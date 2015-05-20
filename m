@@ -1,114 +1,83 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 8/8] serial: tegra: Correct error handling on DMA setup
-Date: Wed, 20 May 2015 13:12:55 +0100
-Message-ID: <555C7A47.1070901@nvidia.com>
-References: <1430835479-6613-1-git-send-email-jonathanh@nvidia.com> <1430835479-6613-9-git-send-email-jonathanh@nvidia.com> <CAAVeFuL=z-xbGT1e_L6+_GQ8aZ0BvNBfmoi65u_7qVHv=tpTbA@mail.gmail.com> <5551CD25.4030206@nvidia.com> <CAAVeFuLUVHJMPjy3y6bw9J7iQHb+is-SR_5H-=TCe4yoyEGRqQ@mail.gmail.com> <555309F4.1080306@nvidia.com> <CAAVeFuL8XoQUykpVbzgJiYNkoXA0e7c1k95nvB6Q+wZUHjOjSw@mail.gmail.com> <555C593F.5040107@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [RESEND PATCH 2/2] ARM: dts: tegra: Use labels for overriding
+ nodes in Tegra114 boards
+Date: Wed, 20 May 2015 14:40:09 +0200
+Message-ID: <20150520124008.GB24016@ulmo.nvidia.com>
+References: <1432036279-6318-1-git-send-email-k.kozlowski.k@gmail.com>
+ <1432036279-6318-2-git-send-email-k.kozlowski.k@gmail.com>
+ <CAAVeFu+-EYwZ9veNK8T6ZTc9tV0ZgGGm4M6vsiXe70TGTvfOzA@mail.gmail.com>
+ <CAJKOXPeDSOwRU4Btt97Tf6Qd1zj5ctVnL_3-_RWGSy004SAACA@mail.gmail.com>
+ <CAAVeFu+2aqCJ-nUomXy+PxKvDEm-yFPd+xq1rvgYiSUp5NohtA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="O3RTKUHj+75w1tg5"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <555C593F.5040107@nvidia.com>
+Content-Disposition: inline
+In-Reply-To: <CAAVeFu+2aqCJ-nUomXy+PxKvDEm-yFPd+xq1rvgYiSUp5NohtA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.cz>, linux-serial@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Krzysztof =?utf-8?Q?Koz=C5=82owski?= <k.kozlowski.k@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 20/05/15 10:51, Jon Hunter wrote:
-> 
-> On 20/05/15 04:57, Alexandre Courbot wrote:
-> 
-> [snip]
-> 
->> There may still be a leak (that is not related to your patch) in the
->> RX path though:
->>
->>     dma_buf = dma_alloc_coherent(...);
->>     ret = dmaengine_slave_config(...);
->>     if (ret < 0) {
->>         ...
->>         goto scrub;
->>     }
->>
->>     tup->rx_dma_buf_virt = dma_buf;
->>     tup->rx_dma_buf_phys = dma_phys;
->>
->> scrub:
->>     dma_release_channel(dma_chan);
->>     return ret;
->>
->> It seems that if dmaengine_slave_config() fails, then the result of
->> dma_alloc_coherent() remains purely local to the function and is never
->> freed. Or am I missing something again?
-> 
-> Yes, you are right here. Actually, this would be applicable to
-> both RX and TX paths because in the TX path the buffer would
-> not be unmapped. I will generated a separate patch for fix
-> this. How does the following look?
-> 
-> diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
-> index 3b63f103f0c9..cf0133ae762d 100644
-> --- a/drivers/tty/serial/serial-tegra.c
-> +++ b/drivers/tty/serial/serial-tegra.c
-> @@ -999,6 +999,12 @@ static int tegra_uart_dma_channel_allocate(struct tegra_uart_port *tup,
->                         dma_release_channel(dma_chan);
->                         return -ENOMEM;
->                 }
-> +               dma_sconfig.src_addr = tup->uport.mapbase;
-> +               dma_sconfig.src_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
-> +               dma_sconfig.src_maxburst = 4;
-> +               tup->rx_dma_chan = dma_chan;
-> +               tup->rx_dma_buf_virt = dma_buf;
-> +               tup->rx_dma_buf_phys = dma_phys;
->         } else {
->                 dma_phys = dma_map_single(tup->uport.dev,
->                         tup->uport.state->xmit.buf, UART_XMIT_SIZE,
-> @@ -1009,39 +1015,23 @@ static int tegra_uart_dma_channel_allocate(struct tegra_uart_port *tup,
->                         return -ENOMEM;
->                 }
->                 dma_buf = tup->uport.state->xmit.buf;
-> -       }
-> -
-> -       if (dma_to_memory) {
-> -               dma_sconfig.src_addr = tup->uport.mapbase;
-> -               dma_sconfig.src_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
-> -               dma_sconfig.src_maxburst = 4;
-> -       } else {
->                 dma_sconfig.dst_addr = tup->uport.mapbase;
->                 dma_sconfig.dst_addr_width = DMA_SLAVE_BUSWIDTH_1_BYTE;
->                 dma_sconfig.dst_maxburst = 16;
-> +               tup->tx_dma_chan = dma_chan;
-> +               tup->tx_dma_buf_virt = dma_buf;
-> +               tup->tx_dma_buf_phys = dma_phys;
->         }
->  
->         ret = dmaengine_slave_config(dma_chan, &dma_sconfig);
->         if (ret < 0) {
->                 dev_err(tup->uport.dev,
->                         "Dma slave config failed, err = %d\n", ret);
-> -               goto scrub;
-> +               tegra_uart_dma_channel_free(tup, dma_to_memory);
-> +               return ret;
->         }
->  
-> -       if (dma_to_memory) {
-> -               tup->rx_dma_chan = dma_chan;
-> -               tup->rx_dma_buf_virt = dma_buf;
-> -               tup->rx_dma_buf_phys = dma_phys;
-> -       } else {
-> -               tup->tx_dma_chan = dma_chan;
-> -               tup->tx_dma_buf_virt = dma_buf;
-> -               tup->tx_dma_buf_phys = dma_phys;
-> -       }
->         return 0;
-> -
-> -scrub:
-> -       tegra_uart_dma_channel_free(tup, dma_to_memory);
-> -       return ret;
->  }
+--O3RTKUHj+75w1tg5
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Posted the patch here [1].
+On Wed, May 20, 2015 at 02:05:38PM +0900, Alexandre Courbot wrote:
+> On Wed, May 20, 2015 at 2:03 PM, Krzysztof Koz=C5=82owski
+> <k.kozlowski.k@gmail.com> wrote:
+> > 2015-05-20 13:05 GMT+09:00 Alexandre Courbot <gnurou@gmail.com>:
+> >> On Tue, May 19, 2015 at 8:51 PM, Krzysztof Kozlowski
+> >> <k.kozlowski.k@gmail.com> wrote:
+> >>> Usage of labels instead of full paths reduces possible mistakes when
+> >>> overriding nodes.
+> >>>
+> >>> Signed-off-by: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
+> >>
+> >> Indentation seems to be off by one tab in the added code (hence the
+> >> huge size of this patch ; most lines should not change), can you
+> >> check?
+> >
+> > It is correct. This change in indentation is an effect of moving nodes
+> > out of first bracket ("\ {"). That is the convention.
+> >
+> > It us up to you guys if this is worth the effort. For exynos we use
+> > label-convention and now I am converting old DTS to it. I think the
+> > label-convention is less error-prone when extending or overriding
+> > nodes. Also it removes duplicated addresses.
+>=20
+> I don't really have a strong opinion on this - Stephen and Thierry
+> have worked with DT much more, let's see what they think...
 
-Jon
+I agree with Stephen that this is unnecessary churn. I understand the
+reason why people prefer to use labels, but I don't think it's enough of
+an issue to warrent rewriting all of the DTS files. I personally don't
+like the convention very much because it makes the otherwise very neatly
+structured DTS files hard to read.
 
-[1] https://lkml.org/lkml/2015/5/20/347
+Thierry
+
+--O3RTKUHj+75w1tg5
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJVXICnAAoJEN0jrNd/PrOhIeYP/3UMvKeGd3+ny+UUBW8BpMz+
+5Kciba9sb0E+q6f62mbB6h6ITWPFKdrGfvkRqmCFGJy7uMyeluZGET44rLMuNdt5
+PSYRlxZq7mLO7/MZ9t1dHI6du8jP5ghGjrxGXqTvQ4l7AwY/4nFZdG95XdZeSSL2
+AIoTzwHajsi5i3fFQV3YUfDIIqUvodAUEm6JtW6uHEvmOxY0Ll41DcpAwCi+xho7
+2iwGonOwjyJr67s26SIccrOOIBqx1fpZneWa0hx4KVsxbtbc83MYXqXHDvYyFEW8
+xEQjy3VDzRAf0Uww9O4iocmUyslDBIVDD18zoFgiUhbcRdwCr90wiGc/DgMyK2gM
+MgJWuc34vU1cWb1BNy+ZPwGTexcrP3Ku6EQ0jbNXWo1ZJQQ/urQFO5fIpsyp4GeB
+VK3pYM1A8actaZfP9976cdH8PcMYPfVTRLSD76GgmTbdV1kS7QNoTxmr5IbuusJT
+4WntVd46619KEaAQm/aM8pQIs1pKw28LPEiqidT2Wa1dQPhSBtOazcJNi9rBaJo3
+qNkjbpSvdb85yejXzyBisIxTkOeq3m4zWElY5dFgK0AdOAPpHubBUYfBdG71Y2GF
+tNTHg/Nz57y948VBIAS3hpTERBTiQTh0EkwwmWDkFKr6D6zYJCCCgH+XVLXMcXBm
+jKmvfobFKq9ibNqD5F+1
+=krdU
+-----END PGP SIGNATURE-----
+
+--O3RTKUHj+75w1tg5--
