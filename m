@@ -1,95 +1,117 @@
 From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/2] drm/nouveau: add staging module option
-Date: Wed, 20 May 2015 14:56:18 +0900
-Message-ID: <1432101379-9515-2-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH 2/2] drm/nouveau: Set tile mode
+Date: Wed, 20 May 2015 14:56:19 +0900
+Message-ID: <1432101379-9515-3-git-send-email-acourbot@nvidia.com>
 References: <1432101379-9515-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 In-Reply-To: <1432101379-9515-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ari Hirvonen <ahirvonen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add a module option allowing to enable staging/unstable APIs. This will
-allow us to experiment freely with experimental APIs for a while before
-setting them in stone.
-
-Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drm/nouveau/nouveau_drm.c          | 18 ++++++++++++++++++
- drm/nouveau/uapi/drm/nouveau_drm.h |  3 +++
- 2 files changed, 21 insertions(+)
-
-diff --git a/drm/nouveau/nouveau_drm.c b/drm/nouveau/nouveau_drm.c
-index 89049335b738..e4bd6ed51e73 100644
---- a/drm/nouveau/nouveau_drm.c
-+++ b/drm/nouveau/nouveau_drm.c
-@@ -75,6 +75,10 @@ MODULE_PARM_DESC(runpm, "disable (0), force enable (1), optimus only default (-1
- int nouveau_runtime_pm = -1;
- module_param_named(runpm, nouveau_runtime_pm, int, 0400);
- 
-+MODULE_PARM_DESC(staging, "enable staging APIs");
-+int nouveau_staging = 0;
-+module_param_named(staging, nouveau_staging, int, 0400);
-+
- static struct drm_driver driver_stub;
- static struct drm_driver driver_pci;
- static struct drm_driver driver_platform;
-@@ -895,6 +899,7 @@ nouveau_ioctls[] = {
- 	DRM_IOCTL_DEF_DRV(NOUVEAU_GEM_CPU_PREP, nouveau_gem_ioctl_cpu_prep, DRM_UNLOCKED|DRM_AUTH|DRM_RENDER_ALLOW),
- 	DRM_IOCTL_DEF_DRV(NOUVEAU_GEM_CPU_FINI, nouveau_gem_ioctl_cpu_fini, DRM_UNLOCKED|DRM_AUTH|DRM_RENDER_ALLOW),
- 	DRM_IOCTL_DEF_DRV(NOUVEAU_GEM_INFO, nouveau_gem_ioctl_info, DRM_UNLOCKED|DRM_AUTH|DRM_RENDER_ALLOW),
-+	/* Staging ioctls */
- };
- 
- long
-@@ -1027,6 +1032,7 @@ static void nouveau_display_options(void)
- 	DRM_DEBUG_DRIVER("... runpm        : %d\n", nouveau_runtime_pm);
- 	DRM_DEBUG_DRIVER("... vram_pushbuf : %d\n", nouveau_vram_pushbuf);
- 	DRM_DEBUG_DRIVER("... pstate       : %d\n", nouveau_pstate);
-+	DRM_DEBUG_DRIVER("... staging      : %d\n", nouveau_staging);
- }
- 
- static const struct dev_pm_ops nouveau_pm_ops = {
-@@ -1088,6 +1094,18 @@ err_free:
- static int __init
- nouveau_drm_init(void)
- {
-+	/* Do not register staging ioctsl if option not specified */
-+	if (!nouveau_staging) {
-+		unsigned i;
-+
-+		/* This keeps us safe is no staging ioctls are defined */
-+		i = min(driver_stub.num_ioctls, DRM_NOUVEAU_STAGING_IOCTL);
-+		while (!nouveau_ioctls[i - 1].func)
-+			i--;
-+
-+		driver_stub.num_ioctls = i;
-+	}
-+
- 	driver_pci = driver_stub;
- 	driver_pci.set_busid = drm_pci_set_busid;
- 	driver_platform = driver_stub;
-diff --git a/drm/nouveau/uapi/drm/nouveau_drm.h b/drm/nouveau/uapi/drm/nouveau_drm.h
-index 5507eead5863..4e7e21f41b5c 100644
---- a/drm/nouveau/uapi/drm/nouveau_drm.h
-+++ b/drm/nouveau/uapi/drm/nouveau_drm.h
-@@ -140,11 +140,14 @@ struct drm_nouveau_gem_cpu_fini {
- #define DRM_NOUVEAU_GEM_CPU_PREP       0x42
- #define DRM_NOUVEAU_GEM_CPU_FINI       0x43
- #define DRM_NOUVEAU_GEM_INFO           0x44
-+/* range 0x98..DRM_COMMAND_END (8 entries) is reserved for staging, unstable ioctls */
-+#define DRM_NOUVEAU_STAGING_IOCTL      0x58
- 
- #define DRM_IOCTL_NOUVEAU_GEM_NEW            DRM_IOWR(DRM_COMMAND_BASE + DRM_NOUVEAU_GEM_NEW, struct drm_nouveau_gem_new)
- #define DRM_IOCTL_NOUVEAU_GEM_PUSHBUF        DRM_IOWR(DRM_COMMAND_BASE + DRM_NOUVEAU_GEM_PUSHBUF, struct drm_nouveau_gem_pushbuf)
- #define DRM_IOCTL_NOUVEAU_GEM_CPU_PREP       DRM_IOW (DRM_COMMAND_BASE + DRM_NOUVEAU_GEM_CPU_PREP, struct drm_nouveau_gem_cpu_prep)
- #define DRM_IOCTL_NOUVEAU_GEM_CPU_FINI       DRM_IOW (DRM_COMMAND_BASE + DRM_NOUVEAU_GEM_CPU_FINI, struct drm_nouveau_gem_cpu_fini)
- #define DRM_IOCTL_NOUVEAU_GEM_INFO           DRM_IOWR(DRM_COMMAND_BASE + DRM_NOUVEAU_GEM_INFO, struct drm_nouveau_gem_info)
-+/* staging ioctls */
- 
- #endif /* __NOUVEAU_DRM_H__ */
--- 
-2.4.0
+RnJvbTogQXJpIEhpcnZvbmVuIDxhaGlydm9uZW5AbnZpZGlhLmNvbT4KCkFkZCBuZXcgTk9VVkVB
+VV9HRU1fU0VUX1RJTElORyBpb2N0bCB0byBzZXQgY29ycmVjdCB0aWxpbmcKbW9kZSBmb3IgaW1w
+b3J0ZWQgZG1hLWJ1ZnMuIFRoaXMgaW9jdGwgaXMgc3RhZ2luZyBmb3Igbm93LgoKU2lnbmVkLW9m
+Zi1ieTogQXJpIEhpcnZvbmVuIDxhaGlydm9uZW5AbnZpZGlhLmNvbT4KW2Fjb3VyYm90QG52aWRp
+YS5jb206IGNhcnJ5IHVwc3RyZWFtLCBmaXggc3R5bGVdClNpZ25lZC1vZmYtYnk6IEFsZXhhbmRy
+ZSBDb3VyYm90IDxhY291cmJvdEBudmlkaWEuY29tPgotLS0KIGRybS9ub3V2ZWF1L25vdXZlYXVf
+ZHJtLmMgICAgICAgICAgfCAgMSArCiBkcm0vbm91dmVhdS9ub3V2ZWF1X2dlbS5jICAgICAgICAg
+IHwgNTUgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKIGRybS9ub3V2ZWF1
+L25vdXZlYXVfZ2VtLmggICAgICAgICAgfCAgMiArKwogZHJtL25vdXZlYXUvdWFwaS9kcm0vbm91
+dmVhdV9kcm0uaCB8ICA4ICsrKysrKwogNCBmaWxlcyBjaGFuZ2VkLCA2NiBpbnNlcnRpb25zKCsp
+CgpkaWZmIC0tZ2l0IGEvZHJtL25vdXZlYXUvbm91dmVhdV9kcm0uYyBiL2RybS9ub3V2ZWF1L25v
+dXZlYXVfZHJtLmMKaW5kZXggZTRiZDZlZDUxZTczLi4xYzc4OThlYzEwMGMgMTAwNjQ0Ci0tLSBh
+L2RybS9ub3V2ZWF1L25vdXZlYXVfZHJtLmMKKysrIGIvZHJtL25vdXZlYXUvbm91dmVhdV9kcm0u
+YwpAQCAtOTAwLDYgKzkwMCw3IEBAIG5vdXZlYXVfaW9jdGxzW10gPSB7CiAJRFJNX0lPQ1RMX0RF
+Rl9EUlYoTk9VVkVBVV9HRU1fQ1BVX0ZJTkksIG5vdXZlYXVfZ2VtX2lvY3RsX2NwdV9maW5pLCBE
+Uk1fVU5MT0NLRUR8RFJNX0FVVEh8RFJNX1JFTkRFUl9BTExPVyksCiAJRFJNX0lPQ1RMX0RFRl9E
+UlYoTk9VVkVBVV9HRU1fSU5GTywgbm91dmVhdV9nZW1faW9jdGxfaW5mbywgRFJNX1VOTE9DS0VE
+fERSTV9BVVRIfERSTV9SRU5ERVJfQUxMT1cpLAogCS8qIFN0YWdpbmcgaW9jdGxzICovCisJRFJN
+X0lPQ1RMX0RFRl9EUlYoTk9VVkVBVV9HRU1fU0VUX1RJTElORywgbm91dmVhdV9nZW1faW9jdGxf
+c2V0X3RpbGluZywgRFJNX1VOTE9DS0VEfERSTV9BVVRIfERSTV9SRU5ERVJfQUxMT1cpLAogfTsK
+IAogbG9uZwpkaWZmIC0tZ2l0IGEvZHJtL25vdXZlYXUvbm91dmVhdV9nZW0uYyBiL2RybS9ub3V2
+ZWF1L25vdXZlYXVfZ2VtLmMKaW5kZXggMGU2OTBiZjE5ZmM5Li40NmZhNGRmMGIzOTAgMTAwNjQ0
+Ci0tLSBhL2RybS9ub3V2ZWF1L25vdXZlYXVfZ2VtLmMKKysrIGIvZHJtL25vdXZlYXUvbm91dmVh
+dV9nZW0uYwpAQCAtMTczLDYgKzE3Myw2MSBAQCBub3V2ZWF1X2dlbV9vYmplY3RfY2xvc2Uoc3Ry
+dWN0IGRybV9nZW1fb2JqZWN0ICpnZW0sIHN0cnVjdCBkcm1fZmlsZSAqZmlsZV9wcml2KQogfQog
+CiBpbnQKK25vdXZlYXVfZ2VtX2lvY3RsX3NldF90aWxpbmcoc3RydWN0IGRybV9kZXZpY2UgKmRl
+diwgdm9pZCAqZGF0YSwKKwkJCSAgICAgc3RydWN0IGRybV9maWxlICpmaWxlX3ByaXYpCit7CisJ
+c3RydWN0IG5vdXZlYXVfZHJtICpkcm0gPSBub3V2ZWF1X2RybShkZXYpOworCXN0cnVjdCBub3V2
+ZWF1X2NsaSAqY2xpID0gbm91dmVhdV9jbGkoZmlsZV9wcml2KTsKKwlzdHJ1Y3QgbnZrbV9mYiAq
+cGZiID0gbnZ4eF9mYigmZHJtLT5kZXZpY2UpOworCXN0cnVjdCBkcm1fbm91dmVhdV9nZW1fc2V0
+X3RpbGluZyAqcmVxID0gZGF0YTsKKwlzdHJ1Y3QgZHJtX2dlbV9vYmplY3QgKmdlbTsKKwlzdHJ1
+Y3Qgbm91dmVhdV9ibyAqbnZibzsKKwlzdHJ1Y3QgbnZrbV9tZW0gKm1lbTsKKwlzdHJ1Y3QgbnZr
+bV92bWEgKnZtYTsKKwlpbnQgcmV0ID0gMDsKKworCWlmICghcGZiLT5tZW10eXBlX3ZhbGlkKHBm
+YiwgcmVxLT50aWxlX2ZsYWdzKSkgeworCQlOVl9QUklOVEsoZXJyb3IsIGNsaSwgImJhZCBtZW10
+eXBlOiAweCUwOHhcbiIsIHJlcS0+dGlsZV9mbGFncyk7CisJCXJldHVybiAtRUlOVkFMOworCX0K
+KworCWdlbSA9IGRybV9nZW1fb2JqZWN0X2xvb2t1cChkZXYsIGZpbGVfcHJpdiwgcmVxLT5oYW5k
+bGUpOworCWlmICghZ2VtKQorCQlyZXR1cm4gLUVOT0VOVDsKKworCW52Ym8gPSBub3V2ZWF1X2dl
+bV9vYmplY3QoZ2VtKTsKKworCWlmIChudmJvLT50aWxlX21vZGUgIT0gcmVxLT50aWxlX21vZGUg
+fHwKKwkgICAgbnZiby0+dGlsZV9mbGFncyAhPSByZXEtPnRpbGVfZmxhZ3MpIHsKKworCQlyZXQg
+PSB0dG1fYm9fcmVzZXJ2ZSgmbnZiby0+Ym8sIGZhbHNlLCBmYWxzZSwgZmFsc2UsIE5VTEwpOwor
+CQlpZiAocmV0KQorCQkJZ290byBvdXQ7CisKKwkJdm1hID0gbm91dmVhdV9ib192bWFfZmluZChu
+dmJvLCBjbGktPnZtKTsKKwkJaWYgKCF2bWEpIHsKKwkJCXJldCA9IC1FTk9FTlQ7CisJCQlnb3Rv
+IHVucmVzZXJ2ZTsKKwkJfQorCisJCW1lbSA9IG52Ym8tPmJvLm1lbS5tbV9ub2RlOworCQludmJv
+LT50aWxlX21vZGUgPSByZXEtPnRpbGVfbW9kZTsKKwkJbnZiby0+dGlsZV9mbGFncyA9IHJlcS0+
+dGlsZV9mbGFnczsKKworCQkvKiBOZWVkIHRvIHJld3JpdGUgcGFnZSB0YWJsZXMgKi8KKwkJbWVt
+LT5tZW10eXBlID0gKG52Ym8tPnRpbGVfZmxhZ3MgPj4gOCkgJiAweGZmOworCQludmttX3ZtX21h
+cCh2bWEsIG52Ym8tPmJvLm1lbS5tbV9ub2RlKTsKKwordW5yZXNlcnZlOgorCQl0dG1fYm9fdW5y
+ZXNlcnZlKCZudmJvLT5ibyk7CisJfQorCitvdXQ6CisJZHJtX2dlbV9vYmplY3RfdW5yZWZlcmVu
+Y2VfdW5sb2NrZWQoZ2VtKTsKKwlyZXR1cm4gcmV0OworfQorCitpbnQKIG5vdXZlYXVfZ2VtX25l
+dyhzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBpbnQgc2l6ZSwgaW50IGFsaWduLCB1aW50MzJfdCBk
+b21haW4sCiAJCXVpbnQzMl90IHRpbGVfbW9kZSwgdWludDMyX3QgdGlsZV9mbGFncywKIAkJc3Ry
+dWN0IG5vdXZlYXVfYm8gKipwbnZibykKZGlmZiAtLWdpdCBhL2RybS9ub3V2ZWF1L25vdXZlYXVf
+Z2VtLmggYi9kcm0vbm91dmVhdS9ub3V2ZWF1X2dlbS5oCmluZGV4IGU0MDQ5ZmFjYTc4MC4uNTZl
+NzQxZDk4YmNkIDEwMDY0NAotLS0gYS9kcm0vbm91dmVhdS9ub3V2ZWF1X2dlbS5oCisrKyBiL2Ry
+bS9ub3V2ZWF1L25vdXZlYXVfZ2VtLmgKQEAgLTIzLDYgKzIzLDggQEAgZXh0ZXJuIHZvaWQgbm91
+dmVhdV9nZW1fb2JqZWN0X2RlbChzdHJ1Y3QgZHJtX2dlbV9vYmplY3QgKik7CiBleHRlcm4gaW50
+IG5vdXZlYXVfZ2VtX29iamVjdF9vcGVuKHN0cnVjdCBkcm1fZ2VtX29iamVjdCAqLCBzdHJ1Y3Qg
+ZHJtX2ZpbGUgKik7CiBleHRlcm4gdm9pZCBub3V2ZWF1X2dlbV9vYmplY3RfY2xvc2Uoc3RydWN0
+IGRybV9nZW1fb2JqZWN0ICosCiAJCQkJICAgICBzdHJ1Y3QgZHJtX2ZpbGUgKik7CitleHRlcm4g
+aW50IG5vdXZlYXVfZ2VtX2lvY3RsX3NldF90aWxpbmcoc3RydWN0IGRybV9kZXZpY2UgKiwgdm9p
+ZCAqLAorCQkJCQlzdHJ1Y3QgZHJtX2ZpbGUgKik7CiBleHRlcm4gaW50IG5vdXZlYXVfZ2VtX2lv
+Y3RsX25ldyhzdHJ1Y3QgZHJtX2RldmljZSAqLCB2b2lkICosCiAJCQkJIHN0cnVjdCBkcm1fZmls
+ZSAqKTsKIGV4dGVybiBpbnQgbm91dmVhdV9nZW1faW9jdGxfcHVzaGJ1ZihzdHJ1Y3QgZHJtX2Rl
+dmljZSAqLCB2b2lkICosCmRpZmYgLS1naXQgYS9kcm0vbm91dmVhdS91YXBpL2RybS9ub3V2ZWF1
+X2RybS5oIGIvZHJtL25vdXZlYXUvdWFwaS9kcm0vbm91dmVhdV9kcm0uaAppbmRleCA0ZTdlMjFm
+NDFiNWMuLjhmMTBiMTZiMTQ3MyAxMDA2NDQKLS0tIGEvZHJtL25vdXZlYXUvdWFwaS9kcm0vbm91
+dmVhdV9kcm0uaAorKysgYi9kcm0vbm91dmVhdS91YXBpL2RybS9ub3V2ZWF1X2RybS5oCkBAIC02
+NCw2ICs2NCwxMiBAQCBzdHJ1Y3QgZHJtX25vdXZlYXVfZ2VtX25ldyB7CiAJdWludDMyX3QgYWxp
+Z247CiB9OwogCitzdHJ1Y3QgZHJtX25vdXZlYXVfZ2VtX3NldF90aWxpbmcgeworCXVpbnQzMl90
+IGhhbmRsZTsKKwl1aW50MzJfdCB0aWxlX21vZGU7CisJdWludDMyX3QgdGlsZV9mbGFnczsKK307
+CisKICNkZWZpbmUgTk9VVkVBVV9HRU1fTUFYX0JVRkZFUlMgMTAyNAogc3RydWN0IGRybV9ub3V2
+ZWF1X2dlbV9wdXNoYnVmX2JvX3ByZXN1bWVkIHsKIAl1aW50MzJfdCB2YWxpZDsKQEAgLTE0Miw2
+ICsxNDgsNyBAQCBzdHJ1Y3QgZHJtX25vdXZlYXVfZ2VtX2NwdV9maW5pIHsKICNkZWZpbmUgRFJN
+X05PVVZFQVVfR0VNX0lORk8gICAgICAgICAgIDB4NDQKIC8qIHJhbmdlIDB4OTguLkRSTV9DT01N
+QU5EX0VORCAoOCBlbnRyaWVzKSBpcyByZXNlcnZlZCBmb3Igc3RhZ2luZywgdW5zdGFibGUgaW9j
+dGxzICovCiAjZGVmaW5lIERSTV9OT1VWRUFVX1NUQUdJTkdfSU9DVEwgICAgICAweDU4CisjZGVm
+aW5lIERSTV9OT1VWRUFVX0dFTV9TRVRfVElMSU5HICAgICAoRFJNX05PVVZFQVVfU1RBR0lOR19J
+T0NUTCArIDB4MCkKIAogI2RlZmluZSBEUk1fSU9DVExfTk9VVkVBVV9HRU1fTkVXICAgICAgICAg
+ICAgRFJNX0lPV1IoRFJNX0NPTU1BTkRfQkFTRSArIERSTV9OT1VWRUFVX0dFTV9ORVcsIHN0cnVj
+dCBkcm1fbm91dmVhdV9nZW1fbmV3KQogI2RlZmluZSBEUk1fSU9DVExfTk9VVkVBVV9HRU1fUFVT
+SEJVRiAgICAgICAgRFJNX0lPV1IoRFJNX0NPTU1BTkRfQkFTRSArIERSTV9OT1VWRUFVX0dFTV9Q
+VVNIQlVGLCBzdHJ1Y3QgZHJtX25vdXZlYXVfZ2VtX3B1c2hidWYpCkBAIC0xNDksNSArMTU2LDYg
+QEAgc3RydWN0IGRybV9ub3V2ZWF1X2dlbV9jcHVfZmluaSB7CiAjZGVmaW5lIERSTV9JT0NUTF9O
+T1VWRUFVX0dFTV9DUFVfRklOSSAgICAgICBEUk1fSU9XIChEUk1fQ09NTUFORF9CQVNFICsgRFJN
+X05PVVZFQVVfR0VNX0NQVV9GSU5JLCBzdHJ1Y3QgZHJtX25vdXZlYXVfZ2VtX2NwdV9maW5pKQog
+I2RlZmluZSBEUk1fSU9DVExfTk9VVkVBVV9HRU1fSU5GTyAgICAgICAgICAgRFJNX0lPV1IoRFJN
+X0NPTU1BTkRfQkFTRSArIERSTV9OT1VWRUFVX0dFTV9JTkZPLCBzdHJ1Y3QgZHJtX25vdXZlYXVf
+Z2VtX2luZm8pCiAvKiBzdGFnaW5nIGlvY3RscyAqLworI2RlZmluZSBEUk1fSU9DVExfTk9VVkVB
+VV9HRU1fU0VUX1RJTElORyAgICAgRFJNX0lPV1IoRFJNX0NPTU1BTkRfQkFTRSArIERSTV9OT1VW
+RUFVX0dFTV9TRVRfVElMSU5HLCBzdHJ1Y3QgZHJtX25vdXZlYXVfZ2VtX3NldF90aWxpbmcpCiAK
+ICNlbmRpZiAvKiBfX05PVVZFQVVfRFJNX0hfXyAqLwotLSAKMi40LjAKCl9fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCk5vdXZlYXUgbWFpbGluZyBsaXN0Ck5v
+dXZlYXVAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
+bWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1Cg==
