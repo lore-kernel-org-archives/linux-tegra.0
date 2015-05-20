@@ -1,99 +1,182 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 2/3] pinctrl: tegra-xusb: Fix allocation of pins
-Date: Wed, 20 May 2015 17:04:07 +0200
-Message-ID: <20150520150405.GA7734@ulmo.nvidia.com>
-References: <1432044863-2035-1-git-send-email-jonathanh@nvidia.com>
- <1432044863-2035-3-git-send-email-jonathanh@nvidia.com>
- <20150519143340.GE26748@ulmo.nvidia.com>
- <555B5563.5060604@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC] tegra: dpaux: pinctrl proposal
+Date: Wed, 20 May 2015 17:40:24 +0200
+Message-ID: <20150520154022.GB7734@ulmo.nvidia.com>
+References: <1431963229-12867-1-git-send-email-jonathanh@nvidia.com>
+ <20150519144654.GG26748@ulmo.nvidia.com>
+ <555C901F.8090009@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nFreZHaLTZJo0R7j"
-Return-path: <linux-gpio-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="8GpibOaaTibBMecb"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <555B5563.5060604@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org
+In-Reply-To: <555C901F.8090009-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---nFreZHaLTZJo0R7j
+--8GpibOaaTibBMecb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, May 19, 2015 at 04:23:15PM +0100, Jon Hunter wrote:
+On Wed, May 20, 2015 at 02:46:07PM +0100, Jon Hunter wrote:
 >=20
-> On 19/05/15 15:33, Thierry Reding wrote:
+> On 19/05/15 15:46, Thierry Reding wrote:
 > > * PGP Signed by an unknown key
 > >=20
-> > On Tue, May 19, 2015 at 03:14:22PM +0100, Jon Hunter wrote:
-> > [...]
+> > On Mon, May 18, 2015 at 04:33:49PM +0100, Jon Hunter wrote:
+> >> Background:
+> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >> On tegra124 and tegra132 devices the pads used by the Display Port Aux=
+iliary
+> >> (DPAUX) channel are multiplexed such that they can also be used by one=
+ of the
+> >> internal i2c controllers. Note that this is different from i2c-over-AUX
+> >> supported by the DPAUX controller. The register that configures these =
+pads is
+> >> part of the DPAUX controllers register set and so requires the clock f=
+or the
+> >> DPAUX controller to be enabled to access the register as well as keepi=
+ng the
+> >> SOR (serial output resource) power domain enabled.
+> >>
+> >> Currently, there is no pinctrl device for these pads and so cannot be =
+easily
+> >> mapped to function as an i2c interface. Furthermore, when using the pa=
+ds for
+> >> the DPAUX channel, the DPAUX driver (drivers/gpu/drm/tegra/dpaux.c) di=
+rectly
+> >> writes the to appropriate register to setup the pads.
+> >>
+> >> There are some products based upon the tegra132 that use these pads fo=
+r an
+> >> internal i2c controller and hence we want to support this configuratio=
+n in the
+> >> kernel.
 > >=20
-> > One more thing:
-> >=20
-> > [...]
-> >> diff --git a/drivers/pinctrl/pinctrl-tegra-xusb.c b/drivers/pinctrl/pi=
-nctrl-tegra-xusb.c
-> >> index 3e8e4a914fb4..c61594066e26 100644
-> >> --- a/drivers/pinctrl/pinctrl-tegra-xusb.c
-> >> +++ b/drivers/pinctrl/pinctrl-tegra-xusb.c
-> >> @@ -125,6 +125,23 @@ static const char *tegra_xusb_padctl_get_group_na=
-me(struct pinctrl_dev *pinctrl,
-> >>  	return padctl->soc->pins[group].name;
-> >>  }
-> >> =20
-> >> +static int tegra_xusb_padctl_get_group_pins(struct pinctrl_dev *pinct=
-rl,
-> >> +					    unsigned group,
-> >> +					    const unsigned **pins,
-> >> +					    unsigned *num_pins)
-> >> +{
-> >> +	struct tegra_xusb_padctl *padctl =3D pinctrl_dev_get_drvdata(pinctrl=
-);
-> >> +
-> >> +	/*
-> >> +	 * For the tegra-xusb pad controller groups are synonomous
-> >> +	 * with lanes/pins and there is always one lane/pin per group.
-> >> +	 */
-> >> +	*pins =3D &padctl->soc->pins[group].number;
-> >=20
-> > Shouldn't this be the same as pinctrl->desc->pins? In that case, maybe a
-> > better solution would be to make .get_group_pins() mandatory again and
-> > turn this into a pinctrl helper function that can be used by all group-
-> > only pinctrl drivers?
+> > Good timing, I was going to (reluctantly) add this to my long TODO list.
+> > I generally like the proposal.
 >=20
-> Yes I believe that you are right. However, I don't think a helper
-> function would work here, because this function returns a pointer to an
-> array of pin numbers. In the case of xusb this is simplified a bit
-> because we are only returning a single number here for the group.
-> However, if you look at other pinctrl devices (such as pinctrl-tegra.c)
-> there could be more than one number in the array.
+> Ok, great.
+> =20
+> >> Proposal:
+> >> =3D=3D=3D=3D=3D=3D=3D=3D
+> >> Add a DPAUX MFD device that consists of a DPAUX controller, for the Di=
+splay
+> >> Port Auxiliary related functionality and a DPAUX pad controller, for h=
+andling
+> >> the pinctrl for the DPAUX pads. Both the DPAUX controller and DPAUX pad
+> >> controller need to access the DPAUX register set and therefore, by mak=
+ing the
+> >> MFD compatible with "simple-mfd" and "syscon", a regmap for the DPAUX =
+registers
+> >> will be created to synchronise register accesses made by the drivers.
+> >=20
+> > Can we not do without an MFD here? Not only would it break DT ABI, but
+> > it's also way more complicated than it needs to be in my opinion, we're
+> > only sharing a single register (or perhaps even two) after all. Keeping
+> > everything in a single DT node would also make the binding less awkward
+> > because the power domain doesn't apply to the pad controller part of
+> > DPAUX.
+> >=20
+> > Can't the dpaux driver simply register the pinmux controller itself?
+>=20
+> Do you think something that looks like the below?
+>=20
+> +Example (tegra124 DPAUX):
+> +
+> +/ {
+> +       ...
+> +
+> +       host1x {
+> +               compatible =3D "nvidia,tegra124-host1x", "simple-bus";
+> +               ...
+> +
+> +               dpaux: dpaux@0,545c0000 {
+> +                       compatible =3D "nvidia,tegra124-dpaux",
+> +                       reg =3D <0x0 0x545c0000 0x0 0x40000>;
+> +                       interrupts =3D <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks =3D <&tegra_car TEGRA124_CLK_DPAUX>,
+> +                                <&tegra_car TEGRA124_CLK_PLL_DP>;
+> +                       clock-names =3D "dpaux", "parent";
+> +                       resets =3D <&tegra_car 181>;
+> +                       reset-names =3D "dpaux";
+> +                       pinctrl-0 =3D <&dpaux_state>;
+> +                       pinctrl-names =3D "default";
+> +                       status =3D "disabled";
+> +
+> +                       dpaux_padctl@0,545c0124 {
+> +                               compatible =3D "nvidia,tegra124-dpaux-pad=
+ctl";
+> +
+> +                               dpaux_state: dpaux_state0 {
+> +                                       dpaux {
+> +                                               nvidia,function =3D "dpau=
+x";
+> +                                       };
+> +                               };
+> +
+> +                               i2c_state: i2c_state0 {
+> +                                       i2c {
+> +                                               nvidia,function =3D "i2c";
+> +                                       };
+> +                               };
+> +                       };
 
-I see. Oh well, guess this is as good as it gets then.
+Why even have this subnode? Couldn't we simply have this:
+
+	host1x@... {
+		...
+
+		dpaux@... {
+			compatible =3D "nvidia,tegra124-dpaux";
+			...
+			pinctrl-0 =3D <&dpaux_aux_state>;
+			pinctrl-1 =3D <&dpaux_i2c_state>;
+			pinctrl-names =3D "aux", "i2c";
+			...
+
+			dpaux_aux_state: pinmux-aux {
+				...
+			};
+
+			dpaux_i2c_state: pinmux-i2c {
+				...
+			};
+		};
+	};
+
+?
+
+We might need to add in indices to tell apart DPAUX and DPAUX1, though
+perhaps we could refer to these states by path instead of phandle to
+avoid that. Anyway, I don't see any particular reason why a subnode
+would be necessary.
 
 Thierry
 
---nFreZHaLTZJo0R7j
+--8GpibOaaTibBMecb
 Content-Type: application/pgp-signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJVXKJjAAoJEN0jrNd/PrOhiJwP/1AD+hb0dqH9pwpUl4+oekDS
-ImIbRQk1L2YG3BGQRogJJ84srI3kIq9iXC+ZUqUIqAKzkl7c299n10t65deaz1wN
-lNGmX9rZyCuHVD+ykdX4bmcyeWaiqYmObAzA0ZlNbnsjhhYyQ+/FQr4gEAHEF9i2
-MyTuCApDW0ZfO4vjGikpo/5+AWUyW/pMtnYVHeZCA9DnVDsLbawwb1VrWNyI6ffT
-S3awNv1Yo6vTxA314T67bqFAufXVWa7jG6zElMCDbukXVWdLskds1QW+De7u+5cm
-sfo06/1tpCh673oHQBAcz9iyQ7/DSO4Hr7vJCvtyfpQ7NSbCmuyD5bRW3WLBcZRh
-/eqf2OLOT7OirLfMIjQo/v41Rn39dskoFpN5nV7/83DnOQnQB2RaJeQoPX7OTdtP
-qBAkKUuQE+2W3yN5ZOt6yqJZ1S5zub74RFivk0F5a64afjEshDgSR1s/+JeCCmpl
-6jaUuga2oydRUAh/wR/zSGgQ3hJRiSmHwGgPX1yXXxtK3bH5BnWnHUvU/B+gceg8
-KNHnB/NlYCcuzeHq/Fsizr2B1oWJ34VSTpgMPVL3SM+995FP2RD92IQdtqhO6IrI
-EDZUqBlu+IKdYLi/lHTLddnKWo8xs/B9sK/2xES2a4c+t1h2xDKzSaLcSADaAl8A
-WePGM5/UHo730V/czKp8
-=oWCz
+iQIcBAABCAAGBQJVXKrkAAoJEN0jrNd/PrOhEZIQAKYhuZuGAYz3lLxCuDlELIT7
+1O5moIcZziX2rEgKK4B7EQ60tjgg6euGo28Oc33PF47q7/4gJ9GYxJBoI2n0aAQc
+OrFfZKskDQFRaA13WF5PJlbPMrqA/ulTL53Saa/1eEiHCQQc+TGegJ7A2OgtFFfM
+3L+WW+H1dLoX+kmPN8pJlBcP2wVy12xK/yj/KUdhPuGmlH70z2IwX1QV4gVsYBvb
+GLmieDd4OTpSNKQjcelga3+vPq6P1XbUIfxyfM8RVAKXQ2zXHtYP8LNbezGuWF0q
+MTrTY0lYWktMO0bDjQRL4PNaQ0x8CHAs0x5IpO4ur4Grlz05yn+Ar/EoFW4/NIcq
+X2fLHdhVvK9V3b0Ms2rO1mWpht2Xkhxbkak1DVbkMK+221nhkydDpEQbEgKLBpRv
+4aUcwMKGRSvQeCXWnPgAgmMcyZzv1hID39N0QLaGiQ6O1XSG6iMxwvrmRXWArieu
+ORuThtRjY+X5J2wVo+5rWtiZ58hLw82PHbgvAKVREIfyqNs7Xip9LGCjy0J5xM7J
+M8DQk6XvpNhnnSHVzrbKPETLrgsxbJdZ+FtmSjikZX5d64++vBjx9OvHEc8DXyqC
+fr4/Gh6qw7632l3QJTT/QBfIgcGdvbozUv+KjLMVPZOtI5lq/cdE2iKJIzdp43Pj
+HFyuMu06fzB7XK+helki
+=1Kcj
 -----END PGP SIGNATURE-----
 
---nFreZHaLTZJo0R7j--
+--8GpibOaaTibBMecb--
