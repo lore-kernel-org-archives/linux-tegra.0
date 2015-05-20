@@ -1,51 +1,82 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH v2 1/2] clk: change clk_ops' ->round_rate() prototype
-Date: Tue, 19 May 2015 18:01:44 -0700
-Message-ID: <20150520010144.GA31054@codeaurora.org>
-References: <1430407809-31147-1-git-send-email-boris.brezillon@free-electrons.com>
- <1430407809-31147-2-git-send-email-boris.brezillon@free-electrons.com>
- <20150507063953.GC32399@codeaurora.org>
- <20150507093702.0b58753d@bbrezillon>
- <20150515174048.4a31af49@bbrezillon>
- <5557267D.7080209@kapsi.fi>
+From: Michael Turquette <mturquette@linaro.org>
+Subject: Re: [PATCH v2] clk: tegra: Update struct tegra_clk_pll_params kerneldoc
+Date: Tue, 19 May 2015 20:39:56 -0700
+Message-ID: <20150520033956.9817.55602@quantum>
+References: <1430919815-22380-1-git-send-email-thierry.reding@gmail.com>
+ <1431012219-28469-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5557267D.7080209@kapsi.fi>
-Sender: linux-arm-msm-owner@vger.kernel.org
-To: Mikko Perttunen <mikko.perttunen@kapsi.fi>
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Mike Turquette <mturquette@linaro.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawn.guo@linaro.org>, ascha Hauer <kernel@pengutronix.de>, David Brown <davidb@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman <bryanh@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Paul Walmsley <paul@pwsan.com>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Barry Song <baohua@kernel.org>, Viresh Kumar <viresh.linux@gmail.com>, Emilio L?pez <emilio@elopez.com.ar>, Maxime Ripard <maxime.rip>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1431012219-28469-1-git-send-email-thierry.reding@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Benson Leung <bleung@chromium.org>, Rhyland Klein <rklein@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/16, Mikko Perttunen wrote:
-> On 05/15/2015 06:40 PM, Boris Brezillon wrote:
-> >Hi Stephen,
-> >
-> >Adding Mikko in the loop (after all, he was the one complaining about
-> >this signed long limitation in the first place, and I forgot to add
-> >him in the Cc list :-/).
+Quoting Thierry Reding (2015-05-07 08:23:39)
+> From: Thierry Reding <treding@nvidia.com>
 > 
-> I think I got it through linux-tegra anyway, but thanks :)
+> Benson Leung pointed out that the kerneldoc for this structure has
+> become stale. Update the field descriptions to match the structure
+> content.
 > 
-> >
-> >Mikko, are you okay with the approach proposed by Stephen (adding a
-> >new method) ?
-> 
-> Yes, sounds good to me. If a driver uses the existing methods with
-> too large frequencies, the issue is pretty discoverable anyway. I
-> think "adjust_rate" sounds a bit too much like it sets the clock's
-> rate, though; perhaps "adjust_rate_request" or something like that?
-> 
+> Reported-by: Benson Leung <bleung@chromium.org>
+> Acked-by: Rhyland Klein <rklein@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
-Well I'm also OK with changing the determine_rate API one more
-time, but we'll have to be careful. Invariably someone will push
-a new clock driver through some non-clk tree path and we'll get
-build breakage. They shouldn't be doing that, so either we do the
-change now and push it to -next and see what breaks, or we do
-this after -rc1 comes out and make sure everyone has lots of
-warning.
+Looks good to me.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Regards,
+Mike
+
+> ---
+> Changes in v2:
+> - document max_p and pdiv_tohw fields
+> 
+>  drivers/clk/tegra/clk.h | 18 +++++++++++++++---
+>  1 file changed, 15 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index f3782dedbdfb..b76b786e15f6 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -157,7 +157,7 @@ struct div_nmp {
+>  };
+>  
+>  /**
+> - * struct clk_pll_params - PLL parameters
+> + * struct tegra_clk_pll_params - PLL parameters
+>   *
+>   * @input_min:                 Minimum input frequency
+>   * @input_max:                 Maximum input frequency
+> @@ -168,12 +168,24 @@ struct div_nmp {
+>   * @base_reg:                  PLL base reg offset
+>   * @misc_reg:                  PLL misc reg offset
+>   * @lock_reg:                  PLL lock reg offset
+> - * @lock_bit_idx:              Bit index for PLL lock status
+> + * @lock_mask:                 Bitmask for PLL lock status
+>   * @lock_enable_bit_idx:       Bit index to enable PLL lock
+> + * @iddq_reg:                  PLL IDDQ register offset
+> + * @iddq_bit_idx:              Bit index to enable PLL IDDQ
+> + * @aux_reg:                   AUX register offset
+> + * @dyn_ramp_reg:              Dynamic ramp control register offset
+> + * @ext_misc_reg:              Miscellaneous control register offsets
+> + * @pmc_divnm_reg:             n, m divider PMC override register offset (PLLM)
+> + * @pmc_divp_reg:              p divider PMC override register offset (PLLM)
+> + * @flags:                     PLL flags
+> + * @stepa_shift:               Dynamic ramp step A field shift
+> + * @stepb_shift:               Dynamic ramp step B field shift
+>   * @lock_delay:                        Delay in us if PLL lock is not used
+> + * @max_p:                     maximum value for the p divider
+> + * @pdiv_tohw:                 mapping of p divider to register values
+> + * @div_nmp:                   offsets and widths on n, m and p fields
+>   * @freq_table:                        array of frequencies supported by PLL
+>   * @fixed_rate:                        PLL rate if it is fixed
+> - * @flags:                     PLL flags
+>   *
+>   * Flags:
+>   * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
+> -- 
+> 2.3.5
+> 
