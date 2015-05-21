@@ -1,120 +1,326 @@
-From: Ben Skeggs <skeggsb@gmail.com>
-Subject: Re: [PATCH 1/2] drm/nouveau: add staging module option
-Date: Thu, 21 May 2015 18:35:58 +1000
-Message-ID: <CACAvsv6OR0HcSnvrcsJRi=JJ0m09EPY9vi0QDuRiqCTfPVjvaQ@mail.gmail.com>
-References: <1432101379-9515-1-git-send-email-acourbot@nvidia.com>
- <1432101379-9515-2-git-send-email-acourbot@nvidia.com>
- <CACAvsv4vW4bBddq2s9eWMzbYcG_F5j+KCkZAfivxKW9AWDBXQQ@mail.gmail.com>
- <CAAVeFu+N6VvPHispeXBTGykncfnOQkJ-J1PxxVa42-ahX2YDsA@mail.gmail.com>
- <CACAvsv7brfoe51eEOibw39_t=Hg6gvb0T2V8YO0-pDdxZ-nPLw@mail.gmail.com>
- <CAAVeFuKYxHQiUObG+78UdCg+R0Zm9UxaFW5WtKQFcHs33vLbAA@mail.gmail.com>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v8 4/9] mfd: Add binding document for NVIDIA Tegra XUSB
+Date: Thu, 21 May 2015 09:40:01 +0100
+Message-ID: <20150521084001.GB6310@x1>
+References: <1430761002-9327-1-git-send-email-abrestic@chromium.org>
+ <1430761002-9327-5-git-send-email-abrestic@chromium.org>
+ <20150513143954.GA3394@x1>
+ <55544CC5.9050001@nvidia.com>
+ <20150514074058.GA22418@x1>
+ <CAL1qeaEqNejuGkN-ke11mtWnaaRo+XieCBkQ6+NQ-Afym6uxVA@mail.gmail.com>
+ <CAL1qeaHy0h7bXhuLHh4AG2Zfu48JYeawgVo4dp_k4oX8YFw6tA@mail.gmail.com>
+ <20150520063551.GD3627@x1>
+ <20150520145227.GA3787@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAAVeFuKYxHQiUObG+78UdCg+R0Zm9UxaFW5WtKQFcHs33vLbAA@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20150520145227.GA3787-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMjEgTWF5IDIwMTUgYXQgMTY6MDQsIEFsZXhhbmRyZSBDb3VyYm90IDxnbnVyb3VAZ21haWwu
-Y29tPiB3cm90ZToKPiBPbiBUaHUsIE1heSAyMSwgMjAxNSBhdCAyOjU1IFBNLCBCZW4gU2tlZ2dz
-IDxza2VnZ3NiQGdtYWlsLmNvbT4gd3JvdGU6Cj4+IE9uIDIxIE1heSAyMDE1IGF0IDE1OjQ5LCBB
-bGV4YW5kcmUgQ291cmJvdCA8Z251cm91QGdtYWlsLmNvbT4gd3JvdGU6Cj4+PiBPbiBUaHUsIE1h
-eSAyMSwgMjAxNSBhdCAxOjQ4IFBNLCBCZW4gU2tlZ2dzIDxza2VnZ3NiQGdtYWlsLmNvbT4gd3Jv
-dGU6Cj4+Pj4gT24gMjAgTWF5IDIwMTUgYXQgMTU6NTYsIEFsZXhhbmRyZSBDb3VyYm90IDxhY291
-cmJvdEBudmlkaWEuY29tPiB3cm90ZToKPj4+Pj4gQWRkIGEgbW9kdWxlIG9wdGlvbiBhbGxvd2lu
-ZyB0byBlbmFibGUgc3RhZ2luZy91bnN0YWJsZSBBUElzLiBUaGlzIHdpbGwKPj4+Pj4gYWxsb3cg
-dXMgdG8gZXhwZXJpbWVudCBmcmVlbHkgd2l0aCBleHBlcmltZW50YWwgQVBJcyBmb3IgYSB3aGls
-ZSBiZWZvcmUKPj4+Pj4gc2V0dGluZyB0aGVtIGluIHN0b25lLgo+Pj4+Pgo+Pj4+PiBTaWduZWQt
-b2ZmLWJ5OiBBbGV4YW5kcmUgQ291cmJvdCA8YWNvdXJib3RAbnZpZGlhLmNvbT4KPj4+Pj4gLS0t
-Cj4+Pj4+ICBkcm0vbm91dmVhdS9ub3V2ZWF1X2RybS5jICAgICAgICAgIHwgMTggKysrKysrKysr
-KysrKysrKysrCj4+Pj4+ICBkcm0vbm91dmVhdS91YXBpL2RybS9ub3V2ZWF1X2RybS5oIHwgIDMg
-KysrCj4+Pj4+ICAyIGZpbGVzIGNoYW5nZWQsIDIxIGluc2VydGlvbnMoKykKPj4+Pj4KPj4+Pj4g
-ZGlmZiAtLWdpdCBhL2RybS9ub3V2ZWF1L25vdXZlYXVfZHJtLmMgYi9kcm0vbm91dmVhdS9ub3V2
-ZWF1X2RybS5jCj4+Pj4+IGluZGV4IDg5MDQ5MzM1YjczOC4uZTRiZDZlZDUxZTczIDEwMDY0NAo+
-Pj4+PiAtLS0gYS9kcm0vbm91dmVhdS9ub3V2ZWF1X2RybS5jCj4+Pj4+ICsrKyBiL2RybS9ub3V2
-ZWF1L25vdXZlYXVfZHJtLmMKPj4+Pj4gQEAgLTc1LDYgKzc1LDEwIEBAIE1PRFVMRV9QQVJNX0RF
-U0MocnVucG0sICJkaXNhYmxlICgwKSwgZm9yY2UgZW5hYmxlICgxKSwgb3B0aW11cyBvbmx5IGRl
-ZmF1bHQgKC0xCj4+Pj4+ICBpbnQgbm91dmVhdV9ydW50aW1lX3BtID0gLTE7Cj4+Pj4+ICBtb2R1
-bGVfcGFyYW1fbmFtZWQocnVucG0sIG5vdXZlYXVfcnVudGltZV9wbSwgaW50LCAwNDAwKTsKPj4+
-Pj4KPj4+Pj4gK01PRFVMRV9QQVJNX0RFU0Moc3RhZ2luZywgImVuYWJsZSBzdGFnaW5nIEFQSXMi
-KTsKPj4+Pj4gK2ludCBub3V2ZWF1X3N0YWdpbmcgPSAwOwo+Pj4+PiArbW9kdWxlX3BhcmFtX25h
-bWVkKHN0YWdpbmcsIG5vdXZlYXVfc3RhZ2luZywgaW50LCAwNDAwKTsKPj4+Pj4gKwo+Pj4+PiAg
-c3RhdGljIHN0cnVjdCBkcm1fZHJpdmVyIGRyaXZlcl9zdHViOwo+Pj4+PiAgc3RhdGljIHN0cnVj
-dCBkcm1fZHJpdmVyIGRyaXZlcl9wY2k7Cj4+Pj4+ICBzdGF0aWMgc3RydWN0IGRybV9kcml2ZXIg
-ZHJpdmVyX3BsYXRmb3JtOwo+Pj4+PiBAQCAtODk1LDYgKzg5OSw3IEBAIG5vdXZlYXVfaW9jdGxz
-W10gPSB7Cj4+Pj4+ICAgICAgICAgRFJNX0lPQ1RMX0RFRl9EUlYoTk9VVkVBVV9HRU1fQ1BVX1BS
-RVAsIG5vdXZlYXVfZ2VtX2lvY3RsX2NwdV9wcmVwLCBEUk1fVU5MT0NLRUR8RFJNX0FVVEh8RFJN
-X1JFTkRFUl9BTExPVyksCj4+Pj4+ICAgICAgICAgRFJNX0lPQ1RMX0RFRl9EUlYoTk9VVkVBVV9H
-RU1fQ1BVX0ZJTkksIG5vdXZlYXVfZ2VtX2lvY3RsX2NwdV9maW5pLCBEUk1fVU5MT0NLRUR8RFJN
-X0FVVEh8RFJNX1JFTkRFUl9BTExPVyksCj4+Pj4+ICAgICAgICAgRFJNX0lPQ1RMX0RFRl9EUlYo
-Tk9VVkVBVV9HRU1fSU5GTywgbm91dmVhdV9nZW1faW9jdGxfaW5mbywgRFJNX1VOTE9DS0VEfERS
-TV9BVVRIfERSTV9SRU5ERVJfQUxMT1cpLAo+Pj4+PiArICAgICAgIC8qIFN0YWdpbmcgaW9jdGxz
-ICovCj4+Pj4+ICB9Owo+Pj4+Pgo+Pj4+PiAgbG9uZwo+Pj4+PiBAQCAtMTAyNyw2ICsxMDMyLDcg
-QEAgc3RhdGljIHZvaWQgbm91dmVhdV9kaXNwbGF5X29wdGlvbnModm9pZCkKPj4+Pj4gICAgICAg
-ICBEUk1fREVCVUdfRFJJVkVSKCIuLi4gcnVucG0gICAgICAgIDogJWRcbiIsIG5vdXZlYXVfcnVu
-dGltZV9wbSk7Cj4+Pj4+ICAgICAgICAgRFJNX0RFQlVHX0RSSVZFUigiLi4uIHZyYW1fcHVzaGJ1
-ZiA6ICVkXG4iLCBub3V2ZWF1X3ZyYW1fcHVzaGJ1Zik7Cj4+Pj4+ICAgICAgICAgRFJNX0RFQlVH
-X0RSSVZFUigiLi4uIHBzdGF0ZSAgICAgICA6ICVkXG4iLCBub3V2ZWF1X3BzdGF0ZSk7Cj4+Pj4+
-ICsgICAgICAgRFJNX0RFQlVHX0RSSVZFUigiLi4uIHN0YWdpbmcgICAgICA6ICVkXG4iLCBub3V2
-ZWF1X3N0YWdpbmcpOwo+Pj4+PiAgfQo+Pj4+Pgo+Pj4+PiAgc3RhdGljIGNvbnN0IHN0cnVjdCBk
-ZXZfcG1fb3BzIG5vdXZlYXVfcG1fb3BzID0gewo+Pj4+PiBAQCAtMTA4OCw2ICsxMDk0LDE4IEBA
-IGVycl9mcmVlOgo+Pj4+PiAgc3RhdGljIGludCBfX2luaXQKPj4+Pj4gIG5vdXZlYXVfZHJtX2lu
-aXQodm9pZCkKPj4+Pj4gIHsKPj4+Pj4gKyAgICAgICAvKiBEbyBub3QgcmVnaXN0ZXIgc3RhZ2lu
-ZyBpb2N0c2wgaWYgb3B0aW9uIG5vdCBzcGVjaWZpZWQgKi8KPj4+Pj4gKyAgICAgICBpZiAoIW5v
-dXZlYXVfc3RhZ2luZykgewo+Pj4+PiArICAgICAgICAgICAgICAgdW5zaWduZWQgaTsKPj4+Pj4g
-Kwo+Pj4+PiArICAgICAgICAgICAgICAgLyogVGhpcyBrZWVwcyB1cyBzYWZlIGlzIG5vIHN0YWdp
-bmcgaW9jdGxzIGFyZSBkZWZpbmVkICovCj4+Pj4+ICsgICAgICAgICAgICAgICBpID0gbWluKGRy
-aXZlcl9zdHViLm51bV9pb2N0bHMsIERSTV9OT1VWRUFVX1NUQUdJTkdfSU9DVEwpOwo+Pj4+PiAr
-ICAgICAgICAgICAgICAgd2hpbGUgKCFub3V2ZWF1X2lvY3Rsc1tpIC0gMV0uZnVuYykKPj4+Pj4g
-KyAgICAgICAgICAgICAgICAgICAgICAgaS0tOwo+Pj4+PiArCj4+Pj4+ICsgICAgICAgICAgICAg
-ICBkcml2ZXJfc3R1Yi5udW1faW9jdGxzID0gaTsKPj4+Pj4gKyAgICAgICB9Cj4+Pj4gSGV5IEFs
-ZXgsCj4+Pj4KPj4+PiBJJ3ZlIGdvdCBubyBzcGVjaWZpYyBvYmplY3Rpb24uICBCdXQgSSdtIGN1
-cmlvdXMgYXMgdG8gd2h5IHlvdSB0b29rCj4+Pj4gdGhpcyBhcHByb2FjaCBhcyBvcHBvc2VkIHRv
-IGp1c3QgYWRkaW5nICJpZiAoIW5vdXZlYXVfc3RhZ2luZykgcmV0dXJuCj4+Pj4gLUVJTlZBTDsi
-IGRpcmVjdGx5IGluIHRoZSBleHBlcmltZW50YWwgaW9jdGxzPwo+Pj4KPj4+IE1haW5seSBiZWNh
-dXNlIHdlIHdpbGwgbGlrZWx5IGZvcmdldCB0byBhZGQgdGhpcyBjaGVjayAob3IgdG8gcmVtb3Zl
-Cj4+PiBpdCkgaW4gc29tZSBvZiB0aGUgc3RhZ2luZyBpb2N0bHMuIFRoZSBjdXJyZW50IHNvbHV0
-aW9uIGRvZXNuJ3QKPj4+IHJlcXVpcmUgdXMgdG8gdGhpbmsgYWJvdXQgdGhhdCAtIGFuZCB0aGUg
-bGVzcyB0aGluZ3MgdG8gdGhpbmsgYWJvdXQsCj4+PiB0aGUgYmV0dGVyLgo+Pj4KPj4+PiBJIHRo
-aW5rLCBpbiBsaW5lIHdpdGgKPj4+PiB3aGF0J3MgYmVlbiBkb25lIGluIG90aGVyIHBsYWNlcywg
-aGF2aW5nIG1vZHVsZSBvcHRpb25zIHBlci1hcGkgaXMKPj4+PiBwZXJoYXBzIGEgYmV0dGVyIGNo
-b2ljZSB0b28uCj4+Pgo+Pj4gRG8geW91IG1lYW4gdGhhdCBlYWNoIGV4cGVyaW1lbnRhbCBpb2N0
-bCBzaG91bGQgaGF2ZSBpdHMgb3duIGVuYWJsZQo+Pj4gb3B0aW9uPyBJIGRvbid0IG1pbmQgZ29p
-bmcgdGhhdCB3YXkgaWYgeW91IHRoaW5rIGl0IGlzIHByZWZlcmFibGUuIEFuZAo+Pj4gaW4gdGhh
-dCBjYXNlIG15IGNvbW1lbnQgYWJvdmUgaXMgdm9pZC4KPj4gVGhhdCB3b3VsZCBiZSBtb3JlIHBy
-ZWZlcmFibGUgSSB0aGluaywgYW5kIG9idmlvdXMgYXMgdG8gd2hhdCBleGFjdGx5Cj4+IHlvdSdy
-ZSBlbmFibGluZy4KPj4KPj4+Cj4+PiBCdXQgYWN0dWFsbHkgSSB3b25kZXIgaWYgaGF2aW5nIHRo
-ZXNlIGV4cGVyaW1lbnRhbCBpb2N0bHMgZW5hYmxlZCBhcwo+Pj4gY29tcGlsZSBvcHRpb25zIChl
-aXRoZXIgaW5kaXZpZHVhbGx5IG9yIGFzIGEgd2hvbGUpIHdvdWxkIG5vdCBiZQo+Pj4gYmV0dGVy
-LiBTb21lIGV4cGVyaW1lbnRhbCBpb2N0bHMgbWF5IHJlcXVpcmUgY29kZSBpbiBzdGFnaW5nIChs
-aWtlIHRoZQo+Pj4gUFVTSEJVRl8yIGlvY3RsIHRoYXQgSSB3b3VsZCBsaWtlIHRvIHN1Ym1pdCBu
-ZXh0KSwgYW5kIEkgZG9uJ3QgdGhpbmsKPj4+IGl0IGlzIGRlc2lyYWJsZSB0byBmb3JjZSBleHRy
-YSBjb2RlIG9yIGtlcm5lbCBvcHRpb25zIChpbiB0aGlzIGNhc2UsCj4+PiBDT05GSUdfU1RBR0lO
-RykgdG8gTm91dmVhdSB1c2VycyB3aG8gd2lsbCBub3QgbWFrZSB1c2Ugb2YgdGhlbS4gSQo+Pj4g
-cmVtZW1iZXIgdGhhdCB3ZSBjb25jbHVkZWQgaW4gZmF2b3Igb3IgbW9kdWxlIG9wdGlvbnMgb24g
-SVJDLCBidXQgaW4KPj4+IHRoZSBsaWdodCBvZiB0aGlzLCB3b3VsZG4ndCBhIGNvbmZpZyBvcHRp
-b24gYmUgYSBsZXNzIGludHJ1c2l2ZQo+Pj4gY2hvaWNlPwo+PiBSaWdodCwgYnV0IHRoZSB3aG9s
-ZSBwb2ludCBvZiB0aGlzIGlzIHRvIGVuY291cmFnZSB0aGUgaW9jdGxzIHRvIG5vdAo+PiBsaXZl
-IHRoZXJlIGZvciB0b28gbG9uZywgYW5kIHByb2dyZXNzIHRvIGZ1bGx5IHN1cHBvcnRlZCBpbnRl
-cmZhY2VzLgo+Cj4gRGVmaW5pdGVseSwgYnV0IG15IGNvbmNlcm4gaXMgdGhhdCBkb2luZyB0aGlz
-IHdpbGwgbWFrZSBOb3V2ZWF1IGRlcGVuZAo+IG9uIFNUQUdJTkcgZm9yIGF0IGxlYXN0IHNob3J0
-IHBlcmlvZHMgb2YgdGltZS4gRG8gd2UgcmVhbGx5IHdhbnQgdGhpcz8KSSBhZG1pdCB0byBoYXZp
-bmcgc2xpZ2h0bHkgbWlzcmVhZCB5b3VyIGxhc3QgcGFyYWdyYXBoLiAgRm9yIGNhc2VzCnN1Y2gg
-YXMgdGhhcywgYSBjb25maWcgb3B0aW9uIHRoYXQgZGVwZW5kcyBvbiBTVEFHSU5HICphbmQqIHRo
-ZSBrZXJuZWwKcGFyYW1ldGVyIHNob3VsZCBiZSB1c2VkLgoKV2hhdCBpcyBwdXNoYnVmMiBkb2lu
-ZyB0aGF0IHJlcXVpcmVzIHN0YWdpbmcgYnR3PyAgWW91J3ZlIGxpbmtlZCBtZSB0bwpwYXRjaGVz
-IHByZXZpb3VzbHksIGJ1dCBJIG1pc3NlZCB0aGF0LgoKQmVuLgpfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1k
-ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
-YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Wed, 20 May 2015, Thierry Reding wrote:
+> On Wed, May 20, 2015 at 07:35:51AM +0100, Lee Jones wrote:
+> > On Tue, 19 May 2015, Andrew Bresticker wrote:
+> > > On Thu, May 14, 2015 at 10:38 AM, Andrew Bresticker
+> > > <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+> > > > On Thu, May 14, 2015 at 12:40 AM, Lee Jones <lee.jones@linaro.o=
+rg> wrote:
+> > > >> On Thu, 14 May 2015, Jon Hunter wrote:
+> > > >>> On 13/05/15 15:39, Lee Jones wrote:
+> > > >>> > On Mon, 04 May 2015, Andrew Bresticker wrote:
+> > > >>> >
+> > > >>> >> Add a binding document for the XUSB host complex on NVIDIA=
+ Tegra124
+> > > >>> >> and later SoCs.  The XUSB host complex includes a mailbox =
+for
+> > > >>> >> communication with the XUSB micro-controller and an xHCI h=
+ost-controller.
+> > > >>> >>
+> > > >>> >> Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> > > >>> >> Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> > > >>> >> Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
+> > > >>> >> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+> > > >>> >> Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
+> > > >>> >> Cc: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+> > > >>> >> Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+> > > >>> >> Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> > > >>> >> ---
+> > > >>> >> Changes from v7:
+> > > >>> >>  - Move non-shared resources into child nodes.
+> > > >>> >> New for v7.
+> > > >>> >> ---
+> > > >>> >>  .../bindings/mfd/nvidia,tegra124-xusb.txt          | 37 +=
++++++++++++++++++++++
+> > > >>> >>  1 file changed, 37 insertions(+)
+> > > >>> >>  create mode 100644 Documentation/devicetree/bindings/mfd/=
+nvidia,tegra124-xusb.txt
+> > > >>> >>
+> > > >>> >> diff --git a/Documentation/devicetree/bindings/mfd/nvidia,=
+tegra124-xusb.txt b/Documentation/devicetree/bindings/mfd/nvidia,tegra1=
+24-xusb.txt
+> > > >>> >> new file mode 100644
+> > > >>> >> index 0000000..bc50110
+> > > >>> >> --- /dev/null
+> > > >>> >> +++ b/Documentation/devicetree/bindings/mfd/nvidia,tegra12=
+4-xusb.txt
+> > > >>> >> @@ -0,0 +1,37 @@
+> > > >>> >> +NVIDIA Tegra XUSB host copmlex
+> > > >>> >> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > >>> >> +
+> > > >>> >> +The XUSB host complex on Tegra124 and later SoCs contains=
+ an xHCI host
+> > > >>> >> +controller and a mailbox for communication with the XUSB =
+micro-controller.
+> > > >>> >> +
+> > > >>> >> +Required properties:
+> > > >>> >> +--------------------
+> > > >>> >> + - compatible: For Tegra124, must contain "nvidia,tegra12=
+4-xusb".
+> > > >>> >> +   Otherwise, must contain '"nvidia,<chip>-xusb", "nvidia=
+,tegra124-xusb"'
+> > > >>> >> +   where <chip> is tegra132.
+> > > >>> >> + - reg: Must contain the base and length of the XUSB FPCI=
+ registers.
+> > > >>> >> + - ranges: Bus address mapping for the XUSB block.  Can b=
+e empty since the
+> > > >>> >> +   mapping is 1:1.
+> > > >>> >> + - #address-cells: Must be 2.
+> > > >>> >> + - #size-cells: Must be 2.
+> > > >>> >> +
+> > > >>> >> +Example:
+> > > >>> >> +--------
+> > > >>> >> +  usb@0,70098000 {
+> > > >>> >> +          compatible =3D "nvidia,tegra124-xusb";
+> > > >>> >> +          reg =3D <0x0 0x70098000 0x0 0x1000>;
+> > > >>> >> +          ranges;
+> > > >>> >> +
+> > > >>> >> +          #address-cells =3D <2>;
+> > > >>> >> +          #size-cells =3D <2>;
+> > > >>> >> +
+> > > >>> >> +          usb-host@0,70090000 {
+> > > >>> >> +                  compatible =3D "nvidia,tegra124-xhci";
+> > > >>> >> +                  ...
+> > > >>> >> +          };
+> > > >>> >> +
+> > > >>> >> +          mailbox {
+> > > >>> >> +                  compatible =3D "nvidia,tegra124-xusb-mb=
+ox";
+> > > >>> >> +                  ...
+> > > >>> >> +          };
+> > > >>> >
+> > > >>> > This doesn't appear to be a proper MFD.  I would have the U=
+SB and
+> > > >>> > Mailbox devices probe seperately and use a phandle to point=
+ the USB
+> > > >>> > device to its Mailbox.
+> > > >>> >
+> > > >>> > usb@xyz {
+> > > >>> >     mboxes =3D <&xusb-mailbox, [chan]>;
+> > > >>> > };
+> > > >>> >
+> > > >>>
+> > > >>> I am assuming that Andrew had laid it out like this to reflec=
+t the hw
+> > > >>> structure. The mailbox and xhci controller are part of the xu=
+sb
+> > > >>> sub-system and hence appear as child nodes. My understanding =
+is that for
+> > > >>> device-tree we want the device-tree structure to reflect the =
+actual hw.
+> > > >>> Is this not the case?
+> > > >>
+> > > >> Yes, the DT files should reflect h/w.  I have requested to see=
+ what
+> > > >> the memory map looks like, so I might provide a more appropria=
+te
+> > > >> solution to accepting a pretty pointless MFD.
+> > > >
+> > > > FWIW, the address map for XUSB looks like this:
+> > > >
+> > > > XUSB_HOST: 0x70090000 - 0x7009a000
+> > > >     xHCI registers: 0x70090000 - 0x70098000
+> > > >     FPCI configuration registers: 0x70098000 - 0x70099000
+> > > >     IPFS configuration registers: 0x70099000 - 0x7009a000
+> > > >
+> > > >> Two solutions spring to mind.  You can either call
+> > > >> of_platform_populate() from the USB driver, as some already do=
+:
+> > > >>
+> > > >>   drivers/usb/dwc3/dwc3-exynos.c:
+> > > >>     ret =3D of_platform_populate(node, NULL, NULL, dev);
+> > > >>   drivers/usb/dwc3/dwc3-keystone.c:
+> > > >>     error =3D of_platform_populate(node, NULL, NULL, dev);
+> > > >>   drivers/usb/dwc3/dwc3-omap.c:
+> > > >>     ret =3D of_platform_populate(node, NULL, NULL, dev);
+> > > >>   drivers/usb/dwc3/dwc3-qcom.c:
+> > > >>     ret =3D of_platform_populate(node, NULL, NULL, qdwc->dev);
+> > > >>   drivers/usb/dwc3/dwc3-st.c:
+> > > >>     ret =3D of_platform_populate(node, NULL, NULL, dev);
+> > > >>   drivers/usb/musb/musb_am335x.c:
+> > > >>     ret =3D of_platform_populate(pdev->dev.of_node, NULL, NULL=
+, &pdev->dev);
+> > > >
+> > > > This still requires a small, separate driver to setup the regma=
+p and
+> > > > do of_platform_populate().  The only difference is it lives in
+> > > > drivers/usb/ instead of drivers/mfd/.
+> > > >
+> > > >> Or use the "simple-mfd", which is currently in -next:
+> > > >>
+> > > >>   git show next/master:Documentation/devicetree/bindings/mfd/m=
+fd.txt
+> > > >
+> > > > I'm not too opposed to this, but Thierry was when I brought thi=
+s up
+> > > > before.  The issue here is that if we ever have to do something
+> > > > besides setting up a regmap in the MFD, we'd have to change the
+> > > > binding and break DT backwards-compatibility.
+> > >=20
+> > > Any thoughts on this?  A minimal MFD seems to be the best way to
+> > > future-proof this binding/driver should it need to be extended in=
+ the
+> > > future.  If this is a firm NAK from you however, I'll need to let
+> > > Jassi now so that he can un-queue the mailbox patches for 4.2....
+> >=20
+> > I was waiting to hear Thierry's thoughts.  However, I am unconvince=
+d
+> > that you need an MFD driver for this and refuse to take a shell (re=
+ad
+> > "pointless") one on an "if we ever ..." clause.
+> >=20
+> > Will you break backwards capability though?  I'm not sure you will.
+> > Old DTBs will still use 'simple-mfd' and probe the devices in the
+> > normal way.  *If* you introduce an MFD driver at a later date then =
+the
+> > old DTB will miss out the *new* functionality, which is expected an=
+d
+> > accepted.
+>=20
+> I'm a little confused by the simple-mfd approach. The only code I see=
+ in
+> linux-next for this is a single line that adds the "simple-mfd" strin=
+g
+> to the OF device ID table in drivers/of/platform.c. As far as I can t=
+ell
+> this will merely cause child devices to be created. There won't be a
+> shared regmap and resources won't be set up properly either. Having a
+> proper MFD driver seems to be the only way to achieve what we need.
+>=20
+> The reason why every other simple-mfd users seems to get away with th=
+is
+> is because they also match on syscon and that sets up a regmap of its
+> own and the child device drivers use the syscon API to get at it. So =
+I
+> don't see how we can make use of simple-mfd to achieve what we need,
+> unless we essentially copy what syscon does (but do proper resource
+> management while at it).
+
+If you have shared resources and your device isn't classed as a syscon
+device then yes, simple-mfd probably isn't suitable for this use-case.
+You might need to go into more detail with regards to "proper resource
+management", as I'm not entirely sure I agree.
+
+Still, this doesn't change the fact that, from what I've seen, I still
+don't think you need a dedicated MFD driver.
+
+What do you think of:
+
+usb-host@0,70090000 {
+	compatible =3D "nvidia,tegra124-xhci";
+	reg =3D <0x0 0x70090000 0x0 0x80CF>,
+	      <0x0 0x70098800 0x0 0x0800>,
+	      <0x0 0x70099000 0x0 0x1000>;
+
+	/* Something from the datasheet */
+	reg-names =3D "xhci-before-mbox", "xhci-after-mbox", "ipfs";
+
+	interrupts =3D <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
+	ranges;
+
+	xusb_mbox: mailbox {
+		compatible =3D "nvidia,tegra124-xusb-mbox";
+		reg =3D <0x0 0x700980e0 0x0 0x13>,
+		      <0x0 0x70098428 0x0 0x03>;
+
+		/* Something from the datasheet */
+		reg-names =3D "mbox-one", "mbox-two";
+		interrupts =3D <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
+	};
+};
+
+Then hvae the XHCI driver call of_platform_populate() as I proposed
+above?
+
+> There is also the matter of clocks, resets, power supplies, etc. whic=
+h
+> simple-mfd can't take into account in its current form. From a hardwa=
+re
+> point of view, (some of) the clocks and resets are shared by the XHCI
+> and the mailbox blocks, so the device tree node would have to take th=
+at
+> into account. And a driver would also have to know which clocks, rese=
+ts
+> and power supplies to probe and the order in which they need to be
+> enabled. simple-mfd doesn't provide any of that currently, so we'd
+> likely need to hack around that in all sorts of weird ways in the chi=
+ld
+> drivers. It makes much more sense for a top-level MFD driver to set u=
+p
+> the shared hardware resources and then instantiate the child devices =
+and
+> let the drivers for those only care about the child-specific resource=
+s.
+>=20
+> A catch-all driver will inevitably lead to implementing a midlayer wi=
+th
+> potentially all sorts of quirks to make it work with the various devi=
+ces
+> out there.
+>=20
+> A much better implementation, in my opinion, would be to make simple-=
+mfd
+> a subclassable object and then have drivers use a helper library to c=
+all
+> code that is common for simple-mfd kinds of devices. Something like t=
+his
+> for example:
+>=20
+> 	struct tegra_xusb {
+> 		...
+> 		struct mfd_simple mfd;
+> 		...
+> 	};
+>=20
+> 	static int tegra_xusb_probe(struct platform_device *pdev)
+> 	{
+> 		struct tegra_xusb *xusb;
+> 		...
+> 		err =3D mfd_simple_register(&xusb->mfd);
+> 		...
+> 	}
+>=20
+> Now all these drivers reuse all the code provided by the mfd_simple
+> helper, which will instantiate the children, but it is also very easy=
+ to
+> tie in the platform-specific glue (clocks, resets, regulators, ...) v=
+ia
+> the device-specific drivers.
+
+I'm not keen on creating a not-so-simple-mfd driver.  Let's work with
+what we've got for the time being.
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
