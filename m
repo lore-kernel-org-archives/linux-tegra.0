@@ -1,67 +1,95 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] nouveau: add coherent BO attribute
-Date: Thu, 21 May 2015 15:09:40 +0900
-Message-ID: <CAAVeFu+K9cwBYSYv67Wk_ije8RdqPUo_ZQeRZhUfmj0AuxggtA@mail.gmail.com>
-References: <1426228051-20298-1-git-send-email-acourbot@nvidia.com>
- <55033B99.4040300@canonical.com> <550545A4.6060106@nvidia.com>
- <CAAVeFuKoryrWPcDkcFuk+OwJjaUn6C-he+xxphkZ7iMBa=Qdkg@mail.gmail.com>
- <CAAVeFu+kRcWT2zxbduA6MU9v1cTVb8HU3GEDdaviUAkYa6SbSQ@mail.gmail.com>
- <5555DAF6.4030309@mblankhorst.nl>
- <CAAVeFuLKeEsf=at_gahCw9qzRWhrxtCVZ==H26y2xUx8-K75eA@mail.gmail.com>
- <555C2F80.9080805@free.fr>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [GIT PULL 4/8] clk: tegra: Changes for v4.2-rc1
+Date: Thu, 21 May 2015 09:25:31 +0300
+Message-ID: <555D7A5B.1070901@nvidia.com>
+References: <1431524980-13599-1-git-send-email-thierry.reding@gmail.com> <1431524980-13599-5-git-send-email-thierry.reding@gmail.com> <20150520195459.GU31753@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <555C2F80.9080805-GANU6spQydw@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Martin Peres <martin.peres-GANU6spQydw@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Maarten Lankhorst <maarten-FcfepWsj2zOByvU0x3ry2g@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150520195459.GU31753-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gV2VkLCBNYXkgMjAsIDIwMTUgYXQgMzo1MyBQTSwgTWFydGluIFBlcmVzIDxtYXJ0aW4ucGVy
-ZXNAZnJlZS5mcj4gd3JvdGU6Cj4gT24gMjAvMDUvMTUgMDg6MTEsIEFsZXhhbmRyZSBDb3VyYm90
-IHdyb3RlOgo+Pgo+PiBPbiBGcmksIE1heSAxNSwgMjAxNSBhdCA4OjM5IFBNLCBNYWFydGVuIExh
-bmtob3JzdAo+PiA8bWFhcnRlbkBtYmxhbmtob3JzdC5ubD4gd3JvdGU6Cj4+Pgo+Pj4gT3AgMTUt
-MDUtMTUgb20gMDk6MTEgc2NocmVlZiBBbGV4YW5kcmUgQ291cmJvdDoKPj4+Pgo+Pj4+IFJlLXBp
-bmdpbmcgTWFydGVlbiBvbiBhbiBlbWFpbCBhZGRyZXNzIHRoYXQgc3RpbGwgZXhpc3RzIDpQCj4+
-Pj4KPj4+PiBPbiBXZWQsIEFwciAyMiwgMjAxNSBhdCA2OjA4IFBNLCBBbGV4YW5kcmUgQ291cmJv
-dCA8Z251cm91QGdtYWlsLmNvbT4KPj4+PiB3cm90ZToKPj4+Pj4KPj4+Pj4gT24gU3VuLCBNYXIg
-MTUsIDIwMTUgYXQgNTo0MSBQTSwgQWxleGFuZHJlIENvdXJib3QKPj4+Pj4gPGFjb3VyYm90QG52
-aWRpYS5jb20+IHdyb3RlOgo+Pj4+Pj4KPj4+Pj4+IE9uIDAzLzE0LzIwMTUgMDQ6MzMgQU0sIE1h
-YXJ0ZW4gTGFua2hvcnN0IHdyb3RlOgo+Pj4+Pj4+Cj4+Pj4+Pj4gSGV5LAo+Pj4+Pj4+Cj4+Pj4+
-Pj4gT3AgMTMtMDMtMTUgb20gMDc6Mjcgc2NocmVlZiBBbGV4YW5kcmUgQ291cmJvdDoKPj4+Pj4+
-Pj4KPj4+Pj4+Pj4gQWRkIGEgZmxhZyBhbGxvd2luZyBOb3V2ZWF1IHRvIHNwZWNpZnkgdGhhdCBh
-biBvYmplY3Qgc2hvdWxkIGJlCj4+Pj4+Pj4+IGNvaGVyZW50Cj4+Pj4+Pj4+IGF0IGFsbG9jYXRp
-b24gdGltZS4gVGhpcyBpcyByZXF1aXJlZCBmb3Igc29tZSBjbGFzcyBvZiBvYmplY3RzIGxpa2UK
-Pj4+Pj4+Pj4gZmVuY2VzIHdoaWNoIGFyZSByYW5kb21seS1hY2Nlc3NlZCBieSBib3RoIHRoZSBD
-UFUgYW5kIEdQVS4gVGhpcwo+Pj4+Pj4+PiBmbGFnCj4+Pj4+Pj4+IGluc3RydWN0cyB0aGUga2Vy
-bmVsIGRyaXZlciB0byBtYWtlIHN1cmUgdGhlIG9iamVjdCByZW1haW5zIGNvaGVyZW50Cj4+Pj4+
-Pj4+IGV2ZW4gb24gYXJjaGl0ZWN0dXJlcyBmb3Igd2hpY2ggY29oZXJlbmN5IGlzIG5vdCBndWFy
-YW50ZWVkIGJ5IHRoZQo+Pj4+Pj4+PiBidXMuCj4+Pj4+Pj4+Cj4+Pj4+Pj4+IFNpZ25lZC1vZmYt
-Ynk6IEFsZXhhbmRyZSBDb3VyYm90IDxhY291cmJvdEBudmlkaWEuY29tPgo+Pj4+Pj4+Cj4+Pj4+
-Pj4gSSBkb24ndCBzZWUgYSBwcm9ibGVtIHdpdGggdGhpcyBwYXRjaCwgYnV0IHNpbWlsYXIgcGF0
-Y2hlcyB0byBpbnRlbAo+Pj4+Pj4+IHRvCj4+Pj4+Pj4gbGliZHJtIGhhdmUgYmVlbiBzaG90IGRv
-d24gd2hlbiB0aGUgY2hhbmdlcyB3ZXJlbid0IGluIGFuIG9mZmljaWFsCj4+Pj4+Pj4ga2VybmVs
-Cj4+Pj4+Pj4geWV0LCBzbyBJIHRoaW5rIHRoaXMgc2hvdWxkIHdhaXQgdW50aWwgdGhlIGNoYW5n
-ZSBpcyBhdCBsZWFzdCBpbgo+Pj4+Pj4+IGRybS1uZXh0Lgo+Pj4+Pj4+IDstKQo+Pj4+Pj4KPj4+
-Pj4+IFNvdW5kcyBnb29kLiBJIHdpbGwgcGluZyB5b3UgYWdhaW4gb25jZSB0aGUga2VybmVsIGNo
-YW5nZSByZWFjaGVzCj4+Pj4+PiAtbmV4dC4KPj4+Pj4KPj4+Pj4gSGkgTWFydGVlbiwKPj4+Pj4K
-Pj4+Pj4gVGhlIGtlcm5lbCBjaGFuZ2UgcmVxdWlyZWQgZm9yIHRoaXMgcGF0Y2ggaXMgbm93IGlu
-IC1uZXh0LiBEbyB5b3UKPj4+Pj4gdGhpbmsgd2UgY2FuIG1lcmdlIGl0IG5vdz8KPj4+Cj4+PiBJ
-IHRoaW5rIGl0IHdvdWxkIGJlIG9rIHRvIG1lcmdlIG5vdy4KPj4KPj4gR3JlYXQgLSB3aG8gY291
-bGQgZG8gdGhpcz8gOlAKPgo+Cj4gSSBjb3VsZCBkbyBpdC4gUGxlYXNlIHByb3ZpZGUgbWUgd2l0
-aCB0aGUgcGF0Y2ggd2l0aCB0aGUgbmVjZXNzYXJ5IFItYiBhbmQgSQo+IGNhbiBwdXNoIGl0IHRv
-IG91ciBsaWJkcm0gKGFuZC9vciBtZXNhKS4KClRoYW5rcywgSSBqdXN0IHNlbnQgYSB2MiB3aXRo
-IHlvdSBpbmNsdWRlZC4gSSBoYXZlIHlldCB0byByZWNlaXZlCmZvcm1hbCBSLWIgYW5kIEEtYiBm
-b3IgaXQgdGhvdWdoLgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpOb3V2ZWF1IG1haWxpbmcgbGlzdApOb3V2ZWF1QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
-dHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vbm91dmVhdQo=
+On 05/20/2015 10:54 PM, Stephen Boyd wrote:
+> On 05/13, Thierry Reding wrote:
+>> Hi Mike, Stephen,
+>>
+>> The following changes since commit b787f68c36d49bb1d9236f403813641efa74a031:
+>>
+>>   Linux 4.1-rc1 (2015-04-26 17:59:10 -0700)
+>>
+>> are available in the git repository at:
+>>
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.2-clk
+>>
+>> for you to fetch changes up to 36b7be6d3ea8f434f1e0723f3fb0e85c3e00ebc2:
+>>
+>>   clk: tegra: Fix hda2codec_2x clock name for Tegra30 (2015-05-13 15:17:14 +0200)
+>>
+>> I've based this pull request on top of the tegra-for-4.2-ramcode pull
+>> request, so pulling only this one should be sufficient to resolve the
+>> dependency.
+>>
+>> Thanks,
+>> Thierry
+>>
+>> ----------------------------------------------------------------
+>> clk: tegra: Changes for v4.2-rc1
+>>
+>> This contains the EMC clock driver that's been exhaustively reviewed and
+>> tested. It also includes a change to the clock core that allows a clock
+>> provider to perform low-level reparenting of clocks. This is required by
+>> the EMC clock driver because the reparenting needs to be done at a very
+>> specific point in time during the EMC frequency switch.
+> 
+> Can someone please describe why we need to do software
+> reparenting at a specific point in time during a frequency
+> switch? I must have missed out on the conversation somewhere and
+> looking at the commit that introduces the function, the argument
+> for why the API is exposed:
+> 
+>       To be used by clock implementations for switching to a new
+>       parent during rate change.
+> 
+> is lacking in any details about *why* we need it.
+> 
+
+Hi Stephen,
+
+the way the EMC clock rate is set in hardware is similar to other
+clocks, i.e. there's a register and you write the new divider and parent
+id to it. However, with EMC, you cannot just do this any time you want;
+writing to the register initiates a state machine in the clock hardware
+that changes a large number of other parameters regarding DRAM timings
+as well. These parameters need to be programmed into shadow registers
+before the rate change write is done. This means that both the new
+divisor and the parent must be written in the same register write.
+
+The CCF has a callback, set_rate_and_parent, which allows for both to be
+passed to the driver at the same time. However, it also requires
+set_rate and set_parent to be implemented, which the EMC driver cannot do.
+
+Furthermore, the CCF cannot help with parent selection for the EMC clock
+at all. The parent for each rate is selected by the board designer.
+
+There is also the issue that sometimes, the EMC driver cannot directly
+switch to the target (rate, parent) pair; instead it is necessary to
+switch first to another pair we call a backup timing. In this situation,
+we temporarily have a parent that is neither the one we had before the
+set_rate call or the one it will be after. Especially, if the switch to
+the backup timing succeeds but the following switch to the target timing
+fails, then without the reparent call the parent in hardware would be
+left inconsistent with the software state.
+
+This is why we've decided to implement the driver with only the set_rate
+callback and decide the required transitions within the driver.
+This also means that the driver needs to have a function to tell the CCF
+that it has changed its parent.
+
+Thanks,
+Mikko.
+
+nvpublic
