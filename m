@@ -1,112 +1,68 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/2] drm/nouveau: add staging module option
-Date: Thu, 21 May 2015 15:04:16 +0900
-Message-ID: <CAAVeFuKYxHQiUObG+78UdCg+R0Zm9UxaFW5WtKQFcHs33vLbAA@mail.gmail.com>
-References: <1432101379-9515-1-git-send-email-acourbot@nvidia.com>
- <1432101379-9515-2-git-send-email-acourbot@nvidia.com> <CACAvsv4vW4bBddq2s9eWMzbYcG_F5j+KCkZAfivxKW9AWDBXQQ@mail.gmail.com>
- <CAAVeFu+N6VvPHispeXBTGykncfnOQkJ-J1PxxVa42-ahX2YDsA@mail.gmail.com> <CACAvsv7brfoe51eEOibw39_t=Hg6gvb0T2V8YO0-pDdxZ-nPLw@mail.gmail.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2] nouveau: add coherent BO attribute
+Date: Thu, 21 May 2015 15:08:28 +0900
+Message-ID: <1432188508-650-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACAvsv7brfoe51eEOibw39_t=Hg6gvb0T2V8YO0-pDdxZ-nPLw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Martin Peres <martin.peres-GANU6spQydw@public.gmane.org>, Maarten Lankhorst <maarten-FcfepWsj2zOByvU0x3ry2g@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, May 21, 2015 at 2:55 PM, Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On 21 May 2015 at 15:49, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> On Thu, May 21, 2015 at 1:48 PM, Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->>> On 20 May 2015 at 15:56, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>>> Add a module option allowing to enable staging/unstable APIs. This will
->>>> allow us to experiment freely with experimental APIs for a while before
->>>> setting them in stone.
->>>>
->>>> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>> ---
->>>>  drm/nouveau/nouveau_drm.c          | 18 ++++++++++++++++++
->>>>  drm/nouveau/uapi/drm/nouveau_drm.h |  3 +++
->>>>  2 files changed, 21 insertions(+)
->>>>
->>>> diff --git a/drm/nouveau/nouveau_drm.c b/drm/nouveau/nouveau_drm.c
->>>> index 89049335b738..e4bd6ed51e73 100644
->>>> --- a/drm/nouveau/nouveau_drm.c
->>>> +++ b/drm/nouveau/nouveau_drm.c
->>>> @@ -75,6 +75,10 @@ MODULE_PARM_DESC(runpm, "disable (0), force enable (1), optimus only default (-1
->>>>  int nouveau_runtime_pm = -1;
->>>>  module_param_named(runpm, nouveau_runtime_pm, int, 0400);
->>>>
->>>> +MODULE_PARM_DESC(staging, "enable staging APIs");
->>>> +int nouveau_staging = 0;
->>>> +module_param_named(staging, nouveau_staging, int, 0400);
->>>> +
->>>>  static struct drm_driver driver_stub;
->>>>  static struct drm_driver driver_pci;
->>>>  static struct drm_driver driver_platform;
->>>> @@ -895,6 +899,7 @@ nouveau_ioctls[] = {
->>>>         DRM_IOCTL_DEF_DRV(NOUVEAU_GEM_CPU_PREP, nouveau_gem_ioctl_cpu_prep, DRM_UNLOCKED|DRM_AUTH|DRM_RENDER_ALLOW),
->>>>         DRM_IOCTL_DEF_DRV(NOUVEAU_GEM_CPU_FINI, nouveau_gem_ioctl_cpu_fini, DRM_UNLOCKED|DRM_AUTH|DRM_RENDER_ALLOW),
->>>>         DRM_IOCTL_DEF_DRV(NOUVEAU_GEM_INFO, nouveau_gem_ioctl_info, DRM_UNLOCKED|DRM_AUTH|DRM_RENDER_ALLOW),
->>>> +       /* Staging ioctls */
->>>>  };
->>>>
->>>>  long
->>>> @@ -1027,6 +1032,7 @@ static void nouveau_display_options(void)
->>>>         DRM_DEBUG_DRIVER("... runpm        : %d\n", nouveau_runtime_pm);
->>>>         DRM_DEBUG_DRIVER("... vram_pushbuf : %d\n", nouveau_vram_pushbuf);
->>>>         DRM_DEBUG_DRIVER("... pstate       : %d\n", nouveau_pstate);
->>>> +       DRM_DEBUG_DRIVER("... staging      : %d\n", nouveau_staging);
->>>>  }
->>>>
->>>>  static const struct dev_pm_ops nouveau_pm_ops = {
->>>> @@ -1088,6 +1094,18 @@ err_free:
->>>>  static int __init
->>>>  nouveau_drm_init(void)
->>>>  {
->>>> +       /* Do not register staging ioctsl if option not specified */
->>>> +       if (!nouveau_staging) {
->>>> +               unsigned i;
->>>> +
->>>> +               /* This keeps us safe is no staging ioctls are defined */
->>>> +               i = min(driver_stub.num_ioctls, DRM_NOUVEAU_STAGING_IOCTL);
->>>> +               while (!nouveau_ioctls[i - 1].func)
->>>> +                       i--;
->>>> +
->>>> +               driver_stub.num_ioctls = i;
->>>> +       }
->>> Hey Alex,
->>>
->>> I've got no specific objection.  But I'm curious as to why you took
->>> this approach as opposed to just adding "if (!nouveau_staging) return
->>> -EINVAL;" directly in the experimental ioctls?
->>
->> Mainly because we will likely forget to add this check (or to remove
->> it) in some of the staging ioctls. The current solution doesn't
->> require us to think about that - and the less things to think about,
->> the better.
->>
->>> I think, in line with
->>> what's been done in other places, having module options per-api is
->>> perhaps a better choice too.
->>
->> Do you mean that each experimental ioctl should have its own enable
->> option? I don't mind going that way if you think it is preferable. And
->> in that case my comment above is void.
-> That would be more preferable I think, and obvious as to what exactly
-> you're enabling.
->
->>
->> But actually I wonder if having these experimental ioctls enabled as
->> compile options (either individually or as a whole) would not be
->> better. Some experimental ioctls may require code in staging (like the
->> PUSHBUF_2 ioctl that I would like to submit next), and I don't think
->> it is desirable to force extra code or kernel options (in this case,
->> CONFIG_STAGING) to Nouveau users who will not make use of them. I
->> remember that we concluded in favor or module options on IRC, but in
->> the light of this, wouldn't a config option be a less intrusive
->> choice?
-> Right, but the whole point of this is to encourage the ioctls to not
-> live there for too long, and progress to fully supported interfaces.
+Add a flag allowing Nouveau to specify that an object should be coherent
+at allocation time. This is required for some class of objects like
+fences which are randomly-accessed by both the CPU and GPU. This flag
+instructs the kernel driver to make sure the object remains coherent
+even on architectures for which coherency is not guaranteed by the bus.
 
-Definitely, but my concern is that doing this will make Nouveau depend
-on STAGING for at least short periods of time. Do we really want this?
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Changes since v1:
+None, just added Martin so he can merge the patch. R-b and A-b wanted. :)
+
+ include/drm/nouveau_drm.h | 1 +
+ nouveau/abi16.c           | 3 +++
+ nouveau/nouveau.h         | 1 +
+ 3 files changed, 5 insertions(+)
+
+diff --git a/include/drm/nouveau_drm.h b/include/drm/nouveau_drm.h
+index b18cad02419b..87aefc5e9d2f 100644
+--- a/include/drm/nouveau_drm.h
++++ b/include/drm/nouveau_drm.h
+@@ -96,6 +96,7 @@ struct drm_nouveau_setparam {
+ #define NOUVEAU_GEM_DOMAIN_VRAM      (1 << 1)
+ #define NOUVEAU_GEM_DOMAIN_GART      (1 << 2)
+ #define NOUVEAU_GEM_DOMAIN_MAPPABLE  (1 << 3)
++#define NOUVEAU_GEM_DOMAIN_COHERENT  (1 << 4)
+ 
+ #define NOUVEAU_GEM_TILE_LAYOUT_MASK 0x0000ff00
+ #define NOUVEAU_GEM_TILE_16BPP       0x00000001
+diff --git a/nouveau/abi16.c b/nouveau/abi16.c
+index 538f3a730dbe..4ca0bfbaf592 100644
+--- a/nouveau/abi16.c
++++ b/nouveau/abi16.c
+@@ -195,6 +195,9 @@ abi16_bo_init(struct nouveau_bo *bo, uint32_t alignment,
+ 	if (bo->flags & NOUVEAU_BO_MAP)
+ 		info->domain |= NOUVEAU_GEM_DOMAIN_MAPPABLE;
+ 
++	if (bo->flags & NOUVEAU_BO_COHERENT)
++		info->domain |= NOUVEAU_GEM_DOMAIN_COHERENT;
++
+ 	if (!(bo->flags & NOUVEAU_BO_CONTIG))
+ 		info->tile_flags = NOUVEAU_GEM_TILE_NONCONTIG;
+ 
+diff --git a/nouveau/nouveau.h b/nouveau/nouveau.h
+index a55e2b020778..4adda0e3594c 100644
+--- a/nouveau/nouveau.h
++++ b/nouveau/nouveau.h
+@@ -127,6 +127,7 @@ union nouveau_bo_config {
+ #define NOUVEAU_BO_MAP     0x80000000
+ #define NOUVEAU_BO_CONTIG  0x40000000
+ #define NOUVEAU_BO_NOSNOOP 0x20000000
++#define NOUVEAU_BO_COHERENT 0x10000000
+ 
+ struct nouveau_bo {
+ 	struct nouveau_device *device;
+-- 
+2.4.0
