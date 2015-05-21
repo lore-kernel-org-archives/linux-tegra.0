@@ -1,95 +1,67 @@
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [GIT PULL 4/8] clk: tegra: Changes for v4.2-rc1
-Date: Thu, 21 May 2015 09:25:31 +0300
-Message-ID: <555D7A5B.1070901@nvidia.com>
-References: <1431524980-13599-1-git-send-email-thierry.reding@gmail.com> <1431524980-13599-5-git-send-email-thierry.reding@gmail.com> <20150520195459.GU31753@codeaurora.org>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v8 4/9] mfd: Add binding document for NVIDIA Tegra XUSB
+Date: Thu, 21 May 2015 09:19:00 +0200
+Message-ID: <CACRpkdbK4BBhs==yFWW91M_4x5f3RGDiXBV+yBYYQ78JG0mMLg@mail.gmail.com>
+References: <1430761002-9327-1-git-send-email-abrestic@chromium.org>
+	<1430761002-9327-5-git-send-email-abrestic@chromium.org>
+	<20150513143954.GA3394@x1>
+	<55544CC5.9050001@nvidia.com>
+	<20150514074058.GA22418@x1>
+	<CAL1qeaEqNejuGkN-ke11mtWnaaRo+XieCBkQ6+NQ-Afym6uxVA@mail.gmail.com>
+	<CAL1qeaHy0h7bXhuLHh4AG2Zfu48JYeawgVo4dp_k4oX8YFw6tA@mail.gmail.com>
+	<20150520063551.GD3627@x1>
+	<20150520145227.GA3787@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150520195459.GU31753-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150520145227.GA3787-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/20/2015 10:54 PM, Stephen Boyd wrote:
-> On 05/13, Thierry Reding wrote:
->> Hi Mike, Stephen,
->>
->> The following changes since commit b787f68c36d49bb1d9236f403813641efa74a031:
->>
->>   Linux 4.1-rc1 (2015-04-26 17:59:10 -0700)
->>
->> are available in the git repository at:
->>
->>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.2-clk
->>
->> for you to fetch changes up to 36b7be6d3ea8f434f1e0723f3fb0e85c3e00ebc2:
->>
->>   clk: tegra: Fix hda2codec_2x clock name for Tegra30 (2015-05-13 15:17:14 +0200)
->>
->> I've based this pull request on top of the tegra-for-4.2-ramcode pull
->> request, so pulling only this one should be sufficient to resolve the
->> dependency.
->>
->> Thanks,
->> Thierry
->>
->> ----------------------------------------------------------------
->> clk: tegra: Changes for v4.2-rc1
->>
->> This contains the EMC clock driver that's been exhaustively reviewed and
->> tested. It also includes a change to the clock core that allows a clock
->> provider to perform low-level reparenting of clocks. This is required by
->> the EMC clock driver because the reparenting needs to be done at a very
->> specific point in time during the EMC frequency switch.
-> 
-> Can someone please describe why we need to do software
-> reparenting at a specific point in time during a frequency
-> switch? I must have missed out on the conversation somewhere and
-> looking at the commit that introduces the function, the argument
-> for why the API is exposed:
-> 
->       To be used by clock implementations for switching to a new
->       parent during rate change.
-> 
-> is lacking in any details about *why* we need it.
-> 
+On Wed, May 20, 2015 at 4:52 PM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 
-Hi Stephen,
+> I'm a little confused by the simple-mfd approach. The only code I see in
+> linux-next for this is a single line that adds the "simple-mfd" string
+> to the OF device ID table in drivers/of/platform.c. As far as I can tell
+> this will merely cause child devices to be created. There won't be a
+> shared regmap and resources won't be set up properly either.
 
-the way the EMC clock rate is set in hardware is similar to other
-clocks, i.e. there's a register and you write the new divider and parent
-id to it. However, with EMC, you cannot just do this any time you want;
-writing to the register initiates a state machine in the clock hardware
-that changes a large number of other parameters regarding DRAM timings
-as well. These parameters need to be programmed into shadow registers
-before the rate change write is done. This means that both the new
-divisor and the parent must be written in the same register write.
+That is correct. The simple-mfd is a two-component approach.
 
-The CCF has a callback, set_rate_and_parent, which allows for both to be
-passed to the driver at the same time. However, it also requires
-set_rate and set_parent to be implemented, which the EMC driver cannot do.
+Ideally, in the simplest case, you combine simple-mfd with syscon.
 
-Furthermore, the CCF cannot help with parent selection for the EMC clock
-at all. The parent for each rate is selected by the board designer.
+foo@0 {
+    compatible = "foo", "syscon", "simple-mfd";
+    reg = <0x10000000 0x1000>;
 
-There is also the issue that sometimes, the EMC driver cannot directly
-switch to the target (rate, parent) pair; instead it is necessary to
-switch first to another pair we call a backup timing. In this situation,
-we temporarily have a parent that is neither the one we had before the
-set_rate call or the one it will be after. Especially, if the switch to
-the backup timing succeeds but the following switch to the target timing
-fails, then without the reparent call the parent in hardware would be
-left inconsistent with the software state.
+    bar@1 {
+        compatible = "bar";
+    };
 
-This is why we've decided to implement the driver with only the set_rate
-callback and decide the required transitions within the driver.
-This also means that the driver needs to have a function to tell the CCF
-that it has changed its parent.
+    baz@2 {
+        compatible = "baz";
+    };
+};
 
-Thanks,
-Mikko.
+This will instantiate bar and baz.
 
-nvpublic
+These subdrivers then probe and:
+
+probe() {
+   struct regmap *map;
+
+   map = syscon_node_to_regmap(parent->of_node);
+   (...)
+}
+
+Simple, syscon is the MFD hub.
+
+Yours,
+Linus Walleij
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
