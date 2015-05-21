@@ -1,326 +1,154 @@
-From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v8 4/9] mfd: Add binding document for NVIDIA Tegra XUSB
-Date: Thu, 21 May 2015 09:40:01 +0100
-Message-ID: <20150521084001.GB6310@x1>
-References: <1430761002-9327-1-git-send-email-abrestic@chromium.org>
- <1430761002-9327-5-git-send-email-abrestic@chromium.org>
- <20150513143954.GA3394@x1>
- <55544CC5.9050001@nvidia.com>
- <20150514074058.GA22418@x1>
- <CAL1qeaEqNejuGkN-ke11mtWnaaRo+XieCBkQ6+NQ-Afym6uxVA@mail.gmail.com>
- <CAL1qeaHy0h7bXhuLHh4AG2Zfu48JYeawgVo4dp_k4oX8YFw6tA@mail.gmail.com>
- <20150520063551.GD3627@x1>
- <20150520145227.GA3787@ulmo.nvidia.com>
+From: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [Nouveau] [PATCH v4] pmu/gk20a: PMU boot support
+Date: Thu, 21 May 2015 18:46:02 +1000
+Message-ID: <CACAvsv7TLxXZrGhwiDKzXGgVumWQEARJRV2x-97O8SbMj+3bRQ@mail.gmail.com>
+References: <1428921530-28556-1-git-send-email-acourbot@nvidia.com>
+	<552B9D8A.5050202@nvidia.com>
+	<CACAvsv4MC3hq5_DJ5c7NPfEYyrsG2vPMjadEhC+H4zcWzc+F=Q@mail.gmail.com>
+	<CAAVeFuL8R=hcO2u8xCZB6GuM58Kgx6RzW2oWwKPcwrs4bj4rqQ@mail.gmail.com>
+	<CACAvsv7un7b38_s6Whu7JdOegNs-+3ci_GFYHAzwO5CL6KWA1Q@mail.gmail.com>
+	<CAAVeFuKOwLiOM-fkadp5dvutrxE-QHP-y=TmSVvBgJ5syHfiHg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20150520145227.GA3787-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAAVeFuKOwLiOM-fkadp5dvutrxE-QHP-y=TmSVvBgJ5syHfiHg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Deepak Goyal <dgoyal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 20 May 2015, Thierry Reding wrote:
-> On Wed, May 20, 2015 at 07:35:51AM +0100, Lee Jones wrote:
-> > On Tue, 19 May 2015, Andrew Bresticker wrote:
-> > > On Thu, May 14, 2015 at 10:38 AM, Andrew Bresticker
-> > > <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
-> > > > On Thu, May 14, 2015 at 12:40 AM, Lee Jones <lee.jones@linaro.o=
-rg> wrote:
-> > > >> On Thu, 14 May 2015, Jon Hunter wrote:
-> > > >>> On 13/05/15 15:39, Lee Jones wrote:
-> > > >>> > On Mon, 04 May 2015, Andrew Bresticker wrote:
-> > > >>> >
-> > > >>> >> Add a binding document for the XUSB host complex on NVIDIA=
- Tegra124
-> > > >>> >> and later SoCs.  The XUSB host complex includes a mailbox =
-for
-> > > >>> >> communication with the XUSB micro-controller and an xHCI h=
-ost-controller.
-> > > >>> >>
-> > > >>> >> Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-> > > >>> >> Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> > > >>> >> Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
-> > > >>> >> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-> > > >>> >> Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
-> > > >>> >> Cc: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> > > >>> >> Cc: Samuel Ortiz <sameo-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-> > > >>> >> Cc: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> > > >>> >> ---
-> > > >>> >> Changes from v7:
-> > > >>> >>  - Move non-shared resources into child nodes.
-> > > >>> >> New for v7.
-> > > >>> >> ---
-> > > >>> >>  .../bindings/mfd/nvidia,tegra124-xusb.txt          | 37 +=
-+++++++++++++++++++++
-> > > >>> >>  1 file changed, 37 insertions(+)
-> > > >>> >>  create mode 100644 Documentation/devicetree/bindings/mfd/=
-nvidia,tegra124-xusb.txt
-> > > >>> >>
-> > > >>> >> diff --git a/Documentation/devicetree/bindings/mfd/nvidia,=
-tegra124-xusb.txt b/Documentation/devicetree/bindings/mfd/nvidia,tegra1=
-24-xusb.txt
-> > > >>> >> new file mode 100644
-> > > >>> >> index 0000000..bc50110
-> > > >>> >> --- /dev/null
-> > > >>> >> +++ b/Documentation/devicetree/bindings/mfd/nvidia,tegra12=
-4-xusb.txt
-> > > >>> >> @@ -0,0 +1,37 @@
-> > > >>> >> +NVIDIA Tegra XUSB host copmlex
-> > > >>> >> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > >>> >> +
-> > > >>> >> +The XUSB host complex on Tegra124 and later SoCs contains=
- an xHCI host
-> > > >>> >> +controller and a mailbox for communication with the XUSB =
-micro-controller.
-> > > >>> >> +
-> > > >>> >> +Required properties:
-> > > >>> >> +--------------------
-> > > >>> >> + - compatible: For Tegra124, must contain "nvidia,tegra12=
-4-xusb".
-> > > >>> >> +   Otherwise, must contain '"nvidia,<chip>-xusb", "nvidia=
-,tegra124-xusb"'
-> > > >>> >> +   where <chip> is tegra132.
-> > > >>> >> + - reg: Must contain the base and length of the XUSB FPCI=
- registers.
-> > > >>> >> + - ranges: Bus address mapping for the XUSB block.  Can b=
-e empty since the
-> > > >>> >> +   mapping is 1:1.
-> > > >>> >> + - #address-cells: Must be 2.
-> > > >>> >> + - #size-cells: Must be 2.
-> > > >>> >> +
-> > > >>> >> +Example:
-> > > >>> >> +--------
-> > > >>> >> +  usb@0,70098000 {
-> > > >>> >> +          compatible =3D "nvidia,tegra124-xusb";
-> > > >>> >> +          reg =3D <0x0 0x70098000 0x0 0x1000>;
-> > > >>> >> +          ranges;
-> > > >>> >> +
-> > > >>> >> +          #address-cells =3D <2>;
-> > > >>> >> +          #size-cells =3D <2>;
-> > > >>> >> +
-> > > >>> >> +          usb-host@0,70090000 {
-> > > >>> >> +                  compatible =3D "nvidia,tegra124-xhci";
-> > > >>> >> +                  ...
-> > > >>> >> +          };
-> > > >>> >> +
-> > > >>> >> +          mailbox {
-> > > >>> >> +                  compatible =3D "nvidia,tegra124-xusb-mb=
-ox";
-> > > >>> >> +                  ...
-> > > >>> >> +          };
-> > > >>> >
-> > > >>> > This doesn't appear to be a proper MFD.  I would have the U=
-SB and
-> > > >>> > Mailbox devices probe seperately and use a phandle to point=
- the USB
-> > > >>> > device to its Mailbox.
-> > > >>> >
-> > > >>> > usb@xyz {
-> > > >>> >     mboxes =3D <&xusb-mailbox, [chan]>;
-> > > >>> > };
-> > > >>> >
-> > > >>>
-> > > >>> I am assuming that Andrew had laid it out like this to reflec=
-t the hw
-> > > >>> structure. The mailbox and xhci controller are part of the xu=
-sb
-> > > >>> sub-system and hence appear as child nodes. My understanding =
-is that for
-> > > >>> device-tree we want the device-tree structure to reflect the =
-actual hw.
-> > > >>> Is this not the case?
-> > > >>
-> > > >> Yes, the DT files should reflect h/w.  I have requested to see=
- what
-> > > >> the memory map looks like, so I might provide a more appropria=
-te
-> > > >> solution to accepting a pretty pointless MFD.
-> > > >
-> > > > FWIW, the address map for XUSB looks like this:
-> > > >
-> > > > XUSB_HOST: 0x70090000 - 0x7009a000
-> > > >     xHCI registers: 0x70090000 - 0x70098000
-> > > >     FPCI configuration registers: 0x70098000 - 0x70099000
-> > > >     IPFS configuration registers: 0x70099000 - 0x7009a000
-> > > >
-> > > >> Two solutions spring to mind.  You can either call
-> > > >> of_platform_populate() from the USB driver, as some already do=
+On 21 May 2015 at 16:03, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Fri, May 15, 2015 at 2:37 PM, Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote=
 :
-> > > >>
-> > > >>   drivers/usb/dwc3/dwc3-exynos.c:
-> > > >>     ret =3D of_platform_populate(node, NULL, NULL, dev);
-> > > >>   drivers/usb/dwc3/dwc3-keystone.c:
-> > > >>     error =3D of_platform_populate(node, NULL, NULL, dev);
-> > > >>   drivers/usb/dwc3/dwc3-omap.c:
-> > > >>     ret =3D of_platform_populate(node, NULL, NULL, dev);
-> > > >>   drivers/usb/dwc3/dwc3-qcom.c:
-> > > >>     ret =3D of_platform_populate(node, NULL, NULL, qdwc->dev);
-> > > >>   drivers/usb/dwc3/dwc3-st.c:
-> > > >>     ret =3D of_platform_populate(node, NULL, NULL, dev);
-> > > >>   drivers/usb/musb/musb_am335x.c:
-> > > >>     ret =3D of_platform_populate(pdev->dev.of_node, NULL, NULL=
-, &pdev->dev);
-> > > >
-> > > > This still requires a small, separate driver to setup the regma=
-p and
-> > > > do of_platform_populate().  The only difference is it lives in
-> > > > drivers/usb/ instead of drivers/mfd/.
-> > > >
-> > > >> Or use the "simple-mfd", which is currently in -next:
-> > > >>
-> > > >>   git show next/master:Documentation/devicetree/bindings/mfd/m=
-fd.txt
-> > > >
-> > > > I'm not too opposed to this, but Thierry was when I brought thi=
-s up
-> > > > before.  The issue here is that if we ever have to do something
-> > > > besides setting up a regmap in the MFD, we'd have to change the
-> > > > binding and break DT backwards-compatibility.
-> > >=20
-> > > Any thoughts on this?  A minimal MFD seems to be the best way to
-> > > future-proof this binding/driver should it need to be extended in=
- the
-> > > future.  If this is a firm NAK from you however, I'll need to let
-> > > Jassi now so that he can un-queue the mailbox patches for 4.2....
-> >=20
-> > I was waiting to hear Thierry's thoughts.  However, I am unconvince=
-d
-> > that you need an MFD driver for this and refuse to take a shell (re=
-ad
-> > "pointless") one on an "if we ever ..." clause.
-> >=20
-> > Will you break backwards capability though?  I'm not sure you will.
-> > Old DTBs will still use 'simple-mfd' and probe the devices in the
-> > normal way.  *If* you introduce an MFD driver at a later date then =
+>> On 12 May 2015 at 19:04, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>> Hi Ben,
+>>>
+>>> On Fri, May 1, 2015 at 8:01 AM, Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrot=
+e:
+>>>> On 13 April 2015 at 20:42, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>=
+ wrote:
+>>>>> Ben, I guess our main remaining concern with this patch is how it=
+ should
+>>>>> integrate wrt. the existing PMU code. Since it is designed to int=
+eract with
+>>>>> the NVIDIA firmware, maybe we should use a different base code, o=
+r do you
+>>>>> think we can somehow share code and data structures?
+>>>> Hey Alexandre,
+>>>>
+>>>> Sorry for the delay in responding to this.
+>>>
+>>> It is my turn to apologize - I was (well still am, technically :)) =
+on
+>>> holidays and have just started unpiling my inbox...
+>>>
+>>>>
+>>>> My original thinking with transitioning to use NVIDIA's firmware w=
+as
+>>>> that I'd modify our firmware interfaces to match yours, and share =
 the
-> > old DTB will miss out the *new* functionality, which is expected an=
-d
-> > accepted.
->=20
-> I'm a little confused by the simple-mfd approach. The only code I see=
- in
-> linux-next for this is a single line that adds the "simple-mfd" strin=
-g
-> to the OF device ID table in drivers/of/platform.c. As far as I can t=
-ell
-> this will merely cause child devices to be created. There won't be a
-> shared regmap and resources won't be set up properly either. Having a
-> proper MFD driver seems to be the only way to achieve what we need.
->=20
-> The reason why every other simple-mfd users seems to get away with th=
-is
-> is because they also match on syscon and that sets up a regmap of its
-> own and the child device drivers use the syscon API to get at it. So =
-I
-> don't see how we can make use of simple-mfd to achieve what we need,
-> unless we essentially copy what syscon does (but do proper resource
-> management while at it).
-
-If you have shared resources and your device isn't classed as a syscon
-device then yes, simple-mfd probably isn't suitable for this use-case.
-You might need to go into more detail with regards to "proper resource
-management", as I'm not entirely sure I agree.
-
-Still, this doesn't change the fact that, from what I've seen, I still
-don't think you need a dedicated MFD driver.
-
-What do you think of:
-
-usb-host@0,70090000 {
-	compatible =3D "nvidia,tegra124-xhci";
-	reg =3D <0x0 0x70090000 0x0 0x80CF>,
-	      <0x0 0x70098800 0x0 0x0800>,
-	      <0x0 0x70099000 0x0 0x1000>;
-
-	/* Something from the datasheet */
-	reg-names =3D "xhci-before-mbox", "xhci-after-mbox", "ipfs";
-
-	interrupts =3D <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
-	ranges;
-
-	xusb_mbox: mailbox {
-		compatible =3D "nvidia,tegra124-xusb-mbox";
-		reg =3D <0x0 0x700980e0 0x0 0x13>,
-		      <0x0 0x70098428 0x0 0x03>;
-
-		/* Something from the datasheet */
-		reg-names =3D "mbox-one", "mbox-two";
-		interrupts =3D <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
-	};
-};
-
-Then hvae the XHCI driver call of_platform_populate() as I proposed
-above?
-
-> There is also the matter of clocks, resets, power supplies, etc. whic=
+>>>> code.  I haven't started on any of this yet due to not having any =
+word
+>>>> on how you guys will be shipping the images, etc.  It would be nic=
+e to
+>>>> have some communication on these things :)
+>>>
+>>> Indeed. For the first time with Maxwell GPUs, NVIDIA-provided firmw=
+are
+>>> will be required for GPUs to operate properly. This raises several
+>>> questions:
+>>>
+>>> - Should the firmware be released under /lib/firmware/nouveau or
+>>> /lib/firmware/nvidia ? (this directory already exists for Tegra USB
+>>> firmware and makes more sense to me, since the firmware is not
+>>> Nouveau-specific)
+>> I think /lib/firmware/nvidia makes sense here too.
+>>
+>>> - For GPCCS/FECS firmware, should we release the netlist "pack" fil=
+e
+>>> or adopt the same format as Nouveau does? (1 file per firmware)
+>>> - Should we keep the current files names (e.g. nvxx_fucxxxx[cd]), o=
+r
+>>> try to switch to more meaningful ones?
+>> I'd actually prefer to have the entire netlists bundled, that gives =
+us
+>> updated reg/ctx production values too as you guys tweak/update them
+>> for hw bugs (etc).  They're also nicer in that you get a single bund=
+le
+>> of everything that's required for that chipset+engine.
+>
+> Good for me - actually that's the solution I implemented first before
+> deciding to go "=C3=A0 la Nouveau". ;) Some extra code will be needed=
+, but
+> nothing crazy, and we will limit that feature to these chips for whic=
 h
-> simple-mfd can't take into account in its current form. From a hardwa=
-re
-> point of view, (some of) the clocks and resets are shared by the XHCI
-> and the mailbox blocks, so the device tree node would have to take th=
-at
-> into account. And a driver would also have to know which clocks, rese=
-ts
-> and power supplies to probe and the order in which they need to be
-> enabled. simple-mfd doesn't provide any of that currently, so we'd
-> likely need to hack around that in all sorts of weird ways in the chi=
-ld
-> drivers. It makes much more sense for a top-level MFD driver to set u=
-p
-> the shared hardware resources and then instantiate the child devices =
-and
-> let the drivers for those only care about the child-specific resource=
-s.
->=20
-> A catch-all driver will inevitably lead to implementing a midlayer wi=
-th
-> potentially all sorts of quirks to make it work with the various devi=
-ces
-> out there.
->=20
-> A much better implementation, in my opinion, would be to make simple-=
-mfd
-> a subclassable object and then have drivers use a helper library to c=
-all
-> code that is common for simple-mfd kinds of devices. Something like t=
-his
-> for example:
->=20
-> 	struct tegra_xusb {
-> 		...
-> 		struct mfd_simple mfd;
-> 		...
-> 	};
->=20
-> 	static int tegra_xusb_probe(struct platform_device *pdev)
-> 	{
-> 		struct tegra_xusb *xusb;
-> 		...
-> 		err =3D mfd_simple_register(&xusb->mfd);
-> 		...
-> 	}
->=20
-> Now all these drivers reuse all the code provided by the mfd_simple
-> helper, which will instantiate the children, but it is also very easy=
- to
-> tie in the platform-specific glue (clocks, resets, regulators, ...) v=
-ia
-> the device-specific drivers.
+> NVIDIA officially provides the firmware.
+>
+>> I don't have too much opinion on naming.  The current model of
+>> nv{CHIPSET}_{UCODE_TYPE}{REGISTER_BASE}[CODE,DATA] was just nice and
+>> convenient to snprintf into a buffer :)
+>
+> Since the firmware will be provided by us, shall we store it into
+> nvidia/<chip>/gpcfe.bin on linux-firmware?
+Sounds fine.
 
-I'm not keen on creating a not-so-simple-mfd driver.  Let's work with
-what we've got for the time being.
+>
+>>> - What about signature files that are required for secure boot?
+>> As with above, if it's possible to ship them in a single file with t=
+he
+>> ucode that it belongs to, that'd be ideal.  It's not a huge deal
+>> though.
+>
+> So here we actually have several files - it is kind of a mess
+> actually. However I could probably merge them into a single netlist
+> file like we did for the GPC/FE CS code.
+If that's possible, that'd be great.
 
---=20
-Lee Jones
-Linaro STMicroelectronics Landing Team Lead
-Linaro.org =E2=94=82 Open source software for ARM SoCs
-=46ollow Linaro: Facebook | Twitter | Blog
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" i=
-n
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
+>>> - Knowing that NVIDIA's firmware ABI is a (very slowly) moving targ=
+et,
+>>> it is worth to aim at ABI compatibility, or should we assume differ=
+ent
+>>> paths for Nouveau and NVIDIA firmware? If ABI incompatibilities are
+>>> introduced in the way, how do we handle versioning?
+>> For incompatible changes, I think appending a -VERSION to each
+>> firmware blob is probably the simplest approach.  The driver can
+>> select the necessary codepath based on what it finds (probably tryin=
+g
+>> newer versions first, obviously).
+>
+> I agree. Hopefully we won't have too much of this.
+>
+>>> All these issues make me tend towards having a separate handling of
+>>> NVIDIA-released firmware (location, format, and ABI). It will also
+>>> make the firmware easier to release if conversions are not necessar=
+y
+>>> on the way out. What are your thoughts on this?
+>> I'm not entirely set here, either way.  I somewhat think that
+>> initially I should adapt our interfaces to match, and a keep single
+>> code path as long as we can.  A lot of the changes so far have seeme=
+d
+>> minor enough we could stick conditionals on firmware version, and if
+>> fw changes come along that warrant a radical change in handling from
+>> the host, we can abstract it away then.
+>>
+>> But, I'm open to other suggestions :)
+>
+> Right now my main concern is to get secure boot support in, and the
+> shortest path seems to be to not care about ABI compatibility between
+> Nouveau and NV firmwares (at least for PMU). Basically I am hoping
+> that you will agree to proceed this way in a first time. ^_^
+If it's really that urgent, my suggestion is to submit the patches as
+you did previously, keeping them confined to GK20A/GM20B, and I'll do
+something nicer to support boards in general.
+
+=46rankly, I'd have had secure boot support in the driver already had
+NVIDIA played things a little differently...  Going forward, I'd like
+to see NVIDIA not treating the Tegra parts of nouveau as a little
+black box where anything goes and things are different from the rest
+of the driver.  The chips operate, for the most part, identically to
+their big siblings...
+
+Thanks,
+Ben.
