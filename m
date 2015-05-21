@@ -1,97 +1,120 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] ARM: v7 setup function should invalidate L1 cache
-Date: Thu, 21 May 2015 10:30:47 +0200
-Message-ID: <20150521083046.GA30323@ulmo.nvidia.com>
-References: <E1Yuk8W-0001tC-IK@rmk-PC.arm.linux.org.uk>
+From: Ben Skeggs <skeggsb@gmail.com>
+Subject: Re: [PATCH 1/2] drm/nouveau: add staging module option
+Date: Thu, 21 May 2015 18:35:58 +1000
+Message-ID: <CACAvsv6OR0HcSnvrcsJRi=JJ0m09EPY9vi0QDuRiqCTfPVjvaQ@mail.gmail.com>
+References: <1432101379-9515-1-git-send-email-acourbot@nvidia.com>
+ <1432101379-9515-2-git-send-email-acourbot@nvidia.com>
+ <CACAvsv4vW4bBddq2s9eWMzbYcG_F5j+KCkZAfivxKW9AWDBXQQ@mail.gmail.com>
+ <CAAVeFu+N6VvPHispeXBTGykncfnOQkJ-J1PxxVa42-ahX2YDsA@mail.gmail.com>
+ <CACAvsv7brfoe51eEOibw39_t=Hg6gvb0T2V8YO0-pDdxZ-nPLw@mail.gmail.com>
+ <CAAVeFuKYxHQiUObG+78UdCg+R0Zm9UxaFW5WtKQFcHs33vLbAA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
-Return-path: <linux-sh-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <E1Yuk8W-0001tC-IK@rmk-PC.arm.linux.org.uk>
-Sender: linux-sh-owner@vger.kernel.org
-To: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-sh@vger.kernel.org, linux-tegra@vger.kernel.org, Christian Daudt <bcm@fixthebug.org>, Florian Fainelli <f.fainelli@gmail.com>, Marc Carino <marc.ceeeee@gmail.com>, Brian Norris <computersforpeace@gmail.com>, Gregory Fong <gregory.0xf0@gmail.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Wei Xu <xuwei5@hisilicon.com>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Barry Song <baohua@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Simon Horman <horms@verge.net.au>, Magnus Damm <magnus.damm@gmail.com>, Dinh Nguyen <dinguyen@opensource.altera.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Micha
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAAVeFuKYxHQiUObG+78UdCg+R0Zm9UxaFW5WtKQFcHs33vLbAA@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
---SUOF0GtieIMvvwua
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, May 19, 2015 at 05:12:56PM +0100, Russell King wrote:
-> All ARMv5 and older CPUs invalidate their caches in the early assembly
-> setup function, prior to enabling the MMU.  This is because the L1
-> cache should not contain any data relevant to the execution of the
-> kernel at this point; all data should have been flushed out to memory.
->=20
-> This requirement should also be true for ARMv6 and ARMv7 CPUs - indeed,
-> these typically do not search their caches when caching is disabled (as
-> it needs to be when the MMU is disabled) so this change should be safe.
->=20
-> ARMv7 allows there to be CPUs which search their caches while caching is
-> disabled, and it's permitted that the cache is uninitialised at boot;
-> for these, the architecture reference manual requires that an
-> implementation specific code sequence is used immediately after reset
-> to ensure that the cache is placed into a sane state.  Such
-> functionality is definitely outside the remit of the Linux kernel, and
-> must be done by the SoC's firmware before _any_ CPU gets to the Linux
-> kernel.
->=20
-> Changing the data cache clean+invalidate to a mere invalidate allows us
-> to get rid of a lot of platform specific hacks around this issue for
-> their secondary CPU bringup paths - some of which were buggy.
->=20
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
-> ---
-[...]
->  arch/arm/mach-tegra/Makefile          |  2 +-
->  arch/arm/mach-tegra/headsmp.S         | 12 ------------
->  arch/arm/mach-tegra/reset.c           |  2 +-
->  arch/arm/mach-tegra/reset.h           |  1 -
-[...]
-
-Russell,
-
-I saw a couple of conflicts trying to apply this to v4.1-rc1..v4.1-rc4
-or any of recent linux-next versions. I ended up applying this on top of
-your for-next branch and tested using that. The conflicts seem very
-minor and a test merge of Tegra's for-next branch resolved this fine. A
-test merge of next-20150520 shows one conflict in mach-socfpga/core.h,
-but it's a trivial one to resolve.
-
-Anyway, the patch seems to work fine on TrimSlice (Tegra20), Beaver
-(Tegra30), Dalmore (Tegra114) and Jetson TK1 (Tegra124). Tested on
-Paul's boot farm:
-
-Tested-by: Thierry Reding <treding@nvidia.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-
-Paul, thanks for setting up the boot test infrastructure, this saved me
-a lot of time.
-
-Thierry
-
---SUOF0GtieIMvvwua
-Content-Type: application/pgp-signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVXZezAAoJEN0jrNd/PrOhrC8P/jcVDadjbdH/cg5TWx+x1CaM
-38tjlw2ECg+7dLvqq+6fnzi36SvCxYcpT9RorPzzZKuWV4Yb0453aeb4luIYO/3Y
-J6m0QStCDx1FnXmuH+gIcBnKIYRo+T5KgnuwBs54XMD25idryzfod3959YbgtTxF
-ttaVxops35MN/nK+wJLaC7TFcPtFVuPZ9atqDPDHBdTGlxt6x+D+WhiYhIsuquE9
-l8pQK/HXGKNiSoUFeQlBQ36qnT9LATWoz2D5xhl8/tA4W8q4oPXF271x1NGLIlw1
-vGdZqpslQFAeSrs0erSfUbDc1yXGs+LfGwsdeWpfo8xBZNd4Orb8dF/qfwq2Bi3E
-U0F4Mlj4bz/wGYPBqpzmXKpL155p7AbN1NyTpYLFm1Wjdyb8sn1AEgQ3bs1F8ISj
-UD//iDfbEUb97a1Zt2FZ9LqOYrzE+kJXendxY/AtKm15SYsG7aZtM4aVuZKonIw1
-YXZ7t7N3BdyLKAd8XZICtT5awLO+WZvAdxC01iVUQqYTX0yfTMYNDxCgd4kPJmdr
-vKlua0DoZC4IwV6IssGqrxprRVhDNg9ojwmTn9zMH3xRWGTOJT+AzWqG8HLYjvfn
-XQxuG6Q1/v5Hg2rsLbRxX4F9Cud5nwXENSqQWV952FzvG+MfXNAeRmI2QlfOshOU
-ryX0P6XmHdivmJdtucsb
-=BRGw
------END PGP SIGNATURE-----
-
---SUOF0GtieIMvvwua--
+T24gMjEgTWF5IDIwMTUgYXQgMTY6MDQsIEFsZXhhbmRyZSBDb3VyYm90IDxnbnVyb3VAZ21haWwu
+Y29tPiB3cm90ZToKPiBPbiBUaHUsIE1heSAyMSwgMjAxNSBhdCAyOjU1IFBNLCBCZW4gU2tlZ2dz
+IDxza2VnZ3NiQGdtYWlsLmNvbT4gd3JvdGU6Cj4+IE9uIDIxIE1heSAyMDE1IGF0IDE1OjQ5LCBB
+bGV4YW5kcmUgQ291cmJvdCA8Z251cm91QGdtYWlsLmNvbT4gd3JvdGU6Cj4+PiBPbiBUaHUsIE1h
+eSAyMSwgMjAxNSBhdCAxOjQ4IFBNLCBCZW4gU2tlZ2dzIDxza2VnZ3NiQGdtYWlsLmNvbT4gd3Jv
+dGU6Cj4+Pj4gT24gMjAgTWF5IDIwMTUgYXQgMTU6NTYsIEFsZXhhbmRyZSBDb3VyYm90IDxhY291
+cmJvdEBudmlkaWEuY29tPiB3cm90ZToKPj4+Pj4gQWRkIGEgbW9kdWxlIG9wdGlvbiBhbGxvd2lu
+ZyB0byBlbmFibGUgc3RhZ2luZy91bnN0YWJsZSBBUElzLiBUaGlzIHdpbGwKPj4+Pj4gYWxsb3cg
+dXMgdG8gZXhwZXJpbWVudCBmcmVlbHkgd2l0aCBleHBlcmltZW50YWwgQVBJcyBmb3IgYSB3aGls
+ZSBiZWZvcmUKPj4+Pj4gc2V0dGluZyB0aGVtIGluIHN0b25lLgo+Pj4+Pgo+Pj4+PiBTaWduZWQt
+b2ZmLWJ5OiBBbGV4YW5kcmUgQ291cmJvdCA8YWNvdXJib3RAbnZpZGlhLmNvbT4KPj4+Pj4gLS0t
+Cj4+Pj4+ICBkcm0vbm91dmVhdS9ub3V2ZWF1X2RybS5jICAgICAgICAgIHwgMTggKysrKysrKysr
+KysrKysrKysrCj4+Pj4+ICBkcm0vbm91dmVhdS91YXBpL2RybS9ub3V2ZWF1X2RybS5oIHwgIDMg
+KysrCj4+Pj4+ICAyIGZpbGVzIGNoYW5nZWQsIDIxIGluc2VydGlvbnMoKykKPj4+Pj4KPj4+Pj4g
+ZGlmZiAtLWdpdCBhL2RybS9ub3V2ZWF1L25vdXZlYXVfZHJtLmMgYi9kcm0vbm91dmVhdS9ub3V2
+ZWF1X2RybS5jCj4+Pj4+IGluZGV4IDg5MDQ5MzM1YjczOC4uZTRiZDZlZDUxZTczIDEwMDY0NAo+
+Pj4+PiAtLS0gYS9kcm0vbm91dmVhdS9ub3V2ZWF1X2RybS5jCj4+Pj4+ICsrKyBiL2RybS9ub3V2
+ZWF1L25vdXZlYXVfZHJtLmMKPj4+Pj4gQEAgLTc1LDYgKzc1LDEwIEBAIE1PRFVMRV9QQVJNX0RF
+U0MocnVucG0sICJkaXNhYmxlICgwKSwgZm9yY2UgZW5hYmxlICgxKSwgb3B0aW11cyBvbmx5IGRl
+ZmF1bHQgKC0xCj4+Pj4+ICBpbnQgbm91dmVhdV9ydW50aW1lX3BtID0gLTE7Cj4+Pj4+ICBtb2R1
+bGVfcGFyYW1fbmFtZWQocnVucG0sIG5vdXZlYXVfcnVudGltZV9wbSwgaW50LCAwNDAwKTsKPj4+
+Pj4KPj4+Pj4gK01PRFVMRV9QQVJNX0RFU0Moc3RhZ2luZywgImVuYWJsZSBzdGFnaW5nIEFQSXMi
+KTsKPj4+Pj4gK2ludCBub3V2ZWF1X3N0YWdpbmcgPSAwOwo+Pj4+PiArbW9kdWxlX3BhcmFtX25h
+bWVkKHN0YWdpbmcsIG5vdXZlYXVfc3RhZ2luZywgaW50LCAwNDAwKTsKPj4+Pj4gKwo+Pj4+PiAg
+c3RhdGljIHN0cnVjdCBkcm1fZHJpdmVyIGRyaXZlcl9zdHViOwo+Pj4+PiAgc3RhdGljIHN0cnVj
+dCBkcm1fZHJpdmVyIGRyaXZlcl9wY2k7Cj4+Pj4+ICBzdGF0aWMgc3RydWN0IGRybV9kcml2ZXIg
+ZHJpdmVyX3BsYXRmb3JtOwo+Pj4+PiBAQCAtODk1LDYgKzg5OSw3IEBAIG5vdXZlYXVfaW9jdGxz
+W10gPSB7Cj4+Pj4+ICAgICAgICAgRFJNX0lPQ1RMX0RFRl9EUlYoTk9VVkVBVV9HRU1fQ1BVX1BS
+RVAsIG5vdXZlYXVfZ2VtX2lvY3RsX2NwdV9wcmVwLCBEUk1fVU5MT0NLRUR8RFJNX0FVVEh8RFJN
+X1JFTkRFUl9BTExPVyksCj4+Pj4+ICAgICAgICAgRFJNX0lPQ1RMX0RFRl9EUlYoTk9VVkVBVV9H
+RU1fQ1BVX0ZJTkksIG5vdXZlYXVfZ2VtX2lvY3RsX2NwdV9maW5pLCBEUk1fVU5MT0NLRUR8RFJN
+X0FVVEh8RFJNX1JFTkRFUl9BTExPVyksCj4+Pj4+ICAgICAgICAgRFJNX0lPQ1RMX0RFRl9EUlYo
+Tk9VVkVBVV9HRU1fSU5GTywgbm91dmVhdV9nZW1faW9jdGxfaW5mbywgRFJNX1VOTE9DS0VEfERS
+TV9BVVRIfERSTV9SRU5ERVJfQUxMT1cpLAo+Pj4+PiArICAgICAgIC8qIFN0YWdpbmcgaW9jdGxz
+ICovCj4+Pj4+ICB9Owo+Pj4+Pgo+Pj4+PiAgbG9uZwo+Pj4+PiBAQCAtMTAyNyw2ICsxMDMyLDcg
+QEAgc3RhdGljIHZvaWQgbm91dmVhdV9kaXNwbGF5X29wdGlvbnModm9pZCkKPj4+Pj4gICAgICAg
+ICBEUk1fREVCVUdfRFJJVkVSKCIuLi4gcnVucG0gICAgICAgIDogJWRcbiIsIG5vdXZlYXVfcnVu
+dGltZV9wbSk7Cj4+Pj4+ICAgICAgICAgRFJNX0RFQlVHX0RSSVZFUigiLi4uIHZyYW1fcHVzaGJ1
+ZiA6ICVkXG4iLCBub3V2ZWF1X3ZyYW1fcHVzaGJ1Zik7Cj4+Pj4+ICAgICAgICAgRFJNX0RFQlVH
+X0RSSVZFUigiLi4uIHBzdGF0ZSAgICAgICA6ICVkXG4iLCBub3V2ZWF1X3BzdGF0ZSk7Cj4+Pj4+
+ICsgICAgICAgRFJNX0RFQlVHX0RSSVZFUigiLi4uIHN0YWdpbmcgICAgICA6ICVkXG4iLCBub3V2
+ZWF1X3N0YWdpbmcpOwo+Pj4+PiAgfQo+Pj4+Pgo+Pj4+PiAgc3RhdGljIGNvbnN0IHN0cnVjdCBk
+ZXZfcG1fb3BzIG5vdXZlYXVfcG1fb3BzID0gewo+Pj4+PiBAQCAtMTA4OCw2ICsxMDk0LDE4IEBA
+IGVycl9mcmVlOgo+Pj4+PiAgc3RhdGljIGludCBfX2luaXQKPj4+Pj4gIG5vdXZlYXVfZHJtX2lu
+aXQodm9pZCkKPj4+Pj4gIHsKPj4+Pj4gKyAgICAgICAvKiBEbyBub3QgcmVnaXN0ZXIgc3RhZ2lu
+ZyBpb2N0c2wgaWYgb3B0aW9uIG5vdCBzcGVjaWZpZWQgKi8KPj4+Pj4gKyAgICAgICBpZiAoIW5v
+dXZlYXVfc3RhZ2luZykgewo+Pj4+PiArICAgICAgICAgICAgICAgdW5zaWduZWQgaTsKPj4+Pj4g
+Kwo+Pj4+PiArICAgICAgICAgICAgICAgLyogVGhpcyBrZWVwcyB1cyBzYWZlIGlzIG5vIHN0YWdp
+bmcgaW9jdGxzIGFyZSBkZWZpbmVkICovCj4+Pj4+ICsgICAgICAgICAgICAgICBpID0gbWluKGRy
+aXZlcl9zdHViLm51bV9pb2N0bHMsIERSTV9OT1VWRUFVX1NUQUdJTkdfSU9DVEwpOwo+Pj4+PiAr
+ICAgICAgICAgICAgICAgd2hpbGUgKCFub3V2ZWF1X2lvY3Rsc1tpIC0gMV0uZnVuYykKPj4+Pj4g
+KyAgICAgICAgICAgICAgICAgICAgICAgaS0tOwo+Pj4+PiArCj4+Pj4+ICsgICAgICAgICAgICAg
+ICBkcml2ZXJfc3R1Yi5udW1faW9jdGxzID0gaTsKPj4+Pj4gKyAgICAgICB9Cj4+Pj4gSGV5IEFs
+ZXgsCj4+Pj4KPj4+PiBJJ3ZlIGdvdCBubyBzcGVjaWZpYyBvYmplY3Rpb24uICBCdXQgSSdtIGN1
+cmlvdXMgYXMgdG8gd2h5IHlvdSB0b29rCj4+Pj4gdGhpcyBhcHByb2FjaCBhcyBvcHBvc2VkIHRv
+IGp1c3QgYWRkaW5nICJpZiAoIW5vdXZlYXVfc3RhZ2luZykgcmV0dXJuCj4+Pj4gLUVJTlZBTDsi
+IGRpcmVjdGx5IGluIHRoZSBleHBlcmltZW50YWwgaW9jdGxzPwo+Pj4KPj4+IE1haW5seSBiZWNh
+dXNlIHdlIHdpbGwgbGlrZWx5IGZvcmdldCB0byBhZGQgdGhpcyBjaGVjayAob3IgdG8gcmVtb3Zl
+Cj4+PiBpdCkgaW4gc29tZSBvZiB0aGUgc3RhZ2luZyBpb2N0bHMuIFRoZSBjdXJyZW50IHNvbHV0
+aW9uIGRvZXNuJ3QKPj4+IHJlcXVpcmUgdXMgdG8gdGhpbmsgYWJvdXQgdGhhdCAtIGFuZCB0aGUg
+bGVzcyB0aGluZ3MgdG8gdGhpbmsgYWJvdXQsCj4+PiB0aGUgYmV0dGVyLgo+Pj4KPj4+PiBJIHRo
+aW5rLCBpbiBsaW5lIHdpdGgKPj4+PiB3aGF0J3MgYmVlbiBkb25lIGluIG90aGVyIHBsYWNlcywg
+aGF2aW5nIG1vZHVsZSBvcHRpb25zIHBlci1hcGkgaXMKPj4+PiBwZXJoYXBzIGEgYmV0dGVyIGNo
+b2ljZSB0b28uCj4+Pgo+Pj4gRG8geW91IG1lYW4gdGhhdCBlYWNoIGV4cGVyaW1lbnRhbCBpb2N0
+bCBzaG91bGQgaGF2ZSBpdHMgb3duIGVuYWJsZQo+Pj4gb3B0aW9uPyBJIGRvbid0IG1pbmQgZ29p
+bmcgdGhhdCB3YXkgaWYgeW91IHRoaW5rIGl0IGlzIHByZWZlcmFibGUuIEFuZAo+Pj4gaW4gdGhh
+dCBjYXNlIG15IGNvbW1lbnQgYWJvdmUgaXMgdm9pZC4KPj4gVGhhdCB3b3VsZCBiZSBtb3JlIHBy
+ZWZlcmFibGUgSSB0aGluaywgYW5kIG9idmlvdXMgYXMgdG8gd2hhdCBleGFjdGx5Cj4+IHlvdSdy
+ZSBlbmFibGluZy4KPj4KPj4+Cj4+PiBCdXQgYWN0dWFsbHkgSSB3b25kZXIgaWYgaGF2aW5nIHRo
+ZXNlIGV4cGVyaW1lbnRhbCBpb2N0bHMgZW5hYmxlZCBhcwo+Pj4gY29tcGlsZSBvcHRpb25zIChl
+aXRoZXIgaW5kaXZpZHVhbGx5IG9yIGFzIGEgd2hvbGUpIHdvdWxkIG5vdCBiZQo+Pj4gYmV0dGVy
+LiBTb21lIGV4cGVyaW1lbnRhbCBpb2N0bHMgbWF5IHJlcXVpcmUgY29kZSBpbiBzdGFnaW5nIChs
+aWtlIHRoZQo+Pj4gUFVTSEJVRl8yIGlvY3RsIHRoYXQgSSB3b3VsZCBsaWtlIHRvIHN1Ym1pdCBu
+ZXh0KSwgYW5kIEkgZG9uJ3QgdGhpbmsKPj4+IGl0IGlzIGRlc2lyYWJsZSB0byBmb3JjZSBleHRy
+YSBjb2RlIG9yIGtlcm5lbCBvcHRpb25zIChpbiB0aGlzIGNhc2UsCj4+PiBDT05GSUdfU1RBR0lO
+RykgdG8gTm91dmVhdSB1c2VycyB3aG8gd2lsbCBub3QgbWFrZSB1c2Ugb2YgdGhlbS4gSQo+Pj4g
+cmVtZW1iZXIgdGhhdCB3ZSBjb25jbHVkZWQgaW4gZmF2b3Igb3IgbW9kdWxlIG9wdGlvbnMgb24g
+SVJDLCBidXQgaW4KPj4+IHRoZSBsaWdodCBvZiB0aGlzLCB3b3VsZG4ndCBhIGNvbmZpZyBvcHRp
+b24gYmUgYSBsZXNzIGludHJ1c2l2ZQo+Pj4gY2hvaWNlPwo+PiBSaWdodCwgYnV0IHRoZSB3aG9s
+ZSBwb2ludCBvZiB0aGlzIGlzIHRvIGVuY291cmFnZSB0aGUgaW9jdGxzIHRvIG5vdAo+PiBsaXZl
+IHRoZXJlIGZvciB0b28gbG9uZywgYW5kIHByb2dyZXNzIHRvIGZ1bGx5IHN1cHBvcnRlZCBpbnRl
+cmZhY2VzLgo+Cj4gRGVmaW5pdGVseSwgYnV0IG15IGNvbmNlcm4gaXMgdGhhdCBkb2luZyB0aGlz
+IHdpbGwgbWFrZSBOb3V2ZWF1IGRlcGVuZAo+IG9uIFNUQUdJTkcgZm9yIGF0IGxlYXN0IHNob3J0
+IHBlcmlvZHMgb2YgdGltZS4gRG8gd2UgcmVhbGx5IHdhbnQgdGhpcz8KSSBhZG1pdCB0byBoYXZp
+bmcgc2xpZ2h0bHkgbWlzcmVhZCB5b3VyIGxhc3QgcGFyYWdyYXBoLiAgRm9yIGNhc2VzCnN1Y2gg
+YXMgdGhhcywgYSBjb25maWcgb3B0aW9uIHRoYXQgZGVwZW5kcyBvbiBTVEFHSU5HICphbmQqIHRo
+ZSBrZXJuZWwKcGFyYW1ldGVyIHNob3VsZCBiZSB1c2VkLgoKV2hhdCBpcyBwdXNoYnVmMiBkb2lu
+ZyB0aGF0IHJlcXVpcmVzIHN0YWdpbmcgYnR3PyAgWW91J3ZlIGxpbmtlZCBtZSB0bwpwYXRjaGVz
+IHByZXZpb3VzbHksIGJ1dCBJIG1pc3NlZCB0aGF0LgoKQmVuLgpfX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1k
+ZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
+YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
