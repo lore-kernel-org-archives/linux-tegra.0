@@ -1,68 +1,67 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2] nouveau: add coherent BO attribute
-Date: Thu, 21 May 2015 15:08:28 +0900
-Message-ID: <1432188508-650-1-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] nouveau: add coherent BO attribute
+Date: Thu, 21 May 2015 15:09:40 +0900
+Message-ID: <CAAVeFu+K9cwBYSYv67Wk_ije8RdqPUo_ZQeRZhUfmj0AuxggtA@mail.gmail.com>
+References: <1426228051-20298-1-git-send-email-acourbot@nvidia.com>
+ <55033B99.4040300@canonical.com> <550545A4.6060106@nvidia.com>
+ <CAAVeFuKoryrWPcDkcFuk+OwJjaUn6C-he+xxphkZ7iMBa=Qdkg@mail.gmail.com>
+ <CAAVeFu+kRcWT2zxbduA6MU9v1cTVb8HU3GEDdaviUAkYa6SbSQ@mail.gmail.com>
+ <5555DAF6.4030309@mblankhorst.nl>
+ <CAAVeFuLKeEsf=at_gahCw9qzRWhrxtCVZ==H26y2xUx8-K75eA@mail.gmail.com>
+ <555C2F80.9080805@free.fr>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Martin Peres <martin.peres-GANU6spQydw@public.gmane.org>, Maarten Lankhorst <maarten-FcfepWsj2zOByvU0x3ry2g@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <555C2F80.9080805-GANU6spQydw@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Martin Peres <martin.peres-GANU6spQydw@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Maarten Lankhorst <maarten-FcfepWsj2zOByvU0x3ry2g@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add a flag allowing Nouveau to specify that an object should be coherent
-at allocation time. This is required for some class of objects like
-fences which are randomly-accessed by both the CPU and GPU. This flag
-instructs the kernel driver to make sure the object remains coherent
-even on architectures for which coherency is not guaranteed by the bus.
-
-Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Changes since v1:
-None, just added Martin so he can merge the patch. R-b and A-b wanted. :)
-
- include/drm/nouveau_drm.h | 1 +
- nouveau/abi16.c           | 3 +++
- nouveau/nouveau.h         | 1 +
- 3 files changed, 5 insertions(+)
-
-diff --git a/include/drm/nouveau_drm.h b/include/drm/nouveau_drm.h
-index b18cad02419b..87aefc5e9d2f 100644
---- a/include/drm/nouveau_drm.h
-+++ b/include/drm/nouveau_drm.h
-@@ -96,6 +96,7 @@ struct drm_nouveau_setparam {
- #define NOUVEAU_GEM_DOMAIN_VRAM      (1 << 1)
- #define NOUVEAU_GEM_DOMAIN_GART      (1 << 2)
- #define NOUVEAU_GEM_DOMAIN_MAPPABLE  (1 << 3)
-+#define NOUVEAU_GEM_DOMAIN_COHERENT  (1 << 4)
- 
- #define NOUVEAU_GEM_TILE_LAYOUT_MASK 0x0000ff00
- #define NOUVEAU_GEM_TILE_16BPP       0x00000001
-diff --git a/nouveau/abi16.c b/nouveau/abi16.c
-index 538f3a730dbe..4ca0bfbaf592 100644
---- a/nouveau/abi16.c
-+++ b/nouveau/abi16.c
-@@ -195,6 +195,9 @@ abi16_bo_init(struct nouveau_bo *bo, uint32_t alignment,
- 	if (bo->flags & NOUVEAU_BO_MAP)
- 		info->domain |= NOUVEAU_GEM_DOMAIN_MAPPABLE;
- 
-+	if (bo->flags & NOUVEAU_BO_COHERENT)
-+		info->domain |= NOUVEAU_GEM_DOMAIN_COHERENT;
-+
- 	if (!(bo->flags & NOUVEAU_BO_CONTIG))
- 		info->tile_flags = NOUVEAU_GEM_TILE_NONCONTIG;
- 
-diff --git a/nouveau/nouveau.h b/nouveau/nouveau.h
-index a55e2b020778..4adda0e3594c 100644
---- a/nouveau/nouveau.h
-+++ b/nouveau/nouveau.h
-@@ -127,6 +127,7 @@ union nouveau_bo_config {
- #define NOUVEAU_BO_MAP     0x80000000
- #define NOUVEAU_BO_CONTIG  0x40000000
- #define NOUVEAU_BO_NOSNOOP 0x20000000
-+#define NOUVEAU_BO_COHERENT 0x10000000
- 
- struct nouveau_bo {
- 	struct nouveau_device *device;
--- 
-2.4.0
+T24gV2VkLCBNYXkgMjAsIDIwMTUgYXQgMzo1MyBQTSwgTWFydGluIFBlcmVzIDxtYXJ0aW4ucGVy
+ZXNAZnJlZS5mcj4gd3JvdGU6Cj4gT24gMjAvMDUvMTUgMDg6MTEsIEFsZXhhbmRyZSBDb3VyYm90
+IHdyb3RlOgo+Pgo+PiBPbiBGcmksIE1heSAxNSwgMjAxNSBhdCA4OjM5IFBNLCBNYWFydGVuIExh
+bmtob3JzdAo+PiA8bWFhcnRlbkBtYmxhbmtob3JzdC5ubD4gd3JvdGU6Cj4+Pgo+Pj4gT3AgMTUt
+MDUtMTUgb20gMDk6MTEgc2NocmVlZiBBbGV4YW5kcmUgQ291cmJvdDoKPj4+Pgo+Pj4+IFJlLXBp
+bmdpbmcgTWFydGVlbiBvbiBhbiBlbWFpbCBhZGRyZXNzIHRoYXQgc3RpbGwgZXhpc3RzIDpQCj4+
+Pj4KPj4+PiBPbiBXZWQsIEFwciAyMiwgMjAxNSBhdCA2OjA4IFBNLCBBbGV4YW5kcmUgQ291cmJv
+dCA8Z251cm91QGdtYWlsLmNvbT4KPj4+PiB3cm90ZToKPj4+Pj4KPj4+Pj4gT24gU3VuLCBNYXIg
+MTUsIDIwMTUgYXQgNTo0MSBQTSwgQWxleGFuZHJlIENvdXJib3QKPj4+Pj4gPGFjb3VyYm90QG52
+aWRpYS5jb20+IHdyb3RlOgo+Pj4+Pj4KPj4+Pj4+IE9uIDAzLzE0LzIwMTUgMDQ6MzMgQU0sIE1h
+YXJ0ZW4gTGFua2hvcnN0IHdyb3RlOgo+Pj4+Pj4+Cj4+Pj4+Pj4gSGV5LAo+Pj4+Pj4+Cj4+Pj4+
+Pj4gT3AgMTMtMDMtMTUgb20gMDc6Mjcgc2NocmVlZiBBbGV4YW5kcmUgQ291cmJvdDoKPj4+Pj4+
+Pj4KPj4+Pj4+Pj4gQWRkIGEgZmxhZyBhbGxvd2luZyBOb3V2ZWF1IHRvIHNwZWNpZnkgdGhhdCBh
+biBvYmplY3Qgc2hvdWxkIGJlCj4+Pj4+Pj4+IGNvaGVyZW50Cj4+Pj4+Pj4+IGF0IGFsbG9jYXRp
+b24gdGltZS4gVGhpcyBpcyByZXF1aXJlZCBmb3Igc29tZSBjbGFzcyBvZiBvYmplY3RzIGxpa2UK
+Pj4+Pj4+Pj4gZmVuY2VzIHdoaWNoIGFyZSByYW5kb21seS1hY2Nlc3NlZCBieSBib3RoIHRoZSBD
+UFUgYW5kIEdQVS4gVGhpcwo+Pj4+Pj4+PiBmbGFnCj4+Pj4+Pj4+IGluc3RydWN0cyB0aGUga2Vy
+bmVsIGRyaXZlciB0byBtYWtlIHN1cmUgdGhlIG9iamVjdCByZW1haW5zIGNvaGVyZW50Cj4+Pj4+
+Pj4+IGV2ZW4gb24gYXJjaGl0ZWN0dXJlcyBmb3Igd2hpY2ggY29oZXJlbmN5IGlzIG5vdCBndWFy
+YW50ZWVkIGJ5IHRoZQo+Pj4+Pj4+PiBidXMuCj4+Pj4+Pj4+Cj4+Pj4+Pj4+IFNpZ25lZC1vZmYt
+Ynk6IEFsZXhhbmRyZSBDb3VyYm90IDxhY291cmJvdEBudmlkaWEuY29tPgo+Pj4+Pj4+Cj4+Pj4+
+Pj4gSSBkb24ndCBzZWUgYSBwcm9ibGVtIHdpdGggdGhpcyBwYXRjaCwgYnV0IHNpbWlsYXIgcGF0
+Y2hlcyB0byBpbnRlbAo+Pj4+Pj4+IHRvCj4+Pj4+Pj4gbGliZHJtIGhhdmUgYmVlbiBzaG90IGRv
+d24gd2hlbiB0aGUgY2hhbmdlcyB3ZXJlbid0IGluIGFuIG9mZmljaWFsCj4+Pj4+Pj4ga2VybmVs
+Cj4+Pj4+Pj4geWV0LCBzbyBJIHRoaW5rIHRoaXMgc2hvdWxkIHdhaXQgdW50aWwgdGhlIGNoYW5n
+ZSBpcyBhdCBsZWFzdCBpbgo+Pj4+Pj4+IGRybS1uZXh0Lgo+Pj4+Pj4+IDstKQo+Pj4+Pj4KPj4+
+Pj4+IFNvdW5kcyBnb29kLiBJIHdpbGwgcGluZyB5b3UgYWdhaW4gb25jZSB0aGUga2VybmVsIGNo
+YW5nZSByZWFjaGVzCj4+Pj4+PiAtbmV4dC4KPj4+Pj4KPj4+Pj4gSGkgTWFydGVlbiwKPj4+Pj4K
+Pj4+Pj4gVGhlIGtlcm5lbCBjaGFuZ2UgcmVxdWlyZWQgZm9yIHRoaXMgcGF0Y2ggaXMgbm93IGlu
+IC1uZXh0LiBEbyB5b3UKPj4+Pj4gdGhpbmsgd2UgY2FuIG1lcmdlIGl0IG5vdz8KPj4+Cj4+PiBJ
+IHRoaW5rIGl0IHdvdWxkIGJlIG9rIHRvIG1lcmdlIG5vdy4KPj4KPj4gR3JlYXQgLSB3aG8gY291
+bGQgZG8gdGhpcz8gOlAKPgo+Cj4gSSBjb3VsZCBkbyBpdC4gUGxlYXNlIHByb3ZpZGUgbWUgd2l0
+aCB0aGUgcGF0Y2ggd2l0aCB0aGUgbmVjZXNzYXJ5IFItYiBhbmQgSQo+IGNhbiBwdXNoIGl0IHRv
+IG91ciBsaWJkcm0gKGFuZC9vciBtZXNhKS4KClRoYW5rcywgSSBqdXN0IHNlbnQgYSB2MiB3aXRo
+IHlvdSBpbmNsdWRlZC4gSSBoYXZlIHlldCB0byByZWNlaXZlCmZvcm1hbCBSLWIgYW5kIEEtYiBm
+b3IgaXQgdGhvdWdoLgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpOb3V2ZWF1IG1haWxpbmcgbGlzdApOb3V2ZWF1QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
+dHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vbm91dmVhdQo=
