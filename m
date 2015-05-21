@@ -1,44 +1,104 @@
-From: Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] ARM: v7 setup function should invalidate L1 cache
-Date: Thu, 21 May 2015 10:08:42 +0800
-Message-ID: <20150521020841.GL24844@dragon>
-References: <E1Yuk8W-0001tC-IK@rmk-PC.arm.linux.org.uk>
+From: Ben Skeggs <skeggsb@gmail.com>
+Subject: Re: [PATCH 1/2] drm/nouveau: add staging module option
+Date: Thu, 21 May 2015 14:48:48 +1000
+Message-ID: <CACAvsv4vW4bBddq2s9eWMzbYcG_F5j+KCkZAfivxKW9AWDBXQQ@mail.gmail.com>
+References: <1432101379-9515-1-git-send-email-acourbot@nvidia.com>
+ <1432101379-9515-2-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <E1Yuk8W-0001tC-IK-eh5Bv4kxaXIANfyc6IWni62ZND6+EDdj@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Christian Daudt <bcm-xK7y4jjYLqYh9ZMKESR00Q@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Marc Carino <marc.ceeeee-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Gregory Clement <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Barry Song <baohua-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dinh Nguyen <dinguyen-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1432101379-9515-2-git-send-email-acourbot@nvidia.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, May 19, 2015 at 05:12:56PM +0100, Russell King wrote:
-> All ARMv5 and older CPUs invalidate their caches in the early assembly
-> setup function, prior to enabling the MMU.  This is because the L1
-> cache should not contain any data relevant to the execution of the
-> kernel at this point; all data should have been flushed out to memory.
-> 
-> This requirement should also be true for ARMv6 and ARMv7 CPUs - indeed,
-> these typically do not search their caches when caching is disabled (as
-> it needs to be when the MMU is disabled) so this change should be safe.
-> 
-> ARMv7 allows there to be CPUs which search their caches while caching is
-> disabled, and it's permitted that the cache is uninitialised at boot;
-> for these, the architecture reference manual requires that an
-> implementation specific code sequence is used immediately after reset
-> to ensure that the cache is placed into a sane state.  Such
-> functionality is definitely outside the remit of the Linux kernel, and
-> must be done by the SoC's firmware before _any_ CPU gets to the Linux
-> kernel.
-> 
-> Changing the data cache clean+invalidate to a mere invalidate allows us
-> to get rid of a lot of platform specific hacks around this issue for
-> their secondary CPU bringup paths - some of which were buggy.
-> 
-> Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-> ---
-...
->  arch/arm/mach-imx/headsmp.S           |  1 -
-
-Acked-by: Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+T24gMjAgTWF5IDIwMTUgYXQgMTU6NTYsIEFsZXhhbmRyZSBDb3VyYm90IDxhY291cmJvdEBudmlk
+aWEuY29tPiB3cm90ZToKPiBBZGQgYSBtb2R1bGUgb3B0aW9uIGFsbG93aW5nIHRvIGVuYWJsZSBz
+dGFnaW5nL3Vuc3RhYmxlIEFQSXMuIFRoaXMgd2lsbAo+IGFsbG93IHVzIHRvIGV4cGVyaW1lbnQg
+ZnJlZWx5IHdpdGggZXhwZXJpbWVudGFsIEFQSXMgZm9yIGEgd2hpbGUgYmVmb3JlCj4gc2V0dGlu
+ZyB0aGVtIGluIHN0b25lLgo+Cj4gU2lnbmVkLW9mZi1ieTogQWxleGFuZHJlIENvdXJib3QgPGFj
+b3VyYm90QG52aWRpYS5jb20+Cj4gLS0tCj4gIGRybS9ub3V2ZWF1L25vdXZlYXVfZHJtLmMgICAg
+ICAgICAgfCAxOCArKysrKysrKysrKysrKysrKysKPiAgZHJtL25vdXZlYXUvdWFwaS9kcm0vbm91
+dmVhdV9kcm0uaCB8ICAzICsrKwo+ICAyIGZpbGVzIGNoYW5nZWQsIDIxIGluc2VydGlvbnMoKykK
+Pgo+IGRpZmYgLS1naXQgYS9kcm0vbm91dmVhdS9ub3V2ZWF1X2RybS5jIGIvZHJtL25vdXZlYXUv
+bm91dmVhdV9kcm0uYwo+IGluZGV4IDg5MDQ5MzM1YjczOC4uZTRiZDZlZDUxZTczIDEwMDY0NAo+
+IC0tLSBhL2RybS9ub3V2ZWF1L25vdXZlYXVfZHJtLmMKPiArKysgYi9kcm0vbm91dmVhdS9ub3V2
+ZWF1X2RybS5jCj4gQEAgLTc1LDYgKzc1LDEwIEBAIE1PRFVMRV9QQVJNX0RFU0MocnVucG0sICJk
+aXNhYmxlICgwKSwgZm9yY2UgZW5hYmxlICgxKSwgb3B0aW11cyBvbmx5IGRlZmF1bHQgKC0xCj4g
+IGludCBub3V2ZWF1X3J1bnRpbWVfcG0gPSAtMTsKPiAgbW9kdWxlX3BhcmFtX25hbWVkKHJ1bnBt
+LCBub3V2ZWF1X3J1bnRpbWVfcG0sIGludCwgMDQwMCk7Cj4KPiArTU9EVUxFX1BBUk1fREVTQyhz
+dGFnaW5nLCAiZW5hYmxlIHN0YWdpbmcgQVBJcyIpOwo+ICtpbnQgbm91dmVhdV9zdGFnaW5nID0g
+MDsKPiArbW9kdWxlX3BhcmFtX25hbWVkKHN0YWdpbmcsIG5vdXZlYXVfc3RhZ2luZywgaW50LCAw
+NDAwKTsKPiArCj4gIHN0YXRpYyBzdHJ1Y3QgZHJtX2RyaXZlciBkcml2ZXJfc3R1YjsKPiAgc3Rh
+dGljIHN0cnVjdCBkcm1fZHJpdmVyIGRyaXZlcl9wY2k7Cj4gIHN0YXRpYyBzdHJ1Y3QgZHJtX2Ry
+aXZlciBkcml2ZXJfcGxhdGZvcm07Cj4gQEAgLTg5NSw2ICs4OTksNyBAQCBub3V2ZWF1X2lvY3Rs
+c1tdID0gewo+ICAgICAgICAgRFJNX0lPQ1RMX0RFRl9EUlYoTk9VVkVBVV9HRU1fQ1BVX1BSRVAs
+IG5vdXZlYXVfZ2VtX2lvY3RsX2NwdV9wcmVwLCBEUk1fVU5MT0NLRUR8RFJNX0FVVEh8RFJNX1JF
+TkRFUl9BTExPVyksCj4gICAgICAgICBEUk1fSU9DVExfREVGX0RSVihOT1VWRUFVX0dFTV9DUFVf
+RklOSSwgbm91dmVhdV9nZW1faW9jdGxfY3B1X2ZpbmksIERSTV9VTkxPQ0tFRHxEUk1fQVVUSHxE
+Uk1fUkVOREVSX0FMTE9XKSwKPiAgICAgICAgIERSTV9JT0NUTF9ERUZfRFJWKE5PVVZFQVVfR0VN
+X0lORk8sIG5vdXZlYXVfZ2VtX2lvY3RsX2luZm8sIERSTV9VTkxPQ0tFRHxEUk1fQVVUSHxEUk1f
+UkVOREVSX0FMTE9XKSwKPiArICAgICAgIC8qIFN0YWdpbmcgaW9jdGxzICovCj4gIH07Cj4KPiAg
+bG9uZwo+IEBAIC0xMDI3LDYgKzEwMzIsNyBAQCBzdGF0aWMgdm9pZCBub3V2ZWF1X2Rpc3BsYXlf
+b3B0aW9ucyh2b2lkKQo+ICAgICAgICAgRFJNX0RFQlVHX0RSSVZFUigiLi4uIHJ1bnBtICAgICAg
+ICA6ICVkXG4iLCBub3V2ZWF1X3J1bnRpbWVfcG0pOwo+ICAgICAgICAgRFJNX0RFQlVHX0RSSVZF
+UigiLi4uIHZyYW1fcHVzaGJ1ZiA6ICVkXG4iLCBub3V2ZWF1X3ZyYW1fcHVzaGJ1Zik7Cj4gICAg
+ICAgICBEUk1fREVCVUdfRFJJVkVSKCIuLi4gcHN0YXRlICAgICAgIDogJWRcbiIsIG5vdXZlYXVf
+cHN0YXRlKTsKPiArICAgICAgIERSTV9ERUJVR19EUklWRVIoIi4uLiBzdGFnaW5nICAgICAgOiAl
+ZFxuIiwgbm91dmVhdV9zdGFnaW5nKTsKPiAgfQo+Cj4gIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZGV2
+X3BtX29wcyBub3V2ZWF1X3BtX29wcyA9IHsKPiBAQCAtMTA4OCw2ICsxMDk0LDE4IEBAIGVycl9m
+cmVlOgo+ICBzdGF0aWMgaW50IF9faW5pdAo+ICBub3V2ZWF1X2RybV9pbml0KHZvaWQpCj4gIHsK
+PiArICAgICAgIC8qIERvIG5vdCByZWdpc3RlciBzdGFnaW5nIGlvY3RzbCBpZiBvcHRpb24gbm90
+IHNwZWNpZmllZCAqLwo+ICsgICAgICAgaWYgKCFub3V2ZWF1X3N0YWdpbmcpIHsKPiArICAgICAg
+ICAgICAgICAgdW5zaWduZWQgaTsKPiArCj4gKyAgICAgICAgICAgICAgIC8qIFRoaXMga2VlcHMg
+dXMgc2FmZSBpcyBubyBzdGFnaW5nIGlvY3RscyBhcmUgZGVmaW5lZCAqLwo+ICsgICAgICAgICAg
+ICAgICBpID0gbWluKGRyaXZlcl9zdHViLm51bV9pb2N0bHMsIERSTV9OT1VWRUFVX1NUQUdJTkdf
+SU9DVEwpOwo+ICsgICAgICAgICAgICAgICB3aGlsZSAoIW5vdXZlYXVfaW9jdGxzW2kgLSAxXS5m
+dW5jKQo+ICsgICAgICAgICAgICAgICAgICAgICAgIGktLTsKPiArCj4gKyAgICAgICAgICAgICAg
+IGRyaXZlcl9zdHViLm51bV9pb2N0bHMgPSBpOwo+ICsgICAgICAgfQpIZXkgQWxleCwKCkkndmUg
+Z290IG5vIHNwZWNpZmljIG9iamVjdGlvbi4gIEJ1dCBJJ20gY3VyaW91cyBhcyB0byB3aHkgeW91
+IHRvb2sKdGhpcyBhcHByb2FjaCBhcyBvcHBvc2VkIHRvIGp1c3QgYWRkaW5nICJpZiAoIW5vdXZl
+YXVfc3RhZ2luZykgcmV0dXJuCi1FSU5WQUw7IiBkaXJlY3RseSBpbiB0aGUgZXhwZXJpbWVudGFs
+IGlvY3Rscz8gIEkgdGhpbmssIGluIGxpbmUgd2l0aAp3aGF0J3MgYmVlbiBkb25lIGluIG90aGVy
+IHBsYWNlcywgaGF2aW5nIG1vZHVsZSBvcHRpb25zIHBlci1hcGkgaXMKcGVyaGFwcyBhIGJldHRl
+ciBjaG9pY2UgdG9vLgoKQmVuLgoKPiArCj4gICAgICAgICBkcml2ZXJfcGNpID0gZHJpdmVyX3N0
+dWI7Cj4gICAgICAgICBkcml2ZXJfcGNpLnNldF9idXNpZCA9IGRybV9wY2lfc2V0X2J1c2lkOwo+
+ICAgICAgICAgZHJpdmVyX3BsYXRmb3JtID0gZHJpdmVyX3N0dWI7Cj4gZGlmZiAtLWdpdCBhL2Ry
+bS9ub3V2ZWF1L3VhcGkvZHJtL25vdXZlYXVfZHJtLmggYi9kcm0vbm91dmVhdS91YXBpL2RybS9u
+b3V2ZWF1X2RybS5oCj4gaW5kZXggNTUwN2VlYWQ1ODYzLi40ZTdlMjFmNDFiNWMgMTAwNjQ0Cj4g
+LS0tIGEvZHJtL25vdXZlYXUvdWFwaS9kcm0vbm91dmVhdV9kcm0uaAo+ICsrKyBiL2RybS9ub3V2
+ZWF1L3VhcGkvZHJtL25vdXZlYXVfZHJtLmgKPiBAQCAtMTQwLDExICsxNDAsMTQgQEAgc3RydWN0
+IGRybV9ub3V2ZWF1X2dlbV9jcHVfZmluaSB7Cj4gICNkZWZpbmUgRFJNX05PVVZFQVVfR0VNX0NQ
+VV9QUkVQICAgICAgIDB4NDIKPiAgI2RlZmluZSBEUk1fTk9VVkVBVV9HRU1fQ1BVX0ZJTkkgICAg
+ICAgMHg0Mwo+ICAjZGVmaW5lIERSTV9OT1VWRUFVX0dFTV9JTkZPICAgICAgICAgICAweDQ0Cj4g
+Ky8qIHJhbmdlIDB4OTguLkRSTV9DT01NQU5EX0VORCAoOCBlbnRyaWVzKSBpcyByZXNlcnZlZCBm
+b3Igc3RhZ2luZywgdW5zdGFibGUgaW9jdGxzICovCj4gKyNkZWZpbmUgRFJNX05PVVZFQVVfU1RB
+R0lOR19JT0NUTCAgICAgIDB4NTgKPgo+ICAjZGVmaW5lIERSTV9JT0NUTF9OT1VWRUFVX0dFTV9O
+RVcgICAgICAgICAgICBEUk1fSU9XUihEUk1fQ09NTUFORF9CQVNFICsgRFJNX05PVVZFQVVfR0VN
+X05FVywgc3RydWN0IGRybV9ub3V2ZWF1X2dlbV9uZXcpCj4gICNkZWZpbmUgRFJNX0lPQ1RMX05P
+VVZFQVVfR0VNX1BVU0hCVUYgICAgICAgIERSTV9JT1dSKERSTV9DT01NQU5EX0JBU0UgKyBEUk1f
+Tk9VVkVBVV9HRU1fUFVTSEJVRiwgc3RydWN0IGRybV9ub3V2ZWF1X2dlbV9wdXNoYnVmKQo+ICAj
+ZGVmaW5lIERSTV9JT0NUTF9OT1VWRUFVX0dFTV9DUFVfUFJFUCAgICAgICBEUk1fSU9XIChEUk1f
+Q09NTUFORF9CQVNFICsgRFJNX05PVVZFQVVfR0VNX0NQVV9QUkVQLCBzdHJ1Y3QgZHJtX25vdXZl
+YXVfZ2VtX2NwdV9wcmVwKQo+ICAjZGVmaW5lIERSTV9JT0NUTF9OT1VWRUFVX0dFTV9DUFVfRklO
+SSAgICAgICBEUk1fSU9XIChEUk1fQ09NTUFORF9CQVNFICsgRFJNX05PVVZFQVVfR0VNX0NQVV9G
+SU5JLCBzdHJ1Y3QgZHJtX25vdXZlYXVfZ2VtX2NwdV9maW5pKQo+ICAjZGVmaW5lIERSTV9JT0NU
+TF9OT1VWRUFVX0dFTV9JTkZPICAgICAgICAgICBEUk1fSU9XUihEUk1fQ09NTUFORF9CQVNFICsg
+RFJNX05PVVZFQVVfR0VNX0lORk8sIHN0cnVjdCBkcm1fbm91dmVhdV9nZW1faW5mbykKPiArLyog
+c3RhZ2luZyBpb2N0bHMgKi8KPgo+ICAjZW5kaWYgLyogX19OT1VWRUFVX0RSTV9IX18gKi8KPiAt
+LQo+IDIuNC4wCj4KPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwo+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiBkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnCj4gaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2Ry
+aS1kZXZlbApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
+cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
+cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
