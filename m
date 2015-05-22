@@ -1,73 +1,61 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Subject: Re: [RFC] tegra: dpaux: pinctrl proposal
-Date: Fri, 22 May 2015 16:37:34 +0100
-Message-ID: <555F4D3E.1030407@nvidia.com>
-References: <1431963229-12867-1-git-send-email-jonathanh@nvidia.com> <20150519144654.GG26748@ulmo.nvidia.com> <555C901F.8090009@nvidia.com> <20150520154022.GB7734@ulmo.nvidia.com> <555CAE47.6070907@nvidia.com> <555CDC82.1010104@wwwdotorg.org> <555DD7B3.6020608@nvidia.com> <20150521140356.GA28021@ulmo.nvidia.com> <CACRpkdYP5FN=4_pWxc1j=e_JfcjA3bXCPDRmZYHeiZ8HDyEaEQ@mail.gmail.com> <555F1E3E.7040500@nvidia.com> <20150522143706.GA19922@ulmo.nvidia.com>
+Date: Fri, 22 May 2015 09:41:05 -0600
+Message-ID: <555F4E11.3050201@wwwdotorg.org>
+References: <1431963229-12867-1-git-send-email-jonathanh@nvidia.com>	<20150519144654.GG26748@ulmo.nvidia.com>	<555C901F.8090009@nvidia.com>	<20150520154022.GB7734@ulmo.nvidia.com>	<555CAE47.6070907@nvidia.com>	<555CDC82.1010104@wwwdotorg.org>	<555DD7B3.6020608@nvidia.com>	<20150521140356.GA28021@ulmo.nvidia.com> <CACRpkdYP5FN=4_pWxc1j=e_JfcjA3bXCPDRmZYHeiZ8HDyEaEQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150522143706.GA19922-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+In-Reply-To: <CACRpkdYP5FN=4_pWxc1j=e_JfcjA3bXCPDRmZYHeiZ8HDyEaEQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 22/05/15 15:37, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Fri, May 22, 2015 at 01:17:02PM +0100, Jon Hunter wrote:
+On 05/22/2015 01:03 AM, Linus Walleij wrote:
+> On Thu, May 21, 2015 at 4:03 PM, Thierry Reding
+> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>
+>>>> I don't see any conceptual reason why the driver that binds to that node
+>>>> can't register as both a pinctrl driver plus anything else it needs to.
+> (...)
+>>> Looking at it there should not be a problem here with regard to the
+>>> driver_data member of the device struct and so I don't see why the
+>>> tegra_dpaux_probe() could not call pinctrl_register() to register the
+>>> device.
 >>
->> On 22/05/15 08:03, Linus Walleij wrote:
->>> On Thu, May 21, 2015 at 4:03 PM, Thierry Reding
->>> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->>>
->>>>>> I don't see any conceptual reason why the driver that binds to that node
->>>>>> can't register as both a pinctrl driver plus anything else it needs to.
->>> (...)
->>>>> Looking at it there should not be a problem here with regard to the
->>>>> driver_data member of the device struct and so I don't see why the
->>>>> tegra_dpaux_probe() could not call pinctrl_register() to register the
->>>>> device.
->>>>
->>>> Yes, I think that'd be the best solution.
->>>
->>> I'm pretty much ready to go to any compromises to get DRM/GPU
->>> drivers to use internal kernel subsystems. The tendency there
->>> is to reimplement all kernel driver frameworks and hammer registers
->>> they need to access.
->>
->> Thanks Linus, but after looking at this further I don't think this
->> approach will work after all. In order to call pinctrl_register() from
->> outside the pinctrl directory, also means exposing the pinctrl_dev and
->> pinctrl_desc structures and so this will get messy. Or at least a bigger
->> churn than I would have hoped for.
-> 
-> It's not that much churn, is it? The structure definitions could be
-> moved to include/linux/pinctrl/machine.h. That's included by core.h in
-> drivers/pinctrl anyway, so that should really be all there is to it.
+>> Yes, I think that'd be the best solution.
+>
+> I'm pretty much ready to go to any compromises to get DRM/GPU
+> drivers to use internal kernel subsystems. The tendency there
+> is to reimplement all kernel driver frameworks and hammer registers
+> they need to access.
+>
+> There are good reasons for. These drivers are usually so complex
+> that things like probing and power up/down become a nightmare
+> with cross-subsystem dependencies.
+>
+> They are a special case. I had a long discussion with Intel's
+> Daniel Vetter about this and they (Intel) eventually used GPIO
+> for some stuff where it would fit nicely, but didn't go to use fixed
+> regulators as I had suggested.
+>
+>>> However, it does mean that all the pinctrl/pinmux/pinconf ops for this
+>>> pinctrl device will need to live in drivers/gpu/drm/tegra/dpaux.c which
+>>> is fine,
+>
+> Yeah that's cool I already have e.g. GPIO chips all over the map,
+> including DRM IIRC.
+>
+>>> but I *believe* that would require moving
+>>> drivers/pinctrl/pinctrl-utils.h to include/linux/pinctrl/ in order to
+>>> make use of these functions.
+>
+> Well I originally intended that to be private and neat, but whatever.
+> Call it pinctrl-utils-internal.h or something then.
 
-I took a quick look and I would need to move pinctrl, pinctrl_dev and
-pinctrl_state. So may be not too bad. pinctrl/machine.h makes logical
-sense, but not sure if they would be more suited to pinctrl/pinctrl.h.
-
->> Thierry, what if we add a drivers/pinctrl/pinctrl-tegra-dpaux.c and then
->> simply call platform_device_register_data() from tegra_dpaux_probe() to
->> register the device? I could still use the parent of_node to match the
->> platform data for the dpaux pin controller.
-> 
-> That'd work for me too. But if that's what it comes down to, I don't see
-> a need to go through the driver model. Why not simply expose a simple
-> set of functions to setup and tear down the pinctrl that the DPAUX
-> driver can call?
-
-Sorry, but I don't understand how that would work :-(
-
-> I'd still clearly prefer to have the pinctrl code live directly in the
-> DPAUX driver, so I think we should at least give that a shot.
-
-It's fine with me if Linus is ok with the changes.
-
-Cheers
-Jon
+Sorry for the bikeshed: perhaps s/internal/provider/? If all providers 
+would need this, does it even make sense to merge it into 
+include/linuxp/pinctrl/pinctrl.h, which defines all the other stuff 
+providers use?
