@@ -1,120 +1,101 @@
-From: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH 3/6] arm64: tegra: Add Tegra210 support
-Date: Fri, 22 May 2015 14:38:00 +0100
-Message-ID: <20150522133800.GY29424@e104818-lin.cambridge.arm.com>
-References: <1431529065-20128-1-git-send-email-thierry.reding@gmail.com>
- <1431529065-20128-3-git-send-email-thierry.reding@gmail.com>
- <20150513171114.GA18655@e104818-lin.cambridge.arm.com>
- <20150515101913.GA20474@ulmo.nvidia.com>
- <20150519145211.GX21251@e104818-lin.cambridge.arm.com>
- <20150519151740.GA28161@ulmo.nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC] tegra: dpaux: pinctrl proposal
+Date: Fri, 22 May 2015 16:37:08 +0200
+Message-ID: <20150522143706.GA19922@ulmo.nvidia.com>
+References: <1431963229-12867-1-git-send-email-jonathanh@nvidia.com>
+ <20150519144654.GG26748@ulmo.nvidia.com>
+ <555C901F.8090009@nvidia.com>
+ <20150520154022.GB7734@ulmo.nvidia.com>
+ <555CAE47.6070907@nvidia.com>
+ <555CDC82.1010104@wwwdotorg.org>
+ <555DD7B3.6020608@nvidia.com>
+ <20150521140356.GA28021@ulmo.nvidia.com>
+ <CACRpkdYP5FN=4_pWxc1j=e_JfcjA3bXCPDRmZYHeiZ8HDyEaEQ@mail.gmail.com>
+ <555F1E3E.7040500@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="LZvS9be/3tNcYl/X"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20150519151740.GA28161-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+In-Reply-To: <555F1E3E.7040500-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, May 19, 2015 at 05:17:42PM +0200, Thierry Reding wrote:
-> On Tue, May 19, 2015 at 03:52:11PM +0100, Catalin Marinas wrote:
-> > On Fri, May 15, 2015 at 12:19:16PM +0200, Thierry Reding wrote:
-> > > On Wed, May 13, 2015 at 06:11:15PM +0100, Catalin Marinas wrote:
-> > > > On Wed, May 13, 2015 at 04:57:42PM +0200, Thierry Reding wrote:
-> > > > > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > > > 
-> > > > > NVIDIA Tegra210 (also known as Tegra X1) has four Cortex-A57 and four
-> > > > > Cortex-A53 CPUs. Compared to Tegra124 and Tegra132 it comes with a 256-
-> > > > > core Maxwell GPU. It supports processing videos of up to 4K resolutions
-> > > > > at 60 fps (H.265, VP9, H.264).
-> > > > > 
-> > > > > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > > > ---
-> > > > >  arch/arm64/Kconfig                       |   9 +
-> > > > >  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 998 +++++++++++++++++++++++++++++++
-> > > > >  2 files changed, 1007 insertions(+)
-> > > > >  create mode 100644 arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> > > > > 
-> > > > > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> > > > > index 7796af4b1d6f..bfdf064ada66 100644
-> > > > > --- a/arch/arm64/Kconfig
-> > > > > +++ b/arch/arm64/Kconfig
-> > > > > @@ -225,6 +225,15 @@ config ARCH_TEGRA_132_SOC
-> > > > >  	  but contains an NVIDIA Denver CPU complex in place of
-> > > > >  	  Tegra124's "4+1" Cortex-A15 CPU complex.
-> > > > >  
-> > > > > +config ARCH_TEGRA_210_SOC
-> > > > > +	bool "NVIDIA Tegra210 SoC"
-> > > > > +	depends on ARCH_TEGRA
-> > > > > +	select PINCTRL_TEGRA210
-> > > > > +	select USB_ULPI if USB_PHY
-> > > > > +	select USB_ULPI_VIEWPORT if USB_PHY
-> > > > > +	help
-> > > > > +	  Enable support for the NVIDIA Tegra210 SoC.
-> > > > > +
-> > > > 
-> > > > The previous ARCH_TEGRA_132_SOC escaped me. Do we need all these
-> > > > ARCH_TEGRA_*_SOC entries? Can we not have per-driver Kconfig options?
-> > > > For example, ARCH_TEGRA_132_SOC seems to be only used in
-> > > > drivers/clk/tegra, a specific Kconfig entry in there would suffice.
-> > > 
-> > > There are actually a couple of other places where this will be used in
-> > > subsequent patches (e.g. memory controller driver). The idea behind
-> > > having these is that each one of them is used to enable the essentials
-> > > out of the box, so that people don't have to go and enable a bunch of
-> > > driver-specific Kconfig options just to get a kernel configuration that
-> > > can actually boot.
-> > 
-> > We debated whether to have ARCH_* options at all on arm64 and we settled
-> > for the middle ground - only add them for SoC families, not individual
-> > SoCs. As for the kernel configuration that actually boots, we want the
-> > arm64 defconfig to include all the supported SoCs and drivers (though
-> > longer term I'd like to see more drivers built as modules by default).
-> > 
-> > > This is also useful for integrators since they can simply omit all SoC
-> > > generations that they're not interested in. Having a per-SoC option
-> > > provides an easy way of doing so.
-> > 
-> > The integrators could just select a SoC family and trim down unwanted
-> > options, I don't think they rely on the kernel defconfig for a final
-> > product. If this becomes an issue, I would rather have per-SoC
-> > defconfigs than lots of Kconfig entries.
-> 
-> I understand the desire to start with a clean plate on a new
-> architecture, but Tegra has worked like this for the past 5 years and
-> it's worked out really well for us. So I'm reluctant to introduce these
-> inconsistencies merely because 64-bit ARM now lives in a different
-> directory.
 
-That's a good time to start cleaning this up, especially since we
-mandate single image from the beginning.
+--LZvS9be/3tNcYl/X
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Are you concerned about arch/arm64/Kconfig growing wild? If so we could
-> easily move these configuration options outside to something like
-> drivers/soc/tegra/Kconfig. While at it, we could move existing options
-> from arch/arm/mach-tegra over to that as well.
+On Fri, May 22, 2015 at 01:17:02PM +0100, Jon Hunter wrote:
+>=20
+> On 22/05/15 08:03, Linus Walleij wrote:
+> > On Thu, May 21, 2015 at 4:03 PM, Thierry Reding
+> > <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> >=20
+> >>>> I don't see any conceptual reason why the driver that binds to that =
+node
+> >>>> can't register as both a pinctrl driver plus anything else it needs =
+to.
+> > (...)
+> >>> Looking at it there should not be a problem here with regard to the
+> >>> driver_data member of the device struct and so I don't see why the
+> >>> tegra_dpaux_probe() could not call pinctrl_register() to register the
+> >>> device.
+> >>
+> >> Yes, I think that'd be the best solution.
+> >=20
+> > I'm pretty much ready to go to any compromises to get DRM/GPU
+> > drivers to use internal kernel subsystems. The tendency there
+> > is to reimplement all kernel driver frameworks and hammer registers
+> > they need to access.
+>=20
+> Thanks Linus, but after looking at this further I don't think this
+> approach will work after all. In order to call pinctrl_register() from
+> outside the pinctrl directory, also means exposing the pinctrl_dev and
+> pinctrl_desc structures and so this will get messy. Or at least a bigger
+> churn than I would have hoped for.
 
-I think the whole ARCH_TEGRA_*_SOC approach is wrong. You don't bother
-introducing Kconfig entries for individual drivers but instead add an
-obj-*_SOC in various Makefiles under drivers/. If we ever get to a point
-where we can build (part of) the SoCs as modules (and I'm not talking
-about kernels shipped with end products but those distro kernel
-targeting development boards), we have to go back and add such Kconfig
-entries for specific drivers.
+It's not that much churn, is it? The structure definitions could be
+moved to include/linux/pinctrl/machine.h. That's included by core.h in
+drivers/pinctrl anyway, so that should really be all there is to it.
 
-So if you do it properly from the beginning with per-driver Kconfig
-entry, I no longer see the point of an ARCH_TEGRA_*_SOC option. It may
-be more convenient for people building end products but they should know
-better what components are required, defconfig is rarely meant for them.
+> Thierry, what if we add a drivers/pinctrl/pinctrl-tegra-dpaux.c and then
+> simply call platform_device_register_data() from tegra_dpaux_probe() to
+> register the device? I could still use the parent of_node to match the
+> platform data for the dpaux pin controller.
 
-I'm looking forward to a patch removing ARCH_TEGRA_132_SOC as well (you
-can keep the 32-bit arm options if you'd like).
+That'd work for me too. But if that's what it comes down to, I don't see
+a need to go through the driver model. Why not simply expose a simple
+set of functions to setup and tear down the pinctrl that the DPAUX
+driver can call?
 
--- 
-Catalin
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+I'd still clearly prefer to have the pinctrl code live directly in the
+DPAUX driver, so I think we should at least give that a shot.
+
+Thierry
+
+--LZvS9be/3tNcYl/X
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJVXz8PAAoJEN0jrNd/PrOh/zMP/2XpnaLJ3s7r0YJt+GjZzApE
+cLv1Xg0sMrtQH9p8TyEq95Lsx3ym1p/DoL3HoVM5jA2rvh0nsVFwPkll7i1Ko8kJ
+QOUfm3+wBYD/kk5ldQTVLt9EXu0fPRUEQXwfHgRnv5l6Pz2lRIyiTuJMAZL2/V5f
+2dnojBBUI7YVaGwfLZT6S7IqXkrN0M62r/y2oxSArRNFY7j+wRYsaAP2Jly+7gdm
+6F1LGp90m1Zm8dXzwwpI3dilFd+zv6Lv3DgCZ/A9i5Bqq6xJ2bcC0qG+Ld/y1kIw
+Zg4DetFpfnPPDfIjM24cHNvpfVoDXarhFnnWZZ4beG7n0VlzqMqlLz9A7vv1uVXF
+UBRgMUlxLHQjFefPCq25Z23X3V1VhZ4KPUBBWE6VfIYg4s1RWmyLaSnaZs2CjHHq
+QvhS68PjiI/3rKgQ/xoK6QcrlNEbV1CnIcGNOhA/JrQ41DEKWHFy3egLI/4wsXBP
+6gUnm32XMjeDRl5k7WCsc7z1RyD+2e2G54xVl+jTJJtOcCkqHdapMPRiLg40rwgB
+94sIL9hvY92l/hZB6XsNGylFCB6mle4Uqbt6gmHzjyOFY6pXrYtcjg1yuFluuMhb
+VppOL1w9vVvKNa71QemHoUcUwtJ+6E4nwYx2lzaFZUX3VhiKd3GvqeaaF0yWywIg
+8rYMhxUFSieitK5Zj14V
+=70FS
+-----END PGP SIGNATURE-----
+
+--LZvS9be/3tNcYl/X--
