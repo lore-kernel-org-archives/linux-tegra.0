@@ -1,64 +1,73 @@
-From: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH 3/6] arm64: tegra: Add Tegra210 support
-Date: Fri, 22 May 2015 16:33:06 +0100
-Message-ID: <20150522153306.GA29424@e104818-lin.cambridge.arm.com>
-References: <1431529065-20128-1-git-send-email-thierry.reding@gmail.com>
- <1431529065-20128-3-git-send-email-thierry.reding@gmail.com>
- <20150513171114.GA18655@e104818-lin.cambridge.arm.com>
- <20150515101913.GA20474@ulmo.nvidia.com>
- <20150519145211.GX21251@e104818-lin.cambridge.arm.com>
- <20150519151740.GA28161@ulmo.nvidia.com>
- <20150522133800.GY29424@e104818-lin.cambridge.arm.com>
- <20150522150514.GD19922@ulmo.nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC] tegra: dpaux: pinctrl proposal
+Date: Fri, 22 May 2015 16:37:34 +0100
+Message-ID: <555F4D3E.1030407@nvidia.com>
+References: <1431963229-12867-1-git-send-email-jonathanh@nvidia.com> <20150519144654.GG26748@ulmo.nvidia.com> <555C901F.8090009@nvidia.com> <20150520154022.GB7734@ulmo.nvidia.com> <555CAE47.6070907@nvidia.com> <555CDC82.1010104@wwwdotorg.org> <555DD7B3.6020608@nvidia.com> <20150521140356.GA28021@ulmo.nvidia.com> <CACRpkdYP5FN=4_pWxc1j=e_JfcjA3bXCPDRmZYHeiZ8HDyEaEQ@mail.gmail.com> <555F1E3E.7040500@nvidia.com> <20150522143706.GA19922@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20150522150514.GD19922-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+In-Reply-To: <20150522143706.GA19922-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, May 22, 2015 at 05:05:16PM +0200, Thierry Reding wrote:
-> On Fri, May 22, 2015 at 02:38:00PM +0100, Catalin Marinas wrote:
-> > So if you do it properly from the beginning with per-driver Kconfig
-> > entry, I no longer see the point of an ARCH_TEGRA_*_SOC option. It may
-> > be more convenient for people building end products but they should know
-> > better what components are required, defconfig is rarely meant for them.
+
+On 22/05/15 15:37, Thierry Reding wrote:
+> * PGP Signed by an unknown key
 > 
-> Your proposal also means that we'll have to go and add separate Kconfig
-> entries for each SoC generation that a driver supports so that the SoC
-> specific bits can be disabled.
+> On Fri, May 22, 2015 at 01:17:02PM +0100, Jon Hunter wrote:
+>>
+>> On 22/05/15 08:03, Linus Walleij wrote:
+>>> On Thu, May 21, 2015 at 4:03 PM, Thierry Reding
+>>> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>>
+>>>>>> I don't see any conceptual reason why the driver that binds to that node
+>>>>>> can't register as both a pinctrl driver plus anything else it needs to.
+>>> (...)
+>>>>> Looking at it there should not be a problem here with regard to the
+>>>>> driver_data member of the device struct and so I don't see why the
+>>>>> tegra_dpaux_probe() could not call pinctrl_register() to register the
+>>>>> device.
+>>>>
+>>>> Yes, I think that'd be the best solution.
+>>>
+>>> I'm pretty much ready to go to any compromises to get DRM/GPU
+>>> drivers to use internal kernel subsystems. The tendency there
+>>> is to reimplement all kernel driver frameworks and hammer registers
+>>> they need to access.
+>>
+>> Thanks Linus, but after looking at this further I don't think this
+>> approach will work after all. In order to call pinctrl_register() from
+>> outside the pinctrl directory, also means exposing the pinctrl_dev and
+>> pinctrl_desc structures and so this will get messy. Or at least a bigger
+>> churn than I would have hoped for.
 > 
-> So in order to get rid of one per-SoC Kconfig entry you'd prefer us to
-> add per-SoC options per driver? Don't you think that's going to make
-> things worse rather than improve them?
+> It's not that much churn, is it? The structure definitions could be
+> moved to include/linux/pinctrl/machine.h. That's included by core.h in
+> drivers/pinctrl anyway, so that should really be all there is to it.
+
+I took a quick look and I would need to move pinctrl, pinctrl_dev and
+pinctrl_state. So may be not too bad. pinctrl/machine.h makes logical
+sense, but not sure if they would be more suited to pinctrl/pinctrl.h.
+
+>> Thierry, what if we add a drivers/pinctrl/pinctrl-tegra-dpaux.c and then
+>> simply call platform_device_register_data() from tegra_dpaux_probe() to
+>> register the device? I could still use the parent of_node to match the
+>> platform data for the dpaux pin controller.
 > 
-> There are currently three drivers (off the top of my head) where we do
-> this and each of them supports five existing generations plus the new
-> Tegra210. So rather than having six symbols to select SoC generation
-> support we'd be needing 18, and that's only counting existing drivers.
+> That'd work for me too. But if that's what it comes down to, I don't see
+> a need to go through the driver model. Why not simply expose a simple
+> set of functions to setup and tear down the pinctrl that the DPAUX
+> driver can call?
 
-That's not what I meant. For example, you have a clk-tegra124.c file
-built for two SoCs already and there may be more coming. Instead of
-multiple obj-y of the same file, just add the entry below to
-drivers/clk/tegra/Kconfig:
+Sorry, but I don't understand how that would work :-(
 
-config CLK_TEGRA124
-	bool "NVIDIA Tegra 124 clock"
-	depends on ARCH_TEGRA_124_SOC || (ARM64 && ARCH_TEGRA)
-	default y
-	help
-	  Used on Tegra 124, 132 etc.
-	  ...
+> I'd still clearly prefer to have the pinctrl code live directly in the
+> DPAUX driver, so I think we should at least give that a shot.
 
-Note that I preserved the 124_SOC dependency for the 32-bit arm case.
-But for arm64, just make it dependent on ARCH_TEGRA.
+It's fine with me if Linus is ok with the changes.
 
-Once done, the Makefile only needs a single entry:
-
-obj-$(CONFIG_TEGRA124) += clk-tegra124.o
-
--- 
-Catalin
+Cheers
+Jon
