@@ -1,38 +1,72 @@
-From: Martin Peres <martin.peres@free.fr>
-Subject: Re: [Nouveau] [PATCH v2] nouveau: add coherent BO attribute
-Date: Thu, 21 May 2015 21:23:07 +0300
-Message-ID: <555E228B.9090400@free.fr>
-References: <1432188508-650-1-git-send-email-acourbot@nvidia.com>
- <CACAvsv5qW74Lp5pYke-4GKi2BYgXot2SM93T_aZX=rztWwGJHA@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [RFC] tegra: dpaux: pinctrl proposal
+Date: Fri, 22 May 2015 09:03:17 +0200
+Message-ID: <CACRpkdYP5FN=4_pWxc1j=e_JfcjA3bXCPDRmZYHeiZ8HDyEaEQ@mail.gmail.com>
+References: <1431963229-12867-1-git-send-email-jonathanh@nvidia.com>
+	<20150519144654.GG26748@ulmo.nvidia.com>
+	<555C901F.8090009@nvidia.com>
+	<20150520154022.GB7734@ulmo.nvidia.com>
+	<555CAE47.6070907@nvidia.com>
+	<555CDC82.1010104@wwwdotorg.org>
+	<555DD7B3.6020608@nvidia.com>
+	<20150521140356.GA28021@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CACAvsv5qW74Lp5pYke-4GKi2BYgXot2SM93T_aZX=rztWwGJHA@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ben Skeggs <skeggsb@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, Maarten Lankhorst <maarten@mblankhorst.nl>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150521140356.GA28021-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMjEvMDUvMjAxNSAxMTo0NywgQmVuIFNrZWdncyB3cm90ZToKPiBPbiAyMSBNYXkgMjAxNSBh
-dCAxNjowOCwgQWxleGFuZHJlIENvdXJib3QgPGFjb3VyYm90QG52aWRpYS5jb20+IHdyb3RlOgo+
-PiBBZGQgYSBmbGFnIGFsbG93aW5nIE5vdXZlYXUgdG8gc3BlY2lmeSB0aGF0IGFuIG9iamVjdCBz
-aG91bGQgYmUgY29oZXJlbnQKPj4gYXQgYWxsb2NhdGlvbiB0aW1lLiBUaGlzIGlzIHJlcXVpcmVk
-IGZvciBzb21lIGNsYXNzIG9mIG9iamVjdHMgbGlrZQo+PiBmZW5jZXMgd2hpY2ggYXJlIHJhbmRv
-bWx5LWFjY2Vzc2VkIGJ5IGJvdGggdGhlIENQVSBhbmQgR1BVLiBUaGlzIGZsYWcKPj4gaW5zdHJ1
-Y3RzIHRoZSBrZXJuZWwgZHJpdmVyIHRvIG1ha2Ugc3VyZSB0aGUgb2JqZWN0IHJlbWFpbnMgY29o
-ZXJlbnQKPj4gZXZlbiBvbiBhcmNoaXRlY3R1cmVzIGZvciB3aGljaCBjb2hlcmVuY3kgaXMgbm90
-IGd1YXJhbnRlZWQgYnkgdGhlIGJ1cy4KPj4KPj4gU2lnbmVkLW9mZi1ieTogQWxleGFuZHJlIENv
-dXJib3QgPGFjb3VyYm90QG52aWRpYS5jb20+Cj4gUmV2aWV3ZWQtYnk6IEJlbiBTa2VnZ3MgPGJz
-a2VnZ3NAcmVkaGF0LmNvbT4KClB1c2hlZCEKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9kcmktZGV2ZWwK
+On Thu, May 21, 2015 at 4:03 PM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+
+>> > I don't see any conceptual reason why the driver that binds to that node
+>> > can't register as both a pinctrl driver plus anything else it needs to.
+(...)
+>> Looking at it there should not be a problem here with regard to the
+>> driver_data member of the device struct and so I don't see why the
+>> tegra_dpaux_probe() could not call pinctrl_register() to register the
+>> device.
+>
+> Yes, I think that'd be the best solution.
+
+I'm pretty much ready to go to any compromises to get DRM/GPU
+drivers to use internal kernel subsystems. The tendency there
+is to reimplement all kernel driver frameworks and hammer registers
+they need to access.
+
+There are good reasons for. These drivers are usually so complex
+that things like probing and power up/down become a nightmare
+with cross-subsystem dependencies.
+
+They are a special case. I had a long discussion with Intel's
+Daniel Vetter about this and they (Intel) eventually used GPIO
+for some stuff where it would fit nicely, but didn't go to use fixed
+regulators as I had suggested.
+
+>> However, it does mean that all the pinctrl/pinmux/pinconf ops for this
+>> pinctrl device will need to live in drivers/gpu/drm/tegra/dpaux.c which
+>> is fine,
+
+Yeah that's cool I already have e.g. GPIO chips all over the map,
+including DRM IIRC.
+
+>> but I *believe* that would require moving
+>> drivers/pinctrl/pinctrl-utils.h to include/linux/pinctrl/ in order to
+>> make use of these functions.
+
+Well I originally intended that to be private and neat, but whatever.
+Call it pinctrl-utils-internal.h or something then.
+
+>> May be that is fine too. I could put
+>> together a patch series and see what everyone thinks.
+>
+> I guess it depends mostly on whether Linus (Cc'ed) is willing to have
+> drivers outside of drivers/pinctrl implement pin controllers.
+
+For this case: go ahead.
+
+Yours,
+Linus Walleij
