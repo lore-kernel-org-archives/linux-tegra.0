@@ -1,130 +1,34 @@
 From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/2] drm/nouveau: add staging module option
-Date: Sat, 23 May 2015 15:39:55 +0900
-Message-ID: <CAAVeFuJ_w4jrGP4CUO4WDG3Rjk7f-S9MSA1uWQGbSYV1T4dPJg@mail.gmail.com>
-References: <1432101379-9515-1-git-send-email-acourbot@nvidia.com>
- <1432101379-9515-2-git-send-email-acourbot@nvidia.com>
- <CACAvsv4vW4bBddq2s9eWMzbYcG_F5j+KCkZAfivxKW9AWDBXQQ@mail.gmail.com>
- <CAAVeFu+N6VvPHispeXBTGykncfnOQkJ-J1PxxVa42-ahX2YDsA@mail.gmail.com>
- <CACAvsv7brfoe51eEOibw39_t=Hg6gvb0T2V8YO0-pDdxZ-nPLw@mail.gmail.com>
- <CAAVeFuKYxHQiUObG+78UdCg+R0Zm9UxaFW5WtKQFcHs33vLbAA@mail.gmail.com>
- <CACAvsv6OR0HcSnvrcsJRi=JJ0m09EPY9vi0QDuRiqCTfPVjvaQ@mail.gmail.com>
+Subject: Re: [Nouveau] [PATCH v2] nouveau: add coherent BO attribute
+Date: Sat, 23 May 2015 15:45:57 +0900
+Message-ID: <CAAVeFuJHL664jbsEBUYFp0atnuF3gisbwhJhR-R=cy+iB8gUCg@mail.gmail.com>
+References: <1432188508-650-1-git-send-email-acourbot@nvidia.com>
+ <CACAvsv5qW74Lp5pYke-4GKi2BYgXot2SM93T_aZX=rztWwGJHA@mail.gmail.com> <555E228B.9090400@free.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <CACAvsv6OR0HcSnvrcsJRi=JJ0m09EPY9vi0QDuRiqCTfPVjvaQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <555E228B.9090400-GANU6spQydw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Martin Peres <martin.peres-GANU6spQydw@public.gmane.org>
+Cc: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Maarten Lankhorst <maarten-FcfepWsj2zOByvU0x3ry2g@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVGh1LCBNYXkgMjEsIDIwMTUgYXQgNTozNSBQTSwgQmVuIFNrZWdncyA8c2tlZ2dzYkBnbWFp
-bC5jb20+IHdyb3RlOgo+IE9uIDIxIE1heSAyMDE1IGF0IDE2OjA0LCBBbGV4YW5kcmUgQ291cmJv
-dCA8Z251cm91QGdtYWlsLmNvbT4gd3JvdGU6Cj4+IE9uIFRodSwgTWF5IDIxLCAyMDE1IGF0IDI6
-NTUgUE0sIEJlbiBTa2VnZ3MgPHNrZWdnc2JAZ21haWwuY29tPiB3cm90ZToKPj4+IE9uIDIxIE1h
-eSAyMDE1IGF0IDE1OjQ5LCBBbGV4YW5kcmUgQ291cmJvdCA8Z251cm91QGdtYWlsLmNvbT4gd3Jv
-dGU6Cj4+Pj4gT24gVGh1LCBNYXkgMjEsIDIwMTUgYXQgMTo0OCBQTSwgQmVuIFNrZWdncyA8c2tl
-Z2dzYkBnbWFpbC5jb20+IHdyb3RlOgo+Pj4+PiBPbiAyMCBNYXkgMjAxNSBhdCAxNTo1NiwgQWxl
-eGFuZHJlIENvdXJib3QgPGFjb3VyYm90QG52aWRpYS5jb20+IHdyb3RlOgo+Pj4+Pj4gQWRkIGEg
-bW9kdWxlIG9wdGlvbiBhbGxvd2luZyB0byBlbmFibGUgc3RhZ2luZy91bnN0YWJsZSBBUElzLiBU
-aGlzIHdpbGwKPj4+Pj4+IGFsbG93IHVzIHRvIGV4cGVyaW1lbnQgZnJlZWx5IHdpdGggZXhwZXJp
-bWVudGFsIEFQSXMgZm9yIGEgd2hpbGUgYmVmb3JlCj4+Pj4+PiBzZXR0aW5nIHRoZW0gaW4gc3Rv
-bmUuCj4+Pj4+Pgo+Pj4+Pj4gU2lnbmVkLW9mZi1ieTogQWxleGFuZHJlIENvdXJib3QgPGFjb3Vy
-Ym90QG52aWRpYS5jb20+Cj4+Pj4+PiAtLS0KPj4+Pj4+ICBkcm0vbm91dmVhdS9ub3V2ZWF1X2Ry
-bS5jICAgICAgICAgIHwgMTggKysrKysrKysrKysrKysrKysrCj4+Pj4+PiAgZHJtL25vdXZlYXUv
-dWFwaS9kcm0vbm91dmVhdV9kcm0uaCB8ICAzICsrKwo+Pj4+Pj4gIDIgZmlsZXMgY2hhbmdlZCwg
-MjEgaW5zZXJ0aW9ucygrKQo+Pj4+Pj4KPj4+Pj4+IGRpZmYgLS1naXQgYS9kcm0vbm91dmVhdS9u
-b3V2ZWF1X2RybS5jIGIvZHJtL25vdXZlYXUvbm91dmVhdV9kcm0uYwo+Pj4+Pj4gaW5kZXggODkw
-NDkzMzViNzM4Li5lNGJkNmVkNTFlNzMgMTAwNjQ0Cj4+Pj4+PiAtLS0gYS9kcm0vbm91dmVhdS9u
-b3V2ZWF1X2RybS5jCj4+Pj4+PiArKysgYi9kcm0vbm91dmVhdS9ub3V2ZWF1X2RybS5jCj4+Pj4+
-PiBAQCAtNzUsNiArNzUsMTAgQEAgTU9EVUxFX1BBUk1fREVTQyhydW5wbSwgImRpc2FibGUgKDAp
-LCBmb3JjZSBlbmFibGUgKDEpLCBvcHRpbXVzIG9ubHkgZGVmYXVsdCAoLTEKPj4+Pj4+ICBpbnQg
-bm91dmVhdV9ydW50aW1lX3BtID0gLTE7Cj4+Pj4+PiAgbW9kdWxlX3BhcmFtX25hbWVkKHJ1bnBt
-LCBub3V2ZWF1X3J1bnRpbWVfcG0sIGludCwgMDQwMCk7Cj4+Pj4+Pgo+Pj4+Pj4gK01PRFVMRV9Q
-QVJNX0RFU0Moc3RhZ2luZywgImVuYWJsZSBzdGFnaW5nIEFQSXMiKTsKPj4+Pj4+ICtpbnQgbm91
-dmVhdV9zdGFnaW5nID0gMDsKPj4+Pj4+ICttb2R1bGVfcGFyYW1fbmFtZWQoc3RhZ2luZywgbm91
-dmVhdV9zdGFnaW5nLCBpbnQsIDA0MDApOwo+Pj4+Pj4gKwo+Pj4+Pj4gIHN0YXRpYyBzdHJ1Y3Qg
-ZHJtX2RyaXZlciBkcml2ZXJfc3R1YjsKPj4+Pj4+ICBzdGF0aWMgc3RydWN0IGRybV9kcml2ZXIg
-ZHJpdmVyX3BjaTsKPj4+Pj4+ICBzdGF0aWMgc3RydWN0IGRybV9kcml2ZXIgZHJpdmVyX3BsYXRm
-b3JtOwo+Pj4+Pj4gQEAgLTg5NSw2ICs4OTksNyBAQCBub3V2ZWF1X2lvY3Rsc1tdID0gewo+Pj4+
-Pj4gICAgICAgICBEUk1fSU9DVExfREVGX0RSVihOT1VWRUFVX0dFTV9DUFVfUFJFUCwgbm91dmVh
-dV9nZW1faW9jdGxfY3B1X3ByZXAsIERSTV9VTkxPQ0tFRHxEUk1fQVVUSHxEUk1fUkVOREVSX0FM
-TE9XKSwKPj4+Pj4+ICAgICAgICAgRFJNX0lPQ1RMX0RFRl9EUlYoTk9VVkVBVV9HRU1fQ1BVX0ZJ
-TkksIG5vdXZlYXVfZ2VtX2lvY3RsX2NwdV9maW5pLCBEUk1fVU5MT0NLRUR8RFJNX0FVVEh8RFJN
-X1JFTkRFUl9BTExPVyksCj4+Pj4+PiAgICAgICAgIERSTV9JT0NUTF9ERUZfRFJWKE5PVVZFQVVf
-R0VNX0lORk8sIG5vdXZlYXVfZ2VtX2lvY3RsX2luZm8sIERSTV9VTkxPQ0tFRHxEUk1fQVVUSHxE
-Uk1fUkVOREVSX0FMTE9XKSwKPj4+Pj4+ICsgICAgICAgLyogU3RhZ2luZyBpb2N0bHMgKi8KPj4+
-Pj4+ICB9Owo+Pj4+Pj4KPj4+Pj4+ICBsb25nCj4+Pj4+PiBAQCAtMTAyNyw2ICsxMDMyLDcgQEAg
-c3RhdGljIHZvaWQgbm91dmVhdV9kaXNwbGF5X29wdGlvbnModm9pZCkKPj4+Pj4+ICAgICAgICAg
-RFJNX0RFQlVHX0RSSVZFUigiLi4uIHJ1bnBtICAgICAgICA6ICVkXG4iLCBub3V2ZWF1X3J1bnRp
-bWVfcG0pOwo+Pj4+Pj4gICAgICAgICBEUk1fREVCVUdfRFJJVkVSKCIuLi4gdnJhbV9wdXNoYnVm
-IDogJWRcbiIsIG5vdXZlYXVfdnJhbV9wdXNoYnVmKTsKPj4+Pj4+ICAgICAgICAgRFJNX0RFQlVH
-X0RSSVZFUigiLi4uIHBzdGF0ZSAgICAgICA6ICVkXG4iLCBub3V2ZWF1X3BzdGF0ZSk7Cj4+Pj4+
-PiArICAgICAgIERSTV9ERUJVR19EUklWRVIoIi4uLiBzdGFnaW5nICAgICAgOiAlZFxuIiwgbm91
-dmVhdV9zdGFnaW5nKTsKPj4+Pj4+ICB9Cj4+Pj4+Pgo+Pj4+Pj4gIHN0YXRpYyBjb25zdCBzdHJ1
-Y3QgZGV2X3BtX29wcyBub3V2ZWF1X3BtX29wcyA9IHsKPj4+Pj4+IEBAIC0xMDg4LDYgKzEwOTQs
-MTggQEAgZXJyX2ZyZWU6Cj4+Pj4+PiAgc3RhdGljIGludCBfX2luaXQKPj4+Pj4+ICBub3V2ZWF1
-X2RybV9pbml0KHZvaWQpCj4+Pj4+PiAgewo+Pj4+Pj4gKyAgICAgICAvKiBEbyBub3QgcmVnaXN0
-ZXIgc3RhZ2luZyBpb2N0c2wgaWYgb3B0aW9uIG5vdCBzcGVjaWZpZWQgKi8KPj4+Pj4+ICsgICAg
-ICAgaWYgKCFub3V2ZWF1X3N0YWdpbmcpIHsKPj4+Pj4+ICsgICAgICAgICAgICAgICB1bnNpZ25l
-ZCBpOwo+Pj4+Pj4gKwo+Pj4+Pj4gKyAgICAgICAgICAgICAgIC8qIFRoaXMga2VlcHMgdXMgc2Fm
-ZSBpcyBubyBzdGFnaW5nIGlvY3RscyBhcmUgZGVmaW5lZCAqLwo+Pj4+Pj4gKyAgICAgICAgICAg
-ICAgIGkgPSBtaW4oZHJpdmVyX3N0dWIubnVtX2lvY3RscywgRFJNX05PVVZFQVVfU1RBR0lOR19J
-T0NUTCk7Cj4+Pj4+PiArICAgICAgICAgICAgICAgd2hpbGUgKCFub3V2ZWF1X2lvY3Rsc1tpIC0g
-MV0uZnVuYykKPj4+Pj4+ICsgICAgICAgICAgICAgICAgICAgICAgIGktLTsKPj4+Pj4+ICsKPj4+
-Pj4+ICsgICAgICAgICAgICAgICBkcml2ZXJfc3R1Yi5udW1faW9jdGxzID0gaTsKPj4+Pj4+ICsg
-ICAgICAgfQo+Pj4+PiBIZXkgQWxleCwKPj4+Pj4KPj4+Pj4gSSd2ZSBnb3Qgbm8gc3BlY2lmaWMg
-b2JqZWN0aW9uLiAgQnV0IEknbSBjdXJpb3VzIGFzIHRvIHdoeSB5b3UgdG9vawo+Pj4+PiB0aGlz
-IGFwcHJvYWNoIGFzIG9wcG9zZWQgdG8ganVzdCBhZGRpbmcgImlmICghbm91dmVhdV9zdGFnaW5n
-KSByZXR1cm4KPj4+Pj4gLUVJTlZBTDsiIGRpcmVjdGx5IGluIHRoZSBleHBlcmltZW50YWwgaW9j
-dGxzPwo+Pj4+Cj4+Pj4gTWFpbmx5IGJlY2F1c2Ugd2Ugd2lsbCBsaWtlbHkgZm9yZ2V0IHRvIGFk
-ZCB0aGlzIGNoZWNrIChvciB0byByZW1vdmUKPj4+PiBpdCkgaW4gc29tZSBvZiB0aGUgc3RhZ2lu
-ZyBpb2N0bHMuIFRoZSBjdXJyZW50IHNvbHV0aW9uIGRvZXNuJ3QKPj4+PiByZXF1aXJlIHVzIHRv
-IHRoaW5rIGFib3V0IHRoYXQgLSBhbmQgdGhlIGxlc3MgdGhpbmdzIHRvIHRoaW5rIGFib3V0LAo+
-Pj4+IHRoZSBiZXR0ZXIuCj4+Pj4KPj4+Pj4gSSB0aGluaywgaW4gbGluZSB3aXRoCj4+Pj4+IHdo
-YXQncyBiZWVuIGRvbmUgaW4gb3RoZXIgcGxhY2VzLCBoYXZpbmcgbW9kdWxlIG9wdGlvbnMgcGVy
-LWFwaSBpcwo+Pj4+PiBwZXJoYXBzIGEgYmV0dGVyIGNob2ljZSB0b28uCj4+Pj4KPj4+PiBEbyB5
-b3UgbWVhbiB0aGF0IGVhY2ggZXhwZXJpbWVudGFsIGlvY3RsIHNob3VsZCBoYXZlIGl0cyBvd24g
-ZW5hYmxlCj4+Pj4gb3B0aW9uPyBJIGRvbid0IG1pbmQgZ29pbmcgdGhhdCB3YXkgaWYgeW91IHRo
-aW5rIGl0IGlzIHByZWZlcmFibGUuIEFuZAo+Pj4+IGluIHRoYXQgY2FzZSBteSBjb21tZW50IGFi
-b3ZlIGlzIHZvaWQuCj4+PiBUaGF0IHdvdWxkIGJlIG1vcmUgcHJlZmVyYWJsZSBJIHRoaW5rLCBh
-bmQgb2J2aW91cyBhcyB0byB3aGF0IGV4YWN0bHkKPj4+IHlvdSdyZSBlbmFibGluZy4KPj4+Cj4+
-Pj4KPj4+PiBCdXQgYWN0dWFsbHkgSSB3b25kZXIgaWYgaGF2aW5nIHRoZXNlIGV4cGVyaW1lbnRh
-bCBpb2N0bHMgZW5hYmxlZCBhcwo+Pj4+IGNvbXBpbGUgb3B0aW9ucyAoZWl0aGVyIGluZGl2aWR1
-YWxseSBvciBhcyBhIHdob2xlKSB3b3VsZCBub3QgYmUKPj4+PiBiZXR0ZXIuIFNvbWUgZXhwZXJp
-bWVudGFsIGlvY3RscyBtYXkgcmVxdWlyZSBjb2RlIGluIHN0YWdpbmcgKGxpa2UgdGhlCj4+Pj4g
-UFVTSEJVRl8yIGlvY3RsIHRoYXQgSSB3b3VsZCBsaWtlIHRvIHN1Ym1pdCBuZXh0KSwgYW5kIEkg
-ZG9uJ3QgdGhpbmsKPj4+PiBpdCBpcyBkZXNpcmFibGUgdG8gZm9yY2UgZXh0cmEgY29kZSBvciBr
-ZXJuZWwgb3B0aW9ucyAoaW4gdGhpcyBjYXNlLAo+Pj4+IENPTkZJR19TVEFHSU5HKSB0byBOb3V2
-ZWF1IHVzZXJzIHdobyB3aWxsIG5vdCBtYWtlIHVzZSBvZiB0aGVtLiBJCj4+Pj4gcmVtZW1iZXIg
-dGhhdCB3ZSBjb25jbHVkZWQgaW4gZmF2b3Igb3IgbW9kdWxlIG9wdGlvbnMgb24gSVJDLCBidXQg
-aW4KPj4+PiB0aGUgbGlnaHQgb2YgdGhpcywgd291bGRuJ3QgYSBjb25maWcgb3B0aW9uIGJlIGEg
-bGVzcyBpbnRydXNpdmUKPj4+PiBjaG9pY2U/Cj4+PiBSaWdodCwgYnV0IHRoZSB3aG9sZSBwb2lu
-dCBvZiB0aGlzIGlzIHRvIGVuY291cmFnZSB0aGUgaW9jdGxzIHRvIG5vdAo+Pj4gbGl2ZSB0aGVy
-ZSBmb3IgdG9vIGxvbmcsIGFuZCBwcm9ncmVzcyB0byBmdWxseSBzdXBwb3J0ZWQgaW50ZXJmYWNl
-cy4KPj4KPj4gRGVmaW5pdGVseSwgYnV0IG15IGNvbmNlcm4gaXMgdGhhdCBkb2luZyB0aGlzIHdp
-bGwgbWFrZSBOb3V2ZWF1IGRlcGVuZAo+PiBvbiBTVEFHSU5HIGZvciBhdCBsZWFzdCBzaG9ydCBw
-ZXJpb2RzIG9mIHRpbWUuIERvIHdlIHJlYWxseSB3YW50IHRoaXM/Cj4gSSBhZG1pdCB0byBoYXZp
-bmcgc2xpZ2h0bHkgbWlzcmVhZCB5b3VyIGxhc3QgcGFyYWdyYXBoLiAgRm9yIGNhc2VzCj4gc3Vj
-aCBhcyB0aGFzLCBhIGNvbmZpZyBvcHRpb24gdGhhdCBkZXBlbmRzIG9uIFNUQUdJTkcgKmFuZCog
-dGhlIGtlcm5lbAo+IHBhcmFtZXRlciBzaG91bGQgYmUgdXNlZC4KClNvdW5kcyBnb29kIQoKPiBX
-aGF0IGlzIHB1c2hidWYyIGRvaW5nIHRoYXQgcmVxdWlyZXMgc3RhZ2luZyBidHc/ICBZb3UndmUg
-bGlua2VkIG1lIHRvCj4gcGF0Y2hlcyBwcmV2aW91c2x5LCBidXQgSSBtaXNzZWQgdGhhdC4KCkl0
-IGRlcGVuZHMgb24gdGhlIEFuZHJvaWQgc3luYyBmcmFtZXdvcmsuIEFjdHVhbGx5IHdlIGFsc28g
-aGF2ZSBhCnBhdGNoIHRoYXQgbWFrZXMgYSBjaGFuZ2UgaW4gdGhlIEFuZHJvaWQgc3luYyBjb2Rl
-IHRoYXQgcHVzaGJ1ZjIKZGVwZW5kcyBvbiwgYW5kIHdpdGhvdXQgcHVzaGJ1ZjIgaXQgZG9lcyBu
-b3QgbWFrZSBtdWNoIHNlbnNlIGJ5IGl0c2VsZgooaHR0cDovL3d3dy5zcGluaWNzLm5ldC9saXN0
-cy9saW51eC1kcml2ZXItZGV2ZWwvbXNnNjM4MzIuaHRtbCApLCBzbyBJCndpbGwgc2VuZCB0aGUg
-cHVzaGJ1ZjIgcGF0Y2hlcyBhbG9uZyB3aXRoIGl0LgpfX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fXwpOb3V2ZWF1IG1haWxpbmcgbGlzdApOb3V2ZWF1QGxpc3Rz
-LmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
-dGluZm8vbm91dmVhdQo=
+On Fri, May 22, 2015 at 3:23 AM, Martin Peres <martin.peres-GANU6spQydw@public.gmane.org> wrote:
+> On 21/05/2015 11:47, Ben Skeggs wrote:
+>>
+>> On 21 May 2015 at 16:08, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>>
+>>> Add a flag allowing Nouveau to specify that an object should be coherent
+>>> at allocation time. This is required for some class of objects like
+>>> fences which are randomly-accessed by both the CPU and GPU. This flag
+>>> instructs the kernel driver to make sure the object remains coherent
+>>> even on architectures for which coherency is not guaranteed by the bus.
+>>>
+>>> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> Reviewed-by: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+>
+>
+> Pushed!
+
+Thanks! Should we also bump the ABI version or something?
