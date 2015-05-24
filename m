@@ -1,72 +1,39 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4] pmu/gk20a: PMU boot support
-Date: Sun, 24 May 2015 18:43:39 +0900
-Message-ID: <CAAVeFuLUS9L4edC-0h-z64SSvdjMQbO9mXCvTAbMbiwqveebgA@mail.gmail.com>
-References: <1428921530-28556-1-git-send-email-acourbot@nvidia.com>
- <552B9D8A.5050202@nvidia.com>
- <CACAvsv4MC3hq5_DJ5c7NPfEYyrsG2vPMjadEhC+H4zcWzc+F=Q@mail.gmail.com>
- <CAAVeFuL8R=hcO2u8xCZB6GuM58Kgx6RzW2oWwKPcwrs4bj4rqQ@mail.gmail.com>
- <CACAvsv7un7b38_s6Whu7JdOegNs-+3ci_GFYHAzwO5CL6KWA1Q@mail.gmail.com>
- <CAAVeFuKOwLiOM-fkadp5dvutrxE-QHP-y=TmSVvBgJ5syHfiHg@mail.gmail.com>
- <CACAvsv7TLxXZrGhwiDKzXGgVumWQEARJRV2x-97O8SbMj+3bRQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [RFC] tegra: dpaux: pinctrl proposal
+Date: Sun, 24 May 2015 23:13:47 +0200
+Message-ID: <CACRpkdbMc2BMKhWpPMZn17-+g1quyBsqo-wTahACep2AT5dwBA@mail.gmail.com>
+References: <1431963229-12867-1-git-send-email-jonathanh@nvidia.com>
+	<20150519144654.GG26748@ulmo.nvidia.com>
+	<555C901F.8090009@nvidia.com>
+	<20150520154022.GB7734@ulmo.nvidia.com>
+	<555CAE47.6070907@nvidia.com>
+	<555CDC82.1010104@wwwdotorg.org>
+	<555DD7B3.6020608@nvidia.com>
+	<20150521140356.GA28021@ulmo.nvidia.com>
+	<CACRpkdYP5FN=4_pWxc1j=e_JfcjA3bXCPDRmZYHeiZ8HDyEaEQ@mail.gmail.com>
+	<555F4E11.3050201@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <CACAvsv7TLxXZrGhwiDKzXGgVumWQEARJRV2x-97O8SbMj+3bRQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Deepak Goyal <dgoyal-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <555F4E11.3050201-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Pj4+PiAtIFdoYXQgYWJvdXQgc2lnbmF0dXJlIGZpbGVzIHRoYXQgYXJlIHJlcXVpcmVkIGZvciBz
-ZWN1cmUgYm9vdD8KPj4+IEFzIHdpdGggYWJvdmUsIGlmIGl0J3MgcG9zc2libGUgdG8gc2hpcCB0
-aGVtIGluIGEgc2luZ2xlIGZpbGUgd2l0aCB0aGUKPj4+IHVjb2RlIHRoYXQgaXQgYmVsb25ncyB0
-bywgdGhhdCdkIGJlIGlkZWFsLiAgSXQncyBub3QgYSBodWdlIGRlYWwKPj4+IHRob3VnaC4KPj4K
-Pj4gU28gaGVyZSB3ZSBhY3R1YWxseSBoYXZlIHNldmVyYWwgZmlsZXMgLSBpdCBpcyBraW5kIG9m
-IGEgbWVzcwo+PiBhY3R1YWxseS4gSG93ZXZlciBJIGNvdWxkIHByb2JhYmx5IG1lcmdlIHRoZW0g
-aW50byBhIHNpbmdsZSBuZXRsaXN0Cj4+IGZpbGUgbGlrZSB3ZSBkaWQgZm9yIHRoZSBHUEMvRkUg
-Q1MgY29kZS4KPiBJZiB0aGF0J3MgcG9zc2libGUsIHRoYXQnZCBiZSBncmVhdC4KCkkgYW0gc3Rp
-bGwgdHJ5aW5nIHRvIGZpZ3VyZSBvdXQgaW50ZXJuYWxseSB3aGF0IG1ha2VzIHRoZSBtb3N0IHNl
-bnNlLApidXQgdGhpcyBpcyBvbmUgb2YgdGhlIG9wZW4gb3B0aW9ucy4gQW5vdGhlciBpcyB0byB1
-c2UgYW5vdGhlcgpwYWNrYWdpbmcgZm9ybWF0IHRoYXQgaXMgYWxyZWFkeSBzdXBwb3J0ZWQgYnkg
-dXBzdHJlYW0sIG9yIGp1c3QgdG8gbGF5CmFsbCBmaXJtd2FyZSBiaW5hcmllcyBhcy1pcywgb25l
-IGZpbGUgcGVyIGZpcm13YXJlIChob3BlZnVsbHkgcHJvcGVybHkKb3JnYW5pemVkIGluIG52aWRp
-YS88Y2hpcD4vKS4gSXQncyBxdWl0ZSBpbXByZXNzaXZlIGhvdyBtdWNoCmJpa2VzaGVkZGluZyB3
-ZSBjYW4gZG8gb24gc2ltcGxlIHF1ZXN0aW9ucy4gOikgQXJlIHlvdSBhd2FyZSBvZiBhCiJiZXN0
-IHByYWN0aWNlIiBmb3IgdXBzdHJlYW0gZmlybXdhcmVzPwoKPj4gUmlnaHQgbm93IG15IG1haW4g
-Y29uY2VybiBpcyB0byBnZXQgc2VjdXJlIGJvb3Qgc3VwcG9ydCBpbiwgYW5kIHRoZQo+PiBzaG9y
-dGVzdCBwYXRoIHNlZW1zIHRvIGJlIHRvIG5vdCBjYXJlIGFib3V0IEFCSSBjb21wYXRpYmlsaXR5
-IGJldHdlZW4KPj4gTm91dmVhdSBhbmQgTlYgZmlybXdhcmVzIChhdCBsZWFzdCBmb3IgUE1VKS4g
-QmFzaWNhbGx5IEkgYW0gaG9waW5nCj4+IHRoYXQgeW91IHdpbGwgYWdyZWUgdG8gcHJvY2VlZCB0
-aGlzIHdheSBpbiBhIGZpcnN0IHRpbWUuIF5fXgo+IElmIGl0J3MgcmVhbGx5IHRoYXQgdXJnZW50
-LCBteSBzdWdnZXN0aW9uIGlzIHRvIHN1Ym1pdCB0aGUgcGF0Y2hlcyBhcwo+IHlvdSBkaWQgcHJl
-dmlvdXNseSwga2VlcGluZyB0aGVtIGNvbmZpbmVkIHRvIEdLMjBBL0dNMjBCLCBhbmQgSSdsbCBk
-bwo+IHNvbWV0aGluZyBuaWNlciB0byBzdXBwb3J0IGJvYXJkcyBpbiBnZW5lcmFsLgo+Cj4gRnJh
-bmtseSwgSSdkIGhhdmUgaGFkIHNlY3VyZSBib290IHN1cHBvcnQgaW4gdGhlIGRyaXZlciBhbHJl
-YWR5IGhhZAo+IE5WSURJQSBwbGF5ZWQgdGhpbmdzIGEgbGl0dGxlIGRpZmZlcmVudGx5Li4uICBH
-b2luZyBmb3J3YXJkLCBJJ2QgbGlrZQo+IHRvIHNlZSBOVklESUEgbm90IHRyZWF0aW5nIHRoZSBU
-ZWdyYSBwYXJ0cyBvZiBub3V2ZWF1IGFzIGEgbGl0dGxlCj4gYmxhY2sgYm94IHdoZXJlIGFueXRo
-aW5nIGdvZXMgYW5kIHRoaW5ncyBhcmUgZGlmZmVyZW50IGZyb20gdGhlIHJlc3QKPiBvZiB0aGUg
-ZHJpdmVyLiAgVGhlIGNoaXBzIG9wZXJhdGUsIGZvciB0aGUgbW9zdCBwYXJ0LCBpZGVudGljYWxs
-eSB0bwo+IHRoZWlyIGJpZyBzaWJsaW5ncy4uLgoKSSBhZ3JlZSB0aGF0J3Mgbm90IG9wdGltYWws
-IGFuZCBJIGFwb2xvZ2l6ZSBmb3IgdGhhdC4gVGhlIG1haW4gcmVhc29uCmlzIHRoYXQgVGVncmEg
-YW5kIGRHUFUgYXJlIHdvcmtpbmcgbW9zdGx5IHNlcGFyYXRlbHkgd2l0aGluIE5WSURJQSwKZGVz
-cGl0ZSBzaGFyaW5nIHRoZSBzYW1lIGRyaXZlci4gSW4gdGhpcyBjYXNlIEkgYWdyZWUgaXQgZG9l
-cyBub3QgbWFrZQptdWNoIHNlbnNlLCBhcyB0aGlzIGNvZGUgaXMgbm90IFRlZ3JhLXNwZWNpZmlj
-LgoKQnV0IG9uIHRoZSBvdGhlciBoYW5kLCB3ZSBuZWVkIHRvIHN0YXJ0IHdpdGggYSBjaGlwLiBJ
-dCBqdXN0IGhhcHBlbnMKdGhhdCBmb3Igc2VjdXJlIGJvb3Qgd2UgYXJlIHN0YXJ0aW5nIHdpdGgg
-VGVncmEsIGJ1dCB0aGlzIHdvcmsgc2hvdWxkCmJlIGxldmVyYWdlYWJsZSBmb3IgZEdQVXMgYW5k
-IEkgZG9uJ3QgZXhwZWN0IGl0IHRvIHRha2UgdG9vIG11Y2gKZWZmb3J0LiBPZiBjb3Vyc2UgaWYg
-d2Ugd2VyZSBnb29kIGNpdGl6ZW5zIHdlIHdvdWxkIGRvIGl0IG91cnNlbHZlcwp3aGlsZSB3ZSBh
-cmUgYXQgaXQuIDovCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCk5vdXZlYXUgbWFpbGluZyBsaXN0Ck5vdXZlYXVAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
-dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1Cg==
+On Fri, May 22, 2015 at 5:41 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> On 05/22/2015 01:03 AM, Linus Walleij wrote:
+
+>> Well I originally intended that to be private and neat, but whatever.
+>> Call it pinctrl-utils-internal.h or something then.
+>
+> Sorry for the bikeshed: perhaps s/internal/provider/? If all providers would
+> need this, does it even make sense to merge it into
+> include/linuxp/pinctrl/pinctrl.h, which defines all the other stuff
+> providers use?
+
+Yeah sort of, I guess it's just local to that subdir for
+convenience. No big deal if we move the things to
+the global headers.
+
+Linus
