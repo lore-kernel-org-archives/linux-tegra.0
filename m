@@ -1,45 +1,49 @@
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] clk: tegra: Fix zero comparison with unsigned in clk-dfll
-Date: Mon, 25 May 2015 10:50:35 +0300
-Message-ID: <1432540235-11927-1-git-send-email-mperttunen@nvidia.com>
+From: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH v5 19/21] clk: tegra: Add Super Gen5 Logic
+Date: Mon, 25 May 2015 08:19:52 +0000
+Message-ID: <40939402ea454e83998b0186b6e291af@HKMAIL103.nvidia.com>
+References: <1431451444-23155-1-git-send-email-rklein@nvidia.com>
+	<1431451444-23155-21-git-send-email-rklein@nvidia.com>
+ <CANLzEkvUAhXCCvtdHEfmJGONkzNu_dBHj1UUm6Et93kXV1Mz0g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CANLzEkvUAhXCCvtdHEfmJGONkzNu_dBHj1UUm6Et93kXV1Mz0g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The DFLL clock driver mistakenly assigned a function result
-value with negative error codes to an unsigned variable and
-then tried to check for error. Fix by assigning first to
-signed variable and then only to unsigned if the result was
-OK.
-
-Reported-by: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/clk/tegra/clk-dfll.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-index 6ec64577..7aa6eac 100644
---- a/drivers/clk/tegra/clk-dfll.c
-+++ b/drivers/clk/tegra/clk-dfll.c
-@@ -1444,10 +1444,12 @@ static int dfll_build_i2c_lut(struct tegra_dfll *td)
- 	v_max = dev_pm_opp_get_voltage(opp);
- 
- 	v = td->soc->min_millivolts * 1000;
--	td->i2c_lut[0] = find_vdd_map_entry_exact(td, v);
--	if (td->i2c_lut[0] < 0)
-+	ret = find_vdd_map_entry_exact(td, v);
-+	if (ret < 0)
- 		goto out;
- 
-+	td->i2c_lut[0] = ret;
-+
- 	for (j = 1, rate = 0; ; rate++) {
- 		opp = dev_pm_opp_find_freq_ceil(td->soc->opp_dev, &rate);
- 		if (IS_ERR(opp))
--- 
-2.1.4
+DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IGJsZXVuZ0Bnb29nbGUuY29t
+IFttYWlsdG86YmxldW5nQGdvb2dsZS5jb21dIE9uIEJlaGFsZiBPZiBCZW5zb24NCj4gTGV1bmcN
+Cj4gU2VudDogRnJpZGF5LCBNYXkgMTUsIDIwMTUgMzozNyBBTQ0KPiBUbzogUmh5bGFuZCBLbGVp
+bg0KPiBDYzogUGV0ZXIgRGUgU2NocmlqdmVyOyBNaWtlIFR1cnF1ZXR0ZTsgU3RlcGhlbiBXYXJy
+ZW47IFN0ZXBoZW4gQm95ZDsgVGhpZXJyeQ0KPiBSZWRpbmc7IEFsZXhhbmRyZSBDb3VyYm90OyBC
+aWxsIEh1YW5nOyBQYXVsIFdhbG1zbGV5OyBKaW0gTGluOyBsaW51eC0NCj4gY2xrQHZnZXIua2Vy
+bmVsLm9yZzsgbGludXgtdGVncmFAdmdlci5rZXJuZWwub3JnOyBsaW51eC1rZXJuZWxAdmdlci5r
+ZXJuZWwub3JnDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjUgMTkvMjFdIGNsazogdGVncmE6IEFk
+ZCBTdXBlciBHZW41IExvZ2ljDQo+IA0KPiBPbiBUdWUsIE1heSAxMiwgMjAxNSBhdCAxMDoyNCBB
+TSwgUmh5bGFuZCBLbGVpbiA8cmtsZWluQG52aWRpYS5jb20+IHdyb3RlOg0KPiA+IEZyb206IEJp
+bGwgSHVhbmcgPGJpbGh1YW5nQG52aWRpYS5jb20+DQo+ID4NCj4gPiBTdXBlciBjbG9jayBkaXZp
+ZGVyIGNvbnRyb2wgYW5kIGNsb2NrIHNvdXJjZSBtdXggb2YgVGVncmEyMTAgaGFzDQo+ID4gY2hh
+bmdlZCBhIGxpdHRsZSBhZ2FpbnN0IHByaW9yIFNvQ3MsIHRoaXMgcGF0Y2ggYWRkcyBHZW41IGxv
+Z2ljIHRvDQo+ID4gYWRkcmVzcyB0aG9zZSBkaWZmZXJlbmNlcy4NCj4gPg0KPiA+IFNpZ25lZC1v
+ZmYtYnk6IEJpbGwgSHVhbmcgPGJpbGh1YW5nQG52aWRpYS5jb20+DQo+ID4gLS0tDQo+ID4gdjI6
+DQo+ID4gICAtIEZpeGVkIHNjbGsgZGl2aWRlciBhZGRyZXNzICgweDM3MCAtPiAweDJjKQ0KPiA+
+DQo+ID4gIGRyaXZlcnMvY2xrL3RlZ3JhL01ha2VmaWxlICAgICAgICAgICAgICAgfCAgICAxICsN
+Cj4gPiAgZHJpdmVycy9jbGsvdGVncmEvY2xrLXRlZ3JhLXN1cGVyLWdlbjUuYyB8ICAxNTANCj4g
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrDQo+ID4gIGRyaXZlcnMvY2xrL3RlZ3JhL2Ns
+ay5oICAgICAgICAgICAgICAgICAgfCAgICAzICsNCj4gPiAgMyBmaWxlcyBjaGFuZ2VkLCAxNTQg
+aW5zZXJ0aW9ucygrKQ0KPiA+ICBjcmVhdGUgbW9kZSAxMDA2NDQgZHJpdmVycy9jbGsvdGVncmEv
+Y2xrLXRlZ3JhLXN1cGVyLWdlbjUuYw0KPiANCj4gSSd2ZSBkaWZmZWQgY2xrLXRlZ3JhLXN1cGVy
+LWdlbjUuYyBhbmQgdGhlIGV4aXN0aW5nIGNsay10ZWdyYS1zdXBlci1nZW40LmMsIGFuZA0KPiB0
+aGVyZSdzIGEgbG90IG9mIGNvZGUgZHVwbGljYXRpb24gaGVyZS4NCj4gVGhleSdyZSB0aGUgc2Ft
+ZSBwYWlyIG9mIGZ1bmN0aW9ucywgd2l0aCBzZXZlcmFsIHNtYWxsIGNoYW5nZXMuIFNpbmNlIHRo
+ZSBpZGVhDQo+IGJlaGluZCBwdWxsaW5nIG91dCB0aGUgc3VwZXIgY2xvY2sgaW5pdGlhbGl6YXRp
+b24gaW50byBhIGNvbW1vbiBmaWxlIHdhcyB0byByZXVzZQ0KPiB0aGUgc2FtZSBpbml0LCBjb3Vs
+ZCB3ZSBleHRlbmQgdGhlIHN1cGVyLWdlbjQgZmlsZSAocmVuYW1lIGlmIHlvdSBoYXZlIHRvKSB0
+bw0KPiBzdXBwb3J0IGJvdGggZ2VucyBpbnN0ZWFkPw0KPiANClRoYW5rcywgd2UnbGwgaW50ZWdy
+YXRlIGdlbjUgaW50byBnZW40IGZpbGUgaW4gdjYuDQo+IC0tDQo+IEJlbnNvbiBMZXVuZw0KPiBT
+b2Z0d2FyZSBFbmdpbmVlciwgQ2hyb20qIE9TDQo+IGJsZXVuZ0BjaHJvbWl1bS5vcmcNCg==
