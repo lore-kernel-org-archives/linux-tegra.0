@@ -1,39 +1,74 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC] tegra: dpaux: pinctrl proposal
-Date: Sun, 24 May 2015 23:13:47 +0200
-Message-ID: <CACRpkdbMc2BMKhWpPMZn17-+g1quyBsqo-wTahACep2AT5dwBA@mail.gmail.com>
-References: <1431963229-12867-1-git-send-email-jonathanh@nvidia.com>
-	<20150519144654.GG26748@ulmo.nvidia.com>
-	<555C901F.8090009@nvidia.com>
-	<20150520154022.GB7734@ulmo.nvidia.com>
-	<555CAE47.6070907@nvidia.com>
-	<555CDC82.1010104@wwwdotorg.org>
-	<555DD7B3.6020608@nvidia.com>
-	<20150521140356.GA28021@ulmo.nvidia.com>
-	<CACRpkdYP5FN=4_pWxc1j=e_JfcjA3bXCPDRmZYHeiZ8HDyEaEQ@mail.gmail.com>
-	<555F4E11.3050201@wwwdotorg.org>
+From: Arto Merilainen <amerilainen@nvidia.com>
+Subject: Re: [PATCH 3/4] drm/tegra: Add VIC support
+Date: Mon, 25 May 2015 10:11:28 +0300
+Message-ID: <5562CB20.4060700@nvidia.com>
+References: <1432214425-27137-1-git-send-email-amerilainen@nvidia.com>
+ <1432214425-27137-4-git-send-email-amerilainen@nvidia.com>
+ <555DEE5F.2060100@nvidia.com> <20150522102528.GD16507@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <555F4E11.3050201-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20150522102528.GD16507@ulmo>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>
+Cc: achew@nvidia.com, dnibade@nvidia.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, srasal@nvidia.com, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, May 22, 2015 at 5:41 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 05/22/2015 01:03 AM, Linus Walleij wrote:
-
->> Well I originally intended that to be private and neat, but whatever.
->> Call it pinctrl-utils-internal.h or something then.
->
-> Sorry for the bikeshed: perhaps s/internal/provider/? If all providers would
-> need this, does it even make sense to merge it into
-> include/linuxp/pinctrl/pinctrl.h, which defines all the other stuff
-> providers use?
-
-Yeah sort of, I guess it's just local to that subdir for
-convenience. No big deal if we move the things to
-the global headers.
-
-Linus
+T24gMDUvMjIvMjAxNSAwMToyNSBQTSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gKiBQR1AgU2ln
+bmVkIGJ5IGFuIHVua25vd24ga2V5Cj4KPiBPbiBUaHUsIE1heSAyMSwgMjAxNSBhdCAwNTo0MDoz
+MVBNICswMzAwLCBNaWtrbyBQZXJ0dHVuZW4gd3JvdGU6Cj4+IE9uIDA1LzIxLzIwMTUgMDQ6MjAg
+UE0sIEFydG8gTWVyaWxhaW5lbiB3cm90ZToKPiBbLi4uXQo+Pj4gK3N0YXRpYyBpbnQgdmljX2lz
+X2FkZHJfcmVnKHN0cnVjdCBkZXZpY2UgKmRldiwgdTMyIGNsYXNzLCB1MzIgb2Zmc2V0LCB1MzIg
+dmFsKQo+Pj4gK3sKPj4+ICsJc3RydWN0IHZpYyAqdmljID0gZGV2X2dldF9kcnZkYXRhKGRldik7
+Cj4+PiArCj4+PiArCS8qIGhhbmRsZSBob3N0IGNsYXNzICovCj4+PiArCWlmIChjbGFzcyA9PSBI
+T1NUMVhfQ0xBU1NfSE9TVDFYKSB7Cj4+PiArCQlpZiAob2Zmc2V0ID09IDB4MmIpCj4+PiArCQkJ
+cmV0dXJuIHRydWU7Cj4+PiArCQlyZXR1cm4gZmFsc2U7Cj4+Cj4+ICJyZXR1cm4gKG9mZnNldCA9
+PSAweDJiKTsiIHBlcmhhcHM/Cj4KPiBJIHRoaW5rIHRoaXMgc2hvdWxkIHJlYWxseSBiZSBleHRy
+YWN0ZWQgaW50byBhIHNlcGFyYXRlIGhlbHBlci4gSWYgd2UKPiBldmVyIG5lZWQgdG8gdGFrZSBp
+bnRvIGFjY291bnQgYWRkaXRpb25hbCBvZmZzZXRzIHdlIHdvdWxkIG90aGVyd2lzZQo+IGhhdmUg
+dG8gZXh0ZW5kIGV2ZXJ5IGRyaXZlciByYXRoZXIgdGhhbiBqdXN0IHRoZSBoZWxwZXIuCgpJIGFn
+cmVlLCB0aGF0IHdvdWxkIGJlIGJldHRlci4KCj4KPiBBbHNvIEkgdGhpbmsgdGhlIDB4MmIgc2hv
+dWxkIGJlIHJlcGxhY2VkIGJ5IHNvbWUgc3ltYm9saWMgbmFtZS4KPiBBY2NvcmRpbmcgdG8gdGhl
+IFRSTSAweDJiIGlzIHRoZSBob3N0MXggY2xhc3MgbWV0aG9kIG5hbWVkCj4gTlZfQ0xBU1NfSE9T
+VF9JTkRDVFJMXzAuIE9kZGx5IGVub3VnaCB0aGF0IGRvZXNuJ3Qgc2VlbSB0byBiZSBhbiBhZGRy
+ZXNzCj4gcmVnaXN0ZXIuIEluc3RlYWQgdGhlIGFkZHJlc3Mgc2VlbXMgdG8gYmUgaW4gdGhlIElO
+RE9GRjIgYW5kIElORE9GRgo+IG1ldGhvZHMgKDB4MmMgYW5kIDB4MmQpLiBJIGFsc28gY2FuJ3Qg
+dGVsbCBmcm9tIHRoZSBUUk0gd2hhdCBleGFjdGx5Cj4gdGhlc2UgYXJlIHN1cHBvc2VkIHRvIGRv
+Lgo+Cj4gQXJ0bywgY2FuIHlvdSBjbGFyaWZ5PwoKVGhpcyBsb29rcyBsaWtlIGFuIHVuZm9ydHVu
+YXRlIG1pc3Rha2UgdGhhdCBnb3QgcmVwcm9kdWNlZCBmcm9tIGdyMmQgYW5kIApncjNkLgoKVGhl
+IElORENUUkwgbWV0aG9kIGlzIHVzZWQgZm9yIGluZGlyZWN0IHJlZ2lzdGVyIGFjY2Vzc2luZyBh
+bmQgaXQgYWxsb3dzIApIb3N0MXggdG8gcmVhZCByZWdpc3RlcnMgb2YgYW4gZW5naW5lIC0gb3Ig
+d3JpdGUgZGF0YSBkaXJlY3RseSB0byAKbWVtb3J5LiBJdCBhbGxvdyBpbXBsZW1lbnRpbmcgY29u
+dGV4dCBzd2l0Y2ggZm9yIHRoZSBjbGllbnRzIHdob3NlIHN0YXRlIApzaG91bGQgYmUgbm90IGNo
+YW5nZSBiZXR3ZWVuIGpvYnMgZnJvbSB0aGUgc2FtZSBhcHBsaWNhdGlvbi4KCj4KPj4+ICsJaWYg
+KElTX0VSUih2aWMtPnJzdCkpIHsKPj4+ICsJCWRldl9lcnIoJnBkZXYtPmRldiwgImNhbm5vdCBn
+ZXQgcmVzZXRcbiIpOwo+Pj4gKwkJcmV0dXJuIFBUUl9FUlIodmljLT5yc3QpOwo+Pj4gKwl9Cj4+
+PiArCj4+PiArCXBsYXRmb3JtX3NldF9kcnZkYXRhKHBkZXYsIHZpYyk7Cj4+PiArCj4+PiArCUlO
+SVRfTElTVF9IRUFEKCZ2aWMtPmNsaWVudC5iYXNlLmxpc3QpOwo+Pj4gKwl2aWMtPmNsaWVudC5i
+YXNlLm9wcyA9ICZ2aWNfY2xpZW50X29wczsKPj4+ICsJdmljLT5jbGllbnQuYmFzZS5kZXYgPSBk
+ZXY7Cj4+PiArCXZpYy0+Y2xpZW50LmJhc2UuY2xhc3MgPSB2aWNfY29uZmlnLT5jbGFzc19pZDsK
+Pj4+ICsJdmljLT5jbGllbnQuYmFzZS5zeW5jcHRzID0gc3luY3B0czsKPj4+ICsJdmljLT5jbGll
+bnQuYmFzZS5udW1fc3luY3B0cyA9IDE7Cj4+PiArCXZpYy0+ZGV2ID0gZGV2Owo+Pj4gKwl2aWMt
+PmNvbmZpZyA9IHZpY19jb25maWc7Cj4+PiArCj4+PiArCUlOSVRfTElTVF9IRUFEKCZ2aWMtPmNs
+aWVudC5saXN0KTsKPj4+ICsJdmljLT5jbGllbnQub3BzID0gJnZpY19vcHM7Cj4+PiArCj4+PiAr
+CWVyciA9IHRlZ3JhX3Bvd2VyZ2F0ZV9zZXF1ZW5jZV9wb3dlcl91cCh2aWMtPmNvbmZpZy0+cG93
+ZXJnYXRlX2lkLAo+Pj4gKwkJCQkJCXZpYy0+Y2xrLCB2aWMtPnJzdCk7Cj4+PiArCWlmIChlcnIp
+IHsKPj4+ICsJCWRldl9lcnIoZGV2LCAiY2Fubm90IHR1cm4gb24gdGhlIGRldmljZVxuIik7Cj4+
+PiArCQlyZXR1cm4gZXJyOwo+Pj4gKwl9Cj4+PiArCj4+PiArCWVyciA9IGhvc3QxeF9jbGllbnRf
+cmVnaXN0ZXIoJnZpYy0+Y2xpZW50LmJhc2UpOwo+Pj4gKwlpZiAoZXJyIDwgMCkgewo+Pgo+PiBZ
+b3UgdXNlZCAnaWYgKGVycikgeycgcHJldmlvdXNseSwgc28gbWF5YmUgYWxzbyBoZXJlLgo+Cj4g
+Rm9yIGNvbnNpc3RlbmN5IHdpdGggb3RoZXIgVGVncmEgRFJNIGNvZGUgdGhlc2UgY2hlY2tzIHNo
+b3VsZCB1c2UgKGF0Cj4gbGVhc3Qgd2hlcmUgcG9zc2libGUpIHRoZSAoZXJyIDwgMCkgbm90YXRp
+b24uCj4KCldpbGwgZml4LgoKLSBBcnRvCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
+ZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
+Zm8vZHJpLWRldmVsCg==
