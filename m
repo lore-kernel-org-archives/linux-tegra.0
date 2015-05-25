@@ -1,34 +1,82 @@
 From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH 02/21] ARM: tegra: Add gpio-ranges property
-Date: Mon, 25 May 2015 16:53:06 +0200
-Message-ID: <1432565608-26036-3-git-send-email-tomeu.vizoso@collabora.com>
+Subject: [PATCH 03/21] ARM: tegra: Register drivers before devices
+Date: Mon, 25 May 2015 16:53:07 +0200
+Message-ID: <1432565608-26036-4-git-send-email-tomeu.vizoso@collabora.com>
 References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org
-Cc: =?UTF-8?q?St=C3=A9phane=20Marchesin?= <stephane.marchesin@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Alexander Holler <holler@ahsoftware.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: =?UTF-8?q?St=C3=A9phane=20Marchesin?= <stephane.marchesin@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Alexander Holler <holler@ahsoftware.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Specify how the GPIOs map to the pins in T124, so the dependency is
-explicit.
+So devices can be probed on demand, we need to have the drivers already
+registered as we don't have enough information to register a driver on
+demand.
 
 Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
 ---
- arch/arm/boot/dts/tegra124.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-tegra/tegra.c | 21 ++++++++-------------
+ 1 file changed, 8 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 13cc7ca..5d1d35f 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -254,6 +254,7 @@
- 		gpio-controller;
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
-+		gpio-ranges = <&pinmux 0 0 250>;
- 	};
+diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+index 861d884..2874425 100644
+--- a/arch/arm/mach-tegra/tegra.c
++++ b/arch/arm/mach-tegra/tegra.c
+@@ -55,6 +55,8 @@
+ #include "reset.h"
+ #include "sleep.h"
  
- 	apbdma: dma@0,60020000 {
++static struct soc_device *soc_dev;
++
+ /*
+  * Storage for debug-macro.S's state.
+  *
+@@ -87,12 +89,10 @@ static void __init tegra_dt_init_irq(void)
+ static void __init tegra_dt_init(void)
+ {
+ 	struct soc_device_attribute *soc_dev_attr;
+-	struct soc_device *soc_dev;
+-	struct device *parent = NULL;
+ 
+ 	soc_dev_attr = kzalloc(sizeof(*soc_dev_attr), GFP_KERNEL);
+ 	if (!soc_dev_attr)
+-		goto out;
++		return;
+ 
+ 	soc_dev_attr->family = kasprintf(GFP_KERNEL, "Tegra");
+ 	soc_dev_attr->revision = kasprintf(GFP_KERNEL, "%d",
+@@ -105,17 +105,7 @@ static void __init tegra_dt_init(void)
+ 		kfree(soc_dev_attr->revision);
+ 		kfree(soc_dev_attr->soc_id);
+ 		kfree(soc_dev_attr);
+-		goto out;
+ 	}
+-
+-	parent = soc_device_to_device(soc_dev);
+-
+-	/*
+-	 * Finished with the static registrations now; fill in the missing
+-	 * devices
+-	 */
+-out:
+-	of_platform_populate(NULL, of_default_bus_match_table, NULL, parent);
+ }
+ 
+ static void __init paz00_init(void)
+@@ -133,8 +123,13 @@ static struct {
+ 
+ static void __init tegra_dt_init_late(void)
+ {
++	struct device *parent = NULL;
+ 	int i;
+ 
++	parent = soc_device_to_device(soc_dev);
++
++	of_platform_populate(NULL, of_default_bus_match_table, NULL, parent);
++
+ 	tegra_init_suspend();
+ 	tegra_cpuidle_init();
+ 
 -- 
 2.4.1
