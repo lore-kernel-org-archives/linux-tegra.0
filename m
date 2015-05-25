@@ -1,43 +1,31 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH 12/21] drm/tegra: Probe dpaux devices on demand
-Date: Mon, 25 May 2015 16:53:16 +0200
-Message-ID: <1432565608-26036-13-git-send-email-tomeu.vizoso@collabora.com>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: =?UTF-8?q?St=C3=A9phane=20Marchesin?= <stephane.marchesin@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Alexander Holler <holler@ahsoftware.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Shailendra Verma <shailendra.capricorn-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] staging:nvec:nvec - Fix for typo in comment to function tegra_nvec_remove().
+Date: Tue, 26 May 2015 02:16:41 +0530
+Message-ID: <1432586801-5879-1-git-send-email-shailendra.capricorn@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Shailendra Verma <shailendra.capricorn-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-When looking up a dpaux device through its DT node, ensure that the
-corresponding device has been registered.
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Signed-off-by: Shailendra Verma <shailendra.capricorn-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/dpaux.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/staging/nvec/nvec.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
-index d6b55e3..10bba41 100644
---- a/drivers/gpu/drm/tegra/dpaux.c
-+++ b/drivers/gpu/drm/tegra/dpaux.c
-@@ -12,6 +12,7 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/of_gpio.h>
-+#include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/reset.h>
- #include <linux/regulator/consumer.h>
-@@ -397,6 +398,8 @@ struct tegra_dpaux *tegra_dpaux_find_by_of_node(struct device_node *np)
- {
- 	struct tegra_dpaux *dpaux;
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index 1bdc8d0..164634d 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -916,7 +916,7 @@ static int tegra_nvec_remove(struct platform_device *pdev)
+ 	nvec_unregister_notifier(nvec, &nvec->nvec_status_notifier);
+ 	cancel_work_sync(&nvec->rx_work);
+ 	cancel_work_sync(&nvec->tx_work);
+-	/* FIXME: needs check wether nvec is responsible for power off */
++	/* FIXME: needs check whether nvec is responsible for power off */
+ 	pm_power_off = NULL;
  
-+	of_platform_device_ensure(np);
-+
- 	mutex_lock(&dpaux_lock);
- 
- 	list_for_each_entry(dpaux, &dpaux_list, list)
+ 	return 0;
 -- 
-2.4.1
+1.7.9.5
