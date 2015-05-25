@@ -1,74 +1,45 @@
-From: Arto Merilainen <amerilainen@nvidia.com>
-Subject: Re: [PATCH 3/4] drm/tegra: Add VIC support
-Date: Mon, 25 May 2015 10:11:28 +0300
-Message-ID: <5562CB20.4060700@nvidia.com>
-References: <1432214425-27137-1-git-send-email-amerilainen@nvidia.com>
- <1432214425-27137-4-git-send-email-amerilainen@nvidia.com>
- <555DEE5F.2060100@nvidia.com> <20150522102528.GD16507@ulmo>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] clk: tegra: Fix zero comparison with unsigned in clk-dfll
+Date: Mon, 25 May 2015 10:50:35 +0300
+Message-ID: <1432540235-11927-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20150522102528.GD16507@ulmo>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>
-Cc: achew@nvidia.com, dnibade@nvidia.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, srasal@nvidia.com, linux-tegra@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMDUvMjIvMjAxNSAwMToyNSBQTSwgVGhpZXJyeSBSZWRpbmcgd3JvdGU6Cj4gKiBQR1AgU2ln
-bmVkIGJ5IGFuIHVua25vd24ga2V5Cj4KPiBPbiBUaHUsIE1heSAyMSwgMjAxNSBhdCAwNTo0MDoz
-MVBNICswMzAwLCBNaWtrbyBQZXJ0dHVuZW4gd3JvdGU6Cj4+IE9uIDA1LzIxLzIwMTUgMDQ6MjAg
-UE0sIEFydG8gTWVyaWxhaW5lbiB3cm90ZToKPiBbLi4uXQo+Pj4gK3N0YXRpYyBpbnQgdmljX2lz
-X2FkZHJfcmVnKHN0cnVjdCBkZXZpY2UgKmRldiwgdTMyIGNsYXNzLCB1MzIgb2Zmc2V0LCB1MzIg
-dmFsKQo+Pj4gK3sKPj4+ICsJc3RydWN0IHZpYyAqdmljID0gZGV2X2dldF9kcnZkYXRhKGRldik7
-Cj4+PiArCj4+PiArCS8qIGhhbmRsZSBob3N0IGNsYXNzICovCj4+PiArCWlmIChjbGFzcyA9PSBI
-T1NUMVhfQ0xBU1NfSE9TVDFYKSB7Cj4+PiArCQlpZiAob2Zmc2V0ID09IDB4MmIpCj4+PiArCQkJ
-cmV0dXJuIHRydWU7Cj4+PiArCQlyZXR1cm4gZmFsc2U7Cj4+Cj4+ICJyZXR1cm4gKG9mZnNldCA9
-PSAweDJiKTsiIHBlcmhhcHM/Cj4KPiBJIHRoaW5rIHRoaXMgc2hvdWxkIHJlYWxseSBiZSBleHRy
-YWN0ZWQgaW50byBhIHNlcGFyYXRlIGhlbHBlci4gSWYgd2UKPiBldmVyIG5lZWQgdG8gdGFrZSBp
-bnRvIGFjY291bnQgYWRkaXRpb25hbCBvZmZzZXRzIHdlIHdvdWxkIG90aGVyd2lzZQo+IGhhdmUg
-dG8gZXh0ZW5kIGV2ZXJ5IGRyaXZlciByYXRoZXIgdGhhbiBqdXN0IHRoZSBoZWxwZXIuCgpJIGFn
-cmVlLCB0aGF0IHdvdWxkIGJlIGJldHRlci4KCj4KPiBBbHNvIEkgdGhpbmsgdGhlIDB4MmIgc2hv
-dWxkIGJlIHJlcGxhY2VkIGJ5IHNvbWUgc3ltYm9saWMgbmFtZS4KPiBBY2NvcmRpbmcgdG8gdGhl
-IFRSTSAweDJiIGlzIHRoZSBob3N0MXggY2xhc3MgbWV0aG9kIG5hbWVkCj4gTlZfQ0xBU1NfSE9T
-VF9JTkRDVFJMXzAuIE9kZGx5IGVub3VnaCB0aGF0IGRvZXNuJ3Qgc2VlbSB0byBiZSBhbiBhZGRy
-ZXNzCj4gcmVnaXN0ZXIuIEluc3RlYWQgdGhlIGFkZHJlc3Mgc2VlbXMgdG8gYmUgaW4gdGhlIElO
-RE9GRjIgYW5kIElORE9GRgo+IG1ldGhvZHMgKDB4MmMgYW5kIDB4MmQpLiBJIGFsc28gY2FuJ3Qg
-dGVsbCBmcm9tIHRoZSBUUk0gd2hhdCBleGFjdGx5Cj4gdGhlc2UgYXJlIHN1cHBvc2VkIHRvIGRv
-Lgo+Cj4gQXJ0bywgY2FuIHlvdSBjbGFyaWZ5PwoKVGhpcyBsb29rcyBsaWtlIGFuIHVuZm9ydHVu
-YXRlIG1pc3Rha2UgdGhhdCBnb3QgcmVwcm9kdWNlZCBmcm9tIGdyMmQgYW5kIApncjNkLgoKVGhl
-IElORENUUkwgbWV0aG9kIGlzIHVzZWQgZm9yIGluZGlyZWN0IHJlZ2lzdGVyIGFjY2Vzc2luZyBh
-bmQgaXQgYWxsb3dzIApIb3N0MXggdG8gcmVhZCByZWdpc3RlcnMgb2YgYW4gZW5naW5lIC0gb3Ig
-d3JpdGUgZGF0YSBkaXJlY3RseSB0byAKbWVtb3J5LiBJdCBhbGxvdyBpbXBsZW1lbnRpbmcgY29u
-dGV4dCBzd2l0Y2ggZm9yIHRoZSBjbGllbnRzIHdob3NlIHN0YXRlIApzaG91bGQgYmUgbm90IGNo
-YW5nZSBiZXR3ZWVuIGpvYnMgZnJvbSB0aGUgc2FtZSBhcHBsaWNhdGlvbi4KCj4KPj4+ICsJaWYg
-KElTX0VSUih2aWMtPnJzdCkpIHsKPj4+ICsJCWRldl9lcnIoJnBkZXYtPmRldiwgImNhbm5vdCBn
-ZXQgcmVzZXRcbiIpOwo+Pj4gKwkJcmV0dXJuIFBUUl9FUlIodmljLT5yc3QpOwo+Pj4gKwl9Cj4+
-PiArCj4+PiArCXBsYXRmb3JtX3NldF9kcnZkYXRhKHBkZXYsIHZpYyk7Cj4+PiArCj4+PiArCUlO
-SVRfTElTVF9IRUFEKCZ2aWMtPmNsaWVudC5iYXNlLmxpc3QpOwo+Pj4gKwl2aWMtPmNsaWVudC5i
-YXNlLm9wcyA9ICZ2aWNfY2xpZW50X29wczsKPj4+ICsJdmljLT5jbGllbnQuYmFzZS5kZXYgPSBk
-ZXY7Cj4+PiArCXZpYy0+Y2xpZW50LmJhc2UuY2xhc3MgPSB2aWNfY29uZmlnLT5jbGFzc19pZDsK
-Pj4+ICsJdmljLT5jbGllbnQuYmFzZS5zeW5jcHRzID0gc3luY3B0czsKPj4+ICsJdmljLT5jbGll
-bnQuYmFzZS5udW1fc3luY3B0cyA9IDE7Cj4+PiArCXZpYy0+ZGV2ID0gZGV2Owo+Pj4gKwl2aWMt
-PmNvbmZpZyA9IHZpY19jb25maWc7Cj4+PiArCj4+PiArCUlOSVRfTElTVF9IRUFEKCZ2aWMtPmNs
-aWVudC5saXN0KTsKPj4+ICsJdmljLT5jbGllbnQub3BzID0gJnZpY19vcHM7Cj4+PiArCj4+PiAr
-CWVyciA9IHRlZ3JhX3Bvd2VyZ2F0ZV9zZXF1ZW5jZV9wb3dlcl91cCh2aWMtPmNvbmZpZy0+cG93
-ZXJnYXRlX2lkLAo+Pj4gKwkJCQkJCXZpYy0+Y2xrLCB2aWMtPnJzdCk7Cj4+PiArCWlmIChlcnIp
-IHsKPj4+ICsJCWRldl9lcnIoZGV2LCAiY2Fubm90IHR1cm4gb24gdGhlIGRldmljZVxuIik7Cj4+
-PiArCQlyZXR1cm4gZXJyOwo+Pj4gKwl9Cj4+PiArCj4+PiArCWVyciA9IGhvc3QxeF9jbGllbnRf
-cmVnaXN0ZXIoJnZpYy0+Y2xpZW50LmJhc2UpOwo+Pj4gKwlpZiAoZXJyIDwgMCkgewo+Pgo+PiBZ
-b3UgdXNlZCAnaWYgKGVycikgeycgcHJldmlvdXNseSwgc28gbWF5YmUgYWxzbyBoZXJlLgo+Cj4g
-Rm9yIGNvbnNpc3RlbmN5IHdpdGggb3RoZXIgVGVncmEgRFJNIGNvZGUgdGhlc2UgY2hlY2tzIHNo
-b3VsZCB1c2UgKGF0Cj4gbGVhc3Qgd2hlcmUgcG9zc2libGUpIHRoZSAoZXJyIDwgMCkgbm90YXRp
-b24uCj4KCldpbGwgZml4LgoKLSBBcnRvCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
-ZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGlu
-Zm8vZHJpLWRldmVsCg==
+The DFLL clock driver mistakenly assigned a function result
+value with negative error codes to an unsigned variable and
+then tried to check for error. Fix by assigning first to
+signed variable and then only to unsigned if the result was
+OK.
+
+Reported-by: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/clk/tegra/clk-dfll.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+index 6ec64577..7aa6eac 100644
+--- a/drivers/clk/tegra/clk-dfll.c
++++ b/drivers/clk/tegra/clk-dfll.c
+@@ -1444,10 +1444,12 @@ static int dfll_build_i2c_lut(struct tegra_dfll *td)
+ 	v_max = dev_pm_opp_get_voltage(opp);
+ 
+ 	v = td->soc->min_millivolts * 1000;
+-	td->i2c_lut[0] = find_vdd_map_entry_exact(td, v);
+-	if (td->i2c_lut[0] < 0)
++	ret = find_vdd_map_entry_exact(td, v);
++	if (ret < 0)
+ 		goto out;
+ 
++	td->i2c_lut[0] = ret;
++
+ 	for (j = 1, rate = 0; ; rate++) {
+ 		opp = dev_pm_opp_find_freq_ceil(td->soc->opp_dev, &rate);
+ 		if (IS_ERR(opp))
+-- 
+2.1.4
