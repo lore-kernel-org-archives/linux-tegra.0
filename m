@@ -1,105 +1,55 @@
-From: Marc Dietrich <marvin24@gmx.de>
-Subject: Re: [PATCH] staging:nvec:nvec - Fix for typo in comment to function
- tegra_nvec_remove().
-Date: Tue, 26 May 2015 13:47:17 +0200
-Message-ID: <3269524.kNMZGSE8Ks@fb07-iapwap2>
-References: <1432586801-5879-1-git-send-email-shailendra.capricorn@gmail.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [Nouveau] [PATCH v2] nouveau: add coherent BO attribute
+Date: Tue, 26 May 2015 22:23:17 +0900
+Message-ID: <CAAVeFuJ4oNi-_ALd3NRNeje7wNntcJ5QME2TWHKTBVWzE0yG1w@mail.gmail.com>
+References: <1432188508-650-1-git-send-email-acourbot@nvidia.com>
+ <CACAvsv5qW74Lp5pYke-4GKi2BYgXot2SM93T_aZX=rztWwGJHA@mail.gmail.com>
+ <555E228B.9090400@free.fr>
+ <CAAVeFuJHL664jbsEBUYFp0atnuF3gisbwhJhR-R=cy+iB8gUCg@mail.gmail.com>
+ <55616F1E.7020602@mblankhorst.nl>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1816191725490892658=="
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <1432586801-5879-1-git-send-email-shailendra.capricorn@gmail.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Shailendra Verma <shailendra.capricorn@gmail.com>
-Cc: devel@driverdev.osuosl.org, Julian Andres Klode <jak@jak-linux.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, ac100@lists.launchpad.net
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <55616F1E.7020602@mblankhorst.nl>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Maarten Lankhorst <maarten@mblankhorst.nl>
+Cc: "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Ben Skeggs <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
---===============1816191725490892658==
-Content-Type: multipart/signed; boundary="nextPart3725027.o5IgLPyd0C"; micalg="pgp-sha256"; protocol="application/pgp-signature"
-
---nextPart3725027.o5IgLPyd0C
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="ISO-8859-1"
-
-Hi Shailendra,
-
-you should fill the patch description with something, even if trivial, =
-and=20
-trim the subject line a bit, e.g.
-
-=2D--
-staging: nvec: fix typo in comment (all lowercase, no full stop at the =
-end)
-
-Fix spelling error in comment in function tegra_nvec_remove.
-
-S-o-b
-=2D----
-
-Thanks,
-
-Marc
-
-Am Dienstag, 26. Mai 2015, 02:16:41 schrieb Shailendra Verma:
-> Signed-off-by: Shailendra Verma <shailendra.capricorn@gmail.com>
-> ---
->  drivers/staging/nvec/nvec.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.=
-c
-> index 1bdc8d0..164634d 100644
-> --- a/drivers/staging/nvec/nvec.c
-> +++ b/drivers/staging/nvec/nvec.c
-> @@ -916,7 +916,7 @@ static int tegra_nvec_remove(struct platform_devi=
-ce
-> *pdev) nvec_unregister_notifier(nvec, &nvec->nvec_status_notifier);
->  =09cancel_work_sync(&nvec->rx_work);
->  =09cancel_work_sync(&nvec->tx_work);
-> -=09/* FIXME: needs check wether nvec is responsible for power off */=
-
-> +=09/* FIXME: needs check whether nvec is responsible for power off *=
-/
->  =09pm_power_off =3D NULL;
->=20
->  =09return 0;
-
---nextPart3725027.o5IgLPyd0C
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAABCAAGBQJVZF1FAAoJEKyeR39HFBtof+MH/AvR5Ke8QQS8HKLxM8xAXz3S
-xBOTlLFJoHAPOze1oQ60UJk1nBvHeAK0oDAl9qsOAvOk9YO7aB//UPOgrPPy9x1X
-7T/Wev0VI1A+mBgJxw7nyV/58rTmhyy+FNwS0+Av7Xpgng32LVg91hdAZT2we74Z
-ycFTduv9K3u69vMPhZZ4r0v5LOUUDUt2WZ7tOIImmTptRt8aaiBO/N0K/wfn2eWM
-Kz5/Ktw1jzZY7ws1A91cNx/TU6uiiUy3DmBiNz9wnQEfktQ3gTFcrYJc4+bGYsUT
-uAaQ6VGp1BOz52tlqcPNS6GM26bbW3NGWFRnrcqcb2W42BIkRCoaN+BSNDe9NUI=
-=d8Ib
------END PGP SIGNATURE-----
-
---nextPart3725027.o5IgLPyd0C--
-
-
---===============1816191725490892658==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
-
---===============1816191725490892658==--
+T24gU3VuLCBNYXkgMjQsIDIwMTUgYXQgMzoyNiBQTSwgTWFhcnRlbiBMYW5raG9yc3QKPG1hYXJ0
+ZW5AbWJsYW5raG9yc3Qubmw+IHdyb3RlOgo+IE9wIDIzLTA1LTE1IG9tIDA4OjQ1IHNjaHJlZWYg
+QWxleGFuZHJlIENvdXJib3Q6Cj4+IE9uIEZyaSwgTWF5IDIyLCAyMDE1IGF0IDM6MjMgQU0sIE1h
+cnRpbiBQZXJlcyA8bWFydGluLnBlcmVzQGZyZWUuZnI+IHdyb3RlOgo+Pj4gT24gMjEvMDUvMjAx
+NSAxMTo0NywgQmVuIFNrZWdncyB3cm90ZToKPj4+PiBPbiAyMSBNYXkgMjAxNSBhdCAxNjowOCwg
+QWxleGFuZHJlIENvdXJib3QgPGFjb3VyYm90QG52aWRpYS5jb20+IHdyb3RlOgo+Pj4+PiBBZGQg
+YSBmbGFnIGFsbG93aW5nIE5vdXZlYXUgdG8gc3BlY2lmeSB0aGF0IGFuIG9iamVjdCBzaG91bGQg
+YmUgY29oZXJlbnQKPj4+Pj4gYXQgYWxsb2NhdGlvbiB0aW1lLiBUaGlzIGlzIHJlcXVpcmVkIGZv
+ciBzb21lIGNsYXNzIG9mIG9iamVjdHMgbGlrZQo+Pj4+PiBmZW5jZXMgd2hpY2ggYXJlIHJhbmRv
+bWx5LWFjY2Vzc2VkIGJ5IGJvdGggdGhlIENQVSBhbmQgR1BVLiBUaGlzIGZsYWcKPj4+Pj4gaW5z
+dHJ1Y3RzIHRoZSBrZXJuZWwgZHJpdmVyIHRvIG1ha2Ugc3VyZSB0aGUgb2JqZWN0IHJlbWFpbnMg
+Y29oZXJlbnQKPj4+Pj4gZXZlbiBvbiBhcmNoaXRlY3R1cmVzIGZvciB3aGljaCBjb2hlcmVuY3kg
+aXMgbm90IGd1YXJhbnRlZWQgYnkgdGhlIGJ1cy4KPj4+Pj4KPj4+Pj4gU2lnbmVkLW9mZi1ieTog
+QWxleGFuZHJlIENvdXJib3QgPGFjb3VyYm90QG52aWRpYS5jb20+Cj4+Pj4gUmV2aWV3ZWQtYnk6
+IEJlbiBTa2VnZ3MgPGJza2VnZ3NAcmVkaGF0LmNvbT4KPj4+Cj4+PiBQdXNoZWQhCj4+IFRoYW5r
+cyEgU2hvdWxkIHdlIGFsc28gYnVtcCB0aGUgQUJJIHZlcnNpb24gb3Igc29tZXRoaW5nPwo+IElm
+IHlvdSBtZWFuIGNoYW5naW5nIGxpYmRybV9ub3V2ZWF1LnNvLjIgdG8gLnNvLjMgbm8hIElmIHlv
+dSBtZWFuIGhhdmluZyBzb21ldGhpbmcgdGhhdCBwa2ctY29uZmlnIGNhbiBwaWNrIHVwIHRoYXQn
+cyBkb25lIGF1dG9tYXRpY2FsbHkgb24gZXZlcnkgZHJtIHJlbGVhc2UuCgpTb3JyeSBmb3Igbm90
+IGhhdmluZyBiZWVuIGNsZWFyLiBJIHdhcyB0YWxraW5nIGFib3V0IGNoZWNraW5nIGFnYWluc3QK
+dGhlIGRyaXZlciB2ZXJzaW9uIHRvIGVuc3VyZSBpdCBzdXBwb3J0cyBhbGwgdGhlIGZlYXR1cmVz
+IHRoYXQgbGliZHJtCmNhbiB0aHJvdyBhdCBpdC4gV2UgaW5jcmVhc2VkIHRoZSBtb2R1bGVzJ3Mg
+dmVyc2lvbiB0byAxLjIuMiB3aGVuCmFkZGluZyB0aGUgY29oZXJlbnQgZmxhZzoKCmRybS9ub3V2
+ZWF1L25vdXZlYXVfZHJtLmg6CiAqIDEuMi4yOgogKiAgICAgIC0gYWRkIE5PVVZFQVVfR0VNX0RP
+TUFJTl9DT0hFUkVOVCBmbGFnCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
+dG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
+LWRldmVsCg==
