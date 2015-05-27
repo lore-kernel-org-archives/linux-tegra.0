@@ -1,61 +1,35 @@
-From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [PATCH] staging:nvec: fix typo in comment
-Date: Wed, 27 May 2015 12:47:45 +0200
-Message-ID: <6669345.xnRRftvuKv@fb07-iapwap2>
-References: <1432690254-3104-1-git-send-email-shailendra.capricorn@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH V2 0/2] pinctrl: tegra-xusb: Clean-up and fixes
+Date: Wed, 27 May 2015 14:11:52 +0100
+Message-ID: <1432732314-372-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart4553843.8NxVoDL3Rz"; micalg="pgp-sha256"; protocol="application/pgp-signature"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1432690254-3104-1-git-send-email-shailendra.capricorn-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Shailendra Verma <shailendra.capricorn-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
---nextPart4553843.8NxVoDL3Rz
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="ISO-8859-1"
+Some clean-up and fixes for tegra-xusb driver.
 
-Am Mittwoch, 27. Mai 2015, 07:00:54 schrieb Shailendra Verma:
-> Fix spelling error in comment in function tegra_nvec_remove.
-> 
-> Signed-off-by: Shailendra Verma <shailendra.capricorn-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+This had been boot tested on tegra20-trimslice, tegra30-beaver,
+tegra114-dalmore-a04 and tegra124-jetson-tk1 and no issues seen.
+Complete test information can be found below.
 
-Acked-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+http://nvt.pwsan.com/pub/jonathanh-tester/testlogs/test_20150527055028_b031599c28a38c92b745822d702e9b073d49dbaa/20150527055028
 
-> ---
->  drivers/staging/nvec/nvec.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-> index 1bdc8d0..164634d 100644
-> --- a/drivers/staging/nvec/nvec.c
-> +++ b/drivers/staging/nvec/nvec.c
-> @@ -916,7 +916,7 @@ static int tegra_nvec_remove(struct platform_device
-> *pdev) nvec_unregister_notifier(nvec, &nvec->nvec_status_notifier);
->  	cancel_work_sync(&nvec->rx_work);
->  	cancel_work_sync(&nvec->tx_work);
-> -	/* FIXME: needs check wether nvec is responsible for power off */
-> +	/* FIXME: needs check whether nvec is responsible for power off */
->  	pm_power_off = NULL;
-> 
->  	return 0;
+Changes since v1:
+- Dropped 3rd patch as it was unnecessary
+- Simplified implementation of get_group_pins function based upon
+  Thierry's feedback.
 
---nextPart4553843.8NxVoDL3Rz
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+Jon Hunter (2):
+  pinctrl: tegra-xusb: Remove unused structure
+  pinctrl: tegra-xusb: Fix allocation of pins
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+ drivers/pinctrl/pinctrl-tegra-xusb.c | 23 ++++++++++++++++++-----
+ 1 file changed, 18 insertions(+), 5 deletions(-)
 
-iQEcBAABCAAGBQJVZaDRAAoJEKyeR39HFBtozk8IAKYx48gG15SM55+PQnqeWWab
-0KPEUbv1ezJF2vkkSzwuS6ajJ5VNGX4qLsa1HXVzAWuZqusBo8Yd+Oby0tlm0neO
-zxmLwhmn55s5bJf0/G697/fBsW+W21cWBOMmHb5O+7BxQy5wp4VfAXkhrgvKKvrj
-NcRJScAjYN/Nzn+vv1d6zsjag3O0vScY8HtAnOKYeCAuPWjlgd91ggIKFsYQWGS6
-wcSNPGzxVuFJ3l2WkI2O3GiynNKZpC2VglMCVP95uLDbS/zs/QNzKyxeAu3A/xsz
-bkUsQ2kH4mXWXRyo2FLDTLnnqCQjo14JhfdtNuQC3PuoiCYJG/xifVq4LqUsJKw=
-=OBMJ
------END PGP SIGNATURE-----
+-- 
+1.9.1
 
---nextPart4553843.8NxVoDL3Rz--
