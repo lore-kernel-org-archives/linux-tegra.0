@@ -1,79 +1,82 @@
-From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Subject: Re: [PATCH 02/21] ARM: tegra: Add gpio-ranges property
-Date: Wed, 27 May 2015 16:18:29 +0200
-Message-ID: <CAAObsKD7YbZX01A=SS7z_PxAMPweHy6sw5ut=50h50C=j9y0zA@mail.gmail.com>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
- <1432565608-26036-3-git-send-email-tomeu.vizoso@collabora.com> <5564CC84.1030700@wwwdotorg.org>
+Date: Wed, 27 May 2015 08:49:19 -0600
+Message-ID: <5565D96F.3000600@wwwdotorg.org>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com> <1432565608-26036-3-git-send-email-tomeu.vizoso@collabora.com> <5564CC84.1030700@wwwdotorg.org> <CAAObsKD7YbZX01A=SS7z_PxAMPweHy6sw5ut=50h50C=j9y0zA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5564CC84.1030700-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <stephane.marchesin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAAObsKD7YbZX01A=SS7z_PxAMPweHy6sw5ut=50h50C=j9y0zA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, =?UTF-8?B?U3TDqXBoYW5lIE1hcmNoZXNpbg==?= <stephane.marchesin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 26 May 2015 at 21:41, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 05/25/2015 08:53 AM, Tomeu Vizoso wrote:
+On 05/27/2015 08:18 AM, Tomeu Vizoso wrote:
+> On 26 May 2015 at 21:41, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>> On 05/25/2015 08:53 AM, Tomeu Vizoso wrote:
+>>>
+>>> Specify how the GPIOs map to the pins in T124, so the dependency is
+>>> explicit.
+>>>
+>>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+>>> ---
+>>>    arch/arm/boot/dts/tegra124.dtsi | 1 +
+>>>    1 file changed, 1 insertion(+)
+>>>
+>>> diff --git a/arch/arm/boot/dts/tegra124.dtsi
+>>> b/arch/arm/boot/dts/tegra124.dtsi
+>>> index 13cc7ca..5d1d35f 100644
+>>> --- a/arch/arm/boot/dts/tegra124.dtsi
+>>> +++ b/arch/arm/boot/dts/tegra124.dtsi
+>>> @@ -254,6 +254,7 @@
+>>>                  gpio-controller;
+>>>                  #interrupt-cells = <2>;
+>>>                  interrupt-controller;
+>>> +               gpio-ranges = <&pinmux 0 0 250>;
 >>
->> Specify how the GPIOs map to the pins in T124, so the dependency is
->> explicit.
 >>
->> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
->> ---
->>   arch/arm/boot/dts/tegra124.dtsi | 1 +
->>   1 file changed, 1 insertion(+)
+>> We should be consistent between SoCs. Why not make the same change for all
+>> Tegra SoCs?
 >>
->> diff --git a/arch/arm/boot/dts/tegra124.dtsi
->> b/arch/arm/boot/dts/tegra124.dtsi
->> index 13cc7ca..5d1d35f 100644
->> --- a/arch/arm/boot/dts/tegra124.dtsi
->> +++ b/arch/arm/boot/dts/tegra124.dtsi
->> @@ -254,6 +254,7 @@
->>                 gpio-controller;
->>                 #interrupt-cells = <2>;
->>                 interrupt-controller;
->> +               gpio-ranges = <&pinmux 0 0 250>;
+>> I think this change will cause the GPIO subsystem to call into the pinctrl
+>> subsystem and create/add/register a new GPIO<->pinctrl range structure. The
+>> pinctrl driver already does this, so I think we'll end up with two duplicate
+>> entries in the pinctrl device's gpio_ranges list. This probably won't cause
+>> a problem, but I wanted to make sure you'd thought about it to make sure.
 >
+> Actually, I have checked and see that gpio-tegra.c registers 256
+> gpios, but pinctrl-tegra124.c adds a range of only 251. I don't really
+> remember where I got the 250 value from, sorry :(
 >
-> We should be consistent between SoCs. Why not make the same change for all
-> Tegra SoCs?
+> I don't see how that would cause any concrete problems, but maybe we
+> should have a single authoritative source (not sure we can do so
+> without breaking DT ABI though).
 >
-> I think this change will cause the GPIO subsystem to call into the pinctrl
-> subsystem and create/add/register a new GPIO<->pinctrl range structure. The
-> pinctrl driver already does this, so I think we'll end up with two duplicate
-> entries in the pinctrl device's gpio_ranges list. This probably won't cause
-> a problem, but I wanted to make sure you'd thought about it to make sure.
+>> Right now, I think we get lucky and pinctrl ends up probing first (or at
+>> least very early) anyway. Somewhat related to this series, I wonder if we
+>> shouldn't add pinctrl client properties to every node in the Tegra DT that
+>> describes a controller that makes use of external pins that are affected by
+>> the pinmux. Such a change would guarantee this desired probing order. In
+>> order to preserve the "program the entire pinmux at once" semantics, these
+>> new pinctrl client properties would all need to reference empty states, yet
+>> would still need to exist to represent the dependency.
+>
+> I think so, but aren't almost all those pins used as gpios? If so,
+> then such a controller's driver will request the gpio it wants which
+> will cause the gpio driver to be registered (and hopefully probed) if
+> needed, which in turn will check that the corresponding pinctrl device
+> has been registered. Or am I missing something?
 
-Actually, I have checked and see that gpio-tegra.c registers 256
-gpios, but pinctrl-tegra124.c adds a range of only 251. I don't really
-remember where I got the 250 value from, sorry :(
-
-I don't see how that would cause any concrete problems, but maybe we
-should have a single authoritative source (not sure we can do so
-without breaking DT ABI though).
-
-> Right now, I think we get lucky and pinctrl ends up probing first (or at
-> least very early) anyway. Somewhat related to this series, I wonder if we
-> shouldn't add pinctrl client properties to every node in the Tegra DT that
-> describes a controller that makes use of external pins that are affected by
-> the pinmux. Such a change would guarantee this desired probing order. In
-> order to preserve the "program the entire pinmux at once" semantics, these
-> new pinctrl client properties would all need to reference empty states, yet
-> would still need to exist to represent the dependency.
-
-I think so, but aren't almost all those pins used as gpios? If so,
-then such a controller's driver will request the gpio it wants which
-will cause the gpio driver to be registered (and hopefully probed) if
-needed, which in turn will check that the corresponding pinctrl device
-has been registered. Or am I missing something?
-
-Regards,
-
-Tomeu
-
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+As you say this probably works out fine for pins that are used as GPIOs. 
+I was thinking more about SFIOs. Take an I2C controller, which doesn't 
+use any GPIOs itself. The pinctrl device should be probed before the I2C 
+device, so that the I2C driver can initiate transactions on the I2C bus 
+during its probe if it wanted to (or at least, clients could initiate 
+transactions at any completely arbitrary time as soon as probe was 
+complete).
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
