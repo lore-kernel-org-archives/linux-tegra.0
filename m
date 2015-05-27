@@ -1,35 +1,41 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH V2 0/2] pinctrl: tegra-xusb: Clean-up and fixes
-Date: Wed, 27 May 2015 14:11:52 +0100
-Message-ID: <1432732314-372-1-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2 1/2] pinctrl: tegra-xusb: Remove unused structure
+Date: Wed, 27 May 2015 14:11:53 +0100
+Message-ID: <1432732314-372-2-git-send-email-jonathanh@nvidia.com>
+References: <1432732314-372-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1432732314-372-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Some clean-up and fixes for tegra-xusb driver.
+The structure tegra_xusb_padctl_group is defined but never used and so
+remove this.
 
-This had been boot tested on tegra20-trimslice, tegra30-beaver,
-tegra114-dalmore-a04 and tegra124-jetson-tk1 and no issues seen.
-Complete test information can be found below.
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/pinctrl/pinctrl-tegra-xusb.c | 5 -----
+ 1 file changed, 5 deletions(-)
 
-http://nvt.pwsan.com/pub/jonathanh-tester/testlogs/test_20150527055028_b031599c28a38c92b745822d702e9b073d49dbaa/20150527055028
-
-Changes since v1:
-- Dropped 3rd patch as it was unnecessary
-- Simplified implementation of get_group_pins function based upon
-  Thierry's feedback.
-
-Jon Hunter (2):
-  pinctrl: tegra-xusb: Remove unused structure
-  pinctrl: tegra-xusb: Fix allocation of pins
-
- drivers/pinctrl/pinctrl-tegra-xusb.c | 23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
-
+diff --git a/drivers/pinctrl/pinctrl-tegra-xusb.c b/drivers/pinctrl/pinctrl-tegra-xusb.c
+index 753d747d4261..3e8e4a914fb4 100644
+--- a/drivers/pinctrl/pinctrl-tegra-xusb.c
++++ b/drivers/pinctrl/pinctrl-tegra-xusb.c
+@@ -59,11 +59,6 @@ struct tegra_xusb_padctl_function {
+ 	unsigned int num_groups;
+ };
+ 
+-struct tegra_xusb_padctl_group {
+-	const unsigned int *funcs;
+-	unsigned int num_funcs;
+-};
+-
+ struct tegra_xusb_padctl_soc {
+ 	const struct pinctrl_pin_desc *pins;
+ 	unsigned int num_pins;
 -- 
 1.9.1
-
