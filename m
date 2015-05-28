@@ -1,134 +1,113 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [GIT PULL 4/8] clk: tegra: Changes for v4.2-rc1
-Date: Thu, 28 May 2015 13:13:09 +0300
-Message-ID: <20150528101309.GV11343@tbergstrom-lnx.Nvidia.com>
-References: <1431524980-13599-1-git-send-email-thierry.reding@gmail.com>
- <1431524980-13599-5-git-send-email-thierry.reding@gmail.com>
- <20150520195459.GU31753@codeaurora.org>
- <555D7A5B.1070901@nvidia.com>
- <20150527195021.GA24204@codeaurora.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 02/21] ARM: tegra: Add gpio-ranges property
+Date: Thu, 28 May 2015 09:50:18 -0600
+Message-ID: <5567393A.6000901@wwwdotorg.org>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com> <1432565608-26036-3-git-send-email-tomeu.vizoso@collabora.com> <5564CC84.1030700@wwwdotorg.org> <CAAObsKD7YbZX01A=SS7z_PxAMPweHy6sw5ut=50h50C=j9y0zA@mail.gmail.com> <5565D96F.3000600@wwwdotorg.org> <CAAObsKB-ayRd7OB1W9nYBJzvBDK0RZk1U56Gqxn08sHPT5FvzA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20150527195021.GA24204-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+In-Reply-To: <CAAObsKB-ayRd7OB1W9nYBJzvBDK0RZk1U56Gqxn08sHPT5FvzA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, =?UTF-8?B?U3TDqXBoYW5lIE1hcmNoZXNpbg==?= <stephane.marchesin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, May 27, 2015 at 12:50:21PM -0700, Stephen Boyd wrote:
-> On 05/21, Mikko Perttunen wrote:
-> > On 05/20/2015 10:54 PM, Stephen Boyd wrote:
-> > > On 05/13, Thierry Reding wrote:
-> > >> Hi Mike, Stephen,
-> > >>
-> > >> The following changes since commit b787f68c36d49bb1d9236f403813641efa74a031:
-> > >>
-> > >>   Linux 4.1-rc1 (2015-04-26 17:59:10 -0700)
-> > >>
-> > >> are available in the git repository at:
-> > >>
-> > >>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.2-clk
-> > >>
-> > >> for you to fetch changes up to 36b7be6d3ea8f434f1e0723f3fb0e85c3e00ebc2:
-> > >>
-> > >>   clk: tegra: Fix hda2codec_2x clock name for Tegra30 (2015-05-13 15:17:14 +0200)
-> > >>
-> > >> I've based this pull request on top of the tegra-for-4.2-ramcode pull
-> > >> request, so pulling only this one should be sufficient to resolve the
-> > >> dependency.
-> > >>
-> > >> Thanks,
-> > >> Thierry
-> > >>
-> > >> ----------------------------------------------------------------
-> > >> clk: tegra: Changes for v4.2-rc1
-> > >>
-> > >> This contains the EMC clock driver that's been exhaustively reviewed and
-> > >> tested. It also includes a change to the clock core that allows a clock
-> > >> provider to perform low-level reparenting of clocks. This is required by
-> > >> the EMC clock driver because the reparenting needs to be done at a very
-> > >> specific point in time during the EMC frequency switch.
-> > > 
-> > > Can someone please describe why we need to do software
-> > > reparenting at a specific point in time during a frequency
-> > > switch? I must have missed out on the conversation somewhere and
-> > > looking at the commit that introduces the function, the argument
-> > > for why the API is exposed:
-> > > 
-> > >       To be used by clock implementations for switching to a new
-> > >       parent during rate change.
-> > > 
-> > > is lacking in any details about *why* we need it.
-> > > 
-> > 
-> > Hi Stephen,
-> > 
-> > the way the EMC clock rate is set in hardware is similar to other
-> > clocks, i.e. there's a register and you write the new divider and parent
-> > id to it. However, with EMC, you cannot just do this any time you want;
-> > writing to the register initiates a state machine in the clock hardware
-> > that changes a large number of other parameters regarding DRAM timings
-> > as well. These parameters need to be programmed into shadow registers
-> > before the rate change write is done. This means that both the new
-> > divisor and the parent must be written in the same register write.
-> > 
-> > The CCF has a callback, set_rate_and_parent, which allows for both to be
-> > passed to the driver at the same time. However, it also requires
-> > set_rate and set_parent to be implemented, which the EMC driver cannot do.
-> 
-> Ok so we should change the framework to allow drivers to only
-> implement set_rate_and_parent and use that in set_rate and
-> set_parent implementations if it's the only option available. Or
-> is there a problem if CCF allows clk_set_parent() on the EMC
-> clock by calling set_rate_and_parent() with the new parent and
-> whatever recalc_rate returns for the new parent's rate going into
-> the clock?
-> 
-> > 
-> > Furthermore, the CCF cannot help with parent selection for the EMC clock
-> > at all. The parent for each rate is selected by the board designer.
-> 
-> I'm not following this part. The CCF mostly asks clock providers
-> what parent should be used when clk_set_rate() is called.
-> 
+On 05/28/2015 02:26 AM, Tomeu Vizoso wrote:
+> On 27 May 2015 at 16:49, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>> On 05/27/2015 08:18 AM, Tomeu Vizoso wrote:
+>>>
+>>> On 26 May 2015 at 21:41, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>>>>
+>>>> On 05/25/2015 08:53 AM, Tomeu Vizoso wrote:
+>>>>>
+>>>>>
+>>>>> Specify how the GPIOs map to the pins in T124, so the dependency is
+>>>>> explicit.
+>>>>>
+>>>>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+>>>>> ---
+>>>>>     arch/arm/boot/dts/tegra124.dtsi | 1 +
+>>>>>     1 file changed, 1 insertion(+)
+>>>>>
+>>>>> diff --git a/arch/arm/boot/dts/tegra124.dtsi
+>>>>> b/arch/arm/boot/dts/tegra124.dtsi
+>>>>> index 13cc7ca..5d1d35f 100644
+>>>>> --- a/arch/arm/boot/dts/tegra124.dtsi
+>>>>> +++ b/arch/arm/boot/dts/tegra124.dtsi
+>>>>> @@ -254,6 +254,7 @@
+>>>>>                   gpio-controller;
+>>>>>                   #interrupt-cells = <2>;
+>>>>>                   interrupt-controller;
+>>>>> +               gpio-ranges = <&pinmux 0 0 250>;
+>>>>
+>>>>
+>>>>
+>>>> We should be consistent between SoCs. Why not make the same change for
+>>>> all
+>>>> Tegra SoCs?
+>>>>
+>>>> I think this change will cause the GPIO subsystem to call into the
+>>>> pinctrl
+>>>> subsystem and create/add/register a new GPIO<->pinctrl range structure.
+>>>> The
+>>>> pinctrl driver already does this, so I think we'll end up with two
+>>>> duplicate
+>>>> entries in the pinctrl device's gpio_ranges list. This probably won't
+>>>> cause
+>>>> a problem, but I wanted to make sure you'd thought about it to make sure.
+>>>
+>>>
+>>> Actually, I have checked and see that gpio-tegra.c registers 256
+>>> gpios, but pinctrl-tegra124.c adds a range of only 251. I don't really
+>>> remember where I got the 250 value from, sorry :(
+>>>
+>>> I don't see how that would cause any concrete problems, but maybe we
+>>> should have a single authoritative source (not sure we can do so
+>>> without breaking DT ABI though).
+>>>
+>>>> Right now, I think we get lucky and pinctrl ends up probing first (or at
+>>>> least very early) anyway. Somewhat related to this series, I wonder if we
+>>>> shouldn't add pinctrl client properties to every node in the Tegra DT
+>>>> that
+>>>> describes a controller that makes use of external pins that are affected
+>>>> by
+>>>> the pinmux. Such a change would guarantee this desired probing order. In
+>>>> order to preserve the "program the entire pinmux at once" semantics,
+>>>> these
+>>>> new pinctrl client properties would all need to reference empty states,
+>>>> yet
+>>>> would still need to exist to represent the dependency.
+>>>
+>>>
+>>> I think so, but aren't almost all those pins used as gpios? If so,
+>>> then such a controller's driver will request the gpio it wants which
+>>> will cause the gpio driver to be registered (and hopefully probed) if
+>>> needed, which in turn will check that the corresponding pinctrl device
+>>> has been registered. Or am I missing something?
+>>
+>>
+>> As you say this probably works out fine for pins that are used as GPIOs. I
+>> was thinking more about SFIOs. Take an I2C controller, which doesn't use any
+>> GPIOs itself. The pinctrl device should be probed before the I2C device, so
+>> that the I2C driver can initiate transactions on the I2C bus during its
+>> probe if it wanted to (or at least, clients could initiate transactions at
+>> any completely arbitrary time as soon as probe was complete).
+>
+> What is using the SFIO in this case, the I2C master or the I2C client?
 
-There are a fixed number of allowed EMC OPPs per board. For each OPP there is
-a set of EMC parameters, the parent clock and the rate for the parent clock
-defined. Due to jitter requirements these settings have to be used. It's
-not allowed to choose a different parent even when that would result in the
-same clock rate.
+The I2C controller a/k/a the I2C master.
 
-> > 
-> > There is also the issue that sometimes, the EMC driver cannot directly
-> > switch to the target (rate, parent) pair; instead it is necessary to
-> > switch first to another pair we call a backup timing. In this situation,
-> > we temporarily have a parent that is neither the one we had before the
-> > set_rate call or the one it will be after. Especially, if the switch to
-> > the backup timing succeeds but the following switch to the target timing
-> > fails, then without the reparent call the parent in hardware would be
-> > left inconsistent with the software state.
-> 
-> Yes, I've sent a patch a while ago to support an idea of a "safe
-> parent" or a backup timing that can be used while a clock is
-> reprogrammed. Mike has also proposed the concept of "coordinated
-> clock rates" which would do something similar and allow clock
-> providers to control complicated rate transitions themselves. It
-> seems that we may be able to use the "safe parent" concept here,
-> where first we switch to some other parent, call the set_rate*
-> op, and then switch the parent back if we're not already using
-> the parent that we should be using.
-> 
+> In any case, is the problem you are referring to that ICs may rely on
 
-Due to the interlock between the CAR block and the EMC controller, there
-is a precise sequence of register accesses to be followed when doing a EMC
-frequency switch. Changing the EMC clock parent or divider in CAR triggers
-a state machine in the EMC controller which causes a bunch of shadow registers
-to take effect and a FIFO of commands to be send to the SDRAM chips.
-Because of this precise sequence, I think a single entity should be responsible
-for handling this. Splitting the sequence in multiple parts maintained by
-different people, will greatly increase the risk of difficult to trace
-stability regressions.
+s/ICs/drivers/ I think.
 
-Peter.
+> a specific pinmux configuration but that's not currently reflected on
+> the DT because pinmux configuration happened so early that things just
+> worked?
+
+Yes; the dependency of some nodes on pinctrl isn't explicitly called out 
+in the DT. It's probably not a good idea to have such implicit 
+dependencies, although I suppose for something so central as pinmux, 
+maybe it's not terrible, since almost everything depends on it and it's 
+pretty obvious.
