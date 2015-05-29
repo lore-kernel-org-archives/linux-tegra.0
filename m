@@ -1,79 +1,77 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC] tegra: dpaux: pinctrl proposal
-Date: Fri, 29 May 2015 16:50:12 +0100
-Message-ID: <55688AB4.2030505@nvidia.com>
-References: <1431963229-12867-1-git-send-email-jonathanh@nvidia.com> <20150519144654.GG26748@ulmo.nvidia.com> <555C901F.8090009@nvidia.com> <20150520154022.GB7734@ulmo.nvidia.com> <555CAE47.6070907@nvidia.com> <555CDC82.1010104@wwwdotorg.org> <555DD7B3.6020608@nvidia.com> <20150521140356.GA28021@ulmo.nvidia.com> <CACRpkdYP5FN=4_pWxc1j=e_JfcjA3bXCPDRmZYHeiZ8HDyEaEQ@mail.gmail.com> <555F1E3E.7040500@nvidia.com> <20150522143706.GA19922@ulmo.nvidia.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH/RFC 1/2] ARM: multi_v7_defconfig: Make drm support modular
+Date: Fri, 29 May 2015 18:33:42 +0200
+Message-ID: <CAMuHMdVKjgNEUot44E45Q1UWCgUC6zOM5mLhBr0qWuXRim3DsA@mail.gmail.com>
+References: <1432905926-31606-1-git-send-email-geert@linux-m68k.org>
+	<2568731.dqdEiMuDro@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150522143706.GA19922-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+In-Reply-To: <2568731.dqdEiMuDro@wuerfel>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: "arm@kernel.org" <arm@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Geert Uytterhoeven <geert+renesas@glider.be>, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, May 29, 2015 at 5:41 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+> On Friday 29 May 2015 15:25:25 Geert Uytterhoeven wrote:
+>> From: Geert Uytterhoeven <geert+renesas@glider.be>
+>>
+>> Make drm support modular to reduce kernel size (-620 KiB):
+>>
+>>        text    data     bss     dec     hex   filename
+>>     12211122 1392076  338520 13941718  d4bbd6 vmlinux.before
+>>     11581470 1387196  338264 13306930  cb0c32 vmlinux.after
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> ---
+>> Slightly controversial:
+>>   - Does anyone need drm for boot testing?
+>
+> Only the tegra driver is affected, so let's ask the tegra
+> maintainers.
 
-On 22/05/15 15:37, Thierry Reding wrote:
-> I'd still clearly prefer to have the pinctrl code live directly in the
-> DPAUX driver, so I think we should at least give that a shot.
+And the qcom maintainers.
 
-I have been working on this more this week and the good news is that by
-using some of the pinconf-generic handlers I can simplify the code and
-avoid moving headers and structures around.
+CONFIG_DRM_MSM also changes from m to y, but this is not visible in
+multi_v7_defconfig due to CONFIG_DRM_MSM_FBDEV=y and defconfig reduction...
 
-However, I have ran into another issue. The current binding looks like
-this ...
+>>  arch/arm/configs/multi_v7_defconfig | 8 +++++---
+>>  1 file changed, 5 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+>> index 40ca1ab29a2e350f..9b4e33d5b15e340f 100644
+>> --- a/arch/arm/configs/multi_v7_defconfig
+>> +++ b/arch/arm/configs/multi_v7_defconfig
+>> @@ -426,15 +426,17 @@ CONFIG_VIDEO_RENESAS_VSP1=m
+>>  # CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
+>>  CONFIG_VIDEO_ADV7180=m
+>>  CONFIG_VIDEO_ML86V7667=m
+>> -CONFIG_DRM=y
+>> +CONFIG_TEGRA_HOST1X=y
+>> +CONFIG_DRM=m
+>>  CONFIG_DRM_PTN3460=m
+>>  CONFIG_DRM_PS8622=m
+>>  CONFIG_DRM_EXYNOS=m
+>>  CONFIG_DRM_EXYNOS_FIMD=y
+>>  CONFIG_DRM_EXYNOS_HDMI=y
+>>  CONFIG_DRM_RCAR_DU=m
+>> -CONFIG_DRM_TEGRA=y
+>> -CONFIG_DRM_PANEL_SIMPLE=y
+>> +CONFIG_DRM_TEGRA=m
+>> +CONFIG_DRM_PANEL_SIMPLE=m
+>> +CONFIG_FB=y
+>>  CONFIG_FB_ARMCLCD=y
+>>  CONFIG_FB_WM8505=y
+>>  CONFIG_FB_SH_MOBILE_LCDC=y
 
-             dpaux: dpaux@0,545c0000 {
-                     compatible = "nvidia,tegra124-dpaux";
-                     reg = <0x0 0x545c0000 0x0 0x40000>;
-                     interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
-                     clocks = <&tegra_car TEGRA124_CLK_DPAUX>,
-                              <&tegra_car TEGRA124_CLK_PLL_DP>;
-                     clock-names = "dpaux", "parent";
-                     resets = <&tegra_car 181>;
-                     reset-names = "dpaux";
-                     status = "disabled";
+Gr{oetje,eeting}s,
 
-                     dpaux_state: dpaux_state0 {
-                             dpaux {
-                                     groups = "dpaux_io";
-                                     function = "dpaux";
-                                     nvidia,dpaux-drvi;
-                                     nvidia,dpaux-drvz;
-                                     nvidia,dpaux-cmh;
-                             };
-                     };
+                        Geert
 
-                     i2c_state: i2c_state0 {
-                             i2c {
-                                     groups = "dpaux_io";
-                                     function = "i2c";
-                             };
-                     };
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-This all works well, however, because the display-port binding now has
-child devices which are not i2c clients I see the following messages
-during kernel boot ...
-
-[    1.607606] i2c i2c-6: of_i2c: modalias failure on
-/host1x@0,50000000/dpaux@0,545c0000/dpaux_state0
-[    1.616658] i2c i2c-6: of_i2c: modalias failure on
-/host1x@0,50000000/dpaux@0,545c0000/i2c_state0
-
-In other words, i2c_add_adapter() (which is called by probing the dpaux)
-then parses the child nodes looking for i2c client devices. However,
-these child devices are not i2c client devices and hence the above error
-messages. I can't find an easy way to avoid this. There is no
-side-effect from these messages, but I would prefer not to see them.
-
-Thierry, my understanding is the i2c-over-aux protocol is a simplified
-version of the i2c protocol. From a DT perspective would a dpaux device
-ever have i2c client devices as children like a normal i2c device has? I
-am wondering if it would be valid in this case to tell the i2c-core not
-to search for children. Although that sounds like a hack. I am not sure
-if the i2c folks would allow us to make these dev_dbg() prints.
-
-Cheers
-Jon
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
