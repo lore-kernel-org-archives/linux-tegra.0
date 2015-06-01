@@ -1,40 +1,110 @@
-From: Jiang Liu <jiang.liu@linux.intel.com>
-Subject: Re: [RFC v1 05/25] gpio: Use irq_desc_get_xxx() to avoid redundant
- lookup of irq_desc
-Date: Mon, 01 Jun 2015 21:48:53 +0800
-Message-ID: <556C62C5.2040107@linux.intel.com>
-References: <1432116013-25902-1-git-send-email-jiang.liu@linux.intel.com>	<1432116013-25902-6-git-send-email-jiang.liu@linux.intel.com> <CACRpkdZfWK5H+gRD6inX31Ouq1XCvq7CneNDJV8x0iihXHzWjw@mail.gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [RFC] tegra: dpaux: pinctrl proposal
+Date: Mon, 01 Jun 2015 13:24:51 -0600
+Message-ID: <556CB183.5020606@wwwdotorg.org>
+References: <1431963229-12867-1-git-send-email-jonathanh@nvidia.com> <20150519144654.GG26748@ulmo.nvidia.com> <555C901F.8090009@nvidia.com> <20150520154022.GB7734@ulmo.nvidia.com> <555CAE47.6070907@nvidia.com> <555CDC82.1010104@wwwdotorg.org> <555DD7B3.6020608@nvidia.com> <20150521140356.GA28021@ulmo.nvidia.com> <CACRpkdYP5FN=4_pWxc1j=e_JfcjA3bXCPDRmZYHeiZ8HDyEaEQ@mail.gmail.com> <555F1E3E.7040500@nvidia.com> <20150522143706.GA19922@ulmo.nvidia.com> <55688AB4.2030505@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZfWK5H+gRD6inX31Ouq1XCvq7CneNDJV8x0iihXHzWjw@mail.gmail.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Randy Dunlap <rdunlap@infradead.org>, Yinghai Lu <yinghai@kernel.org>, Borislav Petkov <bp@alien8.de>, Ray Jui <rjui@broadcom.com>, Alexandre Courbot <gnurou@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?B?U8O2cmVuIEJyaW5rbWFubg==?= <soren.brinkmann@xilinx.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, Tony Luck <tony.luck@intel.com>, x86@kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kern>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <55688AB4.2030505-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 2015/6/1 20:45, Linus Walleij wrote:
-> On Wed, May 20, 2015 at 11:59 AM, Jiang Liu <jiang.liu@linux.intel.com> wrote:
-> 
->> Use irq_desc_get_xxx() to avoid redundant lookup of irq_desc while we
->> already have a pointer to corresponding irq_desc.
->>
->> Signed-off-by: Jiang Liu <jiang.liu@linux.intel.com>
-> 
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> Are there dependencies on this patch or can I just apply it
-> directly to the GPIO tree?
-Hi Linus,
-	Thanks for review.
-	There's a very long dependency list of this patch set,
-so it would be safer to merge this patch set altogether through
-the irq tree if that works:)
-Thanks!
-Gerry
+On 05/29/2015 09:50 AM, Jon Hunter wrote:
+>
+> On 22/05/15 15:37, Thierry Reding wrote:
+>> I'd still clearly prefer to have the pinctrl code live directly in the
+>> DPAUX driver, so I think we should at least give that a shot.
+>
+> I have been working on this more this week and the good news is that by
+> using some of the pinconf-generic handlers I can simplify the code and
+> avoid moving headers and structures around.
+>
+> However, I have ran into another issue. The current binding looks like
+> this ...
+>
+>               dpaux: dpaux@0,545c0000 {
+>                       compatible = "nvidia,tegra124-dpaux";
+>                       reg = <0x0 0x545c0000 0x0 0x40000>;
+>                       interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
+>                       clocks = <&tegra_car TEGRA124_CLK_DPAUX>,
+>                                <&tegra_car TEGRA124_CLK_PLL_DP>;
+>                       clock-names = "dpaux", "parent";
+>                       resets = <&tegra_car 181>;
+>                       reset-names = "dpaux";
+>                       status = "disabled";
+>
+>                       dpaux_state: dpaux_state0 {
+>                               dpaux {
+>                                       groups = "dpaux_io";
+>                                       function = "dpaux";
+>                                       nvidia,dpaux-drvi;
+>                                       nvidia,dpaux-drvz;
+>                                       nvidia,dpaux-cmh;
+>                               };
+>                       };
+>
+>                       i2c_state: i2c_state0 {
+>                               i2c {
+>                                       groups = "dpaux_io";
+>                                       function = "i2c";
+>                               };
+>                       };
+>
+> This all works well, however, because the display-port binding now has
+> child devices which are not i2c clients I see the following messages
+> during kernel boot ...
+>
+> [    1.607606] i2c i2c-6: of_i2c: modalias failure on
+> /host1x@0,50000000/dpaux@0,545c0000/dpaux_state0
+> [    1.616658] i2c i2c-6: of_i2c: modalias failure on
+> /host1x@0,50000000/dpaux@0,545c0000/i2c_state0
 
-> 
-> Yours,
-> Linus Walleij
-> 
+Hmm. The DT binding doc for dpaux doesn't say anything about the device 
+being an I2C controller and hence inheriting/aggregating the core I2C 
+schema. It should...
+
+Equally, being an I2C controller means the node should have 
+#address-cells/#size-cells properties for the I2C address.
+
+> In other words, i2c_add_adapter() (which is called by probing the dpaux)
+> then parses the child nodes looking for i2c client devices. However,
+> these child devices are not i2c client devices and hence the above error
+> messages. I can't find an easy way to avoid this. There is no
+> side-effect from these messages, but I would prefer not to see them.
+
+If this were a completely new binding, I think the best way would be to 
+have the dpaux node contain a child node for each semantic service 
+implemented by the device, e.g.:
+
+dpaux {
+     compatible = "nvidia,tegra124-dpaux";
+     ...
+     pinctrl {
+         dpaux_state: dpaux_state0 {
+             ...
+         i2c_state: i2c_state0 {
+             ...
+     };
+     i2c-bus {
+         // i2c devices go here
+         // I2C core pointed at this sub-node, not the dpaux node
+     };
+};
+
+I guess we can't change the binding this way since it already exists, 
+unless we introduce a new compatible value to distinguish the old and 
+new styles.
+
+Perhaps i2c_add_adapter should only attempt to instantiate devices for 
+sub-nodes that contain a compatible and/or a reg property?
+
+> Thierry, my understanding is the i2c-over-aux protocol is a simplified
+> version of the i2c protocol. From a DT perspective would a dpaux device
+> ever have i2c client devices as children like a normal i2c device has? I
+> am wondering if it would be valid in this case to tell the i2c-core not
+> to search for children. Although that sounds like a hack. I am not sure
+> if the i2c folks would allow us to make these dev_dbg() prints.
