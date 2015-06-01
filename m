@@ -1,71 +1,72 @@
-From: Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
 Subject: Re: [PATCH] ARM: v7 setup function should invalidate L1 cache
-Date: Mon, 1 Jun 2015 11:21:40 +0100
-Message-ID: <556C3234.2030805@hisilicon.com>
+Date: Mon, 1 Jun 2015 12:41:01 +0200
+Message-ID: <CAMuHMdUQkm_9PhSdGS8j85Uodm-o0jiki=Xh4h59PBShB=rCXw@mail.gmail.com>
 References: <E1Yuk8W-0001tC-IK@rmk-PC.arm.linux.org.uk>
+	<CAMuHMdX=T3CsLTT95H_07Si6Kd8SRraBfxADpn+VtAF4GmZ=mw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <E1Yuk8W-0001tC-IK-eh5Bv4kxaXIANfyc6IWni62ZND6+EDdj@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, yanhaifeng-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org, Marc Carino <marc.ceeeee-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Gregory Clement <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, =?UTF-8?B?U8O2cmVuIEJyaW5rbWFubg==?= <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Barry Song <baohua-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Christian Daudt <bcm-xK7y4jjYLqYh9ZMKESR00Q@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Wang Long <long.wanglong-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-sh-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdX=T3CsLTT95H_07Si6Kd8SRraBfxADpn+VtAF4GmZ=mw@mail.gmail.com>
+Sender: linux-sh-owner@vger.kernel.org
+To: Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Linux-sh list <linux-sh@vger.kernel.org>, linux-tegra@vger.kernel.org, Andrew Lunn <andrew@lunn.ch>, Heiko Stuebner <heiko@sntech.de>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Wei Xu <xuwei5@hisilicon.com>, bcm-kernel-feedback-list@broadcom.com, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Stephen Warren <swarren@wwwdotorg.org>, Marc Carino <marc.ceeeee@gmail.com>, Simon Horman <horms@verge.net.au>, Gregory Fong <gregory.0xf0@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, =?UTF-8?Q?S=C3=B6ren_Br
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, May 22, 2015 at 9:36 AM, Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+> On Tue, May 19, 2015 at 6:12 PM, Russell King
+> <rmk+kernel@arm.linux.org.uk> wrote:
+>> All ARMv5 and older CPUs invalidate their caches in the early assembly
+>> setup function, prior to enabling the MMU.  This is because the L1
+>> cache should not contain any data relevant to the execution of the
+>> kernel at this point; all data should have been flushed out to memory.
+>>
+>> This requirement should also be true for ARMv6 and ARMv7 CPUs - indeed,
+>> these typically do not search their caches when caching is disabled (as
+>> it needs to be when the MMU is disabled) so this change should be safe.
+>>
+>> ARMv7 allows there to be CPUs which search their caches while caching is
+>> disabled, and it's permitted that the cache is uninitialised at boot;
+>> for these, the architecture reference manual requires that an
+>> implementation specific code sequence is used immediately after reset
+>> to ensure that the cache is placed into a sane state.  Such
+>> functionality is definitely outside the remit of the Linux kernel, and
+>> must be done by the SoC's firmware before _any_ CPU gets to the Linux
+>> kernel.
+>>
+>> Changing the data cache clean+invalidate to a mere invalidate allows us
+>> to get rid of a lot of platform specific hacks around this issue for
+>> their secondary CPU bringup paths - some of which were buggy.
+>>
+>> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+>
+> For various shmobile:
+>   - sh73a0/kzm9g
+>   - r8a7740/armadillo
+>   - r8a73a4/ape6evm
+>   - r8a7791/koelsch
+>
+> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+FWIW, I have the feeling this has a slight influence on boot reliability on
+two of my boards:
+  - r8a7740/armadillo, which is known to suffer from a cache-related bug in
+    its bootloader, seems to have a higher change of booting successfully on
+    cold boot,
+  - sh73a0/kzm9g, which has known cache-issues with secondary CPU boot up,
+    seems to have a lower chance of booting successfully.
 
-On 5/19/2015 5:12 PM, Russell King wrote:
-> All ARMv5 and older CPUs invalidate their caches in the early assembly
-> setup function, prior to enabling the MMU.  This is because the L1
-> cache should not contain any data relevant to the execution of the
-> kernel at this point; all data should have been flushed out to memory.
-> 
-> This requirement should also be true for ARMv6 and ARMv7 CPUs - indeed,
-> these typically do not search their caches when caching is disabled (as
-> it needs to be when the MMU is disabled) so this change should be safe.
-> 
-> ARMv7 allows there to be CPUs which search their caches while caching is
-> disabled, and it's permitted that the cache is uninitialised at boot;
-> for these, the architecture reference manual requires that an
-> implementation specific code sequence is used immediately after reset
-> to ensure that the cache is placed into a sane state.  Such
-> functionality is definitely outside the remit of the Linux kernel, and
-> must be done by the SoC's firmware before _any_ CPU gets to the Linux
-> kernel.
-> 
-> Changing the data cache clean+invalidate to a mere invalidate allows us
-> to get rid of a lot of platform specific hacks around this issue for
-> their secondary CPU bringup paths - some of which were buggy.
-> 
-> Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-> ---
+No time to spend all week turning this into a statistical significant test
+project... The reset button is my friend...
 
-Hi Russell,
+Gr{oetje,eeting}s,
 
-[...]
->  arch/arm/mach-hisi/Makefile           |  2 +-
->  arch/arm/mach-hisi/core.h             |  1 -
->  arch/arm/mach-hisi/headsmp.S          | 16 ----------------
->  arch/arm/mach-hisi/platsmp.c          |  4 ++--
-[...]
+                        Geert
 
-Sorry for the late reply.
-For Hisilicon:
-    - hip01/ca9x2
-    - hix5hd2/dkb
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-Tested-by: Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>
-
-Thanks!
-
-Best Regards,
-Wei
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
