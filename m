@@ -1,110 +1,58 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [RFC] tegra: dpaux: pinctrl proposal
-Date: Mon, 01 Jun 2015 13:24:51 -0600
-Message-ID: <556CB183.5020606@wwwdotorg.org>
-References: <1431963229-12867-1-git-send-email-jonathanh@nvidia.com> <20150519144654.GG26748@ulmo.nvidia.com> <555C901F.8090009@nvidia.com> <20150520154022.GB7734@ulmo.nvidia.com> <555CAE47.6070907@nvidia.com> <555CDC82.1010104@wwwdotorg.org> <555DD7B3.6020608@nvidia.com> <20150521140356.GA28021@ulmo.nvidia.com> <CACRpkdYP5FN=4_pWxc1j=e_JfcjA3bXCPDRmZYHeiZ8HDyEaEQ@mail.gmail.com> <555F1E3E.7040500@nvidia.com> <20150522143706.GA19922@ulmo.nvidia.com> <55688AB4.2030505@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 00/21] On-demand device registration
+Date: Tue, 2 Jun 2015 10:48:50 +0200
+Message-ID: <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <55688AB4.2030505-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Grant Likely <grant.likely@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, dmaengine@vger.kernel.org, Alexander Holler <holler@ahsoftware.de>, Dan Williams <dan.j.williams@intel.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.or
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/29/2015 09:50 AM, Jon Hunter wrote:
->
-> On 22/05/15 15:37, Thierry Reding wrote:
->> I'd still clearly prefer to have the pinctrl code live directly in the
->> DPAUX driver, so I think we should at least give that a shot.
->
-> I have been working on this more this week and the good news is that by
-> using some of the pinconf-generic handlers I can simplify the code and
-> avoid moving headers and structures around.
->
-> However, I have ran into another issue. The current binding looks like
-> this ...
->
->               dpaux: dpaux@0,545c0000 {
->                       compatible = "nvidia,tegra124-dpaux";
->                       reg = <0x0 0x545c0000 0x0 0x40000>;
->                       interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
->                       clocks = <&tegra_car TEGRA124_CLK_DPAUX>,
->                                <&tegra_car TEGRA124_CLK_PLL_DP>;
->                       clock-names = "dpaux", "parent";
->                       resets = <&tegra_car 181>;
->                       reset-names = "dpaux";
->                       status = "disabled";
->
->                       dpaux_state: dpaux_state0 {
->                               dpaux {
->                                       groups = "dpaux_io";
->                                       function = "dpaux";
->                                       nvidia,dpaux-drvi;
->                                       nvidia,dpaux-drvz;
->                                       nvidia,dpaux-cmh;
->                               };
->                       };
->
->                       i2c_state: i2c_state0 {
->                               i2c {
->                                       groups = "dpaux_io";
->                                       function = "i2c";
->                               };
->                       };
->
-> This all works well, however, because the display-port binding now has
-> child devices which are not i2c clients I see the following messages
-> during kernel boot ...
->
-> [    1.607606] i2c i2c-6: of_i2c: modalias failure on
-> /host1x@0,50000000/dpaux@0,545c0000/dpaux_state0
-> [    1.616658] i2c i2c-6: of_i2c: modalias failure on
-> /host1x@0,50000000/dpaux@0,545c0000/i2c_state0
-
-Hmm. The DT binding doc for dpaux doesn't say anything about the device 
-being an I2C controller and hence inheriting/aggregating the core I2C 
-schema. It should...
-
-Equally, being an I2C controller means the node should have 
-#address-cells/#size-cells properties for the I2C address.
-
-> In other words, i2c_add_adapter() (which is called by probing the dpaux)
-> then parses the child nodes looking for i2c client devices. However,
-> these child devices are not i2c client devices and hence the above error
-> messages. I can't find an easy way to avoid this. There is no
-> side-effect from these messages, but I would prefer not to see them.
-
-If this were a completely new binding, I think the best way would be to 
-have the dpaux node contain a child node for each semantic service 
-implemented by the device, e.g.:
-
-dpaux {
-     compatible = "nvidia,tegra124-dpaux";
-     ...
-     pinctrl {
-         dpaux_state: dpaux_state0 {
-             ...
-         i2c_state: i2c_state0 {
-             ...
-     };
-     i2c-bus {
-         // i2c devices go here
-         // I2C core pointed at this sub-node, not the dpaux node
-     };
-};
-
-I guess we can't change the binding this way since it already exists, 
-unless we introduce a new compatible value to distinguish the old and 
-new styles.
-
-Perhaps i2c_add_adapter should only attempt to instantiate devices for 
-sub-nodes that contain a compatible and/or a reg property?
-
-> Thierry, my understanding is the i2c-over-aux protocol is a simplified
-> version of the i2c protocol. From a DT perspective would a dpaux device
-> ever have i2c client devices as children like a normal i2c device has? I
-> am wondering if it would be valid in this case to tell the i2c-core not
-> to search for children. Although that sounds like a hack. I am not sure
-> if the i2c folks would allow us to make these dev_dbg() prints.
+T24gTW9uLCBNYXkgMjUsIDIwMTUgYXQgNDo1MyBQTSwgVG9tZXUgVml6b3NvCjx0b21ldS52aXpv
+c29AY29sbGFib3JhLmNvbT4gd3JvdGU6Cgo+IGhhdmUgbG9va2VkIGludG8gb3JkZXJlZCBwcm9i
+aW5nIGFzIGEKPiBiZXR0ZXIgd2F5IG9mIHNvbHZpbmcgdGhpcyB0aGFuIG1vdmluZyBub2RlcyBh
+cm91bmQgaW4gdGhlIERUIG9yIHBsYXlpbmcgd2l0aAo+IGluaXRjYWxsIGxldmVscy4KPgo+IFdo
+aWxlIHJlYWRpbmcgdGhlIHRocmVhZCBbMV0gdGhhdCBBbGV4YW5kZXIgSG9sbGVyIHN0YXJ0ZWQg
+d2l0aCBoaXMgc2VyaWVzIHRvCj4gbWFrZSBwcm9iaW5nIG9yZGVyIGRldGVybWluaXN0aWMsIGl0
+IG9jY3VycmVkIHRvIG1lIHRoYXQgaXQgc2hvdWxkIGJlIHBvc3NpYmxlCj4gdG8gYWNoaWV2ZSB0
+aGUgc2FtZSBieSByZWdpc3RlcmluZyBkZXZpY2VzIGFzIHRoZXkgYXJlIHJlZmVyZW5jZWQgYnkg
+b3RoZXIKPiBkZXZpY2VzLgoKVGhpcyBpcyBwcmV0dHkgY29vbCwgYnV0IGEgdG9vIGxvY2FsIHNv
+bHV0aW9uIHRvIGEgZ2xvYmFsIHByb2JsZW0uCgpEZWZlcnJlZCBwcm9iZSBhbmQgaW5pdGNhbGwg
+cmVvcmRlcmluZywgc2lsbHkgYXMgdGhleSBtYXkgc2VlbSwKZG9lcyBub3QgcmVxdWlyZSB5b3Ug
+dG8gdXNlIGRldmljZSB0cmVlLgoKVGhlIHJlYWwgc29sdXRpb24sIHdoaWNoIEkgdGhpbmsgSSBw
+b2ludGVkIG91dCBhbHJlYWR5IHdoZW4gd2UKYWRkZWQgZGVmZXJyZWQgcHJvYmUsIGlzIHRvIHB1
+dCBkZXBlbmRlbmN5IGdyYXBocyBpbiB0aGUgZHJpdmVycwphbmQgaGF2ZSB0aGUga2VybmVsIGRl
+dmljZSBkcml2ZXIgY29yZSBwZXJjb2xhdGUgZGVwZW5kZWNpZXMgYnkKd2Fsa2luZyB0aGUgZ3Jh
+cGggb24gcHJvYmluZyBkcml2ZXIsIHJlbW92aW5nIGRyaXZlciAodXN1YWxseSB0aGUKaW52ZXJz
+ZSB1c2UgY2FzZSksIFtydW50aW1lXSBzdXNwZW5kIGFuZCBbcnVudGltZV0gcmVzdW1laW5nCmEg
+ZHJpdmVyLiBQb3NzaWJseSB0aGUgZGVwZW5kZW5jaWVzIHdpbGwgZXZlbiBiZSBkaWZmZXJlbnQK
+ZGVwZW5kaW5nIG9uIHVzZSBjYXNlLgoKVGhpcyBpcyB3aGF0IHN5c3RlbWQgaXMgZG9pbmcgaW4g
+dXNlcnNwYWNlIGZvciBzdGFydGluZyBzZXJ2aWNlczoKYXNrIGZvciB5b3VyIGRlcGVuZGVuY2ll
+cyBhbmQgd2FpdCBmb3IgdGhlbSBpZiB0aGV5IGFyZSBub3QKdGhlcmUuIFNvIGRyaXZlcnMgYXNr
+IGZvciByZXNvdXJjZXMgYW5kIHdhaXQgZm9yIHRoZW0uIEl0IGFsc28KbmVlZHMgdG8gYmUgYWJz
+dHJhY3QsIHNvIGZvciBleGFtcGxlIHdlIG5lZWQgdG8gYmUgYWJsZSB0bwpoYW5nIG9uIHJlZ3Vs
+YXRvcl9nZXQoKSB1bnRpbCB0aGUgZHJpdmVyIGlzIHVwIGFuZCBwcm92aWRpbmcgdGhhdApyZWd1
+bGF0b3IsIGFuZCBhcyBsb25nIGFzIGV2ZXJ5dGhpbmcgaXMgaW4gc2xvd3BhdGggaXQgc2hvdWxk
+CmJlIE9LLiAoQW5kIHZpY2UgdmVyc2EgbXV0YXRpcyBtdXRhbmRpcyBmb3IgY2xrLCBncGlvLCBw
+aW4KY29udHJvbCwgaW50ZXJydXB0cyAoISkgYW5kIERNQSBjaGFubmVscyBmb3IgZXhhbXBsZS4p
+CgoKU28gaWYgdGhpcyBzaG91bGQgYmUgc29sdmVkIGl0IHNob3VsZCBiZSBzb2x2ZWQgaW4gYW4g
+YWJzdHJhY3Qgd2F5CmluIHRoZSBkZXZpY2UgZHJpdmVyIGNvcmUgYXZhaWxhYmxlIGZvciBhbGws
+IHRoZW4gaGF2ZSBjYWxscyBjYWxsaW5nCm91dCB0byBEVCwgQUNQSSwgcG9zc2libHkgZXZlbiBQ
+Q0kgb3IgVVNCIChhcyB0aGVzZQplbnVtZXJhdGUgZGV2aWNlcyB0aGVtc2VsdmVzKSB0byBvYnRh
+aW4gYSBjZXJ0YWluCmRlcGVuZGVuY3kuCgpZb3VycywKTGludXMgV2FsbGVpagpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
+aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
+dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
