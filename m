@@ -1,63 +1,67 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 02/21] ARM: tegra: Add gpio-ranges property
-Date: Tue, 02 Jun 2015 09:40:33 -0600
-Message-ID: <556DCE71.7050108@wwwdotorg.org>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>	<1432565608-26036-3-git-send-email-tomeu.vizoso@collabora.com>	<5564CC84.1030700@wwwdotorg.org> <CACRpkdbtCDQLaPhWFT0a7NdJmxYzRvhU_efgUh2ZXhbc+FHg3g@mail.gmail.com>
+From: Alexander Holler <holler@ahsoftware.de>
+Subject: Re: [PATCH 00/21] On-demand device registration
+Date: Wed, 03 Jun 2015 00:54:31 +0200
+Message-ID: <556E3427.6000704@ahsoftware.de>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
+ <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdbtCDQLaPhWFT0a7NdJmxYzRvhU_efgUh2ZXhbc+FHg3g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, =?UTF-8?B?U3TDqXBoYW5lIE1hcmNoZXNpbg==?= <stephane.marchesin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Grant Likely <grant.likely@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, DRM PANEL DRIVERS <dri-devel@lists.freedesktop.org>, list@wandq.ahsoftware, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, linux-clk@vger.kernel.org, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, open@wandq.ahsoftware, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Dan Williams <dan.j.williams@intel.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/02/2015 05:28 AM, Linus Walleij wrote:
-> On Tue, May 26, 2015 at 9:41 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->> On 05/25/2015 08:53 AM, Tomeu Vizoso wrote:
->>>
->>> Specify how the GPIOs map to the pins in T124, so the dependency is
->>> explicit.
->>>
->>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
->>> ---
->>>    arch/arm/boot/dts/tegra124.dtsi | 1 +
->>>    1 file changed, 1 insertion(+)
->>>
->>> diff --git a/arch/arm/boot/dts/tegra124.dtsi
->>> b/arch/arm/boot/dts/tegra124.dtsi
->>> index 13cc7ca..5d1d35f 100644
->>> --- a/arch/arm/boot/dts/tegra124.dtsi
->>> +++ b/arch/arm/boot/dts/tegra124.dtsi
->>> @@ -254,6 +254,7 @@
->>>                  gpio-controller;
->>>                  #interrupt-cells = <2>;
->>>                  interrupt-controller;
->>> +               gpio-ranges = <&pinmux 0 0 250>;
->>
->>
->> We should be consistent between SoCs. Why not make the same change for all
->> Tegra SoCs?
->
-> Agreed.
->
->> I think this change will cause the GPIO subsystem to call into the pinctrl
->> subsystem and create/add/register a new GPIO<->pinctrl range structure. The
->> pinctrl driver already does this, so I think we'll end up with two duplicate
->> entries in the pinctrl device's gpio_ranges list. This probably won't cause
->> a problem, but I wanted to make sure you'd thought about it to make sure.
->
-> That sounds like duplication indeed, I would expect that first a patch
-> adds the ranges to the dts[i] files and then a second patch delete the
-> same ranges from the pinctrl driver then, if these shall come in from
-> the device tree.
-
-We can't delete the gpio-range-registration code from the Tegra pinmux 
-driver, or old DTs won't work correctly. We could make it conditional 
-based upon whether the DT contains the property or not.
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+QW0gMDIuMDYuMjAxNSB1bSAxMDo0OCBzY2hyaWViIExpbnVzIFdhbGxlaWo6Cj4gT24gTW9uLCBN
+YXkgMjUsIDIwMTUgYXQgNDo1MyBQTSwgVG9tZXUgVml6b3NvCj4gPHRvbWV1LnZpem9zb0Bjb2xs
+YWJvcmEuY29tPiB3cm90ZToKPiAKPj4gaGF2ZSBsb29rZWQgaW50byBvcmRlcmVkIHByb2Jpbmcg
+YXMgYQo+PiBiZXR0ZXIgd2F5IG9mIHNvbHZpbmcgdGhpcyB0aGFuIG1vdmluZyBub2RlcyBhcm91
+bmQgaW4gdGhlIERUIG9yIHBsYXlpbmcgd2l0aAo+PiBpbml0Y2FsbCBsZXZlbHMuCj4+Cj4+IFdo
+aWxlIHJlYWRpbmcgdGhlIHRocmVhZCBbMV0gdGhhdCBBbGV4YW5kZXIgSG9sbGVyIHN0YXJ0ZWQg
+d2l0aCBoaXMgc2VyaWVzIHRvCj4+IG1ha2UgcHJvYmluZyBvcmRlciBkZXRlcm1pbmlzdGljLCBp
+dCBvY2N1cnJlZCB0byBtZSB0aGF0IGl0IHNob3VsZCBiZSBwb3NzaWJsZQo+PiB0byBhY2hpZXZl
+IHRoZSBzYW1lIGJ5IHJlZ2lzdGVyaW5nIGRldmljZXMgYXMgdGhleSBhcmUgcmVmZXJlbmNlZCBi
+eSBvdGhlcgo+PiBkZXZpY2VzLgo+IAo+IFRoaXMgaXMgcHJldHR5IGNvb2wsIGJ1dCBhIHRvbyBs
+b2NhbCBzb2x1dGlvbiB0byBhIGdsb2JhbCBwcm9ibGVtLgo+IAo+IERlZmVycmVkIHByb2JlIGFu
+ZCBpbml0Y2FsbCByZW9yZGVyaW5nLCBzaWxseSBhcyB0aGV5IG1heSBzZWVtLAo+IGRvZXMgbm90
+IHJlcXVpcmUgeW91IHRvIHVzZSBkZXZpY2UgdHJlZS4KPiAKPiBUaGUgcmVhbCBzb2x1dGlvbiwg
+d2hpY2ggSSB0aGluayBJIHBvaW50ZWQgb3V0IGFscmVhZHkgd2hlbiB3ZQo+IGFkZGVkIGRlZmVy
+cmVkIHByb2JlLCBpcyB0byBwdXQgZGVwZW5kZW5jeSBncmFwaHMgaW4gdGhlIGRyaXZlcnMKPiBh
+bmQgaGF2ZSB0aGUga2VybmVsIGRldmljZSBkcml2ZXIgY29yZSBwZXJjb2xhdGUgZGVwZW5kZWNp
+ZXMgYnkKPiB3YWxraW5nIHRoZSBncmFwaCBvbiBwcm9iaW5nIGRyaXZlciwgcmVtb3ZpbmcgZHJp
+dmVyICh1c3VhbGx5IHRoZQo+IGludmVyc2UgdXNlIGNhc2UpLCBbcnVudGltZV0gc3VzcGVuZCBh
+bmQgW3J1bnRpbWVdIHJlc3VtZWluZwo+IGEgZHJpdmVyLiBQb3NzaWJseSB0aGUgZGVwZW5kZW5j
+aWVzIHdpbGwgZXZlbiBiZSBkaWZmZXJlbnQKPiBkZXBlbmRpbmcgb24gdXNlIGNhc2UuCj4gCj4g
+VGhpcyBpcyB3aGF0IHN5c3RlbWQgaXMgZG9pbmcgaW4gdXNlcnNwYWNlIGZvciBzdGFydGluZyBz
+ZXJ2aWNlczoKPiBhc2sgZm9yIHlvdXIgZGVwZW5kZW5jaWVzIGFuZCB3YWl0IGZvciB0aGVtIGlm
+IHRoZXkgYXJlIG5vdAo+IHRoZXJlLiBTbyBkcml2ZXJzIGFzayBmb3IgcmVzb3VyY2VzIGFuZCB3
+YWl0IGZvciB0aGVtLiBJdCBhbHNvCj4gbmVlZHMgdG8gYmUgYWJzdHJhY3QsIHNvIGZvciBleGFt
+cGxlIHdlIG5lZWQgdG8gYmUgYWJsZSB0bwo+IGhhbmcgb24gcmVndWxhdG9yX2dldCgpIHVudGls
+IHRoZSBkcml2ZXIgaXMgdXAgYW5kIHByb3ZpZGluZyB0aGF0Cj4gcmVndWxhdG9yLCBhbmQgYXMg
+bG9uZyBhcyBldmVyeXRoaW5nIGlzIGluIHNsb3dwYXRoIGl0IHNob3VsZAo+IGJlIE9LLiAoQW5k
+IHZpY2UgdmVyc2EgbXV0YXRpcyBtdXRhbmRpcyBmb3IgY2xrLCBncGlvLCBwaW4KPiBjb250cm9s
+LCBpbnRlcnJ1cHRzICghKSBhbmQgRE1BIGNoYW5uZWxzIGZvciBleGFtcGxlLikKPiAKPiAKPiBT
+byBpZiB0aGlzIHNob3VsZCBiZSBzb2x2ZWQgaXQgc2hvdWxkIGJlIHNvbHZlZCBpbiBhbiBhYnN0
+cmFjdCB3YXkKPiBpbiB0aGUgZGV2aWNlIGRyaXZlciBjb3JlIGF2YWlsYWJsZSBmb3IgYWxsLCB0
+aGVuIGhhdmUgY2FsbHMgY2FsbGluZwo+IG91dCB0byBEVCwgQUNQSSwgcG9zc2libHkgZXZlbiBQ
+Q0kgb3IgVVNCIChhcyB0aGVzZQo+IGVudW1lcmF0ZSBkZXZpY2VzIHRoZW1zZWx2ZXMpIHRvIG9i
+dGFpbiBhIGNlcnRhaW4KPiBkZXBlbmRlbmN5LgoKSSBzdWdnZXN0IHRvIHN0YXJ0IHdpdGggbWFr
+aW5nIGl0IHBvc3NpYmxlIHRvIGlkZW50aWZ5IChhdCBsZWFzdCBtb3N0KQpkcml2ZXJzLiBJJ3Zl
+IGFscmVhZHkgcG9zdGVkIGEgcGF0Y2ggZm9yIHRoYXQgYXJvdW5kIGEgeWVhciBhZ28gYW5kIG5v
+dwpUb21ldSBkaWQgYWxtb3N0IHRoZSBzYW1lLgoKSG93ZXZlciBvbmUgd2FudHMgdG8gbWFrZSBh
+IGRldGVybWluaXN0aWMgb3JkZXIgdG8gbG9hZCBkcml2ZXJzLCB0aGVyZQp3aWxsIGJlIGFsd2F5
+cyB0aGUgbmVlZCB0byBrbm93IHdoaWNoIGRyaXZlcnMgb25lIGhhcyB0byBzb3J0LgoKUmVnYXJk
+cywKCkFsZXhhbmRlciBIb2xsZXIKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
+cmktZGV2ZWwK
