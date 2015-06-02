@@ -1,123 +1,79 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC] tegra: dpaux: pinctrl proposal
-Date: Tue, 2 Jun 2015 10:18:36 +0100
-Message-ID: <556D74EC.6080501@nvidia.com>
-References: <1431963229-12867-1-git-send-email-jonathanh@nvidia.com> <20150519144654.GG26748@ulmo.nvidia.com> <555C901F.8090009@nvidia.com> <20150520154022.GB7734@ulmo.nvidia.com> <555CAE47.6070907@nvidia.com> <555CDC82.1010104@wwwdotorg.org> <555DD7B3.6020608@nvidia.com> <20150521140356.GA28021@ulmo.nvidia.com> <CACRpkdYP5FN=4_pWxc1j=e_JfcjA3bXCPDRmZYHeiZ8HDyEaEQ@mail.gmail.com> <555F1E3E.7040500@nvidia.com> <20150522143706.GA19922@ulmo.nvidia.com> <55688AB4.2030505@nvidia.com> <556CB183.5020606@wwwdotorg.org>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: [PATCH 00/21] On-demand device registration
+Date: Tue, 2 Jun 2015 12:14:06 +0200
+Message-ID: <CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com> <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <556CB183.5020606-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Grant Likely <grant.likely@linaro.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, dmaengine@vger.kernel.org, Alexander Holler <holler@ahsoftware.de>, Dan Williams <dan.j.williams@intel.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, linux-clk@vger.kernel.o
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 01/06/15 20:24, Stephen Warren wrote:
-> On 05/29/2015 09:50 AM, Jon Hunter wrote:
+On 2 June 2015 at 10:48, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Mon, May 25, 2015 at 4:53 PM, Tomeu Vizoso
+> <tomeu.vizoso@collabora.com> wrote:
+>
+>> have looked into ordered probing as a
+>> better way of solving this than moving nodes around in the DT or playing with
+>> initcall levels.
 >>
->> On 22/05/15 15:37, Thierry Reding wrote:
->>> I'd still clearly prefer to have the pinctrl code live directly in the
->>> DPAUX driver, so I think we should at least give that a shot.
->>
->> I have been working on this more this week and the good news is that by
->> using some of the pinconf-generic handlers I can simplify the code and
->> avoid moving headers and structures around.
->>
->> However, I have ran into another issue. The current binding looks like
->> this ...
->>
->>               dpaux: dpaux@0,545c0000 {
->>                       compatible = "nvidia,tegra124-dpaux";
->>                       reg = <0x0 0x545c0000 0x0 0x40000>;
->>                       interrupts = <GIC_SPI 159 IRQ_TYPE_LEVEL_HIGH>;
->>                       clocks = <&tegra_car TEGRA124_CLK_DPAUX>,
->>                                <&tegra_car TEGRA124_CLK_PLL_DP>;
->>                       clock-names = "dpaux", "parent";
->>                       resets = <&tegra_car 181>;
->>                       reset-names = "dpaux";
->>                       status = "disabled";
->>
->>                       dpaux_state: dpaux_state0 {
->>                               dpaux {
->>                                       groups = "dpaux_io";
->>                                       function = "dpaux";
->>                                       nvidia,dpaux-drvi;
->>                                       nvidia,dpaux-drvz;
->>                                       nvidia,dpaux-cmh;
->>                               };
->>                       };
->>
->>                       i2c_state: i2c_state0 {
->>                               i2c {
->>                                       groups = "dpaux_io";
->>                                       function = "i2c";
->>                               };
->>                       };
->>
->> This all works well, however, because the display-port binding now has
->> child devices which are not i2c clients I see the following messages
->> during kernel boot ...
->>
->> [    1.607606] i2c i2c-6: of_i2c: modalias failure on
->> /host1x@0,50000000/dpaux@0,545c0000/dpaux_state0
->> [    1.616658] i2c i2c-6: of_i2c: modalias failure on
->> /host1x@0,50000000/dpaux@0,545c0000/i2c_state0
-> 
-> Hmm. The DT binding doc for dpaux doesn't say anything about the device
-> being an I2C controller and hence inheriting/aggregating the core I2C
-> schema. It should...
+>> While reading the thread [1] that Alexander Holler started with his series to
+>> make probing order deterministic, it occurred to me that it should be possible
+>> to achieve the same by registering devices as they are referenced by other
+>> devices.
+>
+> This is pretty cool, but a too local solution to a global problem.
+>
+> Deferred probe and initcall reordering, silly as they may seem,
+> does not require you to use device tree.
+>
+> The real solution, which I think I pointed out already when we
+> added deferred probe, is to put dependency graphs in the drivers
 
-Yes that would definitely be clearer.
+By this you mean something like what Thierry suggested here?
 
-> Equally, being an I2C controller means the node should have
-> #address-cells/#size-cells properties for the I2C address.
+http://article.gmane.org/gmane.linux.kernel/1774623
 
-Agree.
+> and have the kernel device driver core percolate dependecies by
+> walking the graph on probing driver, removing driver (usually the
+> inverse use case), [runtime] suspend and [runtime] resumeing
+> a driver. Possibly the dependencies will even be different
+> depending on use case.
+>
+> This is what systemd is doing in userspace for starting services:
+> ask for your dependencies and wait for them if they are not
+> there. So drivers ask for resources and wait for them. It also
+> needs to be abstract, so for example we need to be able to
+> hang on regulator_get() until the driver is up and providing that
+> regulator, and as long as everything is in slowpath it should
+> be OK. (And vice versa mutatis mutandis for clk, gpio, pin
+> control, interrupts (!) and DMA channels for example.)
 
->> In other words, i2c_add_adapter() (which is called by probing the dpaux)
->> then parses the child nodes looking for i2c client devices. However,
->> these child devices are not i2c client devices and hence the above error
->> messages. I can't find an easy way to avoid this. There is no
->> side-effect from these messages, but I would prefer not to see them.
-> 
-> If this were a completely new binding, I think the best way would be to
-> have the dpaux node contain a child node for each semantic service
-> implemented by the device, e.g.:
-> 
-> dpaux {
->     compatible = "nvidia,tegra124-dpaux";
->     ...
->     pinctrl {
->         dpaux_state: dpaux_state0 {
->             ...
->         i2c_state: i2c_state0 {
->             ...
->     };
->     i2c-bus {
->         // i2c devices go here
->         // I2C core pointed at this sub-node, not the dpaux node
->     };
-> };
-> 
-> I guess we can't change the binding this way since it already exists,
-> unless we introduce a new compatible value to distinguish the old and
-> new styles.
-> 
-> Perhaps i2c_add_adapter should only attempt to instantiate devices for
-> sub-nodes that contain a compatible and/or a reg property?
+I understood above that you propose probing devices in order, but now
+you mention that resource getters would block until the dependency is
+fulfilled which confuses me because if we are probing in order then
+all dependencies would be fulfilled before the device in question gets
+probed.
 
-It does. However, because I tried to add the pinctrl mappings as
-sub-nodes, this causes the i2c-core to dump error messages during
-initialisation of the dpaux driver, because these child nodes are not
-i2c devices. So what I have works, but I see these error messages from
-the i2c-core, which in this case are benign.
+> So if this should be solved it should be solved in an abstract way
+> in the device driver core available for all, then have calls calling
+> out to DT, ACPI, possibly even PCI or USB (as these
+> enumerate devices themselves) to obtain a certain
+> dependency.
 
-Therefore, to avoid the i2c error messages, the i2c-bus and pinctrl
-nodes need to be sub-nodes like you have above. I like your above
-proposal, but like you said, it does mean adding a new compatibility
-string not to break existing dtbs.
+Yeah, I was planning looking into this now that I got it working with
+async probing.
 
-Cheers
-Jon
+Thanks,
+
+Tomeu
+
+> Yours,
+> Linus Walleij
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
