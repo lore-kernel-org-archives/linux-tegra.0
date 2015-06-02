@@ -1,79 +1,61 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: Re: [PATCH 00/21] On-demand device registration
-Date: Tue, 2 Jun 2015 12:14:06 +0200
-Message-ID: <CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com> <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 02/21] ARM: tegra: Add gpio-ranges property
+Date: Tue, 2 Jun 2015 13:28:35 +0200
+Message-ID: <CACRpkdbtCDQLaPhWFT0a7NdJmxYzRvhU_efgUh2ZXhbc+FHg3g@mail.gmail.com>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
+	<1432565608-26036-3-git-send-email-tomeu.vizoso@collabora.com>
+	<5564CC84.1030700@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Grant Likely <grant.likely@linaro.org>, Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, dmaengine@vger.kernel.org, Alexander Holler <holler@ahsoftware.de>, Dan Williams <dan.j.williams@intel.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, linux-clk@vger.kernel.o
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5564CC84.1030700-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <stephane.marchesin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 2 June 2015 at 10:48, Linus Walleij <linus.walleij@linaro.org> wrote:
-> On Mon, May 25, 2015 at 4:53 PM, Tomeu Vizoso
-> <tomeu.vizoso@collabora.com> wrote:
->
->> have looked into ordered probing as a
->> better way of solving this than moving nodes around in the DT or playing with
->> initcall levels.
+On Tue, May 26, 2015 at 9:41 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> On 05/25/2015 08:53 AM, Tomeu Vizoso wrote:
 >>
->> While reading the thread [1] that Alexander Holler started with his series to
->> make probing order deterministic, it occurred to me that it should be possible
->> to achieve the same by registering devices as they are referenced by other
->> devices.
+>> Specify how the GPIOs map to the pins in T124, so the dependency is
+>> explicit.
+>>
+>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+>> ---
+>>   arch/arm/boot/dts/tegra124.dtsi | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/arch/arm/boot/dts/tegra124.dtsi
+>> b/arch/arm/boot/dts/tegra124.dtsi
+>> index 13cc7ca..5d1d35f 100644
+>> --- a/arch/arm/boot/dts/tegra124.dtsi
+>> +++ b/arch/arm/boot/dts/tegra124.dtsi
+>> @@ -254,6 +254,7 @@
+>>                 gpio-controller;
+>>                 #interrupt-cells = <2>;
+>>                 interrupt-controller;
+>> +               gpio-ranges = <&pinmux 0 0 250>;
 >
-> This is pretty cool, but a too local solution to a global problem.
 >
-> Deferred probe and initcall reordering, silly as they may seem,
-> does not require you to use device tree.
->
-> The real solution, which I think I pointed out already when we
-> added deferred probe, is to put dependency graphs in the drivers
+> We should be consistent between SoCs. Why not make the same change for all
+> Tegra SoCs?
 
-By this you mean something like what Thierry suggested here?
+Agreed.
 
-http://article.gmane.org/gmane.linux.kernel/1774623
+> I think this change will cause the GPIO subsystem to call into the pinctrl
+> subsystem and create/add/register a new GPIO<->pinctrl range structure. The
+> pinctrl driver already does this, so I think we'll end up with two duplicate
+> entries in the pinctrl device's gpio_ranges list. This probably won't cause
+> a problem, but I wanted to make sure you'd thought about it to make sure.
 
-> and have the kernel device driver core percolate dependecies by
-> walking the graph on probing driver, removing driver (usually the
-> inverse use case), [runtime] suspend and [runtime] resumeing
-> a driver. Possibly the dependencies will even be different
-> depending on use case.
->
-> This is what systemd is doing in userspace for starting services:
-> ask for your dependencies and wait for them if they are not
-> there. So drivers ask for resources and wait for them. It also
-> needs to be abstract, so for example we need to be able to
-> hang on regulator_get() until the driver is up and providing that
-> regulator, and as long as everything is in slowpath it should
-> be OK. (And vice versa mutatis mutandis for clk, gpio, pin
-> control, interrupts (!) and DMA channels for example.)
+That sounds like duplication indeed, I would expect that first a patch
+adds the ranges to the dts[i] files and then a second patch delete the
+same ranges from the pinctrl driver then, if these shall come in from
+the device tree.
 
-I understood above that you propose probing devices in order, but now
-you mention that resource getters would block until the dependency is
-fulfilled which confuses me because if we are probing in order then
-all dependencies would be fulfilled before the device in question gets
-probed.
+With GPIO ranges being possible to register from the pin controller,
+gpio chip and also the device tree, things get a bit complex
+admittedly :/ sorry for this, just choose one.
 
-> So if this should be solved it should be solved in an abstract way
-> in the device driver core available for all, then have calls calling
-> out to DT, ACPI, possibly even PCI or USB (as these
-> enumerate devices themselves) to obtain a certain
-> dependency.
-
-Yeah, I was planning looking into this now that I got it working with
-async probing.
-
-Thanks,
-
-Tomeu
-
-> Yours,
-> Linus Walleij
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> http://lists.freedesktop.org/mailman/listinfo/dri-devel
+Yours,
+Linus Walleij
