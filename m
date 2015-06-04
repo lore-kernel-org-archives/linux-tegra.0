@@ -1,111 +1,200 @@
-From: Rob Clark <robdclark@gmail.com>
-Subject: Re: [PATCH 00/21] On-demand device registration
-Date: Wed, 3 Jun 2015 17:12:39 -0400
-Message-ID: <CAF6AEGuOP-3sxDQcNOjVmfP4ue6LmY7KFrj9W75aHKuvZpTFMw@mail.gmail.com>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Jiang Liu <jiang.liu@linux.intel.com>
+Subject: [RFT v2 05/48] gpio: Use irq_desc_get_xxx() to avoid redundant lookup
+ of irq_desc
+Date: Thu,  4 Jun 2015 12:13:15 +0800
+Message-ID: <1433391238-19471-6-git-send-email-jiang.liu@linux.intel.com>
+References: <1433391238-19471-1-git-send-email-jiang.liu@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Linux Fbdev development list <linux-fbdev@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, linux-i2c@vger.kernel.org, Alexander Holler <holler@ahsoftware.de>, linux-clk@vger.kernel.org, "moderated list:ARM/S5P EXYNOS AR..." <linux-samsung-soc@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, linux-pwm@vger.kernel.org, linux-pm@vger.kernel.org, linux-gpio@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Dan Williams <dan.j.williams@intel.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-usb@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dmaengine@vger.kern
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1433391238-19471-1-git-send-email-jiang.liu@linux.intel.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>, Randy Dunlap <rdunlap@infradead.org>, Yinghai Lu <yinghai@kernel.org>, Borislav Petkov <bp@alien8.de>, Ray Jui <rjui@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Javier Martinez Canillas <javier@dowhile0.org>, Santosh Shilimkar <ssantosh@kernel.org>, Kevin Hilman <khilman@deeprootsystems.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>
+Cc: Tony Luck <tony.luck@intel.com>, Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>, linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org, x86@kernel.org, linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, Jiang Liu <jiang.liu@linux.intel.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gTW9uLCBNYXkgMjUsIDIwMTUgYXQgMTA6NTMgQU0sIFRvbWV1IFZpem9zbwo8dG9tZXUudml6
-b3NvQGNvbGxhYm9yYS5jb20+IHdyb3RlOgo+IEhlbGxvLAo+Cj4gSSBoYXZlIGEgcHJvYmxlbSB3
-aXRoIHRoZSBwYW5lbCBvbiBteSBUZWdyYSBDaHJvbWVib29rIHRha2luZyBsb25nZXIgdGhhbgo+
-IGV4cGVjdGVkIHRvIGJlIHJlYWR5IGR1cmluZyBib290IChTdMOpcGhhbmUgTWFyY2hlc2luIHJl
-cG9ydGVkIHdoYXQgaXMKPiBiYXNpY2FsbHkgdGhlIHNhbWUgaXNzdWUgaW4gWzBdKSwgYW5kIGhh
-dmUgbG9va2VkIGludG8gb3JkZXJlZCBwcm9iaW5nIGFzIGEKPiBiZXR0ZXIgd2F5IG9mIHNvbHZp
-bmcgdGhpcyB0aGFuIG1vdmluZyBub2RlcyBhcm91bmQgaW4gdGhlIERUIG9yIHBsYXlpbmcgd2l0
-aAo+IGluaXRjYWxsIGxldmVscy4KPgo+IFdoaWxlIHJlYWRpbmcgdGhlIHRocmVhZCBbMV0gdGhh
-dCBBbGV4YW5kZXIgSG9sbGVyIHN0YXJ0ZWQgd2l0aCBoaXMgc2VyaWVzIHRvCj4gbWFrZSBwcm9i
-aW5nIG9yZGVyIGRldGVybWluaXN0aWMsIGl0IG9jY3VycmVkIHRvIG1lIHRoYXQgaXQgc2hvdWxk
-IGJlIHBvc3NpYmxlCj4gdG8gYWNoaWV2ZSB0aGUgc2FtZSBieSByZWdpc3RlcmluZyBkZXZpY2Vz
-IGFzIHRoZXkgYXJlIHJlZmVyZW5jZWQgYnkgb3RoZXIKPiBkZXZpY2VzLgo+Cj4gVGhpcyBiYXNp
-Y2FsbHkgcmV1c2VzIHRoZSBpbmZvcm1hdGlvbiB0aGF0IGlzIGFscmVhZHkgaW1wbGljaXQgaW4g
-dGhlIHByb2JlKCkKPiBpbXBsZW1lbnRhdGlvbnMsIHNhdmluZyB1cyBmcm9tIHJlZmFjdG9yaW5n
-IGV4aXN0aW5nIGRyaXZlcnMgb3IgYWRkaW5nCj4gaW5mb3JtYXRpb24gdG8gRFRCcy4KPgo+IFNv
-bWV0aGluZyBJJ20gbm90IGNvbXBsZXRlbHkgaGFwcHkgd2l0aCBpcyB0aGF0IEkgaGF2ZSBoYWQg
-dG8gbW92ZSB0aGUgY2FsbCB0bwo+IG9mX3BsYXRmb3JtX3BvcHVsYXRlIGFmdGVyIGFsbCBwbGF0
-Zm9ybSBkcml2ZXJzIGhhdmUgYmVlbiByZWdpc3RlcmVkLgo+IE90aGVyd2lzZSBJIGRvbid0IHNl
-ZSBob3cgSSBjb3VsZCByZWdpc3RlciBkcml2ZXJzIG9uIGRlbWFuZCBhcyB3ZSBkb24ndCBoYXZl
-Cj4geWV0IGVhY2ggZHJpdmVyJ3MgY29tcGF0aWJsZSBzdHJpbmdzLgo+Cj4gRm9yIG1hY2hzIHRo
-YXQgZG9uJ3QgbW92ZSBvZl9wbGF0Zm9ybV9wb3B1bGF0ZSgpIHRvIGEgbGF0ZXIgcG9pbnQsIHRo
-ZXNlCj4gcGF0Y2hlcyBzaG91bGRuJ3QgY2F1c2UgYW55IHByb2JsZW1zIGJ1dCBpdCdzIG5vdCBn
-dWFyYW50ZWVkIHRoYXQgd2UnbGwgYXZvaWQKPiBhbGwgdGhlIGRlZmVycmVkIHByb2JlcyBhcyBz
-b21lIGRyaXZlcnMgbWF5IG5vdCBiZSByZWdpc3RlcmVkIHlldC4KPgo+IEkgaGF2ZSB0ZXN0ZWQg
-dGhpcyBvbiBib2FyZHMgd2l0aCBUZWdyYSwgaU1YLjYgYW5kIEV4eW5vcyBTb0NzLCBhbmQgdGhl
-c2UKPiBwYXRjaGVzIHdlcmUgZW5vdWdoIHRvIGVsaW1pbmF0ZSBhbGwgdGhlIGRlZmVycmVkIHBy
-b2Jlcy4KPgo+IFdpdGggdGhpcyBzZXJpZXMgSSBnZXQgdGhlIGtlcm5lbCB0byBvdXRwdXQgdG8g
-dGhlIHBhbmVsIGluIDAuNXMsIGluc3RlYWQgb2YgMi44cy4KClNvLCBjb21wbGV0ZSBkcml2ZS1i
-eSBjb21tZW50IChhbmQgSSB3b24ndCBjbGFpbSB0byBiZSBhIERUIGV4cGVydCwKZXRjLCBldGMs
-IHNvIHRha2UgdGhpcyB3aXRoIGEgZmV3IGdyYWlucyBvZiBzYWx0KSwgYnV0IHdoeSBub3QgcHVz
-aAp0aGUgcHJvYmxlbSB0byB0aGUgRFQgY29tcGlsZXIgKG9yIGEgcHJlLXByb2Nlc3Mgc3RlcCB0
-aGF0IGNvdWxkIGJlCnJ1biBvbiBleGlzdGluZyBEVCBibG9icyksIHdoaWNoIGdlbmVyYXRlcyBh
-biBvcHRpb25hbCBEVCBub2RlIHRoYXQgaXMKdGhlIHJlY29tbWVuZGVkIHByb2JlIG9yZGVyPyAg
-VGhhdCBzZWVtcyBsaWtlIGl0IGF2b2lkcyBhZGRpbmcKY29tcGxleGl0eSBpbnRvIHRoZSBlYXJs
-eSBib290IGNvZGUgKHdoaWNoIHNlZW1zIGxpa2UgYSBnb29kIHRoaW5nKS4uCgpBcyBhIGJvbnVz
-LCBhIGJvb3RhcmcgKG9yIHNvbWV0aGluZyBsaWtlIHRoYXQpIHdoaWNoIHJ1bnMgdGhyb3VnaCB0
-aGUKcmVjb21tZW5kZWQgcHJvYmUgb3JkZXIgaW4gcmV2ZXJzZSAodG8gY29udGludWUgb3VyIGN1
-cnJlbnQgc3RhdGUgb2YKZW5zdXJpbmcgdGhhdCBFUFJPQkVfREVGRVIgZXJyb3IgcGF0aHMgYXJl
-IHdlbGwgdGVzdGVkKQoKQXQgYW55IHJhdGUsIGZvciBhIGRldmljZSBsaWtlIGEgZHJtIGRyaXZl
-ciB0aGF0IGhhcyBtdWx0aXBsZQpzdWItY29tcG9uZW50cywgYW5kIGRlcGVuZHMgb24gdmFyaW91
-cyBvdGhlciBjbGsvZ3Bpby9yZWd1bGF0b3IvZXRjCmRyaXZlcnMsIHRoZSBjdXJyZW50IEVQUk9C
-RV9ERUZFUiBzaXR1YXRpb24gaXMgcHJldHR5IGNvbWljYWwsIHNvIGFueQpzb2x1dGlvbiB0aGF0
-IGltcHJvdmVzIG9uIHRoaW5ncyBpcyB2ZXJ5IG11Y2ggd2VsY29tZSA6LSkKCkJSLAotUgoKPiBS
-ZWdhcmRzLAo+Cj4gVG9tZXUKPgo+IFswXSBodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL2Fy
-Y2hpdmVzL2RyaS1kZXZlbC8yMDE0LUF1Z3VzdC8wNjY1MjcuaHRtbAo+Cj4gWzFdIGh0dHBzOi8v
-bGttbC5vcmcvbGttbC8yMDE0LzUvMTIvNDUyCj4KPiBUb21ldSBWaXpvc28gKDIxKToKPiAgIHJl
-Z3VsYXRvcjogY29yZTogUmVkdWNlIGNyaXRpY2FsIGFyZWEgaW4gX3JlZ3VsYXRvcl9nZXQKPiAg
-IEFSTTogdGVncmE6IEFkZCBncGlvLXJhbmdlcyBwcm9wZXJ0eQo+ICAgQVJNOiB0ZWdyYTogUmVn
-aXN0ZXIgZHJpdmVycyBiZWZvcmUgZGV2aWNlcwo+ICAgQVJNOiBFWFlOT1M6IFJlZ2lzdGVyIGRy
-aXZlcnMgYmVmb3JlIGRldmljZXMKPiAgIEFSTSBpLk1YNnE6IFJlZ2lzdGVyIGRyaXZlcnMgYmVm
-b3JlIGRldmljZXMKPiAgIG9mL3BsYXRmb3JtOiBBZGQgb2ZfcGxhdGZvcm1fZGV2aWNlX2Vuc3Vy
-ZSgpCj4gICBvZi9wbGF0Zm9ybTogRW5zdXJlIGRldmljZSByZWdpc3RyYXRpb24gb24gbG9va3Vw
-Cj4gICBncGlvOiBQcm9iZSBHUElPIGRyaXZlcnMgb24gZGVtYW5kCj4gICBncGlvOiBQcm9iZSBw
-aW5jdHJsIGRldmljZXMgb24gZGVtYW5kCj4gICByZWd1bGF0b3I6IGNvcmU6IFByb2JlIHJlZ3Vs
-YXRvcnMgb24gZGVtYW5kCj4gICBkcm06IFByb2JlIHBhbmVscyBvbiBkZW1hbmQKPiAgIGRybS90
-ZWdyYTogUHJvYmUgZHBhdXggZGV2aWNlcyBvbiBkZW1hbmQKPiAgIGkyYzogY29yZTogUHJvYmUg
-aTJjIG1hc3RlciBkZXZpY2VzIG9uIGRlbWFuZAo+ICAgcHdtOiBQcm9iZSBQV00gY2hpcCBkZXZp
-Y2VzIG9uIGRlbWFuZAo+ICAgYmFja2xpZ2h0OiBQcm9iZSBiYWNrbGlnaHQgZGV2aWNlcyBvbiBk
-ZW1hbmQKPiAgIHVzYjogcGh5OiBQcm9iZSBwaHkgZGV2aWNlcyBvbiBkZW1hbmQKPiAgIGNsazog
-UHJvYmUgY2xrIHByb3ZpZGVycyBvbiBkZW1hbmQKPiAgIHBpbmN0cmw6IFByb2JlIHBpbmN0cmwg
-ZGV2aWNlcyBvbiBkZW1hbmQKPiAgIHBoeTogY29yZTogUHJvYmUgcGh5IHByb3ZpZGVycyBvbiBk
-ZW1hbmQKPiAgIGRtYTogb2Y6IFByb2JlIERNQSBjb250cm9sbGVycyBvbiBkZW1hbmQKPiAgIHBv
-d2VyLXN1cHBseTogUHJvYmUgcG93ZXIgc3VwcGxpZXMgb24gZGVtYW5kCj4KPiAgYXJjaC9hcm0v
-Ym9vdC9kdHMvdGVncmExMjQuZHRzaSAgICAgfCAgMSArCj4gIGFyY2gvYXJtL21hY2gtZXh5bm9z
-L2V4eW5vcy5jICAgICAgIHwgIDQgKy0tCj4gIGFyY2gvYXJtL21hY2gtaW14L21hY2gtaW14NnEu
-YyAgICAgIHwgMTIgKysrKy0tLS0tCj4gIGFyY2gvYXJtL21hY2gtdGVncmEvdGVncmEuYyAgICAg
-ICAgIHwgMjEgKysrKysrLS0tLS0tLS0tCj4gIGRyaXZlcnMvY2xrL2Nsay5jICAgICAgICAgICAg
-ICAgICAgIHwgIDMgKysrCj4gIGRyaXZlcnMvZG1hL29mLWRtYS5jICAgICAgICAgICAgICAgIHwg
-IDMgKysrCj4gIGRyaXZlcnMvZ3Bpby9ncGlvbGliLW9mLmMgICAgICAgICAgIHwgIDUgKysrKwo+
-ICBkcml2ZXJzL2dwdS9kcm0vZHJtX3BhbmVsLmMgICAgICAgICB8ICAzICsrKwo+ICBkcml2ZXJz
-L2dwdS9kcm0vdGVncmEvZHBhdXguYyAgICAgICB8ICAzICsrKwo+ICBkcml2ZXJzL2kyYy9pMmMt
-Y29yZS5jICAgICAgICAgICAgICB8ICAzICsrKwo+ICBkcml2ZXJzL29mL3BsYXRmb3JtLmMgICAg
-ICAgICAgICAgICB8IDUzICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKPiAg
-ZHJpdmVycy9waHkvcGh5LWNvcmUuYyAgICAgICAgICAgICAgfCAgMyArKysKPiAgZHJpdmVycy9w
-aW5jdHJsL2RldmljZXRyZWUuYyAgICAgICAgfCAgMiArKwo+ICBkcml2ZXJzL3Bvd2VyL3Bvd2Vy
-X3N1cHBseV9jb3JlLmMgICB8ICAzICsrKwo+ICBkcml2ZXJzL3B3bS9jb3JlLmMgICAgICAgICAg
-ICAgICAgICB8ICAzICsrKwo+ICBkcml2ZXJzL3JlZ3VsYXRvci9jb3JlLmMgICAgICAgICAgICB8
-IDQ1ICsrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0KPiAgZHJpdmVycy91c2IvcGh5L3Bo
-eS5jICAgICAgICAgICAgICAgfCAgMyArKysKPiAgZHJpdmVycy92aWRlby9iYWNrbGlnaHQvYmFj
-a2xpZ2h0LmMgfCAgMyArKysKPiAgaW5jbHVkZS9saW51eC9vZl9wbGF0Zm9ybS5oICAgICAgICAg
-fCAgMiArKwo+ICAxOSBmaWxlcyBjaGFuZ2VkLCAxMzAgaW5zZXJ0aW9ucygrKSwgNDUgZGVsZXRp
-b25zKC0pCj4KPiAtLQo+IDIuNC4xCj4KPgo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fCj4gbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKPiBsaW51
-eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKPiBodHRwOi8vbGlzdHMuaW5mcmFkZWFk
-Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
-ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Use irq_desc_get_xxx() to avoid redundant lookup of irq_desc while we
+already have a pointer to corresponding irq_desc.
+
+Signed-off-by: Jiang Liu <jiang.liu@linux.intel.com>
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/gpio/gpio-bcm-kona.c   |    2 +-
+ drivers/gpio/gpio-dwapb.c      |    2 +-
+ drivers/gpio/gpio-mvebu.c      |    2 +-
+ drivers/gpio/gpio-mxc.c        |    6 +++---
+ drivers/gpio/gpio-mxs.c        |    2 +-
+ drivers/gpio/gpio-omap.c       |    2 +-
+ drivers/gpio/gpio-tegra.c      |    4 +---
+ drivers/gpio/gpio-timberdale.c |    5 +++--
+ drivers/gpio/gpio-vf610.c      |    2 +-
+ drivers/gpio/gpio-zynq.c       |    2 +-
+ 10 files changed, 14 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
+index b164ce837b43..2e7a8c66fe57 100644
+--- a/drivers/gpio/gpio-bcm-kona.c
++++ b/drivers/gpio/gpio-bcm-kona.c
+@@ -432,7 +432,7 @@ static void bcm_kona_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
+ 	void __iomem *reg_base;
+ 	int bit, bank_id;
+ 	unsigned long sta;
+-	struct bcm_kona_gpio_bank *bank = irq_get_handler_data(irq);
++	struct bcm_kona_gpio_bank *bank = irq_desc_get_handler_data(desc);
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 
+ 	chained_irq_enter(chip, desc);
+diff --git a/drivers/gpio/gpio-dwapb.c b/drivers/gpio/gpio-dwapb.c
+index 58faf04fce5d..649be07a845d 100644
+--- a/drivers/gpio/gpio-dwapb.c
++++ b/drivers/gpio/gpio-dwapb.c
+@@ -149,7 +149,7 @@ static u32 dwapb_do_irq(struct dwapb_gpio *gpio)
+ 
+ static void dwapb_irq_handler(u32 irq, struct irq_desc *desc)
+ {
+-	struct dwapb_gpio *gpio = irq_get_handler_data(irq);
++	struct dwapb_gpio *gpio = irq_desc_get_handler_data(desc);
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 
+ 	dwapb_do_irq(gpio);
+diff --git a/drivers/gpio/gpio-mvebu.c b/drivers/gpio/gpio-mvebu.c
+index 1a54205860f5..a8c302ef7bc4 100644
+--- a/drivers/gpio/gpio-mvebu.c
++++ b/drivers/gpio/gpio-mvebu.c
+@@ -460,7 +460,7 @@ static int mvebu_gpio_irq_set_type(struct irq_data *d, unsigned int type)
+ 
+ static void mvebu_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
+ {
+-	struct mvebu_gpio_chip *mvchip = irq_get_handler_data(irq);
++	struct mvebu_gpio_chip *mvchip = irq_desc_get_handler_data(desc);
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	u32 cause, type;
+ 	int i;
+diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
+index 9f7446a7ac64..f10948c04f7c 100644
+--- a/drivers/gpio/gpio-mxc.c
++++ b/drivers/gpio/gpio-mxc.c
+@@ -275,8 +275,8 @@ static void mxc_gpio_irq_handler(struct mxc_gpio_port *port, u32 irq_stat)
+ static void mx3_gpio_irq_handler(u32 irq, struct irq_desc *desc)
+ {
+ 	u32 irq_stat;
+-	struct mxc_gpio_port *port = irq_get_handler_data(irq);
+-	struct irq_chip *chip = irq_get_chip(irq);
++	struct mxc_gpio_port *port = irq_desc_get_handler_data(desc);
++	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 
+ 	chained_irq_enter(chip, desc);
+ 
+@@ -292,7 +292,7 @@ static void mx2_gpio_irq_handler(u32 irq, struct irq_desc *desc)
+ {
+ 	u32 irq_msk, irq_stat;
+ 	struct mxc_gpio_port *port;
+-	struct irq_chip *chip = irq_get_chip(irq);
++	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 
+ 	chained_irq_enter(chip, desc);
+ 
+diff --git a/drivers/gpio/gpio-mxs.c b/drivers/gpio/gpio-mxs.c
+index 84cbda6acdda..039c7d50e64f 100644
+--- a/drivers/gpio/gpio-mxs.c
++++ b/drivers/gpio/gpio-mxs.c
+@@ -157,7 +157,7 @@ static void mxs_flip_edge(struct mxs_gpio_port *port, u32 gpio)
+ static void mxs_gpio_irq_handler(u32 irq, struct irq_desc *desc)
+ {
+ 	u32 irq_stat;
+-	struct mxs_gpio_port *port = irq_get_handler_data(irq);
++	struct mxs_gpio_port *port = irq_desc_get_handler_data(desc);
+ 
+ 	desc->irq_data.chip->irq_ack(&desc->irq_data);
+ 
+diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+index b232397ad7ec..acbf3feff1e2 100644
+--- a/drivers/gpio/gpio-omap.c
++++ b/drivers/gpio/gpio-omap.c
+@@ -719,7 +719,7 @@ static void omap_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
+ 	struct gpio_bank *bank;
+ 	int unmasked = 0;
+ 	struct irq_chip *irqchip = irq_desc_get_chip(desc);
+-	struct gpio_chip *chip = irq_get_handler_data(irq);
++	struct gpio_chip *chip = irq_desc_get_handler_data(desc);
+ 
+ 	chained_irq_enter(irqchip, desc);
+ 
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 1741981d53c8..89ed8a56eb0b 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -268,16 +268,14 @@ static void tegra_gpio_irq_shutdown(struct irq_data *d)
+ 
+ static void tegra_gpio_irq_handler(unsigned int irq, struct irq_desc *desc)
+ {
+-	struct tegra_gpio_bank *bank;
+ 	int port;
+ 	int pin;
+ 	int unmasked = 0;
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
++	struct tegra_gpio_bank *bank = irq_desc_get_handler_data(desc);
+ 
+ 	chained_irq_enter(chip, desc);
+ 
+-	bank = irq_get_handler_data(irq);
+-
+ 	for (port = 0; port < 4; port++) {
+ 		int gpio = tegra_gpio_compose(bank->bank, port, 0);
+ 		unsigned long sta = tegra_gpio_readl(GPIO_INT_STA(gpio)) &
+diff --git a/drivers/gpio/gpio-timberdale.c b/drivers/gpio/gpio-timberdale.c
+index e8f97e03c9bb..2b8baf1ea16e 100644
+--- a/drivers/gpio/gpio-timberdale.c
++++ b/drivers/gpio/gpio-timberdale.c
+@@ -194,11 +194,12 @@ out:
+ 
+ static void timbgpio_irq(unsigned int irq, struct irq_desc *desc)
+ {
+-	struct timbgpio *tgpio = irq_get_handler_data(irq);
++	struct timbgpio *tgpio = irq_desc_get_handler_data(desc);
++	struct irq_data *data = irq_desc_get_irq_data(desc);
+ 	unsigned long ipr;
+ 	int offset;
+ 
+-	desc->irq_data.chip->irq_ack(irq_get_irq_data(irq));
++	data->chip->irq_ack(data);
+ 	ipr = ioread32(tgpio->membase + TGPIO_IPR);
+ 	iowrite32(ipr, tgpio->membase + TGPIO_ICR);
+ 
+diff --git a/drivers/gpio/gpio-vf610.c b/drivers/gpio/gpio-vf610.c
+index 7bd9f209ffa8..fa344388f4da 100644
+--- a/drivers/gpio/gpio-vf610.c
++++ b/drivers/gpio/gpio-vf610.c
+@@ -120,7 +120,7 @@ static int vf610_gpio_direction_output(struct gpio_chip *chip, unsigned gpio,
+ 
+ static void vf610_gpio_irq_handler(u32 irq, struct irq_desc *desc)
+ {
+-	struct vf610_gpio_port *port = irq_get_handler_data(irq);
++	struct vf610_gpio_port *port = irq_desc_get_handler_data(desc);
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	int pin;
+ 	unsigned long irq_isfr;
+diff --git a/drivers/gpio/gpio-zynq.c b/drivers/gpio/gpio-zynq.c
+index aea6075e5b2e..70e3a568b1cb 100644
+--- a/drivers/gpio/gpio-zynq.c
++++ b/drivers/gpio/gpio-zynq.c
+@@ -499,7 +499,7 @@ static void zynq_gpio_irqhandler(unsigned int irq, struct irq_desc *desc)
+ {
+ 	u32 int_sts, int_enb;
+ 	unsigned int bank_num;
+-	struct zynq_gpio *gpio = irq_get_handler_data(irq);
++	struct zynq_gpio *gpio = irq_desc_get_handler_data(desc);
+ 	struct irq_chip *irqchip = irq_desc_get_chip(desc);
+ 
+ 	chained_irq_enter(irqchip, desc);
+-- 
+1.7.10.4
