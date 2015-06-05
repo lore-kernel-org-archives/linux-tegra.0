@@ -1,83 +1,69 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH v2 1/2] clk: change clk_ops' ->round_rate() prototype
-Date: Fri, 5 Jun 2015 13:39:28 +0200
-Message-ID: <20150605133928.66909901@bbrezillon>
-References: <1430407809-31147-1-git-send-email-boris.brezillon@free-electrons.com>
- <1430407809-31147-2-git-send-email-boris.brezillon@free-electrons.com>
- <alpine.DEB.2.02.1506042258530.12316@utopia.booyaka.com>
- <557161D1.3040107@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH/RFC 1/2] ARM: multi_v7_defconfig: Make drm support modular
+Date: Fri, 5 Jun 2015 13:39:51 +0200
+Message-ID: <20150605113949.GA26607@ulmo.nvidia.com>
+References: <1432905926-31606-1-git-send-email-geert@linux-m68k.org>
+ <2568731.dqdEiMuDro@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <557161D1.3040107@nvidia.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Paul Walmsley <paul@pwsan.com>, Mike Turquette <mturquette@linaro.org>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Shawn Guo <shawn.guo@linaro.org>, ascha Hauer <kernel@pengutronix.de>, David Brown <davidb@codeaurora.org>, Daniel Walker <dwalker@fifo99.com>, Bryan Huntsman <bryanh@codeaurora.org>, Tony Lindgren <tony@atomide.com>, Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Ralf Baechle <ralf@linux-mips.org>, Max Filippov <jcmvbkbc@gmail.com>, Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Barry Song <baohua@kernel.org>, Viresh Kumar <viresh.linux@gmail.com>, Emilio =?UTF-8?B?TMOzcGV6?= <emilio@elopez.com.ar>, Maxime Ripard <maxime.r>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="YZ5djTAD1cGYuMQK"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <2568731.dqdEiMuDro@wuerfel>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Jon,
 
-On Fri, 5 Jun 2015 09:46:09 +0100
-Jon Hunter <jonathanh@nvidia.com> wrote:
+--YZ5djTAD1cGYuMQK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> On 05/06/15 00:02, Paul Walmsley wrote:
-> > Hi folks
-> > 
-> > just a brief comment on this one:
-> > 
-> > On Thu, 30 Apr 2015, Boris Brezillon wrote:
-> > 
-> >> Clock rates are stored in an unsigned long field, but ->round_rate()
-> >> (which returns a rounded rate from a requested one) returns a long
-> >> value (errors are reported using negative error codes), which can lead
-> >> to long overflow if the clock rate exceed 2Ghz.
-> >>
-> >> Change ->round_rate() prototype to return 0 or an error code, and pass the
-> >> requested rate as a pointer so that it can be adjusted depending on
-> >> hardware capabilities.
-> > 
-> > ...
-> > 
-> >> diff --git a/Documentation/clk.txt b/Documentation/clk.txt
-> >> index 0e4f90a..fca8b7a 100644
-> >> --- a/Documentation/clk.txt
-> >> +++ b/Documentation/clk.txt
-> >> @@ -68,8 +68,8 @@ the operations defined in clk.h:
-> >>  		int		(*is_enabled)(struct clk_hw *hw);
-> >>  		unsigned long	(*recalc_rate)(struct clk_hw *hw,
-> >>  						unsigned long parent_rate);
-> >> -		long		(*round_rate)(struct clk_hw *hw,
-> >> -						unsigned long rate,
-> >> +		int		(*round_rate)(struct clk_hw *hw,
-> >> +						unsigned long *rate,
-> >>  						unsigned long *parent_rate);
-> >>  		long		(*determine_rate)(struct clk_hw *hw,
-> >>  						unsigned long rate,
-> > 
-> > I'd suggest that we should probably go straight to 64-bit rates.  There 
-> > are already plenty of clock sources that can generate rates higher than 
-> > 4GiHz.
-> 
-> An alternative would be to introduce to a frequency "base" the default
-> could be Hz (for backwards compatibility), but for CPUs we probably only
-> care about MHz (or may be kHz) and so 32-bits would still suffice. Even
-> if CPUs cared about Hz they could still use Hz, but in that case they
-> probably don't care about GHz. Obviously, we don't want to break DT
-> compatibility but may be the frequency base could be defined in DT and
-> if it is missing then Hz is assumed. Just a thought ...
+On Fri, May 29, 2015 at 05:41:34PM +0200, Arnd Bergmann wrote:
+> On Friday 29 May 2015 15:25:25 Geert Uytterhoeven wrote:
+> > From: Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
+> >=20
+> > Make drm support modular to reduce kernel size (-620 KiB):
+> >=20
+> >        text    data     bss     dec     hex   filename
+> >     12211122 1392076  338520 13941718  d4bbd6 vmlinux.before
+> >     11581470 1387196  338264 13306930  cb0c32 vmlinux.after
+> >=20
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
+> > ---
+> > Slightly controversial:
+> >   - Does anyone need drm for boot testing?
+>=20
+> Only the tegra driver is affected, so let's ask the tegra
+> maintainers.
 
-Yes, but is it really worth the additional complexity. You'll have to
-add the unit information anyway, so using an unsigned long for the
-value and another field for the unit (an enum ?) is just like using a
-64 bit integer.
+As a matter of fact I do most of the DRM testing on boot using the
+built-in driver. However I can do that easily using tegra_defconfig so
+I'm fine with this change.
 
-Best Regards,
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Boris
+--YZ5djTAD1cGYuMQK
+Content-Type: application/pgp-signature
 
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJVcYqFAAoJEN0jrNd/PrOhsUUP/3AmBHyXGusNmUi5DqT7tDRH
+3p9Fgh/KcOryztduviHiU7nOzMdcS8voEKrKeLMd6gLWG5wYliQXpwrZRhRZYmif
+M8ktACLgvqg2k5WgaWZU7yzykIrizMfTVabdr//hBGZSwUhflglcluO5njuxZPSG
+l9/b+zY2oj8Fd6J6LutV2HDeKTVsCWO/hVc/yZHEWCjqcilliCCxtpqOzkdHF6mg
+qWSkPRzi/aY7ZSZDAYBiAPHs/So62bQileBbHfa9WeyLaoTjFsDtM/vINxxULUFx
+jMr+iOWhVMoME4y0dNIPSFLyu/0DX4A6jysOmAnDj+FajOW1jMYPkZJvPRO9Ny0P
+NFmbleHq5ht9C+RSTDTfg1JuuCSgEWadmv4V5DqzRG+KXL6R6BXaVnktFJCdAP6X
+uQQLR9d72Rsl09CWSPVeHddBBwWw/sYUR23bU1nsOc/9vnOnI4qr51fvUz/KkYs5
+27fZwPmzE4WVD5pBBB2cKWx3vaEwtj5n77eL5aeKi7DEoolxoA3irEuHzlTAI6oB
+QVpt9WPH6PcD/Bc3bKyVr/1DHgMqEXBXPZbFOBvyFzhVL9RkQposCiin57qmKGAj
+djZh7dn7m0LDbW1mym28WbhhJHdZH0kMABUOQ9Z5X03lwAwrT/7f/tHdcu7LRFei
+hGI0OD5F9l0I4bSls3dY
+=W0tE
+-----END PGP SIGNATURE-----
+
+--YZ5djTAD1cGYuMQK--
