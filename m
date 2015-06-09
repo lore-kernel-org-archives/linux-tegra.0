@@ -1,45 +1,166 @@
-From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: make pinctrl_register() return proper error code
-Date: Tue, 9 Jun 2015 08:48:21 -0700
-Message-ID: <20150609154821.GW8863@xsjsorenbubuntu>
-References: <1433822476-26531-1-git-send-email-yamada.masahiro@socionext.com>
+From: Rob Herring <robh@kernel.org>
+Subject: [PATCH 10/15] PCI: kill off set_irq_flags usage
+Date: Tue,  9 Jun 2015 13:26:36 -0500
+Message-ID: <1433874401-27161-11-git-send-email-robh@kernel.org>
+References: <1433874401-27161-1-git-send-email-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1433822476-26531-1-git-send-email-yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-Cc: Alessandro Rubini <rubini-9wsNiZum9E8@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Maoguang Meng <maoguang.meng-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jason Uy <jasonuy-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>, Rickard Strandqvist <rickard_strandqvist-IW2WV5XWFqGZkjO+N0TKoMugMpMbD5Xr@public.gmane.org>, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Varka Bhadram <varkabhadram-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mi
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1433874401-27161-1-git-send-email-robh@kernel.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org, arm@kernel.org, Rob Herring <robh@kernel.org>, Kishon Vijay Abraham I <kishon@ti.com>, Bjorn Helgaas <bhelgaas@google.com>, Murali Karicheri <m-karicheri2@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Jingoo Han <jingoohan1@gmail.com>, Pratyush Anand <pratyush.anand@gmail.com>, Simon Horman <horms@verge.net.au>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, linux-omap@vger.kernel.org, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, linux-sh@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCAyMDE1LTA2LTA5IGF0IDAxOjAxUE0gKzA5MDAsIE1hc2FoaXJvIFlhbWFkYSB3cm90
-ZToKPiBDdXJyZW50bHksIHBpbmN0cmxfcmVnaXN0ZXIoKSBqdXN0IHJldHVybnMgTlVMTCBvbiBl
-cnJvciwgc28gdGhlCj4gY2FsbGVycyBjYW4gbm90IGtub3cgdGhlIGV4YWN0IHJlYXNvbiBvZiB0
-aGUgZmFpbHVyZS4KPiAKPiBTb21lIG9mIHRoZSBwaW5jdHJsIGRyaXZlcnMgcmV0dXJuIC1FSU5W
-QUwsIHNvbWUgLUVOT0RFViwgYW5kIHNvbWUKPiAtRU5PTUVNIG9uIGVycm9yIG9mIHBpbmN0cmxf
-cmVnaXN0ZXIoKSwgYWx0aG91Z2ggdGhlIGVycm9yIGNvZGUKPiBtaWdodCBiZSBkaWZmZXJlbnQg
-ZnJvbSB0aGUgcmVhbCBjYXVzZSBvZiB0aGUgZXJyb3IuCj4gCj4gVGhpcyBjb21taXQgcmV3b3Jr
-cyBwaW5jdHJsX3JlZ2lzdGVyKCkgdG8gcmV0dXJuIHRoZSBhcHByb3ByaWF0ZQo+IGVycm9yIGNv
-ZGUgYW5kIG1vZGlmaWVzIGFsbCBvZiB0aGUgcGluY3RybCBkcml2ZXJzIHRvIHVzZSBJU19FUlIo
-KQo+IGZvciB0aGUgZXJyb3IgY2hlY2tpbmcgYW5kIFBUUl9FUlIoKSBmb3IgZ2V0dGluZyB0aGUg
-ZXJyb3IgY29kZS4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBNYXNhaGlybyBZYW1hZGEgPHlhbWFkYS5t
-YXNhaGlyb0Bzb2Npb25leHQuY29tPgo+IC0tLQo+IAo+IFRoaXMgcGF0Y2ggaXMgYmFzZWQgb24g
-bGludXgtcGluY3RybC9kZXZlbAo+IChDb21taXQgNzE2NDg3M2U3YzY5ZDZiYWI3NDcyNmRlYmMz
-YjQ5NWE4NjMzMmIxZikuCj4gCj4gSSB0aGluayBJIGNvbnZlcnRlZCBhbGwgb2YgdGhlIHBpbmN0
-cmwgZHJpdmVycywgYnV0IGp1c3QgaW4gY2FzZSwKPiBJJ2QgbGlrZSB0aGUgZHJpdmVyIG1haW50
-YWluZXJzIHRvIGNoZWNrIHRoaXMgcGF0Y2ggb3V0Lgo+IAoKRm9yCj4gIGRyaXZlcnMvcGluY3Ry
-bC9waW5jdHJsLXp5bnEuYyAgICAgICAgICAgICAgICB8ICA0ICsrLS0KCkFja2VkLWJ5OiBTw7Zy
-ZW4gQnJpbmttYW5uIDxzb3Jlbi5icmlua21hbm5AeGlsaW54LmNvbT4KCglTw7ZyZW4KCl9fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCkxpbnV4LW1lZGlhdGVr
-IG1haWxpbmcgbGlzdApMaW51eC1tZWRpYXRla0BsaXN0cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9s
-aXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtbWVkaWF0ZWsK
+set_irq_flags is ARM specific with custom flags which have genirq
+equivalents. Convert drivers to use the genirq interfaces directly, so =
+we
+can kill off set_irq_flags. The translation of flags is as follows:
+
+IRQF_VALID -> !IRQ_NOREQUEST
+IRQF_PROBE -> !IRQ_NOPROBE
+IRQF_NOAUTOEN -> IRQ_NOAUTOEN
+
+=46or IRQs managed by an irqdomain, the irqdomain core code handles cle=
+aring
+and setting IRQ_NOREQUEST already, so there is no need to do this in
+=2Emap() functions and we can simply remove the set_irq_flags calls. So=
+me
+users also set IRQ_NOPROBE and this has been maintained although it is =
+not
+clear that is really needed. There appears to be a great deal of blind
+copy and paste of this code.
+
+Signed-off-by: Rob Herring <robh@kernel.org>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Murali Karicheri <m-karicheri2@ti.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: Jingoo Han <jingoohan1@gmail.com>
+Cc: Pratyush Anand <pratyush.anand@gmail.com>
+Cc: Simon Horman <horms@verge.net.au>
+Cc: Michal Simek <michal.simek@xilinx.com>
+Cc: "S=C3=B6ren Brinkmann" <soren.brinkmann@xilinx.com>
+Cc: linux-omap@vger.kernel.org
+Cc: linux-pci@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-tegra@vger.kernel.org
+Cc: linux-sh@vger.kernel.org
+---
+ drivers/pci/host/pci-dra7xx.c      | 1 -
+ drivers/pci/host/pci-keystone-dw.c | 2 --
+ drivers/pci/host/pci-tegra.c       | 1 -
+ drivers/pci/host/pcie-designware.c | 1 -
+ drivers/pci/host/pcie-rcar.c       | 1 -
+ drivers/pci/host/pcie-xilinx.c     | 2 --
+ 6 files changed, 8 deletions(-)
+
+diff --git a/drivers/pci/host/pci-dra7xx.c b/drivers/pci/host/pci-dra7x=
+x.c
+index 2d57e19..94cbc4d 100644
+--- a/drivers/pci/host/pci-dra7xx.c
++++ b/drivers/pci/host/pci-dra7xx.c
+@@ -160,7 +160,6 @@ static int dra7xx_pcie_intx_map(struct irq_domain *=
+domain, unsigned int irq,
+ {
+ 	irq_set_chip_and_handler(irq, &dummy_irq_chip, handle_simple_irq);
+ 	irq_set_chip_data(irq, domain->host_data);
+-	set_irq_flags(irq, IRQF_VALID);
+=20
+ 	return 0;
+ }
+diff --git a/drivers/pci/host/pci-keystone-dw.c b/drivers/pci/host/pci-=
+keystone-dw.c
+index f34892e..f1d0749 100644
+--- a/drivers/pci/host/pci-keystone-dw.c
++++ b/drivers/pci/host/pci-keystone-dw.c
+@@ -196,7 +196,6 @@ static int ks_dw_pcie_msi_map(struct irq_domain *do=
+main, unsigned int irq,
+ 	irq_set_chip_and_handler(irq, &ks_dw_pcie_msi_irq_chip,
+ 				 handle_level_irq);
+ 	irq_set_chip_data(irq, domain->host_data);
+-	set_irq_flags(irq, IRQF_VALID);
+=20
+ 	return 0;
+ }
+@@ -277,7 +276,6 @@ static int ks_dw_pcie_init_legacy_irq_map(struct ir=
+q_domain *d,
+ 	irq_set_chip_and_handler(irq, &ks_dw_pcie_legacy_irq_chip,
+ 				 handle_level_irq);
+ 	irq_set_chip_data(irq, d->host_data);
+-	set_irq_flags(irq, IRQF_VALID);
+=20
+ 	return 0;
+ }
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.=
+c
+index 00e9272..36bd700 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -1263,7 +1263,6 @@ static int tegra_msi_map(struct irq_domain *domai=
+n, unsigned int irq,
+ {
+ 	irq_set_chip_and_handler(irq, &tegra_msi_irq_chip, handle_simple_irq)=
+;
+ 	irq_set_chip_data(irq, domain->host_data);
+-	set_irq_flags(irq, IRQF_VALID);
+=20
+ 	tegra_cpuidle_pcie_irqs_in_use();
+=20
+diff --git a/drivers/pci/host/pcie-designware.c b/drivers/pci/host/pcie=
+-designware.c
+index 2e9f84f..5caa94d 100644
+--- a/drivers/pci/host/pcie-designware.c
++++ b/drivers/pci/host/pcie-designware.c
+@@ -333,7 +333,6 @@ static int dw_pcie_msi_map(struct irq_domain *domai=
+n, unsigned int irq,
+ {
+ 	irq_set_chip_and_handler(irq, &dw_msi_irq_chip, handle_simple_irq);
+ 	irq_set_chip_data(irq, domain->host_data);
+-	set_irq_flags(irq, IRQF_VALID);
+=20
+ 	return 0;
+ }
+diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.=
+c
+index c086210..7678fe0 100644
+--- a/drivers/pci/host/pcie-rcar.c
++++ b/drivers/pci/host/pcie-rcar.c
+@@ -664,7 +664,6 @@ static int rcar_msi_map(struct irq_domain *domain, =
+unsigned int irq,
+ {
+ 	irq_set_chip_and_handler(irq, &rcar_msi_irq_chip, handle_simple_irq);
+ 	irq_set_chip_data(irq, domain->host_data);
+-	set_irq_flags(irq, IRQF_VALID);
+=20
+ 	return 0;
+ }
+diff --git a/drivers/pci/host/pcie-xilinx.c b/drivers/pci/host/pcie-xil=
+inx.c
+index f1a06a0..72015119 100644
+--- a/drivers/pci/host/pcie-xilinx.c
++++ b/drivers/pci/host/pcie-xilinx.c
+@@ -338,7 +338,6 @@ static int xilinx_pcie_msi_map(struct irq_domain *d=
+omain, unsigned int irq,
+ {
+ 	irq_set_chip_and_handler(irq, &xilinx_msi_irq_chip, handle_simple_irq=
+);
+ 	irq_set_chip_data(irq, domain->host_data);
+-	set_irq_flags(irq, IRQF_VALID);
+=20
+ 	return 0;
+ }
+@@ -377,7 +376,6 @@ static int xilinx_pcie_intx_map(struct irq_domain *=
+domain, unsigned int irq,
+ {
+ 	irq_set_chip_and_handler(irq, &dummy_irq_chip, handle_simple_irq);
+ 	irq_set_chip_data(irq, domain->host_data);
+-	set_irq_flags(irq, IRQF_VALID);
+=20
+ 	return 0;
+ }
+--=20
+2.1.0
