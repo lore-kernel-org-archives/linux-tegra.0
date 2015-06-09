@@ -1,67 +1,51 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 00/21] On-demand device registration
-Date: Wed, 10 Jun 2015 09:30:32 +0200
-Message-ID: <CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
- <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
- <CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>
+From: Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: make pinctrl_register() return proper error code
+Date: Tue, 9 Jun 2015 10:55:36 -0700
+Message-ID: <55772898.8050601@broadcom.com>
+References: <1433822476-26531-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dmaengine@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, linux-clk@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, Grant Likely <grant.likely@linaro.org>, Alexander Holler <holler@ahsoftware.de>, Dan Williams <dan.j.williams@intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.o>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1433822476-26531-1-git-send-email-yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Alessandro Rubini <rubini-9wsNiZum9E8@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Maoguang Meng <maoguang.meng-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jason Uy <jasonuy-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rickard Strandqvist <rickard_strandqvist-IW2WV5XWFqGZkjO+N0TKoMugMpMbD5Xr@public.gmane.org>, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Varka Bhadram <varkabhadram@gmail.>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCBKdW4gMiwgMjAxNSBhdCAxMjoxNCBQTSwgVG9tZXUgVml6b3NvCjx0b21ldS52aXpv
-c29AY29sbGFib3JhLmNvbT4gd3JvdGU6Cj4gT24gMiBKdW5lIDIwMTUgYXQgMTA6NDgsIExpbnVz
-IFdhbGxlaWogPGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZz4gd3JvdGU6Cgo+PiBUaGlzIGlzIHdo
-YXQgc3lzdGVtZCBpcyBkb2luZyBpbiB1c2Vyc3BhY2UgZm9yIHN0YXJ0aW5nIHNlcnZpY2VzOgo+
-PiBhc2sgZm9yIHlvdXIgZGVwZW5kZW5jaWVzIGFuZCB3YWl0IGZvciB0aGVtIGlmIHRoZXkgYXJl
-IG5vdAo+PiB0aGVyZS4gU28gZHJpdmVycyBhc2sgZm9yIHJlc291cmNlcyBhbmQgd2FpdCBmb3Ig
-dGhlbS4gSXQgYWxzbwo+PiBuZWVkcyB0byBiZSBhYnN0cmFjdCwgc28gZm9yIGV4YW1wbGUgd2Ug
-bmVlZCB0byBiZSBhYmxlIHRvCj4+IGhhbmcgb24gcmVndWxhdG9yX2dldCgpIHVudGlsIHRoZSBk
-cml2ZXIgaXMgdXAgYW5kIHByb3ZpZGluZyB0aGF0Cj4+IHJlZ3VsYXRvciwgYW5kIGFzIGxvbmcg
-YXMgZXZlcnl0aGluZyBpcyBpbiBzbG93cGF0aCBpdCBzaG91bGQKPj4gYmUgT0suIChBbmQgdmlj
-ZSB2ZXJzYSBtdXRhdGlzIG11dGFuZGlzIGZvciBjbGssIGdwaW8sIHBpbgo+PiBjb250cm9sLCBp
-bnRlcnJ1cHRzICghKSBhbmQgRE1BIGNoYW5uZWxzIGZvciBleGFtcGxlLikKPgo+IEkgdW5kZXJz
-dG9vZCBhYm92ZSB0aGF0IHlvdSBwcm9wb3NlIHByb2JpbmcgZGV2aWNlcyBpbiBvcmRlciwgYnV0
-IG5vdwo+IHlvdSBtZW50aW9uIHRoYXQgcmVzb3VyY2UgZ2V0dGVycyB3b3VsZCBibG9jayB1bnRp
-bCB0aGUgZGVwZW5kZW5jeSBpcwo+IGZ1bGZpbGxlZCB3aGljaCBjb25mdXNlcyBtZSBiZWNhdXNl
-IGlmIHdlIGFyZSBwcm9iaW5nIGluIG9yZGVyIHRoZW4KPiBhbGwgZGVwZW5kZW5jaWVzIHdvdWxk
-IGJlIGZ1bGZpbGxlZCBiZWZvcmUgdGhlIGRldmljZSBpbiBxdWVzdGlvbiBnZXRzCj4gcHJvYmVk
-LgoKU29ycnksIHRoZSBwcm9ibGVtIHNwYWNlIGlzIGEgYml0IGNvbnZvbHV0ZWQgc28gdGhlIGFu
-c3dlcnMKZ2V0IGEgYml0IGNvbnZvbHV0ZWQuIE1heWJlIEknbSB0aGlua2luZyBhbG91ZCBhbmQg
-YWx0ZXJpbmcgdGhlIGNvdXJzZQpvZiBteSB0aG91Z2h0cyBhcyBJIHR5cGUuLi4KCkkgZ3Vlc3Mg
-dGhlcmUgY2FuIGJlIGV4cGxpY2l0IGRlcGVuZGVuY2llcyBmb3IgcmVzb3VyY2VzIGxpa2UgdGhp
-cwpwYXRjaCBkb2VzLCBidXQgYW5vdGhlciB3YXkgd291bGQgYmUgZm9yIGFsbCByZXNvdXJjZSBm
-ZXRjaCBmdW5jdGlvbnMKdG8gYmUgaW5zdHJ1bWVudGVkLCBzbyB0aGF0IHlvdSBkbyBub3QgYmxv
-Y2sgdW50aWwgeW91IHRyeSB0byB0YWtlCmEgcmVzb3VyY2UgdGhhdCBpcyBub3QgeWV0IHRoZXJl
-LCBlLmcuOgoKcmVndWxhdG9yX2dldCguLi4pIC0+IG5vdCBhdmFpbGFibGUsIHNvOgotIGlkZW50
-aWZ5IHRhcmdldCByZWd1bGF0b3IgcHJvdmlkZXIgLSB0aGlzIHdpbGwgbmVlZCBpbnN0cnVtZW50
-YXRpb24KLSBwcm9iZSBpdAoKSXQgdGhlbiB0dXJucyBvdXQgdGhlIHJlZ3VsYXRvciBkcml2ZXIg
-aXMgb24gdGhlIGkyYyBidXMsIHNvIHdlCm5lZWQgdG8gcHJvYmUgdGhlIGkyYyBkcml2ZXI6Ci0g
-aWRlbnRpZnkgdGFyZ2V0IGkyYyBob3N0IGZvciB0aGUgcmVndWxhdG9yIGRyaXZlciAtIHRoaXMg
-d2lsbCBuZWVkCiAgaW5zdHJ1bWVudGF0aW9uCi0gcHJvYmUgdGhlIGkyYyBob3N0IGRyaXZlcgoK
-aTJjIGhvc3QgY29tZXMgb3V0LCBwcm9iZXMgdGhlIHJlZ3VsYXRvciBkcml2ZXIsIHJlZ3VsYXRv
-ciBkcml2ZXIKcHJvYmVzIGFuZCB0aGVuIHRoZSByZWd1bGF0b3JfZ2V0KCkgY2FsbCByZXR1cm5z
-LgoKVGhpcyByZXF1aXJlcyBpbnN0cnVtZW50YXRpb24gb24gYW55dGhpbmcgcHJvdmlkaW5nIGEg
-cmVzb3VyY2UKdG8gYW5vdGhlciBkcml2ZXIgbGlrZSB0aG9zZSBJIG1lbnRpb25lZCBhbmQgYSBs
-b3Qgb2Ygb3ZlcmhlYWQKaW5mcmFzdHJ1Y3R1cmUsIGJ1dCBJIHRoaW5rIGl0J3MgdGhlIHJpZ2h0
-IGFwcHJvYWNoLiBIb3dldmVyIEkgZG9uJ3QKa25vdyBpZiBJIHdvdWxkIGV2ZXIgYmUgYWJsZSB0
-byBwdWxsIHRoYXQgb2ZmIG15c2VsZiwgSSBrbm93IHRhbGsKaXMgY2hlYXAgYW5kIEkgc2hvdWxk
-IHNob3cgdGhlIGNvZGUgaW5zdGVhZC4KCkRlZXBlc3QgcmVzcGVjdCBmb3IgeW91ciBlZmZvcnRz
-IQoKWW91cnMsCkxpbnVzIFdhbGxlaWoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9kcmktZGV2ZWwK
+On 6/8/2015 9:01 PM, Masahiro Yamada wrote:
+> Currently, pinctrl_register() just returns NULL on error, so the
+> callers can not know the exact reason of the failure.
+> 
+> Some of the pinctrl drivers return -EINVAL, some -ENODEV, and some
+> -ENOMEM on error of pinctrl_register(), although the error code
+> might be different from the real cause of the error.
+> 
+> This commit reworks pinctrl_register() to return the appropriate
+> error code and modifies all of the pinctrl drivers to use IS_ERR()
+> for the error checking and PTR_ERR() for getting the error code.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+> ---
+> 
+> This patch is based on linux-pinctrl/devel
+> (Commit 7164873e7c69d6bab74726debc3b495a86332b1f).
+> 
+> I think I converted all of the pinctrl drivers, but just in case,
+> I'd like the driver maintainers to check this patch out.
+> 
+> 
+
+>  drivers/pinctrl/bcm/pinctrl-bcm281xx.c        |  4 ++--
+>  drivers/pinctrl/bcm/pinctrl-cygnus-gpio.c     |  4 ++--
+>  drivers/pinctrl/bcm/pinctrl-cygnus-mux.c      |  4 ++--
+
+Acked-by: Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
