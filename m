@@ -1,119 +1,47 @@
-From: Andrzej Hajda <a.hajda@samsung.com>
-Subject: Re: [PATCH 00/21] On-demand device registration
-Date: Wed, 10 Jun 2015 14:23:25 +0200
-Message-ID: <55782C3D.5000606@samsung.com>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
- <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
- <CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>
- <CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>
- <CAAObsKD97nEARO5eZYA2g8+z_MrazBy-m8PV_kSyj19ya72mAw@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 05/15] gpio: kill off set_irq_flags usage
+Date: Wed, 10 Jun 2015 14:43:00 +0200
+Message-ID: <CACRpkdZW9YvHGoypLRjwQ_gLtnQso3+XN193ZPy17T+31zm+Ag@mail.gmail.com>
+References: <1433874401-27161-1-git-send-email-robh@kernel.org>
+	<1433874401-27161-6-git-send-email-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-reply-to: <CAAObsKD97nEARO5eZYA2g8+z_MrazBy-m8PV_kSyj19ya72mAw@mail.gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, dmaengine@vger.kernel.org, Alexander Holler <holler@ahsoftware.de>, Dan Williams <dan.j.williams@intel.com>, linux-usb@vger.kernel.org, linux-clk@vger.kernel.org, Grant Likely <grant.likely@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1433874401-27161-6-git-send-email-robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Michael Hennerich <michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMDYvMTAvMjAxNSAxMjoxOSBQTSwgVG9tZXUgVml6b3NvIHdyb3RlOgo+IE9uIDEwIEp1bmUg
-MjAxNSBhdCAwOTozMCwgTGludXMgV2FsbGVpaiA8bGludXMud2FsbGVpakBsaW5hcm8ub3JnPiB3
-cm90ZToKPj4gT24gVHVlLCBKdW4gMiwgMjAxNSBhdCAxMjoxNCBQTSwgVG9tZXUgVml6b3NvCj4+
-IDx0b21ldS52aXpvc29AY29sbGFib3JhLmNvbT4gd3JvdGU6Cj4+PiBPbiAyIEp1bmUgMjAxNSBh
-dCAxMDo0OCwgTGludXMgV2FsbGVpaiA8bGludXMud2FsbGVpakBsaW5hcm8ub3JnPiB3cm90ZToK
-Pj4KPj4+PiBUaGlzIGlzIHdoYXQgc3lzdGVtZCBpcyBkb2luZyBpbiB1c2Vyc3BhY2UgZm9yIHN0
-YXJ0aW5nIHNlcnZpY2VzOgo+Pj4+IGFzayBmb3IgeW91ciBkZXBlbmRlbmNpZXMgYW5kIHdhaXQg
-Zm9yIHRoZW0gaWYgdGhleSBhcmUgbm90Cj4+Pj4gdGhlcmUuIFNvIGRyaXZlcnMgYXNrIGZvciBy
-ZXNvdXJjZXMgYW5kIHdhaXQgZm9yIHRoZW0uIEl0IGFsc28KPj4+PiBuZWVkcyB0byBiZSBhYnN0
-cmFjdCwgc28gZm9yIGV4YW1wbGUgd2UgbmVlZCB0byBiZSBhYmxlIHRvCj4+Pj4gaGFuZyBvbiBy
-ZWd1bGF0b3JfZ2V0KCkgdW50aWwgdGhlIGRyaXZlciBpcyB1cCBhbmQgcHJvdmlkaW5nIHRoYXQK
-Pj4+PiByZWd1bGF0b3IsIGFuZCBhcyBsb25nIGFzIGV2ZXJ5dGhpbmcgaXMgaW4gc2xvd3BhdGgg
-aXQgc2hvdWxkCj4+Pj4gYmUgT0suIChBbmQgdmljZSB2ZXJzYSBtdXRhdGlzIG11dGFuZGlzIGZv
-ciBjbGssIGdwaW8sIHBpbgo+Pj4+IGNvbnRyb2wsIGludGVycnVwdHMgKCEpIGFuZCBETUEgY2hh
-bm5lbHMgZm9yIGV4YW1wbGUuKQo+Pj4KPj4+IEkgdW5kZXJzdG9vZCBhYm92ZSB0aGF0IHlvdSBw
-cm9wb3NlIHByb2JpbmcgZGV2aWNlcyBpbiBvcmRlciwgYnV0IG5vdwo+Pj4geW91IG1lbnRpb24g
-dGhhdCByZXNvdXJjZSBnZXR0ZXJzIHdvdWxkIGJsb2NrIHVudGlsIHRoZSBkZXBlbmRlbmN5IGlz
-Cj4+PiBmdWxmaWxsZWQgd2hpY2ggY29uZnVzZXMgbWUgYmVjYXVzZSBpZiB3ZSBhcmUgcHJvYmlu
-ZyBpbiBvcmRlciB0aGVuCj4+PiBhbGwgZGVwZW5kZW5jaWVzIHdvdWxkIGJlIGZ1bGZpbGxlZCBi
-ZWZvcmUgdGhlIGRldmljZSBpbiBxdWVzdGlvbiBnZXRzCj4+PiBwcm9iZWQuCj4+Cj4+IFNvcnJ5
-LCB0aGUgcHJvYmxlbSBzcGFjZSBpcyBhIGJpdCBjb252b2x1dGVkIHNvIHRoZSBhbnN3ZXJzCj4+
-IGdldCBhIGJpdCBjb252b2x1dGVkLiBNYXliZSBJJ20gdGhpbmtpbmcgYWxvdWQgYW5kIGFsdGVy
-aW5nIHRoZSBjb3Vyc2UKPj4gb2YgbXkgdGhvdWdodHMgYXMgSSB0eXBlLi4uCj4+Cj4+IEkgZ3Vl
-c3MgdGhlcmUgY2FuIGJlIGV4cGxpY2l0IGRlcGVuZGVuY2llcyBmb3IgcmVzb3VyY2VzIGxpa2Ug
-dGhpcwo+PiBwYXRjaCBkb2VzLCBidXQgYW5vdGhlciB3YXkgd291bGQgYmUgZm9yIGFsbCByZXNv
-dXJjZSBmZXRjaCBmdW5jdGlvbnMKPj4gdG8gYmUgaW5zdHJ1bWVudGVkLCBzbyB0aGF0IHlvdSBk
-byBub3QgYmxvY2sgdW50aWwgeW91IHRyeSB0byB0YWtlCj4+IGEgcmVzb3VyY2UgdGhhdCBpcyBu
-b3QgeWV0IHRoZXJlLCBlLmcuOgo+Pgo+PiByZWd1bGF0b3JfZ2V0KC4uLikgLT4gbm90IGF2YWls
-YWJsZSwgc286Cj4+IC0gaWRlbnRpZnkgdGFyZ2V0IHJlZ3VsYXRvciBwcm92aWRlciAtIHRoaXMg
-d2lsbCBuZWVkIGluc3RydW1lbnRhdGlvbgo+PiAtIHByb2JlIGl0Cj4+Cj4+IEl0IHRoZW4gdHVy
-bnMgb3V0IHRoZSByZWd1bGF0b3IgZHJpdmVyIGlzIG9uIHRoZSBpMmMgYnVzLCBzbyB3ZQo+PiBu
-ZWVkIHRvIHByb2JlIHRoZSBpMmMgZHJpdmVyOgo+PiAtIGlkZW50aWZ5IHRhcmdldCBpMmMgaG9z
-dCBmb3IgdGhlIHJlZ3VsYXRvciBkcml2ZXIgLSB0aGlzIHdpbGwgbmVlZAo+PiAgIGluc3RydW1l
-bnRhdGlvbgo+PiAtIHByb2JlIHRoZSBpMmMgaG9zdCBkcml2ZXIKPj4KPj4gaTJjIGhvc3QgY29t
-ZXMgb3V0LCBwcm9iZXMgdGhlIHJlZ3VsYXRvciBkcml2ZXIsIHJlZ3VsYXRvciBkcml2ZXIKPj4g
-cHJvYmVzIGFuZCB0aGVuIHRoZSByZWd1bGF0b3JfZ2V0KCkgY2FsbCByZXR1cm5zLgo+IAo+IEht
-bSwgaWYgSSB1bmRlcnN0YW5kIGNvcnJlY3RseSB3aGF0IHlvdSBzYXksIHRoaXMgaXMgZXhhY3Rs
-eSB3aGF0IHRoaXMKPiBwYXJ0aWN1bGFyIHNlcmllcyBkb2VzOgo+IAo+IHJlZ3VsYXRvcl9nZXQg
-LT4gb2ZfcGxhdGZvcm1fZGV2aWNlX2Vuc3VyZSAtPiBwcm9iZSgpIG9uIHRoZSBwbGF0Zm9ybQo+
-IGRldmljZSB0aGF0IGVuY2xvc2VzIHRoZSByZXF1ZXN0ZWQgZGV2aWNlIG5vZGUgKGkyYyBob3N0
-KSAtPiBpMmMgc2xhdmUKPiBnZXRzIHByb2JlZCBhbmQgdGhlIHJlZ3VsYXRvciByZWdpc3RlcmVk
-IC0+IHJlZ3VsYXRvcl9nZXQgcmV0dXJucyB0aGUKPiByZXF1ZXN0ZWQgcmVzb3VyY2UKClRoZSBk
-b3duc2lkZSBvZiB0aGlzIHNvbHV0aW9uIGlzIHRoYXQgaXQgd2lsbCBub3Qgd29yayB3aXRob3V0
-IGRldmljZQp0cmVlIG9yIGV2ZW4gd2l0aG91dCBkZXZpY2UgZGVwZW5kZW5jaWVzIG5vdCBleHBs
-aWNpdGx5IHNwZWNpZmllZCBpbgpkZXZpY2UgdHJlZS4KCj4gCj4gVGhlIGRvd25zaWRlIEknbSBj
-dXJyZW50bHkgbG9va2luZyBhdCBpcyB0aGF0IGFuIGV4cGxpY2l0IGRlcGVuZGVuY3kKPiBncmFw
-aCB3b3VsZCBiZSB1c2VmdWwgdG8gaGF2ZSBmb3Igb3RoZXIgcHVycG9zZXMuIEZvciBleGFtcGxl
-IHRvIHByaW50Cj4gYSBuZWF0IHdhcm5pbmcgd2hlbiBhIGRlcGVuZGVuY3kgY2Fubm90IGJlIGZ1
-bGZpbGxlZC4gT3IgdG8gcmVmdXNlIHRvCj4gdW5iaW5kIGEgZGV2aWNlIHdoaWNoIG90aGVyIGRl
-dmljZXMgZGVwZW5kIG9uLAoKQXMgSSB1bmRlcnN0YW5kIEdyZWcgeW91IGNhbm5vdCBwcmV2ZW50
-IHVuYmluZGluZyBieSBkZXNpZ24sIHNlZSBbMV0uCgpbMV06IGh0dHA6Ly90aHJlYWQuZ21hbmUu
-b3JnL2dtYW5lLmxpbnV4Lmtlcm5lbC8xMTU0MzA4L2ZvY3VzPTExNTQ2NDgKCj4gb3IgdG8gYXV0
-b21hdGljYWxseQo+IHVuYmluZCB0aGUgZGV2aWNlcyB0aGF0IGRlcGVuZCBvbiBpdCwKCldoYXQg
-YWJvdXQgZGV2aWNlcyB0aGF0IGhhdmUgd2VhayBkZXBlbmRlbmN5PyBUaGV5IHNob3VsZCBub3Qg
-YmUgdW5ib3VuZApidXQgdGhleSBzaG91bGQgYmUgc29tZWhvdyBub3RpY2VkIGFib3V0IHVuYmlu
-ZGluZy4KCkluIGdlbmVyYWwgbWFueSBrZXJuZWwgZnJhbWV3b3JrcyBhcmUgYnJva2VuIGluIGhh
-bmRsaW5nIGhvdC11bmJpbmRpbmcKb2YgZHJpdmVycywgY29uc3VtZXJzIGFyZSBub3Qgbm90aWNl
-ZCBhYm91dCB1bmJpbmRpbmcgb2YgdGhlaXIgcmVzb3VyY2UKcHJvdmlkZXJzIGFuZCB1c3VhbGx5
-IHRoZXkgc3RheSB3aXRoIGJyb2tlbiBoYW5kbGVzIG9yIGhhbmRsZXMgdG8gZHVtbXkKcmVzb3Vy
-Y2VzLgoKSSBzdXNwZWN0IHRoZSBvbmx5IHByb3BlciBzb2x1dGlvbiBmb3IgaGFuZGxpbmcgcmVz
-b3VyY2VzIHRoYXQgY2FuCmR5bmFtaWNhbGx5IGFwcGVhci9kaXNhcHBlYXIgaXMgdG8gcHJvdmlk
-ZSBub3RpZmljYXRpb24gdG8gdGhlaXIKY29uc3VtZXJzIGFib3V0IGFwcGVhcmFuY2UgY2hhbmdl
-IG9mIHRoZSByZXNvdXJjZS4KCkkgaGF2ZSBwcm9wb3NlZCBzb21lIHRpbWVzIGFnbyBzb2x1dGlv
-biBmb3IgYWJvdmUgcHJvYmxlbXMgYmFzZWQgb24gdGhlCnN0YXRlbWVudCBhYm92ZSwgY292ZXIg
-bGV0dGVyIGV4cGxhaW5zIGl0IGluIG1vcmUgZGV0YWlsIFsyXS4KSW4gc2hvcnQgaXQgc29sdmVz
-IGZvbGxvd2luZyBpc3N1ZXM6Ci0gY29uc3VtZXIgcmVjZWl2ZXMgcmVzb3VyY2UgYXMgc29vbiBh
-cyBpdCBiZWNvbWVzIGF2YWlsYWJsZSwKLSBjb25zdW1lciBpcyBub3RpZmllZCBqdXN0IGJlZm9y
-ZSByZXNvdXJjZSByZW1vdmFsLAotIGl0IGNhbiBwcm9wZXJseSBoYW5kbGUgcHJvdmlkZXIgdW5i
-aW5kL3JlLWJpbmQsCi0gaXQgYXZvaWRzIGxhdGUgaW5pdCBkdWUgdG8gZGVmZXJyZWQgcHJvYmlu
-ZywKLSBpdCBhbGxvd3MgdG8gdHJhY2sgb3B0aW9uYWwgcmVzb3VyY2VzLgoKWzJdOiBodHRwOi8v
-dGhyZWFkLmdtYW5lLm9yZy9nbWFuZS5saW51eC5rZXJuZWwuZ3Bpby81MjAxCgpSZWdhcmRzCkFu
-ZHJ6ZWoKCj4gb3IgdG8gcHJpbnQgYSB3YXJuaW5nIGlmIGEKPiBkZXZpY2UgaXMgaG90cGx1Z2dl
-ZCBvZmYgYW5kIG90aGVyIGRldmljZXMgZGVwZW5kIG9uIGl0Lgo+IAo+PiBUaGlzIHJlcXVpcmVz
-IGluc3RydW1lbnRhdGlvbiBvbiBhbnl0aGluZyBwcm92aWRpbmcgYSByZXNvdXJjZQo+PiB0byBh
-bm90aGVyIGRyaXZlciBsaWtlIHRob3NlIEkgbWVudGlvbmVkIGFuZCBhIGxvdCBvZiBvdmVyaGVh
-ZAo+PiBpbmZyYXN0cnVjdHVyZSwgYnV0IEkgdGhpbmsgaXQncyB0aGUgcmlnaHQgYXBwcm9hY2gu
-IEhvd2V2ZXIgSSBkb24ndAo+PiBrbm93IGlmIEkgd291bGQgZXZlciBiZSBhYmxlIHRvIHB1bGwg
-dGhhdCBvZmYgbXlzZWxmLCBJIGtub3cgdGFsawo+PiBpcyBjaGVhcCBhbmQgSSBzaG91bGQgc2hv
-dyB0aGUgY29kZSBpbnN0ZWFkLgo+IAo+IFllYWgsIGlmIHlvdSBjYW4gZ2l2ZSBpdCBhIHNlY29u
-ZCBsb29rIGFuZCBzYXkgaWYgaXQgbWF0Y2hlcyB3aGF0IHlvdQo+IHdyb3RlIGFib3ZlLCBpdCB3
-b3VsZCBiZSB2ZXJ5IG11Y2ggYXBwcmVjaWF0ZWQuCj4gCj4+IERlZXBlc3QgcmVzcGVjdCBmb3Ig
-eW91ciBlZmZvcnRzIQo+IAo+IFRoYW5rcyEKPiAKPiBUb21ldQo+IAo+PiBZb3VycywKPj4gTGlu
-dXMgV2FsbGVpago+PiBfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwo+PiBkcmktZGV2ZWwgbWFpbGluZyBsaXN0Cj4+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
-a3RvcC5vcmcKPj4gaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
-L2RyaS1kZXZlbAo+IC0tCj4gVG8gdW5zdWJzY3JpYmUgZnJvbSB0aGlzIGxpc3Q6IHNlbmQgdGhl
-IGxpbmUgInVuc3Vic2NyaWJlIGxpbnV4LWdwaW8iIGluCj4gdGhlIGJvZHkgb2YgYSBtZXNzYWdl
-IHRvIG1ham9yZG9tb0B2Z2VyLmtlcm5lbC5vcmcKPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBo
-dHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9yZG9tby1pbmZvLmh0bWwKPiAKCl9fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxp
-c3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Tue, Jun 9, 2015 at 8:26 PM, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+
+> set_irq_flags is ARM specific with custom flags which have genirq
+> equivalents. Convert drivers to use the genirq interfaces directly, so we
+> can kill off set_irq_flags. The translation of flags is as follows:
+>
+> IRQF_VALID -> !IRQ_NOREQUEST
+> IRQF_PROBE -> !IRQ_NOPROBE
+> IRQF_NOAUTOEN -> IRQ_NOAUTOEN
+>
+> For IRQs managed by an irqdomain, the irqdomain core code handles clearing
+> and setting IRQ_NOREQUEST already, so there is no need to do this in
+> .map() functions and we can simply remove the set_irq_flags calls. Some
+> users also set IRQ_NOPROBE and this has been maintained although it is not
+> clear that is really needed. There appears to be a great deal of blind
+> copy and paste of this code.
+>
+> Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Cc: Michael Hennerich <michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>
+> Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>
+> Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Cc: bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org
+> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+
+Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+
+Yours,
+Linus Walleij
