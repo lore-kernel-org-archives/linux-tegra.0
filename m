@@ -1,43 +1,94 @@
-From: Antoine Tenart <antoine.tenart-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: make pinctrl_register() return proper error code
-Date: Tue, 9 Jun 2015 20:10:43 +0200
-Message-ID: <20150609181043.GA4709@kwain>
-References: <1433822476-26531-1-git-send-email-yamada.masahiro@socionext.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: [PATCH 00/21] On-demand device registration
+Date: Wed, 10 Jun 2015 12:19:49 +0200
+Message-ID: <CAAObsKD97nEARO5eZYA2g8+z_MrazBy-m8PV_kSyj19ya72mAw@mail.gmail.com>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
+ <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
+ <CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com> <CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1433822476-26531-1-git-send-email-yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-Cc: Alessandro Rubini <rubini-9wsNiZum9E8@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Maoguang Meng <maoguang.meng-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jason Uy <jasonuy-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rickard Strandqvist <rickard_strandqvist-IW2WV5XWFqGZkjO+N0TKoMugMpMbD5Xr@public.gmane.org>, Hongzhou Yang <hongzhou.yang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Varka Bhadram <varkabhadram@gmail>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dmaengine@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, linux-clk@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, Grant Likely <grant.likely@linaro.org>, Alexander Holler <holler@ahsoftware.de>, Dan Williams <dan.j.williams@intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.o>
 List-Id: linux-tegra@vger.kernel.org
 
-Hello,
+On 10 June 2015 at 09:30, Linus Walleij <linus.walleij@linaro.org> wrote:
+> On Tue, Jun 2, 2015 at 12:14 PM, Tomeu Vizoso
+> <tomeu.vizoso@collabora.com> wrote:
+>> On 2 June 2015 at 10:48, Linus Walleij <linus.walleij@linaro.org> wrote:
+>
+>>> This is what systemd is doing in userspace for starting services:
+>>> ask for your dependencies and wait for them if they are not
+>>> there. So drivers ask for resources and wait for them. It also
+>>> needs to be abstract, so for example we need to be able to
+>>> hang on regulator_get() until the driver is up and providing that
+>>> regulator, and as long as everything is in slowpath it should
+>>> be OK. (And vice versa mutatis mutandis for clk, gpio, pin
+>>> control, interrupts (!) and DMA channels for example.)
+>>
+>> I understood above that you propose probing devices in order, but now
+>> you mention that resource getters would block until the dependency is
+>> fulfilled which confuses me because if we are probing in order then
+>> all dependencies would be fulfilled before the device in question gets
+>> probed.
+>
+> Sorry, the problem space is a bit convoluted so the answers
+> get a bit convoluted. Maybe I'm thinking aloud and altering the course
+> of my thoughts as I type...
+>
+> I guess there can be explicit dependencies for resources like this
+> patch does, but another way would be for all resource fetch functions
+> to be instrumented, so that you do not block until you try to take
+> a resource that is not yet there, e.g.:
+>
+> regulator_get(...) -> not available, so:
+> - identify target regulator provider - this will need instrumentation
+> - probe it
+>
+> It then turns out the regulator driver is on the i2c bus, so we
+> need to probe the i2c driver:
+> - identify target i2c host for the regulator driver - this will need
+>   instrumentation
+> - probe the i2c host driver
+>
+> i2c host comes out, probes the regulator driver, regulator driver
+> probes and then the regulator_get() call returns.
 
-On Tue, Jun 09, 2015 at 01:01:16PM +0900, Masahiro Yamada wrote:
-> =
+Hmm, if I understand correctly what you say, this is exactly what this
+particular series does:
 
-> I think I converted all of the pinctrl drivers, but just in case,
-> I'd like the driver maintainers to check this patch out.
+regulator_get -> of_platform_device_ensure -> probe() on the platform
+device that encloses the requested device node (i2c host) -> i2c slave
+gets probed and the regulator registered -> regulator_get returns the
+requested resource
 
-For,
+The downside I'm currently looking at is that an explicit dependency
+graph would be useful to have for other purposes. For example to print
+a neat warning when a dependency cannot be fulfilled. Or to refuse to
+unbind a device which other devices depend on, or to automatically
+unbind the devices that depend on it, or to print a warning if a
+device is hotplugged off and other devices depend on it.
 
->  drivers/pinctrl/berlin/berlin.c               |  4 ++--
+> This requires instrumentation on anything providing a resource
+> to another driver like those I mentioned and a lot of overhead
+> infrastructure, but I think it's the right approach. However I don't
+> know if I would ever be able to pull that off myself, I know talk
+> is cheap and I should show the code instead.
 
-Acked-by: Antoine Tenart <antoine.tenart-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Yeah, if you can give it a second look and say if it matches what you
+wrote above, it would be very much appreciated.
 
--- =
+> Deepest respect for your efforts!
 
-Antoine T=E9nart, Free Electrons
-Embedded Linux, Kernel and Android engineering
-http://free-electrons.com
+Thanks!
+
+Tomeu
+
+> Yours,
+> Linus Walleij
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> http://lists.freedesktop.org/mailman/listinfo/dri-devel
