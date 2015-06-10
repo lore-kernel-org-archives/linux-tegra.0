@@ -1,321 +1,67 @@
-From: Rob Herring <robh@kernel.org>
-Subject: [PATCH 05/15] gpio: kill off set_irq_flags usage
-Date: Tue,  9 Jun 2015 13:26:31 -0500
-Message-ID: <1433874401-27161-6-git-send-email-robh@kernel.org>
-References: <1433874401-27161-1-git-send-email-robh@kernel.org>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <1433874401-27161-1-git-send-email-robh@kernel.org>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org, arm@kernel.org, Rob Herring <robh@kernel.org>, Michael Hennerich <michael.hennerich@analog.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Ray Jui <rjui@broadcom.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-gpio@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com, linux-tegra@vger.kernel.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 00/21] On-demand device registration
+Date: Wed, 10 Jun 2015 09:30:32 +0200
+Message-ID: <CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
+ <CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
+ <CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, dmaengine@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, linux-clk@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, Grant Likely <grant.likely@linaro.org>, Alexander Holler <holler@ahsoftware.de>, Dan Williams <dan.j.williams@intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.o>
 List-Id: linux-tegra@vger.kernel.org
 
-set_irq_flags is ARM specific with custom flags which have genirq
-equivalents. Convert drivers to use the genirq interfaces directly, so we
-can kill off set_irq_flags. The translation of flags is as follows:
-
-IRQF_VALID -> !IRQ_NOREQUEST
-IRQF_PROBE -> !IRQ_NOPROBE
-IRQF_NOAUTOEN -> IRQ_NOAUTOEN
-
-For IRQs managed by an irqdomain, the irqdomain core code handles clearing
-and setting IRQ_NOREQUEST already, so there is no need to do this in
-.map() functions and we can simply remove the set_irq_flags calls. Some
-users also set IRQ_NOPROBE and this has been maintained although it is not
-clear that is really needed. There appears to be a great deal of blind
-copy and paste of this code.
-
-Signed-off-by: Rob Herring <robh@kernel.org>
-Cc: Michael Hennerich <michael.hennerich@analog.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: Ray Jui <rjui@broadcom.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-gpio@vger.kernel.org
-Cc: bcm-kernel-feedback-list@broadcom.com
-Cc: linux-tegra@vger.kernel.org
----
- drivers/gpio/gpio-adp5588.c    | 10 +---------
- drivers/gpio/gpio-bcm-kona.c   | 15 ---------------
- drivers/gpio/gpio-davinci.c    |  1 -
- drivers/gpio/gpio-em.c         |  1 -
- drivers/gpio/gpio-ep93xx.c     |  2 +-
- drivers/gpio/gpio-grgpio.c     |  8 --------
- drivers/gpio/gpio-mcp23s08.c   |  4 ----
- drivers/gpio/gpio-msm-v2.c     |  1 -
- drivers/gpio/gpio-pxa.c        |  8 ++++----
- drivers/gpio/gpio-sa1100.c     |  2 +-
- drivers/gpio/gpio-sta2x11.c    |  2 +-
- drivers/gpio/gpio-tegra.c      |  1 -
- drivers/gpio/gpio-timberdale.c |  4 +---
- drivers/gpio/gpiolib.c         |  8 +-------
- 14 files changed, 10 insertions(+), 57 deletions(-)
-
-diff --git a/drivers/gpio/gpio-adp5588.c b/drivers/gpio/gpio-adp5588.c
-index d3fe6a6..df7bb75 100644
---- a/drivers/gpio/gpio-adp5588.c
-+++ b/drivers/gpio/gpio-adp5588.c
-@@ -305,15 +305,7 @@ static int adp5588_irq_setup(struct adp5588_gpio *dev)
- 		irq_set_chip_and_handler(irq, &adp5588_irq_chip,
- 					 handle_level_irq);
- 		irq_set_nested_thread(irq, 1);
--#ifdef CONFIG_ARM
--		/*
--		 * ARM needs us to explicitly flag the IRQ as VALID,
--		 * once we do so, it will also set the noprobe.
--		 */
--		set_irq_flags(irq, IRQF_VALID);
--#else
--		irq_set_noprobe(irq);
--#endif
-+		irq_clear_status_flags(irq, IRQ_NOREQUEST | IRQ_NOPROBE);
- 	}
- 
- 	ret = request_threaded_irq(client->irq,
-diff --git a/drivers/gpio/gpio-bcm-kona.c b/drivers/gpio/gpio-bcm-kona.c
-index b164ce8..8247d27 100644
---- a/drivers/gpio/gpio-bcm-kona.c
-+++ b/drivers/gpio/gpio-bcm-kona.c
-@@ -519,11 +519,7 @@ static int bcm_kona_gpio_irq_map(struct irq_domain *d, unsigned int irq,
- 		return ret;
- 	irq_set_lockdep_class(irq, &gpio_lock_class);
- 	irq_set_chip_and_handler(irq, &bcm_gpio_irq_chip, handle_simple_irq);
--#ifdef CONFIG_ARM
--	set_irq_flags(irq, IRQF_VALID);
--#else
- 	irq_set_noprobe(irq);
--#endif
- 
- 	return 0;
- }
-@@ -638,17 +634,6 @@ static int bcm_kona_gpio_probe(struct platform_device *pdev)
- 		dev_err(dev, "Couldn't add GPIO chip -- %d\n", ret);
- 		goto err_irq_domain;
- 	}
--	for (i = 0; i < chip->ngpio; i++) {
--		int irq = bcm_kona_gpio_to_irq(chip, i);
--		irq_set_lockdep_class(irq, &gpio_lock_class);
--		irq_set_chip_and_handler(irq, &bcm_gpio_irq_chip,
--					 handle_simple_irq);
--#ifdef CONFIG_ARM
--		set_irq_flags(irq, IRQF_VALID);
--#else
--		irq_set_noprobe(irq);
--#endif
--	}
- 	for (i = 0; i < kona_gpio->num_bank; i++) {
- 		bank = &kona_gpio->banks[i];
- 		irq_set_chained_handler(bank->irq, bcm_kona_gpio_irq_handler);
-diff --git a/drivers/gpio/gpio-davinci.c b/drivers/gpio/gpio-davinci.c
-index c5e05c8..59020a6 100644
---- a/drivers/gpio/gpio-davinci.c
-+++ b/drivers/gpio/gpio-davinci.c
-@@ -422,7 +422,6 @@ davinci_gpio_irq_map(struct irq_domain *d, unsigned int irq,
- 	irq_set_irq_type(irq, IRQ_TYPE_NONE);
- 	irq_set_chip_data(irq, (__force void *)g);
- 	irq_set_handler_data(irq, (void *)__gpio_mask(hw));
--	set_irq_flags(irq, IRQF_VALID);
- 
- 	return 0;
- }
-diff --git a/drivers/gpio/gpio-em.c b/drivers/gpio/gpio-em.c
-index 3cfcfc6..3a912a6 100644
---- a/drivers/gpio/gpio-em.c
-+++ b/drivers/gpio/gpio-em.c
-@@ -262,7 +262,6 @@ static int em_gio_irq_domain_map(struct irq_domain *h, unsigned int irq,
- 
- 	irq_set_chip_data(irq, h->host_data);
- 	irq_set_chip_and_handler(irq, &p->irq_chip, handle_level_irq);
--	set_irq_flags(irq, IRQF_VALID); /* kill me now */
- 	return 0;
- }
- 
-diff --git a/drivers/gpio/gpio-ep93xx.c b/drivers/gpio/gpio-ep93xx.c
-index 45684f3..4d35fdc 100644
---- a/drivers/gpio/gpio-ep93xx.c
-+++ b/drivers/gpio/gpio-ep93xx.c
-@@ -234,7 +234,7 @@ static void ep93xx_gpio_init_irq(void)
- 	     gpio_irq <= gpio_to_irq(EP93XX_GPIO_LINE_MAX_IRQ); ++gpio_irq) {
- 		irq_set_chip_and_handler(gpio_irq, &ep93xx_gpio_irq_chip,
- 					 handle_level_irq);
--		set_irq_flags(gpio_irq, IRQF_VALID);
-+		irq_clear_status_flags(gpio_irq, IRQ_NOREQUEST);
- 	}
- 
- 	irq_set_chained_handler(IRQ_EP93XX_GPIO_AB,
-diff --git a/drivers/gpio/gpio-grgpio.c b/drivers/gpio/gpio-grgpio.c
-index 35a0277..6bdb8de 100644
---- a/drivers/gpio/gpio-grgpio.c
-+++ b/drivers/gpio/gpio-grgpio.c
-@@ -281,12 +281,7 @@ static int grgpio_irq_map(struct irq_domain *d, unsigned int irq,
- 	irq_set_chip_data(irq, priv);
- 	irq_set_chip_and_handler(irq, &grgpio_irq_chip,
- 				 handle_simple_irq);
--	irq_clear_status_flags(irq, IRQ_NOREQUEST);
--#ifdef CONFIG_ARM
--	set_irq_flags(irq, IRQF_VALID);
--#else
- 	irq_set_noprobe(irq);
--#endif
- 
- 	return ret;
- }
-@@ -301,9 +296,6 @@ static void grgpio_irq_unmap(struct irq_domain *d, unsigned int irq)
- 	int ngpio = priv->bgc.gc.ngpio;
- 	int i;
- 
--#ifdef CONFIG_ARM
--	set_irq_flags(irq, 0);
--#endif
- 	irq_set_chip_and_handler(irq, NULL, NULL);
- 	irq_set_chip_data(irq, NULL);
- 
-diff --git a/drivers/gpio/gpio-mcp23s08.c b/drivers/gpio/gpio-mcp23s08.c
-index 2fc7ff8..73db7ec 100644
---- a/drivers/gpio/gpio-mcp23s08.c
-+++ b/drivers/gpio/gpio-mcp23s08.c
-@@ -507,11 +507,7 @@ static int mcp23s08_irq_setup(struct mcp23s08 *mcp)
- 		irq_set_chip_data(irq, mcp);
- 		irq_set_chip(irq, &mcp23s08_irq_chip);
- 		irq_set_nested_thread(irq, true);
--#ifdef CONFIG_ARM
--		set_irq_flags(irq, IRQF_VALID);
--#else
- 		irq_set_noprobe(irq);
--#endif
- 	}
- 	return 0;
- }
-diff --git a/drivers/gpio/gpio-msm-v2.c b/drivers/gpio/gpio-msm-v2.c
-index 52ff182..4bbaeb36 100644
---- a/drivers/gpio/gpio-msm-v2.c
-+++ b/drivers/gpio/gpio-msm-v2.c
-@@ -363,7 +363,6 @@ static int msm_gpio_irq_domain_map(struct irq_domain *d, unsigned int irq,
- 	irq_set_lockdep_class(irq, &msm_gpio_lock_class);
- 	irq_set_chip_and_handler(irq, &msm_gpio_irq_chip,
- 			handle_level_irq);
--	set_irq_flags(irq, IRQF_VALID);
- 
- 	return 0;
- }
-diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
-index cdbbcf0..55a11de 100644
---- a/drivers/gpio/gpio-pxa.c
-+++ b/drivers/gpio/gpio-pxa.c
-@@ -524,7 +524,7 @@ static int pxa_irq_domain_map(struct irq_domain *d, unsigned int irq,
- {
- 	irq_set_chip_and_handler(irq, &pxa_muxed_gpio_chip,
- 				 handle_edge_irq);
--	set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
-+	irq_set_noprobe(irq);
- 	return 0;
- }
- 
-@@ -643,20 +643,20 @@ static int pxa_gpio_probe(struct platform_device *pdev)
- 			irq = gpio_to_irq(0);
- 			irq_set_chip_and_handler(irq, &pxa_muxed_gpio_chip,
- 						 handle_edge_irq);
--			set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
-+			irq_clear_status_flags(irq, IRQ_NOREQUEST | IRQ_NOPROBE);
- 		}
- 		if (irq1 > 0) {
- 			irq = gpio_to_irq(1);
- 			irq_set_chip_and_handler(irq, &pxa_muxed_gpio_chip,
- 						 handle_edge_irq);
--			set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
-+			irq_clear_status_flags(irq, IRQ_NOREQUEST | IRQ_NOPROBE);
- 		}
- 
- 		for (irq  = gpio_to_irq(gpio_offset);
- 			irq <= gpio_to_irq(pxa_last_gpio); irq++) {
- 			irq_set_chip_and_handler(irq, &pxa_muxed_gpio_chip,
- 						 handle_edge_irq);
--			set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
-+			irq_clear_status_flags(irq, IRQ_NOREQUEST | IRQ_NOPROBE);
- 		}
- 	}
- 
-diff --git a/drivers/gpio/gpio-sa1100.c b/drivers/gpio/gpio-sa1100.c
-index bec397a..dbc67d1 100644
---- a/drivers/gpio/gpio-sa1100.c
-+++ b/drivers/gpio/gpio-sa1100.c
-@@ -155,7 +155,7 @@ static int sa1100_gpio_irqdomain_map(struct irq_domain *d,
- {
- 	irq_set_chip_and_handler(irq, &sa1100_gpio_irq_chip,
- 				 handle_edge_irq);
--	set_irq_flags(irq, IRQF_VALID | IRQF_PROBE);
-+	irq_set_noprobe(irq);
- 
- 	return 0;
- }
-diff --git a/drivers/gpio/gpio-sta2x11.c b/drivers/gpio/gpio-sta2x11.c
-index 18579ac..55e47828 100644
---- a/drivers/gpio/gpio-sta2x11.c
-+++ b/drivers/gpio/gpio-sta2x11.c
-@@ -346,7 +346,7 @@ static void gsta_alloc_irq_chip(struct gsta_gpio *chip)
- 			i = chip->irq_base + j;
- 			irq_set_chip_and_handler(i, &ct->chip, ct->handler);
- 			irq_set_chip_data(i, gc);
--			irq_modify_status(i, IRQ_NOREQUEST | IRQ_NOPROBE, 0);
-+			irq_clear_status_flags(i, IRQ_NOREQUEST | IRQ_NOPROBE);
- 		}
- 		gc->irq_cnt = i - gc->irq_base;
- 	}
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 1741981..62fdd5d 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -509,7 +509,6 @@ static int tegra_gpio_probe(struct platform_device *pdev)
- 		irq_set_chip_data(irq, bank);
- 		irq_set_chip_and_handler(irq, &tegra_gpio_irq_chip,
- 					 handle_simple_irq);
--		set_irq_flags(irq, IRQF_VALID);
- 	}
- 
- 	for (i = 0; i < tegra_gpio_bank_count; i++) {
-diff --git a/drivers/gpio/gpio-timberdale.c b/drivers/gpio/gpio-timberdale.c
-index e8f97e0..166fe1c 100644
---- a/drivers/gpio/gpio-timberdale.c
-+++ b/drivers/gpio/gpio-timberdale.c
-@@ -294,9 +294,7 @@ static int timbgpio_probe(struct platform_device *pdev)
- 		irq_set_chip_and_handler(tgpio->irq_base + i,
- 			&timbgpio_irqchip, handle_simple_irq);
- 		irq_set_chip_data(tgpio->irq_base + i, tgpio);
--#ifdef CONFIG_ARM
--		set_irq_flags(tgpio->irq_base + i, IRQF_VALID | IRQF_PROBE);
--#endif
-+		irq_clear_status_flags(tgpio->irq_base + i, IRQ_NOREQUEST | IRQ_NOPROBE);
- 	}
- 
- 	irq_set_handler_data(irq, tgpio);
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index 6bc612b..efd35c0 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -477,11 +477,8 @@ static int gpiochip_irq_map(struct irq_domain *d, unsigned int irq,
- 	/* Chips that can sleep need nested thread handlers */
- 	if (chip->can_sleep && !chip->irq_not_threaded)
- 		irq_set_nested_thread(irq, 1);
--#ifdef CONFIG_ARM
--	set_irq_flags(irq, IRQF_VALID);
--#else
- 	irq_set_noprobe(irq);
--#endif
-+
- 	/*
- 	 * No set-up of the hardware will happen if IRQ_TYPE_NONE
- 	 * is passed as default type.
-@@ -496,9 +493,6 @@ static void gpiochip_irq_unmap(struct irq_domain *d, unsigned int irq)
- {
- 	struct gpio_chip *chip = d->host_data;
- 
--#ifdef CONFIG_ARM
--	set_irq_flags(irq, 0);
--#endif
- 	if (chip->can_sleep)
- 		irq_set_nested_thread(irq, 0);
- 	irq_set_chip_and_handler(irq, NULL, NULL);
--- 
-2.1.0
-
+T24gVHVlLCBKdW4gMiwgMjAxNSBhdCAxMjoxNCBQTSwgVG9tZXUgVml6b3NvCjx0b21ldS52aXpv
+c29AY29sbGFib3JhLmNvbT4gd3JvdGU6Cj4gT24gMiBKdW5lIDIwMTUgYXQgMTA6NDgsIExpbnVz
+IFdhbGxlaWogPGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZz4gd3JvdGU6Cgo+PiBUaGlzIGlzIHdo
+YXQgc3lzdGVtZCBpcyBkb2luZyBpbiB1c2Vyc3BhY2UgZm9yIHN0YXJ0aW5nIHNlcnZpY2VzOgo+
+PiBhc2sgZm9yIHlvdXIgZGVwZW5kZW5jaWVzIGFuZCB3YWl0IGZvciB0aGVtIGlmIHRoZXkgYXJl
+IG5vdAo+PiB0aGVyZS4gU28gZHJpdmVycyBhc2sgZm9yIHJlc291cmNlcyBhbmQgd2FpdCBmb3Ig
+dGhlbS4gSXQgYWxzbwo+PiBuZWVkcyB0byBiZSBhYnN0cmFjdCwgc28gZm9yIGV4YW1wbGUgd2Ug
+bmVlZCB0byBiZSBhYmxlIHRvCj4+IGhhbmcgb24gcmVndWxhdG9yX2dldCgpIHVudGlsIHRoZSBk
+cml2ZXIgaXMgdXAgYW5kIHByb3ZpZGluZyB0aGF0Cj4+IHJlZ3VsYXRvciwgYW5kIGFzIGxvbmcg
+YXMgZXZlcnl0aGluZyBpcyBpbiBzbG93cGF0aCBpdCBzaG91bGQKPj4gYmUgT0suIChBbmQgdmlj
+ZSB2ZXJzYSBtdXRhdGlzIG11dGFuZGlzIGZvciBjbGssIGdwaW8sIHBpbgo+PiBjb250cm9sLCBp
+bnRlcnJ1cHRzICghKSBhbmQgRE1BIGNoYW5uZWxzIGZvciBleGFtcGxlLikKPgo+IEkgdW5kZXJz
+dG9vZCBhYm92ZSB0aGF0IHlvdSBwcm9wb3NlIHByb2JpbmcgZGV2aWNlcyBpbiBvcmRlciwgYnV0
+IG5vdwo+IHlvdSBtZW50aW9uIHRoYXQgcmVzb3VyY2UgZ2V0dGVycyB3b3VsZCBibG9jayB1bnRp
+bCB0aGUgZGVwZW5kZW5jeSBpcwo+IGZ1bGZpbGxlZCB3aGljaCBjb25mdXNlcyBtZSBiZWNhdXNl
+IGlmIHdlIGFyZSBwcm9iaW5nIGluIG9yZGVyIHRoZW4KPiBhbGwgZGVwZW5kZW5jaWVzIHdvdWxk
+IGJlIGZ1bGZpbGxlZCBiZWZvcmUgdGhlIGRldmljZSBpbiBxdWVzdGlvbiBnZXRzCj4gcHJvYmVk
+LgoKU29ycnksIHRoZSBwcm9ibGVtIHNwYWNlIGlzIGEgYml0IGNvbnZvbHV0ZWQgc28gdGhlIGFu
+c3dlcnMKZ2V0IGEgYml0IGNvbnZvbHV0ZWQuIE1heWJlIEknbSB0aGlua2luZyBhbG91ZCBhbmQg
+YWx0ZXJpbmcgdGhlIGNvdXJzZQpvZiBteSB0aG91Z2h0cyBhcyBJIHR5cGUuLi4KCkkgZ3Vlc3Mg
+dGhlcmUgY2FuIGJlIGV4cGxpY2l0IGRlcGVuZGVuY2llcyBmb3IgcmVzb3VyY2VzIGxpa2UgdGhp
+cwpwYXRjaCBkb2VzLCBidXQgYW5vdGhlciB3YXkgd291bGQgYmUgZm9yIGFsbCByZXNvdXJjZSBm
+ZXRjaCBmdW5jdGlvbnMKdG8gYmUgaW5zdHJ1bWVudGVkLCBzbyB0aGF0IHlvdSBkbyBub3QgYmxv
+Y2sgdW50aWwgeW91IHRyeSB0byB0YWtlCmEgcmVzb3VyY2UgdGhhdCBpcyBub3QgeWV0IHRoZXJl
+LCBlLmcuOgoKcmVndWxhdG9yX2dldCguLi4pIC0+IG5vdCBhdmFpbGFibGUsIHNvOgotIGlkZW50
+aWZ5IHRhcmdldCByZWd1bGF0b3IgcHJvdmlkZXIgLSB0aGlzIHdpbGwgbmVlZCBpbnN0cnVtZW50
+YXRpb24KLSBwcm9iZSBpdAoKSXQgdGhlbiB0dXJucyBvdXQgdGhlIHJlZ3VsYXRvciBkcml2ZXIg
+aXMgb24gdGhlIGkyYyBidXMsIHNvIHdlCm5lZWQgdG8gcHJvYmUgdGhlIGkyYyBkcml2ZXI6Ci0g
+aWRlbnRpZnkgdGFyZ2V0IGkyYyBob3N0IGZvciB0aGUgcmVndWxhdG9yIGRyaXZlciAtIHRoaXMg
+d2lsbCBuZWVkCiAgaW5zdHJ1bWVudGF0aW9uCi0gcHJvYmUgdGhlIGkyYyBob3N0IGRyaXZlcgoK
+aTJjIGhvc3QgY29tZXMgb3V0LCBwcm9iZXMgdGhlIHJlZ3VsYXRvciBkcml2ZXIsIHJlZ3VsYXRv
+ciBkcml2ZXIKcHJvYmVzIGFuZCB0aGVuIHRoZSByZWd1bGF0b3JfZ2V0KCkgY2FsbCByZXR1cm5z
+LgoKVGhpcyByZXF1aXJlcyBpbnN0cnVtZW50YXRpb24gb24gYW55dGhpbmcgcHJvdmlkaW5nIGEg
+cmVzb3VyY2UKdG8gYW5vdGhlciBkcml2ZXIgbGlrZSB0aG9zZSBJIG1lbnRpb25lZCBhbmQgYSBs
+b3Qgb2Ygb3ZlcmhlYWQKaW5mcmFzdHJ1Y3R1cmUsIGJ1dCBJIHRoaW5rIGl0J3MgdGhlIHJpZ2h0
+IGFwcHJvYWNoLiBIb3dldmVyIEkgZG9uJ3QKa25vdyBpZiBJIHdvdWxkIGV2ZXIgYmUgYWJsZSB0
+byBwdWxsIHRoYXQgb2ZmIG15c2VsZiwgSSBrbm93IHRhbGsKaXMgY2hlYXAgYW5kIEkgc2hvdWxk
+IHNob3cgdGhlIGNvZGUgaW5zdGVhZC4KCkRlZXBlc3QgcmVzcGVjdCBmb3IgeW91ciBlZmZvcnRz
+IQoKWW91cnMsCkxpbnVzIFdhbGxlaWoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9kcmktZGV2ZWwK
