@@ -1,43 +1,71 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: make pinctrl_register() return proper error code
-Date: Wed, 10 Jun 2015 14:52:30 +0200
-Message-ID: <CACRpkdbuOsRK9_AeKe-eQ-uCUqT1212NFe4OKLdzc+QoBxN1Bw@mail.gmail.com>
-References: <1433822476-26531-1-git-send-email-yamada.masahiro@socionext.com>
+From: Alexander Holler <holler@ahsoftware.de>
+Subject: Re: [PATCH 00/21] On-demand device registration
+Date: Wed, 10 Jun 2015 10:28:35 +0200
+Message-ID: <5577F533.1060007@ahsoftware.de>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>	<CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>	<CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>
+ <CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1433822476-26531-1-git-send-email-yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-Cc: Alessandro Rubini <rubini-9wsNiZum9E8@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Maoguang Meng <maoguang.meng-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jason Uy <jasonuy-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Chaotian Jing <chaotian.jing-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rickard Strandqvist <ric>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Linus Walleij <linus.walleij@linaro.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, open@wandq.ahsoftware, dmaengine@vger.kernel.org, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, linux-clk@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, list@wandq.ahsoftware, Rob Herring <robh+dt@kernel.org>, DRM PANEL DRIVERS <dri-devel@lists.freedesktop.org>, Grant Likely <grant.likely@linaro.org>, Dan Williams <dan.j.williams@intel.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>l
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jun 9, 2015 at 6:01 AM, Masahiro Yamada
-<yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org> wrote:
-
-> Currently, pinctrl_register() just returns NULL on error, so the
-> callers can not know the exact reason of the failure.
->
-> Some of the pinctrl drivers return -EINVAL, some -ENODEV, and some
-> -ENOMEM on error of pinctrl_register(), although the error code
-> might be different from the real cause of the error.
->
-> This commit reworks pinctrl_register() to return the appropriate
-> error code and modifies all of the pinctrl drivers to use IS_ERR()
-> for the error checking and PTR_ERR() for getting the error code.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-
-Patch applied, with the ACK-storm.
-
-Yours,
-Linus Walleij
+QW0gMTAuMDYuMjAxNSB1bSAwOTozMCBzY2hyaWViIExpbnVzIFdhbGxlaWo6Cj4gT24gVHVlLCBK
+dW4gMiwgMjAxNSBhdCAxMjoxNCBQTSwgVG9tZXUgVml6b3NvCj4gPHRvbWV1LnZpem9zb0Bjb2xs
+YWJvcmEuY29tPiB3cm90ZToKPj4gT24gMiBKdW5lIDIwMTUgYXQgMTA6NDgsIExpbnVzIFdhbGxl
+aWogPGxpbnVzLndhbGxlaWpAbGluYXJvLm9yZz4gd3JvdGU6Cj4KPj4+IFRoaXMgaXMgd2hhdCBz
+eXN0ZW1kIGlzIGRvaW5nIGluIHVzZXJzcGFjZSBmb3Igc3RhcnRpbmcgc2VydmljZXM6Cj4+PiBh
+c2sgZm9yIHlvdXIgZGVwZW5kZW5jaWVzIGFuZCB3YWl0IGZvciB0aGVtIGlmIHRoZXkgYXJlIG5v
+dAo+Pj4gdGhlcmUuIFNvIGRyaXZlcnMgYXNrIGZvciByZXNvdXJjZXMgYW5kIHdhaXQgZm9yIHRo
+ZW0uIEl0IGFsc28KPj4+IG5lZWRzIHRvIGJlIGFic3RyYWN0LCBzbyBmb3IgZXhhbXBsZSB3ZSBu
+ZWVkIHRvIGJlIGFibGUgdG8KPj4+IGhhbmcgb24gcmVndWxhdG9yX2dldCgpIHVudGlsIHRoZSBk
+cml2ZXIgaXMgdXAgYW5kIHByb3ZpZGluZyB0aGF0Cj4+PiByZWd1bGF0b3IsIGFuZCBhcyBsb25n
+IGFzIGV2ZXJ5dGhpbmcgaXMgaW4gc2xvd3BhdGggaXQgc2hvdWxkCj4+PiBiZSBPSy4gKEFuZCB2
+aWNlIHZlcnNhIG11dGF0aXMgbXV0YW5kaXMgZm9yIGNsaywgZ3BpbywgcGluCj4+PiBjb250cm9s
+LCBpbnRlcnJ1cHRzICghKSBhbmQgRE1BIGNoYW5uZWxzIGZvciBleGFtcGxlLikKPj4KPj4gSSB1
+bmRlcnN0b29kIGFib3ZlIHRoYXQgeW91IHByb3Bvc2UgcHJvYmluZyBkZXZpY2VzIGluIG9yZGVy
+LCBidXQgbm93Cj4+IHlvdSBtZW50aW9uIHRoYXQgcmVzb3VyY2UgZ2V0dGVycyB3b3VsZCBibG9j
+ayB1bnRpbCB0aGUgZGVwZW5kZW5jeSBpcwo+PiBmdWxmaWxsZWQgd2hpY2ggY29uZnVzZXMgbWUg
+YmVjYXVzZSBpZiB3ZSBhcmUgcHJvYmluZyBpbiBvcmRlciB0aGVuCj4+IGFsbCBkZXBlbmRlbmNp
+ZXMgd291bGQgYmUgZnVsZmlsbGVkIGJlZm9yZSB0aGUgZGV2aWNlIGluIHF1ZXN0aW9uIGdldHMK
+Pj4gcHJvYmVkLgo+Cj4gU29ycnksIHRoZSBwcm9ibGVtIHNwYWNlIGlzIGEgYml0IGNvbnZvbHV0
+ZWQgc28gdGhlIGFuc3dlcnMKPiBnZXQgYSBiaXQgY29udm9sdXRlZC4gTWF5YmUgSSdtIHRoaW5r
+aW5nIGFsb3VkIGFuZCBhbHRlcmluZyB0aGUgY291cnNlCj4gb2YgbXkgdGhvdWdodHMgYXMgSSB0
+eXBlLi4uCj4KPiBJIGd1ZXNzIHRoZXJlIGNhbiBiZSBleHBsaWNpdCBkZXBlbmRlbmNpZXMgZm9y
+IHJlc291cmNlcyBsaWtlIHRoaXMKPiBwYXRjaCBkb2VzLCBidXQgYW5vdGhlciB3YXkgd291bGQg
+YmUgZm9yIGFsbCByZXNvdXJjZSBmZXRjaCBmdW5jdGlvbnMKPiB0byBiZSBpbnN0cnVtZW50ZWQs
+IHNvIHRoYXQgeW91IGRvIG5vdCBibG9jayB1bnRpbCB5b3UgdHJ5IHRvIHRha2UKPiBhIHJlc291
+cmNlIHRoYXQgaXMgbm90IHlldCB0aGVyZSwgZS5nLjoKPgo+IHJlZ3VsYXRvcl9nZXQoLi4uKSAt
+PiBub3QgYXZhaWxhYmxlLCBzbzoKPiAtIGlkZW50aWZ5IHRhcmdldCByZWd1bGF0b3IgcHJvdmlk
+ZXIgLSB0aGlzIHdpbGwgbmVlZCBpbnN0cnVtZW50YXRpb24KPiAtIHByb2JlIGl0Cj4KPiBJdCB0
+aGVuIHR1cm5zIG91dCB0aGUgcmVndWxhdG9yIGRyaXZlciBpcyBvbiB0aGUgaTJjIGJ1cywgc28g
+d2UKPiBuZWVkIHRvIHByb2JlIHRoZSBpMmMgZHJpdmVyOgo+IC0gaWRlbnRpZnkgdGFyZ2V0IGky
+YyBob3N0IGZvciB0aGUgcmVndWxhdG9yIGRyaXZlciAtIHRoaXMgd2lsbCBuZWVkCj4gICAgaW5z
+dHJ1bWVudGF0aW9uCj4gLSBwcm9iZSB0aGUgaTJjIGhvc3QgZHJpdmVyCj4KPiBpMmMgaG9zdCBj
+b21lcyBvdXQsIHByb2JlcyB0aGUgcmVndWxhdG9yIGRyaXZlciwgcmVndWxhdG9yIGRyaXZlcgo+
+IHByb2JlcyBhbmQgdGhlbiB0aGUgcmVndWxhdG9yX2dldCgpIGNhbGwgcmV0dXJucy4KPgo+IFRo
+aXMgcmVxdWlyZXMgaW5zdHJ1bWVudGF0aW9uIG9uIGFueXRoaW5nIHByb3ZpZGluZyBhIHJlc291
+cmNlCj4gdG8gYW5vdGhlciBkcml2ZXIgbGlrZSB0aG9zZSBJIG1lbnRpb25lZCBhbmQgYSBsb3Qg
+b2Ygb3ZlcmhlYWQKPiBpbmZyYXN0cnVjdHVyZSwgYnV0IEkgdGhpbmsgaXQncyB0aGUgcmlnaHQg
+YXBwcm9hY2guIEhvd2V2ZXIgSSBkb24ndAo+IGtub3cgaWYgSSB3b3VsZCBldmVyIGJlIGFibGUg
+dG8gcHVsbCB0aGF0IG9mZiBteXNlbGYsIEkga25vdyB0YWxrCj4gaXMgY2hlYXAgYW5kIEkgc2hv
+dWxkIHNob3cgdGhlIGNvZGUgaW5zdGVhZC4KCllvdSB3b3VsZCBlbmQgdXAgd2l0aCB0aGUgc2Ft
+ZSBwcm9ibGVtIG9mIGRlYWRsb2NrcyBhcyBjdXJyZW50bHksIGFuZCAKeW91IHdvdWxkIHN0aWxs
+IG5lZWQgc29tZXRoaW5nIHVnbHkgbGlrZSB0aGUgZGVmZXJlZCBwcm9iZSBicnV0Zm9yY2UgdG8g
+CmF2b2lkIHRoZW0uIFNvIHdoYXQgd291bGQgeW91IHdpbiB3aXRoIHRoYXQgaW5zdHJ1bWVudGF0
+aW9uPwoKQWxleGFuZGVyIEhvbGxlcgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
+ZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
+L2RyaS1kZXZlbAo=
