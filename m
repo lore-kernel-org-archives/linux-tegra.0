@@ -1,111 +1,121 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 00/21] On-demand device registration
-Date: Mon, 15 Jun 2015 10:58:05 +0200
-Message-ID: <CACRpkdaVZmq_w_qgEgTP5oqfH3K1+80O7z7o7CJx-dhivUGhDQ@mail.gmail.com>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
-	<CACRpkdasLwMfEHGMRd1X3K_DU7NMPreE8TMwqqDTg8k9wj=wJQ@mail.gmail.com>
-	<CAAObsKCP-C+TY8Wkk6bQzxZeGYL9X01trtjxfaYp--ZnH07C+w@mail.gmail.com>
-	<CACRpkdZuSj+S2x1yz6n5PgcRK=3ZCcq_To124b2Y+Oj54aydpg@mail.gmail.com>
-	<5577F533.1060007@ahsoftware.de>
-	<CACRpkdYF5K7ckGbgvZc6qRzGFJTQ4WqXdu_7Tcqczn2LkFbn3A@mail.gmail.com>
-	<5579602F.1070801@ahsoftware.de>
-	<CACRpkdaZgBR5rHwrEYqcm5K4w3y8MXG8a0k=Y+oQY+jukHfuyw@mail.gmail.com>
-	<5579B9E8.9040609@ahsoftware.de>
-	<CACRpkdbDSS0yw=q_cR17Bvg+kgTfU3Vcd2gSjx1p4V-CzOZ_SA@mail.gmail.com>
-	<557AC040.40803@ahsoftware.de>
-	<557AC437.9000607@ahsoftware.de>
-	<557C7609.30400@ahsoftware.de>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [Nouveau] [PATCH v2 2/2] drm/nouveau: add GEM_SET_TILING staging
+ ioctl
+Date: Mon, 15 Jun 2015 18:08:21 +0900
+Message-ID: <557E9605.9040406@nvidia.com>
+References: <1434352169-10501-1-git-send-email-acourbot@nvidia.com> <1434352169-10501-3-git-send-email-acourbot@nvidia.com> <20150615075618.GH8341@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <557C7609.30400-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>
+In-Reply-To: <20150615075618.GH8341-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>
-Cc: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, DRM PANEL DRIVERS <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>"linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linu>
+To: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Cc: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Ari Hirvonen <ahirvonen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Jun 13, 2015 at 8:27 PM, Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org> wrote:
-
-> And because you've said that "problem space is a bit convoluted" and I
-> disagree, here's a summary from my point of view:
+On 06/15/2015 04:56 PM, Daniel Vetter wrote:
+> On Mon, Jun 15, 2015 at 04:09:29PM +0900, Alexandre Courbot wrote:
+>> From: Ari Hirvonen <ahirvonen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> Add new NOUVEAU_GEM_SET_TILING ioctl to set correct tiling
+>> mode for imported dma-bufs. This ioctl is staging for now
+>> and enabled with the "staging_tiling" module option.
+>>
+>> Signed-off-by: Ari Hirvonen <ahirvonen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> [acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org: carry upstream, many fixes]
+>> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>   drm/nouveau/nouveau_bo.c           | 18 ++++++++++++
+>>   drm/nouveau/nouveau_bo.h           |  2 ++
+>>   drm/nouveau/nouveau_drm.c          |  6 ++++
+>>   drm/nouveau/nouveau_gem.c          | 58 ++++++++++++++++++++++++++++++++++++++
+>>   drm/nouveau/nouveau_gem.h          |  2 ++
+>>   drm/nouveau/nouveau_ttm.c          | 13 +--------
+>>   drm/nouveau/uapi/drm/nouveau_drm.h |  8 ++++++
+>>   7 files changed, 95 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drm/nouveau/nouveau_bo.c b/drm/nouveau/nouveau_bo.c
+>> index 6edcce1658b7..2a2ebbeb4fc0 100644
+>> --- a/drm/nouveau/nouveau_bo.c
+>> +++ b/drm/nouveau/nouveau_bo.c
+>> @@ -178,6 +178,24 @@ nouveau_bo_fixup_align(struct nouveau_bo *nvbo, u32 flags,
+>>   	*size = roundup(*size, PAGE_SIZE);
+>>   }
+>>
+>> +void
+>> +nouveau_bo_update_tiling(struct nouveau_drm *drm, struct nouveau_bo *nvbo,
+>> +			 struct nvkm_mem *mem)
+>> +{
+>> +	switch (drm->device.info.family) {
+>> +	case NV_DEVICE_INFO_V0_TESLA:
+>> +		if (drm->device.info.chipset != 0x50)
+>> +			mem->memtype = (nvbo->tile_flags & 0x7f00) >> 8;
+>> +		break;
+>> +	case NV_DEVICE_INFO_V0_FERMI:
+>> +	case NV_DEVICE_INFO_V0_KEPLER:
+>> +		mem->memtype = (nvbo->tile_flags & 0xff00) >> 8;
+>> +		break;
+>> +	default:
+>> +		break;
+>> +	}
+>> +}
+>> +
+>>   int
+>>   nouveau_bo_new(struct drm_device *dev, int size, int align,
+>>   	       uint32_t flags, uint32_t tile_mode, uint32_t tile_flags,
+>> diff --git a/drm/nouveau/nouveau_bo.h b/drm/nouveau/nouveau_bo.h
+>> index e42360983229..87d07e3533eb 100644
+>> --- a/drm/nouveau/nouveau_bo.h
+>> +++ b/drm/nouveau/nouveau_bo.h
+>> @@ -69,6 +69,8 @@ nouveau_bo_ref(struct nouveau_bo *ref, struct nouveau_bo **pnvbo)
+>>   extern struct ttm_bo_driver nouveau_bo_driver;
+>>
+>>   void nouveau_bo_move_init(struct nouveau_drm *);
+>> +void nouveau_bo_update_tiling(struct nouveau_drm *, struct nouveau_bo *,
+>> +			      struct nvkm_mem *);
+>>   int  nouveau_bo_new(struct drm_device *, int size, int align, u32 flags,
+>>   		    u32 tile_mode, u32 tile_flags, struct sg_table *sg,
+>>   		    struct reservation_object *robj,
+>> diff --git a/drm/nouveau/nouveau_drm.c b/drm/nouveau/nouveau_drm.c
+>> index 28860268cf38..45a2c88ebf8e 100644
+>> --- a/drm/nouveau/nouveau_drm.c
+>> +++ b/drm/nouveau/nouveau_drm.c
+>> @@ -75,6 +75,10 @@ MODULE_PARM_DESC(runpm, "disable (0), force enable (1), optimus only default (-1
+>>   int nouveau_runtime_pm = -1;
+>>   module_param_named(runpm, nouveau_runtime_pm, int, 0400);
+>>
+>> +MODULE_PARM_DESC(staging_tiling, "enable staging GEM_SET_TILING ioctl");
+>> +int nouveau_staging_tiling = 0;
+>> +module_param_named(staging_tiling, nouveau_staging_tiling, int, 0600);
 >
-> 1. All the necessary information (dependencies between drivers) already
-> exists at compile time. The set of dependencies between drivers might become
-> smaller by configuration, but will not become larger. So there should be NO
-> need to collect them at runtime, e.g. by instrumenting function calls.
+> Please use _unsafe here to make sure that setting this option taints the
+> kernel and gives at least a bit of a deterrent. But in the end the policy
+> is still that you can't regress anything if people complain, which means
+> you might end up with a staging ioctl locked down forever.
 
-I think you arrived at the core of the crux here.
+That would kind of kill the whole purpose of this patchset. But at the 
+same time the point of having staging ioctls is to say "don't use them 
+in production", so hopefully the message is clear.
 
-When we look up a resource provided from another driver, e.g. from
-regulator_get(), clk_get(), pinctrl_get(), gpiod_get() etc - the dependency
-is resolved by looking in a cross-reference table for either a struct device*
-pointer or a string, an index, or both or all three. Examples:
+> The other part I don't like with this plan is that it looks a bit like it
+> could be easily abused to evade the open source userspace requirement
+> upstream has for new interfaces. Doesn't help that your first staging
+> ioctl doesn't come with links to mesa/hwc/whatever patches attached ;-)
 
-struct regulator *regulator_get(struct device *dev, const char *id);
-struct clk *clk_get(struct device *dev, const char *id);
-struct gpio_desc *__must_check __gpiod_get(struct device *dev,
-                                         const char *con_id,
-                                         enum gpiod_flags flags);
-(...)
+Well, you could abuse it - no more than 8 times though. ;)
 
-(*_index() variants exist on some of the resource retrieveal
-functions.)
+The point is not to evade anything though, but rather to have the 
+necessary kernel code land in such a way that we can experiment with 
+Mesa and other user-space.
 
-struct device * is the device requesting the resource, con_id
-is the string name of the resource on the provider side. This is all
-solved by looking in cross reference tables. ONE way of resolving
-that cross reference is to look into the device tree or the ACPI table.
-But for the board file case, this is resolved at runtime by the cross
-reference table, registered with calls such as gpiod_add_lookup_table().
+> Overall I don't think this will help - you need internal branch management
+> anyway, and upstreaming new ABI is somewhat painful for a reason: Screwing
+> things up is really expensive long-term, and the drm community has paid
+> that price a few too many times.
 
-It is true that in the theoretical sense, all of this exist at compile time
-especially if you can parse something like a device tree and
-figure out what struct device * nodes will correspond to the struct
-device_node:s in it. For ACPI I guess a similar procedure is viable.
-
-Problem: this requires the kernel compile to know exactly *which* device tree
-or ACPI table it is going to boot on. The expressed goal of device tree
-and ACPI is to have *ONE* kernel booting several device trees.
-Here your approach stops short: you are suggesting instrumenting
-the kernel at compile time to one single device tree or ACPI table.
-But we never know really what device tree or ACPI table will be used.
-This just cannot be done at compile time for that reason alone.
-
-Example: in boot case (A) the regulator may be provided by regulator
-"foo" driver on an i2c bus. But in boot case (B) the very same regulator
-may be provided by regulator "bar" on an SPI bus. These are very
-real usecases, for example for drivers/net/ethernet/smsc/smsc911x.c,
-will get regulators from the most diverse places depending on what
-device tree is used.
-
-For board files, it is neither possible in theory: you need to compile the
-code to figure out the struct device * provider, and/or the string name
-of the providing device (.name field in struct device for the provider)
-to resolve dependencies at compile time.
-
-For the board file case, resolving dependencies at compile time will
-require a quite complex two-stage rocket: compile the code to
-get resources out, then recompile with known resources.
-
-I guess your suggested approach then need to introduce a special
-build tool to order the initcalls accordingly.
-
-Again this will fall short if you don't know at compile time exactly
-*which* board file will be executed.
-
-So the only practical way to solve this at compile time is to predict
-an initcall ordering sequence for all possible boot paths, compile in
-all of them, and choose the right one at boot. But the number of boot
-paths is equal to the number of device trees / ACPI tables or
-board files supported, and that space is uncontrolled and ordered
-infinite.
-
-Basically I think the root problem with your approach is that you
-assume we know what hardware we will boot on at compile time. We
-discarded that development path years ago. We have no clue, this
-is resolved at runtime. Alas, people still create super-optimized
-systems using exactly this knowledge, but it is not our main target
-here, it is a special optimization case.
-
-Yours,
-Linus Walleij
+It seems to me that this staging feature can exactly help with that: 
+allow new ioctls to mature a bit (no longer than a kernel release cycle) 
+and avoid that "ah, I wish we did this differently" moment. But 
+considering the number of ABIs I have driven so far (0), someone more 
+experienced may challenge that belief.
