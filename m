@@ -1,53 +1,62 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH v2 0/2] drm/nouveau: option for staging ioctls and new
- GEM_SET_TILING ioctl
-Date: Mon, 15 Jun 2015 16:09:27 +0900
-Message-ID: <1434352169-10501-1-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 1/2] drm/nouveau: placeholders for staging ioctls
+Date: Mon, 15 Jun 2015 16:09:28 +0900
+Message-ID: <1434352169-10501-2-git-send-email-acourbot@nvidia.com>
+References: <1434352169-10501-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Ben Skeggs <bskeggs@redhat.com>, nouveau@lists.freedesktop.org, Ari Hirvonen <ahirvonen@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, gnurou@gmail.com, dri-devel@lists.freedesktop.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1434352169-10501-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Ari Hirvonen <ahirvonen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-U2Vjb25kIHZlcnNpb24gb2YgdGhpcyBwYXRjaHNldCBhZGRyZXNzaW5nIEJlbidzIGNvbW1lbnRz
-IGFuZCBmaXhpbmcgYSBmZXcKZXh0cmEgdGhpbmdzLgoKVGhpcyBwYXRjaHNldCBwcm9wb3NlcyB0
-byBpbnRyb2R1Y2UgYSAic3RhZ2luZyIgbW9kdWxlIG9wdGlvbiB0byBkeW5hbWljYWxseQplbmFi
-bGUgZmVhdHVyZXMgKG1vc3RseSBpb2N0bHMpIHRoYXQgYXJlIG1lcmdlZCBidXQgbWF5IGJlIHJl
-ZmluZWQgYmVmb3JlCnRoZXkgYXJlIGRlY2xhcmVkICJzdGFibGUiLiBUaGUgc2Vjb25kIHBhdGNo
-IGlsbHVzdHJhdGVzIHRoZSB1c2Ugb2YgdGhpcwpzdGFnaW5nIG9wdGlvbiB3aXRoIHRoZSBTRVRf
-VElMSU5HIGlvY3RsLCB3aGljaCBjYW4gYmUgdXNlZCB0byBzcGVjaWZ5IHRoZQp0aWxpbmcgb3B0
-aW9ucyBvZiBhIFBSSU1FLWltcG9ydGVkIGJ1ZmZlci4KClRoZSBzdGFnaW5nIHBhcmFtZXRlciB3
-aWxsIGFsbG93IHVzIChwYXJ0aWN1bGFybHksIHVzIGF0IE5WSURJQSkgdG8gZXhwZXJpbWVudApt
-b3JlIGZyZWVseSB3aXRoIG5ldyBmZWF0dXJlcyBhbmQgYXZvaWQgY2Fycnlpbmcgb3V0LW9mLXRy
-ZWUgcGF0Y2hlcyBmb3IgbG9uZwpwZXJpb2RzIG9mIHRpbWUuIFRvIHByZXZlbnQgYWJ1c2UsIHRo
-ZSBudW1iZXIgb2Ygc3RhZ2luZyBpb2N0bHMgaXMgbGltaXRlZCB0byA4CihyYW5nZSAweDk4IHRv
-IDB4YTApIHRoYXQgYXJlIHRvIGJlIHJlY3ljbGVkIGFzIHN0YWdpbmcgaW9jdGxzIGJlY29tZSBz
-dGFibGUgYW5kCmFyZSBhc3NpZ25lZCBhIGZpbmFsIG51bWJlci4KCkNoYW5nZXMgc2luY2UgdjE6
-Ci0gVXNlIG9uZSBtb2R1bGUgb3B0aW9uIHBlciBzdGFnaW5nIGlvY3RsCi0gT25seSBhbGxvdyBH
-RU1fU0VUX1RJTElORyB0byBiZSBjYWxsZWQgb24gZG1hLWJ1ZiBpbXBvcnRlZCBidWZmZXJzCi0g
-TW92ZSB0aGUgY29kZSBzZXR0aW5nIG52a21fbWVtOjptZW10eXBlIGludG8gaXRzIG93biBmdW5j
-dGlvbiB0byBhdm9pZAogIGR1cGxpY2F0aW5nIGNvZGUKCkFsZXhhbmRyZSBDb3VyYm90ICgxKToK
-ICBkcm0vbm91dmVhdTogcGxhY2Vob2xkZXJzIGZvciBzdGFnaW5nIGlvY3RscwoKQXJpIEhpcnZv
-bmVuICgxKToKICBkcm0vbm91dmVhdTogYWRkIEdFTV9TRVRfVElMSU5HIHN0YWdpbmcgaW9jdGwK
-CiBkcm0vbm91dmVhdS9ub3V2ZWF1X2JvLmMgICAgICAgICAgIHwgMTggKysrKysrKysrKysrCiBk
-cm0vbm91dmVhdS9ub3V2ZWF1X2JvLmggICAgICAgICAgIHwgIDIgKysKIGRybS9ub3V2ZWF1L25v
-dXZlYXVfZHJtLmMgICAgICAgICAgfCAgNyArKysrKwogZHJtL25vdXZlYXUvbm91dmVhdV9nZW0u
-YyAgICAgICAgICB8IDU4ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCiBk
-cm0vbm91dmVhdS9ub3V2ZWF1X2dlbS5oICAgICAgICAgIHwgIDIgKysKIGRybS9ub3V2ZWF1L25v
-dXZlYXVfdHRtLmMgICAgICAgICAgfCAxMyArLS0tLS0tLS0KIGRybS9ub3V2ZWF1L3VhcGkvZHJt
-L25vdXZlYXVfZHJtLmggfCAxMSArKysrKysrKwogNyBmaWxlcyBjaGFuZ2VkLCA5OSBpbnNlcnRp
-b25zKCspLCAxMiBkZWxldGlvbnMoLSkKCi0tIAoyLjQuMgoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
-ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Reserve the 8 highest ioctls for "staging" features, i.e. ioctls that
+may change or be dropped altogether and that thus should not be given a
+definite number. This will allow us to experiment with experimental APIs
+for a while before setting them in stone.
+
+Staging ioctls are not expected to stay there for a long time, so we
+limit their number. Besides, each staging ioctls needs to be explicitly
+enabled through its own module option.
+
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drm/nouveau/nouveau_drm.c          | 1 +
+ drm/nouveau/uapi/drm/nouveau_drm.h | 3 +++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/drm/nouveau/nouveau_drm.c b/drm/nouveau/nouveau_drm.c
+index 63f1d39e8358..28860268cf38 100644
+--- a/drm/nouveau/nouveau_drm.c
++++ b/drm/nouveau/nouveau_drm.c
+@@ -896,6 +896,7 @@ nouveau_ioctls[] = {
+ 	DRM_IOCTL_DEF_DRV(NOUVEAU_GEM_CPU_PREP, nouveau_gem_ioctl_cpu_prep, DRM_UNLOCKED|DRM_AUTH|DRM_RENDER_ALLOW),
+ 	DRM_IOCTL_DEF_DRV(NOUVEAU_GEM_CPU_FINI, nouveau_gem_ioctl_cpu_fini, DRM_UNLOCKED|DRM_AUTH|DRM_RENDER_ALLOW),
+ 	DRM_IOCTL_DEF_DRV(NOUVEAU_GEM_INFO, nouveau_gem_ioctl_info, DRM_UNLOCKED|DRM_AUTH|DRM_RENDER_ALLOW),
++	/* Staging ioctls */
+ };
+ 
+ long
+diff --git a/drm/nouveau/uapi/drm/nouveau_drm.h b/drm/nouveau/uapi/drm/nouveau_drm.h
+index 5507eead5863..4e7e21f41b5c 100644
+--- a/drm/nouveau/uapi/drm/nouveau_drm.h
++++ b/drm/nouveau/uapi/drm/nouveau_drm.h
+@@ -140,11 +140,14 @@ struct drm_nouveau_gem_cpu_fini {
+ #define DRM_NOUVEAU_GEM_CPU_PREP       0x42
+ #define DRM_NOUVEAU_GEM_CPU_FINI       0x43
+ #define DRM_NOUVEAU_GEM_INFO           0x44
++/* range 0x98..DRM_COMMAND_END (8 entries) is reserved for staging, unstable ioctls */
++#define DRM_NOUVEAU_STAGING_IOCTL      0x58
+ 
+ #define DRM_IOCTL_NOUVEAU_GEM_NEW            DRM_IOWR(DRM_COMMAND_BASE + DRM_NOUVEAU_GEM_NEW, struct drm_nouveau_gem_new)
+ #define DRM_IOCTL_NOUVEAU_GEM_PUSHBUF        DRM_IOWR(DRM_COMMAND_BASE + DRM_NOUVEAU_GEM_PUSHBUF, struct drm_nouveau_gem_pushbuf)
+ #define DRM_IOCTL_NOUVEAU_GEM_CPU_PREP       DRM_IOW (DRM_COMMAND_BASE + DRM_NOUVEAU_GEM_CPU_PREP, struct drm_nouveau_gem_cpu_prep)
+ #define DRM_IOCTL_NOUVEAU_GEM_CPU_FINI       DRM_IOW (DRM_COMMAND_BASE + DRM_NOUVEAU_GEM_CPU_FINI, struct drm_nouveau_gem_cpu_fini)
+ #define DRM_IOCTL_NOUVEAU_GEM_INFO           DRM_IOWR(DRM_COMMAND_BASE + DRM_NOUVEAU_GEM_INFO, struct drm_nouveau_gem_info)
++/* staging ioctls */
+ 
+ #endif /* __NOUVEAU_DRM_H__ */
+-- 
+2.4.2
