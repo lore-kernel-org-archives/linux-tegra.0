@@ -1,47 +1,100 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: [PATCH] i2c: tegra: apply size limit quirk
-Date: Tue, 16 Jun 2015 19:57:29 +0200
-Message-ID: <1434477449-8340-1-git-send-email-wsa@the-dreams.de>
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 02/21] ARM: tegra: Add gpio-ranges property
+Date: Tue, 16 Jun 2015 14:32:14 -0600
+Message-ID: <558087CE.5070903@wwwdotorg.org>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com> <1432565608-26036-3-git-send-email-tomeu.vizoso@collabora.com> <5564CC84.1030700@wwwdotorg.org> <CACRpkdbtCDQLaPhWFT0a7NdJmxYzRvhU_efgUh2ZXhbc+FHg3g@mail.gmail.com> <556DCE71.7050108@wwwdotorg.org> <CAAObsKBtmJnBZXcv0UE6xGvphSCShFNWehOG8a-PJg-VqPznRw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAAObsKBtmJnBZXcv0UE6xGvphSCShFNWehOG8a-PJg-VqPznRw@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?UTF-8?B?U3TDqXBoYW5lIE1hcmNoZXNpbg==?= <stephane.marchesin@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Alexander Holler <holler@ahsoftware.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-payload_size is a 12 bit field in the HW register, so add a limit for
-this size. That way we gracefully reject the message beforehand instead
-of generating an OOPS while transferring. Verified using some older
-Tegra2 documentation and a more recent Jetson TK1 board.
+On 06/16/2015 02:42 AM, Tomeu Vizoso wrote:
+> On 2 June 2015 at 17:40, Stephen Warren <swarren@wwwdotorg.org> wrote:
+>> On 06/02/2015 05:28 AM, Linus Walleij wrote:
+>>>
+>>> On Tue, May 26, 2015 at 9:41 PM, Stephen Warren <swarren@wwwdotorg.org>
+>>> wrote:
+>>>>
+>>>> On 05/25/2015 08:53 AM, Tomeu Vizoso wrote:
+>>>>>
+>>>>>
+>>>>> Specify how the GPIOs map to the pins in T124, so the dependency is
+>>>>> explicit.
+>>>>>
+>>>>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+>>>>> ---
+>>>>>     arch/arm/boot/dts/tegra124.dtsi | 1 +
+>>>>>     1 file changed, 1 insertion(+)
+>>>>>
+>>>>> diff --git a/arch/arm/boot/dts/tegra124.dtsi
+>>>>> b/arch/arm/boot/dts/tegra124.dtsi
+>>>>> index 13cc7ca..5d1d35f 100644
+>>>>> --- a/arch/arm/boot/dts/tegra124.dtsi
+>>>>> +++ b/arch/arm/boot/dts/tegra124.dtsi
+>>>>> @@ -254,6 +254,7 @@
+>>>>>                   gpio-controller;
+>>>>>                   #interrupt-cells = <2>;
+>>>>>                   interrupt-controller;
+>>>>> +               gpio-ranges = <&pinmux 0 0 250>;
+>>>>
+>>>>
+>>>>
+>>>> We should be consistent between SoCs. Why not make the same change for
+>>>> all
+>>>> Tegra SoCs?
+>>>
+>>>
+>>> Agreed.
+>>>
+>>>> I think this change will cause the GPIO subsystem to call into the
+>>>> pinctrl
+>>>> subsystem and create/add/register a new GPIO<->pinctrl range structure.
+>>>> The
+>>>> pinctrl driver already does this, so I think we'll end up with two
+>>>> duplicate
+>>>> entries in the pinctrl device's gpio_ranges list. This probably won't
+>>>> cause
+>>>> a problem, but I wanted to make sure you'd thought about it to make sure.
+>>>
+>>>
+>>> That sounds like duplication indeed, I would expect that first a patch
+>>> adds the ranges to the dts[i] files and then a second patch delete the
+>>> same ranges from the pinctrl driver then, if these shall come in from
+>>> the device tree.
+>>
+>>
+>> We can't delete the gpio-range-registration code from the Tegra pinmux
+>> driver, or old DTs won't work correctly. We could make it conditional based
+>> upon whether the DT contains the property or not.
+>
+> I've been looking at this and haven't found a good solution. From what
+> I see, the pinctrl driver doesn't have a reference to the gpio device
+> node so cannot tell if it needs to add the range or not.
 
-Signed-off-by: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
----
- drivers/i2c/busses/i2c-tegra.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Well, we know what the node must be called, so the pinctrl driver could 
+search for it by name.
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 0a1b6eacef0fba..78a36681469674 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -669,6 +669,12 @@ static const struct i2c_algorithm tegra_i2c_algo = {
- 	.functionality	= tegra_i2c_func,
- };
- 
-+/* payload size is only 12 bit */
-+static struct i2c_adapter_quirks tegra_i2c_quirks = {
-+	.max_read_len = 4096,
-+	.max_write_len = 4096,
-+};
-+
- static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
- 	.has_continue_xfer_support = false,
- 	.has_per_pkt_xfer_complete_irq = false,
-@@ -739,6 +745,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	i2c_dev->base = base;
- 	i2c_dev->div_clk = div_clk;
- 	i2c_dev->adapter.algo = &tegra_i2c_algo;
-+	i2c_dev->adapter.quirks = &tegra_i2c_quirks;
- 	i2c_dev->irq = irq;
- 	i2c_dev->cont_id = pdev->id;
- 	i2c_dev->dev = &pdev->dev;
--- 
-2.1.4
+> The gpio driver can tell whether it should add the range or not, but
+> if it has to because the gpio-ranges property isn't there, then it
+> doesn't have the reference to the pinctrl device to set the range to.
+>
+> So, given that pinctrl_add_gpio_range is deprecated already, wonder if
+> the lesser evil isn't leaving the duplicated entries for now. On newer
+> SoC revisions such as T210 we can stop calling pinctrl_add_gpio_range
+> at all.
+>
+> Or, we can accept that nobody is going to boot a newer kernel with an
+> older DT on the affected boards and just rely on the presence of the
+> gpio-ranges property :)
+
+Isn't the simplest solution to just leave it as it is? Nothing's broken 
+is it?
+
+For any new SoCs we add, we can certainly switch to a new scheme if we 
+want, but we need to catch/implement that early before the base .dtsi 
+file is included in its first kernel release.
