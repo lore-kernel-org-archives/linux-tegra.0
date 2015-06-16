@@ -1,8 +1,8 @@
 From: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: [PATCH 7/9] gpio: gpio-tegra: fix race in installing chained IRQ
+Subject: [PATCH 8/9] irq: irq-keystonr: fix race in installing chained IRQ
  handler
-Date: Tue, 16 Jun 2015 23:06:50 +0100
-Message-ID: <E1Z4z0M-0002Sl-Ti@rmk-PC.arm.linux.org.uk>
+Date: Tue, 16 Jun 2015 23:06:56 +0100
+Message-ID: <E1Z4z0S-0002Ss-1V@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
@@ -21,23 +21,22 @@ Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
 ---
 Depends on patch 1.
 
- drivers/gpio/gpio-tegra.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/irqchip/irq-keystone.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 1741981d53c8..56dcc8ed98de 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -515,8 +515,8 @@ static int tegra_gpio_probe(struct platform_device *pdev)
- 	for (i = 0; i < tegra_gpio_bank_count; i++) {
- 		bank = &tegra_gpio_banks[i];
+diff --git a/drivers/irqchip/irq-keystone.c b/drivers/irqchip/irq-keystone.c
+index 78e8b3ce5252..00b0193687ef 100644
+--- a/drivers/irqchip/irq-keystone.c
++++ b/drivers/irqchip/irq-keystone.c
+@@ -184,8 +184,7 @@ static int keystone_irq_probe(struct platform_device *pdev)
  
--		irq_set_chained_handler(bank->irq, tegra_gpio_irq_handler);
--		irq_set_handler_data(bank->irq, bank);
-+		irq_set_chained_handler_and_data(bank->irq,
-+						 tegra_gpio_irq_handler, bank);
+ 	platform_set_drvdata(pdev, kirq);
  
- 		for (j = 0; j < 4; j++)
- 			spin_lock_init(&bank->lvl_lock[j]);
+-	irq_set_chained_handler(kirq->irq, keystone_irq_handler);
+-	irq_set_handler_data(kirq->irq, kirq);
++	irq_set_chained_handler_and_data(kirq->irq, keystone_irq_handler, kirq);
+ 
+ 	/* clear all source bits */
+ 	keystone_irq_writel(kirq, ~0x0);
 -- 
 2.1.0
