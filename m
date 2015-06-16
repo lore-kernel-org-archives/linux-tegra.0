@@ -1,80 +1,136 @@
-From: Kyle Huey <me-OhBmq/TcCDJWk0Htik3J/w@public.gmane.org>
-Subject: [PATCH v3] ARM: tegra124: pmu support
-Date: Tue, 16 Jun 2015 14:29:10 -0700
-Message-ID: <1434490150-7071-1-git-send-email-khuey@kylehuey.com>
+From: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: [PATCH 1/9] irq: add irq_set_chained_handler_and_data()
+Date: Tue, 16 Jun 2015 23:06:20 +0100
+Message-ID: <E1Z4yzs-0002Rw-4B@rmk-PC.arm.linux.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Kyle Huey <khuey-OhBmq/TcCDJWk0Htik3J/w@public.gmane.org>
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hans Ulli Kroll <ulli.kroll-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch modifies the device tree for tegra124 based devices to enable the Cortex A15 PMU.  The interrupt numbers are taken from NVIDIA TRM DP-06905-001_v03p.  This patch was tested on a Jetson TK1.
+Driver authors seem to get the ordering of irq_set_chained_handler()
+and irq_set_handler_data() wrong - ordering the former before the
+latter.  This opens a race window where, if there is an interrupt
+pending, the handler will be called between these two calls,
+potentially resulting in an oops.
 
-Updated for proper ordering and to add interrupt-affinity values.
+Provide a single interface to set both of these together, especially
+as that's commonly what is required.
 
-Signed-off-by: Kyle Huey <khuey-OhBmq/TcCDJWk0Htik3J/w@public.gmane.org>
+Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra124.dtsi | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+It probably makes sense to convert everything over to this new
+registration function, and kill all users of irq_set_chained_handler()
+to prevent this problem recurring.  Thoughts?
 
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 13cc7ca..de07d7e 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -913,41 +913,50 @@
- 		nvidia,xcvr-hsslew = <12>;
- 		status = "disabled";
- 	};
+ include/linux/irq.h |  9 +++++++++
+ kernel/irq/chip.c   | 45 ++++++++++++++++++++++++++++++++++-----------
+ 2 files changed, 43 insertions(+), 11 deletions(-)
+
+diff --git a/include/linux/irq.h b/include/linux/irq.h
+index 62c6901cab55..4942cbc379bb 100644
+--- a/include/linux/irq.h
++++ b/include/linux/irq.h
+@@ -517,6 +517,15 @@ irq_set_chained_handler(unsigned int irq, irq_flow_handler_t handle)
+ 	__irq_set_handler(irq, handle, 1, NULL);
+ }
  
- 	cpus {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		cpu@0 {
-+		A15_0: cpu@0 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <0>;
- 		};
- 
--		cpu@1 {
-+		A15_1: cpu@1 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <1>;
- 		};
- 
--		cpu@2 {
-+		A15_2: cpu@2 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <2>;
- 		};
- 
--		cpu@3 {
-+		A15_3: cpu@3 {
- 			device_type = "cpu";
- 			compatible = "arm,cortex-a15";
- 			reg = <3>;
- 		};
- 	};
- 
-+	pmu {
-+		compatible = "arm,cortex-a15-pmu";
-+		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-affinity = <&A15_0>, <&A15_1>, <&A15_2>, <&A15_3>;
-+	};
++/*
++ * Set a highlevel chained flow handler and its data for a given IRQ.
++ * (a chained handler is automatically enabled and set to
++ *  IRQ_NOREQUEST, IRQ_NOPROBE, and IRQ_NOTHREAD)
++ */
++void
++irq_set_chained_handler_and_data(unsigned int irq, irq_flow_handler_t handle,
++				 void *data);
 +
- 	thermal-zones {
- 		cpu {
- 			polling-delay-passive = <1000>;
- 			polling-delay = <1000>;
+ void irq_modify_status(unsigned int irq, unsigned long clr, unsigned long set);
  
- 			thermal-sensors =
- 				<&soctherm TEGRA124_SOCTHERM_SENSOR_CPU>;
- 		};
+ static inline void irq_set_status_flags(unsigned int irq, unsigned long set)
+diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+index eb9a4ea394ab..92bed9010bc6 100644
+--- a/kernel/irq/chip.c
++++ b/kernel/irq/chip.c
+@@ -719,15 +719,9 @@ void handle_percpu_devid_irq(unsigned int irq, struct irq_desc *desc)
+ }
+ 
+ void
+-__irq_set_handler(unsigned int irq, irq_flow_handler_t handle, int is_chained,
+-		  const char *name)
++__irq_do_set_handler(struct irq_desc *desc, irq_flow_handler_t handle,
++		     int is_chained, const char *name)
+ {
+-	unsigned long flags;
+-	struct irq_desc *desc = irq_get_desc_buslock(irq, &flags, 0);
+-
+-	if (!desc)
+-		return;
+-
+ 	if (!handle) {
+ 		handle = handle_bad_irq;
+ 	} else {
+@@ -749,13 +743,13 @@ __irq_set_handler(unsigned int irq, irq_flow_handler_t handle, int is_chained,
+ 			 * right away.
+ 			 */
+ 			if (WARN_ON(is_chained))
+-				goto out;
++				return;
+ 			/* Try the parent */
+ 			irq_data = irq_data->parent_data;
+ 		}
+ #endif
+ 		if (WARN_ON(!irq_data || irq_data->chip == &no_irq_chip))
+-			goto out;
++			return;
+ 	}
+ 
+ 	/* Uninstall? */
+@@ -774,12 +768,41 @@ __irq_set_handler(unsigned int irq, irq_flow_handler_t handle, int is_chained,
+ 		irq_settings_set_nothread(desc);
+ 		irq_startup(desc, true);
+ 	}
+-out:
++}
++
++void
++__irq_set_handler(unsigned int irq, irq_flow_handler_t handle, int is_chained,
++		  const char *name)
++{
++	unsigned long flags;
++	struct irq_desc *desc = irq_get_desc_buslock(irq, &flags, 0);
++
++	if (!desc)
++		return;
++
++	__irq_do_set_handler(desc, handle, is_chained, name);
+ 	irq_put_desc_busunlock(desc, flags);
+ }
+ EXPORT_SYMBOL_GPL(__irq_set_handler);
+ 
+ void
++irq_set_chained_handler_and_data(unsigned int irq, irq_flow_handler_t handle,
++				 void *data)
++{
++	unsigned long flags;
++	struct irq_desc *desc = irq_get_desc_buslock(irq, &flags, 0);
++
++	if (!desc)
++		return;
++
++	__irq_do_set_handler(desc, handle, 1, NULL);
++	desc->irq_data.handler_data = data;
++	
++	irq_put_desc_busunlock(desc, flags);
++}
++EXPORT_SYMBOL_GPL(irq_set_chained_handler_and_data);
++
++void
+ irq_set_chip_and_handler_name(unsigned int irq, struct irq_chip *chip,
+ 			      irq_flow_handler_t handle, const char *name)
+ {
 -- 
-1.9.1
+2.1.0
