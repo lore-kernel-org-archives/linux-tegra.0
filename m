@@ -1,43 +1,46 @@
 From: Russell King <rmk+kernel@arm.linux.org.uk>
-Subject: [PATCH 9/9] irq: spear-shirq: fix race in installing chained IRQ
- handler
-Date: Tue, 16 Jun 2015 23:07:01 +0100
-Message-ID: <E1Z4z0X-0002T1-6U@rmk-PC.arm.linux.org.uk>
+Subject: [PATCH] GPU: ipu: fix lockup caused by pending chained interrupts
+Date: Tue, 16 Jun 2015 23:29:41 +0100
+Message-ID: <E1Z4zMT-0004Y7-KJ@rmk-PC.arm.linux.org.uk>
+References: <E1Z4yzs-0002Rw-4B@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <E1Z4yzs-0002Rw-4B@rmk-PC.arm.linux.org.uk>
 Content-Disposition: inline
 Sender: linux-gpio-owner@vger.kernel.org
 To: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Jason Cooper <jason@lakedaemon.net>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Thierry Reding <thierry.reding@gmail.com>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Shawn Guo <shawn.guo@linaro.org>, Sascha Hauer <kernel@pengutronix.de>
 List-Id: linux-tegra@vger.kernel.org
 
-Fix a race where a pending interrupt could be received and the handler
-called before the handler's data has been setup, by converting to
-irq_set_chained_handler_and_data().
+Even with the oops fixed by a previous patch, the system still fails to
+kexec, due to a stuck chained interrupt locking the system.  We must
+disable the child interrupts prior to setting up the irq chip to ensure
+we don't get stuck here.
 
 Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
 ---
-Depends on patch 1.
+Maybe this is all that's really needed... would also be nice if this
+path had an etry in MAINTAINERS...
 
- drivers/irqchip/spear-shirq.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/gpu/ipu-v3/ipu-common.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/irqchip/spear-shirq.c b/drivers/irqchip/spear-shirq.c
-index 9c145a7cb056..a45121546caf 100644
---- a/drivers/irqchip/spear-shirq.c
-+++ b/drivers/irqchip/spear-shirq.c
-@@ -207,8 +207,7 @@ static void __init spear_shirq_register(struct spear_shirq *shirq,
- 	if (!shirq->irq_chip)
- 		return;
+diff --git a/drivers/gpu/ipu-v3/ipu-common.c b/drivers/gpu/ipu-v3/ipu-common.c
+index 6d2f39d36e44..00f2058944e5 100644
+--- a/drivers/gpu/ipu-v3/ipu-common.c
++++ b/drivers/gpu/ipu-v3/ipu-common.c
+@@ -1107,6 +1107,9 @@ static int ipu_irq_init(struct ipu_soc *ipu)
+ 		return ret;
+ 	}
  
--	irq_set_chained_handler(parent_irq, shirq_handler);
--	irq_set_handler_data(parent_irq, shirq);
-+	irq_set_chained_handler_and_data(parent_irq, shirq_handler, shirq);
- 
- 	for (i = 0; i < shirq->nr_irqs; i++) {
- 		irq_set_chip_and_handler(shirq->virq_base + i,
++	for (i = 0; i < IPU_NUM_IRQS; i += 32)
++		ipu_cm_write(ipu, 0, IPU_INT_CTRL(i / 32));
++
+ 	for (i = 0; i < IPU_NUM_IRQS; i += 32) {
+ 		gc = irq_get_domain_generic_chip(ipu->domain, i);
+ 		gc->reg_base = ipu->cm_reg;
 -- 
 2.1.0
 
