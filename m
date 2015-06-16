@@ -1,58 +1,144 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2] ARM: tegra124: pmu support
-Date: Tue, 16 Jun 2015 00:45:08 +0100
-Message-ID: <557F6384.5030207@nvidia.com>
-References: <1434393968-1105-1-git-send-email-khuey@kylehuey.com>
+From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: Re: [PATCH 02/21] ARM: tegra: Add gpio-ranges property
+Date: Tue, 16 Jun 2015 09:53:08 +0200
+Message-ID: <CAAObsKDzAuFbU1+TKm3TwSL_i3D9PqL2kPUE8GoP+Vck_9Gqxw@mail.gmail.com>
+References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
+ <1432565608-26036-3-git-send-email-tomeu.vizoso@collabora.com>
+ <5564CC84.1030700@wwwdotorg.org> <CAAObsKD7YbZX01A=SS7z_PxAMPweHy6sw5ut=50h50C=j9y0zA@mail.gmail.com>
+ <5565D96F.3000600@wwwdotorg.org> <CAAObsKB-ayRd7OB1W9nYBJzvBDK0RZk1U56Gqxn08sHPT5FvzA@mail.gmail.com>
+ <5567393A.6000901@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1434393968-1105-1-git-send-email-khuey@kylehuey.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kyle Huey <me@kylehuey.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Kyle Huey <khuey@kylehuey.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5567393A.6000901-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <stephane.marchesin-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexander Holler <holler-SXC+2es9fhnfWeYVQQPykw@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 28 May 2015 at 17:50, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> On 05/28/2015 02:26 AM, Tomeu Vizoso wrote:
+>>
+>> On 27 May 2015 at 16:49, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>>>
+>>> On 05/27/2015 08:18 AM, Tomeu Vizoso wrote:
+>>>>
+>>>>
+>>>> On 26 May 2015 at 21:41, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>>>>>
+>>>>>
+>>>>> On 05/25/2015 08:53 AM, Tomeu Vizoso wrote:
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> Specify how the GPIOs map to the pins in T124, so the dependency is
+>>>>>> explicit.
+>>>>>>
+>>>>>> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+>>>>>> ---
+>>>>>>     arch/arm/boot/dts/tegra124.dtsi | 1 +
+>>>>>>     1 file changed, 1 insertion(+)
+>>>>>>
+>>>>>> diff --git a/arch/arm/boot/dts/tegra124.dtsi
+>>>>>> b/arch/arm/boot/dts/tegra124.dtsi
+>>>>>> index 13cc7ca..5d1d35f 100644
+>>>>>> --- a/arch/arm/boot/dts/tegra124.dtsi
+>>>>>> +++ b/arch/arm/boot/dts/tegra124.dtsi
+>>>>>> @@ -254,6 +254,7 @@
+>>>>>>                   gpio-controller;
+>>>>>>                   #interrupt-cells = <2>;
+>>>>>>                   interrupt-controller;
+>>>>>> +               gpio-ranges = <&pinmux 0 0 250>;
+>>>>>
+>>>>>
+>>>>>
+>>>>>
+>>>>> We should be consistent between SoCs. Why not make the same change for
+>>>>> all
+>>>>> Tegra SoCs?
+>>>>>
+>>>>> I think this change will cause the GPIO subsystem to call into the
+>>>>> pinctrl
+>>>>> subsystem and create/add/register a new GPIO<->pinctrl range structure.
+>>>>> The
+>>>>> pinctrl driver already does this, so I think we'll end up with two
+>>>>> duplicate
+>>>>> entries in the pinctrl device's gpio_ranges list. This probably won't
+>>>>> cause
+>>>>> a problem, but I wanted to make sure you'd thought about it to make
+>>>>> sure.
+>>>>
+>>>>
+>>>>
+>>>> Actually, I have checked and see that gpio-tegra.c registers 256
+>>>> gpios, but pinctrl-tegra124.c adds a range of only 251. I don't really
+>>>> remember where I got the 250 value from, sorry :(
+>>>>
+>>>> I don't see how that would cause any concrete problems, but maybe we
+>>>> should have a single authoritative source (not sure we can do so
+>>>> without breaking DT ABI though).
+>>>>
+>>>>> Right now, I think we get lucky and pinctrl ends up probing first (or
+>>>>> at
+>>>>> least very early) anyway. Somewhat related to this series, I wonder if
+>>>>> we
+>>>>> shouldn't add pinctrl client properties to every node in the Tegra DT
+>>>>> that
+>>>>> describes a controller that makes use of external pins that are
+>>>>> affected
+>>>>> by
+>>>>> the pinmux. Such a change would guarantee this desired probing order.
+>>>>> In
+>>>>> order to preserve the "program the entire pinmux at once" semantics,
+>>>>> these
+>>>>> new pinctrl client properties would all need to reference empty states,
+>>>>> yet
+>>>>> would still need to exist to represent the dependency.
+>>>>
+>>>>
+>>>>
+>>>> I think so, but aren't almost all those pins used as gpios? If so,
+>>>> then such a controller's driver will request the gpio it wants which
+>>>> will cause the gpio driver to be registered (and hopefully probed) if
+>>>> needed, which in turn will check that the corresponding pinctrl device
+>>>> has been registered. Or am I missing something?
+>>>
+>>>
+>>>
+>>> As you say this probably works out fine for pins that are used as GPIOs.
+>>> I
+>>> was thinking more about SFIOs. Take an I2C controller, which doesn't use
+>>> any
+>>> GPIOs itself. The pinctrl device should be probed before the I2C device,
+>>> so
+>>> that the I2C driver can initiate transactions on the I2C bus during its
+>>> probe if it wanted to (or at least, clients could initiate transactions
+>>> at
+>>> any completely arbitrary time as soon as probe was complete).
+>>
+>>
+>> What is using the SFIO in this case, the I2C master or the I2C client?
+>
+>
+> The I2C controller a/k/a the I2C master.
+>
+>> In any case, is the problem you are referring to that ICs may rely on
+>
+>
+> s/ICs/drivers/ I think.
+>
+>> a specific pinmux configuration but that's not currently reflected on
+>> the DT because pinmux configuration happened so early that things just
+>> worked?
+>
+>
+> Yes; the dependency of some nodes on pinctrl isn't explicitly called out in
+> the DT. It's probably not a good idea to have such implicit dependencies,
+> although I suppose for something so central as pinmux, maybe it's not
+> terrible, since almost everything depends on it and it's pretty obvious.
 
-On 15/06/15 19:46, Kyle Huey wrote:
-> This patch modifies the device tree for tegra124 based devices to enable the Cortex A15 PMU.  The interrupt numbers are taken from NVIDIA TRM DP-06905-001_v03p.  This patch was tested on a Jetson TK1.
-> 
-> Signed-off-by: Kyle Huey <khuey@kylehuey.com>
-> ---
->  arch/arm/boot/dts/tegra124.dtsi | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-> index 4be06c6..d966d4e 100644
-> --- a/arch/arm/boot/dts/tegra124.dtsi
-> +++ b/arch/arm/boot/dts/tegra124.dtsi
-> @@ -906,16 +906,24 @@
->  
->  		cpu@3 {
->  			device_type = "cpu";
->  			compatible = "arm,cortex-a15";
->  			reg = <3>;
->  		};
->  	};
->  
-> +	pmu {
-> +		compatible = "arm,cortex-a15-pmu";
-> +		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>;
-> +	};
-> +
->  	thermal-zones {
->  		cpu {
->  			polling-delay-passive = <1000>;
->  			polling-delay = <1000>;
->  
->  			thermal-sensors =
->  				<&soctherm TEGRA124_SOCTHERM_SENSOR_CPU>;
->  		};
-> 
+Yup, agreed.
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Thanks,
 
-Jon
+Tomeu
