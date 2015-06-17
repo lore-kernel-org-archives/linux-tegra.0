@@ -1,60 +1,111 @@
-From: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.1-rc8
-Date: Wed, 17 Jun 2015 13:23:02 -0600
-Message-ID: <5581C916.6010807@nvidia.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [PATCH 1/9] irq: add irq_set_chained_handler_and_data()
+Date: Wed, 17 Jun 2015 20:38:03 +0100
+Message-ID: <20150617193803.GY7557@n2100.arm.linux.org.uk>
+References: <E1Z4yzs-0002Rw-4B@rmk-PC.arm.linux.org.uk>
+ <alpine.DEB.2.11.1506171609390.4107@nanos>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.11.1506171609390.4107@nanos>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LAK <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Jason Cooper <jason@lakedaemon.net>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.1-rc8.
-Logs and other details at:
+On Wed, Jun 17, 2015 at 04:10:02PM +0200, Thomas Gleixner wrote:
+> On Tue, 16 Jun 2015, Russell King wrote:
+> 
+> > Driver authors seem to get the ordering of irq_set_chained_handler()
+> > and irq_set_handler_data() wrong - ordering the former before the
+> > latter.  This opens a race window where, if there is an interrupt
+> > pending, the handler will be called between these two calls,
+> > potentially resulting in an oops.
+> > 
+> > Provide a single interface to set both of these together, especially
+> > as that's commonly what is required.
+> > 
+> > Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> > ---
+> > It probably makes sense to convert everything over to this new
+> > registration function, and kill all users of irq_set_chained_handler()
+> > to prevent this problem recurring.  Thoughts?
+> 
+> Yes. Classic coccinelle problem. Here is the semantic patch:
+> 
+> @@
+> expression E1, E2, E3;
+> @@
+> -irq_set_chained_handler(E1, E3);
+> ...
+> -irq_set_handler_data(E1, E2);
+> +irq_set_chained_handler_and_data(E1, E3, E2);
+> 
+> This finds and corrects all instances which get it wrong:
+> 
+> arch:
+>  arm/common/locomo.c                   |    3 +--
+>  arm/common/sa1111.c                   |    3 +--
+>  arm/mach-gemini/gpio.c                |    4 ++--
+>  avr32/mach-at32ap/extint.c            |    3 +--
+>  m68k/mac/psc.c                        |   12 ++++--------
+>  mips/ath25/ar2315.c                   |    4 ++--
+>  mips/ath25/ar5312.c                   |    4 ++--
+>  mips/pci/pci-ar2315.c                 |    4 ++--
+>  mips/ralink/irq.c                     |    3 +--
+>  sh/intc/core.c                        |    5 +++--
+> 
+> drivers:
+>  dma/ipu/ipu_irq.c                     |    6 ++----
+>  gpio/gpio-bcm-kona.c                  |    5 +++--
+>  gpio/gpio-davinci.c                   |   10 ++--------
+>  gpio/gpio-dwapb.c                     |    4 ++--
+>  gpio/gpio-msic.c                      |    3 +--
+>  gpio/gpio-mxc.c                       |   10 +++++-----
+>  gpio/gpio-mxs.c                       |    4 ++--
+>  gpio/gpio-tegra.c                     |    4 ++--
+>  gpu/ipu-v3/ipu-common.c               |   13 +++++--------
+>  irqchip/irq-keystone.c                |    4 ++--
+>  irqchip/spear-shirq.c                 |    3 +--
+>  mfd/pm8921-core.c                     |    6 ++----
+>  mfd/t7l66xb.c                         |    3 +--
+>  mfd/tc6393xb.c                        |    3 +--
+>  pci/host/pci-keystone.c               |    7 +++----
+>  pinctrl/mediatek/pinctrl-mtk-common.c |    3 +--
+>  pinctrl/pinctrl-adi2.c                |    4 ++--
+>  pinctrl/pinctrl-st.c                  |    4 ++--
+>  pinctrl/samsung/pinctrl-exynos.c      |    4 ++--
+>  pinctrl/samsung/pinctrl-s3c24xx.c     |    3 +--
+>  pinctrl/samsung/pinctrl-s3c64xx.c     |    8 ++++----
+>  pinctrl/sunxi/pinctrl-sunxi.c         |    6 +++---
+>  spmi/spmi-pmic-arb.c                  |    6 ++----
+>  33 files changed, 70 insertions(+), 98 deletions(-)
+> 
+> If we revert the search pattern we get the ones which got it right:
+> 
+> @@
+> expression E1, E2, E3;
+> @@
+> -irq_set_handler_data(E1, E2);
+> ...
+> -irq_set_chained_handler(E1, E3);
+> +irq_set_chained_handler_and_data(E1, E3, E2);
+> 
+> That handles another bunch and leaves us with 135 instances of
+> irq_set_chained_handler() which do not set handler data. So its
+> trivial to change them to
+> 
+>  irq_set_chained_handler_and_data(irq, handler, NULL);
+> 
+> and then remove irq_set_chained_handler()
+> 
+> If thats ok for you, then i apply the lot you sent and run the cocci
+> scripts right at rc1. I have another set of transformations in that
+> area pending.
 
-     http://nvt.pwsan.com/pub/linux/testlogs/test_v4.1-rc8/20150617120102/
+Totally fine with that.
 
-
-Test summary
-------------
-
-Build: zImage:
-     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Build: Image:
-     Pass: ( 1/ 1): defconfig
-
-Boot to userspace: defconfig:
-     Pass: ( 1/ 1): qemu-vexpress64
-
-Boot to userspace: multi_v7_defconfig:
-     Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-     Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v4.1-rc7 (d4a4f75cd8f29cd9464a5a32e9224a91571d6649)):
-    text     data      bss    total  kernel
-       0        0        0        0  defconfig
-    -188        0        0     -188  multi_v7_defconfig
-    +104        0        0     +104  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v4.1-rc7 (d4a4f75cd8f29cd9464a5a32e9224a91571d6649))
-     avail    rsrvd     high    freed                board              kconfig                  dtb
-         .        .        .        .      qemu-vexpress64            defconfig           __internal
-         .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-         .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-         .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-         .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-         .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-         .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-         .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-         .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+-- 
+FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
+according to speedtest.net.
