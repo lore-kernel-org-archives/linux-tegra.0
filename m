@@ -1,119 +1,98 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+From: Dinh Nguyen <dinguyen-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>
 Subject: Re: [PATCH] ARM: v7 setup function should invalidate L1 cache
-Date: Wed, 17 Jun 2015 22:30:07 +0100
-Message-ID: <20150617213006.GC7557@n2100.arm.linux.org.uk>
+Date: Wed, 17 Jun 2015 17:12:45 -0500
+Message-ID: <5581F0DD.60408@opensource.altera.com>
 References: <E1Yuk8W-0001tC-IK@rmk-PC.arm.linux.org.uk>
  <CAMuHMdX=T3CsLTT95H_07Si6Kd8SRraBfxADpn+VtAF4GmZ=mw@mail.gmail.com>
  <CAMuHMdUQkm_9PhSdGS8j85Uodm-o0jiki=Xh4h59PBShB=rCXw@mail.gmail.com>
  <20150601105319.GQ2067@n2100.arm.linux.org.uk>
  <CAMuHMdUXCy+87-pwLiJ7ynaM1AeFq0f7R3sJ4prdE3QN09z++w@mail.gmail.com>
  <CADhT+wdJX7jMO3_rafrZMeA5ZVMaA6b2U4zkksfJcUjh41mH9A@mail.gmail.com>
+ <20150617213006.GC7557@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-sh-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CADhT+wdJX7jMO3_rafrZMeA5ZVMaA6b2U4zkksfJcUjh41mH9A@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Dinh Nguyen <dinh.linux@gmail.com>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Andrew Lunn <andrew@lunn.ch>, Heiko Stuebner <heiko@sntech.de>, Linux-sh list <linux-sh@vger.kernel.org>, Gregory Clement <gregory.clement@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Wei Xu <xuwei5@hisilicon.com>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, bcm-kernel-feedback-list@broadcom.com, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Jason Cooper <jason@lakedaemon.net>, Stephen Warren <swarren@wwwdotorg.org>, Marc Carino <marc.ceeeee@gmail.com>, Simon Horman <horms@verge.net.au>, Gregory Fong <gregory.0xf0@gmail.com>, linux-teg
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <20150617213006.GC7557-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
+List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
+ <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Dinh Nguyen <dinh.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Linux-sh list <linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Gregory Clement <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, "open
+ list:ARM/Rockchip SoC..." <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Marc Carino <marc.ceeeee-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Gregory Fong <gregory.0xf0-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra@vger
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jun 17, 2015 at 03:35:13PM -0500, Dinh Nguyen wrote:
-> On Mon, Jun 1, 2015 at 6:50 AM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > Hi Russell,
-> >
-> > On Mon, Jun 1, 2015 at 12:53 PM, Russell King - ARM Linux
-> > <linux@arm.linux.org.uk> wrote:
-> >> On Mon, Jun 01, 2015 at 12:41:01PM +0200, Geert Uytterhoeven wrote:
-> >>> FWIW, I have the feeling this has a slight influence on boot reliability on
-> >>> two of my boards:
-> >>>   - r8a7740/armadillo, which is known to suffer from a cache-related bug in
-> >>>     its bootloader, seems to have a higher change of booting successfully on
-> >>>     cold boot,
-> >>>   - sh73a0/kzm9g, which has known cache-issues with secondary CPU boot up,
-> >>>     seems to have a lower chance of booting successfully.
-> >>>
-> >>> No time to spend all week turning this into a statistical significant test
-> >>> project... The reset button is my friend...
-> >>
-> >> Damn it, you sent this right after I merged and pushed out this change in
-> >> my for-arm-soc branch, and was just about to send it to the arm-soc people.
-> >> What excellent timing you have. :)
-> >
-> > Don't worry, I didn't send that email to make you postpone this change.
-> > Giving the fuzziness of reproduction, and the flakiness (esp. on Armadillo)
-> > of the boot loader, and these are old SoCs, please go ahead.
-> >
-> >> What happens on the kzm9g if you revert the mach-shmobile changes?
-> >
-> > Seems to make no difference.
-> >
-> >> For armadillo, do you use the decompressor?  That should be doing all the
-> >> cache cleaning already, prior to the kernel being entered.
-> >
-> > I think so.
-> >
-> > Corruption pattern ranges from lock up, over "Error: unrecognized/unsupported
-> > machine ID", to booting almost completely, but lacking a few devices due to
-> > a corrupted DTB. Been like that as long as I remember, i.e. since I got the
-> > board ca. 1 year ago. Boots fine (100%) with kexec.
-> >
+On 06/17/2015 04:30 PM, Russell King - ARM Linux wrote:
+> On Wed, Jun 17, 2015 at 03:35:13PM -0500, Dinh Nguyen wrote:
+>> On Mon, Jun 1, 2015 at 6:50 AM, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org> wrote:
+>>> Hi Russell,
+>>>
+>>> On Mon, Jun 1, 2015 at 12:53 PM, Russell King - ARM Linux
+>>> <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
+>>>> On Mon, Jun 01, 2015 at 12:41:01PM +0200, Geert Uytterhoeven wrote:
+>>>>> FWIW, I have the feeling this has a slight influence on boot reliability on
+>>>>> two of my boards:
+>>>>>   - r8a7740/armadillo, which is known to suffer from a cache-related bug in
+>>>>>     its bootloader, seems to have a higher change of booting successfully on
+>>>>>     cold boot,
+>>>>>   - sh73a0/kzm9g, which has known cache-issues with secondary CPU boot up,
+>>>>>     seems to have a lower chance of booting successfully.
+>>>>>
+>>>>> No time to spend all week turning this into a statistical significant test
+>>>>> project... The reset button is my friend...
+>>>>
+>>>> Damn it, you sent this right after I merged and pushed out this change in
+>>>> my for-arm-soc branch, and was just about to send it to the arm-soc people.
+>>>> What excellent timing you have. :)
+>>>
+>>> Don't worry, I didn't send that email to make you postpone this change.
+>>> Giving the fuzziness of reproduction, and the flakiness (esp. on Armadillo)
+>>> of the boot loader, and these are old SoCs, please go ahead.
+>>>
+>>>> What happens on the kzm9g if you revert the mach-shmobile changes?
+>>>
+>>> Seems to make no difference.
+>>>
+>>>> For armadillo, do you use the decompressor?  That should be doing all the
+>>>> cache cleaning already, prior to the kernel being entered.
+>>>
+>>> I think so.
+>>>
+>>> Corruption pattern ranges from lock up, over "Error: unrecognized/unsupported
+>>> machine ID", to booting almost completely, but lacking a few devices due to
+>>> a corrupted DTB. Been like that as long as I remember, i.e. since I got the
+>>> board ca. 1 year ago. Boots fine (100%) with kexec.
+>>>
+>>
+>> It seems like this patch is causing the SoCFPGA to not boot with SMP
+>> reliably. About 1 out of every 10 reboots, I'm seeing the boot failure
+>> below. The error seems to only happen when I do a cold or warm reboot,
+>> but never occurs during a power-up. If I revert this patch, or put
+>> back the call to v7_invalidate_l1 in socfpga_secondary_startup , then
+>> its able to boot 100% of the time.
 > 
-> It seems like this patch is causing the SoCFPGA to not boot with SMP
-> reliably. About 1 out of every 10 reboots, I'm seeing the boot failure
-> below. The error seems to only happen when I do a cold or warm reboot,
-> but never occurs during a power-up. If I revert this patch, or put
-> back the call to v7_invalidate_l1 in socfpga_secondary_startup , then
-> its able to boot 100% of the time.
+> It really sucks that you're only just testing this change now, because
+> I've frozen my tree, and removing it for the next merge window is going
+> to be an entirely non-trivial matter.  You were copied on the original
+> patch, which you failed to test... I can't say I have _much_ sympathy
+> for a bug report at this point in time.
+> 
 
-It really sucks that you're only just testing this change now, because
-I've frozen my tree, and removing it for the next merge window is going
-to be an entirely non-trivial matter.  You were copied on the original
-patch, which you failed to test... I can't say I have _much_ sympathy
-for a bug report at this point in time.
+I apologize for not catching this error while testing this patch. But I
+did test it when you first sent it out..I probably didn't do a stress
+test. Sometimes the reboot fails in the 1st attempt, sometimes it fails
+in the 9th attempt.
 
-> Internal error: Oops - undefined instruction: 0 [#1] SMP ARM
-> Modules linked in:
-> CPU: 1 PID: 0 Comm: swapper/1 Not tainted
-> 4.1.0-rc8-next-20150617-00002-gdd1f624 #1
-> Hardware name: Altera SOCFPGA
-> task: eecaeac0 ti: eecce000 task.ti: eecce000
-> PC is at vfp_notifier+0x58/0x12c
-> LR is at notifier_call_chain+0x44/0x84
+I only caught this error when I was testing my recent changes to use
+CPU_METHOD_OF_DECLARE.
 
-This suggests that access to the VFP coprocessor is still disabled.
-However, vfp_hotplug() should have been called for CPU1 before it
-gets here, which should call vfp_enable(), which should enable access.
+For me, I don't think you need to revert this patch or anything, but a
+fix can go in for a -rcX?
 
-However, what I'm wondering is...
-
-> [<c000a6bc>] (vfp_notifier) from [<c003d134>] (notifier_call_chain+0x44/0x84)
-> [<c003d134>] (notifier_call_chain) from [<c003d18c>]
-> (__atomic_notifier_call_chain+0x18/0x20)
-> [<c003d18c>] (__atomic_notifier_call_chain) from [<c003d1ac>]
-> (atomic_notifier_call_chain+0x18/0x20)
-> [<c003d1ac>] (atomic_notifier_call_chain) from [<c001369c>]
-> (__switch_to+0x34/0x58)
-
-what the rest of the trace is.  Unfortunately, we mark __switch_to() as
-"cantunwind" which means the unwinder always stops here.  It would be
-really good to know what is responsible for this scheduling event,
-whether it's due to a lock which is tried to be taken but is found to
-be locked, but I don't think we can modify __switch_to() to allow it
-to unwind (and I don't have the unwinder knowledge to hand to hack
-something together.)
-
-In order to see what's going on here, we do need to see the rest of the
-trace... right now I don't have the time to be able to sort out
-__switch_to() to achieve that.
-
-As I say, you should have tested this earlier.  About the only thing I
-can do now is to revert the entire original patch, which is going to be
-extremely disruptive as it'll cause yet more conflicts between trees -
-again, something that we want to be avoiding at this stage in the game.
-
-Please test patches earlier.
-
--- 
-FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
-according to speedtest.net.
+Dinh
