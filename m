@@ -1,107 +1,61 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 1/9] irq: add irq_set_chained_handler_and_data()
-Date: Wed, 17 Jun 2015 16:10:02 +0200 (CEST)
-Message-ID: <alpine.DEB.2.11.1506171609390.4107@nanos>
-References: <E1Z4yzs-0002Rw-4B@rmk-PC.arm.linux.org.uk>
+From: Alexander Sverdlin <alexander.sverdlin-xNZwKgViW5gAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] i2c: tegra: apply size limit quirk
+Date: Wed, 17 Jun 2015 16:33:40 +0200
+Message-ID: <55818544.2020000@nokia.com>
+References: <1434477449-8340-1-git-send-email-wsa@the-dreams.de>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <E1Z4yzs-0002Rw-4B@rmk-PC.arm.linux.org.uk>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Russell King <rmk+kernel@arm.linux.org.uk>
-Cc: LAK <linux-arm-kernel@lists.infradead.org>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Jason Cooper <jason@lakedaemon.net>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1434477449-8340-1-git-send-email-wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: ext Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 16 Jun 2015, Russell King wrote:
+Hi!
 
-> Driver authors seem to get the ordering of irq_set_chained_handler()
-> and irq_set_handler_data() wrong - ordering the former before the
-> latter.  This opens a race window where, if there is an interrupt
-> pending, the handler will be called between these two calls,
-> potentially resulting in an oops.
+On 16/06/15 19:57, ext Wolfram Sang wrote:
+> payload_size is a 12 bit field in the HW register, so add a limit for
+> this size. That way we gracefully reject the message beforehand instead
+> of generating an OOPS while transferring. Verified using some older
+> Tegra2 documentation and a more recent Jetson TK1 board.
 > 
-> Provide a single interface to set both of these together, especially
-> as that's commonly what is required.
-> 
-> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
+> Signed-off-by: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+
+Looks good,
+Reviewed-by: Alexander Sverdlin <alexander.sverdlin-xNZwKgViW5gAvxtiuMwx3w@public.gmane.org>
+
 > ---
-> It probably makes sense to convert everything over to this new
-> registration function, and kill all users of irq_set_chained_handler()
-> to prevent this problem recurring.  Thoughts?
+>  drivers/i2c/busses/i2c-tegra.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index 0a1b6eacef0fba..78a36681469674 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -669,6 +669,12 @@ static const struct i2c_algorithm tegra_i2c_algo = {
+>  	.functionality	= tegra_i2c_func,
+>  };
+>  
+> +/* payload size is only 12 bit */
+> +static struct i2c_adapter_quirks tegra_i2c_quirks = {
+> +	.max_read_len = 4096,
+> +	.max_write_len = 4096,
+> +};
+> +
+>  static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
+>  	.has_continue_xfer_support = false,
+>  	.has_per_pkt_xfer_complete_irq = false,
+> @@ -739,6 +745,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+>  	i2c_dev->base = base;
+>  	i2c_dev->div_clk = div_clk;
+>  	i2c_dev->adapter.algo = &tegra_i2c_algo;
+> +	i2c_dev->adapter.quirks = &tegra_i2c_quirks;
+>  	i2c_dev->irq = irq;
+>  	i2c_dev->cont_id = pdev->id;
+>  	i2c_dev->dev = &pdev->dev;
 
-Yes. Classic coccinelle problem. Here is the semantic patch:
-
-@@
-expression E1, E2, E3;
-@@
--irq_set_chained_handler(E1, E3);
-...
--irq_set_handler_data(E1, E2);
-+irq_set_chained_handler_and_data(E1, E3, E2);
-
-This finds and corrects all instances which get it wrong:
-
-arch:
- arm/common/locomo.c                   |    3 +--
- arm/common/sa1111.c                   |    3 +--
- arm/mach-gemini/gpio.c                |    4 ++--
- avr32/mach-at32ap/extint.c            |    3 +--
- m68k/mac/psc.c                        |   12 ++++--------
- mips/ath25/ar2315.c                   |    4 ++--
- mips/ath25/ar5312.c                   |    4 ++--
- mips/pci/pci-ar2315.c                 |    4 ++--
- mips/ralink/irq.c                     |    3 +--
- sh/intc/core.c                        |    5 +++--
-
-drivers:
- dma/ipu/ipu_irq.c                     |    6 ++----
- gpio/gpio-bcm-kona.c                  |    5 +++--
- gpio/gpio-davinci.c                   |   10 ++--------
- gpio/gpio-dwapb.c                     |    4 ++--
- gpio/gpio-msic.c                      |    3 +--
- gpio/gpio-mxc.c                       |   10 +++++-----
- gpio/gpio-mxs.c                       |    4 ++--
- gpio/gpio-tegra.c                     |    4 ++--
- gpu/ipu-v3/ipu-common.c               |   13 +++++--------
- irqchip/irq-keystone.c                |    4 ++--
- irqchip/spear-shirq.c                 |    3 +--
- mfd/pm8921-core.c                     |    6 ++----
- mfd/t7l66xb.c                         |    3 +--
- mfd/tc6393xb.c                        |    3 +--
- pci/host/pci-keystone.c               |    7 +++----
- pinctrl/mediatek/pinctrl-mtk-common.c |    3 +--
- pinctrl/pinctrl-adi2.c                |    4 ++--
- pinctrl/pinctrl-st.c                  |    4 ++--
- pinctrl/samsung/pinctrl-exynos.c      |    4 ++--
- pinctrl/samsung/pinctrl-s3c24xx.c     |    3 +--
- pinctrl/samsung/pinctrl-s3c64xx.c     |    8 ++++----
- pinctrl/sunxi/pinctrl-sunxi.c         |    6 +++---
- spmi/spmi-pmic-arb.c                  |    6 ++----
- 33 files changed, 70 insertions(+), 98 deletions(-)
-
-If we revert the search pattern we get the ones which got it right:
-
-@@
-expression E1, E2, E3;
-@@
--irq_set_handler_data(E1, E2);
-...
--irq_set_chained_handler(E1, E3);
-+irq_set_chained_handler_and_data(E1, E3, E2);
-
-That handles another bunch and leaves us with 135 instances of
-irq_set_chained_handler() which do not set handler data. So its
-trivial to change them to
-
- irq_set_chained_handler_and_data(irq, handler, NULL);
-
-and then remove irq_set_chained_handler()
-
-If thats ok for you, then i apply the lot you sent and run the cocci
-scripts right at rc1. I have another set of transformations in that
-area pending.
-
-Thanks,
-
-	tglx
-
+-- 
+Best regards,
+Alexander Sverdlin.
