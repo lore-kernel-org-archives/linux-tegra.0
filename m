@@ -1,61 +1,52 @@
-From: Alexander Sverdlin <alexander.sverdlin-xNZwKgViW5gAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] i2c: tegra: apply size limit quirk
-Date: Wed, 17 Jun 2015 16:33:40 +0200
-Message-ID: <55818544.2020000@nokia.com>
-References: <1434477449-8340-1-git-send-email-wsa@the-dreams.de>
+From: Hans Ulli Kroll <ulli.kroll@googlemail.com>
+Subject: Re: [PATCH 4/9] ARM: gemini: fix race in installing GPIO chained
+ IRQ handler
+Date: Wed, 17 Jun 2015 19:23:14 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.1506171923010.27619@T520.local>
+References: <E1Z4z07-0002SO-Gv@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1434477449-8340-1-git-send-email-wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: ext Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <E1Z4z07-0002SO-Gv@rmk-PC.arm.linux.org.uk>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Russell King <rmk+kernel@arm.linux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, Alexandre Courbot <gnurou@gmail.com>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Jason Cooper <jason@lakedaemon.net>, Lee Jones <lee.jones@linaro.org>, Linus Walleij <linus.walleij@linaro.org>, Thierry Reding <thierry.reding@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi!
 
-On 16/06/15 19:57, ext Wolfram Sang wrote:
-> payload_size is a 12 bit field in the HW register, so add a limit for
-> this size. That way we gracefully reject the message beforehand instead
-> of generating an OOPS while transferring. Verified using some older
-> Tegra2 documentation and a more recent Jetson TK1 board.
+
+On Tue, 16 Jun 2015, Russell King wrote:
+
+> The gemini code was installing its chained interrupt handler (which
+> enables the interrupt) before it was setting its data, which is bad if
+> the IRQ was previously pending.  Avoid this problem by converting it to
+> irq_set_chained_handler_and_data().
 > 
-> Signed-off-by: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-
-Looks good,
-Reviewed-by: Alexander Sverdlin <alexander.sverdlin-xNZwKgViW5gAvxtiuMwx3w@public.gmane.org>
-
+> Signed-off-by: Russell King <rmk+kernel@arm.linux.org.uk>
 > ---
->  drivers/i2c/busses/i2c-tegra.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+> Depends on patch 1.
 > 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index 0a1b6eacef0fba..78a36681469674 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -669,6 +669,12 @@ static const struct i2c_algorithm tegra_i2c_algo = {
->  	.functionality	= tegra_i2c_func,
->  };
+>  arch/arm/mach-gemini/gpio.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm/mach-gemini/gpio.c b/arch/arm/mach-gemini/gpio.c
+> index f8cb5710d6ee..3292f2e6ed6f 100644
+> --- a/arch/arm/mach-gemini/gpio.c
+> +++ b/arch/arm/mach-gemini/gpio.c
+> @@ -223,8 +223,8 @@ void __init gemini_gpio_init(void)
+>  			set_irq_flags(j, IRQF_VALID);
+>  		}
 >  
-> +/* payload size is only 12 bit */
-> +static struct i2c_adapter_quirks tegra_i2c_quirks = {
-> +	.max_read_len = 4096,
-> +	.max_write_len = 4096,
-> +};
-> +
->  static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
->  	.has_continue_xfer_support = false,
->  	.has_per_pkt_xfer_complete_irq = false,
-> @@ -739,6 +745,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
->  	i2c_dev->base = base;
->  	i2c_dev->div_clk = div_clk;
->  	i2c_dev->adapter.algo = &tegra_i2c_algo;
-> +	i2c_dev->adapter.quirks = &tegra_i2c_quirks;
->  	i2c_dev->irq = irq;
->  	i2c_dev->cont_id = pdev->id;
->  	i2c_dev->dev = &pdev->dev;
+> -		irq_set_chained_handler(IRQ_GPIO(i), gpio_irq_handler);
+> -		irq_set_handler_data(IRQ_GPIO(i), (void *)i);
+> +		irq_set_chained_handler_and_data(IRQ_GPIO(i), gpio_irq_handler,
+> +						 (void *)i);
+>  	}
+>  
+>  	BUG_ON(gpiochip_add(&gemini_gpio_chip));
+> -- 
+> 2.1.0
+> 
+> 
+Acked-by: Hans Ulli Kroll <ulli.kroll@googlemail.com>
 
--- 
-Best regards,
-Alexander Sverdlin.
