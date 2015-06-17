@@ -1,40 +1,92 @@
-From: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 9/9] irq: spear-shirq: fix race in installing chained IRQ handler
-Date: Wed, 17 Jun 2015 08:10:55 +0530
-Message-ID: <CAOh2x=m2y+T0Z78nV5zDmSa6_7NH972EXcEEUKZMZ1dSxE6YKw@mail.gmail.com>
-References: <E1Z4z0X-0002T1-6U@rmk-PC.arm.linux.org.uk>
+From: Marc Dietrich <marvin24@gmx.de>
+Subject: Re: [PATCH] staging: nvec: remove duplicated const
+Date: Wed, 17 Jun 2015 10:26:20 +0200
+Message-ID: <1596867.Dc7iyCSx9r@fb07-iapwap2>
+References: <1434467601-3290-1-git-send-email-van.freenix@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <E1Z4z0X-0002T1-6U-eh5Bv4kxaXIANfyc6IWni62ZND6+EDdj@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Hans Ulli Kroll <ulli.kroll-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============4882928341682814753=="
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <1434467601-3290-1-git-send-email-van.freenix@gmail.com>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Peng Fan <van.freenix@gmail.com>, linux-tegra@vger.kernel.org
+Cc: devel@driverdev.osuosl.org, gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jun 17, 2015 at 3:37 AM, Russell King
-<rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org> wrote:
-> Fix a race where a pending interrupt could be received and the handler
-> called before the handler's data has been setup, by converting to
-> irq_set_chained_handler_and_data().
->
-> Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-> ---
-> Depends on patch 1.
->
->  drivers/irqchip/spear-shirq.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
->
-> diff --git a/drivers/irqchip/spear-shirq.c b/drivers/irqchip/spear-shirq.c
-> index 9c145a7cb056..a45121546caf 100644
-> --- a/drivers/irqchip/spear-shirq.c
-> +++ b/drivers/irqchip/spear-shirq.c
-> @@ -207,8 +207,7 @@ static void __init spear_shirq_register(struct spear_shirq *shirq,
->         if (!shirq->irq_chip)
->                 return;
->
-> -       irq_set_chained_handler(parent_irq, shirq_handler);
-> -       irq_set_handler_data(parent_irq, shirq);
-> +       irq_set_chained_handler_and_data(parent_irq, shirq_handler, shirq);
+--===============4882928341682814753==
+Content-Type: multipart/signed; boundary="nextPart3219380.d6tjNLg1ce"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 
-Acked-by: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+--nextPart3219380.d6tjNLg1ce
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="ISO-8859-1"
+
+Am Dienstag, 16. Juni 2015, 23:13:21 schrieb Peng Fan:
+> Sparse checking warning:
+> "drivers/staging/nvec/nvec_ps2.c:172:14: warning: duplicate const".
+> Remove the duplicated const to fix the warning.
+> 
+> Signed-off-by: Peng Fan <van.freenix@gmail.com>
+
+Thanks!
+
+Acked-by: Marc Dietrich <marvin24@gmx.de>
+
+> ---
+>  drivers/staging/nvec/nvec_ps2.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/staging/nvec/nvec_ps2.c
+> b/drivers/staging/nvec/nvec_ps2.c index 6ebbc82..0922dd3 100644
+> --- a/drivers/staging/nvec/nvec_ps2.c
+> +++ b/drivers/staging/nvec/nvec_ps2.c
+> @@ -169,8 +169,8 @@ static int nvec_mouse_resume(struct device *dev)
+>  }
+>  #endif
+> 
+> -static const SIMPLE_DEV_PM_OPS(nvec_mouse_pm_ops, nvec_mouse_suspend,
+> -				nvec_mouse_resume);
+> +static SIMPLE_DEV_PM_OPS(nvec_mouse_pm_ops, nvec_mouse_suspend,
+> +			 nvec_mouse_resume);
+> 
+>  static struct platform_driver nvec_mouse_driver = {
+>  	.probe  = nvec_mouse_probe,
+
+--nextPart3219380.d6tjNLg1ce
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAABCAAGBQJVgS8sAAoJEKyeR39HFBtoYJcIAJ3cw4TjyHCXdo6fLXAJTejU
+wiKCg/Tq9o+7hQi7zt96AmmnDdU4dEGxqa9IK/MMi303ulblxCINVAHRhI7/7gH6
+RCSn0hg8ivADYhLmozkYHBAT8GF2iOd+I+9xuiDp9940tO1SaUSpSpIjjNbyEPCj
+5jEVOpmKG4/W8rmTDBi6VWjQPu6/NlOiwGWzrZArubx16v5KFUwSfCYkjE082anH
+gul6DpzOd5mzzaqMeiwIZ78Bp2CrEFmsbYLI7PUslT9zzhXSLpAGTAEuqs7M+3Gz
+UAZ/i2h8yzkoAp+ZJj6lP5N+y7vdfncslIsbNM2h0zqIRUdqQTRaeJP3ZnyLksc=
+=PoYE
+-----END PGP SIGNATURE-----
+
+--nextPart3219380.d6tjNLg1ce--
+
+
+--===============4882928341682814753==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+
+--===============4882928341682814753==--
