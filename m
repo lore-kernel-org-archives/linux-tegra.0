@@ -1,55 +1,60 @@
-From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: Re: [PATCH] ARM: v7 setup function should invalidate L1 cache
-Date: Wed, 17 Jun 2015 23:51:57 +0100
-Message-ID: <20150617225157.GD7557@n2100.arm.linux.org.uk>
-References: <E1Yuk8W-0001tC-IK@rmk-PC.arm.linux.org.uk>
- <CAMuHMdX=T3CsLTT95H_07Si6Kd8SRraBfxADpn+VtAF4GmZ=mw@mail.gmail.com>
- <CAMuHMdUQkm_9PhSdGS8j85Uodm-o0jiki=Xh4h59PBShB=rCXw@mail.gmail.com>
- <20150601105319.GQ2067@n2100.arm.linux.org.uk>
- <CAMuHMdUXCy+87-pwLiJ7ynaM1AeFq0f7R3sJ4prdE3QN09z++w@mail.gmail.com>
- <CADhT+wdJX7jMO3_rafrZMeA5ZVMaA6b2U4zkksfJcUjh41mH9A@mail.gmail.com>
- <20150617213006.GC7557@n2100.arm.linux.org.uk>
- <5581F0DD.60408@opensource.altera.com>
- <5581F542.708@opensource.altera.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH 01/44] kernel: Add support for poweroff handler call chain
+Date: Wed, 17 Jun 2015 18:04:54 -0700
+Message-ID: <55821936.4040704@codeaurora.org>
+References: <1412659726-29957-1-git-send-email-linux@roeck-us.net> <1412659726-29957-2-git-send-email-linux@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <5581F542.708-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dinh Nguyen <dinguyen-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org>
-Cc: Dinh Nguyen <dinh.linux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Linux-sh list <linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Gregory Clement <gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Marc Carino <marc.ceeeee-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>Gregory
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-hexagon-owner@vger.kernel.org>
+In-Reply-To: <1412659726-29957-2-git-send-email-linux@roeck-us.net>
+Sender: linux-hexagon-owner@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org
+Cc: linux-m32r-ja@ml.linux-m32r.org, linux-mips@linux-mips.org, linux-efi@vger.kernel.org, linux-ia64@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Len Brown <len.brown@intel.com>, linux-xtensa@linux-xtensa.org, Pavel Machek <pavel@ucw.cz>, devel@driverdev.osuosl.org, linux-s390@vger.kernel.org, lguest@lists.ozlabs.org, linux-c6x-dev@linux-c6x.org, linux-hexagon@vger.kernel.org, linux-sh@vger.kernel.org, Alexander Graf <agraf@suse.de>, linux-acpi@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, xen-devel@lists.xenproject.org, devicetree@vger.kernel.org, user-mode-linux-devel@lists.sourceforge.net, linux-pm@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net, linux-m68k@lists.linux-m68k.org, linux-am33-list@redhat.com, linux-tegra@vger.kernel.org, openipmi-developer@lists.sourceforge.net, linux-metag@vger.kernel.org, linux-arm-kernel@lists.infradead
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jun 17, 2015 at 05:31:30PM -0500, Dinh Nguyen wrote:
-> Also, I am not seeing the error on the SoCFPGA Arria 10 platform at all.
-> This Arria10 platform is running a different version of bootloader than
-> the Cyclone5. Although, I also did test with the latest version of
-> U-Boot on the Cyclone5.
+On 10/06/2014 10:28 PM, Guenter Roeck wrote:
+> Various drivers implement architecture and/or device specific means to
+> remove power from the system.  For the most part, those drivers set the
+> global variable pm_power_off to point to a function within the driver.
+>
+> This mechanism has a number of drawbacks.  Typically only one scheme
+> to remove power is supported (at least if pm_power_off is used).
+> At least in theory there can be multiple means remove power, some of
+> which may be less desirable. For example, some mechanisms may only
+> power off the CPU or the CPU card, while another may power off the
+> entire system.  Others may really just execute a restart sequence
+> or drop into the ROM monitor. Using pm_power_off can also be racy
+> if the function pointer is set from a driver built as module, as the
+> driver may be in the process of being unloaded when pm_power_off is
+> called. If there are multiple poweroff handlers in the system, removing
+> a module with such a handler may inadvertently reset the pointer to
+> pm_power_off to NULL, leaving the system with no means to remove power.
+>
+> Introduce a system poweroff handler call chain to solve the described
+> problems.  This call chain is expected to be executed from the
+> architecture specific machine_power_off() function.  Drivers providing
+> system poweroff functionality are expected to register with this call chain.
+> By using the priority field in the notifier block, callers can control
+> poweroff handler execution sequence and thus ensure that the poweroff
+> handler with the optimal capabilities to remove power for a given system
+> is called first.
 
-It _shouldn't_ cause any issue, unless secondary_startup is called with
-caches already enabled (which it shouldn't.)
+What happened to this series? I want to add shutdown support to my
+platform and I need to write a register on the PMIC in one driver to
+configure it for shutdown instead of restart and then write an MMIO
+register to tell the PMIC to actually do the shutdown in another driver.
+It seems that the notifier solves this case for me, albeit with the
+slight complication that I need to order the two with some priority.
 
-If caches are enabled, that's incredibly dodgy even with the old code -
-cache lines could be migrated to the incoming CPU which v7_invalidate_l1()
-would then invalidate, resulting in the loss of data in those migrated
-cache lines.
-
-If caches are not enabled, this change should have no effect: caches
-should not be searched if the C bit is clear, and we still end up
-invalidating the local L1 cache later in the normal boot sequence.
-
-(If caches are searched with the C bit clear, and the caches initialise
-in an unpredictable state, the ARM ARM requires an implementation specific
-routine to be executed immediately on CPU startup.  The idea is that if
-this option were to be chosen, the vendor must guarantee a certain code
-sequence can't be disrupted by the uninitialised state in the caches,
-which, if you're searching the caches for instruction fetches, is pretty
-much impossible to guarantee no matter what kind of code sequence you
-specify: even the first instruction fetched from the CPU reset vector
-could ultimately be sourced from the instruction cache if the i-cache
-reports that it thinks it has valid data.)
+I'm also considering putting the PMIC configuration part into the reboot
+notifier chain, because it only does things to change the configuration
+and not actually any shutdown/restart itself. That removes any
+requirement to get the priority of notifiers right. This series will
+still be useful for the MMIO register that needs to be toggled though.
+Right now I have to assign pm_power_off or hook the reboot notifier with
+a different priority to make this work.
 
 -- 
-FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
-according to speedtest.net.
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
