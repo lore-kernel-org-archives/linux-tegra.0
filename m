@@ -1,258 +1,120 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v6 20/25] clk: tegra: Add Super Gen5 Logic
-Date: Thu, 18 Jun 2015 17:28:35 -0400
-Message-ID: <1434662920-21469-21-git-send-email-rklein@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH v6 25/25] clk: tegra: Add interface to enable hardware control of SATA/XUSB PLLs
+Date: Thu, 18 Jun 2015 17:28:40 -0400
+Message-ID: <1434662920-21469-26-git-send-email-rklein@nvidia.com>
 References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1434662920-21469-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>, Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>, Rhyland Klein <rklein@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Andrew Bresticker <abrestic@chromium.org>
 
-Super clock divider control and clock source mux of Tegra210 has changed
-a little against prior SoCs, this patch adds Gen5 logic to address those
-differences.
+On Tegra210, hardware control of the SATA and XUSB pad PLLs must be
+done during the UPHY enable sequence rather than the PLLE enable
+sequence.  Export functions to do this so that hardware control can
+be enabled from the XUSB padctl driver.
 
-Signed-off-by: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
-v6:
-  - Added gen5 code into gen4 file and commonized where possible
+ drivers/clk/tegra/clk-tegra210.c |   58 ++++++++++++++++++++++++++++++++++++++
+ include/linux/clk/tegra.h        |    5 ++++
+ 2 files changed, 63 insertions(+)
 
-v2:
-  - Fixed sclk divider address (0x370 -> 0x2c)
-
- drivers/clk/tegra/clk-tegra-super-gen4.c |  142 +++++++++++++++++++++++++++---
- drivers/clk/tegra/clk.h                  |    3 +
- 2 files changed, 132 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk-tegra-super-gen4.c b/drivers/clk/tegra/clk-tegra-super-gen4.c
-index f1f441034b86..25e7f7acea77 100644
---- a/drivers/clk/tegra/clk-tegra-super-gen4.c
-+++ b/drivers/clk/tegra/clk-tegra-super-gen4.c
-@@ -35,9 +35,25 @@
- #define CCLKLP_BURST_POLICY 0x370
- #define SCLK_BURST_POLICY 0x028
- #define SYSTEM_CLK_RATE 0x030
-+#define SCLK_DIVIDER 0x2c
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 3990b5624d3a..be9843f6140d 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -175,6 +175,19 @@
+ #define UTMIP_PLL_CFG1_FORCE_PLL_ENABLE_POWERDOWN BIT(14)
+ #define UTMIP_PLL_CFG1_FORCE_PLL_ACTIVE_POWERDOWN BIT(12)
  
- static DEFINE_SPINLOCK(sysrate_lock);
++#define SATA_PLL_CFG0				0x490
++#define SATA_PLL_CFG0_PADPLL_RESET_SWCTL	BIT(0)
++#define SATA_PLL_CFG0_PADPLL_USE_LOCKDET	BIT(2)
++#define SATA_PLL_CFG0_PADPLL_SLEEP_IDDQ		BIT(13)
++#define SATA_PLL_CFG0_SEQ_ENABLE		BIT(24)
++
++#define XUSBIO_PLL_CFG0				0x51c
++#define XUSBIO_PLL_CFG0_PADPLL_RESET_SWCTL	BIT(0)
++#define XUSBIO_PLL_CFG0_CLK_ENABLE_SWCTL	BIT(2)
++#define XUSBIO_PLL_CFG0_PADPLL_USE_LOCKDET	BIT(6)
++#define XUSBIO_PLL_CFG0_PADPLL_SLEEP_IDDQ	BIT(13)
++#define XUSBIO_PLL_CFG0_SEQ_ENABLE		BIT(24)
++
+ #define UTMIPLL_HW_PWRDN_CFG0			0x52c
+ #define UTMIPLL_HW_PWRDN_CFG0_UTMIPLL_LOCK	BIT(31)
+ #define UTMIPLL_HW_PWRDN_CFG0_SEQ_START_STATE	BIT(25)
+@@ -415,6 +428,51 @@ static const char *mux_pllmcp_clkm[] = {
+ #define PLLU_MISC0_WRITE_MASK		0xbfffffff
+ #define PLLU_MISC1_WRITE_MASK		0x00000007
  
-+enum tegra_super_gen {
-+	gen4 = 4,
-+	gen5,
-+};
++void tegra210_xusb_pll_hw_control_enable(void)
++{
++	u32 val;
 +
-+struct tegra_super_gen_info {
-+	enum tegra_super_gen gen;
-+	const char **sclk_parents;
-+	const char **cclk_g_parents;
-+	const char **cclk_lp_parents;
-+	int num_sclk_parents;
-+	int num_cclk_g_parents;
-+	int num_cclk_lp_parents;
-+};
++	val = readl_relaxed(clk_base + XUSBIO_PLL_CFG0);
++	val &= ~(XUSBIO_PLL_CFG0_CLK_ENABLE_SWCTL |
++		 XUSBIO_PLL_CFG0_PADPLL_RESET_SWCTL);
++	val |= XUSBIO_PLL_CFG0_PADPLL_USE_LOCKDET |
++	       XUSBIO_PLL_CFG0_PADPLL_SLEEP_IDDQ;
++	writel_relaxed(val, clk_base + XUSBIO_PLL_CFG0);
++}
++EXPORT_SYMBOL_GPL(tegra210_xusb_pll_hw_control_enable);
 +
- static const char *sclk_parents[] = { "clk_m", "pll_c_out1", "pll_p_out4",
- 			       "pll_p", "pll_p_out2", "unused",
- 			       "clk_32k", "pll_m_out1" };
-@@ -52,21 +68,81 @@ static const char *cclk_lp_parents[] = { "clk_m", "pll_c", "clk_32k", "pll_m",
- 					 "pll_p", "pll_p_out4", "unused",
- 					 "unused", "pll_x", "pll_x_out0" };
- 
-+const struct tegra_super_gen_info tegra_super_gen_info_gen4 = {
-+	.gen = gen4,
-+	.sclk_parents = sclk_parents,
-+	.cclk_g_parents = cclk_g_parents,
-+	.cclk_lp_parents = cclk_lp_parents,
-+	.num_sclk_parents = ARRAY_SIZE(sclk_parents),
-+	.num_cclk_g_parents = ARRAY_SIZE(cclk_g_parents),
-+	.num_cclk_lp_parents = ARRAY_SIZE(cclk_lp_parents),
-+};
++void tegra210_xusb_pll_hw_sequence_start(void)
++{
++	u32 val;
 +
-+static const char *sclk_parents_gen5[] = { "clk_m", "pll_c_out1", "pll_c4_out3",
-+			       "pll_p", "pll_p_out2", "pll_c4_out1",
-+			       "clk_32k", "pll_c4_out2" };
++	val = readl_relaxed(clk_base + XUSBIO_PLL_CFG0);
++	val |= XUSBIO_PLL_CFG0_SEQ_ENABLE;
++	writel_relaxed(val, clk_base + XUSBIO_PLL_CFG0);
++}
++EXPORT_SYMBOL_GPL(tegra210_xusb_pll_hw_sequence_start);
 +
-+static const char *cclk_g_parents_gen5[] = { "clk_m", "unused", "clk_32k", "unused",
-+					"pll_p", "pll_p_out4", "unused",
-+					"unused", "pll_x", "unused", "unused",
-+					"unused", "unused", "unused", "unused",
-+					"dfllCPU_out" };
++void tegra210_sata_pll_hw_control_enable(void)
++{
++	u32 val;
 +
-+static const char *cclk_lp_parents_gen5[] = { "clk_m", "unused", "clk_32k", "unused",
-+					"pll_p", "pll_p_out4", "unused",
-+					"unused", "pll_x", "unused", "unused",
-+					"unused", "unused", "unused", "unused",
-+					"dfllCPU_out" };
++	val = readl_relaxed(clk_base + SATA_PLL_CFG0);
++	val &= ~SATA_PLL_CFG0_PADPLL_RESET_SWCTL;
++	val |= SATA_PLL_CFG0_PADPLL_USE_LOCKDET |
++	       SATA_PLL_CFG0_PADPLL_SLEEP_IDDQ;
++	writel_relaxed(val, clk_base + SATA_PLL_CFG0);
++}
++EXPORT_SYMBOL_GPL(tegra210_sata_pll_hw_control_enable);
 +
-+const struct tegra_super_gen_info tegra_super_gen_info_gen5 = {
-+	.gen = gen5,
-+	.sclk_parents = sclk_parents_gen5,
-+	.cclk_g_parents = cclk_g_parents_gen5,
-+	.cclk_lp_parents = cclk_lp_parents_gen5,
-+	.num_sclk_parents = ARRAY_SIZE(sclk_parents_gen5),
-+	.num_cclk_g_parents = ARRAY_SIZE(cclk_g_parents_gen5),
-+	.num_cclk_lp_parents = ARRAY_SIZE(cclk_lp_parents_gen5),
-+};
++void tegra210_sata_pll_hw_sequence_start(void)
++{
++	u32 val;
 +
- static void __init tegra_sclk_init(void __iomem *clk_base,
--				struct tegra_clk *tegra_clks)
-+				struct tegra_clk *tegra_clks,
-+				const struct tegra_super_gen_info *gen_info)
- {
- 	struct clk *clk;
- 	struct clk **dt_clk;
- 
--	/* SCLK */
--	dt_clk = tegra_lookup_dt_id(tegra_clk_sclk, tegra_clks);
-+	/* SCLK_MUX */
-+	dt_clk = tegra_lookup_dt_id(tegra_clk_sclk_mux, tegra_clks);
- 	if (dt_clk) {
--		clk = tegra_clk_register_super_mux("sclk", sclk_parents,
--						ARRAY_SIZE(sclk_parents),
-+		clk = tegra_clk_register_super_mux("sclk_mux",
-+						gen_info->sclk_parents,
-+						gen_info->num_sclk_parents,
- 						CLK_SET_RATE_PARENT,
- 						clk_base + SCLK_BURST_POLICY,
- 						0, 4, 0, 0, NULL);
- 		*dt_clk = clk;
++	val = readl_relaxed(clk_base + SATA_PLL_CFG0);
++	val |= SATA_PLL_CFG0_SEQ_ENABLE;
++	writel_relaxed(val, clk_base + SATA_PLL_CFG0);
++}
++EXPORT_SYMBOL_GPL(tegra210_sata_pll_hw_sequence_start);
 +
-+
-+		/* SCLK */
-+		dt_clk = tegra_lookup_dt_id(tegra_clk_sclk, tegra_clks);
-+		if (dt_clk) {
-+			clk = clk_register_divider(NULL, "sclk", "sclk_mux", 0,
-+						clk_base + SCLK_DIVIDER, 0, 8,
-+						0, &sysrate_lock);
-+			*dt_clk = clk;
-+		}
-+	} else {
-+		/* SCLK */
-+		dt_clk = tegra_lookup_dt_id(tegra_clk_sclk, tegra_clks);
-+		if (dt_clk) {
-+			clk = tegra_clk_register_super_mux("sclk",
-+						gen_info->sclk_parents,
-+						gen_info->num_sclk_parents,
-+						CLK_SET_RATE_PARENT,
-+						clk_base + SCLK_BURST_POLICY,
-+						0, 4, 0, 0, NULL);
-+			*dt_clk = clk;
-+		}
- 	}
- 
- 	/* HCLK */
-@@ -96,10 +172,11 @@ static void __init tegra_sclk_init(void __iomem *clk_base,
- 	*dt_clk = clk;
+ static inline void _pll_misc_chk_default(void __iomem *base,
+ 					struct tegra_clk_pll_params *params,
+ 					u8 misc_num, u32 default_val, u32 mask)
+diff --git a/include/linux/clk/tegra.h b/include/linux/clk/tegra.h
+index 19c4208f4752..26b2041cac61 100644
+--- a/include/linux/clk/tegra.h
++++ b/include/linux/clk/tegra.h
+@@ -120,4 +120,9 @@ static inline void tegra_cpu_clock_resume(void)
  }
- 
--void __init tegra_super_clk_gen4_init(void __iomem *clk_base,
-+void __init tegra_super_clk_init(void __iomem *clk_base,
- 				void __iomem *pmc_base,
- 				struct tegra_clk *tegra_clks,
--				struct tegra_clk_pll_params *params)
-+				struct tegra_clk_pll_params *params,
-+				const struct tegra_super_gen_info *gen_info)
- {
- 	struct clk *clk;
- 	struct clk **dt_clk;
-@@ -107,28 +184,50 @@ void __init tegra_super_clk_gen4_init(void __iomem *clk_base,
- 	/* CCLKG */
- 	dt_clk = tegra_lookup_dt_id(tegra_clk_cclk_g, tegra_clks);
- 	if (dt_clk) {
--		clk = tegra_clk_register_super_mux("cclk_g", cclk_g_parents,
--					ARRAY_SIZE(cclk_g_parents),
-+		if (gen_info->gen == gen5) {
-+			clk = tegra_clk_register_super_mux("cclk_g",
-+					gen_info->cclk_g_parents,
-+					gen_info->num_cclk_g_parents,
-+					CLK_SET_RATE_PARENT,
-+					clk_base + CCLKG_BURST_POLICY,
-+					0, 4, 8, 0, NULL);
-+		} else {
-+			clk = tegra_clk_register_super_mux("cclk_g",
-+					gen_info->cclk_g_parents,
-+					gen_info->num_cclk_g_parents,
- 					CLK_SET_RATE_PARENT,
- 					clk_base + CCLKG_BURST_POLICY,
- 					0, 4, 0, 0, NULL);
-+		}
- 		*dt_clk = clk;
- 	}
- 
- 	/* CCLKLP */
- 	dt_clk = tegra_lookup_dt_id(tegra_clk_cclk_lp, tegra_clks);
- 	if (dt_clk) {
--		clk = tegra_clk_register_super_mux("cclk_lp", cclk_lp_parents,
--					ARRAY_SIZE(cclk_lp_parents),
-+		if (gen_info->gen == gen5) {
-+			clk = tegra_clk_register_super_mux("cclk_lp",
-+					gen_info->cclk_lp_parents,
-+					gen_info->num_cclk_lp_parents,
-+					CLK_SET_RATE_PARENT,
-+					clk_base + CCLKLP_BURST_POLICY,
-+					0, 4, 8, 0, NULL);
-+		} else {
-+			clk = tegra_clk_register_super_mux("cclk_lp",
-+					gen_info->cclk_lp_parents,
-+					gen_info->num_cclk_lp_parents,
- 					CLK_SET_RATE_PARENT,
- 					clk_base + CCLKLP_BURST_POLICY,
- 					TEGRA_DIVIDER_2, 4, 8, 9, NULL);
-+		}
- 		*dt_clk = clk;
- 	}
- 
--	tegra_sclk_init(clk_base, tegra_clks);
-+	tegra_sclk_init(clk_base, tegra_clks, gen_info);
- 
--#if defined(CONFIG_ARCH_TEGRA_114_SOC) || defined(CONFIG_ARCH_TEGRA_124_SOC)
-+#if defined(CONFIG_ARCH_TEGRA_114_SOC) || \
-+    defined(CONFIG_ARCH_TEGRA_124_SOC) || \
-+    defined(CONFIG_ARCH_TEGRA_210_SOC)
- 	/* PLLX */
- 	dt_clk = tegra_lookup_dt_id(tegra_clk_pll_x, tegra_clks);
- 	if (!dt_clk)
-@@ -149,3 +248,20 @@ void __init tegra_super_clk_gen4_init(void __iomem *clk_base,
  #endif
- }
  
-+void __init tegra_super_clk_gen4_init(void __iomem *clk_base,
-+				void __iomem *pmc_base,
-+				struct tegra_clk *tegra_clks,
-+				struct tegra_clk_pll_params *params)
-+{
-+	tegra_super_clk_init(clk_base, pmc_base, tegra_clks, params,
-+			     &tegra_super_gen_info_gen4);
-+}
++extern void tegra210_xusb_pll_hw_control_enable(void);
++extern void tegra210_xusb_pll_hw_sequence_start(void);
++extern void tegra210_sata_pll_hw_control_enable(void);
++extern void tegra210_sata_pll_hw_sequence_start(void);
 +
-+void __init tegra_super_clk_gen5_init(void __iomem *clk_base,
-+				void __iomem *pmc_base,
-+				struct tegra_clk *tegra_clks,
-+				struct tegra_clk_pll_params *params)
-+{
-+	tegra_super_clk_init(clk_base, pmc_base, tegra_clks, params,
-+			     &tegra_super_gen_info_gen5);
-+}
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 87239298043c..3053cef1af3e 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -740,6 +740,9 @@ int tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
- void tegra_super_clk_gen4_init(void __iomem *clk_base,
- 			void __iomem *pmc_base, struct tegra_clk *tegra_clks,
- 			struct tegra_clk_pll_params *pll_params);
-+void tegra_super_clk_gen5_init(void __iomem *clk_base,
-+			void __iomem *pmc_base, struct tegra_clk *tegra_clks,
-+			struct tegra_clk_pll_params *pll_params);
- 
- #ifdef CONFIG_TEGRA_CLK_EMC
- struct clk *tegra_clk_register_emc(void __iomem *base, struct device_node *np,
+ #endif /* __LINUX_CLK_TEGRA_H_ */
 -- 
 1.7.9.5
