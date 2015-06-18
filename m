@@ -1,111 +1,185 @@
-From: Ilia Mirkin <imirkin@alum.mit.edu>
-Subject: Re: [Nouveau] [PATCH 1/6] gr: support for NVIDIA-provided firmwares
-Date: Thu, 18 Jun 2015 11:57:42 -0400
-Message-ID: <CAKb7UvhtGhpFBeFerJd8KJyKJdgKTGNvnqTCWCdmQ0OoMwpcew@mail.gmail.com>
-References: <1434638872-29061-1-git-send-email-acourbot@nvidia.com>
- <1434638872-29061-2-git-send-email-acourbot@nvidia.com>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: Re: [PATCH 10/15] PCI: kill off set_irq_flags usage
+Date: Thu, 18 Jun 2015 11:59:54 -0500
+Message-ID: <20150618165954.GE7710@google.com>
+References: <1433874401-27161-1-git-send-email-robh@kernel.org>
+ <1433874401-27161-11-git-send-email-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1434638872-29061-2-git-send-email-acourbot@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alexandre Courbot <gnurou@gmail.com>
-Cc: Terje Bergstrom <tbergstrom@nvidia.com>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Allen Martin <AMartin@nvidia.com>, Ben Skeggs <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Ken Adams <KAdams@nvidia.com>, Andy Ritger <aritger@nvidia.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1433874401-27161-11-git-send-email-robh@kernel.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Russell King <linux@arm.linux.org.uk>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, arm@kernel.org, Kishon Vijay Abraham I <kishon@ti.com>, Murali Karicheri <m-karicheri2@ti.com>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Jingoo Han <jingoohan1@gmail.com>, Pratyush Anand <pratyush.anand@gmail.com>, Simon Horman <horms@verge.net.au>, Michal Simek <michal.simek@xilinx.com>, =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>, linux-omap@vger.kernel.org, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org, linux-sh@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-V2h5IGRpZCB5b3UgY2hhbmdlIHJlcXVlc3RfZmlybXdhcmUgdG8gcmVxdWVzdF9maXJtd2FyZV9k
-aXJlY3Q/CgpPbiBUaHUsIEp1biAxOCwgMjAxNSBhdCAxMDo0NyBBTSwgQWxleGFuZHJlIENvdXJi
-b3QgPGdudXJvdUBnbWFpbC5jb20+IHdyb3RlOgo+IE5WSURJQSB3aWxsIG9mZmljaWFsbHkgc3Rh
-cnQgcHJvdmlkaW5nIHNpZ25lZCBmaXJtd2FyZXMgdGhyb3VnaAo+IGxpbnV4LWZpcm13YXJlLiBD
-aGFuZ2UgdGhlIEdSIGZpcm13YXJlIGxvb2t1cCBmdW5jdGlvbiB0byBsb29rIHRoZW0gdXAKPiBp
-biBhZGRpdGlvbiB0byB0aGUgZXh0cmFjdGVkIGZpcm13YXJlcy4KPgo+IFNpZ25lZC1vZmYtYnk6
-IEFsZXhhbmRyZSBDb3VyYm90IDxhY291cmJvdEBudmlkaWEuY29tPgo+IC0tLQo+ICBkcm0vbm91
-dmVhdS9udmttL2VuZ2luZS9nci9nZjEwMC5jIHwgNjYgKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKystLS0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDUxIGluc2VydGlvbnMoKyksIDE1IGRl
-bGV0aW9ucygtKQo+Cj4gZGlmZiAtLWdpdCBhL2RybS9ub3V2ZWF1L252a20vZW5naW5lL2dyL2dm
-MTAwLmMgYi9kcm0vbm91dmVhdS9udmttL2VuZ2luZS9nci9nZjEwMC5jCj4gaW5kZXggY2ExMWRk
-Yi4uMzlkNDgyZiAxMDA2NDQKPiAtLS0gYS9kcm0vbm91dmVhdS9udmttL2VuZ2luZS9nci9nZjEw
-MC5jCj4gKysrIGIvZHJtL25vdXZlYXUvbnZrbS9lbmdpbmUvZ3IvZ2YxMDAuYwo+IEBAIC0xNTQ0
-LDI2ICsxNTQ0LDYyIEBAIGdmMTAwX2dyX2R0b3JfZncoc3RydWN0IGdmMTAwX2dyX2Z1YyAqZnVj
-KQo+ICAgICAgICAgZnVjLT5kYXRhID0gTlVMTDsKPiAgfQo+Cj4gKy8qKgo+ICsgKiBnZjEwMF9n
-cl9jdG9yX2Z3IC0gaGVscGVyIGZvciBsb2FkaW5nIGV4dGVybmFsIEdSIGZpcm13YXJlcwo+ICsg
-Kgo+ICsgKiBBIGZpcm13YXJlIGNhbiBlaXRoZXIgYmUgb2ZmaWNpYWxseSBwcm92aWRlZCBieSBO
-VklESUEgKGluIHdoaWNoIGNhc2UgaXQgd2lsbAo+ICsgKiB1c2UgYSAiTlZJRElBIG5hbWUiLCBv
-ciBiZSBleHRyYWN0ZWQgZnJvbSB0aGUgYmluYXJ5IGJsb2IgKGFuZCB1c2UgYQo+ICsgKiAiTm91
-dmVhdSBuYW1lIi4gVGhlIGZ3bmFtZSBhbmQgbnZmd25hbWUgYXJlIHRvIGJlIGdpdmVuIHRoZSBO
-b3V2ZWF1IGFuZAo+ICsgKiBOVklESUEgbmFtZXMgb2YgYSBnaXZlbiBmaXJtd2FyZSwgcmVzcGVj
-dGl2ZWx5LiBUaGlzIGZ1bmN0aW9uIHdpbGwgdGhlbgo+ICsgKiB0cnkgdG8gbG9hZCB0aGUgTlZJ
-RElBIGZpcm13YXJlLCB0aGVuIHRoZSBleHRyYWN0ZWQgb25lLCBpbiB0aGF0IG9yZGVyLgo+ICsg
-Kgo+ICsgKi8KPiAgaW50Cj4gIGdmMTAwX2dyX2N0b3JfZncoc3RydWN0IGdmMTAwX2dyX3ByaXYg
-KnByaXYsIGNvbnN0IGNoYXIgKmZ3bmFtZSwKPiAtICAgICAgICAgICAgICAgIHN0cnVjdCBnZjEw
-MF9ncl9mdWMgKmZ1YykKPiArICAgICAgICAgICAgICAgIGNvbnN0IGNoYXIgKm52ZnduYW1lLCBz
-dHJ1Y3QgZ2YxMDBfZ3JfZnVjICpmdWMpCj4gIHsKPiAgICAgICAgIHN0cnVjdCBudmttX2Rldmlj
-ZSAqZGV2aWNlID0gbnZfZGV2aWNlKHByaXYpOwo+ICAgICAgICAgY29uc3Qgc3RydWN0IGZpcm13
-YXJlICpmdzsKPiAtICAgICAgIGNoYXIgZlszMl07Cj4gLSAgICAgICBpbnQgcmV0Owo+ICsgICAg
-ICAgY2hhciBmWzY0XTsKPiArICAgICAgIGludCByZXQgPSAtRUlOVkFMOwo+ICsgICAgICAgaW50
-IGk7Cj4KPiAtICAgICAgIHNucHJpbnRmKGYsIHNpemVvZihmKSwgIm5vdXZlYXUvbnYlMDJ4XyVz
-IiwgZGV2aWNlLT5jaGlwc2V0LCBmd25hbWUpOwo+IC0gICAgICAgcmV0ID0gcmVxdWVzdF9maXJt
-d2FyZSgmZncsIGYsIG52X2RldmljZV9iYXNlKGRldmljZSkpOwo+IC0gICAgICAgaWYgKHJldCkg
-ewo+IC0gICAgICAgICAgICAgICBzbnByaW50ZihmLCBzaXplb2YoZiksICJub3V2ZWF1LyVzIiwg
-ZnduYW1lKTsKPiAtICAgICAgICAgICAgICAgcmV0ID0gcmVxdWVzdF9maXJtd2FyZSgmZncsIGYs
-IG52X2RldmljZV9iYXNlKGRldmljZSkpOwo+IC0gICAgICAgICAgICAgICBpZiAocmV0KSB7Cj4g
-LSAgICAgICAgICAgICAgICAgICAgICAgbnZfZXJyb3IocHJpdiwgImZhaWxlZCB0byBsb2FkICVz
-XG4iLCBmd25hbWUpOwo+IC0gICAgICAgICAgICAgICAgICAgICAgIHJldHVybiByZXQ7Cj4gKyAg
-ICAgICAvKgo+ICsgICAgICAgICogTlZJRElBIGZpcm13YXJlIG5hbWUgcHJvdmlkZWQgLSB0cnkg
-dG8gbG9hZCBpdAo+ICsgICAgICAgICogV2UgdHJ5IHRoaXMgZmlyc3Qgc2luY2UgbW9zdCBjaGlw
-cyB0aGF0IHJlcXVpcmUgZXh0ZXJuYWwgZmlybXdhcmUKPiArICAgICAgICAqIGFyZSBzdXBwb3J0
-ZWQgYnkgTlZJRElBCj4gKyAgICAgICAgKi8KPiArICAgICAgIGlmIChudmZ3bmFtZSkgewo+ICsg
-ICAgICAgICAgICAgICBzbnByaW50ZihmLCBzaXplb2YoZiksICJudmlkaWEvJXMvJXMuYmluIiwg
-ZGV2aWNlLT5jbmFtZSwKPiArICAgICAgICAgICAgICAgICAgICAgICAgbnZmd25hbWUpOwo+ICsg
-ICAgICAgICAgICAgICBpID0gc3RybGVuKGYpOwo+ICsgICAgICAgICAgICAgICB3aGlsZSAoaSkg
-ewo+ICsgICAgICAgICAgICAgICAgICAgICAgIC0taTsKPiArICAgICAgICAgICAgICAgICAgICAg
-ICBmW2ldID0gdG9sb3dlcihmW2ldKTsKPiAgICAgICAgICAgICAgICAgfQo+ICsgICAgICAgICAg
-ICAgICByZXQgPSByZXF1ZXN0X2Zpcm13YXJlX2RpcmVjdCgmZncsIGYsIG52X2RldmljZV9iYXNl
-KGRldmljZSkpOwo+ICsgICAgICAgICAgICAgICBpZiAoIXJldCkKPiArICAgICAgICAgICAgICAg
-ICAgICAgICBnb3RvIGZvdW5kOwo+ICsgICAgICAgfQo+ICsKPiArICAgICAgIC8qIE5vdXZlYXUg
-ZmlybXdhcmUgbmFtZSBwcm92aWRlZCAtIHRyeSB0byBsb2FkIGl0ICovCj4gKyAgICAgICBpZiAo
-ZnduYW1lKSB7Cj4gKyAgICAgICAgICAgICAgIHNucHJpbnRmKGYsIHNpemVvZihmKSwgIm5vdXZl
-YXUvbnYlMDJ4XyVzIiwgZGV2aWNlLT5jaGlwc2V0LAo+ICsgICAgICAgICAgICAgICAgICAgICAg
-ICBmd25hbWUpOwo+ICsgICAgICAgICAgICAgICByZXQgPSByZXF1ZXN0X2Zpcm13YXJlX2RpcmVj
-dCgmZncsIGYsIG52X2RldmljZV9iYXNlKGRldmljZSkpOwo+ICsgICAgICAgICAgICAgICBpZiAo
-IXJldCkKPiArICAgICAgICAgICAgICAgICAgICAgICBnb3RvIGZvdW5kOwo+ICsKPiArICAgICAg
-ICAgICAgICAgc25wcmludGYoZiwgc2l6ZW9mKGYpLCAibm91dmVhdS8lcyIsIGZ3bmFtZSk7Cj4g
-KyAgICAgICAgICAgICAgIHJldCA9IHJlcXVlc3RfZmlybXdhcmVfZGlyZWN0KCZmdywgZiwgbnZf
-ZGV2aWNlX2Jhc2UoZGV2aWNlKSk7Cj4gKyAgICAgICAgICAgICAgIGlmICghcmV0KQo+ICsgICAg
-ICAgICAgICAgICAgICAgICAgIGdvdG8gZm91bmQ7Cj4gICAgICAgICB9Cj4KPiArICAgICAgIG52
-X2Vycm9yKHByaXYsICJmYWlsZWQgdG8gbG9hZCAlcyAvICVzXG4iLCBmd25hbWUsIG52ZnduYW1l
-KTsKPiArICAgICAgIHJldHVybiByZXQ7Cj4gKwo+ICtmb3VuZDoKPiAgICAgICAgIGZ1Yy0+c2l6
-ZSA9IGZ3LT5zaXplOwo+ICAgICAgICAgZnVjLT5kYXRhID0ga21lbWR1cChmdy0+ZGF0YSwgZnVj
-LT5zaXplLCBHRlBfS0VSTkVMKTsKPiAgICAgICAgIHJlbGVhc2VfZmlybXdhcmUoZncpOwo+IEBA
-IC0xNjE1LDEwICsxNjUxLDEwIEBAIGdmMTAwX2dyX2N0b3Ioc3RydWN0IG52a21fb2JqZWN0ICpw
-YXJlbnQsIHN0cnVjdCBudmttX29iamVjdCAqZW5naW5lLAo+Cj4gICAgICAgICBpZiAodXNlX2V4
-dF9mdykgewo+ICAgICAgICAgICAgICAgICBudl9pbmZvKHByaXYsICJ1c2luZyBleHRlcm5hbCBm
-aXJtd2FyZVxuIik7Cj4gLSAgICAgICAgICAgICAgIGlmIChnZjEwMF9ncl9jdG9yX2Z3KHByaXYs
-ICJmdWM0MDljIiwgJnByaXYtPmZ1YzQwOWMpIHx8Cj4gLSAgICAgICAgICAgICAgICAgICBnZjEw
-MF9ncl9jdG9yX2Z3KHByaXYsICJmdWM0MDlkIiwgJnByaXYtPmZ1YzQwOWQpIHx8Cj4gLSAgICAg
-ICAgICAgICAgICAgICBnZjEwMF9ncl9jdG9yX2Z3KHByaXYsICJmdWM0MWFjIiwgJnByaXYtPmZ1
-YzQxYWMpIHx8Cj4gLSAgICAgICAgICAgICAgICAgICBnZjEwMF9ncl9jdG9yX2Z3KHByaXYsICJm
-dWM0MWFkIiwgJnByaXYtPmZ1YzQxYWQpKQo+ICsgICAgICAgICAgICAgICBpZiAoZ2YxMDBfZ3Jf
-Y3Rvcl9mdyhwcml2LCAiZnVjNDA5YyIsICJmZWNzX2luc3QiLCAmcHJpdi0+ZnVjNDA5YykgfHwK
-PiArICAgICAgICAgICAgICAgICAgIGdmMTAwX2dyX2N0b3JfZncocHJpdiwgImZ1YzQwOWQiLCAi
-ZmVjc19kYXRhIiwgJnByaXYtPmZ1YzQwOWQpIHx8Cj4gKyAgICAgICAgICAgICAgICAgICBnZjEw
-MF9ncl9jdG9yX2Z3KHByaXYsICJmdWM0MWFjIiwgImdwY2NzX2luc3QiLCAmcHJpdi0+ZnVjNDFh
-YykgfHwKPiArICAgICAgICAgICAgICAgICAgIGdmMTAwX2dyX2N0b3JfZncocHJpdiwgImZ1YzQx
-YWQiLCAiZ3BjY3NfZGF0YSIsICZwcml2LT5mdWM0MWFkKSkKPiAgICAgICAgICAgICAgICAgICAg
-ICAgICByZXR1cm4gLUVOT0RFVjsKPiAgICAgICAgICAgICAgICAgcHJpdi0+ZmlybXdhcmUgPSB0
-cnVlOwo+ICAgICAgICAgfQo+IC0tCj4gMi40LjMKPgo+IF9fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fCj4gTm91dmVhdSBtYWlsaW5nIGxpc3QKPiBOb3V2ZWF1
-QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+IGh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9ub3V2ZWF1Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
-ZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
-ZHJpLWRldmVsCg==
+On Tue, Jun 09, 2015 at 01:26:36PM -0500, Rob Herring wrote:
+> set_irq_flags is ARM specific with custom flags which have genirq
+> equivalents. Convert drivers to use the genirq interfaces directly, s=
+o we
+> can kill off set_irq_flags. The translation of flags is as follows:
+>=20
+> IRQF_VALID -> !IRQ_NOREQUEST
+> IRQF_PROBE -> !IRQ_NOPROBE
+> IRQF_NOAUTOEN -> IRQ_NOAUTOEN
+>=20
+> For IRQs managed by an irqdomain, the irqdomain core code handles cle=
+aring
+> and setting IRQ_NOREQUEST already, so there is no need to do this in
+> .map() functions and we can simply remove the set_irq_flags calls. So=
+me
+> users also set IRQ_NOPROBE and this has been maintained although it i=
+s not
+> clear that is really needed. There appears to be a great deal of blin=
+d
+> copy and paste of this code.
+>=20
+> Signed-off-by: Rob Herring <robh@kernel.org>
+> Cc: Kishon Vijay Abraham I <kishon@ti.com>
+> Cc: Bjorn Helgaas <bhelgaas@google.com>
+> Cc: Murali Karicheri <m-karicheri2@ti.com>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Stephen Warren <swarren@wwwdotorg.org>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: Jingoo Han <jingoohan1@gmail.com>
+> Cc: Pratyush Anand <pratyush.anand@gmail.com>
+> Cc: Simon Horman <horms@verge.net.au>
+> Cc: Michal Simek <michal.simek@xilinx.com>
+> Cc: "S=F6ren Brinkmann" <soren.brinkmann@xilinx.com>
+> Cc: linux-omap@vger.kernel.org
+> Cc: linux-pci@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-tegra@vger.kernel.org
+> Cc: linux-sh@vger.kernel.org
+
+This is the only part of the series on linux-pci, so I assume this will=
+ be
+merged by somebody else along with the rest.
+
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+
+> ---
+>  drivers/pci/host/pci-dra7xx.c      | 1 -
+>  drivers/pci/host/pci-keystone-dw.c | 2 --
+>  drivers/pci/host/pci-tegra.c       | 1 -
+>  drivers/pci/host/pcie-designware.c | 1 -
+>  drivers/pci/host/pcie-rcar.c       | 1 -
+>  drivers/pci/host/pcie-xilinx.c     | 2 --
+>  6 files changed, 8 deletions(-)
+>=20
+> diff --git a/drivers/pci/host/pci-dra7xx.c b/drivers/pci/host/pci-dra=
+7xx.c
+> index 2d57e19..94cbc4d 100644
+> --- a/drivers/pci/host/pci-dra7xx.c
+> +++ b/drivers/pci/host/pci-dra7xx.c
+> @@ -160,7 +160,6 @@ static int dra7xx_pcie_intx_map(struct irq_domain=
+ *domain, unsigned int irq,
+>  {
+>  	irq_set_chip_and_handler(irq, &dummy_irq_chip, handle_simple_irq);
+>  	irq_set_chip_data(irq, domain->host_data);
+> -	set_irq_flags(irq, IRQF_VALID);
+> =20
+>  	return 0;
+>  }
+> diff --git a/drivers/pci/host/pci-keystone-dw.c b/drivers/pci/host/pc=
+i-keystone-dw.c
+> index f34892e..f1d0749 100644
+> --- a/drivers/pci/host/pci-keystone-dw.c
+> +++ b/drivers/pci/host/pci-keystone-dw.c
+> @@ -196,7 +196,6 @@ static int ks_dw_pcie_msi_map(struct irq_domain *=
+domain, unsigned int irq,
+>  	irq_set_chip_and_handler(irq, &ks_dw_pcie_msi_irq_chip,
+>  				 handle_level_irq);
+>  	irq_set_chip_data(irq, domain->host_data);
+> -	set_irq_flags(irq, IRQF_VALID);
+> =20
+>  	return 0;
+>  }
+> @@ -277,7 +276,6 @@ static int ks_dw_pcie_init_legacy_irq_map(struct =
+irq_domain *d,
+>  	irq_set_chip_and_handler(irq, &ks_dw_pcie_legacy_irq_chip,
+>  				 handle_level_irq);
+>  	irq_set_chip_data(irq, d->host_data);
+> -	set_irq_flags(irq, IRQF_VALID);
+> =20
+>  	return 0;
+>  }
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegr=
+a.c
+> index 00e9272..36bd700 100644
+> --- a/drivers/pci/host/pci-tegra.c
+> +++ b/drivers/pci/host/pci-tegra.c
+> @@ -1263,7 +1263,6 @@ static int tegra_msi_map(struct irq_domain *dom=
+ain, unsigned int irq,
+>  {
+>  	irq_set_chip_and_handler(irq, &tegra_msi_irq_chip, handle_simple_ir=
+q);
+>  	irq_set_chip_data(irq, domain->host_data);
+> -	set_irq_flags(irq, IRQF_VALID);
+> =20
+>  	tegra_cpuidle_pcie_irqs_in_use();
+> =20
+> diff --git a/drivers/pci/host/pcie-designware.c b/drivers/pci/host/pc=
+ie-designware.c
+> index 2e9f84f..5caa94d 100644
+> --- a/drivers/pci/host/pcie-designware.c
+> +++ b/drivers/pci/host/pcie-designware.c
+> @@ -333,7 +333,6 @@ static int dw_pcie_msi_map(struct irq_domain *dom=
+ain, unsigned int irq,
+>  {
+>  	irq_set_chip_and_handler(irq, &dw_msi_irq_chip, handle_simple_irq);
+>  	irq_set_chip_data(irq, domain->host_data);
+> -	set_irq_flags(irq, IRQF_VALID);
+> =20
+>  	return 0;
+>  }
+> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rca=
+r.c
+> index c086210..7678fe0 100644
+> --- a/drivers/pci/host/pcie-rcar.c
+> +++ b/drivers/pci/host/pcie-rcar.c
+> @@ -664,7 +664,6 @@ static int rcar_msi_map(struct irq_domain *domain=
+, unsigned int irq,
+>  {
+>  	irq_set_chip_and_handler(irq, &rcar_msi_irq_chip, handle_simple_irq=
+);
+>  	irq_set_chip_data(irq, domain->host_data);
+> -	set_irq_flags(irq, IRQF_VALID);
+> =20
+>  	return 0;
+>  }
+> diff --git a/drivers/pci/host/pcie-xilinx.c b/drivers/pci/host/pcie-x=
+ilinx.c
+> index f1a06a0..72015119 100644
+> --- a/drivers/pci/host/pcie-xilinx.c
+> +++ b/drivers/pci/host/pcie-xilinx.c
+> @@ -338,7 +338,6 @@ static int xilinx_pcie_msi_map(struct irq_domain =
+*domain, unsigned int irq,
+>  {
+>  	irq_set_chip_and_handler(irq, &xilinx_msi_irq_chip, handle_simple_i=
+rq);
+>  	irq_set_chip_data(irq, domain->host_data);
+> -	set_irq_flags(irq, IRQF_VALID);
+> =20
+>  	return 0;
+>  }
+> @@ -377,7 +376,6 @@ static int xilinx_pcie_intx_map(struct irq_domain=
+ *domain, unsigned int irq,
+>  {
+>  	irq_set_chip_and_handler(irq, &dummy_irq_chip, handle_simple_irq);
+>  	irq_set_chip_data(irq, domain->host_data);
+> -	set_irq_flags(irq, IRQF_VALID);
+> =20
+>  	return 0;
+>  }
+> --=20
+> 2.1.0
+>=20
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
+l" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
