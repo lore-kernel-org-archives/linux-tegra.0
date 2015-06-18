@@ -1,166 +1,139 @@
-From: Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v6 16/25] clk: tegra: pll: Add Set_default logic
-Date: Thu, 18 Jun 2015 17:28:31 -0400
-Message-ID: <1434662920-21469-17-git-send-email-rklein@nvidia.com>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v6 15/25] clk: tegra: pll: Adjust vco_min if SDM present
+Date: Thu, 18 Jun 2015 17:28:30 -0400
+Message-ID: <1434662920-21469-16-git-send-email-rklein@nvidia.com>
 References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>, Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1434662920-21469-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Bill Huang <bilhuang@nvidia.com>
+From: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Add logic which (if specified for a pll) can verify that a PLL is set
-to the proper default value and if not can set it. This can be
-specified per PLL as each will have different default values.
+This code makes use of the SDM fractional divider if present to
+constrain the allowable programming range of the PLL divider register
+bitfields to take advantage of higher frequency granularity that can
+be induced by the SDM divider.
 
-Based on original work by Aleksandr Frid <afrid@nvidia.com>
+Based on original work by Aleksandr Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Signed-off-by: Bill Huang <bilhuang@nvidia.com>
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+Signed-off-by: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 v6:
   - Added kerneldoc
 
-v2:
-  - Remove MACRO for PLL_MISC_CHECK_DEFAULT as suggested, and instead
-    the tegra210 driver will include an inline version of this function.
+v5:
+  - Removed whitespace change
 
- drivers/clk/tegra/clk-pll.c |   39 ++++++++++++++++++++++++++++-----------
- drivers/clk/tegra/clk.h     |   11 +++++++++++
- 2 files changed, 39 insertions(+), 11 deletions(-)
+ drivers/clk/tegra/clk-pll.c |   28 ++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk.h     |    4 ++++
+ 2 files changed, 32 insertions(+)
 
 diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 3c348c96f9da..f878bc879df2 100644
+index 1f70c356bdd7..3c348c96f9da 100644
 --- a/drivers/clk/tegra/clk-pll.c
 +++ b/drivers/clk/tegra/clk-pll.c
-@@ -653,13 +653,19 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
- 			unsigned long rate)
- {
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
-+	struct tegra_clk_pll_freq_table old_cfg;
- 	int state, ret = 0;
+@@ -1612,6 +1612,10 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
  
- 	state = clk_pll_is_enabled(hw);
+ 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
  
-+	_get_pll_mnp(pll, &old_cfg);
++	if (pll_params->adjust_vco)
++		pll_params->vco_min = pll_params->adjust_vco(pll_params,
++							     parent_rate);
 +
- 	if (state)
- 		_clk_pll_disable(hw);
+ 	err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
+ 	if (err)
+ 		return ERR_PTR(err);
+@@ -1650,6 +1654,10 @@ struct clk *tegra_clk_register_pllre(const char *name, const char *parent_name,
  
-+	if (!pll->params->defaults_set && pll->params->set_defaults)
-+		pll->params->set_defaults(pll);
+ 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
+ 
++	if (pll_params->adjust_vco)
++		pll_params->vco_min = pll_params->adjust_vco(pll_params,
++							     parent_rate);
 +
- 	_update_pll_mnp(pll, cfg);
+ 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+ 	if (IS_ERR(pll))
+ 		return ERR_CAST(pll);
+@@ -1706,6 +1714,10 @@ struct clk *tegra_clk_register_pllm(const char *name, const char *parent_name,
  
- 	if (pll->params->flags & TEGRA_PLL_HAS_CPCON)
-@@ -1485,6 +1491,9 @@ static struct clk *_tegra_clk_register_pll(struct tegra_clk_pll *pll,
- 	if (!pll->params->calc_rate)
- 		pll->params->calc_rate = _calc_rate;
+ 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
  
-+	if (pll->params->set_defaults)
-+		pll->params->set_defaults(pll);
++	if (pll_params->adjust_vco)
++		pll_params->vco_min = pll_params->adjust_vco(pll_params,
++							     parent_rate);
 +
- 	/* Data in .init is copied by clk_register(), so stack variable OK */
- 	pll->hw.init = &init;
+ 	pll_params->flags |= TEGRA_PLL_BYPASS;
+ 	pll_params->flags |= TEGRA_PLLM;
+ 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+@@ -2112,6 +2124,10 @@ struct clk *tegra_clk_register_pllc_tegra210(const char *name,
  
-@@ -1595,7 +1604,6 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
- 	struct tegra_clk_pll *pll;
- 	struct clk *clk, *parent;
- 	unsigned long parent_rate;
--	int err;
- 	u32 val, val_iddq;
+ 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
  
- 	parent = __clk_lookup(parent_name);
-@@ -1616,18 +1624,27 @@ struct clk *tegra_clk_register_pllxc(const char *name, const char *parent_name,
- 		pll_params->vco_min = pll_params->adjust_vco(pll_params,
- 							     parent_rate);
- 
--	err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
--	if (err)
--		return ERR_PTR(err);
-+	/*
-+	 * If the pll has a set_defaults callback, it will take care of
-+	 * configuring dynamic ramping and setting IDDQ in that path.
-+	 */
-+	if (!pll_params->set_defaults) {
-+		int err;
++	if (pll_params->adjust_vco)
++		pll_params->vco_min = pll_params->adjust_vco(pll_params,
++							     parent_rate);
 +
-+		err = _setup_dynamic_ramp(pll_params, clk_base, parent_rate);
-+		if (err)
-+			return ERR_PTR(err);
+ 	pll_params->flags |= TEGRA_PLL_BYPASS;
+ 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+ 	if (IS_ERR(pll))
+@@ -2149,6 +2165,10 @@ struct clk *tegra_clk_register_pllxc_tegra210(const char *name,
  
--	val = readl_relaxed(clk_base + pll_params->base_reg);
--	val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
-+		val = readl_relaxed(clk_base + pll_params->base_reg);
-+		val_iddq = readl_relaxed(clk_base + pll_params->iddq_reg);
+ 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
  
--	if (val & PLL_BASE_ENABLE)
--		WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
--	else {
--		val_iddq |= BIT(pll_params->iddq_bit_idx);
--		writel_relaxed(val_iddq, clk_base + pll_params->iddq_reg);
-+		if (val & PLL_BASE_ENABLE)
-+			WARN_ON(val_iddq & BIT(pll_params->iddq_bit_idx));
-+		else {
-+			val_iddq |= BIT(pll_params->iddq_bit_idx);
-+			writel_relaxed(val_iddq,
-+				       clk_base + pll_params->iddq_reg);
-+		}
- 	}
++	if (pll_params->adjust_vco)
++		pll_params->vco_min = pll_params->adjust_vco(pll_params,
++							     parent_rate);
++
+ 	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
+ 	if (IS_ERR(pll))
+ 		return ERR_CAST(pll);
+@@ -2196,6 +2216,10 @@ struct clk *tegra_clk_register_pllss_tegra210(const char *name,
  
+ 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
+ 
++	if (pll_params->adjust_vco)
++		pll_params->vco_min = pll_params->adjust_vco(pll_params,
++							     parent_rate);
++
+ 	/* initialize PLL to minimum rate */
+ 
+ 	cfg.m = _pll_fixed_mdiv(pll_params, parent_rate);
+@@ -2260,6 +2284,10 @@ struct clk *tegra_clk_register_pllmb(const char *name, const char *parent_name,
+ 
+ 	pll_params->vco_min = _clip_vco_min(pll_params->vco_min, parent_rate);
+ 
++	if (pll_params->adjust_vco)
++		pll_params->vco_min = pll_params->adjust_vco(pll_params,
++							     parent_rate);
++
+ 	pll_params->flags |= TEGRA_PLL_BYPASS;
+ 	pll_params->flags |= TEGRA_PLLMB;
  	pll = _tegra_init_pll(clk_base, pmc, pll_params, lock);
 diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 72bf25525bd6..ae42e3e6a116 100644
+index 6170fcef7c33..72bf25525bd6 100644
 --- a/drivers/clk/tegra/clk.h
 +++ b/drivers/clk/tegra/clk.h
-@@ -160,6 +160,8 @@ struct div_nmp {
- 
- #define MAX_PLL_MISC_REG_COUNT	6
- 
-+struct tegra_clk_pll;
-+
- /**
-  * struct tegra_clk_pll_params - PLL parameters
-  *
-@@ -192,6 +194,7 @@ struct div_nmp {
-  * @stepb_shift:		Dynamic ramp step B field shift
-  * @lock_delay:			Delay in us if PLL lock is not used
-  * @max_p:			maximum value for the p divider
-+ * @defaults_set:		Boolean signaling all reg defaults for PLL set.
-  * @pdiv_tohw:			mapping of p divider to register values
-  * @div_nmp:			offsets and widths on n, m and p fields
-  * @freq_table:			array of frequencies supported by PLL
-@@ -204,6 +207,12 @@ struct div_nmp {
+@@ -202,6 +202,8 @@ struct div_nmp {
+  *				PLL's based on fractional divider value.
+  * @calc_rate:			Callback used to change how out of table
   *				rates (dividers and multipler) are calculated.
-  * @adjust_vco:			Callback to adjust the programming range of the
-  *				divider range (if SDM is present)
-+ * @set_defaults:		Callback which will try to initialize PLL
-+ *				registers to sane default values. This is first
-+ *				tried during PLL registration, but if the PLL
-+ *				is already enabled, it will be done the first
-+ *				time the rate is changed while the PLL is
-+ *				disabled.
++ * @adjust_vco:			Callback to adjust the programming range of the
++ *				divider range (if SDM is present)
   *
   * Flags:
   * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
-@@ -261,6 +270,7 @@ struct tegra_clk_pll_params {
- 	int		stepb_shift;
- 	int		lock_delay;
- 	int		max_p;
-+	bool		defaults_set;
- 	struct pdiv_map *pdiv_tohw;
- 	struct div_nmp	*div_nmp;
- 	struct tegra_clk_pll_freq_table	*freq_table;
-@@ -273,6 +283,7 @@ struct tegra_clk_pll_params {
+@@ -269,6 +271,8 @@ struct tegra_clk_pll_params {
+ 	int	(*calc_rate)(struct clk_hw *hw,
+ 			struct tegra_clk_pll_freq_table *cfg,
  			unsigned long rate, unsigned long parent_rate);
- 	unsigned long	(*adjust_vco)(struct tegra_clk_pll_params *pll_params,
- 				unsigned long parent_rate);
-+	void	(*set_defaults)(struct tegra_clk_pll *pll);
++	unsigned long	(*adjust_vco)(struct tegra_clk_pll_params *pll_params,
++				unsigned long parent_rate);
  };
  
  #define TEGRA_PLL_USE_LOCK BIT(0)
