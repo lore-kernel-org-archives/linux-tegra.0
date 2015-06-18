@@ -1,56 +1,33 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 5/6] device: recognize GM20B
-Date: Thu, 18 Jun 2015 23:47:51 +0900
-Message-ID: <1434638872-29061-6-git-send-email-acourbot@nvidia.com>
-References: <1434638872-29061-1-git-send-email-acourbot@nvidia.com>
+From: Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH 01/44] kernel: Add support for poweroff handler call chain
+Date: Thu, 18 Jun 2015 08:30:03 -0700
+Message-ID: <20150618153003.GA19224@roeck-us.net>
+References: <1412659726-29957-1-git-send-email-linux@roeck-us.net>
+ <1412659726-29957-2-git-send-email-linux@roeck-us.net>
+ <55821936.4040704@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <1434638872-29061-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Andy Ritger <aritger-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Aaron Plattner <aplattner-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Allen Martin <AMartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ken Adams <KAdams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-ia64-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <55821936.4040704@codeaurora.org>
+Sender: linux-ia64-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-kernel@vger.kernel.org, linux-m32r-ja@ml.linux-m32r.org, linux-mips@linux-mips.org, linux-efi@vger.kernel.org, linux-ia64@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Len Brown <len.brown@intel.com>, linux-xtensa@linux-xtensa.org, Pavel Machek <pavel@ucw.cz>, devel@driverdev.osuosl.org, linux-s390@vger.kernel.org, lguest@lists.ozlabs.org, linux-c6x-dev@linux-c6x.org, linux-hexagon@vger.kernel.org, linux-sh@vger.kernel.org, Alexander Graf <agraf@suse.de>, linux-acpi@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, xen-devel@lists.xenproject.org, devicetree@vger.kernel.org, user-mode-linux-devel@lists.sourceforge.net, linux-pm@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net, linux-m68k@lists.linux-m68k.org, linux-am33-list@redhat.com, linux-tegra@vger.kernel.org, openipmi-developer@lists.sourceforge.net, linux-metag@vger.kernel.orgli
 List-Id: linux-tegra@vger.kernel.org
 
-UmVjb2duaXplIEdNMjBCIGFuZCBhc3NpZ24gdGhlIHJpZ2h0IGVuZ2luZXMgYW5kIHN1YmRldnMu
-CgpTaWduZWQtb2ZmLWJ5OiBBbGV4YW5kcmUgQ291cmJvdCA8YWNvdXJib3RAbnZpZGlhLmNvbT4K
-LS0tCiBkcm0vbm91dmVhdS9udmttL2VuZ2luZS9kZXZpY2UvZ20xMDAuYyB8IDIwICsrKysrKysr
-KysrKysrKysrKysrCiAxIGZpbGUgY2hhbmdlZCwgMjAgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdp
-dCBhL2RybS9ub3V2ZWF1L252a20vZW5naW5lL2RldmljZS9nbTEwMC5jIGIvZHJtL25vdXZlYXUv
-bnZrbS9lbmdpbmUvZGV2aWNlL2dtMTAwLmMKaW5kZXggNzBhYmYxZS4uYTUxYjNjZSAxMDA2NDQK
-LS0tIGEvZHJtL25vdXZlYXUvbnZrbS9lbmdpbmUvZGV2aWNlL2dtMTAwLmMKKysrIGIvZHJtL25v
-dXZlYXUvbnZrbS9lbmdpbmUvZGV2aWNlL2dtMTAwLmMKQEAgLTE4MSw2ICsxODEsMjYgQEAgZ20x
-MDBfaWRlbnRpZnkoc3RydWN0IG52a21fZGV2aWNlICpkZXZpY2UpCiAJCWRldmljZS0+b2NsYXNz
-W05WREVWX0VOR0lORV9NU1BQUCAgXSA9ICZnZjEwMF9tc3BwcF9vY2xhc3M7CiAjZW5kaWYKIAkJ
-YnJlYWs7CisJY2FzZSAweDEyYjoKKwkJZGV2aWNlLT5jbmFtZSA9ICJHTTIwQiI7CisKKwkJZGV2
-aWNlLT5vY2xhc3NbTlZERVZfU1VCREVWX01DICAgICBdID0gIGdrMjBhX21jX29jbGFzczsKKwkJ
-ZGV2aWNlLT5vY2xhc3NbTlZERVZfU1VCREVWX01NVSAgICBdID0gJmdmMTAwX21tdV9vY2xhc3M7
-CisJCWRldmljZS0+b2NsYXNzW05WREVWX1NVQkRFVl9CVVMgICAgXSA9ICBnZjEwMF9idXNfb2Ns
-YXNzOworCQlkZXZpY2UtPm9jbGFzc1tOVkRFVl9TVUJERVZfRlVTRSAgIF0gPSAmZ20xMDdfZnVz
-ZV9vY2xhc3M7CisJCWRldmljZS0+b2NsYXNzW05WREVWX1NVQkRFVl9USU1FUiAgXSA9ICZnazIw
-YV90aW1lcl9vY2xhc3M7CisJCWRldmljZS0+b2NsYXNzW05WREVWX1NVQkRFVl9GQiAgICAgXSA9
-ICBnazIwYV9mYl9vY2xhc3M7CisJCWRldmljZS0+b2NsYXNzW05WREVWX1NVQkRFVl9MVEMgICAg
-XSA9ICBnbTEwN19sdGNfb2NsYXNzOworCQlkZXZpY2UtPm9jbGFzc1tOVkRFVl9TVUJERVZfSUJV
-UyAgIF0gPSAmZ2syMGFfaWJ1c19vY2xhc3M7CisJCWRldmljZS0+b2NsYXNzW05WREVWX1NVQkRF
-Vl9JTlNUTUVNXSA9IGdrMjBhX2luc3RtZW1fb2NsYXNzOworCQlkZXZpY2UtPm9jbGFzc1tOVkRF
-Vl9TVUJERVZfTU1VICAgIF0gPSAmZ2YxMDBfbW11X29jbGFzczsKKwkJZGV2aWNlLT5vY2xhc3Nb
-TlZERVZfU1VCREVWX0JBUiAgICBdID0gJmdrMjBhX2Jhcl9vY2xhc3M7CisJCWRldmljZS0+b2Ns
-YXNzW05WREVWX0VOR0lORV9ETUFPQkogXSA9ICBnZjExMF9kbWFlbmdfb2NsYXNzOworCQlkZXZp
-Y2UtPm9jbGFzc1tOVkRFVl9FTkdJTkVfRklGTyAgIF0gPSAgZ20yMGJfZmlmb19vY2xhc3M7CisJ
-CWRldmljZS0+b2NsYXNzW05WREVWX0VOR0lORV9TVyAgICAgXSA9ICBnZjEwMF9zd19vY2xhc3M7
-CisJCWRldmljZS0+b2NsYXNzW05WREVWX0VOR0lORV9HUiAgICAgXSA9ICBnbTIwYl9ncl9vY2xh
-c3M7CisJCWRldmljZS0+b2NsYXNzW05WREVWX0VOR0lORV9DRTIgICAgXSA9ICZnbTIwNF9jZTJf
-b2NsYXNzOworCQlicmVhazsKIAlkZWZhdWx0OgogCQludl9mYXRhbChkZXZpY2UsICJ1bmtub3du
-IE1heHdlbGwgY2hpcHNldFxuIik7CiAJCXJldHVybiAtRUlOVkFMOwotLSAKMi40LjMKCl9fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCk5vdXZlYXUgbWFpbGlu
-ZyBsaXN0Ck5vdXZlYXVAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVz
-a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1Cg==
+On Wed, Jun 17, 2015 at 06:04:54PM -0700, Stephen Boyd wrote:
+[ ... ]
+> 
+> What happened to this series? I want to add shutdown support to my
+> platform and I need to write a register on the PMIC in one driver to
+> configure it for shutdown instead of restart and then write an MMIO
+> register to tell the PMIC to actually do the shutdown in another driver.
+> It seems that the notifier solves this case for me, albeit with the
+> slight complication that I need to order the two with some priority.
+> 
+Can you use the .shutdown driver callback instead ?
+
+I see other drivers use that, and check for system_state == SYSTEM_POWER_OFF
+to power off the hardware.
+
+Guenter
