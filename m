@@ -1,33 +1,111 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: Re: [PATCH 01/44] kernel: Add support for poweroff handler call chain
-Date: Thu, 18 Jun 2015 08:30:03 -0700
-Message-ID: <20150618153003.GA19224@roeck-us.net>
-References: <1412659726-29957-1-git-send-email-linux@roeck-us.net>
- <1412659726-29957-2-git-send-email-linux@roeck-us.net>
- <55821936.4040704@codeaurora.org>
+From: Ilia Mirkin <imirkin@alum.mit.edu>
+Subject: Re: [Nouveau] [PATCH 1/6] gr: support for NVIDIA-provided firmwares
+Date: Thu, 18 Jun 2015 11:57:42 -0400
+Message-ID: <CAKb7UvhtGhpFBeFerJd8KJyKJdgKTGNvnqTCWCdmQ0OoMwpcew@mail.gmail.com>
+References: <1434638872-29061-1-git-send-email-acourbot@nvidia.com>
+ <1434638872-29061-2-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-ia64-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <55821936.4040704@codeaurora.org>
-Sender: linux-ia64-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: linux-kernel@vger.kernel.org, linux-m32r-ja@ml.linux-m32r.org, linux-mips@linux-mips.org, linux-efi@vger.kernel.org, linux-ia64@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Len Brown <len.brown@intel.com>, linux-xtensa@linux-xtensa.org, Pavel Machek <pavel@ucw.cz>, devel@driverdev.osuosl.org, linux-s390@vger.kernel.org, lguest@lists.ozlabs.org, linux-c6x-dev@linux-c6x.org, linux-hexagon@vger.kernel.org, linux-sh@vger.kernel.org, Alexander Graf <agraf@suse.de>, linux-acpi@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, xen-devel@lists.xenproject.org, devicetree@vger.kernel.org, user-mode-linux-devel@lists.sourceforge.net, linux-pm@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net, linux-m68k@lists.linux-m68k.org, linux-am33-list@redhat.com, linux-tegra@vger.kernel.org, openipmi-developer@lists.sourceforge.net, linux-metag@vger.kernel.orgli
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1434638872-29061-2-git-send-email-acourbot@nvidia.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: Terje Bergstrom <tbergstrom@nvidia.com>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Allen Martin <AMartin@nvidia.com>, Ben Skeggs <bskeggs@redhat.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Ken Adams <KAdams@nvidia.com>, Andy Ritger <aritger@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jun 17, 2015 at 06:04:54PM -0700, Stephen Boyd wrote:
-[ ... ]
-> 
-> What happened to this series? I want to add shutdown support to my
-> platform and I need to write a register on the PMIC in one driver to
-> configure it for shutdown instead of restart and then write an MMIO
-> register to tell the PMIC to actually do the shutdown in another driver.
-> It seems that the notifier solves this case for me, albeit with the
-> slight complication that I need to order the two with some priority.
-> 
-Can you use the .shutdown driver callback instead ?
-
-I see other drivers use that, and check for system_state == SYSTEM_POWER_OFF
-to power off the hardware.
-
-Guenter
+V2h5IGRpZCB5b3UgY2hhbmdlIHJlcXVlc3RfZmlybXdhcmUgdG8gcmVxdWVzdF9maXJtd2FyZV9k
+aXJlY3Q/CgpPbiBUaHUsIEp1biAxOCwgMjAxNSBhdCAxMDo0NyBBTSwgQWxleGFuZHJlIENvdXJi
+b3QgPGdudXJvdUBnbWFpbC5jb20+IHdyb3RlOgo+IE5WSURJQSB3aWxsIG9mZmljaWFsbHkgc3Rh
+cnQgcHJvdmlkaW5nIHNpZ25lZCBmaXJtd2FyZXMgdGhyb3VnaAo+IGxpbnV4LWZpcm13YXJlLiBD
+aGFuZ2UgdGhlIEdSIGZpcm13YXJlIGxvb2t1cCBmdW5jdGlvbiB0byBsb29rIHRoZW0gdXAKPiBp
+biBhZGRpdGlvbiB0byB0aGUgZXh0cmFjdGVkIGZpcm13YXJlcy4KPgo+IFNpZ25lZC1vZmYtYnk6
+IEFsZXhhbmRyZSBDb3VyYm90IDxhY291cmJvdEBudmlkaWEuY29tPgo+IC0tLQo+ICBkcm0vbm91
+dmVhdS9udmttL2VuZ2luZS9nci9nZjEwMC5jIHwgNjYgKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKystLS0tLS0tLS0KPiAgMSBmaWxlIGNoYW5nZWQsIDUxIGluc2VydGlvbnMoKyksIDE1IGRl
+bGV0aW9ucygtKQo+Cj4gZGlmZiAtLWdpdCBhL2RybS9ub3V2ZWF1L252a20vZW5naW5lL2dyL2dm
+MTAwLmMgYi9kcm0vbm91dmVhdS9udmttL2VuZ2luZS9nci9nZjEwMC5jCj4gaW5kZXggY2ExMWRk
+Yi4uMzlkNDgyZiAxMDA2NDQKPiAtLS0gYS9kcm0vbm91dmVhdS9udmttL2VuZ2luZS9nci9nZjEw
+MC5jCj4gKysrIGIvZHJtL25vdXZlYXUvbnZrbS9lbmdpbmUvZ3IvZ2YxMDAuYwo+IEBAIC0xNTQ0
+LDI2ICsxNTQ0LDYyIEBAIGdmMTAwX2dyX2R0b3JfZncoc3RydWN0IGdmMTAwX2dyX2Z1YyAqZnVj
+KQo+ICAgICAgICAgZnVjLT5kYXRhID0gTlVMTDsKPiAgfQo+Cj4gKy8qKgo+ICsgKiBnZjEwMF9n
+cl9jdG9yX2Z3IC0gaGVscGVyIGZvciBsb2FkaW5nIGV4dGVybmFsIEdSIGZpcm13YXJlcwo+ICsg
+Kgo+ICsgKiBBIGZpcm13YXJlIGNhbiBlaXRoZXIgYmUgb2ZmaWNpYWxseSBwcm92aWRlZCBieSBO
+VklESUEgKGluIHdoaWNoIGNhc2UgaXQgd2lsbAo+ICsgKiB1c2UgYSAiTlZJRElBIG5hbWUiLCBv
+ciBiZSBleHRyYWN0ZWQgZnJvbSB0aGUgYmluYXJ5IGJsb2IgKGFuZCB1c2UgYQo+ICsgKiAiTm91
+dmVhdSBuYW1lIi4gVGhlIGZ3bmFtZSBhbmQgbnZmd25hbWUgYXJlIHRvIGJlIGdpdmVuIHRoZSBO
+b3V2ZWF1IGFuZAo+ICsgKiBOVklESUEgbmFtZXMgb2YgYSBnaXZlbiBmaXJtd2FyZSwgcmVzcGVj
+dGl2ZWx5LiBUaGlzIGZ1bmN0aW9uIHdpbGwgdGhlbgo+ICsgKiB0cnkgdG8gbG9hZCB0aGUgTlZJ
+RElBIGZpcm13YXJlLCB0aGVuIHRoZSBleHRyYWN0ZWQgb25lLCBpbiB0aGF0IG9yZGVyLgo+ICsg
+Kgo+ICsgKi8KPiAgaW50Cj4gIGdmMTAwX2dyX2N0b3JfZncoc3RydWN0IGdmMTAwX2dyX3ByaXYg
+KnByaXYsIGNvbnN0IGNoYXIgKmZ3bmFtZSwKPiAtICAgICAgICAgICAgICAgIHN0cnVjdCBnZjEw
+MF9ncl9mdWMgKmZ1YykKPiArICAgICAgICAgICAgICAgIGNvbnN0IGNoYXIgKm52ZnduYW1lLCBz
+dHJ1Y3QgZ2YxMDBfZ3JfZnVjICpmdWMpCj4gIHsKPiAgICAgICAgIHN0cnVjdCBudmttX2Rldmlj
+ZSAqZGV2aWNlID0gbnZfZGV2aWNlKHByaXYpOwo+ICAgICAgICAgY29uc3Qgc3RydWN0IGZpcm13
+YXJlICpmdzsKPiAtICAgICAgIGNoYXIgZlszMl07Cj4gLSAgICAgICBpbnQgcmV0Owo+ICsgICAg
+ICAgY2hhciBmWzY0XTsKPiArICAgICAgIGludCByZXQgPSAtRUlOVkFMOwo+ICsgICAgICAgaW50
+IGk7Cj4KPiAtICAgICAgIHNucHJpbnRmKGYsIHNpemVvZihmKSwgIm5vdXZlYXUvbnYlMDJ4XyVz
+IiwgZGV2aWNlLT5jaGlwc2V0LCBmd25hbWUpOwo+IC0gICAgICAgcmV0ID0gcmVxdWVzdF9maXJt
+d2FyZSgmZncsIGYsIG52X2RldmljZV9iYXNlKGRldmljZSkpOwo+IC0gICAgICAgaWYgKHJldCkg
+ewo+IC0gICAgICAgICAgICAgICBzbnByaW50ZihmLCBzaXplb2YoZiksICJub3V2ZWF1LyVzIiwg
+ZnduYW1lKTsKPiAtICAgICAgICAgICAgICAgcmV0ID0gcmVxdWVzdF9maXJtd2FyZSgmZncsIGYs
+IG52X2RldmljZV9iYXNlKGRldmljZSkpOwo+IC0gICAgICAgICAgICAgICBpZiAocmV0KSB7Cj4g
+LSAgICAgICAgICAgICAgICAgICAgICAgbnZfZXJyb3IocHJpdiwgImZhaWxlZCB0byBsb2FkICVz
+XG4iLCBmd25hbWUpOwo+IC0gICAgICAgICAgICAgICAgICAgICAgIHJldHVybiByZXQ7Cj4gKyAg
+ICAgICAvKgo+ICsgICAgICAgICogTlZJRElBIGZpcm13YXJlIG5hbWUgcHJvdmlkZWQgLSB0cnkg
+dG8gbG9hZCBpdAo+ICsgICAgICAgICogV2UgdHJ5IHRoaXMgZmlyc3Qgc2luY2UgbW9zdCBjaGlw
+cyB0aGF0IHJlcXVpcmUgZXh0ZXJuYWwgZmlybXdhcmUKPiArICAgICAgICAqIGFyZSBzdXBwb3J0
+ZWQgYnkgTlZJRElBCj4gKyAgICAgICAgKi8KPiArICAgICAgIGlmIChudmZ3bmFtZSkgewo+ICsg
+ICAgICAgICAgICAgICBzbnByaW50ZihmLCBzaXplb2YoZiksICJudmlkaWEvJXMvJXMuYmluIiwg
+ZGV2aWNlLT5jbmFtZSwKPiArICAgICAgICAgICAgICAgICAgICAgICAgbnZmd25hbWUpOwo+ICsg
+ICAgICAgICAgICAgICBpID0gc3RybGVuKGYpOwo+ICsgICAgICAgICAgICAgICB3aGlsZSAoaSkg
+ewo+ICsgICAgICAgICAgICAgICAgICAgICAgIC0taTsKPiArICAgICAgICAgICAgICAgICAgICAg
+ICBmW2ldID0gdG9sb3dlcihmW2ldKTsKPiAgICAgICAgICAgICAgICAgfQo+ICsgICAgICAgICAg
+ICAgICByZXQgPSByZXF1ZXN0X2Zpcm13YXJlX2RpcmVjdCgmZncsIGYsIG52X2RldmljZV9iYXNl
+KGRldmljZSkpOwo+ICsgICAgICAgICAgICAgICBpZiAoIXJldCkKPiArICAgICAgICAgICAgICAg
+ICAgICAgICBnb3RvIGZvdW5kOwo+ICsgICAgICAgfQo+ICsKPiArICAgICAgIC8qIE5vdXZlYXUg
+ZmlybXdhcmUgbmFtZSBwcm92aWRlZCAtIHRyeSB0byBsb2FkIGl0ICovCj4gKyAgICAgICBpZiAo
+ZnduYW1lKSB7Cj4gKyAgICAgICAgICAgICAgIHNucHJpbnRmKGYsIHNpemVvZihmKSwgIm5vdXZl
+YXUvbnYlMDJ4XyVzIiwgZGV2aWNlLT5jaGlwc2V0LAo+ICsgICAgICAgICAgICAgICAgICAgICAg
+ICBmd25hbWUpOwo+ICsgICAgICAgICAgICAgICByZXQgPSByZXF1ZXN0X2Zpcm13YXJlX2RpcmVj
+dCgmZncsIGYsIG52X2RldmljZV9iYXNlKGRldmljZSkpOwo+ICsgICAgICAgICAgICAgICBpZiAo
+IXJldCkKPiArICAgICAgICAgICAgICAgICAgICAgICBnb3RvIGZvdW5kOwo+ICsKPiArICAgICAg
+ICAgICAgICAgc25wcmludGYoZiwgc2l6ZW9mKGYpLCAibm91dmVhdS8lcyIsIGZ3bmFtZSk7Cj4g
+KyAgICAgICAgICAgICAgIHJldCA9IHJlcXVlc3RfZmlybXdhcmVfZGlyZWN0KCZmdywgZiwgbnZf
+ZGV2aWNlX2Jhc2UoZGV2aWNlKSk7Cj4gKyAgICAgICAgICAgICAgIGlmICghcmV0KQo+ICsgICAg
+ICAgICAgICAgICAgICAgICAgIGdvdG8gZm91bmQ7Cj4gICAgICAgICB9Cj4KPiArICAgICAgIG52
+X2Vycm9yKHByaXYsICJmYWlsZWQgdG8gbG9hZCAlcyAvICVzXG4iLCBmd25hbWUsIG52ZnduYW1l
+KTsKPiArICAgICAgIHJldHVybiByZXQ7Cj4gKwo+ICtmb3VuZDoKPiAgICAgICAgIGZ1Yy0+c2l6
+ZSA9IGZ3LT5zaXplOwo+ICAgICAgICAgZnVjLT5kYXRhID0ga21lbWR1cChmdy0+ZGF0YSwgZnVj
+LT5zaXplLCBHRlBfS0VSTkVMKTsKPiAgICAgICAgIHJlbGVhc2VfZmlybXdhcmUoZncpOwo+IEBA
+IC0xNjE1LDEwICsxNjUxLDEwIEBAIGdmMTAwX2dyX2N0b3Ioc3RydWN0IG52a21fb2JqZWN0ICpw
+YXJlbnQsIHN0cnVjdCBudmttX29iamVjdCAqZW5naW5lLAo+Cj4gICAgICAgICBpZiAodXNlX2V4
+dF9mdykgewo+ICAgICAgICAgICAgICAgICBudl9pbmZvKHByaXYsICJ1c2luZyBleHRlcm5hbCBm
+aXJtd2FyZVxuIik7Cj4gLSAgICAgICAgICAgICAgIGlmIChnZjEwMF9ncl9jdG9yX2Z3KHByaXYs
+ICJmdWM0MDljIiwgJnByaXYtPmZ1YzQwOWMpIHx8Cj4gLSAgICAgICAgICAgICAgICAgICBnZjEw
+MF9ncl9jdG9yX2Z3KHByaXYsICJmdWM0MDlkIiwgJnByaXYtPmZ1YzQwOWQpIHx8Cj4gLSAgICAg
+ICAgICAgICAgICAgICBnZjEwMF9ncl9jdG9yX2Z3KHByaXYsICJmdWM0MWFjIiwgJnByaXYtPmZ1
+YzQxYWMpIHx8Cj4gLSAgICAgICAgICAgICAgICAgICBnZjEwMF9ncl9jdG9yX2Z3KHByaXYsICJm
+dWM0MWFkIiwgJnByaXYtPmZ1YzQxYWQpKQo+ICsgICAgICAgICAgICAgICBpZiAoZ2YxMDBfZ3Jf
+Y3Rvcl9mdyhwcml2LCAiZnVjNDA5YyIsICJmZWNzX2luc3QiLCAmcHJpdi0+ZnVjNDA5YykgfHwK
+PiArICAgICAgICAgICAgICAgICAgIGdmMTAwX2dyX2N0b3JfZncocHJpdiwgImZ1YzQwOWQiLCAi
+ZmVjc19kYXRhIiwgJnByaXYtPmZ1YzQwOWQpIHx8Cj4gKyAgICAgICAgICAgICAgICAgICBnZjEw
+MF9ncl9jdG9yX2Z3KHByaXYsICJmdWM0MWFjIiwgImdwY2NzX2luc3QiLCAmcHJpdi0+ZnVjNDFh
+YykgfHwKPiArICAgICAgICAgICAgICAgICAgIGdmMTAwX2dyX2N0b3JfZncocHJpdiwgImZ1YzQx
+YWQiLCAiZ3BjY3NfZGF0YSIsICZwcml2LT5mdWM0MWFkKSkKPiAgICAgICAgICAgICAgICAgICAg
+ICAgICByZXR1cm4gLUVOT0RFVjsKPiAgICAgICAgICAgICAgICAgcHJpdi0+ZmlybXdhcmUgPSB0
+cnVlOwo+ICAgICAgICAgfQo+IC0tCj4gMi40LjMKPgo+IF9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCj4gTm91dmVhdSBtYWlsaW5nIGxpc3QKPiBOb3V2ZWF1
+QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwo+IGh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9ub3V2ZWF1Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVk
+ZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
+ZHJpLWRldmVsCg==
