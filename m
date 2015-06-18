@@ -1,7 +1,7 @@
 From: Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v6 22/25] clk: tegra: pll: Fix issues with rates for VCO PLLs
-Date: Thu, 18 Jun 2015 17:28:37 -0400
-Message-ID: <1434662920-21469-23-git-send-email-rklein@nvidia.com>
+Subject: [PATCH v6 17/25] clk: tegra: pll: Add dyn_ramp callback
+Date: Thu, 18 Jun 2015 17:28:32 -0400
+Message-ID: <1434662920-21469-18-git-send-email-rklein@nvidia.com>
 References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -9,70 +9,64 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>, Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>, Rhyland Klein <rklein@nvidia.com>
+Cc: Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>, Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Andrew Bresticker <abrestic@chromium.org>
+Add a callback to the pll_params for custom dynamic ramping
+functions which can be specified per PLL.
 
-Without this change clk_get_rate would return the final output
-rather than the VCO output as it would factor in the pdiv when
-it shouldn't. This will cause problems for all dividers in the
-subtree of the VCO PLL.
-
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
 Reviewed-by: Benson Leung <bleung@chromium.org>
+Signed-off-by: Bill Huang <bilhuang@nvidia.com>
 Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
-v5:
-  - Switched to using flag for VCO_OUT
+v6:
+  - Added kerneldoc
+  - Moved adding dyn_ramp callback from set_defaults patch to this patch
+  - Reordered patch
 
-v3:
-  - Added fix for this bug which was found during testing
-
- drivers/clk/tegra/clk-pll.c |   16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
+ drivers/clk/tegra/clk-pll.c |    7 +++++++
+ drivers/clk/tegra/clk.h     |    4 ++++
+ 2 files changed, 11 insertions(+)
 
 diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 7c166894babf..61bd15f9478d 100644
+index f878bc879df2..c6cb22cebac1 100644
 --- a/drivers/clk/tegra/clk-pll.c
 +++ b/drivers/clk/tegra/clk-pll.c
-@@ -743,6 +743,8 @@ static int clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 		spin_lock_irqsave(pll->lock, flags);
+@@ -660,6 +660,13 @@ static int _program_pll(struct clk_hw *hw, struct tegra_clk_pll_freq_table *cfg,
  
  	_get_pll_mnp(pll, &old_cfg);
-+	if (pll->params->flags & TEGRA_PLL_VCO_OUT)
-+		cfg.p = old_cfg.p;
  
- 	if (old_cfg.m != cfg.m || old_cfg.n != cfg.n || old_cfg.p != cfg.p ||
- 		old_cfg.sdm_data != cfg.sdm_data)
-@@ -803,11 +805,15 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
++	if (state && pll->params->defaults_set && pll->params->dyn_ramp &&
++			(cfg->m == old_cfg.m) && (cfg->p == old_cfg.p)) {
++		ret = pll->params->dyn_ramp(pll, cfg);
++		if (!ret)
++			return 0;
++	}
++
+ 	if (state)
+ 		_clk_pll_disable(hw);
  
- 	_get_pll_mnp(pll, &cfg);
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index ae42e3e6a116..d29d095659a2 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -213,6 +213,8 @@ struct tegra_clk_pll;
+  *				is already enabled, it will be done the first
+  *				time the rate is changed while the PLL is
+  *				disabled.
++ * @dyn_ramp:			Callback which can be used to define a custom
++ *				dynamic ramp function for a given PLL.
+  *
+  * Flags:
+  * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
+@@ -284,6 +286,8 @@ struct tegra_clk_pll_params {
+ 	unsigned long	(*adjust_vco)(struct tegra_clk_pll_params *pll_params,
+ 				unsigned long parent_rate);
+ 	void	(*set_defaults)(struct tegra_clk_pll *pll);
++	int	(*dyn_ramp)(struct tegra_clk_pll *pll,
++			struct tegra_clk_pll_freq_table *cfg);
+ };
  
--	pdiv = _hw_to_p_div(hw, cfg.p);
--	if (pdiv < 0) {
--		WARN(1, "Clock %s has invalid pdiv value : 0x%x\n",
--			__clk_get_name(hw->clk), cfg.p);
-+	if (pll->params->flags & TEGRA_PLL_VCO_OUT) {
- 		pdiv = 1;
-+	} else {
-+		pdiv = _hw_to_p_div(hw, cfg.p);
-+		if (pdiv < 0) {
-+			WARN(1, "Clock %s has invalid pdiv value : 0x%x\n",
-+				__clk_get_name(hw->clk), cfg.p);
-+			pdiv = 1;
-+		}
- 	}
- 
- 	if (pll->params->set_gain)
-@@ -1094,6 +1100,8 @@ static int clk_pllxc_set_rate(struct clk_hw *hw, unsigned long rate,
- 		spin_lock_irqsave(pll->lock, flags);
- 
- 	_get_pll_mnp(pll, &old_cfg);
-+	if (pll->params->flags & TEGRA_PLL_VCO_OUT)
-+		cfg.p = old_cfg.p;
- 
- 	if (old_cfg.m != cfg.m || old_cfg.n != cfg.n || old_cfg.p != cfg.p)
- 		ret = _program_pll(hw, &cfg, rate);
+ #define TEGRA_PLL_USE_LOCK BIT(0)
 -- 
 1.7.9.5
