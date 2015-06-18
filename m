@@ -1,71 +1,38 @@
-From: Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v6 01/25] clk: tegra: Update struct tegra_clk_pll_params kerneldoc
-Date: Thu, 18 Jun 2015 17:28:16 -0400
-Message-ID: <1434662920-21469-2-git-send-email-rklein@nvidia.com>
-References: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH 01/44] kernel: Add support for poweroff handler call chain
+Date: Thu, 18 Jun 2015 14:40:18 -0700
+Message-ID: <55833AC2.5080700@codeaurora.org>
+References: <1412659726-29957-1-git-send-email-linux@roeck-us.net> <1412659726-29957-2-git-send-email-linux@roeck-us.net> <55821936.4040704@codeaurora.org> <20150618153003.GA19224@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1434662920-21469-1-git-send-email-rklein@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>, Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Thierry Reding <treding@nvidia.com>, Rhyland Klein <rklein@nvidia.com>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-m68k-owner@vger.kernel.org>
+In-Reply-To: <20150618153003.GA19224@roeck-us.net>
+Sender: linux-m68k-owner@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: linux-kernel@vger.kernel.org, linux-m32r-ja@ml.linux-m32r.org, linux-mips@linux-mips.org, linux-efi@vger.kernel.org, linux-ia64@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Len Brown <len.brown@intel.com>, linux-xtensa@linux-xtensa.org, Pavel Machek <pavel@ucw.cz>, devel@driverdev.osuosl.org, linux-s390@vger.kernel.org, lguest@lists.ozlabs.org, linux-c6x-dev@linux-c6x.org, linux-hexagon@vger.kernel.org, linux-sh@vger.kernel.org, Alexander Graf <agraf@suse.de>, linux-acpi@vger.kernel.org, Geert Uytterhoeven <geert@linux-m68k.org>, xen-devel@lists.xenproject.org, devicetree@vger.kernel.org, user-mode-linux-devel@lists.sourceforge.net, linux-pm@vger.kernel.org, adi-buildroot-devel@lists.sourceforge.net, linux-m68k@lists.linux-m68k.org, linux-am33-list@redhat.com, linux-tegra@vger.kernel.org, openipmi-developer@lists.sourceforge.net, linux-metag@vger.kernel.orgli
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On 06/18/2015 08:30 AM, Guenter Roeck wrote:
+> On Wed, Jun 17, 2015 at 06:04:54PM -0700, Stephen Boyd wrote:
+> [ ... ]
+>> What happened to this series? I want to add shutdown support to my
+>> platform and I need to write a register on the PMIC in one driver to
+>> configure it for shutdown instead of restart and then write an MMIO
+>> register to tell the PMIC to actually do the shutdown in another driver.
+>> It seems that the notifier solves this case for me, albeit with the
+>> slight complication that I need to order the two with some priority.
+>>
+> Can you use the .shutdown driver callback instead ?
+>
+> I see other drivers use that, and check for system_state == SYSTEM_POWER_OFF
+> to power off the hardware.
+>
 
-Benson Leung pointed out that the kerneldoc for this structure has
-become stale. Update the field descriptions to match the structure
-content.
+Yes I think that will work. I'll still have to hook pm_power_off() for
+the mmio register, but I guess that's ok and I don't need to worry about
+this series then.
 
-Reported-by: Benson Leung <bleung@chromium.org>
-Acked-by: Rhyland Klein <rklein@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
-Reviewed-by: Benson Leung <bleung@chromium.org>
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/tegra/clk.h |   18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 29799e7f567a..bdc661cb81f0 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -157,7 +157,7 @@ struct div_nmp {
- };
- 
- /**
-- * struct clk_pll_params - PLL parameters
-+ * struct tegra_clk_pll_params - PLL parameters
-  *
-  * @input_min:			Minimum input frequency
-  * @input_max:			Maximum input frequency
-@@ -168,12 +168,24 @@ struct div_nmp {
-  * @base_reg:			PLL base reg offset
-  * @misc_reg:			PLL misc reg offset
-  * @lock_reg:			PLL lock reg offset
-- * @lock_bit_idx:		Bit index for PLL lock status
-+ * @lock_mask:			Bitmask for PLL lock status
-  * @lock_enable_bit_idx:	Bit index to enable PLL lock
-+ * @iddq_reg:			PLL IDDQ register offset
-+ * @iddq_bit_idx:		Bit index to enable PLL IDDQ
-+ * @aux_reg:			AUX register offset
-+ * @dyn_ramp_reg:		Dynamic ramp control register offset
-+ * @ext_misc_reg:		Miscellaneous control register offsets
-+ * @pmc_divnm_reg:		n, m divider PMC override register offset (PLLM)
-+ * @pmc_divp_reg:		p divider PMC override register offset (PLLM)
-+ * @flags:			PLL flags
-+ * @stepa_shift:		Dynamic ramp step A field shift
-+ * @stepb_shift:		Dynamic ramp step B field shift
-  * @lock_delay:			Delay in us if PLL lock is not used
-+ * @max_p:			maximum value for the p divider
-+ * @pdiv_tohw:			mapping of p divider to register values
-+ * @div_nmp:			offsets and widths on n, m and p fields
-  * @freq_table:			array of frequencies supported by PLL
-  * @fixed_rate:			PLL rate if it is fixed
-- * @flags:			PLL flags
-  *
-  * Flags:
-  * TEGRA_PLL_USE_LOCK - This flag indicated to use lock bits for
 -- 
-1.7.9.5
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
