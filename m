@@ -1,53 +1,34 @@
-From: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/6] gr: support for NVIDIA-provided firmwares
-Date: Fri, 19 Jun 2015 15:28:57 +1000
-Message-ID: <CACAvsv5uA0PWRddpdaBaFhkZeny7EtgEUrDgBiDA2UrRU=GLTQ@mail.gmail.com>
-References: <1434638872-29061-1-git-send-email-acourbot@nvidia.com>
- <1434638872-29061-2-git-send-email-acourbot@nvidia.com>
- <CACAvsv4cuwtcobmfFo-5N04vSY47kT5G7NoRnYd6PzHnVhkTrA@mail.gmail.com>
- <CAAVeFu+Kw6jU+HyAx5V6JEzDfYrpVvmOeM41k2U=extPTYi2oQ@mail.gmail.com>
+From: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH] GPU: ipu: fix lockup caused by pending chained
+ interrupts
+Date: Fri, 19 Jun 2015 16:36:06 +0200
+Message-ID: <1434724566.3039.50.camel@pengutronix.de>
+References: <E1Z4yzs-0002Rw-4B@rmk-PC.arm.linux.org.uk>
+	 <E1Z4zMT-0004Y7-KJ@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <CAAVeFu+Kw6jU+HyAx5V6JEzDfYrpVvmOeM41k2U=extPTYi2oQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Aaron Plattner <aplattner-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <E1Z4zMT-0004Y7-KJ-eh5Bv4kxaXIANfyc6IWni62ZND6+EDdj@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Fabio Estevam <festevam-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hans Ulli Kroll <ulli.kroll-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Shawn Guo <shawn.guo-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMTkgSnVuZSAyMDE1IGF0IDE1OjIyLCBBbGV4YW5kcmUgQ291cmJvdCA8Z251cm91QGdtYWls
-LmNvbT4gd3JvdGU6Cj4gT24gRnJpLCBKdW4gMTksIDIwMTUgYXQgMTo0MCBQTSwgQmVuIFNrZWdn
-cyA8c2tlZ2dzYkBnbWFpbC5jb20+IHdyb3RlOgo+PiBPbiAxOSBKdW5lIDIwMTUgYXQgMDA6NDcs
-IEFsZXhhbmRyZSBDb3VyYm90IDxnbnVyb3VAZ21haWwuY29tPiB3cm90ZToKPj4+IE5WSURJQSB3
-aWxsIG9mZmljaWFsbHkgc3RhcnQgcHJvdmlkaW5nIHNpZ25lZCBmaXJtd2FyZXMgdGhyb3VnaAo+
-Pj4gbGludXgtZmlybXdhcmUuIENoYW5nZSB0aGUgR1IgZmlybXdhcmUgbG9va3VwIGZ1bmN0aW9u
-IHRvIGxvb2sgdGhlbSB1cAo+Pj4gaW4gYWRkaXRpb24gdG8gdGhlIGV4dHJhY3RlZCBmaXJtd2Fy
-ZXMuCj4+IEkgd29uZGVyIGlmIHBlcmhhcHMgd2Ugc2hvdWxkIGp1c3QgcmVwbGFjZSB0aGUgbWVj
-aGFuaXNtIGVudGlyZWx5LCBhbmQKPj4gcmVtb3ZlIHRoZSBzdXBwb3J0IGZvciBub3V2ZWF1L2Z1
-YyogYXMgd2UgYWRkICJvZmZpY2lhbCIgc3VwcG9ydCBmb3IKPj4gTlZJRElBJ3MgdWNvZGUuICBU
-aGUgZXhpc3RpbmcgY29kZSBpcyBhY3R1YWxseSBwYXJ0aWFsbHkgYnJva2VuCj4+IGFueXdheSwg
-YW5kIG1vc3RseSB3b3JrcyBieSBsdWNrIGFuZCB3YXMgaW50ZW5kZWQgYXMgYSBkZXZlbG9wbWVu
-dCBhaWQKPj4gLyB3b3JrYXJvdW5kIGFueXdheS4gIFRoZXJlIGFyZSBubyBjaGlwc2V0cyAoYXNp
-ZGUgZnJvbSBHTTJ4eC4uLikKPj4gd2hpY2ggd2UgZG9uJ3QgY3VycmVudGx5IHN1cHBvcnQgdXNp
-bmcgb3VyIG93biB1Y29kZSwgc28gdGhlIGltcGFjdCBvZgo+PiByZW1vdmluZyBpdCB3aWxsIGJl
-IHZlcnkgbWluaW1hbC4KPj4KPj4gVGhvdWdodHM/Cj4KPiBJJ20gYWxsIGZvciBtYWtpbmcgdGhp
-bmdzIHNpbXBsZXIsIGFuZCBpZiBzb21lb25lIG5lZWRzIHRvIHVzZSBhbgo+IGV4dGVybmFsIGZp
-cm13YXJlIGZvciBhIE5vdXZlYXUtc3VwcG9ydGVkIEdQVSB0aGV5IGNhbiBhbHdheXMgcHV0IGl0
-Cj4gdW5kZXIgdGhlIG52aWRpYS8gZmlybXdhcmUgZGlyZWN0b3J5LiBTbyBpZiB5b3UgYWdyZWUg
-d2l0aCBpdCBJIHdpbGwKPiByZW1vdmUgc3VwcG9ydCBmb3IgZmlybXdhcmVzIGluIG5vdXZlYXUv
-IGluIEdSLiBJIGFtIG5vdCBzdXJlIHdoZXRoZXIKPiB5b3VyIHN0YXRlbWVudCBhbHNvIGFwcGxp
-ZXMgdG8gb3RoZXIgZmlybXdhcmVzIChmYWxjb24sIHh0ZW5zYSk/CkknZCBzYXkgbGVhdmUgdGhl
-IG5vbi1nciBlbmdpbmVzIGZvciBub3csIGF0IGxlYXN0IHVudGlsIHdlIGtub3cgd2hhdApOVklE
-SUEgcGxhbnMgb24gZG9pbmcgd2l0aCBkR1BVIGZpcm13YXJlcy4KX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBtYWlsaW5nIGxpc3QKTm91dmVh
-dUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
-bWFuL2xpc3RpbmZvL25vdXZlYXUK
+Am Dienstag, den 16.06.2015, 23:29 +0100 schrieb Russell King:
+> Even with the oops fixed by a previous patch, the system still fails to
+> kexec, due to a stuck chained interrupt locking the system.  We must
+> disable the child interrupts prior to setting up the irq chip to ensure
+> we don't get stuck here.
+> 
+> Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+
+Applied, thank you.
+
+> Maybe this is all that's really needed... would also be nice if this
+> path had an etry in MAINTAINERS...
+
+I'll send a patch to add it to the imx-drm driver section.
+
+regards
+Philipp
