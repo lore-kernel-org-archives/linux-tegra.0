@@ -1,67 +1,97 @@
-From: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>
-Subject: Re: [GIT PULL 4/8] clk: tegra: Changes for v4.2-rc1
-Date: Mon, 22 Jun 2015 10:03:33 +0300
-Message-ID: <5587B345.1040202@kapsi.fi>
-References: <1431524980-13599-1-git-send-email-thierry.reding@gmail.com>
- <1431524980-13599-5-git-send-email-thierry.reding@gmail.com>
- <20150520195459.GU31753@codeaurora.org> <555D7A5B.1070901@nvidia.com>
- <20150527195021.GA24204@codeaurora.org> <5566BDA5.5080104@nvidia.com>
- <20150618234126.9112.80705@quantum> <20150620204104.9112.83328@quantum>
- <5587B243.2070300@kapsi.fi>
+From: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 2/9] ARM: sa1100: convert SA11x0 related code to use new
+ chained handler helper
+Date: Mon, 22 Jun 2015 11:59:23 +0100
+Message-ID: <20150622105923.GE19061@x1>
+References: <E1Z4yzx-0002S6-7p@rmk-PC.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5587B243.2070300-/1wQRMveznE@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <E1Z4yzx-0002S6-7p-eh5Bv4kxaXIANfyc6IWni62ZND6+EDdj@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+To: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hans Ulli Kroll <ulli.kroll-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Fixing Mike's mail address
+On Tue, 16 Jun 2015, Russell King wrote:
 
-On 06/22/15 09:59, Mikko Perttunen wrote:
-> On 06/20/15 23:41, Michael Turquette wrote:
->> Quoting Michael Turquette (2015-06-18 16:41:26)
->> ...
->> I've decided to pull this in the interest of fairness. I'm taking the
->> Exynos cpu clock patches, which will need to be updated in the future to
->> use some new infrastructure for coordinating rate changes across
->> multiple clock nodes. I'm merging the EMC stuff with the same
->> expectation that it will need to migrate to the new infrastructure when
->> it becomes available and we'll get rid of clk_hw_reparent.
->>
->> Sound good?
->
-> Sounds good! Please keep us informed and once the framework changes land
-> we'll fix up this one.
->
->>
->> Regards,
->> Mike
->>
->
-> Thanks,
-> Mikko.
->
->>>
->>> I'm working on some core infrastructure to fix this. I'd like to get
->>> that on the list asap and possibly merged for 4.3. I think it can
->>> benefit your case and remove the need to export clk_hw_reparent, which
->>> is pretty nasty.
->>>
->>> What exactly will break if this is not pulled? I appreciate your offer
->>> to update this driver when the core changes are merged, but I would
->>> prefer to do it the right way first, instead of fixing up something that
->>> is already merged after the fact.
->>>
->>> Regards,
->>> Mike
->>>
->>>>
->>>> Thanks,
->>>> Mikko.
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
->>
->
+> Convert SA11x0 (Neponset, SA1111, and UCB1x00 code) to use the new
+> irq_set_chained_handler_and_data() helper.
+>=20
+> Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+> ---
+> Depends on patch 1.
+>=20
+>  arch/arm/common/sa1111.c        | 7 +++----
+>  arch/arm/mach-sa1100/neponset.c | 3 +--
+>  drivers/mfd/ucb1x00-core.c      | 3 +--
+
+Acked-by: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+
+>  3 files changed, 5 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/arch/arm/common/sa1111.c b/arch/arm/common/sa1111.c
+> index 5cc779c8e9c6..93ee70dbbdd3 100644
+> --- a/arch/arm/common/sa1111.c
+> +++ b/arch/arm/common/sa1111.c
+> @@ -501,8 +501,8 @@ static int sa1111_setup_irq(struct sa1111 *sachip=
+, unsigned irq_base)
+>  	 * Register SA1111 interrupt
+>  	 */
+>  	irq_set_irq_type(sachip->irq, IRQ_TYPE_EDGE_RISING);
+> -	irq_set_handler_data(sachip->irq, sachip);
+> -	irq_set_chained_handler(sachip->irq, sa1111_irq_handler);
+> +	irq_set_chained_handler_and_data(sachip->irq, sa1111_irq_handler,
+> +					 sachip);
+> =20
+>  	dev_info(sachip->dev, "Providing IRQ%u-%u\n",
+>  		sachip->irq_base, sachip->irq_base + SA1111_IRQ_NR - 1);
+> @@ -836,8 +836,7 @@ static void __sa1111_remove(struct sa1111 *sachip=
+)
+>  	clk_unprepare(sachip->clk);
+> =20
+>  	if (sachip->irq !=3D NO_IRQ) {
+> -		irq_set_chained_handler(sachip->irq, NULL);
+> -		irq_set_handler_data(sachip->irq, NULL);
+> +		irq_set_chained_handler_and_data(sachip->irq, NULL, NULL);
+>  		irq_free_descs(sachip->irq_base, SA1111_IRQ_NR);
+> =20
+>  		release_mem_region(sachip->phys + SA1111_INTC, 512);
+> diff --git a/arch/arm/mach-sa1100/neponset.c b/arch/arm/mach-sa1100/n=
+eponset.c
+> index af868d258e66..99d9a3b1bf34 100644
+> --- a/arch/arm/mach-sa1100/neponset.c
+> +++ b/arch/arm/mach-sa1100/neponset.c
+> @@ -327,8 +327,7 @@ static int neponset_probe(struct platform_device =
+*dev)
+>  	irq_set_chip(d->irq_base + NEP_IRQ_SA1111, &nochip);
+> =20
+>  	irq_set_irq_type(irq, IRQ_TYPE_EDGE_RISING);
+> -	irq_set_handler_data(irq, d);
+> -	irq_set_chained_handler(irq, neponset_irq_handler);
+> +	irq_set_chained_handler_and_data(irq, neponset_irq_handler, d);
+> =20
+>  	/*
+>  	 * We would set IRQ_GPIO25 to be a wake-up IRQ, but unfortunately
+> diff --git a/drivers/mfd/ucb1x00-core.c b/drivers/mfd/ucb1x00-core.c
+> index 58ea9fdd3a15..3591550598ad 100644
+> --- a/drivers/mfd/ucb1x00-core.c
+> +++ b/drivers/mfd/ucb1x00-core.c
+> @@ -566,8 +566,7 @@ static int ucb1x00_probe(struct mcp *mcp)
+>  	}
+> =20
+>  	irq_set_irq_type(ucb->irq, IRQ_TYPE_EDGE_RISING);
+> -	irq_set_handler_data(ucb->irq, ucb);
+> -	irq_set_chained_handler(ucb->irq, ucb1x00_irq);
+> +	irq_set_chained_handler_and_data(ucb->irq, ucb1x00_irq, ucb);
+> =20
+>  	if (pdata && pdata->gpio_base) {
+>  		ucb->gpio.label =3D dev_name(&ucb->dev);
+
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
