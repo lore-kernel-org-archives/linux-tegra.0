@@ -1,143 +1,65 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH 00/21] On-demand device registration
-Date: Mon, 22 Jun 2015 19:01:32 -0500
-Message-ID: <CAL_JsqKAWs2McpAP-47UwDMtuBoR+0xkJYvu8+-7yOQwiUfvpw@mail.gmail.com>
-References: <1432565608-26036-1-git-send-email-tomeu.vizoso@collabora.com>
- <CAL_Jsq+EWLEJhRudTGAwYsOg4tX2-pGhygeQGHae9RL8rBpMiA@mail.gmail.com> <CAAObsKCdv_X+YPFacO7NjbRMnvuDisAmiQOWE-Xb3xFFrn6Qog@mail.gmail.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 1/6] gr: use NVIDIA-provided external firmwares
+Date: Tue, 23 Jun 2015 15:16:01 +0900
+Message-ID: <1435040166-25651-2-git-send-email-acourbot@nvidia.com>
+References: <1435040166-25651-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <CAAObsKCdv_X+YPFacO7NjbRMnvuDisAmiQOWE-Xb3xFFrn6Qog@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, =?UTF-8?Q?St=C3=A9phane_Marchesin?= <stephane.marchesin@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Alexander Holler <holler@ahsoftware.de>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Dan Williams <dan.j.williams@intel.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, dmaengine@vger.kernel.org, dri-devel <dri-devel@lists.freedesktop.org>, linux-clk@vger.kernel.org, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.or>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <1435040166-25651-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Andy Ritger <aritger-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Aaron Plattner <aplattner-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Allen Martin <AMartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ken Adams <KAdams-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje Bergstrom <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jun 22, 2015 at 10:23 AM, Tomeu Vizoso
-<tomeu.vizoso@collabora.com> wrote:
-> On 28 May 2015 at 06:33, Rob Herring <robherring2@gmail.com> wrote:
->> On Mon, May 25, 2015 at 9:53 AM, Tomeu Vizoso
->> <tomeu.vizoso@collabora.com> wrote:
->>> Hello,
->>>
->>> I have a problem with the panel on my Tegra Chromebook taking longe=
-r than
->>> expected to be ready during boot (St=C3=A9phane Marchesin reported =
-what is
->>> basically the same issue in [0]), and have looked into ordered prob=
-ing as a
->>> better way of solving this than moving nodes around in the DT or pl=
-aying with
->>> initcall levels.
->>>
->>> While reading the thread [1] that Alexander Holler started with his=
- series to
->>> make probing order deterministic, it occurred to me that it should =
-be possible
->>> to achieve the same by registering devices as they are referenced b=
-y other
->>> devices.
->>
->> I like the concept and novel approach.
->>
->>> This basically reuses the information that is already implicit in t=
-he probe()
->>> implementations, saving us from refactoring existing drivers or add=
-ing
->>> information to DTBs.
->>>
->>> Something I'm not completely happy with is that I have had to move =
-the call to
->>> of_platform_populate after all platform drivers have been registere=
-d.
->>> Otherwise I don't see how I could register drivers on demand as we =
-don't have
->>> yet each driver's compatible strings.
->>
->> Yeah, this is the opposite of what we'd really like.
->
-> Can you elaborate on the reasons why we would like to have devices
-> registered before built-in drivers finish registering, even if we
-> don't probe them yet?
-
-My main thought was for modules we will almost always have devices
-appearing first. More generally, we can have devices and drivers
-coming or going at any point in time and should not put restrictions
-on ordering.
-
-Also, I think all the probe ordering and dependency tracking should be
-done within the driver core (i.e. dependencies are a list of struct
-devices). At some level it has to become firmware specific, but we
-want to minimize that part. I could be convinced otherwise and you
-have put more thought into this problem than I have.
-
->> Ideally, we would
->> have a solution that works for modules too. However, we're no worse
->> off. We pretty much build-in dependencies to avoid module ordering
->> problems.
->
-> Nod, I haven't looked yet at requesting modules on-demand, but I gues=
-s
-> it should be doable. Modules that have dependencies described in the
-> firmware should get them probed automatically already though.
->
->> Perhaps we need to make the probing on-demand rather than simply on
->> device<->driver match occurring.
->
-> I'm afraid that too much old code depends on that. For example, Rafae=
-l
-> pointed out to the PNP subsystem, which registers a driver that will
-> probe devices with the EISA ID PNP0c02 to reserve memory regions for
-> devices that will be probed later.
->
-> http://lxr.free-electrons.com/source/drivers/pnp/system.c
->
-> My understanding is that probing of PNP0c02 devices must happen befor=
-e
-> the actual devices that depend on those regions are probed, so if we
-> decoupled the probing from the driver/device registration, we would b=
-e
-> breaking that assumption.
-
-That shouldn't matter as PNP matching is PNP specific. We already have
-different ways of matching with device/driver name or of_match_table
-for example. Changing how and when OF matching occurs would not affect
-PNP matching. We do matching on device and driver add currently. For
-the "when" part, we would need to add what I'll call async matching or
-deferred matching which in addition to matching on the of_match_table
-also matches on the dependency list having probed. Your last series
-essentially does this, but the difference is yours is not OF specific
-and I think it needs to be. I mean it is OF specific only in the
-aspect that matching already is. From a driver and subsystem
-standpoint, it should not be OF specific much like deferred probe is
-not OF specific, but in reality only occurs (currently) on OF probed
-drivers.
-
->>> For machs that don't move of_platform_populate() to a later point, =
-these
->>> patches shouldn't cause any problems but it's not guaranteed that w=
-e'll avoid
->>> all the deferred probes as some drivers may not be registered yet.
->>
->> Ideally, of_platform_populate is not explicitly called by each
->> platform. So I think we need to make this work for the default case.
->
-> The problem is that some platforms will need fixing because some
-> initcalls assume that some devices will have been registered already,
-> or even probed. I think removing those assumptions shouldn't be
-> problematic because I haven't had much trouble with this on the four
-> platforms I have tested with, but I cannot test every board that is
-> supported upstream.
->
-> I can ask though the KernelCI folks to boot my branch in all their
-> boards and make sure that those work when of_platform_populate is
-> called in late_initcall.
-
-I'd imagine Kevin would be happy to. That is still a subset of h/w, so
-we'd need a way to disable any solution.
-
-Rob
---
-To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
-n
+TlZJRElBIHdpbGwgb2ZmaWNpYWxseSBzdGFydCBwcm92aWRpbmcgR1IgZmlybXdhcmVzIHRocm91
+Z2gKbGludXgtZmlybXdhcmUgZm9yIEdQVXMgdGhhdCByZXF1aXJlIGl0LiBDaGFuZ2UgdGhlIEdS
+IGZpcm13YXJlIGxvb2t1cApmdW5jdGlvbiB0byB1c2UgdGhlc2UgZmlsZXMuCgpTaWduZWQtb2Zm
+LWJ5OiBBbGV4YW5kcmUgQ291cmJvdCA8YWNvdXJib3RAbnZpZGlhLmNvbT4KLS0tCiBkcm0vbm91
+dmVhdS9udmttL2VuZ2luZS9nci9nZjEwMC5jIHwgMzEgKysrKysrKysrKysrKysrKysrKy0tLS0t
+LS0tLS0tLQogMSBmaWxlIGNoYW5nZWQsIDE5IGluc2VydGlvbnMoKyksIDEyIGRlbGV0aW9ucygt
+KQoKZGlmZiAtLWdpdCBhL2RybS9ub3V2ZWF1L252a20vZW5naW5lL2dyL2dmMTAwLmMgYi9kcm0v
+bm91dmVhdS9udmttL2VuZ2luZS9nci9nZjEwMC5jCmluZGV4IGNhMTFkZGI2ZWQ0Ni4uNDU0MDgw
+MzM5NTcyIDEwMDY0NAotLS0gYS9kcm0vbm91dmVhdS9udmttL2VuZ2luZS9nci9nZjEwMC5jCisr
+KyBiL2RybS9ub3V2ZWF1L252a20vZW5naW5lL2dyL2dmMTAwLmMKQEAgLTE1NTAsMTggKzE1NTAs
+MjUgQEAgZ2YxMDBfZ3JfY3Rvcl9mdyhzdHJ1Y3QgZ2YxMDBfZ3JfcHJpdiAqcHJpdiwgY29uc3Qg
+Y2hhciAqZnduYW1lLAogewogCXN0cnVjdCBudmttX2RldmljZSAqZGV2aWNlID0gbnZfZGV2aWNl
+KHByaXYpOwogCWNvbnN0IHN0cnVjdCBmaXJtd2FyZSAqZnc7Ci0JY2hhciBmWzMyXTsKKwljaGFy
+IGZbNjRdOworCWNoYXIgY25hbWVbMTZdOwogCWludCByZXQ7CisJaW50IGk7CisKKwkvKiBDb252
+ZXJ0IGRldmljZSBuYW1lIHRvIGxvd2VyY2FzZSAqLworCXN0cm5jcHkoY25hbWUsIGRldmljZS0+
+Y25hbWUsIHNpemVvZihjbmFtZSkpOworCWNuYW1lW3NpemVvZihjbmFtZSkgLSAxXSA9ICdcMCc7
+CisJaSA9IHN0cmxlbihjbmFtZSk7CisJd2hpbGUgKGkpIHsKKwkJLS1pOworCQljbmFtZVtpXSA9
+IHRvbG93ZXIoY25hbWVbaV0pOworCX0KIAotCXNucHJpbnRmKGYsIHNpemVvZihmKSwgIm5vdXZl
+YXUvbnYlMDJ4XyVzIiwgZGV2aWNlLT5jaGlwc2V0LCBmd25hbWUpOworCXNucHJpbnRmKGYsIHNp
+emVvZihmKSwgIm52aWRpYS8lcy8lcy5iaW4iLCBjbmFtZSwgZnduYW1lKTsKIAlyZXQgPSByZXF1
+ZXN0X2Zpcm13YXJlKCZmdywgZiwgbnZfZGV2aWNlX2Jhc2UoZGV2aWNlKSk7CiAJaWYgKHJldCkg
+ewotCQlzbnByaW50ZihmLCBzaXplb2YoZiksICJub3V2ZWF1LyVzIiwgZnduYW1lKTsKLQkJcmV0
+ID0gcmVxdWVzdF9maXJtd2FyZSgmZncsIGYsIG52X2RldmljZV9iYXNlKGRldmljZSkpOwotCQlp
+ZiAocmV0KSB7Ci0JCQludl9lcnJvcihwcml2LCAiZmFpbGVkIHRvIGxvYWQgJXNcbiIsIGZ3bmFt
+ZSk7Ci0JCQlyZXR1cm4gcmV0OwotCQl9CisJCW52X2Vycm9yKHByaXYsICJmYWlsZWQgdG8gbG9h
+ZCAlc1xuIiwgZnduYW1lKTsKKwkJcmV0dXJuIHJldDsKIAl9CiAKIAlmdWMtPnNpemUgPSBmdy0+
+c2l6ZTsKQEAgLTE2MTUsMTAgKzE2MjIsMTAgQEAgZ2YxMDBfZ3JfY3RvcihzdHJ1Y3QgbnZrbV9v
+YmplY3QgKnBhcmVudCwgc3RydWN0IG52a21fb2JqZWN0ICplbmdpbmUsCiAKIAlpZiAodXNlX2V4
+dF9mdykgewogCQludl9pbmZvKHByaXYsICJ1c2luZyBleHRlcm5hbCBmaXJtd2FyZVxuIik7Ci0J
+CWlmIChnZjEwMF9ncl9jdG9yX2Z3KHByaXYsICJmdWM0MDljIiwgJnByaXYtPmZ1YzQwOWMpIHx8
+Ci0JCSAgICBnZjEwMF9ncl9jdG9yX2Z3KHByaXYsICJmdWM0MDlkIiwgJnByaXYtPmZ1YzQwOWQp
+IHx8Ci0JCSAgICBnZjEwMF9ncl9jdG9yX2Z3KHByaXYsICJmdWM0MWFjIiwgJnByaXYtPmZ1YzQx
+YWMpIHx8Ci0JCSAgICBnZjEwMF9ncl9jdG9yX2Z3KHByaXYsICJmdWM0MWFkIiwgJnByaXYtPmZ1
+YzQxYWQpKQorCQlpZiAoZ2YxMDBfZ3JfY3Rvcl9mdyhwcml2LCAiZmVjc19pbnN0IiwgJnByaXYt
+PmZ1YzQwOWMpIHx8CisJCSAgICBnZjEwMF9ncl9jdG9yX2Z3KHByaXYsICJmZWNzX2RhdGEiLCAm
+cHJpdi0+ZnVjNDA5ZCkgfHwKKwkJICAgIGdmMTAwX2dyX2N0b3JfZncocHJpdiwgImdwY2NzX2lu
+c3QiLCAmcHJpdi0+ZnVjNDFhYykgfHwKKwkJICAgIGdmMTAwX2dyX2N0b3JfZncocHJpdiwgImdw
+Y2NzX2RhdGEiLCAmcHJpdi0+ZnVjNDFhZCkpCiAJCQlyZXR1cm4gLUVOT0RFVjsKIAkJcHJpdi0+
+ZmlybXdhcmUgPSB0cnVlOwogCX0KLS0gCjIuNC40CgpfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXwpOb3V2ZWF1IG1haWxpbmcgbGlzdApOb3V2ZWF1QGxpc3Rz
+LmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
+dGluZm8vbm91dmVhdQo=
