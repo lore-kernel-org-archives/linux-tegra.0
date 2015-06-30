@@ -1,115 +1,52 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RFT PATCH 2/2] i2c: tegra: add support for fast plus (FM+) mode clock rate
-Date: Tue, 30 Jun 2015 16:24:27 +0530
-Message-ID: <1435661667-11554-2-git-send-email-ldewangan@nvidia.com>
-References: <1435661667-11554-1-git-send-email-ldewangan@nvidia.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: paz00: set gpiod_lookup table conn_id's
+Date: Tue, 30 Jun 2015 22:42:55 +0900
+Message-ID: <CAAVeFuKcaz1C9OV26+8A+LypScqDcufR+X99KDJwVui39Nq7xA@mail.gmail.com>
+References: <1435520160-16862-1-git-send-email-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1435661667-11554-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, andrewc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Chaitanya Bandi <bandik-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1435520160-16862-1-git-send-email-digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stable <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra I2C controller required to configure the clock divisor
-register inside controller to different value based on the clock
-speed. The recommended clock divisor for the I2C controller for
-standard/fast mode is 0x19 and for fast-mode plus is 0x10.
+On Mon, Jun 29, 2015 at 4:34 AM, Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> Commit 72daceb9a10a ("net: rfkill: gpio: Add default GPIO driver mappings
+> for ACPI") removed possibility to request GPIO by table index for non-ACPI
+> platforms without changing it users. As result "shutdown" GPIO request
+> will fail if request for "reset" GPIO succeeded or "reset" will be
+> requested instead of "shutdown" if "reset" wasn't defined. Fix it by
+> setting conn_id's in gpiod_lookup_table.
 
-Add support to configure clock divisor register of I2C controller
-based on bus clock rate.
+Yep, and using con_ids is a good idea anyway.
 
-This clock divisor is supported form T114 onwards.
+Acked-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-This is based on change done by
-        Chaitanya Bandi <bandik-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Chaitanya Bandi <bandik-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Stephen/Andrew,
-I need help on testing this on other platform. I tested this on T210.
-
- drivers/i2c/busses/i2c-tegra.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 53f816b..6a77a93 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -142,6 +142,7 @@ struct tegra_i2c_hw_feature {
- 	bool has_config_load_reg;
- 	int clk_divisor_hs_mode;
- 	int clk_divisor_std_fast_mode;
-+	u16 clk_divisor_fast_plus_mode;
- };
- 
- /**
-@@ -181,6 +182,7 @@ struct tegra_i2c_dev {
- 	size_t msg_buf_remaining;
- 	int msg_read;
- 	u32 bus_clk_rate;
-+	u16 clk_divisor_non_hs_mode;
- 	bool is_suspended;
- };
- 
-@@ -441,7 +443,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 
- 	/* Make sure clock divisor programmed correctly */
- 	clk_divisor = i2c_dev->hw->clk_divisor_hs_mode;
--	clk_divisor |= i2c_dev->hw->clk_divisor_std_fast_mode <<
-+	clk_divisor |= i2c_dev->clk_divisor_non_hs_mode <<
- 					I2C_CLK_DIVISOR_STD_FAST_MODE_SHIFT;
- 	i2c_writel(i2c_dev, clk_divisor, I2C_CLK_DIVISOR);
- 
-@@ -697,6 +699,7 @@ static const struct tegra_i2c_hw_feature tegra20_i2c_hw = {
- 	.has_single_clk_source = false,
- 	.clk_divisor_hs_mode = 3,
- 	.clk_divisor_std_fast_mode = 0,
-+	.clk_divisor_fast_plus_mode = 0,
- 	.has_config_load_reg = false,
- };
- 
-@@ -706,6 +709,7 @@ static const struct tegra_i2c_hw_feature tegra30_i2c_hw = {
- 	.has_single_clk_source = false,
- 	.clk_divisor_hs_mode = 3,
- 	.clk_divisor_std_fast_mode = 0,
-+	.clk_divisor_fast_plus_mode = 0,
- 	.has_config_load_reg = false,
- };
- 
-@@ -715,6 +719,7 @@ static const struct tegra_i2c_hw_feature tegra114_i2c_hw = {
- 	.has_single_clk_source = true,
- 	.clk_divisor_hs_mode = 1,
- 	.clk_divisor_std_fast_mode = 0x19,
-+	.clk_divisor_fast_plus_mode = 0x10,
- 	.has_config_load_reg = false,
- };
- 
-@@ -724,6 +729,7 @@ static const struct tegra_i2c_hw_feature tegra124_i2c_hw = {
- 	.has_single_clk_source = true,
- 	.clk_divisor_hs_mode = 1,
- 	.clk_divisor_std_fast_mode = 0x19,
-+	.clk_divisor_fast_plus_mode = 0x10,
- 	.has_config_load_reg = true,
- };
- 
-@@ -821,7 +827,14 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	clk_multiplier *= (i2c_dev->hw->clk_divisor_std_fast_mode + 1);
-+	i2c_dev->clk_divisor_non_hs_mode =
-+			i2c_dev->hw->clk_divisor_std_fast_mode;
-+	if (i2c_dev->hw->clk_divisor_fast_plus_mode &&
-+		(i2c_dev->bus_clk_rate == 1000000))
-+		i2c_dev->clk_divisor_non_hs_mode =
-+			i2c_dev->hw->clk_divisor_fast_plus_mode;
-+
-+	clk_multiplier *= (i2c_dev->clk_divisor_non_hs_mode + 1);
- 	ret = clk_set_rate(i2c_dev->div_clk,
- 			   i2c_dev->bus_clk_rate * clk_multiplier);
- 	if (ret) {
--- 
-2.1.4
+>
+> Signed-off-by: Dmitry Osipenko <digetx-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Fixes: 72daceb (net: rfkill: gpio: Add default GPIO driver mappings for ACPI)
+> Cc: <stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org> # v3.19+
+> ---
+>  arch/arm/mach-tegra/board-paz00.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
+> index fbe74c6..67024f3 100644
+> --- a/arch/arm/mach-tegra/board-paz00.c
+> +++ b/arch/arm/mach-tegra/board-paz00.c
+> @@ -39,8 +39,8 @@ static struct platform_device wifi_rfkill_device = {
+>  static struct gpiod_lookup_table wifi_gpio_lookup = {
+>         .dev_id = "rfkill_gpio",
+>         .table = {
+> -               GPIO_LOOKUP_IDX("tegra-gpio", 25, NULL, 0, 0),
+> -               GPIO_LOOKUP_IDX("tegra-gpio", 85, NULL, 1, 0),
+> +               GPIO_LOOKUP_IDX("tegra-gpio", 25, "reset", 0, 0),
+> +               GPIO_LOOKUP_IDX("tegra-gpio", 85, "shutdown", 1, 0),
+>                 { },
+>         },
+>  };
+> --
+> 2.4.4
+>
