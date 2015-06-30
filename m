@@ -1,45 +1,35 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: [PATCH v2] ARM: tegra: paz00: use con_id's to refer GPIO's in gpiod_lookup table
-Date: Tue, 30 Jun 2015 17:15:50 +0300
-Message-ID: <1435673759-11996-1-git-send-email-digetx@gmail.com>
-Return-path: <stable-owner@vger.kernel.org>
-Sender: stable-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Marc Dietrich <marvin24@gmx.de>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Dmitry Osipenko <digetx@gmail.com>, stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Ard Biesheuvel <ard.biesheuvel-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [PATCH] PCI: tegra: use __pgprot() around static pgprot_t initializer
+Date: Tue, 30 Jun 2015 18:30:18 +0200
+Message-ID: <1435681818-14155-1-git-send-email-ard.biesheuvel@linaro.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Ard Biesheuvel <ard.biesheuvel-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Commit 72daceb9a10a ("net: rfkill: gpio: Add default GPIO driver mappings
-for ACPI") removed possibility to request GPIO by table index for non-ACPI
-platforms without changing it users. As result "shutdown" GPIO request
-will fail if request for "reset" GPIO succeeded or "reset" will be
-requested instead of "shutdown" if "reset" wasn't defined. Fix it by
-making gpiod_lookup_table use con_id's instead of indexes.
+In order to comply with the rules that apply when STRICT_MM_TYPECHECKS
+is defined, wrap the initializer for a pgprot_t in __pgprot().
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-Fixes: 72daceb (net: rfkill: gpio: Add default GPIO driver mappings for ACPI)
-Cc: <stable@vger.kernel.org> # v3.19+
-Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 ---
-
-v2: s/GPIO_LOOKUP_IDX/GPIO_LOOKUP/, otherwise "shutdown" GPIO won't be requested
-
- arch/arm/mach-tegra/board-paz00.c | 4 ++--
+ drivers/pci/host/pci-tegra.c | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
-index fbe74c6..49d1110 100644
---- a/arch/arm/mach-tegra/board-paz00.c
-+++ b/arch/arm/mach-tegra/board-paz00.c
-@@ -39,8 +39,8 @@ static struct platform_device wifi_rfkill_device = {
- static struct gpiod_lookup_table wifi_gpio_lookup = {
- 	.dev_id = "rfkill_gpio",
- 	.table = {
--		GPIO_LOOKUP_IDX("tegra-gpio", 25, NULL, 0, 0),
--		GPIO_LOOKUP_IDX("tegra-gpio", 85, NULL, 1, 0),
-+		GPIO_LOOKUP("tegra-gpio", 25, "reset", 0),
-+		GPIO_LOOKUP("tegra-gpio", 85, "shutdown", 0),
- 		{ },
- 	},
- };
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index 00e92720d7f7..f8a70b64b55c 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -382,8 +382,8 @@ static unsigned long tegra_pcie_conf_offset(unsigned int devfn, int where)
+ static struct tegra_pcie_bus *tegra_pcie_bus_alloc(struct tegra_pcie *pcie,
+ 						   unsigned int busnr)
+ {
+-	pgprot_t prot = L_PTE_PRESENT | L_PTE_YOUNG | L_PTE_DIRTY | L_PTE_XN |
+-			L_PTE_MT_DEV_SHARED | L_PTE_SHARED;
++	pgprot_t prot = __pgprot(L_PTE_PRESENT | L_PTE_YOUNG | L_PTE_DIRTY |
++				 L_PTE_XN | L_PTE_MT_DEV_SHARED | L_PTE_SHARED);
+ 	phys_addr_t cs = pcie->cs->start;
+ 	struct tegra_pcie_bus *bus;
+ 	unsigned int i;
 -- 
-2.4.4
+1.9.1
