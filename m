@@ -1,7 +1,7 @@
 From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH 1/4] ARM: tegra: Add IOMMU node to GK20A
-Date: Wed, 1 Jul 2015 18:13:45 +0900
-Message-ID: <1435742028-8237-2-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH 4/4] ARM: tegra: Enable Nouveau in defconfig
+Date: Wed, 1 Jul 2015 18:13:48 +0900
+Message-ID: <1435742028-8237-5-git-send-email-acourbot@nvidia.com>
 References: <1435742028-8237-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,27 +12,24 @@ To: Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg
 Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Nouveau can make use of the IOMMU to make physical appear linear in the
-GPU address space.
+Since Nouveau support is complete, enable it in the Tegra configuration
+so supported boards can take advantage of it.
 
 Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- arch/arm/boot/dts/tegra124.dtsi | 3 +++
+ arch/arm/configs/tegra_defconfig | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 13cc7ca5e031..bffe90236bf8 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -188,6 +188,9 @@
- 		clock-names = "gpu", "pwr";
- 		resets = <&tegra_car 184>;
- 		reset-names = "gpu";
-+
-+		iommus = <&mc TEGRA_SWGROUP_GPU>;
-+
- 		status = "disabled";
- 	};
- 
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index d199eb249151..a5ef73116fdd 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -292,3 +292,6 @@ CONFIG_EARLY_PRINTK=y
+ CONFIG_CRYPTO_TWOFISH=y
+ # CONFIG_CRYPTO_ANSI_CPRNG is not set
+ CONFIG_CRC_CCITT=y
++CONFIG_DRM_NOUVEAU=m
++CONFIG_NOUVEAU_DEBUG=5
++CONFIG_NOUVEAU_DEBUG_DEFAULT=3
 -- 
 2.4.4
