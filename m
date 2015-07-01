@@ -1,36 +1,120 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] drm/ttm: recognize ARM64 arch in ioprot handler
-Date: Wed, 1 Jul 2015 17:32:29 +0900
-Message-ID: <1435739549-18363-1-git-send-email-acourbot@nvidia.com>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [PATCH v2 12/12] JUST FOR TEST: Add one-shot trigger to update
+ display
+Date: Wed, 1 Jul 2015 10:36:17 +0200
+Message-ID: <20150701083617.GF30960@phenom.ffwll.local>
+References: <1435738915-31973-1-git-send-email-markz@nvidia.com>
+ <1435738915-31973-13-git-send-email-markz@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1435738915-31973-13-git-send-email-markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, David Herrmann <dh.herrmann-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, daniel-/w4YWyX8dFk@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Return proper pgprot for ARM64. This is required for objects like
-Nouveau fences to be mapped with expected coherency.
+On Wed, Jul 01, 2015 at 04:21:55PM +0800, Mark Zhang wrote:
+> This HACK adds a workqueue to refresh the display periodically.
+> This is used just for testing.
 
-Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpu/drm/ttm/ttm_bo_util.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+->dirty is the drm hook you're looking for, it's meant to flush out any
+frontbuffer rendering. Generic kms clients using the dumb buffers (e.g.
+fedora boot splash) use this already.
 
-diff --git a/drivers/gpu/drm/ttm/ttm_bo_util.c b/drivers/gpu/drm/ttm/ttm_bo_util.c
-index 882cccdad272..ac6fe40b99f7 100644
---- a/drivers/gpu/drm/ttm/ttm_bo_util.c
-+++ b/drivers/gpu/drm/ttm/ttm_bo_util.c
-@@ -490,7 +490,8 @@ pgprot_t ttm_io_prot(uint32_t caching_flags, pgprot_t tmp)
- 	else if (boot_cpu_data.x86 > 3)
- 		tmp = pgprot_noncached(tmp);
- #endif
--#if defined(__ia64__) || defined(__arm__) || defined(__powerpc__)
-+#if defined(__ia64__) || defined(__arm__) || defined(__aarch64__) || \
-+    defined(__powerpc__)
- 	if (caching_flags & TTM_PL_FLAG_WC)
- 		tmp = pgprot_writecombine(tmp);
- 	else
+And of course you need to upload a new frame every time an (atomic) flip
+happens too, but I guess you have that already. No need at all for a
+periodic upload hack like this.
+
+Cheers, Daniel
+
+> 
+> Signed-off-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/gpu/drm/tegra/dc.c  |   37 +++++++++++++++++++++++++++++++++++++
+>  drivers/gpu/drm/tegra/drm.h |    1 +
+>  2 files changed, 38 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/tegra/dc.c b/drivers/gpu/drm/tegra/dc.c
+> index 24a91613c4f5..4381691c73f7 100644
+> --- a/drivers/gpu/drm/tegra/dc.c
+> +++ b/drivers/gpu/drm/tegra/dc.c
+> @@ -1296,6 +1296,8 @@ static void tegra_crtc_mode_set_nofb(struct drm_crtc *crtc)
+>  		value &= ~DISP_CTRL_MODE_MASK;
+>  		value |= DISP_CTRL_MODE_NC_DISPLAY;
+>  		tegra_dc_writel(dc, value, DC_CMD_DISPLAY_COMMAND);
+> +
+> +		schedule_work(&dc->one_shot_trigger);
+>  	} else {
+>  		value = tegra_dc_readl(dc, DC_CMD_DISPLAY_COMMAND);
+>  		value &= ~DISP_CTRL_MODE_MASK;
+> @@ -1958,6 +1960,40 @@ static void tegra_dc_one_shot_work(struct work_struct *work)
+>  	drm_modeset_unlock_all(drm);
+>  }
+>  
+> +static void tegra_dc_one_shot_trigger(struct work_struct *work)
+> +{
+> +	struct tegra_dc *dc;
+> +	struct drm_connector *connector;
+> +	struct drm_device *drm;
+> +	unsigned long update_mask = GENERAL_ACT_REQ | NC_HOST_TRIG;
+> +	static int first_trigger = 1;
+> +
+> +	dc = container_of(work, struct tegra_dc, one_shot_trigger);
+> +	drm = dc->base.dev;
+> +	msleep(5000);
+> +
+> +	if (first_trigger) {
+> +		dev_info(dc->dev, "First one-shot triggered.\n");
+> +		tegra_dc_writel(dc, update_mask, DC_CMD_STATE_CONTROL);
+> +		first_trigger = 0;
+> +		schedule_work(&dc->one_shot_trigger);
+> +		return;
+> +	}
+> +
+> +	dev_info(dc->dev, "one-shot: Wakeup dc/dsi/panel.\n");
+> +	drm_modeset_lock_all(drm);
+> +	list_for_each_entry(connector, &drm->mode_config.connector_list, head) {
+> +		if (connector->funcs->dpms)
+> +			connector->funcs->dpms(connector,
+> +						DRM_MODE_DPMS_STANDBY);
+> +	}
+> +	drm_modeset_unlock_all(drm);
+> +
+> +	/* Trigger the one-shot */
+> +	tegra_dc_writel(dc, update_mask, DC_CMD_STATE_CONTROL);
+> +	schedule_work(&dc->one_shot_trigger);
+> +}
+> +
+>  static int tegra_dc_probe(struct platform_device *pdev)
+>  {
+>  	unsigned long flags = HOST1X_SYNCPT_CLIENT_MANAGED;
+> @@ -1977,6 +2013,7 @@ static int tegra_dc_probe(struct platform_device *pdev)
+>  	spin_lock_init(&dc->lock);
+>  	INIT_LIST_HEAD(&dc->list);
+>  	INIT_WORK(&dc->one_shot_work, tegra_dc_one_shot_work);
+> +	INIT_WORK(&dc->one_shot_trigger, tegra_dc_one_shot_trigger);
+>  	dc->dev = &pdev->dev;
+>  	dc->soc = id->data;
+>  
+> diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+> index 00daf427c831..5d606cacb098 100644
+> --- a/drivers/gpu/drm/tegra/drm.h
+> +++ b/drivers/gpu/drm/tegra/drm.h
+> @@ -132,6 +132,7 @@ struct tegra_dc {
+>  	struct drm_pending_vblank_event *event;
+>  
+>  	struct work_struct one_shot_work;
+> +	struct work_struct one_shot_trigger;
+>  
+>  	const struct tegra_dc_soc_info *soc;
+>  
+> -- 
+> 1.7.9.5
+> 
+
 -- 
-2.4.4
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
