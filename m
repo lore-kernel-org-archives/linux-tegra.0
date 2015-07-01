@@ -1,89 +1,50 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH v1 3/3] ARM: tegra: Add gpio-ranges property
-Date: Wed,  1 Jul 2015 14:45:53 +0200
-Message-ID: <1435754753-31307-4-git-send-email-tomeu.vizoso@collabora.com>
-References: <1435754753-31307-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 12/12] JUST FOR TEST: Add one-shot trigger to update
+ display
+Date: Wed, 1 Jul 2015 20:51:29 +0800
+Message-ID: <5593E251.8090802@nvidia.com>
+References: <1435738915-31973-1-git-send-email-markz@nvidia.com> <1435738915-31973-13-git-send-email-markz@nvidia.com> <20150701083617.GF30960@phenom.ffwll.local> <20150701084511.GA24055@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1435754753-31307-1-git-send-email-tomeu.vizoso@collabora.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-kernel@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Stephen Warren <swarren@wwwdotorg.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150701084511.GA24055-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Specify how the GPIOs map to the pins in Tegra SoCs, so the dependency is
-explicit.
+On 07/01/2015 04:46 PM, Daniel Vetter wrote:
+> On Wed, Jul 01, 2015 at 10:36:17AM +0200, Daniel Vetter wrote:
+>> On Wed, Jul 01, 2015 at 04:21:55PM +0800, Mark Zhang wrote:
+>>> This HACK adds a workqueue to refresh the display periodically.
+>>> This is used just for testing.
+>>
+>> ->dirty is the drm hook you're looking for, it's meant to flush out any
+>> frontbuffer rendering. Generic kms clients using the dumb buffers (e.g.
+>> fedora boot splash) use this already.
+>>
+>> And of course you need to upload a new frame every time an (atomic) flip
+>> happens too, but I guess you have that already. No need at all for a
+>> periodic upload hack like this.
+> 
+> btw the nice thing with dirty is that it hands you the exact invalidation
+> rectangle, which means you can minimize uploads. For atomic flips we plan
+> to have the same, but it's not implemented yet.
+> 
+> Another problem is that currently the fbdev helper in drm_fb_helper.c
+> doesn't support the dirty callback. But there's other drivers which need
+> this too (e.g. i915 will gain a dirty callback soon) and qxl has all the
+> code implemented already. So the only thing you need to do is move the qxl
+> code into drm_fb_helper.c and adapt it to use the dirty callback instead
+> of directly calling qxl code. Then you should be all set. Note that simply
+> calling ->dirty from fbdev hooks doesn't work since a lot of those hooks
+> are called from irq context (cursors and stuff) and hence you need a
+> workqueue to do the actual dirty call.
+> 
 
-This currently will add a duplicated entry in the map from pins to gpios
-in the pinmux controller but it should be harmless and will be fixed in a
-later commit.
+I got it. So this is the kernel part I need. Thanks.
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
----
-
- arch/arm/boot/dts/tegra114.dtsi | 1 +
- arch/arm/boot/dts/tegra124.dtsi | 1 +
- arch/arm/boot/dts/tegra20.dtsi  | 1 +
- arch/arm/boot/dts/tegra30.dtsi  | 1 +
- 4 files changed, 4 insertions(+)
-
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index f58a3d9..7e1e171 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -234,6 +234,7 @@
- 		gpio-controller;
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
-+		gpio-ranges = <&pinmux 0 0 246>;
- 	};
- 
- 	apbmisc@70000800 {
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 87318a7..4779df3 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -255,6 +255,7 @@
- 		gpio-controller;
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
-+		gpio-ranges = <&pinmux 0 0 251>;
- 	};
- 
- 	apbdma: dma@0,60020000 {
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index f444b67..b44277c 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -244,6 +244,7 @@
- 		gpio-controller;
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
-+		gpio-ranges = <&pinmux 0 0 224>;
- 	};
- 
- 	apbmisc@70000800 {
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 782b11b..28c547f 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -349,6 +349,7 @@
- 		gpio-controller;
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
-+		gpio-ranges = <&pinmux 0 0 248>;
- 	};
- 
- 	apbmisc@70000800 {
--- 
-2.4.1
+Mark
+> Cheers, Daniel
+> 
