@@ -1,131 +1,65 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [RFC PATCH 04/15] pwm: make use of pwm_get_xxx helpers where appropriate
-Date: Wed,  1 Jul 2015 10:21:50 +0200
-Message-ID: <1435738921-25027-5-git-send-email-boris.brezillon@free-electrons.com>
-References: <1435738921-25027-1-git-send-email-boris.brezillon@free-electrons.com>
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <1435738921-25027-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org
-Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@google.com>, Boris Brezillon <boris.brezillon@free-electrons.com>
+From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 07/12] drm/panel: Add panel func: idle/busy
+Date: Wed, 1 Jul 2015 16:21:50 +0800
+Message-ID: <1435738915-31973-8-git-send-email-markz@nvidia.com>
+References: <1435738915-31973-1-git-send-email-markz@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1435738915-31973-1-git-send-email-markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, daniel-/w4YWyX8dFk@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Use the pwm_get_xxx helpers instead of directly accessing the fields in
-pwm_device. This will allow us to smoothly move to the atomic update
-approach.
+The "idle" function of a drm panel is used to tell panel
+there are no more frames coming in and it should remain the
+last frame it gets.
+Normally this only makes sense for smart panels which has
+internal framebuffer.
 
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+The "busy" function is opposite to "idle".
+
+Signed-off-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/pwm/pwm-atmel.c    |  2 +-
- drivers/pwm/pwm-bcm-kona.c |  3 ++-
- drivers/pwm/pwm-imx.c      |  3 ++-
- drivers/pwm/pwm-rockchip.c |  2 +-
- drivers/pwm/sysfs.c        | 11 ++++++-----
- 5 files changed, 12 insertions(+), 9 deletions(-)
+ include/drm/drm_panel.h |   18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/pwm/pwm-atmel.c b/drivers/pwm/pwm-atmel.c
-index b3b294d..0e4bd4e 100644
---- a/drivers/pwm/pwm-atmel.c
-+++ b/drivers/pwm/pwm-atmel.c
-@@ -114,7 +114,7 @@ static int atmel_pwm_config(struct pwm_chip *chip, struct pwm_device *pwm,
- 	u32 val;
- 	int ret;
+diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
+index e53f48aa070f..77da292ad2fb 100644
+--- a/include/drm/drm_panel.h
++++ b/include/drm/drm_panel.h
+@@ -70,6 +70,8 @@ struct display_timing;
+  * the panel. This is the job of the .unprepare() function.
+  */
+ struct drm_panel_funcs {
++	int (*idle)(struct drm_panel *panel);
++	int (*busy)(struct drm_panel *panel);
+ 	int (*disable)(struct drm_panel *panel);
+ 	int (*unprepare)(struct drm_panel *panel);
+ 	int (*prepare)(struct drm_panel *panel);
+@@ -89,6 +91,22 @@ struct drm_panel {
+ 	struct list_head list;
+ };
  
--	if (pwm_is_enabled(pwm) && (period_ns != pwm->period)) {
-+	if (pwm_is_enabled(pwm) && (period_ns != pwm_get_period(pwm))) {
- 		dev_err(chip->dev, "cannot change PWM period while enabled\n");
- 		return -EBUSY;
- 	}
-diff --git a/drivers/pwm/pwm-bcm-kona.c b/drivers/pwm/pwm-bcm-kona.c
-index dfdcf88..920cd1b 100644
---- a/drivers/pwm/pwm-bcm-kona.c
-+++ b/drivers/pwm/pwm-bcm-kona.c
-@@ -194,7 +194,8 @@ static int kona_pwmc_enable(struct pwm_chip *chip, struct pwm_device *pwm)
- 		return ret;
- 	}
- 
--	ret = kona_pwmc_config(chip, pwm, pwm->duty_cycle, pwm->period);
-+	ret = kona_pwmc_config(chip, pwm, pwm_get_duty_cycle(pwm),
-+			       pwm_get_period(pwm));
- 	if (ret < 0) {
- 		clk_disable_unprepare(kp->clk);
- 		return ret;
-diff --git a/drivers/pwm/pwm-imx.c b/drivers/pwm/pwm-imx.c
-index 008dc64..d600fd5 100644
---- a/drivers/pwm/pwm-imx.c
-+++ b/drivers/pwm/pwm-imx.c
-@@ -129,7 +129,8 @@ static int imx_pwm_config_v2(struct pwm_chip *chip,
- 		sr = readl(imx->mmio_base + MX3_PWMSR);
- 		fifoav = sr & MX3_PWMSR_FIFOAV_MASK;
- 		if (fifoav == MX3_PWMSR_FIFOAV_4WORDS) {
--			period_ms = DIV_ROUND_UP(pwm->period, NSEC_PER_MSEC);
-+			period_ms = DIV_ROUND_UP(pwm_get_period(pwm),
-+						 NSEC_PER_MSEC);
- 			msleep(period_ms);
- 
- 			sr = readl(imx->mmio_base + MX3_PWMSR);
-diff --git a/drivers/pwm/pwm-rockchip.c b/drivers/pwm/pwm-rockchip.c
-index 9442df2..7d9cc90 100644
---- a/drivers/pwm/pwm-rockchip.c
-+++ b/drivers/pwm/pwm-rockchip.c
-@@ -83,7 +83,7 @@ static void rockchip_pwm_set_enable_v2(struct pwm_chip *chip,
- 			  PWM_CONTINUOUS;
- 	u32 val;
- 
--	if (pwm->polarity == PWM_POLARITY_INVERSED)
-+	if (pwm_get_polarity(pwm) == PWM_POLARITY_INVERSED)
- 		enable_conf |= PWM_DUTY_NEGATIVE | PWM_INACTIVE_POSITIVE;
- 	else
- 		enable_conf |= PWM_DUTY_POSITIVE | PWM_INACTIVE_NEGATIVE;
-diff --git a/drivers/pwm/sysfs.c b/drivers/pwm/sysfs.c
-index eecf21d..ac0abec 100644
---- a/drivers/pwm/sysfs.c
-+++ b/drivers/pwm/sysfs.c
-@@ -46,7 +46,7 @@ static ssize_t pwm_period_show(struct device *child,
++static inline int drm_panel_idle(struct drm_panel *panel)
++{
++	if (panel && panel->funcs && panel->funcs->idle)
++		return panel->funcs->idle(panel);
++
++	return panel ? -ENOSYS : -EINVAL;
++}
++
++static inline int drm_panel_busy(struct drm_panel *panel)
++{
++	if (panel && panel->funcs && panel->funcs->busy)
++		return panel->funcs->busy(panel);
++
++	return panel ? -ENOSYS : -EINVAL;
++}
++
+ static inline int drm_panel_unprepare(struct drm_panel *panel)
  {
- 	const struct pwm_device *pwm = child_to_pwm_device(child);
- 
--	return sprintf(buf, "%u\n", pwm->period);
-+	return sprintf(buf, "%u\n", pwm_get_period(pwm));
- }
- 
- static ssize_t pwm_period_store(struct device *child,
-@@ -61,7 +61,7 @@ static ssize_t pwm_period_store(struct device *child,
- 	if (ret)
- 		return ret;
- 
--	ret = pwm_config(pwm, pwm->duty_cycle, val);
-+	ret = pwm_config(pwm, pwm_get_duty_cycle(pwm), val);
- 
- 	return ret ? : size;
- }
-@@ -72,7 +72,7 @@ static ssize_t pwm_duty_cycle_show(struct device *child,
- {
- 	const struct pwm_device *pwm = child_to_pwm_device(child);
- 
--	return sprintf(buf, "%u\n", pwm->duty_cycle);
-+	return sprintf(buf, "%u\n", pwm_get_duty_cycle(pwm));
- }
- 
- static ssize_t pwm_duty_cycle_store(struct device *child,
-@@ -87,7 +87,7 @@ static ssize_t pwm_duty_cycle_store(struct device *child,
- 	if (ret)
- 		return ret;
- 
--	ret = pwm_config(pwm, val, pwm->period);
-+	ret = pwm_config(pwm, val, pwm_get_period(pwm));
- 
- 	return ret ? : size;
- }
-@@ -134,7 +134,8 @@ static ssize_t pwm_polarity_show(struct device *child,
- {
- 	const struct pwm_device *pwm = child_to_pwm_device(child);
- 
--	return sprintf(buf, "%s\n", pwm->polarity ? "inversed" : "normal");
-+	return sprintf(buf, "%s\n",
-+		       pwm_get_polarity(pwm) ? "inversed" : "normal");
- }
- 
- static ssize_t pwm_polarity_store(struct device *child,
+ 	if (panel && panel->funcs && panel->funcs->unprepare)
 -- 
-1.9.1
+1.7.9.5
