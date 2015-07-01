@@ -1,37 +1,57 @@
-From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 10/12] drm/tegra: Suspend dc/dsi/panel in one-shot
- mode
-Date: Wed, 1 Jul 2015 17:03:17 +0800
-Message-ID: <5593ACD5.2090403@nvidia.com>
-References: <1435738915-31973-1-git-send-email-markz@nvidia.com> <1435738915-31973-11-git-send-email-markz@nvidia.com> <20150701090005.GC24055@phenom.ffwll.local>
+From: Varka Bhadram <varkabhadram@gmail.com>
+Subject: Re: [PATCH v2 08/12] drm: dsi: Add "enter idle" & "exit idle" dcs
+ functions
+Date: Wed, 01 Jul 2015 14:38:40 +0530
+Message-ID: <5593AE18.2070306@gmail.com>
+References: <1435738915-31973-1-git-send-email-markz@nvidia.com>
+ <1435738915-31973-9-git-send-email-markz@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150701090005.GC24055-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1435738915-31973-9-git-send-email-markz@nvidia.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Mark Zhang <markz@nvidia.com>, thierry.reding@gmail.com, daniel@ffwll.ch
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/01/2015 05:00 PM, Daniel Vetter wrote:
-> On Wed, Jul 01, 2015 at 04:21:53PM +0800, Mark Zhang wrote:
->> @@ -756,7 +752,11 @@ tegra_dsi_connector_duplicate_state(struct drm_connector *connector)
->>  }
->>  
->>  static const struct drm_connector_funcs tegra_dsi_connector_funcs = {
->> -	.dpms = tegra_dsi_connector_dpms,
->> +	/*
->> +	 * drm_atomic_helper_connector_dpms only handles DPMS ON/OFF,
->> +	 * so use drm_helper_connector_dpms instead.
->> +	 */
->> +	.dpms = drm_helper_connector_dpms,
-> 
-> Nope, mixing legacy dpms handling into an atomic driver is a no-go. You
-> need to use drm_atomic_helper_connector_dpms here.
-
-yeah, so I have to change "drm_atomic_helper_connector_dpms"?
-
-Mark
-> -Daniel
-> 
+T24gMDcvMDEvMjAxNSAwMTo1MSBQTSwgTWFyayBaaGFuZyB3cm90ZToKPiBTaWduZWQtb2ZmLWJ5
+OiBNYXJrIFpoYW5nPG1hcmt6QG52aWRpYS5jb20+Cj4gLS0tCj4gICBkcml2ZXJzL2dwdS9kcm0v
+ZHJtX21pcGlfZHNpLmMgfCAgIDM2ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
+Kwo+ICAgaW5jbHVkZS9kcm0vZHJtX21pcGlfZHNpLmggICAgIHwgICAgMiArKwo+ICAgMiBmaWxl
+cyBjaGFuZ2VkLCAzOCBpbnNlcnRpb25zKCspCj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
+ZHJtL2RybV9taXBpX2RzaS5jIGIvZHJpdmVycy9ncHUvZHJtL2RybV9taXBpX2RzaS5jCj4gaW5k
+ZXggMmQ1Y2E4ZWVjMTNhLi45YmM2ZmY3NWViOGYgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUv
+ZHJtL2RybV9taXBpX2RzaS5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9taXBpX2RzaS5j
+Cj4gQEAgLTg2Miw2ICs4NjIsNDIgQEAgaW50IG1pcGlfZHNpX2Rjc19zZXRfcGl4ZWxfZm9ybWF0
+KHN0cnVjdCBtaXBpX2RzaV9kZXZpY2UgKmRzaSwgdTggZm9ybWF0KQo+ICAgfQo+ICAgRVhQT1JU
+X1NZTUJPTChtaXBpX2RzaV9kY3Nfc2V0X3BpeGVsX2Zvcm1hdCk7Cj4gICAKPiArLyoqCj4gKyAq
+IG1pcGlfZHNpX2Rjc19lbnRlcl9pZGxlX21vZGUoKQo+ICsgKiBAZHNpOiBEU0kgcGVyaXBoZXJh
+bCBkZXZpY2UKPiArICoKPiArICogUmV0dXJuOiAwIG9uIHN1Y2Nlc3Mgb3IgYSBuZWdhdGl2ZSBl
+cnJvciBjb2RlIG9uIGZhaWx1cmUuCj4gKyAqLwo+ICtpbnQgbWlwaV9kc2lfZGNzX2VudGVyX2lk
+bGVfbW9kZShzdHJ1Y3QgbWlwaV9kc2lfZGV2aWNlICpkc2kpCj4gK3sKPiArCXNzaXplX3QgZXJy
+Owo+ICsKPiArCWVyciA9IG1pcGlfZHNpX2Rjc193cml0ZShkc2ksIE1JUElfRENTX0VOVEVSX0lE
+TEVfTU9ERSwgTlVMTCwgMCk7Cj4gKwlpZiAoZXJyIDwgMCkKPiArCQlyZXR1cm4gZXJyOwo+ICsK
+PiArCXJldHVybiAwOwo+ICt9CgpUaGlzIHdlIGNhbiBkbyBzaW1wbHkgYXM6CglyZXR1cm4gbWlw
+aV9kc2lfZGNzX3dyaXRlKGRzaSwgTUlQSV9EQ1NfRU5URVJfSURMRV9NT0RFLCBOVUxMLCAwKTsK
+Cj4gK0VYUE9SVF9TWU1CT0wobWlwaV9kc2lfZGNzX2VudGVyX2lkbGVfbW9kZSk7Cj4gKwo+ICsv
+KioKPiArICogbWlwaV9kc2lfZGNzX2V4aXRfaWRsZV9tb2RlKCkKPiArICogQGRzaTogRFNJIHBl
+cmlwaGVyYWwgZGV2aWNlCj4gKyAqCj4gKyAqIFJldHVybjogMCBvbiBzdWNjZXNzIG9yIGEgbmVn
+YXRpdmUgZXJyb3IgY29kZSBvbiBmYWlsdXJlLgo+ICsgKi8KPiAraW50IG1pcGlfZHNpX2Rjc19l
+eGl0X2lkbGVfbW9kZShzdHJ1Y3QgbWlwaV9kc2lfZGV2aWNlICpkc2kpCj4gK3sKPiArCXNzaXpl
+X3QgZXJyOwo+ICsKPiArCWVyciA9IG1pcGlfZHNpX2Rjc193cml0ZShkc2ksIE1JUElfRENTX0VY
+SVRfSURMRV9NT0RFLCBOVUxMLCAwKTsKPiArCWlmIChlcnIgPCAwKQo+ICsJCXJldHVybiBlcnI7
+Cj4gKwo+ICsJcmV0dXJuIDA7CgpGb3IgdGhpcyBvbmUgYWxzbzogcmV0dXJuIG1pcGlfZHNpX2Rj
+c193cml0ZShkc2ksIE1JUElfRENTX0VYSVRfSURMRV9NT0RFLCBOVUxMLCAwKTsKCgotLSAKVmFy
+a2EgQmhhZHJhbS4KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
+ZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
+Cg==
