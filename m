@@ -1,7 +1,7 @@
 From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 07/12] drm/panel: Add panel func: idle/busy
-Date: Wed, 1 Jul 2015 16:21:50 +0800
-Message-ID: <1435738915-31973-8-git-send-email-markz@nvidia.com>
+Subject: [PATCH v2 04/12] drm: panel: Add DRM panel private mode flag: TE polarity
+Date: Wed, 1 Jul 2015 16:21:47 +0800
+Message-ID: <1435738915-31973-5-git-send-email-markz@nvidia.com>
 References: <1435738915-31973-1-git-send-email-markz@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,54 +12,25 @@ To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, daniel-/w4YWyX8dFk@p
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The "idle" function of a drm panel is used to tell panel
-there are no more frames coming in and it should remain the
-last frame it gets.
-Normally this only makes sense for smart panels which has
-internal framebuffer.
-
-The "busy" function is opposite to "idle".
+Add 2 DRM panel private mode flag: TE polarity high/low.
 
 Signed-off-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- include/drm/drm_panel.h |   18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ include/drm/drm_panel.h |    2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
-index e53f48aa070f..77da292ad2fb 100644
+index 4d51cb380c75..e53f48aa070f 100644
 --- a/include/drm/drm_panel.h
 +++ b/include/drm/drm_panel.h
-@@ -70,6 +70,8 @@ struct display_timing;
-  * the panel. This is the job of the .unprepare() function.
-  */
- struct drm_panel_funcs {
-+	int (*idle)(struct drm_panel *panel);
-+	int (*busy)(struct drm_panel *panel);
- 	int (*disable)(struct drm_panel *panel);
- 	int (*unprepare)(struct drm_panel *panel);
- 	int (*prepare)(struct drm_panel *panel);
-@@ -89,6 +91,22 @@ struct drm_panel {
- 	struct list_head list;
- };
+@@ -27,6 +27,8 @@
+ #include <linux/list.h>
  
-+static inline int drm_panel_idle(struct drm_panel *panel)
-+{
-+	if (panel && panel->funcs && panel->funcs->idle)
-+		return panel->funcs->idle(panel);
-+
-+	return panel ? -ENOSYS : -EINVAL;
-+}
-+
-+static inline int drm_panel_busy(struct drm_panel *panel)
-+{
-+	if (panel && panel->funcs && panel->funcs->busy)
-+		return panel->funcs->busy(panel);
-+
-+	return panel ? -ENOSYS : -EINVAL;
-+}
-+
- static inline int drm_panel_unprepare(struct drm_panel *panel)
- {
- 	if (panel && panel->funcs && panel->funcs->unprepare)
+ #define DRM_PANEL_FLAG_PREFER_ONE_SHOT		(1 << 0)
++#define DRM_PANEL_FLAG_TE_POLARITY_HIGH		(1 << 1)
++#define DRM_PANEL_FLAG_TE_POLARITY_LOW		(1 << 2)
+ 
+ struct drm_connector;
+ struct drm_device;
 -- 
 1.7.9.5
