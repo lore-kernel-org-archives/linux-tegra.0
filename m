@@ -1,7 +1,7 @@
 From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 09/12] drm: panel: Add idle/busy in Sharp lq101r1sx01 driver
-Date: Wed, 1 Jul 2015 16:21:52 +0800
-Message-ID: <1435738915-31973-10-git-send-email-markz@nvidia.com>
+Subject: [PATCH v2 11/12] drm/tegra: dsi: Set connector DPMS state when enable/disable
+Date: Wed, 1 Jul 2015 16:21:54 +0800
+Message-ID: <1435738915-31973-12-git-send-email-markz@nvidia.com>
 References: <1435738915-31973-1-git-send-email-markz@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,61 +12,34 @@ To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, daniel-/w4YWyX8dFk@p
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+This patch fixes a bug when drm_helper_connector_dpms tries to
+switch connector/encoder/crtc DPMS status.
+
 Signed-off-by: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c |   26 +++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+ drivers/gpu/drm/tegra/dsi.c |    3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c b/drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c
-index e32f1449b067..64eb437ee7b3 100644
---- a/drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c
-+++ b/drivers/gpu/drm/panel/panel-sharp-lq101r1sx01.c
-@@ -89,6 +89,18 @@ static __maybe_unused int sharp_panel_read(struct sharp_panel *sharp,
- 	return err;
+diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+index 1d21f149d7f2..7917b7875496 100644
+--- a/drivers/gpu/drm/tegra/dsi.c
++++ b/drivers/gpu/drm/tegra/dsi.c
+@@ -898,6 +898,8 @@ static void tegra_dsi_encoder_mode_set(struct drm_encoder *encoder,
+ 	if (output->panel)
+ 		drm_panel_enable(output->panel);
+ 
++	output->connector.dpms = DRM_MODE_DPMS_ON;
++
+ 	return;
  }
  
-+static int sharp_panel_idle(struct drm_panel *panel)
-+{
-+	struct sharp_panel *sharp = to_sharp_panel(panel);
-+	int err = 0;
-+
-+	err = mipi_dsi_dcs_enter_idle_mode(sharp->link1);
-+	if (err < 0)
-+		dev_err(panel->dev, "failed to enter idle: %d\n", err);
-+
-+	return err;
-+}
-+
- static int sharp_panel_disable(struct drm_panel *panel)
- {
- 	struct sharp_panel *sharp = to_sharp_panel(panel);
-@@ -167,6 +179,18 @@ static int sharp_setup_symmetrical_split(struct mipi_dsi_device *left,
- 	return 0;
+@@ -937,6 +939,7 @@ static void tegra_dsi_encoder_disable(struct drm_encoder *encoder)
+ 
+ 	tegra_dsi_disable(dsi);
+ 
++	output->connector.dpms = DRM_MODE_DPMS_OFF;
+ 	return;
  }
  
-+static int sharp_panel_busy(struct drm_panel *panel)
-+{
-+	struct sharp_panel *sharp = to_sharp_panel(panel);
-+	int err = 0;
-+
-+	err = mipi_dsi_dcs_exit_idle_mode(sharp->link1);
-+	if (err < 0)
-+		dev_err(panel->dev, "failed to exit idle: %d\n", err);
-+
-+	return err;
-+}
-+
- static int sharp_panel_prepare(struct drm_panel *panel)
- {
- 	struct sharp_panel *sharp = to_sharp_panel(panel);
-@@ -318,6 +342,8 @@ static int sharp_panel_get_modes(struct drm_panel *panel)
- }
- 
- static const struct drm_panel_funcs sharp_panel_funcs = {
-+	.idle = sharp_panel_idle,
-+	.busy = sharp_panel_busy,
- 	.disable = sharp_panel_disable,
- 	.unprepare = sharp_panel_unprepare,
- 	.prepare = sharp_panel_prepare,
 -- 
 1.7.9.5
