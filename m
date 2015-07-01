@@ -1,57 +1,38 @@
-From: Varka Bhadram <varkabhadram@gmail.com>
-Subject: Re: [PATCH v2 08/12] drm: dsi: Add "enter idle" & "exit idle" dcs
- functions
-Date: Wed, 01 Jul 2015 14:38:40 +0530
-Message-ID: <5593AE18.2070306@gmail.com>
-References: <1435738915-31973-1-git-send-email-markz@nvidia.com>
- <1435738915-31973-9-git-send-email-markz@nvidia.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/4] ARM: tegra: enable Nouveau for Jetson TK1 and Venice 2
+Date: Wed, 1 Jul 2015 18:13:44 +0900
+Message-ID: <1435742028-8237-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1435738915-31973-9-git-send-email-markz@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Mark Zhang <markz@nvidia.com>, thierry.reding@gmail.com, daniel@ffwll.ch
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMDcvMDEvMjAxNSAwMTo1MSBQTSwgTWFyayBaaGFuZyB3cm90ZToKPiBTaWduZWQtb2ZmLWJ5
-OiBNYXJrIFpoYW5nPG1hcmt6QG52aWRpYS5jb20+Cj4gLS0tCj4gICBkcml2ZXJzL2dwdS9kcm0v
-ZHJtX21pcGlfZHNpLmMgfCAgIDM2ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-Kwo+ICAgaW5jbHVkZS9kcm0vZHJtX21pcGlfZHNpLmggICAgIHwgICAgMiArKwo+ICAgMiBmaWxl
-cyBjaGFuZ2VkLCAzOCBpbnNlcnRpb25zKCspCj4KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
-ZHJtL2RybV9taXBpX2RzaS5jIGIvZHJpdmVycy9ncHUvZHJtL2RybV9taXBpX2RzaS5jCj4gaW5k
-ZXggMmQ1Y2E4ZWVjMTNhLi45YmM2ZmY3NWViOGYgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUv
-ZHJtL2RybV9taXBpX2RzaS5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9taXBpX2RzaS5j
-Cj4gQEAgLTg2Miw2ICs4NjIsNDIgQEAgaW50IG1pcGlfZHNpX2Rjc19zZXRfcGl4ZWxfZm9ybWF0
-KHN0cnVjdCBtaXBpX2RzaV9kZXZpY2UgKmRzaSwgdTggZm9ybWF0KQo+ICAgfQo+ICAgRVhQT1JU
-X1NZTUJPTChtaXBpX2RzaV9kY3Nfc2V0X3BpeGVsX2Zvcm1hdCk7Cj4gICAKPiArLyoqCj4gKyAq
-IG1pcGlfZHNpX2Rjc19lbnRlcl9pZGxlX21vZGUoKQo+ICsgKiBAZHNpOiBEU0kgcGVyaXBoZXJh
-bCBkZXZpY2UKPiArICoKPiArICogUmV0dXJuOiAwIG9uIHN1Y2Nlc3Mgb3IgYSBuZWdhdGl2ZSBl
-cnJvciBjb2RlIG9uIGZhaWx1cmUuCj4gKyAqLwo+ICtpbnQgbWlwaV9kc2lfZGNzX2VudGVyX2lk
-bGVfbW9kZShzdHJ1Y3QgbWlwaV9kc2lfZGV2aWNlICpkc2kpCj4gK3sKPiArCXNzaXplX3QgZXJy
-Owo+ICsKPiArCWVyciA9IG1pcGlfZHNpX2Rjc193cml0ZShkc2ksIE1JUElfRENTX0VOVEVSX0lE
-TEVfTU9ERSwgTlVMTCwgMCk7Cj4gKwlpZiAoZXJyIDwgMCkKPiArCQlyZXR1cm4gZXJyOwo+ICsK
-PiArCXJldHVybiAwOwo+ICt9CgpUaGlzIHdlIGNhbiBkbyBzaW1wbHkgYXM6CglyZXR1cm4gbWlw
-aV9kc2lfZGNzX3dyaXRlKGRzaSwgTUlQSV9EQ1NfRU5URVJfSURMRV9NT0RFLCBOVUxMLCAwKTsK
-Cj4gK0VYUE9SVF9TWU1CT0wobWlwaV9kc2lfZGNzX2VudGVyX2lkbGVfbW9kZSk7Cj4gKwo+ICsv
-KioKPiArICogbWlwaV9kc2lfZGNzX2V4aXRfaWRsZV9tb2RlKCkKPiArICogQGRzaTogRFNJIHBl
-cmlwaGVyYWwgZGV2aWNlCj4gKyAqCj4gKyAqIFJldHVybjogMCBvbiBzdWNjZXNzIG9yIGEgbmVn
-YXRpdmUgZXJyb3IgY29kZSBvbiBmYWlsdXJlLgo+ICsgKi8KPiAraW50IG1pcGlfZHNpX2Rjc19l
-eGl0X2lkbGVfbW9kZShzdHJ1Y3QgbWlwaV9kc2lfZGV2aWNlICpkc2kpCj4gK3sKPiArCXNzaXpl
-X3QgZXJyOwo+ICsKPiArCWVyciA9IG1pcGlfZHNpX2Rjc193cml0ZShkc2ksIE1JUElfRENTX0VY
-SVRfSURMRV9NT0RFLCBOVUxMLCAwKTsKPiArCWlmIChlcnIgPCAwKQo+ICsJCXJldHVybiBlcnI7
-Cj4gKwo+ICsJcmV0dXJuIDA7CgpGb3IgdGhpcyBvbmUgYWxzbzogcmV0dXJuIG1pcGlfZHNpX2Rj
-c193cml0ZShkc2ksIE1JUElfRENTX0VYSVRfSURMRV9NT0RFLCBOVUxMLCAwKTsKCgotLSAKVmFy
-a2EgQmhhZHJhbS4KCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9y
-ZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVs
-Cg==
+With all essential kernel driver and user-space patches merged, GK20A can now
+be enabled safely on Tegra124 devices. This series makes small device tree
+and configuration adjustments to allow this.
+
+It leaves the GK20A nodes ready to be used, but still disabled. Enabling the
+nodes is the work of the bootloader, after it has configured VPR properly.
+
+U-boot patches that do this are in the work. In the meantime, it is safe to
+merge this kernel support.
+
+Alexandre Courbot (3):
+  ARM: tegra: Add IOMMU node to GK20A
+  ARM: tegra: jetson-tk1: Add GK20A GPU DT node
+  ARM: tegra: Enable Nouveau in defconfig
+
+Thierry Reding (1):
+  ARM: tegra: venice2: Add GK20A GPU DT node
+
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts | 10 +++++++++-
+ arch/arm/boot/dts/tegra124-venice2.dts    | 10 +++++++++-
+ arch/arm/boot/dts/tegra124.dtsi           |  3 +++
+ arch/arm/configs/tegra_defconfig          |  3 +++
+ 4 files changed, 24 insertions(+), 2 deletions(-)
+
+-- 
+2.4.4
