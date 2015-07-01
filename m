@@ -1,48 +1,74 @@
-From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Subject: Re: [PATCH v2 12/12] JUST FOR TEST: Add one-shot trigger to update
- display
-Date: Wed, 1 Jul 2015 12:34:57 +0200
-Message-ID: <20150701103457.GD24055@phenom.ffwll.local>
-References: <1435738915-31973-1-git-send-email-markz@nvidia.com>
- <1435738915-31973-13-git-send-email-markz@nvidia.com>
- <20150701083617.GF30960@phenom.ffwll.local>
- <5593AC80.10801@nvidia.com>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Subject: Re: [RFC PATCH 14/15] regulator: pwm: implement ->enable(), ->disable() and ->is_enabled methods
+Date: Wed, 01 Jul 2015 13:58:09 +0200
+Message-ID: <3495901.qMzLCVWCDl@diego>
+References: <1435738921-25027-1-git-send-email-boris.brezillon@free-electrons.com> <1435738921-25027-15-git-send-email-boris.brezillon@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <5593AC80.10801-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pwm-owner@vger.kernel.org>
+In-Reply-To: <1435738921-25027-15-git-send-email-boris.brezillon@free-electrons.com>
+Sender: linux-pwm-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-fbdev@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Bryan Wu <cooloney@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Doug Anderson <dianders@google.com>, Mark Brown <broonie@kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Jingoo Han <jingoohan1@gmail.com>, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jul 01, 2015 at 05:01:52PM +0800, Mark Zhang wrote:
-> On 07/01/2015 04:36 PM, Daniel Vetter wrote:
-> > On Wed, Jul 01, 2015 at 04:21:55PM +0800, Mark Zhang wrote:
-> >> This HACK adds a workqueue to refresh the display periodically.
-> >> This is used just for testing.
-> > 
-> > ->dirty is the drm hook you're looking for, it's meant to flush out any
-> > frontbuffer rendering. Generic kms clients using the dumb buffers (e.g.
-> > fedora boot splash) use this already.
-> > 
+Am Mittwoch, 1. Juli 2015, 10:22:00 schrieb Boris Brezillon:
+> Implement the ->enable(), ->disable() and ->is_enabled methods and remove
+> the PWM call in ->set_voltage_sel().
+> This is particularly important for critical regulators tagged as always-on,
+> because not claiming the PWM (and its dependencies) might lead to
+> unpredictable behavior (like a system hang because the PWM clk is only
+> claimed when the PWM device is enabled).
 > 
-> Oh... I did a grep in drm source and are you talking about
-> "drm_framebuffer_funcs->dirty"? Yeah, that should work for me.. but that
-> requires userspace sending IOCTL to trigger, right? Honestly I'm lazy so
-> I created this HACK so that I don't need userspace to test.
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> ---
+>  drivers/regulator/pwm-regulator.c | 32 ++++++++++++++++++++++++++------
+>  1 file changed, 26 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/regulator/pwm-regulator.c
+> b/drivers/regulator/pwm-regulator.c index 12b4d9d..8159518 100644
+> --- a/drivers/regulator/pwm-regulator.c
+> +++ b/drivers/regulator/pwm-regulator.c
+> @@ -59,12 +59,6 @@ static int pwm_regulator_set_voltage_sel(struct
+> regulator_dev *rdev,
+> 
+>  	drvdata->state = selector;
+> 
+> -	ret = pwm_enable(drvdata->pwm);
+> -	if (ret) {
+> -		dev_err(&rdev->dev, "Failed to enable PWM\n");
+> -		return ret;
+> -	}
+> -
+>  	return 0;
+>  }
+> 
+> @@ -79,11 +73,37 @@ static int pwm_regulator_list_voltage(struct
+> regulator_dev *rdev, return drvdata->duty_cycle_table[selector].uV;
+>  }
+> 
+> +static int pwm_regulator_enable(struct regulator_dev *dev)
+> +{
+> +	struct pwm_regulator_data *drvdata = rdev_get_drvdata(dev);
+> +
+> +	return pwm_enable(drvdata->pwm);
+> +}
+> +
+> +static int pwm_regulator_disable(struct regulator_dev *dev)
+> +{
+> +	struct pwm_regulator_data *drvdata = rdev_get_drvdata(dev);
+> +
+> +	pwm_disable(drvdata->pwm);
+> +
+> +	return 0;
+> +}
+> +
+> +static int pwm_regulator_is_enabled(struct regulator_dev *dev)
+> +{
+> +       struct pwm_regulator_data *drvdata = rdev_get_drvdata(dev);
+> +
+> +       return pwm_is_enabled(drvdata->pwm);
+> +}
 
-Yeah userspace needs to send ioctl already after each drawing. Generic
-userspace does that already since it's required by qxl, udl, soon i915 and
-probably a few others too. fbdev emulation is more annyoing but there's
-code to move around in these drivers (qxl seems best to me as a starting
-point) too.
-
-Imo without this you shouldn't merge one-shot, at least not enabled by
-default.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+nit: indentation is wrong in pwm_regulator_is_enabled (spaces instead of tabs)
