@@ -1,60 +1,48 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH v2 11/12] ASoC: tegra: register dependency parser for firmware
- nodes
-Date: Wed,  1 Jul 2015 11:41:06 +0200
-Message-ID: <1435743667-11987-12-git-send-email-tomeu.vizoso@collabora.com>
-References: <1435743667-11987-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [PATCH v2 12/12] JUST FOR TEST: Add one-shot trigger to update
+ display
+Date: Wed, 1 Jul 2015 12:34:57 +0200
+Message-ID: <20150701103457.GD24055@phenom.ffwll.local>
+References: <1435738915-31973-1-git-send-email-markz@nvidia.com>
+ <1435738915-31973-13-git-send-email-markz@nvidia.com>
+ <20150701083617.GF30960@phenom.ffwll.local>
+ <5593AC80.10801@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1435743667-11987-1-git-send-email-tomeu.vizoso@collabora.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org, linux-fbdev@vger.kernel.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-gpio@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, alsa-devel@alsa-project.org, dri-devel@lists.freedesktop.org, Jaroslav Kysela <perex@perex.cz>, linux-acpi@vger.kernel.org, Mark Brown <broonie@kernel.org>, linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <5593AC80.10801-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-U28gb3RoZXJzIGNhbiBmaW5kIG91dCB3aGF0IGRlcGVuZGVuY2llcyBhIG52aWRpYSx0ZWdyYS1h
-dWRpby1tYXg5ODA5MApkZXZpY2UgaGFzLCBhcyBzcGVjaWZpZWQgaW4KYmluZGluZ3Mvc291bmQv
-bnZpZGlhLHRlZ3JhLWF1ZGlvLW1heDk4MDkwLnR4dC4KClNpZ25lZC1vZmYtYnk6IFRvbWV1IFZp
-em9zbyA8dG9tZXUudml6b3NvQGNvbGxhYm9yYS5jb20+Ci0tLQoKQ2hhbmdlcyBpbiB2MjogTm9u
-ZQoKIHNvdW5kL3NvYy90ZWdyYS90ZWdyYV9tYXg5ODA5MC5jIHwgNDIgKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrLQogMSBmaWxlIGNoYW5nZWQsIDQxIGluc2VydGlvbnMo
-KyksIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9zb3VuZC9zb2MvdGVncmEvdGVncmFfbWF4
-OTgwOTAuYyBiL3NvdW5kL3NvYy90ZWdyYS90ZWdyYV9tYXg5ODA5MC5jCmluZGV4IDkwMmRhMzYu
-LjBmN2NiZjMgMTAwNjQ0Ci0tLSBhL3NvdW5kL3NvYy90ZWdyYS90ZWdyYV9tYXg5ODA5MC5jCisr
-KyBiL3NvdW5kL3NvYy90ZWdyYS90ZWdyYV9tYXg5ODA5MC5jCkBAIC0zMTYsNyArMzE2LDQ3IEBA
-IHN0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1fZHJpdmVyIHRlZ3JhX21heDk4MDkwX2RyaXZlciA9IHsK
-IAkucHJvYmUgPSB0ZWdyYV9tYXg5ODA5MF9wcm9iZSwKIAkucmVtb3ZlID0gdGVncmFfbWF4OTgw
-OTBfcmVtb3ZlLAogfTsKLW1vZHVsZV9wbGF0Zm9ybV9kcml2ZXIodGVncmFfbWF4OTgwOTBfZHJp
-dmVyKTsKKworc3RhdGljIHZvaWQgYWRkX2RlcGVuZGVuY3koc3RydWN0IGZ3bm9kZV9oYW5kbGUg
-KmZ3bm9kZSwKKwkJCSAgIGNvbnN0IGNoYXIgKnByb3BlcnR5LAorCQkJICAgc3RydWN0IGxpc3Rf
-aGVhZCAqZGVwcykKK3sKKwlzdHJ1Y3QgZGV2aWNlX25vZGUgKm5wOworCisJbnAgPSBvZl9wYXJz
-ZV9waGFuZGxlKHRvX29mX25vZGUoZndub2RlKSwgcHJvcGVydHksIDApOworCWlmICghbnApCisJ
-CXJldHVybjsKKworCWZ3bm9kZV9hZGRfZGVwZW5kZW5jeSgmbnAtPmZ3bm9kZSwgZGVwcyk7Cit9
-CisKK3N0YXRpYyB2b2lkIHRlZ3JhX21heDk4MDkwX2dldF9kZXBlbmRlbmNpZXMoc3RydWN0IGZ3
-bm9kZV9oYW5kbGUgKmZ3bm9kZSwKKwkJCQkJICAgIHN0cnVjdCBsaXN0X2hlYWQgKmRlcHMpCit7
-CisJYWRkX2RlcGVuZGVuY3koZndub2RlLCAibnZpZGlhLGkycy1jb250cm9sbGVyIiwgZGVwcyk7
-CisJYWRkX2RlcGVuZGVuY3koZndub2RlLCAibnZpZGlhLGF1ZGlvLWNvZGVjIiwgZGVwcyk7Cit9
-CisKK3N0YXRpYyBpbnQgX19pbml0IHRlZ3JhX21heDk4MDkwX2luaXQodm9pZCkKK3sKKwlpbnQg
-ZXJyOworCisJZXJyID0gcGxhdGZvcm1fZHJpdmVyX3JlZ2lzdGVyKCZ0ZWdyYV9tYXg5ODA5MF9k
-cml2ZXIpOworCWlmIChlcnIgPCAwKQorCQlyZXR1cm4gZXJyOworCisJZndub2RlX2FkZF9kZXBl
-bmRlbmN5X3BhcnNlcih0ZWdyYV9tYXg5ODA5MF9nZXRfZGVwZW5kZW5jaWVzKTsKKworCXJldHVy
-biAwOworfQorbW9kdWxlX2luaXQodGVncmFfbWF4OTgwOTBfaW5pdCk7CisKK3N0YXRpYyB2b2lk
-IF9fZXhpdCB0ZWdyYV9tYXg5ODA5MF9leGl0KHZvaWQpCit7CisJZndub2RlX3JlbW92ZV9kZXBl
-bmRlbmN5X3BhcnNlcih0ZWdyYV9tYXg5ODA5MF9nZXRfZGVwZW5kZW5jaWVzKTsKKwlwbGF0Zm9y
-bV9kcml2ZXJfdW5yZWdpc3RlcigmdGVncmFfbWF4OTgwOTBfZHJpdmVyKTsKK30KK21vZHVsZV9l
-eGl0KHRlZ3JhX21heDk4MDkwX2V4aXQpOwogCiBNT0RVTEVfQVVUSE9SKCJTdGVwaGVuIFdhcnJl
-biA8c3dhcnJlbkBudmlkaWEuY29tPiIpOwogTU9EVUxFX0RFU0NSSVBUSU9OKCJUZWdyYSBtYXg5
-ODA5MCBtYWNoaW5lIEFTb0MgZHJpdmVyIik7Ci0tIAoyLjQuMQoKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
-ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On Wed, Jul 01, 2015 at 05:01:52PM +0800, Mark Zhang wrote:
+> On 07/01/2015 04:36 PM, Daniel Vetter wrote:
+> > On Wed, Jul 01, 2015 at 04:21:55PM +0800, Mark Zhang wrote:
+> >> This HACK adds a workqueue to refresh the display periodically.
+> >> This is used just for testing.
+> > 
+> > ->dirty is the drm hook you're looking for, it's meant to flush out any
+> > frontbuffer rendering. Generic kms clients using the dumb buffers (e.g.
+> > fedora boot splash) use this already.
+> > 
+> 
+> Oh... I did a grep in drm source and are you talking about
+> "drm_framebuffer_funcs->dirty"? Yeah, that should work for me.. but that
+> requires userspace sending IOCTL to trigger, right? Honestly I'm lazy so
+> I created this HACK so that I don't need userspace to test.
+
+Yeah userspace needs to send ioctl already after each drawing. Generic
+userspace does that already since it's required by qxl, udl, soon i915 and
+probably a few others too. fbdev emulation is more annyoing but there's
+code to move around in these drivers (qxl seems best to me as a starting
+point) too.
+
+Imo without this you shouldn't merge one-shot, at least not enabled by
+default.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
