@@ -1,46 +1,35 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v2 01/12] drm: panel: Add a new private mode flag:
- DRM_PANEL_FLAG_PREFER_ONE_SHOT
-Date: Wed, 1 Jul 2015 10:54:37 +0200
-Message-ID: <20150701085437.GB24055@phenom.ffwll.local>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [PATCH v2 10/12] drm/tegra: Suspend dc/dsi/panel in one-shot mode
+Date: Wed, 1 Jul 2015 11:00:05 +0200
+Message-ID: <20150701090005.GC24055@phenom.ffwll.local>
 References: <1435738915-31973-1-git-send-email-markz@nvidia.com>
- <1435738915-31973-2-git-send-email-markz@nvidia.com>
+ <1435738915-31973-11-git-send-email-markz@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1435738915-31973-2-git-send-email-markz@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Mark Zhang <markz@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+In-Reply-To: <1435738915-31973-11-git-send-email-markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, daniel-/w4YWyX8dFk@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gV2VkLCBKdWwgMDEsIDIwMTUgYXQgMDQ6MjE6NDRQTSArMDgwMCwgTWFyayBaaGFuZyB3cm90
-ZToKPiBOb3JtYWxseSB0aGlzIGZsYWcgaXMgc2V0IGJ5IHBhbmVsIGRyaXZlciBzbyB0aGF0IGNy
-dGMgY2FuIGVuYWJsZQo+IHRoZSAib25lLXNob3QiIG1vZGUobm90IHNjYW4gZnJhbWVzIGNvbnRp
-bnVvdXNseSkuCj4gCj4gU2lnbmVkLW9mZi1ieTogTWFyayBaaGFuZyA8bWFya3pAbnZpZGlhLmNv
-bT4KPiAtLS0KPiAgaW5jbHVkZS9kcm0vZHJtX3BhbmVsLmggfCAgICAyICsrCj4gIDEgZmlsZSBj
-aGFuZ2VkLCAyIGluc2VydGlvbnMoKykKPiAKPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS9kcm0vZHJt
-X3BhbmVsLmggYi9pbmNsdWRlL2RybS9kcm1fcGFuZWwuaAo+IGluZGV4IDEzZmY0NGIyODg5My4u
-NGQ1MWNiMzgwYzc1IDEwMDY0NAo+IC0tLSBhL2luY2x1ZGUvZHJtL2RybV9wYW5lbC5oCj4gKysr
-IGIvaW5jbHVkZS9kcm0vZHJtX3BhbmVsLmgKPiBAQCAtMjYsNiArMjYsOCBAQAo+ICAKPiAgI2lu
-Y2x1ZGUgPGxpbnV4L2xpc3QuaD4KPiAgCj4gKyNkZWZpbmUgRFJNX1BBTkVMX0ZMQUdfUFJFRkVS
-X09ORV9TSE9UCQkoMSA8PCAwKQoKVGhpcyBpcyBhIHBhbmVsIHByb3BlcnR5LCBub3QgYSBtb2Rl
-IHByb3BlcnR5LiBJIHRoaW5rIGl0IHdvdWxkIGJlIG11Y2gKYmV0dGVyIHRvIHB1dCB0aGlzIGRp
-cmVjdGx5IGludG8gdGhlIHBhbmVsIHN0cnVjdCwgb3IgbWF5YmUgdGhlIGRzaSBzaW5rCmRldmlj
-ZSBzdHVmZiBvciB3aGVyZXZlci4gQnV0IG1vZGUgcmVhbGx5IGRvZXNuJ3QgaGF2ZSBhbnl0aGlu
-ZyB0byBkbyBob3cKZXhhY3RseSB0aGUgcGl4ZWxzIGdldCB0byB0aGUgcGFuZWwuCi1EYW5pZWwK
-LS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIsIEludGVsIENvcnBvcmF0aW9uCmh0
-dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNr
-dG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJp
-LWRldmVsCg==
+On Wed, Jul 01, 2015 at 04:21:53PM +0800, Mark Zhang wrote:
+> @@ -756,7 +752,11 @@ tegra_dsi_connector_duplicate_state(struct drm_connector *connector)
+>  }
+>  
+>  static const struct drm_connector_funcs tegra_dsi_connector_funcs = {
+> -	.dpms = tegra_dsi_connector_dpms,
+> +	/*
+> +	 * drm_atomic_helper_connector_dpms only handles DPMS ON/OFF,
+> +	 * so use drm_helper_connector_dpms instead.
+> +	 */
+> +	.dpms = drm_helper_connector_dpms,
+
+Nope, mixing legacy dpms handling into an atomic driver is a no-go. You
+need to use drm_atomic_helper_connector_dpms here.
+-Daniel
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
