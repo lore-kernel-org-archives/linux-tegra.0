@@ -1,50 +1,41 @@
-From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 12/12] JUST FOR TEST: Add one-shot trigger to update
- display
-Date: Wed, 1 Jul 2015 20:43:01 +0800
-Message-ID: <5593E055.5050305@nvidia.com>
-References: <1435738915-31973-1-git-send-email-markz@nvidia.com> <1435738915-31973-13-git-send-email-markz@nvidia.com> <20150701083617.GF30960@phenom.ffwll.local> <5593AC80.10801@nvidia.com> <20150701103457.GD24055@phenom.ffwll.local>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150701103457.GD24055-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: [PATCH v1 0/3] Have Tegra's GPIO chip depend explicitly on the pinctrl device
+Date: Wed,  1 Jul 2015 14:45:50 +0200
+Message-ID: <1435754753-31307-1-git-send-email-tomeu.vizoso@collabora.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Thierry Reding <thierry.reding@gmail.com>, Russell King <linux@arm.linux.org.uk>, Linus Walleij <linus.walleij@linaro.org>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Grant Likely <grant.likely@linaro.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/01/2015 06:34 PM, Daniel Vetter wrote:
-> On Wed, Jul 01, 2015 at 05:01:52PM +0800, Mark Zhang wrote:
->> On 07/01/2015 04:36 PM, Daniel Vetter wrote:
->>> On Wed, Jul 01, 2015 at 04:21:55PM +0800, Mark Zhang wrote:
->>>> This HACK adds a workqueue to refresh the display periodically.
->>>> This is used just for testing.
->>>
->>> ->dirty is the drm hook you're looking for, it's meant to flush out any
->>> frontbuffer rendering. Generic kms clients using the dumb buffers (e.g.
->>> fedora boot splash) use this already.
->>>
->>
->> Oh... I did a grep in drm source and are you talking about
->> "drm_framebuffer_funcs->dirty"? Yeah, that should work for me.. but that
->> requires userspace sending IOCTL to trigger, right? Honestly I'm lazy so
->> I created this HACK so that I don't need userspace to test.
-> 
-> Yeah userspace needs to send ioctl already after each drawing. Generic
-> userspace does that already since it's required by qxl, udl, soon i915 and
-> probably a few others too. fbdev emulation is more annyoing but there's
-> code to move around in these drivers (qxl seems best to me as a starting
-> point) too.
-> 
+Hello,
 
-Alright, this makes sense. I have no idea about qxl, what I have now is
-an ubuntu running on Tegra114. So I'm wondering what I suppose to do is
-installing qemu on the ubuntu?
+these three patches make sure that there's an explicit dependency from
+the GPIO chip in Tegra SoCs to the corresponding pinctrl device, without
+having duplicated gpio ranges.
 
-Mark
+By having an explicit dependency, we can do things such as probing the
+pinctrl device before the GPIO chip device to avoid deferred probes.
 
-> Imo without this you shouldn't merge one-shot, at least not enabled by
-> default.
-> -Daniel
-> 
+Thanks,
+
+Tomeu
+
+
+Tomeu Vizoso (3):
+  gpio: defer probe if pinctrl cannot be found
+  pinctrl: tegra: Only set the gpio range if needed
+  ARM: tegra: Add gpio-ranges property
+
+ arch/arm/boot/dts/tegra114.dtsi |  1 +
+ arch/arm/boot/dts/tegra124.dtsi |  1 +
+ arch/arm/boot/dts/tegra20.dtsi  |  1 +
+ arch/arm/boot/dts/tegra30.dtsi  |  1 +
+ drivers/gpio/gpiolib-of.c       | 27 ++++++++++++++++++---------
+ drivers/gpio/gpiolib.c          |  5 ++++-
+ drivers/pinctrl/pinctrl-tegra.c | 19 ++++++++++++++++++-
+ include/linux/of_gpio.h         |  4 ++--
+ 8 files changed, 46 insertions(+), 13 deletions(-)
+
+-- 
+2.4.1
