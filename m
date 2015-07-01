@@ -1,69 +1,58 @@
 From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH v2 0/12] Discover and probe dependencies
-Date: Wed,  1 Jul 2015 11:40:55 +0200
-Message-ID: <1435743667-11987-1-git-send-email-tomeu.vizoso@collabora.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Sender: linux-gpio-owner@vger.kernel.org
+Subject: [PATCH v2 05/12] gpu: host1x: register dependency parser for firmware
+ nodes
+Date: Wed,  1 Jul 2015 11:41:00 +0200
+Message-ID: <1435743667-11987-6-git-send-email-tomeu.vizoso@collabora.com>
+References: <1435743667-11987-1-git-send-email-tomeu.vizoso@collabora.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1435743667-11987-1-git-send-email-tomeu.vizoso@collabora.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: linux-kernel@vger.kernel.org
-Cc: Mark Brown <broonie@kernel.org>, linux-acpi@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-pwm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, alsa-devel@alsa-project.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Alan Stern <stern@rowland.harvard.edu>, Linus Walleij <linus.walleij@linaro.org>, Kumar Gala <galak@codeaurora.org>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Jingoo Han <jingoohan1@gmail.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Pawel Moll <pawel.moll@arm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Le
+Cc: devicetree@vger.kernel.org, linux-fbdev@vger.kernel.org, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-gpio@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, alsa-devel@alsa-project.org, dri-devel@lists.freedesktop.org, linux-acpi@vger.kernel.org, Mark Brown <broonie@kernel.org>, linux-pwm@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
-
-this is version 2 of a series that probes devices in dependency order so
-as to avoid deferred probes. While deferred probing is a powerful
-solution that makes sure that you eventually get a working system at the
-end of the boot, can make it very time consuming to find out why a
-device didn't probe and can also introduce big delays in when a device
-actually probes by sending it to the end of the deferred queue.
-
-So far I have only tested on a Tegra124 Chromebook.
-
-Thanks,
-
-Tomeu
-
-Changes in v2:
-- Instead of delaying all probes until late_initcall, only delay matches
-  of platform devices that have a firmware node attached.
-- Allow bindings implementations register a function instead of using
-  class callbacks, as not only subsystems implement firmware bindings.
-- Move strends to string.h
-- Document that consumers of backlight devices can use the 'backlight'
-  property to hold a phandle to the backlight device.
-- Allocate the list of dependencies and pass it to the function that
-  fills it.
-
-Tomeu Vizoso (12):
-  device: property: delay device-driver matches
-  device: property: find dependencies of a firmware node
-  string: Introduce strends()
-  gpio: register dependency parser for firmware nodes
-  gpu: host1x: register dependency parser for firmware nodes
-  backlight: Document consumers of backlight nodes
-  backlight: register dependency parser for firmware nodes
-  USB: EHCI: register dependency parser for firmware nodes
-  regulator: register dependency parser for firmware nodes
-  pwm: register dependency parser for firmware nodes
-  ASoC: tegra: register dependency parser for firmware nodes
-  driver-core: probe dependencies before probing
-
- .../bindings/video/backlight/backlight.txt         |  22 ++++
- drivers/base/dd.c                                  | 139 +++++++++++++++++++++
- drivers/base/property.c                            | 120 ++++++++++++++++++
- drivers/gpio/gpiolib.c                             |  54 ++++++++
- drivers/gpu/host1x/dev.c                           |  26 ++++
- drivers/pwm/core.c                                 |  28 +++++
- drivers/regulator/core.c                           |  27 ++++
- drivers/usb/host/ehci-tegra.c                      |  16 +++
- drivers/video/backlight/backlight.c                |  16 +++
- include/linux/fwnode.h                             |   5 +
- include/linux/property.h                           |  12 ++
- include/linux/string.h                             |  13 ++
- sound/soc/tegra/tegra_max98090.c                   |  42 ++++++-
- 13 files changed, 519 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/video/backlight/backlight.txt
-
--- 
-2.4.1
-
+U28gb3RoZXJzIGNhbiBmaW5kIG91dCBkZXBlbmRlbmNpZXMgb2YgaG9zdDF4IGNsaWVudHMsIGFz
+IHNwZWNpZmllZCBpbgpiaW5kaW5ncy9ncHUvbnZpZGlhLHRlZ3JhMjAtaG9zdDF4LnR4dC4KClNp
+Z25lZC1vZmYtYnk6IFRvbWV1IFZpem9zbyA8dG9tZXUudml6b3NvQGNvbGxhYm9yYS5jb20+Ci0t
+LQoKQ2hhbmdlcyBpbiB2MjogTm9uZQoKIGRyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuYyB8IDI2ICsr
+KysrKysrKysrKysrKysrKysrKysrKysrCiAxIGZpbGUgY2hhbmdlZCwgMjYgaW5zZXJ0aW9ucygr
+KQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2hvc3QxeC9kZXYuYyBiL2RyaXZlcnMvZ3B1L2hv
+c3QxeC9kZXYuYwppbmRleCA1M2QzZDFkLi41YmIxMGI4IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dw
+dS9ob3N0MXgvZGV2LmMKKysrIGIvZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5jCkBAIC0yMTIsNiAr
+MjEyLDI5IEBAIHN0YXRpYyBzdHJ1Y3QgcGxhdGZvcm1fZHJpdmVyIHRlZ3JhX2hvc3QxeF9kcml2
+ZXIgPSB7CiAJLnJlbW92ZSA9IGhvc3QxeF9yZW1vdmUsCiB9OwogCitzdGF0aWMgdm9pZCBhZGRf
+ZGVwZW5kZW5jeShzdHJ1Y3QgZndub2RlX2hhbmRsZSAqZndub2RlLAorCQkJICAgY29uc3QgY2hh
+ciAqcHJvcGVydHksCisJCQkgICBzdHJ1Y3QgbGlzdF9oZWFkICpkZXBzKQoreworCXN0cnVjdCBk
+ZXZpY2Vfbm9kZSAqbnA7CisKKwlucCA9IG9mX3BhcnNlX3BoYW5kbGUodG9fb2Zfbm9kZShmd25v
+ZGUpLCBwcm9wZXJ0eSwgMCk7CisJaWYgKCFucCkKKwkJcmV0dXJuOworCisJZndub2RlX2FkZF9k
+ZXBlbmRlbmN5KCZucC0+Zndub2RlLCBkZXBzKTsKK30KKworc3RhdGljIHZvaWQgaG9zdDF4X2dl
+dF9kZXBlbmRlbmNpZXMoc3RydWN0IGZ3bm9kZV9oYW5kbGUgKmZ3bm9kZSwKKwkJCQkgICAgc3Ry
+dWN0IGxpc3RfaGVhZCAqZGVwcykKK3sKKwlhZGRfZGVwZW5kZW5jeShmd25vZGUsICJudmlkaWEs
+ZHBhdXgiLCBkZXBzKTsKKwlhZGRfZGVwZW5kZW5jeShmd25vZGUsICJudmlkaWEscGFuZWwiLCBk
+ZXBzKTsKKwlhZGRfZGVwZW5kZW5jeShmd25vZGUsICJudmlkaWEsZGRjLWkyYy1idXMiLCBkZXBz
+KTsKKwlhZGRfZGVwZW5kZW5jeShmd25vZGUsICJudmlkaWEsaHBkLWdwaW8iLCBkZXBzKTsKKwlh
+ZGRfZGVwZW5kZW5jeShmd25vZGUsICJkZGMtaTJjLWJ1cyIsIGRlcHMpOworfQorCiBzdGF0aWMg
+aW50IF9faW5pdCB0ZWdyYV9ob3N0MXhfaW5pdCh2b2lkKQogewogCWludCBlcnI7CkBAIC0yMjgs
+NiArMjUxLDggQEAgc3RhdGljIGludCBfX2luaXQgdGVncmFfaG9zdDF4X2luaXQodm9pZCkKIAlp
+ZiAoZXJyIDwgMCkKIAkJZ290byB1bnJlZ2lzdGVyX2hvc3QxeDsKIAorCWZ3bm9kZV9hZGRfZGVw
+ZW5kZW5jeV9wYXJzZXIoaG9zdDF4X2dldF9kZXBlbmRlbmNpZXMpOworCiAJcmV0dXJuIDA7CiAK
+IHVucmVnaXN0ZXJfaG9zdDF4OgpAQCAtMjQwLDYgKzI2NSw3IEBAIG1vZHVsZV9pbml0KHRlZ3Jh
+X2hvc3QxeF9pbml0KTsKIAogc3RhdGljIHZvaWQgX19leGl0IHRlZ3JhX2hvc3QxeF9leGl0KHZv
+aWQpCiB7CisJZndub2RlX3JlbW92ZV9kZXBlbmRlbmN5X3BhcnNlcihob3N0MXhfZ2V0X2RlcGVu
+ZGVuY2llcyk7CiAJcGxhdGZvcm1fZHJpdmVyX3VucmVnaXN0ZXIoJnRlZ3JhX21pcGlfZHJpdmVy
+KTsKIAlwbGF0Zm9ybV9kcml2ZXJfdW5yZWdpc3RlcigmdGVncmFfaG9zdDF4X2RyaXZlcik7CiAJ
+YnVzX3VucmVnaXN0ZXIoJmhvc3QxeF9idXNfdHlwZSk7Ci0tIAoyLjQuMQoKX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
+dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3Rv
+cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
