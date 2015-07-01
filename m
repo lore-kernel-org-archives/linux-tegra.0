@@ -1,38 +1,53 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 0/4] ARM: tegra: enable Nouveau for Jetson TK1 and Venice 2
-Date: Wed, 1 Jul 2015 18:13:44 +0900
-Message-ID: <1435742028-8237-1-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH 3/4] ARM: tegra: jetson-tk1: Add GK20A GPU DT node
+Date: Wed, 1 Jul 2015 18:13:47 +0900
+Message-ID: <1435742028-8237-4-git-send-email-acourbot@nvidia.com>
+References: <1435742028-8237-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1435742028-8237-1-git-send-email-acourbot@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-With all essential kernel driver and user-space patches merged, GK20A can now
-be enabled safely on Tegra124 devices. This series makes small device tree
-and configuration adjustments to allow this.
+Add the device-tree node for the GK20A GPU and leave it disabled.
+It is the responsability of the bootloader to enable it if the
+VPR registers have been programmed such as the GPU can operate.
 
-It leaves the GK20A nodes ready to be used, but still disabled. Enabling the
-nodes is the work of the bootloader, after it has configured VPR properly.
-
-U-boot patches that do this are in the work. In the meantime, it is safe to
-merge this kernel support.
-
-Alexandre Courbot (3):
-  ARM: tegra: Add IOMMU node to GK20A
-  ARM: tegra: jetson-tk1: Add GK20A GPU DT node
-  ARM: tegra: Enable Nouveau in defconfig
-
-Thierry Reding (1):
-  ARM: tegra: venice2: Add GK20A GPU DT node
-
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+---
  arch/arm/boot/dts/tegra124-jetson-tk1.dts | 10 +++++++++-
- arch/arm/boot/dts/tegra124-venice2.dts    | 10 +++++++++-
- arch/arm/boot/dts/tegra124.dtsi           |  3 +++
- arch/arm/configs/tegra_defconfig          |  3 +++
- 4 files changed, 24 insertions(+), 2 deletions(-)
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
+diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+index ed8a8acd3d34..f0459ea94981 100644
+--- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
++++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+@@ -53,6 +53,14 @@
+ 		};
+ 	};
+ 
++	gpu@0,57000000 {
++		/*
++		 * Node left disabled on purpose - the bootloader will enable
++		 * it after having set the VPR up
++		 */
++		vdd-supply = <&vdd_gpu>;
++	};
++
+ 	pinmux: pinmux@0,70000868 {
+ 		pinctrl-names = "boot";
+ 		pinctrl-0 = <&state_boot>;
+@@ -1514,7 +1522,7 @@
+ 					regulator-always-on;
+ 				};
+ 
+-				sd6 {
++				vdd_gpu: sd6 {
+ 					regulator-name = "+VDD_GPU_AP";
+ 					regulator-min-microvolt = <650000>;
+ 					regulator-max-microvolt = <1200000>;
 -- 
 2.4.4
