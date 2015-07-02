@@ -1,87 +1,49 @@
-From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [RFC PATCH 00/15] pwm: add support for atomic update
-Date: Thu, 2 Jul 2015 09:55:20 +0200
-Message-ID: <20150702095520.3088852f@bbrezillon>
-References: <1435738921-25027-1-git-send-email-boris.brezillon@free-electrons.com>
-	<3250976.mr9RMtjrdC@diego>
+From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
+Subject: Re: [PATCH v1 1/3] gpio: defer probe if pinctrl cannot be found
+Date: Thu, 2 Jul 2015 10:49:27 +0200
+Message-ID: <CAMuHMdWvvc0Tfppif5bpBU-ZqLF6ME1EC19cwq4Zj4q1nU_ZLQ@mail.gmail.com>
+References: <1435754753-31307-1-git-send-email-tomeu.vizoso@collabora.com>
+	<1435754753-31307-2-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <3250976.mr9RMtjrdC@diego>
+In-Reply-To: <1435754753-31307-2-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Doug Anderson <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 01 Jul 2015 23:57:57 +0200
-Heiko St=C3=BCbner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org> wrote:
+Hi Tomeu,
 
-> Hi Boris,
->=20
-> Am Mittwoch, 1. Juli 2015, 10:21:46 schrieb Boris Brezillon:
-> > Hello Thierry,
-> >=20
-> > This series adds support for atomic PWM update, or ITO, the capabil=
-ity
-> > to update all the parameters of a PWM device (enabled/disabled, per=
-iod,
-> > duty and polarity) in one go.
-> >=20
-> > This implementation is still experimental, and I may have missed so=
-me key
-> > aspect, so any feedback are welcome.
-> >=20
-> > Also note that I haven't protected the state update with any lockin=
-g.
-> > That's because the existing config does not protect against concurr=
-ent
-> > access to a requested PWM device (see the pwm_config implementation=
-).
-> > I guess the PWM framework assume the user will implement the proper=
- locking
-> > scheme if it has to concurrently access the device.
-> >=20
-> > The 5 first patches prepare the addition of the pwm_state concept, =
-which
-> > will be used to allow atomic updates.
-> > The following patches introduce the pwm_state struct, initial state
-> > retrieval and atomic update concepts.
-> >=20
-> > Patches 12 and 13 are showing how one can implement the initial sta=
-te
-> > retrieval and atomic update features in a PWM driver (in this speci=
-fic
-> > case I implemented it in the rockchip driver).
-> >=20
-> > The last 2 patches are making use of those changes to improve the
-> > pwm-regulator driver (initializing the regulator state based on the
-> > initial PWM state).
->=20
-> at first I got very strange readings (very wrong values and wrong pol=
-arity),=20
-> which resulted from the issues I pointed out in the replies to indivi=
-dual=20
-> patches. After fixing these, the pwm read-back now returns exactly th=
-e expected=20
-> values :-) .
+On Wed, Jul 1, 2015 at 2:45 PM, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org> wrote:
+> When an OF node has a pin range for its GPIOs, return -EPROBE_DEFER if
+> the pin controller isn't available.
+>
+> Otherwise, the GPIO range wouldn't be set at all unless the pin
+> controller probed always before the GPIO chip.
+>
+> With this change, the probe of the GPIO chip will be deferred and will
+> be retried at a later point, hopefully once the pin controller has been
+> registered and probed already.
+>
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
 
-Sorry about that, as I said I only compile tested the series :-/.
-Anyway, thanks for providing fixes for these bugs, they'll be applied
-in the next version.
+I was a bit afraid this would break the case of gpio controllers that are
+also pin controllers, i.e. where "gpio-ranges" points to the gpio controller
+itself[*], but it doesn't.
 
->=20
-> And with the original voltage table from the Chromeos-devicetrees, th=
-e pwm-
-> regulator also returns the expected 1.2V that coreboot initially set.
+Tested-by: Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>
 
-Great! And thanks for testing the patches.
+[*] E.g. "[PATCH 2/7] ARM: shmobile: r8a7740 dtsi: Add missing "gpio-ranges"
+    to gpio node" (http://www.spinics.net/lists/linux-sh/msg43077.html)
 
-Best Regards,
+Gr{oetje,eeting}s,
 
-Boris
+                        Geert
 
---=20
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
