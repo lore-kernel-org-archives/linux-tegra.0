@@ -1,56 +1,46 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: Re: [RFC PATCH 00/15] pwm: add support for atomic update
-Date: Wed, 01 Jul 2015 23:57:57 +0200
-Message-ID: <3250976.mr9RMtjrdC@diego>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [RFC PATCH 05/15] pwm: introduce default period and polarity
+ concepts
+Date: Thu, 2 Jul 2015 08:44:45 +0200
+Message-ID: <20150702064445.GC11824@pengutronix.de>
 References: <1435738921-25027-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1435738921-25027-6-git-send-email-boris.brezillon@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <1435738921-25027-1-git-send-email-boris.brezillon@free-electrons.com>
+Content-Disposition: inline
+In-Reply-To: <1435738921-25027-6-git-send-email-boris.brezillon@free-electrons.com>
 Sender: linux-pwm-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Boris Brezillon <boris.brezillon@free-electrons.com>, Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-fbdev@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Bryan Wu <cooloney@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Doug Anderson <dianders@google.com>, Mark Brown <broonie@kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Jingoo Han <jingoohan1@gmail.com>, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-fbdev@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Bryan Wu <cooloney@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Doug Anderson <dianders@google.com>, Mark Brown <broonie@kernel.org>, Richard Purdie <rpurdie@rpsys.net>, linux-arm-kernel@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Boris,
+On Wed, Jul 01, 2015 at 10:21:51AM +0200, Boris Brezillon wrote:
+> When requested by a user, the PWM is assigned a default period and po=
+larity
+> extracted from the DT, the platform data or statically set by the dri=
+ver.
+> Those default values are currently stored in the period and polarity
+> fields of the pwm_device struct, but they will be stored somewhere el=
+se
+> once we have introduced the architecture allowing for hardware state
+> retrieval.
+>=20
+> The pwm_set_default_polarity and pwm_set_default_period should only b=
+e
+> used by PWM drivers or the PWM core infrastructure to specify the
+> default period and polarity values.
+Would it make sense to put the prototypes of
+pwm_set_default_p{olarity,eriod} into (say) drivers/pwm/pwm-private.h
+then?
 
-Am Mittwoch, 1. Juli 2015, 10:21:46 schrieb Boris Brezillon:
-> Hello Thierry,
-> 
-> This series adds support for atomic PWM update, or ITO, the capability
-> to update all the parameters of a PWM device (enabled/disabled, period,
-> duty and polarity) in one go.
-> 
-> This implementation is still experimental, and I may have missed some key
-> aspect, so any feedback are welcome.
-> 
-> Also note that I haven't protected the state update with any locking.
-> That's because the existing config does not protect against concurrent
-> access to a requested PWM device (see the pwm_config implementation).
-> I guess the PWM framework assume the user will implement the proper locking
-> scheme if it has to concurrently access the device.
-> 
-> The 5 first patches prepare the addition of the pwm_state concept, which
-> will be used to allow atomic updates.
-> The following patches introduce the pwm_state struct, initial state
-> retrieval and atomic update concepts.
-> 
-> Patches 12 and 13 are showing how one can implement the initial state
-> retrieval and atomic update features in a PWM driver (in this specific
-> case I implemented it in the rockchip driver).
-> 
-> The last 2 patches are making use of those changes to improve the
-> pwm-regulator driver (initializing the regulator state based on the
-> initial PWM state).
+Best regards
+Uwe
 
-at first I got very strange readings (very wrong values and wrong polarity), 
-which resulted from the issues I pointed out in the replies to individual 
-patches. After fixing these, the pwm read-back now returns exactly the expected 
-values :-) .
-
-And with the original voltage table from the Chromeos-devicetrees, the pwm-
-regulator also returns the expected 1.2V that coreboot initially set.
-
-
-Heiko
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
