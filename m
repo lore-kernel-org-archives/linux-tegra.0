@@ -1,58 +1,51 @@
-From: Rob Herring <robherring2@gmail.com>
-Subject: Re: [PATCH v1 1/3] gpio: defer probe if pinctrl cannot be found
-Date: Thu, 2 Jul 2015 10:38:21 -0500
-Message-ID: <CAL_JsqL_ri3XgojPWnhJ9DrUTgqS2ucJbXacVaY5B5VaKfT7eQ@mail.gmail.com>
-References: <1435754753-31307-1-git-send-email-tomeu.vizoso@collabora.com>
- <1435754753-31307-2-git-send-email-tomeu.vizoso@collabora.com>
- <CAL_JsqKXODBk4FVB-kiWFHLGFLCwJDjXvpVqOTvuEJubApbVSg@mail.gmail.com> <CAMuHMdXfKD200tpcJdxBrmwFQhyYLiptOxHOXKLRM9eRfJ9uqg@mail.gmail.com>
+From: Terje Bergstrom <tbergstrom@nvidia.com>
+Subject: Re: [PATCH] gpu: host1x: Fix MLOCK's debug info
+Date: Thu, 2 Jul 2015 14:15:01 -0700
+Message-ID: <5595A9D5.5000209@nvidia.com>
+References: <1435519624-16444-1-git-send-email-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <CAMuHMdXfKD200tpcJdxBrmwFQhyYLiptOxHOXKLRM9eRfJ9uqg@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1435519624-16444-1-git-send-email-digetx@gmail.com>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jul 2, 2015 at 3:59 AM, Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> Hi Rob,
->
-> On Wed, Jul 1, 2015 at 7:36 PM, Rob Herring <robherring2@gmail.com> wrote:
->> On Wed, Jul 1, 2015 at 7:45 AM, Tomeu Vizoso <tomeu.vizoso@collabora.com> wrote:
->>> When an OF node has a pin range for its GPIOs, return -EPROBE_DEFER if
->>> the pin controller isn't available.
->>>
->>> Otherwise, the GPIO range wouldn't be set at all unless the pin
->>> controller probed always before the GPIO chip.
->>>
->>> With this change, the probe of the GPIO chip will be deferred and will
->>> be retried at a later point, hopefully once the pin controller has been
->>> registered and probed already.
->>
->> This will break cases where the pinctrl driver does not exist, but the
->> DT contains pinctrl bindings. We can have similar problems already
->> with clocks though. However, IMO this problem is a bit different in
->> that pinctrl is more likely entirely optional while clocks are often
->> required. You may do all pin setup in bootloader/firmware on some
->> boards and not others. Of course then why put pinctrl in the DT in
->> that case? They could be present just due to how chip vs. board dts
->> files are structured.
->
-> Isn't that already the case?
-> If I change the compatible value of a pinctrl node to an invalid value, I get:
->
->     sh-sci e6c50000.serial: could not find pctldev for node
-> /pfc@e6050000/serial1, deferring probe
-
-I guess so.
-
->> We could address this by simply marking the pin controller node
->> disabled. However, ...
->
-> Doesn't seem to make any difference.
-
-No doubt. I'm proposing that it should, not that it does already. Of
-course, the callers will also have to test for -ENODEV and ignore
-those errors.
-
-Rob
+Ck9uIDA2LzI4LzIwMTUgMTI6MjcgUE0sIERtaXRyeSBPc2lwZW5rbyB3cm90ZToKPiBNTE9DSydz
+IGRlYnVnIGluZm8sIHNwZXdlZCBvbiBDRE1BIHRpbWVvdXQsIGNvbnRhaW5zIG1lYW5pbmdsZXNz
+IE1MT0NLCj4gb3duZXIgY2hhbm5lbCBJRCBiZWNhdXNlIEhPU1QxWF9TWU5DX01MT0NLX09XTkVS
+X0NISURfRigpIHJldHVybnMgc2hpZnRlZAo+IHZhbHVlLCB3aGlsZSB1bnNoaWZ0ZWQgc2hvdWxk
+IGJlIHVzZWQuIEZpeCBpdCBieSBjaGFuZ2luZyAnX0YnIHRvICdfVicuCj4KPiBTaWduZWQtb2Zm
+LWJ5OiBEbWl0cnkgT3NpcGVua28gPGRpZ2V0eEBnbWFpbC5jb20+Cj4gLS0tCj4gICBkcml2ZXJz
+L2dwdS9ob3N0MXgvaHcvZGVidWdfaHcuYyAgICAgICAgIHwgMiArLQo+ICAgZHJpdmVycy9ncHUv
+aG9zdDF4L2h3L2h3X2hvc3QxeDAxX3N5bmMuaCB8IDggKysrKy0tLS0KPiAgIGRyaXZlcnMvZ3B1
+L2hvc3QxeC9ody9od19ob3N0MXgwMl9zeW5jLmggfCA4ICsrKystLS0tCj4gICBkcml2ZXJzL2dw
+dS9ob3N0MXgvaHcvaHdfaG9zdDF4MDRfc3luYy5oIHwgOCArKysrLS0tLQo+ICAgNCBmaWxlcyBj
+aGFuZ2VkLCAxMyBpbnNlcnRpb25zKCspLCAxMyBkZWxldGlvbnMoLSkKPgo+IGRpZmYgLS1naXQg
+YS9kcml2ZXJzL2dwdS9ob3N0MXgvaHcvZGVidWdfaHcuYyBiL2RyaXZlcnMvZ3B1L2hvc3QxeC9o
+dy9kZWJ1Z19ody5jCj4gaW5kZXggNzkxZGU5My4uY2MzZjE4MiAxMDA2NDQKPiAtLS0gYS9kcml2
+ZXJzL2dwdS9ob3N0MXgvaHcvZGVidWdfaHcuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2hvc3QxeC9o
+dy9kZWJ1Z19ody5jCj4gQEAgLTI5OCw3ICsyOTgsNyBAQCBzdGF0aWMgdm9pZCBob3N0MXhfZGVi
+dWdfc2hvd19tbG9ja3Moc3RydWN0IGhvc3QxeCAqaG9zdCwgc3RydWN0IG91dHB1dCAqbykKPiAg
+IAkJCWhvc3QxeF9zeW5jX3JlYWRsKGhvc3QsIEhPU1QxWF9TWU5DX01MT0NLX09XTkVSKGkpKTsK
+PiAgIAkJaWYgKEhPU1QxWF9TWU5DX01MT0NLX09XTkVSX0NIX09XTlNfVihvd25lcikpCj4gICAJ
+CQlob3N0MXhfZGVidWdfb3V0cHV0KG8sICIlZDogbG9ja2VkIGJ5IGNoYW5uZWwgJWRcbiIsCj4g
+LQkJCQlpLCBIT1NUMVhfU1lOQ19NTE9DS19PV05FUl9DSElEX0Yob3duZXIpKTsKPiArCQkJCWks
+IEhPU1QxWF9TWU5DX01MT0NLX09XTkVSX0NISURfVihvd25lcikpOwo+ICAgCQllbHNlIGlmIChI
+T1NUMVhfU1lOQ19NTE9DS19PV05FUl9DUFVfT1dOU19WKG93bmVyKSkKPiAgIAkJCWhvc3QxeF9k
+ZWJ1Z19vdXRwdXQobywgIiVkOiBsb2NrZWQgYnkgY3B1XG4iLCBpKTsKPiAgIAkJZWxzZQooLi4u
+KQoKTG9va3MgZ29vZCwgYW5kIGZpeGVzIGEgYmFkIGdvdGNoYS4KClJldmlld2VkLUJ5OiBUZXJq
+ZSBCZXJnc3Ryb20gPHRiZXJnc3Ryb21AbnZpZGlhLmNvbT4KClRlcmplCl9fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
+ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Au
+b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
