@@ -1,60 +1,66 @@
-From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
-Subject: Re: [PATCH v1 1/3] gpio: defer probe if pinctrl cannot be found
-Date: Thu, 2 Jul 2015 10:59:45 +0200
-Message-ID: <CAMuHMdXfKD200tpcJdxBrmwFQhyYLiptOxHOXKLRM9eRfJ9uqg@mail.gmail.com>
-References: <1435754753-31307-1-git-send-email-tomeu.vizoso@collabora.com>
-	<1435754753-31307-2-git-send-email-tomeu.vizoso@collabora.com>
-	<CAL_JsqKXODBk4FVB-kiWFHLGFLCwJDjXvpVqOTvuEJubApbVSg@mail.gmail.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [RFC PATCH 16/15] pwm: add informations about polarity, duty
+ cycle and period to debugfs
+Date: Thu, 2 Jul 2015 15:01:41 +0200
+Message-ID: <20150702150141.5018a791@bbrezillon>
+References: <1435738921-25027-1-git-send-email-boris.brezillon@free-electrons.com>
+	<3365087.n2eEES60JK@diego>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAL_JsqKXODBk4FVB-kiWFHLGFLCwJDjXvpVqOTvuEJubApbVSg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-pwm-owner@vger.kernel.org>
+In-Reply-To: <3365087.n2eEES60JK@diego>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+Cc: linux-arm-kernel@lists.infradead.org, Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-fbdev@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Bryan Wu <cooloney@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Doug Anderson <dianders@google.com>, Mark Brown <broonie@kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Jingoo Han <jingoohan1@gmail.com>, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Rob,
+On Wed, 01 Jul 2015 23:50:46 +0200
+Heiko St=C3=BCbner <heiko@sntech.de> wrote:
 
-On Wed, Jul 1, 2015 at 7:36 PM, Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Wed, Jul 1, 2015 at 7:45 AM, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org> wrote:
->> When an OF node has a pin range for its GPIOs, return -EPROBE_DEFER if
->> the pin controller isn't available.
->>
->> Otherwise, the GPIO range wouldn't be set at all unless the pin
->> controller probed always before the GPIO chip.
->>
->> With this change, the probe of the GPIO chip will be deferred and will
->> be retried at a later point, hopefully once the pin controller has been
->> registered and probed already.
->
-> This will break cases where the pinctrl driver does not exist, but the
-> DT contains pinctrl bindings. We can have similar problems already
-> with clocks though. However, IMO this problem is a bit different in
-> that pinctrl is more likely entirely optional while clocks are often
-> required. You may do all pin setup in bootloader/firmware on some
-> boards and not others. Of course then why put pinctrl in the DT in
-> that case? They could be present just due to how chip vs. board dts
-> files are structured.
+> The pwm-states make it possible to also output the polarity, duty cyc=
+le
+> and period information in the debugfs pwm summary-outout.
+> This makes it easier to gather overview information about pwms withou=
+t
+> needing to walk through the sysfs attributes of every pwm.
+>=20
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+> might be nice to have too ;-)
 
-Isn't that already the case?
-If I change the compatible value of a pinctrl node to an invalid value, I get:
+Yes.
 
-    sh-sci e6c50000.serial: could not find pctldev for node
-/pfc@e6050000/serial1, deferring probe
+>=20
+>  drivers/pwm/core.c | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
+> index 6dafd8e..79037a2 100644
+> --- a/drivers/pwm/core.c
+> +++ b/drivers/pwm/core.c
+> @@ -951,9 +951,18 @@ static void pwm_dbg_show(struct pwm_chip *chip, =
+struct seq_file *s)
+>  		if (test_bit(PWMF_REQUESTED, &pwm->flags))
+>  			seq_puts(s, " requested");
+> =20
+> -		if (pwm_is_enabled(pwm))
+> +		if (pwm_is_enabled(pwm)) {
+>  			seq_puts(s, " enabled");
+> =20
+> +			seq_printf(s, " period:%uns",
+> +				   pwm_get_period(pwm));
+> +			seq_printf(s, " duty:%uns",
+> +				   pwm_get_duty_cycle(pwm));
+> +			seq_printf(s, " polarity:%s",
+> +				   pwm_get_polarity(pwm) ? "inverse"
+> +							 : "normal");
 
-> We could address this by simply marking the pin controller node
-> disabled. However, ...
+I would print those values even if the PWM is not enabled.
 
-Doesn't seem to make any difference.
 
-Gr{oetje,eeting}s,
 
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--=20
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
