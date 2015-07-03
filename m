@@ -1,51 +1,47 @@
-From: Terje Bergstrom <tbergstrom@nvidia.com>
-Subject: Re: [PATCH] gpu: host1x: Fix MLOCK's debug info
-Date: Thu, 2 Jul 2015 14:15:01 -0700
-Message-ID: <5595A9D5.5000209@nvidia.com>
-References: <1435519624-16444-1-git-send-email-digetx@gmail.com>
+From: Mark Zhang <markz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 12/12] JUST FOR TEST: Add one-shot trigger to update
+ display
+Date: Fri, 3 Jul 2015 15:57:55 +0800
+Message-ID: <55964083.60001@nvidia.com>
+References: <1435738915-31973-1-git-send-email-markz@nvidia.com> <1435738915-31973-13-git-send-email-markz@nvidia.com> <20150701083617.GF30960@phenom.ffwll.local> <5593AC80.10801@nvidia.com> <20150701103457.GD24055@phenom.ffwll.local> <5593E055.5050305@nvidia.com> <20150701145535.GW23343@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1435519624-16444-1-git-send-email-digetx@gmail.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dmitry Osipenko <digetx@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150701145535.GW23343-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDA2LzI4LzIwMTUgMTI6MjcgUE0sIERtaXRyeSBPc2lwZW5rbyB3cm90ZToKPiBNTE9DSydz
-IGRlYnVnIGluZm8sIHNwZXdlZCBvbiBDRE1BIHRpbWVvdXQsIGNvbnRhaW5zIG1lYW5pbmdsZXNz
-IE1MT0NLCj4gb3duZXIgY2hhbm5lbCBJRCBiZWNhdXNlIEhPU1QxWF9TWU5DX01MT0NLX09XTkVS
-X0NISURfRigpIHJldHVybnMgc2hpZnRlZAo+IHZhbHVlLCB3aGlsZSB1bnNoaWZ0ZWQgc2hvdWxk
-IGJlIHVzZWQuIEZpeCBpdCBieSBjaGFuZ2luZyAnX0YnIHRvICdfVicuCj4KPiBTaWduZWQtb2Zm
-LWJ5OiBEbWl0cnkgT3NpcGVua28gPGRpZ2V0eEBnbWFpbC5jb20+Cj4gLS0tCj4gICBkcml2ZXJz
-L2dwdS9ob3N0MXgvaHcvZGVidWdfaHcuYyAgICAgICAgIHwgMiArLQo+ICAgZHJpdmVycy9ncHUv
-aG9zdDF4L2h3L2h3X2hvc3QxeDAxX3N5bmMuaCB8IDggKysrKy0tLS0KPiAgIGRyaXZlcnMvZ3B1
-L2hvc3QxeC9ody9od19ob3N0MXgwMl9zeW5jLmggfCA4ICsrKystLS0tCj4gICBkcml2ZXJzL2dw
-dS9ob3N0MXgvaHcvaHdfaG9zdDF4MDRfc3luYy5oIHwgOCArKysrLS0tLQo+ICAgNCBmaWxlcyBj
-aGFuZ2VkLCAxMyBpbnNlcnRpb25zKCspLCAxMyBkZWxldGlvbnMoLSkKPgo+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL2dwdS9ob3N0MXgvaHcvZGVidWdfaHcuYyBiL2RyaXZlcnMvZ3B1L2hvc3QxeC9o
-dy9kZWJ1Z19ody5jCj4gaW5kZXggNzkxZGU5My4uY2MzZjE4MiAxMDA2NDQKPiAtLS0gYS9kcml2
-ZXJzL2dwdS9ob3N0MXgvaHcvZGVidWdfaHcuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2hvc3QxeC9o
-dy9kZWJ1Z19ody5jCj4gQEAgLTI5OCw3ICsyOTgsNyBAQCBzdGF0aWMgdm9pZCBob3N0MXhfZGVi
-dWdfc2hvd19tbG9ja3Moc3RydWN0IGhvc3QxeCAqaG9zdCwgc3RydWN0IG91dHB1dCAqbykKPiAg
-IAkJCWhvc3QxeF9zeW5jX3JlYWRsKGhvc3QsIEhPU1QxWF9TWU5DX01MT0NLX09XTkVSKGkpKTsK
-PiAgIAkJaWYgKEhPU1QxWF9TWU5DX01MT0NLX09XTkVSX0NIX09XTlNfVihvd25lcikpCj4gICAJ
-CQlob3N0MXhfZGVidWdfb3V0cHV0KG8sICIlZDogbG9ja2VkIGJ5IGNoYW5uZWwgJWRcbiIsCj4g
-LQkJCQlpLCBIT1NUMVhfU1lOQ19NTE9DS19PV05FUl9DSElEX0Yob3duZXIpKTsKPiArCQkJCWks
-IEhPU1QxWF9TWU5DX01MT0NLX09XTkVSX0NISURfVihvd25lcikpOwo+ICAgCQllbHNlIGlmIChI
-T1NUMVhfU1lOQ19NTE9DS19PV05FUl9DUFVfT1dOU19WKG93bmVyKSkKPiAgIAkJCWhvc3QxeF9k
-ZWJ1Z19vdXRwdXQobywgIiVkOiBsb2NrZWQgYnkgY3B1XG4iLCBpKTsKPiAgIAkJZWxzZQooLi4u
-KQoKTG9va3MgZ29vZCwgYW5kIGZpeGVzIGEgYmFkIGdvdGNoYS4KClJldmlld2VkLUJ5OiBUZXJq
-ZSBCZXJnc3Ryb20gPHRiZXJnc3Ryb21AbnZpZGlhLmNvbT4KClRlcmplCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QK
-ZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On 07/01/2015 10:55 PM, Daniel Vetter wrote:
+> On Wed, Jul 01, 2015 at 08:43:01PM +0800, Mark Zhang wrote:
+>> On 07/01/2015 06:34 PM, Daniel Vetter wrote:
+[...]
+>>>
+>>
+>> Alright, this makes sense. I have no idea about qxl, what I have now is
+>> an ubuntu running on Tegra114. So I'm wondering what I suppose to do is
+>> installing qemu on the ubuntu?
+> 
+> My suggestion is just to take the qxl code, move it to the fbdev emulation
+> helper, make it generic and use it. If you want you can do a
+> compile-tested patch on top to switch qxl over to the newly added helpers.
+> No need to install/run qxl itself. Just that qxl seems to have the most
+> complete solution for what you need.
+
+OK, thanks Daniel. I'm not quite familiar with the userspace, but I
+think this is the summary:
+
+- For legacy FB support, we can use the "->dirty" fops, port the qxl
+codes to drm_fb_helper.c, just as you described.
+- For atomic page flip, the one-shot can be triggered when flipping the
+window/plane.
+- How about the front buffer rendering/drawing? I mean, if a drm
+userspace app requests a dumb buffer then draws on it, how can we
+trigger the one-shot to update the display? Do we need to add an
+additional IOCTL to do that?
+
+Mark
+> -Daniel
+> 
