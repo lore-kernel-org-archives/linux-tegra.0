@@ -1,45 +1,143 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Subject: [PATCH] pwm: add informations about polarity, duty cycle and period to debugfs
-Date: Fri, 03 Jul 2015 10:43:22 +0200
-Message-ID: <2415780.vdSYHqsCOV@diego>
-References: <1435738921-25027-1-git-send-email-boris.brezillon@free-electrons.com> <3365087.n2eEES60JK@diego> <20150702150141.5018a791@bbrezillon>
+From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: Enable TPM on tegra124 nyan boards
+Date: Fri, 3 Jul 2015 17:06:44 -0600
+Message-ID: <CAPnjgZ2-BXqdee1WwRgj5nUkqdGdBJJ0Lz135J1FxdDUo4K-cQ@mail.gmail.com>
+References: <1431526427-13340-1-git-send-email-sjg@chromium.org>
+ <5553637C.5010506@wwwdotorg.org> <CAAObsKCxFJA=6kyHM5rtpJMVRZRDbBO3KSn+QdNoOQz1rXCWTQ@mail.gmail.com>
+ <5554AD0B.1060106@wwwdotorg.org> <CAPnjgZ2QrTu=D_AapTded+_NR1waZTbNoN8rCtHnTdd0OdnwLA@mail.gmail.com>
+ <5554C399.4060807@wwwdotorg.org> <CAPnjgZ1o-DvWjJqkEjwbxKxx_0L7p1k8Mc58boqjHQEGh=yj3A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-In-Reply-To: <20150702150141.5018a791@bbrezillon>
-Sender: linux-leds-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: linux-arm-kernel@lists.infradead.org, Thierry Reding <thierry.reding@gmail.com>, linux-pwm@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-fbdev@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Bryan Wu <cooloney@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Doug Anderson <dianders@google.com>, Mark Brown <broonie@kernel.org>, Richard Purdie <rpurdie@rpsys.net>, Jingoo Han <jingoohan1@gmail.com>, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAPnjgZ1o-DvWjJqkEjwbxKxx_0L7p1k8Mc58boqjHQEGh=yj3A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The pwm-states make it possible to also output the polarity, duty cycle
-and period information in the debugfs pwm summary-outout.
-This makes it easier to gather overview information about pwms without
-needing to walk through the sysfs attributes of every pwm.
+Hi,
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
-now values are printed independent of the enable status :-)
+On 14 May 2015 at 10:30, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org> wrote:
+> Hi Stephen,
+>
+> On 14 May 2015 at 09:47, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>>
+>> On 05/14/2015 08:28 AM, Simon Glass wrote:
+>>>
+>>> Hi Stephen,
+>>>
+>>> On 14 May 2015 at 08:11, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>>>>
+>>>> On 05/14/2015 07:09 AM, Tomeu Vizoso wrote:
+>>>>>
+>>>>>
+>>>>> On 13 May 2015 at 16:45, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 05/13/2015 08:13 AM, Simon Glass wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>>
+>>>>>>> Regenerate the pinmux from the latest tegra-pinmux-scripts.
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> (Dropping most CCs; DT maintainers and lists generally don't get CC'd on
+>>>>>> simple DT content changes but rather on schema adds/changes and perhaps
+>>>>>> major DT content changes depending on context)
+>>>>>>
+>>>>>>> diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts
+>>>>>>> b/arch/arm/boot/dts/tegra124-nyan-big.dts
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>>>                   pinctrl-names = "default";
+>>>>>>>                   pinctrl-0 = <&pinmux_default>;
+>>>>>>>
+>>>>>>> -               pinmux_default: common {
+>>>>>>> +               state_default: pinmux {
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> This change will break compilation, since it changes the label name, yet
+>>>>>> the
+>>>>>> old name is still referenced in pinctrl-0 above. Same applies in the
+>>>>>> other
+>>>>>> file too.
+>>>>>>
+>>>>>>> diff --git a/arch/arm/boot/dts/tegra124-nyan-blaze.dts
+>>>>>>> b/arch/arm/boot/dts/tegra124-nyan-blaze.dts
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>>> @@ -437,18 +437,18 @@
+>>>>>>>                           usb_vbus_en0_pn4 {
+>>>>>>>                                   nvidia,pins = "usb_vbus_en0_pn4";
+>>>>>>>                                   nvidia,function = "usb";
+>>>>>>> -                               nvidia,pull = <TEGRA_PIN_PULL_UP>;
+>>>>>>> +                               nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+>>>>>>>                                   nvidia,tristate = <TEGRA_PIN_DISABLE>;
+>>>>>>>                                   nvidia,enable-input =
+>>>>>>> <TEGRA_PIN_ENABLE>;
+>>>>>>> -                               nvidia,open-drain = <TEGRA_PIN_DISABLE>;
+>>>>>>> +                               nvidia,open-drain = <TEGRA_PIN_ENABLE>;
+>>>>>>>                           };
+>>>>>>>                           usb_vbus_en1_pn5 {
+>>>>>>>                                   nvidia,pins = "usb_vbus_en1_pn5";
+>>>>>>>                                   nvidia,function = "usb";
+>>>>>>> -                               nvidia,pull = <TEGRA_PIN_PULL_UP>;
+>>>>>>> +                               nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+>>>>>>>                                   nvidia,tristate = <TEGRA_PIN_DISABLE>;
+>>>>>>>                                   nvidia,enable-input =
+>>>>>>> <TEGRA_PIN_ENABLE>;
+>>>>>>> -                               nvidia,open-drain = <TEGRA_PIN_DISABLE>;
+>>>>>>> +                               nvidia,open-drain = <TEGRA_PIN_ENABLE>;
+>>>>>>>                           };
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> Tomeu, can you comment on those changes? Evidently the pinmux
+>>>>>> configuration
+>>>>>> that's you added to the kernel doesn't exactly match the pinmux
+>>>>>> configuration that you added to tegra-pinmux-scripts.
+>>>>>
+>>>>>
+>>>>>
+>>>>> Are you sure? Just checked and what tegra-pinmux-scripts currently
+>>>>> generates matches what is currently in the kernel, for both nyans.
+>>>>
+>>>>
+>>>>
+>>>> My apologies; you're correct.
+>>>>
+>>>> This patch to the kernel DTs includes changes that aren't generated by
+>>>> either current tegra-pinmux-scripts, nor by tegra-pinmux-scripts with
+>>>> Simon's "[pinmux scripts PATCH] Support TPM on nyan boards" applied. Simon,
+>>>> can you double-check you didn't have any local patches to
+>>>> tegra-pinmux-scripts applied when you generated the DT content for this
+>>>> patch?
+>>>
+>>>
+>>> Yes. Apart from my patch the top commit is 39af.
+>>
+>>
+>> OK, did you paste the same DT content into both DTs then, instead of generating each DT separately?
+>>
+>
+> Not intentionally, but I wonder if I failed to change the board parameter?
+>
+>> When I re-generate the DT using commit 39af, I don't get any changes to usb_vbus_en*.
+>
+> I can't explain that. I'll try it again when I get a chance.
 
- drivers/pwm/core.c | 5 +++++
- 1 file changed, 5 insertions(+)
+It doesn't seem to happen now, I must have done something wrong.
 
-diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-index 6dafd8e..4360ebb 100644
---- a/drivers/pwm/core.c
-+++ b/drivers/pwm/core.c
-@@ -954,6 +954,11 @@ static void pwm_dbg_show(struct pwm_chip *chip, struct seq_file *s)
- 		if (pwm_is_enabled(pwm))
- 			seq_puts(s, " enabled");
- 
-+		seq_printf(s, " period:%uns", pwm_get_period(pwm));
-+		seq_printf(s, " duty:%uns", pwm_get_duty_cycle(pwm));
-+		seq_printf(s, " polarity:%s", pwm_get_polarity(pwm) ? "inverse"
-+								    : "normal");
-+
- 		seq_puts(s, "\n");
- 	}
- }
--- 
-2.1.4
+I'll send a v2 patch.
+
+Regards,
+Simon
