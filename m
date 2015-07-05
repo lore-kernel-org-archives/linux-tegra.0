@@ -1,93 +1,109 @@
-From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [PATCH v2] tegra: Enable TPM on tegra124 nyan boards
-Date: Fri,  3 Jul 2015 17:07:01 -0600
-Message-ID: <1435964821-15251-1-git-send-email-sjg@chromium.org>
+From: Giancarlo Canales <gcanalesb-BUHhN+a2lJ4@public.gmane.org>
+Subject: [cbootimage PATCH] tN: if_bct_is_tN_get_soc_config: Adds bounds
+ checking to the BCT buffer.
+Date: Sat, 04 Jul 2015 20:35:55 -0400
+Message-ID: <E8E25517-CD76-4F00-B711-9EC26951C9F9@me.com>
+Mime-Version: 1.0 (Mac OS X Mail 8.2 \(2098\))
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Regenerate the pinmux from the latest tegra-pinmux-scripts. This adds the
-pinmux settings for the TPM.
+Checks if the BCT buffer is too small to be a valid `nvboot_config_table`.
 
-Signed-off-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Signed-off-by: Giancarlo Canales Barreto <gcanalesb-BUHhN+a2lJ4@public.gmane.org>
 ---
+src/t114/nvbctlib_t114.c | 3 +++
+src/t124/nvbctlib_t124.c | 3 +++
+src/t132/nvbctlib_t132.c | 3 +++
+src/t20/nvbctlib_t20.c   | 3 +++
+src/t210/nvbctlib_t210.c | 3 +++
+src/t30/nvbctlib_t30.c   | 3 +++
+6 files changed, 18 insertions(+)
 
-Changes in v2:
-- Correct USB changes in nyan-blaze
+diff --git a/src/t114/nvbctlib_t114.c b/src/t114/nvbctlib_t114.c
+index dad8f4f..df68369 100644
+--- a/src/t114/nvbctlib_t114.c
++++ b/src/t114/nvbctlib_t114.c
+@@ -1139,6 +1139,9 @@ int if_bct_is_t114_get_soc_config(build_image_context *context,
+{
+	nvboot_config_table * bct = (nvboot_config_table *) context->bct;
 
- arch/arm/boot/dts/tegra124-nyan-big.dts   | 20 ++++++++++----------
- arch/arm/boot/dts/tegra124-nyan-blaze.dts | 20 ++++++++++----------
- 2 files changed, 20 insertions(+), 20 deletions(-)
++	if (context->bct_size < sizeof(nvboot_config_table))
++		return 0;
++
+	if (bct->boot_data_version == BOOTDATA_VERSION_T114)
+	{
+		t114_get_soc_config(context, soc_config);
+diff --git a/src/t124/nvbctlib_t124.c b/src/t124/nvbctlib_t124.c
+index 5df93cd..1f6dc05 100644
+--- a/src/t124/nvbctlib_t124.c
++++ b/src/t124/nvbctlib_t124.c
+@@ -1152,6 +1152,9 @@ int if_bct_is_t124_get_soc_config(build_image_context *context,
+{
+	nvboot_config_table *bct = (nvboot_config_table *) context->bct;
 
-diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts b/arch/arm/boot/dts/tegra124-nyan-big.dts
-index 2d21253..c2955c9 100644
---- a/arch/arm/boot/dts/tegra124-nyan-big.dts
-+++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
-@@ -1098,19 +1098,19 @@
- 			};
- 			cam_i2c_scl_pbb1 {
- 				nvidia,pins = "cam_i2c_scl_pbb1";
--				nvidia,function = "rsvd3";
--				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
--				nvidia,tristate = <TEGRA_PIN_ENABLE>;
--				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
--				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,function = "i2c3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
- 			};
- 			cam_i2c_sda_pbb2 {
- 				nvidia,pins = "cam_i2c_sda_pbb2";
--				nvidia,function = "rsvd3";
--				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
--				nvidia,tristate = <TEGRA_PIN_ENABLE>;
--				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
--				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,function = "i2c3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
- 			};
- 			pbb3 {
- 				nvidia,pins = "pbb3";
-diff --git a/arch/arm/boot/dts/tegra124-nyan-blaze.dts b/arch/arm/boot/dts/tegra124-nyan-blaze.dts
-index 0d30c51..bef31a8 100644
---- a/arch/arm/boot/dts/tegra124-nyan-blaze.dts
-+++ b/arch/arm/boot/dts/tegra124-nyan-blaze.dts
-@@ -1094,19 +1094,19 @@
- 			};
- 			cam_i2c_scl_pbb1 {
- 				nvidia,pins = "cam_i2c_scl_pbb1";
--				nvidia,function = "rsvd3";
--				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
--				nvidia,tristate = <TEGRA_PIN_ENABLE>;
--				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
--				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,function = "i2c3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
- 			};
- 			cam_i2c_sda_pbb2 {
- 				nvidia,pins = "cam_i2c_sda_pbb2";
--				nvidia,function = "rsvd3";
--				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
--				nvidia,tristate = <TEGRA_PIN_ENABLE>;
--				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
--				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
-+				nvidia,function = "i2c3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
- 			};
- 			pbb3 {
- 				nvidia,pins = "pbb3";
--- 
-2.4.3.573.g4eafbef
++	if (context->bct_size < sizeof(nvboot_config_table))
++		return 0;
++
+	if (bct->boot_data_version == BOOTDATA_VERSION_T124) {
+		t124_get_soc_config(context, soc_config);
+		return 1;
+diff --git a/src/t132/nvbctlib_t132.c b/src/t132/nvbctlib_t132.c
+index ab5ab34..4e5d31a 100644
+--- a/src/t132/nvbctlib_t132.c
++++ b/src/t132/nvbctlib_t132.c
+@@ -1233,6 +1233,9 @@ int if_bct_is_t132_get_soc_config(build_image_context *context,
+{
+	nvboot_config_table *bct = (nvboot_config_table *) context->bct;
+
++	if (context->bct_size < sizeof(nvboot_config_table))
++		return 0;
++
+	if (bct->boot_data_version == BOOTDATA_VERSION_T132) {
+		t132_get_soc_config(context, soc_config);
+		return 1;
+diff --git a/src/t20/nvbctlib_t20.c b/src/t20/nvbctlib_t20.c
+index 4e07bf2..813806f 100644
+--- a/src/t20/nvbctlib_t20.c
++++ b/src/t20/nvbctlib_t20.c
+@@ -719,6 +719,9 @@ int if_bct_is_t20_get_soc_config(build_image_context *context,
+	cbootimage_soc_config **soc_config)
+{
+	nvboot_config_table * bct = (nvboot_config_table *) context->bct;
++
++	if (context->bct_size < sizeof(nvboot_config_table))
++		return 0;
+
+	if (bct->boot_data_version == BOOTDATA_VERSION_T20)
+	{
+diff --git a/src/t210/nvbctlib_t210.c b/src/t210/nvbctlib_t210.c
+index 9921bbb..46da441 100644
+--- a/src/t210/nvbctlib_t210.c
++++ b/src/t210/nvbctlib_t210.c
+@@ -2306,6 +2306,9 @@ int if_bct_is_t210_get_soc_config(build_image_context *context,
+{
+	nvboot_config_table *bct = (nvboot_config_table*) context->bct;
+
++	if (context->bct_size < sizeof(nvboot_config_table))
++		return 0;
++
+	if (bct->boot_data_version == BOOTDATA_VERSION_T210) {
+		t210_get_soc_config(context, soc_config);
+		return 1;
+diff --git a/src/t30/nvbctlib_t30.c b/src/t30/nvbctlib_t30.c
+index df3bef0..3590c89 100644
+--- a/src/t30/nvbctlib_t30.c
++++ b/src/t30/nvbctlib_t30.c
+@@ -927,6 +927,9 @@ int if_bct_is_t30_get_soc_config(build_image_context *context,
+{
+	nvboot_config_table * bct = (nvboot_config_table *) context->bct;
+
++	if (context->bct_size < sizeof(nvboot_config_table))
++		return 0;
++
+	if (bct->boot_data_version == BOOTDATA_VERSION_T30)
+	{
+		t30_get_soc_config(context, soc_config);
