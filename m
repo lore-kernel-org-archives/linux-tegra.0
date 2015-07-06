@@ -1,17 +1,17 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH v2 2/2] drm/nouveau: add GEM_SET_TILING
 	staging ioctl
-Date: Mon, 6 Jul 2015 20:41:07 +0900
-Message-ID: <CAAVeFuJG4gL5zzsZg9weEp7X-M_AdiRjmcH99MkMBK07sLfsyw@mail.gmail.com>
+Date: Mon, 6 Jul 2015 15:30:09 +0200
+Message-ID: <20150706133008.GA30401@ulmo.nvidia.com>
 References: <1434352169-10501-1-git-send-email-acourbot@nvidia.com>
  <1434352169-10501-3-git-send-email-acourbot@nvidia.com>
  <557E7B98.1040908@nvidia.com>
  <20150629133055.GC32467@ulmo.nvidia.com>
+ <CAAVeFuJG4gL5zzsZg9weEp7X-M_AdiRjmcH99MkMBK07sLfsyw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============0047601673=="
 Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <20150629133055.GC32467-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+In-Reply-To: <CAAVeFuJG4gL5zzsZg9weEp7X-M_AdiRjmcH99MkMBK07sLfsyw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
  <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
 List-Archive: <http://lists.freedesktop.org/archives/nouveau>
@@ -21,118 +21,151 @@ List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
  <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
 Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Ari Hirvonen <ahirvonen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgVGhpZXJyeSwKCk9uIE1vbiwgSnVuIDI5LCAyMDE1IGF0IDEwOjMwIFBNLCBUaGllcnJ5IFJl
-ZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPiB3cm90ZToKPiBPbiBNb24sIEp1biAxNSwgMjAxNSBh
-dCAwNDoxNTozNlBNICswOTAwLCBBbGV4YW5kcmUgQ291cmJvdCB3cm90ZToKPj4gT24gMDYvMTUv
-MjAxNSAwNDowOSBQTSwgQWxleGFuZHJlIENvdXJib3Qgd3JvdGU6Cj4+ID5Gcm9tOiBBcmkgSGly
-dm9uZW4gPGFoaXJ2b25lbkBudmlkaWEuY29tPgo+PiA+Cj4+ID5BZGQgbmV3IE5PVVZFQVVfR0VN
-X1NFVF9USUxJTkcgaW9jdGwgdG8gc2V0IGNvcnJlY3QgdGlsaW5nCj4+ID5tb2RlIGZvciBpbXBv
-cnRlZCBkbWEtYnVmcy4gVGhpcyBpb2N0bCBpcyBzdGFnaW5nIGZvciBub3cKPj4gPmFuZCBlbmFi
-bGVkIHdpdGggdGhlICJzdGFnaW5nX3RpbGluZyIgbW9kdWxlIG9wdGlvbi4KPj4KPj4gQWRkaW5n
-IFRoaWVycnkgdG8gdGhlIGNvbnZlcnNhdGlvbiBzaW5jZSBoZSBrbm93cyBiZXN0IGFib3V0IGV4
-cG9ydGVkCj4+IGJ1ZmZlcnMgYW5kIGF0dHJpYnV0ZXMuIEkgd29uZGVyIGlmIHRoaXMgd291bGQg
-bm90IGJldHRlciBiZSBkb25lIGF0IHRoZQo+PiB0aW1lIHRoZSBidWZmZXIgZ2V0cyBpbXBvcnRl
-ZC4gSXQgc2VlbXMgdG8gbWUgdGhhdCB0aGlzIHdvdWxkIGJlIGEgbW9yZQo+PiBhcHByb3ByaWF0
-ZSB3YXkgdGhhbiBoYXZpbmcgYW4gaW9jdGwgZGVkaWNhdGVkIHRvIHRoaXMuIFRoaWVycnksIHdv
-dWxkIHlvdQo+PiBoYXZlIGFueSBpbnB1dCBiYXNlZCBvbiB5b3VyIGV4cGVyaWVuY2Ugd2l0aCB0
-ZWdyYWRybT8gSW4gdGhlIGVuZCwgaXQgc2VlbXMKPj4gbGlrZSB5b3UgaGF2ZSBzZXR0bGVkIGZv
-ciBhIHNpbWlsYXIgaW9jdGwgdG8gc2V0IHRoZSB0aWxpbmcgbW9kZSBvZgo+PiBkaXNwbGF5ZWQg
-YnVmZmVycy4KPgo+IFlvdSBjYW4ndCBkbyB0aGlzIGF0IHRoZSB0aW1lIHRoZSBidWZmZXIgaXMg
-aW1wb3J0ZWQgYmVjYXVzZSB0aGUgUFJJTUUKPiBBUEkgZG9lc24ndCBoYXZlIGEgbWVhbnMgdG8g
-Y29tbXVuaWNhdGUgdGhpcyB0eXBlIG9mIG1ldGEtZGF0YS4gVGhlIGRhdGEKPiBpcyBhbHNvIHZl
-cnkgZHJpdmVyLXNwZWNpZmljLCBzbyB5b3UgY2FuJ3QgZWFzaWx5IG1ha2UgaXQgZ2VuZXJpYyBl
-bm91Z2gKPiB0byBiZSB1c2VmdWwgaW4gYSBnZW5lcmljIGltcG9ydCBBUEkuCgpPaywgc28gZG9l
-cyBpdCBtZWFuIHRoYXQgdGhpcyBraW5kIG9mIHVzZS1jYXNlIGlzIGJlc3QgaGFuZGxlZCBieSBh
-CmRyaXZlci1zcGVjaWZpYyBJT0NUTD8KCj4KPiBUaGF0IHNhaWQsIEkgaGF2ZSBhIGNvdXBsZSBv
-ZiBvdGhlciBjb21tZW50cy4gRmlyc3QsIHRoZSBjb21taXQgbWVzc2FnZQo+IGRvZXNuJ3QgbWVu
-dGlvbiB3aHkgdGhpcyBuZWVkcyB0byBiZSBwcm90ZWN0ZWQgYnkgYSBtb2R1bGUgb3B0aW9uLiBB
-bHNvCj4gSSB0aGluayB0aGF0IGlmIHdlIGdvIGZvciBhIG1vZHVsZSBvcHRpb24gaXQgc2hvdWxk
-IGJlIG1vcmUgZ2VuZXJpYyBhbmQKPiBwcm92aWRlIGFuIHVtYnJlbGxhIGlmIGV2ZXIgd2Ugd2Fu
-dCB0byBoYXZlIG1vcmUgY29kZSBndWFyZGVkIGJ5IHRoZQo+IG9wdGlvbi4gSXQgbWlnaHQgYWxz
-byBiZSB1c2VmdWwgdG8gaW50cm9kdWNlIGEgS2NvbmZpZyBzeW1ib2wgdGhhdCBpbgo+IHR1cm4g
-ZGVwZW5kcyBvbiB0aGUgU1RBR0lORyBzeW1ib2wgc28gdGhhdCB1c2VycyBjYW4ndCBhY2NpZGVu
-dGFsbHkKPiBlbmFibGUgdGhpcy4KCldlIGNhbWUgdG8gdGhpcyBvcHRpb24gd2l0aCBCZW4gd2hp
-bGUgZGlzY3Vzc2luZyBob3cgc3RhZ2luZyBJT0NUTHMKY291bGQgYmUgaW1wbGVtZW50ZWQuIFNp
-bmNlIHdlIGRlY2lkZWQgdG8gZHJvcCB0aGlzIGlkZWEgYWx0b2dldGhlciwgSQpndWVzcyB3ZSBk
-b24ndCBoYXZlIHRvIHdvcnJ5IGFib3V0IGhvdyB0byBpbXBsZW1lbnQgdGhlIG9wdGlvbgphbnlt
-b3JlLgoKPgo+PiA+ZGlmZiAtLWdpdCBhL2RybS9ub3V2ZWF1L25vdXZlYXVfZHJtLmMgYi9kcm0v
-bm91dmVhdS9ub3V2ZWF1X2RybS5jCj4+ID5pbmRleCAyODg2MDI2OGNmMzguLjQ1YTJjODhlYmY4
-ZSAxMDA2NDQKPj4gPi0tLSBhL2RybS9ub3V2ZWF1L25vdXZlYXVfZHJtLmMKPj4gPisrKyBiL2Ry
-bS9ub3V2ZWF1L25vdXZlYXVfZHJtLmMKPj4gPkBAIC03NSw2ICs3NSwxMCBAQCBNT0RVTEVfUEFS
-TV9ERVNDKHJ1bnBtLCAiZGlzYWJsZSAoMCksIGZvcmNlIGVuYWJsZSAoMSksIG9wdGltdXMgb25s
-eSBkZWZhdWx0ICgtMQo+PiA+ICBpbnQgbm91dmVhdV9ydW50aW1lX3BtID0gLTE7Cj4+ID4gIG1v
-ZHVsZV9wYXJhbV9uYW1lZChydW5wbSwgbm91dmVhdV9ydW50aW1lX3BtLCBpbnQsIDA0MDApOwo+
-PiA+Cj4+ID4rTU9EVUxFX1BBUk1fREVTQyhzdGFnaW5nX3RpbGluZywgImVuYWJsZSBzdGFnaW5n
-IEdFTV9TRVRfVElMSU5HIGlvY3RsIik7Cj4+ID4raW50IG5vdXZlYXVfc3RhZ2luZ190aWxpbmcg
-PSAwOwo+PiA+K21vZHVsZV9wYXJhbV9uYW1lZChzdGFnaW5nX3RpbGluZywgbm91dmVhdV9zdGFn
-aW5nX3RpbGluZywgaW50LCAwNjAwKTsKPgo+IFBlcmhhcHMgbWFrZSB0aGlzIGEgYm9vbGVhbiBw
-YXJhbWV0ZXI/IEFuZCBsaWtlIEkgc2FpZCwgbWF5YmUgbWFrZSBpdAo+IG1vcmUgZ2VuZXJhbCBh
-bmQgcHJvdmlkZSBhIHNpbmdsZSBvcHRpb24gZm9yIHBvdGVudGlhbGx5IG90aGVyIHN0YWdpbmcK
-PiBmZWF0dXJlcy4KPgo+IEEgd29yZCBvZiBjYXV0aW9uOiBsZXQncyBvbmx5IHJlc29ydCB0byB0
-aGlzIGlmIGFic29sdXRlbHkgbmVjZXNzYXJ5Lgo+IERvaW5nIHRoaXMgaXMgZ29pbmcgdG8gZ2V0
-IG1lc3N5IGFuZCBpZiB3ZSB3YW50IHRoaXMgbWVyZ2VkIEkgc3VzcGVjdAo+IHRoYXQgd2UgZG8g
-aGF2ZSB1c2Vyc3BhY2UgdGhhdCB1c2VzIHRoaXMuIEhlbmNlIGlmIGV2ZXIgdGhpcyBnZXRzCj4g
-bW9kaWZpZWQgdGhhdCB1c2Vyc3BhY2Ugd2lsbCBicmVhay4gQ2FuJ3Qgd2UgZmluZCBhIHdheSBh
-cm91bmQgaXQ/Cj4KPiBOb3RlIHRoYXQgdGhlIERSTV9URUdSQV9TVEFHSU5HIG9wdGlvbiBpcyBh
-IGJpdCBvZiBhIHNwZWNpYWwgY2FzZSBhcwo+IHRoZXJlIGFyZW4ndCBhbnkgcmVhbCB1c2VycyBv
-ZiBpdCBiZXlvbmQgcHJvb2Ygb2YgY29uY2VwdCBjb2RlLiBOb3V2ZWF1LAo+IG9uIHRoZSBvdGhl
-ciBoYW5kLCBoYXMgcmVhbCB1c2VycyB0aGF0IHdpbGwgd2FudCB0byB0YWtlIGFkdmFudGFnZSBv
-Zgo+IHRoaXMgY29kZS4gU28gaWYgd2UgcmVhbGx5IG5lZWQgdG8gZG8gdGhpcywgbGV0J3MgY29t
-ZSB1cCB3aXRoIGEgKnZlcnkqCj4gZ29vZCByYXRpb25hbGUuCgpZZWFoLCBzZXZlcmFsIHBlb3Bs
-ZSB3ZWlnaHRlZCBpbiB0byBwb2ludCBvdXQgdGhpcyB3YXMgYSBiYWQgaWRlYSwgc28KdGhpcyBw
-YXRjaCBzZXJpZXMgaXMgZHJvcHBlZCBmb3Igbm93LiBXZSB3aWxsIGp1c3QgY2FycnkgdGhlc2Ug
-ZXh0cmEKSU9DVExzIG91dC1vZi10cmVlIGZvciBhIGxvbmdlciB0aW1lLCBhbmQgbWFrZSBzdXJl
-IHRoZXkgYXJlIGZpdCBhbmQKd2VsbC10ZXN0ZWQgYmVmb3JlIHN1Ym1pdHRpbmcgdGhlbSB1cHN0
-cmVhbS4KCj4KPj4gPmRpZmYgLS1naXQgYS9kcm0vbm91dmVhdS9ub3V2ZWF1X2dlbS5jIGIvZHJt
-L25vdXZlYXUvbm91dmVhdV9nZW0uYwo+PiA+aW5kZXggMGU2OTBiZjE5ZmM5Li4wZTY5NDQ5Nzk4
-YWEgMTAwNjQ0Cj4+ID4tLS0gYS9kcm0vbm91dmVhdS9ub3V2ZWF1X2dlbS5jCj4+ID4rKysgYi9k
-cm0vbm91dmVhdS9ub3V2ZWF1X2dlbS5jCj4+ID5AQCAtMTcyLDYgKzE3Miw2NCBAQCBub3V2ZWF1
-X2dlbV9vYmplY3RfY2xvc2Uoc3RydWN0IGRybV9nZW1fb2JqZWN0ICpnZW0sIHN0cnVjdCBkcm1f
-ZmlsZSAqZmlsZV9wcml2KQo+PiA+ICAgICB0dG1fYm9fdW5yZXNlcnZlKCZudmJvLT5ibyk7Cj4+
-ID4gIH0KPj4gPgo+PiA+K2V4dGVybiBpbnQgbm91dmVhdV9zdGFnaW5nX3RpbGluZzsKPgo+IFB1
-dCB0aGlzIGluIG5vdXZlYXVfZHJtLmggYWxvbmcgd2l0aCBvdGhlciBleHRlcm5hbCBkZWNsYXJh
-dGlvbnM/Cj4KPj4gPitpbnQKPj4gPitub3V2ZWF1X2dlbV9pb2N0bF9zZXRfdGlsaW5nKHN0cnVj
-dCBkcm1fZGV2aWNlICpkZXYsIHZvaWQgKmRhdGEsCj4+ID4rICAgICAgICAgICAgICAgICAgICAg
-ICAgIHN0cnVjdCBkcm1fZmlsZSAqZmlsZV9wcml2KQo+PiA+K3sKPj4gPisgICAgc3RydWN0IG5v
-dXZlYXVfZHJtICpkcm0gPSBub3V2ZWF1X2RybShkZXYpOwo+PiA+KyAgICBzdHJ1Y3Qgbm91dmVh
-dV9jbGkgKmNsaSA9IG5vdXZlYXVfY2xpKGZpbGVfcHJpdik7Cj4+ID4rICAgIHN0cnVjdCBudmtt
-X2ZiICpwZmIgPSBudnh4X2ZiKCZkcm0tPmRldmljZSk7Cj4+ID4rICAgIHN0cnVjdCBkcm1fbm91
-dmVhdV9nZW1fc2V0X3RpbGluZyAqcmVxID0gZGF0YTsKPj4gPisgICAgc3RydWN0IGRybV9nZW1f
-b2JqZWN0ICpnZW07Cj4+ID4rICAgIHN0cnVjdCBub3V2ZWF1X2JvICpudmJvOwo+PiA+KyAgICBz
-dHJ1Y3QgbnZrbV92bWEgKnZtYTsKPj4gPisgICAgaW50IHJldCA9IDA7Cj4+ID4rCj4+ID4rICAg
-IGlmICghbm91dmVhdV9zdGFnaW5nX3RpbGluZykKPj4gPisgICAgICAgICAgICByZXR1cm4gLUVJ
-TlZBTDsKPj4gPisKPj4gPisgICAgaWYgKCFwZmItPm1lbXR5cGVfdmFsaWQocGZiLCByZXEtPnRp
-bGVfZmxhZ3MpKSB7Cj4+ID4rICAgICAgICAgICAgTlZfUFJJTlRLKGVycm9yLCBjbGksICJiYWQg
-cGFnZSBmbGFnczogMHglMDh4XG4iLCByZXEtPnRpbGVfZmxhZ3MpOwo+PiA+KyAgICAgICAgICAg
-IHJldHVybiAtRUlOVkFMOwo+PiA+KyAgICB9Cj4+ID4rCj4+ID4rICAgIGdlbSA9IGRybV9nZW1f
-b2JqZWN0X2xvb2t1cChkZXYsIGZpbGVfcHJpdiwgcmVxLT5oYW5kbGUpOwo+PiA+KyAgICBpZiAo
-IWdlbSkKPj4gPisgICAgICAgICAgICByZXR1cm4gLUVOT0VOVDsKPj4gPisKPj4gPisgICAgbnZi
-byA9IG5vdXZlYXVfZ2VtX29iamVjdChnZW0pOwo+PiA+Kwo+PiA+KyAgICAvKiBXZSBjYW4gb25s
-eSBjaGFuZ2UgdGlsaW5nIG9uIFBSSU1FLWltcG9ydGVkIGJ1ZmZlcnMgKi8KPj4gPisgICAgaWYg
-KG52Ym8tPmJvLnR5cGUgIT0gdHRtX2JvX3R5cGVfc2cpIHsKPj4gPisgICAgICAgICAgICByZXQg
-PSAtRUlOVkFMOwo+PiA+KyAgICAgICAgICAgIGdvdG8gb3V0Owo+PiA+KyAgICB9Cj4KPiBJIGRv
-bid0IHRoaW5rIHRoYXQncyB0aGUgcmlnaHQgd2F5IHRvIGNoZWNrIGZvciBQUklNRS1pbXBvcnRl
-ZCBidWZmZXJzLgo+IFRoZSByaWdodCBjaGVjayBpczoKPgo+ICAgICAgICAgaWYgKCFnZW0tPmlt
-cG9ydF9hdHRhY2gpIHsKPiAgICAgICAgICAgICAgICAgcmV0ID0gLUVJTlZBTDsKPiAgICAgICAg
-ICAgICAgICAgZ290byBvdXQ7Cj4gICAgICAgICB9Cj4KPiBUaGUgY29tbWVudCBhYm92ZSB0aGlz
-IGJsb2NrIHNob3VsZCBwcm9iYWJseSBhbHNvIHNheSAqd2h5KiB3ZSBjYW4gb25seQo+IGNoYW5n
-ZSB0aWxpbmcgb24gUFJJTUUtaW1wb3J0ZWQgYnVmZmVycy4KClRoZSByZWFzb24gaXMgYmVjYXVz
-ZSB3ZSBhY3R1YWxseSBkb24ndCB3YW50IHRvICpjaGFuZ2UqIHRoZSB0aWxpbmcKc2V0dGluZ3Mg
-YXMgbXVjaCBhcyB3ZSB3YW50IHRvICpzZXQqIHRoZW0gZm9yIGltcG9ydGVkIGJ1ZmZlcnMuIFRo
-ZQpEUk1fTk9VVkVBVV9HRU1fTkVXIGlvY3RsIGhhcyBhIHRpbGluZyBwYXJhbWV0ZXIsIGFuZCB3
-ZSBuZWVkIHRoZSBzYW1lCmZlYXR1cmUgZm9yIFBSSU1FLWltcG9ydGVkIGJ1ZmZlcnMuIFRoaXMg
-aXMgd2h5IEkgd291bGQgaGF2ZSBwcmVmZXJyZWQKdG8gaGF2ZSB0aGlzIGluZm9ybWF0aW9uIHNv
-bWVob3cgYXR0YWNoZWQgdG8gdGhlIGJ1ZmZlciBpdHNlbGYsIG9yCnNwZWNpZmllZCBhdCBpbXBv
-cnQgdGltZSwgc2luY2UgaGF2aW5nIGEgZGVkaWNhdGVkIGlvY3RsIHRlbmRzIHRvCnN1Z2dlc3Qg
-dGhhdCBpdCBpcyB0byBjaGFuZ2UgdGhlIHRpbGluZyBzZXR0aW5ncy4KCkkgd2FudGVkIHlvdXIg
-dGhvdWdodHMgb24gdGhlIHRvcGljIGJlY2F1c2UgSSBrbm93IHlvdSBoYWQgdGhlIHNhbWUKaXNz
-dWUgd2l0aCB0ZWdyYSBEUk0gYW5kIGFjdGl2ZWx5IGxvb2tlZCBmb3IgYSBzb2x1dGlvbiAtIGJ1
-dCBmcm9tCnlvdXIgY29tbWVudHMsIGl0IHNlZW1zIGxpa2UgdGhhdCBzb2x1dGlvbiBpcyB0byBz
-aW1wbHkgdXNlIGEKZGVkaWNhdGVkIElPQ1RMIGZvciB0aGlzLgoKVGhhbmtzIGZvciB5b3VyIGNv
-bW1lbnRzIQpBbGV4LgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpOb3V2ZWF1IG1haWxpbmcgbGlzdApOb3V2ZWF1QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpo
-dHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vbm91dmVhdQo=
+--===============0047601673==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="3MwIy2ne0vdjdPXF"
+Content-Disposition: inline
+
+--3MwIy2ne0vdjdPXF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jul 06, 2015 at 08:41:07PM +0900, Alexandre Courbot wrote:
+> Hi Thierry,
+>=20
+> On Mon, Jun 29, 2015 at 10:30 PM, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wro=
+te:
+> > On Mon, Jun 15, 2015 at 04:15:36PM +0900, Alexandre Courbot wrote:
+> >> On 06/15/2015 04:09 PM, Alexandre Courbot wrote:
+> >> >From: Ari Hirvonen <ahirvonen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >> >
+> >> >Add new NOUVEAU_GEM_SET_TILING ioctl to set correct tiling
+> >> >mode for imported dma-bufs. This ioctl is staging for now
+> >> >and enabled with the "staging_tiling" module option.
+> >>
+> >> Adding Thierry to the conversation since he knows best about exported
+> >> buffers and attributes. I wonder if this would not better be done at t=
+he
+> >> time the buffer gets imported. It seems to me that this would be a more
+> >> appropriate way than having an ioctl dedicated to this. Thierry, would=
+ you
+> >> have any input based on your experience with tegradrm? In the end, it =
+seems
+> >> like you have settled for a similar ioctl to set the tiling mode of
+> >> displayed buffers.
+> >
+> > You can't do this at the time the buffer is imported because the PRIME
+> > API doesn't have a means to communicate this type of meta-data. The data
+> > is also very driver-specific, so you can't easily make it generic enough
+> > to be useful in a generic import API.
+>=20
+> Ok, so does it mean that this kind of use-case is best handled by a
+> driver-specific IOCTL?
+
+Yeah, I think it is.
+
+> >> >+int
+> >> >+nouveau_gem_ioctl_set_tiling(struct drm_device *dev, void *data,
+> >> >+                         struct drm_file *file_priv)
+> >> >+{
+> >> >+    struct nouveau_drm *drm =3D nouveau_drm(dev);
+> >> >+    struct nouveau_cli *cli =3D nouveau_cli(file_priv);
+> >> >+    struct nvkm_fb *pfb =3D nvxx_fb(&drm->device);
+> >> >+    struct drm_nouveau_gem_set_tiling *req =3D data;
+> >> >+    struct drm_gem_object *gem;
+> >> >+    struct nouveau_bo *nvbo;
+> >> >+    struct nvkm_vma *vma;
+> >> >+    int ret =3D 0;
+> >> >+
+> >> >+    if (!nouveau_staging_tiling)
+> >> >+            return -EINVAL;
+> >> >+
+> >> >+    if (!pfb->memtype_valid(pfb, req->tile_flags)) {
+> >> >+            NV_PRINTK(error, cli, "bad page flags: 0x%08x\n", req->t=
+ile_flags);
+> >> >+            return -EINVAL;
+> >> >+    }
+> >> >+
+> >> >+    gem =3D drm_gem_object_lookup(dev, file_priv, req->handle);
+> >> >+    if (!gem)
+> >> >+            return -ENOENT;
+> >> >+
+> >> >+    nvbo =3D nouveau_gem_object(gem);
+> >> >+
+> >> >+    /* We can only change tiling on PRIME-imported buffers */
+> >> >+    if (nvbo->bo.type !=3D ttm_bo_type_sg) {
+> >> >+            ret =3D -EINVAL;
+> >> >+            goto out;
+> >> >+    }
+> >
+> > I don't think that's the right way to check for PRIME-imported buffers.
+> > The right check is:
+> >
+> >         if (!gem->import_attach) {
+> >                 ret =3D -EINVAL;
+> >                 goto out;
+> >         }
+> >
+> > The comment above this block should probably also say *why* we can only
+> > change tiling on PRIME-imported buffers.
+>=20
+> The reason is because we actually don't want to *change* the tiling
+> settings as much as we want to *set* them for imported buffers. The
+> DRM_NOUVEAU_GEM_NEW ioctl has a tiling parameter, and we need the same
+> feature for PRIME-imported buffers.
+
+That would make a much better comment than what you currently have. =3D)
+
+> This is why I would have preferred to have this information somehow
+> attached to the buffer itself, or specified at import time, since
+> having a dedicated ioctl tends to suggest that it is to change the
+> tiling settings.
+>=20
+> I wanted your thoughts on the topic because I know you had the same
+> issue with tegra DRM and actively looked for a solution - but from
+> your comments, it seems like that solution is to simply use a
+> dedicated IOCTL for this.
+
+Yes, I know of no other way to do this.
+
+Thierry
+
+--3MwIy2ne0vdjdPXF
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJVmoLdAAoJEN0jrNd/PrOhHXwP/2pT/kOJK4I7Z0ak9D7g55+1
+3M9Mwvt533AxbJiXEqvaqZobmlGJJ60kPRNjESoOvZeKEtut+hZEj9V8fhDvd0nD
+sWZJ1qdnFnqt9teMATqkgNXVmbnl2OOnOJeZ5q6RiC0k0QCIIvqd/9fyHjGb2uEG
+6F8glVI12P8sk9Vnqsp1wwotiwOYeB5C0h1Kz86ErxJvt5jCoXzNSV6nY/Zf7dtH
+xWcvdACyvhrl5SwZf5AvmijW2IIH6MSPrliS3CZM3/ZJ/BYqz2h1/c8zCbaDkjxP
+5ALprXKGnQJ40GCFvJXknKTtS6PKFxncI/DWacPWrYKspshy2U5SNdtcq/ZIEZV4
+i9FhSpz+tN0SyBUMJzjrso3gldxU7biMC5AJh0GkYB3cpzIqC+zOAl9WZEkVbN6N
+xjarFQlv7SF2wl65ypxKg91teFxM2DFEcUrZXp9bd7VuZvrecSPF4VfA3iyiGvKi
+DvOGbzUHCxT41FuroYjo4luPHCS4dVP3QiSsPrBNK1FLaZ0hTMvFvLjPQbZqKUlp
+ZPcNsqyDL7ppVIxJyIjPz/s5hw4v91M0w/1eN2mal7j6Ty74lzX4WMvn8SHMJ9rx
+1tw9lDupHsIGrQW9XfDdB7LYRmLgGDGx48qttPw0F3CUD9vPUA3zEB1F7sQSLC7e
+UmmzZ9KeAXrU0fpMLTR9
+=Pff9
+-----END PGP SIGNATURE-----
+
+--3MwIy2ne0vdjdPXF--
+
+--===============0047601673==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBt
+YWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
+
+--===============0047601673==--
