@@ -1,44 +1,65 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH v5] clk: change clk_ops' ->determine_rate() prototype
-Date: Wed, 08 Jul 2015 11:07:42 -0700
-Message-ID: <559D66EE.4060707@codeaurora.org>
-References: <1436294888-25752-1-git-send-email-boris.brezillon@free-electrons.com>	<20150708005748.GG30412@codeaurora.org> <20150708110005.704c49ff@bbrezillon>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: Re: [PATCH] GPU-DRM-Tegra: Delete an unnecessary check before the
+ function call "vunmap"
+Date: Wed, 8 Jul 2015 20:40:16 +0200
+Message-ID: <559D6E90.1040005@users.sourceforge.net>
+References: <5307CAA2.8060406@users.sourceforge.net>
+ <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
+ <530A086E.8010901@users.sourceforge.net>
+ <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
+ <530A72AA.3000601@users.sourceforge.net>
+ <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
+ <530B5FB6.6010207@users.sourceforge.net>
+ <alpine.DEB.2.10.1402241710370.2074@hadrien>
+ <530C5E18.1020800@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251014170.2080@hadrien>
+ <530CD2C4.4050903@users.sourceforge.net>
+ <alpine.DEB.2.10.1402251840450.7035@hadrien>
+ <530CF8FF.8080600@users.sourceforge.net>
+ <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
+ <530DD06F.4090703@users.sourceforge.net>
+ <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
+ <5317A59D.4@users.sourceforge.net> <54D335FA.6020101@users.sourceforge.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <20150708110005.704c49ff@bbrezillon>
-Sender: linux-doc-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Tony Lindgren <tony@atomide.com>, Ralf Baechle <ralf@linux-mips.org>, =?UTF-8?B?RW1pbGlvIEzDs3Bleg==?= <emilio@elopez.com.ar>, Maxime Ripard <maxime.ripard@free-electrons.com>, Tero Kristo <t-kristo@ti.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-mips@linux-mips.org, linux-tegra@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <54D335FA.6020101@users.sourceforge.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, =?UTF-8?Q?Terje_Bergstr=c3=b6m?= <tbergstrom@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/08/2015 02:00 AM, Boris Brezillon wrote:
-> Hi Stephen,
->
-> On Tue, 7 Jul 2015 17:57:48 -0700
-> Stephen Boyd <sboyd@codeaurora.org> wrote:
->
->> On 07/07, Boris Brezillon wrote:
->>>
->>>  	} else {
->>>  		pr_err("clk: clk_composite_determine_rate function called, but no mux or rate callback set!\n");
->>> +		req->rate = 0;
->>>  		return 0;
->> Shouldn't this return an error now? And then assigning req->rate
->> wouldn't be necessary. Sorry I must have missed this last round.
->>
-> Actually I wanted to keep the existing behavior: return a 0 rate (not
-> an error) when there is no mux or rate ops.
->
-> That's something we can change afterwards, but it might reveals
-> new bugs if some users are checking for a 0 rate to detect errors.
->
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 5 Feb 2015 10:12:51 +0100
+> 
+> The vunmap() function performs also input parameter validation.
+> Thus the test around the call is not needed.
+> 
+> This issue was detected by using the Coccinelle software.
+> 
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/gpu/drm/tegra/fb.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
+> index e9c715d..803598e 100644
+> --- a/drivers/gpu/drm/tegra/fb.c
+> +++ b/drivers/gpu/drm/tegra/fb.c
+> @@ -66,7 +66,7 @@ static void tegra_fb_destroy(struct drm_framebuffer *framebuffer)
+>  		struct tegra_bo *bo = fb->planes[i];
+>  
+>  		if (bo) {
+> -			if (bo->pages && bo->vaddr)
+> +			if (bo->pages)
+>  				vunmap(bo->vaddr);
+>  
+>  			drm_gem_object_unreference_unlocked(&bo->gem);
+> 
 
-Ok. Care to send the patch now to do that while we're thinking about it?
-We can test it out for a month or two.
+Would you like to integrate this update suggestion
+into another source code repository?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+Regards,
+Markus
