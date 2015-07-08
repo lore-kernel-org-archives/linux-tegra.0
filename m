@@ -1,119 +1,47 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH v5] clk: change clk_ops' ->determine_rate() prototype
-Date: Tue, 7 Jul 2015 17:57:48 -0700
-Message-ID: <20150708005748.GG30412@codeaurora.org>
-References: <1436294888-25752-1-git-send-email-boris.brezillon@free-electrons.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] nouveau/ttm: fix tiled system memory with Maxwell
+Date: Wed, 8 Jul 2015 16:13:43 +0900
+Message-ID: <1436339623-27054-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-doc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1436294888-25752-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Tony Lindgren <tony@atomide.com>, Ralf Baechle <ralf@linux-mips.org>, Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>, Maxime Ripard <maxime.ripard@free-electrons.com>, Tero Kristo <t-kristo@ti.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-mips@linux-mips.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/07, Boris Brezillon wrote:
-> Clock rates are stored in an unsigned long field, but ->determine_rat=
-e()
-> (which returns a rounded rate from a requested one) returns a long
-> value (errors are reported using negative error codes), which can lea=
-d
-> to long overflow if the clock rate exceed 2Ghz.
->=20
-> Change ->determine_rate() prototype to return 0 or an error code, and=
- pass
-> a pointer to a clk_rate_request structure containing the expected tar=
-get
-> rate and the rate constraints imposed by clk users.
->=20
-> The clk_rate_request structure might be extended in the future to con=
-tain
-> other kind of constraints like the rounding policy, the maximum clock
-> inaccuracy or other things that are not yet supported by the CCF
-> (power consumption constraints ?).
->=20
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
->=20
-> CC: Jonathan Corbet <corbet@lwn.net>
-> CC: Tony Lindgren <tony@atomide.com>
-> CC: Ralf Baechle <ralf@linux-mips.org>
-> CC: "Emilio L=F3pez" <emilio@elopez.com.ar>
-> CC: Maxime Ripard <maxime.ripard@free-electrons.com>
-> CC: Tero Kristo <t-kristo@ti.com>
-> CC: Peter De Schrijver <pdeschrijver@nvidia.com>
-> CC: Prashant Gaikwad <pgaikwad@nvidia.com>
-> CC: Stephen Warren <swarren@wwwdotorg.org>
-> CC: Thierry Reding <thierry.reding@gmail.com>
-> CC: Alexandre Courbot <gnurou@gmail.com>
-> CC: linux-doc@vger.kernel.org
-> CC: linux-kernel@vger.kernel.org
-> CC: linux-arm-kernel@lists.infradead.org
-> CC: linux-omap@vger.kernel.org
-> CC: linux-mips@linux-mips.org
-> CC: linux-tegra@vger.kernel.org
->=20
-> ---
-
-I'll throw this patch into -next now to see if any other problems
-shake out. I'm hoping we get some more acks though, so it'll be
-on it's own branch and become immutable in a week or so. One
-question below.
-
-> diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.=
-c
-> index 616f5ae..9e69f34 100644
-> --- a/drivers/clk/clk-composite.c
-> +++ b/drivers/clk/clk-composite.c
-> @@ -99,33 +99,33 @@ static long clk_composite_determine_rate(struct c=
-lk_hw *hw, unsigned long rate,
-> =20
->  			parent_rate =3D __clk_get_rate(parent);
-> =20
-> -			tmp_rate =3D rate_ops->round_rate(rate_hw, rate,
-> +			tmp_rate =3D rate_ops->round_rate(rate_hw, req->rate,
->  							&parent_rate);
->  			if (tmp_rate < 0)
->  				continue;
-> =20
-> -			rate_diff =3D abs(rate - tmp_rate);
-> +			rate_diff =3D abs(req->rate - tmp_rate);
-> =20
-> -			if (!rate_diff || !*best_parent_p
-> +			if (!rate_diff || !req->best_parent_hw
->  				       || best_rate_diff > rate_diff) {
-> -				*best_parent_p =3D __clk_get_hw(parent);
-> -				*best_parent_rate =3D parent_rate;
-> +				req->best_parent_hw =3D __clk_get_hw(parent);
-> +				req->best_parent_rate =3D parent_rate;
->  				best_rate_diff =3D rate_diff;
->  				best_rate =3D tmp_rate;
->  			}
-> =20
->  			if (!rate_diff)
-> -				return rate;
-> +				return 0;
->  		}
-> =20
-> -		return best_rate;
-> +		req->rate =3D best_rate;
-> +		return 0;
->  	} else if (mux_hw && mux_ops && mux_ops->determine_rate) {
->  		__clk_hw_set_clk(mux_hw, hw);
-> -		return mux_ops->determine_rate(mux_hw, rate, min_rate,
-> -					       max_rate, best_parent_rate,
-> -					       best_parent_p);
-> +		return mux_ops->determine_rate(mux_hw, req);
->  	} else {
->  		pr_err("clk: clk_composite_determine_rate function called, but no =
-mux or rate callback set!\n");
-> +		req->rate =3D 0;
->  		return 0;
-
-Shouldn't this return an error now? And then assigning req->rate
-wouldn't be necessary. Sorry I must have missed this last round.
-
---=20
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+QWRkIE1heHdlbGwgdG8gdGhlIHN3aXRjaCBzdGF0ZW1lbnQgdGhhdCBzZXRzIG5vZGUtPm1lbXR5
+cGUsIG90aGVyd2lzZQphbGwgdGlsaW5nIGluZm9ybWF0aW9uIGlzIGlnbm9yZWQgZm9yIGJ1ZmZl
+cnMgaW4gc3lzdGVtIG1lbW9yeS4KCldoaWxlIHdlIGFyZSBhdCBpdCwgbWFrZSB0aGF0IHN3aXRj
+aCBzdGF0ZW1lbnQgZXhwbGljaXRseSBjb21wbGFpbiB0aGUKbmV4dCB0aW1lIHdlIG1lZXQgYSBu
+b24taGFuZGxlZCBjYXJkIGZhbWlseS4KClNpZ25lZC1vZmYtYnk6IEFsZXhhbmRyZSBDb3VyYm90
+IDxhY291cmJvdEBudmlkaWEuY29tPgotLS0KIGRybS9ub3V2ZWF1L25vdXZlYXVfdHRtLmMgfCA5
+ICsrKysrKysrKwogMSBmaWxlIGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBh
+L2RybS9ub3V2ZWF1L25vdXZlYXVfdHRtLmMgYi9kcm0vbm91dmVhdS9ub3V2ZWF1X3R0bS5jCmlu
+ZGV4IDE4ZjQ0OTcxNTc4OC4uNjliZWMxMDU4MDM5IDEwMDY0NAotLS0gYS9kcm0vbm91dmVhdS9u
+b3V2ZWF1X3R0bS5jCisrKyBiL2RybS9ub3V2ZWF1L25vdXZlYXVfdHRtLmMKQEAgLTE3NSwxNSAr
+MTc1LDI0IEBAIG5vdXZlYXVfZ2FydF9tYW5hZ2VyX25ldyhzdHJ1Y3QgdHRtX21lbV90eXBlX21h
+bmFnZXIgKm1hbiwKIAlub2RlLT5wYWdlX3NoaWZ0ID0gMTI7CiAKIAlzd2l0Y2ggKGRybS0+ZGV2
+aWNlLmluZm8uZmFtaWx5KSB7CisJY2FzZSBOVl9ERVZJQ0VfSU5GT19WMF9UTlQ6CisJY2FzZSBO
+Vl9ERVZJQ0VfSU5GT19WMF9DRUxTSVVTOgorCWNhc2UgTlZfREVWSUNFX0lORk9fVjBfS0VMVklO
+OgorCWNhc2UgTlZfREVWSUNFX0lORk9fVjBfUkFOS0lORToKKwljYXNlIE5WX0RFVklDRV9JTkZP
+X1YwX0NVUklFOgorCQlicmVhazsKIAljYXNlIE5WX0RFVklDRV9JTkZPX1YwX1RFU0xBOgogCQlp
+ZiAoZHJtLT5kZXZpY2UuaW5mby5jaGlwc2V0ICE9IDB4NTApCiAJCQlub2RlLT5tZW10eXBlID0g
+KG52Ym8tPnRpbGVfZmxhZ3MgJiAweDdmMDApID4+IDg7CiAJCWJyZWFrOwogCWNhc2UgTlZfREVW
+SUNFX0lORk9fVjBfRkVSTUk6CiAJY2FzZSBOVl9ERVZJQ0VfSU5GT19WMF9LRVBMRVI6CisJY2Fz
+ZSBOVl9ERVZJQ0VfSU5GT19WMF9NQVhXRUxMOgogCQlub2RlLT5tZW10eXBlID0gKG52Ym8tPnRp
+bGVfZmxhZ3MgJiAweGZmMDApID4+IDg7CiAJCWJyZWFrOwogCWRlZmF1bHQ6CisJCU5WX1dBUk4o
+ZHJtLCAiJXM6IHVuaGFuZGxlZCBmYW1pbHkgdHlwZSAleFxuIiwKKwkJCWRybS0+ZGV2aWNlLmlu
+Zm8uZmFtaWx5KTsKIAkJYnJlYWs7CiAJfQogCi0tIAoyLjQuNAoKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBtYWlsaW5nIGxpc3QKTm91dmVh
+dUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL25vdXZlYXUK
