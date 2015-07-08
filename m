@@ -1,47 +1,62 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] nouveau/ttm: fix tiled system memory with Maxwell
-Date: Wed, 8 Jul 2015 16:13:43 +0900
-Message-ID: <1436339623-27054-1-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: roth: Add MMC pwrseq to power wifi on
+Date: Wed, 8 Jul 2015 16:18:48 +0900
+Message-ID: <CAAVeFuJ8sQN6t3tPQNyHizd4LGz=0=R3xdrdQstq5PtwYYnwSg@mail.gmail.com>
+References: <1433749292-13890-1-git-send-email-acourbot@nvidia.com> <CABxcv=kBcr7g77jj98KQ19R_oaoTrVGjqDgQa6ghZz7CJ+t3uw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CABxcv=kBcr7g77jj98KQ19R_oaoTrVGjqDgQa6ghZz7CJ+t3uw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-QWRkIE1heHdlbGwgdG8gdGhlIHN3aXRjaCBzdGF0ZW1lbnQgdGhhdCBzZXRzIG5vZGUtPm1lbXR5
-cGUsIG90aGVyd2lzZQphbGwgdGlsaW5nIGluZm9ybWF0aW9uIGlzIGlnbm9yZWQgZm9yIGJ1ZmZl
-cnMgaW4gc3lzdGVtIG1lbW9yeS4KCldoaWxlIHdlIGFyZSBhdCBpdCwgbWFrZSB0aGF0IHN3aXRj
-aCBzdGF0ZW1lbnQgZXhwbGljaXRseSBjb21wbGFpbiB0aGUKbmV4dCB0aW1lIHdlIG1lZXQgYSBu
-b24taGFuZGxlZCBjYXJkIGZhbWlseS4KClNpZ25lZC1vZmYtYnk6IEFsZXhhbmRyZSBDb3VyYm90
-IDxhY291cmJvdEBudmlkaWEuY29tPgotLS0KIGRybS9ub3V2ZWF1L25vdXZlYXVfdHRtLmMgfCA5
-ICsrKysrKysrKwogMSBmaWxlIGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygrKQoKZGlmZiAtLWdpdCBh
-L2RybS9ub3V2ZWF1L25vdXZlYXVfdHRtLmMgYi9kcm0vbm91dmVhdS9ub3V2ZWF1X3R0bS5jCmlu
-ZGV4IDE4ZjQ0OTcxNTc4OC4uNjliZWMxMDU4MDM5IDEwMDY0NAotLS0gYS9kcm0vbm91dmVhdS9u
-b3V2ZWF1X3R0bS5jCisrKyBiL2RybS9ub3V2ZWF1L25vdXZlYXVfdHRtLmMKQEAgLTE3NSwxNSAr
-MTc1LDI0IEBAIG5vdXZlYXVfZ2FydF9tYW5hZ2VyX25ldyhzdHJ1Y3QgdHRtX21lbV90eXBlX21h
-bmFnZXIgKm1hbiwKIAlub2RlLT5wYWdlX3NoaWZ0ID0gMTI7CiAKIAlzd2l0Y2ggKGRybS0+ZGV2
-aWNlLmluZm8uZmFtaWx5KSB7CisJY2FzZSBOVl9ERVZJQ0VfSU5GT19WMF9UTlQ6CisJY2FzZSBO
-Vl9ERVZJQ0VfSU5GT19WMF9DRUxTSVVTOgorCWNhc2UgTlZfREVWSUNFX0lORk9fVjBfS0VMVklO
-OgorCWNhc2UgTlZfREVWSUNFX0lORk9fVjBfUkFOS0lORToKKwljYXNlIE5WX0RFVklDRV9JTkZP
-X1YwX0NVUklFOgorCQlicmVhazsKIAljYXNlIE5WX0RFVklDRV9JTkZPX1YwX1RFU0xBOgogCQlp
-ZiAoZHJtLT5kZXZpY2UuaW5mby5jaGlwc2V0ICE9IDB4NTApCiAJCQlub2RlLT5tZW10eXBlID0g
-KG52Ym8tPnRpbGVfZmxhZ3MgJiAweDdmMDApID4+IDg7CiAJCWJyZWFrOwogCWNhc2UgTlZfREVW
-SUNFX0lORk9fVjBfRkVSTUk6CiAJY2FzZSBOVl9ERVZJQ0VfSU5GT19WMF9LRVBMRVI6CisJY2Fz
-ZSBOVl9ERVZJQ0VfSU5GT19WMF9NQVhXRUxMOgogCQlub2RlLT5tZW10eXBlID0gKG52Ym8tPnRp
-bGVfZmxhZ3MgJiAweGZmMDApID4+IDg7CiAJCWJyZWFrOwogCWRlZmF1bHQ6CisJCU5WX1dBUk4o
-ZHJtLCAiJXM6IHVuaGFuZGxlZCBmYW1pbHkgdHlwZSAleFxuIiwKKwkJCWRybS0+ZGV2aWNlLmlu
-Zm8uZmFtaWx5KTsKIAkJYnJlYWs7CiAJfQogCi0tIAoyLjQuNAoKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBtYWlsaW5nIGxpc3QKTm91dmVh
-dUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
-bWFuL2xpc3RpbmZvL25vdXZlYXUK
+Ping Thierry, is this patch good to be merged?
+
+On Mon, Jun 8, 2015 at 5:12 PM, Javier Martinez Canillas
+<javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org> wrote:
+> Hello Alexandre,
+>
+> On Mon, Jun 8, 2015 at 9:41 AM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> The wifi chip on roth needs to have its reset deasserted in order to be
+>> probed. Add a mmc-pwrseq-simple to allow this to happen and get wifi
+>> working at boot time.
+>>
+>> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  arch/arm/boot/dts/tegra114-roth.dts | 6 ++++++
+>>  1 file changed, 6 insertions(+)
+>>
+>> diff --git a/arch/arm/boot/dts/tegra114-roth.dts b/arch/arm/boot/dts/tegra114-roth.dts
+>> index ea1772a686c2..04762532a178 100644
+>> --- a/arch/arm/boot/dts/tegra114-roth.dts
+>> +++ b/arch/arm/boot/dts/tegra114-roth.dts
+>> @@ -972,6 +972,11 @@
+>>                 nvidia,invert-interrupt;
+>>         };
+>>
+>> +       sdhci0_pwrseq: sdhci0_pwrseq {
+>> +               compatible = "mmc-pwrseq-simple";
+>> +               reset-gpios = <&gpio TEGRA_GPIO(CC, 5) GPIO_ACTIVE_LOW>;
+>> +       };
+>> +
+>>         /* Wifi */
+>>         sdhci@78000000 {
+>>                 status = "okay";
+>> @@ -979,6 +984,7 @@
+>>                 broken-cd;
+>>                 keep-power-in-suspend;
+>>                 cap-sdio-irq;
+>> +               mmc-pwrseq = <&sdhci0_pwrseq>;
+>>         };
+>>
+>>         /* SD card */
+>
+> I'm neither familiar with this board nor have a schematic but the
+> patch looks good to me.
+>
+> Reviewed-by: Javier Martinez Canillas <javier.martinez-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+>
+> Best regards,
+> Javier
