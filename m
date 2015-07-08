@@ -1,205 +1,80 @@
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 5/5] drm/tegra: Add Tegra DRM allocation API
-Date: Wed, 8 Jul 2015 14:35:12 +0300
-Message-ID: <1436355312-13765-1-git-send-email-mperttunen@nvidia.com>
-References: <1436354868-24309-1-git-send-email-mperttunen@nvidia.com>
+From: Vladimir Zapolskiy <vladimir_zapolskiy-nmGgyN9QBj3QT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 00/10] i2c/drm: fix i2c adapter device driver user counter
+Date: Wed, 8 Jul 2015 15:54:55 +0300
+Message-ID: <1436360095-9065-1-git-send-email-vladimir_zapolskiy@mentor.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1436354868-24309-1-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: airlied-cv59FeDIM0c@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Andy Yan <andy.yan-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Fabio Estevam <fabio.estevam-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add a new IO virtual memory allocation API to allow clients to
-allocate non-GEM memory in the Tegra DRM IOMMU domain. This is
-required e.g. for loading client firmware when clients are attached
-to the IOMMU domain.
+The 01/10 change adds and exports new of_get_i2c_adapter_by_node()
+interface of i2c core, the rest of patches fix current users of
+of_find_i2c_adapter_by_node() interface.
 
-The allocator allocates contiguous physical pages that are then
-mapped contiguously to the IOMMU domain using a bitmap allocator
-inside a 64 MiB reserved for non-GEM allocations. Contiguous
-physical pages are used so that the same allocator works also
-when IOMMU support is disabled and therefore devices access
-physical memory directly.
+of_find_i2c_adapter_by_node() call requires quite often missing
+put_device(), and i2c_put_adapter() releases a device locked by
+i2c_get_adapter() only. In general module_put(adapter->owner) and
+put_device(dev) are not interchangeable.
 
-Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpu/drm/tegra/drm.c | 99 ++++++++++++++++++++++++++++++++++++++++++---
- drivers/gpu/drm/tegra/drm.h |  9 +++++
- 2 files changed, 103 insertions(+), 5 deletions(-)
+This is a common error reproduction scenario as a result of the
+misusage described above (this is run on iMX6 platform with
+HDMI and I2C bus drivers compiled as kernel modules for clearness):
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 427f50c..af4ff86 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -1,12 +1,13 @@
- /*
-  * Copyright (C) 2012 Avionic Design GmbH
-- * Copyright (C) 2012-2013 NVIDIA CORPORATION.  All rights reserved.
-+ * Copyright (C) 2012-2015 NVIDIA CORPORATION.  All rights reserved.
-  *
-  * This program is free software; you can redistribute it and/or modify
-  * it under the terms of the GNU General Public License version 2 as
-  * published by the Free Software Foundation.
-  */
- 
-+#include <linux/bitops.h>
- #include <linux/host1x.h>
- #include <linux/iommu.h>
- 
-@@ -23,6 +24,8 @@
- #define DRIVER_MINOR 0
- #define DRIVER_PATCHLEVEL 0
- 
-+#define IOVA_AREA_SZ (1024 * 1024 * 64) /* 64 MiB */
-+
- struct tegra_drm_file {
- 	struct list_head contexts;
- };
-@@ -125,7 +128,8 @@ static int tegra_drm_load(struct drm_device *drm, unsigned long flags)
- 
- 	if (iommu_present(&platform_bus_type)) {
- 		struct iommu_domain_geometry *geometry;
--		u64 start, end;
-+		u64 start, end, iova_start;
-+		size_t bitmap_size;
- 
- 		tegra->domain = iommu_domain_alloc(&platform_bus_type);
- 		if (!tegra->domain) {
-@@ -136,10 +140,23 @@ static int tegra_drm_load(struct drm_device *drm, unsigned long flags)
- 		geometry = &tegra->domain->geometry;
- 		start = geometry->aperture_start;
- 		end = geometry->aperture_end;
-+		iova_start = end - IOVA_AREA_SZ + 1;
-+
-+		DRM_DEBUG("IOMMU context initialized (GEM aperture: %#llx-%#llx, IOVA aperture: %#llx-%#llx)\n",
-+			  start, iova_start-1, iova_start, end);
-+		bitmap_size = BITS_TO_LONGS(IOVA_AREA_SZ >> PAGE_SHIFT) *
-+			sizeof(long);
-+		tegra->iova_bitmap = devm_kzalloc(drm->dev, bitmap_size,
-+						  GFP_KERNEL);
-+		if (!tegra->iova_bitmap) {
-+			err = -ENOMEM;
-+			goto free;
-+		}
-+		tegra->iova_bitmap_bits = BITS_PER_BYTE * bitmap_size;
-+		tegra->iova_start = iova_start;
-+		mutex_init(&tegra->iova_lock);
- 
--		DRM_DEBUG("IOMMU context initialized (aperture: %#llx-%#llx)\n",
--			  start, end);
--		drm_mm_init(&tegra->mm, start, end - start + 1);
-+		drm_mm_init(&tegra->mm, start, iova_start - start);
- 	}
- 
- 	mutex_init(&tegra->clients_lock);
-@@ -979,6 +996,78 @@ int tegra_drm_unregister_client(struct tegra_drm *tegra,
- 	return 0;
- }
- 
-+void *tegra_drm_alloc(struct tegra_drm *tegra, size_t size,
-+			      dma_addr_t *iova)
-+{
-+	size_t aligned = PAGE_ALIGN(size);
-+	int num_pages = aligned >> PAGE_SHIFT;
-+	void *virt;
-+	unsigned int start;
-+	int err;
-+
-+	virt = (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
-+					get_order(aligned));
-+	if (!virt)
-+		return NULL;
-+
-+	if (!tegra->domain) {
-+		/*
-+		 * If IOMMU is disabled, devices address physical memory
-+		 * directly.
-+		 */
-+		*iova = virt_to_phys(virt);
-+		return virt;
-+	}
-+
-+	mutex_lock(&tegra->iova_lock);
-+
-+	start = bitmap_find_next_zero_area(tegra->iova_bitmap,
-+					   tegra->iova_bitmap_bits, 0,
-+					   num_pages, 0);
-+	if (start > tegra->iova_bitmap_bits)
-+		goto free_pages;
-+
-+	bitmap_set(tegra->iova_bitmap, start, num_pages);
-+
-+	*iova = tegra->iova_start + (start << PAGE_SHIFT);
-+	err = iommu_map(tegra->domain, *iova, virt_to_phys(virt),
-+			aligned, IOMMU_READ | IOMMU_WRITE);
-+	if (err < 0)
-+		goto free_iova;
-+
-+	mutex_unlock(&tegra->iova_lock);
-+
-+	return virt;
-+
-+free_iova:
-+	bitmap_clear(tegra->iova_bitmap, start, num_pages);
-+free_pages:
-+	mutex_unlock(&tegra->iova_lock);
-+
-+	free_pages((unsigned long)virt, get_order(aligned));
-+
-+	return NULL;
-+}
-+
-+void tegra_drm_free(struct tegra_drm *tegra, size_t size, void *virt,
-+		    dma_addr_t iova)
-+{
-+	size_t aligned = PAGE_ALIGN(size);
-+	int num_pages = aligned >> PAGE_SHIFT;
-+
-+	if (tegra->domain) {
-+		unsigned int start = (iova - tegra->iova_start) >> PAGE_SHIFT;
-+
-+		iommu_unmap(tegra->domain, iova, aligned);
-+
-+		mutex_lock(&tegra->iova_lock);
-+		bitmap_clear(tegra->iova_bitmap, start, num_pages);
-+		mutex_unlock(&tegra->iova_lock);
-+	}
-+
-+	free_pages((unsigned long)virt, get_order(aligned));
-+}
-+
- static int host1x_drm_probe(struct host1x_device *dev)
- {
- 	struct drm_driver *driver = &tegra_drm_driver;
-diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-index 0e7756e..58c83b11 100644
---- a/drivers/gpu/drm/tegra/drm.h
-+++ b/drivers/gpu/drm/tegra/drm.h
-@@ -42,6 +42,11 @@ struct tegra_drm {
- 	struct iommu_domain *domain;
- 	struct drm_mm mm;
- 
-+	struct mutex iova_lock;
-+	dma_addr_t iova_start;
-+	unsigned long *iova_bitmap;
-+	unsigned int iova_bitmap_bits;
-+
- 	struct mutex clients_lock;
- 	struct list_head clients;
- 
-@@ -101,6 +106,10 @@ int tegra_drm_unregister_client(struct tegra_drm *tegra,
- int tegra_drm_init(struct tegra_drm *tegra, struct drm_device *drm);
- int tegra_drm_exit(struct tegra_drm *tegra);
- 
-+void *tegra_drm_alloc(struct tegra_drm *tegra, size_t size, dma_addr_t *iova);
-+void tegra_drm_free(struct tegra_drm *tegra, size_t size, void *virt,
-+		    dma_addr_t iova);
-+
- struct tegra_dc_soc_info;
- struct tegra_output;
- 
+    root@mx6q:~# lsmod | grep i2c
+    i2c_imx                10213  0
+    root@mx6q:~# lsmod | grep dw_hdmi_imx
+    dw_hdmi_imx             3631  0
+    dw_hdmi                11846  1 dw_hdmi_imx
+    imxdrm                  8674  3 dw_hdmi_imx,imx_ipuv3_crtc,imx_ldb
+    drm_kms_helper        113765  5 dw_hdmi,imxdrm,imx_ipuv3_crtc,imx_ldb
+    root@mx6q:~# rmmod dw_hdmi_imx
+    root@mx6q:~# lsmod | grep i2c
+    i2c_imx                10213  -1
+
+                                 ^^^^^
+
+    root@mx6q:~# rmmod i2c_imx
+    rmmod: ERROR: Module i2c_imx is in use
+
+To fix existing users of these interfaces and to avoid any further
+confusion and misusage in future, add one more interface
+of_get_i2c_adapter_by_node(), it is similar to i2c_get_adapter() in
+sense that an I2C bus device driver found and locked by user can be
+correctly unlocked by i2c_put_adapter().
+
+Mainly the change concerns DRM users of I2C bus device.
+
+The change is based on torvalds/master branch, d6ac4ffc61a
+
+RFC of the 01/10 change is http://www.spinics.net/lists/linux-i2c/msg20257.html
+
+Vladimir Zapolskiy (10):
+  i2c: add and export of_get_i2c_adapter_by_node() interface
+  drm: dw_hdmi: use of_get_i2c_adapter_by_node interface
+  drm: exynos_hdmi: use of_get_i2c_adapter_by_node interface
+  drm: imx-tve: use of_get_i2c_adapter_by_node interface
+  drm: panel-simple: use of_get_i2c_adapter_by_node interface
+  drm: sti_hdmi: use of_get_i2c_adapter_by_node interface
+  drm: tegra: use of_get_i2c_adapter_by_node interface
+  drm: tilcdc: use of_get_i2c_adapter_by_node interface
+  fbdev: omap2: connector-dvi: use of_get_i2c_adapter_by_node interface
+  i2c: i2c-arb-gpio-challenge: use of_get_i2c_adapter_by_node interface
+
+ drivers/gpu/drm/bridge/dw_hdmi.c                   | 14 ++++--
+ drivers/gpu/drm/exynos/exynos_hdmi.c               |  7 +--
+ drivers/gpu/drm/imx/imx-tve.c                      | 56 +++++++++++++++-------
+ drivers/gpu/drm/panel/panel-simple.c               |  9 ++--
+ drivers/gpu/drm/sti/sti_hdmi.c                     | 19 +++-----
+ drivers/gpu/drm/tegra/output.c                     | 19 ++++----
+ drivers/gpu/drm/tilcdc/tilcdc_tfp410.c             |  6 +--
+ drivers/i2c/i2c-core.c                             | 20 ++++++++
+ drivers/i2c/muxes/i2c-arb-gpio-challenge.c         |  3 +-
+ .../video/fbdev/omap2/displays-new/connector-dvi.c |  2 +-
+ include/linux/i2c.h                                |  6 +++
+ 11 files changed, 104 insertions(+), 57 deletions(-)
+
 -- 
 2.1.4
