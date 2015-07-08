@@ -1,21 +1,27 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [cbootimage PATCH] tN: if_bct_is_tN_get_soc_config: Adds bounds
- checking to the BCT buffer.
-Date: Wed, 08 Jul 2015 14:47:55 -0600
-Message-ID: <559D8C7B.9020200@wwwdotorg.org>
-References: <8A8A7455-57BF-4F37-B70B-B1A8F2E16326@me.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v1 3/3] ARM: tegra: Add gpio-ranges property
+Date: Wed, 08 Jul 2015 14:55:18 -0600
+Message-ID: <559D8E36.50209@wwwdotorg.org>
+References: <1435754753-31307-1-git-send-email-tomeu.vizoso@collabora.com> <1435754753-31307-4-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <8A8A7455-57BF-4F37-B70B-B1A8F2E16326-BUHhN+a2lJ4@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Giancarlo Canales <gcanalesb-BUHhN+a2lJ4@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1435754753-31307-4-git-send-email-tomeu.vizoso@collabora.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>, linux-kernel@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/04/2015 06:03 PM, Giancarlo Canales wrote:
-> Checks if the BCT buffer is too small to be a valid `nvboot_config_table`.
+On 07/01/2015 06:45 AM, Tomeu Vizoso wrote:
+> Specify how the GPIOs map to the pins in Tegra SoCs, so the dependency is
+> explicit.
+>
+> This currently will add a duplicated entry in the map from pins to gpios
+> in the pinmux controller but it should be harmless and will be fixed in a
+> later commit.
 
-Can you please explain what problem this solves and how to trigger it? 
-That explanation should probably be in the commit message too.
+Isn't it in an earlier commit now (patch 2/3)? :-)
+
+At a quick glance, I think this approach will be fine, so the series,
+Acked-by: Stephen Warren <swarren@nvidia.com>
