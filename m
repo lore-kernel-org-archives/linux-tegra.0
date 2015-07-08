@@ -1,65 +1,58 @@
-From: SF Markus Elfring <elfring@users.sourceforge.net>
-Subject: Re: [PATCH] GPU-DRM-Tegra: Delete an unnecessary check before the
- function call "vunmap"
-Date: Wed, 8 Jul 2015 20:40:16 +0200
-Message-ID: <559D6E90.1040005@users.sourceforge.net>
-References: <5307CAA2.8060406@users.sourceforge.net>
- <alpine.DEB.2.02.1402212321410.2043@localhost6.localdomain6>
- <530A086E.8010901@users.sourceforge.net>
- <alpine.DEB.2.02.1402231635510.1985@localhost6.localdomain6>
- <530A72AA.3000601@users.sourceforge.net>
- <alpine.DEB.2.02.1402240658210.2090@localhost6.localdomain6>
- <530B5FB6.6010207@users.sourceforge.net>
- <alpine.DEB.2.10.1402241710370.2074@hadrien>
- <530C5E18.1020800@users.sourceforge.net>
- <alpine.DEB.2.10.1402251014170.2080@hadrien>
- <530CD2C4.4050903@users.sourceforge.net>
- <alpine.DEB.2.10.1402251840450.7035@hadrien>
- <530CF8FF.8080600@users.sourceforge.net>
- <alpine.DEB.2.02.1402252117150.2047@localhost6.localdomain6>
- <530DD06F.4090703@users.sourceforge.net>
- <alpine.DEB.2.02.1402262129250.2221@localhost6.localdomain6>
- <5317A59D.4@users.sourceforge.net> <54D335FA.6020101@users.sourceforge.net>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [RFT PATCH 1/2] i2c: tegra: update CONFIG_LOAD for new conifiguration
+Date: Wed, 08 Jul 2015 14:36:40 -0600
+Message-ID: <559D89D8.50500@wwwdotorg.org>
+References: <1435661667-11554-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <54D335FA.6020101@users.sourceforge.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, =?UTF-8?Q?Terje_Bergstr=c3=b6m?= <tbergstrom@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org, Julia Lawall <julia.lawall@lip6.fr>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1435661667-11554-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, andrewc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chaitanya Bandi <bandik-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Thu, 5 Feb 2015 10:12:51 +0100
-> 
-> The vunmap() function performs also input parameter validation.
-> Thus the test around the call is not needed.
-> 
-> This issue was detected by using the Coccinelle software.
-> 
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+On 06/30/2015 04:54 AM, Laxman Dewangan wrote:
+> Once the new configuration is set on the conifg register of
+> I2C controller, it is require to update the CONFIG_LOAD register
+> to transfer the new SW configuration to actual HW internal
+> registers that would be used in the actual logic.
+>
+> It is like, SW is programming only shadow registers through
+> regular configuration and when these load_config bit fields
+> are set to 1, it causes the regular/shadows registers
+> configuration transferred to the HW internal active registers.
+> So SW has to set these bit fields at the end of all regular
+> registers configuration. And these config_load bits are HW
+> auto-clear bits. HW clears these bit fields once the register
+> configuration is moved to HW internal active registers. So SW
+> has to wait until these bits are auto-cleared before going
+> for any further programming
+>
+> This mechanism is supported on T124 and after this SoCs.
+>
+> This is based on change done by
+> 	Chaitanya Bandi <bandik-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Chaitanya Bandi <bandik-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+I'm not sure why Chaitanya's S-o-b is there and listed last if he's not 
+the patch author. If he wrote the patch, he should be the git author and 
+his S-o-b should be first. If he didn't and you simply based this patch 
+on work by Chaitanya, then his S-o-b probably shouldn't be present, and 
+yours would be last since you're submitting the patch.
+
 > ---
->  drivers/gpu/drm/tegra/fb.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/tegra/fb.c b/drivers/gpu/drm/tegra/fb.c
-> index e9c715d..803598e 100644
-> --- a/drivers/gpu/drm/tegra/fb.c
-> +++ b/drivers/gpu/drm/tegra/fb.c
-> @@ -66,7 +66,7 @@ static void tegra_fb_destroy(struct drm_framebuffer *framebuffer)
->  		struct tegra_bo *bo = fb->planes[i];
->  
->  		if (bo) {
-> -			if (bo->pages && bo->vaddr)
-> +			if (bo->pages)
->  				vunmap(bo->vaddr);
->  
->  			drm_gem_object_unreference_unlocked(&bo->gem);
-> 
+> Stephen/Andrew,
+> I need help on testing this on other platform. I tested this on T210.
 
-Would you like to integrate this update suggestion
-into another source code repository?
+I'm puzzled how this was tested on T210, since it isn't supported 
+upstream yet.
 
-Regards,
-Markus
+The series,
+Tested-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+(Tested audio playback and volume adjustment on Jetson TK1 which 
+contains a Tegra124 SoC)
