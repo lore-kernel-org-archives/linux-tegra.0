@@ -1,53 +1,154 @@
 From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 0/2] ARM: tegra: enable GPU DT node
-Date: Thu, 9 Jul 2015 16:32:59 +0900
-Message-ID: <1436427181-23904-1-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH 2/2] ARM: tegra: enable GPU DT node when appropriate
+Date: Thu, 9 Jul 2015 16:33:01 +0900
+Message-ID: <1436427181-23904-3-git-send-email-acourbot@nvidia.com>
+References: <1436427181-23904-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1436427181-23904-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra124 requires the bootloader to perform VPR initialization, otherwise the
-GPU cannot be used by the system. Since using the GPU without that
-initialization results in a hang, the GPU DT node is left disabled, and it is
-the task of the bootloader to enable it after ensuring it is safe to use the
-GPU.
+T124 requires some specific configuration (VPR setup) to be performed by
+the bootloader before the GPU can be used. For this reason, the GPU node
+in the device tree is disabled by default. This patch enables the node
+if U-boot has performed VPR configuration.
 
-VPR init is already performed since patch df3443dfa449, but the device tree was
-left untouched. This patch series performs this last step and prepares the GPU
-intialization code to receive more code for newer chips.
+Boards enabled by this patch are T124's Jetson TK1 and Venice 2.
 
-Patch 1 of this series moves the GPU initialization code to a more generic
-place, since newer chips like T210 require extra steps to initialize the GPU
-(e.g. WPR setup). It also performs VPR initialization at a later time of the
-bootloader life, so that we can check the status variable right before booting
-the kernel and patch the DT accordingly.
-
-Patch 2 performs the DT patching using the ft_board_setup() hook.
-
-Alexandre Courbot (2):
-  ARM: tegra: move VPR configuration to a later stage
-  ARM: tegra: enable GPU DT node when appropriate
-
- arch/arm/include/asm/arch-tegra/ap.h  |  9 -----
- arch/arm/include/asm/arch-tegra/gpu.h | 43 +++++++++++++++++++++++
- arch/arm/mach-tegra/Makefile          |  2 +-
- arch/arm/mach-tegra/ap.c              |  3 --
- arch/arm/mach-tegra/board2.c          |  3 ++
- arch/arm/mach-tegra/gpu.c             | 66 +++++++++++++++++++++++++++++++++++
- arch/arm/mach-tegra/vpr.c             | 35 -------------------
- board/nvidia/jetson-tk1/jetson-tk1.c  |  8 +++++
- board/nvidia/venice2/venice2.c        |  8 +++++
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm/include/asm/arch-tegra/gpu.h | 16 ++++++++++++++++
+ arch/arm/mach-tegra/gpu.c             | 19 +++++++++++++++++++
+ board/nvidia/jetson-tk1/jetson-tk1.c  |  8 ++++++++
+ board/nvidia/venice2/venice2.c        |  8 ++++++++
  include/configs/jetson-tk1.h          |  2 ++
- include/configs/tegra124-common.h     |  3 ++
  include/configs/venice2.h             |  2 ++
- 12 files changed, 136 insertions(+), 48 deletions(-)
- create mode 100644 arch/arm/include/asm/arch-tegra/gpu.h
- create mode 100644 arch/arm/mach-tegra/gpu.c
- delete mode 100644 arch/arm/mach-tegra/vpr.c
+ 6 files changed, 55 insertions(+)
 
+diff --git a/arch/arm/include/asm/arch-tegra/gpu.h b/arch/arm/include/asm/arch-tegra/gpu.h
+index b347a21835f5..eac73ed5fddf 100644
+--- a/arch/arm/include/asm/arch-tegra/gpu.h
++++ b/arch/arm/include/asm/arch-tegra/gpu.h
+@@ -25,3 +25,19 @@ static inline bool gpu_configured(void)
+ }
+ 
+ #endif /* CONFIG_TEGRA_GPU */
++
++
++#if defined(CONFIG_OF_LIBFDT)
++
++int gpu_enable_node(void *blob, const char *gpupath);
++
++#else /* CONFIG_OF_LIBFDT */
++
++static inline int gpu_enable_node(void *blob, const char *gpupath)
++{
++	return 0;
++}
++
++#endif /* CONFIG_OF_LIBFDT */
++
++#endif
+diff --git a/arch/arm/mach-tegra/gpu.c b/arch/arm/mach-tegra/gpu.c
+index b2fa50b5400e..4ea046d3e5b6 100644
+--- a/arch/arm/mach-tegra/gpu.c
++++ b/arch/arm/mach-tegra/gpu.c
+@@ -45,3 +45,22 @@ bool vpr_configured(void)
+ {
+ 	return _configured;
+ }
++
++#if defined(CONFIG_OF_LIBFDT)
++
++int gpu_enable_node(void *blob, const char *gpupath)
++{
++	int offset;
++
++	if (vpr_configured()) {
++		offset = fdt_path_offset(blob, gpupath);
++		if (offset > 0) {
++			fdt_status_okay(blob, offset);
++			debug("enabled GPU node %s\n", gpupath);
++		}
++	}
++
++	return 0;
++}
++
++#endif
+diff --git a/board/nvidia/jetson-tk1/jetson-tk1.c b/board/nvidia/jetson-tk1/jetson-tk1.c
+index 52425a8f6dea..3c21767ce4da 100644
+--- a/board/nvidia/jetson-tk1/jetson-tk1.c
++++ b/board/nvidia/jetson-tk1/jetson-tk1.c
+@@ -11,6 +11,7 @@
+ 
+ #include <asm/arch/gpio.h>
+ #include <asm/arch/pinmux.h>
++#include <asm/arch-tegra/gpu.h>
+ 
+ #include "pinmux-config-jetson-tk1.h"
+ 
+@@ -79,3 +80,10 @@ int board_eth_init(bd_t *bis)
+ 	return pci_eth_init(bis);
+ }
+ #endif /* PCI */
++
++int ft_board_setup(void *blob, bd_t *bd)
++{
++	gpu_enable_node(blob, "/gpu@0,57000000");
++
++	return 0;
++}
+diff --git a/board/nvidia/venice2/venice2.c b/board/nvidia/venice2/venice2.c
+index c56ef129d6c7..3e2b9a7745e9 100644
+--- a/board/nvidia/venice2/venice2.c
++++ b/board/nvidia/venice2/venice2.c
+@@ -8,6 +8,7 @@
+ #include <common.h>
+ #include <asm/arch/gpio.h>
+ #include <asm/arch/pinmux.h>
++#include <asm/arch-tegra/gpu.h>
+ #include "pinmux-config-venice2.h"
+ 
+ /*
+@@ -27,3 +28,10 @@ void pinmux_init(void)
+ 	pinmux_config_drvgrp_table(venice2_drvgrps,
+ 				   ARRAY_SIZE(venice2_drvgrps));
+ }
++
++int ft_board_setup(void *blob, bd_t *bd)
++{
++	gpu_enable_node(blob, "/gpu@0,57000000");
++
++	return 0;
++}
+diff --git a/include/configs/jetson-tk1.h b/include/configs/jetson-tk1.h
+index 3bbff282df27..b3e649664508 100644
+--- a/include/configs/jetson-tk1.h
++++ b/include/configs/jetson-tk1.h
+@@ -82,4 +82,6 @@
+ #define CONFIG_ARMV7_SECURE_BASE		0xfff00000
+ #define CONFIG_ARMV7_SECURE_RESERVE_SIZE	0x00100000
+ 
++#define CONFIG_OF_BOARD_SETUP
++
+ #endif /* __CONFIG_H */
+diff --git a/include/configs/venice2.h b/include/configs/venice2.h
+index 1d9d053b3566..bc5080aa27f0 100644
+--- a/include/configs/venice2.h
++++ b/include/configs/venice2.h
+@@ -64,4 +64,6 @@
+ #include "tegra-common-usb-gadget.h"
+ #include "tegra-common-post.h"
+ 
++#define CONFIG_OF_BOARD_SETUP
++
+ #endif /* __CONFIG_H */
 -- 
 2.4.4
