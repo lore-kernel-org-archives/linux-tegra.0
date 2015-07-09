@@ -1,7 +1,7 @@
 From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/2] ARM: tegra: enable GPU DT node when appropriate
-Date: Thu, 9 Jul 2015 16:33:01 +0900
-Message-ID: <1436427181-23904-3-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH 1/2] ARM: tegra: move VPR configuration to a later stage
+Date: Thu, 9 Jul 2015 16:33:00 +0900
+Message-ID: <1436427181-23904-2-git-send-email-acourbot@nvidia.com>
 References: <1436427181-23904-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,143 +12,236 @@ To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tom Warren
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T124 requires some specific configuration (VPR setup) to be performed by
-the bootloader before the GPU can be used. For this reason, the GPU node
-in the device tree is disabled by default. This patch enables the node
-if U-boot has performed VPR configuration.
+U-boot is responsible for enabling the GPU DT node after all necessary
+configuration (VPR setup for T124) is performed. In order to be able to
+check whether this configuration has been performed right before booting
+the kernel, make it happen during board_init().
 
-Boards enabled by this patch are T124's Jetson TK1 and Venice 2.
+Also move VPR configuration into the more generic gpu.c file, which will
+also host other GPU-related functions, and let boards specify
+individually whether they need VPR setup or not.
 
 Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/include/asm/arch-tegra/gpu.h | 16 ++++++++++++++++
- arch/arm/mach-tegra/gpu.c             | 19 +++++++++++++++++++
- board/nvidia/jetson-tk1/jetson-tk1.c  |  8 ++++++++
- board/nvidia/venice2/venice2.c        |  8 ++++++++
- include/configs/jetson-tk1.h          |  2 ++
- include/configs/venice2.h             |  2 ++
- 6 files changed, 55 insertions(+)
+ arch/arm/include/asm/arch-tegra/ap.h  |  9 -------
+ arch/arm/include/asm/arch-tegra/gpu.h | 27 ++++++++++++++++++++
+ arch/arm/mach-tegra/Makefile          |  2 +-
+ arch/arm/mach-tegra/ap.c              |  3 ---
+ arch/arm/mach-tegra/board2.c          |  3 +++
+ arch/arm/mach-tegra/gpu.c             | 47 +++++++++++++++++++++++++++++++++++
+ arch/arm/mach-tegra/vpr.c             | 35 --------------------------
+ include/configs/tegra124-common.h     |  3 +++
+ 8 files changed, 81 insertions(+), 48 deletions(-)
+ create mode 100644 arch/arm/include/asm/arch-tegra/gpu.h
+ create mode 100644 arch/arm/mach-tegra/gpu.c
+ delete mode 100644 arch/arm/mach-tegra/vpr.c
 
+diff --git a/arch/arm/include/asm/arch-tegra/ap.h b/arch/arm/include/asm/arch-tegra/ap.h
+index ca40e4e0bce6..2d58271e39f9 100644
+--- a/arch/arm/include/asm/arch-tegra/ap.h
++++ b/arch/arm/include/asm/arch-tegra/ap.h
+@@ -66,15 +66,6 @@ int tegra_get_sku_info(void);
+ /* Do any chip-specific cache config */
+ void config_cache(void);
+ 
+-#if defined(CONFIG_TEGRA124)
+-/* Do chip-specific vpr config */
+-void config_vpr(void);
+-#else
+-static inline void config_vpr(void)
+-{
+-}
+-#endif
+-
+ #if defined(CONFIG_TEGRA_SUPPORT_NON_SECURE)
+ bool tegra_cpu_is_non_secure(void);
+ #endif
 diff --git a/arch/arm/include/asm/arch-tegra/gpu.h b/arch/arm/include/asm/arch-tegra/gpu.h
-index b347a21835f5..eac73ed5fddf 100644
---- a/arch/arm/include/asm/arch-tegra/gpu.h
+new file mode 100644
+index 000000000000..b347a21835f5
+--- /dev/null
 +++ b/arch/arm/include/asm/arch-tegra/gpu.h
-@@ -25,3 +25,19 @@ static inline bool gpu_configured(void)
- }
- 
- #endif /* CONFIG_TEGRA_GPU */
+@@ -0,0 +1,27 @@
++/*
++ *  (C) Copyright 2015
++ *  NVIDIA Corporation <www.nvidia.com>
++ *
++ * SPDX-License-Identifier:	GPL-2.0+
++ */
 +
++#ifndef __ASM_ARCH_TEGRA_GPU_H
++#define __ASM_ARCH_TEGRA_GPU_H
 +
-+#if defined(CONFIG_OF_LIBFDT)
++#if defined(CONFIG_TEGRA_GPU)
 +
-+int gpu_enable_node(void *blob, const char *gpupath);
++void config_gpu(void);
++bool gpu_configured(void);
 +
-+#else /* CONFIG_OF_LIBFDT */
++#else /* CONFIG_TEGRA_GPU */
 +
-+static inline int gpu_enable_node(void *blob, const char *gpupath)
++static inline void config_gpu(void)
 +{
-+	return 0;
 +}
 +
-+#endif /* CONFIG_OF_LIBFDT */
++static inline bool gpu_configured(void)
++{
++	return false;
++}
 +
-+#endif
++#endif /* CONFIG_TEGRA_GPU */
+diff --git a/arch/arm/mach-tegra/Makefile b/arch/arm/mach-tegra/Makefile
+index fefc180b130e..f6f5583d6dd1 100644
+--- a/arch/arm/mach-tegra/Makefile
++++ b/arch/arm/mach-tegra/Makefile
+@@ -24,7 +24,7 @@ obj-y += pinmux-common.o
+ obj-y += powergate.o
+ obj-y += xusb-padctl.o
+ obj-$(CONFIG_DISPLAY_CPUINFO) += sys_info.o
+-obj-$(CONFIG_TEGRA124) += vpr.o
++obj-$(CONFIG_TEGRA_GPU) += gpu.o
+ obj-$(CONFIG_TEGRA_CLOCK_SCALING) += emc.o
+ 
+ ifndef CONFIG_SPL_BUILD
+diff --git a/arch/arm/mach-tegra/ap.c b/arch/arm/mach-tegra/ap.c
+index 0b94e8aaf9c3..70613f9c3649 100644
+--- a/arch/arm/mach-tegra/ap.c
++++ b/arch/arm/mach-tegra/ap.c
+@@ -218,7 +218,4 @@ void s_init(void)
+ 
+ 	/* enable SMMU */
+ 	smmu_enable();
+-
+-	/* init vpr */
+-	config_vpr();
+ }
+diff --git a/arch/arm/mach-tegra/board2.c b/arch/arm/mach-tegra/board2.c
+index ce9b6959efb1..1d7c5eff5587 100644
+--- a/arch/arm/mach-tegra/board2.c
++++ b/arch/arm/mach-tegra/board2.c
+@@ -29,6 +29,7 @@
+ #include <asm/arch-tegra/sys_proto.h>
+ #include <asm/arch-tegra/uart.h>
+ #include <asm/arch-tegra/warmboot.h>
++#include <asm/arch-tegra/gpu.h>
+ #ifdef CONFIG_TEGRA_CLOCK_SCALING
+ #include <asm/arch/emc.h>
+ #endif
+@@ -125,6 +126,8 @@ int board_init(void)
+ 	clock_init();
+ 	clock_verify();
+ 
++	config_gpu();
++
+ #ifdef CONFIG_TEGRA_SPI
+ 	pin_mux_spi();
+ #endif
 diff --git a/arch/arm/mach-tegra/gpu.c b/arch/arm/mach-tegra/gpu.c
-index b2fa50b5400e..4ea046d3e5b6 100644
---- a/arch/arm/mach-tegra/gpu.c
+new file mode 100644
+index 000000000000..b2fa50b5400e
+--- /dev/null
 +++ b/arch/arm/mach-tegra/gpu.c
-@@ -45,3 +45,22 @@ bool vpr_configured(void)
- {
- 	return _configured;
- }
+@@ -0,0 +1,47 @@
++/*
++ * Copyright (c) 2014-2015, NVIDIA CORPORATION.  All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
 +
-+#if defined(CONFIG_OF_LIBFDT)
++/* Tegra vpr routines */
 +
-+int gpu_enable_node(void *blob, const char *gpupath)
++#include <common.h>
++#include <asm/io.h>
++#include <asm/arch/tegra.h>
++#include <asm/arch/mc.h>
++
++#include <fdt_support.h>
++
++static bool _configured;
++
++void config_gpu(void)
 +{
-+	int offset;
++	struct mc_ctlr *mc = (struct mc_ctlr *)NV_PA_MC_BASE;
 +
-+	if (vpr_configured()) {
-+		offset = fdt_path_offset(blob, gpupath);
-+		if (offset > 0) {
-+			fdt_status_okay(blob, offset);
-+			debug("enabled GPU node %s\n", gpupath);
-+		}
-+	}
++	/* Turn VPR off */
++	writel(0, &mc->mc_video_protect_size_mb);
++	writel(TEGRA_MC_VIDEO_PROTECT_REG_WRITE_ACCESS_DISABLED,
++	       &mc->mc_video_protect_reg_ctrl);
++	/* read back to ensure the write went through */
++	readl(&mc->mc_video_protect_reg_ctrl);
 +
-+	return 0;
++	debug("configured VPR\n");
++
++	_configured = true;
 +}
 +
-+#endif
-diff --git a/board/nvidia/jetson-tk1/jetson-tk1.c b/board/nvidia/jetson-tk1/jetson-tk1.c
-index 52425a8f6dea..3c21767ce4da 100644
---- a/board/nvidia/jetson-tk1/jetson-tk1.c
-+++ b/board/nvidia/jetson-tk1/jetson-tk1.c
-@@ -11,6 +11,7 @@
- 
- #include <asm/arch/gpio.h>
- #include <asm/arch/pinmux.h>
-+#include <asm/arch-tegra/gpu.h>
- 
- #include "pinmux-config-jetson-tk1.h"
- 
-@@ -79,3 +80,10 @@ int board_eth_init(bd_t *bis)
- 	return pci_eth_init(bis);
- }
- #endif /* PCI */
-+
-+int ft_board_setup(void *blob, bd_t *bd)
++bool vpr_configured(void)
 +{
-+	gpu_enable_node(blob, "/gpu@0,57000000");
-+
-+	return 0;
++	return _configured;
 +}
-diff --git a/board/nvidia/venice2/venice2.c b/board/nvidia/venice2/venice2.c
-index c56ef129d6c7..3e2b9a7745e9 100644
---- a/board/nvidia/venice2/venice2.c
-+++ b/board/nvidia/venice2/venice2.c
-@@ -8,6 +8,7 @@
- #include <common.h>
- #include <asm/arch/gpio.h>
- #include <asm/arch/pinmux.h>
-+#include <asm/arch-tegra/gpu.h>
- #include "pinmux-config-venice2.h"
+diff --git a/arch/arm/mach-tegra/vpr.c b/arch/arm/mach-tegra/vpr.c
+deleted file mode 100644
+index f695811c9b6d..000000000000
+--- a/arch/arm/mach-tegra/vpr.c
++++ /dev/null
+@@ -1,35 +0,0 @@
+-/*
+- * Copyright (c) 2014, NVIDIA CORPORATION.  All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify it
+- * under the terms and conditions of the GNU General Public License,
+- * version 2, as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope it will be useful, but WITHOUT
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+- * more details.
+- *
+- * You should have received a copy of the GNU General Public License
+- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+- */
+-
+-/* Tegra vpr routines */
+-
+-#include <common.h>
+-#include <asm/io.h>
+-#include <asm/arch/tegra.h>
+-#include <asm/arch/mc.h>
+-
+-/* Configures VPR.  Right now, all we do is turn it off. */
+-void config_vpr(void)
+-{
+-	struct mc_ctlr *mc = (struct mc_ctlr *)NV_PA_MC_BASE;
+-
+-	/* Turn VPR off */
+-	writel(0, &mc->mc_video_protect_size_mb);
+-	writel(TEGRA_MC_VIDEO_PROTECT_REG_WRITE_ACCESS_DISABLED,
+-	       &mc->mc_video_protect_reg_ctrl);
+-	/* read back to ensure the write went through */
+-	readl(&mc->mc_video_protect_reg_ctrl);
+-}
+diff --git a/include/configs/tegra124-common.h b/include/configs/tegra124-common.h
+index 1aee5c89f4c4..a05d2b53c8bf 100644
+--- a/include/configs/tegra124-common.h
++++ b/include/configs/tegra124-common.h
+@@ -70,4 +70,7 @@
+ #define CONFIG_USB_EHCI_TXFIFO_THRESH	0x10
+ #define CONFIG_SYS_USB_EHCI_MAX_ROOT_PORTS 1
  
- /*
-@@ -27,3 +28,10 @@ void pinmux_init(void)
- 	pinmux_config_drvgrp_table(venice2_drvgrps,
- 				   ARRAY_SIZE(venice2_drvgrps));
- }
++/* GPU needs setup */
++#define CONFIG_TEGRA_GPU
 +
-+int ft_board_setup(void *blob, bd_t *bd)
-+{
-+	gpu_enable_node(blob, "/gpu@0,57000000");
-+
-+	return 0;
-+}
-diff --git a/include/configs/jetson-tk1.h b/include/configs/jetson-tk1.h
-index 3bbff282df27..b3e649664508 100644
---- a/include/configs/jetson-tk1.h
-+++ b/include/configs/jetson-tk1.h
-@@ -82,4 +82,6 @@
- #define CONFIG_ARMV7_SECURE_BASE		0xfff00000
- #define CONFIG_ARMV7_SECURE_RESERVE_SIZE	0x00100000
- 
-+#define CONFIG_OF_BOARD_SETUP
-+
- #endif /* __CONFIG_H */
-diff --git a/include/configs/venice2.h b/include/configs/venice2.h
-index 1d9d053b3566..bc5080aa27f0 100644
---- a/include/configs/venice2.h
-+++ b/include/configs/venice2.h
-@@ -64,4 +64,6 @@
- #include "tegra-common-usb-gadget.h"
- #include "tegra-common-post.h"
- 
-+#define CONFIG_OF_BOARD_SETUP
-+
- #endif /* __CONFIG_H */
+ #endif /* _TEGRA124_COMMON_H_ */
 -- 
 2.4.4
