@@ -1,53 +1,49 @@
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] soc/tegra: pmc: Avoid usage of uninitialized variable
-Date: Thu, 9 Jul 2015 11:03:40 +0300
-Message-ID: <559E2ADC.9040902@nvidia.com>
-References: <1436428795-32000-1-git-send-email-thierry.reding@gmail.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2] nouveau/ttm: fix tiled system memory with
+	Maxwell
+Date: Thu, 9 Jul 2015 17:15:14 +0900
+Message-ID: <1436429714-27511-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1436428795-32000-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Thanks for the fix; sorry for the typo or whatever you can call it :)
-
-This should also go into 4.0 and 4.1.
-
-Cheers,
-Mikko.
-
-On 07/09/2015 10:59 AM, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Make sure to only drop the reference to the OF node after it's been
-> successfully obtained.
-> 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/soc/tegra/pmc.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 1878d4da715d..6b0df8154fa4 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -1043,12 +1043,12 @@ void tegra_pmc_init_tsense_reset(struct tegra_pmc *pmc)
->  	u32 value, checksum;
->  
->  	if (!pmc->soc->has_tsense_reset)
-> -		goto out;
-> +		return;
->  
->  	np = of_find_node_by_name(pmc->dev->of_node, "i2c-thermtrip");
->  	if (!np) {
->  		dev_warn(dev, "i2c-thermtrip node not found, %s.\n", disabled);
-> -		goto out;
-> +		return;
->  	}
->  
->  	if (of_property_read_u32(np, "nvidia,i2c-controller-id", &ctrl_id)) {
-> 
+QWRkIE1heHdlbGwgdG8gdGhlIHN3aXRjaCBzdGF0ZW1lbnQgdGhhdCBzZXRzIG5vZGUtPm1lbXR5
+cGUsIG90aGVyd2lzZQphbGwgdGlsaW5nIGluZm9ybWF0aW9uIGlzIGlnbm9yZWQgZm9yIGJ1ZmZl
+cnMgaW4gc3lzdGVtIG1lbW9yeS4KCldoaWxlIHdlIGFyZSBhdCBpdCwgbWFrZSB0aGF0IHN3aXRj
+aCBzdGF0ZW1lbnQgZXhwbGljaXRseSBjb21wbGFpbiB0aGUKbmV4dCB0aW1lIHdlIG1lZXQgYSBu
+b24taGFuZGxlZCBjYXJkIGZhbWlseS4KClNpZ25lZC1vZmYtYnk6IEFsZXhhbmRyZSBDb3VyYm90
+IDxhY291cmJvdEBudmlkaWEuY29tPgotLS0KQ2hhbmdlcyBzaW5jZSB2MToKLSBBZGRlZCBhIGZv
+cmdvdHRlbiBhcmd1bWVudCB0byBOVl9XQVJOCgogZHJtL25vdXZlYXUvbm91dmVhdV90dG0uYyB8
+IDkgKysrKysrKysrCiAxIGZpbGUgY2hhbmdlZCwgOSBpbnNlcnRpb25zKCspCgpkaWZmIC0tZ2l0
+IGEvZHJtL25vdXZlYXUvbm91dmVhdV90dG0uYyBiL2RybS9ub3V2ZWF1L25vdXZlYXVfdHRtLmMK
+aW5kZXggMThmNDQ5NzE1Nzg4Li43NDY0YWVmMzQ2NzQgMTAwNjQ0Ci0tLSBhL2RybS9ub3V2ZWF1
+L25vdXZlYXVfdHRtLmMKKysrIGIvZHJtL25vdXZlYXUvbm91dmVhdV90dG0uYwpAQCAtMTc1LDE1
+ICsxNzUsMjQgQEAgbm91dmVhdV9nYXJ0X21hbmFnZXJfbmV3KHN0cnVjdCB0dG1fbWVtX3R5cGVf
+bWFuYWdlciAqbWFuLAogCW5vZGUtPnBhZ2Vfc2hpZnQgPSAxMjsKIAogCXN3aXRjaCAoZHJtLT5k
+ZXZpY2UuaW5mby5mYW1pbHkpIHsKKwljYXNlIE5WX0RFVklDRV9JTkZPX1YwX1ROVDoKKwljYXNl
+IE5WX0RFVklDRV9JTkZPX1YwX0NFTFNJVVM6CisJY2FzZSBOVl9ERVZJQ0VfSU5GT19WMF9LRUxW
+SU46CisJY2FzZSBOVl9ERVZJQ0VfSU5GT19WMF9SQU5LSU5FOgorCWNhc2UgTlZfREVWSUNFX0lO
+Rk9fVjBfQ1VSSUU6CisJCWJyZWFrOwogCWNhc2UgTlZfREVWSUNFX0lORk9fVjBfVEVTTEE6CiAJ
+CWlmIChkcm0tPmRldmljZS5pbmZvLmNoaXBzZXQgIT0gMHg1MCkKIAkJCW5vZGUtPm1lbXR5cGUg
+PSAobnZiby0+dGlsZV9mbGFncyAmIDB4N2YwMCkgPj4gODsKIAkJYnJlYWs7CiAJY2FzZSBOVl9E
+RVZJQ0VfSU5GT19WMF9GRVJNSToKIAljYXNlIE5WX0RFVklDRV9JTkZPX1YwX0tFUExFUjoKKwlj
+YXNlIE5WX0RFVklDRV9JTkZPX1YwX01BWFdFTEw6CiAJCW5vZGUtPm1lbXR5cGUgPSAobnZiby0+
+dGlsZV9mbGFncyAmIDB4ZmYwMCkgPj4gODsKIAkJYnJlYWs7CiAJZGVmYXVsdDoKKwkJTlZfV0FS
+Tihkcm0sICIlczogdW5oYW5kbGVkIGZhbWlseSB0eXBlICV4XG4iLCBfX2Z1bmNfXywKKwkJCWRy
+bS0+ZGV2aWNlLmluZm8uZmFtaWx5KTsKIAkJYnJlYWs7CiAJfQogCi0tIAoyLjQuNAoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBtYWlsaW5n
+IGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNr
+dG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
