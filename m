@@ -1,70 +1,76 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [alsa-devel] [PATCH v2 11/12] ASoC: tegra: register dependency
- parser for firmware nodes
-Date: Mon, 13 Jul 2015 16:42:55 +0100
-Message-ID: <20150713154254.GH11162@sirena.org.uk>
-References: <1435743667-11987-1-git-send-email-tomeu.vizoso@collabora.com>
- <1435743667-11987-12-git-send-email-tomeu.vizoso@collabora.com>
- <20150701173802.GW11162@sirena.org.uk>
- <CAAObsKDsEuDS46rW9CMuviDEDV-OVXe5q-kiWmw0D_n2D3Tf5A@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="xZKIQynyWHxCFrdv"
+From: Kyle Huey <me-OhBmq/TcCDJWk0Htik3J/w@public.gmane.org>
+Subject: [RESEND PATCH v3] ARM: tegra124: pmu support
+Date: Mon, 13 Jul 2015 10:35:45 -0700
+Message-ID: <1436808945-14524-1-git-send-email-khuey@kylehuey.com>
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAAObsKDsEuDS46rW9CMuviDEDV-OVXe5q-kiWmw0D_n2D3Tf5A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Takashi Iwai <tiwai-l3A5Bk7waGM@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, linux-acpi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linux PWM List <linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "open list:OPEN FIRMWARE AND..." <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "moderated list:ARM PORT" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "open list:TEGRA ARCHITECTUR..." <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Kyle Huey <khuey-OhBmq/TcCDJWk0Htik3J/w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+This patch modifies the device tree for tegra124 based devices to enable
+the Cortex A15 PMU.  The interrupt numbers are taken from NVIDIA TRM
+DP-06905-001_v03p.  This patch was tested on a Jetson TK1.
 
---xZKIQynyWHxCFrdv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Updated for proper ordering and to add interrupt-affinity values.
 
-On Mon, Jul 13, 2015 at 02:10:45PM +0200, Tomeu Vizoso wrote:
-> On 1 July 2015 at 19:38, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> > On Wed, Jul 01, 2015 at 11:41:06AM +0200, Tomeu Vizoso wrote:
+Signed-off-by: Kyle Huey <khuey-OhBmq/TcCDJWk0Htik3J/w@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra124.dtsi | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-> >> +static void tegra_max98090_get_dependencies(struct fwnode_handle *fwnode,
-> >> +                                         struct list_head *deps)
-> >> +{
-> >> +     add_dependency(fwnode, "nvidia,i2s-controller", deps);
-> >> +     add_dependency(fwnode, "nvidia,audio-codec", deps);
-> >> +}
+diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+index 13cc7ca..de07d7e 100644
+--- a/arch/arm/boot/dts/tegra124.dtsi
++++ b/arch/arm/boot/dts/tegra124.dtsi
+@@ -918,31 +918,40 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		cpu@0 {
++		A15_0: cpu@0 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <0>;
+ 		};
+ 
+-		cpu@1 {
++		A15_1: cpu@1 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <1>;
+ 		};
+ 
+-		cpu@2 {
++		A15_2: cpu@2 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <2>;
+ 		};
+ 
+-		cpu@3 {
++		A15_3: cpu@3 {
+ 			device_type = "cpu";
+ 			compatible = "arm,cortex-a15";
+ 			reg = <3>;
+ 		};
+ 	};
+ 
++	pmu {
++		compatible = "arm,cortex-a15-pmu";
++		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>;
++		interrupt-affinity = <&A15_0>, <&A15_1>, <&A15_2>, <&A15_3>;
++	};
++
+ 	thermal-zones {
+ 		cpu {
+ 			polling-delay-passive = <1000>;
+-- 
+1.9.1
 
-> > Why is this all being open coded in an individual driver (we already
-> > know about and manage all these dependencies in the core...)?  If we're
-> > going to do this I'd expect the interface for specifying DT nodes to the
-> > core to be changed to support this.
-
-> Are you thinking of changing drivers to acquire their resources
-> through Arnd's devm_probe (only that the resource table would have to
-> be in struct device_driver)?
-
-> https://lkml.kernel.org/g/4742258.TBitC3hVuO@wuerfel
-
-No, I'm looking at how we already have all the "did all my dependencies
-appear" logic in the core based on data provided by the drivers.
-
---xZKIQynyWHxCFrdv
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJVo9x+AAoJECTWi3JdVIfQCtwH/iR0OWw9MmX0rTpPvdi+DKPm
-GHa0Sy8ieGKrBj60HzGLfLWerctXgSsB/dFWytfnpg4ebqe3Yc4TIcvADmbcA84L
-4nq+I73X1bB9XrAd6+DEAAZ3pWdInbgw+P+VBdZJAmFHaY7pg7SeQmZr4xs3vaPh
-6awa7eHWto27IT7zrOLHy12bBcFwmWZTQ/qh4XMWUPMc30/mfUoGBFzw+YokJGnw
-sFv3JkWM7bXEDdv2y1Vd39730mDC3K8dCMadzDBIcgfECKUR2/Gmh0vxttkhyy6d
-jTa4et1Urk1BsEoVSTT70QFvrvMveGGfFO7tXOD9qWE96pV7B6yIYEhjEne0Eg4=
-=Q8CS
------END PGP SIGNATURE-----
-
---xZKIQynyWHxCFrdv--
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
