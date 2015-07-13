@@ -1,47 +1,34 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH V3 19/19] ARM: tegra: select PM_GENERIC_DOMAINS
-Date: Mon, 13 Jul 2015 16:50:47 +0300
-Message-ID: <20150713135047.GR6287@tbergstrom-lnx.Nvidia.com>
-References: <1436791197-32358-1-git-send-email-jonathanh@nvidia.com>
- <1436791197-32358-20-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH V3 06/19] clk: tegra: remove TEGRA_PLL_USE_LOCK for PLLD/PLLD2
+Date: Mon, 13 Jul 2015 15:02:54 +0100
+Message-ID: <55A3C50E.7060706@nvidia.com>
+References: <1436791197-32358-1-git-send-email-jonathanh@nvidia.com> <1436791197-32358-7-git-send-email-jonathanh@nvidia.com> <20150713134151.GQ6287@tbergstrom-lnx.Nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1436791197-32358-20-git-send-email-jonathanh@nvidia.com>
+In-Reply-To: <20150713134151.GQ6287@tbergstrom-lnx.Nvidia.com>
 Sender: linux-pm-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Prashant Gaikwad <pgaikwad@nvidia.com>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Hans de Goede <hdegoede@redhat.com>, Tejun Heo <tj@kernel.org>, Vince Hsu <vinceh@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Prashant Gaikwad <pgaikwad@nvidia.com>, =?windows-1252?Q?Terje_Bergstr?= =?windows-1252?Q?=F6m?= <tbergstrom@nvidia.com>, Hans de Goede <hdegoede@redhat.com>, Tejun Heo <tj@kernel.org>, Vince Hsu <vinceh@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jul 13, 2015 at 01:39:57PM +0100, Jon Hunter wrote:
-> From: Vince Hsu <vinceh@nvidia.com>
-> 
-> We have added generic power domain support for Tegra SoCs. So now the
-> option M_GENERIC_DOMAINS must be enabled by default to have proper power
 
-Missing P :)
 
-> sequence.
+On 13/07/15 14:41, Peter De Schrijver wrote:
+> On Mon, Jul 13, 2015 at 01:39:44PM +0100, Jon Hunter wrote:
+>> From: Vince Hsu <vinceh@nvidia.com>
+>>
+>> Tegra114 has a HW bug that the PLLD/PLLD2 lock bit cannot be asserted when
+>> the DIS power domain is during up-powergating process but the clamp to this
 > 
-> Signed-off-by: Vince Hsu <vinceh@nvidia.com>
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  arch/arm/mach-tegra/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+> I think there is missing 'off' in this sentence?
 > 
-> diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-> index 0fa4c5f8b1be..fdf86cae3b32 100644
-> --- a/arch/arm/mach-tegra/Kconfig
-> +++ b/arch/arm/mach-tegra/Kconfig
-> @@ -9,6 +9,7 @@ menuconfig ARCH_TEGRA
->  	select HAVE_ARM_TWD if SMP
->  	select PINCTRL
->  	select PM_OPP
-> +	select PM_GENERIC_DOMAINS if PM
->  	select ARCH_HAS_RESET_CONTROLLER
->  	select RESET_CONTROLLER
->  	select SOC_BUS
-> -- 
-> 2.1.4
+> ie. ... 'the DIS power domain is off during up-powergating process'
 > 
+> Also 'un-powergating sequence' would be nicer.
+
+Yes agree. I will re-word that.
+
+Thanks
+Jon
