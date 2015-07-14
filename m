@@ -1,78 +1,161 @@
-From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Subject: [PATCH v2 3/3] ARM: tegra: Add gpio-ranges property
-Date: Tue, 14 Jul 2015 10:29:56 +0200
-Message-ID: <1436862596-27730-4-git-send-email-tomeu.vizoso@collabora.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: [PATCH v2 1/3] gpio: defer probe if pinctrl cannot be found
+Date: Tue, 14 Jul 2015 10:29:54 +0200
+Message-ID: <1436862596-27730-2-git-send-email-tomeu.vizoso@collabora.com>
 References: <1436862596-27730-1-git-send-email-tomeu.vizoso@collabora.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1436862596-27730-1-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1436862596-27730-1-git-send-email-tomeu.vizoso@collabora.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Specify how the GPIOs map to the pins in Tegra SoCs, so the dependency is
-explicit.
+When an OF node has a pin range for its GPIOs, return -EPROBE_DEFER if
+the pin controller isn't available.
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Otherwise, the GPIO range wouldn't be set at all unless the pin
+controller probed always before the GPIO chip.
+
+With this change, the probe of the GPIO chip will be deferred and will
+be retried at a later point, hopefully once the pin controller has been
+registered and probed already.
+
+Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
 ---
 
 Changes in v2:
-- Remove outdated comment from the commit changelog
+- Don't defer probe if the pinctrl node is disabled
 
- arch/arm/boot/dts/tegra114.dtsi | 1 +
- arch/arm/boot/dts/tegra124.dtsi | 1 +
- arch/arm/boot/dts/tegra20.dtsi  | 1 +
- arch/arm/boot/dts/tegra30.dtsi  | 1 +
- 4 files changed, 4 insertions(+)
+ drivers/gpio/gpiolib-of.c | 27 ++++++++++++++++++---------
+ drivers/gpio/gpiolib.c    |  5 ++++-
+ include/linux/of_gpio.h   |  4 ++--
+ 3 files changed, 24 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index f58a3d9d5f13..7e1e1717e46a 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -234,6 +234,7 @@
- 		gpio-controller;
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
-+		gpio-ranges = <&pinmux 0 0 246>;
- 	};
+diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+index 9a0ec48a4737..4e1f73b9136a 100644
+--- a/drivers/gpio/gpiolib-of.c
++++ b/drivers/gpio/gpiolib-of.c
+@@ -338,7 +338,7 @@ void of_mm_gpiochip_remove(struct of_mm_gpio_chip *mm_gc)
+ EXPORT_SYMBOL(of_mm_gpiochip_remove);
  
- 	apbmisc@70000800 {
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 87318a72f615..4779df336cb6 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -255,6 +255,7 @@
- 		gpio-controller;
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
-+		gpio-ranges = <&pinmux 0 0 251>;
- 	};
+ #ifdef CONFIG_PINCTRL
+-static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
++static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
+ {
+ 	struct device_node *np = chip->of_node;
+ 	struct of_phandle_args pinspec;
+@@ -349,7 +349,7 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
+ 	struct property *group_names;
  
- 	apbdma: dma@0,60020000 {
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index f444b67f55c6..b44277c63e8e 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -244,6 +244,7 @@
- 		gpio-controller;
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
-+		gpio-ranges = <&pinmux 0 0 224>;
- 	};
+ 	if (!np)
+-		return;
++		return 0;
  
- 	apbmisc@70000800 {
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 782b11b2af6a..28c547f27ecd 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -349,6 +349,7 @@
- 		gpio-controller;
- 		#interrupt-cells = <2>;
- 		interrupt-controller;
-+		gpio-ranges = <&pinmux 0 0 248>;
- 	};
+ 	group_names = of_find_property(np, group_names_propname, NULL);
  
- 	apbmisc@70000800 {
+@@ -361,7 +361,7 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
+ 
+ 		pctldev = of_pinctrl_get(pinspec.np);
+ 		if (!pctldev)
+-			break;
++			return -EPROBE_DEFER;
+ 
+ 		if (pinspec.args[2]) {
+ 			if (group_names) {
+@@ -381,7 +381,7 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
+ 					pinspec.args[1],
+ 					pinspec.args[2]);
+ 			if (ret)
+-				break;
++				return ret;
+ 		} else {
+ 			/* npins == 0: special range */
+ 			if (pinspec.args[1]) {
+@@ -411,32 +411,41 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
+ 			ret = gpiochip_add_pingroup_range(chip, pctldev,
+ 						pinspec.args[0], name);
+ 			if (ret)
+-				break;
++				return ret;
+ 		}
+ 	}
++
++	return 0;
+ }
+ 
+ #else
+-static void of_gpiochip_add_pin_range(struct gpio_chip *chip) {}
++static int of_gpiochip_add_pin_range(struct gpio_chip *chip) { return 0; }
+ #endif
+ 
+-void of_gpiochip_add(struct gpio_chip *chip)
++int of_gpiochip_add(struct gpio_chip *chip)
+ {
++	int status;
++
+ 	if ((!chip->of_node) && (chip->dev))
+ 		chip->of_node = chip->dev->of_node;
+ 
+ 	if (!chip->of_node)
+-		return;
++		return 0;
+ 
+ 	if (!chip->of_xlate) {
+ 		chip->of_gpio_n_cells = 2;
+ 		chip->of_xlate = of_gpio_simple_xlate;
+ 	}
+ 
+-	of_gpiochip_add_pin_range(chip);
++	status = of_gpiochip_add_pin_range(chip);
++	if (status)
++		return status;
++
+ 	of_node_get(chip->of_node);
+ 
+ 	of_gpiochip_scan_hogs(chip);
++
++	return 0;
+ }
+ 
+ void of_gpiochip_remove(struct gpio_chip *chip)
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index bf4bd1d120c3..a8cab335c0cc 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -287,7 +287,10 @@ int gpiochip_add(struct gpio_chip *chip)
+ 	INIT_LIST_HEAD(&chip->pin_ranges);
+ #endif
+ 
+-	of_gpiochip_add(chip);
++	status = of_gpiochip_add(chip);
++	if (status)
++		goto err_remove_chip;
++
+ 	acpi_gpiochip_add(chip);
+ 
+ 	status = gpiochip_sysfs_register(chip);
+diff --git a/include/linux/of_gpio.h b/include/linux/of_gpio.h
+index 69dbe312b11b..f3191828f037 100644
+--- a/include/linux/of_gpio.h
++++ b/include/linux/of_gpio.h
+@@ -54,7 +54,7 @@ extern int of_mm_gpiochip_add(struct device_node *np,
+ 			      struct of_mm_gpio_chip *mm_gc);
+ extern void of_mm_gpiochip_remove(struct of_mm_gpio_chip *mm_gc);
+ 
+-extern void of_gpiochip_add(struct gpio_chip *gc);
++extern int of_gpiochip_add(struct gpio_chip *gc);
+ extern void of_gpiochip_remove(struct gpio_chip *gc);
+ extern int of_gpio_simple_xlate(struct gpio_chip *gc,
+ 				const struct of_phandle_args *gpiospec,
+@@ -76,7 +76,7 @@ static inline int of_gpio_simple_xlate(struct gpio_chip *gc,
+ 	return -ENOSYS;
+ }
+ 
+-static inline void of_gpiochip_add(struct gpio_chip *gc) { }
++static inline int of_gpiochip_add(struct gpio_chip *gc) { return 0; }
+ static inline void of_gpiochip_remove(struct gpio_chip *gc) { }
+ 
+ #endif /* CONFIG_OF_GPIO */
 -- 
 2.4.3
+
