@@ -1,52 +1,87 @@
-From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [RFC PATCH 14/15] regulator: pwm: implement ->enable(),
- ->disable() and ->is_enabled methods
-Date: Tue, 14 Jul 2015 13:16:28 +0200
-Message-ID: <20150714131628.0c87f0a4@bbrezillon>
-References: <1435738921-25027-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1435738921-25027-15-git-send-email-boris.brezillon@free-electrons.com>
-	<20150714105019.GR11162@sirena.org.uk>
-	<20150714130222.1bdfedc5@bbrezillon>
-	<20150714110819.GU11162@sirena.org.uk>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V3 06/19] clk: tegra: remove TEGRA_PLL_USE_LOCK for PLLD/PLLD2
+Date: Tue, 14 Jul 2015 12:59:01 +0100
+Message-ID: <55A4F985.7010503@nvidia.com>
+References: <1436791197-32358-1-git-send-email-jonathanh@nvidia.com> <1436791197-32358-7-git-send-email-jonathanh@nvidia.com> <20150713134151.GQ6287@tbergstrom-lnx.Nvidia.com> <55A3C50E.7060706@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150714110819.GU11162-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Doug Anderson <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <55A3C50E.7060706-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?windows-1252?Q?Terje_Bergstr?= =?windows-1252?Q?=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 14 Jul 2015 12:08:19 +0100
-Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
 
-> On Tue, Jul 14, 2015 at 01:02:22PM +0200, Boris Brezillon wrote:
-> > Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+On 13/07/15 15:02, Jon Hunter wrote:
 > 
-> > > On Wed, Jul 01, 2015 at 10:22:00AM +0200, Boris Brezillon wrote:
-> > > > Implement the ->enable(), ->disable() and ->is_enabled methods and remove
-> > > > the PWM call in ->set_voltage_sel().
 > 
-> > > This doesn't apply, please check and resend.
+> On 13/07/15 14:41, Peter De Schrijver wrote:
+>> On Mon, Jul 13, 2015 at 01:39:44PM +0100, Jon Hunter wrote:
+>>> From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>
+>>> Tegra114 has a HW bug that the PLLD/PLLD2 lock bit cannot be asserted when
+>>> the DIS power domain is during up-powergating process but the clamp to this
+>>
+>> I think there is missing 'off' in this sentence?
+>>
+>> ie. ... 'the DIS power domain is off during up-powergating process'
+>>
+>> Also 'un-powergating sequence' would be nicer.
 > 
-> > This series was made on top of Linus' tree (4.2-rc1 IIRC) and patch 14
-> > and 15 were not meant to be applied without Thierry's approval (they
-> > depend on other changes in the PWM framework).
-> > I can rebase them on top of linux-next (or just on top of Linus'
-> > 4.2-rc2) if Thierry is okay with that, but I don't think rebasing them
-> > on your regulator's for-next branch is a good idea.
-> 
-> What is the dependency for the enable patch?
+> Yes agree. I will re-word that.
 
-Oh, indeed. This patch has no dependency on the PWM changes. I'll send
-it on its own then.
+Updated version ...
 
-Thanks,
 
-Boris
+From d5cbecd4e97332cd8373b9c4893731eb8e063660 Mon Sep 17 00:00:00 2001
+From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Date: Wed, 11 Mar 2015 16:46:04 +0800
+Subject: [PATCH 06/19] clk: tegra: remove TEGRA_PLL_USE_LOCK for PLLD/PLLD2
 
+Tegra114 has a HW bug where the PLLD/PLLD2 lock bit cannot be asserted
+while turning on the Display power domain and before the clamp to this
+domain has been removed. This issue causes a timeout and aborts the power
+up sequence, even though the PLLD/PLLD2 has already locked. To avoid this,
+don't use the lock for PLLD/PLLD2, just wait 1ms and treat the clocks as
+locked.
+
+Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+[jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org: Updated the changelog description]
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/clk/tegra/clk-tegra114.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index 8237d16b4075..2e5c20c7c088 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -456,8 +456,7 @@ static struct tegra_clk_pll_params pll_d_params = {
+ 	.lock_delay = 1000,
+ 	.div_nmp = &pllp_nmp,
+ 	.freq_table = pll_d_freq_table,
+-	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
+-		 TEGRA_PLL_USE_LOCK,
++	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON,
+ };
+ 
+ static struct tegra_clk_pll_params pll_d2_params = {
+@@ -474,8 +473,7 @@ static struct tegra_clk_pll_params pll_d2_params = {
+ 	.lock_delay = 1000,
+ 	.div_nmp = &pllp_nmp,
+ 	.freq_table = pll_d_freq_table,
+-	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
+-		 TEGRA_PLL_USE_LOCK,
++	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON,
+ };
+ 
+ static struct pdiv_map pllu_p[] = {
 -- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+2.1.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
