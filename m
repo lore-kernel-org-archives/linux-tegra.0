@@ -1,161 +1,89 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: [PATCH v2 1/3] gpio: defer probe if pinctrl cannot be found
-Date: Tue, 14 Jul 2015 10:29:54 +0200
-Message-ID: <1436862596-27730-2-git-send-email-tomeu.vizoso@collabora.com>
-References: <1436862596-27730-1-git-send-email-tomeu.vizoso@collabora.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <1436862596-27730-1-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH v5] clk: change clk_ops' ->determine_rate() prototype
+Date: Tue, 14 Jul 2015 12:47:48 +0200
+Message-ID: <20150714124748.55dd6213@bbrezillon>
+References: <1436294888-25752-1-git-send-email-boris.brezillon@free-electrons.com>
+	<20150708005748.GG30412@codeaurora.org>
+	<20150708110005.704c49ff@bbrezillon>
+	<559D66EE.4060707@codeaurora.org>
+	<20150709223938.19450e75@bbrezillon>
+	<20150713230217.GI30412@codeaurora.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <20150713230217.GI30412@codeaurora.org>
+Sender: linux-doc-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Tony Lindgren <tony@atomide.com>, Ralf Baechle <ralf@linux-mips.org>, Emilio =?UTF-8?B?TMOzcGV6?= <emilio@elopez.com.ar>, Maxime Ripard <maxime.ripard@free-electrons.com>, Tero Kristo <t-kristo@ti.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-mips@linux-mips.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-When an OF node has a pin range for its GPIOs, return -EPROBE_DEFER if
-the pin controller isn't available.
+On Mon, 13 Jul 2015 16:02:18 -0700
+Stephen Boyd <sboyd@codeaurora.org> wrote:
 
-Otherwise, the GPIO range wouldn't be set at all unless the pin
-controller probed always before the GPIO chip.
+> On 07/09, Boris Brezillon wrote:
+> > Hi Stephen,
+> > 
+> > On Wed, 08 Jul 2015 11:07:42 -0700
+> > Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > 
+> > > On 07/08/2015 02:00 AM, Boris Brezillon wrote:
+> > > > Hi Stephen,
+> > > >
+> > > > On Tue, 7 Jul 2015 17:57:48 -0700
+> > > > Stephen Boyd <sboyd@codeaurora.org> wrote:
+> > > >
+> > > >> On 07/07, Boris Brezillon wrote:
+> > > >>>
+> > > >>>  	} else {
+> > > >>>  		pr_err("clk: clk_composite_determine_rate function called, but no mux or rate callback set!\n");
+> > > >>> +		req->rate = 0;
+> > > >>>  		return 0;
+> > > >> Shouldn't this return an error now? And then assigning req->rate
+> > > >> wouldn't be necessary. Sorry I must have missed this last round.
+> > > >>
+> > > > Actually I wanted to keep the existing behavior: return a 0 rate (not
+> > > > an error) when there is no mux or rate ops.
+> > > >
+> > > > That's something we can change afterwards, but it might reveals
+> > > > new bugs if some users are checking for a 0 rate to detect errors.
+> > > >
+> > > 
+> > > Ok. Care to send the patch now to do that while we're thinking about it?
+> > > We can test it out for a month or two.
+> > > 
+> > 
+> > Here is a patch modifying a few drivers to return errors instead of a 0
+> > rate. Feel free to squash it in the previous one if you think this is
+> > better.
+> > 
+> > Best Regards,
+> > 
+> > Boris
+> > 
+> > --- >8 ---
+> > 
+> > From dca9c28301042cf19dad4b1e4555cdb7c1063745 Mon Sep 17 00:00:00 2001
+> > From: Boris Brezillon <boris.brezillon@free-electrons.com>
+> > Date: Thu, 9 Jul 2015 12:20:21 +0200
+> > Subject: [PATCH] clk: fix some determine_rate implementations
+> > 
+> > Some determine_rate implementations are not returning an error when then
+> > failed to adapt the rate according to the rate request.
+> > Fix them so that they return an error instead of silently returning 0.
+> > 
+> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> 
+> The linewrap is seriously messed up here. Please fix your mailer
+> next time. I had to hand edit the patch to get it to apply. I've
+> applied this in top of the original patch as a different commit,
+> in case we need to revert it later.
 
-With this change, the probe of the GPIO chip will be deferred and will
-be retried at a later point, hopefully once the pin controller has been
-registered and probed already.
+Sorry about that, I forgot to remove the line wrapper when copying the
+content of the patch into my mailer :-/.
 
-Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
----
 
-Changes in v2:
-- Don't defer probe if the pinctrl node is disabled
-
- drivers/gpio/gpiolib-of.c | 27 ++++++++++++++++++---------
- drivers/gpio/gpiolib.c    |  5 ++++-
- include/linux/of_gpio.h   |  4 ++--
- 3 files changed, 24 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-index 9a0ec48a4737..4e1f73b9136a 100644
---- a/drivers/gpio/gpiolib-of.c
-+++ b/drivers/gpio/gpiolib-of.c
-@@ -338,7 +338,7 @@ void of_mm_gpiochip_remove(struct of_mm_gpio_chip *mm_gc)
- EXPORT_SYMBOL(of_mm_gpiochip_remove);
- 
- #ifdef CONFIG_PINCTRL
--static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
-+static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
- {
- 	struct device_node *np = chip->of_node;
- 	struct of_phandle_args pinspec;
-@@ -349,7 +349,7 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
- 	struct property *group_names;
- 
- 	if (!np)
--		return;
-+		return 0;
- 
- 	group_names = of_find_property(np, group_names_propname, NULL);
- 
-@@ -361,7 +361,7 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
- 
- 		pctldev = of_pinctrl_get(pinspec.np);
- 		if (!pctldev)
--			break;
-+			return -EPROBE_DEFER;
- 
- 		if (pinspec.args[2]) {
- 			if (group_names) {
-@@ -381,7 +381,7 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
- 					pinspec.args[1],
- 					pinspec.args[2]);
- 			if (ret)
--				break;
-+				return ret;
- 		} else {
- 			/* npins == 0: special range */
- 			if (pinspec.args[1]) {
-@@ -411,32 +411,41 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
- 			ret = gpiochip_add_pingroup_range(chip, pctldev,
- 						pinspec.args[0], name);
- 			if (ret)
--				break;
-+				return ret;
- 		}
- 	}
-+
-+	return 0;
- }
- 
- #else
--static void of_gpiochip_add_pin_range(struct gpio_chip *chip) {}
-+static int of_gpiochip_add_pin_range(struct gpio_chip *chip) { return 0; }
- #endif
- 
--void of_gpiochip_add(struct gpio_chip *chip)
-+int of_gpiochip_add(struct gpio_chip *chip)
- {
-+	int status;
-+
- 	if ((!chip->of_node) && (chip->dev))
- 		chip->of_node = chip->dev->of_node;
- 
- 	if (!chip->of_node)
--		return;
-+		return 0;
- 
- 	if (!chip->of_xlate) {
- 		chip->of_gpio_n_cells = 2;
- 		chip->of_xlate = of_gpio_simple_xlate;
- 	}
- 
--	of_gpiochip_add_pin_range(chip);
-+	status = of_gpiochip_add_pin_range(chip);
-+	if (status)
-+		return status;
-+
- 	of_node_get(chip->of_node);
- 
- 	of_gpiochip_scan_hogs(chip);
-+
-+	return 0;
- }
- 
- void of_gpiochip_remove(struct gpio_chip *chip)
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index bf4bd1d120c3..a8cab335c0cc 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -287,7 +287,10 @@ int gpiochip_add(struct gpio_chip *chip)
- 	INIT_LIST_HEAD(&chip->pin_ranges);
- #endif
- 
--	of_gpiochip_add(chip);
-+	status = of_gpiochip_add(chip);
-+	if (status)
-+		goto err_remove_chip;
-+
- 	acpi_gpiochip_add(chip);
- 
- 	status = gpiochip_sysfs_register(chip);
-diff --git a/include/linux/of_gpio.h b/include/linux/of_gpio.h
-index 69dbe312b11b..f3191828f037 100644
---- a/include/linux/of_gpio.h
-+++ b/include/linux/of_gpio.h
-@@ -54,7 +54,7 @@ extern int of_mm_gpiochip_add(struct device_node *np,
- 			      struct of_mm_gpio_chip *mm_gc);
- extern void of_mm_gpiochip_remove(struct of_mm_gpio_chip *mm_gc);
- 
--extern void of_gpiochip_add(struct gpio_chip *gc);
-+extern int of_gpiochip_add(struct gpio_chip *gc);
- extern void of_gpiochip_remove(struct gpio_chip *gc);
- extern int of_gpio_simple_xlate(struct gpio_chip *gc,
- 				const struct of_phandle_args *gpiospec,
-@@ -76,7 +76,7 @@ static inline int of_gpio_simple_xlate(struct gpio_chip *gc,
- 	return -ENOSYS;
- }
- 
--static inline void of_gpiochip_add(struct gpio_chip *gc) { }
-+static inline int of_gpiochip_add(struct gpio_chip *gc) { return 0; }
- static inline void of_gpiochip_remove(struct gpio_chip *gc) { }
- 
- #endif /* CONFIG_OF_GPIO */
 -- 
-2.4.3
-
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
