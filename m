@@ -1,80 +1,82 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH v5] clk: change clk_ops' ->determine_rate() prototype
-Date: Mon, 13 Jul 2015 16:02:18 -0700
-Message-ID: <20150713230217.GI30412@codeaurora.org>
-References: <1436294888-25752-1-git-send-email-boris.brezillon@free-electrons.com>
- <20150708005748.GG30412@codeaurora.org>
- <20150708110005.704c49ff@bbrezillon>
- <559D66EE.4060707@codeaurora.org>
- <20150709223938.19450e75@bbrezillon>
+From: Peter Chen <peter.chen@freescale.com>
+Subject: Re: [PATCH v3 00/11] USB: OTG/DRD Core functionality
+Date: Tue, 14 Jul 2015 08:59:44 +0800
+Message-ID: <20150714005942.GB31197@shlinux2>
+References: <1436350777-28056-1-git-send-email-rogerq@ti.com>
+ <CAL1qeaEJ9uX1vgvwO4-ABdGi5C96HZ2jBYWeKiGHJ-uqv6ooGg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-doc-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20150709223938.19450e75@bbrezillon>
-Sender: linux-doc-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, Tony Lindgren <tony@atomide.com>, Ralf Baechle <ralf@linux-mips.org>, Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>, Maxime Ripard <maxime.ripard@free-electrons.com>, Tero Kristo <t-kristo@ti.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-mips@linux-mips.org, linux-tegra@vger.kernel.org
+In-Reply-To: <CAL1qeaEJ9uX1vgvwO4-ABdGi5C96HZ2jBYWeKiGHJ-uqv6ooGg@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Andrew Bresticker <abrestic@chromium.org>
+Cc: Roger Quadros <rogerq@ti.com>, Alan Stern <stern@rowland.harvard.edu>, Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>, jun.li@freescale.com, Mathias Nyman <mathias.nyman@linux.intel.com>, tony@atomide.com, Joao.Pinto@synopsys.com, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/09, Boris Brezillon wrote:
-> Hi Stephen,
+On Mon, Jul 13, 2015 at 12:14:43PM -0700, Andrew Bresticker wrote:
+> Hi Roger,
 > 
-> On Wed, 08 Jul 2015 11:07:42 -0700
-> Stephen Boyd <sboyd@codeaurora.org> wrote:
+> On Wed, Jul 8, 2015 at 3:19 AM, Roger Quadros <rogerq@ti.com> wrote:
+> > Usage model:
+> > -----------
+> >
+> > - The OTG controller device is assumed to be the parent of
+> > the host and gadget controller. It must call usb_otg_register()
+> > before populating the host and gadget devices so that the OTG
+> > core is aware that it is an OTG device before the host & gadget
+> > register. The OTG controller must provide struct otg_fsm_ops *
+> > which will be called by the OTG core depending on OTG bus state.
 > 
-> > On 07/08/2015 02:00 AM, Boris Brezillon wrote:
-> > > Hi Stephen,
-> > >
-> > > On Tue, 7 Jul 2015 17:57:48 -0700
-> > > Stephen Boyd <sboyd@codeaurora.org> wrote:
-> > >
-> > >> On 07/07, Boris Brezillon wrote:
-> > >>>
-> > >>>  	} else {
-> > >>>  		pr_err("clk: clk_composite_determine_rate function called, but no mux or rate callback set!\n");
-> > >>> +		req->rate = 0;
-> > >>>  		return 0;
-> > >> Shouldn't this return an error now? And then assigning req->rate
-> > >> wouldn't be necessary. Sorry I must have missed this last round.
-> > >>
-> > > Actually I wanted to keep the existing behavior: return a 0 rate (not
-> > > an error) when there is no mux or rate ops.
-> > >
-> > > That's something we can change afterwards, but it might reveals
-> > > new bugs if some users are checking for a 0 rate to detect errors.
-> > >
-> > 
-> > Ok. Care to send the patch now to do that while we're thinking about it?
-> > We can test it out for a month or two.
-> > 
-> 
-> Here is a patch modifying a few drivers to return errors instead of a 0
-> rate. Feel free to squash it in the previous one if you think this is
-> better.
-> 
-> Best Regards,
-> 
-> Boris
-> 
-> --- >8 ---
-> 
-> From dca9c28301042cf19dad4b1e4555cdb7c1063745 Mon Sep 17 00:00:00 2001
-> From: Boris Brezillon <boris.brezillon@free-electrons.com>
-> Date: Thu, 9 Jul 2015 12:20:21 +0200
-> Subject: [PATCH] clk: fix some determine_rate implementations
-> 
-> Some determine_rate implementations are not returning an error when then
-> failed to adapt the rate according to the rate request.
-> Fix them so that they return an error instead of silently returning 0.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> I'm wondering if the requirement that the OTG controller be the parent
+> of the USB host/device-controllers makes sense.  For some context, I'm
+> working on adding dual-role support for Tegra210, specifically on a
+> system with USB Type-C.  On Tegra, the USB host-controller and USB
+> device-controller are two separate IP blocks (XUSB host and XUSB
+> device) with another, separate, IP block (XUSB padctl) for the USB PHY
+> and OTG support.  In the non-Type-C case, your OTG framework could
+> work well, though it's debatable as to whether or not the XUSB padctl
+> device should be a parent to the XUSB host/device-controller devices
+> (currently it isn't - it's just a PHY provider).  But in the Type-C
+> case, it's an off-chip embedded controller that determines the
+> dual-role status of the Type-C port, so the above requirement doesn't
+> make sense at all.
 
-The linewrap is seriously messed up here. Please fix your mailer
-next time. I had to hand edit the patch to get it to apply. I've
-applied this in top of the original patch as a different commit,
-in case we need to revert it later.
+Hi Andrew,
+
+I think your problem is how to add your core driver to manage device and
+host functionality together, and once you find how (through padctl/type-c
+controller) to do it based on current code, it will be clear how to use roger
+proposal framework at that time.
+
+Most of current core drivers, we use extcon driver (through gpio) or USB
+vbus/id pin (through internal registers) to manager roles.
+
+> 
+> My idea was to have the OTG/DRD controller explicitly specify its host
+> and device controllers, so in DT, something like:
+> 
+> otg-controller {
+>     ...
+>     device-controller = <&usb_device>;
+>     host-controller = <&usb_host>;
+>     ...
+> };
+> 
+> usb_device: usb-device@.... {
+>     ...
+> };
+> 
+> usb_host: usb-host@... {
+>     ...
+> };
+> 
+> What do you think?
+> 
+> Thanks,
+> Andrew
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+
+Best Regards,
+Peter Chen
