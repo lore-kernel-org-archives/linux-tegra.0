@@ -1,71 +1,87 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3 19/19] ARM: tegra: select PM_GENERIC_DOMAINS
-Date: Wed, 15 Jul 2015 11:17:04 +0300
-Message-ID: <20150715081704.GA6287@tbergstrom-lnx.Nvidia.com>
-References: <1436791197-32358-1-git-send-email-jonathanh@nvidia.com>
- <1436791197-32358-20-git-send-email-jonathanh@nvidia.com>
- <20150713135047.GR6287@tbergstrom-lnx.Nvidia.com>
- <55A3C53F.8090003@nvidia.com>
- <55A4F9B6.1070904@nvidia.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [RESEND PATCH v3] ARM: tegra124: pmu support
+Date: Wed, 15 Jul 2015 10:35:11 +0100
+Message-ID: <20150715093511.GA10239@leverpostej>
+References: <1436808945-14524-1-git-send-email-khuey@kylehuey.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <55A4F9B6.1070904-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1436808945-14524-1-git-send-email-khuey@kylehuey.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Kyle Huey <me@kylehuey.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>, "open list:TEGRA ARCHITECTUR..." <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>, Kyle Huey <khuey@kylehuey.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 14, 2015 at 12:59:50PM +0100, Jon Hunter wrote:
+On Mon, Jul 13, 2015 at 06:35:45PM +0100, Kyle Huey wrote:
+> This patch modifies the device tree for tegra124 based devices to enable
+> the Cortex A15 PMU.  The interrupt numbers are taken from NVIDIA TRM
+> DP-06905-001_v03p.  This patch was tested on a Jetson TK1.
 > 
-> 
-> On 13/07/15 15:03, Jon Hunter wrote:
-> > 
-> > 
-> > On 13/07/15 14:50, Peter De Schrijver wrote:
-> >> On Mon, Jul 13, 2015 at 01:39:57PM +0100, Jon Hunter wrote:
-> >>> From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >>>
-> >>> We have added generic power domain support for Tegra SoCs. So now the
-> >>> option M_GENERIC_DOMAINS must be enabled by default to have proper power
-> >>
-> >> Missing P :)
-> > 
-> > Ooops. I think introduced that error. Will fix.
-> 
-> Updated version ...
-> 
+> Updated for proper ordering and to add interrupt-affinity values.
+>
+> Signed-off-by: Kyle Huey <khuey@kylehuey.com>
 
-Acked-By: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> From f7b951cd05973d74fc25e33a1aaec5a6e77bfdc0 Mon Sep 17 00:00:00 2001
-> From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Date: Wed, 11 Mar 2015 13:40:46 +0800
-> Subject: [PATCH 19/19] ARM: tegra: select PM_GENERIC_DOMAINS
-> 
-> We have added generic power domain support for Tegra SoCs. So now the
-> option PM_GENERIC_DOMAINS must be enabled by default to have proper power
-> sequence.
-> 
-> Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+This looks sane to me, and as you've tested it the values seem to be
+valid:
+
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+
+Mark.
+
 > ---
->  arch/arm/mach-tegra/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
+>  arch/arm/boot/dts/tegra124.dtsi | 17 +++++++++++++----
+>  1 file changed, 13 insertions(+), 4 deletions(-)
 > 
-> diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-> index 0fa4c5f8b1be..fdf86cae3b32 100644
-> --- a/arch/arm/mach-tegra/Kconfig
-> +++ b/arch/arm/mach-tegra/Kconfig
-> @@ -9,6 +9,7 @@ menuconfig ARCH_TEGRA
->  	select HAVE_ARM_TWD if SMP
->  	select PINCTRL
->  	select PM_OPP
-> +	select PM_GENERIC_DOMAINS if PM
->  	select ARCH_HAS_RESET_CONTROLLER
->  	select RESET_CONTROLLER
->  	select SOC_BUS
+> diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+> index 13cc7ca..de07d7e 100644
+> --- a/arch/arm/boot/dts/tegra124.dtsi
+> +++ b/arch/arm/boot/dts/tegra124.dtsi
+> @@ -918,31 +918,40 @@
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+>  
+> -		cpu@0 {
+> +		A15_0: cpu@0 {
+>  			device_type = "cpu";
+>  			compatible = "arm,cortex-a15";
+>  			reg = <0>;
+>  		};
+>  
+> -		cpu@1 {
+> +		A15_1: cpu@1 {
+>  			device_type = "cpu";
+>  			compatible = "arm,cortex-a15";
+>  			reg = <1>;
+>  		};
+>  
+> -		cpu@2 {
+> +		A15_2: cpu@2 {
+>  			device_type = "cpu";
+>  			compatible = "arm,cortex-a15";
+>  			reg = <2>;
+>  		};
+>  
+> -		cpu@3 {
+> +		A15_3: cpu@3 {
+>  			device_type = "cpu";
+>  			compatible = "arm,cortex-a15";
+>  			reg = <3>;
+>  		};
+>  	};
+>  
+> +	pmu {
+> +		compatible = "arm,cortex-a15-pmu";
+> +		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>;
+> +		interrupt-affinity = <&A15_0>, <&A15_1>, <&A15_2>, <&A15_3>;
+> +	};
+> +
+>  	thermal-zones {
+>  		cpu {
+>  			polling-delay-passive = <1000>;
 > -- 
-> 2.1.4
+> 1.9.1
 > 
