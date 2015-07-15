@@ -1,85 +1,91 @@
-From: Peter Chen <peter.chen@freescale.com>
-Subject: Re: [PATCH v3 00/11] USB: OTG/DRD Core functionality
-Date: Wed, 15 Jul 2015 10:13:40 +0800
-Message-ID: <20150715021339.GB30154@shlinux2>
-References: <1436350777-28056-1-git-send-email-rogerq@ti.com>
- <CAL1qeaEJ9uX1vgvwO4-ABdGi5C96HZ2jBYWeKiGHJ-uqv6ooGg@mail.gmail.com>
- <20150714005942.GB31197@shlinux2>
- <CAL1qeaHdFv2VQwJVkW-Dv5KxKiJOpfusYuuc50BOkAdp-yvzLw@mail.gmail.com>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V3 06/19] clk: tegra: remove TEGRA_PLL_USE_LOCK for
+ PLLD/PLLD2
+Date: Wed, 15 Jul 2015 11:16:44 +0300
+Message-ID: <20150715081644.GZ6287@tbergstrom-lnx.Nvidia.com>
+References: <1436791197-32358-1-git-send-email-jonathanh@nvidia.com>
+ <1436791197-32358-7-git-send-email-jonathanh@nvidia.com>
+ <20150713134151.GQ6287@tbergstrom-lnx.Nvidia.com>
+ <55A3C50E.7060706@nvidia.com>
+ <55A4F985.7010503@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CAL1qeaHdFv2VQwJVkW-Dv5KxKiJOpfusYuuc50BOkAdp-yvzLw@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Bresticker <abrestic@chromium.org>
-Cc: Roger Quadros <rogerq@ti.com>, Alan Stern <stern@rowland.harvard.edu>, Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Dan Williams <dan.j.williams@intel.com>, jun.li@freescale.com, Mathias Nyman <mathias.nyman@linux.intel.com>, tony@atomide.com, Joao.Pinto@synopsys.com, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+In-Reply-To: <55A4F985.7010503-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 14, 2015 at 11:18:30AM -0700, Andrew Bresticker wrote:
-> Hi Peter,
+On Tue, Jul 14, 2015 at 12:59:01PM +0100, Jon Hunter wrote:
 > 
-> On Mon, Jul 13, 2015 at 5:59 PM, Peter Chen <peter.chen@freescale.com> wrote:
-> > On Mon, Jul 13, 2015 at 12:14:43PM -0700, Andrew Bresticker wrote:
-> >> Hi Roger,
+> On 13/07/15 15:02, Jon Hunter wrote:
+> > 
+> > 
+> > On 13/07/15 14:41, Peter De Schrijver wrote:
+> >> On Mon, Jul 13, 2015 at 01:39:44PM +0100, Jon Hunter wrote:
+> >>> From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>>
+> >>> Tegra114 has a HW bug that the PLLD/PLLD2 lock bit cannot be asserted when
+> >>> the DIS power domain is during up-powergating process but the clamp to this
 > >>
-> >> On Wed, Jul 8, 2015 at 3:19 AM, Roger Quadros <rogerq@ti.com> wrote:
-> >> > Usage model:
-> >> > -----------
-> >> >
-> >> > - The OTG controller device is assumed to be the parent of
-> >> > the host and gadget controller. It must call usb_otg_register()
-> >> > before populating the host and gadget devices so that the OTG
-> >> > core is aware that it is an OTG device before the host & gadget
-> >> > register. The OTG controller must provide struct otg_fsm_ops *
-> >> > which will be called by the OTG core depending on OTG bus state.
+> >> I think there is missing 'off' in this sentence?
 > >>
-> >> I'm wondering if the requirement that the OTG controller be the parent
-> >> of the USB host/device-controllers makes sense.  For some context, I'm
-> >> working on adding dual-role support for Tegra210, specifically on a
-> >> system with USB Type-C.  On Tegra, the USB host-controller and USB
-> >> device-controller are two separate IP blocks (XUSB host and XUSB
-> >> device) with another, separate, IP block (XUSB padctl) for the USB PHY
-> >> and OTG support.  In the non-Type-C case, your OTG framework could
-> >> work well, though it's debatable as to whether or not the XUSB padctl
-> >> device should be a parent to the XUSB host/device-controller devices
-> >> (currently it isn't - it's just a PHY provider).  But in the Type-C
-> >> case, it's an off-chip embedded controller that determines the
-> >> dual-role status of the Type-C port, so the above requirement doesn't
-> >> make sense at all.
-> >
-> > Hi Andrew,
-> >
-> > I think your problem is how to add your core driver to manage device and
-> > host functionality together, and once you find how (through padctl/type-c
-> > controller) to do it based on current code, it will be clear how to use roger
-> > proposal framework at that time.
-> >
-> > Most of current core drivers, we use extcon driver (through gpio) or USB
-> > vbus/id pin (through internal registers) to manager roles.
+> >> ie. ... 'the DIS power domain is off during up-powergating process'
+> >>
+> >> Also 'un-powergating sequence' would be nicer.
+> > 
+> > Yes agree. I will re-word that.
 > 
-> Right, currently I'm modeling the Type-C controller as an extcon
-> device and handle the role-changes in the core drivers, but that
-> doesn't really make sense for the non-Type-C case where we use the
-> XUSB padctl controller and need a full OTG state-machine.
-
-The full OTG FSM is only applied if your board needs it, you can
-disable it through dts. Jun [1] and Roger's patchset are for it.
-
-> Roger's new
-> OTG/DRD framework would fit my situation perfectly since it makes the
-> host/device-controller drivers independent from all the
-> OTG/role-changing logic.  The only issue is the requirement that the
-> OTG/DRD controller be the parent device of the host/device
-> controllers.
+> Updated version ...
 > 
+> 
+> From d5cbecd4e97332cd8373b9c4893731eb8e063660 Mon Sep 17 00:00:00 2001
+> From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Date: Wed, 11 Mar 2015 16:46:04 +0800
+> Subject: [PATCH 06/19] clk: tegra: remove TEGRA_PLL_USE_LOCK for PLLD/PLLD2
+> 
+> Tegra114 has a HW bug where the PLLD/PLLD2 lock bit cannot be asserted
+> while turning on the Display power domain and before the clamp to this
+> domain has been removed. This issue causes a timeout and aborts the power
+> up sequence, even though the PLLD/PLLD2 has already locked. To avoid this,
+> don't use the lock for PLLD/PLLD2, just wait 1ms and treat the clocks as
+> locked.
+> 
+> Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> [jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org: Updated the changelog description]
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The core device is the parent for host/device device, the OTG core
-just use the pointer of it, Roger does an example using dwc3 [2].
-
-[1] http://www.spinics.net/lists/linux-usb/msg127110.html
-[2] http://www.spinics.net/lists/linux-usb/msg126999.html
--- 
-
-Best Regards,
-Peter Chen
+Acked-By: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/clk/tegra/clk-tegra114.c | 6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+> index 8237d16b4075..2e5c20c7c088 100644
+> --- a/drivers/clk/tegra/clk-tegra114.c
+> +++ b/drivers/clk/tegra/clk-tegra114.c
+> @@ -456,8 +456,7 @@ static struct tegra_clk_pll_params pll_d_params = {
+>  	.lock_delay = 1000,
+>  	.div_nmp = &pllp_nmp,
+>  	.freq_table = pll_d_freq_table,
+> -	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
+> -		 TEGRA_PLL_USE_LOCK,
+> +	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON,
+>  };
+>  
+>  static struct tegra_clk_pll_params pll_d2_params = {
+> @@ -474,8 +473,7 @@ static struct tegra_clk_pll_params pll_d2_params = {
+>  	.lock_delay = 1000,
+>  	.div_nmp = &pllp_nmp,
+>  	.freq_table = pll_d_freq_table,
+> -	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
+> -		 TEGRA_PLL_USE_LOCK,
+> +	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON,
+>  };
+>  
+>  static struct pdiv_map pllu_p[] = {
+> -- 
+> 2.1.4
+> 
