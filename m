@@ -1,87 +1,91 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [RESEND PATCH v3] ARM: tegra124: pmu support
-Date: Wed, 15 Jul 2015 10:35:11 +0100
-Message-ID: <20150715093511.GA10239@leverpostej>
-References: <1436808945-14524-1-git-send-email-khuey@kylehuey.com>
+From: Roger Quadros <rogerq@ti.com>
+Subject: Re: [PATCH v3 00/11] USB: OTG/DRD Core functionality
+Date: Wed, 15 Jul 2015 16:26:48 +0300
+Message-ID: <55A65F98.203@ti.com>
+References: <1436350777-28056-1-git-send-email-rogerq@ti.com> <CAL1qeaEJ9uX1vgvwO4-ABdGi5C96HZ2jBYWeKiGHJ-uqv6ooGg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1436808945-14524-1-git-send-email-khuey@kylehuey.com>
+In-Reply-To: <CAL1qeaEJ9uX1vgvwO4-ABdGi5C96HZ2jBYWeKiGHJ-uqv6ooGg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Kyle Huey <me@kylehuey.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <Pawel.Moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>, "open list:TEGRA ARCHITECTUR..." <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>, Kyle Huey <khuey@kylehuey.com>
+To: Andrew Bresticker <abrestic@chromium.org>
+Cc: Alan Stern <stern@rowland.harvard.edu>, Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, peter.chen@freescale.com, Dan Williams <dan.j.williams@intel.com>, jun.li@freescale.com, Mathias Nyman <mathias.nyman@linux.intel.com>, tony@atomide.com, Joao.Pinto@synopsys.com, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jul 13, 2015 at 06:35:45PM +0100, Kyle Huey wrote:
-> This patch modifies the device tree for tegra124 based devices to enable
-> the Cortex A15 PMU.  The interrupt numbers are taken from NVIDIA TRM
-> DP-06905-001_v03p.  This patch was tested on a Jetson TK1.
+Hi Andrew,
+
+On 13/07/15 22:14, Andrew Bresticker wrote:
+> Hi Roger,
 > 
-> Updated for proper ordering and to add interrupt-affinity values.
->
-> Signed-off-by: Kyle Huey <khuey@kylehuey.com>
-
-This looks sane to me, and as you've tested it the values seem to be
-valid:
-
-Acked-by: Mark Rutland <mark.rutland@arm.com>
-
-Mark.
-
-> ---
->  arch/arm/boot/dts/tegra124.dtsi | 17 +++++++++++++----
->  1 file changed, 13 insertions(+), 4 deletions(-)
+> On Wed, Jul 8, 2015 at 3:19 AM, Roger Quadros <rogerq@ti.com> wrote:
+>> Usage model:
+>> -----------
+>>
+>> - The OTG controller device is assumed to be the parent of
+>> the host and gadget controller. It must call usb_otg_register()
+>> before populating the host and gadget devices so that the OTG
+>> core is aware that it is an OTG device before the host & gadget
+>> register. The OTG controller must provide struct otg_fsm_ops *
+>> which will be called by the OTG core depending on OTG bus state.
 > 
-> diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-> index 13cc7ca..de07d7e 100644
-> --- a/arch/arm/boot/dts/tegra124.dtsi
-> +++ b/arch/arm/boot/dts/tegra124.dtsi
-> @@ -918,31 +918,40 @@
->  		#address-cells = <1>;
->  		#size-cells = <0>;
->  
-> -		cpu@0 {
-> +		A15_0: cpu@0 {
->  			device_type = "cpu";
->  			compatible = "arm,cortex-a15";
->  			reg = <0>;
->  		};
->  
-> -		cpu@1 {
-> +		A15_1: cpu@1 {
->  			device_type = "cpu";
->  			compatible = "arm,cortex-a15";
->  			reg = <1>;
->  		};
->  
-> -		cpu@2 {
-> +		A15_2: cpu@2 {
->  			device_type = "cpu";
->  			compatible = "arm,cortex-a15";
->  			reg = <2>;
->  		};
->  
-> -		cpu@3 {
-> +		A15_3: cpu@3 {
->  			device_type = "cpu";
->  			compatible = "arm,cortex-a15";
->  			reg = <3>;
->  		};
->  	};
->  
-> +	pmu {
-> +		compatible = "arm,cortex-a15-pmu";
-> +		interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupt-affinity = <&A15_0>, <&A15_1>, <&A15_2>, <&A15_3>;
-> +	};
-> +
->  	thermal-zones {
->  		cpu {
->  			polling-delay-passive = <1000>;
-> -- 
-> 1.9.1
+> I'm wondering if the requirement that the OTG controller be the parent
+> of the USB host/device-controllers makes sense.  For some context, I'm
+> working on adding dual-role support for Tegra210, specifically on a
+> system with USB Type-C.  On Tegra, the USB host-controller and USB
+> device-controller are two separate IP blocks (XUSB host and XUSB
+> device) with another, separate, IP block (XUSB padctl) for the USB PHY
+> and OTG support.  In the non-Type-C case, your OTG framework could
+> work well, though it's debatable as to whether or not the XUSB padctl
+> device should be a parent to the XUSB host/device-controller devices
+> (currently it isn't - it's just a PHY provider).  But in the Type-C
+> case, it's an off-chip embedded controller that determines the
+> dual-role status of the Type-C port, so the above requirement doesn't
+> make sense at all.
 > 
+> My idea was to have the OTG/DRD controller explicitly specify its host
+> and device controllers, so in DT, something like:
+> 
+> otg-controller {
+>     ...
+>     device-controller = <&usb_device>;
+>     host-controller = <&usb_host>;
+>     ...
+> };
+> 
+> usb_device: usb-device@.... {
+>     ...
+> };
+> 
+> usb_host: usb-host@... {
+>     ...
+> };
+> 
+> What do you think?
+
+I agree that we need to support your use case but how to do it
+is not yet clear to me.
+
+In your above example the otg controller knows what are the host
+and gadget controllers but the host/gadget devices don't
+know who is their otg controller.
+
+So the problem is that when usb_otg_register_hcd/gadget() is called
+we need to get a handle to the otg controller.
+
+One solution I see is to iterate over the registered otg_controller_list
+and check if we match the host/gadget controller in there.
+
+Then there is also a possibility that host/gadget controllers get
+registered before the OTG controller. Then we can't know for sure if
+the host/gadget controller was meant for dual-role operation or not
+and it will resort to single role operation.
+
+Any idea to prevent the above situation?
+
+Maybe we need to add some logic in host/gadget cores to check if the port
+is meant for dual-role use and defer probe if OTG controller is not yet
+registered?
+
+cheers,
+-roger
