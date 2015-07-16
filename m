@@ -1,28 +1,42 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFT PATCH 1/2] i2c: tegra: update CONFIG_LOAD for new conifiguration
-Date: Thu, 16 Jul 2015 15:46:12 +0530
-Message-ID: <55A7846C.6080208@nvidia.com>
-References: <1435661667-11554-1-git-send-email-ldewangan@nvidia.com> <559D89D8.50500@wwwdotorg.org>
+From: Kyle McMartin <kyle-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Subject: Re: [GIT PULL] Firmware for NVIDIA GK20A mobile GPU
+Date: Thu, 16 Jul 2015 11:18:55 -0400
+Message-ID: <20150716151855.GB28956@merlin.infradead.org>
+References: <55A7583B.10806@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <559D89D8.50500-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, andrewc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Chaitanya Bandi <bandik-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <55A7583B.10806-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Wolfram,
+On Thu, Jul 16, 2015 at 04:07:39PM +0900, Alexandre Courbot wrote:
+> Hi linux-firmware maintainers,
+> 
+> The following changes since commit 696403047a940c425c93cb8da1efcec6ffda0b6e:
+> 
+>   linux-firmware: Add firmware file for Intel Bluetooth 8260 (2015-07-14
+> 17:05:20 -0400)
+> 
+> are available in the git repository at:
+> 
+>   https://github.com/Gnurou/linux-firmware.git master
+> 
+> for you to fetch changes up to 899ebcb6812681b91cf2dfd390574b478c612442:
+> 
+>   firmware: tegra: add GK20A FECS/GPCCS firmware (2015-07-16 15:59:03 +0900)
+> 
+> The first patch also strips a few lines that seem to remain from a git merge
+> or rebase conflict.
+> 
+> ----------------------------------------------------------------
+> Alexandre Courbot (2):
+>       Remove patch conflict remains
+>       firmware: tegra: add GK20A FECS/GPCCS firmware
 
-On Thursday 09 July 2015 02:06 AM, Stephen Warren wrote:
-> On 06/30/2015 04:54 AM, Laxman Dewangan wrote:
->> Once the new configuration is set on the conifg register of
->> I2C controller, it is require to update the CONFIG_LOAD register
->> to transfer the new SW configuration to actual HW internal
->> registers that would be used in the actual logic.
+pulled. thanks for noticing the merge markers. :)
 
-Can you please review this series?
-
-Thanks,
-Laxman
+--kyle
