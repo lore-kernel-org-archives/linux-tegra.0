@@ -1,59 +1,102 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: How to encode being an I2C slave in DT?
-Date: Thu, 16 Jul 2015 20:14:51 +0200
-Message-ID: <20150716181451.GA1528@katana>
-References: <1427745615-5428-1-git-send-email-danindrey@mail.ru>
- <20150403194635.GC2016@katana>
- <1549160.njMIY2NVTi@fb07-iapwap2>
- <20150505105513.GA1841@katana>
- <554922EF.3050906@wwwdotorg.org>
- <20150506161712.GA4003@katana>
- <CAL_Jsq+iyeK-bV3ggcJv8Cw3EU71fkBo1wqYZnhCoh2-b_tO-Q@mail.gmail.com>
- <20150519061619.GA4448@schokonusskuchen.bad>
- <55A7736F.5090802@mail.ru>
+From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v3 00/11] USB: OTG/DRD Core functionality
+Date: Thu, 16 Jul 2015 11:29:58 -0700
+Message-ID: <CAL1qeaEkpUq3mzZXpr2gxceW3q_zHLspWUv9qxBP8q_1+_g-OA@mail.gmail.com>
+References: <1436350777-28056-1-git-send-email-rogerq@ti.com>
+	<CAL1qeaEJ9uX1vgvwO4-ABdGi5C96HZ2jBYWeKiGHJ-uqv6ooGg@mail.gmail.com>
+	<55A65F98.203@ti.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="VbJkn9YxBvnuCH5J"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <55A7736F.5090802-JGs/UdohzUI@public.gmane.org>
+In-Reply-To: <55A65F98.203-l0cyMroinI0@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>
-Cc: Rob Herring <robherring2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+To: Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org>
+Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Felipe Balbi <balbi-l0cyMroinI0@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Peter Chen <peter.chen-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, jun.li-KZfg59tc24xl57MIdRCFDg@public.gmane.org, Mathias Nyman <mathias.nyman-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Joao.Pinto-HKixBCOQz3hWk0Htik3J/w@public.gmane.org, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Roger,
 
---VbJkn9YxBvnuCH5J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Wed, Jul 15, 2015 at 6:26 AM, Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org> wrote:
+> Hi Andrew,
+>
+> On 13/07/15 22:14, Andrew Bresticker wrote:
+>> Hi Roger,
+>>
+>> On Wed, Jul 8, 2015 at 3:19 AM, Roger Quadros <rogerq-l0cyMroinI0@public.gmane.org> wrote:
+>>> Usage model:
+>>> -----------
+>>>
+>>> - The OTG controller device is assumed to be the parent of
+>>> the host and gadget controller. It must call usb_otg_register()
+>>> before populating the host and gadget devices so that the OTG
+>>> core is aware that it is an OTG device before the host & gadget
+>>> register. The OTG controller must provide struct otg_fsm_ops *
+>>> which will be called by the OTG core depending on OTG bus state.
+>>
+>> I'm wondering if the requirement that the OTG controller be the parent
+>> of the USB host/device-controllers makes sense.  For some context, I'm
+>> working on adding dual-role support for Tegra210, specifically on a
+>> system with USB Type-C.  On Tegra, the USB host-controller and USB
+>> device-controller are two separate IP blocks (XUSB host and XUSB
+>> device) with another, separate, IP block (XUSB padctl) for the USB PHY
+>> and OTG support.  In the non-Type-C case, your OTG framework could
+>> work well, though it's debatable as to whether or not the XUSB padctl
+>> device should be a parent to the XUSB host/device-controller devices
+>> (currently it isn't - it's just a PHY provider).  But in the Type-C
+>> case, it's an off-chip embedded controller that determines the
+>> dual-role status of the Type-C port, so the above requirement doesn't
+>> make sense at all.
+>>
+>> My idea was to have the OTG/DRD controller explicitly specify its host
+>> and device controllers, so in DT, something like:
+>>
+>> otg-controller {
+>>     ...
+>>     device-controller = <&usb_device>;
+>>     host-controller = <&usb_host>;
+>>     ...
+>> };
+>>
+>> usb_device: usb-device@.... {
+>>     ...
+>> };
+>>
+>> usb_host: usb-host@... {
+>>     ...
+>> };
+>>
+>> What do you think?
+>
+> I agree that we need to support your use case but how to do it
+> is not yet clear to me.
+>
+> In your above example the otg controller knows what are the host
+> and gadget controllers but the host/gadget devices don't
+> know who is their otg controller.
+>
+> So the problem is that when usb_otg_register_hcd/gadget() is called
+> we need to get a handle to the otg controller.
+>
+> One solution I see is to iterate over the registered otg_controller_list
+> and check if we match the host/gadget controller in there.
+>
+> Then there is also a possibility that host/gadget controllers get
+> registered before the OTG controller. Then we can't know for sure if
+> the host/gadget controller was meant for dual-role operation or not
+> and it will resort to single role operation.
+>
+> Any idea to prevent the above situation?
+>
+> Maybe we need to add some logic in host/gadget cores to check if the port
+> is meant for dual-role use and defer probe if OTG controller is not yet
+> registered?
 
+In the DT case, I think we could add an "otg-controller" property to
+the host and gadget nodes, and in usb_otg_register_{hcd,gadget}()
+check for that property and defer probe if the referenced OTG
+controller has not yet been registered.  Not sure how to indicate that
+a host/gadget is meant for dual-role operation on non-DT platforms
+though.
 
-> Did you have enough time to check this ?
-> (sorry for the noise, if I missed patch(es) in the ml)
-
-Nice coincidence, scheduled for tomorrow...
-
-
---VbJkn9YxBvnuCH5J
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJVp/SbAAoJEBQN5MwUoCm2s/UQAKkuFvRxdllLpftPuHTMhx3O
-iNXoBeur/s79Xp2wfiL8a8qhXHWO3k8bo+Wv2FKYT1Iy7VRC+HCakVaPFEoheQ7L
-xP7gRU/FZBl58lxuf22uMKDE0idDsqQelKvqlaKSKp5lQKGvDomJKZUPW5Y5lLtc
-Obd5qQPrtnFxGCpmTFlZ5ayr2VG7GVCERELIwEat5/uOMAUx9GrzeFYA5brPvAho
-JZgqyR82r+EXuWLE7aIqq+fd8xB7TTO6ORNKIjNcsKBbSBJDAabOPfI5zJ8gg+So
-KK+ioCS1bgKs0Xj7P+zZC3hpxrm93OpNw9AikM+nO//aI1Y+t2Jo6o92vS35kUvj
-V4cyjRn0HghmtCcpwPv6dBrLS1pafRpvhO1gYtw/0CYRioN9/cFTxE3fGw+VhHTT
-WP5jw2R31E3ghDnh3dAC1N3B3IoPDVjPxf/U67NjYqyTYQJw2CtXcN0C/SB4XCjN
-yiBpCs+FVYsLW8XQxBhtrfKxyP4YRDSvS9N93gns34PO1HBzoBpoykA+7JTcZxX/
-v2GRoNVm2/VE/QXPSA/rRGU2LunwinPBZIUf/63UqKWARseSN74VYMT1i6n4GTSD
-ltdu8Fxk+1YwJOK8LzkexAndX4shdR4RyuNRppnr9MWLzOig+cD/D2pnwQgk0EOI
-MCcZl6kSR9ShU+IoTDFV
-=d7sI
------END PGP SIGNATURE-----
-
---VbJkn9YxBvnuCH5J--
+Thanks,
+Andrew
