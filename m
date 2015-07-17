@@ -1,135 +1,56 @@
-From: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Subject: Re: [PATCH V3 01/19] reset: add of_reset_control_get_by_index()
-Date: Fri, 17 Jul 2015 14:08:58 +0200
-Message-ID: <1437134938.3254.3.camel@pengutronix.de>
-References: <1436791197-32358-1-git-send-email-jonathanh@nvidia.com>
-	 <1436791197-32358-2-git-send-email-jonathanh@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1436791197-32358-2-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: [RFC 0/9] i2c: slave: improve i2c client address spaces and their DT support
+Date: Fri, 17 Jul 2015 16:08:20 +0200
+Message-ID: <1437142109-31975-1-git-send-email-wsa@the-dreams.de>
+Return-path: <linux-sh-owner@vger.kernel.org>
+Sender: linux-sh-owner@vger.kernel.org
+To: linux-i2c@vger.kernel.org
+Cc: linux-sh@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>, Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Wolfram Sang <wsa@the-dreams.de>, Andrey Danin <danindrey@mail.ru>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Am Montag, den 13.07.2015, 13:39 +0100 schrieb Jon Hunter:
-> From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Add of_reset_control_get_by_index() to allow the drivers to get reset
-> device without knowing its name.
-> 
-> Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> [jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org: Updated stub function to return -ENOTSUPP instead
->  of -ENOSYS which should only be used for system calls.]
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+As promised here is my RFC to improve address spaces for I2C. This should give
+i2c seperate address spaces for standard clients, 10 bit clients, and our own
+slave clients. So, you can now have a 7 bit slave at 0x50 and a 10 bit slave at
+0x050. Or, you can have a slave driver listening at some address and at the
+same time have a client driver talking to this address. Note that this is only
+the core support for that separation, I am still not sure if there is hardware
+being able talking to its own slave address, but we will see.
 
-Acked-by: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+This RFC and while I did some quick tests, it is not thoroughly tested. But I
+wanted to push it out before I leave the computer for the weekend. It still
+shows what path I chose to solve the problem. So, comments on that and further
+testing are more than welcome!
 
-regards
-Philipp
+BTW Andrey, I did not modify your patch and couldn't get the i2c-slave-eeprom driver
+to work with my Jetson TK1. Does this work for you?
 
-> ---
-> v3: addressed comments from Philipp
-> v2: minor changes according to Alex's comments
-> ---
->  drivers/reset/core.c  | 40 +++++++++++++++++++++++++++++-----------
->  include/linux/reset.h |  9 +++++++++
->  2 files changed, 38 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> index 7955e00d04d4..81ae17d15480 100644
-> --- a/drivers/reset/core.c
-> +++ b/drivers/reset/core.c
-> @@ -141,27 +141,24 @@ int reset_control_status(struct reset_control *rstc)
->  EXPORT_SYMBOL_GPL(reset_control_status);
->  
->  /**
-> - * of_reset_control_get - Lookup and obtain a reference to a reset controller.
-> + * of_reset_control_get_by_index - Lookup and obtain a reference to a reset
-> + * controller by index.
->   * @node: device to be reset by the controller
-> - * @id: reset line name
-> - *
-> - * Returns a struct reset_control or IS_ERR() condition containing errno.
-> + * @index: index of the reset controller
->   *
-> - * Use of id names is optional.
-> + * This is to be used to perform a list of resets for a device or power domain
-> + * in whatever order. Returns a struct reset_control or IS_ERR() condition
-> + * containing errno.
->   */
-> -struct reset_control *of_reset_control_get(struct device_node *node,
-> -					   const char *id)
-> +struct reset_control *of_reset_control_get_by_index(struct device_node *node,
-> +					   int index)
->  {
->  	struct reset_control *rstc = ERR_PTR(-EPROBE_DEFER);
->  	struct reset_controller_dev *r, *rcdev;
->  	struct of_phandle_args args;
-> -	int index = 0;
->  	int rstc_id;
->  	int ret;
->  
-> -	if (id)
-> -		index = of_property_match_string(node,
-> -						 "reset-names", id);
->  	ret = of_parse_phandle_with_args(node, "resets", "#reset-cells",
->  					 index, &args);
->  	if (ret)
-> @@ -202,6 +199,27 @@ struct reset_control *of_reset_control_get(struct device_node *node,
->  
->  	return rstc;
->  }
-> +EXPORT_SYMBOL_GPL(of_reset_control_get_by_index);
-> +
-> +/**
-> + * of_reset_control_get - Lookup and obtain a reference to a reset controller.
-> + * @node: device to be reset by the controller
-> + * @id: reset line name
-> + *
-> + * Returns a struct reset_control or IS_ERR() condition containing errno.
-> + *
-> + * Use of id names is optional.
-> + */
-> +struct reset_control *of_reset_control_get(struct device_node *node,
-> +					   const char *id)
-> +{
-> +	int index = 0;
-> +
-> +	if (id)
-> +		index = of_property_match_string(node,
-> +						 "reset-names", id);
-> +	return of_reset_control_get_by_index(node, index);
-> +}
->  EXPORT_SYMBOL_GPL(of_reset_control_get);
->  
->  /**
-> diff --git a/include/linux/reset.h b/include/linux/reset.h
-> index da5602bd77d7..26f1b53386d8 100644
-> --- a/include/linux/reset.h
-> +++ b/include/linux/reset.h
-> @@ -38,6 +38,9 @@ static inline struct reset_control *devm_reset_control_get_optional(
->  struct reset_control *of_reset_control_get(struct device_node *node,
->  					   const char *id);
->  
-> +struct reset_control *of_reset_control_get_by_index(
-> +					struct device_node *node, int index);
-> +
->  #else
->  
->  static inline int reset_control_reset(struct reset_control *rstc)
-> @@ -92,6 +95,12 @@ static inline struct reset_control *of_reset_control_get(
->  	return ERR_PTR(-ENOSYS);
->  }
->  
-> +static inline struct reset_control *of_reset_control_get_by_index(
-> +				struct device_node *node, int index)
-> +{
-> +	return ERR_PTR(-ENOTSUPP);
-> +}
-> +
->  #endif /* CONFIG_RESET_CONTROLLER */
->  
->  #endif
+Thanks,
+
+   Wolfram
+
+
+Andrey Danin (1):
+  i2c: tegra: implement slave mode
+
+Wolfram Sang (8):
+  dt-bindings: add header for generic I2C flags in bindings
+  i2c: add a flag to mark clients as slaves
+  i2c: apply address offset for slaves, too
+  i2c: rename address check functions
+  i2c: make address check indpendent from client struct
+  i2c: apply DT flags when probing
+  i2c: take address space into account when checking for used addresses
+  dts: tegra: WIP: hack dts to test new dt flags for i2c
+
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts |   7 ++
+ drivers/i2c/busses/Kconfig                |   1 +
+ drivers/i2c/busses/i2c-tegra.c            | 119 ++++++++++++++++++++++++++++++
+ drivers/i2c/i2c-core.c                    |  69 +++++++++++------
+ include/dt-bindings/i2c/i2c.h             |  18 +++++
+ include/linux/i2c.h                       |   9 ++-
+ 6 files changed, 197 insertions(+), 26 deletions(-)
+ create mode 100644 include/dt-bindings/i2c/i2c.h
+
+-- 
+2.1.4
+
