@@ -1,83 +1,51 @@
 From: Wolfram Sang <wsa@the-dreams.de>
-Subject: [RFC 7/9] i2c: apply DT flags when probing
-Date: Fri, 17 Jul 2015 16:08:27 +0200
-Message-ID: <1437142109-31975-8-git-send-email-wsa@the-dreams.de>
+Subject: Re: [RFC 9/9] dts: tegra: WIP: hack dts to test new dt flags for i2c
+Date: Fri, 17 Jul 2015 16:11:40 +0200
+Message-ID: <20150717141140.GA9473@katana>
 References: <1437142109-31975-1-git-send-email-wsa@the-dreams.de>
+ <1437142109-31975-10-git-send-email-wsa@the-dreams.de>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="wac7ysb48OaltWcw"
 Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <1437142109-31975-1-git-send-email-wsa@the-dreams.de>
+Content-Disposition: inline
+In-Reply-To: <1437142109-31975-10-git-send-email-wsa@the-dreams.de>
 Sender: linux-sh-owner@vger.kernel.org
 To: linux-i2c@vger.kernel.org
-Cc: linux-sh@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>, Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Wolfram Sang <wsa@the-dreams.de>, Andrey Danin <danindrey@mail.ru>, linux-tegra@vger.kernel.org
+Cc: linux-sh@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>, Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Andrey Danin <danindrey@mail.ru>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
 
-Check for slave and 10-bit flags when probing and mark the client when
-found. Improve the address validity check, too
+--wac7ysb48OaltWcw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
----
- drivers/i2c/i2c-core.c | 23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
+> +			//FIXME: Should be I2C_OWN_SLAVE_ADDRESS | 0x42
+> +			reg = <0xc0000042>;
 
-diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
-index b5719a2cff97bf..4a92eded4ece9c 100644
---- a/drivers/i2c/i2c-core.c
-+++ b/drivers/i2c/i2c-core.c
-@@ -27,6 +27,7 @@
-    I2C slave support (c) 2014 by Wolfram Sang <wsa@sang-engineering.com>
-  */
- 
-+#include <dt-bindings/i2c/i2c.h>
- #include <linux/module.h>
- #include <linux/kernel.h>
- #include <linux/delay.h>
-@@ -1283,7 +1284,8 @@ static struct i2c_client *of_i2c_register_device(struct i2c_adapter *adap,
- 	struct i2c_client *result;
- 	struct i2c_board_info info = {};
- 	struct dev_archdata dev_ad = {};
--	const __be32 *addr;
-+	const __be32 *addr_be;
-+	u32 addr;
- 	int len;
- 
- 	dev_dbg(&adap->dev, "of_i2c: register %s\n", node->full_name);
-@@ -1294,20 +1296,31 @@ static struct i2c_client *of_i2c_register_device(struct i2c_adapter *adap,
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	addr = of_get_property(node, "reg", &len);
--	if (!addr || (len < sizeof(*addr))) {
-+	addr_be = of_get_property(node, "reg", &len);
-+	if (!addr_be || (len < sizeof(*addr_be))) {
- 		dev_err(&adap->dev, "of_i2c: invalid reg on %s\n",
- 			node->full_name);
- 		return ERR_PTR(-EINVAL);
- 	}
- 
--	info.addr = be32_to_cpup(addr);
--	if (info.addr > (1 << 10) - 1) {
-+	addr = be32_to_cpup(addr_be);
-+	if (addr & I2C_TEN_BIT_ADDRESS) {
-+		addr &= ~I2C_TEN_BIT_ADDRESS;
-+		info.flags |= I2C_CLIENT_TEN;
-+	}
-+
-+	if (addr & I2C_OWN_SLAVE_ADDRESS) {
-+		addr &= ~I2C_OWN_SLAVE_ADDRESS;
-+		info.flags |= I2C_CLIENT_SLAVE;
-+	}
-+
-+	if (i2c_check_addr_validity(addr, info.flags)) {
- 		dev_err(&adap->dev, "of_i2c: invalid addr=%x on %s\n",
- 			info.addr, node->full_name);
- 		return ERR_PTR(-EINVAL);
- 	}
- 
-+	info.addr = addr;
- 	info.of_node = of_node_get(node);
- 	info.archdata = &dev_ad;
- 
--- 
-2.1.4
+That should have been 0x40000042, sorry!
 
+
+--wac7ysb48OaltWcw
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJVqQ0cAAoJEBQN5MwUoCm2Cz8P/0eqPbyuGoIwcOFVpzHgrQfK
+7WuElj1V2yo3fJUZIFyDNsQXDhT/NvlmkRs20pCsp2TsCi+RO5iwie4ZyToIf9EI
+BK4JXn1wXgcIIzGGYL8/Ru48jn6G0S2THcH5pDaJ7fLgXvf2/LPTKRmfyXXuGXZ4
+AIrMFB9kML9NzBvCsiA5M29wJozVJGd6UbBhj1NeUAKadeFLwiJHZ6F9e/61dG9R
+Xj1R4FnON/3eC/ultqOO33PghSUUNRZBpE+Kv/qw4+PgaN2Z2UxoNp3ScmB9qMTK
++kiV8lIAKGWazfG6R+jqsHqxUaMMUKJQ8emsXmRcVwoSgvbCqKphbalOWo8pLjlo
+V0jr1HIvhvpAyMNgSHsSi66xkl15ZAbidJ5Ahs9u9VKFOzqLzeI5/bK9CPunhd7B
+JdNxBtI9uAm6bBHY/Tva8CaPM0OuyWc2LFh/12O4dV5v30/u43uy8mY2NIcFgrVQ
+AG5Q5QYTVhq5Y4+Tb0ClBC1kXBFYR2DXpdtFYNZZwg/Od72tVDZAMVKrBddAbXd6
+9pX7tFOBMYdTOt1S8ZfzuXr2+MzA6xMmOEOnDJ5cU1XuLRrKoAhJWZUu5JbDKoyT
+5XDyuE27Hr/Yj4MZ/We+3nU2VvHKW4DNO2iHusdUQOOWPS1crSM6sFobtN5hGoNq
+BhvYN2Nz7oKuILDFVeks
+=JGv9
+-----END PGP SIGNATURE-----
+
+--wac7ysb48OaltWcw--
