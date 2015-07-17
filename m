@@ -1,112 +1,95 @@
-From: Roger Quadros <rogerq@ti.com>
-Subject: Re: [PATCH v3 00/11] USB: OTG/DRD Core functionality
-Date: Fri, 17 Jul 2015 13:34:29 +0300
-Message-ID: <55A8DA35.6040109@ti.com>
-References: <1436350777-28056-1-git-send-email-rogerq@ti.com>	<CAL1qeaEJ9uX1vgvwO4-ABdGi5C96HZ2jBYWeKiGHJ-uqv6ooGg@mail.gmail.com>	<55A65F98.203@ti.com> <CAL1qeaEkpUq3mzZXpr2gxceW3q_zHLspWUv9qxBP8q_1+_g-OA@mail.gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V3 10/19] drm/tegra: dc: Prepare for generic PM domains
+Date: Fri, 17 Jul 2015 12:41:55 +0200
+Message-ID: <20150717104154.GM3057@ulmo>
+References: <1436791197-32358-1-git-send-email-jonathanh@nvidia.com>
+ <1436791197-32358-11-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAL1qeaEkpUq3mzZXpr2gxceW3q_zHLspWUv9qxBP8q_1+_g-OA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrew Bresticker <abrestic@chromium.org>
-Cc: Alan Stern <stern@rowland.harvard.edu>, Felipe Balbi <balbi@ti.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Peter Chen <peter.chen@freescale.com>, Dan Williams <dan.j.williams@intel.com>, jun.li@freescale.com, Mathias Nyman <mathias.nyman@linux.intel.com>, Tony Lindgren <tony@atomide.com>, Joao.Pinto@synopsys.com, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="zROEGoKAXsG5UqGB"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1436791197-32358-11-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 16/07/15 21:29, Andrew Bresticker wrote:
-> Hi Roger,
-> 
-> On Wed, Jul 15, 2015 at 6:26 AM, Roger Quadros <rogerq@ti.com> wrote:
->> Hi Andrew,
->>
->> On 13/07/15 22:14, Andrew Bresticker wrote:
->>> Hi Roger,
->>>
->>> On Wed, Jul 8, 2015 at 3:19 AM, Roger Quadros <rogerq@ti.com> wrote:
->>>> Usage model:
->>>> -----------
->>>>
->>>> - The OTG controller device is assumed to be the parent of
->>>> the host and gadget controller. It must call usb_otg_register()
->>>> before populating the host and gadget devices so that the OTG
->>>> core is aware that it is an OTG device before the host & gadget
->>>> register. The OTG controller must provide struct otg_fsm_ops *
->>>> which will be called by the OTG core depending on OTG bus state.
->>>
->>> I'm wondering if the requirement that the OTG controller be the parent
->>> of the USB host/device-controllers makes sense.  For some context, I'm
->>> working on adding dual-role support for Tegra210, specifically on a
->>> system with USB Type-C.  On Tegra, the USB host-controller and USB
->>> device-controller are two separate IP blocks (XUSB host and XUSB
->>> device) with another, separate, IP block (XUSB padctl) for the USB PHY
->>> and OTG support.  In the non-Type-C case, your OTG framework could
->>> work well, though it's debatable as to whether or not the XUSB padctl
->>> device should be a parent to the XUSB host/device-controller devices
->>> (currently it isn't - it's just a PHY provider).  But in the Type-C
->>> case, it's an off-chip embedded controller that determines the
->>> dual-role status of the Type-C port, so the above requirement doesn't
->>> make sense at all.
->>>
->>> My idea was to have the OTG/DRD controller explicitly specify its host
->>> and device controllers, so in DT, something like:
->>>
->>> otg-controller {
->>>     ...
->>>     device-controller = <&usb_device>;
->>>     host-controller = <&usb_host>;
->>>     ...
->>> };
->>>
->>> usb_device: usb-device@.... {
->>>     ...
->>> };
->>>
->>> usb_host: usb-host@... {
->>>     ...
->>> };
->>>
->>> What do you think?
->>
->> I agree that we need to support your use case but how to do it
->> is not yet clear to me.
->>
->> In your above example the otg controller knows what are the host
->> and gadget controllers but the host/gadget devices don't
->> know who is their otg controller.
->>
->> So the problem is that when usb_otg_register_hcd/gadget() is called
->> we need to get a handle to the otg controller.
->>
->> One solution I see is to iterate over the registered otg_controller_list
->> and check if we match the host/gadget controller in there.
->>
->> Then there is also a possibility that host/gadget controllers get
->> registered before the OTG controller. Then we can't know for sure if
->> the host/gadget controller was meant for dual-role operation or not
->> and it will resort to single role operation.
->>
->> Any idea to prevent the above situation?
->>
->> Maybe we need to add some logic in host/gadget cores to check if the port
->> is meant for dual-role use and defer probe if OTG controller is not yet
->> registered?
-> 
-> In the DT case, I think we could add an "otg-controller" property to
-> the host and gadget nodes, and in usb_otg_register_{hcd,gadget}()
-> check for that property and defer probe if the referenced OTG
-> controller has not yet been registered.  Not sure how to indicate that
-> a host/gadget is meant for dual-role operation on non-DT platforms
-> though.
-> 
 
-Sounds fine for DT case.
+--zROEGoKAXsG5UqGB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-For non DT case I don't see any other way to connect the OTG controller
-to the host/gadget controllers other than the parent child relationship.
+On Mon, Jul 13, 2015 at 01:39:48PM +0100, Jon Hunter wrote:
+> Add support to the tegra dc driver for generic PM domains. However,
+> to ensure backward compatibility with older device tree blobs ensure
+> that the driver can work with or without generic PM domains. In order
+> to migrate to generic PM domain infrastructure the necessary changes
+> are:
+>=20
+> 1. If the "power-domains" property is present in the DT device node then
+>    generic PM domains is supported and pm_runtime_enable() should be
+>    called for the device. Furthermore, the enabling and disabling of the
+>    power-domain is handled via calling pm_runtime_get/put, respectively.
 
-Maybe for non DT case we can still have that constraint.
-We can have this constraint regardless so that DT users who fit
-in that model don't need to add 'otg-controller' property.
+The device could be PM runtime enabled even if no power-domains property
+is set. Couldn't we check something more direct, like for example if the
+dev->pm_domain is non-NULL?
 
-cheers,
--roger
+Perhaps it'd be worth converting the driver to use runtime PM first, and
+move all the powergate and clock handling into suspend/resume functions,
+and then we can conditionalize whether or not we call the legacy API iff
+dev->pm_domain =3D=3D NULL?
+
+> 2. To ensure that clocks are managed consistently when generic PM domains
+>    are used and are not used, drivers should be migrated to use the
+>    tegra_powergate_power_on_legacy() and tegra_powergate_power_off_legacy=
+()
+>    functions instead of the current tegra_powergate_sequence_power_up()
+>    and tegra_powergate_power_off(). The purpose of the
+>    tegra_powergate_power_on_legacy() and tegra_powergate_power_off_legacy=
+()
+>    APIs is to mimick the behaviour of the tegra generic power-domain code,
+>    such that if generic power domains are not supported the functionality
+>    is the same.
+>=20
+> 3. The main difference between the tegra_powergate_sequence_power_up() API
+>    and the tegra_powergate_power_on_legacy() is that the clock used to
+>    enable the powergate is not kept enabled when using the
+>    tegra_powergate_power_on_legacy() API. Therefore, drivers must enable
+>    the clocks they need after calling tegra_powergate_power_on_legacy()
+>    and disable these clocks before calling
+>    tegra_powergate_power_off_legacy().
+
+This seems like it should go into the previous patch. I'm not sure I
+understand why this is necessary. Wouldn't it be easier to update the
+drivers to properly cope with this? We'll need to move them to runtime
+PM at some point anyway, so if we do that first, we should be able to
+hide all these details within the driver's suspend/resume functions
+but without the need for the API churn here.
+
+Thierry
+
+--zROEGoKAXsG5UqGB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJVqNvvAAoJEN0jrNd/PrOh8q0P/1wINIsYJXw7TmYgSRbyg2Dr
+U1gAvoDdAUKVIEjl8XDxesQVmKPbtQfw+PKDddbfS2QbPyg2Pv+nB4MoYBFTFbYZ
+Hr9TquIxCr7mgDugig1YQVxZ/vnwEPQBtqSCru/gUsmVOg3iAVyZ0re6CjcoiFTa
+3WpPmqkYwh8AbsfOS/M661PH8r0VOP2yU2sR0KKlKVQzFnCN1zH6z92GAZa0uxpI
+9xCPBeMaQGPsXj3rPI/317pHO3WwqDWJrzDb30Ts89doSuFKGw8j0lyyq5Qu4y51
+beLv3A57mpehbQgLb/GTGdzHVFGZ3IdkMv2mOJNXP+cmdraXWn+/qcVAreMhL+UC
+ruGBu5DqUicCM0fVkXQIdcj3PqOJe67Mb0+gW/HSNiFzBxAPDVY1VjswMXFawNDw
+9/qG9MiuKthi/pWvbFX0IoajjxMwg5D1npF+Unka4et2oKop1dz7fMbF8PsLJrA5
+kmmApSUbQVXhhqEb4LZnY4PWrTqMxpuayoFaMr1Hi89oFkU0rQFUZMjutf4QoYLl
+BsfGpBeOpoHQZtac98eLjImbgV9Y6uTons2Da5W3/ZKZpILQm5AV+5BUTE2mjlZ5
+XMa9ZM6YtjtMsGNoXNe9UFa+ZPXDzXkKuOVcEba3Iv8FHX+eZVmyuooJayLrJOw+
+nxTr2T4wIPt89oUUN+Cj
+=w6aM
+-----END PGP SIGNATURE-----
+
+--zROEGoKAXsG5UqGB--
