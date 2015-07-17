@@ -1,7 +1,7 @@
 From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: [RFC 3/9] i2c: add a flag to mark clients as slaves
-Date: Fri, 17 Jul 2015 16:08:23 +0200
-Message-ID: <1437142109-31975-4-git-send-email-wsa@the-dreams.de>
+Subject: [RFC 6/9] i2c: make address check indpendent from client struct
+Date: Fri, 17 Jul 2015 16:08:26 +0200
+Message-ID: <1437142109-31975-7-git-send-email-wsa@the-dreams.de>
 References: <1437142109-31975-1-git-send-email-wsa@the-dreams.de>
 Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1437142109-31975-1-git-send-email-wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
@@ -12,33 +12,49 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Wolfram Sang <wsa+renesas-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>
 
-And update indentation with one more tab, sigh...
+We want to use this function with struct boardinfo soon, so let's just
+pass the parameters really needed. We also extend the type of addr, so
+more types can be input. Remove a superfluous dangling comment while
+here.
 
 Signed-off-by: Wolfram Sang <wsa+renesas-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>
 ---
- include/linux/i2c.h | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ drivers/i2c/i2c-core.c | 11 +++++------
+ 1 file changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/i2c.h b/include/linux/i2c.h
-index e83a738a3b8741..51ed2e40932f3d 100644
---- a/include/linux/i2c.h
-+++ b/include/linux/i2c.h
-@@ -550,11 +550,12 @@ void i2c_lock_adapter(struct i2c_adapter *);
- void i2c_unlock_adapter(struct i2c_adapter *);
+diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
+index b54a0f092d53f6..b5719a2cff97bf 100644
+--- a/drivers/i2c/i2c-core.c
++++ b/drivers/i2c/i2c-core.c
+@@ -793,15 +793,15 @@ static unsigned short i2c_encode_flags_to_addr(struct i2c_client *client)
  
- /*flags for the client struct: */
--#define I2C_CLIENT_PEC	0x04		/* Use Packet Error Checking */
--#define I2C_CLIENT_TEN	0x10		/* we have a ten bit chip address */
-+#define I2C_CLIENT_PEC		0x04	/* Use Packet Error Checking */
-+#define I2C_CLIENT_TEN		0x10	/* we have a ten bit chip address */
- 					/* Must equal I2C_M_TEN below */
--#define I2C_CLIENT_WAKE	0x80		/* for board_info; true iff can wake */
--#define I2C_CLIENT_SCCB	0x9000		/* Use Omnivision SCCB protocol */
-+#define I2C_CLIENT_SLAVE	0x20	/* we are the slave */
-+#define I2C_CLIENT_WAKE		0x80	/* for board_info; true iff can wake */
-+#define I2C_CLIENT_SCCB		0x9000	/* Use Omnivision SCCB protocol */
- 					/* Must match I2C_M_STOP|IGNORE_NAK */
+ /* This is a permissive address validity check, I2C address map constraints
+  * are purposely not enforced, except for the general call address. */
+-static int i2c_check_addr_validity(const struct i2c_client *client)
++static int i2c_check_addr_validity(unsigned addr, unsigned short flags)
+ {
+-	if (client->flags & I2C_CLIENT_TEN) {
++	if (flags & I2C_CLIENT_TEN) {
+ 		/* 10-bit address, all values are valid */
+-		if (client->addr > 0x3ff)
++		if (addr > 0x3ff)
+ 			return -EINVAL;
+ 	} else {
+ 		/* 7-bit address, reject the general call address */
+-		if (client->addr == 0x00 || client->addr > 0x7f)
++		if (addr == 0x00 || addr > 0x7f)
+ 			return -EINVAL;
+ 	}
+ 	return 0;
+@@ -979,8 +979,7 @@ i2c_new_device(struct i2c_adapter *adap, struct i2c_board_info const *info)
  
- /* i2c adapter classes (bitmask) */
+ 	strlcpy(client->name, info->type, sizeof(client->name));
+ 
+-	/* Check for address validity */
+-	status = i2c_check_addr_validity(client);
++	status = i2c_check_addr_validity(client->addr, client->flags);
+ 	if (status) {
+ 		dev_err(&adap->dev, "Invalid %d-bit I2C address 0x%02hx\n",
+ 			client->flags & I2C_CLIENT_TEN ? 10 : 7, client->addr);
 -- 
 2.1.4
