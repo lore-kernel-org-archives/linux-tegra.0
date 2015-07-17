@@ -1,92 +1,135 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V3 02/19] memory: tegra: Add MC flush support
-Date: Fri, 17 Jul 2015 13:31:24 +0200
-Message-ID: <20150717113124.GP3057@ulmo>
+From: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH V3 01/19] reset: add of_reset_control_get_by_index()
+Date: Fri, 17 Jul 2015 14:08:58 +0200
+Message-ID: <1437134938.3254.3.camel@pengutronix.de>
 References: <1436791197-32358-1-git-send-email-jonathanh@nvidia.com>
- <1436791197-32358-3-git-send-email-jonathanh@nvidia.com>
- <20150717095754.GG3057@ulmo>
- <20150717102049.GQ6287@tbergstrom-lnx.Nvidia.com>
+	 <1436791197-32358-2-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="xNm6VWMD3PcA105u"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20150717102049.GQ6287-Rysk9IDjsxmJz7etNGeUX8VPkgjIgRvpAL8bYrjMMd8@public.gmane.org>
+In-Reply-To: <1436791197-32358-2-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Am Montag, den 13.07.2015, 13:39 +0100 schrieb Jon Hunter:
+> From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Add of_reset_control_get_by_index() to allow the drivers to get reset
+> device without knowing its name.
+> 
+> Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> [jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org: Updated stub function to return -ENOTSUPP instead
+>  of -ENOSYS which should only be used for system calls.]
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---xNm6VWMD3PcA105u
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Acked-by: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 
-On Fri, Jul 17, 2015 at 01:20:49PM +0300, Peter De Schrijver wrote:
-> On Fri, Jul 17, 2015 at 11:57:55AM +0200, Thierry Reding wrote:
-> > * PGP Signed by an unknown key
-> >=20
-> > On Mon, Jul 13, 2015 at 01:39:40PM +0100, Jon Hunter wrote:
-> > > The Tegra memory controller implements a flush feature to flush pendi=
-ng
-> > > accesses and prevent further accesses from occurring. This feature is
-> > > used when powering down IP blocks to ensure the IP block is in a good
-> > > state. The flushes are organised by software groups and IP blocks are
-> > > assigned in hardware to the different software groups. Add helper
-> > > functions for requesting a handle to an MC flush for a given
-> > > software group and enabling/disabling the MC flush itself.
-> > >=20
-> > > This is based upon a change by Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>.
-> > >=20
-> > > Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > ---
-> > >  drivers/memory/tegra/mc.c | 110 ++++++++++++++++++++++++++++++++++++=
-++++++++++
-> > >  drivers/memory/tegra/mc.h |   2 +
-> > >  include/soc/tegra/mc.h    |  34 ++++++++++++++
-> > >  3 files changed, 146 insertions(+)
-> >=20
-> > Do we know if this is actually necessary? I remember having a discussion
-> > with Arnd Bergmann a while ago, and the Linux driver model kind of
-> > assumes that by the time a device is disabled all outstanding accesses
-> > will have stopped.
-> >=20
-> > Do we have a way to determine that this even makes a difference? Can we
-> > trigger a case where not doing this would cause breakage and see that
-> > adding this fixes that particular issue?
-> >=20
->=20
-> Most likely it is. The memory controller can still be processing requests
-> when the peripheral domain is powergated. This would mean the response ca=
-nnot
-> be delivered in that case. So we need to be sure there are no outstanding
-> requests before shutting down the domain.
+regards
+Philipp
 
-My point is that that's the driver's responsibility anyway, hence making
-the explicit flush unnecessary.
-
-Thierry
-
---xNm6VWMD3PcA105u
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVqOeLAAoJEN0jrNd/PrOhFCoP/1ZbeC/RyL+p1T8/v7t5t1Z/
-71H/16XngqLCD0CuhLjO6CLdNQ0fDrjoSf9I+3qVQ+jN7Wu7hKUhU1ZZ3gEVz71N
-a+exibl8ehQGGbdw7TKIvi8DYuggchgWZCUlZTNYCYALkuKcf85Cky6YfaiJt2G6
-2rBQDviWGAgCpBwEchA/x0jCGHS6ocjN8Dxveo1H//y9ySVjYcqKWzyYjgaqAqZV
-ZaMi+dsg2s6qctQ5tB91Gao6IOoiaCYr4PahmvZ139QyUjSSXU3LjRVC02KGjA4n
-NkxYYlT2Rs0+Y7GSWUo7sDngazihmb1R3f+P5eYMHdwbJWsO2IlQ/UXLER3P5Gac
-OetLOMUhFaXfV4dTks4znKPQl6RfacNMnlnohhQoXwQJVh3npnuhJK4Sah+8qbBE
-+i+FGyR3bIH3fYWlVJDhZ7uf6qR+uHAjp4/7RZlK75J82IcNTlcLI+KtQCL4SS7O
-u2/brWtKjZS34MV6SUnZGutmMYzfKH0HeZY+RJtN7oiF2/89R7j6LzM9Cm3oonDi
-sI26KtmMwUb6m0//T/Ww4PhkciFwqxqK4bwBoEI5P/te2tgWKuo2Gm1GkJaF4HIZ
-tmxWegi8NQbH9BtNCmL8TzebBJF9XPl4QOLCeNfj4+iD4Cz8rvwmiW/l/rel1pFP
-URknwa4SoEDeJgxDFE9y
-=jFgL
------END PGP SIGNATURE-----
-
---xNm6VWMD3PcA105u--
+> ---
+> v3: addressed comments from Philipp
+> v2: minor changes according to Alex's comments
+> ---
+>  drivers/reset/core.c  | 40 +++++++++++++++++++++++++++++-----------
+>  include/linux/reset.h |  9 +++++++++
+>  2 files changed, 38 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+> index 7955e00d04d4..81ae17d15480 100644
+> --- a/drivers/reset/core.c
+> +++ b/drivers/reset/core.c
+> @@ -141,27 +141,24 @@ int reset_control_status(struct reset_control *rstc)
+>  EXPORT_SYMBOL_GPL(reset_control_status);
+>  
+>  /**
+> - * of_reset_control_get - Lookup and obtain a reference to a reset controller.
+> + * of_reset_control_get_by_index - Lookup and obtain a reference to a reset
+> + * controller by index.
+>   * @node: device to be reset by the controller
+> - * @id: reset line name
+> - *
+> - * Returns a struct reset_control or IS_ERR() condition containing errno.
+> + * @index: index of the reset controller
+>   *
+> - * Use of id names is optional.
+> + * This is to be used to perform a list of resets for a device or power domain
+> + * in whatever order. Returns a struct reset_control or IS_ERR() condition
+> + * containing errno.
+>   */
+> -struct reset_control *of_reset_control_get(struct device_node *node,
+> -					   const char *id)
+> +struct reset_control *of_reset_control_get_by_index(struct device_node *node,
+> +					   int index)
+>  {
+>  	struct reset_control *rstc = ERR_PTR(-EPROBE_DEFER);
+>  	struct reset_controller_dev *r, *rcdev;
+>  	struct of_phandle_args args;
+> -	int index = 0;
+>  	int rstc_id;
+>  	int ret;
+>  
+> -	if (id)
+> -		index = of_property_match_string(node,
+> -						 "reset-names", id);
+>  	ret = of_parse_phandle_with_args(node, "resets", "#reset-cells",
+>  					 index, &args);
+>  	if (ret)
+> @@ -202,6 +199,27 @@ struct reset_control *of_reset_control_get(struct device_node *node,
+>  
+>  	return rstc;
+>  }
+> +EXPORT_SYMBOL_GPL(of_reset_control_get_by_index);
+> +
+> +/**
+> + * of_reset_control_get - Lookup and obtain a reference to a reset controller.
+> + * @node: device to be reset by the controller
+> + * @id: reset line name
+> + *
+> + * Returns a struct reset_control or IS_ERR() condition containing errno.
+> + *
+> + * Use of id names is optional.
+> + */
+> +struct reset_control *of_reset_control_get(struct device_node *node,
+> +					   const char *id)
+> +{
+> +	int index = 0;
+> +
+> +	if (id)
+> +		index = of_property_match_string(node,
+> +						 "reset-names", id);
+> +	return of_reset_control_get_by_index(node, index);
+> +}
+>  EXPORT_SYMBOL_GPL(of_reset_control_get);
+>  
+>  /**
+> diff --git a/include/linux/reset.h b/include/linux/reset.h
+> index da5602bd77d7..26f1b53386d8 100644
+> --- a/include/linux/reset.h
+> +++ b/include/linux/reset.h
+> @@ -38,6 +38,9 @@ static inline struct reset_control *devm_reset_control_get_optional(
+>  struct reset_control *of_reset_control_get(struct device_node *node,
+>  					   const char *id);
+>  
+> +struct reset_control *of_reset_control_get_by_index(
+> +					struct device_node *node, int index);
+> +
+>  #else
+>  
+>  static inline int reset_control_reset(struct reset_control *rstc)
+> @@ -92,6 +95,12 @@ static inline struct reset_control *of_reset_control_get(
+>  	return ERR_PTR(-ENOSYS);
+>  }
+>  
+> +static inline struct reset_control *of_reset_control_get_by_index(
+> +				struct device_node *node, int index)
+> +{
+> +	return ERR_PTR(-ENOTSUPP);
+> +}
+> +
+>  #endif /* CONFIG_RESET_CONTROLLER */
+>  
+>  #endif
