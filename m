@@ -1,118 +1,83 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [RESEND PATCH v3] ARM: tegra124: pmu support
-Date: Fri, 17 Jul 2015 10:59:47 +0200
-Message-ID: <20150717085946.GB3057@ulmo>
-References: <1436808945-14524-1-git-send-email-khuey@kylehuey.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V3 18/19] ARM: tegra: add GPU power supply to Jetson TK1
+ DT
+Date: Fri, 17 Jul 2015 11:28:42 +0200
+Message-ID: <20150717092841.GE3057@ulmo>
+References: <1436791197-32358-1-git-send-email-jonathanh@nvidia.com>
+ <1436791197-32358-19-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="3uo+9/B/ebqu+fSQ"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="d8Lz2Tf5e5STOWUP"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1436808945-14524-1-git-send-email-khuey@kylehuey.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kyle Huey <me@kylehuey.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>, "open list:TEGRA ARCHITECTUR..." <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>, Kyle Huey <khuey@kylehuey.com>
+In-Reply-To: <1436791197-32358-19-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---3uo+9/B/ebqu+fSQ
+--d8Lz2Tf5e5STOWUP
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 13, 2015 at 10:35:45AM -0700, Kyle Huey wrote:
-> This patch modifies the device tree for tegra124 based devices to enable
-> the Cortex A15 PMU.  The interrupt numbers are taken from NVIDIA TRM
-> DP-06905-001_v03p.  This patch was tested on a Jetson TK1.
+On Mon, Jul 13, 2015 at 01:39:56PM +0100, Jon Hunter wrote:
+> From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >=20
-> Updated for proper ordering and to add interrupt-affinity values.
+> Add power supply information which is board dependent for GK20A.
 >=20
-> Signed-off-by: Kyle Huey <khuey@kylehuey.com>
+> Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  arch/arm/boot/dts/tegra124.dtsi | 17 +++++++++++++----
->  1 file changed, 13 insertions(+), 4 deletions(-)
-
-Is there any way to test this? What are the effects of adding this? Does
-it enable using perf for profiling?
-
-> diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124=
-=2Edtsi
-> index 13cc7ca..de07d7e 100644
-> --- a/arch/arm/boot/dts/tegra124.dtsi
-> +++ b/arch/arm/boot/dts/tegra124.dtsi
-> @@ -918,31 +918,40 @@
->  		#address-cells =3D <1>;
->  		#size-cells =3D <0>;
+>  arch/arm/boot/dts/tegra124-jetson-tk1.dts | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dt=
+s/tegra124-jetson-tk1.dts
+> index ce5961cd0b77..2b355957635c 100644
+> --- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+> +++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+> @@ -1514,7 +1514,7 @@
+>  					regulator-always-on;
+>  				};
 > =20
-> -		cpu@0 {
-> +		A15_0: cpu@0 {
->  			device_type =3D "cpu";
->  			compatible =3D "arm,cortex-a15";
->  			reg =3D <0>;
->  		};
-> =20
-> -		cpu@1 {
-> +		A15_1: cpu@1 {
->  			device_type =3D "cpu";
->  			compatible =3D "arm,cortex-a15";
->  			reg =3D <1>;
->  		};
-> =20
-> -		cpu@2 {
-> +		A15_2: cpu@2 {
->  			device_type =3D "cpu";
->  			compatible =3D "arm,cortex-a15";
->  			reg =3D <2>;
->  		};
-> =20
-> -		cpu@3 {
-> +		A15_3: cpu@3 {
->  			device_type =3D "cpu";
->  			compatible =3D "arm,cortex-a15";
->  			reg =3D <3>;
+> -				sd6 {
+> +				vdd_gpu: sd6 {
+>  					regulator-name =3D "+VDD_GPU_AP";
+>  					regulator-min-microvolt =3D <650000>;
+>  					regulator-max-microvolt =3D <1200000>;
+> @@ -1635,6 +1635,10 @@
 >  		};
 >  	};
 > =20
-> +	pmu {
-> +		compatible =3D "arm,cortex-a15-pmu";
-> +		interrupts =3D <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupt-affinity =3D <&A15_0>, <&A15_1>, <&A15_2>, <&A15_3>;
+> +	gpu-power-domain {
+> +		vdd-supply =3D <&vdd_gpu>;
+> +	};
 
-These labels look somewhat artificial to me, perhaps we could do
-something like the following instead?
-
-	interrupt-affinity =3D <&{/cpus/cpu@0}>, ...;
-
-That's slightly more obvious and avoids the need to "invent" labels for
-the CPUs.
-
-No need to respin, I can fix that up when applying if nobody objects to
-using the alternative notation.
+This doesn't seem to match the path to the original node.
 
 Thierry
 
---3uo+9/B/ebqu+fSQ
+--d8Lz2Tf5e5STOWUP
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJVqMP+AAoJEN0jrNd/PrOhzt8QAIm0s0Er1dxt9H6yQxSElfYG
-hjavRDjSydeAGmVtIg3WIMI42XL6zVGBhYGc+LciV+qkd26io9sYzCl02CrNIhtj
-0TgEFBH0aUaHqdpdZDquMzCkZ4v+ZQmeaPFR7mwef1y9L2EkJrosMkQpu+2E786+
-fCgMekxG00Fw4rUq9RJV/OCQeElLwdE5hyED+TlHsvJCiQTEcIrVcOvQ/4FJMygu
-pnM/RxIyIYH5EB+fWDU/3PuOOhzy5/Ypau3i0HW2v1E04f/fhbFt6DNz4mFdKN3M
-ztdWse454gntWTr0UuaIKT7xDrtJLowbCwHgZcM50Dk4OvVV4qfq1VU0K0ZfiiEg
-9ASEGCUlidBy5FeKKO1sudJIMk0d5x8pYAyihlQp84kpfR1GA9DdEA2CflQl1YDu
-IUfsjV1ESMU5P7Yi+g16cIKVOBKFSL0MWyirRXQ8U2iAgrgpQ3sshVS1J/jN/oY6
-v884ycxoIuxA31tQOswAH3lCxmPhvNU3rkg6E5BSsbW4KoEn2lRkToLlFGH0wLPC
-sGVNt3Mkqvn9jfrVIbHUkloPYZSCxWYuYJjrLSOAg0ysg12ctxiat4FD8d+wWzB0
-+yfVekaaE9D15qhNeOLF1/Z8T1ajLTiNWeGDDSAmILy7Cxw25luITdrKqXfiVgS8
-7zskl/2ufb7KJqf01yCR
-=n3Ut
+iQIcBAABCAAGBQJVqMrEAAoJEN0jrNd/PrOhD8QP/ij9F1dFueqLw4vAIzphLq+q
+lFmKwSXfuaFYqayu1Cxxsqs9TqtpHwYIuibqU8ZYGxEnOMqtAGTKeUNpEHvke+0T
+2sibN5x3ZRbzysgY/C8Pvl48v8TFh81bpHCRGfw5Yxc/Lxj4NZrpdWBmYnyATiGw
+1dCenldGe1LVLLqnwaqQgwqskP6SVxqZ1poAJVOzsLS07b813yk2eUGYyO9P5moj
+9VG4DnteeUiO3nsCQ+wx0NpMELnIh/E0TagjWiGDGqIEMRb6NrfEufSb0M9TGl6t
+IGxD/edVSQXt2V0K2PGJbwF3eb8rbjDOG2Z6ru+cwNth9Pt94RwmF09I5AXEhKtv
+NvkWGXYj3AnqbuoWW4x9PueRdt6ErNdl6H5hjbS90zrifcYHcu3LQhV5TQ9HcPph
+40DCcRXoaRqeSjBbvkC2z5kI8QzDEoBhwywvnJ9bHkM26Bpq0wDxnLzi6raV+aw1
+9hbwZE+OsvG3lrAmvrghPhfScd/26/EjYlyDBiqmBdTLOT/0B6FPRZFU78iEku+h
+6Cr3UyO8ly6ZRlr32iPN036KurSkaP7w9aUZmCJmyFwJptWSc6QRowYcbBoI/jSU
+3ppD5Lbd1pfj0JuWEkl/jSOKaZCzgSwyQH4IHhnL5+g3O4poJd87sr/4PkE62y92
+fzp0A6UuOeM+BxeSfFhV
+=YPkO
 -----END PGP SIGNATURE-----
 
---3uo+9/B/ebqu+fSQ--
+--d8Lz2Tf5e5STOWUP--
