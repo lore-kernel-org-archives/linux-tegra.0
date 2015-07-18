@@ -1,51 +1,114 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [RFC 9/9] dts: tegra: WIP: hack dts to test new dt flags for i2c
-Date: Fri, 17 Jul 2015 16:11:40 +0200
-Message-ID: <20150717141140.GA9473@katana>
-References: <1437142109-31975-1-git-send-email-wsa@the-dreams.de>
- <1437142109-31975-10-git-send-email-wsa@the-dreams.de>
+From: Kyle Huey <me@kylehuey.com>
+Subject: Re: [RESEND PATCH v3] ARM: tegra124: pmu support
+Date: Sat, 18 Jul 2015 21:54:11 +0800
+Message-ID: <CAP045ArZ0PUcpiWYeXsHbjo6BR3YD-ZzTRsBskZzUaQXfOohrg@mail.gmail.com>
+References: <1436808945-14524-1-git-send-email-khuey@kylehuey.com>
+	<20150717085946.GB3057@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="wac7ysb48OaltWcw"
-Return-path: <linux-sh-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1437142109-31975-10-git-send-email-wsa@the-dreams.de>
-Sender: linux-sh-owner@vger.kernel.org
-To: linux-i2c@vger.kernel.org
-Cc: linux-sh@vger.kernel.org, Magnus Damm <magnus.damm@gmail.com>, Simon Horman <horms@verge.net.au>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Andrey Danin <danindrey@mail.ru>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20150717085946.GB3057@ulmo>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>, "open list:TEGRA ARCHITECTUR..." <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, Jul 17, 2015 at 4:59 PM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
+> On Mon, Jul 13, 2015 at 10:35:45AM -0700, Kyle Huey wrote:
+>> This patch modifies the device tree for tegra124 based devices to enable
+>> the Cortex A15 PMU.  The interrupt numbers are taken from NVIDIA TRM
+>> DP-06905-001_v03p.  This patch was tested on a Jetson TK1.
+>>
+>> Updated for proper ordering and to add interrupt-affinity values.
+>>
+>> Signed-off-by: Kyle Huey <khuey@kylehuey.com>
+>> ---
+>>  arch/arm/boot/dts/tegra124.dtsi | 17 +++++++++++++----
+>>  1 file changed, 13 insertions(+), 4 deletions(-)
+>
+> Is there any way to test this? What are the effects of adding this?
 
---wac7ysb48OaltWcw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Yes.  This enables the ARM PMU driver for the Cortex A15, which allows
+one to use hardware performance counters via the perf_event_open API.
+For a simple test program, see
+https://github.com/khuey/perf-counter-test/.  Without this patch, the
+perf_event_open syscall will fail.  With this patch, the program will
+print out the performance counter value for each iteration of the
+loop. (IIRC on the A15 the branch counter was removed, so you may want
+to replace 0xD with 0x8 which counts instructions executed if you want
+to see a non-zero number there).  You also will see a message about
+the PMU in the kernel log at startup after applying this patch.
 
-> +			//FIXME: Should be I2C_OWN_SLAVE_ADDRESS | 0x42
-> +			reg = <0xc0000042>;
+I have also tested this extensively (including the interrupt features
+of the PMU) on a more complex program.
 
-That should have been 0x40000042, sorry!
+> Does it enable using perf for profiling?
 
+I have not tested it, but I believe you can use perf without this
+patch if you do not use features that require hardware performance
+counter support.  This patch would enable those features.
 
---wac7ysb48OaltWcw
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+>> diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+>> index 13cc7ca..de07d7e 100644
+>> --- a/arch/arm/boot/dts/tegra124.dtsi
+>> +++ b/arch/arm/boot/dts/tegra124.dtsi
+>> @@ -918,31 +918,40 @@
+>>               #address-cells = <1>;
+>>               #size-cells = <0>;
+>>
+>> -             cpu@0 {
+>> +             A15_0: cpu@0 {
+>>                       device_type = "cpu";
+>>                       compatible = "arm,cortex-a15";
+>>                       reg = <0>;
+>>               };
+>>
+>> -             cpu@1 {
+>> +             A15_1: cpu@1 {
+>>                       device_type = "cpu";
+>>                       compatible = "arm,cortex-a15";
+>>                       reg = <1>;
+>>               };
+>>
+>> -             cpu@2 {
+>> +             A15_2: cpu@2 {
+>>                       device_type = "cpu";
+>>                       compatible = "arm,cortex-a15";
+>>                       reg = <2>;
+>>               };
+>>
+>> -             cpu@3 {
+>> +             A15_3: cpu@3 {
+>>                       device_type = "cpu";
+>>                       compatible = "arm,cortex-a15";
+>>                       reg = <3>;
+>>               };
+>>       };
+>>
+>> +     pmu {
+>> +             compatible = "arm,cortex-a15-pmu";
+>> +             interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>,
+>> +                          <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
+>> +                          <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
+>> +                          <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>;
+>> +             interrupt-affinity = <&A15_0>, <&A15_1>, <&A15_2>, <&A15_3>;
+>
+> These labels look somewhat artificial to me, perhaps we could do
+> something like the following instead?
+>
+>         interrupt-affinity = <&{/cpus/cpu@0}>, ...;
+>
+> That's slightly more obvious and avoids the need to "invent" labels for
+> the CPUs.
+>
+> No need to respin, I can fix that up when applying if nobody objects to
+> using the alternative notation.
+>
+> Thierry
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+I have no objections.  I was not aware that the device tree syntax
+supported that.  FWIW I cargo-culted my way to victory from
+vexpress-v2p-ca9.dts here.
 
-iQIcBAEBAgAGBQJVqQ0cAAoJEBQN5MwUoCm2Cz8P/0eqPbyuGoIwcOFVpzHgrQfK
-7WuElj1V2yo3fJUZIFyDNsQXDhT/NvlmkRs20pCsp2TsCi+RO5iwie4ZyToIf9EI
-BK4JXn1wXgcIIzGGYL8/Ru48jn6G0S2THcH5pDaJ7fLgXvf2/LPTKRmfyXXuGXZ4
-AIrMFB9kML9NzBvCsiA5M29wJozVJGd6UbBhj1NeUAKadeFLwiJHZ6F9e/61dG9R
-Xj1R4FnON/3eC/ultqOO33PghSUUNRZBpE+Kv/qw4+PgaN2Z2UxoNp3ScmB9qMTK
-+kiV8lIAKGWazfG6R+jqsHqxUaMMUKJQ8emsXmRcVwoSgvbCqKphbalOWo8pLjlo
-V0jr1HIvhvpAyMNgSHsSi66xkl15ZAbidJ5Ahs9u9VKFOzqLzeI5/bK9CPunhd7B
-JdNxBtI9uAm6bBHY/Tva8CaPM0OuyWc2LFh/12O4dV5v30/u43uy8mY2NIcFgrVQ
-AG5Q5QYTVhq5Y4+Tb0ClBC1kXBFYR2DXpdtFYNZZwg/Od72tVDZAMVKrBddAbXd6
-9pX7tFOBMYdTOt1S8ZfzuXr2+MzA6xMmOEOnDJ5cU1XuLRrKoAhJWZUu5JbDKoyT
-5XDyuE27Hr/Yj4MZ/We+3nU2VvHKW4DNO2iHusdUQOOWPS1crSM6sFobtN5hGoNq
-BhvYN2Nz7oKuILDFVeks
-=JGv9
------END PGP SIGNATURE-----
-
---wac7ysb48OaltWcw--
+- Kyle
