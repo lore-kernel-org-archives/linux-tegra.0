@@ -1,114 +1,33 @@
-From: Kyle Huey <me@kylehuey.com>
-Subject: Re: [RESEND PATCH v3] ARM: tegra124: pmu support
-Date: Sat, 18 Jul 2015 21:54:11 +0800
-Message-ID: <CAP045ArZ0PUcpiWYeXsHbjo6BR3YD-ZzTRsBskZzUaQXfOohrg@mail.gmail.com>
-References: <1436808945-14524-1-git-send-email-khuey@kylehuey.com>
-	<20150717085946.GB3057@ulmo>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20150717085946.GB3057@ulmo>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, "open list:OPEN FIRMWARE AND..." <devicetree@vger.kernel.org>, "moderated list:ARM PORT" <linux-arm-kernel@lists.infradead.org>, "open list:TEGRA ARCHITECTUR..." <linux-tegra@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Jon Hunter <jonathanh@nvidia.com>
+From: Steev Klimaszewski <threeway-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] ARM: tegra: Fix nyan-big panel binding
+Date: Sun, 19 Jul 2015 15:15:13 -0500
+Message-ID: <1437336913-12886-1-git-send-email-steev@gentoo.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Steev Klimaszewski <steev-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jul 17, 2015 at 4:59 PM, Thierry Reding
-<thierry.reding@gmail.com> wrote:
-> On Mon, Jul 13, 2015 at 10:35:45AM -0700, Kyle Huey wrote:
->> This patch modifies the device tree for tegra124 based devices to enable
->> the Cortex A15 PMU.  The interrupt numbers are taken from NVIDIA TRM
->> DP-06905-001_v03p.  This patch was tested on a Jetson TK1.
->>
->> Updated for proper ordering and to add interrupt-affinity values.
->>
->> Signed-off-by: Kyle Huey <khuey@kylehuey.com>
->> ---
->>  arch/arm/boot/dts/tegra124.dtsi | 17 +++++++++++++----
->>  1 file changed, 13 insertions(+), 4 deletions(-)
->
-> Is there any way to test this? What are the effects of adding this?
+The nyan-big Chromebook uses a 1920x1080 panel, not a 1366x768 panel so correct
+the binding.
 
-Yes.  This enables the ARM PMU driver for the Cortex A15, which allows
-one to use hardware performance counters via the perf_event_open API.
-For a simple test program, see
-https://github.com/khuey/perf-counter-test/.  Without this patch, the
-perf_event_open syscall will fail.  With this patch, the program will
-print out the performance counter value for each iteration of the
-loop. (IIRC on the A15 the branch counter was removed, so you may want
-to replace 0xD with 0x8 which counts instructions executed if you want
-to see a non-zero number there).  You also will see a message about
-the PMU in the kernel log at startup after applying this patch.
+Signed-off-by: Steev Klimaszewski <steev-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra124-nyan-big.dts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I have also tested this extensively (including the interrupt features
-of the PMU) on a more complex program.
-
-> Does it enable using perf for profiling?
-
-I have not tested it, but I believe you can use perf without this
-patch if you do not use features that require hardware performance
-counter support.  This patch would enable those features.
-
->> diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
->> index 13cc7ca..de07d7e 100644
->> --- a/arch/arm/boot/dts/tegra124.dtsi
->> +++ b/arch/arm/boot/dts/tegra124.dtsi
->> @@ -918,31 +918,40 @@
->>               #address-cells = <1>;
->>               #size-cells = <0>;
->>
->> -             cpu@0 {
->> +             A15_0: cpu@0 {
->>                       device_type = "cpu";
->>                       compatible = "arm,cortex-a15";
->>                       reg = <0>;
->>               };
->>
->> -             cpu@1 {
->> +             A15_1: cpu@1 {
->>                       device_type = "cpu";
->>                       compatible = "arm,cortex-a15";
->>                       reg = <1>;
->>               };
->>
->> -             cpu@2 {
->> +             A15_2: cpu@2 {
->>                       device_type = "cpu";
->>                       compatible = "arm,cortex-a15";
->>                       reg = <2>;
->>               };
->>
->> -             cpu@3 {
->> +             A15_3: cpu@3 {
->>                       device_type = "cpu";
->>                       compatible = "arm,cortex-a15";
->>                       reg = <3>;
->>               };
->>       };
->>
->> +     pmu {
->> +             compatible = "arm,cortex-a15-pmu";
->> +             interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>,
->> +                          <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
->> +                          <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
->> +                          <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>;
->> +             interrupt-affinity = <&A15_0>, <&A15_1>, <&A15_2>, <&A15_3>;
->
-> These labels look somewhat artificial to me, perhaps we could do
-> something like the following instead?
->
->         interrupt-affinity = <&{/cpus/cpu@0}>, ...;
->
-> That's slightly more obvious and avoids the need to "invent" labels for
-> the CPUs.
->
-> No need to respin, I can fix that up when applying if nobody objects to
-> using the alternative notation.
->
-> Thierry
-
-I have no objections.  I was not aware that the device tree syntax
-supported that.  FWIW I cargo-culted my way to victory from
-vexpress-v2p-ca9.dts here.
-
-- Kyle
+diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts b/arch/arm/boot/dts/tegra124-nyan-big.dts
+index 2d21253..30d4495 100644
+--- a/arch/arm/boot/dts/tegra124-nyan-big.dts
++++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
+@@ -9,7 +9,7 @@
+ 	compatible = "google,nyan-big", "nvidia,tegra124";
+ 
+ 	panel: panel {
+-		compatible = "auo,b133xtn01";
++		compatible = "auo,b133htn01";
+ 
+ 		backlight = <&backlight>;
+ 		ddc-i2c-bus = <&dpaux>;
+-- 
+2.4.6
