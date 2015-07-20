@@ -1,142 +1,129 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC PATCH 08/15] backlight: pwm_bl: remove useless call to
- pwm_set_period
-Date: Mon, 20 Jul 2015 11:10:04 +0200
-Message-ID: <20150720091003.GN29614@ulmo>
-References: <1435738921-25027-1-git-send-email-boris.brezillon@free-electrons.com>
- <1435738921-25027-9-git-send-email-boris.brezillon@free-electrons.com>
- <20150720081559.GI29614@ulmo>
- <20150720102143.05949ca2@bbrezillon>
- <20150720083648.GK29614@ulmo>
- <20150720105003.29b5813a@bbrezillon>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V3 02/19] memory: tegra: Add MC flush support
+Date: Mon, 20 Jul 2015 11:17:44 +0200
+Message-ID: <20150720091743.GO29614@ulmo>
+References: <1436791197-32358-1-git-send-email-jonathanh@nvidia.com>
+ <1436791197-32358-3-git-send-email-jonathanh@nvidia.com>
+ <20150717095754.GG3057@ulmo>
+ <20150717102049.GQ6287@tbergstrom-lnx.Nvidia.com>
+ <20150717113124.GP3057@ulmo>
+ <55ACB54A.4080103@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nb8zVy0QMK3AA1xu"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="PtLnLSExlPr13a2X"
+Return-path: <linux-pm-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20150720105003.29b5813a@bbrezillon>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Doug Anderson <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <55ACB54A.4080103@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Prashant Gaikwad <pgaikwad@nvidia.com>, Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Hans de Goede <hdegoede@redhat.com>, Tejun Heo <tj@kernel.org>, Vince Hsu <vinceh@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---nb8zVy0QMK3AA1xu
+--PtLnLSExlPr13a2X
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 20, 2015 at 10:50:03AM +0200, Boris Brezillon wrote:
-> On Mon, 20 Jul 2015 10:36:50 +0200
-> Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+On Mon, Jul 20, 2015 at 09:46:02AM +0100, Jon Hunter wrote:
 >=20
-> > On Mon, Jul 20, 2015 at 10:21:43AM +0200, Boris Brezillon wrote:
-> > > On Mon, 20 Jul 2015 10:16:00 +0200
-> > > Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> > >=20
-> > > > On Wed, Jul 01, 2015 at 10:21:54AM +0200, Boris Brezillon wrote:
-> > > > > The PWM period will be set when calling pwm_config. Remove this u=
-seless
-> > > > > call to pwm_set_period, which might mess up with the initial PWM =
-state
-> > > > > once we have added proper support for PWM init state retrieval.
-> > > > >=20
-> > > > > Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTGGXanvQGlWp@public.gmane.org=
-m>
-> > > > > ---
-> > > > >  drivers/video/backlight/pwm_bl.c | 4 +---
-> > > > >  1 file changed, 1 insertion(+), 3 deletions(-)
-> > > > >=20
-> > > > > diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/bac=
-klight/pwm_bl.c
-> > > > > index ae498c1..fe5597c 100644
-> > > > > --- a/drivers/video/backlight/pwm_bl.c
-> > > > > +++ b/drivers/video/backlight/pwm_bl.c
-> > > > > @@ -295,10 +295,8 @@ static int pwm_backlight_probe(struct platfo=
-rm_device *pdev)
-> > > > >  	 * via the PWM lookup table.
-> > > > >  	 */
-> > > > >  	pb->period =3D pwm_get_default_period(pb->pwm);
-> > > > > -	if (!pb->period && (data->pwm_period_ns > 0)) {
-> > > > > +	if (!pb->period && (data->pwm_period_ns > 0))
-> > > > >  		pb->period =3D data->pwm_period_ns;
-> > > > > -		pwm_set_period(pb->pwm, data->pwm_period_ns);
-> > > > > -	}
-> > > > > =20
-> > > > >  	pb->lth_brightness =3D data->lth_brightness * (pb->period / pb-=
->scale);
-> > > >=20
-> > > > As far as I remember this line is there in order to pass in a perio=
-d if
-> > > > the backlight driver is initialized from board setup files. In such=
- a
-> > > > case there won't be an period associated with the PWM channel in the
-> > > > first place.
-> > > >=20
-> > > > I think even with the introduction of a default period, we'd be mis=
-sing
-> > > > out on the board setup case because there is no standard place wher=
-e it
-> > > > is being set, so it must come from the platform data.
-> > >=20
-> > > AFAICT, we don't need to explicitly set the period when probing the
-> > > backlight device, because it will be set next time we call
-> > > pwm_config(), and since we're passing pb->period when calling
-> > > pwm_config() everything should be fine.
+> On 17/07/15 12:31, Thierry Reding wrote:
+> > * PGP Signed by an unknown key
 > >=20
-> > Calling pwm_set_period() is still good for consistency. Consider for
-> > example what happens if after the driver were to call pwm_get_period().
-> > It would return some more or less random value (likely 0 or whatever it
-> > had been set to by an earlier user).
+> > On Fri, Jul 17, 2015 at 01:20:49PM +0300, Peter De Schrijver wrote:
+> >> On Fri, Jul 17, 2015 at 11:57:55AM +0200, Thierry Reding wrote:
+> >>>> Old Signed by an unknown key
+> >>>
+> >>> On Mon, Jul 13, 2015 at 01:39:40PM +0100, Jon Hunter wrote:
+> >>>> The Tegra memory controller implements a flush feature to flush pend=
+ing
+> >>>> accesses and prevent further accesses from occurring. This feature is
+> >>>> used when powering down IP blocks to ensure the IP block is in a good
+> >>>> state. The flushes are organised by software groups and IP blocks are
+> >>>> assigned in hardware to the different software groups. Add helper
+> >>>> functions for requesting a handle to an MC flush for a given
+> >>>> software group and enabling/disabling the MC flush itself.
+> >>>>
+> >>>> This is based upon a change by Vince Hsu <vinceh@nvidia.com>.
+> >>>>
+> >>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> >>>> ---
+> >>>>  drivers/memory/tegra/mc.c | 110 +++++++++++++++++++++++++++++++++++=
++++++++++++
+> >>>>  drivers/memory/tegra/mc.h |   2 +
+> >>>>  include/soc/tegra/mc.h    |  34 ++++++++++++++
+> >>>>  3 files changed, 146 insertions(+)
+> >>>
+> >>> Do we know if this is actually necessary? I remember having a discuss=
+ion
+> >>> with Arnd Bergmann a while ago, and the Linux driver model kind of
+> >>> assumes that by the time a device is disabled all outstanding accesses
+> >>> will have stopped.
+> >>>
+> >>> Do we have a way to determine that this even makes a difference? Can =
+we
+> >>> trigger a case where not doing this would cause breakage and see that
+> >>> adding this fixes that particular issue?
+> >>>
+> >>
+> >> Most likely it is. The memory controller can still be processing reque=
+sts
+> >> when the peripheral domain is powergated. This would mean the response=
+ cannot
+> >> be delivered in that case. So we need to be sure there are no outstand=
+ing
+> >> requests before shutting down the domain.
+> >=20
+> > My point is that that's the driver's responsibility anyway, hence making
+> > the explicit flush unnecessary.
 >=20
-> Yes, that's true in general, but in this specific driver
-> pwm_get_period() is never called, and the driver only relies on the
-> pb->period value.
+> I see your point and it is interesting. The trouble is that we would
+> need to test every memory client in every power domain to prove this. So
+> I don't think that is a trivial thing to do. Furthermore, looking at
+> what we have done in kernel used for android products (which probably
+> stress PM the most) this is done and so I don't know of any shipping
+> product that stresses PM that does not do this. May be someone else
+> might. I personally would not be comfortable removing this without
+> testing, but as I mentioned it is not a trivial thing to test correctly.
+> However, I will let you and the other maintainers decide what's best here.
 
-Perhaps that's something that should change. If the PWM core has all
-this infrastructure there should be no need for the backlight driver to
-keep it's own copy of that variable.
+Quite frankly, I'm fairly sure most of this is untested anyway. There
+isn't a good way to test gr3d for example.
 
-> > Technically I think the most proper equivalent here would be to set the
-> > default state's period to data->pwm_period_ns, but I don't think that's
-> > proper to do. Perhaps since this is only relevant to boards where the
-> > backlight device is created from board setup code we don't have to care
-> > so much about messing up the initial state because either the board
-> > setup code has been carefully written to match what the bootloader set
-> > up, or because they don't match at all, in which case we don't have to
-> > worry anyway.
->=20
-> IMHO, if we had to support default period values for non DT boards, the
-> proper way would be to pass something in the PWM platform data and let
-> the PWM driver (or PWM core) initialize the default PWM state.
-> This way the PWM user could rely on the pwm_get_default_period() helper
-> to extract the default period value.
+Generally I lean towards not merging any code that we don't know is
+needed. Merely because Android kernels do something doesn't mean it is
+necessary to do it (or even sane in some cases).
 
-Yes, that's what PWM lookup tables are meant to address. I tried to
-convert existing users a number of times, but never got any replies and
-since it's board code I couldn't merge this through the PWM tree...
+Now I understand that it might be difficult to test this, but that's all
+the more reason not to include the code. If we find that we have bugs
+that this can fix, then we can come up with tests to trigger it and
+validate that the fix actually fixes something.
+
+In other words, I don't think it makes sense to implement mechanisms to
+recover from situations that we have no way of triggering in the first
+place.
 
 Thierry
 
---nb8zVy0QMK3AA1xu
+--PtLnLSExlPr13a2X
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJVrLrrAAoJEN0jrNd/PrOh08gQALrBJoxriwoZWZuTHFuVxlXj
-+qacwxnzF7AAuQ33hTrSUoW5nvNOH2Tk2sdvD3dyG2f0RoxSTh48BN3AcwOT/05Z
-2+YTTQx+hNl3JGwAfaJ5jMWlhu+spJ3YzRUvFxCT3lRxiRctHlu+Gv69tykqmQUS
-onIO1vId37QlOKXdu2GrDwQUDhaGbsOYAj9kA+1SI4svYEnOKIzeUOz+kOxWC4DI
-Q0K2O4ztcJFKkOBxhY92QIjwgyO0E5aN/tRr4g4H/0lOATHXXukAQ2iKKmAvoCvU
-jvrbArFhS7zlGLAM0eshD/JJC+ticio8MGxo+G5OK+aRyEHeRads9ZDKpJdQIQLI
-sHRZwJQeMKXX+eXSr9aozDPFwcYjURToyuAWGH8HwsnwBGiN9ReUKjlQ5ty7Q2R2
-5xzV95vPKpAm2g+Y3kABZEKNGL0E+QEdLrQOs3w/tV7XsZT+YfC3iD5ZI6dpctew
-QwaQctm9QKzYDU7PQPPUSMF9viEmQENVp/oLAyxXcnO7Mhvoh+IsThOM6xd4GPkf
-4ok+DiTUzYt2p8KM/GGy1WSuoCi5PCj2oJ/iHdGjhRlXRrxdDhIE+chBtxdUu64m
-Gr6fMb1mkw/gyQ9d4g1FYO97SHX1SOPhtczpGro1gib6U7Xc0lnRIAVf9urr9mVT
-ciC3JfK9IB1EEWiTRCR6
-=xdx6
+iQIcBAABCAAGBQJVrLy3AAoJEN0jrNd/PrOh31wQAJpwTPNXAqx7R2U81qsD1bbx
+ZliI4G4AzcwyXf4nUStUe4WVzVfkP2LcbPEBhIqGmLxUJc+xsucf8Wa2nOR6qVp1
+rMuwfgyif0IUulADDeMGRH511KGo/vHOYC4vtmYpnBIod9kqPIglYaO1tyNBVZV1
+GSjuOj14Shu/8y5I4wxOYsGi9cOu5BmM4dfzCk1Yj5AXXFN3Zg96WpJD+Sa9hY9f
+aCEfpIS9aFhapQEs4SltkelJgFYk3obLbdphGm2uGiV5sg9gVRjBiCrYLyzKAiQL
+6Nrw2IKKz5cDVBzX/689PJTAGqN6N4oWJQWf6YxvglNd5DFEvuE73qw6Idk5hGhK
+ztI+V2ydVb7OMwLWM9N6UeAPy+30YCm4vUNlSRjBhPUIYQ9+vx3XGaIP7y/6ersP
+mo1jJSgY5NCNkLC0iF3hldrlF1TIr+0Bc2XnttSYH/sJIMLuGf7miaTz/9Q96MQI
+8M+okZIxJxkXF0OetWryR2Q5qq8EKPoJoar2fTi/dooum1KFsM9OOLm6VZ6lc4Bl
+l+jbMRdqJP5in3HDxWL0f0GAxQ4M6hsz0jfmjdD93EEOCYPOhLoaRziwwb2k5MkI
+eU4FLv25TDh1YZ3Z+oQrMM23WBquanLGzFoRiP0rLGt6mepixxVTvCs606M4PecK
+7MVmurI74wgthBR9f+X9
+=l9OW
 -----END PGP SIGNATURE-----
 
---nb8zVy0QMK3AA1xu--
+--PtLnLSExlPr13a2X--
