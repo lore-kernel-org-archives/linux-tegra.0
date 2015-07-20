@@ -1,41 +1,45 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [RFC 9/9] dts: tegra: WIP: hack dts to test new dt flags for
- i2c
-Date: Mon, 20 Jul 2015 16:09:42 -0600
-Message-ID: <55AD71A6.4030105@wwwdotorg.org>
-References: <1437142109-31975-1-git-send-email-wsa@the-dreams.de> <1437142109-31975-10-git-send-email-wsa@the-dreams.de> <3764937.mMMXIHUnrR@avalon> <20150720084557.GA2551@katana> <CAL_JsqKAoydzJ5KOKJTByB9kOQ8KrSX99hVYNkm6FnOZ33xN1w@mail.gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [RFC 0/9] i2c: slave: improve i2c client address spaces and their
+ DT support
+Date: Mon, 20 Jul 2015 16:13:13 -0600
+Message-ID: <55AD7279.5090203@wwwdotorg.org>
+References: <1437142109-31975-1-git-send-email-wsa@the-dreams.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-sh-owner@vger.kernel.org>
-In-Reply-To: <CAL_JsqKAoydzJ5KOKJTByB9kOQ8KrSX99hVYNkm6FnOZ33xN1w@mail.gmail.com>
-Sender: linux-sh-owner@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>, Wolfram Sang <wsa@the-dreams.de>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, SH-Linux <linux-sh@vger.kernel.org>, Magnus Damm <magnus.damm@gmail.com>, Simon Horman <horms@verge.net.au>, Geert Uytterhoeven <geert@linux-m68k.org>, Andrey Danin <danindrey@mail.ru>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1437142109-31975-1-git-send-email-wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/20/2015 10:10 AM, Rob Herring wrote:
-> On Mon, Jul 20, 2015 at 3:45 AM, Wolfram Sang <wsa@the-dreams.de> wrote:
->>
->>>> +
->>>> +           eeprom@42 {
->>>> +                   compatible = "linux,slave-24c02";
->>>> +                   //FIXME: Should be I2C_OWN_SLAVE_ADDRESS | 0x42
->>>> +                   reg = <0xc0000042>;
->>>
->>> The node name doesn't match the reg property anymore. Isn't that considered as
->>> a problem ?
->>
->> Hmm, true. So far, Rob (CCed) was fine with this approach:
->> http://www.spinics.net/lists/linux-tegra/msg22760.html
->>
->> @Rob: If we introduce flag bits in the MSBs of an I2C address, the reg
->> property is different from the node name. Is this a problem?
+On 07/17/2015 08:08 AM, Wolfram Sang wrote:
+> As promised here is my RFC to improve address spaces for I2C. This should give
+> i2c seperate address spaces for standard clients, 10 bit clients, and our own
+> slave clients. So, you can now have a 7 bit slave at 0x50 and a 10 bit slave at
+> 0x050. Or, you can have a slave driver listening at some address and at the
+> same time have a client driver talking to this address. Note that this is only
+> the core support for that separation, I am still not sure if there is hardware
+> being able talking to its own slave address, but we will see.
 >
-> No, I don't it is a problem.
+> This RFC and while I did some quick tests, it is not thoroughly tested. But I
+> wanted to push it out before I leave the computer for the weekend. It still
+> shows what path I chose to solve the problem. So, comments on that and further
+> testing are more than welcome!
+>
+> BTW Andrey, I did not modify your patch and couldn't get the i2c-slave-eeprom driver
+> to work with my Jetson TK1. Does this work for you?
 
-The rule so far has been that the unit address (the value in the node 
-name) must match the first value in the reg property. I don't see why 
-this rule should change. To solve this, just name the node 
-eeprom@c0000042 (or eeprom@40000042 with the correction pointed out 
-earlier in the thread).
+This approach makes sense to me.
+
+I'd expect patch 2/9 "dt-bindings: add header for generic I2C flags in 
+bindings" to document the flags (or at least mention their existence, 
+and point at the new header file) in the core I2C bindings document.
+
+Please consider the series,
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+(ack rather than review since I didn't review patch 1, and mostly 
+concentrated on reviewing the concepts of how slaves were represented 
+rather than the coding details).
