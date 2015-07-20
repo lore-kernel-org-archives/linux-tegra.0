@@ -1,43 +1,50 @@
-From: Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 3/4] of: Add NVIDIA Tegra VIC binding
-Date: Mon, 20 Jul 2015 18:20:26 +0100
-Message-ID: <CACvgo50X_mku2ha8Emi80j9ed+9Kn8SXpLk6ZDFxEKcjUAfCXw@mail.gmail.com>
-References: <1437378869-10451-1-git-send-email-mperttunen@nvidia.com>
-	<1437378869-10451-4-git-send-email-mperttunen@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1437378869-10451-4-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, ML dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>
+Subject: [PATCH v3 0/4] arm: tegra: implement NVEC driver using tegra i2c.
+Date: Mon, 20 Jul 2015 23:35:42 +0300
+Message-ID: <1437424546-30405-1-git-send-email-danindrey@mail.ru>
+Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-tBiZLqfeLfOHmIFyCCdPziST3g8Odh+X@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org
+Cc: Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Mikko,
+This version (v3) is for pushing tegra i2c driver to i2c tree.
+NVEC driver will be reworked later to use i2c core slave framework.
 
-On 20 July 2015 at 08:54, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> This adds device tree binding documentation for the Video Image
-> Compositor (VIC) present on Tegra124 and newer SoC's.
->
-> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  .../devicetree/bindings/gpu/nvidia,tegra20-host1x.txt     | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt
-> index 009f4bf..1328f3f 100644
-> --- a/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt
-> +++ b/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt
-> @@ -240,6 +240,21 @@ of the following host1x client modules:
->      - dpaux
->    - vdd-supply: phandle of a supply that powers the DisplayPort link
->
-> +- vic: Video Image Compositor
-> +  - compatible: For Tegra124, must contain "nvidia,tegra124-vic".  Otherwise,
-> +    must contain '"nvidia,<chip>-vic", "nvidia,tegra124-vic"', where
-> +    <chip> is tegra132.
-Did you make a typo here, or is "tegra124" string really used to
-identify the tegra132 chips ?
+NVEC driver contains code to manage tegra i2c controller in slave mode.
+I2C slave support was implemented in linux kernel. The goal of this
+patch serie is to implement I2C slave mode in tegra drived and rework
+NVEC driver to use it.
 
-Thanks
-Emil
+Patches are based on i2c for-next.
+
+Changes for v3:
+- rebase on top of i2c for-next tree
+- fix 10-bit address condition in tegra i2c driver
+
+Changes for v2:
+- rebased on top of new i2c slave framework.
+- old code is removed in separate patch
+- documentation patch is integrated to main nvec patch
+
+
+Thanks in advance
+
+*** BLURB HERE ***
+
+Andrey Danin (4):
+  i2c: tegra: implement slave mode
+  staging/nvec: reimplement on top of tegra i2c driver
+  staging/nvec: remove old code
+  dt: paz00: define nvec as child of i2c bus
+
+ .../devicetree/bindings/nvec/nvidia,nvec.txt       |  21 +-
+ arch/arm/boot/dts/tegra20-paz00.dts                |  22 +-
+ drivers/i2c/busses/Kconfig                         |   1 +
+ drivers/i2c/busses/i2c-tegra.c                     | 119 ++++++
+ drivers/staging/nvec/nvec.c                        | 411 +++++++--------------
+ drivers/staging/nvec/nvec.h                        |  10 -
+ 6 files changed, 269 insertions(+), 315 deletions(-)
+
+-- 
+1.9.1
