@@ -1,124 +1,117 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [RFC PATCH 05/15] pwm: introduce default period and polarity
- concepts
-Date: Mon, 20 Jul 2015 10:32:46 +0200
-Message-ID: <20150720103246.316c159d@bbrezillon>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC PATCH 08/15] backlight: pwm_bl: remove useless call to
+ pwm_set_period
+Date: Mon, 20 Jul 2015 10:36:50 +0200
+Message-ID: <20150720083648.GK29614@ulmo>
 References: <1435738921-25027-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1435738921-25027-6-git-send-email-boris.brezillon@free-electrons.com>
-	<20150702064445.GC11824@pengutronix.de>
-	<20150702094955.4b1c9254@bbrezillon>
-	<20150720080313.GF29614@ulmo>
-	<20150720101443.180ebddb@bbrezillon>
-	<20150720082241.GJ29614@ulmo>
+ <1435738921-25027-9-git-send-email-boris.brezillon@free-electrons.com>
+ <20150720081559.GI29614@ulmo>
+ <20150720102143.05949ca2@bbrezillon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <20150720082241.GJ29614@ulmo>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@pengutronix.de>, linux-pwm@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-fbdev@vger.kernel.org, Lee Jones <lee.jones@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Tomi Valkeinen <tomi.valkeinen@ti.com>, Bryan Wu <cooloney@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Doug Anderson <dianders@google.com>, Mark Brown <broonie@kernel.org>, Richard Purdie <rpurdie@rpsys.net>, linux-arm-kernel@lists.infradead.org, Jingoo Han <jingoohan1@gmail.com>, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Tv3+oRj6D9L8lW+H"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20150720102143.05949ca2@bbrezillon>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Doug Anderson <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 20 Jul 2015 10:22:42 +0200
-Thierry Reding <thierry.reding@gmail.com> wrote:
 
-> On Mon, Jul 20, 2015 at 10:14:43AM +0200, Boris Brezillon wrote:
-> > Hi Thierry,
-> >=20
-> > On Mon, 20 Jul 2015 10:03:14 +0200
-> > Thierry Reding <thierry.reding@gmail.com> wrote:
-> >=20
-> > > On Thu, Jul 02, 2015 at 09:49:55AM +0200, Boris Brezillon wrote:
-> > > > On Thu, 2 Jul 2015 08:44:45 +0200
-> > > > Uwe Kleine-K=C3=B6nig <u.kleine-koenig@pengutronix.de> wrote:
-> > > >=20
-> > > > > On Wed, Jul 01, 2015 at 10:21:51AM +0200, Boris Brezillon wro=
-te:
-> > > > > > When requested by a user, the PWM is assigned a default per=
-iod and polarity
-> > > > > > extracted from the DT, the platform data or statically set =
-by the driver.
-> > > > > > Those default values are currently stored in the period and=
- polarity
-> > > > > > fields of the pwm_device struct, but they will be stored so=
-mewhere else
-> > > > > > once we have introduced the architecture allowing for hardw=
-are state
-> > > > > > retrieval.
-> > > > > >=20
-> > > > > > The pwm_set_default_polarity and pwm_set_default_period sho=
-uld only be
-> > > > > > used by PWM drivers or the PWM core infrastructure to speci=
-fy the
-> > > > > > default period and polarity values.
-> > > > > Would it make sense to put the prototypes of
-> > > > > pwm_set_default_p{olarity,eriod} into (say) drivers/pwm/pwm-p=
-rivate.h
-> > > > > then?
-> > > > >=20
-> > > >=20
-> > > > Yes, definitely. I was thinking about moving those functions/pr=
-ototypes
-> > > > into include/linux/pwm-provider.h, but I'm fine with
-> > > > drivers/pwm/pwm-private.h too.
-> > > >=20
-> > > > Thierry, any opinion ?
-> > >=20
-> > > I'm not sure I see the need for this. If they are the default val=
-ues and
-> > > drivers have no need to change them, then storing them in the reg=
-ular
-> > > period and polarity fields seems just fine (they'll be propagated=
- into
-> > > new state objects as they get created).
-> > >=20
-> > > And if the driver has a need to change them, then why would it ev=
-er care
-> > > about the default values?
-> >=20
-> > Because the period is often directly extracted from the DT, and thi=
-s
-> > extracted period may not match the one configured by the bootloader=
-=2E
-> >=20
-> > If the driver wants to display the current status without changing =
-the
-> > PWM state, then the driver will use the current state. ITOH, if it
-> > has to apply a new config, the driver will use the default period
-> > value (extracted from the DT) and change the duty-cycle depending o=
-n its
-> > needs.
-> > This is the case we have with the pwm-regulator driver: we want to
-> > display the initial voltage value without changing the PWM config, =
-and
-> > when someone decides to change the voltage, we want to use the defa=
-ult
-> > period instead of keeping the one configured by the bootloader.
+--Tv3+oRj6D9L8lW+H
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jul 20, 2015 at 10:21:43AM +0200, Boris Brezillon wrote:
+> On Mon, 20 Jul 2015 10:16:00 +0200
+> Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 >=20
-> Wouldn't it make more sense to postpone this until the introduction o=
-f
-> the default state, then? That way we'd be getting a more consistent w=
-ay
-> of dealing with default vs. initial by looking only at state objects.
-
-Hm, I was trying to keep the series bisectable. If we do that
-after introducing the default state concept, then some drivers will
-retrieve invalid values until the patches introducing the default
-helpers and changing the different drivers to call the default helpers
-where appropriate are introduced.
-
+> > On Wed, Jul 01, 2015 at 10:21:54AM +0200, Boris Brezillon wrote:
+> > > The PWM period will be set when calling pwm_config. Remove this usele=
+ss
+> > > call to pwm_set_period, which might mess up with the initial PWM state
+> > > once we have added proper support for PWM init state retrieval.
+> > >=20
+> > > Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+> > > ---
+> > >  drivers/video/backlight/pwm_bl.c | 4 +---
+> > >  1 file changed, 1 insertion(+), 3 deletions(-)
+> > >=20
+> > > diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlig=
+ht/pwm_bl.c
+> > > index ae498c1..fe5597c 100644
+> > > --- a/drivers/video/backlight/pwm_bl.c
+> > > +++ b/drivers/video/backlight/pwm_bl.c
+> > > @@ -295,10 +295,8 @@ static int pwm_backlight_probe(struct platform_d=
+evice *pdev)
+> > >  	 * via the PWM lookup table.
+> > >  	 */
+> > >  	pb->period =3D pwm_get_default_period(pb->pwm);
+> > > -	if (!pb->period && (data->pwm_period_ns > 0)) {
+> > > +	if (!pb->period && (data->pwm_period_ns > 0))
+> > >  		pb->period =3D data->pwm_period_ns;
+> > > -		pwm_set_period(pb->pwm, data->pwm_period_ns);
+> > > -	}
+> > > =20
+> > >  	pb->lth_brightness =3D data->lth_brightness * (pb->period / pb->sca=
+le);
+> >=20
+> > As far as I remember this line is there in order to pass in a period if
+> > the backlight driver is initialized from board setup files. In such a
+> > case there won't be an period associated with the PWM channel in the
+> > first place.
+> >=20
+> > I think even with the introduction of a default period, we'd be missing
+> > out on the board setup case because there is no standard place where it
+> > is being set, so it must come from the platform data.
 >=20
-> Ideally initial state should be the same as the default state. Except
-> maybe for the duty-cycle, which won't be encoded in the default state
-> anyway.
+> AFAICT, we don't need to explicitly set the period when probing the
+> backlight device, because it will be set next time we call
+> pwm_config(), and since we're passing pb->period when calling
+> pwm_config() everything should be fine.
 
-Yes, but we don't live in an ideal world ;-), and the value set in an
-old bootloaders might be considered wrong at some point, and new dts
-versions might decide to change a bit the period value.
+Calling pwm_set_period() is still good for consistency. Consider for
+example what happens if after the driver were to call pwm_get_period().
+It would return some more or less random value (likely 0 or whatever it
+had been set to by an earlier user).
 
+Technically I think the most proper equivalent here would be to set the
+default state's period to data->pwm_period_ns, but I don't think that's
+proper to do. Perhaps since this is only relevant to boards where the
+backlight device is created from board setup code we don't have to care
+so much about messing up the initial state because either the board
+setup code has been carefully written to match what the bootloader set
+up, or because they don't match at all, in which case we don't have to
+worry anyway.
 
---=20
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Of course the right thing to do would be to replace all initialization
+of the data->pwm_period_ns by proper PWM lookup tables, but that's
+proven difficult in the past since very few people still have access to
+hardware where that code gets executed.
+
+Thierry
+
+--Tv3+oRj6D9L8lW+H
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJVrLMeAAoJEN0jrNd/PrOh8zEQAIfPfWv1yN2B5jgdI5C06iWq
+85TtAFzdLYG22PTy98n5Zx7d7J+l0vE5BLj6BScx1e/91p0FCP/6kh5EOkvcCgh/
+MmxKmMmsZMjnJF3DWdXm0mjsK68dJm/pUsmOioCs4lMmPJyQU1rUruFvy5FI+Uuj
+l2hP0xfomGXQiq+b6BYcZOrFUHC4U5U2tjCMYkrjsj3B+QxvtizVshNvPX5RGy+G
+96ly+Mh/RM2KWD3keKLJaQWhz/wAd2cAjQFLBIj9x6Rh4s3ph1+5j8CBUVgAFfIc
+rGD8rTKoFQ3L5AntwrpekAq24Y1ZiDLFmKRBPudAeSEZ2xl7y3v6l9hLJaBYJloj
+tk0BEz58tXnUaSpslXV5CInKHKNr0U3jZRlTLbtcOhCoSksfw6ksTOM6Acl2Dq7T
+Buq4RbeINyVgxgdwt2vQE+cLQvmlsJoEGBbUR1ZKkfqqAORIVJKOt63Gk912Tan/
+aX8GbACOIciTc/0TYc1E8zkDjPYJIcmdo2aWX7/vKT0MQ9n9Bsj5/g6Du3uKhUjv
+wyNLG+f2M1r0zI7SVU+QPTqhGdRgkKeonM3RYlyY06bsGlz8DTCT52pBuW2uDYbO
+N3YPdioanSsWALjbors+afukvJccKeEb0RvZFQPOYS0qHBanNMZaA35SnQoK/z0C
+7j/A1WMzImphnnUt+JRq
+=97Q5
+-----END PGP SIGNATURE-----
+
+--Tv3+oRj6D9L8lW+H--
