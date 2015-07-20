@@ -1,192 +1,94 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [RFC PATCH 11/15] pwm: add the core infrastructure to allow
- atomic update
-Date: Mon, 20 Jul 2015 11:48:27 +0200
-Message-ID: <20150720114827.2e5d52a5@bbrezillon>
-References: <1435738921-25027-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1435738921-25027-12-git-send-email-boris.brezillon@free-electrons.com>
-	<20150720085939.GL29614@ulmo>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH v2 1/4] i2c: tegra: implement slave mode
+Date: Mon, 20 Jul 2015 11:50:49 +0200
+Message-ID: <20150720095049.GD2551@katana>
+References: <1427745615-5428-1-git-send-email-danindrey@mail.ru>
+ <1427745615-5428-2-git-send-email-danindrey@mail.ru>
+ <20150403194626.GB2016@katana>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-In-Reply-To: <20150720085939.GL29614@ulmo>
-Sender: linux-leds-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-pwm@vger.kernel.org, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@google.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="11Y7aswkeuHtSBEs"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20150403194626.GB2016@katana>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 20 Jul 2015 10:59:40 +0200
-Thierry Reding <thierry.reding@gmail.com> wrote:
 
-> On Wed, Jul 01, 2015 at 10:21:57AM +0200, Boris Brezillon wrote:
-> > Add an ->apply() method to the pwm_ops struct to allow PWM drivers to
-> > implement atomic update.
-> > This method will be prefered over the ->enable(), ->disable() and
-> > ->config() methods if available.
-> > 
-> > Add the pwm_get_state(), pwm_get_default_state() and pwm_apply_state()
-> > functions for PWM users to be able to use the atomic update feature.
-> > 
-> > Note that the pwm_apply_state() does not guarantee the atomicity of the
-> > update operation, it all depends on the availability and implementation
-> > of the ->apply() method.
-> > 
-> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> > ---
-> >  drivers/pwm/core.c  | 110 ++++++++++++++++++++++++++++++++++++++++++++++------
-> >  include/linux/pwm.h |  26 +++++++++++++
-> >  2 files changed, 124 insertions(+), 12 deletions(-)
-> > 
-> > diff --git a/drivers/pwm/core.c b/drivers/pwm/core.c
-> > index 30631f5..6dafd8e 100644
-> > --- a/drivers/pwm/core.c
-> > +++ b/drivers/pwm/core.c
-> > @@ -238,8 +238,9 @@ int pwmchip_add_with_polarity(struct pwm_chip *chip,
-> >  	unsigned int i;
-> >  	int ret;
-> >  
-> > -	if (!chip || !chip->dev || !chip->ops || !chip->ops->config ||
-> > -	    !chip->ops->enable || !chip->ops->disable || !chip->npwm)
-> > +	if (!chip || !chip->dev || !chip->ops || (!chip->ops->apply &&
-> > +	    (!chip->ops->config || !chip->ops->enable ||
-> > +	     !chip->ops->disable)) || !chip->npwm)
-> >  		return -EINVAL;
-> 
-> This is becoming really unreadable, perhaps split it into two checks, or
-> even split out the sanity check on the ops into a separate function to
-> make the negations easier to read:
-> 
-> 	static bool pwm_ops_check(const struct pwm_ops *ops)
-> 	{
-> 		/* driver supports legacy, non-atomic operation */
-> 		if (ops->config && ops->enable && ops->disable)
-> 			return true;
-> 
-> 		/* driver supports atomic operation */
-> 		if (ops->apply)
-> 			return true;
-> 
-> 		return false;
-> 	}
-> 
-> and then use this:
-> 
-> 	if (!chip || !chip->dev || !chip->ops || !chip->npwm)
-> 		return -EINVAL;
-> 
-> 	if (!pwm_ops_check(chip->ops))
-> 		return -EINVAL;
-> 
+--11Y7aswkeuHtSBEs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sure, I'll change that to make it more readable.
-
-> >  	mutex_lock(&pwm_lock);
-> > @@ -430,7 +431,17 @@ int pwm_config(struct pwm_device *pwm, int duty_ns, int period_ns)
-> >  	if (!pwm || duty_ns < 0 || period_ns <= 0 || duty_ns > period_ns)
-> >  		return -EINVAL;
-> >  
-> > -	err = pwm->chip->ops->config(pwm->chip, pwm, duty_ns, period_ns);
-> > +	if (pwm->chip->ops->apply) {
-> > +		struct pwm_state state = pwm->state;
-> 
-> Shouldn't this use pwm_get_state()?
-
-Yes, I'll fix all of them
-
-[...]
-
-> 
-> > +
-> > +		state.enabled = true;
-> > +		err = pwm->chip->ops->apply(pwm->chip, pwm, &state);
-> 
-> There should be a space between the above two lines.
-
-I'll add an empty line.
-
-
-> 
-> >  
-> > +int pwm_apply_state(struct pwm_device *pwm, const struct pwm_state *state)
+On Fri, Apr 03, 2015 at 09:46:26PM +0200, Wolfram Sang wrote:
+> > +static void tegra_i2c_slave_write(struct tegra_i2c_dev *i2c_dev, u32 v=
+al)
 > > +{
-> > +	int err = 0;
+> > +	i2c_writel(i2c_dev, val, I2C_SL_RCVD);
 > > +
-> > +	if (!pwm)
+> > +	/*
+> > +	 * TODO: A correct fix needs to be found for this.
+> > +	 *
+> > +	 * We experience less incomplete messages with this delay than without
+> > +	 * it, but we don't know why. Help is appreciated.
+> > +	 */
+>=20
+> Uh oh. So I assume this is another reason for staging?
+
+I think we can live with this upstream, no need for staging.
+
+> > +	if (!i2c_dev->slave || !i2c_dev->slave->slave_cb)
 > > +		return -EINVAL;
-> > +
-> > +	if (!memcmp(state, &pwm->state, sizeof(*state)))
-> > +		return 0;
-> > +
-> > +	if (pwm->chip->ops->apply) {
-> > +		err = pwm->chip->ops->apply(pwm->chip, pwm, state);
-> > +		if (!err)
-> > +			pwm->state = *state;
-> 
-> Maybe we want pwm_set_state() for this?
+>=20
+> The core checks for slave_cb being valid.
+>=20
+> > +		i2c_slave_event(i2c_dev->slave, I2C_SLAVE_STOP, &dummy);
+>=20
+> You could use value here, too, or?
+>=20
+> > +	if (!tegra_i2c_slave_isr(irq, i2c_dev))
+> > +		return IRQ_HANDLED;
+>=20
+> Minor nit: I'd prefer =3D=3D 0 here, since it reads "if not slave_isr ret=
+urn
+> handled".
+>=20
+> > +	if (slave->addr > 0x7F)
+> > +		addr2 =3D (slave->addr >> 7) | I2C_SL_ADDR2_TEN_BIT_MODE;
+>=20
+> Nope. There are 10 bit encodings of addresses 0x000-0x07f, too. So, you
+> need to check for the flag (slave->flags & I2C_CLIENT_TEN).
 
-I'm not opposed to the addition of the pwm_set_state() function as long
-as it's a private one: I don't want to let PMW drivers or users mess up
-with the current PWM state.
+If you'd fix up these and resend, I'll happily include this patch for 4.3
+already.
 
-> 
-> > +	} else {
-> > +		/*
-> > +		 * FIXME: restore the initial state in case of error.
-> > +		 */
-> > +		if (state->polarity != pwm->state.polarity) {
-> > +			pwm_disable(pwm);
-> > +			err = pwm_set_polarity(pwm, state->polarity);
-> > +			if (err)
-> > +				goto out;
-> > +		}
-> > +
-> > +		if (state->period != pwm->state.period ||
-> > +		    state->duty_cycle != pwm->state.duty_cycle) {
-> > +			err = pwm_config(pwm, state->period, state->duty_cycle);
-> > +			if (err)
-> > +				goto out;
-> > +		}
-> > +
-> > +		if (state->enabled != pwm->state.enabled) {
-> > +			if (state->enabled)
-> > +				err = pwm_enable(pwm);
-> > +			else
-> > +				pwm_disable(pwm);
-> > +		}
-> > +	}
-> > +
-> > +out:
-> > +	return err;
-> > +}
-> > +EXPORT_SYMBOL_GPL(pwm_apply_state);
-> > +
-> >  static struct pwm_chip *of_node_to_pwmchip(struct device_node *np)
-> >  {
-> >  	struct pwm_chip *chip;
-> > diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-> > index b47244a..7e99679 100644
-> > --- a/include/linux/pwm.h
-> > +++ b/include/linux/pwm.h
-> > @@ -151,6 +151,29 @@ static inline enum pwm_polarity pwm_get_polarity(const struct pwm_device *pwm)
-> >  	return pwm ? pwm->state.polarity : PWM_POLARITY_NORMAL;
-> >  }
-> >  
-> > +/*
-> > + * pwm_apply_state - apply a new state to the PWM device
-> > + */
-> > +int pwm_apply_state(struct pwm_device *pwm, const struct pwm_state *state);
-> 
-> If you add kerneldoc, please add it properly. It should start with /**
-> and you need to list at least the parameters and return value.
+Thanks,
 
-Yes, I'll fix that.
-BTW, I remember that you were expecting another name for this function
-(pwm_update IIRC).
+   Wolfram
 
 
+--11Y7aswkeuHtSBEs
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJVrMR5AAoJEBQN5MwUoCm29gYP/jk9qWhTjLu3Vyfixpw19nJp
+Wu3I2+mYowNVxjD27rIihYYAc2NBhxaD/0tXld/vGdDTba0fnfxw+y2APLigsqhh
+arH/05ae2VVQMVHgOWuA5Ux4Jt/LHbJ2VTY2NXM92iDZgP7pqRBc/qA43YxBYgdA
++2PWyf/TAotud+xMZyn3SQjA+Q8LIpLHOYo/txigeQ+irT6AplL9OfWKq3smI3W7
+5wyUR9zoYJJu+6OCERU7PXU0IWE4Mw8EXs6STobkd4XIzeBB9stGqyNruGeoK42F
+3encICz8cdW7sO9DXEJOJUcag0tyQ0sQE5klwd8QwBjdN4ZJry9v1LVpyYWBdLQ+
+vIL0xVPv/lpmoVIONN7pp7EIZbzN6glHDRg6H+MfstWTRfyUIGoNGFicoryCPDsK
+SvzDlV+4qP65+zhlWbI1u816dhvtKsz9C4T3rFOtva3dZK4Dm3DxJaHzulo5HBzG
+hXMUZrqNtFu9KPq3oJHIRk4Sm8Fioq0gWAdlvT3XSc4a9G3NEfzhmXiEP0H8ldkm
+GxWHviF1mPFqjbu5akmV2su531TXvpw3A2nXyC4c7lchyIRCP0T5+9RFOV9gPXVI
+u39lFNk9hcfqEwdBQX3WKa6uHVZMZOql9Iweb3VE86fNHaJbfapBnHfr+Na4X5QO
+LT/RMWeGywvHgNh04b6g
+=2IuQ
+-----END PGP SIGNATURE-----
+
+--11Y7aswkeuHtSBEs--
