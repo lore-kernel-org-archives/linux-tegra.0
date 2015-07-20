@@ -1,82 +1,117 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [RFC PATCH 06/15] pwm: define a new pwm_state struct
-Date: Mon, 20 Jul 2015 12:12:52 +0200
-Message-ID: <20150720121252.559d286a@bbrezillon>
-References: <1435738921-25027-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1435738921-25027-7-git-send-email-boris.brezillon@free-electrons.com>
-	<20150720080458.GG29614@ulmo>
-	<20150720120116.2358b829@bbrezillon>
-	<20150720100925.GX29614@ulmo>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 2/4] drm/tegra: Add VIC support
+Date: Mon, 20 Jul 2015 12:17:15 +0200
+Message-ID: <20150720101714.GY29614@ulmo>
+References: <1437378869-10451-1-git-send-email-mperttunen@nvidia.com>
+ <1437378869-10451-3-git-send-email-mperttunen@nvidia.com>
+ <55ACB134.8010401@nvidia.com>
+ <55ACB6A2.9030906@nvidia.com>
+ <55ACC5B0.20703@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-leds-owner@vger.kernel.org>
-In-Reply-To: <20150720100925.GX29614@ulmo>
-Sender: linux-leds-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-pwm@vger.kernel.org, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@google.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="apSYfA7d5AHMku3c"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <55ACC5B0.20703-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 20 Jul 2015 12:09:26 +0200
-Thierry Reding <thierry.reding@gmail.com> wrote:
 
-> On Mon, Jul 20, 2015 at 12:01:16PM +0200, Boris Brezillon wrote:
-> > On Mon, 20 Jul 2015 10:04:59 +0200
-> > Thierry Reding <thierry.reding@gmail.com> wrote:
-> > 
-> > > On Wed, Jul 01, 2015 at 10:21:52AM +0200, Boris Brezillon wrote:
-> > > [...]
-> > > > diff --git a/include/linux/pwm.h b/include/linux/pwm.h
-> > > [...]
-> > > > +struct pwm_state {
-> > > > +	unsigned int		period; 	/* in nanoseconds */
-> > > > +	unsigned int		duty_cycle;	/* in nanoseconds */
-> > > > +	enum pwm_polarity	polarity;
-> > > > +};
-> > > 
-> > > No need for the extra padding here.
-> > 
-> > What do you mean by "extra padding" ?
-> > I just reused the indentation used in the pwm_device struct.
-> 
-> Yeah, I have a local patch to fix that up. I find it useless to pad
-> things like this, and it has the downside that it will become totally
-> inconsistent (or cause a lot of churn by reformatting) if ever you add a
-> field that extends beyond the padding. Single spaces don't have any such
-> drawbacks and, in my opinion, look just as good.
+--apSYfA7d5AHMku3c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I prefer the single space approach too, so I won't complain ;-).
+On Mon, Jul 20, 2015 at 10:56:00AM +0100, Jon Hunter wrote:
+>=20
+> On 20/07/15 09:51, Mikko Perttunen wrote:
+> > On 07/20/2015 11:28 AM, Jon Hunter wrote:
+> >> Hi Mikko,
+> >=20
+> > Hi!
+> >=20
+> >> ...
+> >>> +static int vic_runtime_resume(struct device *dev)
+> >>> +{
+> >>> +	struct vic *vic =3D dev_get_drvdata(dev);
+> >>> +	int err;
+> >>> +
+> >>> +	err =3D tegra_powergate_sequence_power_up(TEGRA_POWERGATE_VIC,
+> >>> +						vic->clk, vic->rst);
+> >>
+> >> I would like to deprecate use of the above function [1]. I have been
+> >> trying to migrate driver to use a new API instead of the above.
+> >=20
+> > Yes, we will need to coordinate the API change here. I kept the old way
+> > here to not depend on your series for now.
+> >=20
+> >>
+> >>> +	if (err < 0)
+> >>> +		dev_err(dev, "failed to power up device\n");
+> >>> +
+> >>> +	return err;
+> >>> +}
+> >>> +
+> >>> ...
+> >>> +
+> >>> +	pm_runtime_enable(&pdev->dev);
+> >>> +	if (!pm_runtime_enabled(&pdev->dev)) {
+> >>> +		err =3D vic_runtime_resume(&pdev->dev);
+> >>> +		if (err < 0)
+> >>> +			goto unregister_client;
+> >>> +	}
+> >>
+> >> I don't see why pm_runtime_enable() should ever fail to enable
+> >> pm_runtime here. Hence, the if-statement appears to be redundant. If y=
+ou
+> >> are trying to determine whether rpm is supported for the power-domains
+> >> then you should simply check to see if the DT node for the device has
+> >> the "power-domains" property. See my series [1].
+> >=20
+> > The intention is that if runtime PM is not enabled, the power domain is
+> > still brought up. On a cursory look, it seems like with your patch, this
+> > should indeed work fine without this check if CONFIG_PM is enabled. Now,
+> > that might always be enabled? If so, then everything would be fine; if
+> > this lands after your series, we could even just make the power-domains
+> > prop mandatory and not implement the legacy mode at all. If not, then
+> > AFAIU we must still keep this path.
+>=20
+> Ok, I see you just wish to test it is enabled in the kernel config. Then
+> yes that would make sense and the above is fine.
 
-> 
-> > Would you prefer something like that ?
-> > 
-> > struct pwm_state {
-> > 	unsigned int period; 		/* in nanoseconds */
-> > 	unsigned int duty_cycle;	/* in nanoseconds */
-> > 	enum pwm_polarity polarity;
-> > };
-> 
-> Yeah. I'd say even the comments would be more suited in a kerneldoc-
-> style comment:
-> 
-> 	/**
-> 	 * struct pwm_state - state of a PWM channel
-> 	 * @period: PWM period (in nanoseconds)
-> 	 * @duty_cycle: PWM duty cycle (in nanoseconds)
-> 	 * @polarity: PWM polarity
-> 	 */
-> 	struct pwm_state {
-> 		unsigned int period;
-> 		unsigned int duty_cycle;
-> 		enum pwm_polarity polarity;
-> 	};
-> 
-> This is something that users will need to deal with, so eventually
-> somebody might look at this via some DocBook generated HTML or PDF.
+Do we really need to bother about this? If runtime PM isn't enabled we
+don't care very much about power management anyway. So in my opinion if
+a driver supports runtime PM it should support it all the way and not
+pretend to. Having this mix of runtime PM vs. no runtime PM is beside
+the point of using something like runtime PM in the first place.
 
-I agree.
+So if this is about supporting legacy vs. runtime PM, then I think it
+should be based on some more explicit check, like if (!dev->pm_domain),
+but otherwise we should assume that pm_runtime_enable() succeeds.
 
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+Thierry
+
+--apSYfA7d5AHMku3c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJVrMqqAAoJEN0jrNd/PrOhAiYP/jSbLt+3pfRZEgT/5OzoISns
+bJJcrrScHj1tpUhUxMh1tn6RaC1uUu2vClpb/mc+Th4zN5XXrlj6IXA79aMsuktU
+ecA0Y3haXI4tnX2nZrHsB5o8tSK/M3zQf5qMf2t1A8KQu6A64vnRVaUiaiwwQz0T
+NtrC95rt+V+MfzWGWfpHJkGrmA8pfc9b84omn5WuJngYz8dqrk3zS5GCF+JAqk48
+TWUBdaeuLZopNo7uFEwyZSKd+y8xi2HfSBJJL5DjxJ4zwYSU9e6RlunNgkE26cnD
+1sT0OwX+oqWlYMsTGpq+VbLBngUWZJ3RG5lZbUq8aBYv0K7J612arXifSO4u2ir9
+DmtiiMeRsY1TOvXNUnR5G2iCopaimE8yaym6a7/WJ6poj8wOqykcvKrpMeoYloCJ
+W/SZk8+B7It8Wvz5Embdwd1Z0y7yi264khSSv9DI0QzkpSbxrJHrrnTSiLPv6r4w
+tjySMkoXyPHbAiochqeDkzyx7jRUjRtdyCqqLKV2kvBjStpyNgDz5jqrV8IIVO9q
+JkDhEU38TlXrmnp+ubomW+JqkylJ2dbbC4EtLn6CUMHHlGwczpp6hGwUtEGrfA2P
+b/DSbfOd/Rvj1EKQZdi+1LHSRctbK3R3wgplYOOjYFfwU8WOqG/42U+B53WhIRZw
+n8OU3wk16UyGVvoStHvA
+=SDvh
+-----END PGP SIGNATURE-----
+
+--apSYfA7d5AHMku3c--
