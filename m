@@ -1,61 +1,100 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2 2/4] drm/tegra: Add VIC support
-Date: Mon, 20 Jul 2015 10:56:00 +0100
-Message-ID: <55ACC5B0.20703@nvidia.com>
-References: <1437378869-10451-1-git-send-email-mperttunen@nvidia.com>
- <1437378869-10451-3-git-send-email-mperttunen@nvidia.com>
- <55ACB134.8010401@nvidia.com> <55ACB6A2.9030906@nvidia.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [RFC PATCH 08/15] backlight: pwm_bl: remove useless call to
+ pwm_set_period
+Date: Mon, 20 Jul 2015 11:57:04 +0200
+Message-ID: <20150720115704.0c64d070@bbrezillon>
+References: <1435738921-25027-1-git-send-email-boris.brezillon@free-electrons.com>
+	<1435738921-25027-9-git-send-email-boris.brezillon@free-electrons.com>
+	<20150720081559.GI29614@ulmo>
+	<20150720102143.05949ca2@bbrezillon>
+	<20150720083648.GK29614@ulmo>
+	<20150720105003.29b5813a@bbrezillon>
+	<20150720091003.GN29614@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <55ACB6A2.9030906@nvidia.com>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Mikko Perttunen <mperttunen@nvidia.com>, thierry.reding@gmail.com, tbergstrom@nvidia.com
-Cc: gnurou@gmail.com, Andrew Chew <achew@nvidia.com>, swarren@wwwdotorg.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, amerilainen@nvidia.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pwm-owner@vger.kernel.org>
+In-Reply-To: <20150720091003.GN29614@ulmo>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-pwm@vger.kernel.org, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Bryan Wu <cooloney@gmail.com>, Richard Purdie <rpurdie@rpsys.net>, Jacek Anaszewski <j.anaszewski@samsung.com>, linux-leds@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Jean-Christophe Plagniol-Villard <plagnioj@jcrosoft.com>, Tomi Valkeinen <tomi.valkeinen@ti.com>, linux-fbdev@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, Maxime Ripard <maxime.ripard@free-electrons.com>, Jingoo Han <jingoohan1@gmail.com>, Lee Jones <lee.jones@linaro.org>, Doug Anderson <dianders@google.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDIwLzA3LzE1IDA5OjUxLCBNaWtrbyBQZXJ0dHVuZW4gd3JvdGU6Cj4gT24gMDcvMjAvMjAx
-NSAxMToyOCBBTSwgSm9uIEh1bnRlciB3cm90ZToKPj4gSGkgTWlra28sCj4gCj4gSGkhCj4gCj4+
-IC4uLgo+Pj4gK3N0YXRpYyBpbnQgdmljX3J1bnRpbWVfcmVzdW1lKHN0cnVjdCBkZXZpY2UgKmRl
-dikKPj4+ICt7Cj4+PiArCXN0cnVjdCB2aWMgKnZpYyA9IGRldl9nZXRfZHJ2ZGF0YShkZXYpOwo+
-Pj4gKwlpbnQgZXJyOwo+Pj4gKwo+Pj4gKwllcnIgPSB0ZWdyYV9wb3dlcmdhdGVfc2VxdWVuY2Vf
-cG93ZXJfdXAoVEVHUkFfUE9XRVJHQVRFX1ZJQywKPj4+ICsJCQkJCQl2aWMtPmNsaywgdmljLT5y
-c3QpOwo+Pgo+PiBJIHdvdWxkIGxpa2UgdG8gZGVwcmVjYXRlIHVzZSBvZiB0aGUgYWJvdmUgZnVu
-Y3Rpb24gWzFdLiBJIGhhdmUgYmVlbgo+PiB0cnlpbmcgdG8gbWlncmF0ZSBkcml2ZXIgdG8gdXNl
-IGEgbmV3IEFQSSBpbnN0ZWFkIG9mIHRoZSBhYm92ZS4KPiAKPiBZZXMsIHdlIHdpbGwgbmVlZCB0
-byBjb29yZGluYXRlIHRoZSBBUEkgY2hhbmdlIGhlcmUuIEkga2VwdCB0aGUgb2xkIHdheQo+IGhl
-cmUgdG8gbm90IGRlcGVuZCBvbiB5b3VyIHNlcmllcyBmb3Igbm93Lgo+IAo+Pgo+Pj4gKwlpZiAo
-ZXJyIDwgMCkKPj4+ICsJCWRldl9lcnIoZGV2LCAiZmFpbGVkIHRvIHBvd2VyIHVwIGRldmljZVxu
-Iik7Cj4+PiArCj4+PiArCXJldHVybiBlcnI7Cj4+PiArfQo+Pj4gKwo+Pj4gLi4uCj4+PiArCj4+
-PiArCXBtX3J1bnRpbWVfZW5hYmxlKCZwZGV2LT5kZXYpOwo+Pj4gKwlpZiAoIXBtX3J1bnRpbWVf
-ZW5hYmxlZCgmcGRldi0+ZGV2KSkgewo+Pj4gKwkJZXJyID0gdmljX3J1bnRpbWVfcmVzdW1lKCZw
-ZGV2LT5kZXYpOwo+Pj4gKwkJaWYgKGVyciA8IDApCj4+PiArCQkJZ290byB1bnJlZ2lzdGVyX2Ns
-aWVudDsKPj4+ICsJfQo+Pgo+PiBJIGRvbid0IHNlZSB3aHkgcG1fcnVudGltZV9lbmFibGUoKSBz
-aG91bGQgZXZlciBmYWlsIHRvIGVuYWJsZQo+PiBwbV9ydW50aW1lIGhlcmUuIEhlbmNlLCB0aGUg
-aWYtc3RhdGVtZW50IGFwcGVhcnMgdG8gYmUgcmVkdW5kYW50LiBJZiB5b3UKPj4gYXJlIHRyeWlu
-ZyB0byBkZXRlcm1pbmUgd2hldGhlciBycG0gaXMgc3VwcG9ydGVkIGZvciB0aGUgcG93ZXItZG9t
-YWlucwo+PiB0aGVuIHlvdSBzaG91bGQgc2ltcGx5IGNoZWNrIHRvIHNlZSBpZiB0aGUgRFQgbm9k
-ZSBmb3IgdGhlIGRldmljZSBoYXMKPj4gdGhlICJwb3dlci1kb21haW5zIiBwcm9wZXJ0eS4gU2Vl
-IG15IHNlcmllcyBbMV0uCj4gCj4gVGhlIGludGVudGlvbiBpcyB0aGF0IGlmIHJ1bnRpbWUgUE0g
-aXMgbm90IGVuYWJsZWQsIHRoZSBwb3dlciBkb21haW4gaXMKPiBzdGlsbCBicm91Z2h0IHVwLiBP
-biBhIGN1cnNvcnkgbG9vaywgaXQgc2VlbXMgbGlrZSB3aXRoIHlvdXIgcGF0Y2gsIHRoaXMKPiBz
-aG91bGQgaW5kZWVkIHdvcmsgZmluZSB3aXRob3V0IHRoaXMgY2hlY2sgaWYgQ09ORklHX1BNIGlz
-IGVuYWJsZWQuIE5vdywKPiB0aGF0IG1pZ2h0IGFsd2F5cyBiZSBlbmFibGVkPyBJZiBzbywgdGhl
-biBldmVyeXRoaW5nIHdvdWxkIGJlIGZpbmU7IGlmCj4gdGhpcyBsYW5kcyBhZnRlciB5b3VyIHNl
-cmllcywgd2UgY291bGQgZXZlbiBqdXN0IG1ha2UgdGhlIHBvd2VyLWRvbWFpbnMKPiBwcm9wIG1h
-bmRhdG9yeSBhbmQgbm90IGltcGxlbWVudCB0aGUgbGVnYWN5IG1vZGUgYXQgYWxsLiBJZiBub3Qs
-IHRoZW4KPiBBRkFJVSB3ZSBtdXN0IHN0aWxsIGtlZXAgdGhpcyBwYXRoLgoKT2ssIEkgc2VlIHlv
-dSBqdXN0IHdpc2ggdG8gdGVzdCBpdCBpcyBlbmFibGVkIGluIHRoZSBrZXJuZWwgY29uZmlnLiBU
-aGVuCnllcyB0aGF0IHdvdWxkIG1ha2Ugc2Vuc2UgYW5kIHRoZSBhYm92ZSBpcyBmaW5lLgoKQ2hl
-ZXJzCkpvbgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpk
-cmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0
-cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On Mon, 20 Jul 2015 11:10:04 +0200
+Thierry Reding <thierry.reding@gmail.com> wrote:
+
+> On Mon, Jul 20, 2015 at 10:50:03AM +0200, Boris Brezillon wrote:
+> > On Mon, 20 Jul 2015 10:36:50 +0200
+> > Thierry Reding <thierry.reding@gmail.com> wrote:
+> > 
+> > > On Mon, Jul 20, 2015 at 10:21:43AM +0200, Boris Brezillon wrote:
+> > > > On Mon, 20 Jul 2015 10:16:00 +0200
+> > > > Thierry Reding <thierry.reding@gmail.com> wrote:
+> > > > 
+> > > > > On Wed, Jul 01, 2015 at 10:21:54AM +0200, Boris Brezillon wrote:
+> > > > > > The PWM period will be set when calling pwm_config. Remove this useless
+> > > > > > call to pwm_set_period, which might mess up with the initial PWM state
+> > > > > > once we have added proper support for PWM init state retrieval.
+> > > > > > 
+> > > > > > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> > > > > > ---
+> > > > > >  drivers/video/backlight/pwm_bl.c | 4 +---
+> > > > > >  1 file changed, 1 insertion(+), 3 deletions(-)
+> > > > > > 
+> > > > > > diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
+> > > > > > index ae498c1..fe5597c 100644
+> > > > > > --- a/drivers/video/backlight/pwm_bl.c
+> > > > > > +++ b/drivers/video/backlight/pwm_bl.c
+> > > > > > @@ -295,10 +295,8 @@ static int pwm_backlight_probe(struct platform_device *pdev)
+> > > > > >  	 * via the PWM lookup table.
+> > > > > >  	 */
+> > > > > >  	pb->period = pwm_get_default_period(pb->pwm);
+> > > > > > -	if (!pb->period && (data->pwm_period_ns > 0)) {
+> > > > > > +	if (!pb->period && (data->pwm_period_ns > 0))
+> > > > > >  		pb->period = data->pwm_period_ns;
+> > > > > > -		pwm_set_period(pb->pwm, data->pwm_period_ns);
+> > > > > > -	}
+> > > > > >  
+> > > > > >  	pb->lth_brightness = data->lth_brightness * (pb->period / pb->scale);
+> > > > > 
+> > > > > As far as I remember this line is there in order to pass in a period if
+> > > > > the backlight driver is initialized from board setup files. In such a
+> > > > > case there won't be an period associated with the PWM channel in the
+> > > > > first place.
+> > > > > 
+> > > > > I think even with the introduction of a default period, we'd be missing
+> > > > > out on the board setup case because there is no standard place where it
+> > > > > is being set, so it must come from the platform data.
+> > > > 
+> > > > AFAICT, we don't need to explicitly set the period when probing the
+> > > > backlight device, because it will be set next time we call
+> > > > pwm_config(), and since we're passing pb->period when calling
+> > > > pwm_config() everything should be fine.
+> > > 
+> > > Calling pwm_set_period() is still good for consistency. Consider for
+> > > example what happens if after the driver were to call pwm_get_period().
+> > > It would return some more or less random value (likely 0 or whatever it
+> > > had been set to by an earlier user).
+> > 
+> > Yes, that's true in general, but in this specific driver
+> > pwm_get_period() is never called, and the driver only relies on the
+> > pb->period value.
+> 
+> Perhaps that's something that should change. If the PWM core has all
+> this infrastructure there should be no need for the backlight driver to
+> keep it's own copy of that variable.
+
+Yes, probably. In any case, I don't think we want PWM users to be able
+to mess up with the current or default PWM state, that's why I was
+planning on making the pwm_set_default_xxx helpers private to PWM
+drivers and core infrastructure.
+
+Also note that if we keep this assignment it should at least be changed
+to a pwm_set_default_period() so that it does not override the current
+PWM state.
+
+
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
