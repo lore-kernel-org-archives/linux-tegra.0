@@ -1,38 +1,71 @@
-From: Steev Klimaszewski <steev-aBrp7R+bbdUdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: Fix nyan-big panel binding
-Date: Sun, 19 Jul 2015 22:26:52 -0500
-Message-ID: <1437362812.8225.13.camel@gentoo.org>
-References: <1437336913-12886-1-git-send-email-steev@gentoo.org>
-	 <CAEUnVG6g-0iYexKPXjO167-O6Oay71QXnoVz1Hvs=U8tSOp5uw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] drm/tegra: dpaux: Fix transfers larger than 4 bytes
+Date: Mon, 20 Jul 2015 08:49:38 +0200
+Message-ID: <1437374978-1330-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAEUnVG6g-0iYexKPXjO167-O6Oay71QXnoVz1Hvs=U8tSOp5uw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Steev Klimaszewski <threeway-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Steev Klimaszewski <threeway-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sun, 2015-07-19 at 16:43 -0600, Dylan Reid wrote:
-> On Sun, Jul 19, 2015 at 2:15 PM, Steev Klimaszewski <
-> threeway-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> > The nyan-big Chromebook uses a 1920x1080 panel, not a 1366x768 
-> > panel so correct
-> > the binding.
-> 
-> This isn't incorrect, although it is not complete.  Nyan-big (Acer
-> CB5-311) has _both_ a 1920x1080 and 1366x768 variant available.  They
-> are referred to as the "Full HD" and "HD" models respectively.
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
+The DPAUX read/write FIFO registers aren't sequential in the register
+space, causing transfers larger than 4 bytes to cause accesses to non-
+existing FIFO registers.
 
-Actually, as it turns out, that was a wrong turn. 
+Fixes: 6b6b604215c6 ("drm/tegra: Add eDP support")
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpu/drm/tegra/dpaux.c | 18 ++++++++----------
+ 1 file changed, 8 insertions(+), 10 deletions(-)
 
-The real issue is that 1d002fa720738bcd0bddb9178e9ea0773288e1dd
-(drm/dp: Use large transactions for I2C over AUX) breaks reading of
-EDID data on the nyan_big "Full HD" - I'm not sure if it does on
-others, but by setting DP_AUX_MAX_PAYLOAD_BYTES to 1, it fixed reading
-the EDID data here and I have 1920x1080 at boot, with valid EDID data.
-
-Not really sure the best way to go about doing that though.  I've poked
-at some people in #dri-devel on irc, to see what they think.
+diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
+index d6b55e3e3716..a43a836e6f88 100644
+--- a/drivers/gpu/drm/tegra/dpaux.c
++++ b/drivers/gpu/drm/tegra/dpaux.c
+@@ -72,34 +72,32 @@ static inline void tegra_dpaux_writel(struct tegra_dpaux *dpaux,
+ static void tegra_dpaux_write_fifo(struct tegra_dpaux *dpaux, const u8 *buffer,
+ 				   size_t size)
+ {
+-	unsigned long offset = DPAUX_DP_AUXDATA_WRITE(0);
+ 	size_t i, j;
+ 
+-	for (i = 0; i < size; i += 4) {
+-		size_t num = min_t(size_t, size - i, 4);
++	for (i = 0; i < DIV_ROUND_UP(size, 4); i++) {
++		size_t num = min_t(size_t, size - i * 4, 4);
+ 		unsigned long value = 0;
+ 
+ 		for (j = 0; j < num; j++)
+-			value |= buffer[i + j] << (j * 8);
++			value |= buffer[i * 4 + j] << (j * 8);
+ 
+-		tegra_dpaux_writel(dpaux, value, offset++);
++		tegra_dpaux_writel(dpaux, value, DPAUX_DP_AUXDATA_WRITE(i));
+ 	}
+ }
+ 
+ static void tegra_dpaux_read_fifo(struct tegra_dpaux *dpaux, u8 *buffer,
+ 				  size_t size)
+ {
+-	unsigned long offset = DPAUX_DP_AUXDATA_READ(0);
+ 	size_t i, j;
+ 
+-	for (i = 0; i < size; i += 4) {
+-		size_t num = min_t(size_t, size - i, 4);
++	for (i = 0; i < DIV_ROUND_UP(size, 4); i++) {
++		size_t num = min_t(size_t, size - i * 4, 4);
+ 		unsigned long value;
+ 
+-		value = tegra_dpaux_readl(dpaux, offset++);
++		value = tegra_dpaux_readl(dpaux, DPAUX_DP_AUXDATA_READ(i));
+ 
+ 		for (j = 0; j < num; j++)
+-			buffer[i + j] = value >> (j * 8);
++			buffer[i * 4 + j] = value >> (j * 8);
+ 	}
+ }
+ 
+-- 
+2.4.5
