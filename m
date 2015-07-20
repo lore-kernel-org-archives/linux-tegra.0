@@ -1,74 +1,65 @@
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 2/4] drm/tegra: Add VIC support
-Date: Mon, 20 Jul 2015 11:51:46 +0300
-Message-ID: <55ACB6A2.9030906@nvidia.com>
-References: <1437378869-10451-1-git-send-email-mperttunen@nvidia.com> <1437378869-10451-3-git-send-email-mperttunen@nvidia.com> <55ACB134.8010401@nvidia.com>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [RFC 0/9] i2c: slave: improve i2c client address spaces and
+ their DT support
+Date: Mon, 20 Jul 2015 10:52:31 +0200
+Message-ID: <20150720085230.GB2551@katana>
+References: <1437142109-31975-1-git-send-email-wsa@the-dreams.de>
+ <55ACA1D8.6010403@mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="dTy3Mrz/UPE2dbVg"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <55ACB134.8010401-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <55ACA1D8.6010403-JGs/UdohzUI@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: airlied-cv59FeDIM0c@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/20/2015 11:28 AM, Jon Hunter wrote:
-> Hi Mikko,
 
-Hi!
+--dTy3Mrz/UPE2dbVg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> ...
->> +static int vic_runtime_resume(struct device *dev)
->> +{
->> +	struct vic *vic = dev_get_drvdata(dev);
->> +	int err;
->> +
->> +	err = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_VIC,
->> +						vic->clk, vic->rst);
-> 
-> I would like to deprecate use of the above function [1]. I have been
-> trying to migrate driver to use a new API instead of the above.
 
-Yes, we will need to coordinate the API change here. I kept the old way
-here to not depend on your series for now.
+> Thanks for the patches. Slave mode works for me.
 
-> 
->> +	if (err < 0)
->> +		dev_err(dev, "failed to power up device\n");
->> +
->> +	return err;
->> +}
->> +
->> ...
->> +
->> +	pm_runtime_enable(&pdev->dev);
->> +	if (!pm_runtime_enabled(&pdev->dev)) {
->> +		err = vic_runtime_resume(&pdev->dev);
->> +		if (err < 0)
->> +			goto unregister_client;
->> +	}
-> 
-> I don't see why pm_runtime_enable() should ever fail to enable
-> pm_runtime here. Hence, the if-statement appears to be redundant. If you
-> are trying to determine whether rpm is supported for the power-domains
-> then you should simply check to see if the DT node for the device has
-> the "power-domains" property. See my series [1].
+Okay, need to have a closer look this week. I combined two I2C busses on
+my Jetson TK1. While the initialization of the slave works fine, reading
+=66rom the slave via the second I2C controller does not work (yet).
 
-The intention is that if runtime PM is not enabled, the power domain is
-still brought up. On a cursory look, it seems like with your patch, this
-should indeed work fine without this check if CONFIG_PM is enabled. Now,
-that might always be enabled? If so, then everything would be fine; if
-this lands after your series, we could even just make the power-domains
-prop mandatory and not implement the legacy mode at all. If not, then
-AFAIU we must still keep this path.
+> The series looks good.
 
-> 
-> Cheers
-> Jon
-> 
-> [1] http://www.spinics.net/lists/arm-kernel/msg431051.html
-> 
+Great. I'd be happy for Acked-by or Tested-by tags if possible.
 
-Cheers,
-Mikko.
+> Only hardcoded values in patch 4 confuse me a little.
+
+Yes, they will most likely be replaced by defines in the next series. We
+will need them in another place, too. However, since userspace relies on
+them, they should never be changed.
+
+
+--dTy3Mrz/UPE2dbVg
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJVrLbOAAoJEBQN5MwUoCm2PwYP/RpOE/M8OeTa1HwVD9n7wYGA
+BHP9APrEghzDycFt++K9c0DWHlwHi9Lfj9d2NHfhNnsQso+6FvBTbcBulBWiUavJ
+TS12/rFyge8znHnk51P2VZwJCXPca/8+wxy0wkSX3J7WBU0Ya7fmCy4n9A+mgiQs
+6VcTOABz7l6huKxETLltLkw6ISnuIA6UuAFrszaRSy4v5RriPdZvHJ5F/yNCwIKF
+EbEI/c/Oz5TajgK5ex6hBC48BHnRmvgA8WvhTPVvt0EuibCZVvXViDi/sl+75auA
+c0OPk9pzW8vu/sIr6MLPAs4/36fgJEzZAZWhmiSP92LKlEn1QVkWGVPCUyKKoB3z
+R9xNVoGPdBcKoa+EW/rlxS+IGGA6GHyRytwbKxOo+WSv6z8fAdiFeXUZ+INPyTI1
+gPfCRGo86r+mfj+u5fSL20aaUeJSqNpFYFfXpMtqILTi8aBZeUUCQ6Mx5GDCIP6K
+0ICgNuxVOeV82dl2J/Zh/R9kgNEgvhWERX6OED+UB3p343vLeYbO3xZe0sBak5h1
+VqNgxRwkuPpfUT71S63klEj2/N7Dgb8i/84AUcIK3DrFoMoPAybh++/kgfw9zD4P
+JXzKa56T9qN5veEfhl1hzV89Di7Yk8Cn0S/CpaOK1NNg3Bcd/apMerOzA1risltI
+xaa/xod3A0ymMEBdtaU7
+=T5eh
+-----END PGP SIGNATURE-----
+
+--dTy3Mrz/UPE2dbVg--
