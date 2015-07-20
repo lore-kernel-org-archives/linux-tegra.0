@@ -1,59 +1,59 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC PATCH 03/15] pwm: add pwm_get_polarity helper function
-Date: Mon, 20 Jul 2015 09:52:09 +0200
-Message-ID: <20150720075209.GD29614@ulmo>
-References: <1435738921-25027-1-git-send-email-boris.brezillon@free-electrons.com>
- <1435738921-25027-4-git-send-email-boris.brezillon@free-electrons.com>
+From: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
+Subject: Re: [RFC 9/9] dts: tegra: WIP: hack dts to test new dt flags for i2c
+Date: Mon, 20 Jul 2015 10:53:09 +0300
+Message-ID: <3764937.mMMXIHUnrR@avalon>
+References: <1437142109-31975-1-git-send-email-wsa@the-dreams.de> <1437142109-31975-10-git-send-email-wsa@the-dreams.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="KdquIMZPjGJQvRdI"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1435738921-25027-4-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+In-Reply-To: <1437142109-31975-10-git-send-email-wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bryan Wu <cooloney-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Richard Purdie <rpurdie-Fm38FmjxZ/leoWH0uzbU5w@public.gmane.org>, Jacek Anaszewski <j.anaszewski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-leds-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jean-Christophe Plagniol-Villard <plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org>, Tomi Valkeinen <tomi.valkeinen-l0cyMroinI0@public.gmane.org>, linux-fbdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Maxime Ripard <maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Doug Anderson <dianders-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Wolfram,
 
---KdquIMZPjGJQvRdI
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thank you for the patch.
 
-On Wed, Jul 01, 2015 at 10:21:49AM +0200, Boris Brezillon wrote:
-> Some drivers are directly accessing the ->polarity field in pwm_device.
-> Add an helper to retrieve the current polarity so that we can easily move
-> this field elsewhere (required to support atomic update).
->=20
-> Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+On Friday 17 July 2015 16:08:29 Wolfram Sang wrote:
+> Not-Signed-off-by: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
 > ---
->  include/linux/pwm.h | 5 +++++
->  1 file changed, 5 insertions(+)
+>  arch/arm/boot/dts/tegra124-jetson-tk1.dts | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+> b/arch/arm/boot/dts/tegra124-jetson-tk1.dts index
+> bd43ed6d6ec7c0..4d5f2a4c4da1ce 100644
+> --- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+> +++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+> @@ -1,5 +1,6 @@
+>  /dts-v1/;
+> 
+> +#include <dt-bindings/i2c/i2c.h>
+>  #include <dt-bindings/input/input.h>
+>  #include "tegra124.dtsi"
+> 
+> @@ -1390,6 +1391,12 @@
+>  			reg = <0x56>;
+>  			pagesize = <8>;
+>  		};
+> +
+> +		eeprom@42 {
+> +			compatible = "linux,slave-24c02";
+> +			//FIXME: Should be I2C_OWN_SLAVE_ADDRESS | 0x42
+> +			reg = <0xc0000042>;
 
-Applied thanks.
+The node name doesn't match the reg property anymore. Isn't that considered as 
+a problem ?
 
-Thierry
+> +		};
+>  	};
+> 
+>  	/* Expansion GEN2_I2C_* */
 
---KdquIMZPjGJQvRdI
-Content-Type: application/pgp-signature; name="signature.asc"
+-- 
+Regards,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVrKioAAoJEN0jrNd/PrOhanIP/0BUxXg7th6WFzZDcnlGFzp+
-cq7cOP9ic2jyzUUPGaXTqB3k0pSnXooubXMlgWkDynsLPDzaj2qD2b3uH9iLN9dy
-fJhZtU2RpCoWw5271/z0pC4auHNV6YvbxTquMngXC/zaF18UPSwr7tyGapMDVQOA
-HH0D75i8z3Qfib/xoxYFP2lzomOny/LAO2vlSnNzku5lYpbBy2ZgCdDfSsqW4Wbi
-20g9cYhMeuQSQdqas0MguM2WiSmked6dZXvSS1tu4q1XKBjLoIf7A6aXjfcbdVKZ
-8aSRbIcC9nS1/X1zc9qf0BfS0SRAz8YGM/1rQ3YIrm/NqGaty4fZucEwQ38CXZJL
-3HaPyocmMJ361gclukbsGcG0Cz7mVbnK6uCr4DFZuKuLhN2QENrbQL52kOGR3nP1
-XLcUBxDt8Hc9tuj3HQ5xMmcu1Fva+tmjCGHonsqfjfRlROERo9u+gDZJrAO6lgtM
-aXWBDHPPvqraaNz97cJHAshkC/I7wkDrVosRiBtoMnejAo/4ZYVoFjH4ygun3uCA
-k0uS/uYPbwzmFSpGGLHy6eQ/3f11V7VuNIuNEWGmzXdogwAXckHdtXvNoTe8dR5L
-ooa6viN7Xx5m71MRMFNWqNBP4bSVYWr+ckUJIXcuSpV+3ncDX6/9oB4dApzJUeYn
-xorful0JUkCfX6icbT0i
-=OtfN
------END PGP SIGNATURE-----
-
---KdquIMZPjGJQvRdI--
+Laurent Pinchart
