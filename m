@@ -1,49 +1,71 @@
 From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 4/4] ARM: tegra: Add VIC for Tegra124
-Date: Mon, 20 Jul 2015 10:54:29 +0300
-Message-ID: <1437378869-10451-5-git-send-email-mperttunen@nvidia.com>
-References: <1437378869-10451-1-git-send-email-mperttunen@nvidia.com>
+Subject: [PATCH v2 0/4] Add VIC support for Tegra124
+Date: Mon, 20 Jul 2015 10:54:25 +0300
+Message-ID: <1437378869-10451-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1437378869-10451-1-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 Cc: airlied-cv59FeDIM0c@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From Arto's original cover letter:
 
-This patch adds VIC device tree node for Video Image Compositor.
+This series adds Video-Image-Compositor (VIC) support for Tegra124. The unit
+replaced gr2d engine on T124 and it is effectively used for similar
+operations: making simple surface copy and fill operations.
 
-Signed-off-by: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra124.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+[..]
 
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 87318a7..1233f4a 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -137,6 +137,18 @@
- 			status = "disabled";
- 		};
- 
-+		vic@0,54340000 {
-+			compatible = "nvidia,tegra124-vic";
-+			reg = <0x0 0x54340000 0x0 0x00040000>;
-+			interrupts = <GIC_SPI 72 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks = <&tegra_car TEGRA124_CLK_VIC03>;
-+			clock-names = "vic";
-+			resets = <&tegra_car TEGRA124_CLK_VIC03>;
-+			reset-names = "vic";
-+
-+			iommus = <&mc TEGRA_SWGROUP_VIC>;
-+		};
-+
- 		sor@0,54540000 {
- 			compatible = "nvidia,tegra124-sor";
- 			reg = <0x0 0x54540000 0x0 0x00040000>;
+The series has been tested on Jetson TK1 by first disabling IOMMU (*),
+enabling CMA and running a VIC clear test case that is posted to dri-devel
+and linux-tegra mailing lists. The firmware image for VIC is publicly
+available as part of Linux For Tegra driver package [0].
+
+[0] https://developer.nvidia.com/linux-tegra
+
+(*) Currently Tegra DRM does not support mapping the host1x command buffers
+into kernel address space in case IOMMU is enabled.
+
+End of original cover letter.
+
+The aforementioned VIC clear test can be found at
+https://patchwork.kernel.org/patch/6454821/.
+
+This series is now composed of a commit that adds a general Falcon helper
+library to be used by drivers whose hardware contains a Falcon, which
+includes many Host1x clients; and then separately of the VIC driver that
+uses that Falcon library. The fixes to host1x this series used to include
+are in the 'Host1x/TegraDRM fixes/improvements' series I posted earlier;
+that series is a dependency for this series.
+
+Thanks,
+Mikko.
+
+Arto Merilainen (3):
+  drm/tegra: Add falcon helper library
+  drm/tegra: Add VIC support
+  ARM: tegra: Add VIC for Tegra124
+
+Mikko Perttunen (1):
+  of: Add NVIDIA Tegra VIC binding
+
+ .../bindings/gpu/nvidia,tegra20-host1x.txt         |  15 +
+ arch/arm/boot/dts/tegra124.dtsi                    |  12 +
+ drivers/gpu/drm/tegra/Makefile                     |   4 +-
+ drivers/gpu/drm/tegra/drm.c                        |   7 +
+ drivers/gpu/drm/tegra/drm.h                        |   1 +
+ drivers/gpu/drm/tegra/falcon.c                     | 256 ++++++++++++
+ drivers/gpu/drm/tegra/falcon.h                     | 130 ++++++
+ drivers/gpu/drm/tegra/vic.c                        | 456 +++++++++++++++++++++
+ drivers/gpu/drm/tegra/vic.h                        |  35 ++
+ include/linux/host1x.h                             |   1 +
+ 10 files changed, 916 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpu/drm/tegra/falcon.c
+ create mode 100644 drivers/gpu/drm/tegra/falcon.h
+ create mode 100644 drivers/gpu/drm/tegra/vic.c
+ create mode 100644 drivers/gpu/drm/tegra/vic.h
+
 -- 
 2.1.4
