@@ -1,193 +1,92 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3 08/19] soc: tegra: pmc: Clean-up PMC helper functions
-Date: Tue, 21 Jul 2015 10:38:32 +0100
-Message-ID: <55AE1318.4030503@nvidia.com>
-References: <1436791197-32358-1-git-send-email-jonathanh@nvidia.com> <1436791197-32358-9-git-send-email-jonathanh@nvidia.com> <20150717102546.GL3057@ulmo>
+From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V3 02/19] memory: tegra: Add MC flush support
+Date: Tue, 21 Jul 2015 13:57:51 +0300
+Message-ID: <20150721105751.GK6287@tbergstrom-lnx.Nvidia.com>
+References: <1436791197-32358-1-git-send-email-jonathanh@nvidia.com>
+ <1436791197-32358-3-git-send-email-jonathanh@nvidia.com>
+ <20150717095754.GG3057@ulmo>
+ <20150717102049.GQ6287@tbergstrom-lnx.Nvidia.com>
+ <20150717113124.GP3057@ulmo>
+ <20150720095941.GZ6287@tbergstrom-lnx.Nvidia.com>
+ <20150720131410.GA1098@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150717102546.GL3057@ulmo>
+Content-Disposition: inline
+In-Reply-To: <20150720131410.GA1098@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?windows-1252?Q?Terje_Bergstr?= =?windows-1252?Q?=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 17/07/15 11:25, Thierry Reding wrote:
+On Mon, Jul 20, 2015 at 03:14:25PM +0200, Thierry Reding wrote:
 > * PGP Signed by an unknown key
 > 
-> On Mon, Jul 13, 2015 at 01:39:46PM +0100, Jon Hunter wrote:
->> The following clean-ups have been made to the PMC code:
->>
->> 1. Add a macro for determining the state of a PMC powergate
->> 2. Use the readx_poll_timeout() function instead of implementing a local
->>    polling loop with a timeout.
->> 3. Use a case-statement in the function that removes the powergate clamp
->>    instead of multiple if-statements to improve readability.
->>
->> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  drivers/soc/tegra/pmc.c | 72 ++++++++++++++++++++++++-------------------------
->>  1 file changed, 35 insertions(+), 37 deletions(-)
->>
->> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->> index c0635bdd4ee3..180d434deec5 100644
->> --- a/drivers/soc/tegra/pmc.c
->> +++ b/drivers/soc/tegra/pmc.c
->> @@ -28,6 +28,7 @@
->>  #include <linux/export.h>
->>  #include <linux/init.h>
->>  #include <linux/io.h>
->> +#include <linux/iopoll.h>
->>  #include <linux/of.h>
->>  #include <linux/of_address.h>
->>  #include <linux/platform_device.h>
->> @@ -56,6 +57,8 @@
->>  #define  PWRGATE_TOGGLE_START		(1 << 8)
->>  
->>  #define REMOVE_CLAMPING			0x34
->> +#define  REMOVE_CLAMPING_VDEC		(1 << 3)
->> +#define  REMOVE_CLAMPING_PCIE		(1 << 4)
->>  
->>  #define PWRGATE_STATUS			0x38
->>  
->> @@ -101,6 +104,8 @@
->>  
->>  #define GPU_RG_CNTRL			0x2d4
->>  
->> +#define PMC_PWRGATE_STATE(val, id)	(!!(val & BIT(id)))
+> On Mon, Jul 20, 2015 at 12:59:41PM +0300, Peter De Schrijver wrote:
+> > On Fri, Jul 17, 2015 at 01:31:24PM +0200, Thierry Reding wrote:
+> > > > Old Signed by an unknown key
+> > > 
+> > > On Fri, Jul 17, 2015 at 01:20:49PM +0300, Peter De Schrijver wrote:
+> > > > On Fri, Jul 17, 2015 at 11:57:55AM +0200, Thierry Reding wrote:
+> > > > > > Old Signed by an unknown key
+> > > > > 
+> > > > > On Mon, Jul 13, 2015 at 01:39:40PM +0100, Jon Hunter wrote:
+> > > > > > The Tegra memory controller implements a flush feature to flush pending
+> > > > > > accesses and prevent further accesses from occurring. This feature is
+> > > > > > used when powering down IP blocks to ensure the IP block is in a good
+> > > > > > state. The flushes are organised by software groups and IP blocks are
+> > > > > > assigned in hardware to the different software groups. Add helper
+> > > > > > functions for requesting a handle to an MC flush for a given
+> > > > > > software group and enabling/disabling the MC flush itself.
+> > > > > > 
+> > > > > > This is based upon a change by Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>.
+> > > > > > 
+> > > > > > Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > > > > ---
+> > > > > >  drivers/memory/tegra/mc.c | 110 ++++++++++++++++++++++++++++++++++++++++++++++
+> > > > > >  drivers/memory/tegra/mc.h |   2 +
+> > > > > >  include/soc/tegra/mc.h    |  34 ++++++++++++++
+> > > > > >  3 files changed, 146 insertions(+)
+> > > > > 
+> > > > > Do we know if this is actually necessary? I remember having a discussion
+> > > > > with Arnd Bergmann a while ago, and the Linux driver model kind of
+> > > > > assumes that by the time a device is disabled all outstanding accesses
+> > > > > will have stopped.
+> > > > > 
+> > > > > Do we have a way to determine that this even makes a difference? Can we
+> > > > > trigger a case where not doing this would cause breakage and see that
+> > > > > adding this fixes that particular issue?
+> > > > > 
+> > > > 
+> > > > Most likely it is. The memory controller can still be processing requests
+> > > > when the peripheral domain is powergated. This would mean the response cannot
+> > > > be delivered in that case. So we need to be sure there are no outstanding
+> > > > requests before shutting down the domain.
+> > > 
+> > > My point is that that's the driver's responsibility anyway, hence making
+> > > the explicit flush unnecessary.
+> > > 
+> > 
+> > The peripheral driver doesn't know how long a request is queued in the memory
+> > controller. So it can't be responsible for ensuring this.
 > 
-> I find double-negations very difficult to read. ((value & BIT(id)) != 0)
-> is clearer in my opinion. Also I'd suggest status or value as the first
-> parameter name, for consistency with other parts of the driver.
+> Surely whenever the peripheral reports that the operation is done (be
+> that via some DMA controller interrupt or syncpoint increment) the
+> operation would have flushed from the memory controller. Drivers are
+> already supposed to make sure this is the case when they are removed or
+> suspended, so this would mean that we'd be adding all this code for no
+> real gain.
 > 
->> +
->>  struct tegra_pmc_soc {
->>  	unsigned int num_powergates;
->>  	const char *const *powergates;
->> @@ -177,15 +182,14 @@ static void tegra_pmc_writel(u32 value, unsigned long offset)
->>   */
->>  static int tegra_powergate_set(int id, bool new_state, bool wait)
->>  {
->> -	unsigned long timeout;
->> -	bool status;
->>  	int ret = 0;
->> +	u32 val;
->>  
->>  	mutex_lock(&pmc->powergates_lock);
->>  
->> -	status = tegra_pmc_readl(PWRGATE_STATUS) & (1 << id);
->> +	val = tegra_pmc_readl(PWRGATE_STATUS);
->>  
->> -	if (status == new_state) {
->> +	if (PMC_PWRGATE_STATE(val, id) == new_state) {
->>  		mutex_unlock(&pmc->powergates_lock);
->>  		return 0;
->>  	}
->> @@ -193,17 +197,9 @@ static int tegra_powergate_set(int id, bool new_state, bool wait)
->>  	tegra_pmc_writel(PWRGATE_TOGGLE_START | id, PWRGATE_TOGGLE);
->>  
->>  	if (wait) {
->> -		timeout = jiffies + msecs_to_jiffies(100);
->> -		ret = -ETIMEDOUT;
->> -
->> -		while (time_before(jiffies, timeout)) {
->> -			status = !!(tegra_pmc_readl(PWRGATE_STATUS) & BIT(id));
->> -			if (status == new_state) {
->> -				ret = 0;
->> -				break;
->> -			}
->> -			udelay(10);
->> -		}
->> +		ret = readx_poll_timeout(tegra_pmc_readl, PWRGATE_STATUS,
->> +				val, PMC_PWRGATE_STATE(val, id) == new_state,
->> +				10, 100000);
->>  	}
->>  
->>  	mutex_unlock(&pmc->powergates_lock);
->> @@ -242,13 +238,10 @@ EXPORT_SYMBOL(tegra_powergate_power_off);
->>   */
->>  int tegra_powergate_is_powered(int id)
->>  {
->> -	u32 status;
->> -
->>  	if (!pmc->soc || id < 0 || id >= pmc->soc->num_powergates)
->>  		return -EINVAL;
->>  
->> -	status = tegra_pmc_readl(PWRGATE_STATUS) & (1 << id);
->> -	return !!status;
->> +	return PMC_PWRGATE_STATE(tegra_pmc_readl(PWRGATE_STATUS), id);
-> 
-> I'd prefer to keep the two steps here. As a general rule I try never to
-> mix reading or writing a register with other code on the same line.
-> 
->>  }
->>  
->>  /**
->> @@ -257,34 +250,39 @@ int tegra_powergate_is_powered(int id)
->>   */
->>  int tegra_powergate_remove_clamping(int id)
->>  {
->> -	u32 mask;
->> +	u32 val, reg;
-> 
-> Side note: Please use value instead of val since that's the form used
-> elsewhere in the driver. Also reg would be more appropriately called
-> offset or similar because that's what it really is. It would also be
-> more naturally an unsized type, such as unsigned int. But...
-> 
->>  
->>  	if (!pmc->soc || id < 0 || id >= pmc->soc->num_powergates)
->>  		return -EINVAL;
->>  
->>  	/*
->> -	 * On Tegra124 and later, the clamps for the GPU are controlled by a
->> -	 * separate register (with different semantics).
->> +	 * In most cases the bit for removing the IO clamping is the same as
->> +	 * the powergate partition ID, however, this is not always the case.
->> +	 * Furthermore, on Tegra124 and later, the clamps for the GPU are
->> +	 * controlled by a separate register (with different semantics). The
->> +	 * following case-statement handles these exceptions.
->>  	 */
->> -	if (id == TEGRA_POWERGATE_3D) {
->> +	val = 1 << id;
->> +	reg = REMOVE_CLAMPING;
->> +
->> +	switch (id) {
->> +	case TEGRA_POWERGATE_3D:
->>  		if (pmc->soc->has_gpu_clamps) {
->> -			tegra_pmc_writel(0, GPU_RG_CNTRL);
->> -			return 0;
->> +			val = 0;
->> +			reg  = GPU_RG_CNTRL;
->>  		}
->> +		break;
->> +	case TEGRA_POWERGATE_VDEC:
->> +		val = REMOVE_CLAMPING_VDEC;
->> +		break;
->> +	case TEGRA_POWERGATE_PCIE:
->> +		val = REMOVE_CLAMPING_PCIE;
->> +		break;
->> +	default:
->> +		break;
->>  	}
->>  
->> -	/*
->> -	 * Tegra 2 has a bug where PCIE and VDE clamping masks are
->> -	 * swapped relatively to the partition ids
->> -	 */
->> -	if (id == TEGRA_POWERGATE_VDEC)
->> -		mask = (1 << TEGRA_POWERGATE_PCIE);
->> -	else if (id == TEGRA_POWERGATE_PCIE)
->> -		mask = (1 << TEGRA_POWERGATE_VDEC);
->> -	else
->> -		mask = (1 << id);
->> -
->> -	tegra_pmc_writel(mask, REMOVE_CLAMPING);
->> +	tegra_pmc_writel(val, reg);
-> 
-> ... to be honest, I think the previous code was more straightforward, so
-> I'd prefer if you dropped this particular hunk.
 
-Ok, I will drop that part. Jon
+That highly depends on how the peripheral is implemented. I'm not sure we
+can assume things work this way.
+
+> It would also explain why we're currently not seeing any such problems.
+> 
+
+I don't think we are doing agressive enough powergating today to see any
+problems. That might also mean we're just lucky.
+
+Cheers,
+
+Peter.
