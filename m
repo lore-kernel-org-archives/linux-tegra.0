@@ -1,99 +1,91 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [RFC 0/9] i2c: slave: improve i2c client address spaces and
- their DT support
-Date: Tue, 21 Jul 2015 09:00:56 +0200
-Message-ID: <20150721070056.GB1537@katana>
-References: <1437142109-31975-1-git-send-email-wsa@the-dreams.de>
- <55AD7279.5090203@wwwdotorg.org>
+From: Marc Dietrich <marvin24@gmx.de>
+Subject: Re: [PATCH v3 4/4] dt: paz00: define nvec as child of i2c bus
+Date: Tue, 21 Jul 2015 10:25:31 +0200
+Message-ID: <4778199.vGjAP5lpOS@fb07-iapwap2>
+References: <1437424546-30405-1-git-send-email-danindrey@mail.ru>
+ <55AD73F4.2050502@wwwdotorg.org> <55ADE829.4030108@mail.ru>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="LyciRD1jyfeSSjG0"
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <55AD7279.5090203-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/mixed; boundary="===============5269712430870901435=="
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <55ADE829.4030108@mail.ru>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Andrey Danin <danindrey@mail.ru>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, ac100@lists.launchpad.net, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Julian Andres Klode <jak@jak-linux.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-i2c@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, linux-tegra@vger.kernel.org, devel@linuxdriverproject.org, Ian Campbell <ijc+devicetree@hellion.org.uk>, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
+--===============5269712430870901435==
+Content-Type: multipart/signed; boundary="nextPart2571602.0YnnqBGjHM"; micalg="pgp-sha256"; protocol="application/pgp-signature"
 
---LyciRD1jyfeSSjG0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+--nextPart2571602.0YnnqBGjHM
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="windows-1252"
 
-On Mon, Jul 20, 2015 at 04:13:13PM -0600, Stephen Warren wrote:
-> On 07/17/2015 08:08 AM, Wolfram Sang wrote:
-> >As promised here is my RFC to improve address spaces for I2C. This shoul=
-d give
-> >i2c seperate address spaces for standard clients, 10 bit clients, and ou=
-r own
-> >slave clients. So, you can now have a 7 bit slave at 0x50 and a 10 bit s=
-lave at
-> >0x050. Or, you can have a slave driver listening at some address and at =
-the
-> >same time have a client driver talking to this address. Note that this i=
-s only
-> >the core support for that separation, I am still not sure if there is ha=
-rdware
-> >being able talking to its own slave address, but we will see.
-> >
-> >This RFC and while I did some quick tests, it is not thoroughly tested. =
-But I
-> >wanted to push it out before I leave the computer for the weekend. It st=
-ill
-> >shows what path I chose to solve the problem. So, comments on that and f=
-urther
-> >testing are more than welcome!
-> >
-> >BTW Andrey, I did not modify your patch and couldn't get the i2c-slave-e=
-eprom driver
-> >to work with my Jetson TK1. Does this work for you?
->=20
-> This approach makes sense to me.
+Am Dienstag, 21. Juli 2015, 09:35:21 schrieb Andrey Danin:
+> On 21.07.2015 1:19, Stephen Warren wrote:
+> > On 07/20/2015 02:35 PM, Andrey Danin wrote:
+> >> NVEC driver was reimplemented to use tegra i2c. Use common i2c bindings
+> >> for NVEC node.
+> >> 
+> >> diff --git a/arch/arm/boot/dts/tegra20-paz00.dts
+> >> b/arch/arm/boot/dts/tegra20-paz00.dts
+> >> 
+> >> +        nvec: nvec@45 {
+> >> +            compatible = "nvidia,nvec-slave";
+> >> +            reg = <0x45>;
+> > 
+> > I think you need to or in I2C_OWN_SLAVE_ADDRESS from
+> > <dt-bindings/i2c/i2c.h> here?
+> 
+> Sorry, I mentioned it in letter 0 only.
+> I will rework nvec driver and device tree according to i2c core slave
+> implementation later. v3 of this patchset is for fixing tegra i2c driver
+> only.
 
-\o/
+I think in this case it would be better to leave nvec and dt as it is for now, 
+and just add the slave function to tegra-i2c. Otherwise we will again have two 
+different "nvidia,nvec-slave" bindings (one for the intermediate hack and one 
+for the final representation). As an alternative, you could also add slave 
+function and port nvec in the same series.
 
-> I'd expect patch 2/9 "dt-bindings: add header for generic I2C flags in
-> bindings" to document the flags (or at least mention their existence, and
-> point at the new header file) in the core I2C bindings document.
+Marc
 
-Yes. I forgot to say that docs are missing. I wanted to get some
-feedback first. This series is a good reason to finally start the core
-I2C binding document.
-
-> Please consider the series,
-> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> (ack rather than review since I didn't review patch 1, and mostly
-> concentrated on reviewing the concepts of how slaves were represented rat=
-her
-> than the coding details).
-
-Thanks, exactly that I was looking for this RFC. Will try to send out
-proper patches this week.
-
-
---LyciRD1jyfeSSjG0
+--nextPart2571602.0YnnqBGjHM
 Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
 
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Version: GnuPG v2
 
-iQIcBAEBAgAGBQJVre4oAAoJEBQN5MwUoCm2XQMQAK4LDaETzfu+1rMg1CxexzNE
-orT97BBLRGZViCOeMoK30QADd9A0Nfgh12GIrPKpVj1JXWdwiYt16ZYbL9lKyOTb
-ZCihzcjg9LRVm1IensZuwQzVMESHwLZ8eDgFxZqL4e8RKR9jbyoLVA9xpIlnOvdv
-Z+fZH/eIlcv2o402cS6mDxkkNE4a7T3ZdmeWjFI9dHX63s4TCtbY2VEtRafgXyuS
-+2rAT5CJEi2f2Eh0Fz4+2xuaAECx4uto6cggM7GZ6LA9HCSUN3EKe52c9ncK20Qs
-A54Ws8eXKY4Dr0KZnYNWcPhqWB5Lkge7QTWBaCp6ZUbUKg5BVkewfyovdxIH9dR7
-LQq5VRERIJn7rziIt8xGSgAHWix740VDnRu/j2b0B3RPXGF11vXslXgdVZ3N7xki
-IWHI5zO6X7Hta/xPP5C6tDhDAP7MPA+IuF0l9ym5JC4/pByAV09wK7yUVI+4MjI/
-e2W+ohFJvLpdek4S/5gB544q8u06DRRNCWzU5gmZRpTxfSuGNnKNnSFQ6hlOrhK6
-av5xBzDLOHoN9imt7GaFjdchYy2/5/ZX5dJb7r+V+xh5ssis2ZnU2wSXA7FOrNIq
-rhjeeWQTd7BwYREex4UfAtIkKs8MeTOXfn1+CE4/Lp+yEvw6DTIFCAW+1aWXVE4F
-ED2zkKl1P2vjGFtSnghW
-=6VXE
+iQEcBAABCAAGBQJVrgH7AAoJEKyeR39HFBtoUNAH/3uXLYSyTg+rWF+hEN+1A0e+
+h/SL1QtahmapHS+mq7caG+F9irKll3jcMG2hJRbHTJLaxYJM0dpNJ9h9WrioOI5Z
++tHwmCpJpkgBmVf9728ON6vwpt2mAXnOgs1Gmg1ORxO0e8fBsC3lOlhbHmp/W+Z4
+GJbWkKy376Poh2GvRxKidlJKyLURWWow1RWlj9HAQfNJVdqkK+dv8bxPEV7Cll4F
+Rf/TBlM+djEdIf7vCTXlid+8wqHYygj1nPa68KmqpsQo2+ISEZ6++316xDFHD6pc
+SG/9xY/o2zAmob9JC8GgNYWysM5+xUM3vUiK7OoVS37s5EnibQFkaKa7s3EEI4Y=
+=J41g
 -----END PGP SIGNATURE-----
 
---LyciRD1jyfeSSjG0--
+--nextPart2571602.0YnnqBGjHM--
+
+
+--===============5269712430870901435==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+devel mailing list
+devel@linuxdriverproject.org
+http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
+
+--===============5269712430870901435==--
