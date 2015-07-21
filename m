@@ -1,27 +1,59 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v3 4/4] dt: paz00: define nvec as child of i2c bus
-Date: Mon, 20 Jul 2015 16:19:32 -0600
-Message-ID: <55AD73F4.2050502@wwwdotorg.org>
-References: <1437424546-30405-1-git-send-email-danindrey@mail.ru> <1437424546-30405-5-git-send-email-danindrey@mail.ru>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 3/4] of: Add NVIDIA Tegra VIC binding
+Date: Tue, 21 Jul 2015 09:32:48 +0300
+Message-ID: <55ADE790.9000403@nvidia.com>
+References: <1437378869-10451-1-git-send-email-mperttunen@nvidia.com>	<1437378869-10451-4-git-send-email-mperttunen@nvidia.com> <CACvgo50X_mku2ha8Emi80j9ed+9Kn8SXpLk6ZDFxEKcjUAfCXw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1437424546-30405-5-git-send-email-danindrey@mail.ru>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Andrey Danin <danindrey@mail.ru>
-Cc: devicetree@vger.kernel.org, devel@linuxdriverproject.org, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, ac100@lists.launchpad.net, Laxman Dewangan <ldewangan@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Julian Andres Klode <jak@jak-linux.org>, Marc Dietrich <marvin24@gmx.de>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACvgo50X_mku2ha8Emi80j9ed+9Kn8SXpLk6ZDFxEKcjUAfCXw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, ML dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/20/2015 02:35 PM, Andrey Danin wrote:
-> NVEC driver was reimplemented to use tegra i2c. Use common i2c bindings
-> for NVEC node.
+On 07/20/2015 08:20 PM, Emil Velikov wrote:
+> Hi Mikko,
+> 
+> On 20 July 2015 at 08:54, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> This adds device tree binding documentation for the Video Image
+>> Compositor (VIC) present on Tegra124 and newer SoC's.
+>>
+>> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  .../devicetree/bindings/gpu/nvidia,tegra20-host1x.txt     | 15 +++++++++++++++
+>>  1 file changed, 15 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt
+>> index 009f4bf..1328f3f 100644
+>> --- a/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt
+>> +++ b/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt
+>> @@ -240,6 +240,21 @@ of the following host1x client modules:
+>>      - dpaux
+>>    - vdd-supply: phandle of a supply that powers the DisplayPort link
+>>
+>> +- vic: Video Image Compositor
+>> +  - compatible: For Tegra124, must contain "nvidia,tegra124-vic".  Otherwise,
+>> +    must contain '"nvidia,<chip>-vic", "nvidia,tegra124-vic"', where
+>> +    <chip> is tegra132.
+> Did you make a typo here, or is "tegra124" string really used to
+> identify the tegra132 chips ?
 
-> diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+The idea here is that the compatible string must either be
+  "nvidia,tegra124-vic"
+if the board is a Tegra124 chip. If it's not, the board must be a
+Tegra132 (though we probably should add Tegra210 here too) it must be
+  "nvidia,tegra132-vic", "nvidia,tegra124-vic"
+to indicate that while the hardware is compatible with the Tegra124 VIC
+(and thus can use the same driver and we don't need to update the
+compatible list in the driver), it is actually the Tegra132 version in
+case the driver needs to apply some quirks. Other Tegra bindings use the
+same system.
 
-> +		nvec: nvec@45 {
-> +			compatible = "nvidia,nvec-slave";
-> +			reg = <0x45>;
+> 
+> Thanks
+> Emil
 
-I think you need to or in I2C_OWN_SLAVE_ADDRESS from 
-<dt-bindings/i2c/i2c.h> here?
+Thanks,
+Mikko
