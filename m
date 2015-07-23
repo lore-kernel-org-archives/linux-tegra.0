@@ -1,179 +1,112 @@
-From: Brian Norris <computersforpeace-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [Patch v3 2/5] mtd: nand: add NVIDIA Tegra NAND Flash controller
- driver
-Date: Wed, 22 Jul 2015 16:10:25 -0700
-Message-ID: <20150722231025.GB8876@google.com>
-References: <1431282602-7137-1-git-send-email-dev@lynxeye.de>
- <1431282602-7137-3-git-send-email-dev@lynxeye.de>
- <20150721212710.GN24125@google.com>
- <1437597760.2289.13.camel@lynxeye.de>
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
+Subject: Re: [U-Boot] [PATCH 0/2] ARM: tegra: enable GPU DT node
+Date: Thu, 23 Jul 2015 13:46:47 +0200
+Message-ID: <55B0D427.2000704@suse.de>
+References: <1436427181-23904-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1437597760.2289.13.camel-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+In-Reply-To: <1436427181-23904-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Boris BREZILLON <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Ezequiel Garcia <ezequiel-30ULvvUtt6G51wMPkGsGjgyUoB5FGQPZ@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Thierry Reding <thierry.reding-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+Salut Alexandre,
 
-On Wed, Jul 22, 2015 at 10:42:40PM +0200, Lucas Stach wrote:
-> Am Dienstag, den 21.07.2015, 14:27 -0700 schrieb Brian Norris:
-> > On Sun, May 10, 2015 at 08:29:59PM +0200, Lucas Stach wrote:
-> > > --- /dev/null
-> > > +++ b/drivers/mtd/nand/tegra_nand.c
-> > > @@ -0,0 +1,801 @@
-...
-> > > +static int tegra_nand_read_page(struct mtd_info *mtd, struct nand_chip *chip,
-> > > +				uint8_t *buf, int oob_required, int page)
-> > > +{
-...
-> > > +	value = readl(nand->regs + DEC_STATUS);
-> > > +
-> > > +	if (value & DEC_STATUS_A_ECC_FAIL) {
-> > > +		/*
-> > > +		 * The ECC isn't smart enough to figure out if a page is
-> > > +		 * completely erased and flags an error in this case. So we
-> > > +		 * check the read data here to figure out if it's a legitimate
-> > > +		 * error or a false positive.
-> > > +		 */
-> > > +		int i;
-> > > +		u32 *data = (u32 *)buf;
-> > > +		for (i = 0; i < mtd->writesize / 4; i++) {
-> > > +			if (data[i] != 0xffffffff) {
-> > > +				mtd->ecc_stats.failed++;
-> > > +				return -EBADMSG;
-> > > +			}
-> > > +		}
-> > 
-> > Hmm, what about OOB? It's possible to actually write 0xff to the entire
-> > page. This hunk means that such a data pattern would then be
-> > unprotected. You should probably check that *both* the main and OOB data
-> > are all 0xff; if there are non-0xff bytes, then that (probably, see the
-> > following) means someone intentionally wrote all 0xff to the page. [1]
-> > 
-> 
-> This check is only executed if the ECC engine flagged a non-correctable
-> error. If someone wrote all 0xff to the page there will be a proper ECC
-> checksum calculated and we won't get into this path. So to get this
-> check to wrongly paper over a legitimate error someone would need to
-> write almost all 0xff with a few bits 0, which then flip to a 1
-> afterwards, which is highly unlikely as far as I understand flash
-> technology.
+Am 09.07.2015 um 09:32 schrieb Alexandre Courbot:
+> Tegra124 requires the bootloader to perform VPR initialization, other=
+wise the
+> GPU cannot be used by the system. Since using the GPU without that
+> initialization results in a hang, the GPU DT node is left disabled, a=
+nd it is
+> the task of the bootloader to enable it after ensuring it is safe to =
+use the
+> GPU.
+>=20
+> VPR init is already performed since patch df3443dfa449, but the devic=
+e tree was
+> left untouched. This patch series performs this last step and prepare=
+s the GPU
+> intialization code to receive more code for newer chips.
 
-On second thought, the case I mentioned is not a problem for you
-currently. You'll just have more problems once you start seeing bitflips
-in erased pages.
+Tested-by: Andreas F=E4rber <afaerber-l3A5Bk7waGM@public.gmane.org>
 
-And I agree, the latter case you mention is probably pretty unlikely,
-though I'm not really an EE expert to tell you cannot see such a 0->1
-"stuck bit".
+I've tested this patchset on v2015.07 with 4.2.0-rc3-00115-gc5dfd65 -
+with these two patches I get a console login on HDMI again.
 
-But anyway, why don't you check the spare area too? It turns the
-"unlikely" problem into a non-issue.
+However, I'm still having trouble with X11... Should that be working
+with linux.git? (haven't tried linux-next.git yet)
 
-At the same time, I see that you don't support raw page reads/writes. Is
-it impossible? Or is it just an oversight?
+Among other errors, it seems that nouveau is looking for firmware
+nouveau/nvea_fuc409c and nouveau/fuc409c - who should be providing that=
+?
+It's not in linux-firmware.git [1], and I see no /dev/mmcblk0p* to chec=
+k
+whether the original system has such a file (which I doubt, given the
+nouveau naming). It then falls back to the tegra drm iiuc.
 
-> > Also, your check doesn't handle the case of finding bitflips in erased
-> > pages. So not only do you need to check for all 0xff, but you also need
-> > to tolerate a few flips. e.g., using hweight*() functions. There is
-> > plenty of discussion on this subject, as many people have tried to
-> > resolve this for their various drivers. But none have really done this
-> > in a thorough and correct way, so few have been merged. Thus, I'd really
-> > like to get something like this merged to nand_base.c, with a NAND_*
-> > flag or two to enable it. That would help drivers like yours to easily
-> > grab a good (albeit, likely slow) implementation.
-> > 
-> Did those discussion lead somewhere? It seems they got stuck some time
-> ago. I'm all for using common infrastructure that does the right thing,
-> but I wouldn't like to base this driver on top of future work with no
-> clear roadmap.
+With -rc2 I've seen the system freeze, with -rc3 just not behaving as
+expected when starting X (with ssh/serial remaining usable).
 
-That was really just an FYI. No, the discussion didn't lead much of
-anywhere. A bunch of half-assed implementations, and me with no time
-(and even less hardware, now).
+[    2.841626] [drm] Initialized drm 1.1.0 20060810
+[    2.846621] 57000000.gpu supply vdd not found, using dummy regulator
+[    2.853089] nouveau 57000000.gpu: cannot initialize IOMMU MM
+[    2.860518] [drm] not a PCI device; no HDMI
+[    2.864814] nouveau  [  DEVICE][57000000.gpu] BOOT0  : 0x0ea000a1
+[    2.870932] nouveau  [  DEVICE][57000000.gpu] Chipset: GK20A (NVEA)
+[    2.877211] nouveau  [  DEVICE][57000000.gpu] Family : NVE0
+[    2.916829] nouveau  [ INSTMEM][57000000.gpu] using DMA API
+[    2.923392] nouveau  [    VOLT][57000000.gpu] The default voltage is
+-22uV
+[    2.930297] nouveau  [     CLK][57000000.gpu] parent clock rate: 12 =
+Mhz
+[    2.938662] nouveau  [     CLK][57000000.gpu] --: core 198 MHz
+[    3.037837] nouveau  [  PGRAPH][57000000.gpu] using external firmwar=
+e
+[    3.044493] nouveau 57000000.gpu: Direct firmware load for
+nouveau/nvea_fuc409c failed with error -2
+[    3.053843] nouveau 57000000.gpu: Direct firmware load for
+nouveau/fuc409c failed with error -2
+[    3.062549] nouveau E[  PGRAPH][57000000.gpu] failed to load fuc409c
+[    3.069497] [TTM] Zone  kernel: Available graphics memory: 373624 ki=
+B
+[    3.075927] [TTM] Zone highmem: Available graphics memory: 1032568 k=
+iB
+[    3.082480] [TTM] Initializing pool allocator
+[    3.086923] [TTM] Initializing DMA pool allocator
+[    3.091737] nouveau  [     DRM] VRAM: 0 MiB
+[    3.095914] nouveau  [     DRM] GART: 1048576 MiB
+[    3.191777] nouveau E[   PFIFO][57000000.gpu] unsupported engines
+0x00000030
+[    3.269831] nouveau E[     DRM] failed to create ce channel, -22
+[    3.365874] nouveau E[   PFIFO][57000000.gpu] unsupported engines
+0x00000001
+[    3.443902] nouveau E[     DRM] failed to create kernel channel, -22
+[    3.452322] tegra-hdmi 54280000.hdmi: failed to get HDMI regulator
+[...]
+[    6.817669] +5V_HDMI_CON: supplied by +5V_SYS
+[    6.822215] +1.05V_RUN_AVDD_HDMI_PLL: supplied by +1.05V_RUN
+[    6.828102] +3.3V_RUN: supplied by +3.3V_SYS
+[    6.832438] +3.3V_AVDD_HDMI_AP_GATED: supplied by +3.3V_RUN
+[    6.841657] [drm] Supports vblank timestamp caching Rev 2 (21.10.201=
+3).
+[    6.848317] [drm] No driver support for vblank timestamp query.
+[    6.926989] Console: switching to colour frame buffer device 160x64
+[    6.945437] drm drm: fb0:  frame buffer device
+[    6.949894] drm drm: registered panic notifier
+[    6.976420] [drm] Initialized tegra 0.0.0 20120330 on minor 1
 
-> > So, I'd like to see the first request (about OOB checks) solved, and if
-> > the larger bitflips-in-erased-pages issue isn't addressed, please
-> > include a FIXME comment, or something similar.
+Regards,
+Andreas
 
-I'd still either like to see a good reason not to check the OOB for
-oob[:] == 0xffffffff, or else fix that up. The rest (which is, like you
-say, "bas[ing] this driver on top of future work") is not your problem
-ATM [1].
+[1]
+https://git.kernel.org/cgit/linux/kernel/git/firmware/linux-firmware.gi=
+t/tree
 
-...
-> > > +static void tegra_nand_setup_timing(struct tegra_nand *nand, int mode)
-> > > +{
-> > 
-> > This function could use some comments. The math can be easy to get
-> > wrong, especially without the annotation of units (e.g., picoseconds).
-> > Also, look out for rounding inaccuracies. DIV_ROUND_UP() is nice for
-> > getting conservative conversions at times.
-> > 
-> The timing formulas are listed in the TRM and I don't think it makes
-> sense to repeat them here. Are you okay with a pointer to the relevant
-> section in the TRM?
-
-I don't think we need to see all the formulas again, but a TRM reference
-could be nice. I was asking mostly about units, and also about the
-round-down division. I'll add a few more comments below.
-
-> > > +	unsigned long rate = clk_get_rate(nand->clk) / 1000000;
-
-^^ conversion to MHz? Why? (comment) How about DIV_ROUND_UP, so you
-don't overestimate the clock period (and thus underestimate the number
-of clock periods needed)?
-
-> > > +	unsigned long period = 1000000 / rate;
-
-And period is... in picoseconds? It took me a minute to figure that out
-for sure, so IMO it deserves a comment.
-
-> > > +	const struct nand_sdr_timings *timings;
-> > > +	u32 val, reg = 0;
-> > > +
-> > > +	timings = onfi_async_timing_mode_to_sdr_timings(mode);
-> > > +
-> > > +	val = max3(timings->tAR_min, timings->tRR_min,
-> > > +		   timings->tRC_min) / period;
-
-DIV_ROUND_UP()? You don't want to lop off a partial timing cycle, right?
-Simliar comments apply throughout. Or please correct me if I'm wrong.
-
-> > > +	if (val > 2)
-> > > +		val -= 3;
-> > > +	reg |= TIMING_TCR_TAR_TRR(val);
-> > > +
-> > > +	val = max(max(timings->tCS_min, timings->tCH_min),
-> > > +		  max(timings->tALS_min, timings->tALH_min)) / period;
-> > > +	if (val > 1)
-> > > +		val -= 2;
-> > > +	reg |= TIMING_TCS(val);
-> > > +
-> > > +	val = (max(timings->tRP_min, timings->tREA_max) + 6000) / period;
-> > > +	reg |= (TIMING_TRP(val) | TIMING_TRP_RESP(val));
-> > > +
-> > > +	reg |= TIMING_TWB(timings->tWB_max / period);
-> > > +	reg |= TIMING_TWHR(timings->tWHR_min / period);
-> > > +	reg |= TIMING_TWH(timings->tWH_min / period);
-> > > +	reg |= TIMING_TWP(timings->tWP_min / period);
-> > > +	reg |= TIMING_TRH(timings->tRHW_min / period);
-> > > +
-> > > +	writel(reg, nand->regs + TIMING_1);
-> > > +
-> > > +	val = timings->tADL_min / period;
-> > > +	if (val > 2)
-> > > +		val -= 3;
-> > > +	reg = TIMING_TADL(val);
-> > > +
-> > > +	writel(reg, nand->regs + TIMING_2);
-> > > +}
-
-Brian
-
-[1] Unless, of course, you start using NAND flash that sees bitflips in
-    erased pages.
+--=20
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
+GF: Felix Imend=F6rffer, Jane Smithard, Dilip Upmanyu, Graham Norton; H=
+RB
+21284 (AG N=FCrnberg)
