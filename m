@@ -1,139 +1,170 @@
-From: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>
-Subject: Re: [U-Boot] [PATCH 0/2] ARM: tegra: enable GPU DT node
-Date: Thu, 23 Jul 2015 21:49:15 +0300
-Message-ID: <55B1372B.608@kapsi.fi>
-References: <1436427181-23904-1-git-send-email-acourbot@nvidia.com>
- <55B0D427.2000704@suse.de>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: [PATCH v2 1/3] gpio: defer probe if pinctrl cannot be found
+Date: Fri, 24 Jul 2015 11:15:52 +0200
+Message-ID: <CAAObsKB+fV8rMyctBee83PHQBcXbubdMuMZo=WZv5ivSSaaP+w@mail.gmail.com>
+References: <1436862596-27730-1-git-send-email-tomeu.vizoso@collabora.com> <1436862596-27730-2-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <55B0D427.2000704-l3A5Bk7waGM@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1436862596-27730-2-git-send-email-tomeu.vizoso@collabora.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: linux-gpio@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/23/2015 02:46 PM, Andreas F=E4rber wrote:
-> Salut Alexandre,
+On 14 July 2015 at 10:29, Tomeu Vizoso <tomeu.vizoso@collabora.com> wrote:
+> When an OF node has a pin range for its GPIOs, return -EPROBE_DEFER if
+> the pin controller isn't available.
 >
-> Am 09.07.2015 um 09:32 schrieb Alexandre Courbot:
->> Tegra124 requires the bootloader to perform VPR initialization, othe=
-rwise the
->> GPU cannot be used by the system. Since using the GPU without that
->> initialization results in a hang, the GPU DT node is left disabled, =
-and it is
->> the task of the bootloader to enable it after ensuring it is safe to=
- use the
->> GPU.
->>
->> VPR init is already performed since patch df3443dfa449, but the devi=
-ce tree was
->> left untouched. This patch series performs this last step and prepar=
-es the GPU
->> intialization code to receive more code for newer chips.
+> Otherwise, the GPIO range wouldn't be set at all unless the pin
+> controller probed always before the GPIO chip.
 >
-> Tested-by: Andreas F=E4rber <afaerber-l3A5Bk7waGM@public.gmane.org>
->
-> I've tested this patchset on v2015.07 with 4.2.0-rc3-00115-gc5dfd65 -
-> with these two patches I get a console login on HDMI again.
->
-> However, I'm still having trouble with X11... Should that be working
-> with linux.git? (haven't tried linux-next.git yet)
+> With this change, the probe of the GPIO chip will be deferred and will
+> be retried at a later point, hopefully once the pin controller has been
+> registered and probed already.
 
-X11 with nouveau shouldn't be working (unless there has been significan=
-t=20
-work I'm not aware of since the last time I tested). However, it should=
-=20
-work with the modesetting driver, just without acceleration. To test if=
-=20
-nouveau works, you'll want to use something
-that allows buffer sharing between tegradrm and nouveau like=20
-http://github.com/gnurou/kmscube.
+Ping :)
 
+Thanks,
+
+Tomeu
+
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> ---
 >
-> Among other errors, it seems that nouveau is looking for firmware
-> nouveau/nvea_fuc409c and nouveau/fuc409c - who should be providing th=
-at?
-> It's not in linux-firmware.git [1], and I see no /dev/mmcblk0p* to ch=
-eck
-> whether the original system has such a file (which I doubt, given the
-> nouveau naming). It then falls back to the tegra drm iiuc.
-
-Based on a quick google search, looks like you'll have to pick these=20
-files up from this commit:
-http://git.baserock.org/cgi-bin/cgit.cgi/delta/linux.git/commit/?h=3Dba=
-serock/james/linux-tegra-3.15&id=3D2deb0fa
-
-a strange state of things, indeed.. :)
-
-I guess you could also extract them from the files in linux-firmware.
-
-Mikko
-
+> Changes in v2:
+> - Don't defer probe if the pinctrl node is disabled
 >
-> With -rc2 I've seen the system freeze, with -rc3 just not behaving as
-> expected when starting X (with ssh/serial remaining usable).
+>  drivers/gpio/gpiolib-of.c | 27 ++++++++++++++++++---------
+>  drivers/gpio/gpiolib.c    |  5 ++++-
+>  include/linux/of_gpio.h   |  4 ++--
+>  3 files changed, 24 insertions(+), 12 deletions(-)
 >
-> [    2.841626] [drm] Initialized drm 1.1.0 20060810
-> [    2.846621] 57000000.gpu supply vdd not found, using dummy regulat=
-or
-> [    2.853089] nouveau 57000000.gpu: cannot initialize IOMMU MM
-> [    2.860518] [drm] not a PCI device; no HDMI
-> [    2.864814] nouveau  [  DEVICE][57000000.gpu] BOOT0  : 0x0ea000a1
-> [    2.870932] nouveau  [  DEVICE][57000000.gpu] Chipset: GK20A (NVEA=
-)
-> [    2.877211] nouveau  [  DEVICE][57000000.gpu] Family : NVE0
-> [    2.916829] nouveau  [ INSTMEM][57000000.gpu] using DMA API
-> [    2.923392] nouveau  [    VOLT][57000000.gpu] The default voltage =
-is
-> -22uV
-> [    2.930297] nouveau  [     CLK][57000000.gpu] parent clock rate: 1=
-2 Mhz
-> [    2.938662] nouveau  [     CLK][57000000.gpu] --: core 198 MHz
-> [    3.037837] nouveau  [  PGRAPH][57000000.gpu] using external firmw=
-are
-> [    3.044493] nouveau 57000000.gpu: Direct firmware load for
-> nouveau/nvea_fuc409c failed with error -2
-> [    3.053843] nouveau 57000000.gpu: Direct firmware load for
-> nouveau/fuc409c failed with error -2
-> [    3.062549] nouveau E[  PGRAPH][57000000.gpu] failed to load fuc40=
-9c
-> [    3.069497] [TTM] Zone  kernel: Available graphics memory: 373624 =
-kiB
-> [    3.075927] [TTM] Zone highmem: Available graphics memory: 1032568=
- kiB
-> [    3.082480] [TTM] Initializing pool allocator
-> [    3.086923] [TTM] Initializing DMA pool allocator
-> [    3.091737] nouveau  [     DRM] VRAM: 0 MiB
-> [    3.095914] nouveau  [     DRM] GART: 1048576 MiB
-> [    3.191777] nouveau E[   PFIFO][57000000.gpu] unsupported engines
-> 0x00000030
-> [    3.269831] nouveau E[     DRM] failed to create ce channel, -22
-> [    3.365874] nouveau E[   PFIFO][57000000.gpu] unsupported engines
-> 0x00000001
-> [    3.443902] nouveau E[     DRM] failed to create kernel channel, -=
-22
-> [    3.452322] tegra-hdmi 54280000.hdmi: failed to get HDMI regulator
-> [...]
-> [    6.817669] +5V_HDMI_CON: supplied by +5V_SYS
-> [    6.822215] +1.05V_RUN_AVDD_HDMI_PLL: supplied by +1.05V_RUN
-> [    6.828102] +3.3V_RUN: supplied by +3.3V_SYS
-> [    6.832438] +3.3V_AVDD_HDMI_AP_GATED: supplied by +3.3V_RUN
-> [    6.841657] [drm] Supports vblank timestamp caching Rev 2 (21.10.2=
-013).
-> [    6.848317] [drm] No driver support for vblank timestamp query.
-> [    6.926989] Console: switching to colour frame buffer device 160x6=
-4
-> [    6.945437] drm drm: fb0:  frame buffer device
-> [    6.949894] drm drm: registered panic notifier
-> [    6.976420] [drm] Initialized tegra 0.0.0 20120330 on minor 1
+> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
+> index 9a0ec48a4737..4e1f73b9136a 100644
+> --- a/drivers/gpio/gpiolib-of.c
+> +++ b/drivers/gpio/gpiolib-of.c
+> @@ -338,7 +338,7 @@ void of_mm_gpiochip_remove(struct of_mm_gpio_chip *mm_gc)
+>  EXPORT_SYMBOL(of_mm_gpiochip_remove);
 >
-> Regards,
-> Andreas
+>  #ifdef CONFIG_PINCTRL
+> -static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
+> +static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
+>  {
+>         struct device_node *np = chip->of_node;
+>         struct of_phandle_args pinspec;
+> @@ -349,7 +349,7 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
+>         struct property *group_names;
 >
-> [1]
-> https://git.kernel.org/cgit/linux/kernel/git/firmware/linux-firmware.=
-git/tree
+>         if (!np)
+> -               return;
+> +               return 0;
+>
+>         group_names = of_find_property(np, group_names_propname, NULL);
+>
+> @@ -361,7 +361,7 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
+>
+>                 pctldev = of_pinctrl_get(pinspec.np);
+>                 if (!pctldev)
+> -                       break;
+> +                       return -EPROBE_DEFER;
+>
+>                 if (pinspec.args[2]) {
+>                         if (group_names) {
+> @@ -381,7 +381,7 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
+>                                         pinspec.args[1],
+>                                         pinspec.args[2]);
+>                         if (ret)
+> -                               break;
+> +                               return ret;
+>                 } else {
+>                         /* npins == 0: special range */
+>                         if (pinspec.args[1]) {
+> @@ -411,32 +411,41 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
+>                         ret = gpiochip_add_pingroup_range(chip, pctldev,
+>                                                 pinspec.args[0], name);
+>                         if (ret)
+> -                               break;
+> +                               return ret;
+>                 }
+>         }
+> +
+> +       return 0;
+>  }
+>
+>  #else
+> -static void of_gpiochip_add_pin_range(struct gpio_chip *chip) {}
+> +static int of_gpiochip_add_pin_range(struct gpio_chip *chip) { return 0; }
+>  #endif
+>
+> -void of_gpiochip_add(struct gpio_chip *chip)
+> +int of_gpiochip_add(struct gpio_chip *chip)
+>  {
+> +       int status;
+> +
+>         if ((!chip->of_node) && (chip->dev))
+>                 chip->of_node = chip->dev->of_node;
+>
+>         if (!chip->of_node)
+> -               return;
+> +               return 0;
+>
+>         if (!chip->of_xlate) {
+>                 chip->of_gpio_n_cells = 2;
+>                 chip->of_xlate = of_gpio_simple_xlate;
+>         }
+>
+> -       of_gpiochip_add_pin_range(chip);
+> +       status = of_gpiochip_add_pin_range(chip);
+> +       if (status)
+> +               return status;
+> +
+>         of_node_get(chip->of_node);
+>
+>         of_gpiochip_scan_hogs(chip);
+> +
+> +       return 0;
+>  }
+>
+>  void of_gpiochip_remove(struct gpio_chip *chip)
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index bf4bd1d120c3..a8cab335c0cc 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -287,7 +287,10 @@ int gpiochip_add(struct gpio_chip *chip)
+>         INIT_LIST_HEAD(&chip->pin_ranges);
+>  #endif
+>
+> -       of_gpiochip_add(chip);
+> +       status = of_gpiochip_add(chip);
+> +       if (status)
+> +               goto err_remove_chip;
+> +
+>         acpi_gpiochip_add(chip);
+>
+>         status = gpiochip_sysfs_register(chip);
+> diff --git a/include/linux/of_gpio.h b/include/linux/of_gpio.h
+> index 69dbe312b11b..f3191828f037 100644
+> --- a/include/linux/of_gpio.h
+> +++ b/include/linux/of_gpio.h
+> @@ -54,7 +54,7 @@ extern int of_mm_gpiochip_add(struct device_node *np,
+>                               struct of_mm_gpio_chip *mm_gc);
+>  extern void of_mm_gpiochip_remove(struct of_mm_gpio_chip *mm_gc);
+>
+> -extern void of_gpiochip_add(struct gpio_chip *gc);
+> +extern int of_gpiochip_add(struct gpio_chip *gc);
+>  extern void of_gpiochip_remove(struct gpio_chip *gc);
+>  extern int of_gpio_simple_xlate(struct gpio_chip *gc,
+>                                 const struct of_phandle_args *gpiospec,
+> @@ -76,7 +76,7 @@ static inline int of_gpio_simple_xlate(struct gpio_chip *gc,
+>         return -ENOSYS;
+>  }
+>
+> -static inline void of_gpiochip_add(struct gpio_chip *gc) { }
+> +static inline int of_gpiochip_add(struct gpio_chip *gc) { return 0; }
+>  static inline void of_gpiochip_remove(struct gpio_chip *gc) { }
+>
+>  #endif /* CONFIG_OF_GPIO */
+> --
+> 2.4.3
 >
