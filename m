@@ -1,170 +1,84 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: Re: [PATCH v2 1/3] gpio: defer probe if pinctrl cannot be found
-Date: Fri, 24 Jul 2015 11:15:52 +0200
-Message-ID: <CAAObsKB+fV8rMyctBee83PHQBcXbubdMuMZo=WZv5ivSSaaP+w@mail.gmail.com>
-References: <1436862596-27730-1-git-send-email-tomeu.vizoso@collabora.com> <1436862596-27730-2-git-send-email-tomeu.vizoso@collabora.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v3 1/4] i2c: tegra: implement slave mode
+Date: Fri, 24 Jul 2015 11:27:20 +0200
+Message-ID: <20150724092720.GA1597@katana>
+References: <1437424546-30405-1-git-send-email-danindrey@mail.ru>
+ <1437424546-30405-2-git-send-email-danindrey@mail.ru>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="mYCpIKhGyMATD0i+"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1436862596-27730-2-git-send-email-tomeu.vizoso@collabora.com>
+Content-Disposition: inline
+In-Reply-To: <1437424546-30405-2-git-send-email-danindrey@mail.ru>
 Sender: linux-kernel-owner@vger.kernel.org
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Cc: linux-gpio@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Linus Walleij <linus.walleij@linaro.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+To: Andrey Danin <danindrey@mail.ru>
+Cc: devicetree@vger.kernel.org, devel@linuxdriverproject.org, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, ac100@lists.launchpad.net, Laxman Dewangan <ldewangan@nvidia.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Julian Andres Klode <jak@jak-linux.org>, Marc Dietrich <marvin24@gmx.de>
 List-Id: linux-tegra@vger.kernel.org
 
-On 14 July 2015 at 10:29, Tomeu Vizoso <tomeu.vizoso@collabora.com> wrote:
-> When an OF node has a pin range for its GPIOs, return -EPROBE_DEFER if
-> the pin controller isn't available.
->
-> Otherwise, the GPIO range wouldn't be set at all unless the pin
-> controller probed always before the GPIO chip.
->
-> With this change, the probe of the GPIO chip will be deferred and will
-> be retried at a later point, hopefully once the pin controller has been
-> registered and probed already.
 
-Ping :)
+--mYCpIKhGyMATD0i+
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi Andrey,
+
+On Mon, Jul 20, 2015 at 11:35:43PM +0300, Andrey Danin wrote:
+> Initialization code is based on NVEC driver.
+>=20
+> There is a HW bug in AP20 that was also mentioned in kernel sources
+> for Toshiba AC100.
+>=20
+> Signed-off-by: Andrey Danin <danindrey@mail.ru>
+
+Still doesn't work for me and I think I understand why. Do you run your
+I2C controller in slave mode only? That might work, but using it in
+master/slave mode simultanously won't work yet as I see it:
+
+* After every transfer (as master), clocks get disabled. I assume the IP
+  core won't be able to detect its own address then.
+
+* There is this code in tegra_i2c_init():
+
+	if (!i2c_dev->is_dvc) {
+		u32 sl_cfg =3D i2c_readl(i2c_dev, I2C_SL_CNFG);
+		sl_cfg |=3D I2C_SL_CNFG_NACK | I2C_SL_CNFG_NEWSL;
+		i2c_writel(i2c_dev, sl_cfg, I2C_SL_CNFG);
+		i2c_writel(i2c_dev, 0xfc, I2C_SL_ADDR1);
+		i2c_writel(i2c_dev, 0x00, I2C_SL_ADDR2);
+
+	}
+
+  It probably messes up the slave initialization in tegra_reg_slave().
+  At least I see that the slave address gets overwritten when I peek
+  the register after boot.
+
+Does that make sense to you?
 
 Thanks,
 
-Tomeu
+   Wolfram
 
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> ---
->
-> Changes in v2:
-> - Don't defer probe if the pinctrl node is disabled
->
->  drivers/gpio/gpiolib-of.c | 27 ++++++++++++++++++---------
->  drivers/gpio/gpiolib.c    |  5 ++++-
->  include/linux/of_gpio.h   |  4 ++--
->  3 files changed, 24 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/gpio/gpiolib-of.c b/drivers/gpio/gpiolib-of.c
-> index 9a0ec48a4737..4e1f73b9136a 100644
-> --- a/drivers/gpio/gpiolib-of.c
-> +++ b/drivers/gpio/gpiolib-of.c
-> @@ -338,7 +338,7 @@ void of_mm_gpiochip_remove(struct of_mm_gpio_chip *mm_gc)
->  EXPORT_SYMBOL(of_mm_gpiochip_remove);
->
->  #ifdef CONFIG_PINCTRL
-> -static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
-> +static int of_gpiochip_add_pin_range(struct gpio_chip *chip)
->  {
->         struct device_node *np = chip->of_node;
->         struct of_phandle_args pinspec;
-> @@ -349,7 +349,7 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
->         struct property *group_names;
->
->         if (!np)
-> -               return;
-> +               return 0;
->
->         group_names = of_find_property(np, group_names_propname, NULL);
->
-> @@ -361,7 +361,7 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
->
->                 pctldev = of_pinctrl_get(pinspec.np);
->                 if (!pctldev)
-> -                       break;
-> +                       return -EPROBE_DEFER;
->
->                 if (pinspec.args[2]) {
->                         if (group_names) {
-> @@ -381,7 +381,7 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
->                                         pinspec.args[1],
->                                         pinspec.args[2]);
->                         if (ret)
-> -                               break;
-> +                               return ret;
->                 } else {
->                         /* npins == 0: special range */
->                         if (pinspec.args[1]) {
-> @@ -411,32 +411,41 @@ static void of_gpiochip_add_pin_range(struct gpio_chip *chip)
->                         ret = gpiochip_add_pingroup_range(chip, pctldev,
->                                                 pinspec.args[0], name);
->                         if (ret)
-> -                               break;
-> +                               return ret;
->                 }
->         }
-> +
-> +       return 0;
->  }
->
->  #else
-> -static void of_gpiochip_add_pin_range(struct gpio_chip *chip) {}
-> +static int of_gpiochip_add_pin_range(struct gpio_chip *chip) { return 0; }
->  #endif
->
-> -void of_gpiochip_add(struct gpio_chip *chip)
-> +int of_gpiochip_add(struct gpio_chip *chip)
->  {
-> +       int status;
-> +
->         if ((!chip->of_node) && (chip->dev))
->                 chip->of_node = chip->dev->of_node;
->
->         if (!chip->of_node)
-> -               return;
-> +               return 0;
->
->         if (!chip->of_xlate) {
->                 chip->of_gpio_n_cells = 2;
->                 chip->of_xlate = of_gpio_simple_xlate;
->         }
->
-> -       of_gpiochip_add_pin_range(chip);
-> +       status = of_gpiochip_add_pin_range(chip);
-> +       if (status)
-> +               return status;
-> +
->         of_node_get(chip->of_node);
->
->         of_gpiochip_scan_hogs(chip);
-> +
-> +       return 0;
->  }
->
->  void of_gpiochip_remove(struct gpio_chip *chip)
-> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-> index bf4bd1d120c3..a8cab335c0cc 100644
-> --- a/drivers/gpio/gpiolib.c
-> +++ b/drivers/gpio/gpiolib.c
-> @@ -287,7 +287,10 @@ int gpiochip_add(struct gpio_chip *chip)
->         INIT_LIST_HEAD(&chip->pin_ranges);
->  #endif
->
-> -       of_gpiochip_add(chip);
-> +       status = of_gpiochip_add(chip);
-> +       if (status)
-> +               goto err_remove_chip;
-> +
->         acpi_gpiochip_add(chip);
->
->         status = gpiochip_sysfs_register(chip);
-> diff --git a/include/linux/of_gpio.h b/include/linux/of_gpio.h
-> index 69dbe312b11b..f3191828f037 100644
-> --- a/include/linux/of_gpio.h
-> +++ b/include/linux/of_gpio.h
-> @@ -54,7 +54,7 @@ extern int of_mm_gpiochip_add(struct device_node *np,
->                               struct of_mm_gpio_chip *mm_gc);
->  extern void of_mm_gpiochip_remove(struct of_mm_gpio_chip *mm_gc);
->
-> -extern void of_gpiochip_add(struct gpio_chip *gc);
-> +extern int of_gpiochip_add(struct gpio_chip *gc);
->  extern void of_gpiochip_remove(struct gpio_chip *gc);
->  extern int of_gpio_simple_xlate(struct gpio_chip *gc,
->                                 const struct of_phandle_args *gpiospec,
-> @@ -76,7 +76,7 @@ static inline int of_gpio_simple_xlate(struct gpio_chip *gc,
->         return -ENOSYS;
->  }
->
-> -static inline void of_gpiochip_add(struct gpio_chip *gc) { }
-> +static inline int of_gpiochip_add(struct gpio_chip *gc) { return 0; }
->  static inline void of_gpiochip_remove(struct gpio_chip *gc) { }
->
->  #endif /* CONFIG_OF_GPIO */
-> --
-> 2.4.3
->
+--mYCpIKhGyMATD0i+
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJVsgT3AAoJEBQN5MwUoCm28TkQAJ8GtWdUEhjDsXnlwbznCTXw
+0ztaEoxnmK1CW3iglVwyMEJAC6d8+V3HAItUZbkP+XBRbmBu1OQPOdZNrT9VfaR/
+dqjwMWmYg+VxyQGvjCG4uYRFc8YMHYpam3f4y9Gxi8lxz7MDRgDr1o00c08JIZuf
+FsM2aWXO0qSxhO9PxBCsKIE5gsmw/VTt6tW57oNPrgb4KRWaFmcAmXGUDDwUPy1k
+R4BwxNMe2wWfAiegGfPDS/vYYveJcNP+Sf3nrNUY4p5hYTVKZsiQdDkIyAYkIiJg
+uON8pr8DLWvftjXVzQyRrG4g1i+0xvrtSYJsApJw+UXwcSOoNYWNIWwS4xjbKQCO
+Kvvrz8fbrIkwsn/YFgmOQrLOz/coTeFt3JwNUbhXvvC+dgRqzJPyUW5c0oEd9r7f
+N7vUKne85chLFOJ7ZNxiGtuJ0Dassn0PP+m4C/e+69MBjyG61OFn5KqLK00SWTJ7
+C+8CNYa9nmV0Fh9ed+12VeaqCtXXeg0xOh0oLB0+kRtW2ZH8M5D4JhYnBl/C8ncd
+PxRBkfKsO/TqrWVbqnyzND7eWVGpsU+TTFL1k1T4hx0n3pHA6tg2o60VaamFctvO
+s/lyoJ/YPhcrF8lhlMOZtungmAJpF0zpQaC9vI1QPUcLe6raaE65ZSRg9runI0je
+Epun1jJ9IcWcnOYBR+IE
+=bK/2
+-----END PGP SIGNATURE-----
+
+--mYCpIKhGyMATD0i+--
