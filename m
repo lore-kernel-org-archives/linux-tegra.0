@@ -1,90 +1,124 @@
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
-Subject: Re: [PATCH 00/18] Clean up exposure of arch-internal code
-Date: Mon, 27 Jul 2015 16:45:14 +0200
-Message-ID: <1879037.GgHtQQQr5L@diego>
-References: <20150727122824.GH7557@n2100.arm.linux.org.uk>
-	<20150727131313.GM10969@8bytes.org>
+From: Kyle Huey <me-OhBmq/TcCDJWk0Htik3J/w@public.gmane.org>
+Subject: Re: [RESEND PATCH v3] ARM: tegra124: pmu support
+Date: Mon, 27 Jul 2015 09:46:27 -0700
+Message-ID: <CAP045Aoz4hzBSiZfbuE9jjbFggt=_ZBY4t6TVGL6ELwpi3Ue2Q@mail.gmail.com>
+References: <1436808945-14524-1-git-send-email-khuey@kylehuey.com>
+	<20150717085946.GB3057@ulmo>
+	<CAP045ArZ0PUcpiWYeXsHbjo6BR3YD-ZzTRsBskZzUaQXfOohrg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-In-Reply-To: <20150727131313.GM10969-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
-List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
-List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
-List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
-	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
-Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-To: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Daniel Kurtz <djkurtz-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Tomasz Figa <tfiga-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAP045ArZ0PUcpiWYeXsHbjo6BR3YD-ZzTRsBskZzUaQXfOohrg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "open list:OPEN FIRMWARE AND..." <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "moderated list:ARM PORT" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "open list:TEGRA ARCHITECTUR..." <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am Montag, 27. Juli 2015, 15:13:13 schrieb Joerg Roedel:
-> [+ Heiko for comment on Rockchip IOMMU]
+On Sat, Jul 18, 2015 at 6:54 AM, Kyle Huey <me-OhBmq/TcCDJWk0Htik3J/w@public.gmane.org> wrote:
+> On Fri, Jul 17, 2015 at 4:59 PM, Thierry Reding
+> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> On Mon, Jul 13, 2015 at 10:35:45AM -0700, Kyle Huey wrote:
+>>> This patch modifies the device tree for tegra124 based devices to enable
+>>> the Cortex A15 PMU.  The interrupt numbers are taken from NVIDIA TRM
+>>> DP-06905-001_v03p.  This patch was tested on a Jetson TK1.
+>>>
+>>> Updated for proper ordering and to add interrupt-affinity values.
+>>>
+>>> Signed-off-by: Kyle Huey <khuey-OhBmq/TcCDJWk0Htik3J/w@public.gmane.org>
+>>> ---
+>>>  arch/arm/boot/dts/tegra124.dtsi | 17 +++++++++++++----
+>>>  1 file changed, 13 insertions(+), 4 deletions(-)
+>>
+>> Is there any way to test this? What are the effects of adding this?
+>
+> Yes.  This enables the ARM PMU driver for the Cortex A15, which allows
+> one to use hardware performance counters via the perf_event_open API.
+> For a simple test program, see
+> https://github.com/khuey/perf-counter-test/.  Without this patch, the
+> perf_event_open syscall will fail.  With this patch, the program will
+> print out the performance counter value for each iteration of the
+> loop. (IIRC on the A15 the branch counter was removed, so you may want
+> to replace 0xD with 0x8 which counts instructions executed if you want
+> to see a non-zero number there).  You also will see a message about
+> the PMU in the kernel log at startup after applying this patch.
+>
+> I have also tested this extensively (including the interrupt features
+> of the PMU) on a more complex program.
+>
+>> Does it enable using perf for profiling?
+>
+> I have not tested it, but I believe you can use perf without this
+> patch if you do not use features that require hardware performance
+> counter support.  This patch would enable those features.
+>
+>>> diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+>>> index 13cc7ca..de07d7e 100644
+>>> --- a/arch/arm/boot/dts/tegra124.dtsi
+>>> +++ b/arch/arm/boot/dts/tegra124.dtsi
+>>> @@ -918,31 +918,40 @@
+>>>               #address-cells = <1>;
+>>>               #size-cells = <0>;
+>>>
+>>> -             cpu@0 {
+>>> +             A15_0: cpu@0 {
+>>>                       device_type = "cpu";
+>>>                       compatible = "arm,cortex-a15";
+>>>                       reg = <0>;
+>>>               };
+>>>
+>>> -             cpu@1 {
+>>> +             A15_1: cpu@1 {
+>>>                       device_type = "cpu";
+>>>                       compatible = "arm,cortex-a15";
+>>>                       reg = <1>;
+>>>               };
+>>>
+>>> -             cpu@2 {
+>>> +             A15_2: cpu@2 {
+>>>                       device_type = "cpu";
+>>>                       compatible = "arm,cortex-a15";
+>>>                       reg = <2>;
+>>>               };
+>>>
+>>> -             cpu@3 {
+>>> +             A15_3: cpu@3 {
+>>>                       device_type = "cpu";
+>>>                       compatible = "arm,cortex-a15";
+>>>                       reg = <3>;
+>>>               };
+>>>       };
+>>>
+>>> +     pmu {
+>>> +             compatible = "arm,cortex-a15-pmu";
+>>> +             interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_HIGH>,
+>>> +                          <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>,
+>>> +                          <GIC_SPI 146 IRQ_TYPE_LEVEL_HIGH>,
+>>> +                          <GIC_SPI 147 IRQ_TYPE_LEVEL_HIGH>;
+>>> +             interrupt-affinity = <&A15_0>, <&A15_1>, <&A15_2>, <&A15_3>;
+>>
+>> These labels look somewhat artificial to me, perhaps we could do
+>> something like the following instead?
+>>
+>>         interrupt-affinity = <&{/cpus/cpu@0}>, ...;
+>>
+>> That's slightly more obvious and avoids the need to "invent" labels for
+>> the CPUs.
+>>
+>> No need to respin, I can fix that up when applying if nobody objects to
+>> using the alternative notation.
+>>
+>> Thierry
+>
+> I have no objections.  I was not aware that the device tree syntax
+> supported that.  FWIW I cargo-culted my way to victory from
+> vexpress-v2p-ca9.dts here.
+>
+> - Kyle
 
-adding also Daniel Kurtz and Tomasz Figa who did most of the iommu stuff if I 
-remember correctly.
+Anything else I can do to help move this along?
 
-
-While I'm not this versed in the iommu world I see the issue Russell pointed 
-out, as especially the cache flushes won't work like this on arm64, which uses 
-the same iommu on the rk3368.
-
-
-I'll also try to understand what this does and what needs to be done to the 
-Rockchip iommu, but I guess that'll still take a bit.
-
-
-> On Mon, Jul 27, 2015 at 01:28:24PM +0100, Russell King - ARM Linux wrote:
-> > This series of patches attempts to clean up the use of architecture
-> > internal functions in drivers, and removes some functions from view
-> > in the asm/ headers.  I'm also considering whether we need to add
-> > some linker magic to hide symbols when building the built-in.o files.
-> > 
-> > This was triggered by 3rd party drivers "going under the covers" of
-> > the DMA API and calling the dmac_*() functions directly, a practice
-> > which I have always refused to allow.  This also breaks module
-> > building (which is the big hint that they're doing something wrong.)
-> > 
-> > However, it also came to light that various drivers are using
-> > __cpuc_* functions directly, which are non-portable, and is another
-> > instance of "going under the covers" and tinkering with what should
-> > be kept as architecture implementation details.
-> > 
-> > This series addresses some of these points.  It:
-> > 
-> > (a) moves dmac_map_area() and dmac_unmap_area() prototypes out of
-> > 
-> >     asm/cacheflush.h and into arch/arm/mm.
-> > 
-> > (b) provide a secure_flush() call for the Qualcomm secure monitor
-> > 
-> >     code.
-> > 
-> > (c) stop tegra smmu driver(s) from using __cpuc_flush_dcache_area,
-> > 
-> >     something which necessitates additional complexity to deal with
-> >     the ARM vs ARM64 differences.  It should be using the DMA API.
-> >     However, the Tegra SMMU driver is in really bad shape, and this
-> >     isn't a simple conversion - it requires a lot of additional
-> >     fixes to bring the code up to scratch.
-> > 
-> > It leaves the Rockchip IOMMU driver for the time being, but that is also
-> > something which needs cleaning up in the same way as the Tegra SMMU
-> > driver.
-> > 
-> >  arch/arm/include/asm/cacheflush.h |  21 ++-
-> >  arch/arm/include/asm/glue-cache.h |   2 -
-> >  arch/arm/mm/dma-mapping.c         |   1 +
-> >  arch/arm/mm/dma.h                 |  32 ++++
-> >  drivers/firmware/qcom_scm-32.c    |   4 +-
-> >  drivers/iommu/tegra-smmu.c        | 297
-> >  ++++++++++++++++++++++++-------------- drivers/memory/tegra/tegra114.c  
-> >  |  17 ---
-> >  drivers/memory/tegra/tegra124.c   |  30 ----
-> >  drivers/memory/tegra/tegra30.c    |  17 ---
-> >  include/soc/tegra/mc.h            |   7 -
-> >  10 files changed, 242 insertions(+), 186 deletions(-)
+- Kyle
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
