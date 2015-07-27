@@ -1,79 +1,65 @@
-From: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Subject: [PATCH 12/18] iommu: tegra-smmu: smmu_flush_ptc() wants device
- address
-Date: Mon, 27 Jul 2015 13:29:46 +0100
-Message-ID: <E1ZJhXO-000489-TI@rmk-PC.arm.linux.org.uk>
+From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 00/18] Clean up exposure of arch-internal code
+Date: Mon, 27 Jul 2015 15:13:13 +0200
+Message-ID: <20150727131313.GM10969@8bytes.org>
 References: <20150727122824.GH7557@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150727122824.GH7557-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
 Content-Disposition: inline
+In-Reply-To: <20150727122824.GH7557-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heiko =?iso-8859-1?Q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Pass smmu_flush_ptc() the device address rather than struct page
-poiner.
+[+ Heiko for comment on Rockchip IOMMU]
 
-Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
----
- drivers/iommu/tegra-smmu.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 89e7961f4848..c54b0afda475 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -164,10 +164,9 @@ static void smmu_flush_ptc_all(struct tegra_smmu *smmu)
- 	smmu_writel(smmu, SMMU_PTC_FLUSH_TYPE_ALL, SMMU_PTC_FLUSH);
- }
- 
--static inline void smmu_flush_ptc(struct tegra_smmu *smmu, struct page *page,
-+static inline void smmu_flush_ptc(struct tegra_smmu *smmu, phys_addr_t phys,
- 				  unsigned long offset)
- {
--	phys_addr_t phys = page_to_phys(page);
- 	u32 value;
- 
- 	offset &= ~(smmu->mc->soc->atom_size - 1);
-@@ -407,7 +406,7 @@ static int tegra_smmu_as_prepare(struct tegra_smmu *smmu,
- 		return err;
- 
- 	smmu_flush_dcache(as->pd, 0, SMMU_SIZE_PD);
--	smmu_flush_ptc(smmu, as->pd, 0);
-+	smmu_flush_ptc(smmu, page_to_phys(as->pd), 0);
- 	smmu_flush_tlb_asid(smmu, as->id);
- 
- 	smmu_writel(smmu, as->id & 0x7f, SMMU_PTB_ASID);
-@@ -540,7 +539,7 @@ static u32 *as_get_pte(struct tegra_smmu_as *as, dma_addr_t iova,
- 		pd[pde] = SMMU_MK_PDE(page, SMMU_PDE_ATTR | SMMU_PDE_NEXT);
- 
- 		smmu_flush_dcache(as->pd, pde << 2, 4);
--		smmu_flush_ptc(smmu, as->pd, pde << 2);
-+		smmu_flush_ptc(smmu, page_to_phys(as->pd), pde << 2);
- 		smmu_flush_tlb_section(smmu, as->id, iova);
- 		smmu_flush(smmu);
- 	} else {
-@@ -577,7 +576,7 @@ static void tegra_smmu_pte_put_use(struct tegra_smmu_as *as, unsigned long iova)
- 
- 		/* Flush the page directory entry */
- 		smmu_flush_dcache(as->pd, offset, sizeof(*pd));
--		smmu_flush_ptc(smmu, as->pd, offset);
-+		smmu_flush_ptc(smmu, page_to_phys(as->pd), offset);
- 		smmu_flush_tlb_section(smmu, as->id, iova);
- 		smmu_flush(smmu);
- 
-@@ -597,7 +596,7 @@ static void tegra_smmu_set_pte(struct tegra_smmu_as *as, unsigned long iova,
- 	*pte = val;
- 
- 	smmu_flush_dcache(pte_page, offset, 4);
--	smmu_flush_ptc(smmu, pte_page, offset);
-+	smmu_flush_ptc(smmu, page_to_phys(pte_page), offset);
- 	smmu_flush_tlb_group(smmu, as->id, iova);
- 	smmu_flush(smmu);
- }
--- 
-2.1.0
+On Mon, Jul 27, 2015 at 01:28:24PM +0100, Russell King - ARM Linux wrote:
+> This series of patches attempts to clean up the use of architecture
+> internal functions in drivers, and removes some functions from view
+> in the asm/ headers.  I'm also considering whether we need to add
+> some linker magic to hide symbols when building the built-in.o files.
+> 
+> This was triggered by 3rd party drivers "going under the covers" of
+> the DMA API and calling the dmac_*() functions directly, a practice
+> which I have always refused to allow.  This also breaks module
+> building (which is the big hint that they're doing something wrong.)
+> 
+> However, it also came to light that various drivers are using
+> __cpuc_* functions directly, which are non-portable, and is another
+> instance of "going under the covers" and tinkering with what should
+> be kept as architecture implementation details.
+> 
+> This series addresses some of these points.  It:
+> 
+> (a) moves dmac_map_area() and dmac_unmap_area() prototypes out of
+>     asm/cacheflush.h and into arch/arm/mm.
+> (b) provide a secure_flush() call for the Qualcomm secure monitor
+>     code.
+> (c) stop tegra smmu driver(s) from using __cpuc_flush_dcache_area,
+>     something which necessitates additional complexity to deal with
+>     the ARM vs ARM64 differences.  It should be using the DMA API.
+>     However, the Tegra SMMU driver is in really bad shape, and this
+>     isn't a simple conversion - it requires a lot of additional
+>     fixes to bring the code up to scratch.
+> 
+> It leaves the Rockchip IOMMU driver for the time being, but that is also
+> something which needs cleaning up in the same way as the Tegra SMMU
+> driver.
+> 
+>  arch/arm/include/asm/cacheflush.h |  21 ++-
+>  arch/arm/include/asm/glue-cache.h |   2 -
+>  arch/arm/mm/dma-mapping.c         |   1 +
+>  arch/arm/mm/dma.h                 |  32 ++++
+>  drivers/firmware/qcom_scm-32.c    |   4 +-
+>  drivers/iommu/tegra-smmu.c        | 297 ++++++++++++++++++++++++--------------
+>  drivers/memory/tegra/tegra114.c   |  17 ---
+>  drivers/memory/tegra/tegra124.c   |  30 ----
+>  drivers/memory/tegra/tegra30.c    |  17 ---
+>  include/soc/tegra/mc.h            |   7 -
+>  10 files changed, 242 insertions(+), 186 deletions(-)
+> 
+> -- 
+> FTTC broadband for 0.8mile line: currently at 10.5Mbps down 400kbps up
+> according to speedtest.net.
