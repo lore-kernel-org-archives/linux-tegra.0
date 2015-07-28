@@ -1,183 +1,49 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH V3 11/19] PCI: tegra: Add support for generic PM domains
-Date: Tue, 28 Jul 2015 09:35:57 +0100
-Message-ID: <55B73EED.1080404@nvidia.com>
-References: <1436791197-32358-1-git-send-email-jonathanh@nvidia.com> <1436791197-32358-12-git-send-email-jonathanh@nvidia.com> <20150717104547.GN3057@ulmo>
+From: Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH] regulator: max8973: Set VSEL regmap ops if DVS GPIO is not set
+Date: Tue, 28 Jul 2015 11:34:11 +0300
+Message-ID: <1438072451-22590-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20150717104547.GN3057@ulmo>
-Sender: linux-pm-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, =?windows-1252?Q?Terje_Bergstr?= =?windows-1252?Q?=F6m?= <tbergstrom@nvidia.com>, Hans de Goede <hdegoede@redhat.com>, Tejun Heo <tj@kernel.org>, Vince Hsu <vinceh@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: lgirdwood@gmail.com, broonie@kernel.org, ldewangan@nvidia.com
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+Use regmap helpers for get_voltage_sel and set_voltage_sel ops
+if the DVS GPIO is not set.
 
-On 17/07/15 11:45, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Mon, Jul 13, 2015 at 01:39:49PM +0100, Jon Hunter wrote:
->> Add support to the tegra PCI driver for generic PM domains. However,
->> to ensure backward compatibility with older device tree blobs ensure
->> that the driver can work with or without generic PM domains. In order
->> to migrate to generic PM domain infrastructure the necessary changes
->> are:
->>
->> 1. If the "power-domains" property is present in the DT device node then
->>    generic PM domains is supported and pm_runtime_enable() should be
->>    called for the device. Furthermore, the enabling and disabling of the
->>    power-domain is handled via calling pm_runtime_get/put, respectively.
->>
->> 2. To ensure that clocks are managed consistently when generic PM domains
->>    are used and are not used, drivers should be migrated to use the
->>    tegra_powergate_power_on_legacy() and tegra_powergate_power_off_legacy()
->>    functions instead of the current tegra_powergate_sequence_power_up()
->>    and tegra_powergate_power_off(). The purpose of the
->>    tegra_powergate_power_on_legacy() and tegra_powergate_power_off_legacy()
->>    APIs is to mimick the behaviour of the tegra generic power-domain code,
->>    such that if generic power domains are not supported the functionality
->>    is the same.
->>
->> 3. The main difference between the tegra_powergate_sequence_power_up() API
->>    and the tegra_powergate_power_on_legacy() is that the clock used to
->>    enable the powergate is not kept enabled when using the
->>    tegra_powergate_power_on_legacy() API. Therefore, drivers must enable
->>    the clocks they need after calling tegra_powergate_power_on_legacy()
->>    and disable these clocks before calling
->>    tegra_powergate_power_off_legacy().
-> 
-> This is the same comment as in the DRM patch, and it applies to all
-> devices that use powergating, so it should move into the preparatory
-> patch rather than be repeated in all patches.
-> 
->>
->> The helper functions for handling the powering on and off of the PCI
->> controller have been updated to support generic PM domains. The
->> tegra_pcie_power_off() was missing code to disable the clocks enabled in
->> the tegra_pcie_power_on() function and so this has been added.
->>
->> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->> ---
->>  drivers/pci/host/pci-tegra.c | 49 +++++++++++++++++++++++++++++++++-----------
->>  1 file changed, 37 insertions(+), 12 deletions(-)
->>
->> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
->> index 10c05718dbfd..acd1f311eee5 100644
->> --- a/drivers/pci/host/pci-tegra.c
->> +++ b/drivers/pci/host/pci-tegra.c
->> @@ -40,6 +40,7 @@
->>  #include <linux/pci.h>
->>  #include <linux/phy/phy.h>
->>  #include <linux/platform_device.h>
->> +#include <linux/pm_runtime.h>
->>  #include <linux/reset.h>
->>  #include <linux/sizes.h>
->>  #include <linux/slab.h>
->> @@ -908,19 +909,32 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
->>  
->>  static void tegra_pcie_power_off(struct tegra_pcie *pcie)
->>  {
->> +	const struct tegra_pcie_soc_data *soc = pcie->soc_data;
->>  	int err;
->>  
->> -	/* TODO: disable and unprepare clocks? */
->> -
->>  	err = phy_power_off(pcie->phy);
->>  	if (err < 0)
->>  		dev_warn(pcie->dev, "failed to power off PHY: %d\n", err);
->>  
->>  	reset_control_assert(pcie->pcie_xrst);
->>  	reset_control_assert(pcie->afi_rst);
->> -	reset_control_assert(pcie->pex_rst);
->>  
->> -	tegra_powergate_power_off(TEGRA_POWERGATE_PCIE);
->> +	clk_disable_unprepare(pcie->pll_e);
->> +	if (soc->has_cml_clk)
->> +		clk_disable_unprepare(pcie->cml_clk);
->> +	clk_disable_unprepare(pcie->afi_clk);
->> +	clk_disable_unprepare(pcie->pex_clk);
->> +
->> +	if (pm_runtime_enabled(pcie->dev)) {
->> +		err = pm_runtime_put_sync(pcie->dev);
->> +	} else {
->> +		err = tegra_powergate_power_off_legacy(TEGRA_POWERGATE_PCIE,
->> +						       pcie->pex_clk,
->> +						       pcie->pex_rst);
->> +	}
->> +
->> +	if (err < 0)
->> +		dev_warn(pcie->dev, "powergate power-down failed: %d\n", err);
->>  
->>  	err = regulator_bulk_disable(pcie->num_supplies, pcie->supplies);
->>  	if (err < 0)
->> @@ -934,20 +948,28 @@ static int tegra_pcie_power_on(struct tegra_pcie *pcie)
->>  
->>  	reset_control_assert(pcie->pcie_xrst);
->>  	reset_control_assert(pcie->afi_rst);
->> -	reset_control_assert(pcie->pex_rst);
->> -
->> -	tegra_powergate_power_off(TEGRA_POWERGATE_PCIE);
->>  
->>  	/* enable regulators */
->>  	err = regulator_bulk_enable(pcie->num_supplies, pcie->supplies);
->>  	if (err < 0)
->>  		dev_err(pcie->dev, "failed to enable regulators: %d\n", err);
->>  
->> -	err = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_PCIE,
->> -						pcie->pex_clk,
->> -						pcie->pex_rst);
->> -	if (err) {
->> -		dev_err(pcie->dev, "powerup sequence failed: %d\n", err);
->> +	if (pm_runtime_enabled(pcie->dev)) {
->> +		err = pm_runtime_get_sync(pcie->dev);
->> +	} else {
->> +		err = tegra_powergate_power_on_legacy(TEGRA_POWERGATE_PCIE,
->> +						      pcie->pex_clk,
->> +						      pcie->pex_rst);
->> +	}
->> +
->> +	if (err < 0) {
->> +		dev_err(pcie->dev, "powergate power-up failed: %d\n", err);
->> +		return err;
->> +	}
->> +
->> +	err = clk_prepare_enable(pcie->pex_clk);
->> +	if (err < 0) {
->> +		dev_err(pcie->dev, "failed to enable PEX clock: %d\n", err);
->>  		return err;
->>  	}
->>  
-> 
-> Couldn't we simply move the above code into suspend/resume functions and
-> then call pm_runtime_get() and pm_runtime_put() instead of
-> tegra_pcie_power_on() and tegra_pcie_power_off()?
+The DVS GPIO allows on the fly selection of the VSEL register
+from two choices. However, if it is not set, the VSEL register
+will stay fixed and we can use the regmap ops. This allows use
+of the *hardware_vsel* regulator APIs.
 
-Possibly, however, the tricky part here is the regulators. We cannot put
-the regulators into the runtime resume/suspend hooks, because this would
-mean that the regulators are turned on after and turned off before the
-power domain. We need to have the regulator on before turning on the
-power domain.
+Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
+---
+This was just compile-tested as I don't have a board with this regulator.
 
-So there are two options here AFAICT:
-1. Move everything above after the regulators are turned on in the
-   runtime resume function.
-2. Move handling of all the regulators in the generic power domain
-   code.
+ drivers/regulator/max8973-regulator.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-What do you think?
-
->> @@ -2001,6 +2023,9 @@ static int tegra_pcie_probe(struct platform_device *pdev)
->>  
->>  	pcibios_min_mem = 0;
->>  
->> +	if (of_property_read_bool(pdev->dev.of_node, "power-domains"))
->> +		pm_runtime_enable(&pdev->dev);
-> 
-> Then of course we'd have to call pm_runtime_enable() irrespective of the
-> property and check for the presence of power domain support via another
-> method (like the dev->pm_domain field).
-
-Ok.
-
-Jon
+diff --git a/drivers/regulator/max8973-regulator.c b/drivers/regulator/max8973-regulator.c
+index a3e0bccb3f7d..5b75b7c2e3ea 100644
+--- a/drivers/regulator/max8973-regulator.c
++++ b/drivers/regulator/max8973-regulator.c
+@@ -637,6 +637,15 @@ static int max8973_probe(struct i2c_client *client,
+ 			max->lru_index[i] = i;
+ 		max->lru_index[0] = max->curr_vout_reg;
+ 		max->lru_index[max->curr_vout_reg] = 0;
++	} else {
++		/*
++		 * If there is no DVS GPIO, the VOUT register
++		 * address is fixed.
++		 */
++		max->ops.set_voltage_sel = regulator_set_voltage_sel_regmap;
++		max->ops.get_voltage_sel = regulator_get_voltage_sel_regmap;
++		max->desc.vsel_reg = max->curr_vout_reg;
++		max->desc.vsel_mask = MAX8973_VOUT_MASK;
+ 	}
+ 
+ 	if (pdata_from_dt)
+-- 
+2.1.4
