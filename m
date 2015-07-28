@@ -1,200 +1,75 @@
-From: Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3] PCI: kill off set_irq_flags usage
-Date: Tue, 28 Jul 2015 09:51:49 +0900
-Message-ID: <CCCF3D8A-025B-4359-976C-782F9D932DB7@gmail.com>
-References: <1438030523-15853-1-git-send-email-robh@kernel.org> <1438030523-15853-9-git-send-email-robh@kernel.org>
-Mime-Version: 1.0 (1.0)
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V3 10/19] drm/tegra: dc: Prepare for generic PM domains
+Date: Tue, 28 Jul 2015 09:30:04 +0100
+Message-ID: <55B73D8C.103@nvidia.com>
+References: <1436791197-32358-1-git-send-email-jonathanh@nvidia.com> <1436791197-32358-11-git-send-email-jonathanh@nvidia.com> <20150717104154.GM3057@ulmo>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1438030523-15853-9-git-send-email-robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+In-Reply-To: <20150717104154.GM3057@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Murali Karicheri <m-karicheri2-l0cyMroinI0@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pratyush Anand <pratyush.anand-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, =?utf-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, "linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?windows-1252?Q?Terje_Bergstr?= =?windows-1252?Q?=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 2015. 7. 28., at AM 5:55, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
->=20
-> set_irq_flags is ARM specific with custom flags which have genirq
-> equivalents. Convert drivers to use the genirq interfaces directly, s=
-o we
-> can kill off set_irq_flags. The translation of flags is as follows:
->=20
-> IRQF_VALID -> !IRQ_NOREQUEST
-> IRQF_PROBE -> !IRQ_NOPROBE
-> IRQF_NOAUTOEN -> IRQ_NOAUTOEN
->=20
-> For IRQs managed by an irqdomain, the irqdomain core code handles cle=
-aring
-> and setting IRQ_NOREQUEST already, so there is no need to do this in
-> .map() functions and we can simply remove the set_irq_flags calls. So=
-me
-> users also modify IRQ_NOPROBE and this has been maintained although i=
-t
-> is not clear that is really needed. There appears to be a great deal =
-of
-> blind copy and paste of this code.
->=20
-> Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> Cc: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
-> Acked-by: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-> Cc: Murali Karicheri <m-karicheri2-l0cyMroinI0@public.gmane.org>
-> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-> Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+On 17/07/15 11:41, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Mon, Jul 13, 2015 at 01:39:48PM +0100, Jon Hunter wrote:
+>> Add support to the tegra dc driver for generic PM domains. However,
+>> to ensure backward compatibility with older device tree blobs ensure
+>> that the driver can work with or without generic PM domains. In order
+>> to migrate to generic PM domain infrastructure the necessary changes
+>> are:
+>>
+>> 1. If the "power-domains" property is present in the DT device node then
+>>    generic PM domains is supported and pm_runtime_enable() should be
+>>    called for the device. Furthermore, the enabling and disabling of the
+>>    power-domain is handled via calling pm_runtime_get/put, respectively.
+> 
+> The device could be PM runtime enabled even if no power-domains property
+> is set. Couldn't we check something more direct, like for example if the
+> dev->pm_domain is non-NULL?
 
-Acked-by: Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Yes could do that instead.
 
-Best regards,
-Jingoo Han
+> Perhaps it'd be worth converting the driver to use runtime PM first, and
+> move all the powergate and clock handling into suspend/resume functions,
+> and then we can conditionalize whether or not we call the legacy API iff
+> dev->pm_domain == NULL?
 
-> Cc: Pratyush Anand <pratyush.anand-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>
-> Cc: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
-> Cc: "S=C3=B6ren Brinkmann" <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
-> Cc: linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> ---
-> Thomas asked that this be merged thru subsystem trees instead of arm-=
-soc,
-> so please apply this to your tree.
->=20
-> Rob
->=20
-> drivers/pci/host/pci-dra7xx.c      | 1 -
-> drivers/pci/host/pci-keystone-dw.c | 2 --
-> drivers/pci/host/pci-tegra.c       | 1 -
-> drivers/pci/host/pci-xgene-msi.c   | 1 -
-> drivers/pci/host/pcie-designware.c | 1 -
-> drivers/pci/host/pcie-rcar.c       | 1 -
-> drivers/pci/host/pcie-xilinx.c     | 2 --
-> 7 files changed, 9 deletions(-)
->=20
-> diff --git a/drivers/pci/host/pci-dra7xx.c b/drivers/pci/host/pci-dra=
-7xx.c
-> index 80db09e..1a0d124 100644
-> --- a/drivers/pci/host/pci-dra7xx.c
-> +++ b/drivers/pci/host/pci-dra7xx.c
-> @@ -155,7 +155,6 @@ static int dra7xx_pcie_intx_map(struct irq_domain=
- *domain, unsigned int irq,
-> {
->    irq_set_chip_and_handler(irq, &dummy_irq_chip, handle_simple_irq);
->    irq_set_chip_data(irq, domain->host_data);
-> -    set_irq_flags(irq, IRQF_VALID);
->=20
->    return 0;
-> }
-> diff --git a/drivers/pci/host/pci-keystone-dw.c b/drivers/pci/host/pc=
-i-keystone-dw.c
-> index f34892e..f1d0749 100644
-> --- a/drivers/pci/host/pci-keystone-dw.c
-> +++ b/drivers/pci/host/pci-keystone-dw.c
-> @@ -196,7 +196,6 @@ static int ks_dw_pcie_msi_map(struct irq_domain *=
-domain, unsigned int irq,
->    irq_set_chip_and_handler(irq, &ks_dw_pcie_msi_irq_chip,
->                 handle_level_irq);
->    irq_set_chip_data(irq, domain->host_data);
-> -    set_irq_flags(irq, IRQF_VALID);
->=20
->    return 0;
-> }
-> @@ -277,7 +276,6 @@ static int ks_dw_pcie_init_legacy_irq_map(struct =
-irq_domain *d,
->    irq_set_chip_and_handler(irq, &ks_dw_pcie_legacy_irq_chip,
->                 handle_level_irq);
->    irq_set_chip_data(irq, d->host_data);
-> -    set_irq_flags(irq, IRQF_VALID);
->=20
->    return 0;
-> }
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegr=
-a.c
-> index 10c0571..81df0c1 100644
-> --- a/drivers/pci/host/pci-tegra.c
-> +++ b/drivers/pci/host/pci-tegra.c
-> @@ -1248,7 +1248,6 @@ static int tegra_msi_map(struct irq_domain *dom=
-ain, unsigned int irq,
-> {
->    irq_set_chip_and_handler(irq, &tegra_msi_irq_chip, handle_simple_i=
-rq);
->    irq_set_chip_data(irq, domain->host_data);
-> -    set_irq_flags(irq, IRQF_VALID);
->=20
->    tegra_cpuidle_pcie_irqs_in_use();
->=20
-> diff --git a/drivers/pci/host/pci-xgene-msi.c b/drivers/pci/host/pci-=
-xgene-msi.c
-> index 2d31d4d..8e559d1 100644
-> --- a/drivers/pci/host/pci-xgene-msi.c
-> +++ b/drivers/pci/host/pci-xgene-msi.c
-> @@ -223,7 +223,6 @@ static int xgene_irq_domain_alloc(struct irq_doma=
-in *domain, unsigned int virq,
->    irq_domain_set_info(domain, virq, msi_irq,
->                &xgene_msi_bottom_irq_chip, domain->host_data,
->                handle_simple_irq, NULL, NULL);
-> -    set_irq_flags(virq, IRQF_VALID);
->=20
->    return 0;
-> }
-> diff --git a/drivers/pci/host/pcie-designware.c b/drivers/pci/host/pc=
-ie-designware.c
-> index 69486be..5c6b562 100644
-> --- a/drivers/pci/host/pcie-designware.c
-> +++ b/drivers/pci/host/pcie-designware.c
-> @@ -350,7 +350,6 @@ static int dw_pcie_msi_map(struct irq_domain *dom=
-ain, unsigned int irq,
-> {
->    irq_set_chip_and_handler(irq, &dw_msi_irq_chip, handle_simple_irq)=
-;
->    irq_set_chip_data(irq, domain->host_data);
-> -    set_irq_flags(irq, IRQF_VALID);
->=20
->    return 0;
-> }
-> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rca=
-r.c
-> index c086210..7678fe0 100644
-> --- a/drivers/pci/host/pcie-rcar.c
-> +++ b/drivers/pci/host/pcie-rcar.c
-> @@ -664,7 +664,6 @@ static int rcar_msi_map(struct irq_domain *domain=
-, unsigned int irq,
-> {
->    irq_set_chip_and_handler(irq, &rcar_msi_irq_chip, handle_simple_ir=
-q);
->    irq_set_chip_data(irq, domain->host_data);
-> -    set_irq_flags(irq, IRQF_VALID);
->=20
->    return 0;
-> }
-> diff --git a/drivers/pci/host/pcie-xilinx.c b/drivers/pci/host/pcie-x=
-ilinx.c
-> index f1a06a0..72015119 100644
-> --- a/drivers/pci/host/pcie-xilinx.c
-> +++ b/drivers/pci/host/pcie-xilinx.c
-> @@ -338,7 +338,6 @@ static int xilinx_pcie_msi_map(struct irq_domain =
-*domain, unsigned int irq,
-> {
->    irq_set_chip_and_handler(irq, &xilinx_msi_irq_chip, handle_simple_=
-irq);
->    irq_set_chip_data(irq, domain->host_data);
-> -    set_irq_flags(irq, IRQF_VALID);
->=20
->    return 0;
-> }
-> @@ -377,7 +376,6 @@ static int xilinx_pcie_intx_map(struct irq_domain=
- *domain, unsigned int irq,
-> {
->    irq_set_chip_and_handler(irq, &dummy_irq_chip, handle_simple_irq);
->    irq_set_chip_data(irq, domain->host_data);
-> -    set_irq_flags(irq, IRQF_VALID);
->=20
->    return 0;
-> }
-> --
-> 2.1.0
->=20
+May be that would be a cleaner transition than trying to do it all in
+one go.
+
+>> 2. To ensure that clocks are managed consistently when generic PM domains
+>>    are used and are not used, drivers should be migrated to use the
+>>    tegra_powergate_power_on_legacy() and tegra_powergate_power_off_legacy()
+>>    functions instead of the current tegra_powergate_sequence_power_up()
+>>    and tegra_powergate_power_off(). The purpose of the
+>>    tegra_powergate_power_on_legacy() and tegra_powergate_power_off_legacy()
+>>    APIs is to mimick the behaviour of the tegra generic power-domain code,
+>>    such that if generic power domains are not supported the functionality
+>>    is the same.
+>>
+>> 3. The main difference between the tegra_powergate_sequence_power_up() API
+>>    and the tegra_powergate_power_on_legacy() is that the clock used to
+>>    enable the powergate is not kept enabled when using the
+>>    tegra_powergate_power_on_legacy() API. Therefore, drivers must enable
+>>    the clocks they need after calling tegra_powergate_power_on_legacy()
+>>    and disable these clocks before calling
+>>    tegra_powergate_power_off_legacy().
+> 
+> This seems like it should go into the previous patch. I'm not sure I
+> understand why this is necessary. Wouldn't it be easier to update the
+> drivers to properly cope with this? We'll need to move them to runtime
+> PM at some point anyway, so if we do that first, we should be able to
+> hide all these details within the driver's suspend/resume functions
+> but without the need for the API churn here.
+
+I will take a look at that. I was trying to get the clock handling in
+the driver to be consistent when generic power domains are used and when
+they are not. However, may be that is not a big deal.
+
+Jon
