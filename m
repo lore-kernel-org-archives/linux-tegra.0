@@ -1,50 +1,45 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v3] gpio: kill off set_irq_flags usage
-Date: Tue, 28 Jul 2015 10:49:53 +0200
-Message-ID: <CACRpkdY8FyxDT=aYfCRof_b+P06MhRVWvuip+TZdZGHpLhvL-Q@mail.gmail.com>
-References: <1438030523-15853-1-git-send-email-robh@kernel.org>
-	<1438030523-15853-4-git-send-email-robh@kernel.org>
+Subject: Re: [PATCH v2 1/3] gpio: defer probe if pinctrl cannot be found
+Date: Tue, 28 Jul 2015 12:23:29 +0200
+Message-ID: <CACRpkdakiFxdqOhmdoBjTxxnv7mk3Qz6fdeGS+bw8VMLQoG7vA@mail.gmail.com>
+References: <1436862596-27730-1-git-send-email-tomeu.vizoso@collabora.com>
+	<1436862596-27730-2-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <1438030523-15853-4-git-send-email-robh@kernel.org>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Michael Hennerich <michael.hennerich@analog.com>, Ray Jui <rjui@broadcom.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1436862596-27730-2-git-send-email-tomeu.vizoso@collabora.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Grant Likely <grant.likely@linaro.org>, Rob Herring <robh+dt@kernel.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jul 27, 2015 at 10:55 PM, Rob Herring <robh@kernel.org> wrote:
+On Tue, Jul 14, 2015 at 10:29 AM, Tomeu Vizoso
+<tomeu.vizoso@collabora.com> wrote:
 
-> set_irq_flags is ARM specific with custom flags which have genirq
-> equivalents. Convert drivers to use the genirq interfaces directly, so we
-> can kill off set_irq_flags. The translation of flags is as follows:
+> When an OF node has a pin range for its GPIOs, return -EPROBE_DEFER if
+> the pin controller isn't available.
 >
-> IRQF_VALID -> !IRQ_NOREQUEST
-> IRQF_PROBE -> !IRQ_NOPROBE
-> IRQF_NOAUTOEN -> IRQ_NOAUTOEN
+> Otherwise, the GPIO range wouldn't be set at all unless the pin
+> controller probed always before the GPIO chip.
 >
-> For IRQs managed by an irqdomain, the irqdomain core code handles clearing
-> and setting IRQ_NOREQUEST already, so there is no need to do this in
-> .map() functions and we can simply remove the set_irq_flags calls. Some
-> users also modify IRQ_NOPROBE and this has been maintained although it
-> is not clear that is really needed as most platforms don't use probing.
-> There appears to be a great deal of blind copy and paste of this code.
+> With this change, the probe of the GPIO chip will be deferred and will
+> be retried at a later point, hopefully once the pin controller has been
+> registered and probed already.
 >
-> Signed-off-by: Rob Herring <robh@kernel.org>
-> Cc: Michael Hennerich <michael.hennerich@analog.com>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: Ray Jui <rjui@broadcom.com>
-> Cc: Stephen Warren <swarren@wwwdotorg.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: linux-gpio@vger.kernel.org
-> Cc: bcm-kernel-feedback-list@broadcom.com
-> Cc: linux-tegra@vger.kernel.org
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
 > ---
-> Thomas asked that this be merged thru subsystem trees instead of arm-soc,
-> so please apply this to your tree.
+>
+> Changes in v2:
+> - Don't defer probe if the pinctrl node is disabled
 
-Patch applied with some fuzzing, thanks!
+Sorry for the delay.
+
+This looks like the right thing to do, I was just worried that it would have
+undesired semantic or probe order effects on some platforms, but I think
+this is one of these cases where I just have to apply this and see what
+happens when people test it in linux-next.
+
+So, patch applied.
 
 Yours,
 Linus Walleij
