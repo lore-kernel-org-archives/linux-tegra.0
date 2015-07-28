@@ -1,24 +1,24 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3 10/19] drm/tegra: dc: Prepare for generic PM domains
-Date: Tue, 28 Jul 2015 09:30:04 +0100
-Message-ID: <55B73D8C.103@nvidia.com>
-References: <1436791197-32358-1-git-send-email-jonathanh@nvidia.com> <1436791197-32358-11-git-send-email-jonathanh@nvidia.com> <20150717104154.GM3057@ulmo>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH V3 11/19] PCI: tegra: Add support for generic PM domains
+Date: Tue, 28 Jul 2015 09:35:57 +0100
+Message-ID: <55B73EED.1080404@nvidia.com>
+References: <1436791197-32358-1-git-send-email-jonathanh@nvidia.com> <1436791197-32358-12-git-send-email-jonathanh@nvidia.com> <20150717104547.GN3057@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150717104154.GM3057@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, =?windows-1252?Q?Terje_Bergstr?= =?windows-1252?Q?=F6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20150717104547.GN3057@ulmo>
+Sender: linux-pm-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, =?windows-1252?Q?Terje_Bergstr?= =?windows-1252?Q?=F6m?= <tbergstrom@nvidia.com>, Hans de Goede <hdegoede@redhat.com>, Tejun Heo <tj@kernel.org>, Vince Hsu <vinceh@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 17/07/15 11:41, Thierry Reding wrote:
+On 17/07/15 11:45, Thierry Reding wrote:
 > * PGP Signed by an unknown key
 > 
-> On Mon, Jul 13, 2015 at 01:39:48PM +0100, Jon Hunter wrote:
->> Add support to the tegra dc driver for generic PM domains. However,
+> On Mon, Jul 13, 2015 at 01:39:49PM +0100, Jon Hunter wrote:
+>> Add support to the tegra PCI driver for generic PM domains. However,
 >> to ensure backward compatibility with older device tree blobs ensure
 >> that the driver can work with or without generic PM domains. In order
 >> to migrate to generic PM domain infrastructure the necessary changes
@@ -28,21 +28,7 @@ On 17/07/15 11:41, Thierry Reding wrote:
 >>    generic PM domains is supported and pm_runtime_enable() should be
 >>    called for the device. Furthermore, the enabling and disabling of the
 >>    power-domain is handled via calling pm_runtime_get/put, respectively.
-> 
-> The device could be PM runtime enabled even if no power-domains property
-> is set. Couldn't we check something more direct, like for example if the
-> dev->pm_domain is non-NULL?
-
-Yes could do that instead.
-
-> Perhaps it'd be worth converting the driver to use runtime PM first, and
-> move all the powergate and clock handling into suspend/resume functions,
-> and then we can conditionalize whether or not we call the legacy API iff
-> dev->pm_domain == NULL?
-
-May be that would be a cleaner transition than trying to do it all in
-one go.
-
+>>
 >> 2. To ensure that clocks are managed consistently when generic PM domains
 >>    are used and are not used, drivers should be migrated to use the
 >>    tegra_powergate_power_on_legacy() and tegra_powergate_power_off_legacy()
@@ -61,15 +47,137 @@ one go.
 >>    and disable these clocks before calling
 >>    tegra_powergate_power_off_legacy().
 > 
-> This seems like it should go into the previous patch. I'm not sure I
-> understand why this is necessary. Wouldn't it be easier to update the
-> drivers to properly cope with this? We'll need to move them to runtime
-> PM at some point anyway, so if we do that first, we should be able to
-> hide all these details within the driver's suspend/resume functions
-> but without the need for the API churn here.
+> This is the same comment as in the DRM patch, and it applies to all
+> devices that use powergating, so it should move into the preparatory
+> patch rather than be repeated in all patches.
+> 
+>>
+>> The helper functions for handling the powering on and off of the PCI
+>> controller have been updated to support generic PM domains. The
+>> tegra_pcie_power_off() was missing code to disable the clocks enabled in
+>> the tegra_pcie_power_on() function and so this has been added.
+>>
+>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>> ---
+>>  drivers/pci/host/pci-tegra.c | 49 +++++++++++++++++++++++++++++++++-----------
+>>  1 file changed, 37 insertions(+), 12 deletions(-)
+>>
+>> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+>> index 10c05718dbfd..acd1f311eee5 100644
+>> --- a/drivers/pci/host/pci-tegra.c
+>> +++ b/drivers/pci/host/pci-tegra.c
+>> @@ -40,6 +40,7 @@
+>>  #include <linux/pci.h>
+>>  #include <linux/phy/phy.h>
+>>  #include <linux/platform_device.h>
+>> +#include <linux/pm_runtime.h>
+>>  #include <linux/reset.h>
+>>  #include <linux/sizes.h>
+>>  #include <linux/slab.h>
+>> @@ -908,19 +909,32 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
+>>  
+>>  static void tegra_pcie_power_off(struct tegra_pcie *pcie)
+>>  {
+>> +	const struct tegra_pcie_soc_data *soc = pcie->soc_data;
+>>  	int err;
+>>  
+>> -	/* TODO: disable and unprepare clocks? */
+>> -
+>>  	err = phy_power_off(pcie->phy);
+>>  	if (err < 0)
+>>  		dev_warn(pcie->dev, "failed to power off PHY: %d\n", err);
+>>  
+>>  	reset_control_assert(pcie->pcie_xrst);
+>>  	reset_control_assert(pcie->afi_rst);
+>> -	reset_control_assert(pcie->pex_rst);
+>>  
+>> -	tegra_powergate_power_off(TEGRA_POWERGATE_PCIE);
+>> +	clk_disable_unprepare(pcie->pll_e);
+>> +	if (soc->has_cml_clk)
+>> +		clk_disable_unprepare(pcie->cml_clk);
+>> +	clk_disable_unprepare(pcie->afi_clk);
+>> +	clk_disable_unprepare(pcie->pex_clk);
+>> +
+>> +	if (pm_runtime_enabled(pcie->dev)) {
+>> +		err = pm_runtime_put_sync(pcie->dev);
+>> +	} else {
+>> +		err = tegra_powergate_power_off_legacy(TEGRA_POWERGATE_PCIE,
+>> +						       pcie->pex_clk,
+>> +						       pcie->pex_rst);
+>> +	}
+>> +
+>> +	if (err < 0)
+>> +		dev_warn(pcie->dev, "powergate power-down failed: %d\n", err);
+>>  
+>>  	err = regulator_bulk_disable(pcie->num_supplies, pcie->supplies);
+>>  	if (err < 0)
+>> @@ -934,20 +948,28 @@ static int tegra_pcie_power_on(struct tegra_pcie *pcie)
+>>  
+>>  	reset_control_assert(pcie->pcie_xrst);
+>>  	reset_control_assert(pcie->afi_rst);
+>> -	reset_control_assert(pcie->pex_rst);
+>> -
+>> -	tegra_powergate_power_off(TEGRA_POWERGATE_PCIE);
+>>  
+>>  	/* enable regulators */
+>>  	err = regulator_bulk_enable(pcie->num_supplies, pcie->supplies);
+>>  	if (err < 0)
+>>  		dev_err(pcie->dev, "failed to enable regulators: %d\n", err);
+>>  
+>> -	err = tegra_powergate_sequence_power_up(TEGRA_POWERGATE_PCIE,
+>> -						pcie->pex_clk,
+>> -						pcie->pex_rst);
+>> -	if (err) {
+>> -		dev_err(pcie->dev, "powerup sequence failed: %d\n", err);
+>> +	if (pm_runtime_enabled(pcie->dev)) {
+>> +		err = pm_runtime_get_sync(pcie->dev);
+>> +	} else {
+>> +		err = tegra_powergate_power_on_legacy(TEGRA_POWERGATE_PCIE,
+>> +						      pcie->pex_clk,
+>> +						      pcie->pex_rst);
+>> +	}
+>> +
+>> +	if (err < 0) {
+>> +		dev_err(pcie->dev, "powergate power-up failed: %d\n", err);
+>> +		return err;
+>> +	}
+>> +
+>> +	err = clk_prepare_enable(pcie->pex_clk);
+>> +	if (err < 0) {
+>> +		dev_err(pcie->dev, "failed to enable PEX clock: %d\n", err);
+>>  		return err;
+>>  	}
+>>  
+> 
+> Couldn't we simply move the above code into suspend/resume functions and
+> then call pm_runtime_get() and pm_runtime_put() instead of
+> tegra_pcie_power_on() and tegra_pcie_power_off()?
 
-I will take a look at that. I was trying to get the clock handling in
-the driver to be consistent when generic power domains are used and when
-they are not. However, may be that is not a big deal.
+Possibly, however, the tricky part here is the regulators. We cannot put
+the regulators into the runtime resume/suspend hooks, because this would
+mean that the regulators are turned on after and turned off before the
+power domain. We need to have the regulator on before turning on the
+power domain.
+
+So there are two options here AFAICT:
+1. Move everything above after the regulators are turned on in the
+   runtime resume function.
+2. Move handling of all the regulators in the generic power domain
+   code.
+
+What do you think?
+
+>> @@ -2001,6 +2023,9 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+>>  
+>>  	pcibios_min_mem = 0;
+>>  
+>> +	if (of_property_read_bool(pdev->dev.of_node, "power-domains"))
+>> +		pm_runtime_enable(&pdev->dev);
+> 
+> Then of course we'd have to call pm_runtime_enable() irrespective of the
+> property and check for the presence of power domain support via another
+> method (like the dev->pm_domain field).
+
+Ok.
 
 Jon
