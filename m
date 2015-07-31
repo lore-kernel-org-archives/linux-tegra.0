@@ -1,26 +1,36 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [pinmux scripts PATCH] board-to-uboot: add comment re: auto-generation
-Date: Thu, 30 Jul 2015 15:42:27 -0600
-Message-ID: <55BA9A43.3040906@wwwdotorg.org>
-References: <1438288117-22045-1-git-send-email-swarren@wwwdotorg.org> <CAPnjgZ1Hsbw18OA9c3c7sLpA2pbErBy0ucvQSL2zDBaYqh5YYw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAPnjgZ1Hsbw18OA9c3c7sLpA2pbErBy0ucvQSL2zDBaYqh5YYw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Masahiro Yamada <yamada.masahiro@socionext.com>
+Subject: [PATCH] soc: tegra: remove redundant $(CONFIG_ARCH_TEGRA) in Makefile
+Date: Fri, 31 Jul 2015 14:58:21 +0900
+Message-ID: <1438322301-24584-1-git-send-email-yamada.masahiro@socionext.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Masahiro Yamada <yamada.masahiro@socionext.com>, Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/30/2015 03:37 PM, Simon Glass wrote:
-> On 30 July 2015 at 14:28, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> Add a comment block to the top of each generated U-Boot header file
->> indicating that the file was auto-generated, should not be manually
->> edited, and with a pointer to the tool and command used to generate it.
->
-> Reviewed-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Kbuild descends into drivers/soc/tegra/ only when CONFIG_ARCH_TEGRA
+is enabled. (see drivers/soc/Makefile)
 
-Patch applied.
+$(CONFIG_ARCH_TEGRA) in drivers/soc/tegra/Makefile always evaluates
+to 'y'.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ drivers/soc/tegra/Makefile | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/soc/tegra/Makefile b/drivers/soc/tegra/Makefile
+index cdaad9d..ae857ff 100644
+--- a/drivers/soc/tegra/Makefile
++++ b/drivers/soc/tegra/Makefile
+@@ -1,4 +1,4 @@
+-obj-$(CONFIG_ARCH_TEGRA) += fuse/
++obj-y += fuse/
+ 
+-obj-$(CONFIG_ARCH_TEGRA) += common.o
+-obj-$(CONFIG_ARCH_TEGRA) += pmc.o
++obj-y += common.o
++obj-y += pmc.o
+-- 
+1.9.1
