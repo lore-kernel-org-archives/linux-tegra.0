@@ -1,47 +1,40 @@
 From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [RFT PATCH 1/2] i2c: tegra: update CONFIG_LOAD for new
- conifiguration
-Date: Fri, 31 Jul 2015 12:42:59 +0200
-Message-ID: <20150731104259.GD1522@katana>
+Subject: Re: [RFT PATCH 2/2] i2c: tegra: add support for fast plus (FM+) mode
+ clock rate
+Date: Fri, 31 Jul 2015 12:43:06 +0200
+Message-ID: <20150731104306.GE1522@katana>
 References: <1435661667-11554-1-git-send-email-ldewangan@nvidia.com>
+ <1435661667-11554-2-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="GyRA7555PLgSTuth"
+	protocol="application/pgp-signature"; boundary="19uQFt6ulqmgNgg1"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1435661667-11554-1-git-send-email-ldewangan@nvidia.com>
+In-Reply-To: <1435661667-11554-2-git-send-email-ldewangan@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Laxman Dewangan <ldewangan@nvidia.com>
 Cc: swarren@wwwdotorg.org, thierry.reding@gmail.com, andrewc@nvidia.com, gnurou@gmail.com, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Chaitanya Bandi <bandik@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---GyRA7555PLgSTuth
+--19uQFt6ulqmgNgg1
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 30, 2015 at 04:24:26PM +0530, Laxman Dewangan wrote:
-> Once the new configuration is set on the conifg register of
-> I2C controller, it is require to update the CONFIG_LOAD register
-> to transfer the new SW configuration to actual HW internal
-> registers that would be used in the actual logic.
+On Tue, Jun 30, 2015 at 04:24:27PM +0530, Laxman Dewangan wrote:
+> Tegra I2C controller required to configure the clock divisor
+> register inside controller to different value based on the clock
+> speed. The recommended clock divisor for the I2C controller for
+> standard/fast mode is 0x19 and for fast-mode plus is 0x10.
 >=20
-> It is like, SW is programming only shadow registers through
-> regular configuration and when these load_config bit fields
-> are set to 1, it causes the regular/shadows registers
-> configuration transferred to the HW internal active registers.
-> So SW has to set these bit fields at the end of all regular
-> registers configuration. And these config_load bits are HW
-> auto-clear bits. HW clears these bit fields once the register
-> configuration is moved to HW internal active registers. So SW
-> has to wait until these bits are auto-cleared before going
-> for any further programming
+> Add support to configure clock divisor register of I2C controller
+> based on bus clock rate.
 >=20
-> This mechanism is supported on T124 and after this SoCs.
+> This clock divisor is supported form T114 onwards.
 >=20
 > This is based on change done by
-> 	Chaitanya Bandi <bandik@nvidia.com>
+>         Chaitanya Bandi <bandik@nvidia.com>
 >=20
 > Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 > Signed-off-by: Chaitanya Bandi <bandik@nvidia.com>
@@ -49,26 +42,26 @@ On Tue, Jun 30, 2015 at 04:24:26PM +0530, Laxman Dewangan wrote:
 Applied to for-next, thanks!
 
 
---GyRA7555PLgSTuth
+--19uQFt6ulqmgNgg1
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: Digital signature
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJVu1EzAAoJEBQN5MwUoCm2TqsP/AmrFY/jQ7FimUuOA3Un4VHc
-bF69wIcQuXqDNSdxLObins9iMu9clKLrjEM2rvCrKMKOmOfxBS/fN1umoO9kwama
-dMNq6pFLY8Z2bcE7/SAc1u4t/YemEFPitkiez9PADbMb2EuNI8ajed+5YGnRbaEq
-qXNbLOYqJsGoTjXaYbRCDZqcVu9tvOH6vy/WWhnYa29e369D4kcWniSrg8JLL1Me
-clj0ArPmcMJcjH8eJISL5OwWVSMD9VZu2WIHApXQembnb9aPfpS9xAfbP7gAuJmN
-eHeNWkczlLHN9tgPutY456Xj12O7FN39aJrH7Y25Nx80u4v169w4c4hMgUes6KPa
-6KNBIB3lJ0qyD494CgazcP1Yyh/NGTlG+DNNPDnIBDWek+JJoOMYhb/m/XHo9NaA
-QV3pCZ/z3aKJg+g7YdLVtBnFv23pAoabXSrJr+iuJ8VdaL17iJIYLuk75XVWXpIz
-fk/fg44WN/+ipILeOzJlxaXH4SQcUzmu6vCoLcfrTEufUZ842+aKY2iIf35C+8E9
-DKiYAkDe0lCAHXmfxrlka6fpegCGivNGgoLrAzM/rbAlIMnC2XSZ/oCV6atP8JEl
-FefTpBx/OYRw96IU4jH2zphE1y609VpKoBjcAXy/Jc+hLx1JH5BIx7cgnH2s3PNz
-VHy6H6ooywwBuGekWywF
-=QTqv
+iQIcBAEBAgAGBQJVu1E6AAoJEBQN5MwUoCm2tzkQAIspkfS5k0APKYPzh50fV3W9
+gqLaFDzbr2VPjt2T5l4J5dfyLgwD7rS1H4k07Bs+zkp0bKe4FV63zi6iLGvld0Kv
+jtgeE+RdNLNf2pwx7GMrKitnR1C0YEojbBuegYJGBgySSeN+T0+u1VOvaLXYUMzD
+tm+6xJ/NooEcA0A30KoIpf/kOeVTxD/FK52afPKPHoImlGX0c6Iijift/tDV5FAu
+2jV8p28XhuwKJfel7RsorQbXn2mbnTUGeGFZhkvmcH282Opajb37BNPmofmXqVi8
+c6OCwWaBdylK2HfSAlh3qs4j/NR0cwacPG3w5fLZQ3Z2WXqG3x28Lq1ZHfj0Kywi
+P11ktZJcM/YpCa8kTwP6pFgzGCVuK0pq6ZAF5Ye0LP6lGggwj4+DkLRbrPB+KzHQ
+zKUCOZgLIa/QbgYPQW4cqEvsDoY4MUkJSf+nJg6lpccqDsvZg4UUleJDQx9Y6O74
+qyzMtitXFJ2zCF8E5ksUUi2ftRuLusWpHO6ZbQOV9L3IZM6p+Ijle3GwN+fMLAeT
+U8VYrGDppeTZlKWDS9I8mXEyEdCHbqTY0CH4SS70Fjmdn0nwWOZlmK3y+za3vcw1
+IK7Go2oIIt9DxkD0yf4uVFc6ACXfZ7qM6GjeqgI69LIxkdWXzAhbKXoEQJFoODXJ
+gm4WmyjvIaa7rgxuIPiQ
+=iVzf
 -----END PGP SIGNATURE-----
 
---GyRA7555PLgSTuth--
+--19uQFt6ulqmgNgg1--
