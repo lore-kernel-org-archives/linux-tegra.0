@@ -1,67 +1,60 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [RFT PATCH 2/2] i2c: tegra: add support for fast plus (FM+) mode
- clock rate
-Date: Fri, 31 Jul 2015 12:43:06 +0200
-Message-ID: <20150731104306.GE1522@katana>
-References: <1435661667-11554-1-git-send-email-ldewangan@nvidia.com>
- <1435661667-11554-2-git-send-email-ldewangan@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v4.2-rc5
+Date: Mon, 3 Aug 2015 09:38:37 +0100
+Message-ID: <55BF288D.6070109@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="19uQFt6ulqmgNgg1"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1435661667-11554-2-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: swarren@wwwdotorg.org, thierry.reding@gmail.com, andrewc@nvidia.com, gnurou@gmail.com, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Chaitanya Bandi <bandik@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Here are some basic Tegra test results for Linux v4.2-rc5.
+Logs and other details at:
 
---19uQFt6ulqmgNgg1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Tue, Jun 30, 2015 at 04:24:27PM +0530, Laxman Dewangan wrote:
-> Tegra I2C controller required to configure the clock divisor
-> register inside controller to different value based on the clock
-> speed. The recommended clock divisor for the I2C controller for
-> standard/fast mode is 0x19 and for fast-mode plus is 0x10.
->=20
-> Add support to configure clock divisor register of I2C controller
-> based on bus clock rate.
->=20
-> This clock divisor is supported form T114 onwards.
->=20
-> This is based on change done by
->         Chaitanya Bandi <bandik@nvidia.com>
->=20
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> Signed-off-by: Chaitanya Bandi <bandik@nvidia.com>
-
-Applied to for-next, thanks!
+    https://nvtb.github.io//linux/test_v4.2-rc5/20150802190102/
 
 
---19uQFt6ulqmgNgg1
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Test summary
+------------
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
 
-iQIcBAEBAgAGBQJVu1E6AAoJEBQN5MwUoCm2tzkQAIspkfS5k0APKYPzh50fV3W9
-gqLaFDzbr2VPjt2T5l4J5dfyLgwD7rS1H4k07Bs+zkp0bKe4FV63zi6iLGvld0Kv
-jtgeE+RdNLNf2pwx7GMrKitnR1C0YEojbBuegYJGBgySSeN+T0+u1VOvaLXYUMzD
-tm+6xJ/NooEcA0A30KoIpf/kOeVTxD/FK52afPKPHoImlGX0c6Iijift/tDV5FAu
-2jV8p28XhuwKJfel7RsorQbXn2mbnTUGeGFZhkvmcH282Opajb37BNPmofmXqVi8
-c6OCwWaBdylK2HfSAlh3qs4j/NR0cwacPG3w5fLZQ3Z2WXqG3x28Lq1ZHfj0Kywi
-P11ktZJcM/YpCa8kTwP6pFgzGCVuK0pq6ZAF5Ye0LP6lGggwj4+DkLRbrPB+KzHQ
-zKUCOZgLIa/QbgYPQW4cqEvsDoY4MUkJSf+nJg6lpccqDsvZg4UUleJDQx9Y6O74
-qyzMtitXFJ2zCF8E5ksUUi2ftRuLusWpHO6ZbQOV9L3IZM6p+Ijle3GwN+fMLAeT
-U8VYrGDppeTZlKWDS9I8mXEyEdCHbqTY0CH4SS70Fjmdn0nwWOZlmK3y+za3vcw1
-IK7Go2oIIt9DxkD0yf4uVFc6ACXfZ7qM6GjeqgI69LIxkdWXzAhbKXoEQJFoODXJ
-gm4WmyjvIaa7rgxuIPiQ
-=iVzf
------END PGP SIGNATURE-----
+Build: Image:
+    Pass: ( 1/ 1): defconfig
 
---19uQFt6ulqmgNgg1--
+Boot to userspace: defconfig:
+    Pass: ( 1/ 1): qemu-vexpress64
+
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v4.2-rc4 (cbfe8fa6cd672011c755c3cd85c9ffd4e2d10a6f)):
+   text     data      bss    total  kernel
+    +24        0        0      +24  defconfig
+  +2240        0        0    +2240  multi_v7_defconfig
+   +592     +256        0     +848  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.2-rc4 (cbfe8fa6cd672011c755c3cd85c9ffd4e2d10a6f))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+        .        .        .        .      qemu-vexpress64            defconfig           __internal
+        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+        .        .        .      -4k tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+        .        .        .      -4k  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+        .        .        .      -4k    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+        .        .        .      -4k       tegra30-beaver      tegra_defconfig       tegra30-beaver
