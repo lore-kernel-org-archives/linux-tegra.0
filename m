@@ -1,119 +1,51 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
 Subject: Re: [U-Boot] [PATCH 0/2] ARM: tegra: enable GPU DT node
-Date: Tue, 4 Aug 2015 18:01:32 +0900
-Message-ID: <55C07F6C.2090304@nvidia.com>
+Date: Tue, 4 Aug 2015 15:56:04 +0200
+Message-ID: <55C0C474.5090200@suse.de>
 References: <1436427181-23904-1-git-send-email-acourbot@nvidia.com>
  <55B0D427.2000704@suse.de>
- <CALeDE9OJgJqRkkx+G_iOuyYGyxROyLR6LCLQ8aAEJ356DgA3AQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8;
-	format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CALeDE9OJgJqRkkx+G_iOuyYGyxROyLR6LCLQ8aAEJ356DgA3AQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <55B0D427.2000704-l3A5Bk7waGM@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter Robinson <pbrobinson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
-Cc: u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org
+Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Guillaume Gardet <guillaume-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/24/2015 10:07 PM, Peter Robinson wrote:
-> Hi,
->
->>> Tegra124 requires the bootloader to perform VPR initialization, oth=
-erwise the
->>> GPU cannot be used by the system. Since using the GPU without that
->>> initialization results in a hang, the GPU DT node is left disabled,=
- and it is
->>> the task of the bootloader to enable it after ensuring it is safe t=
-o use the
->>> GPU.
->>>
->>> VPR init is already performed since patch df3443dfa449, but the dev=
-ice tree was
->>> left untouched. This patch series performs this last step and prepa=
-res the GPU
->>> intialization code to receive more code for newer chips.
+Am 23.07.2015 um 13:46 schrieb Andreas F=E4rber:
+> Am 09.07.2015 um 09:32 schrieb Alexandre Courbot:
+>> Tegra124 requires the bootloader to perform VPR initialization, othe=
+rwise the
+>> GPU cannot be used by the system. Since using the GPU without that
+>> initialization results in a hang, the GPU DT node is left disabled, =
+and it is
+>> the task of the bootloader to enable it after ensuring it is safe to=
+ use the
+>> GPU.
 >>
->> Tested-by: Andreas F=C3=A4rber <afaerber-l3A5Bk7waGM@public.gmane.org>
->>
->> I've tested this patchset on v2015.07 with 4.2.0-rc3-00115-gc5dfd65 =
--
->> with these two patches I get a console login on HDMI again.
->>
->> However, I'm still having trouble with X11... Should that be working
->> with linux.git? (haven't tried linux-next.git yet)
->
-> My understanding is that it's not or you need  to use glamour to do
-> so, wayland in theory should work.
->
->> Among other errors, it seems that nouveau is looking for firmware
->> nouveau/nvea_fuc409c and nouveau/fuc409c - who should be providing t=
-hat?
->> It's not in linux-firmware.git [1], and I see no /dev/mmcblk0p* to c=
-heck
->> whether the original system has such a file (which I doubt, given th=
-e
->> nouveau naming). It then falls back to the tegra drm iiuc.
->
-> Details of the changes with firmware loading in this patch series
-> here, likely need the patches, or maybe newer ones for it to work:
-> http://www.spinics.net/lists/dri-devel/msg84828.html
->
-> Firmware landed upstream here:
-> https://git.kernel.org/cgit/linux/kernel/git/firmware/linux-firmware.=
-git/commit/?id=3D899ebcb6812681b91cf2dfd390574b478c612442
->
->> With -rc2 I've seen the system freeze, with -rc3 just not behaving a=
-s
->> expected when starting X (with ssh/serial remaining usable).
->
-> Without the above patchset I've seen the lockups too.
+>> VPR init is already performed since patch df3443dfa449, but the devi=
+ce tree was
+>> left untouched. This patch series performs this last step and prepar=
+es the GPU
+>> intialization code to receive more code for newer chips.
+>=20
+> Tested-by: Andreas F=E4rber <afaerber-l3A5Bk7waGM@public.gmane.org>
+>=20
+> I've tested this patchset on v2015.07 with 4.2.0-rc3-00115-gc5dfd65 -
+> with these two patches I get a console login on HDMI again.
 
-Sorry for the delayed reply.
+Ping! Independent of the Linux and X11 discussions this thread has
+drifted off into, these two patches are still missing in v2015.10-rc1
+and don't apply any more (as reported by Guillaume). Can you please
+rebase and merge them?
 
-As Peter mentioned, the correct firmware files have landed in=20
-linux-firmware, and the loading code using the right paths is in=20
-Nouveau. It may not have landed in Linux mainline yet, so for the momen=
-t=20
-I recommend to use https://github.com/Gnurou/linux/tree/staging/nouveau=
-=20
-(can probably be merged into any recent kernel tree) for the kernel and=
-=20
-https://github.com/Gnurou/nouveau/tree/staging for Nouveau. This will=20
-require Nouveau to be loaded as a module.
+Thanks,
+Andreas
 
-As for X, there are two issues to be addressed:
-
-1) The display and render functions are performed by two different DRI=20
-nodes, and two different drivers (tegradrm for display, nouveau for=20
-render). I suspect the fastest path towards X acceleration is to use th=
-e=20
-modesetting driver + GLamor. It may require some changes to handle the=20
-two different nodes. Modesetting without GLamor should just work, in an=
-y=20
-case. I really should have a look at this sometime but am hoping someon=
-e=20
-else will pick that low-hanging fruit. :)
-
-2) Buffers generated by Nouveau use a tiling mode that tegradrm can=20
-understand, but it needs to be told about it through a dedicated IOCTL.=
-=20
-Without this, buffers would need to be copied into linear buffers befor=
-e=20
-sharing, which would be suboptimal. The kmscube repository linked by=20
-Mikko includes the code to do that.
-
-Note that Nouveau's DDX can also somehow work with this patch:
-
-http://comments.gmane.org/gmane.comp.freedesktop.xorg.nouveau/20101
-
-However, I think modesetting + GLamor is the way to do, especially sinc=
-e=20
-the DDX solution cannot currently work with the Maxwell GPUs found in=20
-Tegra X1 (whereas GLamor should provide acceleration).
-
-In any case, I would be very interested to hear about progress with=20
-getting X on Tegra K1. I don't think the effort required is too big.
-
-Good luck!
-Alex.
+--=20
+SUSE Linux GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
+GF: Felix Imend=F6rffer, Jane Smithard, Dilip Upmanyu, Graham Norton; H=
+RB
+21284 (AG N=FCrnberg)
