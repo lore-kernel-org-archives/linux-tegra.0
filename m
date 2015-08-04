@@ -1,80 +1,96 @@
-From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: [PATCH 02/18] firmware: qcom_scm-32: replace open-coded call
- to __cpuc_flush_dcache_area()
-Date: Tue, 04 Aug 2015 11:50:56 -0700
-Message-ID: <55C10990.3090707@codeaurora.org>
-References: <20150727122824.GH7557@n2100.arm.linux.org.uk> <E1ZJhWZ-00043Z-Ft@rmk-PC.arm.linux.org.uk>
+From: Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [U-Boot] [PATCH 0/2] ARM: tegra: enable GPU DT node
+Date: Tue, 4 Aug 2015 23:24:13 +0000
+Message-ID: <17113c2735bb46caa20531a106f8e15d@HQMAIL104.nvidia.com>
+References: <1436427181-23904-1-git-send-email-acourbot@nvidia.com>
+ <55B0D427.2000704@suse.de> <55C0C474.5090200@suse.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <E1ZJhWZ-00043Z-Ft-eh5Bv4kxaXIANfyc6IWni62ZND6+EDdj@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: =?iso-8859-1?Q?Andreas_F=E4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>, "u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org" <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>
+Cc: Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Guillaume Gardet <guillaume-stAJ6ESoqRxg9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/27/2015 05:28 AM, Russell King wrote:
-> Signed-off-by: Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-> ---
+Alex/Andreas,
 
-Thanks!
+> -----Original Message-----
+> From: Tom Warren
+> Sent: Tuesday, August 04, 2015 8:41 AM
+> To: 'Andreas F=E4rber'; u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org
+> Cc: Alex Courbot; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org; Step=
+hen
+> Warren; Guillaume Gardet
+> Subject: RE: [U-Boot] [PATCH 0/2] ARM: tegra: enable GPU DT node
+>=20
+> Andreas,
+>=20
+> > -----Original Message-----
+> > From: Andreas F=E4rber [mailto:afaerber-l3A5Bk7waGM@public.gmane.org]
+> > Sent: Tuesday, August 04, 2015 6:56 AM
+> > To: u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org
+> > Cc: Alex Courbot; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org;
+> > Stephen Warren; Tom Warren; Guillaume Gardet
+> > Subject: Re: [U-Boot] [PATCH 0/2] ARM: tegra: enable GPU DT node
+> >
+> > Am 23.07.2015 um 13:46 schrieb Andreas F=E4rber:
+> > > Am 09.07.2015 um 09:32 schrieb Alexandre Courbot:
+> > >> Tegra124 requires the bootloader to perform VPR initialization,
+> > >> otherwise the GPU cannot be used by the system. Since using the =
+GPU
+> > >> without that initialization results in a hang, the GPU DT node i=
+s
+> > >> left disabled, and it is the task of the bootloader to enable it
+> > >> after ensuring it is safe to use the GPU.
+> > >>
+> > >> VPR init is already performed since patch df3443dfa449, but the
+> > >> device tree was left untouched. This patch series performs this
+> > >> last step and prepares the GPU intialization code to receive mor=
+e
+> > >> code for
+> > newer chips.
+> > >
+> > > Tested-by: Andreas F=E4rber <afaerber-l3A5Bk7waGM@public.gmane.org>
+> > >
+> > > I've tested this patchset on v2015.07 with 4.2.0-rc3-00115-gc5dfd=
+65
+> > > - with these two patches I get a console login on HDMI again.
+> >
+> > Ping! Independent of the Linux and X11 discussions this thread has
+> > drifted off into, these two patches are still missing in v2015.10-r=
+c1
+> > and don't apply any more (as reported by Guillaume). Can you please=
+ rebase
+> and merge them?
+> Is that request for me? Sorry, lost track of these patches since it a=
+ppeared that
+> there was an on-going discussion.
+> If you're sure they're OK within the context of Tegra U-Boot, I'll ap=
+ply them and
+> send them with the next PR.
+>=20
+> Tom
+Applied to u-boot-tegra/next (along with some other pending Tegra patch=
+es for clocks/PLL/SPI/ums/etc.). I added T210/P2571 support to this pat=
+chset.
 
-Reviewed-by: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+PTAL.  Also, there doesn't appear to be a 'gpu@0,57000000' property in =
+any t124/t210 DT file. Is that coming in another patch or one I missed?
 
->   arch/arm/include/asm/cacheflush.h | 17 +++++++++++++++++
->   drivers/firmware/qcom_scm-32.c    |  4 +---
->   2 files changed, 18 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/arm/include/asm/cacheflush.h b/arch/arm/include/asm/cacheflush.h
-> index c5230a44eeca..d5525bfc7e3e 100644
-> --- a/arch/arm/include/asm/cacheflush.h
-> +++ b/arch/arm/include/asm/cacheflush.h
-> @@ -502,4 +502,21 @@ static inline void set_kernel_text_ro(void) { }
->   void flush_uprobe_xol_access(struct page *page, unsigned long uaddr,
->   			     void *kaddr, unsigned long len);
->   
-> +/**
-> + * secure_flush_area - ensure coherency across the secure boundary
-> + * @addr: virtual address
-> + * @size: size of region
-> + *
-> + * Ensure that the specified area of memory is coherent across the secure
-> + * boundary from the non-secure side.  This is used when calling secure
-> + * firmware where the secure firmware does not ensure coherency.
-> + */
-> +static inline void secure_flush_area(const void *addr, size_t size)
-> +{
-> +	phys_addr_t phys = __pa(addr);
-> +
-> +	__cpuc_flush_dcache_area((void *)addr, size);
-> +	outer_flush_range(phys, phys + size);
-> +}
-> +
->   #endif
-> diff --git a/drivers/firmware/qcom_scm-32.c b/drivers/firmware/qcom_scm-32.c
-> index 1bd6f9c34331..29e6850665eb 100644
-> --- a/drivers/firmware/qcom_scm-32.c
-> +++ b/drivers/firmware/qcom_scm-32.c
-> @@ -24,7 +24,6 @@
->   #include <linux/err.h>
->   #include <linux/qcom_scm.h>
->   
-> -#include <asm/outercache.h>
->   #include <asm/cacheflush.h>
->   
->   #include "qcom_scm.h"
-> @@ -219,8 +218,7 @@ static int __qcom_scm_call(const struct qcom_scm_command *cmd)
->   	 * Flush the command buffer so that the secure world sees
->   	 * the correct data.
->   	 */
-> -	__cpuc_flush_dcache_area((void *)cmd, cmd->len);
-> -	outer_flush_range(cmd_addr, cmd_addr + cmd->len);
-> +	secure_flush_area(cmd, cmd->len);
->   
->   	ret = smc(cmd_addr);
->   	if (ret < 0)
+Thanks,
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Tom
+> >
+> > Thanks,
+> > Andreas
+> >
+> > --
+> > SUSE Linux GmbH, Maxfeldstr. 5, 90409 N=FCrnberg, Germany
+> > GF: Felix Imend=F6rffer, Jane Smithard, Dilip Upmanyu, Graham Norto=
+n;
+> > HRB
+> > 21284 (AG N=FCrnberg)
+--
+nvpublic
