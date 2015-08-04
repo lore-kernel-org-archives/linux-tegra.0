@@ -1,176 +1,119 @@
-From: Vaishali Thakkar <vthakkar1994-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] ASoC: tegra: Use devm_clk_get
-Date: Mon, 3 Aug 2015 17:27:34 +0530
-Message-ID: <20150803115734.GA32440@localhost>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [U-Boot] [PATCH 0/2] ARM: tegra: enable GPU DT node
+Date: Tue, 4 Aug 2015 18:01:32 +0900
+Message-ID: <55C07F6C.2090304@nvidia.com>
+References: <1436427181-23904-1-git-send-email-acourbot@nvidia.com>
+ <55B0D427.2000704@suse.de>
+ <CALeDE9OJgJqRkkx+G_iOuyYGyxROyLR6LCLQ8aAEJ356DgA3AQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
+In-Reply-To: <CALeDE9OJgJqRkkx+G_iOuyYGyxROyLR6LCLQ8aAEJ356DgA3AQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter Robinson <pbrobinson-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
+Cc: u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch introduces the use of managed resource function
-devm_clk_get instead of clk_get and removes corresponding calls
-to clk_put in the probe and remove functions.
-
-To be compatible with the change various gotos are replaced with
-direct returns, and unneeded labels are dropped.
-
-Signed-off-by: Vaishali Thakkar <vthakkar1994-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- sound/soc/tegra/tegra30_ahub.c | 49 ++++++++++++++----------------------------
- 1 file changed, 16 insertions(+), 33 deletions(-)
-
-diff --git a/sound/soc/tegra/tegra30_ahub.c b/sound/soc/tegra/tegra30_ahub.c
-index bc94e5d..989b1e8 100644
---- a/sound/soc/tegra/tegra30_ahub.c
-+++ b/sound/soc/tegra/tegra30_ahub.c
-@@ -549,54 +549,51 @@ static int tegra30_ahub_probe(struct platform_device *pdev)
- 			dev_err(&pdev->dev, "Can't get reset %s\n",
- 				configlink_mods[i].rst_name);
- 			ret = PTR_ERR(rst);
--			goto err;
-+			return ret;
- 		}
- 
- 		ret = reset_control_deassert(rst);
- 		reset_control_put(rst);
- 		if (ret)
--			goto err;
-+			return ret;
- 	}
- 
- 	ahub = devm_kzalloc(&pdev->dev, sizeof(struct tegra30_ahub),
- 			    GFP_KERNEL);
- 	if (!ahub) {
- 		dev_err(&pdev->dev, "Can't allocate tegra30_ahub\n");
--		ret = -ENOMEM;
--		goto err;
-+		return -ENOMEM;
- 	}
- 	dev_set_drvdata(&pdev->dev, ahub);
- 
- 	ahub->soc_data = soc_data;
- 	ahub->dev = &pdev->dev;
- 
--	ahub->clk_d_audio = clk_get(&pdev->dev, "d_audio");
-+	ahub->clk_d_audio = devm_clk_get(&pdev->dev, "d_audio");
- 	if (IS_ERR(ahub->clk_d_audio)) {
- 		dev_err(&pdev->dev, "Can't retrieve ahub d_audio clock\n");
- 		ret = PTR_ERR(ahub->clk_d_audio);
--		goto err;
-+		return ret;
- 	}
- 
--	ahub->clk_apbif = clk_get(&pdev->dev, "apbif");
-+	ahub->clk_apbif = devm_clk_get(&pdev->dev, "apbif");
- 	if (IS_ERR(ahub->clk_apbif)) {
- 		dev_err(&pdev->dev, "Can't retrieve ahub apbif clock\n");
- 		ret = PTR_ERR(ahub->clk_apbif);
--		goto err_clk_put_d_audio;
-+		return ret;
- 	}
- 
- 	res0 = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!res0) {
- 		dev_err(&pdev->dev, "No apbif memory resource\n");
--		ret = -ENODEV;
--		goto err_clk_put_apbif;
-+		return -ENODEV;
- 	}
- 
- 	region = devm_request_mem_region(&pdev->dev, res0->start,
- 					 resource_size(res0), DRV_NAME);
- 	if (!region) {
- 		dev_err(&pdev->dev, "request region apbif failed\n");
--		ret = -EBUSY;
--		goto err_clk_put_apbif;
-+		return -EBUSY;
- 	}
- 	ahub->apbif_addr = res0->start;
- 
-@@ -604,8 +601,7 @@ static int tegra30_ahub_probe(struct platform_device *pdev)
- 				  resource_size(res0));
- 	if (!regs_apbif) {
- 		dev_err(&pdev->dev, "ioremap apbif failed\n");
--		ret = -ENOMEM;
--		goto err_clk_put_apbif;
-+		return -ENOMEM;
- 	}
- 
- 	ahub->regmap_apbif = devm_regmap_init_mmio(&pdev->dev, regs_apbif,
-@@ -613,31 +609,28 @@ static int tegra30_ahub_probe(struct platform_device *pdev)
- 	if (IS_ERR(ahub->regmap_apbif)) {
- 		dev_err(&pdev->dev, "apbif regmap init failed\n");
- 		ret = PTR_ERR(ahub->regmap_apbif);
--		goto err_clk_put_apbif;
-+		return ret;
- 	}
- 	regcache_cache_only(ahub->regmap_apbif, true);
- 
- 	res1 = platform_get_resource(pdev, IORESOURCE_MEM, 1);
- 	if (!res1) {
- 		dev_err(&pdev->dev, "No ahub memory resource\n");
--		ret = -ENODEV;
--		goto err_clk_put_apbif;
-+		return -ENODEV;
- 	}
- 
- 	region = devm_request_mem_region(&pdev->dev, res1->start,
- 					 resource_size(res1), DRV_NAME);
- 	if (!region) {
- 		dev_err(&pdev->dev, "request region ahub failed\n");
--		ret = -EBUSY;
--		goto err_clk_put_apbif;
-+		return -EBUSY;
- 	}
- 
- 	regs_ahub = devm_ioremap(&pdev->dev, res1->start,
- 				 resource_size(res1));
- 	if (!regs_ahub) {
- 		dev_err(&pdev->dev, "ioremap ahub failed\n");
--		ret = -ENOMEM;
--		goto err_clk_put_apbif;
-+		return -ENOMEM;
- 	}
- 
- 	ahub->regmap_ahub = devm_regmap_init_mmio(&pdev->dev, regs_ahub,
-@@ -645,7 +638,7 @@ static int tegra30_ahub_probe(struct platform_device *pdev)
- 	if (IS_ERR(ahub->regmap_ahub)) {
- 		dev_err(&pdev->dev, "ahub regmap init failed\n");
- 		ret = PTR_ERR(ahub->regmap_ahub);
--		goto err_clk_put_apbif;
-+		return ret;
- 	}
- 	regcache_cache_only(ahub->regmap_ahub, true);
- 
-@@ -662,12 +655,7 @@ static int tegra30_ahub_probe(struct platform_device *pdev)
- 
- err_pm_disable:
- 	pm_runtime_disable(&pdev->dev);
--err_clk_put_apbif:
--	clk_put(ahub->clk_apbif);
--err_clk_put_d_audio:
--	clk_put(ahub->clk_d_audio);
--	ahub = NULL;
--err:
-+
- 	return ret;
- }
- 
-@@ -680,11 +668,6 @@ static int tegra30_ahub_remove(struct platform_device *pdev)
- 	if (!pm_runtime_status_suspended(&pdev->dev))
- 		tegra30_ahub_runtime_suspend(&pdev->dev);
- 
--	clk_put(ahub->clk_apbif);
--	clk_put(ahub->clk_d_audio);
+On 07/24/2015 10:07 PM, Peter Robinson wrote:
+> Hi,
+>
+>>> Tegra124 requires the bootloader to perform VPR initialization, oth=
+erwise the
+>>> GPU cannot be used by the system. Since using the GPU without that
+>>> initialization results in a hang, the GPU DT node is left disabled,=
+ and it is
+>>> the task of the bootloader to enable it after ensuring it is safe t=
+o use the
+>>> GPU.
+>>>
+>>> VPR init is already performed since patch df3443dfa449, but the dev=
+ice tree was
+>>> left untouched. This patch series performs this last step and prepa=
+res the GPU
+>>> intialization code to receive more code for newer chips.
+>>
+>> Tested-by: Andreas F=C3=A4rber <afaerber-l3A5Bk7waGM@public.gmane.org>
+>>
+>> I've tested this patchset on v2015.07 with 4.2.0-rc3-00115-gc5dfd65 =
 -
--	ahub = NULL;
--
- 	return 0;
- }
- 
--- 
-1.9.1
+>> with these two patches I get a console login on HDMI again.
+>>
+>> However, I'm still having trouble with X11... Should that be working
+>> with linux.git? (haven't tried linux-next.git yet)
+>
+> My understanding is that it's not or you need  to use glamour to do
+> so, wayland in theory should work.
+>
+>> Among other errors, it seems that nouveau is looking for firmware
+>> nouveau/nvea_fuc409c and nouveau/fuc409c - who should be providing t=
+hat?
+>> It's not in linux-firmware.git [1], and I see no /dev/mmcblk0p* to c=
+heck
+>> whether the original system has such a file (which I doubt, given th=
+e
+>> nouveau naming). It then falls back to the tegra drm iiuc.
+>
+> Details of the changes with firmware loading in this patch series
+> here, likely need the patches, or maybe newer ones for it to work:
+> http://www.spinics.net/lists/dri-devel/msg84828.html
+>
+> Firmware landed upstream here:
+> https://git.kernel.org/cgit/linux/kernel/git/firmware/linux-firmware.=
+git/commit/?id=3D899ebcb6812681b91cf2dfd390574b478c612442
+>
+>> With -rc2 I've seen the system freeze, with -rc3 just not behaving a=
+s
+>> expected when starting X (with ssh/serial remaining usable).
+>
+> Without the above patchset I've seen the lockups too.
+
+Sorry for the delayed reply.
+
+As Peter mentioned, the correct firmware files have landed in=20
+linux-firmware, and the loading code using the right paths is in=20
+Nouveau. It may not have landed in Linux mainline yet, so for the momen=
+t=20
+I recommend to use https://github.com/Gnurou/linux/tree/staging/nouveau=
+=20
+(can probably be merged into any recent kernel tree) for the kernel and=
+=20
+https://github.com/Gnurou/nouveau/tree/staging for Nouveau. This will=20
+require Nouveau to be loaded as a module.
+
+As for X, there are two issues to be addressed:
+
+1) The display and render functions are performed by two different DRI=20
+nodes, and two different drivers (tegradrm for display, nouveau for=20
+render). I suspect the fastest path towards X acceleration is to use th=
+e=20
+modesetting driver + GLamor. It may require some changes to handle the=20
+two different nodes. Modesetting without GLamor should just work, in an=
+y=20
+case. I really should have a look at this sometime but am hoping someon=
+e=20
+else will pick that low-hanging fruit. :)
+
+2) Buffers generated by Nouveau use a tiling mode that tegradrm can=20
+understand, but it needs to be told about it through a dedicated IOCTL.=
+=20
+Without this, buffers would need to be copied into linear buffers befor=
+e=20
+sharing, which would be suboptimal. The kmscube repository linked by=20
+Mikko includes the code to do that.
+
+Note that Nouveau's DDX can also somehow work with this patch:
+
+http://comments.gmane.org/gmane.comp.freedesktop.xorg.nouveau/20101
+
+However, I think modesetting + GLamor is the way to do, especially sinc=
+e=20
+the DDX solution cannot currently work with the Maxwell GPUs found in=20
+Tegra X1 (whereas GLamor should provide acceleration).
+
+In any case, I would be very interested to hear about progress with=20
+getting X on Tegra K1. I don't think the effort required is too big.
+
+Good luck!
+Alex.
