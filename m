@@ -1,153 +1,52 @@
 From: =?UTF-8?q?Konsta=20H=C3=B6ltt=C3=A4?= <kholtta-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RFC PATCH 3/5] gk104: channel priority/timeslice support
-Date: Wed, 5 Aug 2015 14:27:51 +0300
-Message-ID: <1438774073-13870-4-git-send-email-kholtta@nvidia.com>
+Subject: [RFC PATCH 2/5] HACK don't verify route == owner in nvkm
+	ioctl
+Date: Wed, 5 Aug 2015 14:27:50 +0300
+Message-ID: <1438774073-13870-3-git-send-email-kholtta@nvidia.com>
 References: <1438774073-13870-1-git-send-email-kholtta@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 In-Reply-To: <1438774073-13870-1-git-send-email-kholtta-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 To: bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Change channel "priorities" by modifying the runlist timeslice value,
-thus giving more time for more important jobs before switching.
-
-A new KEPLER_SET_CHANNEL_PRIORITY mthd on fifo channel objects sets the
-priority to low, medium or high.
-
-Disable channel and preempt it out, change the timeslice, and then
-enable the channel again. The shift bit in the timeslice register is
-left untouched (3) as is the enable bit.
-
-Signed-off-by: Konsta H=C3=B6ltt=C3=A4 <kholtta-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drm/nouveau/include/nvif/class.h     | 10 +++++++
- drm/nouveau/nvkm/engine/fifo/gk104.c | 58 ++++++++++++++++++++++++++++=
-++++++++
- 2 files changed, 68 insertions(+)
-
-diff --git a/drm/nouveau/include/nvif/class.h b/drm/nouveau/include/nvi=
-f/class.h
-index 28176e6..381c72d 100644
---- a/drm/nouveau/include/nvif/class.h
-+++ b/drm/nouveau/include/nvif/class.h
-@@ -619,9 +619,19 @@ struct fermi_a_zbc_depth_v0 {
- #define FERMI_A_ZBC_DEPTH_V0_FMT_FP32                                 =
-     0x01
- 	__u8  format;
- 	__u8  index;
- 	__u8  pad03[5];
- 	__u32 ds;
- 	__u32 l2;
- };
-=20
-+#define KEPLER_SET_CHANNEL_PRIORITY                                   =
-     0x42 // XXX
-+struct kepler_set_channel_priority_v0 {
-+	__u8  version;
-+#define KEPLER_SET_CHANNEL_PRIORITY_LOW                               =
-     0x00
-+#define KEPLER_SET_CHANNEL_PRIORITY_MEDIUM                            =
-     0x01
-+#define KEPLER_SET_CHANNEL_PRIORITY_HIGH                              =
-     0x02
-+	__u8 priority;
-+	__u8  pad03[6];
-+};
-+
- #endif
-diff --git a/drm/nouveau/nvkm/engine/fifo/gk104.c b/drm/nouveau/nvkm/en=
-gine/fifo/gk104.c
-index 659c05f..2bab45e 100644
---- a/drm/nouveau/nvkm/engine/fifo/gk104.c
-+++ b/drm/nouveau/nvkm/engine/fifo/gk104.c
-@@ -333,22 +333,80 @@ gk104_fifo_chan_fini(struct nvkm_object *object, =
-bool suspend)
- 		gk104_fifo_runlist_update(priv, chan->engine);
- 	}
-=20
- 	gk104_fifo_chan_kick(chan);
- 	nv_wr32(priv, 0x800000 + (chid * 8), 0x00000000);
- 	return nvkm_fifo_channel_fini(&chan->base, suspend);
- }
-=20
-+static int
-+gk104_fifo_set_runlist_timeslice(struct gk104_fifo_priv *priv,
-+		struct gk104_fifo_chan *chan, u8 slice)
-+{
-+	struct nvkm_gpuobj *base =3D nv_gpuobj(nv_object(chan)->parent);
-+	u32 chid =3D chan->base.chid;
-+
-+	nv_mask(priv, 0x800004 + (chid * 8), 0x00000800, 0x00000800);
-+	WARN_ON(gk104_fifo_chan_kick(chan));
-+	nv_wo32(base, 0xf8, slice | 0x10003000);
-+	nv_mask(priv, 0x800004 + (chid * 8), 0x00000400, 0x00000400);
-+	nv_info(chan, "timeslice set to %d for %d\n", slice, chid);
-+
-+	return 0;
-+}
-+
-+int
-+gk104_fifo_chan_set_priority(struct nvkm_object *object, void *data, u=
-32 size)
-+{
-+	struct gk104_fifo_priv *priv =3D (void *)object->engine;
-+	struct gk104_fifo_chan *chan =3D (void *)object;
-+	union {
-+		struct kepler_set_channel_priority_v0 v0;
-+	} *args =3D data;
-+	int ret;
-+
-+	if (nvif_unpack(args->v0, 0, 0, false)) {
-+		switch (args->v0.priority) {
-+		case KEPLER_SET_CHANNEL_PRIORITY_LOW:
-+			/* 64 << 3 =3D=3D 512 us */
-+			return gk104_fifo_set_runlist_timeslice(priv, chan, 64);
-+		case KEPLER_SET_CHANNEL_PRIORITY_MEDIUM:
-+			/* 128 << 3 =3D=3D 1024 us */
-+			return gk104_fifo_set_runlist_timeslice(priv, chan, 128);
-+		case KEPLER_SET_CHANNEL_PRIORITY_HIGH:
-+			/* 256 << 3 =3D=3D 2048 us */
-+			return gk104_fifo_set_runlist_timeslice(priv, chan, 255);
-+		default:
-+			return -EINVAL;
-+		}
-+	}
-+
-+	return ret;
-+}
-+
-+int
-+gk104_fifo_chan_mthd(struct nvkm_object *object, u32 mthd, void *data,=
- u32 size)
-+{
-+	switch (mthd) {
-+	case KEPLER_SET_CHANNEL_PRIORITY:
-+		return gk104_fifo_chan_set_priority(object, data, size);
-+	default:
-+		break;
-+	}
-+	return -EINVAL;
-+}
-+
- struct nvkm_ofuncs
- gk104_fifo_chan_ofuncs =3D {
- 	.ctor =3D gk104_fifo_chan_ctor,
- 	.dtor =3D _nvkm_fifo_channel_dtor,
- 	.init =3D gk104_fifo_chan_init,
- 	.fini =3D gk104_fifo_chan_fini,
-+	.mthd =3D gk104_fifo_chan_mthd,
- 	.map  =3D _nvkm_fifo_channel_map,
- 	.rd32 =3D _nvkm_fifo_channel_rd32,
- 	.wr32 =3D _nvkm_fifo_channel_wr32,
- 	.ntfy =3D _nvkm_fifo_channel_ntfy
- };
-=20
- static struct nvkm_oclass
- gk104_fifo_sclass[] =3D {
---=20
-2.1.4
+RklYTUUhISBTb21lIG9iamVjdHMgd2UgbmVlZCB0byBhY2Nlc3MgZnJvbSB1c2Vyc3BhY2UgYXJl
+IGNyZWF0ZWQgaW4Ka2VybmVsLiBPbmx5IHRoZSAuLlYwX05FVyBpb2N0bCBvbiBrZXJuZWwgb2Jq
+ZWN0cyBhcHBlYXJzIHRvIGJlIGZyZWVseQp1c2FibGUgZnJvbSB1c2Vyc3BhY2UgYXQgdGhpcyBw
+b2ludCwgYW5kIGFsc28gYWNjZXNzaW5nIG9iamVjdHMgdGhhdCBhcmUKY3JlYXRlZCBmcm9tIHVz
+ZXJzcGFjZSBpbiB0aGUgZmlyc3QgcGxhY2UuIFRoZSBjaGFubmVsIG9iamVjdCBpcyBjcmVhdGVk
+CmluIGtlcm5lbCBpbiBub3V2ZWF1X2NoYW4uYywgSSBzdXBwb3NlLgoKU2lnbmVkLW9mZi1ieTog
+S29uc3RhIEjDtmx0dMOkIDxraG9sdHRhQG52aWRpYS5jb20+Ci0tLQogZHJtL25vdXZlYXUvbnZr
+bS9jb3JlL2lvY3RsLmMgfCA1ICsrKy0tCiAxIGZpbGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCsp
+LCAyIGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RybS9ub3V2ZWF1L252a20vY29yZS9pb2N0
+bC5jIGIvZHJtL25vdXZlYXUvbnZrbS9jb3JlL2lvY3RsLmMKaW5kZXggNDQ1OWZmNS4uNDRiMGYx
+ZCAxMDA2NDQKLS0tIGEvZHJtL25vdXZlYXUvbnZrbS9jb3JlL2lvY3RsLmMKKysrIGIvZHJtL25v
+dXZlYXUvbnZrbS9jb3JlL2lvY3RsLmMKQEAgLTQ3NCwxOCArNDc0LDE5IEBAIG52a21faW9jdGxf
+cGF0aChzdHJ1Y3QgbnZrbV9oYW5kbGUgKnBhcmVudCwgdTMyIHR5cGUsIHUzMiBuciwgdTMyICpw
+YXRoLAogCQkJbnZfZGVidWcob2JqZWN0LCAiaGFuZGxlIDB4JTA4eCBub3QgZm91bmRcbiIsIHBh
+dGhbbnJdKTsKIAkJCXJldHVybiAtRU5PRU5UOwogCQl9CiAJCW52a21fbmFtZWRiX3B1dChoYW5k
+bGUpOwogCQlwYXJlbnQgPSBoYW5kbGU7CiAJfQogCiAJaWYgKG93bmVyICE9IE5WSUZfSU9DVExf
+VjBfT1dORVJfQU5ZICYmIG93bmVyICE9IGhhbmRsZS0+cm91dGUpIHsKLQkJbnZfaW9jdGwob2Jq
+ZWN0LCAib2JqZWN0IHJvdXRlICE9IG93bmVyXG4iKTsKLQkJcmV0dXJuIC1FQUNDRVM7CisJCW52
+X2lvY3RsKG9iamVjdCwgIm9iamVjdCByb3V0ZSAhPSBvd25lcjogcm91ICV4IG93ICV4XG4iLCBo
+YW5kbGUtPnJvdXRlLCBvd25lcik7CisJCW52X2lvY3RsKG9iamVjdCwgIkhBQ0shISBzdGlsbCBj
+b250aW51aW5nXG4iKTsKKwkJLy9yZXR1cm4gLUVBQ0NFUzsKIAl9CiAJKnJvdXRlID0gaGFuZGxl
+LT5yb3V0ZTsKIAkqdG9rZW4gPSBoYW5kbGUtPnRva2VuOwogCiAJaWYgKHJldCA9IC1FSU5WQUws
+IHR5cGUgPCBBUlJBWV9TSVpFKG52a21faW9jdGxfdjApKSB7CiAJCWlmIChudmttX2lvY3RsX3Yw
+W3R5cGVdLnZlcnNpb24gPT0gMCkKIAkJCXJldCA9IG52a21faW9jdGxfdjBbdHlwZV0uZnVuYyho
+YW5kbGUsIGRhdGEsIHNpemUpOwogCX0KLS0gCjIuMS40CgpfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpOb3V2ZWF1IG1haWxpbmcgbGlzdApOb3V2ZWF1QGxp
+c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
+bGlzdGluZm8vbm91dmVhdQo=
