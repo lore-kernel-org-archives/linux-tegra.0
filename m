@@ -1,70 +1,84 @@
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: [PATCH 4/5] ARM: tegra: use build-in device properties with rfkill_gpio
-Date: Wed,  5 Aug 2015 16:39:06 +0300
-Message-ID: <1438781947-7952-5-git-send-email-heikki.krogerus@linux.intel.com>
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH 1/5] device property: helper macros for property entry
+ creation
+Date: Wed, 05 Aug 2015 17:02:18 +0300
+Message-ID: <1438783338.29746.172.camel@linux.intel.com>
 References: <1438781947-7952-1-git-send-email-heikki.krogerus@linux.intel.com>
+	 <1438781947-7952-2-git-send-email-heikki.krogerus@linux.intel.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1438781947-7952-1-git-send-email-heikki.krogerus@linux.intel.com>
+In-Reply-To: <1438781947-7952-2-git-send-email-heikki.krogerus@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Johannes Berg <johannes@sipsolutions.net>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mika Westerberg <mika.westerberg@linux.intel.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Pass the rfkill name and type to the device with properties
-instead of driver specific platform data.
+On Wed, 2015-08-05 at 16:39 +0300, Heikki Krogerus wrote:
+> Marcos for easier creation of build-in property entries.
+>=20
+> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> ---
+>  include/linux/property.h | 35 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 35 insertions(+)
+>=20
+> diff --git a/include/linux/property.h b/include/linux/property.h
+> index 76ebde9..204d899 100644
+> --- a/include/linux/property.h
+> +++ b/include/linux/property.h
+> @@ -152,6 +152,41 @@ struct property_entry {
+>  	} value;
+>  };
+> =20
+> +#define PROP_ENTRY_U8(_name_, _val_) { \
 
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-CC: Alexandre Courbot <gnurou@gmail.com>
-CC: Thierry Reding <thierry.reding@gmail.com>
-CC: Stephen Warren <swarren@wwwdotorg.org>
----
- arch/arm/mach-tegra/board-paz00.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+PROP_ prefix is too generic.
+Maybe DEVPROP_ ? At least for the latter no records in the current
+sources.
 
-diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/board-paz00.c
-index fbe74c6..5d8d3a4 100644
---- a/arch/arm/mach-tegra/board-paz00.c
-+++ b/arch/arm/mach-tegra/board-paz00.c
-@@ -17,23 +17,25 @@
-  *
-  */
- 
-+#include <linux/property.h>
- #include <linux/gpio/machine.h>
- #include <linux/platform_device.h>
--#include <linux/rfkill-gpio.h>
- 
- #include "board.h"
- 
--static struct rfkill_gpio_platform_data wifi_rfkill_platform_data = {
--	.name	= "wifi_rfkill",
--	.type	= RFKILL_TYPE_WLAN,
-+static struct property_entry wifi_rfkill_prop[] = {
-+	PROP_ENTRY_STRING("name", "wifi_rfkill"),
-+	PROP_ENTRY_STRING("type", "wlan"),
-+	{ },
-+};
-+
-+static struct property_set wifi_rfkill_pset = {
-+	.properties = wifi_rfkill_prop,
- };
- 
- static struct platform_device wifi_rfkill_device = {
- 	.name	= "rfkill_gpio",
- 	.id	= -1,
--	.dev	= {
--		.platform_data = &wifi_rfkill_platform_data,
--	},
- };
- 
- static struct gpiod_lookup_table wifi_gpio_lookup = {
-@@ -47,6 +49,7 @@ static struct gpiod_lookup_table wifi_gpio_lookup = {
- 
- void __init tegra_paz00_wifikill_init(void)
- {
-+	device_add_property_set(&wifi_rfkill_device.dev, &wifi_rfkill_pset);
- 	gpiod_add_lookup_table(&wifi_gpio_lookup);
- 	platform_device_register(&wifi_rfkill_device);
- }
--- 
-2.4.6
+> +	.name =3D _name_, \
+> +	.type =3D DEV_PROP_U8, \
+> +	.nval =3D 1, \
+> +	.value.u8_data =3D _val_, \
+> +}
+> +
+> +#define PROP_ENTRY_U16(_name_, _val_) { \
+> +	.name =3D _name_, \
+> +	.type =3D DEV_PROP_U16, \
+> +	.nval =3D 1, \
+> +	.value.u16_data =3D _val_, \
+> +}
+> +
+> +#define PROP_ENTRY_U32(_name_, _val_) { \
+> +	.name =3D _name_, \
+> +	.type =3D DEV_PROP_U32, \
+> +	.nval =3D 1, \
+> +	.value.u32_data =3D _val_, \
+> +}
+> +
+> +#define PROP_ENTRY_U64(_name_, _val_) { \
+> +	.name =3D _name_, \
+> +	.type =3D DEV_PROP_U64, \
+> +	.nval =3D 1, \
+> +	.value.u64_data =3D _val_, \
+> +}
+> +
+> +#define PROP_ENTRY_STRING(_name_, _val_) { \
+
+=E2=80=A6_STRING_ARRAY I can notice.
+
+> +	.name =3D _name_, \
+> +	.type =3D DEV_PROP_STRING, \
+> +	.nval =3D 1, \
+> +	.value.str =3D (const char **)_val_, \
+> +}
+> +
+>  /**
+>   * struct property_set - Collection of "built-in" device properties.
+>   * @fwnode: Handle to be pointed to by the fwnode field of struct=20
+> device.
+
+--=20
+Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Intel Finland Oy
