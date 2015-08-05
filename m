@@ -1,138 +1,36 @@
-From: Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: [PATCH 5/5] net: rfkill: gpio: remove rfkill_gpio_platform_data
-Date: Wed, 05 Aug 2015 17:15:28 +0300
-Message-ID: <1438784128.29746.177.camel@linux.intel.com>
-References: <1438781947-7952-1-git-send-email-heikki.krogerus@linux.intel.com>
-	 <1438781947-7952-6-git-send-email-heikki.krogerus@linux.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [flasher PATCH] Fix comment re: meaning of 0x00108000 constant
+Date: Wed,  5 Aug 2015 14:12:38 -0600
+Message-ID: <1438805558-461-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1438781947-7952-6-git-send-email-heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>
-Cc: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 2015-08-05 at 16:39 +0300, Heikki Krogerus wrote:
-> No more users for it.
-> 
-> Signed-off-by: Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-> ---
->  include/linux/rfkill-gpio.h | 37 -----------------------------------
-> --
->  net/rfkill/Kconfig          |  3 +--
->  net/rfkill/rfkill-gpio.c    |  8 --------
->  3 files changed, 1 insertion(+), 47 deletions(-)
->  delete mode 100644 include/linux/rfkill-gpio.h
-> 
-> diff --git a/include/linux/rfkill-gpio.h b/include/linux/rfkill
-> -gpio.h
-> deleted file mode 100644
-> index 20bcb55..0000000
-> --- a/include/linux/rfkill-gpio.h
-> +++ /dev/null
-> @@ -1,37 +0,0 @@
-> -/*
-> - * Copyright (c) 2011, NVIDIA Corporation.
-> - *
-> - * This program is free software; you can redistribute it and/or 
-> modify
-> - * it under the terms of the GNU General Public License as published 
-> by
-> - * the Free Software Foundation; either version 2 of the License, or
-> - * (at your option) any later version.
-> - *
-> - * This program is distributed in the hope that it will be useful, 
-> but WITHOUT
-> - * ANY WARRANTY; without even the implied warranty of 
-> MERCHANTABILITY or
-> - * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public 
-> License for
-> - * more details.
-> - *
-> - * You should have received a copy of the GNU General Public License 
-> along
-> - * with this program; if not, write to the Free Software Foundation, 
-> Inc.,
-> - * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-> - */
-> -
-> -
-> -#ifndef __RFKILL_GPIO_H
-> -#define __RFKILL_GPIO_H
-> -
-> -#include <linux/types.h>
-> -#include <linux/rfkill.h>
-> -
-> -/**
-> - * struct rfkill_gpio_platform_data - platform data for rfkill gpio 
-> device.
-> - * for unused gpio's, the expected value is -1.
-> - * @name:		name for the gpio rf kill instance
-> - */
-> -
-> -struct rfkill_gpio_platform_data {
-> -	char			*name;
-> -	enum rfkill_type	type;
-> -};
-> -
-> -#endif /* __RFKILL_GPIO_H */
-> diff --git a/net/rfkill/Kconfig b/net/rfkill/Kconfig
-> index 4c10e7e..6320890 100644
-> --- a/net/rfkill/Kconfig
-> +++ b/net/rfkill/Kconfig
-> @@ -40,5 +40,4 @@ config RFKILL_GPIO
->  	default n
->  	help
->  	  If you say yes here you get support of a generic gpio 
-> RFKILL
-> -	  driver. The platform should fill in the appropriate fields 
-> in the
-> -	  rfkill_gpio_platform_data structure and pass that to the 
-> driver.
-> +	  driver.
-> diff --git a/net/rfkill/rfkill-gpio.c b/net/rfkill/rfkill-gpio.c
-> index 07323c3..69d92e1 100644
-> --- a/net/rfkill/rfkill-gpio.c
-> +++ b/net/rfkill/rfkill-gpio.c
-> @@ -27,8 +27,6 @@
->  #include <linux/acpi.h>
->  #include <linux/gpio/consumer.h>
->  
-> -#include <linux/rfkill-gpio.h>
-> -
->  struct rfkill_gpio_data {
->  	const char		*name;
->  	enum rfkill_type	type;
-> @@ -89,7 +87,6 @@ static int rfkill_gpio_acpi_probe(struct device 
-> *dev,
->  
->  static int rfkill_gpio_probe(struct platform_device *pdev)
->  {
-> -	struct rfkill_gpio_platform_data *pdata = pdev
-> ->dev.platform_data;
->  	struct rfkill_gpio_data *rfkill;
->  	struct gpio_desc *gpio;
->  	const char *type_name;
-> @@ -111,11 +108,6 @@ static int rfkill_gpio_probe(struct 
-> platform_device *pdev)
->  		ret = rfkill_gpio_acpi_probe(&pdev->dev, rfkill);
->  		if (ret)
->  			return ret;
-> -	} else if (pdata) {
-> -		rfkill->name = pdata->name;
-> -		rfkill->type = pdata->type;
-> -	} else {
-> -		return -ENODEV;
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Shouldn't we leave the error path and modify to check if we have device
-property set set?
+This is the SPL base (which is essentially constant), not the base of
+the main CCPLEX binary (which varies according to the size needs of the
+SPL image).
 
->  	}
->  
->  	rfkill->clk = devm_clk_get(&pdev->dev, NULL);
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ tegra-uboot-flasher | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/tegra-uboot-flasher b/tegra-uboot-flasher
+index d80aa0d48673..4809665d4a6a 100755
+--- a/tegra-uboot-flasher
++++ b/tegra-uboot-flasher
+@@ -87,7 +87,7 @@ gen_flashcmds = {
+ }
+ 
+ def get_loadaddr():
+-    # 0x00108000 is CONFIG_SYS_TEXT_BASE in U-Boot, minus RAM base
++    # 0x00108000 is CONFIG_SPL_TEXT_BASE in U-Boot, minus RAM base
+     return soc['ram-base'] + 0x00108000
+ 
+ def gen_tegrarcm_cmd(bootloader, loadaddr):
 -- 
-Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Intel Finland Oy
+1.9.1
