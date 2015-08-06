@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 1/4] DMA: tegra-apb: Remove unused variables
-Date: Thu, 6 Aug 2015 14:32:30 +0100
-Message-ID: <1438867953-11378-2-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH 3/4] DMA: tegra-apb: Remove unnecessary return statements and variables
+Date: Thu, 6 Aug 2015 14:32:32 +0100
+Message-ID: <1438867953-11378-4-git-send-email-jonathanh@nvidia.com>
 References: <1438867953-11378-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,47 +12,86 @@ To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vinod.koul@intel.com>, S
 Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The callback and callback_param members of the tegra_dma_sg_req structure
-are never used. The dma-engine structure, dma_async_tx_descriptor, defines
-the same members and these are the ones used by the driver. Therefore,
-remove the unused versions from the tegra_dma_sg_req structure.
-
-The half_done member of tegra_dma_channel structure is configured but
-never used and so remove it.
+Some void functions have unnecessary return statements at the end
+(reported by sparse) and so remove these. Also remove the return variables
+from functions tegra_dma_prep_slave_sg() and tegra_dma_prep_slave_cyclic()
+because the value is not used.
 
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/dma/tegra20-apb-dma.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/dma/tegra20-apb-dma.c | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index eaf585e8286b..cf8cff7827f0 100644
+index 11edcca7619b..53a8075dcec8 100644
 --- a/drivers/dma/tegra20-apb-dma.c
 +++ b/drivers/dma/tegra20-apb-dma.c
-@@ -155,7 +155,6 @@ struct tegra_dma_sg_req {
- 	int				req_len;
- 	bool				configured;
- 	bool				last_sg;
--	bool				half_done;
- 	struct list_head		node;
- 	struct tegra_dma_desc		*dma_desc;
- };
-@@ -203,8 +202,6 @@ struct tegra_dma_channel {
- 	/* ISR handler and tasklet for bottom half of isr handling */
- 	dma_isr_handler		isr_handler;
- 	struct tasklet_struct	tasklet;
--	dma_async_tx_callback	callback;
--	void			*callback_param;
+@@ -598,7 +598,6 @@ static void handle_once_dma_done(struct tegra_dma_channel *tdc,
+ 		return;
  
- 	/* Channel-slave specific configuration */
- 	unsigned int slave_id;
-@@ -1136,7 +1133,6 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
- 		sg_req->ch_regs.apb_seq = apb_seq;
- 		sg_req->ch_regs.ahb_seq = ahb_seq;
- 		sg_req->configured = false;
--		sg_req->half_done = false;
- 		sg_req->last_sg = false;
- 		sg_req->dma_desc = dma_desc;
- 		sg_req->req_len = len;
+ 	tdc_start_head_req(tdc);
+-	return;
+ }
+ 
+ static void handle_cont_sngl_cycle_dma_done(struct tegra_dma_channel *tdc,
+@@ -625,7 +624,6 @@ static void handle_cont_sngl_cycle_dma_done(struct tegra_dma_channel *tdc,
+ 		if (!st)
+ 			dma_desc->dma_status = DMA_ERROR;
+ 	}
+-	return;
+ }
+ 
+ static void tegra_dma_tasklet(unsigned long data)
+@@ -717,7 +715,6 @@ static void tegra_dma_issue_pending(struct dma_chan *dc)
+ 	}
+ end:
+ 	spin_unlock_irqrestore(&tdc->lock, flags);
+-	return;
+ }
+ 
+ static int tegra_dma_terminate_all(struct dma_chan *dc)
+@@ -929,7 +926,6 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
+ 	struct tegra_dma_sg_req  *sg_req = NULL;
+ 	u32 burst_size;
+ 	enum dma_slave_buswidth slave_bw;
+-	int ret;
+ 
+ 	if (!tdc->config_init) {
+ 		dev_err(tdc2dev(tdc), "dma channel is not configured\n");
+@@ -940,9 +936,8 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
+ 		return NULL;
+ 	}
+ 
+-	ret = get_transfer_param(tdc, direction, &apb_ptr, &apb_seq, &csr,
+-				&burst_size, &slave_bw);
+-	if (ret < 0)
++	if (get_transfer_param(tdc, direction, &apb_ptr, &apb_seq, &csr,
++				&burst_size, &slave_bw) < 0)
+ 		return NULL;
+ 
+ 	INIT_LIST_HEAD(&req_list);
+@@ -1045,7 +1040,6 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
+ 	dma_addr_t mem = buf_addr;
+ 	u32 burst_size;
+ 	enum dma_slave_buswidth slave_bw;
+-	int ret;
+ 
+ 	if (!buf_len || !period_len) {
+ 		dev_err(tdc2dev(tdc), "Invalid buffer/period len\n");
+@@ -1084,12 +1078,10 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
+ 		return NULL;
+ 	}
+ 
+-	ret = get_transfer_param(tdc, direction, &apb_ptr, &apb_seq, &csr,
+-				&burst_size, &slave_bw);
+-	if (ret < 0)
++	if (get_transfer_param(tdc, direction, &apb_ptr, &apb_seq, &csr,
++				&burst_size, &slave_bw) < 0)
+ 		return NULL;
+ 
+-
+ 	ahb_seq = TEGRA_APBDMA_AHBSEQ_INTR_ENB;
+ 	ahb_seq |= TEGRA_APBDMA_AHBSEQ_WRAP_NONE <<
+ 					TEGRA_APBDMA_AHBSEQ_WRAP_SHIFT;
 -- 
 2.1.4
