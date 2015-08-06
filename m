@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 3/4] DMA: tegra-apb: Remove unnecessary return statements and variables
-Date: Thu, 6 Aug 2015 14:32:32 +0100
-Message-ID: <1438867953-11378-4-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH 2/4] DMA: tegra-apb: Avoid unnecessary channel base address calculation
+Date: Thu, 6 Aug 2015 14:32:31 +0100
+Message-ID: <1438867953-11378-3-git-send-email-jonathanh@nvidia.com>
 References: <1438867953-11378-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,86 +12,55 @@ To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vinod.koul@intel.com>, S
 Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Some void functions have unnecessary return statements at the end
-(reported by sparse) and so remove these. Also remove the return variables
-from functions tegra_dma_prep_slave_sg() and tegra_dma_prep_slave_cyclic()
-because the value is not used.
+Everytime a DMA channel register is accessed, the channel base address
+is calculated by adding the DMA base address and the channel register
+offset. Avoid this calculation and simply calculate the channel base
+address once at probe time for each DMA channel.
 
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/dma/tegra20-apb-dma.c | 16 ++++------------
- 1 file changed, 4 insertions(+), 12 deletions(-)
+ drivers/dma/tegra20-apb-dma.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
 diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 11edcca7619b..53a8075dcec8 100644
+index cf8cff7827f0..11edcca7619b 100644
 --- a/drivers/dma/tegra20-apb-dma.c
 +++ b/drivers/dma/tegra20-apb-dma.c
-@@ -598,7 +598,6 @@ static void handle_once_dma_done(struct tegra_dma_channel *tdc,
- 		return;
- 
- 	tdc_start_head_req(tdc);
--	return;
+@@ -187,7 +187,7 @@ struct tegra_dma_channel {
+ 	bool			config_init;
+ 	int			id;
+ 	int			irq;
+-	unsigned long		chan_base_offset;
++	void __iomem		*chan_addr;
+ 	spinlock_t		lock;
+ 	bool			busy;
+ 	struct tegra_dma	*tdma;
+@@ -239,12 +239,12 @@ static inline u32 tdma_read(struct tegra_dma *tdma, u32 reg)
+ static inline void tdc_write(struct tegra_dma_channel *tdc,
+ 		u32 reg, u32 val)
+ {
+-	writel(val, tdc->tdma->base_addr + tdc->chan_base_offset + reg);
++	writel(val, tdc->chan_addr + reg);
  }
  
- static void handle_cont_sngl_cycle_dma_done(struct tegra_dma_channel *tdc,
-@@ -625,7 +624,6 @@ static void handle_cont_sngl_cycle_dma_done(struct tegra_dma_channel *tdc,
- 		if (!st)
- 			dma_desc->dma_status = DMA_ERROR;
- 	}
--	return;
+ static inline u32 tdc_read(struct tegra_dma_channel *tdc, u32 reg)
+ {
+-	return readl(tdc->tdma->base_addr + tdc->chan_base_offset + reg);
++	return readl(tdc->chan_addr + reg);
  }
  
- static void tegra_dma_tasklet(unsigned long data)
-@@ -717,7 +715,6 @@ static void tegra_dma_issue_pending(struct dma_chan *dc)
- 	}
- end:
- 	spin_unlock_irqrestore(&tdc->lock, flags);
--	return;
- }
+ static inline struct tegra_dma_channel *to_tegra_dma_chan(struct dma_chan *dc)
+@@ -1373,8 +1373,9 @@ static int tegra_dma_probe(struct platform_device *pdev)
+ 	for (i = 0; i < cdata->nr_channels; i++) {
+ 		struct tegra_dma_channel *tdc = &tdma->channels[i];
  
- static int tegra_dma_terminate_all(struct dma_chan *dc)
-@@ -929,7 +926,6 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
- 	struct tegra_dma_sg_req  *sg_req = NULL;
- 	u32 burst_size;
- 	enum dma_slave_buswidth slave_bw;
--	int ret;
+-		tdc->chan_base_offset = TEGRA_APBDMA_CHANNEL_BASE_ADD_OFFSET +
+-					i * cdata->channel_reg_size;
++		tdc->chan_addr = tdma->base_addr +
++				 TEGRA_APBDMA_CHANNEL_BASE_ADD_OFFSET +
++				 (i * cdata->channel_reg_size);
  
- 	if (!tdc->config_init) {
- 		dev_err(tdc2dev(tdc), "dma channel is not configured\n");
-@@ -940,9 +936,8 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_slave_sg(
- 		return NULL;
- 	}
- 
--	ret = get_transfer_param(tdc, direction, &apb_ptr, &apb_seq, &csr,
--				&burst_size, &slave_bw);
--	if (ret < 0)
-+	if (get_transfer_param(tdc, direction, &apb_ptr, &apb_seq, &csr,
-+				&burst_size, &slave_bw) < 0)
- 		return NULL;
- 
- 	INIT_LIST_HEAD(&req_list);
-@@ -1045,7 +1040,6 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
- 	dma_addr_t mem = buf_addr;
- 	u32 burst_size;
- 	enum dma_slave_buswidth slave_bw;
--	int ret;
- 
- 	if (!buf_len || !period_len) {
- 		dev_err(tdc2dev(tdc), "Invalid buffer/period len\n");
-@@ -1084,12 +1078,10 @@ static struct dma_async_tx_descriptor *tegra_dma_prep_dma_cyclic(
- 		return NULL;
- 	}
- 
--	ret = get_transfer_param(tdc, direction, &apb_ptr, &apb_seq, &csr,
--				&burst_size, &slave_bw);
--	if (ret < 0)
-+	if (get_transfer_param(tdc, direction, &apb_ptr, &apb_seq, &csr,
-+				&burst_size, &slave_bw) < 0)
- 		return NULL;
- 
--
- 	ahb_seq = TEGRA_APBDMA_AHBSEQ_INTR_ENB;
- 	ahb_seq |= TEGRA_APBDMA_AHBSEQ_WRAP_NONE <<
- 					TEGRA_APBDMA_AHBSEQ_WRAP_SHIFT;
+ 		res = platform_get_resource(pdev, IORESOURCE_IRQ, i);
+ 		if (!res) {
 -- 
 2.1.4
