@@ -1,112 +1,83 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 4/4] DMA: tegra-apb: Simplify locking for device using global pause
-Date: Thu, 6 Aug 2015 14:32:33 +0100
-Message-ID: <1438867953-11378-5-git-send-email-jonathanh@nvidia.com>
-References: <1438867953-11378-1-git-send-email-jonathanh@nvidia.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: [PATCH v2 2/3] pinctrl: tegra: Only set the gpio range if needed
+Date: Thu, 6 Aug 2015 15:40:32 +0200
+Message-ID: <CAAObsKBk54ZAhGVmpONeBtX1AJv0woq7sp3cCGZ1FeDtTst_DA@mail.gmail.com>
+References: <1436862596-27730-1-git-send-email-tomeu.vizoso@collabora.com> <1436862596-27730-3-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1438867953-11378-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1436862596-27730-3-git-send-email-tomeu.vizoso@collabora.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc: linux-gpio@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Sparse reports the following with regard to locking in the
-tegra_dma_global_pause() and tegra_dma_global_resume() functions:
+On 14 July 2015 at 10:29, Tomeu Vizoso <tomeu.vizoso@collabora.com> wrote:
+> If the gpio DT node has the gpio-ranges property, the range will be
+> added by the gpio core and doesn't need to be added by the pinctrl
+> driver.
+>
+> By having the gpio-ranges property, we have an explicit dependency from
+> the gpio node to the pinctrl node and we can stop using the deprecated
+> pinctrl_add_gpio_range() function.
+>
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> Acked-by: Stephen Warren <swarren@nvidia.com>
 
-drivers/dma/tegra20-apb-dma.c:362:9: warning: context imbalance in
-	'tegra_dma_global_pause' - wrong count at exit
-drivers/dma/tegra20-apb-dma.c:366:13: warning: context imbalance in
-	'tegra_dma_global_resume' - unexpected unlock
+Hi Linus,
 
-The warning is caused because tegra_dma_global_pause() acquires a lock
-but does not release it. However, the lock is released by
-tegra_dma_global_resume(). These pause/resume functions are called in
-pairs and so it does appear to work.
+do you mind if this goes through the Tegra tree? It would be best if
+it went together with 3/3 ("ARM: tegra: Add gpio-ranges property"), to
+avoid duplicated GPIO ranges.
 
-This global pause is used on early tegra devices that do not have an
-individual pause for each channel. The lock appears to be used to ensure
-that multiple channels do not attempt to assert/de-assert the global pause
-at the same time which could cause the DMA controller to be in the wrong
-paused state. Rather than locking around the entire code between the pause
-and resume, employ a simple counter to keep track of the global pause
-requests. By using a counter, it is only necessary to hold the lock when
-pausing and unpausing the DMA controller and hence, fixes the sparse
-warning.
+Thanks,
 
-Please note that for devices that support individual channel pausing, the
-DMA controller lock is not held between pausing and unpausing the channel.
-Hence, this change will make the devices that use the global pause behave
-in the same way, with regard to locking, as those that don't.
+Tomeu
 
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/dma/tegra20-apb-dma.c | 32 ++++++++++++++++++++++++++++----
- 1 file changed, 28 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 53a8075dcec8..c8f79dcaaee8 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -219,6 +219,13 @@ struct tegra_dma {
- 	void __iomem			*base_addr;
- 	const struct tegra_dma_chip_data *chip_data;
- 
-+	/*
-+	 * Counter for managing global pausing of the DMA controller.
-+	 * Only applicable for devices that don't support individual
-+	 * channel pausing.
-+	 */
-+	u32				global_pause_count;
-+
- 	/* Some register need to be cache before suspend */
- 	u32				reg_gen;
- 
-@@ -358,16 +365,32 @@ static void tegra_dma_global_pause(struct tegra_dma_channel *tdc,
- 	struct tegra_dma *tdma = tdc->tdma;
- 
- 	spin_lock(&tdma->global_lock);
--	tdma_write(tdma, TEGRA_APBDMA_GENERAL, 0);
--	if (wait_for_burst_complete)
--		udelay(TEGRA_APBDMA_BURST_COMPLETE_TIME);
-+
-+	if (tdc->tdma->global_pause_count == 0) {
-+		tdma_write(tdma, TEGRA_APBDMA_GENERAL, 0);
-+		if (wait_for_burst_complete)
-+			udelay(TEGRA_APBDMA_BURST_COMPLETE_TIME);
-+	}
-+
-+	tdc->tdma->global_pause_count++;
-+
-+	spin_unlock(&tdma->global_lock);
- }
- 
- static void tegra_dma_global_resume(struct tegra_dma_channel *tdc)
- {
- 	struct tegra_dma *tdma = tdc->tdma;
- 
--	tdma_write(tdma, TEGRA_APBDMA_GENERAL, TEGRA_APBDMA_GENERAL_ENABLE);
-+	spin_lock(&tdma->global_lock);
-+
-+	if (WARN_ON(tdc->tdma->global_pause_count == 0))
-+		goto out;
-+
-+	if (--tdc->tdma->global_pause_count == 0)
-+		tdma_write(tdma, TEGRA_APBDMA_GENERAL,
-+			   TEGRA_APBDMA_GENERAL_ENABLE);
-+
-+out:
- 	spin_unlock(&tdma->global_lock);
- }
- 
-@@ -1407,6 +1430,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 	dma_cap_set(DMA_PRIVATE, tdma->dma_dev.cap_mask);
- 	dma_cap_set(DMA_CYCLIC, tdma->dma_dev.cap_mask);
- 
-+	tdma->global_pause_count = 0;
- 	tdma->dma_dev.dev = &pdev->dev;
- 	tdma->dma_dev.device_alloc_chan_resources =
- 					tegra_dma_alloc_chan_resources;
--- 
-2.1.4
+> ---
+>
+> Changes in v2: None
+>
+>  drivers/pinctrl/pinctrl-tegra.c | 19 ++++++++++++++++++-
+>  1 file changed, 18 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-tegra.c
+> index 0f982b829be1..0fd7fd2b0f72 100644
+> --- a/drivers/pinctrl/pinctrl-tegra.c
+> +++ b/drivers/pinctrl/pinctrl-tegra.c
+> @@ -624,6 +624,22 @@ static struct pinctrl_desc tegra_pinctrl_desc = {
+>         .owner = THIS_MODULE,
+>  };
+>
+> +static bool gpio_node_has_range(void)
+> +{
+> +       struct device_node *np;
+> +       bool has_prop = false;
+> +
+> +       np = of_find_compatible_node(NULL, NULL, "nvidia,tegra30-gpio");
+> +       if (!np)
+> +               return has_prop;
+> +
+> +       has_prop = of_find_property(np, "gpio-ranges", NULL);
+> +
+> +       of_node_put(np);
+> +
+> +       return has_prop;
+> +}
+> +
+>  int tegra_pinctrl_probe(struct platform_device *pdev,
+>                         const struct tegra_pinctrl_soc_data *soc_data)
+>  {
+> @@ -708,7 +724,8 @@ int tegra_pinctrl_probe(struct platform_device *pdev,
+>                 return PTR_ERR(pmx->pctl);
+>         }
+>
+> -       pinctrl_add_gpio_range(pmx->pctl, &tegra_pinctrl_gpio_range);
+> +       if (!gpio_node_has_range())
+> +               pinctrl_add_gpio_range(pmx->pctl, &tegra_pinctrl_gpio_range);
+>
+>         platform_set_drvdata(pdev, pmx);
+>
+> --
+> 2.4.3
+>
