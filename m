@@ -1,55 +1,50 @@
-From: Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Subject: Re: [PATCH 2/5] net: rfkill: add rfkill_find_type function
-Date: Thu, 06 Aug 2015 12:26:59 +0300
-Message-ID: <1438853219.29746.184.camel@linux.intel.com>
+Date: Thu, 6 Aug 2015 14:31:31 +0300
+Message-ID: <55C34593.8010907@cogentembedded.com>
 References: <1438781947-7952-1-git-send-email-heikki.krogerus@linux.intel.com>
-	 <1438781947-7952-3-git-send-email-heikki.krogerus@linux.intel.com>
-	 <1438783649.29746.175.camel@linux.intel.com>
-	 <20150806083004.GI7675@kuha.fi.intel.com>
+ <1438781947-7952-3-git-send-email-heikki.krogerus@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150806083004.GI7675-FZxXFokcWpatqXYlAKuG4QC/G2K4zDHf@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1438781947-7952-3-git-send-email-heikki.krogerus@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Johannes Berg <johannes@sipsolutions.net>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 2015-08-06 at 11:30 +0300, Heikki Krogerus wrote:
-> > >=20
-> On Wed, Aug 05, 2015 at 05:07:29PM +0300, Andy Shevchenko wrote:
-> > On Wed, 2015-08-05 at 16:39 +0300, Heikki Krogerus wrote:
+Hello.
 
+On 8/5/2015 4:39 PM, Heikki Krogerus wrote:
 
-> > > +static inline enum rfkill_type rfkill_find_type(const char
-> > > *name)
-> > > +{
-> > > +	return 0;
-> >=20
-> > Hmm=E2=80=A6 Besides 0 is implicitly casted to enum type the issue =
-with=20
-> > enums
-> > that you rather have to supply existing enum entry. I would suggest=
-=20
-> > to
-> > add RFKILL_TYPE_UNKNOWN if _ALL is reserved for some use cases.
->=20
-> Why would you add a new type just for this? You do realize it would
-> require adding specific handling all over the place? RFKILL_TYPE_ALL
-> (0) is already handled as an invalid type.
+> Helper for finding the type based on name. Useful if the
+> type needs to be determined based on device property.
 
-It was my thought as well (see *if* in my previous comment).
+> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+> ---
+>   include/linux/rfkill.h | 15 +++++++++++++
+>   net/rfkill/core.c      | 57 +++++++++++++++++++++++++-------------------------
+>   2 files changed, 44 insertions(+), 28 deletions(-)
 
->  Confused?
+> diff --git a/include/linux/rfkill.h b/include/linux/rfkill.h
+> index d901078..02f563c 100644
+> --- a/include/linux/rfkill.h
+> +++ b/include/linux/rfkill.h
+[...]
+> @@ -268,6 +277,12 @@ static inline bool rfkill_blocked(struct rfkill *rfkill)
+>   {
+>   	return false;
+>   }
+> +
+> +static inline enum rfkill_type rfkill_find_type(const char *name)
+> +{
+> +	return 0;
+ > +}
+ > +
 
-A bit, yes.
+    Shouldn't it return some member of 'enum rfkill_type' instead?
 
->=20
-> I'll change this and return RFKILL_TYPE_ALL instead of 0.
+[...]
 
-Excellent!
-
---=20
-Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Intel Finland Oy
+MBR, Sergei
