@@ -1,50 +1,42 @@
-From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH 2/5] net: rfkill: add rfkill_find_type function
-Date: Thu, 6 Aug 2015 14:31:31 +0300
-Message-ID: <55C34593.8010907@cogentembedded.com>
-References: <1438781947-7952-1-git-send-email-heikki.krogerus@linux.intel.com>
- <1438781947-7952-3-git-send-email-heikki.krogerus@linux.intel.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 0/4] DMA: tegra-apb: Clean-up
+Date: Thu, 6 Aug 2015 14:32:29 +0100
+Message-ID: <1438867953-11378-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1438781947-7952-3-git-send-email-heikki.krogerus@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, Johannes Berg <johannes@sipsolutions.net>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vinod.koul@intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hello.
+Some clean-up changes for the tegra-apb DMA driver.
 
-On 8/5/2015 4:39 PM, Heikki Krogerus wrote:
+These have been compile and boot tested for ARM and ARM64. Summary of the
+ARM results are below. ARM64 has been tested locally.
 
-> Helper for finding the type based on name. Useful if the
-> type needs to be determined based on device property.
+Test summary
+------------
 
-> Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-> ---
->   include/linux/rfkill.h | 15 +++++++++++++
->   net/rfkill/core.c      | 57 +++++++++++++++++++++++++-------------------------
->   2 files changed, 44 insertions(+), 28 deletions(-)
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
 
-> diff --git a/include/linux/rfkill.h b/include/linux/rfkill.h
-> index d901078..02f563c 100644
-> --- a/include/linux/rfkill.h
-> +++ b/include/linux/rfkill.h
-[...]
-> @@ -268,6 +277,12 @@ static inline bool rfkill_blocked(struct rfkill *rfkill)
->   {
->   	return false;
->   }
-> +
-> +static inline enum rfkill_type rfkill_find_type(const char *name)
-> +{
-> +	return 0;
- > +}
- > +
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+                   tegra20-trimslice, tegra30-beaver
 
-    Shouldn't it return some member of 'enum rfkill_type' instead?
+Boot to userspace: tegra_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+                   tegra20-trimslice, tegra30-beaver
 
-[...]
+Jon Hunter (4):
+  DMA: tegra-apb: Remove unused variables
+  DMA: tegra-apb: Avoid unnecessary channel base address calculation
+  DMA: tegra-apb: Remove unnecessary return statements and variables
+  DMA: tegra-apb: Simplify locking for device using global pause
 
-MBR, Sergei
+ drivers/dma/tegra20-apb-dma.c | 63 ++++++++++++++++++++++++++-----------------
+ 1 file changed, 38 insertions(+), 25 deletions(-)
+
+-- 
+2.1.4
