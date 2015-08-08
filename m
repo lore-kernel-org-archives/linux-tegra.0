@@ -1,60 +1,80 @@
-From: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>
-Subject: Re: [PATCH 1/5] device property: helper macros for property entry creation
-Date: Sat, 08 Aug 2015 00:08:19 +0200
-Message-ID: <6986422.HLaTehgfKn@vostro.rjw.lan>
-References: <1438781947-7952-1-git-send-email-heikki.krogerus@linux.intel.com> <1438783338.29746.172.camel@linux.intel.com> <20150806074848.GH7675@kuha.fi.intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150806074848.GH7675-FZxXFokcWpatqXYlAKuG4QC/G2K4zDHf@public.gmane.org>
-Sender: linux-wireless-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: Andy Shevchenko <andriy.shevchenko-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>, Mika Westerberg <mika.westerberg-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] [ARM][TEGRA] Fix AHB base address on tegra20, tegra30 and tegra114
+Date: Sat,  8 Aug 2015 15:58:12 +0200
+Message-ID: <1439042292-19912-1-git-send-email-kwizart@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday, August 06, 2015 10:48:48 AM Heikki Krogerus wrote:
-> On Wed, Aug 05, 2015 at 05:02:18PM +0300, Andy Shevchenko wrote:
-> > On Wed, 2015-08-05 at 16:39 +0300, Heikki Krogerus wrote:
-> > > Marcos for easier creation of build-in property entries.
-> > > 
-> > > Signed-off-by: Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-> > > ---
-> > >  include/linux/property.h | 35 +++++++++++++++++++++++++++++++++++
-> > >  1 file changed, 35 insertions(+)
-> > > 
-> > > diff --git a/include/linux/property.h b/include/linux/property.h
-> > > index 76ebde9..204d899 100644
-> > > --- a/include/linux/property.h
-> > > +++ b/include/linux/property.h
-> > > @@ -152,6 +152,41 @@ struct property_entry {
-> > >  	} value;
-> > >  };
-> > >  
-> > > +#define PROP_ENTRY_U8(_name_, _val_) { \
-> > 
-> > PROP_ prefix is too generic.
-> > Maybe DEVPROP_ ? At least for the latter no records in the current
-> > sources.
-> 
-> I disagree with that. IMO this kind of macros should ideally resemble
-> the structure name they are used to fill (struct property_entry in
-> this case). And there are already definitions for DEV_PROP_* to
-> describe the types, so using something like DEVPROP_* here is just
-> confusing.
-> 
-> If PROP_ENTRY_* is really not good enough, we can change them
-> PROPERTY_ENTRY_*. But is PROP_ENTRY_* really so bad?
-> 
-> Rafael, what is your opinion?
+Current base address is wrong by 0x04 bytes for AHB bus device as shown in dmesg:
+ tegra-ahb 6000c004.ahb: incorrect AHB base address in DT data - enabling workaround
 
-I would prefer PROPERTY_ENTRY_ to be honest.  It's not like we need to save
-characters here.
+To correct old dtbs,  the commit ce7a10b0ff3db63 checks for the low bit
+of the base address and removes theses 0x04 bytes at runtime.
 
-Thanks,
-Rafael
+This patch fix the original dts, so upstream version doesn't need
+the workaround of the base address.
 
---
-To unsubscribe from this list: send the line "unsubscribe linux-wireless" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+As both addresses are valid, this patch doesn't break compatibility
+
+Tested on tegra20-paz00 (aka ac100)
+
+Signed-off-by: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra114.dtsi | 4 ++--
+ arch/arm/boot/dts/tegra20.dtsi  | 4 ++--
+ arch/arm/boot/dts/tegra30.dtsi  | 4 ++--
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+index f58a3d9..4bdf8f9 100644
+--- a/arch/arm/boot/dts/tegra114.dtsi
++++ b/arch/arm/boot/dts/tegra114.dtsi
+@@ -214,9 +214,9 @@
+ 		#dma-cells = <1>;
+ 	};
+ 
+-	ahb: ahb@6000c004 {
++	ahb: ahb@6000c000 {
+ 		compatible = "nvidia,tegra114-ahb", "nvidia,tegra30-ahb";
+-		reg = <0x6000c004 0x14c>;
++		reg = <0x6000c000 0x150>;
+ 	};
+ 
+ 	gpio: gpio@6000d000 {
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index f444b67..f6f1461 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -225,9 +225,9 @@
+ 		#dma-cells = <1>;
+ 	};
+ 
+-	ahb@6000c004 {
++	ahb@6000c000 {
+ 		compatible = "nvidia,tegra20-ahb";
+-		reg = <0x6000c004 0x10c>; /* AHB Arbitration + Gizmo Controller */
++		reg = <0x6000c000 0x110>; /* AHB Arbitration + Gizmo Controller */
+ 	};
+ 
+ 	gpio: gpio@6000d000 {
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index 782b11b..559763e 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -329,9 +329,9 @@
+ 		#dma-cells = <1>;
+ 	};
+ 
+-	ahb: ahb@6000c004 {
++	ahb: ahb@6000c000 {
+ 		compatible = "nvidia,tegra30-ahb";
+-		reg = <0x6000c004 0x14c>; /* AHB Arbitration + Gizmo Controller */
++		reg = <0x6000c000 0x150>; /* AHB Arbitration + Gizmo Controller */
+ 	};
+ 
+ 	gpio: gpio@6000d000 {
+-- 
+2.4.3
