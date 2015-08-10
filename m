@@ -1,100 +1,58 @@
 From: Joe Perches <joe@perches.com>
-Subject: [PATCH 00/19] staging: Remove unnecessary externs
-Date: Mon, 10 Aug 2015 14:51:15 -0700
-Message-ID: <cover.1439241825.git.joe@perches.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: devel@driverdev.osuosl.org, driverdev-devel@linuxdriverproject.org, ac100@lists.launchpad.net, linux-tegra@vger.kernel.org, speakup@linux-speakup.org, linux-wireless@vger.kernel.org
-Cc: linux-iio@vger.kernel.org, HPDD-discuss@lists.01.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 10/19] staging: nvec: Remove unnecessary externs
+Date: Mon, 10 Aug 2015 14:51:25 -0700
+Message-ID: <d46fa6bcc8925583eb0d24741520fa8c3b6a283f.1439241825.git.joe@perches.com>
+References: <cover.1439241825.git.joe@perches.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <cover.1439241825.git.joe@perches.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: devel@driverdev.osuosl.org, Julian Andres Klode <jak@jak-linux.org>, Marc Dietrich <marvin24@gmx.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ac100@lists.launchpad.net, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-trivial neatening of prototypes
+Using 'extern' is not necessary for function prototypes.
 
-Joe Perches (19):
-  staging: android: Remove unnecessary externs
-  staging: dgnc: Remove unnecessary externs
-  staging: fbtft: Remove unnecessary externs
-  staging: ft1000: Remove unnecessary externs
-  staging: iio: Remove unnecessary externs
-  staging: lustre: Remove unnecessary externs
-  staging: most: Remove unnecessary externs
-  staging: mt29f_spinand: Remove unnecessary externs
-  staging: netlogic: Remove unnecessary externs
-  staging: nvec: Remove unnecessary externs
-  staging: octeon: Remove unnecessary externs
-  staging: olpc_dcon: Remove unnecessary externs
-  staging: rtl8188eu: Remove unnecessary externs
-  staging: rtl8192e: Remove unnecessary externs
-  staging: rtl8192u: Remove unnecessary externs
-  staging: rtl8712: Remove unnecessary externs
-  staging: speakup: Remove unnecessary externs
-  staging: wilc1000: Remove unnecessary externs
-  staging: xgifb: Remove unnecessary externs
+Miscellanea:
 
- drivers/staging/android/sync.h                     |  10 +-
- drivers/staging/dgnc/dgnc_sysfs.h                  |  16 +-
- drivers/staging/fbtft/fbtft.h                      |  52 ++-
- drivers/staging/ft1000/ft1000-pcmcia/ft1000.h      |  19 +-
- drivers/staging/ft1000/ft1000-usb/ft1000_usb.h     |   4 +-
- drivers/staging/iio/meter/ade7854.h                |   4 +-
- .../staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h    |   2 +-
- .../staging/lustre/lnet/klnds/socklnd/socklnd.h    | 141 +++++----
- drivers/staging/lustre/lnet/selftest/console.h     |  90 +++---
- .../staging/lustre/lustre/include/lprocfs_status.h | 313 +++++++++----------
- .../lustre/lustre/include/lustre/lustre_idl.h      | 133 ++++----
- .../lustre/lustre/include/lustre/lustre_user.h     |   2 +-
- drivers/staging/lustre/lustre/include/lustre_dlm.h |   2 +-
- .../staging/lustre/lustre/include/lustre_export.h  |   4 +-
- .../staging/lustre/lustre/include/lustre_import.h  |   4 +-
- drivers/staging/lustre/lustre/include/lustre_net.h |  16 +-
- drivers/staging/lustre/lustre/include/obd_class.h  |  16 +-
- .../staging/lustre/lustre/include/obd_support.h    |   6 +-
- drivers/staging/lustre/lustre/ldlm/ldlm_internal.h |   2 +-
- drivers/staging/lustre/lustre/libcfs/tracefile.h   |  32 +-
- .../staging/lustre/lustre/llite/llite_internal.h   |  16 +-
- drivers/staging/most/hdm-dim2/dim2_hal.h           |   8 +-
- drivers/staging/mt29f_spinand/mt29f_spinand.h      |   4 +-
- drivers/staging/netlogic/xlr_net.h                 |   2 +-
- drivers/staging/nvec/nvec.h                        |  19 +-
- drivers/staging/octeon/ethernet-mdio.h             |   2 +-
- drivers/staging/octeon/octeon-ethernet.h           |  22 +-
- drivers/staging/olpc_dcon/olpc_dcon.h              |   2 +-
- drivers/staging/rtl8188eu/include/osdep_service.h  |   2 +-
- drivers/staging/rtl8188eu/include/rtw_mlme_ext.h   |   8 +-
- drivers/staging/rtl8188eu/include/sta_info.h       |  18 +-
- drivers/staging/rtl8192e/rtl8192e/r8190P_rtl8256.h |  10 +-
- drivers/staging/rtl8192e/rtl8192e/r8192E_cmdpkt.h  |   4 +-
- .../staging/rtl8192e/rtl8192e/r8192E_firmware.h    |   2 +-
- drivers/staging/rtl8192e/rtl8192e/r8192E_phy.h     |  52 ++-
- drivers/staging/rtl8192e/rtl8192e/rtl_dm.h         |  22 +-
- drivers/staging/rtl8192e/rtllib.h                  | 347 ++++++++++-----------
- drivers/staging/rtl8192u/ieee80211/ieee80211.h     | 345 ++++++++++----------
- drivers/staging/rtl8192u/r8190_rtl8256.h           |  11 +-
- drivers/staging/rtl8192u/r8192U.h                  |   2 +-
- drivers/staging/rtl8192u/r8192U_dm.h               |  36 +--
- drivers/staging/rtl8192u/r8192U_wx.h               |   2 +-
- drivers/staging/rtl8192u/r819xU_cmdpkt.h           |   8 +-
- drivers/staging/rtl8192u/r819xU_phy.h              |  55 ++--
- drivers/staging/rtl8712/rtl871x_ioctl.h            |  28 +-
- drivers/staging/speakup/i18n.h                     |  12 +-
- drivers/staging/speakup/speakup.h                  |  68 ++--
- drivers/staging/wilc1000/coreconfigurator.h        |  30 +-
- drivers/staging/wilc1000/linux_wlan_common.h       |   4 +-
- drivers/staging/wilc1000/wilc_wfi_cfgoperations.h  |   2 +-
- drivers/staging/xgifb/vb_init.h                    |   4 +-
- drivers/staging/xgifb/vb_setmode.h                 |  34 +-
- 52 files changed, 1007 insertions(+), 1042 deletions(-)
+o Reflow alignments
 
+Signed-off-by: Joe Perches <joe@perches.com>
+---
+ drivers/staging/nvec/nvec.h | 19 +++++++++----------
+ 1 file changed, 9 insertions(+), 10 deletions(-)
+
+diff --git a/drivers/staging/nvec/nvec.h b/drivers/staging/nvec/nvec.h
+index e271375..2ec9de9 100644
+--- a/drivers/staging/nvec/nvec.h
++++ b/drivers/staging/nvec/nvec.h
+@@ -165,19 +165,18 @@ struct nvec_chip {
+ 	int state;
+ };
+ 
+-extern int nvec_write_async(struct nvec_chip *nvec, const unsigned char *data,
+-			     short size);
++int nvec_write_async(struct nvec_chip *nvec, const unsigned char *data,
++		     short size);
+ 
+-extern struct nvec_msg *nvec_write_sync(struct nvec_chip *nvec,
+-					const unsigned char *data, short size);
++struct nvec_msg *nvec_write_sync(struct nvec_chip *nvec,
++				 const unsigned char *data, short size);
+ 
+-extern int nvec_register_notifier(struct nvec_chip *nvec,
+-				  struct notifier_block *nb,
+-				  unsigned int events);
++int nvec_register_notifier(struct nvec_chip *nvec,
++			   struct notifier_block *nb,
++			   unsigned int events);
+ 
+-extern int nvec_unregister_notifier(struct nvec_chip *dev,
+-				    struct notifier_block *nb);
++int nvec_unregister_notifier(struct nvec_chip *dev, struct notifier_block *nb);
+ 
+-extern void nvec_msg_free(struct nvec_chip *nvec, struct nvec_msg *msg);
++void nvec_msg_free(struct nvec_chip *nvec, struct nvec_msg *msg);
+ 
+ #endif
 -- 
 2.1.2
