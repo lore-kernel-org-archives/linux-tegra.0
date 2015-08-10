@@ -1,94 +1,100 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH 33/74] clockevents/drivers/tegra20: Migrate to new 'set-state' interface
-Date: Mon, 10 Aug 2015 11:51:50 +0200
-Message-ID: <1439200352-26767-33-git-send-email-daniel.lezcano@linaro.org>
-References: <55C87382.4070309@linaro.org>
- <1439200352-26767-1-git-send-email-daniel.lezcano@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1439200352-26767-1-git-send-email-daniel.lezcano@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: mingo@kernel.org
-Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Thierry Reding <treding@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "open list:TEGRA ARCHITECTUR..." <linux-tegra@vger.kernel.org>
+From: Joe Perches <joe@perches.com>
+Subject: [PATCH 00/19] staging: Remove unnecessary externs
+Date: Mon, 10 Aug 2015 14:51:15 -0700
+Message-ID: <cover.1439241825.git.joe@perches.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: devel@driverdev.osuosl.org, driverdev-devel@linuxdriverproject.org, ac100@lists.launchpad.net, linux-tegra@vger.kernel.org, speakup@linux-speakup.org, linux-wireless@vger.kernel.org
+Cc: linux-iio@vger.kernel.org, HPDD-discuss@lists.01.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+trivial neatening of prototypes
 
-Migrate tegra20 driver to the new 'set-state' interface provided by
-clockevents core, the earlier 'set-mode' interface is marked obsolete
-now.
+Joe Perches (19):
+  staging: android: Remove unnecessary externs
+  staging: dgnc: Remove unnecessary externs
+  staging: fbtft: Remove unnecessary externs
+  staging: ft1000: Remove unnecessary externs
+  staging: iio: Remove unnecessary externs
+  staging: lustre: Remove unnecessary externs
+  staging: most: Remove unnecessary externs
+  staging: mt29f_spinand: Remove unnecessary externs
+  staging: netlogic: Remove unnecessary externs
+  staging: nvec: Remove unnecessary externs
+  staging: octeon: Remove unnecessary externs
+  staging: olpc_dcon: Remove unnecessary externs
+  staging: rtl8188eu: Remove unnecessary externs
+  staging: rtl8192e: Remove unnecessary externs
+  staging: rtl8192u: Remove unnecessary externs
+  staging: rtl8712: Remove unnecessary externs
+  staging: speakup: Remove unnecessary externs
+  staging: wilc1000: Remove unnecessary externs
+  staging: xgifb: Remove unnecessary externs
 
-This also enables us to implement callbacks for new states of clockevent
-devices, for example: ONESHOT_STOPPED.
+ drivers/staging/android/sync.h                     |  10 +-
+ drivers/staging/dgnc/dgnc_sysfs.h                  |  16 +-
+ drivers/staging/fbtft/fbtft.h                      |  52 ++-
+ drivers/staging/ft1000/ft1000-pcmcia/ft1000.h      |  19 +-
+ drivers/staging/ft1000/ft1000-usb/ft1000_usb.h     |   4 +-
+ drivers/staging/iio/meter/ade7854.h                |   4 +-
+ .../staging/lustre/lnet/klnds/o2iblnd/o2iblnd.h    |   2 +-
+ .../staging/lustre/lnet/klnds/socklnd/socklnd.h    | 141 +++++----
+ drivers/staging/lustre/lnet/selftest/console.h     |  90 +++---
+ .../staging/lustre/lustre/include/lprocfs_status.h | 313 +++++++++----------
+ .../lustre/lustre/include/lustre/lustre_idl.h      | 133 ++++----
+ .../lustre/lustre/include/lustre/lustre_user.h     |   2 +-
+ drivers/staging/lustre/lustre/include/lustre_dlm.h |   2 +-
+ .../staging/lustre/lustre/include/lustre_export.h  |   4 +-
+ .../staging/lustre/lustre/include/lustre_import.h  |   4 +-
+ drivers/staging/lustre/lustre/include/lustre_net.h |  16 +-
+ drivers/staging/lustre/lustre/include/obd_class.h  |  16 +-
+ .../staging/lustre/lustre/include/obd_support.h    |   6 +-
+ drivers/staging/lustre/lustre/ldlm/ldlm_internal.h |   2 +-
+ drivers/staging/lustre/lustre/libcfs/tracefile.h   |  32 +-
+ .../staging/lustre/lustre/llite/llite_internal.h   |  16 +-
+ drivers/staging/most/hdm-dim2/dim2_hal.h           |   8 +-
+ drivers/staging/mt29f_spinand/mt29f_spinand.h      |   4 +-
+ drivers/staging/netlogic/xlr_net.h                 |   2 +-
+ drivers/staging/nvec/nvec.h                        |  19 +-
+ drivers/staging/octeon/ethernet-mdio.h             |   2 +-
+ drivers/staging/octeon/octeon-ethernet.h           |  22 +-
+ drivers/staging/olpc_dcon/olpc_dcon.h              |   2 +-
+ drivers/staging/rtl8188eu/include/osdep_service.h  |   2 +-
+ drivers/staging/rtl8188eu/include/rtw_mlme_ext.h   |   8 +-
+ drivers/staging/rtl8188eu/include/sta_info.h       |  18 +-
+ drivers/staging/rtl8192e/rtl8192e/r8190P_rtl8256.h |  10 +-
+ drivers/staging/rtl8192e/rtl8192e/r8192E_cmdpkt.h  |   4 +-
+ .../staging/rtl8192e/rtl8192e/r8192E_firmware.h    |   2 +-
+ drivers/staging/rtl8192e/rtl8192e/r8192E_phy.h     |  52 ++-
+ drivers/staging/rtl8192e/rtl8192e/rtl_dm.h         |  22 +-
+ drivers/staging/rtl8192e/rtllib.h                  | 347 ++++++++++-----------
+ drivers/staging/rtl8192u/ieee80211/ieee80211.h     | 345 ++++++++++----------
+ drivers/staging/rtl8192u/r8190_rtl8256.h           |  11 +-
+ drivers/staging/rtl8192u/r8192U.h                  |   2 +-
+ drivers/staging/rtl8192u/r8192U_dm.h               |  36 +--
+ drivers/staging/rtl8192u/r8192U_wx.h               |   2 +-
+ drivers/staging/rtl8192u/r819xU_cmdpkt.h           |   8 +-
+ drivers/staging/rtl8192u/r819xU_phy.h              |  55 ++--
+ drivers/staging/rtl8712/rtl871x_ioctl.h            |  28 +-
+ drivers/staging/speakup/i18n.h                     |  12 +-
+ drivers/staging/speakup/speakup.h                  |  68 ++--
+ drivers/staging/wilc1000/coreconfigurator.h        |  30 +-
+ drivers/staging/wilc1000/linux_wlan_common.h       |   4 +-
+ drivers/staging/wilc1000/wilc_wfi_cfgoperations.h  |   2 +-
+ drivers/staging/xgifb/vb_init.h                    |   4 +-
+ drivers/staging/xgifb/vb_setmode.h                 |  34 +-
+ 52 files changed, 1007 insertions(+), 1042 deletions(-)
 
-Cc: Thierry Reding <treding@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/clocksource/tegra20_timer.c | 45 ++++++++++++++++++++-----------------
- 1 file changed, 24 insertions(+), 21 deletions(-)
-
-diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
-index 5a112d7..6ebda11 100644
---- a/drivers/clocksource/tegra20_timer.c
-+++ b/drivers/clocksource/tegra20_timer.c
-@@ -72,33 +72,36 @@ static int tegra_timer_set_next_event(unsigned long cycles,
- 	return 0;
- }
- 
--static void tegra_timer_set_mode(enum clock_event_mode mode,
--				    struct clock_event_device *evt)
-+static inline void timer_shutdown(struct clock_event_device *evt)
- {
--	u32 reg;
--
- 	timer_writel(0, TIMER3_BASE + TIMER_PTV);
-+}
- 
--	switch (mode) {
--	case CLOCK_EVT_MODE_PERIODIC:
--		reg = 0xC0000000 | ((1000000/HZ)-1);
--		timer_writel(reg, TIMER3_BASE + TIMER_PTV);
--		break;
--	case CLOCK_EVT_MODE_ONESHOT:
--		break;
--	case CLOCK_EVT_MODE_UNUSED:
--	case CLOCK_EVT_MODE_SHUTDOWN:
--	case CLOCK_EVT_MODE_RESUME:
--		break;
--	}
-+static int tegra_timer_shutdown(struct clock_event_device *evt)
-+{
-+	timer_shutdown(evt);
-+	return 0;
-+}
-+
-+static int tegra_timer_set_periodic(struct clock_event_device *evt)
-+{
-+	u32 reg = 0xC0000000 | ((1000000 / HZ) - 1);
-+
-+	timer_shutdown(evt);
-+	timer_writel(reg, TIMER3_BASE + TIMER_PTV);
-+	return 0;
- }
- 
- static struct clock_event_device tegra_clockevent = {
--	.name		= "timer0",
--	.rating		= 300,
--	.features	= CLOCK_EVT_FEAT_ONESHOT | CLOCK_EVT_FEAT_PERIODIC,
--	.set_next_event	= tegra_timer_set_next_event,
--	.set_mode	= tegra_timer_set_mode,
-+	.name			= "timer0",
-+	.rating			= 300,
-+	.features		= CLOCK_EVT_FEAT_ONESHOT |
-+				  CLOCK_EVT_FEAT_PERIODIC,
-+	.set_next_event		= tegra_timer_set_next_event,
-+	.set_state_shutdown	= tegra_timer_shutdown,
-+	.set_state_periodic	= tegra_timer_set_periodic,
-+	.set_state_oneshot	= tegra_timer_shutdown,
-+	.tick_resume		= tegra_timer_shutdown,
- };
- 
- static u64 notrace tegra_read_sched_clock(void)
 -- 
-1.9.1
+2.1.2
