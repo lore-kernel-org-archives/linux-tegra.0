@@ -1,80 +1,94 @@
-From: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] [ARM][TEGRA] Fix AHB base address on tegra20, tegra30 and tegra114
-Date: Sat,  8 Aug 2015 15:58:12 +0200
-Message-ID: <1439042292-19912-1-git-send-email-kwizart@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH 33/74] clockevents/drivers/tegra20: Migrate to new 'set-state' interface
+Date: Mon, 10 Aug 2015 11:51:50 +0200
+Message-ID: <1439200352-26767-33-git-send-email-daniel.lezcano@linaro.org>
+References: <55C87382.4070309@linaro.org>
+ <1439200352-26767-1-git-send-email-daniel.lezcano@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1439200352-26767-1-git-send-email-daniel.lezcano@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: mingo@kernel.org
+Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Thierry Reding <treding@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "open list:TEGRA ARCHITECTUR..." <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Current base address is wrong by 0x04 bytes for AHB bus device as shown in dmesg:
- tegra-ahb 6000c004.ahb: incorrect AHB base address in DT data - enabling workaround
+From: Viresh Kumar <viresh.kumar@linaro.org>
 
-To correct old dtbs,  the commit ce7a10b0ff3db63 checks for the low bit
-of the base address and removes theses 0x04 bytes at runtime.
+Migrate tegra20 driver to the new 'set-state' interface provided by
+clockevents core, the earlier 'set-mode' interface is marked obsolete
+now.
 
-This patch fix the original dts, so upstream version doesn't need
-the workaround of the base address.
+This also enables us to implement callbacks for new states of clockevent
+devices, for example: ONESHOT_STOPPED.
 
-As both addresses are valid, this patch doesn't break compatibility
-
-Tested on tegra20-paz00 (aka ac100)
-
-Signed-off-by: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <treding@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- arch/arm/boot/dts/tegra114.dtsi | 4 ++--
- arch/arm/boot/dts/tegra20.dtsi  | 4 ++--
- arch/arm/boot/dts/tegra30.dtsi  | 4 ++--
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/clocksource/tegra20_timer.c | 45 ++++++++++++++++++++-----------------
+ 1 file changed, 24 insertions(+), 21 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
-index f58a3d9..4bdf8f9 100644
---- a/arch/arm/boot/dts/tegra114.dtsi
-+++ b/arch/arm/boot/dts/tegra114.dtsi
-@@ -214,9 +214,9 @@
- 		#dma-cells = <1>;
- 	};
+diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
+index 5a112d7..6ebda11 100644
+--- a/drivers/clocksource/tegra20_timer.c
++++ b/drivers/clocksource/tegra20_timer.c
+@@ -72,33 +72,36 @@ static int tegra_timer_set_next_event(unsigned long cycles,
+ 	return 0;
+ }
  
--	ahb: ahb@6000c004 {
-+	ahb: ahb@6000c000 {
- 		compatible = "nvidia,tegra114-ahb", "nvidia,tegra30-ahb";
--		reg = <0x6000c004 0x14c>;
-+		reg = <0x6000c000 0x150>;
- 	};
+-static void tegra_timer_set_mode(enum clock_event_mode mode,
+-				    struct clock_event_device *evt)
++static inline void timer_shutdown(struct clock_event_device *evt)
+ {
+-	u32 reg;
+-
+ 	timer_writel(0, TIMER3_BASE + TIMER_PTV);
++}
  
- 	gpio: gpio@6000d000 {
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index f444b67..f6f1461 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -225,9 +225,9 @@
- 		#dma-cells = <1>;
- 	};
+-	switch (mode) {
+-	case CLOCK_EVT_MODE_PERIODIC:
+-		reg = 0xC0000000 | ((1000000/HZ)-1);
+-		timer_writel(reg, TIMER3_BASE + TIMER_PTV);
+-		break;
+-	case CLOCK_EVT_MODE_ONESHOT:
+-		break;
+-	case CLOCK_EVT_MODE_UNUSED:
+-	case CLOCK_EVT_MODE_SHUTDOWN:
+-	case CLOCK_EVT_MODE_RESUME:
+-		break;
+-	}
++static int tegra_timer_shutdown(struct clock_event_device *evt)
++{
++	timer_shutdown(evt);
++	return 0;
++}
++
++static int tegra_timer_set_periodic(struct clock_event_device *evt)
++{
++	u32 reg = 0xC0000000 | ((1000000 / HZ) - 1);
++
++	timer_shutdown(evt);
++	timer_writel(reg, TIMER3_BASE + TIMER_PTV);
++	return 0;
+ }
  
--	ahb@6000c004 {
-+	ahb@6000c000 {
- 		compatible = "nvidia,tegra20-ahb";
--		reg = <0x6000c004 0x10c>; /* AHB Arbitration + Gizmo Controller */
-+		reg = <0x6000c000 0x110>; /* AHB Arbitration + Gizmo Controller */
- 	};
+ static struct clock_event_device tegra_clockevent = {
+-	.name		= "timer0",
+-	.rating		= 300,
+-	.features	= CLOCK_EVT_FEAT_ONESHOT | CLOCK_EVT_FEAT_PERIODIC,
+-	.set_next_event	= tegra_timer_set_next_event,
+-	.set_mode	= tegra_timer_set_mode,
++	.name			= "timer0",
++	.rating			= 300,
++	.features		= CLOCK_EVT_FEAT_ONESHOT |
++				  CLOCK_EVT_FEAT_PERIODIC,
++	.set_next_event		= tegra_timer_set_next_event,
++	.set_state_shutdown	= tegra_timer_shutdown,
++	.set_state_periodic	= tegra_timer_set_periodic,
++	.set_state_oneshot	= tegra_timer_shutdown,
++	.tick_resume		= tegra_timer_shutdown,
+ };
  
- 	gpio: gpio@6000d000 {
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index 782b11b..559763e 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -329,9 +329,9 @@
- 		#dma-cells = <1>;
- 	};
- 
--	ahb: ahb@6000c004 {
-+	ahb: ahb@6000c000 {
- 		compatible = "nvidia,tegra30-ahb";
--		reg = <0x6000c004 0x14c>; /* AHB Arbitration + Gizmo Controller */
-+		reg = <0x6000c000 0x150>; /* AHB Arbitration + Gizmo Controller */
- 	};
- 
- 	gpio: gpio@6000d000 {
+ static u64 notrace tegra_read_sched_clock(void)
 -- 
-2.4.3
+1.9.1
