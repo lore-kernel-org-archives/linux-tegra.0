@@ -1,78 +1,193 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: Re: [PATCH] arm: rpi: Device tree modifications for U-Boot
-Date: Tue, 11 Aug 2015 21:38:38 +0200
-Message-ID: <1439321918.2214.6.camel@lynxeye.de>
-References: <1439303153-12171-1-git-send-email-sjg@chromium.org>
-	 <1439312701.2451.3.camel@lynxeye.de> <55CA3113.1010601@wwwdotorg.org>
+From: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3] PCI: kill off set_irq_flags usage
+Date: Tue, 11 Aug 2015 15:20:27 -0500
+Message-ID: <20150811202027.GG13982@google.com>
+References: <1438030523-15853-1-git-send-email-robh@kernel.org>
+ <1438030523-15853-9-git-send-email-robh@kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <55CA3113.1010601-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1438030523-15853-9-git-send-email-robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Murali Karicheri <m-karicheri2-l0cyMroinI0@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pratyush Anand <pratyush.anand-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Am Dienstag, den 11.08.2015, 11:29 -0600 schrieb Stephen Warren:
-> On 08/11/2015 11:05 AM, Lucas Stach wrote:
-> > Hi Simon,
-> >
-> > why did you send this to the Tegra ML?
-> 
-> At my request, so that the DT changes could be reviewed by the kernel DT 
-> reviewers and added to the copy of the DT files in the kernel source 
-> tree if approved.
-> 
-This doesn't really answer the question why it was sent to the Tegra
-list if it is an RPi change, but that's just a side note.
+On Mon, Jul 27, 2015 at 03:55:21PM -0500, Rob Herring wrote:
+> set_irq_flags is ARM specific with custom flags which have genirq
+> equivalents. Convert drivers to use the genirq interfaces directly, s=
+o we
+> can kill off set_irq_flags. The translation of flags is as follows:
+>=20
+> IRQF_VALID -> !IRQ_NOREQUEST
+> IRQF_PROBE -> !IRQ_NOPROBE
+> IRQF_NOAUTOEN -> IRQ_NOAUTOEN
+>=20
+> For IRQs managed by an irqdomain, the irqdomain core code handles cle=
+aring
+> and setting IRQ_NOREQUEST already, so there is no need to do this in
+> .map() functions and we can simply remove the set_irq_flags calls. So=
+me
+> users also modify IRQ_NOPROBE and this has been maintained although i=
+t
+> is not clear that is really needed. There appears to be a great deal =
+of
+> blind copy and paste of this code.
+>=20
+> Signed-off-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Cc: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
+> Acked-by: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+> Cc: Murali Karicheri <m-karicheri2-l0cyMroinI0@public.gmane.org>
+> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+> Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: Pratyush Anand <pratyush.anand-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>
+> Cc: Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+> Cc: "S=F6ren Brinkmann" <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+> Cc: linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Cc: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Cc: linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> ---
+> Thomas asked that this be merged thru subsystem trees instead of arm-=
+soc,
+> so please apply this to your tree.
 
-> My assertion is that DT content should be independent of SW stack. Or 
-> put another way, all SW stacks should use the same DT content. As such, 
-> if these properties are needed by U-Boot, and contained in the copy of 
-> the DT files in the U-Boot source tree, they should also be present in 
-> the copy of the DT files in the kernel source tree, so the two do not 
-> become out of sync.
-> 
-I agree with that overall goal to have a common DT base between
-different software stacks. After all I lobbied for keeping the Tegra
-pinctrl setting in the DT even though Linux doesn't use them any more.
+Applied with Jingoo's ack to pci/irq for v4.3, thanks!
 
-For my question below I honestly want an answer as to why U-Boot needs
-those DT changes and why it can't work with the current DT contents.
-It's really just the same question we also have to answer for each and
-every DT addition that we do for Linux.
-
-Regards,
-Lucas
-
-> > Am Dienstag, den 11.08.2015, 08:25 -0600 schrieb Simon Glass:
-> >> This updates the device tree from the kernel version to something suitable
-> >> for U-Boot:
-> >>
-> >> - Add stdout-path alias for console
-> >> - Mark the /soc node to be available pre-relocation so that the early
-> >> serial console works (we need the 'ranges' property to be available)
-> 
-> >> diff --git a/arch/arm/boot/dts/bcm2835.dtsi b/arch/arm/boot/dts/bcm2835.dtsi
-> >> index 301c73f..bd6bff6 100644
-> >> --- a/arch/arm/boot/dts/bcm2835.dtsi
-> >> +++ b/arch/arm/boot/dts/bcm2835.dtsi
-> >> @@ -8,6 +8,7 @@
-> >>
-> >>   	chosen {
-> >>   		bootargs = "earlyprintk console=ttyAMA0";
-> >> +		stdout-path = &uart;
-> >>   	};
-> >>
-> >>   	soc {
-> >> @@ -16,6 +17,7 @@
-> >>   		#size-cells = <1>;
-> >>   		ranges = <0x7e000000 0x20000000 0x02000000>;
-> >>   		dma-ranges = <0x40000000 0x00000000 0x20000000>;
-> >> +		u-boot,dm-pre-reloc;
-> >
-> > Why do you need this and why should upstream carry your favourite
-> > bootloaders configuration? This is in no way hardware description.
-> 
-> 
+>  drivers/pci/host/pci-dra7xx.c      | 1 -
+>  drivers/pci/host/pci-keystone-dw.c | 2 --
+>  drivers/pci/host/pci-tegra.c       | 1 -
+>  drivers/pci/host/pci-xgene-msi.c   | 1 -
+>  drivers/pci/host/pcie-designware.c | 1 -
+>  drivers/pci/host/pcie-rcar.c       | 1 -
+>  drivers/pci/host/pcie-xilinx.c     | 2 --
+>  7 files changed, 9 deletions(-)
+>=20
+> diff --git a/drivers/pci/host/pci-dra7xx.c b/drivers/pci/host/pci-dra=
+7xx.c
+> index 80db09e..1a0d124 100644
+> --- a/drivers/pci/host/pci-dra7xx.c
+> +++ b/drivers/pci/host/pci-dra7xx.c
+> @@ -155,7 +155,6 @@ static int dra7xx_pcie_intx_map(struct irq_domain=
+ *domain, unsigned int irq,
+>  {
+>  	irq_set_chip_and_handler(irq, &dummy_irq_chip, handle_simple_irq);
+>  	irq_set_chip_data(irq, domain->host_data);
+> -	set_irq_flags(irq, IRQF_VALID);
+>=20
+>  	return 0;
+>  }
+> diff --git a/drivers/pci/host/pci-keystone-dw.c b/drivers/pci/host/pc=
+i-keystone-dw.c
+> index f34892e..f1d0749 100644
+> --- a/drivers/pci/host/pci-keystone-dw.c
+> +++ b/drivers/pci/host/pci-keystone-dw.c
+> @@ -196,7 +196,6 @@ static int ks_dw_pcie_msi_map(struct irq_domain *=
+domain, unsigned int irq,
+>  	irq_set_chip_and_handler(irq, &ks_dw_pcie_msi_irq_chip,
+>  				 handle_level_irq);
+>  	irq_set_chip_data(irq, domain->host_data);
+> -	set_irq_flags(irq, IRQF_VALID);
+>=20
+>  	return 0;
+>  }
+> @@ -277,7 +276,6 @@ static int ks_dw_pcie_init_legacy_irq_map(struct =
+irq_domain *d,
+>  	irq_set_chip_and_handler(irq, &ks_dw_pcie_legacy_irq_chip,
+>  				 handle_level_irq);
+>  	irq_set_chip_data(irq, d->host_data);
+> -	set_irq_flags(irq, IRQF_VALID);
+>=20
+>  	return 0;
+>  }
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegr=
+a.c
+> index 10c0571..81df0c1 100644
+> --- a/drivers/pci/host/pci-tegra.c
+> +++ b/drivers/pci/host/pci-tegra.c
+> @@ -1248,7 +1248,6 @@ static int tegra_msi_map(struct irq_domain *dom=
+ain, unsigned int irq,
+>  {
+>  	irq_set_chip_and_handler(irq, &tegra_msi_irq_chip, handle_simple_ir=
+q);
+>  	irq_set_chip_data(irq, domain->host_data);
+> -	set_irq_flags(irq, IRQF_VALID);
+>=20
+>  	tegra_cpuidle_pcie_irqs_in_use();
+>=20
+> diff --git a/drivers/pci/host/pci-xgene-msi.c b/drivers/pci/host/pci-=
+xgene-msi.c
+> index 2d31d4d..8e559d1 100644
+> --- a/drivers/pci/host/pci-xgene-msi.c
+> +++ b/drivers/pci/host/pci-xgene-msi.c
+> @@ -223,7 +223,6 @@ static int xgene_irq_domain_alloc(struct irq_doma=
+in *domain, unsigned int virq,
+>  	irq_domain_set_info(domain, virq, msi_irq,
+>  			    &xgene_msi_bottom_irq_chip, domain->host_data,
+>  			    handle_simple_irq, NULL, NULL);
+> -	set_irq_flags(virq, IRQF_VALID);
+>=20
+>  	return 0;
+>  }
+> diff --git a/drivers/pci/host/pcie-designware.c b/drivers/pci/host/pc=
+ie-designware.c
+> index 69486be..5c6b562 100644
+> --- a/drivers/pci/host/pcie-designware.c
+> +++ b/drivers/pci/host/pcie-designware.c
+> @@ -350,7 +350,6 @@ static int dw_pcie_msi_map(struct irq_domain *dom=
+ain, unsigned int irq,
+>  {
+>  	irq_set_chip_and_handler(irq, &dw_msi_irq_chip, handle_simple_irq);
+>  	irq_set_chip_data(irq, domain->host_data);
+> -	set_irq_flags(irq, IRQF_VALID);
+>=20
+>  	return 0;
+>  }
+> diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rca=
+r.c
+> index c086210..7678fe0 100644
+> --- a/drivers/pci/host/pcie-rcar.c
+> +++ b/drivers/pci/host/pcie-rcar.c
+> @@ -664,7 +664,6 @@ static int rcar_msi_map(struct irq_domain *domain=
+, unsigned int irq,
+>  {
+>  	irq_set_chip_and_handler(irq, &rcar_msi_irq_chip, handle_simple_irq=
+);
+>  	irq_set_chip_data(irq, domain->host_data);
+> -	set_irq_flags(irq, IRQF_VALID);
+>=20
+>  	return 0;
+>  }
+> diff --git a/drivers/pci/host/pcie-xilinx.c b/drivers/pci/host/pcie-x=
+ilinx.c
+> index f1a06a0..72015119 100644
+> --- a/drivers/pci/host/pcie-xilinx.c
+> +++ b/drivers/pci/host/pcie-xilinx.c
+> @@ -338,7 +338,6 @@ static int xilinx_pcie_msi_map(struct irq_domain =
+*domain, unsigned int irq,
+>  {
+>  	irq_set_chip_and_handler(irq, &xilinx_msi_irq_chip, handle_simple_i=
+rq);
+>  	irq_set_chip_data(irq, domain->host_data);
+> -	set_irq_flags(irq, IRQF_VALID);
+>=20
+>  	return 0;
+>  }
+> @@ -377,7 +376,6 @@ static int xilinx_pcie_intx_map(struct irq_domain=
+ *domain, unsigned int irq,
+>  {
+>  	irq_set_chip_and_handler(irq, &dummy_irq_chip, handle_simple_irq);
+>  	irq_set_chip_data(irq, domain->host_data);
+> -	set_irq_flags(irq, IRQF_VALID);
+>=20
+>  	return 0;
+>  }
+> --
+> 2.1.0
+>=20
