@@ -1,87 +1,36 @@
-From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH] arm: rpi: Device tree modifications for U-Boot
-Date: Wed, 12 Aug 2015 07:21:32 -0600
-Message-ID: <CAPnjgZ3ztXnkxZJvitiXiKMzq5+x46hbv0PW4HcF7yGgsXUV+Q@mail.gmail.com>
-References: <1439303153-12171-1-git-send-email-sjg@chromium.org> <1439312701.2451.3.camel@lynxeye.de>
+From: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] [ARM][TEGRA] Fix AHB base address on tegra20, tegra30
+ and tegra114
+Date: Wed, 12 Aug 2015 15:01:21 +0000 (UTC)
+Message-ID: <alpine.DEB.2.02.1508121500300.7154@utopia.booyaka.com>
+References: <1439042292-19912-1-git-send-email-kwizart@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: TEXT/PLAIN; charset=US-ASCII
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1439312701.2451.3.camel-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+In-Reply-To: <1439042292-19912-1-git-send-email-kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, lak <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Devicetree Discuss <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, lk <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+To: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Lucas,
+On Sat, 8 Aug 2015, Nicolas Chauvet wrote:
 
-On 11 August 2015 at 11:05, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org> wrote:
-> Hi Simon,
->
-> why did you send this to the Tegra ML?
->
-> Am Dienstag, den 11.08.2015, 08:25 -0600 schrieb Simon Glass:
->> This updates the device tree from the kernel version to something suitable
->> for U-Boot:
->>
->> - Add stdout-path alias for console
->> - Mark the /soc node to be available pre-relocation so that the early
->> serial console works (we need the 'ranges' property to be available)
->>
->> Signed-off-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
->> ---
->>
->>  arch/arm/boot/dts/bcm2835.dtsi | 4 +++-
->>  1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/boot/dts/bcm2835.dtsi b/arch/arm/boot/dts/bcm2835.dtsi
->> index 301c73f..bd6bff6 100644
->> --- a/arch/arm/boot/dts/bcm2835.dtsi
->> +++ b/arch/arm/boot/dts/bcm2835.dtsi
->> @@ -8,6 +8,7 @@
->>
->>       chosen {
->>               bootargs = "earlyprintk console=ttyAMA0";
->> +             stdout-path = &uart;
->>       };
->>
->>       soc {
->> @@ -16,6 +17,7 @@
->>               #size-cells = <1>;
->>               ranges = <0x7e000000 0x20000000 0x02000000>;
->>               dma-ranges = <0x40000000 0x00000000 0x20000000>;
->> +             u-boot,dm-pre-reloc;
->
-> Why do you need this and why should upstream carry your favourite
-> bootloaders configuration? This is in no way hardware description.
+> Current base address is wrong by 0x04 bytes for AHB bus device as shown in dmesg:
+>  tegra-ahb 6000c004.ahb: incorrect AHB base address in DT data - enabling workaround
+> 
+> To correct old dtbs,  the commit ce7a10b0ff3db63 checks for the low bit
+> of the base address and removes theses 0x04 bytes at runtime.
+> 
+> This patch fix the original dts, so upstream version doesn't need
+> the workaround of the base address.
+> 
+> As both addresses are valid, this patch doesn't break compatibility
+> 
+> Tested on tegra20-paz00 (aka ac100)
+> 
+> Signed-off-by: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-I'm not sure how much you know about U-Boot, so let me know if you
-need more info.
+Reviewed-by: Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
 
-U-Boot normally starts up by setting up its serial UART and displaying
-a banner message. At this stage typically only a few devices are
-initialised (e.g. maybe just the UART). It then relocates itself to
-the top of memory and starts up all the devices. It throws away any
-previous devices that it set up before relocation and starts again.
 
-U-Boot uses a thing called driver model (dm) which handles driver
-binding and probing. Driver model has the device tree and would
-normally scan through it and create devices for everything it finds.
-
-Before relocation we don't need every device. Also the CPU is often
-running slowly, perhaps without the cache enabled. SDRAM may not be
-available yet so space is short. We want to avoid starting up things
-that will not be used.
-
-So this property indicates that the device is needed before relocation
-and should be set up by driver model. We need it to avoid a very slow
-and memory-hungry startup.
-
-As to why upstream should accept it, my understanding of upstream is
-that people can send patches to it and in fact are encouraged to do
-so, to avoid misunderstandings and duplication. The device tree files
-are stored in Linux so any binding or source file changes should end
-up there. Otherwise the files tend to diverge and we end up with
-multiple bindings and multiple versions of the same source file.
-
-Regards,
-Simon
+- Paul
