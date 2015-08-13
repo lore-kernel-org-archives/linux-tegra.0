@@ -1,138 +1,63 @@
-From: Vaishali Thakkar <vthakkar1994-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] ASoC: tegra: Convert to managed resources
-Date: Thu, 13 Aug 2015 12:59:21 +0530
-Message-ID: <20150813072920.GA17181@localhost>
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
+Subject: Re: [PATCH 2/2] clk: Convert __clk_get_name(hw->clk) to clk_hw_get_name(hw)
+Date: Thu, 13 Aug 2015 09:57:24 +0200
+Message-ID: <1489587.uKDjVe3x3J@diego>
+References: <1439421161-17868-1-git-send-email-sboyd@codeaurora.org> <1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
+In-Reply-To: <1439421161-17868-2-git-send-email-sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Mike Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sylwester Nawrocki <s.nawrocki-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Tomasz Figa <tomasz.figa-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tero Kristo <t-kristo-l0cyMroinI0@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Ezequiel Garcia <ezequiel.garcia-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org>, Ralf Baechle <ralf-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org>, Kevin Cernekee <cernekee-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Geert Uytterhoeven <geert+renesas-gXvu3+zWzMSzQB+pC5nmwQ@public.gmane.org>, Ulrich Hecht <ulrich.hecht+renesas-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-samsung-soc-u79uwXL29TasMV2rI37PzA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use managed resource functions devm_clk_put and
-devm_snd_soc_register_component to simplify error handling.
+Am Mittwoch, 12. August 2015, 16:12:41 schrieb Stephen Boyd:
+> Use the provider based method to get a clock's name so that we
+> can get rid of the clk member in struct clk_hw one day. Mostly
+> converted with the following coccinelle script.
+> 
+> @@
+> struct clk_hw *E;
+> @@
+> 
+> -__clk_get_name(E->clk)
+> +clk_hw_get_name(E)
+> 
 
-To be compatible with the change various gotos are replaced
-with direct returns, and unneeded labels are dropped.
+For the Rockchip part
+Reviewed-by: Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>
 
-Signed-off-by: Vaishali Thakkar <vthakkar1994-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- sound/soc/tegra/tegra20_spdif.c | 37 +++++++++++++------------------------
- 1 file changed, 13 insertions(+), 24 deletions(-)
 
-diff --git a/sound/soc/tegra/tegra20_spdif.c b/sound/soc/tegra/tegra20_spdif.c
-index 9141477..f69b2e4 100644
---- a/sound/soc/tegra/tegra20_spdif.c
-+++ b/sound/soc/tegra/tegra20_spdif.c
-@@ -273,45 +273,40 @@ static int tegra20_spdif_platform_probe(struct platform_device *pdev)
- 			     GFP_KERNEL);
- 	if (!spdif) {
- 		dev_err(&pdev->dev, "Can't allocate tegra20_spdif\n");
--		ret = -ENOMEM;
--		goto err;
-+		return -ENOMEM;
- 	}
- 	dev_set_drvdata(&pdev->dev, spdif);
- 
--	spdif->clk_spdif_out = clk_get(&pdev->dev, "spdif_out");
-+	spdif->clk_spdif_out = devm_clk_get(&pdev->dev, "spdif_out");
- 	if (IS_ERR(spdif->clk_spdif_out)) {
- 		pr_err("Can't retrieve spdif clock\n");
- 		ret = PTR_ERR(spdif->clk_spdif_out);
--		goto err;
-+		return ret;
- 	}
- 
- 	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	if (!mem) {
- 		dev_err(&pdev->dev, "No memory resource\n");
--		ret = -ENODEV;
--		goto err_clk_put;
-+		return -ENODEV;
- 	}
- 
- 	dmareq = platform_get_resource(pdev, IORESOURCE_DMA, 0);
- 	if (!dmareq) {
- 		dev_err(&pdev->dev, "No DMA resource\n");
--		ret = -ENODEV;
--		goto err_clk_put;
-+		return -ENODEV;
- 	}
- 
- 	memregion = devm_request_mem_region(&pdev->dev, mem->start,
- 					    resource_size(mem), DRV_NAME);
- 	if (!memregion) {
- 		dev_err(&pdev->dev, "Memory region already claimed\n");
--		ret = -EBUSY;
--		goto err_clk_put;
-+		return -EBUSY;
- 	}
- 
- 	regs = devm_ioremap(&pdev->dev, mem->start, resource_size(mem));
- 	if (!regs) {
- 		dev_err(&pdev->dev, "ioremap failed\n");
--		ret = -ENOMEM;
--		goto err_clk_put;
-+		return -ENOMEM;
- 	}
- 
- 	spdif->regmap = devm_regmap_init_mmio(&pdev->dev, regs,
-@@ -319,7 +314,7 @@ static int tegra20_spdif_platform_probe(struct platform_device *pdev)
- 	if (IS_ERR(spdif->regmap)) {
- 		dev_err(&pdev->dev, "regmap init failed\n");
- 		ret = PTR_ERR(spdif->regmap);
--		goto err_clk_put;
-+		return ret;
- 	}
- 
- 	spdif->playback_dma_data.addr = mem->start + TEGRA20_SPDIF_DATA_OUT;
-@@ -334,8 +329,9 @@ static int tegra20_spdif_platform_probe(struct platform_device *pdev)
- 			goto err_pm_disable;
- 	}
- 
--	ret = snd_soc_register_component(&pdev->dev, &tegra20_spdif_component,
--				   &tegra20_spdif_dai, 1);
-+	ret = devm_snd_soc_register_component(&pdev->dev,
-+					      &tegra20_spdif_component,
-+					      &tegra20_spdif_dai, 1);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Could not register DAI: %d\n", ret);
- 		ret = -ENOMEM;
-@@ -345,21 +341,17 @@ static int tegra20_spdif_platform_probe(struct platform_device *pdev)
- 	ret = tegra_pcm_platform_register(&pdev->dev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Could not register PCM: %d\n", ret);
--		goto err_unregister_component;
-+		return ret;
- 	}
- 
- 	return 0;
- 
--err_unregister_component:
--	snd_soc_unregister_component(&pdev->dev);
- err_suspend:
- 	if (!pm_runtime_status_suspended(&pdev->dev))
- 		tegra20_spdif_runtime_suspend(&pdev->dev);
- err_pm_disable:
- 	pm_runtime_disable(&pdev->dev);
--err_clk_put:
--	clk_put(spdif->clk_spdif_out);
--err:
-+
- 	return ret;
- }
- 
-@@ -372,9 +364,6 @@ static int tegra20_spdif_platform_remove(struct platform_device *pdev)
- 		tegra20_spdif_runtime_suspend(&pdev->dev);
- 
- 	tegra_pcm_platform_unregister(&pdev->dev);
--	snd_soc_unregister_component(&pdev->dev);
--
--	clk_put(spdif->clk_spdif_out);
- 
- 	return 0;
- }
--- 
-1.9.1
+Heiko
+
+> diff --git a/drivers/clk/rockchip/clk-inverter.c
+> b/drivers/clk/rockchip/clk-inverter.c index 8054fdb5effb..7cbf43beb3c6
+> 100644
+> --- a/drivers/clk/rockchip/clk-inverter.c
+> +++ b/drivers/clk/rockchip/clk-inverter.c
+> @@ -50,7 +50,7 @@ static int rockchip_inv_set_phase(struct clk_hw *hw, int
+> degrees) val = !!degrees;
+>  	} else {
+>  		pr_err("%s: unsupported phase %d for %s\n",
+> -		       __func__, degrees, __clk_get_name(hw->clk));
+> +		       __func__, degrees, clk_hw_get_name(hw));
+>  		return -EINVAL;
+>  	}
+> 
+> diff --git a/drivers/clk/rockchip/clk-mmc-phase.c
+> b/drivers/clk/rockchip/clk-mmc-phase.c index 77e19097bdc7..9b613426e968
+> 100644
+> --- a/drivers/clk/rockchip/clk-mmc-phase.c
+> +++ b/drivers/clk/rockchip/clk-mmc-phase.c
+> @@ -108,7 +108,7 @@ static int rockchip_mmc_set_phase(struct clk_hw *hw, int
+> degrees) writel(HIWORD_UPDATE(raw_value, 0x07ff, mmc_clock->shift),
+> mmc_clock->reg);
+> 
+>  	pr_debug("%s->set_phase(%d) delay_nums=%u reg[0x%p]=0x%03x
+> actual_degrees=%d\n", -		__clk_get_name(hw->clk), degrees, delay_num,
+> +		clk_hw_get_name(hw), degrees, delay_num,
+>  		mmc_clock->reg, raw_value>>(mmc_clock->shift),
+>  		rockchip_mmc_get_phase(hw)
+>  	);
