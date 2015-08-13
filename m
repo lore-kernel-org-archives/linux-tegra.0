@@ -1,63 +1,52 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 2/2] clk: Convert __clk_get_name(hw->clk) to
- clk_hw_get_name(hw)
-Date: Thu, 13 Aug 2015 11:07:32 +0200
-Message-ID: <20150813090731.GC21716@ulmo>
-References: <1439421161-17868-1-git-send-email-sboyd@codeaurora.org>
- <1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
+From: Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: [PATCH 2/5] net: rfkill: add rfkill_find_type function
+Date: Thu, 13 Aug 2015 11:27:46 +0200
+Message-ID: <1439458066.2114.13.camel@sipsolutions.net>
+References: <1438781947-7952-1-git-send-email-heikki.krogerus@linux.intel.com>
+	 <1438781947-7952-3-git-send-email-heikki.krogerus@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="oJ71EGRlYNjSvfq7"
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Tero Kristo <t-kristo@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Andrew Bresticker <abrestic@chromium.org>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, Ralf Baechle <ralf@linux-mips.org>, Kevin Cernekee <cernekee@chromium.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.orglinu
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1438781947-7952-3-git-send-email-heikki.krogerus@linux.intel.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Mika Westerberg <mika.westerberg@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, 2015-08-05 at 16:39 +0300, Heikki Krogerus wrote:
+> 
+> +static const char *rfkill_types[NUM_RFKILL_TYPES] = {
+> +	[RFKILL_TYPE_WLAN]	= "wlan",
+> +	[RFKILL_TYPE_BLUETOOTH]	= "bluetooth",
+> +	[RFKILL_TYPE_UWB]	= "ultrawideband",
+> +	[RFKILL_TYPE_WIMAX]	= "wimax",
+> +	[RFKILL_TYPE_WWAN]	= "wwan",
+> +	[RFKILL_TYPE_GPS]	= "gps",
+> +	[RFKILL_TYPE_FM]	= "fm",
+> +	[RFKILL_TYPE_NFC]	= "nfc",
+> +};
+> +
+> +enum rfkill_type rfkill_find_type(const char *name)
+> +{
+> +	int i;
+> +
+> +	BUILD_BUG_ON(NUM_RFKILL_TYPES != RFKILL_TYPE_NFC + 1);
+> 
+That BUILD_BUG_ON() is now less useful - previously it pointed to the
+code that needed to change, now you're left wondering if you don't look
+up since it isn't quite that obvious from the code what this does.
 
---oJ71EGRlYNjSvfq7
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Something like
 
-On Wed, Aug 12, 2015 at 04:12:41PM -0700, Stephen Boyd wrote:
-> Use the provider based method to get a clock's name so that we
-> can get rid of the clk member in struct clk_hw one day. Mostly
-> converted with the following coccinelle script.
->=20
-> @@
-> struct clk_hw *E;
-> @@
->=20
-> -__clk_get_name(E->clk)
-> +clk_hw_get_name(E)
->=20
-[...]
->  drivers/clk/tegra/clk-pll.c          |  8 ++++----
+	BUILD_BUG_ON(rfkill_types[NUM_RFKILL_TYPES - 1] == NULL);
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+would be better. As we only add here, that would be safe enough - I've
+done something similar in the past that a bit more complicated.
 
---oJ71EGRlYNjSvfq7
-Content-Type: application/pgp-signature; name="signature.asc"
+With that and the static inline fixed (which maybe you could even
+remove) I'm fine with all these rfkill patches, but I'm not sure how to
+merge them since they affect all kinds of other trees. If desired, I
+can apply them, but an ACK from the tegra maintainer would be good :)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVzF5SAAoJEN0jrNd/PrOhHT0P/iJrUUYIutPfBNvH8txerL+7
-xnmwuEmllVmcxsJsk8a+CogZtFbkZQvYifmGh2IlSy9XcsOsDruHgdsp1330NSr0
-Fuh7nla7Ygt7L98jGh+8Dplpiy9le6F3n4Wr5YWgsXZ2cUgpihp8hSRynx4arTYn
-zmK//oqvSarKhzChh4bjUwHH0f5GZwt9amftL1QY1nwinuVHN3VTz2j6GFoGki3J
-KC6+PD9KvHiqxjmZbiDe8PNk3gph6qZj2g6g9BZAn1oHy2HwIYPyG964kgjuVwSw
-g4wfSg51pDuQW/LQgh53bRo9wrnbCc3Lb8DwlWzlc99fwIKuPC09A7pC01/8sQl8
-09WOSh9v9O5+Df+lMzp0wV0021KrfEWeZTHlMo5zKHVF5yTbF6q0pxrJ5kysxkKz
-MtbpCqWXtpER0OVPl7Ekj0l3f3b7N4ZeqWvqcaHD3WTPrS9h2tmE4SLyErtfEaMH
-NW7icXmC3vZ2keQL6ffjQgrNs110h3zSy1yC0znHl2ofFsJSmlGvk5qiS81oW0j5
-QE5pSbT5tacz6EvOQA92waF4rDPn2gWzy0vyPhhHHIEQUmDrkGotzGyorAgULLqO
-s1ka0NDRwZ+DswuRd+KEKU/XC5IyBp/9EK2fAIzx5qG4spBwj5pN3gDEmY7WzuiG
-IYTtgeucC9Ose6KTNzjn
-=QsVn
------END PGP SIGNATURE-----
-
---oJ71EGRlYNjSvfq7--
+johannes
