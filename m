@@ -1,72 +1,62 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] [ARM][TEGRA] Fix AHB base address on tegra20, tegra30
- and tegra114
-Date: Thu, 13 Aug 2015 16:16:40 +0200
-Message-ID: <20150813141639.GA26559@ulmo>
-References: <1439042292-19912-1-git-send-email-kwizart@gmail.com>
+Subject: Re: [PATCH] soc: tegra: remove redundant $(CONFIG_ARCH_TEGRA) in
+ Makefile
+Date: Thu, 13 Aug 2015 16:18:41 +0200
+Message-ID: <20150813141840.GB26559@ulmo>
+References: <1438322301-24584-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="dDRMvlgZJXvWKvBx"
+	protocol="application/pgp-signature"; boundary="yEPQxsgoJgBvi8ip"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1439042292-19912-1-git-send-email-kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1438322301-24584-1-git-send-email-yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>
+To: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---dDRMvlgZJXvWKvBx
+--yEPQxsgoJgBvi8ip
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 08, 2015 at 03:58:12PM +0200, Nicolas Chauvet wrote:
-> Current base address is wrong by 0x04 bytes for AHB bus device as shown i=
-n dmesg:
->  tegra-ahb 6000c004.ahb: incorrect AHB base address in DT data - enabling=
- workaround
+On Fri, Jul 31, 2015 at 02:58:21PM +0900, Masahiro Yamada wrote:
+> Kbuild descends into drivers/soc/tegra/ only when CONFIG_ARCH_TEGRA
+> is enabled. (see drivers/soc/Makefile)
 >=20
-> To correct old dtbs,  the commit ce7a10b0ff3db63 checks for the low bit
-> of the base address and removes theses 0x04 bytes at runtime.
+> $(CONFIG_ARCH_TEGRA) in drivers/soc/tegra/Makefile always evaluates
+> to 'y'.
 >=20
-> This patch fix the original dts, so upstream version doesn't need
-> the workaround of the base address.
->=20
-> As both addresses are valid, this patch doesn't break compatibility
->=20
-> Tested on tegra20-paz00 (aka ac100)
->=20
-> Signed-off-by: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
 > ---
->  arch/arm/boot/dts/tegra114.dtsi | 4 ++--
->  arch/arm/boot/dts/tegra20.dtsi  | 4 ++--
->  arch/arm/boot/dts/tegra30.dtsi  | 4 ++--
->  3 files changed, 6 insertions(+), 6 deletions(-)
+>=20
+>  drivers/soc/tegra/Makefile | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
 Applied, thanks.
 
 Thierry
 
---dDRMvlgZJXvWKvBx
+--yEPQxsgoJgBvi8ip
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJVzKbEAAoJEN0jrNd/PrOhebMP+wbSN959nULpU2edPt8uuPPg
-wFaHbDF/57sLzk9jFumI/vYk4pv4+XGq5UDFcecEJhpazdgjyLDgYW0DducIsXZz
-/MX0yTq5xVXsx7DYbw3aREy+/jjYjlNoUumbQlHwuk551/s82yPaCfU/JLUmz4hr
-zf4TkN5t/BnsHtTOHKPz+x13rRn5nBvRu+UxnfpMp3132VffzSKbq3GErEh7sirQ
-un3a1MZur1kQ1qWFBeFztdKFSQsw6t5ixq7Xp96SebzPaeqQPg/Wmt1NG8V6zD5B
-uMGYYCU1ln/MwhR2FRBX0mAamj+r7fjMEFmpno+Fqnvx1ASX+kpjvJYQZ4DDoEo1
-B6IozoPyhl1rAlk9OSk9syrw/PdFNOPs4+vS+jsjRrJEA8gzZhOA6ZdeAe1maT7u
-pYu/pDKWE/aeVUjkT9H3kxjpozBdgU/FFYM7zDtzwYoawAb/NlnAt0TN0m1EswTI
-Bdu6q403VXOJErZsgeX7EixIDzgrl3VtEKhuSuJxTV7IDaWXn8HSE+lTGY3e1+og
-HQDuhsyi3xHZjK1ARYXBUvrjpiWHWPKK9d6QqYFVhfsxgtXygrizqWc+JgdrG/oV
-xUDxoSIDc8vt5CyJoNqvSOfU8ASrN/th+YzGhHiV9oyY8LxEyZVYnAafEVswMDW0
-EewgSr9O7LgobVwcWS+z
-=2wK4
+iQIcBAABCAAGBQJVzKdAAAoJEN0jrNd/PrOhtmUP+wVjErLX+Hk69aFCr4qsb0KQ
+kwGp/WRD30gpmb8CyTmZABJ5PXv0zgGE5zMG+L7uNL9vtwfMsgyX7e3G8/c4/5FP
+OvvUBR0fv/w/rzueBK6xv09ze4X8F9888XV1WXaKqAekCSu/tQRgdh9goI6qMcod
+7Gn/DWbzr/jNRPw7JhziECscGNt6+ST3Y4kUn7IMTNkE8vbV2D+WHMQG58f/urfd
+HqqBhy/BK4/v5mxN4pmkjGSLpt4K0d8loyIIbb7HfKayu1KkLgHIm77umsogeGQl
+lZHleAe6tokMnAB/gR3M0F3uUzdyq5XAZ09Rq2FjT50X7pvh/fMDbaaVUCqtNRcl
+9LYg0+qvBinaSHnbMUwUzBjZsfC578Vi2UMboi7JnTF86LxDYn4b52Uf+GgPC9sm
+KkDrQ1Y95qL70ITj7qnwcVpfr7s9Gupd4KFEcZ9RGd9b3xu6FbH5E9zzRwW1W9JR
+8wwOMT1BX6KLTtpQWcb1vrnq+LfpfyIBLHWF8MwjTqLMcwtejsQ0IgSksoFppWI5
+fetMCuqjEakgG0Xt/mzNLvwKUwjBDwpgGRHGNTR0SoJoUOw2MgL67mCTyjJE1jOx
+ILe7iVkXWDoGFG9WVUOSPccdYwg7dJiFG2xqAianEeJ7d9dIqZOAoxn4qdZMwITe
+r/VbRs51ro1gsMzRtC81
+=DPTO
 -----END PGP SIGNATURE-----
 
---dDRMvlgZJXvWKvBx--
+--yEPQxsgoJgBvi8ip--
