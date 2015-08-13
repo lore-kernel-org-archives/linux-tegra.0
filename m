@@ -1,74 +1,72 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 0/3] Have Tegra's GPIO chip depend explicitly on the
- pinctrl device
-Date: Thu, 13 Aug 2015 16:33:33 +0200
-Message-ID: <20150813143332.GC26559@ulmo>
-References: <1436862596-27730-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v3] ARM: tegra: cpuidle: implement
+ cpuidle_state.enter_freeze()
+Date: Thu, 13 Aug 2015 16:54:47 +0200
+Message-ID: <20150813145446.GD26559@ulmo>
+References: <1432046953-12945-1-git-send-email-tomeu.vizoso@collabora.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="qjNfmADvan18RZcF"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="Km1U/tdNT/EmXiR1"
+Return-path: <linux-pm-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1436862596-27730-1-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+In-Reply-To: <1432046953-12945-1-git-send-email-tomeu.vizoso@collabora.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: linux-pm@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Ingo Molnar <mingo@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---qjNfmADvan18RZcF
+--Km1U/tdNT/EmXiR1
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 14, 2015 at 10:29:53AM +0200, Tomeu Vizoso wrote:
-> Hello,
+On Tue, May 19, 2015 at 04:49:12PM +0200, Tomeu Vizoso wrote:
+> This callback is expected to do the same as enter() but it has to
+> guarantee that interrupts aren't enabled at any point in its execution,
+> as the tick is frozen.
 >=20
-> these three patches make sure that there's an explicit dependency from
-> the GPIO chip in Tegra SoCs to the corresponding pinctrl device, without
-> having duplicated gpio ranges.
+> It will be called when the system goes to suspend-to-idle and will
+> reduce power usage because CPUs won't be awaken for unnecessary IRQs.
 >=20
-> By having an explicit dependency, we can do things such as probing the
-> pinctrl device before the GPIO chip device to avoid deferred probes.
+> By setting the CPUIDLE_FLAG_TIMER_STOP flag, we can reuse the same code
+> for both the enter() and enter_freeze() callbacks.
 >=20
-> Thanks,
+> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 >=20
-> Tomeu
+> ---
 >=20
-> Changes in v2:
-> - Don't defer probe if the pinctrl node is disabled
-> - Remove outdated comment from the commit changelog
->=20
-> Tomeu Vizoso (3):
->   gpio: defer probe if pinctrl cannot be found
->   pinctrl: tegra: Only set the gpio range if needed
->   ARM: tegra: Add gpio-ranges property
+> v3:	* Set CPUIDLE_FLAG_TIMER_STOP to simplify things as suggested by
+> 	Lorenzo Pieralisi
+> v2:	* Disable FIQs also when suspending-to-idle
+> ---
+>  arch/arm/mach-tegra/cpuidle-tegra114.c | 13 +++++++++----
+>  1 file changed, 9 insertions(+), 4 deletions(-)
 
-Patches 2 and 3 applied to the Tegra tree. Linus, I've applied the
-pinctrl patch to a separate branch, so we could use that to resolve
-conflicts, should there be any.
+Applied, thanks.
 
 Thierry
 
---qjNfmADvan18RZcF
+--Km1U/tdNT/EmXiR1
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJVzKq6AAoJEN0jrNd/PrOhUFwQAJ2bihWAy4JHtqNAB6R9c8cn
-Rkp89WV4lYl0RjabA8ayFSJbMvmI02BEN5kv/XKsGlcDsl747bopfNE2cBWIgSum
-vlaTXCD5gu1hey0otPYLo8Qvi9HHW/6mNdL8rjyGbI8lavmRwM61muCG6Y4JsUwW
-3nhBF6Aen4oPW9vtKzaO6iJFOIg3lb0HL0Uq0OX45Qj12ztz/DJamKQ+sshuxz0v
-a5/1nx1a7cIDBUyVRxaX8MHNsqeM9LvRHCbbWmKb/bKyLEzmvgPe0PDzygh+tDcT
-sEl2hs7kVuaXralhrBsyGFvDP949DVV50+Ok6PaTm+6ihMJ+94SDR72F1CXjqalA
-i0+h+MG2vQIEFV2uEqIgHRngFnGvstbX6Td/UU0dgqGcHtxdXDXlCoZKC3y6HURh
-DDFNUY08Us+B+pHjvVjkp006VDVHyxbCiWBorILxOS88ZK5NT2X3f0hp2fBm2slo
-34KDHeFf6z+dQ4gDWb1Rmd8Sw5AUkkOhL2m5gA36mOh9BYHc1N+mp4JeTkDwsI2s
-aB0x+ccvXM/KmBZAU2SG8jJicqW8z7NIX9bFILjz1L2YMF815ylIZ7gBhX5ta6W4
-hK/Ub9BFp6yV6Xp85gkjzWS2MRuW43WNgCvSRx22A44A9g1UJIig/Y770am5ucBA
-8OjrDA+K/GB9S/Ftu9Om
-=jjfI
+iQIcBAABCAAGBQJVzK+0AAoJEN0jrNd/PrOhoEkQAJxNOTx0h7bJDHRPXXM7wOIl
+6Ib2CGCYLFzN4FNzK0NTgvP5r1XFVbD9xARd4PnumQnQF3Dkjer/AuoYYi1Z++oz
+5QJYeCqBfOqJK4NyM1HQZ/SdgIGZyX52GtlXj34pzCLZWTeC0iGYSA7cSFF5Kz85
+j14UtJIAjV3t7CPB8+I3ICBYxkhdDP90Tm7PDgTrEDTVRMB/9n7NDBL2Ctgaqxg/
+Kve0J/xuQVItcQbi7h9eugZ99hQ9k1kbEoHNnjd5qCLoyieUzO99tYO8Tcak/wLR
+u6LPdfTb0sc6Zk8vZrfuvo2PYkwlNq1diy74s7mcIrNtDnddMN45NSIaRxoi7ZG5
+q42y+1uHB3A17KQDKzhffBYgGqQhH1cZluvvKuBIkop/jGkQW/Qt/Jf9LiJEWuMI
+Jc2sHz/BRJW0mAmR8TrXToC9h5T2vk6Of3xS1GI3CSbLIC/OeaAjJqrmIFMBVLQk
+ykIGIvFfLzhLS1xcp6IGHuMyf310DA9CcNyA+o7KTp6PMffBhDlR2dxSb4yXrHwf
+WE10TPi+RRxxp1NzJF1E2b1jGzhFolAdtIIi9FW3WSBULz4yWfbwd4xfCq+VzGP9
+g/RJG8ZEJ0KH2Bgj52cLLCrpc0fW4Hc9+oQGXG0KWDzIGVSLW4DFgX1ACiIMmf3F
+sa4NZj091ojSrWsnfZ/g
+=O1PM
 -----END PGP SIGNATURE-----
 
---qjNfmADvan18RZcF--
+--Km1U/tdNT/EmXiR1--
