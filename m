@@ -1,72 +1,56 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v3] ARM: tegra: cpuidle: implement
- cpuidle_state.enter_freeze()
-Date: Thu, 13 Aug 2015 16:54:47 +0200
-Message-ID: <20150813145446.GD26559@ulmo>
-References: <1432046953-12945-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: Re: [PATCH 2/2] clk: Convert __clk_get_name(hw->clk) to clk_hw_get_name(hw)
+Date: Thu, 13 Aug 2015 09:40:07 -0700
+Message-ID: <CAL1qeaE-UJD3CBx=6feF=Hu4=gu5AtQiWwQAZmbg+6qYLhOy2Q@mail.gmail.com>
+References: <1439421161-17868-1-git-send-email-sboyd@codeaurora.org>
+	<1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Km1U/tdNT/EmXiR1"
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1432046953-12945-1-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-pm@vger.kernel.org, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Kukjin Kim <kgene.kim@samsung.com>, Ingo Molnar <mingo@kernel.org>, Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Mike Turquette <mturquette@baylibre.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Tero Kristo <t-kristo@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, Ralf Baechle <ralf@linux-mips.org>, Kevin Cernekee <cernekee@chromium.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, Aug 12, 2015 at 4:12 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
+> Use the provider based method to get a clock's name so that we
+> can get rid of the clk member in struct clk_hw one day. Mostly
+> converted with the following coccinelle script.
+>
+> @@
+> struct clk_hw *E;
+> @@
+>
+> -__clk_get_name(E->clk)
+> +clk_hw_get_name(E)
+>
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
+> Cc: Tomasz Figa <tomasz.figa@gmail.com>
+> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+> Cc: Stephen Warren <swarren@wwwdotorg.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: Tero Kristo <t-kristo@ti.com>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
+> Cc: Andrew Bresticker <abrestic@chromium.org>
+> Cc: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
+> Cc: Ralf Baechle <ralf@linux-mips.org>
+> Cc: Kevin Cernekee <cernekee@chromium.org>
+> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-rockchip@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Cc: linux-tegra@vger.kernel.org
+> Cc: linux-omap@vger.kernel.org
+> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
 
---Km1U/tdNT/EmXiR1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>  drivers/clk/pistachio/clk-pll.c      |  4 ++--
 
-On Tue, May 19, 2015 at 04:49:12PM +0200, Tomeu Vizoso wrote:
-> This callback is expected to do the same as enter() but it has to
-> guarantee that interrupts aren't enabled at any point in its execution,
-> as the tick is frozen.
->=20
-> It will be called when the system goes to suspend-to-idle and will
-> reduce power usage because CPUs won't be awaken for unnecessary IRQs.
->=20
-> By setting the CPUIDLE_FLAG_TIMER_STOP flag, we can reuse the same code
-> for both the enter() and enter_freeze() callbacks.
->=20
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> Cc: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->=20
-> ---
->=20
-> v3:	* Set CPUIDLE_FLAG_TIMER_STOP to simplify things as suggested by
-> 	Lorenzo Pieralisi
-> v2:	* Disable FIQs also when suspending-to-idle
-> ---
->  arch/arm/mach-tegra/cpuidle-tegra114.c | 13 +++++++++----
->  1 file changed, 9 insertions(+), 4 deletions(-)
+For Pistachio,
 
-Applied, thanks.
-
-Thierry
-
---Km1U/tdNT/EmXiR1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJVzK+0AAoJEN0jrNd/PrOhoEkQAJxNOTx0h7bJDHRPXXM7wOIl
-6Ib2CGCYLFzN4FNzK0NTgvP5r1XFVbD9xARd4PnumQnQF3Dkjer/AuoYYi1Z++oz
-5QJYeCqBfOqJK4NyM1HQZ/SdgIGZyX52GtlXj34pzCLZWTeC0iGYSA7cSFF5Kz85
-j14UtJIAjV3t7CPB8+I3ICBYxkhdDP90Tm7PDgTrEDTVRMB/9n7NDBL2Ctgaqxg/
-Kve0J/xuQVItcQbi7h9eugZ99hQ9k1kbEoHNnjd5qCLoyieUzO99tYO8Tcak/wLR
-u6LPdfTb0sc6Zk8vZrfuvo2PYkwlNq1diy74s7mcIrNtDnddMN45NSIaRxoi7ZG5
-q42y+1uHB3A17KQDKzhffBYgGqQhH1cZluvvKuBIkop/jGkQW/Qt/Jf9LiJEWuMI
-Jc2sHz/BRJW0mAmR8TrXToC9h5T2vk6Of3xS1GI3CSbLIC/OeaAjJqrmIFMBVLQk
-ykIGIvFfLzhLS1xcp6IGHuMyf310DA9CcNyA+o7KTp6PMffBhDlR2dxSb4yXrHwf
-WE10TPi+RRxxp1NzJF1E2b1jGzhFolAdtIIi9FW3WSBULz4yWfbwd4xfCq+VzGP9
-g/RJG8ZEJ0KH2Bgj52cLLCrpc0fW4Hc9+oQGXG0KWDzIGVSLW4DFgX1ACiIMmf3F
-sa4NZj091ojSrWsnfZ/g
-=O1PM
------END PGP SIGNATURE-----
-
---Km1U/tdNT/EmXiR1--
+Acked-by: Andrew Bresticker <abrestic@chromium.org>
