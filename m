@@ -1,56 +1,48 @@
-From: Andrew Bresticker <abrestic@chromium.org>
-Subject: Re: [PATCH 2/2] clk: Convert __clk_get_name(hw->clk) to clk_hw_get_name(hw)
-Date: Thu, 13 Aug 2015 09:40:07 -0700
-Message-ID: <CAL1qeaE-UJD3CBx=6feF=Hu4=gu5AtQiWwQAZmbg+6qYLhOy2Q@mail.gmail.com>
-References: <1439421161-17868-1-git-send-email-sboyd@codeaurora.org>
-	<1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
+From: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>
+Subject: Re: [PATCH 0/5] Host1x/TegraDRM fixes/improvements
+Date: Fri, 14 Aug 2015 12:59:15 +0300
+Message-ID: <55CDBBF3.3010405@kapsi.fi>
+References: <1436354868-24309-1-git-send-email-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <1439421161-17868-2-git-send-email-sboyd@codeaurora.org>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: Mike Turquette <mturquette@baylibre.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tomasz Figa <tomasz.figa@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Tero Kristo <t-kristo@ti.com>, Ulf Hansson <ulf.hansson@linaro.org>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Ezequiel Garcia <ezequiel.garcia@imgtec.com>, Ralf Baechle <ralf@linux-mips.org>, Kevin Cernekee <cernekee@chromium.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Ulrich Hecht <ulrich.hecht+renesas@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1436354868-24309-1-git-send-email-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: airlied-cv59FeDIM0c@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Aug 12, 2015 at 4:12 PM, Stephen Boyd <sboyd@codeaurora.org> wrote:
-> Use the provider based method to get a clock's name so that we
-> can get rid of the clk member in struct clk_hw one day. Mostly
-> converted with the following coccinelle script.
->
-> @@
-> struct clk_hw *E;
-> @@
->
-> -__clk_get_name(E->clk)
-> +clk_hw_get_name(E)
->
-> Cc: Heiko Stuebner <heiko@sntech.de>
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
-> Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
-> Cc: Stephen Warren <swarren@wwwdotorg.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: Tero Kristo <t-kristo@ti.com>
-> Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> Cc: Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>
-> Cc: Andrew Bresticker <abrestic@chromium.org>
-> Cc: Ezequiel Garcia <ezequiel.garcia@imgtec.com>
-> Cc: Ralf Baechle <ralf@linux-mips.org>
-> Cc: Kevin Cernekee <cernekee@chromium.org>
-> Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-> Cc: Ulrich Hecht <ulrich.hecht+renesas@gmail.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-rockchip@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-tegra@vger.kernel.org
-> Cc: linux-omap@vger.kernel.org
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
+Bump.
 
->  drivers/clk/pistachio/clk-pll.c      |  4 ++--
-
-For Pistachio,
-
-Acked-by: Andrew Bresticker <abrestic@chromium.org>
+On 07/08/2015 02:27 PM, Mikko Perttunen wrote:
+> Hi, this series has a few small improvements for Host1x and TegraDRM
+> that the VIC series will build upon.
+> 
+> 1/5 is a bug fix to host1x.
+> 2/5 is required by VIC code to implement ->is_addr_reg().
+> 3/5 deduplicates handling of HOST1X class address registers
+>     and fixes the checked registers.
+> 4/5 is required for the host1x firewall to work when bo's are
+>     mapped using IOMMU.
+> 5/5 adds a TegraDRM allocator that allows drivers to allocate
+>     non-GEM memory that is still mapped to the TegraDRM domain.
+> 
+> Arto Merilainen (3):
+>   host1x: Store device address to all bufs
+>   host1x: Pass register value in firewall
+>   drm/tegra: Support kernel mappings with IOMMU
+> 
+> Mikko Perttunen (2):
+>   host1x: Handle HOST1X class address registers directly
+>   drm/tegra: Add Tegra DRM allocation API
+> 
+>  drivers/gpu/drm/tegra/drm.c  | 99 +++++++++++++++++++++++++++++++++++++++++---
+>  drivers/gpu/drm/tegra/drm.h  | 13 +++++-
+>  drivers/gpu/drm/tegra/gem.c  | 34 +++++++++++++--
+>  drivers/gpu/drm/tegra/gr2d.c | 25 ++++-------
+>  drivers/gpu/drm/tegra/gr3d.c | 24 ++++-------
+>  drivers/gpu/host1x/job.c     | 54 +++++++++++++++++-------
+>  include/linux/host1x.h       |  4 +-
+>  7 files changed, 193 insertions(+), 60 deletions(-)
+> 
