@@ -1,16 +1,16 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 3/9] ARM: tegra: Cleanup patches for v4.3-rc1
-Date: Fri, 14 Aug 2015 16:48:34 +0200
-Message-ID: <1439563720-13189-4-git-send-email-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [GIT PULL 2/9] pinctrl: tegra: Changes for v4.3-rc1
+Date: Fri, 14 Aug 2015 16:48:33 +0200
+Message-ID: <1439563720-13189-3-git-send-email-thierry.reding@gmail.com>
 References: <1439563720-13189-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1439563720-13189-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1439563720-13189-1-git-send-email-thierry.reding@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
+Hi Linus,
 
 The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d7d4f0754:
 
@@ -18,27 +18,28 @@ The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d7d4f0754:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.3-cleanup
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.3-pinctrl
 
-for you to fetch changes up to 5cf4af3bebb718b72a23b7e80fddfe8b4e8b0620:
+for you to fetch changes up to 9462510ce31e2b91156bdcc33e4c737e6768e5f8:
 
-  ALSA: hda/tegra: Order clock and reset names consistently (2015-07-16 09:42:05 +0200)
+  pinctrl: tegra: Only set the gpio range if needed (2015-08-13 16:24:33 +0200)
 
-Thanks,
+As mentioned before I've created this branch with Tomeu's change and
+based the for-4.3/dt branch onto that. Feel free to pull this into your
+tree if necessary. It will also go in through the ARM SoC tree via the
+device tree updates that depend upon it.
+
 Thierry
 
 ----------------------------------------------------------------
-ARM: tegra: Cleanup patches for v4.3-rc1
+pinctrl: tegra: Changes for v4.3-rc1
 
-Just a couple of trivial cleanups to make the HDA controller driver code
-match the device tree binding.
+Contains a single patch from Tomeu to avoid setting up a duplicate GPIO
+range.
 
 ----------------------------------------------------------------
-Marcel Ziswiler (1):
-      ALSA: hda/tegra - Fix hda2codec_2x clock and reset names
+Tomeu Vizoso (1):
+      pinctrl: tegra: Only set the gpio range if needed
 
-Thierry Reding (1):
-      ALSA: hda/tegra: Order clock and reset names consistently
-
- Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.txt | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/pinctrl/pinctrl-tegra.c | 19 ++++++++++++++++++-
+ 1 file changed, 18 insertions(+), 1 deletion(-)
