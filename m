@@ -1,16 +1,16 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL 2/9] pinctrl: tegra: Changes for v4.3-rc1
-Date: Fri, 14 Aug 2015 16:48:33 +0200
-Message-ID: <1439563720-13189-3-git-send-email-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [GIT PULL 7/9] ARM: tegra: Memory controller updates for v4.3-rc1
+Date: Fri, 14 Aug 2015 16:48:38 +0200
+Message-ID: <1439563720-13189-8-git-send-email-thierry.reding@gmail.com>
 References: <1439563720-13189-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <1439563720-13189-1-git-send-email-thierry.reding@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-gpio@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1439563720-13189-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Linus,
+Hi ARM SoC maintainers,
 
 The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d7d4f0754:
 
@@ -18,28 +18,40 @@ The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d7d4f0754:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.3-pinctrl
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.3-memory
 
-for you to fetch changes up to 9462510ce31e2b91156bdcc33e4c737e6768e5f8:
+for you to fetch changes up to 588c43a7bd5a53ae523b318e1db16bdd59963a3c:
 
-  pinctrl: tegra: Only set the gpio range if needed (2015-08-13 16:24:33 +0200)
+  memory: tegra: Add Tegra210 support (2015-08-13 16:07:52 +0200)
 
-As mentioned before I've created this branch with Tomeu's change and
-based the for-4.3/dt branch onto that. Feel free to pull this into your
-tree if necessary. It will also go in through the ARM SoC tree via the
-device tree updates that depend upon it.
-
+Thanks,
 Thierry
 
 ----------------------------------------------------------------
-pinctrl: tegra: Changes for v4.3-rc1
+ARM: tegra: Memory controller updates for v4.3-rc1
 
-Contains a single patch from Tomeu to avoid setting up a duplicate GPIO
-range.
+Adds support for Tegra210, which allows the SMMU to be used on this new
+SoC generation.
 
 ----------------------------------------------------------------
-Tomeu Vizoso (1):
-      pinctrl: tegra: Only set the gpio range if needed
+Paul Walmsley (1):
+      memory: tegra: Add support for a variable-size client ID bitfield
 
- drivers/pinctrl/pinctrl-tegra.c | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+Thierry Reding (2):
+      memory: tegra: Expose supported rates via debugfs
+      memory: tegra: Add Tegra210 support
+
+ drivers/iommu/Kconfig                    |    2 +-
+ drivers/memory/tegra/Makefile            |    1 +
+ drivers/memory/tegra/mc.c                |    8 +-
+ drivers/memory/tegra/mc.h                |    4 +
+ drivers/memory/tegra/tegra114.c          |    1 +
+ drivers/memory/tegra/tegra124-emc.c      |   42 +-
+ drivers/memory/tegra/tegra124.c          |    2 +
+ drivers/memory/tegra/tegra210.c          | 1080 ++++++++++++++++++++++++++++++
+ drivers/memory/tegra/tegra30.c           |    1 +
+ include/dt-bindings/memory/tegra210-mc.h |   36 +
+ include/soc/tegra/mc.h                   |    2 +
+ 11 files changed, 1174 insertions(+), 5 deletions(-)
+ create mode 100644 drivers/memory/tegra/tegra210.c
+ create mode 100644 include/dt-bindings/memory/tegra210-mc.h
