@@ -1,98 +1,109 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL] drm/tegra: Changes for v4.3-rc1
-Date: Fri, 14 Aug 2015 17:01:03 +0200
-Message-ID: <1439564463-18445-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] arm: rpi: Device tree modifications for U-Boot
+Date: Fri, 14 Aug 2015 21:46:15 -0600
+Message-ID: <55CEB607.7060908@wwwdotorg.org>
+References: <1439303153-12171-1-git-send-email-sjg@chromium.org> <1439312701.2451.3.camel@lynxeye.de> <CAPnjgZ3ztXnkxZJvitiXiKMzq5+x46hbv0PW4HcF7yGgsXUV+Q@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAPnjgZ3ztXnkxZJvitiXiKMzq5+x46hbv0PW4HcF7yGgsXUV+Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, lak <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Lee Jones <lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Devicetree Discuss <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, lk <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Dave,
+On 08/12/2015 07:21 AM, Simon Glass wrote:
+> Hi Lucas,
+> 
+> On 11 August 2015 at 11:05, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org> wrote:
+>> Hi Simon,
+>>
+>> why did you send this to the Tegra ML?
+>>
+>> Am Dienstag, den 11.08.2015, 08:25 -0600 schrieb Simon Glass:
+>>> This updates the device tree from the kernel version to something suitable
+>>> for U-Boot:
+>>>
+>>> - Add stdout-path alias for console
+>>> - Mark the /soc node to be available pre-relocation so that the early
+>>> serial console works (we need the 'ranges' property to be available)
+>>>
+>>> Signed-off-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>>> ---
+>>>
+>>>  arch/arm/boot/dts/bcm2835.dtsi | 4 +++-
+>>>  1 file changed, 3 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/arm/boot/dts/bcm2835.dtsi b/arch/arm/boot/dts/bcm2835.dtsi
+>>> index 301c73f..bd6bff6 100644
+>>> --- a/arch/arm/boot/dts/bcm2835.dtsi
+>>> +++ b/arch/arm/boot/dts/bcm2835.dtsi
+>>> @@ -8,6 +8,7 @@
+>>>
+>>>       chosen {
+>>>               bootargs = "earlyprintk console=ttyAMA0";
+>>> +             stdout-path = &uart;
+>>>       };
+>>>
+>>>       soc {
+>>> @@ -16,6 +17,7 @@
+>>>               #size-cells = <1>;
+>>>               ranges = <0x7e000000 0x20000000 0x02000000>;
+>>>               dma-ranges = <0x40000000 0x00000000 0x20000000>;
+>>> +             u-boot,dm-pre-reloc;
+>>
+>> Why do you need this and why should upstream carry your favourite
+>> bootloaders configuration? This is in no way hardware description.
+> 
+> I'm not sure how much you know about U-Boot, so let me know if you
+> need more info.
+> 
+> U-Boot normally starts up by setting up its serial UART and displaying
+> a banner message. At this stage typically only a few devices are
+> initialised (e.g. maybe just the UART). It then relocates itself to
+> the top of memory and starts up all the devices. It throws away any
+> previous devices that it set up before relocation and starts again.
+> 
+> U-Boot uses a thing called driver model (dm) which handles driver
+> binding and probing. Driver model has the device tree and would
+> normally scan through it and create devices for everything it finds.
+> 
+> Before relocation we don't need every device. Also the CPU is often
+> running slowly, perhaps without the cache enabled. SDRAM may not be
+> available yet so space is short. We want to avoid starting up things
+> that will not be used.
+> 
+> So this property indicates that the device is needed before relocation
+> and should be set up by driver model. We need it to avoid a very slow
+> and memory-hungry startup.
+> 
+> As to why upstream should accept it, my understanding of upstream is
+> that people can send patches to it and in fact are encouraged to do
+> so, to avoid misunderstandings and duplication. The device tree files
+> are stored in Linux so any binding or source file changes should end
+> up there. Otherwise the files tend to diverge and we end up with
+> multiple bindings and multiple versions of the same source file.
 
-The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d7d4f0754:
+On many platforms, we have U-Boot SPL running first, then the main
+U-Boot. The main U-Boot binary contains both the code to do the
+relocation and the binary that runs after relocation. It seems like it'd
+be simpler to split these up into 3 binaries that each do a single job:
 
-  Linux 4.2-rc1 (2015-07-05 11:01:52 -0700)
+1) SPL, roughly as-is today (varying jobs depending on platform)
 
-are available in the git repository at:
+2) Relocator, which does nothing but work out where to copy U-Boot,
+memcpy()s it there, relocates the image (if not PIE), and jumps to it.
 
-  git://anongit.freedesktop.org/tegra/linux tags/drm/tegra/for-4.3-rc1
+3) The main U-Boot.
 
-for you to fetch changes up to 459cc2c6800b545a482e428a631d99bca8da7790:
+Item (2) above should be simple enough that it can use a very simple
+debug mechanism rather like DEBUG_LL in the Linux kernel. Similar to
+what Rob mentioned in his email.
 
-  drm/tegra: sor: Add HDMI support (2015-08-13 13:49:37 +0200)
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-drm/tegra: Changes for v4.3-rc1
-
-There are a bunch of non-critical fixes here that I've collected over
-the past few months, but the biggest part is Tegra210 support, in the
-DC, DSI and SOR/HDMI drivers.
-
-Also this finally restores DPMS with atomic mode-setting, something
-that has been broken since the conversion and which I had originally
-expected to take far less longer to fix.
-
-----------------------------------------------------------------
-Thierry Reding (41):
-      gpu: host1x: mipi: Parameterize to support future SoCs
-      gpu: host1x: mipi: Fix clock lane register for DSI
-      gpu: host1x: mipi: Clear calibration status
-      gpu: host1x: mipi: Constify OF match table
-      gpu: host1x: mipi: Add Tegra132 support
-      gpu: host1x: mipi: Add Tegra210 support
-      gpu: host1x: mipi: Power down regulators when unused
-      drm/tegra: Allow VBLANK to be disabled
-      drm/tegra: Use SIMPLE_DEV_PM_OPS
-      drm/tegra: output: Support low-active hotplug detect
-      drm/tegra: dc: Reset VBLANK to off
-      drm/tegra: dc: Add Tegra210 support
-      drm/tegra: dc: Implement CRC debugfs interface
-      drm/tegra: dc: Clarify comment about cursor treatment
-      drm/tegra: dc: Remove gratuituous blank line
-      drm/tegra: dc: Request syncpoint earlier
-      drm/tegra: dc: Record statistics
-      drm/tegra: dc: Rename register for consistency
-      drm/tegra: dc: Don't explicitly set owner module
-      drm/tegra: dc: Rename BASE_COLOR_SIZE* fields
-      drm/tegra: dsi: Use proper back-porch for non-sync video mode
-      drm/tegra: dsi: Add Tegra124 support
-      drm/tegra: dsi: Add Tegra132 support
-      drm/tegra: dsi: Add Tegra210 support
-      drm/tegra: dpaux: Provide error message in probe
-      drm/tegra: dpaux: Configure pads as I2C by default
-      drm/tegra: dpaux: Disable interrupt when detached
-      drm/tegra: sor: Rename registers for consistency
-      drm/tegra: sor: Provide error messages in probe
-      drm/tegra: sor: Set minor after debugfs initialization
-      drm/tegra: sor: Reset the correct debugfs fields
-      drm/tegra: sor: Constify display mode
-      drm/tegra: sor: Write correct head state registers
-      drm/tegra: sor: Use DRM debugfs infrastructure for CRC
-      drm/tegra: rgb: Restore DPMS
-      drm/tegra: hdmi: Restore DPMS
-      drm/tegra: dsi: Restore DPMS
-      drm/tegra: sor: Restore DPMS
-      drm/tegra: dc: Implement atomic DPMS
-      drm/tegra: sor: Add Tegra210 eDP support
-      drm/tegra: sor: Add HDMI support
-
- .../bindings/gpu/nvidia,tegra20-host1x.txt         |    8 +-
- drivers/gpu/drm/tegra/dc.c                         |  294 ++--
- drivers/gpu/drm/tegra/dc.h                         |   24 +-
- drivers/gpu/drm/tegra/dpaux.c                      |   63 +-
- drivers/gpu/drm/tegra/dpaux.h                      |    2 +
- drivers/gpu/drm/tegra/drm.c                        |   16 +-
- drivers/gpu/drm/tegra/drm.h                        |   10 +
- drivers/gpu/drm/tegra/dsi.c                        |  126 +-
- drivers/gpu/drm/tegra/dsi.h                        |    4 +
- drivers/gpu/drm/tegra/hdmi.c                       |   78 +-
- drivers/gpu/drm/tegra/output.c                     |   20 +-
- drivers/gpu/drm/tegra/rgb.c                        |   49 +-
- drivers/gpu/drm/tegra/sor.c                        | 1664 +++++++++++++++-----
- drivers/gpu/drm/tegra/sor.h                        |  298 ++--
- drivers/gpu/host1x/mipi.c                          |  253 ++-
- 15 files changed, 2104 insertions(+), 805 deletions(-)
+Item (3) could use DM and DT/ACPI/... to get device information in a
+complete non-hard-coded manner.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
