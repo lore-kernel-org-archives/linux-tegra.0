@@ -1,124 +1,132 @@
-From: Simon Glass <sjg@chromium.org>
-Subject: Re: [PATCH] arm: rpi: Device tree modifications for U-Boot
-Date: Sat, 15 Aug 2015 07:47:00 -0600
-Message-ID: <CAPnjgZ1KxqDf2o_UnsmbWs9DZJpupj6D2trBACrJm-eT1g_xVA@mail.gmail.com>
-References: <1439303153-12171-1-git-send-email-sjg@chromium.org>
- <1439312701.2451.3.camel@lynxeye.de> <CAPnjgZ3ztXnkxZJvitiXiKMzq5+x46hbv0PW4HcF7yGgsXUV+Q@mail.gmail.com>
- <55CEB607.7060908@wwwdotorg.org>
+From: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] ARM: tegra: add "jedec,spi-nor" flash compatible binding
+Date: Sun, 16 Aug 2015 08:13:25 +0200
+Message-ID: <1439705605-9127-1-git-send-email-zajec5@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <55CEB607.7060908@wwwdotorg.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Lucas Stach <dev@lynxeye.de>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, lak <linux-arm-kernel@lists.infradead.org>, Stephen Warren <swarren@nvidia.com>, Russell King <linux@arm.linux.org.uk>, Lee Jones <lee@kernel.org>, Devicetree Discuss <devicetree@vger.kernel.org>, Kumar Gala <galak@codeaurora.org>, lk <linux-kernel@vger.kernel.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, linux-rpi-kernel@lists.infradead.org, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Stephen,
+Starting with commit 8947e396a829 ("Documentation: dt: mtd: replace
+"nor-jedec" binding with "jedec, spi-nor"") we have "jedec,spi-nor"
+binding indicating support for JEDEC identification.
 
-On 14 August 2015 at 21:46, Stephen Warren <swarren@wwwdotorg.org> wrote:
-> On 08/12/2015 07:21 AM, Simon Glass wrote:
->> Hi Lucas,
->>
->> On 11 August 2015 at 11:05, Lucas Stach <dev@lynxeye.de> wrote:
->>> Hi Simon,
->>>
->>> why did you send this to the Tegra ML?
->>>
->>> Am Dienstag, den 11.08.2015, 08:25 -0600 schrieb Simon Glass:
->>>> This updates the device tree from the kernel version to something suitable
->>>> for U-Boot:
->>>>
->>>> - Add stdout-path alias for console
->>>> - Mark the /soc node to be available pre-relocation so that the early
->>>> serial console works (we need the 'ranges' property to be available)
->>>>
->>>> Signed-off-by: Simon Glass <sjg@chromium.org>
->>>> ---
->>>>
->>>>  arch/arm/boot/dts/bcm2835.dtsi | 4 +++-
->>>>  1 file changed, 3 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/arch/arm/boot/dts/bcm2835.dtsi b/arch/arm/boot/dts/bcm2835.dtsi
->>>> index 301c73f..bd6bff6 100644
->>>> --- a/arch/arm/boot/dts/bcm2835.dtsi
->>>> +++ b/arch/arm/boot/dts/bcm2835.dtsi
->>>> @@ -8,6 +8,7 @@
->>>>
->>>>       chosen {
->>>>               bootargs = "earlyprintk console=ttyAMA0";
->>>> +             stdout-path = &uart;
->>>>       };
->>>>
->>>>       soc {
->>>> @@ -16,6 +17,7 @@
->>>>               #size-cells = <1>;
->>>>               ranges = <0x7e000000 0x20000000 0x02000000>;
->>>>               dma-ranges = <0x40000000 0x00000000 0x20000000>;
->>>> +             u-boot,dm-pre-reloc;
->>>
->>> Why do you need this and why should upstream carry your favourite
->>> bootloaders configuration? This is in no way hardware description.
->>
->> I'm not sure how much you know about U-Boot, so let me know if you
->> need more info.
->>
->> U-Boot normally starts up by setting up its serial UART and displaying
->> a banner message. At this stage typically only a few devices are
->> initialised (e.g. maybe just the UART). It then relocates itself to
->> the top of memory and starts up all the devices. It throws away any
->> previous devices that it set up before relocation and starts again.
->>
->> U-Boot uses a thing called driver model (dm) which handles driver
->> binding and probing. Driver model has the device tree and would
->> normally scan through it and create devices for everything it finds.
->>
->> Before relocation we don't need every device. Also the CPU is often
->> running slowly, perhaps without the cache enabled. SDRAM may not be
->> available yet so space is short. We want to avoid starting up things
->> that will not be used.
->>
->> So this property indicates that the device is needed before relocation
->> and should be set up by driver model. We need it to avoid a very slow
->> and memory-hungry startup.
->>
->> As to why upstream should accept it, my understanding of upstream is
->> that people can send patches to it and in fact are encouraged to do
->> so, to avoid misunderstandings and duplication. The device tree files
->> are stored in Linux so any binding or source file changes should end
->> up there. Otherwise the files tend to diverge and we end up with
->> multiple bindings and multiple versions of the same source file.
->
-> On many platforms, we have U-Boot SPL running first, then the main
-> U-Boot. The main U-Boot binary contains both the code to do the
-> relocation and the binary that runs after relocation. It seems like it'd
-> be simpler to split these up into 3 binaries that each do a single job:
->
-> 1) SPL, roughly as-is today (varying jobs depending on platform)
->
-> 2) Relocator, which does nothing but work out where to copy U-Boot,
-> memcpy()s it there, relocates the image (if not PIE), and jumps to it.
->
-> 3) The main U-Boot.
->
-> Item (2) above should be simple enough that it can use a very simple
-> debug mechanism rather like DEBUG_LL in the Linux kernel. Similar to
-> what Rob mentioned in his email.
->
-> Item (3) could use DM and DT/ACPI/... to get device information in a
-> complete non-hard-coded manner.
+Use it for all flashes that are supposed to support READ ID op accordin=
+g
+to the datasheets.
 
-This comment does no seem to relate to my patch. We could certainly
-re-architect U-Boot to work this way. There are  lot of reasons why
-U-Boot works as it does and many platforms don't have SPL.
+Signed-off-by: Rafa=C5=82 Mi=C5=82ecki <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra114-dalmore.dts    | 2 +-
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts | 2 +-
+ arch/arm/boot/dts/tegra124-nyan.dtsi      | 2 +-
+ arch/arm/boot/dts/tegra124-venice2.dts    | 2 +-
+ arch/arm/boot/dts/tegra20-trimslice.dts   | 2 +-
+ arch/arm/boot/dts/tegra30-beaver.dts      | 2 +-
+ arch/arm/boot/dts/tegra30-cardhu.dtsi     | 2 +-
+ 7 files changed, 7 insertions(+), 7 deletions(-)
 
-Relating what you said to the current U-Boot, your item (2) is
-analogous to us not setting up driver model before relocation at all,
-and just having a debug UART. That's a huge topic though, well beyond
-the scope of my original patch. I think it would be better for you to
-start a thread on the U-Boot mailing list with your proposal. At least
-on x86 (which has no SPL) there are all sorts of things that currently
-happen before relocation.
-
-Regards,
-Simon
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts=
+/tegra114-dalmore.dts
+index 8b7aa0d..5de23de 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -1082,7 +1082,7 @@
+ 		status =3D "okay";
+ 		spi-max-frequency =3D <25000000>;
+ 		spi-flash@0 {
+-			compatible =3D "winbond,w25q32dw";
++			compatible =3D "winbond,w25q32dw", "jedec,spi-nor";
+ 			reg =3D <0>;
+ 			spi-max-frequency =3D <20000000>;
+ 		};
+diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/=
+dts/tegra124-jetson-tk1.dts
+index bd43ed6..44097c6 100644
+--- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
++++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+@@ -1611,7 +1611,7 @@
+ 		status =3D "okay";
+ 		spi-max-frequency =3D <25000000>;
+ 		spi-flash@0 {
+-			compatible =3D "winbond,w25q32dw";
++			compatible =3D "winbond,w25q32dw", "jedec,spi-nor";
+ 			reg =3D <0>;
+ 			spi-max-frequency =3D <20000000>;
+ 		};
+diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi b/arch/arm/boot/dts/t=
+egra124-nyan.dtsi
+index a9aec23..7d26f49 100644
+--- a/arch/arm/boot/dts/tegra124-nyan.dtsi
++++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
+@@ -343,7 +343,7 @@
+ 		spi-max-frequency =3D <25000000>;
+=20
+ 		flash@0 {
+-			compatible =3D "winbond,w25q32dw";
++			compatible =3D "winbond,w25q32dw", "jedec,spi-nor";
+ 			spi-max-frequency =3D <25000000>;
+ 			reg =3D <0>;
+ 		};
+diff --git a/arch/arm/boot/dts/tegra124-venice2.dts b/arch/arm/boot/dts=
+/tegra124-venice2.dts
+index 79e724b..4decb3c 100644
+--- a/arch/arm/boot/dts/tegra124-venice2.dts
++++ b/arch/arm/boot/dts/tegra124-venice2.dts
+@@ -866,7 +866,7 @@
+ 		status =3D "okay";
+ 		spi-max-frequency =3D <25000000>;
+ 		spi-flash@0 {
+-			compatible =3D "winbond,w25q32dw";
++			compatible =3D "winbond,w25q32dw", "jedec,spi-nor";
+ 			reg =3D <0>;
+ 			spi-max-frequency =3D <20000000>;
+ 		};
+diff --git a/arch/arm/boot/dts/tegra20-trimslice.dts b/arch/arm/boot/dt=
+s/tegra20-trimslice.dts
+index d99af4e..c4cff8b 100644
+--- a/arch/arm/boot/dts/tegra20-trimslice.dts
++++ b/arch/arm/boot/dts/tegra20-trimslice.dts
+@@ -282,7 +282,7 @@
+ 		status =3D "okay";
+ 		spi-max-frequency =3D <48000000>;
+ 		spi-flash@0 {
+-			compatible =3D "winbond,w25q80bl";
++			compatible =3D "winbond,w25q80bl", "jedec,spi-nor";
+ 			reg =3D <0>;
+ 			spi-max-frequency =3D <48000000>;
+ 		};
+diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/t=
+egra30-beaver.dts
+index 3dede39..c9d230c 100644
+--- a/arch/arm/boot/dts/tegra30-beaver.dts
++++ b/arch/arm/boot/dts/tegra30-beaver.dts
+@@ -1884,7 +1884,7 @@
+ 		status =3D "okay";
+ 		spi-max-frequency =3D <25000000>;
+ 		spi-flash@1 {
+-			compatible =3D "winbond,w25q32";
++			compatible =3D "winbond,w25q32", "jedec,spi-nor";
+ 			reg =3D <1>;
+ 			spi-max-frequency =3D <20000000>;
+ 		};
+diff --git a/arch/arm/boot/dts/tegra30-cardhu.dtsi b/arch/arm/boot/dts/=
+tegra30-cardhu.dtsi
+index bb1ca15..df7f845 100644
+--- a/arch/arm/boot/dts/tegra30-cardhu.dtsi
++++ b/arch/arm/boot/dts/tegra30-cardhu.dtsi
+@@ -354,7 +354,7 @@
+ 		status =3D "okay";
+ 		spi-max-frequency =3D <25000000>;
+ 		spi-flash@1 {
+-			compatible =3D "winbond,w25q32";
++			compatible =3D "winbond,w25q32", "jedec,spi-nor";
+ 			reg =3D <1>;
+ 			spi-max-frequency =3D <20000000>;
+ 		};
+--=20
+1.8.4.5
