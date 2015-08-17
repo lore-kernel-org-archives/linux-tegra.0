@@ -1,145 +1,29 @@
-From: Vaishali Thakkar <vthakkar1994-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ASoC: tegra: Convert to managed resources
-Date: Mon, 17 Aug 2015 15:02:29 +0530
-Message-ID: <CAK-LDbJwfuqU6ekRudms=YfjVxWf1BOREBwCnCh4v-YWY9hA_w@mail.gmail.com>
-References: <20150813072920.GA17181@localhost>
-	<CAAVeFuKT1st8E1fxcDM5CV_OzUcTmvFw8UuU5oh15J1PiFJ0vA@mail.gmail.com>
+From: Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>
+Subject: Re: [GIT PULL 6/9] iommu/tegra-smmu: Changes for v4.3-rc1
+Date: Mon, 17 Aug 2015 14:40:35 +0200
+Message-ID: <20150817124035.GK14980@8bytes.org>
+References: <1439563720-13189-1-git-send-email-thierry.reding@gmail.com>
+ <1439563720-13189-7-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAVeFuKT1st8E1fxcDM5CV_OzUcTmvFw8UuU5oh15J1PiFJ0vA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1439563720-13189-7-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Aug 17, 2015 at 12:47 PM, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Thu, Aug 13, 2015 at 4:29 PM, Vaishali Thakkar
-> <vthakkar1994-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> Use managed resource functions devm_clk_put and
->> devm_snd_soc_register_component to simplify error handling.
->>
->> To be compatible with the change various gotos are replaced
->> with direct returns, and unneeded labels are dropped.
->>
->> Signed-off-by: Vaishali Thakkar <vthakkar1994-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> ---
->>  sound/soc/tegra/tegra20_spdif.c | 37 +++++++++++++------------------------
->>  1 file changed, 13 insertions(+), 24 deletions(-)
->>
->> diff --git a/sound/soc/tegra/tegra20_spdif.c b/sound/soc/tegra/tegra20_spdif.c
->> index 9141477..f69b2e4 100644
->> --- a/sound/soc/tegra/tegra20_spdif.c
->> +++ b/sound/soc/tegra/tegra20_spdif.c
->> @@ -273,45 +273,40 @@ static int tegra20_spdif_platform_probe(struct platform_device *pdev)
->>                              GFP_KERNEL);
->>         if (!spdif) {
->>                 dev_err(&pdev->dev, "Can't allocate tegra20_spdif\n");
->> -               ret = -ENOMEM;
->> -               goto err;
->> +               return -ENOMEM;
->>         }
->>         dev_set_drvdata(&pdev->dev, spdif);
->>
->> -       spdif->clk_spdif_out = clk_get(&pdev->dev, "spdif_out");
->> +       spdif->clk_spdif_out = devm_clk_get(&pdev->dev, "spdif_out");
->>         if (IS_ERR(spdif->clk_spdif_out)) {
->>                 pr_err("Can't retrieve spdif clock\n");
->>                 ret = PTR_ERR(spdif->clk_spdif_out);
->> -               goto err;
->> +               return ret;
->
-> Maybe do "return PTR_ERR(spdif->clk_spdif_out);" for consistency with
-> the other error cases of this function?
->
->>         }
->>
->>         mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->>         if (!mem) {
->>                 dev_err(&pdev->dev, "No memory resource\n");
->> -               ret = -ENODEV;
->> -               goto err_clk_put;
->> +               return -ENODEV;
->>         }
->>
->>         dmareq = platform_get_resource(pdev, IORESOURCE_DMA, 0);
->>         if (!dmareq) {
->>                 dev_err(&pdev->dev, "No DMA resource\n");
->> -               ret = -ENODEV;
->> -               goto err_clk_put;
->> +               return -ENODEV;
->>         }
->>
->>         memregion = devm_request_mem_region(&pdev->dev, mem->start,
->>                                             resource_size(mem), DRV_NAME);
->>         if (!memregion) {
->>                 dev_err(&pdev->dev, "Memory region already claimed\n");
->> -               ret = -EBUSY;
->> -               goto err_clk_put;
->> +               return -EBUSY;
->>         }
->>
->>         regs = devm_ioremap(&pdev->dev, mem->start, resource_size(mem));
->>         if (!regs) {
->>                 dev_err(&pdev->dev, "ioremap failed\n");
->> -               ret = -ENOMEM;
->> -               goto err_clk_put;
->> +               return -ENOMEM;
->>         }
->>
->>         spdif->regmap = devm_regmap_init_mmio(&pdev->dev, regs,
->> @@ -319,7 +314,7 @@ static int tegra20_spdif_platform_probe(struct platform_device *pdev)
->>         if (IS_ERR(spdif->regmap)) {
->>                 dev_err(&pdev->dev, "regmap init failed\n");
->>                 ret = PTR_ERR(spdif->regmap);
->> -               goto err_clk_put;
->> +               return ret;
->
-> Same here.
+On Fri, Aug 14, 2015 at 04:48:37PM +0200, Thierry Reding wrote:
+> Hi Joerg,
+> 
+> The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d7d4f0754:
+> 
+>   Linux 4.2-rc1 (2015-07-05 11:01:52 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.3-iommu
 
-Actually people prefer to write this way when they are calling PTR_ERR
-more than one time for the same value. But as for this file at both places
-we are calling PTR_ERR for different values, may be we can directly call
-it in return.
 
->>         }
->>
->>         spdif->playback_dma_data.addr = mem->start + TEGRA20_SPDIF_DATA_OUT;
->> @@ -334,8 +329,9 @@ static int tegra20_spdif_platform_probe(struct platform_device *pdev)
->>                         goto err_pm_disable;
->>         }
->>
->> -       ret = snd_soc_register_component(&pdev->dev, &tegra20_spdif_component,
->> -                                  &tegra20_spdif_dai, 1);
->> +       ret = devm_snd_soc_register_component(&pdev->dev,
->> +                                             &tegra20_spdif_component,
->> +                                             &tegra20_spdif_dai, 1);
->>         if (ret) {
->>                 dev_err(&pdev->dev, "Could not register DAI: %d\n", ret);
->>                 ret = -ENOMEM;
->> @@ -345,21 +341,17 @@ static int tegra20_spdif_platform_probe(struct platform_device *pdev)
->>         ret = tegra_pcm_platform_register(&pdev->dev);
->>         if (ret) {
->>                 dev_err(&pdev->dev, "Could not register PCM: %d\n", ret);
->> -               goto err_unregister_component;
->> +               return ret;
->
-> In the previous code, PM cleanup was also performed after the
-> component was unregistered. If you return directly, this is not
-> performed anymore - I think you should "goto err_suspend;" here.
-> This will change the ordering of cleanup operations though - e.g.
-> snd_soc_unregister_component() will now be called *after* PM cleanup.
-> Are things still working ok after this? (I suppose they do considering
-> how simple the PM ops are, but it might be worth testing).
-
-I think you are right. I missed that. But now thing is , this patch is already
-applied here:
-https://git.kernel.org/cgit/linux/kernel/git/broonie/sound.git/commit/?h=topic/tegra
-
-I am not sure if now I can change version 2 with the changes you suggested
-or not. Although I will not be able to test it  after changing 'goto
-err_suspend'
-as I don't have hardware but may be someone else can test it.
-
--- 
-Vaishali
+Pulled, thanks.
