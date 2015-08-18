@@ -1,36 +1,97 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [flasher scripts PATCH] Fix "typo" in comment re: padding calculations
-Date: Tue, 18 Aug 2015 13:14:17 -0600
-Message-ID: <1439925257-22522-1-git-send-email-swarren@wwwdotorg.org>
+From: Tyler Baker <tyler.baker-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [GIT PULL 9/9] ARM: tegra: Default configuration updates for v4.3-rc1
+Date: Tue, 18 Aug 2015 15:30:41 -0700
+Message-ID: <CANMBJr7PKy-eCcB3HiBajpApHS_BYPa7xfKjTqV4o8Z1hwY99A@mail.gmail.com>
+References: <1439563720-13189-1-git-send-email-thierry.reding@gmail.com>
+	<1439563720-13189-10-git-send-email-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1439563720-13189-10-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Hi Theirry,
 
-The binary format is U-Boot code + DTB + pad + flash image. U-Boot moves
-the DTB out of the way of BSS. The pad is to prevent U-Boot trashing the
-flash image, not the DTB. Fix the comment to reflect that.
+On 14 August 2015 at 07:48, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> Hi ARM SoC maintainers,
+>
+> The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d7d4f0754:
+>
+>   Linux 4.2-rc1 (2015-07-05 11:01:52 -0700)
+>
+> are available in the git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.3-defconfig
+>
+> for you to fetch changes up to 258d9bc5e77fa40e290a0bd480d5349224374480:
+>
+>   ARM: tegra: Update multi_v7_defconfig (2015-08-14 16:26:00 +0200)
+>
+> Thanks,
+> Thierry
+>
+> ----------------------------------------------------------------
+> ARM: tegra: Default configuration updates for v4.3-rc1
+>
+> Enable the GK20A GPU (via the Nouveau driver) and CPU frequency scaling
+> on Tegra124.
+>
+> ----------------------------------------------------------------
+> Thierry Reding (1):
+>       ARM: tegra: Update multi_v7_defconfig
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- tegra-uboot-flasher | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The kernelci.org bot recently reported jetson-tk1 boot failures[1][2]
+in next-20150818, only when booting the mult_v7_defconfig kernels. I
+bisected[3] these boot failure down to this commit, it didn't cleanly
+revert, so I manually removed that options this patch added, and my
+jetson-tk1 booted again. Digging a bit further, if I apply the patch
+below to next-20150818, my jetson-tk1 boots.
 
-diff --git a/tegra-uboot-flasher b/tegra-uboot-flasher
-index 4809665d4a6a..d20e3ad413ef 100755
---- a/tegra-uboot-flasher
-+++ b/tegra-uboot-flasher
-@@ -160,7 +160,7 @@ def func_flash():
-     if args.debug:
-         print 'bss_size %d 0x%x' % (bss_size, bss_size)
- 
--    # Avoid U-Boot's BSS, so the BSS-zeroing doesn't trash the DTB
-+    # Avoid U-Boot's BSS, so the BSS-zeroing doesn't trash the appended flash image
-     # Add 4KB in case the DTB size changes due to fdtput
-     # Align to 4k, so flash writes don't need a bounce buffer for DMA
-     padded_size = (u_boot_plus_dtb_size + bss_size + (2 * 4 * 1024) - 1) & ~((4 * 1024) - 1)
--- 
-1.9.1
+diff --git a/arch/arm/configs/multi_v7_defconfig
+b/arch/arm/configs/multi_v7_defconfig
+index b2facab..a285afe 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -468,7 +468,6 @@ CONFIG_FRAMEBUFFER_CONSOLE_ROTATION=y
+ CONFIG_SOUND=m
+ CONFIG_SND=m
+ CONFIG_SND_DYNAMIC_MINORS=y
+-CONFIG_SND_HDA_TEGRA=m
+ CONFIG_SND_HDA_INPUT_BEEP=y
+ CONFIG_SND_HDA_PATCH_LOADER=y
+ CONFIG_SND_HDA_CODEC_REALTEK=m
+
+This isn't where the story ends unfortunately. The collabora lab also
+has a jetson-tk1, booted in the same manner, which boots next-20150818
+fine[4]. The only differences I can spot in the two boot logs is that
+the collabora board is using an older version of u-boot, where as my
+board is using a newer version. U-Boot 2015.01-00231-gab77f24-dirty
+(Good) vs U-Boot 2015.07-00130-gb217c89 (Bad). I've also noticed some
+angry udev messages after the modules probe in userspace present in
+both boot logs that look suspicious.
+
+[   70.469914] udevd[108]: worker [113] /devices/soc0/70030000.hda is
+taking a long time
+[   70.479849] udevd[108]: worker [115] /devices/soc0/70300000.ahub is
+taking a long time
+[   70.490769] udevd[108]: worker [117] /devices/soc0/sound is taking
+a long time
+
+FWIW, When I went searching for this patch, I couldn't find it on any
+of the mailing lists. The only reference to this patch was from this
+pull request, thus why I'm reporting the issue here. :)
+
+Anyways, let me know if you can reproduce this issue, and/or can think
+of a reason this might may be causing trouble.
+
+Cheers,
+
+Tyler
+
+[1] http://kernelci.org/boot/all/job/next/kernel/next-20150818/
+[2] http://storage.kernelci.org/next/next-20150818/arm-multi_v7_defconfig/lab-tbaker/boot-tegra124-jetson-tk1.html
+[3] http://hastebin.com/bixofozaji.vhdl
+[4] http://storage.kernelci.org/next/next-20150818/arm-multi_v7_defconfig/lab-collabora/boot-tegra124-jetson-tk1.html
