@@ -1,60 +1,48 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.2-rc7
-Date: Tue, 18 Aug 2015 11:08:12 +0100
-Message-ID: <55D3040C.50006@nvidia.com>
+Subject: Re: [PATCH 0/4] DMA: tegra-apb: Clean-up
+Date: Tue, 18 Aug 2015 11:09:02 +0100
+Message-ID: <55D3043E.2030907@nvidia.com>
+References: <1438867953-11378-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1438867953-11378-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.2-rc7.
-Logs and other details at:
+Any feedback on this series?
 
-    https://nvtb.github.io//linux/test_v4.2-rc7/20150816170102/
+Cheers Jon
 
-
-Test summary
-------------
-
-Build: zImage:
-    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Build: Image:
-    Pass: ( 1/ 1): defconfig
-
-Boot to userspace: defconfig:
-    Pass: ( 1/ 1): qemu-vexpress64
-
-Boot to userspace: multi_v7_defconfig:
-    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v4.2-rc6 (f7644cbfcdf03528f0f450f3940c4985b2291f49)):
-   text     data      bss    total  kernel
- -45431    -5144     -128   -50703  defconfig
-   +512        0        0     +512  multi_v7_defconfig
-   +444        0        0     +444  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v4.2-rc6 (f7644cbfcdf03528f0f450f3940c4985b2291f49))
-    avail    rsrvd     high    freed                board              kconfig                  dtb
-        .        .        .        .      qemu-vexpress64            defconfig           __internal
-        .        .        .      -4k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-        .        .        .      -4k  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-        .        .        .      -4k    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-        .        .        .      -4k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+On 06/08/15 14:32, Jon Hunter wrote:
+> Some clean-up changes for the tegra-apb DMA driver.
+> 
+> These have been compile and boot tested for ARM and ARM64. Summary of the
+> ARM results are below. ARM64 has been tested locally.
+> 
+> Test summary
+> ------------
+> 
+> Build: zImage:
+>     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+> 
+> Boot to userspace: multi_v7_defconfig:
+>     Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+>                    tegra20-trimslice, tegra30-beaver
+> 
+> Boot to userspace: tegra_defconfig:
+>     Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+>                    tegra20-trimslice, tegra30-beaver
+> 
+> Jon Hunter (4):
+>   DMA: tegra-apb: Remove unused variables
+>   DMA: tegra-apb: Avoid unnecessary channel base address calculation
+>   DMA: tegra-apb: Remove unnecessary return statements and variables
+>   DMA: tegra-apb: Simplify locking for device using global pause
+> 
+>  drivers/dma/tegra20-apb-dma.c | 63 ++++++++++++++++++++++++++-----------------
+>  1 file changed, 38 insertions(+), 25 deletions(-)
+> 
