@@ -1,47 +1,39 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] Revert part of "ASoC: tegra: Convert to managed
- resources"
-Date: Tue, 18 Aug 2015 09:55:17 -0700
-Message-ID: <20150818165517.GL10748@sirena.org.uk>
+From: Vaishali Thakkar <vthakkar1994@gmail.com>
+Subject: Re: [PATCH] Revert part of "ASoC: tegra: Convert to
+	managed resources"
+Date: Tue, 18 Aug 2015 22:31:19 +0530
+Message-ID: <CAK-LDbJh26b=ZQnD5Y4cYgzRdu=Zzi+quKU8-_FDk25pgoMCcw@mail.gmail.com>
 References: <20150818115645.GA3345@localhost>
+ <20150818165517.GL10748@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="HFmY1QOi3uof3bwe"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20150818115645.GA3345@localhost>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vaishali Thakkar <vthakkar1994-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <alsa-devel-bounces@alsa-project.org>
+In-Reply-To: <20150818165517.GL10748@sirena.org.uk>
+List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
+List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
+List-Post: <mailto:alsa-devel@alsa-project.org>
+List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
+List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
+ <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
+Errors-To: alsa-devel-bounces@alsa-project.org
+Sender: alsa-devel-bounces@alsa-project.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, alsa-devel@alsa-project.org, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 18 Aug 2015 22:25, "Mark Brown" <broonie@kernel.org> wrote:
+>
+> On Tue, Aug 18, 2015 at 05:26:45PM +0530, Vaishali Thakkar wrote:
+>
+> > Revert the problematic part of commit 470805eb9f31 ("ASoC: tegra:
+> > Convert to managed resources"). Before this commit, PM cleanup was
+>
+> Please use subject lines matching the style for the subsystem on
+> patches.
 
---HFmY1QOi3uof3bwe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Oh, I am sorry.
 
-On Tue, Aug 18, 2015 at 05:26:45PM +0530, Vaishali Thakkar wrote:
-
-> Revert the problematic part of commit 470805eb9f31 ("ASoC: tegra:
-> Convert to managed resources"). Before this commit, PM cleanup was
-
-Please use subject lines matching the style for the subsystem on
-patches.
-
---HFmY1QOi3uof3bwe
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJV02NxAAoJECTWi3JdVIfQRvkH/jSJZDphUwBnFf/wkWpcMTIa
-GGur19MuCklj+1inueffr85tiiymZcrX4a0ZUNRzL899/XdnSAoyT5cjbVg02KPm
-bqtYiY/IN/F10Sucuqsm218kgePPhxBGtzTLOfYA1+/ZH7sMpenAKhCNyH9xG00G
-9xFH+wZmoNjClXC6lvCcIkdnPNpkPHfnxUnL6UCn7RICO5OBq5bb8Am3p0wjQJUr
-CS0lWKu/GmG3s2oqPZkEK/GCsxEVJddSA4+EYw3SRvFAJbMrJ3v6hG0GdLI/uvCg
-PG/OndZvurLm8g+QNUrtTuIZRdZiVhVvOOOR5lQvegBypr4Upah+opk/V+G/ZOc=
-=Nrq+
------END PGP SIGNATURE-----
-
---HFmY1QOi3uof3bwe--
+I'll keep this in mind for next time. Thanks for making it suitable and
+applying the patch.
