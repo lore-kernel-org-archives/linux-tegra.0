@@ -1,37 +1,37 @@
-From: Pratyush Anand <panand-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 08/37] watchdog: tegra: Fix parent of watchdog_device
-Date: Tue, 18 Aug 2015 10:17:41 +0530
-Message-ID: <19025137fe5de0f76ff991038866aeeb84035532.1439524806.git.panand@redhat.com>
-References: <cover.1439524806.git.panand@redhat.com>
+From: MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH] PM / devfreq: tegra: Update governor to use
+ devfreq_update_stats()
+Date: Tue, 18 Aug 2015 04:54:52 +0000 (GMT)
+Message-ID: <874354786.192611439873691246.JavaMail.weblogic@ep2mlwas01a>
+Reply-To: myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <cover.1439524806.git.panand-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-In-Reply-To: <cover.1439524806.git.panand-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-References: <cover.1439524806.git.panand-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+MIME-version: 1.0
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: dyoung-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, dzickus-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, Pratyush Anand <panand-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "javi.merino-5wv7dgnIgG8@public.gmane.org" <javi.merino-5wv7dgnIgG8@public.gmane.org>, tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Fix parent of watchdog_device so that /sys/class/watchdog/watchdogn/device
-is populated.
-
-cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Signed-off-by: Pratyush Anand <panand-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
----
- drivers/watchdog/tegra_wdt.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/watchdog/tegra_wdt.c b/drivers/watchdog/tegra_wdt.c
-index 30451ea46902..7f97cdd53f29 100644
---- a/drivers/watchdog/tegra_wdt.c
-+++ b/drivers/watchdog/tegra_wdt.c
-@@ -218,6 +218,7 @@ static int tegra_wdt_probe(struct platform_device *pdev)
- 	wdd->ops = &tegra_wdt_ops;
- 	wdd->min_timeout = MIN_WDT_TIMEOUT;
- 	wdd->max_timeout = MAX_WDT_TIMEOUT;
-+	wdd->parent = &pdev->dev;
- 
- 	watchdog_set_drvdata(wdd, wdt);
- 
--- 
-2.4.3
+DQpEaXJlY3QgaW52b2NhdGlvbiBvZiBnZXRfZGV2X3N0YXR1cygpIGlzIG5vIG1vcmUgcmVjb21t
+ZW5kZWQuDQoNClNpZ25lZC1vZmYtYnk6IE15dW5nSm9vIEhhbSA8bXl1bmdqb28uaGFtQHNhbXN1
+bmcuY29tPg0KLS0tDQogZHJpdmVycy9kZXZmcmVxL3RlZ3JhLWRldmZyZXEuYyB8IDggKysrKyst
+LS0NCiAxIGZpbGUgY2hhbmdlZCwgNSBpbnNlcnRpb25zKCspLCAzIGRlbGV0aW9ucygtKQ0KDQpk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9kZXZmcmVxL3RlZ3JhLWRldmZyZXEuYyBiL2RyaXZlcnMvZGV2
+ZnJlcS90ZWdyYS1kZXZmcmVxLmMNCmluZGV4IDEzYTFhNmUuLjg0OGI5M2UgMTAwNjQ0DQotLS0g
+YS9kcml2ZXJzL2RldmZyZXEvdGVncmEtZGV2ZnJlcS5jDQorKysgYi9kcml2ZXJzL2RldmZyZXEv
+dGVncmEtZGV2ZnJlcS5jDQpAQCAtNTQxLDE4ICs1NDEsMjAgQEAgc3RhdGljIHN0cnVjdCBkZXZm
+cmVxX2Rldl9wcm9maWxlIHRlZ3JhX2RldmZyZXFfcHJvZmlsZSA9IHsNCiBzdGF0aWMgaW50IHRl
+Z3JhX2dvdmVybm9yX2dldF90YXJnZXQoc3RydWN0IGRldmZyZXEgKmRldmZyZXEsDQogCQkJCSAg
+ICAgdW5zaWduZWQgbG9uZyAqZnJlcSkNCiB7DQotCXN0cnVjdCBkZXZmcmVxX2Rldl9zdGF0dXMg
+c3RhdDsNCisJc3RydWN0IGRldmZyZXFfZGV2X3N0YXR1cyAqc3RhdDsNCiAJc3RydWN0IHRlZ3Jh
+X2RldmZyZXEgKnRlZ3JhOw0KIAlzdHJ1Y3QgdGVncmFfZGV2ZnJlcV9kZXZpY2UgKmRldjsNCiAJ
+dW5zaWduZWQgbG9uZyB0YXJnZXRfZnJlcSA9IDA7DQogCXVuc2lnbmVkIGludCBpOw0KIAlpbnQg
+ZXJyOw0KIA0KLQllcnIgPSBkZXZmcmVxLT5wcm9maWxlLT5nZXRfZGV2X3N0YXR1cyhkZXZmcmVx
+LT5kZXYucGFyZW50LCAmc3RhdCk7DQorCWVyciA9IGRldmZyZXFfdXBkYXRlX3N0YXRzKGRldmZy
+ZXEpOw0KIAlpZiAoZXJyKQ0KIAkJcmV0dXJuIGVycjsNCiANCi0JdGVncmEgPSBzdGF0LnByaXZh
+dGVfZGF0YTsNCisJc3RhdCA9ICZkZXZmcmVxLT5sYXN0X3N0YXR1czsNCisNCisJdGVncmEgPSBz
+dGF0LT5wcml2YXRlX2RhdGE7DQogDQogCWZvciAoaSA9IDA7IGkgPCBBUlJBWV9TSVpFKHRlZ3Jh
+LT5kZXZpY2VzKTsgaSsrKSB7DQogCQlkZXYgPSAmdGVncmEtPmRldmljZXNbaV07DQotLSANCjEu
+OS4xDQoNCg==
