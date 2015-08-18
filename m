@@ -1,51 +1,44 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] ASoC: tegra: Convert to managed resources
-Date: Mon, 17 Aug 2015 22:15:55 -0700
-Message-ID: <20150818051555.GG10748@sirena.org.uk>
-References: <20150813072920.GA17181@localhost>
- <CAAVeFuKT1st8E1fxcDM5CV_OzUcTmvFw8UuU5oh15J1PiFJ0vA@mail.gmail.com>
- <CAK-LDbJwfuqU6ekRudms=YfjVxWf1BOREBwCnCh4v-YWY9hA_w@mail.gmail.com>
- <20150817204751.GD10748@sirena.org.uk>
- <CAK-LDbLCvdUiNZ17oxWwuUhC=hwtpuGeYdxXj=0Y3q48gkbzRw@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="rDr66iUNdD59gODe"
+From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Subject: [PATCH] ARM: tegra: Enable CROS_EC_PROTO for ChromeOS EC mfd driver
+Date: Tue, 18 Aug 2015 09:06:39 +0200
+Message-ID: <1439881599-22348-1-git-send-email-javier@osg.samsung.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAK-LDbLCvdUiNZ17oxWwuUhC=hwtpuGeYdxXj=0Y3q48gkbzRw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vaishali Thakkar <vthakkar1994-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Doug Anderson <dianders-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Gwendal Grignou <gwendal-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+The ChromeOS mfd driver (MFD_CROS_EC) select the CROS_EC_PROTO config
+symbol because the driver uses some communication helper functions in
+drivers/platform/chrome/cros_ec_proto.c but other drivers depends on
+CROS_EC_PROTO instead. Mixing select and depends can lead to circular
+Kconfig dependencies so the MFD_CROS_EC select should be changed to a
+depends on CROS_EC_PROTO instead.
 
---rDr66iUNdD59gODe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+But doing so will break git bisect-ability since MFD_CROS_EC will not
+be enabled anymore unless the default configs first explicitly enable
+the CROS_EC_PROTO dependency.
 
-On Tue, Aug 18, 2015 at 08:15:35AM +0530, Vaishali Thakkar wrote:
+Also enable CHROME_PLATFORMS since the CROS_EC_PROTO symbol is inside
+that submenu.
 
-> I think yes may be code was good before this. But devm_clk_put part should work
-> fine as call of it is before PM stuff. So, can I send a patch
-> reverting the change
-> of component part or do you want me to send a patch reverting whole change?
+Signed-off-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+---
+ arch/arm/configs/tegra_defconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Just fixing the problematic part is fine.
-
---rDr66iUNdD59gODe
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJV0r+KAAoJECTWi3JdVIfQeYsH/ROZ7tusJahnwHEEbgIqvvXn
-Lkz1aSX935eYCQQfFnvnXD9B/2F9cZ1g13KUXSdyqd5gfbKXgSdbxFbLQm0HbZBD
-CG5KrSTN1729feAl/Mq6iqmFYfUxf/85ts3RVtjZQUy3YR3ynBlOZymJNh+hFUHa
-7ofBeGjsg1TdsfrhWEVXhF6mePgMNCXNOq8140dciPEUgXQsj41Cyhz8HzM2mAbN
-S2o8XBndPST0eEcYg0/OmRBYBUQZ7drJsMpvpiOWEGoD7+Vw7z0HrFbNUN7ah/ff
-Vs5c9zBrj+yRzFmOq1SW30XxifGd4VGjCydYpjjAE/6IbDxQeLkxFZgRXLMlYQU=
-=c/zY
------END PGP SIGNATURE-----
-
---rDr66iUNdD59gODe--
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index 9808581176cc..03e775a70c6e 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -254,6 +254,8 @@ CONFIG_KEYBOARD_NVEC=y
+ CONFIG_SERIO_NVEC_PS2=y
+ CONFIG_NVEC_POWER=y
+ CONFIG_NVEC_PAZ00=y
++CONFIG_CHROME_PLATFORMS=y
++CONFIG_CROS_EC_PROTO=y
+ CONFIG_TEGRA_IOMMU_GART=y
+ CONFIG_TEGRA_IOMMU_SMMU=y
+ CONFIG_MEMORY=y
+-- 
+2.4.3
