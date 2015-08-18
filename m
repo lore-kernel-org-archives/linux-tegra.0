@@ -1,66 +1,51 @@
-From: Vaishali Thakkar <vthakkar1994@gmail.com>
-Subject: [PATCH] Revert part of "ASoC: tegra: Convert to managed resources"
-Date: Tue, 18 Aug 2015 17:26:45 +0530
-Message-ID: <20150818115645.GA3345@localhost>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [RFC PATCH 0/7] DMA: Add support for Tegra210 ADMA
+Date: Tue, 18 Aug 2015 14:49:08 +0100
+Message-ID: <1439905755-25150-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, alsa-devel@alsa-project.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Revert the problematic part of commit 470805eb9f31 ("ASoC: tegra:
-Convert to managed resources"). Before this commit, PM cleanup was
-performed after the component was unregistered. But returning
-directly will skip PM cleanup. So, to be on safe side it is better
-to use snd_soc_register_component instead of
-devm_snd_soc_register_component.
+Add support for Tegra210 Audio DMA (ADMA) controller. This driver is based
+upon the existing Tegra20-APB DMA driver and a lot of the core code has
+been re-used.
 
-Signed-off-by: Vaishali Thakkar <vthakkar1994@gmail.com>
----
- sound/soc/tegra/tegra20_spdif.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+This is currently being distributed as an RFC to get feedback on the
+approach and although this has been compile and boot tested, it still
+needs further functional testing to ensure it is working well.
 
-diff --git a/sound/soc/tegra/tegra20_spdif.c b/sound/soc/tegra/tegra20_spdif.c
-index a814da0..66237bc 100644
---- a/sound/soc/tegra/tegra20_spdif.c
-+++ b/sound/soc/tegra/tegra20_spdif.c
-@@ -329,9 +329,8 @@ static int tegra20_spdif_platform_probe(struct platform_device *pdev)
- 			goto err_pm_disable;
- 	}
- 
--	ret = devm_snd_soc_register_component(&pdev->dev,
--					      &tegra20_spdif_component,
--					      &tegra20_spdif_dai, 1);
-+	ret = snd_soc_register_component(&pdev->dev, &tegra20_spdif_component,
-+					 &tegra20_spdif_dai, 1);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Could not register DAI: %d\n", ret);
- 		ret = -ENOMEM;
-@@ -341,11 +340,13 @@ static int tegra20_spdif_platform_probe(struct platform_device *pdev)
- 	ret = tegra_pcm_platform_register(&pdev->dev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Could not register PCM: %d\n", ret);
--		return ret;
-+		goto err_unregister_component;
- 	}
- 
- 	return 0;
- 
-+err_unregister_component:
-+	snd_soc_unregister_component(&pdev->dev);
- err_suspend:
- 	if (!pm_runtime_status_suspended(&pdev->dev))
- 		tegra20_spdif_runtime_suspend(&pdev->dev);
-@@ -364,6 +365,7 @@ static int tegra20_spdif_platform_remove(struct platform_device *pdev)
- 		tegra20_spdif_runtime_suspend(&pdev->dev);
- 
- 	tegra_pcm_platform_unregister(&pdev->dev);
-+	snd_soc_unregister_component(&pdev->dev);
- 
- 	return 0;
- }
+This series is based upon the Tegra-APB clean-up series [0].
+
+[0] https://lkml.org/lkml/2015/8/6/315
+
+Jon Hunter (7):
+  DMA: tegra-apb: Correct runtime-pm usage
+  DMA: tegra-apb: Move code dealing with h/w registers into separate
+    functions
+  DMA: tegra-apb: Clean-up and simplify setting up of transfer
+    parameters
+  DMA: tegra-apb: Add a function table for functions dealing with
+    registers
+  DMA: tegra-apb: Move common code into separate source files
+  Documentation: DT: Add binding documentation for NVIDIA ADMA
+  DMA: tegra-adma: Add support for Tegra210 ADMA
+
+ .../devicetree/bindings/dma/tegra210-adma.txt      |   49 +
+ drivers/dma/Kconfig                                |   16 +
+ drivers/dma/Makefile                               |    2 +
+ drivers/dma/tegra-common.c                         |  734 +++++++++++++
+ drivers/dma/tegra-common.h                         |  260 +++++
+ drivers/dma/tegra20-apb-dma.c                      | 1121 +++-----------------
+ drivers/dma/tegra210-adma.c                        |  710 +++++++++++++
+ 7 files changed, 1928 insertions(+), 964 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/dma/tegra210-adma.txt
+ create mode 100644 drivers/dma/tegra-common.c
+ create mode 100644 drivers/dma/tegra-common.h
+ create mode 100644 drivers/dma/tegra210-adma.c
+
 -- 
-1.9.1
+2.1.4
