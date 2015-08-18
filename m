@@ -1,39 +1,36 @@
-From: Vaishali Thakkar <vthakkar1994@gmail.com>
-Subject: Re: [PATCH] Revert part of "ASoC: tegra: Convert to
-	managed resources"
-Date: Tue, 18 Aug 2015 22:31:19 +0530
-Message-ID: <CAK-LDbJh26b=ZQnD5Y4cYgzRdu=Zzi+quKU8-_FDk25pgoMCcw@mail.gmail.com>
-References: <20150818115645.GA3345@localhost>
- <20150818165517.GL10748@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <alsa-devel-bounces@alsa-project.org>
-In-Reply-To: <20150818165517.GL10748@sirena.org.uk>
-List-Unsubscribe: <http://mailman.alsa-project.org/mailman/options/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=unsubscribe>
-List-Archive: <http://mailman.alsa-project.org/pipermail/alsa-devel/>
-List-Post: <mailto:alsa-devel@alsa-project.org>
-List-Help: <mailto:alsa-devel-request@alsa-project.org?subject=help>
-List-Subscribe: <http://mailman.alsa-project.org/mailman/listinfo/alsa-devel>,
- <mailto:alsa-devel-request@alsa-project.org?subject=subscribe>
-Errors-To: alsa-devel-bounces@alsa-project.org
-Sender: alsa-devel-bounces@alsa-project.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, alsa-devel@alsa-project.org, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, linux-kernel@vger.kernel.org, Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-tegra@vger.kernel.org
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [flasher scripts PATCH] Fix "typo" in comment re: padding calculations
+Date: Tue, 18 Aug 2015 13:14:17 -0600
+Message-ID: <1439925257-22522-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 18 Aug 2015 22:25, "Mark Brown" <broonie@kernel.org> wrote:
->
-> On Tue, Aug 18, 2015 at 05:26:45PM +0530, Vaishali Thakkar wrote:
->
-> > Revert the problematic part of commit 470805eb9f31 ("ASoC: tegra:
-> > Convert to managed resources"). Before this commit, PM cleanup was
->
-> Please use subject lines matching the style for the subsystem on
-> patches.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Oh, I am sorry.
+The binary format is U-Boot code + DTB + pad + flash image. U-Boot moves
+the DTB out of the way of BSS. The pad is to prevent U-Boot trashing the
+flash image, not the DTB. Fix the comment to reflect that.
 
-I'll keep this in mind for next time. Thanks for making it suitable and
-applying the patch.
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ tegra-uboot-flasher | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/tegra-uboot-flasher b/tegra-uboot-flasher
+index 4809665d4a6a..d20e3ad413ef 100755
+--- a/tegra-uboot-flasher
++++ b/tegra-uboot-flasher
+@@ -160,7 +160,7 @@ def func_flash():
+     if args.debug:
+         print 'bss_size %d 0x%x' % (bss_size, bss_size)
+ 
+-    # Avoid U-Boot's BSS, so the BSS-zeroing doesn't trash the DTB
++    # Avoid U-Boot's BSS, so the BSS-zeroing doesn't trash the appended flash image
+     # Add 4KB in case the DTB size changes due to fdtput
+     # Align to 4k, so flash writes don't need a bounce buffer for DMA
+     padded_size = (u_boot_plus_dtb_size + bss_size + (2 * 4 * 1024) - 1) & ~((4 * 1024) - 1)
+-- 
+1.9.1
