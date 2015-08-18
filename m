@@ -1,55 +1,47 @@
-From: Hartley Sweeten <HartleyS@visionengravers.com>
-Subject: RE: [PATCH V2] Watchdog: Fix parent of watchdog_devices
-Date: Tue, 18 Aug 2015 16:45:44 +0000
-Message-ID: <BN3PR0101MB1057C3FE09F00EEC55D2C9B1D0780@BN3PR0101MB1057.prod.exchangelabs.com>
-References: <9fcc2a2cc8273f461baa13c6c9992f3ca56b508a.1439915117.git.panand@redhat.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] Revert part of "ASoC: tegra: Convert to managed
+ resources"
+Date: Tue, 18 Aug 2015 09:55:17 -0700
+Message-ID: <20150818165517.GL10748@sirena.org.uk>
+References: <20150818115645.GA3345@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <9fcc2a2cc8273f461baa13c6c9992f3ca56b508a.1439915117.git.panand@redhat.com>
-Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Pratyush Anand <panand@redhat.com>, "linux@roeck-us.net" <linux@roeck-us.net>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>, "open list:ARM/STI ARCHITECTURE" <kernel@stlinux.com>, Linus Walleij <linus.walleij@linaro.org>, Baruch Siach <baruch@tkos.co.il>, "open list:INTEL MANAGEMENT ENGINE mei" <linux-kernel@vger.kernel.org>, Wim Van Sebroeck <wim@iguana.be>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" <linux-samsung-soc@vger.kernel.org>, Lee Jones <lee@kernel.org>, Kukjin Kim <kgene@kernel.org>, Tomas Winkler <tomas.winkler@intel.com>, "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>, open list:TEGRA ARCHITECTURE SUPP
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="HFmY1QOi3uof3bwe"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20150818115645.GA3345@localhost>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vaishali Thakkar <vthakkar1994-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday, August 18, 2015 9:34 AM, Pratyush Anand wrote:
-> 
-> /sys/class/watchdog/watchdogn/device/modalias can help to identify the
-> driver/module for a given watchdog node. However, many wdt devices does not set
-> its parent and so, we do not see an entry for device in sysfs for such devices.
->
-> This patch fixes parent of watchdog_device so that
-> /sys/class/watchdog/watchdogn/device is populated.
->
-> Exceptions: booke, diag288, mpc8xxx, octeon, softdog and w83627hf -- They do not
-> have any parent. Not sure, how we can we identify driver for these devices.
->
-> Signed-off-by: Pratyush Anand <panand@redhat.com>
-> ---
-[snip]
 
-drivers/watchdog/ep93xx_wdt.c       | 1 +
+--HFmY1QOi3uof3bwe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-[snip]
+On Tue, Aug 18, 2015 at 05:26:45PM +0530, Vaishali Thakkar wrote:
 
-diff --git a/drivers/watchdog/ep93xx_wdt.c b/drivers/watchdog/ep93xx_wdt.c
-index 7a2cc7191c58..0a4d7cc05d54 100644
---- a/drivers/watchdog/ep93xx_wdt.c
-+++ b/drivers/watchdog/ep93xx_wdt.c
-@@ -132,6 +132,7 @@ static int ep93xx_wdt_probe(struct platform_device *pdev)
- 	val = readl(mmio_base + EP93XX_WATCHDOG);
- 	ep93xx_wdt_wdd.bootstatus = (val & 0x01) ? WDIOF_CARDRESET : 0;
- 	ep93xx_wdt_wdd.timeout = timeout;
-+	ep93xx_wdt_wdd.parent = &pdev->dev;
- 
- 	watchdog_set_nowayout(&ep93xx_wdt_wdd, nowayout);
+> Revert the problematic part of commit 470805eb9f31 ("ASoC: tegra:
+> Convert to managed resources"). Before this commit, PM cleanup was
 
-For ep93xx_wdt.c, use whichever tag you prefer:
+Please use subject lines matching the style for the subsystem on
+patches.
 
-Reviewed-by: H Hartley Sweeten <hsweeten@visionengravers.com>
-Acked-by: H Hartley Sweeten <hsweeten@visionengravers.com>
+--HFmY1QOi3uof3bwe
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
 
-Thanks,
-Hartley
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJV02NxAAoJECTWi3JdVIfQRvkH/jSJZDphUwBnFf/wkWpcMTIa
+GGur19MuCklj+1inueffr85tiiymZcrX4a0ZUNRzL899/XdnSAoyT5cjbVg02KPm
+bqtYiY/IN/F10Sucuqsm218kgePPhxBGtzTLOfYA1+/ZH7sMpenAKhCNyH9xG00G
+9xFH+wZmoNjClXC6lvCcIkdnPNpkPHfnxUnL6UCn7RICO5OBq5bb8Am3p0wjQJUr
+CS0lWKu/GmG3s2oqPZkEK/GCsxEVJddSA4+EYw3SRvFAJbMrJ3v6hG0GdLI/uvCg
+PG/OndZvurLm8g+QNUrtTuIZRdZiVhVvOOOR5lQvegBypr4Upah+opk/V+G/ZOc=
+=Nrq+
+-----END PGP SIGNATURE-----
+
+--HFmY1QOi3uof3bwe--
