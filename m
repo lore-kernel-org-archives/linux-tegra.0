@@ -1,43 +1,22 @@
-From: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-Subject: RESEND: Tegra30: Unknown SKU 177
-Date: Wed, 19 Aug 2015 22:40:40 +0200
-Message-ID: <1440016840.3047.10.camel@ziswiler.com>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH 0/4] DMA: tegra-apb: Clean-up
+Date: Thu, 20 Aug 2015 12:11:16 +0530
+Message-ID: <20150820064116.GE13546@localhost>
+References: <1438867953-11378-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1438867953-11378-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi there
+On Thu, Aug 06, 2015 at 02:32:29PM +0100, Jon Hunter wrote:
+> Some clean-up changes for the tegra-apb DMA driver.
 
-Remember there was already a thread started April 8 about this:
+Applied after fixing subsystem name
 
-http://thread.gmane.org/gmane.linux.ports.tegra/16317
-
-Unfortunately I don't think there was any conclusion on NVIDIA's side
-about this yet. Running Linux 4.2.0-rc7-next-20150818 I just noticed
-that our latest Apalis/Colibri T30 modules do still suffer from such
-messages during boot:
-
-Apalis T30 1GB IT V1.1A
-
-[    0.050615] Tegra Unknown SKU 176
-[    0.050680] Tegra Revision: A03 SKU: 176 CPU Process: 2 SoC Process:
-0
-
-Colibri T30 V1.1E
-
-[    0.050562] Tegra Unknown SKU 177
-[    0.050630] Tegra Revision: A03 SKU: 177 CPU Process: 3 SoC Process:
-0
-
-Could somebody at NVIDIA please comment on how to proceed on this?
-
-Thanks!
-
-Cheers
-
-Marcel
+-- 
+~Vinod 
