@@ -1,53 +1,48 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL 7/9] ARM: tegra: Memory controller updates for v4.3-rc1
-Date: Thu, 20 Aug 2015 18:57:50 -0700
-Message-ID: <20150821015750.GL4865@localhost>
+From: Tyler Baker <tyler.baker-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [GIT PULL 9/9] ARM: tegra: Default configuration updates for v4.3-rc1
+Date: Thu, 20 Aug 2015 19:39:10 -0700
+Message-ID: <CANMBJr46__yBZjUhWkxvFz8RAODcbk=wzy2bq1ak-J_WAprH-A@mail.gmail.com>
 References: <1439563720-13189-1-git-send-email-thierry.reding@gmail.com>
- <1439563720-13189-8-git-send-email-thierry.reding@gmail.com>
+	<1439563720-13189-10-git-send-email-thierry.reding@gmail.com>
+	<20150821020042.GN4865@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1439563720-13189-8-git-send-email-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, arm@kernel.org, linux-arm-kernel@lists.infradead.org, Stephen Warren <swarren@wwwdotorg.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150821020042.GN4865@localhost>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Aug 14, 2015 at 04:48:38PM +0200, Thierry Reding wrote:
-> Hi ARM SoC maintainers,
-> 
-> The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d7d4f0754:
-> 
->   Linux 4.2-rc1 (2015-07-05 11:01:52 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.3-memory
-> 
-> for you to fetch changes up to 588c43a7bd5a53ae523b318e1db16bdd59963a3c:
-> 
->   memory: tegra: Add Tegra210 support (2015-08-13 16:07:52 +0200)
-> 
-> Thanks,
-> Thierry
-> 
-> ----------------------------------------------------------------
-> ARM: tegra: Memory controller updates for v4.3-rc1
-> 
-> Adds support for Tegra210, which allows the SMMU to be used on this new
-> SoC generation.
+On 20 August 2015 at 19:00, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org> wrote:
+> On Fri, Aug 14, 2015 at 04:48:40PM +0200, Thierry Reding wrote:
+>> Hi ARM SoC maintainers,
+>>
+>> The following changes since commit d770e558e21961ad6cfdf0ff7df0eb5d7d4f0754:
+>>
+>>   Linux 4.2-rc1 (2015-07-05 11:01:52 -0700)
+>>
+>> are available in the git repository at:
+>>
+>>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.3-defconfig
+>>
+>> for you to fetch changes up to 258d9bc5e77fa40e290a0bd480d5349224374480:
+>>
+>>   ARM: tegra: Update multi_v7_defconfig (2015-08-14 16:26:00 +0200)
+>>
+>> Thanks,
+>> Thierry
+>>
+>> ----------------------------------------------------------------
+>> ARM: tegra: Default configuration updates for v4.3-rc1
+>>
+>> Enable the GK20A GPU (via the Nouveau driver) and CPU frequency scaling
+>> on Tegra124.
+>
+> I know there are issues surfaced by these changes, but the bug is unrelated to
+> the defconfig update per se.
+>
+> I've chosen to merge this, with the hope that the root cause will be found and
+> fixed quickly. If needed, we can revert the options that are causing problems.
 
-Merged, thanks.
-
-
--Olof
+Fine with me, as the issue seem to be local to my board.
