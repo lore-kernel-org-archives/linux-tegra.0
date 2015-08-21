@@ -1,46 +1,62 @@
-From: Valentin Rothberg <valentinrothberg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: soc/tegra: fuse: undefined option ARCH_TEGRA_210_SOC
-Date: Fri, 21 Aug 2015 15:24:25 +0200
-Message-ID: <CAD3Xx4K5_kq2bdUzEm5kN-ZjFJaZcZzQYwY1XYTC3bMLq_MnYg@mail.gmail.com>
-References: <CAD3Xx4+6r1w+oKgjUAuLXzszy9-uRWvXyyfv3q_1YGC6shXHFQ@mail.gmail.com>
- <20150515085700.GE4984@ulmo.nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] clk: tegra: remove TEGRA_PLL_USE_LOCK for PLLD/PLLD2
+Date: Fri, 21 Aug 2015 16:33:23 +0100
+Message-ID: <1440171203-5963-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150515085700.GE4984-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Paul Bolle <pebolle-IWqWACnzNjzz+pZb47iToQ@public.gmane.org>, Andreas Ruprecht <andreas.ruprecht-d40JDW7QUjc@public.gmane.org>, hengelein Stefan <stefan.hengelein-d40JDW7QUjc@public.gmane.org>
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry,
+From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-this is just a kind reminder that the issue (see below) is still present.
+Tegra114 has a HW bug where the PLLD/PLLD2 lock bit cannot be asserted
+while turning on the Display power domain and before the clamp to this
+domain has been removed. This issue causes a timeout and aborts the power
+up sequence, even though the PLLD/PLLD2 has already locked. To avoid this,
+don't use the lock for PLLD/PLLD2, just wait 1ms and treat the clocks as
+locked.
 
-On Fri, May 15, 2015 at 10:57 AM, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> On Thu, May 14, 2015 at 01:50:08PM +0200, Valentin Rothberg wrote:
->> Hi Thierry,
->>
->> your commit e3cf5bf687df ("soc/tegra: fuse: Add Tegra210 support") is
->> in today's linux-next tree (i.e., next-20150514).  The following lines
->> in the commit reference a Kconfig option that is not defined, so that
->> the driver and the affected #ifdef blocks cannot be compiled:
->>
->> drivers/soc/tegra/fuse/Makefile:10:obj-$(CONFIG_ARCH_TEGRA_210_SOC)
->>  += speedo-tegra210.o
->> drivers/soc/tegra/fuse/fuse-tegra.c:104:#ifdef CONFIG_ARCH_TEGRA_210_SOC
->> drivers/soc/tegra/fuse/fuse-tegra30.c:49:    defined(CONFIG_ARCH_TEGRA_210_SOC)
->> drivers/soc/tegra/fuse/fuse-tegra30.c:148:#if defined(CONFIG_ARCH_TEGRA_210_SOC)
->> drivers/soc/tegra/fuse/fuse.h:84:#ifdef CONFIG_ARCH_TEGRA_210_SOC
->> drivers/soc/tegra/fuse/fuse.h:104:#ifdef CONFIG_ARCH_TEGRA_210_SOC
->>
->> Is there a patch queued somewhere to add this option?
->
-> Yes, these patches are all in the process of being merged for v4.2, so
-> I'd expect this particular Kconfig option to show up sometime soon now.
->
-> Thanks,
-> Thierry
+Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+[jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org: Updated the changelog description]
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+I had originally sent this as part of the tegra generic power-domain series
+[0]. However, given that this is really a standalone fix and the
+power-domain work is on-going, I don't see any reason why this should not
+be merged now.
 
-Kind regards,
- Valentin
+[0] http://lists.infradead.org/pipermail/linux-arm-kernel/2015-July/356060.html
+
+ drivers/clk/tegra/clk-tegra114.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
+index db5871519bf5..6c824e469a1b 100644
+--- a/drivers/clk/tegra/clk-tegra114.c
++++ b/drivers/clk/tegra/clk-tegra114.c
+@@ -454,8 +454,7 @@ static struct tegra_clk_pll_params pll_d_params = {
+ 	.lock_delay = 1000,
+ 	.div_nmp = &pllp_nmp,
+ 	.freq_table = pll_d_freq_table,
+-	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
+-		 TEGRA_PLL_USE_LOCK,
++	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON,
+ };
+ 
+ static struct tegra_clk_pll_params pll_d2_params = {
+@@ -472,8 +471,7 @@ static struct tegra_clk_pll_params pll_d2_params = {
+ 	.lock_delay = 1000,
+ 	.div_nmp = &pllp_nmp,
+ 	.freq_table = pll_d_freq_table,
+-	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON |
+-		 TEGRA_PLL_USE_LOCK,
++	.flags = TEGRA_PLL_HAS_CPCON | TEGRA_PLL_SET_LFCON,
+ };
+ 
+ static struct pdiv_map pllu_p[] = {
+-- 
+2.1.4
