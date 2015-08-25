@@ -1,66 +1,69 @@
-From: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
-Subject: Re: [PATCH 1/2] [media] v4l: tegra: Add NVIDIA Tegra VI driver
-Date: Tue, 25 Aug 2015 08:30:41 +0200
-Message-ID: <55DC0B91.2000204@xs4all.nl>
-References: <1440118300-32491-1-git-send-email-pengw@nvidia.com> <1440118300-32491-5-git-send-email-pengw@nvidia.com> <20150821130339.GB22118@ulmo.nvidia.com> <55DBB62C.4020606@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Tegra baseline test results for v4.2-rc8
+Date: Tue, 25 Aug 2015 09:17:32 +0100
+Message-ID: <55DC249C.5070808@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <55DBB62C.4020606-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bryan Wu <pengw-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: hansverk-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jbang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, wenjiaz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, davidw-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, gfitzer-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, kernel-build-reports@lists.linaro.org
 List-Id: linux-tegra@vger.kernel.org
 
-A quick follow-up to Thierry's excellent review:
+Here are some basic Tegra test results for Linux v4.2-rc8.
+Logs and other details at:
 
-On 08/25/2015 02:26 AM, Bryan Wu wrote:
-> On 08/21/2015 06:03 AM, Thierry Reding wrote:
->> On Thu, Aug 20, 2015 at 05:51:39PM -0700, Bryan Wu wrote:
+    https://nvtb.github.io//linux/test_v4.2-rc8/20150823213103/
 
-<snip>
 
->>> +static void
->>> +__tegra_channel_try_format(struct tegra_channel *chan, struct v4l2_pix_format *pix,
->>> +		      const struct tegra_video_format **fmtinfo)
->>> +{
->>> +	const struct tegra_video_format *info;
->>> +	unsigned int min_width;
->>> +	unsigned int max_width;
->>> +	unsigned int min_bpl;
->>> +	unsigned int max_bpl;
->>> +	unsigned int width;
->>> +	unsigned int align;
->>> +	unsigned int bpl;
->>> +
->>> +	/* Retrieve format information and select the default format if the
->>> +	 * requested format isn't supported.
->>> +	 */
->>> +	info = tegra_core_get_format_by_fourcc(pix->pixelformat);
->>> +	if (!info)
->>> +		info = tegra_core_get_format_by_fourcc(TEGRA_VF_DEF_FOURCC);
->> Should this not be an error? As far as I can tell this is silently
->> substituting the default format for the requested one if the requested
->> one isn't supported. Isn't the whole point of this to find out if some
->> format is supported?
->>
-> I think it should return some error and escape following code. I will 
-> fix that.
+Test summary
+------------
 
-Actually, this code is according to the V4L2 spec: if the given format is
-not supported, then VIDIOC_TRY_FMT should replace it with a valid default
-format.
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
 
-The reality is a bit more complex: in many drivers this was never reviewed
-correctly and we ended up with some drivers that return an error for this
-case and some drivers that follow the spec. Historically TV capture drivers
-return an error, webcam drivers don't. Most unfortunate.
+Build: Image:
+    Pass: ( 1/ 1): defconfig
 
-Since this driver is much more likely to be used with sensors I would
-follow the spec here and substitute an invalid format with a default
-format.
+Boot to userspace: defconfig:
+    Pass: ( 1/ 1): qemu-vexpress64
 
-Regards,
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
 
-	Hans
+Boot to userspace: tegra_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v4.2-rc7 (2c6625cd545bdd66acff14f3394865d43920a5c7)):
+   text     data      bss    total  kernel
+     -3        0        0       -3  defconfig
+   text     data      bss    total  kernel
+  -1151        0        0    -1151  multi_v7_defconfig
+ -14778      -64        0   -14842  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.2-rc7 (2c6625cd545bdd66acff14f3394865d43920a5c7))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+        .        .        .        .      qemu-vexpress64            defconfig           __internal
+        .        .        .       4k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+      16k     -16k        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+        .        .        .       4k  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+      16k     -16k        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+        .        .        .       4k    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+      16k     -16k        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+        .        .        .       4k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+      16k     -16k        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
