@@ -1,69 +1,40 @@
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/2] [media] v4l: tegra: Add NVIDIA Tegra VI driver
-Date: Tue, 25 Aug 2015 16:24:12 +0200
-Message-ID: <20150825142411.GC3820@ulmo.nvidia.com>
-References: <1440118300-32491-1-git-send-email-pengw@nvidia.com>
- <1440118300-32491-5-git-send-email-pengw@nvidia.com>
- <20150821130339.GB22118@ulmo.nvidia.com>
- <55DBB62C.4020606@nvidia.com>
- <20150825134444.GH14034@ulmo.nvidia.com>
- <55DC789E.8060300@xs4all.nl>
+From: Ard Biesheuvel <ard.biesheuvel-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] PCI: tegra: use __pgprot() around static pgprot_t initializer
+Date: Tue, 25 Aug 2015 17:05:56 +0200
+Message-ID: <CAKv+Gu82vaxgjkURo_0-Ho6i8pDXM0EuPRxRZobkf4re+DFgKQ@mail.gmail.com>
+References: <1435681818-14155-1-git-send-email-ard.biesheuvel@linaro.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="IpbVkmxF4tDyP/Kb"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <55DC789E.8060300-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
-Content-Disposition: inline
+In-Reply-To: <1435681818-14155-1-git-send-email-ard.biesheuvel-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Hans Verkuil <hverkuil-qWit8jRvyhVmR6Xm/wNWPw@public.gmane.org>
-Cc: Bryan Wu <pengw-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, hansverk-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jbang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, wenjiaz-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, davidw-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, gfitzer-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ard Biesheuvel <ard.biesheuvel-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
---IpbVkmxF4tDyP/Kb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 30 June 2015 at 18:30, Ard Biesheuvel <ard.biesheuvel-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
+> In order to comply with the rules that apply when STRICT_MM_TYPECHECKS
+> is defined, wrap the initializer for a pgprot_t in __pgprot().
+>
+> Signed-off-by: Ard Biesheuvel <ard.biesheuvel-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> ---
+>  drivers/pci/host/pci-tegra.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> index 00e92720d7f7..f8a70b64b55c 100644
+> --- a/drivers/pci/host/pci-tegra.c
+> +++ b/drivers/pci/host/pci-tegra.c
+> @@ -382,8 +382,8 @@ static unsigned long tegra_pcie_conf_offset(unsigned int devfn, int where)
+>  static struct tegra_pcie_bus *tegra_pcie_bus_alloc(struct tegra_pcie *pcie,
+>                                                    unsigned int busnr)
+>  {
+> -       pgprot_t prot = L_PTE_PRESENT | L_PTE_YOUNG | L_PTE_DIRTY | L_PTE_XN |
+> -                       L_PTE_MT_DEV_SHARED | L_PTE_SHARED;
+> +       pgprot_t prot = __pgprot(L_PTE_PRESENT | L_PTE_YOUNG | L_PTE_DIRTY |
+> +                                L_PTE_XN | L_PTE_MT_DEV_SHARED | L_PTE_SHARED);
+>         phys_addr_t cs = pcie->cs->start;
+>         struct tegra_pcie_bus *bus;
+>         unsigned int i;
 
-On Tue, Aug 25, 2015 at 04:15:58PM +0200, Hans Verkuil wrote:
-> On 08/25/15 15:44, Thierry Reding wrote:
-> > On Mon, Aug 24, 2015 at 05:26:20PM -0700, Bryan Wu wrote:
-[...]
-> > > For CMA we need increase the default memory size.
-> >=20
-> > I'd rather not rely on CMA at all, especially since we do have a way
-> > around it.
->=20
-> For the record, I have no problem with it if we start out with contiguous
-> DMA now and enhance it later. I get the impression that getting the IOMMU
-> to work is non-trivial, and I don't think it should block merging of this
-> driver.
->=20
-> This is all internal to the driver, so changing it later will not affect
-> userspace.
-
-Fair enough.
-
-Thierry
-
---IpbVkmxF4tDyP/Kb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJV3HqLAAoJEN0jrNd/PrOhiqsQAIhhwBr8ew/LBF9al4LCzHRl
-d6YnBmGc/UXYfUMLbuJUitwfQK5n9luWjh88ypMoRHo6Gz1mSHOr7cs2Zz0gwUFo
-yTsmXW22lkAKUOHugZZmqSzBzeN4jmPUJtDvhNiHJQxfwmJdmKwcz0eHScdqKwZt
-EUyyVctjfU3sewl4NSbx0/ou95LkZPFZppEi7tbbrOYwgX+qjqlXuj4H5BZut91L
-uaDQylbmvPlFO0s4JW1uVXskQLA38dQwXEtmeJhTrt6AS2YAYlZazdsGRQaO/s7M
-sV7E7iS/KNphTfyH+rZUrEhwD1CQehDs74FcTcojRUsRyq+O02Fwxj3iDzpAnqEf
-A6O3PVRHXy0Ek75nmF25pDqNBbWwQNDeDUfg6C6rOiNX4m0M1dwGxXzBmyJExtEJ
-qlD0ybaxfCvaZZwslNQ+ySnaPpuUlA0MRfeUkDD2xIMDYZ0kDk9DmqnjlpRlzE9Y
-AbudEyaIsdlt1OB3/0MdGhmC3ZKLEdq6Kh7ARE6sqBV25e3zGQ+Oe8KprF0+qi61
-zKYFtUN9eenqODurgP9SxtVxpRol+enrSd3Bw+TIrJSgfxOeEBc+F5HxL/grXFu/
-n2pz4XW2v5U0XjAcgtFiPnETM08iDNvP5rQm5LTnOldi7HtXNbQoOlnE7KnUl5wV
-qjXiZjEdOte9Q386Pucc
-=xv2t
------END PGP SIGNATURE-----
-
---IpbVkmxF4tDyP/Kb--
+Ping?
