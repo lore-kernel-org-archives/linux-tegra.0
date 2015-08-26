@@ -1,38 +1,56 @@
-From: Ard Biesheuvel <ard.biesheuvel-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] PCI: tegra: use __pgprot() around static pgprot_t initializer
-Date: Wed, 26 Aug 2015 10:50:55 +0200
-Message-ID: <CAKv+Gu_jDvaTypEFjgQO03S-sEaEsbmPXL-38Mkd4RuozjykJA@mail.gmail.com>
-References: <1435681818-14155-1-git-send-email-ard.biesheuvel@linaro.org>
-	<CAKv+Gu82vaxgjkURo_0-Ho6i8pDXM0EuPRxRZobkf4re+DFgKQ@mail.gmail.com>
-	<55DC9020.2090300@wwwdotorg.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH resend] PCI: tegra: use __pgprot() around static pgprot_t
+ initializer
+Date: Wed, 26 Aug 2015 11:21:17 +0200
+Message-ID: <20150826092115.GA26691@ulmo.nvidia.com>
+References: <1440578974-26527-1-git-send-email-ard.biesheuvel@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <55DC9020.2090300-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="SLDf9lqlvOQaIe6s"
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1440578974-26527-1-git-send-email-ard.biesheuvel@linaro.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: linux-pci@vger.kernel.org, bhelgaas@google.com, linux-tegra@vger.kernel.org, swarren@wwwdotorg.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 25 August 2015 at 17:56, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 08/25/2015 09:05 AM, Ard Biesheuvel wrote:
->>
->> On 30 June 2015 at 18:30, Ard Biesheuvel <ard.biesheuvel-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
->> wrote:
->>>
->>> In order to comply with the rules that apply when STRICT_MM_TYPECHECKS
->>> is defined, wrap the initializer for a pgprot_t in __pgprot().
->
-> ...
->>
->>
->> Ping?
->
->
-> You forgot to send this to the PCI maintainer or mailing list, so I imagine
-> they never received it.
 
-Oops, my bad. Resent it just now
+--SLDf9lqlvOQaIe6s
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Ard.
+On Wed, Aug 26, 2015 at 10:49:34AM +0200, Ard Biesheuvel wrote:
+> In order to comply with the rules that apply when STRICT_MM_TYPECHECKS
+> is defined, wrap the initializer for a pgprot_t in __pgprot().
+>=20
+> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> ---
+>  drivers/pci/host/pci-tegra.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--SLDf9lqlvOQaIe6s
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJV3YUJAAoJEN0jrNd/PrOhEZsP/3AB58lsE7pfIDsLEscPH1Sq
+SYEPMi+3YWy1mbGra/QymeJY1csc1YlSjtTvBqDDOQFuis1o+3UKkIBmUDTu4/SQ
+8UG9unhYRIuA+2T9klv396pSHRPwPDoYBC2PqJYjU4fVlgQO2BWymTDl8kfnk+Dq
+o79Z2Tk4/xK93eDVc5QQ5itM+W4KrBnnuFzxHn1Y3wXkqbEBi6dS2OaEjqbT0Y12
+7gJu6oR0yNURM1ppG4teucdzN+sw9RFv1Dpm1rxnBQmLdd9gwbPVlwXTYrfsenhg
+kZrsN2ZPdr9A5IJQhiqWp1dkFlqIXy+Sqsp3FEnXDs7YjOTQdWqQUR7/OWPCgGqY
+cRb4D6OyylJx8TVlj4UumsKcKKxWVfakkyV9gwtS1tRBkfzDzDBDcm3KmuzL6jmZ
+zjT8Arbdh7DCVtW4y+USlT1aMv+PFbfCCW1earDkn5HNy+m3UGb9PSl6RfqfASr0
+drQIw5HrrP0ptdqYsMcWNIs11R2i2k7hhceuQRh9PQf4wj0npD3nEAkF0u2V3a38
+CB9DAOk4dciMCbe5QHDZ56zdzvYo3tKTbgOFyYaD+FeR/SPOCS8SU9cxP8IHcTZ7
+V0VFy2qiOZ2oysv2UjBxMZ/pWg19qkm8QaYB2uUEDNDeoSJFkZyVIX8Jc5grRBkN
+Hux9rzHbSPA+Hk209nS0
+=VkiK
+-----END PGP SIGNATURE-----
+
+--SLDf9lqlvOQaIe6s--
