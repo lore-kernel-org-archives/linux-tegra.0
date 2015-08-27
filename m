@@ -1,8 +1,7 @@
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Subject: [PATCH] arm: tegra: dtsi whitespace clean-up for tegra20,
- tegra30 and tegra124
-Date: Thu, 27 Aug 2015 11:44:48 +0200
-Message-ID: <1440668688-17288-1-git-send-email-marcel.ziswiler@toradex.com>
+Subject: [PATCH] arm: tegra: update default configuration
+Date: Thu, 27 Aug 2015 12:10:55 +0200
+Message-ID: <1440670255-19437-1-git-send-email-marcel.ziswiler@toradex.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
@@ -17,90 +16,70 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-tegra@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
+Cc: Alexandre Courbot <gnurou@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Kevin Hilman <khilman@linaro.org>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-kernel@vger.kernel.org, Matt Porter <mporter@linaro.org>, Mark Brown <broonie@kernel.org>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-There were a few cases of eight spaces being used instead of a tab
-character plus one case of using two spaces after an equal sign instead
-of just one which this patch fixes.
+  * Expose hardware/virtual IRQ mapping via debugfs
+  * WM9712 audio/touch controller as found on Colibri T20
+  * sysfs interface for GPIOs
+  * NFS client support for NFS version 4
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 ---
 
- arch/arm/boot/dts/tegra124.dtsi |  2 +-
- arch/arm/boot/dts/tegra20.dtsi  |  4 ++--
- arch/arm/boot/dts/tegra30.dtsi  | 10 +++++-----
- 3 files changed, 8 insertions(+), 8 deletions(-)
+ arch/arm/configs/tegra_defconfig | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 1e204a6..a5c878e 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -636,7 +636,7 @@
- 		reg = <0x0 0x70030000 0x0 0x10000>;
- 		interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&tegra_car TEGRA124_CLK_HDA>,
--		         <&tegra_car TEGRA124_CLK_HDA2HDMI>,
-+			 <&tegra_car TEGRA124_CLK_HDA2HDMI>,
- 			 <&tegra_car TEGRA124_CLK_HDA2CODEC_2X>;
- 		clock-names = "hda", "hda2hdmi", "hda2codec_2x";
- 		resets = <&tegra_car 125>, /* hda */
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index e058709..0a8d1a6 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -601,8 +601,8 @@
- 			 <&tegra_car TEGRA20_CLK_PLL_E>;
- 		clock-names = "pex", "afi", "pll_e";
- 		resets = <&tegra_car 70>,
--		         <&tegra_car 72>,
--		         <&tegra_car 74>;
-+			 <&tegra_car 72>,
-+			 <&tegra_car 74>;
- 		reset-names = "pex", "afi", "pcie_x";
- 		status = "disabled";
- 
-diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
-index fe04fb5..38e1e27 100644
---- a/arch/arm/boot/dts/tegra30.dtsi
-+++ b/arch/arm/boot/dts/tegra30.dtsi
-@@ -42,8 +42,8 @@
- 			 <&tegra_car TEGRA30_CLK_CML0>;
- 		clock-names = "pex", "afi", "pll_e", "cml";
- 		resets = <&tegra_car 70>,
--		         <&tegra_car 72>,
--		         <&tegra_car 74>;
-+			 <&tegra_car 72>,
-+			 <&tegra_car 74>;
- 		reset-names = "pex", "afi", "pcie_x";
- 		status = "disabled";
- 
-@@ -153,7 +153,7 @@
- 				  &tegra_car TEGRA30_CLK_GR3D2>;
- 			clock-names = "3d", "3d2";
- 			resets = <&tegra_car 24>,
--			         <&tegra_car 98>;
-+				 <&tegra_car 98>;
- 			reset-names = "3d", "3d2";
- 		};
- 
-@@ -455,7 +455,7 @@
- 	};
- 
- 	i2c@7000c000 {
--		compatible =  "nvidia,tegra30-i2c", "nvidia,tegra20-i2c";
-+		compatible = "nvidia,tegra30-i2c", "nvidia,tegra20-i2c";
- 		reg = <0x7000c000 0x100>;
- 		interrupts = <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>;
- 		#address-cells = <1>;
-@@ -660,7 +660,7 @@
- 		reg = <0x70030000 0x10000>;
- 		interrupts = <GIC_SPI 81 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&tegra_car TEGRA30_CLK_HDA>,
--		         <&tegra_car TEGRA30_CLK_HDA2HDMI>,
-+			 <&tegra_car TEGRA30_CLK_HDA2HDMI>,
- 			 <&tegra_car TEGRA30_CLK_HDA2CODEC_2X>;
- 		clock-names = "hda", "hda2hdmi", "hda2codec_2x";
- 		resets = <&tegra_car 125>, /* hda */
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index 9808581..6645460 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -1,5 +1,6 @@
+ CONFIG_SYSVIPC=y
+ CONFIG_FHANDLE=y
++CONFIG_IRQ_DOMAIN_DEBUG=y
+ CONFIG_NO_HZ=y
+ CONFIG_HIGH_RES_TIMERS=y
+ CONFIG_IKCONFIG=y
+@@ -121,6 +122,9 @@ CONFIG_KEYBOARD_CROS_EC=y
+ CONFIG_MOUSE_PS2_ELANTECH=y
+ CONFIG_INPUT_TOUCHSCREEN=y
+ CONFIG_TOUCHSCREEN_ATMEL_MXT=y
++CONFIG_TOUCHSCREEN_WM97XX=y
++# CONFIG_TOUCHSCREEN_WM9705 is not set
++# CONFIG_TOUCHSCREEN_WM9713 is not set
+ CONFIG_TOUCHSCREEN_STMPE=y
+ CONFIG_INPUT_MISC=y
+ CONFIG_INPUT_MPU3050=y
+@@ -142,11 +146,13 @@ CONFIG_SPI_TEGRA20_SFLASH=y
+ CONFIG_SPI_TEGRA20_SLINK=y
+ CONFIG_PINCTRL_AS3722=y
+ CONFIG_PINCTRL_PALMAS=y
++CONFIG_GPIO_SYSFS=y
+ CONFIG_GPIO_PCA953X=y
+ CONFIG_GPIO_PCA953X_IRQ=y
+ CONFIG_GPIO_PALMAS=y
+ CONFIG_GPIO_TPS6586X=y
+ CONFIG_GPIO_TPS65910=y
++CONFIG_BATTERY_WM97XX=y
+ CONFIG_BATTERY_SBS=y
+ CONFIG_CHARGER_TPS65090=y
+ CONFIG_POWER_RESET=y
+@@ -208,6 +214,7 @@ CONFIG_SND_SOC_TEGRA=y
+ CONFIG_SND_SOC_TEGRA_RT5640=y
+ CONFIG_SND_SOC_TEGRA_WM8753=y
+ CONFIG_SND_SOC_TEGRA_WM8903=y
++CONFIG_SND_SOC_TEGRA_WM9712=y
+ CONFIG_SND_SOC_TEGRA_TRIMSLICE=y
+ CONFIG_SND_SOC_TEGRA_ALC5632=y
+ CONFIG_SND_SOC_TEGRA_MAX98090=y
+@@ -278,6 +285,7 @@ CONFIG_SQUASHFS=y
+ CONFIG_SQUASHFS_LZO=y
+ CONFIG_SQUASHFS_XZ=y
+ CONFIG_NFS_FS=y
++CONFIG_NFS_V4=y
+ CONFIG_ROOT_NFS=y
+ CONFIG_NLS_CODEPAGE_437=y
+ CONFIG_NLS_ISO8859_1=y
 -- 
 2.4.3
