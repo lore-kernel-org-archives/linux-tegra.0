@@ -1,85 +1,46 @@
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Subject: [PATCH] arm: tegra: update default configuration
-Date: Thu, 27 Aug 2015 12:10:55 +0200
-Message-ID: <1440670255-19437-1-git-send-email-marcel.ziswiler@toradex.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] arm: tegra: update default configuration
+Date: Thu, 27 Aug 2015 15:54:51 +0100
+Message-ID: <20150827145451.GB5313@sirena.org.uk>
+References: <1440670255-19437-1-git-send-email-marcel.ziswiler@toradex.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-tegra@vger.kernel.org
-Cc: Alexandre Courbot <gnurou@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Kevin Hilman <khilman@linaro.org>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, linux-kernel@vger.kernel.org, Matt Porter <mporter@linaro.org>, Mark Brown <broonie@kernel.org>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="aM3YZ0Iwxop3KEKx"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1440670255-19437-1-git-send-email-marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Matt Porter <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-  * Expose hardware/virtual IRQ mapping via debugfs
-  * WM9712 audio/touch controller as found on Colibri T20
-  * sysfs interface for GPIOs
-  * NFS client support for NFS version 4
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
----
+--aM3YZ0Iwxop3KEKx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
- arch/arm/configs/tegra_defconfig | 8 ++++++++
- 1 file changed, 8 insertions(+)
+On Thu, Aug 27, 2015 at 12:10:55PM +0200, Marcel Ziswiler wrote:
 
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 9808581..6645460 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -1,5 +1,6 @@
- CONFIG_SYSVIPC=y
- CONFIG_FHANDLE=y
-+CONFIG_IRQ_DOMAIN_DEBUG=y
- CONFIG_NO_HZ=y
- CONFIG_HIGH_RES_TIMERS=y
- CONFIG_IKCONFIG=y
-@@ -121,6 +122,9 @@ CONFIG_KEYBOARD_CROS_EC=y
- CONFIG_MOUSE_PS2_ELANTECH=y
- CONFIG_INPUT_TOUCHSCREEN=y
- CONFIG_TOUCHSCREEN_ATMEL_MXT=y
-+CONFIG_TOUCHSCREEN_WM97XX=y
-+# CONFIG_TOUCHSCREEN_WM9705 is not set
-+# CONFIG_TOUCHSCREEN_WM9713 is not set
- CONFIG_TOUCHSCREEN_STMPE=y
- CONFIG_INPUT_MISC=y
- CONFIG_INPUT_MPU3050=y
-@@ -142,11 +146,13 @@ CONFIG_SPI_TEGRA20_SFLASH=y
- CONFIG_SPI_TEGRA20_SLINK=y
- CONFIG_PINCTRL_AS3722=y
- CONFIG_PINCTRL_PALMAS=y
-+CONFIG_GPIO_SYSFS=y
- CONFIG_GPIO_PCA953X=y
- CONFIG_GPIO_PCA953X_IRQ=y
- CONFIG_GPIO_PALMAS=y
- CONFIG_GPIO_TPS6586X=y
- CONFIG_GPIO_TPS65910=y
-+CONFIG_BATTERY_WM97XX=y
- CONFIG_BATTERY_SBS=y
- CONFIG_CHARGER_TPS65090=y
- CONFIG_POWER_RESET=y
-@@ -208,6 +214,7 @@ CONFIG_SND_SOC_TEGRA=y
- CONFIG_SND_SOC_TEGRA_RT5640=y
- CONFIG_SND_SOC_TEGRA_WM8753=y
- CONFIG_SND_SOC_TEGRA_WM8903=y
-+CONFIG_SND_SOC_TEGRA_WM9712=y
- CONFIG_SND_SOC_TEGRA_TRIMSLICE=y
- CONFIG_SND_SOC_TEGRA_ALC5632=y
- CONFIG_SND_SOC_TEGRA_MAX98090=y
-@@ -278,6 +285,7 @@ CONFIG_SQUASHFS=y
- CONFIG_SQUASHFS_LZO=y
- CONFIG_SQUASHFS_XZ=y
- CONFIG_NFS_FS=y
-+CONFIG_NFS_V4=y
- CONFIG_ROOT_NFS=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
--- 
-2.4.3
+>   * WM9712 audio/touch controller as found on Colibri T20
+
+> +CONFIG_BATTERY_WM97XX=y
+
+Does the system really have the wm9712 wired up as a battery monitor?
+
+--aM3YZ0Iwxop3KEKx
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJV3yS6AAoJECTWi3JdVIfQfTYH/RwFCHH8L5+aPB6JkdowLxL1
+jReaeo7LCWDi9x81hpc2uk7ChZym2Qq5hToxzthg+e6Kt4uJPLbqvVGMQE3CHLGC
+FIObkflKT7clyeCfWJASWf6QquFlUPoyWky6jnYkTRS7DvQtznL+5IFQHOR+ccEu
+LRUCyWZwFo966wVNTxkEeq1SXkRxtDDZXrpF42aLOwOr1V5e1J4JRhynXW3VqrmZ
+vAkDPVj3qqRncbGgArrJHNjvaCcyiBnkn+L+DyZu7EHxGvrp23XAAVDR1LjhQr/B
+gVWbNTR4XVVs2Ck5Vizg2xCKt0CVaOlsR892ws+sj9EH+qk/furi5ckwVPScYwc=
+=WYNg
+-----END PGP SIGNATURE-----
+
+--aM3YZ0Iwxop3KEKx--
