@@ -1,54 +1,84 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH 1/7] DMA: tegra-apb: Correct runtime-pm usage
-Date: Fri, 28 Aug 2015 11:30:50 +0100
-Message-ID: <55E0385A.6070203@nvidia.com>
-References: <1439905755-25150-1-git-send-email-jonathanh@nvidia.com>
- <55DB1AA9.7090906@nvidia.com> <20150824142143.GK13546@localhost>
- <13590312.K3yoQT5YDc@vostro.rjw.lan> <55DC375F.1070907@nvidia.com>
- <55DCF056.40004@intel.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+From: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 2/9] arm: tegra: apalis_t30: fix hdmi supply
+Date: Fri, 28 Aug 2015 14:42:29 +0200
+Message-ID: <1440765756-1382-3-git-send-email-marcel.ziswiler@toradex.com>
+References: <1440765756-1382-1-git-send-email-marcel.ziswiler@toradex.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <55DCF056.40004-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1440765756-1382-1-git-send-email-marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Fix HDMI supplies (both regular VDD as well as PLL ones) being switched
+by the TPS65911 PMIC's GPIO6 aka EN_VDD_HDMI by introducing two new
+GPIO switched fixed regulators avdd_hdmi_pll_1v8_reg and
+avdd_hdmi_3v3_reg.
 
-On 25/08/15 23:46, Rafael J. Wysocki wrote:
-> On 8/25/2015 11:37 AM, Jon Hunter wrote:
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+---
 
-[snip]
+ arch/arm/boot/dts/tegra30-apalis.dtsi | 32 +++++++++++++++++++++++++++-----
+ 1 file changed, 27 insertions(+), 5 deletions(-)
 
->> Vinod, thinking about this some more, I am wondering if it is just
->> better to get rid of the suspend/resume callbacks and simply handling
->> the state in the runtime suspend/resume callbacks. I think that would be
->> safe too, because once the clock has been disabled, then who knows what
->> the context state will be.
-> 
-> One caveat here: system suspend may be invoked at any time, so you need
-> to ensure that the device is properly suspended when that happens.
-> 
-> I believe you at least need a ->suspend callback for that.
-
-Thanks, makes sense.
-
-On a related note, I see a few drivers, including this DMA driver doing
-the following in the driver ->remove callback.
-
-    pm_runtime_disable(&pdev->dev);
-        !pm_runtime_status_suspended(&pdev->dev))
-            tegra_dma_runtime_suspend(&pdev->dev);
-
-I understand that the code is trying to ensure that the device is
-suspended regardless of whether rpm is enabled or not in the kernel
-config. However, looking at the pm_runtime_status_suspended() function,
-AFAICT, it will always return false above as the disable_depth will be
-greater than 0. So I am concerned that the tegra_dma_runtime_suspend()
-is called even when not needed? However, I could also be missing
-something here.
-
-Cheers
-Jon
+diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
+index 3bff4d7..fd6c94e 100644
+--- a/arch/arm/boot/dts/tegra30-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
+@@ -34,8 +34,8 @@
+ 
+ 	host1x@50000000 {
+ 		hdmi@54280000 {
+-			vdd-supply = <&sys_3v3_reg>;
+-			pll-supply = <&vio_reg>;
++			vdd-supply = <&avdd_hdmi_3v3_reg>;
++			pll-supply = <&avdd_hdmi_pll_1v8_reg>;
+ 
+ 			nvidia,hpd-gpio =
+ 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
+@@ -667,18 +667,40 @@
+ 		#address-cells = <1>;
+ 		#size-cells = <0>;
+ 
+-		sys_3v3_reg: regulator@100 {
++		avdd_hdmi_pll_1v8_reg: regulator@100 {
+ 			compatible = "regulator-fixed";
+ 			reg = <100>;
++			regulator-name = "+V1.8_AVDD_HDMI_PLL";
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1800000>;
++			enable-active-high;
++			gpio = <&pmic 6 GPIO_ACTIVE_HIGH>;
++			vin-supply = <&vio_reg>;
++		};
++
++		sys_3v3_reg: regulator@101 {
++			compatible = "regulator-fixed";
++			reg = <101>;
+ 			regulator-name = "3v3";
+ 			regulator-min-microvolt = <3300000>;
+ 			regulator-max-microvolt = <3300000>;
+ 			regulator-always-on;
+ 		};
+ 
+-		charge_pump_5v0_reg: regulator@101 {
++		avdd_hdmi_3v3_reg: regulator@102 {
+ 			compatible = "regulator-fixed";
+-			reg = <101>;
++			reg = <102>;
++			regulator-name = "+V3.3_AVDD_HDMI";
++			regulator-min-microvolt = <3300000>;
++			regulator-max-microvolt = <3300000>;
++			enable-active-high;
++			gpio = <&pmic 6 GPIO_ACTIVE_HIGH>;
++			vin-supply = <&sys_3v3_reg>;
++		};
++
++		charge_pump_5v0_reg: regulator@103 {
++			compatible = "regulator-fixed";
++			reg = <103>;
+ 			regulator-name = "5v0";
+ 			regulator-min-microvolt = <5000000>;
+ 			regulator-max-microvolt = <5000000>;
+-- 
+2.4.3
