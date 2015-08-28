@@ -1,7 +1,7 @@
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Subject: [PATCH 4/9] arm: tegra: apalis_t30: add comment concerning emmc
-Date: Fri, 28 Aug 2015 14:42:31 +0200
-Message-ID: <1440765756-1382-5-git-send-email-marcel.ziswiler@toradex.com>
+Subject: [PATCH 5/9] arm: tegra: apalis_t30: add digital audio pin muxing
+Date: Fri, 28 Aug 2015 14:42:32 +0200
+Message-ID: <1440765756-1382-6-git-send-email-marcel.ziswiler@toradex.com>
 References: <1440765756-1382-1-git-send-email-marcel.ziswiler@toradex.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -21,25 +21,50 @@ To: linux-tegra@vger.kernel.org
 Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Instead of adding an otherwise unused emmc label just add a comment.
+Add Apalis digital audio pin muxing which is e.g. used for HDA
+operation together with the Realtek HDA codec as found on the Apalis
+Evaluation board.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 ---
 
- arch/arm/boot/dts/tegra30-apalis.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/boot/dts/tegra30-apalis.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
 diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index 84744dc..d1b24b1 100644
+index d1b24b1..4a6ca38 100644
 --- a/arch/arm/boot/dts/tegra30-apalis.dtsi
 +++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -636,6 +636,7 @@
- 		nvidia,sys-clock-req-active-high;
- 	};
+@@ -109,6 +109,30 @@
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+ 			};
  
-+	/* eMMC */
- 	sdhci@78000600 {
- 		status = "okay";
- 		bus-width = <8>;
++			/* Apalis Digital Audio */
++			clk1_req_pee2 {
++				nvidia,pins =	"clk1_req_pee2";
++				nvidia,function = "hda";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++			};
++			clk2_out_pw5 {
++				nvidia,pins = "clk2_out_pw5";
++				nvidia,function = "extperiph2";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++			};
++			dap1_fs_pn0 {
++				nvidia,pins =	"dap1_fs_pn0",
++						"dap1_din_pn1",
++						"dap1_dout_pn2",
++						"dap1_sclk_pn3";
++				nvidia,function = "hda";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++			};
++
+ 			/* Apalis I2C3 */
+ 			cam_i2c_scl_pbb1 {
+ 				nvidia,pins = "cam_i2c_scl_pbb1",
 -- 
 2.4.3
