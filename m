@@ -1,77 +1,45 @@
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Subject: [PATCH 3/9] arm: tegra: apalis_t30: fix pin muxing
-Date: Fri, 28 Aug 2015 14:42:30 +0200
-Message-ID: <1440765756-1382-4-git-send-email-marcel.ziswiler@toradex.com>
+Subject: [PATCH 4/9] arm: tegra: apalis_t30: add comment concerning emmc
+Date: Fri, 28 Aug 2015 14:42:31 +0200
+Message-ID: <1440765756-1382-5-git-send-email-marcel.ziswiler@toradex.com>
 References: <1440765756-1382-1-git-send-email-marcel.ziswiler@toradex.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1440765756-1382-1-git-send-email-marcel.ziswiler@toradex.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: linux-tegra@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Fix pin muxing which got broken due to certain stuff having been
-fixed/renamed since.
+Instead of adding an otherwise unused emmc label just add a comment.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 ---
 
- arch/arm/boot/dts/tegra30-apalis.dtsi | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
+ arch/arm/boot/dts/tegra30-apalis.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index fd6c94e..84744dc 100644
+index 84744dc..d1b24b1 100644
 --- a/arch/arm/boot/dts/tegra30-apalis.dtsi
 +++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -66,7 +66,7 @@
- 			/* BKL1_PWM_EN#, disable TPS65911 PMIC PWM backlight */
- 			uart3_cts_n_pa1 {
- 				nvidia,pins =	"uart3_cts_n_pa1";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "rsvd2";
- 				nvidia,pull = <TEGRA_PIN_PULL_UP>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 			};
-@@ -152,32 +152,32 @@
- 			};
+@@ -636,6 +636,7 @@
+ 		nvidia,sys-clock-req-active-high;
+ 	};
  
- 			/* Apalis PWM1 */
--			gpio_pu6 {
--				nvidia,pins =	"gpio_pu6";
-+			pu6 {
-+				nvidia,pins =	"pu6";
- 				nvidia,function = "pwm3";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 			};
- 
- 			/* Apalis PWM2 */
--			gpio_pu5 {
--				nvidia,pins =	"gpio_pu5";
-+			pu5 {
-+				nvidia,pins =	"pu5";
- 				nvidia,function = "pwm2";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 			};
- 
- 			/* Apalis PWM3 */
--			gpio_pu4 {
--				nvidia,pins =	"gpio_pu4";
-+			pu4 {
-+				nvidia,pins =	"pu4";
- 				nvidia,function = "pwm1";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 			};
- 
- 			/* Apalis PWM4 */
--			gpio_pu3 {
--				nvidia,pins =	"gpio_pu3";
-+			pu3 {
-+				nvidia,pins =	"pu3";
- 				nvidia,function = "pwm0";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++	/* eMMC */
+ 	sdhci@78000600 {
+ 		status = "okay";
+ 		bus-width = <8>;
 -- 
 2.4.3
