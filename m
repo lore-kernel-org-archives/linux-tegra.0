@@ -1,47 +1,72 @@
-From: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH] arm: tegra: update default configuration
-Date: Fri, 28 Aug 2015 20:30:35 +0000
-Message-ID: <1440793833.2795.57.camel@toradex.com>
-References: <986a8cee-f090-4888-91f2-7b564c4b3d1d@email.android.com>
-	 <20150828165132.GQ12027@sirena.org.uk>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150828165132.GQ12027-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Content-Language: en-US
-Content-ID: <8C6E55D6C25D8F419D6177C9DE2D3ECE-wNKe6lTLrGecE4WynfumptQqCkab/8FMAL8bYrjMMd8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: [PATCH v2] arm: tegra: update default configuration
+Date: Fri, 28 Aug 2015 23:08:15 +0200
+Message-ID: <1440796095-26962-1-git-send-email-marcel.ziswiler@toradex.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.org
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Arnd Bergmann <arnd@arndb.de>, Thierry Reding <thierry.reding@gmail.com>, Kevin Hilman <khilman@linaro.org>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>, Russell King <linux@arm.linux.org.uk>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gRnJpLCAyMDE1LTA4LTI4IGF0IDE2OjUxICswMDAwLCBNYXJrIEJyb3duIHdyb3RlOg0KDQo+
-IFBsZWFzZSBmaXggeW91ciBtYWlsZXIgdG8gd29yZCB3cmFwIHdpdGhpbiBwYXJhZ3JhcGhzIHNv
-IHRoYXQgeW91cg0KPiBtYWlscw0KPiBhcmUgbGVnaWJsZS4NCg0KU3VyZSwgc29ycnkuIEF0IHRp
-bWVzIEkgZm9yZ2V0IHRoYXQgQW5kcm9pZCBpc24ndCBzYW5lIGluIHRoYXQgcmVzcGVjdA0KYW5k
-IGNhbid0IGJlIHVzZWQgdG8gc2VuZCBtYWlsaW5nIGxpc3QgY29tcGxpYW50IGVtYWlscy4NCg0K
-PiA+IE9uIDI3IEF1ZyAyMDE1IDE2OjU1LCBNYXJrIEJyb3duIDxicm9vbmllQGtlcm5lbC5vcmc+
-IHdyb3RlOg0KPiANCj4gPiA+IERvZXMgdGhlIHN5c3RlbSByZWFsbHkgaGF2ZSB0aGUgd205NzEy
-IHdpcmVkIHVwIGFzIGEgYmF0dGVyeQ0KPiA+ID4gbW9uaXRvcj8NCj4gDQo+ID4gV2VsbCwgcmVt
-ZW1iZXIgd2UgYXJlIHRhbGtpbmcgYWJvdXQgYSBzeXN0ZW0gb24gbW9kdWxlLiBUaG9zZQ0KPiA+
-IFdNOTcxMg0KPiA+IHBpbnMgYWxsIGdvIHRvIHRoZSAyMDAgcGluIFNPRElNTSBlZGdlIGNvbm5l
-Y3RvciBhbmQgSSBrbm93IHRoYXQNCj4gPiBjZXJ0YWluIGN1c3RvbWVycyBpbmRlZWQgaGF2ZSBj
-YXJyaWVyIGJvYXJkcyB0aGF0IHVzZSBpdCB0aGF0IHdheS4NCj4gPiBJZg0KPiA+IHRoZXJlIGlz
-IGFueSBvcHBvc2l0aW9uIGFuZCBjb25zaWRlcmluZyB0aGlzIGJlaW5nIHJhdGhlciBvcHRpb25h
-bA0KPiA+IEkNCj4gPiBtYXkgYWxzbyBkcm9wIHRoaXMgb25lIGJ1dCBhdWRpby90b3VjaCBpcyBk
-ZWZpbml0ZWx5IGEgc3RhbmRhcmQNCj4gPiBmZWF0dXJlIGF2YWlsYWJsZSBvbiBhbGwgb3IgY2Fy
-cmllciBib2FyZHMuDQo+IA0KPiBEb2VzIHRoYXQgYWN0dWFsbHkgd29yayB3aXRoIG1haW5saW5l
-PyAgVGhlIGRyaXZlciByZXF1aXJlcyBwbGF0Zm9ybQ0KPiBkYXRhIHRvIGRvIGFueXRoaW5nIHVz
-ZWZ1bCAodGhlcmUncyBubyBEVCBiaW5kaW5ncyBmb3IgaXQpIGFuZCBJDQo+IGNhbid0DQo+IHNl
-ZSBhbnl0aGluZyBwcm92aWRpbmcgdGhhdCBvbiBUZWdyYSBzeXN0ZW1zLg0KDQpUbyBiZSBob25l
-c3QgSSBoYXZlIG5vdCByZWFsbHkgdHJpZWQgaXQgcmVzcC4gSSBkaWQgYWN0dWFsbHkgbm90aWNl
-IGl0DQpiYWlsaW5nIG91dCBidXQgaGF2ZW4ndCBoYWQgdGltZSB0byBsb29rIGNsb3NlciBpbnRv
-IGl0IHlldC4gV2UgYXJlDQp1c2luZyBpdCB3aXRoIE5WSURJQSdzIHN0aWxsIHBsYXRmb3JtIGRh
-dGEgYmFzZWQgZG93bnN0cmVhbSBMNFQgUjE2LjUNCmFuZCBJIGRvIGtub3cgdGhhdCBpdCB3b3Jr
-cyB0aGVyZSBzbyBJIGp1c3Qga2luZCBvZiBhc3N1bWVkIHRoZXJlIHdpbGwNCmJlIGEgd2F5IHRv
-IG1ha2UgaXQgd29yayBpbiBtYWlubGluZSBhcyB3ZWxsLiBIb3dldmVyIHJhdGhlciB0aGFuDQph
-ZGRpbmcgc3VjaCBwbGF0Zm9ybSBkYXRhIEkgZ3Vlc3MgbWlncmF0aW5nIGl0IHRvIERUIHdvdWxk
-IG1ha2UgbW9yZQ0Kc2Vuc2UuIEJ1dCB1bnRpbCBzdWNoIGEgbWlncmF0aW9uIGhhcyBiZWVuIGNv
-bXBsZXRlZCBJIGd1ZXNzIHdlIHJhdGhlcg0KanVzdCBkcm9wIGVuYWJsaW5nIGl0IGZvciBub3cg
-YW5kIEkgd2lsbCBzZW5kIG91dCBhIHYyIGluIHRoYXQgcmVzcGVjdC4=
+  * Expose hardware/virtual IRQ mapping via debugfs
+  * WM9712 audio/touch controller as found on Colibri T20
+  * sysfs interface for GPIOs
+  * NFS client support for NFS version 4
+
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+---
+
+Changes in v2:
+- drop WM9712 battery support as that driver still requires platform
+  data rather than a device tree as pointed out by Mark
+
+ arch/arm/configs/tegra_defconfig | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index 9808581..9114bfe 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -1,5 +1,6 @@
+ CONFIG_SYSVIPC=y
+ CONFIG_FHANDLE=y
++CONFIG_IRQ_DOMAIN_DEBUG=y
+ CONFIG_NO_HZ=y
+ CONFIG_HIGH_RES_TIMERS=y
+ CONFIG_IKCONFIG=y
+@@ -121,6 +122,9 @@ CONFIG_KEYBOARD_CROS_EC=y
+ CONFIG_MOUSE_PS2_ELANTECH=y
+ CONFIG_INPUT_TOUCHSCREEN=y
+ CONFIG_TOUCHSCREEN_ATMEL_MXT=y
++CONFIG_TOUCHSCREEN_WM97XX=y
++# CONFIG_TOUCHSCREEN_WM9705 is not set
++# CONFIG_TOUCHSCREEN_WM9713 is not set
+ CONFIG_TOUCHSCREEN_STMPE=y
+ CONFIG_INPUT_MISC=y
+ CONFIG_INPUT_MPU3050=y
+@@ -142,6 +146,7 @@ CONFIG_SPI_TEGRA20_SFLASH=y
+ CONFIG_SPI_TEGRA20_SLINK=y
+ CONFIG_PINCTRL_AS3722=y
+ CONFIG_PINCTRL_PALMAS=y
++CONFIG_GPIO_SYSFS=y
+ CONFIG_GPIO_PCA953X=y
+ CONFIG_GPIO_PCA953X_IRQ=y
+ CONFIG_GPIO_PALMAS=y
+@@ -208,6 +213,7 @@ CONFIG_SND_SOC_TEGRA=y
+ CONFIG_SND_SOC_TEGRA_RT5640=y
+ CONFIG_SND_SOC_TEGRA_WM8753=y
+ CONFIG_SND_SOC_TEGRA_WM8903=y
++CONFIG_SND_SOC_TEGRA_WM9712=y
+ CONFIG_SND_SOC_TEGRA_TRIMSLICE=y
+ CONFIG_SND_SOC_TEGRA_ALC5632=y
+ CONFIG_SND_SOC_TEGRA_MAX98090=y
+@@ -278,6 +284,7 @@ CONFIG_SQUASHFS=y
+ CONFIG_SQUASHFS_LZO=y
+ CONFIG_SQUASHFS_XZ=y
+ CONFIG_NFS_FS=y
++CONFIG_NFS_V4=y
+ CONFIG_ROOT_NFS=y
+ CONFIG_NLS_CODEPAGE_437=y
+ CONFIG_NLS_ISO8859_1=y
+-- 
+2.4.3
