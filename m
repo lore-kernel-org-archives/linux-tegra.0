@@ -1,84 +1,34 @@
-From: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 2/9] arm: tegra: apalis_t30: fix hdmi supply
-Date: Fri, 28 Aug 2015 14:42:29 +0200
-Message-ID: <1440765756-1382-3-git-send-email-marcel.ziswiler@toradex.com>
-References: <1440765756-1382-1-git-send-email-marcel.ziswiler@toradex.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1440765756-1382-1-git-send-email-marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: [PATCH 0/9] arm: tegra: apalis_t30: fix pin mux, hdmi, wakeup and enable hda
+Date: Fri, 28 Aug 2015 14:42:27 +0200
+Message-ID: <1440765756-1382-1-git-send-email-marcel.ziswiler@toradex.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-tegra@vger.kernel.org
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Russell King <linux@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, devicetree@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Fix HDMI supplies (both regular VDD as well as PLL ones) being switched
-by the TPS65911 PMIC's GPIO6 aka EN_VDD_HDMI by introducing two new
-GPIO switched fixed regulators avdd_hdmi_pll_1v8_reg and
-avdd_hdmi_3v3_reg.
+This series finally continues on my previous Easter efforts (BTW:
+thanks all for the feedback and all the patches thereof already having
+been applied) and additionally to fixing the pin muxing and enabling
+HDA audio also fixes HDMI and the wake-up key.
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
----
 
- arch/arm/boot/dts/tegra30-apalis.dtsi | 32 +++++++++++++++++++++++++++-----
- 1 file changed, 27 insertions(+), 5 deletions(-)
+Marcel Ziswiler (9):
+  arm: tegra: apalis_t30: update hardware revisions compatibility
+    comment
+  arm: tegra: apalis_t30: fix hdmi supply
+  arm: tegra: apalis_t30: fix pin muxing
+  arm: tegra: apalis_t30: add comment concerning emmc
+  arm: tegra: apalis_t30: add digital audio pin muxing
+  arm: tegra: apalis_t30: enable hda for eval board
+  arm: tegra: apalis_t30: set otg dr_mode for eval board
+  arm: tegra: apalis_t30: fix backlight pwm comment for eval board
+  arm: tegra: apalis_t30: fix power/wakeup key for eval board
 
-diff --git a/arch/arm/boot/dts/tegra30-apalis.dtsi b/arch/arm/boot/dts/tegra30-apalis.dtsi
-index 3bff4d7..fd6c94e 100644
---- a/arch/arm/boot/dts/tegra30-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra30-apalis.dtsi
-@@ -34,8 +34,8 @@
- 
- 	host1x@50000000 {
- 		hdmi@54280000 {
--			vdd-supply = <&sys_3v3_reg>;
--			pll-supply = <&vio_reg>;
-+			vdd-supply = <&avdd_hdmi_3v3_reg>;
-+			pll-supply = <&avdd_hdmi_pll_1v8_reg>;
- 
- 			nvidia,hpd-gpio =
- 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
-@@ -667,18 +667,40 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		sys_3v3_reg: regulator@100 {
-+		avdd_hdmi_pll_1v8_reg: regulator@100 {
- 			compatible = "regulator-fixed";
- 			reg = <100>;
-+			regulator-name = "+V1.8_AVDD_HDMI_PLL";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			enable-active-high;
-+			gpio = <&pmic 6 GPIO_ACTIVE_HIGH>;
-+			vin-supply = <&vio_reg>;
-+		};
-+
-+		sys_3v3_reg: regulator@101 {
-+			compatible = "regulator-fixed";
-+			reg = <101>;
- 			regulator-name = "3v3";
- 			regulator-min-microvolt = <3300000>;
- 			regulator-max-microvolt = <3300000>;
- 			regulator-always-on;
- 		};
- 
--		charge_pump_5v0_reg: regulator@101 {
-+		avdd_hdmi_3v3_reg: regulator@102 {
- 			compatible = "regulator-fixed";
--			reg = <101>;
-+			reg = <102>;
-+			regulator-name = "+V3.3_AVDD_HDMI";
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3300000>;
-+			enable-active-high;
-+			gpio = <&pmic 6 GPIO_ACTIVE_HIGH>;
-+			vin-supply = <&sys_3v3_reg>;
-+		};
-+
-+		charge_pump_5v0_reg: regulator@103 {
-+			compatible = "regulator-fixed";
-+			reg = <103>;
- 			regulator-name = "5v0";
- 			regulator-min-microvolt = <5000000>;
- 			regulator-max-microvolt = <5000000>;
+ arch/arm/boot/dts/tegra30-apalis-eval.dts | 13 +++--
+ arch/arm/boot/dts/tegra30-apalis.dtsi     | 80 ++++++++++++++++++++++++-------
+ 2 files changed, 73 insertions(+), 20 deletions(-)
+
 -- 
 2.4.3
