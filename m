@@ -1,55 +1,58 @@
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Subject: [PATCH 06/11] arm: tegra: colibri_t30: add touch pen interrupt pin
- muxing
-Date: Fri, 28 Aug 2015 17:59:41 +0200
-Message-ID: <1440777586-19545-7-git-send-email-marcel.ziswiler@toradex.com>
-References: <1440777586-19545-1-git-send-email-marcel.ziswiler@toradex.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] arm: tegra: update default configuration
+Date: Fri, 28 Aug 2015 17:51:32 +0100
+Message-ID: <20150828165132.GQ12027@sirena.org.uk>
+References: <986a8cee-f090-4888-91f2-7b564c4b3d1d@email.android.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1440777586-19545-1-git-send-email-marcel.ziswiler@toradex.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-tegra@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="sd7l8P2TFUHagl4l"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <986a8cee-f090-4888-91f2-7b564c4b3d1d-2ueSQiBKiTY7tOexoI0I+QC/G2K4zDHf@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+Cc: Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matt Porter <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add TOUCH_PEN_INT# pin muxing required for proper STMPE811 touch screen
-controller operation.
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
----
+--sd7l8P2TFUHagl4l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
- arch/arm/boot/dts/tegra30-colibri.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+On Fri, Aug 28, 2015 at 05:41:43AM +0000, Marcel Ziswiler wrote:
 
-diff --git a/arch/arm/boot/dts/tegra30-colibri.dtsi b/arch/arm/boot/dts/tegra30-colibri.dtsi
-index 57335c3..fba3d2a 100644
---- a/arch/arm/boot/dts/tegra30-colibri.dtsi
-+++ b/arch/arm/boot/dts/tegra30-colibri.dtsi
-@@ -183,6 +183,15 @@
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
- 			};
-+
-+			/* TOUCH_PEN_INT# */
-+			pv0 {
-+				nvidia,pins = "pv0";
-+				nvidia,function = "rsvd1";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
- 		};
- 	};
- 
--- 
-2.4.3
+Please fix your mailer to word wrap within paragraphs so that your mails
+are legible.
+
+> On 27 Aug 2015 16:55, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+
+> > Does the system really have the wm9712 wired up as a battery monitor?
+
+> Well, remember we are talking about a system on module. Those WM9712
+> pins all go to the 200 pin SODIMM edge connector and I know that
+> certain customers indeed have carrier boards that use it that way. If
+> there is any opposition and considering this being rather optional I
+> may also drop this one but audio/touch is definitely a standard
+> feature available on all or carrier boards.
+
+Does that actually work with mainline?  The driver requires platform
+data to do anything useful (there's no DT bindings for it) and I can't
+see anything providing that on Tegra systems.
+
+--sd7l8P2TFUHagl4l
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJV4JGUAAoJECTWi3JdVIfQKQQH+wRH8d0GEZgkufoRk3G+BBrF
+pH17of3W9nAGYybE5Vk07chSjUAL/+5aq0THGn9pJDeWZHhq+R5BkPkomGJ0VXYT
+iwFccI9VOLbuz3Pvm2iTTfOPkDsl4yvKOHvRthe6yUtQP8fPUuaOt7WqihCUMWQI
+oL9brigvMnGE3GY4RmjXmk2tHqR+qi/OAX7Y/cFgzOp58oR+vnNyAilfi1Ucr9N2
+6uiYdyFICA9ALfwVKB56aEHdXzgSb80b0z7lqsGrxuN8NZR1VY9a67qw+jsNg4dD
+UamaPHRmHXWnpJZ9z+F1BwriuDT3zbjZXoYeDr89TgIeYYd0Rykle4VGPf0C0qo=
+=pPYY
+-----END PGP SIGNATURE-----
+
+--sd7l8P2TFUHagl4l--
