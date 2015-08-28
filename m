@@ -1,58 +1,47 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+From: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
 Subject: Re: [PATCH] arm: tegra: update default configuration
-Date: Fri, 28 Aug 2015 17:51:32 +0100
-Message-ID: <20150828165132.GQ12027@sirena.org.uk>
+Date: Fri, 28 Aug 2015 20:30:35 +0000
+Message-ID: <1440793833.2795.57.camel@toradex.com>
 References: <986a8cee-f090-4888-91f2-7b564c4b3d1d@email.android.com>
+	 <20150828165132.GQ12027@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="sd7l8P2TFUHagl4l"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <986a8cee-f090-4888-91f2-7b564c4b3d1d-2ueSQiBKiTY7tOexoI0I+QC/G2K4zDHf@public.gmane.org>
+In-Reply-To: <20150828165132.GQ12027-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+Content-Language: en-US
+Content-ID: <8C6E55D6C25D8F419D6177C9DE2D3ECE-wNKe6lTLrGecE4WynfumptQqCkab/8FMAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
-Cc: Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matt Porter <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+To: "broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <mporter-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org" <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
---sd7l8P2TFUHagl4l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Fri, Aug 28, 2015 at 05:41:43AM +0000, Marcel Ziswiler wrote:
-
-Please fix your mailer to word wrap within paragraphs so that your mails
-are legible.
-
-> On 27 Aug 2015 16:55, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-
-> > Does the system really have the wm9712 wired up as a battery monitor?
-
-> Well, remember we are talking about a system on module. Those WM9712
-> pins all go to the 200 pin SODIMM edge connector and I know that
-> certain customers indeed have carrier boards that use it that way. If
-> there is any opposition and considering this being rather optional I
-> may also drop this one but audio/touch is definitely a standard
-> feature available on all or carrier boards.
-
-Does that actually work with mainline?  The driver requires platform
-data to do anything useful (there's no DT bindings for it) and I can't
-see anything providing that on Tegra systems.
-
---sd7l8P2TFUHagl4l
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJV4JGUAAoJECTWi3JdVIfQKQQH+wRH8d0GEZgkufoRk3G+BBrF
-pH17of3W9nAGYybE5Vk07chSjUAL/+5aq0THGn9pJDeWZHhq+R5BkPkomGJ0VXYT
-iwFccI9VOLbuz3Pvm2iTTfOPkDsl4yvKOHvRthe6yUtQP8fPUuaOt7WqihCUMWQI
-oL9brigvMnGE3GY4RmjXmk2tHqR+qi/OAX7Y/cFgzOp58oR+vnNyAilfi1Ucr9N2
-6uiYdyFICA9ALfwVKB56aEHdXzgSb80b0z7lqsGrxuN8NZR1VY9a67qw+jsNg4dD
-UamaPHRmHXWnpJZ9z+F1BwriuDT3zbjZXoYeDr89TgIeYYd0Rykle4VGPf0C0qo=
-=pPYY
------END PGP SIGNATURE-----
-
---sd7l8P2TFUHagl4l--
+T24gRnJpLCAyMDE1LTA4LTI4IGF0IDE2OjUxICswMDAwLCBNYXJrIEJyb3duIHdyb3RlOg0KDQo+
+IFBsZWFzZSBmaXggeW91ciBtYWlsZXIgdG8gd29yZCB3cmFwIHdpdGhpbiBwYXJhZ3JhcGhzIHNv
+IHRoYXQgeW91cg0KPiBtYWlscw0KPiBhcmUgbGVnaWJsZS4NCg0KU3VyZSwgc29ycnkuIEF0IHRp
+bWVzIEkgZm9yZ2V0IHRoYXQgQW5kcm9pZCBpc24ndCBzYW5lIGluIHRoYXQgcmVzcGVjdA0KYW5k
+IGNhbid0IGJlIHVzZWQgdG8gc2VuZCBtYWlsaW5nIGxpc3QgY29tcGxpYW50IGVtYWlscy4NCg0K
+PiA+IE9uIDI3IEF1ZyAyMDE1IDE2OjU1LCBNYXJrIEJyb3duIDxicm9vbmllQGtlcm5lbC5vcmc+
+IHdyb3RlOg0KPiANCj4gPiA+IERvZXMgdGhlIHN5c3RlbSByZWFsbHkgaGF2ZSB0aGUgd205NzEy
+IHdpcmVkIHVwIGFzIGEgYmF0dGVyeQ0KPiA+ID4gbW9uaXRvcj8NCj4gDQo+ID4gV2VsbCwgcmVt
+ZW1iZXIgd2UgYXJlIHRhbGtpbmcgYWJvdXQgYSBzeXN0ZW0gb24gbW9kdWxlLiBUaG9zZQ0KPiA+
+IFdNOTcxMg0KPiA+IHBpbnMgYWxsIGdvIHRvIHRoZSAyMDAgcGluIFNPRElNTSBlZGdlIGNvbm5l
+Y3RvciBhbmQgSSBrbm93IHRoYXQNCj4gPiBjZXJ0YWluIGN1c3RvbWVycyBpbmRlZWQgaGF2ZSBj
+YXJyaWVyIGJvYXJkcyB0aGF0IHVzZSBpdCB0aGF0IHdheS4NCj4gPiBJZg0KPiA+IHRoZXJlIGlz
+IGFueSBvcHBvc2l0aW9uIGFuZCBjb25zaWRlcmluZyB0aGlzIGJlaW5nIHJhdGhlciBvcHRpb25h
+bA0KPiA+IEkNCj4gPiBtYXkgYWxzbyBkcm9wIHRoaXMgb25lIGJ1dCBhdWRpby90b3VjaCBpcyBk
+ZWZpbml0ZWx5IGEgc3RhbmRhcmQNCj4gPiBmZWF0dXJlIGF2YWlsYWJsZSBvbiBhbGwgb3IgY2Fy
+cmllciBib2FyZHMuDQo+IA0KPiBEb2VzIHRoYXQgYWN0dWFsbHkgd29yayB3aXRoIG1haW5saW5l
+PyAgVGhlIGRyaXZlciByZXF1aXJlcyBwbGF0Zm9ybQ0KPiBkYXRhIHRvIGRvIGFueXRoaW5nIHVz
+ZWZ1bCAodGhlcmUncyBubyBEVCBiaW5kaW5ncyBmb3IgaXQpIGFuZCBJDQo+IGNhbid0DQo+IHNl
+ZSBhbnl0aGluZyBwcm92aWRpbmcgdGhhdCBvbiBUZWdyYSBzeXN0ZW1zLg0KDQpUbyBiZSBob25l
+c3QgSSBoYXZlIG5vdCByZWFsbHkgdHJpZWQgaXQgcmVzcC4gSSBkaWQgYWN0dWFsbHkgbm90aWNl
+IGl0DQpiYWlsaW5nIG91dCBidXQgaGF2ZW4ndCBoYWQgdGltZSB0byBsb29rIGNsb3NlciBpbnRv
+IGl0IHlldC4gV2UgYXJlDQp1c2luZyBpdCB3aXRoIE5WSURJQSdzIHN0aWxsIHBsYXRmb3JtIGRh
+dGEgYmFzZWQgZG93bnN0cmVhbSBMNFQgUjE2LjUNCmFuZCBJIGRvIGtub3cgdGhhdCBpdCB3b3Jr
+cyB0aGVyZSBzbyBJIGp1c3Qga2luZCBvZiBhc3N1bWVkIHRoZXJlIHdpbGwNCmJlIGEgd2F5IHRv
+IG1ha2UgaXQgd29yayBpbiBtYWlubGluZSBhcyB3ZWxsLiBIb3dldmVyIHJhdGhlciB0aGFuDQph
+ZGRpbmcgc3VjaCBwbGF0Zm9ybSBkYXRhIEkgZ3Vlc3MgbWlncmF0aW5nIGl0IHRvIERUIHdvdWxk
+IG1ha2UgbW9yZQ0Kc2Vuc2UuIEJ1dCB1bnRpbCBzdWNoIGEgbWlncmF0aW9uIGhhcyBiZWVuIGNv
+bXBsZXRlZCBJIGd1ZXNzIHdlIHJhdGhlcg0KanVzdCBkcm9wIGVuYWJsaW5nIGl0IGZvciBub3cg
+YW5kIEkgd2lsbCBzZW5kIG91dCBhIHYyIGluIHRoYXQgcmVzcGVjdC4=
