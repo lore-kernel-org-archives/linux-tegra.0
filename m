@@ -1,838 +1,171 @@
 From: =?UTF-8?q?Konsta=20H=C3=B6ltt=C3=A4?= <kholtta-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RFC PATCH v2 1/5] notify channel errors to userspace
-Date: Mon, 31 Aug 2015 14:38:31 +0300
-Message-ID: <1441021115-28537-2-git-send-email-kholtta@nvidia.com>
+Subject: [RFC PATCH v2 4/5] gk104: channel timeout detection
+Date: Mon, 31 Aug 2015 14:38:34 +0300
+Message-ID: <1441021115-28537-5-git-send-email-kholtta@nvidia.com>
 References: <1441021115-28537-1-git-send-email-kholtta@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 In-Reply-To: <1441021115-28537-1-git-send-email-kholtta-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 To: bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Let userspace know about some specific types of errors via a shared
-buffer registered with a new ioctl, NOUVEAU_GEM_SET_ERROR_NOTIFIER.
-Once set, the notifier buffer is used until the channel is destroyed.
-The exceptional per-channel error conditions are signaled upwards from
-the nvkm layer via the event/notify mechanism and written to the buffer
-which holds the latest error occurred, readable from userspace.
-
-Some error situations render a channel completely stuck, which may
-require even discarding and reinitializing it or the gpu completely.
-Once a specific type of error happens, no others are expected until
-recovery. Passing the error to userspace in a shared buffer enables the
-graphics driver to periodically check in a light-weight way if anything
-went wrong (typically, after a submit); e.g., the GL robustness
-extension requires to detect that the context has dead.
-
-The notifier currently signals idle timeout, sw notify, mmu fault and
-illegal pbdma error conditions.
-
-Signed-off-by: Konsta H=C3=B6ltt=C3=A4 <kholtta-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drm/nouveau/include/nvif/class.h       |  2 +
- drm/nouveau/include/nvif/event.h       | 11 ++++
- drm/nouveau/include/nvkm/engine/fifo.h |  3 ++
- drm/nouveau/nouveau_chan.c             | 95 ++++++++++++++++++++++++++=
-++++++++
- drm/nouveau/nouveau_chan.h             | 10 ++++
- drm/nouveau/nouveau_drm.c              |  1 +
- drm/nouveau/nouveau_gem.c              | 29 +++++++++++
- drm/nouveau/nouveau_gem.h              |  2 +
- drm/nouveau/nvkm/engine/fifo/base.c    | 53 +++++++++++++++++++
- drm/nouveau/nvkm/engine/fifo/gk104.c   | 13 +++++
- drm/nouveau/nvkm/engine/gr/gf100.c     |  5 ++
- drm/nouveau/uapi/drm/nouveau_drm.h     | 13 +++++
- 12 files changed, 237 insertions(+)
-
-diff --git a/drm/nouveau/include/nvif/class.h b/drm/nouveau/include/nvi=
-f/class.h
-index d90e207..28176e6 100644
---- a/drm/nouveau/include/nvif/class.h
-+++ b/drm/nouveau/include/nvif/class.h
-@@ -410,16 +410,18 @@ struct kepler_channel_gpfifo_a_v0 {
- 	__u8  engine;
- 	__u16 chid;
- 	__u8  pad04[4];
- 	__u32 pushbuf;
- 	__u32 ilength;
- 	__u64 ioffset;
- };
-=20
-+#define CHANNEL_GPFIFO_ERROR_NOTIFIER_EEVENT                          =
-     0x01
-+
- /*********************************************************************=
-**********
-  * legacy display
-  *********************************************************************=
-*********/
-=20
- #define NV04_DISP_NTFY_VBLANK                                         =
-     0x00
- #define NV04_DISP_NTFY_CONN                                           =
-     0x01
-=20
- struct nv04_disp_mthd_v0 {
-diff --git a/drm/nouveau/include/nvif/event.h b/drm/nouveau/include/nvi=
-f/event.h
-index 2176449..d148b85 100644
---- a/drm/nouveau/include/nvif/event.h
-+++ b/drm/nouveau/include/nvif/event.h
-@@ -54,9 +54,20 @@ struct nvif_notify_conn_rep_v0 {
- struct nvif_notify_uevent_req {
- 	/* nvif_notify_req ... */
- };
-=20
- struct nvif_notify_uevent_rep {
- 	/* nvif_notify_rep ... */
- };
-=20
-+struct nvif_notify_eevent_req {
-+	/* nvif_notify_req ... */
-+	u32 chid;
-+};
-+
-+struct nvif_notify_eevent_rep {
-+	/* nvif_notify_rep ... */
-+	u32 error;
-+	u32 chid;
-+};
-+
- #endif
-diff --git a/drm/nouveau/include/nvkm/engine/fifo.h b/drm/nouveau/inclu=
-de/nvkm/engine/fifo.h
-index 9100b80..cbca477 100644
---- a/drm/nouveau/include/nvkm/engine/fifo.h
-+++ b/drm/nouveau/include/nvkm/engine/fifo.h
-@@ -67,16 +67,17 @@ struct nvkm_fifo_base {
- #include <core/engine.h>
- #include <core/event.h>
-=20
- struct nvkm_fifo {
- 	struct nvkm_engine base;
-=20
- 	struct nvkm_event cevent; /* channel creation event */
- 	struct nvkm_event uevent; /* async user trigger */
-+	struct nvkm_event eevent; /* error notifier */
-=20
- 	struct nvkm_object **channel;
- 	spinlock_t lock;
- 	u16 min;
- 	u16 max;
-=20
- 	int  (*chid)(struct nvkm_fifo *, struct nvkm_object *);
- 	void (*pause)(struct nvkm_fifo *, unsigned long *);
-@@ -118,11 +119,13 @@ extern struct nvkm_oclass *gk20a_fifo_oclass;
- extern struct nvkm_oclass *gk208_fifo_oclass;
- extern struct nvkm_oclass *gm204_fifo_oclass;
- extern struct nvkm_oclass *gm20b_fifo_oclass;
-=20
- int  nvkm_fifo_uevent_ctor(struct nvkm_object *, void *, u32,
- 			   struct nvkm_notify *);
- void nvkm_fifo_uevent(struct nvkm_fifo *);
-=20
-+void nvkm_fifo_eevent(struct nvkm_fifo *, u32 chid, u32 error);
-+
- void nv04_fifo_intr(struct nvkm_subdev *);
- int  nv04_fifo_context_attach(struct nvkm_object *, struct nvkm_object=
- *);
- #endif
-diff --git a/drm/nouveau/nouveau_chan.c b/drm/nouveau/nouveau_chan.c
-index 0589bab..ff37f5f 100644
---- a/drm/nouveau/nouveau_chan.c
-+++ b/drm/nouveau/nouveau_chan.c
-@@ -19,26 +19,29 @@
-  * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE =
-OR
-  * OTHER DEALINGS IN THE SOFTWARE.
-  *
-  * Authors: Ben Skeggs
-  */
-=20
- #include <nvif/os.h>
- #include <nvif/class.h>
-+#include <nvif/event.h>
-+#include <nvif/notify.h>
-=20
- /*XXX*/
- #include <core/client.h>
-=20
- #include "nouveau_drm.h"
- #include "nouveau_dma.h"
- #include "nouveau_bo.h"
- #include "nouveau_chan.h"
- #include "nouveau_fence.h"
- #include "nouveau_abi16.h"
-+#include "nouveau_gem.h"
-=20
- MODULE_PARM_DESC(vram_pushbuf, "Create DMA push buffers in VRAM");
- int nouveau_vram_pushbuf;
- module_param_named(vram_pushbuf, nouveau_vram_pushbuf, int, 0400);
-=20
- int
- nouveau_channel_idle(struct nouveau_channel *chan)
- {
-@@ -72,16 +75,22 @@ nouveau_channel_del(struct nouveau_channel **pchan)
- 		nvif_object_fini(&chan->vram);
- 		nvif_object_ref(NULL, &chan->object);
- 		nvif_object_fini(&chan->push.ctxdma);
- 		nouveau_bo_vma_del(chan->push.buffer, &chan->push.vma);
- 		nouveau_bo_unmap(chan->push.buffer);
- 		if (chan->push.buffer && chan->push.buffer->pin_refcnt)
- 			nouveau_bo_unpin(chan->push.buffer);
- 		nouveau_bo_ref(NULL, &chan->push.buffer);
-+		if (chan->error_notifier.buffer) {
-+			nouveau_bo_unmap(chan->error_notifier.buffer);
-+			drm_gem_object_unreference_unlocked(
-+					&chan->error_notifier.buffer->gem);
-+		}
-+		nvif_notify_fini(&chan->error_notifier.notify);
- 		nvif_device_ref(NULL, &chan->device);
- 		kfree(chan);
- 	}
- 	*pchan =3D NULL;
- }
-=20
- static int
- nouveau_channel_prep(struct nouveau_drm *drm, struct nvif_device *devi=
-ce,
-@@ -272,16 +281,89 @@ nouveau_channel_dma(struct nouveau_drm *drm, stru=
-ct nvif_device *device,
- 			return ret;
- 		}
- 	} while (ret && *oclass);
-=20
- 	nouveau_channel_del(pchan);
- 	return ret;
- }
-=20
-+static void
-+nouveau_channel_set_error_notifier(struct nouveau_channel *chan, u32 e=
-rror)
-+{
-+	struct nouveau_cli *cli =3D (void *)nvif_client(chan->object);
-+	struct nouveau_bo *nvbo =3D chan->error_notifier.buffer;
-+	u32 off =3D chan->error_notifier.offset / sizeof(u32);
-+	u64 nsec;
-+
-+	if (!nvbo)
-+		return;
-+
-+	nsec =3D ktime_to_ns(ktime_get_real());
-+
-+	nouveau_bo_wr32(nvbo, off + 0, nsec);
-+	nouveau_bo_wr32(nvbo, off + 1, nsec >> 32);
-+	nouveau_bo_wr32(nvbo, off + 2, error);
-+	nouveau_bo_wr32(nvbo, off + 3, 0xffffffff);
-+
-+	NV_PRINTK(error, cli, "error notifier set to %d for ch %d\n",
-+			error, chan->chid);
-+}
-+
-+int
-+nouveau_channel_init_error_notifier(struct nouveau_channel *chan,
-+		struct drm_file *file, u32 handle, u32 offset)
-+{
-+	struct drm_gem_object *gem;
-+	struct nouveau_bo *nvbo;
-+	int ret;
-+
-+	gem =3D drm_gem_object_lookup(chan->drm->dev, file, handle);
-+	if (!gem)
-+		return -ENOENT;
-+
-+	nvbo =3D nouveau_gem_object(gem);
-+
-+	ret =3D nouveau_bo_map(nvbo);
-+	if (ret) {
-+		drm_gem_object_unreference_unlocked(gem);
-+		return ret;
-+	}
-+
-+	/* drop old ref on reassign */
-+	if (chan->error_notifier.buffer) {
-+		nouveau_bo_unmap(chan->error_notifier.buffer);
-+		drm_gem_object_unreference_unlocked(
-+				&chan->error_notifier.buffer->gem);
-+	}
-+
-+	/* the gem reference held until channel deletion keeps this alive */
-+	chan->error_notifier.buffer =3D nvbo;
-+	chan->error_notifier.offset =3D offset;
-+
-+	/* initialize to a no-error status */
-+	nouveau_bo_wr32(nvbo, offset / sizeof(u32) + 0, 0);
-+	nouveau_bo_wr32(nvbo, offset / sizeof(u32) + 1, 0);
-+	nouveau_bo_wr32(nvbo, offset / sizeof(u32) + 2, 0);
-+	nouveau_bo_wr32(nvbo, offset / sizeof(u32) + 3, 0);
-+
-+	return 0;
-+}
-+
-+static int
-+nouveau_chan_eevent_handler(struct nvif_notify *notify)
-+{
-+	struct nouveau_channel *chan =3D
-+		container_of(notify, typeof(*chan), error_notifier.notify);
-+	const struct nvif_notify_eevent_rep *rep =3D notify->data;
-+
-+	WARN_ON(rep->chid !=3D chan->chid);
-+	nouveau_channel_set_error_notifier(chan, rep->error);
-+	return NVIF_NOTIFY_KEEP;
-+}
- static int
- nouveau_channel_init(struct nouveau_channel *chan, u32 vram, u32 gart)
- {
- 	struct nvif_device *device =3D chan->device;
- 	struct nouveau_cli *cli =3D (void *)nvif_client(&device->base);
- 	struct nvkm_mmu *mmu =3D nvxx_mmu(device);
- 	struct nvkm_sw_chan *swch;
- 	struct nv_dma_v0 args =3D {};
-@@ -381,16 +463,29 @@ nouveau_channel_init(struct nouveau_channel *chan=
-, u32 vram, u32 gart)
- 		if (ret)
- 			return ret;
-=20
- 		BEGIN_NV04(chan, NvSubSw, 0x0000, 1);
- 		OUT_RING  (chan, chan->nvsw.handle);
- 		FIRE_RING (chan);
- 	}
-=20
-+	/* error code events on why we're stuck/broken */
-+	ret =3D nvif_notify_init(chan->object, NULL,
-+			 nouveau_chan_eevent_handler, false,
-+			 CHANNEL_GPFIFO_ERROR_NOTIFIER_EEVENT,
-+			 &(struct nvif_notify_eevent_req) { .chid =3D chan->chid },
-+			 sizeof(struct nvif_notify_eevent_req),
-+			 sizeof(struct nvif_notify_eevent_rep),
-+			 &chan->error_notifier.notify);
-+	if (WARN_ON(ret))
-+		return ret;
-+	/* fini() does one put() */
-+	nvif_notify_get(&chan->error_notifier.notify);
-+
- 	/* initialise synchronisation */
- 	return nouveau_fence(chan->drm)->context_new(chan);
- }
-=20
- int
- nouveau_channel_new(struct nouveau_drm *drm, struct nvif_device *devic=
-e,
- 		    u32 handle, u32 arg0, u32 arg1,
- 		    struct nouveau_channel **pchan)
-diff --git a/drm/nouveau/nouveau_chan.h b/drm/nouveau/nouveau_chan.h
-index 8b3640f..730ddba 100644
---- a/drm/nouveau/nouveau_chan.h
-+++ b/drm/nouveau/nouveau_chan.h
-@@ -33,20 +33,30 @@ struct nouveau_channel {
- 		int ib_free;
- 		int ib_put;
- 	} dma;
- 	u32 user_get_hi;
- 	u32 user_get;
- 	u32 user_put;
-=20
- 	struct nvif_object *object;
-+
-+	struct {
-+		struct nouveau_bo *buffer;
-+		u32 offset;
-+		struct nvif_notify notify;
-+	} error_notifier;
- };
-=20
-=20
- int  nouveau_channel_new(struct nouveau_drm *, struct nvif_device *,
- 			 u32 handle, u32 arg0, u32 arg1,
- 			 struct nouveau_channel **);
- void nouveau_channel_del(struct nouveau_channel **);
- int  nouveau_channel_idle(struct nouveau_channel *);
-+struct drm_file;
-+int nouveau_channel_init_error_notifier(struct nouveau_channel *chan,
-+					struct drm_file *file,
-+					u32 handle, u32 offset);
-=20
- extern int nouveau_vram_pushbuf;
-=20
- #endif
-diff --git a/drm/nouveau/nouveau_drm.c b/drm/nouveau/nouveau_drm.c
-index 7d1297e..e3e6441 100644
---- a/drm/nouveau/nouveau_drm.c
-+++ b/drm/nouveau/nouveau_drm.c
-@@ -898,16 +898,17 @@ nouveau_ioctls[] =3D {
- 	DRM_IOCTL_DEF_DRV(NOUVEAU_GEM_NEW, nouveau_gem_ioctl_new, DRM_UNLOCKE=
-D|DRM_AUTH|DRM_RENDER_ALLOW),
- 	DRM_IOCTL_DEF_DRV(NOUVEAU_GEM_PUSHBUF, nouveau_gem_ioctl_pushbuf, DRM=
-_UNLOCKED|DRM_AUTH|DRM_RENDER_ALLOW),
- 	DRM_IOCTL_DEF_DRV(NOUVEAU_GEM_CPU_PREP, nouveau_gem_ioctl_cpu_prep, D=
-RM_UNLOCKED|DRM_AUTH|DRM_RENDER_ALLOW),
- 	DRM_IOCTL_DEF_DRV(NOUVEAU_GEM_CPU_FINI, nouveau_gem_ioctl_cpu_fini, D=
-RM_UNLOCKED|DRM_AUTH|DRM_RENDER_ALLOW),
- 	DRM_IOCTL_DEF_DRV(NOUVEAU_GEM_INFO, nouveau_gem_ioctl_info, DRM_UNLOC=
-KED|DRM_AUTH|DRM_RENDER_ALLOW),
- 	/* Staging ioctls */
- 	DRM_IOCTL_DEF_DRV(NOUVEAU_GEM_SET_TILING, nouveau_gem_ioctl_set_tilin=
-g, DRM_UNLOCKED|DRM_AUTH|DRM_RENDER_ALLOW),
- 	DRM_IOCTL_DEF_DRV(NOUVEAU_GEM_PUSHBUF_2, nouveau_gem_ioctl_pushbuf_2,=
- DRM_UNLOCKED|DRM_AUTH|DRM_RENDER_ALLOW),
-+	DRM_IOCTL_DEF_DRV(NOUVEAU_GEM_SET_ERROR_NOTIFIER, nouveau_gem_ioctl_s=
-et_error_notifier, DRM_UNLOCKED|DRM_AUTH|DRM_RENDER_ALLOW),
- };
-=20
- long
- nouveau_drm_ioctl(struct file *file, unsigned int cmd, unsigned long a=
-rg)
- {
- 	struct drm_file *filp =3D file->private_data;
- 	struct drm_device *dev =3D filp->minor->dev;
- 	long ret;
-diff --git a/drm/nouveau/nouveau_gem.c b/drm/nouveau/nouveau_gem.c
-index 884ab83..f8373cb 100644
---- a/drm/nouveau/nouveau_gem.c
-+++ b/drm/nouveau/nouveau_gem.c
-@@ -1032,16 +1032,45 @@ out_next:
- 			      (chan->push.vma.offset + ((chan->dma.cur + 2) << 2));
- 		req->suffix1 =3D 0x00000000;
- 	}
-=20
- 	return nouveau_abi16_put(abi16, ret);
- }
-=20
- int
-+nouveau_gem_ioctl_set_error_notifier(struct drm_device *dev, void *dat=
-a,
-+                            struct drm_file *file_priv)
-+{
-+	struct nouveau_abi16 *abi16 =3D nouveau_abi16_get(file_priv, dev);
-+	struct drm_nouveau_gem_set_error_notifier *req =3D data;
-+	struct nouveau_abi16_chan *abi16_ch;
-+	struct nouveau_channel *chan =3D NULL;
-+	int ret =3D 0;
-+
-+	if (unlikely(!abi16))
-+		return -ENOMEM;
-+
-+	list_for_each_entry(abi16_ch, &abi16->channels, head) {
-+		if (abi16_ch->chan->object->handle
-+				=3D=3D (NVDRM_CHAN | req->channel)) {
-+			chan =3D abi16_ch->chan;
-+			break;
-+		}
-+	}
-+	if (!chan)
-+		return nouveau_abi16_put(abi16, -ENOENT);
-+
-+	ret =3D nouveau_channel_init_error_notifier(chan, file_priv,
-+			req->buffer, req->offset);
-+
-+	return nouveau_abi16_put(abi16, ret);
-+}
-+
-+int
- nouveau_gem_ioctl_cpu_prep(struct drm_device *dev, void *data,
- 			   struct drm_file *file_priv)
- {
- 	struct drm_nouveau_gem_cpu_prep *req =3D data;
- 	struct drm_gem_object *gem;
- 	struct nouveau_bo *nvbo;
- 	bool no_wait =3D !!(req->flags & NOUVEAU_GEM_CPU_PREP_NOWAIT);
- 	bool write =3D !!(req->flags & NOUVEAU_GEM_CPU_PREP_WRITE);
-diff --git a/drm/nouveau/nouveau_gem.h b/drm/nouveau/nouveau_gem.h
-index 9e4323f..423ea5a 100644
---- a/drm/nouveau/nouveau_gem.h
-+++ b/drm/nouveau/nouveau_gem.h
-@@ -26,16 +26,18 @@ extern void nouveau_gem_object_close(struct drm_gem=
-_object *,
- extern int nouveau_gem_ioctl_set_tiling(struct drm_device *, void *,
- 					struct drm_file *);
- extern int nouveau_gem_ioctl_new(struct drm_device *, void *,
- 				 struct drm_file *);
- extern int nouveau_gem_ioctl_pushbuf(struct drm_device *, void *,
- 				     struct drm_file *);
- extern int nouveau_gem_ioctl_pushbuf_2(struct drm_device *, void *,
- 				       struct drm_file *);
-+extern int nouveau_gem_ioctl_set_error_notifier(struct drm_device *, v=
-oid *,
-+				       struct drm_file *);
- extern int nouveau_gem_ioctl_cpu_prep(struct drm_device *, void *,
- 				      struct drm_file *);
- extern int nouveau_gem_ioctl_cpu_fini(struct drm_device *, void *,
- 				      struct drm_file *);
- extern int nouveau_gem_ioctl_info(struct drm_device *, void *,
- 				  struct drm_file *);
-=20
- extern int nouveau_gem_prime_pin(struct drm_gem_object *);
-diff --git a/drm/nouveau/nvkm/engine/fifo/base.c b/drm/nouveau/nvkm/eng=
-ine/fifo/base.c
-index fa223f8..a5dc6c9 100644
---- a/drm/nouveau/nvkm/engine/fifo/base.c
-+++ b/drm/nouveau/nvkm/engine/fifo/base.c
-@@ -191,28 +191,76 @@ nvkm_fifo_uevent_ctor(struct nvkm_object *object,=
- void *data, u32 size,
- void
- nvkm_fifo_uevent(struct nvkm_fifo *fifo)
- {
- 	struct nvif_notify_uevent_rep rep =3D {
- 	};
- 	nvkm_event_send(&fifo->uevent, 1, 0, &rep, sizeof(rep));
- }
-=20
-+static int
-+nvkm_fifo_eevent_ctor(struct nvkm_object *object, void *data, u32 size=
-,
-+		      struct nvkm_notify *notify)
-+{
-+	union {
-+		struct nvif_notify_eevent_req req;
-+	} *req =3D data;
-+	int ret;
-+
-+	if (nvif_unvers(req->req)) {
-+		notify->size  =3D sizeof(struct nvif_notify_eevent_rep);
-+		notify->types =3D 1;
-+		notify->index =3D req->req.chid;
-+	}
-+
-+	return ret;
-+}
-+
-+static void
-+gk104_fifo_eevent_init(struct nvkm_event *event, int type, int index)
-+{
-+}
-+
-+static void
-+gk104_fifo_eevent_fini(struct nvkm_event *event, int type, int index)
-+{
-+}
-+
-+static const struct nvkm_event_func
-+nvkm_fifo_eevent_func =3D {
-+	.ctor =3D nvkm_fifo_eevent_ctor,
-+	.init =3D gk104_fifo_eevent_init,
-+	.fini =3D gk104_fifo_eevent_fini,
-+};
-+
-+void
-+nvkm_fifo_eevent(struct nvkm_fifo *fifo, u32 chid, u32 error)
-+{
-+	struct nvif_notify_eevent_rep rep =3D {
-+		.error =3D error,
-+		.chid =3D chid
-+	};
-+	nvkm_event_send(&fifo->eevent, 1, chid, &rep, sizeof(rep));
-+}
-+
- int
- _nvkm_fifo_channel_ntfy(struct nvkm_object *object, u32 type,
- 			struct nvkm_event **event)
- {
- 	struct nvkm_fifo *fifo =3D (void *)object->engine;
- 	switch (type) {
- 	case G82_CHANNEL_DMA_V0_NTFY_UEVENT:
- 		if (nv_mclass(object) >=3D G82_CHANNEL_DMA) {
- 			*event =3D &fifo->uevent;
- 			return 0;
- 		}
- 		break;
-+	case CHANNEL_GPFIFO_ERROR_NOTIFIER_EEVENT:
-+		*event =3D &fifo->eevent;
-+		return 0;
- 	default:
- 		break;
- 	}
- 	return -EINVAL;
- }
-=20
- static int
- nvkm_fifo_chid(struct nvkm_fifo *priv, struct nvkm_object *object)
-@@ -242,16 +290,17 @@ nvkm_client_name_for_fifo_chid(struct nvkm_fifo *=
-fifo, u32 chid)
-=20
- 	return nvkm_client_name(chan);
- }
-=20
- void
- nvkm_fifo_destroy(struct nvkm_fifo *priv)
- {
- 	kfree(priv->channel);
-+	nvkm_event_fini(&priv->eevent);
- 	nvkm_event_fini(&priv->uevent);
- 	nvkm_event_fini(&priv->cevent);
- 	nvkm_engine_destroy(&priv->base);
- }
-=20
- int
- nvkm_fifo_create_(struct nvkm_object *parent, struct nvkm_object *engi=
-ne,
- 		  struct nvkm_oclass *oclass,
-@@ -271,12 +320,16 @@ nvkm_fifo_create_(struct nvkm_object *parent, str=
-uct nvkm_object *engine,
- 	priv->channel =3D kzalloc(sizeof(*priv->channel) * (max + 1), GFP_KER=
-NEL);
- 	if (!priv->channel)
- 		return -ENOMEM;
-=20
- 	ret =3D nvkm_event_init(&nvkm_fifo_event_func, 1, 1, &priv->cevent);
- 	if (ret)
- 		return ret;
-=20
-+	ret =3D nvkm_event_init(&nvkm_fifo_eevent_func, 1, max + 1, &priv->ee=
-vent);
-+	if (ret)
-+		return ret;
-+
- 	priv->chid =3D nvkm_fifo_chid;
- 	spin_lock_init(&priv->lock);
- 	return 0;
- }
-diff --git a/drm/nouveau/nvkm/engine/fifo/gk104.c b/drm/nouveau/nvkm/en=
-gine/fifo/gk104.c
-index 52c22b0..659c05f 100644
---- a/drm/nouveau/nvkm/engine/fifo/gk104.c
-+++ b/drm/nouveau/nvkm/engine/fifo/gk104.c
-@@ -30,16 +30,18 @@
- #include <subdev/bar.h>
- #include <subdev/fb.h>
- #include <subdev/mmu.h>
- #include <subdev/timer.h>
-=20
- #include <nvif/class.h>
- #include <nvif/unpack.h>
-=20
-+#include "nouveau_drm.h"
-+
- #define _(a,b) { (a), ((1ULL << (a)) | (b)) }
- static const struct {
- 	u64 subdev;
- 	u64 mask;
- } fifo_engine[] =3D {
- 	_(NVDEV_ENGINE_GR      , (1ULL << NVDEV_ENGINE_SW) |
- 				 (1ULL << NVDEV_ENGINE_CE2)),
- 	_(NVDEV_ENGINE_MSPDEC  , 0),
-@@ -567,16 +569,20 @@ gk104_fifo_intr_sched_ctxsw(struct gk104_fifo_pri=
-v *priv)
- 		u32 chid =3D load ? next : prev;
- 		(void)save;
-=20
- 		if (busy && chsw) {
- 			if (!(chan =3D (void *)priv->base.channel[chid]))
- 				continue;
- 			if (!(engine =3D gk104_fifo_engine(priv, engn)))
- 				continue;
-+
-+			nvkm_fifo_eevent(&priv->base, chid,
-+					NOUVEAU_GEM_CHANNEL_FIFO_ERROR_IDLE_TIMEOUT);
-+
- 			gk104_fifo_recover(priv, engine, chan);
- 		}
- 	}
- }
-=20
- static void
- gk104_fifo_intr_sched(struct gk104_fifo_priv *priv)
- {
-@@ -783,16 +789,19 @@ gk104_fifo_intr_fault(struct gk104_fifo_priv *pri=
-v, int unit)
- 		 ec ? ec->name : ecunk, (u64)inst << 12,
- 		 nvkm_client_name(engctx));
-=20
- 	object =3D engctx;
- 	while (object) {
- 		switch (nv_mclass(object)) {
- 		case KEPLER_CHANNEL_GPFIFO_A:
- 		case MAXWELL_CHANNEL_GPFIFO_A:
-+			nvkm_fifo_eevent(&priv->base,
-+					((struct nvkm_fifo_chan*)object)->chid,
-+					NOUVEAU_GEM_CHANNEL_FIFO_ERROR_MMU_ERR_FLT);
- 			gk104_fifo_recover(priv, engine, (void *)object);
- 			break;
- 		}
- 		object =3D object->parent;
- 	}
-=20
- 	nvkm_engctx_put(engctx);
- }
-@@ -853,16 +862,18 @@ gk104_fifo_intr_pbdma_0(struct gk104_fifo_priv *p=
-riv, int unit)
- 		nv_error(priv, "PBDMA%d:", unit);
- 		nvkm_bitfield_print(gk104_fifo_pbdma_intr_0, show);
- 		pr_cont("\n");
- 		nv_error(priv,
- 			 "PBDMA%d: ch %d [%s] subc %d mthd 0x%04x data 0x%08x\n",
- 			 unit, chid,
- 			 nvkm_client_name_for_fifo_chid(&priv->base, chid),
- 			 subc, mthd, data);
-+		nvkm_fifo_eevent(&priv->base, chid,
-+				NOUVEAU_GEM_CHANNEL_PBDMA_ERROR);
- 	}
-=20
- 	nv_wr32(priv, 0x040108 + (unit * 0x2000), stat);
- }
-=20
- static const struct nvkm_bitfield gk104_fifo_pbdma_intr_1[] =3D {
- 	{ 0x00000001, "HCE_RE_ILLEGAL_OP" },
- 	{ 0x00000002, "HCE_RE_ALIGNB" },
-@@ -881,16 +892,18 @@ gk104_fifo_intr_pbdma_1(struct gk104_fifo_priv *p=
-riv, int unit)
-=20
- 	if (stat) {
- 		nv_error(priv, "PBDMA%d:", unit);
- 		nvkm_bitfield_print(gk104_fifo_pbdma_intr_1, stat);
- 		pr_cont("\n");
- 		nv_error(priv, "PBDMA%d: ch %d %08x %08x\n", unit, chid,
- 			 nv_rd32(priv, 0x040150 + (unit * 0x2000)),
- 			 nv_rd32(priv, 0x040154 + (unit * 0x2000)));
-+		nvkm_fifo_eevent(&priv->base, chid,
-+				NOUVEAU_GEM_CHANNEL_PBDMA_ERROR);
- 	}
-=20
- 	nv_wr32(priv, 0x040148 + (unit * 0x2000), stat);
- }
-=20
- static void
- gk104_fifo_intr_runlist(struct gk104_fifo_priv *priv)
- {
-diff --git a/drm/nouveau/nvkm/engine/gr/gf100.c b/drm/nouveau/nvkm/engi=
-ne/gr/gf100.c
-index e7c3e9e..8482078 100644
---- a/drm/nouveau/nvkm/engine/gr/gf100.c
-+++ b/drm/nouveau/nvkm/engine/gr/gf100.c
-@@ -32,16 +32,18 @@
- #include <engine/fifo.h>
- #include <subdev/fb.h>
- #include <subdev/mc.h>
- #include <subdev/timer.h>
-=20
- #include <nvif/class.h>
- #include <nvif/unpack.h>
-=20
-+#include "nouveau_drm.h"
-+
- /*********************************************************************=
-**********
-  * Zero Bandwidth Clear
-  *********************************************************************=
-*********/
-=20
- static void
- gf100_gr_zbc_clear_color(struct gf100_gr_priv *priv, int zbc)
- {
- 	if (priv->zbc_color[zbc].format) {
-@@ -1169,34 +1171,37 @@ gf100_gr_intr(struct nvkm_subdev *subdev)
-=20
- 	if (stat & 0x00000020) {
- 		nv_error(priv,
- 			 "ILLEGAL_CLASS ch %d [0x%010llx %s] subc %d class 0x%04x mthd 0x%0=
-4x data 0x%08x\n",
- 			 chid, inst << 12, nvkm_client_name(engctx), subc,
- 			 class, mthd, data);
- 		nv_wr32(priv, 0x400100, 0x00000020);
- 		stat &=3D ~0x00000020;
-+		nvkm_fifo_eevent(pfifo, chid, NOUVEAU_GEM_CHANNEL_GR_ERROR_SW_NOTIFY=
-);
- 	}
-=20
- 	if (stat & 0x00100000) {
- 		nv_error(priv, "DATA_ERROR [");
- 		nvkm_enum_print(nv50_data_error_names, code);
- 		pr_cont("] ch %d [0x%010llx %s] subc %d class 0x%04x mthd 0x%04x dat=
-a 0x%08x\n",
- 			chid, inst << 12, nvkm_client_name(engctx), subc,
- 			class, mthd, data);
- 		nv_wr32(priv, 0x400100, 0x00100000);
- 		stat &=3D ~0x00100000;
-+		nvkm_fifo_eevent(pfifo, chid, NOUVEAU_GEM_CHANNEL_GR_ERROR_SW_NOTIFY=
-);
- 	}
-=20
- 	if (stat & 0x00200000) {
- 		nv_error(priv, "TRAP ch %d [0x%010llx %s]\n", chid, inst << 12,
- 			 nvkm_client_name(engctx));
- 		gf100_gr_trap_intr(priv);
- 		nv_wr32(priv, 0x400100, 0x00200000);
- 		stat &=3D ~0x00200000;
-+		nvkm_fifo_eevent(pfifo, chid, NOUVEAU_GEM_CHANNEL_GR_ERROR_SW_NOTIFY=
-);
- 	}
-=20
- 	if (stat & 0x00080000) {
- 		gf100_gr_ctxctl_isr(priv);
- 		nv_wr32(priv, 0x400100, 0x00080000);
- 		stat &=3D ~0x00080000;
- 	}
-=20
-diff --git a/drm/nouveau/uapi/drm/nouveau_drm.h b/drm/nouveau/uapi/drm/=
-nouveau_drm.h
-index 1331c28..c9c296a 100644
---- a/drm/nouveau/uapi/drm/nouveau_drm.h
-+++ b/drm/nouveau/uapi/drm/nouveau_drm.h
-@@ -143,16 +143,27 @@ struct drm_nouveau_gem_cpu_prep {
- 	uint32_t handle;
- 	uint32_t flags;
- };
-=20
- struct drm_nouveau_gem_cpu_fini {
- 	uint32_t handle;
- };
-=20
-+#define NOUVEAU_GEM_CHANNEL_FIFO_ERROR_IDLE_TIMEOUT	8
-+#define NOUVEAU_GEM_CHANNEL_GR_ERROR_SW_NOTIFY		13
-+#define NOUVEAU_GEM_CHANNEL_FIFO_ERROR_MMU_ERR_FLT	31
-+#define NOUVEAU_GEM_CHANNEL_PBDMA_ERROR			32
-+struct drm_nouveau_gem_set_error_notifier {
-+	uint32_t channel;
-+	uint32_t buffer;
-+	uint32_t offset; /* bytes, u32-aligned */
-+};
-+
-+
- #define DRM_NOUVEAU_GETPARAM           0x00 /* deprecated */
- #define DRM_NOUVEAU_SETPARAM           0x01 /* deprecated */
- #define DRM_NOUVEAU_CHANNEL_ALLOC      0x02 /* deprecated */
- #define DRM_NOUVEAU_CHANNEL_FREE       0x03 /* deprecated */
- #define DRM_NOUVEAU_GROBJ_ALLOC        0x04 /* deprecated */
- #define DRM_NOUVEAU_NOTIFIEROBJ_ALLOC  0x05 /* deprecated */
- #define DRM_NOUVEAU_GPUOBJ_FREE        0x06 /* deprecated */
- #define DRM_NOUVEAU_NVIF               0x07
-@@ -160,19 +171,21 @@ struct drm_nouveau_gem_cpu_fini {
- #define DRM_NOUVEAU_GEM_PUSHBUF        0x41
- #define DRM_NOUVEAU_GEM_CPU_PREP       0x42
- #define DRM_NOUVEAU_GEM_CPU_FINI       0x43
- #define DRM_NOUVEAU_GEM_INFO           0x44
- /* range 0x98..DRM_COMMAND_END (8 entries) is reserved for staging, un=
-stable ioctls */
- #define DRM_NOUVEAU_STAGING_IOCTL      0x58
- #define DRM_NOUVEAU_GEM_SET_TILING     (DRM_NOUVEAU_STAGING_IOCTL + 0x=
-0)
- #define DRM_NOUVEAU_GEM_PUSHBUF_2      (DRM_NOUVEAU_STAGING_IOCTL + 0x=
-1)
-+#define DRM_NOUVEAU_GEM_SET_ERROR_NOTIFIER (DRM_NOUVEAU_STAGING_IOCTL =
-+ 0x2)
-=20
- #define DRM_IOCTL_NOUVEAU_GEM_NEW            DRM_IOWR(DRM_COMMAND_BASE=
- + DRM_NOUVEAU_GEM_NEW, struct drm_nouveau_gem_new)
- #define DRM_IOCTL_NOUVEAU_GEM_PUSHBUF        DRM_IOWR(DRM_COMMAND_BASE=
- + DRM_NOUVEAU_GEM_PUSHBUF, struct drm_nouveau_gem_pushbuf)
- #define DRM_IOCTL_NOUVEAU_GEM_CPU_PREP       DRM_IOW (DRM_COMMAND_BASE=
- + DRM_NOUVEAU_GEM_CPU_PREP, struct drm_nouveau_gem_cpu_prep)
- #define DRM_IOCTL_NOUVEAU_GEM_CPU_FINI       DRM_IOW (DRM_COMMAND_BASE=
- + DRM_NOUVEAU_GEM_CPU_FINI, struct drm_nouveau_gem_cpu_fini)
- #define DRM_IOCTL_NOUVEAU_GEM_INFO           DRM_IOWR(DRM_COMMAND_BASE=
- + DRM_NOUVEAU_GEM_INFO, struct drm_nouveau_gem_info)
- /* staging ioctls */
- #define DRM_IOCTL_NOUVEAU_GEM_SET_TILING     DRM_IOWR(DRM_COMMAND_BASE=
- + DRM_NOUVEAU_GEM_SET_TILING, struct drm_nouveau_gem_set_tiling)
- #define DRM_IOCTL_NOUVEAU_GEM_PUSHBUF_2      DRM_IOWR(DRM_COMMAND_BASE=
- + DRM_NOUVEAU_GEM_PUSHBUF_2, struct drm_nouveau_gem_pushbuf_2)
-+#define DRM_IOCTL_NOUVEAU_GEM_SET_ERROR_NOTIFIER DRM_IOWR(DRM_COMMAND_=
-BASE + DRM_NOUVEAU_GEM_SET_ERROR_NOTIFIER, struct drm_nouveau_gem_set_e=
-rror_notifier)
-=20
- #endif /* __NOUVEAU_DRM_H__ */
---=20
-2.1.4
+RW5hYmxlIHRoZSBzY2hlZHVsaW5nIHRpbWVvdXQgZXJyb3IgaW50ZXJydXB0IGFuZCBzZXQgaXQg
+dG8gYSBsb3cgdmFsdWUKdG8gaGFwcGVuIHBlcmlvZGljYWxseSwgc2luY2UgaXQgY2FuIGJlIG1p
+c3NlZCBpbiBIVyBpbiBjZXJ0YWluCmNvbmRpdGlvbnMuIEluY3JlbWVudCBhIGNoYW5uZWwtc3Bl
+Y2lmaWMgY291bnRlciBpbiBzb2Z0d2FyZSBpbiB0aGUKZXJyb3IgaGFuZGxlciBpZiB0aGUgY3Vy
+cmVudCBjaGFubmVsIGhhc24ndCBhZHZhbmNlZC4gQWJvcnQgdGhlIGNoYW5uZWwKb25jZSB0aGUg
+dGltZW91dCBsaW1pdCBpcyBoaXQgKHdpdGggdGhlIHBlcmlvZGljIGdyYW51bGFyaXR5KS4gVGhl
+IGVycm9yCm5vdGlmaWVyIGlzIHNldCB0byBOT1VWRUFVX0dFTV9DSEFOTkVMX0ZJRk9fRVJST1Jf
+SURMRV9USU1FT1VUIHdoZW4gdGhpcwpvY2N1cnMuCgpBIG5ldyBLRVBMRVJfU0VUX0NIQU5ORUxf
+VElNRU9VVCBtdGhkIHNldHMgdGhlIHRpbWVvdXQgbGltaXQsIGluCm1pbGxpc2Vjb25kcy4gVGhl
+IGludGVycnVwdCBncmFudWxhcml0eSBpcyBzZXQgdG8gMTAwIG1zLgoKU29tZSBzdGF0dXMgYml0
+IG1hbmdsaW5nIGluIHRoZSBzY2hlZCBlcnJvciBoYW5kbGVyIGlzIGNsZWFuZWQgdXAgdG9vLgoK
+U2lnbmVkLW9mZi1ieTogS29uc3RhIEjDtmx0dMOkIDxraG9sdHRhQG52aWRpYS5jb20+Ci0tLQog
+ZHJtL25vdXZlYXUvaW5jbHVkZS9udmlmL2NsYXNzLmggICAgIHwgIDggKysrKwogZHJtL25vdXZl
+YXUvbnZrbS9lbmdpbmUvZmlmby9nazEwNC5jIHwgOTIgKysrKysrKysrKysrKysrKysrKysrKysr
+KysrKystLS0tLS0tCiAyIGZpbGVzIGNoYW5nZWQsIDg0IGluc2VydGlvbnMoKyksIDE2IGRlbGV0
+aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RybS9ub3V2ZWF1L2luY2x1ZGUvbnZpZi9jbGFzcy5oIGIv
+ZHJtL25vdXZlYXUvaW5jbHVkZS9udmlmL2NsYXNzLmgKaW5kZXggNzJjM2IzNy4uOWI1NjhkYyAx
+MDA2NDQKLS0tIGEvZHJtL25vdXZlYXUvaW5jbHVkZS9udmlmL2NsYXNzLmgKKysrIGIvZHJtL25v
+dXZlYXUvaW5jbHVkZS9udmlmL2NsYXNzLmgKQEAgLTYyMCwxOCArNjIwLDI2IEBAIHN0cnVjdCBm
+ZXJtaV9hX3piY19kZXB0aF92MCB7CiAJX191OCAgZm9ybWF0OwogCV9fdTggIGluZGV4OwogCV9f
+dTggIHBhZDAzWzVdOwogCV9fdTMyIGRzOwogCV9fdTMyIGwyOwogfTsKIAogI2RlZmluZSBLRVBM
+RVJfU0VUX0NIQU5ORUxfUFJJT1JJVFkgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgMHgwMAorI2RlZmluZSBLRVBMRVJfU0VUX0NIQU5ORUxfVElNRU9VVCAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgMHgwMQorCiBzdHJ1Y3Qga2VwbGVyX3NldF9j
+aGFubmVsX3ByaW9yaXR5X3YwIHsKIAlfX3U4ICB2ZXJzaW9uOwogI2RlZmluZSBLRVBMRVJfU0VU
+X0NIQU5ORUxfUFJJT1JJVFlfTE9XICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+MHgwMAogI2RlZmluZSBLRVBMRVJfU0VUX0NIQU5ORUxfUFJJT1JJVFlfTUVESVVNICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgMHgwMQogI2RlZmluZSBLRVBMRVJfU0VUX0NIQU5ORUxf
+UFJJT1JJVFlfSElHSCAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgMHgwMgogCV9f
+dTggcHJpb3JpdHk7CiAJX191OCAgcGFkMDNbNl07CiB9OwogCitzdHJ1Y3Qga2VwbGVyX3NldF9j
+aGFubmVsX3RpbWVvdXRfdjAgeworCV9fdTggIHZlcnNpb247CisJX191OCAgcGFkMDNbM107CisJ
+X191MzIgdGltZW91dF9tczsKK307CisKICNlbmRpZgpkaWZmIC0tZ2l0IGEvZHJtL25vdXZlYXUv
+bnZrbS9lbmdpbmUvZmlmby9nazEwNC5jIGIvZHJtL25vdXZlYXUvbnZrbS9lbmdpbmUvZmlmby9n
+azEwNC5jCmluZGV4IGZkYTcyNmQuLjUzYTQ2NGQgMTAwNjQ0Ci0tLSBhL2RybS9ub3V2ZWF1L252
+a20vZW5naW5lL2ZpZm8vZ2sxMDQuYworKysgYi9kcm0vbm91dmVhdS9udmttL2VuZ2luZS9maWZv
+L2drMTA0LmMKQEAgLTQ5LDE2ICs0OSwyMCBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IHsKIAlfKE5W
+REVWX0VOR0lORV9NU1ZMRCAgICwgMCksCiAJXyhOVkRFVl9FTkdJTkVfQ0UwICAgICAsIDApLAog
+CV8oTlZERVZfRU5HSU5FX0NFMSAgICAgLCAwKSwKIAlfKE5WREVWX0VOR0lORV9NU0VOQyAgICwg
+MCksCiB9OwogI3VuZGVmIF8KICNkZWZpbmUgRklGT19FTkdJTkVfTlIgQVJSQVlfU0laRShmaWZv
+X2VuZ2luZSkKIAorI2RlZmluZSBDVFhTV19TVEFUVVNfTE9BRCA1CisjZGVmaW5lIENUWFNXX1NU
+QVRVU19TQVZFIDYKKyNkZWZpbmUgQ1RYU1dfU1RBVFVTX1NXSVRDSCA3CisKIHN0cnVjdCBnazEw
+NF9maWZvX2VuZ24gewogCXN0cnVjdCBudmttX2dwdW9iaiAqcnVubGlzdFsyXTsKIAlpbnQgY3Vy
+X3J1bmxpc3Q7CiAJd2FpdF9xdWV1ZV9oZWFkX3Qgd2FpdDsKIH07CiAKIHN0cnVjdCBnazEwNF9m
+aWZvX3ByaXYgewogCXN0cnVjdCBudmttX2ZpZm8gYmFzZTsKQEAgLTgzLDE4ICs4NywyNSBAQCBz
+dHJ1Y3QgZ2sxMDRfZmlmb19iYXNlIHsKIHN0cnVjdCBnazEwNF9maWZvX2NoYW4gewogCXN0cnVj
+dCBudmttX2ZpZm9fY2hhbiBiYXNlOwogCXUzMiBlbmdpbmU7CiAJZW51bSB7CiAJCVNUT1BQRUQs
+CiAJCVJVTk5JTkcsCiAJCUtJTExFRAogCX0gc3RhdGU7CisJc3RydWN0IHsKKwkJdTMyIHN1bV9t
+czsKKwkJdTMyIGxpbWl0X21zOworCQl1MzIgZ3BmaWZvX2dldDsKKwl9IHRpbWVvdXQ7CiB9Owog
+CisjZGVmaW5lIEdSRklGT19USU1FT1VUX0NIRUNLX1BFUklPRF9NUyAxMDAKKwogLyoqKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioqKioqKioqKioKICAqIEZJRk8gY2hhbm5lbCBvYmplY3RzCiAgKioqKioqKioqKioqKioq
+KioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioqKioq
+KioqKioqLwogCiBzdGF0aWMgdm9pZAogZ2sxMDRfZmlmb19ydW5saXN0X3VwZGF0ZShzdHJ1Y3Qg
+Z2sxMDRfZmlmb19wcml2ICpwcml2LCB1MzIgZW5naW5lKQogewogCXN0cnVjdCBudmttX2JhciAq
+YmFyID0gbnZrbV9iYXIocHJpdik7CkBAIC0yODgsMTYgKzI5OSwyMSBAQCBnazEwNF9maWZvX2No
+YW5fY3RvcihzdHJ1Y3QgbnZrbV9vYmplY3QgKnBhcmVudCwgc3RydWN0IG52a21fb2JqZWN0ICpl
+bmdpbmUsCiAJbnZfd28zMihiYXNlLCAweDk0LCAweDMwMDAwMDAxKTsKIAludl93bzMyKGJhc2Us
+IDB4OWMsIDB4MDAwMDAxMDApOwogCW52X3dvMzIoYmFzZSwgMHhhYywgMHgwMDAwMDAxZik7CiAJ
+bnZfd28zMihiYXNlLCAweGU4LCBjaGFuLT5iYXNlLmNoaWQpOwogCW52X3dvMzIoYmFzZSwgMHhi
+OCwgMHhmODAwMDAwMCk7CiAJbnZfd28zMihiYXNlLCAweGY4LCAweDEwMDAzMDgwKTsgLyogMHgw
+MDIzMTAgKi8KIAludl93bzMyKGJhc2UsIDB4ZmMsIDB4MTAwMDAwMTApOyAvKiAweDAwMjM1MCAq
+LwogCWJhci0+Zmx1c2goYmFyKTsKKworCWNoYW4tPnRpbWVvdXQuc3VtX21zID0gMDsKKwljaGFu
+LT50aW1lb3V0LmxpbWl0X21zID0gLTE7CisJY2hhbi0+dGltZW91dC5ncGZpZm9fZ2V0ID0gMDsK
+KwogCXJldHVybiAwOwogfQogCiBzdGF0aWMgaW50CiBnazEwNF9maWZvX2NoYW5faW5pdChzdHJ1
+Y3QgbnZrbV9vYmplY3QgKm9iamVjdCkKIHsKIAlzdHJ1Y3QgbnZrbV9ncHVvYmogKmJhc2UgPSBu
+dl9ncHVvYmoob2JqZWN0LT5wYXJlbnQpOwogCXN0cnVjdCBnazEwNF9maWZvX3ByaXYgKnByaXYg
+PSAodm9pZCAqKW9iamVjdC0+ZW5naW5lOwpAQCAtMzgxLDIxICszOTcsMzkgQEAgZ2sxMDRfZmlm
+b19jaGFuX3NldF9wcmlvcml0eShzdHJ1Y3QgbnZrbV9vYmplY3QgKm9iamVjdCwgdm9pZCAqZGF0
+YSwgdTMyIHNpemUpCiAJCX0KIAkJcmV0dXJuIGdrMTA0X2ZpZm9fc2V0X3J1bmxpc3RfdGltZXNs
+aWNlKHByaXYsIGNoYW4sIHNsaWNlKTsKIAl9CiAKIAlyZXR1cm4gcmV0OwogfQogCiBpbnQKK2dr
+MTA0X2ZpZm9fY2hhbl9zZXRfdGltZW91dChzdHJ1Y3QgbnZrbV9vYmplY3QgKm9iamVjdCwgdm9p
+ZCAqZGF0YSwgdTMyIHNpemUpCit7CisJc3RydWN0IGdrMTA0X2ZpZm9fY2hhbiAqY2hhbiA9ICh2
+b2lkICopb2JqZWN0OworCXVuaW9uIHsKKwkJc3RydWN0IGtlcGxlcl9zZXRfY2hhbm5lbF90aW1l
+b3V0X3YwIHYwOworCX0gKmFyZ3MgPSBkYXRhOworCWludCByZXQ7CisKKwlpZiAobnZpZl91bnBh
+Y2soYXJncy0+djAsIDAsIDAsIGZhbHNlKSkgeworCQljaGFuLT50aW1lb3V0LmxpbWl0X21zID0g
+YXJncy0+djAudGltZW91dF9tczsKKwl9CisKKwlyZXR1cm4gcmV0OworfQorCitpbnQKIGdrMTA0
+X2ZpZm9fY2hhbl9tdGhkKHN0cnVjdCBudmttX29iamVjdCAqb2JqZWN0LCB1MzIgbXRoZCwgdm9p
+ZCAqZGF0YSwgdTMyIHNpemUpCiB7CiAJc3dpdGNoIChtdGhkKSB7CiAJY2FzZSBLRVBMRVJfU0VU
+X0NIQU5ORUxfUFJJT1JJVFk6CiAJCXJldHVybiBnazEwNF9maWZvX2NoYW5fc2V0X3ByaW9yaXR5
+KG9iamVjdCwgZGF0YSwgc2l6ZSk7CisJY2FzZSBLRVBMRVJfU0VUX0NIQU5ORUxfVElNRU9VVDoK
+KwkJcmV0dXJuIGdrMTA0X2ZpZm9fY2hhbl9zZXRfdGltZW91dChvYmplY3QsIGRhdGEsIHNpemUp
+OwogCWRlZmF1bHQ6CiAJCWJyZWFrOwogCX0KIAlyZXR1cm4gLUVJTlZBTDsKIH0KIAogc3RydWN0
+IG52a21fb2Z1bmNzCiBnazEwNF9maWZvX2NoYW5fb2Z1bmNzID0gewpAQCAtNjA2LDYxICs2NDAs
+ODMgQEAgZ2sxMDRfZmlmb19pbnRyX2JpbmQoc3RydWN0IGdrMTA0X2ZpZm9fcHJpdiAqcHJpdikK
+IH0KIAogc3RhdGljIGNvbnN0IHN0cnVjdCBudmttX2VudW0KIGdrMTA0X2ZpZm9fc2NoZWRfcmVh
+c29uW10gPSB7CiAJeyAweDBhLCAiQ1RYU1dfVElNRU9VVCIgfSwKIAl7fQogfTsKIAorc3RhdGlj
+IGJvb2wKK2drMTA0X2ZpZm9fdXBkYXRlX3RpbWVvdXQoc3RydWN0IGdrMTA0X2ZpZm9fcHJpdiAq
+cHJpdiwKKwkJc3RydWN0IGdrMTA0X2ZpZm9fY2hhbiAqY2hhbiwgdTMyIGR0KQoreworCXUzMiBn
+cGZpZm9fZ2V0ID0gbnZfcmQzMihwcml2LCAweDg4KTsKKwkvKiBhZHZhbmNpbmcsIGJ1dCBzbG93
+bHk7IHJlc2V0IGNvdW50aW5nICovCisJaWYgKGdwZmlmb19nZXQgIT0gY2hhbi0+dGltZW91dC5n
+cGZpZm9fZ2V0KQorCQljaGFuLT50aW1lb3V0LnN1bV9tcyA9IDA7CisKKwljaGFuLT50aW1lb3V0
+LnN1bV9tcyArPSBkdDsKKwljaGFuLT50aW1lb3V0LmdwZmlmb19nZXQgPSBncGZpZm9fZ2V0Owor
+CisJcmV0dXJuIGNoYW4tPnRpbWVvdXQuc3VtX21zID4gY2hhbi0+dGltZW91dC5saW1pdF9tczsK
+K30KKwogc3RhdGljIHZvaWQKIGdrMTA0X2ZpZm9faW50cl9zY2hlZF9jdHhzdyhzdHJ1Y3QgZ2sx
+MDRfZmlmb19wcml2ICpwcml2KQogewogCXN0cnVjdCBudmttX2VuZ2luZSAqZW5naW5lOwogCXN0
+cnVjdCBnazEwNF9maWZvX2NoYW4gKmNoYW47CiAJdTMyIGVuZ247CiAKIAlmb3IgKGVuZ24gPSAw
+OyBlbmduIDwgQVJSQVlfU0laRShmaWZvX2VuZ2luZSk7IGVuZ24rKykgewotCQl1MzIgc3RhdCA9
+IG52X3JkMzIocHJpdiwgMHgwMDI2NDAgKyAoZW5nbiAqIDB4MDQpKTsKLQkJdTMyIGJ1c3kgPSAo
+c3RhdCAmIDB4ODAwMDAwMDApOwotCQl1MzIgbmV4dCA9IChzdGF0ICYgMHgwN2ZmMDAwMCkgPj4g
+MTY7Ci0JCXUzMiBjaHN3ID0gKHN0YXQgJiAweDAwMDA4MDAwKTsKLQkJdTMyIHNhdmUgPSAoc3Rh
+dCAmIDB4MDAwMDQwMDApOwotCQl1MzIgbG9hZCA9IChzdGF0ICYgMHgwMDAwMjAwMCk7Ci0JCXUz
+MiBwcmV2ID0gKHN0YXQgJiAweDAwMDAwN2ZmKTsKLQkJdTMyIGNoaWQgPSBsb2FkID8gbmV4dCA6
+IHByZXY7Ci0JCSh2b2lkKXNhdmU7Ci0KLQkJaWYgKGJ1c3kgJiYgY2hzdykgeworCQl1MzIgZW5n
+c3RhdCA9IG52X3JkMzIocHJpdiwgMHgwMDI2NDAgKyAoZW5nbiAqIDB4MDQpKTsKKwkJdTMyIGJ1
+c3kgPSAoZW5nc3RhdCAmIDB4ODAwMDAwMDApOworCQl1MzIgbmV4dCA9IChlbmdzdGF0ICYgMHgw
+N2ZmMDAwMCkgPj4gMTY7CisJCXUzMiBjdHhzdGF0ID0gKGVuZ3N0YXQgJiAweDAwMDBlMDAwKSA+
+PiAxMzsKKwkJdTMyIHByZXYgPSAoZW5nc3RhdCAmIDB4MDAwMDA3ZmYpOworCisJCXUzMiBjaGlk
+ID0gY3R4c3RhdCA9PSBDVFhTV19TVEFUVVNfTE9BRCA/IG5leHQgOiBwcmV2OworCQl1MzIgY3R4
+c3dfYWN0aXZlID0gY3R4c3RhdCA9PSBDVFhTV19TVEFUVVNfTE9BRCB8fAorCQkJY3R4c3RhdCA9
+PSBDVFhTV19TVEFUVVNfU0FWRSB8fAorCQkJY3R4c3RhdCA9PSBDVFhTV19TVEFUVVNfU1dJVENI
+OworCisJCWlmIChidXN5ICYmIGN0eHN3X2FjdGl2ZSkgewogCQkJaWYgKCEoY2hhbiA9ICh2b2lk
+ICopcHJpdi0+YmFzZS5jaGFubmVsW2NoaWRdKSkKIAkJCQljb250aW51ZTsKIAkJCWlmICghKGVu
+Z2luZSA9IGdrMTA0X2ZpZm9fZW5naW5lKHByaXYsIGVuZ24pKSkKIAkJCQljb250aW51ZTsKIAot
+CQkJbnZrbV9maWZvX2VldmVudCgmcHJpdi0+YmFzZSwgY2hpZCwKLQkJCQkJTk9VVkVBVV9HRU1f
+Q0hBTk5FTF9GSUZPX0VSUk9SX0lETEVfVElNRU9VVCk7Ci0KLQkJCWdrMTA0X2ZpZm9fcmVjb3Zl
+cihwcml2LCBlbmdpbmUsIGNoYW4pOworCQkJaWYgKGdrMTA0X2ZpZm9fdXBkYXRlX3RpbWVvdXQo
+cHJpdiwgY2hhbiwKKwkJCQkJCUdSRklGT19USU1FT1VUX0NIRUNLX1BFUklPRF9NUykpIHsKKwkJ
+CQludmttX2ZpZm9fZWV2ZW50KCZwcml2LT5iYXNlLCBjaGlkLAorCQkJCQkJTk9VVkVBVV9HRU1f
+Q0hBTk5FTF9GSUZPX0VSUk9SX0lETEVfVElNRU9VVCk7CisJCQkJZ2sxMDRfZmlmb19yZWNvdmVy
+KHByaXYsIGVuZ2luZSwgY2hhbik7CisJCQl9IGVsc2UgeworCQkJCW52X2RlYnVnKHByaXYsICJm
+aWZvIHdhaXRpbmcgZm9yIGN0eHN3ICVkIG1zIG9uIGNoICVkXG4iLAorCQkJCQkJY2hhbi0+dGlt
+ZW91dC5zdW1fbXMsIGNoaWQpOworCQkJfQogCQl9CiAJfQogfQogCiBzdGF0aWMgdm9pZAogZ2sx
+MDRfZmlmb19pbnRyX3NjaGVkKHN0cnVjdCBnazEwNF9maWZvX3ByaXYgKnByaXYpCiB7CiAJdTMy
+IGludHIgPSBudl9yZDMyKHByaXYsIDB4MDAyNTRjKTsKIAl1MzIgY29kZSA9IGludHIgJiAweDAw
+MDAwMGZmOwogCWNvbnN0IHN0cnVjdCBudmttX2VudW0gKmVuOwogCWNoYXIgZW51bmtbNl0gPSAi
+IjsKIAogCWVuID0gbnZrbV9lbnVtX2ZpbmQoZ2sxMDRfZmlmb19zY2hlZF9yZWFzb24sIGNvZGUp
+OwogCWlmICghZW4pCiAJCXNucHJpbnRmKGVudW5rLCBzaXplb2YoZW51bmspLCAiVU5LJTAyeCIs
+IGNvZGUpOwogCi0JbnZfZXJyb3IocHJpdiwgIlNDSEVEX0VSUk9SIFsgJXMgXVxuIiwgZW4gPyBl
+bi0+bmFtZSA6IGVudW5rKTsKKwkvKiB0aGlzIGlzIGEgbm9ybWFsIHNpdHVhdGlvbiwgbm90IHNv
+IGxvdWQgKi8KKwludl9kZWJ1Zyhwcml2LCAiU0NIRURfRVJST1IgWyAlcyBdXG4iLCBlbiA/IGVu
+LT5uYW1lIDogZW51bmspOwogCiAJc3dpdGNoIChjb2RlKSB7CiAJY2FzZSAweDBhOgogCQlnazEw
+NF9maWZvX2ludHJfc2NoZWRfY3R4c3cocHJpdik7CiAJCWJyZWFrOwogCWRlZmF1bHQ6CiAJCWJy
+ZWFrOwogCX0KQEAgLTExMzMsMTggKzExODksMjIgQEAgZ2sxMDRfZmlmb19pbml0KHN0cnVjdCBu
+dmttX29iamVjdCAqb2JqZWN0KQogCS8qIFBCRE1BW25dLkhDRSAqLwogCWZvciAoaSA9IDA7IGkg
+PCBwcml2LT5zcG9vbl9ucjsgaSsrKSB7CiAJCW52X3dyMzIocHJpdiwgMHgwNDAxNDggKyAoaSAq
+IDB4MjAwMCksIDB4ZmZmZmZmZmYpOyAvKiBJTlRSICovCiAJCW52X3dyMzIocHJpdiwgMHgwNDAx
+NGMgKyAoaSAqIDB4MjAwMCksIDB4ZmZmZmZmZmYpOyAvKiBJTlRSRU4gKi8KIAl9CiAKIAludl93
+cjMyKHByaXYsIDB4MDAyMjU0LCAweDEwMDAwMDAwIHwgcHJpdi0+dXNlci5iYXIub2Zmc2V0ID4+
+IDEyKTsKIAorCS8qIGVuYWJsZSBpbnRlcnJ1cHRzICovCiAJbnZfd3IzMihwcml2LCAweDAwMjEw
+MCwgMHhmZmZmZmZmZik7CiAJbnZfd3IzMihwcml2LCAweDAwMjE0MCwgMHg3ZmZmZmZmZik7CisK
+KwkvKiBlbmdpbmUgY29udGV4dCBzd2l0Y2ggdGltZW91dCAqLworCW52X3dyMzIocHJpdiwgMHgw
+MDJhMGMsIDB4ODAwMDAwMDAgfCAoMTAwMCAqIEdSRklGT19USU1FT1VUX0NIRUNLX1BFUklPRF9N
+UykpOwogCXJldHVybiAwOwogfQogCiB2b2lkCiBnazEwNF9maWZvX2R0b3Ioc3RydWN0IG52a21f
+b2JqZWN0ICpvYmplY3QpCiB7CiAJc3RydWN0IGdrMTA0X2ZpZm9fcHJpdiAqcHJpdiA9ICh2b2lk
+ICopb2JqZWN0OwogCWludCBpOwotLSAKMi4xLjQKCl9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fCk5vdXZlYXUgbWFpbGluZyBsaXN0Ck5vdXZlYXVAbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
+aW5mby9ub3V2ZWF1Cg==
