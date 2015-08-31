@@ -1,72 +1,28 @@
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Subject: [PATCH v2] arm: tegra: update default configuration
-Date: Fri, 28 Aug 2015 23:08:15 +0200
-Message-ID: <1440796095-26962-1-git-send-email-marcel.ziswiler@toradex.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-tegra@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Arnd Bergmann <arnd@arndb.de>, Thierry Reding <thierry.reding@gmail.com>, Kevin Hilman <khilman@linaro.org>, Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>, Russell King <linux@arm.linux.org.uk>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] Revert part of "ASoC: tegra: Convert to managed resources"
+Date: Mon, 31 Aug 2015 14:27:14 +0900
+Message-ID: <CAAVeFuJ4Mt7R3TSKyytW=5UNsJMxT_c+4dqG_qzHq8i3JmhT1w@mail.gmail.com>
+References: <20150818115645.GA3345@localhost>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20150818115645.GA3345@localhost>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vaishali Thakkar <vthakkar1994-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jaroslav Kysela <perex-/Fr2/VpizcU@public.gmane.org>, Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-  * Expose hardware/virtual IRQ mapping via debugfs
-  * WM9712 audio/touch controller as found on Colibri T20
-  * sysfs interface for GPIOs
-  * NFS client support for NFS version 4
+On Tue, Aug 18, 2015 at 8:56 PM, Vaishali Thakkar
+<vthakkar1994-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> Revert the problematic part of commit 470805eb9f31 ("ASoC: tegra:
+> Convert to managed resources"). Before this commit, PM cleanup was
+> performed after the component was unregistered. But returning
+> directly will skip PM cleanup. So, to be on safe side it is better
+> to use snd_soc_register_component instead of
+> devm_snd_soc_register_component.
+>
+> Signed-off-by: Vaishali Thakkar <vthakkar1994-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
----
+I'm probably late for the party, but FWIW:
 
-Changes in v2:
-- drop WM9712 battery support as that driver still requires platform
-  data rather than a device tree as pointed out by Mark
-
- arch/arm/configs/tegra_defconfig | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 9808581..9114bfe 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -1,5 +1,6 @@
- CONFIG_SYSVIPC=y
- CONFIG_FHANDLE=y
-+CONFIG_IRQ_DOMAIN_DEBUG=y
- CONFIG_NO_HZ=y
- CONFIG_HIGH_RES_TIMERS=y
- CONFIG_IKCONFIG=y
-@@ -121,6 +122,9 @@ CONFIG_KEYBOARD_CROS_EC=y
- CONFIG_MOUSE_PS2_ELANTECH=y
- CONFIG_INPUT_TOUCHSCREEN=y
- CONFIG_TOUCHSCREEN_ATMEL_MXT=y
-+CONFIG_TOUCHSCREEN_WM97XX=y
-+# CONFIG_TOUCHSCREEN_WM9705 is not set
-+# CONFIG_TOUCHSCREEN_WM9713 is not set
- CONFIG_TOUCHSCREEN_STMPE=y
- CONFIG_INPUT_MISC=y
- CONFIG_INPUT_MPU3050=y
-@@ -142,6 +146,7 @@ CONFIG_SPI_TEGRA20_SFLASH=y
- CONFIG_SPI_TEGRA20_SLINK=y
- CONFIG_PINCTRL_AS3722=y
- CONFIG_PINCTRL_PALMAS=y
-+CONFIG_GPIO_SYSFS=y
- CONFIG_GPIO_PCA953X=y
- CONFIG_GPIO_PCA953X_IRQ=y
- CONFIG_GPIO_PALMAS=y
-@@ -208,6 +213,7 @@ CONFIG_SND_SOC_TEGRA=y
- CONFIG_SND_SOC_TEGRA_RT5640=y
- CONFIG_SND_SOC_TEGRA_WM8753=y
- CONFIG_SND_SOC_TEGRA_WM8903=y
-+CONFIG_SND_SOC_TEGRA_WM9712=y
- CONFIG_SND_SOC_TEGRA_TRIMSLICE=y
- CONFIG_SND_SOC_TEGRA_ALC5632=y
- CONFIG_SND_SOC_TEGRA_MAX98090=y
-@@ -278,6 +284,7 @@ CONFIG_SQUASHFS=y
- CONFIG_SQUASHFS_LZO=y
- CONFIG_SQUASHFS_XZ=y
- CONFIG_NFS_FS=y
-+CONFIG_NFS_V4=y
- CONFIG_ROOT_NFS=y
- CONFIG_NLS_CODEPAGE_437=y
- CONFIG_NLS_ISO8859_1=y
--- 
-2.4.3
+Reviewed-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
