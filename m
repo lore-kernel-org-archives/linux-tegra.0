@@ -1,211 +1,201 @@
-From: =?UTF-8?B?S29uc3RhIEjDtmx0dMOk?= <kholtta-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH v2 0/5] More explicit pushbuf error
-	handling
-Date: Wed, 2 Sep 2015 13:13:49 +0300
-Message-ID: <55E6CBDD.1010906@nvidia.com>
-References: <1441021115-28537-1-git-send-email-kholtta@nvidia.com>
- <CACAvsv7Bfz-1Ck2=6DbA_N9CggEcPbXNOjM+6JHM_hxC9LHN-A@mail.gmail.com>
- <55E6C8E5.6050401@nvidia.com>
+From: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [cbootimage PATCH v1 0/8] Add rsa pss signature support
+Date: Wed, 2 Sep 2015 14:19:12 -0700
+Message-ID: <1441228760-26042-1-git-send-email-jimmzhang@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <55E6C8E5.6050401-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-CgpPbiAwMi8wOS8xNSAxMzowMSwgS29uc3RhIEjDtmx0dMOkIHdyb3RlOgo+Cj4KPiBPbiAwMS8w
-OS8xNSAxNjoyNiwgQmVuIFNrZWdncyB3cm90ZToKPj4gT24gMzEgQXVndXN0IDIwMTUgYXQgMjE6
-MzgsIEtvbnN0YSBIw7ZsdHTDpCA8a2hvbHR0YUBudmlkaWEuY29tPiB3cm90ZToKPj4+IEhpIHRo
-ZXJlLAo+Pj4KPj4+IFJlc2VuZGluZyB0aGVzZSBub3cgdGhhdCB0aGV5J3ZlIGhhZCBzb21lIG1v
-cmUgcG9saXNoIGFuZCB0ZXN0aW5nLCAKPj4+IGFuZCBJIGhlYXJkCj4+PiB0aGF0IEJlbidzIHZh
-Y2F0aW9uIGlzIG92ZXIgOi0pCj4+Pgo+Pj4gVGhlc2UgcGF0Y2hlcyB3b3JrIGFzIGEgc3RhcnRp
-bmcgcG9pbnQgZm9yIG1vcmUgZXhwbGljaXQgZXJyb3IgCj4+PiBtZWNoYW5pc21zIGFuZAo+Pj4g
-YmV0dGVyIHJvYnVzdG5lc3MuIEF0IHRoZSBtb21lbnQsIHdoZW4gYSBqb2IgaGFuZ3Mgb3IgZmF1
-bHRzLCBpdCAKPj4+IHNlZW1zIHRoYXQKPj4+IG5vdXZlYXUgZG9lc24ndCBxdWl0ZSBrbm93IGhv
-dyB0byBoYW5kbGUgdGhlIHNpdHVhdGlvbiBhbmQgb2Z0ZW4gCj4+PiByZXN1bHRzIGluIGEKPj4+
-IGhhbmcuIFNvbWUgb2YgdGhlc2Ugc2l0dWF0aW9ucyB3b3VsZCByZXF1aXJlIGVpdGhlciBjb21w
-bGV0ZWx5IAo+Pj4gcmVzZXR0aW5nIHRoZQo+Pj4gZ3B1LCBhbmQvb3IgYSBjb21wbGV4IHBhdGgg
-Zm9yIG9ubHkgcmVjb3ZlcmluZyB0aGUgYnJva2VuIGNoYW5uZWwuCj4+IFllcywgdGhpcyBoYXMg
-YmVlbiBhbiBpc3N1ZSB0aGF0J3MgYmVlbiBvbiBteSAicmVhbGx5IG5pY2UgdG8KPj4gaW1wbGVt
-ZW50IiBsaXN0IGZvciBxdWl0ZSBhIGxvbmcgdGltZSBub3csIGFuZCBvbmx5IGdvdHRlbiBhcm91
-bmQgdG8KPj4gZ2V0dGluZyBpdCBwYXJ0aWFsbHkgZG9uZSAoYXMgeW91IGNhbiBzZWUpLiAgVGhh
-bmtzIGZvciBsb29raW5nIGF0Cj4+IHRoaXMhCj4+Cj4+PiBUbyBzdGFydCwgSSB3b3JrZWQgb24g
-c3VwcG9ydCBmb3IgbGV0dGluZyB1c2Vyc3BhY2Uga25vdyB3aGF0IAo+Pj4gZXhhY3RseSBoYXBw
-ZW5lZC4KPj4+IFByb3BlciByZWNvdmVyeSB3b3VsZCBjb21lIGxhdGVyLiBUaGUgImVycm9yIG5v
-dGlmaWVyIiBpbiB0aGUgZmlyc3QgCj4+PiBwYXRjaCBpcyBhCj4+PiBzaW1wbGUgc2hhcmVkIGJ1
-ZmZlciBiZXR3ZWVuIGtlcm5lbCBhbmQgdXNlcnNwYWNlLiBJdHMgZXJyb3IgY29kZXMgCj4+PiBt
-YXRjaAo+Pj4gbnZncHUncy4gQWx0ZXJuYXRpdmVseSwgdGhlIHN0YXR1cyBjb3VsZCBiZSBxdWVy
-aWVkIHdpdGggYW4gaW9jdGwsIAo+Pj4gYnV0IHRoYXQKPj4+IHdvdWxkIGJlIGNvbnNpZGVyYWJs
-eSBtb3JlIGhlYXZ5d2VpZ2h0LiBJJ2QgbGlrZSB0byBrbm93IGlmIHRoZSAKPj4+IGV2ZW50IG1l
-Y2hhbmlzbQo+Pj4gaXMgbWVhbnQgZm9yIHRoZXNlIGtpbmRzIG9mIGV2ZW50cyBhdCBhbGwgKGVu
-Z2luZXMgbm90aWZ5IGVycm9ycyAKPj4+IHVwd2FyZHMgdG8gdGhlCj4+PiBkcm0gbGF5ZXIpLiBB
-bm90aGVyIGFsdGVybmF0aXZlIHdvdWxkIHByb2JhYmx5IGJlIHRvIHJlZ2lzdGVyIHRoZSAKPj4+
-IHNhbWUgYnVmZmVyCj4+PiB0byBhbGwgbmVjZXNzYXJ5IGVuZ2luZXMgc2VwYXJhdGVseSBpbiBu
-dmlmIG1ldGhvZCBjYWxscz8gT3IgCj4+PiByZWdpc3RlciBpdCB0bwo+Pj4ganVzdCBvbmUgKGUu
-Zy4sIGZpZm8pIGFuZCBnZXQgdGhhdCBlbmdpbmUgd2hlbiBlcnJvcnMgaGFwcGVuIGluIAo+Pj4g
-b3RoZXJzIChlLmcuLAo+Pj4gZ3IpPyBBbmQgZHJtIGhhbmRsZXMgcHJvYmFibHkgd291bGRuJ3Qg
-Zml0IHRoZXJlPyBQbGVhc2UgY29tbWVudCBvbiAKPj4+IHRoaXM7IEkKPj4+IHdyb3RlIHRoaXMg
-YmVmb3JlIHVuZGVyc3RhbmRpbmcgdGhlIG10aGQgbWVjaGFuaXNtLgo+PiBGb3IgdGhlIG1vbWVu
-dCwgSSd2ZSBqdXN0IGdvdCBhIGNvdXBsZSBvZiBoaWdoLWxldmVsCj4+IGNvbW1lbnRzL3F1ZXN0
-aW9ucyBvbiB0aGVzZSBwYXRjaGVzIHNvIGZhciBiZWZvcmUgd2Ugd29ycnkgYWJvdXQKPj4gbml0
-LXBpY2tpbmcgdGhlIGRldGFpbHM6Cj4+Cj4+IElzIHRoZXJlIGFueSByZWFsIG5lZWQgdG8gaGF2
-ZSBhIGZ1bGwtYmxvd24gbm90aWZpZXItc3R5bGUgb2JqZWN0IHRvCj4+IHBhc3MgdGhpcyBpbmZv
-IGJhY2sgdG8gdXNlcnNwYWNlPyAgVGhlIERSTSBoYXMgYW4gZXZlbnQgbWVjaGFuaXNtCj4+IHdo
-ZXJlIHVzZXJzcGFjZSBjb3VsZCBwb2xsIG9uIGl0cyBmZCB0byBnZXQgZXZlbnRzLCB3aGljaCBp
-cyB3aGF0IEknZAo+PiBhc3N1bWUgeW91J2QgYmUgZG9pbmcgaW5zaWRlIG9mIGZlbmNlIHdhaXRz
-IHdpdGggdGhlIGVycm9yIG5vdGlmaWVyPwo+PiBOVklGIGV2ZW50cyBhcmUgYWN0dWFsbHkgaG9v
-a2VkIHVwIHRvIHRoaXMgbWVjaGFuaXNtIGFscmVhZHksIHNvCj4+IHVzZXJzcGFjZSBjb3VsZCBk
-aXJlY3RseSByZXF1ZXN0IHRoZW0gYW5kIGN1dCBxdWl0ZSBhIGxvdCBvdXQgb2YgdGhhdAo+PiBm
-aXJzdCBwYXRjaC4gIEJ1dCwgdGhlIE5WS00tbGV2ZWwgcGFzc2luZyBvZiB0aGVzZSBldmVudHMg
-YmFjayBvdmVyCj4+IE5WSUYgaXMgcHJldHR5IG11Y2ggd2hlcmUgSSB3YXMgZ29pbmcgd2l0aCB0
-aGUgZGVzaWduIHRvby4gIFNvLCBnb29kCj4+IHRvIHNlZSB5b3UndmUgZG9uZSB0aGF0IDopCj4g
-SSBoYWRuJ3QgaGVhcmQgYWJvdXQgdGhhdCBldmVudCBtZWNoYW5pc20geWV0IC0gZG8geW91IG1l
-YW4ganVzdCAKPiBkcm1fcG9sbCgpIGFuZCAtPmV2ZW50X3dhaXQgdGhhdCBpcyB3b2tlbiB1cCBp
-biB1c2lmX25vdGlmeSgpPyBUaGF0IAo+IGRvZXNuJ3QgaGF2ZSBhbnkgdmFsdWVzIHRoYXQgY291
-bGQgYmUgcGFzc2VkIHRvIHVzZXJsYW5kLiBJcyB0aGVyZSBhIAo+IHdheSBmb3IgdGhhdCB0b28g
-YWxyZWFkeT8gVGhlIG1vdGl2YXRpb24gZm9yIHRoZSBjdXJyZW50IGFwcHJvYWNoIGlzIAo+IHRo
-YXQgaXQncyBsaWdodHdlaWdodCwgbm90IHJlcXVpcmluZyBhbnkga2VybmVsIGNhbGxzIChhbmQg
-aXMgCj4gY29tcGF0aWJsZSB3aXRoIG52aWRpYSBnbCBkcml2ZXJzLi4uKQpBaCwgdG8gYW5zd2Vy
-IG15c2VsZjogdGhhdCdkIGJlIGRybV9yZWFkKCkuIERvaC4gSUlVQywgdGhhdCBhcHBsaWVzIHRv
-IApub3V2ZWF1J3Mgbm90aWZ5IG9iamVjdHMgY3JlYXRlZCBmcm9tIHVzZXJzcGFjZT8gKHJvdXRl
-IHVzaWYpCgpUaGUgcG9sbCBhbmQgcmVhZCBjYWxscyB3b3VsZCBzdGlsbCBiZSBvZiBtb3JlIG92
-ZXJoZWFkIHRoYW4gYSBwbGFpbiAKcmVhZCBpbiB1c2Vyc3BhY2UsIGFuZCB0aGF0IHdvdWxkbid0
-IGJlIGNvbXBhdGlibGUgd2l0aCBudmlkaWEgdXNlcnNwYWNlIApkcml2ZXJzLiBNaWdodCBiZSBk
-b2FibGUgd2l0aCBoZWF2eSByZWZhY3RvcmluZyBhbmQgbWVhc3VyaW5nIGlmIHRoZSAKb3Zlcmhl
-YWQgaXMgc2lnbmlmaWNhbnQgLSBJJ20gbm90IGZhbWlsaWFyIHdpdGggdGhhdCBoaWdoLWxldmVs
-IHBhcnQgeWV0LgoKS29uc3RhCgo+Cj4gSSBkb24ndCBhY3R1YWxseSBrbm93IGFsbCB0aGUgZGV0
-YWlscyBob3cgaGlnaGVyLWxldmVsIHBhcnRzIG9mIHRoZSAKPiBkcml2ZXIgdXNlIHRoZSBidWZm
-ZXIgOigganVzdCBhc3N1bWluZyB0aGluZ3MgYXRtLiBJJ2QgZ3Vlc3MgdGhhdCB0aGUgCj4gYnVm
-ZmVyIHdvdWxkIGJlIHJlYWQgYWZ0ZXIgZWFjaCBzdWJtaXQgKGFmdGVyIGEgZmVuY2Ugd2FpdCBo
-YXMgCj4gZmluaXNoZWQsIHdoaWNoIGlzIGEgc2VwYXJhdGUgdGhpbmcpIGlmIGNoZWNraW5nIHRo
-ZSBzdGF0dXMgaXMgCj4gcmVxdWlyZWQuIE15IHVuZGVyc3RhbmRpbmcgaXMgdGhhdCBhdCBsZWFz
-dCB0aGUgZGVza3RvcCBkcml2ZXIgaGFzIChvciAKPiB1c2VkIHRvIGhhdmUpIGEgc2hhcmVkIGJ1
-ZmZlciBmb3IgbG90cyBvZiBjb21tb24gc3R1ZmYgYW5kIHRoaXMgd291bGQgCj4gYmUgcGFydCBv
-ZiBpdCAoaGVuY2UgdGhlIG9mZnNldCBmaWVsZCksIHdoaWNoIHdvdWxkIGNvbXBsaWNhdGUgdGhl
-IAo+IHdob2xlIGRyaXZlciBzdGFjayBpZiB0aGlzIHdlcmUgZG9uZSBkaWZmZXJlbnRseS4gSW4g
-VGVncmEncyAKPiBsaWJkcm0tZXF1aXZhbGVudCB0aGlzIGlzIGluaXRpYWxpemVkIG9uIGNoYW5u
-ZWwgY3JlYXRpb24sIHNvIGNvdWxkIGJlIAo+IGluIGZhY3QgcGFydCBvZiBjaGFubmVsIGluaXQg
-YXJncyBpbiBub3V2ZWF1Pwo+Cj4gSSBjb25zaWRlcmVkIGFsc28gdGhhdCB0aGUgYnVmZmVyIGNv
-dWxkIGJlIGp1c3Qgb25lIHBhZ2UgYW5kIGFsbG9jYXRlZCAKPiBpbiB0aGUga2VybmVsLCBidXQg
-YXMgc2FpZCwgb3VyIGN1cnJlbnQgZHJpdmVycyB3YW50IHRvIGJlIGFibGUgdG8gCj4gcGFzcyBh
-IHNlcGFyYXRlIGJ1ZmZlciB0aGVyZS4KPgo+Pgo+Pj4gQWRkaXRpb25hbGx5LCBwcmlvcml0eSBh
-bmQgdGltZW91dCBtYW5hZ2VtZW50IGZvciBzZXBhcmF0ZSBjaGFubmVscyAKPj4+IGluIGZsaWdo
-dAo+Pj4gb24gdGhlIGdwdSBpcyBhZGRlZCBpbiB0d28gcGF0Y2hlcy4gTmVpdGhlciBpcyBleGFj
-dGx5IHdoYXQgdGhlIG5hbWUgCj4+PiBzYXlzLCBidXQKPj4+IHRoZSBlZmZlY3QgaXMgdGhlIHNh
-bWUsIGFuZCB0aGlzIGlzIHdoYXQgbnZncHUgZG9lcyBjdXJyZW50bHkuIFRob3NlIAo+Pj4gdHdv
-Cj4+PiBwYXRjaGVzIGNhbGwgdGhlIGZpZm8gY2hhbm5lbCBvYmplY3QncyBtZXRob2RzIGRpcmVj
-dGx5IGZyb20gCj4+PiB1c2Vyc3BhY2UsIHNvIGEKPj4+IGhhY2sgaXMgYWRkZWQgaW4gdGhlIG52
-aWYgcGF0aCB0byBhY2NlcHQgdGhhdC4gVGhlIG9iamVjdHMgYXJlIE5FVydkIAo+Pj4gZnJvbQo+
-Pj4ga2VybmVsIHNwYWNlLCBzbyBjYWxsaW5nIGZyb20gdXNlcnNwYWNlIGlzbid0IGFsbG93ZWQs
-IGFzIGl0IAo+Pj4gYXBwZWFycy4gSG93Cj4+PiBzaG91bGQgdGhpcyBiZSBtYW5hZ2VkIGluIGEg
-Y2xlYW4gd2F5Pwo+PiBJcyB0aGVyZSBhbnkgcmVxdWlyZW1lbnQgdG8gYmUgYWJsZSB0byBhZGp1
-c3QgdGhlIHByaW9yaXR5IG9mCj4+IGluLWZsaWdodCBjaGFubmVscz8gIE9yIHdvdWxkIGl0IGJl
-IHNhdGlzZmFjdG9yeSB0byBoYXZlIHRoZXNlIGFzCj4+IGFyZ3VtZW50cyB0byB0aGUgY2hhbm5l
-bCBjcmVhdGlvbiBmdW5jdGlvbnM/ICBFaXRoZXIgd2F5IGlzIGZpbmUsIHRoZQo+PiBsYXR0ZXIg
-aXMgcHJlZmVycmVkIGlmIHRoZXJlJ3Mgbm8gdXNlIGNhc2UgZm9yIGFkanVzdGluZyBpdCBhZnRl
-cndhcmRzCj4+IHRob3VnaC4KPiBNYXliZSBub3QgZXhhY3RseSwgYnV0IHRoZXJlIGlzIGEgdGVj
-aG5pY2FsIHJlcXVpcmVtZW50IGZvcmNlZCBieSAKPiBudmlkaWEgdXNlcnNwYWNlIGRyaXZlciB0
-aGF0IGRvZXNuJ3QgZW5mb3JjZSB0aGlzIHRvIGJlIGRvbmUgYXQgCj4gY3JlYXRpb24gdGltZSwg
-YnV0IGFsbG93cyBpdCBhdCBhbnkgdGltZS4gSSBsb29rZWQgYXQgdGhhdCBvcHRpb24gdG9vIAo+
-IHdoZW4gc3RhcnRpbmcgdG8gd3JpdGUgdGhlc2UgcGF0Y2hlcyBhbmQgeWVzLCB0aGF0IChzcGVj
-aWZ5aW5nIGF0IGluaXQgCj4gdGltZSkgd291bGQndmUgc2ltcGxpZmllZCBzdHVmZi4KPgo+IEl0
-J3MgY2VydGFpbmx5IHBvc3NpYmxlIHRoYXQgdGhlIHRpbWVvdXQvcHJpb3JpdHkgaXMgc2V0IG9u
-bHkgbGF0ZXIgaW4gCj4gdXNlcnNwYWNlIGFmdGVyIGZpbmRpbmcgb3V0IHRoYXQgdGhpcyBpcyBl
-LmcuIGEgd2ViZ2wgcHJvY2VzcyAKPiByZXF1aXJpbmcgdG8gZmluaXNoIGZhc3Rlci4gVGhhdCdz
-IG9uZSBwbGF1c2libGUgdXNlY2FzZS4KPgo+Pgo+PiBJJ20gYXR0ZW1wdGluZyB0byBnZXQgc29t
-ZSBiZXR0ZXIgY2hhbm5lbCBoYW5kbGluZyAoeW91IG1pZ2h0IGhhdmUKPj4gbm90aWNlZCB0aGUg
-Y3VycmVudCBzdHVmZiB0aGUga2VybmVsIHVzZXMgaXMgYSBiaXQgZnJhZ2lsZSwgaXQncwo+PiBl
-dm9sdmVkIG92ZXIgYSBsb25nIHRpbWUgYW5kIHNldmVyYWwgZ2VuZXJhdGlvbnMgb2YgY2hhbm5l
-bCBjbGFzc2VzKQo+PiBpbiBwbGFjZSBpbiB0aW1lIGZvciA0LjQsIHBhcnQgb2Ygd2hpY2ggd2ls
-bCBsaWtlbHkgaW52b2x2ZSBnaXZpbmcKPj4gdXNlcnNwYWNlIGJldHRlciBjb250cm9sIG92ZXIg
-dGhlIGFyZ3VtZW50cyB0aGF0IGdldCBwYXNzZWQgYXQgY2hhbm5lbAo+PiBjcmVhdGlvbiB0aW1l
-Lgo+IFRoZSBjdXJyZW50IHN0dWZmIGlzIGF0IGxlYXN0IG5vdCB0cml2aWFsIHRvIGdyYXNwIGlu
-aXRpYWxseSA6KSBJJ2QgCj4gbG92ZSB0byBhbHNvIGhlbHAgdG8gd3JpdGUgZG9jdW1lbnRhdGlv
-biBmb3IgbG90cyBvZiB0aGluZ3MgaWYgdGltZSAKPiBwZXJtaXRzIC0gSSd2ZSBiZWVuIHRha2lu
-ZyBzb21lIG5vdGVzIGZvciBteXNlbGYsIGJ1dCBhIGdlbmVyYWwgbnZrbSAKPiBnbG9zc2FyeSBh
-bmQgZ2VuZXJhbCByZWFzb25pbmcgYWJvdXQgaG93IHRoaW5ncyBhcmUgZG9uZSB0aGUgd2F5IHRo
-ZXkgCj4gYXJlIHdvdWxkIGRlZmluaXRlbHkgaGVscCBuZXcgZm9sa3MgdG8gZ2V0IHRvIGtub3cg
-dGhlIGNvZGViYXNlIAo+ICh3YXNuJ3QgZWFzeSBmb3IgbWUpLiBUaGUgcHJvYmxlbSBpcyB0aGF0
-IEkgb25seSBjb3VsZCB3cml0ZSBhYm91dCBob3cgCj4gdGhpbmdzIGFyZSBkb25lLCBub3Qgd2h5
-LiBHZXR0aW5nIHRvIGtub3cgYWxsIHRoYXQgd291bGQgcmVxdWlyZSBsb3RzIAo+IG9mIGRpc2N1
-c3Npb24gKGFuZCB0aW1lKS4KPgo+Pgo+PiBBcyBmb3IgdGhlIHBlcm1pc3Npb25zIHByb2JsZW0s
-IHRoYXQgY2FuIGJlIHJlc29sdmVkIGZhaXJseSBlYXNpbHkgSQo+PiB0aGluaywgSSdsbCBwbGF5
-IHdpdGggYSBmZXcgaWRlYXMgYW5kIHNlZSB3aGF0IEkgY29tZSB1cCB3aXRoLgo+Cj4gR29vZCB0
-byBoZWFyLCB0aGFua3MhIEEgYml0IHJlbGF0ZWQgcXVlc3Rpb24gdG8gdGhpczogd2hhdCBleGFj
-dGx5IAo+IGRldGVybWluZXMgdGhlIGxldmVsIG9mIGNvbnRyb2wga2VybmVsIHZzIHVzZXJzcGFj
-ZSBoYXZlIGZvciB0aGUgCj4gY2hhbm5lbHM/IE1hbmFnZW1lbnQgcmlnaHRzIGZvciBub3V2ZWF1
-X2JvJ3M/IExvb2tzIGxpa2Ugc29tZSBzdHVmZiBvZiAKPiBub3V2ZWF1X2NoYW4uYyBjb3VsZCBs
-aXZlIGluIHVzZXJzcGFjZSB0b28uCj4KPiBDaGVlcnMsCj4gS29uc3RhCj4KPj4KPj4gVGhhbmtz
-LAo+PiBCZW4uCj4+Cj4+PiBBbHNvLCBzaW5jZSBub3V2ZWF1IG9mdGVuIGhhbmdzIG9uIGVycm9y
-cywgdGhlIHVzZXJzcGFjZSBoYW5ncyB0b28gCj4+PiAod2FpdGluZyBvbgo+Pj4gYSBmZW5jZSku
-IFRoZSBmaW5hbCBwYXRjaCBhdHRlbXB0cyB0byBmaXggdGhpcyBpbiBhIGNvdXBsZSBvZiAKPj4+
-IHNwZWNpZmljIGVycm9yCj4+PiBwYXRocyB0byBmb3JjaWJseSB1cGRhdGUgYWxsIGZlbmNlcyB0
-byBiZSBmaW5pc2hlZC4gSSdkIGxpa2UgdG8gaGVhciAKPj4+IGhvdyB0aGF0Cj4+PiB3b3VsZCBi
-ZSBoYW5kbGVkIHByb3Blcmx5IC0gY29uc2lkZXIgdGhlIHBhdGNoIGp1c3QgYSAKPj4+IHByb29m
-LW9mLWNvbmNlcHQgYW5kCj4+PiBzYW1wbGUgb2Ygd2hhdCB3b3VsZCBiZSBuZWNlc3NhcnkuCj4+
-Pgo+Pj4gSSBkb24ndCBleHBlY3QgdGhlIHBhdGNoZXMgdG8gYmUgYWNjZXB0ZWQgYXMtaXMgLSBh
-cyBhIG5ld2JpZSwgSSdkIAo+Pj4gYXBwcmVjaWF0ZQo+Pj4gYW55IGhpZ2gtbGV2ZWwgY29tbWVu
-dHMgb24gaWYgSSd2ZSB1bmRlcnN0b29kIGFueXRoaW5nLCBlc3BlY2lhbGx5IAo+Pj4gdGhlIGV2
-ZW50Cj4+PiBhbmQgbnZpZi9tZXRob2QgbWVjaGFuaXNtcyAoSSB1c2UgdGhlIGxhdHRlciBmcm9t
-IHVzZXJzcGFjZSB3aXRoIGEgaGFjawo+Pj4gY29uc3RydWN0ZWQgZnJvbSB0aGUgcGVyZm1vbiBi
-cmFuY2ggc2VlbiBoZXJlIGVhcmxpZXIgaW50byBudmlkaWEncyAKPj4+IGludGVybmFsCj4+PiBs
-aWJkcm0tZXF1aXZhbGVudCkuIFRoZSBmZW5jZS1mb3JjaW5nIHRoaW5nIGlzIHNvbWV0aGluZyB0
-aGF0IGlzIAo+Pj4gbmVjZXNzYXJ5IHdpdGgKPj4+IHRoZSBlcnJvciBub3RpZmllcnMgKGF0IGxl
-YXN0IHdpdGggb3VyIHVzZXJzcGFjZSB0aGF0IHdhaXRzIHJlYWxseSAKPj4+IGxvbmcgb3IKPj4+
-IGluZmluaXRlbHkgb24gZmVuY2VzKS4gSSdtIHdvcmtpbmcgc3BlY2lmaWNhbGx5IG9uIFRlZ3Jh
-IGFuZCBkb24ndCAKPj4+IGtub3cgbXVjaAo+Pj4gYWJvdXQgdGhlIGRlc2t0b3AncyB1c2Vyc3Bh
-Y2UgZGV0YWlscywgc28gSSBtYXkgYmUgYmlhc2VkIGluIHNvbWUgCj4+PiBhcmVhcy4KPj4+Cj4+
-PiBJJ2QgYmUgaGFwcHkgdG8gd3JpdGUgc2FtcGxlIHRlc3RzIG9uIGUuZy4gbGliZHJtIGZvciB0
-aGUgbmV3IAo+Pj4gbWV0aG9kcyBvbmNlIHRoZQo+Pj4ga2VybmVsIHBhdGNoZXMgd291bGQgZ2V0
-IHRvIGEgZ29vZCBzaGFwZSwgaWYgdGhhdCdzIHJlcXVpcmVkIGZvciAKPj4+IGFjY2VwdGluZyBu
-ZXcKPj4+IGZlYXR1cmVzLiBJIHRlc3RlZCB0aGVzZSB0byB3b3JrIGFzIGEgcHJvb2Ytb2YtY29u
-Y2VwdCBvbiBKZXRzb24gCj4+PiBUSzEsIGFuZCB0aGUKPj4+IGNvZGUgaXMgYWRhcHRlZCBmcm9t
-IHRoZSBsYXRlc3QgbnZncHUuCj4+Pgo+Pj4gVGhlIHBhdGNoZXMgY2FuIGFsc28gYmUgZm91bmQg
-aW4gaHR0cDovL2dpdGh1Yi5jb20vc29vZGEvbm91dmVhdSBhbmQgCj4+PiBhcmUgYmFzZWQKPj4+
-IG9uIGEgdmVyc2lvbiBvZiBnbnVyb3Uvc3RhZ2luZy4KPj4+Cj4+PiBUaGFua3MhCj4+PiBLb25z
-dGEgKHNvb2RhIGluIElSQykKPj4+Cj4+PiBLb25zdGEgSMO2bHR0w6QgKDUpOgo+Pj4gICAgbm90
-aWZ5IGNoYW5uZWwgZXJyb3JzIHRvIHVzZXJzcGFjZQo+Pj4gICAgZG9uJ3QgdmVyaWZ5IHJvdXRl
-ID09IG93bmVyIGluIG52a20gaW9jdGwKPj4+ICAgIGdrMTA0OiBjaGFubmVsIHByaW9yaXR5L3Rp
-bWVzbGljZSBzdXBwb3J0Cj4+PiAgICBnazEwNDogY2hhbm5lbCB0aW1lb3V0IGRldGVjdGlvbgo+
-Pj4gICAgSEFDSyBmb3JjZSBmZW5jZXMgdXBkYXRlZCBvbiBlcnJvcgo+Pj4KPj4+ICAgZHJtL25v
-dXZlYXUvaW5jbHVkZS9udmlmL2NsYXNzLmggICAgICAgfCAgMjAgKysrKwo+Pj4gICBkcm0vbm91
-dmVhdS9pbmNsdWRlL252aWYvZXZlbnQuaCAgICAgICB8ICAxMiArKysKPj4+ICAgZHJtL25vdXZl
-YXUvaW5jbHVkZS9udmttL2VuZ2luZS9maWZvLmggfCAgIDUgKy0KPj4+ICAgZHJtL25vdXZlYXUv
-bm91dmVhdV9jaGFuLmMgICAgICAgICAgICAgfCAgOTUgKysrKysrKysrKysrKysrKysrKwo+Pj4g
-ICBkcm0vbm91dmVhdS9ub3V2ZWF1X2NoYW4uaCAgICAgICAgICAgICB8ICAxMCArKwo+Pj4gICBk
-cm0vbm91dmVhdS9ub3V2ZWF1X2RybS5jICAgICAgICAgICAgICB8ICAgMSArCj4+PiAgIGRybS9u
-b3V2ZWF1L25vdXZlYXVfZmVuY2UuYyAgICAgICAgICAgIHwgIDEzICsrLQo+Pj4gICBkcm0vbm91
-dmVhdS9ub3V2ZWF1X2dlbS5jICAgICAgICAgICAgICB8ICAyOSArKysrKysKPj4+ICAgZHJtL25v
-dXZlYXUvbm91dmVhdV9nZW0uaCAgICAgICAgICAgICAgfCAgIDIgKwo+Pj4gICBkcm0vbm91dmVh
-dS9udmttL2NvcmUvaW9jdGwuYyAgICAgICAgICB8ICAgOSArLQo+Pj4gICBkcm0vbm91dmVhdS9u
-dmttL2VuZ2luZS9maWZvL2Jhc2UuYyAgICB8ICA1NiArKysrKysrKysrLQo+Pj4gICBkcm0vbm91
-dmVhdS9udmttL2VuZ2luZS9maWZvL2dmMTAwLmMgICB8ICAgMiArLQo+Pj4gICBkcm0vbm91dmVh
-dS9udmttL2VuZ2luZS9maWZvL2drMTA0LmMgICB8IDE2NiAKPj4+ICsrKysrKysrKysrKysrKysr
-KysrKysrKysrKysrKy0tLQo+Pj4gICBkcm0vbm91dmVhdS9udmttL2VuZ2luZS9maWZvL252MDQu
-YyAgICB8ICAgMiArLQo+Pj4gICBkcm0vbm91dmVhdS9udmttL2VuZ2luZS9nci9nZjEwMC5jICAg
-ICB8ICAgNSArCj4+PiAgIGRybS9ub3V2ZWF1L3VhcGkvZHJtL25vdXZlYXVfZHJtLmggICAgIHwg
-IDEzICsrKwo+Pj4gICAxNiBmaWxlcyBjaGFuZ2VkLCA0MTUgaW5zZXJ0aW9ucygrKSwgMjUgZGVs
-ZXRpb25zKC0pCj4+Pgo+Pj4gLS0gCj4+PiAyLjEuNAo+Pj4KPj4+IF9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4+PiBOb3V2ZWF1IG1haWxpbmcgbGlzdAo+
-Pj4gTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPj4+IGh0dHA6Ly9saXN0cy5mcmVlZGVz
-a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1Cj4+IC0tIAo+PiBUbyB1bnN1YnNjcmli
-ZSBmcm9tIHRoaXMgbGlzdDogc2VuZCB0aGUgbGluZSAidW5zdWJzY3JpYmUgCj4+IGxpbnV4LXRl
-Z3JhIiBpbgo+PiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21vQHZnZXIua2VybmVs
-Lm9yZwo+PiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0IGh0dHA6Ly92Z2VyLmtlcm5lbC5vcmcvbWFq
-b3Jkb21vLWluZm8uaHRtbAo+Cj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX18KPiBOb3V2ZWF1IG1haWxpbmcgbGlzdAo+IE5vdXZlYXVAbGlzdHMuZnJlZWRl
-c2t0b3Aub3JnCj4gaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZv
-L25vdXZlYXUKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-Ck5vdXZlYXUgbWFpbGluZyBsaXN0Ck5vdXZlYXVAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1Cg==
+For security fused tegra chip, BR requires to verify rsa_pss_sig before
+jumping to next level of boot loader.
+
+The patches here are adding rsa_pss_sig related functions, such as updating
+signatures and pubkey, generating signatures on boot loader and bct, and 
+generating signature on any given binary file.
+
+
+Jimmy Zhang (8):
+  Enable --update | -u option support for t210
+  Add bct_dump support for t210
+  Add in libmcrypto
+  Add new configuration keyword "PkcKey"
+  Fix some issues found in libmcrypto
+  Add new configuration keyword "ReSignBl"
+  Add new command line option "--sign | -n" to sign binary image
+  Bump to version 1.6
+
+ configure.ac               |    2 +-
+ src/Makefile.am            |   74 ++-
+ src/bct_dump.c             |   39 +-
+ src/cbootimage.c           |   37 +-
+ src/cbootimage.h           |   26 +
+ src/crypto.c               |  200 ++++++-
+ src/crypto.h               |   76 +++
+ src/data_layout.c          |  301 ++++++++++
+ src/data_layout.h          |    8 +
+ src/libm/base64.c          |  132 +++++
+ src/libm/bigdUtils.c       |  208 +++++++
+ src/libm/bigdigits.h       |  294 ++++++++++
+ src/libm/common.c          |   58 ++
+ src/libm/elliptic-ff2n.c   |  347 +++++++++++
+ src/libm/elliptic-ff2n.h   |   97 +++
+ src/libm/elliptic-ffp.c    | 1403 ++++++++++++++++++++++++++++++++++++++++++++
+ src/libm/elliptic-ffp.h    |  232 ++++++++
+ src/libm/ff2n.c            |  810 +++++++++++++++++++++++++
+ src/libm/ff2n.h            |  127 ++++
+ src/libm/galois.c          |  497 ++++++++++++++++
+ src/libm/galois.h          |  101 ++++
+ src/libm/hash.c            |  114 ++++
+ src/libm/hash.h            |   49 ++
+ src/libm/mcrypto.h         |   34 ++
+ src/libm/md5.c             |  296 ++++++++++
+ src/libm/md5.h             |   57 ++
+ src/libm/mpAND.c           |    9 +
+ src/libm/mpAdd.c           |   41 ++
+ src/libm/mpBitLength.c     |   24 +
+ src/libm/mpCompare.c       |   21 +
+ src/libm/mpComplement.c    |    9 +
+ src/libm/mpDivide.c        |  202 +++++++
+ src/libm/mpEqual.c         |   19 +
+ src/libm/mpGcd.c           |   26 +
+ src/libm/mpHalfDiv.c       |   99 ++++
+ src/libm/mpHalfMod.c       |   46 ++
+ src/libm/mpIsOne.c         |   18 +
+ src/libm/mpIsPrime.c       |  124 ++++
+ src/libm/mpIsZero.c        |   19 +
+ src/libm/mpJacobi.c        |   44 ++
+ src/libm/mpLegendre.c      |    8 +
+ src/libm/mpModAdd.c        |   32 +
+ src/libm/mpModExp.c        |   40 ++
+ src/libm/mpModInv.c        |   49 ++
+ src/libm/mpModMult.c       |   20 +
+ src/libm/mpModSquare.c     |   18 +
+ src/libm/mpModSquareRoot.c |   96 +++
+ src/libm/mpModSubtract.c   |   38 ++
+ src/libm/mpModulo.c        |   37 ++
+ src/libm/mpMultiply.c      |   58 ++
+ src/libm/mpOR.c            |    9 +
+ src/libm/mpSetDigit.c      |   15 +
+ src/libm/mpSetEqual.c      |   11 +
+ src/libm/mpSetZero.c       |   11 +
+ src/libm/mpShiftLeft.c     |   43 ++
+ src/libm/mpShiftRight.c    |   45 ++
+ src/libm/mpShortAdd.c      |   38 ++
+ src/libm/mpShortCmp.c      |   25 +
+ src/libm/mpShortDiv.c      |   55 ++
+ src/libm/mpShortMod.c      |   22 +
+ src/libm/mpShortModMult.c  |   30 +
+ src/libm/mpShortMult.c     |   40 ++
+ src/libm/mpShortSub.c      |   39 ++
+ src/libm/mpSizeof.c        |   14 +
+ src/libm/mpSolinasPrime.c  |   41 ++
+ src/libm/mpSquare.c        |   65 ++
+ src/libm/mpSubtract.c      |   41 ++
+ src/libm/mpSwap.c          |   16 +
+ src/libm/mpXOR.c           |    9 +
+ src/libm/pkcs1-rsa.c       |  788 +++++++++++++++++++++++++
+ src/libm/pkcs1-rsa.h       |  120 ++++
+ src/libm/sha1.c            |  155 +++++
+ src/libm/sha1.h            |   26 +
+ src/libm/sha2.c            |  724 +++++++++++++++++++++++
+ src/libm/sha2.h            |  128 ++++
+ src/libm/spDivide.c        |  175 ++++++
+ src/libm/spGcd.c           |   24 +
+ src/libm/spIsPrime.c       |   89 +++
+ src/libm/spModExp.c        |   64 ++
+ src/libm/spModInv.c        |   41 ++
+ src/libm/spModMult.c       |   17 +
+ src/libm/spMultiply.c      |   76 +++
+ src/libm/spPseudoRand.c    |   30 +
+ src/parse.c                |  142 +++++
+ src/parse.h                |    7 +
+ src/rsa_key_parse.c        |  973 ++++++++++++++++++++++++++++++
+ src/rsa_key_parse.h        |  107 ++++
+ src/set.c                  |   77 ++-
+ src/set.h                  |   10 +
+ src/t210/nvbctlib_t210.c   |   43 +-
+ src/t210/nvboot_bct_t210.h |    2 -
+ 91 files changed, 11081 insertions(+), 22 deletions(-)
+ create mode 100644 src/libm/base64.c
+ create mode 100644 src/libm/bigdUtils.c
+ create mode 100644 src/libm/bigdigits.h
+ create mode 100644 src/libm/common.c
+ create mode 100644 src/libm/elliptic-ff2n.c
+ create mode 100644 src/libm/elliptic-ff2n.h
+ create mode 100644 src/libm/elliptic-ffp.c
+ create mode 100644 src/libm/elliptic-ffp.h
+ create mode 100644 src/libm/ff2n.c
+ create mode 100644 src/libm/ff2n.h
+ create mode 100644 src/libm/galois.c
+ create mode 100644 src/libm/galois.h
+ create mode 100644 src/libm/hash.c
+ create mode 100644 src/libm/hash.h
+ create mode 100644 src/libm/mcrypto.h
+ create mode 100644 src/libm/md5.c
+ create mode 100644 src/libm/md5.h
+ create mode 100644 src/libm/mpAND.c
+ create mode 100644 src/libm/mpAdd.c
+ create mode 100644 src/libm/mpBitLength.c
+ create mode 100644 src/libm/mpCompare.c
+ create mode 100644 src/libm/mpComplement.c
+ create mode 100644 src/libm/mpDivide.c
+ create mode 100644 src/libm/mpEqual.c
+ create mode 100644 src/libm/mpGcd.c
+ create mode 100644 src/libm/mpHalfDiv.c
+ create mode 100644 src/libm/mpHalfMod.c
+ create mode 100644 src/libm/mpIsOne.c
+ create mode 100644 src/libm/mpIsPrime.c
+ create mode 100644 src/libm/mpIsZero.c
+ create mode 100644 src/libm/mpJacobi.c
+ create mode 100644 src/libm/mpLegendre.c
+ create mode 100644 src/libm/mpModAdd.c
+ create mode 100644 src/libm/mpModExp.c
+ create mode 100644 src/libm/mpModInv.c
+ create mode 100644 src/libm/mpModMult.c
+ create mode 100644 src/libm/mpModSquare.c
+ create mode 100644 src/libm/mpModSquareRoot.c
+ create mode 100644 src/libm/mpModSubtract.c
+ create mode 100644 src/libm/mpModulo.c
+ create mode 100644 src/libm/mpMultiply.c
+ create mode 100644 src/libm/mpOR.c
+ create mode 100644 src/libm/mpSetDigit.c
+ create mode 100644 src/libm/mpSetEqual.c
+ create mode 100644 src/libm/mpSetZero.c
+ create mode 100644 src/libm/mpShiftLeft.c
+ create mode 100644 src/libm/mpShiftRight.c
+ create mode 100644 src/libm/mpShortAdd.c
+ create mode 100644 src/libm/mpShortCmp.c
+ create mode 100644 src/libm/mpShortDiv.c
+ create mode 100644 src/libm/mpShortMod.c
+ create mode 100644 src/libm/mpShortModMult.c
+ create mode 100644 src/libm/mpShortMult.c
+ create mode 100644 src/libm/mpShortSub.c
+ create mode 100644 src/libm/mpSizeof.c
+ create mode 100644 src/libm/mpSolinasPrime.c
+ create mode 100644 src/libm/mpSquare.c
+ create mode 100644 src/libm/mpSubtract.c
+ create mode 100644 src/libm/mpSwap.c
+ create mode 100644 src/libm/mpXOR.c
+ create mode 100644 src/libm/pkcs1-rsa.c
+ create mode 100644 src/libm/pkcs1-rsa.h
+ create mode 100644 src/libm/sha1.c
+ create mode 100644 src/libm/sha1.h
+ create mode 100644 src/libm/sha2.c
+ create mode 100644 src/libm/sha2.h
+ create mode 100644 src/libm/spDivide.c
+ create mode 100644 src/libm/spGcd.c
+ create mode 100644 src/libm/spIsPrime.c
+ create mode 100644 src/libm/spModExp.c
+ create mode 100644 src/libm/spModInv.c
+ create mode 100644 src/libm/spModMult.c
+ create mode 100644 src/libm/spMultiply.c
+ create mode 100644 src/libm/spPseudoRand.c
+ create mode 100644 src/rsa_key_parse.c
+ create mode 100644 src/rsa_key_parse.h
+
+-- 
+1.8.1.5
