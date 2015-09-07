@@ -1,100 +1,63 @@
-From: Tyler Baker <tyler.baker-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [GIT PULL 9/9] ARM: tegra: Default configuration updates for v4.3-rc1
-Date: Thu, 3 Sep 2015 16:08:28 -0700
-Message-ID: <CANMBJr6DSXW-h8P8__LKBu-Xv77T35JwxHWvarvqy1keVrtVQQ@mail.gmail.com>
-References: <1439563720-13189-1-git-send-email-thierry.reding@gmail.com>
-	<1439563720-13189-10-git-send-email-thierry.reding@gmail.com>
-	<CANMBJr7PKy-eCcB3HiBajpApHS_BYPa7xfKjTqV4o8Z1hwY99A@mail.gmail.com>
-	<20150819091358.GA26627@ulmo>
-	<1439977724.4135.90.camel@collabora.co.uk>
-	<20150819103305.GF26627@ulmo>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH v2] ARM: tegra: paz00: use con_id's to refer GPIO's in
+ gpiod_lookup table
+Date: Mon, 7 Sep 2015 12:21:37 +0300
+Message-ID: <55ED5721.80508@gmail.com>
+References: <1435673759-11996-1-git-send-email-digetx@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150819103305.GF26627@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Content-Type: text/plain; charset=utf-8;
+	format=flowed
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <1435673759-11996-1-git-send-email-digetx@gmail.com>
+Sender: stable-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Marc Dietrich <marvin24@gmx.de>
+Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry,
-
-On 19 August 2015 at 03:33, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Wed, Aug 19, 2015 at 11:48:44AM +0200, Sjoerd Simons wrote:
->> On Wed, 2015-08-19 at 11:14 +0200, Thierry Reding wrote:
->> > On Tue, Aug 18, 2015 at 03:30:41PM -0700, Tyler Baker wrote:
->> > > Hi Theirry,
->> > >
->> > >
->> > > This isn't where the story ends unfortunately. The collabora lab
->> > > also
->> > > has a jetson-tk1, booted in the same manner, which boots next
->> > > -20150818
->> > > fine[4]. The only differences I can spot in the two boot logs is
->> > > that
->> > > the collabora board is using an older version of u-boot, where as
->> > > my
->> > > board is using a newer version. U-Boot 2015.01-00231-gab77f24-dirty
->> > > (Good) vs U-Boot 2015.07-00130-gb217c89 (Bad).
->>
->> Our 2015.01-00231-gab77f24-dirty is 2015.01-00231-gab77f24 + changes
->> which got merged as 053b86e6d8e50359412e626c33bae3f7bafd74dd in
->> upstream u-boot.
->>
->> Fwiw:
->> $ git show 2015.01-00231-gab77f24
->> commit ab77f24119e80257de4ab017b877f92f96980562
->> Merge: d928664 fa58b10
->> Author: Tom Rini <trini-l0cyMroinI0@public.gmane.org>
->> Date:   Thu Jan 15 14:05:31 2015 -0500
->>
->>     Merge branch 'master' of git://git.denx.de/u-boot-ti
->>
->> Which is definately a commit you should hae in your upstream u-boot
->> tree.
+30.06.2015 17:15, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> Commit 72daceb9a10a ("net: rfkill: gpio: Add default GPIO driver mapp=
+ings
+> for ACPI") removed possibility to request GPIO by table index for non=
+-ACPI
+> platforms without changing it users. As result "shutdown" GPIO reques=
+t
+> will fail if request for "reset" GPIO succeeded or "reset" will be
+> requested instead of "shutdown" if "reset" wasn't defined. Fix it by
+> making gpiod_lookup_table use con_id's instead of indexes.
 >
-> Yeah, I suck. I was running:
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Fixes: 72daceb (net: rfkill: gpio: Add default GPIO driver mappings f=
+or ACPI)
+> Cc: <stable@vger.kernel.org> # v3.19+
+> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
 >
->         $ git show gab77f24
+> v2: s/GPIO_LOOKUP_IDX/GPIO_LOOKUP/, otherwise "shutdown" GPIO won't b=
+e requested
 >
-> I didn't know git could parse the full output from git describe.
+>   arch/arm/mach-tegra/board-paz00.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 >
->> > I don't have either of those commits in any of the U-Boot trees I
->> > have.
->> > Perhaps whatever tree this comes from has local patches that cause
->> > the
->> > breakage? The version that I use a recent upstream U-Boot with some
->> > local patches, none of which should impact Jetson TK1 in any way.
->> > Just
->> > to make sure I tried running latest origin/master, which identifies
->> > thusly:
->> >
->> >     U-Boot 2015.10-rc2-00040-g0f9258228e2b
->> >
->> > And that boots next-20150818 fine.
->>
->> Probably worth for tyler to test that u-boot commit on his jetson to
->> see if that solves the issue he's having...
+> diff --git a/arch/arm/mach-tegra/board-paz00.c b/arch/arm/mach-tegra/=
+board-paz00.c
+> index fbe74c6..49d1110 100644
+> --- a/arch/arm/mach-tegra/board-paz00.c
+> +++ b/arch/arm/mach-tegra/board-paz00.c
+> @@ -39,8 +39,8 @@ static struct platform_device wifi_rfkill_device =3D=
+ {
+>   static struct gpiod_lookup_table wifi_gpio_lookup =3D {
+>   	.dev_id =3D "rfkill_gpio",
+>   	.table =3D {
+> -		GPIO_LOOKUP_IDX("tegra-gpio", 25, NULL, 0, 0),
+> -		GPIO_LOOKUP_IDX("tegra-gpio", 85, NULL, 1, 0),
+> +		GPIO_LOOKUP("tegra-gpio", 25, "reset", 0),
+> +		GPIO_LOOKUP("tegra-gpio", 85, "shutdown", 0),
+>   		{ },
+>   	},
+>   };
 >
-> I've tried reconstructing the version that Tyler is running by checking
-> out 2015.01-00231-gab77f24 and applying 053b86e6d8e5 ("pci: tegra: Fix
-> port information parsing") on top, but that also leaves me with a
-> bootable system, so no way of reproducing. I agree that upgrading to a
-> more recent U-Boot version sounds like the best way forward because it
-> has already proven to work on at least two setups.
+Ping
 
-Sorry for the delay. I've upgraded u-boot to U-Boot
-2015.10-rc2-00439-g03d8714 using the tegra u-boot flashing scripts.
-FWIW, I did have to revert 620776d734e4 ("tftp: adjust settings to be
-suitable for 100Mbit ethernet") to get TFTP working again.
-
-Anyways, it hangs at the exact same spot[1] with the newer version of
-u-boot. If remove the modules from the initrd or just disable
-CONFIG_SND_HDA_TEGRA it boots fine. This weekend I'll try to debug
-this module manually and see if I draw any conclusions.
-
-Cheers,
-
-Tyler
-
-[1] http://lava.kernelci.org/scheduler/job/180894/log_file
+--=20
+Dmitry
