@@ -1,72 +1,67 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+From: Andrey Danin <danindrey@mail.ru>
 Subject: Re: [PATCH v3 1/4] i2c: tegra: implement slave mode
-Date: Tue, 8 Sep 2015 13:46:21 +0200
-Message-ID: <20150908114621.GB15793@katana>
+Date: Tue, 8 Sep 2015 15:31:39 +0300
+Message-ID: <55EED52B.8080701@mail.ru>
 References: <1437424546-30405-1-git-send-email-danindrey@mail.ru>
  <1437424546-30405-2-git-send-email-danindrey@mail.ru>
- <20150724092720.GA1597@katana>
- <55B210F4.6030700@mail.ru>
- <20150724105251.GA22787@katana>
- <55D5C4AA.2000307@mail.ru>
+ <20150724092720.GA1597@katana> <55B210F4.6030700@mail.ru>
+ <20150724105251.GA22787@katana> <55D5C4AA.2000307@mail.ru>
+ <20150908114621.GB15793@katana>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="cvVnyQ+4j833TQvp"
-Return-path: <linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <55D5C4AA.2000307-JGs/UdohzUI@public.gmane.org>
-Sender: linux-i2c-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrey Danin <danindrey-JGs/UdohzUI@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-tBiZLqfeLfOHmIFyCCdPziST3g8Odh+X@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Julian Andres Klode <jak-4HMq4SXA452hPH1hqNUYSQ@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+In-Reply-To: <20150908114621.GB15793@katana>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Wolfram Sang <wsa@the-dreams.de>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, ac100@lists.launchpad.net, Russell King <linux@arm.linux.org.uk>, Pawel Moll <pawel.moll@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Julian Andres Klode <jak@jak-linux.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Ian Campbell <ijc+devicetree@hellion.org.uk>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-i2c@vger.kernel.org, Kumar Gala <galak@codeaurora.org>, linux-tegra@vger.kernel.org, devel@linuxdriverproject.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
+Wolfram, thanks!
 
---cvVnyQ+4j833TQvp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 08.09.2015 14:46, Wolfram Sang wrote:
+>
+>> Sorry for the long delay. I tried to analyze the issue. Attached patch works
+>> on AC100 (Misha Komarovsky helped me with testing).
+>>
+>> Wolfram could you please try the patch with your environment?
+>
+> No change, sadly. I don't get slave interrupts.
 
+Slave ISR is called only if slave device is registered on a bus. Do you 
+get master interrupts ?
 
-> Sorry for the long delay. I tried to analyze the issue. Attached patch wo=
-rks
-> on AC100 (Misha Komarovsky helped me with testing).
->=20
-> Wolfram could you please try the patch with your environment?
+>> Init function is called multuple times. If I2C controller works
+>> in slave mode, then driver must keep slave registers otherwise
+>> slave configuration will be reseted.
+>
+> This patch does not tackle the main issue, though. There should not be a
+> "slave mode" for the controller.
 
-No change, sadly. I don't get slave interrupts.
+Looks like my commit message is not clear enough :(
+ >> If I2C controller works in slave mode, then ...
+I mean something like this:
+"If slave functionality is enabled, then ..."
 
-> Init function is called multuple times. If I2C controller works
-> in slave mode, then driver must keep slave registers otherwise
-> slave configuration will be reseted.
+> It can be a master and slave
+> simultaneously and should do the right thing depending on what's
+> happening on the bus. The Tegra2 manual I have says "The Master can
+> address the internal slave (for basic testing) or an external 7-bit or
+> 10-bit addressed Slave device." So even a loopback should be possible
+> (if we trust the manual ;)).
 
-This patch does not tackle the main issue, though. There should not be a
-"slave mode" for the controller. It can be a master and slave
-simultaneously and should do the right thing depending on what's
-happening on the bus. The Tegra2 manual I have says "The Master can
-address the internal slave (for basic testing) or an external 7-bit or
-10-bit addressed Slave device." So even a loopback should be possible
-(if we trust the manual ;)).
+Slave logic is not enabled by default (we don't set up proper 
+configuration and slave address). We can enable it by default but it is 
+useless without driver that will handle requests.
 
-
---cvVnyQ+4j833TQvp
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJV7sqNAAoJEBQN5MwUoCm22lgQAIihxed7NaPXMqr7WKk5tFbr
-/NJOdJ78NZ05Leaf8hiCJs57LcHnQPOFa7E/wn2IISgZQou3azzFuQBPxdrvjyMF
-C7RDb3ktFhN3mWHoo0VLWCFTqyIVbYN28JjDo6nAhiU3U+2AF7I5iIrg116LKa90
-OCSJHS2/zUmaOrSoSGUQ7PgCRi8xR+0YoTMX6teuH1wWIkR0eAKt1RgNsErtB0oT
-qoS424Hf1PSA9nkbMe8CU/4ie7v2wRFs0N4dSMmNJ4Y5mUI5mHPyf5Hw0vu74wnY
-H/+nr5U3eldI1nGP48pEFBE/+TiDezxtMoB4J0kk8UFCjig9R8g0NGxOGKxtzDdL
-CnlQ0kBUYLPyg9eMCJKOQE2Nvy0s+C5/iy9c3XjTI8qcXWZMf9KYwXjNJCVe7ocW
-L/0RU/tyJQBVA9BDZctmv4heQNwPcQmmlwRD1E06qADKiSXMxBdOce9lKyWeN36+
-UPaWfPsqWoMyWpAfKRudwH1Erym3R6QAiRipaU1xbQg5L8sALRF9Ju6O+eaBdHTx
-JmdJnrCtnX1jUxMwb0xpjiN45DIbyHodBF2sC18MXJccW0N3j3zNj4uZhffxg4Ej
-4h73r9dJhz6dJOunGc336CwP8LQUr06IKG3fCdJ/cFhWO6oVqmlahows8vfLTae5
-U03YbnDd6tzEVNl9fO5A
-=OxLB
------END PGP SIGNATURE-----
-
---cvVnyQ+4j833TQvp--
+We used i2cdetect on the I2C bus where master NVEC controller is 
+connected. i2cdetect found devices on the bus. Also keyboard and mouse 
+was running fine after that (slave logic was not disabled).
