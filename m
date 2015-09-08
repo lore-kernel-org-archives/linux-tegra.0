@@ -1,144 +1,95 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: Re: [PATCH v4 0/22] On-demand device probing
-Date: Tue, 8 Sep 2015 09:30:41 +0200
-Message-ID: <CAAObsKDUzk-9H2_VrVmbc=ZeRaknGcjTMY3Mauh3JVZxLz4CiA@mail.gmail.com>
-References: <1441628627-5143-1-git-send-email-tomeu.vizoso@collabora.com> <CAL_Jsq+E31JaPcp5ELS_ztSqgSrK7U4OzB9xNcNz01Ayrrm+Yg@mail.gmail.com>
+From: Marc Dietrich <marvin24@gmx.de>
+Subject: Re: [PATCH v2] ARM: tegra: paz00: use con_id's to refer GPIO's ingpiod_lookup table
+Date: Tue, 08 Sep 2015 09:59:11 +0200
+Message-ID: <3738507.JjVW9EvTJ3@fb07-iapwap2>
+References: <1435673759-11996-1-git-send-email-digetx@gmail.com> <55ED5721.80508@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <CAL_Jsq+E31JaPcp5ELS_ztSqgSrK7U4OzB9xNcNz01Ayrrm+Yg@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Rob Herring <robherring2@gmail.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Javier Martinez Canillas <javier@osg.samsung.com>, Mark Brown <broonie@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>, "linux-fbdev@vger.kernel.org" <linux-fbdev@vger.kernel.org>, Linux USB List <linux-usb@vger.kernel.org>, Felipe Balbi <balbi@ti.com>, Linux PWM List <linux-pwm@vger.kernel.org>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>
+Content-Type: multipart/signed; boundary="nextPart3403769.ohlsyk9j4l"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Return-path: <stable-owner@vger.kernel.org>
+In-Reply-To: <55ED5721.80508@gmail.com>
+Sender: stable-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 7 September 2015 at 22:50, Rob Herring <robherring2@gmail.com> wrote=
-:
-> On Mon, Sep 7, 2015 at 7:23 AM, Tomeu Vizoso <tomeu.vizoso@collabora.=
-com> wrote:
->> Hello,
->>
->> I have a problem with the panel on my Tegra Chromebook taking longer
->> than expected to be ready during boot (St=C3=A9phane Marchesin repor=
-ted what
->> is basically the same issue in [0]), and have looked into ordered
->> probing as a better way of solving this than moving nodes around in =
-the
->> DT or playing with initcall levels and linking order.
->>
->> While reading the thread [1] that Alexander Holler started with his
->> series to make probing order deterministic, it occurred to me that i=
-t
->> should be possible to achieve the same by probing devices as they ar=
-e
->> referenced by other devices.
->>
->> This basically reuses the information that is already implicit in th=
-e
->> probe() implementations, saving us from refactoring existing drivers=
- or
->> adding information to DTBs.
->>
->> During review of v1 of this series Linus Walleij suggested that it
->> should be the device driver core to make sure that dependencies are
->> ready before probing a device. I gave this idea a try [2] but Mark B=
-rown
->> pointed out to the logic duplication between the resource acquisitio=
-n
->> and dependency discovery code paths (though I think it's fairly mino=
-r).
->>
->> To address that code duplication I experimented with Arnd's devm_pro=
-be
->> [3] concept of having drivers declare their dependencies instead of
->> acquiring them during probe, and while it worked [4], I don't think =
-we
->> end up winning anything when compared to just probing devices on-dem=
-and
->> from resource getters.
->>
->> One remaining objection is to the "sprinkling" of calls to
->> of_device_probe() in the resource getters of each subsystem, but I t=
-hink
->> it's the right thing to do given that the storage of resources is
->> currently subsystem-specific.
->>
->> We could avoid the above by moving resource storage into the core, b=
-ut I
->> don't think there's a compelling case for that.
->>
->> I have tested this on boards with Tegra, iMX.6, Exynos, Rockchip and
->> OMAP SoCs, and these patches were enough to eliminate all the deferr=
-ed
->> probes (except one in PandaBoard because omap_dma_system doesn't hav=
-e a
->> firmware node as of yet).
->>
->> Have submitted a branch [5] with only these patches on top of thursd=
-ay's
->> linux-next to kernelci.org and I don't see any issues that could be
->> caused by them. For some reason it currently has more passes than th=
-e
->> version of -next it's based on!
->>
->> With this series I get the kernel to output to the panel in 0.5s,
->> instead of 2.8s.
->>
->> Regards,
->>
->> Tomeu
->>
->> [0] http://lists.freedesktop.org/archives/dri-devel/2014-August/0665=
-27.html
->>
->> [1] https://lkml.org/lkml/2014/5/12/452
->>
->> [2] https://lkml.org/lkml/2015/6/17/305
->>
->> [3] http://article.gmane.org/gmane.linux.ports.arm.kernel/277689
->>
->> [4] https://lkml.org/lkml/2015/7/21/441a
->>
->> [5] https://git.collabora.com/cgit/user/tomeu/linux.git/log/?h=3Don-=
-demand-probes-v6
->>
->> [6] http://kernelci.org/boot/all/job/collabora/kernel/v4.2-11902-g25=
-d80c927f8b/
->>
->> [7] http://kernelci.org/boot/all/job/next/kernel/next-20150903/
->>
->> Changes in v4:
->> - Added bus.pre_probe callback so the probes of Primecell devices ca=
-n be
->>   deferred if their device IDs cannot be yet read because of the clo=
-ck
->>   driver not having probed when they are registered. Maybe this goes
->>   overboard and the matching information should be in the DT if ther=
-e is
->>   one.
->
-> Seems overboard to me or at least a separate problem.
+--nextPart3403769.ohlsyk9j4l
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-It's a separate problem but this was preventing the series from
-working on a few boards.
+Am Montag, 7. September 2015, 12:21:37 schrieb Dmitry Osipenko:
+> 30.06.2015 17:15, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > Commit 72daceb9a10a ("net: rfkill: gpio: Add default GPIO driver ma=
+ppings
+> > for ACPI") removed possibility to request GPIO by table index for n=
+on-ACPI
+> > platforms without changing it users. As result "shutdown" GPIO requ=
+est
+> > will fail if request for "reset" GPIO succeeded or "reset" will be
+> > requested instead of "shutdown" if "reset" wasn't defined. Fix it b=
+y
+> > making gpiod_lookup_table use con_id's instead of indexes.
+> >=20
+> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> > Fixes: 72daceb (net: rfkill: gpio: Add default GPIO driver mappings=
+ for
+> > ACPI) Cc: <stable@vger.kernel.org> # v3.19+
+> > Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+> > ---
+> >=20
+> > v2: s/GPIO_LOOKUP_IDX/GPIO_LOOKUP/, otherwise "shutdown" GPIO won't=
+ be
+> > requested>=20
+> >   arch/arm/mach-tegra/board-paz00.c | 4 ++--
+> >   1 file changed, 2 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/arch/arm/mach-tegra/board-paz00.c
+> > b/arch/arm/mach-tegra/board-paz00.c index fbe74c6..49d1110 100644
+> > --- a/arch/arm/mach-tegra/board-paz00.c
+> > +++ b/arch/arm/mach-tegra/board-paz00.c
+> > @@ -39,8 +39,8 @@ static struct platform_device wifi_rfkill_device =
+=3D {
+> >=20
+> >   static struct gpiod_lookup_table wifi_gpio_lookup =3D {
+> >  =20
+> >   =09.dev_id =3D "rfkill_gpio",
+> >   =09.table =3D {
+> >=20
+> > -=09=09GPIO_LOOKUP_IDX("tegra-gpio", 25, NULL, 0, 0),
+> > -=09=09GPIO_LOOKUP_IDX("tegra-gpio", 85, NULL, 1, 0),
+> > +=09=09GPIO_LOOKUP("tegra-gpio", 25, "reset", 0),
+> > +=09=09GPIO_LOOKUP("tegra-gpio", 85, "shutdown", 0),
+> >=20
+> >   =09=09{ },
+> >   =09
+> >   =09},
+> >  =20
+> >   };
+>=20
+> Ping
 
-> Most clocks have
-> to be setup before the driver model simply because timers depend on
-> clocks usually.
+also=20
 
-Yes, but in this case the apb clocks for the primecell devices are
-implemented in a normal platform driver (vexpress_osc_driver), instead
-of using CLK_OF_DECLARE.
+Tested-by: Marc Dietrich <marvin24@gmx.de>
 
-Regards,
+I thing this should go through the tegra-soc tree. Thierry? Stephen?
 
-Tomeu
+Marc
 
-> Rob
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
-l" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+--nextPart3403769.ohlsyk9j4l
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAABCAAGBQJV7pVPAAoJEKyeR39HFBtoP2cH/jnfj3sd5sheORZnC76uTj+I
+g6koeh2Ezv3OjLiTbWeIBgQD20BDN7qQl53jNa8XXIWpjwKZ/Dqqu7NLEQpmVreg
+dNxZJ+GC8ACkDDjdd36HIMCFbsllVM1RYot0Mtk/eid8v3V6WYKopERDDke8qLrh
+nGGzSZKNRqMVkqPAeOAkPaWnliJ8IwlXypuy/NjqoQf3EHo0Cvs02DQJc4jNEAGu
+zfULvN8laXWuQBV4K+wZlrS2jUSd/MnFeX1DQcLZRGYLijezjrArqIFnnyxHNYuC
+lLTPoaGbejlBORCqFqCCmOOC985jXB6IOrsjjV+ihfXn1vGqeQNi/Sayrj3HK3c=
+=xKHl
+-----END PGP SIGNATURE-----
+
+--nextPart3403769.ohlsyk9j4l--
