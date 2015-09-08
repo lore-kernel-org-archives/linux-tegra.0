@@ -1,95 +1,43 @@
-From: Marc Dietrich <marvin24@gmx.de>
-Subject: Re: [PATCH v2] ARM: tegra: paz00: use con_id's to refer GPIO's ingpiod_lookup table
-Date: Tue, 08 Sep 2015 09:59:11 +0200
-Message-ID: <3738507.JjVW9EvTJ3@fb07-iapwap2>
-References: <1435673759-11996-1-git-send-email-digetx@gmail.com> <55ED5721.80508@gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart3403769.ohlsyk9j4l"; micalg="pgp-sha256"; protocol="application/pgp-signature"
-Return-path: <stable-owner@vger.kernel.org>
-In-Reply-To: <55ED5721.80508@gmail.com>
-Sender: stable-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Mika Westerberg <mika.westerberg@linux.intel.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, stable@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 1/2] nouveau: arm: Add MODULE_FIRMWARE for gk20a
+Date: Tue,  8 Sep 2015 12:18:46 +0200
+Message-ID: <1441707527-9890-1-git-send-email-kwizart@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
---nextPart3403769.ohlsyk9j4l
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+This patch is needed by initramfs tools to detect
+the required firmware files for the module.
 
-Am Montag, 7. September 2015, 12:21:37 schrieb Dmitry Osipenko:
-> 30.06.2015 17:15, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > Commit 72daceb9a10a ("net: rfkill: gpio: Add default GPIO driver ma=
-ppings
-> > for ACPI") removed possibility to request GPIO by table index for n=
-on-ACPI
-> > platforms without changing it users. As result "shutdown" GPIO requ=
-est
-> > will fail if request for "reset" GPIO succeeded or "reset" will be
-> > requested instead of "shutdown" if "reset" wasn't defined. Fix it b=
-y
-> > making gpiod_lookup_table use con_id's instead of indexes.
-> >=20
-> > Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> > Fixes: 72daceb (net: rfkill: gpio: Add default GPIO driver mappings=
- for
-> > ACPI) Cc: <stable@vger.kernel.org> # v3.19+
-> > Acked-by: Alexandre Courbot <acourbot@nvidia.com>
-> > ---
-> >=20
-> > v2: s/GPIO_LOOKUP_IDX/GPIO_LOOKUP/, otherwise "shutdown" GPIO won't=
- be
-> > requested>=20
-> >   arch/arm/mach-tegra/board-paz00.c | 4 ++--
-> >   1 file changed, 2 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/arch/arm/mach-tegra/board-paz00.c
-> > b/arch/arm/mach-tegra/board-paz00.c index fbe74c6..49d1110 100644
-> > --- a/arch/arm/mach-tegra/board-paz00.c
-> > +++ b/arch/arm/mach-tegra/board-paz00.c
-> > @@ -39,8 +39,8 @@ static struct platform_device wifi_rfkill_device =
-=3D {
-> >=20
-> >   static struct gpiod_lookup_table wifi_gpio_lookup =3D {
-> >  =20
-> >   =09.dev_id =3D "rfkill_gpio",
-> >   =09.table =3D {
-> >=20
-> > -=09=09GPIO_LOOKUP_IDX("tegra-gpio", 25, NULL, 0, 0),
-> > -=09=09GPIO_LOOKUP_IDX("tegra-gpio", 85, NULL, 1, 0),
-> > +=09=09GPIO_LOOKUP("tegra-gpio", 25, "reset", 0),
-> > +=09=09GPIO_LOOKUP("tegra-gpio", 85, "shutdown", 0),
-> >=20
-> >   =09=09{ },
-> >   =09
-> >   =09},
-> >  =20
-> >   };
->=20
-> Ping
+This patch tests for NOUVEAU_PLATFORM_DRIVER and either
+TEGRA_124_SOC or TEGRA_132_SOC for the firmwares related to
+the Tegra K1 generation.
 
-also=20
+Signed-off-by: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/gpu/drm/nouveau/nouveau_drm.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-Tested-by: Marc Dietrich <marvin24@gmx.de>
-
-I thing this should go through the tegra-soc tree. Thierry? Stephen?
-
-Marc
-
---nextPart3403769.ohlsyk9j4l
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAABCAAGBQJV7pVPAAoJEKyeR39HFBtoP2cH/jnfj3sd5sheORZnC76uTj+I
-g6koeh2Ezv3OjLiTbWeIBgQD20BDN7qQl53jNa8XXIWpjwKZ/Dqqu7NLEQpmVreg
-dNxZJ+GC8ACkDDjdd36HIMCFbsllVM1RYot0Mtk/eid8v3V6WYKopERDDke8qLrh
-nGGzSZKNRqMVkqPAeOAkPaWnliJ8IwlXypuy/NjqoQf3EHo0Cvs02DQJc4jNEAGu
-zfULvN8laXWuQBV4K+wZlrS2jUSd/MnFeX1DQcLZRGYLijezjrArqIFnnyxHNYuC
-lLTPoaGbejlBORCqFqCCmOOC985jXB6IOrsjjV+ihfXn1vGqeQNi/Sayrj3HK3c=
-=xKHl
------END PGP SIGNATURE-----
-
---nextPart3403769.ohlsyk9j4l--
+diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
+index ccefb64..862c225 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_drm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+@@ -1111,3 +1111,14 @@ MODULE_DEVICE_TABLE(pci, nouveau_drm_pci_table);
+ MODULE_AUTHOR(DRIVER_AUTHOR);
+ MODULE_DESCRIPTION(DRIVER_DESC);
+ MODULE_LICENSE("GPL and additional rights");
++#if defined(CONFIG_NOUVEAU_PLATFORM_DRIVER) && \
++  (IS_ENABLED(CONFIG_ARCH_TEGRA_124_SOC) || IS_ENABLED(CONFIG_ARCH_TEGRA_132_SOC))
++MODULE_FIRMWARE("nvidia/gk20a/fecs_data.bin");
++MODULE_FIRMWARE("nvidia/gk20a/fecs_inst.bin");
++MODULE_FIRMWARE("nvidia/gk20a/gpccs_data.bin");
++MODULE_FIRMWARE("nvidia/gk20a/gpccs_inst.bin");
++MODULE_FIRMWARE("nvidia/gk20a/sw_bundle_init.bin");
++MODULE_FIRMWARE("nvidia/gk20a/sw_ctx.bin");
++MODULE_FIRMWARE("nvidia/gk20a/sw_method_init.bin");
++MODULE_FIRMWARE("nvidia/gk20a/sw_nonctx.bin");
++#endif
+-- 
+2.4.3
