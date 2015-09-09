@@ -1,28 +1,25 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+From: Viresh Kumar <viresh.kumar@linaro.org>
 Subject: Re: [PATCH] cpufreq: tegra20: remove superfluous CONFIG_PM ifdefs
-Date: Wed, 09 Sep 2015 03:13:45 +0200
-Message-ID: <9512123.FfVbKErfZO@vostro.rjw.lan>
+Date: Wed, 9 Sep 2015 07:57:35 +0530
+Message-ID: <20150909022735.GG7639@linux>
 References: <1441732403-7248-1-git-send-email-b.zolnierkie@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
 In-Reply-To: <1441732403-7248-1-git-send-email-b.zolnierkie@samsung.com>
 Sender: linux-pm-owner@vger.kernel.org
 To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday, September 08, 2015 07:13:23 PM Bartlomiej Zolnierkiewicz wrote:
+On 08-09-15, 19:13, Bartlomiej Zolnierkiewicz wrote:
 > CONFIG_PM ifdefs are superfluous and can be removed.
 > 
 > Cc: Stephen Warren <swarren@wwwdotorg.org>
 > Cc: Thierry Reding <thierry.reding@gmail.com>
 > Cc: Alexandre Courbot <gnurou@gmail.com>
 > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-
-What tree does this apply to?
-
 > ---
 >  drivers/cpufreq/tegra20-cpufreq.c | 2 --
 >  1 file changed, 2 deletions(-)
@@ -41,8 +38,8 @@ What tree does this apply to?
 >  };
 >  
 >  static int __init tegra_cpufreq_init(void)
-> 
+
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
 -- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+viresh
