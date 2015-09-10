@@ -1,69 +1,42 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] cpufreq: tegra20: remove superfluous CONFIG_PM ifdefs
-Date: Wed, 09 Sep 2015 22:14:50 +0200
-Message-ID: <2371290.4u0K8mkgaF@vostro.rjw.lan>
-References: <1441732403-7248-1-git-send-email-b.zolnierkie@samsung.com> <9512123.FfVbKErfZO@vostro.rjw.lan> <1615370.p6S63xknIg@amdc1976>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1615370.p6S63xknIg@amdc1976>
-Sender: linux-pm-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: [PATCH 08/17] thermal: tegra: allow compile test
+Date: Wed,  9 Sep 2015 21:11:04 -0700
+Message-ID: <1441858273-4017-9-git-send-email-edubezval@gmail.com>
+References: <1441858273-4017-1-git-send-email-edubezval@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1441858273-4017-1-git-send-email-edubezval@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rui Zhang <rui.zhang@intel.com>
+Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, Eduardo Valentin <edubezval@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday, September 09, 2015 12:36:39 PM Bartlomiej Zolnierkiewicz wrote:
-> 
-> Hi,
-> 
-> On Wednesday, September 09, 2015 03:13:45 AM Rafael J. Wysocki wrote:
-> > On Tuesday, September 08, 2015 07:13:23 PM Bartlomiej Zolnierkiewicz wrote:
-> > > CONFIG_PM ifdefs are superfluous and can be removed.
-> > > 
-> > > Cc: Stephen Warren <swarren@wwwdotorg.org>
-> > > Cc: Thierry Reding <thierry.reding@gmail.com>
-> > > Cc: Alexandre Courbot <gnurou@gmail.com>
-> > > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > 
-> > What tree does this apply to?
-> 
-> It applies fine to both next (next-20150909 branch) and current Linus'
-> tree (top commit is a794b4f).
+Adding COMPILE_TEST flag to tegra driver to facilitate
+maintenance.
 
-OK
+Cc: Zhang Rui <rui.zhang@intel.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-pm@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+---
+ drivers/thermal/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-My cpufreq branch has not acquired tegra20-cpufreq.c yet, so I'll apply this
-one when -rc1 is out.  Or please ask whoever merged that driver to apply it
-earlier if you want to.
-
-
-> > > ---
-> > >  drivers/cpufreq/tegra20-cpufreq.c | 2 --
-> > >  1 file changed, 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/cpufreq/tegra20-cpufreq.c b/drivers/cpufreq/tegra20-cpufreq.c
-> > > index 8084c7f..2bd6284 100644
-> > > --- a/drivers/cpufreq/tegra20-cpufreq.c
-> > > +++ b/drivers/cpufreq/tegra20-cpufreq.c
-> > > @@ -175,9 +175,7 @@ static struct cpufreq_driver tegra_cpufreq_driver = {
-> > >  	.exit			= tegra_cpu_exit,
-> > >  	.name			= "tegra",
-> > >  	.attr			= cpufreq_generic_attr,
-> > > -#ifdef CONFIG_PM
-> > >  	.suspend		= cpufreq_generic_suspend,
-> > > -#endif
-> > >  };
-> > >  
-> > >  static int __init tegra_cpufreq_init(void)
-> 
-> Best regards,
-> --
-> Bartlomiej Zolnierkiewicz
-> Samsung R&D Institute Poland
-> Samsung Electronics
-> 
-
+diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+index 0e0d0de..c94efd3 100644
+--- a/drivers/thermal/Kconfig
++++ b/drivers/thermal/Kconfig
+@@ -242,7 +242,7 @@ config ARMADA_THERMAL
+ 
+ config TEGRA_SOCTHERM
+ 	tristate "Tegra SOCTHERM thermal management"
+-	depends on ARCH_TEGRA
++	depends on ARCH_TEGRA || COMPILE_TEST
+ 	help
+ 	  Enable this option for integrated thermal management support on NVIDIA
+ 	  Tegra124 systems-on-chip. The driver supports four thermal zones
 -- 
-I speak only for myself.
-Rafael J. Wysocki, Intel Open Source Technology Center.
+2.5.0
