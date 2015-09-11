@@ -1,339 +1,61 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [GIT PULL 9/9] ARM: tegra: Default configuration updates for
- v4.3-rc1
-Date: Fri, 11 Sep 2015 18:33:47 +0200
-Message-ID: <20150911163346.GA20235@ulmo.nvidia.com>
+From: Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [GIT PULL 9/9] ARM: tegra: Default configuration updates for v4.3-rc1
+Date: Fri, 11 Sep 2015 10:08:06 -0700
+Message-ID: <7h7fnw3mvd.fsf@linaro.org>
 References: <1439977724.4135.90.camel@collabora.co.uk>
- <20150819103305.GF26627@ulmo>
- <CANMBJr6DSXW-h8P8__LKBu-Xv77T35JwxHWvarvqy1keVrtVQQ@mail.gmail.com>
- <CAMAWPa_rus4z+Sg3Uff7ndqrpB8dF1c1rQBVQ9r7vXh6PFcVkQ@mail.gmail.com>
- <55F2AF45.5040706@nvidia.com>
- <20150911123759.GA8473@ulmo>
- <55F2D2E3.4010906@nvidia.com>
- <20150911132526.GB21673@ulmo>
- <55F2F895.5040704@nvidia.com>
- <20150911155946.GA13945@ulmo.nvidia.com>
+	<20150819103305.GF26627@ulmo>
+	<CANMBJr6DSXW-h8P8__LKBu-Xv77T35JwxHWvarvqy1keVrtVQQ@mail.gmail.com>
+	<CAMAWPa_rus4z+Sg3Uff7ndqrpB8dF1c1rQBVQ9r7vXh6PFcVkQ@mail.gmail.com>
+	<55F2AF45.5040706@nvidia.com> <20150911123759.GA8473@ulmo>
+	<55F2D2E3.4010906@nvidia.com> <20150911132526.GB21673@ulmo>
+	<55F2F895.5040704@nvidia.com> <20150911155946.GA13945@ulmo.nvidia.com>
+	<20150911163346.GA20235@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="qMm9M+Fa2AknHoGS"
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20150911155946.GA13945-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+In-Reply-To: <20150911163346.GA20235-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org> (Thierry Reding's
+	message of "Fri, 11 Sep 2015 18:33:47 +0200")
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Tyler Baker <tyler.baker-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tyler Baker <tyler.baker-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, "arm@kernel.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> writes:
 
---qMm9M+Fa2AknHoGS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> On Fri, Sep 11, 2015 at 05:59:48PM +0200, Thierry Reding wrote:
+>> On Fri, Sep 11, 2015 at 04:51:49PM +0100, Jon Hunter wrote:
+>> > 
+>> > On 11/09/15 14:25, Thierry Reding wrote:
+>> > 
+>> > [snip]
+>> > 
+>> > > Works for me 100% of the time. Unloading and reloading isn't a problem
+>> > > either. What revision of the Jetson TK1 do you have? Mine is a C.2
+>> > 
+>> > Unfortunately, I am not sure it is whatever is in Paul's automation rig
+>> > [0]. However, I have also reproduced this on a tegra124 nyan-big in the
+>> > office.
+>> 
+>> I was able to reproduce this using a busybox initial ramdisk. Just to
+>> make sure I built a separate one from git and it exposes the same
+>> behaviour. I suspect that this is some sort of weird interaction between
+>> mdev and async probing and nobody's noticed so far because async probing
+>> isn't very common (at least in the ARM world).
+>> 
+>> I'll be off for the weekend soonish, but I'll try to find some more time
+>> next week to track this down.
+>
+> Before I head into the weekend, here are my findings: looks like this
+> might be some sort of recursive locking problem. Here's the output with
+> a lot of debug messages:
 
-On Fri, Sep 11, 2015 at 05:59:48PM +0200, Thierry Reding wrote:
-> On Fri, Sep 11, 2015 at 04:51:49PM +0100, Jon Hunter wrote:
-> >=20
-> > On 11/09/15 14:25, Thierry Reding wrote:
-> >=20
-> > [snip]
-> >=20
-> > > Works for me 100% of the time. Unloading and reloading isn't a problem
-> > > either. What revision of the Jetson TK1 do you have? Mine is a C.2
-> >=20
-> > Unfortunately, I am not sure it is whatever is in Paul's automation rig
-> > [0]. However, I have also reproduced this on a tegra124 nyan-big in the
-> > office.
->=20
-> I was able to reproduce this using a busybox initial ramdisk. Just to
-> make sure I built a separate one from git and it exposes the same
-> behaviour. I suspect that this is some sort of weird interaction between
-> mdev and async probing and nobody's noticed so far because async probing
-> isn't very common (at least in the ARM world).
->=20
-> I'll be off for the weekend soonish, but I'll try to find some more time
-> next week to track this down.
+FWIW, in kernelci we use a buildroot initramfs[1] with eudev enabled for
+module loading.  Before booting, modules are injected into the ramdisk
+so they are loaded during boot by eudev.
 
-Before I head into the weekend, here are my findings: looks like this
-might be some sort of recursive locking problem. Here's the output with
-a lot of debug messages:
+The source is on github[2] and can be rebuilt using './configs/frags/build armel'
 
-	/ # modprobe snd-hda-tegra
-	[  298.765514] snd_hda_tegra: Unknown symbol snd_hdac_bus_enter_link_reset=
- (err 0)
-	[  298.773024] snd_hda_tegra: Unknown symbol azx_probe_codecs (err 0)
-	[  298.779332] snd_hda_tegra: Unknown symbol snd_card_register (err 0)
-	[  298.785834] snd_hda_tegra: Unknown symbol snd_card_free (err 0)
-	[  298.792015] snd_hda_tegra: Unknown symbol azx_init_streams (err 0)
-	[  298.798485] snd_hda_tegra: Unknown symbol azx_stop_all_streams (err 0)
-	[  298.805234] snd_hda_tegra: Unknown symbol snd_dma_free_pages (err 0)
-	[  298.811816] snd_hda_tegra: Unknown symbol snd_hdac_bus_free_stream_page=
-s (err 0)
-	[  298.819413] snd_hda_tegra: Unknown symbol snd_hdac_bus_exit (err 0)
-	[  298.825919] snd_hda_tegra: Unknown symbol snd_card_new (err 0)
-	[  298.832003] snd_hda_tegra: Unknown symbol snd_pcm_lib_malloc_pages (err=
- 0)
-	[  298.839080] snd_hda_tegra: Unknown symbol snd_pcm_lib_free_pages (err 0)
-	[  298.846033] snd_hda_tegra: Unknown symbol azx_bus_init (err 0)
-	[  298.852070] snd_hda_tegra: Unknown symbol azx_free_streams (err 0)
-	[  298.858475] snd_hda_tegra: Unknown symbol azx_init_chip (err 0)
-	[  298.864626] snd_hda_tegra: Unknown symbol snd_device_new (err 0)
-	[  298.870856] snd_hda_tegra: Unknown symbol snd_hda_set_power_save (err 0)
-	[  298.877802] snd_hda_tegra: Unknown symbol azx_stop_chip (err 0)
-	[  298.883953] snd_hda_tegra: Unknown symbol azx_codec_configure (err 0)
-	[  298.890598] snd_hda_tegra: Unknown symbol snd_dma_alloc_pages (err 0)
-	[  298.897274] snd_hda_tegra: Unknown symbol snd_hdac_bus_alloc_stream_pag=
-es (err 0)
-	[  298.904975] snd_hda_tegra: Unknown symbol azx_interrupt (err 0)
-	[  299.024167] device: 'timer': device_add
-	[  299.031120] > driver_register(drv=3Dbf06dd24)
-	[  299.035294]   finding driver...
-	[  299.038495]   adding driver...
-	[  299.041605] > __driver_attach(dev=3Ded805810, data=3Dbf06dd24)
-	[  299.047115]   matching device...
-	[  299.050352] > __driver_attach(dev=3Ded983e10, data=3Dbf06dd24)
-	[  299.055857]   matching device...
-	[  299.059086] > __driver_attach(dev=3Ded9a2010, data=3Dbf06dd24)
-	[  299.064606]   matching device...
-	[  299.067872] > __driver_attach(dev=3Ded9a2210, data=3Dbf06dd24)
-	[  299.073384]   matching device...
-	[  299.076658] > __driver_attach(dev=3Ded9a2410, data=3Dbf06dd24)
-	[  299.082171]   matching device...
-	[  299.085408] > __driver_attach(dev=3Ded9a2610, data=3Dbf06dd24)
-	[  299.090912]   matching device...
-	[  299.094141] > __driver_attach(dev=3Ded9a2810, data=3Dbf06dd24)
-	[  299.099655]   matching device...
-	[  299.102924] > __driver_attach(dev=3Ded9a2a10, data=3Dbf06dd24)
-	[  299.108435]   matching device...
-	[  299.111710] > __driver_attach(dev=3Ded9a2c10, data=3Dbf06dd24)
-	[  299.117221]   matching device...
-	[  299.120459] > __driver_attach(dev=3Ded9a2e10, data=3Dbf06dd24)
-	[  299.125963]   matching device...
-	[  299.129192] > __driver_attach(dev=3Ded9a3010, data=3Dbf06dd24)
-	[  299.134706]   matching device...
-	[  299.137976] > __driver_attach(dev=3Ded9a3210, data=3Dbf06dd24)
-	[  299.143487]   matching device...
-	[  299.146762] > __driver_attach(dev=3Ded9a3410, data=3Dbf06dd24)
-	[  299.152273]   matching device...
-	[  299.155511] > __driver_attach(dev=3Ded9a3610, data=3Dbf06dd24)
-	[  299.161015]   matching device...
-	[  299.164253] > __driver_attach(dev=3Ded9a3810, data=3Dbf06dd24)
-	[  299.169752]   matching device...
-	[  299.173016] > __driver_attach(dev=3Ded9a3a10, data=3Dbf06dd24)
-	[  299.178527]   matching device...
-	[  299.181802] > __driver_attach(dev=3Ded9a3c10, data=3Dbf06dd24)
-	[  299.187325]   matching device...
-	[  299.190560] > __driver_attach(dev=3Ded9a3e10, data=3Dbf06dd24)
-	[  299.196062]   matching device...
-	[  299.199301] > __driver_attach(dev=3Ded9a4010, data=3Dbf06dd24)
-	[  299.204799]   matching device...
-	[  299.208051] > __driver_attach(dev=3Ded9a4210, data=3Dbf06dd24)
-	[  299.213534]   matching device...
-	[  299.216796] > __driver_attach(dev=3Ded9a4410, data=3Dbf06dd24)
-	[  299.222307]   matching device...
-	[  299.225545] > __driver_attach(dev=3Ded9a4610, data=3Dbf06dd24)
-	[  299.231060]   matching device...
-	[  299.234295] > __driver_attach(dev=3Ded9a4810, data=3Dbf06dd24)
-	[  299.239798]   matching device...
-	[  299.243051] > __driver_attach(dev=3Ded9a4a10, data=3Dbf06dd24)
-	[  299.248534]   matching device...
-	[  299.251799] > __driver_attach(dev=3Ded9a4c10, data=3Dbf06dd24)
-	[  299.257309]   matching device...
-	[  299.260548] > __driver_attach(dev=3Ded9a4e10, data=3Dbf06dd24)
-	[  299.266064]   matching device...
-	[  299.269298] > __driver_attach(dev=3Ded9a5010, data=3Dbf06dd24)
-	[  299.274801]   matching device...
-	[  299.278054] > __driver_attach(dev=3Ded9a5210, data=3Dbf06dd24)
-	[  299.283537]   matching device...
-	[  299.286799] > __driver_attach(dev=3Ded9a5410, data=3Dbf06dd24)
-	[  299.292311]   matching device...
-	[  299.295549] > __driver_attach(dev=3Ded9a5610, data=3Dbf06dd24)
-	[  299.301064]   matching device...
-	[  299.304296] > __driver_attach(dev=3Ded9a5810, data=3Dbf06dd24)
-	[  299.309800]   matching device...
-	[  299.313054] > __driver_attach(dev=3Ded9a5a10, data=3Dbf06dd24)
-	[  299.318537]   matching device...
-	[  299.321808]   done
-	[  299.323821]   locking parent...
-	[  299.326991]   done
-	[  299.329007]   locking device...
-	[  299.332191]   done
-	[  299.334201]   probing device...
-	[  299.337372] bus: 'platform': driver_probe_device: matched device 700300=
-00.hda with driver tegra-hda
-	[  299.346453] bus: 'platform': really_probe: probing driver tegra-hda wit=
-h device 70030000.hda
-	[  299.354990] devices_kset: Moving 70030000.hda to end of list
-	[  299.510965] device: 'hdaudioC0D3': device_add
-	[  299.590057] > __hda_codec_driver_register(drv=3Dbf0795f0, name=3Dsnd_hd=
-a_codec_hdmi, owner=3Dbf079680)
-	[  299.598862] > driver_register(drv=3Dbf0795f0)
-	[  299.603054]   finding driver...
-	[  299.606206]   adding driver...
-	[  299.609265] > __driver_attach(dev=3Dede27c00, data=3Dbf0795f0)
-	[  299.614756]   matching device...
-	[  299.617998] > hda_bus_match(dev=3Dede27c00, drv=3Dbf0795f0)
-	[  299.623240] > hda_codec_match(dev=3Dede27c00, drv=3Dbf0795f0)
-	[  299.628657] < hda_codec_match() match!
-	[  299.632429]   done
-	[  299.634443]   locking parent...
+Kevin
 
-It hangs here, but interestingly I can interrupt it using Ctrl-C:
-
-	^C[  329.774183] > __device_attach_driver(drv=3Dbf0795f0, _data=3Decbc3d08)
-	[  329.780536]   matching device...
-	[  329.783844] > hda_bus_match(dev=3Dede27c00, drv=3Dbf0795f0)
-	[  329.789198] > hda_codec_match(dev=3Dede27c00, drv=3Dbf0795f0)
-	[  329.794722] < hda_codec_match() match!
-	[  329.798600]   async allowed: 0
-	[  329.801790] bus: 'hdaudio': driver_probe_device: matched device hdaudio=
-C0D3 with driver snd_hda_codec_hdmi
-	[  329.811577] bus: 'hdaudio': really_probe: probing driver snd_hda_codec_=
-hdmi with device hdaudioC0D3
-	[  329.820913] devices_kset: Moving hdaudioC0D3 to end of list
-	[  329.826618] > hda_codec_driver_probe(dev=3Dede27c00)
-	[  329.831533]   device: hdaudioC0D3
-	[  329.835152] > patch_tegra_hdmi(codec=3Dede27c00)
-	[  329.916075] < patch_tegra_hdmi()
-	[  329.920029] ALSA pcmC0D3p,0:HDMI 0: cannot preallocate for size 65536
-
-	[  330.946327] < hda_codec_driver_probe()
-	[  330.950122] driver: 'snd_hda_codec_hdmi': driver_bound: bound to device=
- 'hdaudioC0D3'
-	[  330.958115] bus: 'hdaudio': really_probe: bound device hdaudioC0D3 to d=
-river snd_hda_codec_hdmi
-	[  330.966903] < __device_attach_driver() =3D 1
-	[  330.971179] device: 'card0': device_add
-	[  330.975432] device: 'controlC0': device_add
-	[  330.981325] device: 'pcmC0D3p': device_add
-	[  330.987256] device: 'input1': device_add
-	[  330.991997] input: tegra-hda HDMI/DP,pcm=3D3 as /devices/soc0/70030000.=
-hda/sound/card0/input1
-	[  331.000477] device: 'event1': device_add
-	[  331.136299] driver: 'tegra-hda': driver_bound: bound to device '7003000=
-0.hda'
-	[  331.143621] bus: 'platform': really_probe: bound device 70030000.hda to=
- driver tegra-hda
-	[  331.151804]   done
-	[  331.153845]   unlocking device...
-	[  331.157288]   done
-	[  331.157473]   done
-	[  331.157483]   locking device...
-	[  331.157493]   done
-	[  331.157501]   unlocking device...
-	[  331.157508]   done
-	[  331.157514]   unlocking parent...
-	[  331.157522]   done
-	[  331.157532] < __driver_attach()
-	[  331.157714]   adding groups...
-	[  331.157722]   sending KOBJ_ADD event...
-	[  331.157772] < driver_register() =3D 0
-	[  331.157784] < __hda_codec_driver_register() =3D 0
-	[  331.196006]   unlocking parent...
-	[  331.199354]   done
-	[  331.201407] < __driver_attach()
-	[  331.204551] > __driver_attach(dev=3Ded9a5c10, data=3Dbf06dd24)
-	[  331.210061]   matching device...
-	[  331.213325] > __driver_attach(dev=3Ded9a5e10, data=3Dbf06dd24)
-	[  331.218826]   matching device...
-	[  331.222091] > __driver_attach(dev=3Ded9a6010, data=3Dbf06dd24)
-	[  331.227593]   matching device...
-	[  331.230837] > __driver_attach(dev=3Ded9a6210, data=3Dbf06dd24)
-	[  331.236341]   matching device...
-	[  331.239578] > __driver_attach(dev=3Ded9a6410, data=3Dbf06dd24)
-	[  331.245079]   matching device...
-	[  331.248351] > __driver_attach(dev=3Ded9a6610, data=3Dbf06dd24)
-	[  331.253854]   matching device...
-	[  331.257119] > __driver_attach(dev=3Ded9a6810, data=3Dbf06dd24)
-	[  331.262623]   matching device...
-	[  331.265901] > __driver_attach(dev=3Ded9a6a10, data=3Dbf06dd24)
-	[  331.271407]   matching device...
-	[  331.274645] > __driver_attach(dev=3Ded9a6c10, data=3Dbf06dd24)
-	[  331.280146]   matching device...
-	[  331.283411] > __driver_attach(dev=3Ded9a6e10, data=3Dbf06dd24)
-	[  331.288913]   matching device...
-	[  331.292178] > __driver_attach(dev=3Ded9a7010, data=3Dbf06dd24)
-	[  331.297681]   matching device...
-	[  331.300955] > __driver_attach(dev=3Ded9a7210, data=3Dbf06dd24)
-	[  331.306459]   matching device...
-	[  331.309696] > __driver_attach(dev=3Ded9a7410, data=3Dbf06dd24)
-	[  331.315197]   matching device...
-	[  331.318461] > __driver_attach(dev=3Ded9a7610, data=3Dbf06dd24)
-	[  331.323964]   matching device...
-	[  331.327229] > __driver_attach(dev=3Ded9a7810, data=3Dbf06dd24)
-	[  331.332732]   matching device...
-	[  331.335993] > __driver_attach(dev=3Ded9a7a10, data=3Dbf06dd24)
-	[  331.341497]   matching device...
-	[  331.344734] > __driver_attach(dev=3Ded9a7c10, data=3Dbf06dd24)
-	[  331.350236]   matching device...
-	[  331.353502] > __driver_attach(dev=3Ded9a7e10, data=3Dbf06dd24)
-	[  331.359005]   matching device...
-	[  331.362269] > __driver_attach(dev=3Ded9b0010, data=3Dbf06dd24)
-	[  331.367772]   matching device...
-	[  331.371032] > __driver_attach(dev=3Ded9b0210, data=3Dbf06dd24)
-	[  331.376533]   matching device...
-	[  331.379771] > __driver_attach(dev=3Ded9b0410, data=3Dbf06dd24)
-	[  331.385272]   matching device...
-	[  331.388536] > __driver_attach(dev=3Ded9b0610, data=3Dbf06dd24)
-	[  331.394039]   matching device...
-	[  331.397312] > __driver_attach(dev=3Ded9b0810, data=3Dbf06dd24)
-	[  331.402816]   matching device...
-	[  331.406068] > __driver_attach(dev=3Ded9b0a10, data=3Dbf06dd24)
-	[  331.411569]   matching device...
-	[  331.414807] > __driver_attach(dev=3Ded9b0c10, data=3Dbf06dd24)
-	[  331.420307]   matching device...
-	[  331.423572] > __driver_attach(dev=3Ded9b0e10, data=3Dbf06dd24)
-	[  331.429074]   matching device...
-	[  331.432339] > __driver_attach(dev=3Ded9b1010, data=3Dbf06dd24)
-	[  331.437841]   matching device...
-	[  331.441092] > __driver_attach(dev=3Ded9b1210, data=3Dbf06dd24)
-	[  331.446600]   matching device...
-	[  331.449836] > __driver_attach(dev=3Ded9b1410, data=3Dbf06dd24)
-	[  331.455339]   matching device...
-	[  331.458604] > __driver_attach(dev=3Dedad2410, data=3Dbf06dd24)
-	[  331.464105]   matching device...
-	[  331.467368] > __driver_attach(dev=3Dedcbb810, data=3Dbf06dd24)
-	[  331.472870]   matching device...
-	[  331.476120] > __driver_attach(dev=3Dedde4a10, data=3Dbf06dd24)
-	[  331.481625]   matching device...
-	[  331.484863] > __driver_attach(dev=3Dedde5210, data=3Dbf06dd24)
-	[  331.490366]   matching device...
-	[  331.493630] > __driver_attach(dev=3Dedde5410, data=3Dbf06dd24)
-	[  331.499133]   matching device...
-	[  331.502384] > __driver_attach(dev=3Dedde5610, data=3Dbf06dd24)
-	[  331.507879]   matching device...
-	[  331.511129] > __driver_attach(dev=3Dedde5810, data=3Dbf06dd24)
-	[  331.516623]   matching device...
-	[  331.519855] > __driver_attach(dev=3Dedde5a10, data=3Dbf06dd24)
-	[  331.525348]   matching device...
-	[  331.528598] > __driver_attach(dev=3Dede78810, data=3Dbf06dd24)
-	[  331.534092]   matching device...
-	[  331.537341] > __driver_attach(dev=3Dedeb5e10, data=3Dbf06dd24)
-	[  331.542838]   matching device...
-	[  331.546133]   adding groups...
-	[  331.549184]   sending KOBJ_ADD event...
-	[  331.553043] < driver_register() =3D 0
-
-Thierry
-
---qMm9M+Fa2AknHoGS
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJV8wJnAAoJEN0jrNd/PrOh5RIP/2SlE8p/eolTj/bdHN0E5Z5D
-sfQxmr91p2xwAlwfwwYlwJ/Z4m5HvUR3RQoIveR+Xe5vrdU8mV5eyiI5reNLe4SX
-BUCoYa53lNa9Ckle9l1pwk322DYi1AioE8W0KTmOx3J02Iud0Z6MyHSQMc7rZjCr
-MzW64r+xDUgZYGoiRNJLVwq0MVSab3uMWII47Xuvf0q7ijg3w/19/Z3gH6GEM1Pf
-G7+W/nr7yOPsODggSN0PWYzIE+uYPKCDl5Hqeq8/jMyKlTqaYSdIkUdrTdWgZY1J
-f+IgQ2/DS7DEgFSx32xfibibD5hG/y+ETKEuHCYxZjVhziWHsLIvKNuk+jGR+rve
-zsh42Rb62RGaV3S6ZCQxlxmVFeKWyz8AMckhjudZLcNkJvKYktH4PG2akGB2c3ah
-TCI3bQ1K+4P7EC8MPPzzOhkMs2hvhR0LdKQD+R3P7i46Bl4vn1z8sl1G7ksRN6gM
-r0tuFaSqi1oTTHuk4vuKDytzniJc0nem2ab/s5Dnec2ixr86zj4X1nMY6d9OVKPS
-RDghz5OrwKOcMPK4heCPEhbRZiffTz33n81lTDgNToditi83cjq6yC7RXda4hSsZ
-3CiNZMM/Ede/ERkO15bh6dUMTUtsyHRaMsaulrIfmdkBEmj+8IMkXPz7XRrTdL54
-UT5N+6ykloECNwnwzLMZ
-=9CWY
------END PGP SIGNATURE-----
-
---qMm9M+Fa2AknHoGS--
+[1] http://storage.kernelci.org/images/rootfs/buildroot/armel/
+[2] https://github.com/kernelci/buildroot/tree/kernelci/2015.02
