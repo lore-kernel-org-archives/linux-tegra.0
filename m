@@ -1,8 +1,8 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [GIT PULL 9/9] ARM: tegra: Default configuration updates for
  v4.3-rc1
-Date: Fri, 11 Sep 2015 15:21:14 +0200
-Message-ID: <20150911132113.GA21673@ulmo>
+Date: Fri, 11 Sep 2015 15:25:27 +0200
+Message-ID: <20150911132526.GB21673@ulmo>
 References: <1439563720-13189-10-git-send-email-thierry.reding@gmail.com>
  <CANMBJr7PKy-eCcB3HiBajpApHS_BYPa7xfKjTqV4o8Z1hwY99A@mail.gmail.com>
  <20150819091358.GA26627@ulmo>
@@ -12,25 +12,25 @@ References: <1439563720-13189-10-git-send-email-thierry.reding@gmail.com>
  <CAMAWPa_rus4z+Sg3Uff7ndqrpB8dF1c1rQBVQ9r7vXh6PFcVkQ@mail.gmail.com>
  <55F2AF45.5040706@nvidia.com>
  <20150911123759.GA8473@ulmo>
- <55F2D3D4.5090608@nvidia.com>
+ <55F2D2E3.4010906@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="pWyiEgJYm5f9v55/"
+	protocol="application/pgp-signature"; boundary="f2QGlHpHGjS2mn6Y"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <55F2D3D4.5090608-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <55F2D2E3.4010906-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Tyler Baker <tyler.baker-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---pWyiEgJYm5f9v55/
+--f2QGlHpHGjS2mn6Y
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Sep 11, 2015 at 02:15:00PM +0100, Jon Hunter wrote:
+On Fri, Sep 11, 2015 at 02:10:59PM +0100, Jon Hunter wrote:
 >=20
 > On 11/09/15 13:38, Thierry Reding wrote:
 > > * PGP Signed by an unknown key
@@ -137,38 +137,53 @@ se it hangs.
 > > just fine. I don't ever see snd-hda-codec-hdmi being probed, but then
 > > probing it manually works fine. No hangs.
 >=20
-> To be clear, booting multi_v7_defconfig works just fine for me too and
-> has been working fine for months. However, the reason I am not seeing
-> the issue Kevin and Tyler are reporting is because I never attempt to
-> "modprobe snd-hda-tegra" after boot. If I do then I see a hang. So I
-> believe the only reason we don't see this is because their setup is
-> loading modules.
+> Did you try "modprobe snd-hda-tegra"? Fails for me 100% of the time.
 
-snd-hda-tegra is auto-loaded on boot for me as well and I don't see any
-hangs either. I can also unload and reload the module just fine. I've
-tested this on next-20150911.
+Works for me 100% of the time. Unloading and reloading isn't a problem
+either. What revision of the Jetson TK1 do you have? Mine is a C.2
+
+> > What I do see is that after a little while network stops working. I
+> > noticed primarily because I boot with an NFS root, so the kernel started
+> > complaining about the NFS server not responding. Being on an NFS root
+> > could be one reason why this works for me, not sure what the kernelci
+> > labs are running. I don't see the network issues with tegra_defconfig.
+> > I've also tried a tegra_defconfig with all of sound support built as
+> > modules and that all works perfectly.
+> >=20
+> > I'll investigate the multi_v7_defconfig network issues, perhaps that'll
+> > give me some clues, or perhaps even allow me to reproduce the original
+> > issue.
+>=20
+> Well I am not using any networking and booting with a simple ramdisk so
+> I don't think that is the right place to look.
+
+Looks like this might have been a transient issue with my networking
+setup. I can no longer reproduce the NFS hangs.
+
+What sort of ramdisk do you use? Can you share the instructions you use
+to create it? Perhaps I can reproduce that way.
 
 Thierry
 
---pWyiEgJYm5f9v55/
+--f2QGlHpHGjS2mn6Y
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJV8tVGAAoJEN0jrNd/PrOhTqUQAJA0bTNu5GjTiQ0bJ0iWNb+p
-FkLzuB42Aki0lTMDr3ueGbWFGVTIJ8BKRgnONxTHOLxJ2JUs2GfFVKhjR+bVMITd
-N+uY6jId/qR/E38rTo+P4DcF9crOFN/ucPqDAF5ZiEWCpw2ePYSqy4zazAPD7Utr
-mwyv3lvlWtaw1SKkfS9er6LqLO8zKL0lTRjACjPMLftBEWRL8nZhz0V3d44PEb3x
-AA88uoIadfYh6s/yjD97q8d2WZcBvZq0FhXmx1lrqGWraMVH89OWtKVYpiVlLd4Z
-Ao0rwsnksmOoHczg14fD8hF/GxSplsyvNq+IeK33w5oLqAM88RGJ8eIn1ECfrqm+
-HfXhVbI6yLBhMl/9lKrdmBl1VJqGCgbXJ4e4j9qy3fK23T+MCQPYYzg4DUqf9DId
-Z5xGXRUvvVVsddlw0S7zjbQkRIaC5CO9pLoHZKrBmwaKjJ7oA7BPr/dMXb8VDy+Z
-t6mcxG+9aYxU9Yfbx0FAmXTIrykY/XYvL0wTyFi8/c4D9jf07tO0zg9Rm9qPQ9MX
-Axd8usJd2ncNxTnveatWJiWMNUwWtAtE+BAr0B19XJbYeNbSH1R3JMBd3uI4/mVB
-pd4qX3QfcJYif3xEWV2C2tIv3hBdzBJcKQq2rgxMT8GoStb0UJxB/m/7ZNB22zLh
-kRtLrRQVrps2Zek02SQb
-=e7ub
+iQIcBAABCAAGBQJV8tZFAAoJEN0jrNd/PrOhJsAP/3elYyYvwdPRZu3qUsrQNMZd
+BSG98fN/JZGAeJHfF//xI4ZvOV/AnL2BD6Uf0t76KghFbNp+IxocuJLxuC0Lo1cC
+9h6zG2dFubDaJAwZy9elSFpgWucBffgFjiDeMyVFE/ow9PTYTNsIye+WGvgrGeBJ
+dnnv3+ppevdb4env/BJs4nkY65w/gamHvnAFYqkSbRvsKp2uee2FYQzX8kht+6qk
+76yOIEtMVF/0Gkh99BsTloj7BIoMyYdMCMhMNeOYlCwl1pDvpGWsJGum2Tb2qWwP
+ouflMsrPIvMscA8Ba1rWoeVDrKRf9ntV6AA2YGFT9g2s9p6NZB0AbWHOyQymvCc6
+ZWeQO6wBn+3ekbHlEq1CFSa6rzCpgEfbSdThjKA09MdN9Naizo7MHSHHCZYhD1U/
+dPi7d/VTkxm+/Z3nEns7rBAhmchr5jEB0lSbYrdkiq4ABKs+FsNbp6QchvQf9d1r
+91G0oa/khqZFgoJLDWbJnB4R1AIbIbm/4Fygst5U7dc+htGhnrQlOxcccJQXkcMk
+WATkou7AIUPBTa9B8gv2dmy8pu8zsPpcaERCQcKLPoeJkoquo1pDjcVLklKDCIHF
+cJb0zsWDe7GeWueu1WM0H5oKZzQejRVfB/4kv/650uZxsyqL4QSlvXP8PHgV3b2B
+OZqzSVpbgEqMGH7pBr6S
+=EOFO
 -----END PGP SIGNATURE-----
 
---pWyiEgJYm5f9v55/--
+--f2QGlHpHGjS2mn6Y--
