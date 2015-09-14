@@ -1,61 +1,76 @@
-From: Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [GIT PULL 9/9] ARM: tegra: Default configuration updates for v4.3-rc1
-Date: Fri, 11 Sep 2015 10:08:06 -0700
-Message-ID: <7h7fnw3mvd.fsf@linaro.org>
-References: <1439977724.4135.90.camel@collabora.co.uk>
-	<20150819103305.GF26627@ulmo>
-	<CANMBJr6DSXW-h8P8__LKBu-Xv77T35JwxHWvarvqy1keVrtVQQ@mail.gmail.com>
-	<CAMAWPa_rus4z+Sg3Uff7ndqrpB8dF1c1rQBVQ9r7vXh6PFcVkQ@mail.gmail.com>
-	<55F2AF45.5040706@nvidia.com> <20150911123759.GA8473@ulmo>
-	<55F2D2E3.4010906@nvidia.com> <20150911132526.GB21673@ulmo>
-	<55F2F895.5040704@nvidia.com> <20150911155946.GA13945@ulmo.nvidia.com>
-	<20150911163346.GA20235@ulmo.nvidia.com>
+From: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH resend] PCI: tegra: use __pgprot() around static pgprot_t
+ initializer
+Date: Mon, 14 Sep 2015 11:47:56 -0500
+Message-ID: <20150914164756.GM829@google.com>
+References: <1440578974-26527-1-git-send-email-ard.biesheuvel@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20150911163346.GA20235-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org> (Thierry Reding's
-	message of "Fri, 11 Sep 2015 18:33:47 +0200")
+Content-Disposition: inline
+In-Reply-To: <1440578974-26527-1-git-send-email-ard.biesheuvel-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tyler Baker <tyler.baker-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sjoerd Simons <sjoerd.simons-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, "arm@kernel.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+To: Ard Biesheuvel <ard.biesheuvel-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> writes:
+On Wed, Aug 26, 2015 at 10:49:34AM +0200, Ard Biesheuvel wrote:
+> In order to comply with the rules that apply when STRICT_MM_TYPECHECKS
+> is defined, wrap the initializer for a pgprot_t in __pgprot().
+> 
+> Signed-off-by: Ard Biesheuvel <ard.biesheuvel-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-> On Fri, Sep 11, 2015 at 05:59:48PM +0200, Thierry Reding wrote:
->> On Fri, Sep 11, 2015 at 04:51:49PM +0100, Jon Hunter wrote:
->> > 
->> > On 11/09/15 14:25, Thierry Reding wrote:
->> > 
->> > [snip]
->> > 
->> > > Works for me 100% of the time. Unloading and reloading isn't a problem
->> > > either. What revision of the Jetson TK1 do you have? Mine is a C.2
->> > 
->> > Unfortunately, I am not sure it is whatever is in Paul's automation rig
->> > [0]. However, I have also reproduced this on a tegra124 nyan-big in the
->> > office.
->> 
->> I was able to reproduce this using a busybox initial ramdisk. Just to
->> make sure I built a separate one from git and it exposes the same
->> behaviour. I suspect that this is some sort of weird interaction between
->> mdev and async probing and nobody's noticed so far because async probing
->> isn't very common (at least in the ARM world).
->> 
->> I'll be off for the weekend soonish, but I'll try to find some more time
->> next week to track this down.
->
-> Before I head into the weekend, here are my findings: looks like this
-> might be some sort of recursive locking problem. Here's the output with
-> a lot of debug messages:
+Applied with Thierry's ack to pci/host-tegra for v4.4, thanks!
 
-FWIW, in kernelci we use a buildroot initramfs[1] with eudev enabled for
-module loading.  Before booting, modules are injected into the ramdisk
-so they are loaded during boot by eudev.
+> ---
+>  drivers/pci/host/pci-tegra.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> index 10c05718dbfd..0d3e6cb0c459 100644
+> --- a/drivers/pci/host/pci-tegra.c
+> +++ b/drivers/pci/host/pci-tegra.c
+> @@ -382,8 +382,8 @@ static unsigned long tegra_pcie_conf_offset(unsigned int devfn, int where)
+>  static struct tegra_pcie_bus *tegra_pcie_bus_alloc(struct tegra_pcie *pcie,
+>  						   unsigned int busnr)
+>  {
+> -	pgprot_t prot = L_PTE_PRESENT | L_PTE_YOUNG | L_PTE_DIRTY | L_PTE_XN |
+> -			L_PTE_MT_DEV_SHARED | L_PTE_SHARED;
+> +	pgprot_t prot = __pgprot(L_PTE_PRESENT | L_PTE_YOUNG | L_PTE_DIRTY |
+> +				 L_PTE_XN | L_PTE_MT_DEV_SHARED | L_PTE_SHARED);
+>  	phys_addr_t cs = pcie->cs->start;
+>  	struct tegra_pcie_bus *bus;
+>  	unsigned int i;
+> -- 
+> 1.9.1
 
-The source is on github[2] and can be rebuilt using './configs/frags/build armel'
 
-Kevin
+commit 512ee2fd9ca1c0b447a144c6c49a53a010f8d6fa
+Author: Ard Biesheuvel <ard.biesheuvel-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Date:   Wed Aug 26 10:49:34 2015 +0200
 
-[1] http://storage.kernelci.org/images/rootfs/buildroot/armel/
-[2] https://github.com/kernelci/buildroot/tree/kernelci/2015.02
+    PCI: tegra: Wrap static pgprot_t initializer with __pgprot()
+    
+    Wrap pgprot_t initializer with __pgprot() to comply with the
+    STRICT_MM_TYPECHECKS rules.
+    
+    [bhelgaas: changelog]
+    Signed-off-by: Ard Biesheuvel <ard.biesheuvel-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+    Signed-off-by: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+    Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index 81df0c1..3018ae5 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -382,8 +382,8 @@ static unsigned long tegra_pcie_conf_offset(unsigned int devfn, int where)
+ static struct tegra_pcie_bus *tegra_pcie_bus_alloc(struct tegra_pcie *pcie,
+ 						   unsigned int busnr)
+ {
+-	pgprot_t prot = L_PTE_PRESENT | L_PTE_YOUNG | L_PTE_DIRTY | L_PTE_XN |
+-			L_PTE_MT_DEV_SHARED | L_PTE_SHARED;
++	pgprot_t prot = __pgprot(L_PTE_PRESENT | L_PTE_YOUNG | L_PTE_DIRTY |
++				 L_PTE_XN | L_PTE_MT_DEV_SHARED | L_PTE_SHARED);
+ 	phys_addr_t cs = pcie->cs->start;
+ 	struct tegra_pcie_bus *bus;
+ 	unsigned int i;
