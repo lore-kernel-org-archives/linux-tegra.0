@@ -1,61 +1,49 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: Unlock top rates for Tegra124 DFLL clock
-Date: Tue, 15 Sep 2015 13:08:53 +0200
-Message-ID: <20150915110852.GA2983@ulmo.nvidia.com>
-References: <1442310915-15475-1-git-send-email-mikko.perttunen@kapsi.fi>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] ARM: Remove __ref on hotplug cpu die path
+Date: Tue, 15 Sep 2015 15:30:06 +0200
+Message-ID: <20150915133005.GB2983@ulmo.nvidia.com>
+References: <1442276597-14325-1-git-send-email-sboyd@codeaurora.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="GvXjxJ+pjyke8COw"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="8P1HSweYDcXXzwPJ"
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1442310915-15475-1-git-send-email-mikko.perttunen-/1wQRMveznE@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>
-Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1442276597-14325-1-git-send-email-sboyd@codeaurora.org>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: arm@kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Tony Lindgren <tony@atomide.com>, Barry Song <baohua@kernel.org>, Andy Gross <agross@codeaurora.org>, Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Sudeep Holla <sudeep.holla@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>, linux-omap@vger.kernel.org, spear-devel@list.st.com, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---GvXjxJ+pjyke8COw
+--8P1HSweYDcXXzwPJ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Sep 15, 2015 at 12:55:15PM +0300, Mikko Perttunen wrote:
-> The new determine_rate prototype allows for clock rates exceeding
-> 2^31-1 Hz to be used. Switch the DFLL clock to use determine_rate
-> instead of round_rate and unlock the top rates supported by the
-> Tegra124.
->=20
-> Signed-off-by: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>
-> ---
->  drivers/clk/tegra/clk-dfll.c | 15 ++++++++-------
->  drivers/clk/tegra/cvb.c      |  7 -------
->  2 files changed, 8 insertions(+), 14 deletions(-)
+On Mon, Sep 14, 2015 at 05:23:17PM -0700, Stephen Boyd wrote:
+[...]
+>  arch/arm/mach-tegra/hotplug.c        | 2 +-
 
-I've applied this to the for-4.4/clk branch in the Tegra tree.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Thanks,
-Thierry
-
---GvXjxJ+pjyke8COw
+--8P1HSweYDcXXzwPJ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJV9/xBAAoJEN0jrNd/PrOhSoIQAIPm/JKjnp4Hlr9Z9dKXvA89
-RtDyRr4fdi0UtIA2VPS1X9n24UEK883vGz4K/kHjfvyJOCWuBKyeZvhgBdYlOEDs
-DBDuHv+oxgvFkV5oplo0BwuEMksMjq6iPpF49FrDgoChtbIgmpvrEjeOFL6qS6bm
-vsr092mvNrVoacNEoSPsDHgjw5GoNRxthzW8PkEGl9d3LjSRf7i6YVIMSJD/16bv
-pvDdZWkBIGmzfNTYZ4MW9hAtmbRqJH74p0EDOeMcWpQ4GYiNLouXQt5IWWBOM3K7
-cDn3pXHhv8LdV6Wou/QNRd5TH5zz6HkcsTHBP89TmXczU/Oq1++eBzPnBsYCHpFY
-VkcUEQugclin87N88Sd6VP0QHkm0onVP90CyDvYkceg5se0ZKY7V4kUKmzPwAJQ1
-fbanMggfXQsRW/nSZck6jTA7rdxG7g7EaRoW8CzYT5xZPZBzzgTNTLhGC4DwQhuu
-aeBnyKcVTWvrcJnzFaNTTlWWLDBD8CHaP1FeUElew1xKoTqUn1zN1RcvV4iqfRZa
-SZMoYUygWrMoTfJVKuCHTVygPqqNj/bXTR+LzGK8NvYeT0Phhhz/a00YxUoAdJW0
-7ZFEwJS5W9EzvU4kAw2zOUZJcKfSjCERP/ZsM9cjVyW/NNBc1WoY2SUDkgTem59N
-7cjTaetl65Y2gQENWFac
-=q1rV
+iQIcBAABCAAGBQJV+B1aAAoJEN0jrNd/PrOhVN4P/3bxLtzF2M9DjGBv01Io1wKh
+QqZk3IlRm4YyIZDioXjBAXbU8gpYUrrA+UOh23dC2HE1ab/7vXg/W4qGXRWLSYX1
+BuXA/YXEFPd73siKJtQ+xa4iBgFLdtDLmAo0d7mdk1nkiKgYug2tBPbuyXuzSr/E
+IBT+aU0OJ4qREqzdJCkLmZG0kHjRgluzb10oaNcpTcQsVBsQnrCYUWZuTJwsCPtA
+thCBQRwXzwbtpuK7WsjTxEtEs1MGWwyn4gnK6+dCiTy/ZRd5T94jRp5fWSQxkpyj
+teON2aZ7XKhR1Dmvi+kmskjIA2k6Jmfg6TX3vanz/bnQ6MruknpoXEm3tOWWRvBO
+hzwk/GRlQaUeYWsQniyziNx5z7I035KhwHJOgwKFrdyVP5S5JiLL8lkki57ptQ/C
+PBp8pfvCg44mSNMqi/45p0mhBJovJ1louBV8q3TmGJFC+/rMMFY7qvMO5EHf4ht4
+NcZxuJ2Fwo4w2l8e/OoGa7LE3PiGpsb+5y7I9dg/eZQglzcHstt+T1Y84P7Cw3pN
+P5Z4TJQk8BNhB3oiDp9qYe52hdF4r2wfAKRmXDBkR3Cub0LcfHuFCLr/Rua2O9nk
+hGELq9GFyP8urYcEfI5ZjnMTufhZM7gSMsX8lApLh9XiAOWIoFfx4lUaCc6lnkEl
+7Y3cKrTIJ6zNL0arRuO6
+=+Fz2
 -----END PGP SIGNATURE-----
 
---GvXjxJ+pjyke8COw--
+--8P1HSweYDcXXzwPJ--
