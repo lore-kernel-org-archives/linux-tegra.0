@@ -1,52 +1,40 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 0/3] ALSA: hda - Avoid potential deadlock
-Date: Thu, 17 Sep 2015 12:00:03 +0200
-Message-ID: <1442484006-9614-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>
-Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Tyler Baker <tyler.baker-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH 1/3] ALSA: hda/hdmi - Add missing MODALIAS information
+Date: Thu, 17 Sep 2015 12:00:04 +0200
+Message-ID: <1442484006-9614-2-git-send-email-thierry.reding@gmail.com>
+References: <1442484006-9614-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1442484006-9614-1-git-send-email-thierry.reding@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Takashi Iwai <tiwai@suse.com>
+Cc: alsa-devel@alsa-project.org, Tyler Baker <tyler.baker@linaro.org>, Kevin Hilman <khilman@kernel.org>, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Thierry Reding <treding@nvidia.com>
 
-The Tegra HDA controller driver committed in v3.16 causes deadlocks when
-loaded as a module. The reason is that the driver core will lock the HDA
-controller device upon calling its probe callback and the probe callback
-then goes on to create child devices for detected codecs and loads their
-modules via a request_module() call. This is problematic because the new
-driver will immediately be bound to the device, which will in turn cause
-the parent of the codec device (the HDA controller device) to be locked
-again, causing a deadlock.
+Add MODALIAS definitions for the Tegra30 HDMI, Tegra114 HDMI and
+Tegra210 HDMI/DP codecs. The preset match table already contains
+corresponding entries, but the MODALIAS list wasn't updated.
 
-This problem seems to have been present since the modularization of the
-HD-audio driver in commit 1289e9e8b42f ("ALSA: hda - Modularize HD-audio
-driver"). On Intel platforms this has been worked around by splitting up
-the probe sequence into a synchronous and an asynchronous part where the
-request_module() calls are asynchronous and hence avoid the deadlock.
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ sound/pci/hda/patch_hdmi.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-An alternative proposal is provided in this series of patches. Rather
-than relying on explicit request_module() calls to load kernel modules
-for HDA codec drivers, this implements a uevent callback for the HDA bus
-to advertises the MODALIAS information to the userspace helper.
-
-Effectively this results in the same modules being loaded, but it uses
-the more canonical infrastructure to perform this. Deferring the module
-loading to userspace removes the need for the explicit request_module()
-calls and works around the recursive locking issue because both drivers
-will be bound from separate contexts.
-
-Thierry
-
-Thierry Reding (3):
-  ALSA: hda/hdmi - Add missing MODALIAS information
-  ALSA: hda - Advertise MODALIAS in uevent
-  ALSA: hda: Do not rely on explicit module loading
-
- sound/hda/hda_bus_type.c   | 12 +++++++
- sound/pci/hda/hda_bind.c   | 80 ----------------------------------------------
- sound/pci/hda/patch_hdmi.c |  3 ++
- 3 files changed, 15 insertions(+), 80 deletions(-)
-
+diff --git a/sound/pci/hda/patch_hdmi.c b/sound/pci/hda/patch_hdmi.c
+index acbfbe087ee8..70f7d873e65e 100644
+--- a/sound/pci/hda/patch_hdmi.c
++++ b/sound/pci/hda/patch_hdmi.c
+@@ -3585,7 +3585,10 @@ MODULE_ALIAS("snd-hda-codec-id:10de0019");
+ MODULE_ALIAS("snd-hda-codec-id:10de001a");
+ MODULE_ALIAS("snd-hda-codec-id:10de001b");
+ MODULE_ALIAS("snd-hda-codec-id:10de001c");
++MODULE_ALIAS("snd-hda-codec-id:10de0020");
++MODULE_ALIAS("snd-hda-codec-id:10de0022");
+ MODULE_ALIAS("snd-hda-codec-id:10de0028");
++MODULE_ALIAS("snd-hda-codec-id:10de0029");
+ MODULE_ALIAS("snd-hda-codec-id:10de0040");
+ MODULE_ALIAS("snd-hda-codec-id:10de0041");
+ MODULE_ALIAS("snd-hda-codec-id:10de0042");
 -- 
 2.5.0
