@@ -1,32 +1,33 @@
-From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: dfll: add missing rcu_read_unlock() for
- error path
-Date: Wed, 16 Sep 2015 15:15:31 -0700
-Message-ID: <20150916221531.GN23081@codeaurora.org>
-References: <1442384094-22144-1-git-send-email-vinceh@nvidia.com>
+From: Vince Hsu <vinceh@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: dfll: add missing rcu_read_unlock() for error
+ path
+Date: Thu, 17 Sep 2015 09:17:10 +0800
+Message-ID: <55FA1496.7000003@nvidia.com>
+References: <1442384094-22144-1-git-send-email-vinceh@nvidia.com> <20150916221531.GN23081@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1442384094-22144-1-git-send-email-vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vince Hsu <vince.h-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <20150916221531.GN23081@codeaurora.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Stephen Boyd <sboyd@codeaurora.org>
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Vince Hsu <vince.h@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/16, Vince Hsu wrote:
-> From: Vince Hsu <vince.h-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> The commit e770940218028c6a5927fda45f2ca9db5d9b35e0 ("clk: tegra: dfll:
-> Properly protect OPP list") added the rcu_read_{lock,unlock} but missed
-> one in the error path. So add the missing one.
-> 
-> Signed-off-by: Vince Hsu <vince.h-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
 
-I think we'll just squash this into the original patch from
-Thierry.
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+On 09/17/2015 06:15 AM, Stephen Boyd wrote:
+> On 09/16, Vince Hsu wrote:
+>> From: Vince Hsu <vince.h@nvidia.com>
+>>
+>> The commit e770940218028c6a5927fda45f2ca9db5d9b35e0 ("clk: tegra: dfll:
+>> Properly protect OPP list") added the rcu_read_{lock,unlock} but missed
+>> one in the error path. So add the missing one.
+>>
+>> Signed-off-by: Vince Hsu <vince.h@nvidia.com>
+>> ---
+> I think we'll just squash this into the original patch from
+> Thierry.
+Sure. Thanks!
+
+Vince
