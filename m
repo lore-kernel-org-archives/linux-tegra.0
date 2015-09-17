@@ -1,75 +1,52 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC] Potential issue with GPIO/IRQ flags
-Date: Wed, 16 Sep 2015 20:26:02 -0500
-Message-ID: <CAL_JsqKSfx4y_3VGhP5mR1-NJB0cJw5JLjhUk3hs92jM=usHPQ@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 0/3] ALSA: hda - Avoid potential deadlock
+Date: Thu, 17 Sep 2015 12:00:03 +0200
+Message-ID: <1442484006-9614-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Andrew F. Davis" <afd-l0cyMroinI0@public.gmane.org>
-Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andreas Fenkart <afenkart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Takashi Iwai <tiwai-IBi9RG/b67k@public.gmane.org>
+Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, Tyler Baker <tyler.baker-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Sep 16, 2015 at 4:07 PM, Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org> wrote:
-> Hello all,
->
-> I've noticed that in a few DT bindings GPIO_ACTIVE_* defines are
-> incorrectly used as interrupt flags. GPIO_ACTIVE_*'s are defined
-> in:
->
-> include/dt-bindings/gpio/gpio.h
->
-> and are used to describe GPIO pins. IRQ types are defined in:
->
-> include/dt-bindings/interrupt-controller/irq.h
->
-> and are flags for IRQ pins.
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-It is perfectly valid for the meaning of the field to be defined by
-the interrupt controller, and gpio interrupts could do something
-different. We've tried to standardize this though.
+The Tegra HDA controller driver committed in v3.16 causes deadlocks when
+loaded as a module. The reason is that the driver core will lock the HDA
+controller device upon calling its probe callback and the probe callback
+then goes on to create child devices for detected codecs and loads their
+modules via a request_module() call. This is problematic because the new
+driver will immediately be bound to the device, which will in turn cause
+the parent of the codec device (the HDA controller device) to be locked
+again, causing a deadlock.
 
-> These seem to have been mixed up in a few places, take for example:
-> arch/arm/boot/dts/tegra124-jetson-tk1.dts. On line 1393 we see the
-> correct usage, but just before on line 1384 we see the issue.
-> GPIO_ACTIVE_HIGH is defined as 0, the same as IRQ_TYPE_NONE. If
-> this IRQ was not hard-coded with the correct edge in the driver
-> this would not work. What the author probably wanted was
-> IRQ_TYPE_LEVEL_HIGH.
->
-> Now lets look at commit c21e678b256b, in this the IRQ flags did not
-> matter as the correct flag was hard-coded (IRQF_TRIGGER_LOW), this
-> patch moves this to the DT, but changed the flag to GPIO_ACTIVE_LOW
-> instead of the desired IRQ_TYPE_LEVEL_LOW. GPIO_ACTIVE_LOW is defined
-> as 1, or IRQ_TYPE_EDGE_RISING in IRQ flags, which is not the
-> equivalent to IRQF_TRIGGER_LOW the author was probably looking for.
->
-> A quick grep (git grep "interrupt.*GPIO_ACTIVE_") shows several more
-> instances of this. I found this by using one of these files as an
-> example and giving myself a lot of problems, so I would like to fix
-> this before it spreads anymore.
->
-> I have a couple of ideas of how to go at this, first would be to
-> just replace the incorrect flags with what was intended, but for
-> some of these I don't know what was intended and do not have the
-> board to test.
->
-> My other solution would be to just change all instances of the GPIO
-> flags to their value corresponding IRQ flags:
->
-> - interrupts = <11 GPIO_ACTIVE_LOW>;
-> + interrupts = <11 IRQ_TYPE_EDGE_RISING>;
->
-> this would not make any functional change as the defines would
-> still evaluate to the same value, but would make it obvious where
-> a problem may be and that they should probably be checked and
-> corrected, maybe we could even put a comment after:
->
-> - interrupts = <11 GPIO_ACTIVE_LOW>;
-> + interrupts = <11 IRQ_TYPE_EDGE_RISING>; // FIXME: Check IRQ type
->
-> Well, what do you think?
+This problem seems to have been present since the modularization of the
+HD-audio driver in commit 1289e9e8b42f ("ALSA: hda - Modularize HD-audio
+driver"). On Intel platforms this has been worked around by splitting up
+the probe sequence into a synchronous and an asynchronous part where the
+request_module() calls are asynchronous and hence avoid the deadlock.
 
-This seems fine. It is no less wrong.
+An alternative proposal is provided in this series of patches. Rather
+than relying on explicit request_module() calls to load kernel modules
+for HDA codec drivers, this implements a uevent callback for the HDA bus
+to advertises the MODALIAS information to the userspace helper.
 
-Rob
+Effectively this results in the same modules being loaded, but it uses
+the more canonical infrastructure to perform this. Deferring the module
+loading to userspace removes the need for the explicit request_module()
+calls and works around the recursive locking issue because both drivers
+will be bound from separate contexts.
+
+Thierry
+
+Thierry Reding (3):
+  ALSA: hda/hdmi - Add missing MODALIAS information
+  ALSA: hda - Advertise MODALIAS in uevent
+  ALSA: hda: Do not rely on explicit module loading
+
+ sound/hda/hda_bus_type.c   | 12 +++++++
+ sound/pci/hda/hda_bind.c   | 80 ----------------------------------------------
+ sound/pci/hda/patch_hdmi.c |  3 ++
+ 3 files changed, 15 insertions(+), 80 deletions(-)
+
+-- 
+2.5.0
