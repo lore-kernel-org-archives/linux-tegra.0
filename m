@@ -1,54 +1,151 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 2/3] ALSA: hda - Advertise MODALIAS in uevent
-Date: Thu, 17 Sep 2015 12:00:05 +0200
-Message-ID: <1442484006-9614-3-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH 3/3] ALSA: hda: Do not rely on explicit module loading
+Date: Thu, 17 Sep 2015 12:00:06 +0200
+Message-ID: <1442484006-9614-4-git-send-email-thierry.reding@gmail.com>
 References: <1442484006-9614-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1442484006-9614-1-git-send-email-thierry.reding@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Takashi Iwai <tiwai@suse.com>
-Cc: alsa-devel@alsa-project.org, Tyler Baker <tyler.baker@linaro.org>, Kevin Hilman <khilman@kernel.org>, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: alsa-devel@alsa-project.org, Kevin Hilman <khilman@kernel.org>, Tyler Baker <tyler.baker@linaro.org>, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-By setting the MODALIAS variable in uevents, userspace helpers will be
-enabled to load modules via the module alias associated with a device.
+With MODALIAS information being properly exported to userspace helpers,
+there is no need to explicitly request modules. Upon registration of new
+codec devices, userspace will know which kernel module to load.
 
-This information is required to automatically load HDA codec drivers
-instead of having to explicitly request the various modules in the HDA
-core code.
+This removes request_module() from the HDA controller's ->probe() path.
+Recursively loading a module this way causes a deadlock in the driver
+core because the HDA controller is locked as part of its own probe but
+probing its children (the HDA codec devices) will attempt to lock them
+again. In the past this has been worked around by splitting the probe
+into synchronous and asynchronous parts, where the request_module() is
+executed from a workqueue to avoid the deadlock.
+
+Since all the information necessary to let userspace load the proper
+kernel modules is now exported, there is no need for such workarounds
+anymore.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- sound/hda/hda_bus_type.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ sound/pci/hda/hda_bind.c | 80 ------------------------------------------------
+ 1 file changed, 80 deletions(-)
 
-diff --git a/sound/hda/hda_bus_type.c b/sound/hda/hda_bus_type.c
-index 89c2711baaaf..5adf24c9f9cc 100644
---- a/sound/hda/hda_bus_type.c
-+++ b/sound/hda/hda_bus_type.c
-@@ -63,9 +63,21 @@ static int hda_bus_match(struct device *dev, struct device_driver *drv)
- 	return 1;
+diff --git a/sound/pci/hda/hda_bind.c b/sound/pci/hda/hda_bind.c
+index d5ac25cc7fee..bbc7e2081b0d 100644
+--- a/sound/pci/hda/hda_bind.c
++++ b/sound/pci/hda/hda_bind.c
+@@ -146,72 +146,6 @@ void hda_codec_driver_unregister(struct hda_codec_driver *drv)
  }
+ EXPORT_SYMBOL_GPL(hda_codec_driver_unregister);
  
-+static int hda_uevent(struct device *dev, struct kobj_uevent_env *env)
-+{
-+	struct hdac_device *hdev = dev_to_hdac_dev(dev);
-+
-+	if (add_uevent_var(env, "MODALIAS=snd-hda-codec-id:%08x",
-+			   hdev->vendor_id))
-+		return -ENOMEM;
-+
-+	return 0;
-+}
-+
- struct bus_type snd_hda_bus_type = {
- 	.name = "hdaudio",
- 	.match = hda_bus_match,
-+	.uevent = hda_uevent,
- };
- EXPORT_SYMBOL_GPL(snd_hda_bus_type);
+-static inline bool codec_probed(struct hda_codec *codec)
+-{
+-	return device_attach(hda_codec_dev(codec)) > 0 && codec->preset;
+-}
+-
+-/* try to auto-load and bind the codec module */
+-static void codec_bind_module(struct hda_codec *codec)
+-{
+-#ifdef MODULE
+-	request_module("snd-hda-codec-id:%08x", codec->core.vendor_id);
+-	if (codec_probed(codec))
+-		return;
+-	request_module("snd-hda-codec-id:%04x*",
+-		       (codec->core.vendor_id >> 16) & 0xffff);
+-	if (codec_probed(codec))
+-		return;
+-#endif
+-}
+-
+-#if IS_ENABLED(CONFIG_SND_HDA_CODEC_HDMI)
+-/* if all audio out widgets are digital, let's assume the codec as a HDMI/DP */
+-static bool is_likely_hdmi_codec(struct hda_codec *codec)
+-{
+-	hda_nid_t nid;
+-
+-	for_each_hda_codec_node(nid, codec) {
+-		unsigned int wcaps = get_wcaps(codec, nid);
+-		switch (get_wcaps_type(wcaps)) {
+-		case AC_WID_AUD_IN:
+-			return false; /* HDMI parser supports only HDMI out */
+-		case AC_WID_AUD_OUT:
+-			if (!(wcaps & AC_WCAP_DIGITAL))
+-				return false;
+-			break;
+-		}
+-	}
+-	return true;
+-}
+-#else
+-/* no HDMI codec parser support */
+-#define is_likely_hdmi_codec(codec)	false
+-#endif /* CONFIG_SND_HDA_CODEC_HDMI */
+-
+-static int codec_bind_generic(struct hda_codec *codec)
+-{
+-	if (codec->probe_id)
+-		return -ENODEV;
+-
+-	if (is_likely_hdmi_codec(codec)) {
+-		codec->probe_id = HDA_CODEC_ID_GENERIC_HDMI;
+-#if IS_MODULE(CONFIG_SND_HDA_CODEC_HDMI)
+-		request_module("snd-hda-codec-hdmi");
+-#endif
+-		if (codec_probed(codec))
+-			return 0;
+-	}
+-
+-	codec->probe_id = HDA_CODEC_ID_GENERIC;
+-#if IS_MODULE(CONFIG_SND_HDA_GENERIC)
+-	request_module("snd-hda-codec-generic");
+-#endif
+-	if (codec_probed(codec))
+-		return 0;
+-	return -ENODEV;
+-}
+-
+ #if IS_ENABLED(CONFIG_SND_HDA_GENERIC)
+ #define is_generic_config(codec) \
+ 	(codec->modelname && !strcmp(codec->modelname, "generic"))
+@@ -241,25 +175,11 @@ int snd_hda_codec_configure(struct hda_codec *codec)
+ 	if (err < 0)
+ 		return err;
  
+-	if (!codec->preset)
+-		codec_bind_module(codec);
+-	if (!codec->preset) {
+-		err = codec_bind_generic(codec);
+-		if (err < 0) {
+-			codec_err(codec, "Unable to bind the codec\n");
+-			goto error;
+-		}
+-	}
+-
+ 	/* audio codec should override the mixer name */
+ 	if (codec->core.afg || !*codec->card->mixername)
+ 		snprintf(codec->card->mixername,
+ 			 sizeof(codec->card->mixername), "%s %s",
+ 			 codec->core.vendor_name, codec->core.chip_name);
+ 	return 0;
+-
+- error:
+-	snd_hdac_device_unregister(&codec->core);
+-	return err;
+ }
+ EXPORT_SYMBOL_GPL(snd_hda_codec_configure);
 -- 
 2.5.0
