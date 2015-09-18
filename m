@@ -1,128 +1,93 @@
-From: "Andrew F. Davis" <afd-l0cyMroinI0@public.gmane.org>
-Subject: Re: [RFC] Potential issue with GPIO/IRQ flags
-Date: Thu, 17 Sep 2015 18:49:11 -0500
-Message-ID: <55FB5177.40304@ti.com>
-References: <CAL_JsqKSfx4y_3VGhP5mR1-NJB0cJw5JLjhUk3hs92jM=usHPQ@mail.gmail.com>
- <55FAE1FB.4070300@ti.com>
- <CAL_JsqKm2ttQ-rikuZYJ7=qVj+-z+Xf8PyiP16=Rh=GoBW9Zhg@mail.gmail.com>
- <55FB04BC.5070605@ti.com> <55FB401C.7060908@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 5/5] drm/tegra: Fix module autoload for OF platform driver
+Date: Fri, 18 Sep 2015 17:36:57 +0200
+Message-ID: <20150918153657.GA6692@ulmo.nvidia.com>
+References: <20150917142232.GA20243@goodgumbo.baconseed.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <55FB401C.7060908-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Andreas Fenkart <afenkart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============0749696951=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20150917142232.GA20243@goodgumbo.baconseed.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Luis de Bethencourt <luis@debethencourt.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/17/2015 05:35 PM, Stephen Warren wrote:
-> On 09/17/2015 11:21 AM, Andrew F. Davis wrote:
->>
->>
->> On 09/17/2015 12:20 PM, Rob Herring wrote:
->>> On Thu, Sep 17, 2015 at 10:53 AM, Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org> wrote:
->>>> On 09/16/2015 08:26 PM, Rob Herring wrote:
->>>>>
->>>>> On Wed, Sep 16, 2015 at 4:07 PM, Andrew F. Davis <afd-l0cyMroinI0@public.gmane.org> wrote:
->>>>>>
->>>>>> Hello all,
->>>>>>
->>>>>> I've noticed that in a few DT bindings GPIO_ACTIVE_* defines are
->>>>>> incorrectly used as interrupt flags. GPIO_ACTIVE_*'s are defined
->>>>>> in:
->>>>>>
->>>>>> include/dt-bindings/gpio/gpio.h
->>>>>>
->>>>>> and are used to describe GPIO pins. IRQ types are defined in:
->>>>>>
->>>>>> include/dt-bindings/interrupt-controller/irq.h
->>>>>>
->>>>>> and are flags for IRQ pins.
->>>>>
->>>>>
->>>>> It is perfectly valid for the meaning of the field to be defined by
->>>>> the interrupt controller, and gpio interrupts could do something
->>>>> different. We've tried to standardize this though.
->>>>>
->>>>
->>>> Sure, but in this case these are not what the interrupt controller
->>>> is expecting.
->>>
->>> Understood. I was talking generally, not this specific case.
->>>
->>>>>> These seem to have been mixed up in a few places, take for example:
->>>>>> arch/arm/boot/dts/tegra124-jetson-tk1.dts. On line 1393 we see the
->>>>>> correct usage, but just before on line 1384 we see the issue.
->>>>>> GPIO_ACTIVE_HIGH is defined as 0, the same as IRQ_TYPE_NONE. If
->>>>>> this IRQ was not hard-coded with the correct edge in the driver
->>>>>> this would not work. What the author probably wanted was
->>>>>> IRQ_TYPE_LEVEL_HIGH.
->>>>>>
->>>>>> Now lets look at commit c21e678b256b, in this the IRQ flags did not
->>>>>> matter as the correct flag was hard-coded (IRQF_TRIGGER_LOW), this
->>>>>> patch moves this to the DT, but changed the flag to GPIO_ACTIVE_LOW
->>>>>> instead of the desired IRQ_TYPE_LEVEL_LOW. GPIO_ACTIVE_LOW is defined
->>>>>> as 1, or IRQ_TYPE_EDGE_RISING in IRQ flags, which is not the
->>>>>> equivalent to IRQF_TRIGGER_LOW the author was probably looking for.
->>>>>>
->>>>>> A quick grep (git grep "interrupt.*GPIO_ACTIVE_") shows several more
->>>>>> instances of this. I found this by using one of these files as an
->>>>>> example and giving myself a lot of problems, so I would like to fix
->>>>>> this before it spreads anymore.
->>>>>>
->>>>>> I have a couple of ideas of how to go at this, first would be to
->>>>>> just replace the incorrect flags with what was intended, but for
->>>>>> some of these I don't know what was intended and do not have the
->>>>>> board to test.
->>>>>>
->>>>>> My other solution would be to just change all instances of the GPIO
->>>>>> flags to their value corresponding IRQ flags:
->>>>>>
->>>>>> - interrupts = <11 GPIO_ACTIVE_LOW>;
->>>>>> + interrupts = <11 IRQ_TYPE_EDGE_RISING>;
->>>>>>
->>>>>> this would not make any functional change as the defines would
->>>>>> still evaluate to the same value, but would make it obvious where
->>>>>> a problem may be and that they should probably be checked and
->>>>>> corrected, maybe we could even put a comment after:
->>>>>>
->>>>>> - interrupts = <11 GPIO_ACTIVE_LOW>;
->>>>>> + interrupts = <11 IRQ_TYPE_EDGE_RISING>; // FIXME: Check IRQ type
->>>>>>
->>>>>> Well, what do you think?
->>>>>
->>>>>
->>>>> This seems fine. It is no less wrong.
->>>>>
->>>>
->>>> I'm not sure what you mean here.
->>>
->>> In this example, the correct value is probably IRQ_TYPE_LEVEL_LOW or
->>> IRQ_TYPE_EDGE_FALLING if the original text was correct in its
->>> intentions (but broken in implementation). Since the change you
->>> propose doesn't change the actual dtb at all, if it was wrong before
->>> it will still be wrong.
->>>
->>
->> I see, that's kinda what I want, maybe for this example the intentions
->> are obvious but my concern is with a couple others that I don't know
->> what the trigger was meant to be and don't have a board to test the
->> changes with, so I would never be sure if I causing any regressions
->> with the fixes. Most of the affected boards are Tegra based (that's
->> why I cc'd linux-tegra), I was hoping they would be interested in
->> testing and finding the right values.
->
-> Presumably/hopefully if you send specific patches, the various
-> maintainers/owners of those DT files will validate/ack then; you don't
-> need to be able to test all of the changes yourself.
->
 
-Well that was what I was going to do, but I found in some cases I didn't
-know what the right value should be. Submitting patches would be easier,
-but instead I had to write that block of text to try to recruit some help
-from the original authors and people with the boards to find these correct
-values.
+--===============0749696951==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="0F1p//8PRICkK4MW"
+Content-Disposition: inline
 
---
-Andrew
+
+--0F1p//8PRICkK4MW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Sep 17, 2015 at 04:22:32PM +0200, Luis de Bethencourt wrote:
+> This platform driver has a OF device ID table but the OF module
+> alias information is not created so module autoloading won't work.
+>=20
+> Signed-off-by: Luis de Bethencourt <luisbg@osg.samsung.com>
+> ---
+>  drivers/gpu/drm/tegra/drm.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+> index 2486bc2..62d724d 100644
+> --- a/drivers/gpu/drm/tegra/drm.c
+> +++ b/drivers/gpu/drm/tegra/drm.c
+> @@ -1064,6 +1064,7 @@ static const struct of_device_id host1x_drm_subdevs=
+[] =3D {
+>  	{ .compatible =3D "nvidia,tegra210-sor1", },
+>  	{ /* sentinel */ }
+>  };
+> +MODULE_DEVICE_TABLE(of, host1x_drm_subdevs);
+
+This shouldn't be necessary because the MODULE_DEVICE_TABLE entries are
+already in the subdrivers.
+
+Thierry
+
+--0F1p//8PRICkK4MW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJV/C+VAAoJEN0jrNd/PrOhJ40P/1Oec3+CJS3qmmnpnjZvn/CI
+O29M65FCOAk5ZyHXq8up5QWg6mgfaFp6zzHyWWAJJ7bpJbf+BSgUWnZQPuxNsRoQ
+NmB7zZP8vYllmE3W8pGFlUd2iMenzcV2ctQmX+ljKSFVDNIT3XF7lq5crUaAP6B9
+GyE9FsOTAF/e8SjUOcdlANdo6TJGWqht94cs4DJEvt3FzmKD/UjEqlcOse5kNoas
+ofbvQPOMiVM+vR4+0wl/N93T2wdIRulF5BsokvrIqXXoabq1JwJYg//3OpJeXbvm
+ONESlDxm76KIbkcZYxVeBwKId6cfSwXPT3sXgBJKNUvO6LZ650+1yGHtBBnPg4br
+nCAY6IxBZrB3SlEERvIucTWkgeTwFhsP/r4F9642dBTR9LYHdYyxJkEZmngaNvJv
+2RMhHkscx2D5iDc6BXzrwn+DwbEXVGB9zNLmQSRl9c7myueashhrELmd4FWZIZMc
+GxS1wnfBv3yMyg1WoeKAbCys6D0L9hKSVU20Dt0C7+BC/e9hEeuouWxLJWIJ8deL
+HzodAj92xf/V+tfYRm+82egNNmD7vFQnt4b6I0M0Ifeye/FpI8lEbUowTC6NPWe1
+s2oCpziX83gXW9NemuHkHaU+LyGs5lNhnIN3xWqPVuhE3nbI7n2yKbZC5HGmp+OD
+iaEibL6O4+vNAmTdXlhA
+=QJPK
+-----END PGP SIGNATURE-----
+
+--0F1p//8PRICkK4MW--
+
+--===============0749696951==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0
+cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+
+--===============0749696951==--
