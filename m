@@ -1,609 +1,250 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [cbootimage PATCH v1 4/8] Add new configuration keyword "PkcKey"
-Date: Mon, 21 Sep 2015 15:41:20 -0600
-Message-ID: <56007980.6060203@wwwdotorg.org>
+Subject: Re: [cbootimage PATCH v1 5/8] Fix some issues found in libmcrypto
+Date: Mon, 21 Sep 2015 16:08:43 -0600
+Message-ID: <56007FEB.7010408@wwwdotorg.org>
 References: <1441228760-26042-1-git-send-email-jimmzhang@nvidia.com>
- <1441228760-26042-5-git-send-email-jimmzhang@nvidia.com>
+ <1441228760-26042-6-git-send-email-jimmzhang@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1441228760-26042-5-git-send-email-jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1441228760-26042-6-git-send-email-jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 09/02/2015 03:19 PM, Jimmy Zhang wrote:
-> Use "PkcKey" to specify rsa key filename and load in
-> rsa private keys from file.
->
-> When keyword "PkcKey" is present, rsa pss signatures are generated
-> for both bootloader and bct. rsa pubkey will also be filled into bct.
+> Libmcrypto can't be used without these fixes.
 
-Oh, so the config file can either specify a literal value for all the 
-hashes, or specify a key and have cbootimage generate them? It would be 
-good to add some form of high-level documentation of the use-cases into 
-README.txt
+This patch should appear immediately after the patch which adds 
+libmcrypto into cbootimage then, before any patch that starts using it.
 
-> PkcKey syntax:
->
->    PkcKey = <rsa_key_filename> [, --save];
->
-> Examples:
->
->     PkcKey = rsa_priv.txt;
->       Load in keys from file rsa_priv.txt
->
->     PkcKey = rsa_priv.pem, --save;
->       Load in keys from file rsa_priv.pem and save pubkey and pubkey hash
->       value to file pubkey.mod and pubkey.sha respectively.
+Have you sent these patches upstream for inclusion in libmcrypto?
 
-Can't the output filenames be either specified in the config file, or 
-derived from the filename passed to PkcKey (so rsa_priv.pem -> 
-rsa_priv.mod, rsa_priv.sha, rather than presumably hard-coding 
-"pubkey.mod", "pubkey.sha")?
+Some description of the fixes and justification for them should be 
+included in the commit description.
 
-> Two key formats are supported.
->     1. Polar SSL format
->        P = ...
->        Q = ...
->
->     2. Open SSL format
->         -----BEGIN RSA PRIVATE KEY-----
->         ...
->         -----END RSA PRIVATE KEY-----
+> diff --git a/src/libm/bigdigits.h b/src/libm/bigdigits.h
 
-Do we need to support two formats; can't the openssl (or other) cmdline 
-application convert the data file between the formats to reduce the 
-complexity in cbootimage?
+>   /* Define type of DIGIT here */
+> -typedef unsigned long DIGIT_T;
+> +typedef unsigned int DIGIT_T;
 
-> diff --git a/src/cbootimage.h b/src/cbootimage.h
+I wonder if this is running afoul of 32-bit-vs-64-bit system 
+assumptions? Does this e.g. fix the build on 64-bit but break it on 
+32-bit? What symptom does this solve? Would it make sense to typedef to 
+e.g. uint32_t if a specific size is required?
 
-> +typedef enum
-> +{
-> +	false = 0,
-> +	true = 1,
-> +} bool;
+> diff --git a/src/libm/common.c b/src/libm/common.c
 
-This is a standard type; the definition should come from a standard 
-system header file.
+> @@ -46,11 +46,11 @@ void mcrypto_dump(char *desc, BYTE *p, UINT len)
+>   #ifdef MCRYPTO_DEBUG
+>   	UINT i = 0;
+>   	
+> -	printf("[%s]\n", desc);
+> +	printf("[%s(%d)]\n", desc, len);
+>   	while (len--) {
+>   		if ((i % 20) == 0 && i)
+>   			printf("\n");
+> -		fprintf(stderr, "%02x ", p[len]);
+> +		fprintf(stderr, "%02x ", p[i]);
 
+While perhaps a valid fix, that looks like debug spew cleanup, so not 
+strictly "required".
 
-> @@ -110,6 +117,7 @@ typedef struct build_image_context_rec
->
->   	char *bct_filename;
->   	char *rsa_filename;
-> +	void *pkckey;
+> diff --git a/src/libm/mpModulo.c b/src/libm/mpModulo.c
+> index c929dd5a2c02..cff60d173e8b 100644
 
-Please expand on what this variable means (comment or better field name).
+> +/* TODO: add support for MCRYPTO_BARRET */
+> +#define MCRYPTO_TRIVIAL_DIVISION
 
-> diff --git a/src/crypto.c b/src/crypto.c
+The libmcrypto Makefile implies this should be solved by adding 
+-DMCRYPTO_TRIVIAL_DIVISION to the build command-line instead.
 
-> - * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
-> + * Copyright (c) 2015, NVIDIA CORPORATION.  All rights reserved.
+> diff --git a/src/libm/mpMultiply.c b/src/libm/mpMultiply.c
 
-Please don't delete old copyright dates, but just add to them. i.e. 
-"2012, 2015".
+> +/* TODO: add support for MCRYPTO_FFT_MUL */
+> +#define MCRYPTO_SCHOOL_BOOK
 
-> +#include "libm/pkcs1-rsa.h"
-> +#include "libm/hash.h"
+Same here.
 
-I would expect libm/include/ to be in the #include path via a -I 
-directive, so those would be:
+>   int mpMultiply(DIGIT_T w[], const DIGIT_T u[], const DIGIT_T v[], UINT ndigits)
+>   {
+> -#ifdef MCRYPTO_SCHOOL_BOOK	
+> +#ifdef MCRYPTO_SCHOOL_BOOK
 
-#include <mcrypto/pkcs1-rsa.h>
-#include <mcrypto/hash.h>
+Unnecessary whitespace change.
 
-(At least the examples that ship with libmcrypto appear to expect the 
-library gets installed with the <libmcrypto/> path available, so we 
-should match that in any code using libmcrypto)
+> diff --git a/src/libm/pkcs1-rsa.c b/src/libm/pkcs1-rsa.c
 
-> +static u_int8_t *pkc_get_pubkey(void *key)
-> +{
-> +	NvTegraPkcKey *pPkcKey = (NvTegraPkcKey *)key;
-> +	return (u_int8_t *)pPkcKey->Modulus.Number;
-> +}
-
-pkc_get_pubkey_modulus()? Since presumably *pPkcKey contains more than 
-just the Modulus field?
-
-> +int
-> +pkc_sign_buffer(void *key, u_int8_t *buffer, u_int32_t size, u_int8_t **pSign)
-...
-> +	/* TODO: define constant for ssk.len */
-> +	ssk.len = (UINT)pPkcKey->Modulus.Digits; /* length in digits of modulus in term of 32 bits */
-
-What is the implication of this TODO? Why isn't this dynamic assignment 
-acceptable?
-
-> @@ -283,17 +321,116 @@ sign_bct(build_image_context *context,
-
-> -	e = sign_data_block(bct + Offset, length, hash_buffer);
-> -	if (e != 0)
-> +	if ((e = sign_data_block(bct + Offset, length, hash_buffer)) != 0)
->   		goto fail;
-
-The original code was cleaner.
-
-> -	e = g_soc_config->set_data(token_crypto_hash,
-> +	if ((e = g_soc_config->set_data(token_crypto_hash,
-
-Same here. It's much better to assign the return code to a variable then 
-test that variable rather than smash everything together into one 
-hard-to-read expression. The same comment applies elsewhere too.
-
-> +	/*  pkc signing? */
-> +	if (context->pkckey) {
-...
-> +		g_soc_config->set_value(token_pub_key_modulus,
-> +					pkc_get_pubkey(context->pkckey),
-> +					bct);
-> +	}
+> +/* cbootimage header */
+> +#include "crypto.h"
 > +
-> + fail:
-> +	free(hash_buffer);
-> +	return e;
-> +}
-> +
->   		goto fail;
->
->    fail:
->   	free(hash_buffer);
->   	return e;
+>   /* Internal Functions - Forward Declaration */
+>   static void memxor(BYTE *c, BYTE *a, BYTE *b, UINT len);
+>   	/* Perform c = a XOR b */
+> @@ -59,6 +62,15 @@ static int GenRsaPrime(DIGIT_T p[], UINT ndigits)
+>   	return 0;
 >   }
-> +void
-> +SwapEndianness(
-
-Something is wrong with the indentation at the end of that function, and 
-there should be a blank line between the functinos.
-
-> +int
-> +pkc_savefile(const char *pFilename,
-> +		u_int8_t *buffer, size_t bytes, const char* ext)
+>
+> +static
+> +UINT SwapBytesInNvU32(const UINT Value)
 > +{
-> +	int ret = 0;
-> +	char *fn = malloc(sizeof(pFilename) + sizeof(ext) + 1);
+> +    UINT Tmp = (Value << 16) | (Value >> 16); /* Swap halves */
+> +    /* Swap bytes pairwise */
+> +    Tmp = ((Tmp >> 8) & 0x00ff00ff) | ((Tmp & 0x00ff00ff) << 8);
+> +    return (Tmp);
 
-sizeof yields the size of the pointer. I suspect you mean strlen.
+No need for ().
 
-> +	FILE *output_file;
+Does "NvU32" refer to the NvU32 type? That's not something that should 
+exist within libmcrypto since it's not NV-specific code.
+
+> @@ -91,8 +103,8 @@ static int MGF1(UINT hid, BYTE *seed, UINT seedlen, BYTE  *mask, UINT masklen)
+>   		
+>   	for(i=0;i<n;i++) {
+>   		/* Constructing Hash Input */
+> -		memcpy(data+seedlen, &i, 4);
+> -		
+> +		*(UINT *)(data+seedlen) = SwapBytesInNvU32(i);
 > +
-> +	sprintf(fn, "%s%s", pFilename, ext);
+
+Why?
+
+> @@ -113,7 +125,6 @@ static int MGF1(UINT hid, BYTE *seed, UINT seedlen, BYTE  *mask, UINT masklen)
+>   }
+>
+>   /* Main Functions */
+> -
+>   int PKCS1_RSA_GenKey(PKCS1_RSA_PUBLIC_KEY *spk, PKCS1_RSA_PRIVATE_KEY *ssk, UINT mod_len)
+
+Unrelated whitespace change.
+
+> @@ -511,14 +522,19 @@ int PKCS1_RSASSA_PSS_SIGN(PKCS1_RSA_PRIVATE_KEY *ssk, UINT hid, BYTE *m, UINT ml
+>   	em = (BYTE *)malloc(NBYTE(ssk->len));
+>   	
+>   	/* PSS Encoding */
+> -	if((ret=PKCS1_EMSA_PSS_ENCODE(hid, m, mlen, slen, em, NBYTE(ssk->len)))!=ERR_OK) {
+> +	if((ret = PKCS1_EMSA_PSS_ENCODE(hid, m, mlen, slen, em, NBYTE(ssk->len)))
+> +				!= ERR_OK) {
+
+Unrelated whitespace change.
+
+>   		free(em);
+> +		printf("Error: encoding failed\n");
+ >   		return ret;
+
+Why? The code already returns an error, and a library really shouldn't 
+be spewing error messages over stdout unless asked.
+
+> +	SwapEndianness(em, NBYTE(ssk->len), em);
+> +	mcrypto_dump("PSS_SIGN: Encoded Message", em, NBYTE(ssk->len));
 > +
-> +	printf("Saving file %s\n", fn);
-> +	output_file = fopen(fn, "w+");
+>   	/* Signing */
+>   	ret = PKCS1_RSASP1(ssk, (DIGIT_T*)em, (DIGIT_T*)s);
+> -	mcrypto_dump("Signature",(BYTE *)s, NBYTE(ssk->len));
+> +	mcrypto_dump("PSS_SIGN: Signature",(BYTE *)s, NBYTE(ssk->len));
 
-I assume this is a binary file given the use of fwrite() below. I don't 
-see any mixture of reading and writing. So that should be "wb".
+Why?
 
-> +	if (output_file == NULL) {
-> +		printf("Error opening raw file %s.\n", fn);
-> +		ret = -1;
-> +		goto fail;
-> +        }
+> +/*
+> + * hid: hash id
+> + * m:   message buffer
+> + * mlen: message length
+> + * slen: signature length
+> + * em:   encoded message   (from hash)
+> + * emlen: encoded message length -> 256
+> + */
+>   int PKCS1_EMSA_PSS_ENCODE(UINT hid, BYTE *m, UINT mlen, UINT slen, BYTE *em, UINT emlen)
+>   {
+>   	/* PSS Encoding */
+> @@ -568,31 +592,34 @@ int PKCS1_EMSA_PSS_ENCODE(UINT hid, BYTE *m, UINT mlen, UINT slen, BYTE *em, UIN
+>   		return ERR_UNKNOWN_HASH;
+>   	
+>   	/* Computing Hash of m */
+> -	mcrypto_dump("PSS Encoding: Message", m, mlen);
 
-Indentation is wrong there; I suggest scanning all the patches for 
-TABs-vs-spaces.
+Why?
 
+>   	H = (BYTE *)malloc(hlen);
+>   	if((ret = Hash(hid, m, mlen, H))!=0) {
+>   		free(H);
+> -		
 
-> +int
-> +pkc_save_pubkey(
-> +	void *pKey,
-> +	const char *pFileName)
+Unrelated whitespace/formatting change. There are others too, but I 
+won't call out each individually.
 
-I think this is saving the modulus and hash, not the key itself? So, 
-pkc_save_pubkey_modulus_and_hash()?
-
-
-> diff --git a/src/crypto.h b/src/crypto.h
-
-> +#define PUBKEY_FILENAME		"pubkey."
-
-that shouldn't be hard-coded.
-
-> +#define PUBKEY_MODULUS		"mod"
-> +#define PUBKEY_MODULUS_HASH	"sha"
-
-Those names don't imply they're filename extensions. 
-PUBKEY_FILENAME_EXT_{MODULUS,HASH} would be better.
-
-> +#define BCT_FILENAME	"bct."
-> +#define BL_FILENAME	"bl."
-
-FILENAME_PREFIX/SUFFIX?
-
-> +#define EXT_SIGNATURE	"sig"
-
-FILENAME_EXT_SIGNATURE?
-
-> +#define NV_BIGINT_MAX_DW 64
-
-A comment re: why that's the right max size would be useful.
-
-> +}NvTegraPkcsVersion;
-> +}NvTegraPkcKey;
-
-Missing space after }.
-
-> diff --git a/src/data_layout.c b/src/data_layout.c
-
-> @@ -620,6 +620,24 @@ write_image(build_image_context *context, file_type image_type)
->   					token_bl_crypto_hash,
->   					(u_int32_t*)hash_buffer,
-
-> +				/* save bl sig to file bl.sig */
-> +				pkc_savefile(BL_FILENAME, (u_int8_t *)sign,
-> +						RSA_KEY_BYTE_SIZE, EXT_SIGNATURE);
-
-This filename also shouldn't be hard-coded.
-
-> diff --git a/src/parse.c b/src/parse.c
-
-> +static int
-> +parse_pkckey_file(build_image_context *context, parse_token token, char *rest)
-
-> +	/* check save option */
-> +	if (*rest == ',') {
-> +		++rest;
+>   		return ret;
+>   	}
+>
+>   	mcrypto_dump("PSS Encoding: Hashed Message", H, hlen);
+>   	
+> +	/* BUG FIX */
+> +	/* slen is 256 that causes the condition below failed */
+> +	/* FIX: set slen to hash length */
+> +	slen = hlen;
 > +
-> +		/* Parse option. */
-> +		if (strstr(rest, OPTION_SAVE) != NULL)
-> +			save_key = 1;
-
-This should error out if there's any other unexpected garbage.
-
-> +	}
-
-else error?
-
-> diff --git a/src/rsa_key_parse.c b/src/rsa_key_parse.c
-
-> +static void pkc_string_to_prime(u_int8_t *pBuffer, u_int8_t *pPrimeNum)
-> +{
-> +	u_int32_t i = 0;
-> +
-> +	while (i < (RSA_KEY_BYTE_SIZE * 2)) {
-> +		*pPrimeNum = HEX_TO_DEC(pBuffer[i]) * 16 +
-> +			HEX_TO_DEC(pBuffer[i + 1]);
-> +		i += 2;
-> +		pPrimeNum++;
-> +	}
-
-What if the string is too short or has an odd length; are those problems 
-possible?
-
-
-> +static bool
-> +pkc_extract_polar_ssl_primes(
-
-> +	/* Parse POLARSSL format */
-> +	pTokenP = (u_int8_t *)strstr((char *)pBuffer, PRIME_PATTERN_P);
-> +	pTokenQ = (u_int8_t *)strstr((char *)pBuffer, PRIME_PATTERN_Q);
-> +
-> +	if (pTokenP != NULL && pTokenQ != NULL) {
-
-There would be fewer indentation levels if this was:
-
-if (!pTokenP || !pTokenQ)
-     return false;
-
-> +		printf("PKC key in PolarSSL format\n");
-
-Shouldn't that be debug output only? The tool shouldn't be noisy all the 
-time.
-
-> +static int
-> +NvTegraPkcAsnParser(
-> +    NvU8 *pBuf,
-> +    NvU32 BufSize,
-> +    NvU8 *pP,
-> +    NvU8 *pQ)
-> +{
-> +    NvS32 i = 0;
-> +    NvS32 LocalSize = 0;
-> +    NvU32 Index = 0;
-> +    NvU32 SequenceNum = 0;
-> +    NvU32 IntegerNum = 0;
-> +    NvU32 Expo = 0;
-> +    NvU8 Type = 0;
-
-All these initializations just hide used-before-initialized bugs. Can 
-you please try removing them? The same comment applies elsewhere.
-
-> +            case INTEGER:                       /*  INTEGER */
-> +                switch(IntegerNum)
-> +                {
-> +                    case 0:     /*  PrivateKeyInfo version  */
-> +                    case 1:     /*  PrivateKey version  */
-> +                    case 3:     /*  Modulus */
-...
-> +                    case 2:     /*  Public Exponent */
-
-All those instances of multiple spaces should be collapsed to just 1. 
-The same comment may apply elsewhere.
-
-> +                    case 4:     /*  P */
-...
-> +                        for (i = 0, Index++; i < LocalSize; i++)
-> +                        {
-> +                            *(pP++) = pBuf[Index++];
-> +                        }
-
-That looks like memcpy. {} aren't needed.
-
-> +                    case 5:     /*  Q */
-
-Cases 4 and 5 are identical, save for whether writing to pP or pQ. Can 
-they be combined?
-
-> +            default:
-> +                /*  Ideally control should not come here for a .pk8 file */
-> +                return NvError_BadParameter;
-
-"Ideally" implies "should not happen, but we accept it if it happens". 
-This seems to error out if that happens, which is a strong assertion.
-
-> +static bool
-> +pkc_extract_open_ssl_primes(
-
-> +    if ((memcmp(pBuffer, DerFormat, sizeof(DerFormat)) != 0) &&
-> +        (memcmp(pBuffer, PEMFORMAT_START, sizeof(PEMFORMAT_START) - 1) != 0))
-> +    {
-> +        return false;
-> +    }
-
-Is it guaranteed that in PEM format, there are no blank lines or other 
-data at the start/end of the file? I don't expect so since that's the 
-entire point of the large strings that are used as PEM format markers, 
-but perhaps.
-
-> +    DerKeySize = BufSize - sizeof(PEMFORMAT_END);
-> +    pPemStart = pBuffer + sizeof(PEMFORMAT_START);
-> +
-> +    if (memcmp(pBuffer + DerKeySize, PEMFORMAT_END,
-> +        sizeof(PEMFORMAT_END) - 1) != 0)
-> +    {
-> +        return false;
-> +    }
-
-What if the file is shorter than DerKeySize + strlen(PEMFORMAT_START) + 
-strlen(PEMFORMAT_END)?
-
-> +    printf("PKC key in Open SSL format\n");
-> +
-> +    if (memcmp(pBuffer, DerFormat, sizeof(DerFormat)) != 0)
-> +    {
-
-Please be consistent about wrapping/not-wrapping braces. I think this 
-project uses wrapped braces.
-
-> +        DerKeySize = DerKeySize - sizeof(PEMFORMAT_START);
-> +
-> +        e = NvBase64Decode(pPemStart, DerKeySize, NULL, &Base64Size);
-> +	if (e != NvSuccess) {
-> +		printf("Base 64 decoding size failed\n");
-> +		goto fail;
-> +	}
-> +
-> +
-> +        pBase64Buf = malloc(Base64Size);
-
-Two blank lines there, and indentation issues throughout the function.
-
-> +fail:
-> +
-> +    if (pBase64Buf != NULL)
-> +        free(pBase64Buf);
-
-free() handles NULL.
-
-> +    if (e != NvSuccess)
-> +        return false;
-> +
-> +    return true;
-
-that's: return e == NvSuccess;
-
-> +static bool
-> +pkc_extract_private_keys(
-> +	u_int8_t *pBuffer,
-> +	u_int32_t BufSize,
-> +	u_int8_t *pP,
-> +	u_int8_t *pQ)
-> +{
-> +	return
-> +	((pkc_extract_open_ssl_primes(pBuffer, BufSize, pP, pQ) == true) ||
-> +	(pkc_extract_polar_ssl_primes(pBuffer, BufSize, pP, pQ) == true));
-
-Wonky indentation. No need for "== true";
-
-> +static NvU32 NvInverseDigit(NvU32 x)
-> +{
-> +    NvU32 i = 1;
-> +    NvU32 j = 2;
-> +    do
-> +    {
-> +        i ^= (j ^ (j & (x * i)));
-> +        j += j;
-> +    }
-> +    while (j);
-
-"while" should be wrapped with }
-
-What does this function do and how/why? A comment is needed.
-
-> +static NvU32
-> +NvBigIntIsZero(
-> +    const NvU32 *x,
-> +    const NvU32 Digits)
-> +{
-> +    NvU32 i;
-> +    for (i = 0; i < Digits; i++)
-> +    {
-> +        if (x[i] != 0)
-> +        {
-> +            return NV_FALSE;
-> +        }
-
-No need for {}.
-
-> +static NvU32
-> +NvBigIntSubtract(
-> +    NvU32 *z,
-> +    const NvU32 *x,
-> +    const NvU32 *y,
-> +    const NvU32 Digits)
-> +{
-> +    NvU32 i, j, k;
-> +    for (i = k = 0; i < Digits; i ++)
-> +    {
-> +        j = x[i] - k;
-> +        k = (j > (~k)) ? 1 : 0;
-> +        j -= y[i];
-> +        k += (j > (~y[i])) ? 1 : 0;
-> +        z[i] = j;
-> +    }
-> +    return k;
-
-">" should evaluate to 1 or 0, so you can drop the ?:.
-
-It would help to use sane variable names, e.g k -> borrow, j -> tmp or 
-something like that.
-
-I would also have expected simpler checks for borrow and only a single 
-check to be necessary. i.e. a final "if (j > x[i])". I assume that an 
-NvBigInt is unsigned? NvBigIntcompare's implementation seems to imply so.
-
-I wonder why all these math functions are re-implemented rather than 
-making use of the "big digits" code in libmcrypto? Where did all this 
-math code come from?
-
-> +static NvU32 NvBigIntGetBit(const NvU32 *x, NvU32 i)
-> +{
-> +  NvU32 b = 0;
-> +
-> +  return (((x[i >> 5] >> (i & 0x1f)) ^ b) & 1);
-
-Why "^ b" when b is hard-coded to 0?
-
-I haven't reviewed the rest of the math functions in any way.
-
-> +NvBase64Decode(
-
-> +    if (pOutBuf == NULL)
-> +    {
-> +        /* Valid if the caller is requesting the size of the decoded
-> +         * binary buffer so they know how much to alloc.
-> +         */
-> +        *pOutBufSize = 0;
-> +    }
-> +    else
-> +    {
-> +        /* Validate the size of the passed input data buffer.
-> +         * In theory the input buffer size should be 3/4 the size of
-> +         * the decoded buffer. But if there were some white
-> +         * space chars in input buffer then it is possible that the
-> +         * input buffer is smaller.
-> +         * First validate against 2/3rds the size of the input buffer
-> +         * here. That allows for some slop.
-> +         * Below code makes sure output buffer size is big enough.
-> +         */
-> +        if (*pOutBufSize < (InBufSize * 2)/3)
-
-If there's a known maximal minimum size for the buffer, why not just 
-return that in the !pOutBuf case rather than executing the big/slow loop 
-below?
-
-> +    /* This loop is less efficient than it could be because
-> +     * it's designed to tolerate bad characters (like whitespace)
-> +     * in the input buffer.
-> +     */
-> +    while (i < InBufSize)
-> +    {
-> +        NvU8 CurrVal;
-> +        NvU32 ValidLen = 0;
-> +        NvU8 ValidBuf[4];
-> +
-> +        // gather 4 good chars from the pInBufput stream
-
-Inconsistent comment style.
-
-> +        if (pOutBuf == NULL)
-> +        {
-> +            // just measurpInBufg the size of the destpInBufation buffer
-
-Search/replace typos there.
-
-> +        switch (ValidLen)
-> +        {
-> +            case 4:
-> +                // 4 pInBufput chars equals 3 pOutBufput chars
-> +                pOutBuf[2] = (unsigned char ) (((ValidBuf[2] << 6) & 0xc0) | ValidBuf[3]);
-> +                // fall through
-> +            case 3:
-> +                // 3 pInBufput chars equals 2 pOutBufput chars
-> +                pOutBuf[1] = (unsigned char ) (ValidBuf[1] << 4 | ValidBuf[2] >> 2);
-> +                // fall through
-> +            case 2:
-> +                // 2 pInBufput chars equals 1 pOutBufput char
-> +                pOutBuf[0] = (unsigned char ) (ValidBuf[0] << 2 | ValidBuf[1] >> 4);
-> +                pOutBuf += ValidLen - 1;
-> +                break;
-> +            case 1:
-> +                // Unexpected
-> +                break;
-> +            case 0:
-> +                // conceivable if white space follows the end of valid data
-> +                break;
-> +            default:
-> +                // Unexpected
-> +                break;
-> +        }
-
-Shouldn't at least cases 1, return an error?
-
-There are lots of formatting errors in this patch that I didn't 
-explicitly call out. Lots of cleanup is required.
-
-I didn't review the math code. It'd be best if it was replaced with 
-something pre-existing rather than re-inventing the wheel.
-
-Someone familiar with our chip security needs to review the crypto usage 
-in this code.
-
-> diff --git a/src/rsa_key_parse.h b/src/rsa_key_parse.h
-
-> +#define HEX_TO_DEC(c)                                   \
-> +    (((c) >= '0' && (c) <= '9') ? (c) - '0' :           \
-> +     ((c) >= 'a' && (c) <= 'f') ? (c) - 'a' + 10 :      \
-> +     ((c) >= 'A' && (c) <= 'F') ? (c) - 'A' + 10 : -1)
-
-I believe that's already in libmcrypto's hex2byte().
-
-> +/* Explicitly sized signed and unsigned ints. */
-> +typedef unsigned char      NvU8;  /**< 0 to 255 */
-> +typedef unsigned short     NvU16; /**< 0 to 65535 */
-> +typedef unsigned int       NvU32; /**< 0 to 4294967295 */
-> +typedef unsigned long long NvU64; /**< 0 to 18446744073709551615 */
-> +typedef signed char        NvS8;  /**< -128 to 127 */
-> +typedef signed short       NvS16; /**< -32768 to 32767 */
-> +typedef signed int         NvS32; /**< -2147483648 to 2147483647 */
-> +typedef signed long long   NvS64; /**< 2^-63 to 2^63-1 */
-
-Let's not introduce even more types. cbootimage already has types for these.
-
-> +#define NV_TRUE	1
-> +#define NV_FALSE 0
-
-Let's just use defines from system header files for these.
-
-> +#define NvSuccess			0
-> +#define NvError_BadParameter		-10
-> +#define NvError_InsufficientMemory	-11
-
-Can't we use error codes from <errno.h>?
-
-> +#endif /* #ifndef INCLUDED_RSA_KEY_PARSE_H_N */
-
-Just "#endif"; no need for the comment.
+
+slen is a parameter to this function. Why not just pass the correct 
+value to the function?
+
+>   	/* Length checking */
+> -	if(emlen<(hlen+slen+2)) {
+> +	if(emlen<(hlen+slen+2)) {  /* emlen: 256, hlen: 32, slen: 32 */
+
+Are those values always true for /any/ use of this function?
+
+>   	/* Generating salt and constructing M */
+>   	salt = (BYTE *)malloc(slen);
+> -	GenSeed(salt, slen);
+> -	mcrypto_dump("PSS Encoding: Salt", salt, slen);
+> +	/* GenSeed(salt, slen); */
+> +	memset(salt, 0xFF, slen);
+
+This looks like a hack for some specific use-case. We shouldn't change 
+the semantics of libmcrypto in this way.
+
+> @@ -629,11 +656,18 @@ int PKCS1_EMSA_PSS_ENCODE(UINT hid, BYTE *m, UINT mlen, UINT slen, BYTE *em, UIN
+>   	mcrypto_dump("PSS Encoding: maskedDB", maskedDB, emlen-hlen-1);
+>   	
+>   	/* Constructing encoded message, em */
+> +	maskedDB[0] &= ~(0xFF << (8 - 1));
+
+Why?
+
+>   	memcpy(em, maskedDB, emlen-hlen-1);
+>   	memcpy(em+emlen-hlen-1, H, hlen);
+>   	em[emlen-1] = 0xbc;
+> -	mcrypto_dump("PSS Encoding: Encoded Message", em, emlen);
+
+Why?
+
+> +	/* added: free memory H, M, DB, ... */
+> +	free(H);
+> +	free(M);
+> +	free(salt);
+> +	free(maskedDB);
+> +	free(DB);
+
+That comment doesn't add any useful information.
+
+> -int LoadPublicKey(char *fname, PKCS1_RSA_PUBLIC_KEY *spk)
+> -{
+... (entire function body removed)
+> -}
+> -
+> -int LoadPrivateKey(char *fname, PKCS1_RSA_PRIVATE_KEY *ssk)
+> -{
+... (entire function body removed)
+> -}
+
+Why?
+
+> diff --git a/src/libm/pkcs1-rsa.h b/src/libm/pkcs1-rsa.h
+
+> -#define PKCS1_MAX_LINE_LEN	346	/* for reading parameter file */
+> +#define PKCS1_MAX_NUM_KEYS	8	/* number of key components */
+> +#define PKCS1_MAX_LINE_LEN	512	/* for reading parameter file */
+
+PKCS1_MAX_NUM_KEYS doesn't seem to be used anywhere.
