@@ -1,15 +1,15 @@
 From: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [cbootimage PATCH v1 2/8] Add bct_dump support for t210
-Date: Mon, 21 Sep 2015 23:27:47 +0000
-Message-ID: <6d93651da9bf481088b332a28f056249@HQMAIL103.nvidia.com>
+Subject: RE: [cbootimage PATCH v1 3/8] Add in libmcrypto
+Date: Tue, 22 Sep 2015 00:05:26 +0000
+Message-ID: <eee2db9d5b064169962fb51a30fd1ba1@HQMAIL103.nvidia.com>
 References: <1441228760-26042-1-git-send-email-jimmzhang@nvidia.com>
- <1441228760-26042-3-git-send-email-jimmzhang@nvidia.com>
- <56006319.5030009@wwwdotorg.org>
+ <1441228760-26042-4-git-send-email-jimmzhang@nvidia.com>
+ <56006457.4040601@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56006319.5030009-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <56006457.4040601-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: 'Stephen Warren' <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
@@ -20,76 +20,50 @@ List-Id: linux-tegra@vger.kernel.org
 
 > -----Original Message-----
 > From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
-> Sent: Monday, September 21, 2015 1:06 PM
+> Sent: Monday, September 21, 2015 1:11 PM
 > To: Jimmy Zhang
 > Cc: Allen Martin; Stephen Warren; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Subject: Re: [cbootimage PATCH v1 2/8] Add bct_dump support for t210
+> Subject: Re: [cbootimage PATCH v1 3/8] Add in libmcrypto
 > 
 > On 09/02/2015 03:19 PM, Jimmy Zhang wrote:
-> > Added support to dump additional fields such as rsa pubkey, rsa pss
-> > signatures for bct and bootloader.
+> > Libmcrypto is an open source crypto library. It can be found at
+> > http://code.google.com/p/libmcrypto/
 > 
-> > diff --git a/src/bct_dump.c b/src/bct_dump.c
+> Not for much longer; Google code is shutting down. Is there a new upstream
+> location for the code that we can reference? Is the project still alive?
 > 
-> > @@ -54,11 +57,13 @@ static value_data const values[] = {
-> >   	{ token_odm_data,            "OdmData       = ", format_u32_hex8 },
-> >   	{ token_secure_jtag_control, "JtagCtrl      = ", format_u32_hex8 },
-> >   	{ token_secure_debug_control, "DebugCtrl     = ", format_u32_hex8
-> },
-> > +	{ token_crypto_hash, 	     "BCT AES Hash  = ", format_hex_16_bytes
-> },
-> > +	{ token_pub_key_modulus,     "PubKeyModulus = ",
-> format_rsa_param },
-> > +	{ token_rsa_pss_sig_bct,     "RsaPssSig_Bct = ", format_rsa_param },
+> Can we not link against a distribution package rather than copying the code
+> inside cbootimage, and having to forever maintain it ourselves, including
+> watching out for security holes and backporting fixes etc.?
 > 
-> The previous patch didn't have an underscore in the keyword name. We
-> should be able to feed the output of bctdump straight back into cbootimage
-> without having to manually fix up the syntax.
+> Has an internal IP audit been performed for this use of libmcrypto? The
+> Google code page says:
 > 
-> That said, I wonder if either (a) shouldn't this data be dumped to a file, since
-> cbootimage would read it from a separate file (b) shouldn't cbootimage read
-> the data from an inline value not a separate file. The use can always use the C
-> pre-processor or similar "code generation"
-> techniques to create the file from a template in order to use different keys
-> for different devices.
+> > There is no license associated with this library (although I have to
+> > select BSD license as code.google.com forced me to) except the
+> > respective licenses of included hash implementation. Anyway, if you
+> > use it, it would be nice if you drop me and David Ireland a line to
+> > say thank.
 > 
+> ... and indeed there are no license headers in any of the files except one. I'd
+> like our IP audit team to validate that using the code from cbootimage is
+> acceptable and that copying the code into cbootimage is acceptable.
+> 
+OK. I am going to open bug for IP audit team if that is what you mean.
 
-Good inspiration. We don't limit how this tool is being used. I mainly used it for debug purpose.
+> >  src/libm/base64.c          |  132 +++++
+> >  src/libm/bigdUtils.c       |  208 +++++++
+> >  src/libm/bigdigits.h       |  294 ++++++++++
+> >  src/libm/common.c          |   58 ++
+> 
+> "libm" is not the name of the library, and this directory layout does not match
+> the upstream package. Please follow upstream's layout:
+> 
+> libmcrypto/include/bigdigits.h
+> libmcrypto/src/base64.c
+> 
+> ... although I still think it'd be even better to just link against a distro package
+> of libmcrypto, or otherwise require it to already exist when building
+> cbootimage, if at all possible.
 
-I will remove the under score as you suggested.
-  
-> > -	{ token_hash_size,           "# Hash size             = ", format_u32 },
-> 
-> Is there a reason for removing that? If so, it should be mentioned in the
-> patch description.
-> 
-
-This piece of code is not needed for dump_bct.  I can add descriptions in commit message. Otherwise, I can revert it.
-
-> > diff --git a/src/t210/nvbctlib_t210.c b/src/t210/nvbctlib_t210.c
-> 
-> > +	case token_rsa_pss_sig_bl:
-> > +		/* ONLY support one bl */
-> > +		memcpy(data, &bct_ptr-
-> >bootloader[set].signature.rsa_pss_sig,
-> > +			sizeof(nvboot_rsa_pss_sig));
-> > +		break;
-> 
-> Same objection about that comment here as in the previous patch.
-
-Explained earlier.
-
-> 
-> > @@ -2121,15 +2128,23 @@ t210_bct_get_value(parse_token id, void
-> *data,
-> > u_int8_t *bct)
-> 
-> >   	case token_crypto_hash:
-> > -		memcpy(data,
-> > -		&(bct_ptr->signature.crypto_hash),
-> > -		sizeof(nvboot_hash));
-> > +		memcpy(data, &(bct_ptr->signature.crypto_hash),
-> > +			sizeof(nvboot_hash));
-> 
-> This feels like an unrelated cleanup patch?
-OK. I will revert it.
+I agree with you.  I will try to build libmcrypto as library and link with it. 
