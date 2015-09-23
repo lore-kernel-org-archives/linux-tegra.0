@@ -1,71 +1,60 @@
-From: Jan Kiszka <jan.kiszka@siemens.com>
-Subject: [PATCH v2 2/2] ARM: tegra: Disable cpuidle driver if PSCI is present
-Date: Wed, 23 Sep 2015 08:39:44 +0200
-Message-ID: <5151ffebe8611545c55f8cc499cf2368b1b789c4.1442990383.git.jan.kiszka@siemens.com>
-References: <cover.1442990383.git.jan.kiszka@siemens.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v4.3-rc2
+Date: Wed, 23 Sep 2015 09:26:57 +0100
+Message-ID: <56026251.6060701@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <cover.1442990383.git.jan.kiszka@siemens.com>
-In-Reply-To: <cover.1442990383.git.jan.kiszka@siemens.com>
-References: <cover.1442990383.git.jan.kiszka@siemens.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Russell King <linux@arm.linux.org.uk>, Thierry Reding <treding@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The firmware takes over the ownership of the flow controller when it
-provides PSCI support. To avoid clashes, disable the Tegra cpuidle
-driver if PSCI was detected.
+Here are some basic Tegra test results for Linux v4.3-rc2.
+Logs and other details at:
 
-Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
----
- arch/arm/mach-tegra/Kconfig | 1 +
- arch/arm/mach-tegra/tegra.c | 4 +++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
+    https://nvtb.github.io//linux/test_v4.3-rc2/20150920150104/
 
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index 0fa4c5f..373768c 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -4,6 +4,7 @@ menuconfig ARCH_TEGRA
- 	select ARCH_SUPPORTS_TRUSTED_FOUNDATIONS
- 	select ARM_AMBA
- 	select ARM_GIC
-+	select ARM_PSCI
- 	select CLKSRC_MMIO
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_ARM_TWD if SMP
-diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
-index 2378fa56..d97c961 100644
---- a/arch/arm/mach-tegra/tegra.c
-+++ b/arch/arm/mach-tegra/tegra.c
-@@ -44,6 +44,7 @@
- #include <asm/mach-types.h>
- #include <asm/setup.h>
- #include <asm/trusted_foundations.h>
-+#include <asm/psci.h>
- 
- #include "board.h"
- #include "common.h"
-@@ -136,7 +137,8 @@ static void __init tegra_dt_init_late(void)
- 	int i;
- 
- 	tegra_init_suspend();
--	tegra_cpuidle_init();
-+	if (!psci_smp_available())
-+		tegra_cpuidle_init();
- 
- 	for (i = 0; i < ARRAY_SIZE(board_init_funcs); i++) {
- 		if (of_machine_is_compatible(board_init_funcs[i].machine)) {
--- 
-2.1.4
+
+Test summary
+------------
+
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Build: Image:
+    Pass: ( 1/ 1): defconfig
+
+Boot to userspace: defconfig:
+    Pass: ( 1/ 1): qemu-vexpress64
+
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v4.3-rc1 (6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f)):
+   text     data      bss    total  kernel
+   +784   +12272        0   +13056  defconfig
+  +2978      -72        0    +2906  multi_v7_defconfig
+    +18        0        0      +18  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.3-rc1 (6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+        .        .        .        .      qemu-vexpress64            defconfig           __internal
+        .        .        .      -4k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+        .        .        .      -4k  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+        .        .        .      -4k    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+        .        .        .      -4k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
