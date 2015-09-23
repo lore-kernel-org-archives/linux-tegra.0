@@ -1,7 +1,7 @@
 From: Bryan Wu <pengw@nvidia.com>
-Subject: [PATCH 3/3] Documentation: DT bindings: add VI and CSI bindings
-Date: Tue, 22 Sep 2015 18:30:34 -0700
-Message-ID: <1442971834-2721-4-git-send-email-pengw@nvidia.com>
+Subject: [PATCH 2/3] ARM64: add tegra-vi support in T210 device-tree
+Date: Tue, 22 Sep 2015 18:30:33 -0700
+Message-ID: <1442971834-2721-3-git-send-email-pengw@nvidia.com>
 References: <1442971834-2721-1-git-send-email-pengw@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,76 +12,54 @@ To: hansverk@cisco.com, linux-media@vger.kernel.org, treding@nvidia.com
 Cc: ebrower@nvidia.com, jbang@nvidia.com, swarren@nvidia.com, davidw@nvidia.com, gfitzer@nvidia.com, bmurthyv@nvidia.com, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Following device tree support for Tegra VI now:
+ - "vi" node which might have 6 ports/endpoints
+ - in TPG mode, "vi" node don't need to define any ports/endpoints
+ - ports/endpoints defines the link between VI and external sensors.
+
 Signed-off-by: Bryan Wu <pengw@nvidia.com>
 ---
- .../bindings/gpu/nvidia,tegra20-host1x.txt         | 211 ++++++++++++++++++++-
- 1 file changed, 205 insertions(+), 6 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra210-p2571-e01.dts |   8 +
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi          | 174 +++++++++++++++++++++-
+ 2 files changed, 181 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt
-index 46d6ead..433cb52 100644
---- a/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt
-+++ b/Documentation/devicetree/bindings/gpu/nvidia,tegra20-host1x.txt
-@@ -40,10 +40,39 @@ of the following host1x client modules:
-   - interrupts: The interrupt outputs from the controller.
-   - clocks: Must contain one entry, for the module clock.
-     See ../clocks/clock-bindings.txt for details.
-+  - clock-names: Must include the following entries:
-+    - vi
-+      This MUST be the first entry.
-+    - csi
-+    - parent
-   - resets: Must contain an entry for each entry in reset-names.
-     See ../reset/reset.txt for details.
-   - reset-names: Must include the following entries:
-     - vi
-+  - power-domains: The power domains settings.
-+    See ../power/power_domain.txt
-+  - iommus: The IOMMU settings.
-+    See ../iommu/iommu.txt
-+  - ports: several VI input ports which connecting CSI ports. Ports contain
-+    several port and each port has one endpoint.
-+    See ../graph.txt and ../media/video-interfaces.txt
-+  - avdd-dsi-csi-supply: a regulator required by VI.
-+
-+- csi: camera serial interface
-+
-+  Required properties:
-+  - compatible: "nvidia,tegra<chip>-csi"
-+  - reg: Physical base address and length of the controller's registers.
-+  - interrupts: The interrupt outputs from the controller.
-+  - clocks: Must contain one entry, for the module clock.
-+    See ../clocks/clock-bindings.txt for details.
-+  - clock-names: Must include the following entries:
-+    - cil
-+      This MUST be the first entry.
-+  - ports: 2 ports presenting 2 channels of CSI. Each port has 2 endpoints:
-+    one connects to sensor device tree node as input and the other one connects
-+    to VI endpoint.
-+    See ../graph.txt and ../media/video-interfaces.txt
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2571-e01.dts b/arch/arm64/boot/dts/nvidia/tegra210-p2571-e01.dts
+index d4ee460..534ada52 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2571-e01.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2571-e01.dts
+@@ -7,6 +7,14 @@
+ 	model = "NVIDIA Tegra210 P2571 reference board (E.1)";
+ 	compatible = "nvidia,p2571-e01", "nvidia,tegra210";
  
- - epp: encoder pre-processor
- 
-@@ -274,13 +303,183 @@ Example:
- 			reset-names = "mpe";
- 		};
- 
--		vi {
--			compatible = "nvidia,tegra20-vi";
--			reg = <0x54080000 0x00040000>;
--			interrupts = <0 69 0x04>;
--			clocks = <&tegra_car TEGRA20_CLK_VI>;
--			resets = <&tegra_car 100>;
++	host1x@0,50000000 {
 +		vi@0,54080000 {
-+			compatible = "nvidia,tegra210-vi";
++			status = "okay";
++
++			avdd-dsi-csi-supply = <&vdd_dsi_csi>;
++		};
++	};
++
+ 	pinmux: pinmux@0,700008d4 {
+ 		pinctrl-names = "boot";
+ 		pinctrl-0 = <&state_boot>;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 1168bcd..3f6501f 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -109,9 +109,181 @@
+ 
+ 		vi@0,54080000 {
+ 			compatible = "nvidia,tegra210-vi";
+-			reg = <0x0 0x54080000 0x0 0x00040000>;
 +			reg = <0x0 0x54080000 0x0 0x800>;
-+			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
-+			status = "disabled";
+ 			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+ 			status = "disabled";
 +			clocks = <&tegra_car TEGRA210_CLK_VI>,
 +				 <&tegra_car TEGRA210_CLK_CSI>,
 +				 <&tegra_car TEGRA210_CLK_PLL_C>;
 +			clock-names = "vi", "csi", "parent";
 +			resets = <&tegra_car 20>;
- 			reset-names = "vi";
++			reset-names = "vi";
 +
 +			power-domains = <&pmc TEGRA_POWERGATE_VENC>;
 +
@@ -250,6 +228,6 @@ index 46d6ead..433cb52 100644
 +			};
  		};
  
- 		epp {
+ 		tsec@0,54100000 {
 -- 
 2.1.4
