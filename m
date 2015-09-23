@@ -1,37 +1,71 @@
-From: Jan Kiszka <jan.kiszka-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v2 1/2] ARM: Availability of psci_smp_available depends on CONFIG_SMP
-Date: Wed, 23 Sep 2015 08:39:43 +0200
-Message-ID: <8b94f7869972d64f442f97208707a5856cbc8b14.1442990383.git.jan.kiszka@siemens.com>
+From: Jan Kiszka <jan.kiszka@siemens.com>
+Subject: [PATCH v2 2/2] ARM: tegra: Disable cpuidle driver if PSCI is present
+Date: Wed, 23 Sep 2015 08:39:44 +0200
+Message-ID: <5151ffebe8611545c55f8cc499cf2368b1b789c4.1442990383.git.jan.kiszka@siemens.com>
 References: <cover.1442990383.git.jan.kiszka@siemens.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <cover.1442990383.git.jan.kiszka-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org>
-In-Reply-To: <cover.1442990383.git.jan.kiszka-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org>
-References: <cover.1442990383.git.jan.kiszka-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <cover.1442990383.git.jan.kiszka@siemens.com>
+In-Reply-To: <cover.1442990383.git.jan.kiszka@siemens.com>
+References: <cover.1442990383.git.jan.kiszka@siemens.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Russell King <linux@arm.linux.org.uk>, Thierry Reding <treding@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, Will Deacon <will.deacon@arm.com>, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Ensure that we can use psci_smp_available without checking for
-CONFIG_SMP first.
+The firmware takes over the ownership of the flow controller when it
+provides PSCI support. To avoid clashes, disable the Tegra cpuidle
+driver if PSCI was detected.
 
-Signed-off-by: Jan Kiszka <jan.kiszka-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
- arch/arm/include/asm/psci.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-tegra/Kconfig | 1 +
+ arch/arm/mach-tegra/tegra.c | 4 +++-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/include/asm/psci.h b/arch/arm/include/asm/psci.h
-index 68ee3ce..ff956f4 100644
---- a/arch/arm/include/asm/psci.h
-+++ b/arch/arm/include/asm/psci.h
-@@ -16,7 +16,7 @@
+diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+index 0fa4c5f..373768c 100644
+--- a/arch/arm/mach-tegra/Kconfig
++++ b/arch/arm/mach-tegra/Kconfig
+@@ -4,6 +4,7 @@ menuconfig ARCH_TEGRA
+ 	select ARCH_SUPPORTS_TRUSTED_FOUNDATIONS
+ 	select ARM_AMBA
+ 	select ARM_GIC
++	select ARM_PSCI
+ 	select CLKSRC_MMIO
+ 	select HAVE_ARM_SCU if SMP
+ 	select HAVE_ARM_TWD if SMP
+diff --git a/arch/arm/mach-tegra/tegra.c b/arch/arm/mach-tegra/tegra.c
+index 2378fa56..d97c961 100644
+--- a/arch/arm/mach-tegra/tegra.c
++++ b/arch/arm/mach-tegra/tegra.c
+@@ -44,6 +44,7 @@
+ #include <asm/mach-types.h>
+ #include <asm/setup.h>
+ #include <asm/trusted_foundations.h>
++#include <asm/psci.h>
  
- extern struct smp_operations psci_smp_ops;
+ #include "board.h"
+ #include "common.h"
+@@ -136,7 +137,8 @@ static void __init tegra_dt_init_late(void)
+ 	int i;
  
--#ifdef CONFIG_ARM_PSCI
-+#if defined(CONFIG_ARM_PSCI) && defined(CONFIG_SMP)
- bool psci_smp_available(void);
- #else
- static inline bool psci_smp_available(void) { return false; }
+ 	tegra_init_suspend();
+-	tegra_cpuidle_init();
++	if (!psci_smp_available())
++		tegra_cpuidle_init();
+ 
+ 	for (i = 0; i < ARRAY_SIZE(board_init_funcs); i++) {
+ 		if (of_machine_is_compatible(board_init_funcs[i].machine)) {
 -- 
 2.1.4
