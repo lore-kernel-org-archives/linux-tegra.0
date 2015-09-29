@@ -1,150 +1,144 @@
-From: Tomasz Figa <tfiga-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: [RFC PATCH 3/3] iommu/tegra-smmu: Make the driver use out of band flushing
-Date: Tue, 29 Sep 2015 14:25:26 +0900
-Message-ID: <1443504379-31841-4-git-send-email-tfiga@chromium.org>
-References: <1443504379-31841-1-git-send-email-tfiga@chromium.org>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 3/3] dmaengine: tegra-adma: Add support for Tegra210 ADMA
+Date: Tue, 29 Sep 2015 09:13:59 +0100
+Message-ID: <560A4847.8090007@nvidia.com>
+References: <1443193000-457-1-git-send-email-jonathanh@nvidia.com>
+ <56056589.9010704@nvidia.com> <56056A8F.5010103@nvidia.com>
+ <1783348.ocWL5DWVKG@wuerfel> <5609556A.8060908@nvidia.com>
+ <56096C9E.7070608@wwwdotorg.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1443504379-31841-1-git-send-email-tfiga-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+In-Reply-To: <56096C9E.7070608-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
-Cc: Tomasz Figa <tfiga-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joerg Roedel <joro-zLv9SwRftAIdnm+yROfE0A@public.gmane.org>, Hiroshi Doyu <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Vince Hsu <vince.h-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Nicolas Iooss <nicolas.iooss_linux-oWGTIYur0i8@public.gmane.org>, Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patch modifies the tegra-smmu driver to perform PTC and TLB flushes
-inside iommu_ops .flush() callback instead of map and unmap operations,
-so that performance of large maps and unmaps is heavily optimized due to
-elimination of page-by-page flushing.
 
-Signed-off-by: Tomasz Figa <tfiga-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/iommu/tegra-smmu.c | 91 ++++++++++++++++++++++++++++++++++++++++++----
- 1 file changed, 83 insertions(+), 8 deletions(-)
+On 28/09/15 17:36, Stephen Warren wrote:
+> On 09/28/2015 08:57 AM, Jon Hunter wrote:
+>>
+>> On 25/09/15 16:47, Arnd Bergmann wrote:
+>>> On Friday 25 September 2015 16:38:55 Jon Hunter wrote:
+>>>> On 25/09/15 16:17, Jon Hunter wrote:
+>>>>>
+>>>>> On 25/09/15 16:03, Arnd Bergmann wrote:
+>>>>>> On Friday 25 September 2015 15:56:40 Jon Hunter wrote:
+>>>>>>> +       case DMA_MEM_TO_DEV:
+>>>>>>> +               burst_size = fls(tdc->config.dst_maxburst);
+>>>>>>> +               ch_regs->config = ADMA_CH_CONFIG_SRC_BUF(num_bufs
+>>>>>>> - 1);
+>>>>>>> +               ch_regs->ctrl =
+>>>>>>> ADMA_CH_CTRL_XFER_DIR(ADMA_MEM_TO_AHUB) |
+>>>>>>> +                              
+>>>>>>> ADMA_CH_CTRL_TX_REQ(tdc->config.slave_id);
+>>>>>>> +               ch_regs->src_addr = buf_addr;
+>>>>>>> +               break;
+>>>>>>> +
+>>>>>>> +       case DMA_DEV_TO_MEM:
+>>>>>>> +               burst_size = fls(tdc->config.src_maxburst);
+>>>>>>> +               ch_regs->config = ADMA_CH_CONFIG_TRG_BUF(num_bufs
+>>>>>>> - 1);
+>>>>>>> +               ch_regs->ctrl =
+>>>>>>> ADMA_CH_CTRL_XFER_DIR(ADMA_AHUB_TO_MEM) |
+>>>>>>> +                              
+>>>>>>> ADMA_CH_CTRL_RX_REQ(tdc->config.slave_id);
+>>>>>>> +               ch_regs->trg_addr = buf_addr;
+>>>>>>> +               break;
+>>>>>>
+>>>>>> Do not use the 'slave_id' field here to identify the slave device,
+>>>>>> that
+>>>>>> concept is broken. Instead, put the slave identification into the
+>>>>>> dma specifier in DT and read it out in your xlate function.
+>>>>>
+>>>>> Why is it broken?
+>>>>>
+>>>>> What happens if I don't know the slave-id? In other words, the
+>>>>> slave-id
+>>>>> can be dynamically allocated and associated with a given slave.
+>>>>
+>>>> I guess thinking about it some more, the driver could assign an id
+>>>> itself to a given channel and I could avoid using slave_id here. There
+>>>> are 22 channels and 10 tx and 10 rx requests.
+>>>
+>>> This sounds roughly right. So you could pick the ch_regs->ctrl value
+>>> when you allocate the tegra_adma_chan structure, and then map it to
+>>> the slave in the xlate() function.
+>>
+>> Actually, what I mentioned about would not work as it is not the DMA
+>> that should assign the requests to the channel.
+>>
+>> I think that I have poorly described the hardware and how it works, so
+>> let me try and explain a bit more.
+>>
+>>  From a hardware perspective it looks like the following ...
+>>
+>> memory <-> adma <-> adma-if <-> xbar <-> clients
+>>
+>> where:
+>> - memory is the system memory
+>> - adma is the dma controller
+>> - adma-if is the dma interface to a crossbar
+>> - xbar is the crossbar
+>> - clients are various audio interfaces, such as i2s, etc
+>>
+>> The adma-if is essentially a mux with 10 tx and 10 rx ports. Any of the
+>> 22 adma channels can be mapped to any of the 10 tx or rx ports. The
+>> request signal used by the adma is determined by which port it is
+>> configured to use. However, what makes this even more configurable is
+>> the xbar is also a mux that can route adma-if ports to the various
+>> clients.
+>>
+>> So potentially, you could use any adma channel and any port to route
+>> audio to any of the clients. However, the adma-if needs to know which
+>> adma channel is mapped to which port
+> 
+> It does? I'm pretty sure it didn't in earlier chips; what changed?
 
-diff --git a/drivers/iommu/tegra-smmu.c b/drivers/iommu/tegra-smmu.c
-index 9305964..92b46d2 100644
---- a/drivers/iommu/tegra-smmu.c
-+++ b/drivers/iommu/tegra-smmu.c
-@@ -614,18 +614,54 @@ static void tegra_smmu_pte_put_use(struct tegra_smmu_as *as, unsigned long iova)
- 	}
- }
- 
-+static void tegra_smmu_pte_put_use_range(struct tegra_smmu_as *as,
-+		unsigned long iova, unsigned int len)
-+{
-+	unsigned int i;
-+
-+	for (i = 0; i < len; i++)
-+		tegra_smmu_pte_put_use(as, iova + i * PAGE_SIZE);
-+}
-+
- static void tegra_smmu_set_pte(struct tegra_smmu_as *as, unsigned long iova,
- 			       u32 *pte, dma_addr_t pte_dma, u32 val)
- {
--	struct tegra_smmu *smmu = as->smmu;
--	unsigned long offset = offset_in_page(pte);
--
- 	*pte = val;
-+}
-+
-+static void tegra_smmu_flush_pte_range(struct tegra_smmu_as *as,
-+				unsigned long iova, unsigned int num_ptes, u32 *pte,
-+				dma_addr_t pt_dma)
-+{
-+	struct tegra_smmu *smmu = as->smmu;
-+	unsigned int tlb_lines_per_atom;
-+	unsigned int ptes_per_tlb_line;
-+	unsigned int ptes_per_atom;
-+	unsigned long offset;
-+	unsigned long iova_end;
-+	int i;
-+
-+	ptes_per_atom = smmu->mc->soc->atom_size / sizeof(*pte);
-+	ptes_per_tlb_line = smmu->soc->tlb_line_size / sizeof(*pte);
-+	tlb_lines_per_atom = smmu->mc->soc->atom_size
-+				/ smmu->soc->tlb_line_size;
-+
-+	offset = round_down(offset_in_page(pte), smmu->mc->soc->atom_size);
-+
-+	iova_end = iova + num_ptes * PAGE_SIZE;
-+	iova = round_down(iova, ptes_per_atom * PAGE_SIZE);
-+	iova_end = round_up(iova_end, ptes_per_atom * PAGE_SIZE);
-+	num_ptes = (iova_end - iova) / PAGE_SIZE;
-+	while (num_ptes) {
-+		smmu_flush_ptc(smmu, pt_dma, offset);
-+		for (i = 0; i < tlb_lines_per_atom; i++) {
-+			smmu_flush_tlb_group(smmu, as->id, iova);
-+			iova += ptes_per_tlb_line * PAGE_SIZE;
-+		}
-+		offset += smmu->mc->soc->atom_size;
-+		num_ptes -= ptes_per_atom;
-+	}
- 
--	dma_sync_single_range_for_device(smmu->dev, pte_dma, offset,
--					 4, DMA_TO_DEVICE);
--	smmu_flush_ptc(smmu, pte_dma, offset);
--	smmu_flush_tlb_group(smmu, as->id, iova);
- 	smmu_flush(smmu);
- }
- 
-@@ -662,11 +698,49 @@ static size_t tegra_smmu_unmap(struct iommu_domain *domain, unsigned long iova,
- 		return 0;
- 
- 	tegra_smmu_set_pte(as, iova, pte, pte_dma, 0);
--	tegra_smmu_pte_put_use(as, iova);
- 
- 	return size;
- }
- 
-+static void tegra_smmu_flush(struct iommu_domain *domain, unsigned long iova,
-+			     size_t size)
-+{
-+	struct tegra_smmu_as *as = to_smmu_as(domain);
-+	struct tegra_smmu *smmu = as->smmu;
-+	u32 num = size >> PAGE_SHIFT;
-+
-+	might_sleep();
-+
-+	while (num) {
-+		unsigned int pt_index = iova_pt_index(iova);
-+		unsigned int len, end;
-+		unsigned long offset;
-+		dma_addr_t pte_dma;
-+		u32 *pte;
-+
-+		end = pt_index + num;
-+		if (end > SMMU_NUM_PTE)
-+			end = SMMU_NUM_PTE;
-+		len = end - pt_index;
-+
-+		pte = tegra_smmu_pte_lookup(as, iova, &pte_dma);
-+		if (!pte)
-+			goto next_pde;
-+
-+		offset = offset_in_page(pte);
-+		dma_sync_single_range_for_device(smmu->dev, pte_dma, offset,
-+						 sizeof(*pte) * len, DMA_TO_DEVICE);
-+
-+		tegra_smmu_flush_pte_range(as, iova, len, pte, pte_dma);
-+		if (*pte == 0)
-+			tegra_smmu_pte_put_use_range(as, iova, len);
-+
-+next_pde:
-+		num -= len;
-+		iova += len << PAGE_SHIFT;
-+	}
-+}
-+
- static phys_addr_t tegra_smmu_iova_to_phys(struct iommu_domain *domain,
- 					   dma_addr_t iova)
- {
-@@ -743,6 +817,7 @@ static const struct iommu_ops tegra_smmu_ops = {
- 	.map = tegra_smmu_map,
- 	.unmap = tegra_smmu_unmap,
- 	.map_sg = default_iommu_map_sg,
-+	.flush = tegra_smmu_flush,
- 	.iova_to_phys = tegra_smmu_iova_to_phys,
- 
- 	.pgsize_bitmap = SZ_4K,
--- 
-2.6.0.rc2.230.g3dd15c0
+I *believe* that T210 is the first one to have the ADMA controller where
+as previous chips used the APB-DMA controller. Looking at the APB-DMA on
+T124 I can see that there is a fixed REQ_SEL value for each of the APBIF
+(equivalent of the ADMA-IF on T210).
+
+> For earlier chips, I believe all that's required is:
+> 
+> When programming the DMA engine, you need to know which ADMA-IF is in
+> use, so the correct DMA request selector can be programmed into the DMA
+> engine for flow-control.
+> 
+> ADMA-IF simply receives the data from DMA, and forwards it to the XBAR
+> tagged with the ADMA-IF's own ID.
+> 
+> The XBAR programming selects which data source (ADMA-IF TX, I2S RX, ...)
+> each sink (ADMARX, I2S TX, ...) receives.
+
+Yes, exactly, this part sounds the same. However, just the ADMA itself
+allows for even more configuration.
+
+> Ideally, when an I2S controller needs to start transmitting data, it
+> should dynamically allocate an ADMA-IF, query it for its DMA slave
+> request ID, and then forward this information to the ASoC code that sets
+> up the DMA transfer.
+
+Agree.
+
+> In practice, this means that since any I2S module could use any ADMA-IF,
+> you probably need to list all DMA request selectors possible in the
+> I2S's DMA-related properties, so it can choose which one to use.
+
+Possibly, but really I think that the i2s only cares about the ADMA-IF
+and the hardware request used by the ADMA can be abstracted by the
+ADMA-IF. In other words, if you allocate an ADMA channel to work with a
+specific ADMA-IF, then let the ADMA-IF select the hardware request
+because as long as one is available, you don't care which.
+
+> Or perhaps the XBAR binding should list all the DMA requestors so that
+> each I2S node doesn't have to.
+
+Yes, however, I think that the ADMA-IF would make sense as it really
+cares about the mapping of hardware request to the ADMA-IF port.
+
+Cheers
+Jon
