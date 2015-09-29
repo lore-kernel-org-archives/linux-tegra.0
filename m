@@ -1,70 +1,78 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 3/3] dmaengine: tegra-adma: Add support for Tegra210 ADMA
-Date: Tue, 29 Sep 2015 16:45:49 +0100
-Message-ID: <560AB22D.9060507@nvidia.com>
-References: <1443193000-457-1-git-send-email-jonathanh@nvidia.com>
- <2496965.bMvvDEqHin@wuerfel> <560A9D9F.2070109@nvidia.com>
- <5513519.ARXvF8rdlP@wuerfel>
+From: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [RFC PATCH 0/3] iommu: Add range flush operation
+Date: Tue, 29 Sep 2015 17:27:12 +0100
+Message-ID: <560ABBE0.8020805@arm.com>
+References: <1443504379-31841-1-git-send-email-tfiga@chromium.org>
+ <560A9E36.9030903@arm.com> <20150929143241.GI21513@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5513519.ARXvF8rdlP@wuerfel>
+In-Reply-To: <20150929143241.GI21513-l+eeeJia6m9vn6HldHNs0ANdhmdF6hFW@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Cc: Tomasz Figa <tfiga-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Will Deacon <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Nicolas Iooss <nicolas.iooss_linux-oWGTIYur0i8@public.gmane.org>, Vince Hsu <vince.h-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 29/09/15 15:32, Russell King - ARM Linux wrote:
+> On Tue, Sep 29, 2015 at 03:20:38PM +0100, Robin Murphy wrote:
+>> A single callback doesn't really generalise well enough: If we wanted to
+>> implement this in the ARM SMMU drivers to optimise the unmap() case [ask
+>> Will how long he spends waiting for a software model to tear down an entire
+>> VFIO domain invalidating one page at a time ;)], then we'd either regress
+>> performance in the map() case with an unnecessary TLB flush, or have to do a
+>> table walk in every flush() call to infer what actually needs doing.
+>
+> And this is the problem of frameworks.  They get in the way of doing
+> things efficiently.
+>
+> Fine, we have the DMA ops, and that calls a map_sg() method.  What we
+> then need is to have a series of standardised library functions which
+> can be called to perform various actions.
+> Consider this: an IOMMU driver gets the raw scatterlist which the
+> driver passed.  The IOMMU driver walks the scatterlist, creating the
+> IOMMU side mapping, and writing the device DMA addresses and DMA lengths
+> to the scatterlist, possibly coalescing some of the entries.  It
+> remembers the number of scatterlist entries that the DMA operation now
+> requires.  The IOMMU code can setup whatever mappings it wants using
 
-On 29/09/15 16:34, Arnd Bergmann wrote:
-> On Tuesday 29 September 2015 15:18:07 Jon Hunter wrote:
->> On 29/09/15 13:39, Arnd Bergmann wrote:
->>> Ok, that makes more sense then. A few questions still:
->>>
->>> * Would the admaif in turn provide a #dma-cells and have the real slaves
->>>   hooked up to it?
->>
->> I don't think that that would be necessary. If you look at the existing
->> tegra i2s binding [0], there is a ahub-cif-ids property which maps the
->> actual slave to the apbif (equivalent of the adma-if). This ID is used
->> to get the appropriate dma channel for this client interface (cif).
->>
->>> * How do you model the xbar in this scenario?
->>
->> The xbar is common to existing tegra devices and today is configured via
->> the ahub-cif-ids property.
-> 
-> I see, so instead of modeling the xbar as part of the DMA engine in DT, you
-> model it as part of the slave. This probably adds a bit of complexity
-> and a somewhat nonstandard binding, but it's too late to change that anyway.
-> 
->>> * How does the adma driver know whether you are using a rx or tx channel
->>>   in the above example, should that perhaps be another cell in dma
->>>   specifier? It seems that the numbers are all overlapping between rx and
->>>   tx (each has 1 through 10).
->>
->> The channels can be configured to be either rx or tx and yes the IDs do
->> overlap so you have 1-10 for both rx and tx. However, if you are asking
->> how do I ensure that only one channel uses a specific hardware request,
->> then yes I probably need to add the direction to the specifier to ensure
->> only one channel uses a request at any given time.
-> 
-> If each channel is either rx or tx, but the two cannot be used simultaneously,
-> you can just list each of them only once, like this:
-> 
-> 	dmas = <&adma 0>, <&adma 1>, <&adma 2>, ...
-> 	dma-names = "if0", "if1", "if2", ...
-> 
-> Otherwise you end up allocating twice the number of channels that you
-> really need.
+... and making that elided "setup whatever mappings it wants" step more 
+efficient is the sole thing that this patch set is trying to address. I 
+apologise for not really following what you're getting at here.
 
-Each dma channel can be configured for either tx or rx. There are 10 tx
-ports on the adma-if and 10 rx. So you could have 20 dma channels
-configured for each one of the tx and rx ports. It is a bit confusing
-because rx port 1 has a request signal of 1 and tx port 1 has a request
-signal of 1 as well. So if you are wondering how the dma distinguishes
-between rx port 1 and tx port 1, it does so by having a separate field
-for the tx and rx request in the dma channel control register.
+> whatever sizes it wants to satisfy the requested scatterlist.
+>
+> It then goes on to call the arch backend with the original scatterlist,
+> asking it to _only_ deal with the CPU coherency for the mapping.  The
+> arch code walks the scatterlist again, this time dealing with the CPU
+> coherency part.
+>
+> Finally, the IOMMU code returns the number of DMA scatterlist entries.
+>
+> When it comes to tearing it down, it's a similar operation to the above,
+> except reversing those actions.
+>
+> The only issue with this approach is that it opens up some of the cache
+> handling to the entire kernel, and that will be _too_ big a target for
+> idiotic driver writers to think they have permission to directly use
+> those interfaces.  To solve this, I'd love to be able to have the linker
+> link together certain objects in the kernel build, and then convert some
+> global symbols to be local symbols, thus denying access to functions that
+> driver authors have no business what so ever touching.
+>
+>> Personally I think it would be nicest to have two separate callbacks, e.g.
+>> .map_sync/.unmap_sync, but at the very least some kind of additional
+>> 'direction' kind of parameter would be necessary.
+>
+> No, not more callbacks - that's the framework thinking, not the library
+> thinking.
 
-Cheers
-Jon
+Eh, swings and roundabouts. An argument denoting whether the flush is 
+being called on the map or unmap path would be fine, it just means some 
+implementations will be doing an extra no-op function call half the 
+time. On closer inspection, the code in patch 3 _is_ using a table walk 
+to figure out if the IOVA has been mapped or unmapped, it just happens 
+that this particular implementation needs to do that walk anyway to sync 
+the PTE updates, so gets away with it.
+
+Robin.
