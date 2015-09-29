@@ -1,53 +1,147 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 3/3] dmaengine: tegra-adma: Add support for Tegra210 ADMA
-Date: Tue, 29 Sep 2015 15:18:07 +0100
-Message-ID: <560A9D9F.2070109@nvidia.com>
-References: <1443193000-457-1-git-send-email-jonathanh@nvidia.com>
- <2417622.fOrcl680Fe@wuerfel> <560A817E.6010405@nvidia.com>
- <2496965.bMvvDEqHin@wuerfel>
+From: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [RFC PATCH 0/3] iommu: Add range flush operation
+Date: Tue, 29 Sep 2015 15:20:38 +0100
+Message-ID: <560A9E36.9030903@arm.com>
+References: <1443504379-31841-1-git-send-email-tfiga@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=WINDOWS-1252; format=flowed
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <2496965.bMvvDEqHin@wuerfel>
+In-Reply-To: <1443504379-31841-1-git-send-email-tfiga-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomasz Figa <tfiga-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Cc: Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Will Deacon <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Nicolas Iooss <nicolas.iooss_linux-oWGTIYur0i8@public.gmane.org>, Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Vince Hsu <vince.h-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Tomasz,
 
-On 29/09/15 13:39, Arnd Bergmann wrote:
+On 29/09/15 06:25, Tomasz Figa wrote:
+> Currently the IOMMU subsystem provides 3 basic operations: iommu_map(),
+> iommu_map_sg() and iommu_unmap(). iommu_map() can be used to map memory
+> page by page, however it involves flushing the caches (CPU and IOMMU) for
+> every mapped page separately, which is unsuitable for use cases that
+> require low mapping latency. Similarly iommu_unmap(), even though it
+> takes a full IOVA range as its argument, performs unmapping in a page
+> by page manner.
 
-[snip]
+This isn't necessarily the general case, though. If the IOMMU has a 
+coherent page table walk interface and its architecture prohibits 
+caching invalid PTEs, then the overhead on an unmap is only a TLB 
+invalidation and the overhead on a map is nothing.
 
-> Ok, that makes more sense then. A few questions still:
-> 
-> * Would the admaif in turn provide a #dma-cells and have the real slaves
->   hooked up to it?
+> To make mapping operation more suitable for such use cases, iommu_map_sg()
+> and .map_sg() callback in iommu_ops struct were introduced, which allowed
+> particular IOMMU drivers to directly iterate over SG entries, create
+> necessary mappings and flush everything in one go.
+>
+> This approach, however, has two drawbacks:
+>   1) it does not do anything about unmap performance,
+>   2) it requires each driver willing to have fast map to implement its
+>      own SG iteration code, even though this is a mostly generic operation.
+>
+> This series tries to mitigate the two issues above, while acknowledging
+> the fact that the .map_sg() callback might be still necessary for some
+> specific platforms, which could have the need to iterate over SG elements
+> inside driver code. Proposed solution introduces a new .flush() callback,
+> which expects IOVA range as its argument and is expected to flush all
+> respective caches (be it CPU, IOMMU TLB or whatever) to make the given
+> IOVA area mapping change visible to IOMMU clients. Then all the 3 basic
+> map/unmap operations are modified to call the .flush() callback at the end
+> of the operation.
+>
+> Advantages of proposed approach include:
+>   1) ability to use default_iommu_map_sg() helper if all the driver needs
+>      for performance optimization is batching the flush,
+>   2) completely no effect on existing code - the .flush() callback is made
+>      optional and if it isn't implemented drivers are expected to do
+>      necessary flushes on a page by page basis in respective (un)mapping
+>      callbakcs,
+>   3) possibility of exporting the iommu_flush() operation and providing
+>      unsynchronized map/unmap operations for subsystems with even higher
+>      requirements for performance (e.g. drivers/gpu/drm).
 
-I don't think that that would be necessary. If you look at the existing
-tegra i2s binding [0], there is a ahub-cif-ids property which maps the
-actual slave to the apbif (equivalent of the adma-if). This ID is used
-to get the appropriate dma channel for this client interface (cif).
+A single callback doesn't really generalise well enough: If we wanted to 
+implement this in the ARM SMMU drivers to optimise the unmap() case [ask 
+Will how long he spends waiting for a software model to tear down an 
+entire VFIO domain invalidating one page at a time ;)], then we'd either 
+regress performance in the map() case with an unnecessary TLB flush, or 
+have to do a table walk in every flush() call to infer what actually 
+needs doing.
 
-> * How do you model the xbar in this scenario?
+Personally I think it would be nicest to have two separate callbacks, 
+e.g. .map_sync/.unmap_sync, but at the very least some kind of 
+additional 'direction' kind of parameter would be necessary.
 
-The xbar is common to existing tegra devices and today is configured via
-the ahub-cif-ids property.
+> The series includes a generic patch implementing necessary changes in
+> IOMMU API and two Tegra-specific patches that demonstrate implementation
+> on driver side and which can be used for further testing.
+>
+> Last, but not least, some performance numbers on Tegra210:
+> +-----------+--------------+-------------+------------+
+> | Operation | Size [bytes] | Before [us] | After [us] |
+> +-----------+--------------+-------------+------------+
+> | Map       | 128K         |         139 |         40 |
+> |           |              |         136 |         34 |
+> |           |              |         137 |         38 |
+> |           |              |         136 |         36 |
+> |           | 4M           |        3939 |       1163 |
+> |           |              |        3730 |       2389 |
+> |           |              |        3613 |        997 |
+> |           |              |        3622 |       1620 |
+> |           | ~18M         |       18635 |       4741 |
+> |           |              |       19261 |       6550 |
+> |           |              |       18473 |       9304 |
+> |           |              |       18125 |       5120 |
+> | Unmap     | 128K         |         128 |          7 |
+> |           |              |         122 |          8 |
+> |           |              |         119 |         10 |
+> |           |              |         123 |         12 |
+> |           | 4M           |        3829 |        151 |
+> |           |              |        3964 |        150 |
+> |           |              |        3908 |        145 |
+> |           |              |        3875 |        155 |
+> |           | ~18M         |       18570 |        683 |
+> |           |              |       18473 |        806 |
+> |           |              |       21020 |        643 |
+> |           |              |       21764 |        652 |
+> +-----------+--------------+-------------+------------+
+> The values are obtained by surrounding the calls to iommu_map_sg()
+> (with default_iommu_map_sg() helper used as .map_sg() callback) and
+> iommu_unmap() with ktime-based time measurement code. Taken 4 samples
+> of every buffer size. ~18M means around 17-19M due do the variance
+> in requested buffer sizes.
 
-> * How does the adma driver know whether you are using a rx or tx channel
->   in the above example, should that perhaps be another cell in dma
->   specifier? It seems that the numbers are all overlapping between rx and
->   tx (each has 1 through 10).
+It would be interesting to know how much of the gain here is due to 
+batching up the TLB maintenance vs. doing the DMA sync in fewer total 
+pieces (with correspondingly fewer barriers). For the drivers which use 
+the io-pgtable framework, trying to do anything about the latter (where 
+it's relevant) looks essentially impossible without rewriting the whole 
+thing, but the former is definitely something we should be able to 
+handle and benefit from.
 
-The channels can be configured to be either rx or tx and yes the IDs do
-overlap so you have 1-10 for both rx and tx. However, if you are asking
-how do I ensure that only one channel uses a specific hardware request,
-then yes I probably need to add the direction to the specifier to ensure
-only one channel uses a request at any given time.
+It certainly seems like a reasonable way to get closer to the kind of 
+iommu_map_range()/iommu_unmap_range() operations proposed before, but 
+with less trampling on the external API. Plus it's nicer than the 
+alternative workaround of having the driver claim anything larger than 
+your basic page size is valid so you can batch up most of your pagetable 
+updates behind the API's back.
 
-Cheers
-Jon
+Robin.
 
-[0]
-http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/sound/nvidia,tegra30-i2s.txt
+> Tomasz Figa (2):
+>    iommu: Add support for out of band flushing
+>    iommu/tegra-smmu: Make the driver use out of band flushing
+>
+> Vince Hsu (1):
+>    memory: tegra: add TLB cache line size
+>
+>   drivers/iommu/iommu.c           | 33 +++++++++++++--
+>   drivers/iommu/tegra-smmu.c      | 91 +++++++++++++++++++++++++++++++++++++----
+>   drivers/memory/tegra/tegra114.c |  1 +
+>   drivers/memory/tegra/tegra124.c |  3 ++
+>   drivers/memory/tegra/tegra210.c |  1 +
+>   drivers/memory/tegra/tegra30.c  |  1 +
+>   include/linux/iommu.h           |  2 +
+>   include/soc/tegra/mc.h          |  1 +
+>   8 files changed, 122 insertions(+), 11 deletions(-)
+>
