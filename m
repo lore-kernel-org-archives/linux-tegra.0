@@ -1,114 +1,76 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 3/3] dmaengine: tegra-adma: Add support for Tegra210 ADMA
-Date: Tue, 29 Sep 2015 15:25:08 +0100
-Message-ID: <560A9F44.5010406@nvidia.com>
-References: <1443193000-457-1-git-send-email-jonathanh@nvidia.com>
- <56056589.9010704@nvidia.com> <56056A8F.5010103@nvidia.com>
- <1783348.ocWL5DWVKG@wuerfel> <5609556A.8060908@nvidia.com>
- <56096C9E.7070608@wwwdotorg.org> <560A4847.8090007@nvidia.com>
+From: Russell King - ARM Linux <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
+Subject: Re: [RFC PATCH 0/3] iommu: Add range flush operation
+Date: Tue, 29 Sep 2015 15:32:41 +0100
+Message-ID: <20150929143241.GI21513@n2100.arm.linux.org.uk>
+References: <1443504379-31841-1-git-send-email-tfiga@chromium.org>
+	<560A9E36.9030903@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <560A4847.8090007-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <560A9E36.9030903-5wv7dgnIgG8@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Robin Murphy <robin.murphy-5wv7dgnIgG8@public.gmane.org>
+Cc: Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Will Deacon <Will.Deacon-5wv7dgnIgG8@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Tomasz Figa <tfiga-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Vince Hsu <vince.h-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Nicolas Iooss <nicolas.iooss_linux-oWGTIYur0i8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, Sep 29, 2015 at 03:20:38PM +0100, Robin Murphy wrote:
+> A single callback doesn't really generalise well enough: If we wanted to
+> implement this in the ARM SMMU drivers to optimise the unmap() case [ask
+> Will how long he spends waiting for a software model to tear down an entire
+> VFIO domain invalidating one page at a time ;)], then we'd either regress
+> performance in the map() case with an unnecessary TLB flush, or have to do a
+> table walk in every flush() call to infer what actually needs doing.
 
-On 29/09/15 09:13, Jon Hunter wrote:
-> 
-> On 28/09/15 17:36, Stephen Warren wrote:
->> On 09/28/2015 08:57 AM, Jon Hunter wrote:
->>>
->>> On 25/09/15 16:47, Arnd Bergmann wrote:
->>>> On Friday 25 September 2015 16:38:55 Jon Hunter wrote:
->>>>> On 25/09/15 16:17, Jon Hunter wrote:
->>>>>>
->>>>>> On 25/09/15 16:03, Arnd Bergmann wrote:
->>>>>>> On Friday 25 September 2015 15:56:40 Jon Hunter wrote:
->>>>>>>> +       case DMA_MEM_TO_DEV:
->>>>>>>> +               burst_size = fls(tdc->config.dst_maxburst);
->>>>>>>> +               ch_regs->config = ADMA_CH_CONFIG_SRC_BUF(num_bufs
->>>>>>>> - 1);
->>>>>>>> +               ch_regs->ctrl =
->>>>>>>> ADMA_CH_CTRL_XFER_DIR(ADMA_MEM_TO_AHUB) |
->>>>>>>> +                              
->>>>>>>> ADMA_CH_CTRL_TX_REQ(tdc->config.slave_id);
->>>>>>>> +               ch_regs->src_addr = buf_addr;
->>>>>>>> +               break;
->>>>>>>> +
->>>>>>>> +       case DMA_DEV_TO_MEM:
->>>>>>>> +               burst_size = fls(tdc->config.src_maxburst);
->>>>>>>> +               ch_regs->config = ADMA_CH_CONFIG_TRG_BUF(num_bufs
->>>>>>>> - 1);
->>>>>>>> +               ch_regs->ctrl =
->>>>>>>> ADMA_CH_CTRL_XFER_DIR(ADMA_AHUB_TO_MEM) |
->>>>>>>> +                              
->>>>>>>> ADMA_CH_CTRL_RX_REQ(tdc->config.slave_id);
->>>>>>>> +               ch_regs->trg_addr = buf_addr;
->>>>>>>> +               break;
->>>>>>>
->>>>>>> Do not use the 'slave_id' field here to identify the slave device,
->>>>>>> that
->>>>>>> concept is broken. Instead, put the slave identification into the
->>>>>>> dma specifier in DT and read it out in your xlate function.
->>>>>>
->>>>>> Why is it broken?
->>>>>>
->>>>>> What happens if I don't know the slave-id? In other words, the
->>>>>> slave-id
->>>>>> can be dynamically allocated and associated with a given slave.
->>>>>
->>>>> I guess thinking about it some more, the driver could assign an id
->>>>> itself to a given channel and I could avoid using slave_id here. There
->>>>> are 22 channels and 10 tx and 10 rx requests.
->>>>
->>>> This sounds roughly right. So you could pick the ch_regs->ctrl value
->>>> when you allocate the tegra_adma_chan structure, and then map it to
->>>> the slave in the xlate() function.
->>>
->>> Actually, what I mentioned about would not work as it is not the DMA
->>> that should assign the requests to the channel.
->>>
->>> I think that I have poorly described the hardware and how it works, so
->>> let me try and explain a bit more.
->>>
->>>  From a hardware perspective it looks like the following ...
->>>
->>> memory <-> adma <-> adma-if <-> xbar <-> clients
->>>
->>> where:
->>> - memory is the system memory
->>> - adma is the dma controller
->>> - adma-if is the dma interface to a crossbar
->>> - xbar is the crossbar
->>> - clients are various audio interfaces, such as i2s, etc
->>>
->>> The adma-if is essentially a mux with 10 tx and 10 rx ports. Any of the
->>> 22 adma channels can be mapped to any of the 10 tx or rx ports. The
->>> request signal used by the adma is determined by which port it is
->>> configured to use. However, what makes this even more configurable is
->>> the xbar is also a mux that can route adma-if ports to the various
->>> clients.
->>>
->>> So potentially, you could use any adma channel and any port to route
->>> audio to any of the clients. However, the adma-if needs to know which
->>> adma channel is mapped to which port
->>
->> It does? I'm pretty sure it didn't in earlier chips; what changed?
-> 
-> I *believe* that T210 is the first one to have the ADMA controller where
-> as previous chips used the APB-DMA controller. Looking at the APB-DMA on
-> T124 I can see that there is a fixed REQ_SEL value for each of the APBIF
-> (equivalent of the ADMA-IF on T210).
+And this is the problem of frameworks.  They get in the way of doing
+things efficiently.
 
-Actually, I think that T210 is the same as the previous chips. Because
-of the xbar you could potentially have various different routing
-possibilities between the DMA, CIF and client. However, the request
-signal between the DMA and CIF is fixed.
+Fine, we have the DMA ops, and that calls a map_sg() method.  What we
+then need is to have a series of standardised library functions which
+can be called to perform various actions.
 
-Sorry, I think my brain melted while traversing the audio subsystem.
+Consider this: an IOMMU driver gets the raw scatterlist which the
+driver passed.  The IOMMU driver walks the scatterlist, creating the
+IOMMU side mapping, and writing the device DMA addresses and DMA lengths
+to the scatterlist, possibly coalescing some of the entries.  It
+remembers the number of scatterlist entries that the DMA operation now
+requires.  The IOMMU code can setup whatever mappings it wants using
+whatever sizes it wants to satisfy the requested scatterlist.
 
-Jon
+It then goes on to call the arch backend with the original scatterlist,
+asking it to _only_ deal with the CPU coherency for the mapping.  The
+arch code walks the scatterlist again, this time dealing with the CPU
+coherency part.
+
+Finally, the IOMMU code returns the number of DMA scatterlist entries.
+
+When it comes to tearing it down, it's a similar operation to the above,
+except reversing those actions.
+
+The only issue with this approach is that it opens up some of the cache
+handling to the entire kernel, and that will be _too_ big a target for
+idiotic driver writers to think they have permission to directly use
+those interfaces.  To solve this, I'd love to be able to have the linker
+link together certain objects in the kernel build, and then convert some
+global symbols to be local symbols, thus denying access to functions that
+driver authors have no business what so ever touching.
+
+> Personally I think it would be nicest to have two separate callbacks, e.g.
+> .map_sync/.unmap_sync, but at the very least some kind of additional
+> 'direction' kind of parameter would be necessary.
+
+No, not more callbacks - that's the framework thinking, not the library
+thinking.
+
+-- 
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
