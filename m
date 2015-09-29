@@ -1,144 +1,152 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 3/3] dmaengine: tegra-adma: Add support for Tegra210 ADMA
-Date: Tue, 29 Sep 2015 09:13:59 +0100
-Message-ID: <560A4847.8090007@nvidia.com>
-References: <1443193000-457-1-git-send-email-jonathanh@nvidia.com>
- <56056589.9010704@nvidia.com> <56056A8F.5010103@nvidia.com>
- <1783348.ocWL5DWVKG@wuerfel> <5609556A.8060908@nvidia.com>
- <56096C9E.7070608@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC PATCH 0/3] iommu: Add range flush operation
+Date: Tue, 29 Sep 2015 11:27:14 +0200
+Message-ID: <20150929092714.GD9460@ulmo.nvidia.com>
+References: <1443504379-31841-1-git-send-email-tfiga@chromium.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56096C9E.7070608-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/mixed; boundary="===============7020999691867273013=="
+Return-path: <iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+In-Reply-To: <1443504379-31841-1-git-send-email-tfiga-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/iommu/>
+List-Post: <mailto:iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>
+List-Help: <mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/iommu>,
+	<mailto:iommu-request-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org?subject=subscribe>
+Sender: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+Errors-To: iommu-bounces-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org
+To: Tomasz Figa <tfiga-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Olav Haugan <ohaugan-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Walmsley <paul-DWxLp4Yu+b8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Antonios Motakis <a.motakis-lrHrjnjw1UfHK3s98zE1ajGjJy/sRE9J@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, iommu-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Nicolas Iooss <nicolas.iooss_linux-oWGTIYur0i8@public.gmane.org>, Russell King <rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vince Hsu <vince.h-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 28/09/15 17:36, Stephen Warren wrote:
-> On 09/28/2015 08:57 AM, Jon Hunter wrote:
->>
->> On 25/09/15 16:47, Arnd Bergmann wrote:
->>> On Friday 25 September 2015 16:38:55 Jon Hunter wrote:
->>>> On 25/09/15 16:17, Jon Hunter wrote:
->>>>>
->>>>> On 25/09/15 16:03, Arnd Bergmann wrote:
->>>>>> On Friday 25 September 2015 15:56:40 Jon Hunter wrote:
->>>>>>> +       case DMA_MEM_TO_DEV:
->>>>>>> +               burst_size = fls(tdc->config.dst_maxburst);
->>>>>>> +               ch_regs->config = ADMA_CH_CONFIG_SRC_BUF(num_bufs
->>>>>>> - 1);
->>>>>>> +               ch_regs->ctrl =
->>>>>>> ADMA_CH_CTRL_XFER_DIR(ADMA_MEM_TO_AHUB) |
->>>>>>> +                              
->>>>>>> ADMA_CH_CTRL_TX_REQ(tdc->config.slave_id);
->>>>>>> +               ch_regs->src_addr = buf_addr;
->>>>>>> +               break;
->>>>>>> +
->>>>>>> +       case DMA_DEV_TO_MEM:
->>>>>>> +               burst_size = fls(tdc->config.src_maxburst);
->>>>>>> +               ch_regs->config = ADMA_CH_CONFIG_TRG_BUF(num_bufs
->>>>>>> - 1);
->>>>>>> +               ch_regs->ctrl =
->>>>>>> ADMA_CH_CTRL_XFER_DIR(ADMA_AHUB_TO_MEM) |
->>>>>>> +                              
->>>>>>> ADMA_CH_CTRL_RX_REQ(tdc->config.slave_id);
->>>>>>> +               ch_regs->trg_addr = buf_addr;
->>>>>>> +               break;
->>>>>>
->>>>>> Do not use the 'slave_id' field here to identify the slave device,
->>>>>> that
->>>>>> concept is broken. Instead, put the slave identification into the
->>>>>> dma specifier in DT and read it out in your xlate function.
->>>>>
->>>>> Why is it broken?
->>>>>
->>>>> What happens if I don't know the slave-id? In other words, the
->>>>> slave-id
->>>>> can be dynamically allocated and associated with a given slave.
->>>>
->>>> I guess thinking about it some more, the driver could assign an id
->>>> itself to a given channel and I could avoid using slave_id here. There
->>>> are 22 channels and 10 tx and 10 rx requests.
->>>
->>> This sounds roughly right. So you could pick the ch_regs->ctrl value
->>> when you allocate the tegra_adma_chan structure, and then map it to
->>> the slave in the xlate() function.
->>
->> Actually, what I mentioned about would not work as it is not the DMA
->> that should assign the requests to the channel.
->>
->> I think that I have poorly described the hardware and how it works, so
->> let me try and explain a bit more.
->>
->>  From a hardware perspective it looks like the following ...
->>
->> memory <-> adma <-> adma-if <-> xbar <-> clients
->>
->> where:
->> - memory is the system memory
->> - adma is the dma controller
->> - adma-if is the dma interface to a crossbar
->> - xbar is the crossbar
->> - clients are various audio interfaces, such as i2s, etc
->>
->> The adma-if is essentially a mux with 10 tx and 10 rx ports. Any of the
->> 22 adma channels can be mapped to any of the 10 tx or rx ports. The
->> request signal used by the adma is determined by which port it is
->> configured to use. However, what makes this even more configurable is
->> the xbar is also a mux that can route adma-if ports to the various
->> clients.
->>
->> So potentially, you could use any adma channel and any port to route
->> audio to any of the clients. However, the adma-if needs to know which
->> adma channel is mapped to which port
-> 
-> It does? I'm pretty sure it didn't in earlier chips; what changed?
+--===============7020999691867273013==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="P+33d92oIH25kiaB"
+Content-Disposition: inline
 
-I *believe* that T210 is the first one to have the ADMA controller where
-as previous chips used the APB-DMA controller. Looking at the APB-DMA on
-T124 I can see that there is a fixed REQ_SEL value for each of the APBIF
-(equivalent of the ADMA-IF on T210).
 
-> For earlier chips, I believe all that's required is:
-> 
-> When programming the DMA engine, you need to know which ADMA-IF is in
-> use, so the correct DMA request selector can be programmed into the DMA
-> engine for flow-control.
-> 
-> ADMA-IF simply receives the data from DMA, and forwards it to the XBAR
-> tagged with the ADMA-IF's own ID.
-> 
-> The XBAR programming selects which data source (ADMA-IF TX, I2S RX, ...)
-> each sink (ADMARX, I2S TX, ...) receives.
+--P+33d92oIH25kiaB
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, exactly, this part sounds the same. However, just the ADMA itself
-allows for even more configuration.
+On Tue, Sep 29, 2015 at 02:25:23PM +0900, Tomasz Figa wrote:
+> Currently the IOMMU subsystem provides 3 basic operations: iommu_map(),
+> iommu_map_sg() and iommu_unmap(). iommu_map() can be used to map memory
+> page by page, however it involves flushing the caches (CPU and IOMMU) for
+> every mapped page separately, which is unsuitable for use cases that
+> require low mapping latency. Similarly iommu_unmap(), even though it
+> takes a full IOVA range as its argument, performs unmapping in a page
+> by page manner.
+>=20
+> To make mapping operation more suitable for such use cases, iommu_map_sg()
+> and .map_sg() callback in iommu_ops struct were introduced, which allowed
+> particular IOMMU drivers to directly iterate over SG entries, create
+> necessary mappings and flush everything in one go.
+>=20
+> This approach, however, has two drawbacks:
+>  1) it does not do anything about unmap performance,
+>  2) it requires each driver willing to have fast map to implement its
+>     own SG iteration code, even though this is a mostly generic operation.
+>=20
+> This series tries to mitigate the two issues above, while acknowledging
+> the fact that the .map_sg() callback might be still necessary for some
+> specific platforms, which could have the need to iterate over SG elements
+> inside driver code. Proposed solution introduces a new .flush() callback,
+> which expects IOVA range as its argument and is expected to flush all
+> respective caches (be it CPU, IOMMU TLB or whatever) to make the given
+> IOVA area mapping change visible to IOMMU clients. Then all the 3 basic
+> map/unmap operations are modified to call the .flush() callback at the end
+> of the operation.=20
+>=20
+> Advantages of proposed approach include:
+>  1) ability to use default_iommu_map_sg() helper if all the driver needs
+>     for performance optimization is batching the flush,
+>  2) completely no effect on existing code - the .flush() callback is made
+>     optional and if it isn't implemented drivers are expected to do
+>     necessary flushes on a page by page basis in respective (un)mapping
+>     callbakcs,
+>  3) possibility of exporting the iommu_flush() operation and providing
+>     unsynchronized map/unmap operations for subsystems with even higher
+>     requirements for performance (e.g. drivers/gpu/drm).
 
-> Ideally, when an I2S controller needs to start transmitting data, it
-> should dynamically allocate an ADMA-IF, query it for its DMA slave
-> request ID, and then forward this information to the ASoC code that sets
-> up the DMA transfer.
+That would require passing in some sort of flag that the core shouldn't
+be flushing itself, right? Currently it would flush on every map/unmap.
 
-Agree.
+>=20
+> The series includes a generic patch implementing necessary changes in
+> IOMMU API and two Tegra-specific patches that demonstrate implementation
+> on driver side and which can be used for further testing.
+>=20
+> Last, but not least, some performance numbers on Tegra210:
+> +-----------+--------------+-------------+------------+
+> | Operation | Size [bytes] | Before [us] | After [us] |
+> +-----------+--------------+-------------+------------+
+> | Map       | 128K         |         139 |         40 |
+> |           |              |         136 |         34 |
+> |           |              |         137 |         38 |
+> |           |              |         136 |         36 |
+> |           | 4M           |        3939 |       1163 |
+> |           |              |        3730 |       2389 |
+> |           |              |        3613 |        997 |
+> |           |              |        3622 |       1620 |
+> |           | ~18M         |       18635 |       4741 |
+> |           |              |       19261 |       6550 |
+> |           |              |       18473 |       9304 |
+> |           |              |       18125 |       5120 |
+> | Unmap     | 128K         |         128 |          7 |
+> |           |              |         122 |          8 |
+> |           |              |         119 |         10 |
+> |           |              |         123 |         12 |
+> |           | 4M           |        3829 |        151 |
+> |           |              |        3964 |        150 |
+> |           |              |        3908 |        145 |
+> |           |              |        3875 |        155 |
+> |           | ~18M         |       18570 |        683 |
+> |           |              |       18473 |        806 |
+> |           |              |       21020 |        643 |
+> |           |              |       21764 |        652 |
+> +-----------+--------------+-------------+------------+
+> The values are obtained by surrounding the calls to iommu_map_sg()
+> (with default_iommu_map_sg() helper used as .map_sg() callback) and
+> iommu_unmap() with ktime-based time measurement code. Taken 4 samples
+> of every buffer size. ~18M means around 17-19M due do the variance
+> in requested buffer sizes.
 
-> In practice, this means that since any I2S module could use any ADMA-IF,
-> you probably need to list all DMA request selectors possible in the
-> I2S's DMA-related properties, so it can choose which one to use.
+Those are pretty impressive numbers.
 
-Possibly, but really I think that the i2s only cares about the ADMA-IF
-and the hardware request used by the ADMA can be abstracted by the
-ADMA-IF. In other words, if you allocate an ADMA channel to work with a
-specific ADMA-IF, then let the ADMA-IF select the hardware request
-because as long as one is available, you don't care which.
+Thierry
 
-> Or perhaps the XBAR binding should list all the DMA requestors so that
-> each I2S node doesn't have to.
+--P+33d92oIH25kiaB
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Yes, however, I think that the ADMA-IF would make sense as it really
-cares about the mapping of hardware request to the ADMA-IF port.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Cheers
-Jon
+iQIcBAABCAAGBQJWCllvAAoJEN0jrNd/PrOhbXUP/0o96KL/hY1LiuIQRbJ5P5qz
+Ln+0vOReZ1w1k5IRnspI9wMYz2ZuczwBkLNr0cSFjJUSbrlx0LEzgIfkr5XUf01u
+rkhILqjDJOWrxBURZuTLwKUYUNG54QS1wIIe2D09idBVCWfrxdlr+JujQyzpvA8B
+E2osI+6kb0pVkpXwdLwok2ZDHsD4Z1ODfWL3ut1O6vclsdsgc3F0swy11j0sfv+y
+t8vjkFR7i1rckKudF0q1PuzqybKE2M9BSYCrcWEuDb4eoHCyaw419uWltB+hzK4Q
+32wVx/ZNUQfcnFpxlX3RUHQxwc1nND6qdqUHt7il6WxHBeNl5wEpyA4i93/sT4LP
+TMOTZ6SRswZBpv0OO7tv7Y7E2GGDEn5Qg+nCyzHLFhdYPS3vQjsghgLpDCZOEe/B
+LSnI/dPOO2A+v91uwEuqQWMBImkjT16YO1Peof0+hbBezJNxhJzrHeCC/3XmDCU+
+jeESQbtkmS1N9zKNlV91Wykk3SlyuVdtSrfM6dByg5jAajwp+ZyVfF1iEHKa6qzk
+VnIswJDGFnuuwnJAcWLJYDF+dDjdNnE6z4vB3XYWNjOe76u8Tz/YZjcPI9DFUkQQ
+mFqXoIWiX885PkA2VURTBT1Dg1cGQE4LsHIQkqghlwlF1DR1B+9L2gQ7iwU/BFC9
+CoVP0/3QSs1cIL5xKaF0
+=mu7r
+-----END PGP SIGNATURE-----
+
+--P+33d92oIH25kiaB--
+
+--===============7020999691867273013==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+
+--===============7020999691867273013==--
