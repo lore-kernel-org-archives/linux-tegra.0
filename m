@@ -1,81 +1,162 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC/PATCH 00/11] arm: omap: counter32k rework
-Date: Wed, 30 Sep 2015 17:03:40 +0200
-Message-ID: <20150930150340.GA19079@ulmo.nvidia.com>
-References: <1443559446-26969-1-git-send-email-balbi@ti.com>
- <20150930141338.GC31865@saruman.tx.rr.com>
- <3705422.OMk7ysE7Jn@wuerfel>
- <6944324.e1oo8C9xbx@wuerfel>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 3/3] dmaengine: tegra-adma: Add support for Tegra210 ADMA
+Date: Wed, 30 Sep 2015 10:25:31 -0600
+Message-ID: <560C0CFB.3000209@wwwdotorg.org>
+References: <1443193000-457-1-git-send-email-jonathanh@nvidia.com>
+ <56056589.9010704@nvidia.com> <56056A8F.5010103@nvidia.com>
+ <1783348.ocWL5DWVKG@wuerfel> <5609556A.8060908@nvidia.com>
+ <56096C9E.7070608@wwwdotorg.org> <560A4847.8090007@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="IJpNTDwzlM2Ie8A6"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <6944324.e1oo8C9xbx@wuerfel>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, Linux OMAP Mailing List <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <560A4847.8090007-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 09/29/2015 02:13 AM, Jon Hunter wrote:
+>
+> On 28/09/15 17:36, Stephen Warren wrote:
+>> On 09/28/2015 08:57 AM, Jon Hunter wrote:
+>>>
+>>> On 25/09/15 16:47, Arnd Bergmann wrote:
+>>>> On Friday 25 September 2015 16:38:55 Jon Hunter wrote:
+>>>>> On 25/09/15 16:17, Jon Hunter wrote:
+>>>>>>
+>>>>>> On 25/09/15 16:03, Arnd Bergmann wrote:
+>>>>>>> On Friday 25 September 2015 15:56:40 Jon Hunter wrote:
+>>>>>>>> +       case DMA_MEM_TO_DEV:
+>>>>>>>> +               burst_size = fls(tdc->config.dst_maxburst);
+>>>>>>>> +               ch_regs->config = ADMA_CH_CONFIG_SRC_BUF(num_bufs
+>>>>>>>> - 1);
+>>>>>>>> +               ch_regs->ctrl =
+>>>>>>>> ADMA_CH_CTRL_XFER_DIR(ADMA_MEM_TO_AHUB) |
+>>>>>>>> +
+>>>>>>>> ADMA_CH_CTRL_TX_REQ(tdc->config.slave_id);
+>>>>>>>> +               ch_regs->src_addr = buf_addr;
+>>>>>>>> +               break;
+>>>>>>>> +
+>>>>>>>> +       case DMA_DEV_TO_MEM:
+>>>>>>>> +               burst_size = fls(tdc->config.src_maxburst);
+>>>>>>>> +               ch_regs->config = ADMA_CH_CONFIG_TRG_BUF(num_bufs
+>>>>>>>> - 1);
+>>>>>>>> +               ch_regs->ctrl =
+>>>>>>>> ADMA_CH_CTRL_XFER_DIR(ADMA_AHUB_TO_MEM) |
+>>>>>>>> +
+>>>>>>>> ADMA_CH_CTRL_RX_REQ(tdc->config.slave_id);
+>>>>>>>> +               ch_regs->trg_addr = buf_addr;
+>>>>>>>> +               break;
+>>>>>>>
+>>>>>>> Do not use the 'slave_id' field here to identify the slave device,
+>>>>>>> that
+>>>>>>> concept is broken. Instead, put the slave identification into the
+>>>>>>> dma specifier in DT and read it out in your xlate function.
+>>>>>>
+>>>>>> Why is it broken?
+>>>>>>
+>>>>>> What happens if I don't know the slave-id? In other words, the
+>>>>>> slave-id
+>>>>>> can be dynamically allocated and associated with a given slave.
+>>>>>
+>>>>> I guess thinking about it some more, the driver could assign an id
+>>>>> itself to a given channel and I could avoid using slave_id here. There
+>>>>> are 22 channels and 10 tx and 10 rx requests.
+>>>>
+>>>> This sounds roughly right. So you could pick the ch_regs->ctrl value
+>>>> when you allocate the tegra_adma_chan structure, and then map it to
+>>>> the slave in the xlate() function.
+>>>
+>>> Actually, what I mentioned about would not work as it is not the DMA
+>>> that should assign the requests to the channel.
+>>>
+>>> I think that I have poorly described the hardware and how it works, so
+>>> let me try and explain a bit more.
+>>>
+>>>   From a hardware perspective it looks like the following ...
+>>>
+>>> memory <-> adma <-> adma-if <-> xbar <-> clients
+>>>
+>>> where:
+>>> - memory is the system memory
+>>> - adma is the dma controller
+>>> - adma-if is the dma interface to a crossbar
+>>> - xbar is the crossbar
+>>> - clients are various audio interfaces, such as i2s, etc
+>>>
+>>> The adma-if is essentially a mux with 10 tx and 10 rx ports. Any of the
+>>> 22 adma channels can be mapped to any of the 10 tx or rx ports. The
+>>> request signal used by the adma is determined by which port it is
+>>> configured to use. However, what makes this even more configurable is
+>>> the xbar is also a mux that can route adma-if ports to the various
+>>> clients.
+>>>
+>>> So potentially, you could use any adma channel and any port to route
+>>> audio to any of the clients. However, the adma-if needs to know which
+>>> adma channel is mapped to which port
+>>
+>> It does? I'm pretty sure it didn't in earlier chips; what changed?
+>
+> I *believe* that T210 is the first one to have the ADMA controller where
+> as previous chips used the APB-DMA controller.
 
---IJpNTDwzlM2Ie8A6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes, I believe that's true.
 
-On Wed, Sep 30, 2015 at 04:49:53PM +0200, Arnd Bergmann wrote:
-> On Wednesday 30 September 2015 16:42:21 Arnd Bergmann wrote:
-> >=20
-> > TEGRA folks: the tegra_read_persistent_clock() implementation apparently
-> > predates the Tegra RTC driver and I wonder if they actually do the
-> > right thing in combination. Could it be that the wall time forwards
-> > twice as fast as it should during resume when the RTC driver is loaded?
-> > Could it be that we can simply remove  tegra_read_persistent_clock()
-> > and the register_persistent_clock() infrastructure?
-> >=20
->=20
-> I found the 'sleeptime_injected' variable now, which takes care of
-> forwarding the clock by the correct amount.
->=20
-> I also found the CLOCK_SOURCE_SUSPEND_NONSTOP flag next to it, which
-> should let us use the counter32k driver to provide the correct
-> time during suspend without the omap_read_persistent_clock() function.
-> We should be able to just delete that code.
->=20
-> If we decide to also delete the tegra_read_persistent_clock()
-> function, we can remove the registration too.
+> Looking at the APB-DMA on
+> T124 I can see that there is a fixed REQ_SEL value for each of the APBIF
+> (equivalent of the ADMA-IF on T210).
 
-This was discussed a very long time ago, but I can't remember most of
-the context. I found this in my inbox:
+I believe that is still true on T210. I don't see any difference in the 
+way request select values are used/configured/... The only difference is 
+that we're using a different DMA engine, but that DMA engine is 
+configured in the same way.
 
-	https://lkml.org/lkml/2014/11/7/605
+>> For earlier chips, I believe all that's required is:
+>>
+>> When programming the DMA engine, you need to know which ADMA-IF is in
+>> use, so the correct DMA request selector can be programmed into the DMA
+>> engine for flow-control.
+>>
+>> ADMA-IF simply receives the data from DMA, and forwards it to the XBAR
+>> tagged with the ADMA-IF's own ID.
+>>
+>> The XBAR programming selects which data source (ADMA-IF TX, I2S RX, ...)
+>> each sink (ADMARX, I2S TX, ...) receives.
+>
+> Yes, exactly, this part sounds the same. However, just the ADMA itself
+> allows for even more configuration.
+>
+>> Ideally, when an I2S controller needs to start transmitting data, it
+>> should dynamically allocate an ADMA-IF, query it for its DMA slave
+>> request ID, and then forward this information to the ASoC code that sets
+>> up the DMA transfer.
+>
+> Agree.
+>
+>> In practice, this means that since any I2S module could use any ADMA-IF,
+>> you probably need to list all DMA request selectors possible in the
+>> I2S's DMA-related properties, so it can choose which one to use.
+>
+> Possibly, but really I think that the i2s only cares about the ADMA-IF
+> and the hardware request used by the ADMA can be abstracted by the
+> ADMA-IF. In other words, if you allocate an ADMA channel to work with a
+> specific ADMA-IF, then let the ADMA-IF select the hardware request
+> because as long as one is available, you don't care which.
 
-But I don't remember if there was an outcome or if anything came of
-that. I'm currently busy with some other work, but thought I'd drop
-this reference here in case somebody wants to dig into it before I
-get around to it.
+Each ADMAIF (FIFO) has a single request select value statically assigned 
+to it as far as I can tell, just like in previous chips.
 
-Thierry
+>> Or perhaps the XBAR binding should list all the DMA requestors so that
+>> each I2S node doesn't have to.
+>
+> Yes, however, I think that the ADMA-IF would make sense as it really
+> cares about the mapping of hardware request to the ADMA-IF port.
+>
+> Cheers
+> Jon
 
---IJpNTDwzlM2Ie8A6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJWC/nIAAoJEN0jrNd/PrOhex8P/iQH6oxefHHQWx5Gu0/sHcD9
-8YuEvOAvNwccUTF5KtrcYfOOwU/V2QQKzOFiPdbdvz5zZPJlYaIWK1EgO1uv5AYD
-hqlb3vVWVCY7ow2GG6CvD1rvFEp8LsssV2hvAJM1sT7pnqOJlESZIIzl6tUalGhX
-iU/YGE2s0TmnzHajx/5U/rTcyKoCkxO7lWla/i94YmNG1NnNVyVgdJ+ZNT9Wks4r
-PfK1jSLxTa/2yo9D5XHWMhiL+QFeHpC4K85NkJkY/WcBlikn+1l9kM0sn603Cdzu
-2rkwZwzbrz91gD/BI+OWllc1Bvc/nxz9quRD/ASrPaTzTq7QjszGE/dGmycf4ELZ
-/RvmP0i8F9HuQ4Vu12rI/Hz/LQEGLJZ7TtkT10B/dorPr+z/3roxo7v/gPmKfKYs
-z8ZSLx6PCpXeTysKE5B3SATdm7reG4FsLgRCdrrLUP+Zhg4Qu8DkCNNbBwqMrG8Q
-UOBInpbRkdvFGSGDcgdtOk9yftH4WCafziHJ0FLo6dpDrnDrVEjhabtqImnQD8Bk
-pOGTAOaXakUBCRn576p4wQJQNzVSRVZnMnxVcXZ091NFurX17FUUVBWzfyGCmKN8
-ga5klfuTmxUDbZ70ykasL9N0+Nn3s7Jfb7jkZMDK7plMFlSEPnJB6CaIW7ILxeJc
-C+Zk043ri/IsI0z1dW4k
-=d0oQ
------END PGP SIGNATURE-----
-
---IJpNTDwzlM2Ie8A6--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
