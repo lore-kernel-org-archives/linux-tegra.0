@@ -1,54 +1,51 @@
-From: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC/PATCH 00/11] arm: omap: counter32k rework
-Date: Fri, 2 Oct 2015 00:12:21 +0200
-Message-ID: <560DAFC5.50003@linaro.org>
-References: <1443559446-26969-1-git-send-email-balbi@ti.com>
- <20150930141338.GC31865@saruman.tx.rr.com> <3705422.OMk7ysE7Jn@wuerfel>
- <6944324.e1oo8C9xbx@wuerfel>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] ARM: Remove __ref on hotplug cpu die path
+Date: Fri, 2 Oct 2015 03:04:00 -0700
+Message-ID: <CACRpkdbgM30DTB_pZedMUnyzQ9nR9hn=JN8SUA6JWK0zPktuZg@mail.gmail.com>
+References: <1442276597-14325-1-git-send-email-sboyd@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
-	format=flowed
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <6944324.e1oo8C9xbx@wuerfel>
+In-Reply-To: <1442276597-14325-1-git-send-email-sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: balbi-l0cyMroinI0@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, Linux OMAP Mailing List <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: "arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Barry Song <baohua-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Andy Gross <agross-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Viresh Kumar <vireshk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Shiraz Hashim <shiraz.linux.kernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, spear-devel <spear-devel-nkJGhpqTU55BDgjK7y7TUQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 09/30/2015 04:49 PM, Arnd Bergmann wrote:
-> On Wednesday 30 September 2015 16:42:21 Arnd Bergmann wrote:
->>
->> TEGRA folks: the tegra_read_persistent_clock() implementation appare=
-ntly
->> predates the Tegra RTC driver and I wonder if they actually do the
->> right thing in combination. Could it be that the wall time forwards
->> twice as fast as it should during resume when the RTC driver is load=
-ed?
->> Could it be that we can simply remove  tegra_read_persistent_clock()
->> and the register_persistent_clock() infrastructure?
->>
+On Mon, Sep 14, 2015 at 5:23 PM, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org> wrote:
+
+> Now that __cpuinit has been removed, the __ref markings on these
+> functions are useless. Remove them. This also reduces the size of
+> the multi_v7_defconfig image:
 >
-> I found the 'sleeptime_injected' variable now, which takes care of
-> forwarding the clock by the correct amount.
+> $ size before after
+>    text    data     bss     dec     hex filename
+>    12683578        1470996  348904 14503478         dd4e36 before
+>    12683274        1470996  348904 14503174         dd4d06 after
 >
-> I also found the CLOCK_SOURCE_SUSPEND_NONSTOP flag next to it, which
-> should let us use the counter32k driver to provide the correct
-> time during suspend without the omap_read_persistent_clock() function=
-=2E
-> We should be able to just delete that code.
+> presumably because now we don't have to jump to code in the
+> .ref.text section and/or the noinline marking is removed.
 >
-> If we decide to also delete the tegra_read_persistent_clock()
-> function, we can remove the registration too.
+> Cc: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+> Cc: Barry Song <baohua-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Cc: Andy Gross <agross-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+> Cc: Viresh Kumar <vireshk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Cc: Shiraz Hashim <shiraz.linux.kernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> Cc: Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>
+> Cc: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+> Cc: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+> Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+> Cc: <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+> Cc: <linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+> Cc: <spear-devel-nkJGhpqTU55BDgjK7y7TUQ@public.gmane.org>
+> Cc: <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+> Signed-off-by: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 
+Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-+1
-
-
---=20
-  <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software fo=
-r ARM SoCs
-
-=46ollow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+Yours,
+Linus Walleij
