@@ -1,7 +1,7 @@
 From: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [tegrarcm PATCH v2 2/4] Add support for update pubkey and rsa-pss signatures
-Date: Fri, 2 Oct 2015 13:56:58 -0700
-Message-ID: <1443819420-26562-3-git-send-email-jimmzhang@nvidia.com>
+Subject: [tegrarcm PATCH v2 3/4] Add support to dump rsa related fields for t210
+Date: Fri, 2 Oct 2015 13:56:59 -0700
+Message-ID: <1443819420-26562-4-git-send-email-jimmzhang@nvidia.com>
 References: <1443819420-26562-1-git-send-email-jimmzhang@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,254 +12,132 @@ To: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+A
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Create new configuration keywords:
-   RsaKeyModulusFile: pubkey modulus
-   RsaPssSigBlFile:   bootloader rsa pss signature
-   RsaPssSigBctFile:  bct rsa pss signature
-
-Sample Configuration file update_bl_sig.cfg
-   RsaKeyModulusFile = pubkey.mod;
-   RsaPssSigBlFile = bl.sig;
-
-where pubkey.mod and bl.sig are files that contain the public key
-modulus and bootloader's rsa-pss signature respectively.
-
-public key modulus and signature are created through utilities
-outside cbootimage.
-
-Command line example:
- $ cbootimage -s tegra210 -u update_bl_sig.cfg image.bin image.bin-bl-signed
-
-Above three new keywords added in this CL are only implemented support
-for T210.
+Add support to dump rsa pubkey, bct's rsa-pss signature and
+bootloader's rsa-pss signature.
 
 Signed-off-by: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- src/cbootimage.h           |  4 ++++
- src/parse.c                | 35 +++++++++++++++++++++++++++++++++++
- src/parse.h                |  4 ++++
- src/set.c                  | 39 +++++++++++++++++++++++++++++++++++++++
- src/set.h                  |  5 +++++
- src/t210/nvbctlib_t210.c   | 23 ++++++++++++++++++++++-
- src/t210/nvboot_bct_t210.h |  2 --
- 7 files changed, 109 insertions(+), 3 deletions(-)
+ src/bct_dump.c           | 38 ++++++++++++++++++++++++++++++++++++++
+ src/t210/nvbctlib_t210.c | 16 ++++++++++++++++
+ 2 files changed, 54 insertions(+)
 
-diff --git a/src/cbootimage.h b/src/cbootimage.h
-index 9706b2c1edb8..1ce8af6f6584 100644
---- a/src/cbootimage.h
-+++ b/src/cbootimage.h
-@@ -49,6 +49,9 @@
+diff --git a/src/bct_dump.c b/src/bct_dump.c
+index be7b85dc72d6..27e3dbb5e6be 100644
+--- a/src/bct_dump.c
++++ b/src/bct_dump.c
+@@ -30,6 +30,8 @@ cbootimage_soc_config * g_soc_config;
+ static void format_u32_hex8(char const * message, void * data);
+ static void format_u32(char const * message, void * data);
+ static void format_chipuid(char const * message, void * data);
++static void format_hex_16_bytes(char const * message, void * data);
++static void format_rsa_param(char const * message, void * data);
  
- #define MAX_MTS_SIZE (4 * 1024 * 1024)
+ typedef void (*format_function)(char const * message, void * data);
  
-+#define ARSE_RSA_MAX_MODULUS_SIZE	2048
-+#define ARSE_RSA_PARAM_MAX_BYTES	(ARSE_RSA_MAX_MODULUS_SIZE / 8)
-+
- #define NVBOOT_CONFIG_TABLE_SIZE_MAX (10 * 1024)
+@@ -42,6 +44,7 @@ typedef struct {
+ typedef union {
+ 	u_int32_t val;
+ 	u_int8_t uid[16];
++	u_int8_t rsa_param[256];
+ } param_types;
  
- /*
-@@ -60,6 +63,7 @@ typedef enum
- 	file_type_bl = 0,
- 	file_type_bct,
- 	file_type_mts,
-+	file_type_bin,
- } file_type;
- 
- /*
-diff --git a/src/parse.c b/src/parse.c
-index 8c9824437393..d2f4016effd8 100644
---- a/src/parse.c
-+++ b/src/parse.c
-@@ -65,6 +65,8 @@ parse_bootloader(build_image_context *context, parse_token token, char *rest);
- static int
- parse_mts_image(build_image_context *context, parse_token token, char *rest);
- static int
-+parse_rsa_param(build_image_context *context, parse_token token, char *rest);
-+static int
- parse_value_u32(build_image_context *context, parse_token token, char *rest);
- static int
- parse_value_chipuid(build_image_context *context,
-@@ -116,6 +118,9 @@ static parse_item s_top_level_items[] = {
- 	{ "ChipUid=",       token_unique_chip_id,	parse_value_chipuid },
- 	{ "JtagCtrl=",	    token_secure_jtag_control,	parse_value_u32 },
- 	{ "DebugCtrl=",	    token_secure_debug_control,	parse_value_u32 },
-+	{ "RsaKeyModulusFile=", token_rsa_key_modulus,	parse_rsa_param },
-+	{ "RsaPssSigBlFile=",   token_rsa_pss_sig_bl,	parse_rsa_param },
-+	{ "RsaPssSigBctFile=",  token_rsa_pss_sig_bct,	parse_rsa_param },
- 	{ NULL, 0, NULL } /* Must be last */
+ #define MAX_PARAM_SIZE sizeof(param_types)
+@@ -54,6 +57,9 @@ static value_data const values[] = {
+ 	{ token_odm_data,            "OdmData       = ", format_u32_hex8 },
+ 	{ token_secure_jtag_control, "JtagCtrl      = ", format_u32_hex8 },
+ 	{ token_secure_debug_control, "DebugCtrl     = ", format_u32_hex8 },
++	{ token_crypto_hash, 	     "BCT AES Hash  = ", format_hex_16_bytes },
++	{ token_rsa_key_modulus,     "RsaKeyModulus = ", format_rsa_param },
++	{ token_rsa_pss_sig_bct,     "RsaPssSigBct = ", format_rsa_param },
+ 	{ token_unique_chip_id,      "ChipUid       = ", format_chipuid },
+ 	{ token_bootloader_used,     "# Bootloader used       = ", format_u32 },
+ 	{ token_bootloaders_max,     "# Bootloaders max       = ", format_u32 },
+@@ -72,6 +78,8 @@ static value_data const bl_values[] = {
+ 	{ token_bl_load_addr,   "Load address = ", format_u32_hex8 },
+ 	{ token_bl_entry_point, "Entry point  = ", format_u32_hex8 },
+ 	{ token_bl_attribute,   "Attributes   = ", format_u32_hex8 },
++	{ token_bl_crypto_hash, "Bl AES Hash  = ", format_hex_16_bytes },
++	{ token_rsa_pss_sig_bl,	"RsaPssSigBl  = ", format_rsa_param },
  };
  
-@@ -480,6 +485,36 @@ static int parse_mts_image(build_image_context *context,
+ static value_data const mts_values[] = {
+@@ -108,6 +116,36 @@ static void format_chipuid(char const * message, void * data)
+ 	printf("%s%s;\n", message, uid_str);
  }
  
- /*
-+ * Parse the given rsa modulus/key/signature file name
-+ * then call set_rsa_settings to set proper rsa field.
-+ *
-+ * @param context	The main context pointer
-+ * @param token  	The parse token value
-+ * @param rest   	String to parse
-+ * @return 0 and 1 for success and failure
-+ */
-+static int parse_rsa_param(build_image_context *context,
-+			parse_token token,
-+			char *rest)
++static void format_hex_16_bytes(char const * message, void * data)
 +{
-+	char filename[MAX_BUFFER];
++	u_int8_t *p_byte = (u_int8_t *)data;
++	int byte_index;
 +
-+	assert(context != NULL);
-+	assert(rest != NULL);
++	printf("%s", message);
++	for (byte_index = 0; byte_index < 16; ++byte_index)
++		printf("%02x", *p_byte++);
 +
-+	if (context->generate_bct != 0)
-+		return 0;
-+
-+	/* Parse the file name. */
-+	rest = parse_filename(rest, filename, MAX_BUFFER);
-+	if (rest == NULL)
-+		return 1;
-+
-+	/* Parsing has finished - set the bootloader */
-+	return set_rsa_param(context, token, filename);
++	printf(";\n");
 +}
 +
-+/*
-  * Parse the given string and find the array items in config file.
-  *
-  * @param context	The main context pointer
-diff --git a/src/parse.h b/src/parse.h
-index ce3f21fb8a31..16242a5c2701 100644
---- a/src/parse.h
-+++ b/src/parse.h
-@@ -114,6 +114,10 @@ typedef enum
- 	token_secure_jtag_control,
- 	token_secure_debug_control,
- 
-+	token_rsa_key_modulus,
-+	token_rsa_pss_sig_bl,
-+	token_rsa_pss_sig_bct,
-+
- 	token_nand_clock_divider,
- 	token_nand_nand_timing,
- 	token_nand_nand_timing2,
-diff --git a/src/set.c b/src/set.c
-index 73af52111360..d9252ef1d706 100644
---- a/src/set.c
-+++ b/src/set.c
-@@ -147,6 +147,45 @@ set_mts_image(build_image_context	*context,
- 	context->mts_entry_point = entry_point;
- 	return update_mts_image(context);
- }
-+
-+int
-+set_rsa_param(build_image_context *context, parse_token token,
-+		char *filename)
++static void format_rsa_param(char const * message, void * data)
 +{
-+	int	result;
-+	u_int8_t *rsa_storage;	/* Holds the rsa param after reading */
-+	u_int32_t actual_size;	/* In bytes */
-+	file_type rsa_filetype = file_type_bin;
++	u_int8_t *rsa = (u_int8_t *)data;
++	int byte_index;
 +
-+        /* Read the image into memory. */
-+	result = read_from_image(filename,
-+				0,
-+				ARSE_RSA_PARAM_MAX_BYTES,
-+				&rsa_storage,
-+				&actual_size,
-+				rsa_filetype);
++	printf("%s", message);
++	for (byte_index = 0; byte_index < ARSE_RSA_PARAM_MAX_BYTES;
++					++byte_index) {
++		printf("%02x", *rsa++);
 +
-+	if (result) {
-+		printf("Error reading file %s.\n", filename);
-+		exit(1);
++		if (byte_index && ((byte_index + 1) % 64 == 0))
++			printf(";\n");
 +	}
 +
-+	if (actual_size != ARSE_RSA_PARAM_MAX_BYTES) {
-+		printf("Error: invalid size, file %s.\n", filename);
-+		exit(1);
-+        }
-+
-+	if (enable_debug)
-+		printf("Updating token %d with file %s\n", (int)token, filename);
-+
-+	/* set to appropriate bct field */
-+	result = g_soc_config->set_value(token,
-+			rsa_storage, context->bct);
-+
-+	free(rsa_storage);
-+	return result;
++	if (byte_index && (byte_index % 64 != 0))
++			printf(";\n");
 +}
 +
- #define DEFAULT()                                                     \
- 	default:                                                      \
- 		printf("Unexpected token %d at line %d\n",            \
-diff --git a/src/set.h b/src/set.h
-index 8b9a69b2a950..b38d4cefcb4f 100644
---- a/src/set.h
-+++ b/src/set.h
-@@ -42,6 +42,11 @@ set_mts_image(build_image_context	*context,
- 		u_int32_t	entry_point);
- 
- int
-+set_rsa_param(build_image_context	*context,
-+		parse_token	token,
-+		char	*filename);
-+
-+int
- context_set_value(build_image_context	*context,
- 		parse_token	token,
- 		void		*value);
+ /*****************************************************************************/
+ static void usage(void)
+ {
 diff --git a/src/t210/nvbctlib_t210.c b/src/t210/nvbctlib_t210.c
-index 9921bbbe0d2d..91a42ec8367f 100644
+index 91a42ec8367f..10e2a4756e1a 100644
 --- a/src/t210/nvbctlib_t210.c
 +++ b/src/t210/nvbctlib_t210.c
-@@ -113,7 +113,10 @@ parse_token t210_root_token_list[] = {
+@@ -109,6 +109,8 @@ parse_token t210_root_token_list[] = {
+ 	token_bootloaders_max,
+ 	token_bct_size,
+ 	token_hash_size,
++	token_crypto_hash,
++	token_bl_crypto_hash,
+ 	token_crypto_offset,
  	token_crypto_length,
  	token_max_bct_search_blks,
- 	token_unique_chip_id,
--	token_secure_debug_control
-+	token_secure_debug_control,
-+	token_rsa_key_modulus,
-+	token_rsa_pss_sig_bl,
-+	token_rsa_pss_sig_bct
- };
- 
- int
-@@ -2198,6 +2201,24 @@ t210_bct_set_value(parse_token id, void *data, u_int8_t *bct)
- 		memcpy(&bct_ptr->unique_chip_id, data, sizeof(nvboot_ecid));
+@@ -2034,6 +2036,11 @@ t210_getbl_param(u_int32_t set,
+ 		sizeof(nvboot_hash));
  		break;
  
-+	case token_rsa_key_modulus:
-+		memcpy(&bct_ptr->key, data, sizeof(nvboot_rsa_key_modulus));
-+		break;
-+
 +	case token_rsa_pss_sig_bl:
-+		/*
-+		 * Update bootloader 0 since there is only one copy
-+		 * of bootloader being built in.
-+		 */
-+		memcpy(&bct_ptr->bootloader[0].signature.rsa_pss_sig,
-+			data, sizeof(nvboot_rsa_pss_sig));
-+		break;
-+
-+	case token_rsa_pss_sig_bct:
-+		memcpy(&bct_ptr->signature.rsa_pss_sig,
-+			data, sizeof(nvboot_rsa_pss_sig));
++		memcpy(data, &bct_ptr->bootloader[set].signature.rsa_pss_sig,
++			sizeof(nvboot_rsa_pss_sig));
 +		break;
 +
  	default:
  		return -ENODATA;
  	}
-diff --git a/src/t210/nvboot_bct_t210.h b/src/t210/nvboot_bct_t210.h
-index 90841f63feb6..c790ee97106d 100644
---- a/src/t210/nvboot_bct_t210.h
-+++ b/src/t210/nvboot_bct_t210.h
-@@ -94,8 +94,6 @@
-  */
- #define NVBOOT_MAX_BCT_SEARCH_BLOCKS	64
+@@ -2130,6 +2137,15 @@ t210_bct_get_value(parse_token id, void *data, u_int8_t *bct)
+ 		memcpy(data, &(bct_ptr->unique_chip_id), sizeof(nvboot_ecid));
+ 		break;
  
--#define ARSE_RSA_MAX_MODULUS_SIZE	2048
--
- /**
-  * Defines the RSA modulus length in bits and bytes used for PKC secure boot.
-  */
++	case token_rsa_key_modulus:
++		memcpy(data, &bct_ptr->key, sizeof(nvboot_rsa_key_modulus));
++		break;
++
++	case token_rsa_pss_sig_bct:
++		memcpy(data, &bct_ptr->signature.rsa_pss_sig,
++			sizeof(nvboot_rsa_pss_sig));
++		break;
++
+ 	case token_reserved_offset:
+ 		*((u_int32_t *)data) = (u_int8_t *)&(samplebct.reserved)
+ 				- (u_int8_t *)&samplebct;
 -- 
 1.8.1.5
