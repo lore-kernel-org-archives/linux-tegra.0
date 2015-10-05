@@ -1,67 +1,39 @@
-From: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [RFC/PATCH 00/11] arm: omap: counter32k rework
-Date: Mon, 5 Oct 2015 04:13:41 -0700
-Message-ID: <20151005111341.GY23801@atomide.com>
-References: <1443559446-26969-1-git-send-email-balbi@ti.com>
- <560DAFC5.50003@linaro.org>
- <20151005105554.GV23801@atomide.com>
- <9068678.D8T0aRhgnK@wuerfel>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2 0/2] Add support for Tegra210 ADMA
+Date: Mon, 5 Oct 2015 13:10:05 +0100
+Message-ID: <1444047007-30494-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <9068678.D8T0aRhgnK@wuerfel>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, Linux OMAP Mailing List <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-* Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> [151005 04:08]:
-> On Monday 05 October 2015 03:55:55 Tony Lindgren wrote:
-> > * Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> [151001 15:16]:
-> > > On 09/30/2015 04:49 PM, Arnd Bergmann wrote:
-> > > >On Wednesday 30 September 2015 16:42:21 Arnd Bergmann wrote:
-> > > >>
-> > > >>TEGRA folks: the tegra_read_persistent_clock() implementation apparently
-> > > >>predates the Tegra RTC driver and I wonder if they actually do the
-> > > >>right thing in combination. Could it be that the wall time forwards
-> > > >>twice as fast as it should during resume when the RTC driver is loaded?
-> > > >>Could it be that we can simply remove  tegra_read_persistent_clock()
-> > > >>and the register_persistent_clock() infrastructure?
-> > > >>
-> > > >
-> > > >I found the 'sleeptime_injected' variable now, which takes care of
-> > > >forwarding the clock by the correct amount.
-> > > >
-> > > >I also found the CLOCK_SOURCE_SUSPEND_NONSTOP flag next to it, which
-> > > >should let us use the counter32k driver to provide the correct
-> > > >time during suspend without the omap_read_persistent_clock() function.
-> > > >We should be able to just delete that code.
-> > > >
-> > > >If we decide to also delete the tegra_read_persistent_clock()
-> > > >function, we can remove the registration too.
-> > > 
-> > > 
-> > > +1
-> > 
-> > We could maybe have read_persistent_clock() just check for the
-> > CLOCK_SOURCE_SUSPEND_NONSTOP flag?
-> 
-> timekeeping_resume() already ignores the persistent clock values if
-> the clocksource has this set. Do you mean we should additionally
-> not call the read_persistent_clock() function at all to safe a
-> few cycles reading that value?
+Add support for the Tegra210 Audio DMA (ADMA) controller. This was
+originally distributed as an RFC [0] based upon the existing tegra
+APB-DMA driver. Since then the driver has been significantly
+re-worked to remove a lot of the unused/unnecessary functionality
+that was carried over from the APB-DMA. This version is no longer
+derived from the APB-DMA driver and has been updated to use the
+virt-dma helpers.
 
-Hmm no I mean if we have CLOCK_SOURCE_SUSPEND_NONSTOP we can
-automatically make read_persistent_clock() use that if nothing
-else got registered.
+V2 changes:
+- Re-worked device-tree binding
 
-> How expensive is the function?
+[0] https://lkml.org/lkml/2015/8/18/237
 
-Usually the persistent clock is on some interconnect, so it is
-way slower compared to a local timer. It doubt it makes a
-difference in timekeeping_resume() though :)
+Jon Hunter (2):
+  Documentation: DT: Add binding documentation for NVIDIA ADMA
+  dmaengine: tegra-adma: Add support for Tegra210 ADMA
 
-Regards,
+ .../devicetree/bindings/dma/tegra210-adma.txt      |  63 ++
+ drivers/dma/Kconfig                                |  13 +
+ drivers/dma/Makefile                               |   1 +
+ drivers/dma/tegra210-adma.c                        | 888 +++++++++++++++++++++
+ 4 files changed, 965 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/dma/tegra210-adma.txt
+ create mode 100644 drivers/dma/tegra210-adma.c
 
-Tony
+-- 
+2.1.4
