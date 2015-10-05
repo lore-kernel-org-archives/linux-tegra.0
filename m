@@ -1,43 +1,97 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] cpufreq: tegra20: remove superfluous CONFIG_PM ifdefs
-Date: Mon, 05 Oct 2015 22:46:23 +0200
-Message-ID: <2839016.SNCn424N2T@vostro.rjw.lan>
-References: <1441732403-7248-1-git-send-email-b.zolnierkie@samsung.com> <1615370.p6S63xknIg@amdc1976> <2371290.4u0K8mkgaF@vostro.rjw.lan>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2371290.4u0K8mkgaF@vostro.rjw.lan>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH 1/2] dt: update Tegra XUSB padctl binding for Tegra210
+Date: Mon,  5 Oct 2015 17:41:56 -0600
+Message-ID: <1444088517-31615-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wednesday, September 09, 2015 10:14:50 PM Rafael J. Wysocki wrote:
-> On Wednesday, September 09, 2015 12:36:39 PM Bartlomiej Zolnierkiewicz wrote:
-> > 
-> > Hi,
-> > 
-> > On Wednesday, September 09, 2015 03:13:45 AM Rafael J. Wysocki wrote:
-> > > On Tuesday, September 08, 2015 07:13:23 PM Bartlomiej Zolnierkiewicz wrote:
-> > > > CONFIG_PM ifdefs are superfluous and can be removed.
-> > > > 
-> > > > Cc: Stephen Warren <swarren@wwwdotorg.org>
-> > > > Cc: Thierry Reding <thierry.reding@gmail.com>
-> > > > Cc: Alexandre Courbot <gnurou@gmail.com>
-> > > > Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> > > 
-> > > What tree does this apply to?
-> > 
-> > It applies fine to both next (next-20150909 branch) and current Linus'
-> > tree (top commit is a794b4f).
-> 
-> OK
-> 
-> My cpufreq branch has not acquired tegra20-cpufreq.c yet, so I'll apply this
-> one when -rc1 is out.  Or please ask whoever merged that driver to apply it
-> earlier if you want to.
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Applied now, thanks!
+Tegra210 introduces some new options for pad muxing. Document these in
+the XUSB padctl binding.
 
-Rafael
+Be more explicit about the valid values for the compatible property, and
+in particular point out that Tegra210 isn't fully backwards-compatible
+with Tegra124, since some registers have moved about.
+
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ .../pinctrl/nvidia,tegra124-xusb-padctl.txt        | 34 +++++++++++++++-------
+ 1 file changed, 24 insertions(+), 10 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
+index 30676ded85bb..3952d893635c 100644
+--- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
++++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
+@@ -13,9 +13,12 @@ how to describe and reference PHYs in device trees.
+ 
+ Required properties:
+ --------------------
+-- compatible: For Tegra124, must contain "nvidia,tegra124-xusb-padctl".
+-  Otherwise, must contain '"nvidia,<chip>-xusb-padctl",
+-  "nvidia-tegra124-xusb-padctl"', where <chip> is tegra132 or tegra210.
++- compatible: Valid options are:
++  Tegra124: "nvidia,tegra124-xusb-padctl".
++  Tegra132: "nvidia,tegra132-xusb-padctl", "nvidia-tegra124-xusb-padctl".
++  Tegra210: "nvidia-tegra210-xusb-padctl".
++    Note that Tegra210 is not backwards-compatible with Tegra124 due to some
++    registers having been moved.
+ - reg: Physical base address and length of the controller's registers.
+ - resets: Must contain an entry for each entry in reset-names.
+   See ../reset/reset.txt for details.
+@@ -45,18 +48,21 @@ Unspecified is represented as an absent property, and off/on are represented
+ as integer values 0 and 1.
+ 
+ Required properties:
+-- nvidia,lanes: An array of strings. Each string is the name of a lane.
++- nvidia,lanes: An array of strings. Each string is the name of a lane (pad).
++  Valid values for lanes are listed below.
+ 
+ Optional properties:
+-- nvidia,function: A string that is the name of the function (pad) that the
+-  pin or group should be assigned to. Valid values for function names are
+-  listed below.
++- nvidia,function: A string that is the name of the function (IO controller)
++  that the pin or group should be assigned to. Valid values for function names
++  are  listed below.
+ - nvidia,iddq: Enables IDDQ mode of the lane. (0: no, 1: yes)
+ 
+ Note that not all of these properties are valid for all lanes. Lanes can be
+ divided into three groups:
+ 
+-  - otg-0, otg-1, otg-2:
++  - otg-0, otg-1, otg-2, otg-3, usb2-bias:
++
++    (otg-3, usb2-bias are valid on Tegra210 only.)
+ 
+     Valid functions for this group are: "snps", "xusb", "uart", "rsvd".
+ 
+@@ -64,13 +70,21 @@ divided into three groups:
+ 
+   - ulpi-0, hsic-0, hsic-1:
+ 
++    (ulpi-0 is valid on Tegra124 and Tegra132 only.)
++
+     Valid functions for this group are: "snps", "xusb".
+ 
+     The nvidia,iddq property does not apply to this group.
+ 
+-  - pcie-0, pcie-1, pcie-2, pcie-3, pcie-4, sata-0:
++  - pcie-0, pcie-1, pcie-2, pcie-3, pcie-4, pcie-5, pcie-6, sata-0:
++
++    (pcie-5, pcie-6 are valid on Tegra210 only.)
++
++    On Tegra124, Tegra132, valid functions for this group are: "pcie", "usb3",
++    "sata", "rsvd".
+ 
+-    Valid functions for this group are: "pcie", "usb3", "sata", "rsvd".
++    On Tegra210, valid functions for this group are "pcie-x1", "usb3",
++    "sata", "pcie-x4".
+ 
+ 
+ Example:
+-- 
+1.9.1
