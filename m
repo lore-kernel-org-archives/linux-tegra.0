@@ -1,31 +1,54 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH 03/17] input: tegra-kbc: drop use of IRQF_NO_SUSPEND flag
-Date: Mon, 5 Oct 2015 15:54:01 +0530
-Message-ID: <56124FC1.8010202@nvidia.com>
-References: <1442850433-5903-1-git-send-email-sudeep.holla@arm.com> <1442850433-5903-4-git-send-email-sudeep.holla@arm.com>
+From: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [RFC/PATCH 00/11] arm: omap: counter32k rework
+Date: Mon, 5 Oct 2015 03:55:55 -0700
+Message-ID: <20151005105554.GV23801@atomide.com>
+References: <1443559446-26969-1-git-send-email-balbi@ti.com>
+ <20150930141338.GC31865@saruman.tx.rr.com>
+ <3705422.OMk7ysE7Jn@wuerfel>
+ <6944324.e1oo8C9xbx@wuerfel>
+ <560DAFC5.50003@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1442850433-5903-4-git-send-email-sudeep.holla@arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sudeep Holla <sudeep.holla@arm.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Thomas Gleixner <tglx@linutronix.de>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <560DAFC5.50003-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, balbi-l0cyMroinI0@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org, Linux OMAP Mailing List <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+* Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> [151001 15:16]:
+> On 09/30/2015 04:49 PM, Arnd Bergmann wrote:
+> >On Wednesday 30 September 2015 16:42:21 Arnd Bergmann wrote:
+> >>
+> >>TEGRA folks: the tegra_read_persistent_clock() implementation apparently
+> >>predates the Tegra RTC driver and I wonder if they actually do the
+> >>right thing in combination. Could it be that the wall time forwards
+> >>twice as fast as it should during resume when the RTC driver is loaded?
+> >>Could it be that we can simply remove  tegra_read_persistent_clock()
+> >>and the register_persistent_clock() infrastructure?
+> >>
+> >
+> >I found the 'sleeptime_injected' variable now, which takes care of
+> >forwarding the clock by the correct amount.
+> >
+> >I also found the CLOCK_SOURCE_SUSPEND_NONSTOP flag next to it, which
+> >should let us use the counter32k driver to provide the correct
+> >time during suspend without the omap_read_persistent_clock() function.
+> >We should be able to just delete that code.
+> >
+> >If we decide to also delete the tegra_read_persistent_clock()
+> >function, we can remove the registration too.
+> 
+> 
+> +1
 
-On Monday 21 September 2015 09:16 PM, Sudeep Holla wrote:
->
-> diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
-> index f97c73bd14f8..5f5dbbd51991 100644
-> --- a/drivers/input/keyboard/tegra-kbc.c
-> +++ b/drivers/input/keyboard/tegra-kbc.c
-> @@ -705,7 +705,7 @@ static int tegra_kbc_probe(struct platform_device *pdev)
->   	input_set_drvdata(kbc->idev, kbc);
->   
->   	err = devm_request_irq(&pdev->dev, kbc->irq, tegra_kbc_isr,
-> -			  IRQF_NO_SUSPEND | IRQF_TRIGGER_HIGH, pdev->name, kbc);
-> +			       IRQF_TRIGGER_HIGH, pdev->name, kbc);
->
+We could maybe have read_persistent_clock() just check for the
+CLOCK_SOURCE_SUSPEND_NONSTOP flag?
 
-Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
+And we probably should have also has_persistent_clock() or something
+that also checks for the CLOCK_SOURCE_SUSPEND_NONSTOP.
+
+Regards,
+
+Tony
