@@ -1,59 +1,60 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 2/2] dmaengine: tegra-adma: Add support for Tegra210
- ADMA
-Date: Tue, 6 Oct 2015 10:45:01 +0100
-Message-ID: <5613981D.3040503@nvidia.com>
-References: <1444047007-30494-1-git-send-email-jonathanh@nvidia.com>
- <1444047007-30494-3-git-send-email-jonathanh@nvidia.com>
- <16524792.BmEijCQ1oc@wuerfel>
+From: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] ARM: Availability of psci_smp_available depends
+ on CONFIG_SMP
+Date: Tue, 6 Oct 2015 16:18:58 +0100
+Message-ID: <20151006151857.GA2416@arm.com>
+References: <cover.1442990383.git.jan.kiszka@siemens.com>
+ <8b94f7869972d64f442f97208707a5856cbc8b14.1442990383.git.jan.kiszka@siemens.com>
+ <20151006081122.GA21527@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <16524792.BmEijCQ1oc@wuerfel>
+Content-Disposition: inline
+In-Reply-To: <20151006081122.GA21527-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jan Kiszka <jan.kiszka-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org>, Sebastian Andrzej Siewior <sebastian-E0PNVn5OA6ohrxcnuTQ+TQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, Oct 06, 2015 at 10:11:24AM +0200, Thierry Reding wrote:
+> On Wed, Sep 23, 2015 at 08:39:43AM +0200, Jan Kiszka wrote:
+> > Ensure that we can use psci_smp_available without checking for
+> > CONFIG_SMP first.
+> > 
+> > Signed-off-by: Jan Kiszka <jan.kiszka-kv7WeFo6aLtBDgjK7y7TUQ@public.gmane.org>
+> > ---
+> >  arch/arm/include/asm/psci.h | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/arch/arm/include/asm/psci.h b/arch/arm/include/asm/psci.h
+> > index 68ee3ce..ff956f4 100644
+> > --- a/arch/arm/include/asm/psci.h
+> > +++ b/arch/arm/include/asm/psci.h
+> > @@ -16,7 +16,7 @@
+> >  
+> >  extern struct smp_operations psci_smp_ops;
+> >  
+> > -#ifdef CONFIG_ARM_PSCI
+> > +#if defined(CONFIG_ARM_PSCI) && defined(CONFIG_SMP)
+> >  bool psci_smp_available(void);
+> >  #else
+> >  static inline bool psci_smp_available(void) { return false; }
+> 
+> Hi Will,
 
-On 06/10/15 10:32, Arnd Bergmann wrote:
-> On Monday 05 October 2015 13:10:07 Jon Hunter wrote:
->> Add support for the Tegra210 Audio DMA controller that is used for
->> transferring data between system memory and the Audio sub-system.
->> The driver only supports cyclic transfers because this is being solely
->> used for audio.
->>
->> This driver is based upon the work by Dara Ramesh <dramesh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>.
->>
->> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> This version looks much better!
-> 
-> Just one small comment:
-> 
->> +	slave_req = dma_spec->args[0];
->> +	slave_dir = dma_spec->args[1];
->> +
->> +	if (slave_req == 0)
->> +		return NULL;
->> +
->> +	switch (slave_dir) {
->> +	case ADMA_AHUB_TO_MEM:
->> +		if (slave_req > tdma->rx_requests)
->> +			return NULL;
->> +
->> +		if (tdma->rx_requests_reserved & BIT(slave_req))
->> +			return NULL;
->> +
->> +		tdma->rx_requests_reserved |= BIT(slave_req);
->> +		break;
-> 
-> The rx_requests_reserved logic looks racy, if you have more than
-> one concurrent request or release. Better use atomic_test_and_set()
-> here and turn the variable into an atomic_t.
+Hi Thierry,
 
-Ah yes, will update.
+> you had questions about this when this was first submitted back in
+> May[0], but discussion stalled. Can you take another look, please?
+> 
+> I think irrespective of what the series is trying to do this is a
+> correct fix. The arch/arm/kernel/psci_smp.c file is only compiled if
+> both ARM_PSCI and SMP are selected. Builds break if we don't mirror
+> that conditional in the header because for ARM_PSCI && !SMP no dummy
+> will be defined, but the implementation for the prototype won't be
+> available either, leading to a linker error.
 
-Thanks
-Jon
+Sure, I'm fine with this patch in isolation, I just didn't (don't) fully
+grok what the series is trying to achieve.
+
+Will
