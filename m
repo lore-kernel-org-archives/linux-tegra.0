@@ -1,79 +1,74 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 2/2] dt: update Tegra PCIe binding for Tegra210
-Date: Mon,  5 Oct 2015 17:41:57 -0600
-Message-ID: <1444088517-31615-2-git-send-email-swarren@wwwdotorg.org>
-References: <1444088517-31615-1-git-send-email-swarren@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] arm: make psci_smp_available() depend on SMP + PSCI as
+ the makefile does
+Date: Tue, 6 Oct 2015 10:11:30 +0200
+Message-ID: <20151006081130.GE18633@ulmo>
+References: <1443820404-16431-1-git-send-email-sebastian@breakpoint.cc>
+Mime-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="so9zsI5B81VjUb/o"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1444088517-31615-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1443820404-16431-1-git-send-email-sebastian-E0PNVn5OA6ohrxcnuTQ+TQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Sebastian Andrzej Siewior <sebastian-E0PNVn5OA6ohrxcnuTQ+TQ@public.gmane.org>
+Cc: Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stefano Stabellini <stefano.stabellini-mvvWK6WmYclDPfheJLI6IQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sebastian Andrzej Siewior <bigeasy-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Reword the description of the ranges property so it is correct
-irrespective of how many #address-cells the PCI node's parent uses.
+--so9zsI5B81VjUb/o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Be more explicit about the valid values for the compatible property, and
-in particular point out that Tegra210 isn't fully backwards-compatible due
-to the introduction of some HW bugs whose workarounds are not present in
-drivers written solely for previous chips. with Tegra124,
+On Fri, Oct 02, 2015 at 11:13:24PM +0200, Sebastian Andrzej Siewior wrote:
+> From: Sebastian Andrzej Siewior <bigeasy-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+>=20
+> with CONFIG_ARM_PSCI=3Dy, CONFIG_SMP=3Dn and CONFIG_ARCH_TEGRA_124_SOC=3D=
+y I
+> end up with:
+>=20
+> |arch/arm/mach-tegra/built-in.o: In function `tegra114_cpuidle_init':
+> |arch/arm/mach-tegra/cpuidle-tegra114.c:93: undefined reference to `psci_=
+smp_available'
+> |Makefile:927: recipe for target 'vmlinux' failed
+>=20
+> during build testing.
+>=20
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+> ---
+>  arch/arm/include/asm/psci.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Still "TODO" is to fill in a complete "Power supplies for Tegra210"
-section. My main use-case for the binding is U-Boot, which doesn't use
-regulator bindings at present, so I have not yet researched this aspect
-of the hardware.
+Jan Kiszka sent out an equivalent patch back in May, but it seems like
+discussion stalled on that. He resent a few days ago:
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- .../bindings/pci/nvidia,tegra20-pcie.txt           | 27 +++++++++++++++-------
- 1 file changed, 19 insertions(+), 8 deletions(-)
+	http://patchwork.ozlabs.org/patch/521597/
 
-diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
-index 75321ae23c08..3d92934a079c 100644
---- a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
-@@ -1,10 +1,15 @@
- NVIDIA Tegra PCIe controller
- 
- Required properties:
--- compatible: For Tegra20, must contain "nvidia,tegra20-pcie".  For Tegra30,
--  "nvidia,tegra30-pcie".  For Tegra124, must contain "nvidia,tegra124-pcie".
--  Otherwise, must contain "nvidia,<chip>-pcie", plus one of the above, where
--  <chip> is tegra132 or tegra210.
-+- compatible: Valid options are:
-+  Tegra20: "nvidia,tegra20-pcie".
-+  Tegra30: "nvidia,tegra30-pcie".
-+  Tegra124: "nvidia,tegra124-pcie".
-+  Tegra132: "nvidia,tegra132-pcie", "nvidia,tegra124-pcie".
-+  Tegra210: "nvidia,tegra210-pcie".
-+    Note that Tegra210 is not backwards-compatible with Tegra124 due to the
-+    introduction of some HW bugs whose workarounds are not present in drivers
-+    written solely for previous chips.
- - device_type: Must be "pci"
- - reg: A list of physical base address and length for each set of controller
-   registers. Must contain an entry for each entry in the reg-names property.
-@@ -27,10 +32,16 @@ Required properties:
-     CPU address space
- - #size-cells: Size representation for root ports (must be 2)
- - ranges: Describes the translation of addresses for root ports and standard
--  PCI regions. The entries must be 6 cells each, where the first three cells
--  correspond to the address as described for the #address-cells property
--  above, the fourth cell is the physical CPU address to translate to and the
--  fifth and six cells are as described for the #size-cells property above.
-+  PCI regions. The entries must be (na_pcie + na_parent + ns_pcie) cells each,
-+  where:
-+    na_pcie refers to #address-cells in the PCIe controller,
-+    na_parent refers to #address-cells in the PCIe controller's parent node,
-+    ns_pcie refers to #size-cells in the PCIe controller,
-+  The first na_pcie cells correspond to the address as described for the
-+  #address-cells property. The next na_parent cells contain the physical CPU
-+  address to translate to and the final ns_pcie cells are as described for the
-+  #size-cells property above.
-+  Multiple entries must be present:
-   - The first two entries are expected to translate the addresses for the root
-     port registers, which are referenced by the assigned-addresses property of
-     the root port nodes (see below).
--- 
-1.9.1
+Let me see if I can get the original discussion resumed. I'll add you in
+the loop.
+
+Thierry
+
+--so9zsI5B81VjUb/o
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJWE4IxAAoJEN0jrNd/PrOhWF4QAL1dQOm3qL6srinGmouzkBMJ
+4m1UJWS7FGYJPiaXZ99O7UqcPIEC7Pu3/QbmJUKSGwSUm+Vok0ticGDlFkiL9vfn
+3QHd6OqiTqDqdrdciS/N9WNAP+9quykcfvwASmRcGvmYXDLKYfhv5nlc+H9s5kZv
+EXbo8JJZOQopsel7mMFc09hKVky6ShMJqNQ9qNjSngN5yDxYCsqB6bkZ/6nTik56
+ODvK4VvxhPOgm7YVEmCSgSHuHCKoJTp9INtky6tN4T/XR6JNQd3hYs21mZoMKJHA
+nafGh76dM/8cztUPdwgWhQ7gZRMNt8TRLUJxZruVdtJnxG9eSCbJBrWMA65uCqt3
+JGEKGlTrzVq2PmnLA6t+GJa+8aU1EfutabuUy59xgLIsgTNNfPuwQuxqDRCPPvZn
+T3axIgWtTHYFLCIfniiwdmZcjolyyPDhjEPY/xRTXCZD1tBOXzi0LgRsrmMV/FQI
+IBVfPIJXHUDLFqyecqkcSeavHQNzJfs/Fq6hEEGblZKiZ3LA+5DY82bwEPOca27s
+FDcq8vVtvYCx9J3XxF/IBS7O0UE1UsYJBgavGuRxs+mgjJ8Jb6POdkosiKWaZ+LV
+wb8ZIdC8UrND+kmmBotrQXEy9SUCGpWVeUBCl92lSE5AnBTrCxiONaOGCSQW83yI
+7U5E+lJlGRb2KzQRbcJG
+=y2la
+-----END PGP SIGNATURE-----
+
+--so9zsI5B81VjUb/o--
