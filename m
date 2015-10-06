@@ -1,166 +1,71 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V9] dt: add NVIDIA Tegra XUSB controller binding
-Date: Tue,  6 Oct 2015 13:01:49 -0600
-Message-ID: <1444158109-1590-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Subject: Re: [PATCH V2 1/2] Documentation: DT: Add binding documentation for
+ NVIDIA ADMA
+Date: Tue, 6 Oct 2015 16:57:23 -0600
+Message-ID: <561451D3.2070605@wwwdotorg.org>
+References: <1444047007-30494-1-git-send-email-jonathanh@nvidia.com>
+ <1444047007-30494-2-git-send-email-jonathanh@nvidia.com>
+ <20151005131215.GN19064@leverpostej> <56139181.4090706@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <56139181.4090706-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 10/06/2015 03:16 AM, Jon Hunter wrote:
+>
+> On 05/10/15 14:12, Mark Rutland wrote:
+>> On Mon, Oct 05, 2015 at 01:10:06PM +0100, Jon Hunter wrote:
+>>> Add device-tree binding documentation for the Tegra210 Audio DMA
+>>> controller.
+>>>
+>>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> ---
+>>>   .../devicetree/bindings/dma/tegra210-adma.txt      | 63 ++++++++++++++++++++++
+>>>   1 file changed, 63 insertions(+)
+>>>   create mode 100644 Documentation/devicetree/bindings/dma/tegra210-adma.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/dma/tegra210-adma.txt b/Documentation/devicetree/bindings/dma/tegra210-adma.txt
+>>> new file mode 100644
+>>> index 000000000000..df0e46868a63
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/dma/tegra210-adma.txt
+>>> @@ -0,0 +1,63 @@
+>>> +* NVIDIA Tegra Audio DMA (ADMA) controller
+>>> +
+>>> +Required properties:
+>>> +- compatible: Must be "nvidia,tegra210-adma".
+>>> +- reg: Should contain DMA registers location and length. This should be
+>>> +  a single entry that includes all of the per-channel registers in one
+>>> +  contiguous bank.
+>>> +- interrupt-parent: Phandle to the interrupt parent controller.
+>>> +- interrupts: Should contain all of the per-channel DMA interrupts in
+>>> +  ascending order with respect to the DMA channel index.
+>>> +- clocks: Must contain one entry for the ADMA module clock, "adma_ape".
+>>> +- clock-names: Must contain the entry "adma_ape".
+>>> +- dma-channels: Must be 22. Defines the number of DMA channels supported
+>>> +  by the DMA controller.
+>>
+>> If this has to be a fixed value, why is it necessary? Why does the
+>> driver not just know this?
+>>
+>> Are there other instances of this IP block where this differs?
+>
+> So this will change for future devices and yes it may seem silly now to
+> have something that fixed and appears to be constant but I was trying to
+> future proof the binding. May be the comment should read "For tegra210
+> must be 22", however, I thought the compatible string would imply this.
 
-Add device-tree binding documentation for the XUSB (xHCI) controller
-present on Tegra124 and later SoCs.
+Typically you'd want a table in the driver that maps from compatible 
+value to the set of per-SoC data that's associated with the compatible 
+value. Then, you don't need to put this data into the DT.
 
-Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-[swarren, combined separate MFD, mailbox, XHCI bindings into one node]
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
-Cc: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
----
-Changes from v8:
- - Combined the separate MFD, mailbox, and XHCI bindings into one; there
-   is a single HW module, and so there should be a single DT node to
-   represent it. Any Linux-internal driver structure should not influence
-   the binding structure. This included squashing the various reg and
-   interrupt resources that were previously in the separate modules into
-   one list.
- - Used lists to document the compatible, reg, and interrupts properties.
- - Renamed the primary binding from xhci to xusb to reflect the name of
-   the overall module.
-Changes from v7:
- - Added back non-shared reg/interrupts properties.
-Changes from v6:
- - Removed XUSB_DEV related clocks/resets.  They will be consumed by
-   a separate driver and binding.
- - Removed reg/interrupts properties.
-No changes from v5.
-Changes from v4:
- - Updated regulator names, as suggested by Thierry.
-No changes from v3.
-Changes from v2:
- - Added mbox-names property.
-Changes from v1:
- - Updated to use common mailbox bindings.
- - Added remaining XUSB-related clocks and resets.
- - Updated list of power supplies to be more accurate wrt to the hardware.
----
- .../bindings/usb/nvidia,tegra124-xusb.txt          | 96 ++++++++++++++++++++++
- 1 file changed, 96 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
-
-diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
-new file mode 100644
-index 000000000000..f8de8d49602e
---- /dev/null
-+++ b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
-@@ -0,0 +1,96 @@
-+NVIDIA Tegra XUSB (XHCI) controller
-+===================================
-+
-+The Tegra XUSB controller supports both USB2 and USB3 interfaces exposed
-+by the Tegra XUSB pad controller.
-+
-+Required properties:
-+--------------------
-+ - compatible: Valid options are:
-+    - Tegra124: "nvidia,tegra124-xusb".
-+    - Tegra132: "nvidia,tegra132-xusb", "nvidia,tegra124-xusb".
-+ - reg: Must contain the following entries, in the following order:
-+    - The xHCI host registers.
-+    - The IPFS registers.
-+    - The FPCI registers.
-+ - interrupts: Must contain the following entries, in the following order:
-+    - The xHCI host interrupt
-+    - The XUSB mailbox interrupt.
-+ - clocks: Must contain an entry for each entry in clock-names.
-+   See ../clock/clock-bindings.txt for details.
-+ - clock-names: Must include the following entries:
-+    - xusb_host
-+    - xusb_host_src
-+    - xusb_falcon_src
-+    - xusb_ss
-+    - xusb_ss_src
-+    - xusb_ss_div2
-+    - xusb_hs_src
-+    - xusb_fs_src
-+    - pll_u_480m
-+    - clk_m
-+    - pll_e
-+ - resets: Must contain an entry for each entry in reset-names.
-+   See ../reset/reset.txt for details.
-+ - reset-names: Must include the following entries:
-+   - xusb_host
-+   - xusb_ss
-+   - xusb_src
-+   Note that xusb_src is the shared reset for xusb_{ss,hs,fs,falcon,host}_src.
-+ - avddio-pex-supply: PCIe/USB3 analog logic power supply.  Must supply 1.05V.
-+ - dvddio-pex-supply: PCIe/USB3 digital logic power supply.  Must supply 1.05V.
-+ - avdd-usb-supply: USB controller power supply.  Must supply 3.3V.
-+ - avdd-pll-utmip-supply: UTMI PLL power supply.  Must supply 1.8V.
-+ - avdd-pll-erefe-supply: PLLE reference PLL power supply.  Must supply 1.05V.
-+ - avdd-usb-ss-pll-supply: PCIe/USB3 PLL power supply.  Must supply 1.05V.
-+ - hvdd-usb-ss-supply: High-voltage PCIe/USB3 power supply.  Must supply 3.3V.
-+ - hvdd-usb-ss-pll-e-supply: High-voltage PLLE power supply.  Must supply 3.3V.
-+
-+Optional properties:
-+--------------------
-+ - phys: Must contain an entry for each entry in phy-names.
-+   See ../phy/phy-bindings.txt for details.
-+ - phy-names: Should include an entry for each PHY used by the controller.
-+   Names must be of the form "<type>-<number>" where <type> is one of "utmi",
-+   "hsic", or "usb3" and <number> is a 0-based index.  On Tegra124, there may
-+   be up to 3 UTMI, 2 HSIC, and 2 USB3 PHYs.
-+
-+Example:
-+--------
-+	usb-host@0,70090000 {
-+		compatible = "nvidia,tegra124-xusb";
-+		reg = <0x0 0x70090000 0x0 0x8000>,
-+		      <0x0 0x70099000 0x0 0x1000>,
-+		      <0x0 0x70098000 0x0 0x1000>;
-+		interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA124_CLK_XUSB_HOST>,
-+			 <&tegra_car TEGRA124_CLK_XUSB_HOST_SRC>,
-+			 <&tegra_car TEGRA124_CLK_XUSB_FALCON_SRC>,
-+			 <&tegra_car TEGRA124_CLK_XUSB_SS>,
-+			 <&tegra_car TEGRA124_CLK_XUSB_SS_DIV2>,
-+			 <&tegra_car TEGRA124_CLK_XUSB_SS_SRC>,
-+			 <&tegra_car TEGRA124_CLK_XUSB_HS_SRC>,
-+			 <&tegra_car TEGRA124_CLK_XUSB_FS_SRC>,
-+			 <&tegra_car TEGRA124_CLK_PLL_U_480M>,
-+			 <&tegra_car TEGRA124_CLK_CLK_M>,
-+			 <&tegra_car TEGRA124_CLK_PLL_E>;
-+		clock-names = "xusb_host", "xusb_host_src", "xusb_falcon_src",
-+			      "xusb_ss", "xusb_ss_div2", "xusb_ss_src",
-+			      "xusb_hs_src", "xusb_fs_src", "pll_u_480m",
-+			      "clk_m", "pll_e";
-+		resets = <&tegra_car 89>, <&tegra_car 156>, <&tegra_car 143>;
-+		reset-names = "xusb_host", "xusb_ss", "xusb_src";
-+		phys = <&padctl TEGRA_XUSB_PADCTL_UTMI_P1>, /* mini-PCIe USB */
-+		       <&padctl TEGRA_XUSB_PADCTL_UTMI_P2>, /* USB A */
-+		       <&padctl TEGRA_XUSB_PADCTL_USB3_P0>; /* USB A */
-+		phy-names = "utmi-1", "utmi-2", "usb3-0";
-+		avddio-pex-supply = <&vdd_1v05_run>;
-+		dvddio-pex-supply = <&vdd_1v05_run>;
-+		avdd-usb-supply = <&vdd_3v3_lp0>;
-+		avdd-pll-utmip-supply = <&vddio_1v8>;
-+		avdd-pll-erefe-supply = <&avdd_1v05_run>;
-+		avdd-usb-ss-pll-supply = <&vdd_1v05_run>;
-+		hvdd-usb-ss-supply = <&vdd_3v3_lp0>;
-+		hvdd-usb-ss-pll-e-supply = <&vdd_3v3_lp0>;
-+	};
--- 
-1.9.1
-
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Even if you don't want to do that (e.g. so the driver can work on future 
+HW without code changes), then you can always add this property in the 
+future if needed; if the property is present the value in it will be 
+used, but if missing, any driver should default to the value in use 
+for/on HW  before the binding update.
