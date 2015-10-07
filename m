@@ -1,172 +1,75 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [tegrarcm PATCH v2 2/4] Add support for update pubkey and rsa-pss
- signatures
-Date: Wed, 7 Oct 2015 10:33:45 -0600
-Message-ID: <56154969.6080501@wwwdotorg.org>
-References: <1443819420-26562-1-git-send-email-jimmzhang@nvidia.com>
- <1443819420-26562-3-git-send-email-jimmzhang@nvidia.com>
+From: Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH V2 1/2] Documentation: DT: Add binding documentation for
+ NVIDIA ADMA
+Date: Wed, 7 Oct 2015 17:33:50 +0100
+Message-ID: <20151007163349.GB31982@leverpostej>
+References: <1444047007-30494-1-git-send-email-jonathanh@nvidia.com>
+ <1444047007-30494-2-git-send-email-jonathanh@nvidia.com>
+ <20151005131215.GN19064@leverpostej>
+ <56139181.4090706@nvidia.com>
+ <561451D3.2070605@wwwdotorg.org>
+ <56153991.3040409@nvidia.com>
+ <561542D3.8030607@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1443819420-26562-3-git-send-email-jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <561542D3.8030607@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vinod.koul@intel.com>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Arnd Bergmann <arnd@arndb.de>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/02/2015 02:56 PM, Jimmy Zhang wrote:
-> Create new configuration keywords:
->     RsaKeyModulusFile: pubkey modulus
->     RsaPssSigBlFile:   bootloader rsa pss signature
->     RsaPssSigBctFile:  bct rsa pss signature
->
-> Sample Configuration file update_bl_sig.cfg
->     RsaKeyModulusFile = pubkey.mod;
->     RsaPssSigBlFile = bl.sig;
->
-> where pubkey.mod and bl.sig are files that contain the public key
-> modulus and bootloader's rsa-pss signature respectively.
->
-> public key modulus and signature are created through utilities
-> outside cbootimage.
->
-> Command line example:
->   $ cbootimage -s tegra210 -u update_bl_sig.cfg image.bin image.bin-bl-signed
->
-> Above three new keywords added in this CL are only implemented support
-> for T210.
+[...]
 
-> diff --git a/src/cbootimage.h b/src/cbootimage.h
+> >>>>>+- dma-channels: Must be 22. Defines the number of DMA channels
+> >>>>>supported
+> >>>>>+  by the DMA controller.
+> >>>>
+> >>>>If this has to be a fixed value, why is it necessary? Why does the
+> >>>>driver not just know this?
+> >>>>
+> >>>>Are there other instances of this IP block where this differs?
+> >>>
+> >>>So this will change for future devices and yes it may seem silly now to
+> >>>have something that fixed and appears to be constant but I was trying to
+> >>>future proof the binding. May be the comment should read "For tegra210
+> >>>must be 22", however, I thought the compatible string would imply this.
+> >>
+> >>Typically you'd want a table in the driver that maps from compatible
+> >>value to the set of per-SoC data that's associated with the compatible
+> >>value. Then, you don't need to put this data into the DT.
+> >
+> >Yes I have seen that which I was not sure that I was a fan of, given
+> >that we have DT and its purpose is to describe the hardware. So may be
+> >the problem I have is deciding on which hardware parameters should be
+> >described in DT versus those that should be place in the driver itself.
+> >I am not sure if there is a rule of thumb for this type of thing?
+> 
+> It seems to be a matter of preference.
+> 
+> I think DT is mainly about identifying which HW is present. Facets
+> of the HW that are fixed (100% derivable from the compatible value)
+> belong in the driver. If we took the opposite view, we should put a
+> description of every register/field layout in the DT in case they
+> change on new HW and we don't want to edit the driver code to take
+> account of that, and in fact should put byte code into the DT since
+> simple data might not be enough to allow us not to edit the driver.
+> Facets that vary between boards, use-cases, etc. are the main
+> benefit of DT in my opinion, not slow-moving data specific to SoCs.
 
-> +#define ARSE_RSA_MAX_MODULUS_SIZE	2048
-> +#define ARSE_RSA_PARAM_MAX_BYTES	(ARSE_RSA_MAX_MODULUS_SIZE / 8)
+I think it depends on what the difference is as opposed to how quickly
+it changes.
 
-These values are currently defined in the chip-specific location 
-src/tNNN/nvboot_bct_tNNN.h, and this patch only removes a single on of 
-those 3 copies when creating this new centralized value. At best that 
-makes the code inconsistent, and at worst could cause compile errors due 
-to multiple definitions.
+If there's some known-configurable but non-probeable property of an IP
+block, then describing that explicitly makes sense if you can predict
+what the other configurations will look like in terms of the programming
+interface (e.g. the register layout). That gives you a degree of forward
+compatibility, with less churn and a smaller driver.
 
-Instead, can you leave this value in the T210-specific location. More 
-related to this below.
+If the register layout changes in a non-predictable fashion, you cannot
+capture that in a binding a need more code. There will always be
+elements which are non-predictable and need changes, but that need not
+be the default case.
 
-> diff --git a/src/parse.c b/src/parse.c
-
-> +static int parse_rsa_param(build_image_context *context,
-> +			parse_token token,
-> +			char *rest)
-> +{
-> +	char filename[MAX_BUFFER];
-> +
-> +	assert(context != NULL);
-> +	assert(rest != NULL);
-> +
-> +	if (context->generate_bct != 0)
-> +		return 0;
-> +
-> +	/* Parse the file name. */
-> +	rest = parse_filename(rest, filename, MAX_BUFFER);
-> +	if (rest == NULL)
-> +		return 1;
-
-That doesn't look like the correct error check. Rather, other function 
-that parse filenames (and other fields) appear to do something like the 
-following after parsing all the fields:
-
-         /* Parse the end state. */
-         rest = parse_end_state(rest, e_state, MAX_STR_LEN);
-         if (rest == NULL)
-                 return 1;
-
-I suspect that code should be present in this function too?
-
-> diff --git a/src/set.c b/src/set.c
-
-> +int
-> +set_rsa_param(build_image_context *context, parse_token token,
-> +		char *filename)
-> +{
-> +	int	result;
-> +	u_int8_t *rsa_storage;	/* Holds the rsa param after reading */
-> +	u_int32_t actual_size;	/* In bytes */
-> +	file_type rsa_filetype = file_type_bin;
-> +
-> +        /* Read the image into memory. */
-> +	result = read_from_image(filename,
-> +				0,
-> +				ARSE_RSA_PARAM_MAX_BYTES,
-> +				&rsa_storage,
-> +				&actual_size,
-> +				rsa_filetype);
-> +
-> +	if (result) {
-> +		printf("Error reading file %s.\n", filename);
-> +		exit(1);
-> +	}
-> +
-> +	if (actual_size != ARSE_RSA_PARAM_MAX_BYTES) {
-> +		printf("Error: invalid size, file %s.\n", filename);
-> +		exit(1);
-> +        }
-
-I would suggest removing anything from this function that restricts the 
-file size to any particular value, since this is generic code, and in 
-theory at least each SoC defines its own RSA size parameters.
-
-Looks like an indentation error there too.
-
-> diff --git a/src/t210/nvbctlib_t210.c b/src/t210/nvbctlib_t210.c
-
-> @@ -2198,6 +2201,24 @@ t210_bct_set_value(parse_token id, void *data, u_int8_t *bct)
->   		memcpy(&bct_ptr->unique_chip_id, data, sizeof(nvboot_ecid));
->   		break;
->
-> +	case token_rsa_key_modulus:
-> +		memcpy(&bct_ptr->key, data, sizeof(nvboot_rsa_key_modulus));
-> +		break;
-> +
-> +	case token_rsa_pss_sig_bl:
-> +		/*
-> +		 * Update bootloader 0 since there is only one copy
-> +		 * of bootloader being built in.
-> +		 */
-> +		memcpy(&bct_ptr->bootloader[0].signature.rsa_pss_sig,
-> +			data, sizeof(nvboot_rsa_pss_sig));
-> +		break;
-> +
-> +	case token_rsa_pss_sig_bct:
-> +		memcpy(&bct_ptr->signature.rsa_pss_sig,
-> +			data, sizeof(nvboot_rsa_pss_sig));
-> +		break;
-
-Instead, I think the file size can be validated here?
-
-Hmm, I don't see a size parameter to this function:-(
-
-Given that, I think that either:
-
-a) Add a size parameter to this function. This has the disadvantage of 
-needing to update a bunch of call sites. I don't know how many; perhaps 
-this isn't a big deal?
-
-or:
-
-b) Modify set_rsa_param() so that it doesn't check the file size against 
-a single global define ARSE_RSA_PARAM_MAX_BYTES, but rather calls a 
-function that's implemented in src/t210/*.c that tells it what size the 
-token should be.
-
-This would also solve my other objection that currently set_rsa_param() 
-assumes that all the RSA-related parameters must be the same size. While 
-that is true at present, I'm not sure that it my be true in all cases in 
-the future.
-
-This is probably the most flexible, and not too hard to implement.
-
-or:
-
-c) Remove the duplicate defines (e.g. ARSE_RSA_MAX_MODULUS_SIZE) from 
-the T114/124/132 files too. This has the disadvantage that if some 
-future chip changes the RSA sizes, we'll have to undo this change at 
-that time, and switch back to (a) or (b).
+Mark.
