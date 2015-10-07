@@ -1,100 +1,205 @@
-From: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [tegrarcm PATCH v2 3/4] Add support to dump rsa related fields
- for t210
-Date: Wed, 7 Oct 2015 22:10:17 +0000
-Message-ID: <522c5bd69a114b23aa468d4cdc1dce76@HQMAIL103.nvidia.com>
-References: <1443819420-26562-1-git-send-email-jimmzhang@nvidia.com>
- <1443819420-26562-4-git-send-email-jimmzhang@nvidia.com>
- <56154C29.90708@wwwdotorg.org>
- <8ad0a6e53ee44852a89c71989b584e1e@HQMAIL103.nvidia.com>
- <56157261.9030000@wwwdotorg.org>
+From: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [cbootimage PATCH] Add man pages
+Date: Wed, 7 Oct 2015 15:38:00 -0700
+Message-ID: <1444257480-24964-1-git-send-email-amartin@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56157261.9030000-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: 'Stephen Warren' <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Allen Martin <AMartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Add man pages for cbootimge(1) and bct_dump(1)
 
+Signed-off-by: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ src/Makefile.am     | 17 +++++++++++
+ src/bct_dump.1.in   | 56 ++++++++++++++++++++++++++++++++++
+ src/cbootimage.1.in | 87 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 160 insertions(+)
+ create mode 100644 src/bct_dump.1.in
+ create mode 100644 src/cbootimage.1.in
 
-> -----Original Message-----
-> From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
-> Sent: Wednesday, October 07, 2015 12:29 PM
-> To: Jimmy Zhang
-> Cc: Allen Martin; Stephen Warren; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Subject: Re: [tegrarcm PATCH v2 3/4] Add support to dump rsa related fields
-> for t210
-> 
-> On 10/07/2015 12:57 PM, Jimmy Zhang wrote:
-> >
-> >
-> >> -----Original Message-----
-> >> From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
-> >> Sent: Wednesday, October 07, 2015 9:45 AM
-> >> To: Jimmy Zhang
-> >> Cc: Allen Martin; Stephen Warren; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> >> Subject: Re: [tegrarcm PATCH v2 3/4] Add support to dump rsa related
-> >> fields for t210
-> >>
-> >> On 10/02/2015 02:56 PM, Jimmy Zhang wrote:
-> >>> Add support to dump rsa pubkey, bct's rsa-pss signature and
-> >>> bootloader's rsa-pss signature.
-> >>
-> >> It also seems to dump some AES hashes too.
-> >>
-> >>> diff --git a/src/bct_dump.c b/src/bct_dump.c
-> >>
-> >>> +static void format_rsa_param(char const * message, void * data) {
-> >>> +	u_int8_t *rsa = (u_int8_t *)data;
-> >>> +	int byte_index;
-> >>> +
-> >>> +	printf("%s", message);
-> >>> +	for (byte_index = 0; byte_index < ARSE_RSA_PARAM_MAX_BYTES;
-> >>> +					++byte_index) {
-> >>> +		printf("%02x", *rsa++);
-> >>> +
-> >>> +		if (byte_index && ((byte_index + 1) % 64 == 0))
-> >>> +			printf(";\n");
-> >>> +	}
-> >>> +
-> >>> +	if (byte_index && (byte_index % 64 != 0))
-> >>> +			printf(";\n");
-> >>> +}
-> >>
-> >> The same comment about hard-coding ARSE_RSA_PARAM_MAX_BYTES
-> applies
-> >> here as in the previous commit.
-> >>
-> >> It would be nice if this function wrote the values to a file. That
-> >> way, the output of bct_dump would be something you could feed into
-> >> cbootimage directly. With this patch, the user has to manually
-> >> convert the inline hex data into a binary file before the output is useful.
-> >>
-> >> Still, solving that might be challenging. If bct_dump wrote to a
-> >> user-supplied filename, the files could simply be named
-> "${filename}.RsaKeyModulus" etc.
-> >> However, since bct_dump prints to stdout, that's not possible.
-> >> Perhaps since bct_dump is mostly a debug aid, we can live with this issue
-> for now.
-> >
-> > Maybe we should add a command line option to save RsaKey modulus to a
-> given file.  I can come up another patch after this series is merged.
-> 
-> That would work. The issue is there are 3 tokens which implies 3 command-
-> line options (and may be more tokens if we extend cbootimage to support N
-> BCT copies, N bootloaders, etc.).
-> 
-> Perhaps best would be:
-> 
-> bct_dump foo.bin
-> -> Prints results to stdout, with inline dumps of the RSA fields
-> 
-> bct_dump -o foo.cfg foo.bin
-> -> "Prints" results to foo.cfg, and puts all the RSA fields (as binary)
-> into foo.cfg.RsaKeyModulus (and a variety of other auto-named files)?
-
-OK. Will do.
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 64c4ea52b8e2..285f9dbd629c 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -84,3 +84,20 @@ bct_dump_SOURCES = \
+ 	t132/nvboot_sdram_param_t132.h \
+ 	t210/nvboot_bct_t210.h \
+ 	t210/nvboot_sdram_param_t210.h
++
++man_MANS = cbootimage.1 bct_dump.1
++
++EXTRA_DIST = cbootimage.1.in bct_dump.1.in
++DISTCLEANFILES = cbootimage.1 cbootimage.man bct_dump.1 bct_dump.man
++
++cbootimage.1: $(srcdir)/cbootimage.1.in
++	sed 's|VERSION|$(VERSION)|g' $< >$@
++
++cbootimage.man: $(srcdir)/cbootimage.1
++	nroff -man $< >$@
++
++bct_dump.1: $(srcdir)/bct_dump.1.in
++	sed 's|VERSION|$(VERSION)|g' $< >$@
++
++bct_dump.man: $(srcdir)/bct_dump.1
++	nroff -man $< >$@
+diff --git a/src/bct_dump.1.in b/src/bct_dump.1.in
+new file mode 100644
+index 000000000000..329e379e91b0
+--- /dev/null
++++ b/src/bct_dump.1.in
+@@ -0,0 +1,56 @@
++.TH bct_dump 1 "6 October 2015" "bct_dump-VERSION" "NVIDIA Tegra BCT Disassembly Tool"
++.IX bct_dump
++.SH NAME
++bct_dump \- tegra BCT disassembly tool
++.SH SYNOPSIS
++.B bct_dump
++.I bctfile
++.SH DESCRIPTION
++This program is used to take a binary Tegra Boot Configuration Table (BCT) and
++disassemble it into a text format suitable to be compiled with cbootimage(1).
++
++.SS Platforms supported
++.IP \(bu
++.B Tegra20
++.IP \(bu
++.B Tegra30
++.IP \(bu
++.B Tegra114
++.IP \(bu
++.B Tegra124
++.IP \(bu
++.B Tegra132
++.IP \(bu
++.B Tegra210
++
++.SH OPTIONS
++.TP
++.B \fIbctfile\fP
++Specify the BCT file to disassemble
++
++.SH EXAMPLES
++To disassmble the BCT file for a Tegra124 Jetson-TK1:
++
++.nf
++$ bct_dump PM375_Hynix_2GB_H5TC4G63AFR_RDA_924MHz.bct
++Version       = 0x00400001;
++BlockSize     = 0x00004000;
++PageSize      = 0x00000200;
++PartitionSize = 0x01000000;
++OdmData       = 0x800d8000;
++JtagCtrl      = 0x00000000;
++ChipUid       = 0x00000000000000000000000000000000;
++# Bootloader used       = 0;
++# Bootloaders max       = 4;
++# BCT size              = 8192;
++ ...
++.fi
++
++.SH RETURN VALUE
++If any error occurs a non zero exit status is returned.
++
++.SH SEE ALSO
++.BR tegrarcm (1), cbootimage(1)
++
++.SH AUTHOR
++Anton Staaf <robotboy-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+diff --git a/src/cbootimage.1.in b/src/cbootimage.1.in
+new file mode 100644
+index 000000000000..dd60dee8a69c
+--- /dev/null
++++ b/src/cbootimage.1.in
+@@ -0,0 +1,87 @@
++.TH cbootimage 1 "6 October 2015" "cbootimage-VERSION" "NVIDIA Tegra Firmware Signing Tool"
++.IX cbootimage
++.SH NAME
++cbootimage \- tegra BCT compiler
++.SH SYNOPSIS
++.B cbootimage
++[
++.I options
++] configfile [
++.I inputimage
++]
++.I outputimage
++.SH DESCRIPTION
++This program is used to create images suitable to place into the boot flash of a
++device using a Tegra SoC.  There are two primary modes of operation of
++cbootimage:
++
++.nr step 1 1
++.IP \n[step] 3
++Compile a textual representation of a BCT into a binary image.
++.IP \n+[step]
++Generate an entire boot image from a previously compiled BCT and a bootloader
++binary.
++
++.SS Platforms supported
++.IP \(bu
++.B Tegra20
++.IP \(bu
++.B Tegra30
++.IP \(bu
++.B Tegra114
++.IP \(bu
++.B Tegra124
++.IP \(bu
++.B Tegra132
++.IP \(bu
++.B Tegra210
++
++.SH COMMANDS
++.TP
++.B \-gbct
++Generate the new bct file from the given config file.
++.TP
++.B \-h, \-\-help, \-?
++Print help text and exit.
++
++.SH OPTIONS
++.TP
++.B \-d, \-\-debug
++Output debugging information.
++.TP
++.B \-o\fIodm_data\fP
++Specify the odm_data(in hex).
++.TP
++.B \-t, \-\-tegra \fINN\fP
++Select target device.  Must be one of: 20, 30, 114, 124, 132, 210.
++.TP
++.B \-s, \-\-ssoc \fItegraNN\fP
++Select target device.  Must be one of: tegra20, tegra30, tegra114, tegra124,
++tegra32, tegra210.
++.TP
++.B \-u \-\-update
++Copy input image data and update bct configs into new image file
++
++.SH EXAMPLES
++To generate a bct file from a text description obtained either through
++bct_dump(1) or cbootimage-configs:
++
++.nf
++$ cbootimage -gbct -t124 PM375_Hynix_2GB_H5TC4G63AFR_RDA_924MHz.bct.cfg PM375_Hynix_2GB_H5TC4G63AFR_RDA_924MHz.bct
++New BCT file PM375_Hynix_2GB_H5TC4G63AFR_RDA_924MHz.bct has been successfully generated!
++.fi
++
++To generate a boot image file including the newly generated bct:
++.nf
++cbootimage -t124 jetson-tk1-emmc.img.cfg jetson-tk1-emmc.img
++Image file jetson-tk1-emmc.img has been successfully generated!
++.fi
++
++.SH RETURN VALUE
++If any error occurs a non zero exit status is returned.
++
++.SH SEE ALSO
++.BR tegrarcm (1), bct_dump(1)
++
++.SH AUTHOR
++Peer Chen <pchen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+-- 
+1.9.1
