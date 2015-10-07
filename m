@@ -1,93 +1,79 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Subject: Re: [PATCH V2 1/2] Documentation: DT: Add binding documentation for
  NVIDIA ADMA
-Date: Wed, 7 Oct 2015 10:05:39 -0600
-Message-ID: <561542D3.8030607@wwwdotorg.org>
+Date: Wed, 7 Oct 2015 10:09:06 -0600
+Message-ID: <561543A2.2090402@wwwdotorg.org>
 References: <1444047007-30494-1-git-send-email-jonathanh@nvidia.com>
  <1444047007-30494-2-git-send-email-jonathanh@nvidia.com>
- <20151005131215.GN19064@leverpostej> <56139181.4090706@nvidia.com>
- <561451D3.2070605@wwwdotorg.org> <56153991.3040409@nvidia.com>
+ <56145369.7040404@wwwdotorg.org> <5614DB41.5080907@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56153991.3040409-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <5614DB41.5080907-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/07/2015 09:26 AM, Jon Hunter wrote:
+On 10/07/2015 02:43 AM, Jon Hunter wrote:
 >
-> On 06/10/15 23:57, Stephen Warren wrote:
->> On 10/06/2015 03:16 AM, Jon Hunter wrote:
->>>
->>> On 05/10/15 14:12, Mark Rutland wrote:
->>>> On Mon, Oct 05, 2015 at 01:10:06PM +0100, Jon Hunter wrote:
->>>>> Add device-tree binding documentation for the Tegra210 Audio DMA
->>>>> controller.
->>>>>
->>>>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>>> ---
->>>>>    .../devicetree/bindings/dma/tegra210-adma.txt      | 63
->>>>> ++++++++++++++++++++++
->>>>>    1 file changed, 63 insertions(+)
->>>>>    create mode 100644
->>>>> Documentation/devicetree/bindings/dma/tegra210-adma.txt
->>>>>
->>>>> diff --git a/Documentation/devicetree/bindings/dma/tegra210-adma.txt
->>>>> b/Documentation/devicetree/bindings/dma/tegra210-adma.txt
->>>>> new file mode 100644
->>>>> index 000000000000..df0e46868a63
->>>>> --- /dev/null
->>>>> +++ b/Documentation/devicetree/bindings/dma/tegra210-adma.txt
->>>>> @@ -0,0 +1,63 @@
->>>>> +* NVIDIA Tegra Audio DMA (ADMA) controller
->>>>> +
->>>>> +Required properties:
->>>>> +- compatible: Must be "nvidia,tegra210-adma".
->>>>> +- reg: Should contain DMA registers location and length. This
->>>>> should be
->>>>> +  a single entry that includes all of the per-channel registers in one
->>>>> +  contiguous bank.
->>>>> +- interrupt-parent: Phandle to the interrupt parent controller.
->>>>> +- interrupts: Should contain all of the per-channel DMA interrupts in
->>>>> +  ascending order with respect to the DMA channel index.
->>>>> +- clocks: Must contain one entry for the ADMA module clock,
->>>>> "adma_ape".
->>>>> +- clock-names: Must contain the entry "adma_ape".
->>>>> +- dma-channels: Must be 22. Defines the number of DMA channels
->>>>> supported
->>>>> +  by the DMA controller.
->>>>
->>>> If this has to be a fixed value, why is it necessary? Why does the
->>>> driver not just know this?
->>>>
->>>> Are there other instances of this IP block where this differs?
->>>
->>> So this will change for future devices and yes it may seem silly now to
->>> have something that fixed and appears to be constant but I was trying to
->>> future proof the binding. May be the comment should read "For tegra210
->>> must be 22", however, I thought the compatible string would imply this.
+> On 07/10/15 00:04, Stephen Warren wrote:
+>> On 10/05/2015 06:10 AM, Jon Hunter wrote:
+>>> Add device-tree binding documentation for the Tegra210 Audio DMA
+>>> controller.
 >>
->> Typically you'd want a table in the driver that maps from compatible
->> value to the set of per-SoC data that's associated with the compatible
->> value. Then, you don't need to put this data into the DT.
+>>> diff --git a/Documentation/devicetree/bindings/dma/tegra210-adma.txt
+>>> b/Documentation/devicetree/bindings/dma/tegra210-adma.txt
+>>
+>>> +- #dma-cells : Must be <2>. The first cell denotes the transmit or
+>>> +  receive request number and should be between 1 and the maximum number
+>>> +  of requests supported (see properties "dma-rx-requests" and
+>>> +  "dma-tx-requests"). This value corresponds to the RX/TX_REQUEST_SELECT
+>>> +  fields in the ADMA_CHn_CTRL register. The second cell denotes whether
+>>> +  the channel is a receive or transmit channel and must be either 2 for
+>>> +  a receive channel and 4 for a transmit channel. These values
+>>> correspond
+>>> +  to the TRANSFER_DIRECTION field of the ADMA_CHn_CTRL register.
+>>
+>> Is it typical to encode the direction into the dma cells? I would have
+>> thought the client would provide that information at run-time when
+>> requesting a DMA channel.
 >
-> Yes I have seen that which I was not sure that I was a fan of, given
-> that we have DT and its purpose is to describe the hardware. So may be
-> the problem I have is deciding on which hardware parameters should be
-> described in DT versus those that should be place in the driver itself.
-> I am not sure if there is a rule of thumb for this type of thing?
+> I have seen other dma bindings that do [0]. If we don't put the
+> direction in the client binding, then it would appear as ...
+>
+> tegra_admaif: admaif@0x702d0000 {
+>      ...
+>      dmas = <&adma 1>, <&adma 1>, <&adma 2>, <&adma 2>,
+>             <&adma 3>, <&adma 3>, <&adma 4>, <&adma 4>,
+>             <&adma 5>, <&adma 5>, <&adma 6>, <&adma 6>,
+>             <&adma 7>, <&adma 7>, <&adma 8>, <&adma 8>,
+>             <&adma 9>, <&adma 9>, <&adma 10>, <&adma 10>;
+>      dma-names = "rx1", "tx1", "rx2", "tx2", "rx3", "tx3",
+>                  "rx4", "tx4", "rx5", "tx5", "rx6", "tx6",
+>                  "rx7", "tx7", "rx8", "tx8", "rx9", "tx9",
+>                  "rx10", "tx10";
+>      ...
+> };
+>
+> ... where "rxN" and "txN" appear to use the same request, but the
+> reality is that "rxN" is using rx-request-N and "txN" is using
+> tx-request-N. Arnd questioned this before. Obviously I can explain this
+> in the binding document if the above is preferred. However, given that
+> they are named "rx1", "rx2", etc, why not put the direction in the binding?
 
-It seems to be a matter of preference.
+Why would we need to duplicate the request IDs? I'd expect to have the 
+following property content:
 
-I think DT is mainly about identifying which HW is present. Facets of 
-the HW that are fixed (100% derivable from the compatible value) belong 
-in the driver. If we took the opposite view, we should put a description 
-of every register/field layout in the DT in case they change on new HW 
-and we don't want to edit the driver code to take account of that, and 
-in fact should put byte code into the DT since simple data might not be 
-enough to allow us not to edit the driver. Facets that vary between 
-boards, use-cases, etc. are the main benefit of DT in my opinion, not 
-slow-moving data specific to SoCs.
+dmas = <&adma 1>, <&adma 2>, <&adma 3>, ...;
+dma-names = "1", "2", "3"...;
+
+*and* not have a cell to represent the direction in DT. After all, the 
+direction of the channel is 100% implied by the use-case (and hence 
+defined by the DMA client's own DT binding); it is known by the client 
+driver and can be supplied at run-time.
+
+Perhaps the core DMA DT bindings are not designed that way though, in 
+which case I suppose the patch you sent makes sense. If so though, that 
+seems like a bug in the core DMA DT bindings.
