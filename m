@@ -1,82 +1,106 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [tegrarcm PATCH v2 3/4] Add support to dump rsa related fields
- for t210
-Date: Wed, 7 Oct 2015 13:28:33 -0600
-Message-ID: <56157261.9030000@wwwdotorg.org>
-References: <1443819420-26562-1-git-send-email-jimmzhang@nvidia.com>
- <1443819420-26562-4-git-send-email-jimmzhang@nvidia.com>
- <56154C29.90708@wwwdotorg.org>
- <8ad0a6e53ee44852a89c71989b584e1e@HQMAIL103.nvidia.com>
+Subject: Re: [PATCH V2 1/2] Documentation: DT: Add binding documentation for
+ NVIDIA ADMA
+Date: Wed, 7 Oct 2015 13:36:46 -0600
+Message-ID: <5615744E.2060209@wwwdotorg.org>
+References: <1444047007-30494-1-git-send-email-jonathanh@nvidia.com>
+ <1444047007-30494-2-git-send-email-jonathanh@nvidia.com>
+ <56145369.7040404@wwwdotorg.org> <5614DB41.5080907@nvidia.com>
+ <561543A2.2090402@wwwdotorg.org> <56154629.8080205@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <8ad0a6e53ee44852a89c71989b584e1e-wO81nVYWzR7YuxH7O460wFaTQe2KTcn/@public.gmane.org>
+In-Reply-To: <56154629.8080205-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Allen Martin <AMartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/07/2015 12:57 PM, Jimmy Zhang wrote:
+On 10/07/2015 10:19 AM, Jon Hunter wrote:
 >
+> On 07/10/15 17:09, Stephen Warren wrote:
+>> On 10/07/2015 02:43 AM, Jon Hunter wrote:
+>>>
+>>> On 07/10/15 00:04, Stephen Warren wrote:
+>>>> On 10/05/2015 06:10 AM, Jon Hunter wrote:
+>>>>> Add device-tree binding documentation for the Tegra210 Audio DMA
+>>>>> controller.
+>>>>
+>>>>> diff --git a/Documentation/devicetree/bindings/dma/tegra210-adma.txt
+>>>>> b/Documentation/devicetree/bindings/dma/tegra210-adma.txt
+>>>>
+>>>>> +- #dma-cells : Must be <2>. The first cell denotes the transmit or
+>>>>> +  receive request number and should be between 1 and the maximum
+>>>>> number
+>>>>> +  of requests supported (see properties "dma-rx-requests" and
+>>>>> +  "dma-tx-requests"). This value corresponds to the
+>>>>> RX/TX_REQUEST_SELECT
+>>>>> +  fields in the ADMA_CHn_CTRL register. The second cell denotes
+>>>>> whether
+>>>>> +  the channel is a receive or transmit channel and must be either 2
+>>>>> for
+>>>>> +  a receive channel and 4 for a transmit channel. These values
+>>>>> correspond
+>>>>> +  to the TRANSFER_DIRECTION field of the ADMA_CHn_CTRL register.
+>>>>
+>>>> Is it typical to encode the direction into the dma cells? I would have
+>>>> thought the client would provide that information at run-time when
+>>>> requesting a DMA channel.
+>>>
+>>> I have seen other dma bindings that do [0]. If we don't put the
+>>> direction in the client binding, then it would appear as ...
+>>>
+>>> tegra_admaif: admaif@0x702d0000 {
+>>>       ...
+>>>       dmas = <&adma 1>, <&adma 1>, <&adma 2>, <&adma 2>,
+>>>              <&adma 3>, <&adma 3>, <&adma 4>, <&adma 4>,
+>>>              <&adma 5>, <&adma 5>, <&adma 6>, <&adma 6>,
+>>>              <&adma 7>, <&adma 7>, <&adma 8>, <&adma 8>,
+>>>              <&adma 9>, <&adma 9>, <&adma 10>, <&adma 10>;
+>>>       dma-names = "rx1", "tx1", "rx2", "tx2", "rx3", "tx3",
+>>>                   "rx4", "tx4", "rx5", "tx5", "rx6", "tx6",
+>>>                   "rx7", "tx7", "rx8", "tx8", "rx9", "tx9",
+>>>                   "rx10", "tx10";
+>>>       ...
+>>> };
+>>>
+>>> ... where "rxN" and "txN" appear to use the same request, but the
+>>> reality is that "rxN" is using rx-request-N and "txN" is using
+>>> tx-request-N. Arnd questioned this before. Obviously I can explain this
+>>> in the binding document if the above is preferred. However, given that
+>>> they are named "rx1", "rx2", etc, why not put the direction in the
+>>> binding?
+>>
+>> Why would we need to duplicate the request IDs? I'd expect to have the
+>> following property content:
+>>
+>> dmas = <&adma 1>, <&adma 2>, <&adma 3>, ...;
+>> dma-names = "1", "2", "3"...;
+>>
+>> *and* not have a cell to represent the direction in DT. After all, the
+>> direction of the channel is 100% implied by the use-case (and hence
+>> defined by the DMA client's own DT binding); it is known by the client
+>> driver and can be supplied at run-time.
 >
->> -----Original Message-----
->> From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
->> Sent: Wednesday, October 07, 2015 9:45 AM
->> To: Jimmy Zhang
->> Cc: Allen Martin; Stephen Warren; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> Subject: Re: [tegrarcm PATCH v2 3/4] Add support to dump rsa related fields
->> for t210
->>
->> On 10/02/2015 02:56 PM, Jimmy Zhang wrote:
->>> Add support to dump rsa pubkey, bct's rsa-pss signature and
->>> bootloader's rsa-pss signature.
->>
->> It also seems to dump some AES hashes too.
->>
->>> diff --git a/src/bct_dump.c b/src/bct_dump.c
->>
->>> +static void format_rsa_param(char const * message, void * data) {
->>> +	u_int8_t *rsa = (u_int8_t *)data;
->>> +	int byte_index;
->>> +
->>> +	printf("%s", message);
->>> +	for (byte_index = 0; byte_index < ARSE_RSA_PARAM_MAX_BYTES;
->>> +					++byte_index) {
->>> +		printf("%02x", *rsa++);
->>> +
->>> +		if (byte_index && ((byte_index + 1) % 64 == 0))
->>> +			printf(";\n");
->>> +	}
->>> +
->>> +	if (byte_index && (byte_index % 64 != 0))
->>> +			printf(";\n");
->>> +}
->>
->> The same comment about hard-coding ARSE_RSA_PARAM_MAX_BYTES
->> applies here as in the previous commit.
->>
->> It would be nice if this function wrote the values to a file. That way, the
->> output of bct_dump would be something you could feed into cbootimage
->> directly. With this patch, the user has to manually convert the inline hex data
->> into a binary file before the output is useful.
->>
->> Still, solving that might be challenging. If bct_dump wrote to a user-supplied
->> filename, the files could simply be named "${filename}.RsaKeyModulus" etc.
->> However, since bct_dump prints to stdout, that's not possible. Perhaps since
->> bct_dump is mostly a debug aid, we can live with this issue for now.
->
-> Maybe we should add a command line option to save RsaKey modulus to a given file.  I can come up another patch after this series is merged.
+> Right, but what does the 1, 2, 3, etc in the specifier represent?
 
-That would work. The issue is there are 3 tokens which implies 3 
-command-line options (and may be more tokens if we extend cbootimage to 
-support N BCT copies, N bootloaders, etc.).
+Aren't they the ADMAIF FIFO IDs?
 
-Perhaps best would be:
+We know the set/number of ADMAIF FIFOs, and each FIFO needs a request 
+selector ID. The list of those can be indexed by the identity of the 
+FIFO that is accessed via DMA.
 
-bct_dump foo.bin
--> Prints results to stdout, with inline dumps of the RSA fields
+Thinking about this more, I think actually that the dmas/dma-names 
+property example that you posted above is exactly what is required here. 
+The counter-example I wrote makes this assumption and hence is invalid. 
+The ADMAIF binding should not assume that the RX and TX request selector 
+IDs are identical. As such, dmas/dma-names should have both an RX and TX 
+entry for each ADMAIF FIFO.
 
-bct_dump -o foo.cfg foo.bin
--> "Prints" results to foo.cfg, and puts all the RSA fields (as binary) 
-into foo.cfg.RsaKeyModulus (and a variety of other auto-named files)?
+Still, there's no need to encode the DMA direction into the #dma-cells. 
+The client code will know that if it wants to configure DMA into (TX to) 
+FIFO ID 5, it must query dma-names entry "tx5", and simply use whatever 
+is in the DT. When it passes that DMA specifier to the DMA API, the 
+ADMAIF driver knows that it will be for TX, and can pass that 
+information to the DMA code.
