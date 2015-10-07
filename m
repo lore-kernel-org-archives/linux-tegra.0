@@ -1,100 +1,172 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 1/2] Documentation: DT: Add binding documentation for
- NVIDIA ADMA
-Date: Wed, 7 Oct 2015 17:19:53 +0100
-Message-ID: <56154629.8080205@nvidia.com>
-References: <1444047007-30494-1-git-send-email-jonathanh@nvidia.com>
- <1444047007-30494-2-git-send-email-jonathanh@nvidia.com>
- <56145369.7040404@wwwdotorg.org> <5614DB41.5080907@nvidia.com>
- <561543A2.2090402@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [tegrarcm PATCH v2 2/4] Add support for update pubkey and rsa-pss
+ signatures
+Date: Wed, 7 Oct 2015 10:33:45 -0600
+Message-ID: <56154969.6080501@wwwdotorg.org>
+References: <1443819420-26562-1-git-send-email-jimmzhang@nvidia.com>
+ <1443819420-26562-3-git-send-email-jimmzhang@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <561543A2.2090402-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1443819420-26562-3-git-send-email-jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 10/02/2015 02:56 PM, Jimmy Zhang wrote:
+> Create new configuration keywords:
+>     RsaKeyModulusFile: pubkey modulus
+>     RsaPssSigBlFile:   bootloader rsa pss signature
+>     RsaPssSigBctFile:  bct rsa pss signature
+>
+> Sample Configuration file update_bl_sig.cfg
+>     RsaKeyModulusFile = pubkey.mod;
+>     RsaPssSigBlFile = bl.sig;
+>
+> where pubkey.mod and bl.sig are files that contain the public key
+> modulus and bootloader's rsa-pss signature respectively.
+>
+> public key modulus and signature are created through utilities
+> outside cbootimage.
+>
+> Command line example:
+>   $ cbootimage -s tegra210 -u update_bl_sig.cfg image.bin image.bin-bl-signed
+>
+> Above three new keywords added in this CL are only implemented support
+> for T210.
 
-On 07/10/15 17:09, Stephen Warren wrote:
-> On 10/07/2015 02:43 AM, Jon Hunter wrote:
->>
->> On 07/10/15 00:04, Stephen Warren wrote:
->>> On 10/05/2015 06:10 AM, Jon Hunter wrote:
->>>> Add device-tree binding documentation for the Tegra210 Audio DMA
->>>> controller.
->>>
->>>> diff --git a/Documentation/devicetree/bindings/dma/tegra210-adma.txt
->>>> b/Documentation/devicetree/bindings/dma/tegra210-adma.txt
->>>
->>>> +- #dma-cells : Must be <2>. The first cell denotes the transmit or
->>>> +  receive request number and should be between 1 and the maximum
->>>> number
->>>> +  of requests supported (see properties "dma-rx-requests" and
->>>> +  "dma-tx-requests"). This value corresponds to the
->>>> RX/TX_REQUEST_SELECT
->>>> +  fields in the ADMA_CHn_CTRL register. The second cell denotes
->>>> whether
->>>> +  the channel is a receive or transmit channel and must be either 2
->>>> for
->>>> +  a receive channel and 4 for a transmit channel. These values
->>>> correspond
->>>> +  to the TRANSFER_DIRECTION field of the ADMA_CHn_CTRL register.
->>>
->>> Is it typical to encode the direction into the dma cells? I would have
->>> thought the client would provide that information at run-time when
->>> requesting a DMA channel.
->>
->> I have seen other dma bindings that do [0]. If we don't put the
->> direction in the client binding, then it would appear as ...
->>
->> tegra_admaif: admaif@0x702d0000 {
->>      ...
->>      dmas = <&adma 1>, <&adma 1>, <&adma 2>, <&adma 2>,
->>             <&adma 3>, <&adma 3>, <&adma 4>, <&adma 4>,
->>             <&adma 5>, <&adma 5>, <&adma 6>, <&adma 6>,
->>             <&adma 7>, <&adma 7>, <&adma 8>, <&adma 8>,
->>             <&adma 9>, <&adma 9>, <&adma 10>, <&adma 10>;
->>      dma-names = "rx1", "tx1", "rx2", "tx2", "rx3", "tx3",
->>                  "rx4", "tx4", "rx5", "tx5", "rx6", "tx6",
->>                  "rx7", "tx7", "rx8", "tx8", "rx9", "tx9",
->>                  "rx10", "tx10";
->>      ...
->> };
->>
->> ... where "rxN" and "txN" appear to use the same request, but the
->> reality is that "rxN" is using rx-request-N and "txN" is using
->> tx-request-N. Arnd questioned this before. Obviously I can explain this
->> in the binding document if the above is preferred. However, given that
->> they are named "rx1", "rx2", etc, why not put the direction in the
->> binding?
-> 
-> Why would we need to duplicate the request IDs? I'd expect to have the
-> following property content:
-> 
-> dmas = <&adma 1>, <&adma 2>, <&adma 3>, ...;
-> dma-names = "1", "2", "3"...;
-> 
-> *and* not have a cell to represent the direction in DT. After all, the
-> direction of the channel is 100% implied by the use-case (and hence
-> defined by the DMA client's own DT binding); it is known by the client
-> driver and can be supplied at run-time.
+> diff --git a/src/cbootimage.h b/src/cbootimage.h
 
-Right, but what does the 1, 2, 3, etc in the specifier represent? If it
-is the request signal then I don't see how this would work because there
-are 10 rx request signals and 10 tx requests signal and both are 1-10.
-If you look at the ADMA_CH<n>_CTRL_0 register you will see there are a
-fields for the TX_REQUEST_SELECT, RX_REQUEST_SELECT and
-TRANSFER_DIRECTION. It seems a bit silly to have both TX_REQUEST_SELECT
-and RX_REQUEST_SELECT as the channel can only work with one direction at
-any given time.
+> +#define ARSE_RSA_MAX_MODULUS_SIZE	2048
+> +#define ARSE_RSA_PARAM_MAX_BYTES	(ARSE_RSA_MAX_MODULUS_SIZE / 8)
 
-> Perhaps the core DMA DT bindings are not designed that way though, in
-> which case I suppose the patch you sent makes sense. If so though, that
-> seems like a bug in the core DMA DT bindings.
+These values are currently defined in the chip-specific location 
+src/tNNN/nvboot_bct_tNNN.h, and this patch only removes a single on of 
+those 3 copies when creating this new centralized value. At best that 
+makes the code inconsistent, and at worst could cause compile errors due 
+to multiple definitions.
 
-I think it is more of a nuance in how this DMA controller is configured.
+Instead, can you leave this value in the T210-specific location. More 
+related to this below.
 
-Jon
+> diff --git a/src/parse.c b/src/parse.c
+
+> +static int parse_rsa_param(build_image_context *context,
+> +			parse_token token,
+> +			char *rest)
+> +{
+> +	char filename[MAX_BUFFER];
+> +
+> +	assert(context != NULL);
+> +	assert(rest != NULL);
+> +
+> +	if (context->generate_bct != 0)
+> +		return 0;
+> +
+> +	/* Parse the file name. */
+> +	rest = parse_filename(rest, filename, MAX_BUFFER);
+> +	if (rest == NULL)
+> +		return 1;
+
+That doesn't look like the correct error check. Rather, other function 
+that parse filenames (and other fields) appear to do something like the 
+following after parsing all the fields:
+
+         /* Parse the end state. */
+         rest = parse_end_state(rest, e_state, MAX_STR_LEN);
+         if (rest == NULL)
+                 return 1;
+
+I suspect that code should be present in this function too?
+
+> diff --git a/src/set.c b/src/set.c
+
+> +int
+> +set_rsa_param(build_image_context *context, parse_token token,
+> +		char *filename)
+> +{
+> +	int	result;
+> +	u_int8_t *rsa_storage;	/* Holds the rsa param after reading */
+> +	u_int32_t actual_size;	/* In bytes */
+> +	file_type rsa_filetype = file_type_bin;
+> +
+> +        /* Read the image into memory. */
+> +	result = read_from_image(filename,
+> +				0,
+> +				ARSE_RSA_PARAM_MAX_BYTES,
+> +				&rsa_storage,
+> +				&actual_size,
+> +				rsa_filetype);
+> +
+> +	if (result) {
+> +		printf("Error reading file %s.\n", filename);
+> +		exit(1);
+> +	}
+> +
+> +	if (actual_size != ARSE_RSA_PARAM_MAX_BYTES) {
+> +		printf("Error: invalid size, file %s.\n", filename);
+> +		exit(1);
+> +        }
+
+I would suggest removing anything from this function that restricts the 
+file size to any particular value, since this is generic code, and in 
+theory at least each SoC defines its own RSA size parameters.
+
+Looks like an indentation error there too.
+
+> diff --git a/src/t210/nvbctlib_t210.c b/src/t210/nvbctlib_t210.c
+
+> @@ -2198,6 +2201,24 @@ t210_bct_set_value(parse_token id, void *data, u_int8_t *bct)
+>   		memcpy(&bct_ptr->unique_chip_id, data, sizeof(nvboot_ecid));
+>   		break;
+>
+> +	case token_rsa_key_modulus:
+> +		memcpy(&bct_ptr->key, data, sizeof(nvboot_rsa_key_modulus));
+> +		break;
+> +
+> +	case token_rsa_pss_sig_bl:
+> +		/*
+> +		 * Update bootloader 0 since there is only one copy
+> +		 * of bootloader being built in.
+> +		 */
+> +		memcpy(&bct_ptr->bootloader[0].signature.rsa_pss_sig,
+> +			data, sizeof(nvboot_rsa_pss_sig));
+> +		break;
+> +
+> +	case token_rsa_pss_sig_bct:
+> +		memcpy(&bct_ptr->signature.rsa_pss_sig,
+> +			data, sizeof(nvboot_rsa_pss_sig));
+> +		break;
+
+Instead, I think the file size can be validated here?
+
+Hmm, I don't see a size parameter to this function:-(
+
+Given that, I think that either:
+
+a) Add a size parameter to this function. This has the disadvantage of 
+needing to update a bunch of call sites. I don't know how many; perhaps 
+this isn't a big deal?
+
+or:
+
+b) Modify set_rsa_param() so that it doesn't check the file size against 
+a single global define ARSE_RSA_PARAM_MAX_BYTES, but rather calls a 
+function that's implemented in src/t210/*.c that tells it what size the 
+token should be.
+
+This would also solve my other objection that currently set_rsa_param() 
+assumes that all the RSA-related parameters must be the same size. While 
+that is true at present, I'm not sure that it my be true in all cases in 
+the future.
+
+This is probably the most flexible, and not too hard to implement.
+
+or:
+
+c) Remove the duplicate defines (e.g. ARSE_RSA_MAX_MODULUS_SIZE) from 
+the T114/124/132 files too. This has the disadvantage that if some 
+future chip changes the RSA sizes, we'll have to undo this change at 
+that time, and switch back to (a) or (b).
