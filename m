@@ -1,75 +1,56 @@
-From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH V2 1/2] Documentation: DT: Add binding documentation for
- NVIDIA ADMA
-Date: Wed, 7 Oct 2015 17:38:11 +0100
-Message-ID: <20151007163811.GC31982@leverpostej>
-References: <1444047007-30494-1-git-send-email-jonathanh@nvidia.com>
- <1444047007-30494-2-git-send-email-jonathanh@nvidia.com>
- <56145369.7040404@wwwdotorg.org>
- <5614DB41.5080907@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [tegrarcm PATCH v2 3/4] Add support to dump rsa related fields
+ for t210
+Date: Wed, 7 Oct 2015 10:45:29 -0600
+Message-ID: <56154C29.90708@wwwdotorg.org>
+References: <1443819420-26562-1-git-send-email-jimmzhang@nvidia.com>
+ <1443819420-26562-4-git-send-email-jimmzhang@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <5614DB41.5080907-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1443819420-26562-4-git-send-email-jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Oct 07, 2015 at 09:43:45AM +0100, Jon Hunter wrote:
-> 
-> On 07/10/15 00:04, Stephen Warren wrote:
-> > On 10/05/2015 06:10 AM, Jon Hunter wrote:
-> >> Add device-tree binding documentation for the Tegra210 Audio DMA
-> >> controller.
-> > 
-> >> diff --git a/Documentation/devicetree/bindings/dma/tegra210-adma.txt
-> >> b/Documentation/devicetree/bindings/dma/tegra210-adma.txt
-> > 
-> >> +- #dma-cells : Must be <2>. The first cell denotes the transmit or
-> >> +  receive request number and should be between 1 and the maximum number
-> >> +  of requests supported (see properties "dma-rx-requests" and
-> >> +  "dma-tx-requests"). This value corresponds to the RX/TX_REQUEST_SELECT
-> >> +  fields in the ADMA_CHn_CTRL register. The second cell denotes whether
-> >> +  the channel is a receive or transmit channel and must be either 2 for
-> >> +  a receive channel and 4 for a transmit channel. These values
-> >> correspond
-> >> +  to the TRANSFER_DIRECTION field of the ADMA_CHn_CTRL register.
-> > 
-> > Is it typical to encode the direction into the dma cells? I would have
-> > thought the client would provide that information at run-time when
-> > requesting a DMA channel.
-> 
-> I have seen other dma bindings that do [0]. If we don't put the
-> direction in the client binding, then it would appear as ...
-> 
-> tegra_admaif: admaif@0x702d0000 {
->     ...
->     dmas = <&adma 1>, <&adma 1>, <&adma 2>, <&adma 2>,
->            <&adma 3>, <&adma 3>, <&adma 4>, <&adma 4>,
->            <&adma 5>, <&adma 5>, <&adma 6>, <&adma 6>,
->            <&adma 7>, <&adma 7>, <&adma 8>, <&adma 8>,
->            <&adma 9>, <&adma 9>, <&adma 10>, <&adma 10>;
->     dma-names = "rx1", "tx1", "rx2", "tx2", "rx3", "tx3",
->                 "rx4", "tx4", "rx5", "tx5", "rx6", "tx6",
->                 "rx7", "tx7", "rx8", "tx8", "rx9", "tx9",
->                 "rx10", "tx10";
->     ...
-> };
-> 
-> ... where "rxN" and "txN" appear to use the same request, but the
-> reality is that "rxN" is using rx-request-N and "txN" is using
-> tx-request-N. Arnd questioned this before. Obviously I can explain this
-> in the binding document if the above is preferred. However, given that
-> they are named "rx1", "rx2", etc, why not put the direction in the binding?
+On 10/02/2015 02:56 PM, Jimmy Zhang wrote:
+> Add support to dump rsa pubkey, bct's rsa-pss signature and
+> bootloader's rsa-pss signature.
 
-The client shouldn't know anything about the format of the specifier. If
-the client expects separate rx and tx DMA channels, it should describe
-these separately with names as above, regardless of whether the DMA
-controller requires TX and RX channels to be described differently.
+It also seems to dump some AES hashes too.
 
-I don't know if it make sense to also verify this from the DMA
-controller's PoV.
+> diff --git a/src/bct_dump.c b/src/bct_dump.c
 
-Mark.
+> +static void format_rsa_param(char const * message, void * data)
+> +{
+> +	u_int8_t *rsa = (u_int8_t *)data;
+> +	int byte_index;
+> +
+> +	printf("%s", message);
+> +	for (byte_index = 0; byte_index < ARSE_RSA_PARAM_MAX_BYTES;
+> +					++byte_index) {
+> +		printf("%02x", *rsa++);
+> +
+> +		if (byte_index && ((byte_index + 1) % 64 == 0))
+> +			printf(";\n");
+> +	}
+> +
+> +	if (byte_index && (byte_index % 64 != 0))
+> +			printf(";\n");
+> +}
+
+The same comment about hard-coding ARSE_RSA_PARAM_MAX_BYTES applies here 
+as in the previous commit.
+
+It would be nice if this function wrote the values to a file. That way, 
+the output of bct_dump would be something you could feed into cbootimage 
+directly. With this patch, the user has to manually convert the inline 
+hex data into a binary file before the output is useful.
+
+Still, solving that might be challenging. If bct_dump wrote to a 
+user-supplied filename, the files could simply be named 
+"${filename}.RsaKeyModulus" etc. However, since bct_dump prints to 
+stdout, that's not possible. Perhaps since bct_dump is mostly a debug 
+aid, we can live with this issue for now.
