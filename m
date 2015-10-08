@@ -1,7 +1,7 @@
 From: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [cbootimage PATCH v3 5/5] Add sample shell script to sign bootimage for T210
-Date: Thu, 8 Oct 2015 12:38:28 -0700
-Message-ID: <1444333109-3671-6-git-send-email-jimmzhang@nvidia.com>
+Subject: [cbootimage PATCH v3 5/5] Add two sample scripts to do rsa signing for T210 bootimage
+Date: Thu, 8 Oct 2015 12:38:29 -0700
+Message-ID: <1444333109-3671-7-git-send-email-jimmzhang@nvidia.com>
 References: <1444333109-3671-1-git-send-email-jimmzhang@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,23 +12,30 @@ To: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+A
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Sign.sh runs openssl and other linux utilities to generate rsa-pss
-signatures for bootloader and bct and inject them into bct directly.
+sign.sh runs openssl and other linux utilities to generate rsa-pss
+signatures for a prebuilt bootimage and inject signatures and rsa
+modulus into bct directly.
 
 Syntax: sign.sh <bootimage> <rsa_key.pem>
 
-Another way to update signature is to use configuration keyword
-"RsaKeyModulusFile", "RsaPssSigBlFile", and "RsaPssSigBctFile". Details
-are explained in man page.
+sign-by-update.sh is similar to sign.sh. The difference is the
+signatures update are done by cbootimage with configuration
+keywords "RsaKeyModulusFile", "RsaPssSigBlFile", and "RsaPssSigBctFile".
+Comparing to sign.sh, this script is relatively simple to be ported
+to T124/T114.
+
+Syntax: sign-by-update.sh <bootimage> <rsa_key.pem>
 
 Signed-off-by: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- rehash.cfg   |  1 +
- rsa_priv.pem | 27 +++++++++++++++++++++++++
- sign.sh      | 65 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 93 insertions(+)
+ rehash.cfg        |  1 +
+ rsa_priv.pem      | 27 +++++++++++++++++++++++
+ sign-by-update.sh | 59 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ sign.sh           | 65 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 152 insertions(+)
  create mode 100644 rehash.cfg
  create mode 100644 rsa_priv.pem
+ create mode 100755 sign-by-update.sh
  create mode 100755 sign.sh
 
 diff --git a/rehash.cfg b/rehash.cfg
@@ -71,6 +78,71 @@ index 000000000000..cbafc03ba35a
 +NzaahUZKtEankjMlXw2RHMYrXjtAJgwXlV4rMWxkaqUrVqq99v6M1QNx/SHjnVB+
 +SYQ8PZHp0mPk/opRPydP/U5WKDcP10KRuSNRSQmvacD5gzs3B6Jhqg==
 +-----END RSA PRIVATE KEY-----
+diff --git a/sign-by-update.sh b/sign-by-update.sh
+new file mode 100755
+index 000000000000..b3f010a41d0e
+--- /dev/null
++++ b/sign-by-update.sh
+@@ -0,0 +1,59 @@
++IMAGE_FILE=$1
++KEY_FILE=$2
++TARGET_IMAGE=$IMAGE_FILE
++CONFIG_FILE=update.cfg
++
++CBOOTIMAGE=src/cbootimage
++BCT_DUMP=src/bct_dump
++OBJCOPY=objcopy
++OPENSSL=openssl
++DD=dd
++RM=rm
++MV=mv
++XXD=xxd
++
++echo " Get rid of all temporary files: *.sig, *.tosig, *.tmp *.mod *.rev"
++$RM -f *.sig *.tosig *.tmp *.mod *.rev
++
++echo " Get bl length "
++BL_LENGTH=`$BCT_DUMP $IMAGE_FILE | grep "Bootloader\[0\].Length" \
++ | awk -F ' ' '{print $4}' | awk -F ';' '{print $1}'`
++
++echo " Extract bootloader to $IMAGE_FILE.bl.tosig, length $BL_LENGTH "
++$DD bs=1 skip=32768 if=$IMAGE_FILE of=$IMAGE_FILE.bl.tosig count=$BL_LENGTH
++
++echo " Calculate rsa signature for bl and save to $IMAGE_FILE.bl.sig"
++$OPENSSL dgst -sha256 -sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:-1 \
++ -sign $KEY_FILE -out $IMAGE_FILE.bl.sig $IMAGE_FILE.bl.tosig
++
++echo " Reverse bl signature to meet tegra soc signature ordering"
++$OBJCOPY -I binary --reverse-bytes=256 $IMAGE_FILE.bl.sig $IMAGE_FILE.bl.sig.rev
++
++echo "# Update bootloader's rsa signature, aes hash and bct's aes hash"
++echo "RsaPssSigBlFile = $IMAGE_FILE.bl.sig.rev;" > $CONFIG_FILE
++echo "RehashBl;" >> $CONFIG_FILE
++$CBOOTIMAGE -s tegra210 -u $CONFIG_FILE $IMAGE_FILE $IMAGE_FILE.tmp
++
++echo " Extract the part of bct which needs to be rsa signed"
++$DD bs=1 if=$IMAGE_FILE.tmp of=$IMAGE_FILE.bct.tosig count=8944 skip=1296
++
++echo " Calculate rsa signature for bct and save to $IMAGE_FILE.bct.sig"
++$OPENSSL dgst -sha256 -sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:-1 \
++ -sign $KEY_FILE -out $IMAGE_FILE.bct.sig $IMAGE_FILE.bct.tosig
++
++echo " Reverse bct signature to meet tegra soc signature ordering"
++$OBJCOPY -I binary --reverse-bytes=256 $IMAGE_FILE.bct.sig $IMAGE_FILE.bct.sig.rev
++
++echo " Create public key modulus from key file $KEY_FILE and save to $KEY_FILE.mod"
++$OPENSSL rsa -in $KEY_FILE -noout -modulus -out $KEY_FILE.mod
++# remove prefix and LF
++$DD bs=1 if=$KEY_FILE.mod of=$KEY_FILE.mod.tmp skip=8 count=512
++# convert format from hexdecimal to binary
++$XXD -r -p -l 256 $KEY_FILE.mod.tmp $KEY_FILE.mod.bin
++# reverse byte order"
++$OBJCOPY -I binary --reverse-bytes=256 $KEY_FILE.mod.bin $KEY_FILE.mod.bin.rev
++
++echo "# Update bct's rsa signature and modulus"
++echo "RsaPssSigBctFile = $IMAGE_FILE.bct.sig.rev;" > $CONFIG_FILE
++echo "RsaKeyModulusFile = $KEY_FILE.mod.bin.rev;" >> $CONFIG_FILE
++$CBOOTIMAGE -s tegra210 -u $CONFIG_FILE $IMAGE_FILE.tmp $TARGET_IMAGE
 diff --git a/sign.sh b/sign.sh
 new file mode 100755
 index 000000000000..8f8a353fe19f
