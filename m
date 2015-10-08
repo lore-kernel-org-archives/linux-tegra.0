@@ -1,146 +1,143 @@
-From: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [cbootimage PATCH v3 5/5] Add sample shell script to sign bootimage for T210
-Date: Wed, 7 Oct 2015 17:40:45 -0700
-Message-ID: <1444264845-16741-6-git-send-email-jimmzhang@nvidia.com>
-References: <1444264845-16741-1-git-send-email-jimmzhang@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH V2 1/2] Documentation: DT: Add binding documentation for
+ NVIDIA ADMA
+Date: Thu, 8 Oct 2015 10:58:11 +0100
+Message-ID: <56163E33.4080303@nvidia.com>
+References: <1444047007-30494-1-git-send-email-jonathanh@nvidia.com>
+ <1444047007-30494-2-git-send-email-jonathanh@nvidia.com>
+ <56145369.7040404@wwwdotorg.org> <5614DB41.5080907@nvidia.com>
+ <561543A2.2090402@wwwdotorg.org> <56154629.8080205@nvidia.com>
+ <5615744E.2060209@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1444264845-16741-1-git-send-email-jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5615744E.2060209@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vinod.koul@intel.com>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Arnd Bergmann <arnd@arndb.de>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Sign.sh runs openssl and other linux utilities to generate rsa-pss
-signatures for bootloader and bct and inject them into bct directly.
 
-Syntax: sign.sh <bootimage> <rsa_key.pem>
+On 07/10/15 20:36, Stephen Warren wrote:
+> On 10/07/2015 10:19 AM, Jon Hunter wrote:
+>>
+>> On 07/10/15 17:09, Stephen Warren wrote:
+>>> On 10/07/2015 02:43 AM, Jon Hunter wrote:
+>>>>
+>>>> On 07/10/15 00:04, Stephen Warren wrote:
+>>>>> On 10/05/2015 06:10 AM, Jon Hunter wrote:
+>>>>>> Add device-tree binding documentation for the Tegra210 Audio DMA
+>>>>>> controller.
+>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/dma/tegra210-adma.txt
+>>>>>> b/Documentation/devicetree/bindings/dma/tegra210-adma.txt
+>>>>>
+>>>>>> +- #dma-cells : Must be <2>. The first cell denotes the transmit or
+>>>>>> +  receive request number and should be between 1 and the maximum
+>>>>>> number
+>>>>>> +  of requests supported (see properties "dma-rx-requests" and
+>>>>>> +  "dma-tx-requests"). This value corresponds to the
+>>>>>> RX/TX_REQUEST_SELECT
+>>>>>> +  fields in the ADMA_CHn_CTRL register. The second cell denotes
+>>>>>> whether
+>>>>>> +  the channel is a receive or transmit channel and must be either 2
+>>>>>> for
+>>>>>> +  a receive channel and 4 for a transmit channel. These values
+>>>>>> correspond
+>>>>>> +  to the TRANSFER_DIRECTION field of the ADMA_CHn_CTRL register.
+>>>>>
+>>>>> Is it typical to encode the direction into the dma cells? I would have
+>>>>> thought the client would provide that information at run-time when
+>>>>> requesting a DMA channel.
+>>>>
+>>>> I have seen other dma bindings that do [0]. If we don't put the
+>>>> direction in the client binding, then it would appear as ...
+>>>>
+>>>> tegra_admaif: admaif@0x702d0000 {
+>>>>       ...
+>>>>       dmas = <&adma 1>, <&adma 1>, <&adma 2>, <&adma 2>,
+>>>>              <&adma 3>, <&adma 3>, <&adma 4>, <&adma 4>,
+>>>>              <&adma 5>, <&adma 5>, <&adma 6>, <&adma 6>,
+>>>>              <&adma 7>, <&adma 7>, <&adma 8>, <&adma 8>,
+>>>>              <&adma 9>, <&adma 9>, <&adma 10>, <&adma 10>;
+>>>>       dma-names = "rx1", "tx1", "rx2", "tx2", "rx3", "tx3",
+>>>>                   "rx4", "tx4", "rx5", "tx5", "rx6", "tx6",
+>>>>                   "rx7", "tx7", "rx8", "tx8", "rx9", "tx9",
+>>>>                   "rx10", "tx10";
+>>>>       ...
+>>>> };
+>>>>
+>>>> ... where "rxN" and "txN" appear to use the same request, but the
+>>>> reality is that "rxN" is using rx-request-N and "txN" is using
+>>>> tx-request-N. Arnd questioned this before. Obviously I can explain this
+>>>> in the binding document if the above is preferred. However, given that
+>>>> they are named "rx1", "rx2", etc, why not put the direction in the
+>>>> binding?
+>>>
+>>> Why would we need to duplicate the request IDs? I'd expect to have the
+>>> following property content:
+>>>
+>>> dmas = <&adma 1>, <&adma 2>, <&adma 3>, ...;
+>>> dma-names = "1", "2", "3"...;
+>>>
+>>> *and* not have a cell to represent the direction in DT. After all, the
+>>> direction of the channel is 100% implied by the use-case (and hence
+>>> defined by the DMA client's own DT binding); it is known by the client
+>>> driver and can be supplied at run-time.
+>>
+>> Right, but what does the 1, 2, 3, etc in the specifier represent?
+> 
+> Aren't they the ADMAIF FIFO IDs?
 
-Another way to update signature is to use configuration keyword
-"RsaKeyModulusFile", "RsaPssSigBlFile", and "RsaPssSigBctFile". Details
-are explained in man page.
+Yes.
 
-Signed-off-by: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- rehash.cfg   |  1 +
- rsa_priv.pem | 27 +++++++++++++++++++++++++
- sign.sh      | 65 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 93 insertions(+)
- create mode 100644 rehash.cfg
- create mode 100644 rsa_priv.pem
- create mode 100755 sign.sh
+> We know the set/number of ADMAIF FIFOs, and each FIFO needs a request
+> selector ID. The list of those can be indexed by the identity of the
+> FIFO that is accessed via DMA.
 
-diff --git a/rehash.cfg b/rehash.cfg
-new file mode 100644
-index 000000000000..c5c741bad536
---- /dev/null
-+++ b/rehash.cfg
-@@ -0,0 +1 @@
-+RehashBl;
-diff --git a/rsa_priv.pem b/rsa_priv.pem
-new file mode 100644
-index 000000000000..cbafc03ba35a
---- /dev/null
-+++ b/rsa_priv.pem
-@@ -0,0 +1,27 @@
-+-----BEGIN RSA PRIVATE KEY-----
-+MIIEpAIBAAKCAQEAs3Lf87UkomlfVHdw/FEz+owzgO+ZFu6/72qT+jSu7aEDZeZj
-+l2cgTQOnHjlmBYj6KoqwXQmY6ZWPNBT7xDqzGdvimCVRC3OGRee2uD+Itu/Qwo1F
-+FOb7v+l3v6lODGqDJ06aIxLicEiqK55dk5z+7dP8yyJ3pRhwiDPE4tNtlLOWgmJ/
-+hENyqBHbMMzg67Qwb+aa89wfq2FRrvGOpfmrKlhqtikDnwJALBfkr7hsZGZOszHC
-+ii2L5T3eCaI/me2/VIGlQSjGxmaDkiG/aIZVTuIX/LuOyi4sLXJ9cIFQ7Ty/0PAk
-+6Ia6VyEGETQt6+JeLETX4Zc+XCnfbE/Flhs5PwIDAQABAoIBAQCMcmM/Xc4PY0Ne
-+W6FNicyR0vtYda4u2avVGWg50tP6XiPHtDrMO8V3IV3B9RCZUmzhsOx51NIeN5T+
-+IVIvcfXNTmCZzdMRkFhODB3hNLCu5SFRs7mWs3Xj7TlxA3R3mUGPGSDgRJ5/XQ/6
-+1ZbNunl38IuQ/SgBShCBOWtmUC4ay+ctm1CzBZ/7AYlauOxdoKiU2nzlwpMrX9+C
-+vaVKRQVYbE7EYJsWKOx6vRPU5Kjoq6StlSW4caG0ReRu9tO+xL7kZnqp1BWl3KHw
-+OfzLy1CmwDkV3bKFclRWWPR97nN7F95SUFIJ3bOVjU/K2TKuLtMYPPVdG4CBBeB5
-+eK2Qae7ZAoGBAOprwiAvcRNWJ2W5JoCkh0L6AHXx2z+S1Bbt0laz4NyqyfPX2SMl
-+DJRxm/IoYRfwZf7fussI1bG7g4UP8HjfrlAzSEWVgPNMSWftOFzkv4QNr2ySjk0/
-+nZRsd+zj2kxhc8ukDhiORkyEEg5gtsEUqbtdZHOiqtkNbKOPD6EGKeP7AoGBAMP3
-+q5NUh9pJ2RGSkdKutloXNe0HPI6sjsCX3HHWAaFyqBtXWvRU3fIaMUpGQcPaqDCt
-+LhzVoNlPXdeQ7vTkBPtiYQBcs0NPI+58pnD5fgR00yTX/5ZIGKbX0NnpZ3spsQAQ
-+FQTXGy80+JyGMmJCDf32VGC96I9Ey5w49U23kXiNAoGAGEtiqwM/rMlY++ncW6ix
-+e/d85LxUBJqq8FVlXyb1PulUVLkh/8pvK1M63jXhGiIH8Aovyar4upq8XqXwPhaw
-+cg9ehhegbZaSZProxHfQgVcJvy7RIKBfLGqxYxOaJCBVZ91wuIrGLlfhpyvOxOPn
-+U0uyhWluW2BQygKhlAaXgNECgYAKDAif5RWR+3dFj14qjwqKU+ZP4K8aIX6wIRkM
-+PQyYWmiD/laLcE5wuycLx85XXD6DQF283LcCbS9CfgvCQm5+9OxEOHx4VvZgo8Nk
-+x2XOlK6+lNRlwAyDgU0T3wOPLPQGLMznEqAyK2UToU2z++77tkVdMF9b+Qr3V3Q8
-+J80tgQKBgQCW2OHHUfnfRMns/d1sp/QNMag19flOT+IjvZXI5ZMy9yojlpcTSdSq
-+NzaahUZKtEankjMlXw2RHMYrXjtAJgwXlV4rMWxkaqUrVqq99v6M1QNx/SHjnVB+
-+SYQ8PZHp0mPk/opRPydP/U5WKDcP10KRuSNRSQmvacD5gzs3B6Jhqg==
-+-----END RSA PRIVATE KEY-----
-diff --git a/sign.sh b/sign.sh
-new file mode 100755
-index 000000000000..8f8a353fe19f
---- /dev/null
-+++ b/sign.sh
-@@ -0,0 +1,65 @@
-+IMAGE_FILE=$1
-+KEY_FILE=$2
-+TARGET_IMAGE=$IMAGE_FILE
-+CONFIG_FILE=rehash.cfg
-+
-+CBOOTIMAGE=src/cbootimage
-+BCT_DUMP=src/bct_dump
-+OBJCOPY=objcopy
-+OPENSSL=openssl
-+DD=dd
-+RM=rm
-+MV=mv
-+XXD=xxd
-+
-+echo " Get rid of all temporary files: *.sig, *.tosig, *.tmp *.mod *.rev"
-+$RM -f *.sig *.tosig *.tmp *.mod *.rev
-+
-+echo " Get bl length "
-+BL_LENGTH=`$BCT_DUMP $IMAGE_FILE | grep "Bootloader\[0\].Length" \
-+ | awk -F ' ' '{print $4}' | awk -F ';' '{print $1}'`
-+
-+echo " Extract bootloader to $IMAGE_FILE.bl.tosig, length $BL_LENGTH "
-+$DD bs=1 skip=32768 if=$IMAGE_FILE of=$IMAGE_FILE.bl.tosig count=$BL_LENGTH
-+
-+echo " Calculate rsa signature for bl and save to $IMAGE_FILE.bl.sig"
-+$OPENSSL dgst -sha256 -sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:-1 \
-+ -sign $KEY_FILE -out $IMAGE_FILE.bl.sig $IMAGE_FILE.bl.tosig
-+
-+echo " Reverse bl signature to meet tegra soc signature ordering"
-+$OBJCOPY -I binary --reverse-bytes=256 $IMAGE_FILE.bl.sig $IMAGE_FILE.bl.sig.rev
-+
-+echo " Inject bl signature into bct"
-+$DD conv=notrunc bs=1 if=$IMAGE_FILE.bl.sig.rev of=$IMAGE_FILE seek=9052 count=256
-+
-+echo " Update bct aes hash and output to $IMAGE_FILE.tmp"
-+$CBOOTIMAGE -s tegra210 -u $CONFIG_FILE $IMAGE_FILE $IMAGE_FILE.tmp
-+
-+echo " Extract the part of bct which needs to be rsa signed"
-+$DD bs=1 if=$IMAGE_FILE.tmp of=$IMAGE_FILE.bct.tosig count=8944 skip=1296
-+
-+echo " Calculate rsa signature for bct and save to $IMAGE_FILE.bct.sig"
-+$OPENSSL dgst -sha256 -sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:-1 \
-+ -sign $KEY_FILE -out $IMAGE_FILE.bct.sig $IMAGE_FILE.bct.tosig
-+
-+echo " Reverse bct signature to meet tegra soc signature ordering"
-+$OBJCOPY -I binary --reverse-bytes=256 $IMAGE_FILE.bct.sig $IMAGE_FILE.bct.sig.rev
-+
-+echo " Inject bct signature into bct"
-+$DD conv=notrunc bs=1 if=$IMAGE_FILE.bct.sig.rev of=$IMAGE_FILE.tmp seek=800 count=256
-+
-+echo " Create public key modulus from key file $KEY_FILE and save to $KEY_FILE.mod"
-+$OPENSSL rsa -in $KEY_FILE -noout -modulus -out $KEY_FILE.mod
-+# remove prefix and LF
-+$DD bs=1 if=$KEY_FILE.mod of=$KEY_FILE.mod.tmp skip=8 count=512
-+# convert format from hexdecimal to binary
-+$XXD -r -p -l 256 $KEY_FILE.mod.tmp $KEY_FILE.mod.bin
-+# reverse byte order"
-+$OBJCOPY -I binary --reverse-bytes=256 $KEY_FILE.mod.bin $KEY_FILE.mod.bin.rev
-+
-+echo " Inject public key modulus into bct"
-+$DD conv=notrunc bs=1 if=$KEY_FILE.mod.bin.rev of=$IMAGE_FILE.tmp seek=528 count=256
-+
-+echo " Copy the signed binary to the target file $TARGET_IMAGE"
-+$MV $IMAGE_FILE.tmp $TARGET_IMAGE
-+
--- 
-1.8.1.5
+Right, but you have 10 RX FIFOs and 10 TX FIFOs. The FIFOs are
+unidirectional. This means that instead of having 20 FIFOs from 1-20
+(yes the FIFOs start from 1 and not 0), you have RX FIFOs from 1-10 and
+TX FIFOs from 1-10.
+
+> Thinking about this more, I think actually that the dmas/dma-names
+> property example that you posted above is exactly what is required here.
+
+Ok, good.
+
+> The counter-example I wrote makes this assumption and hence is invalid.
+> The ADMAIF binding should not assume that the RX and TX request selector
+> IDs are identical. As such, dmas/dma-names should have both an RX and TX
+> entry for each ADMAIF FIFO.
+
+Yes.
+
+> Still, there's no need to encode the DMA direction into the #dma-cells.
+> The client code will know that if it wants to configure DMA into (TX to)
+> FIFO ID 5, it must query dma-names entry "tx5", and simply use whatever
+> is in the DT. When it passes that DMA specifier to the DMA API, the
+> ADMAIF driver knows that it will be for TX, and can pass that
+> information to the DMA code.
+
+That's fine. From my perspective I don't have a strong objection either
+way, however, I can see that given that the name indicates rx or tx,
+then the direction in the binding could be seen as redundant.
+
+So to confirm you are happy with the client bindings being as follows?
+
+tegra_admaif: admaif@0x702d0000 {
+      ...
+     dmas = <&adma 1>, <&adma 1>, <&adma 2>, <&adma 2>,
+            <&adma 3>, <&adma 3>, <&adma 4>, <&adma 4>,
+            <&adma 5>, <&adma 5>, <&adma 6>, <&adma 6>,
+            <&adma 7>, <&adma 7>, <&adma 8>, <&adma 8>,
+            <&adma 9>, <&adma 9>, <&adma 10>, <&adma 10>;
+     dma-names = "rx1", "tx1", "rx2", "tx2", "rx3", "tx3",
+                 "rx4", "tx4", "rx5", "tx5", "rx6", "tx6",
+                 "rx7", "tx7", "rx8", "tx8", "rx9", "tx9",
+                 "rx10", "tx10";
+     ...
+};
+
+Jon
