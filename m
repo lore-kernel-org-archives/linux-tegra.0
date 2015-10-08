@@ -1,7 +1,7 @@
 From: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [cbootimage PATCH v3 4/5] Add new configuration keyword "RehashBl"
-Date: Wed, 7 Oct 2015 17:40:44 -0700
-Message-ID: <1444264845-16741-5-git-send-email-jimmzhang@nvidia.com>
+Subject: [cbootimage PATCH v3 5/5] Add sample shell script to sign bootimage for T210
+Date: Wed, 7 Oct 2015 17:40:45 -0700
+Message-ID: <1444264845-16741-6-git-send-email-jimmzhang@nvidia.com>
 References: <1444264845-16741-1-git-send-email-jimmzhang@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,202 +12,135 @@ To: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+A
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This feature is needed in case an image is updated at later stage
-after bootimage has been created.
+Sign.sh runs openssl and other linux utilities to generate rsa-pss
+signatures for bootloader and bct and inject them into bct directly.
 
-How to use:
-  Add keyword "RehashBl" to configuration file, for example, update.cfg:
-    RehashBl;
+Syntax: sign.sh <bootimage> <rsa_key.pem>
 
-  Invoke cbootimage to re-calculate bootloader aes hash, for example, for
-  bootimage bootloader.bin:
-    $ cbootimage -s tegra210 --update update.cfg bootloader.bin bootloader.bin-resigned
-
-  Where bootloader.bin-resigned is the resigned bootimage bootloader.bin
+Another way to update signature is to use configuration keyword
+"RsaKeyModulusFile", "RsaPssSigBlFile", and "RsaPssSigBctFile". Details
+are explained in man page.
 
 Signed-off-by: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- src/crypto.c      | 34 ++++++++++++++++++++++++++++++++++
- src/crypto.h      |  6 ++++++
- src/data_layout.c | 52 ++++++++++++++++++++++++++++++++++++++++++++++++++++
- src/data_layout.h |  2 ++
- src/parse.c       |  9 +++++++++
- src/parse.h       |  1 +
- 6 files changed, 104 insertions(+)
+ rehash.cfg   |  1 +
+ rsa_priv.pem | 27 +++++++++++++++++++++++++
+ sign.sh      | 65 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 93 insertions(+)
+ create mode 100644 rehash.cfg
+ create mode 100644 rsa_priv.pem
+ create mode 100755 sign.sh
 
-diff --git a/src/crypto.c b/src/crypto.c
-index 99e9f085763c..d6889cb602c9 100644
---- a/src/crypto.c
-+++ b/src/crypto.c
-@@ -297,3 +297,37 @@ sign_bct(build_image_context *context,
- 	free(hash_buffer);
- 	return e;
- }
+diff --git a/rehash.cfg b/rehash.cfg
+new file mode 100644
+index 000000000000..c5c741bad536
+--- /dev/null
++++ b/rehash.cfg
+@@ -0,0 +1 @@
++RehashBl;
+diff --git a/rsa_priv.pem b/rsa_priv.pem
+new file mode 100644
+index 000000000000..cbafc03ba35a
+--- /dev/null
++++ b/rsa_priv.pem
+@@ -0,0 +1,27 @@
++-----BEGIN RSA PRIVATE KEY-----
++MIIEpAIBAAKCAQEAs3Lf87UkomlfVHdw/FEz+owzgO+ZFu6/72qT+jSu7aEDZeZj
++l2cgTQOnHjlmBYj6KoqwXQmY6ZWPNBT7xDqzGdvimCVRC3OGRee2uD+Itu/Qwo1F
++FOb7v+l3v6lODGqDJ06aIxLicEiqK55dk5z+7dP8yyJ3pRhwiDPE4tNtlLOWgmJ/
++hENyqBHbMMzg67Qwb+aa89wfq2FRrvGOpfmrKlhqtikDnwJALBfkr7hsZGZOszHC
++ii2L5T3eCaI/me2/VIGlQSjGxmaDkiG/aIZVTuIX/LuOyi4sLXJ9cIFQ7Ty/0PAk
++6Ia6VyEGETQt6+JeLETX4Zc+XCnfbE/Flhs5PwIDAQABAoIBAQCMcmM/Xc4PY0Ne
++W6FNicyR0vtYda4u2avVGWg50tP6XiPHtDrMO8V3IV3B9RCZUmzhsOx51NIeN5T+
++IVIvcfXNTmCZzdMRkFhODB3hNLCu5SFRs7mWs3Xj7TlxA3R3mUGPGSDgRJ5/XQ/6
++1ZbNunl38IuQ/SgBShCBOWtmUC4ay+ctm1CzBZ/7AYlauOxdoKiU2nzlwpMrX9+C
++vaVKRQVYbE7EYJsWKOx6vRPU5Kjoq6StlSW4caG0ReRu9tO+xL7kZnqp1BWl3KHw
++OfzLy1CmwDkV3bKFclRWWPR97nN7F95SUFIJ3bOVjU/K2TKuLtMYPPVdG4CBBeB5
++eK2Qae7ZAoGBAOprwiAvcRNWJ2W5JoCkh0L6AHXx2z+S1Bbt0laz4NyqyfPX2SMl
++DJRxm/IoYRfwZf7fussI1bG7g4UP8HjfrlAzSEWVgPNMSWftOFzkv4QNr2ySjk0/
++nZRsd+zj2kxhc8ukDhiORkyEEg5gtsEUqbtdZHOiqtkNbKOPD6EGKeP7AoGBAMP3
++q5NUh9pJ2RGSkdKutloXNe0HPI6sjsCX3HHWAaFyqBtXWvRU3fIaMUpGQcPaqDCt
++LhzVoNlPXdeQ7vTkBPtiYQBcs0NPI+58pnD5fgR00yTX/5ZIGKbX0NnpZ3spsQAQ
++FQTXGy80+JyGMmJCDf32VGC96I9Ey5w49U23kXiNAoGAGEtiqwM/rMlY++ncW6ix
++e/d85LxUBJqq8FVlXyb1PulUVLkh/8pvK1M63jXhGiIH8Aovyar4upq8XqXwPhaw
++cg9ehhegbZaSZProxHfQgVcJvy7RIKBfLGqxYxOaJCBVZ91wuIrGLlfhpyvOxOPn
++U0uyhWluW2BQygKhlAaXgNECgYAKDAif5RWR+3dFj14qjwqKU+ZP4K8aIX6wIRkM
++PQyYWmiD/laLcE5wuycLx85XXD6DQF283LcCbS9CfgvCQm5+9OxEOHx4VvZgo8Nk
++x2XOlK6+lNRlwAyDgU0T3wOPLPQGLMznEqAyK2UToU2z++77tkVdMF9b+Qr3V3Q8
++J80tgQKBgQCW2OHHUfnfRMns/d1sp/QNMag19flOT+IjvZXI5ZMy9yojlpcTSdSq
++NzaahUZKtEankjMlXw2RHMYrXjtAJgwXlV4rMWxkaqUrVqq99v6M1QNx/SHjnVB+
++SYQ8PZHp0mPk/opRPydP/U5WKDcP10KRuSNRSQmvacD5gzs3B6Jhqg==
++-----END RSA PRIVATE KEY-----
+diff --git a/sign.sh b/sign.sh
+new file mode 100755
+index 000000000000..8f8a353fe19f
+--- /dev/null
++++ b/sign.sh
+@@ -0,0 +1,65 @@
++IMAGE_FILE=$1
++KEY_FILE=$2
++TARGET_IMAGE=$IMAGE_FILE
++CONFIG_FILE=rehash.cfg
 +
-+int
-+sign_bl(build_image_context *context,
-+	u_int8_t *bootloader,
-+	u_int32_t length,
-+	u_int32_t image_instance)
-+{
-+	int e = 0;
-+	u_int8_t  *hash_buffer;
-+	u_int32_t  hash_size;
++CBOOTIMAGE=src/cbootimage
++BCT_DUMP=src/bct_dump
++OBJCOPY=objcopy
++OPENSSL=openssl
++DD=dd
++RM=rm
++MV=mv
++XXD=xxd
 +
-+	g_soc_config->get_value(token_hash_size,
-+			&hash_size, context->bct);
++echo " Get rid of all temporary files: *.sig, *.tosig, *.tmp *.mod *.rev"
++$RM -f *.sig *.tosig *.tmp *.mod *.rev
 +
-+	hash_buffer = calloc(1, hash_size);
-+	if (hash_buffer == NULL)
-+		return -ENOMEM;
++echo " Get bl length "
++BL_LENGTH=`$BCT_DUMP $IMAGE_FILE | grep "Bootloader\[0\].Length" \
++ | awk -F ' ' '{print $4}' | awk -F ';' '{print $1}'`
 +
-+	/* Encrypt and compute hash */
-+	if ((e = sign_data_block(bootloader,
-+			length,
-+			hash_buffer)) != 0)
-+		goto fail;
++echo " Extract bootloader to $IMAGE_FILE.bl.tosig, length $BL_LENGTH "
++$DD bs=1 skip=32768 if=$IMAGE_FILE of=$IMAGE_FILE.bl.tosig count=$BL_LENGTH
 +
-+	if ((e = g_soc_config->setbl_param(image_instance,
-+				token_bl_crypto_hash,
-+				(u_int32_t*)hash_buffer,
-+				context->bct)) != 0)
-+		goto fail;
++echo " Calculate rsa signature for bl and save to $IMAGE_FILE.bl.sig"
++$OPENSSL dgst -sha256 -sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:-1 \
++ -sign $KEY_FILE -out $IMAGE_FILE.bl.sig $IMAGE_FILE.bl.tosig
 +
-+ fail:
-+	free(hash_buffer);
-+	return e;
-+}
-diff --git a/src/crypto.h b/src/crypto.h
-index d7151e0cd191..936ca9c4c0eb 100644
---- a/src/crypto.h
-+++ b/src/crypto.h
-@@ -44,4 +44,10 @@ sign_data_block(u_int8_t *source,
- 		u_int32_t length,
- 		u_int8_t *signature);
- 
-+int
-+sign_bl(build_image_context *context,
-+	u_int8_t *bootloader,
-+	u_int32_t length,
-+	u_int32_t image_instance);
++echo " Reverse bl signature to meet tegra soc signature ordering"
++$OBJCOPY -I binary --reverse-bytes=256 $IMAGE_FILE.bl.sig $IMAGE_FILE.bl.sig.rev
 +
- #endif /* #ifndef INCLUDED_CRYPTO_H */
-diff --git a/src/data_layout.c b/src/data_layout.c
-index 082609236724..2975f7d1e0f3 100644
---- a/src/data_layout.c
-+++ b/src/data_layout.c
-@@ -1065,3 +1065,55 @@ int get_bct_size_from_image(build_image_context *context)
- 	context->bct = 0;
- 	return bct_size;
- }
++echo " Inject bl signature into bct"
++$DD conv=notrunc bs=1 if=$IMAGE_FILE.bl.sig.rev of=$IMAGE_FILE seek=9052 count=256
 +
-+int resign_bl(build_image_context *context)
-+{
-+	int ret;
-+	u_int8_t  *buffer, *image;
-+	u_int32_t  image_instance = 0;	/* support only one instance */
-+	u_int32_t  image_actual_size; /* In bytes */
-+	u_int32_t  bl_length;
-+	u_int32_t  pages_in_image;
-+	u_int32_t  blk_size, page_size, current_blk, current_page;
-+	u_int32_t  offset;
++echo " Update bct aes hash and output to $IMAGE_FILE.tmp"
++$CBOOTIMAGE -s tegra210 -u $CONFIG_FILE $IMAGE_FILE $IMAGE_FILE.tmp
 +
-+	/* read in bl from image */
-+	g_soc_config->get_value(token_block_size, &blk_size, context->bct);
-+	g_soc_config->get_value(token_page_size, &page_size, context->bct);
++echo " Extract the part of bct which needs to be rsa signed"
++$DD bs=1 if=$IMAGE_FILE.tmp of=$IMAGE_FILE.bct.tosig count=8944 skip=1296
 +
-+	GET_BL_FIELD(image_instance, start_blk, &current_blk);
-+	GET_BL_FIELD(image_instance, start_page,  &current_page);
-+	GET_BL_FIELD(image_instance, length,  &bl_length);
++echo " Calculate rsa signature for bct and save to $IMAGE_FILE.bct.sig"
++$OPENSSL dgst -sha256 -sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:-1 \
++ -sign $KEY_FILE -out $IMAGE_FILE.bct.sig $IMAGE_FILE.bct.tosig
 +
-+	offset = current_blk * blk_size +
-+			current_page * page_size;
++echo " Reverse bct signature to meet tegra soc signature ordering"
++$OBJCOPY -I binary --reverse-bytes=256 $IMAGE_FILE.bct.sig $IMAGE_FILE.bct.sig.rev
 +
-+	if (read_from_image(context->input_image_filename,
-+				offset, bl_length,
-+				&image, &image_actual_size, file_type_bin)) {
-+		printf("Error reading image file %s.\n",
-+				context->input_image_filename);
-+		return -ENOMEM;
-+	}
++echo " Inject bct signature into bct"
++$DD conv=notrunc bs=1 if=$IMAGE_FILE.bct.sig.rev of=$IMAGE_FILE.tmp seek=800 count=256
 +
-+	pages_in_image = ICEIL(image_actual_size, page_size);
++echo " Create public key modulus from key file $KEY_FILE and save to $KEY_FILE.mod"
++$OPENSSL rsa -in $KEY_FILE -noout -modulus -out $KEY_FILE.mod
++# remove prefix and LF
++$DD bs=1 if=$KEY_FILE.mod of=$KEY_FILE.mod.tmp skip=8 count=512
++# convert format from hexdecimal to binary
++$XXD -r -p -l 256 $KEY_FILE.mod.tmp $KEY_FILE.mod.bin
++# reverse byte order"
++$OBJCOPY -I binary --reverse-bytes=256 $KEY_FILE.mod.bin $KEY_FILE.mod.bin.rev
 +
-+	/* Create a local copy of the bl */
-+	if ((buffer = malloc(pages_in_image * page_size)) == NULL) {
-+		ret = -ENOMEM;
-+		goto fail;
-+	}
++echo " Inject public key modulus into bct"
++$DD conv=notrunc bs=1 if=$KEY_FILE.mod.bin.rev of=$IMAGE_FILE.tmp seek=528 count=256
 +
-+	memset(buffer, 0, pages_in_image * page_size);
-+	memcpy(buffer, image, image_actual_size);
++echo " Copy the signed binary to the target file $TARGET_IMAGE"
++$MV $IMAGE_FILE.tmp $TARGET_IMAGE
 +
-+	insert_padding(buffer, image_actual_size);
-+
-+	/* sign bl */
-+	ret = sign_bl(context, buffer, image_actual_size, image_instance);
-+	free (buffer);
-+ fail:
-+	free (image);
-+	return ret;
-+}
-+
-diff --git a/src/data_layout.h b/src/data_layout.h
-index c6e53e61be83..0e6e41fcb24c 100644
---- a/src/data_layout.h
-+++ b/src/data_layout.h
-@@ -64,4 +64,6 @@ get_bct_size_from_image(build_image_context *context);
- int
- begin_update(build_image_context *context);
- 
-+int
-+resign_bl(build_image_context *context);
- #endif /* #ifndef INCLUDED_DATA_LAYOUT_H */
-diff --git a/src/parse.c b/src/parse.c
-index d2f4016effd8..a7cfb72fa77c 100644
---- a/src/parse.c
-+++ b/src/parse.c
-@@ -80,6 +80,8 @@ static int
- parse_dev_param(build_image_context *context, parse_token token, char *rest);
- static int
- parse_sdram_param(build_image_context *context, parse_token token, char *rest);
-+static int
-+parse_sign_bl(build_image_context *context, parse_token token, char *rest);
- 
- static int process_statement(build_image_context *context,
- 				char *str,
-@@ -121,6 +123,7 @@ static parse_item s_top_level_items[] = {
- 	{ "RsaKeyModulusFile=", token_rsa_key_modulus,	parse_rsa_param },
- 	{ "RsaPssSigBlFile=",   token_rsa_pss_sig_bl,	parse_rsa_param },
- 	{ "RsaPssSigBctFile=",  token_rsa_pss_sig_bct,	parse_rsa_param },
-+	{ "RehashBl",       token_sign_bl,		parse_sign_bl },
- 	{ NULL, 0, NULL } /* Must be last */
- };
- 
-@@ -689,6 +692,12 @@ parse_bct_file(build_image_context *context, parse_token token, char *rest)
- 	return 0;
- }
- 
-+static int
-+parse_sign_bl(build_image_context *context, parse_token token, char *rest)
-+{
-+	return resign_bl(context);
-+}
-+
- static char *
- parse_end_state(char *str, char *uname, int chars_remaining)
- {
-diff --git a/src/parse.h b/src/parse.h
-index 16242a5c2701..69f7abe1d405 100644
---- a/src/parse.h
-+++ b/src/parse.h
-@@ -117,6 +117,7 @@ typedef enum
- 	token_rsa_key_modulus,
- 	token_rsa_pss_sig_bl,
- 	token_rsa_pss_sig_bct,
-+	token_sign_bl,
- 
- 	token_nand_clock_divider,
- 	token_nand_nand_timing,
 -- 
 1.8.1.5
