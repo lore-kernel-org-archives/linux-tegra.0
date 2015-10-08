@@ -1,48 +1,49 @@
 From: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [cbootimage PATCH v3 1/5] Enable -u | --update option support for t210
-Date: Thu, 8 Oct 2015 12:38:24 -0700
-Message-ID: <1444333109-3671-2-git-send-email-jimmzhang@nvidia.com>
-References: <1444333109-3671-1-git-send-email-jimmzhang@nvidia.com>
+Subject: [cbootimage PATCH v3 0/5] Add RSA signing support
+Date: Thu, 8 Oct 2015 12:38:23 -0700
+Message-ID: <1444333109-3671-1-git-send-email-jimmzhang@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1444333109-3671-1-git-send-email-jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Signed-off-by: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- src/cbootimage.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+1. Address issues found in v2. 
+2. Use keyword "RehashBl" instead of "ReSignBl" to re-generate AES hash
+   for bootloader (and bct).
+3. Add sample scripts to do rsa signing for T210 bootimage.
 
-diff --git a/src/cbootimage.c b/src/cbootimage.c
-index 1dfb719c819b..b62cedc47ec0 100644
---- a/src/cbootimage.c
-+++ b/src/cbootimage.c
-@@ -79,7 +79,7 @@ usage(void)
- 	printf("                          Default: tegra20.\n");
- 	printf("    -u|--update           Copy input image data and update bct\n");
- 	printf("                          configs into new image file.\n");
--	printf("                          This feature is only for tegra114/124.\n");
-+	printf("                          This feature is currently not supported on tegra20/30.\n");
- 	printf("    configfile            File with configuration information\n");
- 	printf("    inputimage            Input image name. This is required\n");
- 	printf("                          if -u|--update option is used.\n");
-@@ -169,9 +169,10 @@ process_command_line(int argc, char *argv[], build_image_context *context)
- 	/* Record the input image filename if update_image is necessary */
- 	if (context->update_image)
- 	{
--		if (context->boot_data_version != BOOTDATA_VERSION_T114 &&
--			context->boot_data_version != BOOTDATA_VERSION_T124) {
--			printf("Update image feature is only for Tegra114 and Tegra124.\n");
-+		if (context->boot_data_version == BOOTDATA_VERSION_T20 ||
-+			context->boot_data_version == BOOTDATA_VERSION_T30) {
-+			printf("Update image feature is not supported on"
-+				" Tegra20/30.\n");
- 			return -EINVAL;
- 		}
- 
+Jimmy Zhang (5):
+  Enable -u | --update option support for t210
+  Add support for update pubkey and rsa-pss signatures
+  Add support to dump rsa related fields for t210
+  Add new configuration keyword "RehashBl"
+  Add two sample scripts to do rsa signing for T210 bootimage
+
+ rehash.cfg                 |  1 +
+ rsa_priv.pem               | 27 +++++++++++++++++++
+ sign-by-update.sh          | 59 +++++++++++++++++++++++++++++++++++++++++
+ sign.sh                    | 65 ++++++++++++++++++++++++++++++++++++++++++++++
+ src/bct_dump.c             | 38 +++++++++++++++++++++++++++
+ src/cbootimage.c           |  9 ++++---
+ src/cbootimage.h           |  4 +++
+ src/crypto.c               | 34 ++++++++++++++++++++++++
+ src/crypto.h               |  6 +++++
+ src/data_layout.c          | 52 +++++++++++++++++++++++++++++++++++++
+ src/data_layout.h          |  2 ++
+ src/parse.c                | 44 +++++++++++++++++++++++++++++++
+ src/parse.h                |  5 ++++
+ src/set.c                  | 38 +++++++++++++++++++++++++++
+ src/set.h                  |  5 ++++
+ src/t210/nvbctlib_t210.c   | 39 +++++++++++++++++++++++++++-
+ src/t210/nvboot_bct_t210.h |  2 --
+ 17 files changed, 423 insertions(+), 7 deletions(-)
+ create mode 100644 rehash.cfg
+ create mode 100644 rsa_priv.pem
+ create mode 100755 sign-by-update.sh
+ create mode 100755 sign.sh
+
 -- 
 1.8.1.5
