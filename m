@@ -1,7 +1,7 @@
 From: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [cbootimage PATCH v4 2/5] Add support to dump rsa related fields for t210
-Date: Fri, 9 Oct 2015 14:20:43 -0700
-Message-ID: <1444425646-20380-3-git-send-email-jimmzhang@nvidia.com>
+Subject: [cbootimage PATCH v4 4/5] Add a sample script to do rsa signing for T210 bootimage
+Date: Fri, 9 Oct 2015 14:20:45 -0700
+Message-ID: <1444425646-20380-5-git-send-email-jimmzhang@nvidia.com>
 References: <1444425646-20380-1-git-send-email-jimmzhang@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,137 +12,140 @@ To: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+A
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add support to dump rsa pubkey, bct's rsa-pss signature and
-bootloader's rsa-pss signature.
+sign.sh runs openssl and other linux utilities to generate rsa-pss
+signatures for a prebuilt bootimage and then uses cbootimage option
+--update to update bootimage's rsa signatures and rsa modulus.
+
+Syntax: sign.sh <bootimage> <rsa_key.pem>
 
 Signed-off-by: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- src/bct_dump.c           | 39 +++++++++++++++++++++++++++++++++++++++
- src/t210/nvbctlib_t210.c | 17 +++++++++++++++++
- 2 files changed, 56 insertions(+)
+ rehash.cfg      |  1 +
+ rsa_priv.pem    | 27 +++++++++++++++++++++
+ samples/sign.sh | 73 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 101 insertions(+)
+ create mode 100644 rehash.cfg
+ create mode 100644 rsa_priv.pem
+ create mode 100755 samples/sign.sh
 
-diff --git a/src/bct_dump.c b/src/bct_dump.c
-index be7b85dc72d6..1db7d250dc4f 100644
---- a/src/bct_dump.c
-+++ b/src/bct_dump.c
-@@ -30,6 +30,8 @@ cbootimage_soc_config * g_soc_config;
- static void format_u32_hex8(char const * message, void * data);
- static void format_u32(char const * message, void * data);
- static void format_chipuid(char const * message, void * data);
-+static void format_hex_16_bytes(char const * message, void * data);
-+static void format_rsa_param(char const * message, void * data);
- 
- typedef void (*format_function)(char const * message, void * data);
- 
-@@ -39,9 +41,11 @@ typedef struct {
- 	format_function format;
- } value_data;
- 
-+#define ARSE_RSA_PARAM_MAX_BYTES	256
- typedef union {
- 	u_int32_t val;
- 	u_int8_t uid[16];
-+	u_int8_t rsa_param[ARSE_RSA_PARAM_MAX_BYTES];
- } param_types;
- 
- #define MAX_PARAM_SIZE sizeof(param_types)
-@@ -54,6 +58,9 @@ static value_data const values[] = {
- 	{ token_odm_data,            "OdmData       = ", format_u32_hex8 },
- 	{ token_secure_jtag_control, "JtagCtrl      = ", format_u32_hex8 },
- 	{ token_secure_debug_control, "DebugCtrl     = ", format_u32_hex8 },
-+	{ token_crypto_hash, 	     "BCT AES Hash  = ", format_hex_16_bytes },
-+	{ token_rsa_key_modulus,     "RsaKeyModulus = ", format_rsa_param },
-+	{ token_rsa_pss_sig_bct,     "RsaPssSigBct = ", format_rsa_param },
- 	{ token_unique_chip_id,      "ChipUid       = ", format_chipuid },
- 	{ token_bootloader_used,     "# Bootloader used       = ", format_u32 },
- 	{ token_bootloaders_max,     "# Bootloaders max       = ", format_u32 },
-@@ -72,6 +79,8 @@ static value_data const bl_values[] = {
- 	{ token_bl_load_addr,   "Load address = ", format_u32_hex8 },
- 	{ token_bl_entry_point, "Entry point  = ", format_u32_hex8 },
- 	{ token_bl_attribute,   "Attributes   = ", format_u32_hex8 },
-+	{ token_bl_crypto_hash, "Bl AES Hash  = ", format_hex_16_bytes },
-+	{ token_rsa_pss_sig_bl,	"RsaPssSigBl  = ", format_rsa_param },
- };
- 
- static value_data const mts_values[] = {
-@@ -108,6 +117,36 @@ static void format_chipuid(char const * message, void * data)
- 	printf("%s%s;\n", message, uid_str);
- }
- 
-+static void format_hex_16_bytes(char const * message, void * data)
-+{
-+	u_int8_t *p_byte = (u_int8_t *)data;
-+	int byte_index;
+diff --git a/rehash.cfg b/rehash.cfg
+new file mode 100644
+index 000000000000..c5c741bad536
+--- /dev/null
++++ b/rehash.cfg
+@@ -0,0 +1 @@
++RehashBl;
+diff --git a/rsa_priv.pem b/rsa_priv.pem
+new file mode 100644
+index 000000000000..a02d77fc438c
+--- /dev/null
++++ b/rsa_priv.pem
+@@ -0,0 +1,27 @@
++-----BEGIN RSA PRIVATE KEY-----
++MIIEpQIBAAKCAQEA2L0jolLgp2pKAzn/JeZuxgGPY1Yz4ZNkttzvBlVhozEynj2x
++Lttz1gZ6fYUb/ObM8v2PoeOlrwkGoWMscuMS4MnLG2NcJlWmlsLTyfw3EwxblM3D
++DniscakhMexNK3J7uxmmRkQTfldec4JHjsAN6d9cZQ0POdsA7j5lKNG0KgCohKk6
++p+lMYXFqgxx3IQWcynhuKVtVFm/UJJBC+a4ibbXcpnio96ySVrPO/ZpEOhEpPTWX
++VLeiqBB3dsu//9X0vDfShyBlctaonx2Z7xWQWotubze0iIvyU6U+T69aDOXfHQfu
++kNMX3Dj4VCndW/FUrrg5k/y9dMA1We3Ng1A0NQIDAQABAoIBABcWRqZy15VdwBaJ
++5gDeg+w5nFGDjDE6Jx9Hd3qgO69LfU3X2njYTYV92SxnsmyFFU3I7rTa7/ouJvOo
++AcMXJxqkxCrdsaIvu3gRtsesQx2XUmYOaPmwpwXQc0XDGxFGt6FdgRW5CK6LlfcN
++6JtvH8xKy6fD9Vw/VOEL6nCnrd5PU3UNU/Ng7h/SZ+5NEALJE7+gaMvmK9o9lX3a
++/tze6bwKKF+a2luTs2aVGxjUYBud6YOE2KPG7zltuHUHUeEgJ/X/sgWYiHsqpK3l
++rIrjCVIQnrRCCtCHg5BbqtwStl5Gz+Y431DXU9Sv6fVqIFgveweePhhDux/YV+KY
++rvq5RiECgYEA7OHr8BYWkeZKuU/IkGdsdiPEEB7mNOJHwE4OXdwLIIygQGtQCuJG
++EHMQv9kE/1ibVRIxqnliFb/CupZ5wwyvjFgUq5XZl7s6XpNOBhJHV0U5AJSvS0rb
++YNU2PBfRmMMI/gRdF/onUpopY7ZWLv7u+VF7ZgtM5hQr2jwcjwBzbRkCgYEA6jsK
++tB6SGIO2c5E+CLAY5J4eJca6ORaVcKw1OfDL346UJYkvqOLBc8KwFs87gDbwhmjn
++GJUWlhk5iUoWZrFJpTj8+hVNxKumtZ5x8MQkNXL7WBNYcVxobuGVW8c6jZU3C/al
++Im9DRTPXhgvMy7mu4slVaAhhrmUJRdl6fwmCR30CgYEA5FoxwML6RPGUrSl9Nb+N
++riFyWvv+fZJ5Cqf0b4S08U6/GPqaMbPJSQgzaE3D5Ie9Tff5CtZyuHagOJDglie/
++fvJWEsak+QETFqK3/2BVh4qClc2/YjyqWKGQ48MuWS4CmCUKvRd4GsfkCGx4jltR
++ceSbqVZRbiaZ04pJGY2ct9kCgYEArWaaLO/4zgcsGfArUXk0ZIMd5G9zS3IJnckO
+++l7mPxEpYYRm8Qs1lcJKZAh0jx2dAJRGiO9OMj5oVtevL8UNtTA0L9t3oCJHH2s2
++BLzf5WXC5tgjgICdm4CK9s/N7CTMBKJKa+yci22un0C7ExLagm/0NzkFP3ry22/9
++/HAIr20CgYEAnUGwciM7Z9aMpPkX3iaRG/zm1FWbsuJldNa5IZQ6CamDIZhb+u2u
++1yuCUJZ7zY51RO4n2Hi/1OU1XS7XlevoT22i7xJmIjPVoWzumUwMjmhYVqxK/X50
++Hcd+qL1Xs6KmsWrlg2sgFliX79RawE3jl/yZrFMuHvWiItXO92YFuOI=
++-----END RSA PRIVATE KEY-----
+diff --git a/samples/sign.sh b/samples/sign.sh
+new file mode 100755
+index 000000000000..d6c67b3715f5
+--- /dev/null
++++ b/samples/sign.sh
+@@ -0,0 +1,73 @@
++#!/bin/bash
++#
++# Copyright (c) 2015, NVIDIA CORPORATION.  All rights reserved.
++#
++# This program is free software; you can redistribute it and/or modify it
++# under the terms and conditions of the GNU General Public License,
++# version 2, as published by the Free Software Foundation.
++#
++# This program is distributed in the hope it will be useful, but WITHOUT
++# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++# more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.
++#
++# See file CREDITS for list of people who contributed to this
++# project.
++#
++set -e
++IMAGE_FILE=$1
++KEY_FILE=$2
++TARGET_IMAGE=$IMAGE_FILE
++CONFIG_FILE=update.cfg
 +
-+	printf("%s", message);
-+	for (byte_index = 0; byte_index < 16; ++byte_index)
-+		printf("%02x", *p_byte++);
++CBOOTIMAGE=../src/cbootimage
++BCT_DUMP=../src/bct_dump
++OBJCOPY=objcopy
++OPENSSL=openssl
++DD=dd
++RM=rm
++MV=mv
++XXD=xxd
++CUT=cut
 +
-+	printf(";\n");
-+}
++echo "Get rid of all temporary files: *.sig, *.tosig, *.tmp *.mod"
++$RM -f *.sig *.tosig *.tmp *.mod
 +
-+static void format_rsa_param(char const * message, void * data)
-+{
-+	u_int8_t *rsa = (u_int8_t *)data;
-+	int byte_index;
++echo "Get bl length "
++BL_LENGTH=`$BCT_DUMP $IMAGE_FILE | grep "Bootloader\[0\].Length"\
++ | awk -F ' ' '{print $4}' | awk -F ';' '{print $1}'`
 +
-+	printf("%s", message);
-+	for (byte_index = 0; byte_index < ARSE_RSA_PARAM_MAX_BYTES;
-+					++byte_index) {
-+		printf("%02x", *rsa++);
++echo "Extract bootloader to $IMAGE_FILE.bl.tosig, length $BL_LENGTH"
++$DD bs=1 skip=32768 if=$IMAGE_FILE of=$IMAGE_FILE.bl.tosig count=$BL_LENGTH
 +
-+		if ((byte_index + 1) % 64 == 0)
-+			printf(";\n");
-+	}
++echo "Calculate rsa signature for bootloader and save to $IMAGE_FILE.bl.sig"
++$OPENSSL dgst -sha256 -sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:-1 \
++ -sign $KEY_FILE -out $IMAGE_FILE.bl.sig $IMAGE_FILE.bl.tosig
 +
-+	if (byte_index % 64 != 0)
-+		printf(";\n");
-+}
++echo "Update bootloader's rsa signature, aes hash and bct's aes hash"
++echo "RsaPssSigBlFile = $IMAGE_FILE.bl.sig;" > $CONFIG_FILE
++echo "RehashBl;" >> $CONFIG_FILE
++$CBOOTIMAGE -s tegra210 -u $CONFIG_FILE $IMAGE_FILE $IMAGE_FILE.tmp
 +
- /*****************************************************************************/
- static void usage(void)
- {
-diff --git a/src/t210/nvbctlib_t210.c b/src/t210/nvbctlib_t210.c
-index 97985db9db7c..ba2235e1c653 100644
---- a/src/t210/nvbctlib_t210.c
-+++ b/src/t210/nvbctlib_t210.c
-@@ -109,6 +109,8 @@ parse_token t210_root_token_list[] = {
- 	token_bootloaders_max,
- 	token_bct_size,
- 	token_hash_size,
-+	token_crypto_hash,
-+	token_bl_crypto_hash,
- 	token_crypto_offset,
- 	token_crypto_length,
- 	token_max_bct_search_blks,
-@@ -2034,6 +2036,12 @@ t210_getbl_param(u_int32_t set,
- 		sizeof(nvboot_hash));
- 		break;
- 
-+	case token_rsa_pss_sig_bl:
-+		swap_endianness(data,
-+			&bct_ptr->bootloader[set].signature.rsa_pss_sig,
-+			sizeof(nvboot_rsa_pss_sig));
-+		break;
++echo "Extract the part of bct which needs to be rsa signed"
++$DD bs=1 if=$IMAGE_FILE.tmp of=$IMAGE_FILE.bct.tosig count=8944 skip=1296
 +
- 	default:
- 		return -ENODATA;
- 	}
-@@ -2130,6 +2138,15 @@ t210_bct_get_value(parse_token id, void *data, u_int8_t *bct)
- 		memcpy(data, &(bct_ptr->unique_chip_id), sizeof(nvboot_ecid));
- 		break;
- 
-+	case token_rsa_key_modulus:
-+		swap_endianness(data, &bct_ptr->key, sizeof(nvboot_rsa_key_modulus));
-+		break;
++echo "Calculate rsa signature for bct and save to $IMAGE_FILE.bct.sig"
++$OPENSSL dgst -sha256 -sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:-1 \
++ -sign $KEY_FILE -out $IMAGE_FILE.bct.sig $IMAGE_FILE.bct.tosig
 +
-+	case token_rsa_pss_sig_bct:
-+		swap_endianness(data, &bct_ptr->signature.rsa_pss_sig,
-+			sizeof(nvboot_rsa_pss_sig));
-+		break;
++echo "Create public key modulus from key file $KEY_FILE and save to $KEY_FILE.mod"
++$OPENSSL rsa -in $KEY_FILE -noout -modulus -out $KEY_FILE.mod
++# remove prefix
++$CUT -d= -f2 < $KEY_FILE.mod > $KEY_FILE.mod.tmp
 +
- 	case token_reserved_offset:
- 		*((u_int32_t *)data) = (u_int8_t *)&(samplebct.reserved)
- 				- (u_int8_t *)&samplebct;
++# convert from hexdecimal to binary
++$XXD -r -p -l 256 $KEY_FILE.mod.tmp $KEY_FILE.mod.bin
++
++echo "Update bct's rsa signature and modulus"
++echo "RsaPssSigBctFile = $IMAGE_FILE.bct.sig;" > $CONFIG_FILE
++echo "RsaKeyModulusFile = $KEY_FILE.mod.bin;" >> $CONFIG_FILE
++$CBOOTIMAGE -s tegra210 -u $CONFIG_FILE $IMAGE_FILE.tmp $TARGET_IMAGE
 -- 
 1.8.1.5
