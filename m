@@ -1,61 +1,30 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] serial: tegra: handle rx race
-Date: Fri, 9 Oct 2015 14:35:09 +0100
-Message-ID: <5617C28D.1040209@nvidia.com>
-References: <1443051326-1979-1-git-send-email-cfreeman@nvidia.com>
- <5603C158.4000002@nvidia.com> <20150925065840.GA13750@cfreeman-dt>
- <56059B27.2060902@nvidia.com>
+Subject: [PATCH 0/4] serial: tegra: One fix and a few clean-ups
+Date: Fri, 9 Oct 2015 14:49:58 +0100
+Message-ID: <1444398602-24020-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56059B27.2060902-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Christopher Freeman <cfreeman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jiri Slaby <jslaby-IBi9RG/b67k@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Fix a race condition in the receive path and simplify/clean-up the
+serial-tegra driver.
 
-On 25/09/15 20:06, Jon Hunter wrote:
-> On 25/09/15 07:58, Christopher Freeman wrote:
->> On 09-24 10:24 AM, Jon Hunter wrote:
+This has been tested on a tegra124 by using zmodem protocol to transfer a
+file from PC to the tegra device and verifying the downloaded file matches
+the original.
 
-[snip]
+Jon Hunter (4):
+  serial: tegra: Handle another RX race condition
+  serial: tegra: Remove unnecessary return statements
+  serial: tegra: Remove redundant code and check in tegra_uart_stop_rx()
+  serial: tegra: Add helper function for handling RX buffer
 
->>>> diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/serial-tegra.c
->>>> index cf0133a..f9bd378 100644
->>>> --- a/drivers/tty/serial/serial-tegra.c
->>>> +++ b/drivers/tty/serial/serial-tegra.c
->>>> @@ -606,12 +606,6 @@ static void tegra_uart_rx_dma_complete(void *args)
->>>>  	tegra_uart_copy_rx_to_tty(tup, port, count);
->>>>  
->>>>  	tegra_uart_handle_rx_pio(tup, port);
->>>> -	if (tty) {
->>>> -		spin_unlock_irqrestore(&u->lock, flags);
->>>> -		tty_flip_buffer_push(port);
->>>> -		spin_lock_irqsave(&u->lock, flags);
->>>> -		tty_kref_put(tty);
->>>> -	}
->>>>  	tegra_uart_start_rx_dma(tup);
->>>
->>> With this change, tegra_uart_start_rx_dma() is called within the context
->>> of the spinlock (I am sure this is intentional). However,
->>> tegra_uart_start_rx_dma() calls dmaengine_prep_slave_single() and this
->>> calls tegra_dma_prep_slave_sg(). The problem is that
->>> tegra_dma_prep_slave_sg() *may* call kzalloc() to allocate memory. The
->>> allocation only happens if there is not a free dma descriptor available
->>> and if tegra_dma_prep_slave_sg() has been called once, you may get lucky.
->>>
->> This has been the case before this change so we've been getting lucky a lot.
->> Noted though.
-> 
-> Ah, yes you are right. Hmmm ... does not seem good.
+ drivers/tty/serial/serial-tegra.c | 94 ++++++++++++---------------------------
+ 1 file changed, 28 insertions(+), 66 deletions(-)
 
-Sorry, I am completely wrong here. Although tegra_dma_prep_slave_sg()
-may call kzalloc() it does so with GFP_ATOMIC set. So we are ok.
-
-Anyway, per our off-line discussions I will send out the alternative fix
-that we have discussed.
-
-Cheers
-Jon
+-- 
+2.1.4
