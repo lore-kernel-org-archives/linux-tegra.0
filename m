@@ -1,72 +1,33 @@
-From: Julia Lawall <Julia.Lawall@lip6.fr>
-Subject: [PATCH 1/2] memory: tegra: delete unneeded of_node_put
-Date: Fri,  9 Oct 2015 19:47:40 +0200
-Message-ID: <1444412861-2580-2-git-send-email-Julia.Lawall@lip6.fr>
-References: <1444412861-2580-1-git-send-email-Julia.Lawall@lip6.fr>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1444412861-2580-1-git-send-email-Julia.Lawall@lip6.fr>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: kernel-janitors@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [cbootimage PATCH v3 5/5] Add two sample scripts to do rsa
+ signing for T210 bootimage
+Date: Fri, 9 Oct 2015 12:28:34 -0600
+Message-ID: <56180752.40403@wwwdotorg.org>
+References: <1444333109-3671-1-git-send-email-jimmzhang@nvidia.com>
+ <1444333109-3671-7-git-send-email-jimmzhang@nvidia.com>
+ <5616D8CA.2040209@wwwdotorg.org>
+ <797766912b984b9d840369e86e7b2637@HQMAIL103.nvidia.com>
+ <561721CC.9030307@wwwdotorg.org>
+ <4666228153ed418ab535fe9011c1ff67@HQMAIL103.nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4666228153ed418ab535fe9011c1ff67-wO81nVYWzR7YuxH7O460wFaTQe2KTcn/@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Allen Martin <AMartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-for_each_child_of_node performs an of_node_put on each iteration, so
-putting an of_node_put before a continue results in a double put.
+On 10/09/2015 11:11 AM, Jimmy Zhang wrote:
+> I am considering to remove sample sign.sh because
+> 1. It is kind of hacking.
+> 2. Reversing byte order operation can be removed from sample two but not sign.sh
+>
+> If you agree, I will remove sign.sh and then rename sign-by-update.sh to sign.sh
 
-The semantic match that finds this problem is as follows
-(http://coccinelle.lip6.fr):
+I must admit I wondered why you went to the trouble of enhancing 
+cbootimage to be able to update the signatures and then provided a 
+sample script that didn't use cbootimage:-)
 
-// <smpl>
-@@
-expression root,e;
-local idexpression child;
-iterator name for_each_child_of_node;
-@@
-
- for_each_child_of_node(root, child) {
-   ... when != of_node_get(child)
-*  of_node_put(child);
-   ...
-*  continue;
-}
-// </smpl>
-
-Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-
----
- drivers/memory/tegra/mc.c           |    4 +---
- drivers/memory/tegra/tegra124-emc.c |    4 +---
- 2 files changed, 2 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
-index 3dac7be..509c8ff 100644
---- a/drivers/memory/tegra/tegra124-emc.c
-+++ b/drivers/memory/tegra/tegra124-emc.c
-@@ -995,10 +995,8 @@ tegra_emc_find_node_by_ram_code(struct device_node *node, u32 ram_code)
- 		u32 value;
- 
- 		err = of_property_read_u32(np, "nvidia,ram-code", &value);
--		if (err || (value != ram_code)) {
--			of_node_put(np);
-+		if (err || (value != ram_code))
- 			continue;
--		}
- 
- 		return np;
- 	}
-diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
-index a1ae0cc..85ce4be 100644
---- a/drivers/memory/tegra/mc.c
-+++ b/drivers/memory/tegra/mc.c
-@@ -206,10 +206,8 @@ static int tegra_mc_setup_timings(struct tegra_mc *mc)
- 	for_each_child_of_node(mc->dev->of_node, node) {
- 		err = of_property_read_u32(node, "nvidia,ram-code",
- 					   &node_ram_code);
--		if (err || (node_ram_code != ram_code)) {
--			of_node_put(node);
-+		if (err || (node_ram_code != ram_code))
- 			continue;
--		}
- 
- 		err = load_timings(mc, node);
- 		if (err)
+Having a single sample script that only uses cbootimage sounds fine to me.
