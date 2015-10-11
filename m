@@ -1,42 +1,84 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] sched_clock: add data pointer argument to read
- callback
-Date: Sun, 11 Oct 2015 22:40:53 +0200 (CEST)
-Message-ID: <alpine.DEB.2.11.1510112238380.6097@nanos>
-References: <1444427858-576-1-git-send-email-mans@mansr.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH 0/7] staging: make non-modular code explicitly non-modular
+Date: Sun, 11 Oct 2015 19:03:14 -0400
+Message-ID: <1444604601-2896-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <1444427858-576-1-git-send-email-mans@mansr.com>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Mans Rullgard <mans@mansr.com>
-Cc: Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@deeprootsystems.com>, Russell King <linux@arm.linux.org.uk>, Hartley Sweeten <hsweeten@visionengravers.com>, Ryan Mallon <rmallon@gmail.com>, Hans Ulli Kroll <ulli.kroll@googlemail.com>, Imre Kaloz <kaloz@openwrt.org>, Krzysztof Halasa <khalasa@piap.pl>, Eric Miao <eric.y.miao@gmail.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Tony Lindgren <tony@atomide.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Gregory Clement <gregory.clement@free-electrons.com>, Mikael Starvik <starvik@axis.com>, Jesper Nilsson <jesper.nilsson@axis.com>, Michal Simek <monstr@monstr.eu>, Ralf Baechle <ralf@linux-mips.org>C
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
+List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
+List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
+List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
+List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
+ <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
+Errors-To: driverdev-devel-bounces@linuxdriverproject.org
+Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: devel@driverdev.osuosl.org, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, Chris Rorvick <chris@rorvick.com>, Haneen Mohammed <hamohammed.sa@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Robert Baldyga <r.baldyga@samsung.com>, linux-kernel@vger.kernel.org, Felipe Balbi <balbi@ti.com>, "Gujulan Elango,
+ Hari Prasath (H.)" <hgujulan@visteon.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, Thierry Reding <thierry.reding@gmail.com>, Peter Chen <peter.chen@freescale.com>, Vincenzo Scotti <vinc94@gmail.com>, Roberta Dobrescu <roberta.dobrescu@gmail.com>, Riley Andrews <riandrews@android.com>, Tapasweni Pathak <tapaswenipathak@gmail.com>, Markus Elfring <elfring@users.sourceforge.net>
 List-Id: linux-tegra@vger.kernel.org
 
-Mans,
-
-On Fri, 9 Oct 2015, Mans Rullgard wrote:
-
-> This passes a data pointer specified in the sched_clock_register()
-> call to the read callback allowing simpler implementations thereof.
->
-> In this patch, existing uses of this interface are simply updated
-> with a null pointer.
-
-I can't see any simplifaction of any driver. This is called in hot
-pathes and that extra unused argument just adds register pressure for
-no value.
-
-What are you actually trying to solve?
-
-Thanks,
-
-	tglx
+W3Jlc2VuZGluZzsgZm9yZ290IHRvIGFkZCBsa21sIHRvIENjOiAtLSBzb3JyeSBmb3IgdGhvc2Ug
+d2hvIGdldCB0aGlzIDJ4XQoKSW4gYSBwcmV2aW91cyBtZXJnZSB3aW5kb3csIHdlIG1hZGUgY2hh
+bmdlcyB0byBhbGxvdyBiZXR0ZXIKZGVsaW5lYXRpb24gYmV0d2VlbiBtb2R1bGFyIGFuZCBub24t
+bW9kdWxhciBjb2RlIGluIGNvbW1pdAowZmQ5NzJhN2Q5MWQ2ZTE1MzkzYzQ0OTQ5MmEwNGQ5NGMw
+Yjg5MzUxICgibW9kdWxlOiByZWxvY2F0ZSBtb2R1bGVfaW5pdApmcm9tIGluaXQuaCB0byBtb2R1
+bGUuaCIpLiAgVGhpcyBhbGxvd3MgdXMgdG8gbm93IGVuc3VyZSBtb2R1bGUgY29kZQpsb29rcyBt
+b2R1bGFyIGFuZCBub24tbW9kdWxhciBjb2RlIGRvZXMgbm90IGFjY2lkZW50YWxseSBsb29rIG1v
+ZHVsYXIKanVzdCB0byBhdm9pZCBzdWZmZXJpbmcgYnVpbGQgYnJlYWthZ2UuCgpIZXJlIHdlIHRh
+cmdldCBjb2RlIHRoYXQgaXMsIGJ5IG5hdHVyZSBvZiB0aGVpciBNYWtlZmlsZSBhbmQvb3IKS2Nv
+bmZpZyBzZXR0aW5ncywgb25seSBhdmFpbGFibGUgdG8gYmUgYnVpbHQtaW4sIGJ1dCBpbXBsaWNp
+dGx5CnByZXNlbnRpbmcgaXRzZWxmIGFzIGJlaW5nIHBvc3NpYmx5IG1vZHVsYXIgYnkgd2F5IG9m
+IHVzaW5nIG1vZHVsYXIKaGVhZGVycywgbWFjcm9zLCBhbmQgZnVuY3Rpb25zLgoKVGhlIGdvYWwg
+aGVyZSBpcyB0byByZW1vdmUgdGhhdCBpbGx1c2lvbiBvZiBtb2R1bGFyaXR5IGZyb20gdGhlc2UK
+ZmlsZXMsIGJ1dCBpbiBhIHdheSB0aGF0IGxlYXZlcyB0aGUgYWN0dWFsIHJ1bnRpbWUgdW5jaGFu
+Z2VkLgpJbiBkb2luZyBzbywgd2UgcmVtb3ZlIGNvZGUgdGhhdCBoYXMgbmV2ZXIgYmVlbiB0ZXN0
+ZWQgYW5kIGFkZHMKbm8gdmFsdWUgdG8gdGhlIHRyZWUuICBBbmQgd2UgY29udGludWUgdGhlIHBy
+b2Nlc3Mgb2YgZXhwZWN0aW5nIGEKbGV2ZWwgb2YgY29uc2lzdGVuY3kgYmV0d2VlbiB0aGUgS2Nv
+bmZpZy9NYWtlZmlsZSBvZiBjb2RlIGFuZCB0aGUKY29kZSBpbiB1c2UgaXRzZWxmLgoKVGhlcmUg
+YXJlIHR3byBleGNlcHRpb25zIHRvIHVuY2hhbmdlZCBydW50aW1lIGhlcmU6ICBUaGUgZmlyc3Qg
+aXMKaW4gZW14eF91ZGMuYyBkcml2ZXI6IG9uZSBwcmV2aW91c2x5IGNvdWxkIHVzZSBzeXNmcyB0
+byB1bmJpbmQgdGhlCmRyaXZlciB3aGljaCB3b3VsZCB0cnkgYW5kIHVzZSBhIC5yZW1vdmUgZnVu
+Y3Rpb24gdGhhdCB0aGUgbGlua2VyCnNob3VsZCBoYXZlIGRyb3BwZWQgYXMgaXQgd2FzIF9fZXhp
+dC4gIFdlIHNpbXBseSBkaXNhYmxlCnVuYmluZC9iaW5kIGZvciB0aGlzIGRyaXZlci4gIFRoZSBz
+ZWNvbmQgaXMgZm9yIFRlZ3JhIElPTiBtZW1vcnkKbWFuYWdlcjsgaXQgY2xlYXJseSB3YXMgaW50
+ZW5kZWQgdG8gYmUgdHJpc3RhdGUgYnV0IHRoZSBtYWtlZmlsZQpkaWQgbm90IGFsbG93IGl0IHRv
+IGJlOyB0aGF0IGlzIG5vdyBmaXhlZC4KCkJ1aWxkIHRlc3RlZCBvbiBzdGFnaW5nLXRlc3Rpbmcg
+ZnJvbSBTYXQsIG9uIEFSTSwgc2luY2UgdGhlIG1ham9yaXR5Cm9mIGRyaXZlcnMgaGVyZSBhcmUg
+QW5kcm9pZCByZWxhdGVkLiAKClBhdWwuCi0tCgpDYzogQWxleGFuZHJlIENvdXJib3QgPGdudXJv
+dUBnbWFpbC5jb20+CkNjOiAiQXJ2ZSBIasO4bm5ldsOlZyIgPGFydmVAYW5kcm9pZC5jb20+CkNj
+OiBDaHJpcyBSb3J2aWNrIDxjaHJpc0Byb3J2aWNrLmNvbT4KQ2M6IEZlbGlwZSBCYWxiaSA8YmFs
+YmlAdGkuY29tPgpDYzogR3JlZyBLcm9haC1IYXJ0bWFuIDxncmVna2hAbGludXhmb3VuZGF0aW9u
+Lm9yZz4KQ2M6ICJHdWp1bGFuIEVsYW5nbywgSGFyaSBQcmFzYXRoIChILikiIDxoZ3VqdWxhbkB2
+aXN0ZW9uLmNvbT4KQ2M6IEhhbmVlbiBNb2hhbW1lZCA8aGFtb2hhbW1lZC5zYUBnbWFpbC5jb20+
+CkNjOiBNYXJrdXMgRWxmcmluZyA8ZWxmcmluZ0B1c2Vycy5zb3VyY2Vmb3JnZS5uZXQ+CkNjOiBQ
+ZXRlciBDaGVuIDxwZXRlci5jaGVuQGZyZWVzY2FsZS5jb20+CkNjOiBSaWxleSBBbmRyZXdzIDxy
+aWFuZHJld3NAYW5kcm9pZC5jb20+CkNjOiBSb2JlcnRhIERvYnJlc2N1IDxyb2JlcnRhLmRvYnJl
+c2N1QGdtYWlsLmNvbT4KQ2M6IFJvYmVydCBCYWxkeWdhIDxyLmJhbGR5Z2FAc2Ftc3VuZy5jb20+
+CkNjOiBTdGVwaGVuIFdhcnJlbiA8c3dhcnJlbkB3d3dkb3Rvcmcub3JnPgpDYzogVGFwYXN3ZW5p
+IFBhdGhhayA8dGFwYXN3ZW5pcGF0aGFrQGdtYWlsLmNvbT4KQ2M6IFRoaWVycnkgUmVkaW5nIDx0
+aGllcnJ5LnJlZGluZ0BnbWFpbC5jb20+CkNjOiBWaW5jZW56byBTY290dGkgPHZpbmM5NEBnbWFp
+bC5jb20+CkNjOiBkZXZlbEBkcml2ZXJkZXYub3N1b3NsLm9yZwpDYzogbGludXgtdGVncmFAdmdl
+ci5rZXJuZWwub3JnCgotLSAKMi42LjEKUGF1bCBHb3J0bWFrZXIgKDcpOgogIGRyaXZlcnMvc3Rh
+Z2luZzogbWFrZSBhbmRyb2lkIGFzaG1lbS5jIGV4cGxpY2l0bHkgbm9uLW1vZHVsYXIKICBkcml2
+ZXJzL3N0YWdpbmc6IG1ha2UgYW5kcm9pZCBpb25fcGFnZV9wb29sLmMgZXhwbGljaXRseSBub24t
+bW9kdWxhcgogIGRyaXZlcnMvc3RhZ2luZzogbWFrZSBhbmRyb2lkIHRlZ3JhX2lvbi5jIHByb3Bl
+cmx5IHRyaXN0YXRlCiAgZHJpdmVycy9zdGFnaW5nOiBtYWtlIGFuZHJvaWQgc3dfc3luYy5jIGV4
+cGxpY2l0bHkgbm9uLW1vZHVsYXIKICBkcml2ZXJzL3N0YWdpbmc6IG1ha2UgYW5kcm9pZCBsb3dt
+ZW1vcnlraWxsZXIuYyBleHBsaWNpdGx5IG5vbi1tb2R1bGFyCiAgZHJpdmVycy9zdGFnaW5nOiBt
+YWtlIGFuZHJvaWQgdGltZWRfb3V0cHV0LmMgZXhwbGljaXRseSBub24tbW9kdWxhcgogIGRyaXZl
+cnMvc3RhZ2luZzogbWFrZSBlbXh4X3VkYy5jIGV4cGxpY2l0bHkgbm9uLW1vZHVsYXIKCiBkcml2
+ZXJzL3N0YWdpbmcvYW5kcm9pZC9hc2htZW0uYyAgICAgICAgICAgIHwgMjAgKysrLS0tLS0tLS0t
+LS0tLQogZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL2lvbl9wYWdlX3Bvb2wuYyB8IDEwICsr
+LS0tLS0tCiBkcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC9pb24vdGVncmEvTWFrZWZpbGUgIHwgIDIg
+Ky0KIGRyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2xvd21lbW9yeWtpbGxlci5jICAgfCAxOCArKysr
+KystLS0tLS0tLQogZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvc3dfc3luYy5jICAgICAgICAgICB8
+IDExICsrLS0tLS0tLQogZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvdGltZWRfb3V0cHV0LmMgICAg
+ICB8IDE2ICsrKy0tLS0tLS0tLS0KIGRyaXZlcnMvc3RhZ2luZy9lbXh4X3VkYy9lbXh4X3VkYy5j
+ICAgICAgICAgfCAzNyArKysrLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQogNyBmaWxlcyBjaGFu
+Z2VkLCAyMiBpbnNlcnRpb25zKCspLCA5MiBkZWxldGlvbnMoLSkKCi0tIAoyLjYuMQoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZGV2ZWwgbWFpbGluZyBs
+aXN0CmRldmVsQGxpbnV4ZHJpdmVycHJvamVjdC5vcmcKaHR0cDovL2RyaXZlcmRldi5saW51eGRy
+aXZlcnByb2plY3Qub3JnL21haWxtYW4vbGlzdGluZm8vZHJpdmVyZGV2LWRldmVsCg==
