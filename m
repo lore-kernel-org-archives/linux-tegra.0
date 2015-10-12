@@ -1,76 +1,60 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 3/3] drivers/amba: make tegra-ahb.c explicitly non-modular
-Date: Sun, 11 Oct 2015 21:35:47 -0400
-Message-ID: <1444613747-17715-4-git-send-email-paul.gortmaker@windriver.com>
-References: <1444613747-17715-1-git-send-email-paul.gortmaker@windriver.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v4.3-rc4
+Date: Mon, 12 Oct 2015 10:29:08 +0100
+Message-ID: <561B7D64.6070308@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1444613747-17715-1-git-send-email-paul.gortmaker@windriver.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Alexandre Courbot <gnurou@gmail.com>, Russell King <linux@arm.linux.org.uk>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The Kconfig currently controlling compilation of this code is:
+Here are some basic Tegra test results for Linux v4.3-rc4.
+Logs and other details at:
 
-drivers/amba/Kconfig:config TEGRA_AHB
-drivers/amba/Kconfig:   bool "Enable AHB driver for NVIDIA Tegra SoCs"
+    https://nvtb.github.io//linux/test_v4.3-rc4/20151004093105/
 
-...meaning that it currently is not being built as a module by anyone.
 
-Lets remove the couple traces of modularity so that when reading the
-driver there is no doubt it is builtin-only.
+Test summary
+------------
 
-Since module_platform_driver() uses the same init level priority as
-builtin_platform_driver() the init ordering remains unchanged with
-this commit.
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
 
-We also delete the MODULE_LICENSE tag etc. since all that information
-is already contained at the top of the file in the comments.
+Build: Image:
+    Pass: ( 1/ 1): defconfig
 
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-tegra@vger.kernel.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
- drivers/amba/tegra-ahb.c | 9 ++-------
- 1 file changed, 2 insertions(+), 7 deletions(-)
+Boot to userspace: defconfig:
+    Pass: ( 1/ 1): qemu-vexpress64
 
-diff --git a/drivers/amba/tegra-ahb.c b/drivers/amba/tegra-ahb.c
-index b0b688c481e8..5b53ebfa4f9e 100644
---- a/drivers/amba/tegra-ahb.c
-+++ b/drivers/amba/tegra-ahb.c
-@@ -22,7 +22,7 @@
- 
- #include <linux/err.h>
- #include <linux/kernel.h>
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/platform_device.h>
- #include <linux/io.h>
- #include <linux/of.h>
-@@ -301,9 +301,4 @@ static struct platform_driver tegra_ahb_driver = {
- 		.pm = &tegra_ahb_pm,
- 	},
- };
--module_platform_driver(tegra_ahb_driver);
--
--MODULE_AUTHOR("Hiroshi DOYU <hdoyu@nvidia.com>");
--MODULE_DESCRIPTION("Tegra AHB driver");
--MODULE_LICENSE("GPL v2");
--MODULE_ALIAS("platform:" DRV_NAME);
-+builtin_platform_driver(tegra_ahb_driver);
--- 
-2.6.1
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v4.3-rc3 (9ffecb10283508260936b96022d4ee43a7798b4c)):
+   text     data      bss    total  kernel
+  +4247    -4096        0     +151  defconfig
+  +1209        0        0    +1209  multi_v7_defconfig
+  +1049      +64        0    +1113  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.3-rc3 (9ffecb10283508260936b96022d4ee43a7798b4c))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+        .        .        .        .      qemu-vexpress64            defconfig           __internal
+      -8k       8k        .       4k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+      -8k       8k        .       4k tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+      -8k       8k        .       4k  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+      -8k       8k        .       4k  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+      -8k       8k        .       4k    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+      -8k       8k        .       4k    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+      -8k       8k        .       4k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+      -8k       8k        .       4k       tegra30-beaver      tegra_defconfig       tegra30-beaver
