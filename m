@@ -1,61 +1,82 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 3/7] drivers/staging: make android tegra_ion.c properly
- tristate
-Date: Sun, 11 Oct 2015 19:03:17 -0400
-Message-ID: <1444604601-2896-4-git-send-email-paul.gortmaker@windriver.com>
-References: <1444604601-2896-1-git-send-email-paul.gortmaker@windriver.com>
+Subject: [PATCH 0/3] amba/coresight: make non-modular code explicitly
+ non-modular
+Date: Sun, 11 Oct 2015 21:35:44 -0400
+Message-ID: <1444613747-17715-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <1444604601-2896-1-git-send-email-paul.gortmaker@windriver.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: devel@driverdev.osuosl.org, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>, linux-kernel@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Riley Andrews <riandrews@android.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Markus Elfring <elfring@users.sourceforge.net>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Alexandre Courbot <gnurou@gmail.com>, Russell King <linux@arm.linux.org.uk>, Mathieu Poirier <mathieu.poirier@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-VGhlIEtjb25maWcgY3VycmVudGx5IGNvbnRyb2xsaW5nIGNvbXBpbGF0aW9uIG9mIHRoaXMgY29k
-ZSBpczoKCmRyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2lvbi9LY29uZmlnOmNvbmZpZyBJT05fVEVH
-UkEKZHJpdmVycy9zdGFnaW5nL2FuZHJvaWQvaW9uL0tjb25maWc6ICAgIHRyaXN0YXRlICJJb24g
-Zm9yIFRlZ3JhIgoKLi4ud2hpY2ggbGVkIG1lIHRvIGluY29ycmVjdGx5IGNvbmNsdWRlIHRoaXMg
-ZmlsZSB3YXMgYnVpbHQgbW9kdWxhcgplYXJsaWVyLiAgSG93ZXZlciB0aGUgYWJvdmUgQ09ORklH
-IGlzIGp1c3QgdXNlZCB0byBlbnRlciB0aGUgZGlyIGFuZApvbmNlIHdlIGRvIGVudGVyIHRoYXQg
-ZGlyLCB3ZSBzZWUgdGhlIGJ1aWxkIGlzIHVuY29uZGl0aW9uYWw6Cgpkcml2ZXJzL3N0YWdpbmcv
-YW5kcm9pZC9pb24vTWFrZWZpbGU6b2JqLSQoQ09ORklHX0lPTl9URUdSQSkgKz0gdGVncmEvCmRy
-aXZlcnMvc3RhZ2luZy9hbmRyb2lkL2lvbi90ZWdyYS9NYWtlZmlsZTpvYmoteSArPSB0ZWdyYV9p
-b24ubwoKLi4ubWVhbmluZyB0aGF0IGl0IGN1cnJlbnRseSBpcyBub3QgYmVpbmcgYnVpbHQgYXMg
-YSBtb2R1bGUgYnkgYW55b25lLgoKSG93ZXZlciwgZ2l2ZW4gdGhhdCB0aGUgS2NvbmZpZyBkaWQg
-ZXhwbGljaXRseSBjaG9vc2UgdHJpc3RhdGUsIGFuZCB0aGF0CnRoZSBkdW1teSBpb24gZHJpdmVy
-IGlzIChmdW5jdGlvbmFsbHkpIHRyaXN0YXRlLCBJIGNob3NlIHRvIG1ha2UgdGhlCk1ha2VmaWxl
-IGRvIHRoZSByaWdodCB0aGluZyBmb3IgaXQgdG8gYnVpbGQgYXMgYSBtb2R1bGUuCgpBZnRlciB0
-aGlzIGNoYW5nZSwgb24gYW4gQVJNIGFsbG1vZGNvbmZpZywgd2Ugc2VlOgoKICBDQyBbTV0gIGRy
-aXZlcnMvc3RhZ2luZy9hbmRyb2lkL2lvbi90ZWdyYS90ZWdyYV9pb24ubwoKc28gaXQgZG9lcyBi
-dWlsZCBPSyBhcyBhIG1vZHVsZS4gIEkgY2FuJ3Qgdm91Y2ggZm9yIHRoZSBtb2R1bGFyCmZ1bmN0
-aW9uYWxpdHkgaG93ZXZlciwgc28gY29uc2lkZXIgdGhpcyBjb21waWxlIHRlc3RlZCBvbmx5LgoK
-Q2M6IEdyZWcgS3JvYWgtSGFydG1hbiA8Z3JlZ2toQGxpbnV4Zm91bmRhdGlvbi5vcmc+CkNjOiAi
-QXJ2ZSBIasO4bm5ldsOlZyIgPGFydmVAYW5kcm9pZC5jb20+CkNjOiBSaWxleSBBbmRyZXdzIDxy
-aWFuZHJld3NAYW5kcm9pZC5jb20+CkNjOiBTdGVwaGVuIFdhcnJlbiA8c3dhcnJlbkB3d3dkb3Rv
-cmcub3JnPgpDYzogVGhpZXJyeSBSZWRpbmcgPHRoaWVycnkucmVkaW5nQGdtYWlsLmNvbT4KQ2M6
-IEFsZXhhbmRyZSBDb3VyYm90IDxnbnVyb3VAZ21haWwuY29tPgpDYzogTWFya3VzIEVsZnJpbmcg
-PGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0PgpDYzogZGV2ZWxAZHJpdmVyZGV2Lm9zdW9z
-bC5vcmcKQ2M6IGxpbnV4LXRlZ3JhQHZnZXIua2VybmVsLm9yZwpTaWduZWQtb2ZmLWJ5OiBQYXVs
-IEdvcnRtYWtlciA8cGF1bC5nb3J0bWFrZXJAd2luZHJpdmVyLmNvbT4KLS0tCiBkcml2ZXJzL3N0
-YWdpbmcvYW5kcm9pZC9pb24vdGVncmEvTWFrZWZpbGUgfCAyICstCiAxIGZpbGUgY2hhbmdlZCwg
-MSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL3N0YWdp
-bmcvYW5kcm9pZC9pb24vdGVncmEvTWFrZWZpbGUgYi9kcml2ZXJzL3N0YWdpbmcvYW5kcm9pZC9p
-b24vdGVncmEvTWFrZWZpbGUKaW5kZXggMTFjZDAwM2ZiMDhmLi44MDhmMWY1M2YxMWEgMTAwNjQ0
-Ci0tLSBhL2RyaXZlcnMvc3RhZ2luZy9hbmRyb2lkL2lvbi90ZWdyYS9NYWtlZmlsZQorKysgYi9k
-cml2ZXJzL3N0YWdpbmcvYW5kcm9pZC9pb24vdGVncmEvTWFrZWZpbGUKQEAgLTEgKzEgQEAKLW9i
-ai15ICs9IHRlZ3JhX2lvbi5vCitvYmotJChDT05GSUdfSU9OX1RFR1JBKSArPSB0ZWdyYV9pb24u
-bwotLSAKMi42LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fCmRldmVsIG1haWxpbmcgbGlzdApkZXZlbEBsaW51eGRyaXZlcnByb2plY3Qub3JnCmh0dHA6
-Ly9kcml2ZXJkZXYubGludXhkcml2ZXJwcm9qZWN0Lm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaXZl
-cmRldi1kZXZlbAo=
+In a previous merge window, we made changes to allow better
+delineation between modular and non-modular code in commit
+0fd972a7d91d6e15393c449492a04d94c0b89351 ("module: relocate module_init
+from init.h to module.h").  This allows us to now ensure module code
+looks modular and non-modular code does not accidentally look modular
+just to avoid suffering build breakage.
+
+Here we target code that is, by nature of their Makefile and/or
+Kconfig settings, only available to be built-in, but implicitly
+presenting itself as being possibly modular by way of using modular
+headers, macros, and functions.
+
+The goal here is to remove that illusion of modularity from these
+files, but in a way that leaves the actual runtime unchanged.
+In doing so, we remove code that has never been tested and adds
+no value to the tree.  And we continue the process of expecting a
+level of consistency between the Kconfig/Makefile of code and the
+code in use itself.
+
+The coresight drivers make extensive use of module_amba_driver, hence
+why this is all grouped together. Build tested on the latest linux-next,
+for ARCH=arm.
+
+Note that the coresight drivers could in theory be unbound prior to
+this commit, but there doesn't seem to be any case where that would
+make sense, so we explicitly disable that now that we have deleted
+the .remove functions that the unbind would have called.
+
+Paul.
+--
+
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-tegra@vger.kernel.org
+
+Paul Gortmaker (3):
+  amba: create builtin_amba_driver to avoid registration boilerplate
+  drivers/hwtracing: make coresight-* explicitly non-modular
+  drivers/amba: make tegra-ahb.c explicitly non-modular
+
+ drivers/amba/tegra-ahb.c                           |  9 ++-----
+ drivers/hwtracing/coresight/coresight-etb10.c      | 26 +++++--------------
+ drivers/hwtracing/coresight/coresight-etm3x.c      | 29 ++++++---------------
+ drivers/hwtracing/coresight/coresight-etm4x.c      | 19 +++-----------
+ drivers/hwtracing/coresight/coresight-funnel.c     | 25 +++++-------------
+ .../coresight/coresight-replicator-qcom.c          | 19 +++-----------
+ drivers/hwtracing/coresight/coresight-replicator.c | 30 +++++-----------------
+ drivers/hwtracing/coresight/coresight-tmc.c        | 28 +++++---------------
+ drivers/hwtracing/coresight/coresight-tpiu.c       | 25 +++++-------------
+ drivers/hwtracing/coresight/coresight.c            |  3 ---
+ drivers/hwtracing/coresight/of_coresight.c         |  1 -
+ include/linux/amba/bus.h                           |  9 +++++++
+ 12 files changed, 60 insertions(+), 163 deletions(-)
+
+-- 
+2.6.1
