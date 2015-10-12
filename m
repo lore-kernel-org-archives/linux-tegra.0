@@ -1,7 +1,7 @@
 From: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Subject: [PATCH 35/37] ARM: dts: tegra20-iris-512: Fix regulator enable GPIO polarity
-Date: Tue, 13 Oct 2015 00:13:04 +0300
-Message-ID: <1444684386-17094-36-git-send-email-laurent.pinchart@ideasonboard.com>
+Subject: [PATCH 34/37] ARM: dts: tegra20-harmony: Fix regulator enable GPIO polarity
+Date: Tue, 13 Oct 2015 00:13:03 +0300
+Message-ID: <1444684386-17094-35-git-send-email-laurent.pinchart@ideasonboard.com>
 References: <1444684386-17094-1-git-send-email-laurent.pinchart@ideasonboard.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1444684386-17094-1-git-send-email-laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
@@ -17,7 +17,7 @@ starts making use of the flags. Fix it.
 
 Signed-off-by: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra20-iris-512.dts | 2 +-
+ arch/arm/boot/dts/tegra20-harmony.dts | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
@@ -25,18 +25,18 @@ Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-diff --git a/arch/arm/boot/dts/tegra20-iris-512.dts b/arch/arm/boot/dts/tegra20-iris-512.dts
-index 1dd7d7bfdfcc..9b04a367575c 100644
---- a/arch/arm/boot/dts/tegra20-iris-512.dts
-+++ b/arch/arm/boot/dts/tegra20-iris-512.dts
-@@ -85,7 +85,7 @@
- 			regulator-max-microvolt = <5000000>;
- 			regulator-boot-on;
- 			regulator-always-on;
--			gpio = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_HIGH>;
-+			gpio = <&gpio TEGRA_GPIO(W, 2) GPIO_ACTIVE_LOW>;
+diff --git a/arch/arm/boot/dts/tegra20-harmony.dts b/arch/arm/boot/dts/tegra20-harmony.dts
+index b926a07b9443..d18801fe6730 100644
+--- a/arch/arm/boot/dts/tegra20-harmony.dts
++++ b/arch/arm/boot/dts/tegra20-harmony.dts
+@@ -688,7 +688,7 @@
+ 			regulator-name = "vdd_1v5";
+ 			regulator-min-microvolt = <1500000>;
+ 			regulator-max-microvolt = <1500000>;
+-			gpio = <&pmic 0 GPIO_ACTIVE_HIGH>;
++			gpio = <&pmic 0 GPIO_ACTIVE_LOW>;
  		};
  
- 		vcc_sd_reg: regulator@1 {
+ 		regulator@2 {
 -- 
 2.4.9
