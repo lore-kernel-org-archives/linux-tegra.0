@@ -1,57 +1,72 @@
-From: Shawn Guo <shawnguo@kernel.org>
-Subject: Re: [PATCH 00/37] ARM: dts: Fix fixed regulators enable GPIO polarity
-Date: Tue, 13 Oct 2015 23:09:32 +0800
-Message-ID: <20151013150932.GD584@tiger>
-References: <1444684386-17094-1-git-send-email-laurent.pinchart@ideasonboard.com>
- <20151013140946.GB584@tiger>
- <1561402.NmbcA6rYT5@avalon>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [cbootimage PATCH v5 1/5] Add support for update pubkey and
+ rsa-pss signatures
+Date: Tue, 13 Oct 2015 10:19:12 -0600
+Message-ID: <561D2F00.7000306@wwwdotorg.org>
+References: <1444441574-17205-1-git-send-email-jimmzhang@nvidia.com>
+ <1444441574-17205-2-git-send-email-jimmzhang@nvidia.com>
+ <561C38E1.6000103@wwwdotorg.org>
+ <6bc0f021797c4eab93749693af343d5a@HQMAIL103.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1561402.NmbcA6rYT5@avalon>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, linux-omap@vger.kernel.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, Benoit Cousson <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Jason Cooper <jason@lakedaemon.net>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@free-electrons.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Sascha Hauer <kernel@pengutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Linus Walleij <linus.walleij@linaro.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <6bc0f021797c4eab93749693af343d5a-wO81nVYWzR7YuxH7O460wFaTQe2KTcn/@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Allen Martin <AMartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Oct 13, 2015 at 05:17:24PM +0300, Laurent Pinchart wrote:
-> Hi Shawn,
-> 
-> On Tuesday 13 October 2015 22:09:46 Shawn Guo wrote:
-> > On Tue, Oct 13, 2015 at 12:12:29AM +0300, Laurent Pinchart wrote:
-> > > Laurent Pinchart (37):
-> > ...
-> > 
-> > >   ARM: imx6sx-sdb: Fix typo in regulator enable GPIO property
-> > 
-> > ...
-> > 
-> > >   ARM: dts: imx6qdl-tx6: Fix regulator enable GPIO polarity
-> > 
-> > ...
-> > 
-> > >   ARM: dts: imx23-evk: Fix regulator enable GPIO polarity
-> > >   ARM: dts: imx23-stmp378x_devb: Fix regulator enable GPIO polarity
-> > >   ARM: dts: imx25-pdk: Fix regulator enable GPIO polarity
-> > >   ARM: dts: imx28-cfa10036: Fix regulator enable GPIO polarity
-> > >   ARM: dts: imx28-evk: Fix regulator enable GPIO polarity
-> > >   ARM: dts: imx28-m28cu3: Fix regulator enable GPIO polarity
-> > >   ARM: dts: imx28-m28evk: Fix regulator enable GPIO polarity
-> > >   ARM: dts: imx28-sps1: Fix regulator enable GPIO polarity
-> > >   ARM: dts: imx28-tx28: Fix regulator enable GPIO polarity
-> > >   ARM: dts: imx53-m53evk: Fix regulator enable GPIO polarity
-> > >   ARM: dts: imx53-mba53: Fix regulator enable GPIO polarity
-> > >   ARM: dts: imx53-tx53: Fix regulator enable GPIO polarity
-> > >   ARM: dts: imx6q-dmo-edmqmx6: Fix regulator enable GPIO polarity
-> > 
-> > Applied these 15 patches, thanks.
-> 
-> There's ongoing discussions regarding whether this is the right thing to do. 
-> Please see http://www.spinics.net/lists/arm-kernel/msg451724.html. It's thus a 
-> bit early to apply the patches at this point I'm afraid.
+On 10/12/2015 08:02 PM, Jimmy Zhang wrote:
+>
+>
+>> -----Original Message-----
+>> From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
+>> Sent: Monday, October 12, 2015 3:49 PM
+>> To: Jimmy Zhang
+>> Cc: Allen Martin; Stephen Warren; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>> Subject: Re: [cbootimage PATCH v5 1/5] Add support for update pubkey and
+>> rsa-pss signatures
+>>
+>> On 10/09/2015 07:46 PM, Jimmy Zhang wrote:
+>>> Create new configuration keywords:
+>>>      RsaKeyModulusFile: pubkey modulus
+>>>      RsaPssSigBlFile:   bootloader rsa pss signature
+>>>      RsaPssSigBctFile:  bct rsa pss signature
+>>>
+>>> Sample Configuration file update_bl_sig.cfg
+>>>      RsaKeyModulusFile = pubkey.mod;
+>>>      RsaPssSigBlFile = bl.sig;
+>>>
+>>> where pubkey.mod and bl.sig are files that contain the public key
+>>> modulus and bootloader's rsa-pss signature respectively.
+>>>
+>>> public key modulus and signature are created through utilities outside
+>>> cbootimage.
+>>>
+>>> Command line example:
+>>>    $ cbootimage -s tegra210 -u update_bl_sig.cfg image.bin
+>>> image.bin-bl-signed
+>>>
+>>> Above three new keywords added in this CL are only implemented support
+>>> for T210.
+>>
+>> I'd like to see a changelog per patch so I don't have to refer back to the cover
+>> letter each time.
+>>
+>
+> OK
+>
+>>> diff --git a/src/crypto.c b/src/crypto.c
+>>
+>>> +void
+>>> +swap_endianness(
+>>
+>> Nit: It's more like "byte order" (serialization) rather than endianness,
+>> although they're related concepts.
+>
+> This is the function name used by tegrasign. I am open if you have a better name. The reason for the swap because the string actually is a 256 byte long number. Tegra soc handles a number by little endian byte order.
 
-Okay, dropped them except the first one which fixes a typo for
-imx6sx-sdb.
+reverse_byte_order()?
 
-Shawn
+BTW, does cbootimage operate correctly if run in a big-endian host?
