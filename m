@@ -1,99 +1,83 @@
-From: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
-Subject: [PATCH] "drivers/staging: mark android/ion fcns with EXPORT_SYMBOL for tristate
-Date: Tue, 13 Oct 2015 16:46:53 -0400
-Message-ID: <1444769213-7845-1-git-send-email-paul.gortmaker@windriver.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: [GIT PULL] On-demand device probing
+Date: Wed, 14 Oct 2015 10:34:00 +0200
+Message-ID: <561E1378.6000906@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Riley Andrews <riandrews-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-i2c-owner@vger.kernel.org>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>
+Cc: Russell King <linux@arm.linux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=c3=b6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Felipe Balbi <balbi@ti.com>
 List-Id: linux-tegra@vger.kernel.org
 
-In a recent change, we made a bool into a tristate in:
-"drivers/staging: make android tegra_ion.c properly tristate", since it
-was self evident that was the original intention.  However on the final
-link phase we'll see an allmodconfig fail with:
+Hi Rob,
 
-ERROR: "ion_device_add_heap" [drivers/staging/android/ion/tegra/tegra_i=
-on.ko] undefined!
-ERROR: "ion_heap_create" [drivers/staging/android/ion/tegra/tegra_ion.k=
-o] undefined!
-ERROR: "ion_device_create" [drivers/staging/android/ion/tegra/tegra_ion=
-=2Eko] undefined!
-ERROR: "ion_heap_destroy" [drivers/staging/android/ion/tegra/tegra_ion.=
-ko] undefined!
-ERROR: "ion_device_destroy" [drivers/staging/android/ion/tegra/tegra_io=
-n.ko] undefined!
+here is the pull request you asked for, with no changes from the version
+that I posted last to the list.
 
-Export the above using the non GPL specific export, since that is what
-the rest of the ion code base does.
+The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
 
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: "Arve Hj=C3=B8nnev=C3=A5g" <arve-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: Riley Andrews <riandrews-z5hGa2qSFaRBDgjK7y7TUQ@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Markus Elfring <elfring-Rn4VEauK+AKRv+LV9MX5uipxlwaOVQ5f@public.gmane.org>
-Cc: devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Reported-by: kbuild test robot <fengguang.wu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Signed-off-by: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
----
- drivers/staging/android/ion/ion.c      | 3 +++
- drivers/staging/android/ion/ion_heap.c | 2 ++
- 2 files changed, 5 insertions(+)
+Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
 
-diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/androi=
-d/ion/ion.c
-index 91b9b75e41da..e237e9f3312d 100644
---- a/drivers/staging/android/ion/ion.c
-+++ b/drivers/staging/android/ion/ion.c
-@@ -1557,6 +1557,7 @@ void ion_device_add_heap(struct ion_device *dev, =
-struct ion_heap *heap)
-=20
- 	up_write(&dev->lock);
- }
-+EXPORT_SYMBOL(ion_device_add_heap);
-=20
- struct ion_device *ion_device_create(long (*custom_ioctl)
- 				     (struct ion_client *client,
-@@ -1606,6 +1607,7 @@ debugfs_done:
- 	idev->clients =3D RB_ROOT;
- 	return idev;
- }
-+EXPORT_SYMBOL(ion_device_create);
-=20
- void ion_device_destroy(struct ion_device *dev)
- {
-@@ -1614,6 +1616,7 @@ void ion_device_destroy(struct ion_device *dev)
- 	/* XXX need to free the heaps and clients ? */
- 	kfree(dev);
- }
-+EXPORT_SYMBOL(ion_device_destroy);
-=20
- void __init ion_reserve(struct ion_platform_data *data)
- {
-diff --git a/drivers/staging/android/ion/ion_heap.c b/drivers/staging/a=
-ndroid/ion/ion_heap.c
-index fd13d05b538a..e97a2c32ed78 100644
---- a/drivers/staging/android/ion/ion_heap.c
-+++ b/drivers/staging/android/ion/ion_heap.c
-@@ -352,6 +352,7 @@ struct ion_heap *ion_heap_create(struct ion_platfor=
-m_heap *heap_data)
- 	heap->id =3D heap_data->id;
- 	return heap;
- }
-+EXPORT_SYMBOL(ion_heap_create);
-=20
- void ion_heap_destroy(struct ion_heap *heap)
- {
-@@ -379,3 +380,4 @@ void ion_heap_destroy(struct ion_heap *heap)
- 		       heap->type);
- 	}
- }
-+EXPORT_SYMBOL(ion_heap_destroy);
---=20
-2.6.1
+are available in the git repository at:
+
+git+ssh://git.collabora.co.uk/git/user/tomeu/linux.git
+on-demand-probes-for-next
+
+for you to fetch changes up to 587402133fe433759d2d535e5d92ead87fd7f615:
+
+of/platform: Defer probes of registered devices (2015-10-14 10:08:23 +0200)
+
+----------------------------------------------------------------
+Tomeu Vizoso (20):
+driver core: handle -EPROBE_DEFER from bus_type.match()
+ARM: amba: Move reading of periphid to amba_match()
+of/platform: Point to struct device from device node
+of: add function to allow probing a device from a OF node
+gpio: Probe GPIO drivers on demand
+pinctrl: Probe pinctrl devices on demand
+regulator: core: Probe regulators on demand
+drm: Probe panels on demand
+drm/tegra: Probe dpaux devices on demand
+i2c: core: Probe i2c adapters and devices on demand
+pwm: Probe PWM chip devices on demand
+backlight: Probe backlight devices on demand
+usb: phy: Probe phy devices on demand
+clk: Probe clk providers on demand
+pinctrl: Probe pinctrl devices on demand
+phy: core: Probe phy providers on demand
+dma: of: Probe DMA controllers on demand
+power-supply: Probe power supplies on demand
+driver core: Allow deferring probes until late init
+of/platform: Defer probes of registered devices
+
+drivers/amba/bus.c | 88
+++++++++++++++++++++++++++++++++++++++++++++++------------------------------------------
+drivers/base/Kconfig | 18 ++++++++++++++++++
+drivers/base/dd.c | 30 ++++++++++++++++++++++++++++--
+drivers/clk/clk.c | 3 +++
+drivers/dma/of-dma.c | 3 +++
+drivers/gpio/gpiolib-of.c | 5 +++++
+drivers/gpu/drm/drm_panel.c | 3 +++
+drivers/gpu/drm/tegra/dpaux.c | 3 +++
+drivers/i2c/i2c-core.c | 4 ++++
+drivers/of/device.c | 61
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+drivers/of/platform.c | 30 ++++++++++++++++++------------
+drivers/phy/phy-core.c | 3 +++
+drivers/pinctrl/devicetree.c | 3 +++
+drivers/power/power_supply_core.c | 3 +++
+drivers/pwm/core.c | 3 +++
+drivers/regulator/core.c | 2 ++
+drivers/usb/phy/phy.c | 3 +++
+drivers/video/backlight/backlight.c | 3 +++
+include/linux/device.h | 4 +++-
+include/linux/of.h | 1 +
+include/linux/of_device.h | 3 +++
+21 files changed, 219 insertions(+), 57 deletions(-)
+
+
+Thanks,
+
+Tomeu
