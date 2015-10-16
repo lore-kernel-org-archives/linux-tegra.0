@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 3/6] dmaengine: tegra-apb: Save and restore word count
-Date: Fri, 16 Oct 2015 09:25:54 +0100
-Message-ID: <1444983957-18691-4-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH 6/6] dmaengine: tegra-apb: Disable interrupts on removal
+Date: Fri, 16 Oct 2015 09:25:57 +0100
+Message-ID: <1444983957-18691-7-git-send-email-jonathanh@nvidia.com>
 References: <1444983957-18691-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,39 +12,26 @@ To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vinod.koul@intel.com>, S
 Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Newer tegra devices have a separate word count register per channel that
-contains the number of words to be transferred. This register is not
-saved or restored by the suspend/resume helpers for these newer devices
-and so ensure that it is.
+On driver removal, before killing any tasklets, ensure that the channel
+interrupts are disabled so that the tasklet will not try to run during
+or after the removal of the driver.
 
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/dma/tegra20-apb-dma.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/dma/tegra20-apb-dma.c | 1 +
+ 1 file changed, 1 insertion(+)
 
 diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index cf546671f83d..06063d370272 100644
+index 2bfab8d28b53..0dd6e7deaa8e 100644
 --- a/drivers/dma/tegra20-apb-dma.c
 +++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1544,6 +1544,9 @@ static int tegra_dma_pm_suspend(struct device *dev)
- 		ch_reg->apb_ptr = tdc_read(tdc, TEGRA_APBDMA_CHAN_APBPTR);
- 		ch_reg->ahb_seq = tdc_read(tdc, TEGRA_APBDMA_CHAN_AHBSEQ);
- 		ch_reg->apb_seq = tdc_read(tdc, TEGRA_APBDMA_CHAN_APBSEQ);
-+		if (tdma->chip_data->support_separate_wcount_reg)
-+			ch_reg->wcount = tdc_read(tdc,
-+						  TEGRA_APBDMA_CHAN_WCOUNT);
+@@ -1492,6 +1492,7 @@ static int tegra_dma_remove(struct platform_device *pdev)
+ 
+ 	for (i = 0; i < tdma->chip_data->nr_channels; ++i) {
+ 		tdc = &tdma->channels[i];
++		disable_irq(tdc->irq);
+ 		tasklet_kill(&tdc->tasklet);
  	}
  
- 	/* Disable clock */
-@@ -1569,6 +1572,9 @@ static int tegra_dma_pm_resume(struct device *dev)
- 		struct tegra_dma_channel *tdc = &tdma->channels[i];
- 		struct tegra_dma_channel_regs *ch_reg = &tdc->channel_reg;
- 
-+		if (tdma->chip_data->support_separate_wcount_reg)
-+			tdc_write(tdc, TEGRA_APBDMA_CHAN_WCOUNT,
-+				  ch_reg->wcount);
- 		tdc_write(tdc, TEGRA_APBDMA_CHAN_APBSEQ, ch_reg->apb_seq);
- 		tdc_write(tdc, TEGRA_APBDMA_CHAN_APBPTR, ch_reg->apb_ptr);
- 		tdc_write(tdc, TEGRA_APBDMA_CHAN_AHBSEQ, ch_reg->ahb_seq);
 -- 
 2.1.4
