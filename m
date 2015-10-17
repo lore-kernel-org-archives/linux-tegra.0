@@ -1,41 +1,160 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [GIT PULL] On-demand device probing
-Date: Fri, 16 Oct 2015 14:23:06 -0700
-Message-ID: <CAOesGMj44N3Xfv_D_iLEzXBrkN6LXBa-uh6m3fi_F2xDenDhMg@mail.gmail.com>
-References: <20151014092644.GO14956@sirena.org.uk>
-	<1444909328-24761-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [cbootimage PATCH v5 1/5] Add support for update pubkey and
+ rsa-pss signatures
+Date: Sat, 17 Oct 2015 00:21:20 +0000
+Message-ID: <bc8eeffeced34fb1b912850b61a161f0@HQMAIL103.nvidia.com>
+References: <1444441574-17205-1-git-send-email-jimmzhang@nvidia.com>
+ <1444441574-17205-2-git-send-email-jimmzhang@nvidia.com>
+ <561C38E1.6000103@wwwdotorg.org>
+ <6bc0f021797c4eab93749693af343d5a@HQMAIL103.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1444909328-24761-1-git-send-email-tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie@kernel.o>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <6bc0f021797c4eab93749693af343d5a-wO81nVYWzR7YuxH7O460wFaTQe2KTcn/@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: 'Stephen Warren' <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Allen Martin <AMartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "'linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org'" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
-
-I've bisected boot failures in next-20151016 down to patches in this branch:
-
-On Thu, Oct 15, 2015 at 4:42 AM, Tomeu Vizoso
-<tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org> wrote:
-> Tomeu Vizoso (20):
->       driver core: handle -EPROBE_DEFER from bus_type.match()
-
-The machine it happened on was OMAP5UEVM:
-
-http://arm-soc.lixom.net/bootlogs/next/next-20151016/omap5uevm-arm-omap2plus_defconfig.html
-
-But I've also seen it on tegra2, that one bisected down to:
-
->      regulator: core: Probe regulators on demand
-
-http://arm-soc.lixom.net/bootlogs/next/next-20151016/seaboard-arm-multi_v7_defconfig.html
 
 
+> -----Original Message-----
+> From: Jimmy Zhang
+> Sent: Monday, October 12, 2015 7:02 PM
+> To: 'Stephen Warren'
+> Cc: Allen Martin; Stephen Warren; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Subject: RE: [cbootimage PATCH v5 1/5] Add support for update pubkey and
+> rsa-pss signatures
+> 
+> 
+> 
+> > -----Original Message-----
+> > From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
+> > Sent: Monday, October 12, 2015 3:49 PM
+> > To: Jimmy Zhang
+> > Cc: Allen Martin; Stephen Warren; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> > Subject: Re: [cbootimage PATCH v5 1/5] Add support for update pubkey
+> > and rsa-pss signatures
+> >
+> > On 10/09/2015 07:46 PM, Jimmy Zhang wrote:
+> > > Create new configuration keywords:
+> > >     RsaKeyModulusFile: pubkey modulus
+> > >     RsaPssSigBlFile:   bootloader rsa pss signature
+> > >     RsaPssSigBctFile:  bct rsa pss signature
+> > >
+> > > Sample Configuration file update_bl_sig.cfg
+> > >     RsaKeyModulusFile = pubkey.mod;
+> > >     RsaPssSigBlFile = bl.sig;
+> > >
+> > > where pubkey.mod and bl.sig are files that contain the public key
+> > > modulus and bootloader's rsa-pss signature respectively.
+> > >
+> > > public key modulus and signature are created through utilities
+> > > outside cbootimage.
+> > >
+> > > Command line example:
+> > >   $ cbootimage -s tegra210 -u update_bl_sig.cfg image.bin
+> > > image.bin-bl-signed
+> > >
+> > > Above three new keywords added in this CL are only implemented
+> > > support for T210.
+> >
+> > I'd like to see a changelog per patch so I don't have to refer back to
+> > the cover letter each time.
+> >
+> 
+> OK
+> 
+> > > diff --git a/src/crypto.c b/src/crypto.c
+> >
+> > > +void
+> > > +swap_endianness(
+> >
+> > Nit: It's more like "byte order" (serialization) rather than
+> > endianness, although they're related concepts.
+> >
+> 
+> This is the function name used by tegrasign. I am open if you have a better
+> name. The reason for the swap because the string actually is a 256 byte long
+> number. Tegra soc handles a number by little endian byte order.
+> 
+> > > +	u_int8_t *out,
+> > > +	u_int8_t *in,
+> >
+> > Nit: You could make "in" const to since it's not written.
+> >
+> 
+> OK.
+> 
 
--Olof
---
-To unsubscribe from this list: send the line "unsubscribe linux-usb" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Actually this function allows output pointing to input, ie, reversing itself in byte order.
+
+> > > +	const u_int32_t size)
+> >
+> > ... certainly that'd be more useful than making size const.
+> >
+> > > +{
+> > > +	u_int32_t i;
+> > > +
+> > > +	for (i = 0; i < size / 2; i++) {
+> > > +		u_int8_t b1 = in[i];
+> > > +		u_int8_t b2 = in[size - 1 - i];
+> > > +		out[i] = b2;
+> > > +		out[size - 1 - i] = b1;
+> >
+> > Nit: It'd be nice to put "size - 1 - i" into a variable rather than
+> > duplicate the calculation.
+> >
+
+OK
+
+> > > diff --git a/src/set.c b/src/set.c
+> >
+> > > +int
+> > > +set_rsa_param(build_image_context *context, parse_token token,
+> > > +		char *filename)
+> > > +{
+> > > +	int	result;
+> > > +	u_int8_t *rsa_storage;	/* Holds the rsa param after reading */
+> > > +	u_int32_t size;		/* Bytes to read */
+> > > +	u_int32_t actual_size;	/* In bytes */
+> > > +
+> > > +	if (g_soc_config->get_value_size == NULL) {
+> > > +		printf("Error: get_value_size() is not supported.\n");
+> >
+> > I think code that calls that function should be able to assume the
+> > function pointer is non-NULL. This could be achieved by either having
+> > each SoC- specific file provide an implementation of that function.
+> > For the SoCs that don't support this, you could share a common dummy
+> > implementation that always returns an error.
+> >
+> 
+> OK
+> 
+> > > diff --git a/src/parse.h b/src/parse.h
+> >
+> > >   	/*
+> > > +	 * Get the size of specified bct field
+> > > +	 *
+> > > +	 * @param id  	The parse token
+> > > +	 * @param data	Return size from bct field
+> > > +	 * @param bct 	Bct pointer
+> > > +	 * @return 0 and -ENODATA for success and failure
+> > > +	 */
+> > > +	int (*get_value_size)(parse_token id,
+> > > +			void *data,
+> > > +			u_int8_t *bct);
+> >
+> > The existing get/set functions use a void* since they can operate on
+> > different fields with different data types. However, the result of
+> > retrieving a field's size is always a size_t. The "bct" parameter also
+> > doesn't seem to be used; do you think there could ever be a use for it?
+> > I think the following prototype should be used so that we can get as
+> > much type safety as possible:
+> >
+> > // Returns >0 for size, -ve for error, never returns 0.
+> > size_t (*get_value_size)(parse_token id);
+> 
+> OK.
