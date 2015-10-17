@@ -1,69 +1,46 @@
-From: Greg KH <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] staging: comedi: fixed few coding style warnings
-Date: Fri, 16 Oct 2015 23:22:43 -0700
-Message-ID: <20151017062243.GA26616@kroah.com>
-References: <20151014140300.GA22848@localhost.localdomain>
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Fri, 16 Oct 2015 23:57:50 -0700
+Message-ID: <20151017065750.GA18607@kroah.com>
+References: <561E1378.6000906@collabora.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-i2c-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20151014140300.GA22848@localhost.localdomain>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Sakshi Bansal <sakshi.april5@gmail.com>
-Cc: devel@driverdev.osuosl.org, jak@jak-linux.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, ac100@lists.launchpad.net
+In-Reply-To: <561E1378.6000906@collabora.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Felipe Balbi <balbi@ti.com>Jingoo Han <j>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Oct 14, 2015 at 07:33:00PM +0530, Sakshi Bansal wrote:
-> Fixed block comments usage of * on subsequent lines
+On Wed, Oct 14, 2015 at 10:34:00AM +0200, Tomeu Vizoso wrote:
+> Hi Rob,
 > 
-> Signed-off-by: Sakshi Bansal <sakshi.april5@gmail.com>
-> ---
->  drivers/staging/comedi/comedi.h        | 181 +++++++++++++++++++--------------
->  drivers/staging/comedi/comedi_pcmcia.h |   3 +-
->  drivers/staging/comedi/comedilib.h     |  26 ++---
->  3 files changed, 120 insertions(+), 90 deletions(-)
+> here is the pull request you asked for, with no changes from the version
+> that I posted last to the list.
 > 
-> diff --git a/drivers/staging/comedi/comedi.h b/drivers/staging/comedi/comedi.h
-> index 66edda1..31a43ee 100644
-> --- a/drivers/staging/comedi/comedi.h
-> +++ b/drivers/staging/comedi/comedi.h
-> @@ -1,20 +1,20 @@
->  /*
-> -    include/comedi.h (installed as /usr/include/comedi.h)
-> -    header file for comedi
-> + *  include/comedi.h (installed as /usr/include/comedi.h)
-> + *  header file for comedi
->  
-> -    COMEDI - Linux Control and Measurement Device Interface
-> -    Copyright (C) 1998-2001 David A. Schleef <ds@schleef.org>
-> + *  COMEDI - Linux Control and Measurement Device Interface
-> + *  Copyright (C) 1998-2001 David A. Schleef <ds@schleef.org>
->  
-> -    This program is free software; you can redistribute it and/or modify
-> -    it under the terms of the GNU Lesser General Public License as published by
-> -    the Free Software Foundation; either version 2 of the License, or
-> -    (at your option) any later version.
-> + *  This program is free software; you can redistribute it and/or modify
-> + *  it under the terms of the GNU Lesser General Public License as published by
-> + *  the Free Software Foundation; either version 2 of the License, or
-> + *  (at your option) any later version.
->  
+> The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
+> 
+> Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
+> 
+> are available in the git repository at:
+> 
+> git+ssh://git.collabora.co.uk/git/user/tomeu/linux.git
+> on-demand-probes-for-next
 
-Why are you leaving the blank lines alone?  Either do it all or nothing,
-what you are doing here is not correct at all :(
+That's not a signed tag :(
 
-Hint, please leave these alone, there's nothing wrong with the existing
-format.
+Anyway, I REALLY don't like this series (sorry for the delay in
+reviewing them, normally I trust Rob's judgement...)
 
-sorry,
+I can't see adding calls like this all over the tree just to solve a
+bus-specific problem, you are adding of_* calls where they aren't
+needed, or wanted, at all.
+
+What is the root-problem of your delay in device probing?  I read your
+last patch series and I can't seem to figure out what the issue is that
+this is solving in any "better" way from the existing deferred probing.
+
+thanks,
 
 greg k-h
