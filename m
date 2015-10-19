@@ -1,44 +1,46 @@
-From: Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH 03/17] input: tegra-kbc: drop use of IRQF_NO_SUSPEND flag
-Date: Mon, 19 Oct 2015 18:34:02 +0100
-Message-ID: <5625298A.9010801@arm.com>
-References: <1442850433-5903-1-git-send-email-sudeep.holla@arm.com>
- <1442850433-5903-4-git-send-email-sudeep.holla@arm.com>
- <56124FC1.8010202@nvidia.com>
+From: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?=
+	<u.kleine-koenig@pengutronix.de>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Mon, 19 Oct 2015 20:27:44 +0200
+Message-ID: <20151019182744.GD4931@pengutronix.de>
+References: <20151017065750.GA18607@kroah.com>
+ <20151018192931.GY14956@sirena.org.uk>
+ <20151018193757.GA9147@kroah.com>
+ <20151018195330.GB14956@sirena.org.uk>
+ <1445247881.53393.146.camel@infradead.org>
+ <CAL_JsqKehmSobpbdeXGo=-1pAbtrhCHovyyCWya_MNOhGCi8CQ@mail.gmail.com>
+ <1445258870.53393.173.camel@infradead.org>
+ <20151019145048.GI14956@sirena.org.uk>
+ <1445268580.53393.183.camel@infradead.org>
+ <20151019154324.GN32532@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-input-owner@vger.kernel.org>
-In-Reply-To: <56124FC1.8010202@nvidia.com>
-Sender: linux-input-owner@vger.kernel.org
-To: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Sudeep Holla <sudeep.holla@arm.com>, Thomas Gleixner <tglx@linutronix.de>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20151019154324.GN32532@n2100.arm.linux.org.uk>
+Sender: linux-clk-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: David Woodhouse <dwmw2@infradead.org>, Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Liam Girdwood <lgirdwood@g>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Dmitry,
+Hello,
 
-On 05/10/15 11:24, Laxman Dewangan wrote:
->
-> On Monday 21 September 2015 09:16 PM, Sudeep Holla wrote:
->>
->> diff --git a/drivers/input/keyboard/tegra-kbc.c
->> b/drivers/input/keyboard/tegra-kbc.c
->> index f97c73bd14f8..5f5dbbd51991 100644
->> --- a/drivers/input/keyboard/tegra-kbc.c
->> +++ b/drivers/input/keyboard/tegra-kbc.c
->> @@ -705,7 +705,7 @@ static int tegra_kbc_probe(struct platform_device
->> *pdev)
->>       input_set_drvdata(kbc->idev, kbc);
->>       err = devm_request_irq(&pdev->dev, kbc->irq, tegra_kbc_isr,
->> -              IRQF_NO_SUSPEND | IRQF_TRIGGER_HIGH, pdev->name, kbc);
->> +                   IRQF_TRIGGER_HIGH, pdev->name, kbc);
->>
->
-> Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
->
+On Mon, Oct 19, 2015 at 04:43:24PM +0100, Russell King - ARM Linux wrot=
+e:
+> It's a bit ironic that you've chosen GPIO as an example there.  The
+> "new" GPIO API (the gpiod_* stuff) only has a fwnode way to get the
+> gpio descriptor.  There's no of_* method.
 
-Can you pick this up with all the Acks ?
+Without following all that fwnode discussion:
+gpiod_get et al. should work for you here, doesn't it? It just takes a
+struct device * and I'm happy with it.
 
--- 
-Regards,
-Sudeep
+Best regards
+Uwe
+
+--=20
+Pengutronix e.K.                           | Uwe Kleine-K=F6nig        =
+    |
+Industrial Linux Solutions                 | http://www.pengutronix.de/=
+  |
