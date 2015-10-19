@@ -1,61 +1,62 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3 1/2] Documentation: DT: Add binding documentation for
- NVIDIA ADMA
-Date: Mon, 19 Oct 2015 12:22:51 +0100
-Message-ID: <5624D28B.70803@nvidia.com>
-References: <1444980919-20331-1-git-send-email-jonathanh@nvidia.com>
- <1444980919-20331-2-git-send-email-jonathanh@nvidia.com>
- <56212139.4080101@wwwdotorg.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] pinctrl: tegra-xusb: Correct lane mux options
+Date: Mon, 19 Oct 2015 12:41:43 +0100
+Message-ID: <5624D6F7.6020906@nvidia.com>
+References: <1444987441-25176-1-git-send-email-jonathanh@nvidia.com>
+ <56212308.7050405@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56212139.4080101-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <56212308.7050405@wwwdotorg.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 16/10/15 17:09, Stephen Warren wrote:
-> On 10/16/2015 01:35 AM, Jon Hunter wrote:
->> Add device-tree binding documentation for the Tegra210 Audio DMA
->> controller.
+On 16/10/15 17:17, Stephen Warren wrote:
+> On 10/16/2015 03:24 AM, Jon Hunter wrote:
+>> The description of the XUSB_PADCTL_USB3_PAD_MUX_0 register in the
+>> Tegra124
+>> documentation implies that all functions (pcie, usb3 and sata) can be
+>> muxed onto to all lanes (pcie lanes 0-4 and sata lane 0). However, it has
+>> been confirmed that this is not the case and the mux'ing options much
+>> more
+>> limited. Unfortunately, the public documentation has not been updated to
+>> reflect this and so detail the actual mux'ing options here by function:
 > 
->> diff --git a/Documentation/devicetree/bindings/dma/tegra210-adma.txt
->> b/Documentation/devicetree/bindings/dma/tegra210-adma.txt
+> FWIW, there's better documentation of this in the Tegra210 TRM, although
+> the options have been expanded on that chip, so the docs don't entirely
+> apply to Tegra124.
+
+Yes I have been trying to get this better documented.
+
+>> Function:        Lanes:
+>> pcie1 x2:        pcie3, pcie4
+>> pcie1 x4:        pcie1, pcie2, pcie3, pcie4
+>> pcie2 x1 (option1):    pcie0
+>> pcie2 x1 (option2):    pcie2
+>> usb3 port 0:        pcie0
+>> usb3 port 1 (option 1):    pcie1
+>> usb3 port 1 (option 2):    sata0
+>> sata:            sata0
 > 
->> +Required properties:
+> I think this change needs a DT binding change to go along with it. Can
+> you take a look at:
 > 
->> +- interrupt-parent: Phandle to the interrupt parent controller.
+> http://www.spinics.net/lists/arm-kernel/msg449647.html
+> [PATCH 1/2] dt: update Tegra XUSB padctl binding for Tegra210
+>
+> (Sorry, I didn't realize anyone other than Thierry and Andrew were
+> working on XUSB/padctl so didn't explicitly CC you on that.)
 > 
-> Nit: Since that is more of a "system level"/standard property, it's
-> typical not to document it. The property is not actually required if the
-> inherited value is already correct. Still, it's obvious enough what this
-> means, so I'd only suggest fixing this if you have to respin for some
-> other reason.
+> ... to see what would need to be changed there? Or from a binding
+> perspective should we simply assume that people will refer to the HW
+> docs (or other information sources) for the exact list of available
+> options?
 
-Ok.
-
->> +- clocks: Must contain one entry for the ADMA module clock, "adma_ape".
->> +- clock-names: Must contain the entry "adma_ape".
-> 
-> Which clock is this in the CAR? I don't see any adma_ape clock
-> documented in the TRM.
-
-Darn. I thought I had checked this. Yes it should be the AHUB clock and
-looking at the current t210 clock patches for mainline this is
-TEGRA210_CLK_D_AUDIO. Ok will fix this.
-
-> Is there a dedicated reset signal for this module? If so, we should
-> require a resets property.
-
-No there does not appear to be. Looking at the documentation the ADMA
-would be reset by the main APE reset. Seems to be one reset that resets
-most modules in the APE.
-
-That raises another issue, the ADMA is in the audio power partition and
-currently our downstream driver assumes that this is on. I should at
-least check this.
+Yes may be the above needs to go in the binding doc. For t124, I don't
+think that the TRM will get updated now.
 
 Jon
