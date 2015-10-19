@@ -1,7 +1,7 @@
 From: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [cbootimage PATCH v6 2/5] Add support to dump rsa related fields for t210
-Date: Mon, 19 Oct 2015 12:03:02 -0700
-Message-ID: <1445281385-28020-3-git-send-email-jimmzhang@nvidia.com>
+Subject: [cbootimage PATCH v6 3/5] Add new configuration keyword "RehashBl"
+Date: Mon, 19 Oct 2015 12:03:03 -0700
+Message-ID: <1445281385-28020-4-git-send-email-jimmzhang@nvidia.com>
 References: <1445281385-28020-1-git-send-email-jimmzhang@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,205 +12,211 @@ To: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+A
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add support to dump rsa pubkey, bct's rsa-pss signature and
-bootloader's rsa-pss signature.
+This feature is needed in case an image is updated at later stage
+after bootimage has been created.
 
-Changes in V6:
-1) Add token id as input parameter for format_function()
-2) Call get_value_size() to get paramter size in function
-   format_rsa_param() instead of using a constant.
+How to use:
+  Add keyword "RehashBl" to configuration file, for example, update.cfg:
+    RehashBl;
+
+  Invoke cbootimage to re-calculate bootloader aes hash, for example, for
+  bootimage bootloader.bin:
+    $ cbootimage -s tegra210 --update update.cfg bootloader.bin bootloader.bin-resigned
+
+  Where bootloader.bin-resigned is the resigned bootimage bootloader.bin
 
 Signed-off-by: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- src/bct_dump.c           | 65 ++++++++++++++++++++++++++++++++++++++++--------
- src/t210/nvbctlib_t210.c | 17 +++++++++++++
- 2 files changed, 72 insertions(+), 10 deletions(-)
+ samples/update.cfg |  1 +
+ src/crypto.c       | 34 ++++++++++++++++++++++++++++++++++
+ src/crypto.h       |  7 +++++++
+ src/data_layout.c  | 51 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ src/data_layout.h  |  2 ++
+ src/parse.c        |  9 +++++++++
+ src/parse.h        |  1 +
+ 7 files changed, 105 insertions(+)
+ create mode 100644 samples/update.cfg
 
-diff --git a/src/bct_dump.c b/src/bct_dump.c
-index be7b85dc72d6..4f50fa261e6e 100644
---- a/src/bct_dump.c
-+++ b/src/bct_dump.c
-@@ -27,11 +27,13 @@
- int enable_debug;
- cbootimage_soc_config * g_soc_config;
- 
--static void format_u32_hex8(char const * message, void * data);
--static void format_u32(char const * message, void * data);
--static void format_chipuid(char const * message, void * data);
-+static void format_u32_hex8(parse_token id, char const * message, void * data);
-+static void format_u32(parse_token id, char const * message, void * data);
-+static void format_chipuid(parse_token id, char const * message, void * data);
-+static void format_hex_16_bytes(parse_token id, char const * message, void * data);
-+static void format_rsa_param(parse_token id, char const * message, void * data);
- 
--typedef void (*format_function)(char const * message, void * data);
-+typedef void (*format_function)(parse_token id, char const * message, void * data);
- 
- typedef struct {
- 	parse_token id;
-@@ -39,9 +41,11 @@ typedef struct {
- 	format_function format;
- } value_data;
- 
-+#define PARAM_TYPE_BINARY_DATA_MAX_SIZE 256
- typedef union {
- 	u_int32_t val;
- 	u_int8_t uid[16];
-+	u_int8_t binary[PARAM_TYPE_BINARY_DATA_MAX_SIZE];
- } param_types;
- 
- #define MAX_PARAM_SIZE sizeof(param_types)
-@@ -54,6 +58,9 @@ static value_data const values[] = {
- 	{ token_odm_data,            "OdmData       = ", format_u32_hex8 },
- 	{ token_secure_jtag_control, "JtagCtrl      = ", format_u32_hex8 },
- 	{ token_secure_debug_control, "DebugCtrl     = ", format_u32_hex8 },
-+	{ token_crypto_hash, 	     "BCT AES Hash  = ", format_hex_16_bytes },
-+	{ token_rsa_key_modulus,     "RsaKeyModulus:\n", format_rsa_param },
-+	{ token_rsa_pss_sig_bct,     "RsaPssSigBct:\n", format_rsa_param },
- 	{ token_unique_chip_id,      "ChipUid       = ", format_chipuid },
- 	{ token_bootloader_used,     "# Bootloader used       = ", format_u32 },
- 	{ token_bootloaders_max,     "# Bootloaders max       = ", format_u32 },
-@@ -72,6 +79,8 @@ static value_data const bl_values[] = {
- 	{ token_bl_load_addr,   "Load address = ", format_u32_hex8 },
- 	{ token_bl_entry_point, "Entry point  = ", format_u32_hex8 },
- 	{ token_bl_attribute,   "Attributes   = ", format_u32_hex8 },
-+	{ token_bl_crypto_hash, "Bl AES Hash  = ", format_hex_16_bytes },
-+	{ token_rsa_pss_sig_bl,	"RsaPssSigBl:\n", format_rsa_param },
- };
- 
- static value_data const mts_values[] = {
-@@ -85,17 +94,17 @@ static value_data const mts_values[] = {
- };
- 
- /*****************************************************************************/
--static void format_u32_hex8(char const * message, void * data)
-+static void format_u32_hex8(parse_token id, char const * message, void * data)
- {
- 	printf("%s0x%08x;\n", message, *((u_int32_t *) data));
+diff --git a/samples/update.cfg b/samples/update.cfg
+new file mode 100644
+index 000000000000..c5c741bad536
+--- /dev/null
++++ b/samples/update.cfg
+@@ -0,0 +1 @@
++RehashBl;
+diff --git a/src/crypto.c b/src/crypto.c
+index f218188d0059..6eb87a70a6bc 100644
+--- a/src/crypto.c
++++ b/src/crypto.c
+@@ -326,3 +326,37 @@ reverse_byte_order(
+ 	if (size % 2)
+ 		out[size / 2] = in[size / 2];
  }
- 
--static void format_u32(char const * message, void * data)
-+static void format_u32(parse_token id, char const * message, void * data)
- {
- 	printf("%s%d;\n", message, *((u_int32_t *) data));
- }
- 
--static void format_chipuid(char const * message, void * data)
-+static void format_chipuid(parse_token id, char const * message, void * data)
- {
- 	u_int8_t *uid = (u_int8_t *)data;
- 	int byte_index;
-@@ -108,6 +117,38 @@ static void format_chipuid(char const * message, void * data)
- 	printf("%s%s;\n", message, uid_str);
- }
- 
-+static void format_hex_16_bytes(parse_token id, char const * message, void * data)
++
++int
++sign_bl(build_image_context *context,
++	u_int8_t *bootloader,
++	u_int32_t length,
++	u_int32_t image_instance)
 +{
-+	u_int8_t *p_byte = (u_int8_t *)data;
-+	int byte_index;
++	int e = 0;
++	u_int8_t  *hash_buffer;
++	u_int32_t  hash_size;
 +
-+	printf("%s", message);
-+	for (byte_index = 0; byte_index < 16; ++byte_index)
-+		printf("%02x", *p_byte++);
++	g_soc_config->get_value(token_hash_size,
++			&hash_size, context->bct);
 +
-+	printf(";\n");
++	hash_buffer = calloc(1, hash_size);
++	if (hash_buffer == NULL)
++		return -ENOMEM;
++
++	/* Encrypt and compute hash */
++	if ((e = sign_data_block(bootloader,
++			length,
++			hash_buffer)) != 0)
++		goto fail;
++
++	if ((e = g_soc_config->setbl_param(image_instance,
++				token_bl_crypto_hash,
++				(u_int32_t*)hash_buffer,
++				context->bct)) != 0)
++		goto fail;
++
++ fail:
++	free(hash_buffer);
++	return e;
 +}
+diff --git a/src/crypto.h b/src/crypto.h
+index 04d2a0ccab34..5896b517ee46 100644
+--- a/src/crypto.h
++++ b/src/crypto.h
+@@ -49,4 +49,11 @@ reverse_byte_order(
+ 	u_int8_t *out,
+ 	u_int8_t *in,
+ 	const u_int32_t size);
 +
-+static void format_rsa_param(parse_token id, char const * message, void * data)
++int
++sign_bl(build_image_context *context,
++	u_int8_t *bootloader,
++	u_int32_t length,
++	u_int32_t image_instance);
++
+ #endif /* #ifndef INCLUDED_CRYPTO_H */
+diff --git a/src/data_layout.c b/src/data_layout.c
+index 082609236724..5d3fe10ceda4 100644
+--- a/src/data_layout.c
++++ b/src/data_layout.c
+@@ -1065,3 +1065,54 @@ int get_bct_size_from_image(build_image_context *context)
+ 	context->bct = 0;
+ 	return bct_size;
+ }
++
++int resign_bl(build_image_context *context)
 +{
-+#define MAX_BYTE_NUMBER_PER_LINE	16
-+	u_int8_t *rsa = (u_int8_t *)data;
-+	int size = g_soc_config->get_value_size(id);
-+	int byte_index;
++	int ret;
++	u_int8_t  *buffer, *image;
++	u_int32_t  image_instance = 0;	/* support only one instance */
++	u_int32_t  image_actual_size; /* In bytes */
++	u_int32_t  bl_length;
++	u_int32_t  pages_in_image;
++	u_int32_t  blk_size, page_size, current_blk, current_page;
++	u_int32_t  offset;
 +
-+	printf("%s", message);
-+	for (byte_index = 0; byte_index < size; ++byte_index) {
-+		printf(" %02x", *rsa++);
++	/* read in bl from image */
++	g_soc_config->get_value(token_block_size, &blk_size, context->bct);
++	g_soc_config->get_value(token_page_size, &page_size, context->bct);
 +
-+		if ((byte_index + 1) % MAX_BYTE_NUMBER_PER_LINE == 0)
-+			printf("\n");
++	GET_BL_FIELD(image_instance, start_blk, &current_blk);
++	GET_BL_FIELD(image_instance, start_page,  &current_page);
++	GET_BL_FIELD(image_instance, length,  &bl_length);
++
++	offset = current_blk * blk_size +
++			current_page * page_size;
++
++	if (read_from_image(context->input_image_filename,
++				offset, bl_length,
++				&image, &image_actual_size, file_type_bin)) {
++		printf("Error reading image file %s.\n",
++				context->input_image_filename);
++		return -ENOMEM;
 +	}
 +
-+	if (byte_index % MAX_BYTE_NUMBER_PER_LINE != 0)
-+		printf("\n");
-+#undef MAX_BYTE_NUMBER_PER_LINE
++	pages_in_image = ICEIL(image_actual_size, page_size);
++
++	/* Create a local copy of the bl */
++	if ((buffer = malloc(pages_in_image * page_size)) == NULL) {
++		ret = -ENOMEM;
++		goto fail;
++	}
++
++	memset(buffer, 0, pages_in_image * page_size);
++	memcpy(buffer, image, image_actual_size);
++
++	insert_padding(buffer, image_actual_size);
++
++	/* sign bl */
++	ret = sign_bl(context, buffer, image_actual_size, image_instance);
++	free (buffer);
++ fail:
++	free (image);
++	return ret;
++}
+diff --git a/src/data_layout.h b/src/data_layout.h
+index c6e53e61be83..0e6e41fcb24c 100644
+--- a/src/data_layout.h
++++ b/src/data_layout.h
+@@ -64,4 +64,6 @@ get_bct_size_from_image(build_image_context *context);
+ int
+ begin_update(build_image_context *context);
+ 
++int
++resign_bl(build_image_context *context);
+ #endif /* #ifndef INCLUDED_DATA_LAYOUT_H */
+diff --git a/src/parse.c b/src/parse.c
+index 667895c4dd54..6f37dad76212 100644
+--- a/src/parse.c
++++ b/src/parse.c
+@@ -80,6 +80,8 @@ static int
+ parse_dev_param(build_image_context *context, parse_token token, char *rest);
+ static int
+ parse_sdram_param(build_image_context *context, parse_token token, char *rest);
++static int
++parse_sign_bl(build_image_context *context, parse_token token, char *rest);
+ 
+ static int process_statement(build_image_context *context,
+ 				char *str,
+@@ -121,6 +123,7 @@ static parse_item s_top_level_items[] = {
+ 	{ "RsaKeyModulusFile=", token_rsa_key_modulus,	parse_rsa_param },
+ 	{ "RsaPssSigBlFile=",   token_rsa_pss_sig_bl,	parse_rsa_param },
+ 	{ "RsaPssSigBctFile=",  token_rsa_pss_sig_bct,	parse_rsa_param },
++	{ "RehashBl",       token_sign_bl,		parse_sign_bl },
+ 	{ NULL, 0, NULL } /* Must be last */
+ };
+ 
+@@ -689,6 +692,12 @@ parse_bct_file(build_image_context *context, parse_token token, char *rest)
+ 	return 0;
+ }
+ 
++static int
++parse_sign_bl(build_image_context *context, parse_token token, char *rest)
++{
++	return resign_bl(context);
 +}
 +
- /*****************************************************************************/
- static void usage(void)
+ static char *
+ parse_end_state(char *str, char *uname, int chars_remaining)
  {
-@@ -213,7 +254,7 @@ int main(int argc, char *argv[])
- 		if (e)
- 			memset(&data, 0, MAX_PARAM_SIZE);
+diff --git a/src/parse.h b/src/parse.h
+index f2e28b306709..191742c082ee 100644
+--- a/src/parse.h
++++ b/src/parse.h
+@@ -117,6 +117,7 @@ typedef enum
+ 	token_rsa_key_modulus,
+ 	token_rsa_pss_sig_bl,
+ 	token_rsa_pss_sig_bct,
++	token_sign_bl,
  
--		values[i].format(values[i].message, &data);
-+		values[i].format(values[i].id, values[i].message, &data);
- 	}
- 
- 	/* Display bootloader values */
-@@ -241,7 +282,9 @@ int main(int argc, char *argv[])
- 				if (e)
- 					data.val = -1;
- 
--				bl_values[j].format(bl_values[j].message, &data);
-+				bl_values[j].format(bl_values[j].id,
-+							bl_values[j].message,
-+							&data);
- 			}
- 		}
- 	}
-@@ -271,7 +314,9 @@ int main(int argc, char *argv[])
- 				if (e)
- 					data.val = -1;
- 
--				mts_values[j].format(mts_values[j].message, &data);
-+				mts_values[j].format(mts_values[j].id,
-+							mts_values[j].message,
-+							&data);
- 			}
- 		}
- 	}
-diff --git a/src/t210/nvbctlib_t210.c b/src/t210/nvbctlib_t210.c
-index c8e13486aaa3..4b63cadb5285 100644
---- a/src/t210/nvbctlib_t210.c
-+++ b/src/t210/nvbctlib_t210.c
-@@ -109,6 +109,8 @@ parse_token t210_root_token_list[] = {
- 	token_bootloaders_max,
- 	token_bct_size,
- 	token_hash_size,
-+	token_crypto_hash,
-+	token_bl_crypto_hash,
- 	token_crypto_offset,
- 	token_crypto_length,
- 	token_max_bct_search_blks,
-@@ -2034,6 +2036,12 @@ t210_getbl_param(u_int32_t set,
- 		sizeof(nvboot_hash));
- 		break;
- 
-+	case token_rsa_pss_sig_bl:
-+		reverse_byte_order(data,
-+			&bct_ptr->bootloader[set].signature.rsa_pss_sig,
-+			sizeof(nvboot_rsa_pss_sig));
-+		break;
-+
- 	default:
- 		return -ENODATA;
- 	}
-@@ -2130,6 +2138,15 @@ t210_bct_get_value(parse_token id, void *data, u_int8_t *bct)
- 		memcpy(data, &(bct_ptr->unique_chip_id), sizeof(nvboot_ecid));
- 		break;
- 
-+	case token_rsa_key_modulus:
-+		reverse_byte_order(data, &bct_ptr->key, sizeof(nvboot_rsa_key_modulus));
-+		break;
-+
-+	case token_rsa_pss_sig_bct:
-+		reverse_byte_order(data, &bct_ptr->signature.rsa_pss_sig,
-+			sizeof(nvboot_rsa_pss_sig));
-+		break;
-+
- 	case token_reserved_offset:
- 		*((u_int32_t *)data) = (u_int8_t *)&(samplebct.reserved)
- 				- (u_int8_t *)&samplebct;
+ 	token_nand_clock_divider,
+ 	token_nand_nand_timing,
 -- 
 1.8.1.5
