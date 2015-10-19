@@ -1,67 +1,37 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [cbootimage PATCH v6 1/5] Add support for update pubkey and
- rsa-pss signatures
-Date: Mon, 19 Oct 2015 14:38:29 -0600
-Message-ID: <562554C5.1010504@wwwdotorg.org>
-References: <1445281385-28020-1-git-send-email-jimmzhang@nvidia.com>
- <1445281385-28020-2-git-send-email-jimmzhang@nvidia.com>
+From: Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH/RESEND] ARM: Remove __ref on hotplug cpu die path
+Date: Mon, 19 Oct 2015 13:38:15 -0700
+Message-ID: <20151019203815.GD22043@atomide.com>
+References: <1445285133-11977-1-git-send-email-sboyd@codeaurora.org>
+ <20151019202301.GA453@leverpostej>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1445281385-28020-2-git-send-email-jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20151019202301.GA453@leverpostej>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, arm@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Will Deacon <will.deacon@arm.com>, linux-omap@vger.kernel.org, linux-arm-msm@vger.kernel.org, spear-devel@list.st.com, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/19/2015 01:03 PM, Jimmy Zhang wrote:
-> Create new configuration keywords:
->     RsaKeyModulusFile: pubkey modulus
->     RsaPssSigBlFile:   bootloader rsa pss signature
->     RsaPssSigBctFile:  bct rsa pss signature
->
-> Sample Configuration file update_bl_sig.cfg
->     RsaKeyModulusFile = pubkey.mod;
->     RsaPssSigBlFile = bl.sig;
->
-> where pubkey.mod and bl.sig are files that contain the public key
-> modulus and bootloader's rsa-pss signature respectively.
->
-> public key modulus and signature are created through utilities
-> outside cbootimage.
->
-> Command line example:
->   $ cbootimage -s tegra210 -u update_bl_sig.cfg image.bin image.bin-bl-signed
->
-> Above three new keywords added in this CL are only implemented to support
-> for T210.
->
-> Changes in V6:
-> 1) Rename function swap_endianness() to reverse_byte_order()
-> 2) Put "size - 1 - i" to a variable to avoid double calculation
-> 3) Remove checking NULL pointer of get_value_size() in function set_rsa_param()
-> 4) Change function prototype for get_value_size()
+* Mark Rutland <mark.rutland@arm.com> [151019 13:27]:
+> On Mon, Oct 19, 2015 at 01:05:33PM -0700, Stephen Boyd wrote:
+> > Now that __cpuinit has been removed, the __ref markings on these
+> > functions are useless. Remove them. This also reduces the size of
+> > the multi_v7_defconfig image:
+> > 
+> > $ size before after
+> >    text    data     bss     dec     hex filename
+> >    12683578        1470996  348904 14503478         dd4e36 before
+> >    12683274        1470996  348904 14503174         dd4d06 after
+> > 
+> > presumably because now we don't have to jump to code in the
+> > .ref.text section and/or the noinline marking is removed.
+> 
+> FWIW:
+> 
+> Acked-by: Mark Rutland <mark.rutland@arm.com>
 
-The changelog should be below the --- line since it's not typically 
-checked in.
+And if you need even more acks:
 
->   src/t114/nvbctlib_t114.c |  1 +
->   src/t124/nvbctlib_t124.c |  1 +
->   src/t210/nvbctlib_t210.c | 46 +++++++++++++++++++++++++++++++++++++++++++++-
-
-t20, t30, t132 files should be updated to add an implementation of 
-struct cbootimage_soc_config .get_value_size too.
-
-I was going to apply these patches and then send a patch to fix that up, 
-but I noticed that this series introduces a bunch of warnings. Can you 
-submit v7 that builds cleanly, has that fixed, and:
-
-> diff --git a/src/crypto.c b/src/crypto.c
-
-> +void
-> +reverse_byte_order(
-> +	u_int8_t *out,
-> +	u_int8_t *in,
-
-"in" should be const.
+Acked-by: Tony Lindgren <tony@atomide.com>
