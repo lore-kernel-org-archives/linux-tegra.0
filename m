@@ -1,75 +1,93 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH V3 1/2] Documentation: DT: Add binding documentation for
- NVIDIA ADMA
-Date: Mon, 19 Oct 2015 10:33:26 -0600
-Message-ID: <56251B56.70007@wwwdotorg.org>
-References: <1444980919-20331-1-git-send-email-jonathanh@nvidia.com>
- <1444980919-20331-2-git-send-email-jonathanh@nvidia.com>
- <56212139.4080101@wwwdotorg.org> <5624D28B.70803@nvidia.com>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Mon, 19 Oct 2015 17:45:14 +0100
+Message-ID: <20151019164513.GP32532@n2100.arm.linux.org.uk>
+References: <20151018192931.GY14956@sirena.org.uk>
+ <20151018193757.GA9147@kroah.com>
+ <20151018195330.GB14956@sirena.org.uk>
+ <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
+ <20151019131821.GA32532@n2100.arm.linux.org.uk>
+ <CAAObsKDS_+AZ26P_fHc6pvAYrQotsuoO0DEGQUWC514t3DD_jQ@mail.gmail.com>
+ <20151019143045.GE32532@n2100.arm.linux.org.uk>
+ <CAAObsKDWM6A98tdKHqi4fe5DBf0BmB0JeghcZDWan_PYbyshag@mail.gmail.com>
+ <20151019153548.GM32532@n2100.arm.linux.org.uk>
+ <CAMuHMdVv=ieYM-Nehp0qV8CEggHEeJ22j-6i_N09rRA_U=2ePw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5624D28B.70803-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pwm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVv=ieYM-Nehp0qV8CEggHEeJ22j-6i_N09rRA_U=2ePw@mail.gmail.com>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@g>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/19/2015 05:22 AM, Jon Hunter wrote:
->
-> On 16/10/15 17:09, Stephen Warren wrote:
->> On 10/16/2015 01:35 AM, Jon Hunter wrote:
->>> Add device-tree binding documentation for the Tegra210 Audio DMA
->>> controller.
->>
->>> diff --git a/Documentation/devicetree/bindings/dma/tegra210-adma.txt
->>> b/Documentation/devicetree/bindings/dma/tegra210-adma.txt
->>
->>> +Required properties:
->>
->>> +- interrupt-parent: Phandle to the interrupt parent controller.
->>
->> Nit: Since that is more of a "system level"/standard property, it's
->> typical not to document it. The property is not actually required if the
->> inherited value is already correct. Still, it's obvious enough what this
->> means, so I'd only suggest fixing this if you have to respin for some
->> other reason.
->
-> Ok.
->
->>> +- clocks: Must contain one entry for the ADMA module clock, "adma_ape".
->>> +- clock-names: Must contain the entry "adma_ape".
->>
->> Which clock is this in the CAR? I don't see any adma_ape clock
->> documented in the TRM.
->
-> Darn. I thought I had checked this. Yes it should be the AHUB clock and
-> looking at the current t210 clock patches for mainline this is
-> TEGRA210_CLK_D_AUDIO. Ok will fix this.
->
->> Is there a dedicated reset signal for this module? If so, we should
->> require a resets property.
->
-> No there does not appear to be. Looking at the documentation the ADMA
-> would be reset by the main APE reset. Seems to be one reset that resets
-> most modules in the APE.
->
-> That raises another issue, the ADMA is in the audio power partition and
-> currently our downstream driver assumes that this is on. I should at
-> least check this.
+On Mon, Oct 19, 2015 at 06:21:40PM +0200, Geert Uytterhoeven wrote:
+> Hi Russell,
+> 
+> On Mon, Oct 19, 2015 at 5:35 PM, Russell King - ARM Linux
+> <linux@arm.linux.org.uk> wrote:
+> >> > What you can do is print those devices which have failed to probe at
+> >> > late_initcall() time - possibly augmenting that with reports from
+> >> > subsystems showing what resources are not available, but that's only
+> >> > a guide, because of the "it might or might not be in a kernel module"
+> >> > problem.
+> >>
+> >> Well, adding those reports would give you a changelog similar to the
+> >> one in this series...
+> >
+> > I'm not sure about that, because what I was thinking of is adding
+> > a flag which would be set at late_initcall() time prior to running
+> > a final round of deferred device probing.
+> 
+> Which round is the final round?
 
-IIRC the situation downstream w.r.t. the audio power partition is 
-something like:
+I said "a" not "the".  Maybe I should've said "one last round of deferred
+probing before entering userspace".
 
-The AGIC is in that power partition. The Linux kernel AGIC driver gets 
-probed before the power domain driver for that domain. (I think) 
-deferred probe doesn't work for the AGIC driver for some reason (perhaps 
-this is just a bug or oversight in our downstream AGIC driver?). So, the 
-AGIC driver can't turn on the audio power domain. So, there's a hack in 
-the bootloader to turn the power domain on. So, everything in the kernel 
-assumes that power domain is on at boot and so drivers don't have to 
-explicitly control/request that power domain.
+> That's the one which didn't manage to bind any new devices to drivers,
+> which is something you only know _after_ the round has been run.
+> 
+> So I think we need one extra round to handle this.
 
-We should fix this properly so that upstream doesn't make the assumption 
-that the audio power domain is magically on before the kernel boots.
+Yes - because the idea is that we do everything we do today without
+printing anything about deferred probes.  We then set a flag which
+indicates we should report defers, and then we trigger another round
+of probes.
+
+If everything probed successfully, the deferred probe list will be
+empty and nothing will be seen.  Otherwise, we should end up with a
+report of all the devices that weren't able to be bound to their
+drivers due to -EPROBE_DEFER.
+
+> 
+> > This flag would then be used in a deferred_warn() printk function
+> > which would normally be silent, but when this flag is set, it would
+> > print the reason for the deferral - and this would replace (or be
+> > added) to the subsystems and drivers which return -EPROBE_DEFER.
+> >
+> > That has the effect of hiding all the deferrals up until just before
+> > launching into userspace, which should then acomplish two things -
+> > firstly, getting rid of the rather useless deferred messages up to
+> > that point, and secondly printing the reason why the remaining
+> > deferrals are happening.
+> >
+> > That should be a small number of new lines plus a one-line change
+> > in subsystems and drivers.
+> 
+> Apart from the extra round we probably can't get rid of, that sounds
+> OK to me.
+
+Yes, it means a little longer to boot, but if there's nothing pending
+this _should_ only be microseconds - it should be nothing more than
+setting the flag, possibly taking and releasing a lock, and checking
+that the deferred probe list is empty.
+
+Of course, if the deferred probe list isn't empty, then there'll be
+more expense - but I'm willing to bet that for those developers with
+serial console enabled, the kernel boot will be faster overall due
+to the reduced number of characters printed during the boot.
+
+-- 
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
