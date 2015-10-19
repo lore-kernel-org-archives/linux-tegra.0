@@ -1,99 +1,91 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: [GIT PULL] On-demand device probing
-Date: Mon, 19 Oct 2015 19:39:06 +0100
-Message-ID: <20151019183905.GS32532@n2100.arm.linux.org.uk>
-References: <20151018192931.GY14956@sirena.org.uk>
- <20151018193757.GA9147@kroah.com>
- <20151018195330.GB14956@sirena.org.uk>
- <1445247881.53393.146.camel@infradead.org>
- <CAL_JsqKehmSobpbdeXGo=-1pAbtrhCHovyyCWya_MNOhGCi8CQ@mail.gmail.com>
- <1445258870.53393.173.camel@infradead.org>
- <20151019145048.GI14956@sirena.org.uk>
- <1445268580.53393.183.camel@infradead.org>
- <20151019154324.GN32532@n2100.arm.linux.org.uk>
- <20151019182744.GD4931@pengutronix.de>
+From: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [cbootimage PATCH v6 0/5] Add RSA signing support
+Date: Mon, 19 Oct 2015 12:03:00 -0700
+Message-ID: <1445281385-28020-1-git-send-email-jimmzhang@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20151019182744.GD4931@pengutronix.de>
-Sender: linux-clk-owner@vger.kernel.org
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Cc: David Woodhouse <dwmw2@infradead.org>, Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Liam Girdwood <lgirdwood@g>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Oct 19, 2015 at 08:27:44PM +0200, Uwe Kleine-K=F6nig wrote:
-> Hello,
->=20
-> On Mon, Oct 19, 2015 at 04:43:24PM +0100, Russell King - ARM Linux wr=
-ote:
-> > It's a bit ironic that you've chosen GPIO as an example there.  The
-> > "new" GPIO API (the gpiod_* stuff) only has a fwnode way to get the
-> > gpio descriptor.  There's no of_* method.
->=20
-> Without following all that fwnode discussion:
-> gpiod_get et al. should work for you here, doesn't it? It just takes =
-a
-> struct device * and I'm happy with it.
+V6:
+1 Rename function swap_endianness() to reverse_byte_order()
+2 Put "size - 1 - i" to a variable to avoid double calculation
+3 Remove checking NULL pointer of get_value_size() in function set_rsa_param()
+4 Change function prototype for get_value_size()
+5 Pass token id to format_function() so that format_rsa_param() will
+  call get_value_size() to find out the actual byte length in value
+  buffer instead of using a constant.
+ 
 
-What if you don't have a struct device?  I had that problem recently
-when modifying the mvebu PCIe code.  The 'struct device' node doesn't
-contain the GPIOs, it's the PCIe controller.  Individual ports on the
-controller are described in DT as sub-nodes, and the sub-nodes can
-have a GPIO for card reset purposes.  These sub-nodes don't have a
-struct device.
+V5:
+1. Remove Rehash.cfg from patch 4 and add update.cfg into patch 3 and
+   place it under samples directory.
 
-Right now, I'm having to do this to work around this issue:
+2. Move test key file rsa_priv.pem to samples directory
 
-        reset_gpio =3D of_get_named_gpio_flags(child, "reset-gpios", 0,=
- &flags);
-        if (reset_gpio =3D=3D -EPROBE_DEFER) {
-                ret =3D reset_gpio;
-                goto err;
-        }
+V4:
+1. Replace constant definition with soc specific supported function
+   get_value_size() to obtain a field size.
+2. Add byte order swapping function to support tegra rsa related fields
+   byte order requirements.
+3. Use one simplified sample script to demonstrate how to do rsa signing
+   for T210 boot image.
 
-        if (gpio_is_valid(reset_gpio)) {
-                unsigned long gpio_flags;
+V3: 
+1. Address issues found in v2. 
+2. Use keyword "RehashBl" instead of "ReSignBl" to re-generate AES hash
+   for bootloader (and bct).
+3. Add sample scripts to do rsa signing for T210 bootimage.
 
-                port->reset_name =3D devm_kasprintf(dev, GFP_KERNEL, "%=
-s-reset",
-                                                  port->name);
-                if (!port->reset_name) {
-                        ret =3D -ENOMEM;
-                        goto err;
-                }
+V2:
+1. Split CL1 into two patches.
 
-                if (flags & OF_GPIO_ACTIVE_LOW) {
-                        dev_info(dev, "%s: reset gpio is active low\n",
-                                 of_node_full_name(child));
-                        gpio_flags =3D GPIOF_ACTIVE_LOW |
-                                     GPIOF_OUT_INIT_LOW;
-                } else {
-                        gpio_flags =3D GPIOF_OUT_INIT_HIGH;
-                }
+2. Use openssl utility to generate signature and save to file. Then use
+   --update option to load in signature files to update rsa-pss signature
+   fields in bct. So, all rsa-pss signing functions and files are removed.
 
-                ret =3D devm_gpio_request_one(dev, reset_gpio, gpio_fla=
-gs,
-                                            port->reset_name);
-                if (ret) {
-                        if (ret =3D=3D -EPROBE_DEFER)
-                                goto err;
-                        goto skip;
-                }
+3. Use keyword "ReSignBl" to re-generate AES hash for bootloader (and bct).
 
-                port->reset_gpio =3D gpio_to_desc(reset_gpio);
-        }
+V1:
+For security fused tegra chip, BR requires to verify rsa_pss_sig before
+jumping to next level of boot loader.
 
-Not nice, is it?  Not nice to have that in lots of drivers either.
+The patches here are adding rsa_pss_sig related functions, such as updating
+signatures and pubkey, generating signatures on boot loader and bct, and
+generating signature on any given binary file.
 
-However, switching to use any of_* or fwnode_* thing also carries with
-it another problem: you can't control the name appearing in the
-allocation, so you end up with a bunch of GPIOs requested with a "reset=
-"
-name - meaning you lose any identification of which port the GPIO was
-bound to.
 
---=20
-=46TTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+Jimmy Zhang (5):
+  Add support for update pubkey and rsa-pss signatures
+  Add support to dump rsa related fields for t210
+  Add new configuration keyword "RehashBl"
+  Add a sample script to do rsa signing for T210 bootimage
+  Bump to version 1.6
+
+ configure.ac             |  2 +-
+ samples/rsa_priv.pem     | 27 ++++++++++++++++++
+ samples/sign.sh          | 73 ++++++++++++++++++++++++++++++++++++++++++++++++
+ samples/update.cfg       |  1 +
+ src/bct_dump.c           | 65 +++++++++++++++++++++++++++++++++++-------
+ src/cbootimage.h         |  1 +
+ src/crypto.c             | 63 +++++++++++++++++++++++++++++++++++++++++
+ src/crypto.h             | 12 ++++++++
+ src/data_layout.c        | 51 +++++++++++++++++++++++++++++++++
+ src/data_layout.h        |  2 ++
+ src/parse.c              | 49 ++++++++++++++++++++++++++++++++
+ src/parse.h              | 18 ++++++++++++
+ src/set.c                | 44 +++++++++++++++++++++++++++++
+ src/set.h                |  5 ++++
+ src/t114/nvbctlib_t114.c |  1 +
+ src/t124/nvbctlib_t124.c |  1 +
+ src/t210/nvbctlib_t210.c | 63 ++++++++++++++++++++++++++++++++++++++++-
+ 17 files changed, 466 insertions(+), 12 deletions(-)
+ create mode 100644 samples/rsa_priv.pem
+ create mode 100755 samples/sign.sh
+ create mode 100644 samples/update.cfg
+
+-- 
+1.8.1.5
