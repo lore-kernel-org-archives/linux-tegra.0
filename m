@@ -1,55 +1,282 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [GIT PULL] On-demand device probing
-Date: Mon, 19 Oct 2015 09:52:44 -0700
-Message-ID: <CAOesGMjzeJYVuNzrtahNxiMk-3Huq76=DVhKixMNC=3vebUc_Q@mail.gmail.com>
-References: <20151014092644.GO14956@sirena.org.uk>
-	<1444909328-24761-1-git-send-email-tomeu.vizoso@collabora.com>
-	<CAOesGMj44N3Xfv_D_iLEzXBrkN6LXBa-uh6m3fi_F2xDenDhMg@mail.gmail.com>
-	<CAL_Jsq+34sRXe0HWCKNceQfLj=WfDV4-soynumvdnH_nwuj+9g@mail.gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: What is a "phy"; lanes or a group?
+Date: Mon, 19 Oct 2015 11:05:50 -0600
+Message-ID: <562522EE.90603@wwwdotorg.org>
+References: <56214D54.8030608@wwwdotorg.org> <5625049D.3040103@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <CAL_Jsq+34sRXe0HWCKNceQfLj=WfDV4-soynumvdnH_nwuj+9g@mail.gmail.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5625049D.3040103-l0cyMroinI0@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Oct 17, 2015 at 8:19 AM, Rob Herring <robh+dt@kernel.org> wrote:
-> On Fri, Oct 16, 2015 at 4:23 PM, Olof Johansson <olof@lixom.net> wrote:
->> Hi,
->>
->> I've bisected boot failures in next-20151016 down to patches in this branch:
->>
->> On Thu, Oct 15, 2015 at 4:42 AM, Tomeu Vizoso
->> <tomeu.vizoso@collabora.com> wrote:
->>> Tomeu Vizoso (20):
->>>       driver core: handle -EPROBE_DEFER from bus_type.match()
->>
->> The machine it happened on was OMAP5UEVM:
->>
->> http://arm-soc.lixom.net/bootlogs/next/next-20151016/omap5uevm-arm-omap2plus_defconfig.html
+On 10/19/2015 08:56 AM, Kishon Vijay Abraham I wrote:
+> Hi,
 >
-> So this one is because the MMC node numbering changed. I don't know
-> how to fix that other than with aliases, but that doesn't solve
-> backwards compatibility.
-
-Yep, aliases will take care of it in this case. This is where -next
-fills a great purpose, we can make sure we get those aliases added in
-before the patches go in.
-
->> But I've also seen it on tegra2, that one bisected down to:
+> On Saturday 17 October 2015 12:47 AM, Stephen Warren wrote:
+>> Kishon,
 >>
->>>      regulator: core: Probe regulators on demand
->>
->> http://arm-soc.lixom.net/bootlogs/next/next-20151016/seaboard-arm-multi_v7_defconfig.html
+>> I wanted to confirm a few aspects about the PHY subsystem in Linux, and
+>> also the DT representation of PHYs. Mainly I'd like to understand
+>> whether an individual PHY represents a single "lane" of traffic, or the
+>> whole set of lanes related to a particular IO controller or "port" of an
+>> IO controller. This distinction isn't relevant for e.g. a USB2
+>> controller that only uses a single (differential) lane, but is for
+>> something like a x4 PCIe port.
 >
-> This one you need a rootwait I think. The MMC scanning is not
-> guaranteed to be done before the rootfs mounting AFAIK. There may be
-> other problems, but we can't see them since it panics.
+> right, that's generally the case where we represent a single lane as a
+> PHY and the IP that implements these multiple lanes as PHY provider.
+ >
+>> I think it's simplest if I describe some scenarios and confirm the set
+>> of phys you'd expect to exist in each:
+>>
+>> 1)
+>>
+>> 1 single PCIe controller, with 1 x1 port.
+>>
+>> I believe the PCIe driver would get 1 PHY.
+>
+> right.
+>
+>> 2)
+>>
+>> 1 single PCIe controller with 2 x1 root ports.
+>>
+>> I believe the PCIe driver would get 2 separate PHYs; 1 PHY per root port.
+>
+> yes.
+>
+>> 3)
+>>
+>> 1 single PCIe controller with 1 x4 port.
+>>
+>> Would you expect the PCIe driver to get a single PHY that represented
+>> the collection of 4 lanes, or to get 4 separate PHYs; one for each lane.
+>
+> Ideally would like to have four separate PHY's if each of these lanes
+> can be configured independently.
+>
+>> == PHY count for multi-lane controllers:
+>>
+>> Perhaps the answer depends on the SoC architecture; I could image some
+>> SoCs having an entirely independent PHY per lane thus requiring the PCIe
+>> driver to get 4 PHYs, whereas another SoC might have a single set of
+>> registers that control all 4 lanes as a single block, which in turn was
+>> exposed as a single PHY.
+>
+> For IPs which implement multiple PHYs (in this case multi lane), there
+> can be a single phy provider and multiple PHYs, one PHY for each lane.
+>
+>> However, I'd hope that the PCIe driver wouldn't have to understand those
+>> details, so it was possible to transplant the PCIe IP between different
+>> SoCs that used different PHY architectures without needing to understand
+>> the differences. Has any thought been given to this?
+>
+> The standard PCI dt binding already defines *num-lanes*, so the PCIe
+> driver can know the number of lanes that the controller can support.
 
-Embarrassing, I almost always do this and I'm surprised this machine
-has been this stable without it.
+OK, I see we use "nvidia,num-lanes" in the Tegra PCIe driver since I 
+suppose the Tegra binding pre-dates that standard property.
 
+So, we do indeed know exactly how many lanes are used by each port.
 
--Olof
+>>
+>> We could isolate the PCIe driver by either:
+>>
+>> a) Always making the PCIe driver get a single PHY for each port
+>
+> here by port you mean each lane right?
+
+Here I meant port...
+
+>> irrespective of lane count. If the HW doesn't work like this, we could
+>> provide some kind of "aggregate" PHY that "fans out" to all the
+>> individual PHYs.
+>
+> Not sure I get this. Care to explain more?
+
+Here (in this section of the email) I'm discussing the set of PHYs that 
+a PCIe driver would "get" for each port. Option (a) above is to get one 
+PHY per port. Option (b) below is to get one PHY per lane.
+
+The issue the above paragraph discusses is what happens when the PHY HW 
+module doesn't actually support the same set of PHYs as the PCIe driver 
+is requesting; e.g. if the PCIe driver requests 1 PHY for a x4 PCIe 
+port, whereas the PHY HW module implements 4 independent PHYs (one per 
+lane). There's an impedance mismatch here that perhaps could be solved 
+by inserting an "aggregate" PHY provider between the PCIe controller and 
+the PHY provider:
+
+       one get                   four gets
+PCIE ---------> aggregrate PHY -----------> actual PHY provider(s)
+
+>> b) Always making the PCIe driver get as many PHYs as there are lanes. In
+>> the case where the PHY provider only implements a single PHY, we could
+>> either provide the same PHY for each lane, or provide dummy PHYs for all
+>> but one lane.
+>
+> If the HW IP is modeled in such a way that there is a single PHY control
+> for all the lanes, then the PCIe driver can just get and configure a
+> single PHY. But generally most of the IPs give independent control for
+> each of the PHYs.
+
+There's always the opportunity of a mismatch here. The PCIe controller 
+could be created by an IP vendor (and hence the driver would have to 
+request 4 PHYs for a x4 port in order to handle any possible SoC 
+integration), whereas an SoC vendor might implement a PHY module that is 
+an entire x4 bus, rather than 4 individual PHYs.
+
+>> == PHY brick provider count
+>>
+>> On Tegra, we have some PHY "bricks" that contain multiple lanes. Each
+>> lane can be configured to connect to one of n IO controllers (USB3,
+>> PCIe, SATA). The exact set of "n" IO controllers associated with each
+>> lane varies lane to lane. There are some global register settings to
+>> enable the "brick" as a whole, and some per lane settings to enable (and
+>> configure muxing for) each lane. We currently have the muxing modelled
+>> via the pinctrl DT bindings and Linux driver subsystem.
+>>
+>> How many PHY objects would you expect to exist in such a setup. Options I
+>> can think of are:
+>>
+>> a)
+>>
+>> A single PHY, since there is some global register state associated with
+>> the "brick". Multiple IO controller drivers will get this same PHY, and
+>> we'll implement reference counting to determine when to actually
+>> enable/disable this PHY. The driver will look at the muxing information
+>> to determine the actual use for each lane, and enable/disable/configure
+>> the per-lane options the first time the PHY is "got".
+>>
+>> The disadvantage here is that per-lane information isn't implied by the
+>> set of PHY objects in use, since there's only one. This information
+>> could perhaps be provided by various custom properties in the PHY
+>> provider's DT node(s) though.
+>>
+>> As background, we currently have this option implemented for Tegra124's
+>> PCIe brick (which supports 5 lanes).
+>>
+>> Concretely, the provider might use #phy-cells = <0> here if there's just
+>> one brick implemented in the PHY HW module.
+>>
+>> b)
+>>
+>> A PHY per IO controller (port) that may use (parts of) the PHY brick.
+>> For example, even with just a 7-lane PHY brick, we might expose a PHY
+>> for each of 4 USB2 single-port controllers, one for each of 4 ports in
+>> the USB3 controller, 1 for the SATA controller, and one for each of 2
+>> ports in the PCIe controller. (That's 11 PHY objects for 7 lanes).
+>>
+>> The disadvantage here is that we potentially end up with (and certainly
+>> do on Tegra) with the PHY provider providing many more PHYs than lanes,
+>> if the number of IO controller (ports) that can be muxed into the PHY
+>> brick exceeds the number of lanes.
+>>
+>> As background, I've seen a patch to extend Tegra124's PCIe PHY binding
+>> to essentially this model. However, the conversion looked like it
+>> supported a mix of model (a) and (b) for different cases, which feels
+>> inconsistent.
+>>
+>> Concretely, the provider might use #phy-cells = <1>, with valid values
+>> being:
+>>
+>> PHY_USB2_CONTROLLER0
+>> PHY_USB2_CONTROLLER1
+>> ...
+>> PHY_USB3_CONTROLLER0_PORT0
+>> PHY_USB3_CONTROLLER0_PORT1
+>> ...
+>> PHY_PCIE_CONTROLLER0_PORT0
+>> PHY_PCIE_CONTROLLER0_PORT1
+>> PHY_SATA
+>>
+>> c)
+>>
+>> A PHY per IO lane in the brick. In this case, the global PHY enabling
+>> would happen when the first PHY was enabled via reference counting, and
+>> all the per-lane registers would be controlled by each individual PHY
+>> object.
+>
+> This looks like the best option where the PHY brick will be modeled as a
+> PHY provider and a separate PHY for each of the 7 lanes.
+>
+>> This option feels most generic, and gives the most lane-specific
+>> information to the PHY driver, I think?
+>>
+>> The disadvantage here is that it's difficult for the PHY provider to
+>> know which lanes form part of the same logical connection, e.g. if we
+>> need to program each lane to enable it, then perform some link-level
+>> configuration across all lanes involved in that link.
+>
+> Maybe we can use PHY TYPE to differentiate between the lanes. With that
+> #phy-cells should be 2, 1st cell should have PHY TYPE (PHY_TYPE_SATA,
+> PHY_TYPE_USB3, PHY_TYPE_PCIE, etc..) and the 2nd cell can be made
+> optional to be used only with PCIe to differentiate LANE0, LANE1 etc..
+
+That doesn't sound so good because it's not a real representation of the 
+HW. Our "PCIe" PHY brick (PCIe just by name really) on Tegra210 has 7 
+identical lanes. IIUC, each lane would be programmed identically 
+irrespective of whether a SATA, USB3, or PCIe controller happened to be 
+mux'd to the lane. Thus, having the PHY binding include a TYPE_ would be 
+a bit misleading, since there really isn't a type associated with the 
+lane in HW (at least not at a SW-visible level).
+
+It'd also be confusing since we also have (multi-lane) PHY bricks for 
+each of USB3, SATA, PCIe, so we'd need a "phy cell" in DT to distinguish 
+between the PHY brick, rather than between the usage of a particular lane.
+
+If we do end up needing any processing across all lanes at once, I 
+wonder if it wouldn't be better to add new APIs to the PHY subsystem 
+that operate on n PHYs at once, rather than PHY-by-PHY. That would quite 
+clearly display the intent of the call, and could be implemented as a 
+simple loop over the existing per-PHY APIs for providers that don't care 
+about that detail. Something like:
+
+int phy_get_array(struct device *dev, const char **strings, int 
+phy_count, struct phy **phys);
+(or a separate "post get bus" call)
+
+int phy_power_on_array(struct phy **phys, int phy_count);
+
+?
+
+>> Concretely, the provider might use #phy-cells = <1>, with valid values
+>> being:
+>>
+>> PHY_LANE0
+>> PHY_LANE1
+>> PHY_LANE2
+>> ...
+>>
+>> Again perhaps the answer differs between SoCs? If so, do you have any
+>> thoughts/guidance which option is most appropriate when?
+>
+> The 'c' option looks appropriate to me with some modifications.
+>
+>> Finally, do you have any generic thoughts re: structuring of PHY
+>> provider DT nodes? I've heard of a proposal for Tegra to have a
+>> top-level DT node for the HW module that implements the PHYs, but with a
+>> separate DT sub-node per PHY that's implemented in order to provide
+>> PHY-specific configuration. I see some of the Samsung bindings already
+>> do something like this. Do you have any general guidance on this, or do
+>> you think individual bindings are free to do whatever makes sense for
+>> the HW in question?
+>
+> Looks like your PHY is similar to miphy365. I'd recommend you to look at
+> Documentation/devicetree/bindings/phy/phy-miphy365x.txt and see if it
+> makes sense to you.
+
+It looks like that describes a provider with 2 single-lane PHYs. On 
+Tegra210, we actually have a PHY controller with sub-blocks for:
+
+- 4 separate x1 USB2 PHY bricks
+- 1 (x1 or x2; not sure yet) "USB3/SATA" PHY brick
+- 1 x7 "USB3/PCIe" PHY brick
+
+... where various USB3 controller ports could be mux'd to (lanes from) 
+either of the latter two PHY bricks, and various ports of the PCIe 
+controller can be muxed to all manner of combinations of (lanes from) 
+the PCIe PHY brick.
