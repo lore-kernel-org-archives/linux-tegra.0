@@ -1,220 +1,134 @@
-From: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
-Subject: Re: What is a "phy"; lanes or a group?
-Date: Mon, 19 Oct 2015 20:26:29 +0530
-Message-ID: <5625049D.3040103@ti.com>
-References: <56214D54.8030608@wwwdotorg.org>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Mon, 19 Oct 2015 17:00:54 +0200
+Message-ID: <CAAObsKDWM6A98tdKHqi4fe5DBf0BmB0JeghcZDWan_PYbyshag@mail.gmail.com>
+References: <561E1378.6000906@collabora.com> <20151017065750.GA18607@kroah.com>
+ <20151018192931.GY14956@sirena.org.uk> <20151018193757.GA9147@kroah.com>
+ <20151018195330.GB14956@sirena.org.uk> <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
+ <20151019131821.GA32532@n2100.arm.linux.org.uk> <CAAObsKDS_+AZ26P_fHc6pvAYrQotsuoO0DEGQUWC514t3DD_jQ@mail.gmail.com>
+ <20151019143045.GE32532@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56214D54.8030608-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <20151019143045.GE32532@n2100.arm.linux.org.uk>
+Sender: linux-clk-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>, Jingo
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+On 19 October 2015 at 16:30, Russell King - ARM Linux
+<linux@arm.linux.org.uk> wrote:
+> On Mon, Oct 19, 2015 at 04:10:56PM +0200, Tomeu Vizoso wrote:
+>> On 19 October 2015 at 15:18, Russell King - ARM Linux
+>> <linux@arm.linux.org.uk> wrote:
+>> > On Mon, Oct 19, 2015 at 02:34:22PM +0200, Tomeu Vizoso wrote:
+>> >> ... If a device is available and has
+>> >> a compatible driver, but it cannot be probed because a dependency
+>> >> isn't going to be available, that's an error and is going to cause
+>> >> real-world problems unless the device is redundant. Currently we say
+>> >> nothing because with deferred probe the probe callbacks are also part
+>> >> of the mechanism that determines the dependency order.
+>> >
+>> > So what if device X depends on device Y, and we have a driver for
+>> > device Y built-in to the kernel, but the driver for device X is a
+>> > module?
+>> >
+>> > I don't see this being solvable in the way you describe above - it's
+>> > going to identify X as being unable to be satisfied, and report it as
+>> > an error - but it's not an error at all.
+>>
+>> It's going to probe Y at late_initcall, then probe X when its driver
+>> is registered. No deferred probes nor messages about it.
+>>
+>> But if you meant to write the opposite case (X built-in and Y in a
+>> module), then I have to ask you in what situation that would make
+>> sense.
+>
+> I did mean the opposite way around.  It may not make sense if you're
+> targetting a single platform, but it may make sense in a single zImage
+> kernel.
+>
+> Consider something like a single zImage kernel that is built with
+> everything built-in to be able to boot and mount rootfs without
+> initramfs support on both platform A and platform B.  Both platforms
+> share some hardware (eg, an I2C GPIO expander) which is built as a
+> module.  It is a resource provider.  Platform B contains a driver
+> which is required to boot on platform A, but not platform B (so the
+> kernel has to have that driver built-in.)  On platform B, there is
+> a dependency to the I2C GPIO expander device.
 
-On Saturday 17 October 2015 12:47 AM, Stephen Warren wrote:
-> Kishon,
-> 
-> I wanted to confirm a few aspects about the PHY subsystem in Linux, and
-> also the DT representation of PHYs. Mainly I'd like to understand
-> whether an individual PHY represents a single "lane" of traffic, or the
-> whole set of lanes related to a particular IO controller or "port" of an
-> IO controller. This distinction isn't relevant for e.g. a USB2
-> controller that only uses a single (differential) lane, but is for
-> something like a x4 PCIe port.
+I see, in this situation the person trying to find out why some device
+hadn't probed would enable debug logging of failed probes and would
+see one spurious message if there was a deferred probe because of the
+module.
 
-right, that's generally the case where we represent a single lane as a
-PHY and the IP that implements these multiple lanes as PHY provider.
-> 
-> I think it's simplest if I describe some scenarios and confirm the set
-> of phys you'd expect to exist in each:
-> 
-> 1)
-> 
-> 1 single PCIe controller, with 1 x1 port.
-> 
-> I believe the PCIe driver would get 1 PHY.
+>> >> Having a specific switch for enabling deferred probe logging sounds
+>> >> good, but there's going to be hundreds of spurious messages about
+>> >> deferred probes that were just deferrals and only one of them is going
+>> >> to be the actual error in which a device failed to find a dependency.
+>> >
+>> > Why would there be?  Sounds like something's very wrong there.
+>>
+>> Sorry about that, I have checked that only now and I "only" get 39
+>> deferred probe messages on exynos5250-snow.
+>
+> I typically see one or two, maybe five maximum on the platforms I have
+> here, but normally zero.
 
-right.
-> 
-> 2)
-> 
-> 1 single PCIe controller with 2 x1 root ports.
-> 
-> I believe the PCIe driver would get 2 separate PHYs; 1 PHY per root port.
+Hmm, I have given a look at our lava farm and have seen 2 dozens as
+common (with multi_v7).
 
-yes.
-> 
-> 3)
-> 
-> 1 single PCIe controller with 1 x4 port.
-> 
-> Would you expect the PCIe driver to get a single PHY that represented
-> the collection of 4 lanes, or to get 4 separate PHYs; one for each lane.
+>> > So, really, after boot and all appropriate modules have been loaded,
+>> > you should end up with no deferred probes.  Are you saying that you
+>> > still have "hundreds" at that point?  If you do, that sounds like
+>> > there's something very wrong.
+>>
+>> I was talking about messages if we log each -EPROBE_DEFER, not devices
+>> that remain to be probed. The point being that right now we don't have
+>> a way to know if we are deferring because the dependency will be
+>> around later, or if we have a problem and the dependency isn't going
+>> to be there at all.
+>
+> What's the difference between a dependency which isn't around because
+> the driver is not built into the kernel but is available as a module,
+> and a dependency that isn't around because the module hasn't been
+> loaded yet?
+>
+> How do you distinguish between those two scenarios?  In the former
+> scenario, the device will eventually come up when udev loads the
+> module.  In the latter case, it's a persistent failing case.
 
-Ideally would like to have four separate PHY's if each of these lanes
-can be configured independently.
-> 
-> == PHY count for multi-lane controllers:
-> 
-> Perhaps the answer depends on the SoC architecture; I could image some
-> SoCs having an entirely independent PHY per lane thus requiring the PCIe
-> driver to get 4 PHYs, whereas another SoC might have a single set of
-> registers that control all 4 lanes as a single block, which in turn was
-> exposed as a single PHY.
+Agreed, but it's something that doesn't happen often and that's why
+such messages would be at the debug level instead of being warns or
+errors.
 
-For IPs which implement multiple PHYs (in this case multi lane), there
-can be a single phy provider and multiple PHYs, one PHY for each lane.
-> 
-> However, I'd hope that the PCIe driver wouldn't have to understand those
-> details, so it was possible to transplant the PCIe IP between different
-> SoCs that used different PHY architectures without needing to understand
-> the differences. Has any thought been given to this?
+>> Agreed, with the note from above on why it would be better to only
+>> print such a message only when the -EPROBE_DEFER is likely to be a
+>> problem.
+>
+> ... and my argument is that there's _no way_ to know for certain which
+> deferred probes will be a problem, and which won't.  The only way to
+> definitely know that is if you disable kernel modules, and require
+> all drivers to be built into the kernel.
+>
+> What you can do is print those devices which have failed to probe at
+> late_initcall() time - possibly augmenting that with reports from
+> subsystems showing what resources are not available, but that's only
+> a guide, because of the "it might or might not be in a kernel module"
+> problem.
 
-The standard PCI dt binding already defines *num-lanes*, so the PCIe
-driver can know the number of lanes that the controller can support.
-> 
-> We could isolate the PCIe driver by either:
-> 
-> a) Always making the PCIe driver get a single PHY for each port
+Well, adding those reports would give you a changelog similar to the
+one in this series...
 
-here by port you mean each lane right?
-> irrespective of lane count. If the HW doesn't work like this, we could
-> provide some kind of "aggregate" PHY that "fans out" to all the
-> individual PHYs.
+Thanks,
 
-Not sure I get this. Care to explain more?
+Tomeu
 
-> 
-> b) Always making the PCIe driver get as many PHYs as there are lanes. In
-> the case where the PHY provider only implements a single PHY, we could
-> either provide the same PHY for each lane, or provide dummy PHYs for all
-> but one lane.
-
-If the HW IP is modeled in such a way that there is a single PHY control
-for all the lanes, then the PCIe driver can just get and configure a
-single PHY. But generally most of the IPs give independent control for
-each of the PHYs.
-> 
-> == PHY brick provider count
-> 
-> On Tegra, we have some PHY "bricks" that contain multiple lanes. Each
-> lane can be configured to connect to one of n IO controllers (USB3,
-> PCIe, SATA). The exact set of "n" IO controllers associated with each
-> lane varies lane to lane. There are some global register settings to
-> enable the "brick" as a whole, and some per lane settings to enable (and
-> configure muxing for) each lane. We currently have the muxing modelled
-> via the pinctrl DT bindings and Linux driver subsystem.
-> 
-> How many PHY object would you expect to exist in such a setup. Options I
-> can think of are:
-> 
-> a)
-> 
-> A single PHY, since there is some global register state associated with
-> the "brick". Multiple IO controller drivers will get this same PHY, and
-> we'll implement reference counting to determine when to actually
-> enable/disable this PHY. The driver will look at the muxing information
-> to determine the actual use for each lane, and enable/disable/configure
-> the per-lane options the first time the PHY is "got".
-> 
-> The disadvantage here is that per-lane information isn't implied by the
-> set of PHY objects in use, since there's only one. This information
-> could perhaps be provided by various custom properties in the PHY
-> provider's DT node(s) though.
-> 
-> As background, we currently have this option implemented for Tegra124's
-> PCIe brick (which supports 5 lanes).
-> 
-> Concretely, the provider might use #phy-cells = <0> here if there's just
-> one brick implemented in the PHY HW module.
-> 
-> b)
-> 
-> A PHY per IO controller (port) that may use (parts of) the PHY brick.
-> For example, even with just a 7-lane PHY brick, we might expose a PHY
-> for each of 4 USB2 single-port controllers, one for each of 4 ports in
-> the USB3 controller, 1 for the SATA controller, and one for each of 2
-> ports in the PCIe controller. (That's 11 PHY objects for 7 lanes).
-> 
-> The disadvantage here is that we potentially end up with (and certainly
-> do on Tegra) with the PHY provider providing many more PHYs than lanes,
-> if the number of IO controller (ports) that can be muxed into the PHY
-> brick exceeds the number of lanes.
-> 
-> As background, I've seen a patch to extend Tegra124's PCIe PHY binding
-> to essentially this model. However, the conversion looked like it
-> supported a mix of model (a) and (b) for different cases, which feels
-> inconsistent.
-> 
-> Concretely, the provider might use #phy-cells = <1>, with valid values
-> being:
-> 
-> PHY_USB2_CONTROLLER0
-> PHY_USB2_CONTROLLER1
-> ...
-> PHY_USB3_CONTROLLER0_PORT0
-> PHY_USB3_CONTROLLER0_PORT1
-> ...
-> PHY_PCIE_CONTROLLER0_PORT0
-> PHY_PCIE_CONTROLLER0_PORT1
-> PHY_SATA
-> 
-> c)
-> 
-> A PHY per IO lane in the brick. In this case, the global PHY enabling
-> would happen when the first PHY was enabled via reference counting, and
-> all the per-lane registers would be controlled by each individual PHY
-> object.
-
-This looks like the best option where the PHY brick will be modeled as a
-PHY provider and a separate PHY for each of the 7 lanes.
-> 
-> This option feels most generic, and gives the most lane-specific
-> information to the PHY driver, I think?
-> 
-> The disadvantage here is that it's difficult for the PHY provider to
-> know which lanes form part of the same logical connection, e.g. if we
-> need to program each lane to enable it, then perform some link-level
-> configuration across all lanes involved in that link.
-
-Maybe we can use PHY TYPE to differentiate between the lanes. With that
-#phy-cells should be 2, 1st cell should have PHY TYPE (PHY_TYPE_SATA,
-PHY_TYPE_USB3, PHY_TYPE_PCIE, etc..) and the 2nd cell can be made
-optional to be used only with PCIe to differentiate LANE0, LANE1 etc..
-> 
-> Concretely, the provider might use #phy-cells = <1>, with valid values
-> being:
-> 
-> PHY_LANE0
-> PHY_LANE1
-> PHY_LANE2
-> ...
-> 
-> Again perhaps the answer differs between SoCs? If so, do you have any
-> thoughts/guidance which option is most appropriate when?
-
-The 'c' option looks appropriate to me with some modifications.
-> 
-> Finally, do you have any generic thoughts re: structuring of PHY
-> provider DT nodes? I've heard of a proposal for Tegra to have a
-> top-level DT node for the HW module that implements the PHYs, but with a
-> separate DT sub-node per PHY that's implemented in order to provide
-> PHY-specific configuration. I see some of the Samsung bindings already
-> do something like this. Do you have any general guidance on this, or do
-> you think individual bindings are free to do whatever makes sense for
-> the HW in question?
-
-Looks like your PHY is similar to miphy365. I'd recommend you to look at
-Documentation/devicetree/bindings/phy/phy-miphy365x.txt and see if it
-makes sense to you.
-> 
-> Thanks for reading this long email, and any responses you give!
-
-No problem.
-
-Cheers
-Kishon
+> --
+> FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+> according to speedtest.net.
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
