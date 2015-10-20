@@ -1,109 +1,59 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] pinctrl: tegra-xusb: Correct lane mux options
-Date: Tue, 20 Oct 2015 12:36:12 -0600
-Message-ID: <5626899C.6050804@wwwdotorg.org>
-References: <1444987441-25176-1-git-send-email-jonathanh@nvidia.com>
- <56212308.7050405@wwwdotorg.org> <56262563.3020201@nvidia.com>
- <562666FD.1020902@wwwdotorg.org> <562681CA.4060307@nvidia.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Tue, 20 Oct 2015 20:35:28 +0100
+Message-ID: <20151020193528.GE32054@sirena.org.uk>
+References: <CAAObsKChQN4gg91dCWJS_Co_MrYyBrB1J7gxgGo4hsPXNZRp3g@mail.gmail.com>
+ <Pine.LNX.4.44L0.1510201311260.1855-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <562681CA.4060307@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="7fVr/IRGAG9sAW4J"
+Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <Pine.LNX.4.44L0.1510201311260.1855-100000@iolanthe.rowland.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Rob Herring <robh@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, David Woodhouse <dwmw2@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbary>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/20/2015 12:02 PM, Jon Hunter wrote:
->
-> On 20/10/15 17:08, Stephen Warren wrote:
->> On 10/20/2015 05:28 AM, Jon Hunter wrote:
->>>
->>> On 16/10/15 17:17, Stephen Warren wrote:
->>>> On 10/16/2015 03:24 AM, Jon Hunter wrote:
->>>>> The description of the XUSB_PADCTL_USB3_PAD_MUX_0 register in the
->>>>> Tegra124
->>>>> documentation implies that all functions (pcie, usb3 and sata) can be
->>>>> muxed onto to all lanes (pcie lanes 0-4 and sata lane 0). However,
->>>>> it has
->>>>> been confirmed that this is not the case and the mux'ing options much
->>>>> more
->>>>> limited. Unfortunately, the public documentation has not been
->>>>> updated to
->>>>> reflect this and so detail the actual mux'ing options here by function:
->>>>
->>>> FWIW, there's better documentation of this in the Tegra210 TRM, although
->>>> the options have been expanded on that chip, so the docs don't entirely
->>>> apply to Tegra124.
->>>>
->>>>> Function:        Lanes:
->>>>> pcie1 x2:        pcie3, pcie4
->>>>> pcie1 x4:        pcie1, pcie2, pcie3, pcie4
->>>>> pcie2 x1 (option1):    pcie0
->>>>> pcie2 x1 (option2):    pcie2
->>>>> usb3 port 0:        pcie0
->>>>> usb3 port 1 (option 1):    pcie1
->>>>> usb3 port 1 (option 2):    sata0
->>>>> sata:            sata0
->>>>
->>>> I think this change needs a DT binding change to go along with it. Can
->>>> you take a look at:
->>>>
->>>> http://www.spinics.net/lists/arm-kernel/msg449647.html
->>>> [PATCH 1/2] dt: update Tegra XUSB padctl binding for Tegra210
->>>
->>> I took a look at the above and it looks fine to me. Do you want me to
->>> put the above info into the DT binding doc? I am not sure that we need
->>> to update the binding itself.
->>
->> Hmm. I guess there /should/ be no need for the DT bindings to list out
->> all the valid combinations; it should just say "go read the HW docs". Of
->> course as you mentioned our HW docs aren't quite as complete as they
->> should be in this area, but still solving that in the DT binding doc may
->> not be the best approach. But then again, the DT binding doc already
->> lists which functions are valid for which groups of pins, but perhaps
->> that's more about understanding the structure of the binding than the HW.
->
-> I had thought about trying to put the options in the tegra124.dtsi, but
-> I am not sure if there is an easy way to do that without having ...
->
-> 	padctl@0,7009f000 {
-> 		...
->
-> 		padctl_option1: pinmux {
-> 			usb3 {...};		
-> 			pcie {...};
-> 			sata {...};
-> 		};
-> 		padctl_option2: pinmux {
-> 			usb3 {...};
-> 			pcie {...};
-> 			sata {...};
-> 		};
-> 		...
-> 		padctl_optionN: pinmux {
-> 			usb3 {...};
-> 			pcie {...};
-> 			sata {...};
-> 		};
-> 	};
->
-> ... that would be a long-ish list. Unless there is a better way to do it?
 
-Well, you could break it down to N options per controller type or port 
-rather than all N global options which might simplify things a bit 
-(fewer combinatorics to worry about), but I expect it'd still be more 
-trouble than its worth. People designing HW are who actually care about 
-the set of valid options, and they're more likely to get that 
-information via talking to NV systems engineers rather than looking at 
-the DT binding.
+--7fVr/IRGAG9sAW4J
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> I guess I'll leave it up to you which way to go. Perhaps let's not
->> pursue adding this to the binding doc until we get the PHY-per-lane
->> changes in place or rejected or the two changes will conflict badly?
->
-> That's fine with me. Are you ok with this patch as-is going upstream for
-> now?
+On Tue, Oct 20, 2015 at 01:14:46PM -0400, Alan Stern wrote:
+> On Tue, 20 Oct 2015, Tomeu Vizoso wrote:
 
-Yes, the code change is fine as is.
+> > This iteration of the series would make this quite easy, as
+> > dependencies are calculated before probes are attempted:
+
+> > https://lkml.org/lkml/2015/6/17/311
+
+> But what Rafael is proposing is quite general; it would apply to _all_
+> dependencies as opposed to just those present in DT drivers or those=20
+> affecting platform_devices.
+
+We'll still need most of the DT bits that are there at the minute (the
+ones strewn around the subsystems) AFAICT since it's at the point where
+we parse the DT and work out what the dependencies are which we probably
+want to do prior to getting the drivers up and will be different for
+ACPI.  I think the level of DT dependency here looks a lot larger than
+it actually is due to the fact that a lot of what's being modified is DT
+parsing code.
+
+--7fVr/IRGAG9sAW4J
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWJpd/AAoJECTWi3JdVIfQyOUH/3aWMFomvCvS2CL4BvzIQDB4
+BphbR2H9ODV06RJMlHiGXa91+iBfp+FxWHQeyoc0ySA1Jn2tzZp8YwHnkNB32MvM
+lh9IOvlTQGwWOFxNNJZeExicoCW4ui3F1sQmcS3ycu9gHHUi/xdqczCFlIeJdJRX
+mSuLTMmuJVsxwFPY/X7EmKZzJLG8eIHWwzkH66432AO4UpU9Bs/dZ5vPxCSCsL89
+xEBG0PSdsFy/hL2Ag1zHZcu49cpEDLK/26vKrW96Ql6dklsfN5D3HDazZ4l0RE0r
+5iF7s3G0fFNpopm+SgwuwWXN92NtcPiHMEfZwLFeekLgyA+fdXC8yesekx0zmVg=
+=cBfe
+-----END PGP SIGNATURE-----
+
+--7fVr/IRGAG9sAW4J--
