@@ -1,318 +1,301 @@
-From: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
-Subject: Re: What is a "phy"; lanes or a group?
-Date: Wed, 21 Oct 2015 04:11:11 +0530
-Message-ID: <5626C307.3030709@ti.com>
-References: <56214D54.8030608@wwwdotorg.org> <5625049D.3040103@ti.com>
- <562522EE.90603@wwwdotorg.org>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Wed, 21 Oct 2015 01:34:10 +0200
+Message-ID: <4903022.NtioyRkmbB@vostro.rjw.lan>
+References: <561E1378.6000906@collabora.com> <4025469.zmyipZqCsP@vostro.rjw.lan> <CAL_JsqJuu5_Osqi+X6M6UeRDZFQB+_8riYDF1gvsGayk5-4SFw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <562522EE.90603-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <CAL_JsqJuu5_Osqi+X6M6UeRDZFQB+_8riYDF1gvsGayk5-4SFw@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: David Woodhouse <dwmw2@infradead.org>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Liam Girdwood <lgirdw>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+On Tuesday, October 20, 2015 09:15:01 AM Rob Herring wrote:
+> On Tue, Oct 20, 2015 at 2:56 AM, Rafael J. Wysocki <rjw@rjwysocki.net=
+> wrote:
+> > On Monday, October 19, 2015 05:58:40 PM Rob Herring wrote:
+> >> On Mon, Oct 19, 2015 at 4:40 PM, Rafael J. Wysocki <rjw@rjwysocki.=
+net> wrote:
+> >> > On Monday, October 19, 2015 10:58:25 AM Rob Herring wrote:
+> >> >> On Mon, Oct 19, 2015 at 10:29 AM, David Woodhouse <dwmw2@infrad=
+ead.org> wrote:
+> >> >> > On Mon, 2015-10-19 at 15:50 +0100, Mark Brown wrote:
+> >> >> >> > But the point I'm making is that we are working towards *f=
+ixing* that,
+> >> >> >> > and *not* using DT-specific code in places where we should=
+ be using the
+> >> >> >> > generic APIs.
+> >> >> >>
+> >> >> >> What is the plan for fixing things here?  It's not obvious (=
+at least to
+> >> >> >> me) that we don't want to have the subsystems having knowled=
+ge of how
+> >> >> >> they are bound to a specific firmware which is what you seem=
+ to imply
+> >> >> >> here.
+> >> >> >
+> >> >> > I don't know that there *is* a coherent plan here to address =
+it all.
+> >> >> >
+> >> >> > Certainly, we *will* need subsystems to have firmware-specifi=
+c
+> >> >> > knowledge in some cases. Take GPIO as an example; ACPI *has* =
+a way to
+> >> >> > describe GPIO, and properties which reference GPIO pins are i=
+ntended to
+> >> >> > work through that =E2=80=94 while in DT, properties which ref=
+erence GPIO pins
+> >> >> > will have different contents. They'll be compatible at the dr=
+iver
+> >> >> > level, in the sense that there's a call to get a given GPIO g=
+iven the
+> >> >> > property name, but the subsystems *will* be doing different t=
+hings
+> >> >> > behind the scenes.
+> >> >> >
+> >> >> > My plan, such as it is, is to go through the leaf-node driver=
+s which
+> >> >> > almost definitely *should* be firmware-agnostic, and convert =
+those. And
+> >> >> > then take stock of what we have left, and work out what, if a=
+nything,
+> >> >> > still needs to be done.
+> >> >>
+> >> >> Many cases are already agnostic in the drivers in terms of the =
+*_get()
+> >> >> functions. Some are DT specific, but probably because those sub=
+systems
+> >> >> are new and DT only. In any case, I don't think these 1 line ch=
+anges
+> >> >> do anything to make doing conversions here harder.
+> >> >>
+> >> >> >> It seems like we're going to have to refactor these bits of =
+code when
+> >> >> >> they get generalised anyway so I'm not sure that the additio=
+nal cost
+> >> >> >> here is that big.
+> >> >> >
+> >> >> > That's an acceptable answer =E2=80=94 "we're adding legacy co=
+de here but we
+> >> >> > know it's going to be refactored anyway". If that's true, all=
+ it takes
+> >> >> > is a note in the commit comment to that effect. That's differ=
+ent from
+> >> >> > having not thought about it :)
+> >> >>
+> >> >> Considering at one point we did create a fwnode based API, we d=
+id
+> >> >> think about it. Plus there was little input from ACPI folks as =
+to
+> >> >> whether the change was even useful for ACPI case.
+> >> >
+> >> > Well, sorry, but who was asking whom, specifically?
+> >>
+> >> You and linux-acpi have been copied on v2 and later of the entire
+> >> series I think.
+> >
+> > Yes, but it wasn't like a direct request, say "We need your input, =
+so can you
+> > please have a look and BTW we want this in 4.4, so please do it ASA=
+P".  In
+> > which case I'd prioritize that before other things I needed to take=
+ care of.
+>=20
+> Fair enough. Can you please review and comment on v7 of the series? W=
+e
+> can discuss at KS as well.
 
-On Monday 19 October 2015 10:35 PM, Stephen Warren wrote:
-> On 10/19/2015 08:56 AM, Kishon Vijay Abraham I wrote:
->> Hi,
->>
->> On Saturday 17 October 2015 12:47 AM, Stephen Warren wrote:
->>> Kishon,
->>>
->>> I wanted to confirm a few aspects about the PHY subsystem in Linux, and
->>> also the DT representation of PHYs. Mainly I'd like to understand
->>> whether an individual PHY represents a single "lane" of traffic, or the
->>> whole set of lanes related to a particular IO controller or "port" of an
->>> IO controller. This distinction isn't relevant for e.g. a USB2
->>> controller that only uses a single (differential) lane, but is for
->>> something like a x4 PCIe port.
->>
->> right, that's generally the case where we represent a single lane as a
->> PHY and the IP that implements these multiple lanes as PHY provider.
->>
->>> I think it's simplest if I describe some scenarios and confirm the set
->>> of phys you'd expect to exist in each:
->>>
->>> 1)
->>>
->>> 1 single PCIe controller, with 1 x1 port.
->>>
->>> I believe the PCIe driver would get 1 PHY.
->>
->> right.
->>
->>> 2)
->>>
->>> 1 single PCIe controller with 2 x1 root ports.
->>>
->>> I believe the PCIe driver would get 2 separate PHYs; 1 PHY per root
->>> port.
->>
->> yes.
->>
->>> 3)
->>>
->>> 1 single PCIe controller with 1 x4 port.
->>>
->>> Would you expect the PCIe driver to get a single PHY that represented
->>> the collection of 4 lanes, or to get 4 separate PHYs; one for each lane.
->>
->> Ideally would like to have four separate PHY's if each of these lanes
->> can be configured independently.
->>
->>> == PHY count for multi-lane controllers:
->>>
->>> Perhaps the answer depends on the SoC architecture; I could image some
->>> SoCs having an entirely independent PHY per lane thus requiring the PCIe
->>> driver to get 4 PHYs, whereas another SoC might have a single set of
->>> registers that control all 4 lanes as a single block, which in turn was
->>> exposed as a single PHY.
->>
->> For IPs which implement multiple PHYs (in this case multi lane), there
->> can be a single phy provider and multiple PHYs, one PHY for each lane.
->>
->>> However, I'd hope that the PCIe driver wouldn't have to understand those
->>> details, so it was possible to transplant the PCIe IP between different
->>> SoCs that used different PHY architectures without needing to understand
->>> the differences. Has any thought been given to this?
->>
->> The standard PCI dt binding already defines *num-lanes*, so the PCIe
->> driver can know the number of lanes that the controller can support.
-> 
-> OK, I see we use "nvidia,num-lanes" in the Tegra PCIe driver since I
-> suppose the Tegra binding pre-dates that standard property.
-> 
-> So, we do indeed know exactly how many lanes are used by each port.
-> 
->>>
->>> We could isolate the PCIe driver by either:
->>>
->>> a) Always making the PCIe driver get a single PHY for each port
->>
->> here by port you mean each lane right?
-> 
-> Here I meant port...
+I'll do that.
 
-okay.. something like root port?
+I'm in the middle of travel right now and speaking at a conference tomo=
+rrow,
+so I may not be able to get to that for a couple of days, but will do m=
+y best
+to do it as soon as I possibly can.
 
-> 
->>> irrespective of lane count. If the HW doesn't work like this, we could
->>> provide some kind of "aggregate" PHY that "fans out" to all the
->>> individual PHYs.
->>
->> Not sure I get this. Care to explain more?
-> 
-> Here (in this section of the email) I'm discussing the set of PHYs that
-> a PCIe driver would "get" for each port. Option (a) above is to get one
-> PHY per port. Option (b) below is to get one PHY per lane.
-> 
-> The issue the above paragraph discusses is what happens when the PHY HW
-> module doesn't actually support the same set of PHYs as the PCIe driver
-> is requesting; e.g. if the PCIe driver requests 1 PHY for a x4 PCIe
+> >> > The underlying problem is present in ACPI too and we don't reall=
+y have a good
+> >> > solution for it.  We might benefit from a common one if it exist=
+ed.
+> >>
+> >> The problem for DT is we don't generically know what are the
+> >> dependencies at a core level. We could know some or most dependenc=
+ies
+> >> if phandles (links to other nodes) were typed, but they are not. I=
+f
+> >> the core had this information, we could simply control the device
+> >> creation to order probing. Instead, this information is encoded in=
+to
+> >> the bindings and binding parsing resides in the subsystems. That
+> >> parsing happens during probe of the client side and is done by the
+> >> subsystems (for common bindings). Since we already do the parsing =
+at
+> >> this point, it is a convenient place to trigger the probe of the
+> >> dependency. Is ACPI going to be similar in this regard?
+> >
+> > It is similar in some ways.  For example, if a device's functionali=
+ty depends
+> > on an I2C resource (connection), the core doesn't know that at the =
+device
+> > creation time at least in some cases.  Same for GPIO, SPI, DMA engi=
+nes etc.
+>=20
+> So you will need to create devices, defer their probing and then prob=
+e
+> on demand as well unless you have other ideas how you would do it.
 
-why does the driver request only 1 PHY here? It should request 4 PHYs.
-The driver should have the knowledge of how the controller and the PHY's
-are integrated right?
+Right.
 
-> port, whereas the PHY HW module implements 4 independent PHYs (one per
-> lane). There's an impedance mismatch here that perhaps could be solved
-> by inserting an "aggregate" PHY provider between the PCIe controller and
-> the PHY provider:
-> 
->       one get                   four gets
-> PCIE ---------> aggregrate PHY -----------> actual PHY provider(s)
-> 
->>> b) Always making the PCIe driver get as many PHYs as there are lanes. In
->>> the case where the PHY provider only implements a single PHY, we could
->>> either provide the same PHY for each lane, or provide dummy PHYs for all
->>> but one lane.
->>
->> If the HW IP is modeled in such a way that there is a single PHY control
->> for all the lanes, then the PCIe driver can just get and configure a
->> single PHY. But generally most of the IPs give independent control for
->> each of the PHYs.
-> 
-> There's always the opportunity of a mismatch here. The PCIe controller
-> could be created by an IP vendor (and hence the driver would have to
-> request 4 PHYs for a x4 port in order to handle any possible SoC
-> integration), whereas an SoC vendor might implement a PHY module that is
-> an entire x4 bus, rather than 4 individual PHYs.
+> > There is a _DEP object in ACPI that can be used by firmware to tell=
+ the OS
+> > about those dependencies, but there's no way in the driver core to =
+use that
+> > information anyway today.
+>=20
+> I would think that the equivalent function for ACPI to of_device_prob=
+e
+> could process these if they are generic and you can associate the
+> dependency to a struct device.
 
-There should be a glue layer driver which programs the integration layer
-of controller IP with the SoC. The PHY handling should be done there.
-> 
->>> == PHY brick provider count
->>>
->>> On Tegra, we have some PHY "bricks" that contain multiple lanes. Each
->>> lane can be configured to connect to one of n IO controllers (USB3,
->>> PCIe, SATA). The exact set of "n" IO controllers associated with each
->>> lane varies lane to lane. There are some global register settings to
->>> enable the "brick" as a whole, and some per lane settings to enable (and
->>> configure muxing for) each lane. We currently have the muxing modelled
->>> via the pinctrl DT bindings and Linux driver subsystem.
->>>
->>> How many PHY objects would you expect to exist in such a setup.
->>> Options I
->>> can think of are:
->>>
->>> a)
->>>
->>> A single PHY, since there is some global register state associated with
->>> the "brick". Multiple IO controller drivers will get this same PHY, and
->>> we'll implement reference counting to determine when to actually
->>> enable/disable this PHY. The driver will look at the muxing information
->>> to determine the actual use for each lane, and enable/disable/configure
->>> the per-lane options the first time the PHY is "got".
->>>
->>> The disadvantage here is that per-lane information isn't implied by the
->>> set of PHY objects in use, since there's only one. This information
->>> could perhaps be provided by various custom properties in the PHY
->>> provider's DT node(s) though.
->>>
->>> As background, we currently have this option implemented for Tegra124's
->>> PCIe brick (which supports 5 lanes).
->>>
->>> Concretely, the provider might use #phy-cells = <0> here if there's just
->>> one brick implemented in the PHY HW module.
->>>
->>> b)
->>>
->>> A PHY per IO controller (port) that may use (parts of) the PHY brick.
->>> For example, even with just a 7-lane PHY brick, we might expose a PHY
->>> for each of 4 USB2 single-port controllers, one for each of 4 ports in
->>> the USB3 controller, 1 for the SATA controller, and one for each of 2
->>> ports in the PCIe controller. (That's 11 PHY objects for 7 lanes).
->>>
->>> The disadvantage here is that we potentially end up with (and certainly
->>> do on Tegra) with the PHY provider providing many more PHYs than lanes,
->>> if the number of IO controller (ports) that can be muxed into the PHY
->>> brick exceeds the number of lanes.
->>>
->>> As background, I've seen a patch to extend Tegra124's PCIe PHY binding
->>> to essentially this model. However, the conversion looked like it
->>> supported a mix of model (a) and (b) for different cases, which feels
->>> inconsistent.
->>>
->>> Concretely, the provider might use #phy-cells = <1>, with valid values
->>> being:
->>>
->>> PHY_USB2_CONTROLLER0
->>> PHY_USB2_CONTROLLER1
->>> ...
->>> PHY_USB3_CONTROLLER0_PORT0
->>> PHY_USB3_CONTROLLER0_PORT1
->>> ...
->>> PHY_PCIE_CONTROLLER0_PORT0
->>> PHY_PCIE_CONTROLLER0_PORT1
->>> PHY_SATA
->>>
->>> c)
->>>
->>> A PHY per IO lane in the brick. In this case, the global PHY enabling
->>> would happen when the first PHY was enabled via reference counting, and
->>> all the per-lane registers would be controlled by each individual PHY
->>> object.
->>
->> This looks like the best option where the PHY brick will be modeled as a
->> PHY provider and a separate PHY for each of the 7 lanes.
->>
->>> This option feels most generic, and gives the most lane-specific
->>> information to the PHY driver, I think?
->>>
->>> The disadvantage here is that it's difficult for the PHY provider to
->>> know which lanes form part of the same logical connection, e.g. if we
->>> need to program each lane to enable it, then perform some link-level
->>> configuration across all lanes involved in that link.
->>
->> Maybe we can use PHY TYPE to differentiate between the lanes. With that
->> #phy-cells should be 2, 1st cell should have PHY TYPE (PHY_TYPE_SATA,
->> PHY_TYPE_USB3, PHY_TYPE_PCIE, etc..) and the 2nd cell can be made
->> optional to be used only with PCIe to differentiate LANE0, LANE1 etc..
-> 
-> That doesn't sound so good because it's not a real representation of the
-> HW. Our "PCIe" PHY brick (PCIe just by name really) on Tegra210 has 7
-> identical lanes. IIUC, each lane would be programmed identically
-> irrespective of whether a SATA, USB3, or PCIe controller happened to be
-> mux'd to the lane. Thus, having the PHY binding include a TYPE_ would be
-> a bit misleading, since there really isn't a type associated with the
-> lane in HW (at least not at a SW-visible level).
+Well, something along these lines probably.
 
-all right, if there is no difference in the configuration then PHY_TYPE
-is not required. Then just create a dt node for the brick (phy provider
-dt node) and create a sub node for each of the 7 lanes inside the brick.
+> >> Fundamentally, it is a question of probe devices when their
+> >> dependencies are present or drivers ensure their dependencies are
+> >> ready. IIRC, init systems went thru a similar debate for service
+> >> dependencies.
+> >
+> > The probe ordering is not the entire picture, though.
+> >
+> > Even if you get the probe ordering right, the problem is going to s=
+how up in
+> > multiple other places: system suspend/resume, runtime PM, system sh=
+utdown,
+> > unbinding of drivers.  In all of those cases it is necessary to han=
+dle things
+> > in a specific order if there is a dependency.
+>=20
+> My understanding was with deferred probe that it also solves suspend
+> ordering problems because things are suspended in reverse order of
+> probing. I suppose you could have slightly different dependencies for
+> suspend, runtime PM, etc. than for probe? Perhaps we need to save the
+> list of dependencies as we probe them. I don't think that would be to=
+o
+> hard to add on to this series, but then if we don't need it now, why
+> add it?
 
-Use the subnode as the phandle in the controller dt node.
-> 
-> It'd also be confusing since we also have (multi-lane) PHY bricks for
-> each of USB3, SATA, PCIe, so we'd need a "phy cell" in DT to distinguish
+As Alan said, there are two problems here.  First off, the ordering of =
+the
+list used by system suspend/resume is the registration ordering, not th=
+e
+probe ordering.  Moreover, though, even if we get the ordering right, i=
+t
+still is not sufficient for devices with async_suspend set.
 
-you mean separate phy bricks for each of USB3, SATA.. I thought you
-mentioned single PHY's in a single PHY brick that can be used by USB3,
-SATA..?
-> between the PHY brick, rather than between the usage of a particular lane.
-> 
-> If we do end up needing any processing across all lanes at once, I
-> wonder if it wouldn't be better to add new APIs to the PHY subsystem
-> that operate on n PHYs at once, rather than PHY-by-PHY. That would quite
-> clearly display the intent of the call, and could be implemented as a
-> simple loop over the existing per-PHY APIs for providers that don't care
-> about that detail. Something like:
-> 
-> int phy_get_array(struct device *dev, const char **strings, int
-> phy_count, struct phy **phys);
-> (or a separate "post get bus" call)
-> 
-> int phy_power_on_array(struct phy **phys, int phy_count);
-> 
-> ?
+To address this, the core will have to make the involved async threads =
+wait
+for each other in accordance with the dependencies too.  That, in turn,=
+ is
+very close to what's needed for runtime PM.
 
-That should be okay.
-> 
->>> Concretely, the provider might use #phy-cells = <1>, with valid values
->>> being:
->>>
->>> PHY_LANE0
->>> PHY_LANE1
->>> PHY_LANE2
->>> ...
->>>
->>> Again perhaps the answer differs between SoCs? If so, do you have any
->>> thoughts/guidance which option is most appropriate when?
->>
->> The 'c' option looks appropriate to me with some modifications.
->>
->>> Finally, do you have any generic thoughts re: structuring of PHY
->>> provider DT nodes? I've heard of a proposal for Tegra to have a
->>> top-level DT node for the HW module that implements the PHYs, but with a
->>> separate DT sub-node per PHY that's implemented in order to provide
->>> PHY-specific configuration. I see some of the Samsung bindings already
->>> do something like this. Do you have any general guidance on this, or do
->>> you think individual bindings are free to do whatever makes sense for
->>> the HW in question?
->>
->> Looks like your PHY is similar to miphy365. I'd recommend you to look at
->> Documentation/devicetree/bindings/phy/phy-miphy365x.txt and see if it
->> makes sense to you.
-> 
-> It looks like that describes a provider with 2 single-lane PHYs. On
-> Tegra210, we actually have a PHY controller with sub-blocks for:
-> 
-> - 4 separate x1 USB2 PHY bricks
-> - 1 (x1 or x2; not sure yet) "USB3/SATA" PHY brick
-> - 1 x7 "USB3/PCIe" PHY brick
+> >> >> In any case, we're talking about adding 1 line.
+> >> >
+> >> > But also about making the driver core slighly OF-centric.
+> >>
+> >> How so? The one line is in DT binding parsing code in subsystems, =
+not
+> >> driver core. The driver core change is we add every device (that
+> >> happened to be created by DT) to the deferred probe list, so they
+> >> don't probe right away.
+> >
+> > The "that happened to be created by DT" part is of concern here.  W=
+hat is there
+> > that makes DT special in that respect?  Why shouldn't that be appli=
+cable to
+> > devices created by the ACPI core, for example, or by a board file o=
+r something
+> > else?
+>=20
+> DT is first. I think both examples could use this. Board files avoid
+> the problem by controlling the registration order with initcall level=
+s
+> and just the call order in the code. You could come up with some way
+> to define dependencies for devices in board files and reuse this
+> mechanism. ACPI could use this as well if the dependencies are handle=
+d
+> in a similar way and it seems like they could be.
+>=20
+> >> > Sure, we need OF-specific code and ACPI-specific code wherever d=
+ifferent
+> >> > handling is required, but doing that at the driver core level se=
+ems to be
+> >> > a bit of a stretch to me.
+> >> >
+> >> > Please note that we don't really have ACPI-specific calls in the=
+ driver core,
+> >> > although we might have added them long ago even before the OF st=
+uff appeared
+> >> > in the kernel for the first time.  We didn't do that, (among oth=
+er things)
+> >> > because we didn't want that particular firmware interface to app=
+ear special
+> >> > in any way and I'm not really sure why it is now OK to make OF l=
+ook special
+> >> > instead.
+> >>
+> >> I don't think DT is special and we avoid DT specific core changes =
+as
+> >> much as possible. I think the difference is DT uses platform_devic=
+e
+> >> and ACPI does not.
+> >
+> > ACPI uses platform devices too.  In fact, ACPI device objects are e=
+numerated as
+> > platform devices by default now.
+>=20
+> Okay, I should have grepped for that:
+> drivers/base/platform.c:                ACPI_COMPANION_SET(&pdev->dev=
+, NULL);
+> drivers/base/platform.c:        len =3D acpi_device_modalias(dev, buf=
+,
+> PAGE_SIZE -1);
+> drivers/base/platform.c:        rc =3D acpi_device_uevent_modalias(de=
+v, env);
+> drivers/base/platform.c:        /* Then try ACPI style match */
+> drivers/base/platform.c:        if (acpi_driver_match_device(dev, drv=
+))
+>=20
+> These are all cases which have DT version as well, so we're not reall=
+y
+> all that different here. There's a few more for DT, but that probably
+> means you have just not hit the problems we have yet. For example,
+> what happens if you have an interrupt line in which the controller is
+> probed after the device connected to the interrupt line? That require=
+d
+> resolving irqs in platform_get_irq rather than using static resources
+> to support deferred probe.
 
-hmm okay.. that makes it clear. Haven't seen any other vendor have this
-kind of IP.
+We don't have this particular problem, because the IRQ controllers are
+enumerated in a special way.
 
-For this it makes sense to create multiple PHY providers within the same
-driver but again there should be a separate PHY for each lane.
+> Converting things like this to fwnode calls isn't hard to do. There
+> just hasn't been a pressing need or mandate to do so.
 
-And then for enabling the PHYs in a particular block, use the new
-power_on_array APIs.
+Well, to me the problem is actually generic, so it is better to use gen=
+eric
+concepts to start with when trying to address it where that doesn't add=
+ too
+much overhead.  Otherwise it's very easy to lose the broader context fr=
+om
+one's sight and then to start cutting corners.
 
-Thanks
-Kishon
+Thanks,
+Rafael
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-gpio" i=
+n
+the body of a message to majordomo@vger.kernel.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
