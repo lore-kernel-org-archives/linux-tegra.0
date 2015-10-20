@@ -1,319 +1,209 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH] dt: Tegra XUSB padctl: per-lane PHYs and USB lane map
-Date: Tue, 20 Oct 2015 11:10:18 +0100
-Message-ID: <5626130A.5090604@nvidia.com>
-References: <1445297442-21439-1-git-send-email-swarren@wwwdotorg.org>
+From: David Woodhouse <dwmw2@infradead.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Tue, 20 Oct 2015 12:12:19 +0100
+Message-ID: <1445339539.4486.36.camel@infradead.org>
+References: <561E1378.6000906@collabora.com>
+	 <20151017065750.GA18607@kroah.com> <20151018192931.GY14956@sirena.org.uk>
+	 <20151018193757.GA9147@kroah.com> <20151018195330.GB14956@sirena.org.uk>
+	 <1445247881.53393.146.camel@infradead.org>
+	 <CAL_JsqKehmSobpbdeXGo=-1pAbtrhCHovyyCWya_MNOhGCi8CQ@mail.gmail.com>
+	 <1445258870.53393.173.camel@infradead.org>
+	 <20151019145048.GI14956@sirena.org.uk>
+	 <1445268580.53393.183.camel@infradead.org>
+	 <20151019154324.GN32532@n2100.arm.linux.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1445297442-21439-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: multipart/signed; micalg="sha-1"; protocol="application/x-pkcs7-signature";
+	boundary="=-+aJcgcrNh6eiygBmdQmH"
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20151019154324.GN32532@n2100.arm.linux.org.uk>
+Sender: linux-pm-owner@vger.kernel.org
+To: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 20/10/15 00:30, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Convert the binding to provide a PHY per lane, rather than a PHY per
-> "pad" block in the hardware. This will allow the driver to easily know
-> which lanes are used by clients, and thus only enable those lanes, and
-> generally better aligns with the fact the hardware has configuration per
-> lane rather than solely configuration per "pad" block.
-> 
-> Add entries to pinctrl-tegra-xusb.h to enumerate all "pad" blocks on
-> Tegra210, which will allow an XUSB DT node to reference the PHYs it needs.
-> 
-> Add an nvidia,ss-port-map register to allow configuration of the
-> XUSB_PADCTL_SS_PORT_MAP register.
-> 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Thierry, Jon, here's a start at where I think the XUSB padctl binding
-> should go. What are your thoughts on this approach?
-> 
-> Kishon, this implements a "PHY-per-lane" approach for Tegra's XUSB padctl
-> module. Does the result look good to you? You may need to apply the patch
-> for the binding doc to make sense since I guess you aren't familiar with
-> the binding or HW.
-> 
->  .../pinctrl/nvidia,tegra124-xusb-padctl.txt        | 122 +++++++++++++++------
->  include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h   |  24 +++-
->  2 files changed, 108 insertions(+), 38 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
-> index 3952d893635c..9b39f3283636 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
-> @@ -1,16 +1,31 @@
->  Device tree binding for NVIDIA Tegra XUSB pad controller
->  ========================================================
->  
-> -The Tegra XUSB pad controller manages a set of lanes, each of which can be
-> -assigned to one out of a set of different pads. Some of these pads have an
-> -associated PHY that must be powered up before the pad can be used.
-> -
-> -This document defines the device-specific binding for the XUSB pad controller.
-> +The Tegra XUSB pad controller manages a set of "pads". Each pad drives output
-> +to (or receives input from) one or more SoC IO signals, or (pad) lanes. Note
-> +that in many contexts, a "pad" is an individual pin/signal/ball on a chip
-> +package. In the context of this documentation, a "pad" refers to a sub-block
-> +of the XUSB padctl HW module, which in turn is attached to potentially more
-> +than one pin/signal/ball on the chip. This unusual use of terminology is
-> +consistent with Tegra hardware documentation.
+--=-+aJcgcrNh6eiygBmdQmH
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Ugh, you are right I see things like "7-lane pad" in the documentation.
-In my mind pad has always been one physical ball and lane came from pcie
-for a differential pair.
+On Mon, 2015-10-19 at 16:43 +0100, Russell King - ARM Linux wrote:
+> On Mon, Oct 19, 2015 at 04:29:40PM +0100, David Woodhouse wrote:
+> > I don't know that there *is* a coherent plan here to address it
+> > all.
+> >=20
+> > Certainly, we *will* need subsystems to have firmware-specific
+> > knowledge in some cases. Take GPIO as an example; ACPI *has* a way
+> > to
+> > describe GPIO, and properties which reference GPIO pins are
+> > intended to
+> > work through that =E2=80=94 while in DT, properties which reference GPI=
+O
+> > pins
+> > will have different contents. They'll be compatible at the driver
+> > level, in the sense that there's a call to get a given GPIO given
+> > the
+> > property name, but the subsystems *will* be doing different things
+> > behind the scenes.
+>=20
+> It's a bit ironic that you've chosen GPIO as an example there.  The
+> "new" GPIO API (the gpiod_* stuff) only has a fwnode way to get the
+> gpio descriptor.  There's no of_* method.
 
-> +These pads must typically be powered up and configured before they can be
-> +used. Individual lanes may also need various configuration applied to be
-> +useful. This binding allows specification of the set of pads and lanes to be
-> +used in a particular system, and their associated configuration.
-> +
-> +Various IO controllers are attached to the pad controller internally to Tegra.
-> +Examples are USB2, XUSB, SATA, and PCIe. The XUSB padctl contains muxes that
-> +route the IO controllers' lanes to the lanes of the pads. This binding allows
-> +specification of the intended configuration of these muxes.
->  
->  Refer to pinctrl-bindings.txt in this directory for generic information about
->  pin controller device tree bindings and ../phy/phy-bindings.txt for details on
->  how to describe and reference PHYs in device trees.
->  
-> +Each PHY provided by this binding refers to a single (differential, and
-> +typicallly bi-directional) lane of a pad.
->
->  Required properties:
->  --------------------
->  - compatible: Valid options are:
-> @@ -24,8 +39,19 @@ Required properties:
->    See ../reset/reset.txt for details.
->  - reset-names: Must include the following entries:
->    - padctl
-> -- #phy-cells: Should be 1. The specifier is the index of the PHY to reference.
-> -  See <dt-bindings/pinctrl/pinctrl-tegra-xusb.h> for the list of valid values.
-> +- #phy-cells: Should be 2. The first cell indicates the pad that implements
-> +  the lane. See <dt-bindings/pinctrl/pinctrl-tegra-xusb.h> for the list of
-> +  valid values. The second cell indicates the lane within the pad.
-> +
-> +Optional properties:
-> +--------------------
-> +- nvidia,ss-port-map: This value to program into the XUSB_PADCTL_SS_PORT_MAP
-> +  register. If this value is missing, no programming of the register should
-> +  occur.
-> +
-> +FIXME: Probably need other global properties to initialize registers such as
-> +XUSB_PADCTL_SNPS_OC_MAP_0, XUSB_PADCTL_USB2_OC_MAP_0,
-> +XUSB_PADCTL_VBUS_OC_MAP_0...
->  
->  Lane muxing:
->  ------------
-> @@ -34,28 +60,34 @@ Child nodes contain the pinmux configurations following the conventions from
->  the pinctrl-bindings.txt document. Typically a single, static configuration is
->  given and applied at boot time.
->  
-> -Each subnode describes groups of lanes along with parameters and pads that
-> -they should be assigned to. The name of these subnodes is not important. All
-> -subnodes should be parsed solely based on their content.
-> +Each subnode describes arbitary sets of (pad) lanes along with muxing and
-> +configuration parameters that should be applied to them. The name of these
-> +subnodes is not important. All subnodes should be parsed solely based on their
-> +content.
->  
->  Each subnode only applies the parameters that are explicitly listed. In other
-> -words, if a subnode that lists a function but no pin configuration parameters
-> +words, a subnode that lists a function but no pin configuration parameters
->  implies no information about any pin configuration parameters. Similarly, a
-> -subnode that describes only an IDDQ parameter implies no information about
-> -what function the pins are assigned to. For this reason even seemingly boolean
-> -values are actually tristates in this binding: unspecified, off or on.
-> +subnode that describes only an configuration parameter implies no information
-> +about what function the pins are assigned to. For this reason even seemingly
-> +boolean values are actually tristates in this binding: unspecified, off or on.
->  Unspecified is represented as an absent property, and off/on are represented
->  as integer values 0 and 1.
->  
->  Required properties:
-> -- nvidia,lanes: An array of strings. Each string is the name of a lane (pad).
-> +- nvidia,lanes: An array of strings. Each string is the name of a (pad) lane.
->    Valid values for lanes are listed below.
->  
->  Optional properties:
->  - nvidia,function: A string that is the name of the function (IO controller)
->    that the pin or group should be assigned to. Valid values for function names
->    are  listed below.
-> -- nvidia,iddq: Enables IDDQ mode of the lane. (0: no, 1: yes)
-> +- FIXME: Need to add e.g. nvidia,hsic-strobe-trim,
-> +  nvidia,otg-hs-curr-level-offset, ...
-> +
-> +Deprecated properties:
-> +- nvidia,iddq: (single-cell) Integer. Programming this value statically
-> +  violates prescribed HW programming rules, hence this property is deprecated.
->  
->  Note that not all of these properties are valid for all lanes. Lanes can be
->  divided into three groups:
-> @@ -66,7 +98,8 @@ divided into three groups:
->  
->      Valid functions for this group are: "snps", "xusb", "uart", "rsvd".
->  
-> -    The nvidia,iddq property does not apply to this group.
-> +    FIXME: I'm not sure if usb2-bias needs to be exposed as a PHY, or if XUSB
-> +    padctl can simply configure/enable it itself?
->  
->    - ulpi-0, hsic-0, hsic-1:
->  
-> @@ -74,8 +107,6 @@ divided into three groups:
->  
->      Valid functions for this group are: "snps", "xusb".
->  
-> -    The nvidia,iddq property does not apply to this group.
-> -
->    - pcie-0, pcie-1, pcie-2, pcie-3, pcie-4, pcie-5, pcie-6, sata-0:
->  
->      (pcie-5, pcie-6 are valid on Tegra210 only.)
-> @@ -86,7 +117,6 @@ divided into three groups:
->      On Tegra210, valid functions for this group are "pcie-x1", "usb3",
->      "sata", "pcie-x4".
->  
-> -
->  Example:
->  ========
->  
-> @@ -99,45 +129,65 @@ SoC file extract:
->  		resets = <&tegra_car 142>;
->  		reset-names = "padctl";
->  
-> -		#phy-cells = <1>;
-> +		#phy-cells = <2>;
->  	};
->  
->  Board file extract:
->  -------------------
->  
->  	pcie-controller@0,01003000 {
-> -		...
-> -
-> -		phys = <&padctl 0>;
-> -		phy-names = "pcie";
-> +		status = "okay";
-> +
-> +		pci@1,0 {
-> +			status = "okay";
-> +			nvidia,num-lanes = <4>;
-> +			phys = <&padctl TEGRA_XUSB_PADCTL_PCIE 1>,
-> +			       <&padctl TEGRA_XUSB_PADCTL_PCIE 2>,
-> +			       <&padctl TEGRA_XUSB_PADCTL_PCIE 3>,
-> +			       <&padctl TEGRA_XUSB_PADCTL_PCIE 4>;
-> +			/* These are the lane IDs within this PCIe port */
-> +			phy-names = "0", "1", "2", "3";
+I think that part is already being worked on, but...
 
-Looks good. So the above simply indicates what pad lane is used, but the
-actual pin mux is still setup by the default pin mux below? Would the
-xlate verify the pad lane is setup correctly?
+> If ACPI already handles GPIOs internally, then I'm left wondering
+> why GPIO descriptor stuff went down the fwnode route at all - it
+> seems rather pointless in this case,=20
 
-> +		};
->  
-> -		...
-> +		pci@2,0 {
-> +			status = "okay";
-> +			nvidia,num-lanes = <1>;
-> +			phys = <&padctl TEGRA_XUSB_PADCTL_PCIE 0>;
-> +			phy-names = "0";
-> +		};
->  	};
->  
-> -	...
-> +	padctl@0,7009f000 {
-> +		status = "okay";
->  
-> -	padctl: padctl@0,7009f000 {
->  		pinctrl-0 = <&padctl_default>;
->  		pinctrl-names = "default";
->  
->  		padctl_default: pinmux {
-> +			xusb {
-> +				nvidia,lanes = "otg-1", "otg-2";
-> +				nvidia,function = "xusb";
-> +			};
-> +
->  			usb3 {
-> -				nvidia,lanes = "pcie-0", "pcie-1";
-> +				nvidia,lanes = "pcie-5", "pcie-6";
->  				nvidia,function = "usb3";
-> -				nvidia,iddq = <0>;
->  			};
->  
-> -			pcie {
-> -				nvidia,lanes = "pcie-2", "pcie-3",
-> -					       "pcie-4";
-> -				nvidia,function = "pcie";
-> -				nvidia,iddq = <0>;
-> +			pcie-x1 {
-> +				nvidia,lanes = "pcie-0";
-> +				nvidia,function = "pcie-x1";
-> +			};
-> +
-> +			pcie-x4 {
-> +				nvidia,lanes = "pcie-1", "pcie-2",
-> +					       "pcie-3", "pcie-4";
-> +				nvidia,function = "pcie-x4";
+ACPI already had a way for a given device to say that it uses certain
+other GPIOs. But until we had device properties in ACPI, it could say
+*what* it used them for. So sure, we could say that we used GPIO#15
+from <this> controller and GPIOs #27 and #31 from <that> controller.
+But there was no way to say that the former was the shotdown pin and
+the latter was the reset pin.
 
-It is worth having a separate example for t210 versus changing the above
-because it is still valid for t124.
+While a GPIO property in DT will contain a phandle and basically be a
+complete reference to find the pin you're after, the same property
+represented in ACPI will just be an index into the resources that ACPI
+could already refer to.
 
->  			};
->  
->  			sata {
->  				nvidia,lanes = "sata-0";
->  				nvidia,function = "sata";
-> -				nvidia,iddq = <0>;
->  			};
->  		};
->  	};
-> diff --git a/include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h b/include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h
-> index 914d56da9324..edc961202d1c 100644
-> --- a/include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h
-> +++ b/include/dt-bindings/pinctrl/pinctrl-tegra-xusb.h
-> @@ -1,7 +1,27 @@
->  #ifndef _DT_BINDINGS_PINCTRL_TEGRA_XUSB_H
->  #define _DT_BINDINGS_PINCTRL_TEGRA_XUSB_H 1
->  
-> -#define TEGRA_XUSB_PADCTL_PCIE 0
-> -#define TEGRA_XUSB_PADCTL_SATA 1
-> +/*
-> + * These legacy specifiers represent a client that uses an unspecified subset
-> + * of the lanes within a particular "pad". Drivers that handle these
-> + * specifiers should enable all lanes of the pad.
-> + */
-> +#define TEGRA_XUSB_PADCTL_PCIE_LEGACY	0
-> +#define TEGRA_XUSB_PADCTL_SATA_LEGACY	1
+So referring to the example in Documentation/acpi/gpio-properties.txt:
 
-Do you know if the pcie and sata drivers for tegra actually use the
-"phys" and "phy-names" properties? I had a quick grep for "phy_get" and
-"phy-names" in the pcie and ata drivers but did not see any usage for
-tegra. I am wondering if tegra124 is really just relying on the default
-pin-mux as opposed to the phy properties. If so may be we could get rid
-of the above and update the binding without breaking anything?
+      Name (_CRS, ResourceTemplate ()
+      {
+          GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionInputOnly,
+                  "\\_SB.GPO0", 0, ResourceConsumer) {15}
+          GpioIo (Exclusive, PullUp, 0, 0, IoRestrictionInputOnly,
+                  "\\_SB.GPO0", 0, ResourceConsumer) {27, 31}
+      })
 
-> +
-> +/*
-> + * These represent the set of "pads" that exist within XUSB padctl hardware.
-> + * Different pads contain a different number of lanes. See the TRM for
-> + * details. The second cell of any specifier that uses these values will
-> + * represent the specific lane that the client uses.
-> + */
-> +#define TEGRA_XUSB_PADCTL_PCIE		2
-> +#define TEGRA_XUSB_PADCTL_SATA		3
-> +#define TEGRA_XUSB_PADCTL_HSIC		4
-> +#define TEGRA_XUSB_PADCTL_USB2_BIAS	5
-> +#define TEGRA_XUSB_PADCTL_USB2_0	6
-> +#define TEGRA_XUSB_PADCTL_USB2_1	7
-> +#define TEGRA_XUSB_PADCTL_USB2_2	8
-> +#define TEGRA_XUSB_PADCTL_USB2_3	9
->  
->  #endif /* _DT_BINDINGS_PINCTRL_TEGRA_XUSB_H */
->
+That part, ACPI already had. But..
 
-Jon
+      Name (_DSD, Package ()
+      {
+          ToUUID("daffd814-6eba-4d8c-8a91-bc9bbf4aa301"),
+          Package ()
+          {
+              Package () {"reset-gpio", Package() {^BTH, 1, 1, 0 }},
+              Package () {"shutdown-gpio", Package() {^BTH, 0, 0, 0 }},
+          }
+      })
+
+...this part is new, and allows us the full flexibility of device
+properties. And the appropriate gpiod_get* function is supposed to
+transparently work on either DT or ACPI.
+
+
+--=20
+dwmw2
+
+
+--=-+aJcgcrNh6eiygBmdQmH
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExCzAJBgUrDgMCGgUAMIAGCSqGSIb3DQEHAQAAoIISjjCCBicw
+ggUPoAMCAQICAw3vNzANBgkqhkiG9w0BAQUFADCBjDELMAkGA1UEBhMCSUwxFjAUBgNVBAoTDVN0
+YXJ0Q29tIEx0ZC4xKzApBgNVBAsTIlNlY3VyZSBEaWdpdGFsIENlcnRpZmljYXRlIFNpZ25pbmcx
+ODA2BgNVBAMTL1N0YXJ0Q29tIENsYXNzIDEgUHJpbWFyeSBJbnRlcm1lZGlhdGUgQ2xpZW50IENB
+MB4XDTE1MDUwNTA5NDM0MVoXDTE2MDUwNTA5NTMzNlowQjEcMBoGA1UEAwwTZHdtdzJAaW5mcmFk
+ZWFkLm9yZzEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCASIwDQYJKoZIhvcN
+AQEBBQADggEPADCCAQoCggEBAMkbm9kPbx1j/X4RVyf/pPKSYwelcco69TvnQQbKM8m8xkWjXJI1
+jpJ1jMaGUZGFToINMSZi7lZawUozudWbXSKy1SikENSTJHffsdRAIlsp+hR8vWvjsKUry6sEdqPG
+doa5RY7+N4WRusWZDYW/RRWE6i9EL9qV86CVPYqw22UBOUw4/j/HVGCV6TSB8yE5iEwhk/hUuzRr
+FZm1MJMR7mCS7BCR8Lr5jFY61lWpBiXNXIxLZCvDc26KR5L5tYX43iUVO3fzES1GRVoYnxxk2tmz
+fcsZG5vK+Trc9L8OZJfkYrEHH3+Iw41MQ0w/djVtYr1+HYldx0QmYXAtnhIj+UMCAwEAAaOCAtkw
+ggLVMAkGA1UdEwQCMAAwCwYDVR0PBAQDAgSwMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcD
+BDAdBgNVHQ4EFgQUszC96C3w5/2+d+atSr0IpT26YI4wHwYDVR0jBBgwFoAUU3Ltkpzg2ssBXHx+
+ljVO8tS4UYIwHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzCCAUwGA1UdIASCAUMwggE/
+MIIBOwYLKwYBBAGBtTcBAgMwggEqMC4GCCsGAQUFBwIBFiJodHRwOi8vd3d3LnN0YXJ0c3NsLmNv
+bS9wb2xpY3kucGRmMIH3BggrBgEFBQcCAjCB6jAnFiBTdGFydENvbSBDZXJ0aWZpY2F0aW9uIEF1
+dGhvcml0eTADAgEBGoG+VGhpcyBjZXJ0aWZpY2F0ZSB3YXMgaXNzdWVkIGFjY29yZGluZyB0byB0
+aGUgQ2xhc3MgMSBWYWxpZGF0aW9uIHJlcXVpcmVtZW50cyBvZiB0aGUgU3RhcnRDb20gQ0EgcG9s
+aWN5LCByZWxpYW5jZSBvbmx5IGZvciB0aGUgaW50ZW5kZWQgcHVycG9zZSBpbiBjb21wbGlhbmNl
+IG9mIHRoZSByZWx5aW5nIHBhcnR5IG9ibGlnYXRpb25zLjA2BgNVHR8ELzAtMCugKaAnhiVodHRw
+Oi8vY3JsLnN0YXJ0c3NsLmNvbS9jcnR1MS1jcmwuY3JsMIGOBggrBgEFBQcBAQSBgTB/MDkGCCsG
+AQUFBzABhi1odHRwOi8vb2NzcC5zdGFydHNzbC5jb20vc3ViL2NsYXNzMS9jbGllbnQvY2EwQgYI
+KwYBBQUHMAKGNmh0dHA6Ly9haWEuc3RhcnRzc2wuY29tL2NlcnRzL3N1Yi5jbGFzczEuY2xpZW50
+LmNhLmNydDAjBgNVHRIEHDAahhhodHRwOi8vd3d3LnN0YXJ0c3NsLmNvbS8wDQYJKoZIhvcNAQEF
+BQADggEBAHMQmxHHodpS85X8HRyxhvfkys7r+taCNOaNU9cxQu/cZ/6k5nS2qGNMzZ6jb7ueY/V7
+7p+4DW/9ZWODDTf4Fz00mh5SSVc20Bz7t+hhxwHd62PZgENh5i76Qq2tw48U8AsYo5damHby1epf
+neZafLpUkLLO7AGBJIiRVTevdvyXQ0qnixOmKMWyvrhSNGuVIKVdeqLP+102Dwf+dpFyw+j1hz28
+jEEKpHa+NR1b2kXuSPi/rMGhexwlJOh4tK8KQ6Ryr0rIN//NSbOgbyYZrzc/ZUWX9V5OA84ChFb2
+vkFl0OcYrttp/rhDBLITwffPxSZeoBh9H7zYzkbCXKL3BUIwggYnMIIFD6ADAgECAgMN7zcwDQYJ
+KoZIhvcNAQEFBQAwgYwxCzAJBgNVBAYTAklMMRYwFAYDVQQKEw1TdGFydENvbSBMdGQuMSswKQYD
+VQQLEyJTZWN1cmUgRGlnaXRhbCBDZXJ0aWZpY2F0ZSBTaWduaW5nMTgwNgYDVQQDEy9TdGFydENv
+bSBDbGFzcyAxIFByaW1hcnkgSW50ZXJtZWRpYXRlIENsaWVudCBDQTAeFw0xNTA1MDUwOTQzNDFa
+Fw0xNjA1MDUwOTUzMzZaMEIxHDAaBgNVBAMME2R3bXcyQGluZnJhZGVhZC5vcmcxIjAgBgkqhkiG
+9w0BCQEWE2R3bXcyQGluZnJhZGVhZC5vcmcwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIB
+AQDJG5vZD28dY/1+EVcn/6TykmMHpXHKOvU750EGyjPJvMZFo1ySNY6SdYzGhlGRhU6CDTEmYu5W
+WsFKM7nVm10istUopBDUkyR337HUQCJbKfoUfL1r47ClK8urBHajxnaGuUWO/jeFkbrFmQ2Fv0UV
+hOovRC/alfOglT2KsNtlATlMOP4/x1Rglek0gfMhOYhMIZP4VLs0axWZtTCTEe5gkuwQkfC6+YxW
+OtZVqQYlzVyMS2Qrw3NuikeS+bWF+N4lFTt38xEtRkVaGJ8cZNrZs33LGRubyvk63PS/DmSX5GKx
+Bx9/iMONTENMP3Y1bWK9fh2JXcdEJmFwLZ4SI/lDAgMBAAGjggLZMIIC1TAJBgNVHRMEAjAAMAsG
+A1UdDwQEAwIEsDAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwHQYDVR0OBBYEFLMwvegt
+8Of9vnfmrUq9CKU9umCOMB8GA1UdIwQYMBaAFFNy7ZKc4NrLAVx8fpY1TvLUuFGCMB4GA1UdEQQX
+MBWBE2R3bXcyQGluZnJhZGVhZC5vcmcwggFMBgNVHSAEggFDMIIBPzCCATsGCysGAQQBgbU3AQID
+MIIBKjAuBggrBgEFBQcCARYiaHR0cDovL3d3dy5zdGFydHNzbC5jb20vcG9saWN5LnBkZjCB9wYI
+KwYBBQUHAgIwgeowJxYgU3RhcnRDb20gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkwAwIBARqBvlRo
+aXMgY2VydGlmaWNhdGUgd2FzIGlzc3VlZCBhY2NvcmRpbmcgdG8gdGhlIENsYXNzIDEgVmFsaWRh
+dGlvbiByZXF1aXJlbWVudHMgb2YgdGhlIFN0YXJ0Q29tIENBIHBvbGljeSwgcmVsaWFuY2Ugb25s
+eSBmb3IgdGhlIGludGVuZGVkIHB1cnBvc2UgaW4gY29tcGxpYW5jZSBvZiB0aGUgcmVseWluZyBw
+YXJ0eSBvYmxpZ2F0aW9ucy4wNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5zdGFydHNzbC5j
+b20vY3J0dTEtY3JsLmNybDCBjgYIKwYBBQUHAQEEgYEwfzA5BggrBgEFBQcwAYYtaHR0cDovL29j
+c3Auc3RhcnRzc2wuY29tL3N1Yi9jbGFzczEvY2xpZW50L2NhMEIGCCsGAQUFBzAChjZodHRwOi8v
+YWlhLnN0YXJ0c3NsLmNvbS9jZXJ0cy9zdWIuY2xhc3MxLmNsaWVudC5jYS5jcnQwIwYDVR0SBBww
+GoYYaHR0cDovL3d3dy5zdGFydHNzbC5jb20vMA0GCSqGSIb3DQEBBQUAA4IBAQBzEJsRx6HaUvOV
+/B0csYb35MrO6/rWgjTmjVPXMULv3Gf+pOZ0tqhjTM2eo2+7nmP1e+6fuA1v/WVjgw03+Bc9NJoe
+UklXNtAc+7foYccB3etj2YBDYeYu+kKtrcOPFPALGKOXWph28tXqX53mWny6VJCyzuwBgSSIkVU3
+r3b8l0NKp4sTpijFsr64UjRrlSClXXqiz/tdNg8H/naRcsPo9Yc9vIxBCqR2vjUdW9pF7kj4v6zB
+oXscJSToeLSvCkOkcq9KyDf/zUmzoG8mGa83P2VFl/VeTgPOAoRW9r5BZdDnGK7baf64QwSyE8H3
+z8UmXqAYfR+82M5Gwlyi9wVCMIIGNDCCBBygAwIBAgIBHjANBgkqhkiG9w0BAQUFADB9MQswCQYD
+VQQGEwJJTDEWMBQGA1UEChMNU3RhcnRDb20gTHRkLjErMCkGA1UECxMiU2VjdXJlIERpZ2l0YWwg
+Q2VydGlmaWNhdGUgU2lnbmluZzEpMCcGA1UEAxMgU3RhcnRDb20gQ2VydGlmaWNhdGlvbiBBdXRo
+b3JpdHkwHhcNMDcxMDI0MjEwMTU1WhcNMTcxMDI0MjEwMTU1WjCBjDELMAkGA1UEBhMCSUwxFjAU
+BgNVBAoTDVN0YXJ0Q29tIEx0ZC4xKzApBgNVBAsTIlNlY3VyZSBEaWdpdGFsIENlcnRpZmljYXRl
+IFNpZ25pbmcxODA2BgNVBAMTL1N0YXJ0Q29tIENsYXNzIDEgUHJpbWFyeSBJbnRlcm1lZGlhdGUg
+Q2xpZW50IENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxwmDzM4t2BqxKaQuE6uW
+vooyg4ymiEGWVUet1G8SD+rqvyNH4QrvnEIaFHxOhESip7vMz39ScLpNLbL1QpOlPW/tFIzNHS3q
+d2XRNYG5Sv9RcGE+T4qbLtsjjJbi6sL7Ls/f/X9ftTyhxvxWkf8KW37iKrueKsxw2HqolH7GM6FX
+5UfNAwAu4ZifkpmZzU1slBhyWwaQPEPPZRsWoTb7q8hmgv6Nv3Hg9rmA1/VPBIOQ6SKRkHXG0Hhm
+q1dOFoAFI411+a/9nWm5rcVjGcIWZ2v/43Yksq60jExipA4l5uv9/+Hm33mbgmCszdj/Dthf13tg
+Av2O83hLJ0exTqfrlwIDAQABo4IBrTCCAakwDwYDVR0TAQH/BAUwAwEB/zAOBgNVHQ8BAf8EBAMC
+AQYwHQYDVR0OBBYEFFNy7ZKc4NrLAVx8fpY1TvLUuFGCMB8GA1UdIwQYMBaAFE4L7xqkQFulF2mH
+MMo0aEPQQa7yMGYGCCsGAQUFBwEBBFowWDAnBggrBgEFBQcwAYYbaHR0cDovL29jc3Auc3RhcnRz
+c2wuY29tL2NhMC0GCCsGAQUFBzAChiFodHRwOi8vd3d3LnN0YXJ0c3NsLmNvbS9zZnNjYS5jcnQw
+WwYDVR0fBFQwUjAnoCWgI4YhaHR0cDovL3d3dy5zdGFydHNzbC5jb20vc2ZzY2EuY3JsMCegJaAj
+hiFodHRwOi8vY3JsLnN0YXJ0c3NsLmNvbS9zZnNjYS5jcmwwgYAGA1UdIAR5MHcwdQYLKwYBBAGB
+tTcBAgEwZjAuBggrBgEFBQcCARYiaHR0cDovL3d3dy5zdGFydHNzbC5jb20vcG9saWN5LnBkZjA0
+BggrBgEFBQcCARYoaHR0cDovL3d3dy5zdGFydHNzbC5jb20vaW50ZXJtZWRpYXRlLnBkZjANBgkq
+hkiG9w0BAQUFAAOCAgEACoMIfXirLAZcuGOMXq4cuSN3TaFx2H2GvD5VSy/6rV55BYHbWNaPeQn3
+oBSU8KgQZn/Kck1JxbLpAxVCNtsxeW1R87ifhsYZ0qjdrA9anrW2MAWCtosmAOT4OxK9QPoSjCMx
+M3HbkZCDJgnlE8jMopH21BbyAYr7b5EfGRQJNtgWcvqSXwKHnTutR08+Kkn0KAkXCzeQNLeA5LlY
+UzFyM7kPAp8pIRMQ+seHunmyG642S2+y/qHEdMuGIwpfz3eDF1PdctL04qYK/zu+Qg1Bw0RwgigV
+Zs/0c5HP2/e9DBHh7eSwtzYlk4AUr6yxLlcwSjOfOmKEQ/Q8tzh0IFiNu9IPuTGAPBn4CPxD0+Ru
+8T2wg8/s43R/PT3kd1OEqOJUl7q+h+r6fpvU0Fzxd2tC8Ga6fDEPme+1Nbi+03pVjuZQKbGwKJ66
+gEn06WqaxVZC+J8hh/jR0k9mST1iAZPNYulcNJ8tKmVtjYsv0L1TSm2+NwON58tO+pIVzu3DWwSE
+XSf+qkDavQam+QtEOZxLBXI++aMUEapSn+k3Lxm48ZCYfAWLb/Xj7F5JQMbZvCexglAbYR0kIHqW
+5DnsYSdMD/IplJMojx0NBrxJ3fN9dvX2Y6BIXRsF1du4qESm4/3CKuyUV7p9DW3mPlHTGLvYxnyK
+Qy7VFBkoLINszBrOUeIxggNvMIIDawIBATCBlDCBjDELMAkGA1UEBhMCSUwxFjAUBgNVBAoTDVN0
+YXJ0Q29tIEx0ZC4xKzApBgNVBAsTIlNlY3VyZSBEaWdpdGFsIENlcnRpZmljYXRlIFNpZ25pbmcx
+ODA2BgNVBAMTL1N0YXJ0Q29tIENsYXNzIDEgUHJpbWFyeSBJbnRlcm1lZGlhdGUgQ2xpZW50IENB
+AgMN7zcwCQYFKw4DAhoFAKCCAa8wGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0B
+CQUxDxcNMTUxMDIwMTExMjE5WjAjBgkqhkiG9w0BCQQxFgQUv0OEEjbLRsLynZm5JAYOAzh3tOYw
+gaUGCSsGAQQBgjcQBDGBlzCBlDCBjDELMAkGA1UEBhMCSUwxFjAUBgNVBAoTDVN0YXJ0Q29tIEx0
+ZC4xKzApBgNVBAsTIlNlY3VyZSBEaWdpdGFsIENlcnRpZmljYXRlIFNpZ25pbmcxODA2BgNVBAMT
+L1N0YXJ0Q29tIENsYXNzIDEgUHJpbWFyeSBJbnRlcm1lZGlhdGUgQ2xpZW50IENBAgMN7zcwgacG
+CyqGSIb3DQEJEAILMYGXoIGUMIGMMQswCQYDVQQGEwJJTDEWMBQGA1UEChMNU3RhcnRDb20gTHRk
+LjErMCkGA1UECxMiU2VjdXJlIERpZ2l0YWwgQ2VydGlmaWNhdGUgU2lnbmluZzE4MDYGA1UEAxMv
+U3RhcnRDb20gQ2xhc3MgMSBQcmltYXJ5IEludGVybWVkaWF0ZSBDbGllbnQgQ0ECAw3vNzANBgkq
+hkiG9w0BAQEFAASCAQBo9wOo3MeSG1VMdupav69dRRZ62mT5WQhSnCLwIDWB0FE+vrloY0SXHatE
+/HOw8oeJQGGNT8LSKGD/sEfK5ZFshtyFUIlGGJ2gIQtx/n8W2z8AjcIdAWJfOdzsgE9DxGDcz0Pz
+8TpxHl3TuIVYFvHU0vGi0XcmjkcmBGrsu0gbAE5g8FMxCBZ2NXeGLl8046fSkyfQzaFufUF7UCm2
+MVz1hhGM4aZ32ZNBP928JeYZOh+VZ9K65Fahv3fKW8vXcFlVE/yJnABaIKueq58/0v58sI7wG28c
+JIE36SriyhyDZlIiw14xy811vP4mpsAhpkmZnFKLSF7kuSizaqdAxtaIAAAAAAAA
+
+
+--=-+aJcgcrNh6eiygBmdQmH--
+
