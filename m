@@ -1,14 +1,16 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 1/4] clk: tegra: Changes for v4.4-rc1
-Date: Tue, 20 Oct 2015 15:17:35 +0200
-Message-ID: <1445347058-8834-1-git-send-email-thierry.reding@gmail.com>
+Subject: [GIT PULL 3/4] ARM: tegra: Devicetree changes for v4.4-rc1
+Date: Tue, 20 Oct 2015 15:17:37 +0200
+Message-ID: <1445347058-8834-3-git-send-email-thierry.reding@gmail.com>
+References: <1445347058-8834-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1445347058-8834-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Mike, Stephen,
+Hi ARM SoC maintainers,
 
 The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
 
@@ -16,37 +18,56 @@ The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.4-clk
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.4-dt
 
-for you to fetch changes up to 88d909bedf4df7285d6e8d8730425df0d163512e:
+for you to fetch changes up to 481b4f1a3f64c529333186a9e94eab41b271e3d8:
 
-  clk: tegra: Modify tegra_audio_clk_init to accept more plls (2015-10-20 13:56:55 +0200)
-
-----------------------------------------------------------------
-clk: tegra: Changes for v4.4-rc1
-
-This contains a patch that allows the DFLL to use clock rates higher
-than 2^31-1 Hz by using the ->determine_rate() operation instead of the
-->round_rate() operation. Other than that there's a couple of cleanups
-in preparation for Tegra210 support.
+  ARM: tegra: Use consistent indentation for SATA node (2015-10-20 13:51:52 +0200)
 
 ----------------------------------------------------------------
-Mikko Perttunen (1):
-      clk: tegra: Unlock top rates for Tegra124 DFLL clock
+ARM: tegra: Devicetree changes for v4.4-rc1
 
-Rhyland Klein (2):
-      clk: tegra: Fix comments for structure definitions
-      clk: tegra: Modify tegra_audio_clk_init to accept more plls
+Mostly a bunch of updates to the Toradex Apalis and Colibri platforms
+along with a couple of cleanup patches.
 
-Thierry Reding (2):
-      clk: tegra: dfll: Monitor code is DEBUG_FS only
-      clk: tegra: Update struct tegra_clk_pll_params kerneldoc
+----------------------------------------------------------------
+Jon Hunter (1):
+      ARM: tegra: Enable CPUFreq support for Tegra124 Chromebooks
 
- drivers/clk/tegra/clk-dfll.c        | 114 ++++++++++++++++++------------------
- drivers/clk/tegra/clk-tegra-audio.c |  25 +++++---
- drivers/clk/tegra/clk-tegra114.c    |   8 ++-
- drivers/clk/tegra/clk-tegra124.c    |   8 ++-
- drivers/clk/tegra/clk-tegra30.c     |   8 ++-
- drivers/clk/tegra/clk.h             | 106 +++++++++++++++++++++------------
- drivers/clk/tegra/cvb.c             |   7 ---
- 7 files changed, 163 insertions(+), 113 deletions(-)
+Marcel Ziswiler (21):
+      ARM: tegra: Whitespace clean-up for Tegra20/30/124
+      ARM: tegra: apalis: Update hardware revisions compatibility comment
+      ARM: tegra: apalis: Fix HDMI power supplies
+      ARM: tegra: apalis: Fix pin muxing
+      ARM: tegra: apalis: Add comment concerning eMMC
+      ARM: tegra: apalis: Add digital audio pin muxing
+      ARM: tegra: apalis-eval: Enable HDA controller
+      ARM: tegra: apalis-eval: Set OTG dr_mode
+      ARM: tegra: apalis-eval: Fix backlight PWM comment
+      ARM: tegra: apalis-eval: Fix power/wakeup key
+      ARM: tegra: colibri: Update hardware revisions compatibility
+      ARM: tegra: colibri: Fix HDMI supplies
+      ARM: tegra: colibri: Improve comment about thermal alert pin
+      ARM: tegra: colibri: Add pin muxing for on-module power I2C
+      ARM: tegra: colibri: Fix comment about 3v3 fixed supply
+      ARM: tegra: colibri: Add touch pen interrupt pin muxing
+      ARM: tegra: colibri: Activate STMPE811 touch controller
+      ARM: tegra: colibri: Replace eMMC label by comment
+      ARM: tegra: colibri-eval: Fix vendor string of M41T0M6 RTC
+      ARM: tegra: colibri-eval: Add comment concerning SD/MMC
+      ARM: tegra: colibri-eval: Fix power/wakeup key
+
+Thierry Reding (3):
+      ARM: tegra: apalis: Properly align pin names
+      ARM: tegra: colibri: Properly align pin names
+      ARM: tegra: Use consistent indentation for SATA node
+
+ arch/arm/boot/dts/tegra124-nyan.dtsi          |  15 +-
+ arch/arm/boot/dts/tegra124.dtsi               |  20 +--
+ arch/arm/boot/dts/tegra20.dtsi                |   4 +-
+ arch/arm/boot/dts/tegra30-apalis-eval.dts     |  13 +-
+ arch/arm/boot/dts/tegra30-apalis.dtsi         | 214 ++++++++++++++++----------
+ arch/arm/boot/dts/tegra30-colibri-eval-v3.dts |   9 +-
+ arch/arm/boot/dts/tegra30-colibri.dtsi        | 196 ++++++++++++++++-------
+ arch/arm/boot/dts/tegra30.dtsi                |  10 +-
+ 8 files changed, 315 insertions(+), 166 deletions(-)
