@@ -1,53 +1,100 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [GIT PULL] On-demand device probing
-Date: Tue, 20 Oct 2015 13:14:46 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44L0.1510201311260.1855-100000@iolanthe.rowland.org>
-References: <CAAObsKChQN4gg91dCWJS_Co_MrYyBrB1J7gxgGo4hsPXNZRp3g@mail.gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] pinctrl: tegra-xusb: Correct lane mux options
+Date: Tue, 20 Oct 2015 19:02:50 +0100
+Message-ID: <562681CA.4060307@nvidia.com>
+References: <1444987441-25176-1-git-send-email-jonathanh@nvidia.com>
+ <56212308.7050405@wwwdotorg.org> <56262563.3020201@nvidia.com>
+ <562666FD.1020902@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAAObsKChQN4gg91dCWJS_Co_MrYyBrB1J7gxgGo4hsPXNZRp3g@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, David Woodhouse <dwmw2@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.c>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <562666FD.1020902@wwwdotorg.org>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 20 Oct 2015, Tomeu Vizoso wrote:
 
-> On 20 October 2015 at 18:04, Alan Stern <stern@rowland.harvard.edu> wrote:
-> > On Tue, 20 Oct 2015, Mark Brown wrote:
-> >
-> >> On Tue, Oct 20, 2015 at 10:40:03AM -0400, Alan Stern wrote:
-> >>
-> >> > Furthermore, that applies only to devices that use synchronous suspend.
-> >> > Async suspend is becoming common, and there the only restrictions are
-> >> > parent-child relations plus whatever explicit requirements that drivers
-> >> > impose by calling device_pm_wait_for_dev().
-> >>
-> >> Hrm, this is the first I'd noticed that feature though I see the initial
-> >> commit dates from January.
-> >
-> > Async suspend and device_pm_wait_for_dev() were added in January 2010,
-> > not 2015!
-> >
-> >>  It looks like most of the users are PCs at
-> >> the minute but we should be using it more widely for embedded things,
-> >> there's definitely some cases I'm aware of where it will allow us to
-> >> remove some open coding.
-> >>
-> >> It does seem like we want to be feeding dependency information we
-> >> discover for probing way into the suspend dependencies...
-> >
-> > Rafael has been thinking about a way to do this systematically.
-> > Nothing concrete has emerged yet.
+On 20/10/15 17:08, Stephen Warren wrote:
+> On 10/20/2015 05:28 AM, Jon Hunter wrote:
+>>
+>> On 16/10/15 17:17, Stephen Warren wrote:
+>>> On 10/16/2015 03:24 AM, Jon Hunter wrote:
+>>>> The description of the XUSB_PADCTL_USB3_PAD_MUX_0 register in the
+>>>> Tegra124
+>>>> documentation implies that all functions (pcie, usb3 and sata) can be
+>>>> muxed onto to all lanes (pcie lanes 0-4 and sata lane 0). However,
+>>>> it has
+>>>> been confirmed that this is not the case and the mux'ing options much
+>>>> more
+>>>> limited. Unfortunately, the public documentation has not been
+>>>> updated to
+>>>> reflect this and so detail the actual mux'ing options here by function:
+>>>
+>>> FWIW, there's better documentation of this in the Tegra210 TRM, although
+>>> the options have been expanded on that chip, so the docs don't entirely
+>>> apply to Tegra124.
+>>>
+>>>> Function:        Lanes:
+>>>> pcie1 x2:        pcie3, pcie4
+>>>> pcie1 x4:        pcie1, pcie2, pcie3, pcie4
+>>>> pcie2 x1 (option1):    pcie0
+>>>> pcie2 x1 (option2):    pcie2
+>>>> usb3 port 0:        pcie0
+>>>> usb3 port 1 (option 1):    pcie1
+>>>> usb3 port 1 (option 2):    sata0
+>>>> sata:            sata0
+>>>
+>>> I think this change needs a DT binding change to go along with it. Can
+>>> you take a look at:
+>>>
+>>> http://www.spinics.net/lists/arm-kernel/msg449647.html
+>>> [PATCH 1/2] dt: update Tegra XUSB padctl binding for Tegra210
+>>
+>> I took a look at the above and it looks fine to me. Do you want me to
+>> put the above info into the DT binding doc? I am not sure that we need
+>> to update the binding itself.
 > 
-> This iteration of the series would make this quite easy, as
-> dependencies are calculated before probes are attempted:
-> 
-> https://lkml.org/lkml/2015/6/17/311
+> Hmm. I guess there /should/ be no need for the DT bindings to list out
+> all the valid combinations; it should just say "go read the HW docs". Of
+> course as you mentioned our HW docs aren't quite as complete as they
+> should be in this area, but still solving that in the DT binding doc may
+> not be the best approach. But then again, the DT binding doc already
+> lists which functions are valid for which groups of pins, but perhaps
+> that's more about understanding the structure of the binding than the HW.
 
-But what Rafael is proposing is quite general; it would apply to _all_
-dependencies as opposed to just those present in DT drivers or those 
-affecting platform_devices.
+I had thought about trying to put the options in the tegra124.dtsi, but
+I am not sure if there is an easy way to do that without having ...
 
-Alan Stern
+	padctl@0,7009f000 {
+		...
+
+		padctl_option1: pinmux {
+			usb3 {...};		
+			pcie {...};
+			sata {...};
+		};
+		padctl_option2: pinmux {
+			usb3 {...};
+			pcie {...};
+			sata {...};
+		};
+		...
+		padctl_optionN: pinmux {
+			usb3 {...};
+			pcie {...};
+			sata {...};
+		};
+	};
+
+... that would be a long-ish list. Unless there is a better way to do it?
+
+> I guess I'll leave it up to you which way to go. Perhaps let's not
+> pursue adding this to the binding doc until we get the PHY-per-lane
+> changes in place or rejected or the two changes will conflict badly?
+
+That's fine with me. Are you ok with this patch as-is going upstream for
+now?
+
+Jon
