@@ -1,69 +1,57 @@
-From: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Subject: Re: [GIT PULL 1/4] clk: tegra: Changes for v4.4-rc1
-Date: Tue, 20 Oct 2015 09:14:14 -0700
-Message-ID: <20151020161414.20687.98536@quantum>
-References: <1445347058-8834-1-git-send-email-thierry.reding@gmail.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Tue, 20 Oct 2015 18:21:55 +0200
+Message-ID: <CAAObsKChQN4gg91dCWJS_Co_MrYyBrB1J7gxgGo4hsPXNZRp3g@mail.gmail.com>
+References: <20151020153612.GB32054@sirena.org.uk> <Pine.LNX.4.44L0.1510201159400.1855-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1445347058-8834-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.44L0.1510201159400.1855-100000@iolanthe.rowland.org>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, David Woodhouse <dwmw2@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.c>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Thierry Reding (2015-10-20 06:17:35)
-> Hi Mike, Stephen,
-> 
-> The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
-> 
->   Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.4-clk
+On 20 October 2015 at 18:04, Alan Stern <stern@rowland.harvard.edu> wrote:
+> On Tue, 20 Oct 2015, Mark Brown wrote:
+>
+>> On Tue, Oct 20, 2015 at 10:40:03AM -0400, Alan Stern wrote:
+>>
+>> > Furthermore, that applies only to devices that use synchronous suspend.
+>> > Async suspend is becoming common, and there the only restrictions are
+>> > parent-child relations plus whatever explicit requirements that drivers
+>> > impose by calling device_pm_wait_for_dev().
+>>
+>> Hrm, this is the first I'd noticed that feature though I see the initial
+>> commit dates from January.
+>
+> Async suspend and device_pm_wait_for_dev() were added in January 2010,
+> not 2015!
+>
+>>  It looks like most of the users are PCs at
+>> the minute but we should be using it more widely for embedded things,
+>> there's definitely some cases I'm aware of where it will allow us to
+>> remove some open coding.
+>>
+>> It does seem like we want to be feeding dependency information we
+>> discover for probing way into the suspend dependencies...
+>
+> Rafael has been thinking about a way to do this systematically.
+> Nothing concrete has emerged yet.
 
-Pulled.
+This iteration of the series would make this quite easy, as
+dependencies are calculated before probes are attempted:
+
+https://lkml.org/lkml/2015/6/17/311
 
 Regards,
-Mike
 
-> 
-> for you to fetch changes up to 88d909bedf4df7285d6e8d8730425df0d163512e:
-> 
->   clk: tegra: Modify tegra_audio_clk_init to accept more plls (2015-10-20 13:56:55 +0200)
-> 
-> ----------------------------------------------------------------
-> clk: tegra: Changes for v4.4-rc1
-> 
-> This contains a patch that allows the DFLL to use clock rates higher
-> than 2^31-1 Hz by using the ->determine_rate() operation instead of the
-> ->round_rate() operation. Other than that there's a couple of cleanups
-> in preparation for Tegra210 support.
-> 
-> ----------------------------------------------------------------
-> Mikko Perttunen (1):
->       clk: tegra: Unlock top rates for Tegra124 DFLL clock
-> 
-> Rhyland Klein (2):
->       clk: tegra: Fix comments for structure definitions
->       clk: tegra: Modify tegra_audio_clk_init to accept more plls
-> 
-> Thierry Reding (2):
->       clk: tegra: dfll: Monitor code is DEBUG_FS only
->       clk: tegra: Update struct tegra_clk_pll_params kerneldoc
-> 
->  drivers/clk/tegra/clk-dfll.c        | 114 ++++++++++++++++++------------------
->  drivers/clk/tegra/clk-tegra-audio.c |  25 +++++---
->  drivers/clk/tegra/clk-tegra114.c    |   8 ++-
->  drivers/clk/tegra/clk-tegra124.c    |   8 ++-
->  drivers/clk/tegra/clk-tegra30.c     |   8 ++-
->  drivers/clk/tegra/clk.h             | 106 +++++++++++++++++++++------------
->  drivers/clk/tegra/cvb.c             |   7 ---
->  7 files changed, 163 insertions(+), 113 deletions(-)
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Tomeu
+
+> Alan Stern
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> Please read the FAQ at  http://www.tux.org/lkml/
