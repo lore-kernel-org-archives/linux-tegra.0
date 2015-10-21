@@ -1,90 +1,155 @@
-From: Russell King - ARM Linux <linux@arm.linux.org.uk>
-Subject: Re: Alternative approach to solve the deferred probe
-Date: Wed, 21 Oct 2015 18:20:42 +0100
-Message-ID: <20151021172042.GJ32532@n2100.arm.linux.org.uk>
-References: <CAAObsKDS_+AZ26P_fHc6pvAYrQotsuoO0DEGQUWC514t3DD_jQ@mail.gmail.com>
- <20151019143045.GE32532@n2100.arm.linux.org.uk>
- <CAAObsKDWM6A98tdKHqi4fe5DBf0BmB0JeghcZDWan_PYbyshag@mail.gmail.com>
- <20151019153548.GM32532@n2100.arm.linux.org.uk>
- <CAMuHMdVv=ieYM-Nehp0qV8CEggHEeJ22j-6i_N09rRA_U=2ePw@mail.gmail.com>
- <20151020154656.GY32532@n2100.arm.linux.org.uk>
- <56270D5B.5010902@gmail.com>
- <20151021081847.GB32532@n2100.arm.linux.org.uk>
- <5627B0F7.7010600@gmail.com>
- <5627C381.60602@ti.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [RFC PATCH] dt: Tegra XUSB padctl: per-lane PHYs and USB lane map
+Date: Wed, 21 Oct 2015 11:40:25 -0600
+Message-ID: <5627CE09.3090304@wwwdotorg.org>
+References: <1445297442-21439-1-git-send-email-swarren@wwwdotorg.org>
+ <20151021121513.GA24168@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5627C381.60602@ti.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: frowand.list@gmail.com, Geert Uytterhoeven <geert@linux-m68k.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20151021121513.GA24168@ulmo>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Oct 21, 2015 at 07:55:29PM +0300, Grygorii Strashko wrote:
-> On 10/21/2015 06:36 PM, Frank Rowand wrote:
-> > The above is currently the last point for probe to succeed or defer
-> > (until possibly, as you mentioned, module loading resolves the defer).
-> > If a probe defers above, it will defer again below.  The set of defers
-> > should be exactly the same above and below.
-> > 
-> 
-> Unfortunately this is not "the last point for probe to succeed or defer".
+On 10/21/2015 06:15 AM, Thierry Reding wrote:
+> On Mon, Oct 19, 2015 at 05:30:42PM -0600, Stephen Warren wrote:
+>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> Convert the binding to provide a PHY per lane, rather than a PHY per
+>> "pad" block in the hardware. This will allow the driver to easily know
+>> which lanes are used by clients, and thus only enable those lanes, and
+>> generally better aligns with the fact the hardware has configuration per
+>> lane rather than solely configuration per "pad" block.
+>>
+>> Add entries to pinctrl-tegra-xusb.h to enumerate all "pad" blocks on
+>> Tegra210, which will allow an XUSB DT node to reference the PHYs it needs.
+>>
+>> Add an nvidia,ss-port-map register to allow configuration of the
+>> XUSB_PADCTL_SS_PORT_MAP register.
 
-Of course it isn't.  Being pedantic, there's actually no such thing,
-because the point that the kernel as finished booting can never actually
-be determined with things like modules being present.  That's something
-I've acknowledged from the start of this.
+> According to Kishon's latest recommendation, the padctl binding should
+> probably look more like this:
+>
+> 	padctl@0,7009f000 {
+> 		...
+>
+> 		phys {
+> 			pcie {
+> 				/* 5 subnodes on Tegra124, 7 on Tegra210 */
+> 				pcie-0 {
+> 					...
+> 				};
+>
+> 				...
+> 			};
 
-> There are still a bunch of drivers in Kernel which will be probed at late_initcall() level.
-> (like ./drivers/net/ethernet/ti/cpsw.c => late_initcall(cpsw_init);
-> Yes - they probably need to be updated to use module_init(), but that's what
-> we have now). Those drivers will re-trigger deferred device probing if their
-> probe succeeded.
+I noticed that he mentioned a separate node per PHY brick or PHY.
 
-Maybe this particular late_initcall() which triggers off the deferred
-probing should be moved to its own really_late_initcall() which happens
-as the very last thing - I think this is intended to run after everything
-else has had a chance to probe once.
+That seems like an odd requirement, or even recommendation, since the 
+PHY bindings, like (almost?) all other DT provider/consumer bindings, 
+use a phandle+specifier to indicate which resource is being provided. As 
+such, there's no absolute need to represent objects as DT nodes, 
+although there may be other good arguments for doing so.
 
-> As result, it is impossible to say when will it happen the 
-> "final round of deferred device probing" :( and final list of drivers
-> which was "deferred forever" will be know only when kernel exits to
-> User space  ("deferred forever" - before loading modules).
-> 
-> May be, we also can consider adding debug_fs entry which can be used to
-> display actual state of deferred_probe_pending_list? 
+> This is pretty much a direct transcription of the padctl block diagram
+> in the TRM (e.g. page 1312 in vB4 of the Tegra X1 TRM).
+>
+> Once we have this, I'm beginning to think that we should just drop the
+> pinctrl component, because we now have subnodes for each lane that can
+> carry the configuration. As an aside, going with this more verbose DT
+> representation should also give us an easy way of providing backwards-
+> compatibility. The driver could look for the existence of the phys
+> sub-node and fallback to the old code in its absence.
 
-There are complaints in this thread about the existing deferred probing
-implementation being hard to debug - where it's known that a device
-has deferred, but it's not known why that happened.
+I would assert that if we're going to make this kind of radical change 
+to the binding, we should simply change the compatible value. This will 
+allow us to have two completely separate drivers for the two different 
+DT representations. In turn, that will keep each driver simpler, in that 
+we don't have two different drivers intermixed into one file.
 
-That would be solved by my proposal, as this final round of probing
-before entering userspace after _all_ normal device probes have been
-attempted once and then we've tried to satisfy the deferred probe
-(okay, that's what it's _supposed_ to be - and as it takes three lines
-to write it, you'll excuse me if I just use the abbreviated "final
-round of deferred probe" which is much shorter - but remember that
-the long version is what I actually mean) would produce a list of
-not only the devices that failed to probe, but also the cause of the
-deferred probes.
+The two drivers could share some common code e.g. by calling into a 
+common C file for some purposes, and only have separate DT parsing 
+logic, if that works out well.
 
-My proposal would ensure that subsystems are happier to add these
-prints, because in the normal scenario where we have deferred probing,
-we're not littering the console log with lots of useless failure
-messages which make people stop and think "now did device X probe?"
-It also means scripts in our boot farms can more effectively analyse
-the log and determine whether the boot was actually successful and
-contained no errors.
+In the kernel I guess we'd technically need to keep each driver around 
+"forever" due to DT ABI requirements.
 
-Merely printing the list of devices which have been deferred is next
-to useless.  The next question will always be "why did device X defer?"
-and if that can't be answered, it means people having to spend a long
-time adding lots of printks to the kernel at lots of -EPROBE_DEFER
-returning sites or in the relevant drivers, tracing through the code
-back towards the -EPROBE_DEFER sites to try and track it down.
+In U-Boot, I'd suggest simply dropping support for the old 
+compatible-value since we know that the DT is part of the U-Boot source 
+tree and tightly coupled. U-Boot is firmware after all.
 
--- 
-FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
-according to speedtest.net.
+> The above is also nice because it gives us a complete picture of what
+> lanes are being used. For example, if some of the lanes are unused the
+> corresponding device tree nodes could be marked status = "disabled",
+> which would come in handy for the programming (e.g. IDDQ).
+
+I worry that it's a bit verbose. Still, it's quite readable and as you 
+say obviously maps to the documentation, so it may be worth going with this.
+
+> I think for XUSB we'll need some additional information, though. Your
+> proposal already adds the nvidia,ss-port-map property to add some of the
+> information (mapping of SS ports to USB2 ports), but I think that's a)
+> not very readable and b) doesn't give us enough flexibility to describe
+> additional meta-data.
+
+That property was only intended to represent that single piece of 
+information. If there's other information that needs to be represented, 
+we should certainly add more properties. I didn't enumerate all of them 
+in my proposal since I was mainly concentrating on discussion the 
+representation/specification of a PHY object, and not all the other 
+miscellaneous configuration that the HW module has.
+
+For ss-port-map in particular, I believe we should just use the same 
+encoding that the HW register itself has. This keeps DT parsing simple, 
+and keeps the binding directly in line with the HW documentation.
+
+> I'm aware of at least two other pieces of
+> information that we need: VBUS power supplies and port mode.
+
+We also need to configure the mapping between USB controller ports and 
+"OC" (over-current) pins, and various per-lane tuning parameters. For 
+reference, there's a patch in Andrew Bresticker's tree that adds the 
+tuning parameters:
+
+git://github.com/abrestic/linux.git tegra-xhci-v8-test
+bff711f935a989c220eabeeffffc150f18f54d7e
+pinctrl: Update Tegra XUSB pad controller binding for USB
+
+> Originally
+> I think the binding used indexed names (vbus0-supply, vbus1-supply, ...)
+> for the VBUS supplies but that's also suboptimally structured in my
+> opinion. I think we could combine both into something of this sort
+> (within the padctl node above):
+>
+> 		ports {
+> 			usb3-0 {
+> 				vbus-supply = <&vbus1_reg>;
+> 				nvidia,port = <1>;
+> 			};
+
+Is there a standard binding for USB connectors? I've heard hints of a 
+standard binding for e.g. HDMI connectors recently. Things like VBUS 
+supply, ID pin reading, port mode, OC detection, etc. seem like they'd 
+be quite generally applicable, although I must admit I'd rather not 
+rat-hole this thread into designing any kind of universal standard...
+
+> 			utmi-1 {
+> 				vbus-supply = <&vbus1_reg>;
+> 				mode = "host";
+> 			};
+
+> Note how both usb3-* and utmi-* ports specify the same regulators for
+> the same physical port. It would probably be enough to simply have them
+> listed in one place, but I suspect boards could omit USB2 fallback mode
+> and wire up only the SS lanes, though I'm not sure if that's permitted.
+
+I don't think that's permitted by USB spec.
+
+It seems like it'd be better to represent the concept of a physical USB 
+port. In this case, you wouldn't need to represent the VBUS supply 
+multiple times since the physical port only has a single supply. Mapping 
+the physical port to the various USB2 and USB3 controller ports could 
+happen either elsewhere, or as properties within the physical port object.
