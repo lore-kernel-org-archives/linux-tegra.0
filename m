@@ -1,72 +1,63 @@
-From: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
-Subject: Re: [RFC PATCH] dt: Tegra XUSB padctl: per-lane PHYs and USB lane map
-Date: Thu, 22 Oct 2015 01:40:25 +0530
-Message-ID: <5627F131.7070008@ti.com>
-References: <1445297442-21439-1-git-send-email-swarren@wwwdotorg.org>
- <20151021121513.GA24168@ulmo> <5627CE09.3090304@wwwdotorg.org>
+From: Russell King - ARM Linux <linux@arm.linux.org.uk>
+Subject: Re: Alternative approach to solve the deferred probe
+Date: Wed, 21 Oct 2015 21:35:19 +0100
+Message-ID: <20151021203519.GO32532@n2100.arm.linux.org.uk>
+References: <20151019131821.GA32532@n2100.arm.linux.org.uk>
+ <CAAObsKDS_+AZ26P_fHc6pvAYrQotsuoO0DEGQUWC514t3DD_jQ@mail.gmail.com>
+ <20151019143045.GE32532@n2100.arm.linux.org.uk>
+ <CAAObsKDWM6A98tdKHqi4fe5DBf0BmB0JeghcZDWan_PYbyshag@mail.gmail.com>
+ <20151019153548.GM32532@n2100.arm.linux.org.uk>
+ <CAMuHMdVv=ieYM-Nehp0qV8CEggHEeJ22j-6i_N09rRA_U=2ePw@mail.gmail.com>
+ <20151020154656.GY32532@n2100.arm.linux.org.uk>
+ <56270D5B.5010902@gmail.com>
+ <20151021081847.GB32532@n2100.arm.linux.org.uk>
+ <5627B0F7.7010600@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5627CE09.3090304-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-i2c-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <5627B0F7.7010600@gmail.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Frank Rowand <frowand.list@gmail.com>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mark Brown <broonie@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rob Herring <robh+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwo>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
-
-On Wednesday 21 October 2015 11:10 PM, Stephen Warren wrote:
-> On 10/21/2015 06:15 AM, Thierry Reding wrote:
->> On Mon, Oct 19, 2015 at 05:30:42PM -0600, Stephen Warren wrote:
->>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>
->>> Convert the binding to provide a PHY per lane, rather than a PHY per
->>> "pad" block in the hardware. This will allow the driver to easily know
->>> which lanes are used by clients, and thus only enable those lanes, and
->>> generally better aligns with the fact the hardware has configuration per
->>> lane rather than solely configuration per "pad" block.
->>>
->>> Add entries to pinctrl-tegra-xusb.h to enumerate all "pad" blocks on
->>> Tegra210, which will allow an XUSB DT node to reference the PHYs it
->>> needs.
->>>
->>> Add an nvidia,ss-port-map register to allow configuration of the
->>> XUSB_PADCTL_SS_PORT_MAP register.
+On Wed, Oct 21, 2015 at 08:36:23AM -0700, Frank Rowand wrote:
+> On 10/21/2015 1:18 AM, Russell King - ARM Linux wrote:
+> > On Tue, Oct 20, 2015 at 08:58:19PM -0700, Frank Rowand wrote:
+> >> On 10/20/2015 8:46 AM, Russell King - ARM Linux wrote:
 > 
->> According to Kishon's latest recommendation, the padctl binding should
->> probably look more like this:
->>
->>     padctl@0,7009f000 {
->>         ...
->>
->>         phys {
->>             pcie {
->>                 /* 5 subnodes on Tegra124, 7 on Tegra210 */
->>                 pcie-0 {
->>                     ...
->>                 };
->>
->>                 ...
->>             };
+> < snip >
 > 
-> I noticed that he mentioned a separate node per PHY brick or PHY.
+> >>> +
+> >>>  static bool driver_deferred_probe_enable = false;
+> >>> +
+> >>>  /**
+> >>>   * driver_deferred_probe_trigger() - Kick off re-probing deferred devices
+> >>>   *
+> >>> @@ -188,6 +210,13 @@ static int deferred_probe_initcall(void)
+> >>>  	driver_deferred_probe_trigger();
+> >>
+> >> Couldn't you put the "driver_deferred_probe_report = true" here?  And then
+> >> not add another round of probes.
+> > 
+> > The idea is not to report anything for drivers that were deferred
+> > during the normal bootup.  The above is part of the normal bootup,
+> > and the deferred activity should not be warned about.
 > 
-> That seems like an odd requirement, or even recommendation, since the
-> PHY bindings, like (almost?) all other DT provider/consumer bindings,
-> use a phandle+specifier to indicate which resource is being provided. As
+> The above is currently the last point for probe to succeed or defer
+> (until possibly, as you mentioned, module loading resolves the defer).
+> If a probe defers above, it will defer again below.  The set of defers
+> should be exactly the same above and below.
 
-A lot of that was added before PHY core was better able to handle multi
-phy PHY provider. Using phandle+specifier makes the driver code do lot
-of stuff just to find the PHY which was unnecessary. This can be avoided
-just by modeling the dt node properly and using the correct phandle in
-the controller dt node.
+Why should it?  Isn't this late_initcall() the first opportunity that
+deferred devices get to be re-probed from their first set of attempts
+via the drivers having their initcalls called?
 
-> such, there's no absolute need to represent objects as DT nodes,
-> although there may be other good arguments for doing so.
+If what you're saying is true, what's the point of this late_initcall()?
 
-yeah, that would be a better representation of the hw and avoid lot of
-useless stuff in the driver.
+<re-cut again, I've no idea why you keep adding it back>
 
-Thanks
-Kishon
+-- 
+FTTC broadband for 0.8mile line: currently at 9.6Mbps down 400kbps up
+according to speedtest.net.
