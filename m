@@ -1,54 +1,95 @@
-From: Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH/RESEND] ARM: Remove __ref on hotplug cpu die path
-Date: Thu, 22 Oct 2015 09:55:56 -0700
-Message-ID: <20151022165556.GE19953@localhost>
-References: <1445285133-11977-1-git-send-email-sboyd@codeaurora.org>
+From: Frank Rowand <frowand.list@gmail.com>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Thu, 22 Oct 2015 11:53:31 -0700
+Message-ID: <562930AB.1070203@gmail.com>
+References: <20151018192931.GY14956@sirena.org.uk> <20151018193757.GA9147@kroah.com> <20151018195330.GB14956@sirena.org.uk> <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com> <5627B677.5090109@gmail.com> <20151021162758.GP32054@sirena.org.uk> <5627D6E0.5020708@gmail.com> <CAL_Jsq+FPtCuBnte2HTgbdpNYM=v_kLaCRcOC1kMaCQwVC=5Kw@mail.gmail.com> <562808AF.7090406@gmail.com> <CAAObsKAkyjdvNOS3+nuT0N9sudUFLsZXFtcm6Y038p+HSdsZsg@mail.gmail.com> <20151022144405.GC21861@kroah.com>
+Reply-To: frowand.list@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1445285133-11977-1-git-send-email-sboyd@codeaurora.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>
-Cc: arm@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Tony Lindgren <tony@atomide.com>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Will Deacon <will.deacon@arm.com>, Mark Rutland <mark.rutland@arm.com>, linux-omap@vger.kernel.org, linux-arm-msm@vger.kernel.org, spear-devel@list.st.com, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <20151022144405.GC21861@kroah.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, =?ISO-8859-1?Q?Terje_Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>, Jingoo
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Oct 19, 2015 at 01:05:33PM -0700, Stephen Boyd wrote:
-> Now that __cpuinit has been removed, the __ref markings on these
-> functions are useless. Remove them. This also reduces the size of
-> the multi_v7_defconfig image:
+On 10/22/2015 7:44 AM, Greg Kroah-Hartman wrote:
+> <oops, sent too early...>
 > 
-> $ size before after
->    text    data     bss     dec     hex filename
->    12683578        1470996  348904 14503478         dd4e36 before
->    12683274        1470996  348904 14503174         dd4d06 after
+> On Thu, Oct 22, 2015 at 11:05:11AM +0200, Tomeu Vizoso wrote:
+>> But that's moot currently because Greg believes that the time spent
+>> probing devices at boot time could be reduced enough so that the order
+>> in which devices are probed becomes irrelevant. IME that would have to
+>> be under 200ms so that the user doesn't notice and that's unicorn-far
+>> from any bootlog I have ever seen.
 > 
-> presumably because now we don't have to jump to code in the
-> .ref.text section and/or the noinline marking is removed.
+> But as no one has actually produced a bootlog, how do you know that?
+> Where exactly is your time being spent?  What driver is causing long
+> delays?  Why is the long-delay-drivers not being done in their own
+> thread?  And most importantly, why are you ignoring the work that people
+> did back in 2008 to solve the issue on other hardware platforms?
 > 
-> Cc: Tony Lindgren <tony@atomide.com>
-> Acked-by: Barry Song <baohua@kernel.org>
-> Acked-by: Andy Gross <agross@codeaurora.org>
-> Acked-by: Viresh Kumar <vireshk@kernel.org>
-> Cc: Shiraz Hashim <shiraz.linux.kernel@gmail.com>
-> Cc: Stephen Warren <swarren@wwwdotorg.org>
-> Acked-by: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
-> Cc: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: <linux-omap@vger.kernel.org>
-> Cc: <linux-arm-msm@vger.kernel.org>
-> Cc: <spear-devel@list.st.com>
-> Cc: <linux-tegra@vger.kernel.org>
-> Signed-off-by: Stephen Boyd <sboyd@codeaurora.org>
-> ---
+>> Given that downstreams are already carrying as many hacks as they
+>> could think of to speed total boot up, I think this is effectively
+>> telling them to go away.
 > 
-> Collected the acks and resent.
+> No I'm not, I'm asking for real data, not hand-wavy-this-is-going-to
+> solve-the-random-issue-i'm-having type patch by putting random calls in
+> semi-random subsystems all over the kernel.
+> 
+> And when I ask for real data, you respond with the fact that you aren't
+> trying to speed up boot time here at all, so what am I supposed to think
 
-Applied to next/cleanup. Thanks!
+I also had the understanding that this patch series was about improving
+boot time.  But I was kindly corrected that the behavior change was
+getting the panel displaying stuff at an earlier point in the boot sequence,
+_not_ completing the entire boot faster. 
 
+The claim for the current series, in patch 0 in v7 is:
 
--Olof
+   With this series I get the kernel to output to the panel in 0.5s,
+   instead of 2.8s.
+
+Just to get side-tracked, one other approach at ordering to reduce
+deferrals reported a modest boot time reduction for four boards and a
+very slight boot time increase for one other board.) The report of boot
+times with that approach was in:
+
+  http://article.gmane.org/gmane.linux.drivers.devicetree/133010
+
+from Alexander Holler.
+
+I have not searched further to see if there is more data of boot time
+reductions from any of the other attempts to change driver binding
+order to move dependencies before use of a resource.  But whether
+there is a performance improvement or not, there continues to be
+a stream of developers creatively impacting the binding order for
+their specific driver(s) or board.  So it seems that maybe there
+is an underlying problem, or we don't have adequate documentation
+explaining how to avoid a need to order bindings, or the
+documentation exists and is not being read.
+
+I have been defaulting to the position that has been asserted by
+the device tree maintainters, that probe deferrals work just fine
+for at least the majority of cases (and is the message I have been
+sharing in my conference presentations about device tree).  But I
+suspect that there is at least a small minority of cases that are not
+well served by probe deferral.  (Not to be read as an endorsement of
+this specific patch series, just a generic observation.)
+
+-Frank
+
+> other than that you don't care enough to do the real work and are trying
+> to hack the driver core up instead.
+> 
+>> Sorry for the rant,
+> 
+> No apologies needed, it's cathartic at times :)
+> 
+> thanks,
+> 
+> greg k-h
+> .
+> 
+
