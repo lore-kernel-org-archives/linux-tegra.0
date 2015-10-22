@@ -1,80 +1,44 @@
-From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Subject: Re: [GIT PULL] On-demand device probing
-Date: Thu, 22 Oct 2015 11:14:49 +0200
-Message-ID: <CAAObsKAWS83xkptJY+2V6jYddG8S7KpM1PQoXWoEE=b7wCy7cg@mail.gmail.com>
-References: <20151020153612.GB32054@sirena.org.uk> <Pine.LNX.4.44L0.1510201159400.1855-100000@iolanthe.rowland.org>
- <CAAObsKChQN4gg91dCWJS_Co_MrYyBrB1J7gxgGo4hsPXNZRp3g@mail.gmail.com> <1757126.NgBN1ISfc9@vostro.rjw.lan>
+From: Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>
+Subject: Re: [RFC PATCH] dt: Tegra XUSB padctl: per-lane PHYs and USB lane map
+Date: Thu, 22 Oct 2015 16:03:01 +0300
+Message-ID: <5628DE85.3010808@kapsi.fi>
+References: <1445297442-21439-1-git-send-email-swarren@wwwdotorg.org>
+ <5626130A.5090604@nvidia.com> <5626641C.8040009@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1757126.NgBN1ISfc9@vostro.rjw.lan>
-Sender: linux-pm-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Alan Stern <stern@rowland.harvard.edu>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.co>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5626641C.8040009-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 22 October 2015 at 02:54, Rafael J. Wysocki <rjw@rjwysocki.net> wrote:
-> On Tuesday, October 20, 2015 06:21:55 PM Tomeu Vizoso wrote:
->> On 20 October 2015 at 18:04, Alan Stern <stern@rowland.harvard.edu> wrote:
->> > On Tue, 20 Oct 2015, Mark Brown wrote:
->> >
->> >> On Tue, Oct 20, 2015 at 10:40:03AM -0400, Alan Stern wrote:
->> >>
->> >> > Furthermore, that applies only to devices that use synchronous suspend.
->> >> > Async suspend is becoming common, and there the only restrictions are
->> >> > parent-child relations plus whatever explicit requirements that drivers
->> >> > impose by calling device_pm_wait_for_dev().
->> >>
->> >> Hrm, this is the first I'd noticed that feature though I see the initial
->> >> commit dates from January.
->> >
->> > Async suspend and device_pm_wait_for_dev() were added in January 2010,
->> > not 2015!
->> >
->> >>  It looks like most of the users are PCs at
->> >> the minute but we should be using it more widely for embedded things,
->> >> there's definitely some cases I'm aware of where it will allow us to
->> >> remove some open coding.
->> >>
->> >> It does seem like we want to be feeding dependency information we
->> >> discover for probing way into the suspend dependencies...
->> >
->> > Rafael has been thinking about a way to do this systematically.
->> > Nothing concrete has emerged yet.
->>
->> This iteration of the series would make this quite easy, as
->> dependencies are calculated before probes are attempted:
->>
->> https://lkml.org/lkml/2015/6/17/311
+On 10/20/2015 06:56 PM, Stephen Warren wrote:
+> ...
 >
-> Well, if you know how to represent "links" between devices, the mechanism
-> introduced here doesn't really add much value, because in that case the
-> core knows what the dependencies are in the first place and can only
-> defer the probes that have to be deferred.
-
-By "here" you mean what you are proposing for ordering device
-suspends, or on-demand probing?
-
-If you meant that probing on-demand is unneeded if we already have
-dependency information, I agree with you and that's why I only pushed
-forward on-demand, as the approach linked above introduced some
-duplication when inferring the dependencies. Maybe that could be
-avoided without too much refactoring.
-
-In any case, Thierry mentioned the other day in #tegra that one could
-also collect dependency information as a follow up to the on-demand
-series by calling device_depend() or such instead of
-of_device_probe().
-
-Regards,
-
-Tomeu
-
-> Thanks,
-> Rafael
+> In drivers/pci/host/pci-tegra.c tegra_pcie_get_resources() I see a call
+> to devm_phy_optional_get().
 >
+> The SATA driver doesn't seem to do anything with phys at the moment,
+> although tegra124.dtsi does put phy-related properties into the SATA DT
+> node.
+
+FWIW, the SATA driver does use the PHY - just through the 
+ahci_platform_{get,enable,...}_resources API. (so is life..)
+
+Mikko
+
+>
+> So, we can either:
+> a) Just ignore DT ABI for these cases claiming the DT binding is not yet
+> declared stable.
+>
+> b) Continue to support those specifier values for ABI reasons, which
+> needs the "_LEGACY" values shown above.
+>
+> (a) is certainly simpler.
 > --
-> To unsubscribe from this list: send the line "unsubscribe linux-kernel" in
-> the body of a message to majordomo@vger.kernel.org
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
