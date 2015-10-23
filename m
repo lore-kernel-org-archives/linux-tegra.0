@@ -1,135 +1,37 @@
-From: Rob Herring <robh+dt@kernel.org>
-Subject: Re: [GIT PULL] On-demand device probing
-Date: Fri, 23 Oct 2015 11:34:34 -0500
-Message-ID: <CAL_JsqLNSM=+j2r9HPcbSzsZrgnGEY3=kv21EXxisKwP5+57ag@mail.gmail.com>
-References: <20151018192931.GY14956@sirena.org.uk> <20151018193757.GA9147@kroah.com>
- <20151018195330.GB14956@sirena.org.uk> <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
- <5627B677.5090109@gmail.com> <20151021162758.GP32054@sirena.org.uk>
- <5627D6E0.5020708@gmail.com> <CAL_Jsq+FPtCuBnte2HTgbdpNYM=v_kLaCRcOC1kMaCQwVC=5Kw@mail.gmail.com>
- <562808AF.7090406@gmail.com> <CAAObsKAkyjdvNOS3+nuT0N9sudUFLsZXFtcm6Y038p+HSdsZsg@mail.gmail.com>
- <20151022144405.GC21861@kroah.com> <562930AB.1070203@gmail.com> <562A5602.7000208@sonymobile.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: tegra-xusb: Correct lane mux options
+Date: Fri, 23 Oct 2015 12:56:51 -0600
+Message-ID: <562A82F3.3060309@wwwdotorg.org>
+References: <1444987441-25176-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <562A5602.7000208@sonymobile.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Tim Bird <tim.bird@sonymobile.com>
-Cc: "frowand.list@gmail.com" <frowand.list@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mark Brown <broonie@kernel.org>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1444987441-25176-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Oct 23, 2015 at 10:45 AM, Tim Bird <tim.bird@sonymobile.com> wrote:
-> On 10/22/2015 11:53 AM, Frank Rowand wrote:
->> On 10/22/2015 7:44 AM, Greg Kroah-Hartman wrote:
->>> <oops, sent too early...>
->>>
->>> On Thu, Oct 22, 2015 at 11:05:11AM +0200, Tomeu Vizoso wrote:
->>>> But that's moot currently because Greg believes that the time spent
->>>> probing devices at boot time could be reduced enough so that the order
->>>> in which devices are probed becomes irrelevant. IME that would have to
->>>> be under 200ms so that the user doesn't notice and that's unicorn-far
->>>> from any bootlog I have ever seen.
->>>
->>> But as no one has actually produced a bootlog, how do you know that?
->>> Where exactly is your time being spent?  What driver is causing long
->>> delays?  Why is the long-delay-drivers not being done in their own
->>> thread?  And most importantly, why are you ignoring the work that people
->>> did back in 2008 to solve the issue on other hardware platforms?
->>>
->>>> Given that downstreams are already carrying as many hacks as they
->>>> could think of to speed total boot up, I think this is effectively
->>>> telling them to go away.
->>>
->>> No I'm not, I'm asking for real data, not hand-wavy-this-is-going-to
->>> solve-the-random-issue-i'm-having type patch by putting random calls in
->>> semi-random subsystems all over the kernel.
->>>
->>> And when I ask for real data, you respond with the fact that you aren't
->>> trying to speed up boot time here at all, so what am I supposed to think
->>
->> I also had the understanding that this patch series was about improving
->> boot time.  But I was kindly corrected that the behavior change was
->> getting the panel displaying stuff at an earlier point in the boot sequence,
->> _not_ completing the entire boot faster.
->>
->> The claim for the current series, in patch 0 in v7 is:
->>
->>    With this series I get the kernel to output to the panel in 0.5s,
->>    instead of 2.8s.
+On 10/16/2015 03:24 AM, Jon Hunter wrote:
+> The description of the XUSB_PADCTL_USB3_PAD_MUX_0 register in the Tegra124
+> documentation implies that all functions (pcie, usb3 and sata) can be
+> muxed onto to all lanes (pcie lanes 0-4 and sata lane 0). However, it has
+> been confirmed that this is not the case and the mux'ing options much more
+> limited. Unfortunately, the public documentation has not been updated to
+> reflect this and so detail the actual mux'ing options here by function:
 >
-> It's very common to want to get the display up before the
-> rest of the system.  So wanting to accelerate one part of the boot
-> at the expense to the rest of the system is a valid use case.
-> Deferred initcalls, which is out of tree primarily because it requires
-> the type of manual tweaking that Tomeu describes, specifically
-> addressed this issue.
+> Function:		Lanes:
+> pcie1 x2:		pcie3, pcie4
+> pcie1 x4:		pcie1, pcie2, pcie3, pcie4
+> pcie2 x1 (option1):	pcie0
+> pcie2 x1 (option2):	pcie2
+> usb3 port 0:		pcie0
+> usb3 port 1 (option 1):	pcie1
+> usb3 port 1 (option 2):	sata0
+> sata:			sata0
 
-Agreed and other folks will want other things up first. But it seems
-we are getting lucky with link order with the speed ups in this case.
-We need a way to specify priority of probing devices. If we have that
-piece, then all this plumbing can be used. A simple solution would be
-looking at stdout-path to get the console device to probe. That would
-be trivial to add on top of this. That may work for the display too,
-but you may not want the console on the display. That wouldn't work
-for CAN bus either, but then I'm not sure there is a generic solution
-for its requirements (respond within 50ms IIRC).
+Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
->> Just to get side-tracked, one other approach at ordering to reduce
->> deferrals reported a modest boot time reduction for four boards and a
->> very slight boot time increase for one other board.) The report of boot
->> times with that approach was in:
->>
->>   http://article.gmane.org/gmane.linux.drivers.devicetree/133010
->>
->> from Alexander Holler.
->>
->> I have not searched further to see if there is more data of boot time
->> reductions from any of the other attempts to change driver binding
->> order to move dependencies before use of a resource.  But whether
->> there is a performance improvement or not, there continues to be
->> a stream of developers creatively impacting the binding order for
->> their specific driver(s) or board.  So it seems that maybe there
->> is an underlying problem, or we don't have adequate documentation
->> explaining how to avoid a need to order bindings, or the
->> documentation exists and is not being read.
->
-> Well, I have probe order problems unrelated to boot time, that
-> I solved by resorting to putting stuff into modules and loading
-> them post-boot.  So I'd be interested in easy solutions to managing
-> boot order in mainline.
-
-I take it that this series doesn't help those problems?
-
->> I have been defaulting to the position that has been asserted by
->> the device tree maintainters, that probe deferrals work just fine
->> for at least the majority of cases (and is the message I have been
->> sharing in my conference presentations about device tree).  But I
->> suspect that there is at least a small minority of cases that are not
->> well served by probe deferral.  (Not to be read as an endorsement of
->> this specific patch series, just a generic observation.)
->
-> I've been worried about DT overhead adding to boot time for a while.
-
-Always beating up DT... ;) Yes, I'm sure there is some overhead, but
-looking at bootgraph there's much longer items not related to DT (USB,
-MMC and anything over I2C seem to be typical). With DT we lost most
-control of the order, and at the same time we added a load of new
-subsystems that are dependencies.
-
-> And IMHO probe deferral is just about the lamest way to solve boot
-> order dependencies I can imagine, from a computer science perspective.
-> (Well, there's a certain elegance to it, but it's a stupid "make
-> everything re-doable, back up and start over, time-wasting" elegance.)
-
-Exactly. That was a large part of my accepting it.
-
-> However, when Android takes 35 seconds to boot, and most people almost never
-> cold-boot your product, a few seconds of kernel time-wasting on
-> cold-boot seem less important. Alas, when I started working on mobile
-> phones I stopped caring much about boot time.
->
-> Thus, I've never worried about the DT overhead enough to actually
-> measure it, as requested by Greg.  So I'll just shut up now. :-)
-
-That would be a challenge to measure since it is distributed.
-
-Rob
+I didn't check the actual lists of values, but it sounds about right 
+from memory.
