@@ -1,37 +1,93 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: tegra-xusb: Correct lane mux options
-Date: Fri, 23 Oct 2015 12:56:51 -0600
-Message-ID: <562A82F3.3060309@wwwdotorg.org>
-References: <1444987441-25176-1-git-send-email-jonathanh@nvidia.com>
+From: Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2] spi: Tegra: add device tree binding doc for SPI/QSPI
+Date: Fri, 23 Oct 2015 16:30:42 -0700
+Message-ID: <1445643042-5764-1-git-send-email-twarren@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1444987441-25176-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org
+Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, tomcwarren3959-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jteki-oRp2ZoJdM/RWk0Htik3J/w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/16/2015 03:24 AM, Jon Hunter wrote:
-> The description of the XUSB_PADCTL_USB3_PAD_MUX_0 register in the Tegra124
-> documentation implies that all functions (pcie, usb3 and sata) can be
-> muxed onto to all lanes (pcie lanes 0-4 and sata lane 0). However, it has
-> been confirmed that this is not the case and the mux'ing options much more
-> limited. Unfortunately, the public documentation has not been updated to
-> reflect this and so detail the actual mux'ing options here by function:
->
-> Function:		Lanes:
-> pcie1 x2:		pcie3, pcie4
-> pcie1 x4:		pcie1, pcie2, pcie3, pcie4
-> pcie2 x1 (option1):	pcie0
-> pcie2 x1 (option2):	pcie2
-> usb3 port 0:		pcie0
-> usb3 port 1 (option 1):	pcie1
-> usb3 port 1 (option 2):	sata0
-> sata:			sata0
+This patch adds the device tree binding doc for the Tegra
+SPI/QSPI controllers on Tegra114 and Tegra210.
 
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Changes in v2:
+- based it more on kernel's nvidia,tegra114-spi.txt binding
+- changes based on prelim review by swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 
-I didn't check the actual lists of values, but it sounds about right 
-from memory.
+ doc/device-tree-bindings/spi/spi-tegra.txt | 60 ++++++++++++++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+ create mode 100644 doc/device-tree-bindings/spi/spi-tegra.txt
+
+diff --git a/doc/device-tree-bindings/spi/spi-tegra.txt b/doc/device-tree-bindings/spi/spi-tegra.txt
+new file mode 100644
+index 0000000..3664267
+--- /dev/null
++++ b/doc/device-tree-bindings/spi/spi-tegra.txt
+@@ -0,0 +1,60 @@
++NVIDIA Tegra SPI/QSPI controller.
++
++Required properties:
++- compatible : should be one of the following:
++  "nvidia,tegra114-spi" (for Tegra114)
++  "nvidia,tegra210-qspi" (for Tegra210)
++- reg: Should contain SPI registers location and length.
++- interrupts: Should contain SPI interrupts.
++- clock-names : Must include the following entries:
++  - spi
++- clocks : Must contain an entry for each entry in clock-names.
++  See ../clocks/clock-bindings.txt for details.
++- resets : Must contain an entry for each entry in reset-names.
++  See ../reset/reset.txt for details.
++- reset-names : Must include the following entries:
++  - spi
++
++Optional properties:
++- dmas : Must contain an entry for each entry in clock-names.
++  See ../dma/dma.txt for details.
++- dma-names : Must include the following entries:
++  - rx
++  - tx
++
++Recommended properties:
++- spi-max-frequency: Definition as per spi-bus.txt
++
++Example:
++
++spi@7000d600 {
++	compatible = "nvidia,tegra114-spi";
++	reg = <0x7000d600 0x200>;
++	interrupts = <0 82 0x04>;
++	spi-max-frequency = <25000000>;
++	#address-cells = <1>;
++	#size-cells = <0>;
++	clocks = <&tegra_car 44>;
++	clock-names = "spi";
++	resets = <&tegra_car 44>;
++	reset-names = "spi";
++	dmas = <&apbdma 16>, <&apbdma 16>;
++	dma-names = "rx", "tx";
++	status = "disabled";
++};
++
++spi@70410000 {
++	compatible = "nvidia,tegra210-qspi";
++	reg = <0x0 0x70410000 0x0 0x1000>;
++	interrupts = <0 10 0x04>;
++	spi-max-frequency = <24000000>;
++	#address-cells = <1>;
++	#size-cells = <0>;
++	clocks = <&tegra_car 211>;
++	clock-names = "spi";
++	resets = <&tegra_car 211>;
++	reset-names = "spi";
++	dmas = <&apbdma 16>, <&apbdma 16>;
++	dma-names = "rx", "tx";
++	status = "disabled";
++};
+-- 
+1.8.2.1.610.g562af5b
