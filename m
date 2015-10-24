@@ -1,93 +1,93 @@
-From: Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2] spi: Tegra: add device tree binding doc for SPI/QSPI
-Date: Fri, 23 Oct 2015 16:30:42 -0700
-Message-ID: <1445643042-5764-1-git-send-email-twarren@nvidia.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Sat, 24 Oct 2015 16:17:12 +0200
+Message-ID: <24100858.2KIS8Y2npV@vostro.rjw.lan>
+References: <20151018192931.GY14956@sirena.org.uk> <562A5602.7000208@sonymobile.com> <CAL_JsqLNSM=+j2r9HPcbSzsZrgnGEY3=kv21EXxisKwP5+57ag@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org
-Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, tomcwarren3959-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jteki-oRp2ZoJdM/RWk0Htik3J/w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <CAL_JsqLNSM=+j2r9HPcbSzsZrgnGEY3=kv21EXxisKwP5+57ag@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Tim Bird <tim.bird@sonymobile.com>, "frowand.list@gmail.com" <frowand.list@gmail.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Mark Brown <broonie@kernel.org>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwo>
 List-Id: linux-tegra@vger.kernel.org
 
-This patch adds the device tree binding doc for the Tegra
-SPI/QSPI controllers on Tegra114 and Tegra210.
+On Friday, October 23, 2015 11:34:34 AM Rob Herring wrote:
+> On Fri, Oct 23, 2015 at 10:45 AM, Tim Bird <tim.bird@sonymobile.com> wrote:
+> > On 10/22/2015 11:53 AM, Frank Rowand wrote:
+> >> On 10/22/2015 7:44 AM, Greg Kroah-Hartman wrote:
+> >>> <oops, sent too early...>
+> >>>
+> >>> On Thu, Oct 22, 2015 at 11:05:11AM +0200, Tomeu Vizoso wrote:
+> >>>> But that's moot currently because Greg believes that the time spent
+> >>>> probing devices at boot time could be reduced enough so that the order
+> >>>> in which devices are probed becomes irrelevant. IME that would have to
+> >>>> be under 200ms so that the user doesn't notice and that's unicorn-far
+> >>>> from any bootlog I have ever seen.
+> >>>
+> >>> But as no one has actually produced a bootlog, how do you know that?
+> >>> Where exactly is your time being spent?  What driver is causing long
+> >>> delays?  Why is the long-delay-drivers not being done in their own
+> >>> thread?  And most importantly, why are you ignoring the work that people
+> >>> did back in 2008 to solve the issue on other hardware platforms?
+> >>>
+> >>>> Given that downstreams are already carrying as many hacks as they
+> >>>> could think of to speed total boot up, I think this is effectively
+> >>>> telling them to go away.
+> >>>
+> >>> No I'm not, I'm asking for real data, not hand-wavy-this-is-going-to
+> >>> solve-the-random-issue-i'm-having type patch by putting random calls in
+> >>> semi-random subsystems all over the kernel.
+> >>>
+> >>> And when I ask for real data, you respond with the fact that you aren't
+> >>> trying to speed up boot time here at all, so what am I supposed to think
+> >>
+> >> I also had the understanding that this patch series was about improving
+> >> boot time.  But I was kindly corrected that the behavior change was
+> >> getting the panel displaying stuff at an earlier point in the boot sequence,
+> >> _not_ completing the entire boot faster.
+> >>
+> >> The claim for the current series, in patch 0 in v7 is:
+> >>
+> >>    With this series I get the kernel to output to the panel in 0.5s,
+> >>    instead of 2.8s.
+> >
+> > It's very common to want to get the display up before the
+> > rest of the system.  So wanting to accelerate one part of the boot
+> > at the expense to the rest of the system is a valid use case.
+> > Deferred initcalls, which is out of tree primarily because it requires
+> > the type of manual tweaking that Tomeu describes, specifically
+> > addressed this issue.
+> 
+> Agreed and other folks will want other things up first. But it seems
+> we are getting lucky with link order with the speed ups in this case.
+> We need a way to specify priority of probing devices. If we have that
+> piece, then all this plumbing can be used. A simple solution would be
+> looking at stdout-path to get the console device to probe. That would
+> be trivial to add on top of this. That may work for the display too,
+> but you may not want the console on the display. That wouldn't work
+> for CAN bus either, but then I'm not sure there is a generic solution
+> for its requirements (respond within 50ms IIRC).
 
-Signed-off-by: Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Changes in v2:
-- based it more on kernel's nvidia,tegra114-spi.txt binding
-- changes based on prelim review by swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Well, I'm not quite sure why exactly everyone is so focused on probing here.
 
- doc/device-tree-bindings/spi/spi-tegra.txt | 60 ++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
- create mode 100644 doc/device-tree-bindings/spi/spi-tegra.txt
+Probing is just one aspect of the fact that we need functional dependencies
+to be tracked somehow and acted on when necessary.  And this is not limited
+to probing, as I have already said for a few times.  Other cases include:
+system shutdown, system suspend/resume, runtime PM, unbinding of drivers.
 
-diff --git a/doc/device-tree-bindings/spi/spi-tegra.txt b/doc/device-tree-bindings/spi/spi-tegra.txt
-new file mode 100644
-index 0000000..3664267
---- /dev/null
-+++ b/doc/device-tree-bindings/spi/spi-tegra.txt
-@@ -0,0 +1,60 @@
-+NVIDIA Tegra SPI/QSPI controller.
-+
-+Required properties:
-+- compatible : should be one of the following:
-+  "nvidia,tegra114-spi" (for Tegra114)
-+  "nvidia,tegra210-qspi" (for Tegra210)
-+- reg: Should contain SPI registers location and length.
-+- interrupts: Should contain SPI interrupts.
-+- clock-names : Must include the following entries:
-+  - spi
-+- clocks : Must contain an entry for each entry in clock-names.
-+  See ../clocks/clock-bindings.txt for details.
-+- resets : Must contain an entry for each entry in reset-names.
-+  See ../reset/reset.txt for details.
-+- reset-names : Must include the following entries:
-+  - spi
-+
-+Optional properties:
-+- dmas : Must contain an entry for each entry in clock-names.
-+  See ../dma/dma.txt for details.
-+- dma-names : Must include the following entries:
-+  - rx
-+  - tx
-+
-+Recommended properties:
-+- spi-max-frequency: Definition as per spi-bus.txt
-+
-+Example:
-+
-+spi@7000d600 {
-+	compatible = "nvidia,tegra114-spi";
-+	reg = <0x7000d600 0x200>;
-+	interrupts = <0 82 0x04>;
-+	spi-max-frequency = <25000000>;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	clocks = <&tegra_car 44>;
-+	clock-names = "spi";
-+	resets = <&tegra_car 44>;
-+	reset-names = "spi";
-+	dmas = <&apbdma 16>, <&apbdma 16>;
-+	dma-names = "rx", "tx";
-+	status = "disabled";
-+};
-+
-+spi@70410000 {
-+	compatible = "nvidia,tegra210-qspi";
-+	reg = <0x0 0x70410000 0x0 0x1000>;
-+	interrupts = <0 10 0x04>;
-+	spi-max-frequency = <24000000>;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	clocks = <&tegra_car 211>;
-+	clock-names = "spi";
-+	resets = <&tegra_car 211>;
-+	reset-names = "spi";
-+	dmas = <&apbdma 16>, <&apbdma 16>;
-+	dma-names = "rx", "tx";
-+	status = "disabled";
-+};
--- 
-1.8.2.1.610.g562af5b
+If there is a functional dependency between two devices (say, B requires A
+to be present and functional, meaning that the driver of A has to be present
+and working for the driver of B to be working), all of the above need to be
+done in a specific order.
+
+Today, however, the driver core only knows about structural dependencies
+and only in the specific parent-child case.
+
+So perhaps it's better to start discussing about a solution for the general
+issue?
+
+Thanks,
+Rafael
+
