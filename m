@@ -1,37 +1,37 @@
-From: Lucas Stach <dev@lynxeye.de>
-Subject: [PATCH] irqchip: tegra: propagate IRQ type setting to parent
-Date: Sun, 25 Oct 2015 16:39:12 +0100
-Message-ID: <1445787552-13062-1-git-send-email-dev@lynxeye.de>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Subject: [PATCH] clocksource/drivers/tegra: allow timer irq affinity change
+Date: Sun, 25 Oct 2015 16:40:30 +0100
+Message-ID: <1445787630-13251-1-git-send-email-dev@lynxeye.de>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The LIC doesn't deal with the different types of interrupts itself
-but needs to forward calls to set the appropriate type to its parent
-IRQ controller.
+Allow the timer core to change the smp affinity of the broadcast timer
+irq by setting CLOCK_EVT_FEAT_DYNIRQ flag.
 
-Without this fix all IRQs routed through the LIC will stay at the
-initial EDGE type, while most of them should actually be level triggered.
+This reduces interrupt pressure and wakeups on CPU0 as well as vastly
+reducing the number of timer broadcast IPIs.
 
-Cc: <stable@vger.kernel.org> # 4.1
-Signed-off-by: Lucas Stach <dev@lynxeye.de>
+Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 ---
- drivers/irqchip/irq-tegra.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clocksource/tegra20_timer.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/irq-tegra.c b/drivers/irqchip/irq-tegra.c
-index 2fd89eb..fd88e68 100644
---- a/drivers/irqchip/irq-tegra.c
-+++ b/drivers/irqchip/irq-tegra.c
-@@ -214,6 +214,7 @@ static struct irq_chip tegra_ictlr_chip = {
- 	.irq_unmask		= tegra_unmask,
- 	.irq_retrigger		= tegra_retrigger,
- 	.irq_set_wake		= tegra_set_wake,
-+	.irq_set_type		= irq_chip_set_type_parent,
- 	.flags			= IRQCHIP_MASK_ON_SUSPEND,
- #ifdef CONFIG_SMP
- 	.irq_set_affinity	= irq_chip_set_affinity_parent,
+diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
+index 6ebda11..38333ab 100644
+--- a/drivers/clocksource/tegra20_timer.c
++++ b/drivers/clocksource/tegra20_timer.c
+@@ -96,7 +96,8 @@ static struct clock_event_device tegra_clockevent = {
+ 	.name			= "timer0",
+ 	.rating			= 300,
+ 	.features		= CLOCK_EVT_FEAT_ONESHOT |
+-				  CLOCK_EVT_FEAT_PERIODIC,
++				  CLOCK_EVT_FEAT_PERIODIC |
++				  CLOCK_EVT_FEAT_DYNIRQ,
+ 	.set_next_event		= tegra_timer_set_next_event,
+ 	.set_state_shutdown	= tegra_timer_shutdown,
+ 	.set_state_periodic	= tegra_timer_set_periodic,
 -- 
 2.4.3
