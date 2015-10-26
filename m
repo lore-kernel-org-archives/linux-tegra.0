@@ -1,36 +1,66 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [GIT PULL 4/4] ARM: tegra: Default configuration updates for
- v4.4-rc1
-Date: Mon, 26 Oct 2015 09:48:03 +0900
-Message-ID: <20151026004803.GE14238@localhost>
-References: <1445347058-8834-1-git-send-email-thierry.reding@gmail.com>
- <1445347058-8834-4-git-send-email-thierry.reding@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Mon, 26 Oct 2015 10:12:24 +0900
+Message-ID: <20151026011224.GV29919@sirena.org.uk>
+References: <20151018192931.GY14956@sirena.org.uk>
+ <562A5602.7000208@sonymobile.com>
+ <CAL_JsqLNSM=+j2r9HPcbSzsZrgnGEY3=kv21EXxisKwP5+57ag@mail.gmail.com>
+ <24100858.2KIS8Y2npV@vostro.rjw.lan>
+ <20151024220648.GR29919@sirena.org.uk>
+ <CAJZ5v0hPVu7AL8zBdU4Kb7+MVfYv0mTa43RhnCyyPR+RKDbhLA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="CSNFvL6ilyiKL/Hs"
+Return-path: <linux-clk-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1445347058-8834-4-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+In-Reply-To: <CAJZ5v0hPVu7AL8zBdU4Kb7+MVfYv0mTa43RhnCyyPR+RKDbhLA@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tim Bird <tim.bird@sonymobile.com>, "frowand.list@gmail.com" <frowand.list@gmail.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Oct 20, 2015 at 03:17:38PM +0200, Thierry Reding wrote:
-> Hi ARM SoC maintainers,
-> 
-> The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
-> 
->   Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.4-defconfig
-> 
-> for you to fetch changes up to 2fb43cecf5164fd99d0fd9fdd87f40e5148ecd91:
-> 
->   ARM: tegra: Update multi_v7_defconfig (2015-10-20 14:47:07 +0200)
 
-Merged, thanks!
+--CSNFvL6ilyiKL/Hs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Sun, Oct 25, 2015 at 02:54:39PM +0100, Rafael J. Wysocki wrote:
+> On Sun, Oct 25, 2015 at 12:06 AM, Mark Brown <broonie@kernel.org> wrote:
 
--Olof
+> > There's also the understanding people had that the order things get
+> > bound changes the ordering for some of the other cases (perhaps it's a
+> > good idea to do that, it seems likely to be sensible?).
+
+> But it really doesn't do that.  Also making it do so doesn't help much
+> in the cases where things can happen asynchronously (system
+> suspend/resume, runtime PM).
+
+Yeah, people seem to have that impression though. :(
+
+> If, instead, there was a way to specify a functional dependency at the
+> device registration time, it might be used to change the order of
+> everything relevant, including probe.  That should help to reduce the
+> noise you're referring to.
+
+This links back to the idea of having generic support for pre-probe
+actions which is also generally useful (the ability to do things like
+power on regulators for devices on enumerable buses so they can be
+enumerated as standard). =20
+
+--CSNFvL6ilyiKL/Hs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWLX34AAoJECTWi3JdVIfQxWcH/1aCaKRkQgKa9vAZbBaq2sSf
+30EqKg/SLlEPyozfvQqz8QTpxr1XYD4iJ3qT3048aeuYApT7TZVZUMpSpeLuuWcN
+Cmi76xZim7KYTRuT+iFewFse+gaKJyl1zpU+2O0R4VpWxUe2fxwJY159CgqS8/cO
+rv3tQ03svICO5hrXlW9tS/Z/hoGZe9FQiiWYvmvdcM3XEKYkKY9m8B0B64OJ/8Sp
+WmN+EQ1sevAGuMoa3EWIZDhYIbICzBSHA8WLWolALOmEmFEHiz/fjBSf5rYaD42U
+68oNScKwVepB4LeewE+syAzBFVMow0SfbpI6dfbwaiS64BNVbMzP5X5Jq04MZMY=
+=w1Sh
+-----END PGP SIGNATURE-----
+
+--CSNFvL6ilyiKL/Hs--
