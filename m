@@ -1,40 +1,35 @@
-From: "Andrew F. Davis" <afd@ti.com>
-Subject: Re: [GIT PULL] On-demand device probing
-Date: Sun, 25 Oct 2015 14:45:54 -0500
-Message-ID: <562D3172.2070303@ti.com>
-References: <20151018192931.GY14956@sirena.org.uk>
- <20151018193757.GA9147@kroah.com> <20151018195330.GB14956@sirena.org.uk>
- <CAAObsKB2BUZ-smid45wOdAQw6h2yNqCydk+azAFNk69ewHJtZQ@mail.gmail.com>
- <5627B677.5090109@gmail.com> <20151021162758.GP32054@sirena.org.uk>
- <5627D6E0.5020708@gmail.com>
- <CAL_Jsq+FPtCuBnte2HTgbdpNYM=v_kLaCRcOC1kMaCQwVC=5Kw@mail.gmail.com>
- <562808AF.7090406@gmail.com>
- <CAAObsKAkyjdvNOS3+nuT0N9sudUFLsZXFtcm6Y038p+HSdsZsg@mail.gmail.com>
- <20151022144405.GC21861@kroah.com> <562930AB.1070203@gmail.com>
- <562A5602.7000208@sonymobile.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [GIT PULL 3/4] ARM: tegra: Devicetree changes for v4.4-rc1
+Date: Mon, 26 Oct 2015 09:47:03 +0900
+Message-ID: <20151026004703.GD14238@localhost>
+References: <1445347058-8834-1-git-send-email-thierry.reding@gmail.com>
+ <1445347058-8834-3-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <562A5602.7000208@sonymobile.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Tim Bird <tim.bird@sonymobile.com>, "frowand.list@gmail.com" <frowand.list@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Tomeu Vizoso <tomeu.vizoso@collabora.com>, Rob Herring <robh+dt@kernel.org>, Mark Brown <broonie@kernel.org>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, =?UTF-8?Q?Terje_Bergstr=c3=b6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>, David Woodhouse <dwmw2@infradead.org>, Liam Girdwood <lgirdwood@gmail.com>, Felipe Balbi <balbi@ti.com>, Jingoo
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1445347058-8834-3-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/23/2015 10:45 AM, Tim Bird wrote:
-> I've been worried about DT overhead adding to boot time for a while.
-> And IMHO probe deferral is just about the lamest way to solve boot
-> order dependencies I can imagine, from a computer science perspective.
-> (Well, there's a certain elegance to it, but it's a stupid "make
-> everything re-doable, back up and start over, time-wasting" elegance.)
->
+On Tue, Oct 20, 2015 at 03:17:37PM +0200, Thierry Reding wrote:
+> Hi ARM SoC maintainers,
+> 
+> The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
+> 
+>   Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.4-dt
+> 
+> for you to fetch changes up to 481b4f1a3f64c529333186a9e94eab41b271e3d8:
+> 
+>   ARM: tegra: Use consistent indentation for SATA node (2015-10-20 13:51:52 +0200)
 
-It has a bogosort kind of elegance. :)
+Merged, thanks!
 
-Also this might be a silly question (I haven't been following this issue
-for very long), but as the only place that can really know what devices
-depend on each other, in a generic kernel, is the DT (or whatever
-abstraction) will we not eventually need to solve this issue there? Could
-we just add a "depends-on = <&phandle>;" to nodes when we know they are
-needed for our board?
+
+-Olof
