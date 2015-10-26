@@ -1,60 +1,42 @@
-From: Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [GIT PULL] On-demand device probing
-Date: Mon, 26 Oct 2015 03:51:38 -0700
-Message-ID: <20151026105138.20687.13546@quantum>
-References: <20151018192931.GY14956@sirena.org.uk> <562A5602.7000208@sonymobile.com>
- <CAL_JsqLNSM=+j2r9HPcbSzsZrgnGEY3=kv21EXxisKwP5+57ag@mail.gmail.com>
- <24100858.2KIS8Y2npV@vostro.rjw.lan> <20151024220648.GR29919@sirena.org.uk>
- <CAJZ5v0hPVu7AL8zBdU4Kb7+MVfYv0mTa43RhnCyyPR+RKDbhLA@mail.gmail.com>
+From: Jisheng Zhang <jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+Subject: [RFC PATCH 2/3] PCI: tegra: generate proper configuration access cycles
+Date: Mon, 26 Oct 2015 19:02:13 +0800
+Message-ID: <1445857334-6936-3-git-send-email-jszhang@marvell.com>
+References: <1445857334-6936-1-git-send-email-jszhang@marvell.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <CAJZ5v0hPVu7AL8zBdU4Kb7+MVfYv0mTa43RhnCyyPR+RKDbhLA@mail.gmail.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Mark Brown <broonie@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tim Bird <tim.bird@sonymobile.com>, "frowand.list@gmail.com" <frowand.list@gmail.com>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, =?utf-8?q?Terje_Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbary>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1445857334-6936-1-git-send-email-jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tinamdar-qTEPVZfXA3Y@public.gmane.org, rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Jisheng Zhang <jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Rafael J. Wysocki (2015-10-25 06:54:39)
-> On Sun, Oct 25, 2015 at 12:06 AM, Mark Brown <broonie@kernel.org> wrote:
-> > On Sat, Oct 24, 2015 at 04:17:12PM +0200, Rafael J. Wysocki wrote:
-> >
-> >> Well, I'm not quite sure why exactly everyone is so focused on probing here.
-> >
-> > Probe deferral is really noisy even if it's working fine on a given
-> > system so it's constantly being highlighted to people in a way that
-> > other issues aren't if you're not directly having problems.
-> >
-> > There's also the understanding people had that the order things get
-> > bound changes the ordering for some of the other cases (perhaps it's a
-> > good idea to do that, it seems likely to be sensible?).
-> 
-> But it really doesn't do that.  Also making it do so doesn't help much
-> in the cases where things can happen asynchronously (system
-> suspend/resume, runtime PM).
-> 
-> If, instead, there was a way to specify a functional dependency at the
-> device registration time, it might be used to change the order of
-> everything relevant, including probe.  That should help to reduce the
-> noise you're referring to.
+Inspired by Russell King's patch[1], I found current tegra also has the
+same issue of "reading 32-bits from the command register, modifying the
+command register, and then writing it back has the effect of clearing
+any status bits that were indicating at that time" as pointed out by
+Russell. This patch fix this issue by using the pci_generic_config_write.
 
-Taking it a step further, if functional dependencies were understood at
-link-time then we could optimize link order as well. There are probably
-lots of optimizations if we only made the effort to understand these
-dependencies earlier.
+[1]http://www.spinics.net/lists/linux-pci/msg44869.html
 
-Constructing the device/resource dependency graph before the device ever
-boots sounds interesting to me.
+Signed-off-by: Jisheng Zhang <jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+---
+ drivers/pci/host/pci-tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Regards,
-Mike
-
-> 
-> If the dependency could only be discovered at the probe time, the
-> order of things might be changed in response to letting the driver
-> core know about it rather than "just in case", which should be more
-> efficient.
-> 
-> Thanks,
-> Rafael
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index 81df0c1..d926e3e 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -483,7 +483,7 @@ static void __iomem *tegra_pcie_conf_address(struct pci_bus *bus,
+ static struct pci_ops tegra_pcie_ops = {
+ 	.map_bus = tegra_pcie_conf_address,
+ 	.read = pci_generic_config_read32,
+-	.write = pci_generic_config_write32,
++	.write = pci_generic_config_write,
+ };
+ 
+ static unsigned long tegra_pcie_port_get_pex_ctrl(struct tegra_pcie_port *port)
+-- 
+2.6.2
