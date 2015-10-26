@@ -1,47 +1,31 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH 03/17] input: tegra-kbc: drop use of IRQF_NO_SUSPEND flag
-Date: Mon, 26 Oct 2015 01:37:08 -0700
-Message-ID: <20151026083708.GB13056@localhost>
-References: <1442850433-5903-1-git-send-email-sudeep.holla@arm.com>
- <1442850433-5903-4-git-send-email-sudeep.holla@arm.com>
- <56124FC1.8010202@nvidia.com>
- <5625298A.9010801@arm.com>
+From: Jacek Anaszewski <j.anaszewski@samsung.com>
+Subject: Re: [PATCH 0/9] add missing of_node_put
+Date: Mon, 26 Oct 2015 09:48:31 +0100
+Message-ID: <562DE8DF.5090609@samsung.com>
+References: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5625298A.9010801@arm.com>
-Sender: linux-input-owner@vger.kernel.org
-To: Sudeep Holla <sudeep.holla@arm.com>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=ISO-8859-1; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-reply-to: <1445697755-26341-1-git-send-email-Julia.Lawall@lip6.fr>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: linux-arm-kernel@lists.infradead.org, kernel-janitors@vger.kernel.org, linux-bluetooth@vger.kernel.org, linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, Russell King - ARM Linux <linux@arm.linux.org.uk>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Andrew Lunn <andrew@lunn.ch>, Bjorn Helgaas <bhelgaas@google.com>, Jason Cooper <jason@lakedaemon.net>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Oct 19, 2015 at 06:34:02PM +0100, Sudeep Holla wrote:
-> Hi Dmitry,
-> 
-> On 05/10/15 11:24, Laxman Dewangan wrote:
-> >
-> >On Monday 21 September 2015 09:16 PM, Sudeep Holla wrote:
-> >>
-> >>diff --git a/drivers/input/keyboard/tegra-kbc.c
-> >>b/drivers/input/keyboard/tegra-kbc.c
-> >>index f97c73bd14f8..5f5dbbd51991 100644
-> >>--- a/drivers/input/keyboard/tegra-kbc.c
-> >>+++ b/drivers/input/keyboard/tegra-kbc.c
-> >>@@ -705,7 +705,7 @@ static int tegra_kbc_probe(struct platform_device
-> >>*pdev)
-> >>      input_set_drvdata(kbc->idev, kbc);
-> >>      err = devm_request_irq(&pdev->dev, kbc->irq, tegra_kbc_isr,
-> >>-              IRQF_NO_SUSPEND | IRQF_TRIGGER_HIGH, pdev->name, kbc);
-> >>+                   IRQF_TRIGGER_HIGH, pdev->name, kbc);
-> >>
-> >
-> >Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
-> >
-> 
-> Can you pick this up with all the Acks ?
+Hi Julia,
 
-Applied, thank you.
+Patches 1-4 have been applied to the LED tree, thanks.
+
+On 10/24/2015 04:42 PM, Julia Lawall wrote:
+> The various for_each device_node iterators performs an of_node_get on each
+> iteration, so a break out of the loop requires an of_node_put.
+>
+> The complete semantic patch that fixes this problem is
+> (http://coccinelle.lip6.fr):
+>
+[...]
 
 -- 
-Dmitry
+Best Regards,
+Jacek Anaszewski
