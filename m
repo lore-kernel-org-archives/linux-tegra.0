@@ -1,62 +1,78 @@
-From: Ray Jui <rjui@broadcom.com>
-Subject: Re: [RFC PATCH 1/3] PCI: iproc: generate proper configuration access
- cycles
-Date: Mon, 26 Oct 2015 10:18:14 -0700
-Message-ID: <562E6056.3040203@broadcom.com>
-References: <1445857334-6936-1-git-send-email-jszhang@marvell.com>
- <1445857334-6936-2-git-send-email-jszhang@marvell.com>
+From: Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [PATCH v2] spi: Tegra: add device tree binding doc for SPI/QSPI
+Date: Mon, 26 Oct 2015 18:04:34 +0000
+Message-ID: <77b185ab23764f1e8cde0a41189bb490@HQMAIL104.nvidia.com>
+References: <1445643042-5764-1-git-send-email-twarren@nvidia.com>
+ <562E55BD.7070000@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <1445857334-6936-2-git-send-email-jszhang@marvell.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Jisheng Zhang <jszhang@marvell.com>, bhelgaas@google.com, thierry.reding@gmail.com, swarren@wwwdotorg.org, gnurou@gmail.com, tinamdar@apm.com, sbranden@broadcom.com, linux@arm.linux.org.uk
-Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <562E55BD.7070000-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org" <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "tomcwarren3959-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <tomcwarren3959-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "jteki-oRp2ZoJdM/RWk0Htik3J/w@public.gmane.org" <jteki-oRp2ZoJdM/RWk0Htik3J/w@public.gmane.org>, "robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "pawel.moll-5wv7dgnIgG8@public.gmane.org" <pawel.moll-5wv7dgnIgG8@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org" <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, "galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org" <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Jisheng,
+Stephen,
 
-On 10/26/2015 4:02 AM, Jisheng Zhang wrote:
-> Inspired by Russell King's patch[1], I found current iproc also has the
-> same issue of "reading 32-bits from the command register, modifying the
-> command register, and then writing it back has the effect of clearing
-> any status bits that were indicating at that time" as pointed out by
-> Russell. This patch fix this issue by using the pci_generic_config_write.
->
-> [1]http://www.spinics.net/lists/linux-pci/msg44869.html
->
-> Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
-> ---
->   drivers/pci/host/pcie-iproc.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/pci/host/pcie-iproc.c b/drivers/pci/host/pcie-iproc.c
-> index fe2efb1..0c423f2 100644
-> --- a/drivers/pci/host/pcie-iproc.c
-> +++ b/drivers/pci/host/pcie-iproc.c
-> @@ -111,7 +111,7 @@ static void __iomem *iproc_pcie_map_cfg_bus(struct pci_bus *bus,
->   static struct pci_ops iproc_pcie_ops = {
->   	.map_bus = iproc_pcie_map_cfg_bus,
->   	.read = pci_generic_config_read32,
-> -	.write = pci_generic_config_write32,
-> +	.write = pci_generic_config_write,
->   };
->
->   static void iproc_pcie_reset(struct iproc_pcie *pcie)
->
+> -----Original Message-----
+> From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
+> Sent: Monday, October 26, 2015 9:33 AM
+> To: Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>; u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org
+> Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>; tomcwarren3959-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org;
+> jteki-oRp2ZoJdM/RWk0Htik3J/w@public.gmane.org; robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org; pawel.moll-5wv7dgnIgG8@public.gmane.org;
+> mark.rutland-5wv7dgnIgG8@public.gmane.org; ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org;
+> galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org; Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>; linux-
+> tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>; linux-arm-
+> kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> Subject: Re: [PATCH v2] spi: Tegra: add device tree binding doc for SPI/QSPI
+> 
+> On 10/23/2015 05:30 PM, Tom Warren wrote:
+> > This patch adds the device tree binding doc for the Tegra SPI/QSPI
+> > controllers on Tegra114 and Tegra210.
+> 
+> > diff --git a/doc/device-tree-bindings/spi/spi-tegra.txt
+> > b/doc/device-tree-bindings/spi/spi-tegra.txt
+> 
+> Since this is a patch to the Linux kernel, it should use the path and file names
+> from the Linux kernel, so that should be:
+> 
+> Documentation/devicetree/bindings/spi/nvidia,tegra210-qspi.txt
+I thought I was adding a binding doc to U-Boot, so the QSPI driver for T210 can go in. I wasn't aware that I had to submit a changelist against the kernel's binding first. I'll redo the file path.
 
-I have already confirmed with the ASIC team that the current iProc PCIe 
-controller requires 32-bit aligned access into the configuration space 
-due to the way how it was integrated into various iProc SoCs including 
-NSP, Cygnus, and NS2.
+> 
+> (or perhaps an earlier SoC number if this HW block first appeared before
+> Tegra210)
+AFAICT, QSPI first appeared in Tegra210/X1.
 
-This change will prevent the driver from working properly.
+> 
+> > +NVIDIA Tegra SPI/QSPI controller.
+> 
+> There's already a binding document for the regular SPI controller. The plain SPI
+> entries should be removed from this file, leaving it covering the QSPI controller
+> only.
+There is no spi binding for Tegra114 in U-Boot at present, hence my duplication. I'll remove the SPI entries from this file, and perhaps copy over the kernel's tegra114 spi binding for U-Boot at a later date.
 
-I've informed our ASIC team about this issue and all future iProc based 
-SoCs should be able to support 8-bit, 16-bit access and therefore 
-pci_generic_config_write/read can be used for those SoCs.
+> 
+> Can you confirm that there physically is a separate QSPI controller in HW and
+> that it has different registers to the regular SPI controller?
+> Or, is QSPI simply a new mode of operation for the existing HW?
+QSPI is its own controller, separate from the traditional 4 Tegra SPI controllers. It has its own address space, and some differences in bits in some registers, and adds misc and timing registers that don't exist in the SPI controller. It supports Master mode only (no slave mode), and adds Dual (x2)  and Quad mode (x4) transfer options. It's basically a superset of the Tegra SPI controller.
 
-Thanks,
+> 
+> > +Required properties:
+> > +- compatible : should be one of the following:
+> > +  "nvidia,tegra114-spi" (for Tegra114)
+> > +  "nvidia,tegra210-qspi" (for Tegra210)
+> > +- reg: Should contain SPI registers location and length.
+> > +- interrupts: Should contain SPI interrupts.
+> 
+> Are there multiple interrupts or just one? I imagine just one, in which case just
+> "interrupt" at the end of that description.
+Only 1 interrupt for QSPI. Note that this was copied verbatim from the kernel's current nvidia,tegra114-spi.txt binding, so if it's wrong, it's wrong there, too.
 
-Ray
+Tom
+--
+nvpublic
