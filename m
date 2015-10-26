@@ -1,15 +1,15 @@
-From: Jisheng Zhang <jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
-Subject: [RFC PATCH 2/3] PCI: tegra: generate proper configuration access cycles
-Date: Mon, 26 Oct 2015 19:02:13 +0800
-Message-ID: <1445857334-6936-3-git-send-email-jszhang@marvell.com>
+From: Jisheng Zhang <jszhang@marvell.com>
+Subject: [RFC PATCH 3/3] PCI: xgene: generate proper configuration access cycles
+Date: Mon, 26 Oct 2015 19:02:14 +0800
+Message-ID: <1445857334-6936-4-git-send-email-jszhang@marvell.com>
 References: <1445857334-6936-1-git-send-email-jszhang@marvell.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1445857334-6936-1-git-send-email-jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tinamdar-qTEPVZfXA3Y@public.gmane.org, rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, Jisheng Zhang <jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1445857334-6936-1-git-send-email-jszhang@marvell.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: bhelgaas@google.com, thierry.reding@gmail.com, swarren@wwwdotorg.org, gnurou@gmail.com, tinamdar@apm.com, rjui@broadcom.com, sbranden@broadcom.com, linux@arm.linux.org.uk
+Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com, Jisheng Zhang <jszhang@marvell.com>
 List-Id: linux-tegra@vger.kernel.org
 
 Inspired by Russell King's patch[1], I found current tegra also has the
@@ -20,23 +20,23 @@ Russell. This patch fix this issue by using the pci_generic_config_write.
 
 [1]http://www.spinics.net/lists/linux-pci/msg44869.html
 
-Signed-off-by: Jisheng Zhang <jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
 ---
- drivers/pci/host/pci-tegra.c | 2 +-
+ drivers/pci/host/pci-xgene.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 81df0c1..d926e3e 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -483,7 +483,7 @@ static void __iomem *tegra_pcie_conf_address(struct pci_bus *bus,
- static struct pci_ops tegra_pcie_ops = {
- 	.map_bus = tegra_pcie_conf_address,
- 	.read = pci_generic_config_read32,
+diff --git a/drivers/pci/host/pci-xgene.c b/drivers/pci/host/pci-xgene.c
+index 0236ab9..8946a6c 100644
+--- a/drivers/pci/host/pci-xgene.c
++++ b/drivers/pci/host/pci-xgene.c
+@@ -176,7 +176,7 @@ static int xgene_pcie_config_read32(struct pci_bus *bus, unsigned int devfn,
+ static struct pci_ops xgene_pcie_ops = {
+ 	.map_bus = xgene_pcie_map_bus,
+ 	.read = xgene_pcie_config_read32,
 -	.write = pci_generic_config_write32,
 +	.write = pci_generic_config_write,
  };
  
- static unsigned long tegra_pcie_port_get_pex_ctrl(struct tegra_pcie_port *port)
+ static u64 xgene_pcie_set_ib_mask(void __iomem *csr_base, u32 addr,
 -- 
 2.6.2
