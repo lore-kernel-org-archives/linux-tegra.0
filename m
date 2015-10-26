@@ -1,117 +1,58 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/3] gr: support for securely-booted FECS firmware
-Date: Mon, 26 Oct 2015 14:47:36 +0900
-Message-ID: <1445838457-26737-1-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 0/4] ARM: tegra: GPU WPR region support
+Date: Mon, 26 Oct 2015 14:50:21 +0900
+Message-ID: <CAAVeFuLENPfjy1k2ZTUArTph_6wbAxXninZ2Tmp6-MV4zVgaHw@mail.gmail.com>
+References: <1445230624-30314-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1445230624-30314-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Trigger the loading of FECS/GPCCS using secure boot if required, and
-start managed falcons using the CPUCTL_ALIAS register since CPUCTL is
-protected in that case.
+Ping Tom, how does this look to you?
 
-Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drm/nouveau/nvkm/engine/gr/gf100.c | 56 +++++++++++++++++++++++++++++++-------
- 1 file changed, 46 insertions(+), 10 deletions(-)
-
-diff --git a/drm/nouveau/nvkm/engine/gr/gf100.c b/drm/nouveau/nvkm/engine/gr/gf100.c
-index dda7a7d224c9..67691941d7ba 100644
---- a/drm/nouveau/nvkm/engine/gr/gf100.c
-+++ b/drm/nouveau/nvkm/engine/gr/gf100.c
-@@ -27,6 +27,7 @@
- 
- #include <core/client.h>
- #include <core/option.h>
-+#include <core/secure_boot.h>
- #include <subdev/fb.h>
- #include <subdev/mc.h>
- #include <subdev/pmu.h>
-@@ -1342,16 +1343,40 @@ gf100_gr_init_ctxctl(struct gf100_gr *gr)
- 	if (gr->firmware) {
- 		/* load fuc microcode */
- 		nvkm_mc_unk260(device->mc, 0);
--		gf100_gr_init_fw(gr, 0x409000, &gr->fuc409c, &gr->fuc409d);
--		gf100_gr_init_fw(gr, 0x41a000, &gr->fuc41ac, &gr->fuc41ad);
-+
-+		if (nvkm_is_secure(device, LSF_FALCON_ID_FECS) ||
-+		    nvkm_is_secure(device, LSF_FALCON_ID_GPCCS)) {
-+			int err = nvkm_secure_boot(subdev->device);
-+
-+			if (err)
-+				return err;
-+		}
-+
-+		if (!nvkm_is_secure(device, LSF_FALCON_ID_FECS))
-+			gf100_gr_init_fw(gr, 0x409000, &gr->fuc409c,
-+					 &gr->fuc409d);
-+
-+		if (!nvkm_is_secure(device, LSF_FALCON_ID_GPCCS))
-+			gf100_gr_init_fw(gr, 0x41a000, &gr->fuc41ac,
-+					 &gr->fuc41ad);
-+
- 		nvkm_mc_unk260(device->mc, 1);
- 
- 		/* start both of them running */
- 		nvkm_wr32(device, 0x409840, 0xffffffff);
- 		nvkm_wr32(device, 0x41a10c, 0x00000000);
- 		nvkm_wr32(device, 0x40910c, 0x00000000);
--		nvkm_wr32(device, 0x41a100, 0x00000002);
--		nvkm_wr32(device, 0x409100, 0x00000002);
-+		/* Use FALCON_CPUCTL_ALIAS if falcon is in secure mode */
-+		if (nvkm_rd32(device, 0x41a100) & 0x40)
-+			nvkm_wr32(device, 0x41a130, 0x00000002);
-+		else
-+			nvkm_wr32(device, 0x41a100, 0x00000002);
-+
-+		/* Use FALCON_CPUCTL_ALIAS if falcon is in secure mode */
-+		if (nvkm_rd32(device, 0x409100) & 0x40)
-+			nvkm_wr32(device, 0x409130, 0x00000002);
-+		else
-+			nvkm_wr32(device, 0x409100, 0x00000002);
- 		if (nvkm_msec(device, 2000,
- 			if (nvkm_rd32(device, 0x409800) & 0x00000001)
- 				break;
-@@ -1659,6 +1684,7 @@ int
- gf100_gr_ctor(const struct gf100_gr_func *func, struct nvkm_device *device,
- 	      int index, struct gf100_gr *gr)
- {
-+	struct nvkm_subdev *subdev = &gr->base.engine.subdev;
- 	int ret;
- 
- 	gr->func = func;
-@@ -1672,12 +1698,22 @@ gf100_gr_ctor(const struct gf100_gr_func *func, struct nvkm_device *device,
- 		return ret;
- 
- 	if (gr->firmware) {
--		nvkm_info(&gr->base.engine.subdev, "using external firmware\n");
--		if (gf100_gr_ctor_fw(gr, "fecs_inst", &gr->fuc409c) ||
--		    gf100_gr_ctor_fw(gr, "fecs_data", &gr->fuc409d) ||
--		    gf100_gr_ctor_fw(gr, "gpccs_inst", &gr->fuc41ac) ||
--		    gf100_gr_ctor_fw(gr, "gpccs_data", &gr->fuc41ad))
--			return -ENODEV;
-+		nvkm_info(subdev, "using external firmware\n");
-+		if (!nvkm_is_secure(device, LSF_FALCON_ID_FECS)) {
-+			if (gf100_gr_ctor_fw(gr, "fecs_inst", &gr->fuc409c) ||
-+			    gf100_gr_ctor_fw(gr, "fecs_data", &gr->fuc409d))
-+				return -ENODEV;
-+		} else {
-+			nvkm_info(subdev, "FECS firmware securely managed\n");
-+		}
-+
-+		if (!nvkm_is_secure(device, LSF_FALCON_ID_GPCCS)) {
-+			if (gf100_gr_ctor_fw(gr, "gpccs_inst", &gr->fuc41ac) ||
-+			    gf100_gr_ctor_fw(gr, "gpccs_data", &gr->fuc41ad))
-+				return -ENODEV;
-+		} else {
-+			nvkm_info(subdev, "GPCCS firmware securely managed\n");
-+		}
- 	}
- 
- 	return 0;
--- 
-2.6.1
+On Mon, Oct 19, 2015 at 1:57 PM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> This series makes U-boot program the write-protected (WPR) region of T210 chips,
+> allowing the kernel to perform GPU secure firmware loading.
+>
+> Tegra 210's GPU requires its firmware to be loaded though a write-protected
+> region. An area of physical memory is carved-out, programmed into the
+> corresponding memory controller registers, and locked such as only the GPU can
+> write into it. This area needs to be set up by the bootloader since it cannot
+> be re-claimed for normal use after being locked.
+>
+> The first 3 patches of this series are cleanup patches. Patch 2 implements a
+> suggestion made by Stephen, patch 3 renames GPU-related functions to sound less
+> generic.
+>
+> The last patch adds support for the GPU WPR region. The top 256KB of memory are
+> removed from the available memory, and the corresponding MC registers are
+> programmed to point to it, which allows the kernel to initiate secure firmware
+> loading.
+>
+> Alexandre Courbot (4):
+>   ARM: tegra: remove vpr_configured() function
+>   ARM: tegra: simplify GPU setup
+>   ARM: tegra: rename GPU functions
+>   ARM: tegra210: gpu: configure WPR region
+>
+>  arch/arm/include/asm/arch-tegra/gpu.h   | 14 +++------
+>  arch/arm/include/asm/arch-tegra210/mc.h | 12 ++++++++
+>  arch/arm/mach-tegra/board.c             |  4 +++
+>  arch/arm/mach-tegra/board2.c            | 22 +++++++++++++-
+>  arch/arm/mach-tegra/gpu.c               | 52 +++++++++++++++++++++++++++++----
+>  board/nvidia/jetson-tk1/jetson-tk1.c    |  8 -----
+>  board/nvidia/p2571/p2571.c              |  7 -----
+>  board/nvidia/venice2/venice2.c          |  8 -----
+>  include/configs/jetson-tk1.h            |  2 --
+>  include/configs/p2571.h                 |  2 --
+>  include/configs/tegra-common.h          |  2 ++
+>  include/configs/venice2.h               |  2 --
+>  12 files changed, 89 insertions(+), 46 deletions(-)
+>
+> --
+> 2.6.1
+>
