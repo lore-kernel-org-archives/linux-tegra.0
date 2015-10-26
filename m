@@ -1,58 +1,58 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 0/4] ARM: tegra: GPU WPR region support
-Date: Mon, 26 Oct 2015 14:50:21 +0900
-Message-ID: <CAAVeFuLENPfjy1k2ZTUArTph_6wbAxXninZ2Tmp6-MV4zVgaHw@mail.gmail.com>
-References: <1445230624-30314-1-git-send-email-acourbot@nvidia.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH 06/19] input: tegra-kbc: enable support for the standard
+ "wakeup-source" property
+Date: Mon, 26 Oct 2015 01:33:54 -0700
+Message-ID: <20151026083354.GA13056@localhost>
+References: <1445422216-29375-1-git-send-email-sudeep.holla@arm.com>
+ <1445422216-29375-7-git-send-email-sudeep.holla@arm.com>
+ <20151023063946.GA38047@dtor-ws>
+ <562A0AB7.3080607@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1445230624-30314-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <562A0AB7.3080607@arm.com>
+Sender: linux-input-owner@vger.kernel.org
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Ping Tom, how does this look to you?
+On Fri, Oct 23, 2015 at 11:23:51AM +0100, Sudeep Holla wrote:
+> 
+> 
+> On 23/10/15 07:39, Dmitry Torokhov wrote:
+> >On Wed, Oct 21, 2015 at 11:10:03AM +0100, Sudeep Holla wrote:
+> >>Though the mmc core driver should/will continue to support the legacy
+> >>"nvidia,wakeup-source" property to enable SDIO as the wakeup source, we
+> >>need to add support for the new standard property "wakeup-source".
+> >>
+> >>This patch adds support for "wakeup-source" property in addition to the
+> >>existing "nvidia,wakeup-source" property.
+> >>
+> >>Cc: Laxman Dewangan <ldewangan@nvidia.com>
+> >>Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> >>Cc: Thierry Reding <thierry.reding@gmail.com>
+> >>Cc: linux-input@vger.kernel.org
+> >>Cc: linux-tegra@vger.kernel.org
+> >>Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> >
+> >Applied, thank you.
+> >
+> 
+> Thanks, but I think I sent out a old copy which had unrelated commit
+> message because of copy-paste. *Sorry for that*. Can you update it
+> something like:
+> 
+> "
+> Though the tegra-kbc driver should/will continue to support the legacy
+> "nvidia,wakeup-source" property to enable keyboard as the wakeup source,
+> we need to add support for the new standard property "wakeup-source".
+> 
+> This patch adds support for "wakeup-source" property in addition to the
+> existing "nvidia,wakeup-source" property.
+> "
 
-On Mon, Oct 19, 2015 at 1:57 PM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> This series makes U-boot program the write-protected (WPR) region of T210 chips,
-> allowing the kernel to perform GPU secure firmware loading.
->
-> Tegra 210's GPU requires its firmware to be loaded though a write-protected
-> region. An area of physical memory is carved-out, programmed into the
-> corresponding memory controller registers, and locked such as only the GPU can
-> write into it. This area needs to be set up by the bootloader since it cannot
-> be re-claimed for normal use after being locked.
->
-> The first 3 patches of this series are cleanup patches. Patch 2 implements a
-> suggestion made by Stephen, patch 3 renames GPU-related functions to sound less
-> generic.
->
-> The last patch adds support for the GPU WPR region. The top 256KB of memory are
-> removed from the available memory, and the corresponding MC registers are
-> programmed to point to it, which allows the kernel to initiate secure firmware
-> loading.
->
-> Alexandre Courbot (4):
->   ARM: tegra: remove vpr_configured() function
->   ARM: tegra: simplify GPU setup
->   ARM: tegra: rename GPU functions
->   ARM: tegra210: gpu: configure WPR region
->
->  arch/arm/include/asm/arch-tegra/gpu.h   | 14 +++------
->  arch/arm/include/asm/arch-tegra210/mc.h | 12 ++++++++
->  arch/arm/mach-tegra/board.c             |  4 +++
->  arch/arm/mach-tegra/board2.c            | 22 +++++++++++++-
->  arch/arm/mach-tegra/gpu.c               | 52 +++++++++++++++++++++++++++++----
->  board/nvidia/jetson-tk1/jetson-tk1.c    |  8 -----
->  board/nvidia/p2571/p2571.c              |  7 -----
->  board/nvidia/venice2/venice2.c          |  8 -----
->  include/configs/jetson-tk1.h            |  2 --
->  include/configs/p2571.h                 |  2 --
->  include/configs/tegra-common.h          |  2 ++
->  include/configs/venice2.h               |  2 --
->  12 files changed, 89 insertions(+), 46 deletions(-)
->
-> --
-> 2.6.1
->
+Thanks, I replaced the description with what you supplied.
+
+-- 
+Dmitry
