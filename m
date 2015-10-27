@@ -1,71 +1,51 @@
-From: Jisheng Zhang <jszhang@marvell.com>
-Subject: Re: [RFC PATCH 1/3] PCI: iproc: generate proper configuration
- access cycles
-Date: Tue, 27 Oct 2015 10:18:20 +0800
-Message-ID: <20151027101820.2d2a1368@xhacker>
-References: <1445857334-6936-1-git-send-email-jszhang@marvell.com>
-	<1445857334-6936-2-git-send-email-jszhang@marvell.com>
-	<562E6056.3040203@broadcom.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [GIT PULL] On-demand device probing
+Date: Tue, 27 Oct 2015 06:03:43 +0100
+Message-ID: <10275162.nPuKaJCcTU@vostro.rjw.lan>
+References: <Pine.LNX.4.44L0.1510201159400.1855-100000@iolanthe.rowland.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <562E6056.3040203@broadcom.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Ray Jui <rjui@broadcom.com>
-Cc: bhelgaas@google.com, thierry.reding@gmail.com, swarren@wwwdotorg.org, gnurou@gmail.com, tinamdar@apm.com, sbranden@broadcom.com, linux@arm.linux.org.uk, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, bcm-kernel-feedback-list@broadcom.com
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <Pine.LNX.4.44L0.1510201159400.1855-100000@iolanthe.rowland.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gma>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 26 Oct 2015 10:18:14 -0700
-Ray Jui <rjui@broadcom.com> wrote:
+On Tuesday, October 20, 2015 12:04:05 PM Alan Stern wrote:
+> On Tue, 20 Oct 2015, Mark Brown wrote:
+> 
+> > On Tue, Oct 20, 2015 at 10:40:03AM -0400, Alan Stern wrote:
+> > 
+> > > Furthermore, that applies only to devices that use synchronous suspend.  
+> > > Async suspend is becoming common, and there the only restrictions are 
+> > > parent-child relations plus whatever explicit requirements that drivers 
+> > > impose by calling device_pm_wait_for_dev().
+> > 
+> > Hrm, this is the first I'd noticed that feature though I see the initial
+> > commit dates from January.
+> 
+> Async suspend and device_pm_wait_for_dev() were added in January 2010, 
+> not 2015!
+> 
+> >  It looks like most of the users are PCs at
+> > the minute but we should be using it more widely for embedded things,
+> > there's definitely some cases I'm aware of where it will allow us to
+> > remove some open coding.
+> > 
+> > It does seem like we want to be feeding dependency information we
+> > discover for probing way into the suspend dependencies...
+> 
+> Rafael has been thinking about a way to do this systematically.  
+> Nothing concrete has emerged yet.
 
-> Hi Jisheng,
-> 
-> On 10/26/2015 4:02 AM, Jisheng Zhang wrote:
-> > Inspired by Russell King's patch[1], I found current iproc also has the
-> > same issue of "reading 32-bits from the command register, modifying the
-> > command register, and then writing it back has the effect of clearing
-> > any status bits that were indicating at that time" as pointed out by
-> > Russell. This patch fix this issue by using the pci_generic_config_write.
-> >
-> > [1]http://www.spinics.net/lists/linux-pci/msg44869.html
-> >
-> > Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
-> > ---
-> >   drivers/pci/host/pcie-iproc.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/pci/host/pcie-iproc.c b/drivers/pci/host/pcie-iproc.c
-> > index fe2efb1..0c423f2 100644
-> > --- a/drivers/pci/host/pcie-iproc.c
-> > +++ b/drivers/pci/host/pcie-iproc.c
-> > @@ -111,7 +111,7 @@ static void __iomem *iproc_pcie_map_cfg_bus(struct pci_bus *bus,
-> >   static struct pci_ops iproc_pcie_ops = {
-> >   	.map_bus = iproc_pcie_map_cfg_bus,
-> >   	.read = pci_generic_config_read32,
-> > -	.write = pci_generic_config_write32,
-> > +	.write = pci_generic_config_write,
-> >   };
-> >
-> >   static void iproc_pcie_reset(struct iproc_pcie *pcie)
-> >  
-> 
-> I have already confirmed with the ASIC team that the current iProc PCIe 
-> controller requires 32-bit aligned access into the configuration space 
-> due to the way how it was integrated into various iProc SoCs including 
-> NSP, Cygnus, and NS2.
-> 
-> This change will prevent the driver from working properly.
-> 
-> I've informed our ASIC team about this issue and all future iProc based 
-> SoCs should be able to support 8-bit, 16-bit access and therefore 
-> pci_generic_config_write/read can be used for those SoCs.
-> 
-> Thanks,
-> 
-> Ray
+Well, good point. :-)
 
-Got it. 
+I've been kind of struggling with finding time to work on the patches lately
+and some aspects of the design are still not finalized.  It seems, though, that
+it can be beneficial to discuss the approach in general, so let me start a new
+thread for that.
 
-Thanks for the information,
-Jisheng
+Thanks,
+Rafael
