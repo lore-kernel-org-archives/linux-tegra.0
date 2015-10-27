@@ -1,51 +1,44 @@
-From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [GIT PULL] On-demand device probing
-Date: Tue, 27 Oct 2015 06:03:43 +0100
-Message-ID: <10275162.nPuKaJCcTU@vostro.rjw.lan>
-References: <Pine.LNX.4.44L0.1510201159400.1855-100000@iolanthe.rowland.org>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V3 2/2] dmaengine: tegra-adma: Add support for Tegra210
+ ADMA
+Date: Tue, 27 Oct 2015 09:24:01 +0000
+Message-ID: <562F42B1.30102@nvidia.com>
+References: <1444980919-20331-1-git-send-email-jonathanh@nvidia.com>
+ <1444980919-20331-3-git-send-email-jonathanh@nvidia.com>
+ <20151027021008.GD11691@vkoul-mobl.iind.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <Pine.LNX.4.44L0.1510201159400.1855-100000@iolanthe.rowland.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alan Stern <stern@rowland.harvard.edu>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Tomeu Vizoso <tomeu.vizoso@collabora.com>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Vinod Koul <vinod.koul@intel.com>, Dan Williams <dan.j.williams@intel.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Terje =?ISO-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Wolfram Sang <wsa@the-dreams.de>, Frank Rowand <frowand.list@gmail.com>, Grant Likely <grant.likely@linaro.org>, Kishon Vijay Abraham I <kishon@ti.com>, Sebastian Reichel <sre@kernel.org>, Dmitry Eremin-Solenikov <dbaryshkov@gma>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20151027021008.GD11691-bQVUxfxUtC13uc1i7fC1zK2pdiUAq4bhAL8bYrjMMd8@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday, October 20, 2015 12:04:05 PM Alan Stern wrote:
-> On Tue, 20 Oct 2015, Mark Brown wrote:
-> 
-> > On Tue, Oct 20, 2015 at 10:40:03AM -0400, Alan Stern wrote:
-> > 
-> > > Furthermore, that applies only to devices that use synchronous suspend.  
-> > > Async suspend is becoming common, and there the only restrictions are 
-> > > parent-child relations plus whatever explicit requirements that drivers 
-> > > impose by calling device_pm_wait_for_dev().
-> > 
-> > Hrm, this is the first I'd noticed that feature though I see the initial
-> > commit dates from January.
-> 
-> Async suspend and device_pm_wait_for_dev() were added in January 2010, 
-> not 2015!
-> 
-> >  It looks like most of the users are PCs at
-> > the minute but we should be using it more widely for embedded things,
-> > there's definitely some cases I'm aware of where it will allow us to
-> > remove some open coding.
-> > 
-> > It does seem like we want to be feeding dependency information we
-> > discover for probing way into the suspend dependencies...
-> 
-> Rafael has been thinking about a way to do this systematically.  
-> Nothing concrete has emerged yet.
 
-Well, good point. :-)
+On 27/10/15 02:10, Vinod Koul wrote:
+> On Fri, Oct 16, 2015 at 08:35:19AM +0100, Jon Hunter wrote:
+>> +static inline void tdma_ch_write(struct tegra_adma_chan *tdc,
+>> +		u32 reg, u32 val)
+> 
+> Coding style issue here
 
-I've been kind of struggling with finding time to work on the patches lately
-and some aspects of the design are still not finalized.  It seems, though, that
-it can be beneficial to discuss the approach in general, so let me start a new
-thread for that.
+Yes will correct.
 
-Thanks,
-Rafael
+>> +static int tegra_adma_alloc_chan_resources(struct dma_chan *dc)
+>> +{
+>> +	struct tegra_adma_chan *tdc = to_tegra_adma_chan(dc);
+>> +	int ret;
+>> +
+>> +	ret = pm_runtime_get_sync(tdc2dev(tdc));
+>> +	if (ret)
+>> +		return ret;
+> 
+> pm_runtime_get_sync() return postive values on success too, so this can
+> fail. This check should be for less than zero case
+
+I stumbled upon that recently and will also fix up.
+
+Cheers
+Jon
