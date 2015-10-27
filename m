@@ -1,66 +1,39 @@
-From: Tom Warren <TWarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [PATCH 0/4] ARM: tegra: GPU WPR region support
-Date: Tue, 27 Oct 2015 15:57:52 +0000
-Message-ID: <caa39e0a12454046a1638aae190f0161@HQMAIL104.nvidia.com>
-References: <1445230624-30314-1-git-send-email-acourbot@nvidia.com>
- <CAAVeFuLENPfjy1k2ZTUArTph_6wbAxXninZ2Tmp6-MV4zVgaHw@mail.gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] pinctrl: tegra-xusb: Correct lane mux options
+Date: Tue, 27 Oct 2015 17:07:11 +0100
+Message-ID: <CACRpkdZXnmMufmAmjK7SiRZeLE16FD17krCfH4YD5MQOPt5ZPw@mail.gmail.com>
+References: <1444987441-25176-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAVeFuLENPfjy1k2ZTUArTph_6wbAxXninZ2Tmp6-MV4zVgaHw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Content-Language: en-US
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alex Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org" <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1444987441-25176-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-U29ycnksIEFsZXguIE1pc3NlZCB0aGVzZS4NCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0t
-LQ0KPiBGcm9tOiBBbGV4YW5kcmUgQ291cmJvdCBbbWFpbHRvOmdudXJvdUBnbWFpbC5jb21dDQo+
-IFNlbnQ6IFN1bmRheSwgT2N0b2JlciAyNSwgMjAxNSAxMDo1MCBQTQ0KPiBUbzogQWxleCBDb3Vy
-Ym90IDxhY291cmJvdEBudmlkaWEuY29tPg0KPiBDYzogVG9tIFdhcnJlbiA8VFdhcnJlbkBudmlk
-aWEuY29tPjsgU3RlcGhlbiBXYXJyZW4NCj4gPHN3YXJyZW5AbnZpZGlhLmNvbT47IFRoaWVycnkg
-UmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+OyB1LQ0KPiBib290QGxpc3RzLmRlbnguZGU7IGxp
-bnV4LXRlZ3JhQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIDAvNF0gQVJN
-OiB0ZWdyYTogR1BVIFdQUiByZWdpb24gc3VwcG9ydA0KPiANCj4gUGluZyBUb20sIGhvdyBkb2Vz
-IHRoaXMgbG9vayB0byB5b3U/DQpMb29rcyBwcmV0dHkgZ29vZCwgYnV0IHdoYXQgYWJvdXQgc2F2
-aW5nIHRoZSBzZWN1cml0eV9jYXJ2ZW91dCByZWcgc2V0dGluZ3MgYmFjayB0byB0aGUgQkNUIG9y
-IHNjcmF0Y2ggcmVncyBzbyB0aG9zZSBzZXR0aW5ncyB3aWxsIGJlIHJlc3RvcmVkIG9uIExQMCBy
-ZXN1bWU/DQoNClRvbQ0KLS0NCm52cHVibGljDQo+IA0KPiBPbiBNb24sIE9jdCAxOSwgMjAxNSBh
-dCAxOjU3IFBNLCBBbGV4YW5kcmUgQ291cmJvdCA8YWNvdXJib3RAbnZpZGlhLmNvbT4NCj4gd3Jv
-dGU6DQo+ID4gVGhpcyBzZXJpZXMgbWFrZXMgVS1ib290IHByb2dyYW0gdGhlIHdyaXRlLXByb3Rl
-Y3RlZCAoV1BSKSByZWdpb24gb2YNCj4gPiBUMjEwIGNoaXBzLCBhbGxvd2luZyB0aGUga2VybmVs
-IHRvIHBlcmZvcm0gR1BVIHNlY3VyZSBmaXJtd2FyZSBsb2FkaW5nLg0KPiA+DQo+ID4gVGVncmEg
-MjEwJ3MgR1BVIHJlcXVpcmVzIGl0cyBmaXJtd2FyZSB0byBiZSBsb2FkZWQgdGhvdWdoIGENCj4g
-PiB3cml0ZS1wcm90ZWN0ZWQgcmVnaW9uLiBBbiBhcmVhIG9mIHBoeXNpY2FsIG1lbW9yeSBpcyBj
-YXJ2ZWQtb3V0LA0KPiA+IHByb2dyYW1tZWQgaW50byB0aGUgY29ycmVzcG9uZGluZyBtZW1vcnkg
-Y29udHJvbGxlciByZWdpc3RlcnMsIGFuZA0KPiA+IGxvY2tlZCBzdWNoIGFzIG9ubHkgdGhlIEdQ
-VSBjYW4gd3JpdGUgaW50byBpdC4gVGhpcyBhcmVhIG5lZWRzIHRvIGJlDQo+ID4gc2V0IHVwIGJ5
-IHRoZSBib290bG9hZGVyIHNpbmNlIGl0IGNhbm5vdCBiZSByZS1jbGFpbWVkIGZvciBub3JtYWwg
-dXNlIGFmdGVyDQo+IGJlaW5nIGxvY2tlZC4NCj4gPg0KPiA+IFRoZSBmaXJzdCAzIHBhdGNoZXMg
-b2YgdGhpcyBzZXJpZXMgYXJlIGNsZWFudXAgcGF0Y2hlcy4gUGF0Y2ggMg0KPiA+IGltcGxlbWVu
-dHMgYSBzdWdnZXN0aW9uIG1hZGUgYnkgU3RlcGhlbiwgcGF0Y2ggMyByZW5hbWVzIEdQVS1yZWxh
-dGVkDQo+ID4gZnVuY3Rpb25zIHRvIHNvdW5kIGxlc3MgZ2VuZXJpYy4NCj4gPg0KPiA+IFRoZSBs
-YXN0IHBhdGNoIGFkZHMgc3VwcG9ydCBmb3IgdGhlIEdQVSBXUFIgcmVnaW9uLiBUaGUgdG9wIDI1
-NktCIG9mDQo+ID4gbWVtb3J5IGFyZSByZW1vdmVkIGZyb20gdGhlIGF2YWlsYWJsZSBtZW1vcnks
-IGFuZCB0aGUgY29ycmVzcG9uZGluZyBNQw0KPiA+IHJlZ2lzdGVycyBhcmUgcHJvZ3JhbW1lZCB0
-byBwb2ludCB0byBpdCwgd2hpY2ggYWxsb3dzIHRoZSBrZXJuZWwgdG8NCj4gPiBpbml0aWF0ZSBz
-ZWN1cmUgZmlybXdhcmUgbG9hZGluZy4NCj4gPg0KPiA+IEFsZXhhbmRyZSBDb3VyYm90ICg0KToN
-Cj4gPiAgIEFSTTogdGVncmE6IHJlbW92ZSB2cHJfY29uZmlndXJlZCgpIGZ1bmN0aW9uDQo+ID4g
-ICBBUk06IHRlZ3JhOiBzaW1wbGlmeSBHUFUgc2V0dXANCj4gPiAgIEFSTTogdGVncmE6IHJlbmFt
-ZSBHUFUgZnVuY3Rpb25zDQo+ID4gICBBUk06IHRlZ3JhMjEwOiBncHU6IGNvbmZpZ3VyZSBXUFIg
-cmVnaW9uDQo+ID4NCj4gPiAgYXJjaC9hcm0vaW5jbHVkZS9hc20vYXJjaC10ZWdyYS9ncHUuaCAg
-IHwgMTQgKysrLS0tLS0tDQo+ID4gIGFyY2gvYXJtL2luY2x1ZGUvYXNtL2FyY2gtdGVncmEyMTAv
-bWMuaCB8IDEyICsrKysrKysrDQo+ID4gIGFyY2gvYXJtL21hY2gtdGVncmEvYm9hcmQuYyAgICAg
-ICAgICAgICB8ICA0ICsrKw0KPiA+ICBhcmNoL2FybS9tYWNoLXRlZ3JhL2JvYXJkMi5jICAgICAg
-ICAgICAgfCAyMiArKysrKysrKysrKysrLQ0KPiA+ICBhcmNoL2FybS9tYWNoLXRlZ3JhL2dwdS5j
-ICAgICAgICAgICAgICAgfCA1Mg0KPiArKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0N
-Cj4gPiAgYm9hcmQvbnZpZGlhL2pldHNvbi10azEvamV0c29uLXRrMS5jICAgIHwgIDggLS0tLS0N
-Cj4gPiAgYm9hcmQvbnZpZGlhL3AyNTcxL3AyNTcxLmMgICAgICAgICAgICAgIHwgIDcgLS0tLS0N
-Cj4gPiAgYm9hcmQvbnZpZGlhL3ZlbmljZTIvdmVuaWNlMi5jICAgICAgICAgIHwgIDggLS0tLS0N
-Cj4gPiAgaW5jbHVkZS9jb25maWdzL2pldHNvbi10azEuaCAgICAgICAgICAgIHwgIDIgLS0NCj4g
-PiAgaW5jbHVkZS9jb25maWdzL3AyNTcxLmggICAgICAgICAgICAgICAgIHwgIDIgLS0NCj4gPiAg
-aW5jbHVkZS9jb25maWdzL3RlZ3JhLWNvbW1vbi5oICAgICAgICAgIHwgIDIgKysNCj4gPiAgaW5j
-bHVkZS9jb25maWdzL3ZlbmljZTIuaCAgICAgICAgICAgICAgIHwgIDIgLS0NCj4gPiAgMTIgZmls
-ZXMgY2hhbmdlZCwgODkgaW5zZXJ0aW9ucygrKSwgNDYgZGVsZXRpb25zKC0pDQo+ID4NCj4gPiAt
-LQ0KPiA+IDIuNi4xDQo+ID4NCg==
+On Fri, Oct 16, 2015 at 11:24 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
+
+> The description of the XUSB_PADCTL_USB3_PAD_MUX_0 register in the Tegra124
+> documentation implies that all functions (pcie, usb3 and sata) can be
+> muxed onto to all lanes (pcie lanes 0-4 and sata lane 0). However, it has
+> been confirmed that this is not the case and the mux'ing options much more
+> limited. Unfortunately, the public documentation has not been updated to
+> reflect this and so detail the actual mux'ing options here by function:
+>
+> Function:               Lanes:
+> pcie1 x2:               pcie3, pcie4
+> pcie1 x4:               pcie1, pcie2, pcie3, pcie4
+> pcie2 x1 (option1):     pcie0
+> pcie2 x1 (option2):     pcie2
+> usb3 port 0:            pcie0
+> usb3 port 1 (option 1): pcie1
+> usb3 port 1 (option 2): sata0
+> sata:                   sata0
+>
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+
+Patch applied with Stephen's ACK.
+
+Yours,
+Linus Walleij
