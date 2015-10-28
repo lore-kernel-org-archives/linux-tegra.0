@@ -1,43 +1,66 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 6/6] dmaengine: tegra-apb: Disable interrupts on removal
-Date: Wed, 28 Oct 2015 13:34:06 +0000
-Message-ID: <5630CECE.2000600@nvidia.com>
-References: <1444983957-18691-1-git-send-email-jonathanh@nvidia.com>
- <1444983957-18691-7-git-send-email-jonathanh@nvidia.com>
- <5620BB0E.9040400@metafoo.de> <5620C383.3060104@nvidia.com>
- <5620D42A.8060007@metafoo.de> <5620D7FE.2010205@nvidia.com>
- <20151028065339.GE3041@vkoul-mobl.iind.intel.com>
+From: Tom Warren <TWarren@nvidia.com>
+Subject: Re: [PATCH 0/4] ARM: tegra: GPU WPR region support
+Date: Wed, 28 Oct 2015 15:44:08 +0000
+Message-ID: <b2143f6e4b114bf2acf63cac1269687a@HQMAIL104.nvidia.com>
+References: <1445230624-30314-1-git-send-email-acourbot@nvidia.com>
+ <CAAVeFuLENPfjy1k2ZTUArTph_6wbAxXninZ2Tmp6-MV4zVgaHw@mail.gmail.com>
+ <caa39e0a12454046a1638aae190f0161@HQMAIL104.nvidia.com>
+ <CAAVeFuKdUag3dqED9ViB0Nb3vicVVp7oayZ8Uv44Zv-osPWMig@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20151028065339.GE3041-bQVUxfxUtC13uc1i7fC1zK2pdiUAq4bhAL8bYrjMMd8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <u-boot-bounces@lists.denx.de>
+In-Reply-To: <CAAVeFuKdUag3dqED9ViB0Nb3vicVVp7oayZ8Uv44Zv-osPWMig@mail.gmail.com>
+Content-Language: en-US
+List-Unsubscribe: <http://lists.denx.de/mailman/options/u-boot>,
+ <mailto:u-boot-request@lists.denx.de?subject=unsubscribe>
+List-Archive: <http://lists.denx.de/pipermail/u-boot/>
+List-Post: <mailto:u-boot@lists.denx.de>
+List-Help: <mailto:u-boot-request@lists.denx.de?subject=help>
+List-Subscribe: <http://lists.denx.de/mailman/listinfo/u-boot>,
+ <mailto:u-boot-request@lists.denx.de?subject=subscribe>
+Errors-To: u-boot-bounces@lists.denx.de
+Sender: "U-Boot" <u-boot-bounces@lists.denx.de>
+To: Alexandre Courbot <gnurou@gmail.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>, Thierry Reding <treding@nvidia.com>, "u-boot@lists.denx.de" <u-boot@lists.denx.de>
 List-Id: linux-tegra@vger.kernel.org
 
+Alex,
 
-On 28/10/15 06:53, Vinod Koul wrote:
-> On Fri, Oct 16, 2015 at 11:57:02AM +0100, Jon Hunter wrote:
->>>>> How about just calling free_irq()? That's how you'd typically handle this.
->>>>
->>>> Yes, however, the interrupt is requested by devm_request_irq(). I guess
->>>> I could call devm_free_irq() here?
->>>
->>> Just use request_irq() instead of devm_request_irq(). You have the same
->>> issue on the error path in the probe function anyway and also need to add
->>> the free_irq() before the tasklet_kill() there as well.
->>
->> I was wondering about that but the tasklets should never be scheduled if
->> the probe does not succeed, so I think it is ok.
+> -----Original Message-----
+> From: Alexandre Courbot [mailto:gnurou@gmail.com]
+> Sent: Wednesday, October 28, 2015 2:13 AM
+> To: Tom Warren <TWarren@nvidia.com>
+> Cc: Alex Courbot <acourbot@nvidia.com>; Stephen Warren
+> <swarren@nvidia.com>; Thierry Reding <treding@nvidia.com>; u-
+> boot@lists.denx.de; linux-tegra@vger.kernel.org
+> Subject: Re: [PATCH 0/4] ARM: tegra: GPU WPR region support
 > 
-> This is actually very racy, if probe fails but due to devm_ calls your irq
-> is alive till it freed by core
+> On Wed, Oct 28, 2015 at 12:57 AM, Tom Warren <TWarren@nvidia.com>
+> wrote:
+> > Sorry, Alex. Missed these.
+> >
+> >> -----Original Message-----
+> >> From: Alexandre Courbot [mailto:gnurou@gmail.com]
+> >> Sent: Sunday, October 25, 2015 10:50 PM
+> >> To: Alex Courbot <acourbot@nvidia.com>
+> >> Cc: Tom Warren <TWarren@nvidia.com>; Stephen Warren
+> >> <swarren@nvidia.com>; Thierry Reding <treding@nvidia.com>; u-
+> >> boot@lists.denx.de; linux-tegra@vger.kernel.org
+> >> Subject: Re: [PATCH 0/4] ARM: tegra: GPU WPR region support
+> >>
+> >> Ping Tom, how does this look to you?
+> > Looks pretty good, but what about saving the security_carveout reg settings
+> back to the BCT or scratch regs so those settings will be restored on LP0
+> resume?
 > 
-> And a faulty device triggering irq can complicate matters, so for irq IMHO
-> we don't get much benefit with devm_ variant
+> Absolutely - I am not familiar at all with BCT or scratch registers (and U-boot in
+> general :) ) though, could you point me to some part of the code which I could
+> use as a reference for this?
+> 
+> Also, how can I decide which mechanism to use over the other?
+I'll have to refresh my meat RAM on how U-Boot handles LP0 WRT BCT/scratch regs, but in coreboot I had to 'flush' the updated carveout regs back to the BCT copy in SDRAM so that they'd be properly restored on resume. I only pushed the modified regs (BOM and CFG0, IIRC).  If you have access to Google's coreboot repo, look in src/soc/nvidia/tegra210/sdram_lp0.c, commit ID 920968258. Or just Google for sdram_lp0.c, should be the top hit.
 
-That's fine, I will drop the devm_ usage here then.
-
-Jon
+> 
+> Thanks,
+> Alex.
