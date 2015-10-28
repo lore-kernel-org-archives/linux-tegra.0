@@ -1,41 +1,66 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [PATCH 6/6] dmaengine: tegra-apb: Disable interrupts on removal
-Date: Wed, 28 Oct 2015 15:53:41 +0900
-Message-ID: <20151028065339.GE3041@vkoul-mobl.iind.intel.com>
+From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/6] dmaengine: tegra-apb: Correct runtime-pm usage
+Date: Wed, 28 Oct 2015 16:03:47 +0900
+Message-ID: <20151028070345.GF3041@vkoul-mobl.iind.intel.com>
 References: <1444983957-18691-1-git-send-email-jonathanh@nvidia.com>
- <1444983957-18691-7-git-send-email-jonathanh@nvidia.com>
- <5620BB0E.9040400@metafoo.de>
- <5620C383.3060104@nvidia.com>
- <5620D42A.8060007@metafoo.de>
- <5620D7FE.2010205@nvidia.com>
+ <1444983957-18691-2-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <5620D7FE.2010205@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1444983957-18691-2-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Oct 16, 2015 at 11:57:02AM +0100, Jon Hunter wrote:
-> >>> How about just calling free_irq()? That's how you'd typically handle this.
-> >>
-> >> Yes, however, the interrupt is requested by devm_request_irq(). I guess
-> >> I could call devm_free_irq() here?
-> > 
-> > Just use request_irq() instead of devm_request_irq(). You have the same
-> > issue on the error path in the probe function anyway and also need to add
-> > the free_irq() before the tasklet_kill() there as well.
-> 
-> I was wondering about that but the tasklets should never be scheduled if
-> the probe does not succeed, so I think it is ok.
+On Fri, Oct 16, 2015 at 09:25:52AM +0100, Jon Hunter wrote:
+> @@ -1182,14 +1182,11 @@ static int tegra_dma_alloc_chan_resources(struct dma_chan *dc)
+>  {
+>  	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
+>  	struct tegra_dma *tdma = tdc->tdma;
+> -	int ret;
+>  
+>  	dma_cookie_init(&tdc->dma_chan);
+>  	tdc->config_init = false;
+> -	ret = clk_prepare_enable(tdma->dma_clk);
+> -	if (ret < 0)
+> -		dev_err(tdc2dev(tdc), "clk_prepare_enable failed: %d\n", ret);
+> -	return ret;
+> +
+> +	return pm_runtime_get_sync(tdma->dev);
 
-This is actually very racy, if probe fails but due to devm_ calls your irq
-is alive till it freed by core
+Alloc channel is supposed to return number of descriptors allocated and if
+pm_runtime_get_sync() returns postive values we get wrong return!
 
-And a faulty device triggering irq can complicate matters, so for irq IMHO
-we don't get much benefit with devm_ variant
+>  	pm_runtime_enable(&pdev->dev);
+> -	if (!pm_runtime_enabled(&pdev->dev)) {
+> +	if (!pm_runtime_enabled(&pdev->dev))
+>  		ret = tegra_dma_runtime_resume(&pdev->dev);
+> -		if (ret) {
+> -			dev_err(&pdev->dev, "dma_runtime_resume failed %d\n",
+> -				ret);
+> -			goto err_pm_disable;
+> -		}
+> -	}
+> +	else
+> +		ret = pm_runtime_get_sync(&pdev->dev);
+
+do we need pm_runtime_get() here, should we use pm_request_resume() ?
+
+>  static int tegra_dma_pm_suspend(struct device *dev)
+>  {
+>  	struct tegra_dma *tdma = dev_get_drvdata(dev);
+> -	int i;
+> -	int ret;
+> +	int i, ret;
+>  
+>  	/* Enable clock before accessing register */
+> -	ret = tegra_dma_runtime_resume(dev);
+> +	ret = pm_runtime_get_sync(dev);
+
+If you are runtime suspended then core will runtime resume you before
+invoking suspend, so why do we need this
 
 -- 
 ~Vinod
