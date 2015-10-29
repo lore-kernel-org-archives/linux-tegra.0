@@ -1,37 +1,70 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [U-Boot] [PATCH 4/4] ARM: tegra210: gpu: configure WPR region
-Date: Thu, 29 Oct 2015 08:55:07 +0900
-Message-ID: <5631605B.4020800@nvidia.com>
-References: <1445230624-30314-1-git-send-email-acourbot@nvidia.com>
- <1445230624-30314-5-git-send-email-acourbot@nvidia.com>
- <56310CE8.3050107@wwwdotorg.org>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH 1/6] dmaengine: tegra-apb: Correct runtime-pm usage
+Date: Thu, 29 Oct 2015 10:57:13 +0900
+Message-ID: <20151029015709.GE18368@vkoul-mobl.iind.intel.com>
+References: <1444983957-18691-1-git-send-email-jonathanh@nvidia.com>
+ <1444983957-18691-2-git-send-email-jonathanh@nvidia.com>
+ <20151028070345.GF3041@vkoul-mobl.iind.intel.com>
+ <5630CE5C.7070201@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56310CE8.3050107-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <5630CE5C.7070201@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/29/2015 02:59 AM, Stephen Warren wrote:
-> On 10/18/2015 10:57 PM, Alexandre Courbot wrote:
->> T210's GPU secure firmware loading requires a write-protected region
->> to be set up.
->>
->> This patch reserves the upper 256KB of RAM as the WPR region and locks
->> it so the kernel can initiate secure firmware loading.
->
-> On T210, it's the responsibility of nvtboot (which runs before U-Boot)
-> to set up any and all carve-outs. This code should not be necessary, and
-> indeed I expect the registers it touches can't actually be programmed
-> from U-Boot, which runs in non-secure mode after WPR is already locked.
+On Wed, Oct 28, 2015 at 01:32:12PM +0000, Jon Hunter wrote:
+> 
+> On 28/10/15 07:03, Vinod Koul wrote:
+> > On Fri, Oct 16, 2015 at 09:25:52AM +0100, Jon Hunter wrote:
+> >> @@ -1182,14 +1182,11 @@ static int tegra_dma_alloc_chan_resources(struct dma_chan *dc)
+> >>  {
+> >>  	struct tegra_dma_channel *tdc = to_tegra_dma_chan(dc);
+> >>  	struct tegra_dma *tdma = tdc->tdma;
+> >> -	int ret;
+> >>  
+> >>  	dma_cookie_init(&tdc->dma_chan);
+> >>  	tdc->config_init = false;
+> >> -	ret = clk_prepare_enable(tdma->dma_clk);
+> >> -	if (ret < 0)
+> >> -		dev_err(tdc2dev(tdc), "clk_prepare_enable failed: %d\n", ret);
+> >> -	return ret;
+> >> +
+> >> +	return pm_runtime_get_sync(tdma->dev);
+> > 
+> > Alloc channel is supposed to return number of descriptors allocated and if
+> > pm_runtime_get_sync() returns postive values we get wrong return!
+> 
+> Yes I will fix. I assume that returning 0 is allowed if no descriptors
+> are allocated here. So much for correcting rpm usage ;-)
 
-Ok, I was running from Thierry's miniloader which did not program or 
-lock these registers.
+Yes 0 is allowed...
 
-The question then is: do we have an official nvtboot binary available 
-for upstream support? AFAICT Thierry's miniloader solution is the only 
-solution available to the public, and without this setup one cannot use 
-the GPU on T210.
+> >>  static int tegra_dma_pm_suspend(struct device *dev)
+> >>  {
+> >>  	struct tegra_dma *tdma = dev_get_drvdata(dev);
+> >> -	int i;
+> >> -	int ret;
+> >> +	int i, ret;
+> >>  
+> >>  	/* Enable clock before accessing register */
+> >> -	ret = tegra_dma_runtime_resume(dev);
+> >> +	ret = pm_runtime_get_sync(dev);
+> > 
+> > If you are runtime suspended then core will runtime resume you before
+> > invoking suspend, so why do we need this
+> 
+> Is this change now in the mainline? Do you have commit ID for that?
+> 
+> I recall the last time we discussed this that Rafael said that they were
+> going to do that, but he said as a rule of thumb if you need to resume
+> it, resume it [0].
+
+IIRC this has been always the behaviour, at least I see this when I test the
+devices
+
+-- 
+~Vinod
