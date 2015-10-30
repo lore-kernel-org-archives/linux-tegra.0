@@ -1,51 +1,73 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL] drm/tegra: Changes for v4.4-rc1
-Date: Fri, 30 Oct 2015 18:50:30 +0100
-Message-ID: <1446227430-18735-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [RFC PATCH 1/3] PCI: iproc: generate proper configuration access cycles
+Date: Sat, 31 Oct 2015 00:21:08 +0100
+Message-ID: <4140206.u40gNKhatz@wuerfel>
+References: <1445857334-6936-1-git-send-email-jszhang@marvell.com> <562E6056.3040203@broadcom.com> <20151027101820.2d2a1368@xhacker>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20151027101820.2d2a1368@xhacker>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Jisheng Zhang <jszhang@marvell.com>, Ray Jui <rjui@broadcom.com>, gnurou@gmail.com, linux@arm.linux.org.uk, sbranden@broadcom.com, swarren@wwwdotorg.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, thierry.reding@gmail.com, bcm-kernel-feedback-list@broadcom.com, tinamdar@apm.com, bhelgaas@google.com
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Dave,
+On Tuesday 27 October 2015 10:18:20 Jisheng Zhang wrote:
+> On Mon, 26 Oct 2015 10:18:14 -0700 Ray Jui <rjui@broadcom.com> wrote:
+> 
+> > Hi Jisheng,
+> > 
+> > On 10/26/2015 4:02 AM, Jisheng Zhang wrote:
+> > > Inspired by Russell King's patch[1], I found current iproc also has the
+> > > same issue of "reading 32-bits from the command register, modifying the
+> > > command register, and then writing it back has the effect of clearing
+> > > any status bits that were indicating at that time" as pointed out by
+> > > Russell. This patch fix this issue by using the pci_generic_config_write.
+> > >
+> > > [1]http://www.spinics.net/lists/linux-pci/msg44869.html
+> > >
+> > > Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+> > > ---
+> > >   drivers/pci/host/pcie-iproc.c | 2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/pci/host/pcie-iproc.c b/drivers/pci/host/pcie-iproc.c
+> > > index fe2efb1..0c423f2 100644
+> > > --- a/drivers/pci/host/pcie-iproc.c
+> > > +++ b/drivers/pci/host/pcie-iproc.c
+> > > @@ -111,7 +111,7 @@ static void __iomem *iproc_pcie_map_cfg_bus(struct pci_bus *bus,
+> > >   static struct pci_ops iproc_pcie_ops = {
+> > >     .map_bus = iproc_pcie_map_cfg_bus,
+> > >     .read = pci_generic_config_read32,
+> > > -   .write = pci_generic_config_write32,
+> > > +   .write = pci_generic_config_write,
+> > >   };
+> > >
+> > >   static void iproc_pcie_reset(struct iproc_pcie *pcie)
+> > >  
+> > 
+> > I have already confirmed with the ASIC team that the current iProc PCIe 
+> > controller requires 32-bit aligned access into the configuration space 
+> > due to the way how it was integrated into various iProc SoCs including 
+> > NSP, Cygnus, and NS2.
+> > 
+> > This change will prevent the driver from working properly.
+> > 
+> > I've informed our ASIC team about this issue and all future iProc based 
+> > SoCs should be able to support 8-bit, 16-bit access and therefore 
+> > pci_generic_config_write/read can be used for those SoCs.
+>
+> Thanks for the information,
 
-The following changes since commit 6ff33f3902c3b1c5d0db6b1e2c70b6d76fba357f:
+We discussed the same issue when the X-gene PCI host driver was first
+reviewed, and someone from APM then clarified that it had the same bug.
 
-  Linux 4.3-rc1 (2015-09-12 16:35:56 -0700)
+However, I don't know the details about the Tegra implementation, or
+whether the X-Gene bug has been fixed in a newer version of the parts,
+so we need to get confirmation from the respective developers before
+applying any of the patches. If X-gene has been fixed in the meantime,
+we need to make sure we match on the exact product numbers in the
+compatible property so we only do it for the newer ones.
 
-are available in the git repository at:
-
-  git://anongit.freedesktop.org/tegra/linux tags/drm/tegra/for-4.4-rc1
-
-for you to fetch changes up to 2bcdcbfae2895764372ef973a969f395a548f1ea:
-
-  drm/tegra: dc: Request/free syncpoint at init/exit (2015-10-30 18:40:52 +0100)
-
-I realize this is awfully late, but I guess I was ashamed of the amount
-of work that this contains and was waiting for something else to show
-up. Nothing did, so it's really just a few patches of cleanup work.
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-drm/tegra: Changes for v4.4-rc1
-
-Just a couple of minor fixes and cleanups for this cycle.
-
-----------------------------------------------------------------
-Dmitry Osipenko (1):
-      gpu: host1x: Fix MLOCK's debug info
-
-Thierry Reding (2):
-      drm/tegra: fb: Remove gratuituous blank line
-      drm/tegra: dc: Request/free syncpoint at init/exit
-
- drivers/gpu/drm/tegra/dc.c               | 14 +++++++-------
- drivers/gpu/drm/tegra/fb.c               |  1 -
- drivers/gpu/host1x/hw/debug_hw.c         |  2 +-
- drivers/gpu/host1x/hw/hw_host1x01_sync.h |  8 ++++----
- drivers/gpu/host1x/hw/hw_host1x02_sync.h |  8 ++++----
- drivers/gpu/host1x/hw/hw_host1x04_sync.h |  8 ++++----
- 6 files changed, 20 insertions(+), 21 deletions(-)
+	Arnd
