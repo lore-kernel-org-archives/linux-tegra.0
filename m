@@ -1,73 +1,60 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [RFC PATCH 1/3] PCI: iproc: generate proper configuration access cycles
-Date: Sat, 31 Oct 2015 00:21:08 +0100
-Message-ID: <4140206.u40gNKhatz@wuerfel>
-References: <1445857334-6936-1-git-send-email-jszhang@marvell.com> <562E6056.3040203@broadcom.com> <20151027101820.2d2a1368@xhacker>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151027101820.2d2a1368@xhacker>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Jisheng Zhang <jszhang@marvell.com>, Ray Jui <rjui@broadcom.com>, gnurou@gmail.com, linux@arm.linux.org.uk, sbranden@broadcom.com, swarren@wwwdotorg.org, linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, thierry.reding@gmail.com, bcm-kernel-feedback-list@broadcom.com, tinamdar@apm.com, bhelgaas@google.com
+From: Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: [RFC 0/8] Add support for NVIDIA Tegra XUSB
+Date: Mon,  2 Nov 2015 11:55:15 +0000
+Message-ID: <1446465323-9493-1-git-send-email-martyn.welch@collabora.co.uk>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 27 October 2015 10:18:20 Jisheng Zhang wrote:
-> On Mon, 26 Oct 2015 10:18:14 -0700 Ray Jui <rjui@broadcom.com> wrote:
-> 
-> > Hi Jisheng,
-> > 
-> > On 10/26/2015 4:02 AM, Jisheng Zhang wrote:
-> > > Inspired by Russell King's patch[1], I found current iproc also has the
-> > > same issue of "reading 32-bits from the command register, modifying the
-> > > command register, and then writing it back has the effect of clearing
-> > > any status bits that were indicating at that time" as pointed out by
-> > > Russell. This patch fix this issue by using the pci_generic_config_write.
-> > >
-> > > [1]http://www.spinics.net/lists/linux-pci/msg44869.html
-> > >
-> > > Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
-> > > ---
-> > >   drivers/pci/host/pcie-iproc.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/pci/host/pcie-iproc.c b/drivers/pci/host/pcie-iproc.c
-> > > index fe2efb1..0c423f2 100644
-> > > --- a/drivers/pci/host/pcie-iproc.c
-> > > +++ b/drivers/pci/host/pcie-iproc.c
-> > > @@ -111,7 +111,7 @@ static void __iomem *iproc_pcie_map_cfg_bus(struct pci_bus *bus,
-> > >   static struct pci_ops iproc_pcie_ops = {
-> > >     .map_bus = iproc_pcie_map_cfg_bus,
-> > >     .read = pci_generic_config_read32,
-> > > -   .write = pci_generic_config_write32,
-> > > +   .write = pci_generic_config_write,
-> > >   };
-> > >
-> > >   static void iproc_pcie_reset(struct iproc_pcie *pcie)
-> > >  
-> > 
-> > I have already confirmed with the ASIC team that the current iProc PCIe 
-> > controller requires 32-bit aligned access into the configuration space 
-> > due to the way how it was integrated into various iProc SoCs including 
-> > NSP, Cygnus, and NS2.
-> > 
-> > This change will prevent the driver from working properly.
-> > 
-> > I've informed our ASIC team about this issue and all future iProc based 
-> > SoCs should be able to support 8-bit, 16-bit access and therefore 
-> > pci_generic_config_write/read can be used for those SoCs.
->
-> Thanks for the information,
+This series is based on commits that can be found in the git tree here:
 
-We discussed the same issue when the X-gene PCI host driver was first
-reviewed, and someone from APM then clarified that it had the same bug.
+https://github.com/thierryreding/linux/commits/staging/xhci
 
-However, I don't know the details about the Tegra implementation, or
-whether the X-Gene bug has been fixed in a newer version of the parts,
-so we need to get confirmation from the respective developers before
-applying any of the patches. If X-gene has been fixed in the meantime,
-we need to make sure we match on the exact product numbers in the
-compatible property so we only do it for the newer ones.
+I have included the patches I've used from that tree as patches 1-5.
 
-	Arnd
+The above patches were submitted for review back in May:
+
+https://lkml.org/lkml/2015/5/4/574
+
+The approach taken in these patches was deemed not appropriate (treating
+the XUSB as a MFD).
+
+In patch 6 I add the bindings based in those submitted for review here
+(with a few modifications currently required by the driver):
+
+https://www.spinics.net/lists/linux-usb/msg130940.html
+
+I have included my changes to the original patch series in patch 7. With
+these modifications the patch series builds and works, but is rather hacky.
+Devices for the mailbox driver and xHCI driver are now created in the xusb
+driver (still under the mfd directory for now - it will be moved before
+this series is submitted properly). As the child devices use
+infrastructure which expects the device to be associated with a of_node,
+it has been necessary to point the child device at the parents of_node
+where this is needed. This approach did not seem viable for the mailbox
+API, so to get that working the child device node was pointed to the
+parents of_node (in tegra_xusb_add_device). The unfortunate side effect of
+this is that upon device creation the parents probe routine gets called...
+
+Not good.
+
+Patch 8 attempts to resolve this. When passing the parents device node to
+the mailbox API, the mailbox's receive callback was raising errors as
+that function is looking for the drvdata stored in the child's device node,
+but getting the parents. This patch jumps though a few hoops to get to the
+child's device node.
+
+Unfortunately, whilst the receive callback seems to be getting the right
+drvdata, USB3 devices are being enumerated as USB2 devices rather than
+USB3 devices, so something is clearly not right.
+
+I'm posting these patches in the hope that someone can point me in the
+right direction.
+
+Is there a better approach I'm missing?
+
+Any ideas why devices aren't being enumerated as USB3?
+
+Martyn
