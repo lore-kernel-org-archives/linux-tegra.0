@@ -1,7 +1,7 @@
 From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: [PATCH v4 1/5] mtd: nand: tegra: add devicetree binding
-Date: Mon,  2 Nov 2015 21:33:18 +0100
-Message-ID: <1446496402-8142-2-git-send-email-dev@lynxeye.de>
+Subject: [PATCH v4 3/5] clk: tegra20: init NDFLASH clock to sensible rate
+Date: Mon,  2 Nov 2015 21:33:20 +0100
+Message-ID: <1446496402-8142-4-git-send-email-dev@lynxeye.de>
 References: <1446496402-8142-1-git-send-email-dev@lynxeye.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1446496402-8142-1-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
@@ -10,50 +10,26 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Re
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This adds the devicetree binding for the Tegra 2 NAND flash
-controller.
+Set up the NAND Flash controller clock to run at 150MHz
+instead of the rate set by the bootloader. This is a
+conservative rate which also yields good performance.
 
 Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 ---
- .../bindings/mtd/nvidia,tegra20-nand.txt           | 30 ++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
+ drivers/clk/tegra/clk-tegra20.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-new file mode 100644
-index 0000000..911b130
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mtd/nvidia,tegra20-nand.txt
-@@ -0,0 +1,30 @@
-+NVIDIA Tegra NAND Flash controller
-+
-+Required properties:
-+- compatible: Must be one of:
-+  - "nvidia,tegra20-nand"
-+- reg: MMIO address range
-+- interrupts: interrupt output of the NFC controller
-+- clocks: Must contain an entry for each entry in clock-names.
-+  See ../clocks/clock-bindings.txt for details.
-+- clock-names: Must include the following entries:
-+  - nand
-+- resets: Must contain an entry for each entry in reset-names.
-+  See ../reset/reset.txt for details.
-+- reset-names: Must include the following entries:
-+  - nand
-+
-+Optional properties:
-+- wp-gpios: GPIO used to disable write protection of the flash when pulled into
-+            the active direction
-+
-+  Example:
-+	nand@70008000 {
-+		compatible = "nvidia,tegra20-nand";
-+		reg = <0x70008000 0x100>;
-+		interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA20_CLK_NDFLASH>;
-+		clock-names = "nand";
-+		resets = <&tegra_car 13>;
-+		reset-names = "nand";
-+	};
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index bf004f0..741c74e 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -1062,6 +1062,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{TEGRA20_CLK_DISP2, TEGRA20_CLK_PLL_P, 600000000, 0},
+ 	{TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0},
+ 	{TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0},
++	{TEGRA20_CLK_NDFLASH, TEGRA20_CLK_PLL_P, 150000000, 0},
+ 	{TEGRA20_CLK_CLK_MAX, TEGRA20_CLK_CLK_MAX, 0, 0}, /* This MUST be the last entry */
+ };
+ 
 -- 
 2.4.3
