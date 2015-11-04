@@ -1,58 +1,69 @@
-From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/6] dmaengine: tegra-apb: Correct runtime-pm usage
-Date: Wed, 4 Nov 2015 14:04:38 +0530
-Message-ID: <20151104083438.GJ12910@localhost>
-References: <1444983957-18691-1-git-send-email-jonathanh@nvidia.com>
- <1444983957-18691-2-git-send-email-jonathanh@nvidia.com>
- <20151028070345.GF3041@vkoul-mobl.iind.intel.com>
- <5630CE5C.7070201@nvidia.com>
- <20151029015709.GE18368@vkoul-mobl.iind.intel.com>
- <5638DF7E.9080700@nvidia.com>
- <7hvb9iai8a.fsf@deeprootsystems.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: Enable CPUFreq support for Tegra124
+ Chromebooks
+Date: Wed, 4 Nov 2015 12:16:40 +0000
+Message-ID: <5639F728.6090808@nvidia.com>
+References: <1433331821-9648-1-git-send-email-jonathanh@nvidia.com>
+ <556EE8B0.2060205@nvidia.com> <55A3B848.2080205@nvidia.com>
+ <CAAObsKA0N50gfPA9sMZfnM8N+N9Oo-YHMCDdF7JdWjpxXtFJbA@mail.gmail.com>
+ <20150915081234.GA25970@ulmo.nvidia.com>
+ <CAAObsKAuJz6KoexA2VHPxxVCZ9PbUAFWUx6tSOmdPYq50u_=-g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <7hvb9iai8a.fsf-1D3HCaltpLuhEniVeURVKkEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <CAAObsKAuJz6KoexA2VHPxxVCZ9PbUAFWUx6tSOmdPYq50u_=-g@mail.gmail.com>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomeu Vizoso <tomeu.vizoso-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Nov 03, 2015 at 01:25:09PM -0800, Kevin Hilman wrote:
-> >>>>>  	/* Enable clock before accessing register */
-> >>>>> -	ret = tegra_dma_runtime_resume(dev);
-> >>>>> +	ret = pm_runtime_get_sync(dev);
-> >>>>
-> >>>> If you are runtime suspended then core will runtime resume you before
-> >>>> invoking suspend, so why do we need this
-> >>>
-> >>> Is this change now in the mainline? Do you have commit ID for that?
-> >>>
-> >>> I recall the last time we discussed this that Rafael said that they were
-> >>> going to do that, but he said as a rule of thumb if you need to resume
-> >>> it, resume it [0].
-> >> 
-> >> IIRC this has been always the behaviour, at least I see this when I test the
-> >> devices
-> >
-> > I have been doing some testing today and if the DMA is runtime
-> > suspended, then I don't see it runtime resumed before suspend is called.
-> >
-> > Can you elborate on "at least I see this when I test the devices"? What
-> > are you looking at? Are you using kernel function tracers in some way?
+
+On 15/09/15 10:00, Tomeu Vizoso wrote:
+> On 15 September 2015 at 10:12, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> On Thu, Sep 03, 2015 at 03:40:45PM +0200, Tomeu Vizoso wrote:
+>>> On 13 July 2015 at 15:08, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>>> On 03/06/15 12:44, Jon Hunter wrote:
+>>>>> Adding LAKML. Jon
+>>>>>
+>>>>> On 03/06/15 12:43, Jon Hunter wrote:
+>>>>>> Add the device-tree DFLL clock node and CPU regulator phandle for
+>>>>>> tegra124 chromebooks to enable CPUFreq support on these boards.
+>>>
+>>> Ping.
+>>>
+>>> Thanks,
+>>
+>> Sorry that this has gone unnoticed for so long. I've applied it now to
+>> the for-4.4/dt branch.
+>>
+>> Tomeu, do you want me to add your Tested-by, Reviewed-by or Acked-by
+>> before I push this out?
 > 
-> The PM core does a _get_noresume()[1] which tries to prevent runtime
-> suspends *during* a system suspend.  However, the PM core should not be
-> doing an actual runtime resume of the device, so if the device is
-> already runtime suspended, it will not be runtime resumed by the core,
-> so if the driver needs it to be runtime resumed, it needs to do it
-> itself.
+> I haven't done proper tests, but I have tested for several weeks a
+> branch containing these changes on a nyan-big and have found no
+> issues.
+> 
+> You can add my Reviewed-by though. Sorry for not having made this clear.
 
-+ Rafael
+I have noticed that system suspend to LP1 is not working on the nyan-big
+with linux-next and never exits suspend. It appears that this patch is
+the culprit. I tested cpufreq was changing the frequency as expected but
+I did not test suspend.
 
-This is contrariry to what I see, If my driver is runtime suspended and on
-suspend, it gets runtime resumed and then suspended
+I have tested suspend on the jetson-tk1 with linux-next that also has
+cpufreq enabled and do not see any problems.
 
--- 
-~Vinod
+Adding Mikko ... Mikko do you know of any reason why cpufreq could cause
+problems with suspend? I am guessing it is to do with the different
+clock used for the CPUs. Any thoughts?
+
+Tomeu, have you tried suspend on a nyan-big with next?
+
+I am testing with "rtcwake -d rtc1 -m mem -s 5".
+
+Thierry, we may need to comment out these changes for 4.3 or revert this
+patch altogether.
+
+Cheers
+Jon
