@@ -1,25 +1,58 @@
-From: "Jose Calvache" <josecalvach.e-1ViLX0X+lBJBDgjK7y7TUQ@public.gmane.org>
-Subject: Eure Hilfe
-Date: Wed, 4 Nov 2015 02:56:29 -0500
-Message-ID: <f492d0c2249f0842024cf6fc4136ba4e.squirrel__31303.5485255115$1446625022$gmane$org@wdtraders.com>
-Reply-To: josecalvach.e-CZK690njTpI@public.gmane.org
+From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/6] dmaengine: tegra-apb: Correct runtime-pm usage
+Date: Wed, 4 Nov 2015 14:04:38 +0530
+Message-ID: <20151104083438.GJ12910@localhost>
+References: <1444983957-18691-1-git-send-email-jonathanh@nvidia.com>
+ <1444983957-18691-2-git-send-email-jonathanh@nvidia.com>
+ <20151028070345.GF3041@vkoul-mobl.iind.intel.com>
+ <5630CE5C.7070201@nvidia.com>
+ <20151029015709.GE18368@vkoul-mobl.iind.intel.com>
+ <5638DF7E.9080700@nvidia.com>
+ <7hvb9iai8a.fsf@deeprootsystems.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <7hvb9iai8a.fsf-1D3HCaltpLuhEniVeURVKkEOCMrvLtNR@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Guten Tag,
+On Tue, Nov 03, 2015 at 01:25:09PM -0800, Kevin Hilman wrote:
+> >>>>>  	/* Enable clock before accessing register */
+> >>>>> -	ret = tegra_dma_runtime_resume(dev);
+> >>>>> +	ret = pm_runtime_get_sync(dev);
+> >>>>
+> >>>> If you are runtime suspended then core will runtime resume you before
+> >>>> invoking suspend, so why do we need this
+> >>>
+> >>> Is this change now in the mainline? Do you have commit ID for that?
+> >>>
+> >>> I recall the last time we discussed this that Rafael said that they were
+> >>> going to do that, but he said as a rule of thumb if you need to resume
+> >>> it, resume it [0].
+> >> 
+> >> IIRC this has been always the behaviour, at least I see this when I test the
+> >> devices
+> >
+> > I have been doing some testing today and if the DMA is runtime
+> > suspended, then I don't see it runtime resumed before suspend is called.
+> >
+> > Can you elborate on "at least I see this when I test the devices"? What
+> > are you looking at? Are you using kernel function tracers in some way?
+> 
+> The PM core does a _get_noresume()[1] which tries to prevent runtime
+> suspends *during* a system suspend.  However, the PM core should not be
+> doing an actual runtime resume of the device, so if the device is
+> already runtime suspended, it will not be runtime resumed by the core,
+> so if the driver needs it to be runtime resumed, it needs to do it
+> itself.
 
-Ich m=F6chte, dass Sie mich auf einem Geldtransfer zu unterst=FCtzen, w=
-enn Sie
-bereit und interessiert sind, antworten Sie mir bitte nach Erhalt diese=
-r
-E-Mails f=FCr mehr Klarheit und Modalit=E4ten f=FCr den erfolgreichen A=
-bschluss
-dieser Transaktion erforderlich.
-Dank und warten Sie Ihre dringende Antwort zu diesem Thema.
++ Rafael
 
-=46reundliche Gr=FC=DFe,
-Mr. Jose Calvache.
+This is contrariry to what I see, If my driver is runtime suspended and on
+suspend, it gets runtime resumed and then suspended
+
+-- 
+~Vinod
