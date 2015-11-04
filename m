@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 1/2] dt-bindings: phy: Add NVIDIA Tegra XUSB pad controller binding
-Date: Wed,  4 Nov 2015 18:11:48 +0100
-Message-ID: <1446657109-15568-2-git-send-email-thierry.reding@gmail.com>
+Subject: [PATCH 2/2] dt-bindings: phy: tegra-xusb-padctl: Add Tegra210 support
+Date: Wed,  4 Nov 2015 18:11:49 +0100
+Message-ID: <1446657109-15568-3-git-send-email-thierry.reding@gmail.com>
 References: <1446657109-15568-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1446657109-15568-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,184 +12,132 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The NVIDIA Tegra XUSB pad controller provides a set of pads, each with a
-set of lanes that are used for PCIe, SATA and USB.
+Extend the binding to cover the set of feature found in Tegra210.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- .../bindings/phy/nvidia,tegra-xusb-padctl.txt      | 359 +++++++++++++++++++++
- 1 file changed, 359 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/phy/nvidia,tegra-xusb-padctl.txt
+ .../bindings/phy/nvidia,tegra-xusb-padctl.txt      | 330 +++++++++++++++++++++
+ 1 file changed, 330 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra-xusb-padctl.txt b/Documentation/devicetree/bindings/phy/nvidia,tegra-xusb-padctl.txt
-new file mode 100644
-index 000000000000..026e924ae54a
---- /dev/null
+index 026e924ae54a..e7d7400bc981 100644
+--- a/Documentation/devicetree/bindings/phy/nvidia,tegra-xusb-padctl.txt
 +++ b/Documentation/devicetree/bindings/phy/nvidia,tegra-xusb-padctl.txt
-@@ -0,0 +1,359 @@
-+Device tree binding for NVIDIA Tegra XUSB pad controller
-+========================================================
+@@ -22,6 +22,7 @@ Required properties:
+ --------------------
+ - compatible: Must be:
+   - "nvidia,tegra124-xusb-padctl": for Tegra124 and Tegra132
++  - "nvidia,tegra210-xusb-padctl": for Tegra210
+ - reg: Physical base address and length of the controller's registers.
+ - resets: Must contain an entry for each entry in reset-names.
+ - reset-names: Must include the following entries:
+@@ -45,6 +46,44 @@ the pad and any of its lanes, this property must be set to "okay".
+ For Tegra124 and Tegra132, the following pads exist: utmi, ulpi, hsic, pcie
+ and sata. No extra resources are required for operation of these pads.
+ 
++For Tegra210, the following pads exist: utmi, hsic, pcie and sata. Below is
++a description of the properties of each pad.
 +
-+The Tegra XUSB pad controller manages a set of pads, each of which controls
-+one or more lanes. Each lane can in turn be assigned to one out of a set of
-+different outputs. A pad contains logic common for all its lanes. Each lane
-+can additionally be separately configured and powered up.
-+
-+Some of the lanes are high-speed lanes, which can be used for PCIe, SATA or
-+super-speed USB. Other lanes are for various types of low-speed, full-speed
-+or high-speed USB (such as UTMI, ULPI and HSIC).
-+
-+In addition to per-lane configuration, USB 3.0 ports may require additional
-+settings on a per-board basis.
-+
-+Pads will be represented as children of the top-level XUSB pad controller
-+device tree node. Each lane exposed by the pad will be represented by its
-+own subnode and can be referenced by users of the lane using the standard
-+PHY bindings, as described by the phy-bindings.txt file in this directory.
++UTMI pad:
++---------
 +
 +Required properties:
-+--------------------
-+- compatible: Must be:
-+  - "nvidia,tegra124-xusb-padctl": for Tegra124 and Tegra132
-+- reg: Physical base address and length of the controller's registers.
++- clocks: Must contain an entry for each entry in clock-names.
++- clock-names: Must contain the following entries:
++  - "trk": phandle and specifier referring to the USB2 tracking clock
++
++HSIC pad:
++---------
++
++Required properties:
++- clocks: Must contain an entry for each entry in clock-names.
++- clock-names: Must contain the following entries:
++  - "trk": phandle and specifier referring to the HSIC tracking clock
++
++PCIe pad:
++---------
++
++Required properties:
++- clocks: Must contain an entry for each entry in clock-names.
++- clock-names: Must contain the following entries:
++  - "pll": phandle and specifier referring to the PLLE
 +- resets: Must contain an entry for each entry in reset-names.
-+- reset-names: Must include the following entries:
-+  - "padctl"
-+- mboxes: Must contain an entry for each entry in mbox-names.
-+- mbox-names: Must include the following entries:
-+  - "xusb"
++- reset-names: Must contain the following entries:
++  - "phy": reset for the PCIe UPHY block
 +
-+
-+Pad nodes:
-+==========
-+
-+A required child node named "pads" contains a list of subnodes, one for each
-+of the pads exposed by the XUSB pad controller. Each pad may need additional
-+resources that can be referenced in its pad node.
-+
-+The "status" property is used to enable or disable the use of a pad. If set
-+to "disabled", the pad will not be used on the given board. In order to use
-+the pad and any of its lanes, this property must be set to "okay".
-+
-+For Tegra124 and Tegra132, the following pads exist: utmi, ulpi, hsic, pcie
-+and sata. No extra resources are required for operation of these pads.
-+
-+
-+PHY nodes:
-+==========
-+
-+Each pad node has one or more children, each representing one of the lanes
-+controlled by the pad.
++SATA pad:
++---------
 +
 +Required properties:
-+--------------------
-+- status: Defines the operation status of the PHY. Valid values are:
-+  - "disabled": the PHY is disabled
-+  - "okay": the PHY is enabled
-+- #phy-cells: Should be 0. Since each lane represents a single PHY, there is
-+  no need for an additional specifier.
-+- nvidia,function: The output function of the PHY. See below for a list of
-+  valid functions per SoC generation.
++- resets: Must contain an entry for each entry in reset-names.
++- reset-names: Must contain the following entries:
++  - "phy": reset for the SATA UPHY block
 +
-+For Tegra124 and Tegra132, the list of valid PHY nodes is given below:
-+- utmi: utmi-0, utmi-1, utmi-2
+ 
+ PHY nodes:
+ ==========
+@@ -74,6 +113,17 @@ For Tegra124 and Tegra132, the list of valid PHY nodes is given below:
+ - sata: sata-0
+   - functions: "usb3-ss", "sata"
+ 
++For Tegra210, the list of valid PHY nodes is given below:
++- utmi: utmi-0, utmi-1, utmi-2, utmi-3
 +  - functions: "snps", "xusb", "uart"
-+- ulpi: ulpi-0
-+  - functions: "snps", "xusb"
 +- hsic: hsic-0, hsic-1
 +  - functions: "snps", "xusb"
-+- pcie: pcie-0, pcie-1, pcie-2, pcie-3, pcie-4
-+  - functions: "pcie", "usb3-ss"
++- pcie: pcie-0, pcie-1, pcie-2, pcie-3, pcie-4, pcie-5, pcie-6
++  - functions: "pcie-x1", "usb3-ss", "pcie-x4"
 +- sata: sata-0
 +  - functions: "usb3-ss", "sata"
 +
-+Port nodes:
-+===========
 +
-+A required child node named "ports" contains a list of all the ports exposed
-+by the XUSB pad controller. Per-port configuration is only required for USB.
-+
-+UTMI ports:
-+-----------
-+
-+Required properties:
-+- status: Defines the operation status of the port. Valid values are:
-+  - "disabled": the port is disabled
-+  - "okay": the port is enabled
-+- mode: A string that determines the mode in which to run the port. Valid
-+  values are:
-+  - "host": for USB host mode
-+  - "device": for USB device mode
-+  - "otg": for USB OTG mode
-+
-+Optional properties:
-+- nvidia,internal: A boolean property whose presence determines that a port
-+  is internal. In the absence of this property the port is considered to be
-+  external.
-+- vbus-supply: phandle to a regulator supplying the VBUS voltage.
-+
-+ULPI ports:
-+-----------
-+
-+Optional properties:
-+- status: Defines the operation status of the port. Valid values are:
-+  - "disabled": the port is disabled
-+  - "okay": the port is enabled
-+- nvidia,internal: A boolean property whose presence determines that a port
-+  is internal. In the absence of this property the port is considered to be
-+  external.
-+
-+HSIC ports:
-+-----------
-+
-+Required properties:
-+- status: Defines the operation status of the port. Valid values are:
-+  - "disabled": the port is disabled
-+  - "okay": the port is enabled
-+
-+Super-speed USB ports:
-+----------------------
-+
-+Required properties:
-+- status: Defines the operation status of the port. Valid values are:
-+  - "disabled": the port is disabled
-+  - "okay": the port is enabled
-+- nvidia,port: A single cell that specifies the physical port number to map
-+  this super-speed USB port to. The range of valid port numbers varies with
-+  the SoC generation:
-+  - 0-2: for Tegra124 and Tegra132
-+
-+Optional properties:
-+- nvidia,internal: A boolean property whose presence determines that a port
-+  is internal. In the absence of this property the port is considered to be
-+  external.
-+
-+For Tegra124 and Tegra132, the XUSB pad controller exposes the following
-+ports:
-+- 3x UTMI: utmi-0, utmi-1, utmi-2
-+- 1x ULPI: ulpi-0
+ Port nodes:
+ ===========
+ 
+@@ -129,6 +179,7 @@ Required properties:
+   this super-speed USB port to. The range of valid port numbers varies with
+   the SoC generation:
+   - 0-2: for Tegra124 and Tegra132
++  - 0-3: for Tegra210
+ 
+ Optional properties:
+ - nvidia,internal: A boolean property whose presence determines that a port
+@@ -142,6 +193,11 @@ ports:
+ - 2x HSIC: hsic-0, hsic-1
+ - 2x super-speed USB: usb3-0, usb3-1
+ 
++For Tegra210, the XUSB pad controller exposes the following ports:
++- 4x UTMI: utmi-0, utmi-1, utmi-2, utmi-3
 +- 2x HSIC: hsic-0, hsic-1
-+- 2x super-speed USB: usb3-0, usb3-1
++- 4x super-speed USB: usb3-0, usb3-1, usb3-2, usb3-3
 +
+ 
+ Examples:
+ =========
+@@ -357,3 +413,277 @@ Board file:
+ 			};
+ 		};
+ 	};
 +
-+Examples:
-+=========
-+
-+Tegra124 and Tegra132:
-+----------------------
++Tegra210:
++---------
 +
 +SoC include:
 +
 +	padctl@0,7009f000 {
-+		compatible = "nvidia,tegra124-xusb-padctl";
++		compatible = "nvidia,tegra210-xusb-padctl";
 +		reg = <0x0 0x7009f000 0x0 0x1000>;
 +		resets = <&tegra_car 142>;
 +		reset-names = "padctl";
 +		mboxes = <&xusb_mbox>;
 +		mbox-names = "xusb";
 +
++		status = "disabled";
++
 +		pads {
 +			utmi {
++				clocks = <&tegra_car TEGRA210_CLK_USB2_TRK>;
++				clock-names = "trk";
 +				status = "disabled";
 +
 +				utmi-0 {
@@ -206,18 +154,16 @@ index 000000000000..026e924ae54a
 +					status = "disabled";
 +					#phy-cells = <0>;
 +				};
-+			};
 +
-+			ulpi {
-+				status = "disabled";
-+
-+				ulpi-0 {
++				utmi-3 {
 +					status = "disabled";
 +					#phy-cells = <0>;
 +				};
 +			};
 +
 +			hsic {
++				clocks = <&tegra_car TEGRA210_CLK_HSIC_TRK>;
++				clock-names = "trk";
 +				status = "disabled";
 +
 +				hsic-0 {
@@ -232,6 +178,10 @@ index 000000000000..026e924ae54a
 +			};
 +
 +			pcie {
++				clocks = <&tegra_car TEGRA210_CLK_PLL_E>;
++				clock-names = "pll";
++				resets = <&tegra_car 205>;
++				reset-names = "phy";
 +				status = "disabled";
 +
 +				pcie-0 {
@@ -258,9 +208,23 @@ index 000000000000..026e924ae54a
 +					status = "disabled";
 +					#phy-cells = <0>;
 +				};
++
++				pcie-5 {
++					status = "disabled";
++					#phy-cells = <0>;
++				};
++
++				pcie-6 {
++					status = "disabled";
++					#phy-cells = <0>;
++				};
 +			};
 +
 +			sata {
++				clocks = <&tegra_car TEGRA210_CLK_PLL_E>;
++				clock-names = "pll";
++				resets = <&tegra_car 204>;
++				reset-names = "phy";
 +				status = "disabled";
 +
 +				sata-0 {
@@ -283,7 +247,7 @@ index 000000000000..026e924ae54a
 +				status = "disabled";
 +			};
 +
-+			ulpi-0 {
++			utmi-3 {
 +				status = "disabled";
 +			};
 +
@@ -300,6 +264,14 @@ index 000000000000..026e924ae54a
 +			};
 +
 +			usb3-1 {
++				status = "disabled";
++			};
++
++			usb3-2 {
++				status = "disabled";
++			};
++
++			usb3-3 {
 +				status = "disabled";
 +			};
 +		};
@@ -328,23 +300,48 @@ index 000000000000..026e924ae54a
 +					nvidia,function = "xusb";
 +					status = "okay";
 +				};
++
++				utmi-3 {
++					nvidia,function = "xusb";
++					status = "okay";
++				};
 +			};
 +
 +			pcie {
 +				status = "okay";
 +
 +				pcie-0 {
-+					nvidia,function = "usb3-ss";
++					nvidia,function = "pcie-x1";
++					status = "okay";
++				};
++
++				pcie-1 {
++					nvidia,function = "pcie-x4";
 +					status = "okay";
 +				};
 +
 +				pcie-2 {
-+					nvidia,function = "pcie";
++					nvidia,function = "pcie-x4";
++					status = "okay";
++				};
++
++				pcie-3 {
++					nvidia,function = "pcie-x4";
 +					status = "okay";
 +				};
 +
 +				pcie-4 {
-+					nvidia,function = "pcie";
++					nvidia,function = "pcie-x4";
++					status = "okay";
++				};
++
++				pcie-5 {
++					nvidia,function = "usb3-ss";
++					status = "okay";
++				};
++
++				pcie-6 {
++					nvidia,function = "usb3-ss";
 +					status = "okay";
 +				};
 +			};
@@ -360,29 +357,38 @@ index 000000000000..026e924ae54a
 +		};
 +
 +		ports {
-+			/* Micro A/B */
 +			utmi-0 {
 +				status = "okay";
 +				mode = "otg";
 +			};
 +
-+			/* Mini PCIe */
 +			utmi-1 {
 +				status = "okay";
++				vbus-supply = <&vdd_5v0_rtl>;
 +				mode = "host";
 +			};
 +
-+			/* USB3 */
 +			utmi-2 {
 +				status = "okay";
++				vbus-supply = <&vdd_usb_vbus>;
 +				mode = "host";
++			};
 +
-+				vbus-supply = <&vdd_usb3_vbus>;
++			utmi-3 {
++				status = "okay";
++				mode = "host";
 +			};
 +
 +			usb3-0 {
-+				nvidia,port = <2>;
 +				status = "okay";
++				nvidia,lanes = "pcie-6";
++				nvidia,port = <1>;
++			};
++
++			usb3-1 {
++				status = "okay";
++				nvidia,lanes = "pcie-5";
++				nvidia,port = <2>;
 +			};
 +		};
 +	};
