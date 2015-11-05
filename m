@@ -1,290 +1,51 @@
-From: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-Subject: [RFC PATCH 1/7] reset: drop ARCH_HAS_RESET_CONTROLLER
-Date: Thu,  5 Nov 2015 20:15:22 +0900
-Message-ID: <1446722128-11961-2-git-send-email-yamada.masahiro@socionext.com>
-References: <1446722128-11961-1-git-send-email-yamada.masahiro@socionext.com>
+From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/6] dmaengine: tegra-apb: Correct runtime-pm usage
+Date: Thu, 5 Nov 2015 17:47:30 +0530
+Message-ID: <20151105121730.GY12910@localhost>
+References: <1444983957-18691-1-git-send-email-jonathanh@nvidia.com>
+ <20151104083438.GJ12910@localhost>
+ <7hvb9hr98g.fsf@deeprootsystems.com>
+ <1564097.buIA8Wdn8f@vostro.rjw.lan>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1446722128-11961-1-git-send-email-yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michael Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jens Kuske <jenskuske-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Maxime Coquelin <maxime.coquelin-qxv4g6HH51o@public.gmane.org>, Barry Song <baohua-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Eric Miao <eric.y.miao-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Srinivas
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1564097.buIA8Wdn8f-sKB8Sp2ER+y1GS7QM15AGw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>
+Cc: Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The reset sub-system is supposed to be enabled by two steps:
+On Thu, Nov 05, 2015 at 03:15:18AM +0100, Rafael J. Wysocki wrote:
 
-  - ARCH_HAS_RESET_CONTROLLER is select'ed by such sub-architectures
-    that support reset controllers
+> > > + Rafael
+> > >
+> > > This is contrariry to what I see, If my driver is runtime suspended and on
+> > > suspend, it gets runtime resumed and then suspended
+> > 
+> > Since I was late to the thread, can you explain what kind of driver and
+> > on what bus type you're seeing this behavior?
+> > 
+> > It could be that your bus-type is doing something, but I don't think it
+> > should be the PM core.
+> 
+> Right.
+> 
+> Bus types do that, the core doesn't.  The ACPI PM domain does that too
+> for some devices.
+> 
+> So Vinod, more details, please.
 
-  - Based on that, RESET_CONTROLLER is configured by "make menuconfig"
-    or friends.  (Note that it is a user-configurable option as it has
-    a prompt.)
+Okay relooking at core I do think that runtime resume should not be invoked
+while suspending, as core seems to call pm_runtime_get_noresume() but I am
+still missing something here..
 
-But, this is getting messy in spite of the intention.  Some SoC families
-(such as Tegra, sunxi, etc.) select both ARCH_HAS_RESET_CONTROLLER and
-RESET_CONTROLLER.  So, it is no longer configurable (i.e. forcibly
-select'ed) in the multi-platforms.
+I do see this behaviour (runtime resume on suspend) on Intel audio drivers
+which are PCI devices, is PCI or ACPI doing some magic here.
 
-Also, many drivers that use reset APIs are accompanied by
-"depends on RESET_CONTROLLER".
+I have seen this as consistent behavior and actually an irritant, as we used
+to download firmware in resume patch, but then we end up thrashing the
+controller while going to suspend!
 
-Like pinctrl, clk sub-systems, reset is a fundamental feature needed
-for SoCs to work correctly.
-
-If a particular SoC supports a reset controller driver, it is very
-likely to be necessary for that SoC.
-
-So, this commit drops ARCH_HAS_RESET_CONTROLLER, making RESET_CONTROLLER
-a user-unconfigurable option.  Going forward, it should be directly
-select'ed by relevant SoCs.
-
-This change would also be useful to clean-up "depends on RESET_CONTROLLER"
-in other drivers.
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
----
-
- arch/arm/Kconfig               |  3 +--
- arch/arm/mach-berlin/Kconfig   |  2 +-
- arch/arm/mach-imx/Kconfig      |  2 +-
- arch/arm/mach-mmp/Kconfig      |  4 ++--
- arch/arm/mach-prima2/Kconfig   |  2 +-
- arch/arm/mach-rockchip/Kconfig |  2 +-
- arch/arm/mach-sti/Kconfig      |  1 -
- arch/arm/mach-sunxi/Kconfig    |  1 -
- arch/arm/mach-tegra/Kconfig    |  1 -
- arch/arm64/Kconfig.platforms   |  3 +--
- arch/mips/Kconfig              |  4 +---
- drivers/reset/Kconfig          | 12 +++++++-----
- drivers/reset/sti/Kconfig      |  1 -
- 13 files changed, 16 insertions(+), 22 deletions(-)
-
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index f1ed110..55af5e8 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -972,7 +972,7 @@ config ARCH_EFM32
- config ARCH_LPC18XX
- 	bool "NXP LPC18xx/LPC43xx"
- 	depends on ARM_SINGLE_ARMV7M
--	select ARCH_HAS_RESET_CONTROLLER
-+	select RESET_CONTROLLER
- 	select ARM_AMBA
- 	select CLKSRC_LPC32XX
- 	select PINCTRL
-@@ -983,7 +983,6 @@ config ARCH_LPC18XX
- config ARCH_STM32
- 	bool "STMicrolectronics STM32"
- 	depends on ARM_SINGLE_ARMV7M
--	select ARCH_HAS_RESET_CONTROLLER
- 	select ARMV7M_SYSTICK
- 	select CLKSRC_STM32
- 	select RESET_CONTROLLER
-diff --git a/arch/arm/mach-berlin/Kconfig b/arch/arm/mach-berlin/Kconfig
-index 742d53a..1c8e301 100644
---- a/arch/arm/mach-berlin/Kconfig
-+++ b/arch/arm/mach-berlin/Kconfig
-@@ -1,6 +1,6 @@
- menuconfig ARCH_BERLIN
- 	bool "Marvell Berlin SoCs" if ARCH_MULTI_V7
--	select ARCH_HAS_RESET_CONTROLLER
-+	select RESET_CONTROLLER
- 	select ARCH_REQUIRE_GPIOLIB
- 	select ARM_GIC
- 	select DW_APB_ICTL
-diff --git a/arch/arm/mach-imx/Kconfig b/arch/arm/mach-imx/Kconfig
-index 8ceda28..7773cd7 100644
---- a/arch/arm/mach-imx/Kconfig
-+++ b/arch/arm/mach-imx/Kconfig
-@@ -58,7 +58,7 @@ config HAVE_IMX_MMDC
- 
- config HAVE_IMX_SRC
- 	def_bool y if SMP
--	select ARCH_HAS_RESET_CONTROLLER
-+	select RESET_CONTROLLER
- 
- config IMX_HAVE_IOMUX_V1
- 	bool
-diff --git a/arch/arm/mach-mmp/Kconfig b/arch/arm/mach-mmp/Kconfig
-index fdbfadf..46fdb69 100644
---- a/arch/arm/mach-mmp/Kconfig
-+++ b/arch/arm/mach-mmp/Kconfig
-@@ -90,7 +90,7 @@ config MACH_MMP_DT
- 	select PINCTRL
- 	select PINCTRL_SINGLE
- 	select COMMON_CLK
--	select ARCH_HAS_RESET_CONTROLLER
-+	select RESET_CONTROLLER
- 	select CPU_MOHAWK
- 	help
- 	  Include support for Marvell MMP2 based platforms using
-@@ -104,7 +104,7 @@ config MACH_MMP2_DT
- 	select PINCTRL
- 	select PINCTRL_SINGLE
- 	select COMMON_CLK
--	select ARCH_HAS_RESET_CONTROLLER
-+	select RESET_CONTROLLER
- 	select CPU_PJ4
- 	help
- 	  Include support for Marvell MMP2 based platforms using
-diff --git a/arch/arm/mach-prima2/Kconfig b/arch/arm/mach-prima2/Kconfig
-index 9ab8932..5d03202 100644
---- a/arch/arm/mach-prima2/Kconfig
-+++ b/arch/arm/mach-prima2/Kconfig
-@@ -1,6 +1,6 @@
- menuconfig ARCH_SIRF
- 	bool "CSR SiRF" if ARCH_MULTI_V7
--	select ARCH_HAS_RESET_CONTROLLER
-+	select RESET_CONTROLLER
- 	select ARCH_REQUIRE_GPIOLIB
- 	select GENERIC_IRQ_CHIP
- 	select NO_IOPORT_MAP
-diff --git a/arch/arm/mach-rockchip/Kconfig b/arch/arm/mach-rockchip/Kconfig
-index ae4eb7c..6990c3a 100644
---- a/arch/arm/mach-rockchip/Kconfig
-+++ b/arch/arm/mach-rockchip/Kconfig
-@@ -2,7 +2,7 @@ config ARCH_ROCKCHIP
- 	bool "Rockchip RK2928 and RK3xxx SOCs" if ARCH_MULTI_V7
- 	select PINCTRL
- 	select PINCTRL_ROCKCHIP
--	select ARCH_HAS_RESET_CONTROLLER
-+	select RESET_CONTROLLER
- 	select ARCH_REQUIRE_GPIOLIB
- 	select ARM_AMBA
- 	select ARM_GIC
-diff --git a/arch/arm/mach-sti/Kconfig b/arch/arm/mach-sti/Kconfig
-index 125865d..d0606e2 100644
---- a/arch/arm/mach-sti/Kconfig
-+++ b/arch/arm/mach-sti/Kconfig
-@@ -6,7 +6,6 @@ menuconfig ARCH_STI
- 	select PINCTRL
- 	select PINCTRL_ST
- 	select MFD_SYSCON
--	select ARCH_HAS_RESET_CONTROLLER
- 	select HAVE_ARM_SCU if SMP
- 	select ARCH_REQUIRE_GPIOLIB
- 	select ARM_ERRATA_754322
-diff --git a/arch/arm/mach-sunxi/Kconfig b/arch/arm/mach-sunxi/Kconfig
-index 4efe2d4..60b58ca 100644
---- a/arch/arm/mach-sunxi/Kconfig
-+++ b/arch/arm/mach-sunxi/Kconfig
-@@ -1,7 +1,6 @@
- menuconfig ARCH_SUNXI
- 	bool "Allwinner SoCs" if ARCH_MULTI_V7
- 	select ARCH_REQUIRE_GPIOLIB
--	select ARCH_HAS_RESET_CONTROLLER
- 	select CLKSRC_MMIO
- 	select GENERIC_IRQ_CHIP
- 	select PINCTRL
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index 0fa4c5f..269efaa 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -9,7 +9,6 @@ menuconfig ARCH_TEGRA
- 	select HAVE_ARM_TWD if SMP
- 	select PINCTRL
- 	select PM_OPP
--	select ARCH_HAS_RESET_CONTROLLER
- 	select RESET_CONTROLLER
- 	select SOC_BUS
- 	select USB_ULPI if USB_PHY
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index bb066e0..c455540 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -53,7 +53,7 @@ config ARCH_QCOM
- 
- config ARCH_ROCKCHIP
- 	bool "Rockchip Platforms"
--	select ARCH_HAS_RESET_CONTROLLER
-+	select RESET_CONTROLLER
- 	select ARCH_REQUIRE_GPIOLIB
- 	select PINCTRL
- 	select PINCTRL_ROCKCHIP
-@@ -68,7 +68,6 @@ config ARCH_SEATTLE
- 
- config ARCH_TEGRA
- 	bool "NVIDIA Tegra SoC Family"
--	select ARCH_HAS_RESET_CONTROLLER
- 	select ARCH_REQUIRE_GPIOLIB
- 	select CLKDEV_LOOKUP
- 	select CLKSRC_MMIO
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index e3aa5b0..da655a0 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -119,7 +119,7 @@ config ATH25
- 
- config ATH79
- 	bool "Atheros AR71XX/AR724X/AR913X based boards"
--	select ARCH_HAS_RESET_CONTROLLER
-+	select RESET_CONTROLLER
- 	select ARCH_REQUIRE_GPIOLIB
- 	select BOOT_RAW
- 	select CEVT_R4K
-@@ -329,7 +329,6 @@ config LANTIQ
- 	select USE_OF
- 	select PINCTRL
- 	select PINCTRL_LANTIQ
--	select ARCH_HAS_RESET_CONTROLLER
- 	select RESET_CONTROLLER
- 
- config LASAT
-@@ -555,7 +554,6 @@ config RALINK
- 	select SYS_HAS_EARLY_PRINTK
- 	select HAVE_MACH_CLKDEV
- 	select CLKDEV_LOOKUP
--	select ARCH_HAS_RESET_CONTROLLER
- 	select RESET_CONTROLLER
- 
- config SGI_IP22
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 0615f50..4ca3cc8 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -1,9 +1,5 @@
--config ARCH_HAS_RESET_CONTROLLER
-+config RESET_CONTROLLER
- 	bool
--
--menuconfig RESET_CONTROLLER
--	bool "Reset Controller Support"
--	default y if ARCH_HAS_RESET_CONTROLLER
- 	help
- 	  Generic Reset Controller support.
- 
-@@ -12,4 +8,10 @@ menuconfig RESET_CONTROLLER
- 
- 	  If unsure, say no.
- 
-+
-+menu "Reset Controllers"
-+	depends on RESET_CONTROLLER
-+
- source "drivers/reset/sti/Kconfig"
-+
-+endmenu
-diff --git a/drivers/reset/sti/Kconfig b/drivers/reset/sti/Kconfig
-index f8c15a3..6131785 100644
---- a/drivers/reset/sti/Kconfig
-+++ b/drivers/reset/sti/Kconfig
-@@ -2,7 +2,6 @@ if ARCH_STI
- 
- config STI_RESET_SYSCFG
- 	bool
--	select RESET_CONTROLLER
- 
- config STIH415_RESET
- 	bool
 -- 
-1.9.1
+~Vinod
