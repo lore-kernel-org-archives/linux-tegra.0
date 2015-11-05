@@ -1,133 +1,93 @@
-From: Alban Bedel <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [cbootimage PATCH 3/3] Add support to read and write rsa related fields on t124
-Date: Thu,  5 Nov 2015 17:03:22 +0100
-Message-ID: <1446739402-14238-4-git-send-email-alban.bedel@avionic-design.de>
-References: <1446739402-14238-1-git-send-email-alban.bedel@avionic-design.de>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1446739402-14238-1-git-send-email-alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Alban Bedel <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH 1/2] dt-bindings: phy: Add NVIDIA Tegra XUSB pad
+ controller binding
+Date: Thu, 5 Nov 2015 10:13:36 -0800
+Message-ID: <CAL1qeaHHS5PAUzcPAKevfUzcp+AiNUeYX0AowM4HJX5-x2x+nQ@mail.gmail.com>
+References: <1446657109-15568-1-git-send-email-thierry.reding@gmail.com>
+	<1446657109-15568-2-git-send-email-thierry.reding@gmail.com>
+	<563B27AC.2000702@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <563B27AC.2000702-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This allow creating and reading signed images for secure boot on t124.
+On Thu, Nov 5, 2015 at 1:55 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> +UTMI ports:
+>> +-----------
+>> +
+>> +Required properties:
+>> +- status: Defines the operation status of the port. Valid values are:
+>> +  - "disabled": the port is disabled
+>> +  - "okay": the port is enabled
+>> +- mode: A string that determines the mode in which to run the port. Valid
+>> +  values are:
+>> +  - "host": for USB host mode
+>> +  - "device": for USB device mode
+>> +  - "otg": for USB OTG mode
+>> +
+>> +Optional properties:
+>> +- nvidia,internal: A boolean property whose presence determines that a port
+>> +  is internal. In the absence of this property the port is considered to be
+>> +  external.
+>> +- vbus-supply: phandle to a regulator supplying the VBUS voltage.
+>> +
+>> +ULPI ports:
+>> +-----------
+>> +
+>> +Optional properties:
+>> +- status: Defines the operation status of the port. Valid values are:
+>> +  - "disabled": the port is disabled
+>> +  - "okay": the port is enabled
+>> +- nvidia,internal: A boolean property whose presence determines that a port
+>> +  is internal. In the absence of this property the port is considered to be
+>> +  external.
+>> +
+>> +HSIC ports:
+>> +-----------
+>> +
+>> +Required properties:
+>> +- status: Defines the operation status of the port. Valid values are:
+>> +  - "disabled": the port is disabled
+>> +  - "okay": the port is enabled
+>> +
+>> +Super-speed USB ports:
+>> +----------------------
+>> +
+>> +Required properties:
+>> +- status: Defines the operation status of the port. Valid values are:
+>> +  - "disabled": the port is disabled
+>> +  - "okay": the port is enabled
+>> +- nvidia,port: A single cell that specifies the physical port number to map
+>> +  this super-speed USB port to. The range of valid port numbers varies with
+>> +  the SoC generation:
+>> +  - 0-2: for Tegra124 and Tegra132
+>
+> I am a bit confused by what nvidia,port property is used for. Is this to
+> program XUSB_PADCTL_SS_PORT_MAP_0? If so then I think that this should
+> be an optional property because if you want to use the usb3 ports for
+> usb3, then we should not need to specify this here.
 
-Signed-off-by: Alban Bedel <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
----
- src/t124/nvbctlib_t124.c | 66 ++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 64 insertions(+), 2 deletions(-)
+"nvidia,port" is used to program XUSB_PADCTL_SS_PORT_MAP and is
+definitely required.  It specifies the UTMI port to which the SS port
+is mapped to.  For example, Nyan-Big has 3 UTMI ports (0, 1
+(internal), and 2) and 2 SS ports (0 and 1).  SS port 0 is mapped to
+the same physical port as UTMI port 0 and SS port 1 is mapped to the
+same physical port as UTMI port 2.
 
-diff --git a/src/t124/nvbctlib_t124.c b/src/t124/nvbctlib_t124.c
-index 5b760ad..ce0a34b 100644
---- a/src/t124/nvbctlib_t124.c
-+++ b/src/t124/nvbctlib_t124.c
-@@ -113,7 +113,10 @@ parse_token t124_root_token_list[] = {
- 	token_crypto_length,
- 	token_max_bct_search_blks,
- 	token_unique_chip_id,
--	token_secure_jtag_control
-+	token_secure_jtag_control,
-+	token_rsa_key_modulus,
-+	token_rsa_pss_sig_bl,
-+	token_rsa_pss_sig_bct
- };
- 
- int
-@@ -876,6 +879,12 @@ t124_getbl_param(u_int32_t set,
- 		sizeof(nvboot_hash));
- 		break;
- 
-+	case token_rsa_pss_sig_bl:
-+		reverse_byte_order((u_int8_t *)data,
-+			(const u_int8_t *)&bct_ptr->bootloader[set].signature.rsa_pss_sig,
-+			sizeof(nvboot_rsa_pss_sig));
-+		break;
-+
- 	default:
- 		return -ENODATA;
- 	}
-@@ -974,6 +983,17 @@ t124_bct_get_value(parse_token id, void *data, u_int8_t *bct)
- 		memcpy(data, &(bct_ptr->unique_chip_id), sizeof(nvboot_ecid));
- 		break;
- 
-+	case token_rsa_key_modulus:
-+		reverse_byte_order(data, (const u_int8_t *)&bct_ptr->key,
-+				sizeof(nvboot_rsa_key_modulus));
-+		break;
-+
-+	case token_rsa_pss_sig_bct:
-+		reverse_byte_order(data,
-+			(const u_int8_t *)&bct_ptr->signature.rsa_pss_sig,
-+			sizeof(nvboot_rsa_pss_sig));
-+		break;
-+
- 	case token_reserved_offset:
- 		*((u_int32_t *)data) = (u_int8_t *)&(samplebct.reserved)
- 				- (u_int8_t *)&samplebct;
-@@ -1020,6 +1040,28 @@ t124_bct_get_value(parse_token id, void *data, u_int8_t *bct)
- }
- 
- int
-+t124_bct_get_value_size(parse_token id)
-+{
-+	switch (id) {
-+	case token_rsa_key_modulus:
-+		return sizeof(nvboot_rsa_key_modulus);
-+
-+	case token_rsa_pss_sig_bl:
-+		return sizeof(nvboot_rsa_pss_sig);
-+
-+	case token_rsa_pss_sig_bct:
-+		return sizeof(nvboot_rsa_pss_sig);
-+
-+	/*
-+	 * Other bct fields can be added in when needed
-+	 */
-+	default:
-+		return -ENODATA;
-+	}
-+	return 0;
-+}
-+
-+int
- t124_bct_set_value(parse_token id, void *data, u_int8_t *bct)
- {
- 	nvboot_config_table *bct_ptr = (nvboot_config_table *)bct;
-@@ -1044,6 +1086,26 @@ t124_bct_set_value(parse_token id, void *data, u_int8_t *bct)
- 		memcpy(&bct_ptr->unique_chip_id, data, sizeof(nvboot_ecid));
- 		break;
- 
-+	case token_rsa_key_modulus:
-+		reverse_byte_order((u_int8_t *)&bct_ptr->key, data,
-+					sizeof(nvboot_rsa_key_modulus));
-+		break;
-+
-+	case token_rsa_pss_sig_bl:
-+		/*
-+		 * Update bootloader 0 since there is only one copy
-+		 * of bootloader being built in.
-+		 */
-+		reverse_byte_order(
-+			(u_int8_t *)&bct_ptr->bootloader[0].signature.rsa_pss_sig,
-+			data, sizeof(nvboot_rsa_pss_sig));
-+		break;
-+
-+	case token_rsa_pss_sig_bct:
-+		reverse_byte_order((u_int8_t *)&bct_ptr->signature.rsa_pss_sig,
-+			data, sizeof(nvboot_rsa_pss_sig));
-+		break;
-+
- 	default:
- 		return -ENODATA;
- 	}
-@@ -1125,7 +1187,7 @@ cbootimage_soc_config tegra124_config = {
- 	.getbl_param				= t124_getbl_param,
- 	.set_value					= t124_bct_set_value,
- 	.get_value					= t124_bct_get_value,
--	.get_value_size					= bct_get_unsupported,
-+	.get_value_size					= t124_bct_get_value_size,
- 	.set_data					= t124_bct_set_data,
- 	.get_bct_size				= t124_get_bct_size,
- 	.token_supported			= t124_bct_token_supported,
--- 
-2.6.2
+> Also the XHCI has 3 usb2 ports and 2 usb3 ports and so when you have
+> port numbers 0-2 I am not sure what you are referring too.
+
+The port numbers correspond tot he UTMI ports, so 3 UTMI ports =
+possible port values of 0 - 2.
+
+Maybe "port" isn't the best name here?
+
+-Andrew
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
