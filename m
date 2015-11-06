@@ -1,93 +1,105 @@
-From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH 1/2] dt-bindings: phy: Add NVIDIA Tegra XUSB pad
- controller binding
-Date: Thu, 5 Nov 2015 10:13:36 -0800
-Message-ID: <CAL1qeaHHS5PAUzcPAKevfUzcp+AiNUeYX0AowM4HJX5-x2x+nQ@mail.gmail.com>
-References: <1446657109-15568-1-git-send-email-thierry.reding@gmail.com>
-	<1446657109-15568-2-git-send-email-thierry.reding@gmail.com>
-	<563B27AC.2000702@nvidia.com>
+From: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+Subject: Re: [RFC PATCH 0/7] reset: make RESET_CONTROLLER a select'ed option
+Date: Fri, 6 Nov 2015 14:58:04 +0900
+Message-ID: <CAK7LNARjtTXUNQFDtcqtxUo0c49h_kfNCf-2WZUEFXmttZoFyA@mail.gmail.com>
+References: <1446722128-11961-1-git-send-email-yamada.masahiro@socionext.com>
+	<3770393.BLNOaUSB5Q@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <563B27AC.2000702-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <3770393.BLNOaUSB5Q@wuerfel>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Stephen
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Nov 5, 2015 at 1:55 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> +UTMI ports:
->> +-----------
->> +
->> +Required properties:
->> +- status: Defines the operation status of the port. Valid values are:
->> +  - "disabled": the port is disabled
->> +  - "okay": the port is enabled
->> +- mode: A string that determines the mode in which to run the port. Valid
->> +  values are:
->> +  - "host": for USB host mode
->> +  - "device": for USB device mode
->> +  - "otg": for USB OTG mode
->> +
->> +Optional properties:
->> +- nvidia,internal: A boolean property whose presence determines that a port
->> +  is internal. In the absence of this property the port is considered to be
->> +  external.
->> +- vbus-supply: phandle to a regulator supplying the VBUS voltage.
->> +
->> +ULPI ports:
->> +-----------
->> +
->> +Optional properties:
->> +- status: Defines the operation status of the port. Valid values are:
->> +  - "disabled": the port is disabled
->> +  - "okay": the port is enabled
->> +- nvidia,internal: A boolean property whose presence determines that a port
->> +  is internal. In the absence of this property the port is considered to be
->> +  external.
->> +
->> +HSIC ports:
->> +-----------
->> +
->> +Required properties:
->> +- status: Defines the operation status of the port. Valid values are:
->> +  - "disabled": the port is disabled
->> +  - "okay": the port is enabled
->> +
->> +Super-speed USB ports:
->> +----------------------
->> +
->> +Required properties:
->> +- status: Defines the operation status of the port. Valid values are:
->> +  - "disabled": the port is disabled
->> +  - "okay": the port is enabled
->> +- nvidia,port: A single cell that specifies the physical port number to map
->> +  this super-speed USB port to. The range of valid port numbers varies with
->> +  the SoC generation:
->> +  - 0-2: for Tegra124 and Tegra132
+Hi Arnd,
+
+
+
+2015-11-05 23:49 GMT+09:00 Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>:
+> On Thursday 05 November 2015 20:15:21 Masahiro Yamada wrote:
+>> When I was implementing a new reset controller for my SoCs,
+>> I struggled to make my sub-menu shown under the reset
+>> controller menu.
+>> I noticed the Kconfig in reset sub-system are screwed up due to two
+>> config options (ARCH_HAS_RESET_CONTROLLER and RESET_CONTROLLER).
+>>
+>> I think only the former should be select'ed by relevant SoCs,
+>> but in fact the latter is also select'ed here and there.
+>> Mixing "select" to a user-configurable option is a mess.
+>>
+>> Finally, I started to wonder whether it could be more simpler?
+>>
+>> The first patch drops ARCH_HAS_RESET_CONTROLLER.
+>> RESET_CONTROLLER should be directly selected by SoCs.
+>>
+>> The rest of this series are minor clean ups in other
+>> sub-systems.
+>> I can postpone them if changes over cross sub-systems
+>> are not preferred.
 >
-> I am a bit confused by what nvidia,port property is used for. Is this to
-> program XUSB_PADCTL_SS_PORT_MAP_0? If so then I think that this should
-> be an optional property because if you want to use the usb3 ports for
-> usb3, then we should not need to specify this here.
+> Thanks a lot for picking up this topic! It has been annoying me
+> for a while and I have submitted an experimental patch some time
+> ago, but not finished it myself.
+>
+> For some reason, I only see a subset of your patches here (patch 1, 4 and 6),
+> so I don't know exactly what you did.
 
-"nvidia,port" is used to program XUSB_PADCTL_SS_PORT_MAP and is
-definitely required.  It specifies the UTMI port to which the SS port
-is mapped to.  For example, Nyan-Big has 3 UTMI ports (0, 1
-(internal), and 2) and 2 SS ports (0 and 1).  SS port 0 is mapped to
-the same physical port as UTMI port 0 and SS port 1 is mapped to the
-same physical port as UTMI port 2.
+All the patches CCed linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org,
+so you can dig into LKML log or the following patchwork
+https://patchwork.kernel.org/project/LKML/list/
 
-> Also the XHCI has 3 usb2 ports and 2 usb3 ports and so when you have
-> port numbers 0-2 I am not sure what you are referring too.
 
-The port numbers correspond tot he UTMI ports, so 3 UTMI ports =
-possible port values of 0 - 2.
 
-Maybe "port" isn't the best name here?
 
--Andrew
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> For reference, you can find
+> my original patch below. Please check if I did things that your
+> series doesn't do, and whether those are still needed.
+
+Thanks.
+
+Yours looks mostly nice, and this work is worth continuing.
+(I am pleased to review it when you submit the next version.)
+
+I have some comments.
+
+[1]
+Why is ARCH_HAS_RESET_CONTROLLER select'ed by
+ARCH_MULTIPLATFORM, but not by others?
+This seems weird.
+
+We do not have such options like
+  ARCH_HAS_PINCTRL,  ARCH_HAS_COMMON_CLK...
+
+
+[2]
+The difference is that yours is adding per-driver options such as
+RESET_SOCFPGA, RESET_BERLIN, etc.
+I think this is a good idea.
+
+But, I notice lowlevel drivers select RESET_CONTROLLER,
+for example, RESET_SOCFPGA select RESET_CONTROLLER.
+
+We generally do the opposite in other subsystems, I think.
+
+
+For example, the whole of clk menu is guarded by "depends on COMMON_CLK".
+
+menu "Common Clock Framework"
+         depends on COMMON_CLK
+
+     <bunch of low-level drivers>
+
+endmenu
+
+
+Likewise for pinctrl.
+
+
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
