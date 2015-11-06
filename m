@@ -1,105 +1,74 @@
-From: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+From: Arnd Bergmann <arnd@arndb.de>
 Subject: Re: [RFC PATCH 0/7] reset: make RESET_CONTROLLER a select'ed option
-Date: Fri, 6 Nov 2015 14:58:04 +0900
-Message-ID: <CAK7LNARjtTXUNQFDtcqtxUo0c49h_kfNCf-2WZUEFXmttZoFyA@mail.gmail.com>
-References: <1446722128-11961-1-git-send-email-yamada.masahiro@socionext.com>
-	<3770393.BLNOaUSB5Q@wuerfel>
+Date: Fri, 06 Nov 2015 10:29:54 +0100
+Message-ID: <4121507.a7FHqRxKcX@wuerfel>
+References: <1446722128-11961-1-git-send-email-yamada.masahiro@socionext.com> <3770393.BLNOaUSB5Q@wuerfel> <CAK7LNARjtTXUNQFDtcqtxUo0c49h_kfNCf-2WZUEFXmttZoFyA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <3770393.BLNOaUSB5Q@wuerfel>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, linux-mips-6z/3iImG2C8G8FEW9MqTrA@public.gmane.org, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, =?UTF-8?Q?Terje_Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sebastian Hesselbarth <sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sascha Hauer <kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Stephen
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <CAK7LNARjtTXUNQFDtcqtxUo0c49h_kfNCf-2WZUEFXmttZoFyA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: linux-arm-kernel@lists.infradead.org
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>, linux-mips@linux-mips.org, kernel@stlinux.com, David Airlie <airlied@linux.ie>, Catalin Marinas <catalin.marinas@arm.com>, Linus Walleij <linus.walleij@linaro.org>, Will Deacon <will.deacon@arm.com>, dri-devel@lists.freedesktop.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Heiko Stuebner <heiko@sntech.de>, Alexandre Courbot <gnurou@gmail.com>, Russell King <linux@arm.linux.org.uk>, Michael Turquette <mturquette@linaro.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Chen-Yu Tsai <wens@csie.org>, Maxime Coquelin <maxime.coquelin@st.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Stephe
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Arnd,
+On Friday 06 November 2015 14:58:04 Masahiro Yamada wrote:
+> 2015-11-05 23:49 GMT+09:00 Arnd Bergmann <arnd@arndb.de>:
+> [1]
+> Why is ARCH_HAS_RESET_CONTROLLER select'ed by
+> ARCH_MULTIPLATFORM, but not by others?
+> This seems weird.
 
+I tried to avoid having to set this from each platform separately,
+and all users of ARCH_HAS_RESET_CONTROLLER on ARM are also
+based on ARCH_MULTIPLATFORM. The other platforms are lagging behind
+in their conversion and use neither reset controllers not
+multiplatform. If anyone wants to make them use reset controllers,
+we probably want them to use multiplatform as well.
 
+> We do not have such options like
+>   ARCH_HAS_PINCTRL,  ARCH_HAS_COMMON_CLK...
 
-2015-11-05 23:49 GMT+09:00 Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>:
-> On Thursday 05 November 2015 20:15:21 Masahiro Yamada wrote:
->> When I was implementing a new reset controller for my SoCs,
->> I struggled to make my sub-menu shown under the reset
->> controller menu.
->> I noticed the Kconfig in reset sub-system are screwed up due to two
->> config options (ARCH_HAS_RESET_CONTROLLER and RESET_CONTROLLER).
->>
->> I think only the former should be select'ed by relevant SoCs,
->> but in fact the latter is also select'ed here and there.
->> Mixing "select" to a user-configurable option is a mess.
->>
->> Finally, I started to wonder whether it could be more simpler?
->>
->> The first patch drops ARCH_HAS_RESET_CONTROLLER.
->> RESET_CONTROLLER should be directly selected by SoCs.
->>
->> The rest of this series are minor clean ups in other
->> sub-systems.
->> I can postpone them if changes over cross sub-systems
->> are not preferred.
->
-> Thanks a lot for picking up this topic! It has been annoying me
-> for a while and I have submitted an experimental patch some time
-> ago, but not finished it myself.
->
-> For some reason, I only see a subset of your patches here (patch 1, 4 and 6),
-> so I don't know exactly what you did.
+We could of course change it in one direction or another, but it
+didn't seem urgent here.
 
-All the patches CCed linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org,
-so you can dig into LKML log or the following patchwork
-https://patchwork.kernel.org/project/LKML/list/
+> [2]
+> The difference is that yours is adding per-driver options such as
+> RESET_SOCFPGA, RESET_BERLIN, etc.
+> I think this is a good idea.
+> 
+> But, I notice lowlevel drivers select RESET_CONTROLLER,
+> for example, RESET_SOCFPGA select RESET_CONTROLLER.
+> 
+> We generally do the opposite in other subsystems, I think.
+> 
+> 
+> For example, the whole of clk menu is guarded by "depends on COMMON_CLK".
+> 
+> menu "Common Clock Framework"
+>          depends on COMMON_CLK
+> 
+>      <bunch of low-level drivers>
+> 
+> endmenu
+> 
+> 
+> Likewise for pinctrl.
 
+We can do that too, either way works for me, and we are using both
+in other parts of the kernel. REGMAP is an example for another subsystem
+that gets selected by each driver that relies on the framework.
 
+The practical difference is only in the case that the subsystem
+is enabled (e.g. by using ARCH_MULTIPLATFORM) but all reset drivers
+are disabled. A device driver using the API in one case will see
+the stubbed-out inline helpers and not contain any object code
+that relies on non-NULL return values from them, while in the
+other case it calls into the subsystem code to get the same
+return value at runtime.
 
+If you volunteer to clean up my patch, feel free to choose between
+the two options as you like.
 
-> For reference, you can find
-> my original patch below. Please check if I did things that your
-> series doesn't do, and whether those are still needed.
-
-Thanks.
-
-Yours looks mostly nice, and this work is worth continuing.
-(I am pleased to review it when you submit the next version.)
-
-I have some comments.
-
-[1]
-Why is ARCH_HAS_RESET_CONTROLLER select'ed by
-ARCH_MULTIPLATFORM, but not by others?
-This seems weird.
-
-We do not have such options like
-  ARCH_HAS_PINCTRL,  ARCH_HAS_COMMON_CLK...
-
-
-[2]
-The difference is that yours is adding per-driver options such as
-RESET_SOCFPGA, RESET_BERLIN, etc.
-I think this is a good idea.
-
-But, I notice lowlevel drivers select RESET_CONTROLLER,
-for example, RESET_SOCFPGA select RESET_CONTROLLER.
-
-We generally do the opposite in other subsystems, I think.
-
-
-For example, the whole of clk menu is guarded by "depends on COMMON_CLK".
-
-menu "Common Clock Framework"
-         depends on COMMON_CLK
-
-     <bunch of low-level drivers>
-
-endmenu
-
-
-Likewise for pinctrl.
-
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+	Arnd
