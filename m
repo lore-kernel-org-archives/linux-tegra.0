@@ -1,75 +1,94 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [U-Boot] [PATCH 4/4] ARM: tegra210: gpu: configure WPR region
-Date: Mon, 9 Nov 2015 09:18:16 -0700
-Message-ID: <5640C748.8080207@wwwdotorg.org>
-References: <1445230624-30314-1-git-send-email-acourbot@nvidia.com>
- <1445230624-30314-5-git-send-email-acourbot@nvidia.com>
- <56310CE8.3050107@wwwdotorg.org> <20151109143654.GB11362@ulmo.nvidia.com>
- <5640B994.7050307@wwwdotorg.org> <20151109154742.GE11362@ulmo.nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/2] dt-bindings: phy: Add NVIDIA Tegra XUSB pad
+ controller binding
+Date: Mon, 9 Nov 2015 16:48:28 +0000
+Message-ID: <5640CE5C.9070103@nvidia.com>
+References: <1446657109-15568-1-git-send-email-thierry.reding@gmail.com>
+ <1446657109-15568-2-git-send-email-thierry.reding@gmail.com>
+ <563B27AC.2000702@nvidia.com>
+ <CAL1qeaHHS5PAUzcPAKevfUzcp+AiNUeYX0AowM4HJX5-x2x+nQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20151109154742.GE11362-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+In-Reply-To: <CAL1qeaHHS5PAUzcPAKevfUzcp+AiNUeYX0AowM4HJX5-x2x+nQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tom Warren <twarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/09/2015 08:48 AM, Thierry Reding wrote:
-> On Mon, Nov 09, 2015 at 08:19:48AM -0700, Stephen Warren wrote:
->> On 11/09/2015 07:36 AM, Thierry Reding wrote:
->>> On Wed, Oct 28, 2015 at 11:59:04AM -0600, Stephen Warren wrote:
->>>> On 10/18/2015 10:57 PM, Alexandre Courbot wrote:
->>>>> T210's GPU secure firmware loading requires a write-protected region
->>>>> to be set up.
->>>>>
->>>>> This patch reserves the upper 256KB of RAM as the WPR region and locks
->>>>> it so the kernel can initiate secure firmware loading.
->>>>
->>>> On T210, it's the responsibility of nvtboot (which runs before U-Boot) to
->>>> set up any and all carve-outs. This code should not be necessary, and indeed
->>>> I expect the registers it touches can't actually be programmed from U-Boot,
->>>> which runs in non-secure mode after WPR is already locked.
->>>
->>> Can we document this assumption somewhere? It's entirely possible that
->>> someone might want to run U-Boot without nvtboot
->>
->> That's not currently a supported use-case.
->
-> Isn't the whole point of open-source for people to be able to do all the
-> things that aren't supported?
 
-Sure, but the default case that we support should "just work", and be 
-represented by the code we ship, and be supported by us. Any non-default 
-case is going to require some research or additional coding/fixing/... 
-effort, and we haven't necessarily published the information require to 
-make those cases work.
-
->>> , in which case nvtboot
->>> would still need to be responsible for setting this up.
+On 05/11/15 18:13, Andrew Bresticker wrote:
+> On Thu, Nov 5, 2015 at 1:55 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>> +UTMI ports:
+>>> +-----------
+>>> +
+>>> +Required properties:
+>>> +- status: Defines the operation status of the port. Valid values are:
+>>> +  - "disabled": the port is disabled
+>>> +  - "okay": the port is enabled
+>>> +- mode: A string that determines the mode in which to run the port. Valid
+>>> +  values are:
+>>> +  - "host": for USB host mode
+>>> +  - "device": for USB device mode
+>>> +  - "otg": for USB OTG mode
+>>> +
+>>> +Optional properties:
+>>> +- nvidia,internal: A boolean property whose presence determines that a port
+>>> +  is internal. In the absence of this property the port is considered to be
+>>> +  external.
+>>> +- vbus-supply: phandle to a regulator supplying the VBUS voltage.
+>>> +
+>>> +ULPI ports:
+>>> +-----------
+>>> +
+>>> +Optional properties:
+>>> +- status: Defines the operation status of the port. Valid values are:
+>>> +  - "disabled": the port is disabled
+>>> +  - "okay": the port is enabled
+>>> +- nvidia,internal: A boolean property whose presence determines that a port
+>>> +  is internal. In the absence of this property the port is considered to be
+>>> +  external.
+>>> +
+>>> +HSIC ports:
+>>> +-----------
+>>> +
+>>> +Required properties:
+>>> +- status: Defines the operation status of the port. Valid values are:
+>>> +  - "disabled": the port is disabled
+>>> +  - "okay": the port is enabled
+>>> +
+>>> +Super-speed USB ports:
+>>> +----------------------
+>>> +
+>>> +Required properties:
+>>> +- status: Defines the operation status of the port. Valid values are:
+>>> +  - "disabled": the port is disabled
+>>> +  - "okay": the port is enabled
+>>> +- nvidia,port: A single cell that specifies the physical port number to map
+>>> +  this super-speed USB port to. The range of valid port numbers varies with
+>>> +  the SoC generation:
+>>> +  - 0-2: for Tegra124 and Tegra132
 >>
->> I assume s/nvtboot/whatever other bootloader is in use/?
->
-> Right, I was going to write U-Boot here, but that's obviously only true
-> if U-Boot is still running in secure mode. Otherwise, yes, it'd be what-
-> ever is the other bootloader being used.
->
->>> Or if it isn't
->>> we could still point at some location where the interactions between a
->>> first stage bootloader and U-Boot are documented.
->>>
->>> Do we have a document of this kind already?
->>
->> The L4T U-Boot source code:-)
->
-> There's a bunch of things that even the L4T U-Boot doesn't document. The
-> fact that it doesn't initialize the SMMU or WPR doesn't indicate that it
-> is something that a first stage bootloader needs to do.
+>> I am a bit confused by what nvidia,port property is used for. Is this to
+>> program XUSB_PADCTL_SS_PORT_MAP_0? If so then I think that this should
+>> be an optional property because if you want to use the usb3 ports for
+>> usb3, then we should not need to specify this here.
+> 
+> "nvidia,port" is used to program XUSB_PADCTL_SS_PORT_MAP and is
+> definitely required.  It specifies the UTMI port to which the SS port
+> is mapped to.  For example, Nyan-Big has 3 UTMI ports (0, 1
+> (internal), and 2) and 2 SS ports (0 and 1).  SS port 0 is mapped to
+> the same physical port as UTMI port 0 and SS port 1 is mapped to the
+> same physical port as UTMI port 2.
 
-I meant this more along the lines of "if there's no code to do something 
-in L4T U-Boot, upstream U-Boot wouldn't need that code either". That 
-should be true at least w.r.t. nvtboot integration; certainly there are 
-features that only exist in upstream U-Boot and haven't been back-ported 
-downstream. I wasn't really implying that there's actual documentation 
-(comments) in the L4T U-Boot source code.
+By port, you mean usb3 connector/receptacle right?
+
+I had also been thinking about the use-case where you have an embedded
+usb3 device (on the same pcb) directly connected to the tegra and so I
+was wondering if setting this register would be still necessary.
+However, I have checked with the designers and they told me that we do
+still need to set this even if this case. So it does appear to be
+required after all. Sorry for the noise.
+
+Jon
