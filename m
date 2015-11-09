@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH V2 4/6] dmaengine: tegra-apb: Only save channel state for those in use
-Date: Mon, 9 Nov 2015 13:23:47 +0000
-Message-ID: <1447075429-27311-5-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH V2 6/6] dmaengine: tegra-apb: Free interrupts before killing tasklets
+Date: Mon, 9 Nov 2015 13:23:49 +0000
+Message-ID: <1447075429-27311-7-git-send-email-jonathanh@nvidia.com>
 References: <1447075429-27311-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,45 +12,48 @@ To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vinod.koul@intel.com>, S
 Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Currently the tegra-apb DMA driver suspend/resume helpers, save and
-restore the registers for all channels regardless of whether they are
-in use or not. Change this so that only channels that have been
-allocated and configured are saved and restored.
+On probe failure or driver removal, before killing any tasklets, ensure
+that the channel interrupt is freed to ensure that another channel
+interrupt cannot occur and schedule the tasklet again.
 
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/dma/tegra20-apb-dma.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+V2 changes:
+- Updated patch to use free_irq instead of disable_irq
+
+ drivers/dma/tegra20-apb-dma.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 94f59c3fcdca..4fc0851069cd 100644
+index 004edcdb2d2e..d3892a106c1e 100644
 --- a/drivers/dma/tegra20-apb-dma.c
 +++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1544,6 +1544,12 @@ static int tegra_dma_pm_suspend(struct device *dev)
+@@ -1396,8 +1396,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
+ 		}
+ 		tdc->irq = res->start;
+ 		snprintf(tdc->name, sizeof(tdc->name), "apbdma.%d", i);
+-		ret = devm_request_irq(&pdev->dev, tdc->irq,
+-				tegra_dma_isr, 0, tdc->name, tdc);
++		ret = request_irq(tdc->irq, tegra_dma_isr, 0, tdc->name, tdc);
+ 		if (ret) {
+ 			dev_err(&pdev->dev,
+ 				"request_irq failed with err %d channel %d\n",
+@@ -1478,6 +1477,8 @@ err_unregister_dma_dev:
+ err_irq:
+ 	while (--i >= 0) {
  		struct tegra_dma_channel *tdc = &tdma->channels[i];
- 		struct tegra_dma_channel_regs *ch_reg = &tdc->channel_reg;
- 
-+		/*
-+		 * Only save the state of DMA channels that are in use.
-+		 */
-+		if (!tdc->config_init)
-+			continue;
 +
- 		ch_reg->csr = tdc_read(tdc, TEGRA_APBDMA_CHAN_CSR);
- 		ch_reg->ahb_ptr = tdc_read(tdc, TEGRA_APBDMA_CHAN_AHBPTR);
- 		ch_reg->apb_ptr = tdc_read(tdc, TEGRA_APBDMA_CHAN_APBPTR);
-@@ -1577,6 +1583,12 @@ static int tegra_dma_pm_resume(struct device *dev)
- 		struct tegra_dma_channel *tdc = &tdma->channels[i];
- 		struct tegra_dma_channel_regs *ch_reg = &tdc->channel_reg;
++		free_irq(tdc->irq, tdc);
+ 		tasklet_kill(&tdc->tasklet);
+ 	}
  
-+		/*
-+		 * Only restore the state of DMA channels that are in use.
-+		 */
-+		if (!tdc->config_init)
-+			continue;
-+
- 		if (tdma->chip_data->support_separate_wcount_reg)
- 			tdc_write(tdc, TEGRA_APBDMA_CHAN_WCOUNT,
- 				  ch_reg->wcount);
+@@ -1497,6 +1498,7 @@ static int tegra_dma_remove(struct platform_device *pdev)
+ 
+ 	for (i = 0; i < tdma->chip_data->nr_channels; ++i) {
+ 		tdc = &tdma->channels[i];
++		free_irq(tdc->irq, tdc);
+ 		tasklet_kill(&tdc->tasklet);
+ 	}
+ 
 -- 
 2.1.4
