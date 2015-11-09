@@ -1,49 +1,50 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 2/6] dmaengine: tegra-apb: Use dev_get_drvdata()
-Date: Mon, 9 Nov 2015 13:23:45 +0000
-Message-ID: <1447075429-27311-3-git-send-email-jonathanh@nvidia.com>
-References: <1447075429-27311-1-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH V2 0/6] DMA: tegra-apb: Clean-up
+Date: Mon, 9 Nov 2015 13:23:43 +0000
+Message-ID: <1447075429-27311-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1447075429-27311-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vinod.koul@intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-In the tegra_dma_runtime_suspend/resume functions, the pdev structure
-is not needed, and so just call dev_get_drvdata() to get the device
-data structure.
+Some clean-up changes for the tegra-apb DMA driver.
 
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/dma/tegra20-apb-dma.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+These have been compile and boot tested for ARM and ARM64. Summary of the
+ARM results are below.
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 6007111fac1d..802d66a25de6 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1509,8 +1509,7 @@ static int tegra_dma_remove(struct platform_device *pdev)
- 
- static int tegra_dma_runtime_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct tegra_dma *tdma = platform_get_drvdata(pdev);
-+	struct tegra_dma *tdma = dev_get_drvdata(dev);
- 
- 	clk_disable_unprepare(tdma->dma_clk);
- 	return 0;
-@@ -1518,8 +1517,7 @@ static int tegra_dma_runtime_suspend(struct device *dev)
- 
- static int tegra_dma_runtime_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct tegra_dma *tdma = platform_get_drvdata(pdev);
-+	struct tegra_dma *tdma = dev_get_drvdata(dev);
- 	int ret;
- 
- 	ret = clk_prepare_enable(tdma->dma_clk);
+Test summary
+------------
+
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Build: Image:
+    Pass: ( 1/ 1): defconfig
+
+Boot to userspace: defconfig:
+    Pass: ( 1/ 1): qemu-vexpress64
+
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+                   tegra20-trimslice, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+                   tegra20-trimslice, tegra30-beaver
+
+Jon Hunter (6):
+  dmaengine: tegra-apb: Correct runtime-pm usage
+  dmaengine: tegra-apb: Use dev_get_drvdata()
+  dmaengine: tegra-apb: Save and restore word count
+  dmaengine: tegra-apb: Only save channel state for those in use
+  dmaengine: tegra-apb: Update driver to use GFP_NOWAIT
+  dmaengine: tegra-apb: Free interrupts before killing tasklets
+
+ drivers/dma/tegra20-apb-dma.c | 83 ++++++++++++++++++++++++-------------------
+ 1 file changed, 46 insertions(+), 37 deletions(-)
+
 -- 
 2.1.4
