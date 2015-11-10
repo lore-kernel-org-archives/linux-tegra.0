@@ -1,41 +1,39 @@
-From: Alban Bedel <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [tegrarcm PATCH 1/2] Remove the operational mode check
-Date: Mon,  9 Nov 2015 18:19:45 +0100
-Message-ID: <1447089586-24826-2-git-send-email-alban.bedel@avionic-design.de>
-References: <1447089586-24826-1-git-send-email-alban.bedel@avionic-design.de>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1447089586-24826-1-git-send-email-alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Alban Bedel <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+From: Andrew Chew <achew@nvidia.com>
+Subject: [PATCH] watchdog: tegra: Stop watchdog first if restarting
+Date: Mon, 9 Nov 2015 16:11:38 -0800
+Message-ID: <1447114298-5516-1-git-send-email-achew@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-watchdog@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, abrestic@chromium.org, treding@nvidia.com, swarren@nvidia.com, jimmzhang@nvidia.com, linux@roeck-us.net, wim@iguana.be, Andrew Chew <achew@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This check isn't really needed, if communication isn't possible it
-will just fails later on. Further it currently prevent communicating
-with secured devices, so just remove it.
+If we need to restart the watchdog due to someone changing the timeout
+interval, stop the watchdog before restarting it.  Otherwise, the new
+timeout doesn't seem to take.
 
-Signed-off-by: Alban Bedel <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Signed-off-by: Andrew Chew <achew@nvidia.com>
 ---
- src/main.c | 7 -------
- 1 file changed, 7 deletions(-)
+ drivers/watchdog/tegra_wdt.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/src/main.c b/src/main.c
-index 3db0ed8..b024562 100644
---- a/src/main.c
-+++ b/src/main.c
-@@ -352,13 +352,6 @@ int main(int argc, char **argv)
- 		error(1, errno, "wait status after platform info");
- 	dump_platform_info(&info);
+diff --git a/drivers/watchdog/tegra_wdt.c b/drivers/watchdog/tegra_wdt.c
+index 7f97cdd..9ec5760 100644
+--- a/drivers/watchdog/tegra_wdt.c
++++ b/drivers/watchdog/tegra_wdt.c
+@@ -140,8 +140,10 @@ static int tegra_wdt_set_timeout(struct watchdog_device *wdd,
+ {
+ 	wdd->timeout = timeout;
  
--	if (info.op_mode != RCM_OP_MODE_DEVEL &&
--	    info.op_mode != RCM_OP_MODE_ODM_OPEN &&
--	    info.op_mode != RCM_OP_MODE_ODM_SECURE &&
--	    info.op_mode != RCM_OP_MODE_PRE_PRODUCTION)
--		error(1, ENODEV, "device is not in developer, open, secure, "
--		      "or pre-production mode, cannot flash");
--
- 	// download the BCT
- 	ret = download_bct(h3p, bctfile);
- 	if (ret) {
+-	if (watchdog_active(wdd))
++	if (watchdog_active(wdd)) {
++		tegra_wdt_stop(wdd);
+ 		return tegra_wdt_start(wdd);
++	}
+ 
+ 	return 0;
+ }
 -- 
-2.6.3
+2.1.4
