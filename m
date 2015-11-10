@@ -1,43 +1,43 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 4/6] dmaengine: tegra-apb: Only save channel state for
- those in use
-Date: Tue, 10 Nov 2015 09:57:35 +0000
-Message-ID: <5641BF8F.1010304@nvidia.com>
-References: <1447075429-27311-1-git-send-email-jonathanh@nvidia.com>
- <1447075429-27311-5-git-send-email-jonathanh@nvidia.com>
- <CAHp75Ve77TVmc6TE-mDRvH3_jbKZvzYv0dj7WOXF0mRFa=JErg@mail.gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [RFC PATCH 0/2] Add support for Tegra210 AGIC
+Date: Tue, 10 Nov 2015 14:39:35 +0000
+Message-ID: <1447166377-19707-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAHp75Ve77TVmc6TE-mDRvH3_jbKZvzYv0dj7WOXF0mRFa=JErg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dmaengine <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+The Tegra210 AGIC interrupt controller is a 2nd level interrupt controller
+located in a separate power domain to the main GIC interrupt controller.
+It can route interrupts to the main CPU cluster or an Audio DSP slave.
 
-On 09/11/15 13:58, Andy Shevchenko wrote:
-> On Mon, Nov 9, 2015 at 3:23 PM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> Currently the tegra-apb DMA driver suspend/resume helpers, save and
->> restore the registers for all channels regardless of whether they are
->> in use or not. Change this so that only channels that have been
->> allocated and configured are saved and restored.
-> 
-> Nitpick
-> 
->> +               /*
->> +                * Only save the state of DMA channels that are in use.
->> +                */
-> 
-> One line?
-> 
->> +               /*
->> +                * Only restore the state of DMA channels that are in use.
->> +                */
-> 
-> Same.
+Ideally we would like to re-use the existing ARM GIC driver because the
+AGIC is a GIC-400. However, in order to do so this requires a few
+significant changes to the exisiting GIC driver for power management
+reasons.
 
-Ok.
+The purpose of this RFC is to get some feedback on the approach and see
+if we can support the AGIC in this way or if a separate driver is
+warranted for this device.
 
-Jon
+Please note that this RFC does not address the issue of interrupt routing.
+Ideally I was thinking that having a mechanism/API to migrate an interrupt
+from the CPU cluster to the DSP would make sense, however, I don't believe
+this is supported today in the kernel. Would such an approach be acceptable
+or if not, is there a better way to handle this?
+
+Jon Hunter (2):
+  genirq: Add runtime resume/suspend support for IRQ chips
+  irqchip/gic: Add support for tegra AGIC interrupt controller
+
+ drivers/irqchip/irq-gic.c | 341 +++++++++++++++++++++++++++++++++++++++-------
+ include/linux/irq.h       |   4 +
+ kernel/irq/internals.h    |  17 +++
+ kernel/irq/manage.c       |   7 +
+ 4 files changed, 319 insertions(+), 50 deletions(-)
+
+-- 
+2.1.4
