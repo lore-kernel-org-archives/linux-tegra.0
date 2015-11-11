@@ -1,49 +1,39 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [cbootimage PATCH 3/3] Add support to read and write rsa related
- fields on t124
-Date: Wed, 11 Nov 2015 10:04:34 -0700
-Message-ID: <56437522.7000304@wwwdotorg.org>
-References: <1446739402-14238-1-git-send-email-alban.bedel@avionic-design.de>
- <1446739402-14238-4-git-send-email-alban.bedel@avionic-design.de>
- <56436FA4.3070906@wwwdotorg.org> <20151111175603.43a21403@avionic-0020>
+Subject: Re: [tegrarcm PATCH 1/2] Remove the operational mode check
+Date: Wed, 11 Nov 2015 10:07:21 -0700
+Message-ID: <564375C9.9070405@wwwdotorg.org>
+References: <1447089586-24826-1-git-send-email-alban.bedel@avionic-design.de>
+ <1447089586-24826-2-git-send-email-alban.bedel@avionic-design.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20151111175603.43a21403@avionic-0020>
+In-Reply-To: <1447089586-24826-2-git-send-email-alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Alban Bedel <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Penny Chiu <pchiu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/11/2015 09:56 AM, Alban Bedel wrote:
-> On Wed, 11 Nov 2015 09:41:08 -0700
-> Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->
->> On 11/05/2015 09:03 AM, Alban Bedel wrote:
->>> This allow creating and reading signed images for secure boot on t124.
->>
->> This patch looks like it's identical to the equivalent code for T210.
->> Does it depend on your other two patches, or is it independent, such
->> that I can apply it now?
->
-> Yes, this can be applied without the rest.
+On 11/09/2015 10:19 AM, Alban Bedel wrote:
+> This check isn't really needed, if communication isn't possible it
+> will just fails later on. Further it currently prevent communicating
+> with secured devices, so just remove it.
 
-OK, I've applied this patch.
+> diff --git a/src/main.c b/src/main.c
 
->> It'd be nice if we could share code between src/tNNN/nvbctlib_tNNN.c
->> somehow rather than duplicating it all, but that's not a problem this
->> patch introduces, so no need to attempt that now.
->
-> That would be quiet nice, but that would probably require quiet a large
-> rework of the current abstraction. I suspect it would need to move to
-> some description of the BCT that include the offset of each field. That
-> way the parsers/set/get functions wouldn't need to be reimplemented for
-> each BCT version.
+> @@ -352,13 +352,6 @@ int main(int argc, char **argv)
 
-My idea was to compile a single C file once per SoC, with the 
-pre-processor include path set differently each time in order to pick up 
-a per-SoC header containing the definition of the BCT structure type, 
-plus some configuration options to indicate which fields exist in the 
-structure, in order to ifdef out support for missing fields. I've seen 
-this technique used in other places and it worked out well there.
+> -	if (info.op_mode != RCM_OP_MODE_DEVEL &&
+> -	    info.op_mode != RCM_OP_MODE_ODM_OPEN &&
+> -	    info.op_mode != RCM_OP_MODE_ODM_SECURE &&
+> -	    info.op_mode != RCM_OP_MODE_PRE_PRODUCTION)
+> -		error(1, ENODEV, "device is not in developer, open, secure, "
+> -		      "or pre-production mode, cannot flash");
+
+I would rather maintain the sanity check. The set of OP_MODE values 
+should be quite small, so we should be able to simply add another on 
+here. Recasting this as a switch might make the code marginally simpler.
+
+Either way, we should update src/rcm.h to add a new RCM_OP_MODE 
+constant, and dump_platform_info() so that it can print the name of the 
+relevant other mode(s).
