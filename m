@@ -1,84 +1,233 @@
 From: Bryan Wu <pengw-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 0/3 RFC v5] media: platform: add NVIDIA Tegra VI driver
-Date: Wed, 11 Nov 2015 11:50:45 -0800
-Message-ID: <1447271448-30056-1-git-send-email-pengw@nvidia.com>
+Subject: [PATCH 2/3] ARM64: add tegra-vi support in T210 device-tree
+Date: Wed, 11 Nov 2015 11:50:47 -0800
+Message-ID: <1447271448-30056-3-git-send-email-pengw@nvidia.com>
+References: <1447271448-30056-1-git-send-email-pengw@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1447271448-30056-1-git-send-email-pengw-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: hansverk-FYB4Gu1CFyUAvxtiuMwx3w@public.gmane.org, linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: ebrower-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jbang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, davidw-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bmurthyv-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This patchset add and enable V4L2 driver for latest NVIDIA Tegra
-Video Input hardware controller.
+Following device tree support for Tegra VI now:
+ - "vi" node which might have 6 ports/endpoints
+ - in TPG mode, "vi" node don't need to define any ports/endpoints
+ - ports/endpoints defines the link between VI and external sensors.
 
-It's based on the staging/work branch of Thierry Reding Tegra
-upstream kernel github repo, which is based on 4.3.0-next-20151106.
-(https://github.com/thierryreding/linux/tree/staging/work)
+Signed-off-by: Bryan Wu <pengw-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm64/boot/dts/nvidia/tegra210-p2571.dts |   8 ++
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi      | 174 +++++++++++++++++++++++++-
+ 2 files changed, 181 insertions(+), 1 deletion(-)
 
-v5:
-  - Introduce 2 kthreads for capture
-    Use one kthread to start capture a frame and wait for next frame
-    start. Before waiting, it will move the current buffer to another queue
-    which will be handled by the second kthread.
-    
-    The second kthread (capture_done) will wait for memory output done
-    sync point event and hand over the buffer to videobuffer2 framework as
-    capture done.
-
-  - Fix building issue after upstream V4L2 API changed
-
-  - Fix one potential race condition
-    Increase syncpoint max value before arming syncshot capture
-
-  - Remove freezer in kthread since it's problematic according latest
-    discussion in 2015 Kernel Summit
-  - Verify with a real sensor module (OV5693)
-
-v4:
-  - fix all the coding style issues
-  - solve all the minor problems pointed out by Hans Verkuil
-
-v3:
-  - rework on the locking code related to kthread
-  - remove some dead code
-  - other fixes
-
-v2:
-  - allocate kthread for each channel instead of workqueue
-  - create tegra-csi as a separated V4L2 subdevice
-  - define all the register bits needed in this driver
-  - add device tree binding document
-  - update things according to Hans and Thierry's review.
-
-Bryan Wu (3):
-  [media] v4l: tegra: Add NVIDIA Tegra VI driver
-  ARM64: add tegra-vi support in T210 device-tree
-  Documentation: DT bindings: add VI and CSI bindings
-
- .../display/tegra/nvidia,tegra20-host1x.txt        | 211 ++++-
- arch/arm64/boot/dts/nvidia/tegra210-p2571.dts      |   8 +
- arch/arm64/boot/dts/nvidia/tegra210.dtsi           | 174 ++++-
- drivers/media/platform/Kconfig                     |   1 +
- drivers/media/platform/Makefile                    |   2 +
- drivers/media/platform/tegra/Kconfig               |  10 +
- drivers/media/platform/tegra/Makefile              |   3 +
- drivers/media/platform/tegra/tegra-channel.c       | 849 +++++++++++++++++++++
- drivers/media/platform/tegra/tegra-core.c          | 254 ++++++
- drivers/media/platform/tegra/tegra-core.h          | 162 ++++
- drivers/media/platform/tegra/tegra-csi.c           | 560 ++++++++++++++
- drivers/media/platform/tegra/tegra-vi.c            | 732 ++++++++++++++++++
- drivers/media/platform/tegra/tegra-vi.h            | 213 ++++++
- 13 files changed, 3172 insertions(+), 7 deletions(-)
- create mode 100644 drivers/media/platform/tegra/Kconfig
- create mode 100644 drivers/media/platform/tegra/Makefile
- create mode 100644 drivers/media/platform/tegra/tegra-channel.c
- create mode 100644 drivers/media/platform/tegra/tegra-core.c
- create mode 100644 drivers/media/platform/tegra/tegra-core.h
- create mode 100644 drivers/media/platform/tegra/tegra-csi.c
- create mode 100644 drivers/media/platform/tegra/tegra-vi.c
- create mode 100644 drivers/media/platform/tegra/tegra-vi.h
-
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2571.dts b/arch/arm64/boot/dts/nvidia/tegra210-p2571.dts
+index 50a3582..c573546 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2571.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2571.dts
+@@ -7,6 +7,14 @@
+ 	model = "NVIDIA Tegra210 P2571 reference board";
+ 	compatible = "nvidia,p2571", "nvidia,tegra210";
+ 
++	host1x@0,50000000 {
++		vi@0,54080000 {
++			status = "okay";
++
++			avdd-dsi-csi-supply = <&vdd_dsi_csi>;
++		};
++	};
++
+ 	pinmux: pinmux@0,700008d4 {
+ 		pinctrl-names = "boot";
+ 		pinctrl-0 = <&state_boot>;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 8048fc5..57ffc28 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -123,9 +123,181 @@
+ 
+ 		vi@0,54080000 {
+ 			compatible = "nvidia,tegra210-vi";
+-			reg = <0x0 0x54080000 0x0 0x00040000>;
++			reg = <0x0 0x54080000 0x0 0x800>;
+ 			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+ 			status = "disabled";
++			clocks = <&tegra_car TEGRA210_CLK_VI>,
++				 <&tegra_car TEGRA210_CLK_CSI>,
++				 <&tegra_car TEGRA210_CLK_PLL_C>;
++			clock-names = "vi", "csi", "parent";
++			resets = <&tegra_car 20>;
++			reset-names = "vi";
++
++			power-domains = <&pmc TEGRA_POWERGATE_VENC>;
++
++			iommus = <&mc TEGRA_SWGROUP_VI>;
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++
++					vi_in0: endpoint {
++						remote-endpoint = <&csi_out0>;
++					};
++				};
++				port@1 {
++					reg = <1>;
++
++					vi_in1: endpoint {
++						remote-endpoint = <&csi_out1>;
++					};
++				};
++				port@2 {
++					reg = <2>;
++
++					vi_in2: endpoint {
++						remote-endpoint = <&csi_out2>;
++					};
++				};
++				port@3 {
++					reg = <3>;
++
++					vi_in3: endpoint {
++						remote-endpoint = <&csi_out3>;
++					};
++				};
++				port@4 {
++					reg = <4>;
++
++					vi_in4: endpoint {
++						remote-endpoint = <&csi_out4>;
++					};
++				};
++				port@5 {
++					reg = <5>;
++
++					vi_in5: endpoint {
++						remote-endpoint = <&csi_out5>;
++					};
++				};
++
++			};
++		};
++
++		csi@0,54080838 {
++			compatible = "nvidia,tegra210-csi";
++			reg = <0x0 0x54080838 0x0 0x700>;
++			clocks = <&tegra_car TEGRA210_CLK_CILAB>;
++			clock-names = "cil";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@0 {
++					reg = <0>;
++					#address-cells = <1>;
++					#size-cells = <0>;
++					csi_in0: endpoint@0 {
++						reg = <0x0>;
++					};
++					csi_out0: endpoint@1 {
++						reg = <0x1>;
++						remote-endpoint = <&vi_in0>;
++					};
++				};
++				port@1 {
++					reg = <1>;
++					#address-cells = <1>;
++					#size-cells = <0>;
++					csi_in1: endpoint@0 {
++						reg = <0>;
++					};
++					csi_out1: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&vi_in1>;
++					};
++				};
++			};
++		};
++
++		csi@1,54081038 {
++			compatible = "nvidia,tegra210-csi";
++			reg = <0x0 0x54081038 0x0 0x700>;
++			clocks = <&tegra_car TEGRA210_CLK_CILCD>;
++			clock-names = "cil";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@2 {
++					reg = <2>;
++					#address-cells = <1>;
++					#size-cells = <0>;
++					csi_in2: endpoint@0 {
++						reg = <0>;
++					};
++
++					csi_out2: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&vi_in2>;
++					};
++				};
++				port@3 {
++					reg = <3>;
++					#address-cells = <1>;
++					#size-cells = <0>;
++					csi_in3: endpoint@0 {
++						reg = <0>;
++					};
++
++					csi_out3: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&vi_in3>;
++					};
++				};
++			};
++		};
++
++		csi@2,54081838 {
++			compatible = "nvidia,tegra210-csi";
++			reg = <0x0 0x54081838 0x0 0x700>;
++			clocks = <&tegra_car TEGRA210_CLK_CILE>;
++			clock-names = "cil";
++
++			ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				port@4 {
++					reg = <4>;
++					#address-cells = <1>;
++					#size-cells = <0>;
++					csi_in4: endpoint@0 {
++						reg = <0>;
++					};
++					csi_out4: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&vi_in4>;
++					};
++				};
++				port@5 {
++					reg = <5>;
++					#address-cells = <1>;
++					#size-cells = <0>;
++					csi_in5: endpoint@0 {
++						reg = <0>;
++					};
++					csi_out5: endpoint@1 {
++						reg = <1>;
++						remote-endpoint = <&vi_in5>;
++					};
++				};
++			};
+ 		};
+ 
+ 		tsec@0,54100000 {
 -- 
 2.1.4
