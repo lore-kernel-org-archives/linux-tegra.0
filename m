@@ -1,87 +1,177 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] i2c: tegra: fix a possible NULL dereference
-Date: Thu, 12 Nov 2015 14:55:49 +0100
-Message-ID: <20151112135549.GB1131@ulmo>
-References: <1447313163-23848-1-git-send-email-clabbe.montjoie@gmail.com>
- <20151112122923.GA31671@ulmo>
- <564496E8.60106@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC PATCH 1/2] genirq: Add runtime resume/suspend support for
+ IRQ chips
+Date: Thu, 12 Nov 2015 14:02:24 +0000
+Message-ID: <56449BF0.9090408@nvidia.com>
+References: <1447166377-19707-1-git-send-email-jonathanh@nvidia.com>
+ <1447166377-19707-2-git-send-email-jonathanh@nvidia.com>
+ <alpine.DEB.2.11.1511101017190.3915@nanos> <56421421.8070807@nvidia.com>
+ <56421FA5.4020801@ti.com> <56423245.1040602@metafoo.de>
+ <564314D9.9040502@nvidia.com> <564361AE.4070303@ti.com>
+ <5644710D.7080108@nvidia.com> <5644920C.8080007@metafoo.de>
+ <5644959D.2020207@nvidia.com> <5644986B.5030901@metafoo.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Pd0ReVV5GZGQvF3a"
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <564496E8.60106@nvidia.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: LABBE Corentin <clabbe.montjoie@gmail.com>, gnurou@gmail.com, ldewangan@nvidia.com, swarren@wwwdotorg.org, wsa@the-dreams.de, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5644986B.5030901-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Cc: Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---Pd0ReVV5GZGQvF3a
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 12/11/15 13:47, Lars-Peter Clausen wrote:
+> On 11/12/2015 02:35 PM, Jon Hunter wrote:
+>>
+>> On 12/11/15 13:20, Lars-Peter Clausen wrote:
+>>> On 11/12/2015 11:59 AM, Jon Hunter wrote:
+>>>>
+>>>> On 11/11/15 15:41, Grygorii Strashko wrote:
+>>>>> On 11/11/2015 12:13 PM, Jon Hunter wrote:
+>>>>>>
+>>>>>> On 10/11/15 18:07, Lars-Peter Clausen wrote:
+>>>>>>> On 11/10/2015 05:47 PM, Grygorii Strashko wrote:
+>>>>>>> [...]
+>>>>>>>>> I was trying to simplify matters by placing the resume call in
+>>>>>>>>> __setup_irq() as opposed to requested_threaded_irq(). However, the would
+>>>>>>>>> mean the resume is inside the bus_lock and may be I should not assume
+>>>>>>>>> that I can sleep here.
+>>>>>>>>>
+>>>>>>>>>> Can you folks please agree on something which is correct and complete?
+>>>>>>>>>
+>>>>>>>>> Soren I am happy to defer to your patch and drop this. My only comment
+>>>>>>>>> would be what about the request_percpu_irq() path in your patch?
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> I have the same comment here as I asked Soren:
+>>>>>>>> 1) There are no restrictions to call irq set_irq_type() whenever,
+>>>>>>>> as result HW can be accessed before request_x_irq()/__setup_irq().
+>>>>>>>> And this is used quite widely now :(
+>>>>>>>>
+>>>>>>>
+>>>>>>> Changing the configuration of a resource that is not owned seems to be
+>>>>>>> fairly broken. In the worst case this will overwrite the configuration that
+>>>>>>> was set by owner of the resource.
+>>>>>>>
+>>>>>>> Especially those that call irq_set_irq_type() directly before request_irq(),
+>>>>>>> given that you supply the trigger type to request_irq() which will make sure
+>>>>>>> that there are no conflicts and the configure.
+>>>>>>>
+>>>>>>> This is a bit like calling gpio_set_direction() before you call
+>>>>>>> gpio_request(), which will also have PM issues.
+>>>>>>
+>>>>>> Yes, I agree that this does sound a bit odd, but ...
+>>>>>>
+>>>>>>>> For example, during OF boot:
+>>>>>>>>
+>>>>>>>> [a]  irq_create_of_mapping()
+>>>>>>>>     - irq_create_fwspec_mapping()
+>>>>>>>>       - irq_set_irq_type()
+>>>>>>
+>>>>>> The above means that if someone calls of_irq_get() (or
+>>>>>> platform_get_irq()), before request_irq(), then this will call
+>>>>>> irq_create_of_mapping() and hence, call irq_set_irq_type. So should
+>>>>>> irq_create_fwspec_mapping() be setting the type in the first place? I
+>>>>>> can see it is convenient to do it here.
+>>>>>
+>>>>> In general there is another option - save OF-flags and pass them to
+>>>>> __setup_irq() where they can be processed.
+>>>>
+>>>> Right, we could look at doing something like this.
+>>>>
+>>>>>>>> or
+>>>>> [b]
+>>>>>>>> 	irq_set_irq_type(irq, IRQ_TYPE_LEVEL_HIGH);
+>>>>>>>> 	irq_set_chained_handler(irq, mx31ads_expio_irq_handler);
+>>>>>
+>>>>> option: add "flag" parameter to irq_set_chained_handler
+>>>>>
+>>>>>>>>
+>>>>>>>> or
+>>>>> [c]
+>>>>>>>> 	irq_set_irq_type(alarm_irq, IRQ_TYPE_EDGE_BOTH);
+>>>>>>>> 	err = devm_request_irq(&pdev->dev, alarm_irq, fan_alarm_irq_handler,
+>>>>>>>> (there are ~200 occurrences of irq set_irq_type in Kernel)
+>>>>>>>>
+>>>>>>>> 2) if i'm not wrong, the same is valid for irq_set_irq_wake() and irq_set_affinity()
+>>>>>>>>
+>>>>>>>> I'm not saying all these code is correct, but that what's now in kernel :(
+>>>>>>>> I've tried to test Soren's patch with omap-gpio and immediately hit case [a] :.(
+>>>>>>>
+>>>>>>> All functions for which are part of the public API and for which it is legal
+>>>>>>> to call them without calling request_irq() (or similar) first will need to
+>>>>>>> have pm_get()/pm_put().
+>>>>>>
+>>>>>> Right. May be we can look at the various entry points to the chip
+>>>>>> operators to get a feel for which public APIs need to be handled.
+>>>>>
+>>>>>
+>>>>> Seems yes. But we need to be very careful with this, some of functions could be
+>>>>> called recursively (nested), like:
+>>>>> [d]
+>>>>> static int pcf857x_irq_set_wake(struct irq_data *data, unsigned int on)
+>>>>> {
+>>>>> 	...
+>>>>> 	error = irq_set_irq_wake(gpio->irq_parent, on);
+>>>>>
+>>>>>
+>>>>> Personally, I have nothing against irq_pm_(get|put) :) and thought about similar things
+>>>>> when tried to solve the same problem for omap-gpio driver.
+>>>>> But :(, I have to fall back to irq_bus_lock/sync_unlock, because of [a,b,c] - all above
+>>>>> APIs surrounded by chip_bus_lock/chip_bus_sync_unlock. ([d] - I've not hit it just because
+>>>>> I was lucky).
+>>>>
+>>>> I had a quick peek at the omap-gpio driver and I see that internally you
+>>>> are using the gpio ref-count to manage RPM and use the bus-lock hooks to
+>>>> invoke RPM.
+>>>>
+>>>> This can definitely be complex when considering all the potential paths,
+>>>> but I think that we need to a look at this from a chip-ops perspective
+>>>> because only the chip knows if it is accessible or not. That said, what
+>>>> we need to assess is:
+>>>>
+>>>> 1. Which chip-ops should ONLY be called after an IRQ has been allocated
+>>>>    (eg, enable/disable, mask/unmask, type, etc). These chip-ops should
+>>>>    not try to control the chip PM, but should possibly WARN if called
+>>>>    when  the chip is not accessible.
+>>>> 2. For chip-ops that may be called without allocating an IRQ (eg.
+>>>>    bus_lock, irq_suspend, etc), can these be called from an atomic
+>>>>    context? If they might be called from an atomic context then these
+>>>>    are the chip-ops which will cause problems as we cannot guarantee
+>>>>    that all IRQ chips can support irq-safe RPM.
+>>>
+>>> They can't. chip_bus_lock() can sleep, so anything that locks the bus can't
+>>> be called from atomic context.
+>>
+>> Sorry, what can't? Yes I understand that we cannot call anything that
+>> locks the bus from an atomic context.
+> 
+> They can't be called from atomic context. The chip_bus_lock() function may
+> sleep and you can't access the device without previously locking the bus.
+> Since the device only needs to be powered up when it is accessed its safe to
+> assume that the places where you need pm_get()/pm_put() are only called from
+> non-atomic context.
 
-On Thu, Nov 12, 2015 at 01:40:56PM +0000, Jon Hunter wrote:
->=20
-> On 12/11/15 12:29, Thierry Reding wrote:
-> > * PGP Signed by an unknown key
-> >=20
-> > On Thu, Nov 12, 2015 at 08:26:03AM +0100, LABBE Corentin wrote:
-> >> of_match_device could return NULL, and so cause a NULL pointer
-> >=20
-> > No. There is no way that of_match_device() can ever fail. The driver
-> > core uses the same table to match the OF device to the driver, so the
-> > only case where of_match_device() would return NULL is if no match was
-> > found, in which case the tegra_i2c_probe() function would never have
-> > been called in the first place.
->=20
-> Right and so ...
->=20
-> >> dereference later at line 809:
-> >> i2c_dev->hw =3D match->data;
-> >>
-> >> Signed-off-by: LABBE Corentin <clabbe.montjoie@gmail.com>
-> >> ---
-> >>  drivers/i2c/busses/i2c-tegra.c | 3 +++
-> >>  1 file changed, 3 insertions(+)
-> >>
-> >> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-t=
-egra.c
-> >> index a0522fc..c803551 100644
-> >> --- a/drivers/i2c/busses/i2c-tegra.c
-> >> +++ b/drivers/i2c/busses/i2c-tegra.c
-> >> @@ -806,7 +806,10 @@ static int tegra_i2c_probe(struct platform_device=
- *pdev)
-> >> =20
-> >>  	if (pdev->dev.of_node) {
->=20
-> Can we get rid of this if-statement?
+Right, absolutely.
 
-Yeah, I guess we can drop that, too. It's been a long time since Tegra
-was converted to OF only.
+>>> One easy way out might be to always call pm_get/pm_but from
+>>> bus_lock,/bus_unlock. This way the chip is guaranteed to be powered up when
+>>> accessed happens. In addition pm_get is called when the IRQ is request and
+>>> pm_put is called when the IRQ is release, this is to ensure the chip stays
+>>> powered when it is actively monitoring the IRQ lines.
+>>
+>> Yes I had thought about that, but it is not quite that easy, because in
+>> the case of request_irq() you don't want to pm_put() after the
+>> bus_unlock(). However, the bus_lock/unlock() are good indicators of
+>> different paths.
+> 
+> You'd call pm_get() twice in request_irq() once from bus_lock() and once
+> independently, that way you still have a reference even after the bus_unlock().
 
-Thierry
+Yes that is a possibility. However, there are places such as
+show_interrupts() (kernel/irq/proc.c) and irq_gc_suspend() that do not
+call bus_lock/unlock() which would need to be handled for PM. May be
+these should also call bus_lock() as well?
 
---Pd0ReVV5GZGQvF3a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJWRJplAAoJEN0jrNd/PrOhpU4P/2xzfOSylcOH06AHmnFOPyx6
-a5IvlC9pouSGClWVftpfcgERauzCJOqaM+Rp6OGCvj7e3ox3iXgP6Iq08GrGYdJH
-fU3qV2j8N3MOIo5hoYJlncrNS+cTeql9766fBRd1BbdTiT23EC50jShZzJb0pgRc
-kxTynQ+zHjrX/CqX9cp1aRKUMmRFopG8VLNLzGJ9ktdHhmxYLCJoVzY4pM+Qz8BS
-VZzU3/0z/ump3LQ/sB3YH8AB7Rj96wSOR4Z6J2mU/9ZW10ekHsROtbIixqPvtcU8
-IokAhm7DzetVeCBZJZU9OgAOn8tTWFd0vLcC+YrXfRmUv4gXdOSYlQzpsRWOOiVW
-3Y8QVUFM9q2gw8+6i8mWqLNc24XlLm7koqJlDrxsVgDRYdSeJs6UzssGjjZyJAt6
-vXezyu/7jPgASz9ZJ8Hryz9diWTc6/LM7L5RGledARbYnWSTde8Ytf6B72L68R7X
-QV5n4TyoJkeH4JQb/Cj5cjlF3ac2ZbVXJut+pOdoK1bTi+26Z+Tb/Rddk+Szn73S
-HGbZ3XR2FTJS6pCRu8P3Glj30hYtLDSr6d17YrKMnaujfRsfjjjubwb8YXqA3Rvn
-PqLTY7yDepQvKqebr4jHEAq+RiUXCeUXwCrVgrQvp/iMuuMqtsL22M/iPAI3tgIX
-GQxfMA9pt5ItAnhDwDjl
-=ytq8
------END PGP SIGNATURE-----
-
---Pd0ReVV5GZGQvF3a--
+Jon
