@@ -1,104 +1,64 @@
-From: LABBE Corentin <clabbe.montjoie@gmail.com>
-Subject: Re: [PATCH] i2c: tegra: fix a possible NULL dereference
-Date: Thu, 12 Nov 2015 15:54:58 +0100
-Message-ID: <20151112145458.GB3758@Red>
-References: <1447313163-23848-1-git-send-email-clabbe.montjoie@gmail.com>
- <20151112122923.GA31671@ulmo>
- <20151112125422.GA3758@Red>
- <20151112132837.GF31671@ulmo>
- <20151112134519.GJ24008@pengutronix.de>
- <20151112135500.GA1131@ulmo>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC PATCH 1/2] genirq: Add runtime resume/suspend support for
+ IRQ chips
+Date: Thu, 12 Nov 2015 15:38:23 +0000
+Message-ID: <5644B26F.5060508@nvidia.com>
+References: <1447166377-19707-1-git-send-email-jonathanh@nvidia.com>
+ <1447166377-19707-2-git-send-email-jonathanh@nvidia.com>
+ <alpine.DEB.2.11.1511101017190.3915@nanos> <56421421.8070807@nvidia.com>
+ <56421FA5.4020801@ti.com> <56423245.1040602@metafoo.de>
+ <564314D9.9040502@nvidia.com> <564361AE.4070303@ti.com>
+ <5644710D.7080108@nvidia.com> <5644920C.8080007@metafoo.de>
+ <5644959D.2020207@nvidia.com> <5644986B.5030901@metafoo.de>
+ <56449BF0.9090408@nvidia.com> <5644A418.2020906@metafoo.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20151112135500.GA1131@ulmo>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, LABBE Corentin <montjoie.mailing@gmail.com>, gnurou@gmail.com, ldewangan@nvidia.com, swarren@wwwdotorg.org, wsa@the-dreams.de, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5644A418.2020906-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Cc: Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Nov 12, 2015 at 02:55:00PM +0100, Thierry Reding wrote:
-> On Thu, Nov 12, 2015 at 02:45:20PM +0100, Uwe Kleine-K=F6nig wrote:
-> > On Thu, Nov 12, 2015 at 02:28:37PM +0100, Thierry Reding wrote:
-> > > On Thu, Nov 12, 2015 at 01:54:22PM +0100, LABBE Corentin wrote:
-> > > > On Thu, Nov 12, 2015 at 01:29:23PM +0100, Thierry Reding wrote:
-> > > > > On Thu, Nov 12, 2015 at 08:26:03AM +0100, LABBE Corentin wrot=
-e:
-> > > > > > of_match_device could return NULL, and so cause a NULL poin=
-ter
-> > > > >=20
-> > > > > No. There is no way that of_match_device() can ever fail. The=
- driver
-> > > > > core uses the same table to match the OF device to the driver=
-, so the
-> > > > > only case where of_match_device() would return NULL is if no =
-match was
-> > > > > found, in which case the tegra_i2c_probe() function would nev=
-er have
-> > > > > been called in the first place.
-> > > > >=20
-> > > > > Thierry
-> > > > >=20
-> > > >=20
-> > > > In a parallel thread for i2c-rcar, the conclusion was different=
-=2E
-> > > > https://lkml.org/lkml/2015/11/12/83
-> > >=20
-> > > The conclusion was the same: there should be no case where this h=
-appens.
-> > > The example that Uwe gave is hypothetical and not valid DT in the=
- first
-> > > place. So instead of chickening out I think it'd be better to jus=
-t crash
-> > > to make sure people fix the DT.
-> >=20
-> > It depends in your trust in the DT. Just because it's not advisable=
- to
-> > do something that is not documented usually isn't a good excuse to =
-not
-> > handle broken input. That't the case for webserver requests, argume=
-nts
-> > to system calls and several more. I admit DT is a bit special becau=
-se
-> > you have to assume it's trusted, but still handling errors in a san=
-e way
-> > is IMHO nice.
->=20
-> Given that it's supposed to be provided by firmware and possibly from=
- a
-> ROM, crashing might be a better motivation for fixing it than errorin=
-g
-> out, which people might just ignore or not notice until it's too late=
-=2E
->=20
-> > > On a side-note I think that platform_match() should be stricter a=
-nd do
-> > > something like this instead:
-> > >=20
-> > > 	if (dev->of_node) {
-> > > 		if (of_driver_match_device(dev, drv))
-> > > 			return 1;
-> > >=20
-> > > 		return 0;
-> > > 	}
-> > That's equivalent to
-> >=20
-> > 	if (dev->of_node)
-> > 		return of_driver_match_device(dev, drv);
-> >=20
-> > and was already suggested in the thread referenced from my reply to
-> > http://article.gmane.org/gmane.linux.kernel/2083641 :-)
->=20
-> Ah, too many cross-reference =3D) FWIW:
->=20
-> Acked-by: Thierry Reding <treding@nvidia.com>
->=20
 
-Just for be sure, since the thread goes in lot of direction, you ack my=
- patch ?
-Perhaps is it better that I resent a version which use of_device_get_ma=
-tch_data() ?
+On 12/11/15 14:37, Lars-Peter Clausen wrote:
+> On 11/12/2015 03:02 PM, Jon Hunter wrote:
+> [...]
+>>>>> One easy way out might be to always call pm_get/pm_but from
+>>>>> bus_lock,/bus_unlock. This way the chip is guaranteed to be powered up when
+>>>>> accessed happens. In addition pm_get is called when the IRQ is request and
+>>>>> pm_put is called when the IRQ is release, this is to ensure the chip stays
+>>>>> powered when it is actively monitoring the IRQ lines.
+>>>>
+>>>> Yes I had thought about that, but it is not quite that easy, because in
+>>>> the case of request_irq() you don't want to pm_put() after the
+>>>> bus_unlock(). However, the bus_lock/unlock() are good indicators of
+>>>> different paths.
+>>>
+>>> You'd call pm_get() twice in request_irq() once from bus_lock() and once
+>>> independently, that way you still have a reference even after the bus_unlock().
+>>
+>> Yes that is a possibility. However, there are places such as
+>> show_interrupts() (kernel/irq/proc.c) and irq_gc_suspend() that do not
+>> call bus_lock/unlock() which would need to be handled for PM. May be
+>> these should also call bus_lock() as well?
+> 
+> show_interrupts() only accesses software state, not hardware state, or does it?
 
-Regards
+Good point. Today there only appears to be one user:
+
+arch/powerpc/sysdev/fsl_msi.c:	.irq_print_chip = fsl_msi_print_chip,
+
+This one is purely software. However, it would be easy to handle the
+show_interrupts case if needed.
+
+> suspend/resume is a bit tricky. It's kind of driver specific if it needs to
+> actually access the hardware or whether the state is already shadowed in
+> software. Maybe we can make this an exception for now and let drivers handle
+> this on their own.
+
+Yes I would agree with you on that.
+
+Cheers
+Jon
