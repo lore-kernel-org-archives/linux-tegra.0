@@ -1,84 +1,49 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] i2c: tegra: fix a possible NULL dereference
-Date: Thu, 12 Nov 2015 13:29:23 +0100
-Message-ID: <20151112122923.GA31671@ulmo>
-References: <1447313163-23848-1-git-send-email-clabbe.montjoie@gmail.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2] nouveau: arm: Add MODULE_FIRMWARE for gk20a
+Date: Thu, 12 Nov 2015 21:53:50 +0900
+Message-ID: <CAAVeFuLNadYawJB0zZHzMc3CA7GiukEox=FGH8wupXjyK576MQ@mail.gmail.com>
+References: <1443452893-18246-1-git-send-email-kwizart@gmail.com>
+ <CAAVeFuJLJO4LvLqq2w9gMe6V6L3VDi+Gz59GvwKF2v8OWTWgBQ@mail.gmail.com> <CABr+WTmG1p6-dGGpWJgGBAJydyWz=2aPj-e93X9metn8y8Qrcg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="WIyZ46R2i8wDzkSu"
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1447313163-23848-1-git-send-email-clabbe.montjoie@gmail.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: LABBE Corentin <clabbe.montjoie@gmail.com>
-Cc: gnurou@gmail.com, ldewangan@nvidia.com, swarren@wwwdotorg.org, wsa@the-dreams.de, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CABr+WTmG1p6-dGGpWJgGBAJydyWz=2aPj-e93X9metn8y8Qrcg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, Nov 11, 2015 at 6:29 PM, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> 2015-09-30 6:57 GMT+02:00 Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
+>>
+>> On Tue, Sep 29, 2015 at 12:08 AM, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> wrote:
+>> > This patch is needed by initramfs tools to detect
+>> > the required firmware files for the module.
+>> >
+>> > This patch tests for either TEGRA_124_SOC or TEGRA_132_SOC
+>> > for the firmwares related to the Tegra K1 generation.
+>> >
+>> > v2: move the MODULE_FIRMWARE to the nvidia_platform.c file.
+>> >  This will avoid to test for NOUVEAU_PLATFORM_DRIVER
+>>
+>> Nice, thanks for doing this change!
+>>
+>> Reviewed-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+>
+> Thx for the review.
+> FYI I've tested the patch on top of 4.3+ kernels, and the initramfs
+> generated with dracut works as expected.
+>
+> Is there any other concern with this patch ?
+>
+> It's certainly late for 4.4,I would expect it to hit kernel 4.3 at some
+> point, but I don't think everything is wired from userspace(Xorg/Wayland)
+> wrt dGPU support.
+> So It could also wait for 4.5.
+> What do you think ?
 
---WIyZ46R2i8wDzkSu
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Nov 12, 2015 at 08:26:03AM +0100, LABBE Corentin wrote:
-> of_match_device could return NULL, and so cause a NULL pointer
-
-No. There is no way that of_match_device() can ever fail. The driver
-core uses the same table to match the OF device to the driver, so the
-only case where of_match_device() would return NULL is if no match was
-found, in which case the tegra_i2c_probe() function would never have
-been called in the first place.
-
-Thierry
-
-> dereference later at line 809:
-> i2c_dev->hw =3D match->data;
->=20
-> Signed-off-by: LABBE Corentin <clabbe.montjoie@gmail.com>
-> ---
->  drivers/i2c/busses/i2c-tegra.c | 3 +++
->  1 file changed, 3 insertions(+)
->=20
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegr=
-a.c
-> index a0522fc..c803551 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -806,7 +806,10 @@ static int tegra_i2c_probe(struct platform_device *p=
-dev)
-> =20
->  	if (pdev->dev.of_node) {
->  		const struct of_device_id *match;
-> +
->  		match =3D of_match_device(tegra_i2c_of_match, &pdev->dev);
-> +		if (!match)
-> +			return -ENODEV;
->  		i2c_dev->hw =3D match->data;
->  		i2c_dev->is_dvc =3D of_device_is_compatible(pdev->dev.of_node,
->  						"nvidia,tegra20-i2c-dvc");
-> --=20
-> 2.4.10
->=20
-
---WIyZ46R2i8wDzkSu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJWRIYjAAoJEN0jrNd/PrOhbQcQAL0jAQVQhVwTtPNeHxdbsbqk
-m4Z9EyUE8C/J+l/mHTKnxiRFEww+EM7azrVS4ywMjuLxZxJJfBDdFf1rbCG96byl
-DKrGEi5r16dX8FJ3yD1mcLQxX75LNqK8T0QnZroN9HMHfivX81hejOsU8HMBfFwb
-PC3xQFHH0Kd54qmWwUz9O2bSBPeiNf+lucVSxyCpYGjbXCCY9jbloYYV0dwjIu4H
-8HliRYtAOknnl7UaDnq1Osei0JFggidA5SLg4+CFqsSPPKf5Rhm3ZzAGyK/5EbQv
-cv+OfjTzMNhKG9T8PL9g6Z1z+CGYDbht+gXPEG8rFOgA7aTNv8MyK2BYPsomsVnW
-j24Udl5rzMg8Lh2o7Epgaa5dOWj/n6ltIH5TidkpUjI3SJYGdmDPZ9kb3EDcqC2k
-ZK12+3elYRT1ZnnPy4DYqUAlZvpCpbpTBVZQYlrwvuZAS7yj8JmmRt/OL1vY8Ok+
-oJs+eIut4Dmy0xqeZ5yFBkwzggj64+jZLf16ERb6ZqzUQttt/FzEpu1JStgBVoSz
-JrLfgHi3iPTcungHRM5xEfgshtAfwGdGF/jhBlhg0bEzk5BZaZyXtaMbA6Zmre4F
-SlG8PtdI9OYr6E9iXyP05ShR518aIuqZ0whD0jW2fubhoCyP0Y/cqJ7gdkwaTQjW
-Aaxp0a72O21wrORE65G1
-=45KG
------END PGP SIGNATURE-----
-
---WIyZ46R2i8wDzkSu--
+I don't see a particular reason to hurry, however this patch has been
+sitting around for one month now - Ben, is there any particular reason
+for not merging it?
