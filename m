@@ -1,43 +1,50 @@
-From: =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
-Subject: Re: [RFC PATCH 1/2] genirq: Add runtime resume/suspend support for
- IRQ chips
-Date: Thu, 12 Nov 2015 09:04:22 -0800
-Message-ID: <20151112170422.GC3605@xsjsorenbubuntu>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [RFC PATCH 1/2] genirq: Add runtime resume/suspend support for IRQ chips
+Date: Thu, 12 Nov 2015 15:20:40 -0800
+Message-ID: <7hio56dctz.fsf@deeprootsystems.com>
 References: <1447166377-19707-1-git-send-email-jonathanh@nvidia.com>
- <1447166377-19707-2-git-send-email-jonathanh@nvidia.com>
- <alpine.DEB.2.11.1511101017190.3915@nanos>
- <56421421.8070807@nvidia.com>
+	<1447166377-19707-2-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <56421421.8070807@nvidia.com>
+In-Reply-To: <1447166377-19707-2-git-send-email-jonathanh@nvidia.com> (Jon
+	Hunter's message of "Tue, 10 Nov 2015 14:39:36 +0000")
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, LKML <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Jon,
+Jon Hunter <jonathanh@nvidia.com> writes:
 
-On Tue, 2015-11-10 at 03:58PM +0000, Jon Hunter wrote:
-> Hi Thomas,
->=20
-> On 10/11/15 15:26, Thomas Gleixner wrote:
-[...]
-> > Can you folks please agree on something which is correct and comple=
-te?
->=20
-> Soren I am happy to defer to your patch and drop this. My only commen=
-t
-> would be what about the request_percpu_irq() path in your patch?
+> Some IRQ chips may be located in a power domain outside of the CPU subsystem
+> and hence will require device specific runtime power management. Ideally,
+> rather than adding more functions to the irq_chip_ops function table, using
+> existing chip functions such as irq_startup/shutdown or
+> irq_request/release_resources() would be best. However, these existing chip
+> functions are called in the context of a spinlock which is not ideal for
+> power management operations that may take some time to power up a domain.
+>
+> Two possible solutions are:
+> 1. Move existing chip operators such as irq_request/release_resources()
+>    outside of the spinlock and use these helpers.
+> 2. Add new chip operators that are called outside of any spinlocks while
+>    setting up and freeing an IRQ.
 
-Sorry, I couldn't spent any time on this the last days. And now it seem=
-s
-you are already a lot closer to a solution than the initial patches wer=
-e.
-I'm happy to step back from this patch set, but I'd appreciate if you
-kept me in the loop.
+> Not knowing whether we can safely move irq_request/release_resources() to
+> outside the spinlock (but hopefully this will solicit some feedback), add
+> new chip operators for runtime resuming and suspending of an IRQ chip.
 
-	Thanks,
-	S=C3=B6ren
+I'm not quite seeing how this would connect to the actual hardware
+power domain (presumabaly managed by genpd) and any other devices in
+that domain (presumably managed by runtime PM.)
+
+If all the RPM devices in the domain go idle, it will be powered off
+independently of the status of the irqchip because the irqchip isn't
+using RPM. 
+
+Is there a longer-term plan to handle the irqchips as a "normal" device
+and use RPM?  IMO, that approach would be helpful even for irqchips that
+share power domains with CPUs, since there are efforts working towards
+using genpd/RPM to manage CPUs/clusters.
+
+Kevin
