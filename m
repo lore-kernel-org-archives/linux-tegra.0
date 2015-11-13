@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH V3 5/6] dmaengine: tegra-apb: Update driver to use GFP_NOWAIT
-Date: Fri, 13 Nov 2015 16:39:42 +0000
-Message-ID: <1447432783-7466-6-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH V3 2/6] dmaengine: tegra-apb: Use dev_get_drvdata()
+Date: Fri, 13 Nov 2015 16:39:39 +0000
+Message-ID: <1447432783-7466-3-git-send-email-jonathanh@nvidia.com>
 References: <1447432783-7466-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,38 +12,38 @@ To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vinod.koul@intel.com>, S
 Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, andy.shevchenko@gmail.com, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The tegra20-apb-dma driver currently uses the flag GFP_ATOMIC when
-allocating memory for structures used in conjunction with the DMA
-descriptors. It is preferred that dmaengine drivers use GFP_NOWAIT
-instead and so the emergency memory pool will not be used by these
-drivers.
+In the tegra_dma_runtime_suspend/resume functions, the pdev structure
+is not needed, and so just call dev_get_drvdata() to get the device
+data structure.
 
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/dma/tegra20-apb-dma.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/dma/tegra20-apb-dma.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index d4cabd6931e5..754c1f54d4fe 100644
+index f68bccf55a24..355dbc354818 100644
 --- a/drivers/dma/tegra20-apb-dma.c
 +++ b/drivers/dma/tegra20-apb-dma.c
-@@ -296,7 +296,7 @@ static struct tegra_dma_desc *tegra_dma_desc_get(
- 	spin_unlock_irqrestore(&tdc->lock, flags);
+@@ -1509,8 +1509,7 @@ static int tegra_dma_remove(struct platform_device *pdev)
  
- 	/* Allocate DMA desc */
--	dma_desc = kzalloc(sizeof(*dma_desc), GFP_ATOMIC);
-+	dma_desc = kzalloc(sizeof(*dma_desc), GFP_NOWAIT);
- 	if (!dma_desc) {
- 		dev_err(tdc2dev(tdc), "dma_desc alloc failed\n");
- 		return NULL;
-@@ -336,7 +336,7 @@ static struct tegra_dma_sg_req *tegra_dma_sg_req_get(
- 	}
- 	spin_unlock_irqrestore(&tdc->lock, flags);
+ static int tegra_dma_runtime_suspend(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct tegra_dma *tdma = platform_get_drvdata(pdev);
++	struct tegra_dma *tdma = dev_get_drvdata(dev);
  
--	sg_req = kzalloc(sizeof(struct tegra_dma_sg_req), GFP_ATOMIC);
-+	sg_req = kzalloc(sizeof(struct tegra_dma_sg_req), GFP_NOWAIT);
- 	if (!sg_req)
- 		dev_err(tdc2dev(tdc), "sg_req alloc failed\n");
- 	return sg_req;
+ 	clk_disable_unprepare(tdma->dma_clk);
+ 	return 0;
+@@ -1518,8 +1517,7 @@ static int tegra_dma_runtime_suspend(struct device *dev)
+ 
+ static int tegra_dma_runtime_resume(struct device *dev)
+ {
+-	struct platform_device *pdev = to_platform_device(dev);
+-	struct tegra_dma *tdma = platform_get_drvdata(pdev);
++	struct tegra_dma *tdma = dev_get_drvdata(dev);
+ 	int ret;
+ 
+ 	ret = clk_prepare_enable(tdma->dma_clk);
 -- 
 2.1.4
