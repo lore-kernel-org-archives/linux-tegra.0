@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH V3 6/6] dmaengine: tegra-apb: Free interrupts before killing tasklets
-Date: Fri, 13 Nov 2015 16:39:43 +0000
-Message-ID: <1447432783-7466-7-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH V3 5/6] dmaengine: tegra-apb: Update driver to use GFP_NOWAIT
+Date: Fri, 13 Nov 2015 16:39:42 +0000
+Message-ID: <1447432783-7466-6-git-send-email-jonathanh@nvidia.com>
 References: <1447432783-7466-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,45 +12,38 @@ To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vinod.koul@intel.com>, S
 Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, andy.shevchenko@gmail.com, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On probe failure or driver removal, before killing any tasklets, ensure
-that the channel interrupt is freed to ensure that another channel
-interrupt cannot occur and schedule the tasklet again.
+The tegra20-apb-dma driver currently uses the flag GFP_ATOMIC when
+allocating memory for structures used in conjunction with the DMA
+descriptors. It is preferred that dmaengine drivers use GFP_NOWAIT
+instead and so the emergency memory pool will not be used by these
+drivers.
 
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/dma/tegra20-apb-dma.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/dma/tegra20-apb-dma.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 754c1f54d4fe..935da8192f59 100644
+index d4cabd6931e5..754c1f54d4fe 100644
 --- a/drivers/dma/tegra20-apb-dma.c
 +++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1396,8 +1396,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 		}
- 		tdc->irq = res->start;
- 		snprintf(tdc->name, sizeof(tdc->name), "apbdma.%d", i);
--		ret = devm_request_irq(&pdev->dev, tdc->irq,
--				tegra_dma_isr, 0, tdc->name, tdc);
-+		ret = request_irq(tdc->irq, tegra_dma_isr, 0, tdc->name, tdc);
- 		if (ret) {
- 			dev_err(&pdev->dev,
- 				"request_irq failed with err %d channel %d\n",
-@@ -1478,6 +1477,8 @@ err_unregister_dma_dev:
- err_irq:
- 	while (--i >= 0) {
- 		struct tegra_dma_channel *tdc = &tdma->channels[i];
-+
-+		free_irq(tdc->irq, tdc);
- 		tasklet_kill(&tdc->tasklet);
+@@ -296,7 +296,7 @@ static struct tegra_dma_desc *tegra_dma_desc_get(
+ 	spin_unlock_irqrestore(&tdc->lock, flags);
+ 
+ 	/* Allocate DMA desc */
+-	dma_desc = kzalloc(sizeof(*dma_desc), GFP_ATOMIC);
++	dma_desc = kzalloc(sizeof(*dma_desc), GFP_NOWAIT);
+ 	if (!dma_desc) {
+ 		dev_err(tdc2dev(tdc), "dma_desc alloc failed\n");
+ 		return NULL;
+@@ -336,7 +336,7 @@ static struct tegra_dma_sg_req *tegra_dma_sg_req_get(
  	}
+ 	spin_unlock_irqrestore(&tdc->lock, flags);
  
-@@ -1497,6 +1498,7 @@ static int tegra_dma_remove(struct platform_device *pdev)
- 
- 	for (i = 0; i < tdma->chip_data->nr_channels; ++i) {
- 		tdc = &tdma->channels[i];
-+		free_irq(tdc->irq, tdc);
- 		tasklet_kill(&tdc->tasklet);
- 	}
- 
+-	sg_req = kzalloc(sizeof(struct tegra_dma_sg_req), GFP_ATOMIC);
++	sg_req = kzalloc(sizeof(struct tegra_dma_sg_req), GFP_NOWAIT);
+ 	if (!sg_req)
+ 		dev_err(tdc2dev(tdc), "sg_req alloc failed\n");
+ 	return sg_req;
 -- 
 2.1.4
