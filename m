@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH V3 2/6] dmaengine: tegra-apb: Use dev_get_drvdata()
-Date: Fri, 13 Nov 2015 16:39:39 +0000
-Message-ID: <1447432783-7466-3-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH V3 4/6] dmaengine: tegra-apb: Only save channel state for those in use
+Date: Fri, 13 Nov 2015 16:39:41 +0000
+Message-ID: <1447432783-7466-5-git-send-email-jonathanh@nvidia.com>
 References: <1447432783-7466-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,38 +12,44 @@ To: Laxman Dewangan <ldewangan@nvidia.com>, Vinod Koul <vinod.koul@intel.com>, S
 Cc: dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, andy.shevchenko@gmail.com, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-In the tegra_dma_runtime_suspend/resume functions, the pdev structure
-is not needed, and so just call dev_get_drvdata() to get the device
-data structure.
+Currently the tegra-apb DMA driver suspend/resume helpers, save and
+restore the registers for all channels regardless of whether they are
+in use or not. Change this so that only channels that have been
+allocated and configured are saved and restored.
 
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/dma/tegra20-apb-dma.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+V3 changes:
+- Updated comment to be on a single line
+
+ drivers/dma/tegra20-apb-dma.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index f68bccf55a24..355dbc354818 100644
+index 18a561376c63..d4cabd6931e5 100644
 --- a/drivers/dma/tegra20-apb-dma.c
 +++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1509,8 +1509,7 @@ static int tegra_dma_remove(struct platform_device *pdev)
+@@ -1545,6 +1545,10 @@ static int tegra_dma_pm_suspend(struct device *dev)
+ 		struct tegra_dma_channel *tdc = &tdma->channels[i];
+ 		struct tegra_dma_channel_regs *ch_reg = &tdc->channel_reg;
  
- static int tegra_dma_runtime_suspend(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct tegra_dma *tdma = platform_get_drvdata(pdev);
-+	struct tegra_dma *tdma = dev_get_drvdata(dev);
++		/* Only save the state of DMA channels that are in use */
++		if (!tdc->config_init)
++			continue;
++
+ 		ch_reg->csr = tdc_read(tdc, TEGRA_APBDMA_CHAN_CSR);
+ 		ch_reg->ahb_ptr = tdc_read(tdc, TEGRA_APBDMA_CHAN_AHBPTR);
+ 		ch_reg->apb_ptr = tdc_read(tdc, TEGRA_APBDMA_CHAN_APBPTR);
+@@ -1579,6 +1583,10 @@ static int tegra_dma_pm_resume(struct device *dev)
+ 		struct tegra_dma_channel *tdc = &tdma->channels[i];
+ 		struct tegra_dma_channel_regs *ch_reg = &tdc->channel_reg;
  
- 	clk_disable_unprepare(tdma->dma_clk);
- 	return 0;
-@@ -1518,8 +1517,7 @@ static int tegra_dma_runtime_suspend(struct device *dev)
- 
- static int tegra_dma_runtime_resume(struct device *dev)
- {
--	struct platform_device *pdev = to_platform_device(dev);
--	struct tegra_dma *tdma = platform_get_drvdata(pdev);
-+	struct tegra_dma *tdma = dev_get_drvdata(dev);
- 	int ret;
- 
- 	ret = clk_prepare_enable(tdma->dma_clk);
++		/* Only restore the state of DMA channels that are in use */
++		if (!tdc->config_init)
++			continue;
++
+ 		if (tdma->chip_data->support_separate_wcount_reg)
+ 			tdc_write(tdc, TEGRA_APBDMA_CHAN_WCOUNT,
+ 				  ch_reg->wcount);
 -- 
 2.1.4
