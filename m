@@ -1,51 +1,178 @@
-From: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
-Subject: Re: [RFC PATCH 1/2] genirq: Add runtime resume/suspend support for
- IRQ chips
-Date: Fri, 13 Nov 2015 15:01:45 -0500 (EST)
-Message-ID: <alpine.DEB.2.11.1511131456440.3987@nanos>
-References: <1447166377-19707-1-git-send-email-jonathanh@nvidia.com> <1447166377-19707-2-git-send-email-jonathanh@nvidia.com> <7hio56dctz.fsf@deeprootsystems.com> <5645A6F6.6020202@nvidia.com>
+From: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V3 1/6] dmaengine: tegra-apb: Correct runtime-pm usage
+Date: Sat, 14 Nov 2015 15:27:49 +0200
+Message-ID: <CAHp75VdE0G9cpgrvisSp5_zM4hK27L-=bSLQZ5=+Pyj4HcSt6w@mail.gmail.com>
+References: <1447432783-7466-1-git-send-email-jonathanh@nvidia.com>
+	<1447432783-7466-2-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5645A6F6.6020202-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1447432783-7466-2-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dmaengine <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 13 Nov 2015, Jon Hunter wrote:
-> On 12/11/15 23:20, Kevin Hilman wrote:
-> > If all the RPM devices in the domain go idle, it will be powered off
-> > independently of the status of the irqchip because the irqchip isn't
-> > using RPM. 
-> 
-> That's dependent on how the irqchip uses these helpers. If these helpers
-> invoke RPM then that will not be the case.
+On Fri, Nov 13, 2015 at 6:39 PM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> The tegra-apb DMA driver enables runtime-pm but never calls
+> pm_runtime_get/put and hence the runtime-pm callbacks are never invoked.
+> The driver manages the clocks by directly calling clk_prepare_enable()
+> and clk_unprepare_disable().
+>
+> Fix this by replacing the clk_prepare_enable() and clk_disable_unprepare()
+> with pm_runtime_get_sync() and pm_runtime_put(), respectively. Note that
+> the consequence of this is that if runtime-pm is disabled, then the clocks
+> will remain on the entire time the driver is loaded. However, if
+> runtime-pm is disabled, then power is not most likely not a concern.
+>
 
-You need a very proper description of how that domain is working. If
-all devices are idle, it's not necessary correct to power down the
-irqchip as is might serve other devices as well.
+Have you tested these changes somehow?
 
-OTOH, if it can be powered down then all idle devices need to release
-the irq they requested because request_irq() would hold a ref on the
-power domain.
+See my comments below.
 
-I have no idea how you can describe that proper.
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> V3 changes:
+> - Removed unnecessary update to local variables in suspend/resume
+> V2 changes:
+> - Fixed return value for allocating channel
+> - Fixed test for return value from pm_runtime_get_sync()
+>
+> drivers/dma/tegra20-apb-dma.c | 43 ++++++++++++++++++-------------------------
+>  1 file changed, 18 insertions(+), 25 deletions(-)
+>
+> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+> index c8f79dcaaee8..f68bccf55a24 100644
+> --- a/drivers/dma/tegra20-apb-dma.c
+> +++ b/drivers/dma/tegra20-apb-dma.c
+> @@ -1186,10 +1186,12 @@ static int tegra_dma_alloc_chan_resources(struct dma_chan *dc)
+>
+>         dma_cookie_init(&tdc->dma_chan);
+>         tdc->config_init = false;
+> -       ret = clk_prepare_enable(tdma->dma_clk);
+> +
+> +       ret = pm_runtime_get_sync(tdma->dev);
+>         if (ret < 0)
+> -               dev_err(tdc2dev(tdc), "clk_prepare_enable failed: %d\n", ret);
+> -       return ret;
+> +               return ret;
+> +
 
-> > Is there a longer-term plan to handle the irqchips as a "normal" device
-> > and use RPM?  IMO, that approach would be helpful even for irqchips that
-> > share power domains with CPUs, since there are efforts working towards
-> > using genpd/RPM to manage CPUs/clusters.
-> 
-> That would ideal. However, the majority of irqchips today
-> create/register them with IRQCHIP_DECLARE() and not as "normal" devices.
-> Therefore, I was reluctant to add "struct device" to the irqchip
-> structure. However, if this is what you would prefer and Thomas is ok
-> with it, then that would be fine with me.
+> +       return 0;
 
-I have no objections against that, but how is the 'struct device'
-going to be initialized?
+This is a non-reachable code.
 
-Thanks,
+>  }
+>
+>  static void tegra_dma_free_chan_resources(struct dma_chan *dc)
+> @@ -1232,7 +1234,7 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
+>                 list_del(&sg_req->node);
+>                 kfree(sg_req);
+>         }
+> -       clk_disable_unprepare(tdma->dma_clk);
+> +       pm_runtime_put(tdma->dev);
+>
+>         tdc->slave_id = 0;
+>  }
+> @@ -1356,20 +1358,14 @@ static int tegra_dma_probe(struct platform_device *pdev)
+>         spin_lock_init(&tdma->global_lock);
+>
+>         pm_runtime_enable(&pdev->dev);
+> -       if (!pm_runtime_enabled(&pdev->dev)) {
+> +       if (!pm_runtime_enabled(&pdev->dev))
+>                 ret = tegra_dma_runtime_resume(&pdev->dev);
 
-	tglx
+I didn't check, but does this bring device to powered on state?
+
+> -               if (ret) {
+> -                       dev_err(&pdev->dev, "dma_runtime_resume failed %d\n",
+> -                               ret);
+> -                       goto err_pm_disable;
+> -               }
+> -       }
+> +       else
+> +               ret = pm_runtime_get_sync(&pdev->dev);
+>
+> -       /* Enable clock before accessing registers */
+> -       ret = clk_prepare_enable(tdma->dma_clk);
+>         if (ret < 0) {
+> -               dev_err(&pdev->dev, "clk_prepare_enable failed: %d\n", ret);
+> -               goto err_pm_disable;
+> +               pm_runtime_disable(&pdev->dev);
+> +               return ret;
+>         }
+>
+>         /* Reset DMA controller */
+> @@ -1382,7 +1378,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
+>         tdma_write(tdma, TEGRA_APBDMA_CONTROL, 0);
+>         tdma_write(tdma, TEGRA_APBDMA_IRQ_MASK_SET, 0xFFFFFFFFul);
+>
+> -       clk_disable_unprepare(tdma->dma_clk);
+> +       pm_runtime_put(&pdev->dev);
+>
+>         INIT_LIST_HEAD(&tdma->dma_dev.channels);
+>         for (i = 0; i < cdata->nr_channels; i++) {
+> @@ -1485,7 +1481,6 @@ err_irq:
+>                 tasklet_kill(&tdc->tasklet);
+>         }
+>
+> -err_pm_disable:
+>         pm_runtime_disable(&pdev->dev);
+>         if (!pm_runtime_status_suspended(&pdev->dev))
+>                 tegra_dma_runtime_suspend(&pdev->dev);
+> @@ -1543,7 +1538,7 @@ static int tegra_dma_pm_suspend(struct device *dev)
+>         int ret;
+>
+>         /* Enable clock before accessing register */
+> -       ret = tegra_dma_runtime_resume(dev);
+> +       ret = pm_runtime_get_sync(dev);
+>         if (ret < 0)
+>                 return ret;
+>
+> @@ -1560,7 +1555,7 @@ static int tegra_dma_pm_suspend(struct device *dev)
+>         }
+>
+>         /* Disable clock */
+> -       tegra_dma_runtime_suspend(dev);
+> +       pm_runtime_put(dev);
+>         return 0;
+>  }
+>
+> @@ -1571,7 +1566,7 @@ static int tegra_dma_pm_resume(struct device *dev)
+>         int ret;
+>
+>         /* Enable clock before accessing register */
+> -       ret = tegra_dma_runtime_resume(dev);
+> +       ret = pm_runtime_get_sync(dev);
+>         if (ret < 0)
+>                 return ret;
+>
+> @@ -1592,16 +1587,14 @@ static int tegra_dma_pm_resume(struct device *dev)
+>         }
+>
+>         /* Disable clock */
+> -       tegra_dma_runtime_suspend(dev);
+> +       pm_runtime_put(dev);
+>         return 0;
+>  }
+>  #endif
+>
+>  static const struct dev_pm_ops tegra_dma_dev_pm_ops = {
+> -#ifdef CONFIG_PM
+> -       .runtime_suspend = tegra_dma_runtime_suspend,
+> -       .runtime_resume = tegra_dma_runtime_resume,
+> -#endif
+> +       SET_RUNTIME_PM_OPS(tegra_dma_runtime_suspend, tegra_dma_runtime_resume,
+> +                          NULL)
+>         SET_SYSTEM_SLEEP_PM_OPS(tegra_dma_pm_suspend, tegra_dma_pm_resume)
+>  };
+>
+> --
+> 2.1.4
+>
+
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
