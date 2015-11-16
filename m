@@ -1,86 +1,85 @@
-From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
-Subject: Re: [RFC PATCH 1/2] genirq: Add runtime resume/suspend support for
- IRQ chips
-Date: Mon, 16 Nov 2015 11:48:42 +0100
-Message-ID: <CAMuHMdW2L1gYO7cNjeeaBTcQQdEXc9q45E1sZj-=TPwokkGx2g@mail.gmail.com>
-References: <1447166377-19707-1-git-send-email-jonathanh@nvidia.com>
-	<1447166377-19707-2-git-send-email-jonathanh@nvidia.com>
-	<7hio56dctz.fsf@deeprootsystems.com>
-	<5645A6F6.6020202@nvidia.com>
-	<alpine.DEB.2.11.1511131456440.3987@nanos>
-	<5649A603.6020308@nvidia.com>
-	<CAMuHMdXazgRcw=+O-w+PsZpwiW8iCwZ8MmhNSjcOoZGRP45Y6Q@mail.gmail.com>
-	<5649B135.8050800@nvidia.com>
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] watchdog: tegra: Stop watchdog first if restarting
+Date: Mon, 16 Nov 2015 11:48:43 +0100
+Message-ID: <20151116104841.GA31033@ulmo.nvidia.com>
+References: <1447114298-5516-1-git-send-email-achew@nvidia.com>
+ <56463F7E.8040008@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5649B135.8050800-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux PM list <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ZGiS0Q5IWpPtfppv"
+Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <56463F7E.8040008-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Content-Disposition: inline
+Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Cc: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Jon,
+--ZGiS0Q5IWpPtfppv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 16, 2015 at 11:34 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> On 16/11/15 09:49, Geert Uytterhoeven wrote:
->> On Mon, Nov 16, 2015 at 10:46 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>> On 13/11/15 20:01, Thomas Gleixner wrote:
->>>> On Fri, 13 Nov 2015, Jon Hunter wrote:
->>>>> On 12/11/15 23:20, Kevin Hilman wrote:
->>>>>> If all the RPM devices in the domain go idle, it will be powered off
->>>>>> independently of the status of the irqchip because the irqchip isn't
->>>>>> using RPM.
->>>>>
->>>>> That's dependent on how the irqchip uses these helpers. If these helpers
->>>>> invoke RPM then that will not be the case.
->>>>
->>>> You need a very proper description of how that domain is working. If
->>>> all devices are idle, it's not necessary correct to power down the
->>>> irqchip as is might serve other devices as well.
->>>
->>> Agreed. The irqchip should only be powered down if there are no
->>> interrupts in-use/requested. Runtime-pm will keep a reference count for
->>> all requested IRQs.
->>
->> That means the irqchip won't be powered down automatically when the
->> last user is powered down, unless all users release their irqs during
->> suspend.
->
-> Right.
->
->> Handling it automatically needs more bookkeeping than a simple reference
->> count.
->
-> So what would you suggest? Adding a pm_runtime_register_irq() API that
-> would register an IRQ with the device that you want RPM to handle? Not
-> sure if there is a better/easier way to handle this.
+On Fri, Nov 13, 2015 at 11:52:30AM -0800, Guenter Roeck wrote:
+> On 11/09/2015 04:11 PM, Andrew Chew wrote:
+> >If we need to restart the watchdog due to someone changing the timeout
+> >interval, stop the watchdog before restarting it.  Otherwise, the new
+> >timeout doesn't seem to take.
+> >
+> >Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> Reviewed-by: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+>=20
+> Some feedback from the maintainers would be helpful, though,
+> especially if there is some other means to change the timeout
+> without stopping the watchdog.
 
-The irqchip needs to keep track how many times request_irq() has been
-called, cfr. your suggestion above.
+I don't think there is. The TIMER_WDT<w>_COMMAND_0 register has this
+description:
 
-On the other side, the system needs to keep track how many times request_irq()
-has been called for each irqchip, so it can subtract those numbers from the
-irqchip's counters during suspend of the device, and re-add them during resume.
-So we need at least a "struct device *" parameter for request_irq().
-devm_request_irq() already has that, but not all drivers use that.
+	"The StartCounter bit enables watchdog counter operation, loads
+	the watchdog counter, starts the watchdog timer to count down,
+	resets the expiration count to 0, and clears all flags. Also
+	used as restart.
+=09
+	..."
 
-However, I think this should be looked at into the context of "[RFD]
-Functional dependencies between devices".
-https://lwn.net/Articles/662205/
-https://lkml.org/lkml/2015/10/27/388
+The way I read this is that the watchdog period (the field that the
+wdd->timeout value gets written to) is latched when the StartCounter
+bit transitions from 0 to 1. So this change looks correct to me:
 
-There can be other dependencies than interrupts between devices.
-All functions using dependencies need a "struct device *" parameter to
-record information.
+Reviewed-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Gr{oetje,eeting}s,
+Andrew, it might be worthwhile to file an internal bug report to see if
+we can get the TRM updated with a more explicit programming sequence or
+at least get confirmation from one of the hardware designers whether or
+not this is the correct sequence when changing the period.
 
-                        Geert
+Thierry
 
+--ZGiS0Q5IWpPtfppv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJWSbSHAAoJEN0jrNd/PrOhvzMP/RTwkcp/xAmEd96jSU4U84oE
+7rs7/PNq7x7xmLMiUJWpSGzn3ptuFIko0gpZ5Rtoa2y/rGjio2bGwedGFKF4LDX4
+hcisBkbo1RMkOLMZ2zvJpZ/AwaVLFAWX/z1HM+5ghsHJoNYsEn6gwCGCoPKKp6wx
+WrUM8zfix1JmrVMoF4biGb7tCw4gJ2dnz+mAhpKHRPezb0Ylnq1wUUgg5N9Xfsfm
+kTxLUITvGqGYue0CJ0Wi4ImTSnCWJ1SbTX66ilLjW18RZEjumW0R9pBWwA7Gt0MG
+BAFEvhK29M3JOL8pFV5Id90J0cpCvgnw7DMXge/XVts1UxMIudkiuvYIQpiziyJn
+BYKyuKJqiB32Ah6b0CiDzlV4f1zZda1ujneWkomm23PtlmyRAAVgLSvI1R0mjjdL
+zj7eNSgn2dKh6IMdV05oYEdjhP44UZQOhyQZJhyr3OKzbwaeQh0hxgEXJal7GjH7
+XwNJWk4yhwKZO4isP05YjcjCizccJsQpbLMaFPX+nO9O6EbiFkgmMYBzpJnRy+oZ
+EebOPOFQb5KVxyRZFbS3klJ98wOKxNk3hpTlYGgQRz6ZRhf9LgcTCC3RnOOzlrDL
+1ckd3xt/3SQi3HqrtmD5vPH/4jhD7TFhvQAllx1oRtuta5Mu9IRvbWm1C/ubmFRK
+w1GHp1KiuSRgJpPzw5D4
+=PTai
+-----END PGP SIGNATURE-----
+
+--ZGiS0Q5IWpPtfppv--
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
