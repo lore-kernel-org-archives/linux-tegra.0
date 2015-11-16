@@ -1,306 +1,126 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/2] dt-bindings: phy: Add NVIDIA Tegra XUSB pad
- controller binding
-Date: Mon, 16 Nov 2015 13:13:45 -0700
-Message-ID: <564A38F9.8070902@wwwdotorg.org>
+Subject: Re: [PATCH 2/2] dt-bindings: phy: tegra-xusb-padctl: Add Tegra210
+ support
+Date: Mon, 16 Nov 2015 13:26:43 -0700
+Message-ID: <564A3C03.1040608@wwwdotorg.org>
 References: <1446657109-15568-1-git-send-email-thierry.reding@gmail.com>
- <1446657109-15568-2-git-send-email-thierry.reding@gmail.com>
- <563A7077.20902@wwwdotorg.org> <20151113161138.GA7219@ulmo>
+ <1446657109-15568-3-git-send-email-thierry.reding@gmail.com>
+ <563A71C7.9030002@wwwdotorg.org> <20151113163239.GB7219@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20151113161138.GA7219@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20151113163239.GB7219@ulmo>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/13/2015 09:11 AM, Thierry Reding wrote:
-> On Wed, Nov 04, 2015 at 01:54:15PM -0700, Stephen Warren wrote:
+On 11/13/2015 09:32 AM, Thierry Reding wrote:
+> On Wed, Nov 04, 2015 at 01:59:51PM -0700, Stephen Warren wrote:
 >> On 11/04/2015 10:11 AM, Thierry Reding wrote:
 >>> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >>>
->>> The NVIDIA Tegra XUSB pad controller provides a set of pads, each with a
->>> set of lanes that are used for PCIe, SATA and USB.
+>>> Extend the binding to cover the set of feature found in Tegra210.
 >>
->>>   .../bindings/phy/nvidia,tegra-xusb-padctl.txt      | 359 +++++++++++++++++++++
->>
->> For Tegra bindings, we usually use the full compatible value as the
->> filename, so I'd expect the chip number in the filename too.
->
-> I specifically didn't do that to avoid confusion. The XUSB pad
-> controller was introduced on Tegra114, but patches weren't posted until
-> Tegra124. So nvidia,tegra114-xusb-padctl.txt would be the proper name
-> for this binding if we were following the conventions, but then we have
-> never specified that binding (though I think it would look mostly the
-> same as for Tegra124).
->
-> I can of course still go for nvidia,tegra114-xusb-padctl.txt, the
-> content would explicitly list valid compatible strings. It's just that
-> none of them would match the filename.
-
-I was asking that the file be named to match the compatible flag, not 
-the SoC version that contains the HW module.
-
-The first/oldest compatible value currently documented is Tegra124, so 
-I'd expect that to appear in the filename.
-
-Yes, it's theoretically possible for the binding to be enhanced in the 
-future to cover Tegra114, and at that time we'd probably want to rename 
-the file. However, I believe the likelihood of that happening is zero 
-(or even negative, which is admittedly mathematically impossible, but 
-I'm being hyperbolic).
-
->> I'd expect to see a patch in this series that edits the existing
->> Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
->> and mentions that the binding is deprecated.
->
-> How about this:
->
-> --- >8 ---
-> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
-> index 30676ded85bb..77dfba05ccfd 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
-> +++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt
-> @@ -1,6 +1,11 @@
->   Device tree binding for NVIDIA Tegra XUSB pad controller
->   ========================================================
->
-> +NOTE: It turns out that this binding isn't an accurate description of the XUSB
-> +pad controller. While the description is good enough for the functional subset
-> +required for PCIe and SATA, it lacks the flexibility to represent the features
-> +needed for USB. For the new binding, see ../phy/nvidia,tegra-xusb-padctl.txt.
-> +
->   The Tegra XUSB pad controller manages a set of lanes, each of which can be
->   assigned to one out of a set of different pads. Some of these pads have an
->   associated PHY that must be powered up before the pad can be used.
-> --- >8 ---
-
-That sounds good, although I'd suggest explicitly mentioning that the 
-binding is deprecated. Perhaps add ", and so this binding is deprecated" 
-at the end of the first sentence?
-
 >>> diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra-xusb-padctl.txt b/Documentation/devicetree/bindings/phy/nvidia,tegra-xusb-padctl.txt
->>> +- reg: Physical base address and length of the controller's registers.
->>> +- resets: Must contain an entry for each entry in reset-names.
->>> +- reset-names: Must include the following entries:
->>> +  - "padctl"
 >>
->> Are there no clocks or power domains that affect XUSB padctl? I suppose we
->> can start off without any, and add them later if we need.
->
-> I don't think there are any. The TRM specifies that it's in the ungated
-> Vaux_soc power partition, and doesn't mention any clocks.
-
-OK. Obviously the module must used some clock, since it contains clocked 
-logic. However, equally that clock is obviously on even without the 
-driver explicitly managing it since the HW works right now. So, I 
-suppose we can defer adding any clock entries to the binding/DT until 
-later, if the need arises. It'd still be nice if we could put the 
-complete details into the binding from day one, but I understand that 
-the documentation isn't exactly forthcoming on these topics.
-
->>> +- mboxes: Must contain an entry for each entry in mbox-names.
->>> +- mbox-names: Must include the following entries:
->>> +  - "xusb"
->>
->> I thought we'd decided not to use any mbox binding or drivers in XUSB now?
->> See for example my proposed XUSB controller binding at:
->>
->> http://www.spinics.net/lists/linux-tegra/msg23922.html
->> [PATCH V9] dt: add NVIDIA Tegra XUSB controller binding
->>
->> The idea is that the mailbox should be entirely internal to the XUSB
->> controller driver, and if the receipt of a mailbox message requires any
->> change in the XUSB pad controller programming, the XUSB controller driver
->> should simply call the XUSB pad controller driver to perform that operation.
->
-> Okay, I think that should work, but it'll require a rather large rewrite
-> of... well, everything. I think Martyn was going to look into that, so I
-> guess I'll just drop this for now.
->
-> Instead I think we'll need a phandle to the XUSB pad controller, so that
-> we can resolve it to the proper context. Something like this perhaps?
->
-> 	- nvidia,padctl: phandle to the XUSB pad controller that is used
-> 	  to configure the USB pads used by the XHCI controller.
->
-> That should of course go into the XHCI controller binding. The nice
-> thing about this would be that we get rid of the circular dependency
-> XHCI -> padctl -> mailbox -> XHCI.
-
-Yes, that sounds good.
-
->>> +Pad nodes:
->>> +==========
->>
->>> +For Tegra124 and Tegra132, the following pads exist: utmi, ulpi, hsic, pcie
->>> +and sata. No extra resources are required for operation of these pads.
->>
->> Judging by the diagram in the TRM (e.g. figure 41 in the Tegra124 TRM,
->> figure 36 in the Tegra210 TRM), there is not a single "utmi" pad, but rather
->> a separate pad per USB2 lane. However, the other types of pads are indeed
->> multi-lane. The TRM also refers to "USB2" pads rather than "UTMI" pads. I
->> don't see a ULPI pad in the diagram either. Assuming the diagram in the TRM
->> is consistent with the register layout, I think we should have the following
->> set of pad nodes:
->>
->> utmi-0
->> utmi-1
->> utmi-2
->> hsic
->> pcie
->> sata
->
-> I think the diagram is incomplete. If you look at the register
-> definitions there is clearly a ULPI lane that can be muxed to SNPS or
-> XUSB. Further there are two registers that allow configuration of the
-> ULPI link.
-
-OK, I see ULPI-related fields/registers in the Tegra124 register specs. 
-They've apparently been removed from Tegra210.
-
-> Similarly I think the UTMI pads are innacurately represented. First I
-> think naming them UTMI is more accurate, because USB2 could be either
-> UTMI or HSIC. Also there is common logic shared between all UTMI pads
-> which is why I think it makes sense to collect them in a separate top
-> level utmi pad node.
- >
-> With Tegra210 this will become more important because having the top-
-> level utmi pad node provides for a good location to put shared resources
-> in the device tree.
-
-Can you please provide more details re: which shared resources you're 
-referring to? Looking at the implementation I have of struct 
-tegra_xusb_phy_ops .prepare()/.enable() I'm not seeing any common 
-logic/resources. Note that I'm making the subtle (perhaps arbitrary) 
-distinction between logic that's global to the entire of XUSB PADCTL 
-(but naturally affects everything contained inside it, such as the 
-clamping and reset bits) and logic that actually binds N USB2/UTMI lanes 
-together into some common sub-block (such as registers 
-XUSB_PADCTL_UPHY_PLL_P0_CTL* for PCIe), rather than those lanes being 
-bound together only at the top level of XUSB PADCTL.
-
-While I agree that "USB2" isn't good naming, it /is/ the naming used by 
-the TRM and the register documentation. I'm not quite convinced that the 
-DT binding is the correct place to fix this naming mistake. At the very 
-least, can we add a note near the "utmi" names indicating that they're 
-referred to as "USB2" in the HW documentation?
-
-...
->>> +Super-speed USB ports:
->>> +----------------------
+>>> +PCIe pad:
+>>> +---------
 >>> +
 >>> +Required properties:
->>> +- status: Defines the operation status of the port. Valid values are:
->>> +  - "disabled": the port is disabled
->>> +  - "okay": the port is enabled
->>> +- nvidia,port: A single cell that specifies the physical port number to map
->>> +  this super-speed USB port to. The range of valid port numbers varies with
->>> +  the SoC generation:
->>> +  - 0-2: for Tegra124 and Tegra132
+>>> +- clocks: Must contain an entry for each entry in clock-names.
+>>> +- clock-names: Must contain the following entries:
+>>> +  - "pll": phandle and specifier referring to the PLLE
+>>> +- resets: Must contain an entry for each entry in reset-names.
+>>> +- reset-names: Must contain the following entries:
+>>> +  - "phy": reset for the PCIe UPHY block
 >>
->> Wouldn't it be better to name the node after the physical port number, just
->> like we name the PHY/lane nodes after the PHY/lane identity? We don't seem
->> to have any such mapping information in the UTMI port nodes; how do we
->> correlate the USB2 and USB3 ports?
+>> I don't recall any clocks or resets properties in the pads for Tegra124. Do
+>> we really not need any?
 >
-> The mapping of UTMI and HSIC ports seems to be static. ...
-...
-> The correlation of USB2 and USB3 ports is specifically done using this
-> nvidia,port property.
-
-OK, perhaps nvidia,usb2-companion-port-id would be a more descriptive 
-property name then. I got the impression this property indicated which 
-USB3 port this node contained configuration for.
-
-> The index in the USB3 port name represents the
-> hardware index of the port, which is used to index registers etc. Now I
-> suppose we could turn this around, and have the ports named after the
-> physical port, but then we'd still need an nvidia,port property to
-> relate that "physical port" to the pad controller hardware index. That
-> seems the wrong way around to me, since we're describing the XUSB pad
-> controller part of the port here.
+> Tegra124 had two instances of what used to be called IOPHY, one for PCIe
+> and one for SATA. On Tegra210 these have been replaced by two instances
+> of what's called UPHY. The resets listed in the PCIe and SATA pad nodes
+> are wired to those UPHY instances, hence why they are new on Tegra210.
 >
->> I wonder if we shouldn't represent USB (physical) ports at the lane-side of
->> the XUSB pad controller rather than the IO controller side. That way, we
->> could pack both USB2- and USB3-related information into a single node. For
->> example, vbus-supply really applies equally to the companion USB2 and USB3
->> ports, whereas this binding represents those two parts of the overall USB
->> port separately, with the vbus-supply property appearing in only one of the
->> two places.
->
-> My understanding is that the USB3 ports work on top of USB2 ports. USB3
-> ports don't work standalone, so they must always be associated with one
-> of the USB2 ports. If they aren't there is a hardware mechanism in place
-> that disables the USB3 port.
+> For Tegra124 no resets exist for the IOPHY instances.
 
-Yes, a USB3 port must be coupled with a "companion" USB2 port.
+OK.
 
-> There are further some registers that control the electrical signalling
-> of each of these ports, so I think it makes sense to represent this from
-> the perspective of the pad controller rather than the I/O controller.
+I wonder if renaming the section title from "PCIe pad" to "Tegra210 PCIe 
+pad" would be helpful; it'd certainly allow the reader to more quickly 
+work out what part of the document they were looking at if jumping 
+around in it.
 
-But at the signal interface between the XUSB controller and XUSB PADCTL 
-module, the two are the same thing.
-
-By "port" are you referring to something other than the signals at the 
-periphery of the XUSB PADCTL module (either directed internally for 
-connection to the XUSB controller, or externally to the physical balls 
-on the chip package).
-
->> I guess this boils down to what a "port" actually is; the IO
->> controller <-> XUSB pad controller interface, or the XUSB pad controller <->
->> SoC pins interface.
->>
->>> +For Tegra124 and Tegra132, the XUSB pad controller exposes the following
->>> +ports:
->>> +- 3x UTMI: utmi-0, utmi-1, utmi-2
->>> +- 1x ULPI: ulpi-0
->>> +- 2x HSIC: hsic-0, hsic-1
->>> +- 2x super-speed USB: usb3-0, usb3-1
->>
->> I suspect that chunk would be better placed directly inside the "Port
->> nodes:" section, since it describes valid values for the nodes that are
->> subsequently described.
->>
->> Do we need port nodes for PCIe or SATA at all? If not, should we
->> s/ports/usb-ports/ in the container node name? I suppose it doesn't matter,
->> but it feels slightly odd to only represent some of the ports.
->
-> I've seen references to "PCIe ports" and "SATA port" in documentation,
-> but I don't see any immediate need to include them. An early version of
-> the binding (and implementation) had them, but they ended up unused and
-> empty. I don't see any registers that would substantiate that we need
-> them. Then again, keeping the top-level node named "ports" will give us
-> the flexibility to add them if necessary with the benefit that the
-> parent name is still accurate, whereas naming it "usb-ports" would make
-> things somewhat inconsistent if we ever need PCIe and SATA ports.
-
-OK, I was expecting to add top-level "sata-ports" and "pcie-ports" nodes 
-in the future if required, but I supposed we can indeed just add 
-everything under "ports" instead.
-
->>> +Examples:
->>> +=========
+>>> +SATA pad:
+>>> +---------
 >>> +
->>> +Tegra124 and Tegra132:
->>> +----------------------
+>>> +Required properties:
+>>> +- resets: Must contain an entry for each entry in reset-names.
+>>> +- reset-names: Must contain the following entries:
+>>> +  - "phy": reset for the SATA UPHY block
+>>> +
+>>>
+>>>   PHY nodes:
 >>
->> The example isn't valid for Tegra132 since the compatible values don't
->> include any Tegra132 entry.
->>
->> BTW, I've suggested a lot of phrasing changes. Once we've settled the other
->> questions, just let me know if you want me to propose an updated version of
->> the patch that contains all those phrasing changes so you don't have to do
->> them all yourself.
+>> Nit: 2 blank lines there.
 >
-> Feel free to integrate whatever phrasing changes you think improve the
-> binding. It might be best for you to do that yourself to avoid churn due
-> to me misunderstanding what you were suggesting.
+> Those were intentional for additional spacing between sections.
 
-I think I'd like to see a bit more clarity on the definition of "ports" 
-and the description of the node structure before I suggest any more 
-tweaks to the wording. I'm not 100% sure I understood the proposed 
-structure fully yet.
+That seems inconsistent, and not something I recall seeing before, so 
+I'm not sure anyone would realize that. Better to do it with more 
+explicit section names I think.
+
+>>> +For Tegra210, the list of valid PHY nodes is given below:
+>>> +- utmi: utmi-0, utmi-1, utmi-2, utmi-3
+>>> +  - functions: "snps", "xusb", "uart"
+>>> +- hsic: hsic-0, hsic-1
+>>> +  - functions: "snps", "xusb"
+>>> +- pcie: pcie-0, pcie-1, pcie-2, pcie-3, pcie-4, pcie-5, pcie-6
+>>> +  - functions: "pcie-x1", "usb3-ss", "pcie-x4"
+>>> +- sata: sata-0
+>>> +  - functions: "usb3-ss", "sata"
+>>
+>> usb2-bias also needs to be present.
+>
+> I'm not sure about this. All of the driver code that I've looked deals
+> with the usb2-bias pad internally. As far as I can tell, this pad needs
+> to be configured to whatever any of the other pads is configured for. I
+> think that means if any of the UTMI pads is configured for XUSB then the
+> usb2-bias pad must also be configured for XUSB. Which would also imply
+> that if one of the UTMI pads is configured for XUSB, all of them must be
+> configured for XUSB.
+
+I don't believe that's true; on Tegra210 I have successfully configured 
+the (legacy) "USB2 controller" to drive the recovery/micro-USB 
+board-level port, and the "XUSB controller" (USB2 and USB3 ports 
+thereof) to drive a couple of other board-level ports.
+
+> It's also not a pad in the sense that the others are pads. It doesn't
+> directly connect anywhere. It's also shared by all the UTMI pads. That
+> said, there are two registers that allow some of the parameters of the
+> pad to be set, so perhaps adding the node exclusively for
+> configurability might make sense.
+>
+> It wouldn't really be a PHY node, though, so wouldn't fit into the above
+> group. Perhaps something like the following could be added:
+>
+>    There is an additional pad that is used to support the bias voltages
+>    to the USB2/UTMI pads. This is not a PHY that can be consumed by any
+>    I/O controller, but the device tree node can be used to specify
+>    parameters needed for the programming of the pad.
+>
+> I think the function shouldn't necessarily be exposed as a parameter,
+> because all that would do is add the possibility for a conflicting set
+> of mux options with the USB2/UTMI pads.
+
+OK, if we can come up with a well-described algorithm re: how/when to 
+program/enable this pad, then we can probably represent this differently 
+than the other pads. I might expect DT to contain values for 
+HS_DISCON_LEVEL HS_SQUELCH_LEVEL, although I can't recall if those 
+values are SoC- or board-specific off the top of my head.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
