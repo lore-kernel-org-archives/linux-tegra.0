@@ -1,80 +1,103 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/2] dt-bindings: phy: tegra-xusb-padctl: Add Tegra210
- support
-Date: Mon, 16 Nov 2015 16:35:14 -0700
-Message-ID: <564A6832.8090205@wwwdotorg.org>
-References: <1446657109-15568-1-git-send-email-thierry.reding@gmail.com>
- <1446657109-15568-3-git-send-email-thierry.reding@gmail.com>
- <563A71C7.9030002@wwwdotorg.org> <20151113163239.GB7219@ulmo>
- <CAL1qeaEj=sihAxxw26aDkrzOO6F0GzmVfBs2dv2ch+4p0=AuXA@mail.gmail.com>
- <564A3D03.70001@wwwdotorg.org>
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH] ARM: use "depends on" for SoC configs instead of "if"
+ after prompt
+Date: Tue, 17 Nov 2015 08:49:53 +0900
+Message-ID: <564A6BA1.6020103@samsung.com>
+References: <1447643170-23773-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <564A3D03.70001-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-reply-to: <1447643170-23773-1-git-send-email-yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Viresh Kumar <vireshk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, bcm-kerne
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/16/2015 01:30 PM, Stephen Warren wrote:
-> On 11/13/2015 10:58 AM, Andrew Bresticker wrote:
->> On Fri, Nov 13, 2015 at 8:32 AM, Thierry Reding
->> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->>> On Wed, Nov 04, 2015 at 01:59:51PM -0700, Stephen Warren wrote:
->>>> On 11/04/2015 10:11 AM, Thierry Reding wrote:
->>>>> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>>>
->>>>> Extend the binding to cover the set of feature found in Tegra210.
->>>>
->>>>> diff --git
->>>>> a/Documentation/devicetree/bindings/phy/nvidia,tegra-xusb-padctl.txt b/Documentation/devicetree/bindings/phy/nvidia,tegra-xusb-padctl.txt
->>>>>
->>>>
->>>>> +For Tegra210, the list of valid PHY nodes is given below:
->>>>> +- utmi: utmi-0, utmi-1, utmi-2, utmi-3
->>>>> +  - functions: "snps", "xusb", "uart"
->>>>> +- hsic: hsic-0, hsic-1
->>>>> +  - functions: "snps", "xusb"
->>>>> +- pcie: pcie-0, pcie-1, pcie-2, pcie-3, pcie-4, pcie-5, pcie-6
->>>>> +  - functions: "pcie-x1", "usb3-ss", "pcie-x4"
->>>>> +- sata: sata-0
->>>>> +  - functions: "usb3-ss", "sata"
->>>>
->>>> usb2-bias also needs to be present.
->>>
->>> I'm not sure about this. All of the driver code that I've looked deals
->>> with the usb2-bias pad internally. As far as I can tell, this pad needs
->>> to be configured to whatever any of the other pads is configured for. I
->>> think that means if any of the UTMI pads is configured for XUSB then the
->>> usb2-bias pad must also be configured for XUSB. Which would also imply
->>> that if one of the UTMI pads is configured for XUSB, all of them must be
->>> configured for XUSB.
->>
->> I was told by hardware engineers at NVIDIA that (at least on
->> Tegra124/Tegra132) the usb2-bias pad must be configured in the
->> XUSB_PADCTL register space if UTMI pad 0 is muxed to XUSB.  If UTMI
->> pad 0 is muxed to SNPS, then the usb2-bias pad is configured in the
->> USB register space (base 0x7d000000).  You may want to follow up
->> internally to confirm this.  If it's true, that could make things here
->> a bit nastier, especially if we want to support configurations where
->> some pads are muxed to XUSB while others are muxed to SNPS.
->
-> Hmm. I've certainly successfully tested a configuration where UTMI pad 0
-> was handled by the SNPS controller and other pads by the XUSB controller
-> *and* where I set the usb2-bias "pad"'s muxing and configuration via the
-> XUSB PADCTL module. In that case, I /had/ to configure usb2-bias via
-> XUSB PADCTL or the other XUSB pads didn't work. However, perhaps that
-> was because the XUSB controller driver probed before the SNPS driver;
-> perhaps if they'd probed the other way around and the SNPS driver
-> configured the bias pad, then everything would have worked without
-> configuring the bias pad via XUSB PADCTL.
->
-> I suppose I'll have to start another internal thread to get the full
-> details, and differentiate between "recommended" and "supported" and
-> "must" vs. "can"/"should".
+On 16.11.2015 12:06, Masahiro Yamada wrote:
+> Many ARM sub-architectures use prompts followed by "if" conditional,
+> but it is wrong.
+> 
+> Please notice the difference between
+> 
+>     config ARCH_FOO
+>             bool "Foo SoCs" if ARCH_MULTI_V7
+> 
+> and
+> 
+>     config ARCH_FOO
+>             bool "Foo SoCs"
+>             depends on ARCH_MULTI_V7
+> 
+> These two are *not* equivalent!
+> 
+> In the former statement, it is not ARCH_FOO, but its prompt that
+> depends on ARCH_MULTI_V7.  So, it is completely valid that ARCH_FOO
+> is selected by another, but ARCH_MULTI_V7 is still disabled. As it is
+> not unmet dependency, Kconfig never warns.  This is probably not what
+> you want.
+> 
+> The former should be used only when you need to do so, and you really
+> understand what you are doing.  (In most cases, it should be wrong!)
+> 
+> For enabling/disabling sub-architectures, the latter is always correct.
+> 
+> As a good side effect, this commit fixes some entries over 80 columns
+> (mach-imx, mach-integrator, mach-mbevu).
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+> ---
+> 
+> I hope this patch is applied to ARM-SOC, but am CCing Kbuild ML
+> because the correct understanding of Kconfig is required for this patch.
+> 
+> 
+>  arch/arm/Kconfig                 |  3 ++-
+>  arch/arm/mach-alpine/Kconfig     |  3 ++-
+>  arch/arm/mach-at91/Kconfig       | 15 ++++++++++-----
+>  arch/arm/mach-axxia/Kconfig      |  3 ++-
+>  arch/arm/mach-bcm/Kconfig        | 27 ++++++++++++++++++---------
+>  arch/arm/mach-berlin/Kconfig     |  3 ++-
+>  arch/arm/mach-cns3xxx/Kconfig    |  3 ++-
+>  arch/arm/mach-exynos/Kconfig     |  3 ++-
+>  arch/arm/mach-highbank/Kconfig   |  3 ++-
+>  arch/arm/mach-hisi/Kconfig       | 12 ++++++++----
+>  arch/arm/mach-imx/Kconfig        |  6 ++++--
+>  arch/arm/mach-integrator/Kconfig |  3 ++-
+>  arch/arm/mach-mediatek/Kconfig   |  3 ++-
+>  arch/arm/mach-meson/Kconfig      |  3 ++-
+>  arch/arm/mach-moxart/Kconfig     |  3 ++-
+>  arch/arm/mach-mvebu/Kconfig      | 24 ++++++++++++++++--------
+>  arch/arm/mach-picoxcell/Kconfig  |  3 ++-
+>  arch/arm/mach-prima2/Kconfig     |  3 ++-
+>  arch/arm/mach-qcom/Kconfig       |  3 ++-
+>  arch/arm/mach-rockchip/Kconfig   |  3 ++-
+>  arch/arm/mach-s5pv210/Kconfig    |  3 ++-
 
-I've discussed this with a HW engineer, and apparently this rule is 
-simply a recommendation, with the acknowledgement that everything will 
-work perfectly fine if we ignore it.
+For Exynos and S5PV210:
+Acked-by: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+
+Best regards,
+Krzysztof
+
+>  arch/arm/mach-shmobile/Kconfig   |  4 ++--
+>  arch/arm/mach-socfpga/Kconfig    |  3 ++-
+>  arch/arm/mach-spear/Kconfig      |  3 ++-
+>  arch/arm/mach-sti/Kconfig        |  3 ++-
+>  arch/arm/mach-sunxi/Kconfig      |  3 ++-
+>  arch/arm/mach-tegra/Kconfig      |  3 ++-
+>  arch/arm/mach-u300/Kconfig       |  4 ++--
+>  arch/arm/mach-ux500/Kconfig      |  4 ++--
+>  arch/arm/mach-vexpress/Kconfig   |  3 ++-
+>  arch/arm/mach-zx/Kconfig         |  3 ++-
+>  arch/arm/mach-zynq/Kconfig       |  3 ++-
+>  32 files changed, 110 insertions(+), 58 deletions(-)
+> 
