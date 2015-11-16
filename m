@@ -1,178 +1,43 @@
-From: Andy Shevchenko <andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V3 1/6] dmaengine: tegra-apb: Correct runtime-pm usage
-Date: Sat, 14 Nov 2015 15:27:49 +0200
-Message-ID: <CAHp75VdE0G9cpgrvisSp5_zM4hK27L-=bSLQZ5=+Pyj4HcSt6w@mail.gmail.com>
-References: <1447432783-7466-1-git-send-email-jonathanh@nvidia.com>
-	<1447432783-7466-2-git-send-email-jonathanh@nvidia.com>
+From: Martyn Welch <martyn.welch-ZGY8ohtN/8pPYcu2f3hruQ@public.gmane.org>
+Subject: Re: [PATCH 1/2] dt-bindings: phy: Add NVIDIA Tegra XUSB pad controller
+ binding
+Date: Mon, 16 Nov 2015 09:12:37 +0000
+Message-ID: <56499E05.8050301@collabora.co.uk>
+References: <1446657109-15568-1-git-send-email-thierry.reding@gmail.com> <1446657109-15568-2-git-send-email-thierry.reding@gmail.com> <563A7077.20902@wwwdotorg.org> <20151113161138.GA7219@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1447432783-7466-2-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20151113161138.GA7219@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dmaengine <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Nov 13, 2015 at 6:39 PM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> The tegra-apb DMA driver enables runtime-pm but never calls
-> pm_runtime_get/put and hence the runtime-pm callbacks are never invoked.
-> The driver manages the clocks by directly calling clk_prepare_enable()
-> and clk_unprepare_disable().
->
-> Fix this by replacing the clk_prepare_enable() and clk_disable_unprepare()
-> with pm_runtime_get_sync() and pm_runtime_put(), respectively. Note that
-> the consequence of this is that if runtime-pm is disabled, then the clocks
-> will remain on the entire time the driver is loaded. However, if
-> runtime-pm is disabled, then power is not most likely not a concern.
->
-
-Have you tested these changes somehow?
-
-See my comments below.
-
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> V3 changes:
-> - Removed unnecessary update to local variables in suspend/resume
-> V2 changes:
-> - Fixed return value for allocating channel
-> - Fixed test for return value from pm_runtime_get_sync()
->
-> drivers/dma/tegra20-apb-dma.c | 43 ++++++++++++++++++-------------------------
->  1 file changed, 18 insertions(+), 25 deletions(-)
->
-> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-> index c8f79dcaaee8..f68bccf55a24 100644
-> --- a/drivers/dma/tegra20-apb-dma.c
-> +++ b/drivers/dma/tegra20-apb-dma.c
-> @@ -1186,10 +1186,12 @@ static int tegra_dma_alloc_chan_resources(struct dma_chan *dc)
->
->         dma_cookie_init(&tdc->dma_chan);
->         tdc->config_init = false;
-> -       ret = clk_prepare_enable(tdma->dma_clk);
-> +
-> +       ret = pm_runtime_get_sync(tdma->dev);
->         if (ret < 0)
-> -               dev_err(tdc2dev(tdc), "clk_prepare_enable failed: %d\n", ret);
-> -       return ret;
-> +               return ret;
-> +
-
-> +       return 0;
-
-This is a non-reachable code.
-
->  }
->
->  static void tegra_dma_free_chan_resources(struct dma_chan *dc)
-> @@ -1232,7 +1234,7 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
->                 list_del(&sg_req->node);
->                 kfree(sg_req);
->         }
-> -       clk_disable_unprepare(tdma->dma_clk);
-> +       pm_runtime_put(tdma->dev);
->
->         tdc->slave_id = 0;
->  }
-> @@ -1356,20 +1358,14 @@ static int tegra_dma_probe(struct platform_device *pdev)
->         spin_lock_init(&tdma->global_lock);
->
->         pm_runtime_enable(&pdev->dev);
-> -       if (!pm_runtime_enabled(&pdev->dev)) {
-> +       if (!pm_runtime_enabled(&pdev->dev))
->                 ret = tegra_dma_runtime_resume(&pdev->dev);
-
-I didn't check, but does this bring device to powered on state?
-
-> -               if (ret) {
-> -                       dev_err(&pdev->dev, "dma_runtime_resume failed %d\n",
-> -                               ret);
-> -                       goto err_pm_disable;
-> -               }
-> -       }
-> +       else
-> +               ret = pm_runtime_get_sync(&pdev->dev);
->
-> -       /* Enable clock before accessing registers */
-> -       ret = clk_prepare_enable(tdma->dma_clk);
->         if (ret < 0) {
-> -               dev_err(&pdev->dev, "clk_prepare_enable failed: %d\n", ret);
-> -               goto err_pm_disable;
-> +               pm_runtime_disable(&pdev->dev);
-> +               return ret;
->         }
->
->         /* Reset DMA controller */
-> @@ -1382,7 +1378,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
->         tdma_write(tdma, TEGRA_APBDMA_CONTROL, 0);
->         tdma_write(tdma, TEGRA_APBDMA_IRQ_MASK_SET, 0xFFFFFFFFul);
->
-> -       clk_disable_unprepare(tdma->dma_clk);
-> +       pm_runtime_put(&pdev->dev);
->
->         INIT_LIST_HEAD(&tdma->dma_dev.channels);
->         for (i = 0; i < cdata->nr_channels; i++) {
-> @@ -1485,7 +1481,6 @@ err_irq:
->                 tasklet_kill(&tdc->tasklet);
->         }
->
-> -err_pm_disable:
->         pm_runtime_disable(&pdev->dev);
->         if (!pm_runtime_status_suspended(&pdev->dev))
->                 tegra_dma_runtime_suspend(&pdev->dev);
-> @@ -1543,7 +1538,7 @@ static int tegra_dma_pm_suspend(struct device *dev)
->         int ret;
->
->         /* Enable clock before accessing register */
-> -       ret = tegra_dma_runtime_resume(dev);
-> +       ret = pm_runtime_get_sync(dev);
->         if (ret < 0)
->                 return ret;
->
-> @@ -1560,7 +1555,7 @@ static int tegra_dma_pm_suspend(struct device *dev)
->         }
->
->         /* Disable clock */
-> -       tegra_dma_runtime_suspend(dev);
-> +       pm_runtime_put(dev);
->         return 0;
->  }
->
-> @@ -1571,7 +1566,7 @@ static int tegra_dma_pm_resume(struct device *dev)
->         int ret;
->
->         /* Enable clock before accessing register */
-> -       ret = tegra_dma_runtime_resume(dev);
-> +       ret = pm_runtime_get_sync(dev);
->         if (ret < 0)
->                 return ret;
->
-> @@ -1592,16 +1587,14 @@ static int tegra_dma_pm_resume(struct device *dev)
->         }
->
->         /* Disable clock */
-> -       tegra_dma_runtime_suspend(dev);
-> +       pm_runtime_put(dev);
->         return 0;
->  }
->  #endif
->
->  static const struct dev_pm_ops tegra_dma_dev_pm_ops = {
-> -#ifdef CONFIG_PM
-> -       .runtime_suspend = tegra_dma_runtime_suspend,
-> -       .runtime_resume = tegra_dma_runtime_resume,
-> -#endif
-> +       SET_RUNTIME_PM_OPS(tegra_dma_runtime_suspend, tegra_dma_runtime_resume,
-> +                          NULL)
->         SET_SYSTEM_SLEEP_PM_OPS(tegra_dma_pm_suspend, tegra_dma_pm_resume)
->  };
->
-> --
-> 2.1.4
->
 
 
+On 13/11/15 16:11, Thierry Reding wrote:
+> On Wed, Nov 04, 2015 at 01:54:15PM -0700, Stephen Warren wrote:
+>> On 11/04/2015 10:11 AM, Thierry Reding wrote:
+>>> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>
+>>> +- mboxes: Must contain an entry for each entry in mbox-names.
+>>> +- mbox-names: Must include the following entries:
+>>> +  - "xusb"
+>> I thought we'd decided not to use any mbox binding or drivers in XUSB now?
+>> See for example my proposed XUSB controller binding at:
+>>
+>> http://www.spinics.net/lists/linux-tegra/msg23922.html
+>> [PATCH V9] dt: add NVIDIA Tegra XUSB controller binding
+>>
+>> The idea is that the mailbox should be entirely internal to the XUSB
+>> controller driver, and if the receipt of a mailbox message requires any
+>> change in the XUSB pad controller programming, the XUSB controller driver
+>> should simply call the XUSB pad controller driver to perform that operation.
+> Okay, I think that should work, but it'll require a rather large rewrite
+> of... well, everything. I think Martyn was going to look into that, so I
+> guess I'll just drop this for now.
+>
+Unfortunately I've been shifted onto other things now,
 
--- 
-With Best Regards,
-Andy Shevchenko
+Martyn
