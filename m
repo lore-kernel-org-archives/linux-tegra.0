@@ -1,74 +1,86 @@
-From: <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-Subject: RE: [PATCH] ARM: use "depends on" for SoC configs instead of "if"
- after prompt
-Date: Mon, 16 Nov 2015 10:32:51 +0000
-Message-ID: <d5271606263b496c841abd62647f9db0@SOC-EX02V.e01.socionext.com>
-References: <1447643170-23773-1-git-send-email-yamada.masahiro@socionext.com>
- <4171977.M1BLuS2ZzP@wuerfel>
+From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
+Subject: Re: [RFC PATCH 1/2] genirq: Add runtime resume/suspend support for
+ IRQ chips
+Date: Mon, 16 Nov 2015 11:48:42 +0100
+Message-ID: <CAMuHMdW2L1gYO7cNjeeaBTcQQdEXc9q45E1sZj-=TPwokkGx2g@mail.gmail.com>
+References: <1447166377-19707-1-git-send-email-jonathanh@nvidia.com>
+	<1447166377-19707-2-git-send-email-jonathanh@nvidia.com>
+	<7hio56dctz.fsf@deeprootsystems.com>
+	<5645A6F6.6020202@nvidia.com>
+	<alpine.DEB.2.11.1511131456440.3987@nanos>
+	<5649A603.6020308@nvidia.com>
+	<CAMuHMdXazgRcw=+O-w+PsZpwiW8iCwZ8MmhNSjcOoZGRP45Y6Q@mail.gmail.com>
+	<5649B135.8050800@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <4171977.M1BLuS2ZzP@wuerfel>
-Content-Language: ja-JP
+In-Reply-To: <5649B135.8050800-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arnd-r2nGTMty4D4@public.gmane.org
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mmarek-IBi9RG/b67k@public.gmane.org, olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org, linux-kbuild-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org, agross-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, kernel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org, gregory.clement-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, tsahee-IEYhy/pPZWng2XuLRlxkFAC/G2K4zDHf@public.gmane.org, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, plagnioj-sclMFOaUSTBWk0Htik3J/w@public.gmane.org, dinguyen-yzvPICuk2ABMcg4IHK0kFoH6Mc4MB0Vx@public.gmane.org, baohua-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, shiraz.linux.kernel-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, patrice.chotard-qxv4g6HH51o@public.gmane.org, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org, horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org, michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org, heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, davidb-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, vireshk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, mappyland78@g
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux PM list <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgQXJuZCwNCg0KIA0KPiBPbiBNb25kYXkgMTYgTm92ZW1iZXIgMjAxNSAxMjowNjoxMCBNYXNh
-aGlybyBZYW1hZGEgd3JvdGU6DQo+ID4gTWFueSBBUk0gc3ViLWFyY2hpdGVjdHVyZXMgdXNlIHBy
-b21wdHMgZm9sbG93ZWQgYnkgImlmIiBjb25kaXRpb25hbCwNCj4gPiBidXQgaXQgaXMgd3Jvbmcu
-DQo+ID4NCj4gPiBQbGVhc2Ugbm90aWNlIHRoZSBkaWZmZXJlbmNlIGJldHdlZW4NCj4gPg0KPiA+
-ICAgICBjb25maWcgQVJDSF9GT08NCj4gPiAgICAgICAgICAgICBib29sICJGb28gU29DcyIgaWYg
-QVJDSF9NVUxUSV9WNw0KPiA+DQo+ID4gYW5kDQo+ID4NCj4gPiAgICAgY29uZmlnIEFSQ0hfRk9P
-DQo+ID4gICAgICAgICAgICAgYm9vbCAiRm9vIFNvQ3MiDQo+ID4gICAgICAgICAgICAgZGVwZW5k
-cyBvbiBBUkNIX01VTFRJX1Y3DQo+ID4NCj4gPiBUaGVzZSB0d28gYXJlICpub3QqIGVxdWl2YWxl
-bnQhDQo+ID4NCj4gPiBJbiB0aGUgZm9ybWVyIHN0YXRlbWVudCwgaXQgaXMgbm90IEFSQ0hfRk9P
-LCBidXQgaXRzIHByb21wdCB0aGF0DQo+ID4gZGVwZW5kcyBvbiBBUkNIX01VTFRJX1Y3LiAgU28s
-IGl0IGlzIGNvbXBsZXRlbHkgdmFsaWQgdGhhdCBBUkNIX0ZPTyBpcw0KPiA+IHNlbGVjdGVkIGJ5
-IGFub3RoZXIsIGJ1dCBBUkNIX01VTFRJX1Y3IGlzIHN0aWxsIGRpc2FibGVkLiBBcyBpdCBpcyBu
-b3QNCj4gPiB1bm1ldCBkZXBlbmRlbmN5LCBLY29uZmlnIG5ldmVyIHdhcm5zLiAgVGhpcyBpcyBw
-cm9iYWJseSBub3Qgd2hhdCB5b3UNCj4gPiB3YW50Lg0KPiANCj4gRGlkIHlvdSBlbmNvdW50ZXIg
-YSBjYXNlIHdoZXJlIHNvbWVvbmUgYWN0dWFsbHkgZGlkIGEgJ3NlbGVjdCcgb24gb25lIG9mDQo+
-IHRob3NlIHN5bWJvbHM/IEkgcHJvYmFibHkgaW50cm9kdWNlZCBhIGxvdCBvZiB0aGVtIGFuZCBk
-aWQgbm90IGV4cGVjdCB0aGF0DQo+IHRvIGhhcHBlbi4NCg0KTm8sIGZvciBBUk0gc3ViLWFyY2hp
-dGVjdHVyZXMuDQpCdXQsIHllcyBmb3IgdGhlIEFSTSBjb3JlIHBhcnQuDQoNCg0KRm9yIGV4YW1w
-bGUsIHRoZSBmb2xsb3dpbmcgZW50cnkgaW4gYXJjaC9hcm0vS2NvbmZpZyBpcyBzdXNwaWNvdXMu
-DQoNCmNvbmZpZyBQQ0kNCiAgICAgICAgYm9vbCAiUENJIHN1cHBvcnQiIGlmIE1JR0hUX0hBVkVf
-UENJDQogICAgICAgIGhlbHANCiAgICAgICAgICBGaW5kIG91dCB3aGV0aGVyIHlvdSBoYXZlIGEg
-UENJIG1vdGhlcmJvYXJkLiBQQ0kgaXMgdGhlIG5hbWUgb2YgYQ0KICAgICAgICAgIGJ1cyBzeXN0
-ZW0sIGkuZS4gdGhlIHdheSB0aGUgQ1BVIHRhbGtzIHRvIHRoZSBvdGhlciBzdHVmZiBpbnNpZGUN
-CiAgICAgICAgICB5b3VyIGJveC4gT3RoZXIgYnVzIHN5c3RlbXMgYXJlIElTQSwgRUlTQSwgTWlj
-cm9DaGFubmVsIChNQ0EpIG9yDQogICAgICAgICAgVkVTQS4gSWYgeW91IGhhdmUgUENJLCBzYXkg
-WSwgb3RoZXJ3aXNlIE4uDQoNCg0KDQoNClRyeSAibWFrZSBBUkNIPWFybSBmb290YnJpZGdlX2Rl
-ZmNvbmZpZyIgYW5kIGNoZWNrIHRoZSAuY29uZmlnIGZpbGUuDQoNCkl0IGRlZmluZXMgQ09ORklH
-X1BDST15LCBidXQgbm90IENPTkZJR19NSUdIVF9IQVZFX1BDSS4NCkkgYW0gbm90IHN1cmUgdGhp
-cyBpcyBhIHNhbmUgLmNvbmZpZyBvciBub3QuDQoNCkJ1dCwgYW55d2F5LCBLY29uZmlnIGRvZXMg
-bm90IGNvbXBsYWluIGFib3V0IGl0Lg0KDQoNCldlIGhhdmUgc2ltaWxhciBpc3N1ZXMgZm9yIENQ
-VV9WNiwgQ1BVX1Y2SywgQ1BVX1Y3LCBldGMuDQpUaGUgY29uZmlnIGlzIHNlbGVjdGVkLCBidXQg
-dGhlICJpZiIgY29uZGl0aW9uYWwgaXMgdW5tZXQuDQooSSBkZWNpZGVkIHRvIHBvc3Rwb25lIHRo
-aXMgcHJvYmxlbSBiZWNhdXNlIGl0IHdvdWxkIHRha2Ugc29tZSB0aW1lIHRvIHVuZGVyc3RhbmQN
-CmNvbXBsaWNhdGVkIGRlcGVuZGVuY3kuKQ0KDQpUaGUgdXNlIG9mIGEgcHJvbXB0IGZvbGxvd2Vk
-IGJ5ICJpZiIgd2l0aG91dCBjb3JyZWN0IHVuZGVyc3RhbmRpbmcgaXMgZGFuZ2Vyb3VzDQpiZWNh
-dXNlIGl0IGNvdWxkIGhpZGUgdGhlIHVubWV0IGRlcGVuZGVuY3kgcHJvYmxlbS4NCg0KSSB3YW50
-IHRvIGVsaW1pbmF0ZSB0aGUgcG90ZW50aWFsIHByb2JsZW0gYnkgdGhpcyBwYXRjaA0KYmVmb3Jl
-IHNvbWVib2R5IGludHJvZHVjZSBpbnNhbmUgZGVwZW5kZW5jeS4NCg0KDQo+IA0KPiA+IGRpZmYg
-LS1naXQgYS9hcmNoL2FybS9tYWNoLWludGVncmF0b3IvS2NvbmZpZw0KPiA+IGIvYXJjaC9hcm0v
-bWFjaC1pbnRlZ3JhdG9yL0tjb25maWcNCj4gPiBpbmRleCAwMmQwODM0Li4yZmE5ZDExIDEwMDY0
-NA0KPiA+IC0tLSBhL2FyY2gvYXJtL21hY2gtaW50ZWdyYXRvci9LY29uZmlnDQo+ID4gKysrIGIv
-YXJjaC9hcm0vbWFjaC1pbnRlZ3JhdG9yL0tjb25maWcNCj4gPiBAQCAtMSw1ICsxLDYgQEANCj4g
-PiAgY29uZmlnIEFSQ0hfSU5URUdSQVRPUg0KPiA+IC0JYm9vbCAiQVJNIEx0ZC4gSW50ZWdyYXRv
-ciBmYW1pbHkiIGlmIChBUkNIX01VTFRJX1Y0VCB8fA0KPiBBUkNIX01VTFRJX1Y1IHx8IEFSQ0hf
-TVVMVElfVjYpDQo+ID4gKwlib29sICJBUk0gTHRkLiBJbnRlZ3JhdG9yIGZhbWlseSINCj4gPiAr
-CWRlcGVuZHMgb24gQVJDSF9NVUxUSV9WNFQgfHwgQVJDSF9NVUxUSV9WNSB8fCBBUkNIX01VTFRJ
-X1Y2DQo+ID4gIAlzZWxlY3QgQVJNX0FNQkENCj4gPiAgCXNlbGVjdCBBUk1fUEFUQ0hfUEhZU19W
-SVJUIGlmIE1NVQ0KPiA+ICAJc2VsZWN0IEFVVE9fWlJFTEFERFINCj4gDQo+IFRoZXJlIGlzIG9u
-ZSByZWxhdGVkIGNoYW5nZSB0aGF0IEkgd291bGQgbGlrZSB0byBzZWUsIGFuZCB0aGF0IGlzIHRv
-IGNvbnZlcnQNCj4gYWxsIHRvcC1sZXZlbCAnY29uZmlnJyBzdGF0ZW1lbnRzIHRoYXQgaGF2ZSBz
-dWItb3B0aW9ucyBpbnRvICdtZW51Y29uZmlnJw0KPiBzdGF0ZW1lbnRzIGZvciBjb25zaXN0ZW5j
-eS4gQXQgdGhlIG1vbWVudCwgdGhlIHBsYXRmb3JtIG1lbnUgaGFzIGEgbWl4IG9mDQo+IHBsYXRm
-b3JtLXNlbGVjdGlvbiBhbmQgcGxhdGZvcm0tc3BlY2lmaWMgb3B0aW9ucywgYW5kIEknZCBsaWtl
-IHRvIG1ha2UgdGhhdA0KPiBtb3JlIGNvbnNpc3RlbnQuDQoNCkkgYWdyZWUsIGJ1dCBpbiBhbm90
-aGVyIHBhdGNoIChvciBzZXJpZXMpPw0KDQoNCg0KQmVzdCBSZWdhcmRzDQpNYXNoYWlybyBZYW1h
-ZGENCg0K
+Hi Jon,
+
+On Mon, Nov 16, 2015 at 11:34 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> On 16/11/15 09:49, Geert Uytterhoeven wrote:
+>> On Mon, Nov 16, 2015 at 10:46 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>> On 13/11/15 20:01, Thomas Gleixner wrote:
+>>>> On Fri, 13 Nov 2015, Jon Hunter wrote:
+>>>>> On 12/11/15 23:20, Kevin Hilman wrote:
+>>>>>> If all the RPM devices in the domain go idle, it will be powered off
+>>>>>> independently of the status of the irqchip because the irqchip isn't
+>>>>>> using RPM.
+>>>>>
+>>>>> That's dependent on how the irqchip uses these helpers. If these helpers
+>>>>> invoke RPM then that will not be the case.
+>>>>
+>>>> You need a very proper description of how that domain is working. If
+>>>> all devices are idle, it's not necessary correct to power down the
+>>>> irqchip as is might serve other devices as well.
+>>>
+>>> Agreed. The irqchip should only be powered down if there are no
+>>> interrupts in-use/requested. Runtime-pm will keep a reference count for
+>>> all requested IRQs.
+>>
+>> That means the irqchip won't be powered down automatically when the
+>> last user is powered down, unless all users release their irqs during
+>> suspend.
+>
+> Right.
+>
+>> Handling it automatically needs more bookkeeping than a simple reference
+>> count.
+>
+> So what would you suggest? Adding a pm_runtime_register_irq() API that
+> would register an IRQ with the device that you want RPM to handle? Not
+> sure if there is a better/easier way to handle this.
+
+The irqchip needs to keep track how many times request_irq() has been
+called, cfr. your suggestion above.
+
+On the other side, the system needs to keep track how many times request_irq()
+has been called for each irqchip, so it can subtract those numbers from the
+irqchip's counters during suspend of the device, and re-add them during resume.
+So we need at least a "struct device *" parameter for request_irq().
+devm_request_irq() already has that, but not all drivers use that.
+
+However, I think this should be looked at into the context of "[RFD]
+Functional dependencies between devices".
+https://lwn.net/Articles/662205/
+https://lkml.org/lkml/2015/10/27/388
+
+There can be other dependencies than interrupts between devices.
+All functions using dependencies need a "struct device *" parameter to
+record information.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
