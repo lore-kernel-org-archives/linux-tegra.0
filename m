@@ -1,42 +1,65 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH v2] drm/tegra: fix locking of SET_TILING ioctl
-Date: Thu, 19 Nov 2015 13:51:38 +0900
-Message-ID: <1447908698-25075-1-git-send-email-acourbot@nvidia.com>
+From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/2] mmc: tegra: Constify SoC data
+Date: Thu, 19 Nov 2015 12:51:36 +0100
+Message-ID: <CAPDyKFrk76fvf17i2V47tRJiFoT-ADgyU_9D+X=XNUrztcudeg@mail.gmail.com>
+References: <1447666035-10044-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>, Terje Bergstrom <tbergstrom@nvidia.com>
-Cc: gnurou@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1447666035-10044-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Q29tbWl0IGVmNGM2MjcwYmYyOCBtYWRlIHRoZSBjaGVjayBvZiB3aGV0aGVyIHN0cnVjdF9tdXRl
-eCBpcyBoZWxkIG1vcmUKdmVyYm9zZSwgYW5kIHRoaXMgdHJpZ2dlcnMgYSB3YXJuaW5nIHdoZW4g
-Y2FsbGluZwpkcm1fZ2VtX29iamVjdF91bnJlZmVyZW5jZSgpIGZyb20gdGVncmFfZ2VtX3NldF90
-aWxpbmcoKSB3aGljaCBkb2VzIG5vdAphY3F1aXJlIHRoYXQgbG9jay4KClVzZSBkcm1fZ2VtX29i
-amVjdF91bnJlZmVyZW5jZV91bmxvY2tlZCgpIGluc3RlYWQgdG8gZW5zdXJlIGxvY2tpbmcgaXMK
-aGFuZGxlZCBjb3JyZWN0bHkuCgpTaWduZWQtb2ZmLWJ5OiBBbGV4YW5kcmUgQ291cmJvdCA8YWNv
-dXJib3RAbnZpZGlhLmNvbT4KUmV2aWV3ZWQtYnk6IERhbmllbCBWZXR0ZXIgPGRhbmllbC52ZXR0
-ZXJAZmZ3bGwuY2g+Ci0tLQp2MjogZml4IGNvbW1pdCBsb2cgYWNjb3JkaW5nIHRvIERhbmllbCdz
-IGNvbW1lbnRzLCBhZGQgcmV2aWV3IHRhZy4KCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMg
-fCAyICstCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkKCmRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgYi9kcml2ZXJzL2dwdS9kcm0v
-dGVncmEvZHJtLmMKaW5kZXggY2M0ODMzNGVmMTY0Li5jMGFlODk4NjU5NTggMTAwNjQ0Ci0tLSBh
-L2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYworKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEv
-ZHJtLmMKQEAgLTY4Myw3ICs2ODMsNyBAQCBzdGF0aWMgaW50IHRlZ3JhX2dlbV9zZXRfdGlsaW5n
-KHN0cnVjdCBkcm1fZGV2aWNlICpkcm0sIHZvaWQgKmRhdGEsCiAJYm8tPnRpbGluZy5tb2RlID0g
-bW9kZTsKIAliby0+dGlsaW5nLnZhbHVlID0gdmFsdWU7CiAKLQlkcm1fZ2VtX29iamVjdF91bnJl
-ZmVyZW5jZShnZW0pOworCWRybV9nZW1fb2JqZWN0X3VucmVmZXJlbmNlX3VubG9ja2VkKGdlbSk7
-CiAKIAlyZXR1cm4gMDsKIH0KLS0gCjIuNi4yCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0
-cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
-c3RpbmZvL2RyaS1kZXZlbAo=
+On 16 November 2015 at 10:27, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> The data in the SoC description structures is static and can therefore
+> reside in read-only memory.
+>
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Thanks, applied for next!
+
+Kind regards
+Uffe
+
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index ad28b49f0203..8d49d9af6f54 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -184,7 +184,7 @@ static const struct sdhci_pltfm_data sdhci_tegra20_pdata = {
+>         .ops  = &tegra_sdhci_ops,
+>  };
+>
+> -static struct sdhci_tegra_soc_data soc_data_tegra20 = {
+> +static const struct sdhci_tegra_soc_data soc_data_tegra20 = {
+>         .pdata = &sdhci_tegra20_pdata,
+>         .nvquirks = NVQUIRK_FORCE_SDHCI_SPEC_200 |
+>                     NVQUIRK_ENABLE_BLOCK_GAP_DET,
+> @@ -200,7 +200,7 @@ static const struct sdhci_pltfm_data sdhci_tegra30_pdata = {
+>         .ops  = &tegra_sdhci_ops,
+>  };
+>
+> -static struct sdhci_tegra_soc_data soc_data_tegra30 = {
+> +static const struct sdhci_tegra_soc_data soc_data_tegra30 = {
+>         .pdata = &sdhci_tegra30_pdata,
+>         .nvquirks = NVQUIRK_ENABLE_SDHCI_SPEC_300 |
+>                     NVQUIRK_DISABLE_SDR50 |
+> @@ -229,7 +229,7 @@ static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
+>         .ops  = &tegra114_sdhci_ops,
+>  };
+>
+> -static struct sdhci_tegra_soc_data soc_data_tegra114 = {
+> +static const struct sdhci_tegra_soc_data soc_data_tegra114 = {
+>         .pdata = &sdhci_tegra114_pdata,
+>         .nvquirks = NVQUIRK_DISABLE_SDR50 |
+>                     NVQUIRK_DISABLE_DDR50 |
+> --
+> 2.5.0
+>
