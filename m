@@ -1,32 +1,42 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] drm/tegra: fix locking of SET_TILING ioctl
-Date: Thu, 19 Nov 2015 13:52:02 +0900
-Message-ID: <CAAVeFu+xTzYnbXN-xYviOA01HYVm9dfoP3kh-JX8EHYaZG_V_A@mail.gmail.com>
-References: <1447312196-11470-1-git-send-email-acourbot@nvidia.com> <20151117100241.GN16848@phenom.ffwll.local>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH v2] drm/tegra: fix locking of SET_TILING ioctl
+Date: Thu, 19 Nov 2015 13:51:38 +0900
+Message-ID: <1447908698-25075-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20151117100241.GN16848@phenom.ffwll.local>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Terje Bergstrom <tbergstrom@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>, Terje Bergstrom <tbergstrom@nvidia.com>
+Cc: gnurou@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Nov 17, 2015 at 7:02 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
-> On Thu, Nov 12, 2015 at 04:09:56PM +0900, Alexandre Courbot wrote:
->> drm_gem_object_unreference() now expects obj->dev->struct_mutex to be
->> held. Use the newly-introduced drm_gem_object_unreference_unlocked()
->> which handles locking for us.
->
-> This rule has been really old, I simply made the checking more anal in
->
-> commit ef4c6270bf2867e2f8032e9614d1a8cfc6c71663
-> Author: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Date:   Thu Oct 15 09:36:25 2015 +0200
->
->     drm/gem: Check locking in drm_gem_object_unreference
->
-> With the above added this is:
->
-> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch
-
-Thanks! Sending an updated version.
+Q29tbWl0IGVmNGM2MjcwYmYyOCBtYWRlIHRoZSBjaGVjayBvZiB3aGV0aGVyIHN0cnVjdF9tdXRl
+eCBpcyBoZWxkIG1vcmUKdmVyYm9zZSwgYW5kIHRoaXMgdHJpZ2dlcnMgYSB3YXJuaW5nIHdoZW4g
+Y2FsbGluZwpkcm1fZ2VtX29iamVjdF91bnJlZmVyZW5jZSgpIGZyb20gdGVncmFfZ2VtX3NldF90
+aWxpbmcoKSB3aGljaCBkb2VzIG5vdAphY3F1aXJlIHRoYXQgbG9jay4KClVzZSBkcm1fZ2VtX29i
+amVjdF91bnJlZmVyZW5jZV91bmxvY2tlZCgpIGluc3RlYWQgdG8gZW5zdXJlIGxvY2tpbmcgaXMK
+aGFuZGxlZCBjb3JyZWN0bHkuCgpTaWduZWQtb2ZmLWJ5OiBBbGV4YW5kcmUgQ291cmJvdCA8YWNv
+dXJib3RAbnZpZGlhLmNvbT4KUmV2aWV3ZWQtYnk6IERhbmllbCBWZXR0ZXIgPGRhbmllbC52ZXR0
+ZXJAZmZ3bGwuY2g+Ci0tLQp2MjogZml4IGNvbW1pdCBsb2cgYWNjb3JkaW5nIHRvIERhbmllbCdz
+IGNvbW1lbnRzLCBhZGQgcmV2aWV3IHRhZy4KCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMg
+fCAyICstCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKyksIDEgZGVsZXRpb24oLSkKCmRp
+ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgYi9kcml2ZXJzL2dwdS9kcm0v
+dGVncmEvZHJtLmMKaW5kZXggY2M0ODMzNGVmMTY0Li5jMGFlODk4NjU5NTggMTAwNjQ0Ci0tLSBh
+L2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYworKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEv
+ZHJtLmMKQEAgLTY4Myw3ICs2ODMsNyBAQCBzdGF0aWMgaW50IHRlZ3JhX2dlbV9zZXRfdGlsaW5n
+KHN0cnVjdCBkcm1fZGV2aWNlICpkcm0sIHZvaWQgKmRhdGEsCiAJYm8tPnRpbGluZy5tb2RlID0g
+bW9kZTsKIAliby0+dGlsaW5nLnZhbHVlID0gdmFsdWU7CiAKLQlkcm1fZ2VtX29iamVjdF91bnJl
+ZmVyZW5jZShnZW0pOworCWRybV9nZW1fb2JqZWN0X3VucmVmZXJlbmNlX3VubG9ja2VkKGdlbSk7
+CiAKIAlyZXR1cm4gMDsKIH0KLS0gCjIuNi4yCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0
+cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
+c3RpbmZvL2RyaS1kZXZlbAo=
