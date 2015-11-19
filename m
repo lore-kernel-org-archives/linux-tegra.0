@@ -1,93 +1,32 @@
-From: Nicolas Iooss <nicolas.iooss_linux-oWGTIYur0i8@public.gmane.org>
-Subject: [PATCH] drm: do not use device name as a format string
-Date: Wed, 18 Nov 2015 18:58:18 +0100
-Message-ID: <1447869498-13277-1-git-send-email-nicolas.iooss_linux@m4x.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Jianwei Wang <jianwei.wang.chn-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alison Wang <alison.wang-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Nicolas Iooss <nicolas.iooss_linux-oWGTIYur0i8@public.gmane.org>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] drm/tegra: fix locking of SET_TILING ioctl
+Date: Thu, 19 Nov 2015 13:52:02 +0900
+Message-ID: <CAAVeFu+xTzYnbXN-xYviOA01HYVm9dfoP3kh-JX8EHYaZG_V_A@mail.gmail.com>
+References: <1447312196-11470-1-git-send-email-acourbot@nvidia.com> <20151117100241.GN16848@phenom.ffwll.local>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20151117100241.GN16848@phenom.ffwll.local>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Courbot <acourbot@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Terje Bergstrom <tbergstrom@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
 List-Id: linux-tegra@vger.kernel.org
 
-drm_dev_set_unique() formats its parameter using kvasprintf() but many
-of its callers directly pass dev_name(dev) as printf format string,
-without any format parameter.  This can cause some issues when the
-device name contains '%' characters.
+On Tue, Nov 17, 2015 at 7:02 PM, Daniel Vetter <daniel@ffwll.ch> wrote:
+> On Thu, Nov 12, 2015 at 04:09:56PM +0900, Alexandre Courbot wrote:
+>> drm_gem_object_unreference() now expects obj->dev->struct_mutex to be
+>> held. Use the newly-introduced drm_gem_object_unreference_unlocked()
+>> which handles locking for us.
+>
+> This rule has been really old, I simply made the checking more anal in
+>
+> commit ef4c6270bf2867e2f8032e9614d1a8cfc6c71663
+> Author: Daniel Vetter <daniel.vetter@ffwll.ch>
+> Date:   Thu Oct 15 09:36:25 2015 +0200
+>
+>     drm/gem: Check locking in drm_gem_object_unreference
+>
+> With the above added this is:
+>
+> Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch
 
-To avoid any potential issue, always use "%s" when using
-drm_dev_set_unique() with dev_name().
-
-Signed-off-by: Nicolas Iooss <nicolas.iooss_linux-oWGTIYur0i8@public.gmane.org>
----
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c | 2 +-
- drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c    | 2 +-
- drivers/gpu/drm/tegra/drm.c                  | 2 +-
- drivers/gpu/drm/vc4/vc4_drv.c                | 2 +-
- include/drm/drmP.h                           | 1 +
- 5 files changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-index 244df0a440b7..0d720d3a7ee0 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-@@ -733,7 +733,7 @@ static int atmel_hlcdc_dc_drm_probe(struct platform_device *pdev)
- 	if (!ddev)
- 		return -ENOMEM;
- 
--	ret = drm_dev_set_unique(ddev, dev_name(ddev->dev));
-+	ret = drm_dev_set_unique(ddev, "%s", dev_name(ddev->dev));
- 	if (ret)
- 		goto err_unref;
- 
-diff --git a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
-index 1930234ba5f1..947d75f59881 100644
---- a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
-+++ b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
-@@ -363,7 +363,7 @@ static int fsl_dcu_drm_probe(struct platform_device *pdev)
- 	fsl_dev->np = dev->of_node;
- 	drm->dev_private = fsl_dev;
- 	dev_set_drvdata(dev, fsl_dev);
--	drm_dev_set_unique(drm, dev_name(dev));
-+	drm_dev_set_unique(drm, "%s", dev_name(dev));
- 
- 	ret = drm_dev_register(drm, 0);
- 	if (ret < 0)
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index 159ef515cab1..b278f60f4376 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -991,7 +991,7 @@ static int host1x_drm_probe(struct host1x_device *dev)
- 	if (!drm)
- 		return -ENOMEM;
- 
--	drm_dev_set_unique(drm, dev_name(&dev->dev));
-+	drm_dev_set_unique(drm, "%s", dev_name(&dev->dev));
- 	dev_set_drvdata(&dev->dev, drm);
- 
- 	err = drm_dev_register(drm, 0);
-diff --git a/drivers/gpu/drm/vc4/vc4_drv.c b/drivers/gpu/drm/vc4/vc4_drv.c
-index 6e730605edcc..c90a451aaa79 100644
---- a/drivers/gpu/drm/vc4/vc4_drv.c
-+++ b/drivers/gpu/drm/vc4/vc4_drv.c
-@@ -168,7 +168,7 @@ static int vc4_drm_bind(struct device *dev)
- 	vc4->dev = drm;
- 	drm->dev_private = vc4;
- 
--	drm_dev_set_unique(drm, dev_name(dev));
-+	drm_dev_set_unique(drm, "%s", dev_name(dev));
- 
- 	drm_mode_config_init(drm);
- 	if (ret)
-diff --git a/include/drm/drmP.h b/include/drm/drmP.h
-index 0b921ae06cd8..995fb96cb740 100644
---- a/include/drm/drmP.h
-+++ b/include/drm/drmP.h
-@@ -1049,6 +1049,7 @@ void drm_dev_ref(struct drm_device *dev);
- void drm_dev_unref(struct drm_device *dev);
- int drm_dev_register(struct drm_device *dev, unsigned long flags);
- void drm_dev_unregister(struct drm_device *dev);
-+__printf(2, 3)
- int drm_dev_set_unique(struct drm_device *dev, const char *fmt, ...);
- 
- struct drm_minor *drm_minor_acquire(unsigned int minor_id);
--- 
-2.6.2
+Thanks! Sending an updated version.
