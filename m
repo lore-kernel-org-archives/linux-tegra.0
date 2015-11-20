@@ -1,125 +1,70 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2] mfd: as3722: Handle interrupts on suspend
-Date: Fri, 20 Nov 2015 10:51:00 +0000
-Message-ID: <1448016660-18819-1-git-send-email-jonathanh@nvidia.com>
+From: Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: move _calc_dynamic_ram_rate out of #ifdef
+Date: Fri, 20 Nov 2015 16:10:32 +0100
+Message-ID: <20151120151031.GD3300@ulmo.nvidia.com>
+References: <4290741.p1jMzEOUEU@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="xXmbgvnjoT4axfJE"
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <4290741.p1jMzEOUEU@wuerfel>
+Content-Disposition: inline
+Sender: linux-clk-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Rhyland Klein <rklein@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-The as3722 device is registered as an irqchip and the as3722-rtc interrupt
-is one of it's interrupt sources. When using the as3722-rtc as a wake-up
-device from suspend, the following is seen:
+--xXmbgvnjoT4axfJE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  PM: Syncing filesystems ... done.
-  Freezing user space processes ... (elapsed 0.001 seconds) done.
-  Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
-  Suspending console(s) (use no_console_suspend to debug)
-  PM: suspend of devices complete after 161.119 msecs
-  PM: late suspend of devices complete after 1.048 msecs
-  PM: noirq suspend of devices complete after 0.756 msecs
-  Disabling non-boot CPUs ...
-  CPU1: shutdown
-  CPU2: shutdown
-  CPU3: shutdown
-  Entering suspend state LP1
-  Enabling non-boot CPUs ...
-  CPU1 is up
-  CPU2 is up
-  CPU3 is up
-  PM: noirq resume of devices complete after 0.487 msecs
-  as3722 4-0040: Failed to read IRQ status: -16
-  as3722 4-0040: Failed to read IRQ status: -16
-  as3722 4-0040: Failed to read IRQ status: -16
-  as3722 4-0040: Failed to read IRQ status: -16
-  ...
+On Thu, Nov 19, 2015 at 11:32:33PM +0100, Arnd Bergmann wrote:
+> _calc_dynamic_ram_rate is defined inside an #ifdef but called
+> later in the same file outside of that #ifdef, which can cause a
+> build error:
+>=20
+> drivers/clk/tegra/clk-pll.c: In function '_tegra_clk_register_pll':
+> drivers/clk/tegra/clk-pll.c:1541:29: error: '_calc_dynamic_ramp_rate' und=
+eclared (first use in this function)
+>=20
+> This moves both _calc_dynamic_ram_rate and _pll_fixed_mdiv in
+> front of the #ifdef to make all configurations compile again.
+>=20
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fixes: 44c8b9fa432c ("clk: tegra: pll: Fix _pll_ramp_calc_pll logic and _=
+calc_dynamic_ramp_rate")
+> ----
+> The patch that caused it appears to be older, but I only ran into
+> the randconfig bug today for the first time. Apparently the commit
+> is only in linux-next at the moment, not in 4.4-rc1
 
-The reason why the as3722 interrupt status cannot be read is because the
-as3722 interrupt is not masked during suspend and when the as3722-rtc
-interrupt occurs, to wake-up the device, the interrupt is seen before the
-i2c controller has been resumed in order to read the as3722 interrupt
-status.
+Hmm... this looks familiar, I thought I had included an equivalent patch
+in the clock tree. I'll go do some digging, but this looks exactly like
+what I had done at the time.
 
-The as3722-rtc driver sets it's interrupt as a wake-up source during
-suspend, which gets propagated to the parent as3722 interrupt. However,
-the as3722-rtc driver cannot disable it's interrupt during suspend
-otherwise we would never be woken up and so the as3722 must disable it's
-interrupt instead.
+Thanks,
+Thierry
 
-Fix this by disabling the as3722 interrupt during suspend. To ensure that
-a wake-up event from the as3722 is not missing, enable the as3722 interrupt
-as a wake-up source before disabling the interrupt on entering suspend.
+--xXmbgvnjoT4axfJE
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-v2 changes:
-- Re-enabled the interrupt in resume before disabling the wake-up.
+iQIcBAABCAAGBQJWTzfmAAoJEN0jrNd/PrOhxC0QAL0mKUm99890XJQWumHt3akC
+e7nPpyPLhi9s89HzoPd1y1BwI9lT2mY/09OAxeAsgM//7blAucf+9+HSLmPe7JJc
+puLZYDXy6QAgmqqPODFahJcemU6PfRcU+JDM5+73Ym6lc71v3KEsFKtqWhy+FT+a
+XO02Vw9IL8w5pN1QtZ2jG0l4T8Rj2V66WreGl4+4/of6F/IL+p/MrIV7tNdaFDdi
+brWKGLBh21ihHjmhd/5W2UkpSlg+lbl5O7JJlCeneHfSVHXhYXvXiK1zziUeMSo+
+P6BASGqY+K88s0i+dQt+VOUpgUJP+swFY60eH3ynjc69/+QMRdafyKUsRtIDvryY
+Smr8YRXGypmHfyDPdZJEgnineGscfy2Yxl/AHub5/QNaa7OJE/Rj2vTBq+e+j7SP
+RAO/UAcNDQ1R7k3jb1/lz62s7GBAmt5MJJ+Q9WXWgxF8wxHOayD7D7dlMquWvCzP
+YOsVwymMb5CRcs2DxuSsFVPojtc4bVYiXopMg1DfL+uCKFx+qEM7EeyoIDKHfKvd
+l1SQ+5T4EOKx5NnmmEN9aXXBIJS9taep2Yyr2AUv/yerSgAByOplwki0JiKzpRky
+GGhL6wmkzSpmxgwmQYxFn9nKYgd8DuciJOh47qpQ8w6tFL/Ub08kFemow2dnF93B
+8O1rQ4OGzgFRf48nDnDx
+=K6N1
+-----END PGP SIGNATURE-----
 
- drivers/mfd/as3722.c | 30 ++++++++++++++++++++++++++++++
- 1 file changed, 30 insertions(+)
-
-diff --git a/drivers/mfd/as3722.c b/drivers/mfd/as3722.c
-index 924ea90494ae..3b21eb4bc480 100644
---- a/drivers/mfd/as3722.c
-+++ b/drivers/mfd/as3722.c
-@@ -405,6 +405,8 @@ static int as3722_i2c_probe(struct i2c_client *i2c,
- 		goto scrub;
- 	}
- 
-+	device_init_wakeup(as3722->dev, true);
-+
- 	dev_dbg(as3722->dev, "AS3722 core driver initialized successfully\n");
- 	return 0;
- 
-@@ -422,6 +424,29 @@ static int as3722_i2c_remove(struct i2c_client *i2c)
- 	return 0;
- }
- 
-+static int as3722_i2c_suspend(struct device *dev)
-+{
-+	struct as3722 *as3722 = dev_get_drvdata(dev);
-+
-+	if (device_may_wakeup(dev))
-+		enable_irq_wake(as3722->chip_irq);
-+	disable_irq(as3722->chip_irq);
-+
-+	return 0;
-+}
-+
-+static int as3722_i2c_resume(struct device *dev)
-+{
-+	struct as3722 *as3722 = dev_get_drvdata(dev);
-+
-+	enable_irq(as3722->chip_irq);
-+
-+	if (device_may_wakeup(dev))
-+		disable_irq_wake(as3722->chip_irq);
-+
-+	return 0;
-+}
-+
- static const struct of_device_id as3722_of_match[] = {
- 	{ .compatible = "ams,as3722", },
- 	{},
-@@ -434,10 +459,15 @@ static const struct i2c_device_id as3722_i2c_id[] = {
- };
- MODULE_DEVICE_TABLE(i2c, as3722_i2c_id);
- 
-+static const struct dev_pm_ops as3722_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(as3722_i2c_suspend, as3722_i2c_resume)
-+};
-+
- static struct i2c_driver as3722_i2c_driver = {
- 	.driver = {
- 		.name = "as3722",
- 		.of_match_table = as3722_of_match,
-+		.pm = &as3722_pm_ops,
- 	},
- 	.probe = as3722_i2c_probe,
- 	.remove = as3722_i2c_remove,
--- 
-2.1.4
+--xXmbgvnjoT4axfJE--
