@@ -1,50 +1,31 @@
-From: Rhyland Klein <rklein@nvidia.com>
+From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 Subject: Re: [PATCH] clk: tegra: Fix bypassing of PLLs
-Date: Fri, 20 Nov 2015 11:43:45 -0500
-Message-ID: <564F4DC1.4090604@nvidia.com>
+Date: Fri, 20 Nov 2015 09:15:27 -0800
+Message-ID: <20151120171527.GL32672@codeaurora.org>
 References: <1448032264-29622-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <1448032264-29622-1-git-send-email-jonathanh@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1448032264-29622-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/20/2015 10:11 AM, Jon Hunter wrote:
+On 11/20, Jon Hunter wrote:
 > The _clk_disable_pll() function will attempt to place a PLL into bypass
 > if the TEGRA_PLL_BYPASS is specified for the PLL and then disable the PLL
 > by clearing the enable bit. To place the PLL into bypass, the bypass bit
 > needs to be set and not cleared. Fix this by setting the bypass bit and
 > not clearing it.
 > 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  drivers/clk/tegra/clk-pll.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-> index d6d4ecb88e94..e5aa9c87df4c 100644
-> --- a/drivers/clk/tegra/clk-pll.c
-> +++ b/drivers/clk/tegra/clk-pll.c
-> @@ -312,7 +312,7 @@ static void _clk_pll_disable(struct clk_hw *hw)
->  
->  	val = pll_readl_base(pll);
->  	if (pll->params->flags & TEGRA_PLL_BYPASS)
-> -		val &= ~PLL_BASE_BYPASS;
-> +		val |= PLL_BASE_BYPASS;
->  	val &= ~PLL_BASE_ENABLE;
->  	pll_writel_base(val, pll);
->  
-> 
 
-
-Good catch.
-
-Acked-by: Rhyland Klein <rklein@nvidia.com>
-
+Fixes tag? It looks like this has been wrong from the beginning
+of time.
 
 -- 
-nvpublic
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
