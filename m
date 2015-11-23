@@ -1,105 +1,73 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH 2/2] PCI: tegra: Implement ->add_bus() callback
-Date: Mon, 23 Nov 2015 13:40:26 +0100
-Message-ID: <1448282426-2642-2-git-send-email-thierry.reding@gmail.com>
-References: <1448282426-2642-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <1448282426-2642-1-git-send-email-thierry.reding@gmail.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] ARM: tegra: select USB_ULPI from EHCI rather than platform
+Date: Mon, 23 Nov 2015 14:51:29 +0100
+Message-ID: <8693901.Fc4bDK8zzK@wuerfel>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+For historic reasons, the tegra platform selects USB_ULPI from architecture
+code, but that hasn't really made sense for a long time, as the only
+user of that code is the Tegra EHCI driver that has its own Kconfig
+symbol.
 
-The configuration space mapping on Tegra is somewhat special, and in
-order to avoid wasting virtual address space the configuration space
-for each bus needs to be stitched together from several blocks which
-form a single continuous virtual address range for accessors.
+This removes the 'select' statements from mach-tegra and drivers/soc/tegra
+and adds them with the device driver that actually needs them.
 
-Currently the configuration space is mapped upon the first access to
-one of its registers. However, the mapping operation may sleep under
-certain circumstances, so doing it from the configuration space
-accessors (they are protected by a spin lock) will trigger a warning.
-
-To avoid the warning, use the ->add_bus() callback to perform the
-mapping at enumeration time when the operation is allowed to sleep.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/pci/host/pci-tegra.c | 40 +++++++++++++++++++---------------------
- 1 file changed, 19 insertions(+), 21 deletions(-)
+Tegra maintainers, can you pick this up for 4.5? There is no real bug here,
+but I found this when looking at something else in drivers/usb/phy.
 
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 3018ae52e092..c3666f9d7ef1 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -426,31 +426,23 @@ free:
- 	return ERR_PTR(err);
- }
- 
--/*
-- * Look up a virtual address mapping for the specified bus number. If no such
-- * mapping exists, try to create one.
-- */
--static void __iomem *tegra_pcie_bus_map(struct tegra_pcie *pcie,
--					unsigned int busnr)
-+static int tegra_pcie_add_bus(struct pci_bus *bus)
- {
--	struct tegra_pcie_bus *bus;
-+	struct tegra_pcie *pcie = sys_to_pcie(bus->sysdata);
-+	struct tegra_pcie_bus *b;
- 
--	list_for_each_entry(bus, &pcie->buses, list)
--		if (bus->nr == busnr)
--			return (void __iomem *)bus->area->addr;
-+	b = tegra_pcie_bus_alloc(pcie, bus->number);
-+	if (IS_ERR(b))
-+		return PTR_ERR(b);
- 
--	bus = tegra_pcie_bus_alloc(pcie, busnr);
--	if (IS_ERR(bus))
--		return NULL;
-+	list_add_tail(&b->list, &pcie->buses);
- 
--	list_add_tail(&bus->list, &pcie->buses);
--
--	return (void __iomem *)bus->area->addr;
-+	return 0;
- }
- 
--static void __iomem *tegra_pcie_conf_address(struct pci_bus *bus,
--					     unsigned int devfn,
--					     int where)
-+static void __iomem *tegra_pcie_map_bus(struct pci_bus *bus,
-+					unsigned int devfn,
-+					int where)
- {
- 	struct tegra_pcie *pcie = sys_to_pcie(bus->sysdata);
- 	void __iomem *addr = NULL;
-@@ -466,7 +458,12 @@ static void __iomem *tegra_pcie_conf_address(struct pci_bus *bus,
- 			}
- 		}
- 	} else {
--		addr = tegra_pcie_bus_map(pcie, bus->number);
-+		struct tegra_pcie_bus *b;
-+
-+		list_for_each_entry(b, &pcie->buses, list)
-+			if (b->nr == bus->number)
-+				addr = (void __iomem *)b->area->addr;
-+
- 		if (!addr) {
- 			dev_err(pcie->dev,
- 				"failed to map cfg. space for bus %u\n",
-@@ -481,7 +478,8 @@ static void __iomem *tegra_pcie_conf_address(struct pci_bus *bus,
- }
- 
- static struct pci_ops tegra_pcie_ops = {
--	.map_bus = tegra_pcie_conf_address,
-+	.add_bus = tegra_pcie_add_bus,
-+	.map_bus = tegra_pcie_map_bus,
- 	.read = pci_generic_config_read32,
- 	.write = pci_generic_config_write32,
- };
--- 
-2.5.0
+diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
+index 11963667c6a9..32239aff1051 100644
+--- a/arch/arm/mach-tegra/Kconfig
++++ b/arch/arm/mach-tegra/Kconfig
+@@ -12,7 +12,5 @@ menuconfig ARCH_TEGRA
+ 	select ARCH_HAS_RESET_CONTROLLER
+ 	select RESET_CONTROLLER
+ 	select SOC_BUS
+-	select USB_ULPI if USB_PHY
+-	select USB_ULPI_VIEWPORT if USB_PHY
+ 	help
+ 	  This enables support for NVIDIA Tegra based systems.
+diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
+index 7e35dfe52af5..d0c3c3e085e3 100644
+--- a/drivers/soc/tegra/Kconfig
++++ b/drivers/soc/tegra/Kconfig
+@@ -57,8 +57,6 @@ if ARM64
+ config ARCH_TEGRA_132_SOC
+ 	bool "NVIDIA Tegra132 SoC"
+ 	select PINCTRL_TEGRA124
+-	select USB_ULPI if USB_PHY
+-	select USB_ULPI_VIEWPORT if USB_PHY
+ 	help
+ 	  Enable support for NVIDIA Tegra132 SoC, based on the Denver
+ 	  ARMv8 CPU.  The Tegra132 SoC is similar to the Tegra124 SoC,
+@@ -68,8 +66,6 @@ config ARCH_TEGRA_132_SOC
+ config ARCH_TEGRA_210_SOC
+ 	bool "NVIDIA Tegra210 SoC"
+ 	select PINCTRL_TEGRA210
+-	select USB_ULPI if USB_PHY
+-	select USB_ULPI_VIEWPORT if USB_PHY
+ 	help
+ 	  Enable support for the NVIDIA Tegra210 SoC. Also known as Tegra X1,
+ 	  the Tegra210 has four Cortex-A57 cores paired with four Cortex-A53
+diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
+index 3bb08870148f..95e72d75e0a0 100644
+--- a/drivers/usb/host/Kconfig
++++ b/drivers/usb/host/Kconfig
+@@ -220,6 +220,8 @@ config USB_EHCI_TEGRA
+        depends on ARCH_TEGRA
+        select USB_EHCI_ROOT_HUB_TT
+        select USB_PHY
++	select USB_ULPI
++	select USB_ULPI_VIEWPORT
+        help
+          This driver enables support for the internal USB Host Controllers
+          found in NVIDIA Tegra SoCs. The controllers are EHCI compliant.
