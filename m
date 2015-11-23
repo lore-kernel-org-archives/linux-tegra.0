@@ -1,39 +1,54 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: Fix bypassing of PLLs
-Date: Mon, 23 Nov 2015 12:36:33 +0000
-Message-ID: <56530851.8020206@nvidia.com>
-References: <1448032264-29622-1-git-send-email-jonathanh@nvidia.com>
- <20151120171527.GL32672@codeaurora.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 1/2] PCI: Add pci_ops.add_bus() callback
+Date: Mon, 23 Nov 2015 13:40:25 +0100
+Message-ID: <1448282426-2642-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20151120171527.GL32672-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-On 20/11/15 17:15, Stephen Boyd wrote:
-> On 11/20, Jon Hunter wrote:
->> The _clk_disable_pll() function will attempt to place a PLL into bypass
->> if the TEGRA_PLL_BYPASS is specified for the PLL and then disable the PLL
->> by clearing the enable bit. To place the PLL into bypass, the bypass bit
->> needs to be set and not cleared. Fix this by setting the bypass bit and
->> not clearing it.
->>
->> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
-> 
-> Fixes tag? It looks like this has been wrong from the beginning
-> of time.
+This callback will be called on every newly created bus. Drivers can
+implement it to perform driver-specific initialization of the bus.
 
-Yes good point.
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/pci/probe.c | 8 +++++++-
+ include/linux/pci.h | 1 +
+ 2 files changed, 8 insertions(+), 1 deletion(-)
 
-Thierry, I see you have put this in the -next branch for tegra. Do you
-want to add the following?
-
-Fixes: 8f8f484bf355 ("clk: tegra: add Tegra specific clocks")
-
-Jon
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index e735c728e3b3..fbed432f8915 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -754,7 +754,13 @@ add_dev:
+ 	ret = device_register(&child->dev);
+ 	WARN_ON(ret < 0);
+ 
+-	pcibios_add_bus(child);
++	if (child->ops->add_bus) {
++		ret = child->ops->add_bus(child);
++		if (ret < 0)
++			dev_err(&child->dev, "failed to add bus: %d\n", ret);
++	} else {
++		pcibios_add_bus(child);
++	}
+ 
+ 	/* Create legacy_io and legacy_mem files for this bus */
+ 	pci_create_legacy_files(child);
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index e828e7b4afec..70c1228d585f 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -569,6 +569,7 @@ static inline int pcibios_err_to_errno(int err)
+ /* Low-level architecture-dependent routines */
+ 
+ struct pci_ops {
++	int (*add_bus)(struct pci_bus *bus);
+ 	void __iomem *(*map_bus)(struct pci_bus *bus, unsigned int devfn, int where);
+ 	int (*read)(struct pci_bus *bus, unsigned int devfn, int where, int size, u32 *val);
+ 	int (*write)(struct pci_bus *bus, unsigned int devfn, int where, int size, u32 val);
+-- 
+2.5.0
