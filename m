@@ -1,73 +1,69 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] ARM: tegra: select USB_ULPI from EHCI rather than platform
-Date: Mon, 23 Nov 2015 14:51:29 +0100
-Message-ID: <8693901.Fc4bDK8zzK@wuerfel>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: select USB_ULPI from EHCI rather than
+ platform
+Date: Mon, 23 Nov 2015 15:37:33 +0100
+Message-ID: <20151123143733.GA2318@ulmo.nvidia.com>
+References: <8693901.Fc4bDK8zzK@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="azLHFNyN32YCQGCU"
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <8693901.Fc4bDK8zzK@wuerfel>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-For historic reasons, the tegra platform selects USB_ULPI from architecture
-code, but that hasn't really made sense for a long time, as the only
-user of that code is the Tegra EHCI driver that has its own Kconfig
-symbol.
 
-This removes the 'select' statements from mach-tegra and drivers/soc/tegra
-and adds them with the device driver that actually needs them.
+--azLHFNyN32YCQGCU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
-Tegra maintainers, can you pick this up for 4.5? There is no real bug here,
-but I found this when looking at something else in drivers/usb/phy.
+On Mon, Nov 23, 2015 at 02:51:29PM +0100, Arnd Bergmann wrote:
+> For historic reasons, the tegra platform selects USB_ULPI from architectu=
+re
+> code, but that hasn't really made sense for a long time, as the only
+> user of that code is the Tegra EHCI driver that has its own Kconfig
+> symbol.
+>=20
+> This removes the 'select' statements from mach-tegra and drivers/soc/tegra
+> and adds them with the device driver that actually needs them.
+>=20
+> Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+> ---
+> Tegra maintainers, can you pick this up for 4.5? There is no real bug her=
+e,
+> but I found this when looking at something else in drivers/usb/phy.
 
-diff --git a/arch/arm/mach-tegra/Kconfig b/arch/arm/mach-tegra/Kconfig
-index 11963667c6a9..32239aff1051 100644
---- a/arch/arm/mach-tegra/Kconfig
-+++ b/arch/arm/mach-tegra/Kconfig
-@@ -12,7 +12,5 @@ menuconfig ARCH_TEGRA
- 	select ARCH_HAS_RESET_CONTROLLER
- 	select RESET_CONTROLLER
- 	select SOC_BUS
--	select USB_ULPI if USB_PHY
--	select USB_ULPI_VIEWPORT if USB_PHY
- 	help
- 	  This enables support for NVIDIA Tegra based systems.
-diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
-index 7e35dfe52af5..d0c3c3e085e3 100644
---- a/drivers/soc/tegra/Kconfig
-+++ b/drivers/soc/tegra/Kconfig
-@@ -57,8 +57,6 @@ if ARM64
- config ARCH_TEGRA_132_SOC
- 	bool "NVIDIA Tegra132 SoC"
- 	select PINCTRL_TEGRA124
--	select USB_ULPI if USB_PHY
--	select USB_ULPI_VIEWPORT if USB_PHY
- 	help
- 	  Enable support for NVIDIA Tegra132 SoC, based on the Denver
- 	  ARMv8 CPU.  The Tegra132 SoC is similar to the Tegra124 SoC,
-@@ -68,8 +66,6 @@ config ARCH_TEGRA_132_SOC
- config ARCH_TEGRA_210_SOC
- 	bool "NVIDIA Tegra210 SoC"
- 	select PINCTRL_TEGRA210
--	select USB_ULPI if USB_PHY
--	select USB_ULPI_VIEWPORT if USB_PHY
- 	help
- 	  Enable support for the NVIDIA Tegra210 SoC. Also known as Tegra X1,
- 	  the Tegra210 has four Cortex-A57 cores paired with four Cortex-A53
-diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
-index 3bb08870148f..95e72d75e0a0 100644
---- a/drivers/usb/host/Kconfig
-+++ b/drivers/usb/host/Kconfig
-@@ -220,6 +220,8 @@ config USB_EHCI_TEGRA
-        depends on ARCH_TEGRA
-        select USB_EHCI_ROOT_HUB_TT
-        select USB_PHY
-+	select USB_ULPI
-+	select USB_ULPI_VIEWPORT
-        help
-          This driver enables support for the internal USB Host Controllers
-          found in NVIDIA Tegra SoCs. The controllers are EHCI compliant.
+Applied, thanks.
+
+Thierry
+
+--azLHFNyN32YCQGCU
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJWUySoAAoJEN0jrNd/PrOhVboQAIp9pOwSrpVoDpydru56ZFWw
+mqqtaDSu4YIZCV/U+9cM/KrVY/7ybgc+yacqdxENFVtAphrGVoLV/LpCYOcLlhln
+SdS1eUU2QK8WHr8Sk9otzqqBOJhX/ZDz5t67QiSrlvNe9FAGHqaX1p1KlAvFVnvz
+MeApx4NjNAw5RfoONVbEGO8HAgSu+NPG0PvnmZCrchWB273Ygj6uqIUn5abw/prJ
++jh8WO+ij3/xSGrId0JBjUAXTqAmXLANqGY1KGMnDnKWBNZ2NDeVzdwjZt00j7Sk
+5wUXCtWTm8+kTfzSL+Q+ZaKvLJgFqaRafTlZC7D8IvMfiQvbBGX5/rwYjENob6dH
+GGbcDlG8RBEvbk2tl/m8OS7sWcwGlJwASpr/asIMS5q4x/ri2EsNLotu1XsTQTQ9
++W7ptCVofuEcORI8Ouay1wXjEgSlPZ1K521gljcrlZHxk3QSaafLhjH90x+n9/fm
+Ps+cn8vtRwvPzfA2bGQkyy31w8sVeZRkiFdlTC/ynwIlyqklZZsgkXow6/VJ6vcX
+u8ZSmkM5Ga68rxsaDxV3SDwb8V/RoqK0Fjinqa/2niFGdRklWDEvvphrLRPqU4sZ
+TKesBYdgYzrq3S+p7jVRbcdM91KH3e2pLk+6IqDWSGfuQLwIGK3ez6SGdQUTefZk
+jbhW3Fq0wTc1KPqppxOT
+=6lk2
+-----END PGP SIGNATURE-----
+
+--azLHFNyN32YCQGCU--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
