@@ -1,79 +1,153 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM: use "depends on" for SoC configs instead of "if"
- after prompt
-Date: Tue, 24 Nov 2015 16:58:57 +0100
-Message-ID: <20151124155857.GB32623@ulmo.nvidia.com>
-References: <1447643170-23773-1-git-send-email-yamada.masahiro@socionext.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH V2] mfd: as3722: Handle interrupts on suspend
+Date: Tue, 24 Nov 2015 16:23:44 +0000
+Message-ID: <20151124162344.GG807@x1>
+References: <1448016660-18819-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============4441376934294068470=="
-Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1447643170-23773-1-git-send-email-yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
-List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
- <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
-Cc: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Viresh Kumar <vireshk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, bcm-kernel-feedback-
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1448016660-18819-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, 20 Nov 2015, Jon Hunter wrote:
 
---===============4441376934294068470==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="DBIVS5p969aUjpLe"
-Content-Disposition: inline
+> The as3722 device is registered as an irqchip and the as3722-rtc inte=
+rrupt
+> is one of it's interrupt sources. When using the as3722-rtc as a wake=
+-up
+> device from suspend, the following is seen:
+>=20
+>   PM: Syncing filesystems ... done.
+>   Freezing user space processes ... (elapsed 0.001 seconds) done.
+>   Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done=
+=2E
+>   Suspending console(s) (use no_console_suspend to debug)
+>   PM: suspend of devices complete after 161.119 msecs
+>   PM: late suspend of devices complete after 1.048 msecs
+>   PM: noirq suspend of devices complete after 0.756 msecs
+>   Disabling non-boot CPUs ...
+>   CPU1: shutdown
+>   CPU2: shutdown
+>   CPU3: shutdown
+>   Entering suspend state LP1
+>   Enabling non-boot CPUs ...
+>   CPU1 is up
+>   CPU2 is up
+>   CPU3 is up
+>   PM: noirq resume of devices complete after 0.487 msecs
+>   as3722 4-0040: Failed to read IRQ status: -16
+>   as3722 4-0040: Failed to read IRQ status: -16
+>   as3722 4-0040: Failed to read IRQ status: -16
+>   as3722 4-0040: Failed to read IRQ status: -16
+>   ...
+>=20
+> The reason why the as3722 interrupt status cannot be read is because =
+the
+> as3722 interrupt is not masked during suspend and when the as3722-rtc
+> interrupt occurs, to wake-up the device, the interrupt is seen before=
+ the
+> i2c controller has been resumed in order to read the as3722 interrupt
+> status.
+>=20
+> The as3722-rtc driver sets it's interrupt as a wake-up source during
+> suspend, which gets propagated to the parent as3722 interrupt. Howeve=
+r,
+> the as3722-rtc driver cannot disable it's interrupt during suspend
+> otherwise we would never be woken up and so the as3722 must disable i=
+t's
+> interrupt instead.
+>=20
+> Fix this by disabling the as3722 interrupt during suspend. To ensure =
+that
+> a wake-up event from the as3722 is not missing, enable the as3722 int=
+errupt
+> as a wake-up source before disabling the interrupt on entering suspen=
+d.
+>=20
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>=20
+> v2 changes:
+> - Re-enabled the interrupt in resume before disabling the wake-up.
+>=20
+>  drivers/mfd/as3722.c | 30 ++++++++++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
 
+Looks reasonable.
 
---DBIVS5p969aUjpLe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Applied, thanks.
 
-On Mon, Nov 16, 2015 at 12:06:10PM +0900, Masahiro Yamada wrote:
-[...]
->  arch/arm/mach-tegra/Kconfig      |  3 ++-
+> diff --git a/drivers/mfd/as3722.c b/drivers/mfd/as3722.c
+> index 924ea90494ae..3b21eb4bc480 100644
+> --- a/drivers/mfd/as3722.c
+> +++ b/drivers/mfd/as3722.c
+> @@ -405,6 +405,8 @@ static int as3722_i2c_probe(struct i2c_client *i2=
+c,
+>  		goto scrub;
+>  	}
+> =20
+> +	device_init_wakeup(as3722->dev, true);
+> +
+>  	dev_dbg(as3722->dev, "AS3722 core driver initialized successfully\n=
+");
+>  	return 0;
+> =20
+> @@ -422,6 +424,29 @@ static int as3722_i2c_remove(struct i2c_client *=
+i2c)
+>  	return 0;
+>  }
+> =20
+> +static int as3722_i2c_suspend(struct device *dev)
+> +{
+> +	struct as3722 *as3722 =3D dev_get_drvdata(dev);
+> +
+> +	if (device_may_wakeup(dev))
+> +		enable_irq_wake(as3722->chip_irq);
+> +	disable_irq(as3722->chip_irq);
+> +
+> +	return 0;
+> +}
+> +
+> +static int as3722_i2c_resume(struct device *dev)
+> +{
+> +	struct as3722 *as3722 =3D dev_get_drvdata(dev);
+> +
+> +	enable_irq(as3722->chip_irq);
+> +
+> +	if (device_may_wakeup(dev))
+> +		disable_irq_wake(as3722->chip_irq);
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct of_device_id as3722_of_match[] =3D {
+>  	{ .compatible =3D "ams,as3722", },
+>  	{},
+> @@ -434,10 +459,15 @@ static const struct i2c_device_id as3722_i2c_id=
+[] =3D {
+>  };
+>  MODULE_DEVICE_TABLE(i2c, as3722_i2c_id);
+> =20
+> +static const struct dev_pm_ops as3722_pm_ops =3D {
+> +	SET_SYSTEM_SLEEP_PM_OPS(as3722_i2c_suspend, as3722_i2c_resume)
+> +};
+> +
+>  static struct i2c_driver as3722_i2c_driver =3D {
+>  	.driver =3D {
+>  		.name =3D "as3722",
+>  		.of_match_table =3D as3722_of_match,
+> +		.pm =3D &as3722_pm_ops,
+>  	},
+>  	.probe =3D as3722_i2c_probe,
+>  	.remove =3D as3722_i2c_remove,
 
-There will be a slight conflict between this and a patch in the tegra
-tree, but nothing that the ARM SoC maintainers can't handle, so:
-
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
---DBIVS5p969aUjpLe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJWVIk+AAoJEN0jrNd/PrOhnzIP/1jQCataECT3jzWxP30Hc9ki
-wkBigP29aIoVh9DlXbukNYCM2SVPHpBZC+EcTXRNTWPxRRFJULjjxOfLGLOs0V9b
-/w+j+rQN6ujkT3cfSMOTshTYNlAgoMt/oN1ss9UfjnBaLxcbVZ/qYxIoS0t7Qyms
-+0Fc386BliBz0/tXrFA87yWIV+OR9NNS0AQaeGZ23d/UzRjpJIRs2rNwCeppE/zw
-UN/kN8jw0rRpkQnozEmfaYoggA+ln5NMY4+dQi9Zf69gNVvtBu1XfpLAMmsy/I2S
-2sYjlOPVZkpUGhI1gTYnfoNuIt0acyfC7pF51NpQYViu2jdZUxpDecZbuEIq8vpU
-uWOOR4QIRrHIs6zxlt3+qF4V7tpEXgoOpu1iUQyMEDeEsZTVPjXbxOE0yCCFKZ0+
-HPn7j49444OsWIm79bSEHX0emesPq1bDgAxXSm+xF7cJeqLEDgmt8QvlmTVCcbOU
-8knTBVrUbC3mqNT7FWYKSPEPvGIsnkH4JQS3ExuLSldDCvON2+SVSUA6BI4dti32
-8s55nBBkn0liRK5hU0fmqMzeUH4BZ3sHcA3sBYuXeDOhae0oBGLRe07lwCivBr9o
-5nfhR/Ky2vJekAhp4zed1cSLPDdewBooaI79KA3YErvsH2oSVcZuH+uM0CeFBZ2p
-H13dNVvpi5mmZ8ppl3Ov
-=y6xG
------END PGP SIGNATURE-----
-
---DBIVS5p969aUjpLe--
-
-
---===============4441376934294068470==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-Linux-mediatek mailing list
-Linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-http://lists.infradead.org/mailman/listinfo/linux-mediatek
-
---===============4441376934294068470==--
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
