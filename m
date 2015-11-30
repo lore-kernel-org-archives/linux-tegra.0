@@ -1,72 +1,45 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] clk: tegra: Fix bypassing of PLLs
-Date: Thu, 26 Nov 2015 09:56:44 +0000
-Message-ID: <5656D75C.9030203@nvidia.com>
-References: <1448032264-29622-1-git-send-email-jonathanh@nvidia.com>
- <CANMBJr7vYb+kuUBzsC8i4b=b6DRVsbqnf5OrVtj6kVS2RMNgfQ@mail.gmail.com>
- <20151125151100.GA31492@ulmo.nvidia.com>
- <CANMBJr598C1nd7awHdDx_j1uVNbnnAju1sgCvdmg1p6VO-FupQ@mail.gmail.com>
- <5655F489.6080808@nvidia.com>
+From: Maxime Coquelin <maxime.coquelin-qxv4g6HH51o@public.gmane.org>
+Subject: Re: [PATCH] ARM: use "depends on" for SoC configs instead of "if"
+ after prompt
+Date: Mon, 30 Nov 2015 11:43:32 +0100
+Message-ID: <565C2854.6000800@st.com>
+References: <1447643170-23773-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <5655F489.6080808@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Tyler Baker <tyler.baker@linaro.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rhyland Klein <rklein@nvidia.com>, Kevin's boot bot <khilman@kernel.org>
+Return-path: <linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+In-Reply-To: <1447643170-23773-1-git-send-email-yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-mediatek/>
+List-Post: <mailto:linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+List-Help: <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-mediatek>,
+ <mailto:linux-mediatek-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
+Sender: "Linux-mediatek" <linux-mediatek-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Errors-To: linux-mediatek-bounces+glpam-linux-mediatek=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: Andrew Lunn <andrew-g2DYL2Zd6BY@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jamie Iles <jamie-wmLquQDDieKakBO8gow8eQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Viresh Kumar <vireshk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Magnus Damm <magnus.damm-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Wei Xu <xuwei5-C8/M+/jPZTeaMJb+Lgu22Q@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Chen-Yu Tsai <wens@csie>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 25/11/15 17:48, Jon Hunter wrote:
-> 
-> On 25/11/15 15:52, Tyler Baker wrote:
->> On 25 November 2015 at 07:11, Thierry Reding <thierry.reding@gmail.com> wrote:
->>> On Mon, Nov 23, 2015 at 03:18:59PM -0800, Tyler Baker wrote:
->>>> Hi Jon,
->>>>
->>>> On 20 November 2015 at 07:11, Jon Hunter <jonathanh@nvidia.com> wrote:
->>>>> The _clk_disable_pll() function will attempt to place a PLL into bypass
->>>>> if the TEGRA_PLL_BYPASS is specified for the PLL and then disable the PLL
->>>>> by clearing the enable bit. To place the PLL into bypass, the bypass bit
->>>>> needs to be set and not cleared. Fix this by setting the bypass bit and
->>>>> not clearing it.
->>>>>
->>>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->>>>
->>>> The kernelci.org bot recently detected a jetson-tk1 boot failure[1][2]
->>>> in the tegra tree. This boot failure has only been observed when
->>>> booting with a multi_v7_defconfig kernel variant. The bot bisected[3]
->>>> this boot failure to this commit, and I confirmed reverting it on top
->>>> of the tegra for-next branch resolves the issue. The ramdisk[4] used
->>>> for booting is loaded with the modules from the build. It appears to
->>>> me that as the modules are being loaded in userspace by eudev the
->>>> jetson-tk1 locks up. I've sifted through the console logs a bit, and
->>>> found this splat to be most interesting[5].  Can you confirm this
->>>> issue on your end?
->>>
->>> Just to close the loop on this: we've discussed this on IRC and came to
->>> the conclusion that not using the bypass mode is safer (switching into
->>> and out of bypass can glitch). I've dropped this patch for now and Jon
->>> will be looking into a second revision of the patch which, in addition
->>> to fixing bypass (the fix is legit, it just happens to break because of
->>> the glitch, most likely), will also remove the BYPASS flag setting so
->>> that bypass will not be used.
->>
->> Thanks for the update, I appreciate you guys looking into this issue.
->> Please CC me on any fixes, I can re-test and give my tested-by.
-> 
-> No problem. On 2nd thoughts I am wondering if there is any value in
-> bypassing the PLL when disabling it. I will look into this and see what
-> I find out.
 
-So I got some feedback saying that setting the bypass bit is not
-glitch-less for most PLLs and so we should avoid setting this. It may
-look a bit odd from reviewing the code, but it is clear to me know. So
-we should just drop this change. However, if you like we could add a
-comment to document why we are doing this.
+On 11/16/2015 04:06 AM, Masahiro Yamada wrote:
+> diff --git a/arch/arm/mach-sti/Kconfig b/arch/arm/mach-sti/Kconfig
+> index 125865d..736abe6 100644
+> --- a/arch/arm/mach-sti/Kconfig
+> +++ b/arch/arm/mach-sti/Kconfig
+> @@ -1,5 +1,6 @@
+>   menuconfig ARCH_STI
+> -	bool "STMicroelectronics Consumer Electronics SOCs" if ARCH_MULTI_V7
+> +	bool "STMicroelectronics Consumer Electronics SOCs"
+> +	depends on ARCH_MULTI_V7
+>   	select ARM_GIC
+>   	select ST_IRQCHIP
+>   	select ARM_GLOBAL_TIMER
 
-Cheers
-Jon
+For STi part:
+Acked-by: Maxime Coquelin <maxime.coquelin-qxv4g6HH51o@public.gmane.org>
 
-
+Thanks,
+Maxime
