@@ -1,37 +1,61 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [RFD] PM_GENERIC_DOMAINS && !PM
-Date: Mon, 30 Nov 2015 16:42:46 +0000
-Message-ID: <565C7C86.7030801@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V3 0/6] DMA: tegra-apb: Clean-up
+Date: Mon, 30 Nov 2015 16:45:24 +0000
+Message-ID: <565C7D24.1060905@nvidia.com>
+References: <1447432783-7466-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-Sender: linux-pm-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1447432783-7466-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, andy.shevchenko-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Currently, if PM is disabled in the kernel then so is
-PM_GENERIC_DOMAINS. Although this makes sense, I can see a scenario
-where having minimal genpd support could be advantageous.
+Hi Vinod,
 
-I am looking at enabling genpd for Tegra and ideally we would populate
-the power domains when the platform device is probed for the power
-management controller (PMC) as this device contains the registers for
-enabling the power domains.
-
-This works fine for the case where PM is enabled, but I am concerned
-about the case where we don't have PM enabled in the kernel. In this
-case, because domains are not populated early during the boot process, I
-am concerned that there is a chance for a device dependent on a power
-domain to be probed before the PMC device has been probed and had chance
-to turn on any power domains.
-
-Obviously, we could try and play with the ordering of devices, but it
-seems to me that even if PM is not enabled, it would still be nice to
-register power domains with the kernel and allow devices to attach to
-them and only probe the device if they are powered.
-
-Does this sound reasonable or is there a better approach?
+Any more comments on this?
 
 Cheers
 Jon
+
+On 13/11/15 16:39, Jon Hunter wrote:
+> Some clean-up changes for the tegra-apb DMA driver.
+> 
+> Changes for V3 noted in the applicable patches.
+> 
+> These have been compile and boot tested for ARM and ARM64. Summary of the
+> ARM results are below.
+> 
+> Test summary
+> ------------
+> 
+> Build: zImage:
+>     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+> 
+> Build: Image:
+>     Pass: ( 1/ 1): defconfig
+> 
+> Boot to userspace: defconfig:
+>     Pass: ( 1/ 1): qemu-vexpress64
+> 
+> Boot to userspace: multi_v7_defconfig:
+>     Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+>                    tegra20-trimslice, tegra30-beaver
+> 
+> Boot to userspace: tegra_defconfig:
+>     Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+>                    tegra20-trimslice, tegra30-beaver
+> 
+> Jon Hunter (6):
+>   dmaengine: tegra-apb: Correct runtime-pm usage
+>   dmaengine: tegra-apb: Use dev_get_drvdata()
+>   dmaengine: tegra-apb: Save and restore word count
+>   dmaengine: tegra-apb: Only save channel state for those in use
+>   dmaengine: tegra-apb: Update driver to use GFP_NOWAIT
+>   dmaengine: tegra-apb: Free interrupts before killing tasklets
+> 
+>  drivers/dma/tegra20-apb-dma.c | 73 ++++++++++++++++++++++++-------------------
+>  1 file changed, 40 insertions(+), 33 deletions(-)
+> 
