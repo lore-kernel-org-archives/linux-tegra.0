@@ -1,75 +1,85 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFD] PM_GENERIC_DOMAINS && !PM
-Date: Wed, 2 Dec 2015 16:40:50 +0100
-Message-ID: <20151202154050.GB624@ulmo>
-References: <565C7C86.7030801@nvidia.com>
- <565DBEE6.5030704@nvidia.com>
- <20151201161809.GA20561@ulmo>
- <1995321.JkVMSghsar@vostro.rjw.lan>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V4 00/16] Add generic PM domain support for Tegra
+Date: Fri, 4 Dec 2015 14:57:01 +0000
+Message-ID: <1449241037-22193-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="KFztAG8eRSV9hGtP"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1995321.JkVMSghsar-sKB8Sp2ER+y1GS7QM15AGw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Kevin Hilman <khilman-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rafael Wysocki <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Adds generic PM domain support for Tegra SoCs but so far it is only
+enabled Tegra 64-bit devices. There is no reason why this cannot be
+enabled for Tegra 32-bit devices, but to keep the patch series to a
+minimum only 64-bit devices are enabled.
 
---KFztAG8eRSV9hGtP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This series has been boot tested on Tegra210 as well as various 32-bit
+Tegra platforms.
 
-On Wed, Dec 02, 2015 at 02:35:20AM +0100, Rafael J. Wysocki wrote:
-> On Tuesday, December 01, 2015 05:18:09 PM Thierry Reding wrote:
-> >=20
->=20
-> [cut]
->=20
-> >=20
-> > That all sounds very complicated for little gain. Disabling PM doesn't
-> > make much sense these days, so I'd personally be fine to unconditonally
-> > enable PM on Tegra. I'm not sure what the correct way would be. Since
-> > the PM symbol is user-visible, selecting it doesn't sound like a very
-> > good solution, though a quick grep shows that some architectures do
-> > this.
-> >=20
-> > Rafael, do you know what the canonical way is to make !PM invalid for a
-> > platform?
->=20
-> Well, good question.
->=20
-> I can't really suggest anything cleaner than selecting it from the top-le=
-vel
-> Kconfig at the moment.
+Summary of changes since V3 [0]:
+- Dropped tegra124 support for now
+- Removed MC flush support per feedback from Thierry
+- Cleaned up the PMC changes per feedback from Thierry
+- Added support for tegra210
 
-Alright, sounds like something we should do.
+Series Summary:
+Patch 1:    Adds the new function of_reset_control_get_by_index().
+Patch 2-9:  PMC clean-up and fixes
+Patch 10:   Adds function to remove a generic PM domain
+Patch 11:   Updates DT documentation for PMC w.r.t Tegra210
+Patch 12:   Adds DT documentation for tegra generic PM domains
+Patch 13:   Adds PMC generic DM domains support
+Patch 14:   Adds audio clock for Tegra210 audio power-domain
+Patch 15:   Adds DT bindings for Tegra210 audio power-domain
+Patch 16:   Enable generic PM domains for tegra64
 
-Thanks,
-Thierry
+[0] http://comments.gmane.org/gmane.linux.ports.tegra/22944
 
---KFztAG8eRSV9hGtP
-Content-Type: application/pgp-signature; name="signature.asc"
+Jon Hunter (15):
+  soc: tegra: pmc: Add missing structure members to kernel-doc
+  soc: tegra: pmc: Fix sparse warning for tegra_pmc_init_tsense_reset
+  soc: tegra: pmc: Remove debugfs entry on probe failure
+  soc: tegra: pmc: Avoid extra remapping of PMC registers
+  soc: tegra: pmc: Wait for powergate state to change
+  soc: tegra: pmc: Remove non-existing power partitions for T210
+  soc: tegra: pmc: Fix checking of valid partitions
+  soc: tegra: pmc: Ensure partitions can be toggled on/off by PMC
+  PM / Domains: Add function to remove a pm-domain
+  Documentation: DT: bindings: Update NVIDIA PMC for Tegra210
+  Documentation: DT: bindings: Add power domain info for NVIDIA PMC
+  soc: tegra: pmc: Add generic PM domain support
+  clk: tegra210: Add the APB2APE audio clock
+  ARM64: tegra: Add audio PM domain device node for Tegra210
+  ARM64: tegra: select PM_GENERIC_DOMAINS
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Vince Hsu (1):
+  reset: add of_reset_control_get_by_index()
 
-iQIcBAABCAAGBQJWXxECAAoJEN0jrNd/PrOh9tYP/ApXGqg14KqNoVv0+9e5vWvQ
-Z71/iAnq03eQBGl0fc656YjYCkXet+PaTpQcfd0f0/L0i26IrhkqQ5mgENvDEdpz
-cmTcyz/mV9XMh+BcArEsq+xpzMV+8PJYHJh8D1buh4jXH2a5gfffvu9iEUoq+Wlv
-I90XXcyPWnuuz9azzO17KN1OVWKHofZmPDmUBcyBjoGKzcBARra8sR8MzTHLRHAv
-740Lo10sqzk6XnnyJ22JaRIcM6VKl8qyj9VX1jR4lKd9Im1nceKSJrugNbzdaINf
-a8oRPqLVSZ6ncb26y7TGD2m/lMO1bfTG+m0DyNgnE1pDWWzjBPxGkH5gk3BdVH7m
-to90iNB15XTeQ5W+7hxN0w5raqBimn5fkK854kjM3PU1vLONqhah3huk7MUp7EAL
-MzGCVTJnttjeBDrb1SAfJsjUExB9H1EojZHAZFJqdDXv3+OJyfB2lylrN4NmDtrv
-vEI4wx1taAQ+OAwamugqcgWz4X6n42IhG5UuXktkZdtuJM1XKEWXkkNXGT8daW1U
-rFM65L0Xrgsq2P/UypzbdH0PNSnBb6Ay0APNhAlfcM8HlK/8WfKwqN09XGsZcR44
-jBFtJyB9+2c4UtLk/eZBNvuPOifHLbIFPYjHd3IJWkCfaOKPxc415XIxYP89ZLDN
-87NyxK40jKhiU6zKfbmV
-=V/fY
------END PGP SIGNATURE-----
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      |  66 ++-
+ arch/arm/boot/dts/tegra124.dtsi                    |   1 +
+ arch/arm/mach-tegra/platsmp.c                      |  16 +-
+ arch/arm64/Kconfig.platforms                       |   2 +
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  11 +-
+ drivers/base/power/domain.c                        |  26 +
+ drivers/clk/tegra/clk-id.h                         |   1 +
+ drivers/clk/tegra/clk-tegra-periph.c               |   1 +
+ drivers/clk/tegra/clk-tegra210.c                   |   1 +
+ drivers/reset/core.c                               |  40 +-
+ drivers/soc/tegra/pmc.c                            | 586 +++++++++++++++++++--
+ include/dt-bindings/clock/tegra210-car.h           |   2 +-
+ include/dt-bindings/power/tegra-powergate.h        |  35 ++
+ include/linux/pm_domain.h                          |   5 +
+ include/linux/reset.h                              |   9 +
+ include/soc/tegra/pmc.h                            |  38 +-
+ 16 files changed, 720 insertions(+), 120 deletions(-)
+ create mode 100644 include/dt-bindings/power/tegra-powergate.h
 
---KFztAG8eRSV9hGtP--
+-- 
+2.1.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
