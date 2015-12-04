@@ -1,67 +1,118 @@
 From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/2] PCI: Add pci_ops.add_bus() callback
-Date: Fri, 4 Dec 2015 13:50:04 -0600
-Message-ID: <20151204195004.GE20125@localhost>
+Subject: Re: [PATCH 2/2] PCI: tegra: Implement ->add_bus() callback
+Date: Fri, 4 Dec 2015 14:01:10 -0600
+Message-ID: <20151204200110.GF20125@localhost>
 References: <1448282426-2642-1-git-send-email-thierry.reding@gmail.com>
+ <1448282426-2642-2-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1448282426-2642-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1448282426-2642-2-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry,
-
-On Mon, Nov 23, 2015 at 01:40:25PM +0100, Thierry Reding wrote:
+On Mon, Nov 23, 2015 at 01:40:26PM +0100, Thierry Reding wrote:
 > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> This callback will be called on every newly created bus. Drivers can
-> implement it to perform driver-specific initialization of the bus.
+> The configuration space mapping on Tegra is somewhat special, and in
+
+It'd be nice to have a tiny hint about specifically what is special
+about Tegra config space mapping.
+
+> order to avoid wasting virtual address space the configuration space
+> for each bus needs to be stitched together from several blocks which
+> form a single continuous virtual address range for accessors.
+> 
+> Currently the configuration space is mapped upon the first access to
+> one of its registers. However, the mapping operation may sleep under
+> certain circumstances, so doing it from the configuration space
+> accessors (they are protected by a spin lock) will trigger a warning.
+
+Can you include the exact warning?  Does it happen always?  Always on
+the first config access to a bus?
+
+> To avoid the warning, use the ->add_bus() callback to perform the
+> mapping at enumeration time when the operation is allowed to sleep.
 > 
 > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  drivers/pci/probe.c | 8 +++++++-
->  include/linux/pci.h | 1 +
->  2 files changed, 8 insertions(+), 1 deletion(-)
+>  drivers/pci/host/pci-tegra.c | 40 +++++++++++++++++++---------------------
+>  1 file changed, 19 insertions(+), 21 deletions(-)
 > 
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index e735c728e3b3..fbed432f8915 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -754,7 +754,13 @@ add_dev:
->  	ret = device_register(&child->dev);
->  	WARN_ON(ret < 0);
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> index 3018ae52e092..c3666f9d7ef1 100644
+> --- a/drivers/pci/host/pci-tegra.c
+> +++ b/drivers/pci/host/pci-tegra.c
+> @@ -426,31 +426,23 @@ free:
+>  	return ERR_PTR(err);
+>  }
 >  
-> -	pcibios_add_bus(child);
-> +	if (child->ops->add_bus) {
-> +		ret = child->ops->add_bus(child);
-> +		if (ret < 0)
-> +			dev_err(&child->dev, "failed to add bus: %d\n", ret);
-> +	} else {
-> +		pcibios_add_bus(child);
-> +	}
-
-pcibios_add_bus() does arch-specific things.  child->ops->add_bus()
-does driver-specific things.  I think these are orthogonal, so I think
-we want to *always* call pcibios_add_bus(), don't we?
-
->  	/* Create legacy_io and legacy_mem files for this bus */
->  	pci_create_legacy_files(child);
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index e828e7b4afec..70c1228d585f 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -569,6 +569,7 @@ static inline int pcibios_err_to_errno(int err)
->  /* Low-level architecture-dependent routines */
+> -/*
+> - * Look up a virtual address mapping for the specified bus number. If no such
+> - * mapping exists, try to create one.
+> - */
+> -static void __iomem *tegra_pcie_bus_map(struct tegra_pcie *pcie,
+> -					unsigned int busnr)
+> +static int tegra_pcie_add_bus(struct pci_bus *bus)
+>  {
+> -	struct tegra_pcie_bus *bus;
+> +	struct tegra_pcie *pcie = sys_to_pcie(bus->sysdata);
+> +	struct tegra_pcie_bus *b;
 >  
->  struct pci_ops {
-> +	int (*add_bus)(struct pci_bus *bus);
->  	void __iomem *(*map_bus)(struct pci_bus *bus, unsigned int devfn, int where);
->  	int (*read)(struct pci_bus *bus, unsigned int devfn, int where, int size, u32 *val);
->  	int (*write)(struct pci_bus *bus, unsigned int devfn, int where, int size, u32 val);
+> -	list_for_each_entry(bus, &pcie->buses, list)
+> -		if (bus->nr == busnr)
+> -			return (void __iomem *)bus->area->addr;
+> +	b = tegra_pcie_bus_alloc(pcie, bus->number);
+> +	if (IS_ERR(b))
+> +		return PTR_ERR(b);
+>  
+> -	bus = tegra_pcie_bus_alloc(pcie, busnr);
+> -	if (IS_ERR(bus))
+> -		return NULL;
+> +	list_add_tail(&b->list, &pcie->buses);
+>  
+> -	list_add_tail(&bus->list, &pcie->buses);
+> -
+> -	return (void __iomem *)bus->area->addr;
+> +	return 0;
+>  }
+>  
+> -static void __iomem *tegra_pcie_conf_address(struct pci_bus *bus,
+> -					     unsigned int devfn,
+> -					     int where)
+> +static void __iomem *tegra_pcie_map_bus(struct pci_bus *bus,
+> +					unsigned int devfn,
+> +					int where)
+>  {
+>  	struct tegra_pcie *pcie = sys_to_pcie(bus->sysdata);
+>  	void __iomem *addr = NULL;
+> @@ -466,7 +458,12 @@ static void __iomem *tegra_pcie_conf_address(struct pci_bus *bus,
+>  			}
+>  		}
+>  	} else {
+> -		addr = tegra_pcie_bus_map(pcie, bus->number);
+> +		struct tegra_pcie_bus *b;
+> +
+> +		list_for_each_entry(b, &pcie->buses, list)
+> +			if (b->nr == bus->number)
+> +				addr = (void __iomem *)b->area->addr;
+> +
+>  		if (!addr) {
+>  			dev_err(pcie->dev,
+>  				"failed to map cfg. space for bus %u\n",
+> @@ -481,7 +478,8 @@ static void __iomem *tegra_pcie_conf_address(struct pci_bus *bus,
+>  }
+>  
+>  static struct pci_ops tegra_pcie_ops = {
+> -	.map_bus = tegra_pcie_conf_address,
+> +	.add_bus = tegra_pcie_add_bus,
+> +	.map_bus = tegra_pcie_map_bus,
+>  	.read = pci_generic_config_read32,
+>  	.write = pci_generic_config_write32,
+>  };
 > -- 
 > 2.5.0
 > 
