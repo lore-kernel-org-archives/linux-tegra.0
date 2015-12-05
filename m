@@ -1,122 +1,105 @@
-From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/2] PCI: tegra: Implement ->add_bus() callback
-Date: Fri, 4 Dec 2015 14:01:10 -0600
-Message-ID: <20151204200110.GF20125@localhost>
-References: <1448282426-2642-1-git-send-email-thierry.reding@gmail.com>
- <1448282426-2642-2-git-send-email-thierry.reding@gmail.com>
+From: Nicolas Iooss <nicolas.iooss_linux-oWGTIYur0i8@public.gmane.org>
+Subject: Re: [PATCH] drm: do not use device name as a format string
+Date: Sat, 5 Dec 2015 10:45:50 +0100
+Message-ID: <5662B24E.4090202@m4x.org>
+References: <1447869498-13277-1-git-send-email-nicolas.iooss_linux@m4x.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1448282426-2642-2-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1447869498-13277-1-git-send-email-nicolas.iooss_linux-oWGTIYur0i8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Jianwei Wang <jianwei.wang.chn-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alison Wang <alison.wang-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?Q?Terje_Bergstr=c3=b6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Nov 23, 2015 at 01:40:26PM +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Hello,
+I sent the path below a few weeks ago and did not have any feedback.
+Is there any issue in it that I need to fix before submitting it again?
+
+Thanks,
+Nicolas Iooss
+
+On 11/18/2015 06:58 PM, Nicolas Iooss wrote:
+> drm_dev_set_unique() formats its parameter using kvasprintf() but many
+> of its callers directly pass dev_name(dev) as printf format string,
+> without any format parameter.  This can cause some issues when the
+> device name contains '%' characters.
 > 
-> The configuration space mapping on Tegra is somewhat special, and in
-
-It'd be nice to have a tiny hint about specifically what is special
-about Tegra config space mapping.
-
-> order to avoid wasting virtual address space the configuration space
-> for each bus needs to be stitched together from several blocks which
-> form a single continuous virtual address range for accessors.
+> To avoid any potential issue, always use "%s" when using
+> drm_dev_set_unique() with dev_name().
 > 
-> Currently the configuration space is mapped upon the first access to
-> one of its registers. However, the mapping operation may sleep under
-> certain circumstances, so doing it from the configuration space
-> accessors (they are protected by a spin lock) will trigger a warning.
-
-Can you include the exact warning?  Does it happen always?  Always on
-the first config access to a bus?
-
-> To avoid the warning, use the ->add_bus() callback to perform the
-> mapping at enumeration time when the operation is allowed to sleep.
-> 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Nicolas Iooss <nicolas.iooss_linux-oWGTIYur0i8@public.gmane.org>
 > ---
->  drivers/pci/host/pci-tegra.c | 40 +++++++++++++++++++---------------------
->  1 file changed, 19 insertions(+), 21 deletions(-)
+>  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c | 2 +-
+>  drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c    | 2 +-
+>  drivers/gpu/drm/tegra/drm.c                  | 2 +-
+>  drivers/gpu/drm/vc4/vc4_drv.c                | 2 +-
+>  include/drm/drmP.h                           | 1 +
+>  5 files changed, 5 insertions(+), 4 deletions(-)
 > 
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index 3018ae52e092..c3666f9d7ef1 100644
-> --- a/drivers/pci/host/pci-tegra.c
-> +++ b/drivers/pci/host/pci-tegra.c
-> @@ -426,31 +426,23 @@ free:
->  	return ERR_PTR(err);
->  }
+> diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
+> index 244df0a440b7..0d720d3a7ee0 100644
+> --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
+> +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
+> @@ -733,7 +733,7 @@ static int atmel_hlcdc_dc_drm_probe(struct platform_device *pdev)
+>  	if (!ddev)
+>  		return -ENOMEM;
 >  
-> -/*
-> - * Look up a virtual address mapping for the specified bus number. If no such
-> - * mapping exists, try to create one.
-> - */
-> -static void __iomem *tegra_pcie_bus_map(struct tegra_pcie *pcie,
-> -					unsigned int busnr)
-> +static int tegra_pcie_add_bus(struct pci_bus *bus)
->  {
-> -	struct tegra_pcie_bus *bus;
-> +	struct tegra_pcie *pcie = sys_to_pcie(bus->sysdata);
-> +	struct tegra_pcie_bus *b;
+> -	ret = drm_dev_set_unique(ddev, dev_name(ddev->dev));
+> +	ret = drm_dev_set_unique(ddev, "%s", dev_name(ddev->dev));
+>  	if (ret)
+>  		goto err_unref;
 >  
-> -	list_for_each_entry(bus, &pcie->buses, list)
-> -		if (bus->nr == busnr)
-> -			return (void __iomem *)bus->area->addr;
-> +	b = tegra_pcie_bus_alloc(pcie, bus->number);
-> +	if (IS_ERR(b))
-> +		return PTR_ERR(b);
+> diff --git a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
+> index 1930234ba5f1..947d75f59881 100644
+> --- a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
+> +++ b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
+> @@ -363,7 +363,7 @@ static int fsl_dcu_drm_probe(struct platform_device *pdev)
+>  	fsl_dev->np = dev->of_node;
+>  	drm->dev_private = fsl_dev;
+>  	dev_set_drvdata(dev, fsl_dev);
+> -	drm_dev_set_unique(drm, dev_name(dev));
+> +	drm_dev_set_unique(drm, "%s", dev_name(dev));
 >  
-> -	bus = tegra_pcie_bus_alloc(pcie, busnr);
-> -	if (IS_ERR(bus))
-> -		return NULL;
-> +	list_add_tail(&b->list, &pcie->buses);
+>  	ret = drm_dev_register(drm, 0);
+>  	if (ret < 0)
+> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+> index 159ef515cab1..b278f60f4376 100644
+> --- a/drivers/gpu/drm/tegra/drm.c
+> +++ b/drivers/gpu/drm/tegra/drm.c
+> @@ -991,7 +991,7 @@ static int host1x_drm_probe(struct host1x_device *dev)
+>  	if (!drm)
+>  		return -ENOMEM;
 >  
-> -	list_add_tail(&bus->list, &pcie->buses);
-> -
-> -	return (void __iomem *)bus->area->addr;
-> +	return 0;
->  }
+> -	drm_dev_set_unique(drm, dev_name(&dev->dev));
+> +	drm_dev_set_unique(drm, "%s", dev_name(&dev->dev));
+>  	dev_set_drvdata(&dev->dev, drm);
 >  
-> -static void __iomem *tegra_pcie_conf_address(struct pci_bus *bus,
-> -					     unsigned int devfn,
-> -					     int where)
-> +static void __iomem *tegra_pcie_map_bus(struct pci_bus *bus,
-> +					unsigned int devfn,
-> +					int where)
->  {
->  	struct tegra_pcie *pcie = sys_to_pcie(bus->sysdata);
->  	void __iomem *addr = NULL;
-> @@ -466,7 +458,12 @@ static void __iomem *tegra_pcie_conf_address(struct pci_bus *bus,
->  			}
->  		}
->  	} else {
-> -		addr = tegra_pcie_bus_map(pcie, bus->number);
-> +		struct tegra_pcie_bus *b;
-> +
-> +		list_for_each_entry(b, &pcie->buses, list)
-> +			if (b->nr == bus->number)
-> +				addr = (void __iomem *)b->area->addr;
-> +
->  		if (!addr) {
->  			dev_err(pcie->dev,
->  				"failed to map cfg. space for bus %u\n",
-> @@ -481,7 +478,8 @@ static void __iomem *tegra_pcie_conf_address(struct pci_bus *bus,
->  }
+>  	err = drm_dev_register(drm, 0);
+> diff --git a/drivers/gpu/drm/vc4/vc4_drv.c b/drivers/gpu/drm/vc4/vc4_drv.c
+> index 6e730605edcc..c90a451aaa79 100644
+> --- a/drivers/gpu/drm/vc4/vc4_drv.c
+> +++ b/drivers/gpu/drm/vc4/vc4_drv.c
+> @@ -168,7 +168,7 @@ static int vc4_drm_bind(struct device *dev)
+>  	vc4->dev = drm;
+>  	drm->dev_private = vc4;
 >  
->  static struct pci_ops tegra_pcie_ops = {
-> -	.map_bus = tegra_pcie_conf_address,
-> +	.add_bus = tegra_pcie_add_bus,
-> +	.map_bus = tegra_pcie_map_bus,
->  	.read = pci_generic_config_read32,
->  	.write = pci_generic_config_write32,
->  };
-> -- 
-> 2.5.0
+> -	drm_dev_set_unique(drm, dev_name(dev));
+> +	drm_dev_set_unique(drm, "%s", dev_name(dev));
+>  
+>  	drm_mode_config_init(drm);
+>  	if (ret)
+> diff --git a/include/drm/drmP.h b/include/drm/drmP.h
+> index 0b921ae06cd8..995fb96cb740 100644
+> --- a/include/drm/drmP.h
+> +++ b/include/drm/drmP.h
+> @@ -1049,6 +1049,7 @@ void drm_dev_ref(struct drm_device *dev);
+>  void drm_dev_unref(struct drm_device *dev);
+>  int drm_dev_register(struct drm_device *dev, unsigned long flags);
+>  void drm_dev_unregister(struct drm_device *dev);
+> +__printf(2, 3)
+>  int drm_dev_set_unique(struct drm_device *dev, const char *fmt, ...);
+>  
+>  struct drm_minor *drm_minor_acquire(unsigned int minor_id);
 > 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pci" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
