@@ -1,106 +1,48 @@
-From: Daniel Vetter <daniel@ffwll.ch>
+From: Nicolas Iooss <nicolas.iooss_linux-oWGTIYur0i8@public.gmane.org>
 Subject: Re: [PATCH] drm: do not use device name as a format string
-Date: Sun, 6 Dec 2015 10:35:59 +0100
-Message-ID: <20151206093559.GT10243@phenom.ffwll.local>
+Date: Sun, 6 Dec 2015 11:16:32 +0100
+Message-ID: <56640B00.7040100@m4x.org>
 References: <1447869498-13277-1-git-send-email-nicolas.iooss_linux@m4x.org>
- <5662B24E.4090202@m4x.org>
+ <5662B24E.4090202@m4x.org> <20151206093559.GT10243@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <5662B24E.4090202@m4x.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Nicolas Iooss <nicolas.iooss_linux@m4x.org>
-Cc: Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Alison Wang <alison.wang@freescale.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20151206093559.GT10243-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Jianwei Wang <jianwei.wang.chn-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alison Wang <alison.wang-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?Q?Terje_Bergstr=c3=b6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gU2F0LCBEZWMgMDUsIDIwMTUgYXQgMTA6NDU6NTBBTSArMDEwMCwgTmljb2xhcyBJb29zcyB3
-cm90ZToKPiBIZWxsbywKPiBJIHNlbnQgdGhlIHBhdGggYmVsb3cgYSBmZXcgd2Vla3MgYWdvIGFu
-ZCBkaWQgbm90IGhhdmUgYW55IGZlZWRiYWNrLgo+IElzIHRoZXJlIGFueSBpc3N1ZSBpbiBpdCB0
-aGF0IEkgbmVlZCB0byBmaXggYmVmb3JlIHN1Ym1pdHRpbmcgaXQgYWdhaW4/CgpTb3JyeSwgbXVz
-dCBoYXZlIG1pc3NlZCB0aGlzLgoKPiAKPiBUaGFua3MsCj4gTmljb2xhcyBJb29zcwo+IAo+IE9u
-IDExLzE4LzIwMTUgMDY6NTggUE0sIE5pY29sYXMgSW9vc3Mgd3JvdGU6Cj4gPiBkcm1fZGV2X3Nl
-dF91bmlxdWUoKSBmb3JtYXRzIGl0cyBwYXJhbWV0ZXIgdXNpbmcga3Zhc3ByaW50ZigpIGJ1dCBt
-YW55Cj4gPiBvZiBpdHMgY2FsbGVycyBkaXJlY3RseSBwYXNzIGRldl9uYW1lKGRldikgYXMgcHJp
-bnRmIGZvcm1hdCBzdHJpbmcsCj4gPiB3aXRob3V0IGFueSBmb3JtYXQgcGFyYW1ldGVyLiAgVGhp
-cyBjYW4gY2F1c2Ugc29tZSBpc3N1ZXMgd2hlbiB0aGUKPiA+IGRldmljZSBuYW1lIGNvbnRhaW5z
-ICclJyBjaGFyYWN0ZXJzLgo+ID4gCj4gPiBUbyBhdm9pZCBhbnkgcG90ZW50aWFsIGlzc3VlLCBh
-bHdheXMgdXNlICIlcyIgd2hlbiB1c2luZwo+ID4gZHJtX2Rldl9zZXRfdW5pcXVlKCkgd2l0aCBk
-ZXZfbmFtZSgpLgoKTm90IHN1cmUgdGhpcyBpcyB3b3J0aCBpdCByZWFsbHksIG5vcm1hbGx5IHBl
-b3BsZSBkb24ndCBwbGFjZSAlIGNoYXJhY3RlcnMKaW50byB0aGVpciBkZXZpY2UgbmFtZXMsIGV2
-ZXIuIEFuZCBpZiB0aGV5IGRvIGl0J2xsIGJsb3cgdXAuIFRoZXJlJ3MgYWxzbwpubyBzZWN1cml0
-eSBpc3N1ZSBoZXJlIHNpbmNlIHVzZXJzcGFjZSBjYW4ndCBzZXQgdGhpcyBuYW1lLgoKSWYgdGhl
-IG1haW50YWluZXJzIG9mIHRoZSBhZmZlY3RlZCBkcml2ZXJzIGRvbid0IHdhbnQgdGhpcyBJIHdv
-bid0IG1lcmdlCnRoaXMgcGF0Y2guCgpUaGFua3MsIERhbmllbAoKPiA+IAo+ID4gU2lnbmVkLW9m
-Zi1ieTogTmljb2xhcyBJb29zcyA8bmljb2xhcy5pb29zc19saW51eEBtNHgub3JnPgo+ID4gLS0t
-Cj4gPiAgZHJpdmVycy9ncHUvZHJtL2F0bWVsLWhsY2RjL2F0bWVsX2hsY2RjX2RjLmMgfCAyICst
-Cj4gPiAgZHJpdmVycy9ncHUvZHJtL2ZzbC1kY3UvZnNsX2RjdV9kcm1fZHJ2LmMgICAgfCAyICst
-Cj4gPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jICAgICAgICAgICAgICAgICAgfCAyICst
-Cj4gPiAgZHJpdmVycy9ncHUvZHJtL3ZjNC92YzRfZHJ2LmMgICAgICAgICAgICAgICAgfCAyICst
-Cj4gPiAgaW5jbHVkZS9kcm0vZHJtUC5oICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAxICsK
-PiA+ICA1IGZpbGVzIGNoYW5nZWQsIDUgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkKPiA+
-IAo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9hdG1lbC1obGNkYy9hdG1lbF9obGNk
-Y19kYy5jIGIvZHJpdmVycy9ncHUvZHJtL2F0bWVsLWhsY2RjL2F0bWVsX2hsY2RjX2RjLmMKPiA+
-IGluZGV4IDI0NGRmMGE0NDBiNy4uMGQ3MjBkM2E3ZWUwIDEwMDY0NAo+ID4gLS0tIGEvZHJpdmVy
-cy9ncHUvZHJtL2F0bWVsLWhsY2RjL2F0bWVsX2hsY2RjX2RjLmMKPiA+ICsrKyBiL2RyaXZlcnMv
-Z3B1L2RybS9hdG1lbC1obGNkYy9hdG1lbF9obGNkY19kYy5jCj4gPiBAQCAtNzMzLDcgKzczMyw3
-IEBAIHN0YXRpYyBpbnQgYXRtZWxfaGxjZGNfZGNfZHJtX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9k
-ZXZpY2UgKnBkZXYpCj4gPiAgCWlmICghZGRldikKPiA+ICAJCXJldHVybiAtRU5PTUVNOwo+ID4g
-IAo+ID4gLQlyZXQgPSBkcm1fZGV2X3NldF91bmlxdWUoZGRldiwgZGV2X25hbWUoZGRldi0+ZGV2
-KSk7Cj4gPiArCXJldCA9IGRybV9kZXZfc2V0X3VuaXF1ZShkZGV2LCAiJXMiLCBkZXZfbmFtZShk
-ZGV2LT5kZXYpKTsKPiA+ICAJaWYgKHJldCkKPiA+ICAJCWdvdG8gZXJyX3VucmVmOwo+ID4gIAo+
-ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9mc2wtZGN1L2ZzbF9kY3VfZHJtX2Rydi5j
-IGIvZHJpdmVycy9ncHUvZHJtL2ZzbC1kY3UvZnNsX2RjdV9kcm1fZHJ2LmMKPiA+IGluZGV4IDE5
-MzAyMzRiYTVmMS4uOTQ3ZDc1ZjU5ODgxIDEwMDY0NAo+ID4gLS0tIGEvZHJpdmVycy9ncHUvZHJt
-L2ZzbC1kY3UvZnNsX2RjdV9kcm1fZHJ2LmMKPiA+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9mc2wt
-ZGN1L2ZzbF9kY3VfZHJtX2Rydi5jCj4gPiBAQCAtMzYzLDcgKzM2Myw3IEBAIHN0YXRpYyBpbnQg
-ZnNsX2RjdV9kcm1fcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKPiA+ICAJZnNs
-X2Rldi0+bnAgPSBkZXYtPm9mX25vZGU7Cj4gPiAgCWRybS0+ZGV2X3ByaXZhdGUgPSBmc2xfZGV2
-Owo+ID4gIAlkZXZfc2V0X2RydmRhdGEoZGV2LCBmc2xfZGV2KTsKPiA+IC0JZHJtX2Rldl9zZXRf
-dW5pcXVlKGRybSwgZGV2X25hbWUoZGV2KSk7Cj4gPiArCWRybV9kZXZfc2V0X3VuaXF1ZShkcm0s
-ICIlcyIsIGRldl9uYW1lKGRldikpOwo+ID4gIAo+ID4gIAlyZXQgPSBkcm1fZGV2X3JlZ2lzdGVy
-KGRybSwgMCk7Cj4gPiAgCWlmIChyZXQgPCAwKQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1
-L2RybS90ZWdyYS9kcm0uYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYwo+ID4gaW5kZXgg
-MTU5ZWY1MTVjYWIxLi5iMjc4ZjYwZjQzNzYgMTAwNjQ0Cj4gPiAtLS0gYS9kcml2ZXJzL2dwdS9k
-cm0vdGVncmEvZHJtLmMKPiA+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYwo+ID4g
-QEAgLTk5MSw3ICs5OTEsNyBAQCBzdGF0aWMgaW50IGhvc3QxeF9kcm1fcHJvYmUoc3RydWN0IGhv
-c3QxeF9kZXZpY2UgKmRldikKPiA+ICAJaWYgKCFkcm0pCj4gPiAgCQlyZXR1cm4gLUVOT01FTTsK
-PiA+ICAKPiA+IC0JZHJtX2Rldl9zZXRfdW5pcXVlKGRybSwgZGV2X25hbWUoJmRldi0+ZGV2KSk7
-Cj4gPiArCWRybV9kZXZfc2V0X3VuaXF1ZShkcm0sICIlcyIsIGRldl9uYW1lKCZkZXYtPmRldikp
-Owo+ID4gIAlkZXZfc2V0X2RydmRhdGEoJmRldi0+ZGV2LCBkcm0pOwo+ID4gIAo+ID4gIAllcnIg
-PSBkcm1fZGV2X3JlZ2lzdGVyKGRybSwgMCk7Cj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
-ZHJtL3ZjNC92YzRfZHJ2LmMgYi9kcml2ZXJzL2dwdS9kcm0vdmM0L3ZjNF9kcnYuYwo+ID4gaW5k
-ZXggNmU3MzA2MDVlZGNjLi5jOTBhNDUxYWFhNzkgMTAwNjQ0Cj4gPiAtLS0gYS9kcml2ZXJzL2dw
-dS9kcm0vdmM0L3ZjNF9kcnYuYwo+ID4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3ZjNC92YzRfZHJ2
-LmMKPiA+IEBAIC0xNjgsNyArMTY4LDcgQEAgc3RhdGljIGludCB2YzRfZHJtX2JpbmQoc3RydWN0
-IGRldmljZSAqZGV2KQo+ID4gIAl2YzQtPmRldiA9IGRybTsKPiA+ICAJZHJtLT5kZXZfcHJpdmF0
-ZSA9IHZjNDsKPiA+ICAKPiA+IC0JZHJtX2Rldl9zZXRfdW5pcXVlKGRybSwgZGV2X25hbWUoZGV2
-KSk7Cj4gPiArCWRybV9kZXZfc2V0X3VuaXF1ZShkcm0sICIlcyIsIGRldl9uYW1lKGRldikpOwo+
-ID4gIAo+ID4gIAlkcm1fbW9kZV9jb25maWdfaW5pdChkcm0pOwo+ID4gIAlpZiAocmV0KQo+ID4g
-ZGlmZiAtLWdpdCBhL2luY2x1ZGUvZHJtL2RybVAuaCBiL2luY2x1ZGUvZHJtL2RybVAuaAo+ID4g
-aW5kZXggMGI5MjFhZTA2Y2Q4Li45OTVmYjk2Y2I3NDAgMTAwNjQ0Cj4gPiAtLS0gYS9pbmNsdWRl
-L2RybS9kcm1QLmgKPiA+ICsrKyBiL2luY2x1ZGUvZHJtL2RybVAuaAo+ID4gQEAgLTEwNDksNiAr
-MTA0OSw3IEBAIHZvaWQgZHJtX2Rldl9yZWYoc3RydWN0IGRybV9kZXZpY2UgKmRldik7Cj4gPiAg
-dm9pZCBkcm1fZGV2X3VucmVmKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYpOwo+ID4gIGludCBkcm1f
-ZGV2X3JlZ2lzdGVyKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHVuc2lnbmVkIGxvbmcgZmxhZ3Mp
-Owo+ID4gIHZvaWQgZHJtX2Rldl91bnJlZ2lzdGVyKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYpOwo+
-ID4gK19fcHJpbnRmKDIsIDMpCj4gPiAgaW50IGRybV9kZXZfc2V0X3VuaXF1ZShzdHJ1Y3QgZHJt
-X2RldmljZSAqZGV2LCBjb25zdCBjaGFyICpmbXQsIC4uLik7Cj4gPiAgCj4gPiAgc3RydWN0IGRy
-bV9taW5vciAqZHJtX21pbm9yX2FjcXVpcmUodW5zaWduZWQgaW50IG1pbm9yX2lkKTsKPiA+IAo+
-IAo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCj4gZHJp
-LWRldmVsIG1haWxpbmcgbGlzdAo+IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBo
-dHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCgot
-LSAKRGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9yYXRpb24KaHR0
-cDovL2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWwK
+On 12/06/2015 10:35 AM, Daniel Vetter wrote:
+>> On 11/18/2015 06:58 PM, Nicolas Iooss wrote:
+>>> drm_dev_set_unique() formats its parameter using kvasprintf() but many
+>>> of its callers directly pass dev_name(dev) as printf format string,
+>>> without any format parameter.  This can cause some issues when the
+>>> device name contains '%' characters.
+>>>
+>>> To avoid any potential issue, always use "%s" when using
+>>> drm_dev_set_unique() with dev_name().
+> 
+> Not sure this is worth it really, normally people don't place % characters
+> into their device names, ever. And if they do it'll blow up. There's also
+> no security issue here since userspace can't set this name.
+> 
+> If the maintainers of the affected drivers don't want this I won't merge
+> this patch.
+
+Actually I had the same opinion before I began to add __printf
+attributes and "%s" in several places in the kernel to make
+-Wformat-security useful.  This led me to discover some funny issues
+like the one fixed by commit 3958b79266b1 ("configfs: fix kernel
+infoleak through user-controlled format string",
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/?id=3958b79266b14729edd61daf9dfb84de45f4ec6d
+).  The patch I sent is in fact a very small step towards making
+-Wformat-security useful again to detect "real" issues.
+
+Of course, if you do not feel it is worth it and believe that dev_name
+is fully controlled by trusted sources which will never introduce any %
+character, I understand your will of not merging my patch.
+
+Regards,
+Nicolas
