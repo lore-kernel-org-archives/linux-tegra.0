@@ -1,66 +1,92 @@
-From: Alban Bedel <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Subject: [PATCH v2 2/2] Fix image update with image smaller than 10KiB
-Date: Mon,  7 Dec 2015 12:52:30 +0100
-Message-ID: <1449489150-5732-2-git-send-email-alban.bedel@avionic-design.de>
-References: <1449489150-5732-1-git-send-email-alban.bedel@avionic-design.de>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1449489150-5732-1-git-send-email-alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Alban Bedel <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH] drm: do not use device name as a format string
+Date: Mon, 7 Dec 2015 13:25:52 +0100
+Message-ID: <20151207132552.478200e3@bbrezillon>
+References: <1447869498-13277-1-git-send-email-nicolas.iooss_linux@m4x.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1447869498-13277-1-git-send-email-nicolas.iooss_linux@m4x.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Nicolas Iooss <nicolas.iooss_linux@m4x.org>
+Cc: Terje =?UTF-8?B?QmVyZ3N0csO2?= =?UTF-8?B?bQ==?= <tbergstrom@nvidia.com>, Alison Wang <alison.wang@freescale.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The BCT size check assume a quiet large image, however if the image
-doesn't contains a bootloader it won't be that large. Change the size
-check to check for the smallest possible BCT size which is currently
-the T20 BCT.
-
-Signed-off-by: Alban Bedel <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
---
-Changelog:
-v2: * Add a comment to explain the value of NVBOOT_CONFIG_TABLE_SIZE_MIN
----
- src/cbootimage.h  | 14 ++++++++++++++
- src/data_layout.c |  2 +-
- 2 files changed, 15 insertions(+), 1 deletion(-)
-
-diff --git a/src/cbootimage.h b/src/cbootimage.h
-index 63f0ee9..ba2d997 100644
---- a/src/cbootimage.h
-+++ b/src/cbootimage.h
-@@ -49,6 +49,20 @@
- 
- #define MAX_MTS_SIZE (4 * 1024 * 1024)
- 
-+/* Minimum size to read to at least be able to validate a BCT, it must
-+ * include the boot_data_version field with any BCT version while not
-+ * beeing larger than the smallest possible BCT. The currently supported
-+ * BCT are as follow:
-+ *
-+ * Chip		Version offset	Total size
-+ * T20		32		4080
-+ * T30		32		6128
-+ * T114		1792		8192
-+ * T124		1744		8192
-+ * T132		1744		8704
-+ * T210		1328		10240
-+ */
-+#define NVBOOT_CONFIG_TABLE_SIZE_MIN 4080
- #define NVBOOT_CONFIG_TABLE_SIZE_MAX (10 * 1024)
- 
- /*
-diff --git a/src/data_layout.c b/src/data_layout.c
-index 460310d..59b5afd 100644
---- a/src/data_layout.c
-+++ b/src/data_layout.c
-@@ -1052,7 +1052,7 @@ int get_bct_size_from_image(build_image_context *context)
- 	if (!fp)
- 		return -ENODATA;
- 
--	if (fread(buffer, 1, NVBOOT_CONFIG_TABLE_SIZE_MAX, fp) != NVBOOT_CONFIG_TABLE_SIZE_MAX) {
-+	if (fread(buffer, 1, NVBOOT_CONFIG_TABLE_SIZE_MAX, fp) < NVBOOT_CONFIG_TABLE_SIZE_MIN) {
- 		fclose(fp);
- 		return -ENODATA;
- 	}
--- 
-2.6.3
+T24gV2VkLCAxOCBOb3YgMjAxNSAxODo1ODoxOCArMDEwMApOaWNvbGFzIElvb3NzIDxuaWNvbGFz
+Lmlvb3NzX2xpbnV4QG00eC5vcmc+IHdyb3RlOgoKPiBkcm1fZGV2X3NldF91bmlxdWUoKSBmb3Jt
+YXRzIGl0cyBwYXJhbWV0ZXIgdXNpbmcga3Zhc3ByaW50ZigpIGJ1dCBtYW55Cj4gb2YgaXRzIGNh
+bGxlcnMgZGlyZWN0bHkgcGFzcyBkZXZfbmFtZShkZXYpIGFzIHByaW50ZiBmb3JtYXQgc3RyaW5n
+LAo+IHdpdGhvdXQgYW55IGZvcm1hdCBwYXJhbWV0ZXIuICBUaGlzIGNhbiBjYXVzZSBzb21lIGlz
+c3VlcyB3aGVuIHRoZQo+IGRldmljZSBuYW1lIGNvbnRhaW5zICclJyBjaGFyYWN0ZXJzLgo+IAo+
+IFRvIGF2b2lkIGFueSBwb3RlbnRpYWwgaXNzdWUsIGFsd2F5cyB1c2UgIiVzIiB3aGVuIHVzaW5n
+Cj4gZHJtX2Rldl9zZXRfdW5pcXVlKCkgd2l0aCBkZXZfbmFtZSgpLgo+IAo+IFNpZ25lZC1vZmYt
+Ynk6IE5pY29sYXMgSW9vc3MgPG5pY29sYXMuaW9vc3NfbGludXhAbTR4Lm9yZz4KCkknbGwgbGV0
+IERhbmllbCBkZWNpZGUgd2hldGhlciBpdCdzIHJlbGV2YW50IG9yIG5vdCB0byBhZGQgYSBuZXcK
+ZnVuY3Rpb24vbWFjcm8gdG8gaGlkZSB0aGlzLCBidXQgSSdtIGZpbmUgd2l0aCB0aGUgY3VycmVu
+dCBwYXRjaC4KCltmb3IgdGhlIGF0bWVsLWhsY2RjIGRyaXZlcl0KQWNrZWQtYnk6IEJvcmlzIEJy
+ZXppbGxvbiA8Ym9yaXMuYnJlemlsbG9uQGZyZWUtZWxlY3Ryb25zLmNvbT4KCj4gLS0tCj4gIGRy
+aXZlcnMvZ3B1L2RybS9hdG1lbC1obGNkYy9hdG1lbF9obGNkY19kYy5jIHwgMiArLQo+ICBkcml2
+ZXJzL2dwdS9kcm0vZnNsLWRjdS9mc2xfZGN1X2RybV9kcnYuYyAgICB8IDIgKy0KPiAgZHJpdmVy
+cy9ncHUvZHJtL3RlZ3JhL2RybS5jICAgICAgICAgICAgICAgICAgfCAyICstCj4gIGRyaXZlcnMv
+Z3B1L2RybS92YzQvdmM0X2Rydi5jICAgICAgICAgICAgICAgIHwgMiArLQo+ICBpbmNsdWRlL2Ry
+bS9kcm1QLmggICAgICAgICAgICAgICAgICAgICAgICAgICB8IDEgKwo+ICA1IGZpbGVzIGNoYW5n
+ZWQsIDUgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJp
+dmVycy9ncHUvZHJtL2F0bWVsLWhsY2RjL2F0bWVsX2hsY2RjX2RjLmMgYi9kcml2ZXJzL2dwdS9k
+cm0vYXRtZWwtaGxjZGMvYXRtZWxfaGxjZGNfZGMuYwo+IGluZGV4IDI0NGRmMGE0NDBiNy4uMGQ3
+MjBkM2E3ZWUwIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9hdG1lbC1obGNkYy9hdG1l
+bF9obGNkY19kYy5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2F0bWVsLWhsY2RjL2F0bWVsX2hs
+Y2RjX2RjLmMKPiBAQCAtNzMzLDcgKzczMyw3IEBAIHN0YXRpYyBpbnQgYXRtZWxfaGxjZGNfZGNf
+ZHJtX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gIAlpZiAoIWRkZXYpCj4g
+IAkJcmV0dXJuIC1FTk9NRU07Cj4gIAo+IC0JcmV0ID0gZHJtX2Rldl9zZXRfdW5pcXVlKGRkZXYs
+IGRldl9uYW1lKGRkZXYtPmRldikpOwo+ICsJcmV0ID0gZHJtX2Rldl9zZXRfdW5pcXVlKGRkZXYs
+ICIlcyIsIGRldl9uYW1lKGRkZXYtPmRldikpOwo+ICAJaWYgKHJldCkKPiAgCQlnb3RvIGVycl91
+bnJlZjsKPiAgCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9mc2wtZGN1L2ZzbF9kY3Vf
+ZHJtX2Rydi5jIGIvZHJpdmVycy9ncHUvZHJtL2ZzbC1kY3UvZnNsX2RjdV9kcm1fZHJ2LmMKPiBp
+bmRleCAxOTMwMjM0YmE1ZjEuLjk0N2Q3NWY1OTg4MSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dw
+dS9kcm0vZnNsLWRjdS9mc2xfZGN1X2RybV9kcnYuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9m
+c2wtZGN1L2ZzbF9kY3VfZHJtX2Rydi5jCj4gQEAgLTM2Myw3ICszNjMsNyBAQCBzdGF0aWMgaW50
+IGZzbF9kY3VfZHJtX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gIAlmc2xf
+ZGV2LT5ucCA9IGRldi0+b2Zfbm9kZTsKPiAgCWRybS0+ZGV2X3ByaXZhdGUgPSBmc2xfZGV2Owo+
+ICAJZGV2X3NldF9kcnZkYXRhKGRldiwgZnNsX2Rldik7Cj4gLQlkcm1fZGV2X3NldF91bmlxdWUo
+ZHJtLCBkZXZfbmFtZShkZXYpKTsKPiArCWRybV9kZXZfc2V0X3VuaXF1ZShkcm0sICIlcyIsIGRl
+dl9uYW1lKGRldikpOwo+ICAKPiAgCXJldCA9IGRybV9kZXZfcmVnaXN0ZXIoZHJtLCAwKTsKPiAg
+CWlmIChyZXQgPCAwKQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMg
+Yi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKPiBpbmRleCAxNTllZjUxNWNhYjEuLmIyNzhm
+NjBmNDM3NiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKPiArKysg
+Yi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKPiBAQCAtOTkxLDcgKzk5MSw3IEBAIHN0YXRp
+YyBpbnQgaG9zdDF4X2RybV9wcm9iZShzdHJ1Y3QgaG9zdDF4X2RldmljZSAqZGV2KQo+ICAJaWYg
+KCFkcm0pCj4gIAkJcmV0dXJuIC1FTk9NRU07Cj4gIAo+IC0JZHJtX2Rldl9zZXRfdW5pcXVlKGRy
+bSwgZGV2X25hbWUoJmRldi0+ZGV2KSk7Cj4gKwlkcm1fZGV2X3NldF91bmlxdWUoZHJtLCAiJXMi
+LCBkZXZfbmFtZSgmZGV2LT5kZXYpKTsKPiAgCWRldl9zZXRfZHJ2ZGF0YSgmZGV2LT5kZXYsIGRy
+bSk7Cj4gIAo+ICAJZXJyID0gZHJtX2Rldl9yZWdpc3Rlcihkcm0sIDApOwo+IGRpZmYgLS1naXQg
+YS9kcml2ZXJzL2dwdS9kcm0vdmM0L3ZjNF9kcnYuYyBiL2RyaXZlcnMvZ3B1L2RybS92YzQvdmM0
+X2Rydi5jCj4gaW5kZXggNmU3MzA2MDVlZGNjLi5jOTBhNDUxYWFhNzkgMTAwNjQ0Cj4gLS0tIGEv
+ZHJpdmVycy9ncHUvZHJtL3ZjNC92YzRfZHJ2LmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdmM0
+L3ZjNF9kcnYuYwo+IEBAIC0xNjgsNyArMTY4LDcgQEAgc3RhdGljIGludCB2YzRfZHJtX2JpbmQo
+c3RydWN0IGRldmljZSAqZGV2KQo+ICAJdmM0LT5kZXYgPSBkcm07Cj4gIAlkcm0tPmRldl9wcml2
+YXRlID0gdmM0Owo+ICAKPiAtCWRybV9kZXZfc2V0X3VuaXF1ZShkcm0sIGRldl9uYW1lKGRldikp
+Owo+ICsJZHJtX2Rldl9zZXRfdW5pcXVlKGRybSwgIiVzIiwgZGV2X25hbWUoZGV2KSk7Cj4gIAo+
+ICAJZHJtX21vZGVfY29uZmlnX2luaXQoZHJtKTsKPiAgCWlmIChyZXQpCj4gZGlmZiAtLWdpdCBh
+L2luY2x1ZGUvZHJtL2RybVAuaCBiL2luY2x1ZGUvZHJtL2RybVAuaAo+IGluZGV4IDBiOTIxYWUw
+NmNkOC4uOTk1ZmI5NmNiNzQwIDEwMDY0NAo+IC0tLSBhL2luY2x1ZGUvZHJtL2RybVAuaAo+ICsr
+KyBiL2luY2x1ZGUvZHJtL2RybVAuaAo+IEBAIC0xMDQ5LDYgKzEwNDksNyBAQCB2b2lkIGRybV9k
+ZXZfcmVmKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYpOwo+ICB2b2lkIGRybV9kZXZfdW5yZWYoc3Ry
+dWN0IGRybV9kZXZpY2UgKmRldik7Cj4gIGludCBkcm1fZGV2X3JlZ2lzdGVyKHN0cnVjdCBkcm1f
+ZGV2aWNlICpkZXYsIHVuc2lnbmVkIGxvbmcgZmxhZ3MpOwo+ICB2b2lkIGRybV9kZXZfdW5yZWdp
+c3RlcihzdHJ1Y3QgZHJtX2RldmljZSAqZGV2KTsKPiArX19wcmludGYoMiwgMykKPiAgaW50IGRy
+bV9kZXZfc2V0X3VuaXF1ZShzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBjb25zdCBjaGFyICpmbXQs
+IC4uLik7Cj4gIAo+ICBzdHJ1Y3QgZHJtX21pbm9yICpkcm1fbWlub3JfYWNxdWlyZSh1bnNpZ25l
+ZCBpbnQgbWlub3JfaWQpOwoKCgotLSAKQm9yaXMgQnJlemlsbG9uLCBGcmVlIEVsZWN0cm9ucwpF
+bWJlZGRlZCBMaW51eCBhbmQgS2VybmVsIGVuZ2luZWVyaW5nCmh0dHA6Ly9mcmVlLWVsZWN0cm9u
+cy5jb20KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
+LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6
+Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
