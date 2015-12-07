@@ -1,31 +1,67 @@
-From: Saurabh Sengar <saurabh.truth@gmail.com>
-Subject: [PATCH] gpu: host1x: mipi: Added missing mutex_unlock
-Date: Mon,  7 Dec 2015 01:22:58 +0530
-Message-ID: <1449431578-6998-1-git-send-email-saurabh.truth@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, tbergstrom@nvidia.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Saurabh Sengar <saurabh.truth@gmail.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH] drm: do not use device name as a format string
+Date: Mon, 7 Dec 2015 08:43:12 +0100
+Message-ID: <20151207074312.GU10243@phenom.ffwll.local>
+References: <1447869498-13277-1-git-send-email-nicolas.iooss_linux@m4x.org>
+ <5662B24E.4090202@m4x.org>
+ <20151206093559.GT10243@phenom.ffwll.local>
+ <56640B00.7040100@m4x.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <56640B00.7040100@m4x.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Nicolas Iooss <nicolas.iooss_linux@m4x.org>
+Cc: Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Alison Wang <alison.wang@freescale.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-In case of error too function should return after releasing the mutex
-
-Signed-off-by: Saurabh Sengar <saurabh.truth@gmail.com>
----
- drivers/gpu/host1x/mipi.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/gpu/host1x/mipi.c b/drivers/gpu/host1x/mipi.c
-index 52a6fd2..6e559a9 100644
---- a/drivers/gpu/host1x/mipi.c
-+++ b/drivers/gpu/host1x/mipi.c
-@@ -250,6 +250,7 @@ struct tegra_mipi_device *tegra_mipi_request(struct device *device)
- 			dev_err(dev->mipi->dev,
- 				"failed to power up MIPI bricks: %d\n",
- 				err);
-+			mutex_unlock(&dev->mipi->lock);
- 			return ERR_PTR(err);
- 		}
- 	}
--- 
-1.9.1
+T24gU3VuLCBEZWMgMDYsIDIwMTUgYXQgMTE6MTY6MzJBTSArMDEwMCwgTmljb2xhcyBJb29zcyB3
+cm90ZToKPiBPbiAxMi8wNi8yMDE1IDEwOjM1IEFNLCBEYW5pZWwgVmV0dGVyIHdyb3RlOgo+ID4+
+IE9uIDExLzE4LzIwMTUgMDY6NTggUE0sIE5pY29sYXMgSW9vc3Mgd3JvdGU6Cj4gPj4+IGRybV9k
+ZXZfc2V0X3VuaXF1ZSgpIGZvcm1hdHMgaXRzIHBhcmFtZXRlciB1c2luZyBrdmFzcHJpbnRmKCkg
+YnV0IG1hbnkKPiA+Pj4gb2YgaXRzIGNhbGxlcnMgZGlyZWN0bHkgcGFzcyBkZXZfbmFtZShkZXYp
+IGFzIHByaW50ZiBmb3JtYXQgc3RyaW5nLAo+ID4+PiB3aXRob3V0IGFueSBmb3JtYXQgcGFyYW1l
+dGVyLiAgVGhpcyBjYW4gY2F1c2Ugc29tZSBpc3N1ZXMgd2hlbiB0aGUKPiA+Pj4gZGV2aWNlIG5h
+bWUgY29udGFpbnMgJyUnIGNoYXJhY3RlcnMuCj4gPj4+Cj4gPj4+IFRvIGF2b2lkIGFueSBwb3Rl
+bnRpYWwgaXNzdWUsIGFsd2F5cyB1c2UgIiVzIiB3aGVuIHVzaW5nCj4gPj4+IGRybV9kZXZfc2V0
+X3VuaXF1ZSgpIHdpdGggZGV2X25hbWUoKS4KPiA+IAo+ID4gTm90IHN1cmUgdGhpcyBpcyB3b3J0
+aCBpdCByZWFsbHksIG5vcm1hbGx5IHBlb3BsZSBkb24ndCBwbGFjZSAlIGNoYXJhY3RlcnMKPiA+
+IGludG8gdGhlaXIgZGV2aWNlIG5hbWVzLCBldmVyLiBBbmQgaWYgdGhleSBkbyBpdCdsbCBibG93
+IHVwLiBUaGVyZSdzIGFsc28KPiA+IG5vIHNlY3VyaXR5IGlzc3VlIGhlcmUgc2luY2UgdXNlcnNw
+YWNlIGNhbid0IHNldCB0aGlzIG5hbWUuCj4gPiAKPiA+IElmIHRoZSBtYWludGFpbmVycyBvZiB0
+aGUgYWZmZWN0ZWQgZHJpdmVycyBkb24ndCB3YW50IHRoaXMgSSB3b24ndCBtZXJnZQo+ID4gdGhp
+cyBwYXRjaC4KPiAKPiBBY3R1YWxseSBJIGhhZCB0aGUgc2FtZSBvcGluaW9uIGJlZm9yZSBJIGJl
+Z2FuIHRvIGFkZCBfX3ByaW50Zgo+IGF0dHJpYnV0ZXMgYW5kICIlcyIgaW4gc2V2ZXJhbCBwbGFj
+ZXMgaW4gdGhlIGtlcm5lbCB0byBtYWtlCj4gLVdmb3JtYXQtc2VjdXJpdHkgdXNlZnVsLiAgVGhp
+cyBsZWQgbWUgdG8gZGlzY292ZXIgc29tZSBmdW5ueSBpc3N1ZXMKPiBsaWtlIHRoZSBvbmUgZml4
+ZWQgYnkgY29tbWl0IDM5NThiNzkyNjZiMSAoImNvbmZpZ2ZzOiBmaXgga2VybmVsCj4gaW5mb2xl
+YWsgdGhyb3VnaCB1c2VyLWNvbnRyb2xsZWQgZm9ybWF0IHN0cmluZyIsCj4gaHR0cHM6Ly9naXQu
+a2VybmVsLm9yZy9jZ2l0L2xpbnV4L2tlcm5lbC9naXQvdG9ydmFsZHMvbGludXguZ2l0L2NvbW1p
+dC8/aWQ9Mzk1OGI3OTI2NmIxNDcyOWVkZDYxZGFmOWRmYjg0ZGU0NWY0ZWM2ZAo+ICkuICBUaGUg
+cGF0Y2ggSSBzZW50IGlzIGluIGZhY3QgYSB2ZXJ5IHNtYWxsIHN0ZXAgdG93YXJkcyBtYWtpbmcK
+PiAtV2Zvcm1hdC1zZWN1cml0eSB1c2VmdWwgYWdhaW4gdG8gZGV0ZWN0ICJyZWFsIiBpc3N1ZXMu
+Cj4gCj4gT2YgY291cnNlLCBpZiB5b3UgZG8gbm90IGZlZWwgaXQgaXMgd29ydGggaXQgYW5kIGJl
+bGlldmUgdGhhdCBkZXZfbmFtZQo+IGlzIGZ1bGx5IGNvbnRyb2xsZWQgYnkgdHJ1c3RlZCBzb3Vy
+Y2VzIHdoaWNoIHdpbGwgbmV2ZXIgaW50cm9kdWNlIGFueSAlCj4gY2hhcmFjdGVyLCBJIHVuZGVy
+c3RhbmQgeW91ciB3aWxsIG9mIG5vdCBtZXJnaW5nIG15IHBhdGNoLgoKQWgsIHRoYXQncyB0aGUg
+Y29udGV4dCBJIHdhcyBtaXNzaW5nLCB0aGF0IHJlYWxseSBzaG91bGQgYmUgaW4gdGhlIGNvbW1p
+dAptZXNzYWdlLiBJZiB0aGlzIGlzIHBhcnQgb2YgYW4gb3ZlcmFsbCBlZmZvcnQgdG8gZW5hYmxl
+IHNvbWV0aGluZyB1c2VmdWwKaXQgbWFrZXMgbW9yZSBzZW5zZSB0byBnZXQgaXQgaW4uCgpPbiB0
+aGUgcGF0Y2ggaXRzZWxmIGl0IGZlZWxzIHJhdGhlciBmdW5ueSB0byBkbyBhICIlcyIsIHN0cik7
+IGNvbWJvLCBtYXliZQp3ZSBzaG91bGQgaGF2ZSBhIGRybV9kZXZfc2V0X3VuaXF1ZV9zdGF0aWMg
+aW5zdGVhZD8gSW5jbHVkaW5nIGtlcm5lbGRvYwpleHBsYWluaW5nIHdoeSB0aGVyZSdzIHRvby4K
+LURhbmllbAotLSAKRGFuaWVsIFZldHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9y
+YXRpb24KaHR0cDovL2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
+aW5mby9kcmktZGV2ZWwK
