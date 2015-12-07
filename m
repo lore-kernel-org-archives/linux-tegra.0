@@ -1,92 +1,121 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH] drm: do not use device name as a format string
-Date: Mon, 7 Dec 2015 13:25:52 +0100
-Message-ID: <20151207132552.478200e3@bbrezillon>
+Date: Mon, 7 Dec 2015 13:31:53 +0100
+Message-ID: <20151207123153.GY13177@ulmo>
 References: <1447869498-13277-1-git-send-email-nicolas.iooss_linux@m4x.org>
+ <5662B24E.4090202@m4x.org>
+ <20151206093559.GT10243@phenom.ffwll.local>
+ <56640B00.7040100@m4x.org>
+ <20151207074312.GU10243@phenom.ffwll.local>
+ <874mfuzite.fsf@intel.com>
+ <20151207114652.GC10243@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1447869498-13277-1-git-send-email-nicolas.iooss_linux@m4x.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Nicolas Iooss <nicolas.iooss_linux@m4x.org>
-Cc: Terje =?UTF-8?B?QmVyZ3N0csO2?= =?UTF-8?B?bQ==?= <tbergstrom@nvidia.com>, Alison Wang <alison.wang@freescale.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="2VOk7s3pVsDYAazo"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20151207114652.GC10243-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jani Nikula <jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Nicolas Iooss <nicolas.iooss_linux-oWGTIYur0i8@public.gmane.org>, Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alison Wang <alison.wang-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gV2VkLCAxOCBOb3YgMjAxNSAxODo1ODoxOCArMDEwMApOaWNvbGFzIElvb3NzIDxuaWNvbGFz
-Lmlvb3NzX2xpbnV4QG00eC5vcmc+IHdyb3RlOgoKPiBkcm1fZGV2X3NldF91bmlxdWUoKSBmb3Jt
-YXRzIGl0cyBwYXJhbWV0ZXIgdXNpbmcga3Zhc3ByaW50ZigpIGJ1dCBtYW55Cj4gb2YgaXRzIGNh
-bGxlcnMgZGlyZWN0bHkgcGFzcyBkZXZfbmFtZShkZXYpIGFzIHByaW50ZiBmb3JtYXQgc3RyaW5n
-LAo+IHdpdGhvdXQgYW55IGZvcm1hdCBwYXJhbWV0ZXIuICBUaGlzIGNhbiBjYXVzZSBzb21lIGlz
-c3VlcyB3aGVuIHRoZQo+IGRldmljZSBuYW1lIGNvbnRhaW5zICclJyBjaGFyYWN0ZXJzLgo+IAo+
-IFRvIGF2b2lkIGFueSBwb3RlbnRpYWwgaXNzdWUsIGFsd2F5cyB1c2UgIiVzIiB3aGVuIHVzaW5n
-Cj4gZHJtX2Rldl9zZXRfdW5pcXVlKCkgd2l0aCBkZXZfbmFtZSgpLgo+IAo+IFNpZ25lZC1vZmYt
-Ynk6IE5pY29sYXMgSW9vc3MgPG5pY29sYXMuaW9vc3NfbGludXhAbTR4Lm9yZz4KCkknbGwgbGV0
-IERhbmllbCBkZWNpZGUgd2hldGhlciBpdCdzIHJlbGV2YW50IG9yIG5vdCB0byBhZGQgYSBuZXcK
-ZnVuY3Rpb24vbWFjcm8gdG8gaGlkZSB0aGlzLCBidXQgSSdtIGZpbmUgd2l0aCB0aGUgY3VycmVu
-dCBwYXRjaC4KCltmb3IgdGhlIGF0bWVsLWhsY2RjIGRyaXZlcl0KQWNrZWQtYnk6IEJvcmlzIEJy
-ZXppbGxvbiA8Ym9yaXMuYnJlemlsbG9uQGZyZWUtZWxlY3Ryb25zLmNvbT4KCj4gLS0tCj4gIGRy
-aXZlcnMvZ3B1L2RybS9hdG1lbC1obGNkYy9hdG1lbF9obGNkY19kYy5jIHwgMiArLQo+ICBkcml2
-ZXJzL2dwdS9kcm0vZnNsLWRjdS9mc2xfZGN1X2RybV9kcnYuYyAgICB8IDIgKy0KPiAgZHJpdmVy
-cy9ncHUvZHJtL3RlZ3JhL2RybS5jICAgICAgICAgICAgICAgICAgfCAyICstCj4gIGRyaXZlcnMv
-Z3B1L2RybS92YzQvdmM0X2Rydi5jICAgICAgICAgICAgICAgIHwgMiArLQo+ICBpbmNsdWRlL2Ry
-bS9kcm1QLmggICAgICAgICAgICAgICAgICAgICAgICAgICB8IDEgKwo+ICA1IGZpbGVzIGNoYW5n
-ZWQsIDUgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJp
-dmVycy9ncHUvZHJtL2F0bWVsLWhsY2RjL2F0bWVsX2hsY2RjX2RjLmMgYi9kcml2ZXJzL2dwdS9k
-cm0vYXRtZWwtaGxjZGMvYXRtZWxfaGxjZGNfZGMuYwo+IGluZGV4IDI0NGRmMGE0NDBiNy4uMGQ3
-MjBkM2E3ZWUwIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9hdG1lbC1obGNkYy9hdG1l
-bF9obGNkY19kYy5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2F0bWVsLWhsY2RjL2F0bWVsX2hs
-Y2RjX2RjLmMKPiBAQCAtNzMzLDcgKzczMyw3IEBAIHN0YXRpYyBpbnQgYXRtZWxfaGxjZGNfZGNf
-ZHJtX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gIAlpZiAoIWRkZXYpCj4g
-IAkJcmV0dXJuIC1FTk9NRU07Cj4gIAo+IC0JcmV0ID0gZHJtX2Rldl9zZXRfdW5pcXVlKGRkZXYs
-IGRldl9uYW1lKGRkZXYtPmRldikpOwo+ICsJcmV0ID0gZHJtX2Rldl9zZXRfdW5pcXVlKGRkZXYs
-ICIlcyIsIGRldl9uYW1lKGRkZXYtPmRldikpOwo+ICAJaWYgKHJldCkKPiAgCQlnb3RvIGVycl91
-bnJlZjsKPiAgCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9mc2wtZGN1L2ZzbF9kY3Vf
-ZHJtX2Rydi5jIGIvZHJpdmVycy9ncHUvZHJtL2ZzbC1kY3UvZnNsX2RjdV9kcm1fZHJ2LmMKPiBp
-bmRleCAxOTMwMjM0YmE1ZjEuLjk0N2Q3NWY1OTg4MSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dw
-dS9kcm0vZnNsLWRjdS9mc2xfZGN1X2RybV9kcnYuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9m
-c2wtZGN1L2ZzbF9kY3VfZHJtX2Rydi5jCj4gQEAgLTM2Myw3ICszNjMsNyBAQCBzdGF0aWMgaW50
-IGZzbF9kY3VfZHJtX3Byb2JlKHN0cnVjdCBwbGF0Zm9ybV9kZXZpY2UgKnBkZXYpCj4gIAlmc2xf
-ZGV2LT5ucCA9IGRldi0+b2Zfbm9kZTsKPiAgCWRybS0+ZGV2X3ByaXZhdGUgPSBmc2xfZGV2Owo+
-ICAJZGV2X3NldF9kcnZkYXRhKGRldiwgZnNsX2Rldik7Cj4gLQlkcm1fZGV2X3NldF91bmlxdWUo
-ZHJtLCBkZXZfbmFtZShkZXYpKTsKPiArCWRybV9kZXZfc2V0X3VuaXF1ZShkcm0sICIlcyIsIGRl
-dl9uYW1lKGRldikpOwo+ICAKPiAgCXJldCA9IGRybV9kZXZfcmVnaXN0ZXIoZHJtLCAwKTsKPiAg
-CWlmIChyZXQgPCAwKQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMg
-Yi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKPiBpbmRleCAxNTllZjUxNWNhYjEuLmIyNzhm
-NjBmNDM3NiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKPiArKysg
-Yi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKPiBAQCAtOTkxLDcgKzk5MSw3IEBAIHN0YXRp
-YyBpbnQgaG9zdDF4X2RybV9wcm9iZShzdHJ1Y3QgaG9zdDF4X2RldmljZSAqZGV2KQo+ICAJaWYg
-KCFkcm0pCj4gIAkJcmV0dXJuIC1FTk9NRU07Cj4gIAo+IC0JZHJtX2Rldl9zZXRfdW5pcXVlKGRy
-bSwgZGV2X25hbWUoJmRldi0+ZGV2KSk7Cj4gKwlkcm1fZGV2X3NldF91bmlxdWUoZHJtLCAiJXMi
-LCBkZXZfbmFtZSgmZGV2LT5kZXYpKTsKPiAgCWRldl9zZXRfZHJ2ZGF0YSgmZGV2LT5kZXYsIGRy
-bSk7Cj4gIAo+ICAJZXJyID0gZHJtX2Rldl9yZWdpc3Rlcihkcm0sIDApOwo+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL2dwdS9kcm0vdmM0L3ZjNF9kcnYuYyBiL2RyaXZlcnMvZ3B1L2RybS92YzQvdmM0
-X2Rydi5jCj4gaW5kZXggNmU3MzA2MDVlZGNjLi5jOTBhNDUxYWFhNzkgMTAwNjQ0Cj4gLS0tIGEv
-ZHJpdmVycy9ncHUvZHJtL3ZjNC92YzRfZHJ2LmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdmM0
-L3ZjNF9kcnYuYwo+IEBAIC0xNjgsNyArMTY4LDcgQEAgc3RhdGljIGludCB2YzRfZHJtX2JpbmQo
-c3RydWN0IGRldmljZSAqZGV2KQo+ICAJdmM0LT5kZXYgPSBkcm07Cj4gIAlkcm0tPmRldl9wcml2
-YXRlID0gdmM0Owo+ICAKPiAtCWRybV9kZXZfc2V0X3VuaXF1ZShkcm0sIGRldl9uYW1lKGRldikp
-Owo+ICsJZHJtX2Rldl9zZXRfdW5pcXVlKGRybSwgIiVzIiwgZGV2X25hbWUoZGV2KSk7Cj4gIAo+
-ICAJZHJtX21vZGVfY29uZmlnX2luaXQoZHJtKTsKPiAgCWlmIChyZXQpCj4gZGlmZiAtLWdpdCBh
-L2luY2x1ZGUvZHJtL2RybVAuaCBiL2luY2x1ZGUvZHJtL2RybVAuaAo+IGluZGV4IDBiOTIxYWUw
-NmNkOC4uOTk1ZmI5NmNiNzQwIDEwMDY0NAo+IC0tLSBhL2luY2x1ZGUvZHJtL2RybVAuaAo+ICsr
-KyBiL2luY2x1ZGUvZHJtL2RybVAuaAo+IEBAIC0xMDQ5LDYgKzEwNDksNyBAQCB2b2lkIGRybV9k
-ZXZfcmVmKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYpOwo+ICB2b2lkIGRybV9kZXZfdW5yZWYoc3Ry
-dWN0IGRybV9kZXZpY2UgKmRldik7Cj4gIGludCBkcm1fZGV2X3JlZ2lzdGVyKHN0cnVjdCBkcm1f
-ZGV2aWNlICpkZXYsIHVuc2lnbmVkIGxvbmcgZmxhZ3MpOwo+ICB2b2lkIGRybV9kZXZfdW5yZWdp
-c3RlcihzdHJ1Y3QgZHJtX2RldmljZSAqZGV2KTsKPiArX19wcmludGYoMiwgMykKPiAgaW50IGRy
-bV9kZXZfc2V0X3VuaXF1ZShzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBjb25zdCBjaGFyICpmbXQs
-IC4uLik7Cj4gIAo+ICBzdHJ1Y3QgZHJtX21pbm9yICpkcm1fbWlub3JfYWNxdWlyZSh1bnNpZ25l
-ZCBpbnQgbWlub3JfaWQpOwoKCgotLSAKQm9yaXMgQnJlemlsbG9uLCBGcmVlIEVsZWN0cm9ucwpF
-bWJlZGRlZCBMaW51eCBhbmQgS2VybmVsIGVuZ2luZWVyaW5nCmh0dHA6Ly9mcmVlLWVsZWN0cm9u
-cy5jb20KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJp
-LWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHA6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+
+--2VOk7s3pVsDYAazo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Dec 07, 2015 at 12:46:52PM +0100, Daniel Vetter wrote:
+> On Mon, Dec 07, 2015 at 11:53:01AM +0200, Jani Nikula wrote:
+> > On Mon, 07 Dec 2015, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org> wrote:
+> > > On Sun, Dec 06, 2015 at 11:16:32AM +0100, Nicolas Iooss wrote:
+> > >> On 12/06/2015 10:35 AM, Daniel Vetter wrote:
+> > >> >> On 11/18/2015 06:58 PM, Nicolas Iooss wrote:
+> > >> >>> drm_dev_set_unique() formats its parameter using kvasprintf() bu=
+t many
+> > >> >>> of its callers directly pass dev_name(dev) as printf format stri=
+ng,
+> > >> >>> without any format parameter.  This can cause some issues when t=
+he
+> > >> >>> device name contains '%' characters.
+> > >> >>>
+> > >> >>> To avoid any potential issue, always use "%s" when using
+> > >> >>> drm_dev_set_unique() with dev_name().
+> > >> >=20
+> > >> > Not sure this is worth it really, normally people don't place % ch=
+aracters
+> > >> > into their device names, ever. And if they do it'll blow up. There=
+'s also
+> > >> > no security issue here since userspace can't set this name.
+> > >> >=20
+> > >> > If the maintainers of the affected drivers don't want this I won't=
+ merge
+> > >> > this patch.
+> > >>=20
+> > >> Actually I had the same opinion before I began to add __printf
+> > >> attributes and "%s" in several places in the kernel to make
+> > >> -Wformat-security useful.  This led me to discover some funny issues
+> > >> like the one fixed by commit 3958b79266b1 ("configfs: fix kernel
+> > >> infoleak through user-controlled format string",
+> > >> https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/comm=
+it/?id=3D3958b79266b14729edd61daf9dfb84de45f4ec6d
+> > >> ).  The patch I sent is in fact a very small step towards making
+> > >> -Wformat-security useful again to detect "real" issues.
+> > >>=20
+> > >> Of course, if you do not feel it is worth it and believe that dev_na=
+me
+> > >> is fully controlled by trusted sources which will never introduce an=
+y %
+> > >> character, I understand your will of not merging my patch.
+> > >
+> > > Ah, that's the context I was missing, that really should be in the co=
+mmit
+> > > message. If this is part of an overall effort to enable something use=
+ful
+> > > it makes more sense to get it in.
+> > >
+> > > On the patch itself it feels rather funny to do a "%s", str); combo, =
+maybe
+> > > we should have a drm_dev_set_unique_static instead? Including kerneld=
+oc
+> > > explaining why there's too.
+> >=20
+> > No caller of drm_dev_set_unique() actually uses the formatting for
+> > anything... so you'd end up with drm_dev_set_unique_static() and an
+> > orphaned drm_dev_set_unique()...
+>=20
+> Ok, then I guess we can just ditch the printf stuff from set_unique.
+> Nicolas, you're up for that?
+
+Looking at all the callsites of drm_dev_set_unique() it seems like all
+of the drivers (with the exception of vgem) use dev_name() on the same
+device that's already passed into drm_dev_alloc(), so perhaps another
+alternative would be to have drm_dev_alloc() set the unique name by
+default and keep the function for cases where it needs to be set
+explicitly (like for vgem). vgem passes drm_dev_alloc() a NULL device,
+so that could serve as condition.
+
+Thierry
+
+--2VOk7s3pVsDYAazo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJWZXw5AAoJEN0jrNd/PrOhj0QQAILlT4/o7SXCncyMBj6WDMAv
+lpREOAdlfpDQmQNE6nfQQfzrkbmYwXPXzk0krUEcCYbKoY4MRoFGnSkeRhdtFXrn
+hplA22y1XhW0iKHNNk4rflN5rEXtxI1zitVXS/mClKW+z1x6MHl4U1G3mc1z4yiu
+zfGpDEauw5mANRBQ1gWv5nYmK9SxBHNDwjgocTTyth2whN8abfam615g3E30+hx1
+oWPhUd7xud6Bc7vvcDJ1vmDOMvReOX7narOpXZlNkYbQU1yJS9qTvKpkd+RNdG6Y
+W24IrWLr3kHqZvibsMRrKSKG9o8fMdSWAppa5GwLt0o0sZoYf4ErWW5oHyABcSE/
+DFmfkehq4IK2gnMZOEm4v6dmo58X7s6F4tCTKhmVW27sCVHe3vBFhMlmyls0D/LF
+f+9Wod81ytcxw/pZYkYAuu/ir+Mr5o/h5veENQ6Uw5JHJDfzgu+5+ojC/VMSZmVI
+KFQoc/BTHH9hvGRY90weJUAfuo2wHMRJABdrdC0X29zPZ942y4OMaPmJK5pnzcjL
+knhKf4/+//95tsTDPjnKEpzzb3SkGHQ3Hc/nkbvNg3WMWuUFtb72ydV4Xkz3fKyH
+KPCUNKTFWXETooOJW/9VZnSZh7n4qMSoSnaJuDyqXooUgSN9FhrpfagQWk1wSxxO
+mRmPJJI0m3IPTSKpmVRW
+=XPB1
+-----END PGP SIGNATURE-----
+
+--2VOk7s3pVsDYAazo--
