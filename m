@@ -1,69 +1,51 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Subject: Re: [PATCH] drm: do not use device name as a format string
-Date: Mon, 07 Dec 2015 11:53:01 +0200
-Message-ID: <874mfuzite.fsf@intel.com>
-References: <1447869498-13277-1-git-send-email-nicolas.iooss_linux@m4x.org>
- <5662B24E.4090202@m4x.org> <20151206093559.GT10243@phenom.ffwll.local>
- <56640B00.7040100@m4x.org> <20151207074312.GU10243@phenom.ffwll.local>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V4 11/16] Documentation: DT: bindings: Update NVIDIA PMC
+ for Tegra210
+Date: Mon, 7 Dec 2015 09:54:15 +0000
+Message-ID: <56655747.9070009@nvidia.com>
+References: <1449241037-22193-1-git-send-email-jonathanh@nvidia.com>
+ <1449241037-22193-12-git-send-email-jonathanh@nvidia.com>
+ <20151206003106.GA12441@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20151207074312.GU10243@phenom.ffwll.local>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel@ffwll.ch>, Nicolas Iooss <nicolas.iooss_linux@m4x.org>
-Cc: linux-tegra@vger.kernel.org, Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Alison Wang <alison.wang@freescale.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20151206003106.GA12441@rob-hp-laptop>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rafael Wysocki <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gTW9uLCAwNyBEZWMgMjAxNSwgRGFuaWVsIFZldHRlciA8ZGFuaWVsQGZmd2xsLmNoPiB3cm90
-ZToKPiBPbiBTdW4sIERlYyAwNiwgMjAxNSBhdCAxMToxNjozMkFNICswMTAwLCBOaWNvbGFzIElv
-b3NzIHdyb3RlOgo+PiBPbiAxMi8wNi8yMDE1IDEwOjM1IEFNLCBEYW5pZWwgVmV0dGVyIHdyb3Rl
-Ogo+PiA+PiBPbiAxMS8xOC8yMDE1IDA2OjU4IFBNLCBOaWNvbGFzIElvb3NzIHdyb3RlOgo+PiA+
-Pj4gZHJtX2Rldl9zZXRfdW5pcXVlKCkgZm9ybWF0cyBpdHMgcGFyYW1ldGVyIHVzaW5nIGt2YXNw
-cmludGYoKSBidXQgbWFueQo+PiA+Pj4gb2YgaXRzIGNhbGxlcnMgZGlyZWN0bHkgcGFzcyBkZXZf
-bmFtZShkZXYpIGFzIHByaW50ZiBmb3JtYXQgc3RyaW5nLAo+PiA+Pj4gd2l0aG91dCBhbnkgZm9y
-bWF0IHBhcmFtZXRlci4gIFRoaXMgY2FuIGNhdXNlIHNvbWUgaXNzdWVzIHdoZW4gdGhlCj4+ID4+
-PiBkZXZpY2UgbmFtZSBjb250YWlucyAnJScgY2hhcmFjdGVycy4KPj4gPj4+Cj4+ID4+PiBUbyBh
-dm9pZCBhbnkgcG90ZW50aWFsIGlzc3VlLCBhbHdheXMgdXNlICIlcyIgd2hlbiB1c2luZwo+PiA+
-Pj4gZHJtX2Rldl9zZXRfdW5pcXVlKCkgd2l0aCBkZXZfbmFtZSgpLgo+PiA+IAo+PiA+IE5vdCBz
-dXJlIHRoaXMgaXMgd29ydGggaXQgcmVhbGx5LCBub3JtYWxseSBwZW9wbGUgZG9uJ3QgcGxhY2Ug
-JSBjaGFyYWN0ZXJzCj4+ID4gaW50byB0aGVpciBkZXZpY2UgbmFtZXMsIGV2ZXIuIEFuZCBpZiB0
-aGV5IGRvIGl0J2xsIGJsb3cgdXAuIFRoZXJlJ3MgYWxzbwo+PiA+IG5vIHNlY3VyaXR5IGlzc3Vl
-IGhlcmUgc2luY2UgdXNlcnNwYWNlIGNhbid0IHNldCB0aGlzIG5hbWUuCj4+ID4gCj4+ID4gSWYg
-dGhlIG1haW50YWluZXJzIG9mIHRoZSBhZmZlY3RlZCBkcml2ZXJzIGRvbid0IHdhbnQgdGhpcyBJ
-IHdvbid0IG1lcmdlCj4+ID4gdGhpcyBwYXRjaC4KPj4gCj4+IEFjdHVhbGx5IEkgaGFkIHRoZSBz
-YW1lIG9waW5pb24gYmVmb3JlIEkgYmVnYW4gdG8gYWRkIF9fcHJpbnRmCj4+IGF0dHJpYnV0ZXMg
-YW5kICIlcyIgaW4gc2V2ZXJhbCBwbGFjZXMgaW4gdGhlIGtlcm5lbCB0byBtYWtlCj4+IC1XZm9y
-bWF0LXNlY3VyaXR5IHVzZWZ1bC4gIFRoaXMgbGVkIG1lIHRvIGRpc2NvdmVyIHNvbWUgZnVubnkg
-aXNzdWVzCj4+IGxpa2UgdGhlIG9uZSBmaXhlZCBieSBjb21taXQgMzk1OGI3OTI2NmIxICgiY29u
-ZmlnZnM6IGZpeCBrZXJuZWwKPj4gaW5mb2xlYWsgdGhyb3VnaCB1c2VyLWNvbnRyb2xsZWQgZm9y
-bWF0IHN0cmluZyIsCj4+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcvY2dpdC9saW51eC9rZXJuZWwv
-Z2l0L3RvcnZhbGRzL2xpbnV4LmdpdC9jb21taXQvP2lkPTM5NThiNzkyNjZiMTQ3MjllZGQ2MWRh
-ZjlkZmI4NGRlNDVmNGVjNmQKPj4gKS4gIFRoZSBwYXRjaCBJIHNlbnQgaXMgaW4gZmFjdCBhIHZl
-cnkgc21hbGwgc3RlcCB0b3dhcmRzIG1ha2luZwo+PiAtV2Zvcm1hdC1zZWN1cml0eSB1c2VmdWwg
-YWdhaW4gdG8gZGV0ZWN0ICJyZWFsIiBpc3N1ZXMuCj4+IAo+PiBPZiBjb3Vyc2UsIGlmIHlvdSBk
-byBub3QgZmVlbCBpdCBpcyB3b3J0aCBpdCBhbmQgYmVsaWV2ZSB0aGF0IGRldl9uYW1lCj4+IGlz
-IGZ1bGx5IGNvbnRyb2xsZWQgYnkgdHJ1c3RlZCBzb3VyY2VzIHdoaWNoIHdpbGwgbmV2ZXIgaW50
-cm9kdWNlIGFueSAlCj4+IGNoYXJhY3RlciwgSSB1bmRlcnN0YW5kIHlvdXIgd2lsbCBvZiBub3Qg
-bWVyZ2luZyBteSBwYXRjaC4KPgo+IEFoLCB0aGF0J3MgdGhlIGNvbnRleHQgSSB3YXMgbWlzc2lu
-ZywgdGhhdCByZWFsbHkgc2hvdWxkIGJlIGluIHRoZSBjb21taXQKPiBtZXNzYWdlLiBJZiB0aGlz
-IGlzIHBhcnQgb2YgYW4gb3ZlcmFsbCBlZmZvcnQgdG8gZW5hYmxlIHNvbWV0aGluZyB1c2VmdWwK
-PiBpdCBtYWtlcyBtb3JlIHNlbnNlIHRvIGdldCBpdCBpbi4KPgo+IE9uIHRoZSBwYXRjaCBpdHNl
-bGYgaXQgZmVlbHMgcmF0aGVyIGZ1bm55IHRvIGRvIGEgIiVzIiwgc3RyKTsgY29tYm8sIG1heWJl
-Cj4gd2Ugc2hvdWxkIGhhdmUgYSBkcm1fZGV2X3NldF91bmlxdWVfc3RhdGljIGluc3RlYWQ/IElu
-Y2x1ZGluZyBrZXJuZWxkb2MKPiBleHBsYWluaW5nIHdoeSB0aGVyZSdzIHRvby4KCk5vIGNhbGxl
-ciBvZiBkcm1fZGV2X3NldF91bmlxdWUoKSBhY3R1YWxseSB1c2VzIHRoZSBmb3JtYXR0aW5nIGZv
-cgphbnl0aGluZy4uLiBzbyB5b3UnZCBlbmQgdXAgd2l0aCBkcm1fZGV2X3NldF91bmlxdWVfc3Rh
-dGljKCkgYW5kIGFuCm9ycGhhbmVkIGRybV9kZXZfc2V0X3VuaXF1ZSgpLi4uCgpCUiwKSmFuaS4K
-CgoKLS0gCkphbmkgTmlrdWxhLCBJbnRlbCBPcGVuIFNvdXJjZSBUZWNobm9sb2d5IENlbnRlcgpf
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwg
-bWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3Rz
-LmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+
+On 06/12/15 00:31, Rob Herring wrote:
+> On Fri, Dec 04, 2015 at 02:57:12PM +0000, Jon Hunter wrote:
+>> ---
+>>  Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt | 5 +++--
+>>  1 file changed, 3 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+>> index 02c27004d4a8..838e1a69ec0a 100644
+>> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+>> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+>> @@ -9,8 +9,9 @@ Required properties:
+>>  - compatible : For Tegra20, must contain "nvidia,tegra20-pmc".  For Tegra30,
+>>    must contain "nvidia,tegra30-pmc".  For Tegra114, must contain
+>>    "nvidia,tegra114-pmc".  For Tegra124, must contain "nvidia,tegra124-pmc".
+>> -  Otherwise, must contain "nvidia,<chip>-pmc", plus at least one of the
+>> -  above, where <chip> is tegra132.
+>> +  For Tegra210, must contain "nvidia,tegra210-pmc". Otherwise, must contain
+>> +  "nvidia,<chip>-pmc", plus at least one of the above, where <chip> is
+>> +  tegra132.
+> 
+> Can you reorg this some so the compatible strings are a list rather than 
+> a paragraph of text. I find the last sentence a bit confusing as well. 
+> Seems like <chip> should be a list rather than just tegra132.
+
+Yes no problem.
+
+Thanks
+Jon
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
