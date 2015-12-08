@@ -1,88 +1,53 @@
-From: Kevin Hilman <khilman@kernel.org>
-Subject: Re: [PATCH V4 12/16] Documentation: DT: bindings: Add power domain info for NVIDIA PMC
-Date: Tue, 08 Dec 2015 11:07:06 -0800
-Message-ID: <7h4mfslpyd.fsf@deeprootsystems.com>
-References: <1449241037-22193-1-git-send-email-jonathanh@nvidia.com>
-	<1449241037-22193-13-git-send-email-jonathanh@nvidia.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: [PATCH] cpufreq: tegra: add regulator dependency for T124
+Date: Tue, 08 Dec 2015 22:52:45 +0100
+Message-ID: <2194927.eV2s2QmZs0@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1449241037-22193-13-git-send-email-jonathanh@nvidia.com> (Jon
-	Hunter's message of "Fri, 4 Dec 2015 14:57:13 +0000")
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rafael Wysocki <rjw@rjwysocki.net>, Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Vince Hsu <vinceh@nvidia.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Jon Hunter <jonathanh@nvidia.com> writes:
+This driver is the only one that calls regulator_sync_voltage(), but it
+can currently be built with CONFIG_REGULATOR disabled, producing
+this build error:
 
-> Add power-domain binding documentation for the NVIDIA PMC driver in
-> order to support generic power-domains.
->
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->
-> ---
->
-> Please note that I have been debating whether I add this
-> "nvidia,powergate-clock-disable" property or just leave the clocks
-> disabled by default. Some downstream kernels leave the clocks enabled
-> for the audio power-domain because the clocks required for powering up
-> the power-domain are needed by all modules within the power-domain.
-> However are the same time there are other power-domains that may need
-> to be on, but not always clocked and so having the ability to specify if
-> the clocks should be disabled seems useful. However, I can also remove
-> this and just have the appropriate devices turn on the clocks as well.
-> ---
->  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 61 ++++++++++++++++++++++
->  1 file changed, 61 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-> index 838e1a69ec0a..8e4641db51a9 100644
-> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-> @@ -1,5 +1,7 @@
->  NVIDIA Tegra Power Management Controller (PMC)
->  
-> +== Power Management Controller Node ==
-> +
->  The PMC block interacts with an external Power Management Unit. The PMC
->  mostly controls the entry and exit of the system from different sleep
->  modes. It provides power-gating controllers for SoC and CPU power-islands.
-> @@ -69,6 +71,10 @@ Optional properties for hardware-triggered thermal reset (inside 'i2c-thermtrip'
->                       Defaults to 0. Valid values are described in section 12.5.2
->                       "Pinmux Support" of the Tegra4 Technical Reference Manual.
->  
-> +Optional nodes:
-> +- pm-domains : This node contains a hierarchy of PM domain nodes, which should
-> +	       match the power-domains on the Tegra SoC.
-> +
->  Example:
->  
->  / SoC dts including file
-> @@ -114,3 +120,58 @@ pmc@7000f400 {
->  	};
->  	...
->  };
-> +
-> +
-> +== PM Domain Nodes ==
-> +
-> +Each of the PM domain nodes represents a power-domain on the Tegra SoC
-> +that can be power-gated by the PMC and should be named appropriately.
-> +
-> +Required properties:
-> +  - clocks: Must contain an entry for each clock required by the PMC for
-> +    controlling a power-gate. See ../clocks/clock-bindings.txt for details.
+drivers/cpufreq/tegra124-cpufreq.c: In function 'tegra124_cpu_switch_to_pllx':
+drivers/cpufreq/tegra124-cpufreq.c:68:2: error: implicit declaration of function 'regulator_sync_voltage' [-Werror=implicit-function-declaration]
+  regulator_sync_voltage(priv->vdd_cpu_reg);
 
-We've had this discussiona for a couple of other SoCs, so I need to
-ask...
+My first attempt was to implement a helper for this function
+for regulator_sync_voltage, but Mark Brown explained:
 
-Presumably these are not device clocks that a runtime PM enabled driver
-should be managing for a device, right?  IOW, We want to make sure that the
-PM domain isn't managing clocks for drivers that should be doing it.
+   We don't do this for *all* regulator API functions - there's some where
+   using them strongly suggests that there is actually a dependency on
+   the regulator API.  This does seem like it might be falling into the
+   specialist category [...]
+   Looking at the code I'm pretty unclear on what the authors think the
+   use of _sync_voltage() is doing in the first place so it may be even
+   better to just remove the call.  It seems to have been included in the
+   first commit so there's not changelog explaining things and there's
+   no comment either.  I'd *expect* it to be a noop as far as I can see.
 
-I understand there are legitimate reasons for the PM domain to manage
-clocks in addition to device drivers (e.g. for synchronous reset), but
-just want to be sure it's not a shortcut for having a proper driver.
+This adds the dependency to make the driver always build successfully
+or not be enabled at all. Alternatively, we could investigate if the
+driver should stop calling regulator_sync_voltage instead.
 
-Kevin
+Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+
+diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+index 235a1ba73d92..b1f8a73e5a94 100644
+--- a/drivers/cpufreq/Kconfig.arm
++++ b/drivers/cpufreq/Kconfig.arm
+@@ -226,7 +226,7 @@ config ARM_TEGRA20_CPUFREQ
+ 
+ config ARM_TEGRA124_CPUFREQ
+ 	tristate "Tegra124 CPUFreq support"
+-	depends on ARCH_TEGRA && CPUFREQ_DT
++	depends on ARCH_TEGRA && CPUFREQ_DT && REGULATOR
+ 	default y
+ 	help
+ 	  This adds the CPUFreq driver support for Tegra124 SOCs.
