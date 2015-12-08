@@ -1,53 +1,91 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: [PATCH] cpufreq: tegra: add regulator dependency for T124
-Date: Tue, 08 Dec 2015 22:52:45 +0100
-Message-ID: <2194927.eV2s2QmZs0@wuerfel>
+From: Nicolas Iooss <nicolas.iooss_linux@m4x.org>
+Subject: [PATCH 1/2] drm: make drm_dev_set_unique() not use a format string
+Date: Tue,  8 Dec 2015 23:12:11 +0100
+Message-ID: <1449612732-32438-1-git-send-email-nicolas.iooss_linux@m4x.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>, David Airlie <airlied@linux.ie>, Jianwei Wang <jianwei.wang.chn@gmail.com>, Alison Wang <alison.wang@freescale.com>, Mark Yao <mark.yao@rock-chips.com>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Cc: Nicolas Iooss <nicolas.iooss_linux@m4x.org>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-This driver is the only one that calls regulator_sync_voltage(), but it
-can currently be built with CONFIG_REGULATOR disabled, producing
-this build error:
-
-drivers/cpufreq/tegra124-cpufreq.c: In function 'tegra124_cpu_switch_to_pllx':
-drivers/cpufreq/tegra124-cpufreq.c:68:2: error: implicit declaration of function 'regulator_sync_voltage' [-Werror=implicit-function-declaration]
-  regulator_sync_voltage(priv->vdd_cpu_reg);
-
-My first attempt was to implement a helper for this function
-for regulator_sync_voltage, but Mark Brown explained:
-
-   We don't do this for *all* regulator API functions - there's some where
-   using them strongly suggests that there is actually a dependency on
-   the regulator API.  This does seem like it might be falling into the
-   specialist category [...]
-   Looking at the code I'm pretty unclear on what the authors think the
-   use of _sync_voltage() is doing in the first place so it may be even
-   better to just remove the call.  It seems to have been included in the
-   first commit so there's not changelog explaining things and there's
-   no comment either.  I'd *expect* it to be a noop as far as I can see.
-
-This adds the dependency to make the driver always build successfully
-or not be enabled at all. Alternatively, we could investigate if the
-driver should stop calling regulator_sync_voltage instead.
-
-Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-
-diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-index 235a1ba73d92..b1f8a73e5a94 100644
---- a/drivers/cpufreq/Kconfig.arm
-+++ b/drivers/cpufreq/Kconfig.arm
-@@ -226,7 +226,7 @@ config ARM_TEGRA20_CPUFREQ
- 
- config ARM_TEGRA124_CPUFREQ
- 	tristate "Tegra124 CPUFreq support"
--	depends on ARCH_TEGRA && CPUFREQ_DT
-+	depends on ARCH_TEGRA && CPUFREQ_DT && REGULATOR
- 	default y
- 	help
- 	  This adds the CPUFreq driver support for Tegra124 SOCs.
+ZHJtX2Rldl9zZXRfdW5pcXVlKCkgdXNlcyBhIGZvcm1hdCBzdHJpbmcgdG8gZGVmaW5lIHRoZSB1
+bmlxdWUgbmFtZSBvZiBhCmRldmljZS4gIFRoaXMgZmVhdHVyZSBpcyBub3QgdXNlZCBhcyBjdXJy
+ZW50bHkgYWxsIHRoZSBjYWxscyB0byB0aGlzCmZ1bmN0aW9uIGVpdGhlciB1c2UgIiVzIiBhcyBh
+IGZvcm1hdCBzdHJpbmcgb3IgZGlyZWN0bHkgdXNlCmRldl9uYW1lKCkuCgpFdmVuIHRob3VnaCB0
+aGlzIHNlY29uZCBraW5kIG9mIGNhbGwgZG9lcyBub3QgaW50cm9kdWNlIHNlY3VyaXR5CnByb2Js
+ZW1zLCBiZWNhdXNlIHRoZXJlIGNhbm5vdCBiZSAiJSIgY2hhcmFjdGVycyBpbiBkZXZfbmFtZSgp
+IHJlc3VsdHMsCmdjYyBpc3N1ZXMgYSB3YXJuaW5nIHdoZW4gYnVpbGRpbmcgd2l0aCAtV2Zvcm1h
+dC1zZWN1cml0eSBmbGFnCigid2FybmluZzogZm9ybWF0IHN0cmluZyBpcyBub3QgYSBzdHJpbmcg
+bGl0ZXJhbCAocG90ZW50aWFsbHkKaW5zZWN1cmUpIikuICBUaGlzIHdhcm5pbmcgaXMgdXNlZnVs
+IHRvIGZpbmQgcmVhbCBidWdzIGxpa2UgdGhlIG9uZQpmaXhlZCBieSBjb21taXQgMzk1OGI3OTI2
+NmIxICgiY29uZmlnZnM6IGZpeCBrZXJuZWwgaW5mb2xlYWsgdGhyb3VnaAp1c2VyLWNvbnRyb2xs
+ZWQgZm9ybWF0IHN0cmluZyIpLiAgRmFsc2UgcG9zaXRpdmVzIHdoaWNoIGRvIG5vdCBicmluZwph
+biBleHRyYSB2YWx1ZSBtYWtlIHRoZSB3b3JrIG9mIGZpbmRpbmcgcmVhbCBidWdzIGhhcmRlci4K
+ClRoZXJlZm9yZSByZW1vdmUgdGhlIGZvcm1hdC1zdHJpbmcgZmVhdHVyZSBmcm9tIGRybV9kZXZf
+c2V0X3VuaXF1ZSgpLgoKU2lnbmVkLW9mZi1ieTogTmljb2xhcyBJb29zcyA8bmljb2xhcy5pb29z
+c19saW51eEBtNHgub3JnPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9kcm1fZHJ2LmMgICAgICAgICAg
+ICAgICAgICAgfCAxMSArKystLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbm91dmVh
+dV9kcm0uYyAgICAgICB8ICAyICstCiBkcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBf
+ZHJtX2Rydi5jIHwgIDIgKy0KIGluY2x1ZGUvZHJtL2RybVAuaCAgICAgICAgICAgICAgICAgICAg
+ICAgICAgfCAgMiArLQogNCBmaWxlcyBjaGFuZ2VkLCA2IGluc2VydGlvbnMoKyksIDExIGRlbGV0
+aW9ucygtKQoKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fZHJ2LmMgYi9kcml2ZXJz
+L2dwdS9kcm0vZHJtX2Rydi5jCmluZGV4IDdkZDY3MjhkZDA5Mi4uMjBlYWEwYWFlMjA1IDEwMDY0
+NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2Rydi5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9k
+cm1fZHJ2LmMKQEAgLTc5Nyw3ICs3OTcsNyBAQCBFWFBPUlRfU1lNQk9MKGRybV9kZXZfdW5yZWdp
+c3Rlcik7CiAvKioKICAqIGRybV9kZXZfc2V0X3VuaXF1ZSAtIFNldCB0aGUgdW5pcXVlIG5hbWUg
+b2YgYSBEUk0gZGV2aWNlCiAgKiBAZGV2OiBkZXZpY2Ugb2Ygd2hpY2ggdG8gc2V0IHRoZSB1bmlx
+dWUgbmFtZQotICogQGZtdDogZm9ybWF0IHN0cmluZyBmb3IgdW5pcXVlIG5hbWUKKyAqIEBuYW1l
+OiB1bmlxdWUgbmFtZQogICoKICAqIFNldHMgdGhlIHVuaXF1ZSBuYW1lIG9mIGEgRFJNIGRldmlj
+ZSB1c2luZyB0aGUgc3BlY2lmaWVkIGZvcm1hdCBzdHJpbmcgYW5kCiAgKiBhIHZhcmlhYmxlIGxp
+c3Qgb2YgYXJndW1lbnRzLiBEcml2ZXJzIGNhbiB1c2UgdGhpcyBhdCBkcml2ZXIgcHJvYmUgdGlt
+ZSBpZgpAQCAtODA1LDE1ICs4MDUsMTAgQEAgRVhQT1JUX1NZTUJPTChkcm1fZGV2X3VucmVnaXN0
+ZXIpOwogICoKICAqIFJldHVybjogMCBvbiBzdWNjZXNzIG9yIGEgbmVnYXRpdmUgZXJyb3IgY29k
+ZSBvbiBmYWlsdXJlLgogICovCi1pbnQgZHJtX2Rldl9zZXRfdW5pcXVlKHN0cnVjdCBkcm1fZGV2
+aWNlICpkZXYsIGNvbnN0IGNoYXIgKmZtdCwgLi4uKQoraW50IGRybV9kZXZfc2V0X3VuaXF1ZShz
+dHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBjb25zdCBjaGFyICpuYW1lKQogewotCXZhX2xpc3QgYXA7
+Ci0KIAlrZnJlZShkZXYtPnVuaXF1ZSk7Ci0KLQl2YV9zdGFydChhcCwgZm10KTsKLQlkZXYtPnVu
+aXF1ZSA9IGt2YXNwcmludGYoR0ZQX0tFUk5FTCwgZm10LCBhcCk7Ci0JdmFfZW5kKGFwKTsKKwlk
+ZXYtPnVuaXF1ZSA9IGtzdHJkdXAobmFtZSwgR0ZQX0tFUk5FTCk7CiAKIAlyZXR1cm4gZGV2LT51
+bmlxdWUgPyAwIDogLUVOT01FTTsKIH0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9ub3V2
+ZWF1L25vdXZlYXVfZHJtLmMgYi9kcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9ub3V2ZWF1X2RybS5j
+CmluZGV4IDFkM2VlNTE3OWFiOC4uMmQyM2Y5NWYxN2NlIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dw
+dS9kcm0vbm91dmVhdS9ub3V2ZWF1X2RybS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1
+L25vdXZlYXVfZHJtLmMKQEAgLTEwNDYsNyArMTA0Niw3IEBAIG5vdXZlYXVfcGxhdGZvcm1fZGV2
+aWNlX2NyZWF0ZShjb25zdCBzdHJ1Y3QgbnZrbV9kZXZpY2VfdGVncmFfZnVuYyAqZnVuYywKIAkJ
+Z290byBlcnJfZnJlZTsKIAl9CiAKLQllcnIgPSBkcm1fZGV2X3NldF91bmlxdWUoZHJtLCAiJXMi
+LCBkZXZfbmFtZSgmcGRldi0+ZGV2KSk7CisJZXJyID0gZHJtX2Rldl9zZXRfdW5pcXVlKGRybSwg
+ZGV2X25hbWUoJnBkZXYtPmRldikpOwogCWlmIChlcnIgPCAwKQogCQlnb3RvIGVycl9mcmVlOwog
+CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX2Rydi5j
+IGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9kcnYuYwppbmRleCBmMjJl
+MWUxZWU2NGEuLjIxNWQ2YzQ0YWY1NSAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3JvY2tj
+aGlwL3JvY2tjaGlwX2RybV9kcnYuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9j
+a2NoaXBfZHJtX2Rydi5jCkBAIC00NTAsNyArNDUwLDcgQEAgc3RhdGljIGludCByb2NrY2hpcF9k
+cm1fYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYpCiAJaWYgKCFkcm0pCiAJCXJldHVybiAtRU5PTUVN
+OwogCi0JcmV0ID0gZHJtX2Rldl9zZXRfdW5pcXVlKGRybSwgIiVzIiwgZGV2X25hbWUoZGV2KSk7
+CisJcmV0ID0gZHJtX2Rldl9zZXRfdW5pcXVlKGRybSwgZGV2X25hbWUoZGV2KSk7CiAJaWYgKHJl
+dCkKIAkJZ290byBlcnJfZnJlZTsKIApkaWZmIC0tZ2l0IGEvaW5jbHVkZS9kcm0vZHJtUC5oIGIv
+aW5jbHVkZS9kcm0vZHJtUC5oCmluZGV4IDBhMjcxY2ExZjdjNy4uZjE0YzI1YTZiYmYyIDEwMDY0
+NAotLS0gYS9pbmNsdWRlL2RybS9kcm1QLmgKKysrIGIvaW5jbHVkZS9kcm0vZHJtUC5oCkBAIC0x
+MDU5LDcgKzEwNTksNyBAQCB2b2lkIGRybV9kZXZfcmVmKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYp
+Owogdm9pZCBkcm1fZGV2X3VucmVmKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYpOwogaW50IGRybV9k
+ZXZfcmVnaXN0ZXIoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgdW5zaWduZWQgbG9uZyBmbGFncyk7
+CiB2b2lkIGRybV9kZXZfdW5yZWdpc3RlcihzdHJ1Y3QgZHJtX2RldmljZSAqZGV2KTsKLWludCBk
+cm1fZGV2X3NldF91bmlxdWUoc3RydWN0IGRybV9kZXZpY2UgKmRldiwgY29uc3QgY2hhciAqZm10
+LCAuLi4pOworaW50IGRybV9kZXZfc2V0X3VuaXF1ZShzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBj
+b25zdCBjaGFyICpuYW1lKTsKIAogc3RydWN0IGRybV9taW5vciAqZHJtX21pbm9yX2FjcXVpcmUo
+dW5zaWduZWQgaW50IG1pbm9yX2lkKTsKIHZvaWQgZHJtX21pbm9yX3JlbGVhc2Uoc3RydWN0IGRy
+bV9taW5vciAqbWlub3IpOwotLSAKMi42LjMKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3Rz
+LmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
+dGluZm8vZHJpLWRldmVsCg==
