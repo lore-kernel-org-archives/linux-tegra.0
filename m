@@ -1,156 +1,88 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 2/2] Determine SPL entry-point automatically
-Date: Tue,  8 Dec 2015 10:47:29 -0700
-Message-ID: <1449596849-27393-2-git-send-email-swarren@wwwdotorg.org>
-References: <1449596849-27393-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1449596849-27393-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Kevin Hilman <khilman@kernel.org>
+Subject: Re: [PATCH V4 12/16] Documentation: DT: bindings: Add power domain info for NVIDIA PMC
+Date: Tue, 08 Dec 2015 11:07:06 -0800
+Message-ID: <7h4mfslpyd.fsf@deeprootsystems.com>
+References: <1449241037-22193-1-git-send-email-jonathanh@nvidia.com>
+	<1449241037-22193-13-git-send-email-jonathanh@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1449241037-22193-13-git-send-email-jonathanh@nvidia.com> (Jon
+	Hunter's message of "Fri, 4 Dec 2015 14:57:13 +0000")
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rafael Wysocki <rjw@rjwysocki.net>, Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Vince Hsu <vinceh@nvidia.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Jon Hunter <jonathanh@nvidia.com> writes:
 
-tegra-uboot-flasher currently hard-codes the U-Boot SPL entry point. The
-chosen value works fine for upstream/mainline U-Boot. However, L4T U-Boot
-uses a different value for compatibility with L4T's flashing tools. This
-causes tegra-uboot-flasher to fail when using with and L4T U-Boot. Fix
-this by having tegra-uboot-flasher's build process introspect the U-Boot
-binaries to determine the actual load-/entry-address.
+> Add power-domain binding documentation for the NVIDIA PMC driver in
+> order to support generic power-domains.
+>
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>
+> ---
+>
+> Please note that I have been debating whether I add this
+> "nvidia,powergate-clock-disable" property or just leave the clocks
+> disabled by default. Some downstream kernels leave the clocks enabled
+> for the audio power-domain because the clocks required for powering up
+> the power-domain are needed by all modules within the power-domain.
+> However are the same time there are other power-domains that may need
+> to be on, but not always clocked and so having the ability to specify if
+> the clocks should be disabled seems useful. However, I can also remove
+> this and just have the appropriate devices turn on the clocks as well.
+> ---
+>  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 61 ++++++++++++++++++++++
+>  1 file changed, 61 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> index 838e1a69ec0a..8e4641db51a9 100644
+> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> @@ -1,5 +1,7 @@
+>  NVIDIA Tegra Power Management Controller (PMC)
+>  
+> +== Power Management Controller Node ==
+> +
+>  The PMC block interacts with an external Power Management Unit. The PMC
+>  mostly controls the entry and exit of the system from different sleep
+>  modes. It provides power-gating controllers for SoC and CPU power-islands.
+> @@ -69,6 +71,10 @@ Optional properties for hardware-triggered thermal reset (inside 'i2c-thermtrip'
+>                       Defaults to 0. Valid values are described in section 12.5.2
+>                       "Pinmux Support" of the Tegra4 Technical Reference Manual.
+>  
+> +Optional nodes:
+> +- pm-domains : This node contains a hierarchy of PM domain nodes, which should
+> +	       match the power-domains on the Tegra SoC.
+> +
+>  Example:
+>  
+>  / SoC dts including file
+> @@ -114,3 +120,58 @@ pmc@7000f400 {
+>  	};
+>  	...
+>  };
+> +
+> +
+> +== PM Domain Nodes ==
+> +
+> +Each of the PM domain nodes represents a power-domain on the Tegra SoC
+> +that can be power-gated by the PMC and should be named appropriately.
+> +
+> +Required properties:
+> +  - clocks: Must contain an entry for each clock required by the PMC for
+> +    controlling a power-gate. See ../clocks/clock-bindings.txt for details.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- build               |  9 +++++++-
- elf-get-entry       | 65 +++++++++++++++++++++++++++++++++++++++++++++++++++++
- tegra-uboot-flasher | 11 ++++++---
- 3 files changed, 81 insertions(+), 4 deletions(-)
- create mode 100755 elf-get-entry
+We've had this discussiona for a couple of other SoCs, so I need to
+ask...
 
-diff --git a/build b/build
-index b58112e12be2..56c0254ab0da 100755
---- a/build
-+++ b/build
-@@ -1,6 +1,6 @@
- #!/usr/bin/env python2
- 
--# Copyright (c) 2013, NVIDIA CORPORATION. All rights reserved.
-+# Copyright (c) 2013-2015 NVIDIA CORPORATION. All rights reserved.
- #
- # Permission is hereby granted, free of charge, to any person obtaining a
- # copy of this software and associated documentation files (the "Software"),
-@@ -156,6 +156,13 @@ def import_uboot_one_board(boardname, build_uboot_dir):
-     f.write(bss_size)
-     f.close()
- 
-+    get_entry = os.path.join(scripts_dir, 'elf-get-entry')
-+    uboot_spl = os.path.join(build_uboot_dir, 'spl', 'u-boot-spl')
-+    dst = os.path.join(out_board_dir, 'u-boot-spl-entry')
-+    with open(dst, "wt") as dst_f:
-+        cmd = [get_entry, uboot_spl]
-+        subprocess.check_call(cmd, stdout=dst_f)
-+
-     src = os.path.join(build_uboot_dir, 'u-boot-nodtb-tegra.bin')
-     dst = os.path.join(out_board_dir, 'u-boot-nodtb-tegra.bin')
-     cp(src, dst)
-diff --git a/elf-get-entry b/elf-get-entry
-new file mode 100755
-index 000000000000..98556ed36d84
---- /dev/null
-+++ b/elf-get-entry
-@@ -0,0 +1,65 @@
-+#!/usr/bin/env python2
-+
-+# Copyright (c) 2015, NVIDIA CORPORATION. All rights reserved.
-+#
-+# Permission is hereby granted, free of charge, to any person obtaining a
-+# copy of this software and associated documentation files (the "Software"),
-+# to deal in the Software without restriction, including without limitation
-+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
-+# and/or sell copies of the Software, and to permit persons to whom the
-+# Software is furnished to do so, subject to the following conditions:
-+#
-+# The above copyright notice and this permission notice shall be included in
-+# all copies or substantial portions of the Software.
-+#
-+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-+# DEALINGS IN THE SOFTWARE.
-+
-+import sys
-+import struct
-+
-+if len(sys.argv) != 2:
-+    print >>sys.stderr, "usage: %s filename.elf" % sys.argv[0]
-+    sys.exit(-1)
-+
-+f = file(sys.argv[1], 'rb')
-+data = f.read(0x20)
-+f.close()
-+
-+if data[0:4] != '\x7fELF':
-+    print >>sys.stderr, "ELF magic mismatch"
-+    sys.exit(-1)
-+
-+ei_class = ord(data[4])
-+if ei_class == 1:
-+    elf_bytes = 4
-+    struct_type = 'I'
-+elif ei_class == 2:
-+    elf_bytes = 8
-+    struct_type = 'Q'
-+else:
-+    print >>sys.stderr, "Bad EI_CLASS value"
-+    sys.exit(-1)
-+
-+ei_data = ord(data[5])
-+if ei_data == 1:
-+    struct_endian = '<'
-+elif ei_data == 2:
-+    struct_endian = '>'
-+else:
-+    print >>sys.stderr, "Bad EI_DATA value"
-+    sys.exit(-1)
-+
-+ei_version = ord(data[6])
-+if ei_version != 1:
-+    print >>sys.stderr, "Bad EI_VERSION value"
-+    sys.exit(-1)
-+
-+e_entry = data[0x18:0x18 + elf_bytes]
-+ep = struct.unpack(struct_endian + struct_type, e_entry)
-+print '0x%x' % ep
-diff --git a/tegra-uboot-flasher b/tegra-uboot-flasher
-index 3a77a8be9e6b..0fefe21dc211 100755
---- a/tegra-uboot-flasher
-+++ b/tegra-uboot-flasher
-@@ -1,6 +1,6 @@
- #!/usr/bin/env python2
- 
--# Copyright (c) 2013, NVIDIA CORPORATION. All rights reserved.
-+# Copyright (c) 2013-2015 NVIDIA CORPORATION. All rights reserved.
- #
- # Permission is hereby granted, free of charge, to any person obtaining a
- # copy of this software and associated documentation files (the "Software"),
-@@ -87,8 +87,13 @@ gen_flashcmds = {
- }
- 
- def get_loadaddr():
--    # 0x00108000 is CONFIG_SPL_TEXT_BASE in U-Boot, minus RAM base
--    return soc['ram-base'] + 0x00108000
-+    spl_entry_fn = os.path.join(out_board_dir, 'u-boot-spl-entry')
-+    with open(spl_entry_fn, 'rt') as spl_entry_f:
-+        spl_entry_s = spl_entry_f.read().strip()
-+    spl_entry = int(spl_entry_s, 0)
-+    if args.debug:
-+        print 'spl_entry %d 0x%x' % (spl_entry, spl_entry)
-+    return spl_entry
- 
- def gen_tegrarcm_cmd(bootloader, loadaddr):
-     if type(loadaddr) != str:
--- 
-2.6.3
+Presumably these are not device clocks that a runtime PM enabled driver
+should be managing for a device, right?  IOW, We want to make sure that the
+PM domain isn't managing clocks for drivers that should be doing it.
+
+I understand there are legitimate reasons for the PM domain to manage
+clocks in addition to device drivers (e.g. for synchronous reset), but
+just want to be sure it's not a shortcut for having a proper driver.
+
+Kevin
