@@ -1,23 +1,61 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v3 1/2] Fix the error reporting of
- get_bct_size_from_image() and read_bct_file()
-Date: Tue, 8 Dec 2015 17:16:16 -0700
-Message-ID: <566772D0.4030802@wwwdotorg.org>
-References: <1449585133-9384-1-git-send-email-alban.bedel@avionic-design.de>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH] cpufreq: tegra: add regulator dependency for T124
+Date: Wed, 9 Dec 2015 07:46:17 +0530
+Message-ID: <20151209021617.GQ3692@ubuntu>
+References: <2194927.eV2s2QmZs0@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1449585133-9384-1-git-send-email-alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alban Bedel <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <2194927.eV2s2QmZs0@wuerfel>
+Sender: linux-pm-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, broonie@kernel.org, Liam Girdwood <lgirdwood@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/08/2015 07:32 AM, Alban Bedel wrote:
-> get_bct_size_from_image() and read_bct_file() should return negative
-> error codes, so add the missing minus signs. Also fix the return value
-> check on get_bct_size_from_image(), a negative value indicate an error
-> not zero.
+On 08-12-15, 22:52, Arnd Bergmann wrote:
+> This driver is the only one that calls regulator_sync_voltage(), but it
+> can currently be built with CONFIG_REGULATOR disabled, producing
+> this build error:
+> 
+> drivers/cpufreq/tegra124-cpufreq.c: In function 'tegra124_cpu_switch_to_pllx':
+> drivers/cpufreq/tegra124-cpufreq.c:68:2: error: implicit declaration of function 'regulator_sync_voltage' [-Werror=implicit-function-declaration]
+>   regulator_sync_voltage(priv->vdd_cpu_reg);
+> 
+> My first attempt was to implement a helper for this function
+> for regulator_sync_voltage, but Mark Brown explained:
+> 
+>    We don't do this for *all* regulator API functions - there's some where
+>    using them strongly suggests that there is actually a dependency on
+>    the regulator API.  This does seem like it might be falling into the
+>    specialist category [...]
+>    Looking at the code I'm pretty unclear on what the authors think the
+>    use of _sync_voltage() is doing in the first place so it may be even
+>    better to just remove the call.  It seems to have been included in the
+>    first commit so there's not changelog explaining things and there's
+>    no comment either.  I'd *expect* it to be a noop as far as I can see.
+> 
+> This adds the dependency to make the driver always build successfully
+> or not be enabled at all. Alternatively, we could investigate if the
+> driver should stop calling regulator_sync_voltage instead.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
+> index 235a1ba73d92..b1f8a73e5a94 100644
+> --- a/drivers/cpufreq/Kconfig.arm
+> +++ b/drivers/cpufreq/Kconfig.arm
+> @@ -226,7 +226,7 @@ config ARM_TEGRA20_CPUFREQ
+>  
+>  config ARM_TEGRA124_CPUFREQ
+>  	tristate "Tegra124 CPUFreq support"
+> -	depends on ARCH_TEGRA && CPUFREQ_DT
+> +	depends on ARCH_TEGRA && CPUFREQ_DT && REGULATOR
+>  	default y
+>  	help
+>  	  This adds the CPUFreq driver support for Tegra124 SOCs.
 
-I've applied the series.
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+
+-- 
+viresh
