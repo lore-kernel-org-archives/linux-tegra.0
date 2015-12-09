@@ -1,61 +1,72 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: Re: [PATCH] cpufreq: tegra: add regulator dependency for T124
-Date: Wed, 9 Dec 2015 07:46:17 +0530
-Message-ID: <20151209021617.GQ3692@ubuntu>
-References: <2194927.eV2s2QmZs0@wuerfel>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <2194927.eV2s2QmZs0@wuerfel>
-Sender: linux-pm-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, broonie@kernel.org, Liam Girdwood <lgirdwood@gmail.com>
+From: Simon Guinot <simon.guinot-jKBdWWKqtFpg9hUCZPvPmw@public.gmane.org>
+Subject: [PATCH] staging: nvec: fix block comments
+Date: Wed,  9 Dec 2015 08:14:06 +0100
+Message-ID: <1449645246-18561-1-git-send-email-simon.guinot@sequanux.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Simon Guinot <simon.guinot-jKBdWWKqtFpg9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08-12-15, 22:52, Arnd Bergmann wrote:
-> This driver is the only one that calls regulator_sync_voltage(), but it
-> can currently be built with CONFIG_REGULATOR disabled, producing
-> this build error:
-> 
-> drivers/cpufreq/tegra124-cpufreq.c: In function 'tegra124_cpu_switch_to_pllx':
-> drivers/cpufreq/tegra124-cpufreq.c:68:2: error: implicit declaration of function 'regulator_sync_voltage' [-Werror=implicit-function-declaration]
->   regulator_sync_voltage(priv->vdd_cpu_reg);
-> 
-> My first attempt was to implement a helper for this function
-> for regulator_sync_voltage, but Mark Brown explained:
-> 
->    We don't do this for *all* regulator API functions - there's some where
->    using them strongly suggests that there is actually a dependency on
->    the regulator API.  This does seem like it might be falling into the
->    specialist category [...]
->    Looking at the code I'm pretty unclear on what the authors think the
->    use of _sync_voltage() is doing in the first place so it may be even
->    better to just remove the call.  It seems to have been included in the
->    first commit so there's not changelog explaining things and there's
->    no comment either.  I'd *expect* it to be a noop as far as I can see.
-> 
-> This adds the dependency to make the driver always build successfully
-> or not be enabled at all. Alternatively, we could investigate if the
-> driver should stop calling regulator_sync_voltage instead.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> 
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index 235a1ba73d92..b1f8a73e5a94 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -226,7 +226,7 @@ config ARM_TEGRA20_CPUFREQ
->  
->  config ARM_TEGRA124_CPUFREQ
->  	tristate "Tegra124 CPUFreq support"
-> -	depends on ARCH_TEGRA && CPUFREQ_DT
-> +	depends on ARCH_TEGRA && CPUFREQ_DT && REGULATOR
->  	default y
->  	help
->  	  This adds the CPUFreq driver support for Tegra124 SOCs.
+This patch fixes a couple of checkpatch warnings about block comments.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Signed-off-by: Simon Guinot <simon.guinot-jKBdWWKqtFpg9hUCZPvPmw@public.gmane.org>
+---
+ drivers/staging/nvec/nvec.c       |  6 ++++--
+ drivers/staging/nvec/nvec_power.c | 14 +++++++++-----
+ 2 files changed, 13 insertions(+), 7 deletions(-)
 
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index 802c9597d421..cb0927ddd78f 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -508,8 +508,10 @@ static void nvec_rx_completed(struct nvec_chip *nvec)
+ 
+ 	spin_lock(&nvec->rx_lock);
+ 
+-	/* add the received data to the work list
+-	   and move the ring buffer pointer to the next entry */
++	/*
++	 * Add the received data to the work list and move the ring buffer
++	 * pointer to the next entry.
++	 */
+ 	list_add_tail(&nvec->rx->node, &nvec->rx_data);
+ 
+ 	spin_unlock(&nvec->rx_lock);
+diff --git a/drivers/staging/nvec/nvec_power.c b/drivers/staging/nvec/nvec_power.c
+index 04a7402ae2df..b4a0545e8806 100644
+--- a/drivers/staging/nvec/nvec_power.c
++++ b/drivers/staging/nvec/nvec_power.c
+@@ -207,8 +207,10 @@ static int nvec_power_bat_notifier(struct notifier_block *nb,
+ 	case TYPE:
+ 		memcpy(power->bat_type, &res->plc, res->length - 2);
+ 		power->bat_type[res->length - 2] = '\0';
+-		/* this differs a little from the spec
+-		   fill in more if you find some */
++		/*
++		 * This differs a little from the spec fill in more if you find
++		 * some.
++		 */
+ 		if (!strncmp(power->bat_type, "Li", 30))
+ 			power->bat_type_enum = POWER_SUPPLY_TECHNOLOGY_LION;
+ 		else
+@@ -356,12 +358,14 @@ static void nvec_power_poll(struct work_struct *work)
+ 	if (counter >= ARRAY_SIZE(bat_iter))
+ 		counter = 0;
+ 
+-/* AC status via sys req */
++	/* AC status via sys req */
+ 	nvec_write_async(power->nvec, buf, 2);
+ 	msleep(100);
+ 
+-/* select a battery request function via round robin
+-   doing it all at once seems to overload the power supply */
++	/*
++	 * Select a battery request function via round robin doing it all at
++	 * once seems to overload the power supply.
++	 */
+ 	buf[0] = NVEC_BAT;
+ 	buf[1] = bat_iter[counter++];
+ 	nvec_write_async(power->nvec, buf, 2);
 -- 
-viresh
+2.1.4
