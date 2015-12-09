@@ -1,87 +1,87 @@
-From: Jon Hunter <jonathanh@nvidia.com>
+From: Mark Brown <broonie@kernel.org>
 Subject: Re: [PATCH] cpufreq: tegra: add regulator dependency for T124
-Date: Wed, 9 Dec 2015 17:33:33 +0000
-Message-ID: <566865ED.3020106@nvidia.com>
-References: <2194927.eV2s2QmZs0@wuerfel> <5668188F.2080202@nvidia.com>
+Date: Wed, 9 Dec 2015 20:10:07 +0000
+Message-ID: <20151209201007.GG5727@sirena.org.uk>
+References: <2194927.eV2s2QmZs0@wuerfel>
+ <5668188F.2080202@nvidia.com>
  <20151209144734.GB5727@sirena.org.uk>
+ <566865ED.3020106@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20151209144734.GB5727@sirena.org.uk>
-Sender: linux-pm-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="BWpbUxt7sU2t3mXs"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <566865ED.3020106@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
 Cc: Arnd Bergmann <arnd@arndb.de>, linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Liam Girdwood <lgirdwood@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 09/12/15 14:47, Mark Brown wrote:
-> * PGP Signed by an unknown key
-> 
-> On Wed, Dec 09, 2015 at 12:03:27PM +0000, Jon Hunter wrote:
->> On 08/12/15 21:52, Arnd Bergmann wrote:
-> 
->>> My first attempt was to implement a helper for this function
->>> for regulator_sync_voltage, but Mark Brown explained:
-> 
->>>    We don't do this for *all* regulator API functions - there's some where
->>>    using them strongly suggests that there is actually a dependency on
->>>    the regulator API.  This does seem like it might be falling into the
->>>    specialist category [...]
->>>    Looking at the code I'm pretty unclear on what the authors think the
->>>    use of _sync_voltage() is doing in the first place so it may be even
->>>    better to just remove the call.  It seems to have been included in the
->>>    first commit so there's not changelog explaining things and there's
->>>    no comment either.  I'd *expect* it to be a noop as far as I can see.
-> 
->> In this sequence we are switching from the DFLL clock source (which
->> directly controls the voltage) back to a PLL (which does not control the
->> voltage directly). What we want to do is to restore the voltage back to
->> the voltage it was operating at before we switched to the DFLL clock
->> (which could have changed it).
-> 
-> If changes implemented by the clock driver are trashing the regulator
-> settings I would expect the clock driver to be responsible for fixing
-> things up rather than another driver that happens to use the clock.  I'd
-> also expect some kind of internal documentation explaining what's going
-> on, and possibly 
+--BWpbUxt7sU2t3mXs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes, the DFLL clock driver could restore the voltage, however, that
-does not guarantee that the voltage is still sufficient for the other
-clock source.
+On Wed, Dec 09, 2015 at 05:33:33PM +0000, Jon Hunter wrote:
+> On 09/12/15 14:47, Mark Brown wrote:
 
->> I am not familiar with regulator_sync_voltage() but from the comment it
->> does say that it will re-apply the last voltage that was configured for
->> the regulator. So I can see what they were doing. The question I have
->> is, if the consumer has not explicitly called regulator_set_voltage()
->> then what does regulator_sync_voltage() do? I am wondering if we should
->> have been doing a regulator_get_voltage() during the probe and a
->> regulator_set_voltage() when switching back?
-> 
-> This *is* the sort of thing _sync() is intended for, though it's mainly
-> expected to be used in cases like suspend where things have been powered
-> off.  As you can see from the code it's based on the settings that
-> software made, but then if nothing in software has any need to configure
-> anything then why do we even care that the hardware changed anything?
+> > If changes implemented by the clock driver are trashing the regulator
+> > settings I would expect the clock driver to be responsible for fixing
+> > things up rather than another driver that happens to use the clock.  I'd
+> > also expect some kind of internal documentation explaining what's going
+> > on, and possibly=20
 
-Yes, that's my point. When switching between these clock sources, I
-think that software does need to set something and so we should care.
+> Yes, the DFLL clock driver could restore the voltage, however, that
+> does not guarantee that the voltage is still sufficient for the other
+> clock source.
 
-> Setting the voltage you've read back sounds broken, if the hardware
-> might randomly change things how do you know the settings we read were
-> sane?  Shouldn't we know what voltage range the device requires in a
-> given mode and set that - that's much more normal?
+But the code we've got won't do that either - it'l just set the voltage
+to whatever the last thing the regulator API had that might have been
+within its constraints.
 
-The hardware will not randomly change the voltage until the DFLL is
-enabled and so you would have to do this before.
+> > Setting the voltage you've read back sounds broken, if the hardware
+> > might randomly change things how do you know the settings we read were
+> > sane?  Shouldn't we know what voltage range the device requires in a
+> > given mode and set that - that's much more normal?
 
-Yes, setting the frequency and voltage as defined by a given operating
-mode would make sense. However, I am not sure we have those defined in
-the kernel for this PLL and would have to be added.
+> The hardware will not randomly change the voltage until the DFLL is
+> enabled and so you would have to do this before.
 
-I was thinking that during boot we could read the default voltage and
-frequency set by the bootloader and use this as it should not be
-changing dynamically at this point because the cpufreq driver has not
-been activated yet.
+I'm not clear that there's even a guarantee that the kernel will ever
+have seen this configuration, consider for example what happens if
+someone uses kexec?
 
-Jon
+> Yes, setting the frequency and voltage as defined by a given operating
+> mode would make sense. However, I am not sure we have those defined in
+> the kernel for this PLL and would have to be added.
+
+I think given how you're describing the hardware that this will be
+required in order to provide something robust (and also to get the best
+power savings from the hardware).
+
+> I was thinking that during boot we could read the default voltage and
+> frequency set by the bootloader and use this as it should not be
+> changing dynamically at this point because the cpufreq driver has not
+> been activated yet.
+
+I'm a bit confused here, we're talking about a change to the cpufreq
+driver here aren't we?  Or alternatively why are we manipulating the
+clock tree like this if we don't yet have support for the hardware?
+
+--BWpbUxt7sU2t3mXs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWaIqfAAoJECTWi3JdVIfQgK0H/jzMENro5B0FAKbaLm5ilXMU
+acF/SqGyuIC/vOyAs2kQzigGXADCY2BbAbuIWsy2g0WeOma1n33dDU+4mMVX0r0t
+zvVqVJK617YhwErwg3BihJWOCukTl07nE+8l2Nu6uL94NzdYJvDH6yaG+emwlnS/
+dsGmzrAmYHZsK0tjzw5d6HyU5uAxseNjzcapm8u0xLu+PRCGcTG8WKA7RW8mJ3R2
+CeGaS2P701pOc9X/30Atx2+7ge8QwxD0oGLGebFcg5nnwOO78fmyrZbt+jWCDDko
+UC6QG72hiZNrAgbJDo9jKsdeEUnzvzzY1a0/A3UrXfZjDpfwI8Jg4D9HZV+naH0=
+=cNCo
+-----END PGP SIGNATURE-----
+
+--BWpbUxt7sU2t3mXs--
