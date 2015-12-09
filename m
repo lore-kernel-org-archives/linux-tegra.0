@@ -1,87 +1,98 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] cpufreq: tegra: add regulator dependency for T124
-Date: Wed, 9 Dec 2015 20:10:07 +0000
-Message-ID: <20151209201007.GG5727@sirena.org.uk>
-References: <2194927.eV2s2QmZs0@wuerfel>
- <5668188F.2080202@nvidia.com>
- <20151209144734.GB5727@sirena.org.uk>
- <566865ED.3020106@nvidia.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH 0/6] drivers/dma: drop modular code from non modular drivers
+Date: Wed, 9 Dec 2015 18:21:56 -0500
+Message-ID: <1449703322-17762-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="BWpbUxt7sU2t3mXs"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <566865ED.3020106@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Liam Girdwood <lgirdwood@gmail.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: linux-kernel@vger.kernel.org
+Cc: Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Vinod Koul <vinod.koul@intel.com>, Haojian Zhuang <haojian.zhuang@gmail.com>, Paul Gortmaker <paul.gortmaker@windriver.com>, Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, dmaengine@vger.kernel.org, Dan Williams <dan.j.williams@intel.com>, Robert Jarzmik <robert.jarzmik@free.fr>, Daniel Mack <daniel@zonque.org>
 List-Id: linux-tegra@vger.kernel.org
 
+This series of commits is a slice of a larger project to ensure
+people don't have dead code for module removal in non-modular
+drivers.  Overall there is roughly 5k lines of dead code in the
+kernel due to this.
 
---BWpbUxt7sU2t3mXs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There is a quasi-separate theme, in that some of the drivers were
+allowing an unbind implicitly since it is enabled by default.  But
+for core DMA infrastructure drivers, this doesn't seem useful -- so
+we also disable that here which allows us to delete any ".remove"
+functions from the drivers that would otherwise be called during the
+(impossible to trigger) module removal.
 
-On Wed, Dec 09, 2015 at 05:33:33PM +0000, Jon Hunter wrote:
-> On 09/12/15 14:47, Mark Brown wrote:
+Since ARM covers these files the best of all architectures, each
+file was build tested for allmodconfig on ARM, which at the same
+time confirms that the files are not built with "CC [M]" -- hence
+genuinely non-modular.
 
-> > If changes implemented by the clock driver are trashing the regulator
-> > settings I would expect the clock driver to be responsible for fixing
-> > things up rather than another driver that happens to use the clock.  I'd
-> > also expect some kind of internal documentation explaining what's going
-> > on, and possibly=20
+My testing and the larger patch series in general has been done
+against the latest linux-next tree.
 
-> Yes, the DFLL clock driver could restore the voltage, however, that
-> does not guarantee that the voltage is still sufficient for the other
-> clock source.
+Paul.
+---
 
-But the code we've got won't do that either - it'l just set the voltage
-to whatever the last thing the regulator API had that might have been
-within its constraints.
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: Daniel Mack <daniel@zonque.org>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Haojian Zhuang <haojian.zhuang@gmail.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Robert Jarzmik <robert.jarzmik@free.fr>
+Cc: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Vinod Koul <vinod.koul@intel.com>
+Cc: dmaengine@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-tegra@vger.kernel.org
 
-> > Setting the voltage you've read back sounds broken, if the hardware
-> > might randomly change things how do you know the settings we read were
-> > sane?  Shouldn't we know what voltage range the device requires in a
-> > given mode and set that - that's much more normal?
 
-> The hardware will not randomly change the voltage until the DFLL is
-> enabled and so you would have to do this before.
+Paul Gortmaker (6):
+  drivers/dma: make edma.c explicitly non-modular
+  drivers/dma: make mmp_pdma.c explicitly non-modular
+  drivers/dma: make mmp_tdma.c explicitly non-modular
+  drivers/dma: make pxa_dma.c explicitly non-modular
+  drivers/dma: make sh/shdma-*.c explicitly non-modular
+  drivers/dma: make tegra20-apb-dma.c explicitly non-modular
 
-I'm not clear that there's even a guarantee that the kernel will ever
-have seen this configuration, consider for example what happens if
-someone uses kexec?
+ drivers/dma/edma.c            | 37 ++++++-------------------------------
+ drivers/dma/mmp_pdma.c        | 21 ++++-----------------
+ drivers/dma/mmp_tdma.c        | 22 +++-------------------
+ drivers/dma/pxa_dma.c         | 38 +++-----------------------------------
+ drivers/dma/sh/shdma-base.c   | 14 ++------------
+ drivers/dma/sh/shdma-of.c     | 11 +++--------
+ drivers/dma/tegra20-apb-dma.c | 35 ++++-------------------------------
+ 7 files changed, 25 insertions(+), 153 deletions(-)
 
-> Yes, setting the frequency and voltage as defined by a given operating
-> mode would make sense. However, I am not sure we have those defined in
-> the kernel for this PLL and would have to be added.
+-- 
+2.6.1
 
-I think given how you're describing the hardware that this will be
-required in order to provide something robust (and also to get the best
-power savings from the hardware).
 
-> I was thinking that during boot we could read the default voltage and
-> frequency set by the bootloader and use this as it should not be
-> changing dynamically at this point because the cpufreq driver has not
-> been activated yet.
+Paul Gortmaker (6):
+  drivers/dma: make edma.c explicitly non-modular
+  drivers/dma: make mmp_pdma.c explicitly non-modular
+  drivers/dma: make mmp_tdma.c explicitly non-modular
+  drivers/dma: make pxa_dma.c explicitly non-modular
+  drivers/dma: make sh/shdma-*.c explicitly non-modular
+  drivers/dma: make tegra20-apb-dma.c explicitly non-modular
 
-I'm a bit confused here, we're talking about a change to the cpufreq
-driver here aren't we?  Or alternatively why are we manipulating the
-clock tree like this if we don't yet have support for the hardware?
+ drivers/dma/edma.c            | 37 ++++++-------------------------------
+ drivers/dma/mmp_pdma.c        | 21 ++++-----------------
+ drivers/dma/mmp_tdma.c        | 22 +++-------------------
+ drivers/dma/pxa_dma.c         | 38 +++-----------------------------------
+ drivers/dma/sh/shdma-base.c   | 14 ++------------
+ drivers/dma/sh/shdma-of.c     | 11 +++--------
+ drivers/dma/tegra20-apb-dma.c | 35 ++++-------------------------------
+ 7 files changed, 25 insertions(+), 153 deletions(-)
 
---BWpbUxt7sU2t3mXs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWaIqfAAoJECTWi3JdVIfQgK0H/jzMENro5B0FAKbaLm5ilXMU
-acF/SqGyuIC/vOyAs2kQzigGXADCY2BbAbuIWsy2g0WeOma1n33dDU+4mMVX0r0t
-zvVqVJK617YhwErwg3BihJWOCukTl07nE+8l2Nu6uL94NzdYJvDH6yaG+emwlnS/
-dsGmzrAmYHZsK0tjzw5d6HyU5uAxseNjzcapm8u0xLu+PRCGcTG8WKA7RW8mJ3R2
-CeGaS2P701pOc9X/30Atx2+7ge8QwxD0oGLGebFcg5nnwOO78fmyrZbt+jWCDDko
-UC6QG72hiZNrAgbJDo9jKsdeEUnzvzzY1a0/A3UrXfZjDpfwI8Jg4D9HZV+naH0=
-=cNCo
------END PGP SIGNATURE-----
-
---BWpbUxt7sU2t3mXs--
+-- 
+2.6.1
