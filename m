@@ -1,129 +1,43 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 6/6] drivers/dma: make tegra20-apb-dma.c explicitly non-modular
-Date: Wed, 9 Dec 2015 18:22:02 -0500
-Message-ID: <1449703322-17762-7-git-send-email-paul.gortmaker@windriver.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH 0/6] drivers/dma: drop modular code from non modular drivers
+Date: Thu, 10 Dec 2015 00:29:27 +0100
+Message-ID: <7162994.ydt4N8UgZZ@wuerfel>
 References: <1449703322-17762-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1449703322-17762-1-git-send-email-paul.gortmaker@windriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Laxman Dewangan <ldewangan@nvidia.com>, Dan Williams <dan.j.williams@intel.com>, Vinod Koul <vinod.koul@intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1449703322-17762-1-git-send-email-paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Haojian Zhuang <haojian.zhuang-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Robert Jarzmik <robert.jarzmik-GANU6spQydw@public.gmane.org>, Daniel Mack <daniel-cYrQPVfZoowdnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The Kconfig currently controlling compilation of this code is:
+On Wednesday 09 December 2015 18:21:56 Paul Gortmaker wrote:
+> This series of commits is a slice of a larger project to ensure
+> people don't have dead code for module removal in non-modular
+> drivers.  Overall there is roughly 5k lines of dead code in the
+> kernel due to this.
+> 
+> There is a quasi-separate theme, in that some of the drivers were
+> allowing an unbind implicitly since it is enabled by default.  But
+> for core DMA infrastructure drivers, this doesn't seem useful -- so
+> we also disable that here which allows us to delete any ".remove"
+> functions from the drivers that would otherwise be called during the
+> (impossible to trigger) module removal.
+> 
+> Since ARM covers these files the best of all architectures, each
+> file was build tested for allmodconfig on ARM, which at the same
+> time confirms that the files are not built with "CC [M]" -- hence
+> genuinely non-modular.
+> 
+> My testing and the larger patch series in general has been done
+> against the latest linux-next tree.
+> 
+> 
 
-drivers/dma/Kconfig:config TEGRA20_APB_DMA
-drivers/dma/Kconfig:    bool "NVIDIA Tegra20 APB DMA support"
+We are in the process of changing the DMA drivers to a new way of
+passing the "filter" function around. We can soon build them
+all as loadable modules again.
 
-...meaning that it currently is not being built as a module by anyone.
-
-Lets remove the modular code that is essentially orphaned, so that
-when reading the driver there is no doubt it is builtin-only.
-
-We explicitly disallow a driver unbind, since that doesn't have a
-sensible use case anyway, and it allows us to drop the ".remove"
-code for non-modular drivers.
-
-Since module_platform_driver() uses the same init level priority as
-builtin_platform_driver() the init ordering remains unchanged with
-this commit.
-
-We don't replace module.h with init.h since the file already has that.
-
-Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
-
-We also delete the MODULE_LICENSE tag etc. since all that information
-was (or is now) contained at the top of the file in the comments.
-
-Cc: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: Vinod Koul <vinod.koul@intel.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: dmaengine@vger.kernel.org
-Cc: linux-tegra@vger.kernel.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
----
- drivers/dma/tegra20-apb-dma.c | 35 ++++-------------------------------
- 1 file changed, 4 insertions(+), 31 deletions(-)
-
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 935da8192f59..eee783cee45b 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -3,6 +3,8 @@
-  *
-  * Copyright (c) 2012-2013, NVIDIA CORPORATION.  All rights reserved.
-  *
-+ * Author: Laxman Dewangan <ldewangan@nvidia.com>
-+ *
-  * This program is free software; you can redistribute it and/or modify it
-  * under the terms and conditions of the GNU General Public License,
-  * version 2, as published by the Free Software Foundation.
-@@ -26,7 +28,6 @@
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/mm.h>
--#include <linux/module.h>
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/of_dma.h>
-@@ -1309,7 +1310,6 @@ static const struct of_device_id tegra_dma_of_match[] = {
- 	}, {
- 	},
- };
--MODULE_DEVICE_TABLE(of, tegra_dma_of_match);
- 
- static int tegra_dma_probe(struct platform_device *pdev)
- {
-@@ -1488,27 +1488,6 @@ err_irq:
- 	return ret;
- }
- 
--static int tegra_dma_remove(struct platform_device *pdev)
--{
--	struct tegra_dma *tdma = platform_get_drvdata(pdev);
--	int i;
--	struct tegra_dma_channel *tdc;
--
--	dma_async_device_unregister(&tdma->dma_dev);
--
--	for (i = 0; i < tdma->chip_data->nr_channels; ++i) {
--		tdc = &tdma->channels[i];
--		free_irq(tdc->irq, tdc);
--		tasklet_kill(&tdc->tasklet);
--	}
--
--	pm_runtime_disable(&pdev->dev);
--	if (!pm_runtime_status_suspended(&pdev->dev))
--		tegra_dma_runtime_suspend(&pdev->dev);
--
--	return 0;
--}
--
- static int tegra_dma_runtime_suspend(struct device *dev)
- {
- 	struct tegra_dma *tdma = dev_get_drvdata(dev);
-@@ -1616,15 +1595,9 @@ static struct platform_driver tegra_dmac_driver = {
- 	.driver = {
- 		.name	= "tegra-apbdma",
- 		.pm	= &tegra_dma_dev_pm_ops,
-+		.suppress_bind_attrs = true,
- 		.of_match_table = tegra_dma_of_match,
- 	},
- 	.probe		= tegra_dma_probe,
--	.remove		= tegra_dma_remove,
- };
--
--module_platform_driver(tegra_dmac_driver);
--
--MODULE_ALIAS("platform:tegra20-apbdma");
--MODULE_DESCRIPTION("NVIDIA Tegra APB DMA Controller driver");
--MODULE_AUTHOR("Laxman Dewangan <ldewangan@nvidia.com>");
--MODULE_LICENSE("GPL v2");
-+builtin_platform_driver(tegra_dmac_driver);
--- 
-2.6.1
+	Arnd
