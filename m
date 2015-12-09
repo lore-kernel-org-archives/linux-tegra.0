@@ -1,113 +1,88 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: Re: [PATCH 2/2] drm: use dev_name as default unique name in
- drm_dev_alloc()
-Date: Wed, 9 Dec 2015 14:25:54 +0100
-Message-ID: <20151209142554.40fe61d3@bbrezillon>
-References: <1449612732-32438-1-git-send-email-nicolas.iooss_linux@m4x.org>
- <1449612732-32438-2-git-send-email-nicolas.iooss_linux@m4x.org>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] cpufreq: tegra: add regulator dependency for T124
+Date: Wed, 9 Dec 2015 14:47:34 +0000
+Message-ID: <20151209144734.GB5727@sirena.org.uk>
+References: <2194927.eV2s2QmZs0@wuerfel>
+ <5668188F.2080202@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1449612732-32438-2-git-send-email-nicolas.iooss_linux@m4x.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Nicolas Iooss <nicolas.iooss_linux@m4x.org>
-Cc: Terje =?UTF-8?B?QmVyZ3N0csO2bQ==?= <tbergstrom@nvidia.com>, Alison Wang <alison.wang@freescale.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="leQ0ainWKcxhm+Q3"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <5668188F.2080202-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCAgOCBEZWMgMjAxNSAyMzoxMjoxMiArMDEwMApOaWNvbGFzIElvb3NzIDxuaWNvbGFz
-Lmlvb3NzX2xpbnV4QG00eC5vcmc+IHdyb3RlOgoKPiBUaGUgZm9sbG93aW5nIGNvZGUgcGF0dGVy
-biBleGlzdHMgaW4gc29tZSBEUk0gZHJpdmVyczoKPiAKPiAgICAgZGRldiA9IGRybV9kZXZfYWxs
-b2MoJmRyaXZlciwgcGFyZW50X2Rldik7Cj4gICAgIGRybV9kZXZfc2V0X3VuaXF1ZShkZGV2LCBk
-ZXZfbmFtZShwYXJlbnRfZGV2KSk7Cj4gCj4gKFNvbWV0aW1lcyBkZXZfbmFtZShkZGV2LT5kZXYp
-IGlzIHVzZWQsIHdoaWNoIGlzIHRoZSBzYW1lLikKPiAKPiBBcyBzdWdnZXN0ZWQgaW4KPiBodHRw
-Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL2FyY2hpdmVzL2RyaS1kZXZlbC8yMDE1LURlY2VtYmVy
-LzA5NjQ0MS5odG1sLAo+IHRoZSB1bmlxdWUgbmFtZSBvZiBhIG5ldyBEUk0gZGV2aWNlIGNhbiBi
-ZSBzZXQgYXMgZGV2X25hbWUocGFyZW50X2RldikKPiB3aGVuIHBhcmVudF9kZXYgaXMgbm90IE5V
-TEwgKHZnZW0gaXMgYSBzcGVjaWFsIGNhc2UpLgo+IAo+IFNpZ25lZC1vZmYtYnk6IE5pY29sYXMg
-SW9vc3MgPG5pY29sYXMuaW9vc3NfbGludXhAbTR4Lm9yZz4KCltmb3IgYXRtZWwtaGxjZGNdCkFj
-a2VkLWJ5OiBCb3JpcyBCcmV6aWxsb24gPGJvcmlzLmJyZXppbGxvbkBmcmVlLWVsZWN0cm9ucy5j
-b20+Cgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vYXRtZWwtaGxjZGMvYXRtZWxfaGxjZGNfZGMu
-YyB8IDQgLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2Rydi5jICAgICAgICAgICAgICAgICAg
-ICB8IDkgKysrKysrKysrCj4gIGRyaXZlcnMvZ3B1L2RybS9mc2wtZGN1L2ZzbF9kY3VfZHJtX2Ry
-di5jICAgIHwgMSAtCj4gIGRyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L25vdXZlYXVfZHJtLmMgICAg
-ICAgIHwgNCAtLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZHJ2
-LmMgIHwgNCAtLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYyAgICAgICAgICAgICAg
-ICAgIHwgMSAtCj4gIGRyaXZlcnMvZ3B1L2RybS92YzQvdmM0X2Rydi5jICAgICAgICAgICAgICAg
-IHwgMiAtLQo+ICA3IGZpbGVzIGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygrKSwgMTYgZGVsZXRpb25z
-KC0pCj4gCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9hdG1lbC1obGNkYy9hdG1lbF9o
-bGNkY19kYy5jIGIvZHJpdmVycy9ncHUvZHJtL2F0bWVsLWhsY2RjL2F0bWVsX2hsY2RjX2RjLmMK
-PiBpbmRleCAyNDRkZjBhNDQwYjcuLmZiYTRmNzJlN2FlMSAxMDA2NDQKPiAtLS0gYS9kcml2ZXJz
-L2dwdS9kcm0vYXRtZWwtaGxjZGMvYXRtZWxfaGxjZGNfZGMuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1
-L2RybS9hdG1lbC1obGNkYy9hdG1lbF9obGNkY19kYy5jCj4gQEAgLTczMywxMCArNzMzLDYgQEAg
-c3RhdGljIGludCBhdG1lbF9obGNkY19kY19kcm1fcHJvYmUoc3RydWN0IHBsYXRmb3JtX2Rldmlj
-ZSAqcGRldikKPiAgCWlmICghZGRldikKPiAgCQlyZXR1cm4gLUVOT01FTTsKPiAgCj4gLQlyZXQg
-PSBkcm1fZGV2X3NldF91bmlxdWUoZGRldiwgZGV2X25hbWUoZGRldi0+ZGV2KSk7Cj4gLQlpZiAo
-cmV0KQo+IC0JCWdvdG8gZXJyX3VucmVmOwo+IC0KPiAgCXJldCA9IGF0bWVsX2hsY2RjX2RjX2xv
-YWQoZGRldik7Cj4gIAlpZiAocmV0KQo+ICAJCWdvdG8gZXJyX3VucmVmOwo+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL2dwdS9kcm0vZHJtX2Rydi5jIGIvZHJpdmVycy9ncHUvZHJtL2RybV9kcnYuYwo+
-IGluZGV4IDIwZWFhMGFhZTIwNS4uZGY3NDlhNjE1NmUwIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMv
-Z3B1L2RybS9kcm1fZHJ2LmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2Rydi5jCj4gQEAg
-LTYzMyw4ICs2MzMsMTcgQEAgc3RydWN0IGRybV9kZXZpY2UgKmRybV9kZXZfYWxsb2Moc3RydWN0
-IGRybV9kcml2ZXIgKmRyaXZlciwKPiAgCQl9Cj4gIAl9Cj4gIAo+ICsJaWYgKHBhcmVudCkgewo+
-ICsJCXJldCA9IGRybV9kZXZfc2V0X3VuaXF1ZShkZXYsIGRldl9uYW1lKHBhcmVudCkpOwo+ICsJ
-CWlmIChyZXQpCj4gKwkJCWdvdG8gZXJyX3NldHVuaXF1ZTsKPiArCX0KPiArCj4gIAlyZXR1cm4g
-ZGV2Owo+ICAKPiArZXJyX3NldHVuaXF1ZToKPiArCWlmIChkcm1fY29yZV9jaGVja19mZWF0dXJl
-KGRldiwgRFJJVkVSX0dFTSkpCj4gKwkJZHJtX2dlbV9kZXN0cm95KGRldik7Cj4gIGVycl9jdHhi
-aXRtYXA6Cj4gIAlkcm1fbGVnYWN5X2N0eGJpdG1hcF9jbGVhbnVwKGRldik7Cj4gIAlkcm1faHRf
-cmVtb3ZlKCZkZXYtPm1hcF9oYXNoKTsKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2Zz
-bC1kY3UvZnNsX2RjdV9kcm1fZHJ2LmMgYi9kcml2ZXJzL2dwdS9kcm0vZnNsLWRjdS9mc2xfZGN1
-X2RybV9kcnYuYwo+IGluZGV4IDE5MzAyMzRiYTVmMS4uZmNhOTdkM2ZjODQ2IDEwMDY0NAo+IC0t
-LSBhL2RyaXZlcnMvZ3B1L2RybS9mc2wtZGN1L2ZzbF9kY3VfZHJtX2Rydi5jCj4gKysrIGIvZHJp
-dmVycy9ncHUvZHJtL2ZzbC1kY3UvZnNsX2RjdV9kcm1fZHJ2LmMKPiBAQCAtMzYzLDcgKzM2Myw2
-IEBAIHN0YXRpYyBpbnQgZnNsX2RjdV9kcm1fcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAq
-cGRldikKPiAgCWZzbF9kZXYtPm5wID0gZGV2LT5vZl9ub2RlOwo+ICAJZHJtLT5kZXZfcHJpdmF0
-ZSA9IGZzbF9kZXY7Cj4gIAlkZXZfc2V0X2RydmRhdGEoZGV2LCBmc2xfZGV2KTsKPiAtCWRybV9k
-ZXZfc2V0X3VuaXF1ZShkcm0sIGRldl9uYW1lKGRldikpOwo+ICAKPiAgCXJldCA9IGRybV9kZXZf
-cmVnaXN0ZXIoZHJtLCAwKTsKPiAgCWlmIChyZXQgPCAwKQo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
-L2dwdS9kcm0vbm91dmVhdS9ub3V2ZWF1X2RybS5jIGIvZHJpdmVycy9ncHUvZHJtL25vdXZlYXUv
-bm91dmVhdV9kcm0uYwo+IGluZGV4IDJkMjNmOTVmMTdjZS4uYjNhNTYzYzQ0YmNkIDEwMDY0NAo+
-IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L25vdXZlYXVfZHJtLmMKPiArKysgYi9kcml2
-ZXJzL2dwdS9kcm0vbm91dmVhdS9ub3V2ZWF1X2RybS5jCj4gQEAgLTEwNDYsMTAgKzEwNDYsNiBA
-QCBub3V2ZWF1X3BsYXRmb3JtX2RldmljZV9jcmVhdGUoY29uc3Qgc3RydWN0IG52a21fZGV2aWNl
-X3RlZ3JhX2Z1bmMgKmZ1bmMsCj4gIAkJZ290byBlcnJfZnJlZTsKPiAgCX0KPiAgCj4gLQllcnIg
-PSBkcm1fZGV2X3NldF91bmlxdWUoZHJtLCBkZXZfbmFtZSgmcGRldi0+ZGV2KSk7Cj4gLQlpZiAo
-ZXJyIDwgMCkKPiAtCQlnb3RvIGVycl9mcmVlOwo+IC0KPiAgCWRybS0+cGxhdGZvcm1kZXYgPSBw
-ZGV2Owo+ICAJcGxhdGZvcm1fc2V0X2RydmRhdGEocGRldiwgZHJtKTsKPiAgCj4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZHJ2LmMgYi9kcml2ZXJz
-L2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX2Rydi5jCj4gaW5kZXggMjE1ZDZjNDRhZjU1
-Li5hZmJiNzQwN2M0NGYgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3Jv
-Y2tjaGlwX2RybV9kcnYuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hp
-cF9kcm1fZHJ2LmMKPiBAQCAtNDUwLDEwICs0NTAsNiBAQCBzdGF0aWMgaW50IHJvY2tjaGlwX2Ry
-bV9iaW5kKHN0cnVjdCBkZXZpY2UgKmRldikKPiAgCWlmICghZHJtKQo+ICAJCXJldHVybiAtRU5P
-TUVNOwo+ICAKPiAtCXJldCA9IGRybV9kZXZfc2V0X3VuaXF1ZShkcm0sIGRldl9uYW1lKGRldikp
-Owo+IC0JaWYgKHJldCkKPiAtCQlnb3RvIGVycl9mcmVlOwo+IC0KPiAgCXJldCA9IGRybV9kZXZf
-cmVnaXN0ZXIoZHJtLCAwKTsKPiAgCWlmIChyZXQpCj4gIAkJZ290byBlcnJfZnJlZTsKPiBkaWZm
-IC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jIGIvZHJpdmVycy9ncHUvZHJtL3Rl
-Z3JhL2RybS5jCj4gaW5kZXggMTU5ZWY1MTVjYWIxLi4xMmUyZDNjY2JjOWQgMTAwNjQ0Cj4gLS0t
-IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3Rl
-Z3JhL2RybS5jCj4gQEAgLTk5MSw3ICs5OTEsNiBAQCBzdGF0aWMgaW50IGhvc3QxeF9kcm1fcHJv
-YmUoc3RydWN0IGhvc3QxeF9kZXZpY2UgKmRldikKPiAgCWlmICghZHJtKQo+ICAJCXJldHVybiAt
-RU5PTUVNOwo+ICAKPiAtCWRybV9kZXZfc2V0X3VuaXF1ZShkcm0sIGRldl9uYW1lKCZkZXYtPmRl
-dikpOwo+ICAJZGV2X3NldF9kcnZkYXRhKCZkZXYtPmRldiwgZHJtKTsKPiAgCj4gIAllcnIgPSBk
-cm1fZGV2X3JlZ2lzdGVyKGRybSwgMCk7Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS92
-YzQvdmM0X2Rydi5jIGIvZHJpdmVycy9ncHUvZHJtL3ZjNC92YzRfZHJ2LmMKPiBpbmRleCBkNWRi
-OWUwZjNiNzMuLjY0Nzc3MjMwNWU4ZiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vdmM0
-L3ZjNF9kcnYuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS92YzQvdmM0X2Rydi5jCj4gQEAgLTE2
-OCw4ICsxNjgsNiBAQCBzdGF0aWMgaW50IHZjNF9kcm1fYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYp
-Cj4gIAl2YzQtPmRldiA9IGRybTsKPiAgCWRybS0+ZGV2X3ByaXZhdGUgPSB2YzQ7Cj4gIAo+IC0J
-ZHJtX2Rldl9zZXRfdW5pcXVlKGRybSwgZGV2X25hbWUoZGV2KSk7Cj4gLQo+ICAJZHJtX21vZGVf
-Y29uZmlnX2luaXQoZHJtKTsKPiAgCWlmIChyZXQpCj4gIAkJZ290byB1bnJlZjsKCgoKLS0gCkJv
-cmlzIEJyZXppbGxvbiwgRnJlZSBFbGVjdHJvbnMKRW1iZWRkZWQgTGludXggYW5kIEtlcm5lbCBl
-bmdpbmVlcmluZwpodHRwOi8vZnJlZS1lbGVjdHJvbnMuY29tCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
-dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--leQ0ainWKcxhm+Q3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Dec 09, 2015 at 12:03:27PM +0000, Jon Hunter wrote:
+> On 08/12/15 21:52, Arnd Bergmann wrote:
+
+> > My first attempt was to implement a helper for this function
+> > for regulator_sync_voltage, but Mark Brown explained:
+
+> >    We don't do this for *all* regulator API functions - there's some wh=
+ere
+> >    using them strongly suggests that there is actually a dependency on
+> >    the regulator API.  This does seem like it might be falling into the
+> >    specialist category [...]
+> >    Looking at the code I'm pretty unclear on what the authors think the
+> >    use of _sync_voltage() is doing in the first place so it may be even
+> >    better to just remove the call.  It seems to have been included in t=
+he
+> >    first commit so there's not changelog explaining things and there's
+> >    no comment either.  I'd *expect* it to be a noop as far as I can see.
+
+> In this sequence we are switching from the DFLL clock source (which
+> directly controls the voltage) back to a PLL (which does not control the
+> voltage directly). What we want to do is to restore the voltage back to
+> the voltage it was operating at before we switched to the DFLL clock
+> (which could have changed it).
+
+If changes implemented by the clock driver are trashing the regulator
+settings I would expect the clock driver to be responsible for fixing
+things up rather than another driver that happens to use the clock.  I'd
+also expect some kind of internal documentation explaining what's going
+on, and possibly=20
+
+> I am not familiar with regulator_sync_voltage() but from the comment it
+> does say that it will re-apply the last voltage that was configured for
+> the regulator. So I can see what they were doing. The question I have
+> is, if the consumer has not explicitly called regulator_set_voltage()
+> then what does regulator_sync_voltage() do? I am wondering if we should
+> have been doing a regulator_get_voltage() during the probe and a
+> regulator_set_voltage() when switching back?
+
+This *is* the sort of thing _sync() is intended for, though it's mainly
+expected to be used in cases like suspend where things have been powered
+off.  As you can see from the code it's based on the settings that
+software made, but then if nothing in software has any need to configure
+anything then why do we even care that the hardware changed anything?
+
+Setting the voltage you've read back sounds broken, if the hardware
+might randomly change things how do you know the settings we read were
+sane?  Shouldn't we know what voltage range the device requires in a
+given mode and set that - that's much more normal?
+
+--leQ0ainWKcxhm+Q3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWaD8FAAoJECTWi3JdVIfQTykH/39vqFHeNi+inGYjrMQ1c8I2
+6SFhKeWNSZ+5lweeQyVoBrAzgA+w4gAz8McXhH4zyp6scztbS+QW8FxmOSpZELQF
+8AizTencTwC0IeofS+d4sRa123MevWpRzFw5rZRoT3W7WiW5CcJJiEQyt6MkgmkT
+ON5oJdcvPUxVf/3rycuv2X1NLn8bIRgW0r/81q2SzV+iMMa3pTw4Cbc1Ufi6tSp5
+T8OxJTggNCAUflTPOKbkurF/it3zBYgHqX3nJwdV78mkToLv2Aq95BVqd5m0bht5
+JIm7JBzHDg5Ahwj8Yq8IQtnHv+JN/k2HIVHwZWKYx7qlOwsoiv/6NFcI/KqFgKo=
+=Ax/h
+-----END PGP SIGNATURE-----
+
+--leQ0ainWKcxhm+Q3--
