@@ -1,82 +1,59 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] cpufreq: tegra: add regulator dependency for T124
-Date: Thu, 10 Dec 2015 12:12:11 +0000
-Message-ID: <56696C1B.3010503@nvidia.com>
-References: <2194927.eV2s2QmZs0@wuerfel> <5668188F.2080202@nvidia.com>
- <20151209144734.GB5727@sirena.org.uk> <566865ED.3020106@nvidia.com>
- <20151209201007.GG5727@sirena.org.uk> <56694EFA.7010901@nvidia.com>
- <20151210113541.GL5727@sirena.org.uk>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v4.4-rc1
+Date: Thu, 10 Dec 2015 12:43:34 +0000
+Message-ID: <56697376.9060406@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20151210113541.GL5727@sirena.org.uk>
-Sender: linux-pm-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Viresh Kumar <viresh.kumar@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Liam Girdwood <lgirdwood@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Here are some basic Tegra test results for Linux v4.4-rc1.
+Logs and other details at:
 
-On 10/12/15 11:35, Mark Brown wrote:
-> * PGP Signed by an unknown key
-> 
-> On Thu, Dec 10, 2015 at 10:07:54AM +0000, Jon Hunter wrote:
->> On 09/12/15 20:10, Mark Brown wrote:
->>> On Wed, Dec 09, 2015 at 05:33:33PM +0000, Jon Hunter wrote:
-> 
->>>> Yes, setting the frequency and voltage as defined by a given operating
->>>> mode would make sense. However, I am not sure we have those defined in
->>>> the kernel for this PLL and would have to be added.
-> 
->>> I think given how you're describing the hardware that this will be
->>> required in order to provide something robust (and also to get the best
->>> power savings from the hardware).
-> 
->> Yes I agree it would be more robust. However, if you care about power
->> savings then you should be using the DFLL/cpufreq anyway.
-> 
-> Without knowing anything about the hardware this is all a bit confusing
-> I'm afraid.  What is "DFLL/cpufreq" as opposed to "the PLL"?
+    https://nvtb.github.io//linux/test_v4.4-rc1/20151208093330/
 
-No problem.
 
-The two main clocks sources (there are others) used for the CPU complex
-are the PLLX and the DFLL. The PLLX is a normal PLL and you can
-configure to run at various frequencies. However, this PLL requires that
-you/software set the voltage appropriately. The DFLL has the ability to
-control the voltage itself per the frequency requested (no software
-management of the voltage required).
+Test summary
+------------
 
-There is no reason why you could not use the PLLX in conjunction with
-cpufreq, but for T124 we use the DFLL.
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
 
-Typically, T124 will boot using the PLLX and then if cpufreq is enabled,
-the DFLL will be enabled and we will switch to this clock.
+Build: Image:
+    Pass: ( 1/ 1): defconfig
 
-We would only ever switch back to the PLLX if cpufreq is removed and
-hence the DFLL is disabled. And this is where this patch comes in and I
-am wondering if this has ever been tested.
+Boot to userspace: defconfig:
+    Pass: ( 1/ 1): qemu-vexpress64
 
->> From testing the t124 jetson and nyan-big, both of these boards have a
->> different configuration for the PLL at boot time, so although we could
->> pick a safe operating point for all t124 boards, I was thinking of just
->> restoring their initial configuration.
-> 
-> This seems more complex, and also makes the idea of relying on the
-> initial configuration seem slightly concerning - other software seems to
-> be already changing the configuration before we get to the kernel so if
-> we don't fully understand the configuration we're doing we seem likely
-> to find some configuration where we miss things.
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
 
-I don't think so. At probe time for cpufreq, we know the clock source
-for the CPU complex and we can query the voltage and frequency. You may
-say what happens if you are already running from the DFLL that happened
-to be setup by the bootloader? It is probably not likely as there is
-more software setup involved before you can enable the DFLL. However, it
-could be handled.
+Boot to userspace: tegra_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
 
-By the way, I am not saying that we should do this, but if we don't we
-need to define a safe/default V-F for all devices to operate at. I guess
-that it could also be specified in the DTB and if not we use a default.
+vmlinux object size
+(delta in bytes from test_v4.3 (6a13feb9c82803e2b815eca72fa7a9f5561d7861)):
+   text     data      bss    total  kernel
++272788   +40576    +5824  +319188  defconfig
++260002   +38896     +320  +299218  multi_v7_defconfig
++286258   +14816     +944  +302018  tegra_defconfig
 
-Jon
+
+Boot-time memory difference
+(delta in bytes from test_v4.3 (6a13feb9c82803e2b815eca72fa7a9f5561d7861))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+        .        .        .        .      qemu-vexpress64            defconfig           __internal
+    -292k     292k   -8192k      24k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+    -308k     308k   -8192k      12k tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+    -292k     292k   -8192k      24k  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+    -308k     308k   -8192k      12k  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+    -292k     292k   -8192k      24k    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+    -308k     308k   -8192k      12k    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+    -292k     292k   -8192k      24k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+    -308k     308k   -8192k      12k       tegra30-beaver      tegra_defconfig       tegra30-beaver
