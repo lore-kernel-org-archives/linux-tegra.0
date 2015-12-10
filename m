@@ -1,38 +1,39 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [cbootimage-configs PATCH] Add p2371-2180 BCT
-Date: Thu, 10 Dec 2015 14:48:28 -0700
-Message-ID: <5669F32C.3080005@wwwdotorg.org>
-References: <1449594296-32493-1-git-send-email-swarren@wwwdotorg.org>
+From: Rhyland Klein <rklein@nvidia.com>
+Subject: [PATCH 0/9] Tegra CLK Fixes
+Date: Thu, 10 Dec 2015 17:08:19 -0500
+Message-ID: <1449785308-19546-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1449594296-32493-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>, Rhyland Klein <rklein@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/08/2015 10:04 AM, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> This is for the Jetson TX1 developer kit. The SDRAM timings were taken
-> from the L4T r23 release.
+This patch set fixes some issues found with the Tegra CLK drivers
+in testing. There are also a few patches which clean up the code
+and fix some naming issues.
 
-I have applied this, although I have found a few caveats with the 
-content when used with nvtboot. In particular, nvtboot appears to expect:
+Andrew Bresticker (1):
+  clk: tegra: pll: Fix potential sleeping-while-atomic
 
-a) num_sdram_sets to be equal to 0. This causes the boot ROM not to 
-initialize SDRAM, which then triggers nvtboot to do so. Either nvtboot 
-initializes SDRAM differently than the boot ROM does even when using the 
-same SDRAM parameters from the BCT, or there are other side-effects of 
-running the SDRAM initialization code in nvtboot, such that skipping 
-this operation causes nvtboot to fail to operate correctly. My suspicion 
-so far is the latter, but more investigation is required.
+Mark Kuo (2):
+  clk: tegra: pll: Do not disable PLLE when under HW control
+  clk: tegra: pll: Fix PLLE SS config
 
-b) nvtboot expects the customer_data field in the BCT to contain some 
-additional data structures, e.g. board IDs.
+Rhyland Klein (6):
+  clk: tegra: Fix divider on VI_I2C
+  clk: tegra210: Remove improper flags for lock_enable
+  clk: tegra210: Fix naming of MISC registers
+  clk: tegra: Fix the misnaming of nvenc from msenc
+  clk: tegra210: fix pllx dyn step calculation
+  clk: tegra210: Initialize PLL_D2 to a sane rate
 
-Fixing these issues will likely only require additions to the BCT 
-definition in this patch, rather than requiring anything in the patch to 
-be modified/fixed. Hence it seems reasonable to apply this. cbootimage 
-changes would also be required in order to set up the extra fields.
+ drivers/clk/tegra/clk-pll.c          | 50 +++++++++++++--------
+ drivers/clk/tegra/clk-tegra-periph.c |  4 +-
+ drivers/clk/tegra/clk-tegra210.c     | 87 +++++++++++++++---------------------
+ 3 files changed, 71 insertions(+), 70 deletions(-)
+
+-- 
+1.9.1
+
