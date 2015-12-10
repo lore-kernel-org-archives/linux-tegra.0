@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.4-rc3
-Date: Thu, 10 Dec 2015 13:29:04 +0000
-Message-ID: <56697E20.1080808@nvidia.com>
+Subject: Tegra baseline test results for v4.4-rc4
+Date: Thu, 10 Dec 2015 13:56:20 +0000
+Message-ID: <56698484.3060808@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
@@ -11,10 +11,10 @@ To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29
 Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.4-rc3.
+Here are some basic Tegra test results for Linux v4.4-rc4.
 Logs and other details at:
 
-    https://nvtb.github.io//linux/test_v4.4-rc3/20151210051526/
+    https://nvtb.github.io//linux/test_v4.4-rc4/20151210053103/
 
 
 Test summary
@@ -39,22 +39,22 @@ Boot to userspace: tegra_defconfig:
 
 
 vmlinux object size
-(delta in bytes from test_v4.4-rc2 (1ec218373b8ebda821aec00bb156a9c94fad9cd4)):
+(delta in bytes from test_v4.4-rc3 (31ade3b83e1821da5fbb2f11b5b3d4ab2ec39db8)):
    text     data      bss    total  kernel
-   +928     +904        0    +1832  defconfig
-   +560     +256        0     +816  multi_v7_defconfig
-   +344        0        0     +344  tegra_defconfig
+  +4046    -4104        0      -58  defconfig
+  +2665        0        0    +2665  multi_v7_defconfig
+  +2361        0        0    +2361  tegra_defconfig
 
 
 Boot-time memory difference
-(delta in bytes from test_v4.4-rc2 (1ec218373b8ebda821aec00bb156a9c94fad9cd4))
+(delta in bytes from test_v4.4-rc3 (31ade3b83e1821da5fbb2f11b5b3d4ab2ec39db8))
     avail    rsrvd     high    freed                board              kconfig                  dtb
         .        .        .        .      qemu-vexpress64            defconfig           __internal
-        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+        .        .        .      -4k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+        .        .        .      -4k tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+        .        .        .      -4k  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+        .        .        .      -4k  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+        .        .        .      -4k    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+        .        .        .      -4k    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+        .        .        .      -4k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+        .        .        .      -4k       tegra30-beaver      tegra_defconfig       tegra30-beaver
