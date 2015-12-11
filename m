@@ -1,72 +1,97 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 1/2] drm: make drm_dev_set_unique() not use a format
- string
-Date: Fri, 11 Dec 2015 09:12:26 +0100
-Message-ID: <20151211081226.GV20822@phenom.ffwll.local>
-References: <1449612732-32438-1-git-send-email-nicolas.iooss_linux@m4x.org>
- <CACvgo51hU5L5wDeViyR2AW5J1HYOc_rKRUQoEh9_u1qOx7vPXA@mail.gmail.com>
- <56676D5A.6060605@m4x.org>
+From: Nicolas Iooss <nicolas.iooss_linux@m4x.org>
+Subject: [PATCH v2 1/2] drm: make drm_dev_set_unique() not use a format string
+Date: Fri, 11 Dec 2015 11:20:27 +0100
+Message-ID: <1449829228-4425-1-git-send-email-nicolas.iooss_linux@m4x.org>
+References: <20151211081226.GV20822@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <56676D5A.6060605@m4x.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Nicolas Iooss <nicolas.iooss_linux@m4x.org>
-Cc: Emil Velikov <emil.l.velikov@gmail.com>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Alison Wang <alison.wang@freescale.com>, Stephen Warren <swarren@wwwdotorg.org>, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20151211081226.GV20822@phenom.ffwll.local>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>, David Airlie <airlied@linux.ie>, Jianwei Wang <jianwei.wang.chn@gmail.com>, Alison Wang <alison.wang@freescale.com>, Mark Yao <mark.yao@rock-chips.com>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Cc: Nicolas Iooss <nicolas.iooss_linux@m4x.org>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Dec 09, 2015 at 12:52:58AM +0100, Nicolas Iooss wrote:
-> On 12/09/2015 12:28 AM, Emil Velikov wrote:
-> > On 8 December 2015 at 22:12, Nicolas Iooss <nicolas.iooss_linux@m4x.org> wrote:
-> >> drm_dev_set_unique() uses a format string to define the unique name of a
-> >> device.  This feature is not used as currently all the calls to this
-> >> function either use "%s" as a format string or directly use
-> >> dev_name().
-> >>
-> >> Even though this second kind of call does not introduce security
-> >> problems, because there cannot be "%" characters in dev_name() results,
-> >> gcc issues a warning when building with -Wformat-security flag
-> >> ("warning: format string is not a string literal (potentially
-> >> insecure)").  This warning is useful to find real bugs like the one
-> >> fixed by commit 3958b79266b1 ("configfs: fix kernel infoleak through
-> >> user-controlled format string").  False positives which do not bring
-> >> an extra value make the work of finding real bugs harder.
-> >>
-> >> Therefore remove the format-string feature from drm_dev_set_unique().
-> >>
-> >> Signed-off-by: Nicolas Iooss <nicolas.iooss_linux@m4x.org>
-> >> ---
-> >>  drivers/gpu/drm/drm_drv.c                   | 11 +++--------
-> >>  drivers/gpu/drm/nouveau/nouveau_drm.c       |  2 +-
-> >>  drivers/gpu/drm/rockchip/rockchip_drm_drv.c |  2 +-
-> >>  include/drm/drmP.h                          |  2 +-
-> >>  4 files changed, 6 insertions(+), 11 deletions(-)
-> >>
-> >> diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
-> >> index 7dd6728dd092..20eaa0aae205 100644
-> >> --- a/drivers/gpu/drm/drm_drv.c
-> >> +++ b/drivers/gpu/drm/drm_drv.c
-> >> @@ -797,7 +797,7 @@ EXPORT_SYMBOL(drm_dev_unregister);
-> >>  /**
-> >>   * drm_dev_set_unique - Set the unique name of a DRM device
-> >>   * @dev: device of which to set the unique name
-> >> - * @fmt: format string for unique name
-> >> + * @name: unique name
-> >>   *
-> >>   * Sets the unique name of a DRM device using the specified format string and
-> >>   * a variable list of arguments. Drivers can use this at driver probe time if
-> > You might want to also update the above hunk :-)
-> 
-> Indeed, thanks! I will wait a little bit for other feedbacks, read all
-> the comments/documentation to see if anything else needs an update and
-> submit a v2.
-
-fyi 4.5 window for drm is closing in the next few days (because holidays
-and all that). Please resend soon, otherwise it might miss and get delayed
-to 4.6.
--Daniel
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+ZHJtX2Rldl9zZXRfdW5pcXVlKCkgdXNlcyBhIGZvcm1hdCBzdHJpbmcgdG8gZGVmaW5lIHRoZSB1
+bmlxdWUgbmFtZSBvZiBhCmRldmljZS4gIFRoaXMgZmVhdHVyZSBpcyBub3QgdXNlZCBhcyBjdXJy
+ZW50bHkgYWxsIHRoZSBjYWxscyB0byB0aGlzCmZ1bmN0aW9uIGVpdGhlciB1c2UgIiVzIiBhcyBh
+IGZvcm1hdCBzdHJpbmcgb3IgZGlyZWN0bHkgdXNlCmRldl9uYW1lKCkuCgpFdmVuIHRob3VnaCB0
+aGlzIHNlY29uZCBraW5kIG9mIGNhbGwgZG9lcyBub3QgaW50cm9kdWNlIHNlY3VyaXR5CnByb2Js
+ZW1zLCBiZWNhdXNlIHRoZXJlIGNhbm5vdCBiZSAiJSIgY2hhcmFjdGVycyBpbiBkZXZfbmFtZSgp
+IHJlc3VsdHMsCmdjYyBpc3N1ZXMgYSB3YXJuaW5nIHdoZW4gYnVpbGRpbmcgd2l0aCAtV2Zvcm1h
+dC1zZWN1cml0eSBmbGFnCigid2FybmluZzogZm9ybWF0IHN0cmluZyBpcyBub3QgYSBzdHJpbmcg
+bGl0ZXJhbCAocG90ZW50aWFsbHkKaW5zZWN1cmUpIikuICBUaGlzIHdhcm5pbmcgaXMgdXNlZnVs
+IHRvIGZpbmQgcmVhbCBidWdzIGxpa2UgdGhlIG9uZQpmaXhlZCBieSBjb21taXQgMzk1OGI3OTI2
+NmIxICgiY29uZmlnZnM6IGZpeCBrZXJuZWwgaW5mb2xlYWsgdGhyb3VnaAp1c2VyLWNvbnRyb2xs
+ZWQgZm9ybWF0IHN0cmluZyIpLiAgRmFsc2UgcG9zaXRpdmVzIHdoaWNoIGRvIG5vdCBicmluZwph
+biBleHRyYSB2YWx1ZSBtYWtlIHRoZSB3b3JrIG9mIGZpbmRpbmcgcmVhbCBidWdzIGhhcmRlci4K
+ClRoZXJlZm9yZSByZW1vdmUgdGhlIGZvcm1hdC1zdHJpbmcgZmVhdHVyZSBmcm9tIGRybV9kZXZf
+c2V0X3VuaXF1ZSgpLgoKU2lnbmVkLW9mZi1ieTogTmljb2xhcyBJb29zcyA8bmljb2xhcy5pb29z
+c19saW51eEBtNHgub3JnPgotLS0KdjI6IHVwZGF0ZSBkcm1fZGV2X3NldF91bmlxdWUoKSBjb21t
+ZW50CgogZHJpdmVycy9ncHUvZHJtL2RybV9kcnYuYyAgICAgICAgICAgICAgICAgICB8IDE3ICsr
+KysrKy0tLS0tLS0tLS0tCiBkcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9ub3V2ZWF1X2RybS5jICAg
+ICAgIHwgIDIgKy0KIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZHJ2LmMg
+fCAgMiArLQogaW5jbHVkZS9kcm0vZHJtUC5oICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAy
+ICstCiA0IGZpbGVzIGNoYW5nZWQsIDkgaW5zZXJ0aW9ucygrKSwgMTQgZGVsZXRpb25zKC0pCgpk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2RybV9kcnYuYyBiL2RyaXZlcnMvZ3B1L2RybS9k
+cm1fZHJ2LmMKaW5kZXggN2RkNjcyOGRkMDkyLi5lYWE0MzE2ZjNjNDUgMTAwNjQ0Ci0tLSBhL2Ry
+aXZlcnMvZ3B1L2RybS9kcm1fZHJ2LmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9kcnYuYwpA
+QCAtNzk3LDIzICs3OTcsMTggQEAgRVhQT1JUX1NZTUJPTChkcm1fZGV2X3VucmVnaXN0ZXIpOwog
+LyoqCiAgKiBkcm1fZGV2X3NldF91bmlxdWUgLSBTZXQgdGhlIHVuaXF1ZSBuYW1lIG9mIGEgRFJN
+IGRldmljZQogICogQGRldjogZGV2aWNlIG9mIHdoaWNoIHRvIHNldCB0aGUgdW5pcXVlIG5hbWUK
+LSAqIEBmbXQ6IGZvcm1hdCBzdHJpbmcgZm9yIHVuaXF1ZSBuYW1lCisgKiBAbmFtZTogdW5pcXVl
+IG5hbWUKICAqCi0gKiBTZXRzIHRoZSB1bmlxdWUgbmFtZSBvZiBhIERSTSBkZXZpY2UgdXNpbmcg
+dGhlIHNwZWNpZmllZCBmb3JtYXQgc3RyaW5nIGFuZAotICogYSB2YXJpYWJsZSBsaXN0IG9mIGFy
+Z3VtZW50cy4gRHJpdmVycyBjYW4gdXNlIHRoaXMgYXQgZHJpdmVyIHByb2JlIHRpbWUgaWYKLSAq
+IHRoZSB1bmlxdWUgbmFtZSBvZiB0aGUgZGV2aWNlcyB0aGV5IGRyaXZlIGlzIHN0YXRpYy4KKyAq
+IFNldHMgdGhlIHVuaXF1ZSBuYW1lIG9mIGEgRFJNIGRldmljZSB1c2luZyB0aGUgc3BlY2lmaWVk
+IHN0cmluZy4gRHJpdmVycworICogY2FuIHVzZSB0aGlzIGF0IGRyaXZlciBwcm9iZSB0aW1lIGlm
+IHRoZSB1bmlxdWUgbmFtZSBvZiB0aGUgZGV2aWNlcyB0aGV5CisgKiBkcml2ZSBpcyBzdGF0aWMu
+CiAgKgogICogUmV0dXJuOiAwIG9uIHN1Y2Nlc3Mgb3IgYSBuZWdhdGl2ZSBlcnJvciBjb2RlIG9u
+IGZhaWx1cmUuCiAgKi8KLWludCBkcm1fZGV2X3NldF91bmlxdWUoc3RydWN0IGRybV9kZXZpY2Ug
+KmRldiwgY29uc3QgY2hhciAqZm10LCAuLi4pCitpbnQgZHJtX2Rldl9zZXRfdW5pcXVlKHN0cnVj
+dCBkcm1fZGV2aWNlICpkZXYsIGNvbnN0IGNoYXIgKm5hbWUpCiB7Ci0JdmFfbGlzdCBhcDsKLQog
+CWtmcmVlKGRldi0+dW5pcXVlKTsKLQotCXZhX3N0YXJ0KGFwLCBmbXQpOwotCWRldi0+dW5pcXVl
+ID0ga3Zhc3ByaW50ZihHRlBfS0VSTkVMLCBmbXQsIGFwKTsKLQl2YV9lbmQoYXApOworCWRldi0+
+dW5pcXVlID0ga3N0cmR1cChuYW1lLCBHRlBfS0VSTkVMKTsKIAogCXJldHVybiBkZXYtPnVuaXF1
+ZSA/IDAgOiAtRU5PTUVNOwogfQpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL25vdXZlYXUv
+bm91dmVhdV9kcm0uYyBiL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L25vdXZlYXVfZHJtLmMKaW5k
+ZXggMWQzZWU1MTc5YWI4Li4yZDIzZjk1ZjE3Y2UgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS9ub3V2ZWF1L25vdXZlYXVfZHJtLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbm91
+dmVhdV9kcm0uYwpAQCAtMTA0Niw3ICsxMDQ2LDcgQEAgbm91dmVhdV9wbGF0Zm9ybV9kZXZpY2Vf
+Y3JlYXRlKGNvbnN0IHN0cnVjdCBudmttX2RldmljZV90ZWdyYV9mdW5jICpmdW5jLAogCQlnb3Rv
+IGVycl9mcmVlOwogCX0KIAotCWVyciA9IGRybV9kZXZfc2V0X3VuaXF1ZShkcm0sICIlcyIsIGRl
+dl9uYW1lKCZwZGV2LT5kZXYpKTsKKwllcnIgPSBkcm1fZGV2X3NldF91bmlxdWUoZHJtLCBkZXZf
+bmFtZSgmcGRldi0+ZGV2KSk7CiAJaWYgKGVyciA8IDApCiAJCWdvdG8gZXJyX2ZyZWU7CiAKZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZHJ2LmMgYi9k
+cml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAvcm9ja2NoaXBfZHJtX2Rydi5jCmluZGV4IGYyMmUxZTFl
+ZTY0YS4uMjE1ZDZjNDRhZjU1IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAv
+cm9ja2NoaXBfZHJtX2Rydi5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hp
+cF9kcm1fZHJ2LmMKQEAgLTQ1MCw3ICs0NTAsNyBAQCBzdGF0aWMgaW50IHJvY2tjaGlwX2RybV9i
+aW5kKHN0cnVjdCBkZXZpY2UgKmRldikKIAlpZiAoIWRybSkKIAkJcmV0dXJuIC1FTk9NRU07CiAK
+LQlyZXQgPSBkcm1fZGV2X3NldF91bmlxdWUoZHJtLCAiJXMiLCBkZXZfbmFtZShkZXYpKTsKKwly
+ZXQgPSBkcm1fZGV2X3NldF91bmlxdWUoZHJtLCBkZXZfbmFtZShkZXYpKTsKIAlpZiAocmV0KQog
+CQlnb3RvIGVycl9mcmVlOwogCmRpZmYgLS1naXQgYS9pbmNsdWRlL2RybS9kcm1QLmggYi9pbmNs
+dWRlL2RybS9kcm1QLmgKaW5kZXggMGEyNzFjYTFmN2M3Li5mMTRjMjVhNmJiZjIgMTAwNjQ0Ci0t
+LSBhL2luY2x1ZGUvZHJtL2RybVAuaAorKysgYi9pbmNsdWRlL2RybS9kcm1QLmgKQEAgLTEwNTks
+NyArMTA1OSw3IEBAIHZvaWQgZHJtX2Rldl9yZWYoc3RydWN0IGRybV9kZXZpY2UgKmRldik7CiB2
+b2lkIGRybV9kZXZfdW5yZWYoc3RydWN0IGRybV9kZXZpY2UgKmRldik7CiBpbnQgZHJtX2Rldl9y
+ZWdpc3RlcihzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCB1bnNpZ25lZCBsb25nIGZsYWdzKTsKIHZv
+aWQgZHJtX2Rldl91bnJlZ2lzdGVyKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYpOwotaW50IGRybV9k
+ZXZfc2V0X3VuaXF1ZShzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LCBjb25zdCBjaGFyICpmbXQsIC4u
+Lik7CitpbnQgZHJtX2Rldl9zZXRfdW5pcXVlKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIGNvbnN0
+IGNoYXIgKm5hbWUpOwogCiBzdHJ1Y3QgZHJtX21pbm9yICpkcm1fbWlub3JfYWNxdWlyZSh1bnNp
+Z25lZCBpbnQgbWlub3JfaWQpOwogdm9pZCBkcm1fbWlub3JfcmVsZWFzZShzdHJ1Y3QgZHJtX21p
+bm9yICptaW5vcik7Ci0tIAoyLjYuMwoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnCmh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9kcmktZGV2ZWwK
