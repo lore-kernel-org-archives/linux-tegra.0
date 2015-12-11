@@ -1,37 +1,72 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/9] clk: tegra: Fix divider on VI_I2C
-Date: Thu, 10 Dec 2015 17:08:20 -0500
-Message-ID: <1449785308-19546-2-git-send-email-rklein@nvidia.com>
-References: <1449785308-19546-1-git-send-email-rklein@nvidia.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 1/2] drm: make drm_dev_set_unique() not use a format
+ string
+Date: Fri, 11 Dec 2015 09:12:26 +0100
+Message-ID: <20151211081226.GV20822@phenom.ffwll.local>
+References: <1449612732-32438-1-git-send-email-nicolas.iooss_linux@m4x.org>
+ <CACvgo51hU5L5wDeViyR2AW5J1HYOc_rKRUQoEh9_u1qOx7vPXA@mail.gmail.com>
+ <56676D5A.6060605@m4x.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1449785308-19546-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <56676D5A.6060605@m4x.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Nicolas Iooss <nicolas.iooss_linux@m4x.org>
+Cc: Emil Velikov <emil.l.velikov@gmail.com>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Alison Wang <alison.wang@freescale.com>, Stephen Warren <swarren@wwwdotorg.org>, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>, ML dri-devel <dri-devel@lists.freedesktop.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-VI-I2C has 16 bits available for its divider. Switch the divider
-width to 16 instead of 8 so correct rates can be set.
+On Wed, Dec 09, 2015 at 12:52:58AM +0100, Nicolas Iooss wrote:
+> On 12/09/2015 12:28 AM, Emil Velikov wrote:
+> > On 8 December 2015 at 22:12, Nicolas Iooss <nicolas.iooss_linux@m4x.org> wrote:
+> >> drm_dev_set_unique() uses a format string to define the unique name of a
+> >> device.  This feature is not used as currently all the calls to this
+> >> function either use "%s" as a format string or directly use
+> >> dev_name().
+> >>
+> >> Even though this second kind of call does not introduce security
+> >> problems, because there cannot be "%" characters in dev_name() results,
+> >> gcc issues a warning when building with -Wformat-security flag
+> >> ("warning: format string is not a string literal (potentially
+> >> insecure)").  This warning is useful to find real bugs like the one
+> >> fixed by commit 3958b79266b1 ("configfs: fix kernel infoleak through
+> >> user-controlled format string").  False positives which do not bring
+> >> an extra value make the work of finding real bugs harder.
+> >>
+> >> Therefore remove the format-string feature from drm_dev_set_unique().
+> >>
+> >> Signed-off-by: Nicolas Iooss <nicolas.iooss_linux@m4x.org>
+> >> ---
+> >>  drivers/gpu/drm/drm_drv.c                   | 11 +++--------
+> >>  drivers/gpu/drm/nouveau/nouveau_drm.c       |  2 +-
+> >>  drivers/gpu/drm/rockchip/rockchip_drm_drv.c |  2 +-
+> >>  include/drm/drmP.h                          |  2 +-
+> >>  4 files changed, 6 insertions(+), 11 deletions(-)
+> >>
+> >> diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
+> >> index 7dd6728dd092..20eaa0aae205 100644
+> >> --- a/drivers/gpu/drm/drm_drv.c
+> >> +++ b/drivers/gpu/drm/drm_drv.c
+> >> @@ -797,7 +797,7 @@ EXPORT_SYMBOL(drm_dev_unregister);
+> >>  /**
+> >>   * drm_dev_set_unique - Set the unique name of a DRM device
+> >>   * @dev: device of which to set the unique name
+> >> - * @fmt: format string for unique name
+> >> + * @name: unique name
+> >>   *
+> >>   * Sets the unique name of a DRM device using the specified format string and
+> >>   * a variable list of arguments. Drivers can use this at driver probe time if
+> > You might want to also update the above hunk :-)
+> 
+> Indeed, thanks! I will wait a little bit for other feedbacks, read all
+> the comments/documentation to see if anything else needs an update and
+> submit a v2.
 
-Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/clk/tegra/clk-tegra-periph.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-index 6ad381a888a6..105405ca85ab 100644
---- a/drivers/clk/tegra/clk-tegra-periph.c
-+++ b/drivers/clk/tegra/clk-tegra-periph.c
-@@ -782,7 +782,7 @@ static struct tegra_periph_init_data periph_clks[] = {
- 	NODIV("sor1", mux_clkm_sor1_brick_sor1_src, CLK_SOURCE_SOR1, 15, MASK(1), 183, 0, tegra_clk_sor1, &sor1_lock),
- 	MUX8("sdmmc_legacy", mux_pllp_out3_clkm_pllp_pllc4, CLK_SOURCE_SDMMC_LEGACY, 193, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_sdmmc_legacy),
- 	MUX8("qspi", mux_pllp_pllc_pllc_out1_pllc4_out2_pllc4_out1_clkm_pllc4_out0, CLK_SOURCE_QSPI, 211, TEGRA_PERIPH_ON_APB, tegra_clk_qspi),
--	MUX("vii2c", mux_pllp_pllc_clkm, CLK_SOURCE_VI_I2C, 208, TEGRA_PERIPH_ON_APB, tegra_clk_vi_i2c),
-+	I2C("vii2c", mux_pllp_pllc_clkm, CLK_SOURCE_VI_I2C, 208, tegra_clk_vi_i2c),
- 	MUX("mipibif", mux_pllp_clkm, CLK_SOURCE_MIPIBIF, 173, TEGRA_PERIPH_ON_APB, tegra_clk_mipibif),
- 	MUX("uartape", mux_pllp_pllc_clkm, CLK_SOURCE_UARTAPE, 212, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_uartape),
- 	MUX8("tsecb", mux_pllp_pllc2_c_c3_clkm, CLK_SOURCE_TSECB, 206, 0, tegra_clk_tsecb),
+fyi 4.5 window for drm is closing in the next few days (because holidays
+and all that). Please resend soon, otherwise it might miss and get delayed
+to 4.6.
+-Daniel
 -- 
-1.9.1
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
