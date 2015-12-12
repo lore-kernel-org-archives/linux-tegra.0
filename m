@@ -1,105 +1,46 @@
-From: Nicolas Iooss <nicolas.iooss_linux@m4x.org>
-Subject: [PATCH v2 2/2] drm: use dev_name as default unique name in
- drm_dev_alloc()
-Date: Fri, 11 Dec 2015 11:20:28 +0100
-Message-ID: <1449829228-4425-2-git-send-email-nicolas.iooss_linux@m4x.org>
-References: <20151211081226.GV20822@phenom.ffwll.local>
- <1449829228-4425-1-git-send-email-nicolas.iooss_linux@m4x.org>
+From: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>
+Subject: Re: [PATCH] cpufreq: tegra: add regulator dependency for T124
+Date: Sat, 12 Dec 2015 03:26:57 +0100
+Message-ID: <1834718.KShzbrV9CD@vostro.rjw.lan>
+References: <2194927.eV2s2QmZs0@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1449829228-4425-1-git-send-email-nicolas.iooss_linux@m4x.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>, David Airlie <airlied@linux.ie>, Jianwei Wang <jianwei.wang.chn@gmail.com>, Alison Wang <alison.wang@freescale.com>, Mark Yao <mark.yao@rock-chips.com>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
-Cc: Nicolas Iooss <nicolas.iooss_linux@m4x.org>, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <2194927.eV2s2QmZs0@wuerfel>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-VGhlIGZvbGxvd2luZyBjb2RlIHBhdHRlcm4gZXhpc3RzIGluIHNvbWUgRFJNIGRyaXZlcnM6Cgog
-ICAgZGRldiA9IGRybV9kZXZfYWxsb2MoJmRyaXZlciwgcGFyZW50X2Rldik7CiAgICBkcm1fZGV2
-X3NldF91bmlxdWUoZGRldiwgZGV2X25hbWUocGFyZW50X2RldikpOwoKKFNvbWV0aW1lcyBkZXZf
-bmFtZShkZGV2LT5kZXYpIGlzIHVzZWQsIHdoaWNoIGlzIHRoZSBzYW1lLikKCkFzIHN1Z2dlc3Rl
-ZCBpbgpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL2FyY2hpdmVzL2RyaS1kZXZlbC8yMDE1
-LURlY2VtYmVyLzA5NjQ0MS5odG1sLAp0aGUgdW5pcXVlIG5hbWUgb2YgYSBuZXcgRFJNIGRldmlj
-ZSBjYW4gYmUgc2V0IGFzIGRldl9uYW1lKHBhcmVudF9kZXYpCndoZW4gcGFyZW50X2RldiBpcyBu
-b3QgTlVMTCAodmdlbSBpcyBhIHNwZWNpYWwgY2FzZSkuCgpTaWduZWQtb2ZmLWJ5OiBOaWNvbGFz
-IElvb3NzIDxuaWNvbGFzLmlvb3NzX2xpbnV4QG00eC5vcmc+CkFja2VkLWJ5OiBCb3JpcyBCcmV6
-aWxsb24gPGJvcmlzLmJyZXppbGxvbkBmcmVlLWVsZWN0cm9ucy5jb20+Ci0tLQogZHJpdmVycy9n
-cHUvZHJtL2F0bWVsLWhsY2RjL2F0bWVsX2hsY2RjX2RjLmMgfCA0IC0tLS0KIGRyaXZlcnMvZ3B1
-L2RybS9kcm1fZHJ2LmMgICAgICAgICAgICAgICAgICAgIHwgOSArKysrKysrKysKIGRyaXZlcnMv
-Z3B1L2RybS9mc2wtZGN1L2ZzbF9kY3VfZHJtX2Rydi5jICAgIHwgMSAtCiBkcml2ZXJzL2dwdS9k
-cm0vbm91dmVhdS9ub3V2ZWF1X2RybS5jICAgICAgICB8IDQgLS0tLQogZHJpdmVycy9ncHUvZHJt
-L3JvY2tjaGlwL3JvY2tjaGlwX2RybV9kcnYuYyAgfCA0IC0tLS0KIGRyaXZlcnMvZ3B1L2RybS90
-ZWdyYS9kcm0uYyAgICAgICAgICAgICAgICAgIHwgMSAtCiBkcml2ZXJzL2dwdS9kcm0vdmM0L3Zj
-NF9kcnYuYyAgICAgICAgICAgICAgICB8IDIgLS0KIDcgZmlsZXMgY2hhbmdlZCwgOSBpbnNlcnRp
-b25zKCspLCAxNiBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vYXRt
-ZWwtaGxjZGMvYXRtZWxfaGxjZGNfZGMuYyBiL2RyaXZlcnMvZ3B1L2RybS9hdG1lbC1obGNkYy9h
-dG1lbF9obGNkY19kYy5jCmluZGV4IDI0NGRmMGE0NDBiNy4uZmJhNGY3MmU3YWUxIDEwMDY0NAot
-LS0gYS9kcml2ZXJzL2dwdS9kcm0vYXRtZWwtaGxjZGMvYXRtZWxfaGxjZGNfZGMuYworKysgYi9k
-cml2ZXJzL2dwdS9kcm0vYXRtZWwtaGxjZGMvYXRtZWxfaGxjZGNfZGMuYwpAQCAtNzMzLDEwICs3
-MzMsNiBAQCBzdGF0aWMgaW50IGF0bWVsX2hsY2RjX2RjX2RybV9wcm9iZShzdHJ1Y3QgcGxhdGZv
-cm1fZGV2aWNlICpwZGV2KQogCWlmICghZGRldikKIAkJcmV0dXJuIC1FTk9NRU07CiAKLQlyZXQg
-PSBkcm1fZGV2X3NldF91bmlxdWUoZGRldiwgZGV2X25hbWUoZGRldi0+ZGV2KSk7Ci0JaWYgKHJl
-dCkKLQkJZ290byBlcnJfdW5yZWY7Ci0KIAlyZXQgPSBhdG1lbF9obGNkY19kY19sb2FkKGRkZXYp
-OwogCWlmIChyZXQpCiAJCWdvdG8gZXJyX3VucmVmOwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
-ZHJtL2RybV9kcnYuYyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fZHJ2LmMKaW5kZXggZWFhNDMxNmYz
-YzQ1Li5iZjkzNGNkZWEyMWMgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fZHJ2LmMK
-KysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9kcnYuYwpAQCAtNjMzLDggKzYzMywxNyBAQCBzdHJ1
-Y3QgZHJtX2RldmljZSAqZHJtX2Rldl9hbGxvYyhzdHJ1Y3QgZHJtX2RyaXZlciAqZHJpdmVyLAog
-CQl9CiAJfQogCisJaWYgKHBhcmVudCkgeworCQlyZXQgPSBkcm1fZGV2X3NldF91bmlxdWUoZGV2
-LCBkZXZfbmFtZShwYXJlbnQpKTsKKwkJaWYgKHJldCkKKwkJCWdvdG8gZXJyX3NldHVuaXF1ZTsK
-Kwl9CisKIAlyZXR1cm4gZGV2OwogCitlcnJfc2V0dW5pcXVlOgorCWlmIChkcm1fY29yZV9jaGVj
-a19mZWF0dXJlKGRldiwgRFJJVkVSX0dFTSkpCisJCWRybV9nZW1fZGVzdHJveShkZXYpOwogZXJy
-X2N0eGJpdG1hcDoKIAlkcm1fbGVnYWN5X2N0eGJpdG1hcF9jbGVhbnVwKGRldik7CiAJZHJtX2h0
-X3JlbW92ZSgmZGV2LT5tYXBfaGFzaCk7CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZnNs
-LWRjdS9mc2xfZGN1X2RybV9kcnYuYyBiL2RyaXZlcnMvZ3B1L2RybS9mc2wtZGN1L2ZzbF9kY3Vf
-ZHJtX2Rydi5jCmluZGV4IDE5MzAyMzRiYTVmMS4uZmNhOTdkM2ZjODQ2IDEwMDY0NAotLS0gYS9k
-cml2ZXJzL2dwdS9kcm0vZnNsLWRjdS9mc2xfZGN1X2RybV9kcnYuYworKysgYi9kcml2ZXJzL2dw
-dS9kcm0vZnNsLWRjdS9mc2xfZGN1X2RybV9kcnYuYwpAQCAtMzYzLDcgKzM2Myw2IEBAIHN0YXRp
-YyBpbnQgZnNsX2RjdV9kcm1fcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikKIAlm
-c2xfZGV2LT5ucCA9IGRldi0+b2Zfbm9kZTsKIAlkcm0tPmRldl9wcml2YXRlID0gZnNsX2RldjsK
-IAlkZXZfc2V0X2RydmRhdGEoZGV2LCBmc2xfZGV2KTsKLQlkcm1fZGV2X3NldF91bmlxdWUoZHJt
-LCBkZXZfbmFtZShkZXYpKTsKIAogCXJldCA9IGRybV9kZXZfcmVnaXN0ZXIoZHJtLCAwKTsKIAlp
-ZiAocmV0IDwgMCkKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L25vdXZlYXVf
-ZHJtLmMgYi9kcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9ub3V2ZWF1X2RybS5jCmluZGV4IDJkMjNm
-OTVmMTdjZS4uYjNhNTYzYzQ0YmNkIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vbm91dmVh
-dS9ub3V2ZWF1X2RybS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9ub3V2ZWF1L25vdXZlYXVfZHJt
-LmMKQEAgLTEwNDYsMTAgKzEwNDYsNiBAQCBub3V2ZWF1X3BsYXRmb3JtX2RldmljZV9jcmVhdGUo
-Y29uc3Qgc3RydWN0IG52a21fZGV2aWNlX3RlZ3JhX2Z1bmMgKmZ1bmMsCiAJCWdvdG8gZXJyX2Zy
-ZWU7CiAJfQogCi0JZXJyID0gZHJtX2Rldl9zZXRfdW5pcXVlKGRybSwgZGV2X25hbWUoJnBkZXYt
-PmRldikpOwotCWlmIChlcnIgPCAwKQotCQlnb3RvIGVycl9mcmVlOwotCiAJZHJtLT5wbGF0Zm9y
-bWRldiA9IHBkZXY7CiAJcGxhdGZvcm1fc2V0X2RydmRhdGEocGRldiwgZHJtKTsKIApkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9kcnYuYyBiL2RyaXZl
-cnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZHJ2LmMKaW5kZXggMjE1ZDZjNDRhZjU1
-Li5hZmJiNzQwN2M0NGYgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9yb2Nr
-Y2hpcF9kcm1fZHJ2LmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2Ry
-bV9kcnYuYwpAQCAtNDUwLDEwICs0NTAsNiBAQCBzdGF0aWMgaW50IHJvY2tjaGlwX2RybV9iaW5k
-KHN0cnVjdCBkZXZpY2UgKmRldikKIAlpZiAoIWRybSkKIAkJcmV0dXJuIC1FTk9NRU07CiAKLQly
-ZXQgPSBkcm1fZGV2X3NldF91bmlxdWUoZHJtLCBkZXZfbmFtZShkZXYpKTsKLQlpZiAocmV0KQot
-CQlnb3RvIGVycl9mcmVlOwotCiAJcmV0ID0gZHJtX2Rldl9yZWdpc3Rlcihkcm0sIDApOwogCWlm
-IChyZXQpCiAJCWdvdG8gZXJyX2ZyZWU7CmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVn
-cmEvZHJtLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKaW5kZXggMTU5ZWY1MTVjYWIx
-Li4xMmUyZDNjY2JjOWQgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYwor
-KysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKQEAgLTk5MSw3ICs5OTEsNiBAQCBzdGF0
-aWMgaW50IGhvc3QxeF9kcm1fcHJvYmUoc3RydWN0IGhvc3QxeF9kZXZpY2UgKmRldikKIAlpZiAo
-IWRybSkKIAkJcmV0dXJuIC1FTk9NRU07CiAKLQlkcm1fZGV2X3NldF91bmlxdWUoZHJtLCBkZXZf
-bmFtZSgmZGV2LT5kZXYpKTsKIAlkZXZfc2V0X2RydmRhdGEoJmRldi0+ZGV2LCBkcm0pOwogCiAJ
-ZXJyID0gZHJtX2Rldl9yZWdpc3Rlcihkcm0sIDApOwpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUv
-ZHJtL3ZjNC92YzRfZHJ2LmMgYi9kcml2ZXJzL2dwdS9kcm0vdmM0L3ZjNF9kcnYuYwppbmRleCBk
-NWRiOWUwZjNiNzMuLjY0Nzc3MjMwNWU4ZiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3Zj
-NC92YzRfZHJ2LmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3ZjNC92YzRfZHJ2LmMKQEAgLTE2OCw4
-ICsxNjgsNiBAQCBzdGF0aWMgaW50IHZjNF9kcm1fYmluZChzdHJ1Y3QgZGV2aWNlICpkZXYpCiAJ
-dmM0LT5kZXYgPSBkcm07CiAJZHJtLT5kZXZfcHJpdmF0ZSA9IHZjNDsKIAotCWRybV9kZXZfc2V0
-X3VuaXF1ZShkcm0sIGRldl9uYW1lKGRldikpOwotCiAJZHJtX21vZGVfY29uZmlnX2luaXQoZHJt
-KTsKIAlpZiAocmV0KQogCQlnb3RvIHVucmVmOwotLSAKMi42LjMKCl9fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJp
-LWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On Tuesday, December 08, 2015 10:52:45 PM Arnd Bergmann wrote:
+> This driver is the only one that calls regulator_sync_voltage(), but it
+> can currently be built with CONFIG_REGULATOR disabled, producing
+> this build error:
+> 
+> drivers/cpufreq/tegra124-cpufreq.c: In function 'tegra124_cpu_switch_to_pllx':
+> drivers/cpufreq/tegra124-cpufreq.c:68:2: error: implicit declaration of function 'regulator_sync_voltage' [-Werror=implicit-function-declaration]
+>   regulator_sync_voltage(priv->vdd_cpu_reg);
+> 
+> My first attempt was to implement a helper for this function
+> for regulator_sync_voltage, but Mark Brown explained:
+> 
+>    We don't do this for *all* regulator API functions - there's some where
+>    using them strongly suggests that there is actually a dependency on
+>    the regulator API.  This does seem like it might be falling into the
+>    specialist category [...]
+>    Looking at the code I'm pretty unclear on what the authors think the
+>    use of _sync_voltage() is doing in the first place so it may be even
+>    better to just remove the call.  It seems to have been included in the
+>    first commit so there's not changelog explaining things and there's
+>    no comment either.  I'd *expect* it to be a noop as far as I can see.
+> 
+> This adds the dependency to make the driver always build successfully
+> or not be enabled at all. Alternatively, we could investigate if the
+> driver should stop calling regulator_sync_voltage instead.
+> 
+> Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+
+Applied, thanks!
+
+Rafael
