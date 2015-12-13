@@ -1,99 +1,89 @@
 From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 00/10] drivers/pci: avoid module_init in non-modular host/pci*
-Date: Sat, 12 Dec 2015 20:41:47 -0500
-Message-ID: <1449970917-12633-1-git-send-email-paul.gortmaker@windriver.com>
+Subject: [PATCH 06/10] drivers/pci: make host/pci-tegra.c explicitly non-modular
+Date: Sat, 12 Dec 2015 20:41:53 -0500
+Message-ID: <1449970917-12633-7-git-send-email-paul.gortmaker@windriver.com>
+References: <1449970917-12633-1-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1449970917-12633-1-git-send-email-paul.gortmaker@windriver.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: linux-kernel@vger.kernel.org
-Cc: linux-sh@vger.kernel.org, linux-pci@vger.kernel.org, Paul Gortmaker <paul.gortmaker@windriver.com>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Pratyush Anand <pratyush.anand@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Kishon Vijay Abraham I <kishon@ti.com>, Murali Karicheri <m-karicheri2@ti.com>, =?UTF-8?q?S=C3=B6ren=20Brinkmann?= <soren.brinkmann@xilinx.com>, Jason Cooper <jason@lakedaemon.net>, Stephen Warren <swarren@wwwdotorg.org>, Simon Horman <horms@verge.net.au>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Richard Zhu <Richard.Zhu@freescale.com>, rfi@lists.rocketboards.org, Ley Foon Tan <lftan@altera.com>, Bjorn Helgaas <bhelgaas@google.com>, Lucas Stach <l.stach@pengutronix.de>
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Thierry Reding <thierry.reding@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-VGhpcyBzZXJpZXMgb2YgY29tbWl0cyBpcyBhIHNsaWNlIG9mIGEgbGFyZ2VyIHByb2plY3QgdG8g
-ZW5zdXJlCnBlb3BsZSBkb24ndCBoYXZlIGRlYWQgY29kZSBmb3IgbW9kdWxlIHJlbW92YWwgaW4g
-bm9uLW1vZHVsYXIKZHJpdmVycy4gIE92ZXJhbGwgdGhlcmUgd2FzIHJvdWdobHkgNWsgbGluZXMg
-b2YgZGVhZCBjb2RlIGluIHRoZQprZXJuZWwgZHVlIHRvIHRoaXMuICBTbyBmYXIgd2UndmUgZml4
-ZWQgc2V2ZXJhbCBhcmVhcywgbGlrZSB0dHksCng4NiwgbmV0LCBldGMuIGFuZCB3ZSBjb250aW51
-ZSB0byB3b3JrIG9uIG90aGVyIGFyZWFzLgoKVGhlcmUgYXJlIHNldmVyYWwgcmVhc29ucyB0byBu
-b3QgdXNlIG1vZHVsZV9pbml0IGZvciBjb2RlIHRoYXQgY2FuCm5ldmVyIGJlIGJ1aWx0IGFzIGEg
-bW9kdWxlLCBidXQgdGhlIGJpZyBvbmVzIGFyZToKCiAoMSkgaXQgaXMgZWFzeSB0byBhY2NpZGVu
-dGFsbHkgY29kZSB1cCB1bnVzZWQgbW9kdWxlX2V4aXQgYW5kIHJlbW92ZSBjb2RlCiAoMikgaXQg
-Y2FuIGJlIG1pc2xlYWRpbmcgd2hlbiByZWFkaW5nIHRoZSBzb3VyY2UsIHRoaW5raW5nIGl0IGNh
-biBiZQogICAgICBtb2R1bGFyIHdoZW4gdGhlIE1ha2VmaWxlIGFuZC9vciBLY29uZmlnIHByb2hp
-Yml0IGl0CiAoMykgaXQgcmVxdWlyZXMgdGhlIGluY2x1ZGUgb2YgdGhlIG1vZHVsZS5oIGhlYWRl
-ciBmaWxlIHdoaWNoIGluIHR1cm4KICAgICBpbmNsdWRlcyBuZWFybHkgZXZlcnl0aGluZyBlbHNl
-LgoKSGVyZSB3ZSBjb252ZXJ0IHNvbWUgbW9kdWxlX2luaXQoKSBjYWxscyBpbnRvIGRldmljZV9p
-bml0Y2FsbCgpIGFuZCBkZWxldGUKYW55IG1vZHVsZV9leGl0IGFuZCByZW1vdmUgY29kZSB0aGF0
-IGdldHMgb3JwaGFuZWQgaW4gdGhlIHByb2Nlc3MsIGZvcgphbiBvdmVyYWxsIG5ldCBjb2RlIHJl
-ZHVjdGlvbiwgd2hpY2ggaXMgYWx3YXlzIHdlbGNvbWUuCgpUaGUgdXNlIG9mIGRldmljZV9pbml0
-Y2FsbCBlbnN1cmVzIHRoYXQgdGhlIGluaXQgZnVuY3Rpb24gb3JkZXJpbmcKcmVtYWlucyB1bmNo
-YW5nZWQsIGJ1dCBvbmUgY291bGQgYXJndWUgdGhhdCBQQ0kgaG9zdCBjb2RlIG1pZ2h0IGJlIG1v
-cmUKYXBwcm9wcmlhdGUgdG8gYmUgaGFuZGxlZCB1bmRlciBzdWJzeXNfaW5pdGNhbGwuICBGb3J0
-dW5hdGVseSB3ZSBjYW4KcmV2aXNpdCBtYWtpbmcgdGhpcyBleHRyYSBjaGFuZ2UgYXQgYSBsYXRl
-ciBkYXRlIGlmIGRlc2lyZWQ7IGl0IGRvZXMKbm90IG5lZWQgdG8gaGFwcGVuIG5vdywgYW5kIHdl
-IHJlZHVjZSB0aGUgcmlzayBvZiBpbnRyb2R1Y2luZwpyZWdyZXNzaW9ucyBhdCB0aGlzIHBvaW50
-IGluIHRpbWUgYnkgc2VwYXJhdGluZyB0aGUgdHdvIGNoYW5nZXMuCgpPdmVyIGhhbGYgb2YgdGhl
-IGRyaXZlcnMgY2hhbmdlZCBoZXJlIGFscmVhZHkgZXhwbGljaXRseSBkaXNhbGxvd2VkIGFueQp1
-bmJpbmQgb3BlcmF0aW9ucy4gIEZvciB0aGUgcmVzdCB3ZSBtYWtlIHRoZW0gdGhlIHNhbWUsIHNp
-bmNlIHRoZXJlIGlzCm5vdCByZWFsbHkgYW55IHNlbnNpYmxlIHVzZSBjYXNlIHRvIHVuYmluZCBh
-bnkgYnVpbHQtaW4gYnVzIHN1cHBvcnQgdGhhdApJIGNhbiB0aGluayBvZi4KCkkgaGF2ZSBtb3Jl
-ICJhdm9pZCBtb2R1bGUgdXNhZ2UgaW4gbm9uLW1vZHVsYXIgY29kZSIgY2xlYW51cHMgZm9yIHRo
-ZQpQQ0kgc3Vic3lzdGVtLCBidXQgdGhlc2UgYWxsIGhhdmUgYSBjb21tb24gdGhlbWUgYW5kIGl0
-IG1ha2VzIGZvciBhCm1vcmUgbWFpbnRhaW5lciBmcmllbmRseSBzZXJpZXMgc2l6ZSB0byBqdXN0
-IGFzayB0byBkaWdlc3QgdGhlc2UgMXN0LgoKVGVzdGluZyB3YXMgZG9uZSBvbiBsaW51eC1uZXh0
-LCB1c2luZyBhbiBBUkNIPWFybSBhbGxtb2Rjb25maWcgYW5kIHRoZW4KZXhwbGljaXRseSBidWls
-ZGluZyB0aGUgZmlsZXMgY2hhbmdlZCBpbiB0aGlzIHNlcmllcy4gIElmIGRlc2lyZWQsIEkKY2Fu
-IHByb3ZpZGUgYSB2NC40LXJjNCBiYXNlZCBicmFuY2ggZm9yIG1lcmdpbmcgdnMgZS1tYWlsIHBy
-b2Nlc3NpbmcsCnNpbmNlIEkgZG9uJ3QgdGhpbmsgdGhlIHVuZGVybHlpbmcgYmFzZWxpbmUgaXMg
-b3Zlcmx5IGltcG9ydGFudCBmb3IKdGhpcyAobGFyZ2VseSB0cml2aWFsKSBzZXJpZXMgb2YgcGF0
-Y2hlcy4KClBhdWwuCi0tLQoKQ2M6IEFsZXhhbmRyZSBDb3VyYm90IDxnbnVyb3VAZ21haWwuY29t
-PgpDYzogQmpvcm4gSGVsZ2FhcyA8YmhlbGdhYXNAZ29vZ2xlLmNvbT4KQ2M6IEphc29uIENvb3Bl
-ciA8amFzb25AbGFrZWRhZW1vbi5uZXQ+CkNjOiBLaXNob24gVmlqYXkgQWJyYWhhbSBJIDxraXNo
-b25AdGkuY29tPgpDYzogTGV5IEZvb24gVGFuIDxsZnRhbkBhbHRlcmEuY29tPgpDYzogTHVjYXMg
-U3RhY2ggPGwuc3RhY2hAcGVuZ3V0cm9uaXguZGU+CkNjOiBNaWNoYWwgU2ltZWsgPG1pY2hhbC5z
-aW1la0B4aWxpbnguY29tPgpDYzogTXVyYWxpIEthcmljaGVyaSA8bS1rYXJpY2hlcmkyQHRpLmNv
-bT4KQ2M6IFByYXR5dXNoIEFuYW5kIDxwcmF0eXVzaC5hbmFuZEBnbWFpbC5jb20+CkNjOiBSaWNo
-YXJkIFpodSA8UmljaGFyZC5aaHVAZnJlZXNjYWxlLmNvbT4KQ2M6IFNpbW9uIEhvcm1hbiA8aG9y
-bXNAdmVyZ2UubmV0LmF1PgpDYzogIlPDtnJlbiBCcmlua21hbm4iIDxzb3Jlbi5icmlua21hbm5A
-eGlsaW54LmNvbT4KQ2M6IFN0ZXBoZW4gV2FycmVuIDxzd2FycmVuQHd3d2RvdG9yZy5vcmc+CkNj
-OiBUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5yZWRpbmdAZ21haWwuY29tPgpDYzogVGhvbWFzIFBl
-dGF6em9uaSA8dGhvbWFzLnBldGF6em9uaUBmcmVlLWVsZWN0cm9ucy5jb20+CgpDYzogbGludXgt
-YXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnCkNjOiBsaW51eC1vbWFwQHZnZXIua2VybmVs
-Lm9yZwpDYzogbGludXgtcGNpQHZnZXIua2VybmVsLm9yZwpDYzogbGludXgtc2hAdmdlci5rZXJu
-ZWwub3JnCkNjOiBsaW51eC10ZWdyYUB2Z2VyLmtlcm5lbC5vcmcKQ2M6IHJmaUBsaXN0cy5yb2Nr
-ZXRib2FyZHMub3JnCgpQYXVsIEdvcnRtYWtlciAoMTApOgogIGRyaXZlcnMvcGNpOiBtYWtlIGhv
-c3QvcGNpLWlteDYuYyBkcml2ZXIgZXhwbGljaXRseSBub24tbW9kdWxhcgogIGRyaXZlcnMvcGNp
-OiBtYWtlIGhvc3QvcGNpZS1zcGVhcjEzeHguYyBkcml2ZXIgZXhwbGljaXRseSBub24tbW9kdWxh
-cgogIGRyaXZlcnMvcGNpOiBtYWtlIGhvc3QvcGNpLW12ZWJ1LmMgZXhwbGljaXRseSBub24tbW9k
-dWxhcgogIGRyaXZlcnMvcGNpOiBtYWtlIGhvc3QvcGNpLWRyYTd4eC5jIGV4cGxpY2l0bHkgbm9u
-LW1vZHVsYXIKICBkcml2ZXJzL3BjaTogbWFrZSBob3N0L3BjaS1yY2FyLWdlbjIuYyBleHBsaWNp
-dGx5IG5vbi1tb2R1bGFyCiAgZHJpdmVycy9wY2k6IG1ha2UgaG9zdC9wY2ktdGVncmEuYyBleHBs
-aWNpdGx5IG5vbi1tb2R1bGFyCiAgZHJpdmVycy9wY2k6IG1ha2UgaG9zdC9wY2llLXJjYXIuYyBl
-eHBsaWNpdGx5IG5vbi1tb2R1bGFyCiAgZHJpdmVycy9wY2k6IG1ha2UgaG9zdC9wY2llLXhpbGlu
-eC5jIGV4cGxpY2l0bHkgbm9uLW1vZHVsYXIKICBkcml2ZXJzL3BjaTogbWFrZSBob3N0L3BjaS1r
-ZXlzdG9uZS5jIGV4cGxpY2l0bHkgbm9uLW1vZHVsYXIKICBkcml2ZXJzL3BjaTogbWFrZSBob3N0
-L3BjaWUtYWx0ZXJhLmMgZXhwbGljaXRseSBub24tbW9kdWxhcgoKIGRyaXZlcnMvcGNpL2hvc3Qv
-cGNpLWRyYTd4eC5jICAgICB8IDMxICsrKy0tLS0tLS0tLS0tLS0tLS0tLS0tCiBkcml2ZXJzL3Bj
-aS9ob3N0L3BjaS1pbXg2LmMgICAgICAgfCAxMiArKystLS0tLS0KIGRyaXZlcnMvcGNpL2hvc3Qv
-cGNpLWtleXN0b25lLmMgICB8IDIxICsrKy0tLS0tLS0tLS0tLS0KIGRyaXZlcnMvcGNpL2hvc3Qv
-cGNpLW12ZWJ1LmMgICAgICB8IDExICsrKy0tLS0tCiBkcml2ZXJzL3BjaS9ob3N0L3BjaS1yY2Fy
-LWdlbjIuYyAgfCAxMiArKystLS0tLS0KIGRyaXZlcnMvcGNpL2hvc3QvcGNpLXRlZ3JhLmMgICAg
-ICB8IDExICsrKy0tLS0tCiBkcml2ZXJzL3BjaS9ob3N0L3BjaWUtYWx0ZXJhLmMgICAgfCAxMiAr
-KysrLS0tLS0KIGRyaXZlcnMvcGNpL2hvc3QvcGNpZS1yY2FyLmMgICAgICB8IDExICsrKy0tLS0t
-CiBkcml2ZXJzL3BjaS9ob3N0L3BjaWUtc3BlYXIxM3h4LmMgfCAxMCArKystLS0tLQogZHJpdmVy
-cy9wY2kvaG9zdC9wY2llLXhpbGlueC5jICAgIHwgNTMgKystLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tCiAxMCBmaWxlcyBjaGFuZ2VkLCAzNSBpbnNlcnRpb25zKCspLCAxNDkg
-ZGVsZXRpb25zKC0pCgotLSAKMi42LjEKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0t
-a2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
+The Kconfig currently controlling compilation of this code is:
+
+drivers/pci/host/Kconfig:config PCI_TEGRA
+drivers/pci/host/Kconfig:       bool "NVIDIA Tegra PCIe controller"
+
+...meaning that it currently is not being built as a module by anyone.
+
+Lets remove the modular code that is essentially orphaned, so that
+when reading the driver there is no doubt it is builtin-only.
+
+We don't have to disallow a driver unbind, since that is already
+done for us in this driver.
+
+Since module_platform_driver() uses the same init level priority as
+builtin_platform_driver() the init ordering remains unchanged with
+this commit.
+
+Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+
+We also delete the MODULE_LICENSE tag etc. since all that information
+was (or is now) contained at the top of the file in the comments.
+
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-tegra@vger.kernel.org
+Cc: linux-pci@vger.kernel.org
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+---
+ drivers/pci/host/pci-tegra.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index 3018ae52e092..b49ea58787c1 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -9,6 +9,8 @@
+  *
+  * Bits taken from arch/arm/mach-dove/pcie.c
+  *
++ * Module Author: Thierry Reding <treding@nvidia.com>
++ *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+  * the Free Software Foundation; either version 2 of the License, or
+@@ -32,7 +34,7 @@
+ #include <linux/irq.h>
+ #include <linux/irqdomain.h>
+ #include <linux/kernel.h>
+-#include <linux/module.h>
++#include <linux/init.h>
+ #include <linux/msi.h>
+ #include <linux/of_address.h>
+ #include <linux/of_pci.h>
+@@ -1864,7 +1866,6 @@ static const struct of_device_id tegra_pcie_of_match[] = {
+ 	{ .compatible = "nvidia,tegra20-pcie", .data = &tegra20_pcie_data },
+ 	{ },
+ };
+-MODULE_DEVICE_TABLE(of, tegra_pcie_of_match);
+ 
+ static void *tegra_pcie_ports_seq_start(struct seq_file *s, loff_t *pos)
+ {
+@@ -2055,8 +2056,4 @@ static struct platform_driver tegra_pcie_driver = {
+ 	},
+ 	.probe = tegra_pcie_probe,
+ };
+-module_platform_driver(tegra_pcie_driver);
+-
+-MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
+-MODULE_DESCRIPTION("NVIDIA Tegra PCIe driver");
+-MODULE_LICENSE("GPL v2");
++builtin_platform_driver(tegra_pcie_driver);
+-- 
+2.6.1
