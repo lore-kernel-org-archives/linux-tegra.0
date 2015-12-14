@@ -1,87 +1,77 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 06/10] drivers/pci: make host/pci-tegra.c explicitly
- non-modular
-Date: Mon, 14 Dec 2015 09:15:45 +0100
-Message-ID: <20151214081545.GB10055@ulmo.nvidia.com>
+From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
+Subject: Re: [PATCH 00/10] drivers/pci: avoid module_init in non-modular host/pci*
+Date: Mon, 14 Dec 2015 09:19:30 +0100
+Message-ID: <CAMuHMdXr=ErCO3R2LB+wBJh3JSiFkH5q3-FLSTOwdGT87fXz3A@mail.gmail.com>
 References: <1449970917-12633-1-git-send-email-paul.gortmaker@windriver.com>
- <1449970917-12633-7-git-send-email-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="4SFOXa2GPu3tIq4H"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1449970917-12633-7-git-send-email-paul.gortmaker@windriver.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Paul Gortmaker <paul.gortmaker@windriver.com>
-Cc: linux-kernel@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1449970917-12633-1-git-send-email-paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-sh list <linux-sh-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-pci <linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pratyush Anand <pratyush.anand-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Murali Karicheri <m-karicheri2-l0cyMroinI0@public.gmane.org>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Richard Zhu <Richard.Zhu-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, rfi-g9ZBwUv/Ih/yUk5EbOjzuce+I+R0W71w@public.gmane.org, Ley Foon Tan <lftan@al>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Paul,
 
---4SFOXa2GPu3tIq4H
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Sun, Dec 13, 2015 at 2:41 AM, Paul Gortmaker
+<paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org> wrote:
+> This series of commits is a slice of a larger project to ensure
+> people don't have dead code for module removal in non-modular
+> drivers.  Overall there was roughly 5k lines of dead code in the
+> kernel due to this.  So far we've fixed several areas, like tty,
+> x86, net, etc. and we continue to work on other areas.
+>
+> There are several reasons to not use module_init for code that can
+> never be built as a module, but the big ones are:
+>
+>  (1) it is easy to accidentally code up unused module_exit and remove code
+>  (2) it can be misleading when reading the source, thinking it can be
+>       modular when the Makefile and/or Kconfig prohibit it
+>  (3) it requires the include of the module.h header file which in turn
+>      includes nearly everything else.
+>
+> Here we convert some module_init() calls into device_initcall() and delete
+> any module_exit and remove code that gets orphaned in the process, for
+> an overall net code reduction, which is always welcome.
+>
+> The use of device_initcall ensures that the init function ordering
+> remains unchanged, but one could argue that PCI host code might be more
+> appropriate to be handled under subsys_initcall.  Fortunately we can
+> revisit making this extra change at a later date if desired; it does
+> not need to happen now, and we reduce the risk of introducing
+> regressions at this point in time by separating the two changes.
+>
+> Over half of the drivers changed here already explicitly disallowed any
+> unbind operations.  For the rest we make them the same, since there is
+> not really any sensible use case to unbind any built-in bus support that
+> I can think of.
 
-On Sat, Dec 12, 2015 at 08:41:53PM -0500, Paul Gortmaker wrote:
-> The Kconfig currently controlling compilation of this code is:
->=20
-> drivers/pci/host/Kconfig:config PCI_TEGRA
-> drivers/pci/host/Kconfig:       bool "NVIDIA Tegra PCIe controller"
->=20
-> ...meaning that it currently is not being built as a module by anyone.
->=20
-> Lets remove the modular code that is essentially orphaned, so that
-> when reading the driver there is no doubt it is builtin-only.
->=20
-> We don't have to disallow a driver unbind, since that is already
-> done for us in this driver.
->=20
-> Since module_platform_driver() uses the same init level priority as
-> builtin_platform_driver() the init ordering remains unchanged with
-> this commit.
->=20
-> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
->=20
-> We also delete the MODULE_LICENSE tag etc. since all that information
-> was (or is now) contained at the top of the file in the comments.
->=20
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Bjorn Helgaas <bhelgaas@google.com>
-> Cc: Stephen Warren <swarren@wwwdotorg.org>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: linux-tegra@vger.kernel.org
-> Cc: linux-pci@vger.kernel.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-> ---
->  drivers/pci/host/pci-tegra.c | 11 ++++-------
->  1 file changed, 4 insertions(+), 7 deletions(-)
+Personally, I think all of these should become tristate, so distro kernels
+don't have to build in PCI(e) support for all SoCs. multi_v7_defconfig kernels
+are becoming too big.
 
-I'd rather not do this. There is work underway to make it possible to
-turn PCI host drivers into modules. I have a local tree with the
-necessary changes and, though I suspect it might take a few releases to
-get everything merged, I think we'll get there eventually.
+That does not preclude making these modules un-unloadable, though.
 
-Thierry
+> Paul Gortmaker (10):
+>   drivers/pci: make host/pci-imx6.c driver explicitly non-modular
+>   drivers/pci: make host/pcie-spear13xx.c driver explicitly non-modular
+>   drivers/pci: make host/pci-mvebu.c explicitly non-modular
+>   drivers/pci: make host/pci-dra7xx.c explicitly non-modular
+>   drivers/pci: make host/pci-rcar-gen2.c explicitly non-modular
+>   drivers/pci: make host/pci-tegra.c explicitly non-modular
+>   drivers/pci: make host/pcie-rcar.c explicitly non-modular
+>   drivers/pci: make host/pcie-xilinx.c explicitly non-modular
+>   drivers/pci: make host/pci-keystone.c explicitly non-modular
+>   drivers/pci: make host/pcie-altera.c explicitly non-modular
 
---4SFOXa2GPu3tIq4H
-Content-Type: application/pgp-signature; name="signature.asc"
+Gr{oetje,eeting}s,
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+                        Geert
 
-iQIcBAABCAAGBQJWbnqxAAoJEN0jrNd/PrOhRQQP/jJM5GR+zJ2XfllEyito5A1H
-NH4ZkqIkEe5EQSgxWBw+Ijh4I9wOsvsJ6I2tc2AkypYtqhzW3gYO235+dY5J70+H
-YhK5Xw0HhMGadAZBO9N1nnV76hCGGdev4rU2PE7c/l6+DsgrEfVNW996mhUtHMG9
-sByIDu41+yK0dKaIFLEAJQ6TkYCi7wnN5miIgvO5eshUXlMBxk8o0PwUTWP/mPFx
-bOF9EXVmtJcprumuvdTUYrsD7/YWv3f8hlLpJ1IdKyyVxsW2g05F+dRgeUrhibkh
-8WFIn+JC3sQIa2rFo+kEAkzSp+zbp93pHYFkPGs0hwqQoLFFAhDmcd3y0XESbPNa
-JTGWFxWkQzIgVG1NvEKj+ZVoWUXwP+Oid7YvdHuMoLq0TW6wjpV22M2FKPNS4NHE
-Jh6jrF1MHloLL4TJQutTuMiRRx2LguUA5tlXGo2rdFhtY80ivmXfAUGMmyRR2gYQ
-QMeAX8Qi2q2176sIs5o+8G3J7uI6pVzBdyVU2hKLUnpuvSxVWxC5MrY9EPnq2aWm
-7Ox1zrrdwMzwPQTbPeZ8LUbWKbSK6Y/ZKWg8Teo77YowzrnwvlbkSm9NuaKhwQ7s
-3oOioG1iwKzlb02eFg9RFDToKRfJAcXlfj05zEeGLzpnUkcQ4ozU+YT6xfWZmr4L
-93tc7AF6CQj2MY3wsLHy
-=/vf4
------END PGP SIGNATURE-----
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org
 
---4SFOXa2GPu3tIq4H--
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
