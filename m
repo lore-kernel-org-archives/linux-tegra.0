@@ -1,60 +1,37 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.4-rc5
-Date: Mon, 14 Dec 2015 10:12:20 +0000
-Message-ID: <566E9604.8040601@nvidia.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH 00/10] drivers/pci: avoid module_init in non-modular host/pci*
+Date: Mon, 14 Dec 2015 11:27:02 +0100
+Message-ID: <3302340.SIljl1qYTl@wuerfel>
+References: <1449970917-12633-1-git-send-email-paul.gortmaker@windriver.com> <CAFiDJ5-Y8afg5kDRQLK1pain-k1kPQAn3vhWrVkB1ADPRHvx+A@mail.gmail.com> <20151214091940.GA15126@ulmo.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20151214091940.GA15126@ulmo.nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Ley Foon Tan <lftan@altera.com>, Geert Uytterhoeven <geert@linux-m68k.org>, Paul Gortmaker <paul.gortmaker@windriver.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Linux-sh list <linux-sh@vger.kernel.org>, linux-pci <linux-pci@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, Pratyush Anand <pratyush.anand@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Kishon Vijay Abraham I <kishon@ti.com>, Murali Karicheri <m-karicheri2@ti.com>, =?ISO-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>, Jason Cooper <jason@lakedaemon.net>, Stephen Warren <swarren@wwwdotorg.org>, Simon Horman <horms@verge.net.au>, linux-tegra@vger.kernel.org, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Richard
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.4-rc5.
-Logs and other details at:
-
-    https://nvtb.github.io//linux/test_v4.4-rc5/20151213180102/
-
-
-Test summary
-------------
-
-Build: zImage:
-    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Build: Image:
-    Pass: ( 1/ 1): defconfig
-
-Boot to userspace: defconfig:
-    Pass: ( 1/ 1): qemu-vexpress64
-
-Boot to userspace: multi_v7_defconfig:
-    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
+On Monday 14 December 2015 10:19:40 Thierry Reding wrote:
+> > PCIe host driver that use fixup (DECLARE_PCI_FIXUP_*) can't use tristate.
+> > Fixup region is in kernel region and this region if not updated when
+> > loading a module.
+> 
+> Interesting, I hadn't thought about that. I suppose this means that the
+> module will end up containing an unused section with the fixup code. It
+> might be useful to add a way for that to trigger a warning at build
+> time.
+> 
+> Perhaps to fix this a mechanism could be introduced to add a table of
+> fixups to a host controller driver and that will get applied to all
+> children of the bridge. It could be problematic to cover all of the
+> different fixup stages, though.
+> 
 
 
-vmlinux object size
-(delta in bytes from test_v4.4-rc4 (527e9316f8ec44bd53d90fb9f611fa7ffff52bb9)):
-   text     data      bss    total  kernel
-   +219        0        0     +219  defconfig
-  +5803     +448        0    +6251  multi_v7_defconfig
-  +5203      +64      -64    +5203  tegra_defconfig
+I think a lot of the fixups shouldn't really be there in the first place,
+they are about stuff that we can fix up in the probe function, or that should
+be fixed up in the probe function with some appropriate core support added.
 
-
-Boot-time memory difference
-(delta in bytes from test_v4.4-rc4 (527e9316f8ec44bd53d90fb9f611fa7ffff52bb9))
-    avail    rsrvd     high    freed                board              kconfig                  dtb
-        .        .        .        .      qemu-vexpress64            defconfig           __internal
-      -8k       8k        .       4k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-      -8k       8k        .       4k tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-      -8k       8k        .       4k  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-      -8k       8k        .       4k  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-      -8k       8k        .       4k    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-      -8k       8k        .       4k    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-      -8k       8k        .       4k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-      -8k       8k        .       4k       tegra30-beaver      tegra_defconfig       tegra30-beaver
+	Arnd
