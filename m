@@ -1,133 +1,122 @@
-From: Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V4 12/16] Documentation: DT: bindings: Add power domain info for NVIDIA PMC
-Date: Mon, 14 Dec 2015 16:42:29 -0800
-Message-ID: <7hmvtcbkzu.fsf@deeprootsystems.com>
-References: <1449241037-22193-1-git-send-email-jonathanh@nvidia.com>
-	<1449241037-22193-13-git-send-email-jonathanh@nvidia.com>
-	<7h4mfslpyd.fsf@deeprootsystems.com> <56681D53.9090600@nvidia.com>
-	<56681F9A.6080200@nvidia.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2 2/2] drm: use dev_name as default unique name in
+ drm_dev_alloc()
+Date: Tue, 15 Dec 2015 14:10:19 +0100
+Message-ID: <20151215131019.GB30437@phenom.ffwll.local>
+References: <20151211081226.GV20822@phenom.ffwll.local>
+ <1449829228-4425-1-git-send-email-nicolas.iooss_linux@m4x.org>
+ <1449829228-4425-2-git-send-email-nicolas.iooss_linux@m4x.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56681F9A.6080200-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> (Jon Hunter's message of "Wed, 9
-	Dec 2015 12:33:30 +0000")
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rafael Wysocki <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <1449829228-4425-2-git-send-email-nicolas.iooss_linux@m4x.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Nicolas Iooss <nicolas.iooss_linux@m4x.org>
+Cc: Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Alison Wang <alison.wang@freescale.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> writes:
-
-> On 09/12/15 12:23, Jon Hunter wrote:
->> 
->> On 08/12/15 19:07, Kevin Hilman wrote:
->>> Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> writes:
->>>
->>>> Add power-domain binding documentation for the NVIDIA PMC driver in
->>>> order to support generic power-domains.
->>>>
->>>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>>
->>>> ---
->>>>
->>>> Please note that I have been debating whether I add this
->>>> "nvidia,powergate-clock-disable" property or just leave the clocks
->>>> disabled by default. Some downstream kernels leave the clocks enabled
->>>> for the audio power-domain because the clocks required for powering up
->>>> the power-domain are needed by all modules within the power-domain.
->>>> However are the same time there are other power-domains that may need
->>>> to be on, but not always clocked and so having the ability to specify if
->>>> the clocks should be disabled seems useful. However, I can also remove
->>>> this and just have the appropriate devices turn on the clocks as well.
->>>> ---
->>>>  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 61 ++++++++++++++++++++++
->>>>  1 file changed, 61 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
->>>> index 838e1a69ec0a..8e4641db51a9 100644
->>>> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
->>>> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
->>>> @@ -1,5 +1,7 @@
->>>>  NVIDIA Tegra Power Management Controller (PMC)
->>>>  
->>>> +== Power Management Controller Node ==
->>>> +
->>>>  The PMC block interacts with an external Power Management Unit. The PMC
->>>>  mostly controls the entry and exit of the system from different sleep
->>>>  modes. It provides power-gating controllers for SoC and CPU power-islands.
->>>> @@ -69,6 +71,10 @@ Optional properties for hardware-triggered thermal reset (inside 'i2c-thermtrip'
->>>>                       Defaults to 0. Valid values are described in section 12.5.2
->>>>                       "Pinmux Support" of the Tegra4 Technical Reference Manual.
->>>>  
->>>> +Optional nodes:
->>>> +- pm-domains : This node contains a hierarchy of PM domain nodes, which should
->>>> +	       match the power-domains on the Tegra SoC.
->>>> +
->>>>  Example:
->>>>  
->>>>  / SoC dts including file
->>>> @@ -114,3 +120,58 @@ pmc@7000f400 {
->>>>  	};
->>>>  	...
->>>>  };
->>>> +
->>>> +
->>>> +== PM Domain Nodes ==
->>>> +
->>>> +Each of the PM domain nodes represents a power-domain on the Tegra SoC
->>>> +that can be power-gated by the PMC and should be named appropriately.
->>>> +
->>>> +Required properties:
->>>> +  - clocks: Must contain an entry for each clock required by the PMC for
->>>> +    controlling a power-gate. See ../clocks/clock-bindings.txt for details.
->>>
->>> We've had this discussiona for a couple of other SoCs, so I need to
->>> ask...
->>>
->>> Presumably these are not device clocks that a runtime PM enabled driver
->>> should be managing for a device, right?  IOW, We want to make sure that the
->>> PM domain isn't managing clocks for drivers that should be doing it.
->>>
->>> I understand there are legitimate reasons for the PM domain to manage
->>> clocks in addition to device drivers (e.g. for synchronous reset), but
->>> just want to be sure it's not a shortcut for having a proper driver.
->> 
->> So some clocks may also be used by devices, but they are needed as part
->> of the power ungating/gating sequence. The general power-up sequence for
->> tegra is ...
->> 
->> 1. Enable the power-domain
->> 2. Enable the clock(s)
->> 3. Remove signal clamps
->> 4. De-assert reset(s)
->> 5. Disable clocks (optional)
->> 
->> You may say we should only handle #1 above for the powering up sequence,
->> but we can't do this. The reason is that there is one bit for each
->> power-domain that controls the signaling clamps and so we need to turn
->> on all the clocks specified in the TRM before we do this. Once we have
->> done this and released the reset(s), we can then disable the clocks
->> again (shown above an optional as it is not mandatory from a design
->> perspective) and then the devices in the power-domain should enable the
->> clocks they need as and when they want them.
->> 
->> Please note that I 100% agree that all clocks required by a device are
->> handled by the device and we do not implement any short-cuts here. The
->> only question I had was if there are clocks that may be bus clocks in
->> the power-domain that are required by all device in the power-domain.
->> However, may be this should be represented as a bus driver and all the
->> devices are children of it?
->
-> Although the "nvidia,powergate-disable-clocks" optional property I had
-> proposed could be seen as a bit of a short-cut, it is true :-)
-> May be I should make the disabling of clocks again mandatory for the
-> power-up sequence.
-
-IIUC, that looks like a flag that tells the power-domain to just leave
-all the clocks enabled after the domain power up?  Is that right?
-
-To me that looks like possibly useful bringup hack, but a short-cut
-that's ripe for abuse and would likely be used so that drivers don't
-ever need to do their own clock management.
-
-Kevin
+T24gRnJpLCBEZWMgMTEsIDIwMTUgYXQgMTE6MjA6MjhBTSArMDEwMCwgTmljb2xhcyBJb29zcyB3
+cm90ZToKPiBUaGUgZm9sbG93aW5nIGNvZGUgcGF0dGVybiBleGlzdHMgaW4gc29tZSBEUk0gZHJp
+dmVyczoKPiAKPiAgICAgZGRldiA9IGRybV9kZXZfYWxsb2MoJmRyaXZlciwgcGFyZW50X2Rldik7
+Cj4gICAgIGRybV9kZXZfc2V0X3VuaXF1ZShkZGV2LCBkZXZfbmFtZShwYXJlbnRfZGV2KSk7Cj4g
+Cj4gKFNvbWV0aW1lcyBkZXZfbmFtZShkZGV2LT5kZXYpIGlzIHVzZWQsIHdoaWNoIGlzIHRoZSBz
+YW1lLikKPiAKPiBBcyBzdWdnZXN0ZWQgaW4KPiBodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L2FyY2hpdmVzL2RyaS1kZXZlbC8yMDE1LURlY2VtYmVyLzA5NjQ0MS5odG1sLAo+IHRoZSB1bmlx
+dWUgbmFtZSBvZiBhIG5ldyBEUk0gZGV2aWNlIGNhbiBiZSBzZXQgYXMgZGV2X25hbWUocGFyZW50
+X2RldikKPiB3aGVuIHBhcmVudF9kZXYgaXMgbm90IE5VTEwgKHZnZW0gaXMgYSBzcGVjaWFsIGNh
+c2UpLgo+IAo+IFNpZ25lZC1vZmYtYnk6IE5pY29sYXMgSW9vc3MgPG5pY29sYXMuaW9vc3NfbGlu
+dXhAbTR4Lm9yZz4KPiBBY2tlZC1ieTogQm9yaXMgQnJlemlsbG9uIDxib3Jpcy5icmV6aWxsb25A
+ZnJlZS1lbGVjdHJvbnMuY29tPgoKUHVsbGVkIHRoZXNlIHR3byBpbiwgYnV0IHRoZXJlJ3Mgc29t
+ZSBvdGhlciBkcml2ZXJzIGZsb2F0aW5nIGFyb3VuZCBhbmQKaGVhZGluZyB0b3dhcmRzIDQuNSB3
+aXRoIHdoaWNoIGl0IHdpbGwgY29uZmxpY3QuIElmIGl0J3MgY2F1c2luZyB0b28gbXVjaAp0cm91
+YmxlIEknbGwgZHJvcCBpdCBhZ2FpbiBhbmQgd2UgaGF2ZSB0byBnZXQgaXQgaW4gcmlnaHQgYXJv
+dW5kIDQuNS1yYzEKdG8gYXZvaWQgdHJvdWJsZSB3aXRoIG5ldyBkcml2ZXJzLgoKVGhhbmtzLCBE
+YW5pZWwKCj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9hdG1lbC1obGNkYy9hdG1lbF9obGNkY19k
+Yy5jIHwgNCAtLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fZHJ2LmMgICAgICAgICAgICAgICAg
+ICAgIHwgOSArKysrKysrKysKPiAgZHJpdmVycy9ncHUvZHJtL2ZzbC1kY3UvZnNsX2RjdV9kcm1f
+ZHJ2LmMgICAgfCAxIC0KPiAgZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbm91dmVhdV9kcm0uYyAg
+ICAgICAgfCA0IC0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9k
+cnYuYyAgfCA0IC0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jICAgICAgICAgICAg
+ICAgICAgfCAxIC0KPiAgZHJpdmVycy9ncHUvZHJtL3ZjNC92YzRfZHJ2LmMgICAgICAgICAgICAg
+ICAgfCAyIC0tCj4gIDcgZmlsZXMgY2hhbmdlZCwgOSBpbnNlcnRpb25zKCspLCAxNiBkZWxldGlv
+bnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2F0bWVsLWhsY2RjL2F0bWVs
+X2hsY2RjX2RjLmMgYi9kcml2ZXJzL2dwdS9kcm0vYXRtZWwtaGxjZGMvYXRtZWxfaGxjZGNfZGMu
+Ywo+IGluZGV4IDI0NGRmMGE0NDBiNy4uZmJhNGY3MmU3YWUxIDEwMDY0NAo+IC0tLSBhL2RyaXZl
+cnMvZ3B1L2RybS9hdG1lbC1obGNkYy9hdG1lbF9obGNkY19kYy5jCj4gKysrIGIvZHJpdmVycy9n
+cHUvZHJtL2F0bWVsLWhsY2RjL2F0bWVsX2hsY2RjX2RjLmMKPiBAQCAtNzMzLDEwICs3MzMsNiBA
+QCBzdGF0aWMgaW50IGF0bWVsX2hsY2RjX2RjX2RybV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2
+aWNlICpwZGV2KQo+ICAJaWYgKCFkZGV2KQo+ICAJCXJldHVybiAtRU5PTUVNOwo+ICAKPiAtCXJl
+dCA9IGRybV9kZXZfc2V0X3VuaXF1ZShkZGV2LCBkZXZfbmFtZShkZGV2LT5kZXYpKTsKPiAtCWlm
+IChyZXQpCj4gLQkJZ290byBlcnJfdW5yZWY7Cj4gLQo+ICAJcmV0ID0gYXRtZWxfaGxjZGNfZGNf
+bG9hZChkZGV2KTsKPiAgCWlmIChyZXQpCj4gIAkJZ290byBlcnJfdW5yZWY7Cj4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fZHJ2LmMgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2Rydi5j
+Cj4gaW5kZXggZWFhNDMxNmYzYzQ1Li5iZjkzNGNkZWEyMWMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVy
+cy9ncHUvZHJtL2RybV9kcnYuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fZHJ2LmMKPiBA
+QCAtNjMzLDggKzYzMywxNyBAQCBzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2Rldl9hbGxvYyhzdHJ1
+Y3QgZHJtX2RyaXZlciAqZHJpdmVyLAo+ICAJCX0KPiAgCX0KPiAgCj4gKwlpZiAocGFyZW50KSB7
+Cj4gKwkJcmV0ID0gZHJtX2Rldl9zZXRfdW5pcXVlKGRldiwgZGV2X25hbWUocGFyZW50KSk7Cj4g
+KwkJaWYgKHJldCkKPiArCQkJZ290byBlcnJfc2V0dW5pcXVlOwo+ICsJfQo+ICsKPiAgCXJldHVy
+biBkZXY7Cj4gIAo+ICtlcnJfc2V0dW5pcXVlOgo+ICsJaWYgKGRybV9jb3JlX2NoZWNrX2ZlYXR1
+cmUoZGV2LCBEUklWRVJfR0VNKSkKPiArCQlkcm1fZ2VtX2Rlc3Ryb3koZGV2KTsKPiAgZXJyX2N0
+eGJpdG1hcDoKPiAgCWRybV9sZWdhY3lfY3R4Yml0bWFwX2NsZWFudXAoZGV2KTsKPiAgCWRybV9o
+dF9yZW1vdmUoJmRldi0+bWFwX2hhc2gpOwo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
+ZnNsLWRjdS9mc2xfZGN1X2RybV9kcnYuYyBiL2RyaXZlcnMvZ3B1L2RybS9mc2wtZGN1L2ZzbF9k
+Y3VfZHJtX2Rydi5jCj4gaW5kZXggMTkzMDIzNGJhNWYxLi5mY2E5N2QzZmM4NDYgMTAwNjQ0Cj4g
+LS0tIGEvZHJpdmVycy9ncHUvZHJtL2ZzbC1kY3UvZnNsX2RjdV9kcm1fZHJ2LmMKPiArKysgYi9k
+cml2ZXJzL2dwdS9kcm0vZnNsLWRjdS9mc2xfZGN1X2RybV9kcnYuYwo+IEBAIC0zNjMsNyArMzYz
+LDYgQEAgc3RhdGljIGludCBmc2xfZGN1X2RybV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNl
+ICpwZGV2KQo+ICAJZnNsX2Rldi0+bnAgPSBkZXYtPm9mX25vZGU7Cj4gIAlkcm0tPmRldl9wcml2
+YXRlID0gZnNsX2RldjsKPiAgCWRldl9zZXRfZHJ2ZGF0YShkZXYsIGZzbF9kZXYpOwo+IC0JZHJt
+X2Rldl9zZXRfdW5pcXVlKGRybSwgZGV2X25hbWUoZGV2KSk7Cj4gIAo+ICAJcmV0ID0gZHJtX2Rl
+dl9yZWdpc3Rlcihkcm0sIDApOwo+ICAJaWYgKHJldCA8IDApCj4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvZ3B1L2RybS9ub3V2ZWF1L25vdXZlYXVfZHJtLmMgYi9kcml2ZXJzL2dwdS9kcm0vbm91dmVh
+dS9ub3V2ZWF1X2RybS5jCj4gaW5kZXggMmQyM2Y5NWYxN2NlLi5iM2E1NjNjNDRiY2QgMTAwNjQ0
+Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbm91dmVhdV9kcm0uYwo+ICsrKyBiL2Ry
+aXZlcnMvZ3B1L2RybS9ub3V2ZWF1L25vdXZlYXVfZHJtLmMKPiBAQCAtMTA0NiwxMCArMTA0Niw2
+IEBAIG5vdXZlYXVfcGxhdGZvcm1fZGV2aWNlX2NyZWF0ZShjb25zdCBzdHJ1Y3QgbnZrbV9kZXZp
+Y2VfdGVncmFfZnVuYyAqZnVuYywKPiAgCQlnb3RvIGVycl9mcmVlOwo+ICAJfQo+ICAKPiAtCWVy
+ciA9IGRybV9kZXZfc2V0X3VuaXF1ZShkcm0sIGRldl9uYW1lKCZwZGV2LT5kZXYpKTsKPiAtCWlm
+IChlcnIgPCAwKQo+IC0JCWdvdG8gZXJyX2ZyZWU7Cj4gLQo+ICAJZHJtLT5wbGF0Zm9ybWRldiA9
+IHBkZXY7Cj4gIAlwbGF0Zm9ybV9zZXRfZHJ2ZGF0YShwZGV2LCBkcm0pOwo+ICAKPiBkaWZmIC0t
+Z2l0IGEvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9kcnYuYyBiL2RyaXZl
+cnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZHJ2LmMKPiBpbmRleCAyMTVkNmM0NGFm
+NTUuLmFmYmI3NDA3YzQ0ZiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAv
+cm9ja2NoaXBfZHJtX2Rydi5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tj
+aGlwX2RybV9kcnYuYwo+IEBAIC00NTAsMTAgKzQ1MCw2IEBAIHN0YXRpYyBpbnQgcm9ja2NoaXBf
+ZHJtX2JpbmQoc3RydWN0IGRldmljZSAqZGV2KQo+ICAJaWYgKCFkcm0pCj4gIAkJcmV0dXJuIC1F
+Tk9NRU07Cj4gIAo+IC0JcmV0ID0gZHJtX2Rldl9zZXRfdW5pcXVlKGRybSwgZGV2X25hbWUoZGV2
+KSk7Cj4gLQlpZiAocmV0KQo+IC0JCWdvdG8gZXJyX2ZyZWU7Cj4gLQo+ICAJcmV0ID0gZHJtX2Rl
+dl9yZWdpc3Rlcihkcm0sIDApOwo+ICAJaWYgKHJldCkKPiAgCQlnb3RvIGVycl9mcmVlOwo+IGRp
+ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgYi9kcml2ZXJzL2dwdS9kcm0v
+dGVncmEvZHJtLmMKPiBpbmRleCAxNTllZjUxNWNhYjEuLjEyZTJkM2NjYmM5ZCAxMDA2NDQKPiAt
+LS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0v
+dGVncmEvZHJtLmMKPiBAQCAtOTkxLDcgKzk5MSw2IEBAIHN0YXRpYyBpbnQgaG9zdDF4X2RybV9w
+cm9iZShzdHJ1Y3QgaG9zdDF4X2RldmljZSAqZGV2KQo+ICAJaWYgKCFkcm0pCj4gIAkJcmV0dXJu
+IC1FTk9NRU07Cj4gIAo+IC0JZHJtX2Rldl9zZXRfdW5pcXVlKGRybSwgZGV2X25hbWUoJmRldi0+
+ZGV2KSk7Cj4gIAlkZXZfc2V0X2RydmRhdGEoJmRldi0+ZGV2LCBkcm0pOwo+ICAKPiAgCWVyciA9
+IGRybV9kZXZfcmVnaXN0ZXIoZHJtLCAwKTsKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJt
+L3ZjNC92YzRfZHJ2LmMgYi9kcml2ZXJzL2dwdS9kcm0vdmM0L3ZjNF9kcnYuYwo+IGluZGV4IGQ1
+ZGI5ZTBmM2I3My4uNjQ3NzcyMzA1ZThmIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS92
+YzQvdmM0X2Rydi5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3ZjNC92YzRfZHJ2LmMKPiBAQCAt
+MTY4LDggKzE2OCw2IEBAIHN0YXRpYyBpbnQgdmM0X2RybV9iaW5kKHN0cnVjdCBkZXZpY2UgKmRl
+dikKPiAgCXZjNC0+ZGV2ID0gZHJtOwo+ICAJZHJtLT5kZXZfcHJpdmF0ZSA9IHZjNDsKPiAgCj4g
+LQlkcm1fZGV2X3NldF91bmlxdWUoZHJtLCBkZXZfbmFtZShkZXYpKTsKPiAtCj4gIAlkcm1fbW9k
+ZV9jb25maWdfaW5pdChkcm0pOwo+ICAJaWYgKHJldCkKPiAgCQlnb3RvIHVucmVmOwo+IC0tIAo+
+IDIuNi4zCj4gCj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X18KPiBkcmktZGV2ZWwgbWFpbGluZyBsaXN0Cj4gZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
+Lm9yZwo+IGh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
+ZGV2ZWwKCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3Jh
+dGlvbgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2RyaS1kZXZlbAo=
