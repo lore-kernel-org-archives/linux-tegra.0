@@ -1,122 +1,74 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v2 2/2] drm: use dev_name as default unique name in
- drm_dev_alloc()
-Date: Tue, 15 Dec 2015 14:10:19 +0100
-Message-ID: <20151215131019.GB30437@phenom.ffwll.local>
-References: <20151211081226.GV20822@phenom.ffwll.local>
- <1449829228-4425-1-git-send-email-nicolas.iooss_linux@m4x.org>
- <1449829228-4425-2-git-send-email-nicolas.iooss_linux@m4x.org>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: Re: [PATCH 00/10] drivers/pci: avoid module_init in non-modular
+ host/pci*
+Date: Tue, 15 Dec 2015 10:16:24 -0500
+Message-ID: <20151215151624.GB2772@windriver.com>
+References: <1449970917-12633-1-git-send-email-paul.gortmaker@windriver.com>
+ <CAFiDJ5-Y8afg5kDRQLK1pain-k1kPQAn3vhWrVkB1ADPRHvx+A@mail.gmail.com>
+ <20151214091940.GA15126@ulmo.nvidia.com>
+ <3302340.SIljl1qYTl@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <1449829228-4425-2-git-send-email-nicolas.iooss_linux@m4x.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Nicolas Iooss <nicolas.iooss_linux@m4x.org>
-Cc: Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Alison Wang <alison.wang@freescale.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+In-Reply-To: <3302340.SIljl1qYTl@wuerfel>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Linux-sh list <linux-sh@vger.kernel.org>, linux-pci <linux-pci@vger.kernel.org>, Rocketboard Maillist <rfi@lists.rocketboards.org>, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Pratyush Anand <pratyush.anand@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Kishon Vijay Abraham I <kishon@ti.com>, Murali Karicheri <m-karicheri2@ti.com>, Geert Uytterhoeven <geert@linux-m68k.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Jason Cooper <jason@lakedaemon.net>, Stephen Warren <swarren@wwwdotorg.org>, Simon Horman <horms@verge.net.au>, Bjorn Helgaas <bhelgaas@google.com>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Richard Zhu <Richard.Zhu@>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gRnJpLCBEZWMgMTEsIDIwMTUgYXQgMTE6MjA6MjhBTSArMDEwMCwgTmljb2xhcyBJb29zcyB3
-cm90ZToKPiBUaGUgZm9sbG93aW5nIGNvZGUgcGF0dGVybiBleGlzdHMgaW4gc29tZSBEUk0gZHJp
-dmVyczoKPiAKPiAgICAgZGRldiA9IGRybV9kZXZfYWxsb2MoJmRyaXZlciwgcGFyZW50X2Rldik7
-Cj4gICAgIGRybV9kZXZfc2V0X3VuaXF1ZShkZGV2LCBkZXZfbmFtZShwYXJlbnRfZGV2KSk7Cj4g
-Cj4gKFNvbWV0aW1lcyBkZXZfbmFtZShkZGV2LT5kZXYpIGlzIHVzZWQsIHdoaWNoIGlzIHRoZSBz
-YW1lLikKPiAKPiBBcyBzdWdnZXN0ZWQgaW4KPiBodHRwOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-L2FyY2hpdmVzL2RyaS1kZXZlbC8yMDE1LURlY2VtYmVyLzA5NjQ0MS5odG1sLAo+IHRoZSB1bmlx
-dWUgbmFtZSBvZiBhIG5ldyBEUk0gZGV2aWNlIGNhbiBiZSBzZXQgYXMgZGV2X25hbWUocGFyZW50
-X2RldikKPiB3aGVuIHBhcmVudF9kZXYgaXMgbm90IE5VTEwgKHZnZW0gaXMgYSBzcGVjaWFsIGNh
-c2UpLgo+IAo+IFNpZ25lZC1vZmYtYnk6IE5pY29sYXMgSW9vc3MgPG5pY29sYXMuaW9vc3NfbGlu
-dXhAbTR4Lm9yZz4KPiBBY2tlZC1ieTogQm9yaXMgQnJlemlsbG9uIDxib3Jpcy5icmV6aWxsb25A
-ZnJlZS1lbGVjdHJvbnMuY29tPgoKUHVsbGVkIHRoZXNlIHR3byBpbiwgYnV0IHRoZXJlJ3Mgc29t
-ZSBvdGhlciBkcml2ZXJzIGZsb2F0aW5nIGFyb3VuZCBhbmQKaGVhZGluZyB0b3dhcmRzIDQuNSB3
-aXRoIHdoaWNoIGl0IHdpbGwgY29uZmxpY3QuIElmIGl0J3MgY2F1c2luZyB0b28gbXVjaAp0cm91
-YmxlIEknbGwgZHJvcCBpdCBhZ2FpbiBhbmQgd2UgaGF2ZSB0byBnZXQgaXQgaW4gcmlnaHQgYXJv
-dW5kIDQuNS1yYzEKdG8gYXZvaWQgdHJvdWJsZSB3aXRoIG5ldyBkcml2ZXJzLgoKVGhhbmtzLCBE
-YW5pZWwKCj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9hdG1lbC1obGNkYy9hdG1lbF9obGNkY19k
-Yy5jIHwgNCAtLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9kcm1fZHJ2LmMgICAgICAgICAgICAgICAg
-ICAgIHwgOSArKysrKysrKysKPiAgZHJpdmVycy9ncHUvZHJtL2ZzbC1kY3UvZnNsX2RjdV9kcm1f
-ZHJ2LmMgICAgfCAxIC0KPiAgZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbm91dmVhdV9kcm0uYyAg
-ICAgICAgfCA0IC0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9k
-cnYuYyAgfCA0IC0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jICAgICAgICAgICAg
-ICAgICAgfCAxIC0KPiAgZHJpdmVycy9ncHUvZHJtL3ZjNC92YzRfZHJ2LmMgICAgICAgICAgICAg
-ICAgfCAyIC0tCj4gIDcgZmlsZXMgY2hhbmdlZCwgOSBpbnNlcnRpb25zKCspLCAxNiBkZWxldGlv
-bnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2F0bWVsLWhsY2RjL2F0bWVs
-X2hsY2RjX2RjLmMgYi9kcml2ZXJzL2dwdS9kcm0vYXRtZWwtaGxjZGMvYXRtZWxfaGxjZGNfZGMu
-Ywo+IGluZGV4IDI0NGRmMGE0NDBiNy4uZmJhNGY3MmU3YWUxIDEwMDY0NAo+IC0tLSBhL2RyaXZl
-cnMvZ3B1L2RybS9hdG1lbC1obGNkYy9hdG1lbF9obGNkY19kYy5jCj4gKysrIGIvZHJpdmVycy9n
-cHUvZHJtL2F0bWVsLWhsY2RjL2F0bWVsX2hsY2RjX2RjLmMKPiBAQCAtNzMzLDEwICs3MzMsNiBA
-QCBzdGF0aWMgaW50IGF0bWVsX2hsY2RjX2RjX2RybV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2
-aWNlICpwZGV2KQo+ICAJaWYgKCFkZGV2KQo+ICAJCXJldHVybiAtRU5PTUVNOwo+ICAKPiAtCXJl
-dCA9IGRybV9kZXZfc2V0X3VuaXF1ZShkZGV2LCBkZXZfbmFtZShkZGV2LT5kZXYpKTsKPiAtCWlm
-IChyZXQpCj4gLQkJZ290byBlcnJfdW5yZWY7Cj4gLQo+ICAJcmV0ID0gYXRtZWxfaGxjZGNfZGNf
-bG9hZChkZGV2KTsKPiAgCWlmIChyZXQpCj4gIAkJZ290byBlcnJfdW5yZWY7Cj4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fZHJ2LmMgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2Rydi5j
-Cj4gaW5kZXggZWFhNDMxNmYzYzQ1Li5iZjkzNGNkZWEyMWMgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVy
-cy9ncHUvZHJtL2RybV9kcnYuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fZHJ2LmMKPiBA
-QCAtNjMzLDggKzYzMywxNyBAQCBzdHJ1Y3QgZHJtX2RldmljZSAqZHJtX2Rldl9hbGxvYyhzdHJ1
-Y3QgZHJtX2RyaXZlciAqZHJpdmVyLAo+ICAJCX0KPiAgCX0KPiAgCj4gKwlpZiAocGFyZW50KSB7
-Cj4gKwkJcmV0ID0gZHJtX2Rldl9zZXRfdW5pcXVlKGRldiwgZGV2X25hbWUocGFyZW50KSk7Cj4g
-KwkJaWYgKHJldCkKPiArCQkJZ290byBlcnJfc2V0dW5pcXVlOwo+ICsJfQo+ICsKPiAgCXJldHVy
-biBkZXY7Cj4gIAo+ICtlcnJfc2V0dW5pcXVlOgo+ICsJaWYgKGRybV9jb3JlX2NoZWNrX2ZlYXR1
-cmUoZGV2LCBEUklWRVJfR0VNKSkKPiArCQlkcm1fZ2VtX2Rlc3Ryb3koZGV2KTsKPiAgZXJyX2N0
-eGJpdG1hcDoKPiAgCWRybV9sZWdhY3lfY3R4Yml0bWFwX2NsZWFudXAoZGV2KTsKPiAgCWRybV9o
-dF9yZW1vdmUoJmRldi0+bWFwX2hhc2gpOwo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
-ZnNsLWRjdS9mc2xfZGN1X2RybV9kcnYuYyBiL2RyaXZlcnMvZ3B1L2RybS9mc2wtZGN1L2ZzbF9k
-Y3VfZHJtX2Rydi5jCj4gaW5kZXggMTkzMDIzNGJhNWYxLi5mY2E5N2QzZmM4NDYgMTAwNjQ0Cj4g
-LS0tIGEvZHJpdmVycy9ncHUvZHJtL2ZzbC1kY3UvZnNsX2RjdV9kcm1fZHJ2LmMKPiArKysgYi9k
-cml2ZXJzL2dwdS9kcm0vZnNsLWRjdS9mc2xfZGN1X2RybV9kcnYuYwo+IEBAIC0zNjMsNyArMzYz
-LDYgQEAgc3RhdGljIGludCBmc2xfZGN1X2RybV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNl
-ICpwZGV2KQo+ICAJZnNsX2Rldi0+bnAgPSBkZXYtPm9mX25vZGU7Cj4gIAlkcm0tPmRldl9wcml2
-YXRlID0gZnNsX2RldjsKPiAgCWRldl9zZXRfZHJ2ZGF0YShkZXYsIGZzbF9kZXYpOwo+IC0JZHJt
-X2Rldl9zZXRfdW5pcXVlKGRybSwgZGV2X25hbWUoZGV2KSk7Cj4gIAo+ICAJcmV0ID0gZHJtX2Rl
-dl9yZWdpc3Rlcihkcm0sIDApOwo+ICAJaWYgKHJldCA8IDApCj4gZGlmZiAtLWdpdCBhL2RyaXZl
-cnMvZ3B1L2RybS9ub3V2ZWF1L25vdXZlYXVfZHJtLmMgYi9kcml2ZXJzL2dwdS9kcm0vbm91dmVh
-dS9ub3V2ZWF1X2RybS5jCj4gaW5kZXggMmQyM2Y5NWYxN2NlLi5iM2E1NjNjNDRiY2QgMTAwNjQ0
-Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbm91dmVhdV9kcm0uYwo+ICsrKyBiL2Ry
-aXZlcnMvZ3B1L2RybS9ub3V2ZWF1L25vdXZlYXVfZHJtLmMKPiBAQCAtMTA0NiwxMCArMTA0Niw2
-IEBAIG5vdXZlYXVfcGxhdGZvcm1fZGV2aWNlX2NyZWF0ZShjb25zdCBzdHJ1Y3QgbnZrbV9kZXZp
-Y2VfdGVncmFfZnVuYyAqZnVuYywKPiAgCQlnb3RvIGVycl9mcmVlOwo+ICAJfQo+ICAKPiAtCWVy
-ciA9IGRybV9kZXZfc2V0X3VuaXF1ZShkcm0sIGRldl9uYW1lKCZwZGV2LT5kZXYpKTsKPiAtCWlm
-IChlcnIgPCAwKQo+IC0JCWdvdG8gZXJyX2ZyZWU7Cj4gLQo+ICAJZHJtLT5wbGF0Zm9ybWRldiA9
-IHBkZXY7Cj4gIAlwbGF0Zm9ybV9zZXRfZHJ2ZGF0YShwZGV2LCBkcm0pOwo+ICAKPiBkaWZmIC0t
-Z2l0IGEvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tjaGlwX2RybV9kcnYuYyBiL2RyaXZl
-cnMvZ3B1L2RybS9yb2NrY2hpcC9yb2NrY2hpcF9kcm1fZHJ2LmMKPiBpbmRleCAyMTVkNmM0NGFm
-NTUuLmFmYmI3NDA3YzQ0ZiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vcm9ja2NoaXAv
-cm9ja2NoaXBfZHJtX2Rydi5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3JvY2tjaGlwL3JvY2tj
-aGlwX2RybV9kcnYuYwo+IEBAIC00NTAsMTAgKzQ1MCw2IEBAIHN0YXRpYyBpbnQgcm9ja2NoaXBf
-ZHJtX2JpbmQoc3RydWN0IGRldmljZSAqZGV2KQo+ICAJaWYgKCFkcm0pCj4gIAkJcmV0dXJuIC1F
-Tk9NRU07Cj4gIAo+IC0JcmV0ID0gZHJtX2Rldl9zZXRfdW5pcXVlKGRybSwgZGV2X25hbWUoZGV2
-KSk7Cj4gLQlpZiAocmV0KQo+IC0JCWdvdG8gZXJyX2ZyZWU7Cj4gLQo+ICAJcmV0ID0gZHJtX2Rl
-dl9yZWdpc3Rlcihkcm0sIDApOwo+ICAJaWYgKHJldCkKPiAgCQlnb3RvIGVycl9mcmVlOwo+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgYi9kcml2ZXJzL2dwdS9kcm0v
-dGVncmEvZHJtLmMKPiBpbmRleCAxNTllZjUxNWNhYjEuLjEyZTJkM2NjYmM5ZCAxMDA2NDQKPiAt
-LS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0v
-dGVncmEvZHJtLmMKPiBAQCAtOTkxLDcgKzk5MSw2IEBAIHN0YXRpYyBpbnQgaG9zdDF4X2RybV9w
-cm9iZShzdHJ1Y3QgaG9zdDF4X2RldmljZSAqZGV2KQo+ICAJaWYgKCFkcm0pCj4gIAkJcmV0dXJu
-IC1FTk9NRU07Cj4gIAo+IC0JZHJtX2Rldl9zZXRfdW5pcXVlKGRybSwgZGV2X25hbWUoJmRldi0+
-ZGV2KSk7Cj4gIAlkZXZfc2V0X2RydmRhdGEoJmRldi0+ZGV2LCBkcm0pOwo+ICAKPiAgCWVyciA9
-IGRybV9kZXZfcmVnaXN0ZXIoZHJtLCAwKTsKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJt
-L3ZjNC92YzRfZHJ2LmMgYi9kcml2ZXJzL2dwdS9kcm0vdmM0L3ZjNF9kcnYuYwo+IGluZGV4IGQ1
-ZGI5ZTBmM2I3My4uNjQ3NzcyMzA1ZThmIDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS92
-YzQvdmM0X2Rydi5jCj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3ZjNC92YzRfZHJ2LmMKPiBAQCAt
-MTY4LDggKzE2OCw2IEBAIHN0YXRpYyBpbnQgdmM0X2RybV9iaW5kKHN0cnVjdCBkZXZpY2UgKmRl
-dikKPiAgCXZjNC0+ZGV2ID0gZHJtOwo+ICAJZHJtLT5kZXZfcHJpdmF0ZSA9IHZjNDsKPiAgCj4g
-LQlkcm1fZGV2X3NldF91bmlxdWUoZHJtLCBkZXZfbmFtZShkZXYpKTsKPiAtCj4gIAlkcm1fbW9k
-ZV9jb25maWdfaW5pdChkcm0pOwo+ICAJaWYgKHJldCkKPiAgCQlnb3RvIHVucmVmOwo+IC0tIAo+
-IDIuNi4zCj4gCj4gX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X18KPiBkcmktZGV2ZWwgbWFpbGluZyBsaXN0Cj4gZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9w
-Lm9yZwo+IGh0dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWwKCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3Jh
-dGlvbgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKaHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2RyaS1kZXZlbAo=
+[Re: [PATCH 00/10] drivers/pci: avoid module_init in non-modular host/pci*] On 14/12/2015 (Mon 11:27) Arnd Bergmann wrote:
+
+> On Monday 14 December 2015 10:19:40 Thierry Reding wrote:
+> > > PCIe host driver that use fixup (DECLARE_PCI_FIXUP_*) can't use tristate.
+> > > Fixup region is in kernel region and this region if not updated when
+> > > loading a module.
+> > 
+> > Interesting, I hadn't thought about that. I suppose this means that the
+> > module will end up containing an unused section with the fixup code. It
+> > might be useful to add a way for that to trigger a warning at build
+> > time.
+> > 
+> > Perhaps to fix this a mechanism could be introduced to add a table of
+> > fixups to a host controller driver and that will get applied to all
+> > children of the bridge. It could be problematic to cover all of the
+> > different fixup stages, though.
+> > 
+> 
+> 
+> I think a lot of the fixups shouldn't really be there in the first place,
+> they are about stuff that we can fix up in the probe function, or that should
+> be fixed up in the probe function with some appropriate core support added.
+
+So, the feedback on this is a bit all over the map, leaving me unsure
+what to do next.  And is the choice we make on a per board/bsp basis or
+ideally across all platforms?  I see the choices as:
+
+1) do nothing; which IMHO is least desirable as it leaves the code
+misrepresenting itself as modular; one of the key issues I wanted to fix
+
+2) use the patches I've sent ; then as they are genuinely made modular,
+the person doing so essentially "patch -R" or reverts the change as
+step one.  This has the advantage of solving the "we'll get to it
+someday" issue if someday never comes.
+
+3) make them all tristate;  beat it with a stick until it compiles [M]
+and modposts -- leaving the fixups and functional testing to people with
+the boards and low level knowledge to make it _work_ as a module.  The
+downside here is the code is still kind of misrepresenting itself as
+modularly functional -- a ban of unloading might mitigate that some.
+
+Paul.
+--
+
+> 
+> 	Arnd
