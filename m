@@ -1,78 +1,83 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH V4 16/16] ARM64: tegra: select PM_GENERIC_DOMAINS
-Date: Wed, 16 Dec 2015 13:51:46 +0100
-Message-ID: <CAPDyKFq=AWtranL2uifgO5TuTW5ykt+X8NkGpg7UDBpEivDxjA@mail.gmail.com>
-References: <1449241037-22193-1-git-send-email-jonathanh@nvidia.com>
-	<1449241037-22193-17-git-send-email-jonathanh@nvidia.com>
-	<CAPDyKFrcuK4iCo7Tg1Q_XjB7Y-+=s-ax1vzK4UEu9FfPnuProw@mail.gmail.com>
-	<567131A2.6030303@nvidia.com>
-	<CAPDyKFpZoZZapqanFyUzT_jZ6DLBnGXOXEyDHosWpphAjzhy7A@mail.gmail.com>
-	<56714DA3.80707@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <56714DA3.80707@nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rafael Wysocki <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Vince Hsu <vinceh@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [GIT PULL] drm/tegra: Changes for v4.5-rc1
+Date: Wed, 16 Dec 2015 18:24:44 +0100
+Message-ID: <1450286684-11157-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 16 December 2015 at 12:40, Jon Hunter <jonathanh@nvidia.com> wrote:
->
-> On 16/12/15 09:47, Ulf Hansson wrote:
->> On 16 December 2015 at 10:40, Jon Hunter <jonathanh@nvidia.com> wrote:
->>> Hi Ulf,
->>>
->>> On 15/12/15 19:54, Ulf Hansson wrote:
->>>> On 4 December 2015 at 15:57, Jon Hunter <jonathanh@nvidia.com> wrote:
->>>>> Enable PM_GENERIC_DOMAINS for tegra 64-bit devices. To ensure that devices
->>>>> dependent upon a particular power-domain are only probed when that power
->>>>> domain has been powered up, requires that PM is made mandatory for tegra
->>>>> 64-bit devices and so select this option for tegra as well.
->>>>>
->>>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->>>>> ---
->>>>>  arch/arm64/Kconfig.platforms | 2 ++
->>>>>  1 file changed, 2 insertions(+)
->>>>>
->>>>> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
->>>>> index 9806324fa215..e0b5bd0aff0f 100644
->>>>> --- a/arch/arm64/Kconfig.platforms
->>>>> +++ b/arch/arm64/Kconfig.platforms
->>>>> @@ -93,6 +93,8 @@ config ARCH_TEGRA
->>>>>         select GENERIC_CLOCKEVENTS
->>>>>         select HAVE_CLK
->>>>>         select PINCTRL
->>>>> +       select PM
->>>>> +       select PM_GENERIC_DOMAINS
->>>>
->>>> If you still want to allow ARCH_TEGRA to run without PM, you should
->>>> probably change to:
->>>>
->>>> select PM_GENERIC_DOMAINS if PM
->>>
->>> Per the changelog this is deliberate. If we allow !PM, then there is a
->>> potential that you could probe a device when the power domain is not
->>> powered on. I understand that some SoCs turn on all the power-domains
->>> when !PM but this will not work for tegra because we don't register the
->>> power domain until later in the boot and so we are relying upon probe
->>> deferral to defer the probe of devices that use power-domains.
->>
->> So what you are saying is that adding the PM domain support, will fix
->> some devices to become successfully probed as they were broken before?
->
-> Not exactly. There is a legacy tegra_powergate_sequence_power_up() that
-> has been used to date to get around this. However, by migrating to GENPD
-> we really need to make PM mandatory, otherwise you could attempt to
-> probe a device in a power domain that is not powered. In other words,
-> you are probing blindly. I know some SoCs do this, but that does not
-> seem very robust.
+Hi Dave,
 
-Thank for the clarification. I agree.
+The following changes since commit 663a233eef643b38f36c05535cb5c9a4972edcc1:
 
-You may add my:
+  Merge branch 'drm-header-fixes' of https://github.com/GabrielL/linux into drm-next (2015-12-11 13:46:05 +1000)
 
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+are available in the git repository at:
 
-Kind regards
-Uffe
+  git://anongit.freedesktop.org/tegra/linux tags/drm/tegra/for-4.5-rc1
+
+for you to fetch changes up to ad906599c1919eda6f365ecec8d50198c9232131:
+
+  drm/tegra: Advertise DRIVER_ATOMIC (2015-12-14 15:47:36 +0100)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+drm/tegra: Changes for v4.5-rc1
+
+This adds support for the version of host1x found on Tegra210 SoCs. It
+also makes use of the new atomic suspend/resume functionality to bring
+this feature to Tegra.
+
+Other than that it's mostly small fixes and cleanups, with some prep-
+work for things that will hopefully get merged for the next release.
+
+----------------------------------------------------------------
+Dan Carpenter (1):
+      drm/tegra: checking for IS_ERR() instead of NULL
+
+Daniel Vetter (3):
+      drm/tegra: Use unlocked gem unreferencing
+      drm/tegra: Don't take dev->struct_mutex in mmap offset ioctl
+      drm/tegra: Use drm_gem_object_unreference_unlocked()
+
+Julia Lawall (1):
+      drm/tegra: dc: Add missing of_node_put()
+
+Thierry Reding (9):
+      gpu: host1x: Use platform_register/unregister_drivers()
+      gpu: host1x: Remove core driver on unregister
+      gpu: host1x: Add Tegra210 support
+      drm/tegra: Use new multi-driver module helpers
+      drm/tegra: sor: Operate on struct drm_dp_aux *
+      drm/tegra: sor: Remove unnecessary conditional
+      drm/tegra: Implement subsystem-level suspend/resume
+      drm/tegra: Use DRIVER level for IOMMU aperture message
+      drm/tegra: Advertise DRIVER_ATOMIC
+
+ drivers/gpu/drm/tegra/dc.c                  |   4 +-
+ drivers/gpu/drm/tegra/dpaux.c               |  41 ++---
+ drivers/gpu/drm/tegra/drm.c                 |  89 ++++------
+ drivers/gpu/drm/tegra/drm.h                 |  27 ++--
+ drivers/gpu/drm/tegra/fb.c                  |  24 +++
+ drivers/gpu/drm/tegra/gem.c                 |  15 +-
+ drivers/gpu/drm/tegra/sor.c                 | 145 ++++++++---------
+ drivers/gpu/host1x/Makefile                 |   3 +-
+ drivers/gpu/host1x/bus.c                    |   2 +
+ drivers/gpu/host1x/dev.c                    |  33 ++--
+ drivers/gpu/host1x/hw/host1x05.c            |  42 +++++
+ drivers/gpu/host1x/hw/host1x05.h            |  26 +++
+ drivers/gpu/host1x/hw/host1x05_hardware.h   | 142 ++++++++++++++++
+ drivers/gpu/host1x/hw/hw_host1x05_channel.h | 121 ++++++++++++++
+ drivers/gpu/host1x/hw/hw_host1x05_sync.h    | 243 ++++++++++++++++++++++++++++
+ drivers/gpu/host1x/hw/hw_host1x05_uclass.h  | 181 +++++++++++++++++++++
+ 16 files changed, 944 insertions(+), 194 deletions(-)
+ create mode 100644 drivers/gpu/host1x/hw/host1x05.c
+ create mode 100644 drivers/gpu/host1x/hw/host1x05.h
+ create mode 100644 drivers/gpu/host1x/hw/host1x05_hardware.h
+ create mode 100644 drivers/gpu/host1x/hw/hw_host1x05_channel.h
+ create mode 100644 drivers/gpu/host1x/hw/hw_host1x05_sync.h
+ create mode 100644 drivers/gpu/host1x/hw/hw_host1x05_uclass.h
