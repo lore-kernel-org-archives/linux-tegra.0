@@ -1,57 +1,108 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [RFC PATCH V2 0/8] Add support for Tegra210 AGIC
-Date: Thu, 17 Dec 2015 10:48:21 +0000
-Message-ID: <1450349309-8107-1-git-send-email-jonathanh@nvidia.com>
+Subject: [RFC PATCH V2 1/8] irqdomain: Ensure type settings match for an existing mapping
+Date: Thu, 17 Dec 2015 10:48:22 +0000
+Message-ID: <1450349309-8107-2-git-send-email-jonathanh@nvidia.com>
+References: <1450349309-8107-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1450349309-8107-1-git-send-email-jonathanh@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Jiang Liu <jiang.liu@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>
 Cc: Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, Soren Brinkmann <soren.brinkmann@xilinx.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The Tegra210 AGIC interrupt controller is a 2nd level interrupt controller
-located in a separate power domain to the main GIC interrupt controller.
-It can route interrupts to the main CPU cluster or an Audio DSP slave.
+When mapping an IRQ, if a mapping already exists, then we simply return
+the virual IRQ number. However, we do not check that the type settings for
+the existing mapping match those for the mapping that is about to be
+created. It may be unlikely that the type settings would not match, but
+check for this and don't return a valid IRQ mapping if the type settings
+do not match.
 
-Ideally we would like to re-use the existing ARM GIC driver because the
-AGIC is a GIC-400. However, in order to do so this requires a few
-significant changes to the exisiting GIC driver for power management
-reasons.
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ kernel/irq/irqdomain.c | 58 +++++++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 43 insertions(+), 15 deletions(-)
 
-The purpose of this RFC-V2 is to get some feedback on the approach and see
-if we can support the AGIC in this way or if a separate driver is
-warranted for this device.
-
-Please note that this RFC does not address the issue of interrupt routing.
-Ideally I was thinking that having a mechanism/API to migrate an interrupt
-from the CPU cluster to the DSP would make sense, however, I don't believe
-this is supported today in the kernel. Would such an approach be acceptable
-or if not, is there a better way to handle this?
-
-Changes from V1:
-- Prevent IRQ mapping from setting the IRQ type and only program the
-  type when allocating the IRQ.
-- Resolved some __init section conflicts found with V1 series.
-
-
-Jon Hunter (8):
-  irqdomain: Ensure type settings match for an existing mapping
-  irqdomain: Don't set type when mapping an IRQ
-  genirq: Add runtime power management support for IRQ chips
-  irqchip/gic: Don't initialise chip if mapping IO space fails
-  irqchip/gic: Return an error if GIC initialisation fails
-  irqchip/gic: Assign irqchip dynamically
-  irqchip/gic: Prepare for adding platform driver
-  irqchip/gic: Add support for tegra AGIC interrupt controller
-
- drivers/irqchip/irq-gic-common.c |   4 +-
- drivers/irqchip/irq-gic.c        | 473 ++++++++++++++++++++++++++++-----------
- include/linux/irq.h              |   4 +
- kernel/irq/internals.h           |  24 ++
- kernel/irq/irqdomain.c           |  76 +++++--
- kernel/irq/manage.c              |  14 ++
- 6 files changed, 447 insertions(+), 148 deletions(-)
-
+diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+index 22aa9612ef7c..eae31e978ab2 100644
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -568,8 +568,10 @@ static void of_phandle_args_to_fwspec(struct of_phandle_args *irq_data,
+ 
+ unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec)
+ {
++	struct device_node *of_node;
+ 	struct irq_domain *domain;
+ 	irq_hw_number_t hwirq;
++	unsigned int cur_type = IRQ_TYPE_NONE;
+ 	unsigned int type = IRQ_TYPE_NONE;
+ 	int virq;
+ 
+@@ -587,23 +589,49 @@ unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec)
+ 	if (irq_domain_translate(domain, fwspec, &hwirq, &type))
+ 		return 0;
+ 
+-	if (irq_domain_is_hierarchy(domain)) {
+-		/*
+-		 * If we've already configured this interrupt,
+-		 * don't do it again, or hell will break loose.
+-		 */
+-		virq = irq_find_mapping(domain, hwirq);
+-		if (virq)
+-			return virq;
++	of_node = irq_domain_get_of_node(domain);
+ 
+-		virq = irq_domain_alloc_irqs(domain, 1, NUMA_NO_NODE, fwspec);
+-		if (virq <= 0)
+-			return 0;
++	/*
++	 * If we've already configured this interrupt,
++	 * don't do it again, or hell will break loose.
++	 */
++	virq = irq_find_mapping(domain, hwirq);
++	if (!virq) {
++		if (irq_domain_is_hierarchy(domain)) {
++			virq = irq_domain_alloc_irqs(domain, 1, NUMA_NO_NODE,
++						     fwspec);
++			if (virq <= 0)
++				return 0;
++		} else {
++			virq = irq_domain_alloc_descs(-1, 1, hwirq,
++						      of_node_to_nid(of_node));
++			if (virq <= 0)
++				return 0;
++
++			if (irq_domain_associate(domain, virq, hwirq)) {
++				irq_free_desc(virq);
++				return 0;
++			}
++		}
+ 	} else {
+-		/* Create mapping */
+-		virq = irq_create_mapping(domain, hwirq);
+-		if (!virq)
+-			return virq;
++		cur_type = irq_get_trigger_type(virq);
++	}
++
++	/*
++	 * If the trigger type is not specified or matches the current
++	 * trigger type then we are done so return the interrupt number.
++	 */
++	if (type == IRQ_TYPE_NONE || type == cur_type)
++		return virq;
++
++	/*
++	 * If the trigger type is already set and does
++	 * not match this interrupt, then return 0.
++	 */
++	if (cur_type != IRQ_TYPE_NONE) {
++		pr_warn("type mismatch, failed to map hwirq-%lu for %s!\n",
++			hwirq, of_node_full_name(of_node));
++		return 0;
+ 	}
+ 
+ 	/* Set type if specified and different than the current one */
 -- 
 2.1.4
