@@ -1,47 +1,82 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 5/5] ARM: tegra: Default configuration updates for v4.5-rc1
-Date: Thu, 17 Dec 2015 13:50:39 +0100
-Message-ID: <1450356639-7758-5-git-send-email-thierry.reding@gmail.com>
-References: <1450356639-7758-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1450356639-7758-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC PATCH V2 1/8] irqdomain: Ensure type settings match for an
+ existing mapping
+Date: Thu, 17 Dec 2015 14:16:25 +0100
+Message-ID: <CACRpkdYPvMfqou7t9K_5=Ojx3U_sc8B2Zkxgeu=1JXxCUU_E2Q@mail.gmail.com>
+References: <1450349309-8107-1-git-send-email-jonathanh@nvidia.com>
+	<1450349309-8107-2-git-send-email-jonathanh@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1450349309-8107-2-git-send-email-jonathanh@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Jiang Liu <jiang.liu@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Soren Brinkmann <soren.brinkmann@xilinx.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
+On Thu, Dec 17, 2015 at 11:48 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
 
-The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
+> When mapping an IRQ, if a mapping already exists, then we simply return
+> the virual IRQ number. However, we do not check that the type settings for
 
-  Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
+^virtual
 
-are available in the git repository at:
+Just that it isn't virtual, it's a Linux IRQ number, we actually use
+hwirq for the non-virtual IRQ number/offse in this function.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.5-defconfig
+But I know I may be fighting weathermills here.
 
-for you to fetch changes up to 36d6e0872152aab506f952792db7221b9c25ed33:
+>  unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec)
+>  {
+> +       struct device_node *of_node;
+>         struct irq_domain *domain;
+>         irq_hw_number_t hwirq;
+> +       unsigned int cur_type = IRQ_TYPE_NONE;
+>         unsigned int type = IRQ_TYPE_NONE;
+>         int virq;
+>
+> @@ -587,23 +589,49 @@ unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec)
+>         if (irq_domain_translate(domain, fwspec, &hwirq, &type))
+>                 return 0;
+>
+> -       if (irq_domain_is_hierarchy(domain)) {
+> -               /*
+> -                * If we've already configured this interrupt,
+> -                * don't do it again, or hell will break loose.
+> -                */
+> -               virq = irq_find_mapping(domain, hwirq);
+> -               if (virq)
+> -                       return virq;
+> +       of_node = irq_domain_get_of_node(domain);
 
-  arm64: defconfig: Enable printk timestamps (2015-11-16 15:48:24 +0100)
+Marc's patches went to great lengths to do this fwspec-neutral,
+i.e. it doesn't matter if it's done by DT or ACPI (or whatever).
 
-Thanks,
-Thierry
+This just drives a truck through all of that by making
+the whole function OF-specific again.
 
-----------------------------------------------------------------
-ARM: tegra: Default configuration updates for v4.5-rc1
+>
+> -               virq = irq_domain_alloc_irqs(domain, 1, NUMA_NO_NODE, fwspec);
+> -               if (virq <= 0)
+> -                       return 0;
+> +       /*
+> +        * If we've already configured this interrupt,
+> +        * don't do it again, or hell will break loose.
+> +        */
+> +       virq = irq_find_mapping(domain, hwirq);
+> +       if (!virq) {
+> +               if (irq_domain_is_hierarchy(domain)) {
+> +                       virq = irq_domain_alloc_irqs(domain, 1, NUMA_NO_NODE,
+> +                                                    fwspec);
+> +                       if (virq <= 0)
+> +                               return 0;
+> +               } else {
+> +                       virq = irq_domain_alloc_descs(-1, 1, hwirq,
+> +                                                     of_node_to_nid(of_node));
 
-This set of patches enable various drivers and features required by
-64-bit Tegra SoCs (Tegra132 and Tegra210).
+What is this all of a sudden? Not even mentioned in the
+commit. Plus I bet ACPI need something else than OF nid
+passed here.
 
-----------------------------------------------------------------
-Thierry Reding (7):
-      arm64: defconfig: Enable Tegra210 support
-      arm64: defconfig: Do not disable Tegra AHB driver
-      arm64: defconfig: Enable tegra-apbdma driver
-      arm64: defconfig: Enable serial-tegra driver
-      arm64: defconfig: Enable sdhci-tegra driver
-      arm64: defconfig: Enable squashfs support
-      arm64: defconfig: Enable printk timestamps
-
- arch/arm64/configs/defconfig | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Yours,
+Linus Walleij
