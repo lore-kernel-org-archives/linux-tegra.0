@@ -1,148 +1,57 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RFC PATCH V2 3/8] genirq: Add runtime power management support for IRQ chips
-Date: Thu, 17 Dec 2015 10:48:24 +0000
-Message-ID: <1450349309-8107-4-git-send-email-jonathanh@nvidia.com>
-References: <1450349309-8107-1-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [RFC PATCH V2 0/8] Add support for Tegra210 AGIC
+Date: Thu, 17 Dec 2015 10:48:21 +0000
+Message-ID: <1450349309-8107-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1450349309-8107-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Jiang Liu <jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Jiang Liu <jiang.liu@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, Soren Brinkmann <soren.brinkmann@xilinx.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Some IRQ chips may be located in a power domain outside of the CPU
-subsystem and hence will require device specific runtime power management.
-In order to support such IRQ chips, add a pointer for a device structure
-to the irq_chip structure, and if this pointer is populated by the IRQ
-chip driver and the flag CHIP_HAS_RPM is set, then the pm_runtime_get/put
-APIs for this chip will be called when an IRQ is requested/freed,
-respectively.
+The Tegra210 AGIC interrupt controller is a 2nd level interrupt controller
+located in a separate power domain to the main GIC interrupt controller.
+It can route interrupts to the main CPU cluster or an Audio DSP slave.
 
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- include/linux/irq.h    |  4 ++++
- kernel/irq/internals.h | 24 ++++++++++++++++++++++++
- kernel/irq/manage.c    |  7 +++++++
- 3 files changed, 35 insertions(+)
+Ideally we would like to re-use the existing ARM GIC driver because the
+AGIC is a GIC-400. However, in order to do so this requires a few
+significant changes to the exisiting GIC driver for power management
+reasons.
 
-diff --git a/include/linux/irq.h b/include/linux/irq.h
-index 3c1c96786248..7a61a7f76177 100644
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -307,6 +307,7 @@ static inline irq_hw_number_t irqd_to_hwirq(struct irq_data *d)
- /**
-  * struct irq_chip - hardware interrupt chip descriptor
-  *
-+ * @dev:		pointer to associated device
-  * @name:		name for /proc/interrupts
-  * @irq_startup:	start up the interrupt (defaults to ->enable if NULL)
-  * @irq_shutdown:	shut down the interrupt (defaults to ->disable if NULL)
-@@ -344,6 +345,7 @@ static inline irq_hw_number_t irqd_to_hwirq(struct irq_data *d)
-  * @flags:		chip specific flags
-  */
- struct irq_chip {
-+	struct device	*dev;
- 	const char	*name;
- 	unsigned int	(*irq_startup)(struct irq_data *data);
- 	void		(*irq_shutdown)(struct irq_data *data);
-@@ -399,6 +401,7 @@ struct irq_chip {
-  * IRQCHIP_SKIP_SET_WAKE:	Skip chip.irq_set_wake(), for this irq chip
-  * IRQCHIP_ONESHOT_SAFE:	One shot does not require mask/unmask
-  * IRQCHIP_EOI_THREADED:	Chip requires eoi() on unmask in threaded mode
-+ * IRQCHIP_HAS_PM:		Chip requires runtime power management
-  */
- enum {
- 	IRQCHIP_SET_TYPE_MASKED		= (1 <<  0),
-@@ -408,6 +411,7 @@ enum {
- 	IRQCHIP_SKIP_SET_WAKE		= (1 <<  4),
- 	IRQCHIP_ONESHOT_SAFE		= (1 <<  5),
- 	IRQCHIP_EOI_THREADED		= (1 <<  6),
-+	IRQCHIP_HAS_RPM			= (1 <<  7),
- };
- 
- #include <linux/irqdesc.h>
-diff --git a/kernel/irq/internals.h b/kernel/irq/internals.h
-index fcab63c66905..30a2add7cae6 100644
---- a/kernel/irq/internals.h
-+++ b/kernel/irq/internals.h
-@@ -7,6 +7,7 @@
-  */
- #include <linux/irqdesc.h>
- #include <linux/kernel_stat.h>
-+#include <linux/pm_runtime.h>
- 
- #ifdef CONFIG_SPARSE_IRQ
- # define IRQ_BITMAP_BITS	(NR_IRQS + 8196)
-@@ -125,6 +126,29 @@ static inline void chip_bus_sync_unlock(struct irq_desc *desc)
- 		desc->irq_data.chip->irq_bus_sync_unlock(&desc->irq_data);
- }
- 
-+/* Inline functions for support of irq chips that require runtime pm */
-+static inline int chip_pm_get(struct irq_desc *desc)
-+{
-+	int retval = 0;
-+
-+	if (desc->irq_data.chip->dev &&
-+	    desc->irq_data.chip->flags & IRQCHIP_HAS_RPM)
-+		retval = pm_runtime_get_sync(desc->irq_data.chip->dev);
-+
-+	return (retval < 0) ? retval : 0;
-+}
-+
-+static inline int chip_pm_put(struct irq_desc *desc)
-+{
-+	int retval = 0;
-+
-+	if (desc->irq_data.chip->dev &&
-+	    desc->irq_data.chip->flags & IRQCHIP_HAS_RPM)
-+		retval = pm_runtime_put(desc->irq_data.chip->dev);
-+
-+	return (retval < 0) ? retval : 0;
-+}
-+
- #define _IRQ_DESC_CHECK		(1 << 0)
- #define _IRQ_DESC_PERCPU	(1 << 1)
- 
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index 2a429b061171..8a96e4f1e985 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -1116,6 +1116,10 @@ __setup_irq(unsigned int irq, struct irq_desc *desc, struct irqaction *new)
- 	if (!try_module_get(desc->owner))
- 		return -ENODEV;
- 
-+	ret = chip_pm_get(desc);
-+	if (ret < 0)
-+		return ret;
-+
- 	new->irq = irq;
- 
- 	/*
-@@ -1400,6 +1404,7 @@ out_thread:
- 		put_task_struct(t);
- 	}
- out_mput:
-+	chip_pm_put(desc);
- 	module_put(desc->owner);
- 	return ret;
- }
-@@ -1513,6 +1518,7 @@ static struct irqaction *__free_irq(unsigned int irq, void *dev_id)
- 		}
- 	}
- 
-+	chip_pm_put(desc);
- 	module_put(desc->owner);
- 	kfree(action->secondary);
- 	return action;
-@@ -1799,6 +1805,7 @@ static struct irqaction *__free_percpu_irq(unsigned int irq, void __percpu *dev_
- 
- 	unregister_handler_proc(irq, action);
- 
-+	chip_pm_put(desc);
- 	module_put(desc->owner);
- 	return action;
- 
+The purpose of this RFC-V2 is to get some feedback on the approach and see
+if we can support the AGIC in this way or if a separate driver is
+warranted for this device.
+
+Please note that this RFC does not address the issue of interrupt routing.
+Ideally I was thinking that having a mechanism/API to migrate an interrupt
+from the CPU cluster to the DSP would make sense, however, I don't believe
+this is supported today in the kernel. Would such an approach be acceptable
+or if not, is there a better way to handle this?
+
+Changes from V1:
+- Prevent IRQ mapping from setting the IRQ type and only program the
+  type when allocating the IRQ.
+- Resolved some __init section conflicts found with V1 series.
+
+
+Jon Hunter (8):
+  irqdomain: Ensure type settings match for an existing mapping
+  irqdomain: Don't set type when mapping an IRQ
+  genirq: Add runtime power management support for IRQ chips
+  irqchip/gic: Don't initialise chip if mapping IO space fails
+  irqchip/gic: Return an error if GIC initialisation fails
+  irqchip/gic: Assign irqchip dynamically
+  irqchip/gic: Prepare for adding platform driver
+  irqchip/gic: Add support for tegra AGIC interrupt controller
+
+ drivers/irqchip/irq-gic-common.c |   4 +-
+ drivers/irqchip/irq-gic.c        | 473 ++++++++++++++++++++++++++++-----------
+ include/linux/irq.h              |   4 +
+ kernel/irq/internals.h           |  24 ++
+ kernel/irq/irqdomain.c           |  76 +++++--
+ kernel/irq/manage.c              |  14 ++
+ 6 files changed, 447 insertions(+), 148 deletions(-)
+
 -- 
 2.1.4
