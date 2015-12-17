@@ -1,98 +1,28 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RFC PATCH V2 3/8] genirq: Add runtime power management support
- for IRQ chips
-Date: Thu, 17 Dec 2015 14:19:48 +0100
-Message-ID: <CACRpkdZXBPQv0ftZJEyE_Q7X_nTpY=3Cd_PTCnK-nHMyqmmBqg@mail.gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [RFC PATCH V2 4/8] irqchip/gic: Don't initialise chip if mapping
+ IO space fails
+Date: Thu, 17 Dec 2015 14:21:11 +0100
+Message-ID: <CACRpkdaHxaUthxi+Y9uFf8S0dTraxPRaoeBgaOcwe=26z6xg2Q@mail.gmail.com>
 References: <1450349309-8107-1-git-send-email-jonathanh@nvidia.com>
-	<1450349309-8107-4-git-send-email-jonathanh@nvidia.com>
+	<1450349309-8107-5-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1450349309-8107-4-git-send-email-jonathanh@nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Jiang Liu <jiang.liu@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Soren Brinkmann <soren.brinkmann@xilinx.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1450349309-8107-5-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Jiang Liu <jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Dec 17, 2015 at 11:48 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
+On Thu, Dec 17, 2015 at 11:48 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 
-(Adding Rafael and linux-pm to To: list)
-
-> Some IRQ chips may be located in a power domain outside of the CPU
-> subsystem and hence will require device specific runtime power management.
-> In order to support such IRQ chips, add a pointer for a device structure
-> to the irq_chip structure, and if this pointer is populated by the IRQ
-> chip driver and the flag CHIP_HAS_RPM is set, then the pm_runtime_get/put
-> APIs for this chip will be called when an IRQ is requested/freed,
-> respectively.
+> If we fail to map the address space for the GIC distributor or CPU
+> interface, then don't attempt to initialise the chip, just WARN and
+> return.
 >
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Overall I like what you're trying to do. This will enable e.g. I2C
-GPIO supplying expanders to power down if none of its lines are
-used for IRQs. (Read below on the suspend() case for even
-better stuff we can do!)
-
-(...)
-> @@ -307,6 +307,7 @@ static inline irq_hw_number_t irqd_to_hwirq(struct irq_data *d)
->  /**
->   * struct irq_chip - hardware interrupt chip descriptor
->   *
-> + * @dev:               pointer to associated device
-(...)
->  struct irq_chip {
-> +       struct device   *dev;
-
-In struct gpio_chip I just this merge window have to merge a gigantic
-patch renaming this from "dev" to "parent" because we need to add
-a *real* struct device dev; to gpio_chip.
-
-So for the advent that we may in the future need a real struct device
-inside irq_chip, name this .parent already today, please.
-
-> +/* Inline functions for support of irq chips that require runtime pm */
-> +static inline int chip_pm_get(struct irq_desc *desc)
-> +{
-> +       int retval = 0;
-> +
-> +       if (desc->irq_data.chip->dev &&
-> +           desc->irq_data.chip->flags & IRQCHIP_HAS_RPM)
-> +               retval = pm_runtime_get_sync(desc->irq_data.chip->dev);
-> +
-> +       return (retval < 0) ? retval : 0;
-> +}
-
-That is boiling all PM upward into the platform_device or whatever
-it is containing this. But we're not just in it for runtime_pm_suspend()
-and runtime_pm_resume(). We also have regular suspend() and
-resume(). And ideally that should be handled by the same
-callbacks.
-
-First: what if the device contain any wakeup-flagged IRQs?
-I think there is something missing here. The suspend() usecase
-is not handled by this patch, but we need to think about that
-here as well. I think irqchips on GPIO expanders (for example)
-should be powered down on suspend() *unless* one or more of
-its IRQs is flagged as wakeup, and in that case it should
-*not* be powered down, instead it should just mask all
-non-wakeup IRQs and restore them on resume().
-
-Second: it's soo easy to get something wrong here. It'd be good
-if the kernel was helpful. What about something like:
-
-if (desc->irq_data.chip->dev) {
-    if (desc->irq_data.chip->flags & IRQCHIP_HAS_RPM)
-           retval = pm_runtime_get_sync(desc->irq_data.chip->dev)
-    else if (pm_runtime_enabled(desc->irq_data.chip->dev))
-           dev_warn_once(desc->irq_data.chip->dev, "irqchip not
-flagged for RPM but has runtime PM enabled! weird.\n");
-}
-
-As I see it, a device that supplies an irqchip, has runtime PM but
-is *NOT* setting IRQCHIP_HAS_RPM just *have* to be looked
-at in detail, and deserve to have this littering its dmesg so we can
-fix it. It just makes no real sense. It more sounds like a recepie for
-missing interrupts otherwise.
+Reviewed-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
 Yours,
 Linus Walleij
