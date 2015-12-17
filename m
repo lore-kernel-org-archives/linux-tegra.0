@@ -1,14 +1,16 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 1/5] clk: tegra: Changes for v4.5-rc1
-Date: Thu, 17 Dec 2015 13:50:35 +0100
-Message-ID: <1450356639-7758-1-git-send-email-thierry.reding@gmail.com>
+Subject: [GIT PULL 3/5] ARM: tegra: Core SoC changes for v4.5-rc1
+Date: Thu, 17 Dec 2015 13:50:37 +0100
+Message-ID: <1450356639-7758-3-git-send-email-thierry.reding@gmail.com>
+References: <1450356639-7758-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1450356639-7758-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Mike, Stephen,
+Hi ARM SoC maintainers,
 
 The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
 
@@ -16,77 +18,40 @@ The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.5-clk
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.5-soc
 
-for you to fetch changes up to 2d7f61f37731f635af47615a8a331ffe7f884934:
+for you to fetch changes up to a262e87ff354f12447bb6268bd63edf7ba1c20e0:
 
-  clk: tegra: Read correct IDDQ register in PLL_SS registration (2015-12-17 13:37:58 +0100)
-
-Note that the first commit in this set adds the device tree bindings for
-Tegra210. This is a dependency for the for-4.5/dt branch because it adds
-the dt-bindings include file used by the Tegra210 DTS files.
+  ARM: tegra: select USB_ULPI from EHCI rather than platform (2015-11-24 16:47:26 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-clk: tegra: Changes for v4.5-rc1
+ARM: tegra: Core SoC changes for v4.5-rc1
 
-This set of changes adds support for the Tegra210 SoC and contains a
-couple fixes and cleanups.
+The big thing here is Tegra210 support, which is really only the Kconfig
+symbol. Other than that there's a few miscellaneous fixes.
 
 ----------------------------------------------------------------
-Andrew Bresticker (1):
-      clk: tegra: pll: Fix issues with rates for VCO PLLs
+Arnd Bergmann (1):
+      ARM: tegra: select USB_ULPI from EHCI rather than platform
 
-Bill Huang (8):
-      clk: tegra: pll: Change misc_reg count from 3 to 6
-      clk: tegra: pll: Add code to handle if resets are supported by PLL
-      clk: tegra: pll: Adjust vco_min if SDM present
-      clk: tegra: pll: Add Set_default logic
-      clk: tegra: pll: Add logic for SS
-      clk: tegra: Add Super Gen5 Logic
-      clk: tegra: Fix WARN_ON in PLL_RE registration
-      clk: tegra: Read correct IDDQ register in PLL_SS registration
+Jon Hunter (1):
+      ARM: tegra: Ensure entire dcache is flushed on entering LP0/1
 
-Danny Huang (1):
-      clk: tegra: pll: Update PLLM handling
+Thierry Reding (3):
+      soc/tegra: Provide per-SoC Kconfig symbols
+      soc/tegra: Add Tegra210 support
+      amba: Hide TEGRA_AHB symbol
 
-Rhyland Klein (12):
-      clk: tegra: periph: Add new periph clks and muxes for Tegra210
-      clk: tegra: pll: Add tegra_pll_wait_for_lock to clk header
-      clk: tegra: pll: Simplify clk_enable_path
-      clk: tegra: pll: Update warning message
-      clk: tegra: pll: Don't unconditionally set LOCK flags
-      clk: tegra: pll: Add logic for handling SDM data
-      clk: tegra: pll: Add logic for out-of-table rates for T210
-      clk: tegra: pll: Fix _pll_ramp_calc_pll logic and _calc_dynamic_ramp_rate
-      clk: tegra: pll: Add specialized logic for Tegra210
-      clk: tegra: pll: Add support for PLLMB for Tegra210
-      clk: tegra: pll: Add dyn_ramp callback
-      clk: tegra: Add support for Tegra210 clocks
-
-Thierry Reding (5):
-      clk: tegra: Add Tegra210 device tree binding
-      clk: tegra: Fix 26 MHz oscillator frequency
-      clk: tegra: Miscellaneous coding style cleanups
-      clk: tegra: Format tables consistently
-      clk: tegra: Constify pdiv-to-hw mappings
-
- .../bindings/clock/nvidia,tegra210-car.txt         |   56 +
- drivers/clk/tegra/Makefile                         |    1 +
- drivers/clk/tegra/clk-id.h                         |   75 +-
- drivers/clk/tegra/clk-pll.c                        |  838 ++++--
- drivers/clk/tegra/clk-tegra-periph.c               |  371 ++-
- drivers/clk/tegra/clk-tegra-super-gen4.c           |  142 +-
- drivers/clk/tegra/clk-tegra114.c                   |  339 +--
- drivers/clk/tegra/clk-tegra124.c                   |  453 ++--
- drivers/clk/tegra/clk-tegra20.c                    |  314 ++-
- drivers/clk/tegra/clk-tegra210.c                   | 2852 ++++++++++++++++++++
- drivers/clk/tegra/clk-tegra30.c                    |  426 +--
- drivers/clk/tegra/clk.h                            |  101 +-
- include/dt-bindings/clock/tegra210-car.h           |  401 +++
- 13 files changed, 5439 insertions(+), 930 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra210-car.txt
- create mode 100644 drivers/clk/tegra/clk-tegra210.c
- create mode 100644 include/dt-bindings/clock/tegra210-car.h
+ arch/arm/mach-tegra/Kconfig         | 54 +-----------------------
+ arch/arm/mach-tegra/sleep-tegra20.S |  3 ++
+ arch/arm/mach-tegra/sleep-tegra30.S |  3 ++
+ arch/arm64/Kconfig.platforms        | 12 ------
+ drivers/amba/Kconfig                |  2 +-
+ drivers/soc/Kconfig                 |  1 +
+ drivers/soc/tegra/Kconfig           | 83 +++++++++++++++++++++++++++++++++++++
+ drivers/usb/host/Kconfig            |  2 +
+ 8 files changed, 94 insertions(+), 66 deletions(-)
+ create mode 100644 drivers/soc/tegra/Kconfig
