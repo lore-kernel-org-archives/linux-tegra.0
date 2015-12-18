@@ -1,46 +1,48 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH V2 6/8] irqchip/gic: Assign irqchip dynamically
-Date: Fri, 18 Dec 2015 10:26:18 +0000
-Message-ID: <5673DF4A.7050203@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [RFC PATCH V2 8/8] irqchip/gic: Add support for tegra AGIC
+ interrupt controller
+Date: Fri, 18 Dec 2015 10:44:27 +0000
+Message-ID: <5673E38B.7060702@nvidia.com>
 References: <1450349309-8107-1-git-send-email-jonathanh@nvidia.com>
- <1450349309-8107-7-git-send-email-jonathanh@nvidia.com>
- <567295B5.8050900@arm.com>
+ <1450349309-8107-9-git-send-email-jonathanh@nvidia.com>
+ <CACRpkdZT42rpKsVtNYdCuL_i0xWngvKSMSVUy1bLmPtxHhG5ew@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <567295B5.8050900-5wv7dgnIgG8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Jiang Liu <jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZT42rpKsVtNYdCuL_i0xWngvKSMSVUy1bLmPtxHhG5ew@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Jiang Liu <jiang.liu@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Soren Brinkmann <soren.brinkmann@xilinx.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 17/12/15 11:00, Marc Zyngier wrote:
-> Hi Jon,
+On 17/12/15 13:32, Linus Walleij wrote:
+> On Thu, Dec 17, 2015 at 11:48 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
 > 
-> On 17/12/15 10:48, Jon Hunter wrote:
->> Dynamically assign the irqchip structure for each GIC controller
->> instance. This is necessary in order to populate the "dev" member
->> of the irqchip structure for GIC instances that require runtime
->> power management support. This also allows us to populate a unique
->> name for each GIC controller.
->>
->> This is based upon a patch by Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>.
->>
->> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> Add a driver for the Tegra-AGIC interrupt controller which is compatible
+>> with the ARM GIC-400 interrupt controller.
+> (...)
+>> +static const struct dev_pm_ops gic_pm_ops = {
+>> +       SET_RUNTIME_PM_OPS(gic_runtime_suspend,
+>> +                          gic_runtime_resume, NULL)
+>> +       SET_SYSTEM_SLEEP_PM_OPS(gic_suspend, gic_resume)
+>> +};
 > 
-> This is going to clash horribly with the version I've pulled into my tree:
+> Now you do what I commented on in the earlier patch: assign
+> the runtime PM functions to normal suspend/resume.
 > 
-> https://git.kernel.org/cgit/linux/kernel/git/maz/arm-platforms.git/commit/?h=irq/gic-4.5&id=58b8964990dc6b59198b25337624b8518cb1dd87
+> This will have the effect of inhibiting any IRQs marked for
+> wakeup on the GIC, even if you just want to go to sleep until
+> something happens, will it not?
 > 
-> so you may want to have a look at this. I don't think it will affect the
-> work you are doing in a major may though.
+> You should turn on the alarm clock before going to bed, not
+> turn it off, as figure of speak ...
 
-Ok, great. I was wondering if this change has been queued somewhere. It
-is not too different from mine, however, AFAICT you could get rid of the
-gic_eoimode1_chip structure, as I have done, as it is mostly the same as
-gic_chip.
+Yes I am alway having problems with my alarm, may be this is why ;-)
+
+I see what you are saying, so if there are any wake-ups enabled then we
+should not suspend the chip. Right?
 
 Cheers
 Jon
