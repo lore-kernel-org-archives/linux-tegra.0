@@ -1,48 +1,44 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [RFC PATCH V2 8/8] irqchip/gic: Add support for tegra AGIC
- interrupt controller
-Date: Fri, 18 Dec 2015 10:44:27 +0000
-Message-ID: <5673E38B.7060702@nvidia.com>
-References: <1450349309-8107-1-git-send-email-jonathanh@nvidia.com>
- <1450349309-8107-9-git-send-email-jonathanh@nvidia.com>
- <CACRpkdZT42rpKsVtNYdCuL_i0xWngvKSMSVUy1bLmPtxHhG5ew@mail.gmail.com>
+Subject: [PATCH] clk: tegra: Fix clock sources for tegra210 EMC
+Date: Fri, 18 Dec 2015 13:45:28 +0000
+Message-ID: <1450446328-6414-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdZT42rpKsVtNYdCuL_i0xWngvKSMSVUy1bLmPtxHhG5ew@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Jiang Liu <jiang.liu@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Soren Brinkmann <soren.brinkmann@xilinx.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Content-Type: text/plain
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Rhyland Klein <rklein@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+The EMC clock sources for tegra210 currently incorrectly include pll_c2
+and pll_c3. However, both of these should have been pll_mb as shown in
+the TRM. If tegra210 happens to be configured such that the pll_mb is the
+default clock for the EMC, as configured by the bootloader, then this will
+cause a system hang on boot. This is because the kernel will disable the
+pll_mb when disabling unused clock as it appears to be unused when it is
+not.
 
-On 17/12/15 13:32, Linus Walleij wrote:
-> On Thu, Dec 17, 2015 at 11:48 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
-> 
->> Add a driver for the Tegra-AGIC interrupt controller which is compatible
->> with the ARM GIC-400 interrupt controller.
-> (...)
->> +static const struct dev_pm_ops gic_pm_ops = {
->> +       SET_RUNTIME_PM_OPS(gic_runtime_suspend,
->> +                          gic_runtime_resume, NULL)
->> +       SET_SYSTEM_SLEEP_PM_OPS(gic_suspend, gic_resume)
->> +};
-> 
-> Now you do what I commented on in the earlier patch: assign
-> the runtime PM functions to normal suspend/resume.
-> 
-> This will have the effect of inhibiting any IRQs marked for
-> wakeup on the GIC, even if you just want to go to sleep until
-> something happens, will it not?
-> 
-> You should turn on the alarm clock before going to bed, not
-> turn it off, as figure of speak ...
+Also add the additional pll_p clock source for the EMC.
 
-Yes I am alway having problems with my alarm, may be this is why ;-)
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/clk/tegra/clk-tegra210.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-I see what you are saying, so if there are any wake-ups enabled then we
-should not suspend the chip. Right?
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 58514c44ea83..849be30b52bf 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -243,7 +243,8 @@ static unsigned long tegra210_input_freq[] = {
+ };
+ 
+ static const char *mux_pllmcp_clkm[] = {
+-	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud", "pll_c2", "pll_c3",
++	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud", "pll_mb", "pll_mb",
++	"pll_p",
+ };
+ #define mux_pllmcp_clkm_idx NULL
+ 
+-- 
+2.1.4
 
-Cheers
-Jon
