@@ -1,111 +1,119 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH V2 1/8] irqdomain: Ensure type settings match for an
- existing mapping
-Date: Fri, 18 Dec 2015 10:10:15 +0000
-Message-ID: <5673DB87.6040106@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [RFC PATCH V2 3/8] genirq: Add runtime power management support
+ for IRQ chips
+Date: Fri, 18 Dec 2015 10:20:29 +0000
+Message-ID: <5673DDED.5000307@nvidia.com>
 References: <1450349309-8107-1-git-send-email-jonathanh@nvidia.com>
- <1450349309-8107-2-git-send-email-jonathanh@nvidia.com>
- <CACRpkdYPvMfqou7t9K_5=Ojx3U_sc8B2Zkxgeu=1JXxCUU_E2Q@mail.gmail.com>
+ <1450349309-8107-4-git-send-email-jonathanh@nvidia.com>
+ <CACRpkdZXBPQv0ftZJEyE_Q7X_nTpY=3Cd_PTCnK-nHMyqmmBqg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdYPvMfqou7t9K_5=Ojx3U_sc8B2Zkxgeu=1JXxCUU_E2Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Jiang Liu <jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZXBPQv0ftZJEyE_Q7X_nTpY=3Cd_PTCnK-nHMyqmmBqg@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>, "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Jiang Liu <jiang.liu@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Soren Brinkmann <soren.brinkmann@xilinx.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 17/12/15 13:16, Linus Walleij wrote:
-> On Thu, Dec 17, 2015 at 11:48 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> 
->> When mapping an IRQ, if a mapping already exists, then we simply return
->> the virual IRQ number. However, we do not check that the type settings for
-> 
-> ^virtual
-> 
-> Just that it isn't virtual, it's a Linux IRQ number, we actually use
-> hwirq for the non-virtual IRQ number/offse in this function.
-> 
-> But I know I may be fighting weathermills here.
 
-Ok, will re-word this.
-
->>  unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec)
->>  {
->> +       struct device_node *of_node;
->>         struct irq_domain *domain;
->>         irq_hw_number_t hwirq;
->> +       unsigned int cur_type = IRQ_TYPE_NONE;
->>         unsigned int type = IRQ_TYPE_NONE;
->>         int virq;
+On 17/12/15 13:19, Linus Walleij wrote:
+> On Thu, Dec 17, 2015 at 11:48 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
+> 
+> (Adding Rafael and linux-pm to To: list)
+> 
+>> Some IRQ chips may be located in a power domain outside of the CPU
+>> subsystem and hence will require device specific runtime power management.
+>> In order to support such IRQ chips, add a pointer for a device structure
+>> to the irq_chip structure, and if this pointer is populated by the IRQ
+>> chip driver and the flag CHIP_HAS_RPM is set, then the pm_runtime_get/put
+>> APIs for this chip will be called when an IRQ is requested/freed,
+>> respectively.
 >>
->> @@ -587,23 +589,49 @@ unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec)
->>         if (irq_domain_translate(domain, fwspec, &hwirq, &type))
->>                 return 0;
->>
->> -       if (irq_domain_is_hierarchy(domain)) {
->> -               /*
->> -                * If we've already configured this interrupt,
->> -                * don't do it again, or hell will break loose.
->> -                */
->> -               virq = irq_find_mapping(domain, hwirq);
->> -               if (virq)
->> -                       return virq;
->> +       of_node = irq_domain_get_of_node(domain);
+>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > 
-> Marc's patches went to great lengths to do this fwspec-neutral,
-> i.e. it doesn't matter if it's done by DT or ACPI (or whatever).
+> Overall I like what you're trying to do. This will enable e.g. I2C
+> GPIO supplying expanders to power down if none of its lines are
+> used for IRQs. (Read below on the suspend() case for even
+> better stuff we can do!)
 > 
-> This just drives a truck through all of that by making
-> the whole function OF-specific again.
-
-Yes, was not sure if this would be popular. I was on the fence, but I
-saw the following ...
-
-	if (!domain) {
- 		pr_warn("no irq domain found for %s !\n",
-			of_node_full_name(to_of_node(fwspec->fwnode)));
-			return 0;
-	}
-
-... and thought we are not completely agnostic. However, if you prefer I
-park my mini else where, I can definitely drop this, no big deal ;-)
-
->>
->> -               virq = irq_domain_alloc_irqs(domain, 1, NUMA_NO_NODE, fwspec);
->> -               if (virq <= 0)
->> -                       return 0;
->> +       /*
->> +        * If we've already configured this interrupt,
->> +        * don't do it again, or hell will break loose.
->> +        */
->> +       virq = irq_find_mapping(domain, hwirq);
->> +       if (!virq) {
->> +               if (irq_domain_is_hierarchy(domain)) {
->> +                       virq = irq_domain_alloc_irqs(domain, 1, NUMA_NO_NODE,
->> +                                                    fwspec);
->> +                       if (virq <= 0)
->> +                               return 0;
->> +               } else {
->> +                       virq = irq_domain_alloc_descs(-1, 1, hwirq,
->> +                                                     of_node_to_nid(of_node));
+> (...)
+>> @@ -307,6 +307,7 @@ static inline irq_hw_number_t irqd_to_hwirq(struct irq_data *d)
+>>  /**
+>>   * struct irq_chip - hardware interrupt chip descriptor
+>>   *
+>> + * @dev:               pointer to associated device
+> (...)
+>>  struct irq_chip {
+>> +       struct device   *dev;
 > 
-> What is this all of a sudden? Not even mentioned in the
-> commit. Plus I bet ACPI need something else than OF nid
-> passed here.
+> In struct gpio_chip I just this merge window have to merge a gigantic
+> patch renaming this from "dev" to "parent" because we need to add
+> a *real* struct device dev; to gpio_chip.
+> 
+> So for the advent that we may in the future need a real struct device
+> inside irq_chip, name this .parent already today, please.
 
-Do you mean the else part of all of the above?
+Ok, fine with me.
 
-So in the current code, the else part calls irq_create_mapping() and
-this function internally, calls irq_find_mapping(). Given that I am now
-calling irq_find_mapping() before the if, I don't really need to call
-irq_create_mapping() again, I just need to call the functions in
-irq_create_mapping() that allocate and setup the IRQ number. Sorry, I
-did not really explain this. However, if it is simpler, I can call
-irq_create_mapping() instead and may be this makes the change easier to
-read.
+>> +/* Inline functions for support of irq chips that require runtime pm */
+>> +static inline int chip_pm_get(struct irq_desc *desc)
+>> +{
+>> +       int retval = 0;
+>> +
+>> +       if (desc->irq_data.chip->dev &&
+>> +           desc->irq_data.chip->flags & IRQCHIP_HAS_RPM)
+>> +               retval = pm_runtime_get_sync(desc->irq_data.chip->dev);
+>> +
+>> +       return (retval < 0) ? retval : 0;
+>> +}
+> 
+> That is boiling all PM upward into the platform_device or whatever
+> it is containing this. But we're not just in it for runtime_pm_suspend()
+> and runtime_pm_resume(). We also have regular suspend() and
+> resume(). And ideally that should be handled by the same
+> callbacks.
+
+Yes, I have purposely not tried to handle suspend here as I have left it
+to be handle by suspend_device_irqs() called during system suspend.
+
+I don't follow why we need to handle regular suspend here? Or is this
+for chips that do not support runtime-pm?
+
+> First: what if the device contain any wakeup-flagged IRQs?
+
+So today with this patch, the IRQ chip would only be runtime suspended
+if all IRQs are freed. So it should not impact wakeups. Unless I am
+missing something?
+
+> I think there is something missing here. The suspend() usecase
+> is not handled by this patch, but we need to think about that
+> here as well. I think irqchips on GPIO expanders (for example)
+> should be powered down on suspend() *unless* one or more of
+> its IRQs is flagged as wakeup, and in that case it should
+> *not* be powered down, instead it should just mask all
+> non-wakeup IRQs and restore them on resume().
+> 
+> Second: it's soo easy to get something wrong here. It'd be good
+> if the kernel was helpful. What about something like:
+> 
+> if (desc->irq_data.chip->dev) {
+>     if (desc->irq_data.chip->flags & IRQCHIP_HAS_RPM)
+>            retval = pm_runtime_get_sync(desc->irq_data.chip->dev)
+>     else if (pm_runtime_enabled(desc->irq_data.chip->dev))
+>            dev_warn_once(desc->irq_data.chip->dev, "irqchip not
+> flagged for RPM but has runtime PM enabled! weird.\n");
+> }
+>
+> As I see it, a device that supplies an irqchip, has runtime PM but
+> is *NOT* setting IRQCHIP_HAS_RPM just *have* to be looked
+> at in detail, and deserve to have this littering its dmesg so we can
+> fix it. It just makes no real sense. It more sounds like a recepie for
+> missing interrupts otherwise.
+
+Yes, I agree, additional checking such as the above would be helpful.
+Thanks.
 
 Cheers
 Jon
