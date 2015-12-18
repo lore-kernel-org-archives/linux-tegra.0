@@ -1,44 +1,55 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] clk: tegra: Fix clock sources for tegra210 EMC
-Date: Fri, 18 Dec 2015 13:45:28 +0000
-Message-ID: <1450446328-6414-1-git-send-email-jonathanh@nvidia.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH 04/69] clocksource/drivers/tegra: Allow timer irq affinity
+ change
+Date: Fri, 18 Dec 2015 15:17:17 +0100
+Message-ID: <1450448302-27429-4-git-send-email-daniel.lezcano@linaro.org>
+References: <5672CB9E.7090707@linaro.org>
+ <1450448302-27429-1-git-send-email-daniel.lezcano@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-clk-owner@vger.kernel.org>
-Sender: linux-clk-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Rhyland Klein <rklein@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1450448302-27429-1-git-send-email-daniel.lezcano@linaro.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: tglx@linutronix.de
+Cc: Alexandre Courbot <gnurou@gmail.com>, Lucas Stach <dev@lynxeye.de>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, "open list:TEGRA ARCHITECTUR..." <linux-tegra@vger.kernel.org>, mingo@kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-The EMC clock sources for tegra210 currently incorrectly include pll_c2
-and pll_c3. However, both of these should have been pll_mb as shown in
-the TRM. If tegra210 happens to be configured such that the pll_mb is the
-default clock for the EMC, as configured by the bootloader, then this will
-cause a system hang on boot. This is because the kernel will disable the
-pll_mb when disabling unused clock as it appears to be unused when it is
-not.
+From: Lucas Stach <dev@lynxeye.de>
 
-Also add the additional pll_p clock source for the EMC.
+Allow the timer core to change the smp affinity of the broadcast timer
+irq by setting CLOCK_EVT_FEAT_DYNIRQ flag.
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+This reduces interrupt pressure and wakeups on CPU0 as well as vastly
+reducing the number of timer broadcast IPIs.
+
+Signed-off-by: Lucas Stach <dev@lynxeye.de>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- drivers/clk/tegra/clk-tegra210.c | 3 ++-
+ drivers/clocksource/tegra20_timer.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 58514c44ea83..849be30b52bf 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -243,7 +243,8 @@ static unsigned long tegra210_input_freq[] = {
- };
- 
- static const char *mux_pllmcp_clkm[] = {
--	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud", "pll_c2", "pll_c3",
-+	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud", "pll_mb", "pll_mb",
-+	"pll_p",
- };
- #define mux_pllmcp_clkm_idx NULL
- 
+diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
+index 6ebda11..38333ab 100644
+--- a/drivers/clocksource/tegra20_timer.c
++++ b/drivers/clocksource/tegra20_timer.c
+@@ -96,7 +96,8 @@ static struct clock_event_device tegra_clockevent = {
+ 	.name			= "timer0",
+ 	.rating			= 300,
+ 	.features		= CLOCK_EVT_FEAT_ONESHOT |
+-				  CLOCK_EVT_FEAT_PERIODIC,
++				  CLOCK_EVT_FEAT_PERIODIC |
++				  CLOCK_EVT_FEAT_DYNIRQ,
+ 	.set_next_event		= tegra_timer_set_next_event,
+ 	.set_state_shutdown	= tegra_timer_shutdown,
+ 	.set_state_periodic	= tegra_timer_set_periodic,
 -- 
-2.1.4
-
+1.9.1
