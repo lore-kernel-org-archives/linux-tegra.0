@@ -1,53 +1,40 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: Fix clock sources for tegra210 EMC
-Date: Fri, 18 Dec 2015 11:48:58 -0500
-Message-ID: <567438FA.2030405@nvidia.com>
-References: <1450446328-6414-1-git-send-email-jonathanh@nvidia.com>
+From: SF Markus Elfring <elfring@users.sourceforge.net>
+Subject: [PATCH] GPU-host1x: Use a signed return type for do_relocs()
+Date: Sat, 19 Dec 2015 12:56:54 +0100
+Message-ID: <56754606.6060201@users.sourceforge.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1450446328-6414-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <http://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, =?UTF-8?Q?Terje_Bergstr=c3=b6m?= <tbergstrom@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Julia Lawall <julia.lawall@lip6.fr>, kernel-janitors@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/18/2015 8:45 AM, Jon Hunter wrote:
-> The EMC clock sources for tegra210 currently incorrectly include pll_c2
-> and pll_c3. However, both of these should have been pll_mb as shown in
-> the TRM. If tegra210 happens to be configured such that the pll_mb is the
-> default clock for the EMC, as configured by the bootloader, then this will
-> cause a system hang on boot. This is because the kernel will disable the
-> pll_mb when disabling unused clock as it appears to be unused when it is
-> not.
-> 
-> Also add the additional pll_p clock source for the EMC.
-> 
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> index 58514c44ea83..849be30b52bf 100644
-> --- a/drivers/clk/tegra/clk-tegra210.c
-> +++ b/drivers/clk/tegra/clk-tegra210.c
-> @@ -243,7 +243,8 @@ static unsigned long tegra210_input_freq[] = {
->  };
->  
->  static const char *mux_pllmcp_clkm[] = {
-> -	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud", "pll_c2", "pll_c3",
-> +	"pll_m", "pll_c", "pll_p", "clk_m", "pll_m_ud", "pll_mb", "pll_mb",
-> +	"pll_p",
->  };
->  #define mux_pllmcp_clkm_idx NULL
->  
-> 
-
-Acked-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
--rhyland
-
--- 
-nvpublic
+RnJvbTogTWFya3VzIEVsZnJpbmcgPGVsZnJpbmdAdXNlcnMuc291cmNlZm9yZ2UubmV0PgpEYXRl
+OiBTYXQsIDE5IERlYyAyMDE1IDEyOjQ4OjMxICswMTAwCgpUaGUgcmV0dXJuIHR5cGUgInVuc2ln
+bmVkIGludCIgd2FzIHVzZWQgYnkgdGhlIGRvX3JlbG9jcygpIGZ1bmN0aW9uCmRlc3BpdGUgb2Yg
+dGhlIGFzcGVjdCB0aGF0IGl0IHdpbGwgZXZlbnR1YWxseSByZXR1cm4gYSBuZWdhdGl2ZSBlcnJv
+ciBjb2RlLgpJbXByb3ZlIHRoaXMgaW1wbGVtZW50YXRpb24gZGV0YWlsIGJ5IGRlbGV0aW9uIG9m
+IHRoZSB0eXBlIHF1YWxpZmllciB0aGVuLgoKVGhpcyBpc3N1ZSB3YXMgZGV0ZWN0ZWQgYnkgdXNp
+bmcgdGhlIENvY2NpbmVsbGUgc29mdHdhcmUuCgpTaWduZWQtb2ZmLWJ5OiBNYXJrdXMgRWxmcmlu
+ZyA8ZWxmcmluZ0B1c2Vycy5zb3VyY2Vmb3JnZS5uZXQ+Ci0tLQogZHJpdmVycy9ncHUvaG9zdDF4
+L2pvYi5jIHwgMiArLQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9u
+KC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvaG9zdDF4L2pvYi5jIGIvZHJpdmVycy9ncHUv
+aG9zdDF4L2pvYi5jCmluZGV4IDYzYmQ2M2YuLjE5MTlhYWIgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMv
+Z3B1L2hvc3QxeC9qb2IuYworKysgYi9kcml2ZXJzL2dwdS9ob3N0MXgvam9iLmMKQEAgLTIyNSw3
+ICsyMjUsNyBAQCB1bnBpbjoKIAlyZXR1cm4gMDsKIH0KIAotc3RhdGljIHVuc2lnbmVkIGludCBk
+b19yZWxvY3Moc3RydWN0IGhvc3QxeF9qb2IgKmpvYiwgc3RydWN0IGhvc3QxeF9ibyAqY21kYnVm
+KQorc3RhdGljIGludCBkb19yZWxvY3Moc3RydWN0IGhvc3QxeF9qb2IgKmpvYiwgc3RydWN0IGhv
+c3QxeF9ibyAqY21kYnVmKQogewogCWludCBpID0gMDsKIAl1MzIgbGFzdF9wYWdlID0gfjA7Ci0t
+IAoyLjYuMwoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+ZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0
+dHA6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
