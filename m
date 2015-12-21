@@ -1,150 +1,67 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: [PATCH 1/5] mmc: tegra: implement module external clock change
-Date: Sat, 19 Dec 2015 20:16:00 +0100
-Message-ID: <1450552564-32697-2-git-send-email-dev@lynxeye.de>
-References: <1450552564-32697-1-git-send-email-dev@lynxeye.de>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1450552564-32697-1-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: Fix suspend hang on Tegra124 Chromebooks
+Date: Mon, 21 Dec 2015 09:50:08 +0000
+Message-ID: <5677CB50.7030907@nvidia.com>
+References: <1449570409-30244-1-git-send-email-jonathanh@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1449570409-30244-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Allow the the driver to change the clock supplied from the CAR directly,
-minimizing the need to divide the clock inside the SDMMC module itself.
+Ping?
 
-This allows for higher clock speeds than the default 48MHz supplied to
-the module and is a prerequisite to support DDR signaling modes, where
-the Tegra host needs to be run with a fixed internal divider of 2 for
-data to be sampled correctly. (Tegra K1 TRM v03p chapter 29.7.1.1)
-
-Also enable the broken preset value quirk as the preset values need to
-be adapted to the changed clocking. While Tegra114+ allows this through
-vendor registers, there is no such way for Tegra30. Takes the easy way
-out  and keep things consistent between the different SoC generations by
-flagging the preset registers as unusable.
-
-Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
----
- drivers/mmc/host/sdhci-tegra.c | 56 +++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 50 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index ad28b49..877daf5 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -49,6 +49,7 @@ struct sdhci_tegra_soc_data {
- struct sdhci_tegra {
- 	const struct sdhci_tegra_soc_data *soc_data;
- 	struct gpio_desc *power_gpio;
-+	bool ddr_signaling;
- };
- 
- static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
-@@ -143,6 +144,8 @@ static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
- 	if (soc_data->nvquirks & NVQUIRK_DISABLE_SDR104)
- 		misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_SDR104;
- 	sdhci_writew(host, misc_ctrl, SDHCI_TEGRA_VENDOR_MISC_CTRL);
-+
-+	tegra_host->ddr_signaling = false;
- }
- 
- static void tegra_sdhci_set_bus_width(struct sdhci_host *host, int bus_width)
-@@ -164,15 +167,53 @@ static void tegra_sdhci_set_bus_width(struct sdhci_host *host, int bus_width)
- 	sdhci_writeb(host, ctrl, SDHCI_HOST_CONTROL);
- }
- 
-+static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_tegra *tegra_host = pltfm_host->priv;
-+	unsigned long host_clk;
-+
-+	if (!clock)
-+		return;
-+
-+	host_clk = tegra_host->ddr_signaling ? clock * 2 : clock;
-+	clk_set_rate(pltfm_host->clk, host_clk);
-+	host->max_clk = clk_get_rate(pltfm_host->clk);
-+
-+	return sdhci_set_clock(host, clock);
-+}
-+
-+static void tegra_sdhci_set_uhs_signaling(struct sdhci_host *host, unsigned timing)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+	struct sdhci_tegra *tegra_host = pltfm_host->priv;
-+
-+	if (timing == MMC_TIMING_UHS_DDR50)
-+		tegra_host->ddr_signaling = true;
-+
-+	return sdhci_set_uhs_signaling(host, timing);
-+}
-+
-+static unsigned int tegra_sdhci_get_max_clock(struct sdhci_host *host)
-+{
-+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-+
-+	/*
-+	 * DDR modes require the host to run at double the card frequency, so
-+	 * the maximum rate we can support is half of the module input clock.
-+	 */
-+	return clk_round_rate(pltfm_host->clk, UINT_MAX) / 2;
-+}
-+
- static const struct sdhci_ops tegra_sdhci_ops = {
- 	.get_ro     = tegra_sdhci_get_ro,
- 	.read_w     = tegra_sdhci_readw,
- 	.write_l    = tegra_sdhci_writel,
--	.set_clock  = sdhci_set_clock,
-+	.set_clock  = tegra_sdhci_set_clock,
- 	.set_bus_width = tegra_sdhci_set_bus_width,
- 	.reset      = tegra_sdhci_reset,
--	.set_uhs_signaling = sdhci_set_uhs_signaling,
--	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
-+	.set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
-+	.get_max_clock = tegra_sdhci_get_max_clock,
- };
- 
- static const struct sdhci_pltfm_data sdhci_tegra20_pdata = {
-@@ -197,6 +238,7 @@ static const struct sdhci_pltfm_data sdhci_tegra30_pdata = {
- 		  SDHCI_QUIRK_NO_HISPD_BIT |
- 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
- 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
-+	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
- 	.ops  = &tegra_sdhci_ops,
- };
- 
-@@ -212,11 +254,11 @@ static const struct sdhci_ops tegra114_sdhci_ops = {
- 	.read_w     = tegra_sdhci_readw,
- 	.write_w    = tegra_sdhci_writew,
- 	.write_l    = tegra_sdhci_writel,
--	.set_clock  = sdhci_set_clock,
-+	.set_clock  = tegra_sdhci_set_clock,
- 	.set_bus_width = tegra_sdhci_set_bus_width,
- 	.reset      = tegra_sdhci_reset,
--	.set_uhs_signaling = sdhci_set_uhs_signaling,
--	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
-+	.set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
-+	.get_max_clock = tegra_sdhci_get_max_clock,
- };
- 
- static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
-@@ -226,6 +268,7 @@ static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
- 		  SDHCI_QUIRK_NO_HISPD_BIT |
- 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
- 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
-+	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
- 	.ops  = &tegra114_sdhci_ops,
- };
- 
-@@ -271,6 +314,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 		rc = -ENOMEM;
- 		goto err_alloc_tegra_host;
- 	}
-+	tegra_host->ddr_signaling = false;
- 	tegra_host->soc_data = soc_data;
- 	pltfm_host->priv = tegra_host;
- 
--- 
-2.5.0
+On 08/12/15 10:26, Jon Hunter wrote:
+> Enabling CPUFreq support for Tegra124 Chromebooks is causing the Tegra124
+> to hang when resuming from suspend.
+> 
+> When CPUFreq is enabled, the CPU clock is changed from the PLLX clock to
+> the DFLL clock during kernel boot. When resuming from suspend the CPU
+> clock is temporarily changed back to the PLLX clock before switching back
+> to the DFLL. If the DFLL is operating at a much lower frequency than the
+> PLLX when we enter suspend, and so the CPU voltage rail is at a voltage
+> too low for the CPUs to operate at the PLLX frequency, then the device
+> will hang.
+> 
+> Please note that the PLLX is used in the resume sequence to switch the CPU
+> clock from the very slow 32K clock to a faster clock during early resume
+> to speed up the resume sequence before the DFLL is resumed.
+> 
+> Ideally, we should fix this by setting the suspend frequency so that it
+> matches the PLLX frequency, however, that would be a bigger change. For
+> now simply disable CPUFreq support for Tegra124 Chromebooks to avoid the
+> hang when resuming from suspend.
+> 
+> Fixes: 9a0baee960a7 ("ARM: tegra: Enable CPUFreq support for Tegra124
+> 		      Chromebooks")
+> 
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> 
+> Please note that this fix is required for v4.4
+> 
+>  arch/arm/boot/dts/tegra124-nyan.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi b/arch/arm/boot/dts/tegra124-nyan.dtsi
+> index 40c23a0b7cfc..ec1aa64ded68 100644
+> --- a/arch/arm/boot/dts/tegra124-nyan.dtsi
+> +++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
+> @@ -399,7 +399,7 @@
+>  
+>  	/* CPU DFLL clock */
+>  	clock@0,70110000 {
+> -		status = "okay";
+> +		status = "disabled";
+>  		vdd-cpu-supply = <&vdd_cpu>;
+>  		nvidia,i2c-fs-rate = <400000>;
+>  	};
+> 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
