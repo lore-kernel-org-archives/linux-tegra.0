@@ -1,46 +1,76 @@
-From: Rhyland Klein <rklein@nvidia.com>
-Subject: Re: [PATCH 2/2] clk: tegra: Use definition for pll_u override bit
-Date: Mon, 21 Dec 2015 11:38:21 -0500
-Message-ID: <56782AFD.80004@nvidia.com>
-References: <1450702592-7755-1-git-send-email-jonathanh@nvidia.com>
- <1450702592-7755-2-git-send-email-jonathanh@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <1450702592-7755-2-git-send-email-jonathanh@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Julia Lawall <Julia.Lawall@lip6.fr>
+Subject: [PATCH 1/5] pinctrl-tegra: add missing of_node_put
+Date: Mon, 21 Dec 2015 17:39:44 +0100
+Message-ID: <1450715988-4770-2-git-send-email-Julia.Lawall@lip6.fr>
+References: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+In-Reply-To: <1450715988-4770-1-git-send-email-Julia.Lawall@lip6.fr>
+Sender: kernel-janitors-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: kernel-janitors@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/21/2015 7:56 AM, Jon Hunter wrote:
-> The definition, PLLU_BASE_OVERRIDE, for the pll_u OVERRIDE bit is defined
-> but not used and when the OVERRIDE bit is cleared in tegra210_pll_init()
-> the code directly uses the bit number. Therefore, use the definition,
-> PLLU_BASE_OVERRIDE when clearing the OVERRIDE bit.
-> 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> index 791215747863..6f043c5e2394 100644
-> --- a/drivers/clk/tegra/clk-tegra210.c
-> +++ b/drivers/clk/tegra/clk-tegra210.c
-> @@ -2520,7 +2520,7 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
->  
->  	/* PLLU_VCO */
->  	val = readl(clk_base + pll_u_vco_params.base_reg);
-> -	val &= ~BIT(24); /* disable PLLU_OVERRIDE */
-> +	val &= ~PLLU_BASE_OVERRIDE; /* disable PLLU_OVERRIDE */
->  	writel(val, clk_base + pll_u_vco_params.base_reg);
->  
->  	clk = tegra_clk_register_pllre("pll_u_vco", "pll_ref", clk_base, pmc,
-> 
+for_each_child_of_node performs an of_node_get on each iteration, so a
+return from the loop requires an of_node_put.
 
-Acked-by: Rhyland Klein <rklein@nvidia.com>
+A simplified version of the semantic patch that fixes this problem is as
+follows (http://coccinelle.lip6.fr):
 
--- 
-nvpublic
+// <smpl>
+@@
+local idexpression n;
+expression e,e1;
+@@
+
+ for_each_child_of_node(e1,n) {
+   ...
+(
+   of_node_put(n);
+|
+   e = n
+|
+   return n;
+|
++  of_node_put(n);
+?  return ...;
+)
+   ...
+ }
+// </smpl>
+
+Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+
+---
+ drivers/pinctrl/pinctrl-tegra-xusb.c |    4 +++-
+ drivers/pinctrl/pinctrl-tegra.c      |    1 +
+ 2 files changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/pinctrl/pinctrl-tegra-xusb.c b/drivers/pinctrl/pinctrl-tegra-xusb.c
+index 84a43e6..bd3aa5a 100644
+--- a/drivers/pinctrl/pinctrl-tegra-xusb.c
++++ b/drivers/pinctrl/pinctrl-tegra-xusb.c
+@@ -253,8 +253,10 @@ static int tegra_xusb_padctl_dt_node_to_map(struct pinctrl_dev *pinctrl,
+ 		err = tegra_xusb_padctl_parse_subnode(padctl, np, maps,
+ 						      &reserved_maps,
+ 						      num_maps);
+-		if (err < 0)
++		if (err < 0) {
++			of_node_put(np);
+ 			return err;
++		}
+ 	}
+ 
+ 	return 0;
+diff --git a/drivers/pinctrl/pinctrl-tegra.c b/drivers/pinctrl/pinctrl-tegra.c
+index 0fd7fd2..9da4da2 100644
+--- a/drivers/pinctrl/pinctrl-tegra.c
++++ b/drivers/pinctrl/pinctrl-tegra.c
+@@ -217,6 +217,7 @@ static int tegra_pinctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 		if (ret < 0) {
+ 			pinctrl_utils_dt_free_map(pctldev, *map,
+ 				*num_maps);
++			of_node_put(np);
+ 			return ret;
+ 		}
+ 	}
+
