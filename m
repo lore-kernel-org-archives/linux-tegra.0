@@ -1,42 +1,60 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ARM64: tegra: Add chosen node for tegra132 norrin
-Date: Mon, 21 Dec 2015 13:22:51 +0000
-Message-ID: <1450704171-8345-1-git-send-email-jonathanh@nvidia.com>
+Subject: Tegra baseline test results for v4.4-rc6
+Date: Mon, 21 Dec 2015 14:08:22 +0000
+Message-ID: <567807D6.2090208@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The NVIDIA bootloader, nvtboot, expects the "chosen" node to be present
-in the device-tree blob and it is not then it fails to boot the kernel.
-Add the chosen node so we can boot the kernel on tegra132 norrin with
-the nvtboot bootloader.
+Here are some basic Tegra test results for Linux v4.4-rc6.
+Logs and other details at:
 
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm64/boot/dts/nvidia/tegra132-norrin.dts | 2 ++
- 1 file changed, 2 insertions(+)
+    https://nvtb.github.io//linux/test_v4.4-rc6/20151220163104/
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
-index 7dfe1c085966..62f33fc84e3e 100644
---- a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
-@@ -12,6 +12,8 @@
- 		rtc1 = "/rtc@0,7000e000";
- 	};
- 
-+	chosen { };
-+
- 	memory {
- 		device_type = "memory";
- 		reg = <0x0 0x80000000 0x0 0x80000000>;
--- 
-2.1.4
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Test summary
+------------
+
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Build: Image:
+    Pass: ( 1/ 1): defconfig
+
+Boot to userspace: defconfig:
+    Pass: ( 1/ 1): qemu-vexpress64
+
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v4.4-rc5 (9f9499ae8e6415cefc4fe0a96ad0e27864353c89)):
+   text     data      bss    total  kernel
+  +4108   +12288        0   +16396  defconfig
+  -5144        0        0    -5144  multi_v7_defconfig
+  +1748        0        0    +1748  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.4-rc5 (9f9499ae8e6415cefc4fe0a96ad0e27864353c89))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+        .        .        .        .      qemu-vexpress64            defconfig           __internal
+       8k      -8k        .      -4k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+        .        .        .      -4k tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+       8k      -8k        .      -4k  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+        .        .        .      -4k  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+       8k      -8k        .      -4k    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+        .        .        .      -4k    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+       8k      -8k        .      -4k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+        .        .        .      -4k       tegra30-beaver      tegra_defconfig       tegra30-beaver
