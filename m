@@ -1,114 +1,45 @@
-From: Lucas Stach <dev@lynxeye.de>
-Subject: [PATCH v2 4/5] mmc: tegra: enable UHS-I modes
-Date: Tue, 22 Dec 2015 19:41:03 +0100
-Message-ID: <1450809664-11360-5-git-send-email-dev@lynxeye.de>
-References: <1450809664-11360-1-git-send-email-dev@lynxeye.de>
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1450809664-11360-1-git-send-email-dev@lynxeye.de>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [GIT PULL 5/5] ARM: tegra: Default configuration updates for
+ v4.5-rc1
+Date: Tue, 22 Dec 2015 11:56:33 -0800
+Message-ID: <20151222195633.GJ30172@localhost>
+References: <1450356639-7758-1-git-send-email-thierry.reding@gmail.com>
+ <1450356639-7758-5-git-send-email-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1450356639-7758-5-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Keep the quirk bits, as Tegra30 and Tegra114 host have different levels
-of support for UHS-I modes and so need different spare bits to be set,
-but change the logic to be positive.
+On Thu, Dec 17, 2015 at 01:50:39PM +0100, Thierry Reding wrote:
+> Hi ARM SoC maintainers,
+> 
+> The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
+> 
+>   Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.5-defconfig
+> 
+> for you to fetch changes up to 36d6e0872152aab506f952792db7221b9c25ed33:
+> 
+>   arm64: defconfig: Enable printk timestamps (2015-11-16 15:48:24 +0100)
+> 
+> Thanks,
+> Thierry
+> 
+> ----------------------------------------------------------------
+> ARM: tegra: Default configuration updates for v4.5-rc1
+> 
+> This set of patches enable various drivers and features required by
+> 64-bit Tegra SoCs (Tegra132 and Tegra210).
 
-Signed-off-by: Lucas Stach <dev@lynxeye.de>
----
- drivers/mmc/host/sdhci-tegra.c | 40 ++++++++++++++++++++--------------------
- 1 file changed, 20 insertions(+), 20 deletions(-)
+Merged, thanks.
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 0201549..20084f8 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -45,9 +45,9 @@
- #define NVQUIRK_FORCE_SDHCI_SPEC_200	BIT(0)
- #define NVQUIRK_ENABLE_BLOCK_GAP_DET	BIT(1)
- #define NVQUIRK_ENABLE_SDHCI_SPEC_300	BIT(2)
--#define NVQUIRK_DISABLE_SDR50		BIT(3)
--#define NVQUIRK_DISABLE_SDR104		BIT(4)
--#define NVQUIRK_DISABLE_DDR50		BIT(5)
-+#define NVQUIRK_ENABLE_SDR50		BIT(3)
-+#define NVQUIRK_ENABLE_SDR104		BIT(4)
-+#define NVQUIRK_ENABLE_DDR50		BIT(5)
- 
- struct sdhci_tegra_soc_data {
- 	const struct sdhci_pltfm_data *pdata;
-@@ -144,18 +144,18 @@ static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
- 	/* Erratum: Enable SDHCI spec v3.00 support */
- 	if (soc_data->nvquirks & NVQUIRK_ENABLE_SDHCI_SPEC_300)
- 		misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDHCI_SPEC_300;
--	/* Don't advertise UHS modes which aren't supported yet */
--	if (soc_data->nvquirks & NVQUIRK_DISABLE_SDR50)
--		misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_SDR50;
--	if (soc_data->nvquirks & NVQUIRK_DISABLE_DDR50)
--		misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_DDR50;
--	if (soc_data->nvquirks & NVQUIRK_DISABLE_SDR104)
--		misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_SDR104;
-+	/* Advertise UHS modes as supported by host */
-+	if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR50)
-+		misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDR50;
-+	if (soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
-+		misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_DDR50;
-+	if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR104)
-+		misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDR104;
- 	sdhci_writew(host, misc_ctrl, SDHCI_TEGRA_VENDOR_MISC_CTRL);
- 
- 	clk_ctrl = sdhci_readl(host, SDHCI_TEGRA_VENDOR_CLOCK_CTRL);
- 	clk_ctrl &= ~SDHCI_CLOCK_CTRL_SPI_MODE_CLKEN_OVERRIDE;
--	if (!(soc_data->nvquirks & NVQUIRK_DISABLE_SDR50))
-+	if (soc_data->nvquirks & SDHCI_MISC_CTRL_ENABLE_SDR50)
- 		clk_ctrl |= SDHCI_CLOCK_CTRL_SDR50_TUNING_OVERRIDE;
- 	sdhci_writel(host, clk_ctrl, SDHCI_TEGRA_VENDOR_CLOCK_CTRL);
- 
-@@ -305,8 +305,8 @@ static const struct sdhci_pltfm_data sdhci_tegra30_pdata = {
- static const struct sdhci_tegra_soc_data soc_data_tegra30 = {
- 	.pdata = &sdhci_tegra30_pdata,
- 	.nvquirks = NVQUIRK_ENABLE_SDHCI_SPEC_300 |
--		    NVQUIRK_DISABLE_SDR50 |
--		    NVQUIRK_DISABLE_SDR104,
-+		    NVQUIRK_ENABLE_SDR50 |
-+		    NVQUIRK_ENABLE_SDR104,
- };
- 
- static const struct sdhci_ops tegra114_sdhci_ops = {
-@@ -335,9 +335,9 @@ static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
- 
- static const struct sdhci_tegra_soc_data soc_data_tegra114 = {
- 	.pdata = &sdhci_tegra114_pdata,
--	.nvquirks = NVQUIRK_DISABLE_SDR50 |
--		    NVQUIRK_DISABLE_DDR50 |
--		    NVQUIRK_DISABLE_SDR104,
-+	.nvquirks = NVQUIRK_ENABLE_SDR50 |
-+		    NVQUIRK_ENABLE_DDR50 |
-+		    NVQUIRK_ENABLE_SDR104,
- };
- 
- static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
-@@ -353,9 +353,9 @@ static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
- 
- static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
- 	.pdata = &sdhci_tegra210_pdata,
--	.nvquirks = NVQUIRK_DISABLE_SDR50 |
--		    NVQUIRK_DISABLE_DDR50 |
--		    NVQUIRK_DISABLE_SDR104,
-+	.nvquirks = NVQUIRK_ENABLE_SDR50 |
-+		    NVQUIRK_ENABLE_DDR50 |
-+		    NVQUIRK_ENABLE_SDR104,
- };
- 
- static const struct of_device_id sdhci_tegra_dt_match[] = {
-@@ -402,7 +402,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
- 	if (rc)
- 		goto err_parse_dt;
- 
--	if (!(tegra_host->soc_data->nvquirks & NVQUIRK_DISABLE_DDR50))
-+	if (tegra_host->soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
- 		host->mmc->caps |= MMC_CAP_1_8V_DDR;
- 
- 	tegra_host->power_gpio = devm_gpiod_get_optional(&pdev->dev, "power",
--- 
-2.5.0
 
+-Olof
