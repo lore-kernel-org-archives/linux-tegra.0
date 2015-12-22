@@ -1,55 +1,55 @@
 From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC PATCH V2 1/8] irqdomain: Ensure type settings match for an
- existing mapping
-Date: Tue, 22 Dec 2015 11:00:37 +0100
-Message-ID: <CACRpkdasLeVyE7MXyJ=LQHSYxUDE77VttX_TdqMV6afgk_NqrQ@mail.gmail.com>
+Subject: Re: [RFC PATCH V2 8/8] irqchip/gic: Add support for tegra AGIC
+ interrupt controller
+Date: Tue, 22 Dec 2015 11:03:59 +0100
+Message-ID: <CACRpkdYWfe3MTE1YBPKspcpXNggADCbguCgupo+POwaTv_-6Kw@mail.gmail.com>
 References: <1450349309-8107-1-git-send-email-jonathanh@nvidia.com>
-	<1450349309-8107-2-git-send-email-jonathanh@nvidia.com>
-	<CACRpkdYPvMfqou7t9K_5=Ojx3U_sc8B2Zkxgeu=1JXxCUU_E2Q@mail.gmail.com>
-	<5673DB87.6040106@nvidia.com>
-	<CACRpkdbjRiW8gcZcifHLELjBukpsCKyTQ+NpP51+v3kYLDcPHA@mail.gmail.com>
+	<1450349309-8107-9-git-send-email-jonathanh@nvidia.com>
+	<CACRpkdZT42rpKsVtNYdCuL_i0xWngvKSMSVUy1bLmPtxHhG5ew@mail.gmail.com>
+	<5673E38B.7060702@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdbjRiW8gcZcifHLELjBukpsCKyTQ+NpP51+v3kYLDcPHA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <5673E38B.7060702-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Jiang Liu <jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Rafael J. Wysocki" <rafael.j.wysocki-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Jiang Liu <jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Dec 22, 2015 at 10:58 AM, Linus Walleij
-<linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org> wrote:
-> On Fri, Dec 18, 2015 at 11:10 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> On 17/12/15 13:16, Linus Walleij wrote:
->>> On Thu, Dec 17, 2015 at 11:48 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>>> +               } else {
->>>> +                       virq = irq_domain_alloc_descs(-1, 1, hwirq,
->>>> +                                                     of_node_to_nid(of_node));
->>>
->>> What is this all of a sudden? Not even mentioned in the
->>> commit. Plus I bet ACPI need something else than OF nid
->>> passed here.
+On Fri, Dec 18, 2015 at 11:44 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> On 17/12/15 13:32, Linus Walleij wrote:
+>> On Thu, Dec 17, 2015 at 11:48 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 >>
->> Do you mean the else part of all of the above?
+>>> Add a driver for the Tegra-AGIC interrupt controller which is compatible
+>>> with the ARM GIC-400 interrupt controller.
+>> (...)
+>>> +static const struct dev_pm_ops gic_pm_ops = {
+>>> +       SET_RUNTIME_PM_OPS(gic_runtime_suspend,
+>>> +                          gic_runtime_resume, NULL)
+>>> +       SET_SYSTEM_SLEEP_PM_OPS(gic_suspend, gic_resume)
+>>> +};
+>>
+>> Now you do what I commented on in the earlier patch: assign
+>> the runtime PM functions to normal suspend/resume.
+>>
+>> This will have the effect of inhibiting any IRQs marked for
+>> wakeup on the GIC, even if you just want to go to sleep until
+>> something happens, will it not?
+>>
+>> You should turn on the alarm clock before going to bed, not
+>> turn it off, as figure of speak ...
 >
-> Yes
+> Yes I am alway having problems with my alarm, may be this is why ;-)
 >
->> So in the current code, the else part calls irq_create_mapping() (...)
->
-> No, not that... The fact that you all of a sudden have started
-> calling irq_domain_alloc_descs() which the function didn't do
-> before, totally changing the calling semantics for everyone in
-> the kernel, leading to the problem I then describe with this
-> potentially being called before the irqdomain for the irqchip
-> is initialized and descs getting "random" numbers.
+> I see what you are saying, so if there are any wake-ups enabled then we
+> should not suspend the chip. Right?
 
-I see I didn't go into those details in my first answer. Hm, I
-guess I got uncertain and deleted it because I remember
-writing it...
-
-I am simply worries that starting to call irq_domain_alloc_descs()
-has unintended side effects, especially on platforms using
-legacy or simple irqdomains.
+Yep, so I think you should just wrap the normal suspend functions
+into some function that check if we have some wakeup active
+and then just return 0, else if everything is clear, call the same
+runtime PM hooks, and it will work nicely I think. IIUC the wakeup
+flag is only for the suspend/resume/sleep case so this should
+be enough.
 
 Yours,
 Linus Walleij
