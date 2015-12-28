@@ -1,35 +1,67 @@
-From: Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH 13/19] ARM: dts: tegra: replace legacy *,wakeup property
- with wakeup-source
-Date: Wed, 23 Dec 2015 11:24:38 +0000
-Message-ID: <CAPKp9uZ1hMegdL6wTUT0ROGd5CzyrnfKWsSRShXNdwRcyZ4Pnw@mail.gmail.com>
-References: <1445422216-29375-1-git-send-email-sudeep.holla@arm.com>
-	<1445422216-29375-14-git-send-email-sudeep.holla@arm.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH v2 0/5] Tegra SDHCI UHS-I support
+Date: Mon, 28 Dec 2015 14:18:02 +0100
+Message-ID: <CAPDyKFrS=uM7aiC5gOBHw1LWKz=tTatV8DLbMc8xGzGJcRTe5Q@mail.gmail.com>
+References: <1450809664-11360-1-git-send-email-dev@lynxeye.de>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1445422216-29375-14-git-send-email-sudeep.holla-5wv7dgnIgG8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: open list <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1450809664-11360-1-git-send-email-dev@lynxeye.de>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Lucas Stach <dev@lynxeye.de>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-mmc <linux-mmc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Oct 21, 2015 at 11:10 AM, Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org> wrote:
-> Though the keyboard and other driver will continue to support the legacy
-> "gpio-key,wakeup", "nvidia,wakeup-source" boolean property to enable the
-> wakeup source, "wakeup-source" is the new standard binding.
+On 22 December 2015 at 19:40, Lucas Stach <dev@lynxeye.de> wrote:
+> Hi all,
 >
-> This patch replaces all the legacy wakeup properties with the unified
-> "wakeup-source" property in order to avoid any futher copy-paste
-> duplication.
+> this series implements UHS-I signaling for the Tegra SDHCI host,
+> which mainly means putting a proper tuning sequence in place.
 >
-> Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> I've tested this on Jetson TK1 and got the following speed results,
+> where mmcblk0 is the on-board eMMC and mmcblk1 is a micro SDXC card:
+>
+> Without series applied:
+> hdparm -t /dev/mmcblk0
+>  Timing buffered disk reads:  110 MB in  3.05 seconds =  36.02 MB/sec
+> hdparm -t /dev/mmcblk1
+>  Timing buffered disk reads:   56 MB in  3.01 seconds =  18.63 MB/sec
+>
+> With series applied:
+> hdparm -t /dev/mmcblk0
+>  Timing buffered disk reads:  236 MB in  3.00 seconds =  78.58 MB/sec
+> hdparm -t /dev/mmcblk1
+>  Timing buffered disk reads:  102 MB in  3.04 seconds =  33.51 MB/sec
+>
+> Tegra 30 does support UHS-I speeds too, but currently has problems
+> when lowering the card voltage, which is needed in order to switch
+> to UHS-I signaling. I have some more patches to fix this, but they
+> need a bit more cleanup, with them applied the gains on Tegra30 are
+> similar to the results above.
+>
+> For now the gains are limited to Tegra124+, with no regressions on
+> Tegra30 and Tegra20.
+>
+> V2 fixes some minor style problems and is rebased on top of mmc/next.
+> This means it enables the same tuning logic on Tegra210 also. I
+> don't have a way to test this myself, so any testing on Tegra210 much
+> appreciated.
+>
+> Regards,
+> Lucas
+>
+> Lucas Stach (5):
+>   mmc: tegra: implement module external clock change
+>   mmc: tegra: disable SPI_MODE_CLKEN
+>   mmc: tegra: implement UHS tuning
+>   mmc: tegra: enable UHS-I modes
+>   mmc: tegra: use correct accessor for misc ctrl register
+>
+>  drivers/mmc/host/sdhci-tegra.c | 166 ++++++++++++++++++++++++++++++++++-------
+>  1 file changed, 138 insertions(+), 28 deletions(-)
+>
 
-Ping, do you prefer taking via your tree or should I send to armsoc
-directly ?
+Thanks, applied for next!
 
---
-Regards,
-Sudeep
+Kind regards
+Uffe
