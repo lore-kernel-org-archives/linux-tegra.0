@@ -1,41 +1,30 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: [PATCH] mmc: tegra: don't enable UHS modes on Tegra210
-Date: Wed, 30 Dec 2015 16:49:09 +0100
-Message-ID: <1451490549-21430-1-git-send-email-dev@lynxeye.de>
+From: "Jeff Skoll" <s_w9gc9x-uCjPqYABYO6OPzg9A3tDVg@public.gmane.org>
+Subject: Charity Donation
+Date: Sat, 02 Jan 2016 12:43:15 -0500
+Message-ID: <auto-000000267021@mailadmin.uni-kassel.de>
+Reply-To: jeff.skoll-aj9EiHWJibxFWb1O811qSg@public.gmane.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Description: Mail message body
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Me <s_w9gc9x-uCjPqYABYO6OPzg9A3tDVg@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra210 needs a different tuning sequence than Tegra30+. Disable
-UHS modes until support for this is properly added.
+Hi,
+My name is Jeffrey Skoll, a philanthropist and the founder of one of th=
+e largest private foundations in the world. I believe strongly in =E2=80=
+=98giving while living.=E2=80=99 I had one idea that never changed in m=
+y mind =E2=80=94 that you should use your wealth to help people and I h=
+ave decided to secretly give USD2.498 Million to a randomly selected in=
+dividual. On receipt of this email, you should count yourself as the in=
+dividual. Kindly get back to me at your earliest convenience, so I know=
+ your email address is valid.
 
-Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
----
-Ulf,
-this is a follow on patch to my Tegra UHS-I series. After reading the
-Tegra210 TRM I realized that the currently implemented tuning sequence will
-only work on Tegra30..Tegra124.  If you don't keep your tree stable you
-might want to squash this into [PATCH v2 4/5] mmc: tegra: enable UHS-I modes,
-otherwise please pick this up as a fix on top.
----
- drivers/mmc/host/sdhci-tegra.c | 3 ---
- 1 file changed, 3 deletions(-)
+Visit the web page to know more about me: http://www.theglobeandmail.co=
+m/news/national/meet-the-canadian-billionaire-whos-giving-it-all-away/a=
+rticle4209888/ or you can read an article of me on Wikipedia.
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index b5abbe2..83c4bf7 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -353,9 +353,6 @@ static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
- 
- static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
- 	.pdata = &sdhci_tegra210_pdata,
--	.nvquirks = NVQUIRK_ENABLE_SDR50 |
--		    NVQUIRK_ENABLE_DDR50 |
--		    NVQUIRK_ENABLE_SDR104,
- };
- 
- static const struct of_device_id sdhci_tegra_dt_match[] = {
--- 
-2.5.0
+Regards,
+Jeffrey Skoll.
