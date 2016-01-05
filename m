@@ -1,40 +1,104 @@
-From: Nicolas Chauvet <kwizart@gmail.com>
-Subject: [PATCH] Remove CONFIG_CRYPTO_DEV_TEGRA_AES from multi_v7_defconfig
-Date: Mon,  4 Jan 2016 22:41:50 +0100
-Message-ID: <1451943710-6253-1-git-send-email-kwizart@gmail.com>
+From: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Subject: Re: [GIT PULL 1/5] clk: tegra: Changes for v4.5-rc1
+Date: Mon, 04 Jan 2016 16:23:51 -0800
+Message-ID: <20160105002351.15239.82225@quark.deferred.io>
+References: <1450356639-7758-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: thierry.reding@gmail.com
-Cc: linux-tegra@vger.kernel.org, Nicolas Chauvet <kwizart@gmail.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1450356639-7758-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The related driver was removed by commit 645af2e4 on Feb 2014
----
- arch/arm/configs/multi_v7_defconfig | 1 -
- 1 file changed, 1 deletion(-)
+Quoting Thierry Reding (2015-12-17 04:50:35)
+> Hi Mike, Stephen,
+> 
+> The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
+> 
+>   Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.5-clk
 
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 69a22fd..ae7e769 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -727,7 +727,6 @@ CONFIG_PRINTK_TIME=y
- CONFIG_DEBUG_FS=y
- CONFIG_MAGIC_SYSRQ=y
- CONFIG_LOCKUP_DETECTOR=y
--CONFIG_CRYPTO_DEV_TEGRA_AES=y
- CONFIG_CPUFREQ_DT=y
- CONFIG_KEYSTONE_IRQ=y
- CONFIG_CRYPTO_DEV_SUN4I_SS=m
--- 
-2.4.3
+Pulled.
+
+Regards,
+Mike
+
+> 
+> for you to fetch changes up to 2d7f61f37731f635af47615a8a331ffe7f884934:
+> 
+>   clk: tegra: Read correct IDDQ register in PLL_SS registration (2015-12-17 13:37:58 +0100)
+> 
+> Note that the first commit in this set adds the device tree bindings for
+> Tegra210. This is a dependency for the for-4.5/dt branch because it adds
+> the dt-bindings include file used by the Tegra210 DTS files.
+> 
+> Thanks,
+> Thierry
+> 
+> ----------------------------------------------------------------
+> clk: tegra: Changes for v4.5-rc1
+> 
+> This set of changes adds support for the Tegra210 SoC and contains a
+> couple fixes and cleanups.
+> 
+> ----------------------------------------------------------------
+> Andrew Bresticker (1):
+>       clk: tegra: pll: Fix issues with rates for VCO PLLs
+> 
+> Bill Huang (8):
+>       clk: tegra: pll: Change misc_reg count from 3 to 6
+>       clk: tegra: pll: Add code to handle if resets are supported by PLL
+>       clk: tegra: pll: Adjust vco_min if SDM present
+>       clk: tegra: pll: Add Set_default logic
+>       clk: tegra: pll: Add logic for SS
+>       clk: tegra: Add Super Gen5 Logic
+>       clk: tegra: Fix WARN_ON in PLL_RE registration
+>       clk: tegra: Read correct IDDQ register in PLL_SS registration
+> 
+> Danny Huang (1):
+>       clk: tegra: pll: Update PLLM handling
+> 
+> Rhyland Klein (12):
+>       clk: tegra: periph: Add new periph clks and muxes for Tegra210
+>       clk: tegra: pll: Add tegra_pll_wait_for_lock to clk header
+>       clk: tegra: pll: Simplify clk_enable_path
+>       clk: tegra: pll: Update warning message
+>       clk: tegra: pll: Don't unconditionally set LOCK flags
+>       clk: tegra: pll: Add logic for handling SDM data
+>       clk: tegra: pll: Add logic for out-of-table rates for T210
+>       clk: tegra: pll: Fix _pll_ramp_calc_pll logic and _calc_dynamic_ramp_rate
+>       clk: tegra: pll: Add specialized logic for Tegra210
+>       clk: tegra: pll: Add support for PLLMB for Tegra210
+>       clk: tegra: pll: Add dyn_ramp callback
+>       clk: tegra: Add support for Tegra210 clocks
+> 
+> Thierry Reding (5):
+>       clk: tegra: Add Tegra210 device tree binding
+>       clk: tegra: Fix 26 MHz oscillator frequency
+>       clk: tegra: Miscellaneous coding style cleanups
+>       clk: tegra: Format tables consistently
+>       clk: tegra: Constify pdiv-to-hw mappings
+> 
+>  .../bindings/clock/nvidia,tegra210-car.txt         |   56 +
+>  drivers/clk/tegra/Makefile                         |    1 +
+>  drivers/clk/tegra/clk-id.h                         |   75 +-
+>  drivers/clk/tegra/clk-pll.c                        |  838 ++++--
+>  drivers/clk/tegra/clk-tegra-periph.c               |  371 ++-
+>  drivers/clk/tegra/clk-tegra-super-gen4.c           |  142 +-
+>  drivers/clk/tegra/clk-tegra114.c                   |  339 +--
+>  drivers/clk/tegra/clk-tegra124.c                   |  453 ++--
+>  drivers/clk/tegra/clk-tegra20.c                    |  314 ++-
+>  drivers/clk/tegra/clk-tegra210.c                   | 2852 ++++++++++++++++++++
+>  drivers/clk/tegra/clk-tegra30.c                    |  426 +--
+>  drivers/clk/tegra/clk.h                            |  101 +-
+>  include/dt-bindings/clock/tegra210-car.h           |  401 +++
+>  13 files changed, 5439 insertions(+), 930 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra210-car.txt
+>  create mode 100644 drivers/clk/tegra/clk-tegra210.c
+>  create mode 100644 include/dt-bindings/clock/tegra210-car.h
