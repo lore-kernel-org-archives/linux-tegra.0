@@ -1,104 +1,46 @@
-From: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Subject: Re: [GIT PULL 1/5] clk: tegra: Changes for v4.5-rc1
-Date: Mon, 04 Jan 2016 16:23:51 -0800
-Message-ID: <20160105002351.15239.82225@quark.deferred.io>
-References: <1450356639-7758-1-git-send-email-thierry.reding@gmail.com>
+From: Jisheng Zhang <jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+Subject: [PATCH 00/11] mmc: use sdhci_pltfm_init for private allocation and clean up
+Date: Tue, 5 Jan 2016 18:51:28 +0800
+Message-ID: <1451991099-4946-1-git-send-email-jszhang@marvell.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1450356639-7758-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org, michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org, soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org, ludovic.desroches-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org, srinivas.kandagatla-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, maxime.coquelin-qxv4g6HH51o@public.gmane.org, patrice.chotard-qxv4g6HH51o@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jisheng Zhang <jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Quoting Thierry Reding (2015-12-17 04:50:35)
-> Hi Mike, Stephen,
-> 
-> The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
-> 
->   Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.5-clk
+These patches are to complete the TODO in Commit 0e748234293f ("mmc:
+sdhci: Add size for caller in init+register"), I.E:
 
-Pulled.
+- todo: migrate clients to using allocation this way
+- todo: remove priv variable once migration is complete
 
-Regards,
-Mike
+Jisheng Zhang (11):
+  mmc: sdhci-bcm2835: use sdhci_pltfm_init for private allocation
+  mmc: sdhci-esdhc-imx: use sdhci_pltfm_init for private allocation
+  mmc: sdhci-msm: use sdhci_pltfm_init for private allocation
+  mmc: sdhci-of-arasan: use sdhci_pltfm_init for private allocation
+  mmc: sdhci-of-at91: use sdhci_pltfm_init for private allocation
+  mmc: sdhci-of-esdhc: use sdhci_pltfm_init for private allocation
+  mmc: sdhci-pxav3: use sdhci_pltfm_init for private allocation
+  mmc: sdhci-st: use sdhci_pltfm_init for private allocation
+  mmc: sdhci-tegra: use sdhci_pltfm_init for private allocation
+  mmc: sdhci-pxav2: remove unnecessary assignment of pltfm_host->priv
+  mmc: sdhci-pltfm: remove priv variable from sdhci_pltfm_host
 
-> 
-> for you to fetch changes up to 2d7f61f37731f635af47615a8a331ffe7f884934:
-> 
->   clk: tegra: Read correct IDDQ register in PLL_SS registration (2015-12-17 13:37:58 +0100)
-> 
-> Note that the first commit in this set adds the device tree bindings for
-> Tegra210. This is a dependency for the for-4.5/dt branch because it adds
-> the dt-bindings include file used by the Tegra210 DTS files.
-> 
-> Thanks,
-> Thierry
-> 
-> ----------------------------------------------------------------
-> clk: tegra: Changes for v4.5-rc1
-> 
-> This set of changes adds support for the Tegra210 SoC and contains a
-> couple fixes and cleanups.
-> 
-> ----------------------------------------------------------------
-> Andrew Bresticker (1):
->       clk: tegra: pll: Fix issues with rates for VCO PLLs
-> 
-> Bill Huang (8):
->       clk: tegra: pll: Change misc_reg count from 3 to 6
->       clk: tegra: pll: Add code to handle if resets are supported by PLL
->       clk: tegra: pll: Adjust vco_min if SDM present
->       clk: tegra: pll: Add Set_default logic
->       clk: tegra: pll: Add logic for SS
->       clk: tegra: Add Super Gen5 Logic
->       clk: tegra: Fix WARN_ON in PLL_RE registration
->       clk: tegra: Read correct IDDQ register in PLL_SS registration
-> 
-> Danny Huang (1):
->       clk: tegra: pll: Update PLLM handling
-> 
-> Rhyland Klein (12):
->       clk: tegra: periph: Add new periph clks and muxes for Tegra210
->       clk: tegra: pll: Add tegra_pll_wait_for_lock to clk header
->       clk: tegra: pll: Simplify clk_enable_path
->       clk: tegra: pll: Update warning message
->       clk: tegra: pll: Don't unconditionally set LOCK flags
->       clk: tegra: pll: Add logic for handling SDM data
->       clk: tegra: pll: Add logic for out-of-table rates for T210
->       clk: tegra: pll: Fix _pll_ramp_calc_pll logic and _calc_dynamic_ramp_rate
->       clk: tegra: pll: Add specialized logic for Tegra210
->       clk: tegra: pll: Add support for PLLMB for Tegra210
->       clk: tegra: pll: Add dyn_ramp callback
->       clk: tegra: Add support for Tegra210 clocks
-> 
-> Thierry Reding (5):
->       clk: tegra: Add Tegra210 device tree binding
->       clk: tegra: Fix 26 MHz oscillator frequency
->       clk: tegra: Miscellaneous coding style cleanups
->       clk: tegra: Format tables consistently
->       clk: tegra: Constify pdiv-to-hw mappings
-> 
->  .../bindings/clock/nvidia,tegra210-car.txt         |   56 +
->  drivers/clk/tegra/Makefile                         |    1 +
->  drivers/clk/tegra/clk-id.h                         |   75 +-
->  drivers/clk/tegra/clk-pll.c                        |  838 ++++--
->  drivers/clk/tegra/clk-tegra-periph.c               |  371 ++-
->  drivers/clk/tegra/clk-tegra-super-gen4.c           |  142 +-
->  drivers/clk/tegra/clk-tegra114.c                   |  339 +--
->  drivers/clk/tegra/clk-tegra124.c                   |  453 ++--
->  drivers/clk/tegra/clk-tegra20.c                    |  314 ++-
->  drivers/clk/tegra/clk-tegra210.c                   | 2852 ++++++++++++++++++++
->  drivers/clk/tegra/clk-tegra30.c                    |  426 +--
->  drivers/clk/tegra/clk.h                            |  101 +-
->  include/dt-bindings/clock/tegra210-car.h           |  401 +++
->  13 files changed, 5439 insertions(+), 930 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/nvidia,tegra210-car.txt
->  create mode 100644 drivers/clk/tegra/clk-tegra210.c
->  create mode 100644 include/dt-bindings/clock/tegra210-car.h
+ drivers/mmc/host/sdhci-bcm2835.c   | 14 +++-----------
+ drivers/mmc/host/sdhci-esdhc-imx.c | 38 +++++++++++++++++---------------------
+ drivers/mmc/host/sdhci-msm.c       | 13 +++++--------
+ drivers/mmc/host/sdhci-of-arasan.c | 25 ++++++++++---------------
+ drivers/mmc/host/sdhci-of-at91.c   | 21 ++++++++-------------
+ drivers/mmc/host/sdhci-of-esdhc.c  | 17 ++++++++---------
+ drivers/mmc/host/sdhci-pltfm.h     |  1 -
+ drivers/mmc/host/sdhci-pxav2.c     |  1 -
+ drivers/mmc/host/sdhci-pxav3.c     | 21 +++++++++------------
+ drivers/mmc/host/sdhci-st.c        | 36 ++++++++++++++++++------------------
+ drivers/mmc/host/sdhci-tegra.c     | 19 ++++++-------------
+ 11 files changed, 84 insertions(+), 122 deletions(-)
+
+-- 
+2.6.4
