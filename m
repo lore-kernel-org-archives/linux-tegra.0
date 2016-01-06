@@ -1,84 +1,107 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] ARM64: tegra: Add support for Google Pixel C
-Date: Wed, 6 Jan 2016 12:49:52 +0000
-Message-ID: <568D0D70.4020309@nvidia.com>
-References: <1452073222-2956-1-git-send-email-jonathanh@nvidia.com>
- <20160106094616.GA563@leverpostej>
+From: Ludovic Desroches <ludovic.desroches@atmel.com>
+Subject: Re: [PATCH v3 06/12] mmc: sdhci-of-at91: use sdhci_pltfm_init for
+ private allocation
+Date: Wed, 6 Jan 2016 14:13:16 +0100
+Message-ID: <20160106131316.GJ2334@odux.rfo.atmel.com>
+References: <1452076303-1960-1-git-send-email-jszhang@marvell.com>
+ <1452076303-1960-7-git-send-email-jszhang@marvell.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160106094616.GA563@leverpostej>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Olof Johansson <olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1452076303-1960-7-git-send-email-jszhang@marvell.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jisheng Zhang <jszhang@marvell.com>
+Cc: ulf.hansson@linaro.org, arnd@arndb.de, ludovic.desroches@atmel.com, swarren@wwwdotorg.org, lee@kernel.org, eric@anholt.net, michal.simek@xilinx.com, soren.brinkmann@xilinx.com, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, thierry.reding@gmail.com, sebastian.hesselbarth@gmail.com, linux-mmc@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 06/01/16 09:46, Mark Rutland wrote:
-> Hi,
+On Wed, Jan 06, 2016 at 06:31:37PM +0800, Jisheng Zhang wrote:
+> Commit 0e748234293f ("mmc: sdhci: Add size for caller in init+register")
+> allows users of sdhci_pltfm to allocate private space in calls to
+> sdhci_pltfm_init+sdhci_pltfm_register. This patch migrates the
+> sdhci-of-at91 driver to this allocation.
 > 
-> On Wed, Jan 06, 2016 at 09:40:22AM +0000, Jon Hunter wrote:
->> Add initial device-tree support for Google Pixel C (a.k.a. Smaug) based
->> upon Tegra210 SoC with 3 GiB of LPDDR4 RAM.
->>
->> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  arch/arm64/boot/dts/nvidia/Makefile           |  1 +
->>  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 42 +++++++++++++++++++++++++++
->>  2 files changed, 43 insertions(+)
->>  create mode 100644 arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
->>
->> diff --git a/arch/arm64/boot/dts/nvidia/Makefile b/arch/arm64/boot/dts/nvidia/Makefile
->> index a7e865da1005..0f7cdf3e05c1 100644
->> --- a/arch/arm64/boot/dts/nvidia/Makefile
->> +++ b/arch/arm64/boot/dts/nvidia/Makefile
->> @@ -2,6 +2,7 @@ dtb-$(CONFIG_ARCH_TEGRA_132_SOC) += tegra132-norrin.dtb
->>  dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2371-0000.dtb
->>  dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2371-2180.dtb
->>  dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2571.dtb
->> +dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-smaug.dtb
->>  
->>  always		:= $(dtb-y)
->>  clean-files	:= *.dtb
->> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
->> new file mode 100644
->> index 000000000000..a7474f5fcbcc
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
->> @@ -0,0 +1,42 @@
->> +/dts-v1/;
->> +
->> +#include "tegra210.dtsi"
->> +
->> +/ {
->> +	model = "Google Pixel C";
->> +	compatible = "google,smaug-rev8", "google,smaug-rev7",
->> +		     "google,smaug-rev6", "google,smaug-rev5",
->> +		     "google,smaug-rev4", "google,smaug-rev3",
->> +		     "google,smaug-rev1", "google,smaug", "nvidia,tegra210";
+> Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+
+Acked-by: Ludovic Desroches <ludovic.desroches@atmel.com>
+
+Thanks
+
+> ---
+>  drivers/mmc/host/sdhci-of-at91.c | 24 +++++++++---------------
+>  1 file changed, 9 insertions(+), 15 deletions(-)
 > 
-> This looks a little funky. Is each revision a strict superset of the
-> previous version?
-
-Yes this is based upon what Google have in the chromiumos branch [0] and
-I have checked with them and they were ok with this.
-
-Olof, let me know if you have any more comments here.
-
->> +
->> +	chosen {
->> +		bootargs = "console=ttyS0,115200n8 earlycon=uart8250,mmio32,0x70006000";
->> +	};
+> diff --git a/drivers/mmc/host/sdhci-of-at91.c b/drivers/mmc/host/sdhci-of-at91.c
+> index 7e7d8f0..43f729f 100644
+> --- a/drivers/mmc/host/sdhci-of-at91.c
+> +++ b/drivers/mmc/host/sdhci-of-at91.c
+> @@ -58,7 +58,7 @@ static int sdhci_at91_runtime_suspend(struct device *dev)
+>  {
+>  	struct sdhci_host *host = dev_get_drvdata(dev);
+>  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> -	struct sdhci_at91_priv *priv = pltfm_host->priv;
+> +	struct sdhci_at91_priv *priv = sdhci_pltfm_priv(pltfm_host);
+>  	int ret;
+>  
+>  	ret = sdhci_runtime_suspend_host(host);
+> @@ -74,7 +74,7 @@ static int sdhci_at91_runtime_resume(struct device *dev)
+>  {
+>  	struct sdhci_host *host = dev_get_drvdata(dev);
+>  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> -	struct sdhci_at91_priv *priv = pltfm_host->priv;
+> +	struct sdhci_at91_priv *priv = sdhci_pltfm_priv(pltfm_host);
+>  	int ret;
+>  
+>  	ret = clk_prepare_enable(priv->mainck);
+> @@ -124,11 +124,12 @@ static int sdhci_at91_probe(struct platform_device *pdev)
+>  		return -EINVAL;
+>  	soc_data = match->data;
+>  
+> -	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+> -	if (!priv) {
+> -		dev_err(&pdev->dev, "unable to allocate private data\n");
+> -		return -ENOMEM;
+> -	}
+> +	host = sdhci_pltfm_init(pdev, soc_data, sizeof(*priv));
+> +	if (IS_ERR(host))
+> +		return PTR_ERR(host);
+> +
+> +	pltfm_host = sdhci_priv(host);
+> +	priv = sdhci_pltfm_priv(pltfm_host);
+>  
+>  	priv->mainck = devm_clk_get(&pdev->dev, "baseclk");
+>  	if (IS_ERR(priv->mainck)) {
+> @@ -148,10 +149,6 @@ static int sdhci_at91_probe(struct platform_device *pdev)
+>  		return PTR_ERR(priv->gck);
+>  	}
+>  
+> -	host = sdhci_pltfm_init(pdev, soc_data, 0);
+> -	if (IS_ERR(host))
+> -		return PTR_ERR(host);
+> -
+>  	/*
+>  	 * The mult clock is provided by as a generated clock by the PMC
+>  	 * controller. In order to set the rate of gck, we have to get the
+> @@ -191,9 +188,6 @@ static int sdhci_at91_probe(struct platform_device *pdev)
+>  	clk_prepare_enable(priv->mainck);
+>  	clk_prepare_enable(priv->gck);
+>  
+> -	pltfm_host = sdhci_priv(host);
+> -	pltfm_host->priv = priv;
+> -
+>  	ret = mmc_of_parse(host->mmc);
+>  	if (ret)
+>  		goto clocks_disable_unprepare;
+> @@ -230,7 +224,7 @@ static int sdhci_at91_remove(struct platform_device *pdev)
+>  {
+>  	struct sdhci_host	*host = platform_get_drvdata(pdev);
+>  	struct sdhci_pltfm_host	*pltfm_host = sdhci_priv(host);
+> -	struct sdhci_at91_priv	*priv = pltfm_host->priv;
+> +	struct sdhci_at91_priv	*priv = sdhci_pltfm_priv(pltfm_host);
+>  
+>  	pm_runtime_get_sync(&pdev->dev);
+>  	pm_runtime_disable(&pdev->dev);
+> -- 
+> 2.7.0.rc3
 > 
-> Use stdout-path.
-
-Ok.
-
-> Otherwise this looks ok.
-
-Cheers
-Jon
-
-[0]
-https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.18/arch/arm64/boot/dts/tegra/tegra210-smaug-p1.dts
