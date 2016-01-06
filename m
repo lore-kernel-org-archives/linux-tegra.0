@@ -1,107 +1,84 @@
-From: Jisheng Zhang <jszhang@marvell.com>
-Subject: [PATCH v3 05/12] mmc: sdhci-of-arasan: use sdhci_pltfm_init for
- private allocation
-Date: Wed, 6 Jan 2016 18:31:36 +0800
-Message-ID: <1452076303-1960-6-git-send-email-jszhang@marvell.com>
-References: <1452076303-1960-1-git-send-email-jszhang@marvell.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM64: tegra: Add support for Google Pixel C
+Date: Wed, 6 Jan 2016 12:49:52 +0000
+Message-ID: <568D0D70.4020309@nvidia.com>
+References: <1452073222-2956-1-git-send-email-jonathanh@nvidia.com>
+ <20160106094616.GA563@leverpostej>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1452076303-1960-1-git-send-email-jszhang@marvell.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: ulf.hansson@linaro.org, arnd@arndb.de, ludovic.desroches@atmel.com, swarren@wwwdotorg.org, lee@kernel.org, eric@anholt.net, michal.simek@xilinx.com, soren.brinkmann@xilinx.com, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, thierry.reding@gmail.com, sebastian.hesselbarth@gmail.com
-Cc: Jisheng Zhang <jszhang@marvell.com>, kernel@stlinux.com, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160106094616.GA563@leverpostej>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Olof Johansson <olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Commit 0e748234293f ("mmc: sdhci: Add size for caller in init+register")
-allows users of sdhci_pltfm to allocate private space in calls to
-sdhci_pltfm_init+sdhci_pltfm_register. This patch migrates the
-sdhci-of-arasan driver to this allocation.
 
-Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
-Acked-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/mmc/host/sdhci-of-arasan.c | 25 ++++++++++---------------
- 1 file changed, 10 insertions(+), 15 deletions(-)
+On 06/01/16 09:46, Mark Rutland wrote:
+> Hi,
+> 
+> On Wed, Jan 06, 2016 at 09:40:22AM +0000, Jon Hunter wrote:
+>> Add initial device-tree support for Google Pixel C (a.k.a. Smaug) based
+>> upon Tegra210 SoC with 3 GiB of LPDDR4 RAM.
+>>
+>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  arch/arm64/boot/dts/nvidia/Makefile           |  1 +
+>>  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 42 +++++++++++++++++++++++++++
+>>  2 files changed, 43 insertions(+)
+>>  create mode 100644 arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+>>
+>> diff --git a/arch/arm64/boot/dts/nvidia/Makefile b/arch/arm64/boot/dts/nvidia/Makefile
+>> index a7e865da1005..0f7cdf3e05c1 100644
+>> --- a/arch/arm64/boot/dts/nvidia/Makefile
+>> +++ b/arch/arm64/boot/dts/nvidia/Makefile
+>> @@ -2,6 +2,7 @@ dtb-$(CONFIG_ARCH_TEGRA_132_SOC) += tegra132-norrin.dtb
+>>  dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2371-0000.dtb
+>>  dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2371-2180.dtb
+>>  dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2571.dtb
+>> +dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-smaug.dtb
+>>  
+>>  always		:= $(dtb-y)
+>>  clean-files	:= *.dtb
+>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+>> new file mode 100644
+>> index 000000000000..a7474f5fcbcc
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+>> @@ -0,0 +1,42 @@
+>> +/dts-v1/;
+>> +
+>> +#include "tegra210.dtsi"
+>> +
+>> +/ {
+>> +	model = "Google Pixel C";
+>> +	compatible = "google,smaug-rev8", "google,smaug-rev7",
+>> +		     "google,smaug-rev6", "google,smaug-rev5",
+>> +		     "google,smaug-rev4", "google,smaug-rev3",
+>> +		     "google,smaug-rev1", "google,smaug", "nvidia,tegra210";
+> 
+> This looks a little funky. Is each revision a strict superset of the
+> previous version?
 
-diff --git a/drivers/mmc/host/sdhci-of-arasan.c b/drivers/mmc/host/sdhci-of-arasan.c
-index 75379cb..53c8d36 100644
---- a/drivers/mmc/host/sdhci-of-arasan.c
-+++ b/drivers/mmc/host/sdhci-of-arasan.c
-@@ -81,7 +81,7 @@ static int sdhci_arasan_suspend(struct device *dev)
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct sdhci_host *host = platform_get_drvdata(pdev);
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
--	struct sdhci_arasan_data *sdhci_arasan = pltfm_host->priv;
-+	struct sdhci_arasan_data *sdhci_arasan = sdhci_pltfm_priv(pltfm_host);
- 	int ret;
- 
- 	ret = sdhci_suspend_host(host);
-@@ -106,7 +106,7 @@ static int sdhci_arasan_resume(struct device *dev)
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct sdhci_host *host = platform_get_drvdata(pdev);
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
--	struct sdhci_arasan_data *sdhci_arasan = pltfm_host->priv;
-+	struct sdhci_arasan_data *sdhci_arasan = sdhci_pltfm_priv(pltfm_host);
- 	int ret;
- 
- 	ret = clk_enable(sdhci_arasan->clk_ahb);
-@@ -137,10 +137,13 @@ static int sdhci_arasan_probe(struct platform_device *pdev)
- 	struct sdhci_pltfm_host *pltfm_host;
- 	struct sdhci_arasan_data *sdhci_arasan;
- 
--	sdhci_arasan = devm_kzalloc(&pdev->dev, sizeof(*sdhci_arasan),
--			GFP_KERNEL);
--	if (!sdhci_arasan)
--		return -ENOMEM;
-+	host = sdhci_pltfm_init(pdev, &sdhci_arasan_pdata,
-+				sizeof(*sdhci_arasan));
-+	if (IS_ERR(host))
-+		return PTR_ERR(host);
-+
-+	pltfm_host = sdhci_priv(host);
-+	sdhci_arasan = sdhci_pltfm_priv(pltfm_host);
- 
- 	sdhci_arasan->clk_ahb = devm_clk_get(&pdev->dev, "clk_ahb");
- 	if (IS_ERR(sdhci_arasan->clk_ahb)) {
-@@ -166,20 +169,12 @@ static int sdhci_arasan_probe(struct platform_device *pdev)
- 		goto clk_dis_ahb;
- 	}
- 
--	host = sdhci_pltfm_init(pdev, &sdhci_arasan_pdata, 0);
--	if (IS_ERR(host)) {
--		ret = PTR_ERR(host);
--		goto clk_disable_all;
--	}
--
- 	if (of_device_is_compatible(pdev->dev.of_node, "arasan,sdhci-4.9a")) {
- 		host->quirks |= SDHCI_QUIRK_NO_HISPD_BIT;
- 		host->quirks2 |= SDHCI_QUIRK2_HOST_NO_CMD23;
- 	}
- 
- 	sdhci_get_of_property(pdev);
--	pltfm_host = sdhci_priv(host);
--	pltfm_host->priv = sdhci_arasan;
- 	pltfm_host->clk = clk_xin;
- 
- 	ret = mmc_of_parse(host->mmc);
-@@ -208,7 +203,7 @@ static int sdhci_arasan_remove(struct platform_device *pdev)
- {
- 	struct sdhci_host *host = platform_get_drvdata(pdev);
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
--	struct sdhci_arasan_data *sdhci_arasan = pltfm_host->priv;
-+	struct sdhci_arasan_data *sdhci_arasan = sdhci_pltfm_priv(pltfm_host);
- 
- 	clk_disable_unprepare(sdhci_arasan->clk_ahb);
- 
--- 
-2.7.0.rc3
+Yes this is based upon what Google have in the chromiumos branch [0] and
+I have checked with them and they were ok with this.
+
+Olof, let me know if you have any more comments here.
+
+>> +
+>> +	chosen {
+>> +		bootargs = "console=ttyS0,115200n8 earlycon=uart8250,mmio32,0x70006000";
+>> +	};
+> 
+> Use stdout-path.
+
+Ok.
+
+> Otherwise this looks ok.
+
+Cheers
+Jon
+
+[0]
+https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.18/arch/arm64/boot/dts/tegra/tegra210-smaug-p1.dts
