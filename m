@@ -1,80 +1,64 @@
 From: Jisheng Zhang <jszhang@marvell.com>
-Subject: Re: [PATCH 03/11] mmc: sdhci-msm: use sdhci_pltfm_init for private
- allocation
-Date: Wed, 6 Jan 2016 10:36:28 +0800
-Message-ID: <20160106103628.05a8f9c4@xhacker>
-References: <1451991099-4946-4-git-send-email-jszhang@marvell.com>
-	<201601052054.hzEzw4pe%fengguang.wu@intel.com>
+Subject: [PATCH v2 01/12] mmc: sdhci-bcm2835: use sdhci_pltfm_init for private allocation
+Date: Wed, 6 Jan 2016 11:55:54 +0800
+Message-ID: <1452052565-4232-2-git-send-email-jszhang@marvell.com>
+References: <1452052565-4232-1-git-send-email-jszhang@marvell.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <201601052054.hzEzw4pe%fengguang.wu@intel.com>
+In-Reply-To: <1452052565-4232-1-git-send-email-jszhang@marvell.com>
 Sender: linux-mmc-owner@vger.kernel.org
-To: kbuild test robot <lkp@intel.com>
-Cc: kbuild-all@01.org, ulf.hansson@linaro.org, swarren@wwwdotorg.org, lee@kernel.org, eric@anholt.net, michal.simek@xilinx.com, soren.brinkmann@xilinx.com, ludovic.desroches@atmel.com, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, thierry.reding@gmail.com, sebastian.hesselbarth@gmail.com, linux-mmc@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, linux-tegra@vger.kernel.org
+To: ulf.hansson@linaro.org, arnd@arndb.de, swarren@wwwdotorg.org, lee@kernel.org, eric@anholt.net, michal.simek@xilinx.com, soren.brinkmann@xilinx.com, ludovic.desroches@atmel.com, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, thierry.reding@gmail.com, sebastian.hesselbarth@gmail.com
+Cc: linux-mmc@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, linux-tegra@vger.kernel.org, Jisheng Zhang <jszhang@marvell.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 5 Jan 2016 20:47:37 +0800 kbuild test robot wrote:
+Commit 0e748234293f ("mmc: sdhci: Add size for caller in init+register")
+allows users of sdhci_pltfm to allocate private space in calls to
+sdhci_pltfm_init+sdhci_pltfm_register. This patch migrates sdhci-bcm2835
+to this allocation.
 
-> Hi Jisheng,
-> 
-> [auto build test WARNING on v4.4-rc8]
-> [also build test WARNING on next-20160105]
-> [cannot apply to ulf.hansson-mmc/next]
-> [if your patch is applied to the wrong git tree, please drop us a note to help improving the system]
-> 
-> url:    https://github.com/0day-ci/linux/commits/Jisheng-Zhang/mmc-sdhci-bcm2835-use-sdhci_pltfm_init-for-private-allocation/20160105-190232
-> config: arm64-allmodconfig (attached as .config)
-> reproduce:
->         wget https://git.kernel.org/cgit/linux/kernel/git/wfg/lkp-tests.git/plain/sbin/make.cross -O ~/bin/make.cross
->         chmod +x ~/bin/make.cross
->         # save the attached .config to linux build tree
->         make.cross ARCH=arm64 
-> 
-> All warnings (new ones prefixed by >>):
-> 
->    drivers/mmc/host/sdhci-msm.c: In function 'sdhci_msm_probe':
-> >> drivers/mmc/host/sdhci-msm.c:440:32: warning: 'msm_host' is used uninitialized in this function [-Wuninitialized]  
->      host = sdhci_pltfm_init(pdev, &msm_host->sdhci_msm_pdata,
+Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+Acked-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/mmc/host/sdhci-bcm2835.c | 14 +++-----------
+ 1 file changed, 3 insertions(+), 11 deletions(-)
 
-OOPS, I'll fix it.
-
-Thanks a lot,
-Jisheng
-
-
->                                    ^
-> 
-> vim +/msm_host +440 drivers/mmc/host/sdhci-msm.c
-> 
->    424		.set_clock = sdhci_set_clock,
->    425		.set_bus_width = sdhci_set_bus_width,
->    426		.set_uhs_signaling = sdhci_set_uhs_signaling,
->    427	};
->    428	
->    429	static int sdhci_msm_probe(struct platform_device *pdev)
->    430	{
->    431		struct sdhci_host *host;
->    432		struct sdhci_pltfm_host *pltfm_host;
->    433		struct sdhci_msm_host *msm_host;
->    434		struct resource *core_memres;
->    435		int ret;
->    436		u16 host_version, core_minor;
->    437		u32 core_version, caps;
->    438		u8 core_major;
->    439	
->  > 440		host = sdhci_pltfm_init(pdev, &msm_host->sdhci_msm_pdata,  
->    441					sizeof(*msm_host));
->    442		if (IS_ERR(host))
->    443			return PTR_ERR(host);
->    444	
->    445		pltfm_host = sdhci_priv(host);
->    446		msm_host = sdhci_pltfm_priv(pltfm_host);
->    447		msm_host->sdhci_msm_pdata.ops = &sdhci_msm_ops;
->    448		msm_host->mmc = host->mmc;
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+diff --git a/drivers/mmc/host/sdhci-bcm2835.c b/drivers/mmc/host/sdhci-bcm2835.c
+index 1c65d46..4a6a1d1 100644
+--- a/drivers/mmc/host/sdhci-bcm2835.c
++++ b/drivers/mmc/host/sdhci-bcm2835.c
+@@ -74,7 +74,7 @@ static inline u32 bcm2835_sdhci_readl(struct sdhci_host *host, int reg)
+ static void bcm2835_sdhci_writew(struct sdhci_host *host, u16 val, int reg)
+ {
+ 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+-	struct bcm2835_sdhci *bcm2835_host = pltfm_host->priv;
++	struct bcm2835_sdhci *bcm2835_host = sdhci_pltfm_priv(pltfm_host);
+ 	u32 oldval = (reg == SDHCI_COMMAND) ? bcm2835_host->shadow :
+ 		bcm2835_sdhci_readl(host, reg & ~3);
+ 	u32 word_num = (reg >> 1) & 1;
+@@ -152,20 +152,12 @@ static int bcm2835_sdhci_probe(struct platform_device *pdev)
+ 	struct sdhci_pltfm_host *pltfm_host;
+ 	int ret;
+ 
+-	host = sdhci_pltfm_init(pdev, &bcm2835_sdhci_pdata, 0);
++	host = sdhci_pltfm_init(pdev, &bcm2835_sdhci_pdata,
++				sizeof(*bcm2835_host));
+ 	if (IS_ERR(host))
+ 		return PTR_ERR(host);
+ 
+-	bcm2835_host = devm_kzalloc(&pdev->dev, sizeof(*bcm2835_host),
+-					GFP_KERNEL);
+-	if (!bcm2835_host) {
+-		dev_err(mmc_dev(host->mmc),
+-			"failed to allocate bcm2835_sdhci\n");
+-		return -ENOMEM;
+-	}
+-
+ 	pltfm_host = sdhci_priv(host);
+-	pltfm_host->priv = bcm2835_host;
+ 
+ 	pltfm_host->clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(pltfm_host->clk)) {
+-- 
+2.7.0.rc3
 
