@@ -1,75 +1,133 @@
-From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH] ARM64: tegra: Add support for Google Pixel C
-Date: Wed, 6 Jan 2016 09:46:16 +0000
-Message-ID: <20160106094616.GA563@leverpostej>
-References: <1452073222-2956-1-git-send-email-jonathanh@nvidia.com>
+From: Ludovic Desroches <ludovic.desroches@atmel.com>
+Subject: Re: [PATCH v2 06/12] mmc: sdhci-of-at91: use sdhci_pltfm_init for
+ private allocation
+Date: Wed, 6 Jan 2016 11:11:55 +0100
+Message-ID: <20160106101155.GI2334@odux.rfo.atmel.com>
+References: <1452052565-4232-1-git-send-email-jszhang@marvell.com>
+ <1452052565-4232-7-git-send-email-jszhang@marvell.com>
+ <20160106090215.GG2334@odux.rfo.atmel.com>
+ <20160106172248.7ab58050@xhacker>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1452073222-2956-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Olof Johansson <olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20160106172248.7ab58050@xhacker>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jisheng Zhang <jszhang@marvell.com>
+Cc: Ludovic Desroches <ludovic.desroches@atmel.com>, ulf.hansson@linaro.org, arnd@arndb.de, swarren@wwwdotorg.org, lee@kernel.org, eric@anholt.net, michal.simek@xilinx.com, soren.brinkmann@xilinx.com, srinivas.kandagatla@gmail.com, maxime.coquelin@st.com, patrice.chotard@st.com, thierry.reding@gmail.com, sebastian.hesselbarth@gmail.com, linux-mmc@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
-
-On Wed, Jan 06, 2016 at 09:40:22AM +0000, Jon Hunter wrote:
-> Add initial device-tree support for Google Pixel C (a.k.a. Smaug) based
-> upon Tegra210 SoC with 3 GiB of LPDDR4 RAM.
+On Wed, Jan 06, 2016 at 05:22:48PM +0800, Jisheng Zhang wrote:
+> Dear Ludovic,
 > 
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  arch/arm64/boot/dts/nvidia/Makefile           |  1 +
->  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 42 +++++++++++++++++++++++++++
->  2 files changed, 43 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+> On Wed, 6 Jan 2016 10:02:15 +0100 Ludovic Desroches wrote:
 > 
-> diff --git a/arch/arm64/boot/dts/nvidia/Makefile b/arch/arm64/boot/dts/nvidia/Makefile
-> index a7e865da1005..0f7cdf3e05c1 100644
-> --- a/arch/arm64/boot/dts/nvidia/Makefile
-> +++ b/arch/arm64/boot/dts/nvidia/Makefile
-> @@ -2,6 +2,7 @@ dtb-$(CONFIG_ARCH_TEGRA_132_SOC) += tegra132-norrin.dtb
->  dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2371-0000.dtb
->  dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2371-2180.dtb
->  dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2571.dtb
-> +dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-smaug.dtb
->  
->  always		:= $(dtb-y)
->  clean-files	:= *.dtb
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> new file mode 100644
-> index 000000000000..a7474f5fcbcc
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> @@ -0,0 +1,42 @@
-> +/dts-v1/;
-> +
-> +#include "tegra210.dtsi"
-> +
-> +/ {
-> +	model = "Google Pixel C";
-> +	compatible = "google,smaug-rev8", "google,smaug-rev7",
-> +		     "google,smaug-rev6", "google,smaug-rev5",
-> +		     "google,smaug-rev4", "google,smaug-rev3",
-> +		     "google,smaug-rev1", "google,smaug", "nvidia,tegra210";
+> > Hi Jisheng,
+> > 
+> > Thanks for your patch but it needs to be updated since it breaks this
+> > driver.
+> > 
+> > -       struct sdhci_at91_priv  *priv = pltfm_host->priv;
+> > +       struct sdhci_at91_priv  *priv = sdhci_pltfm_priv(pltfm_host);
+> > 
+> > is missing in sdhci_at91_runtime_suspend and sdhci_at91_runtime_resume
+> > causing a NULL pointer dereference.
+> 
+> My code base is 4.4-rc8.
+> I didn't see sdhci_at91_runtime_suspend and sdhci_at91_runtime_resume
+> functions in the sdhci-of-at91.c. Seems the at91 runtime pm support
+> is newly added and intends for 4.5.
+> 
+> So the question is which code base should I use? 
 
-This looks a little funky. Is each revision a strict superset of the
-previous version?
+I did the test on next-20151222 since next-20160104 is broken for many
+ARM SoC.
 
-> +
-> +	chosen {
-> +		bootargs = "console=ttyS0,115200n8 earlycon=uart8250,mmio32,0x70006000";
-> +	};
-
-Use stdout-path.
-
-Otherwise this looks ok.
-
-Thanks,
-Mark.
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+> Hi Ulf,
+> 
+> could you please give some suggestions?
+> 
+> Thanks in advance,
+> Jisheng
+> 
+> > 
+> > On Wed, Jan 06, 2016 at 11:55:59AM +0800, Jisheng Zhang wrote:
+> > > Commit 0e748234293f ("mmc: sdhci: Add size for caller in init+register")
+> > > allows users of sdhci_pltfm to allocate private space in calls to
+> > > sdhci_pltfm_init+sdhci_pltfm_register. This patch migrates the
+> > > sdhci-of-at91 driver to this allocation.
+> > > 
+> > > Signed-off-by: Jisheng Zhang <jszhang@marvell.com>
+> > > Acked-by: Arnd Bergmann <arnd@arndb.de>
+> > > ---
+> > >  drivers/mmc/host/sdhci-of-at91.c | 21 ++++++++-------------
+> > >  1 file changed, 8 insertions(+), 13 deletions(-)
+> > > 
+> > > diff --git a/drivers/mmc/host/sdhci-of-at91.c b/drivers/mmc/host/sdhci-of-at91.c
+> > > index 06d0b50..765eb09 100644
+> > > --- a/drivers/mmc/host/sdhci-of-at91.c
+> > > +++ b/drivers/mmc/host/sdhci-of-at91.c
+> > > @@ -68,11 +68,13 @@ static int sdhci_at91_probe(struct platform_device *pdev)
+> > >  		return -EINVAL;
+> > >  	soc_data = match->data;
+> > >  
+> > > -	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+> > > -	if (!priv) {
+> > > -		dev_err(&pdev->dev, "unable to allocate private data\n");
+> > > -		return -ENOMEM;
+> > > -	}
+> > > +	host = sdhci_pltfm_init(pdev, soc_data,
+> > > +				sizeof(*priv));  
+> > 
+> > Can be on the same line.
+> 
+> Great! will do in v3.
+> 
+> > 
+> > Regards
+> > 
+> > Ludovic
+> > 
+> > > +	if (IS_ERR(host))
+> > > +		return PTR_ERR(host);
+> > > +
+> > > +	pltfm_host = sdhci_priv(host);
+> > > +	priv = sdhci_pltfm_priv(pltfm_host);
+> > >  
+> > >  	priv->mainck = devm_clk_get(&pdev->dev, "baseclk");
+> > >  	if (IS_ERR(priv->mainck)) {
+> > > @@ -92,10 +94,6 @@ static int sdhci_at91_probe(struct platform_device *pdev)
+> > >  		return PTR_ERR(priv->gck);
+> > >  	}
+> > >  
+> > > -	host = sdhci_pltfm_init(pdev, soc_data, 0);
+> > > -	if (IS_ERR(host))
+> > > -		return PTR_ERR(host);
+> > > -
+> > >  	/*
+> > >  	 * The mult clock is provided by as a generated clock by the PMC
+> > >  	 * controller. In order to set the rate of gck, we have to get the
+> > > @@ -135,9 +133,6 @@ static int sdhci_at91_probe(struct platform_device *pdev)
+> > >  	clk_prepare_enable(priv->mainck);
+> > >  	clk_prepare_enable(priv->gck);
+> > >  
+> > > -	pltfm_host = sdhci_priv(host);
+> > > -	pltfm_host->priv = priv;
+> > > -
+> > >  	ret = mmc_of_parse(host->mmc);
+> > >  	if (ret)
+> > >  		goto clocks_disable_unprepare;
+> > > @@ -163,7 +158,7 @@ static int sdhci_at91_remove(struct platform_device *pdev)
+> > >  {
+> > >  	struct sdhci_host	*host = platform_get_drvdata(pdev);
+> > >  	struct sdhci_pltfm_host	*pltfm_host = sdhci_priv(host);
+> > > -	struct sdhci_at91_priv	*priv = pltfm_host->priv;
+> > > +	struct sdhci_at91_priv	*priv = sdhci_pltfm_priv(pltfm_host);
+> > >  
+> > >  	sdhci_pltfm_unregister(pdev);
+> > >  
+> > > -- 
+> > > 2.7.0.rc3
+> > >   
+> 
