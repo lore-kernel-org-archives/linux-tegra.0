@@ -1,23 +1,20 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
+From: Lucas Stach <l.stach@pengutronix.de>
 Subject: Re: [PATCH v3] PCI: hosts: mark pcie/pci (msi) irq cascade handler
  as IRQF_NO_THREAD
-Date: Wed, 6 Jan 2016 16:18:27 -0600
-Message-ID: <20160106221827.GD16231@localhost>
+Date: Thu, 07 Jan 2016 10:18:16 +0100
+Message-ID: <1452158296.21272.15.camel@pengutronix.de>
 References: <1449775100-30877-1-git-send-email-grygorii.strashko@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-sh-owner@vger.kernel.org>
-Content-Disposition: inline
+Return-path: <linux-pci-owner@vger.kernel.org>
 In-Reply-To: <1449775100-30877-1-git-send-email-grygorii.strashko@ti.com>
-Sender: linux-sh-owner@vger.kernel.org
+Sender: linux-pci-owner@vger.kernel.org
 To: Grygorii Strashko <grygorii.strashko@ti.com>
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, tony@atomide.com, nsekhar@ti.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-sh@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>, Jingoo Han <jingoohan1@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Richard Zhu <Richard.Zhu@freescale.com>, Lucas Stach <l.stach@pengutronix.de>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, Pratyush Anand <pratyush.anand@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>, linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, tony@atomide.com, nsekhar@ti.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-sh@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>, Jingoo Han <jingoohan1@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Richard Zhu <Richard.Zhu@freescale.com>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, Pratyush Anand <pratyush.anand@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?ISO-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Grygorii,
-
-On Thu, Dec 10, 2015 at 09:18:20PM +0200, Grygorii Strashko wrote:
+Am Donnerstag, den 10.12.2015, 21:18 +0200 schrieb Grygorii Strashko:
 > On -RT and if kernel is booting with "threadirqs" cmd line parameter
 > pcie/pci (msi) irq cascade handlers (like dra7xx_pcie_msi_irq_handler=
 ())
@@ -68,9 +65,16 @@ o
 > Cc: Simon Horman <horms@verge.net.au>
 > Cc: Pratyush Anand <pratyush.anand@gmail.com>
 > Cc: Michal Simek <michal.simek@xilinx.com>
-> Cc: "S=F6ren Brinkmann" <soren.brinkmann@xilinx.com>
+> Cc: "S=C3=B6ren Brinkmann" <soren.brinkmann@xilinx.com>
 > Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 > Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+
+Sorry this fell through the cracks, so here is my late
+
+Acked-by: Lucas Stach <l.stach@pengutronix.de>
+
+for the imx6 part.
+
 > ---
 > Changes in v3:
 >  - change applied to all affected pci(e) host drivers in drivers/pci/=
@@ -93,13 +97,7 @@ is not easy
 >  drivers/pci/host/pcie-spear13xx.c |  3 ++-
 >  drivers/pci/host/pcie-xilinx.c    |  3 ++-
 >  7 files changed, 25 insertions(+), 8 deletions(-)
-
-I applied this to pci/host for v4.5, thanks.  I added a stable tag.
-I haven't seen any acks from the host driver guys, but I will still add
-them if I see any in the next few days.
-
-Bjorn
-
+>=20
 > diff --git a/drivers/pci/host/pci-dra7xx.c b/drivers/pci/host/pci-dra=
 7xx.c
 > index 8c36880..0415192 100644
@@ -234,12 +232,7 @@ e_port *port)
 >  	if (err) {
 >  		dev_err(dev, "unable to request irq %d\n", port->irq);
 >  		return err;
-> --=20
-> 2.6.4
->=20
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-kerne=
-l" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> Please read the FAQ at  http://www.tux.org/lkml/
+
+--=20
+Pengutronix e.K.             | Lucas Stach                 |
+Industrial Linux Solutions   | http://www.pengutronix.de/  |
