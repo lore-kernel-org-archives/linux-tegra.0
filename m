@@ -1,56 +1,66 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: next boot: 564 boots: 59 failed, 448 passed with 57 offline
- (next-20160107)
-Date: Thu, 7 Jan 2016 16:56:57 +0000
-Message-ID: <20160107165657.GH6588@sirena.org.uk>
-References: <568e8740.01941c0a.31072.ffffb67b@mx.google.com>
- <20160107155958.GG6588@sirena.org.uk>
- <20160107162810.GA25177@ulmo>
+From: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] ARM64: tegra: Add support for Google Pixel C
+Date: Thu, 7 Jan 2016 11:20:45 -0600
+Message-ID: <CAL_Jsq++DkgJA--40YBqGZd5BJFkzXfKt_st1kN+ZiVY7yb8OA@mail.gmail.com>
+References: <1452073222-2956-1-git-send-email-jonathanh@nvidia.com>
+ <568D0D70.4020309@nvidia.com> <568E65F0.2070201@nvidia.com>
+ <4442990.rM1mk43t6M@wuerfel> <568E9804.5020503@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nCRcqX7cEx7rr7Pe"
-Return-path: <linux-next-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160107162810.GA25177@ulmo>
-Sender: linux-next-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Arnd Bergmann <arnd@arndb.de>, kernel-build-reports@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <568E9804.5020503-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Olof Johansson <olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Thu, Jan 7, 2016 at 10:53 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>
+> On 07/01/16 14:11, Arnd Bergmann wrote:
+>> On Thursday 07 January 2016 13:19:44 Jon Hunter wrote:
 
---nCRcqX7cEx7rr7Pe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+[...]
 
-On Thu, Jan 07, 2016 at 05:28:10PM +0100, Thierry Reding wrote:
+> Ok so something like this ...
+>
+> diff --git a/drivers/tty/serial/8250/8250_early.c
+> b/drivers/tty/serial/8250/8250_early.c
+> index af62131af21e..4ce6e2b57534 100644
+> --- a/drivers/tty/serial/8250/8250_early.c
+> +++ b/drivers/tty/serial/8250/8250_early.c
+> @@ -141,7 +141,18 @@ int __init early_serial8250_setup(struct
+> earlycon_device *device,
+>         device->con->write = early_serial8250_write;
+>         return 0;
+>  }
+> +
+> +int __init early_serial8250_mem32_setup(struct earlycon_device *device,
+> +                                       const char *options)
+> +{
+> +       device->port.iotype = UPIO_MEM32;
+> +       device->port.regshift = 2;
+> +
+> +       return early_serial8250_setup(device, options);
+> +}
+>  EARLYCON_DECLARE(uart8250, early_serial8250_setup);
+>  EARLYCON_DECLARE(uart, early_serial8250_setup);
+>  OF_EARLYCON_DECLARE(ns16550, "ns16550", early_serial8250_setup);
+>  OF_EARLYCON_DECLARE(ns16550a, "ns16550a", early_serial8250_setup);
+> +OF_EARLYCON_DECLARE(tegra20_uart, "nvidia,tegra20-uart",
+> +                   early_serial8250_mem32_setup);
+>
+>> Would it be possible to handle the "reg-io-width" parsing in
+>> early_serial8250_setup instead of keying it off the string?
+>
+> Good point. I spent a bit of time looking at this, but I cannot see an
+> easy way to do this unless we check for "reg-io-width" and "reg-shift"
+> in early_init_dt_scan_chosen_serial() and pass to of_setup_earlycon(),
+> however, I am guessing that this would not be ideal as this would happen
+> for non-8250 devices. May be that would be ok, but I am not sure.
 
-> These should all be fixed by this patch:
+There's been one attempt[1] already. It had a few issues easily
+solved, but I haven't seen a follow-up.
 
-> 	serial: 8250: of: Fix the driver and actually compile the 8250_of
+Rob
 
-> which can be found in patchwork here:
-
-> 	https://patchwork.kernel.org/patch/7883541/
-
-> I think this is merely waiting to be picked up into the tty tree. I
-
-Ah, good - hopefully that'll get picked up quickly, I suspect it's going
-to turn out to be responsible for a bunch of the other failures we're
-seeing at the minute.
-
---nCRcqX7cEx7rr7Pe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWjpjYAAoJECTWi3JdVIfQvQwH/isS0Ohw9I6pdKMEiRE0pYw6
-DPvujsU4sCPA2u744h0HHGDP2wMw4IkY0IymQKaJenkFYoAq1L+uK/Ar/UasooJ8
-YCs83VaW/cQTdlFHqWiXOcqdKr07PK9UA/OQ7zVNGZ0HFvoM/Cm7zzYh0SqKwQDc
-sLHf6KfE7GatbgRF1jyBulgQpL1X7Vvin32pGvnK8NqelAE9+WzRM0CYD/mJ7By9
-2ohSuzzF/ZugYXzGZcggn5G6X4HTSoEIIstgt/x33qd0wdFRIXGKKrtVxUahct5A
-cmVPs4s3xkGXTQ0I173cH9zUsdISqz9H3PAHf5xA8vyn+aKYvX5ncQIAW2rjxfE=
-=VPDn
------END PGP SIGNATURE-----
-
---nCRcqX7cEx7rr7Pe--
+[1] https://lkml.org/lkml/2015/11/30/513
