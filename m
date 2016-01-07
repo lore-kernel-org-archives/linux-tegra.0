@@ -1,127 +1,116 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: next boot: 564 boots: 59 failed, 448 passed with 57 offline
- (next-20160107)
-Date: Thu, 7 Jan 2016 17:28:10 +0100
-Message-ID: <20160107162810.GA25177@ulmo>
-References: <568e8740.01941c0a.31072.ffffb67b@mx.google.com>
- <20160107155958.GG6588@sirena.org.uk>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM64: tegra: Add support for Google Pixel C
+Date: Thu, 7 Jan 2016 16:53:24 +0000
+Message-ID: <568E9804.5020503@nvidia.com>
+References: <1452073222-2956-1-git-send-email-jonathanh@nvidia.com>
+ <568D0D70.4020309@nvidia.com> <568E65F0.2070201@nvidia.com>
+ <4442990.rM1mk43t6M@wuerfel>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="FL5UXtIhxfXey3p5"
-Return-path: <linux-next-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160107155958.GG6588@sirena.org.uk>
-Sender: linux-next-owner@vger.kernel.org
-To: Mark Brown <broonie@kernel.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jslaby@suse.com>, Arnd Bergmann <arnd@arndb.de>, kernel-build-reports@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <4442990.rM1mk43t6M@wuerfel>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Olof Johansson <olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---FL5UXtIhxfXey3p5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 07/01/16 14:11, Arnd Bergmann wrote:
+> On Thursday 07 January 2016 13:19:44 Jon Hunter wrote:
+>>
+>> Adding Arnd.
+>>
+>> Hmmm ... well apparently stdout-path does not work for tegra and in
+>> order to make this work I had to do the following ...
+>>
+>>
+>> [PATCH] serial: 8250: of: Add earlycon support for Tegra
+>>
+>> Currently, early console support only works for Tegra when the serial
+>> port information is passed via the earlycon boot parameter. If the
+>> serial port information is specified via device-tree using the
+>> "stdout-path" then the early console does not work because:
+>>
+>> 1. The tegra serial ports compatibility parameter does not match any
+>>    of the supported serial drivers for early console.
+>> 2. The of_setup_earlycon() function assumes that serial port registers
+>>    are byte aligned and for tegra they are 32-bit aligned.
+>>
+>> Add an early console setup function for tegra so that the early console
+>> can be specified via the device-tree "stdout-path" variable.
+>>
+>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  drivers/tty/serial/8250/8250_of.c | 10 ++++++++++
+>>  1 file changed, 10 insertions(+)
+>>
+>> diff --git a/drivers/tty/serial/8250/8250_of.c b/drivers/tty/serial/8250/8250_of.c
+>> index 33021c1f7d55..98adf83e83c2 100644
+>> --- a/drivers/tty/serial/8250/8250_of.c
+>> +++ b/drivers/tty/serial/8250/8250_of.c
+>> @@ -44,6 +44,16 @@ void tegra_serial_handle_break(struct uart_port *p)
+>>                 udelay(1);
+>>         } while (1);
+>>  }
+>> +
+>> +int __init tegra_earlycon_setup(struct earlycon_device *device,
+>> +                               const char *options)
+>> +{
+>> +       device->port.iotype = UPIO_MEM32;
+>> +       device->port.regshift = 2;
+>> +
+>> +       return early_serial8250_setup(device, options);
+>> +}
+>> +OF_EARLYCON_DECLARE(tegra20_uart, "nvidia,tegra20-uart", tegra_earlycon_setup);
+>>  #else
+>>  static inline void tegra_serial_handle_break(struct uart_port *port)
+>>  {
+>>
+>>
+>> Arnd, does the above look ok, or should there be a generic
+>> early_serial8250x32_setup() somewhere?
+> 
+> I think it would be better to put it into 8250_early.c rather than 
+> 8250_of.c, as there are already some other definitions in there,
+> and the #ifdef CONFIG_TEGRA in 8250_of.c is for some other workaround.
 
-On Thu, Jan 07, 2016 at 03:59:58PM +0000, Mark Brown wrote:
-> On Thu, Jan 07, 2016 at 07:41:52AM -0800, kernelci.org bot wrote:
->=20
-> > Tree: next
-> > Branch: local/master
-> > Git Describe: next-20160107
-> > Git Commit: 0f023a298a7d2a8e99c54913f7277b3c08c1f5c9
-> > Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.=
-git
-> > Tested: 95 unique boards, 25 SoC families, 28 builds out of 135
-> >=20
-> > Boot Failures Detected: https://kernelci.org/boot/?next-20160107&fail
->=20
-> For the past couple of days -next has been failing to boot on various
-> Tegra platforms, there are failures involving either no kernel output or
-> (with tegra_defconfig) backtraces during CMA allocation from USB, for
-> example:
->=20
->    http://storage.kernelci.org/next/next-20160107/arm-tegra_defconfig/lab=
--khilman/boot-tegra30-beaver.html
->=20
-> >     multi_v7_defconfig+CONFIG_THUMB2_KERNEL=3Dy:
-> >         tegra124-jetson-tk1: 2 failed labs
-> >         tegra30-beaver: 1 failed lab
-> >=20
-> >     tegra_defconfig:
-> >         tegra124-jetson-tk1: 2 failed labs
-> >         tegra124-jetson-tk1_rootfs:nfs: 1 failed lab
-> >         tegra124-nyan-big: 1 failed lab
-> >         tegra30-beaver: 1 failed lab
-> >=20
-> >     multi_v7_defconfig+CONFIG_ARM_LPAE=3Dy:
-> >         tegra124-jetson-tk1: 1 failed lab
-> >         tegra124-nyan-big: 1 failed lab
-> >=20
-> >     multi_v7_defconfig:
-> >         tegra124-jetson-tk1: 2 failed labs
-> >         tegra30-beaver: 1 failed lab
-> >=20
-> >     multi_v7_defconfig+CONFIG_LKDTM=3Dy:
-> >         tegra124-jetson-tk1: 2 failed labs
-> >         tegra30-beaver: 1 failed lab
-> >=20
-> >     multi_v7_defconfig+CONFIG_PROVE_LOCKING=3Dy:
-> >         tegra124-jetson-tk1: 2 failed labs
-> >         tegra30-beaver: 1 failed lab
->=20
-> I did bisects yesterday but they were a bit inconclusive, showing a
-> series of skipped commits in the TTY tree as being the culprits:
->=20
-> afd7f88f157796e586fc99d62da13a54024e0731 serial: 8250: move of_serial cod=
-e to 8250 directory
-> 4e33870b3bb691996354a8f9e8f69458b4fc34d9 serial: of: CONFIG_SERIAL_8250 i=
-s always set
-> d1b5c87fa8058a3f477ae05555916dd1cea934ad serial: remove NWP serial support
->=20
-> which seems more than a little surprising and like they might be false
-> positives, especially in the cases that do produce output.  The errors
-> today look the same.  I've not investigated further than the bisects.
->=20
-> Full bisect logs:
->=20
->  https://ci.linaro.org/view/people/job/tbaker-boot-bisect-bot/140/console
->  https://ci.linaro.org/view/people/job/tbaker-boot-bisect-bot/141/console
+Ok so something like this ...
 
-These should all be fixed by this patch:
+diff --git a/drivers/tty/serial/8250/8250_early.c
+b/drivers/tty/serial/8250/8250_early.c
+index af62131af21e..4ce6e2b57534 100644
+--- a/drivers/tty/serial/8250/8250_early.c
++++ b/drivers/tty/serial/8250/8250_early.c
+@@ -141,7 +141,18 @@ int __init early_serial8250_setup(struct
+earlycon_device *device,
+        device->con->write = early_serial8250_write;
+        return 0;
+ }
++
++int __init early_serial8250_mem32_setup(struct earlycon_device *device,
++                                       const char *options)
++{
++       device->port.iotype = UPIO_MEM32;
++       device->port.regshift = 2;
++
++       return early_serial8250_setup(device, options);
++}
+ EARLYCON_DECLARE(uart8250, early_serial8250_setup);
+ EARLYCON_DECLARE(uart, early_serial8250_setup);
+ OF_EARLYCON_DECLARE(ns16550, "ns16550", early_serial8250_setup);
+ OF_EARLYCON_DECLARE(ns16550a, "ns16550a", early_serial8250_setup);
++OF_EARLYCON_DECLARE(tegra20_uart, "nvidia,tegra20-uart",
++                   early_serial8250_mem32_setup);
 
-	serial: 8250: of: Fix the driver and actually compile the 8250_of
+> Would it be possible to handle the "reg-io-width" parsing in
+> early_serial8250_setup instead of keying it off the string?
 
-which can be found in patchwork here:
+Good point. I spent a bit of time looking at this, but I cannot see an
+easy way to do this unless we check for "reg-io-width" and "reg-shift"
+in early_init_dt_scan_chosen_serial() and pass to of_setup_earlycon(),
+however, I am guessing that this would not be ideal as this would happen
+for non-8250 devices. May be that would be ok, but I am not sure.
 
-	https://patchwork.kernel.org/patch/7883541/
-
-I think this is merely waiting to be picked up into the tty tree. I
-suspect the reason why there's output in the first place is because
-of earlyprintk. I've seen recent linux-next work properly, with the
-serial console hanging at some point (fbcon shows login prompt). If
-I apply the above patch things are back to normal.
-
-Thierry
-
---FL5UXtIhxfXey3p5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJWjpIVAAoJEN0jrNd/PrOhUE4P/3e3zJQcsqhGNuntZS173+rG
-INM3nvTay+eJq1T6R3obDEcR4/xZVTp8+MRMUuddEXdpkDPDjrYPnnu66PoepQqi
-BzUYao/NS+Vy7EhPrzyZ3cVlH2f7dCQqcHUprqJO81vAIN5M52JgXEOrklsWZe14
-DXDbMdQci8AnEI5d/qKGQBX5nLDr89Y6psOlUoEXc+cy+j3T7+Rm4KdKS3a7LdkK
-/OxBIUch7xDBCUIBVP35bMGmZlfIIsT0IMJvu9spfA91dt0TngW1Zk4sPbb3cTwZ
-qefXFmacaeXiWUCy0S3S64xg471aFvlCT/0fvn+CH0lnmnwC470ToKMYzO3vgLB4
-48c6JDAakVhHFJRzxQWWo1lHcop2xDasZ2yRkkQ3k7DaD9lC8Rc622BSOpr4EDdZ
-0PiZQrrwXqqaDnmObdjb15U6aIkcXpWw4mq0P4VFazOMex2QV468dzA0WUgXKwnp
-qDbwN4svjYMxwrs5XbonlLoIwTRh1NbY3of9RlqjmjgpVnekWJY5iMHx3DtMgkTf
-yPdLHJuotNdVBqRu9KHhjdgUbJ73D6Ki1Sv3/Hi28jzPEKXe5LVwAKIzK1m6BrqI
-tFgcDWEhKdWw1RM8mRPDQ2T2q3DC8iTkCwiARoIUYtzJijH9S3Bq6u1BfZRAB+7/
-+TCdAoLUzXf5ZjBYVIJg
-=eDDT
------END PGP SIGNATURE-----
-
---FL5UXtIhxfXey3p5--
+Cheers
+Jon
