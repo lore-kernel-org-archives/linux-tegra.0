@@ -1,129 +1,56 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 3/9] clk: tegra210: Fix naming of MISC registers
-Date: Fri, 8 Jan 2016 13:45:08 -0500
-Message-ID: <1452278714-10751-4-git-send-email-rklein@nvidia.com>
-References: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] regulator: max8973: add THERMAL_OF dependency
+Date: Fri, 08 Jan 2016 21:06:43 +0100
+Message-ID: <7607130.s0M7SSqlJV@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1452278714-10751-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Mike Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: broonie@kernel.org
+Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Some register for PLLM and PLLMB were named MISC0 but according to the
-TRM, they have different names. Sync up the names to make it easier to
-understand which register they are really referring to.
+From 9f5ddfc667eb45dc2c5459e5acc5de45572456cd Mon Sep 17 00:00:00 2001
+From: Arnd Bergmann <arnd@arndb.de>
+Date: Fri, 8 Jan 2016 20:59:29 +0100
+Subject: [PATCH] regulator: max8973: add THERMAL_OF dependency
 
-Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+The max8973 regulator driver has gained thermal support, but it
+now fails to link when the driver is built-in and CONFIG_THERMAL=m:
+
+drivers/built-in.o: In function `max8973_remove':
+console.c:(.text+0x94ac4): undefined reference to `thermal_zone_of_sensor_unregister'
+drivers/built-in.o: In function `max8973_probe':
+console.c:(.text+0x95710): undefined reference to `thermal_zone_of_sensor_register'
+
+This adds a dependency "depends on THERMAL || !THERMAL_OF" to ensure
+that the driver cannot be built-in when THERMAL=m but is forced to
+be a module as well, unless THERMAL_OF is disabled.
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Fixes: 1b7a4c6a9eea ("regulator: max8973: add support for junction thermal warning")
 ---
- drivers/clk/tegra/clk-tegra210.c | 36 ++++++++++++++++++------------------
- 1 file changed, 18 insertions(+), 18 deletions(-)
+I've run into the same problem a couple of times now, with every driver
+that calls thermal_zone_of_sensor_register(). I think we need a better
+solution in general, but this fixes the immediate build error for now.
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index f45c9adf7fb2..2a7faa357130 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -59,7 +59,7 @@
- #define PLLC3_MISC3 0x50c
- 
- #define PLLM_BASE 0x90
--#define PLLM_MISC0 0x9c
-+#define PLLM_MISC2 0x9c
- #define PLLM_MISC1 0x98
- #define PLLP_BASE 0xa0
- #define PLLP_MISC0 0xac
-@@ -99,7 +99,7 @@
- #define PLLC4_MISC0 0x5a8
- #define PLLC4_OUT 0x5e4
- #define PLLMB_BASE 0x5e8
--#define PLLMB_MISC0 0x5ec
-+#define PLLMB_MISC1 0x5ec
- #define PLLA1_BASE 0x6a4
- #define PLLA1_MISC0 0x6a8
- #define PLLA1_MISC1 0x6ac
-@@ -367,12 +367,12 @@ static const char *mux_pllmcp_clkm[] = {
- /* PLLMB */
- #define PLLMB_BASE_LOCK			(1 << 27)
- 
--#define PLLMB_MISC0_LOCK_OVERRIDE	(1 << 18)
--#define PLLMB_MISC0_IDDQ		(1 << 17)
--#define PLLMB_MISC0_LOCK_ENABLE		(1 << 16)
-+#define PLLMB_MISC1_LOCK_OVERRIDE	(1 << 18)
-+#define PLLMB_MISC1_IDDQ		(1 << 17)
-+#define PLLMB_MISC1_LOCK_ENABLE		(1 << 16)
- 
--#define PLLMB_MISC0_DEFAULT_VALUE	0x00030000
--#define PLLMB_MISC0_WRITE_MASK		0x0007ffff
-+#define PLLMB_MISC1_DEFAULT_VALUE	0x00030000
-+#define PLLMB_MISC1_WRITE_MASK		0x0007ffff
- 
- /* PLLP */
- #define PLLP_BASE_OVERRIDE		(1 << 28)
-@@ -914,15 +914,15 @@ void tegra210_pllmb_set_defaults(struct tegra_clk_pll *pllmb)
- 		 * PLL is ON: check if defaults already set, then set those
- 		 * that can be updated in flight.
- 		 */
--		val = PLLMB_MISC0_DEFAULT_VALUE & (~PLLMB_MISC0_IDDQ);
--		mask = PLLMB_MISC0_LOCK_ENABLE | PLLMB_MISC0_LOCK_OVERRIDE;
-+		val = PLLMB_MISC1_DEFAULT_VALUE & (~PLLMB_MISC1_IDDQ);
-+		mask = PLLMB_MISC1_LOCK_ENABLE | PLLMB_MISC1_LOCK_OVERRIDE;
- 		_pll_misc_chk_default(clk_base, pllmb->params, 0, val,
--				~mask & PLLMB_MISC0_WRITE_MASK);
-+				~mask & PLLMB_MISC1_WRITE_MASK);
- 
- 		/* Enable lock detect */
- 		val = readl_relaxed(clk_base + pllmb->params->ext_misc_reg[0]);
- 		val &= ~mask;
--		val |= PLLMB_MISC0_DEFAULT_VALUE & mask;
-+		val |= PLLMB_MISC1_DEFAULT_VALUE & mask;
- 		writel_relaxed(val, clk_base + pllmb->params->ext_misc_reg[0]);
- 		udelay(1);
- 
-@@ -930,7 +930,7 @@ void tegra210_pllmb_set_defaults(struct tegra_clk_pll *pllmb)
- 	}
- 
- 	/* set IDDQ, enable lock detect */
--	writel_relaxed(PLLMB_MISC0_DEFAULT_VALUE,
-+	writel_relaxed(PLLMB_MISC1_DEFAULT_VALUE,
- 			clk_base + pllmb->params->ext_misc_reg[0]);
- 	udelay(1);
- }
-@@ -1557,14 +1557,14 @@ static struct tegra_clk_pll_params pll_m_params = {
- 	.vco_min = 800000000,
- 	.vco_max = 1866000000,
- 	.base_reg = PLLM_BASE,
--	.misc_reg = PLLM_MISC0,
-+	.misc_reg = PLLM_MISC2,
- 	.lock_mask = PLL_BASE_LOCK,
- 	.lock_enable_bit_idx = PLLM_MISC_LOCK_ENABLE,
- 	.lock_delay = 300,
--	.iddq_reg = PLLM_MISC0,
-+	.iddq_reg = PLLM_MISC2,
- 	.iddq_bit_idx = PLLM_IDDQ_BIT,
- 	.max_p = PLL_QLIN_PDIV_MAX,
--	.ext_misc_reg[0] = PLLM_MISC0,
-+	.ext_misc_reg[0] = PLLM_MISC2,
- 	.ext_misc_reg[0] = PLLM_MISC1,
- 	.round_p_to_pdiv = pll_qlin_p_to_pdiv,
- 	.pdiv_tohw = pll_qlin_pdiv_to_hw,
-@@ -1584,13 +1584,13 @@ static struct tegra_clk_pll_params pll_mb_params = {
- 	.vco_min = 800000000,
- 	.vco_max = 1866000000,
- 	.base_reg = PLLMB_BASE,
--	.misc_reg = PLLMB_MISC0,
-+	.misc_reg = PLLMB_MISC1,
- 	.lock_mask = PLL_BASE_LOCK,
- 	.lock_delay = 300,
--	.iddq_reg = PLLMB_MISC0,
-+	.iddq_reg = PLLMB_MISC1,
- 	.iddq_bit_idx = PLLMB_IDDQ_BIT,
- 	.max_p = PLL_QLIN_PDIV_MAX,
--	.ext_misc_reg[0] = PLLMB_MISC0,
-+	.ext_misc_reg[0] = PLLMB_MISC1,
- 	.round_p_to_pdiv = pll_qlin_p_to_pdiv,
- 	.pdiv_tohw = pll_qlin_pdiv_to_hw,
- 	.div_nmp = &pllm_nmp,
--- 
-1.9.1
+Maybe we should replace the "#ifdef CONFIG_THERMAL_OF" with "#if
+IS_REACHABLE(CONFIG_THERMAL) && IS_ENABLED(CONFIG_THERMAL_OF)"?
+The disadvantage of that is that the thermal management would be
+silently disabled rather than cause a link error, and that may also
+not be desired.
+
+diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
+index 8155e80dd3f8..7df9da82f592 100644
+--- a/drivers/regulator/Kconfig
++++ b/drivers/regulator/Kconfig
+@@ -383,6 +383,7 @@ config REGULATOR_MAX8952
+ config REGULATOR_MAX8973
+ 	tristate "Maxim MAX8973 voltage regulator "
+ 	depends on I2C
++	depends on THERMAL || !THERMAL_OF
+ 	select REGMAP_I2C
+ 	help
+ 	  The MAXIM MAX8973 high-efficiency. three phase, DC-DC step-down
+
