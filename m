@@ -1,100 +1,59 @@
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Mark Brown <broonie@kernel.org>
 Subject: Re: next boot: 564 boots: 59 failed, 448 passed with 57 offline
  (next-20160107)
-Date: Thu, 7 Jan 2016 10:57:39 -0800
-Message-ID: <20160107185739.GA29951@kroah.com>
+Date: Fri, 8 Jan 2016 02:47:55 +0000
+Message-ID: <20160108024755.GK6588@sirena.org.uk>
 References: <568e8740.01941c0a.31072.ffffb67b@mx.google.com>
  <20160107155958.GG6588@sirena.org.uk>
  <20160107162810.GA25177@ulmo>
+ <20160107185739.GA29951@kroah.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="g5OIygP5QP1fC/+Y"
 Return-path: <linux-next-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20160107162810.GA25177@ulmo>
+In-Reply-To: <20160107185739.GA29951@kroah.com>
 Sender: linux-next-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Jiri Slaby <jslaby@suse.com>, Arnd Bergmann <arnd@arndb.de>, kernel-build-reports@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Jiri Slaby <jslaby@suse.com>, Arnd Bergmann <arnd@arndb.de>, kernel-build-reports@lists.linaro.org, linux-next@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jan 07, 2016 at 05:28:10PM +0100, Thierry Reding wrote:
-> On Thu, Jan 07, 2016 at 03:59:58PM +0000, Mark Brown wrote:
-> > On Thu, Jan 07, 2016 at 07:41:52AM -0800, kernelci.org bot wrote:
-> > 
-> > > Tree: next
-> > > Branch: local/master
-> > > Git Describe: next-20160107
-> > > Git Commit: 0f023a298a7d2a8e99c54913f7277b3c08c1f5c9
-> > > Git URL: git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-> > > Tested: 95 unique boards, 25 SoC families, 28 builds out of 135
-> > > 
-> > > Boot Failures Detected: https://kernelci.org/boot/?next-20160107&fail
-> > 
-> > For the past couple of days -next has been failing to boot on various
-> > Tegra platforms, there are failures involving either no kernel output or
-> > (with tegra_defconfig) backtraces during CMA allocation from USB, for
-> > example:
-> > 
-> >    http://storage.kernelci.org/next/next-20160107/arm-tegra_defconfig/lab-khilman/boot-tegra30-beaver.html
-> > 
-> > >     multi_v7_defconfig+CONFIG_THUMB2_KERNEL=y:
-> > >         tegra124-jetson-tk1: 2 failed labs
-> > >         tegra30-beaver: 1 failed lab
-> > > 
-> > >     tegra_defconfig:
-> > >         tegra124-jetson-tk1: 2 failed labs
-> > >         tegra124-jetson-tk1_rootfs:nfs: 1 failed lab
-> > >         tegra124-nyan-big: 1 failed lab
-> > >         tegra30-beaver: 1 failed lab
-> > > 
-> > >     multi_v7_defconfig+CONFIG_ARM_LPAE=y:
-> > >         tegra124-jetson-tk1: 1 failed lab
-> > >         tegra124-nyan-big: 1 failed lab
-> > > 
-> > >     multi_v7_defconfig:
-> > >         tegra124-jetson-tk1: 2 failed labs
-> > >         tegra30-beaver: 1 failed lab
-> > > 
-> > >     multi_v7_defconfig+CONFIG_LKDTM=y:
-> > >         tegra124-jetson-tk1: 2 failed labs
-> > >         tegra30-beaver: 1 failed lab
-> > > 
-> > >     multi_v7_defconfig+CONFIG_PROVE_LOCKING=y:
-> > >         tegra124-jetson-tk1: 2 failed labs
-> > >         tegra30-beaver: 1 failed lab
-> > 
-> > I did bisects yesterday but they were a bit inconclusive, showing a
-> > series of skipped commits in the TTY tree as being the culprits:
-> > 
-> > afd7f88f157796e586fc99d62da13a54024e0731 serial: 8250: move of_serial code to 8250 directory
-> > 4e33870b3bb691996354a8f9e8f69458b4fc34d9 serial: of: CONFIG_SERIAL_8250 is always set
-> > d1b5c87fa8058a3f477ae05555916dd1cea934ad serial: remove NWP serial support
-> > 
-> > which seems more than a little surprising and like they might be false
-> > positives, especially in the cases that do produce output.  The errors
-> > today look the same.  I've not investigated further than the bisects.
-> > 
-> > Full bisect logs:
-> > 
-> >  https://ci.linaro.org/view/people/job/tbaker-boot-bisect-bot/140/console
-> >  https://ci.linaro.org/view/people/job/tbaker-boot-bisect-bot/141/console
-> 
-> These should all be fixed by this patch:
-> 
-> 	serial: 8250: of: Fix the driver and actually compile the 8250_of
-> 
-> which can be found in patchwork here:
-> 
-> 	https://patchwork.kernel.org/patch/7883541/
-> 
-> I think this is merely waiting to be picked up into the tty tree. I
-> suspect the reason why there's output in the first place is because
-> of earlyprintk. I've seen recent linux-next work properly, with the
-> serial console hanging at some point (fbcon shows login prompt). If
-> I apply the above patch things are back to normal.
 
-I'll go queue that up later, but how is this suddenly showing up in
--next?  The tty tree has been pretty quiet for a while now..
+--g5OIygP5QP1fC/+Y
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-thanks,
+On Thu, Jan 07, 2016 at 10:57:39AM -0800, Greg Kroah-Hartman wrote:
+> On Thu, Jan 07, 2016 at 05:28:10PM +0100, Thierry Reding wrote:
+> > On Thu, Jan 07, 2016 at 03:59:58PM +0000, Mark Brown wrote:
 
-greg k-h
+> > I think this is merely waiting to be picked up into the tty tree. I
+> > suspect the reason why there's output in the first place is because
+> > of earlyprintk. I've seen recent linux-next work properly, with the
+> > serial console hanging at some point (fbcon shows login prompt). If
+> > I apply the above patch things are back to normal.
+
+> I'll go queue that up later, but how is this suddenly showing up in
+> -next?  The tty tree has been pretty quiet for a while now..
+
+There were some memory management issues which broke booting on almost
+all ARM platforms for most of this week so nothing else was really
+visible and relatively few -next builds over the Christmas vacation (as
+one would expect).
+
+--g5OIygP5QP1fC/+Y
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWjyNaAAoJECTWi3JdVIfQJi8H+wXnxbpktnbMtjaJsgn8QRAo
+vpl14xYflxZclifzKEY2UkzwjHIKQZ2hApVIbr75uRhLsELighaly2QKZw+1Jo0i
+Cmz1hFBgsD8/PKRQ1m474e82+TzJeu+Z3xm0ctIcDA3hv1Qa8+vXFwU1ET83UuwT
+Q/gy2QKHzbOtsoXj7wnrdHf8K168XiPuMbU1g+QQqNd+Z93GWTWrFStKg2oXv/2i
+AWdR5NpR25aT9hutMs1x5yrjOuMtRta42B0HbyN6J2pePjLhI9o2mK+QhW+DAD9q
+KrmdI26iRWSkh6bVA+RlFjPBCo5PgVZ3Uh+ns1sWTIOqRTsikWhf449hfLg1yCk=
+=DjR0
+-----END PGP SIGNATURE-----
+
+--g5OIygP5QP1fC/+Y--
