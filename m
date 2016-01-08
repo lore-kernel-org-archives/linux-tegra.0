@@ -1,7 +1,7 @@
 From: Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 5/9] clk: tegra: pll: Fix potential sleeping-while-atomic
-Date: Fri, 8 Jan 2016 13:45:10 -0500
-Message-ID: <1452278714-10751-6-git-send-email-rklein@nvidia.com>
+Subject: [PATCH 7/9] clk: tegra: pll: Do not disable PLLE when under HW control
+Date: Fri, 8 Jan 2016 13:45:12 -0500
+Message-ID: <1452278714-10751-8-git-send-email-rklein@nvidia.com>
 References: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -9,53 +9,78 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>, Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>, Rhyland Klein <rklein@nvidia.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>, Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Kuo <mkuo@nvidia.com>, Rhyland Klein <rklein@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Andrew Bresticker <abrestic@chromium.org>
+From: Mark Kuo <mkuo@nvidia.com>
 
-Since the ->enable() callback is called with a spinlock held, we cannot
-call potentially blocking functions such as clk_get_rate() or
-clk_get_parent(), so use the unlocked versions instead.
+SW should not disable PLLE if PLLE is already put under HW control.
 
-Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-[rklein: Adapted from ChromeOS patch, removing pllu_enable cleanup as
-it isn't present upstream]
+Signed-off-by: Mark Kuo <mkuo@nvidia.com>
 Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- drivers/clk/tegra/clk-pll.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/tegra/clk-pll.c | 22 +++++++++++++++-------
+ 1 file changed, 15 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index a534bfab30b3..65156486889a 100644
+index 65156486889a..d9c3109b75bd 100644
 --- a/drivers/clk/tegra/clk-pll.c
 +++ b/drivers/clk/tegra/clk-pll.c
-@@ -880,7 +880,7 @@ static int clk_plle_training(struct tegra_clk_pll *pll)
- static int clk_plle_enable(struct clk_hw *hw)
- {
+@@ -2012,7 +2012,7 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
  	struct tegra_clk_pll *pll = to_clk_pll(hw);
--	unsigned long input_rate = clk_get_rate(clk_get_parent(hw->clk));
-+	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
  	struct tegra_clk_pll_freq_table sel;
  	u32 val;
- 	int err;
-@@ -1378,7 +1378,7 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
- 	u32 val;
- 	int ret;
+-	int ret;
++	int ret = 0;
  	unsigned long flags = 0;
--	unsigned long input_rate = clk_get_rate(clk_get_parent(hw->clk));
-+	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+ 	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
  
- 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
- 		return -EINVAL;
-@@ -2014,7 +2014,7 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
- 	u32 val;
- 	int ret;
- 	unsigned long flags = 0;
--	unsigned long input_rate = clk_get_rate(clk_get_parent(hw->clk));
-+	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+@@ -2022,16 +2022,14 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
+ 	if (pll->lock)
+ 		spin_lock_irqsave(pll->lock, flags);
  
- 	if (_get_table_rate(hw, &sel, pll->params->fixed_rate, input_rate))
- 		return -EINVAL;
++	val = pll_readl(pll->params->aux_reg, pll);
++	if (val & PLLE_AUX_SEQ_ENABLE)
++		goto out;
++
+ 	val = pll_readl_base(pll);
+ 	val &= ~BIT(30); /* Disable lock override */
+ 	pll_writel_base(val, pll);
+ 
+-	val = pll_readl(pll->params->aux_reg, pll);
+-	val |= PLLE_AUX_ENABLE_SWCTL;
+-	val &= ~PLLE_AUX_SEQ_ENABLE;
+-	pll_writel(val, pll->params->aux_reg, pll);
+-	udelay(1);
+-
+ 	val = pll_readl_misc(pll);
+ 	val |= PLLE_MISC_LOCK_ENABLE;
+ 	val |= PLLE_MISC_IDDQ_SW_CTRL;
+@@ -2104,15 +2102,25 @@ static void clk_plle_tegra210_disable(struct clk_hw *hw)
+ 	if (pll->lock)
+ 		spin_lock_irqsave(pll->lock, flags);
+ 
++	/* If PLLE HW sequencer is enabled, SW should not disable PLLE */
++	val = pll_readl(pll->params->aux_reg, pll);
++	if (val & PLLE_AUX_SEQ_ENABLE)
++		goto out;
++
+ 	val = pll_readl_base(pll);
+ 	val &= ~PLLE_BASE_ENABLE;
+ 	pll_writel_base(val, pll);
+ 
++	val = pll_readl(pll->params->aux_reg, pll);
++	val |= PLLE_AUX_ENABLE_SWCTL | PLLE_AUX_SS_SWCTL;
++	pll_writel(val, pll->params->aux_reg, pll);
++
+ 	val = pll_readl_misc(pll);
+ 	val |= PLLE_MISC_IDDQ_SW_CTRL | PLLE_MISC_IDDQ_SW_VALUE;
+ 	pll_writel_misc(val, pll);
+ 	udelay(1);
+ 
++out:
+ 	if (pll->lock)
+ 		spin_unlock_irqrestore(pll->lock, flags);
+ }
 -- 
 1.9.1
