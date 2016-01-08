@@ -1,86 +1,49 @@
-From: Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 7/9] clk: tegra: pll: Do not disable PLLE when under HW control
-Date: Fri, 8 Jan 2016 13:37:09 -0500
-Message-ID: <1452278231-9546-8-git-send-email-rklein@nvidia.com>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 6/9] clk: tegra210: fix pllx dyn step calculation
+Date: Fri, 8 Jan 2016 13:37:08 -0500
+Message-ID: <1452278231-9546-7-git-send-email-rklein@nvidia.com>
 References: <1452278231-9546-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1452278231-9546-1-git-send-email-rklein@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc: Mike Turquette <mturquette@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>, Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Kuo <mkuo@nvidia.com>, Rhyland Klein <rklein@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1452278231-9546-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mike Turquette <mturquette-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Mark Kuo <mkuo@nvidia.com>
+The logic for calculating the input rate used when figuring out
+the proper dynamic steps for pllx was incorrect. It is supposed to
+be calculated using parent_rate / m but it was just using the parent
+rate directly, therefore using the wrong step values.
 
-SW should not disable PLLE if PLLE is already put under HW control.
-
-Signed-off-by: Mark Kuo <mkuo@nvidia.com>
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/clk/tegra/clk-pll.c | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+ drivers/clk/tegra/clk-tegra210.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 65156486889a..d9c3109b75bd 100644
---- a/drivers/clk/tegra/clk-pll.c
-+++ b/drivers/clk/tegra/clk-pll.c
-@@ -2012,7 +2012,7 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
- 	struct tegra_clk_pll_freq_table sel;
- 	u32 val;
--	int ret;
-+	int ret = 0;
- 	unsigned long flags = 0;
- 	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 2a7faa357130..5d8fac7052f2 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -780,13 +780,13 @@ static void pllx_get_dyn_steps(struct clk_hw *hw, u32 *step_a, u32 *step_b)
+ {
+ 	unsigned long input_rate;
  
-@@ -2022,16 +2022,14 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
- 
-+	val = pll_readl(pll->params->aux_reg, pll);
-+	if (val & PLLE_AUX_SEQ_ENABLE)
-+		goto out;
+-	if (!IS_ERR_OR_NULL(hw->clk)) {
++	/* cf rate */
++	if (!IS_ERR_OR_NULL(hw->clk))
+ 		input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
+-		/* cf rate */
+-		input_rate /= tegra_pll_get_fixed_mdiv(hw, input_rate);
+-	} else {
++	else
+ 		input_rate = 38400000;
+-	}
 +
- 	val = pll_readl_base(pll);
- 	val &= ~BIT(30); /* Disable lock override */
- 	pll_writel_base(val, pll);
++	input_rate /= tegra_pll_get_fixed_mdiv(hw, input_rate);
  
--	val = pll_readl(pll->params->aux_reg, pll);
--	val |= PLLE_AUX_ENABLE_SWCTL;
--	val &= ~PLLE_AUX_SEQ_ENABLE;
--	pll_writel(val, pll->params->aux_reg, pll);
--	udelay(1);
--
- 	val = pll_readl_misc(pll);
- 	val |= PLLE_MISC_LOCK_ENABLE;
- 	val |= PLLE_MISC_IDDQ_SW_CTRL;
-@@ -2104,15 +2102,25 @@ static void clk_plle_tegra210_disable(struct clk_hw *hw)
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
- 
-+	/* If PLLE HW sequencer is enabled, SW should not disable PLLE */
-+	val = pll_readl(pll->params->aux_reg, pll);
-+	if (val & PLLE_AUX_SEQ_ENABLE)
-+		goto out;
-+
- 	val = pll_readl_base(pll);
- 	val &= ~PLLE_BASE_ENABLE;
- 	pll_writel_base(val, pll);
- 
-+	val = pll_readl(pll->params->aux_reg, pll);
-+	val |= PLLE_AUX_ENABLE_SWCTL | PLLE_AUX_SS_SWCTL;
-+	pll_writel(val, pll->params->aux_reg, pll);
-+
- 	val = pll_readl_misc(pll);
- 	val |= PLLE_MISC_IDDQ_SW_CTRL | PLLE_MISC_IDDQ_SW_VALUE;
- 	pll_writel_misc(val, pll);
- 	udelay(1);
- 
-+out:
- 	if (pll->lock)
- 		spin_unlock_irqrestore(pll->lock, flags);
- }
+ 	switch (input_rate) {
+ 	case 12000000:
 -- 
 1.9.1
