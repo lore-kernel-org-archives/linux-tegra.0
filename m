@@ -1,126 +1,102 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/3] serial: 8250_early: Add support for regshift
-Date: Tue, 12 Jan 2016 18:28:08 +0000
-Message-ID: <569545B8.5000200@nvidia.com>
-References: <1452594809-17972-1-git-send-email-jonathanh@nvidia.com>
- <1452594809-17972-3-git-send-email-jonathanh@nvidia.com>
- <569526B1.3030000@hurleysoftware.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [RFC PATCH V2 3/8] genirq: Add runtime power management support
+ for IRQ chips
+Date: Tue, 12 Jan 2016 20:40:42 +0200
+Message-ID: <569548AA.8090903@ti.com>
+References: <1450349309-8107-1-git-send-email-jonathanh@nvidia.com>
+ <1450349309-8107-4-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <569526B1.3030000-WaGBZJeGNqdsbIuE7sb01tBPR1lH4CV8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter Hurley <peter-WaGBZJeGNqdsbIuE7sb01tBPR1lH4CV8@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: paul.burton-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1450349309-8107-4-git-send-email-jonathanh@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Jiang Liu <jiang.liu@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Soren Brinkmann <soren.brinkmann@xilinx.com>
+Cc: Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Peter,
+Hi Jon,
 
-On 12/01/16 16:15, Peter Hurley wrote:
-> Hi Jon,
+On 12/17/2015 12:48 PM, Jon Hunter wrote:
+> Some IRQ chips may be located in a power domain outside of the CPU
+> subsystem and hence will require device specific runtime power management.
+> In order to support such IRQ chips, add a pointer for a device structure
+> to the irq_chip structure, and if this pointer is populated by the IRQ
+> chip driver and the flag CHIP_HAS_RPM is set, then the pm_runtime_get/put
+> APIs for this chip will be called when an IRQ is requested/freed,
+> respectively.
 > 
-> On 01/12/2016 02:33 AM, Jon Hunter wrote:
->> The 8250 early console assumes a default regshift for each iotype. This
->> does not work for all devices. For example, Tegra UARTs use a iotype of
->> UPIO_MEM with a regshift of 2 because the registers are 32-bit aligned
->> and permit byte access.
->>
->> If the regshift is specified (for example, via device-tree), then use the
->> value provided and otherwise revert to the defaults assumed for each
->> iotype.
->>
->> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->> Please note that today for Tegra, early console is supported by passing
->> the boot parameter "earlycon=uart8250,mmio32,0xXXXXXXXX". While this works
->> and we could use UPIO_MEM32 for tegra, this would mean changing all the
->> DT source files for Tegra to add the "reg-io-width" property. IMO it seems
->> better to make early console for 8250 work in the same way as the normal
->> 8250 console and support regshift.
->>
->>  drivers/tty/serial/8250/8250_early.c | 36 ++++++++++++++++++++++++++----------
->>  1 file changed, 26 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/tty/serial/8250/8250_early.c b/drivers/tty/serial/8250/8250_early.c
->> index af62131af21e..758054957788 100644
->> --- a/drivers/tty/serial/8250/8250_early.c
->> +++ b/drivers/tty/serial/8250/8250_early.c
->> @@ -41,15 +41,15 @@ static unsigned int __init serial8250_early_in(struct uart_port *port, int offse
->>  {
->>  	switch (port->iotype) {
->>  	case UPIO_MEM:
->> -		return readb(port->membase + offset);
->> +		return readb(port->membase + (offset << port->regshift));
->>  	case UPIO_MEM16:
->> -		return readw(port->membase + (offset << 1));
->> +		return readw(port->membase + (offset << port->regshift));
->>  	case UPIO_MEM32:
->> -		return readl(port->membase + (offset << 2));
->> +		return readl(port->membase + (offset << port->regshift));
->>  	case UPIO_MEM32BE:
->> -		return ioread32be(port->membase + (offset << 2));
->> +		return ioread32be(port->membase + (offset << port->regshift));
->>  	case UPIO_PORT:
->> -		return inb(port->iobase + offset);
->> +		return inb(port->iobase + (offset << port->regshift));
->>  	default:
->>  		return 0;
->>  	}
->> @@ -59,19 +59,19 @@ static void __init serial8250_early_out(struct uart_port *port, int offset, int
->>  {
->>  	switch (port->iotype) {
->>  	case UPIO_MEM:
->> -		writeb(value, port->membase + offset);
->> +		writeb(value, port->membase + (offset << port->regshift));
->>  		break;
->>  	case UPIO_MEM16:
->> -		writew(value, port->membase + (offset << 1));
->> +		writew(value, port->membase + (offset << port->regshift));
->>  		break;
->>  	case UPIO_MEM32:
->> -		writel(value, port->membase + (offset << 2));
->> +		writel(value, port->membase + (offset << port->regshift));
->>  		break;
->>  	case UPIO_MEM32BE:
->> -		iowrite32be(value, port->membase + (offset << 2));
->> +		iowrite32be(value, port->membase + (offset << port->regshift));
->>  		break;
->>  	case UPIO_PORT:
->> -		outb(value, port->iobase + offset);
->> +		outb(value, port->iobase + (offset << port->regshift));
->>  		break;
->>  	}
->>  }
->> @@ -128,6 +128,22 @@ int __init early_serial8250_setup(struct earlycon_device *device,
->>  	if (!(device->port.membase || device->port.iobase))
->>  		return -ENODEV;
->>  
->> +	/*
->> +	 * If regshift is not specified, then assume the
->> +	 * following defaults for the below iotypes.
->> +	 */
->> +	if (!device->port.regshift) {
->> +		switch (device->port.iotype) {
->> +		case UPIO_MEM16:
->> +			device->port.regshift = 1;
->> +			break;
->> +		case UPIO_MEM32:
->> +		case UPIO_MEM32BE:
->> +			device->port.regshift = 2;
->> +			break;
->> +		}
->> +	}
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+
+I've tried to test these patches with OMAP GPIO and I see it works, in general.
+"In general" - because OMAP GPIO has some code which is expected to be used
+very late during suspend or when entering deep CPUIdle states, so I can't use
+this approach "out-of-the-box" until i find the way to sort it out.
+
+Hope some one else can try to test it with GPIO. Soren?
+
+> ---
+>   include/linux/irq.h    |  4 ++++
+>   kernel/irq/internals.h | 24 ++++++++++++++++++++++++
+>   kernel/irq/manage.c    |  7 +++++++
+>   3 files changed, 35 insertions(+)
 > 
-> Since the earlycon command line parsing sets port->regshift, the only possible
-> path requiring defaults would be DT, but 8250 DT should not have default
-> regshift based on the iotype; the 8250 port driver doesn't.
+> diff --git a/include/linux/irq.h b/include/linux/irq.h
+> index 3c1c96786248..7a61a7f76177 100644
+> --- a/include/linux/irq.h
+> +++ b/include/linux/irq.h
 
-Ah, I see, I missed that. However, for command line parsing, I only see
-regshift being set to 2 for mmio32 (and I guess it will be 0 otherwise).
-Is mmio16 not supported for command line parsing?
+...
 
-Ok, I will drop the above hunk.
+>   
+> diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+> index 2a429b061171..8a96e4f1e985 100644
+> --- a/kernel/irq/manage.c
+> +++ b/kernel/irq/manage.c
+> @@ -1116,6 +1116,10 @@ __setup_irq(unsigned int irq, struct irq_desc *desc, struct irqaction *new)
+>   	if (!try_module_get(desc->owner))
+>   		return -ENODEV;
+>   
+> +	ret = chip_pm_get(desc);
+> +	if (ret < 0)
+> +		return ret;
+> +
+>   	new->irq = irq;
+>   
+>   	/*
+> @@ -1400,6 +1404,7 @@ out_thread:
+>   		put_task_struct(t);
+>   	}
+>   out_mput:
+> +	chip_pm_put(desc);
+>   	module_put(desc->owner);
+>   	return ret;
+>   }
 
-Cheers
-Jon
+Here I still think, that for this solution to be complete It might be good to add additional
+API to request/free chained IRQs. This is not usual case for GPIO drivers,
+but with AGIC it seems possible. If no objection I can do rfc.
+
+
+> @@ -1513,6 +1518,7 @@ static struct irqaction *__free_irq(unsigned int irq, void *dev_id)
+>   		}
+>   	}
+>   
+> +	chip_pm_put(desc);
+>   	module_put(desc->owner);
+>   	kfree(action->secondary);
+>   	return action;
+> @@ -1799,6 +1805,7 @@ static struct irqaction *__free_percpu_irq(unsigned int irq, void __percpu *dev_
+>   
+>   	unregister_handler_proc(irq, action);
+>   
+> +	chip_pm_put(desc);
+>   	module_put(desc->owner);
+>   	return action;
+>   
+> 
+
+
+-- 
+regards,
+-grygorii
