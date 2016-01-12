@@ -1,122 +1,110 @@
-From: Peter Hurley <peter-WaGBZJeGNqdsbIuE7sb01tBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH 2/3] serial: 8250_early: Add support for regshift
-Date: Tue, 12 Jan 2016 08:15:45 -0800
-Message-ID: <569526B1.3030000@hurleysoftware.com>
-References: <1452594809-17972-1-git-send-email-jonathanh@nvidia.com>
- <1452594809-17972-3-git-send-email-jonathanh@nvidia.com>
+From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Subject: Re: [GIT PULL 3/5] ARM: tegra: Core SoC changes for v4.5-rc1
+Date: Tue, 12 Jan 2016 10:09:28 -0800
+Message-ID: <20160112180928.GA30090@localhost>
+References: <1450356639-7758-1-git-send-email-thierry.reding@gmail.com>
+ <1450356639-7758-3-git-send-email-thierry.reding@gmail.com>
+ <20151222195446.GH30172@localhost>
+ <20151230154647.GB7085@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1452594809-17972-3-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20151230154647.GB7085@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: paul.burton-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Jon,
+On Wed, Dec 30, 2015 at 04:46:47PM +0100, Thierry Reding wrote:
+> On Tue, Dec 22, 2015 at 11:54:46AM -0800, Olof Johansson wrote:
+> > On Thu, Dec 17, 2015 at 01:50:37PM +0100, Thierry Reding wrote:
+> > > Hi ARM SoC maintainers,
+> > > 
+> > > The following changes since commit 8005c49d9aea74d382f474ce11afbbc7d7130bec:
+> > > 
+> > >   Linux 4.4-rc1 (2015-11-15 17:00:27 -0800)
+> > > 
+> > > are available in the git repository at:
+> > > 
+> > >   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.5-soc
+> > > 
+> > > for you to fetch changes up to a262e87ff354f12447bb6268bd63edf7ba1c20e0:
+> > > 
+> > >   ARM: tegra: select USB_ULPI from EHCI rather than platform (2015-11-24 16:47:26 +0100)
+> > > 
+> > > Thanks,
+> > > Thierry
+> > > 
+> > > ----------------------------------------------------------------
+> > > ARM: tegra: Core SoC changes for v4.5-rc1
+> > > 
+> > > The big thing here is Tegra210 support, which is really only the Kconfig
+> > > symbol. Other than that there's a few miscellaneous fixes.
+> > 
+> > Hi,
+> > 
+> > We merge arch/arm and arch/arm64 and drivers/bus contents through separate
+> > branches, so having them come in from you in one combined branch isn't working
+> > very well.
+> > 
+> > If you don't have any downstream users of this I can just cherry-pick them into
+> > the appropriate branches, but if you do, please send separate requests for
+> > those three categories.
+> 
+> I don't think that'll work. Or at least, the outcome will be almost the
+> same because of interdependencies between the branches.
+> 
+> For the patches in this branch:
+> 
+>       soc/tegra: Provide per-SoC Kconfig symbols
+>       soc/tegra: Add Tegra210 support
+> 
+> These are dependencies for the following:
+> 
+>       ARM: tegra: select USB_ULPI from EHCI rather than platform
+> 
+> Whereas these two:
+> 
+>       ARM: tegra: Ensure entire dcache is flushed on entering LP0/1
+>       amba: Hide TEGRA_AHB symbol
+> 
+> can be applied in any order. So I could send you a pull request with
+> only the drivers/bus patch, and another one with the dcache flush fix.
+> 
+> But that's about it. The Kconfig changes are dependent on each other,
+> hence will need to be brought in via a common ancestor, unless you want
+> to resolve a rather annoying conflict in arm-soc.
 
-On 01/12/2016 02:33 AM, Jon Hunter wrote:
-> The 8250 early console assumes a default regshift for each iotype. This
-> does not work for all devices. For example, Tegra UARTs use a iotype of
-> UPIO_MEM with a regshift of 2 because the registers are 32-bit aligned
-> and permit byte access.
-> 
-> If the regshift is specified (for example, via device-tree), then use the
-> value provided and otherwise revert to the defaults assumed for each
-> iotype.
-> 
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Please note that today for Tegra, early console is supported by passing
-> the boot parameter "earlycon=uart8250,mmio32,0xXXXXXXXX". While this works
-> and we could use UPIO_MEM32 for tegra, this would mean changing all the
-> DT source files for Tegra to add the "reg-io-width" property. IMO it seems
-> better to make early console for 8250 work in the same way as the normal
-> 8250 console and support regshift.
-> 
->  drivers/tty/serial/8250/8250_early.c | 36 ++++++++++++++++++++++++++----------
->  1 file changed, 26 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/8250/8250_early.c b/drivers/tty/serial/8250/8250_early.c
-> index af62131af21e..758054957788 100644
-> --- a/drivers/tty/serial/8250/8250_early.c
-> +++ b/drivers/tty/serial/8250/8250_early.c
-> @@ -41,15 +41,15 @@ static unsigned int __init serial8250_early_in(struct uart_port *port, int offse
->  {
->  	switch (port->iotype) {
->  	case UPIO_MEM:
-> -		return readb(port->membase + offset);
-> +		return readb(port->membase + (offset << port->regshift));
->  	case UPIO_MEM16:
-> -		return readw(port->membase + (offset << 1));
-> +		return readw(port->membase + (offset << port->regshift));
->  	case UPIO_MEM32:
-> -		return readl(port->membase + (offset << 2));
-> +		return readl(port->membase + (offset << port->regshift));
->  	case UPIO_MEM32BE:
-> -		return ioread32be(port->membase + (offset << 2));
-> +		return ioread32be(port->membase + (offset << port->regshift));
->  	case UPIO_PORT:
-> -		return inb(port->iobase + offset);
-> +		return inb(port->iobase + (offset << port->regshift));
->  	default:
->  		return 0;
->  	}
-> @@ -59,19 +59,19 @@ static void __init serial8250_early_out(struct uart_port *port, int offset, int
->  {
->  	switch (port->iotype) {
->  	case UPIO_MEM:
-> -		writeb(value, port->membase + offset);
-> +		writeb(value, port->membase + (offset << port->regshift));
->  		break;
->  	case UPIO_MEM16:
-> -		writew(value, port->membase + (offset << 1));
-> +		writew(value, port->membase + (offset << port->regshift));
->  		break;
->  	case UPIO_MEM32:
-> -		writel(value, port->membase + (offset << 2));
-> +		writel(value, port->membase + (offset << port->regshift));
->  		break;
->  	case UPIO_MEM32BE:
-> -		iowrite32be(value, port->membase + (offset << 2));
-> +		iowrite32be(value, port->membase + (offset << port->regshift));
->  		break;
->  	case UPIO_PORT:
-> -		outb(value, port->iobase + offset);
-> +		outb(value, port->iobase + (offset << port->regshift));
->  		break;
->  	}
->  }
-> @@ -128,6 +128,22 @@ int __init early_serial8250_setup(struct earlycon_device *device,
->  	if (!(device->port.membase || device->port.iobase))
->  		return -ENODEV;
->  
-> +	/*
-> +	 * If regshift is not specified, then assume the
-> +	 * following defaults for the below iotypes.
-> +	 */
-> +	if (!device->port.regshift) {
-> +		switch (device->port.iotype) {
-> +		case UPIO_MEM16:
-> +			device->port.regshift = 1;
-> +			break;
-> +		case UPIO_MEM32:
-> +		case UPIO_MEM32BE:
-> +			device->port.regshift = 2;
-> +			break;
-> +		}
-> +	}
+Doing the refactoring/cleanup in a separate new branch that both of them build
+on wouldn't be a bad way to do it in the future. That way dependences would
+still flow in the direction we're used to (cleanups/refactor -> soc -> driver
+code).
 
-Since the earlycon command line parsing sets port->regshift, the only possible
-path requiring defaults would be DT, but 8250 DT should not have default
-regshift based on the iotype; the 8250 port driver doesn't.
+> As for the for-4.5/dt branch that has a dependency on both the
+> for-4.5/clk branch for a DT include file and on the for-4.5/soc branch
+> for the new ARCH_TEGRA_210_SOC Kconfig symbol. I suppose it wouldn't be
+> strictly necessary to pull in the branch because it is a ("soft") make
+> dependency and the Tegra210 DTBs will simply be ignored unless the
+> for-4.5/soc branch is also merged. That's slightly confusing because
+> then there's a branch with DTS files that can't be built.
 
-Regards,
-Peter Hurley
+The sorting of 64-bit patches into separate branches is sort of new, in the
+past we grouped all 64-bit contributions in one branch. So yeah there would be
+some dependencies here. I'm personally OK with things not being buildable at
+first (or, having nothing to build in the case where SoC is merged first).
 
-> +
->  	if (!device->baud) {
->  		struct uart_port *port = &device->port;
->  		unsigned int ier;
-> 
+> Anyway, let me know what you prefer and I'm sure I can work something
+> out that will suite you.
+
+I think the above could be worth considering for now.
+
+Given that the code has been in -next through your own tree, and we're
+at a very late phase in the release cycle (and I've owed you this answer
+for a while, delayed due to travel and being sick), I'll merge in all
+the tegra contents into one late/tegra branch that we'll aim to send in
+during this merge window. We've occasionally done that on other platforms
+as well when dependencies have been messy.
+
+
+-Olof
