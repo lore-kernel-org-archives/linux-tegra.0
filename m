@@ -1,58 +1,60 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] regulator: max8973: add THERMAL_OF dependency
-Date: Mon, 11 Jan 2016 16:47:44 +0000
-Message-ID: <20160111164744.GM6588@sirena.org.uk>
-References: <7607130.s0M7SSqlJV@wuerfel>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v4.4
+Date: Tue, 12 Jan 2016 09:23:57 +0000
+Message-ID: <5694C62D.7040507@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="onwk0SivC/dtQkFp"
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <7607130.s0M7SSqlJV@wuerfel>
-Sender: linux-pm-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>, Eduardo Valentin <edubezval@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Here are some basic Tegra test results for Linux v4.4.
+Logs and other details at:
 
---onwk0SivC/dtQkFp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+    https://nvtb.github.io//linux/test_v4.4/20160110153104/
 
-On Fri, Jan 08, 2016 at 09:06:43PM +0100, Arnd Bergmann wrote:
 
-> I've run into the same problem a couple of times now, with every driver
-> that calls thermal_zone_of_sensor_register(). I think we need a better
-> solution in general, but this fixes the immediate build error for now.
+Test summary
+------------
 
-Yes, this doesn't feel very clever especially in this use case where
-we're mostly providing data into the thermal framework and not really
-relying on it for anything.
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
 
-> Maybe we should replace the "#ifdef CONFIG_THERMAL_OF" with "#if
-> IS_REACHABLE(CONFIG_THERMAL) && IS_ENABLED(CONFIG_THERMAL_OF)"?
-> The disadvantage of that is that the thermal management would be
-> silently disabled rather than cause a link error, and that may also
-> not be desired.
+Build: Image:
+    Pass: ( 1/ 1): defconfig
 
-Perhaps we should ensure that at least some glue code is bool rather
-than modular?  That's got downsides too, it increases the amount of code
-that gets built into the kernel but perhaps that's an acceptable
-tradeoff here.
+Boot to userspace: defconfig:
+    Pass: ( 1/ 1): qemu-vexpress64
 
---onwk0SivC/dtQkFp
-Content-Type: application/pgp-signature; name="signature.asc"
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Boot to userspace: tegra_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
 
-iQEcBAEBCAAGBQJWk9yvAAoJECTWi3JdVIfQbgsH/RAvyucImi+oTbbwIJ/kXNpz
-zr8fDlaHs92d79F4xrghoGXcWXkbhozRaNQBXOIC74163Crn25vla/3JBk0jjCDJ
-AnGSs+t6/6Q7YzNmPnzlvTe+ZGwZf2bF/n1Bm4svgt/2Qtuy9/6AQBK2AGtFcAK3
-SU7gkL/27VRAfNkK52hOZ18ms2F8Ga8fLBr12kuIOVUnQbtFOd5gYEiIc6buv1ty
-izc+jw/MuzxEhnIVeHQC5ZBYBibTmmEmBWaE8UGzTH7didZl6mOfYdwus6iqoTfP
-YBUWf6HxaKS6qyHwtPbUv6wY+aKb3t1EMu0L+1FWeZk8VBKOrJbR5Oho8ghV+5I=
-=18Bt
------END PGP SIGNATURE-----
 
---onwk0SivC/dtQkFp--
+vmlinux object size
+(delta in bytes from test_v4.4-rc8 (168309855a7d1e16db751e9c647119fe2d2dc878)):
+   text     data      bss    total  kernel
+    -12        0        0      -12  defconfig
+      0        0        0        0  multi_v7_defconfig
+   +200      -64        0     +136  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.4-rc8 (168309855a7d1e16db751e9c647119fe2d2dc878))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+        .        .        .        .      qemu-vexpress64            defconfig           __internal
+        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
