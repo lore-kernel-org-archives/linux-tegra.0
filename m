@@ -1,7 +1,7 @@
 From: Wei Ni <wni@nvidia.com>
-Subject: [PATCH V1 07/10] thermal: tegra: add thermtrip function
-Date: Wed, 13 Jan 2016 16:00:33 +0800
-Message-ID: <1452672033-432-1-git-send-email-wni@nvidia.com>
+Subject: [PATCH V1 08/10] thermal: tegra: add PM support
+Date: Wed, 13 Jan 2016 16:00:43 +0800
+Message-ID: <1452672043-475-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
@@ -10,492 +10,305 @@ To: rui.zhang@intel.com, mikko.perttunen@kapsi.fi, swarren@wwwdotorg.org
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Wei Ni <wni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add support for hardware critical thermal limits to the SOC_THERM
-driver.  This is implemented outside the Linux thermal framework.
-If these limits are breached, the chip will reset, and if appropriately
-configured, will turn off the PMIC.
-
-This support is critical for safe usage of the chip.
+Add suspend/resume function in soctherm driver.
+And enable it for Tegra124 and Tegra210.
 
 Signed-off-by: Wei Ni <wni@nvidia.com>
 ---
- drivers/thermal/tegra/tegra124_soctherm.c |  27 ++++
- drivers/thermal/tegra/tegra210_soctherm.c |  27 ++++
- drivers/thermal/tegra/tegra_soctherm.c    | 256 ++++++++++++++++++++++++++++++
- drivers/thermal/tegra/tegra_soctherm.h    |   7 +
- 4 files changed, 317 insertions(+)
+ drivers/thermal/tegra/tegra124_soctherm.c |   9 ++
+ drivers/thermal/tegra/tegra210_soctherm.c |   9 ++
+ drivers/thermal/tegra/tegra_soctherm.c    | 154 +++++++++++++++++++++---------
+ drivers/thermal/tegra/tegra_soctherm.h    |   5 +
+ 4 files changed, 130 insertions(+), 47 deletions(-)
 
 diff --git a/drivers/thermal/tegra/tegra124_soctherm.c b/drivers/thermal/tegra/tegra124_soctherm.c
-index 56bf26d58a04..13d7f4e3a3d7 100644
+index 13d7f4e3a3d7..04cb419dbabc 100644
 --- a/drivers/thermal/tegra/tegra124_soctherm.c
 +++ b/drivers/thermal/tegra/tegra124_soctherm.c
-@@ -19,6 +19,17 @@
+@@ -205,6 +205,14 @@ static const struct of_device_id tegra124_soctherm_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, tegra_soctherm_of_match);
  
- #include "tegra_soctherm.h"
- 
-+#define TEGRA124_THERMTRIP_ANY_EN_MASK		(0x1 << 28)
-+#define TEGRA124_THERMTRIP_MEM_EN_MASK		(0x1 << 27)
-+#define TEGRA124_THERMTRIP_GPU_EN_MASK		(0x1 << 26)
-+#define TEGRA124_THERMTRIP_CPU_EN_MASK		(0x1 << 25)
-+#define TEGRA124_THERMTRIP_TSENSE_EN_MASK	(0x1 << 24)
-+#define TEGRA124_THERMTRIP_GPUMEM_THRESH_MASK	(0xff << 16)
-+#define TEGRA124_THERMTRIP_CPU_THRESH_MASK	(0xff << 8)
-+#define TEGRA124_THERMTRIP_TSENSE_THRESH_MASK	0xff
++#ifdef CONFIG_PM_SLEEP
++static SIMPLE_DEV_PM_OPS(tegra124_soctherm_pm,
++			 soctherm_suspend, soctherm_resume);
++#define TEGRA124_SOC_THERM_PM      (&tegra124_soctherm_pm)
++#else
++#define TEGRA124_SOC_THERM_PM      NULL
++#endif
 +
-+#define TEGRA124_THRESH_GRAIN			1000
-+
- static const struct tegra_tsensor_configuration t124_tsensor_config = {
- 	.tall = 16300,
- 	.tiddq_en = 1,
-@@ -37,6 +48,10 @@ static const struct tegra_tsensor_group tegra124_tsensor_group_cpu = {
- 	.pdiv_mask			= SENSOR_PDIV_CPU_MASK,
- 	.pllx_hotspot_diff		= 10,
- 	.pllx_hotspot_mask		= SENSOR_HOTSPOT_CPU_MASK,
-+	.thermtrip_any_en_mask		= TEGRA124_THERMTRIP_ANY_EN_MASK,
-+	.thermtrip_enable_mask		= TEGRA124_THERMTRIP_CPU_EN_MASK,
-+	.thermtrip_threshold_mask	= TEGRA124_THERMTRIP_CPU_THRESH_MASK,
-+	.thresh_grain			= TEGRA124_THRESH_GRAIN,
+ static int tegra124_soctherm_probe(struct platform_device *pdev)
+ {
+ 	return tegra_soctherm_probe(pdev,
+@@ -218,6 +226,7 @@ static struct platform_driver tegra124_soctherm_driver = {
+ 	.remove = tegra_soctherm_remove,
+ 	.driver = {
+ 		.name = "tegra124_soctherm",
++		.pm = TEGRA124_SOC_THERM_PM,
+ 		.of_match_table = tegra124_soctherm_of_match,
+ 	},
  };
- 
- static const struct tegra_tsensor_group tegra124_tsensor_group_gpu = {
-@@ -49,6 +64,10 @@ static const struct tegra_tsensor_group tegra124_tsensor_group_gpu = {
- 	.pdiv_mask			= SENSOR_PDIV_GPU_MASK,
- 	.pllx_hotspot_diff		= 5,
- 	.pllx_hotspot_mask		= SENSOR_HOTSPOT_GPU_MASK,
-+	.thermtrip_any_en_mask		= TEGRA124_THERMTRIP_ANY_EN_MASK,
-+	.thermtrip_enable_mask		= TEGRA124_THERMTRIP_GPU_EN_MASK,
-+	.thermtrip_threshold_mask	= TEGRA124_THERMTRIP_GPUMEM_THRESH_MASK,
-+	.thresh_grain			= TEGRA124_THRESH_GRAIN,
- };
- 
- static const struct tegra_tsensor_group tegra124_tsensor_group_pll = {
-@@ -59,6 +78,10 @@ static const struct tegra_tsensor_group tegra124_tsensor_group_pll = {
- 	.pdiv				= 8,
- 	.pdiv_ate			= 8,
- 	.pdiv_mask			= SENSOR_PDIV_PLLX_MASK,
-+	.thermtrip_any_en_mask		= TEGRA124_THERMTRIP_ANY_EN_MASK,
-+	.thermtrip_enable_mask		= TEGRA124_THERMTRIP_TSENSE_EN_MASK,
-+	.thermtrip_threshold_mask	= TEGRA124_THERMTRIP_TSENSE_THRESH_MASK,
-+	.thresh_grain			= TEGRA124_THRESH_GRAIN,
- };
- 
- static const struct tegra_tsensor_group tegra124_tsensor_group_mem = {
-@@ -71,6 +94,10 @@ static const struct tegra_tsensor_group tegra124_tsensor_group_mem = {
- 	.pdiv_mask			= SENSOR_PDIV_MEM_MASK,
- 	.pllx_hotspot_diff		= 0,
- 	.pllx_hotspot_mask		= SENSOR_HOTSPOT_MEM_MASK,
-+	.thermtrip_any_en_mask		= TEGRA124_THERMTRIP_ANY_EN_MASK,
-+	.thermtrip_enable_mask		= TEGRA124_THERMTRIP_MEM_EN_MASK,
-+	.thermtrip_threshold_mask	= TEGRA124_THERMTRIP_GPUMEM_THRESH_MASK,
-+	.thresh_grain			= TEGRA124_THRESH_GRAIN,
- };
- 
- static const struct tegra_tsensor_group *
 diff --git a/drivers/thermal/tegra/tegra210_soctherm.c b/drivers/thermal/tegra/tegra210_soctherm.c
-index 70c748c6bed6..91f48990dd8e 100644
+index 91f48990dd8e..551faa3f7a6c 100644
 --- a/drivers/thermal/tegra/tegra210_soctherm.c
 +++ b/drivers/thermal/tegra/tegra210_soctherm.c
-@@ -20,6 +20,17 @@
+@@ -208,6 +208,14 @@ MODULE_DEVICE_TABLE(of, tegra_soctherm_of_match);
  
- #include "tegra_soctherm.h"
+ #define TEGRA210_FUSE_CP_REV 0x90
  
-+#define TEGRA210_THERMTRIP_ANY_EN_MASK		(0x1 << 31)
-+#define TEGRA210_THERMTRIP_MEM_EN_MASK		(0x1 << 30)
-+#define TEGRA210_THERMTRIP_GPU_EN_MASK		(0x1 << 29)
-+#define TEGRA210_THERMTRIP_CPU_EN_MASK		(0x1 << 28)
-+#define TEGRA210_THERMTRIP_TSENSE_EN_MASK	(0x1 << 27)
-+#define TEGRA210_THERMTRIP_GPUMEM_THRESH_MASK	(0x1ff << 18)
-+#define TEGRA210_THERMTRIP_CPU_THRESH_MASK	(0x1ff << 9)
-+#define TEGRA210_THERMTRIP_TSENSE_THRESH_MASK	0x1ff
++#ifdef CONFIG_PM_SLEEP
++static SIMPLE_DEV_PM_OPS(tegra210_soctherm_pm,
++			 soctherm_suspend, soctherm_resume);
++#define TEGRA210_SOC_THERM_PM      (&tegra210_soctherm_pm)
++#else
++#define TEGRA210_SOC_THERM_PM      NULL
++#endif
 +
-+#define TEGRA210_THRESH_GRAIN			500
-+
- static const struct tegra_tsensor_configuration tegra210_tsensor_config = {
- 	.tall = 16300,
- 	.tiddq_en = 1,
-@@ -38,6 +49,10 @@ static const struct tegra_tsensor_group tegra210_tsensor_group_cpu = {
- 	.pdiv_mask			= SENSOR_PDIV_CPU_MASK,
- 	.pllx_hotspot_diff		= 10,
- 	.pllx_hotspot_mask		= SENSOR_HOTSPOT_CPU_MASK,
-+	.thermtrip_any_en_mask		= TEGRA210_THERMTRIP_ANY_EN_MASK,
-+	.thermtrip_enable_mask		= TEGRA210_THERMTRIP_CPU_EN_MASK,
-+	.thermtrip_threshold_mask	= TEGRA210_THERMTRIP_CPU_THRESH_MASK,
-+	.thresh_grain			= TEGRA210_THRESH_GRAIN,
+ static int tegra210_soctherm_probe(struct platform_device *pdev)
+ {
+ 	u32 rev;
+@@ -227,6 +235,7 @@ static struct platform_driver tegra210_soctherm_driver = {
+ 	.driver = {
+ 		.name = "tegra210_soctherm",
+ 		.owner = THIS_MODULE,
++		.pm = TEGRA210_SOC_THERM_PM,
+ 		.of_match_table = tegra210_soctherm_of_match,
+ 	},
  };
- 
- static const struct tegra_tsensor_group tegra210_tsensor_group_gpu = {
-@@ -50,6 +65,10 @@ static const struct tegra_tsensor_group tegra210_tsensor_group_gpu = {
- 	.pdiv_mask			= SENSOR_PDIV_GPU_MASK,
- 	.pllx_hotspot_diff		= 5,
- 	.pllx_hotspot_mask		= SENSOR_HOTSPOT_GPU_MASK,
-+	.thermtrip_any_en_mask		= TEGRA210_THERMTRIP_ANY_EN_MASK,
-+	.thermtrip_enable_mask		= TEGRA210_THERMTRIP_GPU_EN_MASK,
-+	.thermtrip_threshold_mask	= TEGRA210_THERMTRIP_GPUMEM_THRESH_MASK,
-+	.thresh_grain			= TEGRA210_THRESH_GRAIN,
- };
- 
- static const struct tegra_tsensor_group tegra210_tsensor_group_pll = {
-@@ -60,6 +79,10 @@ static const struct tegra_tsensor_group tegra210_tsensor_group_pll = {
- 	.pdiv				= 8,
- 	.pdiv_ate			= 8,
- 	.pdiv_mask			= SENSOR_PDIV_PLLX_MASK,
-+	.thermtrip_any_en_mask		= TEGRA210_THERMTRIP_ANY_EN_MASK,
-+	.thermtrip_enable_mask		= TEGRA210_THERMTRIP_TSENSE_EN_MASK,
-+	.thermtrip_threshold_mask	= TEGRA210_THERMTRIP_TSENSE_THRESH_MASK,
-+	.thresh_grain			= TEGRA210_THRESH_GRAIN,
- };
- 
- static const struct tegra_tsensor_group tegra210_tsensor_group_mem = {
-@@ -72,6 +95,10 @@ static const struct tegra_tsensor_group tegra210_tsensor_group_mem = {
- 	.pdiv_mask			= SENSOR_PDIV_MEM_MASK,
- 	.pllx_hotspot_diff		= 0,
- 	.pllx_hotspot_mask		= SENSOR_HOTSPOT_MEM_MASK,
-+	.thermtrip_any_en_mask		= TEGRA210_THERMTRIP_ANY_EN_MASK,
-+	.thermtrip_enable_mask		= TEGRA210_THERMTRIP_MEM_EN_MASK,
-+	.thermtrip_threshold_mask	= TEGRA210_THERMTRIP_GPUMEM_THRESH_MASK,
-+	.thresh_grain			= TEGRA210_THRESH_GRAIN,
- };
- 
- static const struct tegra_tsensor_group *
 diff --git a/drivers/thermal/tegra/tegra_soctherm.c b/drivers/thermal/tegra/tegra_soctherm.c
-index c28d0a2a3ff9..6fd72ceb4865 100644
+index 6fd72ceb4865..5b43f1413b35 100644
 --- a/drivers/thermal/tegra/tegra_soctherm.c
 +++ b/drivers/thermal/tegra/tegra_soctherm.c
-@@ -73,6 +73,9 @@
- #define REG_SET_MASK(r, m, v)	(((r) & ~(m)) | \
- 				 (((v) & (m >> (ffs(m) - 1))) << (ffs(m) - 1)))
- 
-+static const int min_low_temp = -127000;
-+static const int max_high_temp = 127000;
-+
- struct tegra_thermctl_zone {
- 	void __iomem *reg;
- 	u32 mask;
-@@ -86,6 +89,7 @@ struct tegra_soctherm {
- 
- 	struct thermal_zone_device *thermctl_tzs[TEGRA124_SOCTHERM_SENSOR_NUM];
- 	struct tegra_tsensor *tsensors;
-+	const struct tegra_tsensor_group **sensor_groups;
+@@ -92,17 +92,11 @@ struct tegra_soctherm {
+ 	const struct tegra_tsensor_group **sensor_groups;
  };
  
- static int enable_tsensor(struct tegra_soctherm *tegra,
-@@ -151,12 +155,245 @@ static const struct thermal_zone_of_device_ops tegra_of_thermal_ops = {
- 	.get_temp = tegra_thermctl_get_temp,
- };
- 
-+/**
-+ * enforce_temp_range() - check and enforce temperature range [min, max]
-+ * @trip_temp: the trip temperature to check
-+ *
-+ * Checks and enforces the permitted temperature range that SOC_THERM
-+ * HW can support This is
-+ * done while taking care of precision.
-+ *
-+ * Return: The precision adjusted capped temperature in millicelsius.
-+ */
-+static int enforce_temp_range(struct device *dev, int trip_temp)
-+{
-+	int temp;
-+
-+	temp = clamp_val(trip_temp, min_low_temp, max_high_temp);
-+	if (temp != trip_temp)
-+		dev_info(dev, "soctherm: trip temp %d forced to %d\n",
-+			 trip_temp, temp);
-+	return temp;
-+}
-+
-+/**
-+ * thermtrip_program() - Configures the hardware to shut down the
-+ * system if a given sensor group reaches a given temperature
-+ * @dev: ptr to the struct device for the SOC_THERM IP block
-+ * @sg: pointer to the sensor group to set the thermtrip temperature for
-+ * @trip_temp: the temperature in millicelsius to trigger the thermal trip at
-+ *
-+ * Sets the thermal trip threshold of the given sensor group to be the
-+ * @trip_temp.  If this threshold is crossed, the hardware will shut
-+ * down.
-+ *
-+ * Note that, although @trip_temp is specified in millicelsius, the
-+ * hardware is programmed in degrees Celsius.
-+ *
-+ * Return: 0 upon success, or %-EINVAL upon failure.
-+ */
-+static int thermtrip_program(struct device *dev,
-+			     const struct tegra_tsensor_group *sg,
-+			     int trip_temp)
-+{
-+	struct tegra_soctherm *ts = dev_get_drvdata(dev);
-+	int temp;
-+	u32 r;
-+
-+	if (!dev || !sg)
-+		return -EINVAL;
-+
-+	if (!sg->thermtrip_threshold_mask)
-+		return -EINVAL;
-+
-+	temp = enforce_temp_range(dev, trip_temp) / sg->thresh_grain;
-+
-+	r = readl(ts->regs + THERMCTL_THERMTRIP_CTL);
-+	r = REG_SET_MASK(r, sg->thermtrip_threshold_mask, temp);
-+	r = REG_SET_MASK(r, sg->thermtrip_enable_mask, 1);
-+	r = REG_SET_MASK(r, sg->thermtrip_any_en_mask, 0);
-+	writel(r, ts->regs + THERMCTL_THERMTRIP_CTL);
-+
-+	return 0;
-+}
-+
-+/**
-+ * tegra_soctherm_thermtrip() - configure thermal shutdown from DT data
-+ * @dev: struct device * of the SOC_THERM instance
-+ *
-+ * Configure the SOC_THERM "THERMTRIP" feature, using data from DT.
-+ * After it's been configured, THERMTRIP will take action when the
-+ * configured SoC thermal sensor group reaches a certain temperature.
-+ *
-+ * SOC_THERM registers are in the VDD_SOC voltage domain.  This means
-+ * that SOC_THERM THERMTRIP programming does not survive an LP0/SC7
-+ * transition, unless this driver has been modified to save those
-+ * registers before entering SC7 and restore them upon exiting SC7.
-+ *
-+ * Return: 0 upon success, or a negative error code on failure.
-+ * "Success" does not mean that thermtrip was enabled; it could also
-+ * mean that no "thermtrip" node was found in DT.  THERMTRIP has been
-+ * enabled successfully when a message similar to this one appears on
-+ * the serial console: "thermtrip: will shut down when sensor group
-+ * XXX reaches YYYYYY millidegrees C"
-+ */
-+static int tegra_soctherm_thermtrip(struct device *dev)
-+{
-+	struct tegra_soctherm *ts = dev_get_drvdata(dev);
-+	const struct tegra_tsensor_group **ttgs =  ts->sensor_groups;
-+	struct device_node *dn;
-+	int i;
-+
-+	dn = of_find_node_by_name(dev->of_node, "hw-trips");
-+	if (!dn) {
-+		dev_info(dev, "thermtrip: no DT node - not enabling\n");
-+		return -ENODEV;
-+	}
-+
-+	for (i = 0; i < TEGRA124_SOCTHERM_SENSOR_NUM; ++i) {
-+		const struct tegra_tsensor_group *sg = ttgs[i];
-+		struct device_node *sgdn;
-+		u32 temperature;
-+		int r;
-+
-+		sgdn = of_find_node_by_name(dn, sg->name);
-+		if (!sgdn) {
-+			dev_info(dev,
-+				 "thermtrip: %s: skip due to no configuration\n",
-+				 sg->name);
-+			continue;
-+		}
-+
-+		r = of_property_read_u32(sgdn, "therm-temp", &temperature);
-+		if (r) {
-+			dev_err(dev,
-+				"thermtrip: %s: missing temperature property\n",
-+				sg->name);
-+			continue;
-+		}
-+
-+		r = thermtrip_program(dev, sg, temperature);
-+		if (r) {
-+			dev_err(dev, "thermtrip: %s: error during enable\n",
-+				sg->name);
-+			continue;
-+		}
-+
-+		dev_info(dev,
-+			 "thermtrip: will shut down when %s reaches %d mC\n",
-+			 sg->name, temperature);
-+	}
-+
-+	return 0;
-+}
-+
- #ifdef CONFIG_DEBUG_FS
-+static const struct tegra_tsensor_group *find_sensor_group_by_id(
-+						struct tegra_soctherm *ts,
-+						int id)
-+{
-+	int i;
-+
-+	if ((id < 0) || (id > TEGRA124_SOCTHERM_SENSOR_NUM))
-+		return ERR_PTR(-EINVAL);
-+
-+	for (i = 0; i < TEGRA124_SOCTHERM_SENSOR_NUM; i++)
-+		if (ts->sensor_groups[i]->id == id)
-+			return ts->sensor_groups[i];
-+
-+	return NULL;
-+}
-+
-+static int thermtrip_read(struct platform_device *pdev,
-+			  int id, u32 *temp)
-+{
-+	struct tegra_soctherm *ts = platform_get_drvdata(pdev);
-+	const struct tegra_tsensor_group *sg;
-+	u32 state;
-+	int r;
-+
-+	sg = find_sensor_group_by_id(ts, id);
-+	if (IS_ERR(sg)) {
-+		dev_err(&pdev->dev, "Read thermtrip failed\n");
-+		return -EINVAL;
-+	}
-+
-+	r = readl(ts->regs + THERMCTL_THERMTRIP_CTL);
-+	state = REG_GET_MASK(r, sg->thermtrip_threshold_mask);
-+	state *= sg->thresh_grain;
-+	*temp = state;
-+
-+	return 0;
-+}
-+
-+static int thermtrip_write(struct platform_device *pdev,
-+			   int id, int temp)
-+{
-+	struct tegra_soctherm *ts = platform_get_drvdata(pdev);
-+	const struct tegra_tsensor_group *sg;
-+	u32 state;
-+	int r;
-+
-+	sg = find_sensor_group_by_id(ts, id);
-+	if (IS_ERR(sg)) {
-+		dev_err(&pdev->dev, "Read thermtrip failed\n");
-+		return -EINVAL;
-+	}
-+
-+	r = readl(ts->regs + THERMCTL_THERMTRIP_CTL);
-+	state = REG_GET_MASK(r, sg->thermtrip_enable_mask);
-+	if (!state) {
-+		dev_err(&pdev->dev, "%s thermtrip not enabled.\n", sg->name);
-+		return -EINVAL;
-+	}
-+
-+	r = thermtrip_program(&pdev->dev, sg, temp);
-+	if (r) {
-+		dev_err(&pdev->dev, "Set %s thermtrip failed.\n", sg->name);
-+		return r;
-+	}
-+
-+	return 0;
-+}
-+
-+#define DEFINE_THERMTRIP_SIMPLE_ATTR(__name, __id)			\
-+static int __name##_show(void *data, u64 *val)				\
-+{									\
-+	struct platform_device *pdev = data;				\
-+	u32 temp;							\
-+	int r;								\
-+									\
-+	r = thermtrip_read(pdev, __id, &temp);				\
-+	if (r < 0)							\
-+		return 0;						\
-+	*val = temp;							\
-+									\
-+	return 0;							\
-+}									\
-+									\
-+static int __name##_set(void *data, u64 val)				\
-+{									\
-+	struct platform_device *pdev = data;				\
-+	int r;								\
-+									\
-+	r = thermtrip_write(pdev, __id, val);				\
-+	if (r)								\
-+		return r;						\
-+	else								\
-+		return 0;						\
-+}									\
-+DEFINE_SIMPLE_ATTRIBUTE(__name##_fops, __name##_show, __name##_set, "%lld\n")
-+
-+DEFINE_THERMTRIP_SIMPLE_ATTR(cpu_thermtrip, TEGRA124_SOCTHERM_SENSOR_CPU);
-+DEFINE_THERMTRIP_SIMPLE_ATTR(gpu_thermtrip, TEGRA124_SOCTHERM_SENSOR_GPU);
-+DEFINE_THERMTRIP_SIMPLE_ATTR(pll_thermtrip, TEGRA124_SOCTHERM_SENSOR_PLLX);
-+
- static int regs_show(struct seq_file *s, void *data)
+-static int enable_tsensor(struct tegra_soctherm *tegra,
+-			  struct tegra_tsensor *sensor,
+-			  const struct tsensor_shared_calibration *shared)
++static void enable_tsensor(struct tegra_soctherm *tegra,
++			   struct tegra_tsensor *sensor)
  {
- 	struct platform_device *pdev = s->private;
- 	struct tegra_soctherm *ts = platform_get_drvdata(pdev);
- 	struct tegra_tsensor *tsensors = ts->tsensors;
-+	const struct tegra_tsensor_group **ttgs = ts->sensor_groups;
- 	u32 r, state;
- 	int i;
+ 	void __iomem *base = tegra->regs + sensor->base;
+ 	unsigned int val;
+-	int err;
+-
+-	err = tegra_soctherm_calculate_tsensor_calibration(sensor, shared);
+-	if (err)
+-		return err;
  
-@@ -229,6 +466,17 @@ static int regs_show(struct seq_file *s, void *data)
- 	state = REG_GET_MASK(r, SENSOR_TEMP2_MEM_TEMP_MASK);
- 	seq_printf(s, " MEM(%d)\n", translate_temp(state));
+ 	val = sensor->config->tall << SENSOR_CONFIG0_TALL_SHIFT;
+ 	writel(val, base + SENSOR_CONFIG0);
+@@ -114,8 +108,6 @@ static int enable_tsensor(struct tegra_soctherm *tegra,
+ 	writel(val, base + SENSOR_CONFIG1);
  
-+	r = readl(ts->regs + THERMCTL_THERMTRIP_CTL);
-+	state = REG_GET_MASK(r, ttgs[0]->thermtrip_any_en_mask);
-+	seq_printf(s, "ThermTRIP ANY En(%d)\n", state);
-+	for (i = 0; i < TEGRA124_SOCTHERM_SENSOR_NUM; i++) {
-+		state = REG_GET_MASK(r, ttgs[i]->thermtrip_enable_mask);
-+		seq_printf(s, "     %s En(%d) ", ttgs[i]->name, state);
-+		state = REG_GET_MASK(r, ttgs[i]->thermtrip_threshold_mask);
-+		state *= ttgs[i]->thresh_grain;
-+		seq_printf(s, "Thresh(%d)\n", state);
+ 	writel(sensor->calib, base + SENSOR_CONFIG2);
+-
+-	return 0;
+ }
+ 
+ /*
+@@ -513,6 +505,74 @@ static inline int soctherm_debug_init(struct platform_device *pdev)
+ { return 0; }
+ #endif
+ 
++static int soctherm_clk_enable(struct platform_device *pdev, bool enable)
++{
++	struct tegra_soctherm *tegra = platform_get_drvdata(pdev);
++	int err;
++
++	if (tegra->clock_soctherm == NULL || tegra->clock_tsensor == NULL)
++		return -EINVAL;
++
++	reset_control_assert(tegra->reset);
++
++	if (enable) {
++		err = clk_prepare_enable(tegra->clock_soctherm);
++		if (err) {
++			reset_control_deassert(tegra->reset);
++			return err;
++		}
++
++		err = clk_prepare_enable(tegra->clock_tsensor);
++		if (err) {
++			clk_disable_unprepare(tegra->clock_soctherm);
++			reset_control_deassert(tegra->reset);
++			return err;
++		}
++	} else {
++		clk_disable_unprepare(tegra->clock_tsensor);
++		clk_disable_unprepare(tegra->clock_soctherm);
 +	}
 +
- 	return 0;
- }
++	reset_control_deassert(tegra->reset);
++
++	return 0;
++}
++
++static int soctherm_init(struct platform_device *pdev)
++{
++	struct tegra_soctherm *tegra = platform_get_drvdata(pdev);
++	struct tegra_tsensor *tsensors = tegra->tsensors;
++	const struct tegra_tsensor_group **ttgs = tegra->sensor_groups;
++	int i, err;
++	u32 pdiv, hotspot;
++
++	/* Initialize raw sensors */
++	for (i = 0; tsensors[i].name; ++i)
++		enable_tsensor(tegra, tsensors + i);
++
++	/* Wait for sensor data to be ready */
++	usleep_range(1000, 5000);
++
++	/* program pdiv and hotspot offsets per THERM */
++	pdiv = readl(tegra->regs + SENSOR_PDIV);
++	hotspot = readl(tegra->regs + SENSOR_HOTSPOT_OFF);
++	for (i = 0; i < TEGRA124_SOCTHERM_SENSOR_NUM; ++i) {
++		pdiv = REG_SET_MASK(pdiv, ttgs[i]->pdiv_mask,
++				    ttgs[i]->pdiv);
++		if (ttgs[i]->id != TEGRA124_SOCTHERM_SENSOR_PLLX)
++			hotspot =  REG_SET_MASK(hotspot,
++						ttgs[i]->pllx_hotspot_mask,
++						ttgs[i]->pllx_hotspot_diff);
++	}
++	writel(pdiv, tegra->regs + SENSOR_PDIV);
++	writel(hotspot, tegra->regs + SENSOR_HOTSPOT_OFF);
++
++	/* Initialize thermctl sensors */
++	err = tegra_soctherm_thermtrip(&pdev->dev);
++
++	return err;
++}
++
+ int tegra_soctherm_probe(struct platform_device *pdev,
+ 			 struct tegra_tsensor *tsensors,
+ 			 const struct tegra_tsensor_group **ttgs,
+@@ -524,7 +584,6 @@ int tegra_soctherm_probe(struct platform_device *pdev,
+ 	struct resource *res;
+ 	unsigned int i;
+ 	int err;
+-	u32 pdiv, hotspot;
  
-@@ -251,6 +499,12 @@ static int soctherm_debug_init(struct platform_device *pdev)
- 	tegra_soctherm_root = debugfs_create_dir("tegra_soctherm", NULL);
- 	debugfs_create_file("regs", 0644, tegra_soctherm_root,
- 			    pdev, &regs_fops);
-+	debugfs_create_file("cpu_thermtrip", S_IRUGO | S_IWUSR,
-+			    tegra_soctherm_root, pdev, &cpu_thermtrip_fops);
-+	debugfs_create_file("gpu_thermtrip", S_IRUGO | S_IWUSR,
-+			    tegra_soctherm_root, pdev, &gpu_thermtrip_fops);
-+	debugfs_create_file("pll_thermtrip", S_IRUGO | S_IWUSR,
-+			    tegra_soctherm_root, pdev, &pll_thermtrip_fops);
+ 	tegra = devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
+ 	if (!tegra)
+@@ -558,48 +617,25 @@ int tegra_soctherm_probe(struct platform_device *pdev,
+ 		return PTR_ERR(tegra->clock_soctherm);
+ 	}
  
- 	return 0;
- }
-@@ -279,6 +533,7 @@ int tegra_soctherm_probe(struct platform_device *pdev,
- 	dev_set_drvdata(&pdev->dev, tegra);
+-	reset_control_assert(tegra->reset);
+-
+-	err = clk_prepare_enable(tegra->clock_soctherm);
+-	if (err)
+-		return err;
+-
+-	err = clk_prepare_enable(tegra->clock_tsensor);
+-	if (err) {
+-		clk_disable_unprepare(tegra->clock_soctherm);
+-		return err;
+-	}
+-
+-	reset_control_deassert(tegra->reset);
+-
+-	/* Initialize raw sensors */
+-
++	/* calculate shared calibration data */
+ 	err = tegra_soctherm_calculate_shared_calibration(tfuse, &shared_calib);
+ 	if (err)
+ 		goto disable_clocks;
  
- 	tegra->tsensors = tsensors;
-+	tegra->sensor_groups = ttgs;
++	/* calculate tsensor calibaration data */
+ 	for (i = 0; tsensors[i].name; ++i) {
+-		err = enable_tsensor(tegra, tsensors + i, &shared_calib);
++		err = tegra_soctherm_calculate_tsensor_calibration(tsensors + i,
++								&shared_calib);
+ 		if (err)
+ 			goto disable_clocks;
+ 	}
  
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	tegra->regs = devm_ioremap_resource(&pdev->dev, res);
-@@ -344,6 +599,7 @@ int tegra_soctherm_probe(struct platform_device *pdev,
- 	writel(hotspot, tegra->regs + SENSOR_HOTSPOT_OFF);
- 
- 	/* Initialize thermctl sensors */
-+	tegra_soctherm_thermtrip(&pdev->dev);
+-	/* program pdiv and hotspot offsets per THERM */
+-	pdiv = readl(tegra->regs + SENSOR_PDIV);
+-	hotspot = readl(tegra->regs + SENSOR_HOTSPOT_OFF);
+-	for (i = 0; i < TEGRA124_SOCTHERM_SENSOR_NUM; ++i) {
+-		pdiv = REG_SET_MASK(pdiv, ttgs[i]->pdiv_mask,
+-				   ttgs[i]->pdiv);
+-		if (ttgs[i]->id != TEGRA124_SOCTHERM_SENSOR_PLLX)
+-			hotspot =  REG_SET_MASK(hotspot,
+-						ttgs[i]->pllx_hotspot_mask,
+-						ttgs[i]->pllx_hotspot_diff);
++	soctherm_clk_enable(pdev, true);
++	err = soctherm_init(pdev);
++	if (err) {
++		dev_err(&pdev->dev, "Initialize platform data failed\n");
++		goto disable_clocks;
+ 	}
+-	writel(pdiv, tegra->regs + SENSOR_PDIV);
+-	writel(hotspot, tegra->regs + SENSOR_HOTSPOT_OFF);
+-
+-	/* Initialize thermctl sensors */
+-	tegra_soctherm_thermtrip(&pdev->dev);
  
  	for (i = 0; i < TEGRA124_SOCTHERM_SENSOR_NUM; ++i) {
  		struct tegra_thermctl_zone *zone =
+@@ -635,8 +671,7 @@ unregister_tzs:
+ 						  tegra->thermctl_tzs[i]);
+ 
+ disable_clocks:
+-	clk_disable_unprepare(tegra->clock_tsensor);
+-	clk_disable_unprepare(tegra->clock_soctherm);
++	soctherm_clk_enable(pdev, false);
+ 
+ 	return err;
+ }
+@@ -651,8 +686,33 @@ int tegra_soctherm_remove(struct platform_device *pdev)
+ 						  tegra->thermctl_tzs[i]);
+ 	}
+ 
+-	clk_disable_unprepare(tegra->clock_tsensor);
+-	clk_disable_unprepare(tegra->clock_soctherm);
++	soctherm_clk_enable(pdev, false);
++
++	return 0;
++}
++
++int soctherm_suspend(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++
++	soctherm_clk_enable(pdev, false);
++
++	return 0;
++}
++
++int soctherm_resume(struct device *dev)
++{
++	struct platform_device *pdev = to_platform_device(dev);
++	int err;
++
++	soctherm_clk_enable(pdev, true);
++	err = soctherm_init(pdev);
++	if (err) {
++		dev_err(&pdev->dev,
++			"Resume failed: initialize failed\n");
++		soctherm_clk_enable(pdev, false);
++		return err;
++	}
+ 
+ 	return 0;
+ }
 diff --git a/drivers/thermal/tegra/tegra_soctherm.h b/drivers/thermal/tegra/tegra_soctherm.h
-index 3ade453fc353..1017424e6e85 100644
+index 1017424e6e85..9b3a55f81fdb 100644
 --- a/drivers/thermal/tegra/tegra_soctherm.h
 +++ b/drivers/thermal/tegra/tegra_soctherm.h
-@@ -21,6 +21,9 @@
- #define SENSOR_CONFIG2_THERMB_MASK		0xffff
- #define SENSOR_CONFIG2_THERMB_SHIFT		0
+@@ -111,5 +111,10 @@ int tegra_soctherm_probe(struct platform_device *pdev,
+ 			 const struct tegra_soctherm_fuse *tfuse);
+ int tegra_soctherm_remove(struct platform_device *pdev);
  
-+#define THERMCTL_THERMTRIP_CTL			0x80
-+/* BITs are defined in device file */
++#ifdef CONFIG_PM_SLEEP
++int soctherm_suspend(struct device *dev);
++int soctherm_resume(struct device *dev);
++#endif
 +
- #define SENSOR_PDIV				0x1c0
- #define SENSOR_PDIV_CPU_MASK			(0xf << 12)
- #define SENSOR_PDIV_GPU_MASK			(0xf << 8)
-@@ -59,6 +62,10 @@ struct tegra_tsensor_group {
- 	u32		sensor_temp_mask;
- 	u32		pdiv, pdiv_ate, pdiv_mask;
- 	u32		pllx_hotspot_diff, pllx_hotspot_mask;
-+	u32		thermtrip_enable_mask;
-+	u32		thermtrip_any_en_mask;
-+	u32		thermtrip_threshold_mask;
-+	int		thresh_grain;
- };
+ #endif
  
- struct tegra_tsensor_configuration {
 -- 
 1.9.1
