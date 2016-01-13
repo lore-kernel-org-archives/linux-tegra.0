@@ -1,41 +1,53 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V1 10/10] ARM: tegra: set hw trips for Tegra124
-Date: Wed, 13 Jan 2016 16:01:04 +0800
-Message-ID: <1452672064-563-1-git-send-email-wni@nvidia.com>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH v3] PCI: hosts: mark pcie/pci (msi) irq cascade handler
+ as IRQF_NO_THREAD
+Date: Wed, 13 Jan 2016 14:39:04 +0100
+Message-ID: <20160113133904.GD29964@linutronix.de>
+References: <1449775100-30877-1-git-send-email-grygorii.strashko@ti.com>
+ <20160106221827.GD16231@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160106221827.GD16231@localhost>
+Sender: linux-pci-owner@vger.kernel.org
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>, linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, tony@atomide.com, nsekhar@ti.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-sh@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, Kishon Vijay Abraham I <kishon@ti.com>, Jingoo Han <jingoohan1@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Richard Zhu <Richard.Zhu@freescale.com>, Lucas Stach <l.stach@pengutronix.de>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, Pratyush Anand <pratyush.anand@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Set hw trips for Tegra124.
+* Bjorn Helgaas | 2016-01-06 16:18:27 [-0600]:
 
-Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra124.dtsi | 9 +++++++++
- 1 file changed, 9 insertions(+)
+>Hi Bjorn,
 
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index 68669f791c8b..c670d71a8f37 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -701,6 +701,15 @@
- 		resets = <&tegra_car 78>;
- 		reset-names = "soctherm";
- 		#thermal-sensor-cells = <1>;
-+
-+		hw-trips {
-+			cpu {
-+				therm-temp = <103000>;
-+			};
-+			gpu {
-+				therm-temp = <101000>;
-+			};
-+		};
- 	};
- 
- 	dfll: clock@0,70110000 {
--- 
-1.9.1
+>> diff --git a/drivers/pci/host/pci-dra7xx.c b/drivers/pci/host/pci-dra7xx.c
+>> index 8c36880..0415192 100644
+>> --- a/drivers/pci/host/pci-dra7xx.c
+>> +++ b/drivers/pci/host/pci-dra7xx.c
+>> @@ -301,8 +301,19 @@ static int __init dra7xx_add_pcie_port(struct dra7xx_pcie *dra7xx,
+>>  		return -EINVAL;
+>>  	}
+>>  
+>> +	/*
+>> +	 * Mark dra7xx_pcie_msi IRQ as IRQF_NO_THREAD
+>> +	 * On -RT and if kernel is booting with "threadirqs" cmd line parameter
+>> +	 * the dra7xx_pcie_msi_irq_handler() will be forced threaded but,
+>> +	 * in the same time, it's IRQ dispatcher and calls generic_handle_irq(),
+>> +	 * which, in turn, will be resolved to handle_simple_irq() call.
+>> +	 * The handle_simple_irq() expected to be called with IRQ disabled, as
+>> +	 * result kernle will display warning:
+>> +	 * "irq XXX handler YYY+0x0/0x14 enabled interrupts".
+>> +	 */
+
+could you _please_ remove this coment? This kind of comment (if at all)
+should be part of the commit message (which is the case more or less).
+
+>>  	ret = devm_request_irq(&pdev->dev, pp->irq,
+>> -			       dra7xx_pcie_msi_irq_handler, IRQF_SHARED,
+>> +			       dra7xx_pcie_msi_irq_handler,
+>> +			       IRQF_SHARED | IRQF_NO_THREAD,
+>>  			       "dra7-pcie-msi",	pp);
+>>  	if (ret) {
+>>  		dev_err(&pdev->dev, "failed to request irq\n");
+>> diff --git a/drivers/pci/host/pci-exynos.c b/drivers/pci/host/pci-exynos.c
+
+Sebastian
