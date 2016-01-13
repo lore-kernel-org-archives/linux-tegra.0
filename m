@@ -1,80 +1,139 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 0/9 REPOST] Tegra CLK Fixes
-Date: Wed, 13 Jan 2016 15:05:16 +0100
-Message-ID: <20160113140516.GD15782@ulmo>
-References: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V1 01/10] thermal: tegra: move tegra thermal files into
+ tegra directory
+Date: Wed, 13 Jan 2016 15:24:18 +0100
+Message-ID: <20160113142418.GA2588@ulmo>
+References: <1452671929-32740-1-git-send-email-wni@nvidia.com>
+ <1452671929-32740-2-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="pQhZXvAqiZgbeUkD"
-Return-path: <linux-clk-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="+HP7ph2BbKc20aGI"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>, Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1452671929-32740-2-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---pQhZXvAqiZgbeUkD
+--+HP7ph2BbKc20aGI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 08, 2016 at 01:45:05PM -0500, Rhyland Klein wrote:
-> This patch set fixes some issues found with the Tegra CLK drivers
-> in testing. There are also a few patches which clean up the code
-> and fix some naming issues.
->=20
-> Resending with correct email address for Mike Turquette.
->=20
-> Andrew Bresticker (1):
->   clk: tegra: pll: Fix potential sleeping-while-atomic
->=20
-> Mark Kuo (2):
->   clk: tegra: pll: Do not disable PLLE when under HW control
->   clk: tegra: pll: Fix PLLE SS config
->=20
-> Rhyland Klein (6):
->   clk: tegra: Fix divider on VI_I2C
->   clk: tegra210: Remove improper flags for lock_enable
->   clk: tegra210: Fix naming of MISC registers
->   clk: tegra: Fix the misnaming of nvenc from msenc
->   clk: tegra210: fix pllx dyn step calculation
->   clk: tegra210: Initialize PLL_D2 to a sane rate
->=20
->  drivers/clk/tegra/clk-pll.c          | 50 +++++++++++++--------
->  drivers/clk/tegra/clk-tegra-periph.c |  4 +-
->  drivers/clk/tegra/clk-tegra210.c     | 87 +++++++++++++++---------------=
-------
->  3 files changed, 71 insertions(+), 70 deletions(-)
+On Wed, Jan 13, 2016 at 03:58:40PM +0800, Wei Ni wrote:
+> Move tegra soctherm driver to tegra directory, it's easy to maintain
+> and add more new function support for tegra platforms.
 
-Rhyland,
+Please use the proper spelling "Tegra", except where you refer to
+directory or file names.
 
-This looks like a very nice round of fixups for the clock driver. I've
-replied to a couple of individual patches where I thought things could
-be improved a little, but they're mostly minor things.
+> This will also help to split soctherm driver into common parts and
+> chip specific data related parts.
+>=20
+> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/thermal/Kconfig                      | 15 +++++----------
+>  drivers/thermal/Makefile                     |  2 +-
+>  drivers/thermal/tegra/Kconfig                |  9 +++++++++
+>  drivers/thermal/tegra/Makefile               |  6 ++++++
+>  drivers/thermal/{ =3D> tegra}/tegra_soctherm.c |  0
+>  5 files changed, 21 insertions(+), 11 deletions(-)
+>  create mode 100644 drivers/thermal/tegra/Kconfig
+>  create mode 100644 drivers/thermal/tegra/Makefile
+>  rename drivers/thermal/{ =3D> tegra}/tegra_soctherm.c (100%)
+>=20
+> diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+> index c463c89b90ef..7984cba6b340 100644
+> --- a/drivers/thermal/Kconfig
+> +++ b/drivers/thermal/Kconfig
+> @@ -254,16 +254,6 @@ config ARMADA_THERMAL
+>  	  Enable this option if you want to have support for thermal management
+>  	  controller present in Armada 370 and Armada XP SoC.
+> =20
+> -config TEGRA_SOCTHERM
+> -	tristate "Tegra SOCTHERM thermal management"
+> -	depends on ARCH_TEGRA
+> -	help
+> -	  Enable this option for integrated thermal management support on NVIDIA
+> -	  Tegra124 systems-on-chip. The driver supports four thermal zones
+> -	  (CPU, GPU, MEM, PLLX). Cooling devices can be bound to the thermal
+> -	  zones to manage temperatures. This option is also required for the
+> -	  emergency thermal reset (thermtrip) feature to function.
+> -
+>  config DB8500_CPUFREQ_COOLING
+>  	tristate "DB8500 cpufreq cooling"
+>  	depends on ARCH_U8500
+> @@ -380,6 +370,11 @@ depends on ARCH_STI && OF
+>  source "drivers/thermal/st/Kconfig"
+>  endmenu
+> =20
+> +menu "Tegra thermal drivers"
+> +depends on ARCH_TEGRA
+> +source "drivers/thermal/tegra/Kconfig"
+> +endmenu
+> +
+
+I think it'd be more idiomatic to only source the file here and move the
+menu declaration and the dependencies into that file. Perhaps also make
+the menu description "NVIDIA Tegra thermal drivers", I think we've been
+using that consistently elsewhere.
+
+> diff --git a/drivers/thermal/tegra/Kconfig b/drivers/thermal/tegra/Kconfig
+> new file mode 100644
+> index 000000000000..a6e6cd4528dc
+> --- /dev/null
+> +++ b/drivers/thermal/tegra/Kconfig
+> @@ -0,0 +1,9 @@
+> +config TEGRA_SOCTHERM
+> +	tristate "Tegra SOCTHERM thermal management"
+> +	depends on ARCH_TEGRA
+> +	help
+> +	  Enable this option for integrated thermal management support on NVIDIA
+> +	  Tegra124 systems-on-chip. The driver supports four thermal zones
+> +	  (CPU, GPU, MEM, PLLX). Cooling devices can be bound to the thermal
+> +	  zones to manage temperatures. This option is also required for the
+> +	  emergency thermal reset (thermtrip) feature to function.
+> diff --git a/drivers/thermal/tegra/Makefile b/drivers/thermal/tegra/Makef=
+ile
+> new file mode 100644
+> index 000000000000..8c51076e4b1e
+> --- /dev/null
+> +++ b/drivers/thermal/tegra/Makefile
+> @@ -0,0 +1,6 @@
+> +#
+> +# Tegra thermal specific Makefile
+> +#
+> +
+> +# Tegra soc thermal drivers
+> +obj-$(CONFIG_TEGRA_SOCTHERM)	+=3D tegra_soctherm.o
+
+I personally don't think these comments are helpful. They're really
+redundant given that they're in a Makefile within a subdirectory of
+drivers/thermal.
 
 Thierry
 
---pQhZXvAqiZgbeUkD
+--+HP7ph2BbKc20aGI
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJWllmcAAoJEN0jrNd/PrOh/YAP/2k6jUcN+5Of8iCkEfPEfQ57
-8A6KY8J1pXX5ch+BvBAlgLGi63NXeqxDU6mCWQeYPpfcZSH8LYh28IY0XHs+h3cf
-hRPk1rkvY1XjJqbP7UhQvFUJqTc7oX8rs5O1OWhfXHCAbAtE5YuaYQtWL8ifZEU/
-YIiL+rf2HrU3W/Qq1hS3b34mGTCNi/rBRx46FnpTw0LsOZhcNeYr0CtYbXnxdLLl
-lAd4R69FFx7K9gv5Qv9VLdJCyTGhQYNGpg9kWv2xyU2P6Qs+pcK0allBKOz/b5qh
-sMJk4g13Zg15SJcXfAQRaFC8dvJKFFrkEQlh/LY55Wdx9jgygkjBffRQ1z7srXPw
-XIL928JL0FRBuowUBr5CL/6haCMWl//vTpPNpXSLmy4Av1N85vjjMvjnbG6xiFHD
-//dTg8ZE3lgHNZvPRFfC5AitILo54iOrHssB1VV1gVipRDOmXTmEfYl4kNBOx0vV
-sb4IgXjl8UAU5UVcWtT1TNNSnNfS4xUBlckHpQSzuEKm+AzVDSvESLl4Sq7nXWJg
-IS7wwnCUSEcfKcWb6KcOhidlrxVBirRvjYDcIrvVFRrqzc+MrIVycW6xz31/+2xs
-sq9/fmn+cKTV1rIPHU8xZiv1LPMALbJWOyRQzIwe6JK73dyGlY0zpiJFh7KC7YmG
-5hEC76Dmap2hTFKG8dkB
-=JL/M
+iQIcBAABCAAGBQJWll4PAAoJEN0jrNd/PrOh4jcP/3Zyb1vgO042mZtFKB/KfiQl
+0FQlM6d7oUdN4VD1lQeSWzoT0+8OBKm+QAMXrgWlvFY1j1s1Xozwh2jxh/hxr5Ay
+OM9pKhJozpqwUJJ2CuNttEiIy57YI5LGtY3z70Z7yWw8qZgsQHdo7MTaDEBltU6y
+c66vFgrxgCm3HLXj0FNAO9xDy4MI6Y+6t9cAVr1aiFMYTNO2nZ1XwL2hGEK+VUA3
+cdYbZL2bWMst8BiFXMHvNPRSe+QPJjQRkMfuVp8ReTRmRtMpztwns1s0X5fj/RSu
+Psrwi7BGQ85Kyb1kYfS3l/5MOXcQGWRu51mVwK0y3qadUQi245bW6A+52GVN5WGH
+8ZvC3femc/zobezbN7JZQ/AUet32caoiAxPX5N94CS6zAmUfFrTaDmaKxN52QRPH
+joY6bYTRgWBKXuM7DnIUt1gXaj+xJhRMY9xvrqCi7vydoGrC7Y9nfA/DCU/H5ysZ
+dbuJKoynMPoZAbquZK5EQC4mbwRbLgewQtW/Q2UgpHp6dfZcOGa6CskUBByZaafl
++nw4btLuNZM989E9Oy3addIVrplpwvmNxQVSuIlCb0wip9pUoMA8AR1Htatdr5S/
+PyoxpYLmamOi9LpIzYPKeXwyGAUaU35tardHSdyatsc2NeIZbd8mUp06wTTMxuQd
+zCSKLuy/07gNscYs1AG3
+=gCWN
 -----END PGP SIGNATURE-----
 
---pQhZXvAqiZgbeUkD--
+--+HP7ph2BbKc20aGI--
