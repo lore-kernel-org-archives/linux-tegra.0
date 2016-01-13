@@ -1,62 +1,80 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 9/9] clk: tegra210: Initialize PLL_D2 to a sane rate
-Date: Wed, 13 Jan 2016 15:03:09 +0100
-Message-ID: <20160113140309.GB15782@ulmo>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 0/9 REPOST] Tegra CLK Fixes
+Date: Wed, 13 Jan 2016 15:05:16 +0100
+Message-ID: <20160113140516.GD15782@ulmo>
 References: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
- <1452278714-10751-10-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="St7VIuEGZ6dlpu13"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="pQhZXvAqiZgbeUkD"
+Return-path: <linux-clk-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1452278714-10751-10-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>, Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---St7VIuEGZ6dlpu13
+--pQhZXvAqiZgbeUkD
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 08, 2016 at 01:45:14PM -0500, Rhyland Klein wrote:
-> Initialize PLL_D2 to a sane rate at the start of the day.
+On Fri, Jan 08, 2016 at 01:45:05PM -0500, Rhyland Klein wrote:
+> This patch set fixes some issues found with the Tegra CLK drivers
+> in testing. There are also a few patches which clean up the code
+> and fix some naming issues.
 >=20
-> Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 1 +
->  1 file changed, 1 insertion(+)
+> Resending with correct email address for Mike Turquette.
+>=20
+> Andrew Bresticker (1):
+>   clk: tegra: pll: Fix potential sleeping-while-atomic
+>=20
+> Mark Kuo (2):
+>   clk: tegra: pll: Do not disable PLLE when under HW control
+>   clk: tegra: pll: Fix PLLE SS config
+>=20
+> Rhyland Klein (6):
+>   clk: tegra: Fix divider on VI_I2C
+>   clk: tegra210: Remove improper flags for lock_enable
+>   clk: tegra210: Fix naming of MISC registers
+>   clk: tegra: Fix the misnaming of nvenc from msenc
+>   clk: tegra210: fix pllx dyn step calculation
+>   clk: tegra210: Initialize PLL_D2 to a sane rate
+>=20
+>  drivers/clk/tegra/clk-pll.c          | 50 +++++++++++++--------
+>  drivers/clk/tegra/clk-tegra-periph.c |  4 +-
+>  drivers/clk/tegra/clk-tegra210.c     | 87 +++++++++++++++---------------=
+------
+>  3 files changed, 71 insertions(+), 70 deletions(-)
 
-There are a lot of assumptions in this commit message. I'm asking myself
-why does it need to be initialized to any rate at all? Isn't it up to
-the user driver to set the PLL to whatever it knows to be a sane rate?
-Why is 594 MHz a sane rate?
+Rhyland,
 
-A good commit message should answer those questions.
+This looks like a very nice round of fixups for the clock driver. I've
+replied to a couple of individual patches where I thought things could
+be improved a little, but they're mostly minor things.
 
 Thierry
 
---St7VIuEGZ6dlpu13
+--pQhZXvAqiZgbeUkD
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJWllkdAAoJEN0jrNd/PrOhCfUP/jGCR7vcSSvoMaIqs5IW4AxO
-b2FaAzx3ZbUEg1M0WLpaSKIkupucZz4Z2XuTt/+HEIz5IyUvQ3o1bB57OkgXcYUA
-8j/U+RKzAMgc+ns9v/vnrfeg7bwRhdTlXbRkDu7YmguMrxSGC7UMVreC+RfcmniX
-lRtsHvdHsPdrpp86IH4113l9bd71+d+qMLoJ6fD3UZ5UVYvCuSLGshQQv88rXupX
-oLCS7g8fVYzZintwsr62W1EBScVJjMRC4RJ6ScD7SYhiZTPLVaAkSB7FN+Rtv+oe
-+HHQhlHVMabRjJQ18Ek8KiVMVo5/U9JHxkZ/O99/O28VPqPLZHZdgp2EAfvak09v
-jKDip86VUXC9AMTfT1krUGWaHQMuEVCpbHrfXlQxu+WgkAXDITnHVecflioWmpgt
-XVW5c+ZbGlUaiUj/Esc8X/u7J1a+YPTYZmR79v125jsiq2MQlsDzFtcZH1l3KhjV
-hCWNZQDi6D9A35ZTMkCzG0HUIL1P7gEFgReIDcmzQkOvpzwjOtZifuUfDlE9vJmm
-eOeCqp1jqv1IheVNeiRZIfRfkDtV7u59prQUrNE9tWuz7WQcl/pWaXTbRvNXoGch
-HW6w/dwC8oyxzW5tj4g+9SVWy6h5oelmbaYRa+TBcFLcKqEq/Rm7j+WkjzvPyRPr
-IFUj9+QypSKvbMMQ7k8j
-=qQzv
+iQIcBAABCAAGBQJWllmcAAoJEN0jrNd/PrOh/YAP/2k6jUcN+5Of8iCkEfPEfQ57
+8A6KY8J1pXX5ch+BvBAlgLGi63NXeqxDU6mCWQeYPpfcZSH8LYh28IY0XHs+h3cf
+hRPk1rkvY1XjJqbP7UhQvFUJqTc7oX8rs5O1OWhfXHCAbAtE5YuaYQtWL8ifZEU/
+YIiL+rf2HrU3W/Qq1hS3b34mGTCNi/rBRx46FnpTw0LsOZhcNeYr0CtYbXnxdLLl
+lAd4R69FFx7K9gv5Qv9VLdJCyTGhQYNGpg9kWv2xyU2P6Qs+pcK0allBKOz/b5qh
+sMJk4g13Zg15SJcXfAQRaFC8dvJKFFrkEQlh/LY55Wdx9jgygkjBffRQ1z7srXPw
+XIL928JL0FRBuowUBr5CL/6haCMWl//vTpPNpXSLmy4Av1N85vjjMvjnbG6xiFHD
+//dTg8ZE3lgHNZvPRFfC5AitILo54iOrHssB1VV1gVipRDOmXTmEfYl4kNBOx0vV
+sb4IgXjl8UAU5UVcWtT1TNNSnNfS4xUBlckHpQSzuEKm+AzVDSvESLl4Sq7nXWJg
+IS7wwnCUSEcfKcWb6KcOhidlrxVBirRvjYDcIrvVFRrqzc+MrIVycW6xz31/+2xs
+sq9/fmn+cKTV1rIPHU8xZiv1LPMALbJWOyRQzIwe6JK73dyGlY0zpiJFh7KC7YmG
+5hEC76Dmap2hTFKG8dkB
+=JL/M
 -----END PGP SIGNATURE-----
 
---St7VIuEGZ6dlpu13--
+--pQhZXvAqiZgbeUkD--
