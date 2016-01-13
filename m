@@ -1,55 +1,70 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 9/9] clk: tegra210: Initialize PLL_D2 to a sane rate
-Date: Wed, 13 Jan 2016 11:27:09 -0500
-Message-ID: <56967ADD.8090904@nvidia.com>
-References: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
- <1452278714-10751-10-git-send-email-rklein@nvidia.com>
- <20160113140309.GB15782@ulmo>
+From: Rhyland Klein <rklein@nvidia.com>
+Subject: Re: [PATCH 2/2] clk: tegra: Use definition for pll_u override bit
+Date: Wed, 13 Jan 2016 11:28:08 -0500
+Message-ID: <56967B18.9070209@nvidia.com>
+References: <1450702592-7755-1-git-send-email-jonathanh@nvidia.com>
+ <1450702592-7755-2-git-send-email-jonathanh@nvidia.com>
+ <20160113160833.GK2588@ulmo> <5696770D.2050007@nvidia.com>
+ <20160113161931.GN2588@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160113140309.GB15782@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <20160113161931.GN2588@ulmo>
+Sender: linux-clk-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 1/13/2016 9:03 AM, Thierry Reding wrote:
+On 1/13/2016 11:19 AM, Thierry Reding wrote:
 > * PGP Signed by an unknown key
 > 
-> On Fri, Jan 08, 2016 at 01:45:14PM -0500, Rhyland Klein wrote:
->> Initialize PLL_D2 to a sane rate at the start of the day.
+> On Wed, Jan 13, 2016 at 11:10:53AM -0500, Rhyland Klein wrote:
+>> On 1/13/2016 11:08 AM, Thierry Reding wrote:
+>>>> Old Signed by an unknown key
+>>>
+>>> On Mon, Dec 21, 2015 at 12:56:32PM +0000, Jon Hunter wrote:
+>>>> The definition, PLLU_BASE_OVERRIDE, for the pll_u OVERRIDE bit is defined
+>>>> but not used and when the OVERRIDE bit is cleared in tegra210_pll_init()
+>>>> the code directly uses the bit number. Therefore, use the definition,
+>>>> PLLU_BASE_OVERRIDE when clearing the OVERRIDE bit.
+>>>>
+>>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>>>> ---
+>>>>  drivers/clk/tegra/clk-tegra210.c | 2 +-
+>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+>>>> index 791215747863..6f043c5e2394 100644
+>>>> --- a/drivers/clk/tegra/clk-tegra210.c
+>>>> +++ b/drivers/clk/tegra/clk-tegra210.c
+>>>> @@ -2520,7 +2520,7 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
+>>>>  
+>>>>  	/* PLLU_VCO */
+>>>>  	val = readl(clk_base + pll_u_vco_params.base_reg);
+>>>> -	val &= ~BIT(24); /* disable PLLU_OVERRIDE */
+>>>> +	val &= ~PLLU_BASE_OVERRIDE; /* disable PLLU_OVERRIDE */
+>>>>  	writel(val, clk_base + pll_u_vco_params.base_reg);
+>>>>  
+>>>>  	clk = tegra_clk_register_pllre("pll_u_vco", "pll_ref", clk_base, pmc,
+>>>
+>>> I think the comment is now redundant, given that the code says pretty
+>>> much the same thing. No need to respin for that, I can remove the
+>>> comment when I apply the patch. That is, unless anyone feels strongly
+>>> about keeping the comment.
 >>
->> Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  drivers/clk/tegra/clk-tegra210.c | 1 +
->>  1 file changed, 1 insertion(+)
+>> I agree its redundant. If I am going to post a new version to address
+>> other concerns, I can just roll this in while doing so.
 > 
-> There are a lot of assumptions in this commit message. I'm asking myself
-> why does it need to be initialized to any rate at all? Isn't it up to
-> the user driver to set the PLL to whatever it knows to be a sane rate?
-> Why is 594 MHz a sane rate?
-> 
-> A good commit message should answer those questions.
+> This looks like a good fix, or cleanup, on its own. So no need for
+> anyone to carry this forward, I can pick it up into a fixes branch
+> for v4.5.
 > 
 
-Thanks. This patch came about in response to some work with
-suspend/resume logic in the ChromeOS kernel. In the suspend/resume patch
-there, it reads all clk rates and caches them in suspend, then re-sets
-them on resume. We hadn't been using pll_d2 at all, and its rate (when
-read in suspend()) came back as 0. Then in resume, we would tr to set
-it, clk_set_rate(pll_d2, 0) and would generate a warning/error that 0
-wasn't a valid rate.
+Sure thing.
 
-As for the specific rate I chose, I simply took one off the table of
-supported frequencies in the clk-tegra210 code, so that it was non-zero.
-
-Since we don't support suspend/resume right now in the clk drivers, I
-don't think its urgent to merge this patch. I can drop in in the next
-rev if thats easier.
-
--rhyland
+Thanks,
+Rhyland
 
 
 -- 
