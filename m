@@ -1,72 +1,79 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 0/3] serial: earlycon: Add device-tree support for
- earlycon on Tegra
-Date: Wed, 13 Jan 2016 17:03:40 +0100
-Message-ID: <20160113160340.GJ2588@ulmo>
-References: <1452594809-17972-1-git-send-email-jonathanh@nvidia.com>
+Subject: Re: [PATCH 2/2] clk: tegra: Use definition for pll_u override bit
+Date: Wed, 13 Jan 2016 17:08:33 +0100
+Message-ID: <20160113160833.GK2588@ulmo>
+References: <1450702592-7755-1-git-send-email-jonathanh@nvidia.com>
+ <1450702592-7755-2-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="FCKy2vjPBX+S/5dE"
+	protocol="application/pgp-signature"; boundary="Ucgz5Oc/kKURWzXs"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1452594809-17972-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1450702592-7755-2-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Frank Rowand <frowand.list-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Grant Likely <grant.likely-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, paul.burton-1AXoQHu6uovQT0dZR+AlfA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---FCKy2vjPBX+S/5dE
+--Ucgz5Oc/kKURWzXs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jan 12, 2016 at 10:33:26AM +0000, Jon Hunter wrote:
-> For Tegra the early console is support by passing the console information
-> via the boot parameter earlycon. This series allows us to use the
-> device-tree "stdout-path" property for early console (as well as the
-> console) on Tegra.
+On Mon, Dec 21, 2015 at 12:56:32PM +0000, Jon Hunter wrote:
+> The definition, PLLU_BASE_OVERRIDE, for the pll_u OVERRIDE bit is defined
+> but not used and when the OVERRIDE bit is cleared in tegra210_pll_init()
+> the code directly uses the bit number. Therefore, use the definition,
+> PLLU_BASE_OVERRIDE when clearing the OVERRIDE bit.
 >=20
-> Jon Hunter (3):
->   serial: earlycon: Add device-tree support for other IO types
->   serial: 8250_early: Add support for regshift
->   serial: 8250_early: Add earlycon support for Tegra
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/clk/tegra/clk-tegra210.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >=20
->  drivers/of/fdt.c                     | 26 +++++++++++++++++++++++-
->  drivers/tty/serial/8250/8250_early.c | 38 ++++++++++++++++++++++++++----=
-------
->  drivers/tty/serial/earlycon.c        |  6 ++++--
->  include/linux/serial_core.h          |  3 ++-
->  4 files changed, 59 insertions(+), 14 deletions(-)
+> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-teg=
+ra210.c
+> index 791215747863..6f043c5e2394 100644
+> --- a/drivers/clk/tegra/clk-tegra210.c
+> +++ b/drivers/clk/tegra/clk-tegra210.c
+> @@ -2520,7 +2520,7 @@ static void __init tegra210_pll_init(void __iomem *=
+clk_base,
+> =20
+>  	/* PLLU_VCO */
+>  	val =3D readl(clk_base + pll_u_vco_params.base_reg);
+> -	val &=3D ~BIT(24); /* disable PLLU_OVERRIDE */
+> +	val &=3D ~PLLU_BASE_OVERRIDE; /* disable PLLU_OVERRIDE */
+>  	writel(val, clk_base + pll_u_vco_params.base_reg);
+> =20
+>  	clk =3D tegra_clk_register_pllre("pll_u_vco", "pll_ref", clk_base, pmc,
 
-The series:
-
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Jon, do you have plans on adding the stdout-path properties to existing
-device tree files?
+I think the comment is now redundant, given that the code says pretty
+much the same thing. No need to respin for that, I can remove the
+comment when I apply the patch. That is, unless anyone feels strongly
+about keeping the comment.
 
 Thierry
 
---FCKy2vjPBX+S/5dE
+--Ucgz5Oc/kKURWzXs
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJWlnVcAAoJEN0jrNd/PrOhN7wQAIoi6dBpXk/TVhtox0UIVfmT
-aeP49h6pdiERyh4qC3Q8MNjT5aIT82b6L+iiUIlPYceDECCTKJaLGxa5IBRAVVIE
-QN20YvIaq8Uab6oqTPJYEi8su1J1jMOB9E5DSLx4WLrUAS9SadLG9TWUL1f/tYsA
-fT8INaektPkUuAe4yjebPNl3C69kvdopMLuznUzVoXMYQQav0nZBllNnjM3bzaau
-aOhSOhtvjhXYX3R8vnl+Oj6O0R/QvQ6q/eRqDaC4G2bW6XTOasSqDIt1X0rAtJDi
-gyJm/pD4PUv0FlYq7msT/7D3U4Q09FN5cHV2kMmrDterfpY6OKpzkvBsYtieVizX
-a00Rp82UUTr6nytWe9etDr99QAB6QrnX4yekDWz05LhgQAkTOJgZ9Yhvx9OQxtJF
-sBYMGdwCtcaN0ZEK1HwmFKOF824zjLrm40DXF0HKCs4434DXSKVr7+qC5dxXxc2w
-SaKnElpwf/dxtIIS5qh9oYIzZx+0dGRHN9IcgK2vUwkT0Mwq3pSVDoKluLbg9F9t
-ysN/F9eO2i1edKGVcS+afxOHpevybQl7WPUIFIR6pVKXLNTcUFWyQtAdgxjUs3UY
-vTpZsFS/xkW/qfROmEP4ENWNHSsKNHsZz+YMfj7j39wJYSzGe9kfX0LYYh5gt+nb
-3STBnpGo4RNwkjyHuw+5
-=ZJzZ
+iQIcBAABCAAGBQJWlnaBAAoJEN0jrNd/PrOhYy0P/0QT4i67rYJf6GoSzj8vTvlt
+HatbZar3oEa3iy35pmgWhEeWgYTy24hocOer+MXIU81ztpeHYGWBQFj96UuX7l17
+8xf9ieAUsWEK4C00zFuYIeFuWJD/h06V811VMMvN3I9+ps/2p6ENzKKvHaVxMp0r
+H/YjO+hotf6zl9uzYkclzXkDQaLLrIJizxRoatRbprUB61ZHMBOgVMgqj4EvKUFp
+/0bpV3EjBY1X4vwzhjoQ3DOrfm4dF7Y5Z/EbGgvqSUcpJb3L87TVIR91BXcORSs+
+xWVrY9/gpj64mfA+Ey2cxK4OOEXu5nj/j5J2R4S4LDwKx4EJPzsrQFE3ubwWr9+h
+5EGkkqkAzTDp5fhQC7hp1HMm2uQv/pTVoLXrmePlUuY/jGLf67OA5ST7Z0jAyFqA
+MZE2GztpAXiycbVHzyoAKdQpP5u5VUCiFRgfVdcRzAWpF9kcstQJl7B6y/CpsFX5
+FjxK3DoFCrUNJpywLPt9lXg6mhaFD61GWq6H4PLFHL9Owmnt92BbkpSVgRgUmPiM
+WL3opEZqIGCR+73ddNyMAbpO12mM+yizV8unihFcAyUiek8rt7Yf3257W9LtwCeW
+SnMACqg9bxv/TeWo6Moy/5Y4QQP+ytfOICvqMsVglS2fL5zP5pciaWzwLN0oIVCg
+IUggScjz/nx1ygfpVOnf
+=Adjp
 -----END PGP SIGNATURE-----
 
---FCKy2vjPBX+S/5dE--
+--Ucgz5Oc/kKURWzXs--
