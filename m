@@ -1,194 +1,103 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V1 05/10] thermal: tegra: add sysfs to dump registers
-Date: Wed, 13 Jan 2016 16:17:40 +0100
-Message-ID: <20160113151740.GE2588@ulmo>
-References: <1452672007-330-1-git-send-email-wni@nvidia.com>
+Subject: Re: [PATCH V1 06/10] of: Add bindings of hw-trips for soctherm
+Date: Wed, 13 Jan 2016 16:25:27 +0100
+Message-ID: <20160113152527.GF2588@ulmo>
+References: <1452672022-387-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="a1QUDc0q7S3U7/Jg"
+	protocol="application/pgp-signature"; boundary="+ts6NCQ4mrNQIV8p"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1452672007-330-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1452672022-387-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---a1QUDc0q7S3U7/Jg
+--+ts6NCQ4mrNQIV8p
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jan 13, 2016 at 04:00:07PM +0800, Wei Ni wrote:
-> Add sysfs interface to dump registers for debug.
+Cc'ing devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, please make sure to always Cc that
+list on device tree binding patches.
 
-You're adding a debugfs interface here, not sysfs.
+On Wed, Jan 13, 2016 at 04:00:22PM +0800, Wei Ni wrote:
+> Add hw-trips sub-node for soctherm, which is
+> used to describe the hardware trip points for
+> each soctherm sensors.
 
-> diff --git a/drivers/thermal/tegra/tegra_soctherm.c b/drivers/thermal/teg=
-ra/tegra_soctherm.c
-[...]
-> +#ifdef CONFIG_DEBUG_FS
-> +static int regs_show(struct seq_file *s, void *data)
-> +{
-> +	struct platform_device *pdev =3D s->private;
-> +	struct tegra_soctherm *ts =3D platform_get_drvdata(pdev);
-> +	struct tegra_tsensor *tsensors =3D ts->tsensors;
-> +	u32 r, state;
-> +	int i;
-> +
-> +	seq_puts(s, "-----TSENSE (convert HW)-----\n");
-> +
-> +	for (i =3D 0; tsensors[i].name; i++) {
-> +		r =3D readl(ts->regs + tsensors[i].base + SENSOR_CONFIG1);
-> +		state =3D REG_GET_MASK(r, SENSOR_CONFIG1_TEMP_ENABLE);
-> +		if (!state)
-> +			continue;
-> +
-> +		seq_printf(s, "%s: ", tsensors[i].name);
-> +
-> +		seq_printf(s, "En(%d) ", state);
-> +		state =3D REG_GET_MASK(r, SENSOR_CONFIG1_TIDDQ_EN_MASK);
-> +		seq_printf(s, "tiddq(%d) ", state);
-> +		state =3D REG_GET_MASK(r, SENSOR_CONFIG1_TEN_COUNT_MASK);
-> +		seq_printf(s, "ten_count(%d) ", state);
-> +		state =3D REG_GET_MASK(r, SENSOR_CONFIG1_TSAMPLE_MASK);
-> +		seq_printf(s, "tsample(%d) ", state + 1);
-> +
-> +		r =3D readl(ts->regs + tsensors[i].base + SENSOR_STATUS1);
-> +		state =3D REG_GET_MASK(r, SENSOR_STATUS1_TEMP_VALID_MASK);
-> +		seq_printf(s, "Temp(%d/", state);
-> +		state =3D REG_GET_MASK(r, SENSOR_STATUS1_TEMP_MASK);
-> +		seq_printf(s, "%d) ", translate_temp(state));
-> +
-> +		r =3D readl(ts->regs + tsensors[i].base + SENSOR_STATUS0);
-> +		state =3D REG_GET_MASK(r, SENSOR_STATUS0_VALID_MASK);
-> +		seq_printf(s, "Capture(%d/", state);
-> +		state =3D REG_GET_MASK(r, SENSOR_STATUS0_CAPTURE_MASK);
-> +		seq_printf(s, "%d) ", state);
-> +
-> +		r =3D readl(ts->regs + tsensors[i].base + SENSOR_CONFIG0);
-> +		state =3D REG_GET_MASK(r, SENSOR_CONFIG0_STOP);
-> +		seq_printf(s, "Stop(%d) ", state);
-> +		state =3D REG_GET_MASK(r, SENSOR_CONFIG0_TALL_MASK);
-> +		seq_printf(s, "Tall(%d) ", state);
-> +		state =3D REG_GET_MASK(r, SENSOR_CONFIG0_TCALC_OVER);
-> +		seq_printf(s, "Over(%d/", state);
-> +		state =3D REG_GET_MASK(r, SENSOR_CONFIG0_OVER);
-> +		seq_printf(s, "%d/", state);
-> +		state =3D REG_GET_MASK(r, SENSOR_CONFIG0_CPTR_OVER);
-> +		seq_printf(s, "%d) ", state);
-> +
-> +		r =3D readl(ts->regs + tsensors[i].base + SENSOR_CONFIG2);
-> +		state =3D REG_GET_MASK(r, SENSOR_CONFIG2_THERMA_MASK);
-> +		seq_printf(s, "Therm_A/B(%d/", state);
-> +		state =3D REG_GET_MASK(r, SENSOR_CONFIG2_THERMB_MASK);
-> +		seq_printf(s, "%d)\n", (s16)state);
-> +	}
+Perhaps you should mention Tegra in the subject and the commit message?
 
-This isn't really a register dump, it's a decoded form of the register
-contents. I think it'd be better to either provide a debugfs file with
-the raw register contents, perhaps with register name and offset, or a
-decoded version. Or both.
+Also please use all of the 72 columns that are at your disposal when
+writing commit messages.
 
-> +
-> +	r =3D readl(ts->regs + SENSOR_PDIV);
-> +	seq_printf(s, "PDIV: 0x%x\n", r);
-> +
-> +	r =3D readl(ts->regs + SENSOR_HOTSPOT_OFF);
-> +	seq_printf(s, "HOTSPOT: 0x%x\n", r);
-> +
-> +	seq_puts(s, "\n");
-> +	seq_puts(s, "-----SOC_THERM-----\n");
-
-I don't think these separators are any good. debugfs files are
-essentially for free, so if you have logical separation of the content,
-as indicated by the separator here, a better option would be to make
-these separate files.
-
-> +	r =3D readl(ts->regs + SENSOR_TEMP1);
-> +	state =3D REG_GET_MASK(r, SENSOR_TEMP1_CPU_TEMP_MASK);
-> +	seq_printf(s, "Temperatures: CPU(%d) ", translate_temp(state));
-> +	state =3D REG_GET_MASK(r, SENSOR_TEMP1_GPU_TEMP_MASK);
-> +	seq_printf(s, " GPU(%d) ", translate_temp(state));
-> +	r =3D readl(ts->regs + SENSOR_TEMP2);
-> +	state =3D REG_GET_MASK(r, SENSOR_TEMP2_PLLX_TEMP_MASK);
-> +	seq_printf(s, " PLLX(%d) ", translate_temp(state));
-> +	state =3D REG_GET_MASK(r, SENSOR_TEMP2_MEM_TEMP_MASK);
-> +	seq_printf(s, " MEM(%d)\n", translate_temp(state));
-
-Isn't this something that the thermal core support already exports via
-some interface?
-
-> +static int soctherm_debug_init(struct platform_device *pdev)
-> +{
-> +	struct dentry *tegra_soctherm_root;
-> +
-> +	tegra_soctherm_root =3D debugfs_create_dir("tegra_soctherm", NULL);
-
-You should check for potential failure here, otherwise you might end up
-in a situation where you create the soctherm files in the debugfs root,
-which is almost certainly not what you want.
-
-> +	debugfs_create_file("regs", 0644, tegra_soctherm_root,
-> +			    pdev, &regs_fops);
-> +
-> +	return 0;
-> +}
-> +#else
-> +static inline int soctherm_debug_init(struct platform_device *pdev)
-> +{ return 0; }
-> +#endif
-> +
->  int tegra_soctherm_probe(struct platform_device *pdev,
->  			 struct tegra_tsensor *tsensors,
->  			 const struct tegra_tsensor_group **ttgs,
-> @@ -154,6 +276,10 @@ int tegra_soctherm_probe(struct platform_device *pde=
-v,
->  	if (!tegra)
->  		return -ENOMEM;
+> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  .../devicetree/bindings/thermal/tegra-soctherm.txt | 29 ++++++++++++++++=
+++++++
+>  1 file changed, 29 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/thermal/tegra-soctherm.txt=
+ b/Documentation/devicetree/bindings/thermal/tegra-soctherm.txt
+> index 6b68cd150405..77aef0b4968b 100644
+> --- a/Documentation/devicetree/bindings/thermal/tegra-soctherm.txt
+> +++ b/Documentation/devicetree/bindings/thermal/tegra-soctherm.txt
+> @@ -26,6 +26,18 @@ Required properties :
+>      of this property. See <dt-bindings/thermal/tegra124-soctherm.h> for a
+>      list of valid values when referring to thermal sensors.
 > =20
-> +	dev_set_drvdata(&pdev->dev, tegra);
-> +
-> +	tegra->tsensors =3D tsensors;
-> +
->  	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	tegra->regs =3D devm_ioremap_resource(&pdev->dev, res);
->  	if (IS_ERR(tegra->regs))
-> @@ -243,6 +369,8 @@ int tegra_soctherm_probe(struct platform_device *pdev,
->  		tegra->thermctl_tzs[ttgs[i]->id] =3D tz;
->  	}
-> =20
-> +	soctherm_debug_init(pdev);
+> +Optional properties:
+> +- hw-trips : A sub-node which is a container of hardware trip points
+> +    for each sensors.
 
-If you never check and don't care about the return value, I suggest
-making the soctherm_debugfs_init() function return void. You should
-still check for errors within the function to make sure you're not
-doing anything you shouldn't, but you can silently ignore errors if
-you don't care, or perhaps give an indication as to what failed with
-a dev_warn() or similar.
+Perhaps call the node "trip-points"? "hw-" seems kind of redundant since
+DT is a hardware description, and "trips" isn't a very good abbreviation
+for "trip-points".
+
+> +  * sensors: Sub-nodes which are used to describe the HW trip points inf=
+o,
+> +        must be named as "cpu", "gpu", "mem", "pll".
+> +      Properties:
+> +      - therm-temp : Shutdown temperature in millicelsius, once the
+> +        temperature of this sensor is higher than the therm-temp, the sy=
+stem
+> +        will be reset or shutdown.
+
+Why not call the property "shutdown-temperature" if that's what it is.
+
+> +      - throt-temp : HW throttle temperature in millicelsius, once the
+> +        temperature of this sensor is higher than the throt-temp, the HW
+> +        throttle will be triggered in soctherm. (Not implement yet)
+
+"throttle-temperature" would be a better name in my opinion. More typing
+perhaps but less chance of getting the abbreviations wrong. Also there's
+no need for the "(Not implement yet)" because the binding isn't about an
+implementation, it's about the hardware description. If you have no code
+that uses this, a safer option might be to just drop it for now.
 
 Thierry
 
---a1QUDc0q7S3U7/Jg
+--+ts6NCQ4mrNQIV8p
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJWlmqSAAoJEN0jrNd/PrOhQbUP/1oqaod/Dphez5B5nhop4lHi
-A2qik9FSVVy8nZtNWPpQJU0AFGzeSGBHP6775xdhbmaKkHCjA4uSEfUYGIL3uc8U
-P38MWPcgJXnQcP5rdVKQAJMr6SjQIbDvRQ6+YHgNVkPiIvPJLJyfrYrVCahFRIgL
-Kd928k9WfWzKAU9+QpP4VdU7W9S5TIxrHjvGWd9AzVsaPPxS+fKMZoNlccwZXAHv
-gdvUkOc8PN1Lic8LSGATZOR1pgIxoDSJdEWHiQz6RYi028MhLgXq8IcthO4+HgZ2
-DFUPIE8AoliAyXMatCKSDgctyyrbm/IMspwZfdLqcM7HyIwon/uvHy3ykGk2PEH1
-R3R4wPBV357H0e7pjPk31IYSOLdiEr/o7SnxIMdj8jvkyQRio5MnN8vFyjgt9Ni8
-KPfCpFV2UZji11BvJ6NDJg3nw5fdvBdEl12tepr889PNUQBhPR+l7YUGfTSrT0WD
-304BkJj7YD/2QwrBpCKeDotvj5f8IwjXmudBqh5+KPujZLD7DZn8OEHtU31ScwuE
-kULjJSGOCJkRi/1oomHyl/4XCMX1mDY7Jk4Ev2K4M1aZiPxA/uGfmxN5bbJsxtAt
-wLC1t4dY/eEZvlGQzjbPScHOy5A8p6+qXERTrnmF2D+bnsnN6BL95gPm8vVflrIC
-ovdlKXxV9Po0FaItBNkm
-=EZEZ
+iQIcBAABCAAGBQJWlmxnAAoJEN0jrNd/PrOhn64P/ROmY6V2mUZRaBsCpU1EPfk6
+YBYaWg3trnkI24WcVj9PpBb4PodZJTuU/KHmTCIUs0zl4sWsZsT4zMOW0ZaGpdJ4
+t1MhfuPVkG4bLoUHLaIW6JvTS2THNIfm0TKT+C9G7XfD/C/K7taK+SO+edg0zdj1
+LIhEbzenNmvIf9xBe2XnJB61WaS79TJP3rJT5eC++S94/3Wodq7sFbEfXPdI16vN
+arH3FeX4uEbREa0WVHrBt4T37fb2ZvcvJ2KsnSgN325S8d4SCHloDQzpsVit8IIV
+TVpDayeCzq3jZ4Y91alyFAOXprlbunJcvCC8QRy4Prcpm+QPYVSYbZ9lqSo0NdEr
+L5WZ7vQmDynIpC3Zvf+z6s7g4XTdkX5fNZpZFomZt8JxnPruTnj5YSZs46tR0xdy
+kGLP4qjBo3kP97IJFxBfq6yRBVf2Y0GPFeP16uytnzx+ZtoeXV4obNHcxjWw4Ocf
+HIOb1ppX8N5UQQOCxIu6fta2dyefku+6GPgUCTOsHg7n7W2I4UU9eM4qFEaNo6cc
+4E5vXcqYxB22JRk/jRJjymNLR44VbO48L0RPdZUliZMUovVqW+zTp58fsUIKJ7R7
+46BAu/APqvKdHlL/VG0QDPlvf0eXi6e7ETGvjqIWTuMJvP4UkHkoz3CCKVRH9dsT
+OSah9UuLdxl8iCXxi6rf
+=cwJ6
 -----END PGP SIGNATURE-----
 
---a1QUDc0q7S3U7/Jg--
+--+ts6NCQ4mrNQIV8p--
