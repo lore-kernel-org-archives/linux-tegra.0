@@ -1,70 +1,62 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 8/9] clk: tegra: pll: Fix PLLE SS config
-Date: Wed, 13 Jan 2016 15:00:13 +0100
-Message-ID: <20160113140013.GA15782@ulmo>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 9/9] clk: tegra210: Initialize PLL_D2 to a sane rate
+Date: Wed, 13 Jan 2016 15:03:09 +0100
+Message-ID: <20160113140309.GB15782@ulmo>
 References: <1452278714-10751-1-git-send-email-rklein@nvidia.com>
- <1452278714-10751-9-git-send-email-rklein@nvidia.com>
+ <1452278714-10751-10-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
-Return-path: <linux-clk-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="St7VIuEGZ6dlpu13"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1452278714-10751-9-git-send-email-rklein@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Bill Huang <bilhuang@nvidia.com>, Jim Lin <jilin@nvidia.com>, Benson Leung <bleung@chromium.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Kuo <mkuo@nvidia.com>
+In-Reply-To: <1452278714-10751-10-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jim Lin <jilin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Benson Leung <bleung-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---cNdxnHkX5QqsyA0e
+--St7VIuEGZ6dlpu13
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jan 08, 2016 at 01:45:13PM -0500, Rhyland Klein wrote:
-> From: Mark Kuo <mkuo@nvidia.com>
+On Fri, Jan 08, 2016 at 01:45:14PM -0500, Rhyland Klein wrote:
+> Initialize PLL_D2 to a sane rate at the start of the day.
 >=20
-> Fix PLLE spread spectrum configuration so it aligns with downstream
-> kernel.
->=20
-> Signed-off-by: Mark Kuo <mkuo@nvidia.com>
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  drivers/clk/tegra/clk-pll.c | 22 ++++++++++++++--------
->  1 file changed, 14 insertions(+), 8 deletions(-)
+>  drivers/clk/tegra/clk-tegra210.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-Can we have a better description for this. Merely saying that this is
-meant to align things with downstream isn't really helpful for anyone
-who doesn't have the downstream kernel to check against.
+There are a lot of assumptions in this commit message. I'm asking myself
+why does it need to be initialized to any rate at all? Isn't it up to
+the user driver to set the PLL to whatever it knows to be a sane rate?
+Why is 594 MHz a sane rate?
 
-I also see some potential for splitting this up into several logical
-changes, since for example it seems to fix a typo (?) where some bits
-were being set that should really be cleared, and in other hunks it
-splits up the SS coefficients by SoC generation. Splitting it up into
-logical changes might make it easier to write accurate commit
-descriptions rather than this kind of blanket commit message.
+A good commit message should answer those questions.
 
 Thierry
 
---cNdxnHkX5QqsyA0e
+--St7VIuEGZ6dlpu13
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJWllhrAAoJEN0jrNd/PrOheQUQAINeqKI44/qaYw125AoiNJVM
-QTPHzlqsYVXTFVsBXDxNpPA6PKFPO3NAbQxAhVzkCL7/ahww74Py4o9SQJO02XWm
-1V+OXPFIZEX8NivF85J7SsszPiRrVOgeSPODAlLirRZcAW+uzJAD5fvjylTurdUq
-uNdYxtyt10Pp6Grr4Sc7URFibqLXzJ9ggUFe1+LgH53wBRKRJuUdGDhOqeo+oiKy
-klWlNjCabISOdb5nNTwPfO2C4inUbY9Eox9ENsqMbbSrZ/A1FIBtW4U+OPIihM63
-iyqFyfPgYJ6SWHl2mRhvCW6IrrZHZhiNw88BZ+VBCcY9+LIPWQEqNBW+ZXk1GjGy
-Uv4DCxoYgNqz9ErizadS7RQF0KnuxMMCQ0/l8/CJY2P+BNMH73o2KL4gnJ4cdlEt
-A7iMdEvDMvPpFU/92E6rG+lsi1fB4GT3YYDk19shL2+ihnFvwyoR1vOttTeaNssx
-aPRQlZ5ZKa/LLa0wYym2pNvM3JV53HDKJ1U5PdqsUCrylQB4MXij/zl27JGs+5li
-KJzSDoImnBKN+XozrlVJ2vL8Fsy3MCHnGCggKMabHxRvy8qBFiCkS8YbXQsKmROI
-o0XO81w3IHImHd0wTCuQTa0LwJXubNTwH1sDk0PCklEkat0Lq02RSI9H0mvW7aAM
-fPXEwsuoQTCdim7GJgKX
-=BpQQ
+iQIcBAABCAAGBQJWllkdAAoJEN0jrNd/PrOhCfUP/jGCR7vcSSvoMaIqs5IW4AxO
+b2FaAzx3ZbUEg1M0WLpaSKIkupucZz4Z2XuTt/+HEIz5IyUvQ3o1bB57OkgXcYUA
+8j/U+RKzAMgc+ns9v/vnrfeg7bwRhdTlXbRkDu7YmguMrxSGC7UMVreC+RfcmniX
+lRtsHvdHsPdrpp86IH4113l9bd71+d+qMLoJ6fD3UZ5UVYvCuSLGshQQv88rXupX
+oLCS7g8fVYzZintwsr62W1EBScVJjMRC4RJ6ScD7SYhiZTPLVaAkSB7FN+Rtv+oe
++HHQhlHVMabRjJQ18Ek8KiVMVo5/U9JHxkZ/O99/O28VPqPLZHZdgp2EAfvak09v
+jKDip86VUXC9AMTfT1krUGWaHQMuEVCpbHrfXlQxu+WgkAXDITnHVecflioWmpgt
+XVW5c+ZbGlUaiUj/Esc8X/u7J1a+YPTYZmR79v125jsiq2MQlsDzFtcZH1l3KhjV
+hCWNZQDi6D9A35ZTMkCzG0HUIL1P7gEFgReIDcmzQkOvpzwjOtZifuUfDlE9vJmm
+eOeCqp1jqv1IheVNeiRZIfRfkDtV7u59prQUrNE9tWuz7WQcl/pWaXTbRvNXoGch
+HW6w/dwC8oyxzW5tj4g+9SVWy6h5oelmbaYRa+TBcFLcKqEq/Rm7j+WkjzvPyRPr
+IFUj9+QypSKvbMMQ7k8j
+=qQzv
 -----END PGP SIGNATURE-----
 
---cNdxnHkX5QqsyA0e--
+--St7VIuEGZ6dlpu13--
