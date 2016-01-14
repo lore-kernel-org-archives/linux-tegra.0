@@ -1,141 +1,235 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V4 16/16] ARM64: tegra: select PM_GENERIC_DOMAINS
-Date: Thu, 14 Jan 2016 11:29:24 +0100
-Message-ID: <20160114102924.GA22340@ulmo>
-References: <1449241037-22193-1-git-send-email-jonathanh@nvidia.com>
- <8579242.omBpg1aLr2@wuerfel>
- <CAPDyKFrewx5CbS9QKZAxqq0Gu+TywQ3nkDGZFURR=PJLtkDuyQ@mail.gmail.com>
- <11122786.kKumQ3Dhls@wuerfel>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V1 05/10] thermal: tegra: add sysfs to dump registers
+Date: Thu, 14 Jan 2016 19:01:33 +0800
+Message-ID: <5697800D.7060207@nvidia.com>
+References: <1452672007-330-1-git-send-email-wni@nvidia.com> <20160113151740.GE2588@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="gBBFr7Ir9EOA20Yy"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <11122786.kKumQ3Dhls@wuerfel>
+In-Reply-To: <20160113151740.GE2588@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rafael Wysocki <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---gBBFr7Ir9EOA20Yy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 14, 2016 at 10:21:06AM +0100, Arnd Bergmann wrote:
-> On Thursday 14 January 2016 09:57:14 Ulf Hansson wrote:
-> > On 13 January 2016 at 21:43, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
-> > > On Wednesday 13 January 2016 18:03:24 Thierry Reding wrote:
-> > >> On Fri, Dec 04, 2015 at 02:57:17PM +0000, Jon Hunter wrote:
-> > >> > Enable PM_GENERIC_DOMAINS for tegra 64-bit devices. To ensure that=
- devices
-> > >> > dependent upon a particular power-domain are only probed when that=
- power
-> > >> > domain has been powered up, requires that PM is made mandatory for=
- tegra
-> > >> > 64-bit devices and so select this option for tegra as well.
-> > >> >
-> > >> > Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > >> > ---
-> > >> >  arch/arm64/Kconfig.platforms | 2 ++
-> > >> >  1 file changed, 2 insertions(+)
-> > >> >
-> > >> > diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.pla=
-tforms
-> > >> > index 9806324fa215..e0b5bd0aff0f 100644
-> > >> > --- a/arch/arm64/Kconfig.platforms
-> > >> > +++ b/arch/arm64/Kconfig.platforms
-> > >> > @@ -93,6 +93,8 @@ config ARCH_TEGRA
-> > >> >       select GENERIC_CLOCKEVENTS
-> > >> >       select HAVE_CLK
-> > >> >       select PINCTRL
-> > >> > +     select PM
-> > >> > +     select PM_GENERIC_DOMAINS
-> > >> >       select RESET_CONTROLLER
-> > >> >       help
-> > >> >         This enables support for the NVIDIA Tegra SoC family.
-> > >>
-> > >> This has potential consequences for multi-platform builds, doesn't i=
-t?
-> > >> All of a sudden any combination of builds that includes Tegra won't =
-be
-> > >> possible to build without PM support.
-> > >>
-> > >> Adding linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org for visibility.
-> > >>
-> > >>
-> > >
-> > > Agreed, it would be better to add 'depends on PM_GENERIC_DOMAINS'
-> > > dependencies in the drivers that require it.
-> > >
-> >=20
-> > The problem with that approach is that if those drivers are cross SoC
-> > drivers. In some cases PM isn't needed and it is.
-> >=20
-> > Of course I don't have the in depth knowledge about the drivers being
-> > used in Tegra which may need PM, perhaps it's not that many?
-> >=20
-> > Anyway, to me it seems like ARCH_TEGRA should depend on PM instead.
-> > Would that work?
+On 2016=E5=B9=B401=E6=9C=8813=E6=97=A5 23:17, Thierry Reding wrote:
+> * PGP Signed by an unknown key
 >=20
-> That seems a little over-restrictive, as it prevents you from
-> building a tegra kernel even if none of the drivers that rely
-> on the pm domains are used, but it would work.
+> On Wed, Jan 13, 2016 at 04:00:07PM +0800, Wei Ni wrote:
+>> Add sysfs interface to dump registers for debug.
 >=20
-> I've looked again at how other platforms (on arm32) do it, and
-> a lot of them use "select PM_GENERIC_DOMAINS if PM", so they don't
-> automatically enable PM, but they enable the pmdomain code if
-> PM is already set. No driver really "depends on PM_GENERIC_DOMAINS",
-> so we shouldn't really start that now or we end up with circular
-> dependencies in the long run.
+> You're adding a debugfs interface here, not sysfs.
 
-It just occurred to me that none of these options really make much of a
-difference. As Jon mentioned once we merge this series a lot of features
-on Tegra will start to rely on PM_GENERIC_DOMAINS and hence PM. So if we
-do want to build a kernel with a maximum of Tegra features enabled (and
-I think a multi_v7_defconfig should include that) we'll end up with a PM
-dependency anyway, whether forced via select or implied via depends on.
+Oh, sorry, should be debugfs.
 
-I'm beginning to wonder if PM really should be an option these days. The
-disadvantages of making it optional do outweigh the advantages in my
-opinion. I'm not saying that, in general, it's totally useless to build
-a kernel that has no PM support, but for the more specific case where
-you would want to enable multi-platform support I don't think there's
-much practical advantage in allowing !PM. One of the most common build
-warnings are triggered because of this option. Also multi-platform
-kernels are really big already, so much so that I doubt it would make a
-significant difference if we unconditionally built PM support. Also the
-chances are that we'll be seeing more and more SoCs support PM and rely
-on it, much like Tegra would with the addition of this series.
+>=20
+>> diff --git a/drivers/thermal/tegra/tegra_soctherm.c b/drivers/therma=
+l/tegra/tegra_soctherm.c
+> [...]
+>> +#ifdef CONFIG_DEBUG_FS
+>> +static int regs_show(struct seq_file *s, void *data)
+>> +{
+>> +	struct platform_device *pdev =3D s->private;
+>> +	struct tegra_soctherm *ts =3D platform_get_drvdata(pdev);
+>> +	struct tegra_tsensor *tsensors =3D ts->tsensors;
+>> +	u32 r, state;
+>> +	int i;
+>> +
+>> +	seq_puts(s, "-----TSENSE (convert HW)-----\n");
+>> +
+>> +	for (i =3D 0; tsensors[i].name; i++) {
+>> +		r =3D readl(ts->regs + tsensors[i].base + SENSOR_CONFIG1);
+>> +		state =3D REG_GET_MASK(r, SENSOR_CONFIG1_TEMP_ENABLE);
+>> +		if (!state)
+>> +			continue;
+>> +
+>> +		seq_printf(s, "%s: ", tsensors[i].name);
+>> +
+>> +		seq_printf(s, "En(%d) ", state);
+>> +		state =3D REG_GET_MASK(r, SENSOR_CONFIG1_TIDDQ_EN_MASK);
+>> +		seq_printf(s, "tiddq(%d) ", state);
+>> +		state =3D REG_GET_MASK(r, SENSOR_CONFIG1_TEN_COUNT_MASK);
+>> +		seq_printf(s, "ten_count(%d) ", state);
+>> +		state =3D REG_GET_MASK(r, SENSOR_CONFIG1_TSAMPLE_MASK);
+>> +		seq_printf(s, "tsample(%d) ", state + 1);
+>> +
+>> +		r =3D readl(ts->regs + tsensors[i].base + SENSOR_STATUS1);
+>> +		state =3D REG_GET_MASK(r, SENSOR_STATUS1_TEMP_VALID_MASK);
+>> +		seq_printf(s, "Temp(%d/", state);
+>> +		state =3D REG_GET_MASK(r, SENSOR_STATUS1_TEMP_MASK);
+>> +		seq_printf(s, "%d) ", translate_temp(state));
+>> +
+>> +		r =3D readl(ts->regs + tsensors[i].base + SENSOR_STATUS0);
+>> +		state =3D REG_GET_MASK(r, SENSOR_STATUS0_VALID_MASK);
+>> +		seq_printf(s, "Capture(%d/", state);
+>> +		state =3D REG_GET_MASK(r, SENSOR_STATUS0_CAPTURE_MASK);
+>> +		seq_printf(s, "%d) ", state);
+>> +
+>> +		r =3D readl(ts->regs + tsensors[i].base + SENSOR_CONFIG0);
+>> +		state =3D REG_GET_MASK(r, SENSOR_CONFIG0_STOP);
+>> +		seq_printf(s, "Stop(%d) ", state);
+>> +		state =3D REG_GET_MASK(r, SENSOR_CONFIG0_TALL_MASK);
+>> +		seq_printf(s, "Tall(%d) ", state);
+>> +		state =3D REG_GET_MASK(r, SENSOR_CONFIG0_TCALC_OVER);
+>> +		seq_printf(s, "Over(%d/", state);
+>> +		state =3D REG_GET_MASK(r, SENSOR_CONFIG0_OVER);
+>> +		seq_printf(s, "%d/", state);
+>> +		state =3D REG_GET_MASK(r, SENSOR_CONFIG0_CPTR_OVER);
+>> +		seq_printf(s, "%d) ", state);
+>> +
+>> +		r =3D readl(ts->regs + tsensors[i].base + SENSOR_CONFIG2);
+>> +		state =3D REG_GET_MASK(r, SENSOR_CONFIG2_THERMA_MASK);
+>> +		seq_printf(s, "Therm_A/B(%d/", state);
+>> +		state =3D REG_GET_MASK(r, SENSOR_CONFIG2_THERMB_MASK);
+>> +		seq_printf(s, "%d)\n", (s16)state);
+>> +	}
+>=20
+> This isn't really a register dump, it's a decoded form of the registe=
+r
+> contents. I think it'd be better to either provide a debugfs file wit=
+h
+> the raw register contents, perhaps with register name and offset, or =
+a
+> decoded version. Or both.
 
-I imagine that we could save ourselves a lot of headaches by simply
-enabling PM by default, whether that be via the PM Kconfig option or by
-selecting it from ARCH_TEGRA and any other architectures that may come
-to rely on it. Doing so would also reduce the amount of test coverage
-that we need to do, both at compile- and runtime.
+Yes, you are right, it's a decoded form of register contents.
 
-Thierry
+>=20
+>> +
+>> +	r =3D readl(ts->regs + SENSOR_PDIV);
+>> +	seq_printf(s, "PDIV: 0x%x\n", r);
+>> +
+>> +	r =3D readl(ts->regs + SENSOR_HOTSPOT_OFF);
+>> +	seq_printf(s, "HOTSPOT: 0x%x\n", r);
+>> +
+>> +	seq_puts(s, "\n");
+>> +	seq_puts(s, "-----SOC_THERM-----\n");
+>=20
+> I don't think these separators are any good. debugfs files are
+> essentially for free, so if you have logical separation of the conten=
+t,
+> as indicated by the separator here, a better option would be to make
+> these separate files.
 
---gBBFr7Ir9EOA20Yy
-Content-Type: application/pgp-signature; name="signature.asc"
+This is the decoded form. To make it more readable, I add this separato=
+rs, and I
+will add more contents which should belong to it.
+This debugfs file is something like:
+root@tegra-ubuntu:/sys/kernel/debug/tegra_soctherm# cat regs
+-----TSENSE (convert HW)-----
+cpu0: En(1) tiddq(1) ten_count(1) tsample(120) Temp(1/26500) Capture(1/=
+8471)
+Stop(0) Tall(16300) Over(0/0/0) Therm_A/B(1683/-1687)
+cpu1: En(1) tiddq(1) ten_count(1) tsample(120) Temp(1/25500) Capture(1/=
+8653)
+Stop(0) Tall(16300) Over(0/0/0) Therm_A/B(1800/-1850)
+cpu2: En(1) tiddq(1) ten_count(1) tsample(120) Temp(1/28000) Capture(1/=
+8386)
+Stop(0) Tall(16300) Over(0/0/0) Therm_A/B(1709/-1693)
+cpu3: En(1) tiddq(1) ten_count(1) tsample(120) Temp(1/26500) Capture(1/=
+8402)
+Stop(0) Tall(16300) Over(0/0/0) Therm_A/B(1732/-1723)
+mem0: En(1) tiddq(1) ten_count(1) tsample(120) Temp(1/27000) Capture(1/=
+8552)
+Stop(0) Tall(16300) Over(0/0/0) Therm_A/B(1670/-1689)
+mem1: En(1) tiddq(1) ten_count(1) tsample(120) Temp(1/25500) Capture(1/=
+8691)
+Stop(0) Tall(16300) Over(0/0/0) Therm_A/B(1911/-1976)
+gpu: En(1) tiddq(1) ten_count(1) tsample(120) Temp(0/0) Capture(0/0) St=
+op(0)
+Tall(16300) Over(0/0/0) Therm_A/B(1714/-1730)
+pllx: En(1) tiddq(1) ten_count(1) tsample(120) Temp(1/26500) Capture(1/=
+8465)
+Stop(0) Tall(16300) Over(0/0/0) Therm_A/B(1644/-1645)
+PDIV: 0x8888
+HOTSPOT: 0xa0500
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+-----SOC_THERM-----
+Temperatures: CPU(28000)  GPU(29000)  PLLX(26500)  MEM(27000)
 
-iQIcBAABCAAGBQJWl3iBAAoJEN0jrNd/PrOhlBAP/1IkvmlDI2pinS/PtwoV6oOk
-EgBcbBqUyd2zk/YZ6EC5mAD5Azh3a7NEvet2Ux+9MND1fNxXQ5KA8dGQz0XYWwWJ
-WZPyebPUTUsaqqeVG10UA8bPAeD0ewj5g8rI1ZyKAQED8JYInCLuzVN1h/+29fdl
-HhADB85n6egLj67IS/03RNIhtDbk7QVjRjSAC+ZJQXIJxJGoCA989GNt18pxfQxg
-PxZ6W33tv1DtCL5YEhfsUcTZlRaDULt1dAWl+BET0J4o8CeqDkDcvr9ufQc+nwAk
-QxLfI6mQ++dhCzSTxSMT3Jc/EpV42d5/3mXDZZ4wmRxGS56ZKFiAood9I6iCMYpW
-m5Gro3+alGKoYsdVKqtlQIC5grEJkkfnSlmfl/nMmB46T5h97wop7iIhAcYgJNXK
-SZZkIgu6ZSNtrdY/s+L24QddAF9kWw5Y/VKxaO0LBVcjdBLwT04Qr7JUvqH/lhFJ
-jb3nTz64cqHf/u/XMKd03a4dOUnmkEQICtVUMcjPZeTatiWwaanXUJtNHZ20kvx0
-d/Xc4pXicTtKDaYvUVoBrg79z1e0Zt26OKz0BZ1BY9DNhqQ5//GykISoPsx+BM15
-3Ae9zmdnDHMZk8BIeODByTaa8RKj/olOQ2c2RwMW8GfIrBF6OzcF7eBNv5O/zXmW
-sOgWDaYrHJMx9WPcDCQv
-=4NxC
------END PGP SIGNATURE-----
+>=20
+>> +	r =3D readl(ts->regs + SENSOR_TEMP1);
+>> +	state =3D REG_GET_MASK(r, SENSOR_TEMP1_CPU_TEMP_MASK);
+>> +	seq_printf(s, "Temperatures: CPU(%d) ", translate_temp(state));
+>> +	state =3D REG_GET_MASK(r, SENSOR_TEMP1_GPU_TEMP_MASK);
+>> +	seq_printf(s, " GPU(%d) ", translate_temp(state));
+>> +	r =3D readl(ts->regs + SENSOR_TEMP2);
+>> +	state =3D REG_GET_MASK(r, SENSOR_TEMP2_PLLX_TEMP_MASK);
+>> +	seq_printf(s, " PLLX(%d) ", translate_temp(state));
+>> +	state =3D REG_GET_MASK(r, SENSOR_TEMP2_MEM_TEMP_MASK);
+>> +	seq_printf(s, " MEM(%d)\n", translate_temp(state));
+>=20
+> Isn't this something that the thermal core support already exports vi=
+a
+> some interface?
 
---gBBFr7Ir9EOA20Yy--
+Hmm, yes, I add them to here so that we can check all HW information in
+this file.
+
+>=20
+>> +static int soctherm_debug_init(struct platform_device *pdev)
+>> +{
+>> +	struct dentry *tegra_soctherm_root;
+>> +
+>> +	tegra_soctherm_root =3D debugfs_create_dir("tegra_soctherm", NULL)=
+;
+>=20
+> You should check for potential failure here, otherwise you might end =
+up
+> in a situation where you create the soctherm files in the debugfs roo=
+t,
+> which is almost certainly not what you want.
+
+Yes, you are right, will check the return value.
+
+>=20
+>> +	debugfs_create_file("regs", 0644, tegra_soctherm_root,
+>> +			    pdev, &regs_fops);
+>> +
+>> +	return 0;
+>> +}
+>> +#else
+>> +static inline int soctherm_debug_init(struct platform_device *pdev)
+>> +{ return 0; }
+>> +#endif
+>> +
+>>  int tegra_soctherm_probe(struct platform_device *pdev,
+>>  			 struct tegra_tsensor *tsensors,
+>>  			 const struct tegra_tsensor_group **ttgs,
+>> @@ -154,6 +276,10 @@ int tegra_soctherm_probe(struct platform_device=
+ *pdev,
+>>  	if (!tegra)
+>>  		return -ENOMEM;
+>> =20
+>> +	dev_set_drvdata(&pdev->dev, tegra);
+>> +
+>> +	tegra->tsensors =3D tsensors;
+>> +
+>>  	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>>  	tegra->regs =3D devm_ioremap_resource(&pdev->dev, res);
+>>  	if (IS_ERR(tegra->regs))
+>> @@ -243,6 +369,8 @@ int tegra_soctherm_probe(struct platform_device =
+*pdev,
+>>  		tegra->thermctl_tzs[ttgs[i]->id] =3D tz;
+>>  	}
+>> =20
+>> +	soctherm_debug_init(pdev);
+>=20
+> If you never check and don't care about the return value, I suggest
+> making the soctherm_debugfs_init() function return void. You should
+> still check for errors within the function to make sure you're not
+> doing anything you shouldn't, but you can silently ignore errors if
+> you don't care, or perhaps give an indication as to what failed with
+> a dev_warn() or similar.
+
+Yes, you are right, I will change to return void.
+
+>=20
+> Thierry
+>=20
+> * Unknown Key
+> * 0x7F3EB3A1
+>=20
