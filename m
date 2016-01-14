@@ -1,102 +1,64 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V1 02/10] thermal: tegra: combine sensor group-related
- data
-Date: Thu, 14 Jan 2016 13:40:45 +0800
-Message-ID: <569734DD.6000901@nvidia.com>
-References: <1452671929-32740-1-git-send-email-wni@nvidia.com> <1452671929-32740-3-git-send-email-wni@nvidia.com> <20160113143123.GB2588@ulmo>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH v3] PCI: hosts: mark pcie/pci (msi) irq cascade handler as
+ IRQF_NO_THREAD
+Date: Thu, 14 Jan 2016 11:49:24 +0530
+Message-ID: <56973DEC.2000108@ti.com>
+References: <1449775100-30877-1-git-send-email-grygorii.strashko@ti.com>
+ <20160106221827.GD16231@localhost> <20160113133904.GD29964@linutronix.de>
+ <20160113175016.GB28453@localhost> <56969BE3.6000804@ti.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160113143123.GB2588@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <56969BE3.6000804@ti.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Grygorii Strashko <grygorii.strashko@ti.com>, Bjorn Helgaas <helgaas@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, tony@atomide.com, nsekhar@ti.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-sh@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Richard Zhu <Richard.Zhu@freescale.com>, Lucas Stach <l.stach@pengutronix.de>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, Pratyush Anand <pratyush.anand@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi,
 
-
-On 2016=E5=B9=B401=E6=9C=8813=E6=97=A5 22:31, Thierry Reding wrote:
-> * PGP Signed by an unknown key
->=20
-> On Wed, Jan 13, 2016 at 03:58:41PM +0800, Wei Ni wrote:
->> Combine sensor group-related data structures into struct
->> tegra_tsensor_group. This provides a single location for
->> sensor group data storage.
->> More sensor group data will be added in subsequent patches.
+On Thursday 14 January 2016 12:18 AM, Grygorii Strashko wrote:
+> On 01/13/2016 07:50 PM, Bjorn Helgaas wrote:
+>> On Wed, Jan 13, 2016 at 02:39:04PM +0100, Sebastian Andrzej Siewior wrote:
+>>> * Bjorn Helgaas | 2016-01-06 16:18:27 [-0600]:
+>>>
+>>>> Hi Bjorn,
+>>>
+>>>>> diff --git a/drivers/pci/host/pci-dra7xx.c b/drivers/pci/host/pci-dra7xx.c
+>>>>> index 8c36880..0415192 100644
+>>>>> --- a/drivers/pci/host/pci-dra7xx.c
+>>>>> +++ b/drivers/pci/host/pci-dra7xx.c
+>>>>> @@ -301,8 +301,19 @@ static int __init dra7xx_add_pcie_port(struct
+>>>>> dra7xx_pcie *dra7xx,
+>>>>>           return -EINVAL;
+>>>>>       }
+>>>>>
+>>>>> +    /*
+>>>>> +     * Mark dra7xx_pcie_msi IRQ as IRQF_NO_THREAD
+>>>>> +     * On -RT and if kernel is booting with "threadirqs" cmd line parameter
+>>>>> +     * the dra7xx_pcie_msi_irq_handler() will be forced threaded but,
+>>>>> +     * in the same time, it's IRQ dispatcher and calls generic_handle_irq(),
+>>>>> +     * which, in turn, will be resolved to handle_simple_irq() call.
+>>>>> +     * The handle_simple_irq() expected to be called with IRQ disabled, as
+>>>>> +     * result kernle will display warning:
+>>>>> +     * "irq XXX handler YYY+0x0/0x14 enabled interrupts".
+>>>>> +     */
+>>>
+>>> could you _please_ remove this coment? This kind of comment (if at all)
+>>> should be part of the commit message (which is the case more or less).
 >>
->> Get rid of T124-specific PDIV/HOTSPOT hack.
->> tegra-soctherm.c contained a hack to set the SENSOR_PDIV and
->> SENSOR_HOTSPOT_OFFSET registers - it just did two writes of
->> T124-specific opaque values.  Convert these into a form that can be
->> substituted on a per-chip basis, and into structure fields that have
->> at least some independent meaning.
->=20
-> This reads as two completely separate commit messages. Should the pat=
-ch
-> be split up to separate out the two logical changes?
+>> IIRC, Grygorii specifically wanted to keep this comment in dra7xx, but
+> 
+> True.
+> 
+>> I do agree that this level of detail is more appropriate for a changelog.
+>>
+>> If Grygorii and Kishon don't object, I can update the patch to remove it.
+> 
+> But no objections from my side. Thanks a lot.
 
-Hmm, you are right, will do it.
+I don't have any objections.
 
->=20
->> diff --git a/drivers/thermal/tegra/tegra_soctherm.c b/drivers/therma=
-l/tegra/tegra_soctherm.c
-> [...]
->> +static struct tegra_tsensor_group tegra124_tsensor_group_cpu =3D {
-> [...]
->> +};
->> +
->> +static struct tegra_tsensor_group tegra124_tsensor_group_gpu =3D {
-> [...]
->> +};
->> +
->> +static struct tegra_tsensor_group tegra124_tsensor_group_pll =3D {
-> [...]
->> +};
->> +
->> +static struct tegra_tsensor_group tegra124_tsensor_group_mem =3D {
-> [...]
->> +};
->> +
->> +static struct tegra_tsensor_group *
->> +tegra124_tsensor_groups[TEGRA124_SOCTHERM_SENSOR_NUM] =3D {
-> [...]
->>  };
->=20
-> These look like they should all be static const.
-
-Yes, they should be "static const", I fixed them in the next patch [03/=
-10].
-I will change it in this patch.
-
->=20
->> @@ -168,7 +268,7 @@ struct tegra_soctherm {
->>  	struct clk *clock_soctherm;
->>  	void __iomem *regs;
->> =20
->> -	struct thermal_zone_device *thermctl_tzs[4];
->> +	struct thermal_zone_device *thermctl_tzs[TEGRA124_SOCTHERM_SENSOR_=
-NUM];
->>  };
->=20
-> Does it make sense to use macros here for the number of zones? I susp=
-ect
-> that since you do parameterize the Tegra210 support that will be adde=
-d
-> later on will have a different maximum number, in which case macros w=
-ill
-> not work very well.
-
-All the Tegra serial chips support 4 thermal zones: cpu, gpu, mem, pllx=
-,
-including the Tegra 210, so we can use the TEGRA124_SOCTHERM_SENSOR_NUM=
-=2E
-
->=20
-> But perhaps I'll see how you solved that problem in a later patch.
->=20
-> Thierry
->=20
-> * Unknown Key
-> * 0x7F3EB3A1
->=20
+Thanks
+Kishon
