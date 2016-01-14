@@ -1,77 +1,129 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH V4 16/16] ARM64: tegra: select PM_GENERIC_DOMAINS
-Date: Thu, 14 Jan 2016 12:11:39 +0100
-Message-ID: <4244898.5om31fQ1mz@wuerfel>
-References: <1449241037-22193-1-git-send-email-jonathanh@nvidia.com> <11122786.kKumQ3Dhls@wuerfel> <20160114102924.GA22340@ulmo>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V4 05/16] soc: tegra: pmc: Avoid extra remapping of PMC
+ registers
+Date: Thu, 14 Jan 2016 14:45:26 +0100
+Message-ID: <20160114134526.GA23082@ulmo>
+References: <1449241037-22193-1-git-send-email-jonathanh@nvidia.com>
+ <1449241037-22193-6-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="5vNYLRcllDrimb99"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160114102924.GA22340@ulmo>
+Content-Disposition: inline
+In-Reply-To: <1449241037-22193-6-git-send-email-jonathanh@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Jon Hunter <jonathanh@nvidia.com>, Philipp Zabel <p.zabel@pengutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Rafael Wysocki <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Vince Hsu <vinceh@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Rafael Wysocki <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Vince Hsu <vinceh@nvidia.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thursday 14 January 2016 11:29:24 Thierry Reding wrote:
-> 
-> It just occurred to me that none of these options really make much of a
-> difference. As Jon mentioned once we merge this series a lot of features
-> on Tegra will start to rely on PM_GENERIC_DOMAINS and hence PM. So if we
-> do want to build a kernel with a maximum of Tegra features enabled (and
-> I think a multi_v7_defconfig should include that) we'll end up with a PM
-> dependency anyway, whether forced via select or implied via depends on.
-> 
-> I'm beginning to wonder if PM really should be an option these days. The
-> disadvantages of making it optional do outweigh the advantages in my
-> opinion. I'm not saying that, in general, it's totally useless to build
-> a kernel that has no PM support, but for the more specific case where
-> you would want to enable multi-platform support I don't think there's
-> much practical advantage in allowing !PM. One of the most common build
-> warnings are triggered because of this option. Also multi-platform
-> kernels are really big already, so much so that I doubt it would make a
-> significant difference if we unconditionally built PM support. Also the
-> chances are that we'll be seeing more and more SoCs support PM and rely
-> on it, much like Tegra would with the addition of this series.
-> 
-> I imagine that we could save ourselves a lot of headaches by simply
-> enabling PM by default, whether that be via the PM Kconfig option or by
-> selecting it from ARCH_TEGRA and any other architectures that may come
-> to rely on it. Doing so would also reduce the amount of test coverage
-> that we need to do, both at compile- and runtime.
 
-I think this needs some investigation. As a general policy, we should
-not grow the kernel image size when moving from a traditional ARM
-platform to an ARCH_MULTIPLATFORM one.
+--5vNYLRcllDrimb99
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is somewhat contradicted by how we already require CONFIG_OF
-to be set for multiplatform kernels, and that adds around 80kb
-to the image size.
+On Fri, Dec 04, 2015 at 02:57:06PM +0000, Jon Hunter wrote:
+> During early initialisation, the PMC registers are mapped and the PMC SoC
+> data is populated in the PMC data structure. This allows other drivers
+> access the PMC register space, via the public tegra PMC APIs, prior to
+> probing the PMC device.
+>=20
+> When the PMC device is probed, the PMC registers are mapped again and if
+> successful the initial mapping is freed. If the probing of the PMC device
+> fails after the registers are remapped, then the registers will be
+> unmapped and hence the pointer to the PMC registers will be invalid. This
+> could lead to a potential crash, because once the PMC SoC data pointer is
+> populated, the driver assumes that the PMC register mapping is also valid
+> and a user calling any of the public tegra PMC APIs could trigger an
+> exception because these APIs don't check that the mapping is still valid.
+>=20
+> Rather than adding a test to see if the PMC register mapping is valid,
+> fix this by removing the second mapping of the PMC registers and reserve
+> the memory region for the PMC registers during early initialisation where
+> the initial mapping is created. During the probing of the PMC simply check
+> that the PMC registers have been mapped.
+>=20
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  drivers/soc/tegra/pmc.c | 19 +++++++++----------
+>  1 file changed, 9 insertions(+), 10 deletions(-)
 
-Looking at just the defconfig files, these are the ones that currently
-do not set CONFIG_PM:
+devm_ioremap_resource() was used on purpose to make sure we get a proper
+name assigned to the memory region in /proc/iomem. As it is, there will
+be no name associated with it, which I think is unfortunate. As such I'd
+prefer keeping that call and instead fix the issue with the invalid
+mapping by making sure that pmc->base is assigned only after nothing can
+fail in probe anymore.
 
-build/acs5k_defconfig/.config:# CONFIG_PM is not set
-build/acs5k_tiny_defconfig/.config:# CONFIG_PM is not set
-build/axm55xx_defconfig/.config:# CONFIG_PM is not set
-build/bcm2835_defconfig/.config:# CONFIG_PM is not set
-build/clps711x_defconfig/.config:# CONFIG_PM is not set
-build/ebsa110_defconfig/.config:# CONFIG_PM is not set
-build/footbridge_defconfig/.config:# CONFIG_PM is not set
-build/ks8695_defconfig/.config:# CONFIG_PM is not set
-build/netwinder_defconfig/.config:# CONFIG_PM is not set
-build/rpc_defconfig/.config:# CONFIG_PM is not set
-build/u300_defconfig/.config:# CONFIG_PM is not set
-build/vf610m4_defconfig/.config:# CONFIG_PM is not set
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index e60fc2d33c94..fdd1a8d0940f 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -807,22 +807,17 @@ out:
+> =20
+>  static int tegra_pmc_probe(struct platform_device *pdev)
+>  {
+> -	void __iomem *base =3D pmc->base;
 
-The only ones among these are are actually multiplatform are axm55xx,
-bcm2835, and u300. I see no downsides of force-enabling PM for
-any of those, so we could decide to 'select PM' from
-CONFIG_ARCH_MULTIPLATFORM.
+The alternative that I proposed above would entail not setting this...
 
-The one usecase where we may want to have a modern machine without
-CONFIG_PM is a minimal MACH_VIRT kernel for running in a virtual
-machine or QEMU with minimal memory requirements, e.g. trying to
-squeeze a large number of guests on a single host system.
+> -	struct resource *res;
+>  	int err;
+> =20
+> +	if (!pmc->base) {
+> +		dev_err(&pdev->dev, "base address is not configured\n");
+> +		return -ENXIO;
+> +	}
+> +
+>  	err =3D tegra_pmc_parse_dt(pmc, pdev->dev.of_node);
+>  	if (err < 0)
+>  		return err;
+> =20
+> -	/* take over the memory region from the early initialization */
+> -	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -	pmc->base =3D devm_ioremap_resource(&pdev->dev, res);
 
-	Arnd
+=2E.. and storing the result of the mapping in "base" instead...
+
+> -	if (IS_ERR(pmc->base))
+> -		return PTR_ERR(pmc->base);
+> -
+> -	iounmap(base);
+
+=2E.. and move the unmap to the very end of the probe function, which
+would look something like:
+
+	/* take over the memory region from the early initialization */
+	iounmap(pmc->base);
+	pmc->base =3D base;
+
+That way the mapping in "base" will automatically be undone upon error
+and the pmc->base will only be overridden when it's certain that the
+probe will succeed.
+
+What do you think?
+
+Thierry
+
+--5vNYLRcllDrimb99
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJWl6ZzAAoJEN0jrNd/PrOhwt0QALiLsgn8/ZX5N4ziMzHYYPdi
+GP1IBL0nwkDCbLDwzHc/aA/xKwzNsouHRV+1otCXnIocPNgfo3EhKc2svSyc8ir/
+1tqeN6o+6om3okKIBlLdiZ3aWo9YBTvv5tojrM4MKbrBc0KMGR2PVWdF5k7VvAXi
+3uznqng+AVIDFEWTjiNRFedaiqzjP5qoBItV8H5JCzJhPwYuflWlPbX9EBov5Mxi
+M68lSQCAaqrTVc1cVvpkfE4/TfMlyzAj+/IjAsE2HAN/t7FvKO4a7Klq0dMa+4Wo
+e5xhQZYmEwATNWShlkulCyhN2z/J8xHX/d7FymmcEKZZuZuTs+2ycSfOOYCKqZwZ
+NLysJL3fMXynQ7omvK220RHWpYv7CqDvuX1MQj0rTzJbBpbWncrt8BgvRE3Jnz/o
+MvwaW6VsQWAKLkCZGer1Z/feBEDCz3TPlSkhT56+54lker/seQsIZa1a2+8rwmAw
+cK86lUQf1EHdzdGtWzFrapCkuYDl1ETruIQwTNUlX17iiut05FisWSgxnVOY6t7G
+DQmi0+dP4rYLZ7z4oHtJ3qKZ9C/igtw4lTGpLfy5bFjwA+RlVUzETlQk2pexmpBY
+43h1PtLaKA78tLG8g1Fl/He/jNJyko/c6apLU2Az9y58bYizBxW/WYWLc5WL8FIu
+XPyrJ1IXsfAfA6YPAsyv
+=LRR3
+-----END PGP SIGNATURE-----
+
+--5vNYLRcllDrimb99--
