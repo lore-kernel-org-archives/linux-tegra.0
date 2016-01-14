@@ -1,7 +1,7 @@
 From: Rhyland Klein <rklein@nvidia.com>
-Subject: [Patch V2 7/9] clk: tegra: pll: Do not disable PLLE when under HW control
-Date: Thu, 14 Jan 2016 14:24:36 -0500
-Message-ID: <1452799478-14791-8-git-send-email-rklein@nvidia.com>
+Subject: [Patch V2 8/9] clk: tegra: pll: Fix typos around clearing plle bits during enable
+Date: Thu, 14 Jan 2016 14:24:37 -0500
+Message-ID: <1452799478-14791-9-git-send-email-rklein@nvidia.com>
 References: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -9,78 +9,40 @@ Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Kuo <mkuo@nvidia.com>, Rhyland Klein <rklein@nvidia.com>
+Cc: Mike Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Rhyland Klein <rklein@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Mark Kuo <mkuo@nvidia.com>
+While enabling PLLE on both Tegra114 and Tegra210, we should be clearing
+PLLE_MISC_VREG_BG_CTRL_MASK and PLLE_MISC_VREG_CTRL_MASK not setting
+them. This patch fixes both places where we incorrectly set instead
+of cleared those bits.
 
-SW should not disable PLLE if PLLE is already put under HW control.
-
-Signed-off-by: Mark Kuo <mkuo@nvidia.com>
 Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- drivers/clk/tegra/clk-pll.c | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
+ drivers/clk/tegra/clk-pll.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-index 65156486889a..d9c3109b75bd 100644
+index d9c3109b75bd..cb28130e6c0a 100644
 --- a/drivers/clk/tegra/clk-pll.c
 +++ b/drivers/clk/tegra/clk-pll.c
-@@ -2012,7 +2012,7 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
- 	struct tegra_clk_pll *pll = to_clk_pll(hw);
- 	struct tegra_clk_pll_freq_table sel;
- 	u32 val;
--	int ret;
-+	int ret = 0;
- 	unsigned long flags = 0;
- 	unsigned long input_rate = clk_hw_get_rate(clk_hw_get_parent(hw));
- 
-@@ -2022,16 +2022,14 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
- 
-+	val = pll_readl(pll->params->aux_reg, pll);
-+	if (val & PLLE_AUX_SEQ_ENABLE)
-+		goto out;
-+
- 	val = pll_readl_base(pll);
- 	val &= ~BIT(30); /* Disable lock override */
- 	pll_writel_base(val, pll);
- 
--	val = pll_readl(pll->params->aux_reg, pll);
--	val |= PLLE_AUX_ENABLE_SWCTL;
--	val &= ~PLLE_AUX_SEQ_ENABLE;
--	pll_writel(val, pll->params->aux_reg, pll);
--	udelay(1);
--
- 	val = pll_readl_misc(pll);
- 	val |= PLLE_MISC_LOCK_ENABLE;
+@@ -1401,7 +1401,7 @@ static int clk_plle_tegra114_enable(struct clk_hw *hw)
  	val |= PLLE_MISC_IDDQ_SW_CTRL;
-@@ -2104,15 +2102,25 @@ static void clk_plle_tegra210_disable(struct clk_hw *hw)
- 	if (pll->lock)
- 		spin_lock_irqsave(pll->lock, flags);
- 
-+	/* If PLLE HW sequencer is enabled, SW should not disable PLLE */
-+	val = pll_readl(pll->params->aux_reg, pll);
-+	if (val & PLLE_AUX_SEQ_ENABLE)
-+		goto out;
-+
- 	val = pll_readl_base(pll);
- 	val &= ~PLLE_BASE_ENABLE;
- 	pll_writel_base(val, pll);
- 
-+	val = pll_readl(pll->params->aux_reg, pll);
-+	val |= PLLE_AUX_ENABLE_SWCTL | PLLE_AUX_SS_SWCTL;
-+	pll_writel(val, pll->params->aux_reg, pll);
-+
- 	val = pll_readl_misc(pll);
- 	val |= PLLE_MISC_IDDQ_SW_CTRL | PLLE_MISC_IDDQ_SW_VALUE;
+ 	val &= ~PLLE_MISC_IDDQ_SW_VALUE;
+ 	val |= PLLE_MISC_PLLE_PTS;
+-	val |= PLLE_MISC_VREG_BG_CTRL_MASK | PLLE_MISC_VREG_CTRL_MASK;
++	val &= ~(PLLE_MISC_VREG_BG_CTRL_MASK | PLLE_MISC_VREG_CTRL_MASK);
  	pll_writel_misc(val, pll);
- 	udelay(1);
+ 	udelay(5);
  
-+out:
- 	if (pll->lock)
- 		spin_unlock_irqrestore(pll->lock, flags);
- }
+@@ -2035,7 +2035,7 @@ static int clk_plle_tegra210_enable(struct clk_hw *hw)
+ 	val |= PLLE_MISC_IDDQ_SW_CTRL;
+ 	val &= ~PLLE_MISC_IDDQ_SW_VALUE;
+ 	val |= PLLE_MISC_PLLE_PTS;
+-	val |= PLLE_MISC_VREG_BG_CTRL_MASK | PLLE_MISC_VREG_CTRL_MASK;
++	val &= ~(PLLE_MISC_VREG_BG_CTRL_MASK | PLLE_MISC_VREG_CTRL_MASK);
+ 	pll_writel_misc(val, pll);
+ 	udelay(5);
+ 
 -- 
 1.9.1
