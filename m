@@ -1,100 +1,129 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V4 12/16] Documentation: DT: bindings: Add power domain
- info for NVIDIA PMC
-Date: Thu, 14 Jan 2016 15:41:58 +0100
-Message-ID: <20160114144158.GF23082@ulmo>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH V4 05/16] soc: tegra: pmc: Avoid extra remapping of PMC
+ registers
+Date: Thu, 14 Jan 2016 16:35:28 +0000
+Message-ID: <5697CE50.2050004@nvidia.com>
 References: <1449241037-22193-1-git-send-email-jonathanh@nvidia.com>
- <1449241037-22193-13-git-send-email-jonathanh@nvidia.com>
+ <1449241037-22193-6-git-send-email-jonathanh@nvidia.com>
+ <20160114134526.GA23082@ulmo>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Y1L3PTX8QE8cb2T+"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1449241037-22193-13-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rafael Wysocki <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160114134526.GA23082@ulmo>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Rafael Wysocki <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Vince Hsu <vinceh@nvidia.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---Y1L3PTX8QE8cb2T+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 14/01/16 13:45, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Fri, Dec 04, 2015 at 02:57:06PM +0000, Jon Hunter wrote:
+>> During early initialisation, the PMC registers are mapped and the PMC SoC
+>> data is populated in the PMC data structure. This allows other drivers
+>> access the PMC register space, via the public tegra PMC APIs, prior to
+>> probing the PMC device.
+>>
+>> When the PMC device is probed, the PMC registers are mapped again and if
+>> successful the initial mapping is freed. If the probing of the PMC device
+>> fails after the registers are remapped, then the registers will be
+>> unmapped and hence the pointer to the PMC registers will be invalid. This
+>> could lead to a potential crash, because once the PMC SoC data pointer is
+>> populated, the driver assumes that the PMC register mapping is also valid
+>> and a user calling any of the public tegra PMC APIs could trigger an
+>> exception because these APIs don't check that the mapping is still valid.
+>>
+>> Rather than adding a test to see if the PMC register mapping is valid,
+>> fix this by removing the second mapping of the PMC registers and reserve
+>> the memory region for the PMC registers during early initialisation where
+>> the initial mapping is created. During the probing of the PMC simply check
+>> that the PMC registers have been mapped.
+>>
+>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>> ---
+>>  drivers/soc/tegra/pmc.c | 19 +++++++++----------
+>>  1 file changed, 9 insertions(+), 10 deletions(-)
+> 
+> devm_ioremap_resource() was used on purpose to make sure we get a proper
+> name assigned to the memory region in /proc/iomem. As it is, there will
+> be no name associated with it, which I think is unfortunate. As such I'd
+> prefer keeping that call and instead fix the issue with the invalid
+> mapping by making sure that pmc->base is assigned only after nothing can
+> fail in probe anymore.
 
-On Fri, Dec 04, 2015 at 02:57:13PM +0000, Jon Hunter wrote:
-> Add power-domain binding documentation for the NVIDIA PMC driver in
-> order to support generic power-domains.
->=20
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> ---
->=20
-> Please note that I have been debating whether I add this
-> "nvidia,powergate-clock-disable" property or just leave the clocks
-> disabled by default. Some downstream kernels leave the clocks enabled
-> for the audio power-domain because the clocks required for powering up
-> the power-domain are needed by all modules within the power-domain.
-> However are the same time there are other power-domains that may need
-> to be on, but not always clocked and so having the ability to specify if
-> the clocks should be disabled seems useful. However, I can also remove
-> this and just have the appropriate devices turn on the clocks as well.
-> ---
->  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 61 ++++++++++++++++=
-++++++
->  1 file changed, 61 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-p=
-mc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-> index 838e1a69ec0a..8e4641db51a9 100644
-> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-> @@ -1,5 +1,7 @@
->  NVIDIA Tegra Power Management Controller (PMC)
-> =20
-> +=3D=3D Power Management Controller Node =3D=3D
-> +
->  The PMC block interacts with an external Power Management Unit. The PMC
->  mostly controls the entry and exit of the system from different sleep
->  modes. It provides power-gating controllers for SoC and CPU power-island=
-s.
-> @@ -69,6 +71,10 @@ Optional properties for hardware-triggered thermal res=
-et (inside 'i2c-thermtrip'
->                       Defaults to 0. Valid values are described in sectio=
-n 12.5.2
->                       "Pinmux Support" of the Tegra4 Technical Reference =
-Manual.
-> =20
-> +Optional nodes:
-> +- pm-domains : This node contains a hierarchy of PM domain nodes, which =
-should
-> +	       match the power-domains on the Tegra SoC.
-> +
+Yes, however, you still get a valid name in /proc/iomem with this
+change. I made sure I tested that ...
 
-pm-domains is a linuxism. Perhaps name this after what Tegra calls this:
-"powergates"?
+/ # cat /proc/iomem
+6000d000-6000dfff : /gpio@0,6000d000
+60020000-600213ff : /dma@0,60020000
+700008d4-70000b6f : /pinmux@0,700008d4
+70003000-70003293 : /pinmux@0,700008d4
+70006000-7000603f : serial
+7000d100-7000d1ff : /i2c@0,7000d100
+7000e400-7000e7ff : /pmc@0,7000e400
+...
 
-Thierry
+The only expection might be the non-DT case, but I am not sure we care
+about that for most boards? Hmm ... I wonder if I need to set
+"regs.name" for the non-DT case? I probably should ...
 
---Y1L3PTX8QE8cb2T+
-Content-Type: application/pgp-signature; name="signature.asc"
+>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>> index e60fc2d33c94..fdd1a8d0940f 100644
+>> --- a/drivers/soc/tegra/pmc.c
+>> +++ b/drivers/soc/tegra/pmc.c
+>> @@ -807,22 +807,17 @@ out:
+>>  
+>>  static int tegra_pmc_probe(struct platform_device *pdev)
+>>  {
+>> -	void __iomem *base = pmc->base;
+> 
+> The alternative that I proposed above would entail not setting this...
+> 
+>> -	struct resource *res;
+>>  	int err;
+>>  
+>> +	if (!pmc->base) {
+>> +		dev_err(&pdev->dev, "base address is not configured\n");
+>> +		return -ENXIO;
+>> +	}
+>> +
+>>  	err = tegra_pmc_parse_dt(pmc, pdev->dev.of_node);
+>>  	if (err < 0)
+>>  		return err;
+>>  
+>> -	/* take over the memory region from the early initialization */
+>> -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> -	pmc->base = devm_ioremap_resource(&pdev->dev, res);
+> 
+> ... and storing the result of the mapping in "base" instead...
+> 
+>> -	if (IS_ERR(pmc->base))
+>> -		return PTR_ERR(pmc->base);
+>> -
+>> -	iounmap(base);
+> 
+> ... and move the unmap to the very end of the probe function, which
+> would look something like:
+> 
+> 	/* take over the memory region from the early initialization */
+> 	iounmap(pmc->base);
+> 	pmc->base = base;
+> 
+> That way the mapping in "base" will automatically be undone upon error
+> and the pmc->base will only be overridden when it's certain that the
+> probe will succeed.
+> 
+> What do you think?
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+I thought about that, but it still seems racy. You probably want to
+assign the new base before freeing the old and so you would need another
+tmp variable. Even so, I was not sure if there could be a race here.
+Ideally, you would lock, but then you need to lock everywhere that you
+use base. Given that my patch still provides a /proc/iomem entry with a
+valid name, it seems best to me.
 
-iQIcBAABCAAGBQJWl7O2AAoJEN0jrNd/PrOhDIYP/RnJZDfTEMB/dHdRiFTb0iHt
-ayKZa6W7xt39GiWqVZqs0g7T7KrPQKnZTodo57hdwUZMM+kqzEVKCixIdTNwXAcO
-foFfVKbLrqR4zt1GvXs/eEIH1M1MxNWEoyJ9XwFu8hwwbP3DuotI4FzJRd4VRB1o
-+oeP5Fqe1GvV/7z3obybhXYCW4QJ7gIVN5OxbOK1bPbtMhT829oCWGW4dNsnmFcC
-slGbAwA0WOfMu1NRLp7SqV0SlqePC63Cyw+qAuONSyz/JjL833meVzkJXBY/+NYK
-iDyAU2lYnIzZnUZAlKrT/eT9Kuwxp6vKUYNmriU7sWqjpkbVqNBs42jAwE4vvSta
-uhn/TG+Tw+O99inM9uZTy9ohybtlq/OBsQv3zL7XMB032tfkBfTL5ZsyCFU88sdz
-ZhNE5jtpz+KheT+/R8kHqjUMy+28zGfbw15qmRiOcR8hydaUNaSc69Crb+6OSCVr
-MZV7i5Ap/ca3INGh92Wd38JMB3OYSOIesIHezHKGqyIQsEc1CjJb1EJZjfPiU47U
-p1EPEigAKzZwm88oKmFjPLSGQUut1967F6GLwiDhgZmVJGN2UHwSWfazbAXNbsJt
-gENtFKTsjCIi/4BWwJHTepTgxzndSX6VXGTkGSYRqyS09uhE4N1icdomgc3tfWCz
-bLzQfXv5XdvR419mr2ow
-=9MSY
------END PGP SIGNATURE-----
-
---Y1L3PTX8QE8cb2T+--
+Cheers
+Jon
