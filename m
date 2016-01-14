@@ -1,129 +1,149 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V4 05/16] soc: tegra: pmc: Avoid extra remapping of PMC
- registers
-Date: Thu, 14 Jan 2016 14:45:26 +0100
-Message-ID: <20160114134526.GA23082@ulmo>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V4 06/16] soc: tegra: pmc: Wait for powergate state to
+ change
+Date: Thu, 14 Jan 2016 15:01:05 +0100
+Message-ID: <20160114140105.GB23082@ulmo>
 References: <1449241037-22193-1-git-send-email-jonathanh@nvidia.com>
- <1449241037-22193-6-git-send-email-jonathanh@nvidia.com>
+ <1449241037-22193-7-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="5vNYLRcllDrimb99"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="OwLcNYc0lM97+oe1"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1449241037-22193-6-git-send-email-jonathanh@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Rafael Wysocki <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Vince Hsu <vinceh@nvidia.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
+In-Reply-To: <1449241037-22193-7-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rafael Wysocki <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---5vNYLRcllDrimb99
+--OwLcNYc0lM97+oe1
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 04, 2015 at 02:57:06PM +0000, Jon Hunter wrote:
-> During early initialisation, the PMC registers are mapped and the PMC SoC
-> data is populated in the PMC data structure. This allows other drivers
-> access the PMC register space, via the public tegra PMC APIs, prior to
-> probing the PMC device.
+On Fri, Dec 04, 2015 at 02:57:07PM +0000, Jon Hunter wrote:
+> Currently, the function tegra_powergate_set() simply sets the desired
+> powergate state but does not wait for the state to change. In most cases
+> we should wait for the state to change before proceeding. Currently, there
+> is a case for tegra114 and tegra124 devices where we do not wait when
+> starting the secondary CPU as this is not necessary. However, this is only
+> done at boot time and so waiting here will only have a small impact on bo=
+ot
+> time. Therefore, update tegra_powergate_set() to wait when setting the
+> powergate.
 >=20
-> When the PMC device is probed, the PMC registers are mapped again and if
-> successful the initial mapping is freed. If the probing of the PMC device
-> fails after the registers are remapped, then the registers will be
-> unmapped and hence the pointer to the PMC registers will be invalid. This
-> could lead to a potential crash, because once the PMC SoC data pointer is
-> populated, the driver assumes that the PMC register mapping is also valid
-> and a user calling any of the public tegra PMC APIs could trigger an
-> exception because these APIs don't check that the mapping is still valid.
+> By adding this feature, we can also eliminate the polling loop from
+> tegra30_boot_secondary().
 >=20
-> Rather than adding a test to see if the PMC register mapping is valid,
-> fix this by removing the second mapping of the PMC registers and reserve
-> the memory region for the PMC registers during early initialisation where
-> the initial mapping is created. During the probing of the PMC simply check
-> that the PMC registers have been mapped.
->=20
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  drivers/soc/tegra/pmc.c | 19 +++++++++----------
->  1 file changed, 9 insertions(+), 10 deletions(-)
+> A macro has also been adding for checking the status of the powergate and
 
-devm_ioremap_resource() was used on purpose to make sure we get a proper
-name assigned to the memory region in /proc/iomem. As it is, there will
-be no name associated with it, which I think is unfortunate. As such I'd
-prefer keeping that call and instead fix the issue with the invalid
-mapping by making sure that pmc->base is assigned only after nothing can
-fail in probe anymore.
+"added"
+
+> so update the tegra_powergate_is_powered() to use this macro as well.
+>=20
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  arch/arm/mach-tegra/platsmp.c | 16 +++-------------
+>  drivers/soc/tegra/pmc.c       | 21 +++++++++++++++------
+>  2 files changed, 18 insertions(+), 19 deletions(-)
+>=20
+> diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
+> index b45086666648..40cb761e7c95 100644
+> --- a/arch/arm/mach-tegra/platsmp.c
+> +++ b/arch/arm/mach-tegra/platsmp.c
+> @@ -108,19 +108,9 @@ static int tegra30_boot_secondary(unsigned int cpu, =
+struct task_struct *idle)
+>  	 * be un-gated by un-toggling the power gate register
+>  	 * manually.
+>  	 */
+> -	if (!tegra_pmc_cpu_is_powered(cpu)) {
+> -		ret =3D tegra_pmc_cpu_power_on(cpu);
+> -		if (ret)
+> -			return ret;
+> -
+> -		/* Wait for the power to come up. */
+> -		timeout =3D jiffies + msecs_to_jiffies(100);
+> -		while (!tegra_pmc_cpu_is_powered(cpu)) {
+> -			if (time_after(jiffies, timeout))
+> -				return -ETIMEDOUT;
+> -			udelay(10);
+> -		}
+> -	}
+> +	ret =3D tegra_pmc_cpu_power_on(cpu);
+> +	if (ret)
+> +		return ret;
+> =20
+>  remove_clamps:
+>  	/* CPU partition is powered. Enable the CPU clock. */
+
+I vaguely remember this being very brittle. I assume you've tested this
+extensively and made sure it doesn't regress?
 
 > diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index e60fc2d33c94..fdd1a8d0940f 100644
+> index fdd1a8d0940f..f94d970089ce 100644
 > --- a/drivers/soc/tegra/pmc.c
 > +++ b/drivers/soc/tegra/pmc.c
-> @@ -807,22 +807,17 @@ out:
+> @@ -28,6 +28,7 @@
+>  #include <linux/export.h>
+>  #include <linux/init.h>
+>  #include <linux/io.h>
+> +#include <linux/iopoll.h>
+>  #include <linux/of.h>
+>  #include <linux/of_address.h>
+>  #include <linux/platform_device.h>
+> @@ -101,6 +102,8 @@
 > =20
->  static int tegra_pmc_probe(struct platform_device *pdev)
->  {
-> -	void __iomem *base =3D pmc->base;
-
-The alternative that I proposed above would entail not setting this...
-
-> -	struct resource *res;
->  	int err;
+>  #define GPU_RG_CNTRL			0x2d4
 > =20
-> +	if (!pmc->base) {
-> +		dev_err(&pdev->dev, "base address is not configured\n");
-> +		return -ENXIO;
-> +	}
+> +#define PMC_PWRGATE_STATE(status, id)	((status & BIT(id)) !=3D 0)
 > +
->  	err =3D tegra_pmc_parse_dt(pmc, pdev->dev.of_node);
->  	if (err < 0)
->  		return err;
-> =20
-> -	/* take over the memory region from the early initialization */
-> -	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> -	pmc->base =3D devm_ioremap_resource(&pdev->dev, res);
 
-=2E.. and storing the result of the mapping in "base" instead...
+This looks suspiciously like a register or register field definition.
+Maybe turn this into a static inline function, such as:
 
-> -	if (IS_ERR(pmc->base))
-> -		return PTR_ERR(pmc->base);
-> -
-> -	iounmap(base);
+	static inline bool tegra_powergate_state(u32 status, int id)
+	{
+		return (status & BIT(id)) !=3D 0;
+	}
 
-=2E.. and move the unmap to the very end of the probe function, which
-would look something like:
+?
 
-	/* take over the memory region from the early initialization */
-	iounmap(pmc->base);
-	pmc->base =3D base;
+>  struct tegra_pmc_soc {
+>  	unsigned int num_powergates;
+>  	const char *const *powergates;
+> @@ -181,22 +184,27 @@ static void tegra_pmc_writel(u32 value, unsigned lo=
+ng offset)
+>   */
+>  static int tegra_powergate_set(int id, bool new_state)
+>  {
+> -	bool status;
+> +	u32 status;
+> +	int err =3D 0;
 
-That way the mapping in "base" will automatically be undone upon error
-and the pmc->base will only be overridden when it's certain that the
-probe will succeed.
-
-What do you think?
+Initialization to 0 doesn't seem necessary here.
 
 Thierry
 
---5vNYLRcllDrimb99
+--OwLcNYc0lM97+oe1
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJWl6ZzAAoJEN0jrNd/PrOhwt0QALiLsgn8/ZX5N4ziMzHYYPdi
-GP1IBL0nwkDCbLDwzHc/aA/xKwzNsouHRV+1otCXnIocPNgfo3EhKc2svSyc8ir/
-1tqeN6o+6om3okKIBlLdiZ3aWo9YBTvv5tojrM4MKbrBc0KMGR2PVWdF5k7VvAXi
-3uznqng+AVIDFEWTjiNRFedaiqzjP5qoBItV8H5JCzJhPwYuflWlPbX9EBov5Mxi
-M68lSQCAaqrTVc1cVvpkfE4/TfMlyzAj+/IjAsE2HAN/t7FvKO4a7Klq0dMa+4Wo
-e5xhQZYmEwATNWShlkulCyhN2z/J8xHX/d7FymmcEKZZuZuTs+2ycSfOOYCKqZwZ
-NLysJL3fMXynQ7omvK220RHWpYv7CqDvuX1MQj0rTzJbBpbWncrt8BgvRE3Jnz/o
-MvwaW6VsQWAKLkCZGer1Z/feBEDCz3TPlSkhT56+54lker/seQsIZa1a2+8rwmAw
-cK86lUQf1EHdzdGtWzFrapCkuYDl1ETruIQwTNUlX17iiut05FisWSgxnVOY6t7G
-DQmi0+dP4rYLZ7z4oHtJ3qKZ9C/igtw4lTGpLfy5bFjwA+RlVUzETlQk2pexmpBY
-43h1PtLaKA78tLG8g1Fl/He/jNJyko/c6apLU2Az9y58bYizBxW/WYWLc5WL8FIu
-XPyrJ1IXsfAfA6YPAsyv
-=LRR3
+iQIcBAABCAAGBQJWl6ofAAoJEN0jrNd/PrOhtnoQAIexe7X0xQiIpYROJ1NOJdBn
+8ve6SAuq9EEuDk3MQhe8OCkLhEH2p2tNMr2we+I+DEfRKon5dYLf6kfCQsXHGBcO
+hiVWCTWWGVawYrs44Ce6uPFJV3GThRqv0jB3yZGPsFP74IT4xTKwmTz4BhUG9kpd
+ecVYPTwHT/2tdfX6Y3RM0CsRUkc0pgsGlIQlV4hUlRw7nIIaWNfYov5iwvYRh7Oz
+kr8Pi49o9YLROvFEUH6kdiTq6pOY9/eI7nnfRx8cETwGm08REygJaxd9PQ2u3Roh
+tNpLrJjCae7gDgn4CI+lefOfHrKiqyvOZlWJvq42FuDICiwlDH5Ww5jinitKVlmX
+BfjJCQZkrG87ixlkCI+FEaBflukAJk1KZIDxb6n6BEKNowpYHHfngF9NLJ557W/B
+Tw3NqarYNC+1m0FkOlLYshecW5fOEN0K0f3GW8L2P+8qUDzBZK1PvHZG/+Ll5FJd
+1Xx0pombKg+yTWfTqRI0+TFK/ckAUp1a9TyTq9pIAQwTBD2w1GEu4qW4K/a0qm6p
+6djQovB4PWv1b9OUeoXLxspCsDlN3uVDpyk6XdJFp+FsGLJf17if0NB92pZocO53
+w+uJr0mpv2eJj4u2a/NjgI9GbWwDhNmKzZdFd5HjxJrHctaLB59Loxhuzu9akC0W
+1gSlirSmNrgiybFqsMIq
+=4EzA
 -----END PGP SIGNATURE-----
 
---5vNYLRcllDrimb99--
+--OwLcNYc0lM97+oe1--
