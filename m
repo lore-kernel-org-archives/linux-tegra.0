@@ -1,64 +1,67 @@
-From: Kishon Vijay Abraham I <kishon@ti.com>
-Subject: Re: [PATCH v3] PCI: hosts: mark pcie/pci (msi) irq cascade handler as
- IRQF_NO_THREAD
-Date: Thu, 14 Jan 2016 11:49:24 +0530
-Message-ID: <56973DEC.2000108@ti.com>
-References: <1449775100-30877-1-git-send-email-grygorii.strashko@ti.com>
- <20160106221827.GD16231@localhost> <20160113133904.GD29964@linutronix.de>
- <20160113175016.GB28453@localhost> <56969BE3.6000804@ti.com>
+From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V4 16/16] ARM64: tegra: select PM_GENERIC_DOMAINS
+Date: Thu, 14 Jan 2016 09:57:14 +0100
+Message-ID: <CAPDyKFrewx5CbS9QKZAxqq0Gu+TywQ3nkDGZFURR=PJLtkDuyQ@mail.gmail.com>
+References: <1449241037-22193-1-git-send-email-jonathanh@nvidia.com>
+	<1449241037-22193-17-git-send-email-jonathanh@nvidia.com>
+	<20160113170324.GO2588@ulmo>
+	<8579242.omBpg1aLr2@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <56969BE3.6000804@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Grygorii Strashko <grygorii.strashko@ti.com>, Bjorn Helgaas <helgaas@kernel.org>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>, tony@atomide.com, nsekhar@ti.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-sh@vger.kernel.org, linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org, Jingoo Han <jingoohan1@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Richard Zhu <Richard.Zhu@freescale.com>, Lucas Stach <l.stach@pengutronix.de>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Simon Horman <horms@verge.net.au>, Pratyush Anand <pratyush.anand@gmail.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <8579242.omBpg1aLr2@wuerfel>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rafael Wysocki <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
-
-On Thursday 14 January 2016 12:18 AM, Grygorii Strashko wrote:
-> On 01/13/2016 07:50 PM, Bjorn Helgaas wrote:
->> On Wed, Jan 13, 2016 at 02:39:04PM +0100, Sebastian Andrzej Siewior wrote:
->>> * Bjorn Helgaas | 2016-01-06 16:18:27 [-0600]:
->>>
->>>> Hi Bjorn,
->>>
->>>>> diff --git a/drivers/pci/host/pci-dra7xx.c b/drivers/pci/host/pci-dra7xx.c
->>>>> index 8c36880..0415192 100644
->>>>> --- a/drivers/pci/host/pci-dra7xx.c
->>>>> +++ b/drivers/pci/host/pci-dra7xx.c
->>>>> @@ -301,8 +301,19 @@ static int __init dra7xx_add_pcie_port(struct
->>>>> dra7xx_pcie *dra7xx,
->>>>>           return -EINVAL;
->>>>>       }
->>>>>
->>>>> +    /*
->>>>> +     * Mark dra7xx_pcie_msi IRQ as IRQF_NO_THREAD
->>>>> +     * On -RT and if kernel is booting with "threadirqs" cmd line parameter
->>>>> +     * the dra7xx_pcie_msi_irq_handler() will be forced threaded but,
->>>>> +     * in the same time, it's IRQ dispatcher and calls generic_handle_irq(),
->>>>> +     * which, in turn, will be resolved to handle_simple_irq() call.
->>>>> +     * The handle_simple_irq() expected to be called with IRQ disabled, as
->>>>> +     * result kernle will display warning:
->>>>> +     * "irq XXX handler YYY+0x0/0x14 enabled interrupts".
->>>>> +     */
->>>
->>> could you _please_ remove this coment? This kind of comment (if at all)
->>> should be part of the commit message (which is the case more or less).
+On 13 January 2016 at 21:43, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org> wrote:
+> On Wednesday 13 January 2016 18:03:24 Thierry Reding wrote:
+>> On Fri, Dec 04, 2015 at 02:57:17PM +0000, Jon Hunter wrote:
+>> > Enable PM_GENERIC_DOMAINS for tegra 64-bit devices. To ensure that devices
+>> > dependent upon a particular power-domain are only probed when that power
+>> > domain has been powered up, requires that PM is made mandatory for tegra
+>> > 64-bit devices and so select this option for tegra as well.
+>> >
+>> > Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> > ---
+>> >  arch/arm64/Kconfig.platforms | 2 ++
+>> >  1 file changed, 2 insertions(+)
+>> >
+>> > diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+>> > index 9806324fa215..e0b5bd0aff0f 100644
+>> > --- a/arch/arm64/Kconfig.platforms
+>> > +++ b/arch/arm64/Kconfig.platforms
+>> > @@ -93,6 +93,8 @@ config ARCH_TEGRA
+>> >       select GENERIC_CLOCKEVENTS
+>> >       select HAVE_CLK
+>> >       select PINCTRL
+>> > +     select PM
+>> > +     select PM_GENERIC_DOMAINS
+>> >       select RESET_CONTROLLER
+>> >       help
+>> >         This enables support for the NVIDIA Tegra SoC family.
 >>
->> IIRC, Grygorii specifically wanted to keep this comment in dra7xx, but
-> 
-> True.
-> 
->> I do agree that this level of detail is more appropriate for a changelog.
+>> This has potential consequences for multi-platform builds, doesn't it?
+>> All of a sudden any combination of builds that includes Tegra won't be
+>> possible to build without PM support.
 >>
->> If Grygorii and Kishon don't object, I can update the patch to remove it.
-> 
-> But no objections from my side. Thanks a lot.
+>> Adding linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org for visibility.
+>>
+>>
+>
+> Agreed, it would be better to add 'depends on PM_GENERIC_DOMAINS'
+> dependencies in the drivers that require it.
+>
 
-I don't have any objections.
+The problem with that approach is that if those drivers are cross SoC
+drivers. In some cases PM isn't needed and it is.
 
-Thanks
-Kishon
+Of course I don't have the in depth knowledge about the drivers being
+used in Tegra which may need PM, perhaps it's not that many?
+
+Anyway, to me it seems like ARCH_TEGRA should depend on PM instead.
+Would that work?
+
+Kind regards
+Uffe
