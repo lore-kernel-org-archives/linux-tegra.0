@@ -1,70 +1,77 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH V4 12/16] Documentation: DT: bindings: Add power domain
- info for NVIDIA PMC
-Date: Fri, 15 Jan 2016 09:43:01 +0000
-Message-ID: <5698BF25.2080309@nvidia.com>
-References: <1449241037-22193-1-git-send-email-jonathanh@nvidia.com>
- <1449241037-22193-13-git-send-email-jonathanh@nvidia.com>
- <20160114144158.GF23082@ulmo>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V1 08/10] thermal: tegra: add PM support
+Date: Fri, 15 Jan 2016 17:51:02 +0800
+Message-ID: <5698C106.4080805@nvidia.com>
+References: <1452672043-475-1-git-send-email-wni@nvidia.com> <20160113155540.GH2588@ulmo>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20160114144158.GF23082@ulmo>
-Sender: linux-pm-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Rafael Wysocki <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Vince Hsu <vinceh@nvidia.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160113155540.GH2588@ulmo>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 14/01/16 14:41, Thierry Reding wrote:
+
+On 2016=E5=B9=B401=E6=9C=8813=E6=97=A5 23:55, Thierry Reding wrote:
 > * PGP Signed by an unknown key
-> 
-> On Fri, Dec 04, 2015 at 02:57:13PM +0000, Jon Hunter wrote:
->> Add power-domain binding documentation for the NVIDIA PMC driver in
->> order to support generic power-domains.
+>=20
+> On Wed, Jan 13, 2016 at 04:00:43PM +0800, Wei Ni wrote:
+>> Add suspend/resume function in soctherm driver.
+>> And enable it for Tegra124 and Tegra210.
 >>
->> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->>
+>> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >> ---
->>
->> Please note that I have been debating whether I add this
->> "nvidia,powergate-clock-disable" property or just leave the clocks
->> disabled by default. Some downstream kernels leave the clocks enabled
->> for the audio power-domain because the clocks required for powering up
->> the power-domain are needed by all modules within the power-domain.
->> However are the same time there are other power-domains that may need
->> to be on, but not always clocked and so having the ability to specify if
->> the clocks should be disabled seems useful. However, I can also remove
->> this and just have the appropriate devices turn on the clocks as well.
->> ---
->>  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 61 ++++++++++++++++++++++
->>  1 file changed, 61 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
->> index 838e1a69ec0a..8e4641db51a9 100644
->> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
->> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
->> @@ -1,5 +1,7 @@
->>  NVIDIA Tegra Power Management Controller (PMC)
->>  
->> +== Power Management Controller Node ==
->> +
->>  The PMC block interacts with an external Power Management Unit. The PMC
->>  mostly controls the entry and exit of the system from different sleep
->>  modes. It provides power-gating controllers for SoC and CPU power-islands.
->> @@ -69,6 +71,10 @@ Optional properties for hardware-triggered thermal reset (inside 'i2c-thermtrip'
->>                       Defaults to 0. Valid values are described in section 12.5.2
->>                       "Pinmux Support" of the Tegra4 Technical Reference Manual.
->>  
->> +Optional nodes:
->> +- pm-domains : This node contains a hierarchy of PM domain nodes, which should
->> +	       match the power-domains on the Tegra SoC.
->> +
-> 
-> pm-domains is a linuxism. Perhaps name this after what Tegra calls this:
-> "powergates"?
+>>  drivers/thermal/tegra/tegra124_soctherm.c |   9 ++
+>>  drivers/thermal/tegra/tegra210_soctherm.c |   9 ++
+>>  drivers/thermal/tegra/tegra_soctherm.c    | 154 +++++++++++++++++++=
+++---------
+>>  drivers/thermal/tegra/tegra_soctherm.h    |   5 +
+>>  4 files changed, 130 insertions(+), 47 deletions(-)
+>=20
+> This all looks like it'd be a better candidate for runtime PM. The
+> implementation would be mostly the same, except that you'd need to
+> add a few more things to tegra_soctherm_probe() and use the runtime
+> PM API to enable/disable the device (clocks, resets, ...). System
+> sleep should then be taken care of automatically.
 
-Ok.
+We can not handle it as runtime PM, because this is used to monitor the
+temperatures, once they reach to critical value, it need to trigger ope=
+rations
+to protect system, such as shutdown or throttle. If this device suspend=
+ in
+runtime, then it can't handle these events.
 
-Jon
+>=20
+> Another comment irrespective of that...
+>=20
+>> diff --git a/drivers/thermal/tegra/tegra124_soctherm.c b/drivers/the=
+rmal/tegra/tegra124_soctherm.c
+>> index 13d7f4e3a3d7..04cb419dbabc 100644
+>> --- a/drivers/thermal/tegra/tegra124_soctherm.c
+>> +++ b/drivers/thermal/tegra/tegra124_soctherm.c
+>> @@ -205,6 +205,14 @@ static const struct of_device_id tegra124_socth=
+erm_of_match[] =3D {
+>>  };
+>>  MODULE_DEVICE_TABLE(of, tegra_soctherm_of_match);
+>> =20
+>> +#ifdef CONFIG_PM_SLEEP
+>> +static SIMPLE_DEV_PM_OPS(tegra124_soctherm_pm,
+>> +			 soctherm_suspend, soctherm_resume);
+>> +#define TEGRA124_SOC_THERM_PM      (&tegra124_soctherm_pm)
+>> +#else
+>> +#define TEGRA124_SOC_THERM_PM      NULL
+>> +#endif
+>=20
+> I wouldn't bother with the #ifdef, just always define the structure.
+
+Ok, will remove them.
+
+>=20
+> Thierry
+>=20
+> * Unknown Key
+> * 0x7F3EB3A1
+>=20
