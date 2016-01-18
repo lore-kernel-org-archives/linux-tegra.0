@@ -1,56 +1,72 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 1/5] core: add gpuobj memcpy helper functions
-Date: Mon, 18 Jan 2016 15:10:43 +0900
-Message-ID: <1453097447-12152-2-git-send-email-acourbot@nvidia.com>
-References: <1453097447-12152-1-git-send-email-acourbot@nvidia.com>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V3 00/11] Add T210 support in Tegra soctherm
+Date: Mon, 18 Jan 2016 18:02:25 +0800
+Message-ID: <1453111356-12298-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <1453097447-12152-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-List-Unsubscribe: <http://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
+Cc: MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-QWRkIG1lbWNweSBmdW5jdGlvbnMgdGhhdCBhbGxvdyBjb3B5aW5nIGEgYnVmZmVyIHRvIGEgZ3B1
-b2JqIGFuZAp2aWNlLXZlcnNhLgoKU2lnbmVkLW9mZi1ieTogQWxleGFuZHJlIENvdXJib3QgPGFj
-b3VyYm90QG52aWRpYS5jb20+Ci0tLQogZHJtL25vdXZlYXUvaW5jbHVkZS9udmttL2NvcmUvZ3B1
-b2JqLmggfCAgNCArKysrCiBkcm0vbm91dmVhdS9udmttL2NvcmUvZ3B1b2JqLmMgICAgICAgICB8
-IDIwICsrKysrKysrKysrKysrKysrKysrCiAyIGZpbGVzIGNoYW5nZWQsIDI0IGluc2VydGlvbnMo
-KykKCmRpZmYgLS1naXQgYS9kcm0vbm91dmVhdS9pbmNsdWRlL252a20vY29yZS9ncHVvYmouaCBi
-L2RybS9ub3V2ZWF1L2luY2x1ZGUvbnZrbS9jb3JlL2dwdW9iai5oCmluZGV4IGQ0ZjU2ZWFmYjA3
-My4uYzIzZGE0ZjA1OTI5IDEwMDY0NAotLS0gYS9kcm0vbm91dmVhdS9pbmNsdWRlL252a20vY29y
-ZS9ncHVvYmouaAorKysgYi9kcm0vbm91dmVhdS9pbmNsdWRlL252a20vY29yZS9ncHVvYmouaApA
-QCAtMzcsNCArMzcsOCBAQCBpbnQgbnZrbV9ncHVvYmpfd3JhcChzdHJ1Y3QgbnZrbV9tZW1vcnkg
-Kiwgc3RydWN0IG52a21fZ3B1b2JqICoqKTsKIGludCBudmttX2dwdW9ial9tYXAoc3RydWN0IG52
-a21fZ3B1b2JqICosIHN0cnVjdCBudmttX3ZtICosIHUzMiBhY2Nlc3MsCiAJCSAgICBzdHJ1Y3Qg
-bnZrbV92bWEgKik7CiB2b2lkIG52a21fZ3B1b2JqX3VubWFwKHN0cnVjdCBudmttX3ZtYSAqKTsK
-K3ZvaWQgbnZrbV9ncHVvYmpfbWVtY3B5X3RvKHN0cnVjdCBudmttX2dwdW9iaiAqZHN0LCB1MzIg
-ZHN0b2Zmc2V0LCB2b2lkICpzcmMsCisJCQkgICB1MzIgbGVuZ3RoKTsKK3ZvaWQgbnZrbV9ncHVv
-YmpfbWVtY3B5X2Zyb20odm9pZCAqZHN0LCBzdHJ1Y3QgbnZrbV9ncHVvYmogKnNyYywgdTMyIHNy
-Y29mZnNldCwKKwkJCSAgICAgdTMyIGxlbmd0aCk7CiAjZW5kaWYKZGlmZiAtLWdpdCBhL2RybS9u
-b3V2ZWF1L252a20vY29yZS9ncHVvYmouYyBiL2RybS9ub3V2ZWF1L252a20vY29yZS9ncHVvYmou
-YwppbmRleCBjM2E3OTBlYjhkNmEuLmE3YmQyMjcwNmIyYSAxMDA2NDQKLS0tIGEvZHJtL25vdXZl
-YXUvbnZrbS9jb3JlL2dwdW9iai5jCisrKyBiL2RybS9ub3V2ZWF1L252a20vY29yZS9ncHVvYmou
-YwpAQCAtMjUzLDMgKzI1MywyMyBAQCBudmttX2dwdW9ial93cmFwKHN0cnVjdCBudmttX21lbW9y
-eSAqbWVtb3J5LCBzdHJ1Y3QgbnZrbV9ncHVvYmogKipwZ3B1b2JqKQogCSgqcGdwdW9iaiktPnNp
-emUgPSBudmttX21lbW9yeV9zaXplKG1lbW9yeSk7CiAJcmV0dXJuIDA7CiB9CisKK3ZvaWQKK252
-a21fZ3B1b2JqX21lbWNweV90byhzdHJ1Y3QgbnZrbV9ncHVvYmogKmRzdCwgdTMyIGRzdG9mZnNl
-dCwgdm9pZCAqc3JjLAorCQkgICAgICB1MzIgbGVuZ3RoKQoreworCWludCBpOworCisJZm9yIChp
-ID0gMDsgaSA8IGxlbmd0aDsgaSArPSA0KQorCQludmttX3dvMzIoZHN0LCBkc3RvZmZzZXQgKyBp
-LCAqKHUzMiAqKShzcmMgKyBpKSk7Cit9CisKK3ZvaWQKK252a21fZ3B1b2JqX21lbWNweV9mcm9t
-KHZvaWQgKmRzdCwgc3RydWN0IG52a21fZ3B1b2JqICpzcmMsIHUzMiBzcmNvZmZzZXQsCisJCQl1
-MzIgbGVuZ3RoKQoreworCWludCBpOworCisJZm9yIChpID0gMDsgaSA8IGxlbmd0aDsgaSArPSA0
-KQorCQkoKHUzMiAqKXNyYylbaSAvIDRdID0gbnZrbV9ybzMyKHNyYywgc3Jjb2Zmc2V0ICsgaSk7
-Cit9Ci0tIAoyLjcuMAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KTm91dmVhdSBtYWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
-aHR0cDovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL25vdXZlYXUK
+This patchset adds following functions for tegra_soctherm driver:
+1. add T210 support.
+2. export debugfs to show some registers.
+3. add thermtrip funciton.
+4. add suspend/resume function.
+
+The V1 serial is in:
+http://www.spinics.net/lists/linux-tegra/msg24808.html
+The V2 serial is in:
+http://www.spinics.net/lists/linux-tegra/msg24901.html
+
+Main changes from V2:
+1. Fix build error in patch [1/11].
+2. Use of_get_child_by_name instead of of_find_node_by_name in patch [8/11].
+3. Use debugfs_remove_recursive to remove debugfs in patch [6/11].
+
+Main changes from V1:
+1. Use the new type to handl different Tegra chips in one driver,
+which suggested by Thierry.
+2. Changes per Thieery's other comments.
+
+Wei Ni (11):
+  thermal: tegra: move tegra thermal files into tegra directory
+  thermal: tegra: combine sensor group-related data
+  thermal: tegra: get rid of PDIV/HOTSPOT hack
+  thermal: tegra: split tegra_soctherm driver
+  thermal: tegra: add T210-specific SOC_THERM driver
+  thermal: tegra: add a debugfs to show registers
+  of: Add bindings of hw-trips for soctherm
+  thermal: tegra: add thermtrip function
+  thermal: tegra: add PM support
+  arm64: tegra: add soctherm node for Tegra210
+  ARM: tegra: set hw trips for Tegra124
+
+ .../devicetree/bindings/thermal/tegra-soctherm.txt |  24 +
+ arch/arm/boot/dts/tegra124.dtsi                    |   9 +
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  53 ++
+ drivers/thermal/Kconfig                            |  12 +-
+ drivers/thermal/Makefile                           |   2 +-
+ drivers/thermal/tegra/Kconfig                      |  13 +
+ drivers/thermal/tegra/Makefile                     |   5 +
+ drivers/thermal/tegra/soctherm-fuse.c              | 155 ++++
+ drivers/thermal/tegra/soctherm.c                   | 789 +++++++++++++++++++++
+ drivers/thermal/tegra/soctherm.h                   | 125 ++++
+ drivers/thermal/tegra/tegra124-soctherm.c          | 207 ++++++
+ drivers/thermal/tegra/tegra210-soctherm.c          | 208 ++++++
+ drivers/thermal/tegra_soctherm.c                   | 476 -------------
+ include/dt-bindings/thermal/tegra124-soctherm.h    |   1 +
+ 14 files changed, 1592 insertions(+), 487 deletions(-)
+ create mode 100644 drivers/thermal/tegra/Kconfig
+ create mode 100644 drivers/thermal/tegra/Makefile
+ create mode 100644 drivers/thermal/tegra/soctherm-fuse.c
+ create mode 100644 drivers/thermal/tegra/soctherm.c
+ create mode 100644 drivers/thermal/tegra/soctherm.h
+ create mode 100644 drivers/thermal/tegra/tegra124-soctherm.c
+ create mode 100644 drivers/thermal/tegra/tegra210-soctherm.c
+ delete mode 100644 drivers/thermal/tegra_soctherm.c
+
+-- 
+1.9.1
