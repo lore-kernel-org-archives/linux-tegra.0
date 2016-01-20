@@ -1,67 +1,71 @@
-From: Ralf Ramsauer <ralf-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
-Subject: Re: [PATCH 2/2] ARM: tegra: Add high speed UARTs to Jetson TK1 device
- tree
-Date: Tue, 19 Jan 2016 18:16:34 +0100
-Message-ID: <569E6F72.1000702@ramses-pyramidenbau.de>
-References: <1453209155-6213-1-git-send-email-ralf@ramses-pyramidenbau.de>
- <1453209155-6213-3-git-send-email-ralf@ramses-pyramidenbau.de>
- <569E652E.5020907@wwwdotorg.org>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [RFC PATCH V2 3/8] genirq: Add runtime power management support
+ for IRQ chips
+Date: Wed, 20 Jan 2016 16:30:44 +0100 (CET)
+Message-ID: <alpine.DEB.2.11.1601201620450.3575@nanos>
+References: <1450349309-8107-1-git-send-email-jonathanh@nvidia.com> <1450349309-8107-4-git-send-email-jonathanh@nvidia.com> <CAPDyKFqZK4HYWgXam63=eCKAWsjwCiQbT5jdmgjqid_er3Sg1g@mail.gmail.com> <569E1366.8070005@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <569E652E.5020907-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <569E1366.8070005@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Jiang Liu <jiang.liu@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, Soren Brinkmann <soren.brinkmann@xilinx.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
 List-Id: linux-tegra@vger.kernel.org
 
-Thanks for review, Stephen.
+On Tue, 19 Jan 2016, Jon Hunter wrote:
+> On 18/01/16 14:47, Ulf Hansson wrote:
+> >> +/* Inline functions for support of irq chips that require runtime pm */
+> >> +static inline int chip_pm_get(struct irq_desc *desc)
+> > 
+> > Why does these new get/put functions need to be inline functions and
+> > thus defined in the header file? Perhaps move them to manage.c are
+> > better?
+> 
+> They don't have to be, and so I can move them.
 
-On 01/19/16 17:32, Stephen Warren wrote:
-> On 01/19/2016 06:12 AM, Ralf Ramsauer wrote:
->> This patch enables the APB DMA high speed UARTs of the Jetson TK1.
->
-> In the cover letter, you mentioned that these ports are exposed on the
-> expansion connector. It'd be useful to mention that fact here too,
-> since the cover letter doesn't make it into the git commit log.
-Good point.
->
-> However, given that, I don't think we should apply this patch. We
-> can't know ahead of time what hardware is connected to the expansion
-> header; the pins aren't dedicated to be serial ports (they could be
-> GPIOs and probably other functions too depending on the pinmux
-> settings), and different people will connect different hardware or
-> none at all. Hence, the default DT should not enable IO controllers
-> for the pins on the expansion connector. The best approach these days
-> is to use DT overlays. You may need to add some "hooks" into the Tegra
-> base DT files to allow overlays to be used; they weren't written with
-> overlays in mind.
-If the argument is that those pins could also differently be used, then
-the same would also apply to I2C busses, which are apparently _all_
-exported in the current device tree, even if no hardware is connected by
-default. Those pins are also available on the expansion headers.
+Yes, please make them proper functions. The proper place for them is chip.c
+ 
+> > This won't play nicely when CONFIG_PM is unset, as pm_runtime_put()
+> > would return -ENOSYS. In such cases I guess you would like to ignore
+> > the error!?
+> 
+> Ok, yes good point.
 
-You are right that those pins of the CPU can generally be used as GPIOs,
-but regarding the Jetson TK1 board, the meaning of those pins on the
-expansion header is the UART functionality. This is also what the
-official documentation of Nvidia states on those pins [2]. So if you do
-want to have a special non-UART setup, then you should have to disable
-them on your own, by default they should be enabled.
+So you need a CONFIG_PM variant and stubs which return 0 for the !PM case.
+ 
+> >> @@ -1116,6 +1116,10 @@ __setup_irq(unsigned int irq, struct irq_desc *desc, struct irqaction *new)
+> >>         if (!try_module_get(desc->owner))
+> >>                 return -ENODEV;
+> >>
+> >> +       ret = chip_pm_get(desc);
+> >> +       if (ret < 0)
+> >> +               return ret;
 
-On the Jetson TK1 board, only GPIO_PU* and GPIO_PH* should be used as
-GPIOs [2].
+That leaks the module refcount.
 
-  Ralf
+> > I don't think using __free_irq() is the correct place to decrease the
+> > runtime PM usage count. It will keep the irqchip runtime resumed even
+> > if there are no irqs enabled for it.
+> >
+> > Instead I would rather allow the irqchip to be runtime suspended, when
+> > there are no irqs enabled on it.
 
-[1]
-http://developer.download.nvidia.com/embedded/jetson/TK1/2014-03-24/JetsonTK1_ModuleSpecification_PM375_V1.0.pdf
-[2] http://elinux.org/Jetson/GPIO#Jetson_TK1_GPIO_pinouts
-> -- 
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Which is a no no, as you might lose interrupts that way. We disable interrupts
+lazy, i.e. we do not mask them. So no, you cannot do that from
+enable/disable_irq().
+ 
+> This may appear ugly, but for something like this, we may need to have a
+> separate enable/disable API, such as
+> enable_irq_lazy()/disable_irq_lazy() which could be used to runtime
+> suspend/resume the chip and must not be used in critical sections.
 
--- 
-Ralf Ramsauer
-GPG: 0x8F10049B
+enable_irq_lazy is a misnomer. enable_irq_pm or such might be acceptable.
+
+But before we go there I really want to see a proper use case for such
+functions.
+
+Thanks,
+
+	tglx
+
