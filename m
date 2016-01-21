@@ -1,162 +1,98 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V3 04/11] thermal: tegra: split tegra_soctherm driver
-Date: Thu, 21 Jan 2016 15:46:05 +0100
-Message-ID: <20160121144605.GB32301@ulmo>
-References: <1453111356-12298-1-git-send-email-wni@nvidia.com>
- <1453111356-12298-5-git-send-email-wni@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V3 06/11] thermal: tegra: add a debugfs to show registers
+Date: Thu, 21 Jan 2016 15:50:33 +0100
+Message-ID: <20160121145033.GC32301@ulmo>
+References: <1453111437-12401-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nVMJ2NtxeReIH9PS"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="f0KYrhQ4vYSV2aJu"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1453111356-12298-5-git-send-email-wni@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wei Ni <wni@nvidia.com>
-Cc: rui.zhang@intel.com, MLongnecker@nvidia.com, swarren@wwwdotorg.org, mikko.perttunen@kapsi.fi, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1453111437-12401-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---nVMJ2NtxeReIH9PS
+--f0KYrhQ4vYSV2aJu
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 18, 2016 at 06:02:29PM +0800, Wei Ni wrote:
+On Mon, Jan 18, 2016 at 06:03:57PM +0800, Wei Ni wrote:
 [...]
-> +int tegra_soctherm_calculate_tsensor_calibration(
-> +				struct tegra_tsensor *sensor,
-> +				const struct tsensor_shared_calibration *shared)
-
-The need to ident weirdly here should be an indication that the function
-name is too long, how about:
-
-int tegra_tsensor_calc_calib(struct tegra_tsensor *sensor,
-			     const struct tsensor_shared_calibration *shared)
-
-?
-
+> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soc=
+therm.c
+[...]
+> +static void soctherm_debug_init(struct platform_device *pdev)
 > +{
-> +	const struct tegra_tsensor_group *sensor_group;
-> +	u32 val, calib;
-> +	s32 actual_tsensor_ft, actual_tsensor_cp;
-> +	s32 delta_sens, delta_temp;
-> +	s32 mult, div;
-> +	s16 therma, thermb;
-> +	int err;
+> +	struct tegra_soctherm *tegra =3D platform_get_drvdata(pdev);
+> +	struct dentry *root, *file;
 > +
-> +	sensor_group = sensor->group;
+> +	root =3D debugfs_create_dir("tegra_soctherm", NULL);
+
+Perhaps leave away the tegra_ prefix here? It's kind of redundant.
+
+> +	if (!root) {
+> +		dev_err(&pdev->dev, "failed to create debugfs directory\n");
+> +		return;
+> +	}
 > +
-> +	err = tegra_fuse_readl(sensor->calib_fuse_offset, &val);
-> +	if (err)
-> +		return err;
+> +	tegra->debugfs_dir =3D root;
 > +
-> +	actual_tsensor_cp = (shared->base_cp * 64) + sign_extend32(val, 12);
-> +	val = (val & FUSE_TSENSOR_CALIB_FT_TS_BASE_MASK)
-> +		>> FUSE_TSENSOR_CALIB_FT_TS_BASE_SHIFT;
+> +	file =3D debugfs_create_file("regs", 0644, root, pdev, &regs_fops);
 
-I think it's more canonical to put the >> on the first line line.
+Can we call this something different, please? "summary" would be a
+better name, in my opinion.
 
-> +	actual_tsensor_ft = (shared->base_ft * 32) + sign_extend32(val, 12);
+> +	if (!file)
+> +		dev_err(&pdev->dev, "failed to create debugfs file\n");
+> +}
+> +#else
+> +static inline void soctherm_debug_init(struct platform_device *pdev)
+> +{ return 0; }
+
+Please follow the regular CodingStyle here, too:
+
+	...
+	{
+		return 0;
+	}
+
+> @@ -178,6 +309,10 @@ static int tegra_soctherm_probe(struct platform_devi=
+ce *pdev)
+>  	if (!tegra)
+>  		return -ENOMEM;
+> =20
+> +	dev_set_drvdata(&pdev->dev, tegra);
 > +
-> +	delta_sens = actual_tsensor_ft - actual_tsensor_cp;
-> +	delta_temp = shared->actual_temp_ft - shared->actual_temp_cp;
-> +
-> +	mult = sensor_group->pdiv * sensor->config->tsample_ate;
-> +	div = sensor->config->tsample * sensor_group->pdiv_ate;
-> +
-> +	therma = div64_s64_precise((s64)delta_temp * (1LL << 13) * mult,
-> +			(s64)delta_sens * div);
+> +	tegra->soc =3D soc;
 
-Are the explicit casts necessary? Shouldn't an s32 be automatically
-promoted to s64? Also arguments on subsequent lines should be aligned
-with the first argument on the first line.
-
-> +	thermb = div64_s64_precise(
-> +			((s64)actual_tsensor_ft * shared->actual_temp_cp) -
-> +			((s64)actual_tsensor_cp * shared->actual_temp_ft),
-> +			(s64)delta_sens);
-
-Perhaps add a temporary variable for the first parameter here for
-readability?
-
-> +
-> +	therma = div64_s64_precise((s64)therma * sensor->fuse_corr_alpha,
-> +			(s64)1000000LL);
-> +	thermb = div64_s64_precise((s64)thermb * sensor->fuse_corr_alpha +
-> +			sensor->fuse_corr_beta,
-> +			(s64)1000000LL);
-
-What are the 1000000LL? Does it perhaps make sense to have a macro for
-it, or perhaps a comment would help.
-
-> +	calib = ((u16)therma << SENSOR_CONFIG2_THERMA_SHIFT) |
-> +		 ((u16)thermb << SENSOR_CONFIG2_THERMB_SHIFT);
-
-Alignment here isn't right.
-
-> diff --git a/drivers/thermal/tegra/soctherm.h b/drivers/thermal/tegra/soctherm.h
-[...]
-> +struct tegra_soctherm_soc {
-> +	struct tegra_tsensor *tsensors;
-
-Can't these be const? Do they ever need to be modified? If so, they
-should probably not be part of this structure. Or at least only part of
-them should be. The invariant part.
-
-The reason is that if ever a second instance of this device was present
-both instances would share this same data. I know it's unlikely to
-happen, but setting a bad example would be... well... bad.
-
-Instead I think if you need to have non-const fields you could separate
-this further into struct tegra_tsensor_soc, with only the static
-information about the sensor, and make struct tegra_tsensor contain a
-pointer to that SoC structure and provide the variable fields in
-addition. That way you can create a struct tegra_tsensor for each struct
-tegra_tsensor_soc and store those per-instance.
-
-> diff --git a/drivers/thermal/tegra/tegra124-soctherm.c b/drivers/thermal/tegra/tegra124-soctherm.c
-[...]
-> +static struct tegra_tsensor tegra124_tsensors[] = {
-
-Can this be "static const" instead?
-
-> +	{
-> +		.name = "cpu0",
-> +		.base = 0xc0,
-> +		.config = &t124_tsensor_config,
-> +		.calib_fuse_offset = 0x098,
-> +		.fuse_corr_alpha = 1135400,
-> +		.fuse_corr_beta = -6266900,
-> +		.group = &tegra124_tsensor_group_cpu,
-> +	},
-> +	{
-
-"}," and "{" can go on the same line.
-
-> +struct tegra_soctherm_soc tegra124_soctherm = {
-
-"const"?
+This looks odd here. Does this perhaps belong in one of the previous
+patches?
 
 Thierry
 
---nVMJ2NtxeReIH9PS
+--f0KYrhQ4vYSV2aJu
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJWoO8qAAoJEN0jrNd/PrOhAXQQAJgTu98mM8jUStv4lwMFyefM
-iOqeWexmpDTqs6YoJ0ozQWu67egdDGbwTQ/ywGb2RgL0zNm1ZlPX0xNVngIfL3F7
-Sc464H35PWYIWXg8rt1+j5ceVcCkVoRQ2BDaqiNaJpIRd/10ecLJ/ki1r2DRoLnB
-Qj5b7Tkgg4fifYous88uhKhPkGvepADUd5341pFLIez7hOqHKf//i6ND9tH2qvbC
-KpkSAF5IooUH8tRE+PvXeFG2O5XLwXdVbaZo83S5I62y0kRnmDHMR0mbd3rwonm+
-gSfCT8cYNmW4cGY9NpzWypwXIvVde0IWKnWk0z3MMdW2qsE5Sv5PCr3mpQjFlsT0
-n70DcirCAMn4BeaJVVOijhQISr+NzS8c97LVDM+uZy7yeo2xmktRialYYysVzOX1
-ItdPdAhi61HVpu8uBvuv8gqvlw5ADVouyP1VXngkrWboH4n5AbQPL0IIIoJx2T1X
-v3pZ8TszrMtvfUi31di+AzBIIWJeF+ZX9SJVvVtbBwvDvbSBfcjCo6BwntMksdp/
-HaGShjJKM9EzM+p4IKh9thoMJiGqWPxfcsPpjrW0/ncSfFsb6gnZjyWyqUZAtGHA
-2iENsAllDuHdWxU/umTww/JY6R0lLUZLfM38d4ooNgYv8bVinmJkMvw7168bqfl2
-bmJoFwIlNFXDo3tD03d5
-=lc/g
+iQIcBAABCAAGBQJWoPA5AAoJEN0jrNd/PrOhSX4QAJiVg/riFnVmMO7WjpswhKWu
+TZFWqLMZfk0MLtSRCU3E82l5qZ92RrHPLJkTfCXwhmk4wkWBO8byr0Vjq91Q17vW
+cb9RrpAz0PHpzieoY2mQhvAqIobtl/BLkPB/sQF5hd+L/5JsVrTZDhmq3+Ekd0T3
+k7BIPxPu8scb6a6ImWsAS4GPBPoY2fTmsgTJsOviajywhHHSO5cCqJIwL+AJq44U
+RzqbOAx2Hai1Yay2F2oWdOwmH3SWhM4hKbsXci7pCZKG0uGo6lGGG5NeANGfB97N
+9KPNWfenbl3Q3PnpDy/VGIQotvumuHO2TXH+79bb35bPqUKZSxTwLXDJpSb02x5k
+0hpqfrh7HR5e3NjwDdpKEfcJD5OSi5bnXVruvY2KyRXe5zKaxRibeY81TZXWMeZE
+lZtCDsI7mJmiS/3ub/uTBFpf0Mak49M1aURvlux+5Ke+BpBLvNOQjqjfl1cmKiz0
+Fm1jMatXxWAVrshwvvGZR3UpPN9/1u8du8Br+Z7kg9pLHK50Xrv55fEbVUeC4xGL
+xay+rsodlfFN+z6KeNf1EVoEGfoSpfbQ1CZXp+LUOSJczjW+juQnbyf32x7BuVSB
+iygJbIX5MtbyQW2/kuLTFt876AHuY73hSoTL1x+aoa6esZiqXqVy46Z/xluwL1yF
+Ji+U31ojiuLUUhsyQfZQ
+=R3VW
 -----END PGP SIGNATURE-----
 
---nVMJ2NtxeReIH9PS--
+--f0KYrhQ4vYSV2aJu--
