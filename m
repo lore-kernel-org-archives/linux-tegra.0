@@ -1,80 +1,67 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] PM / devfreq: tegra: Set freq in rate callback
-Date: Thu, 21 Jan 2016 11:54:11 +0100
-Message-ID: <20160121105411.GA32212@ulmo>
-References: <1453362746-9310-1-git-send-email-tomeu.vizoso@collabora.com>
+From: Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [Nouveau] [PATCH v2 2/5] core: add support for secure boot
+Date: Thu, 21 Jan 2016 12:09:21 +0000
+Message-ID: <CACvgo50P8JQ5EkCEMmnGQGO4jMsc0O4cRB1QO04V0KQS7Y8AYA@mail.gmail.com>
+References: <1453097447-12152-1-git-send-email-acourbot@nvidia.com>
+	<1453097447-12152-3-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="AhhlLboLdkugWU4S"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1453362746-9310-1-git-send-email-tomeu.vizoso@collabora.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-Cc: linux-kernel@vger.kernel.org, Tyler Baker <tyler.baker@linaro.org>, MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1453097447-12152-3-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ML nouveau <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Alexandre,
 
---AhhlLboLdkugWU4S
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 18 January 2016 at 06:10, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 
-On Thu, Jan 21, 2016 at 08:52:26AM +0100, Tomeu Vizoso wrote:
-> As per the documentation of the devfreq_dev_profile.target callback, set
-> the freq argument to the new frequency before returning.
->=20
-> This caused endless messages like this after recent changes in the core:
->=20
-> devfreq 6000c800.actmon: Couldn't update frequency transition information.
->=20
-> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
-> Reported-by: Tyler Baker <tyler.baker@linaro.org>
-> ---
->  drivers/devfreq/tegra-devfreq.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/devfreq/tegra-devfreq.c b/drivers/devfreq/tegra-devf=
-req.c
-> index 848b93ee930f..fe9dce0245bf 100644
-> --- a/drivers/devfreq/tegra-devfreq.c
-> +++ b/drivers/devfreq/tegra-devfreq.c
-> @@ -500,6 +500,8 @@ static int tegra_devfreq_target(struct device *dev, u=
-nsigned long *freq,
->  	clk_set_min_rate(tegra->emc_clock, rate);
->  	clk_set_rate(tegra->emc_clock, 0);
-> =20
-> +	*freq =3D rate;
+[snip]
+> +static const char *
+> +managed_falcons_names[] = {
+> +       [NVKM_SECBOOT_FALCON_PMU] = "PMU",
+> +       [NVKM_SECBOOT_FALCON_RESERVED] = "<invalid>",
+"<reserved>" perhaps ? we already have one invalid below.
+
+> +       [NVKM_SECBOOT_FALCON_FECS] = "FECS",
+> +       [NVKM_SECBOOT_FALCON_GPCCS] = "GPCCS",
+> +       [NVKM_SECBOOT_FALCON_END] = "<invalid>",
+> +};
 > +
->  	return 0;
->  }
-> =20
 
-I had noticed it recently but hadn't got around to look into it, thanks
-for fixing it.
+[snip]
+> +int
+> +nvkm_secboot_ctor(const struct nvkm_secboot_func *func,
+> +                 struct nvkm_device *device, int index,
+> +                 struct nvkm_secboot *sb)
+> +{
+> +       unsigned long fid;
+> +
+> +       nvkm_subdev_ctor(&nvkm_secboot, device, index, 0, &sb->subdev);
+> +       sb->func = func;
+> +
+Move these two after the switch statement ?
 
-Tested-by: Thierry Reding <treding@nvidia.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
+> +       /* setup the performing falcon's base address and masks */
+> +       switch (func->boot_falcon) {
+> +       case NVKM_SECBOOT_FALCON_PMU:
+> +               sb->base = 0x10a000;
+> +               sb->irq_mask = 0x1000000;
+> +               sb->enable_mask = 0x2000;
+> +               break;
+> +       default:
+> +               nvdev_error(device, "invalid secure boot falcon\n");
+> +               return -EINVAL;
+> +       };
+> +
+> +       nvkm_info(&sb->subdev, "securely managed falcons:\n");
+> +       for_each_set_bit(fid, &sb->func->managed_falcons,
+> +                        NVKM_SECBOOT_FALCON_END)
+> +               nvkm_info(&sb->subdev, "- %s\n", managed_falcons_names[fid]);
+> +
+> +       return 0;
+> +}
 
---AhhlLboLdkugWU4S
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJWoLjQAAoJEN0jrNd/PrOh3VEQAIdcEc8HUjfJ7jxeB5tj0e8y
-u8vnimklWFNtCfG2zTYrVs658UKJph9nwllI9LoUMp5bNusuNAKP+ELfzqQchKzJ
-I5VNoyowmU5U0Ogw3ifpw++4XKNt2pMGXOhXU/XNgbWTm0t3ryFb7/MRj78KwoBg
-fpKEllR6c8g05asdTeIuQq7zJPXxlYTGngjl/Ure3ybOpebkly8HmFSn0eOzwUWr
-rSYWu76peA46LoYSoqsZMhlVQMcl7WkDHieZdePIHoswSF2bXbyAOD6Ix6GFmpLf
-KOavWm0p972z+8WkwB/KrCbpqo4OTzV5IIzbFobPHsFKsDalWyUHz4Q8e2gcZQd7
-S68m2x3dfM+PrSvjkwIWpJJe32Sauk+P0AVk+OsInWJXZRvgc5lrtCTfc7aW1H3P
-R90f88RUCNwUDhs5KH2OouEUTqDbW8NM8JKA5xFBFrYpV5j90aJqskHQ4/vD20W1
-sGfhri1oYc8nfESl8FkZ/mdC9rKEszQu9ez7TUK9gZH0MUswRzmV58mAnV7G8Bot
-alHox2YhQ3L5hgjodxv01eA1OLmqcR3wJOkPWewcaOVqr/EQxEkXR1iviufSAAgf
-08kr63+JB+qTB9lj7Z/HAFNyNdgHVLem10HSwKhTFtsgOyLpTxkN97UJqmARpGjD
-F88cTQ5t8hmGwvqkxRN2
-=SDMw
------END PGP SIGNATURE-----
-
---AhhlLboLdkugWU4S--
+Cheers,
+Emil
