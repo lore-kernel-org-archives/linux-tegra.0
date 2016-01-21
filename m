@@ -1,98 +1,118 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V3 06/11] thermal: tegra: add a debugfs to show registers
-Date: Thu, 21 Jan 2016 15:50:33 +0100
-Message-ID: <20160121145033.GC32301@ulmo>
-References: <1453111437-12401-1-git-send-email-wni@nvidia.com>
+Subject: Re: [PATCH V3 07/11] of: Add bindings of hw-trips for soctherm
+Date: Thu, 21 Jan 2016 15:52:51 +0100
+Message-ID: <20160121145251.GD32301@ulmo>
+References: <1453111448-12445-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="f0KYrhQ4vYSV2aJu"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="/3yNEOqWowh/8j+e"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1453111437-12401-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1453111448-12445-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---f0KYrhQ4vYSV2aJu
+--/3yNEOqWowh/8j+e
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 18, 2016 at 06:03:57PM +0800, Wei Ni wrote:
-[...]
-> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soc=
-therm.c
-[...]
-> +static void soctherm_debug_init(struct platform_device *pdev)
-> +{
-> +	struct tegra_soctherm *tegra =3D platform_get_drvdata(pdev);
-> +	struct dentry *root, *file;
-> +
-> +	root =3D debugfs_create_dir("tegra_soctherm", NULL);
+On Mon, Jan 18, 2016 at 06:04:08PM +0800, Wei Ni wrote:
+> Add hw-trips sub-node for soctherm, which is
+> used to describe the hardware trip points for
+> each soctherm sensors.
 
-Perhaps leave away the tegra_ prefix here? It's kind of redundant.
+Please make use of the full 78 characters in each line. Otherwise looks
+good to me.
 
-> +	if (!root) {
-> +		dev_err(&pdev->dev, "failed to create debugfs directory\n");
-> +		return;
-> +	}
-> +
-> +	tegra->debugfs_dir =3D root;
-> +
-> +	file =3D debugfs_create_file("regs", 0644, root, pdev, &regs_fops);
-
-Can we call this something different, please? "summary" would be a
-better name, in my opinion.
-
-> +	if (!file)
-> +		dev_err(&pdev->dev, "failed to create debugfs file\n");
-> +}
-> +#else
-> +static inline void soctherm_debug_init(struct platform_device *pdev)
-> +{ return 0; }
-
-Please follow the regular CodingStyle here, too:
-
-	...
-	{
-		return 0;
-	}
-
-> @@ -178,6 +309,10 @@ static int tegra_soctherm_probe(struct platform_devi=
-ce *pdev)
->  	if (!tegra)
->  		return -ENOMEM;
-> =20
-> +	dev_set_drvdata(&pdev->dev, tegra);
-> +
-> +	tegra->soc =3D soc;
-
-This looks odd here. Does this perhaps belong in one of the previous
-patches?
+Oh, also make sure to Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org on device tree
+binding patches. Doing that now, hence quoting verbatim.
 
 Thierry
 
---f0KYrhQ4vYSV2aJu
+>=20
+> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  .../devicetree/bindings/thermal/tegra-soctherm.txt | 24 ++++++++++++++++=
+++++++
+>  1 file changed, 24 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/thermal/tegra-soctherm.txt=
+ b/Documentation/devicetree/bindings/thermal/tegra-soctherm.txt
+> index 6b68cd150405..75dc9dbe7e1a 100644
+> --- a/Documentation/devicetree/bindings/thermal/tegra-soctherm.txt
+> +++ b/Documentation/devicetree/bindings/thermal/tegra-soctherm.txt
+> @@ -26,6 +26,15 @@ Required properties :
+>      of this property. See <dt-bindings/thermal/tegra124-soctherm.h> for a
+>      list of valid values when referring to thermal sensors.
+> =20
+> +Optional properties:
+> +- hw-trip-points : A sub-node which is a container of hardware trip poin=
+ts
+> +    for each sensors.
+> +  * sensors: Sub-nodes which are used to describe the HW trip points inf=
+o,
+> +        must be named as "cpu", "gpu", "mem", "pll".
+> +      Properties:
+> +      - thermtrip-temperature : Shutdown or reset temperature in millice=
+lsius,
+> +        once the temperature of this sensor is higher than the
+> +        thermtrip-temperature, the system will be shutdown or reset.
+> =20
+>  Example :
+> =20
+> @@ -40,6 +49,21 @@ Example :
+>  		reset-names =3D "soctherm";
+> =20
+>  		#thermal-sensor-cells =3D <1>;
+> +
+> +		hw-trip-points {
+> +			cpu {
+> +				thermtrip-temperature =3D <103000>;
+> +			};
+> +			gpu {
+> +				thermtrip-temperature =3D <103500>;
+> +			};
+> +			mem {
+> +				thermtrip-temperature =3D <103500>;
+> +			};
+> +			pll {
+> +				thermtrip-temperature =3D <105000>;
+> +			};
+> +		};
+>  	};
+> =20
+>  Example: referring to thermal sensors :
+> --=20
+> 1.9.1
+>=20
+
+--/3yNEOqWowh/8j+e
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJWoPA5AAoJEN0jrNd/PrOhSX4QAJiVg/riFnVmMO7WjpswhKWu
-TZFWqLMZfk0MLtSRCU3E82l5qZ92RrHPLJkTfCXwhmk4wkWBO8byr0Vjq91Q17vW
-cb9RrpAz0PHpzieoY2mQhvAqIobtl/BLkPB/sQF5hd+L/5JsVrTZDhmq3+Ekd0T3
-k7BIPxPu8scb6a6ImWsAS4GPBPoY2fTmsgTJsOviajywhHHSO5cCqJIwL+AJq44U
-RzqbOAx2Hai1Yay2F2oWdOwmH3SWhM4hKbsXci7pCZKG0uGo6lGGG5NeANGfB97N
-9KPNWfenbl3Q3PnpDy/VGIQotvumuHO2TXH+79bb35bPqUKZSxTwLXDJpSb02x5k
-0hpqfrh7HR5e3NjwDdpKEfcJD5OSi5bnXVruvY2KyRXe5zKaxRibeY81TZXWMeZE
-lZtCDsI7mJmiS/3ub/uTBFpf0Mak49M1aURvlux+5Ke+BpBLvNOQjqjfl1cmKiz0
-Fm1jMatXxWAVrshwvvGZR3UpPN9/1u8du8Br+Z7kg9pLHK50Xrv55fEbVUeC4xGL
-xay+rsodlfFN+z6KeNf1EVoEGfoSpfbQ1CZXp+LUOSJczjW+juQnbyf32x7BuVSB
-iygJbIX5MtbyQW2/kuLTFt876AHuY73hSoTL1x+aoa6esZiqXqVy46Z/xluwL1yF
-Ji+U31ojiuLUUhsyQfZQ
-=R3VW
+iQIcBAABCAAGBQJWoPDCAAoJEN0jrNd/PrOhgHQP/0A4EQ9vvJA3H57hVKRACe5z
+1KAezYKbFod0rQHDvO0ISQQFSwYO1MnTq4qEiJdfaw1/DGbbxPUSfBJ8B6y0w+GV
+TOQJb/kec28bXuhbMFPGnL0VoFnPNoagzFaSNsjETEJo8RdkFQ3PD4CO/Rl2QuUh
+Ue8SS96ohqlWfC3HbdjQMpp6RGWlHKYm74eLurGWjlqoYXQs0DjJkBXYJeVo1sbQ
+tnAhhEbNwtpMIcZY2VCeImz4v8fFgT+SG44Wj1tWwfMy/7VuWnpS5r0SFZ7173iL
+ZxllPrkQa6JJi3O3rkS1zzymEoAgWOvtusPDA/xKl13tP2KEQGhr6QuDBu6vBZzM
+WNRSB2IxjvCgGaDGaplRFN/QyaRp1p+tEiBgbZhNkZl+Chbrus9Oa/Es8XDhWpsZ
+uilzK0oX7m+7SGctxiGfzW1wcin4eAj8A7H2xgwxYKMg1eme24XWd9YXjUJsSe7h
+lavknsccBpzAlIUHnfat/K4Fuj9UoG0kIrKwK+80RXo4X/EzdH+qKnefgnteKwxN
+6TyHeY5AupZGg3HNQE4+vRw3k0HjvSp360/7us+cofrA1Rf4v/lgMc1tlrklX484
+saVBmn/nj/LOfsuqVc5qvhhYYcxg3sl4nc+49SdBHALPWKXniQr4lkPuEdHVUiu2
+mLbCGKaASfAodNs0vH+N
+=Pb8u
 -----END PGP SIGNATURE-----
 
---f0KYrhQ4vYSV2aJu--
+--/3yNEOqWowh/8j+e--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
