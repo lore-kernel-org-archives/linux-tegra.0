@@ -1,90 +1,86 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V3 00/11] Add T210 support in Tegra soctherm
-Date: Thu, 21 Jan 2016 15:56:57 +0100
-Message-ID: <20160121145657.GF32301@ulmo>
-References: <1453111356-12298-1-git-send-email-wni@nvidia.com>
+From: Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [RFC PATCH V2 3/8] genirq: Add runtime power management support
+ for IRQ chips
+Date: Thu, 21 Jan 2016 20:51:11 +0100 (CET)
+Message-ID: <alpine.DEB.2.11.1601212026230.3886@nanos>
+References: <1450349309-8107-1-git-send-email-jonathanh@nvidia.com> <1450349309-8107-4-git-send-email-jonathanh@nvidia.com> <CAPDyKFqZK4HYWgXam63=eCKAWsjwCiQbT5jdmgjqid_er3Sg1g@mail.gmail.com> <569E1366.8070005@nvidia.com> <alpine.DEB.2.11.1601201620450.3575@nanos>
+ <CAPDyKFrqQO6Mh7ew5YTW011a11LmFW7c+cZpAKmY8tovxjGmOw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="xaMk4Io5JJdpkLEb"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1453111356-12298-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAPDyKFrqQO6Mh7ew5YTW011a11LmFW7c+cZpAKmY8tovxjGmOw@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Jiang Liu <jiang.liu@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, Soren Brinkmann <soren.brinkmann@xilinx.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
 List-Id: linux-tegra@vger.kernel.org
 
+On Thu, 21 Jan 2016, Ulf Hansson wrote:
+> >> > I don't think using __free_irq() is the correct place to decrease the
+> >> > runtime PM usage count. It will keep the irqchip runtime resumed even
+> >> > if there are no irqs enabled for it.
+> >> >
+> >> > Instead I would rather allow the irqchip to be runtime suspended, when
+> >> > there are no irqs enabled on it.
+> >
+> > Which is a no no, as you might lose interrupts that way. We disable interrupts
+> > lazy, i.e. we do not mask them. So no, you cannot do that from
+> > enable/disable_irq().
+> 
+> Thanks for the input!
+> 
+> My main point around the approach suggested in $subject patch, is that
+> I don't think it's *enough* fine grained.
+> 
+> From a runtime PM perspective, we should allow the irqchip to enter a
+> low power state when there are no IRQs enabled for it.
+> 
+> As enable|disable_irq() isn't the place to do runtime PM reference
+> counting from, perhaps there is another option? Maybe the irqchip
+> driver itself is better suited to take these decisions?
 
---xaMk4Io5JJdpkLEb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The irq chip driver does not have more information than the core code,
+actually it has less.
 
-On Mon, Jan 18, 2016 at 06:02:25PM +0800, Wei Ni wrote:
-> This patchset adds following functions for tegra_soctherm driver:
-> 1. add T210 support.
-> 2. export debugfs to show some registers.
-> 3. add thermtrip funciton.
-> 4. add suspend/resume function.
->=20
-> The V1 serial is in:
-> http://www.spinics.net/lists/linux-tegra/msg24808.html
-> The V2 serial is in:
-> http://www.spinics.net/lists/linux-tegra/msg24901.html
->=20
-> Main changes from V2:
-> 1. Fix build error in patch [1/11].
-> 2. Use of_get_child_by_name instead of of_find_node_by_name in patch [8/1=
-1].
-> 3. Use debugfs_remove_recursive to remove debugfs in patch [6/11].
->=20
-> Main changes from V1:
-> 1. Use the new type to handl different Tegra chips in one driver,
-> which suggested by Thierry.
-> 2. Changes per Thieery's other comments.
->=20
-> Wei Ni (11):
->   thermal: tegra: move tegra thermal files into tegra directory
->   thermal: tegra: combine sensor group-related data
->   thermal: tegra: get rid of PDIV/HOTSPOT hack
->   thermal: tegra: split tegra_soctherm driver
->   thermal: tegra: add T210-specific SOC_THERM driver
->   thermal: tegra: add a debugfs to show registers
->   of: Add bindings of hw-trips for soctherm
->   thermal: tegra: add thermtrip function
->   thermal: tegra: add PM support
->   arm64: tegra: add soctherm node for Tegra210
->   ARM: tegra: set hw trips for Tegra124
+Let's look at disable_irq(). It's normaly used for short periods of time where
+a driver needs to make sure that the interrupt is not handled. That's hardly a
+point to do power management, because its going to be reenabled right
+away. That's one of the reasons for doing the lazy masking, though the main
+reason is to prevent losing interrupt on edge driven irq lines.
 
-Hi Wei,
+So as long as an interrupt handler is installed, there is no sane way that we
+can decide to power down the irq chip, unless that chip has the magic ability
+to relay incoming interrupts while powered down :)
 
-This series looks mostly good to me. I've commented on a couple of minor
-things as replies to the individual patches.
+There is also the issue with shared interrupts....
 
-On a higher level, what's the test procedure that we can use to validate
-that this code works?
+So the only sane way to power down the irq chip is to remove the handlers when
+the device is not in use. Actually some of the subsystems/drivers do that
+already.
 
-Thierry
+Though there might be a case where the device driver is still in use, but it
+has brought down the device into a quiescent state, which guarantees that no
+interrupts happen unless its powered up again. That would be an opportunity to
+shut down the interrupt and do power management as well. So currently we only
+have the option of freeing the interrupt and requesting it again.
 
---xaMk4Io5JJdpkLEb
-Content-Type: application/pgp-signature; name="signature.asc"
+It might be conveniant to avoid that by having extra functions which are less
+heavyweight. Something like irq_[de]activate(irq, void *dev_id), which would
+mask/unmask the interrupt and do power management on the irq chip.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+If you can come up with a simple comparision of such an approach with the
+free/request_irq() method which shows that it is superior, I'm surely not in
+the way. No need to code that core part, just show how a few drivers would use
+those functions and why this is less intrusive and simpler to use for the
+developer that going for the free/request() solution.
 
-iQIcBAABCAAGBQJWoPG5AAoJEN0jrNd/PrOhx3IP/1CLNjmq6G1K/Sc8jfms8Zgs
-fQfWtiBWIpkfKh4H4twd/S4c3j+QbtGPsXscoTiX1eqH/6kEtB13cjxyddWvaZ2A
-Pqtn2As0XZsp6PUi/WX/+F9OKUSPSwAYFohddCLzK5DB85/1DtHZ8yNhT2Lv5CQM
-N9Y7ehcrNgxiJB+UWW6NKQP9GdnUfMsr8uUjVkEPVetRU3NShs0ErCJXGAj8lqIj
-CtRfTOgxaGjLmaD9bHIypHbeLbPoxRm/h3GQkgeDBLNgnZ53tQLf64F6xhSjaYP5
-sTyjZs46vtx0Hm2d/MunmKZFeKTgX48hRd4daMuwauBKXq0mfqeKznxWRUvGfHc8
-9b3yCAxBvNkeIhba+AVNkMOX+iRY3THplWCwFsq48FjoWdlV1eZLSguC/T4Jc79w
-1/VfkCBfw5Cu74bg1cEtA7B4RnAdn6LtkneOrVq1C1l9yMQe1rZlW4ziVUicw7P2
-hhPUWivEH8QQ4rVo0HKwz3r+fbopDwfylPYymylSNSyjfKlYXjoLVw8lwmfOk9la
-x5fq4MPASSWDG8HO75PHHpYKhFGrj+b7NhTXdN9ta3P0bzkmboJ07gA4jOX+WXq+
-9LvoE5/lXiNGsqu+wUiRJbBcxYY6eVu6qLJP+TlPeO1264XIRJubbYJXR/13jyDz
-MV8bLvrLSFUYDWWXrs9E
-=PH4m
------END PGP SIGNATURE-----
+Thanks,
 
---xaMk4Io5JJdpkLEb--
+	tglx
+
+
+
+
+
+
+
+
