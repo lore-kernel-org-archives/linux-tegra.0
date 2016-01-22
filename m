@@ -1,200 +1,129 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3 04/11] thermal: tegra: split tegra_soctherm driver
-Date: Fri, 22 Jan 2016 16:52:20 +0800
-Message-ID: <56A1EDC4.6000401@nvidia.com>
-References: <1453111356-12298-1-git-send-email-wni@nvidia.com> <1453111356-12298-5-git-send-email-wni@nvidia.com> <20160121144605.GB32301@ulmo>
+From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [RFC PATCH V2 3/8] genirq: Add runtime power management support
+ for IRQ chips
+Date: Fri, 22 Jan 2016 12:08:23 +0100
+Message-ID: <CAPDyKFoNcARZRZfXM1Rdn2PZqtnUdbfn1Fb4PzKZs_DKkxKtSw@mail.gmail.com>
+References: <1450349309-8107-1-git-send-email-jonathanh@nvidia.com>
+	<1450349309-8107-4-git-send-email-jonathanh@nvidia.com>
+	<CAPDyKFqZK4HYWgXam63=eCKAWsjwCiQbT5jdmgjqid_er3Sg1g@mail.gmail.com>
+	<569E1366.8070005@nvidia.com>
+	<alpine.DEB.2.11.1601201620450.3575@nanos>
+	<CAPDyKFrqQO6Mh7ew5YTW011a11LmFW7c+cZpAKmY8tovxjGmOw@mail.gmail.com>
+	<alpine.DEB.2.11.1601212026230.3886@nanos>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160121144605.GB32301@ulmo>
+In-Reply-To: <alpine.DEB.2.11.1601212026230.3886@nanos>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Jiang Liu <jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 21 January 2016 at 20:51, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org> wrote:
+> On Thu, 21 Jan 2016, Ulf Hansson wrote:
+>> >> > I don't think using __free_irq() is the correct place to decrease the
+>> >> > runtime PM usage count. It will keep the irqchip runtime resumed even
+>> >> > if there are no irqs enabled for it.
+>> >> >
+>> >> > Instead I would rather allow the irqchip to be runtime suspended, when
+>> >> > there are no irqs enabled on it.
+>> >
+>> > Which is a no no, as you might lose interrupts that way. We disable interrupts
+>> > lazy, i.e. we do not mask them. So no, you cannot do that from
+>> > enable/disable_irq().
+>>
+>> Thanks for the input!
+>>
+>> My main point around the approach suggested in $subject patch, is that
+>> I don't think it's *enough* fine grained.
+>>
+>> From a runtime PM perspective, we should allow the irqchip to enter a
+>> low power state when there are no IRQs enabled for it.
+>>
+>> As enable|disable_irq() isn't the place to do runtime PM reference
+>> counting from, perhaps there is another option? Maybe the irqchip
+>> driver itself is better suited to take these decisions?
+>
+> The irq chip driver does not have more information than the core code,
+> actually it has less.
+>
+> Let's look at disable_irq(). It's normaly used for short periods of time where
+> a driver needs to make sure that the interrupt is not handled. That's hardly a
+> point to do power management, because its going to be reenabled right
+> away. That's one of the reasons for doing the lazy masking, though the main
+> reason is to prevent losing interrupt on edge driven irq lines.
 
+I didn't think of the edge driven irq case.
 
-On 2016=E5=B9=B401=E6=9C=8821=E6=97=A5 22:46, Thierry Reding wrote:
-> * PGP Signed by an unknown key
->=20
-> On Mon, Jan 18, 2016 at 06:02:29PM +0800, Wei Ni wrote:
-> [...]
->> +int tegra_soctherm_calculate_tsensor_calibration(
->> +				struct tegra_tsensor *sensor,
->> +				const struct tsensor_shared_calibration *shared)
->=20
-> The need to ident weirdly here should be an indication that the funct=
-ion
-> name is too long, how about:
+I totally agree, disable|enable_irq() can't be used for power management.
 
-Hmm, yes, it's too long.
+>
+> So as long as an interrupt handler is installed, there is no sane way that we
+> can decide to power down the irq chip, unless that chip has the magic ability
+> to relay incoming interrupts while powered down :)
+>
+> There is also the issue with shared interrupts....
+>
+> So the only sane way to power down the irq chip is to remove the handlers when
+> the device is not in use. Actually some of the subsystems/drivers do that
+> already.
+>
+> Though there might be a case where the device driver is still in use, but it
+> has brought down the device into a quiescent state, which guarantees that no
+> interrupts happen unless its powered up again. That would be an opportunity to
+> shut down the interrupt and do power management as well. So currently we only
+> have the option of freeing the interrupt and requesting it again.
 
->=20
-> int tegra_tsensor_calc_calib(struct tegra_tsensor *sensor,
-> 			     const struct tsensor_shared_calibration *shared)
->=20
-> ?
+I agree, this is exactly the case I have been thinking of.
 
-There have two functions about calibration, I prefer to name them as:
-tegra_calc_tsensor_calib() and tegra_calc_shared_calib().
+Closely related to this topic.
 
->=20
->> +{
->> +	const struct tegra_tsensor_group *sensor_group;
->> +	u32 val, calib;
->> +	s32 actual_tsensor_ft, actual_tsensor_cp;
->> +	s32 delta_sens, delta_temp;
->> +	s32 mult, div;
->> +	s16 therma, thermb;
->> +	int err;
->> +
->> +	sensor_group =3D sensor->group;
->> +
->> +	err =3D tegra_fuse_readl(sensor->calib_fuse_offset, &val);
->> +	if (err)
->> +		return err;
->> +
->> +	actual_tsensor_cp =3D (shared->base_cp * 64) + sign_extend32(val, =
-12);
->> +	val =3D (val & FUSE_TSENSOR_CALIB_FT_TS_BASE_MASK)
->> +		>> FUSE_TSENSOR_CALIB_FT_TS_BASE_SHIFT;
->=20
-> I think it's more canonical to put the >> on the first line line.
+Currently there are several cases where subsystems/drivers don't
+protects themselves from receiving an IRQ, when the device is in a
+quiescent state.
+This may lead to hangs at device register accesses etc, especially
+when the IRQ handler expects the device to be functional and not in a
+low power state.
 
-Ok, will fix it.
+This is a different issue, but the solution I had in mind was to use
+disable|enable_irq() as protection. I now realize that
+freeing/re-requesting the IRQ handler is better, as that would
+potentially allow power management for the irqchip as well.
 
->=20
->> +	actual_tsensor_ft =3D (shared->base_ft * 32) + sign_extend32(val, =
-12);
->> +
->> +	delta_sens =3D actual_tsensor_ft - actual_tsensor_cp;
->> +	delta_temp =3D shared->actual_temp_ft - shared->actual_temp_cp;
->> +
->> +	mult =3D sensor_group->pdiv * sensor->config->tsample_ate;
->> +	div =3D sensor->config->tsample * sensor_group->pdiv_ate;
->> +
->> +	therma =3D div64_s64_precise((s64)delta_temp * (1LL << 13) * mult,
->> +			(s64)delta_sens * div);
->=20
-> Are the explicit casts necessary? Shouldn't an s32 be automatically
-> promoted to s64? Also arguments on subsequent lines should be aligned
-> with the first argument on the first line.
+>
+> It might be conveniant to avoid that by having extra functions which are less
+> heavyweight. Something like irq_[de]activate(irq, void *dev_id), which would
+> mask/unmask the interrupt and do power management on the irq chip.
 
-I made a mistake, the div64_s64_precise(s64 a, s64 b) should be
-div64_s64_precise(s64 a, s32b), so to make the value more precise, I ad=
-ded (s64)
-cast in here.
-And I will use temporary variable, and align the arguments.
+I like that idea!
 
->=20
->> +	thermb =3D div64_s64_precise(
->> +			((s64)actual_tsensor_ft * shared->actual_temp_cp) -
->> +			((s64)actual_tsensor_cp * shared->actual_temp_ft),
->> +			(s64)delta_sens);
->=20
-> Perhaps add a temporary variable for the first parameter here for
-> readability?
+We may also want to distinguish between the PM case and by just having
+an IRQ handler registered, for whatever reason.
 
-Yes, will use temporary variable, and remove the cast for delta_sens.
+More importantly, we don't want to introduce unnecessary latencies
+when bringing devices back to full power from a quiescent power state.
 
->=20
->> +
->> +	therma =3D div64_s64_precise((s64)therma * sensor->fuse_corr_alpha=
-,
->> +			(s64)1000000LL);
->> +	thermb =3D div64_s64_precise((s64)thermb * sensor->fuse_corr_alpha=
- +
->> +			sensor->fuse_corr_beta,
->> +			(s64)1000000LL);
->=20
-> What are the 1000000LL? Does it perhaps make sense to have a macro fo=
-r
-> it, or perhaps a comment would help.
+Perhaps the functions should be named something with "pm" to better
+reflect their purpose?
 
-It's the coefficient data for the therma and thermb. I will use macro f=
-or it.
-#define CALIB_COEFFICIENT 1000000LL
+>
+> If you can come up with a simple comparision of such an approach with the
+> free/request_irq() method which shows that it is superior, I'm surely not in
+> the way. No need to code that core part, just show how a few drivers would use
+> those functions and why this is less intrusive and simpler to use for the
+> developer that going for the free/request() solution.
 
->=20
->> +	calib =3D ((u16)therma << SENSOR_CONFIG2_THERMA_SHIFT) |
->> +		 ((u16)thermb << SENSOR_CONFIG2_THERMB_SHIFT);
->=20
-> Alignment here isn't right.
+Here's a small collection of drivers that I easily picked up as
+candidates for using these new APIs.
+In principle, they would invoke these new APIs from their runtime PM callbacks.
 
-will do it.
+drivers/spi/spi-atmel.c
+drivers/spi/spi-pl022.c
+drivers/i2c/busses/i2c-omap.c
+drivers/i2c/busses/i2c-nomadik.c
+drivers/i2c/busses/i2c-sh_mobile.c
+drivers/mmc/host/mtk-sd.c
+drivers/mmc/host/mmci.c
 
->=20
->> diff --git a/drivers/thermal/tegra/soctherm.h b/drivers/thermal/tegr=
-a/soctherm.h
-> [...]
->> +struct tegra_soctherm_soc {
->> +	struct tegra_tsensor *tsensors;
->=20
-> Can't these be const? Do they ever need to be modified? If so, they
-> should probably not be part of this structure. Or at least only part =
-of
-> them should be. The invariant part.
->=20
-> The reason is that if ever a second instance of this device was prese=
-nt
-> both instances would share this same data. I know it's unlikely to
-> happen, but setting a bad example would be... well... bad.
->=20
-> Instead I think if you need to have non-const fields you could separa=
-te
-> this further into struct tegra_tsensor_soc, with only the static
-> information about the sensor, and make struct tegra_tsensor contain a
-> pointer to that SoC structure and provide the variable fields in
-> addition. That way you can create a struct tegra_tsensor for each str=
-uct
-> tegra_tsensor_soc and store those per-instance.
-
-There has a member "calib" in the tsensors which will be written in the=
- driver,
-so I didn't make it as const.
-But you are right, I need to consider the risk that the system have two=
- more SOCs.
-I will remove the "calib" to struct tegra_soctherm, then can fix this i=
-ssue, and
-can make all data to "const" in the chip-specific file.
-
->=20
->> diff --git a/drivers/thermal/tegra/tegra124-soctherm.c b/drivers/the=
-rmal/tegra/tegra124-soctherm.c
-> [...]
->> +static struct tegra_tsensor tegra124_tsensors[] =3D {
->=20
-> Can this be "static const" instead?
-
-Will fix this one.
-
->=20
->> +	{
->> +		.name =3D "cpu0",
->> +		.base =3D 0xc0,
->> +		.config =3D &t124_tsensor_config,
->> +		.calib_fuse_offset =3D 0x098,
->> +		.fuse_corr_alpha =3D 1135400,
->> +		.fuse_corr_beta =3D -6266900,
->> +		.group =3D &tegra124_tsensor_group_cpu,
->> +	},
->> +	{
->=20
-> "}," and "{" can go on the same line.
-
-Got it, will change it.
-
->=20
->> +struct tegra_soctherm_soc tegra124_soctherm =3D {
->=20
-> "const"?
-
-Will fix it.
-
->=20
-> Thierry
->=20
-> * Unknown Key
-> * 0x7F3EB3A1
->=20
+Kind regards
+Uffe
