@@ -1,86 +1,92 @@
-From: Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [RFC PATCH V2 3/8] genirq: Add runtime power management support
- for IRQ chips
-Date: Thu, 21 Jan 2016 20:51:11 +0100 (CET)
-Message-ID: <alpine.DEB.2.11.1601212026230.3886@nanos>
-References: <1450349309-8107-1-git-send-email-jonathanh@nvidia.com> <1450349309-8107-4-git-send-email-jonathanh@nvidia.com> <CAPDyKFqZK4HYWgXam63=eCKAWsjwCiQbT5jdmgjqid_er3Sg1g@mail.gmail.com> <569E1366.8070005@nvidia.com> <alpine.DEB.2.11.1601201620450.3575@nanos>
- <CAPDyKFrqQO6Mh7ew5YTW011a11LmFW7c+cZpAKmY8tovxjGmOw@mail.gmail.com>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V3 00/11] Add T210 support in Tegra soctherm
+Date: Fri, 22 Jan 2016 15:27:49 +0800
+Message-ID: <56A1D9F5.9090108@nvidia.com>
+References: <1453111356-12298-1-git-send-email-wni@nvidia.com> <20160121145657.GF32301@ulmo>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CAPDyKFrqQO6Mh7ew5YTW011a11LmFW7c+cZpAKmY8tovxjGmOw@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Jiang Liu <jiang.liu@linux.intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, Soren Brinkmann <soren.brinkmann@xilinx.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160121145657.GF32301@ulmo>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 21 Jan 2016, Ulf Hansson wrote:
-> >> > I don't think using __free_irq() is the correct place to decrease the
-> >> > runtime PM usage count. It will keep the irqchip runtime resumed even
-> >> > if there are no irqs enabled for it.
-> >> >
-> >> > Instead I would rather allow the irqchip to be runtime suspended, when
-> >> > there are no irqs enabled on it.
-> >
-> > Which is a no no, as you might lose interrupts that way. We disable interrupts
-> > lazy, i.e. we do not mask them. So no, you cannot do that from
-> > enable/disable_irq().
-> 
-> Thanks for the input!
-> 
-> My main point around the approach suggested in $subject patch, is that
-> I don't think it's *enough* fine grained.
-> 
-> From a runtime PM perspective, we should allow the irqchip to enter a
-> low power state when there are no IRQs enabled for it.
-> 
-> As enable|disable_irq() isn't the place to do runtime PM reference
-> counting from, perhaps there is another option? Maybe the irqchip
-> driver itself is better suited to take these decisions?
-
-The irq chip driver does not have more information than the core code,
-actually it has less.
-
-Let's look at disable_irq(). It's normaly used for short periods of time where
-a driver needs to make sure that the interrupt is not handled. That's hardly a
-point to do power management, because its going to be reenabled right
-away. That's one of the reasons for doing the lazy masking, though the main
-reason is to prevent losing interrupt on edge driven irq lines.
-
-So as long as an interrupt handler is installed, there is no sane way that we
-can decide to power down the irq chip, unless that chip has the magic ability
-to relay incoming interrupts while powered down :)
-
-There is also the issue with shared interrupts....
-
-So the only sane way to power down the irq chip is to remove the handlers when
-the device is not in use. Actually some of the subsystems/drivers do that
-already.
-
-Though there might be a case where the device driver is still in use, but it
-has brought down the device into a quiescent state, which guarantees that no
-interrupts happen unless its powered up again. That would be an opportunity to
-shut down the interrupt and do power management as well. So currently we only
-have the option of freeing the interrupt and requesting it again.
-
-It might be conveniant to avoid that by having extra functions which are less
-heavyweight. Something like irq_[de]activate(irq, void *dev_id), which would
-mask/unmask the interrupt and do power management on the irq chip.
-
-If you can come up with a simple comparision of such an approach with the
-free/request_irq() method which shows that it is superior, I'm surely not in
-the way. No need to code that core part, just show how a few drivers would use
-those functions and why this is less intrusive and simpler to use for the
-developer that going for the free/request() solution.
-
-Thanks,
-
-	tglx
 
 
+On 2016=E5=B9=B401=E6=9C=8821=E6=97=A5 22:56, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+>=20
+> On Mon, Jan 18, 2016 at 06:02:25PM +0800, Wei Ni wrote:
+>> This patchset adds following functions for tegra_soctherm driver:
+>> 1. add T210 support.
+>> 2. export debugfs to show some registers.
+>> 3. add thermtrip funciton.
+>> 4. add suspend/resume function.
+>>
+>> The V1 serial is in:
+>> http://www.spinics.net/lists/linux-tegra/msg24808.html
+>> The V2 serial is in:
+>> http://www.spinics.net/lists/linux-tegra/msg24901.html
+>>
+>> Main changes from V2:
+>> 1. Fix build error in patch [1/11].
+>> 2. Use of_get_child_by_name instead of of_find_node_by_name in patch=
+ [8/11].
+>> 3. Use debugfs_remove_recursive to remove debugfs in patch [6/11].
+>>
+>> Main changes from V1:
+>> 1. Use the new type to handl different Tegra chips in one driver,
+>> which suggested by Thierry.
+>> 2. Changes per Thieery's other comments.
+>>
+>> Wei Ni (11):
+>>   thermal: tegra: move tegra thermal files into tegra directory
+>>   thermal: tegra: combine sensor group-related data
+>>   thermal: tegra: get rid of PDIV/HOTSPOT hack
+>>   thermal: tegra: split tegra_soctherm driver
+>>   thermal: tegra: add T210-specific SOC_THERM driver
+>>   thermal: tegra: add a debugfs to show registers
+>>   of: Add bindings of hw-trips for soctherm
+>>   thermal: tegra: add thermtrip function
+>>   thermal: tegra: add PM support
+>>   arm64: tegra: add soctherm node for Tegra210
+>>   ARM: tegra: set hw trips for Tegra124
+>=20
+> Hi Wei,
+>=20
+> This series looks mostly good to me. I've commented on a couple of mi=
+nor
+> things as replies to the individual patches.
 
+Thanks for your review, I will check your comments and send out next ve=
+rsion in
+next few days.
 
+>=20
+> On a higher level, what's the test procedure that we can use to valid=
+ate
+> that this code works?
 
+You can check following files:
+1. Run "cat /sys/class/thermal/thermal*/temp" to read temperature
+This driver will register four thermal zones: cpu, gpu, mem and pll.
+2. Run "cat /sys/kernel/debug/tegra_soctherm/regs" to show the register=
+ contents.
+3. Write a low temperature value to
+/sys/kernel/debug/tegra_soctherm/thermtrip/xxx to trigger the thermtrip=
+ function.
+=46or example, if the cpu temperature is 30000 now, you can read it fro=
+m above
+thermal zones, then "echo 25000 >
+/sys/kernel/debug/tegra_soctherm/thermtrip/cpu", the system will be shu=
+tdown
+immediately.
 
-
-
+>=20
+> Thierry
+>=20
+> * Unknown Key
+> * 0x7F3EB3A1
+>=20
