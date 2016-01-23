@@ -1,55 +1,68 @@
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: [PATCH] ARM: tegra: remove redundant ARM_L1_CACHE_SHIFT_6 select
-Date: Sat, 23 Jan 2016 17:55:30 +0900
-Message-ID: <1453539330-11903-1-git-send-email-yamada.masahiro@socionext.com>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH] i2c: tegra: fix a possible NULL dereference
+Date: Sat, 23 Jan 2016 11:56:46 +0100
+Message-ID: <20160123105645.GA2036@katana>
+References: <1447313163-23848-1-git-send-email-clabbe.montjoie@gmail.com>
+ <20151112122923.GA31671@ulmo>
+ <20151112125422.GA3758@Red>
+ <20151112132837.GF31671@ulmo>
+ <20151112134519.GJ24008@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
-Cc: Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Mikko Perttunen <mikko.perttunen@kapsi.fi>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, Masahiro Yamada <yamada.masahiro@socionext.com>, Thierry Reding <thierry.reding@gmail.com>, Tuomas Tynkkynen <ttynkkynen@nvidia.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="AqsLC8rIMeq19msA"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20151112134519.GJ24008-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, LABBE Corentin <montjoie.mailing-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, LABBE Corentin <clabbe.montjoie-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-These two are both ARMv7 SoCs.  They need not explicitly select
-ARM_L1_CACHE_SHIFT_6 because it is enabled along with CPU_V7.
 
-Refer to commit a092f2b15399 ("ARM: 7291/1: cache: assume 64-byte L1
-cachelines for ARMv7 CPUs").
+--AqsLC8rIMeq19msA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Hi Uwe,
 
- drivers/soc/tegra/Kconfig | 2 --
- 1 file changed, 2 deletions(-)
+> That's equivalent to
+>=20
+> 	if (dev->of_node)
+> 		return of_driver_match_device(dev, drv);
+>=20
+> and was already suggested in the thread referenced from my reply to
+> http://article.gmane.org/gmane.linux.kernel/2083641 :-)
 
-diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
-index d0c3c3e..03089ad 100644
---- a/drivers/soc/tegra/Kconfig
-+++ b/drivers/soc/tegra/Kconfig
-@@ -31,7 +31,6 @@ config ARCH_TEGRA_3x_SOC
- config ARCH_TEGRA_114_SOC
- 	bool "Enable support for Tegra114 family"
- 	select ARM_ERRATA_798181 if SMP
--	select ARM_L1_CACHE_SHIFT_6
- 	select HAVE_ARM_ARCH_TIMER
- 	select PINCTRL_TEGRA114
- 	select TEGRA_TIMER
-@@ -41,7 +40,6 @@ config ARCH_TEGRA_114_SOC
- 
- config ARCH_TEGRA_124_SOC
- 	bool "Enable support for Tegra124 family"
--	select ARM_L1_CACHE_SHIFT_6
- 	select HAVE_ARM_ARCH_TIMER
- 	select PINCTRL_TEGRA124
- 	select TEGRA_TIMER
--- 
-1.9.1
+Did you make a proper patch out of it? Can't find it, though I also
+think this would be useful.
+
+Acked-by: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+
+All the best,
+
+   Wolfram
+
+--AqsLC8rIMeq19msA
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJWo1xtAAoJEBQN5MwUoCm203MP/1gwlaJN6AIs1LNdTdvJwDvW
+aLwpbldiGIaBM4BOsvt7JF43OquRt8poHsQyaz8wml5WJcIXv/yiBorM9YV/QOVT
+WmcOsajBH81MPQiF98NaPFahNBbJl2dvp08kHjRbiCk+QcZ4lQtiLLdivJ6eI0Tk
+d1/QcdeBYILsSIjb7xNnBV6Otj0wbsGFrSYLzNv9RZ+OM25sSd6UB0WnNqb/sEUB
+qsIBrY2/WJb62JZ5r3UXcdEPf9280yLMdFrHXMUS5bvzZ9qxSXOeQj6335cb+aQd
++jc98kC1KWI4Xn7Fs4+v9Dg6/HccrFor/NyUiEJMJQM/UmNU/2kK8kJRPsrtNgOd
+HdYSm/wZgadUQEkwpOgigcQTOYfyKoVdhO9AYi8j+VmwQsM9qOHwf/5NjJ6lICi6
+W86Hxv2AaIWiRbx/eX9WZT5oeqrhQS9jseE+1r/AAmbImXFG+iZthMckqpVrLs8I
+sgc2AqOcyu4An8X9n0y/b65K/O89ipG9KBV2pdMHaRsoxNRPS9+AUL82e+yz97li
+IGWLFYRVN8Y+nrta7fb9rh8A/mPKnQXG6Jx+6RSkx1/GN14nE4441o4rbodCFUxj
+uz86qDiTJ19eoohcLwdNrt6wFQv2uiyW8DUmVabpfyng+Y1p6O9QtF/k3dGZWt4l
+mE/ZinGMl3MT2HbOdHsN
+=wmTp
+-----END PGP SIGNATURE-----
+
+--AqsLC8rIMeq19msA--
