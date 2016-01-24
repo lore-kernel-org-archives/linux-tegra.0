@@ -1,14 +1,14 @@
-From: Amitoj Kaur Chawla <amitoj1606@gmail.com>
-Subject: [PATCH] clk: tegra: clk-emc: Add missing of_node_put
-Date: Sun, 24 Jan 2016 20:45:20 +0530
-Message-ID: <20160124151519.GA23923@amitoj-Inspiron-3542>
+From: Amitoj Kaur Chawla <amitoj1606-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] gpu: host1x: bus: Add missing of_node_put
+Date: Sun, 24 Jan 2016 22:02:10 +0530
+Message-ID: <20160124163210.GA24872@amitoj-Inspiron-3542>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-clk-owner@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-Sender: linux-clk-owner@vger.kernel.org
-To: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, sboyd@codeaurora.org, swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: julia.lawall@lip6.fr
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: julia.lawall-L2FTfq7BK8M@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 for_each_child_of_node performs an of_node_get on each iteration, so
@@ -19,54 +19,42 @@ Found using Coccinelle. The semantic patch used for this is as follows:
 // <smpl>
 @@
 expression e;
-local idexpression child;
+local idexpression n;
 @@
 
- for_each_child_of_node(root, child) {
-   ... when != of_node_put(child)
-       when != e = child
+ for_each_child_of_node(..., n) {
+   ... when != of_node_put(n)
+       when != e = n
 (
-   return child;
+   return n;
 |
-+  of_node_put(child);
++  of_node_put(n);
 ?  return ...;
 )
    ...
  }
 // </smpl>
 
-Signed-off-by: Amitoj Kaur Chawla <amitoj1606@gmail.com>
+Signed-off-by: Amitoj Kaur Chawla <amitoj1606-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 ---
- drivers/clk/tegra/clk-emc.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/gpu/host1x/bus.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-emc.c b/drivers/clk/tegra/clk-emc.c
-index 138a94b..6aaccf9 100644
---- a/drivers/clk/tegra/clk-emc.c
-+++ b/drivers/clk/tegra/clk-emc.c
-@@ -450,8 +450,10 @@ static int load_timings_from_dt(struct tegra_clk_emc *tegra,
- 		struct emc_timing *timing = tegra->timings + (i++);
- 
- 		err = load_one_timing_from_dt(tegra, timing, child);
--		if (err)
-+		if (err) {
-+			of_node_put(child);
- 			return err;
-+		}
- 
- 		timing->ram_code = ram_code;
- 	}
-@@ -501,9 +503,9 @@ struct clk *tegra_clk_register_emc(void __iomem *base, struct device_node *np,
- 		 * fuses until the apbmisc driver is loaded.
- 		 */
- 		err = load_timings_from_dt(tegra, node, node_ram_code);
-+		of_node_put(node);
- 		if (err)
- 			return ERR_PTR(err);
--		of_node_put(node);
- 		break;
+diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
+index 4a99c64..c1795a2 100644
+--- a/drivers/gpu/host1x/bus.c
++++ b/drivers/gpu/host1x/bus.c
+@@ -82,8 +82,10 @@ static int host1x_device_parse_dt(struct host1x_device *device,
+ 		if (of_match_node(driver->subdevs, np) &&
+ 		    of_device_is_available(np)) {
+ 			err = host1x_subdev_add(device, np);
+-			if (err < 0)
++			if (err < 0) {
++				of_node_put(np);
+ 				return err;
++			}
+ 		}
  	}
  
 -- 
 1.9.1
-
