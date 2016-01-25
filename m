@@ -1,62 +1,76 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2] ARM64: tegra: Add chosen node for tegra132 norrin
-Date: Mon, 25 Jan 2016 16:01:00 +0000
-Message-ID: <56A646BC.1010708@nvidia.com>
-References: <1453737310-11391-1-git-send-email-jonathanh@nvidia.com>
- <56A645CC.5070907@nvidia.com>
+From: Amitoj Kaur Chawla <amitoj1606@gmail.com>
+Subject: [PATCH 1/2] memory: tegra: mc: Add missing of_node_put
+Date: Mon, 25 Jan 2016 21:31:59 +0530
+Message-ID: <20160125160159.GA21563@amitoj-Inspiron-3542>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56A645CC.5070907-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: julia.lawall@lip6.fr
 List-Id: linux-tegra@vger.kernel.org
 
-Correcting ARM-SOC email address ..
+for_each_child_of_node performs an of_node_get on each iteration, so
+to break out of the loop an of_node_put is required.
 
-On 25/01/16 15:57, Jon Hunter wrote:
-> 
-> On 25/01/16 15:55, Jon Hunter wrote:
->> The NVIDIA bootloader, nvtboot, expects the "chosen" node to be present
->> in the device-tree blob and if it is not then it fails to boot the kernel.
->> Add the chosen node so we can boot the kernel on Tegra132 Norrin with the
->> nvtboot bootloader.
->>
->> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->> Ideally, we would like to get this into v4.5 as a fix for Tegra132 Norrin
->> so that we can enable booting this board as part of our automated testing
->> setup for Tegra [0][1]. Thierry suggested I send this directly as a fix
->> to ARM-SOC. Let me know if this is ok. I have not included a "fixes" as it
->> may not be needed for all bootloaders, but if you need this we could put:
->>
->> Fixes: 0f279eb arm64: tegra: Add NVIDIA Tegra132 Norrin support
->>
->> [0] http://nvtb.github.io/linux/
->> [1] http://nvtb.github.io/linux-next/
-> 
-> Forgot to mentioned that the differences for v1 -> v2 are just some
-> minor corrections to the commit message.
-> 
-> Jon
-> 
->>  arch/arm64/boot/dts/nvidia/tegra132-norrin.dts | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
->> index 7dfe1c085966..62f33fc84e3e 100644
->> --- a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
->> +++ b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
->> @@ -12,6 +12,8 @@
->>  		rtc1 = "/rtc@0,7000e000";
->>  	};
->>  
->> +	chosen { };
->> +
->>  	memory {
->>  		device_type = "memory";
->>  		reg = <0x0 0x80000000 0x0 0x80000000>;
->>
+Found using Coccinelle. The semantic patch used for this is as follows:
+
+// <smpl>
+@@
+expression e;
+local idexpression n;
+@@
+
+ for_each_child_of_node(..., n) {
+   ... when != of_node_put(n)
+       when != e = n
+(
+   return n;
+|
++  of_node_put(n);
+?  return ...;
+)
+   ...
+ }
+// </smpl
+
+Signed-off-by: Amitoj Kaur Chawla <amitoj1606@gmail.com>
+---
+There is also an extra of_node_put() before a continue in the same loop on
+line 212 of this file which should be deleted. Julia Lawall has already sent 
+a patch to delete this but if preferred I can send one patch to do both the 
+changes.
+
+ drivers/memory/tegra/mc.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/memory/tegra/mc.c b/drivers/memory/tegra/mc.c
+index a1ae0cc..7dd42e7 100644
+--- a/drivers/memory/tegra/mc.c
++++ b/drivers/memory/tegra/mc.c
+@@ -186,8 +186,10 @@ static int load_timings(struct tegra_mc *mc, struct device_node *node)
+ 		timing = &mc->timings[i++];
+ 
+ 		err = load_one_timing(mc, timing, child);
+-		if (err)
++		if (err) {
++			of_node_put(child);
+ 			return err;
++		}
+ 	}
+ 
+ 	return 0;
+@@ -212,9 +214,9 @@ static int tegra_mc_setup_timings(struct tegra_mc *mc)
+ 		}
+ 
+ 		err = load_timings(mc, node);
++		of_node_put(node);
+ 		if (err)
+ 			return err;
+-		of_node_put(node);
+ 		break;
+ 	}
+ 
+-- 
+1.9.1
