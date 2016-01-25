@@ -1,73 +1,72 @@
-From: Jisheng Zhang <jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH v3 00/12] mmc: use sdhci_pltfm_init for private
- allocation and clean up
-Date: Mon, 25 Jan 2016 19:09:12 +0800
-Message-ID: <20160125190912.001ee172@xhacker>
-References: <1452076303-1960-1-git-send-email-jszhang@marvell.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCHv2 3/4] ARM: tegra: use build-in device properties with
+ rfkill_gpio
+Date: Mon, 25 Jan 2016 13:18:40 +0100
+Message-ID: <20160125121840.GA20452@ulmo.nvidia.com>
+References: <1453712629-143317-1-git-send-email-heikki.krogerus@linux.intel.com>
+ <1453712629-143317-4-git-send-email-heikki.krogerus@linux.intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Dxnq1zWXvFF0Q93v"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1452076303-1960-1-git-send-email-jszhang-eYqpPyKDWXRBDgjK7y7TUQ@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1453712629-143317-4-git-send-email-heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, arnd-r2nGTMty4D4@public.gmane.org, ludovic.desroches-AIFe0yeh4nAAvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, lee-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org, michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org, soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org, srinivas.kandagatla-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, maxime.coquelin-qxv4g6HH51o@public.gmane.org, patrice.chotard-qxv4g6HH51o@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, sebastian.hesselbarth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-rpi-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+Cc: Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Dear All,
 
-On Wed, 6 Jan 2016 18:31:31 +0800 Jisheng Zhang wrote:
+--Dxnq1zWXvFF0Q93v
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> These patches are to complete the TODOs in Commit 0e748234293f ("mmc:
-> sdhci: Add size for caller in init+register"), I.E:
-> 
-> - todo: migrate clients to using allocation this way
-> - todo: remove priv variable once migration is complete
+On Mon, Jan 25, 2016 at 12:03:48PM +0300, Heikki Krogerus wrote:
+> Pass the rfkill name and type to the device with properties
+> instead of driver specific platform data.
+>=20
+> Signed-off-by: Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+> CC: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> CC: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> CC: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+> ---
+>  arch/arm/mach-tegra/board-paz00.c | 17 ++++++++++-------
+>  1 file changed, 10 insertions(+), 7 deletions(-)
 
-What do you think about this series? Do I need to rebase on 4.5-rc1 then send
-a v4? Any suggestions are appreciated.
+Looks fine to me. We might want to wait for Marc (Cc'ed) to give this a
+spin, since I don't have the hardware. For reference, the series can be
+found here:
 
-Thanks in advance,
-Jisheng
+	http://patchwork.ozlabs.org/patch/572640/
+	http://patchwork.ozlabs.org/patch/572644/
+	http://patchwork.ozlabs.org/patch/572643/
+	http://patchwork.ozlabs.org/patch/572642/
 
-> 
-> Since v2:
->  - based on mmc next tree and remove all priv usage introduced in newly
->    commits in this tree
->  - don't break two lines if sdhci_pltfm_init() call could be put into
->    one line. Thank Ludovic Desroches.
-> 
-> Since v1:
->  - add new patch03 to factorise sdhci_msm_pdata outisde of sdhci_msm_host.
->    This is to fix drivers/mmc/host/sdhci-msm.c:440:32: warning: 'msm_host'
->    is used uninitialized in this function [-Wuninitialized]
->  - Add Arnd's Ack for all patches except patch3 which is new in v2
-> 
-> 
-> Jisheng Zhang (12):
->   mmc: sdhci-bcm2835: use sdhci_pltfm_init for private allocation
->   mmc: sdhci-esdhc-imx: use sdhci_pltfm_init for private allocation
->   mmc: sdhci-msm: factorise sdhci_msm_pdata outisde of sdhci_msm_host
->   mmc: sdhci-msm: use sdhci_pltfm_init for private allocation
->   mmc: sdhci-of-arasan: use sdhci_pltfm_init for private allocation
->   mmc: sdhci-of-at91: use sdhci_pltfm_init for private allocation
->   mmc: sdhci-of-esdhc: use sdhci_pltfm_init for private allocation
->   mmc: sdhci-pxav3: use sdhci_pltfm_init for private allocation
->   mmc: sdhci-st: use sdhci_pltfm_init for private allocation
->   mmc: sdhci-tegra: use sdhci_pltfm_init for private allocation
->   mmc: sdhci-pxav2: remove unnecessary assignment of pltfm_host->priv
->   mmc: sdhci-pltfm: remove priv variable from sdhci_pltfm_host
-> 
->  drivers/mmc/host/sdhci-bcm2835.c   | 14 +++-----------
->  drivers/mmc/host/sdhci-esdhc-imx.c | 38 +++++++++++++++++---------------------
->  drivers/mmc/host/sdhci-msm.c       | 23 ++++++++++-------------
->  drivers/mmc/host/sdhci-of-arasan.c | 25 ++++++++++---------------
->  drivers/mmc/host/sdhci-of-at91.c   | 24 +++++++++---------------
->  drivers/mmc/host/sdhci-of-esdhc.c  | 19 +++++++++----------
->  drivers/mmc/host/sdhci-pltfm.h     |  1 -
->  drivers/mmc/host/sdhci-pxav2.c     |  1 -
->  drivers/mmc/host/sdhci-pxav3.c     | 20 ++++++++------------
->  drivers/mmc/host/sdhci-st.c        | 35 +++++++++++++++++------------------
->  drivers/mmc/host/sdhci-tegra.c     | 21 +++++++--------------
->  11 files changed, 90 insertions(+), 131 deletions(-)
-> 
+Johannes, I assume that you'll want to take this through your tree
+because of the dependency? In that case:
+
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+--Dxnq1zWXvFF0Q93v
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJWphKcAAoJEN0jrNd/PrOhVlMP/i5QMgu5bU6jLEAYoubopBXw
+VgZPSBqaddHK6qgVntB/9kwD6o8h11xb3FSE4yOSy7bLHHkUjYNpbVPY395nhkCW
+mwevqUgh7RjD5sRXPdbT0wbqzRQ6+/1glS+yqV2CL49o8wPasYOsmJifZw0hyG0j
+/5N0b4Tgq4PgZbjh02kVNcwPMc6mV2lrNCRkOi8TBsXoHHNUA3D1m7/qW2Hr0vEi
+PFJzPddKsEIpoUnohzhxrbwsZUXCg+Cdan25FWU8a/P7hmM/PvyY/lalsJ+2pZAc
+V3NeMgAUldNbubzsFoSL041OHIo165aqQZozYDBbhLaUbsIeAw66C3LwO3+6GLLG
+86gsMlk8vDD91Lh3ZG29Z6wS7cxnDCxGTTl3ltjbivS7ohdd+XP8ChCBExVdb+YQ
+Jw4QvIr6rPWXLzEhkSGEj6MinCcSPD7RrIJp0Z204LBIbuy+nXdhzSNH2V3WuU0C
+zJuHyElAuCNN5UadBPaVopFIRMwxtDRpmDUiVFcBvPIQx5BCxYD1pP1M1XR9SQIE
+X5lHJ5WI6Z5hG/Z183wK8wuGx9itVbviSg9V+Po2eFk3dWzEJ8AHbx4mJtKgLhks
+1MhnQrWH3mCIjDF9W0Y5PNcuYd6HBesV/gY84BdGO5xy6cdT57LfI6ZTubIYZIhM
+TbiCVZw9K1FvOObSqanK
+=8JOH
+-----END PGP SIGNATURE-----
+
+--Dxnq1zWXvFF0Q93v--
