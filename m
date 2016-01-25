@@ -1,60 +1,36 @@
-From: Amitoj Kaur Chawla <amitoj1606-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] gpu: host1x: bus: Add missing of_node_put
-Date: Sun, 24 Jan 2016 22:02:10 +0530
-Message-ID: <20160124163210.GA24872@amitoj-Inspiron-3542>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [Nouveau] [PATCH v2 2/5] core: add support for secure boot
+Date: Mon, 25 Jan 2016 11:15:51 +0900
+Message-ID: <CAAVeFuLXwo0hb7Z_h3+gOA4u+fp0u=zLPuGxFBW+uY0MsQY-aQ@mail.gmail.com>
+References: <1453097447-12152-1-git-send-email-acourbot@nvidia.com>
+ <1453097447-12152-3-git-send-email-acourbot@nvidia.com> <CACvgo50P8JQ5EkCEMmnGQGO4jMsc0O4cRB1QO04V0KQS7Y8AYA@mail.gmail.com>
+ <56A0CB7A.9010104@gmail.com> <CACvgo53cqvn73=Ks-syi=12eO7vrjRcwKJHpgfHh75hHT0sPkQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
+In-Reply-To: <CACvgo53cqvn73=Ks-syi=12eO7vrjRcwKJHpgfHh75hHT0sPkQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: julia.lawall-L2FTfq7BK8M@public.gmane.org
+To: Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ML nouveau <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-for_each_child_of_node performs an of_node_get on each iteration, so
-to break out of the loop an of_node_put is required.
+On Thu, Jan 21, 2016 at 9:31 PM, Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On 21 January 2016 at 12:13, Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>> On 01/21/2016 10:09 PM, Emil Velikov wrote:
+>>> Hi Alexandre,
+>>>
+>>> On 18 January 2016 at 06:10, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>>
+>>> [snip]
+>>>> +static const char *
+>>>> +managed_falcons_names[] = {
+>>>> +       [NVKM_SECBOOT_FALCON_PMU] = "PMU",
+>>>> +       [NVKM_SECBOOT_FALCON_RESERVED] = "<invalid>",
+>>> "<reserved>" perhaps ? we already have one invalid below.
+>> Does <reserved> really mean: "we don't want to tell you?" here? :)
+>>
+> That or we have some secret WIP that we're haven't decided if it'll work out :-)
 
-Found using Coccinelle. The semantic patch used for this is as follows:
-
-// <smpl>
-@@
-expression e;
-local idexpression n;
-@@
-
- for_each_child_of_node(..., n) {
-   ... when != of_node_put(n)
-       when != e = n
-(
-   return n;
-|
-+  of_node_put(n);
-?  return ...;
-)
-   ...
- }
-// </smpl>
-
-Signed-off-by: Amitoj Kaur Chawla <amitoj1606-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/gpu/host1x/bus.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-index 4a99c64..c1795a2 100644
---- a/drivers/gpu/host1x/bus.c
-+++ b/drivers/gpu/host1x/bus.c
-@@ -82,8 +82,10 @@ static int host1x_device_parse_dt(struct host1x_device *device,
- 		if (of_match_node(driver->subdevs, np) &&
- 		    of_device_is_available(np)) {
- 			err = host1x_subdev_add(device, np);
--			if (err < 0)
-+			if (err < 0) {
-+				of_node_put(np);
- 				return err;
-+			}
- 		}
- 	}
- 
--- 
-1.9.1
+That's just how it appears on our end. :) But since this enum does not
+seem to be used by the hardware anyway, I will simply remove the
+"_RESERVED" entry. Thanks.
