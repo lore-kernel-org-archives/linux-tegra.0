@@ -1,78 +1,63 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] clk: tegra: clk-emc: Add missing of_node_put
-Date: Mon, 25 Jan 2016 13:55:47 +0100
-Message-ID: <20160125125547.GO20452@ulmo.nvidia.com>
-References: <20160124151519.GA23923@amitoj-Inspiron-3542>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V4 02/16] soc: tegra: pmc: Add missing structure members
+ to kernel-doc
+Date: Mon, 25 Jan 2016 14:20:57 +0100
+Message-ID: <20160125132057.GP20452@ulmo.nvidia.com>
+References: <1449241037-22193-1-git-send-email-jonathanh@nvidia.com>
+ <1449241037-22193-3-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="UFMLoheMaWcIEZAi"
-Return-path: <linux-clk-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="TRkqPRiqIDKgfg/F"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20160124151519.GA23923@amitoj-Inspiron-3542>
-Sender: linux-clk-owner@vger.kernel.org
-To: Amitoj Kaur Chawla <amitoj1606@gmail.com>
-Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, sboyd@codeaurora.org, swarren@wwwdotorg.org, gnurou@gmail.com, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, julia.lawall@lip6.fr
+In-Reply-To: <1449241037-22193-3-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rafael Wysocki <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---UFMLoheMaWcIEZAi
+--TRkqPRiqIDKgfg/F
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jan 24, 2016 at 08:45:20PM +0530, Amitoj Kaur Chawla wrote:
-> for_each_child_of_node performs an of_node_get on each iteration, so
-> to break out of the loop an of_node_put is required.
+On Fri, Dec 04, 2015 at 02:57:03PM +0000, Jon Hunter wrote:
+> Some members of the tegra_pmc structure are missing from the kernel-doc
+> comment for this structure. Add the missing members.
 >=20
-> Found using Coccinelle. The semantic patch used for this is as follows:
->=20
-> // <smpl>
-> @@
-> expression e;
-> local idexpression child;
-> @@
->=20
->  for_each_child_of_node(root, child) {
->    ... when !=3D of_node_put(child)
->        when !=3D e =3D child
-> (
->    return child;
-> |
-> +  of_node_put(child);
-> ?  return ...;
-> )
->    ...
->  }
-> // </smpl>
->=20
-> Signed-off-by: Amitoj Kaur Chawla <amitoj1606@gmail.com>
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  drivers/clk/tegra/clk-emc.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>  drivers/soc/tegra/pmc.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
 Applied, thanks.
 
 Thierry
 
---UFMLoheMaWcIEZAi
+--TRkqPRiqIDKgfg/F
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJWphtTAAoJEN0jrNd/PrOh4i4QAJDrzpBXqUT6yC5Pg8I8mVBh
-vU22kT5OgMa9WtVZLdBg+0+fZUWAXtyVmsy9T/05CKNyg9khp9+nlPnAZC5B1a7b
-Lb4ubZdTcb09bgca/VoysZqP0HbSKSWBPng85DCAakIcuSFO+5hpJLiKBYvz7U8W
-AeHCsqQ3jUWjFu1c1GG87L7CRBumm9annleRVmIa0xG4nrgUjSqVxuaAzZ30lHrH
-yk51RBxaFM770i329pUWpF4+2phFYstRgwOrDDp8o0Hp6iC+PSLbMpjY87jTbGf2
-yKIVdc3uU130o5ip8EdjhTkTECUvoMhGecmLBqinYA4+z5NsdFbcuPiNt3cjUZWn
-+cbcoHerGn3bitHH9LJSdiBFeH4nSzz9CLbiCc70tlvhhay2FHLfcoElVX/OjUUq
-b9dpMR3Zo0vrvZgjYN5i2BtVmvJE3Iv3n6h3IvRLt+GJDpVC+A+SixeuufKTaegn
-gZPBbST/3faxZr5hCs95uwUArLyO0VQHKAIYT9rS2lg2+W/LJuQfsNk9G0+NhpSF
-DiR767GIgkaPdsxBy6hvvbvZ1QV/OMgOT52omLnEl8zuTeB4nOwfaMUGErKY6TVt
-KJvARSi8jUvFOkacIVERMEMCE4IHbtmqU/0wyvNdRQUkkVnS9AkQEzCSM4ueaVFv
-QnLIckdZZtfX4AWv487/
-=a2ih
+iQIcBAABCAAGBQJWpiE2AAoJEN0jrNd/PrOhzmYP/2IHL7zYJhmJJeAVfNVL9FWZ
+ejXzhgXcv9+LSw2EUdIdHkuU9e9bXULQ8mH6mVGvfgm0rKHwKcV+zylIW5PXha2c
+HQ1jjIXYNPCrAtXuQ/qhr06G7xx0HQjSZy9V98cjpWx4SRsn+JFPDGfwq3d7ONGg
+vLdgaPZ0rI6NNyr3aQCORPdAYIP1zHWSwNJ63wVsemeQ2CRwXByIzgsBpOsT0pid
+p/mK/zyv4vqknZF3oBUnHGbFLHpqESvNoh03lSwahnyP2gCDiQZbZ5oJkj7g/Evn
+3cgu78glFhDHKbZHRe/KpzRjcxg9MS2p1TqBTBVrXzpdUrtRy79zZN/fZUhI0lvg
+qbZIgqZwrJvih9JgGXGd+nJXBK22/VrY7I/HDGzwp9lpLknkmO6NNERjQlcYOarO
+GiRUBXuvbKGfVeai6r80PFh7yoNcZx2g5NbIlmg9dRV+p4Tp7ewCNvwvnxQn0v6q
+YullkJWpO8vPBIXDI+9I8WPGCIEQ6QR6yGzsKd99hb+p5DbzpGhX5iwu1NBP69Yj
+Z/TAxRBHV4HBHcmZKeHHS8Zq/eNw8zohOf1qpO7f3un5Rv46hHXIOU7d3lNGR+q3
+YlGbCZbbJc6KOJhQb85L436WWAvzWRUsviCzk4NmkTHXR09dTaYmxoltdkBugnBM
+Eci+dL8YQ0mn7WtD3nZx
+=129t
 -----END PGP SIGNATURE-----
 
---UFMLoheMaWcIEZAi--
+--TRkqPRiqIDKgfg/F--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
