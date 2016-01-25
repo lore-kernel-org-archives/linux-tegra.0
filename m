@@ -1,67 +1,52 @@
-From: Amitoj Kaur Chawla <amitoj1606-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v2 2/2] memory: tegra: tegra124-emc: Add missing of_node_put
-Date: Mon, 25 Jan 2016 22:57:48 +0530
-Message-ID: <20160125172748.GA26252@amitoj-Inspiron-3542>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [RESEND PATCH V2] ARM64: tegra: Add chosen node for tegra132 norrin
+Date: Mon, 25 Jan 2016 20:25:55 +0000
+Message-ID: <1453753555-14634-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: julia.lawall-L2FTfq7BK8M@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-for_each_child_of_node performs an of_node_get on each iteration, so
-to break out of the loop an of_node_put is required.
+The NVIDIA bootloader, nvtboot, expects the "chosen" node to be present
+in the device-tree blob and if it is not then it fails to boot the kernel.
+Add the chosen node so we can boot the kernel on Tegra132 Norrin with the
+nvtboot bootloader.
 
-Found using Coccinelle. The semantic patch used for this is as follows:
-
-// <smpl>
-@@
-expression e;
-local idexpression n;
-@@
-
- for_each_child_of_node(..., n) {
-   ... when != of_node_put(n)
-       when != e = n
-(
-   return n;
-|
-+  of_node_put(n);
-?  return ...;
-)
-   ...
- }
-// </smpl
-
-Signed-off-by: Amitoj Kaur Chawla <amitoj1606-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-Changes in v2:
-        -Modified the note underneath ---
+v1 -> v2 changes:
+- minor fixes to commit message
 
-There is an extra of_node_put() before a continue in the same file on
-line 1001 which should be deleted too. Julia Lawall has already sent a patch 
-to delete this but if preferred I can send one patch to do both the changes.
+Ideally, we would like to get this into v4.5 as a fix for Tegra132 Norrin
+so that we can enable booting this board as part of our automated testing
+setup for Tegra [0][1]. Thierry suggested I send this directly as a fix
+to ARM-SOC. Let me know if this is ok. I have not included a "fixes" as it
+may not be needed for all bootloaders, but if you need this we could put:
 
- drivers/memory/tegra/tegra124-emc.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Fixes: 0f279eb arm64: tegra: Add NVIDIA Tegra132 Norrin support
 
-diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
-index 3dac7be..02a6317 100644
---- a/drivers/memory/tegra/tegra124-emc.c
-+++ b/drivers/memory/tegra/tegra124-emc.c
-@@ -970,8 +970,10 @@ static int tegra_emc_load_timings_from_dt(struct tegra_emc *emc,
- 		timing = &emc->timings[i++];
+[0] http://nvtb.github.io/linux/
+[1] http://nvtb.github.io/linux-next/
+
+ arch/arm64/boot/dts/nvidia/tegra132-norrin.dts | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
+index 7dfe1c085966..62f33fc84e3e 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
+@@ -12,6 +12,8 @@
+ 		rtc1 = "/rtc@0,7000e000";
+ 	};
  
- 		err = load_one_timing_from_dt(emc, timing, child);
--		if (err)
-+		if (err) {
-+			of_node_put(child);
- 			return err;
-+		}
- 	}
- 
- 	sort(emc->timings, emc->num_timings, sizeof(*timing), cmp_timings,
++	chosen { };
++
+ 	memory {
+ 		device_type = "memory";
+ 		reg = <0x0 0x80000000 0x0 0x80000000>;
 -- 
-1.9.1
+2.1.4
