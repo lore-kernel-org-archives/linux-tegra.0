@@ -1,58 +1,71 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [Patch V2 1/9] clk: tegra: Fix divider on VI_I2C
-Date: Mon, 25 Jan 2016 13:30:57 +0100
-Message-ID: <20160125123057.GD20452@ulmo.nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [Patch V2 2/9] clk: tegra210: Remove improper flags for
+ lock_enable
+Date: Mon, 25 Jan 2016 13:34:12 +0100
+Message-ID: <20160125123412.GE20452@ulmo.nvidia.com>
 References: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
- <1452799478-14791-2-git-send-email-rklein@nvidia.com>
+ <1452799478-14791-3-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="wULyF7TL5taEdwHz"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="ffoCPvUAPMgSXi6H"
+Return-path: <linux-clk-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1452799478-14791-2-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1452799478-14791-3-git-send-email-rklein@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---wULyF7TL5taEdwHz
+--ffoCPvUAPMgSXi6H
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 14, 2016 at 02:24:30PM -0500, Rhyland Klein wrote:
-> VI-I2C has 16 bits available for its divider. Switch the divider
-> width to 16 instead of 8 so correct rates can be set.
+On Thu, Jan 14, 2016 at 02:24:31PM -0500, Rhyland Klein wrote:
+> Most PLL's don't actually have LOCK_ENABLE bits. However, most PLL's
+> also had that flag set, which meant that the clk code was trying to
+> enable locks, and inadvertantly flipping bits in other fields.
 >=20
-> Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> For PLLM, ensure the correct register is used for the misc_register.
+> PLL_MISC0 contains the EN_LCKDET bit which should be used for enabling
+> the lock, and PLLM_MISC1 shouldn't be used at all.
+>=20
+> Lastly, remove some of the settings which would point to the EN_LCKDET
+> bits for some PLLs. There is no need to enable the locks, and that is
+> done as part of the set_defaults logic already.
+>=20
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 > ---
->  drivers/clk/tegra/clk-tegra-periph.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/clk/tegra/clk-tegra210.c | 42 ++++++++++++++--------------------=
+------
+>  1 file changed, 14 insertions(+), 28 deletions(-)
 
-Applied, thanks.
+It seems like this could've been split into several patches given the
+three different changes above. However since they all seem to relate to
+the lock enable behaviour I've gone and applied this as is.
 
 Thierry
 
---wULyF7TL5taEdwHz
+--ffoCPvUAPMgSXi6H
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJWphWAAAoJEN0jrNd/PrOhDXsP/2d0Bcr6tfkePb9iFKYVyaQQ
-oFVAHHRjxNGz0WmZvfASN5XeV66Kqp4yHvQivb9K33O59uJy4HYTx9BKsY/ah6dz
-KjEWwl/0yTJYQ2sLHukbwERecZyDwamEkZ1KlNu6tdomsweVzK9MuK/60gvYY4kY
-p2jnCZ/C5n0sSPIPWqpaGPSpOoKvqKMzo26hng9d9Q8qk++3fXaMAjWM7gBDnZod
-FFpByrNWtWuMmK0wSEbR0iGCvgWOm+mS17qRIm/oMEL4IjisW/8ZlLoCq8qShASb
-5B+R+OYBOUuiNw/6bKup2ajofMmKJsaIAx3s+Xs3h+fZHyBNC03tFZ3giXy6MAj4
-xlIUEzoD9r3TWAoq7AOxDHZBnU/KlPW6cMWKrskdbdGfgYgEh7YSBOlPS7sjTufb
-/vkuq8yVUdDt92R2oyBYfd+NY6FGW6m76U7WxiV533Nzmyye2DMbxQekuqchGje0
-FEpONhz/h3v4wIJ9+T4NyUbFGPOQubuwTv+paKVqVTV8ZHDNObqKFx0RThYGOJIe
-LRcoIhlM6pcLJPid1RJ2hyu2mTjnvXvOHw0asOxppfUmr3SItcTAT0+PK8FsVLgS
-a16+Rh3sieFKk1bSzMRuqFdoL+Ouht9XVqJrffj15tanchxiShfVYQZcnB+IBY6p
-pziDwUEII8+JXnjPKtmF
-=iIvJ
+iQIcBAABCAAGBQJWphZEAAoJEN0jrNd/PrOhppkP/1l+BZDc28KuhziBSZOdb78Z
+XPladFFOulXksTGqP9ian9vVpfdcFL9iAS3s+eVF5wDyJwVcjwEAihs2hJKrjogh
+WUgIGjUksbg3amFoXDc6MZbGfHp/mZUCDd/qU4/Dk5q5iJugMA2KB8RGmgRXR67v
+iSboVwMxEfxf/oAWTBRxNuo/F+9JMqxZ9G8oiBfIiFCocAu+joWzgtfkAgCc8pX4
+BrvgWHwkON8TKswiIpFVoYOUGiQww8wAtnCHyGKHAOUgxCMeU6OIQEHpVMaAcdVa
+9oejrjbG5laQlpZ/g6qTWZDTwdWmzEWQi0JNbHexWlekE5NT7xrnHDAMIPBGlKi5
+zMOabFFv5lRZGc8RYwqY+ugS0SfOvqIs1dzccbC6wxiATRXYGg1X5/MdtVQDnB01
+4NniX48fCOzW3rD8bjyiS3oq0wI8nSo0peyuvvAOEln3prM8EtlKkxFuibY7yksf
+/11Gu8Rya4OkskwrQsTFfICSWoZpjqFT9bzJFKDHF0ujEKJ7pwf+SHXiX0IbUQUt
+rgAwmWzgpuw9ZTohkhSzVycZNNZDrKYSkga1Pb0D5yNk9NkQhD7E99AaW6HOsjPt
+zS5x+g0ixnNKfW/nTwCi/blaWKqT9WMZgviEu8sXyPXwpiMWb68r/Mtw4vHqYiz8
+h7emxlcvWm+VxjsJ92vP
+=a2KY
 -----END PGP SIGNATURE-----
 
---wULyF7TL5taEdwHz--
+--ffoCPvUAPMgSXi6H--
