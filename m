@@ -1,56 +1,73 @@
 From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
-Subject: Re: [PATCHv2 3/4] ARM: tegra: use build-in device properties withrfkill_gpio
-Date: Mon, 25 Jan 2016 21:59:04 +0100
-Message-ID: <1626364.s6q6eBGYVQ@ax5200p>
-References: <1453712629-143317-1-git-send-email-heikki.krogerus@linux.intel.com> <1453712629-143317-4-git-send-email-heikki.krogerus@linux.intel.com> <20160125121840.GA20452@ulmo.nvidia.com>
+Subject: Re: [PATCH] staging: nvec: replace led_classdev_register
+Date: Mon, 25 Jan 2016 22:00:30 +0100
+Message-ID: <2597303.a4Sc8PqG2R@ax5200p>
+References: <20160121102450.GA10897@IND12F0122>
 Mime-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart1990714.Ebrfbf8RNK"; micalg="pgp-sha1"; protocol="application/pgp-signature"
+Content-Type: multipart/signed; boundary="nextPart3216891.n81t2AyFHP"; micalg="pgp-sha1"; protocol="application/pgp-signature"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160125121840.GA20452-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org>
+In-Reply-To: <20160121102450.GA10897@IND12F0122>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+To: "Gujulan Elango, Hari Prasath (H.)" <hgujulan-Vi+0cqmPEYlBDgjK7y7TUQ@public.gmane.org>, "devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org" <devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org>
+Cc: "gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org" <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---nextPart1990714.Ebrfbf8RNK
+--nextPart3216891.n81t2AyFHP
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
 
-Am Montag 25 Januar 2016, 13:18:40 schrieb Thierry Reding:
-> On Mon, Jan 25, 2016 at 12:03:48PM +0300, Heikki Krogerus wrote:
-> > Pass the rfkill name and type to the device with properties
-> > instead of driver specific platform data.
-> > 
-> > Signed-off-by: Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-> > CC: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > CC: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > CC: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-> > ---
-> > 
-> >  arch/arm/mach-tegra/board-paz00.c | 17 ++++++++++-------
-> >  1 file changed, 10 insertions(+), 7 deletions(-)
+Am Donnerstag 21 Januar 2016, 10:23:46 schrieb Gujulan Elango, Hari Prasath:
+> From: Hari Prasath Gujulan Elango <hgujulan-Vi+0cqmPEYlBDgjK7y7TUQ@public.gmane.org>
 > 
-> Looks fine to me. We might want to wait for Marc (Cc'ed) to give this a
-> spin, since I don't have the hardware. For reference, the series can be
-> found here:
+> Replace the led_classdev_register() with the platform managed version
+> devm_led_classdev_register() & henceforth remove the redundant
+> nvec_paz00_remove() function.
 > 
-> 	http://patchwork.ozlabs.org/patch/572640/
-> 	http://patchwork.ozlabs.org/patch/572644/
-> 	http://patchwork.ozlabs.org/patch/572643/
-> 	http://patchwork.ozlabs.org/patch/572642/
-> 
-> Johannes, I assume that you'll want to take this through your tree
-> because of the dependency? In that case:
-> 
-> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Hari Prasath Gujulan Elango <hgujulan-Vi+0cqmPEYlBDgjK7y7TUQ@public.gmane.org>
 
-seems to work fine. I wish we could instantiate this from device-tree so we 
-can finially get rid of this file.
+Thanks!
 
-Tested-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Acked-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 
---nextPart1990714.Ebrfbf8RNK
+> ---
+>  drivers/staging/nvec/nvec_paz00.c | 12 +-----------
+>  1 file changed, 1 insertion(+), 11 deletions(-)
+> 
+> diff --git a/drivers/staging/nvec/nvec_paz00.c
+> b/drivers/staging/nvec/nvec_paz00.c index 68146bf..cddbfd2 100644
+> --- a/drivers/staging/nvec/nvec_paz00.c
+> +++ b/drivers/staging/nvec/nvec_paz00.c
+> @@ -63,7 +63,7 @@ static int nvec_paz00_probe(struct platform_device *pdev)
+> 
+>  	platform_set_drvdata(pdev, led);
+> 
+> -	ret = led_classdev_register(&pdev->dev, &led->cdev);
+> +	ret = devm_led_classdev_register(&pdev->dev, &led->cdev);
+>  	if (ret < 0)
+>  		return ret;
+> 
+> @@ -73,18 +73,8 @@ static int nvec_paz00_probe(struct platform_device *pdev)
+> return 0;
+>  }
+> 
+> -static int nvec_paz00_remove(struct platform_device *pdev)
+> -{
+> -	struct nvec_led *led = platform_get_drvdata(pdev);
+> -
+> -	led_classdev_unregister(&led->cdev);
+> -
+> -	return 0;
+> -}
+> -
+>  static struct platform_driver nvec_paz00_driver = {
+>  	.probe  = nvec_paz00_probe,
+> -	.remove = nvec_paz00_remove,
+>  	.driver = {
+>  		.name  = "nvec-paz00",
+>  	},
+
+--nextPart3216891.n81t2AyFHP
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part.
 Content-Transfer-Encoding: 7Bit
@@ -58,13 +75,13 @@ Content-Transfer-Encoding: 7Bit
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2.0.22 (GNU/Linux)
 
-iQEcBAABAgAGBQJWpoyYAAoJEKyeR39HFBtojysH+gPoKfxQC7HZRoPxlW3cvw3w
-yQnlrnL8ifHJeFYBiZWSMDZ8COOTb0VkJAfZ/BNTm2+yBPzxPXMNCvrM9B9EHZF/
-ikY/8YZ6uMXZqEMguEDxagwGSmr7we8rwAu0NaG+92eS1wYs6sLdBgi6vWxYV9Yy
-99/6IdQuCS8ICFWatUlB2FETABxLWtW0o5qW7CoNbCcgRNMqn+csXnBV1kteQK+s
-NpKIomwmPqbWXFxYw0sDluVyu6Ljb5NqVh4Z7ybGN+Bjsjerx2+PGUZxIqNNAdNj
-dFtB8vAebqxsSdcwPRqhZrh1gCj8JTt9GC8lnAaMU7u6Umw9szAauwq8HmhJBWI=
-=9kVs
+iQEcBAABAgAGBQJWpozuAAoJEKyeR39HFBtodk4H/1Zrps4VfTi+++xVyjRTKgu6
+MniyBAy3VEbnS/AsQQfQKk5ZuRu4JJ/ldWJLyPapKklYu4e+bFGrzqGB97NssFar
+jJQhUrQXDT/sthX5IvR+R3x4YI1ARYm8uUYhs6V1jsRW3UefSek3Zd985NdyK1+A
+/QTSdFOjR6UlR4b/P0PaEX+nn9/pgYkv3qjj0EcqFneimjYfZuGoH9loJoHK8tM8
+kwiEu3+iVa8kVBPea1S/uaZ9SSRp5+M86Hko9NaxSfyr5gwe0E+h0C9J7jDynYaJ
+h8eQlP8aQe8URbQ96VaG0P8g0HvANz6u/wunCdfCjjW+n1aFWutuc/aMqYQwtS8=
+=jPKV
 -----END PGP SIGNATURE-----
 
---nextPart1990714.Ebrfbf8RNK--
+--nextPart3216891.n81t2AyFHP--
