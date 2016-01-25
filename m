@@ -1,68 +1,78 @@
-From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Subject: [PATCHv2 2/4] net: rfkill: gpio: get the name and type from device property
-Date: Mon, 25 Jan 2016 12:03:47 +0300
-Message-ID: <1453712629-143317-3-git-send-email-heikki.krogerus@linux.intel.com>
-References: <1453712629-143317-1-git-send-email-heikki.krogerus@linux.intel.com>
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <1453712629-143317-1-git-send-email-heikki.krogerus@linux.intel.com>
-Sender: netdev-owner@vger.kernel.org
-To: Johannes Berg <johannes@sipsolutions.net>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V4 00/11] Add T210 support in Tegra soctherm
+Date: Mon, 25 Jan 2016 18:43:15 +0800
+Message-ID: <1453718595-4019-1-git-send-email-wni@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
+Cc: MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This prepares the driver for removal of platform data.
+This patchset adds following functions for tegra_soctherm driver:
+1. add T210 support.
+2. export debugfs to show some registers.
+3. add thermtrip funciton.
+4. add suspend/resume function.
 
-Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
----
- net/rfkill/rfkill-gpio.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+The V3 serial is in:
+http://www.spinics.net/lists/linux-tegra/msg24911.html
+The V2 serial is in:
+http://www.spinics.net/lists/linux-tegra/msg24901.html
+The V1 serial is in:
+http://www.spinics.net/lists/linux-tegra/msg24808.html
 
-diff --git a/net/rfkill/rfkill-gpio.c b/net/rfkill/rfkill-gpio.c
-index 4b1e3f3..1a9c031 100644
---- a/net/rfkill/rfkill-gpio.c
-+++ b/net/rfkill/rfkill-gpio.c
-@@ -81,7 +81,6 @@ static int rfkill_gpio_acpi_probe(struct device *dev,
- 	if (!id)
- 		return -ENODEV;
- 
--	rfkill->name = dev_name(dev);
- 	rfkill->type = (unsigned)id->driver_data;
- 
- 	return acpi_dev_add_driver_gpios(ACPI_COMPANION(dev),
-@@ -93,12 +92,21 @@ static int rfkill_gpio_probe(struct platform_device *pdev)
- 	struct rfkill_gpio_platform_data *pdata = pdev->dev.platform_data;
- 	struct rfkill_gpio_data *rfkill;
- 	struct gpio_desc *gpio;
-+	const char *type_name;
- 	int ret;
- 
- 	rfkill = devm_kzalloc(&pdev->dev, sizeof(*rfkill), GFP_KERNEL);
- 	if (!rfkill)
- 		return -ENOMEM;
- 
-+	device_property_read_string(&pdev->dev, "name", &rfkill->name);
-+	device_property_read_string(&pdev->dev, "type", &type_name);
-+
-+	if (!rfkill->name)
-+		rfkill->name = dev_name(&pdev->dev);
-+
-+	rfkill->type = rfkill_find_type(type_name);
-+
- 	if (ACPI_HANDLE(&pdev->dev)) {
- 		ret = rfkill_gpio_acpi_probe(&pdev->dev, rfkill);
- 		if (ret)
-@@ -124,10 +132,8 @@ static int rfkill_gpio_probe(struct platform_device *pdev)
- 
- 	rfkill->shutdown_gpio = gpio;
- 
--	/* Make sure at-least one of the GPIO is defined and that
--	 * a name is specified for this instance
--	 */
--	if ((!rfkill->reset_gpio && !rfkill->shutdown_gpio) || !rfkill->name) {
-+	/* Make sure at-least one GPIO is defined for this instance */
-+	if (!rfkill->reset_gpio && !rfkill->shutdown_gpio) {
- 		dev_err(&pdev->dev, "invalid platform data\n");
- 		return -EINVAL;
- 	}
+Main changes from V3:
+1. Change structures to "const" in chip specific files
+2. Minor changes per Thieery's comments.
+
+Main changes from V2:
+1. Fix build error in patch [1/11].
+2. Use of_get_child_by_name instead of of_find_node_by_name in patch [8/11].
+3. Use debugfs_remove_recursive to remove debugfs in patch [6/11].
+
+Main changes from V1:
+1. Use the new type to handl different Tegra chips in one driver,
+which suggested by Thierry.
+2. Changes per Thieery's other comments.
+
+Wei Ni (11):
+  thermal: tegra: move tegra thermal files into tegra directory
+  thermal: tegra: combine sensor group-related data
+  thermal: tegra: get rid of PDIV/HOTSPOT hack
+  thermal: tegra: split tegra_soctherm driver
+  thermal: tegra: add T210-specific SOC_THERM driver
+  thermal: tegra: add a debugfs to show registers
+  of: Add bindings of hw-trip-points for soctherm
+  thermal: tegra: add thermtrip function
+  thermal: tegra: add PM support
+  arm64: tegra: add soctherm node for Tegra210
+  ARM: tegra: set thermtrip for Tegra124
+
+ .../devicetree/bindings/thermal/tegra-soctherm.txt |  24 +
+ arch/arm/boot/dts/tegra124.dtsi                    |   9 +
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  53 ++
+ drivers/thermal/Kconfig                            |  12 +-
+ drivers/thermal/Makefile                           |   2 +-
+ drivers/thermal/tegra/Kconfig                      |  13 +
+ drivers/thermal/tegra/Makefile                     |   5 +
+ drivers/thermal/tegra/soctherm-fuse.c              | 169 +++++
+ drivers/thermal/tegra/soctherm.c                   | 806 +++++++++++++++++++++
+ drivers/thermal/tegra/soctherm.h                   | 123 ++++
+ drivers/thermal/tegra/tegra124-soctherm.c          | 196 +++++
+ drivers/thermal/tegra/tegra210-soctherm.c          | 197 +++++
+ drivers/thermal/tegra_soctherm.c                   | 476 ------------
+ include/dt-bindings/thermal/tegra124-soctherm.h    |   1 +
+ 14 files changed, 1599 insertions(+), 487 deletions(-)
+ create mode 100644 drivers/thermal/tegra/Kconfig
+ create mode 100644 drivers/thermal/tegra/Makefile
+ create mode 100644 drivers/thermal/tegra/soctherm-fuse.c
+ create mode 100644 drivers/thermal/tegra/soctherm.c
+ create mode 100644 drivers/thermal/tegra/soctherm.h
+ create mode 100644 drivers/thermal/tegra/tegra124-soctherm.c
+ create mode 100644 drivers/thermal/tegra/tegra210-soctherm.c
+ delete mode 100644 drivers/thermal/tegra_soctherm.c
+
 -- 
-2.7.0.rc3
+1.9.1
