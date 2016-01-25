@@ -1,42 +1,127 @@
-From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [Nouveau] [PATCH v2 2/5] core: add support for secure boot
-Date: Mon, 25 Jan 2016 11:17:41 +0900
-Message-ID: <CAAVeFuJadD7nAP+3UVK4HrvdZ+BCXzch9NMb3UTTrz1hr7Z=9Q@mail.gmail.com>
-References: <1453097447-12152-1-git-send-email-acourbot@nvidia.com>
- <1453097447-12152-3-git-send-email-acourbot@nvidia.com> <CACvgo50P8JQ5EkCEMmnGQGO4jMsc0O4cRB1QO04V0KQS7Y8AYA@mail.gmail.com>
- <56A0CB7A.9010104@gmail.com> <CACvgo53cqvn73=Ks-syi=12eO7vrjRcwKJHpgfHh75hHT0sPkQ@mail.gmail.com>
- <CAAVeFuLXwo0hb7Z_h3+gOA4u+fp0u=zLPuGxFBW+uY0MsQY-aQ@mail.gmail.com>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V3 05/11] thermal: tegra: add T210-specific SOC_THERM
+ driver
+Date: Mon, 25 Jan 2016 13:48:43 +0800
+Message-ID: <56A5B73B.6040706@nvidia.com>
+References: <1453111426-12356-1-git-send-email-wni@nvidia.com> <20160121142546.GA32301@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAVeFuLXwo0hb7Z_h3+gOA4u+fp0u=zLPuGxFBW+uY0MsQY-aQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <20160121142546.GA32301@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, ML nouveau <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jan 25, 2016 at 11:15 AM, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Thu, Jan 21, 2016 at 9:31 PM, Emil Velikov <emil.l.velikov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->> On 21 January 2016 at 12:13, Ben Skeggs <skeggsb-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->>> On 01/21/2016 10:09 PM, Emil Velikov wrote:
->>>> Hi Alexandre,
->>>>
->>>> On 18 January 2016 at 06:10, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>>>
->>>> [snip]
->>>>> +static const char *
->>>>> +managed_falcons_names[] = {
->>>>> +       [NVKM_SECBOOT_FALCON_PMU] = "PMU",
->>>>> +       [NVKM_SECBOOT_FALCON_RESERVED] = "<invalid>",
->>>> "<reserved>" perhaps ? we already have one invalid below.
->>> Does <reserved> really mean: "we don't want to tell you?" here? :)
->>>
->> That or we have some secret WIP that we're haven't decided if it'll work out :-)
->
-> That's just how it appears on our end. :) But since this enum does not
-> seem to be used by the hardware anyway, I will simply remove the
-> "_RESERVED" entry. Thanks.
 
-Meh, stupid me - these values also appear in the firmware files, so I
-must keep the same numbering, and thus the _RESERVED entry. Sorry for
-the noise.
+
+On 2016=E5=B9=B401=E6=9C=8821=E6=97=A5 22:25, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+>=20
+> On Mon, Jan 18, 2016 at 06:03:46PM +0800, Wei Ni wrote:
+>> Add Tegra210 specific SOC_THERM driver.
+>>
+>> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  drivers/thermal/tegra/Makefile            |   1 +
+>>  drivers/thermal/tegra/soctherm-fuse.c     |  11 ++
+>>  drivers/thermal/tegra/soctherm.c          |   6 +
+>>  drivers/thermal/tegra/soctherm.h          |   4 +
+>>  drivers/thermal/tegra/tegra210-soctherm.c | 181 +++++++++++++++++++=
++++++++++++
+>>  5 files changed, 203 insertions(+)
+>>  create mode 100644 drivers/thermal/tegra/tegra210-soctherm.c
+>=20
+> This looks pretty good, just a few minor nits...
+>=20
+>> diff --git a/drivers/thermal/tegra/soctherm.h b/drivers/thermal/tegr=
+a/soctherm.h
+> [...]
+>> index 1ac66cafb392..bd0f03bc9d80 100644
+>> --- a/drivers/thermal/tegra/soctherm.h
+>> +++ b/drivers/thermal/tegra/soctherm.h
+>> @@ -108,5 +108,9 @@ int tegra_soctherm_calculate_tsensor_calibration=
+(
+>>  extern struct tegra_soctherm_soc tegra124_soctherm;
+>>  #endif
+>> =20
+>> +#ifdef CONFIG_ARCH_TEGRA_210_SOC
+>> +extern struct tegra_soctherm_soc tegra210_soctherm;
+>=20
+> I would've expected this to be "const".
+
+Yes, will change it.
+
+>=20
+>> diff --git a/drivers/thermal/tegra/tegra210-soctherm.c b/drivers/the=
+rmal/tegra/tegra210-soctherm.c
+> [...]
+>> +static const struct tegra_tsensor_group tegra210_tsensor_group_cpu =
+=3D {
+>> +	.id				=3D TEGRA124_SOCTHERM_SENSOR_CPU,
+>> +	.name				=3D "cpu",
+>> +	.sensor_temp_offset		=3D SENSOR_TEMP1,
+>> +	.sensor_temp_mask		=3D SENSOR_TEMP1_CPU_TEMP_MASK,
+>> +	.pdiv				=3D 8,
+>> +	.pdiv_ate			=3D 8,
+>> +	.pdiv_mask			=3D SENSOR_PDIV_CPU_MASK,
+>> +	.pllx_hotspot_diff		=3D 10,
+>> +	.pllx_hotspot_mask		=3D SENSOR_HOTSPOT_CPU_MASK,
+>> +};
+>=20
+> I prefer single spaces for padding because I find it easier to read t=
+hat
+> way. Also using tabs to make this look like a table has the drawback
+> that you run the risk of having to adjust padding for all fields when=
+ a
+> new field is added whose name is longer than any existing ones. Or yo=
+u
+> have to rely on excessive padding (such as in this case) to make that
+> unlikely. So I don't see any advantage in this, but I don't have very
+> strong objections either.
+
+Ok, will change it.
+
+>=20
+>> +static const struct tegra_tsensor_group *
+>> +tegra210_tsensor_groups[] =3D {
+>=20
+> Why wrap these two lines? They seem to fit on one line and within 78
+> columns.
+
+Hmm, will fix it.
+
+>=20
+>> +static struct tegra_tsensor tegra210_tsensors[] =3D {
+>=20
+> "static const"?
+
+Will change to "const".
+
+>=20
+>> +	{
+>> +		.name =3D "cpu0",
+>> +		.base =3D 0xc0,
+>> +		.config =3D &tegra210_tsensor_config,
+>> +		.calib_fuse_offset =3D 0x098,
+>> +		.fuse_corr_alpha =3D 1085000,
+>> +		.fuse_corr_beta =3D 3244200,
+>> +		.group =3D &tegra210_tsensor_group_cpu,
+>> +	},
+>> +	{
+>=20
+> "}," and "{" can go on the same line.
+
+Will change it.
+
+>=20
+>> +struct tegra_soctherm_soc tegra210_soctherm =3D {
+>=20
+> "const"?
+>=20
+> Thierry
+>=20
+> * Unknown Key
+> * 0x7F3EB3A1
+>=20
