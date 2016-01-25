@@ -1,61 +1,78 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [Patch V2 9/9] clk: tegra: pll: Fix PLLE SS coefficients val
-Date: Mon, 25 Jan 2016 13:49:12 +0100
-Message-ID: <20160125124912.GN20452@ulmo.nvidia.com>
-References: <1452799602-14847-1-git-send-email-rklein@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: clk-emc: Add missing of_node_put
+Date: Mon, 25 Jan 2016 13:55:47 +0100
+Message-ID: <20160125125547.GO20452@ulmo.nvidia.com>
+References: <20160124151519.GA23923@amitoj-Inspiron-3542>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="MSd2ShuMixI0uVaZ"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="UFMLoheMaWcIEZAi"
+Return-path: <linux-clk-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1452799602-14847-1-git-send-email-rklein@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Mark Kuo <mkuo@nvidia.com>
+In-Reply-To: <20160124151519.GA23923@amitoj-Inspiron-3542>
+Sender: linux-clk-owner@vger.kernel.org
+To: Amitoj Kaur Chawla <amitoj1606@gmail.com>
+Cc: pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, sboyd@codeaurora.org, swarren@wwwdotorg.org, gnurou@gmail.com, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, julia.lawall@lip6.fr
 List-Id: linux-tegra@vger.kernel.org
 
 
---MSd2ShuMixI0uVaZ
+--UFMLoheMaWcIEZAi
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 14, 2016 at 02:26:42PM -0500, Rhyland Klein wrote:
-> From: Mark Kuo <mkuo@nvidia.com>
+On Sun, Jan 24, 2016 at 08:45:20PM +0530, Amitoj Kaur Chawla wrote:
+> for_each_child_of_node performs an of_node_get on each iteration, so
+> to break out of the loop an of_node_put is required.
 >=20
-> The PLLE_SS_COEFFICIENTS_VAL should be different for Tegra210
-> from Tegra114. Add SoC generation specific versions for Tegra114
-> and Tegra210 and use those in their respective plle_enable functions.
+> Found using Coccinelle. The semantic patch used for this is as follows:
 >=20
-> Signed-off-by: Mark Kuo <mkuo@nvidia.com>
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> // <smpl>
+> @@
+> expression e;
+> local idexpression child;
+> @@
+>=20
+>  for_each_child_of_node(root, child) {
+>    ... when !=3D of_node_put(child)
+>        when !=3D e =3D child
+> (
+>    return child;
+> |
+> +  of_node_put(child);
+> ?  return ...;
+> )
+>    ...
+>  }
+> // </smpl>
+>=20
+> Signed-off-by: Amitoj Kaur Chawla <amitoj1606@gmail.com>
 > ---
->  drivers/clk/tegra/clk-pll.c | 18 ++++++++++++------
->  1 file changed, 12 insertions(+), 6 deletions(-)
+>  drivers/clk/tegra/clk-emc.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 
 Applied, thanks.
 
 Thierry
 
---MSd2ShuMixI0uVaZ
+--UFMLoheMaWcIEZAi
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJWphnIAAoJEN0jrNd/PrOhS88P/3XCFntNJJQoOjfmcB8puJYf
-DIZF3xO74Xa0EeBiupYV4IjdamD5hMYgrYrkcJHkctBDs5YgDQW8EN5OiYEceAxr
-pqh/rRHyWaDmX9IIIfAbmPzJjgp8VyowJhyRg4ZgUFwcqJ304cOcJ+PNmCK+h0lm
-Geih/7T/5M/I6T/Nuxpfac5jxpofkRAwIUBAURq7nHOe5ap8JQnSaxtc/wT9eifl
-7pWki2EoZCxDWzjIj57JTMFL+W+NpST+ZewqIEyjsedbcxTdyC74255e1zp+MSuy
-Y1Paz9G7zUApE/Yna/dHihpJu6hujw32rnTXJ1R6duaPErP5tj1sWiX1wmIxfno8
-NHYKH8euXfyFsg/kohkahxWVapv/FvT+/Yo4RbwcCL/JuG0Ydaqa58Jg2pwLjcxm
-6g1CKQllQeNT8N8ZGDwQ7zS1jaHsANvXj1JfD08COGjQiJ6UrSPVdZnTcsFw6CJ8
-6R/xSmsNthp4yyNch5Fte+Rhl1dgRNVE35uqkkIQsOoIyBezyjb186nz/e3T0hNN
-QbTE/Ul1MzNpe407YHEoZoINfvcJH6WfznweyB4IOJsHZjeGWu2mA4rYW1qlWClt
-lAtlMtbnaSaaC4j8F9fKs1c76SxMEqHXU8HDDIjNn4I2PnnENsnqcc9d1xAhCHAy
-YZY86LKoXrG8wNoqXETx
-=2F+Y
+iQIcBAABCAAGBQJWphtTAAoJEN0jrNd/PrOh4i4QAJDrzpBXqUT6yC5Pg8I8mVBh
+vU22kT5OgMa9WtVZLdBg+0+fZUWAXtyVmsy9T/05CKNyg9khp9+nlPnAZC5B1a7b
+Lb4ubZdTcb09bgca/VoysZqP0HbSKSWBPng85DCAakIcuSFO+5hpJLiKBYvz7U8W
+AeHCsqQ3jUWjFu1c1GG87L7CRBumm9annleRVmIa0xG4nrgUjSqVxuaAzZ30lHrH
+yk51RBxaFM770i329pUWpF4+2phFYstRgwOrDDp8o0Hp6iC+PSLbMpjY87jTbGf2
+yKIVdc3uU130o5ip8EdjhTkTECUvoMhGecmLBqinYA4+z5NsdFbcuPiNt3cjUZWn
++cbcoHerGn3bitHH9LJSdiBFeH4nSzz9CLbiCc70tlvhhay2FHLfcoElVX/OjUUq
+b9dpMR3Zo0vrvZgjYN5i2BtVmvJE3Iv3n6h3IvRLt+GJDpVC+A+SixeuufKTaegn
+gZPBbST/3faxZr5hCs95uwUArLyO0VQHKAIYT9rS2lg2+W/LJuQfsNk9G0+NhpSF
+DiR767GIgkaPdsxBy6hvvbvZ1QV/OMgOT52omLnEl8zuTeB4nOwfaMUGErKY6TVt
+KJvARSi8jUvFOkacIVERMEMCE4IHbtmqU/0wyvNdRQUkkVnS9AkQEzCSM4ueaVFv
+QnLIckdZZtfX4AWv487/
+=a2ih
 -----END PGP SIGNATURE-----
 
---MSd2ShuMixI0uVaZ--
+--UFMLoheMaWcIEZAi--
