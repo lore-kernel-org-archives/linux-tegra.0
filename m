@@ -1,68 +1,78 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM64: tegra: Add chosen node for tegra132 norrin
-Date: Mon, 25 Jan 2016 14:57:04 +0100
-Message-ID: <20160125135704.GA7014@ulmo.nvidia.com>
-References: <1450704171-8345-1-git-send-email-jonathanh@nvidia.com>
+Subject: Re: [PATCH] gpu: host1x: bus: Add missing of_node_put
+Date: Mon, 25 Jan 2016 15:02:28 +0100
+Message-ID: <20160125140228.GB7014@ulmo.nvidia.com>
+References: <20160124163210.GA24872@amitoj-Inspiron-3542>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="qDbXVdCdHGoSgWSk"
+	protocol="application/pgp-signature"; boundary="gj572EiMnwbLXET9"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1450704171-8345-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20160124163210.GA24872@amitoj-Inspiron-3542>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Amitoj Kaur Chawla <amitoj1606-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, julia.lawall-L2FTfq7BK8M@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---qDbXVdCdHGoSgWSk
+--gj572EiMnwbLXET9
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 21, 2015 at 01:22:51PM +0000, Jon Hunter wrote:
-> The NVIDIA bootloader, nvtboot, expects the "chosen" node to be present
-> in the device-tree blob and it is not then it fails to boot the kernel.
-
-"if it is not"
-
-> Add the chosen node so we can boot the kernel on tegra132 norrin with
-
-"Tegra132 Norrin"
-
-> the nvtboot bootloader.
+On Sun, Jan 24, 2016 at 10:02:10PM +0530, Amitoj Kaur Chawla wrote:
+> for_each_child_of_node performs an of_node_get on each iteration, so
+> to break out of the loop an of_node_put is required.
 >=20
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Found using Coccinelle. The semantic patch used for this is as follows:
+>=20
+> // <smpl>
+> @@
+> expression e;
+> local idexpression n;
+> @@
+>=20
+>  for_each_child_of_node(..., n) {
+>    ... when !=3D of_node_put(n)
+>        when !=3D e =3D n
+> (
+>    return n;
+> |
+> +  of_node_put(n);
+> ?  return ...;
+> )
+>    ...
+>  }
+> // </smpl>
+>=20
+> Signed-off-by: Amitoj Kaur Chawla <amitoj1606-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->  arch/arm64/boot/dts/nvidia/tegra132-norrin.dts | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/gpu/host1x/bus.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
-Otherwise looks good to me. Given that this is a fix for v4.5 material,
-you might want to send it directly to arm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org (and perhaps
-mention that you'd like to have this applied to v4.5). With the above
-two fixups:
+Applied, thanks.
 
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Thierry
 
---qDbXVdCdHGoSgWSk
+--gj572EiMnwbLXET9
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJWpimrAAoJEN0jrNd/PrOhm9wP/RqlgJmhv/DEouaPXp7FXsDL
-pXzBXrOFSe00ueET75r6aL+eEKwgn45IhhyPL5XiwkjdMhTqc4Y5kpQLdh3X3e2u
-hXw+kbaKyHn95fSsV2vaz+mvt0cHCB2cafgsmw+6GfoslnSd4J1eJ+fuTa53IZki
-sxKywogy8UdFJpwE9BKckbQm3+9enVT5hcr2A7myFTZIuRJO0XRTmUvHAjypNI1R
-Vs1VGTK3czFlOlnXHDqBdlWayYR1tH6F38Bj1vnxTcWvecwlhZLn5b4s3kXNN8q5
-k3Scvg063WngR4rIbKL/l5YDb9yD2e4g1Y1tBhFjn8JGYfm11kR06hSwvR4NBvWq
-peQ+8HrsqzOEYIIriBbvKtMO7yMnfIj2MY84ngYhGuQsn74ah3bmgRr5fYTPHM0l
-dAG5UvzFmmbq+HOaenig6uCRrmkyIfjMqTziyDPjC0oFGioKUb5TEtU2J3xAeOvP
-09EoAfuhAY/SSLebWgdDWPKepa6vyKend8sx8U6rpyZ231fNFfKc5leJ9PMWy8nO
-1UNyLGI+grlN2gowbBQU6/7/oAHx1NUgH9dulHmjnXFTuUA/9T5GNEifcCU9kMwc
-6SuuPYpM+86ROob9csK2DHQ1Uf3G7Slp554iQ764Clf3C6ibT55AfYd3si47Qcbo
-nOhfxp4WKyWErGGA03gv
-=5VDZ
+iQIcBAABCAAGBQJWpir0AAoJEN0jrNd/PrOhdfgP/RzDVzkGu+K76JXP3EL1y/sP
+5bxLWjdNVDeZq+IB08byAbY2aTVby44MA4LYEiSgS/OSQ2iDueeD2ERh8sSU4wPC
+MqSbt26vxfqxTGqzPB8ydolibFiZZ70u3LcOK1smdyP7bQ3/I5FQvNenybgvu0+n
+2Af9F0JRy863zT06IYxQ+p0+4H0CypzLxYxEc/pyomz96OSn5f3Sq/zvEjveFZrP
+KtNp0ZPukPxqnKe1+54w6ciGxUEtDdwD/i+YRDLHpAeOIBPTj1mwcaX7Fe0yDnD8
+jKRb9AC5Xh6FS9GHpkPIHF93p7uNRCNw/eM0PWpxZiIxtWTcTrq31qqCJaKH5wpq
+duGh5VGU7y0qDejBY7/n28o1PUdDC0gNGmLimIYoj6IwXqaDTiC6ILfRpLtVjW8X
+n2NZbW4hCrDxKKRKWW7oxj0lOOUelNBGnMF7v+tGqO7aOsSmsMhAoRO0BAA/ApYv
+76mSvEa8rMs+PTndRRQn0HvhEn2N/1TdAKtlZkSGpvliObsb//n9ifdf6L/GmOEv
+7wKO0XiFOhv7rHsFAk/JiQV2YgyWHvLRUS3Nwt2It7F62Xas8nYLMx2GLiasylRy
+EMeykHaGrNyDAIIioiqbIYtkw4wsvQM+aApwrS4ST32JwxbXnnxcwWLrDOfz8Fea
+qWo4o5dN91j4n7ZMukHx
+=CjLm
 -----END PGP SIGNATURE-----
 
---qDbXVdCdHGoSgWSk--
+--gj572EiMnwbLXET9--
