@@ -1,60 +1,65 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [Patch V2 4/9] clk: tegra: Fix the misnaming of nvenc from msenc
-Date: Mon, 25 Jan 2016 13:36:30 +0100
-Message-ID: <20160125123630.GG20452@ulmo.nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [Patch V2 5/9] clk: tegra: pll: Fix potential
+ sleeping-while-atomic
+Date: Mon, 25 Jan 2016 13:40:04 +0100
+Message-ID: <20160125124004.GH20452@ulmo.nvidia.com>
 References: <1452799478-14791-1-git-send-email-rklein@nvidia.com>
- <1452799478-14791-5-git-send-email-rklein@nvidia.com>
+ <1452799478-14791-6-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="iAL9S67WQOXgEPD9"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="k+G3HLlWI7eRTl+h"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1452799478-14791-5-git-send-email-rklein@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1452799478-14791-6-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mike Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---iAL9S67WQOXgEPD9
+--k+G3HLlWI7eRTl+h
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 14, 2016 at 02:24:33PM -0500, Rhyland Klein wrote:
-> When adding the nvenc clock, it was partially named msenc in
-> the code. Since the msenc clk isn't present in T210 where the nvenc
-> clk is, its misleading to see it present. Therefore, properly
-> rename it.
+On Thu, Jan 14, 2016 at 02:24:34PM -0500, Rhyland Klein wrote:
+> From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 >=20
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> Since the ->enable() callback is called with a spinlock held, we cannot
+> call potentially blocking functions such as clk_get_rate() or
+> clk_get_parent(), so use the unlocked versions instead.
+>=20
+> Signed-off-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+> [rklein: Adapted from ChromeOS patch, removing pllu_enable cleanup as
+> it isn't present upstream]
+> Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  drivers/clk/tegra/clk-tegra-periph.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/clk/tegra/clk-pll.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
 Applied, thanks.
 
 Thierry
 
---iAL9S67WQOXgEPD9
+--k+G3HLlWI7eRTl+h
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJWphbOAAoJEN0jrNd/PrOh74QP/0xdFbNAhlulOeKulRLxjPhI
-YOm/VcnU1ExdAeJdcxk4ydVKaU7XhLkMeKy+Kqca9SZ4bBMMmpSKsyDiLjIs+75L
-opG0fi9IytoFIRkXumgJN8TlH89pM1+Wt8rCQoBuMsuvzrtdH97+JkkhtGeK5UXv
-wWnrMNboLCp9URY0F20wrgYPAmhYb1dXPsNH8mQv+ZC80KpxSHqZYLJ9Euhnfs02
-5Nvx/hX1Q/t2loRw8UFTelFgh8fokXGtGkDDT5mnrMaEwan1ALa3CmV18q5iFUPw
-2t+VHVts1KYctKsfbYdNb5aXYpVOmZUN3Pvv14VoCtkapj1mSWhOpuYsp+umoWhI
-wp8BKFjfyGsxPjOogZ2Romew9BgLaiQaYA6hBRdkk+A0bxbfBUsxSCEQ79163m2p
-qi9CSVFTTpuDbcQJ3X/tVLvH5KtG76S6U6ryPKtQcH8pnowxMeMy57sUIqcY3Ur+
-sKq8VBK/8B7cCURNnP1gPz63z0K6MhOr49FpzdfWsXmVzJ7bOoFPXtQBw+ST2qGc
-oHS1hDNK7ZaCFShoshGbhsLDxSaXNIEBRuolq5M1wOT0I9B2qcbjMajuxkpwbncv
-8ksSAGs0MORKg6hvhZZ+UYped8wCm9NC1eJM9k4SCiF7a19L5x3P4T/cAHDlPDo9
-K6w1cHo5tPwhUwG6A6li
-=Zd1K
+iQIcBAABCAAGBQJWphekAAoJEN0jrNd/PrOhXlsQAJCkU+FneOsQzZZXHPqyVfC8
+WBtoO1Lsnc6AwmzGQbbjS54gku4TptEKrEbxz6h2AXilhmGZIEav9bu6J6hhBkpU
+2npLKPpfQGq1+D4B2uxX9Np/IsqCQtIkraHmawVjy3Zo4ww3tSw3RJg8VeBTK6wZ
+oGblDnXVPXD6oKQJx2hGg8soUTjHFuBR2HTYAWMOrPXDwjbw7P8bWthQo6fsK/e0
+8+8Rs2sXLAQ1VPAV0lw3whTs9w9QqAIn6ioxpIk4pl3U5jenFSm1DcFLNDFDm35o
+W3zwbax1Smt9ypA+4jbtBT3qmJDhMD8gejan9oZI9hWZvB2+SJZh4lEA7w/JS21A
+OES/0eZXAKU5BBKHmUStMdGc7IUsAYKRvIXCCcA2NY7HIjQeFzPdxsw2uX4iiaHX
+c7DwNCBqLxDMccRnlIM9KPNaKmwdVF1mvHo+14OKiYEXFPa3QoW8rbRa3O9azlts
+VYs8z74zbGYnbBxFhm6e66vslAMSLS2MJTrORWej5sFr5m8Mw+bJQrwQJuENayyo
+TmoZ97it1bZkFOtgr73fNPkYhmf0yAn2ROgN49xvMzmfxdG2dQYI97AALdgYrGhI
+2XK6/LQZLkcedj9j8A0/mYIuYT19w16Jo0W5ko4Axa3rwN2KR35dcf3aJ4Dm4o1e
+Q9KiCVHQvbrMBjb2Rd4/
+=IBtp
 -----END PGP SIGNATURE-----
 
---iAL9S67WQOXgEPD9--
+--k+G3HLlWI7eRTl+h--
