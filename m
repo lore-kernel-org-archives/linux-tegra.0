@@ -1,72 +1,61 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCHv2 3/4] ARM: tegra: use build-in device properties with
- rfkill_gpio
-Date: Mon, 25 Jan 2016 13:18:40 +0100
-Message-ID: <20160125121840.GA20452@ulmo.nvidia.com>
-References: <1453712629-143317-1-git-send-email-heikki.krogerus@linux.intel.com>
- <1453712629-143317-4-git-send-email-heikki.krogerus@linux.intel.com>
+Subject: Re: [PATCH] ARM: tegra: remove redundant ARM_L1_CACHE_SHIFT_6 select
+Date: Mon, 25 Jan 2016 13:24:15 +0100
+Message-ID: <20160125122415.GB20452@ulmo.nvidia.com>
+References: <1453539330-11903-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Dxnq1zWXvFF0Q93v"
+	protocol="application/pgp-signature"; boundary="Yylu36WmvOXNoKYn"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1453712629-143317-4-git-send-email-heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
+In-Reply-To: <1453539330-11903-1-git-send-email-yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Cc: Johannes Berg <johannes-cdvu00un1VgdHxzADdlk8Q@public.gmane.org>, linux-wireless-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+To: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tuomas Tynkkynen <ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---Dxnq1zWXvFF0Q93v
+--Yylu36WmvOXNoKYn
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jan 25, 2016 at 12:03:48PM +0300, Heikki Krogerus wrote:
-> Pass the rfkill name and type to the device with properties
-> instead of driver specific platform data.
+On Sat, Jan 23, 2016 at 05:55:30PM +0900, Masahiro Yamada wrote:
+> These two are both ARMv7 SoCs.  They need not explicitly select
+> ARM_L1_CACHE_SHIFT_6 because it is enabled along with CPU_V7.
 >=20
-> Signed-off-by: Heikki Krogerus <heikki.krogerus-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-> CC: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> CC: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> CC: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+> Refer to commit a092f2b15399 ("ARM: 7291/1: cache: assume 64-byte L1
+> cachelines for ARMv7 CPUs").
+>=20
+> Signed-off-by: Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>
 > ---
->  arch/arm/mach-tegra/board-paz00.c | 17 ++++++++++-------
->  1 file changed, 10 insertions(+), 7 deletions(-)
+>=20
+>  drivers/soc/tegra/Kconfig | 2 --
+>  1 file changed, 2 deletions(-)
 
-Looks fine to me. We might want to wait for Marc (Cc'ed) to give this a
-spin, since I don't have the hardware. For reference, the series can be
-found here:
+Applied, thanks.
 
-	http://patchwork.ozlabs.org/patch/572640/
-	http://patchwork.ozlabs.org/patch/572644/
-	http://patchwork.ozlabs.org/patch/572643/
-	http://patchwork.ozlabs.org/patch/572642/
+Thierry
 
-Johannes, I assume that you'll want to take this through your tree
-because of the dependency? In that case:
-
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
---Dxnq1zWXvFF0Q93v
+--Yylu36WmvOXNoKYn
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJWphKcAAoJEN0jrNd/PrOhVlMP/i5QMgu5bU6jLEAYoubopBXw
-VgZPSBqaddHK6qgVntB/9kwD6o8h11xb3FSE4yOSy7bLHHkUjYNpbVPY395nhkCW
-mwevqUgh7RjD5sRXPdbT0wbqzRQ6+/1glS+yqV2CL49o8wPasYOsmJifZw0hyG0j
-/5N0b4Tgq4PgZbjh02kVNcwPMc6mV2lrNCRkOi8TBsXoHHNUA3D1m7/qW2Hr0vEi
-PFJzPddKsEIpoUnohzhxrbwsZUXCg+Cdan25FWU8a/P7hmM/PvyY/lalsJ+2pZAc
-V3NeMgAUldNbubzsFoSL041OHIo165aqQZozYDBbhLaUbsIeAw66C3LwO3+6GLLG
-86gsMlk8vDD91Lh3ZG29Z6wS7cxnDCxGTTl3ltjbivS7ohdd+XP8ChCBExVdb+YQ
-Jw4QvIr6rPWXLzEhkSGEj6MinCcSPD7RrIJp0Z204LBIbuy+nXdhzSNH2V3WuU0C
-zJuHyElAuCNN5UadBPaVopFIRMwxtDRpmDUiVFcBvPIQx5BCxYD1pP1M1XR9SQIE
-X5lHJ5WI6Z5hG/Z183wK8wuGx9itVbviSg9V+Po2eFk3dWzEJ8AHbx4mJtKgLhks
-1MhnQrWH3mCIjDF9W0Y5PNcuYd6HBesV/gY84BdGO5xy6cdT57LfI6ZTubIYZIhM
-TbiCVZw9K1FvOObSqanK
-=8JOH
+iQIcBAABCAAGBQJWphPvAAoJEN0jrNd/PrOhtSsP/j1srkUtsPbSeO8fwHx4ysin
+KKU6Xyl37jNMsZCB4/nlO2h4YugkT3BWkF5rtBci8jRrfBG6eCVCi/dN3cvoGhJw
+H6maWako/4awm5fxiCApBBGIf/qU0GPA+iQMn0/5UgX9oAR2I40kIGmjbDxaISIe
+B0eyDDHM4OT4Kc0hAVv9b7xVkVoJoIALjwdhda8KzlGVtCwJ5HxkCkU4ztwmSC0O
+mWtDrVkCTuiR9HczRl0a4Uls42DE4QFiWB8mmQe1J8JnE+pBRHURuZhu+b/+d42i
+aVDqvStZSkDoy3nO3WTF0DSs5sdHAfOwPQ/IY5mCWaWNIrXtDObMHUtVknCmyD6g
+7AH9QOwsmmoi8iea9ZDRXoaStI3Ygmbpq07Etn34xDA1pGPqTDvfz1h6D1JfRzej
+M/bjPJdO7/RvHChYkZzEzegJ/4TKIGpj8Dsy3JnYWuOTX0lknXuFUDc5B847TrCf
+Bqq25vDx/h/Vcr+m9nSBC7ndA0DyR5zUvP3c0wCiqzxouxtJewr+HCsU8kBAh+g+
+nO3P1duySPaPHeOpF46Na1MUKjDw5V/+QbMw1ZbZFBQRjvNYCdrf9uisZGoM8yTu
+HcMZLRU+cwXGuWQX3q3ZO8zZ3sVdGyA2xkiM5wA2u1Ic2uNMBk/BY6q+pTojLFcl
+hL8kV3iQzRztURzs+x0W
+=BcpX
 -----END PGP SIGNATURE-----
 
---Dxnq1zWXvFF0Q93v--
+--Yylu36WmvOXNoKYn--
