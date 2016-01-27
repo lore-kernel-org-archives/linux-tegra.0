@@ -1,42 +1,50 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] ARM: tegra: Fixed typo
-Date: Wed, 27 Jan 2016 18:15:50 +0900
-Message-ID: <56A88AC6.4090105@nvidia.com>
-References: <1453827558-10954-1-git-send-email-ralf@ramses-pyramidenbau.de>
- <1453827558-10954-2-git-send-email-ralf@ramses-pyramidenbau.de>
- <CAAVeFuKiaSZH5RF=zEnYVoRU_rtVvONRYdtGbK=fgV_icO8tDw@mail.gmail.com>
- <56A883C7.9000007@ramses-pyramidenbau.de>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH V4 16/16] ARM64: tegra: select PM_GENERIC_DOMAINS
+Date: Wed, 27 Jan 2016 10:43:10 +0100
+Message-ID: <CAPDyKFqmWRY4vb=JAqwBmGqRhpq0MrdiAt4jCt5tdhYsxz0ziw@mail.gmail.com>
+References: <1449241037-22193-1-git-send-email-jonathanh@nvidia.com>
+	<8579242.omBpg1aLr2@wuerfel>
+	<CAPDyKFrewx5CbS9QKZAxqq0Gu+TywQ3nkDGZFURR=PJLtkDuyQ@mail.gmail.com>
+	<11122786.kKumQ3Dhls@wuerfel>
+	<5697D7E2.3030209@nvidia.com>
+	<56A7A662.4090203@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56A883C7.9000007-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ralf Ramsauer <ralf-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <56A7A662.4090203@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Thierry Reding <thierry.reding@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Rafael Wysocki <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Vince Hsu <vinceh@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 01/27/16 17:45, Ralf Ramsauer wrote:
-> On 01/27/2016 08:59 AM, Alexandre Courbot wrote:
->> Hey Ralf, thanks for following up with patches as we discussed in private!
->>
->> Small nit: you will want to use the active form ("Fix typo" instead of
->> "Fixed typo") in your commit messages.
-> So even my language skills got improved ;-)
+[...]
 
-This is grammatically correct, but using imperative form is the 
-convention in the kernel. As per Documentation/SubmittingPatches:
+>
+> Any more thoughts on this?
+>
+> I have been discussing with Thierry and we think that selecting PM for
+> tegra still makes the most sense. The question is, is this ok for
+> multi-configs?
 
-Describe your changes in imperative mood, e.g. "make xyzzy do frotz"
-instead of "[This patch] makes xyzzy do frotz" or "[I] changed xyzzy
-to do frotz", as if you are giving orders to the codebase to change
-its behaviour.
+Yes, this is too me the best option.
 
->> It would also be nice if the commit title was a little more precise
->> about where the typo has been corrected.
-> Uhm - as this is be pretty small non-diff-related change... Is it
-> necessary to send a v3 or would it also be okay to let the maintainer
-> amend the subject?
-> (to sth.: like "ARM: tegra: Fix the same C&P typo in several dts includes")
+Additionally, for those tegra SoCs/platforms that needs
+PM_GENERIC_DOMAINS, it can safely select that as well.
 
-Let's see what Thierry says about this.
+>
+> The only other suggestion/thought I have is to allow
+> PM_GENERIC_DOMAINS_OF to be selected independently of PM so that we can
+> have minimal support for PM domains that allows you to register PM
+> domains with the kernel and their current state, but does not allow you
+> to control them, etc. This way tegra could always select
+> PM_GENERIC_DOMAINS_OF regardless of PM, and we would be able to
+> determine if we can probe a device safely.
+>
+> I am not sure that Rafael is too keen on this approach but that is the
+> only alternative I have come up with.
+
+I think Rafael already made his point around this approach, which is a
+clear no. And I fully agree with it.
+
+Kind regards
+Uffe
