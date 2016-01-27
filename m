@@ -1,107 +1,91 @@
-From: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH V4 16/16] ARM64: tegra: select PM_GENERIC_DOMAINS
-Date: Tue, 26 Jan 2016 13:52:40 -0800
-Message-ID: <7hzivsm2jb.fsf@baylibre.com>
-References: <1449241037-22193-1-git-send-email-jonathanh@nvidia.com>
-	<11122786.kKumQ3Dhls@wuerfel> <20160114102924.GA22340@ulmo>
-	<4244898.5om31fQ1mz@wuerfel> <20160126173001.GA11062@ulmo.nvidia.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] ARM: tegra: Fixed typo
+Date: Wed, 27 Jan 2016 16:59:11 +0900
+Message-ID: <CAAVeFuKiaSZH5RF=zEnYVoRU_rtVvONRYdtGbK=fgV_icO8tDw@mail.gmail.com>
+References: <1453827558-10954-1-git-send-email-ralf@ramses-pyramidenbau.de> <1453827558-10954-2-git-send-email-ralf@ramses-pyramidenbau.de>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160126173001.GA11062-AwZRO8vwLAwmlAP/+Wk3EA@public.gmane.org> (Thierry Reding's
-	message of "Tue, 26 Jan 2016 18:30:01 +0100")
+In-Reply-To: <1453827558-10954-2-git-send-email-ralf-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rafael Wysocki <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree@vger.kernel.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel@vger.kernel.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra@vger.kernel.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm@vger.kernel.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Ralf Ramsauer <ralf-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> writes:
+Hey Ralf, thanks for following up with patches as we discussed in private!
 
-> On Thu, Jan 14, 2016 at 12:11:39PM +0100, Arnd Bergmann wrote:
->> On Thursday 14 January 2016 11:29:24 Thierry Reding wrote:
->> > 
->> > It just occurred to me that none of these options really make much of a
->> > difference. As Jon mentioned once we merge this series a lot of features
->> > on Tegra will start to rely on PM_GENERIC_DOMAINS and hence PM. So if we
->> > do want to build a kernel with a maximum of Tegra features enabled (and
->> > I think a multi_v7_defconfig should include that) we'll end up with a PM
->> > dependency anyway, whether forced via select or implied via depends on.
->> > 
->> > I'm beginning to wonder if PM really should be an option these days. The
->> > disadvantages of making it optional do outweigh the advantages in my
->> > opinion. I'm not saying that, in general, it's totally useless to build
->> > a kernel that has no PM support, but for the more specific case where
->> > you would want to enable multi-platform support I don't think there's
->> > much practical advantage in allowing !PM. One of the most common build
->> > warnings are triggered because of this option. Also multi-platform
->> > kernels are really big already, so much so that I doubt it would make a
->> > significant difference if we unconditionally built PM support. Also the
->> > chances are that we'll be seeing more and more SoCs support PM and rely
->> > on it, much like Tegra would with the addition of this series.
->> > 
->> > I imagine that we could save ourselves a lot of headaches by simply
->> > enabling PM by default, whether that be via the PM Kconfig option or by
->> > selecting it from ARCH_TEGRA and any other architectures that may come
->> > to rely on it. Doing so would also reduce the amount of test coverage
->> > that we need to do, both at compile- and runtime.
->> 
->> I think this needs some investigation. As a general policy, we should
->> not grow the kernel image size when moving from a traditional ARM
->> platform to an ARCH_MULTIPLATFORM one.
+Small nit: you will want to use the active form ("Fix typo" instead of
+"Fixed typo") in your commit messages.
+
+It would also be nice if the commit title was a little more precise
+about where the typo has been corrected.
+
+On Wed, Jan 27, 2016 at 1:59 AM, Ralf Ramsauer
+<ralf-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org> wrote:
+> Signed-off-by: Ralf Ramsauer <ralf-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
+> ---
+>  arch/arm/boot/dts/tegra114.dtsi | 2 +-
+>  arch/arm/boot/dts/tegra124.dtsi | 2 +-
+>  arch/arm/boot/dts/tegra20.dtsi  | 2 +-
+>  arch/arm/boot/dts/tegra30.dtsi  | 2 +-
+>  4 files changed, 4 insertions(+), 4 deletions(-)
 >
-> If we make ARCH_TEGRA select PM, then moving to a multi-platform kernel
-> isn't automatically going to increase the image size. The image size is
-> only going to increase if you select ARCH_TEGRA to be part of the multi
-> platform image.
+> diff --git a/arch/arm/boot/dts/tegra114.dtsi b/arch/arm/boot/dts/tegra114.dtsi
+> index d845bd1..5017ed8 100644
+> --- a/arch/arm/boot/dts/tegra114.dtsi
+> +++ b/arch/arm/boot/dts/tegra114.dtsi
+> @@ -256,7 +256,7 @@
+>          * driver and APB DMA based serial driver for higher baudrate
+>          * and performace. To enable the 8250 based driver, the compatible
+>          * is "nvidia,tegra114-uart", "nvidia,tegra20-uart" and to enable
+> -        * the APB DMA based serial driver, the comptible is
+> +        * the APB DMA based serial driver, the compatible is
+>          * "nvidia,tegra114-hsuart", "nvidia,tegra30-hsuart".
+>          */
+>         uarta: serial@70006000 {
+> diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
+> index 68669f7..995289b 100644
+> --- a/arch/arm/boot/dts/tegra124.dtsi
+> +++ b/arch/arm/boot/dts/tegra124.dtsi
+> @@ -322,7 +322,7 @@
+>          * driver and APB DMA based serial driver for higher baudrate
+>          * and performace. To enable the 8250 based driver, the compatible
+>          * is "nvidia,tegra124-uart", "nvidia,tegra20-uart" and to enable
+> -        * the APB DMA based serial driver, the comptible is
+> +        * the APB DMA based serial driver, the compatible is
+>          * "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart".
+>          */
+>         uarta: serial@0,70006000 {
+> diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+> index 33173e1..8fb61b9 100644
+> --- a/arch/arm/boot/dts/tegra20.dtsi
+> +++ b/arch/arm/boot/dts/tegra20.dtsi
+> @@ -309,7 +309,7 @@
+>          * driver and APB DMA based serial driver for higher baudrate
+>          * and performace. To enable the 8250 based driver, the compatible
+>          * is "nvidia,tegra20-uart" and to enable the APB DMA based serial
+> -        * driver, the comptible is "nvidia,tegra20-hsuart".
+> +        * driver, the compatible is "nvidia,tegra20-hsuart".
+>          */
+>         uarta: serial@70006000 {
+>                 compatible = "nvidia,tegra20-uart";
+> diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+> index 313e260..c6edc8c 100644
+> --- a/arch/arm/boot/dts/tegra30.dtsi
+> +++ b/arch/arm/boot/dts/tegra30.dtsi
+> @@ -371,7 +371,7 @@
+>          * driver and APB DMA based serial driver for higher baudrate
+>          * and performace. To enable the 8250 based driver, the compatible
+>          * is "nvidia,tegra30-uart", "nvidia,tegra20-uart" and to enable
+> -        * the APB DMA based serial driver, the comptible is
+> +        * the APB DMA based serial driver, the compatible is
+>          * "nvidia,tegra30-hsuart", "nvidia,tegra20-hsuart".
+>          */
+>         uarta: serial@70006000 {
+> --
+> 2.4.10
 >
->> This is somewhat contradicted by how we already require CONFIG_OF
->> to be set for multiplatform kernels, and that adds around 80kb
->> to the image size.
->
-> Yeah, there's also a fair amount of per-SoC code that can't be built as
-> a module and which will be included in multi-platform images when the
-> corresponding ARCH_* symbol is enabled. But I think that's inevitable
-> given the purpose of multi-platform images.
->
->> Looking at just the defconfig files, these are the ones that currently
->> do not set CONFIG_PM:
->> 
->> build/acs5k_defconfig/.config:# CONFIG_PM is not set
->> build/acs5k_tiny_defconfig/.config:# CONFIG_PM is not set
->> build/axm55xx_defconfig/.config:# CONFIG_PM is not set
->> build/bcm2835_defconfig/.config:# CONFIG_PM is not set
->> build/clps711x_defconfig/.config:# CONFIG_PM is not set
->> build/ebsa110_defconfig/.config:# CONFIG_PM is not set
->> build/footbridge_defconfig/.config:# CONFIG_PM is not set
->> build/ks8695_defconfig/.config:# CONFIG_PM is not set
->> build/netwinder_defconfig/.config:# CONFIG_PM is not set
->> build/rpc_defconfig/.config:# CONFIG_PM is not set
->> build/u300_defconfig/.config:# CONFIG_PM is not set
->> build/vf610m4_defconfig/.config:# CONFIG_PM is not set
->> 
->> The only ones among these are are actually multiplatform are axm55xx,
->> bcm2835, and u300. I see no downsides of force-enabling PM for
->> any of those, so we could decide to 'select PM' from
->> CONFIG_ARCH_MULTIPLATFORM.
->
-> ARCH_MULTIPLATFORM selecting PM would include PM unconditionally, even
-> if none of the selected platforms require it. In my opinion an explicit
-> select from platforms that require PM would be cleaner.
-
-I agree.
-
-Doing it this way also points you exactly at which arch(es) needs to be
-disabled if you want to build a !PM multi-plaform kernel.
-
-> It could be that once we start doing that for a single platform others
-> might follow.
-
-I suspect so as well.  The main reason we're not there already is that
-full PM support for most platforms remains out of tree.
-
-> When this becomes common place it might be worth moving it up a level,
-> but I think explicit dependencies would be better for starters.
-
-+1
-
-Kevin
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
