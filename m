@@ -1,70 +1,33 @@
-From: "Laison Computech Inc" <danny-nst7T5aFo3dBDgjK7y7TUQ@public.gmane.org>
-Subject: NEW ARRIVALS, CISCO,CPU's,Memory, LAPTOP AND AVAYA
-Date: Wed, 27 Jan 2016 12:42:07 +0700
-Message-ID: <201601270544.AQX06505__4194.19882023266$1453951415$gmane$org@razorgate1.infokom.net>
-Reply-To: <LaisonComputer-bdq14YP6qtT9W2o6/NvY6w@public.gmane.org>
+From: MyungJoo Ham <myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: Re: [PATCH] PM / devfreq: tegra: Set freq in rate callback
+Date: Thu, 28 Jan 2016 04:14:06 +0000 (GMT)
+Message-ID: <987619535.304031453954442569.JavaMail.weblogic@epmlwas09c>
+Reply-To: myungjoo.ham-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain;
-	charset="Windows-1251"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+MIME-version: 1.0
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tyler Baker <tyler.baker-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, =?utf-8?Q?=EB=B0=95=EA=B2=BD=EB=AF=BC?= <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Dear Sir/Madam,
-
-Clean tested working pulls CPUs and QTYs in stock.
-
-115  X   X5650
-65  X   E5410
-75  X   X5660
-145  X   E5530
-100  X   E5645
-40  X   X5680
-75  X   X5690
-
-Brand new sealed  IP phones and QTYs in stock.
-
-55 x CP-7937G
-77 x CP-7942G
-54 x CP-7945G
-75 x CP-7962G
-......
-45 x Avaya 9630
-65 x Avaya 9641
-55 x Avaya 9640
-
-All NIB.
-
-Here is our current stock list.
-
- SSD drives and 750 gig 2.5" sata drives
-
-We also have
-250 x i5 dell
-133 x HP
-360 x Lenevo
-all grade A
-
-Here is the qty in stock for laptops
- 
-150 x E6500 Dell Latitude E6500 Core 2 Duo 2.80GHz T9600 4GB 160GB DVD+/-RW Win 7
- 60 x E6510 Dell Ltitude E6510. 15.6" Intel Core i5- M520 @ 2.40GHz. 4GB. 320GB DVD+/-RW Win 7
-30 X 8530P HP EliteBook 8530p 15.4" Laptop 2.53GHz Core 2 Duo T9400, 4GB RAM, 160GB HDD, Win
-100 x  8740W  HP EliteBook 8740w 17" 2.4Ghz Core i5 6GB 250GB Win 7 Pr
-45 x 8760W HP EliteBook 8760W 17.3" 2nd Gen Intel Core i7 2.70GHz 8GB 320GB Windows 7 Pro
-50 x DELL 6520Dell latitude e6520 15.6" i5-2520M 2.5Ghz, 8GB Ram, 500GB HD Win 7 @ $115
-120 x DELL 6420 Laptop Dell Latitude E6420 14" Intel Core i5 2.4Ghz 4GB RAM 250GB HDD DVD Win 7
-150 x T410 Lenovo ThinkPad Laptop T410s 14.1" 2.40GHz Core i5 4GB RAM 160GB Win 7
-180 x 8440P HP EliteBook 8440p 14" M520 Core i5 2.4GHz 4GB 250GB Win 7
-
-
-Let me know if you're interested. We are very open to offers and willing to work with you to make sure that we have a deal.
-
-Thank You
-Barbara Johnson
-Laison Computech Inc
-210 N Scoring Ave,
-Rialto California, 92376
-Tel: +1-657-232-7047
-Fax: +1-347-214-047
+PiBIaSBUaGllcnJ5LA0KPiANCj4gT24gMjEgSmFudWFyeSAyMDE2IGF0IDAyOjU0LCBUaGllcnJ5
+IFJlZGluZyA8dGhpZXJyeS5yZWRpbmdAZ21haWwuY29tPiB3cm90ZToNCj4gPiBPbiBUaHUsIEph
+biAyMSwgMjAxNiBhdCAwODo1MjoyNkFNICswMTAwLCBUb21ldSBWaXpvc28gd3JvdGU6DQpbXQ0K
+PiA+PiBTaWduZWQtb2ZmLWJ5OiBUb21ldSBWaXpvc28gPHRvbWV1LnZpem9zb0Bjb2xsYWJvcmEu
+Y29tPg0KPiA+PiBSZXBvcnRlZC1ieTogVHlsZXIgQmFrZXIgPHR5bGVyLmJha2VyQGxpbmFyby5v
+cmc+DQpbXQ0KPiA+Pg0KPiA+DQo+ID4gSSBoYWQgbm90aWNlZCBpdCByZWNlbnRseSBidXQgaGFk
+bid0IGdvdCBhcm91bmQgdG8gbG9vayBpbnRvIGl0LCB0aGFua3MNCj4gPiBmb3IgZml4aW5nIGl0
+Lg0KPiA+DQo+ID4gVGVzdGVkLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29t
+Pg0KPiA+IEFja2VkLWJ5OiBUaGllcnJ5IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPg0KPiAN
+Cj4gSSBkb24ndCBzZWUgdGhpcyBwYXRjaCBpbiAtbmV4dCB5ZXQsIHNvIEknbSBndWVzcyBpdCBo
+YXNuJ3QgYmVlbg0KPiBhcHBsaWVkLiBBbnkgY2hhbmNlIHlvdSBjb3VsZCBwaWNrIGl0IHVwPyBU
+aGlzIGlzc3VlIGlzIG5vdw0KPiBtYW5pZmVzdGluZyBpbiBtYWlubGluZSwgYW5kIGNhdXNpbmcg
+dG9uIG9mIG5vaXNlIGluIHRoZSBib290IHJlcG9ydHMuDQo+IA0KPiBDaGVlcnMsDQo+IA0KPiBU
+eWxlcg0KDQoNCkhleSwgdGhlIHBhdGNoIGFwcGVhcmVkIGF0IHRoZSBtYWlsaW5nIGxpc3QgYSB3
+ZWVrIGFnby4NCkxpbnV4IDQuNS1yYzEgYXBwZWFyZWQgMyBkYXlzIGFnby4NClRoZSBmYXN0ZXN0
+IHBvc3NpYmxlIGZvciBtYWlubGluZSBpbmNsdXNpb24gaXMgNC41LXJjMiBvciAzLg0KDQpZb3Ug
+Y2Fubm90IHNpbXBseSBleHBlY3QgdGhlIHBhdGNoIHRvIGJlIGluY2x1ZGVkIGluIHRoZSBtYWlp
+bmxpbmUgdGhhdCBmYXN0Lg0KDQo=
