@@ -1,142 +1,53 @@
-From: Mathieu Poirier <mathieu.poirier-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH V5 06/14] soc: tegra: pmc: Fix checking of valid partitions
-Date: Fri, 29 Jan 2016 10:08:30 -0700
-Message-ID: <CANLsYkxY5P2wQxGev0veN39nD-1cTVkZCVpX9jca7da39JJpWg@mail.gmail.com>
-References: <1453998832-27383-1-git-send-email-jonathanh@nvidia.com>
-	<1453998832-27383-7-git-send-email-jonathanh@nvidia.com>
+From: Tejun Heo <tj@kernel.org>
+Subject: Re: [PATCH] workqueue: warn if memory reclaim tries to flush
+ !WQ_MEM_RECLAIM workqueue
+Date: Fri, 29 Jan 2016 13:28:56 -0500
+Message-ID: <20160129182856.GP3628@mtj.duckdns.org>
+References: <20151203093350.GP17308@twins.programming.kicks-ass.net>
+ <20151203100018.GO11639@twins.programming.kicks-ass.net>
+ <20151203144811.GA27463@mtj.duckdns.org>
+ <20151203150442.GR17308@twins.programming.kicks-ass.net>
+ <20151203150604.GC27463@mtj.duckdns.org>
+ <20151203192616.GJ27463@mtj.duckdns.org>
+ <20160126173843.GA11115@ulmo.nvidia.com>
+ <20160128101210.GC6357@twins.programming.kicks-ass.net>
+ <20160129110941.GK32380@htj.duckdns.org>
+ <20160129151739.GA1087@worktop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1453998832-27383-7-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <owner-linux-mm@kvack.org>
+Content-Disposition: inline
+In-Reply-To: <20160129151739.GA1087@worktop>
+Sender: owner-linux-mm@kvack.org
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Ulrich Obergfell <uobergfe@redhat.com>, Ingo Molnar <mingo@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, kernel-team@fb.com, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, rmk+kernel@arm.linux.org.uk, Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 28 January 2016 at 09:33, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> The tegra power partitions are referenced by a numerical ID which are
-> the same values programmed into the PMC registers for controlling the
-> partition. For a given device, the valid partition IDs may not be
-> contiguous and so simply checking that an ID is not greater than the
-> maximum ID supported may not mean it is valid. Fix this by adding a
-> bitmap for representing the valid partitions of a device and add a
-> helper function will test if the partition is valid.
->
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/soc/tegra/pmc.c | 21 +++++++++++++++++----
->  include/soc/tegra/pmc.h |  1 +
->  2 files changed, 18 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 35ee60fd17be..032dd5c17130 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -132,6 +132,7 @@ struct tegra_pmc_soc {
->   * @cpu_pwr_good_en: CPU power good signal is enabled
->   * @lp0_vec_phys: physical base address of the LP0 warm boot code
->   * @lp0_vec_size: size of the LP0 warm boot code
-> + * @powergates_valid: Bitmap of valid power gates
->   * @powergates_lock: mutex for power gate register access
->   */
->  struct tegra_pmc {
-> @@ -156,6 +157,7 @@ struct tegra_pmc {
->         bool cpu_pwr_good_en;
->         u32 lp0_vec_phys;
->         u32 lp0_vec_size;
-> +       DECLARE_BITMAP(powergates_valid, TEGRA_POWERGATE_MAX);
->
->         struct mutex powergates_lock;
->  };
-> @@ -180,6 +182,11 @@ static inline bool tegra_powergate_state(int id)
->         return (tegra_pmc_readl(PWRGATE_STATUS) & BIT(id)) != 0;
->  }
->
-> +static inline bool tegra_powergate_is_valid(int id)
-> +{
-> +       return test_bit(id, pmc->powergates_valid);
-> +}
-> +
->  /**
->   * tegra_powergate_set() - set the state of a partition
->   * @id: partition ID
-> @@ -213,7 +220,7 @@ static int tegra_powergate_set(unsigned int id, bool new_state)
->   */
->  int tegra_powergate_power_on(unsigned int id)
->  {
-> -       if (!pmc->soc || id >= pmc->soc->num_powergates)
-> +       if (!tegra_powergate_is_valid(id))
->                 return -EINVAL;
+Hey, Peter.
 
-The "!pmc-soc" condition is no longer needed?  If so the changelog
-should reflect that or a new patch that deals with just that should be
-etched.  The same comment applies for the rest of the patch.
+On Fri, Jan 29, 2016 at 04:17:39PM +0100, Peter Zijlstra wrote:
+> On Fri, Jan 29, 2016 at 06:09:41AM -0500, Tejun Heo wrote:
+> >  I posted a patch to disable
+> > disable flush dependency checks on those workqueues and there's a
+> > outreachy project to weed out the users of the old interface, so
+> > hopefully this won't be an issue soon.
+> 
+> Will that same project review all workqueue users for the strict per-cpu
+> stuff, so we can finally kill that weird stuff you do on hotplug?
 
->
->         return tegra_powergate_set(id, true);
-> @@ -225,7 +232,7 @@ int tegra_powergate_power_on(unsigned int id)
->   */
->  int tegra_powergate_power_off(unsigned int id)
->  {
-> -       if (!pmc->soc || id >= pmc->soc->num_powergates)
-> +       if (!tegra_powergate_is_valid(id))
->                 return -EINVAL;
->
->         return tegra_powergate_set(id, false);
-> @@ -240,7 +247,7 @@ int tegra_powergate_is_powered(unsigned int id)
->  {
->         int status;
->
-> -       if (!pmc->soc || id >= pmc->soc->num_powergates)
-> +       if (!tegra_powergate_is_valid(id))
->                 return -EINVAL;
->
->         mutex_lock(&pmc->powergates_lock);
-> @@ -258,7 +265,7 @@ int tegra_powergate_remove_clamping(unsigned int id)
->  {
->         u32 mask;
->
-> -       if (!pmc->soc || id >= pmc->soc->num_powergates)
-> +       if (!tegra_powergate_is_valid(id))
->                 return -EINVAL;
->
->         mutex_lock(&pmc->powergates_lock);
-> @@ -1118,6 +1125,7 @@ static int __init tegra_pmc_early_init(void)
->         const struct of_device_id *match;
->         struct device_node *np;
->         struct resource regs;
-> +       unsigned int i;
->         bool invert;
->         u32 value;
->
-> @@ -1167,6 +1175,11 @@ static int __init tegra_pmc_early_init(void)
->                 return -ENXIO;
->         }
->
-> +       /* Create a bit-mask of the valid partitions */
-> +       for (i = 0; i < pmc->soc->num_powergates; i++)
-> +               if (pmc->soc->powergates[i])
-> +                       set_bit(i, pmc->powergates_valid);
-> +
->         mutex_init(&pmc->powergates_lock);
->
->         /*
-> diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
-> index 07e332dd44fb..e9e53473a63e 100644
-> --- a/include/soc/tegra/pmc.h
-> +++ b/include/soc/tegra/pmc.h
-> @@ -72,6 +72,7 @@ int tegra_pmc_cpu_remove_clamping(unsigned int cpuid);
->  #define TEGRA_POWERGATE_AUD    27
->  #define TEGRA_POWERGATE_DFD    28
->  #define TEGRA_POWERGATE_VE2    29
-> +#define TEGRA_POWERGATE_MAX    TEGRA_POWERGATE_VE2
->
->  #define TEGRA_POWERGATE_3D0    TEGRA_POWERGATE_3D
->
-> --
-> 2.1.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe devicetree" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Unfortunately not.  We do want to distinguish cpu-affine for
+correctness and as an optimization; however, making that distinction
+is unlikely to make the dynamic worker affinity binding go away.  We
+can't forcifully shut down workers which are executing work items
+which are affine as an optimization when the CPU goes down.
+
+Thanks.
+
+-- 
+tejun
+
+--
+To unsubscribe, send a message with 'unsubscribe linux-mm' in
+the body to majordomo@kvack.org.  For more info on Linux MM,
+see: http://www.linux-mm.org/ .
+Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
