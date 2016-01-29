@@ -1,33 +1,74 @@
-From: Peter Zijlstra <peterz-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Subject: Re: [PATCH] workqueue: warn if memory reclaim tries to flush
- !WQ_MEM_RECLAIM workqueue
-Date: Fri, 29 Jan 2016 16:17:39 +0100
-Message-ID: <20160129151739.GA1087@worktop>
-References: <20151203002810.GJ19878@mtj.duckdns.org>
- <20151203093350.GP17308@twins.programming.kicks-ass.net>
- <20151203100018.GO11639@twins.programming.kicks-ass.net>
- <20151203144811.GA27463@mtj.duckdns.org>
- <20151203150442.GR17308@twins.programming.kicks-ass.net>
- <20151203150604.GC27463@mtj.duckdns.org>
- <20151203192616.GJ27463@mtj.duckdns.org>
- <20160126173843.GA11115@ulmo.nvidia.com>
- <20160128101210.GC6357@twins.programming.kicks-ass.net>
- <20160129110941.GK32380@htj.duckdns.org>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH V5 10/14] Documentation: DT: bindings: Add power domain
+ info for NVIDIA PMC
+Date: Fri, 29 Jan 2016 10:06:25 -0600
+Message-ID: <20160129160625.GA21918@rob-hp-laptop>
+References: <1453998832-27383-1-git-send-email-jonathanh@nvidia.com>
+ <1453998832-27383-11-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-pm-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20160129110941.GK32380-piEFEHQLUPpN0TnZuCh8vA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Ulrich Obergfell <uobergfe-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Ingo Molnar <mingo-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Andrew Morton <akpm-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-team-b10kYP2dOMg@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rmk+kernel-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org, Johannes Weiner <hannes-druUgvl0LCNAfugRpC6u6w@public.gmane.org>, linux-mm-Bw31MaZKKs3YtjvyW6yDsg@public.gmane.org
+In-Reply-To: <1453998832-27383-11-git-send-email-jonathanh@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jan 29, 2016 at 06:09:41AM -0500, Tejun Heo wrote:
->  I posted a patch to disable
-> disable flush dependency checks on those workqueues and there's a
-> outreachy project to weed out the users of the old interface, so
-> hopefully this won't be an issue soon.
+On Thu, Jan 28, 2016 at 04:33:48PM +0000, Jon Hunter wrote:
+> Add power-domain binding documentation for the NVIDIA PMC driver in
+> order to support generic power-domains.
+> 
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 55 ++++++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> index 53aa5496c5cf..3c77373aa826 100644
+> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+> @@ -1,5 +1,7 @@
+>  NVIDIA Tegra Power Management Controller (PMC)
+>  
+> +== Power Management Controller Node ==
+> +
+>  The PMC block interacts with an external Power Management Unit. The PMC
+>  mostly controls the entry and exit of the system from different sleep
+>  modes. It provides power-gating controllers for SoC and CPU power-islands.
+> @@ -70,6 +72,10 @@ Optional properties for hardware-triggered thermal reset (inside 'i2c-thermtrip'
+>                       Defaults to 0. Valid values are described in section 12.5.2
+>                       "Pinmux Support" of the Tegra4 Technical Reference Manual.
+>  
+> +Optional nodes:
+> +- powergates : This node contains a hierarchy of power domain nodes, which
+> +	       should match the powergates on the Tegra SoC.
+> +
+>  Example:
+>  
+>  / SoC dts including file
+> @@ -115,3 +121,52 @@ pmc@7000f400 {
+>  	};
+>  	...
+>  };
+> +
+> +
+> +== PM Domain Nodes ==
+> +
+> +Each of the PM domain nodes represents a power-domain on the Tegra SoC
+> +that can be power-gated by the PMC and should be named appropriately.
+> +
+> +Required properties:
+> +  - clocks: Must contain an entry for each clock required by the PMC for
+> +    controlling a power-gate. See ../clocks/clock-bindings.txt for details.
+> +  - resets: Must contain an entry for each reset required by the PMC for
+> +    controlling a power-gate. See ../reset/reset.txt for details.
+> +  - nvidia,powergate: Integer cell that contains an identifier for the PMC
+> +    power-gate that is associated with the power-domain. Please refer to
+> +    the Tegra TRM for more details.
 
-Will that same project review all workqueue users for the strict per-cpu
-stuff, so we can finally kill that weird stuff you do on hotplug?
+Why not make this value be the power-domain cell for consumers and the 
+pmc be the phandle. Then use reg property for the subnodes. That avoids 
+a custom property.
+
+> +  - #power-domain-cells: Must be 0.
