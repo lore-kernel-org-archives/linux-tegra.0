@@ -1,53 +1,45 @@
 From: Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH] workqueue: warn if memory reclaim tries to flush
- !WQ_MEM_RECLAIM workqueue
-Date: Fri, 29 Jan 2016 13:28:56 -0500
-Message-ID: <20160129182856.GP3628@mtj.duckdns.org>
-References: <20151203093350.GP17308@twins.programming.kicks-ass.net>
+Subject: Re: [PATCH wq/for-4.5-fixes] workqueue: skip flush dependency checks
+ for legacy workqueues
+Date: Fri, 29 Jan 2016 13:32:03 -0500
+Message-ID: <20160129183203.GQ3628@mtj.duckdns.org>
+References: <20151203002810.GJ19878@mtj.duckdns.org>
+ <20151203093350.GP17308@twins.programming.kicks-ass.net>
  <20151203100018.GO11639@twins.programming.kicks-ass.net>
  <20151203144811.GA27463@mtj.duckdns.org>
  <20151203150442.GR17308@twins.programming.kicks-ass.net>
  <20151203150604.GC27463@mtj.duckdns.org>
  <20151203192616.GJ27463@mtj.duckdns.org>
  <20160126173843.GA11115@ulmo.nvidia.com>
- <20160128101210.GC6357@twins.programming.kicks-ass.net>
- <20160129110941.GK32380@htj.duckdns.org>
- <20160129151739.GA1087@worktop>
+ <20160129105946.GJ32380@htj.duckdns.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <owner-linux-mm@kvack.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20160129151739.GA1087@worktop>
-Sender: owner-linux-mm@kvack.org
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Ulrich Obergfell <uobergfe@redhat.com>, Ingo Molnar <mingo@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, kernel-team@fb.com, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, rmk+kernel@arm.linux.org.uk, Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org
+In-Reply-To: <20160129105946.GJ32380@htj.duckdns.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ulrich Obergfell <uobergfe@redhat.com>, Ingo Molnar <mingo@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, kernel-team@fb.com, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hey, Peter.
-
-On Fri, Jan 29, 2016 at 04:17:39PM +0100, Peter Zijlstra wrote:
-> On Fri, Jan 29, 2016 at 06:09:41AM -0500, Tejun Heo wrote:
-> >  I posted a patch to disable
-> > disable flush dependency checks on those workqueues and there's a
-> > outreachy project to weed out the users of the old interface, so
-> > hopefully this won't be an issue soon.
+On Fri, Jan 29, 2016 at 05:59:46AM -0500, Tejun Heo wrote:
+> fca839c00a12 ("workqueue: warn if memory reclaim tries to flush
+> !WQ_MEM_RECLAIM workqueue") implemented flush dependency warning which
+> triggers if a PF_MEMALLOC task or WQ_MEM_RECLAIM workqueue tries to
+> flush a !WQ_MEM_RECLAIM workquee.
 > 
-> Will that same project review all workqueue users for the strict per-cpu
-> stuff, so we can finally kill that weird stuff you do on hotplug?
+> This assumes that workqueues marked with WQ_MEM_RECLAIM sit in memory
+> reclaim path and making it depend on something which may need more
+> memory to make forward progress can lead to deadlocks.  Unfortunately,
+> workqueues created with the legacy create*_workqueue() interface
+> always have WQ_MEM_RECLAIM regardless of whether they are depended
+> upon memory reclaim or not.  These spurious WQ_MEM_RECLAIM markings
+> cause spurious triggering of the flush dependency checks.
+...
 
-Unfortunately not.  We do want to distinguish cpu-affine for
-correctness and as an optimization; however, making that distinction
-is unlikely to make the dynamic worker affinity binding go away.  We
-can't forcifully shut down workers which are executing work items
-which are affine as an optimization when the CPU goes down.
+Applied to wq/for-4.5-fixes.
 
 Thanks.
 
 -- 
 tejun
-
---
-To unsubscribe, send a message with 'unsubscribe linux-mm' in
-the body to majordomo@kvack.org.  For more info on Linux MM,
-see: http://www.linux-mm.org/ .
-Don't email: <a href=mailto:"dont@kvack.org"> email@kvack.org </a>
