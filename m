@@ -1,125 +1,91 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V5 05/14] soc: tegra: pmc: Wait for powergate state to
- change
-Date: Wed, 3 Feb 2016 09:20:07 +0000
-Message-ID: <56B1C647.4060504@nvidia.com>
+Subject: Re: [PATCH V5 08/14] PM / Domains: Add function to remove a pm-domain
+Date: Wed, 3 Feb 2016 10:51:40 +0000
+Message-ID: <56B1DBBC.5020509@nvidia.com>
 References: <1453998832-27383-1-git-send-email-jonathanh@nvidia.com>
- <1453998832-27383-6-git-send-email-jonathanh@nvidia.com>
- <CANLsYkycbEo+wyMX8RJ9H-S5kDTjQR4nnDZc5gvf2kShOZAv9w@mail.gmail.com>
- <56AF613A.1000909@nvidia.com>
+ <1453998832-27383-9-git-send-email-jonathanh@nvidia.com>
+ <CAPDyKFqJLdoee4a9819XukXTmYyd3pue452K_zbiV6XhfA=fTw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56AF613A.1000909-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <CAPDyKFqJLdoee4a9819XukXTmYyd3pue452K_zbiV6XhfA=fTw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mathieu Poirier <mathieu.poirier-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 01/02/16 13:44, Jon Hunter wrote:
-> 
-> On 29/01/16 16:58, Mathieu Poirier wrote:
->> On 28 January 2016 at 09:33, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>> Currently, the function tegra_powergate_set() simply sets the desired
->>> powergate state but does not wait for the state to change. In most cases
->>> we should wait for the state to change before proceeding. Currently, there
->>> is a case for tegra114 and tegra124 devices where we do not wait when
->>> starting the secondary CPU as this is not necessary. However, this is only
->>> done at boot time and so waiting here will only have a small impact on
->>> boot time. Therefore, update tegra_powergate_set() to wait when setting
->>> the powergate.
->>>
->>> By adding this feature, we can also eliminate the polling loop from
->>> tegra30_boot_secondary().
->>>
->>> A function has been added for checking the status of the powergate and
->>> so update the tegra_powergate_is_powered() to use this macro as well.
->>>
->>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>> ---
->>>  arch/arm/mach-tegra/platsmp.c | 16 +++-------------
->>>  drivers/soc/tegra/pmc.c       |  9 ++++++++-
->>>  2 files changed, 11 insertions(+), 14 deletions(-)
->>>
->>> diff --git a/arch/arm/mach-tegra/platsmp.c b/arch/arm/mach-tegra/platsmp.c
->>> index f3f61dbbda97..75620ae73913 100644
->>> --- a/arch/arm/mach-tegra/platsmp.c
->>> +++ b/arch/arm/mach-tegra/platsmp.c
->>> @@ -108,19 +108,9 @@ static int tegra30_boot_secondary(unsigned int cpu, struct task_struct *idle)
->>>          * be un-gated by un-toggling the power gate register
->>>          * manually.
->>>          */
->>> -       if (!tegra_pmc_cpu_is_powered(cpu)) {
->>> -               ret = tegra_pmc_cpu_power_on(cpu);
->>> -               if (ret)
->>> -                       return ret;
->>> -
->>> -               /* Wait for the power to come up. */
->>> -               timeout = jiffies + msecs_to_jiffies(100);
->>> -               while (!tegra_pmc_cpu_is_powered(cpu)) {
->>> -                       if (time_after(jiffies, timeout))
->>> -                               return -ETIMEDOUT;
->>> -                       udelay(10);
->>> -               }
->>> -       }
->>> +       ret = tegra_pmc_cpu_power_on(cpu);
->>> +       if (ret)
->>> +               return ret;
->>>
->>>  remove_clamps:
->>>         /* CPU partition is powered. Enable the CPU clock. */
->>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->>> index 99cb2fdd29e1..35ee60fd17be 100644
->>> --- a/drivers/soc/tegra/pmc.c
->>> +++ b/drivers/soc/tegra/pmc.c
->>> @@ -28,6 +28,7 @@
->>>  #include <linux/export.h>
->>>  #include <linux/init.h>
->>>  #include <linux/io.h>
->>> +#include <linux/iopoll.h>
->>>  #include <linux/of.h>
->>>  #include <linux/of_address.h>
->>>  #include <linux/platform_device.h>
->>> @@ -186,6 +187,9 @@ static inline bool tegra_powergate_state(int id)
->>>   */
->>>  static int tegra_powergate_set(unsigned int id, bool new_state)
->>>  {
->>> +       bool status;
->>> +       int err;
->>> +
->>>         mutex_lock(&pmc->powergates_lock);
->>>
->>>         if (tegra_powergate_state(id) == new_state) {
->>> @@ -195,9 +199,12 @@ static int tegra_powergate_set(unsigned int id, bool new_state)
->>>
->>>         tegra_pmc_writel(PWRGATE_TOGGLE_START | id, PWRGATE_TOGGLE);
->>>
->>> +       err = readx_poll_timeout(tegra_powergate_state, id, status,
->>> +                                status == new_state, 10, 100000);
->>> +
+On 02/02/16 15:35, Ulf Hansson wrote:
+> On 28 January 2016 at 17:33, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> The genpd framework allows users to add power-domains via the
+>> pm_genpd_init() function, however, there is no corresponding function
+>> to remove a power-domain. For most devices this may be fine as the power
+>> domains are never removed, however, for devices that wish to populate
+>> the power-domains from within a driver, having the ability to remove a
+>> power domain if the probing of the device fails or the driver is unloaded
+>> is necessary. Therefore, add a function to remove a power-domain. Please
+>> note that the power domain can only be removed if there are no devices
+>> using the power-domain and it is not linked to another domain.
 >>
->> I understand (and agree) with the goal of this patch but I wonder (and
->> I don't know much about the system/context) if holding a mutex while
->> sleeping won't incur adverse effect on other parts of the system that
->> weren't use to see this wait.  One way to fix this might be to use
->> "mutex_trylock()" and let callers retry as they see fit if an
->> operation is already in progress.
+>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  drivers/base/power/domain.c | 26 ++++++++++++++++++++++++++
+>>  include/linux/pm_domain.h   |  5 +++++
+>>  2 files changed, 31 insertions(+)
+>>
+>> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+>> index 45e3641b427d..b4120121bcac 100644
+>> --- a/drivers/base/power/domain.c
+>> +++ b/drivers/base/power/domain.c
+>> @@ -1529,6 +1529,32 @@ void pm_genpd_init(struct generic_pm_domain *genpd,
+>>  }
+>>  EXPORT_SYMBOL_GPL(pm_genpd_init);
+>>
+>> +/**
+>> + * pm_genpd_remove - Remove a generic I/O PM domain object.
+>> + * @genpd: PM domain object to remove.
+>> + */
+>> +int pm_genpd_remove(struct generic_pm_domain *genpd)
+>> +{
+>> +       if (IS_ERR_OR_NULL(genpd))
+>> +               return -EINVAL;
+>> +
+>> +       mutex_lock(&genpd->lock);
 > 
-> I could unlock the mutex after writing the TOGGLE_START register. I
-> don't believe that we need to waiting for a powergate to change before
-> writing again.
+> pm_genpd_summary_show() first locks the gpd_list_lock, then the genpd lock.
+> 
+> Please preserve that order here as well, to prevent potential deadlocks.
 
-I was not thinking clearly here, the whole reason for the locking is to
-protect the base address as we swap it during the probe.
+Ok, yes good point.
 
-In general, I prefer to keep it the way we have it in this patch. By
-using mutex_trylock() would mean that now clients would have to handle
-retrying if they cannot get the lock and make it more complex.
-Powergates should not be turned on and off that frequently and so
-hopefully a delay here should be tolerable. For CPUs, this should only
-be used on cold boot and not during CPU hotplug events.
+>> +
+>> +       if (!list_empty(&genpd->master_links)
+>> +           || !list_empty(&genpd->slave_links) || genpd->device_count) {
+>> +               mutex_unlock(&genpd->lock);
+>> +               return -EBUSY;
+>> +       }
+>> +
+>> +       mutex_lock_nested(&gpd_list_lock, SINGLE_DEPTH_NESTING);
+> 
+> Why the nesting, can this really cause lockdep warnings?
 
-Cheers
+Hmmm, yes I don't believe that is needed here as it should be a
+different class. Will fix.
+
+>> +       list_del(&genpd->gpd_list_node);
+>> +       mutex_unlock(&gpd_list_lock);
+>> +       mutex_unlock(&genpd->lock);
+> 
+> Before returning, you need to make sure there isn't a scheduled work
+> for powering off the genpd.
+> That might happen for example happen via genpd_poweroff_unused().
+> 
+> Otherwise, the caller of pm_genpd_remove() might free the memory while
+> the genpd struct is still in use...
+> 
+> I assume a cancel_delayed_work_sync() should do the trick here.
+
+Good point. I will address that too.
+
 Jon
