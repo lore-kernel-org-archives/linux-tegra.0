@@ -1,53 +1,67 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 0/4] Fix headphone detection on Acer Chromebook 13
-Date: Thu, 4 Feb 2016 18:03:26 +0000
-Message-ID: <20160204180326.GP4455@sirena.org.uk>
+From: Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/4] soc/sound: tegra_max98090: do not invert headphone
+ jack
+Date: Thu, 4 Feb 2016 12:05:50 -0700
+Message-ID: <56B3A10E.4010508@gmail.com>
 References: <1454563862-1971-1-git-send-email-sctincman@gmail.com>
+ <1454563862-1971-2-git-send-email-sctincman@gmail.com>
+ <56B37E19.6010002@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="gIhrS3Q23Nl70UJ5"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1454563862-1971-1-git-send-email-sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <56B37E19.6010002-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 02/04/2016 09:36 AM, Stephen Warren wrote:
+> On 02/03/2016 10:30 PM, Jonathan Tinkham wrote:
+>> The headphone jack should not be inverted
+>
+> Have you tested this on Venice2 as well as Nyan? I'm pretty sure 
+> Venice2 was tested when this driver was written, and whoever added 
+> Nyan support to the kernel simply assumed it would work. As such, my 
+> suspicion is that this series will break Venice2 even as it fixes Nyan.
 
---gIhrS3Q23Nl70UJ5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I have not tested this on Venice2, only on Nyan. That seems like a 
+plausible cause and reasonable suspicion.
 
-On Wed, Feb 03, 2016 at 10:30:58PM -0700, Jonathan Tinkham wrote:
+> Why doesn't user-space expect what the kernel actually implements? The 
+> kernel should be defining the control naming.
+>
+> Which user-space are you using specifically, and which part of it 
+> expects particular naming?
+>
+> Perhaps this series needs to be parametrized based on a flag in DT, 
+> rather than switching the hard-coded values, so that only Venice2 can 
+> be affected?
 
-> Jonathan Tinkham (4):
->   soc/sound: tegra_max98090: do not invert headphone jack
->   sound/soc: tegra_max98090: rename headphone jack DAPM
->   sound/soc: tegra_max98090: document headphone jack rename
->   soc/sound: tegra_max98090: update dts affected by rename
+Specifically pulse-audio and alsa under Arch Linux.
 
-Please try to use subject lines reflecting the style for the subsystem -
-this makes it easier for people to spot relevant content.  The above
-isn't even internally consistent :(
+I was referencing 'Documentation/sound/alsa/soc/dapm.txt' with regards 
+to control names. While it is possible to add another entry into the 
+user-space configuration, I took this documentation as a definition of 
+kernel control naming schemes, and thought the driver had used a 
+non-standard naming scheme (or at least, not a consistent one).
 
---gIhrS3Q23Nl70UJ5
-Content-Type: application/pgp-signature; name="signature.asc"
+> On 02/03/2016 10:31 PM, Jonathan Tinkham wrote:
+>> Update device-tree bindings to reflect the rename of the board's
+>> headphone jack.
+>
+> This looks like an incompatible change to the DT. While you've fixed 
+> the DT, which will fix new installations, old DTs now won't work. This 
+> breaks DT ABI. Any DT change needs to be backwards compatible, i.e. 
+> the old name should still work and be documented as a legacy value. 
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+I see that now. If the inversion behavior differs between venice2 and 
+nyan, then another compatible string would need to be added anyways, 
+correct? As you mentioned above, this might need to be done anyways for 
+the rename.
 
-iQEcBAEBCAAGBQJWs5JuAAoJECTWi3JdVIfQDVcH/2bISj8BZpcEaTMwXuyWrfQ8
-DybA+ST6T6VI9ceLQrnDul2Q/4zuxEkW22uRKCtaNrvMIH4XdU8QDiRzcjLuTrCE
-ZvWPmvrch6rHIchcfM7sklnmn8XPL6w5LRF3EmZ0Fy+Zoyrs1Pr1WfIQK4mI2fRK
-GSkME8UNEqwYyVHp6jn+mgjIVibM6HdmxG4h7BpHLziZBZkS4vagdCN9l2u4xQ/y
-DI9jvVJP4fZf2NF2K+sp2YviFoq7p2tZiGkvK+q3AWiQaBcPk0eBKkxFWML0R+HB
-meZBf/kjZRQUaAfEJMqbW3ySp8RKS0JYPOML4hWZukQXN6+QaSfF2dqVyrBqmUA=
-=1li2
------END PGP SIGNATURE-----
-
---gIhrS3Q23Nl70UJ5--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Something like:
+- "compatible = nvidia,tegra-audio-max98090" implements old inversion 
+behavior and leaves the switch as "Headphones" to avoid breaking older DTs
+- "compatible = nvidia,tegra-{venice2,nyan}-audio-max98090" that 
+separates the inversion behavior and also introduces the rename
