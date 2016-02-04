@@ -1,190 +1,28 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH V5 11/14] soc: tegra: pmc: Add generic PM domain support
-Date: Thu, 4 Feb 2016 16:44:59 +0100
-Message-ID: <CAPDyKFpnUJA2pLSUOw8rkjyXLY6b__TM=38jsvYAZVhe+DS=zg@mail.gmail.com>
-References: <1453998832-27383-1-git-send-email-jonathanh@nvidia.com>
-	<1453998832-27383-12-git-send-email-jonathanh@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 1/4] soc/sound: tegra_max98090: do not invert headphone
+ jack
+Date: Thu, 4 Feb 2016 09:36:41 -0700
+Message-ID: <56B37E19.6010002@wwwdotorg.org>
+References: <1454563862-1971-1-git-send-email-sctincman@gmail.com>
+ <1454563862-1971-2-git-send-email-sctincman@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1453998832-27383-12-git-send-email-jonathanh@nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1454563862-1971-2-git-send-email-sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 28 January 2016 at 17:33, Jon Hunter <jonathanh@nvidia.com> wrote:
-> Adds generic PM support to the PMC driver where the PM domains are
-> populated from device-tree and the PM domain consumer devices are
-> bound to their relevant PM domains via device-tree as well.
->
-> Update the tegra_powergate_sequence_power_up() API so that internally
-> it calls the same tegra_powergate_xxx functions that are used by the
-> tegra generic power domain code for consistency.
->
-> This is based upon work by Thierry Reding <treding@nvidia.com>
-> and Vince Hsu <vinceh@nvidia.com>.
->
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  drivers/soc/tegra/pmc.c                     | 470 ++++++++++++++++++++++++++--
->  include/dt-bindings/power/tegra-powergate.h |  36 +++
->  include/soc/tegra/pmc.h                     |  39 +--
+On 02/03/2016 10:30 PM, Jonathan Tinkham wrote:
+> The headphone jack should not be inverted
 
-I suggest you split the header changes into a separate patch.
-
-Moreover, these new DT definitions should be documented in the patch
-describing the new powergate DT bindings. At least a simple list
-providing the available options.
-
-[...]
-
->
-> +static void tegra_powergate_disable_clocks(struct tegra_powergate *pg)
-> +{
-> +       unsigned int i;
-> +
-> +       for (i = 0; i < pg->num_clks; i++)
-> +               clk_disable_unprepare(pg->clks[i]);
-> +}
-> +
-> +static int tegra_powergate_enable_clocks(struct tegra_powergate *pg)
-> +{
-> +       unsigned int i;
-> +       int err;
-> +
-> +       for (i = 0; i < pg->num_clks; i++) {
-> +               err = clk_prepare_enable(pg->clks[i]);
-> +               if (err)
-> +                       goto out;
-> +       }
-> +
-> +       return 0;
-> +
-> +out:
-> +       while (i--)
-> +               clk_disable_unprepare(pg->clks[i]);
-> +
-> +       return err;
-> +}
-
-I have seen similar code around in other PM domains, dealing with
-enabling/disabling a *list* of clocks.
-Perhaps we should invent a new clock API that helps with this to
-prevents code duplication!?
-
-[...]
-
->  /**
->   * tegra_powergate_power_on() - power on partition
->   * @id: partition ID
-> @@ -319,35 +512,20 @@ EXPORT_SYMBOL(tegra_powergate_remove_clamping);
->  int tegra_powergate_sequence_power_up(unsigned int id, struct clk *clk,
->                                       struct reset_control *rst)
-
-There seems to be two viable ways for a driver to control tegra powergates.
-
-1)
-$Subject patch enables the use of runtime PM.
-
-2)
-The current tegra_powergate_sequence_power_up() and
-tegra_powergate_power_off() API.
-
-It seems fragile to allow both options, but perhaps your are
-protecting this with some lock to prevent concurrent accesses?
-
-Also, I assume you need the two options in a transition phase, before
-you have deployed runtime PM for these drivers?
-
-[...]
-
-> +static int tegra_powergate_of_get_clks(struct device *dev,
-> +                                      struct tegra_powergate *pg)
-> +{
-> +       struct clk *clk;
-> +       unsigned int i;
-> +       int err;
-> +
-> +       pg->num_clks = of_count_phandle_with_args(pg->of_node, "clocks",
-> +                                                 "#clock-cells");
-> +       if (pg->num_clks == 0)
-> +               return -ENODEV;
-> +
-> +       pg->clks = devm_kcalloc(dev, pg->num_clks, sizeof(clk), GFP_KERNEL);
-> +       if (!pg->clks)
-> +               return -ENOMEM;
-> +
-> +       for (i = 0; i < pg->num_clks; i++) {
-> +               pg->clks[i] = of_clk_get(pg->of_node, i);
-> +               if (IS_ERR(pg->clks[i])) {
-> +                       err = PTR_ERR(pg->clks[i]);
-> +                       goto err;
-> +               }
-> +       }
-> +
-> +       return 0;
-> +
-> +err:
-> +       while (i--)
-> +               clk_put(pg->clks[i]);
-> +
-> +       pg->num_clks = 0;
-> +
-> +       return err;
-> +}
-
-Fetching clocks like above function does, seems to be a quite common case.
-
-As I suggested to add an enable/disable API for a clock list, the
-similar can be done for creating the clock list.
-
-Just an idea...
-
-[...]
-
-> +
-> +static void tegra_powergate_remove(struct tegra_pmc *pmc)
-> +{
-> +       struct tegra_powergate *pg, *n;
-> +
-> +       list_for_each_entry_safe(pg, n, &pmc->powergates_list, node) {
-
-The tegra powergate driver will hold a list of nvidia powergates
-domains, and the generic PM domain will hold a list of all generic PM
-domains.
-
-Perhaps there's a way to allow the generic PM domain to control this
-by itself. If we for example used the struct device corresponding to
-the powergate driver, genpd could use it to distinguish between
-various instances of genpd structs..!? Maybe it would simplify the way
-to deal with removing domains?
-
-> +               of_genpd_del_provider(pg->of_node);
-> +
-> +               if (pg->parent) {
-> +                       if (WARN_ON(pm_genpd_remove_subdomain(pg->parent,
-> +                                                             &pg->genpd)))
-> +                               return;
-> +
-> +                       pg->parent = NULL;
-> +               }
-> +
-> +               if (WARN_ON(pm_genpd_remove(&pg->genpd)))
-> +                       return;
-> +
-> +               while (pg->num_clks--)
-> +                       clk_put(pg->clks[pg->num_clks]);
-> +
-> +               while (pg->num_resets--)
-> +                       reset_control_put(pg->resets[pg->num_resets]);
-> +
-> +               list_del(&pg->node);
-> +       }
-> +}
-> +
-
-[...]
-
-Kind regards
-Uffe
+Have you tested this on Venice2 as well as Nyan? I'm pretty sure Venice2 
+was tested when this driver was written, and whoever added Nyan support 
+to the kernel simply assumed it would work. As such, my suspicion is 
+that this series will break Venice2 even as it fixes Nyan.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
