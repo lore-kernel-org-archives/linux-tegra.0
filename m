@@ -1,25 +1,72 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 3/4] sound/soc: tegra_max98090: document headphone jack
- rename
-Date: Thu, 4 Feb 2016 09:39:08 -0700
-Message-ID: <56B37EAC.5010101@wwwdotorg.org>
-References: <1454563862-1971-1-git-send-email-sctincman@gmail.com>
- <1454563862-1971-4-git-send-email-sctincman@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [GIT PULL] clk: tegra: Fixes for v4.5-rc3
+Date: Thu,  4 Feb 2016 18:52:42 +0100
+Message-ID: <1454608362-8954-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1454563862-1971-4-git-send-email-sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+To: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/03/2016 10:31 PM, Jonathan Tinkham wrote:
-> Update device-tree bindings to reflect the rename of the board's
-> headphone jack.
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-This looks like an incompatible change to the DT. While you've fixed the 
-DT, which will fix new installations, old DTs now won't work. This 
-breaks DT ABI. Any DT change needs to be backwards compatible, i.e. the 
-old name should still work and be documented as a legacy value.
+Hi Mike, Stephen,
+
+The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f08d:
+
+  Linux 4.5-rc1 (2016-01-24 13:06:47 -0800)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.5-clk-fixes
+
+for you to fetch changes up to 5a1d5eff3ede4de4482015a9999336051054283f:
+
+  clk: tegra: super: Fix sparse warnings for functions not declared as static (2016-02-02 15:49:34 +0100)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+clk: tegra: Fixes for v4.5-rc3
+
+This set contains a bunch of miscellaneous fixes that have accumulated
+over the past couple of weeks, primarily for the Tegra210 support added
+in v4.5-rc1.
+
+----------------------------------------------------------------
+Amitoj Kaur Chawla (1):
+      clk: tegra: Add missing of_node_put()
+
+Andrew Bresticker (1):
+      clk: tegra: pll: Fix potential sleeping-while-atomic
+
+Jon Hunter (7):
+      clk: tegra: Add the APB2APE audio clock on Tegra210
+      clk: tegra: Fix clock sources for Tegra210 EMC
+      clk: tegra: Fix warning caused by pll_u failing to lock
+      clk: tegra: Use definition for pll_u override bit
+      clk: tegra: Fix sparse warning for pll_m
+      clk: tegra: Fix sparse warnings for functions not declared as static
+      clk: tegra: super: Fix sparse warnings for functions not declared as static
+
+Mark Kuo (2):
+      clk: tegra: Do not disable PLLE when under hardware control
+      clk: tegra: Fix PLLE SS coefficients
+
+Rhyland Klein (6):
+      clk: tegra: Fix divider on VI_I2C
+      clk: tegra: Remove improper flags for lock_enable
+      clk: tegra: Fix naming of MISC registers
+      clk: tegra: Fix the misnaming of nvenc from msenc
+      clk: tegra: Fix pllx dyn step calculation
+      clk: tegra: Fix typos around clearing PLLE bits during enable
+
+ drivers/clk/tegra/clk-emc.c              |   6 +-
+ drivers/clk/tegra/clk-id.h               |   1 +
+ drivers/clk/tegra/clk-pll.c              |  50 +++++++-----
+ drivers/clk/tegra/clk-tegra-periph.c     |   5 +-
+ drivers/clk/tegra/clk-tegra-super-gen4.c |   6 +-
+ drivers/clk/tegra/clk-tegra210.c         | 132 ++++++++++++++-----------------
+ include/dt-bindings/clock/tegra210-car.h |   2 +-
+ 7 files changed, 104 insertions(+), 98 deletions(-)
