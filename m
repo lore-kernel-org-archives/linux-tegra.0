@@ -1,37 +1,34 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] Use non-zero address for CRC calculations
-Date: Wed, 3 Feb 2016 09:43:19 -0700
-Message-ID: <56B22E27.8050603@wwwdotorg.org>
-References: <1454459458-7177-1-git-send-email-swarren@wwwdotorg.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1454459458-7177-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 0/4] Fix headphone detection on Acer Chromebook 13
+Date: Wed,  3 Feb 2016 22:30:58 -0700
+Message-ID: <1454563862-1971-1-git-send-email-sctincman@gmail.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/02/2016 05:30 PM, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> Currently, U-Boot's itest command cannot read from address 0. On Tegra20,
-> soc['ram-base'] can be 0, and is the address passed to itest. Modify the
-> code to use an offset from this address, so as not to use address 0.
->
-> Note that in Tegra30 and later, the RAM base is non-zero, so this issue
-> does not occur. This issue also only affects the "flash" command, and not
-> the "exec" command.
->
-> A patch is also in progress to fix the itest command in U-Boot. However,
-> fixing tegra-uboot-flasher not to use address 0 seems reasonable too, and
-> will immediately solve the issue irrespective of which U-Boot code-base is
-> in use.
->
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Untested so far since I'm working from home today due to snowfall and can't
-> remotely plug in my old Tegra20 HW. I'll test before I apply this tomorrow.
+Headphone output works, but headphone detection does not. The problem
+is improper inversion of the jack gpio, and improper naming of the
+DAPM switch. With these changes, headphone insertion and removal is
+picked up by userspace, and the switch properly toggled.
 
-Tested on Seaboard/Springbank and Jetson TK1, and applied.
+Jonathan Tinkham (4):
+  soc/sound: tegra_max98090: do not invert headphone jack
+  sound/soc: tegra_max98090: rename headphone jack DAPM
+  sound/soc: tegra_max98090: document headphone jack rename
+  soc/sound: tegra_max98090: update dts affected by rename
+
+ .../devicetree/bindings/sound/nvidia,tegra-audio-max98090.txt  |  6 +++---
+ arch/arm/boot/dts/tegra124-nyan.dtsi                           |  4 ++--
+ arch/arm/boot/dts/tegra124-venice2.dts                         |  4 ++--
+ sound/soc/tegra/tegra_max98090.c                               | 10 +++++-----
+ 4 files changed, 12 insertions(+), 12 deletions(-)
+
+-- 
+2.7.0
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
