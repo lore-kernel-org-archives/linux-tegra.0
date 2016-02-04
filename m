@@ -1,86 +1,33 @@
 From: Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH 1/4] soc/sound: tegra_max98090: do not invert headphone jack
-Date: Thu, 4 Feb 2016 11:17:14 -0800
-Message-ID: <CAEUnVG7bCgzC-f_Anaw6qayGsXi=_NrWZGRy7SSALkLVLPZnUQ@mail.gmail.com>
+Subject: Re: [PATCH 3/4] sound/soc: tegra_max98090: document headphone jack rename
+Date: Thu, 4 Feb 2016 11:22:52 -0800
+Message-ID: <CAEUnVG6DhFNcg64wKwbusxL=O_LBybv3wzFCjX+6vzLNFzuEDw@mail.gmail.com>
 References: <1454563862-1971-1-git-send-email-sctincman@gmail.com>
- <1454563862-1971-2-git-send-email-sctincman@gmail.com> <56B37E19.6010002@wwwdotorg.org>
- <56B3A10E.4010508@gmail.com>
+ <1454563862-1971-4-git-send-email-sctincman@gmail.com> <56B37EAC.5010101@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56B3A10E.4010508-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <56B37EAC.5010101-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Feb 4, 2016 at 11:05 AM, Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On 02/04/2016 09:36 AM, Stephen Warren wrote:
+On Thu, Feb 4, 2016 at 8:39 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> On 02/03/2016 10:31 PM, Jonathan Tinkham wrote:
 >>
->> On 02/03/2016 10:30 PM, Jonathan Tinkham wrote:
->>>
->>> The headphone jack should not be inverted
->>
->>
->> Have you tested this on Venice2 as well as Nyan? I'm pretty sure Venice2
->> was tested when this driver was written, and whoever added Nyan support to
->> the kernel simply assumed it would work. As such, my suspicion is that this
->> series will break Venice2 even as it fixes Nyan.
+>> Update device-tree bindings to reflect the rename of the board's
+>> headphone jack.
 >
 >
-> I have not tested this on Venice2, only on Nyan. That seems like a plausible
-> cause and reasonable suspicion.
+> This looks like an incompatible change to the DT. While you've fixed the DT,
+> which will fix new installations, old DTs now won't work. This breaks DT
+> ABI. Any DT change needs to be backwards compatible, i.e. the old name
+> should still work and be documented as a legacy value.
 >
->> Why doesn't user-space expect what the kernel actually implements? The
->> kernel should be defining the control naming.
->>
->> Which user-space are you using specifically, and which part of it expects
->> particular naming?
->>
->> Perhaps this series needs to be parametrized based on a flag in DT, rather
->> than switching the hard-coded values, so that only Venice2 can be affected?
->
->
-> Specifically pulse-audio and alsa under Arch Linux.
->
-> I was referencing 'Documentation/sound/alsa/soc/dapm.txt' with regards to
-> control names. While it is possible to add another entry into the user-space
-> configuration, I took this documentation as a definition of kernel control
-> naming schemes, and thought the driver had used a non-standard naming scheme
-> (or at least, not a consistent one).
->
->> On 02/03/2016 10:31 PM, Jonathan Tinkham wrote:
->>>
->>> Update device-tree bindings to reflect the rename of the board's
->>> headphone jack.
->>
->>
->> This looks like an incompatible change to the DT. While you've fixed the
->> DT, which will fix new installations, old DTs now won't work. This breaks DT
->> ABI. Any DT change needs to be backwards compatible, i.e. the old name
->> should still work and be documented as a legacy value.
->
->
-> I see that now. If the inversion behavior differs between venice2 and nyan,
-> then another compatible string would need to be added anyways, correct? As
-> you mentioned above, this might need to be done anyways for the rename.
 
-Venice2 and both nyan platforms do have different polarity of HP detect.
+These values are also present in the UCM config for the boards present
+in alsa-lib/conf/ucm/GoogleNyan
 
-For some boards we have an hd-invert property in DT.
-
-Would setting hp-det-gpio to active low in the pinmux achieve the same thing?
-
->
-> Something like:
-> - "compatible = nvidia,tegra-audio-max98090" implements old inversion
-> behavior and leaves the switch as "Headphones" to avoid breaking older DTs
-> - "compatible = nvidia,tegra-{venice2,nyan}-audio-max98090" that separates
-> the inversion behavior and also introduces the rename
->
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+It's better not to rely on drivers using a "standard" name, better to
+let the UCM file abstract it away.
