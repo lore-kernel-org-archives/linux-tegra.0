@@ -1,26 +1,52 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] pinctrl: tegra: move Tegra pinctrl drivers to sub-directory
-Date: Fri, 5 Feb 2016 15:17:34 +0100
-Message-ID: <CACRpkdawE1_b-7AW+2ZF94DF4k+JOkv=XXDB5bD6y084maDo6g@mail.gmail.com>
-References: <1453563008-30106-1-git-send-email-yamada.masahiro@socionext.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [RFC PATCH V2 3/8] genirq: Add runtime power management support
+ for IRQ chips
+Date: Fri, 5 Feb 2016 15:37:17 +0100
+Message-ID: <CACRpkdbE-Ny585yK+DBkNENpWyk8rSEvdRdvLgMTCBp13grp4w@mail.gmail.com>
+References: <1450349309-8107-1-git-send-email-jonathanh@nvidia.com>
+	<1450349309-8107-4-git-send-email-jonathanh@nvidia.com>
+	<CAPDyKFqZK4HYWgXam63=eCKAWsjwCiQbT5jdmgjqid_er3Sg1g@mail.gmail.com>
+	<569E1366.8070005@nvidia.com>
+	<alpine.DEB.2.11.1601201620450.3575@nanos>
+	<CAPDyKFrqQO6Mh7ew5YTW011a11LmFW7c+cZpAKmY8tovxjGmOw@mail.gmail.com>
+	<alpine.DEB.2.11.1601212026230.3886@nanos>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1453563008-30106-1-git-send-email-yamada.masahiro@socionext.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <alpine.DEB.2.11.1601212026230.3886@nanos>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+Cc: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Jiang Liu <jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Sat, Jan 23, 2016 at 4:30 PM, Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
+On Thu, Jan 21, 2016 at 8:51 PM, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org> wrote:
 
-> Tegra has several pinctrl drivers.  Now it is reasonable enough to
-> move them into drivers/pinctrl/tegra/.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> So as long as an interrupt handler is installed, there is no sane way that we
+> can decide to power down the irq chip, unless that chip has the magic ability
+> to relay incoming interrupts while powered down :)
 
-Patch applied with Thierry's ACK.
+Actually isn't that exactly what almost every SoC that supports
+deepsleep does?
+
+They power off the primary interrupt controller and arm the padring
+of the SoC with an asynchronous edge detector to wake up as soon
+as something happens on a few select lines, like a keypad button
+or whatnot.
+
+The asynchronous edge detector is handled by the ROM or some
+power-management microcontroller, which wakes up the system
+and restores power to the CPU and primary interrupt controller.
+That is the magic ability right there.
+
+Of course as the wakeup signal may be deasserted at the
+point the system actually comes back up, so the magic ROM
+power management unit then needs to latch
+any latent IRQs from some shadow register to the primary interrupt
+controller, which as far as I've seen is done by out-of-tree hacks
+similar to the irq_[get/set]_irqchip_state() implemented
+by Marc Zyngier, albeit for virtualization.
+
+I've not seen it on any non-primary interrupt controller though.
 
 Yours,
 Linus Walleij
