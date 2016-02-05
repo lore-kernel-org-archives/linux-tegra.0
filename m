@@ -1,58 +1,71 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/4] soc/sound: tegra_max98090: do not invert headphone
- jack
-Date: Thu, 4 Feb 2016 19:37:01 +0000
-Message-ID: <20160204193701.GS4455@sirena.org.uk>
-References: <1454563862-1971-1-git-send-email-sctincman@gmail.com>
- <1454563862-1971-2-git-send-email-sctincman@gmail.com>
- <56B37E19.6010002@wwwdotorg.org>
- <56B3A10E.4010508@gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] clk: tegra: Fix divider settings for Tegra210 pll_a
+Date: Fri, 5 Feb 2016 14:01:37 +0000
+Message-ID: <1454680897-9464-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="azZrKF05zqlgub2L"
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <56B3A10E.4010508-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+When setting the pll_a frequency, to what should be 368639844 Hz, the
+actual output frequency of the pll is 737279687 Hz (as reported by the
+debugfs clk_summary entry), which is double the expect frequency. The
+calculations for the pll frequency appear to be correct and the problem
+is caused by incorrect divider settings for the pll_a in the look-up
+table of multipliers and dividers. The P dividers for all entries in the
+table are all one less than they should be. Fix this by increasing the
+value of the P dividers by 1 to get the expected rates.
 
---azZrKF05zqlgub2L
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The rates in the table have been verified using the following equations:
 
-On Thu, Feb 04, 2016 at 12:05:50PM -0700, Jonathan Tinkham wrote:
+1. Integer NDIV (SDM_DIN = 0)
+   fout = (fref * n) / (m * p)
 
-> I was referencing 'Documentation/sound/alsa/soc/dapm.txt' with regards to
-> control names. While it is possible to add another entry into the user-space
-> configuration, I took this documentation as a definition of kernel control
-> naming schemes, and thought the driver had used a non-standard naming scheme
-> (or at least, not a consistent one).
+2. Fractional NDIV
+   fout = (fref * (n + 0.5 + (SDM_DIN/8192))) / (m * p)
 
-That's *not* ABI documentation, that's a random example of some kernel
-internal strings.
+Where SDM_DIN is a signed 16-bit value between 0xf000 and 0x1000.
 
-> I see that now. If the inversion behavior differs between venice2 and nyan,
-> then another compatible string would need to be added anyways, correct? As
-> you mentioned above, this might need to be done anyways for the rename.
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
 
-A property would be nicer.
+Thierry, Rhyland, please note that after this change, the pll_a settings
+match those in the nvidia downstream 3.18 kernel for Tegra210.
 
---azZrKF05zqlgub2L
-Content-Type: application/pgp-signature; name="signature.asc"
+ drivers/clk/tegra/clk-tegra210.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWs6hcAAoJECTWi3JdVIfQwtsH/0Xtt4UrZsRLT1LUoXCLoNU6
-TCE+D1MGRgw4Y5cHjzgCeOVZg1FFSkfohtyUTce9SW41PdZVPSq0F/OFnHnh4Avg
-61SHzJSKv2QnFiNA2ZptK2rwcElyd5BJXjpJiSb5OyvWHOa5fxmWDms2IDuwA7y7
-71tox5g4xwzuHMHqcCjzNwJFculdyzPH++BJw3cCcbiErxI4Fy1BYG2QnhXkKZBv
-WmCRqo8L8jh1Ts2BQD2pMjJIwuedIgQ3oBF5KdraLNpgxMgDIO0rTJsC0lkS5Fvw
-4qJM4SxPGqnmSVZWgOcK6eXdQByMoX3USdbSxFAqhEQYmae9Bu+2CBsJ2w+jxbo=
-=cz6L
------END PGP SIGNATURE-----
-
---azZrKF05zqlgub2L--
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index 637041fd53ad..5e0652d4876b 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -1761,15 +1761,15 @@ static struct div_nmp plla_nmp = {
+ };
+ 
+ static struct tegra_clk_pll_freq_table pll_a_freq_table[] = {
+-	{ 12000000, 282240000, 47, 1, 1, 1, 0xf148 }, /* actual: 282240234 */
+-	{ 12000000, 368640000, 61, 1, 1, 1, 0xfe15 }, /* actual: 368640381 */
+-	{ 12000000, 240000000, 60, 1, 2, 1,      0 },
+-	{ 13000000, 282240000, 43, 1, 1, 1, 0xfd7d }, /* actual: 282239807 */
+-	{ 13000000, 368640000, 56, 1, 1, 1, 0x06d8 }, /* actual: 368640137 */
+-	{ 13000000, 240000000, 55, 1, 2, 1,      0 }, /* actual: 238.3 MHz */
+-	{ 38400000, 282240000, 44, 3, 1, 1, 0xf333 }, /* actual: 282239844 */
+-	{ 38400000, 368640000, 57, 3, 1, 1, 0x0333 }, /* actual: 368639844 */
+-	{ 38400000, 240000000, 75, 3, 3, 1,      0 },
++	{ 12000000, 282240000, 47, 1, 2, 1, 0xf148 }, /* actual: 282240234 */
++	{ 12000000, 368640000, 61, 1, 2, 1, 0xfe15 }, /* actual: 368640381 */
++	{ 12000000, 240000000, 60, 1, 3, 1,      0 },
++	{ 13000000, 282240000, 43, 1, 2, 1, 0xfd7d }, /* actual: 282239807 */
++	{ 13000000, 368640000, 56, 1, 2, 1, 0x06d8 }, /* actual: 368640137 */
++	{ 13000000, 240000000, 55, 1, 3, 1,      0 }, /* actual: 238.3 MHz */
++	{ 38400000, 282240000, 44, 3, 2, 1, 0xf333 }, /* actual: 282239844 */
++	{ 38400000, 368640000, 57, 3, 2, 1, 0x0333 }, /* actual: 368639844 */
++	{ 38400000, 240000000, 75, 3, 4, 1,      0 },
+ 	{        0,         0,  0, 0, 0, 0,      0 },
+ };
+ 
+-- 
+2.1.4
