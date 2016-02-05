@@ -1,52 +1,64 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC PATCH V2 3/8] genirq: Add runtime power management support
- for IRQ chips
-Date: Fri, 5 Feb 2016 15:37:17 +0100
-Message-ID: <CACRpkdbE-Ny585yK+DBkNENpWyk8rSEvdRdvLgMTCBp13grp4w@mail.gmail.com>
-References: <1450349309-8107-1-git-send-email-jonathanh@nvidia.com>
-	<1450349309-8107-4-git-send-email-jonathanh@nvidia.com>
-	<CAPDyKFqZK4HYWgXam63=eCKAWsjwCiQbT5jdmgjqid_er3Sg1g@mail.gmail.com>
-	<569E1366.8070005@nvidia.com>
-	<alpine.DEB.2.11.1601201620450.3575@nanos>
-	<CAPDyKFrqQO6Mh7ew5YTW011a11LmFW7c+cZpAKmY8tovxjGmOw@mail.gmail.com>
-	<alpine.DEB.2.11.1601212026230.3886@nanos>
+From: Rhyland Klein <rklein@nvidia.com>
+Subject: Re: [PATCH] clk: tegra: Fix divider settings for Tegra210 pll_a
+Date: Fri, 5 Feb 2016 11:03:04 -0500
+Message-ID: <56B4C7B8.4090402@nvidia.com>
+References: <1454680897-9464-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <alpine.DEB.2.11.1601212026230.3886@nanos>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
-Cc: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Jiang Liu <jiang.liu-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Soren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1454680897-9464-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jan 21, 2016 at 8:51 PM, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org> wrote:
+On 2/5/2016 9:01 AM, Jon Hunter wrote:
+> When setting the pll_a frequency, to what should be 368639844 Hz, the
+> actual output frequency of the pll is 737279687 Hz (as reported by the
+> debugfs clk_summary entry), which is double the expect frequency. The
+> calculations for the pll frequency appear to be correct and the problem
+> is caused by incorrect divider settings for the pll_a in the look-up
+> table of multipliers and dividers. The P dividers for all entries in the
+> table are all one less than they should be. Fix this by increasing the
+> value of the P dividers by 1 to get the expected rates.
+> 
+> The rates in the table have been verified using the following equations:
+> 
+> 1. Integer NDIV (SDM_DIN = 0)
+>    fout = (fref * n) / (m * p)
+> 
+> 2. Fractional NDIV
+>    fout = (fref * (n + 0.5 + (SDM_DIN/8192))) / (m * p)
+> 
+> Where SDM_DIN is a signed 16-bit value between 0xf000 and 0x1000.
+> 
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+> 
+> Thierry, Rhyland, please note that after this change, the pll_a settings
+> match those in the nvidia downstream 3.18 kernel for Tegra210.
+> 
+>
 
-> So as long as an interrupt handler is installed, there is no sane way that we
-> can decide to power down the irq chip, unless that chip has the magic ability
-> to relay incoming interrupts while powered down :)
+This was an issue we had before/around merging T210 driver. The tegra
+clock code was inconsistent in how it treated the pdiv. In some places
+it stored the direct HW value in the frequency table entry struct (like
+in the predefined frequencies like what you changed). Some places stored
+the translated (=_hw_to_p_div()). This is most commonly a difference in
+a factor of 2.
 
-Actually isn't that exactly what almost every SoC that supports
-deepsleep does?
+I found when initially doing the T210 that most clocks I requested rates
+for came out at either 1/2 or 2x what I wanted depending on the path.
 
-They power off the primary interrupt controller and arm the padring
-of the SoC with an asynchronous edge detector to wake up as soon
-as something happens on a few select lines, like a keypad button
-or whatnot.
+I think when Thierry merged my series, he added some code to address
+this issue, as he saw it too I think. Depending on what his change was
+(to consistently store either pdiv or hw_val) then we may need to adjust
+ALL the predefined rates in the clk-tegra210 code.
 
-The asynchronous edge detector is handled by the ROM or some
-power-management microcontroller, which wakes up the system
-and restores power to the CPU and primary interrupt controller.
-That is the magic ability right there.
+Thierry, do you remember off-hand what you changed for that?
 
-Of course as the wakeup signal may be deasserted at the
-point the system actually comes back up, so the magic ROM
-power management unit then needs to latch
-any latent IRQs from some shadow register to the primary interrupt
-controller, which as far as I've seen is done by out-of-tree hacks
-similar to the irq_[get/set]_irqchip_state() implemented
-by Marc Zyngier, albeit for virtualization.
+-rhyland
 
-I've not seen it on any non-primary interrupt controller though.
-
-Yours,
-Linus Walleij
+-- 
+nvpublic
