@@ -1,90 +1,34 @@
-From: Adrian Hunter <adrian.hunter@intel.com>
-Subject: Re: [PATCH v4 00/13] mmc: use sdhci_pltfm_init for private allocation
- and clean up
-Date: Mon, 8 Feb 2016 16:09:37 +0200
-Message-ID: <56B8A1A1.2080408@intel.com>
-References: <1453803353-6266-1-git-send-email-jszhang@marvell.com>
- <CAPDyKFpFSTYsAUCG9nFnnzmVsA3zm4hAPO8+6REArt9BJtn+0Q@mail.gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] serial: 8250_early: Add earlycon support for Tegra
+Date: Mon, 8 Feb 2016 16:27:35 +0000
+Message-ID: <1454948855-26640-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <CAPDyKFpFSTYsAUCG9nFnnzmVsA3zm4hAPO8+6REArt9BJtn+0Q@mail.gmail.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>, Jisheng Zhang <jszhang@marvell.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Ludovic Desroches <ludovic.desroches@atmel.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, Maxime Coquelin <maxime.coquelin@st.com>, Patrice CHOTARD <patrice.chotard@st.com>, Thierry Reding <thierry.reding@gmail.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, kernel@stlinux.com, linux-mmc <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-rpi-kernel@lists.infradead.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Jiri Slaby <jslaby-IBi9RG/b67k@public.gmane.org>
+Cc: Peter Hurley <peter-WaGBZJeGNqdsbIuE7sb01tBPR1lH4CV8@public.gmane.org>, linux-serial-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/02/16 12:38, Ulf Hansson wrote:
-> + Adrian
-> 
-> On 26 January 2016 at 11:15, Jisheng Zhang <jszhang@marvell.com> wrote:
->> These patches are to complete the TODOs in Commit 0e748234293f ("mmc:
->> sdhci: Add size for caller in init+register"), I.E:
->>
->> - todo: migrate clients to using allocation this way
->> - todo: remove priv variable once migration is complete
->>
->> Since v3:
->>  - based on v4.5-rc1
->>  - add Ludovic's ack for sdhci-of-at91 changes
->>  - fix use-after-free in some drivers: some host drivers still needs to
->>    access sdhci_pltfm_host->private after sdhci_pltfm_unregister(), but
->>    the private should be already freed by sdhci_pltfm_unregister.
->>  - add patch5 to fix one clk bug in sdhci_arasan_remove(). IMHO, It's
->>    better to add this patch to fixes rather than waiting for next merge
->>    window
->>
->> Since v2:
->>  - based on mmc next tree and remove all priv usage introduced in newly
->>    commits in this tree
->>  - don't break two lines if sdhci_pltfm_init() call could be put into
->>    one line. Thank Ludovic Desroches.
->>
->> Since v1:
->>  - add new patch03 to factorise sdhci_msm_pdata outisde of sdhci_msm_host.
->>    This is to fix drivers/mmc/host/sdhci-msm.c:440:32: warning: 'msm_host'
->>    is used uninitialized in this function [-Wuninitialized]
->>  - Add Arnd's Ack for all patches except patch3 which is new in v2
->>
->>
->> Jisheng Zhang (13):
->>   mmc: sdhci-bcm2835: use sdhci_pltfm_init for private allocation
->>   mmc: sdhci-esdhc-imx: use sdhci_pltfm_init for private allocation
->>   mmc: sdhci-msm: factorise sdhci_msm_pdata outisde of sdhci_msm_host
->>   mmc: sdhci-msm: use sdhci_pltfm_init for private allocation
->>   mmc: sdhci-of-arasan: fix clk issue in sdhci_arasan_remove()
->>   mmc: sdhci-of-arasan: use sdhci_pltfm_init for private allocation
->>   mmc: sdhci-of-at91: use sdhci_pltfm_init for private allocation
->>   mmc: sdhci-of-esdhc: use sdhci_pltfm_init for private allocation
->>   mmc: sdhci-pxav3: use sdhci_pltfm_init for private allocation
->>   mmc: sdhci-st: use sdhci_pltfm_init for private allocation
->>   mmc: sdhci-tegra: use sdhci_pltfm_init for private allocation
->>   mmc: sdhci-pxav2: remove unnecessary assignment of pltfm_host->priv
->>   mmc: sdhci-pltfm: remove priv variable from sdhci_pltfm_host
->>
->>  drivers/mmc/host/sdhci-bcm2835.c   | 14 +++----------
->>  drivers/mmc/host/sdhci-esdhc-imx.c | 38 ++++++++++++++++--------------------
->>  drivers/mmc/host/sdhci-msm.c       | 25 +++++++++++-------------
->>  drivers/mmc/host/sdhci-of-arasan.c | 33 +++++++++++++++----------------
->>  drivers/mmc/host/sdhci-of-at91.c   | 33 ++++++++++++++-----------------
->>  drivers/mmc/host/sdhci-of-esdhc.c  | 19 +++++++++---------
->>  drivers/mmc/host/sdhci-pltfm.h     |  1 -
->>  drivers/mmc/host/sdhci-pxav2.c     |  1 -
->>  drivers/mmc/host/sdhci-pxav3.c     | 20 ++++++++-----------
->>  drivers/mmc/host/sdhci-st.c        | 40 +++++++++++++++++++-------------------
->>  drivers/mmc/host/sdhci-tegra.c     | 21 +++++++-------------
->>  11 files changed, 106 insertions(+), 139 deletions(-)
->>
->> --
->> 2.7.0
->>
-> 
-> To avoid confusions. I don't intend to pick up any further sdhci
-> patches, unless they are acked by Adrian Hunter.
+Declare an OF early console for Tegra so that the early console device
+can be specified via the "stdout-path" property in device-tree.
 
-The patches look OK, although patch 6 doesn't apply cleanly anymore.
-Nevertheless:
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/tty/serial/8250/8250_early.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-
+diff --git a/drivers/tty/serial/8250/8250_early.c b/drivers/tty/serial/8250/8250_early.c
+index 3b3dbdc1b73e..8d08ff5c4e34 100644
+--- a/drivers/tty/serial/8250/8250_early.c
++++ b/drivers/tty/serial/8250/8250_early.c
+@@ -149,6 +149,7 @@ EARLYCON_DECLARE(uart8250, early_serial8250_setup);
+ EARLYCON_DECLARE(uart, early_serial8250_setup);
+ OF_EARLYCON_DECLARE(ns16550, "ns16550", early_serial8250_setup);
+ OF_EARLYCON_DECLARE(ns16550a, "ns16550a", early_serial8250_setup);
++OF_EARLYCON_DECLARE(uart, "nvidia,tegra20-uart", early_serial8250_setup);
+ 
+ #ifdef CONFIG_SERIAL_8250_OMAP
+ 
+-- 
+2.1.4
