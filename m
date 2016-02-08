@@ -1,111 +1,71 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH V2] ARM64: tegra: Add support for Google Pixel C
-Date: Mon, 8 Feb 2016 16:33:19 +0000
-Message-ID: <1454949199-27050-1-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v4.5-rc3
+Date: Mon, 8 Feb 2016 16:53:51 +0000
+Message-ID: <56B8C81F.6000300@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, Olof Johansson <olofj@chromium.org>, linux-arm-kernel@lists.infradead.org, Jon Hunter <jonathanh@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add initial device-tree support for Google Pixel C (a.k.a. Smaug) based
-upon Tegra210 SoC with 3 GiB of LPDDR4 RAM.
+Here are some basic Tegra test results for Linux v4.5-rc3.
+Logs and other details at:
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/Makefile           |  1 +
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 60 +++++++++++++++++++++++++++
- 2 files changed, 61 insertions(+)
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+    https://nvtb.github.io//linux/test_v4.5-rc3/20160208033104/
 
-diff --git a/arch/arm64/boot/dts/nvidia/Makefile b/arch/arm64/boot/dts/nvidia/Makefile
-index a7e865da1005..0f7cdf3e05c1 100644
---- a/arch/arm64/boot/dts/nvidia/Makefile
-+++ b/arch/arm64/boot/dts/nvidia/Makefile
-@@ -2,6 +2,7 @@ dtb-$(CONFIG_ARCH_TEGRA_132_SOC) += tegra132-norrin.dtb
- dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2371-0000.dtb
- dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2371-2180.dtb
- dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2571.dtb
-+dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-smaug.dtb
- 
- always		:= $(dtb-y)
- clean-files	:= *.dtb
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-new file mode 100644
-index 000000000000..59acdb6b4f23
---- /dev/null
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-@@ -0,0 +1,60 @@
-+/dts-v1/;
-+
-+#include "tegra210.dtsi"
-+
-+/ {
-+	model = "Google Pixel C";
-+	compatible = "google,smaug-rev8", "google,smaug-rev7",
-+		     "google,smaug-rev6", "google,smaug-rev5",
-+		     "google,smaug-rev4", "google,smaug-rev3",
-+		     "google,smaug-rev1", "google,smaug", "nvidia,tegra210";
-+
-+	aliases {
-+		serial0 = &uarta;
-+	};
-+
-+	chosen {
-+		bootargs = "earlycon";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory {
-+		device_type = "memory";
-+		reg = <0x0 0x80000000 0x0 0xc0000000>;
-+	};
-+
-+	serial@0,70006000 {
-+		status = "okay";
-+	};
-+
-+	pmc@0,7000e400 {
-+		nvidia,invert-interrupt;
-+		nvidia,suspend-mode = <0>;
-+		nvidia,cpu-pwr-good-time = <0>;
-+		nvidia,cpu-pwr-off-time = <0>;
-+		nvidia,core-pwr-good-time = <12000 6000>;
-+		nvidia,core-pwr-off-time = <39053>;
-+		nvidia,core-power-req-active-high;
-+		nvidia,sys-clock-req-active-high;
-+		status = "okay";
-+	};
-+
-+	sdhci@0,700b0600 {
-+		bus-width = <8>;
-+		non-removable;
-+		status = "okay";
-+	};
-+
-+	clocks {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		clk32k_in: clock@0 {
-+			compatible = "fixed-clock";
-+			reg = <0>;
-+			#clock-cells = <0>;
-+			clock-frequency = <32768>;
-+		};
-+	};
-+};
--- 
-2.1.4
+
+Test summary
+------------
+
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Build: Image:
+    Pass: ( 1/ 1): defconfig
+
+Boot to userspace: defconfig:
+    Pass: ( 3/ 3): qemu-vexpress64, tegra132-norrin,
+		   tegra210-p2371-0000
+
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: multi_v7_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: tegra_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v4.5-rc2 (36f90b0a2ddd60823fe193a85e60ff1906c2a9b3)):
+   text     data      bss    total  kernel
+  +4160   +12288     -128   +16320  defconfig
+  +3754     +320      +64    +4138  multi_v7_defconfig
+  +1938     +456        0    +2394  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.5-rc2 (36f90b0a2ddd60823fe193a85e60ff1906c2a9b3))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+        .        .        .        .      qemu-vexpress64            defconfig           __internal
+      -8k       8k        .       4k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+      -4k       4k        .      -4k tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+      -8k       8k        .       4k  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+      -4k       4k        .      -4k  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
+      -8k       8k        .       4k    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+      -4k       4k        .      -4k    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
+      -8k       8k        .       4k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+      -4k       4k        .      -4k       tegra30-beaver      tegra_defconfig       tegra30-beaver
