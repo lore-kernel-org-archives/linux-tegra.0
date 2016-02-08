@@ -1,38 +1,90 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] clk: tegra: Fixup post dividers on Tegra210
-Date: Fri, 5 Feb 2016 11:36:54 -0500
-Message-ID: <56B4CFA6.8090301@nvidia.com>
-References: <1454689052-25289-1-git-send-email-thierry.reding@gmail.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Subject: Re: [PATCH v4 00/13] mmc: use sdhci_pltfm_init for private allocation
+ and clean up
+Date: Mon, 8 Feb 2016 16:09:37 +0200
+Message-ID: <56B8A1A1.2080408@intel.com>
+References: <1453803353-6266-1-git-send-email-jszhang@marvell.com>
+ <CAPDyKFpFSTYsAUCG9nFnnzmVsA3zm4hAPO8+6REArt9BJtn+0Q@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1454689052-25289-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <CAPDyKFpFSTYsAUCG9nFnnzmVsA3zm4hAPO8+6REArt9BJtn+0Q@mail.gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>, Jisheng Zhang <jszhang@marvell.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Ludovic Desroches <ludovic.desroches@atmel.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, Maxime Coquelin <maxime.coquelin@st.com>, Patrice CHOTARD <patrice.chotard@st.com>, Thierry Reding <thierry.reding@gmail.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, kernel@stlinux.com, linux-mmc <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-rpi-kernel@lists.infradead.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 2/5/2016 11:17 AM, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 04/02/16 12:38, Ulf Hansson wrote:
+> + Adrian
 > 
-> Commit 86c679a52294 ("clk: tegra: pll: Fix _pll_ramp_calc_pll logic and
-> _calc_dynamic_ramp_rate") changed the PLL divider computation logic to
-> consistently use P-divider values from tables as real dividers rather
-> than the hardware values. Unfortunately for some reason many of the
-> Tegra210 clocks didn't have their tables updated (most likely an over-
-> sight by me when applying the patches). This commit fixes them all up.
+> On 26 January 2016 at 11:15, Jisheng Zhang <jszhang@marvell.com> wrote:
+>> These patches are to complete the TODOs in Commit 0e748234293f ("mmc:
+>> sdhci: Add size for caller in init+register"), I.E:
+>>
+>> - todo: migrate clients to using allocation this way
+>> - todo: remove priv variable once migration is complete
+>>
+>> Since v3:
+>>  - based on v4.5-rc1
+>>  - add Ludovic's ack for sdhci-of-at91 changes
+>>  - fix use-after-free in some drivers: some host drivers still needs to
+>>    access sdhci_pltfm_host->private after sdhci_pltfm_unregister(), but
+>>    the private should be already freed by sdhci_pltfm_unregister.
+>>  - add patch5 to fix one clk bug in sdhci_arasan_remove(). IMHO, It's
+>>    better to add this patch to fixes rather than waiting for next merge
+>>    window
+>>
+>> Since v2:
+>>  - based on mmc next tree and remove all priv usage introduced in newly
+>>    commits in this tree
+>>  - don't break two lines if sdhci_pltfm_init() call could be put into
+>>    one line. Thank Ludovic Desroches.
+>>
+>> Since v1:
+>>  - add new patch03 to factorise sdhci_msm_pdata outisde of sdhci_msm_host.
+>>    This is to fix drivers/mmc/host/sdhci-msm.c:440:32: warning: 'msm_host'
+>>    is used uninitialized in this function [-Wuninitialized]
+>>  - Add Arnd's Ack for all patches except patch3 which is new in v2
+>>
+>>
+>> Jisheng Zhang (13):
+>>   mmc: sdhci-bcm2835: use sdhci_pltfm_init for private allocation
+>>   mmc: sdhci-esdhc-imx: use sdhci_pltfm_init for private allocation
+>>   mmc: sdhci-msm: factorise sdhci_msm_pdata outisde of sdhci_msm_host
+>>   mmc: sdhci-msm: use sdhci_pltfm_init for private allocation
+>>   mmc: sdhci-of-arasan: fix clk issue in sdhci_arasan_remove()
+>>   mmc: sdhci-of-arasan: use sdhci_pltfm_init for private allocation
+>>   mmc: sdhci-of-at91: use sdhci_pltfm_init for private allocation
+>>   mmc: sdhci-of-esdhc: use sdhci_pltfm_init for private allocation
+>>   mmc: sdhci-pxav3: use sdhci_pltfm_init for private allocation
+>>   mmc: sdhci-st: use sdhci_pltfm_init for private allocation
+>>   mmc: sdhci-tegra: use sdhci_pltfm_init for private allocation
+>>   mmc: sdhci-pxav2: remove unnecessary assignment of pltfm_host->priv
+>>   mmc: sdhci-pltfm: remove priv variable from sdhci_pltfm_host
+>>
+>>  drivers/mmc/host/sdhci-bcm2835.c   | 14 +++----------
+>>  drivers/mmc/host/sdhci-esdhc-imx.c | 38 ++++++++++++++++--------------------
+>>  drivers/mmc/host/sdhci-msm.c       | 25 +++++++++++-------------
+>>  drivers/mmc/host/sdhci-of-arasan.c | 33 +++++++++++++++----------------
+>>  drivers/mmc/host/sdhci-of-at91.c   | 33 ++++++++++++++-----------------
+>>  drivers/mmc/host/sdhci-of-esdhc.c  | 19 +++++++++---------
+>>  drivers/mmc/host/sdhci-pltfm.h     |  1 -
+>>  drivers/mmc/host/sdhci-pxav2.c     |  1 -
+>>  drivers/mmc/host/sdhci-pxav3.c     | 20 ++++++++-----------
+>>  drivers/mmc/host/sdhci-st.c        | 40 +++++++++++++++++++-------------------
+>>  drivers/mmc/host/sdhci-tegra.c     | 21 +++++++-------------
+>>  11 files changed, 106 insertions(+), 139 deletions(-)
+>>
+>> --
+>> 2.7.0
+>>
 > 
-> Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 94 ++++++++++++++++++++--------------------
->  1 file changed, 47 insertions(+), 47 deletions(-)
-> 
+> To avoid confusions. I don't intend to pick up any further sdhci
+> patches, unless they are acked by Adrian Hunter.
 
-Acked-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+The patches look OK, although patch 6 doesn't apply cleanly anymore.
+Nevertheless:
 
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
--- 
-nvpublic
