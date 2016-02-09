@@ -1,97 +1,25 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 2/3] PCI: tegra: Track bus -> CPU mapping
-Date: Tue,  9 Feb 2016 15:52:32 +0100
-Message-ID: <1455029553-9460-2-git-send-email-thierry.reding@gmail.com>
-References: <1455029553-9460-1-git-send-email-thierry.reding@gmail.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] PCI: tegra: Update for new XUSB pad controller bindings
+Date: Tue, 9 Feb 2016 09:14:50 -0700
+Message-ID: <56BA107A.9050201@wwwdotorg.org>
+References: <1455029465-9211-1-git-send-email-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1455029553-9460-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1455029465-9211-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 02/09/2016 07:51 AM, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> The current XUSB pad controller bindings are insufficient to describe
+> PHY devices attached to USB controllers. New bindings have been created
+> to overcome these restrictions.
 
-Track the offsets of the bus -> CPU mapping for I/O and memory. This is
-cosmetic for current Tegra chips because the offset is always 0. But to
-properly support legacy use-cases, like VGA, this would be needed so
-that PCI bus addresses can be relocated.
-
-While at it, also request the I/O resource both in physical memory and
-I/O space to make /proc/iomem consistent, as well as add the I/O region
-to the list of host bridge resources.
-
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/pci/host/pci-tegra.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
-
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 82d7ad3a1c3a..f6fc54b48606 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -281,6 +281,11 @@ struct tegra_pcie {
- 	struct resource prefetch;
- 	struct resource busn;
- 
-+	struct {
-+		resource_size_t mem;
-+		resource_size_t io;
-+	} offset;
-+
- 	struct clk *pex_clk;
- 	struct clk *afi_clk;
- 	struct clk *pll_e;
-@@ -614,6 +619,17 @@ static int tegra_pcie_setup(int nr, struct pci_sys_data *sys)
- 	struct tegra_pcie *pcie = sys_to_pcie(sys);
- 	int err;
- 
-+	sys->mem_offset = pcie->offset.mem;
-+	sys->io_offset = pcie->offset.io;
-+
-+	err = devm_request_resource(pcie->dev, &pcie->all, &pcie->io);
-+	if (err < 0)
-+		return err;
-+
-+	err = devm_request_resource(pcie->dev, &ioport_resource, &pcie->pio);
-+	if (err < 0)
-+		return err;
-+
- 	err = devm_request_resource(pcie->dev, &pcie->all, &pcie->mem);
- 	if (err < 0)
- 		return err;
-@@ -622,6 +638,7 @@ static int tegra_pcie_setup(int nr, struct pci_sys_data *sys)
- 	if (err)
- 		return err;
- 
-+	pci_add_resource_offset(&sys->resources, &pcie->pio, sys->io_offset);
- 	pci_add_resource_offset(&sys->resources, &pcie->mem, sys->mem_offset);
- 	pci_add_resource_offset(&sys->resources, &pcie->prefetch,
- 				sys->mem_offset);
-@@ -1729,6 +1746,9 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
- 
- 		switch (res.flags & IORESOURCE_TYPE_BITS) {
- 		case IORESOURCE_IO:
-+			/* Track the bus -> CPU I/O mapping offset. */
-+			pcie->offset.io = res.start - range.pci_addr;
-+
- 			memcpy(&pcie->pio, &res, sizeof(res));
- 			pcie->pio.name = np->full_name;
- 
-@@ -1749,6 +1769,14 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
- 			break;
- 
- 		case IORESOURCE_MEM:
-+			/*
-+			 * Track the bus -> CPU memory mapping offset. This
-+			 * assumes that the prefetchable and non-prefetchable
-+			 * regions will be the last of type IORESOURCE_MEM in
-+			 * the ranges property.
-+			 * */
-+			pcie->offset.mem = res.start - range.pci_addr;
-+
- 			if (res.flags & IORESOURCE_PREFETCH) {
- 				memcpy(&pcie->prefetch, &res, sizeof(res));
- 				pcie->prefetch.name = "prefetchable";
--- 
-2.7.1
+New bindings have been created? Which ones; there were several attempts 
+to enhance the bindings, but I wasn't aware that any of them had passed 
+through review and been accepted.
