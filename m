@@ -1,63 +1,57 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/2] ARM64: tegra: Add stdout-path for various boards
-Date: Tue, 9 Feb 2016 13:52:00 +0000
-Message-ID: <1455025920-21875-2-git-send-email-jonathanh@nvidia.com>
-References: <1455025920-21875-1-git-send-email-jonathanh@nvidia.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH] drm/tegra: remove unused variable
+Date: Tue, 9 Feb 2016 14:54:55 +0100
+Message-ID: <20160209135455.GW11240@phenom.ffwll.local>
+References: <1455020923-1089878-1-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1455025920-21875-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <1455020923-1089878-1-git-send-email-arnd@arndb.de>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Daniel Stone <daniels@collabora.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, linux-tegra@vger.kernel.org, Daniel Vetter <daniel.vetter@intel.com>, Thierry Reding <treding@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-For Tegra boards, the device-tree alias serial0 is used for the console
-and so add the stdout-path information so that the console no longer
-needs to be passed via the kernel boot parameters.
-
-For tegra132-norrin the alias serial0 is not defined and so add this.
-
-This has been tested on tegra132-norrin and tegra210-p2371-0000.
-
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm64/boot/dts/nvidia/tegra132-norrin.dts | 5 ++++-
- arch/arm64/boot/dts/nvidia/tegra210-p2530.dtsi | 4 ++++
- 2 files changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
-index 62f33fc84e3e..3c0b4d7bfa6f 100644
---- a/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra132-norrin.dts
-@@ -10,9 +10,12 @@
- 	aliases {
- 		rtc0 = "/i2c@0,7000d000/as3722@40";
- 		rtc1 = "/rtc@0,7000e000";
-+		serial0 = &uarta;
- 	};
- 
--	chosen { };
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
- 
- 	memory {
- 		device_type = "memory";
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2530.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2530.dtsi
-index ece0dec61fae..73ba58260817 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2530.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2530.dtsi
-@@ -9,6 +9,10 @@
- 		serial0 = &uarta;
- 	};
- 
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
- 	memory {
- 		device_type = "memory";
- 		reg = <0x0 0x80000000 0x0 0xc0000000>;
--- 
-2.1.4
+T24gVHVlLCBGZWIgMDksIDIwMTYgYXQgMDE6Mjg6MTVQTSArMDEwMCwgQXJuZCBCZXJnbWFubiB3
+cm90ZToKPiBBIG5ld2x5IG1lcmdlZCBwYXRjaCByZW1vdmVkIHRoZSBvbmx5IHVzZXIgb2YgdGhp
+cyB2YXJpYWJsZSwKPiBsZWFkaW5nIHRvIGEgaGFybWxlc3MgZ2NjIHdhcm5pbmc6Cj4gCj4gZHJp
+dmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jOiBJbiBmdW5jdGlvbiAndGVncmFfZHJtX3ByZWNsb3Nl
+JzoKPiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmM6ODYxOjE5OiBlcnJvcjogdW51c2VkIHZh
+cmlhYmxlICdjcnRjJyBbLVdlcnJvcj11bnVzZWQtdmFyaWFibGVdCj4gCj4gVGhpcyByZW1vdmVz
+IHRoZSB2YXJpYWJsZSBhcyB3ZWxsLgo+IAo+IENjOiBUZXJqZSBCZXJnc3Ryw7ZtIDx0YmVyZ3N0
+cm9tQG52aWRpYS5jb20+Cj4gQ2M6IERhbmllbCBTdG9uZSA8ZGFuaWVsc0Bjb2xsYWJvcmEuY29t
+Pgo+IENjOiBBbGV4IERldWNoZXIgPGFsZXhhbmRlci5kZXVjaGVyQGFtZC5jb20+Cj4gQ2M6IFRo
+aWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Cj4gQ2M6IERhbmllbCBWZXR0ZXIgPGRh
+bmllbC52ZXR0ZXJAaW50ZWwuY29tPgo+IEZpeGVzOiAwNDE3ZDQyNGFjMGQgKCJkcm0vdGVncmE6
+IFN0b3AgY2FuY2VsbGluZyBwYWdlIGZsaXAgZXZlbnRzIikKPiBTaWduZWQtb2ZmLWJ5OiBBcm5k
+IEJlcmdtYW5uIDxhcm5kQGFybmRiLmRlPgoKQWxyZWFkeSBmaXhlZCBieSBEYXZlIGluIDEwYzFi
+NjE4M2ExNjNhY2E1OWJhOTJiODhmMmI0YzRjZWNkMjBkNGMuIFRoYW5rcwphbnl3YXkgZm9yIHRo
+ZSBxdWljayBwYXRjaC4KLURhbmllbAoKPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2Ry
+bS5jIHwgMSAtCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGRlbGV0aW9uKC0pCj4gCj4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9k
+cm0uYwo+IGluZGV4IDAyMWQwZTEzOThmYi4uOGU2YjE4Y2FhNzA2IDEwMDY0NAo+IC0tLSBhL2Ry
+aXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9k
+cm0uYwo+IEBAIC04NTgsNyArODU4LDYgQEAgc3RhdGljIHZvaWQgdGVncmFfZHJtX3ByZWNsb3Nl
+KHN0cnVjdCBkcm1fZGV2aWNlICpkcm0sIHN0cnVjdCBkcm1fZmlsZSAqZmlsZSkKPiAgewo+ICAJ
+c3RydWN0IHRlZ3JhX2RybV9maWxlICpmcHJpdiA9IGZpbGUtPmRyaXZlcl9wcml2Owo+ICAJc3Ry
+dWN0IHRlZ3JhX2RybV9jb250ZXh0ICpjb250ZXh0LCAqdG1wOwo+IC0Jc3RydWN0IGRybV9jcnRj
+ICpjcnRjOwo+ICAKPiAgCWxpc3RfZm9yX2VhY2hfZW50cnlfc2FmZShjb250ZXh0LCB0bXAsICZm
+cHJpdi0+Y29udGV4dHMsIGxpc3QpCj4gIAkJdGVncmFfZHJtX2NvbnRleHRfZnJlZShjb250ZXh0
+KTsKPiAtLSAKPiAyLjcuMAo+IAo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCj4gZHJpLWRldmVsIG1haWxpbmcgbGlzdAo+IGRyaS1kZXZlbEBsaXN0cy5m
+cmVlZGVza3RvcC5vcmcKPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
+c3RpbmZvL2RyaS1kZXZlbAoKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIsIElu
+dGVsIENvcnBvcmF0aW9uCmh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
+dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
+YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
