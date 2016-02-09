@@ -1,57 +1,76 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH] drm/tegra: remove unused variable
-Date: Tue, 9 Feb 2016 14:54:55 +0100
-Message-ID: <20160209135455.GW11240@phenom.ffwll.local>
-References: <1455020923-1089878-1-git-send-email-arnd@arndb.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <1455020923-1089878-1-git-send-email-arnd@arndb.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Daniel Stone <daniels@collabora.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>, linux-tegra@vger.kernel.org, Daniel Vetter <daniel.vetter@intel.com>, Thierry Reding <treding@nvidia.com>, linux-arm-kernel@lists.infradead.org
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2 1/2] PCI: Add pci_ops.{add,remove}_bus() callbacks
+Date: Tue,  9 Feb 2016 15:30:47 +0100
+Message-ID: <1455028248-1950-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCBGZWIgMDksIDIwMTYgYXQgMDE6Mjg6MTVQTSArMDEwMCwgQXJuZCBCZXJnbWFubiB3
-cm90ZToKPiBBIG5ld2x5IG1lcmdlZCBwYXRjaCByZW1vdmVkIHRoZSBvbmx5IHVzZXIgb2YgdGhp
-cyB2YXJpYWJsZSwKPiBsZWFkaW5nIHRvIGEgaGFybWxlc3MgZ2NjIHdhcm5pbmc6Cj4gCj4gZHJp
-dmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jOiBJbiBmdW5jdGlvbiAndGVncmFfZHJtX3ByZWNsb3Nl
-JzoKPiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmM6ODYxOjE5OiBlcnJvcjogdW51c2VkIHZh
-cmlhYmxlICdjcnRjJyBbLVdlcnJvcj11bnVzZWQtdmFyaWFibGVdCj4gCj4gVGhpcyByZW1vdmVz
-IHRoZSB2YXJpYWJsZSBhcyB3ZWxsLgo+IAo+IENjOiBUZXJqZSBCZXJnc3Ryw7ZtIDx0YmVyZ3N0
-cm9tQG52aWRpYS5jb20+Cj4gQ2M6IERhbmllbCBTdG9uZSA8ZGFuaWVsc0Bjb2xsYWJvcmEuY29t
-Pgo+IENjOiBBbGV4IERldWNoZXIgPGFsZXhhbmRlci5kZXVjaGVyQGFtZC5jb20+Cj4gQ2M6IFRo
-aWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5jb20+Cj4gQ2M6IERhbmllbCBWZXR0ZXIgPGRh
-bmllbC52ZXR0ZXJAaW50ZWwuY29tPgo+IEZpeGVzOiAwNDE3ZDQyNGFjMGQgKCJkcm0vdGVncmE6
-IFN0b3AgY2FuY2VsbGluZyBwYWdlIGZsaXAgZXZlbnRzIikKPiBTaWduZWQtb2ZmLWJ5OiBBcm5k
-IEJlcmdtYW5uIDxhcm5kQGFybmRiLmRlPgoKQWxyZWFkeSBmaXhlZCBieSBEYXZlIGluIDEwYzFi
-NjE4M2ExNjNhY2E1OWJhOTJiODhmMmI0YzRjZWNkMjBkNGMuIFRoYW5rcwphbnl3YXkgZm9yIHRo
-ZSBxdWljayBwYXRjaC4KLURhbmllbAoKPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2Ry
-bS5jIHwgMSAtCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGRlbGV0aW9uKC0pCj4gCj4gZGlmZiAtLWdp
-dCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9k
-cm0uYwo+IGluZGV4IDAyMWQwZTEzOThmYi4uOGU2YjE4Y2FhNzA2IDEwMDY0NAo+IC0tLSBhL2Ry
-aXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9k
-cm0uYwo+IEBAIC04NTgsNyArODU4LDYgQEAgc3RhdGljIHZvaWQgdGVncmFfZHJtX3ByZWNsb3Nl
-KHN0cnVjdCBkcm1fZGV2aWNlICpkcm0sIHN0cnVjdCBkcm1fZmlsZSAqZmlsZSkKPiAgewo+ICAJ
-c3RydWN0IHRlZ3JhX2RybV9maWxlICpmcHJpdiA9IGZpbGUtPmRyaXZlcl9wcml2Owo+ICAJc3Ry
-dWN0IHRlZ3JhX2RybV9jb250ZXh0ICpjb250ZXh0LCAqdG1wOwo+IC0Jc3RydWN0IGRybV9jcnRj
-ICpjcnRjOwo+ICAKPiAgCWxpc3RfZm9yX2VhY2hfZW50cnlfc2FmZShjb250ZXh0LCB0bXAsICZm
-cHJpdi0+Y29udGV4dHMsIGxpc3QpCj4gIAkJdGVncmFfZHJtX2NvbnRleHRfZnJlZShjb250ZXh0
-KTsKPiAtLSAKPiAyLjcuMAo+IAo+IF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCj4gZHJpLWRldmVsIG1haWxpbmcgbGlzdAo+IGRyaS1kZXZlbEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xp
-c3RpbmZvL2RyaS1kZXZlbAoKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUgRW5naW5lZXIsIElu
-dGVsIENvcnBvcmF0aW9uCmh0dHA6Ly9ibG9nLmZmd2xsLmNoCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
-dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
-YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+These callbacks will be called on every newly created bus and when a bus
+is being removed, respectively. This can be used by drivers to implement
+driver-specific initialization and teardown of the bus, in addition to
+the architecture-specifics implemented by the pcibios_add_bus() and the
+pcibios_remove_bus() functions.
+
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Changes in v2:
+- add pci_ops.remove_bus() callback
+- always call pcibios_add_bus()
+
+ drivers/pci/probe.c  | 6 ++++++
+ drivers/pci/remove.c | 4 ++++
+ include/linux/pci.h  | 2 ++
+ 3 files changed, 12 insertions(+)
+
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 6d7ab9bb0d5a..3ea4de1c6926 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -758,6 +758,12 @@ add_dev:
+ 
+ 	pcibios_add_bus(child);
+ 
++	if (child->ops->add_bus) {
++		ret = child->ops->add_bus(child);
++		if (WARN_ON(ret < 0))
++			dev_err(&child->dev, "failed to add bus: %d\n", ret);
++	}
++
+ 	/* Create legacy_io and legacy_mem files for this bus */
+ 	pci_create_legacy_files(child);
+ 
+diff --git a/drivers/pci/remove.c b/drivers/pci/remove.c
+index 8a280e9c2ad1..d35c7fcde3af 100644
+--- a/drivers/pci/remove.c
++++ b/drivers/pci/remove.c
+@@ -54,6 +54,10 @@ void pci_remove_bus(struct pci_bus *bus)
+ 	pci_bus_release_busn_res(bus);
+ 	up_write(&pci_bus_sem);
+ 	pci_remove_legacy_files(bus);
++
++	if (bus->ops->remove_bus)
++		bus->ops->remove_bus(bus);
++
+ 	pcibios_remove_bus(bus);
+ 	device_unregister(&bus->dev);
+ }
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 27df4a6585da..0f7ef14c4d10 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -578,6 +578,8 @@ static inline int pcibios_err_to_errno(int err)
+ /* Low-level architecture-dependent routines */
+ 
+ struct pci_ops {
++	int (*add_bus)(struct pci_bus *bus);
++	void (*remove_bus)(struct pci_bus *bus);
+ 	void __iomem *(*map_bus)(struct pci_bus *bus, unsigned int devfn, int where);
+ 	int (*read)(struct pci_bus *bus, unsigned int devfn, int where, int size, u32 *val);
+ 	int (*write)(struct pci_bus *bus, unsigned int devfn, int where, int size, u32 val);
+-- 
+2.7.1
