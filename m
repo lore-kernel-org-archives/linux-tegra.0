@@ -1,135 +1,45 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3] ARM64: tegra: Add support for Google Pixel C
-Date: Tue, 9 Feb 2016 12:26:49 +0000
-Message-ID: <1455020809-17531-1-git-send-email-jonathanh@nvidia.com>
-References: <1454949199-27050-1-git-send-email-jonathanh@nvidia.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] drm/tegra: remove unused variable
+Date: Tue,  9 Feb 2016 13:28:15 +0100
+Message-ID: <1455020923-1089878-1-git-send-email-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1454949199-27050-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Olof Johansson <olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>
+Cc: Alexandre Courbot <gnurou@gmail.com>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Daniel Stone <daniels@collabora.com>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, Alex Deucher <alexander.deucher@amd.com>, Daniel Vetter <daniel.vetter@intel.com>, Thierry Reding <treding@nvidia.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add initial device-tree support for Google Pixel C (a.k.a. Smaug) based
-upon Tegra210 SoC with 3 GiB of LPDDR4 RAM.
-
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-
-Changes v2 -> v3:
-- Added PSCI information to enable all 4 CPUs on boot
-
-Changes v1 -> v2:
-- Removed console boot parameter and added stdout-path
-- Added 32k clock for PMC
-
- arch/arm64/boot/dts/nvidia/Makefile           |  1 +
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 83 +++++++++++++++++++++++++++
- 2 files changed, 84 insertions(+)
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-
-diff --git a/arch/arm64/boot/dts/nvidia/Makefile b/arch/arm64/boot/dts/nvidia/Makefile
-index a7e865da1005..0f7cdf3e05c1 100644
---- a/arch/arm64/boot/dts/nvidia/Makefile
-+++ b/arch/arm64/boot/dts/nvidia/Makefile
-@@ -2,6 +2,7 @@ dtb-$(CONFIG_ARCH_TEGRA_132_SOC) += tegra132-norrin.dtb
- dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2371-0000.dtb
- dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2371-2180.dtb
- dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2571.dtb
-+dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-smaug.dtb
- 
- always		:= $(dtb-y)
- clean-files	:= *.dtb
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-new file mode 100644
-index 000000000000..750e85c45135
---- /dev/null
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-@@ -0,0 +1,83 @@
-+/dts-v1/;
-+
-+#include "tegra210.dtsi"
-+
-+/ {
-+	model = "Google Pixel C";
-+	compatible = "google,smaug-rev8", "google,smaug-rev7",
-+		     "google,smaug-rev6", "google,smaug-rev5",
-+		     "google,smaug-rev4", "google,smaug-rev3",
-+		     "google,smaug-rev1", "google,smaug", "nvidia,tegra210";
-+
-+	aliases {
-+		serial0 = &uarta;
-+	};
-+
-+	chosen {
-+		bootargs = "earlycon";
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	memory {
-+		device_type = "memory";
-+		reg = <0x0 0x80000000 0x0 0xc0000000>;
-+	};
-+
-+	serial@0,70006000 {
-+		status = "okay";
-+	};
-+
-+	pmc@0,7000e400 {
-+		nvidia,invert-interrupt;
-+		nvidia,suspend-mode = <0>;
-+		nvidia,cpu-pwr-good-time = <0>;
-+		nvidia,cpu-pwr-off-time = <0>;
-+		nvidia,core-pwr-good-time = <12000 6000>;
-+		nvidia,core-pwr-off-time = <39053>;
-+		nvidia,core-power-req-active-high;
-+		nvidia,sys-clock-req-active-high;
-+		status = "okay";
-+	};
-+
-+	sdhci@0,700b0600 {
-+		bus-width = <8>;
-+		non-removable;
-+		status = "okay";
-+	};
-+
-+	clocks {
-+		compatible = "simple-bus";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		clk32k_in: clock@0 {
-+			compatible = "fixed-clock";
-+			reg = <0>;
-+			#clock-cells = <0>;
-+			clock-frequency = <32768>;
-+		};
-+	};
-+
-+	cpus {
-+		cpu@0 {
-+			enable-method = "psci";
-+		};
-+
-+		cpu@1 {
-+			enable-method = "psci";
-+		};
-+
-+		cpu@2 {
-+			enable-method = "psci";
-+		};
-+
-+		cpu@3 {
-+			enable-method = "psci";
-+		};
-+	};
-+
-+	psci {
-+		compatible = "arm,psci-1.0";
-+		method = "smc";
-+	};
-+};
--- 
-2.1.4
+QSBuZXdseSBtZXJnZWQgcGF0Y2ggcmVtb3ZlZCB0aGUgb25seSB1c2VyIG9mIHRoaXMgdmFyaWFi
+bGUsCmxlYWRpbmcgdG8gYSBoYXJtbGVzcyBnY2Mgd2FybmluZzoKCmRyaXZlcnMvZ3B1L2RybS90
+ZWdyYS9kcm0uYzogSW4gZnVuY3Rpb24gJ3RlZ3JhX2RybV9wcmVjbG9zZSc6CmRyaXZlcnMvZ3B1
+L2RybS90ZWdyYS9kcm0uYzo4NjE6MTk6IGVycm9yOiB1bnVzZWQgdmFyaWFibGUgJ2NydGMnIFst
+V2Vycm9yPXVudXNlZC12YXJpYWJsZV0KClRoaXMgcmVtb3ZlcyB0aGUgdmFyaWFibGUgYXMgd2Vs
+bC4KCkNjOiBUZXJqZSBCZXJnc3Ryw7ZtIDx0YmVyZ3N0cm9tQG52aWRpYS5jb20+CkNjOiBEYW5p
+ZWwgU3RvbmUgPGRhbmllbHNAY29sbGFib3JhLmNvbT4KQ2M6IEFsZXggRGV1Y2hlciA8YWxleGFu
+ZGVyLmRldWNoZXJAYW1kLmNvbT4KQ2M6IFRoaWVycnkgUmVkaW5nIDx0cmVkaW5nQG52aWRpYS5j
+b20+CkNjOiBEYW5pZWwgVmV0dGVyIDxkYW5pZWwudmV0dGVyQGludGVsLmNvbT4KRml4ZXM6IDA0
+MTdkNDI0YWMwZCAoImRybS90ZWdyYTogU3RvcCBjYW5jZWxsaW5nIHBhZ2UgZmxpcCBldmVudHMi
+KQpTaWduZWQtb2ZmLWJ5OiBBcm5kIEJlcmdtYW5uIDxhcm5kQGFybmRiLmRlPgotLS0KIGRyaXZl
+cnMvZ3B1L2RybS90ZWdyYS9kcm0uYyB8IDEgLQogMSBmaWxlIGNoYW5nZWQsIDEgZGVsZXRpb24o
+LSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgYi9kcml2ZXJzL2dw
+dS9kcm0vdGVncmEvZHJtLmMKaW5kZXggMDIxZDBlMTM5OGZiLi44ZTZiMThjYWE3MDYgMTAwNjQ0
+Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYworKysgYi9kcml2ZXJzL2dwdS9kcm0v
+dGVncmEvZHJtLmMKQEAgLTg1OCw3ICs4NTgsNiBAQCBzdGF0aWMgdm9pZCB0ZWdyYV9kcm1fcHJl
+Y2xvc2Uoc3RydWN0IGRybV9kZXZpY2UgKmRybSwgc3RydWN0IGRybV9maWxlICpmaWxlKQogewog
+CXN0cnVjdCB0ZWdyYV9kcm1fZmlsZSAqZnByaXYgPSBmaWxlLT5kcml2ZXJfcHJpdjsKIAlzdHJ1
+Y3QgdGVncmFfZHJtX2NvbnRleHQgKmNvbnRleHQsICp0bXA7Ci0Jc3RydWN0IGRybV9jcnRjICpj
+cnRjOwogCiAJbGlzdF9mb3JfZWFjaF9lbnRyeV9zYWZlKGNvbnRleHQsIHRtcCwgJmZwcml2LT5j
+b250ZXh0cywgbGlzdCkKIAkJdGVncmFfZHJtX2NvbnRleHRfZnJlZShjb250ZXh0KTsKLS0gCjIu
+Ny4wCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmkt
+ZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
+Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
