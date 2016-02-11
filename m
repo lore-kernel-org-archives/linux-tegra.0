@@ -1,39 +1,37 @@
-From: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] PM / OPP: Fix NULL pointer dereference crash when
- disabling OPPs
-Date: Thu, 11 Feb 2016 17:04:09 +0530
-Message-ID: <20160211113409.GA28558@vireshk>
-References: <1455189959-27944-1-git-send-email-jonathanh@nvidia.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V3] ARM64: tegra: Add support for Google Pixel C
+Date: Thu, 11 Feb 2016 20:35:44 +0900
+Message-ID: <CAAVeFuKKGW9-0bO6wkCL=i7P0XJ4Mx44BD3A5EvN8G4sS1NyXA@mail.gmail.com>
+References: <1454949199-27050-1-git-send-email-jonathanh@nvidia.com>
+ <1455020809-17531-1-git-send-email-jonathanh@nvidia.com> <CAAVeFuJt+VdJb4S3PC-RXVFYhLnq7yF+dV_w5or=0ebG+LnnGw@mail.gmail.com>
+ <56BC4C91.6070409@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1455189959-27944-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <56BC4C91.6070409-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Viresh Kumar <vireshk-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Nishanth Menon <nm-l0cyMroinI0@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Olof Johansson <olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 11-02-16, 11:25, Jon Hunter wrote:
-> Commit 7d34d56ef334 ("PM / OPP: Disable OPPs that aren't supported by
-> the regulator") disables OPPs that are not supported by the regulator.
-> This is causes a crash on Tegra124 Jetson TK1 when using the DFLL clock
-> source for the CPU. The DFLL manages the voltage itself and so there is
-> no regulator specified for the OPPs and so we get a crash when we try to
-> dereference the regulator pointer. Fix this by checking to see if the
-> regulator IS_ERR_OR_NULL before dereferencing it.
-> 
-> Fixes: 7d34d56ef334 ("PM / OPP: Disable OPPs that aren't supported by the
-> regulator")
-> 
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/base/power/opp/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, Feb 11, 2016 at 5:55 PM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>
+> On 11/02/16 08:32, Alexandre Courbot wrote:
+>> On Tue, Feb 9, 2016 at 9:26 PM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>> Add initial device-tree support for Google Pixel C (a.k.a. Smaug) based
+>>> upon Tegra210 SoC with 3 GiB of LPDDR4 RAM.
+>>>
+>>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> I need to add "clk_ignore_unused=1" to the bootargs in order to avoid
+>> a hang during boot, but otherwise can reach a serial console.
+>
+> Were you testing on -next? If so, you should not need that. Otherwise,
+> please make sure you have this patch [0]. Thierry has included this in a
+> clock fixes series that should turn up in main soon.
 
-Sorry about that :(
+In one of my moments of stupidity, I was on 4.5-rc3. Adding the patch
+you mention makes boot complete without issues.
 
-Acked-by: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-
--- 
-viresh
+Thanks,
+Alex.
