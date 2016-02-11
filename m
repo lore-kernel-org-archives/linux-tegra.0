@@ -1,41 +1,56 @@
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH] PM / OPP: Fix NULL pointer dereference crash when
- disabling OPPs
-Date: Thu, 11 Feb 2016 22:16:28 +0100
-Message-ID: <CAJZ5v0j1sTZd-YTNfFmRwtmsN8AniaCsKM_aUJ7ka8VJjwK5Qw@mail.gmail.com>
-References: <1455189959-27944-1-git-send-email-jonathanh@nvidia.com>
-	<20160211113409.GA28558@vireshk>
+From: Mathieu Poirier <mathieu.poirier-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 0/8] soc: tegra: pmc: Various fixes
+Date: Thu, 11 Feb 2016 15:13:21 -0700
+Message-ID: <CANLsYkymp3jP7Df3ts6tGNdTL4AGFKPPAC6Eu-gMvFBCKXR89w@mail.gmail.com>
+References: <1455213806-21871-1-git-send-email-jonathanh@nvidia.com>
+	<56BCCFCA.4010009@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <20160211113409.GA28558@vireshk>
-Sender: linux-pm-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>, Jon Hunter <jonathanh@nvidia.com>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@codeaurora.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <56BCCFCA.4010009-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Feb 11, 2016 at 12:34 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
-> On 11-02-16, 11:25, Jon Hunter wrote:
->> Commit 7d34d56ef334 ("PM / OPP: Disable OPPs that aren't supported by
->> the regulator") disables OPPs that are not supported by the regulator.
->> This is causes a crash on Tegra124 Jetson TK1 when using the DFLL clock
->> source for the CPU. The DFLL manages the voltage itself and so there is
->> no regulator specified for the OPPs and so we get a crash when we try to
->> dereference the regulator pointer. Fix this by checking to see if the
->> regulator IS_ERR_OR_NULL before dereferencing it.
->>
->> Fixes: 7d34d56ef334 ("PM / OPP: Disable OPPs that aren't supported by the
->> regulator")
->>
->> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->> ---
->>  drivers/base/power/opp/core.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
+On 11 February 2016 at 11:15, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> +Mathieu, sorry I should have copied you. I recall that you had some
+> comments on this. I guess you are not on linux-tegra, but you can view
+> the patches here:
 >
-> Sorry about that :(
+> http://marc.info/?l=linux-tegra&r=1&b=201602&w=2
+
+Thanks for fixing patch 2 and 3, this is much better.  I've also
+reviewed the other patches and things do look good to me.
+
+For the whole set,
+Reviewed-by: Mathieu Poirier <mathieu.poirier-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+
 >
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-
-Applied, thanks!
-
-Rafael
+> Jon
+>
+> On 11/02/16 18:03, Jon Hunter wrote:
+>> This series contains a few fixes on the Tegra PMC driver. Some of these
+>> patches were original included as part of the series to add generic PM
+>> domain support for Tegra [0]. However, to keep these patch series a
+>> manageable size, I have separate them in to this series and I have added
+>> a couple more fixes as well.
+>>
+>> [0] http://marc.info/?l=linux-tegra&m=145399885003830&w=2
+>>
+>> Jon Hunter (8):
+>>   soc: tegra: pmc: Remove non-existing L2 partition for Tegra124
+>>   soc: tegra: pmc: Restore base address on probe failure
+>>   soc: tegra: pmc: Protect public functions from potential race
+>>     conditions
+>>   soc: tegra: pmc: Change powergate and rail IDs to be an unsigned type
+>>   soc: tegra: pmc: Fix testing of powergate state
+>>   soc: tegra: pmc: Fix verification of valid partitions
+>>   soc: tegra: pmc: Remove additional check for a valid partition
+>>   soc: tegra: pmc: Ensure GPU partition can be toggled on/off by PMC
+>>
+>>  drivers/gpu/drm/tegra/drm.h |   2 +-
+>>  drivers/soc/tegra/pmc.c     | 131 +++++++++++++++++++++++++++++---------------
+>>  include/soc/tegra/pmc.h     |  35 ++++++------
+>>  3 files changed, 105 insertions(+), 63 deletions(-)
+>>
