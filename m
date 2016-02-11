@@ -1,83 +1,48 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 6/8] soc: tegra: pmc: Fix verification of valid partitions
-Date: Thu, 11 Feb 2016 18:03:24 +0000
-Message-ID: <1455213806-21871-7-git-send-email-jonathanh@nvidia.com>
+Subject: Re: [PATCH 0/8] soc: tegra: pmc: Various fixes
+Date: Thu, 11 Feb 2016 18:15:38 +0000
+Message-ID: <56BCCFCA.4010009@nvidia.com>
 References: <1455213806-21871-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1455213806-21871-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mathieu Poirier <mathieu.poirier-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The tegra power partitions are referenced by a numerical ID which are
-the same values programmed into the PMC registers for controlling the
-partition. For a given device, the valid partition IDs may not be
-contiguous and so simply checking that an ID is not greater than the
-maximum ID supported may not mean it is valid. Fix this by checking if
-the powergate is defined in the list of powergates for the Tegra SoC.
++Mathieu, sorry I should have copied you. I recall that you had some
+comments on this. I guess you are not on linux-tegra, but you can view
+the patches here:
 
-Add a helper function for checking valid powergates and use where we
-need to verify if the powergate ID is valid or not.
+http://marc.info/?l=linux-tegra&r=1&b=201602&w=2
 
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/soc/tegra/pmc.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+Jon
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 9e8d359baf0e..e75782b47267 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -179,6 +179,11 @@ static inline bool tegra_powergate_state(int id)
- 	return (tegra_pmc_readl(PWRGATE_STATUS) & BIT(id)) != 0;
- }
- 
-+static inline bool tegra_powergate_is_valid(int id)
-+{
-+	return (pmc->soc && pmc->soc->powergates[id]);
-+}
-+
- /**
-  * tegra_powergate_set() - set the state of a partition
-  * @id: partition ID
-@@ -206,7 +211,7 @@ static int tegra_powergate_set(unsigned int id, bool new_state)
-  */
- int tegra_powergate_power_on(unsigned int id)
- {
--	if (!pmc->soc || id >= pmc->soc->num_powergates)
-+	if (!tegra_powergate_is_valid(id))
- 		return -EINVAL;
- 
- 	return tegra_powergate_set(id, true);
-@@ -218,7 +223,7 @@ int tegra_powergate_power_on(unsigned int id)
-  */
- int tegra_powergate_power_off(unsigned int id)
- {
--	if (!pmc->soc || id >= pmc->soc->num_powergates)
-+	if (!tegra_powergate_is_valid(id))
- 		return -EINVAL;
- 
- 	return tegra_powergate_set(id, false);
-@@ -233,7 +238,7 @@ int tegra_powergate_is_powered(unsigned int id)
- {
- 	int status;
- 
--	if (!pmc->soc || id >= pmc->soc->num_powergates)
-+	if (!tegra_powergate_is_valid(id))
- 		return -EINVAL;
- 
- 	mutex_lock(&pmc->powergates_lock);
-@@ -251,7 +256,7 @@ int tegra_powergate_remove_clamping(unsigned int id)
- {
- 	u32 mask;
- 
--	if (!pmc->soc || id >= pmc->soc->num_powergates)
-+	if (!tegra_powergate_is_valid(id))
- 		return -EINVAL;
- 
- 	mutex_lock(&pmc->powergates_lock);
--- 
-2.1.4
+On 11/02/16 18:03, Jon Hunter wrote:
+> This series contains a few fixes on the Tegra PMC driver. Some of these
+> patches were original included as part of the series to add generic PM
+> domain support for Tegra [0]. However, to keep these patch series a
+> manageable size, I have separate them in to this series and I have added
+> a couple more fixes as well.
+> 
+> [0] http://marc.info/?l=linux-tegra&m=145399885003830&w=2
+> 
+> Jon Hunter (8):
+>   soc: tegra: pmc: Remove non-existing L2 partition for Tegra124
+>   soc: tegra: pmc: Restore base address on probe failure
+>   soc: tegra: pmc: Protect public functions from potential race
+>     conditions
+>   soc: tegra: pmc: Change powergate and rail IDs to be an unsigned type
+>   soc: tegra: pmc: Fix testing of powergate state
+>   soc: tegra: pmc: Fix verification of valid partitions
+>   soc: tegra: pmc: Remove additional check for a valid partition
+>   soc: tegra: pmc: Ensure GPU partition can be toggled on/off by PMC
+> 
+>  drivers/gpu/drm/tegra/drm.h |   2 +-
+>  drivers/soc/tegra/pmc.c     | 131 +++++++++++++++++++++++++++++---------------
+>  include/soc/tegra/pmc.h     |  35 ++++++------
+>  3 files changed, 105 insertions(+), 63 deletions(-)
+> 
