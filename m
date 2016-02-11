@@ -1,48 +1,37 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 0/8] soc: tegra: pmc: Various fixes
-Date: Thu, 11 Feb 2016 18:15:38 +0000
-Message-ID: <56BCCFCA.4010009@nvidia.com>
-References: <1455213806-21871-1-git-send-email-jonathanh@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [cbootimage PATCH] Bump to version 1.7
+Date: Thu, 11 Feb 2016 13:04:48 -0700
+Message-ID: <1455221088-15687-1-git-send-email-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1455213806-21871-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mathieu Poirier <mathieu.poirier-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-+Mathieu, sorry I should have copied you. I recall that you had some
-comments on this. I guess you are not on linux-tegra, but you can view
-the patches here:
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-http://marc.info/?l=linux-tegra&r=1&b=201602&w=2
+This release:
+- Ports RSA signature field operations to T124.
+- Fixes some error handling.
+- Fixes image update with small image file sizes.
 
-Jon
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 11/02/16 18:03, Jon Hunter wrote:
-> This series contains a few fixes on the Tegra PMC driver. Some of these
-> patches were original included as part of the series to add generic PM
-> domain support for Tegra [0]. However, to keep these patch series a
-> manageable size, I have separate them in to this series and I have added
-> a couple more fixes as well.
-> 
-> [0] http://marc.info/?l=linux-tegra&m=145399885003830&w=2
-> 
-> Jon Hunter (8):
->   soc: tegra: pmc: Remove non-existing L2 partition for Tegra124
->   soc: tegra: pmc: Restore base address on probe failure
->   soc: tegra: pmc: Protect public functions from potential race
->     conditions
->   soc: tegra: pmc: Change powergate and rail IDs to be an unsigned type
->   soc: tegra: pmc: Fix testing of powergate state
->   soc: tegra: pmc: Fix verification of valid partitions
->   soc: tegra: pmc: Remove additional check for a valid partition
->   soc: tegra: pmc: Ensure GPU partition can be toggled on/off by PMC
-> 
->  drivers/gpu/drm/tegra/drm.h |   2 +-
->  drivers/soc/tegra/pmc.c     | 131 +++++++++++++++++++++++++++++---------------
->  include/soc/tegra/pmc.h     |  35 ++++++------
->  3 files changed, 105 insertions(+), 63 deletions(-)
-> 
+diff --git a/configure.ac b/configure.ac
+index f251f09c211f..c8218ba5b598 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -2,7 +2,7 @@
+ # Process this file with autoconf to produce a configure script.
+ 
+ AC_PREREQ([2.67])
+-AC_INIT([cbootimage], [1.6], [jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org])
++AC_INIT([cbootimage], [1.7], [jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org])
+ AM_INIT_AUTOMAKE
+ AC_CONFIG_SRCDIR([src/cbootimage.c])
+ AC_CONFIG_HEADERS([config.h])
+-- 
+2.7.0
