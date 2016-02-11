@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/8] soc: tegra: pmc: Restore base address on probe failure
-Date: Thu, 11 Feb 2016 18:03:20 +0000
-Message-ID: <1455213806-21871-3-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH 5/8] soc: tegra: pmc: Fix testing of powergate state
+Date: Thu, 11 Feb 2016 18:03:23 +0000
+Message-ID: <1455213806-21871-6-git-send-email-jonathanh@nvidia.com>
 References: <1455213806-21871-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,72 +12,75 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Re
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-During early initialisation, the PMC registers are mapped and the PMC SoC
-data is populated in the PMC data structure. This allows other drivers
-access the PMC register space, via the public tegra PMC APIs, prior to
-probing the PMC device.
+In tegra_powergate_set() the state of the powergates is read and OR'ed
+with the bit for the powergate of interest. This unsigned 32-bit value
+is then compared with a boolean value to test if the powergate is
+already in the desired state. When turning on a powergate, apart from
+the powergate that is represented by bit 0, this test will always
+return false and so we may attempt to turn on the powergate when it is
+already on.
 
-When the PMC device is probed, the PMC registers are mapped again and if
-successful the initial mapping is freed. If the probing of the PMC device
-fails after the registers are remapped, then the registers will be
-unmapped and hence the pointer to the PMC registers will be invalid. This
-could lead to a potential crash, because once the PMC SoC data pointer is
-populated, the driver assumes that the PMC register mapping is also valid
-and a user calling any of the public tegra PMC APIs could trigger an
-exception because these APIs don't check that the mapping is still valid.
-
-Fix this by updating the mapping and freeing the original mapping only if
-probing the PMC device is successful.
+After OR'ing the bit for the powergate, check if the result is not equal
+to zero before comparing with the boolean value. Add a helper function
+to return the current state of a powergate and use this in both
+tegra_powergate_set() and tegra_powergate_is_powered() where we check
+the powergate status.
 
 Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-
-Please note that in order to properly fix this, we should lock around the
-update on the base address pointer. The 3rd patch of this series adds the
-locking and with the locking in place we can then also drop this "tmp"
-variable added here.
-
- drivers/soc/tegra/pmc.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ drivers/soc/tegra/pmc.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 922430322877..900f72f0d757 100644
+index 5f32a3e34476..9e8d359baf0e 100644
 --- a/drivers/soc/tegra/pmc.c
 +++ b/drivers/soc/tegra/pmc.c
-@@ -807,7 +807,7 @@ out:
- 
- static int tegra_pmc_probe(struct platform_device *pdev)
- {
--	void __iomem *base = pmc->base;
-+	void __iomem *base, *tmp;
- 	struct resource *res;
- 	int err;
- 
-@@ -817,11 +817,9 @@ static int tegra_pmc_probe(struct platform_device *pdev)
- 
- 	/* take over the memory region from the early initialization */
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pmc->base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(pmc->base))
--		return PTR_ERR(pmc->base);
--
--	iounmap(base);
-+	base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
- 
- 	pmc->clk = devm_clk_get(&pdev->dev, "pclk");
- 	if (IS_ERR(pmc->clk)) {
-@@ -850,6 +848,10 @@ static int tegra_pmc_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
-+	tmp = pmc->base;
-+	pmc->base = base;
-+	iounmap(tmp);
-+
- 	return 0;
+@@ -174,6 +174,11 @@ static void tegra_pmc_writel(u32 value, unsigned long offset)
+ 	writel(value, pmc->base + offset);
  }
  
++static inline bool tegra_powergate_state(int id)
++{
++	return (tegra_pmc_readl(PWRGATE_STATUS) & BIT(id)) != 0;
++}
++
+ /**
+  * tegra_powergate_set() - set the state of a partition
+  * @id: partition ID
+@@ -181,13 +186,9 @@ static void tegra_pmc_writel(u32 value, unsigned long offset)
+  */
+ static int tegra_powergate_set(unsigned int id, bool new_state)
+ {
+-	bool status;
+-
+ 	mutex_lock(&pmc->powergates_lock);
+ 
+-	status = tegra_pmc_readl(PWRGATE_STATUS) & (1 << id);
+-
+-	if (status == new_state) {
++	if (tegra_powergate_state(id) == new_state) {
+ 		mutex_unlock(&pmc->powergates_lock);
+ 		return 0;
+ 	}
+@@ -230,16 +231,16 @@ EXPORT_SYMBOL(tegra_powergate_power_off);
+  */
+ int tegra_powergate_is_powered(unsigned int id)
+ {
+-	u32 status;
++	int status;
+ 
+ 	if (!pmc->soc || id >= pmc->soc->num_powergates)
+ 		return -EINVAL;
+ 
+ 	mutex_lock(&pmc->powergates_lock);
+-	status = tegra_pmc_readl(PWRGATE_STATUS) & (1 << id);
++	status = tegra_powergate_state(id);
+ 	mutex_unlock(&pmc->powergates_lock);
+ 
+-	return !!status;
++	return status;
+ }
+ 
+ /**
 -- 
 2.1.4
