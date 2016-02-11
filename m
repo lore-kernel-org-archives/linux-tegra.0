@@ -1,37 +1,41 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [cbootimage PATCH] Bump to version 1.7
-Date: Thu, 11 Feb 2016 13:04:48 -0700
-Message-ID: <1455221088-15687-1-git-send-email-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH] PM / OPP: Fix NULL pointer dereference crash when
+ disabling OPPs
+Date: Thu, 11 Feb 2016 22:16:28 +0100
+Message-ID: <CAJZ5v0j1sTZd-YTNfFmRwtmsN8AniaCsKM_aUJ7ka8VJjwK5Qw@mail.gmail.com>
+References: <1455189959-27944-1-git-send-email-jonathanh@nvidia.com>
+	<20160211113409.GA28558@vireshk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <20160211113409.GA28558@vireshk>
+Sender: linux-pm-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>, Jon Hunter <jonathanh@nvidia.com>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@codeaurora.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Thu, Feb 11, 2016 at 12:34 PM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> On 11-02-16, 11:25, Jon Hunter wrote:
+>> Commit 7d34d56ef334 ("PM / OPP: Disable OPPs that aren't supported by
+>> the regulator") disables OPPs that are not supported by the regulator.
+>> This is causes a crash on Tegra124 Jetson TK1 when using the DFLL clock
+>> source for the CPU. The DFLL manages the voltage itself and so there is
+>> no regulator specified for the OPPs and so we get a crash when we try to
+>> dereference the regulator pointer. Fix this by checking to see if the
+>> regulator IS_ERR_OR_NULL before dereferencing it.
+>>
+>> Fixes: 7d34d56ef334 ("PM / OPP: Disable OPPs that aren't supported by the
+>> regulator")
+>>
+>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>> ---
+>>  drivers/base/power/opp/core.c | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> Sorry about that :(
+>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-This release:
-- Ports RSA signature field operations to T124.
-- Fixes some error handling.
-- Fixes image update with small image file sizes.
+Applied, thanks!
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- configure.ac | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/configure.ac b/configure.ac
-index f251f09c211f..c8218ba5b598 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -2,7 +2,7 @@
- # Process this file with autoconf to produce a configure script.
- 
- AC_PREREQ([2.67])
--AC_INIT([cbootimage], [1.6], [jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org])
-+AC_INIT([cbootimage], [1.7], [jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org])
- AM_INIT_AUTOMAKE
- AC_CONFIG_SRCDIR([src/cbootimage.c])
- AC_CONFIG_HEADERS([config.h])
--- 
-2.7.0
+Rafael
