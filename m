@@ -1,75 +1,25 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 8/8] soc: tegra: pmc: Ensure GPU partition can be toggled
- on/off by PMC
-Date: Fri, 12 Feb 2016 09:38:46 +0000
-Message-ID: <56BDA826.2000304@nvidia.com>
-References: <1455213806-21871-1-git-send-email-jonathanh@nvidia.com>
- <1455213806-21871-9-git-send-email-jonathanh@nvidia.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V5 07/11] of: Add bindings of hw-trip-points for soctherm
+Date: Fri, 12 Feb 2016 08:42:52 -0600
+Message-ID: <CAL_JsqKwQOxkWyYPcv6sBe8ELUuPx4N+iUF94J8R63bRxsGK4g@mail.gmail.com>
+References: <1454057260-16412-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1455213806-21871-9-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1454057260-16412-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Zhang Rui <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Mikko Perttunen <mikko.perttunen-/1wQRMveznE@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, Jan 29, 2016 at 2:47 AM, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> Add hw-trips sub-node for soctherm, which is
+> used to describe the hardware trip points for
+> each soctherm sensors.
 
-On 11/02/16 18:03, Jon Hunter wrote:
-> For Tegra124 and Tegra210, the GPU partition cannot be toggled on and
-> off via the APBDEV_PMC_PWRGATE_TOGGLE_0 register. For these devices, the
-> partition is simply powered up and down via an external regulator.
-> Describe in the PMC SoC data in which devices the GPU partition can be
-> controlled via the APBDEV_PMC_PWRGATE_TOGGLE_0 register and ensure that
-> no one can incorrectly try to toggle the GPU partition via the
-> APBDEV_PMC_PWRGATE_TOGGLE_0 register.
-> 
-> Furthermore, because we cannot use the APBDEV_PMC_PWRGATE_STATUS_0
-> register to determine if the GPU partition is powered, use the
-> APBDEV_PMC_CLAMP_STATUS_0 register to determine if the GPU partition
-> is powered. The APBDEV_PMC_CLAMP_STATUS_0 register is bit wise
-> compatible with the APBDEV_PMC_PWRGATE_STATUS_0 register and if the
-> clamp is disabled (ie. the appropriate bit == 0), then this indicates
-> the partition is powered.
-> 
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/soc/tegra/pmc.c | 15 ++++++++++++++-
->  1 file changed, 14 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 8e358dbffaed..442232269df3 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -52,6 +52,8 @@
->  #define  DPD_SAMPLE_ENABLE		(1 << 0)
->  #define  DPD_SAMPLE_DISABLE		(0 << 0)
->  
-> +#define CLAMP_STATUS			0x2c
-> +
->  #define PWRGATE_TOGGLE			0x30
->  #define  PWRGATE_TOGGLE_START		(1 << 8)
->  
-> @@ -109,6 +111,7 @@ struct tegra_pmc_soc {
->  
->  	bool has_tsense_reset;
->  	bool has_gpu_clamps;
-> +	bool has_gpu_toggle;
->  };
->  
->  /**
-> @@ -176,7 +179,10 @@ static void tegra_pmc_writel(u32 value, unsigned long offset)
->  
->  static inline bool tegra_powergate_state(int id)
->  {
-> -	return (tegra_pmc_readl(PWRGATE_STATUS) & BIT(id)) != 0;
-> +	if (id == TEGRA_POWERGATE_3D && !pmc->soc->has_gpu_toggle)
-> +		return (tegra_pmc_readl(CLAMP_STATUS) & BIT(id)) == 0;
+I still don't understand why you are doing something custom here.
+What's wrong with what is defined in:
 
-Well, this is still not right. For devices with
-!pmc->soc->has_gpu_toggle, these devices have their own separate
-register for removing the clamp and so the APBDEV_PMC_CLAMP_STATUS_0
-register will not tell us the status. I need to look at this some more.
+Documentation/devicetree/bindings/thermal/thermal.txt
 
-Jon
+Rob
