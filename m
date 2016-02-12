@@ -1,87 +1,79 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 8/8] soc: tegra: pmc: Ensure GPU partition can be toggled
- on/off by PMC
-Date: Fri, 12 Feb 2016 18:51:47 +0000
-Message-ID: <56BE29C3.4090901@nvidia.com>
-References: <1455213806-21871-1-git-send-email-jonathanh@nvidia.com>
- <1455213806-21871-9-git-send-email-jonathanh@nvidia.com>
- <56BDA826.2000304@nvidia.com> <20160212172540.GA29081@ulmo>
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: Re: [PATCH V5 11/14] soc: tegra: pmc: Add generic PM domain support
+Date: Fri, 12 Feb 2016 15:14:04 -0800
+Message-ID: <7hh9hdzflv.fsf@baylibre.com>
+References: <1453998832-27383-1-git-send-email-jonathanh@nvidia.com>
+	<1453998832-27383-12-git-send-email-jonathanh@nvidia.com>
+	<CAPDyKFpnUJA2pLSUOw8rkjyXLY6b__TM=38jsvYAZVhe+DS=zg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160212172540.GA29081@ulmo>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAPDyKFpnUJA2pLSUOw8rkjyXLY6b__TM=38jsvYAZVhe+DS=zg@mail.gmail.com>
+	(Ulf Hansson's message of "Thu, 4 Feb 2016 16:44:59 +0100")
+Sender: linux-pm-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Ulf Hansson <ulf.hansson@linaro.org> writes:
 
-On 12/02/16 17:25, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Fri, Feb 12, 2016 at 09:38:46AM +0000, Jon Hunter wrote:
+> On 28 January 2016 at 17:33, Jon Hunter <jonathanh@nvidia.com> wrote:
+>> Adds generic PM support to the PMC driver where the PM domains are
+>> populated from device-tree and the PM domain consumer devices are
+>> bound to their relevant PM domains via device-tree as well.
 >>
->> On 11/02/16 18:03, Jon Hunter wrote:
->>> For Tegra124 and Tegra210, the GPU partition cannot be toggled on and
->>> off via the APBDEV_PMC_PWRGATE_TOGGLE_0 register. For these devices, the
->>> partition is simply powered up and down via an external regulator.
->>> Describe in the PMC SoC data in which devices the GPU partition can be
->>> controlled via the APBDEV_PMC_PWRGATE_TOGGLE_0 register and ensure that
->>> no one can incorrectly try to toggle the GPU partition via the
->>> APBDEV_PMC_PWRGATE_TOGGLE_0 register.
->>>
->>> Furthermore, because we cannot use the APBDEV_PMC_PWRGATE_STATUS_0
->>> register to determine if the GPU partition is powered, use the
->>> APBDEV_PMC_CLAMP_STATUS_0 register to determine if the GPU partition
->>> is powered. The APBDEV_PMC_CLAMP_STATUS_0 register is bit wise
->>> compatible with the APBDEV_PMC_PWRGATE_STATUS_0 register and if the
->>> clamp is disabled (ie. the appropriate bit == 0), then this indicates
->>> the partition is powered.
->>>
->>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>> ---
->>>  drivers/soc/tegra/pmc.c | 15 ++++++++++++++-
->>>  1 file changed, 14 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->>> index 8e358dbffaed..442232269df3 100644
->>> --- a/drivers/soc/tegra/pmc.c
->>> +++ b/drivers/soc/tegra/pmc.c
->>> @@ -52,6 +52,8 @@
->>>  #define  DPD_SAMPLE_ENABLE		(1 << 0)
->>>  #define  DPD_SAMPLE_DISABLE		(0 << 0)
->>>  
->>> +#define CLAMP_STATUS			0x2c
->>> +
->>>  #define PWRGATE_TOGGLE			0x30
->>>  #define  PWRGATE_TOGGLE_START		(1 << 8)
->>>  
->>> @@ -109,6 +111,7 @@ struct tegra_pmc_soc {
->>>  
->>>  	bool has_tsense_reset;
->>>  	bool has_gpu_clamps;
->>> +	bool has_gpu_toggle;
->>>  };
->>>  
->>>  /**
->>> @@ -176,7 +179,10 @@ static void tegra_pmc_writel(u32 value, unsigned long offset)
->>>  
->>>  static inline bool tegra_powergate_state(int id)
->>>  {
->>> -	return (tegra_pmc_readl(PWRGATE_STATUS) & BIT(id)) != 0;
->>> +	if (id == TEGRA_POWERGATE_3D && !pmc->soc->has_gpu_toggle)
->>> +		return (tegra_pmc_readl(CLAMP_STATUS) & BIT(id)) == 0;
+>> Update the tegra_powergate_sequence_power_up() API so that internally
+>> it calls the same tegra_powergate_xxx functions that are used by the
+>> tegra generic power domain code for consistency.
 >>
->> Well, this is still not right. For devices with
->> !pmc->soc->has_gpu_toggle, these devices have their own separate
->> register for removing the clamp and so the APBDEV_PMC_CLAMP_STATUS_0
->> register will not tell us the status. I need to look at this some more.
-> 
-> Any objections to me applying patches 1-7 while you work on fixing this
-> last one?
+>> This is based upon work by Thierry Reding <treding@nvidia.com>
+>> and Vince Hsu <vinceh@nvidia.com>.
+>>
+>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 
-Not at all. Please go ahead.
+[...]
 
-Cheers
-Jon
+>> +static void tegra_powergate_disable_clocks(struct tegra_powergate *pg)
+>> +{
+>> +       unsigned int i;
+>> +
+>> +       for (i = 0; i < pg->num_clks; i++)
+>> +               clk_disable_unprepare(pg->clks[i]);
+>> +}
+>> +
+>> +static int tegra_powergate_enable_clocks(struct tegra_powergate *pg)
+>> +{
+>> +       unsigned int i;
+>> +       int err;
+>> +
+>> +       for (i = 0; i < pg->num_clks; i++) {
+>> +               err = clk_prepare_enable(pg->clks[i]);
+>> +               if (err)
+>> +                       goto out;
+>> +       }
+>> +
+>> +       return 0;
+>> +
+>> +out:
+>> +       while (i--)
+>> +               clk_disable_unprepare(pg->clks[i]);
+>> +
+>> +       return err;
+>> +}
+>
+> I have seen similar code around in other PM domains, dealing with
+> enabling/disabling a *list* of clocks.
+> Perhaps we should invent a new clock API that helps with this to
+> prevents code duplication!?
+
+What about the pm_clk_* API which was built for tracking clocks
+associated with devices for runtime PM.
+
+IOW, you could pm_clk_add(pg->pmc->dev, pg->clks[i]) and then your
+_enable_clocks() would become pm_clk_suspend() an dyour
+_disable_clocks() would become pm_clk_resume().
+
+I might not be following the mapping between PMC and PGs though so not
+sure pg->pmc->dev is the right struct device, but you get the idea.
+
+Kevin
