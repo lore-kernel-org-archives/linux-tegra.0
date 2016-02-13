@@ -1,79 +1,90 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH V5 11/14] soc: tegra: pmc: Add generic PM domain support
-Date: Fri, 12 Feb 2016 15:14:04 -0800
-Message-ID: <7hh9hdzflv.fsf@baylibre.com>
-References: <1453998832-27383-1-git-send-email-jonathanh@nvidia.com>
-	<1453998832-27383-12-git-send-email-jonathanh@nvidia.com>
-	<CAPDyKFpnUJA2pLSUOw8rkjyXLY6b__TM=38jsvYAZVhe+DS=zg@mail.gmail.com>
+From: Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/4] soc/sound: tegra_max98090: do not invert headphone
+ jack
+Date: Fri, 12 Feb 2016 19:10:28 -0700
+Message-ID: <56BE9094.1040500@gmail.com>
+References: <1454563862-1971-1-git-send-email-sctincman@gmail.com>
+ <1454563862-1971-2-git-send-email-sctincman@gmail.com>
+ <56B37E19.6010002@wwwdotorg.org> <56B3A10E.4010508@gmail.com>
+ <56B8E5AD.8040707@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CAPDyKFpnUJA2pLSUOw8rkjyXLY6b__TM=38jsvYAZVhe+DS=zg@mail.gmail.com>
-	(Ulf Hansson's message of "Thu, 4 Feb 2016 16:44:59 +0100")
-Sender: linux-pm-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <56B8E5AD.8040707-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Ulf Hansson <ulf.hansson@linaro.org> writes:
-
-> On 28 January 2016 at 17:33, Jon Hunter <jonathanh@nvidia.com> wrote:
->> Adds generic PM support to the PMC driver where the PM domains are
->> populated from device-tree and the PM domain consumer devices are
->> bound to their relevant PM domains via device-tree as well.
+On 02/08/2016 11:59 AM, Stephen Warren wrote:
+> On 02/04/2016 12:05 PM, Jonathan Tinkham wrote:
+>> On 02/04/2016 09:36 AM, Stephen Warren wrote:
+>>> On 02/03/2016 10:30 PM, Jonathan Tinkham wrote:
+>>>> The headphone jack should not be inverted
+>>>
+>>> Have you tested this on Venice2 as well as Nyan? I'm pretty sure
+>>> Venice2 was tested when this driver was written, and whoever added
+>>> Nyan support to the kernel simply assumed it would work. As such, my
+>>> suspicion is that this series will break Venice2 even as it fixes Nyan.
 >>
->> Update the tegra_powergate_sequence_power_up() API so that internally
->> it calls the same tegra_powergate_xxx functions that are used by the
->> tegra generic power domain code for consistency.
+>> I have not tested this on Venice2, only on Nyan. That seems like a
+>> plausible cause and reasonable suspicion.
 >>
->> This is based upon work by Thierry Reding <treding@nvidia.com>
->> and Vince Hsu <vinceh@nvidia.com>.
+>>> Why doesn't user-space expect what the kernel actually implements? The
+>>> kernel should be defining the control naming.
+>>>
+>>> Which user-space are you using specifically, and which part of it
+>>> expects particular naming?
+>>>
+>>> Perhaps this series needs to be parametrized based on a flag in DT,
+>>> rather than switching the hard-coded values, so that only Venice2 can
+>>> be affected?
 >>
->> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-
-[...]
-
->> +static void tegra_powergate_disable_clocks(struct tegra_powergate *pg)
->> +{
->> +       unsigned int i;
->> +
->> +       for (i = 0; i < pg->num_clks; i++)
->> +               clk_disable_unprepare(pg->clks[i]);
->> +}
->> +
->> +static int tegra_powergate_enable_clocks(struct tegra_powergate *pg)
->> +{
->> +       unsigned int i;
->> +       int err;
->> +
->> +       for (i = 0; i < pg->num_clks; i++) {
->> +               err = clk_prepare_enable(pg->clks[i]);
->> +               if (err)
->> +                       goto out;
->> +       }
->> +
->> +       return 0;
->> +
->> +out:
->> +       while (i--)
->> +               clk_disable_unprepare(pg->clks[i]);
->> +
->> +       return err;
->> +}
+>> Specifically pulse-audio and alsa under Arch Linux.
+>>
+>> I was referencing 'Documentation/sound/alsa/soc/dapm.txt' with regards
+>> to control names. While it is possible to add another entry into the
+>> user-space configuration, I took this documentation as a definition of
+>> kernel control naming schemes, and thought the driver had used a
+>> non-standard naming scheme (or at least, not a consistent one).
+>>
+>>> On 02/03/2016 10:31 PM, Jonathan Tinkham wrote:
+>>>> Update device-tree bindings to reflect the rename of the board's
+>>>> headphone jack.
+>>>
+>>> This looks like an incompatible change to the DT. While you've fixed
+>>> the DT, which will fix new installations, old DTs now won't work. This
+>>> breaks DT ABI. Any DT change needs to be backwards compatible, i.e.
+>>> the old name should still work and be documented as a legacy value.
+>>
+>> I see that now. If the inversion behavior differs between venice2 and
+>> nyan, then another compatible string would need to be added anyways,
+>> correct? As you mentioned above, this might need to be done anyways for
+>> the rename.
+>>
+>> Something like:
+>> - "compatible = nvidia,tegra-audio-max98090" implements old inversion
+>> behavior and leaves the switch as "Headphones" to avoid breaking 
+>> older DTs
+>> - "compatible = nvidia,tegra-{venice2,nyan}-audio-max98090" that
+>> separates the inversion behavior and also introduces the rename
 >
-> I have seen similar code around in other PM domains, dealing with
-> enabling/disabling a *list* of clocks.
-> Perhaps we should invent a new clock API that helps with this to
-> prevents code duplication!?
+> It'd be preferable to key this off an separate flag rather than the 
+> compatible value. That would more directly represent the data in 
+> question, and allow any future boards to be added without having to 
+> edit the driver to know whether those new boards neded HP DET 
+> inversion or not.
+>
+> However, do note that each of the 3 boards using this binding has a 
+> board-specific compatible value present already:
+>
+> nvidia,tegra-audio-max98090-venice2
+> nvidia,tegra-audio-max98090-nyan-blaze
+> nvidia,tegra-audio-max98090-nyan-big
 
-What about the pm_clk_* API which was built for tracking clocks
-associated with devices for runtime PM.
+Indeed, I noticed those compatible strings after I sent that message.
 
-IOW, you could pm_clk_add(pg->pmc->dev, pg->clks[i]) and then your
-_enable_clocks() would become pm_clk_suspend() an dyour
-_disable_clocks() would become pm_clk_resume().
-
-I might not be following the mapping between PMC and PGs though so not
-sure pg->pmc->dev is the right struct device, but you get the idea.
-
-Kevin
+A property seems the more ideal/desired way to go. However, to avoid 
+breaking older DTs, does that mean it must be implemented as assuming 
+inversion is default, and set nyan and other boards to "hd-invert = 0"?
