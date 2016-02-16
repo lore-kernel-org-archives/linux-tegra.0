@@ -1,104 +1,111 @@
-From: Jisheng Zhang <jszhang@marvell.com>
-Subject: Re: [PATCH v4 00/13] mmc: use sdhci_pltfm_init for private
- allocation and clean up
-Date: Tue, 16 Feb 2016 10:38:02 +0800
-Message-ID: <20160216103802.266f356c@xhacker>
-References: <1453803353-6266-1-git-send-email-jszhang@marvell.com>
-	<CAPDyKFpFSTYsAUCG9nFnnzmVsA3zm4hAPO8+6REArt9BJtn+0Q@mail.gmail.com>
-	<56B8A1A1.2080408@intel.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] ARM: dts: tegra: replace legacy *,wakeup property with
+ wakeup-source
+Date: Tue, 16 Feb 2016 11:37:57 +0100
+Message-ID: <20160216103757.GA9979@ulmo>
+References: <1454968543-12035-1-git-send-email-sudeep.holla@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <56B8A1A1.2080408@intel.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Ludovic Desroches <ludovic.desroches@atmel.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, Maxime Coquelin <maxime.coquelin@st.com>, Patrice CHOTARD <patrice.chotard@st.com>, Thierry Reding <thierry.reding@gmail.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, kernel@stlinux.com, linux-mmc <linux-mmc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-rpi-kernel@lists.infradead.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: multipart/mixed; boundary="===============0178094862920477298=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1454968543-12035-1-git-send-email-sudeep.holla@arm.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Dear Adrian, Ulf,
 
-On Mon, 8 Feb 2016 16:09:37 +0200 Adrian Hunter wrote:
+--===============0178094862920477298==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
+Content-Disposition: inline
 
-> On 04/02/16 12:38, Ulf Hansson wrote:
-> > + Adrian
-> > 
-> > On 26 January 2016 at 11:15, Jisheng Zhang <jszhang@marvell.com> wrote:  
-> >> These patches are to complete the TODOs in Commit 0e748234293f ("mmc:
-> >> sdhci: Add size for caller in init+register"), I.E:
-> >>
-> >> - todo: migrate clients to using allocation this way
-> >> - todo: remove priv variable once migration is complete
-> >>
-> >> Since v3:
-> >>  - based on v4.5-rc1
-> >>  - add Ludovic's ack for sdhci-of-at91 changes
-> >>  - fix use-after-free in some drivers: some host drivers still needs to
-> >>    access sdhci_pltfm_host->private after sdhci_pltfm_unregister(), but
-> >>    the private should be already freed by sdhci_pltfm_unregister.
-> >>  - add patch5 to fix one clk bug in sdhci_arasan_remove(). IMHO, It's
-> >>    better to add this patch to fixes rather than waiting for next merge
-> >>    window
-> >>
-> >> Since v2:
-> >>  - based on mmc next tree and remove all priv usage introduced in newly
-> >>    commits in this tree
-> >>  - don't break two lines if sdhci_pltfm_init() call could be put into
-> >>    one line. Thank Ludovic Desroches.
-> >>
-> >> Since v1:
-> >>  - add new patch03 to factorise sdhci_msm_pdata outisde of sdhci_msm_host.
-> >>    This is to fix drivers/mmc/host/sdhci-msm.c:440:32: warning: 'msm_host'
-> >>    is used uninitialized in this function [-Wuninitialized]
-> >>  - Add Arnd's Ack for all patches except patch3 which is new in v2
-> >>
-> >>
-> >> Jisheng Zhang (13):
-> >>   mmc: sdhci-bcm2835: use sdhci_pltfm_init for private allocation
-> >>   mmc: sdhci-esdhc-imx: use sdhci_pltfm_init for private allocation
-> >>   mmc: sdhci-msm: factorise sdhci_msm_pdata outisde of sdhci_msm_host
-> >>   mmc: sdhci-msm: use sdhci_pltfm_init for private allocation
-> >>   mmc: sdhci-of-arasan: fix clk issue in sdhci_arasan_remove()
-> >>   mmc: sdhci-of-arasan: use sdhci_pltfm_init for private allocation
-> >>   mmc: sdhci-of-at91: use sdhci_pltfm_init for private allocation
-> >>   mmc: sdhci-of-esdhc: use sdhci_pltfm_init for private allocation
-> >>   mmc: sdhci-pxav3: use sdhci_pltfm_init for private allocation
-> >>   mmc: sdhci-st: use sdhci_pltfm_init for private allocation
-> >>   mmc: sdhci-tegra: use sdhci_pltfm_init for private allocation
-> >>   mmc: sdhci-pxav2: remove unnecessary assignment of pltfm_host->priv
-> >>   mmc: sdhci-pltfm: remove priv variable from sdhci_pltfm_host
-> >>
-> >>  drivers/mmc/host/sdhci-bcm2835.c   | 14 +++----------
-> >>  drivers/mmc/host/sdhci-esdhc-imx.c | 38 ++++++++++++++++--------------------
-> >>  drivers/mmc/host/sdhci-msm.c       | 25 +++++++++++-------------
-> >>  drivers/mmc/host/sdhci-of-arasan.c | 33 +++++++++++++++----------------
-> >>  drivers/mmc/host/sdhci-of-at91.c   | 33 ++++++++++++++-----------------
-> >>  drivers/mmc/host/sdhci-of-esdhc.c  | 19 +++++++++---------
-> >>  drivers/mmc/host/sdhci-pltfm.h     |  1 -
-> >>  drivers/mmc/host/sdhci-pxav2.c     |  1 -
-> >>  drivers/mmc/host/sdhci-pxav3.c     | 20 ++++++++-----------
-> >>  drivers/mmc/host/sdhci-st.c        | 40 +++++++++++++++++++-------------------
-> >>  drivers/mmc/host/sdhci-tegra.c     | 21 +++++++-------------
-> >>  11 files changed, 106 insertions(+), 139 deletions(-)
-> >>
-> >> --
-> >> 2.7.0
-> >>  
-> > 
-> > To avoid confusions. I don't intend to pick up any further sdhci
-> > patches, unless they are acked by Adrian Hunter.  
-> 
-> The patches look OK, although patch 6 doesn't apply cleanly anymore.
-> Nevertheless:
 
-Sorry for being late. I'm just back from vacation.
-Thank you very much for reviewing! I'll send a new series based on Ulf's next
-branch.
+--d6Gm4EdcadzBjdND
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> Acked-by: Adrian Hunter <adrian.hunter@intel.com>
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+On Mon, Feb 08, 2016 at 09:55:43PM +0000, Sudeep Holla wrote:
+> Though the keyboard and other driver will continue to support the legacy
+> "gpio-key,wakeup", "nvidia,wakeup-source" boolean property to enable the
+> wakeup source, "wakeup-source" is the new standard binding.
+>=20
+> This patch replaces all the legacy wakeup properties with the unified
+> "wakeup-source" property in order to avoid any further copy-paste
+> duplication.
+>=20
+> Cc: Stephen Warren <swarren@wwwdotorg.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: linux-tegra@vger.kernel.org
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> ---
+>  arch/arm/boot/dts/tegra114-dalmore.dts         | 2 +-
+>  arch/arm/boot/dts/tegra114-roth.dts            | 2 +-
+>  arch/arm/boot/dts/tegra114-tn7.dts             | 2 +-
+>  arch/arm/boot/dts/tegra124-jetson-tk1.dts      | 2 +-
+>  arch/arm/boot/dts/tegra124-nyan.dtsi           | 4 ++--
+>  arch/arm/boot/dts/tegra124-venice2.dts         | 2 +-
+>  arch/arm/boot/dts/tegra20-harmony.dts          | 2 +-
+>  arch/arm/boot/dts/tegra20-paz00.dts            | 2 +-
+>  arch/arm/boot/dts/tegra20-seaboard.dts         | 4 ++--
+>  arch/arm/boot/dts/tegra20-trimslice.dts        | 2 +-
+>  arch/arm/boot/dts/tegra20-ventana.dts          | 2 +-
+>  arch/arm/boot/dts/tegra20-whistler.dts         | 2 +-
+>  arch/arm/boot/dts/tegra30-apalis-eval.dts      | 2 +-
+>  arch/arm/boot/dts/tegra30-cardhu.dtsi          | 2 +-
+>  arch/arm/boot/dts/tegra30-colibri-eval-v3.dts  | 2 +-
+>  arch/arm64/boot/dts/nvidia/tegra132-norrin.dts | 4 ++--
+>  16 files changed, 19 insertions(+), 19 deletions(-)
+
+I've applied this for 4.6, though I took the liberty of splitting this
+up into ARM and arm64 patches, since the ARM SoC maintainers prefer it
+that way.
+
+Thanks,
+Thierry
+
+--d6Gm4EdcadzBjdND
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJWwvwDAAoJEN0jrNd/PrOhfbAP/30upmYWeAV+/lB8fPx/FMX+
+9fDRqUykb0vsgPYh08VQUa0cUuc3eSqgHDbp3HjytZs2Lz+ApeAdbsMxc1mu9CxX
+RttKNV1j4QrRtbIXQWgElQVLWjgKJccK+B/t6WyYTOegZdnnxKK/MS1QI03E5HRy
+X8J/dSDtPc4qawI6HIqj4HLo0tIUF3doUck2dPB2dl9hAFSGQcpDmhZtgZ6CK6PG
+besh3oinb2/IxIg9P+QlaZg27JT4F9UsWEAMq+dF77mP8p8rj7KIPsbUgX07uYXo
+k2FKG5kK6JN4x1xMuwov04gv073LANc19ayrhXrZfrXDph69jQvMc6FebDoOjG2z
+VZk8E7eLRK5rEz3pFenqzx67xoMMjwY2CPs8907yO4/Ihayd4qXoSTIGiA9wAEis
+ll2lwMSQHgSIXeBat5EChxJbXky/UI1NEvc6odWLSbzquViPuelCWp/uXH86HECj
+zff5VW9PRnBx5/1peVRfcKkKNQ/cXh9XHfJtdFjy0Lj+rg9OTwb+d7Ugn9MbRPfg
+MvKVngMut8eh1KoWHRmeACfGeGqhq9CuJUD1ALNhMZ1UioNH9JnTXRxCpt3ORjbT
+lkvrIg3IYzw0TlGhU0pVFYiyVVWAJ1Cjhyi7hg+pk3T15Q0Mz5XCPvHRAcEeUBE1
+KyZdRzOX9hxoAuZUv+ug
+=VFwQ
+-----END PGP SIGNATURE-----
+
+--d6Gm4EdcadzBjdND--
+
+
+--===============0178094862920477298==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============0178094862920477298==--
