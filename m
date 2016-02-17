@@ -1,120 +1,61 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/4] soc/sound: tegra_max98090: do not invert headphone
- jack
-Date: Tue, 16 Feb 2016 14:43:32 -0700
-Message-ID: <56C39804.7040706@wwwdotorg.org>
-References: <1454563862-1971-1-git-send-email-sctincman@gmail.com>
- <1454563862-1971-2-git-send-email-sctincman@gmail.com>
- <56B37E19.6010002@wwwdotorg.org> <56B3A10E.4010508@gmail.com>
- <CAEUnVG7bCgzC-f_Anaw6qayGsXi=_NrWZGRy7SSALkLVLPZnUQ@mail.gmail.com>
- <56B8E4D8.8070604@wwwdotorg.org> <56BE9125.3060104@gmail.com>
+From: Wei Ni <wni@nvidia.com>
+Subject: Re: [PATCH V5 07/11] of: Add bindings of hw-trip-points for soctherm
+Date: Wed, 17 Feb 2016 17:46:37 +0800
+Message-ID: <56C4417D.2030409@nvidia.com>
+References: <1454057260-16412-1-git-send-email-wni@nvidia.com> <CAL_JsqKwQOxkWyYPcv6sBe8ELUuPx4N+iUF94J8R63bRxsGK4g@mail.gmail.com> <56C17AFD.8050203@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56BE9125.3060104-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Dylan Reid <dgreid-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Cc: "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org" <alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <56C17AFD.8050203@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>, Thierry Reding <thierry.reding@gmail.com>, Zhang Rui <rui.zhang@intel.com>, MLongnecker@nvidia.com, Stephen Warren <swarren@wwwdotorg.org>, Mikko Perttunen <mikko.perttunen@kapsi.fi>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/12/2016 07:12 PM, Jonathan Tinkham wrote:
-> On 02/08/2016 11:56 AM, Stephen Warren wrote:
->> On 02/04/2016 12:17 PM, Dylan Reid wrote:
->>> On Thu, Feb 4, 2016 at 11:05 AM, Jonathan Tinkham
->>> <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->>>> On 02/04/2016 09:36 AM, Stephen Warren wrote:
->>>>>
->>>>> On 02/03/2016 10:30 PM, Jonathan Tinkham wrote:
->>>>>>
->>>>>> The headphone jack should not be inverted
->>>>>
->>>>>
->>>>> Have you tested this on Venice2 as well as Nyan? I'm pretty sure
->>>>> Venice2
->>>>> was tested when this driver was written, and whoever added Nyan
->>>>> support to
->>>>> the kernel simply assumed it would work. As such, my suspicion is
->>>>> that this
->>>>> series will break Venice2 even as it fixes Nyan.
->>>>
->>>>
->>>> I have not tested this on Venice2, only on Nyan. That seems like a
->>>> plausible
->>>> cause and reasonable suspicion.
->>>>
->>>>> Why doesn't user-space expect what the kernel actually implements? The
->>>>> kernel should be defining the control naming.
->>>>>
->>>>> Which user-space are you using specifically, and which part of it
->>>>> expects
->>>>> particular naming?
->>>>>
->>>>> Perhaps this series needs to be parametrized based on a flag in DT,
->>>>> rather
->>>>> than switching the hard-coded values, so that only Venice2 can be
->>>>> affected?
->>>>
->>>>
->>>> Specifically pulse-audio and alsa under Arch Linux.
->>>>
->>>> I was referencing 'Documentation/sound/alsa/soc/dapm.txt' with
->>>> regards to
->>>> control names. While it is possible to add another entry into the
->>>> user-space
->>>> configuration, I took this documentation as a definition of kernel
->>>> control
->>>> naming schemes, and thought the driver had used a non-standard
->>>> naming scheme
->>>> (or at least, not a consistent one).
->>>>
->>>>> On 02/03/2016 10:31 PM, Jonathan Tinkham wrote:
->>>>>>
->>>>>> Update device-tree bindings to reflect the rename of the board's
->>>>>> headphone jack.
->>>>>
->>>>>
->>>>> This looks like an incompatible change to the DT. While you've
->>>>> fixed the
->>>>> DT, which will fix new installations, old DTs now won't work. This
->>>>> breaks DT
->>>>> ABI. Any DT change needs to be backwards compatible, i.e. the old name
->>>>> should still work and be documented as a legacy value.
->>>>
->>>>
->>>> I see that now. If the inversion behavior differs between venice2
->>>> and nyan,
->>>> then another compatible string would need to be added anyways,
->>>> correct? As
->>>> you mentioned above, this might need to be done anyways for the rename.
->>>
->>> Venice2 and both nyan platforms do have different polarity of HP detect.
->>>
->>> For some boards we have an hd-invert property in DT.
->>>
->>> Would setting hp-det-gpio to active low in the pinmux achieve the
->>> same thing?
->>
->> I don't believe we have a pinmux setting for this.
->>
->> However, there's a GPIO_ACTIVE_HIGH/LOW flag that could be used in DT
->> property nvidia,hp-det-gpios's flags field to indicate the polarity.
->> That should work, but indeed you could use a separate hp-dt-invert
->> property if not.
->
-> Yeah, I could find other things that have an "invert" property, but none
-> for headphone/mic detect pins.
->
-> I'm not sure setting the GPIO_ACTIVE_HIGH/LOW flag would work. Doesn't
-> it depend on how the pin is physically wired?
+Hi, Rob
 
-The flag value used has to match the circuit design, yes. However, I 
-don't think there's any requirement that the circuit work any particular 
-way for the software to rely on using such a flag.
+On 2016=E5=B9=B402=E6=9C=8815=E6=97=A5 15:15, Wei Ni wrote:
+> Hi, Rob
+>=20
+> On 2016=E5=B9=B402=E6=9C=8812=E6=97=A5 22:42, Rob Herring wrote:
+>> On Fri, Jan 29, 2016 at 2:47 AM, Wei Ni <wni@nvidia.com> wrote:
+>>> Add hw-trips sub-node for soctherm, which is
+>>> used to describe the hardware trip points for
+>>> each soctherm sensors.
+>>
+>> I still don't understand why you are doing something custom here.
+>> What's wrong with what is defined in:
+>>
+>> Documentation/devicetree/bindings/thermal/thermal.txt
 
-Logically, there's a "headphone present" signal, and SW needs to 
-determine the value of that signal. The "present" value could be 
-represented by either a low or a high state in the circuit, depending on 
-how the circuit is implemented. The ACTIVE_HIGH/LOW flag simply 
-indicates which voltage level is associated with the semantic meaning on 
-"headphone present".
+I think it's better to add a .set_trip_temp for of-thermal's
+thermal_zone_of_device_ops{}, so that we can set trip points on hardwar=
+e. I'm
+preparing patches, and will send out next version.
+Thanks for your comments.
+
+>=20
+> In current thermal framework, it support to set trip points for the t=
+hermal
+> zones, but this trip point is handled by SW, doesn't have callbacks t=
+o program
+> the hardware.
+> There had patches:
+> [PATCH 12/16] thermal: thermal: Add support for hardware-tracked trip=
+ points,
+> http://lists.infradead.org/pipermail/linux-mediatek/2015-May/000866.h=
+tml,
+> which can support to program hardware to set trip points, but it seem=
+s this
+> series didn't be taken.
+> So I add this hw-trip-points sub-node for soctherm.
+>=20
+> Hi, Sascha Hauer
+>=20
+> Thanks.
+> Wei.
+>=20
+>>
+>> Rob
+>>
