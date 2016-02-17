@@ -1,61 +1,139 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: Re: [PATCH V5 07/11] of: Add bindings of hw-trip-points for soctherm
-Date: Wed, 17 Feb 2016 17:46:37 +0800
-Message-ID: <56C4417D.2030409@nvidia.com>
-References: <1454057260-16412-1-git-send-email-wni@nvidia.com> <CAL_JsqKwQOxkWyYPcv6sBe8ELUuPx4N+iUF94J8R63bRxsGK4g@mail.gmail.com> <56C17AFD.8050203@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 0/5] Tegra SDHCI UHS-I support
+Date: Wed, 17 Feb 2016 13:19:36 +0000
+Message-ID: <56C47368.4010304@nvidia.com>
+References: <1450809664-11360-1-git-send-email-dev@lynxeye.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <56C17AFD.8050203@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Sascha Hauer <s.hauer@pengutronix.de>, Thierry Reding <thierry.reding@gmail.com>, Zhang Rui <rui.zhang@intel.com>, MLongnecker@nvidia.com, Stephen Warren <swarren@wwwdotorg.org>, Mikko Perttunen <mikko.perttunen@kapsi.fi>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1450809664-11360-1-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi, Rob
+Hi Lucas,
 
-On 2016=E5=B9=B402=E6=9C=8815=E6=97=A5 15:15, Wei Ni wrote:
-> Hi, Rob
->=20
-> On 2016=E5=B9=B402=E6=9C=8812=E6=97=A5 22:42, Rob Herring wrote:
->> On Fri, Jan 29, 2016 at 2:47 AM, Wei Ni <wni@nvidia.com> wrote:
->>> Add hw-trips sub-node for soctherm, which is
->>> used to describe the hardware trip points for
->>> each soctherm sensors.
->>
->> I still don't understand why you are doing something custom here.
->> What's wrong with what is defined in:
->>
->> Documentation/devicetree/bindings/thermal/thermal.txt
+On 22/12/15 18:40, Lucas Stach wrote:
+> Hi all,
+> 
+> this series implements UHS-I signaling for the Tegra SDHCI host,
+> which mainly means putting a proper tuning sequence in place.
+> 
+> I've tested this on Jetson TK1 and got the following speed results,
+> where mmcblk0 is the on-board eMMC and mmcblk1 is a micro SDXC card:
+> 
+> Without series applied:
+> hdparm -t /dev/mmcblk0
+>  Timing buffered disk reads:  110 MB in  3.05 seconds =  36.02 MB/sec
+> hdparm -t /dev/mmcblk1
+>  Timing buffered disk reads:   56 MB in  3.01 seconds =  18.63 MB/sec
+>  
+> With series applied:
+> hdparm -t /dev/mmcblk0
+>  Timing buffered disk reads:  236 MB in  3.00 seconds =  78.58 MB/sec
+> hdparm -t /dev/mmcblk1
+>  Timing buffered disk reads:  102 MB in  3.04 seconds =  33.51 MB/sec
+> 
+> Tegra 30 does support UHS-I speeds too, but currently has problems
+> when lowering the card voltage, which is needed in order to switch
+> to UHS-I signaling. I have some more patches to fix this, but they
+> need a bit more cleanup, with them applied the gains on Tegra30 are
+> similar to the results above.
+> 
+> For now the gains are limited to Tegra124+, with no regressions on
+> Tegra30 and Tegra20.
+> 
+> V2 fixes some minor style problems and is rebased on top of mmc/next.
+> This means it enables the same tuning logic on Tegra210 also. I
+> don't have a way to test this myself, so any testing on Tegra210 much
+> appreciated.
 
-I think it's better to add a .set_trip_temp for of-thermal's
-thermal_zone_of_device_ops{}, so that we can set trip points on hardwar=
-e. I'm
-preparing patches, and will send out next version.
-Thanks for your comments.
+I have recently noticed that on my tegra114-dalmore-a04, SD cards are no
+longer recognised on boot. It appears that the problem started after
+this series was merged.
 
->=20
-> In current thermal framework, it support to set trip points for the t=
-hermal
-> zones, but this trip point is handled by SW, doesn't have callbacks t=
-o program
-> the hardware.
-> There had patches:
-> [PATCH 12/16] thermal: thermal: Add support for hardware-tracked trip=
- points,
-> http://lists.infradead.org/pipermail/linux-mediatek/2015-May/000866.h=
-tml,
-> which can support to program hardware to set trip points, but it seem=
-s this
-> series didn't be taken.
-> So I add this hw-trip-points sub-node for soctherm.
->=20
-> Hi, Sascha Hauer
->=20
-> Thanks.
-> Wei.
->=20
->>
->> Rob
->>
+On tegra114 I see:
+
+[    1.777006] mmc0: error -110 whilst initialising SD card
+
+If I disable the UHS-I changes then it works again (see below). I am
+guessing you don't have a tegra114 board to test on? I have not had time
+to look into this further, but I am not sure if we should disable UHS-I
+on tegra114 for now?
+
+Cheers
+Jon
+
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 83c4bf7bc16c..bc7a0847e316 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -147,10 +147,16 @@ static void tegra_sdhci_reset(struct sdhci_host
+*host, u8 mask)
+ 	/* Advertise UHS modes as supported by host */
+ 	if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR50)
+ 		misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDR50;
++	else
++		misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_SDR50;
+ 	if (soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
+ 		misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_DDR50;
++	else
++		misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_DDR50;
+ 	if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR104)
+ 		misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDR104;
++	else
++		misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_SDR104;
+ 	sdhci_writel(host, misc_ctrl, SDHCI_TEGRA_VENDOR_MISC_CTRL);
+
+ 	clk_ctrl = sdhci_readl(host, SDHCI_TEGRA_VENDOR_CLOCK_CTRL);
+@@ -315,6 +321,32 @@ static const struct sdhci_ops tegra114_sdhci_ops = {
+ 	.write_w    = tegra_sdhci_writew,
+ 	.write_l    = tegra_sdhci_writel,
+ 	.set_clock  = tegra_sdhci_set_clock,
++	.set_bus_width = sdhci_set_bus_width,
++	.reset      = tegra_sdhci_reset,
++	.set_uhs_signaling = sdhci_set_uhs_signaling,
++	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
++};
++
++static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
++	.quirks = SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
++		  SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
++		  SDHCI_QUIRK_SINGLE_POWER_WRITE |
++		  SDHCI_QUIRK_NO_HISPD_BIT |
++		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
++		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
++	.ops  = &tegra114_sdhci_ops,
++};
++
++static const struct sdhci_tegra_soc_data soc_data_tegra114 = {
++	.pdata = &sdhci_tegra114_pdata,
++};
++
++static const struct sdhci_ops tegra124_sdhci_ops = {
++	.get_ro     = tegra_sdhci_get_ro,
++	.read_w     = tegra_sdhci_readw,
++	.write_w    = tegra_sdhci_writew,
++	.write_l    = tegra_sdhci_writel,
++	.set_clock  = tegra_sdhci_set_clock,
+ 	.set_bus_width = tegra_sdhci_set_bus_width,
+ 	.reset      = tegra_sdhci_reset,
+ 	.platform_execute_tuning = tegra_sdhci_execute_tuning,
+@@ -322,7 +354,7 @@ static const struct sdhci_ops tegra114_sdhci_ops = {
+ 	.get_max_clock = tegra_sdhci_get_max_clock,
+ };
+
+-static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
++static const struct sdhci_pltfm_data sdhci_tegra124_pdata = {
+ 	.quirks = SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
+ 		  SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
+ 		  SDHCI_QUIRK_SINGLE_POWER_WRITE |
+@@ -330,11 +362,11 @@ static const struct sdhci_pltfm_data
+sdhci_tegra114_pdata = {
+ 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
+ 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+ 	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
+-	.ops  = &tegra114_sdhci_ops,
++	.ops  = &tegra124_sdhci_ops,
