@@ -1,120 +1,132 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] mmc: tegra: Disable UHS-I modes for tegra114
-Date: Thu, 18 Feb 2016 14:48:44 +0000
-Message-ID: <1455806924-14967-1-git-send-email-jonathanh@nvidia.com>
+From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V5 11/14] soc: tegra: pmc: Add generic PM domain support
+Date: Thu, 18 Feb 2016 16:06:26 +0100
+Message-ID: <CAPDyKFpO5dd4asjhpEUW69GcwZ_FNPKauKRpVFh0SJk_+smRSg@mail.gmail.com>
+References: <1453998832-27383-1-git-send-email-jonathanh@nvidia.com>
+	<1453998832-27383-12-git-send-email-jonathanh@nvidia.com>
+	<CAPDyKFpnUJA2pLSUOw8rkjyXLY6b__TM=38jsvYAZVhe+DS=zg@mail.gmail.com>
+	<56BB7AF4.8040708@nvidia.com>
+	<CAPDyKFrZ6tWBsQC0tyWWeChiZja3h_zcbaiX25ak-Zyp4MzqVw@mail.gmail.com>
+	<56BC50C2.7050609@nvidia.com>
+	<CAPDyKFrdmufsMqNL0U7q5gPEUqsg3SrkrNChcziQjEOjvd30Ng@mail.gmail.com>
+	<56BC5EE0.2040804@nvidia.com>
+	<CAPDyKFq_0t4tcvkgMBW8p8ubJDALWMjdhgGM+_Z6auRxEkSPdA@mail.gmail.com>
+	<56BCB90C.8000302@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <56BCB90C.8000302-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-SD card support for Tegra114 started failing after commit a8e326a911d3
-("mmc: tegra: implement module external clock change") was merged. This
-commit was part of a series to enable UHS-I modes for Tegra. To
-workaround this problem for now, only disable UHS-I modes for Tegra114
-and in order to do this it is necessary to revert changes from commits
-a8e326a911d3 ("mmc: tegra: implement module external clock change"),
-c3c2384c3ac0 ("mmc: tegra: implement UHS tuning"), 7ad2ed1dfcbe
-("mmc: tegra: enable UHS-I modes") that impact Tegra114. To do this so
-that UHS-I mode can be disabled for Tegra114 but not for Tegra124
-separate the platform data, soc data and sdhci-ops so they are no longer
-common to both Tegra114 and Tegra124.
+On 11 February 2016 at 17:38, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>
+> On 11/02/16 10:28, Ulf Hansson wrote:
+>> On 11 February 2016 at 11:13, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>>
+>>> On 11/02/16 09:57, Ulf Hansson wrote:
+>>>> On 11 February 2016 at 10:13, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>>>>
+>>>>> On 10/02/16 18:25, Ulf Hansson wrote:
+>>>>>
+>>>>> [snip]
+>>>>>
+>>>>>>>> Perhaps there's a way to allow the generic PM domain to control this
+>>>>>>>> by itself. If we for example used the struct device corresponding to
+>>>>>>>> the powergate driver, genpd could use it to distinguish between
+>>>>>>>> various instances of genpd structs..!? Maybe it would simplify the way
+>>>>>>>> to deal with removing domains?
+>>>>>>>
+>>>>>>> Yes, that would be ideal. However, would have require changing
+>>>>>>> genpd_init()? I am not sure how genpd would be able to access the device
+>>>>>>> struct for the powergate driver because we don't provide this via any
+>>>>>>> API I am aware of? And I am guessing that you don't wish to expose the
+>>>>>>> gpd_list to the world either.
+>>>>>>>
+>>>>>>> If there is an easy way, I am open to it, but looking at it today, I am
+>>>>>>> not sure I see a simple way in which we could add a new API to do this.
+>>>>>>> However, may be I am missing something!
+>>>>>>
+>>>>>> If we add a new __pm_genpd_init() API, that could require a struct
+>>>>>> device to be provided. That API will thus invoke the existing
+>>>>>> pm_genpd_init() but also deal with the extra things needed here.
+>>>>>>
+>>>>>> I would also allow such an API to return an error code.
+>>>>>>
+>>>>>> Correspondingly, pm_genpd_remove() could be required to be provided
+>>>>>> with a struct device.
+>>>>>>
+>>>>>> Existing users of pm_genpd_init() can then convert to
+>>>>>> __pm_genpd_init() whenever suitable.
+>>>>>>
+>>>>>> Of course, another option is just to add new member in the genpd
+>>>>>> struct for the struct *device. The caller of pm_genpd_init() could
+>>>>>> check it, but allow it to be NULL. Although, the pm_genpd_remove() API
+>>>>>> would require that pointer to the struct device to be set...
+>>>>>>
+>>>>>> What do you think?
+>>>>>
+>>>>> Yes, sounds good. May be it is simpler just to add a new member and let
+>>>>> the platform genpd driver handle it.
+>>>>>
+>>>>> I am wondering if in addition to pm_genpd_remove(), we then just have a
+>>>>> function called pm_genpd_remove_tail(), which allows you to pass the
+>>>>> struct device pointer and will remove the last pm-domain from the
+>>>>> gpd_list and return the genpd pointer if successful. Internally, it will
+>>>>> call pm_genpd_remove(). It seems to me that if there are nested
+>>>>> pm-domains, then we probably want to remove them starting from the tail
+>>>>> as opposed to the head.
+>>>>>
+>>>>> How does that sound?
+>>>>
+>>>> Why not make pm_genpd_remove() to behave as you describe for
+>>>> pm_genpd_remove_tail()?
+>>>> That's probably the only sane way to remove genpds anyhow!?
+>>>
+>>> Simply to offer flexibility. I could see that for some devices that have
+>>> no dependencies between pm-domains and have a static list of pm-domains,
+>>> they can simply call pm_genpd_remove() for a given pm-domain. However,
+>>> that said, I can envision a case where a single pm-domain would be
+>>> removed by itself and so may be there is no benefit?
+>>
+>> If I understand correctly, you agree to try with the most simple
+>> approach first and thus without providing too much flexibility.
+>>
+>> Anyway, I am looking forward to review your next version of the patchset! :-)
+>
+> So one snag I hit with this, is that in order to remove a pm-domain, I
+> first need to check if it is a subdomain of any other domains and if so
+> remove it as a subdomain first. Before, this was simple because I called
+> pm_genpd_remove_subdomain if the domain had a parent, and then called
+> pm_genpd_remove().
 
-Fixes: a8e326a911d3 ("mmc: tegra: implement module external clock change")
+You certainly have a point here.
 
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/mmc/host/sdhci-tegra.c | 42 +++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 37 insertions(+), 5 deletions(-)
+One more thing, we not only have to check whether the domain is a
+subdomain. we also need to check if the domain is a parent (master)
+for other subdomains. It being a parent, prevents us from removing it
+until all its subdomains are removed.
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index 83c4bf7bc16c..bc7a0847e316 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -147,10 +147,16 @@ static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
- 	/* Advertise UHS modes as supported by host */
- 	if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR50)
- 		misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDR50;
-+	else
-+		misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_SDR50;
- 	if (soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
- 		misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_DDR50;
-+	else
-+		misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_DDR50;
- 	if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR104)
- 		misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDR104;
-+	else
-+		misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_SDR104;
- 	sdhci_writel(host, misc_ctrl, SDHCI_TEGRA_VENDOR_MISC_CTRL);
- 
- 	clk_ctrl = sdhci_readl(host, SDHCI_TEGRA_VENDOR_CLOCK_CTRL);
-@@ -315,6 +321,32 @@ static const struct sdhci_ops tegra114_sdhci_ops = {
- 	.write_w    = tegra_sdhci_writew,
- 	.write_l    = tegra_sdhci_writel,
- 	.set_clock  = tegra_sdhci_set_clock,
-+	.set_bus_width = sdhci_set_bus_width,
-+	.reset      = tegra_sdhci_reset,
-+	.set_uhs_signaling = sdhci_set_uhs_signaling,
-+	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
-+};
-+
-+static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
-+	.quirks = SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
-+		  SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
-+		  SDHCI_QUIRK_SINGLE_POWER_WRITE |
-+		  SDHCI_QUIRK_NO_HISPD_BIT |
-+		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
-+		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
-+	.ops  = &tegra114_sdhci_ops,
-+};
-+
-+static const struct sdhci_tegra_soc_data soc_data_tegra114 = {
-+	.pdata = &sdhci_tegra114_pdata,
-+};
-+
-+static const struct sdhci_ops tegra124_sdhci_ops = {
-+	.get_ro     = tegra_sdhci_get_ro,
-+	.read_w     = tegra_sdhci_readw,
-+	.write_w    = tegra_sdhci_writew,
-+	.write_l    = tegra_sdhci_writel,
-+	.set_clock  = tegra_sdhci_set_clock,
- 	.set_bus_width = tegra_sdhci_set_bus_width,
- 	.reset      = tegra_sdhci_reset,
- 	.platform_execute_tuning = tegra_sdhci_execute_tuning,
-@@ -322,7 +354,7 @@ static const struct sdhci_ops tegra114_sdhci_ops = {
- 	.get_max_clock = tegra_sdhci_get_max_clock,
- };
- 
--static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
-+static const struct sdhci_pltfm_data sdhci_tegra124_pdata = {
- 	.quirks = SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
- 		  SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
- 		  SDHCI_QUIRK_SINGLE_POWER_WRITE |
-@@ -330,11 +362,11 @@ static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
- 		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
- 		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
- 	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
--	.ops  = &tegra114_sdhci_ops,
-+	.ops  = &tegra124_sdhci_ops,
- };
- 
--static const struct sdhci_tegra_soc_data soc_data_tegra114 = {
--	.pdata = &sdhci_tegra114_pdata,
-+static const struct sdhci_tegra_soc_data soc_data_tegra124 = {
-+	.pdata = &sdhci_tegra124_pdata,
- 	.nvquirks = NVQUIRK_ENABLE_SDR50 |
- 		    NVQUIRK_ENABLE_DDR50 |
- 		    NVQUIRK_ENABLE_SDR104,
-@@ -357,7 +389,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
- 
- static const struct of_device_id sdhci_tegra_dt_match[] = {
- 	{ .compatible = "nvidia,tegra210-sdhci", .data = &soc_data_tegra210 },
--	{ .compatible = "nvidia,tegra124-sdhci", .data = &soc_data_tegra114 },
-+	{ .compatible = "nvidia,tegra124-sdhci", .data = &soc_data_tegra124 },
- 	{ .compatible = "nvidia,tegra114-sdhci", .data = &soc_data_tegra114 },
- 	{ .compatible = "nvidia,tegra30-sdhci", .data = &soc_data_tegra30 },
- 	{ .compatible = "nvidia,tegra20-sdhci", .data = &soc_data_tegra20 },
--- 
-2.1.4
+>
+> With the proposal we have discussed, I no longer have any knowledge of
+> whether the pm-domain is a subdomain or not because pm_genpd_remove()
+> would remove the tail and then return it. So this means that I now need
+> to handle the removal of the subdomain within pm_genpd_remove(), which
+> is ok, but creates more changes as I need to parse the slave_links list,
+> etc.
+>
+> I am wondering if it would be better to add a simple function called
+> pm_genpd_list_get_tail(struct device *dev) that would return the last
+> pm-domain register for a given device and then simply call
+> pm_genpd_remove_subdomain() (if needed) and pm_genpd_remove()?
+
+That should work. Please go ahead and have try!
+
+Kind regards
+Uffe
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
