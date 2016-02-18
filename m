@@ -1,134 +1,67 @@
-From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] mmc: tegra: Disable UHS-I modes for tegra114
-Date: Thu, 18 Feb 2016 17:07:01 +0100
-Message-ID: <CAPDyKFowEH=4PU1ErNxMA0=SiDT1Q86H0SfMuiH5jA+H7mvquA@mail.gmail.com>
-References: <1455806924-14967-1-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V5 11/14] soc: tegra: pmc: Add generic PM domain support
+Date: Thu, 18 Feb 2016 16:31:22 +0000
+Message-ID: <56C5F1DA.2060705@nvidia.com>
+References: <1453998832-27383-1-git-send-email-jonathanh@nvidia.com>
+ <1453998832-27383-12-git-send-email-jonathanh@nvidia.com>
+ <CAPDyKFpnUJA2pLSUOw8rkjyXLY6b__TM=38jsvYAZVhe+DS=zg@mail.gmail.com>
+ <7hh9hdzflv.fsf@baylibre.com> <56C1B62B.5060708@nvidia.com>
+ <CAPDyKFoPrFoMOFxC37zXX4L3VdLKknaw_LUTw7ycr9mfa_=7_A@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1455806924-14967-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <CAPDyKFoPrFoMOFxC37zXX4L3VdLKknaw_LUTw7ycr9mfa_=7_A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-+Adrian
 
-On 18 February 2016 at 15:48, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> SD card support for Tegra114 started failing after commit a8e326a911d3
-> ("mmc: tegra: implement module external clock change") was merged. This
-> commit was part of a series to enable UHS-I modes for Tegra. To
-> workaround this problem for now, only disable UHS-I modes for Tegra114
-> and in order to do this it is necessary to revert changes from commits
-> a8e326a911d3 ("mmc: tegra: implement module external clock change"),
-> c3c2384c3ac0 ("mmc: tegra: implement UHS tuning"), 7ad2ed1dfcbe
-> ("mmc: tegra: enable UHS-I modes") that impact Tegra114. To do this so
-> that UHS-I mode can be disabled for Tegra114 but not for Tegra124
-> separate the platform data, soc data and sdhci-ops so they are no longer
-> common to both Tegra114 and Tegra124.
->
-> Fixes: a8e326a911d3 ("mmc: tegra: implement module external clock change")
->
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 18/02/16 16:00, Ulf Hansson wrote:
+> [...]
+> 
+>>>
+>>> What about the pm_clk_* API which was built for tracking clocks
+>>> associated with devices for runtime PM.
+>>>
+>>> IOW, you could pm_clk_add(pg->pmc->dev, pg->clks[i]) and then your
+>>> _enable_clocks() would become pm_clk_suspend() an dyour
+>>> _disable_clocks() would become pm_clk_resume().
+>>
+>> Very interesting, I was not aware of this.
+>>
+>>> I might not be following the mapping between PMC and PGs though so not
+>>> sure pg->pmc->dev is the right struct device, but you get the idea.
+>>
+>> Yes, so this will not work here as-is, because the pmc->dev is common to
+>> all pm-domains (it is the device that creates all the pm-domains). So to
+>> make this work, I would need to create a device for each pm-domain and
+>> add the clocks to that.
+>>
+>> I see that this works very well for normal drivers, but it does not feel
+>> so natural for pm-domains where we don't have a device struct today. By
+>> the way, the rockchip pm-domains implementation is very much in the same
+>> boat as tegra, where there are multiple clocks per pm-domain and it is
+>> handled by a simple list. So I am not sure if you think that we should
+>> be turning all pm-domains registered by pm_genpd_init() into a device
+>> and then we can make use of these pm_clk_XXXX() APIs?
+>>
+>> I have implemented the generic clk APIs that Ulf and I discussed for
+>> handling multiple clocks, but if we think that this is a better way,
+>> then I will hold off for now.
+> 
+> I think Kevin has a point that we already have PM clocks to build upon.
+> Could we perhaps try to extend that API instead to suite this needs as well?
 
-This looks okay to me, although I need and ack from Adrian to pick up
-this for fixes. Adrian did recently step in as the maintainer for
-sdhci.
+We certainly could and I am not against it, however, it means that we
+need to create a device structure for each pm-domain. If you and Kevin
+are ok with me adding this to pm_genpd_init(), then I can give it a try.
 
-Kind regards
-Uffe
+> I do realize that it will make this patchset more complicated. As I
+> stated earlier, this was just an idea I had, so to be clear I won't
+> hold back an ack for this patchset, if you decide to deal with this in
+> separate "improvement" step.
 
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 42 +++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 37 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 83c4bf7bc16c..bc7a0847e316 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -147,10 +147,16 @@ static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
->         /* Advertise UHS modes as supported by host */
->         if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR50)
->                 misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDR50;
-> +       else
-> +               misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_SDR50;
->         if (soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
->                 misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_DDR50;
-> +       else
-> +               misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_DDR50;
->         if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR104)
->                 misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDR104;
-> +       else
-> +               misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_SDR104;
->         sdhci_writel(host, misc_ctrl, SDHCI_TEGRA_VENDOR_MISC_CTRL);
->
->         clk_ctrl = sdhci_readl(host, SDHCI_TEGRA_VENDOR_CLOCK_CTRL);
-> @@ -315,6 +321,32 @@ static const struct sdhci_ops tegra114_sdhci_ops = {
->         .write_w    = tegra_sdhci_writew,
->         .write_l    = tegra_sdhci_writel,
->         .set_clock  = tegra_sdhci_set_clock,
-> +       .set_bus_width = sdhci_set_bus_width,
-> +       .reset      = tegra_sdhci_reset,
-> +       .set_uhs_signaling = sdhci_set_uhs_signaling,
-> +       .get_max_clock = sdhci_pltfm_clk_get_max_clock,
-> +};
-> +
-> +static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
-> +       .quirks = SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
-> +                 SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
-> +                 SDHCI_QUIRK_SINGLE_POWER_WRITE |
-> +                 SDHCI_QUIRK_NO_HISPD_BIT |
-> +                 SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
-> +                 SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
-> +       .ops  = &tegra114_sdhci_ops,
-> +};
-> +
-> +static const struct sdhci_tegra_soc_data soc_data_tegra114 = {
-> +       .pdata = &sdhci_tegra114_pdata,
-> +};
-> +
-> +static const struct sdhci_ops tegra124_sdhci_ops = {
-> +       .get_ro     = tegra_sdhci_get_ro,
-> +       .read_w     = tegra_sdhci_readw,
-> +       .write_w    = tegra_sdhci_writew,
-> +       .write_l    = tegra_sdhci_writel,
-> +       .set_clock  = tegra_sdhci_set_clock,
->         .set_bus_width = tegra_sdhci_set_bus_width,
->         .reset      = tegra_sdhci_reset,
->         .platform_execute_tuning = tegra_sdhci_execute_tuning,
-> @@ -322,7 +354,7 @@ static const struct sdhci_ops tegra114_sdhci_ops = {
->         .get_max_clock = tegra_sdhci_get_max_clock,
->  };
->
-> -static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
-> +static const struct sdhci_pltfm_data sdhci_tegra124_pdata = {
->         .quirks = SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
->                   SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
->                   SDHCI_QUIRK_SINGLE_POWER_WRITE |
-> @@ -330,11 +362,11 @@ static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
->                   SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
->                   SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
->         .quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN,
-> -       .ops  = &tegra114_sdhci_ops,
-> +       .ops  = &tegra124_sdhci_ops,
->  };
->
-> -static const struct sdhci_tegra_soc_data soc_data_tegra114 = {
-> -       .pdata = &sdhci_tegra114_pdata,
-> +static const struct sdhci_tegra_soc_data soc_data_tegra124 = {
-> +       .pdata = &sdhci_tegra124_pdata,
->         .nvquirks = NVQUIRK_ENABLE_SDR50 |
->                     NVQUIRK_ENABLE_DDR50 |
->                     NVQUIRK_ENABLE_SDR104,
-> @@ -357,7 +389,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
->
->  static const struct of_device_id sdhci_tegra_dt_match[] = {
->         { .compatible = "nvidia,tegra210-sdhci", .data = &soc_data_tegra210 },
-> -       { .compatible = "nvidia,tegra124-sdhci", .data = &soc_data_tegra114 },
-> +       { .compatible = "nvidia,tegra124-sdhci", .data = &soc_data_tegra124 },
->         { .compatible = "nvidia,tegra114-sdhci", .data = &soc_data_tegra114 },
->         { .compatible = "nvidia,tegra30-sdhci", .data = &soc_data_tegra30 },
->         { .compatible = "nvidia,tegra20-sdhci", .data = &soc_data_tegra20 },
-> --
-> 2.1.4
->
+Thanks
+Jon
