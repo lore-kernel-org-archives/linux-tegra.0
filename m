@@ -1,7 +1,7 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 45/61] gpio: tc3589x: Use devm_gpiochip_add_data() for gpio registration
-Date: Mon, 22 Feb 2016 19:38:34 +0530
-Message-ID: <1456150130-2668-46-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH 41/61] gpio: stp-xway: Use devm_gpiochip_add_data() for gpio registration
+Date: Mon, 22 Feb 2016 19:38:30 +0530
+Message-ID: <1456150130-2668-42-git-send-email-ldewangan@nvidia.com>
 References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,48 +12,25 @@ To: linus.walleij@linaro.org, gnurou@gmail.com, michael.hennerich@analog.com, co
 Cc: ldewangan@nvidia.com, bjorn.andersson@sonymobile.com, a.kesavan@samsung.com, gregkh@linuxfoundation.org, catalin.marinas@arm.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, patches@opensource.wolfsonmicro.com, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use devm_gpiochip_add_data() for GPIO registration and remove the
-need of driver callback .remove.
+Use devm_gpiochip_add_data() for GPIO registration.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- drivers/gpio/gpio-tc3589x.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+ drivers/gpio/gpio-stp-xway.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-tc3589x.c b/drivers/gpio/gpio-tc3589x.c
-index 05a27ec..4f566e6 100644
---- a/drivers/gpio/gpio-tc3589x.c
-+++ b/drivers/gpio/gpio-tc3589x.c
-@@ -272,7 +272,8 @@ static int tc3589x_gpio_probe(struct platform_device *pdev)
- 		return ret;
- 	}
+diff --git a/drivers/gpio/gpio-stp-xway.c b/drivers/gpio/gpio-stp-xway.c
+index d11dd48..19e654f 100644
+--- a/drivers/gpio/gpio-stp-xway.c
++++ b/drivers/gpio/gpio-stp-xway.c
+@@ -258,7 +258,7 @@ static int xway_stp_probe(struct platform_device *pdev)
  
--	ret = gpiochip_add_data(&tc3589x_gpio->chip, tc3589x_gpio);
-+	ret = devm_gpiochip_add_data(&pdev->dev, &tc3589x_gpio->chip,
-+				     tc3589x_gpio);
- 	if (ret) {
- 		dev_err(&pdev->dev, "unable to add gpiochip: %d\n", ret);
- 		return ret;
-@@ -299,20 +300,10 @@ static int tc3589x_gpio_probe(struct platform_device *pdev)
- 	return 0;
- }
+ 	ret = xway_stp_hw_init(chip);
+ 	if (!ret)
+-		ret = gpiochip_add_data(&chip->gc, chip);
++		ret = devm_gpiochip_add_data(&pdev->dev, &chip->gc, chip);
  
--static int tc3589x_gpio_remove(struct platform_device *pdev)
--{
--	struct tc3589x_gpio *tc3589x_gpio = platform_get_drvdata(pdev);
--
--	gpiochip_remove(&tc3589x_gpio->chip);
--
--	return 0;
--}
--
- static struct platform_driver tc3589x_gpio_driver = {
- 	.driver.name	= "tc3589x-gpio",
- 	.driver.owner	= THIS_MODULE,
- 	.probe		= tc3589x_gpio_probe,
--	.remove		= tc3589x_gpio_remove,
- };
- 
- static int __init tc3589x_gpio_init(void)
+ 	if (!ret)
+ 		dev_info(&pdev->dev, "Init done\n");
 -- 
 2.1.4
