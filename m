@@ -1,99 +1,102 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: [PATCH v6 11/12] arm64: tegra: add soctherm node for Tegra210
-Date: Mon, 22 Feb 2016 16:13:08 +0800
-Message-ID: <1456128788-29291-1-git-send-email-wni@nvidia.com>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v6 00/12] Add T210 support in Tegra soctherm
+Date: Mon, 22 Feb 2016 16:14:29 +0800
+Message-ID: <56CAC365.6000308@nvidia.com>
+References: <1456128391-28857-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, rui.zhang@intel.com
-Cc: MLongnecker@nvidia.com, swarren@wwwdotorg.org, mikko.perttunen@kapsi.fi, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Wei Ni <wni@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1456128391-28857-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
+Cc: MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Adds soctherm node for Tegra210, and add cpu,
-gpu, mem, pllx as thermal-zones. Set critical
-trip temp for cpu and gpu thermal zone.
+I sent this patch twice, please ignore this one.
 
-Signed-off-by: Wei Ni <wni@nvidia.com>
+On 2016=E5=B9=B402=E6=9C=8822=E6=97=A5 16:06, Wei Ni wrote:
+> This patchset adds following functions for tegra_soctherm driver:
+> 1. add T210 support.
+> 2. export debugfs to show some registers.
+> 3. add thermtrip funciton.
+> 4. add suspend/resume function.
+>=20
+> The v5 serial is in:
+> http://www.spinics.net/lists/linux-tegra/msg25079.html
+> The v4 serial is in:
+> http://www.spinics.net/lists/linux-tegra/msg24972.html
+> The V3 serial is in:
+> http://www.spinics.net/lists/linux-tegra/msg24911.html
+> The V2 serial is in:
+> http://www.spinics.net/lists/linux-tegra/msg24901.html
+> The V1 serial is in:
+> http://www.spinics.net/lists/linux-tegra/msg24808.html
+>=20
+> Main changes from V5:
+> 1. Change to use linux thermal framework to implement
+> thermtrip funciton, per Rob's comment.
+> 2. Add .set_trip_temp() in of-thermal driver, so that
+> we can set trips on hardware.
+>=20
+> Main changes from V4:
+> 1. Change description of devicetree binding per Rob's comment.
+> 2. Call of_node_put to decrement refcount of the node.
+>=20
+> Main changes from V3:
+> 1. Change structures to "const" in chip specific files.
+> 2. Minor changes per Thieery's comments.
+>=20
+> Main changes from V2:
+> 1. Fix build error in patch [1/11].
+> 2. Use of_get_child_by_name instead of of_find_node_by_name in patch =
+[8/11].
+> 3. Use debugfs_remove_recursive to remove debugfs in patch [6/11].
+>=20
+> Main changes from V1:
+> 1. Use the new type to handl different Tegra chips in one driver, whi=
+ch suggested by Thierry.
+> 2. Changes per Thieery's other comments.
+>=20
+> Wei Ni (12):
+>   thermal: tegra: move tegra thermal files into tegra directory
+>   thermal: tegra: combine sensor group-related data
+>   thermal: tegra: get rid of PDIV/HOTSPOT hack
+>   thermal: tegra: split tegra_soctherm driver
+>   thermal: tegra: add Tegra210 specific SOC_THERM driver
+>   thermal: tegra: add a debugfs to show registers
+>   thermal: of-thermal: allow setting trip_temp on hardware
+>   of: add notes of critical trips for soctherm
+>   thermal: tegra: add thermtrip function
+>   thermal: tegra: add PM support
+>   arm64: tegra: add soctherm node for Tegra210
+>   arm: tegra: set critical trips for Tegra124
+>=20
+>  .../devicetree/bindings/thermal/tegra-soctherm.txt |  12 +
+>  arch/arm/boot/dts/tegra124.dtsi                    |  16 +
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  60 ++
+>  drivers/thermal/Kconfig                            |  12 +-
+>  drivers/thermal/Makefile                           |   2 +-
+>  drivers/thermal/of-thermal.c                       |   8 +
+>  drivers/thermal/tegra/Kconfig                      |  13 +
+>  drivers/thermal/tegra/Makefile                     |   5 +
+>  drivers/thermal/tegra/soctherm-fuse.c              | 169 +++++
+>  drivers/thermal/tegra/soctherm.c                   | 685 +++++++++++=
+++++++++++
+>  drivers/thermal/tegra/soctherm.h                   | 123 ++++
+>  drivers/thermal/tegra/tegra124-soctherm.c          | 196 ++++++
+>  drivers/thermal/tegra/tegra210-soctherm.c          | 197 ++++++
+>  drivers/thermal/tegra_soctherm.c                   | 476 -----------=
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 60 ++++++++++++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index cd4f45ccd6a7..c7ef500a347e 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -3,6 +3,7 @@
- #include <dt-bindings/memory/tegra210-mc.h>
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/thermal/tegra124-soctherm.h>
- 
- / {
- 	compatible = "nvidia,tegra210";
-@@ -802,4 +803,63 @@
- 				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
- 		interrupt-parent = <&gic>;
- 	};
-+
-+	soctherm: thermal-sensor@0,700e2000 {
-+		compatible = "nvidia,tegra210-soctherm";
-+		reg = <0x0 0x700e2000 0x0 0x1000>;
-+		interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&tegra_car TEGRA210_CLK_TSENSOR>,
-+			<&tegra_car TEGRA210_CLK_SOC_THERM>;
-+		clock-names = "tsensor", "soctherm";
-+		resets = <&tegra_car 78>;
-+		reset-names = "soctherm";
-+		#thermal-sensor-cells = <1>;
-+	};
-+
-+	thermal-zones {
-+		cpu {
-+			polling-delay-passive = <1000>;
-+			polling-delay = <0>;
-+
-+			thermal-sensors =
-+				<&soctherm TEGRA124_SOCTHERM_SENSOR_CPU>;
-+
-+			trips {
-+				cpu_shutdown_trip: shutdown-trip {
-+					temperature = <102500>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+		mem {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+
-+			thermal-sensors =
-+				<&soctherm TEGRA124_SOCTHERM_SENSOR_MEM>;
-+		};
-+		gpu {
-+			polling-delay-passive = <1000>;
-+			polling-delay = <0>;
-+
-+			thermal-sensors =
-+				<&soctherm TEGRA124_SOCTHERM_SENSOR_GPU>;
-+
-+			trips {
-+				gpu_shutdown_trip: shutdown-trip {
-+					temperature = <103000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+		pllx {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+
-+			thermal-sensors =
-+				<&soctherm TEGRA124_SOCTHERM_SENSOR_PLLX>;
-+		};
-+	};
- };
--- 
-1.9.1
+>  include/dt-bindings/thermal/tegra124-soctherm.h    |   1 +
+>  include/linux/thermal.h                            |   1 +
+>  16 files changed, 1489 insertions(+), 487 deletions(-)
+>  create mode 100644 drivers/thermal/tegra/Kconfig
+>  create mode 100644 drivers/thermal/tegra/Makefile
+>  create mode 100644 drivers/thermal/tegra/soctherm-fuse.c
+>  create mode 100644 drivers/thermal/tegra/soctherm.c
+>  create mode 100644 drivers/thermal/tegra/soctherm.h
+>  create mode 100644 drivers/thermal/tegra/tegra124-soctherm.c
+>  create mode 100644 drivers/thermal/tegra/tegra210-soctherm.c
+>  delete mode 100644 drivers/thermal/tegra_soctherm.c
+>=20
