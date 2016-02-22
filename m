@@ -1,7 +1,7 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 16/61] gpio: da9055: Use devm_gpiochip_add_data() for gpio registration
-Date: Mon, 22 Feb 2016 19:38:05 +0530
-Message-ID: <1456150130-2668-17-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH 15/61] gpio: da9052: Use devm_gpiochip_add_data() for gpio registration
+Date: Mon, 22 Feb 2016 19:38:04 +0530
+Message-ID: <1456150130-2668-16-git-send-email-ldewangan@nvidia.com>
 References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -16,16 +16,15 @@ Use devm_gpiochip_add_data() for GPIO registration and remove the
 need of driver callback .remove.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Support Opensource <support.opensource@diasemi.com>
 ---
- drivers/gpio/gpio-da9055.c | 16 ++--------------
- 1 file changed, 2 insertions(+), 14 deletions(-)
+ drivers/gpio/gpio-da9052.c | 11 +----------
+ 1 file changed, 1 insertion(+), 10 deletions(-)
 
-diff --git a/drivers/gpio/gpio-da9055.c b/drivers/gpio/gpio-da9055.c
-index 18210fb..2c2c18d 100644
---- a/drivers/gpio/gpio-da9055.c
-+++ b/drivers/gpio/gpio-da9055.c
-@@ -151,31 +151,19 @@ static int da9055_gpio_probe(struct platform_device *pdev)
+diff --git a/drivers/gpio/gpio-da9052.c b/drivers/gpio/gpio-da9052.c
+index f9b3247..e29553b 100644
+--- a/drivers/gpio/gpio-da9052.c
++++ b/drivers/gpio/gpio-da9052.c
+@@ -214,7 +214,7 @@ static int da9052_gpio_probe(struct platform_device *pdev)
  	if (pdata && pdata->gpio_base)
  		gpio->gp.base = pdata->gpio_base;
  
@@ -33,31 +32,24 @@ index 18210fb..2c2c18d 100644
 +	ret = devm_gpiochip_add_data(&pdev->dev, &gpio->gp, gpio);
  	if (ret < 0) {
  		dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
--		goto err_mem;
-+		return ret;
- 	}
- 
- 	platform_set_drvdata(pdev, gpio);
- 
+ 		return ret;
+@@ -225,17 +225,8 @@ static int da9052_gpio_probe(struct platform_device *pdev)
  	return 0;
--
--err_mem:
--	return ret;
--}
--
--static int da9055_gpio_remove(struct platform_device *pdev)
+ }
+ 
+-static int da9052_gpio_remove(struct platform_device *pdev)
 -{
--	struct da9055_gpio *gpio = platform_get_drvdata(pdev);
+-	struct da9052_gpio *gpio = platform_get_drvdata(pdev);
 -
 -	gpiochip_remove(&gpio->gp);
 -	return 0;
- }
- 
- static struct platform_driver da9055_gpio_driver = {
- 	.probe = da9055_gpio_probe,
--	.remove = da9055_gpio_remove,
+-}
+-
+ static struct platform_driver da9052_gpio_driver = {
+ 	.probe = da9052_gpio_probe,
+-	.remove = da9052_gpio_remove,
  	.driver = {
- 		.name	= "da9055-gpio",
+ 		.name	= "da9052-gpio",
  	},
 -- 
 2.1.4
