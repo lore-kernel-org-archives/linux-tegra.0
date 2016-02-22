@@ -1,21 +1,33 @@
 From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH v6 00/12] Add T210 support in Tegra soctherm
-Date: Mon, 22 Feb 2016 16:14:29 +0800
-Message-ID: <56CAC365.6000308@nvidia.com>
-References: <1456128391-28857-1-git-send-email-wni@nvidia.com>
+Date: Mon, 22 Feb 2016 16:18:09 +0800
+Message-ID: <56CAC441.60008@nvidia.com>
+References: <1456128340-28800-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1456128391-28857-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1456128340-28800-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
 Cc: MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-I sent this patch twice, please ignore this one.
+In the V5 series, there has discussion about how to implement thermtrip=
+ (shut
+down) function, so I sent out this V6 series, which use Linux thermal f=
+ramework
+to implement it, for more discussion.
 
-On 2016=E5=B9=B402=E6=9C=8822=E6=97=A5 16:06, Wei Ni wrote:
+Thierry,
+It looks there are no comments on patches 01~06 from V4, if no more com=
+ments,
+will your take these patches first?
+
+Thanks.
+Wei.
+
+On 2016=E5=B9=B402=E6=9C=8822=E6=97=A5 16:05, Wei Ni wrote:
 > This patchset adds following functions for tegra_soctherm driver:
 > 1. add T210 support.
 > 2. export debugfs to show some registers.
