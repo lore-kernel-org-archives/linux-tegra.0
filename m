@@ -1,94 +1,77 @@
 From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v6 00/12] Add T210 support in Tegra soctherm
-Date: Mon, 22 Feb 2016 16:05:36 +0800
-Message-ID: <1456128340-28800-1-git-send-email-wni@nvidia.com>
+Subject: [PATCH v6 03/12] thermal: tegra: get rid of PDIV/HOTSPOT hack
+Date: Mon, 22 Feb 2016 16:05:39 +0800
+Message-ID: <1456128340-28800-4-git-send-email-wni@nvidia.com>
+References: <1456128340-28800-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1456128340-28800-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
 Cc: MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This patchset adds following functions for tegra_soctherm driver:
-1. add T210 support.
-2. export debugfs to show some registers.
-3. add thermtrip funciton.
-4. add suspend/resume function.
+Get rid of T124-specific PDIV/HOTSPOT hack.
+tegra-soctherm.c contained a hack to set the SENSOR_PDIV and
+SENSOR_HOTSPOT_OFFSET registers - it just did two writes of
+T124-specific opaque values.  Convert these into a form that can be
+substituted on a per-chip basis, and into structure fields that have
+at least some independent meaning.
 
-The v5 serial is in:
-http://www.spinics.net/lists/linux-tegra/msg25079.html
-The v4 serial is in:
-http://www.spinics.net/lists/linux-tegra/msg24972.html
-The V3 serial is in:
-http://www.spinics.net/lists/linux-tegra/msg24911.html
-The V2 serial is in:
-http://www.spinics.net/lists/linux-tegra/msg24901.html
-The V1 serial is in:
-http://www.spinics.net/lists/linux-tegra/msg24808.html
+Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/thermal/tegra/tegra-soctherm.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
-Main changes from V5:
-1. Change to use linux thermal framework to implement
-thermtrip funciton, per Rob's comment.
-2. Add .set_trip_temp() in of-thermal driver, so that
-we can set trips on hardware.
-
-Main changes from V4:
-1. Change description of devicetree binding per Rob's comment.
-2. Call of_node_put to decrement refcount of the node.
-
-Main changes from V3:
-1. Change structures to "const" in chip specific files.
-2. Minor changes per Thieery's comments.
-
-Main changes from V2:
-1. Fix build error in patch [1/11].
-2. Use of_get_child_by_name instead of of_find_node_by_name in patch [8/11].
-3. Use debugfs_remove_recursive to remove debugfs in patch [6/11].
-
-Main changes from V1:
-1. Use the new type to handl different Tegra chips in one driver, which suggested by Thierry.
-2. Changes per Thieery's other comments.
-
-Wei Ni (12):
-  thermal: tegra: move tegra thermal files into tegra directory
-  thermal: tegra: combine sensor group-related data
-  thermal: tegra: get rid of PDIV/HOTSPOT hack
-  thermal: tegra: split tegra_soctherm driver
-  thermal: tegra: add Tegra210 specific SOC_THERM driver
-  thermal: tegra: add a debugfs to show registers
-  thermal: of-thermal: allow setting trip_temp on hardware
-  of: add notes of critical trips for soctherm
-  thermal: tegra: add thermtrip function
-  thermal: tegra: add PM support
-  arm64: tegra: add soctherm node for Tegra210
-  arm: tegra: set critical trips for Tegra124
-
- .../devicetree/bindings/thermal/tegra-soctherm.txt |  12 +
- arch/arm/boot/dts/tegra124.dtsi                    |  16 +
- arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  60 ++
- drivers/thermal/Kconfig                            |  12 +-
- drivers/thermal/Makefile                           |   2 +-
- drivers/thermal/of-thermal.c                       |   8 +
- drivers/thermal/tegra/Kconfig                      |  13 +
- drivers/thermal/tegra/Makefile                     |   5 +
- drivers/thermal/tegra/soctherm-fuse.c              | 169 +++++
- drivers/thermal/tegra/soctherm.c                   | 685 +++++++++++++++++++++
- drivers/thermal/tegra/soctherm.h                   | 123 ++++
- drivers/thermal/tegra/tegra124-soctherm.c          | 196 ++++++
- drivers/thermal/tegra/tegra210-soctherm.c          | 197 ++++++
- drivers/thermal/tegra_soctherm.c                   | 476 --------------
- include/dt-bindings/thermal/tegra124-soctherm.h    |   1 +
- include/linux/thermal.h                            |   1 +
- 16 files changed, 1489 insertions(+), 487 deletions(-)
- create mode 100644 drivers/thermal/tegra/Kconfig
- create mode 100644 drivers/thermal/tegra/Makefile
- create mode 100644 drivers/thermal/tegra/soctherm-fuse.c
- create mode 100644 drivers/thermal/tegra/soctherm.c
- create mode 100644 drivers/thermal/tegra/soctherm.h
- create mode 100644 drivers/thermal/tegra/tegra124-soctherm.c
- create mode 100644 drivers/thermal/tegra/tegra210-soctherm.c
- delete mode 100644 drivers/thermal/tegra_soctherm.c
-
+diff --git a/drivers/thermal/tegra/tegra-soctherm.c b/drivers/thermal/tegra/tegra-soctherm.c
+index 6ef3a7dec1d8..0b9e6871a7d8 100644
+--- a/drivers/thermal/tegra/tegra-soctherm.c
++++ b/drivers/thermal/tegra/tegra-soctherm.c
+@@ -48,14 +48,12 @@
+ #define SENSOR_CONFIG2_THERMB_SHIFT		0
+ 
+ #define SENSOR_PDIV				0x1c0
+-#define SENSOR_PDIV_T124			0x8888
+ #define SENSOR_PDIV_CPU_MASK			(0xf << 12)
+ #define SENSOR_PDIV_GPU_MASK			(0xf << 8)
+ #define SENSOR_PDIV_MEM_MASK			(0xf << 4)
+ #define SENSOR_PDIV_PLLX_MASK			(0xf << 0)
+ 
+ #define SENSOR_HOTSPOT_OFF			0x1c4
+-#define SENSOR_HOTSPOT_OFF_T124			0x00060600
+ #define SENSOR_HOTSPOT_CPU_MASK			(0xff << 16)
+ #define SENSOR_HOTSPOT_GPU_MASK			(0xff << 8)
+ #define SENSOR_HOTSPOT_MEM_MASK			(0xff << 0)
+@@ -438,6 +436,7 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
+ 	struct resource *res;
+ 	unsigned int i;
+ 	int err;
++	u32 pdiv, hotspot;
+ 
+ 	const struct tegra_tsensor *tsensors = t124_tsensors;
+ 	const struct tegra_tsensor_group **ttgs = tegra124_tsensor_groups;
+@@ -495,8 +494,19 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
+ 			goto disable_clocks;
+ 	}
+ 
+-	writel(SENSOR_PDIV_T124, tegra->regs + SENSOR_PDIV);
+-	writel(SENSOR_HOTSPOT_OFF_T124, tegra->regs + SENSOR_HOTSPOT_OFF);
++	/* Program pdiv and hotspot offsets per THERM */
++	pdiv = readl(tegra->regs + SENSOR_PDIV);
++	hotspot = readl(tegra->regs + SENSOR_HOTSPOT_OFF);
++	for (i = 0; i < TEGRA124_SOCTHERM_SENSOR_NUM; ++i) {
++		pdiv = REG_SET_MASK(pdiv, ttgs[i]->pdiv_mask,
++				    ttgs[i]->pdiv);
++		if (ttgs[i]->id != TEGRA124_SOCTHERM_SENSOR_PLLX)
++			hotspot =  REG_SET_MASK(hotspot,
++						ttgs[i]->pllx_hotspot_mask,
++						ttgs[i]->pllx_hotspot_diff);
++	}
++	writel(pdiv, tegra->regs + SENSOR_PDIV);
++	writel(hotspot, tegra->regs + SENSOR_HOTSPOT_OFF);
+ 
+ 	/* Initialize thermctl sensors */
+ 
 -- 
 1.9.1
