@@ -1,59 +1,29 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 23/61] gpio: janz-ttl: Use devm_gpiochip_add_data() for gpio registration
-Date: Mon, 22 Feb 2016 19:38:12 +0530
-Message-ID: <1456150130-2668-24-git-send-email-ldewangan@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 00/61] gpio: Add and use devm_gpiochip_add_data()
+Date: Mon, 22 Feb 2016 15:44:44 +0100
+Message-ID: <CACRpkdbt+RiWMA74e40MNZVnDM0t0futtFnbyu9sRhv7p93-Tg@mail.gmail.com>
 References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1456150130-2668-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, michael.hennerich-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org, corbet-T1hC0tSOHrs@public.gmane.org, albeu-GANU6spQydw@public.gmane.org, rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, shc_work-JGs/UdohzUI@public.gmane.org, support.opensource-WBD+wuPFNBhBDgjK7y7TUQ@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, bjorn.andersson-/MT0OVThwyLZJqsBc5GL+g@public.gmane.org, a.kesavan-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, catalin.marinas-5wv7dgnIgG8@public.gmane.org, linux-doc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, patches-yzvPICuk2AATkU/dhu1WVueM+bqZidxxQQ4Iyu8u01E@public.gmane.org, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Michael Hennerich <michael.hennerich@analog.com>, Jon Corbet <corbet@lwn.net>, Alban Bedel <albeu@free.fr>, Ray Jui <rjui@broadcom.com>, Alexander Shiyan <shc_work@mail.ru>, Support Opensource <support.opensource@diasemi.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?Q?Andersson=2C_Bj=C3=B6rn?= <bjorn.andersson@sonymobile.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Greg KH <gregkh@linuxfoundation.org>, Catalin Marinas <catalin.marinas@arm.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "open list:WOLFSON MICROELECTRONICS DRIVERS" <patches@opensource.wolfsonmicro.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>linu
 List-Id: linux-tegra@vger.kernel.org
 
-Use devm_gpiochip_add_data() for GPIO registration and remove the
-need of driver callback .remove.
+On Mon, Feb 22, 2016 at 3:07 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpio/gpio-janz-ttl.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+> Add resource management APIs for gpiochip_add_data() and
+> gpiochip_remove() and use these APIs from different HW drivers.
+>
+> This is based on discussion on patch to use the new APIs.
+>         gpio: Add devm_ apis for gpio_chip_add and remove
 
-diff --git a/drivers/gpio/gpio-janz-ttl.c b/drivers/gpio/gpio-janz-ttl.c
-index 482aa03..a8d0a6b 100644
---- a/drivers/gpio/gpio-janz-ttl.c
-+++ b/drivers/gpio/gpio-janz-ttl.c
-@@ -182,7 +182,7 @@ static int ttl_probe(struct platform_device *pdev)
- 	gpio->base = -1;
- 	gpio->ngpio = 20;
- 
--	ret = gpiochip_add_data(gpio, NULL);
-+	ret = devm_gpiochip_add_data(dev, gpio, NULL);
- 	if (ret) {
- 		dev_err(dev, "unable to add GPIO chip\n");
- 		return ret;
-@@ -191,21 +191,11 @@ static int ttl_probe(struct platform_device *pdev)
- 	return 0;
- }
- 
--static int ttl_remove(struct platform_device *pdev)
--{
--	struct ttl_module *mod = platform_get_drvdata(pdev);
--
--	gpiochip_remove(&mod->gpio);
--
--	return 0;
--}
--
- static struct platform_driver ttl_driver = {
- 	.driver		= {
- 		.name	= DRV_NAME,
- 	},
- 	.probe		= ttl_probe,
--	.remove		= ttl_remove,
- };
- 
- module_platform_driver(ttl_driver);
--- 
-2.1.4
+Awesome!
+
+Do you have a git I can just pull these off so I don't have to apply
+then all one-by-one?
+
+Yours,
+Linus Walleij
