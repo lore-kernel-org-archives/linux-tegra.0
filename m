@@ -1,31 +1,47 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 1/3] dt/bindings: Add 'nvidia,hd-no-invert' option
-Date: Mon, 22 Feb 2016 12:48:52 -0700
-Message-ID: <56CB6624.6030600@wwwdotorg.org>
-References: <56C3977E.8050001@wwwdotorg.org>
- <1456122253-3039-1-git-send-email-sctincman@gmail.com>
- <1456122253-3039-2-git-send-email-sctincman@gmail.com>
+From: Alban <albeu@free.fr>
+Subject: Re: [PATCH 10/61] gpio: ath79: Use devm_gpiochip_add_data() for
+ gpio registration
+Date: Mon, 22 Feb 2016 21:13:23 +0100
+Message-ID: <20160222211323.5c10533f@tock>
+References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>
+	<1456150130-2668-11-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1456122253-3039-2-git-send-email-sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Return-path: <linux-doc-owner@vger.kernel.org>
+In-Reply-To: <1456150130-2668-11-git-send-email-ldewangan@nvidia.com>
+Sender: linux-doc-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Aban Bedel <albeu@free.fr>, linus.walleij@linaro.org, gnurou@gmail.com, michael.hennerich@analog.com, corbet@lwn.net, rjui@broadcom.com, shc_work@mail.ru, support.opensource@diasemi.com, swarren@wwwdotorg.org, thierry.reding@gmail.com, bjorn.andersson@sonymobile.com, a.kesavan@samsung.com, gregkh@linuxfoundation.org, catalin.marinas@arm.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, patches@opensource.wolfsonmicro.com, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/21/2016 11:24 PM, Jonathan Tinkham wrote:
-> Document an option to not invert the headphone detect GPIO signal
->
+On Mon, 22 Feb 2016 19:37:59 +0530
+Laxman Dewangan <ldewangan@nvidia.com> wrote:
 
-> diff --git a/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.txt b/Documentation/devicetree/bindings/sound/nvidia,tegra-audio-max98090.txt
+> Use devm_gpiochip_add_data() for GPIO registration.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Cc: Alban Bedel <albeu@free.fr>
+> ---
+>  drivers/gpio/gpio-ath79.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpio/gpio-ath79.c b/drivers/gpio/gpio-ath79.c
+> index d13dd13..a6aad59 100644
+> --- a/drivers/gpio/gpio-ath79.c
+> +++ b/drivers/gpio/gpio-ath79.c
+> @@ -182,7 +182,7 @@ static int ath79_gpio_probe(struct platform_device *pdev)
+>  		ctrl->chip.direction_output = ar934x_gpio_direction_output;
+>  	}
+>  
+> -	err = gpiochip_add_data(&ctrl->chip, ctrl);
+> +	err = devm_gpiochip_add_data(&pdev->dev, &ctrl->chip, ctrl);
+>  	if (err) {
+>  		dev_err(&pdev->dev,
+>  			"cannot add AR71xx GPIO chip, error=%d", err);
 
->   Optional properties:
->   - nvidia,hp-det-gpios : The GPIO that detect headphones are plugged in
-> +- nvidia,hd-no-invert : Do not invert headphone detect signal
+With the patches already applied to the devel branch a few more changes
+will be needed to remove the calls to gpiochip_remove() in the probe
+error path and the remove callback.
 
-We should use "hp" not "hd" to be consistent with other properties.
-
-Why can't we use the GPIO specifier's ACTIVE_LOW/ACTIVE_HIGH flag to 
-represent the polarity of this signal?
+Alban
