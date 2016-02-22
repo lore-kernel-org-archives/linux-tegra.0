@@ -1,73 +1,56 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.5-rc5
-Date: Mon, 22 Feb 2016 10:23:58 +0000
-Message-ID: <56CAE1BE.6000602@nvidia.com>
+From: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+Subject: Re: Re: [PATCH] PM / devfreq: tegra: Set freq in rate callback
+Date: Mon, 22 Feb 2016 15:17:19 +0100
+Message-ID: <CAAObsKCT+f70=bxxTOu2Vg7PLi0YaL+pkk4C41EUqtTS9e3NZA@mail.gmail.com>
+References: <987619535.304031453954442569.JavaMail.weblogic@epmlwas09c>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <987619535.304031453954442569.JavaMail.weblogic@epmlwas09c>
+Sender: linux-pm-owner@vger.kernel.org
+To: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: Tyler Baker <tyler.baker@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, =?UTF-8?B?67CV6rK966+8?= <kyungmin.park@samsung.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.5-rc5.
-Logs and other details at:
+On 28 January 2016 at 05:14, MyungJoo Ham <myungjoo.ham@samsung.com> wrote:
+>> Hi Thierry,
+>>
+>> On 21 January 2016 at 02:54, Thierry Reding <thierry.reding@gmail.com> wrote:
+>> > On Thu, Jan 21, 2016 at 08:52:26AM +0100, Tomeu Vizoso wrote:
+> []
+>> >> Signed-off-by: Tomeu Vizoso <tomeu.vizoso@collabora.com>
+>> >> Reported-by: Tyler Baker <tyler.baker@linaro.org>
+> []
+>> >>
+>> >
+>> > I had noticed it recently but hadn't got around to look into it, thanks
+>> > for fixing it.
+>> >
+>> > Tested-by: Thierry Reding <treding@nvidia.com>
+>> > Acked-by: Thierry Reding <treding@nvidia.com>
+>>
+>> I don't see this patch in -next yet, so I'm guess it hasn't been
+>> applied. Any chance you could pick it up? This issue is now
+>> manifesting in mainline, and causing ton of noise in the boot reports.
+>>
+>> Cheers,
+>>
+>> Tyler
+>
+>
+> Hey, the patch appeared at the mailing list a week ago.
+> Linux 4.5-rc1 appeared 3 days ago.
+> The fastest possible for mainline inclusion is 4.5-rc2 or 3.
+>
+> You cannot simply expect the patch to be included in the maiinline that fast.
 
-    https://nvtb.github.io//linux/test_v4.5-rc5/20160220140102/
+Hi MyungJoo Ham,
 
+the problem is that linux-next has been showing that error in
+multi_v7_defconfig builds since your changes got there. This is so
+annoying that people have been putting their tegra124 boards offline
+in their CI labs until this gets fixed in linux-next.
 
-Test summary
-------------
+Regards,
 
-Build: zImage:
-    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Build: Image:
-    Pass: ( 1/ 1): defconfig
-
-Boot to userspace: defconfig:
-    Pass: ( 3/ 3): qemu-vexpress64, tegra132-norrin,
-		   tegra210-p2371-0000
-
-Boot to userspace: multi_v7_defconfig:
-    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: multi_v7_defconfig:
-    FAIL: ( 1/ 4): tegra114-dalmore-a04
-    Pass: ( 3/ 4): tegra124-jetson-tk1, tegra20-trimslice,
-		   tegra30-beaver
-
-PM: System suspend: tegra_defconfig:
-    FAIL: ( 1/ 4): tegra114-dalmore-a04
-    Pass: ( 3/ 4): tegra124-jetson-tk1, tegra20-trimslice,
-		   tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v4.5-rc4 (18558cae0272f8fd9647e69d3fec1565a7949865)):
-   text     data      bss    total  kernel
-    +60     +512     +128     +700  defconfig
-  +1596     +224        0    +1820  multi_v7_defconfig
-  +1320     +232        0    +1552  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v4.5-rc4 (18558cae0272f8fd9647e69d3fec1565a7949865))
-    avail    rsrvd     high    freed                board              kconfig                  dtb
-        .        .        .        .      qemu-vexpress64            defconfig           __internal
-      -8k       8k        .       4k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-      -8k       8k        .       4k  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
-      -8k       8k        .       4k    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
-      -8k       8k        .       4k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+Tomeu
