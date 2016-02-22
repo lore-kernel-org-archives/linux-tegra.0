@@ -1,53 +1,73 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 0/3] Fix headphone detection on Acer Chromebook 13
-Date: Mon, 22 Feb 2016 18:46:18 +0900
-Message-ID: <20160222094617.GW18327@sirena.org.uk>
-References: <56C3977E.8050001@wwwdotorg.org>
- <1456122253-3039-1-git-send-email-sctincman@gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v4.5-rc4
+Date: Mon, 22 Feb 2016 10:16:06 +0000
+Message-ID: <56CADFE6.8040605@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="A7Y7Q+zxDFVJwB6H"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1456122253-3039-1-git-send-email-sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Here are some basic Tegra test results for Linux v4.5-rc4.
+Logs and other details at:
 
---A7Y7Q+zxDFVJwB6H
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+    https://nvtb.github.io//linux/test_v4.5-rc4/20160214133102/
 
-On Sun, Feb 21, 2016 at 11:24:10PM -0700, Jonathan Tinkham wrote:
-> Add a new DT property to disable inversion of headphone detect GPIO.
-> This fixes the headphone detection on the CB5-311.
->=20
-> Jonathan Tinkham (3):
->   dt/bindings: Add 'nvidia,hd-no-invert' option
->   sound/soc/tegra: tegra_max98090: add 'nvidia,hd-no-invert' option
->   ARM: tegra: Do not invert nyan headphone detection signal
 
-As I said in reply to your earlier series:
+Test summary
+------------
 
-| Please try to use subject lines reflecting the style for the subsystem -
-| this makes it easier for people to spot relevant content.
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
 
---A7Y7Q+zxDFVJwB6H
-Content-Type: application/pgp-signature; name="signature.asc"
+Build: Image:
+    Pass: ( 1/ 1): defconfig
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Boot to userspace: defconfig:
+    Pass: ( 3/ 3): qemu-vexpress64, tegra132-norrin,
+		   tegra210-p2371-0000
 
-iQEcBAEBCAAGBQJWytjkAAoJECTWi3JdVIfQohcH/jBhPtSdZyF4J4OpOMDmh2X3
-GMSS1lLDH2JC6ND1wEEt7W38phi3F54uojdCr94qFxyL5xogro/44mT1COvwrL2T
-uf7JJh8MFSTT3oQXAyyBt31dnVXSyuYTw9bGHuF2WTKTo4HSyT63jwDjkizoWEuH
-8sdPwHTSvg20usauK2Z0yLWg32z+bR7jxdfUAdz2sF0dsOlZU77kMRO8k3/VTZfA
-VWzELldCX2xFYNqXzwktnsFuqWnqzVzTiRSVmM2ab8bIVJAAvi3+IT5O5AOBlM++
-nTTamd6DAjzUcS6w5l+NsAB7NBs2K4OK9a354CJem0tHBwku1KsVbbG5hbbXExs=
-=KLyk
------END PGP SIGNATURE-----
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
 
---A7Y7Q+zxDFVJwB6H--
+Boot to userspace: tegra_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: multi_v7_defconfig:
+    FAIL: ( 1/ 4): tegra114-dalmore-a04
+    Pass: ( 3/ 4): tegra124-jetson-tk1, tegra20-trimslice,
+		   tegra30-beaver
+
+PM: System suspend: tegra_defconfig:
+    FAIL: ( 1/ 4): tegra114-dalmore-a04
+    Pass: ( 3/ 4): tegra124-jetson-tk1, tegra20-trimslice,
+		   tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v4.5-rc3 (388f7b1d6e8ca06762e2454d28d6c3c55ad0fe95)):
+   text     data      bss    total  kernel
+  +4113    -4064     +128     +177  defconfig
+  +5326     +128      +64    +5518  multi_v7_defconfig
+  +1224     +184        0    +1408  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.5-rc3 (388f7b1d6e8ca06762e2454d28d6c3c55ad0fe95))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+        .        .        .        .      qemu-vexpress64            defconfig           __internal
+        .        .        .      -4k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+        .        .        .      -4k  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
+        .        .        .      -4k    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
+        .        .        .      -4k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
