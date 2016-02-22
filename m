@@ -1,32 +1,39 @@
-From: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: add "jedec,spi-nor" flash compatible binding
-Date: Mon, 22 Feb 2016 07:20:37 +0100
-Message-ID: <CACna6rzi2NJW2JL0X4eLJOXDsLyvcsj+piBEbP6LWOUvOfctRw@mail.gmail.com>
-References: <1439705605-9127-1-git-send-email-zajec5@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+From: Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 2/3] sound/soc/tegra: tegra_max98090: add 'nvidia,hd-no-invert' option
+Date: Sun, 21 Feb 2016 23:24:12 -0700
+Message-ID: <1456122253-3039-3-git-send-email-sctincman@gmail.com>
+References: <56C3977E.8050001@wwwdotorg.org>
+ <1456122253-3039-1-git-send-email-sctincman@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1439705605-9127-1-git-send-email-zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1456122253-3039-1-git-send-email-sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: "linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 16 August 2015 at 08:13, Rafa=C5=82 Mi=C5=82ecki <zajec5-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> =
-wrote:
-> Starting with commit 8947e396a829 ("Documentation: dt: mtd: replace
-> "nor-jedec" binding with "jedec, spi-nor"") we have "jedec,spi-nor"
-> binding indicating support for JEDEC identification.
->
-> Use it for all flashes that are supposed to support READ ID op accord=
-ing
-> to the datasheets.
+Add a device-tree property that does not invert the headphone
+detect signal
 
-Hi, for some reason it seems this patch wasn't applied. I didn't get
-any comment and it was sent to all e-mails listed in MAINTAINERS in
-TEGRA ARCHITECTURE SUPPORT
-which I hope it enough.
+Signed-off-by: Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ sound/soc/tegra/tegra_max98090.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Could someone pick it, please? FWIW you can find it in the patchwork:
-http://patchwork.ozlabs.org/patch/507676/
+diff --git a/sound/soc/tegra/tegra_max98090.c b/sound/soc/tegra/tegra_max98090.c
+index 902da36..73beba6 100644
+--- a/sound/soc/tegra/tegra_max98090.c
++++ b/sound/soc/tegra/tegra_max98090.c
+@@ -238,6 +238,11 @@ static int tegra_max98090_probe(struct platform_device *pdev)
+ 	if (machine->gpio_hp_det == -EPROBE_DEFER)
+ 		return -EPROBE_DEFER;
+ 
++	if (of_property_read_bool(np, "nvidia,hd-no-invert"))
++		tegra_max98090_hp_jack_gpio.invert = 0;
++	else
++		tegra_max98090_hp_jack_gpio.invert = 1;
++
+ 	machine->gpio_mic_det =
+ 			of_get_named_gpio(np, "nvidia,mic-det-gpios", 0);
+ 	if (machine->gpio_mic_det == -EPROBE_DEFER)
+-- 
+2.7.1
