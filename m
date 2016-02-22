@@ -1,7 +1,7 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 31/61] gpio: mxc: Use devm_gpiochip_add_data() for gpio registration
-Date: Mon, 22 Feb 2016 19:38:20 +0530
-Message-ID: <1456150130-2668-32-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH 34/61] gpio: pcf857x: Use devm_gpiochip_add_data() for gpio registration
+Date: Mon, 22 Feb 2016 19:38:23 +0530
+Message-ID: <1456150130-2668-35-git-send-email-ldewangan@nvidia.com>
 References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,38 +17,57 @@ error path.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- drivers/gpio/gpio-mxc.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/gpio/gpio-pcf857x.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpio/gpio-mxc.c b/drivers/gpio/gpio-mxc.c
-index 7fd21cb..1b342a3 100644
---- a/drivers/gpio/gpio-mxc.c
-+++ b/drivers/gpio/gpio-mxc.c
-@@ -462,14 +462,14 @@ static int mxc_gpio_probe(struct platform_device *pdev)
- 	port->gc.base = (pdev->id < 0) ? of_alias_get_id(np, "gpio") * 32 :
- 					     pdev->id * 32;
+diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
+index 709cd3f..169c09a 100644
+--- a/drivers/gpio/gpio-pcf857x.c
++++ b/drivers/gpio/gpio-pcf857x.c
+@@ -372,7 +372,7 @@ static int pcf857x_probe(struct i2c_client *client,
+ 	gpio->out = ~n_latch;
+ 	gpio->status = gpio->out;
  
--	err = gpiochip_add_data(&port->gc, port);
-+	err = devm_gpiochip_add_data(&pdev->dev, &port->gc, port);
- 	if (err)
- 		goto out_bgio;
+-	status = gpiochip_add_data(&gpio->chip, gpio);
++	status = devm_gpiochip_add_data(&client->dev, &gpio->chip, gpio);
+ 	if (status < 0)
+ 		goto fail;
  
- 	irq_base = irq_alloc_descs(-1, 0, 32, numa_node_id());
- 	if (irq_base < 0) {
- 		err = irq_base;
--		goto out_gpiochip_remove;
-+		goto out_bgio;
+@@ -383,7 +383,7 @@ static int pcf857x_probe(struct i2c_client *client,
+ 					      IRQ_TYPE_NONE);
+ 		if (status) {
+ 			dev_err(&client->dev, "cannot add irqchip\n");
+-			goto fail_irq;
++			goto fail;
+ 		}
+ 
+ 		status = devm_request_threaded_irq(&client->dev, client->irq,
+@@ -391,7 +391,7 @@ static int pcf857x_probe(struct i2c_client *client,
+ 					IRQF_TRIGGER_FALLING | IRQF_SHARED,
+ 					dev_name(&client->dev), gpio);
+ 		if (status)
+-			goto fail_irq;
++			goto fail;
+ 
+ 		gpiochip_set_chained_irqchip(&gpio->chip, &pcf857x_irq_chip,
+ 					     client->irq, NULL);
+@@ -413,9 +413,6 @@ static int pcf857x_probe(struct i2c_client *client,
+ 
+ 	return 0;
+ 
+-fail_irq:
+-	gpiochip_remove(&gpio->chip);
+-
+ fail:
+ 	dev_dbg(&client->dev, "probe error %d for '%s'\n", status,
+ 		client->name);
+@@ -440,7 +437,6 @@ static int pcf857x_remove(struct i2c_client *client)
+ 		}
  	}
  
- 	port->domain = irq_domain_add_legacy(np, 32, irq_base, 0,
-@@ -492,8 +492,6 @@ out_irqdomain_remove:
- 	irq_domain_remove(port->domain);
- out_irqdesc_free:
- 	irq_free_descs(irq_base, 32);
--out_gpiochip_remove:
--	gpiochip_remove(&port->gc);
- out_bgio:
- 	dev_info(&pdev->dev, "%s failed with errno %d\n", __func__, err);
- 	return err;
+-	gpiochip_remove(&gpio->chip);
+ 	return status;
+ }
+ 
 -- 
 2.1.4
