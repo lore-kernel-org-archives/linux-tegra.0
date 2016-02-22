@@ -1,7 +1,7 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 34/61] gpio: pcf857x: Use devm_gpiochip_add_data() for gpio registration
-Date: Mon, 22 Feb 2016 19:38:23 +0530
-Message-ID: <1456150130-2668-35-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH 33/61] gpio: pca953x: Use devm_gpiochip_add_data() for gpio registration
+Date: Mon, 22 Feb 2016 19:38:22 +0530
+Message-ID: <1456150130-2668-34-git-send-email-ldewangan@nvidia.com>
 References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,61 +12,33 @@ To: linus.walleij@linaro.org, gnurou@gmail.com, michael.hennerich@analog.com, co
 Cc: ldewangan@nvidia.com, bjorn.andersson@sonymobile.com, a.kesavan@samsung.com, gregkh@linuxfoundation.org, catalin.marinas@arm.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, patches@opensource.wolfsonmicro.com, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use devm_gpiochip_add_data() for GPIO registration and clean the
-error path.
+Use devm_gpiochip_add_data() for GPIO registration.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- drivers/gpio/gpio-pcf857x.c | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+ drivers/gpio/gpio-pca953x.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/gpio/gpio-pcf857x.c b/drivers/gpio/gpio-pcf857x.c
-index 709cd3f..169c09a 100644
---- a/drivers/gpio/gpio-pcf857x.c
-+++ b/drivers/gpio/gpio-pcf857x.c
-@@ -372,7 +372,7 @@ static int pcf857x_probe(struct i2c_client *client,
- 	gpio->out = ~n_latch;
- 	gpio->status = gpio->out;
+diff --git a/drivers/gpio/gpio-pca953x.c b/drivers/gpio/gpio-pca953x.c
+index 23196c5..b7fe5d5 100644
+--- a/drivers/gpio/gpio-pca953x.c
++++ b/drivers/gpio/gpio-pca953x.c
+@@ -754,7 +754,7 @@ static int pca953x_probe(struct i2c_client *client,
+ 	if (ret)
+ 		return ret;
  
--	status = gpiochip_add_data(&gpio->chip, gpio);
-+	status = devm_gpiochip_add_data(&client->dev, &gpio->chip, gpio);
- 	if (status < 0)
- 		goto fail;
+-	ret = gpiochip_add_data(&chip->gpio_chip, chip);
++	ret = devm_gpiochip_add_data(&client->dev, &chip->gpio_chip, chip);
+ 	if (ret)
+ 		return ret;
  
-@@ -383,7 +383,7 @@ static int pcf857x_probe(struct i2c_client *client,
- 					      IRQ_TYPE_NONE);
- 		if (status) {
- 			dev_err(&client->dev, "cannot add irqchip\n");
--			goto fail_irq;
-+			goto fail;
- 		}
- 
- 		status = devm_request_threaded_irq(&client->dev, client->irq,
-@@ -391,7 +391,7 @@ static int pcf857x_probe(struct i2c_client *client,
- 					IRQF_TRIGGER_FALLING | IRQF_SHARED,
- 					dev_name(&client->dev), gpio);
- 		if (status)
--			goto fail_irq;
-+			goto fail;
- 
- 		gpiochip_set_chained_irqchip(&gpio->chip, &pcf857x_irq_chip,
- 					     client->irq, NULL);
-@@ -413,9 +413,6 @@ static int pcf857x_probe(struct i2c_client *client,
- 
- 	return 0;
- 
--fail_irq:
--	gpiochip_remove(&gpio->chip);
--
- fail:
- 	dev_dbg(&client->dev, "probe error %d for '%s'\n", status,
- 		client->name);
-@@ -440,7 +437,6 @@ static int pcf857x_remove(struct i2c_client *client)
+@@ -789,8 +789,6 @@ static int pca953x_remove(struct i2c_client *client)
  		}
  	}
  
--	gpiochip_remove(&gpio->chip);
- 	return status;
+-	gpiochip_remove(&chip->gpio_chip);
+-
+ 	return 0;
  }
  
 -- 
