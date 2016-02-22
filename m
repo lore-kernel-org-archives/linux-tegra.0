@@ -1,7 +1,7 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 37/61] gpio: rdc321x: Use devm_gpiochip_add_data() for gpio registration
-Date: Mon, 22 Feb 2016 19:38:26 +0530
-Message-ID: <1456150130-2668-38-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH 39/61] gpio: spear-spics: Use devm_gpiochip_add_data() for gpio registration
+Date: Mon, 22 Feb 2016 19:38:28 +0530
+Message-ID: <1456150130-2668-40-git-send-email-ldewangan@nvidia.com>
 References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,43 +12,25 @@ To: linus.walleij@linaro.org, gnurou@gmail.com, michael.hennerich@analog.com, co
 Cc: ldewangan@nvidia.com, bjorn.andersson@sonymobile.com, a.kesavan@samsung.com, gregkh@linuxfoundation.org, catalin.marinas@arm.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, patches@opensource.wolfsonmicro.com, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use devm_gpiochip_add_data() for GPIO registration and remove the
-need of driver callback .remove.
+Use devm_gpiochip_add_data() for GPIO registration.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- drivers/gpio/gpio-rdc321x.c | 13 ++-----------
- 1 file changed, 2 insertions(+), 11 deletions(-)
+ drivers/gpio/gpio-spear-spics.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-rdc321x.c b/drivers/gpio/gpio-rdc321x.c
-index 96ddee3..ec945b9 100644
---- a/drivers/gpio/gpio-rdc321x.c
-+++ b/drivers/gpio/gpio-rdc321x.c
-@@ -194,23 +194,14 @@ static int rdc321x_gpio_probe(struct platform_device *pdev)
+diff --git a/drivers/gpio/gpio-spear-spics.c b/drivers/gpio/gpio-spear-spics.c
+index 50fb090..7ffd164 100644
+--- a/drivers/gpio/gpio-spear-spics.c
++++ b/drivers/gpio/gpio-spear-spics.c
+@@ -165,7 +165,7 @@ static int spics_gpio_probe(struct platform_device *pdev)
+ 	spics->chip.owner = THIS_MODULE;
+ 	spics->last_off = -1;
  
- 	dev_info(&pdev->dev, "registering %d GPIOs\n",
- 					rdc321x_gpio_dev->chip.ngpio);
--	return gpiochip_add_data(&rdc321x_gpio_dev->chip, rdc321x_gpio_dev);
--}
--
--static int rdc321x_gpio_remove(struct platform_device *pdev)
--{
--	struct rdc321x_gpio *rdc321x_gpio_dev = platform_get_drvdata(pdev);
--
--	gpiochip_remove(&rdc321x_gpio_dev->chip);
--
--	return 0;
-+	return devm_gpiochip_add_data(&pdev->dev, &rdc321x_gpio_dev->chip,
-+				      rdc321x_gpio_dev);
- }
- 
- static struct platform_driver rdc321x_gpio_driver = {
- 	.driver.name	= "rdc321x-gpio",
- 	.driver.owner	= THIS_MODULE,
- 	.probe		= rdc321x_gpio_probe,
--	.remove		= rdc321x_gpio_remove,
- };
- 
- module_platform_driver(rdc321x_gpio_driver);
+-	ret = gpiochip_add_data(&spics->chip, spics);
++	ret = devm_gpiochip_add_data(&pdev->dev, &spics->chip, spics);
+ 	if (ret) {
+ 		dev_err(&pdev->dev, "unable to add gpio chip\n");
+ 		return ret;
 -- 
 2.1.4
