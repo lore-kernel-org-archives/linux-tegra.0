@@ -1,7 +1,7 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 32/61] gpio: octeon: Use devm_gpiochip_add_data() for gpio registration
-Date: Mon, 22 Feb 2016 19:38:21 +0530
-Message-ID: <1456150130-2668-33-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH 35/61] gpio: palmas: Use devm_gpiochip_add_data() for gpio registration
+Date: Mon, 22 Feb 2016 19:38:24 +0530
+Message-ID: <1456150130-2668-36-git-send-email-ldewangan@nvidia.com>
 References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,43 +17,43 @@ need of driver callback .remove.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- drivers/gpio/gpio-octeon.c | 10 +---------
- 1 file changed, 1 insertion(+), 9 deletions(-)
+ drivers/gpio/gpio-palmas.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/gpio/gpio-octeon.c b/drivers/gpio/gpio-octeon.c
-index 7665ebc..47aead1 100644
---- a/drivers/gpio/gpio-octeon.c
-+++ b/drivers/gpio/gpio-octeon.c
-@@ -117,7 +117,7 @@ static int octeon_gpio_probe(struct platform_device *pdev)
- 	chip->get = octeon_gpio_get;
- 	chip->direction_output = octeon_gpio_dir_out;
- 	chip->set = octeon_gpio_set;
--	err = gpiochip_add_data(chip, gpio);
-+	err = devm_gpiochip_add_data(&pdev->dev, chip, gpio);
- 	if (err)
- 		goto out;
+diff --git a/drivers/gpio/gpio-palmas.c b/drivers/gpio/gpio-palmas.c
+index fdfb3b1..6f27b3d 100644
+--- a/drivers/gpio/gpio-palmas.c
++++ b/drivers/gpio/gpio-palmas.c
+@@ -195,7 +195,8 @@ static int palmas_gpio_probe(struct platform_device *pdev)
+ 	else
+ 		palmas_gpio->gpio_chip.base = -1;
  
-@@ -126,13 +126,6 @@ out:
- 	return err;
+-	ret = gpiochip_add_data(&palmas_gpio->gpio_chip, palmas_gpio);
++	ret = devm_gpiochip_add_data(&pdev->dev, &palmas_gpio->gpio_chip,
++				     palmas_gpio);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
+ 		return ret;
+@@ -205,20 +206,11 @@ static int palmas_gpio_probe(struct platform_device *pdev)
+ 	return ret;
  }
  
--static int octeon_gpio_remove(struct platform_device *pdev)
+-static int palmas_gpio_remove(struct platform_device *pdev)
 -{
--	struct gpio_chip *chip = dev_get_platdata(&pdev->dev);
--	gpiochip_remove(chip);
+-	struct palmas_gpio *palmas_gpio = platform_get_drvdata(pdev);
+-
+-	gpiochip_remove(&palmas_gpio->gpio_chip);
 -	return 0;
 -}
 -
- static struct of_device_id octeon_gpio_match[] = {
- 	{
- 		.compatible = "cavium,octeon-3860-gpio",
-@@ -147,7 +140,6 @@ static struct platform_driver octeon_gpio_driver = {
- 		.of_match_table = octeon_gpio_match,
- 	},
- 	.probe		= octeon_gpio_probe,
--	.remove		= octeon_gpio_remove,
+ static struct platform_driver palmas_gpio_driver = {
+ 	.driver.name	= "palmas-gpio",
+ 	.driver.owner	= THIS_MODULE,
+ 	.driver.of_match_table = of_palmas_gpio_match,
+ 	.probe		= palmas_gpio_probe,
+-	.remove		= palmas_gpio_remove,
  };
  
- module_platform_driver(octeon_gpio_driver);
+ static int __init palmas_gpio_init(void)
 -- 
 2.1.4
