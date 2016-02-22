@@ -1,7 +1,7 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 14/61] gpio: cs5535: Use devm_gpiochip_add_data() for gpio registration
-Date: Mon, 22 Feb 2016 19:38:03 +0530
-Message-ID: <1456150130-2668-15-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH 17/61] gpio: dln2: Use devm_gpiochip_add_data() for gpio registration
+Date: Mon, 22 Feb 2016 19:38:06 +0530
+Message-ID: <1456150130-2668-18-git-send-email-ldewangan@nvidia.com>
 References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,64 +12,61 @@ To: linus.walleij@linaro.org, gnurou@gmail.com, michael.hennerich@analog.com, co
 Cc: ldewangan@nvidia.com, bjorn.andersson@sonymobile.com, a.kesavan@samsung.com, gregkh@linuxfoundation.org, catalin.marinas@arm.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, patches@opensource.wolfsonmicro.com, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use devm_gpiochip_add_data() for GPIO registration and remove the
-need of driver callback .remove.
+Use devm_gpiochip_add_data() for GPIO registration.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- drivers/gpio/gpio-cs5535.c | 20 +++++---------------
- 1 file changed, 5 insertions(+), 15 deletions(-)
+ drivers/gpio/gpio-dln2.c | 16 ++++------------
+ 1 file changed, 4 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/gpio/gpio-cs5535.c b/drivers/gpio/gpio-cs5535.c
-index eccb712..90278b1 100644
---- a/drivers/gpio/gpio-cs5535.c
-+++ b/drivers/gpio/gpio-cs5535.c
-@@ -320,13 +320,13 @@ static int cs5535_gpio_probe(struct platform_device *pdev)
- 	res = platform_get_resource(pdev, IORESOURCE_IO, 0);
- 	if (!res) {
- 		dev_err(&pdev->dev, "can't fetch device resource info\n");
--		goto done;
-+		return err;
+diff --git a/drivers/gpio/gpio-dln2.c b/drivers/gpio/gpio-dln2.c
+index e11a7d1..f7a60a4 100644
+--- a/drivers/gpio/gpio-dln2.c
++++ b/drivers/gpio/gpio-dln2.c
+@@ -479,40 +479,32 @@ static int dln2_gpio_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, dln2);
+ 
+-	ret = gpiochip_add_data(&dln2->gpio, dln2);
++	ret = devm_gpiochip_add_data(dev, &dln2->gpio, dln2);
+ 	if (ret < 0) {
+ 		dev_err(dev, "failed to add gpio chip: %d\n", ret);
+-		goto out;
++		return ret;
  	}
  
- 	if (!devm_request_region(&pdev->dev, res->start, resource_size(res),
- 				 pdev->name)) {
- 		dev_err(&pdev->dev, "can't request region\n");
--		goto done;
-+		return err;
+ 	ret = gpiochip_irqchip_add(&dln2->gpio, &dln2_gpio_irqchip, 0,
+ 				   handle_simple_irq, IRQ_TYPE_NONE);
+ 	if (ret < 0) {
+ 		dev_err(dev, "failed to add irq chip: %d\n", ret);
+-		goto out_gpiochip_remove;
++		return ret;
  	}
  
- 	/* set up the driver-specific struct */
-@@ -348,19 +348,10 @@ static int cs5535_gpio_probe(struct platform_device *pdev)
- 				mask_orig, mask);
+ 	ret = dln2_register_event_cb(pdev, DLN2_GPIO_CONDITION_MET_EV,
+ 				     dln2_gpio_event);
+ 	if (ret) {
+ 		dev_err(dev, "failed to register event cb: %d\n", ret);
+-		goto out_gpiochip_remove;
++		return ret;
+ 	}
  
- 	/* finally, register with the generic GPIO API */
--	err = gpiochip_add_data(&cs5535_gpio_chip.chip, &cs5535_gpio_chip);
-+	err = devm_gpiochip_add_data(&pdev->dev, &cs5535_gpio_chip.chip,
-+				     &cs5535_gpio_chip);
- 	if (err)
--		goto done;
+ 	return 0;
 -
--	return 0;
+-out_gpiochip_remove:
+-	gpiochip_remove(&dln2->gpio);
+-out:
+-	return ret;
+ }
+ 
+ static int dln2_gpio_remove(struct platform_device *pdev)
+ {
+-	struct dln2_gpio *dln2 = platform_get_drvdata(pdev);
 -
--done:
--	return err;
--}
--
--static int cs5535_gpio_remove(struct platform_device *pdev)
--{
--	gpiochip_remove(&cs5535_gpio_chip.chip);
-+		return err;
+ 	dln2_unregister_event_cb(pdev, DLN2_GPIO_CONDITION_MET_EV);
+-	gpiochip_remove(&dln2->gpio);
  
  	return 0;
  }
-@@ -370,7 +361,6 @@ static struct platform_driver cs5535_gpio_driver = {
- 		.name = DRV_NAME,
- 	},
- 	.probe = cs5535_gpio_probe,
--	.remove = cs5535_gpio_remove,
- };
- 
- module_platform_driver(cs5535_gpio_driver);
 -- 
 2.1.4
