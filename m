@@ -1,7 +1,7 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 53/61] gpio: twl6040: Use devm_gpiochip_add_data() for gpio registration
-Date: Mon, 22 Feb 2016 19:38:42 +0530
-Message-ID: <1456150130-2668-54-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH 51/61] gpio: ts4800: Use devm_gpiochip_add_data() for gpio registration
+Date: Mon, 22 Feb 2016 19:38:40 +0530
+Message-ID: <1456150130-2668-52-git-send-email-ldewangan@nvidia.com>
 References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -17,42 +17,38 @@ need of driver callback .remove.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- drivers/gpio/gpio-twl6040.c | 9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ drivers/gpio/gpio-ts4800.c | 12 +-----------
+ 1 file changed, 1 insertion(+), 11 deletions(-)
 
-diff --git a/drivers/gpio/gpio-twl6040.c b/drivers/gpio/gpio-twl6040.c
-index 8e9e985..b780314 100644
---- a/drivers/gpio/gpio-twl6040.c
-+++ b/drivers/gpio/gpio-twl6040.c
-@@ -100,7 +100,7 @@ static int gpo_twl6040_probe(struct platform_device *pdev)
- 	twl6040gpo_chip.of_node = twl6040_core_dev->of_node;
- #endif
+diff --git a/drivers/gpio/gpio-ts4800.c b/drivers/gpio/gpio-ts4800.c
+index c4908a4..b8762d9 100644
+--- a/drivers/gpio/gpio-ts4800.c
++++ b/drivers/gpio/gpio-ts4800.c
+@@ -61,16 +61,7 @@ static int ts4800_gpio_probe(struct platform_device *pdev)
  
--	ret = gpiochip_add_data(&twl6040gpo_chip, NULL);
-+	ret = devm_gpiochip_add_data(&pdev->dev, &twl6040gpo_chip, NULL);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "could not register gpiochip, %d\n", ret);
- 		twl6040gpo_chip.ngpio = 0;
-@@ -109,12 +109,6 @@ static int gpo_twl6040_probe(struct platform_device *pdev)
- 	return ret;
- }
+ 	platform_set_drvdata(pdev, chip);
  
--static int gpo_twl6040_remove(struct platform_device *pdev)
--{
--	gpiochip_remove(&twl6040gpo_chip);
--	return 0;
+-	return gpiochip_add_data(chip, NULL);
 -}
 -
- /* Note:  this hardware lives inside an I2C-based multi-function device. */
- MODULE_ALIAS("platform:twl6040-gpo");
+-static int ts4800_gpio_remove(struct platform_device *pdev)
+-{
+-	struct gpio_chip *chip = platform_get_drvdata(pdev);
+-
+-	gpiochip_remove(chip);
+-
+-	return 0;
++	return devm_gpiochip_add_data(&pdev->dev, chip, NULL);
+ }
  
-@@ -123,7 +117,6 @@ static struct platform_driver gpo_twl6040_driver = {
- 		.name	= "twl6040-gpo",
- 	},
- 	.probe		= gpo_twl6040_probe,
--	.remove		= gpo_twl6040_remove,
+ static const struct of_device_id ts4800_gpio_of_match[] = {
+@@ -84,7 +75,6 @@ static struct platform_driver ts4800_gpio_driver = {
+ 		   .of_match_table = ts4800_gpio_of_match,
+ 		   },
+ 	.probe = ts4800_gpio_probe,
+-	.remove = ts4800_gpio_remove,
  };
  
- module_platform_driver(gpo_twl6040_driver);
+ module_platform_driver_probe(ts4800_gpio_driver, ts4800_gpio_probe);
 -- 
 2.1.4
