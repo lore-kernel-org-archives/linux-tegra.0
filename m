@@ -1,7 +1,7 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 08/61] gpio: amdpt: Use devm_gpiochip_add_data() for gpio registration
-Date: Mon, 22 Feb 2016 19:37:57 +0530
-Message-ID: <1456150130-2668-9-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH 10/61] gpio: ath79: Use devm_gpiochip_add_data() for gpio registration
+Date: Mon, 22 Feb 2016 19:37:59 +0530
+Message-ID: <1456150130-2668-11-git-send-email-ldewangan@nvidia.com>
 References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,50 +12,26 @@ To: linus.walleij@linaro.org, gnurou@gmail.com, michael.hennerich@analog.com, co
 Cc: ldewangan@nvidia.com, bjorn.andersson@sonymobile.com, a.kesavan@samsung.com, gregkh@linuxfoundation.org, catalin.marinas@arm.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, patches@opensource.wolfsonmicro.com, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use devm_gpiochip_add_data() for GPIO registration and remove the
-need of driver callback .remove.
+Use devm_gpiochip_add_data() for GPIO registration.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Alban Bedel <albeu@free.fr>
 ---
- drivers/gpio/gpio-amdpt.c | 12 +-----------
- 1 file changed, 1 insertion(+), 11 deletions(-)
+ drivers/gpio/gpio-ath79.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-amdpt.c b/drivers/gpio/gpio-amdpt.c
-index c248404..857eec5 100644
---- a/drivers/gpio/gpio-amdpt.c
-+++ b/drivers/gpio/gpio-amdpt.c
-@@ -212,7 +212,7 @@ static int pt_gpio_probe(struct platform_device *pdev)
- #if defined(CONFIG_OF_GPIO)
- 	pt_gpio->gc.of_node          = pdev->dev.of_node;
- #endif
--	ret = gpiochip_add_data(&pt_gpio->gc, pt_gpio);
-+	ret = devm_gpiochip_add_data(&pdev->dev, &pt_gpio->gc, pt_gpio);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to register GPIO lib\n");
- 		return ret;
-@@ -228,15 +228,6 @@ static int pt_gpio_probe(struct platform_device *pdev)
- 	return ret;
- }
+diff --git a/drivers/gpio/gpio-ath79.c b/drivers/gpio/gpio-ath79.c
+index d13dd13..a6aad59 100644
+--- a/drivers/gpio/gpio-ath79.c
++++ b/drivers/gpio/gpio-ath79.c
+@@ -182,7 +182,7 @@ static int ath79_gpio_probe(struct platform_device *pdev)
+ 		ctrl->chip.direction_output = ar934x_gpio_direction_output;
+ 	}
  
--static int pt_gpio_remove(struct platform_device *pdev)
--{
--	struct pt_gpio_chip *pt_gpio = platform_get_drvdata(pdev);
--
--	gpiochip_remove(&pt_gpio->gc);
--
--	return 0;
--}
--
- static const struct acpi_device_id pt_gpio_acpi_match[] = {
- 	{ "AMDF030", 0 },
- 	{ },
-@@ -249,7 +240,6 @@ static struct platform_driver pt_gpio_driver = {
- 		.acpi_match_table = ACPI_PTR(pt_gpio_acpi_match),
- 	},
- 	.probe = pt_gpio_probe,
--	.remove = pt_gpio_remove,
- };
- 
- module_platform_driver(pt_gpio_driver);
+-	err = gpiochip_add_data(&ctrl->chip, ctrl);
++	err = devm_gpiochip_add_data(&pdev->dev, &ctrl->chip, ctrl);
+ 	if (err) {
+ 		dev_err(&pdev->dev,
+ 			"cannot add AR71xx GPIO chip, error=%d", err);
 -- 
 2.1.4
