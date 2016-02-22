@@ -1,62 +1,58 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 52/61] gpio: ts5500: Use devm_gpiochip_add_data() for gpio registration
-Date: Mon, 22 Feb 2016 19:38:41 +0530
-Message-ID: <1456150130-2668-53-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH 53/61] gpio: twl6040: Use devm_gpiochip_add_data() for gpio registration
+Date: Mon, 22 Feb 2016 19:38:42 +0530
+Message-ID: <1456150130-2668-54-git-send-email-ldewangan@nvidia.com>
 References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: linus.walleij@linaro.org, gnurou@gmail.com, michael.hennerich@analog.com, corbet@lwn.net, albeu@free.fr, rjui@broadcom.com, shc_work@mail.ru, support.opensource@diasemi.com, swarren@wwwdotorg.org, thierry.reding@gmail.com
 Cc: ldewangan@nvidia.com, bjorn.andersson@sonymobile.com, a.kesavan@samsung.com, gregkh@linuxfoundation.org, catalin.marinas@arm.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, patches@opensource.wolfsonmicro.com, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use devm_gpiochip_add_data() for GPIO registration and clean the
-error path.
+Use devm_gpiochip_add_data() for GPIO registration and remove the
+need of driver callback .remove.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- drivers/gpio/gpio-ts5500.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+ drivers/gpio/gpio-twl6040.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/drivers/gpio/gpio-ts5500.c b/drivers/gpio/gpio-ts5500.c
-index 5f94508..6cfeba0 100644
---- a/drivers/gpio/gpio-ts5500.c
-+++ b/drivers/gpio/gpio-ts5500.c
-@@ -409,7 +409,7 @@ static int ts5500_dio_probe(struct platform_device *pdev)
- 		break;
- 	}
+diff --git a/drivers/gpio/gpio-twl6040.c b/drivers/gpio/gpio-twl6040.c
+index 8e9e985..b780314 100644
+--- a/drivers/gpio/gpio-twl6040.c
++++ b/drivers/gpio/gpio-twl6040.c
+@@ -100,7 +100,7 @@ static int gpo_twl6040_probe(struct platform_device *pdev)
+ 	twl6040gpo_chip.of_node = twl6040_core_dev->of_node;
+ #endif
  
--	ret = gpiochip_add_data(&priv->gpio_chip, priv);
-+	ret = devm_gpiochip_add_data(dev, &priv->gpio_chip, priv);
- 	if (ret) {
- 		dev_err(dev, "failed to register the gpio chip\n");
- 		return ret;
-@@ -418,13 +418,10 @@ static int ts5500_dio_probe(struct platform_device *pdev)
- 	ret = ts5500_enable_irq(priv);
- 	if (ret) {
- 		dev_err(dev, "invalid interrupt %d\n", priv->hwirq);
--		goto cleanup;
-+		return ret;
- 	}
- 
- 	return 0;
--cleanup:
--	gpiochip_remove(&priv->gpio_chip);
--	return ret;
+-	ret = gpiochip_add_data(&twl6040gpo_chip, NULL);
++	ret = devm_gpiochip_add_data(&pdev->dev, &twl6040gpo_chip, NULL);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "could not register gpiochip, %d\n", ret);
+ 		twl6040gpo_chip.ngpio = 0;
+@@ -109,12 +109,6 @@ static int gpo_twl6040_probe(struct platform_device *pdev)
+ 	return ret;
  }
  
- static int ts5500_dio_remove(struct platform_device *pdev)
-@@ -432,7 +429,7 @@ static int ts5500_dio_remove(struct platform_device *pdev)
- 	struct ts5500_priv *priv = platform_get_drvdata(pdev);
+-static int gpo_twl6040_remove(struct platform_device *pdev)
+-{
+-	gpiochip_remove(&twl6040gpo_chip);
+-	return 0;
+-}
+-
+ /* Note:  this hardware lives inside an I2C-based multi-function device. */
+ MODULE_ALIAS("platform:twl6040-gpo");
  
- 	ts5500_disable_irq(priv);
--	gpiochip_remove(&priv->gpio_chip);
-+
- 	return 0;
- }
+@@ -123,7 +117,6 @@ static struct platform_driver gpo_twl6040_driver = {
+ 		.name	= "twl6040-gpo",
+ 	},
+ 	.probe		= gpo_twl6040_probe,
+-	.remove		= gpo_twl6040_remove,
+ };
  
+ module_platform_driver(gpo_twl6040_driver);
 -- 
 2.1.4
-
