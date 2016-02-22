@@ -1,43 +1,105 @@
-From: Brian Norris <computersforpeace@gmail.com>
-Subject: Re: [PATCH] ARM: tegra: add "jedec,spi-nor" flash compatible binding
-Date: Mon, 22 Feb 2016 10:04:01 -0800
-Message-ID: <20160222180401.GA115735@google.com>
-References: <1439705605-9127-1-git-send-email-zajec5@gmail.com>
+From: Matt Longnecker <mlongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v6 00/12] Add T210 support in Tegra soctherm
+Date: Mon, 22 Feb 2016 10:31:57 -0800
+Message-ID: <56CB541D.1000202@nvidia.com>
+References: <1456128340-28800-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1439705605-9127-1-git-send-email-zajec5@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: =?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1456128340-28800-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gU3VuLCBBdWcgMTYsIDIwMTUgYXQgMDg6MTM6MjVBTSArMDIwMCwgUmFmYcWCIE1pxYJlY2tp
-IHdyb3RlOgo+IFN0YXJ0aW5nIHdpdGggY29tbWl0IDg5NDdlMzk2YTgyOSAoIkRvY3VtZW50YXRp
-b246IGR0OiBtdGQ6IHJlcGxhY2UKPiAibm9yLWplZGVjIiBiaW5kaW5nIHdpdGggImplZGVjLCBz
-cGktbm9yIiIpIHdlIGhhdmUgImplZGVjLHNwaS1ub3IiCj4gYmluZGluZyBpbmRpY2F0aW5nIHN1
-cHBvcnQgZm9yIEpFREVDIGlkZW50aWZpY2F0aW9uLgo+IAo+IFVzZSBpdCBmb3IgYWxsIGZsYXNo
-ZXMgdGhhdCBhcmUgc3VwcG9zZWQgdG8gc3VwcG9ydCBSRUFEIElEIG9wIGFjY29yZGluZwo+IHRv
-IHRoZSBkYXRhc2hlZXRzLgo+IAo+IFNpZ25lZC1vZmYtYnk6IFJhZmHFgiBNacWCZWNraSA8emFq
-ZWM1QGdtYWlsLmNvbT4KPiAtLS0KPiAgYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMTQtZGFsbW9y
-ZS5kdHMgICAgfCAyICstCj4gIGFyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0LWpldHNvbi10azEu
-ZHRzIHwgMiArLQo+ICBhcmNoL2FybS9ib290L2R0cy90ZWdyYTEyNC1ueWFuLmR0c2kgICAgICB8
-IDIgKy0KPiAgYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQtdmVuaWNlMi5kdHMgICAgfCAyICst
-Cj4gIGFyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMjAtdHJpbXNsaWNlLmR0cyAgIHwgMiArLQo+ICBh
-cmNoL2FybS9ib290L2R0cy90ZWdyYTMwLWJlYXZlci5kdHMgICAgICB8IDIgKy0KPiAgYXJjaC9h
-cm0vYm9vdC9kdHMvdGVncmEzMC1jYXJkaHUuZHRzaSAgICAgfCAyICstCj4gIDcgZmlsZXMgY2hh
-bmdlZCwgNyBpbnNlcnRpb25zKCspLCA3IGRlbGV0aW9ucygtKQoKRldJVzoKCkFja2VkLWJ5OiBC
-cmlhbiBOb3JyaXMgPGNvbXB1dGVyc2ZvcnBlYWNlQGdtYWlsLmNvbT4KCl9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmxpbnV4LWFybS1rZXJuZWwgbWFpbGlu
-ZyBsaXN0CmxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZwpodHRwOi8vbGlzdHMu
-aW5mcmFkZWFkLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpbnV4LWFybS1rZXJuZWwK
+Wei,
+
+Should changes to of-thermal should be discussed on linux-pm as opposed 
+to just linux-tegra and lkml?
+
+Should you include Eduardo on the thread?
+
+-Matt
+
+On 02/22/2016 12:05 AM, Wei Ni wrote:
+> This patchset adds following functions for tegra_soctherm driver:
+> 1. add T210 support.
+> 2. export debugfs to show some registers.
+> 3. add thermtrip funciton.
+> 4. add suspend/resume function.
+>
+> The v5 serial is in:
+> http://www.spinics.net/lists/linux-tegra/msg25079.html
+> The v4 serial is in:
+> http://www.spinics.net/lists/linux-tegra/msg24972.html
+> The V3 serial is in:
+> http://www.spinics.net/lists/linux-tegra/msg24911.html
+> The V2 serial is in:
+> http://www.spinics.net/lists/linux-tegra/msg24901.html
+> The V1 serial is in:
+> http://www.spinics.net/lists/linux-tegra/msg24808.html
+>
+> Main changes from V5:
+> 1. Change to use linux thermal framework to implement
+> thermtrip funciton, per Rob's comment.
+> 2. Add .set_trip_temp() in of-thermal driver, so that
+> we can set trips on hardware.
+>
+> Main changes from V4:
+> 1. Change description of devicetree binding per Rob's comment.
+> 2. Call of_node_put to decrement refcount of the node.
+>
+> Main changes from V3:
+> 1. Change structures to "const" in chip specific files.
+> 2. Minor changes per Thieery's comments.
+>
+> Main changes from V2:
+> 1. Fix build error in patch [1/11].
+> 2. Use of_get_child_by_name instead of of_find_node_by_name in patch [8/11].
+> 3. Use debugfs_remove_recursive to remove debugfs in patch [6/11].
+>
+> Main changes from V1:
+> 1. Use the new type to handl different Tegra chips in one driver, which suggested by Thierry.
+> 2. Changes per Thieery's other comments.
+>
+> Wei Ni (12):
+>    thermal: tegra: move tegra thermal files into tegra directory
+>    thermal: tegra: combine sensor group-related data
+>    thermal: tegra: get rid of PDIV/HOTSPOT hack
+>    thermal: tegra: split tegra_soctherm driver
+>    thermal: tegra: add Tegra210 specific SOC_THERM driver
+>    thermal: tegra: add a debugfs to show registers
+>    thermal: of-thermal: allow setting trip_temp on hardware
+>    of: add notes of critical trips for soctherm
+>    thermal: tegra: add thermtrip function
+>    thermal: tegra: add PM support
+>    arm64: tegra: add soctherm node for Tegra210
+>    arm: tegra: set critical trips for Tegra124
+>
+>   .../devicetree/bindings/thermal/tegra-soctherm.txt |  12 +
+>   arch/arm/boot/dts/tegra124.dtsi                    |  16 +
+>   arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  60 ++
+>   drivers/thermal/Kconfig                            |  12 +-
+>   drivers/thermal/Makefile                           |   2 +-
+>   drivers/thermal/of-thermal.c                       |   8 +
+>   drivers/thermal/tegra/Kconfig                      |  13 +
+>   drivers/thermal/tegra/Makefile                     |   5 +
+>   drivers/thermal/tegra/soctherm-fuse.c              | 169 +++++
+>   drivers/thermal/tegra/soctherm.c                   | 685 +++++++++++++++++++++
+>   drivers/thermal/tegra/soctherm.h                   | 123 ++++
+>   drivers/thermal/tegra/tegra124-soctherm.c          | 196 ++++++
+>   drivers/thermal/tegra/tegra210-soctherm.c          | 197 ++++++
+>   drivers/thermal/tegra_soctherm.c                   | 476 --------------
+>   include/dt-bindings/thermal/tegra124-soctherm.h    |   1 +
+>   include/linux/thermal.h                            |   1 +
+>   16 files changed, 1489 insertions(+), 487 deletions(-)
+>   create mode 100644 drivers/thermal/tegra/Kconfig
+>   create mode 100644 drivers/thermal/tegra/Makefile
+>   create mode 100644 drivers/thermal/tegra/soctherm-fuse.c
+>   create mode 100644 drivers/thermal/tegra/soctherm.c
+>   create mode 100644 drivers/thermal/tegra/soctherm.h
+>   create mode 100644 drivers/thermal/tegra/tegra124-soctherm.c
+>   create mode 100644 drivers/thermal/tegra/tegra210-soctherm.c
+>   delete mode 100644 drivers/thermal/tegra_soctherm.c
+>
