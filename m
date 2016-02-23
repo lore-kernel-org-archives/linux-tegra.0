@@ -1,50 +1,29 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCHv2 3/4] ARM: tegra: use build-in device properties with rfkill_gpio
-Date: Tue, 23 Feb 2016 14:17:17 +0100
-Message-ID: <2463567.tt0f0ingYr@wuerfel>
-References: <1453712629-143317-1-git-send-email-heikki.krogerus@linux.intel.com> <3086257.esvHq8Yk9N@wuerfel> <4048115.S0MS1KQXCA@fb07-iapwap2>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: regulator: core: Request GPIO before creating sysfs entries
+Date: Tue, 23 Feb 2016 13:22:38 +0000
+Message-ID: <56CC5D1E.6010101@nvidia.com>
+References: <1456129440-28143-1-git-send-email-krzysztof.adamski@tieto.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <4048115.S0MS1KQXCA@fb07-iapwap2>
-Sender: netdev-owner@vger.kernel.org
-To: Marc Dietrich <marvin24@gmx.de>
-Cc: Johannes Berg <johannes@sipsolutions.net>, Thierry Reding <thierry.reding@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1456129440-28143-1-git-send-email-krzysztof.adamski-++hxYGjEMp0AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, krzysztof.adamski-++hxYGjEMp0AvxtiuMwx3w@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 23 February 2016 11:38:52 Marc Dietrich wrote:
-> Am Dienstag, 23. Februar 2016, 11:31:40 CET schrieb Arnd Bergmann:
-> > On Tuesday 23 February 2016 11:15:31 Arnd Bergmann wrote:
-> > > On Thursday 18 February 2016 21:04:49 Johannes Berg wrote:
-> > > > On Tue, 2016-01-26 at 09:42 +0100, Johannes Berg wrote:
-> > > Just for my curiosity: what is the difference between a rfkill-gpio
-> > > device and a gpio-keys device with a KEY_RFKILL code?
-> > > 
-> > > arch/arm/boot/dts/bcm4708-netgear-r6250.dts and others seem to
-> > > do the second approach in DT so they don't need to create the
-> > > platform device.
-> > 
-> > I found the answer now (after discussing on IRC): just
-> > for reference: KEY_RFKILL is for sending the event to the kernel
-> > when a user presses the gpio butting, this rfkill-gpio turns
-> > the devices on or off when after an RFKILL event is received.
-> 
-> yes, paz00 has no hw key. rfkill is triggered via software (rfkill) only. The 
-> problem in the past was how to describe such a device in the device tree. 
-> 
-> Strictly speaking, there is no rfkill device hardware (just an interface). The 
-> only hardware that exists is in our case is connected to a hard wired usb bus 
-> (wifi dongle), which makes it complicated to attach a DT property or subdevice 
-> to it. And a standalone device-tree entry for a non hardware device was 
-> rejected in the past.
-> 
+Hi Mark, Krzysztof,
 
-Ah, so the problem of attaching DT properties to a USB device has recently
-been solved, see subject "USB: core: let USB device know device node".
+It appears that commit daad134d6649 ("regulator: core: Request GPIO
+before creating sysfs entries") breaks boot on tegra124-nyan-big in
+-next today.
 
-Would that work for you? With this, the USB driver can simply look at
-the optional DT properties of the USB function to implement its rfkill
-callbacks.
+Looking at the change, it does not appear that the exit path has been
+updated correctly and so if a regulator is deferred then there is a
+crash in the exit path. I am not sure that there is a simple way to
+workaround this because of fix from commit 53032dafc6b9 ("regulator
+core: fix double-free in regulator_register() error path") unless we
+move regulator_ena_gpio_free() into regulator_dev_release().
 
-	Arnd
+Cheers
+Jon
