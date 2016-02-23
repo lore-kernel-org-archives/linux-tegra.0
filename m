@@ -1,44 +1,48 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCHv2 3/4] ARM: tegra: use build-in device properties with rfkill_gpio
-Date: Tue, 23 Feb 2016 16:06:55 +0100
-Message-ID: <3466361.DVRahbqhfF@wuerfel>
-References: <1453712629-143317-1-git-send-email-heikki.krogerus@linux.intel.com> <2463567.tt0f0ingYr@wuerfel> <2927215.6IlWnjRTgT@fb07-iapwap2>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 10/61] gpio: ath79: Use devm_gpiochip_add_data() for gpio
+ registration
+Date: Tue, 23 Feb 2016 20:28:24 +0530
+Message-ID: <56CC7390.6050805@nvidia.com>
+References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>	<1456150130-2668-11-git-send-email-ldewangan@nvidia.com> <20160222211323.5c10533f@tock>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2927215.6IlWnjRTgT@fb07-iapwap2>
+In-Reply-To: <20160222211323.5c10533f@tock>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marc Dietrich <marvin24@gmx.de>
-Cc: Johannes Berg <johannes@sipsolutions.net>, Thierry Reding <thierry.reding@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>
+To: Alban <albeu@free.fr>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, michael.hennerich@analog.com, corbet@lwn.net, rjui@broadcom.com, shc_work@mail.ru, support.opensource@diasemi.com, swarren@wwwdotorg.org, thierry.reding@gmail.com, bjorn.andersson@sonymobile.com, a.kesavan@samsung.com, gregkh@linuxfoundation.org, catalin.marinas@arm.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, patches@opensource.wolfsonmicro.com, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 23 February 2016 14:42:55 Marc Dietrich wrote:
-> Am Dienstag, 23. Februar 2016, 14:17:17 CET schrieb Arnd Bergmann:
-> > On Tuesday 23 February 2016 11:38:52 Marc Dietrich wrote:
-> > > Am Dienstag, 23. Februar 2016, 11:31:40 CET schrieb Arnd Bergmann:
-> > Ah, so the problem of attaching DT properties to a USB device has recently
-> > been solved, see subject "USB: core: let USB device know device node".
-> > 
-> > Would that work for you? With this, the USB driver can simply look at
-> > the optional DT properties of the USB function to implement its rfkill
-> > callbacks.
-> 
-> oh, that looks indeed interesting. The question is now if rfkill is a property 
-> of a device or a subdevice itself. The latter one would only require addition 
-> of device-tree instantiation of rfkill, while with the former one, the (or 
-> all) usb driver(s) need to be modified to accept device tree properties, 
-> especially gpios. The driver would then be responsible to add an rfkill 
-> "device".
-> 
-> IMHO (and unfortunately), it's just a property (a way to specify the relevant 
-> gpios), making the solution again hard to archive.
 
-Does rfkill always have a separate device in the Linux driver model?
-
-I would say that if we standardize on the property names, we can
-have some generic helper code that does everything with one or
-two function calls, similar to how we can read a mac address from
-a DT node from ROM-less USB ethernet devices.
-
-	Arnd
+On Tuesday 23 February 2016 01:43 AM, Alban wrote:
+> On Mon, 22 Feb 2016 19:37:59 +0530
+> Laxman Dewangan <ldewangan@nvidia.com> wrote:
+>
+>> Use devm_gpiochip_add_data() for GPIO registration.
+>>
+>> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+>> Cc: Alban Bedel <albeu@free.fr>
+>> ---
+>>   drivers/gpio/gpio-ath79.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/gpio/gpio-ath79.c b/drivers/gpio/gpio-ath79.c
+>> index d13dd13..a6aad59 100644
+>> --- a/drivers/gpio/gpio-ath79.c
+>> +++ b/drivers/gpio/gpio-ath79.c
+>> @@ -182,7 +182,7 @@ static int ath79_gpio_probe(struct platform_device *pdev)
+>>   		ctrl->chip.direction_output = ar934x_gpio_direction_output;
+>>   	}
+>>   
+>> -	err = gpiochip_add_data(&ctrl->chip, ctrl);
+>> +	err = devm_gpiochip_add_data(&pdev->dev, &ctrl->chip, ctrl);
+>>   	if (err) {
+>>   		dev_err(&pdev->dev,
+>>   			"cannot add AR71xx GPIO chip, error=%d", err);
+> With the patches already applied to the devel branch a few more changes
+> will be needed to remove the calls to gpiochip_remove() in the probe
+> error path and the remove callback.
+>
+OK, I will drop this patch when provide the git pointer to Linus.
+We can work on this later.
