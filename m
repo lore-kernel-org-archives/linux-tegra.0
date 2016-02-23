@@ -1,171 +1,35 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: [PATCH] ARM: dts: tegra: correct Beaver pinmux
-Date: Tue, 23 Feb 2016 21:49:03 +0100
-Message-ID: <1456260543-18076-1-git-send-email-dev@lynxeye.de>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v6 08/12] of: add notes of critical trips for soctherm
+Date: Tue, 23 Feb 2016 15:38:29 -0600
+Message-ID: <20160223213829.GA16577@rob-hp-laptop>
+References: <1456128650-29104-1-git-send-email-wni@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1456128650-29104-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Update pinmux to get rid of invalid uses of the rsvd1 function and
-add correct drive settings for SDIO1, which makes some more SD-cards
-work.
+On Mon, Feb 22, 2016 at 04:10:50PM +0800, Wei Ni wrote:
+> The "ctirical" type trip in thermal zone can be
 
-Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
----
- arch/arm/boot/dts/tegra30-beaver.dts | 39 ++++++++++++++++++++++--------------
- 1 file changed, 24 insertions(+), 15 deletions(-)
+typo
 
-diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
-index 3dede39..1daed40 100644
---- a/arch/arm/boot/dts/tegra30-beaver.dts
-+++ b/arch/arm/boot/dts/tegra30-beaver.dts
-@@ -255,14 +255,14 @@
- 			};
- 			sdmmc3_dat6_pd3 {
- 				nvidia,pins = "sdmmc3_dat6_pd3";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "spdif";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
- 			};
- 			sdmmc3_dat7_pd4 {
- 				nvidia,pins = "sdmmc3_dat7_pd4";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "spdif";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-@@ -276,14 +276,14 @@
- 			};
- 			vi_vsync_pd6 {
- 				nvidia,pins = "vi_vsync_pd6";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "ddr";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
- 			};
- 			vi_hsync_pd7 {
- 				nvidia,pins = "vi_hsync_pd7";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "ddr";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-@@ -801,7 +801,7 @@
- 			};
- 			hdmi_int_pn7 {
- 				nvidia,pins = "hdmi_int_pn7";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "hdmi";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-@@ -836,7 +836,7 @@
- 			};
- 			ulpi_data3_po4 {
- 				nvidia,pins = "ulpi_data3_po4";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "uarta";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-@@ -1102,21 +1102,21 @@
- 			};
- 			vi_d10_pt2 {
- 				nvidia,pins = "vi_d10_pt2";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "ddr";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
- 			};
- 			vi_d11_pt3 {
- 				nvidia,pins = "vi_d11_pt3";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "ddr";
- 				nvidia,pull = <TEGRA_PIN_PULL_UP>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
- 			};
- 			vi_d0_pt4 {
- 				nvidia,pins = "vi_d0_pt4";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "ddr";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-@@ -1146,7 +1146,7 @@
- 			};
- 			pu0 {
- 				nvidia,pins = "pu0";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "owr";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-@@ -1167,7 +1167,7 @@
- 			};
- 			pu3 {
- 				nvidia,pins = "pu3";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "pwm0";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-@@ -1188,7 +1188,7 @@
- 			};
- 			pu6 {
- 				nvidia,pins = "pu6";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "pwm3";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-@@ -1216,7 +1216,7 @@
- 			};
- 			pv3 {
- 				nvidia,pins = "pv3";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "clk_12m_out";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-@@ -1505,7 +1505,7 @@
- 			};
- 			pbb0 {
- 				nvidia,pins = "pbb0";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "i2s4";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-@@ -1570,7 +1570,7 @@
- 			};
- 			pcc1 {
- 				nvidia,pins = "pcc1";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "i2s4";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-@@ -1718,6 +1718,15 @@
- 				nvidia,slew-rate-rising = <1>;
- 				nvidia,slew-rate-falling = <1>;
- 			};
-+			sdio1 {
-+				nvidia,pins = "drive_sdio1";
-+				nvidia,high-speed-mode = <TEGRA_PIN_DISABLE>;
-+				nvidia,schmitt = <TEGRA_PIN_DISABLE>;
-+				nvidia,pull-down-strength = <46>;
-+				nvidia,pull-up-strength = <42>;
-+				nvidia,slew-rate-rising = <1>;
-+				nvidia,slew-rate-falling = <1>;
-+			};
- 			gpv {
- 				nvidia,pins = "drive_gpv";
- 				nvidia,pull-up-strength = <16>;
--- 
-2.5.0
+> set to SOC_THERM hardware, it can trigger shut down
+> or reset event from hardware.
+> 
+> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  Documentation/devicetree/bindings/thermal/tegra-soctherm.txt | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+
+Otherwise,
+
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
