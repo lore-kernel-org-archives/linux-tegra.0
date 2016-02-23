@@ -1,74 +1,58 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] regulator: core: fix error path of
- regulator_ena_gpio_free
-Date: Tue, 23 Feb 2016 15:18:59 +0000
-Message-ID: <56CC7863.4080202@nvidia.com>
-References: <56CC6979.3050305@nvidia.com>
- <1456238830-13733-1-git-send-email-krzysztof.adamski@tieto.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 00/61] gpio: Add and use devm_gpiochip_add_data()
+Date: Tue, 23 Feb 2016 20:45:29 +0530
+Message-ID: <56CC7791.2000607@nvidia.com>
+References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com> <CACRpkdbt+RiWMA74e40MNZVnDM0t0futtFnbyu9sRhv7p93-Tg@mail.gmail.com> <56CC1FD4.1080905@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1456238830-13733-1-git-send-email-krzysztof.adamski@tieto.com>
+In-Reply-To: <56CC1FD4.1080905@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Adamski <krzysztof.adamski@tieto.com>, Mark Brown <broonie@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Michael Hennerich <michael.hennerich@analog.com>, Jon Corbet <corbet@lwn.net>, Alban Bedel <albeu@free.fr>, Ray Jui <rjui@broadcom.com>, Alexander Shiyan <shc_work@mail.ru>, Support Opensource <support.opensource@diasemi.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?B?IkFuZGVyc3NvbiwgQmrDtnJuIg==?= <bjorn.andersson@sonymobile.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Greg KH <gregkh@linuxfoundation.org>, Catalin Marinas <catalin.marinas@arm.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, WOLFSON MICROELECTRONICS DRIVERS <patches@opensource.wolfsonmicro.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 23/02/16 14:47, Krzysztof Adamski wrote:
-> This problem was introduced by:
-> commit daad134d6649 ("regulator: core: Request GPIO before creating
-> sysfs entries")
-> 
-> The error path was not updated correctly and in case
-> regulator_ena_gpio_free failed, device_unregister was called even though
-> it was not registered yet.
-> 
-> Signed-off-by: Krzysztof Adamski <krzysztof.adamski@tieto.com>
-> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+Hi Linus,
 
-Nit ... I think that order of the above should be reversed.
+On Tuesday 23 February 2016 02:31 PM, Laxman Dewangan wrote:
+>
+> On Monday 22 February 2016 08:14 PM, Linus Walleij wrote:
+>> On Mon, Feb 22, 2016 at 3:07 PM, Laxman Dewangan 
+>> <ldewangan@nvidia.com> wrote:
+>>
+>>> Add resource management APIs for gpiochip_add_data() and
+>>> gpiochip_remove() and use these APIs from different HW drivers.
+>>>
+>>> This is based on discussion on patch to use the new APIs.
+>>>          gpio: Add devm_ apis for gpio_chip_add and remove
+>> Awesome!
+>>
+>> Do you have a git I can just pull these off so I don't have to apply
+>> then all one-by-one?
+>
+>
+> Nop, I do not have the git repo for sharing as of now at this time.
+> Trying to learn to how to create.
+>
 
-> ---
->  drivers/regulator/core.c | 8 +++-----
->  1 file changed, 3 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-> index 6ee9ba4..d1e7859 100644
-> --- a/drivers/regulator/core.c
-> +++ b/drivers/regulator/core.c
-> @@ -3919,7 +3919,7 @@ regulator_register(const struct regulator_desc *regulator_desc,
->  		if (ret != 0) {
->  			rdev_err(rdev, "Failed to request enable GPIO%d: %d\n",
->  				 config->ena_gpio, ret);
-> -			goto wash;
-> +			goto clean;
->  		}
->  	}
->  
-> @@ -3942,7 +3942,7 @@ regulator_register(const struct regulator_desc *regulator_desc,
->  
->  	ret = set_machine_constraints(rdev, constraints);
->  	if (ret < 0)
-> -		goto scrub;
-> +		goto wash;
->  
->  	if (init_data && init_data->supply_regulator)
->  		rdev->supply_name = init_data->supply_regulator;
-> @@ -3972,10 +3972,8 @@ out:
->  unset_supplies:
->  	unset_regulator_supplies(rdev);
->  
-> -scrub:
-> -	regulator_ena_gpio_free(rdev);
-> -
->  wash:
-> +	regulator_ena_gpio_free(rdev);
->  	device_unregister(&rdev->dev);
->  	/* device core frees rdev */
->  	rdev = ERR_PTR(ret);
 
-What about the case where device_register() fails? I think you still
-call clean and so you will leak the gpio?
+I have made the repo in git hub as
+     https://github.com/ldewangan/linux-upstream.git
 
-Jon
+branch name is devm_gpiochip.
+     https://github.com/ldewangan/linux-upstream/tree/devm_gpiochip
+
+I am not sure that it will work or not but I have pushed all changes to 
+this repo/branch.
+This is on top of your repo
+https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git
+          branch gpio-fornext
+
+I collected acked by and also added in patch.
+
+
+
+Thanks,
+Laxman
