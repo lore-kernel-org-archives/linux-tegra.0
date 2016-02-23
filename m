@@ -1,68 +1,41 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: Re: [PATCH v6 07/12] thermal: of-thermal: allow setting trip_temp
- on hardware
-Date: Tue, 23 Feb 2016 10:16:37 +0800
-Message-ID: <56CBC105.6080703@nvidia.com>
-References: <1456128555-29058-1-git-send-email-wni@nvidia.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 2/2] drm/tegra: Set the DMA mask
+Date: Tue, 23 Feb 2016 15:25:54 +0900
+Message-ID: <1456208754-12362-2-git-send-email-acourbot@nvidia.com>
+References: <1456208754-12362-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1456128555-29058-1-git-send-email-wni@nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: thierry.reding@gmail.com, edubezval@gmail.com, rui.zhang@intel.com
-Cc: MLongnecker@nvidia.com, swarren@wwwdotorg.org, mikko.perttunen@kapsi.fi, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1456208754-12362-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add linux-pm@vger.kernel.org in the CC list.
+The default DMA mask covers a 32 bits address range, but tegradrm can
+address more than that. Set the DMA mask to the actual addressable range
+to avoid the use of unneeded bounce buffers.
 
-On 2016=E5=B9=B402=E6=9C=8822=E6=97=A5 16:09, Wei Ni wrote:
-> In current of-thermal, the .set_trip_temp only support to
-> set trip_temp for SW. But some sensors support to set
-> trip_temp on hardware, so that can trigger interrupt,
-> shutdown or any other events.
-> This patch adds .set_trip_temp() callback in
-> thermal_zone_of_device_ops{}, so that the sensor device can
-> use it to set trip_temp on hardware.
->=20
-> Signed-off-by: Wei Ni <wni@nvidia.com>
-> ---
->  drivers/thermal/of-thermal.c | 8 ++++++++
->  include/linux/thermal.h      | 1 +
->  2 files changed, 9 insertions(+)
->=20
-> diff --git a/drivers/thermal/of-thermal.c b/drivers/thermal/of-therma=
-l.c
-> index be4eedcb839a..fbfc5a52dc27 100644
-> --- a/drivers/thermal/of-thermal.c
-> +++ b/drivers/thermal/of-thermal.c
-> @@ -331,6 +331,14 @@ static int of_thermal_set_trip_temp(struct therm=
-al_zone_device *tz, int trip,
->  	if (trip >=3D data->ntrips || trip < 0)
->  		return -EDOM;
-> =20
-> +	if (data->ops->set_trip_temp) {
-> +		int ret;
-> +
-> +		ret =3D data->ops->set_trip_temp(data->sensor_data, trip, temp);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
->  	/* thermal framework should take care of data->mask & (1 << trip) *=
-/
->  	data->trips[trip].temperature =3D temp;
-> =20
-> diff --git a/include/linux/thermal.h b/include/linux/thermal.h
-> index e13a1ace50e9..e69296dc583b 100644
-> --- a/include/linux/thermal.h
-> +++ b/include/linux/thermal.h
-> @@ -338,6 +338,7 @@ struct thermal_zone_of_device_ops {
->  	int (*get_temp)(void *, int *);
->  	int (*get_trend)(void *, long *);
->  	int (*set_emul_temp)(void *, int);
-> +	int (*set_trip_temp)(void *, int, int);
->  };
-> =20
->  /**
->=20
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Thierry, I am not absolutely sure whether the size is correct and applies
+to all Tegra generations - please let me know if this needs to be
+reworked.
+
+ drivers/gpu/drm/tegra/drm.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index bc0555adecaf..503fc9e73521 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -992,6 +992,7 @@ static int host1x_drm_probe(struct host1x_device *dev)
+ 
+ 	dev_set_drvdata(&dev->dev, drm);
+ 	of_dma_configure(drm->dev, NULL);
++	dma_set_mask(drm->dev, DMA_BIT_MASK(34));
+ 
+ 	err = drm_dev_register(drm, 0);
+ 	if (err < 0)
+-- 
+2.7.1
