@@ -1,39 +1,43 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/2] drm/tegra: Set the DMA mask
-Date: Tue, 23 Feb 2016 15:25:54 +0900
-Message-ID: <1456208754-12362-2-git-send-email-acourbot@nvidia.com>
-References: <1456208754-12362-1-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH 1/2] drm/tegra: Set DMA ops
+Date: Tue, 23 Feb 2016 15:25:53 +0900
+Message-ID: <1456208754-12362-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1456208754-12362-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The default DMA mask covers a 32 bits address range, but tegradrm can
-address more than that. Set the DMA mask to the actual addressable range
-to avoid the use of unneeded bounce buffers.
+The current settings leaves the DRM device's dma_ops field NULL, which
+makes it use the dummy DMA ops on arm64 and return an error whenever we
+try to import a buffer. Call of_dma_configure() with a NULL node (since
+the device is not spawn from the device tree) so that
+arch_setup_dma_ops() is called and sets the default ioswtlb DMA ops.
 
-Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
-Thierry, I am not absolutely sure whether the size is correct and applies
-to all Tegra generations - please let me know if this needs to be
-reworked.
-
- drivers/gpu/drm/tegra/drm.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/tegra/drm.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index bc0555adecaf..503fc9e73521 100644
+index d347188bf8f4..bc0555adecaf 100644
 --- a/drivers/gpu/drm/tegra/drm.c
 +++ b/drivers/gpu/drm/tegra/drm.c
-@@ -992,6 +992,7 @@ static int host1x_drm_probe(struct host1x_device *dev)
+@@ -9,6 +9,7 @@
+ 
+ #include <linux/host1x.h>
+ #include <linux/iommu.h>
++#include <linux/of_device.h>
+ 
+ #include <drm/drm_atomic.h>
+ #include <drm/drm_atomic_helper.h>
+@@ -990,6 +991,7 @@ static int host1x_drm_probe(struct host1x_device *dev)
+ 		return -ENOMEM;
  
  	dev_set_drvdata(&dev->dev, drm);
- 	of_dma_configure(drm->dev, NULL);
-+	dma_set_mask(drm->dev, DMA_BIT_MASK(34));
++	of_dma_configure(drm->dev, NULL);
  
  	err = drm_dev_register(drm, 0);
  	if (err < 0)
