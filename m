@@ -1,42 +1,25 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v2] PCI: tegra: Support per-lane PHYs
-Date: Tue, 23 Feb 2016 11:17:52 -0700
-Message-ID: <56CCA250.2010403@wwwdotorg.org>
-References: <1455029465-9211-1-git-send-email-thierry.reding@gmail.com>
- <1455904860-29090-1-git-send-email-thierry.reding@gmail.com>
+From: Johannes Berg <johannes@sipsolutions.net>
+Subject: Re: [PATCHv2 3/4] ARM: tegra: use build-in device properties with
+ rfkill_gpio
+Date: Tue, 23 Feb 2016 21:39:05 +0100
+Message-ID: <1456259945.9910.25.camel@sipsolutions.net>
+References: <1453712629-143317-1-git-send-email-heikki.krogerus@linux.intel.com>
+	 <2463567.tt0f0ingYr@wuerfel> <2927215.6IlWnjRTgT@fb07-iapwap2>
+	 <3466361.DVRahbqhfF@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <1455904860-29090-1-git-send-email-thierry.reding@gmail.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <3466361.DVRahbqhfF@wuerfel>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Marc Dietrich <marvin24@gmx.de>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/19/2016 11:01 AM, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
->
-> The current XUSB pad controller bindings are insufficient to describe
-> PHY devices attached to USB controllers. New bindings have been created
-> to overcome these restrictions. As a side-effect each root port now is
-> assigned a set of PHY devices, one for each lane associated with the
-> root port. This has the benefit of allowing fine-grained control of the
-> power management for each lane.
+On Tue, 2016-02-23 at 16:06 +0100, Arnd Bergmann wrote:
+>=C2=A0
+> Does rfkill always have a separate device in the Linux driver model?
 
-Overall this change looks OK. However, since it encodes aspects of the 
-DT binding (i.e. that the per-port nodes have a phys property in the new 
-scheme), I think it can't be applied until the related DT binding change 
-is accepted.
+Yes, the rfkill core code registers and adds one in the rfkill class.
 
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-
-> @@ -883,14 +904,24 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
-
-> +	if (of_get_property(pcie->dev->of_node, "phys", NULL) == NULL) {
-
-Rather than re-parsing DT to determine this, thus duplicating the logic, 
-can't the code store some flag in tegra_pcie_phys_get() indicating which 
-path was taken, and that flag used here? Perhaps that flag could be 
-based on whether pcie->phy is set, although the else block here implies 
-that particular solution won't work.
+> johannes
