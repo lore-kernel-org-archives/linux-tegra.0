@@ -1,51 +1,42 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] sound/soc/tegra: tegra_max98090: Invert headphone by GPIO
- flag
-Date: Tue, 23 Feb 2016 10:35:28 -0700
-Message-ID: <56CC9860.2060003@wwwdotorg.org>
-References: <56CB6624.6030600@wwwdotorg.org>
- <1456247985-5563-1-git-send-email-sctincman@gmail.com>
- <1456247985-5563-2-git-send-email-sctincman@gmail.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2] PCI: tegra: Support per-lane PHYs
+Date: Tue, 23 Feb 2016 11:17:52 -0700
+Message-ID: <56CCA250.2010403@wwwdotorg.org>
+References: <1455029465-9211-1-git-send-email-thierry.reding@gmail.com>
+ <1455904860-29090-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1456247985-5563-2-git-send-email-sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <1455904860-29090-1-git-send-email-thierry.reding@gmail.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/23/2016 10:19 AM, Jonathan Tinkham wrote:
-
- > Subject: sound/soc/tegra: tegra_max98090: Invert headphone by GPIO
- > flag
-
-Mark has mentioned quite a few times that this patch subject is 
-incorrect. ASoC patch subjects should start with "ASoC: ". You can see 
-this by running:
-
-git log -- sound/soc/tegra/
-
-I'd suggest the following:
-
-AsoC: tegra_max98090: honor headphone detect GPIO polarity
-
-> Set the invert property for the headphone jack depending on the GPIO flag in the
-> device-tree. This is similar to what is done for tegra_rt5640.
+On 02/19/2016 11:01 AM, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
 >
+> The current XUSB pad controller bindings are insufficient to describe
+> PHY devices attached to USB controllers. New bindings have been created
+> to overcome these restrictions. As a side-effect each root port now is
+> assigned a set of PHY devices, one for each lane associated with the
+> root port. This has the benefit of allowing fine-grained control of the
+> power management for each lane.
 
-> diff --git a/sound/soc/tegra/tegra_max98090.c b/sound/soc/tegra/tegra_max98090.c
+Overall this change looks OK. However, since it encodes aspects of the 
+DT binding (i.e. that the per-port nodes have a phys property in the new 
+scheme), I think it can't be applied until the related DT binding change 
+is accepted.
 
-> @@ -155,6 +156,7 @@ static int tegra_max98090_asoc_init(struct snd_soc_pcm_runtime *rtd)
->   				      ARRAY_SIZE(tegra_max98090_hp_jack_pins));
->
->   		tegra_max98090_hp_jack_gpio.gpio = machine->gpio_hp_det;
-> +		tegra_max98090_hp_jack_gpio.invert = (machine->gpio_hp_det_flags & OF_GPIO_ACTIVE_LOW);
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
 
-Did you run checkpatch? It should complain about > 80 columns, and I 
-suspect about the unnecessary brackets around that expression. In fact, 
-checkpatch indicates quite a few other warnings and errors.
+> @@ -883,14 +904,24 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
 
-The logic in this patch looks OK. Do the relevant DT files all have the 
-correct GPIO flags already? That'd be nice!
+> +	if (of_get_property(pcie->dev->of_node, "phys", NULL) == NULL) {
+
+Rather than re-parsing DT to determine this, thus duplicating the logic, 
+can't the code store some flag in tegra_pcie_phys_get() indicating which 
+path was taken, and that flag used here? Perhaps that flag could be 
+based on whether pcie->phy is set, although the else block here implies 
+that particular solution won't work.
