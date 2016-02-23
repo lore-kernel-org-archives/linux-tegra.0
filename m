@@ -1,62 +1,44 @@
-From: Krzysztof Adamski <krzysztof.adamski@tieto.com>
-Subject: [PATCH] regulator: core: fix error path of regulator_ena_gpio_free
-Date: Tue, 23 Feb 2016 15:47:10 +0100
-Message-ID: <1456238830-13733-1-git-send-email-krzysztof.adamski@tieto.com>
-References: <56CC6979.3050305@nvidia.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCHv2 3/4] ARM: tegra: use build-in device properties with rfkill_gpio
+Date: Tue, 23 Feb 2016 16:06:55 +0100
+Message-ID: <3466361.DVRahbqhfF@wuerfel>
+References: <1453712629-143317-1-git-send-email-heikki.krogerus@linux.intel.com> <2463567.tt0f0ingYr@wuerfel> <2927215.6IlWnjRTgT@fb07-iapwap2>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <56CC6979.3050305@nvidia.com>
+In-Reply-To: <2927215.6IlWnjRTgT@fb07-iapwap2>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Mark Brown <broonie@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: Krzysztof Adamski <krzysztof.adamski@tieto.com>
+To: Marc Dietrich <marvin24@gmx.de>
+Cc: Johannes Berg <johannes@sipsolutions.net>, Thierry Reding <thierry.reding@gmail.com>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, linux-wireless@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This problem was introduced by:
-commit daad134d6649 ("regulator: core: Request GPIO before creating
-sysfs entries")
+On Tuesday 23 February 2016 14:42:55 Marc Dietrich wrote:
+> Am Dienstag, 23. Februar 2016, 14:17:17 CET schrieb Arnd Bergmann:
+> > On Tuesday 23 February 2016 11:38:52 Marc Dietrich wrote:
+> > > Am Dienstag, 23. Februar 2016, 11:31:40 CET schrieb Arnd Bergmann:
+> > Ah, so the problem of attaching DT properties to a USB device has recently
+> > been solved, see subject "USB: core: let USB device know device node".
+> > 
+> > Would that work for you? With this, the USB driver can simply look at
+> > the optional DT properties of the USB function to implement its rfkill
+> > callbacks.
+> 
+> oh, that looks indeed interesting. The question is now if rfkill is a property 
+> of a device or a subdevice itself. The latter one would only require addition 
+> of device-tree instantiation of rfkill, while with the former one, the (or 
+> all) usb driver(s) need to be modified to accept device tree properties, 
+> especially gpios. The driver would then be responsible to add an rfkill 
+> "device".
+> 
+> IMHO (and unfortunately), it's just a property (a way to specify the relevant 
+> gpios), making the solution again hard to archive.
 
-The error path was not updated correctly and in case
-regulator_ena_gpio_free failed, device_unregister was called even though
-it was not registered yet.
+Does rfkill always have a separate device in the Linux driver model?
 
-Signed-off-by: Krzysztof Adamski <krzysztof.adamski@tieto.com>
-Reported-by: Jon Hunter <jonathanh@nvidia.com>
----
- drivers/regulator/core.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+I would say that if we standardize on the property names, we can
+have some generic helper code that does everything with one or
+two function calls, similar to how we can read a mac address from
+a DT node from ROM-less USB ethernet devices.
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 6ee9ba4..d1e7859 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -3919,7 +3919,7 @@ regulator_register(const struct regulator_desc *regulator_desc,
- 		if (ret != 0) {
- 			rdev_err(rdev, "Failed to request enable GPIO%d: %d\n",
- 				 config->ena_gpio, ret);
--			goto wash;
-+			goto clean;
- 		}
- 	}
- 
-@@ -3942,7 +3942,7 @@ regulator_register(const struct regulator_desc *regulator_desc,
- 
- 	ret = set_machine_constraints(rdev, constraints);
- 	if (ret < 0)
--		goto scrub;
-+		goto wash;
- 
- 	if (init_data && init_data->supply_regulator)
- 		rdev->supply_name = init_data->supply_regulator;
-@@ -3972,10 +3972,8 @@ out:
- unset_supplies:
- 	unset_regulator_supplies(rdev);
- 
--scrub:
--	regulator_ena_gpio_free(rdev);
--
- wash:
-+	regulator_ena_gpio_free(rdev);
- 	device_unregister(&rdev->dev);
- 	/* device core frees rdev */
- 	rdev = ERR_PTR(ret);
--- 
-2.1.4
+	Arnd
