@@ -1,45 +1,59 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH 1/2] drm/tegra: Set DMA ops
-Date: Tue, 23 Feb 2016 15:25:53 +0900
-Message-ID: <1456208754-12362-1-git-send-email-acourbot@nvidia.com>
+From: Michael Hennerich <michael.hennerich@analog.com>
+Subject: Re: [PATCH 07/61] gpio: adp5588: Use devm_gpiochip_add_data() for
+ gpio registration
+Date: Tue, 23 Feb 2016 08:49:21 +0100
+Message-ID: <56CC0F01.1000006@analog.com>
+References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>
+ <1456150130-2668-8-git-send-email-ldewangan@nvidia.com>
+Reply-To: <michael.hennerich@analog.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1456150130-2668-8-git-send-email-ldewangan@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
+To: Laxman Dewangan <ldewangan@nvidia.com>, linus.walleij@linaro.org, gnurou@gmail.com, corbet@lwn.net, albeu@free.fr, rjui@broadcom.com, shc_work@mail.ru, support.opensource@diasemi.com, swarren@wwwdotorg.org, thierry.reding@gmail.com
+Cc: bjorn.andersson@sonymobile.com, a.kesavan@samsung.com, gregkh@linuxfoundation.org, catalin.marinas@arm.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, patches@opensource.wolfsonmicro.com, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The current settings leaves the DRM device's dma_ops field NULL, which
-makes it use the dummy DMA ops on arm64 and return an error whenever we
-try to import a buffer. Call of_dma_configure() with a NULL node (since
-the device is not spawn from the device tree) so that
-arch_setup_dma_ops() is called and sets the default ioswtlb DMA ops.
+On 02/22/2016 03:07 PM, Laxman Dewangan wrote:
+> Use devm_gpiochip_add_data() for GPIO registration and remove the
+> call for gpiochip_remove() from remove callback.
+>
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
----
- drivers/gpu/drm/tegra/drm.c | 2 ++
- 1 file changed, 2 insertions(+)
+Acked-by: Michael Hennerich <michael.hennerich@analog.com>
 
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index d347188bf8f4..bc0555adecaf 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -9,6 +9,7 @@
- 
- #include <linux/host1x.h>
- #include <linux/iommu.h>
-+#include <linux/of_device.h>
- 
- #include <drm/drm_atomic.h>
- #include <drm/drm_atomic_helper.h>
-@@ -990,6 +991,7 @@ static int host1x_drm_probe(struct host1x_device *dev)
- 		return -ENOMEM;
- 
- 	dev_set_drvdata(&dev->dev, drm);
-+	of_dma_configure(drm->dev, NULL);
- 
- 	err = drm_dev_register(drm, 0);
- 	if (err < 0)
+> Cc: Michael Hennerich <michael.hennerich@analog.com>
+> ---
+>   drivers/gpio/gpio-adp5588.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/gpio/gpio-adp5588.c b/drivers/gpio/gpio-adp5588.c
+> index 19a0eba..c0f718b 100644
+> --- a/drivers/gpio/gpio-adp5588.c
+> +++ b/drivers/gpio/gpio-adp5588.c
+> @@ -414,7 +414,7 @@ static int adp5588_gpio_probe(struct i2c_client *client,
+>   		}
+>   	}
+>
+> -	ret = gpiochip_add_data(&dev->gpio_chip, dev);
+> +	ret = devm_gpiochip_add_data(&client->dev, &dev->gpio_chip, dev);
+>   	if (ret)
+>   		goto err_irq;
+>
+> @@ -457,8 +457,6 @@ static int adp5588_gpio_remove(struct i2c_client *client)
+>   	if (dev->irq_base)
+>   		free_irq(dev->client->irq, dev);
+>
+> -	gpiochip_remove(&dev->gpio_chip);
+> -
+>   	return 0;
+>   }
+>
+>
+
+
 -- 
-2.7.1
+Greetings,
+Michael
