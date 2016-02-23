@@ -1,75 +1,32 @@
-From: Michael Hennerich <michael.hennerich@analog.com>
-Subject: Re: [PATCH 06/61] gpio: adp5520: Use devm_gpiochip_add_data() for
- gpio registration
-Date: Tue, 23 Feb 2016 08:49:47 +0100
-Message-ID: <56CC0F1B.9040003@analog.com>
-References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>
- <1456150130-2668-7-git-send-email-ldewangan@nvidia.com>
-Reply-To: <michael.hennerich@analog.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 00/61] gpio: Add and use devm_gpiochip_add_data()
+Date: Tue, 23 Feb 2016 14:31:08 +0530
+Message-ID: <56CC1FD4.1080905@nvidia.com>
+References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com> <CACRpkdbt+RiWMA74e40MNZVnDM0t0futtFnbyu9sRhv7p93-Tg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1456150130-2668-7-git-send-email-ldewangan@nvidia.com>
+In-Reply-To: <CACRpkdbt+RiWMA74e40MNZVnDM0t0futtFnbyu9sRhv7p93-Tg@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, linus.walleij@linaro.org, gnurou@gmail.com, corbet@lwn.net, albeu@free.fr, rjui@broadcom.com, shc_work@mail.ru, support.opensource@diasemi.com, swarren@wwwdotorg.org, thierry.reding@gmail.com
-Cc: bjorn.andersson@sonymobile.com, a.kesavan@samsung.com, gregkh@linuxfoundation.org, catalin.marinas@arm.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, patches@opensource.wolfsonmicro.com, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Michael Hennerich <michael.hennerich@analog.com>, Jon Corbet <corbet@lwn.net>, Alban Bedel <albeu@free.fr>, Ray Jui <rjui@broadcom.com>, Alexander Shiyan <shc_work@mail.ru>, Support Opensource <support.opensource@diasemi.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?B?IkFuZGVyc3NvbiwgQmrDtnJuIg==?= <bjorn.andersson@sonymobile.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Greg KH <gregkh@linuxfoundation.org>, Catalin Marinas <catalin.marinas@arm.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, WOLFSON MICROELECTRONICS DRIVERS <patches@opensource.wolfsonmicro.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/22/2016 03:07 PM, Laxman Dewangan wrote:
-> Use devm_gpiochip_add_data() for GPIO registration and remove the
-> call for gpiochip_remove() from error path.
->
-> Also remove the need of driver callback .remove.
->
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 
-Acked-by: Michael Hennerich <michael.hennerich@analog.com>
-
-> Cc: Michael Hennerich <michael.hennerich@analog.com>
-> ---
->   drivers/gpio/gpio-adp5520.c | 13 +------------
->   1 file changed, 1 insertion(+), 12 deletions(-)
+On Monday 22 February 2016 08:14 PM, Linus Walleij wrote:
+> On Mon, Feb 22, 2016 at 3:07 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 >
-> diff --git a/drivers/gpio/gpio-adp5520.c b/drivers/gpio/gpio-adp5520.c
-> index 4fa7ff1..abf1996 100644
-> --- a/drivers/gpio/gpio-adp5520.c
-> +++ b/drivers/gpio/gpio-adp5520.c
-> @@ -153,7 +153,7 @@ static int adp5520_gpio_probe(struct platform_device *pdev)
->   		goto err;
->   	}
+>> Add resource management APIs for gpiochip_add_data() and
+>> gpiochip_remove() and use these APIs from different HW drivers.
+>>
+>> This is based on discussion on patch to use the new APIs.
+>>          gpio: Add devm_ apis for gpio_chip_add and remove
+> Awesome!
 >
-> -	ret = gpiochip_add_data(&dev->gpio_chip, dev);
-> +	ret = devm_gpiochip_add_data(&pdev->dev, &dev->gpio_chip, dev);
->   	if (ret)
->   		goto err;
->
-> @@ -164,22 +164,11 @@ err:
->   	return ret;
->   }
->
-> -static int adp5520_gpio_remove(struct platform_device *pdev)
-> -{
-> -	struct adp5520_gpio *dev;
-> -
-> -	dev = platform_get_drvdata(pdev);
-> -	gpiochip_remove(&dev->gpio_chip);
-> -
-> -	return 0;
-> -}
-> -
->   static struct platform_driver adp5520_gpio_driver = {
->   	.driver	= {
->   		.name	= "adp5520-gpio",
->   	},
->   	.probe		= adp5520_gpio_probe,
-> -	.remove		= adp5520_gpio_remove,
->   };
->
->   module_platform_driver(adp5520_gpio_driver);
->
+> Do you have a git I can just pull these off so I don't have to apply
+> then all one-by-one?
 
 
--- 
-Greetings,
-Michael
+Nop, I do not have the git repo for sharing as of now at this time.
+Trying to learn to how to create.
