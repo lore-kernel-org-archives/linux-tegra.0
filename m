@@ -1,12 +1,13 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 1/2] drm/tegra: Set DMA ops
-Date: Tue, 23 Feb 2016 16:28:15 +0100
-Message-ID: <20160223152815.GD27656@ulmo>
+Subject: Re: [PATCH 2/2] drm/tegra: Set the DMA mask
+Date: Tue, 23 Feb 2016 17:04:40 +0100
+Message-ID: <20160223160440.GE27656@ulmo>
 References: <1456208754-12362-1-git-send-email-acourbot@nvidia.com>
+ <1456208754-12362-2-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0051349171=="
+Content-Type: multipart/mixed; boundary="===============0497534444=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1456208754-12362-1-git-send-email-acourbot@nvidia.com>
+In-Reply-To: <1456208754-12362-2-git-send-email-acourbot@nvidia.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -21,107 +22,66 @@ Cc: gnurou@gmail.com, Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, 
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0051349171==
+--===============0497534444==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="BRE3mIcgqKzpedwo"
+	protocol="application/pgp-signature"; boundary="wchHw8dVAp53YPj8"
 Content-Disposition: inline
 
 
---BRE3mIcgqKzpedwo
+--wchHw8dVAp53YPj8
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 23, 2016 at 03:25:53PM +0900, Alexandre Courbot wrote:
-> The current settings leaves the DRM device's dma_ops field NULL, which
-> makes it use the dummy DMA ops on arm64 and return an error whenever we
-> try to import a buffer. Call of_dma_configure() with a NULL node (since
-> the device is not spawn from the device tree) so that
-> arch_setup_dma_ops() is called and sets the default ioswtlb DMA ops.
+On Tue, Feb 23, 2016 at 03:25:54PM +0900, Alexandre Courbot wrote:
+> The default DMA mask covers a 32 bits address range, but tegradrm can
+> address more than that. Set the DMA mask to the actual addressable range
+> to avoid the use of unneeded bounce buffers.
 >=20
 > Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 > ---
->  drivers/gpu/drm/tegra/drm.c | 2 ++
->  1 file changed, 2 insertions(+)
+> Thierry, I am not absolutely sure whether the size is correct and applies
+> to all Tegra generations - please let me know if this needs to be
+> reworked.
 >=20
-> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-> index d347188bf8f4..bc0555adecaf 100644
-> --- a/drivers/gpu/drm/tegra/drm.c
-> +++ b/drivers/gpu/drm/tegra/drm.c
-> @@ -9,6 +9,7 @@
-> =20
->  #include <linux/host1x.h>
->  #include <linux/iommu.h>
-> +#include <linux/of_device.h>
-> =20
->  #include <drm/drm_atomic.h>
->  #include <drm/drm_atomic_helper.h>
-> @@ -990,6 +991,7 @@ static int host1x_drm_probe(struct host1x_device *dev)
->  		return -ENOMEM;
-> =20
->  	dev_set_drvdata(&dev->dev, drm);
-> +	of_dma_configure(drm->dev, NULL);
+>  drivers/gpu/drm/tegra/drm.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-Looking at the various pieces, I think this really belongs in
-host1x_device_add() (see drivers/gpu/host1x/bus.c) where it can replace
-the open-coded setting of DMA and coherent DMA masks. Also why can't we
-pass the correct device tree node here? The DRM device is a virtual
-device that hangs off the host1x device, so I think it could use the
-same device tree node as the host1x device.
+This kind of depends on whether or not the device is behind an IOMMU. If
+it is, then the IOMMU DMA MASK would apply, which can be derived from
+the number of address bits that the IOMMU can handle. The SMMU supports
+32 address bits on Tegra30 and Tegra114, 34 address bits on more recent
+generations.
 
-Something like the below (untested).
+I think for now it's safer to leave the DMA mask at the default (32 bit)
+to avoid the need to distinguish between IOMMU and non-IOMMU devices.
 
 Thierry
 
---- >8 ---
-diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-index c2e7fba370bb..d46d26a574da 100644
---- a/drivers/gpu/host1x/bus.c
-+++ b/drivers/gpu/host1x/bus.c
-@@ -17,6 +17,7 @@
-=20
- #include <linux/host1x.h>
- #include <linux/of.h>
-+#include <linux/of_device.h>
- #include <linux/slab.h>
-=20
- #include "bus.h"
-@@ -393,9 +394,8 @@ static int host1x_device_add(struct host1x *host1x,
- 	INIT_LIST_HEAD(&device->list);
- 	device->driver =3D driver;
-=20
--	device->dev.coherent_dma_mask =3D host1x->dev->coherent_dma_mask;
--	device->dev.dma_mask =3D &device->dev.coherent_dma_mask;
- 	dev_set_name(&device->dev, "%s", driver->driver.name);
-+	of_dma_configure(&device->dev, host1x->dev->of_node);
- 	device->dev.release =3D host1x_device_release;
- 	device->dev.bus =3D &host1x_bus_type;
- 	device->dev.parent =3D host1x->dev;
-
---BRE3mIcgqKzpedwo
+--wchHw8dVAp53YPj8
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJWzHqMAAoJEN0jrNd/PrOhYkQP/Rv+/mB6vFRedUYxEBcj9te+
-aN0AzJShF2DuzQyjf97Hb/hdfU7EGpF0p5L2R3ssCW3BIyKwm0SNWGSpHX/f/5b0
-SeSkoh2Sx89Tju8EDH7CJYVI0QjJhxGMBUhK2e39yM+0BKmMg1pbVw0zLuZecp3Q
-vpB/1Gdn8/Rsf7QHJ5dhCkqTRYhG9Jv8dzxH0naBp+4Q0WXLOlGMUudq8vDUpod4
-KJ9dYiYI6hucnz5ZCW+50nSn/iijB3PsBbIG0xrGAqGIRbYVvV+QywK7TXLbtJB+
-dptYA/KJEgR+wqKp7IBB4lkPNzPSBGQJ3mUwiuAL1PXpa8L5KTAdP6Uq+TxOwkbh
-1nv2sonpeArOzsZAnTgSpEtLhoGDoAB+/f4rC80MOQ/EBsEbfJIVHOii9QzyhPJY
-ijeyPxnOssE2LZxFK2yKlF2cbwtkkZtP1cZlOuaohcytgM5hCZ6xRziRTqi8gck1
-wgpVzGOhm+hfEKXmszJXUIOXFBaNcb+U1acck55ovS4Nbcn3zPdXTFrYBr/RqifC
-qKoj2ZZD2/fAasvnUPW+5rmf/4FTDm5BDDKZlE9+JRzocYhQuSj0NQaUwZEEKa2Q
-R7hZsowCXUWAuT4ql6IqPZfw4CVQfVECm7Dyrski/IR6zrhYv6bUOcF6YsD3k9hO
-rUtEqxcewrj+M4G2ylOY
-=wS5j
+iQIcBAABCAAGBQJWzIMVAAoJEN0jrNd/PrOh5g4QAMGcE1SjSsrKg9rVPjneReq8
+Wi529GoSsgADetbS4yzp9VP5f4mWR1+r+GAA9SPbIxmeDm3xxyLVZwY04iGzBehu
+IRMhrwQMbt+M6Tn83+qMgFrS5iuhhAyobr+5UB2uQhyG/eC4RvJaQHB3okDIPiPr
+Hgr2fua5rame+OE2J5NSqplqpa9NaLwhDVgb4r6sIQdyE7ERD1S6CrwpeY/G7Liu
+e9jB66Z+xGkQzBbVEUhoXVtoOz4FHlhgJwg7nCMcy/YPhMc1aJZ0WXwssJkaF1z7
+5pz3RT56/rqsiMR/IQL6EEKGRTH1tRU52Ys2O48+BjNAZlpEWoj33O7OAOT5CjUs
+nu1Syn9bvoXv2SBHw0wlUUIirHw9zfKgZHHBuShylyIuZlk4G8XVl2S5XiB2i4UZ
+OwSbfPl+KfqNx+6tf55qGzhXOyFTU1Ufs//LGySA65SXFrW2pmVzthw4NxQcUKqd
+MNa4vP/O2b0BDAkUZukPDFqD7FNLLyZtvpqdUA8W6gJ4+2NstEmJGntD7XuZQ00d
+jubXUjJDZDBC9dEUh4bDzeOq+I4uBsEv5pW55Vtoz2H2+yrplnYenCLjJETkbVFY
+tuxr0i18qExp6JJygyCdWWepZ5EmXYln9lIDx4hzncRzhuYGq0FsorflEZ3eRYol
+TnPIf9qJ/5HFTO1yRysy
+=K/n3
 -----END PGP SIGNATURE-----
 
---BRE3mIcgqKzpedwo--
+--wchHw8dVAp53YPj8--
 
---===============0051349171==
+--===============0497534444==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: base64
@@ -131,4 +91,4 @@ X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
 IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
 dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
 
---===============0051349171==--
+--===============0497534444==--
