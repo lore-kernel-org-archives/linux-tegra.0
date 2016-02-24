@@ -1,47 +1,157 @@
-From: "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>
-Subject: Re: [RFC][PATCH] thermal: add sysfs_notify on some attributes
-Date: Wed, 24 Feb 2016 20:24:09 +0000
-Message-ID: <1456345360.3860.9.camel@intel.com>
-References: <1456287118-32510-1-git-send-email-srikars@nvidia.com>
+From: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] drm/nouveau: platform: Fix deferred probe
+Date: Thu, 25 Feb 2016 08:33:49 +1000
+Message-ID: <56CE2FCD.6050203@redhat.com>
+References: <1456335283-22097-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1456287118-32510-1-git-send-email-srikars@nvidia.com>
-Content-Language: en-US
-Content-ID: <2FC03F7A5377734CBB8CFE0D8ED61845@intel.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "srikars@nvidia.com" <srikars@nvidia.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="EaA9WNpB748OfpeM0WgSS7W2H6O4fGFG3"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1456335283-22097-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCAyMDE2LTAyLTIzIGF0IDIwOjExIC0wODAwLCBTcmlrYXIgU3JpbWF0aCBUaXJ1bWFs
-YSB3cm90ZToNCj4gQWRkIGEgc3lzZnNfbm90aWZ5IG9uIHRoZXJtYWxfem9uZSovdGVtcCBhbmQg
-Y29vbGluZ19kZXZpY2UqLw0KPiBjdXJfc3RhdGUgd2hlbmV2ZXIgYSBwYXNzaXZlIG9yIGNyaXRp
-Y2FsIHRyaXAgaXMgdHJpZ2dlcmVkLg0KPiANCj4gVGhpcyBjaGFuZ2UgYWxsb3dzIHVzZXJtb2Rl
-IGFwcHMgdG8gcmVnaXN0ZXIgaXRzZWxmIHRvIGdldCBub3RpZmllZCwNCj4gd2hlbiBjZXJ0YWlu
-IHRoZXJtYWwgY29uZGl0aW9ucyBvY2N1ciBhbmQgcmVkdWNlIHRoZWlyIHdvcmtsb2FkLg0KPiBU
-aGlzIHdvcmtsb2FkIHRocm90dGxpbmcgY2FuIHJlZHVjZVxwcmV2ZW50IHRocm90dGxpbmcgb2Yg
-aGFyZHdhcmUNCj4gY2xvY2tzIHdoaWxlIGFsbG93aW5nIHNvbWUgb3RoZXIgY3JpdGljYWwgYXBw
-cyB0byBydW4gbG9uZ2VyDQo+IHJlbGlhYmx5Lg0KPiBTaWduZWQtb2ZmLWJ5OiBTcmlrYXIgU3Jp
-bWF0aCBUaXJ1bWFsYSA8c3Jpa2Fyc0BudmlkaWEuY29tPg0KPiAtLS0NCj4gwqBkcml2ZXJzL3Ro
-ZXJtYWwvdGhlcm1hbF9jb3JlLmMgfCAzICsrKw0KPiDCoDEgZmlsZSBjaGFuZ2VkLCAzIGluc2Vy
-dGlvbnMoKykNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3RoZXJtYWwvdGhlcm1hbF9jb3Jl
-LmMNCj4gYi9kcml2ZXJzL3RoZXJtYWwvdGhlcm1hbF9jb3JlLmMNCj4gaW5kZXggYTBhOGZkMS4u
-ZDhkMjU3ZCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy90aGVybWFsL3RoZXJtYWxfY29yZS5jDQo+
-ICsrKyBiL2RyaXZlcnMvdGhlcm1hbC90aGVybWFsX2NvcmUuYw0KPiBAQCAtNTY3LDYgKzU2Nyw4
-IEBAIHZvaWQgdGhlcm1hbF96b25lX2RldmljZV91cGRhdGUoc3RydWN0DQo+IHRoZXJtYWxfem9u
-ZV9kZXZpY2UgKnR6KQ0KPiDCoA0KPiDCoAlmb3IgKGNvdW50ID0gMDsgY291bnQgPCB0ei0+dHJp
-cHM7IGNvdW50KyspDQo+IMKgCQloYW5kbGVfdGhlcm1hbF90cmlwKHR6LCBjb3VudCk7DQo+ICsN
-Cj4gKwlzeXNmc19ub3RpZnkoJnR6LT5kZXZpY2Uua29iaiwgTlVMTCwgInRlbXAiKTsNCldoZW4g
-dXNlciBzcGFjZSBnb3Zlcm5vciBpcyB1c2VkIHRoaXMgd2lsbCByZXN1bHQgaW4gdHdvIG5vdGlm
-aWNhdGlvbnMNCnRvIHVzZXIgc3BhY2UuDQpBbHNvIHlvdSB3YW50IHdoZW4gYSB0cmlwIGlzIHZp
-b2xhdGVkLiBGb3Igc29tZSBkcml2ZXIgdGhlcmUgd2lsbCBiZQ0KdG9vIG1hbnkgY2FsbHMgZnJv
-bSBpcnEgdGhyZWFkLCBzbyB5b3UgbWF5IHdhbnQgaW4gaGFuZGxlX3RoZXJtYWxfdHJpcA0Kd2hl
-biBhIHRyaXAgaXMgdmlvbGF0ZWQuDQoNClRoYW5rcywNClNyaW5pdmFzDQo+IMKgfQ0KPiDCoEVY
-UE9SVF9TWU1CT0xfR1BMKHRoZXJtYWxfem9uZV9kZXZpY2VfdXBkYXRlKTsNCj4gwqANCj4gQEAg
-LTE2MzgsNiArMTY0MCw3IEBAIHZvaWQgdGhlcm1hbF9jZGV2X3VwZGF0ZShzdHJ1Y3QNCj4gdGhl
-cm1hbF9jb29saW5nX2RldmljZSAqY2RldikNCj4gwqAJY2Rldi0+dXBkYXRlZCA9IHRydWU7DQo+
-IMKgCXRyYWNlX2NkZXZfdXBkYXRlKGNkZXYsIHRhcmdldCk7DQo+IMKgCWRldl9kYmcoJmNkZXYt
-PmRldmljZSwgInNldCB0byBzdGF0ZSAlbHVcbiIsIHRhcmdldCk7DQo+ICsJc3lzZnNfbm90aWZ5
-KCZjZGV2LT5kZXZpY2Uua29iaiwgTlVMTCwgImN1cl9zdGF0ZSIpOw0KPiDCoH0NCj4gwqBFWFBP
-UlRfU1lNQk9MKHRoZXJtYWxfY2Rldl91cGRhdGUpOw0KPiDCoA==
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--EaA9WNpB748OfpeM0WgSS7W2H6O4fGFG3
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: quoted-printable
+
+On 02/25/2016 03:34 AM, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> The error cleanup paths aren't quite correct and will crash upon
+> deferred probe.
+>=20
+> Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org # v4.3+
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reviewed-by: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+
+> ---
+>  drivers/gpu/drm/nouveau/nouveau_platform.c         |  2 +-
+>  drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c | 40 ++++++++++++++=
+++------
+>  2 files changed, 30 insertions(+), 12 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/nouveau/nouveau_platform.c b/drivers/gpu/d=
+rm/nouveau/nouveau_platform.c
+> index 8a70cec59bcd..2dfe58af12e4 100644
+> --- a/drivers/gpu/drm/nouveau/nouveau_platform.c
+> +++ b/drivers/gpu/drm/nouveau/nouveau_platform.c
+> @@ -24,7 +24,7 @@
+>  static int nouveau_platform_probe(struct platform_device *pdev)
+>  {
+>  	const struct nvkm_device_tegra_func *func;
+> -	struct nvkm_device *device;
+> +	struct nvkm_device *device =3D NULL;
+>  	struct drm_device *drm;
+>  	int ret;
+> =20
+> diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c b/drive=
+rs/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+> index 7f8a42721eb2..e7e581d6a8ff 100644
+> --- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+> +++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+> @@ -252,32 +252,40 @@ nvkm_device_tegra_new(const struct nvkm_device_te=
+gra_func *func,
+> =20
+>  	if (!(tdev =3D kzalloc(sizeof(*tdev), GFP_KERNEL)))
+>  		return -ENOMEM;
+> -	*pdevice =3D &tdev->device;
+> +
+>  	tdev->func =3D func;
+>  	tdev->pdev =3D pdev;
+>  	tdev->irq =3D -1;
+> =20
+>  	tdev->vdd =3D devm_regulator_get(&pdev->dev, "vdd");
+> -	if (IS_ERR(tdev->vdd))
+> -		return PTR_ERR(tdev->vdd);
+> +	if (IS_ERR(tdev->vdd)) {
+> +		ret =3D PTR_ERR(tdev->vdd);
+> +		goto free;
+> +	}
+> =20
+>  	tdev->rst =3D devm_reset_control_get(&pdev->dev, "gpu");
+> -	if (IS_ERR(tdev->rst))
+> -		return PTR_ERR(tdev->rst);
+> +	if (IS_ERR(tdev->rst)) {
+> +		ret =3D PTR_ERR(tdev->rst);
+> +		goto free;
+> +	}
+> =20
+>  	tdev->clk =3D devm_clk_get(&pdev->dev, "gpu");
+> -	if (IS_ERR(tdev->clk))
+> -		return PTR_ERR(tdev->clk);
+> +	if (IS_ERR(tdev->clk)) {
+> +		ret =3D PTR_ERR(tdev->clk);
+> +		goto free;
+> +	}
+> =20
+>  	tdev->clk_pwr =3D devm_clk_get(&pdev->dev, "pwr");
+> -	if (IS_ERR(tdev->clk_pwr))
+> -		return PTR_ERR(tdev->clk_pwr);
+> +	if (IS_ERR(tdev->clk_pwr)) {
+> +		ret =3D PTR_ERR(tdev->clk_pwr);
+> +		goto free;
+> +	}
+> =20
+>  	nvkm_device_tegra_probe_iommu(tdev);
+> =20
+>  	ret =3D nvkm_device_tegra_power_up(tdev);
+>  	if (ret)
+> -		return ret;
+> +		goto remove;
+> =20
+>  	tdev->gpu_speedo =3D tegra_sku_info.gpu_speedo_value;
+>  	ret =3D nvkm_device_ctor(&nvkm_device_tegra_func, NULL, &pdev->dev,
+> @@ -285,9 +293,19 @@ nvkm_device_tegra_new(const struct nvkm_device_teg=
+ra_func *func,
+>  			       cfg, dbg, detect, mmio, subdev_mask,
+>  			       &tdev->device);
+>  	if (ret)
+> -		return ret;
+> +		goto powerdown;
+> +
+> +	*pdevice =3D &tdev->device;
+> =20
+>  	return 0;
+> +
+> +powerdown:
+> +	nvkm_device_tegra_power_down(tdev);
+> +remove:
+> +	nvkm_device_tegra_remove_iommu(tdev);
+> +free:
+> +	kfree(tdev);
+> +	return ret;
+>  }
+>  #else
+>  int
+>=20
+
+
+--EaA9WNpB748OfpeM0WgSS7W2H6O4fGFG3
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJWzi/NAAoJEHYLnGJQkpH7JlMP/jiCeqT4M9MnGl/YlbnWOM/5
+R2CB4+ku1hxdfwolUITZc0lYbA75hLBP7mcFvzMMnaiCITmK+YpSCYpqqwElOBUp
+b9xB+IYuB/yR1B+TLpbA0jElbBDzqeqezLh7eb4btSkBwBs0hwzzgIGh8EQMHpok
+GQt0z9R4H1/Lbp65uIDRoVtopOAUdmCxMF1bEHLtZmAsC7dxY50pccep6PHqtbBW
+bEizSj1Sq3efGOrVFKvIlcUs6B/KrnIVFiFJLMODCJ/adnoIJENk26s0Aq63y1Nh
+WVTpQ03Zi2K6eT6GjTPNTahpQhqyyB+bCVGvAi6xwdeZNJzCLXoxT/MofizOY95B
+ERdDbTooubS/3gdPp9SdX7x2zHD+NqLUr+XyYAIGBMQ3RHm1RaPjAI9/VDz5ejLs
+51jPcacQZMKhxNGVXzmqhyg/ohDwvaUT8xalGK94ht+w+XGwUmTskqykoReEKXOG
+SLlwZwO/nK75Emz3HpZ6t23wV9C+oVGB+IimOV04/FAxAi60h+m5+oIVkCUcqHvT
+K8IKh0qrB3tfMNQitHLBVPncQOSVu9S3BiExccQrno3l3R0AtzbWGWqvCch9CT0l
+n801tXceQymrNySQ1jVSzFLyybjeGecuQl9WxN3Mj22UNboOJ18dbQ31F67WvpKm
+pkgdTG/52zlClD+CCQeT
+=sMo2
+-----END PGP SIGNATURE-----
+
+--EaA9WNpB748OfpeM0WgSS7W2H6O4fGFG3--
