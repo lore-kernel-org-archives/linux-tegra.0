@@ -1,72 +1,52 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH V5 11/14] soc: tegra: pmc: Add generic PM domain support
-Date: Tue, 23 Feb 2016 16:03:32 -0800
-Message-ID: <7h60xft1nv.fsf@baylibre.com>
-References: <1453998832-27383-1-git-send-email-jonathanh@nvidia.com>
-	<1453998832-27383-12-git-send-email-jonathanh@nvidia.com>
-	<CAPDyKFpnUJA2pLSUOw8rkjyXLY6b__TM=38jsvYAZVhe+DS=zg@mail.gmail.com>
-	<7hh9hdzflv.fsf@baylibre.com> <56C1B62B.5060708@nvidia.com>
-	<CAPDyKFoPrFoMOFxC37zXX4L3VdLKknaw_LUTw7ycr9mfa_=7_A@mail.gmail.com>
-	<56C5F1DA.2060705@nvidia.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] sound/soc/tegra: tegra_max98090: fix hp detect on
+ Chromebook 13
+Date: Wed, 24 Feb 2016 12:25:52 +0900
+Message-ID: <20160224032552.GJ18327@sirena.org.uk>
+References: <56CB6624.6030600@wwwdotorg.org>
+ <1456247985-5563-1-git-send-email-sctincman@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <56C5F1DA.2060705@nvidia.com> (Jon Hunter's message of "Thu, 18
-	Feb 2016 16:31:22 +0000")
-Sender: linux-pm-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="KE2MUCIIiXMogsnv"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1456247985-5563-1-git-send-email-sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Jon Hunter <jonathanh@nvidia.com> writes:
 
-> On 18/02/16 16:00, Ulf Hansson wrote:
->> [...]
->> 
->>>>
->>>> What about the pm_clk_* API which was built for tracking clocks
->>>> associated with devices for runtime PM.
->>>>
->>>> IOW, you could pm_clk_add(pg->pmc->dev, pg->clks[i]) and then your
->>>> _enable_clocks() would become pm_clk_suspend() an dyour
->>>> _disable_clocks() would become pm_clk_resume().
->>>
->>> Very interesting, I was not aware of this.
->>>
->>>> I might not be following the mapping between PMC and PGs though so not
->>>> sure pg->pmc->dev is the right struct device, but you get the idea.
->>>
->>> Yes, so this will not work here as-is, because the pmc->dev is common to
->>> all pm-domains (it is the device that creates all the pm-domains). So to
->>> make this work, I would need to create a device for each pm-domain and
->>> add the clocks to that.
->>>
->>> I see that this works very well for normal drivers, but it does not feel
->>> so natural for pm-domains where we don't have a device struct today. By
->>> the way, the rockchip pm-domains implementation is very much in the same
->>> boat as tegra, where there are multiple clocks per pm-domain and it is
->>> handled by a simple list. So I am not sure if you think that we should
->>> be turning all pm-domains registered by pm_genpd_init() into a device
->>> and then we can make use of these pm_clk_XXXX() APIs?
->>>
->>> I have implemented the generic clk APIs that Ulf and I discussed for
->>> handling multiple clocks, but if we think that this is a better way,
->>> then I will hold off for now.
->> 
->> I think Kevin has a point that we already have PM clocks to build upon.
->> Could we perhaps try to extend that API instead to suite this needs as well?
->
-> We certainly could and I am not against it, however, it means that we
-> need to create a device structure for each pm-domain. If you and Kevin
-> are ok with me adding this to pm_genpd_init(), then I can give it a try.
+--KE2MUCIIiXMogsnv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-At this point, I'm thinking that the added complexity of a per-pm-domain
-struct device isn't justified.  Managing simple lists of clocks in the
-SoC specific PM domains is quite easy to review and maintain, IMO.
+On Tue, Feb 23, 2016 at 10:19:44AM -0700, Jonathan Tinkham wrote:
 
-So I recommend just keeping it that way for now.  If it starts to get
-unwieldy for tegra, rockchip and any others, we can revisit a common way
-of doing it then.
+> Jonathan Tinkham (1):
+>   sound/soc/tegra: tegra_max98090: Invert headphone by GPIO flag
 
-Kevin
+I have *repeatedly* reminded you to use subject lines reflecting the
+style for the subsystem and you continue to ignore me.  Please don't
+ignore review comments, people are generally making them for a reason
+and are likely to have the same concerns if issues remain unaddressed.
+Having to repeat the same comments can get repetitive and make people
+question the value of time spent reviewing.  If you disagree with the
+concerns so that the reviewer can understand your decisions.
 
+--KE2MUCIIiXMogsnv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWzSK/AAoJECTWi3JdVIfQ3MQH/isaO3NuP85twRRnceZJSZT8
+/xmDsR2e/UjX0CnJwhHZvY9yQYybV0ng6fQhzJkHwlQ71IRYL5ITu7XPA4tFj6gk
+I55tZi0HTab1MVICm5zs6/VNQvLXNsOe4RtVSJcEJU0bO84J7g9GDx2LW9o59Hhm
+dg0SGJWKdOxeRV2jc2Yy/6wVyipbFs1cm/aLTCLSiYoRmawW9HGId092ygaQhGkD
+CvqGSEekOdAAEeu2dxDxVPB0Jqnxf8RFims4Eo8VeMxOLCuqLBdYVFKhSdJOz2bn
+i4JWyRcOo6YgAxDPnjPfsrb4J9g9QbeOGREYFEY5E++9m1syaL6Fhe4M/XsELG0=
+=S1Rf
+-----END PGP SIGNATURE-----
+
+--KE2MUCIIiXMogsnv--
