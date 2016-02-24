@@ -1,7 +1,7 @@
 From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v3 01/11] core: add gpuobj memcpy helper functions
-Date: Wed, 24 Feb 2016 14:42:14 +0900
-Message-ID: <1456292544-32206-2-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH v3 02/11] gr/gk20a: move firmware bundle release to gf100
+Date: Wed, 24 Feb 2016 14:42:15 +0900
+Message-ID: <1456292544-32206-3-git-send-email-acourbot@nvidia.com>
 References: <1456292544-32206-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,55 +12,122 @@ To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add memcpy functions to copy a buffer to a gpuobj and vice-versa. This
-will be used by the secure boot code.
+Some members of gf100_gr were freed by the gk20a driver. That's not
+where it should be done - free them in gf100 so other chips that use
+NVIDIA-provided firmware free these structures properly.
+
+This also removes the need for a GK20A-specific destructor.
 
 Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drm/nouveau/include/nvkm/core/gpuobj.h |  4 ++++
- drm/nouveau/nvkm/core/gpuobj.c         | 20 ++++++++++++++++++++
- 2 files changed, 24 insertions(+)
+ drm/nouveau/nvkm/engine/gr/gf100.c | 11 +++++++++++
+ drm/nouveau/nvkm/engine/gr/gf100.h |  3 +--
+ drm/nouveau/nvkm/engine/gr/gk20a.c | 16 ----------------
+ drm/nouveau/nvkm/engine/gr/gm20b.c |  1 -
+ 4 files changed, 12 insertions(+), 19 deletions(-)
 
-diff --git a/drm/nouveau/include/nvkm/core/gpuobj.h b/drm/nouveau/include/nvkm/core/gpuobj.h
-index d4f56eafb073..c23da4f05929 100644
---- a/drm/nouveau/include/nvkm/core/gpuobj.h
-+++ b/drm/nouveau/include/nvkm/core/gpuobj.h
-@@ -37,4 +37,8 @@ int nvkm_gpuobj_wrap(struct nvkm_memory *, struct nvkm_gpuobj **);
- int nvkm_gpuobj_map(struct nvkm_gpuobj *, struct nvkm_vm *, u32 access,
- 		    struct nvkm_vma *);
- void nvkm_gpuobj_unmap(struct nvkm_vma *);
-+void nvkm_gpuobj_memcpy_to(struct nvkm_gpuobj *dst, u32 dstoffset, void *src,
-+			   u32 length);
-+void nvkm_gpuobj_memcpy_from(void *dst, struct nvkm_gpuobj *src, u32 srcoffset,
-+			     u32 length);
- #endif
-diff --git a/drm/nouveau/nvkm/core/gpuobj.c b/drm/nouveau/nvkm/core/gpuobj.c
-index c3a790eb8d6a..a7bd22706b2a 100644
---- a/drm/nouveau/nvkm/core/gpuobj.c
-+++ b/drm/nouveau/nvkm/core/gpuobj.c
-@@ -253,3 +253,23 @@ nvkm_gpuobj_wrap(struct nvkm_memory *memory, struct nvkm_gpuobj **pgpuobj)
- 	(*pgpuobj)->size = nvkm_memory_size(memory);
- 	return 0;
+diff --git a/drm/nouveau/nvkm/engine/gr/gf100.c b/drm/nouveau/nvkm/engine/gr/gf100.c
+index f2410aff07cf..7a8a0c7139e5 100644
+--- a/drm/nouveau/nvkm/engine/gr/gf100.c
++++ b/drm/nouveau/nvkm/engine/gr/gf100.c
+@@ -1684,6 +1684,12 @@ gf100_gr_dtor_fw(struct gf100_gr_fuc *fuc)
+ 	fuc->data = NULL;
  }
-+
-+void
-+nvkm_gpuobj_memcpy_to(struct nvkm_gpuobj *dst, u32 dstoffset, void *src,
-+		      u32 length)
+ 
++static void
++gf100_gr_dtor_init(struct gf100_gr_pack *pack)
 +{
-+	int i;
-+
-+	for (i = 0; i < length; i += 4)
-+		nvkm_wo32(dst, dstoffset + i, *(u32 *)(src + i));
++	vfree(pack);
 +}
 +
-+void
-+nvkm_gpuobj_memcpy_from(void *dst, struct nvkm_gpuobj *src, u32 srcoffset,
-+			u32 length)
-+{
-+	int i;
+ void *
+ gf100_gr_dtor(struct nvkm_gr *base)
+ {
+@@ -1698,6 +1704,11 @@ gf100_gr_dtor(struct nvkm_gr *base)
+ 	gf100_gr_dtor_fw(&gr->fuc41ac);
+ 	gf100_gr_dtor_fw(&gr->fuc41ad);
+ 
++	gf100_gr_dtor_init(gr->fuc_bundle);
++	gf100_gr_dtor_init(gr->fuc_method);
++	gf100_gr_dtor_init(gr->fuc_sw_ctx);
++	gf100_gr_dtor_init(gr->fuc_sw_nonctx);
 +
-+	for (i = 0; i < length; i += 4)
-+		((u32 *)src)[i / 4] = nvkm_ro32(src, srcoffset + i);
-+}
+ 	nvkm_memory_del(&gr->unk4188b8);
+ 	nvkm_memory_del(&gr->unk4188b4);
+ 	return gr;
+diff --git a/drm/nouveau/nvkm/engine/gr/gf100.h b/drm/nouveau/nvkm/engine/gr/gf100.h
+index 8dca40dde06b..cff4b40d887e 100644
+--- a/drm/nouveau/nvkm/engine/gr/gf100.h
++++ b/drm/nouveau/nvkm/engine/gr/gf100.h
+@@ -82,7 +82,7 @@ struct gf100_gr {
+ 
+ 	/*
+ 	 * Used if the register packs are loaded from NVIDIA fw instead of
+-	 * using hardcoded arrays.
++	 * using hardcoded arrays. To be allocated with vzalloc().
+ 	 */
+ 	struct gf100_gr_pack *fuc_sw_nonctx;
+ 	struct gf100_gr_pack *fuc_sw_ctx;
+@@ -140,7 +140,6 @@ int gk104_gr_init(struct gf100_gr *);
+ 
+ int gk20a_gr_new_(const struct gf100_gr_func *, struct nvkm_device *,
+ 		  int, struct nvkm_gr **);
+-void gk20a_gr_dtor(struct gf100_gr *);
+ int gk20a_gr_init(struct gf100_gr *);
+ 
+ int gm200_gr_init(struct gf100_gr *);
+diff --git a/drm/nouveau/nvkm/engine/gr/gk20a.c b/drm/nouveau/nvkm/engine/gr/gk20a.c
+index b8758d3b8b51..a321dd019932 100644
+--- a/drm/nouveau/nvkm/engine/gr/gk20a.c
++++ b/drm/nouveau/nvkm/engine/gr/gk20a.c
+@@ -26,12 +26,6 @@
+ 
+ #include <nvif/class.h>
+ 
+-static void
+-gk20a_gr_init_dtor(struct gf100_gr_pack *pack)
+-{
+-	vfree(pack);
+-}
+-
+ struct gk20a_fw_av
+ {
+ 	u32 addr;
+@@ -273,15 +267,6 @@ gk20a_gr_init(struct gf100_gr *gr)
+ 	return gf100_gr_init_ctxctl(gr);
+ }
+ 
+-void
+-gk20a_gr_dtor(struct gf100_gr *gr)
+-{
+-	gk20a_gr_init_dtor(gr->fuc_method);
+-	gk20a_gr_init_dtor(gr->fuc_bundle);
+-	gk20a_gr_init_dtor(gr->fuc_sw_ctx);
+-	gk20a_gr_init_dtor(gr->fuc_sw_nonctx);
+-}
+-
+ int
+ gk20a_gr_new_(const struct gf100_gr_func *func, struct nvkm_device *device,
+ 	      int index, struct nvkm_gr **pgr)
+@@ -335,7 +320,6 @@ gk20a_gr_new_(const struct gf100_gr_func *func, struct nvkm_device *device,
+ 
+ static const struct gf100_gr_func
+ gk20a_gr = {
+-	.dtor = gk20a_gr_dtor,
+ 	.init = gk20a_gr_init,
+ 	.set_hww_esr_report_mask = gk20a_gr_set_hww_esr_report_mask,
+ 	.ppc_nr = 1,
+diff --git a/drm/nouveau/nvkm/engine/gr/gm20b.c b/drm/nouveau/nvkm/engine/gr/gm20b.c
+index 65b6e3d1e90d..443922e46ff9 100644
+--- a/drm/nouveau/nvkm/engine/gr/gm20b.c
++++ b/drm/nouveau/nvkm/engine/gr/gm20b.c
+@@ -61,7 +61,6 @@ gm20b_gr_set_hww_esr_report_mask(struct gf100_gr *gr)
+ 
+ static const struct gf100_gr_func
+ gm20b_gr = {
+-	.dtor = gk20a_gr_dtor,
+ 	.init = gk20a_gr_init,
+ 	.init_gpc_mmu = gm20b_gr_init_gpc_mmu,
+ 	.set_hww_esr_report_mask = gm20b_gr_set_hww_esr_report_mask,
 -- 
 2.7.1
