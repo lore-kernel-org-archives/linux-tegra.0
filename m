@@ -1,72 +1,39 @@
-From: Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] sound/soc/tegra: tegra_max98090: Invert headphone by GPIO
- flag
-Date: Wed, 24 Feb 2016 09:51:38 -0700
-Message-ID: <56CDDF9A.3020709@gmail.com>
-References: <56CB6624.6030600@wwwdotorg.org>
- <1456247985-5563-1-git-send-email-sctincman@gmail.com>
- <1456247985-5563-2-git-send-email-sctincman@gmail.com>
- <56CC9860.2060003@wwwdotorg.org> <56CDDD82.7040402@gmail.com>
- <56CDDE35.1010408@wwwdotorg.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH] mmc: sdhci-tegra: Set DMA mask
+Date: Wed, 24 Feb 2016 10:08:54 -0700
+Message-ID: <56CDE3A6.9080903@wwwdotorg.org>
+References: <1456305079-27779-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56CDDE35.1010408-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1456305079-27779-1-git-send-email-acourbot@nvidia.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-
-
-On 02/24/2016 09:45 AM, Stephen Warren wrote:
-> On 02/24/2016 09:42 AM, Jonathan Tinkham wrote:
->> On 02/23/2016 10:35 AM, Stephen Warren wrote:
->>> On 02/23/2016 10:19 AM, Jonathan Tinkham wrote:
->>>
->>> > Subject: sound/soc/tegra: tegra_max98090: Invert headphone by GPIO
->>> > flag
->>>
->>> Mark has mentioned quite a few times that this patch subject is
->>> incorrect. ASoC patch subjects should start with "ASoC: ". You can see
->>> this by running:
->>>
->>> git log -- sound/soc/tegra/
->>>
->>> I'd suggest the following:
->>>
->>> AsoC: tegra_max98090: honor headphone detect GPIO polarity
->>>
->> My apologies, I finally grok what he was saying. Thank you.
->>>> Set the invert property for the headphone jack depending on the GPIO
->>>> flag in the
->>>> device-tree. This is similar to what is done for tegra_rt5640.
->>>>
->>>
->>>> diff --git a/sound/soc/tegra/tegra_max98090.c
->>>> b/sound/soc/tegra/tegra_max98090.c
->>>
->>>> @@ -155,6 +156,7 @@ static int tegra_max98090_asoc_init(struct
->>>> snd_soc_pcm_runtime *rtd)
->>>> ARRAY_SIZE(tegra_max98090_hp_jack_pins));
->>>>
->>>>           tegra_max98090_hp_jack_gpio.gpio = machine->gpio_hp_det;
->>>> +        tegra_max98090_hp_jack_gpio.invert =
->>>> (machine->gpio_hp_det_flags & OF_GPIO_ACTIVE_LOW);
->>>
->>> Did you run checkpatch? It should complain about > 80 columns, and I
->>> suspect about the unnecessary brackets around that expression. In
->>> fact, checkpatch indicates quite a few other warnings and errors.
->>>
->>> The logic in this patch looks OK. Do the relevant DT files all have
->>> the correct GPIO flags already? That'd be nice!
->>
->> The only board is the venice2, which doesn't have a 'nvidia,hp-det-gpio'
->> entry at all (how did this even work before?)
+On 02/24/2016 02:11 AM, Alexandre Courbot wrote:
+> On T210, the sdhci controller can address more than 32 bits of address
+> space. Failing to express this fact results in the use of bounce
+> buffers and affects performance.
 >
-> I mean: Is ACTIVE_LOW/ACTIVE_HIGH flag in the existing 
-> nvidia,hp-det-gpios already correctly set?
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+> I am pretty sure this one is wrong in some way, but just to get the ball
+> rolling as the use of bounce buffers is currently quite heavy on Jetson TX1.
+>
+> Thierry, Stephen, could you confirm that I got the DMA masks correctly? I
+> am not sure about the actual addressable size on TX1, and also suspect TK1 can
+> also address more than 32 bits.
 
-Yes. I also have cleaned up the warnings/errors from checkpatch, and can 
-resubmit if acceptable.
+I don't actually know what the HW capabilities are. You had best track 
+down one of NVIDIA's HW designers/integrators; hopefully the can provide 
+all kinds of gory details.
+
+One thing I will say: in U-Boot, we deliberately clip usable RAM size to 
+2GiB so that the PA of all RAM fits into 32 bits, specifically because 
+of IO controllers that can only address 32 bits. It is possible this was 
+only required on earlier chips and T210 fixed it though; I don't know. 
+Equally, I suppose the restriction might only apply to a subset of IO 
+controllers (USB would be another one relevant to U-Boot).
