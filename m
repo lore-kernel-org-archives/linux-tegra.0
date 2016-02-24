@@ -1,39 +1,113 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] mmc: sdhci-tegra: Set DMA mask
-Date: Wed, 24 Feb 2016 10:08:54 -0700
-Message-ID: <56CDE3A6.9080903@wwwdotorg.org>
-References: <1456305079-27779-1-git-send-email-acourbot@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1456305079-27779-1-git-send-email-acourbot@nvidia.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] drm/nouveau: platform: Fix deferred probe
+Date: Wed, 24 Feb 2016 18:34:43 +0100
+Message-ID: <1456335283-22097-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/24/2016 02:11 AM, Alexandre Courbot wrote:
-> On T210, the sdhci controller can address more than 32 bits of address
-> space. Failing to express this fact results in the use of bounce
-> buffers and affects performance.
->
-> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-> ---
-> I am pretty sure this one is wrong in some way, but just to get the ball
-> rolling as the use of bounce buffers is currently quite heavy on Jetson TX1.
->
-> Thierry, Stephen, could you confirm that I got the DMA masks correctly? I
-> am not sure about the actual addressable size on TX1, and also suspect TK1 can
-> also address more than 32 bits.
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I don't actually know what the HW capabilities are. You had best track 
-down one of NVIDIA's HW designers/integrators; hopefully the can provide 
-all kinds of gory details.
+The error cleanup paths aren't quite correct and will crash upon
+deferred probe.
 
-One thing I will say: in U-Boot, we deliberately clip usable RAM size to 
-2GiB so that the PA of all RAM fits into 32 bits, specifically because 
-of IO controllers that can only address 32 bits. It is possible this was 
-only required on earlier chips and T210 fixed it though; I don't know. 
-Equally, I suppose the restriction might only apply to a subset of IO 
-controllers (USB would be another one relevant to U-Boot).
+Cc: stable-u79uwXL29TY76Z2rM5mHXA@public.gmane.org # v4.3+
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpu/drm/nouveau/nouveau_platform.c         |  2 +-
+ drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c | 40 ++++++++++++++++------
+ 2 files changed, 30 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/gpu/drm/nouveau/nouveau_platform.c b/drivers/gpu/drm/nouveau/nouveau_platform.c
+index 8a70cec59bcd..2dfe58af12e4 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_platform.c
++++ b/drivers/gpu/drm/nouveau/nouveau_platform.c
+@@ -24,7 +24,7 @@
+ static int nouveau_platform_probe(struct platform_device *pdev)
+ {
+ 	const struct nvkm_device_tegra_func *func;
+-	struct nvkm_device *device;
++	struct nvkm_device *device = NULL;
+ 	struct drm_device *drm;
+ 	int ret;
+ 
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+index 7f8a42721eb2..e7e581d6a8ff 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+@@ -252,32 +252,40 @@ nvkm_device_tegra_new(const struct nvkm_device_tegra_func *func,
+ 
+ 	if (!(tdev = kzalloc(sizeof(*tdev), GFP_KERNEL)))
+ 		return -ENOMEM;
+-	*pdevice = &tdev->device;
++
+ 	tdev->func = func;
+ 	tdev->pdev = pdev;
+ 	tdev->irq = -1;
+ 
+ 	tdev->vdd = devm_regulator_get(&pdev->dev, "vdd");
+-	if (IS_ERR(tdev->vdd))
+-		return PTR_ERR(tdev->vdd);
++	if (IS_ERR(tdev->vdd)) {
++		ret = PTR_ERR(tdev->vdd);
++		goto free;
++	}
+ 
+ 	tdev->rst = devm_reset_control_get(&pdev->dev, "gpu");
+-	if (IS_ERR(tdev->rst))
+-		return PTR_ERR(tdev->rst);
++	if (IS_ERR(tdev->rst)) {
++		ret = PTR_ERR(tdev->rst);
++		goto free;
++	}
+ 
+ 	tdev->clk = devm_clk_get(&pdev->dev, "gpu");
+-	if (IS_ERR(tdev->clk))
+-		return PTR_ERR(tdev->clk);
++	if (IS_ERR(tdev->clk)) {
++		ret = PTR_ERR(tdev->clk);
++		goto free;
++	}
+ 
+ 	tdev->clk_pwr = devm_clk_get(&pdev->dev, "pwr");
+-	if (IS_ERR(tdev->clk_pwr))
+-		return PTR_ERR(tdev->clk_pwr);
++	if (IS_ERR(tdev->clk_pwr)) {
++		ret = PTR_ERR(tdev->clk_pwr);
++		goto free;
++	}
+ 
+ 	nvkm_device_tegra_probe_iommu(tdev);
+ 
+ 	ret = nvkm_device_tegra_power_up(tdev);
+ 	if (ret)
+-		return ret;
++		goto remove;
+ 
+ 	tdev->gpu_speedo = tegra_sku_info.gpu_speedo_value;
+ 	ret = nvkm_device_ctor(&nvkm_device_tegra_func, NULL, &pdev->dev,
+@@ -285,9 +293,19 @@ nvkm_device_tegra_new(const struct nvkm_device_tegra_func *func,
+ 			       cfg, dbg, detect, mmio, subdev_mask,
+ 			       &tdev->device);
+ 	if (ret)
+-		return ret;
++		goto powerdown;
++
++	*pdevice = &tdev->device;
+ 
+ 	return 0;
++
++powerdown:
++	nvkm_device_tegra_power_down(tdev);
++remove:
++	nvkm_device_tegra_remove_iommu(tdev);
++free:
++	kfree(tdev);
++	return ret;
+ }
+ #else
+ int
+-- 
+2.7.1
