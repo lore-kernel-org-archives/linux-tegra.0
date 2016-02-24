@@ -1,61 +1,59 @@
 From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/2] drm/tegra: Set DMA ops
-Date: Wed, 24 Feb 2016 17:30:54 +0900
-Message-ID: <56CD6A3E.4090800@nvidia.com>
+Subject: Re: [PATCH 2/2] drm/tegra: Set the DMA mask
+Date: Wed, 24 Feb 2016 17:38:09 +0900
+Message-ID: <56CD6BF1.8040107@nvidia.com>
 References: <1456208754-12362-1-git-send-email-acourbot@nvidia.com>
- <20160223152815.GD27656@ulmo>
+ <1456208754-12362-2-git-send-email-acourbot@nvidia.com>
+ <20160223160440.GE27656@ulmo>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160223152815.GD27656@ulmo>
+In-Reply-To: <20160223160440.GE27656@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: =?UTF-8?Q?Terje_Bergstr=c3=b6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/24/2016 12:28 AM, Thierry Reding wrote:
+On 02/24/2016 01:04 AM, Thierry Reding wrote:
 > * PGP Signed by an unknown key
 >
-> On Tue, Feb 23, 2016 at 03:25:53PM +0900, Alexandre Courbot wrote:
->> The current settings leaves the DRM device's dma_ops field NULL, which
->> makes it use the dummy DMA ops on arm64 and return an error whenever we
->> try to import a buffer. Call of_dma_configure() with a NULL node (since
->> the device is not spawn from the device tree) so that
->> arch_setup_dma_ops() is called and sets the default ioswtlb DMA ops.
+> On Tue, Feb 23, 2016 at 03:25:54PM +0900, Alexandre Courbot wrote:
+>> The default DMA mask covers a 32 bits address range, but tegradrm can
+>> address more than that. Set the DMA mask to the actual addressable range
+>> to avoid the use of unneeded bounce buffers.
 >>
 >> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >> ---
->>   drivers/gpu/drm/tegra/drm.c | 2 ++
->>   1 file changed, 2 insertions(+)
+>> Thierry, I am not absolutely sure whether the size is correct and applies
+>> to all Tegra generations - please let me know if this needs to be
+>> reworked.
 >>
->> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
->> index d347188bf8f4..bc0555adecaf 100644
->> --- a/drivers/gpu/drm/tegra/drm.c
->> +++ b/drivers/gpu/drm/tegra/drm.c
->> @@ -9,6 +9,7 @@
->>
->>   #include <linux/host1x.h>
->>   #include <linux/iommu.h>
->> +#include <linux/of_device.h>
->>
->>   #include <drm/drm_atomic.h>
->>   #include <drm/drm_atomic_helper.h>
->> @@ -990,6 +991,7 @@ static int host1x_drm_probe(struct host1x_device *dev)
->>   		return -ENOMEM;
->>
->>   	dev_set_drvdata(&dev->dev, drm);
->> +	of_dma_configure(drm->dev, NULL);
+>>   drivers/gpu/drm/tegra/drm.c | 1 +
+>>   1 file changed, 1 insertion(+)
 >
-> Looking at the various pieces, I think this really belongs in
-> host1x_device_add() (see drivers/gpu/host1x/bus.c) where it can replace
-> the open-coded setting of DMA and coherent DMA masks. Also why can't we
-> pass the correct device tree node here? The DRM device is a virtual
-> device that hangs off the host1x device, so I think it could use the
-> same device tree node as the host1x device.
+> This kind of depends on whether or not the device is behind an IOMMU.  If
+> it is, then the IOMMU DMA MASK would apply, which can be derived from
+> the number of address bits that the IOMMU can handle. The SMMU supports
+> 32 address bits on Tegra30 and Tegra114, 34 address bits on more recent
+> generations.
 >
-> Something like the below (untested).
+> I think for now it's safer to leave the DMA mask at the default (32 bit)
+> to avoid the need to distinguish between IOMMU and non-IOMMU devices.
 
-You're right, that looks like a much better place to do this. 
-of_dma_configure() is called at the bus level (platform and PCI), so it 
-makes sense to do it from host1x too.
+Leaving it that way makes it (almost) impossible to import buffers on 
+TX1. Patch 1 sets the DMA ops to swiotlb, so at least after this we 
+actually try to import the buffer. However, any page that is higher than 
+the 32 bits range will be bounced. If you are lucky, you won't notice it 
+(even though I don't think it is acceptable to bounce data to be 
+displayed), but most of the time the swiotlb bounce area will run full 
+and import will fail with the following message:
+
+drm drm: swiotlb buffer is full (sz: 294912 bytes)
+
+So we should really try and fix this. The issue is, how do you detect 
+whether you are behind a IOMMU? The DCs have an iommus property, but the 
+drm device (which does the importing) does not. And when we import a 
+buffer into tegradrm, nothing guarantees that it is for display. So far 
+I cannot think of a better heuristics than "assume 32 bits on < t124 and 
+34 bits afterwards".
