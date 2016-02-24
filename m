@@ -1,47 +1,93 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2] gpu: host1x: Set DMA ops on device creation
-Date: Wed, 24 Feb 2016 17:55:54 +0900
-Message-ID: <1456304154-23051-1-git-send-email-acourbot@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] regulator: core: fix error path of
+ regulator_ena_gpio_free
+Date: Wed, 24 Feb 2016 09:03:27 +0000
+Message-ID: <56CD71DF.8020509@nvidia.com>
+References: <56CC6979.3050305@nvidia.com>
+ <1456238830-13733-1-git-send-email-krzysztof.adamski@tieto.com>
+ <56CC7863.4080202@nvidia.com> <20160224082602.GC19954@box2.japko.eu>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160224082602.GC19954@box2.japko.eu>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Krzysztof Adamski <krzysztof.adamski@tieto.com>
+Cc: Mark Brown <broonie@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Currently host1x-instanciated devices have their dma_ops left to NULL,
-which makes any DMA operation (like buffer import) on ARM64 fallback
-to the dummy_dma_ops and fail with an error.
 
-This patch calls of_dma_configure() with the host1x node when creating
-such a device, so the proper DMA operations are set.
+On 24/02/16 08:26, Krzysztof Adamski wrote:
+> On Tue, Feb 23, 2016 at 03:18:59PM +0000, Jon Hunter wrote:
+>>
+>> On 23/02/16 14:47, Krzysztof Adamski wrote:
+>>> Signed-off-by: Krzysztof Adamski <krzysztof.adamski@tieto.com>
+>>> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+>>
+>> Nit ... I think that order of the above should be reversed.
+>>
+> 
+> Couldn't find any reference stating proper order of those tags and
+> briefly looking at other commit messages shows this order as quite common.
+> 
+>>> ---
+>>>  drivers/regulator/core.c | 8 +++-----
+>>>  1 file changed, 3 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+>>> index 6ee9ba4..d1e7859 100644
+>>> --- a/drivers/regulator/core.c
+>>> +++ b/drivers/regulator/core.c
+>>> @@ -3919,7 +3919,7 @@ regulator_register(const struct regulator_desc
+>>> *regulator_desc,
+>>>          if (ret != 0) {
+>>>              rdev_err(rdev, "Failed to request enable GPIO%d: %d\n",
+>>>                   config->ena_gpio, ret);
+>>> -            goto wash;
+>>> +            goto clean;
+>>>          }
+>>>      }
+>>>
+>>> @@ -3942,7 +3942,7 @@ regulator_register(const struct regulator_desc
+>>> *regulator_desc,
+>>>
+>>>      ret = set_machine_constraints(rdev, constraints);
+>>>      if (ret < 0)
+>>> -        goto scrub;
+>>> +        goto wash;
+>>>
+>>>      if (init_data && init_data->supply_regulator)
+>>>          rdev->supply_name = init_data->supply_regulator;
+>>> @@ -3972,10 +3972,8 @@ out:
+>>>  unset_supplies:
+>>>      unset_regulator_supplies(rdev);
+>>>
+>>> -scrub:
+>>> -    regulator_ena_gpio_free(rdev);
+>>> -
+>>>  wash:
+>>> +    regulator_ena_gpio_free(rdev);
+>>>      device_unregister(&rdev->dev);
+>>>      /* device core frees rdev */
+>>>      rdev = ERR_PTR(ret);
+>>
+>> What about the case where device_register() fails? I think you still
+>> call clean and so you will leak the gpio?
+>>
+>> Jon
+>>
+> True. I couldn't find anything more clever than calling
+> regulator_ena_gpio_free() in two paths like in an upcomming v2. Putting
+> it inside of regulator_dev_release() won't entirely fix the problem
+> either as this won't be called in this particular case
+> (device_register() fail). I personally still prefer calling
+> regulator_ena_gpio_free() inside of regulator_register insted of
+> deffering it to regulator_dev_release() as it seems to be clearer to me.
 
-Suggested-by: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpu/host1x/bus.c | 2 ++
- 1 file changed, 2 insertions(+)
+Yes if you were to put regulator_ena_gpio_free() inside the
+regulator_dev_release(), you would still need to call
+regulator_ena_gpio_free() if the device_register fails. I see the way
+you have it now there are two places you call regulator_ena_gpio_free()
+in the error path. It is not a big deal, really either way.
 
-diff --git a/drivers/gpu/host1x/bus.c b/drivers/gpu/host1x/bus.c
-index c2e7fba370bb..c27858ae0552 100644
---- a/drivers/gpu/host1x/bus.c
-+++ b/drivers/gpu/host1x/bus.c
-@@ -18,6 +18,7 @@
- #include <linux/host1x.h>
- #include <linux/of.h>
- #include <linux/slab.h>
-+#include <linux/of_device.h>
- 
- #include "bus.h"
- #include "dev.h"
-@@ -396,6 +397,7 @@ static int host1x_device_add(struct host1x *host1x,
- 	device->dev.coherent_dma_mask = host1x->dev->coherent_dma_mask;
- 	device->dev.dma_mask = &device->dev.coherent_dma_mask;
- 	dev_set_name(&device->dev, "%s", driver->driver.name);
-+	of_dma_configure(&device->dev, host1x->dev->of_node);
- 	device->dev.release = host1x_device_release;
- 	device->dev.bus = &host1x_bus_type;
- 	device->dev.parent = host1x->dev;
--- 
-2.7.1
+Jon
