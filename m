@@ -1,66 +1,61 @@
-From: Krzysztof Adamski <krzysztof.adamski-++hxYGjEMp0AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] regulator: core: fix error path of regulator_ena_gpio_free
-Date: Wed, 24 Feb 2016 09:27:59 +0100
-Message-ID: <1456302479-14045-1-git-send-email-krzysztof.adamski@tieto.com>
-References: <56CC7863.4080202@nvidia.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/2] drm/tegra: Set DMA ops
+Date: Wed, 24 Feb 2016 17:30:54 +0900
+Message-ID: <56CD6A3E.4090800@nvidia.com>
+References: <1456208754-12362-1-git-send-email-acourbot@nvidia.com>
+ <20160223152815.GD27656@ulmo>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56CC7863.4080202-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20160223152815.GD27656@ulmo>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: Krzysztof Adamski <krzysztof.adamski-++hxYGjEMp0AvxtiuMwx3w@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: =?UTF-8?Q?Terje_Bergstr=c3=b6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This problem was introduced by:
-commit daad134d6649 ("regulator: core: Request GPIO before creating
-sysfs entries")
+On 02/24/2016 12:28 AM, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+>
+> On Tue, Feb 23, 2016 at 03:25:53PM +0900, Alexandre Courbot wrote:
+>> The current settings leaves the DRM device's dma_ops field NULL, which
+>> makes it use the dummy DMA ops on arm64 and return an error whenever we
+>> try to import a buffer. Call of_dma_configure() with a NULL node (since
+>> the device is not spawn from the device tree) so that
+>> arch_setup_dma_ops() is called and sets the default ioswtlb DMA ops.
+>>
+>> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>   drivers/gpu/drm/tegra/drm.c | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+>> index d347188bf8f4..bc0555adecaf 100644
+>> --- a/drivers/gpu/drm/tegra/drm.c
+>> +++ b/drivers/gpu/drm/tegra/drm.c
+>> @@ -9,6 +9,7 @@
+>>
+>>   #include <linux/host1x.h>
+>>   #include <linux/iommu.h>
+>> +#include <linux/of_device.h>
+>>
+>>   #include <drm/drm_atomic.h>
+>>   #include <drm/drm_atomic_helper.h>
+>> @@ -990,6 +991,7 @@ static int host1x_drm_probe(struct host1x_device *dev)
+>>   		return -ENOMEM;
+>>
+>>   	dev_set_drvdata(&dev->dev, drm);
+>> +	of_dma_configure(drm->dev, NULL);
+>
+> Looking at the various pieces, I think this really belongs in
+> host1x_device_add() (see drivers/gpu/host1x/bus.c) where it can replace
+> the open-coded setting of DMA and coherent DMA masks. Also why can't we
+> pass the correct device tree node here? The DRM device is a virtual
+> device that hangs off the host1x device, so I think it could use the
+> same device tree node as the host1x device.
+>
+> Something like the below (untested).
 
-The error path was not updated correctly and in case
-regulator_ena_gpio_free failed, device_unregister was called even though
-it was not registered yet.
-
-Signed-off-by: Krzysztof Adamski <krzysztof.adamski-++hxYGjEMp0AvxtiuMwx3w@public.gmane.org>
-Reported-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/regulator/core.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 6ee9ba4..055f8c1 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -3919,7 +3919,7 @@ regulator_register(const struct regulator_desc *regulator_desc,
- 		if (ret != 0) {
- 			rdev_err(rdev, "Failed to request enable GPIO%d: %d\n",
- 				 config->ena_gpio, ret);
--			goto wash;
-+			goto clean;
- 		}
- 	}
- 
-@@ -3931,7 +3931,7 @@ regulator_register(const struct regulator_desc *regulator_desc,
- 	ret = device_register(&rdev->dev);
- 	if (ret != 0) {
- 		put_device(&rdev->dev);
--		goto clean;
-+		goto wash;
- 	}
- 
- 	dev_set_drvdata(&rdev->dev, rdev);
-@@ -3974,13 +3974,13 @@ unset_supplies:
- 
- scrub:
- 	regulator_ena_gpio_free(rdev);
--
--wash:
- 	device_unregister(&rdev->dev);
- 	/* device core frees rdev */
- 	rdev = ERR_PTR(ret);
- 	goto out;
- 
-+wash:
-+	regulator_ena_gpio_free(rdev);
- clean:
- 	kfree(rdev);
- 	rdev = ERR_PTR(ret);
--- 
-2.1.4
+You're right, that looks like a much better place to do this. 
+of_dma_configure() is called at the bus level (platform and PCI), so it 
+makes sense to do it from host1x too.
