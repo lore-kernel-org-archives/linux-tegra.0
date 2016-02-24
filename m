@@ -1,20 +1,47 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [pinmux scripts PATCH] remove invalid uses of rsvd1 from beaver
- config
-Date: Wed, 24 Feb 2016 11:31:56 -0700
-Message-ID: <56CDF71C.1060201@wwwdotorg.org>
-References: <1456260126-16113-1-git-send-email-dev@lynxeye.de>
+From: "Pandruvada, Srinivas" <srinivas.pandruvada@intel.com>
+Subject: Re: [RFC][PATCH] thermal: add sysfs_notify on some attributes
+Date: Wed, 24 Feb 2016 20:24:09 +0000
+Message-ID: <1456345360.3860.9.camel@intel.com>
+References: <1456287118-32510-1-git-send-email-srikars@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1456260126-16113-1-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1456287118-32510-1-git-send-email-srikars@nvidia.com>
+Content-Language: en-US
+Content-ID: <2FC03F7A5377734CBB8CFE0D8ED61845@intel.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "srikars@nvidia.com" <srikars@nvidia.com>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/23/2016 01:42 PM, Lucas Stach wrote:
-> Replace by actual function names of pinmux option 1.
-
-Applied.
+T24gVHVlLCAyMDE2LTAyLTIzIGF0IDIwOjExIC0wODAwLCBTcmlrYXIgU3JpbWF0aCBUaXJ1bWFs
+YSB3cm90ZToNCj4gQWRkIGEgc3lzZnNfbm90aWZ5IG9uIHRoZXJtYWxfem9uZSovdGVtcCBhbmQg
+Y29vbGluZ19kZXZpY2UqLw0KPiBjdXJfc3RhdGUgd2hlbmV2ZXIgYSBwYXNzaXZlIG9yIGNyaXRp
+Y2FsIHRyaXAgaXMgdHJpZ2dlcmVkLg0KPiANCj4gVGhpcyBjaGFuZ2UgYWxsb3dzIHVzZXJtb2Rl
+IGFwcHMgdG8gcmVnaXN0ZXIgaXRzZWxmIHRvIGdldCBub3RpZmllZCwNCj4gd2hlbiBjZXJ0YWlu
+IHRoZXJtYWwgY29uZGl0aW9ucyBvY2N1ciBhbmQgcmVkdWNlIHRoZWlyIHdvcmtsb2FkLg0KPiBU
+aGlzIHdvcmtsb2FkIHRocm90dGxpbmcgY2FuIHJlZHVjZVxwcmV2ZW50IHRocm90dGxpbmcgb2Yg
+aGFyZHdhcmUNCj4gY2xvY2tzIHdoaWxlIGFsbG93aW5nIHNvbWUgb3RoZXIgY3JpdGljYWwgYXBw
+cyB0byBydW4gbG9uZ2VyDQo+IHJlbGlhYmx5Lg0KPiBTaWduZWQtb2ZmLWJ5OiBTcmlrYXIgU3Jp
+bWF0aCBUaXJ1bWFsYSA8c3Jpa2Fyc0BudmlkaWEuY29tPg0KPiAtLS0NCj4gwqBkcml2ZXJzL3Ro
+ZXJtYWwvdGhlcm1hbF9jb3JlLmMgfCAzICsrKw0KPiDCoDEgZmlsZSBjaGFuZ2VkLCAzIGluc2Vy
+dGlvbnMoKykNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3RoZXJtYWwvdGhlcm1hbF9jb3Jl
+LmMNCj4gYi9kcml2ZXJzL3RoZXJtYWwvdGhlcm1hbF9jb3JlLmMNCj4gaW5kZXggYTBhOGZkMS4u
+ZDhkMjU3ZCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy90aGVybWFsL3RoZXJtYWxfY29yZS5jDQo+
+ICsrKyBiL2RyaXZlcnMvdGhlcm1hbC90aGVybWFsX2NvcmUuYw0KPiBAQCAtNTY3LDYgKzU2Nyw4
+IEBAIHZvaWQgdGhlcm1hbF96b25lX2RldmljZV91cGRhdGUoc3RydWN0DQo+IHRoZXJtYWxfem9u
+ZV9kZXZpY2UgKnR6KQ0KPiDCoA0KPiDCoAlmb3IgKGNvdW50ID0gMDsgY291bnQgPCB0ei0+dHJp
+cHM7IGNvdW50KyspDQo+IMKgCQloYW5kbGVfdGhlcm1hbF90cmlwKHR6LCBjb3VudCk7DQo+ICsN
+Cj4gKwlzeXNmc19ub3RpZnkoJnR6LT5kZXZpY2Uua29iaiwgTlVMTCwgInRlbXAiKTsNCldoZW4g
+dXNlciBzcGFjZSBnb3Zlcm5vciBpcyB1c2VkIHRoaXMgd2lsbCByZXN1bHQgaW4gdHdvIG5vdGlm
+aWNhdGlvbnMNCnRvIHVzZXIgc3BhY2UuDQpBbHNvIHlvdSB3YW50IHdoZW4gYSB0cmlwIGlzIHZp
+b2xhdGVkLiBGb3Igc29tZSBkcml2ZXIgdGhlcmUgd2lsbCBiZQ0KdG9vIG1hbnkgY2FsbHMgZnJv
+bSBpcnEgdGhyZWFkLCBzbyB5b3UgbWF5IHdhbnQgaW4gaGFuZGxlX3RoZXJtYWxfdHJpcA0Kd2hl
+biBhIHRyaXAgaXMgdmlvbGF0ZWQuDQoNClRoYW5rcywNClNyaW5pdmFzDQo+IMKgfQ0KPiDCoEVY
+UE9SVF9TWU1CT0xfR1BMKHRoZXJtYWxfem9uZV9kZXZpY2VfdXBkYXRlKTsNCj4gwqANCj4gQEAg
+LTE2MzgsNiArMTY0MCw3IEBAIHZvaWQgdGhlcm1hbF9jZGV2X3VwZGF0ZShzdHJ1Y3QNCj4gdGhl
+cm1hbF9jb29saW5nX2RldmljZSAqY2RldikNCj4gwqAJY2Rldi0+dXBkYXRlZCA9IHRydWU7DQo+
+IMKgCXRyYWNlX2NkZXZfdXBkYXRlKGNkZXYsIHRhcmdldCk7DQo+IMKgCWRldl9kYmcoJmNkZXYt
+PmRldmljZSwgInNldCB0byBzdGF0ZSAlbHVcbiIsIHRhcmdldCk7DQo+ICsJc3lzZnNfbm90aWZ5
+KCZjZGV2LT5kZXZpY2Uua29iaiwgTlVMTCwgImN1cl9zdGF0ZSIpOw0KPiDCoH0NCj4gwqBFWFBP
+UlRfU1lNQk9MKHRoZXJtYWxfY2Rldl91cGRhdGUpOw0KPiDCoA==
