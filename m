@@ -1,38 +1,72 @@
-From: Kyle McMartin <kyle-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Subject: Re: [GIT,PULL] Signed firmware for NVIDIA Maxwell 2 GPUs
-Date: Tue, 23 Feb 2016 16:11:36 -0500
-Message-ID: <20160223211136.GB19431@merlin.infradead.org>
-References: <56CC2CAF.8080102@nvidia.com>
+From: Kevin Hilman <khilman@baylibre.com>
+Subject: Re: [PATCH V5 11/14] soc: tegra: pmc: Add generic PM domain support
+Date: Tue, 23 Feb 2016 16:03:32 -0800
+Message-ID: <7h60xft1nv.fsf@baylibre.com>
+References: <1453998832-27383-1-git-send-email-jonathanh@nvidia.com>
+	<1453998832-27383-12-git-send-email-jonathanh@nvidia.com>
+	<CAPDyKFpnUJA2pLSUOw8rkjyXLY6b__TM=38jsvYAZVhe+DS=zg@mail.gmail.com>
+	<7hh9hdzflv.fsf@baylibre.com> <56C1B62B.5060708@nvidia.com>
+	<CAPDyKFoPrFoMOFxC37zXX4L3VdLKknaw_LUTw7ycr9mfa_=7_A@mail.gmail.com>
+	<56C5F1DA.2060705@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <56CC2CAF.8080102-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <56C5F1DA.2060705@nvidia.com> (Jon Hunter's message of "Thu, 18
+	Feb 2016 16:31:22 +0000")
+Sender: linux-pm-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Feb 23, 2016 at 06:55:59PM +0900, Alexandre Courbot wrote:
-> Hi linux-firmware maintainers,
-> 
-> The following changes since commit f66eccaab7d605d433cb82e389441b21ec99b40f:
-> 
->   Update Intel OPA hfi1 firmware (2016-02-15 08:34:16 -0500)
-> 
-> are available in the git repository at:
-> 
->   https://github.com/Gnurou/linux-firmware.git secboot
-> 
-> for you to fetch changes up to 8d1fd61a3723ab8cb6b7bfeb8be38e16282cc1ed:
-> 
->   nvidia: Add GM20B signed firmware (2016-02-23 18:48:41 +0900)
-> 
-> These two patches add the NVIDIA-released firmwares necessary to enable
-> rendering on desktop and mobile Maxwell 2 GPUs. Kernel support is ready to
-> be merged once this pull request is officially accepted.
-> 
+Jon Hunter <jonathanh@nvidia.com> writes:
 
-Pulled. Thanks Alexandre.
+> On 18/02/16 16:00, Ulf Hansson wrote:
+>> [...]
+>> 
+>>>>
+>>>> What about the pm_clk_* API which was built for tracking clocks
+>>>> associated with devices for runtime PM.
+>>>>
+>>>> IOW, you could pm_clk_add(pg->pmc->dev, pg->clks[i]) and then your
+>>>> _enable_clocks() would become pm_clk_suspend() an dyour
+>>>> _disable_clocks() would become pm_clk_resume().
+>>>
+>>> Very interesting, I was not aware of this.
+>>>
+>>>> I might not be following the mapping between PMC and PGs though so not
+>>>> sure pg->pmc->dev is the right struct device, but you get the idea.
+>>>
+>>> Yes, so this will not work here as-is, because the pmc->dev is common to
+>>> all pm-domains (it is the device that creates all the pm-domains). So to
+>>> make this work, I would need to create a device for each pm-domain and
+>>> add the clocks to that.
+>>>
+>>> I see that this works very well for normal drivers, but it does not feel
+>>> so natural for pm-domains where we don't have a device struct today. By
+>>> the way, the rockchip pm-domains implementation is very much in the same
+>>> boat as tegra, where there are multiple clocks per pm-domain and it is
+>>> handled by a simple list. So I am not sure if you think that we should
+>>> be turning all pm-domains registered by pm_genpd_init() into a device
+>>> and then we can make use of these pm_clk_XXXX() APIs?
+>>>
+>>> I have implemented the generic clk APIs that Ulf and I discussed for
+>>> handling multiple clocks, but if we think that this is a better way,
+>>> then I will hold off for now.
+>> 
+>> I think Kevin has a point that we already have PM clocks to build upon.
+>> Could we perhaps try to extend that API instead to suite this needs as well?
+>
+> We certainly could and I am not against it, however, it means that we
+> need to create a device structure for each pm-domain. If you and Kevin
+> are ok with me adding this to pm_genpd_init(), then I can give it a try.
 
-regards, --Kyle
+At this point, I'm thinking that the added complexity of a per-pm-domain
+struct device isn't justified.  Managing simple lists of clocks in the
+SoC specific PM domains is quite easy to review and maintain, IMO.
+
+So I recommend just keeping it that way for now.  If it starts to get
+unwieldy for tegra, rockchip and any others, we can revisit a common way
+of doing it then.
+
+Kevin
+
