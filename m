@@ -1,7 +1,7 @@
 From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v3 10/11] secboot/gm200: add secure-boot support
-Date: Wed, 24 Feb 2016 14:42:23 +0900
-Message-ID: <1456292544-32206-11-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH v3 07/11] core: add support for secure boot
+Date: Wed, 24 Feb 2016 14:42:20 +0900
+Message-ID: <1456292544-32206-8-git-send-email-acourbot@nvidia.com>
 References: <1456292544-32206-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,93 +12,72 @@ To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
 Cc: nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add secure-boot for the dGPU set of GM20X chips, using the PMU as the
-high-secure falcon.
+On GM200 and later GPUs, firmware for some essential falcons (notably
+GR ones) must be authenticated by a NVIDIA-produced signature and
+loaded by a high-secure falcon in order to be able to access privileged
+registers, in a process known as Secure Boot.
 
-This work is based on Deepak Goyal's initial port of Secure Boot to
-Nouveau.
+Secure Boot requires building a binary blob containing the firmwares
+and signatures of the falcons to be loaded. This blob is then given to
+a high-secure falcon running a signed loader firmware that copies the
+blob into a write-protected region, checks that the signatures are
+valid, and finally loads the verified firmware into the managed falcons
+and switches them to privileged mode.
+
+This patch adds infrastructure code to support this process on chips
+that require it.
 
 Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drm/nouveau/include/nvkm/subdev/secboot.h |    2 +
- drm/nouveau/nvkm/engine/device/base.c     |    2 +
- drm/nouveau/nvkm/engine/gr/gm200.c        |    8 +-
- drm/nouveau/nvkm/subdev/secboot/Kbuild    |    1 +
- drm/nouveau/nvkm/subdev/secboot/gm200.c   | 1485 +++++++++++++++++++++++++++++
- drm/nouveau/nvkm/subdev/secboot/priv.h    |  178 ++++
- 6 files changed, 1669 insertions(+), 7 deletions(-)
- create mode 100644 drm/nouveau/nvkm/subdev/secboot/gm200.c
+ drm/nouveau/include/nvkm/core/device.h    |   3 +
+ drm/nouveau/include/nvkm/subdev/secboot.h |  56 ++++++
+ drm/nouveau/nvkm/core/subdev.c            |   1 +
+ drm/nouveau/nvkm/engine/device/base.c     |   2 +
+ drm/nouveau/nvkm/engine/device/priv.h     |   1 +
+ drm/nouveau/nvkm/subdev/Kbuild            |   1 +
+ drm/nouveau/nvkm/subdev/secboot/Kbuild    |   1 +
+ drm/nouveau/nvkm/subdev/secboot/base.c    | 296 ++++++++++++++++++++++++++++++
+ drm/nouveau/nvkm/subdev/secboot/priv.h    |  48 +++++
+ 9 files changed, 409 insertions(+)
+ create mode 100644 drm/nouveau/include/nvkm/subdev/secboot.h
+ create mode 100644 drm/nouveau/nvkm/subdev/secboot/Kbuild
+ create mode 100644 drm/nouveau/nvkm/subdev/secboot/base.c
+ create mode 100644 drm/nouveau/nvkm/subdev/secboot/priv.h
 
+diff --git a/drm/nouveau/include/nvkm/core/device.h b/drm/nouveau/include/nvkm/core/device.h
+index 913192c94876..d154a75e93a9 100644
+--- a/drm/nouveau/include/nvkm/core/device.h
++++ b/drm/nouveau/include/nvkm/core/device.h
+@@ -24,6 +24,7 @@ enum nvkm_devidx {
+ 	NVKM_SUBDEV_VOLT,
+ 	NVKM_SUBDEV_THERM,
+ 	NVKM_SUBDEV_CLK,
++	NVKM_SUBDEV_SECBOOT,
+ 
+ 	NVKM_ENGINE_DMAOBJ,
+ 	NVKM_ENGINE_IFB,
+@@ -119,6 +120,7 @@ struct nvkm_device {
+ 	struct nvkm_therm *therm;
+ 	struct nvkm_timer *timer;
+ 	struct nvkm_volt *volt;
++	struct nvkm_secboot *secboot;
+ 
+ 	struct nvkm_engine *bsp;
+ 	struct nvkm_engine *ce[3];
+@@ -184,6 +186,7 @@ struct nvkm_device_chip {
+ 	int (*therm  )(struct nvkm_device *, int idx, struct nvkm_therm **);
+ 	int (*timer  )(struct nvkm_device *, int idx, struct nvkm_timer **);
+ 	int (*volt   )(struct nvkm_device *, int idx, struct nvkm_volt **);
++	int (*secboot)(struct nvkm_device *, int idx, struct nvkm_secboot **);
+ 
+ 	int (*bsp    )(struct nvkm_device *, int idx, struct nvkm_engine **);
+ 	int (*ce[3]  )(struct nvkm_device *, int idx, struct nvkm_engine **);
 diff --git a/drm/nouveau/include/nvkm/subdev/secboot.h b/drm/nouveau/include/nvkm/subdev/secboot.h
-index f40b57567676..a509f2b4aa5f 100644
---- a/drm/nouveau/include/nvkm/subdev/secboot.h
-+++ b/drm/nouveau/include/nvkm/subdev/secboot.h
-@@ -53,4 +53,6 @@ bool nvkm_secboot_is_managed(struct nvkm_secboot *, enum nvkm_secboot_falcon);
- int nvkm_secboot_reset(struct nvkm_secboot *, u32 falcon);
- int nvkm_secboot_start(struct nvkm_secboot *, u32 falcon);
- 
-+int gm200_secboot_new(struct nvkm_device *, int, struct nvkm_secboot **);
-+
- #endif
-diff --git a/drm/nouveau/nvkm/engine/device/base.c b/drm/nouveau/nvkm/engine/device/base.c
-index ba44ba925f4b..ab56abac0bc5 100644
---- a/drm/nouveau/nvkm/engine/device/base.c
-+++ b/drm/nouveau/nvkm/engine/device/base.c
-@@ -2022,6 +2022,7 @@ nv124_chipset = {
- 	.fifo = gm200_fifo_new,
- 	.gr = gm200_gr_new,
- 	.sw = gf100_sw_new,
-+	.secboot = gm200_secboot_new,
- };
- 
- static const struct nvkm_device_chip
-@@ -2053,6 +2054,7 @@ nv126_chipset = {
- 	.fifo = gm200_fifo_new,
- 	.gr = gm206_gr_new,
- 	.sw = gf100_sw_new,
-+	.secboot = gm200_secboot_new,
- };
- 
- static const struct nvkm_device_chip
-diff --git a/drm/nouveau/nvkm/engine/gr/gm200.c b/drm/nouveau/nvkm/engine/gr/gm200.c
-index 038f9b338a85..935360366dc1 100644
---- a/drm/nouveau/nvkm/engine/gr/gm200.c
-+++ b/drm/nouveau/nvkm/engine/gr/gm200.c
-@@ -231,12 +231,6 @@ gm200_gr_data[] = {
-  * PGRAPH engine/subdev functions
-  ******************************************************************************/
- 
--static int
--gm200_gr_init_ctxctl(struct gf100_gr *gr)
--{
--	return 0;
--}
--
- int
- gm200_gr_init(struct gf100_gr *gr)
- {
-@@ -350,7 +344,7 @@ gm200_gr_init(struct gf100_gr *gr)
- 
- 	gf100_gr_zbc_init(gr);
- 
--	return gm200_gr_init_ctxctl(gr);
-+	return gf100_gr_init_ctxctl(gr);
- }
- 
- int gm200_gr_new_(const struct gf100_gr_func *func, struct nvkm_device *device,
-diff --git a/drm/nouveau/nvkm/subdev/secboot/Kbuild b/drm/nouveau/nvkm/subdev/secboot/Kbuild
-index e757096b2ff0..c1abf59410d1 100644
---- a/drm/nouveau/nvkm/subdev/secboot/Kbuild
-+++ b/drm/nouveau/nvkm/subdev/secboot/Kbuild
-@@ -1 +1,2 @@
- nvkm-y += nvkm/subdev/secboot/base.o
-+nvkm-y += nvkm/subdev/secboot/gm200.o
-diff --git a/drm/nouveau/nvkm/subdev/secboot/gm200.c b/drm/nouveau/nvkm/subdev/secboot/gm200.c
 new file mode 100644
-index 000000000000..b7ceba59dfb2
+index 000000000000..f40b57567676
 --- /dev/null
-+++ b/drm/nouveau/nvkm/subdev/secboot/gm200.c
-@@ -0,0 +1,1485 @@
++++ b/drm/nouveau/include/nvkm/subdev/secboot.h
+@@ -0,0 +1,56 @@
 +/*
 + * Copyright (c) 2016, NVIDIA CORPORATION. All rights reserved.
 + *
@@ -121,1655 +100,458 @@ index 000000000000..b7ceba59dfb2
 + * DEALINGS IN THE SOFTWARE.
 + */
 +
++#ifndef __NVKM_SECURE_BOOT_H__
++#define __NVKM_SECURE_BOOT_H__
++
++#include <core/subdev.h>
++
++enum nvkm_secboot_falcon {
++	NVKM_SECBOOT_FALCON_PMU	= 0,
++	NVKM_SECBOOT_FALCON_RESERVED = 1,
++	NVKM_SECBOOT_FALCON_FECS = 2,
++	NVKM_SECBOOT_FALCON_GPCCS = 3,
++	NVKM_SECBOOT_FALCON_END = 4,
++	NVKM_SECBOOT_FALCON_INVALID = 0xffffffff,
++};
++
++/**
++ * @base:		base IO address of the falcon performing secure boot
++ * @irq_mask:		IRQ mask of the falcon performing secure boot
++ * @enable_mask:	enable mask of the falcon performing secure boot
++*/
++struct nvkm_secboot {
++	const struct nvkm_secboot_func *func;
++	struct nvkm_subdev subdev;
++
++	u32 base;
++	u32 irq_mask;
++	u32 enable_mask;
++};
++#define nvkm_secboot(p) container_of((p), struct nvkm_secboot, subdev)
++
++bool nvkm_secboot_is_managed(struct nvkm_secboot *, enum nvkm_secboot_falcon);
++int nvkm_secboot_reset(struct nvkm_secboot *, u32 falcon);
++int nvkm_secboot_start(struct nvkm_secboot *, u32 falcon);
++
++#endif
+diff --git a/drm/nouveau/nvkm/core/subdev.c b/drm/nouveau/nvkm/core/subdev.c
+index 7de98470a2a0..d8b3d2a362ad 100644
+--- a/drm/nouveau/nvkm/core/subdev.c
++++ b/drm/nouveau/nvkm/core/subdev.c
+@@ -49,6 +49,7 @@ nvkm_subdev_name[NVKM_SUBDEV_NR] = {
+ 	[NVKM_SUBDEV_THERM  ] = "therm",
+ 	[NVKM_SUBDEV_TIMER  ] = "tmr",
+ 	[NVKM_SUBDEV_VOLT   ] = "volt",
++	[NVKM_SUBDEV_SECBOOT] = "secboot",
+ 	[NVKM_ENGINE_BSP    ] = "bsp",
+ 	[NVKM_ENGINE_CE0    ] = "ce0",
+ 	[NVKM_ENGINE_CE1    ] = "ce1",
+diff --git a/drm/nouveau/nvkm/engine/device/base.c b/drm/nouveau/nvkm/engine/device/base.c
+index da371b805562..ba44ba925f4b 100644
+--- a/drm/nouveau/nvkm/engine/device/base.c
++++ b/drm/nouveau/nvkm/engine/device/base.c
+@@ -2123,6 +2123,7 @@ nvkm_device_subdev(struct nvkm_device *device, int index)
+ 	_(THERM  , device->therm  , &device->therm->subdev);
+ 	_(TIMER  , device->timer  , &device->timer->subdev);
+ 	_(VOLT   , device->volt   , &device->volt->subdev);
++	_(SECBOOT, device->secboot, &device->secboot->subdev);
+ #undef _
+ 	default:
+ 		engine = nvkm_device_engine(device, index);
+@@ -2572,6 +2573,7 @@ nvkm_device_ctor(const struct nvkm_device_func *func,
+ 		_(NVKM_SUBDEV_THERM  ,   therm);
+ 		_(NVKM_SUBDEV_TIMER  ,   timer);
+ 		_(NVKM_SUBDEV_VOLT   ,    volt);
++		_(NVKM_SUBDEV_SECBOOT, secboot);
+ 		_(NVKM_ENGINE_BSP    ,     bsp);
+ 		_(NVKM_ENGINE_CE0    ,   ce[0]);
+ 		_(NVKM_ENGINE_CE1    ,   ce[1]);
+diff --git a/drm/nouveau/nvkm/engine/device/priv.h b/drm/nouveau/nvkm/engine/device/priv.h
+index ed3ad2c30e17..03fe0afbf6bf 100644
+--- a/drm/nouveau/nvkm/engine/device/priv.h
++++ b/drm/nouveau/nvkm/engine/device/priv.h
+@@ -22,6 +22,7 @@
+ #include <subdev/therm.h>
+ #include <subdev/timer.h>
+ #include <subdev/volt.h>
++#include <subdev/secboot.h>
+ 
+ #include <engine/bsp.h>
+ #include <engine/ce.h>
+diff --git a/drm/nouveau/nvkm/subdev/Kbuild b/drm/nouveau/nvkm/subdev/Kbuild
+index ee2c38f50ef5..ec8c5eb30653 100644
+--- a/drm/nouveau/nvkm/subdev/Kbuild
++++ b/drm/nouveau/nvkm/subdev/Kbuild
+@@ -15,6 +15,7 @@ include $(src)/nvkm/subdev/mmu/Kbuild
+ include $(src)/nvkm/subdev/mxm/Kbuild
+ include $(src)/nvkm/subdev/pci/Kbuild
+ include $(src)/nvkm/subdev/pmu/Kbuild
++include $(src)/nvkm/subdev/secboot/Kbuild
+ include $(src)/nvkm/subdev/therm/Kbuild
+ include $(src)/nvkm/subdev/timer/Kbuild
+ include $(src)/nvkm/subdev/volt/Kbuild
+diff --git a/drm/nouveau/nvkm/subdev/secboot/Kbuild b/drm/nouveau/nvkm/subdev/secboot/Kbuild
+new file mode 100644
+index 000000000000..e757096b2ff0
+--- /dev/null
++++ b/drm/nouveau/nvkm/subdev/secboot/Kbuild
+@@ -0,0 +1 @@
++nvkm-y += nvkm/subdev/secboot/base.o
+diff --git a/drm/nouveau/nvkm/subdev/secboot/base.c b/drm/nouveau/nvkm/subdev/secboot/base.c
+new file mode 100644
+index 000000000000..b718ba79177c
+--- /dev/null
++++ b/drm/nouveau/nvkm/subdev/secboot/base.c
+@@ -0,0 +1,296 @@
 +/*
-+ * Secure boot is the process by which NVIDIA-signed firmware is loaded into
-+ * some of the falcons of a GPU. For production devices this is the only way
-+ * for the firmware to access useful (but sensitive) registers.
++ * Copyright (c) 2016, NVIDIA CORPORATION. All rights reserved.
 + *
-+ * A Falcon microprocessor supporting advanced security modes can run in one of
-+ * three modes:
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the "Software"),
++ * to deal in the Software without restriction, including without limitation
++ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
++ * and/or sell copies of the Software, and to permit persons to whom the
++ * Software is furnished to do so, subject to the following conditions:
 + *
-+ * - Non-secure (NS). In this mode, functionality is similar to Falcon
-+ *   architectures before security modes were introduced (pre-Maxwell), but
-+ *   capability is restricted. In particular, certain registers may be
-+ *   inaccessible for reads and/or writes, and physical memory access may be
-+ *   disabled (on certain Falcon instances). This is the only possible mode that
-+ *   can be used if you don't have microcode cryptographically signed by NVIDIA.
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
 + *
-+ * - Heavy Secure (HS). In this mode, the microprocessor is a black box - it's
-+ *   not possible to read or write any Falcon internal state or Falcon registers
-+ *   from outside the Falcon (for example, from the host system). The only way
-+ *   to enable this mode is by loading microcode that has been signed by NVIDIA.
-+ *   (The loading process involves tagging the IMEM block as secure, writing the
-+ *   signature into a Falcon register, and starting execution. The hardware will
-+ *   validate the signature, and if valid, grant HS privileges.)
-+ *
-+ * - Light Secure (LS). In this mode, the microprocessor has more privileges
-+ *   than NS but fewer than HS. Some of the microprocessor state is visible to
-+ *   host software to ease debugging. The only way to enable this mode is by HS
-+ *   microcode enabling LS mode. Some privileges available to HS mode are not
-+ *   available here. LS mode is introduced in GM20x.
-+ *
-+ * Secure boot consists in temporarily switching a HS-capable falcon (typically
-+ * PMU) into HS mode in order to validate the LS firmwares of managed falcons,
-+ * load them, and switch managed falcons into LS mode. Once secure boot
-+ * completes, no falcon remains in HS mode.
-+ *
-+ * Secure boot requires a write-protected memory region (WPR) which can only be
-+ * written by the secure falcon. On dGPU, the driver sets up the WPR region in
-+ * video memory. On Tegra, it is set up by the bootloader and its location and
-+ * size written into memory controller registers.
-+ *
-+ * The secure boot process takes place as follows:
-+ *
-+ * 1) A LS blob is constructed that contains all the LS firmwares we want to
-+ *    load, along with their signatures and bootloaders.
-+ *
-+ * 2) A HS blob (also called ACR) is created that contains the signed HS
-+ *    firmware in charge of loading the LS firmwares into their respective
-+ *    falcons.
-+ *
-+ * 3) The HS blob is loaded (via its own bootloader) and executed on the
-+ *    HS-capable falcon. It authenticates itself, switches the secure falcon to
-+ *    HS mode and setup the WPR region around the LS blob (dGPU) or copies the
-+ *    LS blob into the WPR region (Tegra).
-+ *
-+ * 4) The LS blob is now secure from all external tampering. The HS falcon
-+ *    checks the signatures of the LS firmwares and, if valid, switches the
-+ *    managed falcons to LS mode and makes them ready to run the LS firmware.
-+ *
-+ * 5) The managed falcons remain in LS mode and can be started.
-+ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
++ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
++ * DEALINGS IN THE SOFTWARE.
 + */
 +
 +#include "priv.h"
++#include <subdev/timer.h>
 +
-+#include <core/gpuobj.h>
-+#include <core/firmware.h>
-+#include <subdev/fb.h>
-+
-+enum {
-+	FALCON_DMAIDX_UCODE		= 0,
-+	FALCON_DMAIDX_VIRT		= 1,
-+	FALCON_DMAIDX_PHYS_VID		= 2,
-+	FALCON_DMAIDX_PHYS_SYS_COH	= 3,
-+	FALCON_DMAIDX_PHYS_SYS_NCOH	= 4,
++static const char *
++managed_falcons_names[] = {
++	[NVKM_SECBOOT_FALCON_PMU] = "PMU",
++	[NVKM_SECBOOT_FALCON_RESERVED] = "<reserved>",
++	[NVKM_SECBOOT_FALCON_FECS] = "FECS",
++	[NVKM_SECBOOT_FALCON_GPCCS] = "GPCCS",
++	[NVKM_SECBOOT_FALCON_END] = "<invalid>",
 +};
-+
-+/**
-+ * struct fw_bin_header - header of firmware files
-+ * @bin_magic:		always 0x3b1d14f0
-+ * @bin_ver:		version of the bin format
-+ * @bin_size:		entire image size including this header
-+ * @header_offset:	offset of the firmware/bootloader header in the file
-+ * @data_offset:	offset of the firmware/bootloader payload in the file
-+ * @data_size:		size of the payload
-+ *
-+ * This header is located at the beginning of the HS firmware and HS bootloader
-+ * files, to describe where the headers and data can be found.
-+ */
-+struct fw_bin_header {
-+	u32 bin_magic;
-+	u32 bin_ver;
-+	u32 bin_size;
-+	u32 header_offset;
-+	u32 data_offset;
-+	u32 data_size;
-+};
-+
-+/**
-+ * struct fw_bl_desc - firmware bootloader descriptor
-+ * @start_tag:		starting tag of bootloader
-+ * @desc_dmem_load_off:	DMEM offset of flcn_bl_dmem_desc
-+ * @code_off:		offset of code section
-+ * @code_size:		size of code section
-+ * @data_off:		offset of data section
-+ * @data_size:		size of data section
-+ *
-+ * This structure is embedded in bootloader firmware files at to describe the
-+ * IMEM and DMEM layout expected by the bootloader.
-+ */
-+struct fw_bl_desc {
-+	u32 start_tag;
-+	u32 dmem_load_off;
-+	u32 code_off;
-+	u32 code_size;
-+	u32 data_off;
-+	u32 data_size;
-+};
-+
 +
 +/*
-+ *
-+ * LS blob structures
-+ *
++ * Helper falcon functions
 + */
 +
-+/**
-+ * struct lsf_ucode_desc - LS falcon signatures
-+ * @prd_keys:		signature to use when the GPU is in production mode
-+ * @dgb_keys:		signature to use when the GPU is in debug mode
-+ * @b_prd_present:	whether the production key is present
-+ * @b_dgb_present:	whether the debug key is present
-+ * @falcon_id:		ID of the falcon the ucode applies to
-+ *
-+ * Directly loaded from a signature file.
-+ */
-+struct lsf_ucode_desc {
-+	u8  prd_keys[2][16];
-+	u8  dbg_keys[2][16];
-+	u32 b_prd_present;
-+	u32 b_dbg_present;
-+	u32 falcon_id;
-+};
-+
-+/**
-+ * struct lsf_lsb_header - LS firmware header
-+ * @signature:		signature to verify the firmware against
-+ * @ucode_off:		offset of the ucode blob in the WPR region. The ucode
-+ *                      blob contains the bootloader, code and data of the
-+ *                      LS falcon
-+ * @ucode_size:		size of the ucode blob, including bootloader
-+ * @data_size:		size of the ucode blob data
-+ * @bl_code_size:	size of the bootloader code
-+ * @bl_imem_off:	offset in imem of the bootloader
-+ * @bl_data_off:	offset of the bootloader data in WPR region
-+ * @bl_data_size:	size of the bootloader data
-+ * @app_code_off:	offset of the app code relative to ucode_off
-+ * @app_code_size:	size of the app code
-+ * @app_data_off:	offset of the app data relative to ucode_off
-+ * @app_data_size:	size of the app data
-+ * @flags:		flags for the secure bootloader
-+ *
-+ * This structure is written into the WPR region for each managed falcon. Each
-+ * instance is referenced by the lsb_offset member of the corresponding
-+ * lsf_wpr_header.
-+ */
-+struct lsf_lsb_header {
-+	struct lsf_ucode_desc signature;
-+	u32 ucode_off;
-+	u32 ucode_size;
-+	u32 data_size;
-+	u32 bl_code_size;
-+	u32 bl_imem_off;
-+	u32 bl_data_off;
-+	u32 bl_data_size;
-+	u32 app_code_off;
-+	u32 app_code_size;
-+	u32 app_data_off;
-+	u32 app_data_size;
-+	u32 flags;
-+#define LSF_FLAG_LOAD_CODE_AT_0		1
-+#define LSF_FLAG_DMACTL_REQ_CTX		4
-+#define LSF_FLAG_FORCE_PRIV_LOAD	8
-+};
-+
-+/**
-+ * struct lsf_wpr_header - LS blob WPR Header
-+ * @falcon_id:		LS falcon ID
-+ * @lsb_offset:		offset of the lsb_lsf_header in the WPR region
-+ * @bootstrap_owner:	secure falcon reponsible for bootstrapping the LS falcon
-+ * @lazy_bootstrap:	skip bootstrapping by ACR
-+ * @status:		bootstrapping status
-+ *
-+ * An array of these is written at the beginning of the WPR region, one for
-+ * each managed falcon. The array is terminated by an instance which falcon_id
-+ * is LSF_FALCON_ID_INVALID.
-+ */
-+struct lsf_wpr_header {
-+	u32  falcon_id;
-+	u32  lsb_offset;
-+	u32  bootstrap_owner;
-+	u32  lazy_bootstrap;
-+	u32  status;
-+#define LSF_IMAGE_STATUS_NONE				0
-+#define LSF_IMAGE_STATUS_COPY				1
-+#define LSF_IMAGE_STATUS_VALIDATION_CODE_FAILED		2
-+#define LSF_IMAGE_STATUS_VALIDATION_DATA_FAILED		3
-+#define LSF_IMAGE_STATUS_VALIDATION_DONE		4
-+#define LSF_IMAGE_STATUS_VALIDATION_SKIPPED		5
-+#define LSF_IMAGE_STATUS_BOOTSTRAP_READY		6
-+};
-+
-+
-+/**
-+ * struct ls_ucode_img_desc - descriptor of firmware image
-+ * @descriptor_size:		size of this descriptor
-+ * @image_size:			size of the whole image
-+ * @bootloader_start_offset:	start offset of the bootloader in ucode image
-+ * @bootloader_size:		size of the bootloader
-+ * @bootloader_imem_offset:	start off set of the bootloader in IMEM
-+ * @bootloader_entry_point:	entry point of the bootloader in IMEM
-+ * @app_start_offset:		start offset of the LS firmware
-+ * @app_size:			size of the LS firmware's code and data
-+ * @app_imem_offset:		offset of the app in IMEM
-+ * @app_imem_entry:		entry point of the app in IMEM
-+ * @app_dmem_offset:		offset of the data in DMEM
-+ * @app_resident_code_offset:	offset of app code from app_start_offset
-+ * @app_resident_code_size:	size of the code
-+ * @app_resident_data_offset:	offset of data from app_start_offset
-+ * @app_resident_data_size:	size of data
-+ *
-+ * A firmware image contains the code, data, and bootloader of a given LS
-+ * falcon in a single blob. This structure describes where everything is.
-+ *
-+ * This can be generated from a (bootloader, code, data) set if they have
-+ * been loaded separately, or come directly from a file.
-+ */
-+struct ls_ucode_img_desc {
-+	u32 descriptor_size;
-+	u32 image_size;
-+	u32 tools_version;
-+	u32 app_version;
-+	char date[64];
-+	u32 bootloader_start_offset;
-+	u32 bootloader_size;
-+	u32 bootloader_imem_offset;
-+	u32 bootloader_entry_point;
-+	u32 app_start_offset;
-+	u32 app_size;
-+	u32 app_imem_offset;
-+	u32 app_imem_entry;
-+	u32 app_dmem_offset;
-+	u32 app_resident_code_offset;
-+	u32 app_resident_code_size;
-+	u32 app_resident_data_offset;
-+	u32 app_resident_data_size;
-+	u32 nb_overlays;
-+	struct {u32 start; u32 size; } load_ovl[64];
-+	u32 compressed;
-+};
-+
-+/**
-+ * struct ls_ucode_img - temporary storage for loaded LS firmwares
-+ * @node:		to link within lsf_ucode_mgr
-+ * @falcon_id:		ID of the falcon this LS firmware is for
-+ * @ucode_desc:		loaded or generated map of ucode_data
-+ * @ucode_header:	header of the firmware
-+ * @ucode_data:		firmware payload (code and data)
-+ * @ucode_size:		size in bytes of data in ucode_data
-+ * @wpr_header:		WPR header to be written to the LS blob
-+ * @lsb_header:		LSB header to be written to the LS blob
-+ *
-+ * Preparing the WPR LS blob requires information about all the LS firmwares
-+ * (size, etc) to be known. This structure contains all the data of one LS
-+ * firmware.
-+ */
-+struct ls_ucode_img {
-+	struct list_head node;
-+	enum nvkm_secboot_falcon falcon_id;
-+
-+	struct ls_ucode_img_desc ucode_desc;
-+	u32 *ucode_header;
-+	u8 *ucode_data;
-+	u32 ucode_size;
-+
-+	struct lsf_wpr_header wpr_header;
-+	struct lsf_lsb_header lsb_header;
-+};
-+
-+/**
-+ * struct ls_ucode_mgr - manager for all LS falcon firmwares
-+ * @count:	number of managed LS falcons
-+ * @wpr_size:	size of the required WPR region in bytes
-+ * @img_list:	linked list of lsf_ucode_img
-+ */
-+struct ls_ucode_mgr {
-+	u16 count;
-+	u32 wpr_size;
-+	struct list_head img_list;
-+};
-+
-+
-+/*
-+ *
-+ * HS blob structures
-+ *
-+ */
-+
-+/**
-+ * struct hsf_fw_header - HS firmware descriptor
-+ * @sig_dbg_offset:	offset of the debug signature
-+ * @sig_dbg_size:	size of the debug signature
-+ * @sig_prod_offset:	offset of the production signature
-+ * @sig_prod_size:	size of the production signature
-+ * @patch_loc:		offset of the offset (sic) of where the signature is
-+ * @patch_sig:		offset of the offset (sic) to add to sig_*_offset
-+ * @hdr_offset:		offset of the load header (see struct hs_load_header)
-+ * @hdr_size:		size of above header
-+ *
-+ * This structure is embedded in the HS firmware image at
-+ * hs_bin_hdr.header_offset.
-+ */
-+struct hsf_fw_header {
-+	u32 sig_dbg_offset;
-+	u32 sig_dbg_size;
-+	u32 sig_prod_offset;
-+	u32 sig_prod_size;
-+	u32 patch_loc;
-+	u32 patch_sig;
-+	u32 hdr_offset;
-+	u32 hdr_size;
-+};
-+
-+/**
-+ * struct hsf_load_header - HS firmware load header
-+ */
-+struct hsf_load_header {
-+	u32 non_sec_code_off;
-+	u32 non_sec_code_size;
-+	u32 data_dma_base;
-+	u32 data_size;
-+	u32 num_apps;
-+	struct {
-+		u32 sec_code_off;
-+		u32 sec_code_size;
-+	} app[0];
-+};
-+
-+/**
-+ * Convenience function to duplicate a firmware file in memory and check that
-+ * it has the required minimum size.
-+ */
-+static void *
-+gm200_secboot_load_firmware(struct nvkm_subdev *subdev, const char *name,
-+		    size_t min_size)
++static int
++falcon_clear_halt_interrupt(struct nvkm_device *device, u32 base)
 +{
-+	const struct firmware *fw;
-+	void *blob;
 +	int ret;
 +
-+	ret = nvkm_firmware_get(subdev->device, name, &fw);
-+	if (ret)
-+		return ERR_PTR(ret);
-+	if (fw->size < min_size) {
-+		nvkm_error(subdev, "%s is smaller than expected size %zu\n",
-+			   name, min_size);
-+		nvkm_firmware_put(fw);
-+		return ERR_PTR(-EINVAL);
-+	}
-+	blob = kmemdup(fw->data, fw->size, GFP_KERNEL);
-+	nvkm_firmware_put(fw);
-+	if (!blob)
-+		return ERR_PTR(-ENOMEM);
-+
-+	return blob;
-+}
-+
-+
-+/*
-+ * Low-secure blob creation
-+ */
-+
-+#define BL_DESC_BLK_SIZE 256
-+/**
-+ * Build a ucode image and descriptor from provided bootloader, code and data.
-+ *
-+ * @bl:		bootloader image, including 16-bytes descriptor
-+ * @code:	LS firmware code segment
-+ * @data:	LS firmware data segment
-+ * @desc:	ucode descriptor to be written
-+ *
-+ * Return: allocated ucode image with corresponding descriptor information. desc
-+ *         is also updated to contain the right offsets within returned image.
-+ */
-+static void *
-+ls_ucode_img_build(const struct firmware *bl, const struct firmware *code,
-+		   const struct firmware *data, struct ls_ucode_img_desc *desc)
-+{
-+	struct fw_bin_header *bin_hdr = (void *)bl->data;
-+	struct fw_bl_desc *bl_desc = (void *)bl->data + bin_hdr->header_offset;
-+	void *bl_data = (void *)bl->data + bin_hdr->data_offset;
-+	u32 pos = 0;
-+	void *image;
-+
-+	desc->bootloader_start_offset = pos;
-+	desc->bootloader_size = ALIGN(bl_desc->code_size, sizeof(u32));
-+	desc->bootloader_imem_offset = bl_desc->start_tag * 256;
-+	desc->bootloader_entry_point = bl_desc->start_tag * 256;
-+
-+	pos = ALIGN(pos + desc->bootloader_size, BL_DESC_BLK_SIZE);
-+	desc->app_start_offset = pos;
-+	desc->app_size = ALIGN(code->size, BL_DESC_BLK_SIZE) +
-+			 ALIGN(data->size, BL_DESC_BLK_SIZE);
-+	desc->app_imem_offset = 0;
-+	desc->app_imem_entry = 0;
-+	desc->app_dmem_offset = 0;
-+	desc->app_resident_code_offset = 0;
-+	desc->app_resident_code_size = ALIGN(code->size, BL_DESC_BLK_SIZE);
-+
-+	pos = ALIGN(pos + desc->app_resident_code_size, BL_DESC_BLK_SIZE);
-+	desc->app_resident_data_offset = pos - desc->app_start_offset;
-+	desc->app_resident_data_size = ALIGN(data->size, BL_DESC_BLK_SIZE);
-+
-+	desc->image_size = ALIGN(bl_desc->code_size, BL_DESC_BLK_SIZE) +
-+			   desc->app_size;
-+
-+	image = kzalloc(desc->image_size, GFP_KERNEL);
-+	if (!image)
-+		return ERR_PTR(-ENOMEM);
-+
-+	memcpy(image + desc->bootloader_start_offset, bl_data,
-+	       bl_desc->code_size);
-+	memcpy(image + desc->app_start_offset, code->data, code->size);
-+	memcpy(image + desc->app_start_offset + desc->app_resident_data_offset,
-+	       data->data, data->size);
-+
-+	return image;
-+}
-+
-+/**
-+ * ls_ucode_img_load_generic() - load and prepare a LS ucode image
-+ *
-+ * Load the LS microcode, bootloader and signature and pack them into a single
-+ * blob. Also generate the corresponding ucode descriptor.
-+ */
-+static int
-+ls_ucode_img_load_generic(struct nvkm_subdev *subdev,
-+			  struct ls_ucode_img *img, const char *falcon_name,
-+			  const u32 falcon_id)
-+{
-+	const struct firmware *bl, *code, *data;
-+	struct lsf_ucode_desc *lsf_desc;
-+	char f[64];
-+	int ret;
-+
-+	img->ucode_header = NULL;
-+
-+	snprintf(f, sizeof(f), "gr/%s_bl", falcon_name);
-+	ret = nvkm_firmware_get(subdev->device, f, &bl);
-+	if (ret)
-+		goto error;
-+
-+	snprintf(f, sizeof(f), "gr/%s_inst", falcon_name);
-+	ret = nvkm_firmware_get(subdev->device, f, &code);
-+	if (ret)
-+		goto free_bl;
-+
-+	snprintf(f, sizeof(f), "gr/%s_data", falcon_name);
-+	ret = nvkm_firmware_get(subdev->device, f, &data);
-+	if (ret)
-+		goto free_inst;
-+
-+	img->ucode_data = ls_ucode_img_build(bl, code, data,
-+					     &img->ucode_desc);
-+	if (IS_ERR(img->ucode_data)) {
-+		ret = PTR_ERR(img->ucode_data);
-+		goto free_data;
-+	}
-+	img->ucode_size = img->ucode_desc.image_size;
-+
-+	snprintf(f, sizeof(f), "gr/%s_sig", falcon_name);
-+	lsf_desc = gm200_secboot_load_firmware(subdev, f, sizeof(*lsf_desc));
-+	if (IS_ERR(lsf_desc)) {
-+		ret = PTR_ERR(lsf_desc);
-+		goto free_image;
-+	}
-+	/* not needed? the signature should already have the right value */
-+	lsf_desc->falcon_id = falcon_id;
-+	memcpy(&img->lsb_header.signature, lsf_desc, sizeof(*lsf_desc));
-+	img->falcon_id = lsf_desc->falcon_id;
-+	kfree(lsf_desc);
-+
-+	/* success path - only free requested firmware files */
-+	goto free_data;
-+
-+free_image:
-+	kfree(img->ucode_data);
-+free_data:
-+	nvkm_firmware_put(data);
-+free_inst:
-+	nvkm_firmware_put(code);
-+free_bl:
-+	nvkm_firmware_put(bl);
-+error:
-+	return ret;
-+}
-+
-+typedef int (*lsf_load_func)(struct nvkm_subdev *, struct ls_ucode_img *);
-+
-+static int
-+ls_ucode_img_load_fecs(struct nvkm_subdev *subdev, struct ls_ucode_img *img)
-+{
-+	return ls_ucode_img_load_generic(subdev, img, "fecs",
-+					 NVKM_SECBOOT_FALCON_FECS);
-+}
-+
-+static int
-+ls_ucode_img_load_gpccs(struct nvkm_subdev *subdev, struct ls_ucode_img *img)
-+{
-+	return ls_ucode_img_load_generic(subdev, img, "gpccs",
-+					 NVKM_SECBOOT_FALCON_GPCCS);
-+}
-+
-+/**
-+ * ls_ucode_img_load() - create a lsf_ucode_img and load it
-+ */
-+static struct ls_ucode_img *
-+ls_ucode_img_load(struct nvkm_subdev *subdev, lsf_load_func load_func)
-+{
-+	struct ls_ucode_img *img;
-+	int ret;
-+
-+	img = kzalloc(sizeof(*img), GFP_KERNEL);
-+	if (!img)
-+		return ERR_PTR(-ENOMEM);
-+
-+	ret = load_func(subdev, img);
-+	if (ret) {
-+		kfree(img);
-+		return ERR_PTR(ret);
-+	}
-+
-+	return img;
-+}
-+
-+static const lsf_load_func lsf_load_funcs[] = {
-+	[NVKM_SECBOOT_FALCON_END] = NULL, /* reserve enough space */
-+	[NVKM_SECBOOT_FALCON_FECS] = ls_ucode_img_load_fecs,
-+	[NVKM_SECBOOT_FALCON_GPCCS] = ls_ucode_img_load_gpccs,
-+};
-+
-+/**
-+ * ls_ucode_img_populate_bl_desc() - populate a DMEM BL descriptor for LS image
-+ * @img:	ucode image to generate against
-+ * @desc:	descriptor to populate
-+ * @sb:		secure boot state to use for base addresses
-+ *
-+ * Populate the DMEM BL descriptor with the information contained in a
-+ * ls_ucode_desc.
-+ *
-+ */
-+static void
-+ls_ucode_img_populate_bl_desc(struct ls_ucode_img *img, u64 wpr_addr,
-+			      struct gm200_flcn_bl_desc *desc)
-+{
-+	struct ls_ucode_img_desc *pdesc = &img->ucode_desc;
-+	u64 addr_base;
-+
-+	addr_base = wpr_addr + img->lsb_header.ucode_off +
-+		    pdesc->app_start_offset;
-+
-+	memset(desc, 0, sizeof(*desc));
-+	desc->ctx_dma = FALCON_DMAIDX_UCODE;
-+	desc->code_dma_base.lo = lower_32_bits(
-+		(addr_base + pdesc->app_resident_code_offset));
-+	desc->code_dma_base.hi = upper_32_bits(
-+		(addr_base + pdesc->app_resident_code_offset));
-+	desc->non_sec_code_size = pdesc->app_resident_code_size;
-+	desc->data_dma_base.lo = lower_32_bits(
-+		(addr_base + pdesc->app_resident_data_offset));
-+	desc->data_dma_base.hi = upper_32_bits(
-+		(addr_base + pdesc->app_resident_data_offset));
-+	desc->data_size = pdesc->app_resident_data_size;
-+	desc->code_entry_point = pdesc->app_imem_entry;
-+}
-+
-+#define LSF_LSB_HEADER_ALIGN 256
-+#define LSF_BL_DATA_ALIGN 256
-+#define LSF_BL_DATA_SIZE_ALIGN 256
-+#define LSF_BL_CODE_SIZE_ALIGN 256
-+#define LSF_UCODE_DATA_ALIGN 4096
-+
-+/**
-+ * ls_ucode_img_fill_headers - fill the WPR and LSB headers of an image
-+ * @gsb:	secure boot device used
-+ * @img:	image to generate for
-+ * @offset:	offset in the WPR region where this image starts
-+ *
-+ * Allocate space in the WPR area from offset and write the WPR and LSB headers
-+ * accordingly.
-+ *
-+ * Return: offset at the end of this image.
-+ */
-+static u32
-+ls_ucode_img_fill_headers(struct gm200_secboot *gsb, struct ls_ucode_img *img,
-+			  u32 offset)
-+{
-+	struct lsf_wpr_header *whdr = &img->wpr_header;
-+	struct lsf_lsb_header *lhdr = &img->lsb_header;
-+	struct ls_ucode_img_desc *desc = &img->ucode_desc;
-+
-+	if (img->ucode_header) {
-+		nvkm_fatal(&gsb->base.subdev,
-+			    "images withough loader are not supported yet!\n");
-+		return offset;
-+	}
-+
-+	/* Fill WPR header */
-+	whdr->falcon_id = img->falcon_id;
-+	whdr->bootstrap_owner = gsb->base.func->boot_falcon;
-+	whdr->status = LSF_IMAGE_STATUS_COPY;
-+
-+	/* Align, save off, and include an LSB header size */
-+	offset = ALIGN(offset, LSF_LSB_HEADER_ALIGN);
-+	whdr->lsb_offset = offset;
-+	offset += sizeof(struct lsf_lsb_header);
-+
-+	/*
-+	 * Align, save off, and include the original (static) ucode
-+	 * image size
-+	 */
-+	offset = ALIGN(offset, LSF_UCODE_DATA_ALIGN);
-+	lhdr->ucode_off = offset;
-+	offset += img->ucode_size;
-+
-+	/*
-+	 * For falcons that use a boot loader (BL), we append a loader
-+	 * desc structure on the end of the ucode image and consider
-+	 * this the boot loader data. The host will then copy the loader
-+	 * desc args to this space within the WPR region (before locking
-+	 * down) and the HS bin will then copy them to DMEM 0 for the
-+	 * loader.
-+	 */
-+	lhdr->bl_code_size = ALIGN(desc->bootloader_size,
-+				   LSF_BL_CODE_SIZE_ALIGN);
-+	lhdr->ucode_size = ALIGN(desc->app_resident_data_offset,
-+				 LSF_BL_CODE_SIZE_ALIGN) + lhdr->bl_code_size;
-+	lhdr->data_size = ALIGN(desc->app_size, LSF_BL_CODE_SIZE_ALIGN) +
-+				lhdr->bl_code_size - lhdr->ucode_size;
-+	/*
-+	 * Though the BL is located at 0th offset of the image, the VA
-+	 * is different to make sure that it doesn't collide the actual
-+	 * OS VA range
-+	 */
-+	lhdr->bl_imem_off = desc->bootloader_imem_offset;
-+	lhdr->app_code_off = desc->app_start_offset +
-+			     desc->app_resident_code_offset;
-+	lhdr->app_code_size = desc->app_resident_code_size;
-+	lhdr->app_data_off = desc->app_start_offset +
-+			     desc->app_resident_data_offset;
-+	lhdr->app_data_size = desc->app_resident_data_size;
-+
-+	lhdr->flags = 0;
-+	if (img->falcon_id == gsb->base.func->boot_falcon)
-+		lhdr->flags = LSF_FLAG_DMACTL_REQ_CTX;
-+
-+	/* GPCCS will be loaded using PRI */
-+	if (img->falcon_id == NVKM_SECBOOT_FALCON_GPCCS)
-+		lhdr->flags |= LSF_FLAG_FORCE_PRIV_LOAD;
-+
-+	/* Align (size bloat) and save off BL descriptor size */
-+	lhdr->bl_data_size = ALIGN(sizeof(struct gm200_flcn_bl_desc),
-+				   LSF_BL_DATA_SIZE_ALIGN);
-+	/*
-+	 * Align, save off, and include the additional BL data
-+	 */
-+	offset = ALIGN(offset, LSF_BL_DATA_ALIGN);
-+	lhdr->bl_data_off = offset;
-+	offset += lhdr->bl_data_size;
-+
-+	return offset;
-+}
-+
-+static void
-+ls_ucode_mgr_init(struct ls_ucode_mgr *mgr)
-+{
-+	memset(mgr, 0, sizeof(*mgr));
-+	INIT_LIST_HEAD(&mgr->img_list);
-+}
-+
-+static void
-+ls_ucode_mgr_cleanup(struct ls_ucode_mgr *mgr)
-+{
-+	struct ls_ucode_img *img, *t;
-+
-+	list_for_each_entry_safe(img, t, &mgr->img_list, node) {
-+		kfree(img->ucode_data);
-+		kfree(img->ucode_header);
-+		kfree(img);
-+	}
-+}
-+
-+static void
-+ls_ucode_mgr_add_img(struct ls_ucode_mgr *mgr, struct ls_ucode_img *img)
-+{
-+	mgr->count++;
-+	list_add_tail(&img->node, &mgr->img_list);
-+}
-+
-+/**
-+ * ls_ucode_mgr_fill_headers - fill WPR and LSB headers of all managed images
-+ */
-+static void
-+ls_ucode_mgr_fill_headers(struct gm200_secboot *gsb, struct ls_ucode_mgr *mgr)
-+{
-+	struct ls_ucode_img *img;
-+	u32 offset;
-+
-+	/*
-+	 * Start with an array of WPR headers at the base of the WPR.
-+	 * The expectation here is that the secure falcon will do a single DMA
-+	 * read of this array and cache it internally so it's ok to pack these.
-+	 * Also, we add 1 to the falcon count to indicate the end of the array.
-+	 */
-+	offset = sizeof(struct lsf_wpr_header) * (mgr->count + 1);
-+
-+	/*
-+	 * Walk the managed falcons, accounting for the LSB structs
-+	 * as well as the ucode images.
-+	 */
-+	list_for_each_entry(img, &mgr->img_list, node) {
-+		offset = ls_ucode_img_fill_headers(gsb, img, offset);
-+	}
-+
-+	mgr->wpr_size = offset;
-+}
-+
-+/**
-+ * ls_ucode_mgr_write_wpr - write the WPR blob contents
-+ */
-+static int
-+ls_ucode_mgr_write_wpr(struct gm200_secboot *gsb, struct ls_ucode_mgr *mgr,
-+		       struct nvkm_gpuobj *wpr_blob)
-+{
-+	struct ls_ucode_img *img;
-+	u32 pos = 0;
-+
-+	nvkm_kmap(wpr_blob);
-+
-+	list_for_each_entry(img, &mgr->img_list, node) {
-+		nvkm_gpuobj_memcpy_to(wpr_blob, pos, &img->wpr_header,
-+				      sizeof(img->wpr_header));
-+
-+		nvkm_gpuobj_memcpy_to(wpr_blob, img->wpr_header.lsb_offset,
-+				     &img->lsb_header, sizeof(img->lsb_header));
-+
-+		/* Generate and write BL descriptor */
-+		if (!img->ucode_header) {
-+			u8 desc[gsb->func->bl_desc_size];
-+			struct gm200_flcn_bl_desc gdesc;
-+
-+			ls_ucode_img_populate_bl_desc(img, gsb->wpr_addr,
-+						      &gdesc);
-+			gsb->func->fixup_bl_desc(&gdesc, &desc);
-+			nvkm_gpuobj_memcpy_to(wpr_blob,
-+					      img->lsb_header.bl_data_off,
-+					      &desc, gsb->func->bl_desc_size);
-+		}
-+
-+		/* Copy ucode */
-+		nvkm_gpuobj_memcpy_to(wpr_blob, img->lsb_header.ucode_off,
-+				      img->ucode_data, img->ucode_size);
-+
-+		pos += sizeof(img->wpr_header);
-+	}
-+
-+	nvkm_wo32(wpr_blob, pos, NVKM_SECBOOT_FALCON_INVALID);
-+
-+	nvkm_done(wpr_blob);
++	/* clear halt interrupt */
++	nvkm_mask(device, base + 0x004, 0x10, 0x10);
++	/* wait until halt interrupt is cleared */
++	ret = nvkm_wait_msec(device, 10, base + 0x008, 0x10, 0x0);
++	if (ret < 0)
++		return ret;
 +
 +	return 0;
 +}
 +
-+/* Both size and address of WPR need to be 128K-aligned */
-+#define WPR_ALIGNMENT	0x20000
-+/**
-+ * gm200_secboot_prepare_ls_blob() - prepare the LS blob
-+ *
-+ * For each securely managed falcon, load the FW, signatures and bootloaders and
-+ * prepare a ucode blob. Then, compute the offsets in the WPR region for each
-+ * blob, and finally write the headers and ucode blobs into a GPU object that
-+ * will be copied into the WPR region by the HS firmware.
-+ */
 +static int
-+gm200_secboot_prepare_ls_blob(struct gm200_secboot *gsb)
++falcon_wait_idle(struct nvkm_device *device, u32 base)
 +{
-+	struct nvkm_secboot *sb = &gsb->base;
++	int ret;
++
++	ret = nvkm_wait_msec(device, 10, base + 0x04c, 0xffff, 0x0);
++	if (ret < 0)
++		return ret;
++
++	return 0;
++}
++
++static int
++nvkm_secboot_falcon_enable(struct nvkm_secboot *sb)
++{
 +	struct nvkm_device *device = sb->subdev.device;
-+	struct ls_ucode_mgr mgr;
-+	int falcon_id;
 +	int ret;
 +
-+	ls_ucode_mgr_init(&mgr);
-+
-+	/* Load all LS blobs */
-+	for_each_set_bit(falcon_id, &gsb->base.func->managed_falcons,
-+			 NVKM_SECBOOT_FALCON_END) {
-+		struct ls_ucode_img *img;
-+
-+		img = ls_ucode_img_load(&sb->subdev, lsf_load_funcs[falcon_id]);
-+
-+		if (IS_ERR(img)) {
-+			ret = PTR_ERR(img);
-+			goto cleanup;
-+		}
-+		ls_ucode_mgr_add_img(&mgr, img);
-+	}
-+
-+	/*
-+	 * Fill the WPR and LSF headers with the right offsets and compute
-+	 * required WPR size
-+	 */
-+	ls_ucode_mgr_fill_headers(gsb, &mgr);
-+	mgr.wpr_size = ALIGN(mgr.wpr_size, WPR_ALIGNMENT);
-+
-+	/* Allocate GPU object that will contain the WPR region */
-+	ret = nvkm_gpuobj_new(device, mgr.wpr_size, WPR_ALIGNMENT, false, NULL,
-+			      &gsb->ls_blob);
-+	if (ret)
-+		goto cleanup;
-+
-+	nvkm_debug(&sb->subdev, "%d managed LS falcons, WPR size is %d bytes\n",
-+		    mgr.count, mgr.wpr_size);
-+
-+	/* If WPR address and size are not fixed, set them to fit the LS blob */
-+	if (!gsb->wpr_size) {
-+		gsb->wpr_addr = gsb->ls_blob->addr;
-+		gsb->wpr_size = gsb->ls_blob->size;
-+	}
-+
-+	/* Write LS blob */
-+	ret = ls_ucode_mgr_write_wpr(gsb, &mgr, gsb->ls_blob);
-+
-+cleanup:
-+	ls_ucode_mgr_cleanup(&mgr);
-+
-+	return ret;
-+}
-+
-+/*
-+ * High-secure blob creation
-+ */
-+
-+/**
-+ * gm200_secboot_hsf_patch_signature() - patch HS blob with correct signature
-+ */
-+static void
-+gm200_secboot_hsf_patch_signature(struct gm200_secboot *gsb, void *acr_image)
-+{
-+	struct nvkm_secboot *sb = &gsb->base;
-+	struct fw_bin_header *hsbin_hdr = acr_image;
-+	struct hsf_fw_header *fw_hdr = acr_image + hsbin_hdr->header_offset;
-+	void *hs_data = acr_image + hsbin_hdr->data_offset;
-+	void *sig;
-+	u32 sig_size;
-+
-+	/* Falcon in debug or production mode? */
-+	if ((nvkm_rd32(sb->subdev.device, sb->base + 0xc08) >> 20) & 0x1) {
-+		sig = acr_image + fw_hdr->sig_dbg_offset;
-+		sig_size = fw_hdr->sig_dbg_size;
-+	} else {
-+		sig = acr_image + fw_hdr->sig_prod_offset;
-+		sig_size = fw_hdr->sig_prod_size;
-+	}
-+
-+	/* Patch signature */
-+	memcpy(hs_data + fw_hdr->patch_loc, sig + fw_hdr->patch_sig, sig_size);
-+}
-+
-+/**
-+ * gm200_secboot_populate_hsf_bl_desc() - populate BL descriptor for HS image
-+ */
-+static void
-+gm200_secboot_populate_hsf_bl_desc(void *acr_image,
-+				   struct gm200_flcn_bl_desc *bl_desc)
-+{
-+	struct fw_bin_header *hsbin_hdr = acr_image;
-+	struct hsf_fw_header *fw_hdr = acr_image + hsbin_hdr->header_offset;
-+	struct hsf_load_header *load_hdr = acr_image + fw_hdr->hdr_offset;
-+
-+	/*
-+	 * Descriptor for the bootloader that will load the ACR image into
-+	 * IMEM/DMEM memory.
-+	 */
-+	fw_hdr = acr_image + hsbin_hdr->header_offset;
-+	load_hdr = acr_image + fw_hdr->hdr_offset;
-+	memset(bl_desc, 0, sizeof(*bl_desc));
-+	bl_desc->ctx_dma = FALCON_DMAIDX_VIRT;
-+	bl_desc->non_sec_code_off = load_hdr->non_sec_code_off;
-+	bl_desc->non_sec_code_size = load_hdr->non_sec_code_size;
-+	bl_desc->sec_code_off = load_hdr->app[0].sec_code_off;
-+	bl_desc->sec_code_size = load_hdr->app[0].sec_code_size;
-+	bl_desc->code_entry_point = 0;
-+	/*
-+	 * We need to set code_dma_base to the virtual address of the acr_blob,
-+	 * and add this address to data_dma_base before writing it into DMEM
-+	 */
-+	bl_desc->code_dma_base.lo = 0;
-+	bl_desc->data_dma_base.lo = load_hdr->data_dma_base;
-+	bl_desc->data_size = load_hdr->data_size;
-+}
-+
-+/**
-+ * gm200_secboot_prepare_hs_blob - load and prepare a HS blob and BL descriptor
-+ *
-+ * @gsb secure boot instance to prepare for
-+ * @fw name of the HS firmware to load
-+ * @blob pointer to gpuobj that will be allocated to receive the HS FW payload
-+ * @bl_desc pointer to the BL descriptor to write for this firmware
-+ * @patch whether we should patch the HS descriptor (only for HS loaders)
-+ */
-+static int
-+gm200_secboot_prepare_hs_blob(struct gm200_secboot *gsb, const char *fw,
-+			      struct nvkm_gpuobj **blob,
-+			      struct gm200_flcn_bl_desc *bl_desc, bool patch)
-+{
-+	struct nvkm_subdev *subdev = &gsb->base.subdev;
-+	void *acr_image;
-+	struct fw_bin_header *hsbin_hdr;
-+	struct hsf_fw_header *fw_hdr;
-+	void *acr_data;
-+	struct hsf_load_header *load_hdr;
-+	struct hsflcn_acr_desc *desc;
-+	int ret;
-+
-+	acr_image = gm200_secboot_load_firmware(subdev, fw, 0);
-+	if (IS_ERR(acr_image))
-+		return PTR_ERR(acr_image);
-+	hsbin_hdr = acr_image;
-+
-+	/* Patch signature */
-+	gm200_secboot_hsf_patch_signature(gsb, acr_image);
-+
-+	acr_data = acr_image + hsbin_hdr->data_offset;
-+
-+	/* Patch descriptor? */
-+	if (patch) {
-+		fw_hdr = acr_image + hsbin_hdr->header_offset;
-+		load_hdr = acr_image + fw_hdr->hdr_offset;
-+		desc = acr_data + load_hdr->data_dma_base;
-+		gsb->func->fixup_hs_desc(gsb, desc);
-+	}
-+
-+	/* Generate HS BL descriptor */
-+	gm200_secboot_populate_hsf_bl_desc(acr_image, bl_desc);
-+
-+	/* Create ACR blob and copy HS data to it */
-+	ret = nvkm_gpuobj_new(subdev->device, ALIGN(hsbin_hdr->data_size, 256),
-+			      0x1000, false, NULL, blob);
-+	if (ret)
-+		goto cleanup;
-+
-+	nvkm_kmap(*blob);
-+	nvkm_gpuobj_memcpy_to(*blob, 0, acr_data, hsbin_hdr->data_size);
-+	nvkm_done(*blob);
-+
-+cleanup:
-+	kfree(acr_image);
-+
-+	return ret;
-+}
-+
-+/*
-+ * High-secure bootloader blob creation
-+ */
-+
-+static int
-+gm200_secboot_prepare_hsbl_blob(struct gm200_secboot *gsb)
-+{
-+	struct nvkm_subdev *subdev = &gsb->base.subdev;
-+
-+	gsb->hsbl_blob = gm200_secboot_load_firmware(subdev, "acr/bl", 0);
-+	if (IS_ERR(gsb->hsbl_blob)) {
-+		int ret = PTR_ERR(gsb->hsbl_blob);
-+
-+		gsb->hsbl_blob = NULL;
++	/* enable engine */
++	nvkm_mask(device, 0x200, sb->enable_mask, sb->enable_mask);
++	nvkm_rd32(device, 0x200);
++	ret = nvkm_wait_msec(device, 10, sb->base + 0x10c, 0x6, 0x0);
++	if (ret < 0) {
++		nvkm_mask(device, 0x200, sb->enable_mask, 0x0);
++		nvkm_error(&sb->subdev, "Falcon mem scrubbing timeout\n");
 +		return ret;
 +	}
 +
-+	return 0;
-+}
-+
-+/**
-+ * gm20x_secboot_prepare_blobs - load blobs common to all GM20X GPUs.
-+ *
-+ * This includes the LS blob, HS ucode loading blob, and HS bootloader.
-+ *
-+ * The HS ucode unload blob is only used on dGPU.
-+ */
-+int
-+gm20x_secboot_prepare_blobs(struct gm200_secboot *gsb)
-+{
-+	int ret;
-+
-+	/* Load and prepare the managed falcon's firmwares */
-+	ret = gm200_secboot_prepare_ls_blob(gsb);
++	ret = falcon_wait_idle(device, sb->base);
 +	if (ret)
 +		return ret;
 +
-+	/* Load the HS firmware that will load the LS firmwares */
-+	ret = gm200_secboot_prepare_hs_blob(gsb, "acr/ucode_load",
-+					    &gsb->acr_load_blob,
-+					    &gsb->acr_load_bl_desc, true);
-+	if (ret)
-+		return ret;
-+
-+	/* Load the HS firmware bootloader */
-+	ret = gm200_secboot_prepare_hsbl_blob(gsb);
-+	if (ret)
-+		return ret;
++	/* enable IRQs */
++	nvkm_wr32(device, sb->base + 0x010, 0xff);
++	nvkm_mask(device, 0x640, sb->irq_mask, 0x1000000);
++	nvkm_mask(device, 0x644, sb->irq_mask, 0x1000000);
 +
 +	return 0;
 +}
 +
 +static int
-+gm200_secboot_prepare_blobs(struct nvkm_secboot *sb)
++nvkm_secboot_falcon_disable(struct nvkm_secboot *sb)
 +{
-+	struct gm200_secboot *gsb = gm200_secboot(sb);
++	struct nvkm_device *device = sb->subdev.device;
 +	int ret;
 +
-+	ret = gm20x_secboot_prepare_blobs(gsb);
++	ret = falcon_clear_halt_interrupt(device, sb->base);
 +	if (ret)
 +		return ret;
 +
-+	/* dGPU only: load the HS firmware that unprotects the WPR region */
-+	ret = gm200_secboot_prepare_hs_blob(gsb, "acr/ucode_unload",
-+					    &gsb->acr_unload_blob,
-+					    &gsb->acr_unload_bl_desc, false);
++	ret = falcon_wait_idle(device, sb->base);
 +	if (ret)
 +		return ret;
 +
-+	return 0;
-+}
-+
-+
-+
-+/*
-+ * Secure Boot Execution
-+ */
-+
-+/**
-+ * gm200_secboot_load_hs_bl() - load HS bootloader into DMEM and IMEM
-+ */
-+static void
-+gm200_secboot_load_hs_bl(struct gm200_secboot *gsb, void *data, u32 data_size)
-+{
-+	struct nvkm_device *device = gsb->base.subdev.device;
-+	struct fw_bin_header *hdr = gsb->hsbl_blob;
-+	struct fw_bl_desc *hsbl_desc = gsb->hsbl_blob + hdr->header_offset;
-+	void *blob_data = gsb->hsbl_blob + hdr->data_offset;
-+	void *hsbl_code = blob_data + hsbl_desc->code_off;
-+	void *hsbl_data = blob_data + hsbl_desc->data_off;
-+	u32 code_size = ALIGN(hsbl_desc->code_size, 256);
-+	const u32 base = gsb->base.base;
-+	u32 blk;
-+	u32 tag;
-+	int i;
-+
-+	/*
-+	 * Copy HS bootloader data
-+	 */
-+	nvkm_wr32(device, base + 0x1c0, (0x00000000 | (0x1 << 24)));
-+	for (i = 0; i < hsbl_desc->data_size / 4; i++)
-+		nvkm_wr32(device, base + 0x1c4, ((u32 *)hsbl_data)[i]);
-+
-+	/*
-+	 * Copy HS bootloader interface structure where the HS descriptor
-+	 * expects it to be
-+	 */
-+	nvkm_wr32(device, base + 0x1c0,
-+		  (hsbl_desc->dmem_load_off | (0x1 << 24)));
-+	for (i = 0; i < data_size / 4; i++)
-+		nvkm_wr32(device, base + 0x1c4, ((u32 *)data)[i]);
-+
-+	/* Copy HS bootloader code to end of IMEM */
-+	blk = (nvkm_rd32(device, base + 0x108) & 0x1ff) - (code_size >> 8);
-+	tag = hsbl_desc->start_tag;
-+	nvkm_wr32(device, base + 0x180, ((blk & 0xff) << 8) | (0x1 << 24));
-+	for (i = 0; i < code_size / 4; i++) {
-+		/* write new tag every 256B */
-+		if ((i & 0x3f) == 0) {
-+			nvkm_wr32(device, base + 0x188, tag & 0xffff);
-+			tag++;
-+		}
-+		nvkm_wr32(device, base + 0x184, ((u32 *)hsbl_code)[i]);
-+	}
-+	nvkm_wr32(device, base + 0x188, 0);
-+}
-+
-+/**
-+ * gm200_secboot_setup_falcon() - set up the secure falcon for secure boot
-+ */
-+static int
-+gm200_secboot_setup_falcon(struct gm200_secboot *gsb)
-+{
-+	struct nvkm_device *device = gsb->base.subdev.device;
-+	struct fw_bin_header *hdr = gsb->hsbl_blob;
-+	struct fw_bl_desc *hsbl_desc = gsb->hsbl_blob + hdr->header_offset;
-+	/* virtual start address for boot vector */
-+	u32 virt_addr = hsbl_desc->start_tag << 8;
-+	const u32 base = gsb->base.base;
-+	const u32 reg_base = base + 0xe00;
-+	u32 inst_loc;
-+	int ret;
-+
-+	ret = nvkm_secboot_falcon_reset(&gsb->base);
-+	if (ret)
-+		return ret;
-+
-+	/* setup apertures - virtual */
-+	nvkm_wr32(device, reg_base + 4 * (FALCON_DMAIDX_UCODE), 0x4);
-+	nvkm_wr32(device, reg_base + 4 * (FALCON_DMAIDX_VIRT), 0x0);
-+	/* setup apertures - physical */
-+	nvkm_wr32(device, reg_base + 4 * (FALCON_DMAIDX_PHYS_VID), 0x4);
-+	nvkm_wr32(device, reg_base + 4 * (FALCON_DMAIDX_PHYS_SYS_COH),
-+		  0x4 | 0x1);
-+	nvkm_wr32(device, reg_base + 4 * (FALCON_DMAIDX_PHYS_SYS_NCOH),
-+		  0x4 | 0x2);
-+
-+	/* Set context */
-+	if (device->fb->ram)
-+		inst_loc = 0x0; /* FB */
-+	else
-+		inst_loc = 0x3; /* Non-coherent sysmem */
-+
-+	nvkm_mask(device, base + 0x048, 0x1, 0x1);
-+	nvkm_wr32(device, base + 0x480,
-+		  ((gsb->inst->addr >> 12) & 0xfffffff) |
-+		  (inst_loc << 28) | (1 << 30));
-+
-+	/* Set boot vector to code's starting virtual address */
-+	nvkm_wr32(device, base + 0x104, virt_addr);
-+
-+	return 0;
-+}
-+
-+/**
-+ * gm200_secboot_run_hs_blob() - run the given high-secure blob
-+ */
-+static int
-+gm200_secboot_run_hs_blob(struct gm200_secboot *gsb, struct nvkm_gpuobj *blob,
-+			  struct gm200_flcn_bl_desc *desc)
-+{
-+	struct nvkm_vma vma;
-+	u64 vma_addr;
-+	const u32 bl_desc_size = gsb->func->bl_desc_size;
-+	u8 bl_desc[bl_desc_size];
-+	int ret;
-+
-+	/* Map the HS firmware so the HS bootloader can see it */
-+	ret = nvkm_gpuobj_map(blob, gsb->vm, NV_MEM_ACCESS_RW, &vma);
-+	if (ret)
-+		return ret;
-+
-+	/* Add the mapping address to the DMA bases */
-+	vma_addr = flcn64_to_u64(desc->code_dma_base) + vma.offset;
-+	desc->code_dma_base.lo = lower_32_bits(vma_addr);
-+	desc->code_dma_base.hi = upper_32_bits(vma_addr);
-+	vma_addr = flcn64_to_u64(desc->data_dma_base) + vma.offset;
-+	desc->data_dma_base.lo = lower_32_bits(vma_addr);
-+	desc->data_dma_base.hi = upper_32_bits(vma_addr);
-+
-+	/* Fixup the BL header */
-+	gsb->func->fixup_bl_desc(desc, &bl_desc);
-+
-+	/* Reset the falcon and make it ready to run the HS bootloader */
-+	ret = gm200_secboot_setup_falcon(gsb);
-+	if (ret)
-+		goto done;
-+
-+	/* Load the HS bootloader into the falcon's IMEM/DMEM */
-+	gm200_secboot_load_hs_bl(gsb, &bl_desc, bl_desc_size);
-+
-+	/* Start the HS bootloader */
-+	ret = nvkm_secboot_falcon_run(&gsb->base);
-+	if (ret)
-+		goto done;
-+
-+done:
-+	/* Restore the original DMA addresses */
-+	vma_addr = flcn64_to_u64(desc->code_dma_base) - vma.offset;
-+	desc->code_dma_base.lo = lower_32_bits(vma_addr);
-+	desc->code_dma_base.hi = upper_32_bits(vma_addr);
-+	vma_addr = flcn64_to_u64(desc->data_dma_base) - vma.offset;
-+	desc->data_dma_base.lo = lower_32_bits(vma_addr);
-+	desc->data_dma_base.hi = upper_32_bits(vma_addr);
-+
-+	/* We don't need the ACR firmware anymore */
-+	nvkm_gpuobj_unmap(&vma);
-+
-+	return ret;
-+}
-+
-+/*
-+ * gm200_secboot_reset() - execute secure boot from the prepared state
-+ *
-+ * Load the HS bootloader and ask the falcon to run it. This will in turn
-+ * load the HS firmware and run it, so once the falcon stops all the managed
-+ * falcons should have their LS firmware loaded and be ready to run.
-+ */
-+int
-+gm200_secboot_reset(struct nvkm_secboot *sb, enum nvkm_secboot_falcon falcon)
-+{
-+	struct gm200_secboot *gsb = gm200_secboot(sb);
-+	int ret;
-+
-+	/*
-+	 * Dummy GM200 implementation: perform secure boot each time we are
-+	 * called on FECS. Since only FECS and GPCCS are managed and started
-+	 * together, this ought to be safe.
-+	 *
-+	 * Once we have proper PMU firmware and support, this will be changed
-+	 * to a proper call to the PMU method.
-+	 */
-+	if (falcon != NVKM_SECBOOT_FALCON_FECS)
-+		goto end;
-+
-+	/* If WPR is set and we have an unload blob, run it to unlock WPR */
-+	if (gsb->acr_unload_blob &&
-+	    gsb->falcon_state[NVKM_SECBOOT_FALCON_FECS] != NON_SECURE) {
-+		ret = gm200_secboot_run_hs_blob(gsb, gsb->acr_unload_blob,
-+						&gsb->acr_unload_bl_desc);
-+		if (ret)
-+			return ret;
++	if ((nvkm_rd32(device, 0x200) & sb->enable_mask) != 0) {
++		/* disable IRQs */
++		nvkm_mask(device, 0x644, sb->irq_mask, 0x0);
++		nvkm_mask(device, 0x640, sb->irq_mask, 0x0);
++		nvkm_wr32(device, sb->base + 0x014, 0xff);
++		/* disable engine */
++		nvkm_mask(device, 0x200, sb->enable_mask, 0x0);
 +	}
 +
-+	/* Reload all managed falcons */
-+	ret = gm200_secboot_run_hs_blob(gsb, gsb->acr_load_blob,
-+					&gsb->acr_load_bl_desc);
-+	if (ret)
-+		return ret;
-+
-+end:
-+	gsb->falcon_state[falcon] = RESET;
 +	return 0;
 +}
 +
 +int
-+gm200_secboot_start(struct nvkm_secboot *sb, enum nvkm_secboot_falcon falcon)
++nvkm_secboot_falcon_reset(struct nvkm_secboot *sb)
 +{
-+	struct gm200_secboot *gsb = gm200_secboot(sb);
-+	int base;
++	int ret;
 +
-+	switch (falcon) {
-+	case NVKM_SECBOOT_FALCON_FECS:
-+		base = 0x409000;
-+		break;
-+	case NVKM_SECBOOT_FALCON_GPCCS:
-+		base = 0x41a000;
-+		break;
-+	default:
-+		nvkm_error(&sb->subdev, "cannot start unhandled falcon!\n");
++	ret = nvkm_secboot_falcon_disable(sb);
++	if (ret)
++		return ret;
++
++	ret = nvkm_secboot_falcon_enable(sb);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++/**
++ * nvkm_secboot_falcon_run - run the falcon that will perform secure boot
++ *
++ * This function is to be called after all chip-specific preparations have
++ * been completed. It will start the falcon to perform secure boot, wait for
++ * it to halt, and report if an error occurred.
++ */
++int
++nvkm_secboot_falcon_run(struct nvkm_secboot *sb)
++{
++	struct nvkm_device *device = sb->subdev.device;
++	int ret;
++
++	/* Start falcon */
++	nvkm_wr32(device, sb->base + 0x100, 0x2);
++
++	/* Wait for falcon halt */
++	ret = nvkm_wait_msec(device, 100, sb->base + 0x100, 0x10, 0x10);
++	if (ret < 0)
++		return ret;
++
++	/* If mailbox register contains an error code, then ACR has failed */
++	ret = nvkm_rd32(device, sb->base + 0x040);
++	if (ret) {
++		nvkm_error(&sb->subdev, "ACR boot failed, ret 0x%08x", ret);
++		falcon_clear_halt_interrupt(device, sb->base);
 +		return -EINVAL;
 +	}
 +
-+	nvkm_wr32(sb->subdev.device, base + 0x130, 0x00000002);
-+	gsb->falcon_state[falcon] = RUNNING;
-+
 +	return 0;
 +}
 +
 +
-+
++/**
++ * nvkm_secboot_reset() - reset specified falcon
++ */
 +int
-+gm200_secboot_init(struct nvkm_secboot *sb)
++nvkm_secboot_reset(struct nvkm_secboot *sb, u32 falcon)
 +{
-+	struct gm200_secboot *gsb = gm200_secboot(sb);
-+	struct nvkm_device *device = sb->subdev.device;
-+	struct nvkm_vm *vm;
-+	const u64 vm_area_len = 600 * 1024;
-+	int ret;
++	/* Unmanaged falcon? */
++	if (!(BIT(falcon) & sb->func->managed_falcons)) {
++		nvkm_error(&sb->subdev, "cannot reset unmanaged falcon!\n");
++		return -EINVAL;
++	}
 +
-+	/* Allocate instance block and VM */
-+	ret = nvkm_gpuobj_new(device, 0x1000, 0, true, NULL, &gsb->inst);
-+	if (ret)
-+		return ret;
-+
-+	ret = nvkm_gpuobj_new(device, 0x8000, 0, true, NULL, &gsb->pgd);
-+	if (ret)
-+		return ret;
-+
-+	ret = nvkm_vm_new(device, 0, vm_area_len, 0, NULL, &vm);
-+	if (ret)
-+		return ret;
-+
-+	atomic_inc(&vm->engref[NVKM_SUBDEV_PMU]);
-+
-+	ret = nvkm_vm_ref(vm, &gsb->vm, gsb->pgd);
-+	nvkm_vm_ref(NULL, &vm, NULL);
-+	if (ret)
-+		return ret;
-+
-+	nvkm_kmap(gsb->inst);
-+	nvkm_wo32(gsb->inst, 0x200, lower_32_bits(gsb->pgd->addr));
-+	nvkm_wo32(gsb->inst, 0x204, upper_32_bits(gsb->pgd->addr));
-+	nvkm_wo32(gsb->inst, 0x208, lower_32_bits(vm_area_len - 1));
-+	nvkm_wo32(gsb->inst, 0x20c, upper_32_bits(vm_area_len - 1));
-+	nvkm_done(gsb->inst);
-+
-+	return 0;
++	return sb->func->reset(sb, falcon);
 +}
 +
++/**
++ * nvkm_secboot_start() - start specified falcon
++ */
 +int
-+gm200_secboot_fini(struct nvkm_secboot *sb, bool suspend)
++nvkm_secboot_start(struct nvkm_secboot *sb, u32 falcon)
 +{
-+	struct gm200_secboot *gsb = gm200_secboot(sb);
++	/* Unmanaged falcon? */
++	if (!(BIT(falcon) & sb->func->managed_falcons)) {
++		nvkm_error(&sb->subdev, "cannot start unmanaged falcon!\n");
++		return -EINVAL;
++	}
++
++	return sb->func->start(sb, falcon);
++}
++
++/**
++ * nvkm_secboot_is_managed() - check whether a given falcon is securely-managed
++ */
++bool
++nvkm_secboot_is_managed(struct nvkm_secboot *secboot,
++			enum nvkm_secboot_falcon fid)
++{
++	if (!secboot)
++		return false;
++
++	return secboot->func->managed_falcons & BIT(fid);
++}
++
++static int
++nvkm_secboot_oneinit(struct nvkm_subdev *subdev)
++{
++	struct nvkm_secboot *sb = nvkm_secboot(subdev);
 +	int ret = 0;
 +
-+	/* Run the unload blob to unprotect the WPR region */
-+	if (gsb->acr_unload_blob &&
-+	    gsb->falcon_state[NVKM_SECBOOT_FALCON_FECS] != NON_SECURE)
-+		ret = gm200_secboot_run_hs_blob(gsb, gsb->acr_unload_blob,
-+						&gsb->acr_unload_bl_desc);
++	/* Call chip-specific init function */
++	if (sb->func->init)
++		ret = sb->func->init(sb);
++	if (ret) {
++		nvkm_error(subdev, "Secure Boot initialization failed: %d\n",
++			   ret);
++		return ret;
++	}
++
++	/*
++	 * Build all blobs - the same blobs can be used to perform secure boot
++	 * multiple times
++	 */
++	if (sb->func->prepare_blobs)
++		ret = sb->func->prepare_blobs(sb);
 +
 +	return ret;
 +}
 +
-+void *
-+gm200_secboot_dtor(struct nvkm_secboot *sb)
++static int
++nvkm_secboot_fini(struct nvkm_subdev *subdev, bool suspend)
 +{
-+	struct gm200_secboot *gsb = gm200_secboot(sb);
++	struct nvkm_secboot *sb = nvkm_secboot(subdev);
++	int ret = 0;
 +
-+	nvkm_gpuobj_del(&gsb->acr_unload_blob);
++	if (sb->func->fini)
++		ret = sb->func->fini(sb, suspend);
 +
-+	kfree(gsb->hsbl_blob);
-+	nvkm_gpuobj_del(&gsb->acr_load_blob);
-+	nvkm_gpuobj_del(&gsb->ls_blob);
-+
-+	nvkm_vm_ref(NULL, &gsb->vm, gsb->pgd);
-+	nvkm_gpuobj_del(&gsb->pgd);
-+	nvkm_gpuobj_del(&gsb->inst);
-+
-+	return gsb;
++	return ret;
 +}
 +
-+
-+static const struct nvkm_secboot_func
-+gm200_secboot = {
-+	.dtor = gm200_secboot_dtor,
-+	.init = gm200_secboot_init,
-+	.fini = gm200_secboot_fini,
-+	.prepare_blobs = gm200_secboot_prepare_blobs,
-+	.reset = gm200_secboot_reset,
-+	.start = gm200_secboot_start,
-+	.managed_falcons = BIT(NVKM_SECBOOT_FALCON_FECS) |
-+			   BIT(NVKM_SECBOOT_FALCON_GPCCS),
-+	.boot_falcon = NVKM_SECBOOT_FALCON_PMU,
-+};
-+
-+/**
-+ * gm200_fixup_bl_desc - just copy the BL descriptor
-+ *
-+ * Use the GM200 descriptor format by default.
-+ */
-+static void
-+gm200_secboot_fixup_bl_desc(const struct gm200_flcn_bl_desc *desc, void *ret)
++static void *
++nvkm_secboot_dtor(struct nvkm_subdev *subdev)
 +{
-+	memcpy(ret, desc, sizeof(*desc));
++	struct nvkm_secboot *sb = nvkm_secboot(subdev);
++	void *ret = NULL;
++
++	if (sb->func->dtor)
++		ret = sb->func->dtor(sb);
++
++	return ret;
 +}
 +
-+static void
-+gm200_secboot_fixup_hs_desc(struct gm200_secboot *gsb,
-+			    struct hsflcn_acr_desc *desc)
-+{
-+	desc->ucode_blob_base = gsb->ls_blob->addr;
-+	desc->ucode_blob_size = gsb->ls_blob->size;
-+
-+	desc->wpr_offset = 0;
-+
-+	/* WPR region information for the HS binary to set up */
-+	desc->wpr_region_id = 1;
-+	desc->regions.no_regions = 1;
-+	desc->regions.region_props[0].region_id = 1;
-+	desc->regions.region_props[0].start_addr = gsb->wpr_addr >> 8;
-+	desc->regions.region_props[0].end_addr =
-+		(gsb->wpr_addr + gsb->wpr_size) >> 8;
-+}
-+
-+static const struct gm200_secboot_func
-+gm200_secboot_func = {
-+	.bl_desc_size = sizeof(struct gm200_flcn_bl_desc),
-+	.fixup_bl_desc = gm200_secboot_fixup_bl_desc,
-+	.fixup_hs_desc = gm200_secboot_fixup_hs_desc,
++static const struct nvkm_subdev_func
++nvkm_secboot = {
++	.oneinit = nvkm_secboot_oneinit,
++	.fini = nvkm_secboot_fini,
++	.dtor = nvkm_secboot_dtor,
 +};
 +
 +int
-+gm200_secboot_new(struct nvkm_device *device, int index,
-+		  struct nvkm_secboot **psb)
++nvkm_secboot_ctor(const struct nvkm_secboot_func *func,
++		  struct nvkm_device *device, int index,
++		  struct nvkm_secboot *sb)
 +{
-+	int ret;
-+	struct gm200_secboot *gsb;
++	unsigned long fid;
 +
-+	gsb = kzalloc(sizeof(*gsb), GFP_KERNEL);
-+	if (!gsb) {
-+		psb = NULL;
-+		return -ENOMEM;
-+	}
-+	*psb = &gsb->base;
++	nvkm_subdev_ctor(&nvkm_secboot, device, index, 0, &sb->subdev);
++	sb->func = func;
 +
-+	ret = nvkm_secboot_ctor(&gm200_secboot, device, index, &gsb->base);
-+	if (ret)
-+		return ret;
++	/* setup the performing falcon's base address and masks */
++	switch (func->boot_falcon) {
++	case NVKM_SECBOOT_FALCON_PMU:
++		sb->base = 0x10a000;
++		sb->irq_mask = 0x1000000;
++		sb->enable_mask = 0x2000;
++		break;
++	default:
++		nvkm_error(&sb->subdev, "invalid secure boot falcon\n");
++		return -EINVAL;
++	};
 +
-+	gsb->func = &gm200_secboot_func;
++	nvkm_debug(&sb->subdev, "securely managed falcons:\n");
++	for_each_set_bit(fid, &sb->func->managed_falcons,
++			 NVKM_SECBOOT_FALCON_END)
++		nvkm_debug(&sb->subdev, "- %s\n", managed_falcons_names[fid]);
 +
 +	return 0;
 +}
-+
-+MODULE_FIRMWARE("nvidia/gm200/acr/bl.bin");
-+MODULE_FIRMWARE("nvidia/gm200/acr/ucode_load.bin");
-+MODULE_FIRMWARE("nvidia/gm200/acr/ucode_unload.bin");
-+MODULE_FIRMWARE("nvidia/gm200/gr/fecs_bl.bin");
-+MODULE_FIRMWARE("nvidia/gm200/gr/fecs_inst.bin");
-+MODULE_FIRMWARE("nvidia/gm200/gr/fecs_data.bin");
-+MODULE_FIRMWARE("nvidia/gm200/gr/fecs_sig.bin");
-+MODULE_FIRMWARE("nvidia/gm200/gr/gpccs_bl.bin");
-+MODULE_FIRMWARE("nvidia/gm200/gr/gpccs_inst.bin");
-+MODULE_FIRMWARE("nvidia/gm200/gr/gpccs_data.bin");
-+MODULE_FIRMWARE("nvidia/gm200/gr/gpccs_sig.bin");
-+MODULE_FIRMWARE("nvidia/gm200/gr/sw_ctx.bin");
-+MODULE_FIRMWARE("nvidia/gm200/gr/sw_nonctx.bin");
-+MODULE_FIRMWARE("nvidia/gm200/gr/sw_bundle_init.bin");
-+MODULE_FIRMWARE("nvidia/gm200/gr/sw_method_init.bin");
-+
-+MODULE_FIRMWARE("nvidia/gm204/acr/bl.bin");
-+MODULE_FIRMWARE("nvidia/gm204/acr/ucode_load.bin");
-+MODULE_FIRMWARE("nvidia/gm204/acr/ucode_unload.bin");
-+MODULE_FIRMWARE("nvidia/gm204/gr/fecs_bl.bin");
-+MODULE_FIRMWARE("nvidia/gm204/gr/fecs_inst.bin");
-+MODULE_FIRMWARE("nvidia/gm204/gr/fecs_data.bin");
-+MODULE_FIRMWARE("nvidia/gm204/gr/fecs_sig.bin");
-+MODULE_FIRMWARE("nvidia/gm204/gr/gpccs_bl.bin");
-+MODULE_FIRMWARE("nvidia/gm204/gr/gpccs_inst.bin");
-+MODULE_FIRMWARE("nvidia/gm204/gr/gpccs_data.bin");
-+MODULE_FIRMWARE("nvidia/gm204/gr/gpccs_sig.bin");
-+MODULE_FIRMWARE("nvidia/gm204/gr/sw_ctx.bin");
-+MODULE_FIRMWARE("nvidia/gm204/gr/sw_nonctx.bin");
-+MODULE_FIRMWARE("nvidia/gm204/gr/sw_bundle_init.bin");
-+MODULE_FIRMWARE("nvidia/gm204/gr/sw_method_init.bin");
-+
-+MODULE_FIRMWARE("nvidia/gm206/acr/bl.bin");
-+MODULE_FIRMWARE("nvidia/gm206/acr/ucode_load.bin");
-+MODULE_FIRMWARE("nvidia/gm206/acr/ucode_unload.bin");
-+MODULE_FIRMWARE("nvidia/gm206/gr/fecs_bl.bin");
-+MODULE_FIRMWARE("nvidia/gm206/gr/fecs_inst.bin");
-+MODULE_FIRMWARE("nvidia/gm206/gr/fecs_data.bin");
-+MODULE_FIRMWARE("nvidia/gm206/gr/fecs_sig.bin");
-+MODULE_FIRMWARE("nvidia/gm206/gr/gpccs_bl.bin");
-+MODULE_FIRMWARE("nvidia/gm206/gr/gpccs_inst.bin");
-+MODULE_FIRMWARE("nvidia/gm206/gr/gpccs_data.bin");
-+MODULE_FIRMWARE("nvidia/gm206/gr/gpccs_sig.bin");
-+MODULE_FIRMWARE("nvidia/gm206/gr/sw_ctx.bin");
-+MODULE_FIRMWARE("nvidia/gm206/gr/sw_nonctx.bin");
-+MODULE_FIRMWARE("nvidia/gm206/gr/sw_bundle_init.bin");
-+MODULE_FIRMWARE("nvidia/gm206/gr/sw_method_init.bin");
 diff --git a/drm/nouveau/nvkm/subdev/secboot/priv.h b/drm/nouveau/nvkm/subdev/secboot/priv.h
-index 44ef4b3d8824..f2b09dee7c5d 100644
---- a/drm/nouveau/nvkm/subdev/secboot/priv.h
+new file mode 100644
+index 000000000000..44ef4b3d8824
+--- /dev/null
 +++ b/drm/nouveau/nvkm/subdev/secboot/priv.h
-@@ -45,4 +45,182 @@ int nvkm_secboot_ctor(const struct nvkm_secboot_func *, struct nvkm_device *,
- int nvkm_secboot_falcon_reset(struct nvkm_secboot *);
- int nvkm_secboot_falcon_run(struct nvkm_secboot *);
- 
-+struct flcn_u64 {
-+	u32 lo;
-+	u32 hi;
-+};
-+static inline u64 flcn64_to_u64(const struct flcn_u64 f)
-+{
-+	return ((u64)f.hi) << 32 | f.lo;
-+}
-+
-+/**
-+ * struct gm200_flcn_bl_desc - DMEM bootloader descriptor
-+ * @signature:		16B signature for secure code. 0s if no secure code
-+ * @ctx_dma:		DMA context to be used by BL while loading code/data
-+ * @code_dma_base:	256B-aligned Physical FB Address where code is located
-+ *			(falcon's $xcbase register)
-+ * @non_sec_code_off:	offset from code_dma_base where the non-secure code is
-+ *                      located. The offset must be multiple of 256 to help perf
-+ * @non_sec_code_size:	the size of the nonSecure code part.
-+ * @sec_code_off:	offset from code_dma_base where the secure code is
-+ *                      located. The offset must be multiple of 256 to help perf
-+ * @sec_code_size:	offset from code_dma_base where the secure code is
-+ *                      located. The offset must be multiple of 256 to help perf
-+ * @code_entry_point:	code entry point which will be invoked by BL after
-+ *                      code is loaded.
-+ * @data_dma_base:	256B aligned Physical FB Address where data is located.
-+ *			(falcon's $xdbase register)
-+ * @data_size:		size of data block. Should be multiple of 256B
+@@ -0,0 +1,48 @@
++/*
++ * Copyright (c) 2015, NVIDIA CORPORATION. All rights reserved.
 + *
-+ * Structure used by the bootloader to load the rest of the code. This has
-+ * to be filled by host and copied into DMEM at offset provided in the
-+ * hsflcn_bl_desc.bl_desc_dmem_load_off.
-+ */
-+struct gm200_flcn_bl_desc {
-+	u32 reserved[4];
-+	u32 signature[4];
-+	u32 ctx_dma;
-+	struct flcn_u64 code_dma_base;
-+	u32 non_sec_code_off;
-+	u32 non_sec_code_size;
-+	u32 sec_code_off;
-+	u32 sec_code_size;
-+	u32 code_entry_point;
-+	struct flcn_u64 data_dma_base;
-+	u32 data_size;
-+};
-+
-+/**
-+ * struct hsflcn_acr_desc - data section of the HS firmware
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the "Software"),
++ * to deal in the Software without restriction, including without limitation
++ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
++ * and/or sell copies of the Software, and to permit persons to whom the
++ * Software is furnished to do so, subject to the following conditions:
 + *
-+ * This header is to be copied at the beginning of DMEM by the HS bootloader.
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
 + *
-+ * @signature:		signature of ACR ucode
-+ * @wpr_region_id:	region ID holding the WPR header and its details
-+ * @wpr_offset:		offset from the WPR region holding the wpr header
-+ * @regions:		region descriptors
-+ * @nonwpr_ucode_blob_size:	size of LS blob
-+ * @nonwpr_ucode_blob_start:	FB location of LS blob is
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
++ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
++ * DEALINGS IN THE SOFTWARE.
 + */
-+struct hsflcn_acr_desc {
-+	union {
-+		u8 reserved_dmem[0x200];
-+		u32 signatures[4];
-+	} ucode_reserved_space;
-+	u32 wpr_region_id;
-+	u32 wpr_offset;
-+	u32 mmu_mem_range;
-+#define FLCN_ACR_MAX_REGIONS 2
-+	struct {
-+		u32 no_regions;
-+		struct {
-+			u32 start_addr;
-+			u32 end_addr;
-+			u32 region_id;
-+			u32 read_mask;
-+			u32 write_mask;
-+			u32 client_mask;
-+		} region_props[FLCN_ACR_MAX_REGIONS];
-+	} regions;
-+	u32 ucode_blob_size;
-+	u64 ucode_blob_base __aligned(8);
-+	struct {
-+		u32 vpr_enabled;
-+		u32 vpr_start;
-+		u32 vpr_end;
-+		u32 hdcp_policies;
-+	} vpr_desc;
++
++#ifndef __NVKM_SECBOOT_PRIV_H__
++#define __NVKM_SECBOOT_PRIV_H__
++
++#include <subdev/secboot.h>
++#include <subdev/mmu.h>
++
++struct nvkm_secboot_func {
++	int (*init)(struct nvkm_secboot *);
++	int (*fini)(struct nvkm_secboot *, bool suspend);
++	void *(*dtor)(struct nvkm_secboot *);
++	int (*prepare_blobs)(struct nvkm_secboot *);
++	int (*reset)(struct nvkm_secboot *, enum nvkm_secboot_falcon);
++	int (*start)(struct nvkm_secboot *, enum nvkm_secboot_falcon);
++
++	/* ID of the falcon that will perform secure boot */
++	enum nvkm_secboot_falcon boot_falcon;
++	/* Bit-mask of IDs of managed falcons */
++	unsigned long managed_falcons;
 +};
 +
-+/**
-+ * Contains the whole secure boot state, allowing it to be performed as needed
-+ * @wpr_addr:		physical address of the WPR region
-+ * @wpr_size:		size in bytes of the WPR region
-+ * @ls_blob:		LS blob of all the LS firmwares, signatures, bootloaders
-+ * @ls_blob_size:	size of the LS blob
-+ * @ls_blob_nb_regions:	number of LS firmwares that will be loaded
-+ * @acr_blob:		HS blob
-+ * @acr_blob_vma:	mapping of the HS blob into the secure falcon's VM
-+ * @acr_bl_desc:	bootloader descriptor of the HS blob
-+ * @hsbl_blob:		HS blob bootloader
-+ * @inst:		instance block for HS falcon
-+ * @pgd:		page directory for the HS falcon
-+ * @vm:			address space used by the HS falcon
-+ * @bl_desc_size:	size of the BL descriptor used by this chip.
-+ * @fixup_bl_desc:	hook that generates the proper BL descriptor format from
-+ *			the generic GM200 format into a data array of size
-+ *			bl_desc_size
-+ */
-+struct gm200_secboot {
-+	struct nvkm_secboot base;
-+	const struct gm200_secboot_func *func;
++int nvkm_secboot_ctor(const struct nvkm_secboot_func *, struct nvkm_device *,
++		      int index, struct nvkm_secboot *);
++int nvkm_secboot_falcon_reset(struct nvkm_secboot *);
++int nvkm_secboot_falcon_run(struct nvkm_secboot *);
 +
-+	/*
-+	 * Address and size of the WPR region. On dGPU this will be the
-+	 * address of the LS blob. On Tegra this is a fixed region set by the
-+	 * bootloader
-+	 */
-+	u64 wpr_addr;
-+	u32 wpr_size;
-+
-+	/*
-+	 * HS FW - lock WPR region (dGPU only) and load LS FWs
-+	 * on Tegra the HS FW copies the LS blob into the fixed WPR instead
-+	 */
-+	struct nvkm_gpuobj *acr_load_blob;
-+	struct gm200_flcn_bl_desc acr_load_bl_desc;
-+
-+	/* HS FW - unlock WPR region (dGPU only) */
-+	struct nvkm_gpuobj *acr_unload_blob;
-+	struct gm200_flcn_bl_desc acr_unload_bl_desc;
-+
-+	/* HS bootloader */
-+	void *hsbl_blob;
-+
-+	/* LS FWs, to be loaded by the HS ACR */
-+	struct nvkm_gpuobj *ls_blob;
-+
-+	/* Instance block & address space used for HS FW execution */
-+	struct nvkm_gpuobj *inst;
-+	struct nvkm_gpuobj *pgd;
-+	struct nvkm_vm *vm;
-+
-+	/* To keep track of the state of all managed falcons */
-+	enum {
-+		/* In non-secure state, no firmware loaded, no privileges*/
-+		NON_SECURE = 0,
-+		/* In low-secure mode and ready to be started */
-+		RESET,
-+		/* In low-secure mode and running */
-+		RUNNING,
-+	} falcon_state[NVKM_SECBOOT_FALCON_END];
-+
-+};
-+#define gm200_secboot(sb) container_of(sb, struct gm200_secboot, base)
-+
-+struct gm200_secboot_func {
-+	/*
-+	 * Size of the bootloader descriptor for this chip. A block of this
-+	 * size is allocated before booting a falcon and the fixup_bl_desc
-+	 * callback is called on it
-+	 */
-+	u32 bl_desc_size;
-+	void (*fixup_bl_desc)(const struct gm200_flcn_bl_desc *, void *);
-+
-+	/*
-+	 * Chip-specific modifications of the HS descriptor can be done here.
-+	 * On dGPU this is used to fill the information about the WPR region
-+	 * we want the HS FW to set up.
-+	 */
-+	void (*fixup_hs_desc)(struct gm200_secboot *, struct hsflcn_acr_desc *);
-+};
-+
-+int gm200_secboot_init(struct nvkm_secboot *);
-+void *gm200_secboot_dtor(struct nvkm_secboot *);
-+int gm200_secboot_reset(struct nvkm_secboot *, u32);
-+int gm200_secboot_start(struct nvkm_secboot *, u32);
-+
-+int gm20x_secboot_prepare_blobs(struct gm200_secboot *);
-+
- #endif
++#endif
 -- 
 2.7.1
