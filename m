@@ -1,93 +1,98 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] regulator: core: fix error path of
- regulator_ena_gpio_free
-Date: Wed, 24 Feb 2016 09:03:27 +0000
-Message-ID: <56CD71DF.8020509@nvidia.com>
-References: <56CC6979.3050305@nvidia.com>
- <1456238830-13733-1-git-send-email-krzysztof.adamski@tieto.com>
- <56CC7863.4080202@nvidia.com> <20160224082602.GC19954@box2.japko.eu>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH] mmc: sdhci-tegra: Set DMA mask
+Date: Wed, 24 Feb 2016 18:11:19 +0900
+Message-ID: <1456305079-27779-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160224082602.GC19954@box2.japko.eu>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Krzysztof Adamski <krzysztof.adamski@tieto.com>
-Cc: Mark Brown <broonie@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-mmc-owner@vger.kernel.org>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+On T210, the sdhci controller can address more than 32 bits of address
+space. Failing to express this fact results in the use of bounce
+buffers and affects performance.
 
-On 24/02/16 08:26, Krzysztof Adamski wrote:
-> On Tue, Feb 23, 2016 at 03:18:59PM +0000, Jon Hunter wrote:
->>
->> On 23/02/16 14:47, Krzysztof Adamski wrote:
->>> Signed-off-by: Krzysztof Adamski <krzysztof.adamski@tieto.com>
->>> Reported-by: Jon Hunter <jonathanh@nvidia.com>
->>
->> Nit ... I think that order of the above should be reversed.
->>
-> 
-> Couldn't find any reference stating proper order of those tags and
-> briefly looking at other commit messages shows this order as quite common.
-> 
->>> ---
->>>  drivers/regulator/core.c | 8 +++-----
->>>  1 file changed, 3 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
->>> index 6ee9ba4..d1e7859 100644
->>> --- a/drivers/regulator/core.c
->>> +++ b/drivers/regulator/core.c
->>> @@ -3919,7 +3919,7 @@ regulator_register(const struct regulator_desc
->>> *regulator_desc,
->>>          if (ret != 0) {
->>>              rdev_err(rdev, "Failed to request enable GPIO%d: %d\n",
->>>                   config->ena_gpio, ret);
->>> -            goto wash;
->>> +            goto clean;
->>>          }
->>>      }
->>>
->>> @@ -3942,7 +3942,7 @@ regulator_register(const struct regulator_desc
->>> *regulator_desc,
->>>
->>>      ret = set_machine_constraints(rdev, constraints);
->>>      if (ret < 0)
->>> -        goto scrub;
->>> +        goto wash;
->>>
->>>      if (init_data && init_data->supply_regulator)
->>>          rdev->supply_name = init_data->supply_regulator;
->>> @@ -3972,10 +3972,8 @@ out:
->>>  unset_supplies:
->>>      unset_regulator_supplies(rdev);
->>>
->>> -scrub:
->>> -    regulator_ena_gpio_free(rdev);
->>> -
->>>  wash:
->>> +    regulator_ena_gpio_free(rdev);
->>>      device_unregister(&rdev->dev);
->>>      /* device core frees rdev */
->>>      rdev = ERR_PTR(ret);
->>
->> What about the case where device_register() fails? I think you still
->> call clean and so you will leak the gpio?
->>
->> Jon
->>
-> True. I couldn't find anything more clever than calling
-> regulator_ena_gpio_free() in two paths like in an upcomming v2. Putting
-> it inside of regulator_dev_release() won't entirely fix the problem
-> either as this won't be called in this particular case
-> (device_register() fail). I personally still prefer calling
-> regulator_ena_gpio_free() inside of regulator_register insted of
-> deffering it to regulator_dev_release() as it seems to be clearer to me.
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+---
+I am pretty sure this one is wrong in some way, but just to get the ball
+rolling as the use of bounce buffers is currently quite heavy on Jetson TX1.
 
-Yes if you were to put regulator_ena_gpio_free() inside the
-regulator_dev_release(), you would still need to call
-regulator_ena_gpio_free() if the device_register fails. I see the way
-you have it now there are two places you call regulator_ena_gpio_free()
-in the error path. It is not a big deal, really either way.
+Thierry, Stephen, could you confirm that I got the DMA masks correctly? I
+am not sure about the actual addressable size on TX1, and also suspect TK1 can
+also address more than 32 bits.
 
-Jon
+Also, I noticed that sdhci_host has a dma_mask member which I thought would do
+the trick but actually doesn't seem to be used for anything useful. Could the
+MMC maintainers comment on this and let me know if the DMA mask setting should
+be moved at the core level instead of being done per-driver?
+
+ drivers/mmc/host/sdhci-tegra.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 83c4bf7bc16c..50a97c5845e8 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -25,6 +25,7 @@
+ #include <linux/mmc/mmc.h>
+ #include <linux/mmc/slot-gpio.h>
+ #include <linux/gpio/consumer.h>
++#include <linux/dma-mapping.h>
+ 
+ #include "sdhci-pltfm.h"
+ 
+@@ -52,6 +53,7 @@
+ struct sdhci_tegra_soc_data {
+ 	const struct sdhci_pltfm_data *pdata;
+ 	u32 nvquirks;
++	u64 dma_mask;
+ };
+ 
+ struct sdhci_tegra {
+@@ -289,6 +291,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra20 = {
+ 	.pdata = &sdhci_tegra20_pdata,
+ 	.nvquirks = NVQUIRK_FORCE_SDHCI_SPEC_200 |
+ 		    NVQUIRK_ENABLE_BLOCK_GAP_DET,
++	.dma_mask = DMA_BIT_MASK(32),
+ };
+ 
+ static const struct sdhci_pltfm_data sdhci_tegra30_pdata = {
+@@ -307,6 +310,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra30 = {
+ 	.nvquirks = NVQUIRK_ENABLE_SDHCI_SPEC_300 |
+ 		    NVQUIRK_ENABLE_SDR50 |
+ 		    NVQUIRK_ENABLE_SDR104,
++	.dma_mask = DMA_BIT_MASK(32),
+ };
+ 
+ static const struct sdhci_ops tegra114_sdhci_ops = {
+@@ -338,6 +342,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra114 = {
+ 	.nvquirks = NVQUIRK_ENABLE_SDR50 |
+ 		    NVQUIRK_ENABLE_DDR50 |
+ 		    NVQUIRK_ENABLE_SDR104,
++	.dma_mask = DMA_BIT_MASK(32),
+ };
+ 
+ static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
+@@ -353,6 +358,7 @@ static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
+ 
+ static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
+ 	.pdata = &sdhci_tegra210_pdata,
++	.dma_mask = DMA_BIT_MASK(34),
+ };
+ 
+ static const struct of_device_id sdhci_tegra_dt_match[] = {
+@@ -380,6 +386,9 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	soc_data = match->data;
+ 
++	if (soc_data->dma_mask)
++		dma_set_mask(&pdev->dev, soc_data->dma_mask);
++
+ 	host = sdhci_pltfm_init(pdev, soc_data->pdata, 0);
+ 	if (IS_ERR(host))
+ 		return PTR_ERR(host);
+-- 
+2.7.1
+
