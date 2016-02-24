@@ -1,67 +1,116 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH] i2c: tegra: don't open code of_device_get_match_data()
-Date: Wed, 24 Feb 2016 11:26:31 +0100
-Message-ID: <20160224102631.GE1391@katana>
-References: <1456063089-3403-1-git-send-email-wsa@the-dreams.de>
- <56CAD248.8060301@nvidia.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="wTWi5aaYRw9ix9vO"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <56CAD248.8060301-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Krzysztof Adamski <krzysztof.adamski@tieto.com>
+Subject: [PATCH v3] regulator: core: fix crash in error path of regulator_register
+Date: Wed, 24 Feb 2016 11:52:50 +0100
+Message-ID: <1456311170-22984-1-git-send-email-krzysztof.adamski@tieto.com>
+References: <56CD7563.2060702@nvidia.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <56CD7563.2060702@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Mark Brown <broonie@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: Krzysztof Adamski <krzysztof.adamski@tieto.com>
 List-Id: linux-tegra@vger.kernel.org
 
+This problem was introduced by:
+commit daad134d6649 ("regulator: core: Request GPIO before creating
+sysfs entries")
 
---wTWi5aaYRw9ix9vO
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The error path was not updated correctly after moving GPIO registration
+code and in case regulator_ena_gpio_free failed, device_unregister() was
+called even though device_register() was not yet called.
+
+This problem breaks the boot at least on all Tegra 32-bit devices. It
+will also crash each device that specifices GPIO that is unavaiable at
+regulator_register call. Here's error log I've got when forced GPIO to
+be invalid:
+
+[    1.116612] usb-otg-vbus-reg: Failed to request enable GPIO10: -22
+[    1.122794] Unable to handle kernel NULL pointer dereference at
+virtual address 00000044
+[    1.130894] pgd = c0004000
+[    1.133598] [00000044] *pgd=00000000
+[    1.137205] Internal error: Oops: 5 [#1] SMP ARM
+
+and here's backtrace from KDB:
+
+Exception stack(0xef11fbd0 to 0xef11fc18)
+fbc0:                                     00000000 c0738a14 00000000 00000000
+fbe0: c0b2a0b0 00000000 00000000 c0738a14 c0b5fdf8 00000001 ef7f6074 ef11fc4c
+fc00: ef11fc50 ef11fc20 c02a8344 c02a7f1c 60000013 ffffffff
+[<c010cee0>] (__dabt_svc) from [<c02a7f1c>] (kernfs_find_ns+0x18/0xf8)
+[<c02a7f1c>] (kernfs_find_ns) from [<c02a8344>] (kernfs_find_and_get_ns+0x40/0x58)
+[<c02a8344>] (kernfs_find_and_get_ns) from [<c02ac4a4>] (sysfs_unmerge_group+0x28/0x68)
+[<c02ac4a4>] (sysfs_unmerge_group) from [<c044389c>] (dpm_sysfs_remove+0x30/0x5c)
+[<c044389c>] (dpm_sysfs_remove) from [<c0436ba8>] (device_del+0x48/0x1f4)
+[<c0436ba8>] (device_del) from [<c0436d84>] (device_unregister+0x30/0x6c)
+[<c0436d84>] (device_unregister) from [<c0403910>] (regulator_register+0x6d0/0xdac)
+[<c0403910>] (regulator_register) from [<c04052d4>] (devm_regulator_register+0x50/0x84)
+[<c04052d4>] (devm_regulator_register) from [<c0406298>] (reg_fixed_voltage_probe+0x25c/0x3c0)
+[<c0406298>] (reg_fixed_voltage_probe) from [<c043d21c>] (platform_drv_probe+0x60/0xb0)
+[<c043d21c>] (platform_drv_probe) from [<c043b078>] (driver_probe_device+0x24c/0x440)
+[<c043b078>] (driver_probe_device) from [<c043b5e8>] (__device_attach_driver+0xc0/0x120)
+[<c043b5e8>] (__device_attach_driver) from [<c043901c>] (bus_for_each_drv+0x6c/0x98)
+[<c043901c>] (bus_for_each_drv) from [<c043ad20>] (__device_attach+0xac/0x138)
+[<c043ad20>] (__device_attach) from [<c043b664>] (device_initial_probe+0x1c/0x20)
+[<c043b664>] (device_initial_probe) from [<c043a074>] (bus_probe_device+0x94/0x9c)
+[<c043a074>] (bus_probe_device) from [<c043a610>] (deferred_probe_work_func+0x80/0xcc)
+[<c043a610>] (deferred_probe_work_func) from [<c01381d0>] (process_one_work+0x158/0x454)
+[<c01381d0>] (process_one_work) from [<c013854c>] (worker_thread+0x38/0x510)
+[<c013854c>] (worker_thread) from [<c013e154>] (kthread+0xe8/0x104)
+[<c013e154>] (kthread) from [<c0108638>] (ret_from_fork+0x14/0x3c)
+
+Signed-off-by: Krzysztof Adamski <krzysztof.adamski@tieto.com>
+Reported-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
+---
+
+Changes compared to v2:
+- Extended commit message
+
+Changes compared to v1:
+- Fixed error path of device_register too, as noticed by Jon
 
 
-> >This change will also make Coverity happy by avoiding a theoretical NULL
-> >pointer dereference; yet another reason is to use the above helper funct=
-ion
-> >to tighten the code and make it more readable.
-> >
-> >Signed-off-by: Wolfram Sang <wolfram-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-> >---
-> >
-> >Compile tested only; HW test would be much appreciated!
->=20
-> Tested on Jetson-TX1.
+ drivers/regulator/core.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Thanks!
-
-> There is some more cleanups needed on this driver i.e. do not support
-> non-DT, move the of_table to down etc. I like to post follow up post after
-> this is applied.
-
-Please do. This is applied now, I'll push out later today.
-
-
---wTWi5aaYRw9ix9vO
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJWzYVXAAoJEBQN5MwUoCm2lgwQAKvRJtLZB/LsFL+QXXJ9DsWi
-FrdMB0tqp6/STMwRmdVz83xRpE4Gem/h3GEy6tYl1rxuROsovtVUuuqKg0nUgeXg
-A8hNvcAm+qdlEmUhCzJqyOr93RYWU2qIEcJIJyYdcGVHR9nES131eeMrD5hXSO2f
-upkiZGSpHtmBJcPPNgwd8uoYsbmsQ6fVbAQUTjJCoM1uHPgRyqRUutSWDz6tg2up
-IN+3tvIVPuMlWHlue/v31BcopHh1JqI2IO9Ami0srRdXkbPQXMp0LvwfAHzLzhoY
-81C/rPRVmZw1/6jOj751PkCws3DOGQmpibgJfYKW0CC9VVcgvickcXz72vXdLk/c
-XCP1PbdScgtIrXPAfKKJZth0BD3RqpWi9k6XCogpwiIeCcqgjJsCgm+Th2VTp5ry
-eCVn5cI4asxP+eGjgTqqvIbF/M3rD5aBdL21RpkgYxv4ovYL5PDgDbTKqXfA1pP+
-uLgC68zVJeP9yFTcN1nkvZNEA4ltEF9W5UAaILHCT57YEEf0XDZ9dV1tfb/gsZF1
-YLJDocapZlDxUPJ3yZMep6OQy1JKDr/SIK9oPwdKN0KGDmDfMBL24toNyuAE/5fF
-olA1vhHBA/A4JYRDX8jLwkvMtcXyWhnGdNOLudOFAy0nTF0ZHVK4S5YVvNkm7mu1
-7f3YF/o1Um+fhPBagkoc
-=he6i
------END PGP SIGNATURE-----
-
---wTWi5aaYRw9ix9vO--
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 6ee9ba4..055f8c1 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -3919,7 +3919,7 @@ regulator_register(const struct regulator_desc *regulator_desc,
+ 		if (ret != 0) {
+ 			rdev_err(rdev, "Failed to request enable GPIO%d: %d\n",
+ 				 config->ena_gpio, ret);
+-			goto wash;
++			goto clean;
+ 		}
+ 	}
+ 
+@@ -3931,7 +3931,7 @@ regulator_register(const struct regulator_desc *regulator_desc,
+ 	ret = device_register(&rdev->dev);
+ 	if (ret != 0) {
+ 		put_device(&rdev->dev);
+-		goto clean;
++		goto wash;
+ 	}
+ 
+ 	dev_set_drvdata(&rdev->dev, rdev);
+@@ -3974,13 +3974,13 @@ unset_supplies:
+ 
+ scrub:
+ 	regulator_ena_gpio_free(rdev);
+-
+-wash:
+ 	device_unregister(&rdev->dev);
+ 	/* device core frees rdev */
+ 	rdev = ERR_PTR(ret);
+ 	goto out;
+ 
++wash:
++	regulator_ena_gpio_free(rdev);
+ clean:
+ 	kfree(rdev);
+ 	rdev = ERR_PTR(ret);
+-- 
+2.1.4
