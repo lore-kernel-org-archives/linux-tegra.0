@@ -1,52 +1,63 @@
 From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] sound/soc/tegra: tegra_max98090: fix hp detect on
- Chromebook 13
-Date: Wed, 24 Feb 2016 12:25:52 +0900
-Message-ID: <20160224032552.GJ18327@sirena.org.uk>
-References: <56CB6624.6030600@wwwdotorg.org>
- <1456247985-5563-1-git-send-email-sctincman@gmail.com>
+Subject: Re: regulator: core: Request GPIO before creating sysfs entries
+Date: Wed, 24 Feb 2016 12:48:55 +0900
+Message-ID: <20160224034855.GP18327@sirena.org.uk>
+References: <1456129440-28143-1-git-send-email-krzysztof.adamski@tieto.com>
+ <56CC5D1E.6010101@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="KE2MUCIIiXMogsnv"
+	protocol="application/pgp-signature"; boundary="+/lp9f/wU8jZ28Xb"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1456247985-5563-1-git-send-email-sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <56CC5D1E.6010101-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: krzysztof.adamski-++hxYGjEMp0AvxtiuMwx3w@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---KE2MUCIIiXMogsnv
+--+/lp9f/wU8jZ28Xb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Tue, Feb 23, 2016 at 10:19:44AM -0700, Jonathan Tinkham wrote:
+On Tue, Feb 23, 2016 at 01:22:38PM +0000, Jon Hunter wrote:
 
-> Jonathan Tinkham (1):
->   sound/soc/tegra: tegra_max98090: Invert headphone by GPIO flag
+> It appears that commit daad134d6649 ("regulator: core: Request GPIO
+> before creating sysfs entries") breaks boot on tegra124-nyan-big in
+> -next today.
 
-I have *repeatedly* reminded you to use subject lines reflecting the
-style for the subsystem and you continue to ignore me.  Please don't
-ignore review comments, people are generally making them for a reason
-and are likely to have the same concerns if issues remain unaddressed.
-Having to repeat the same comments can get repetitive and make people
-question the value of time spent reviewing.  If you disagree with the
-concerns so that the reviewer can understand your decisions.
+Please when reporting problems provide some concrete description of the
+problem you are trying to report, for example a boot log.  This makes it
+much easier to understand the problem you are trying to report.  I see
+there is more information further down the thread but it's good to get
+this stuff in the initial report.
 
---KE2MUCIIiXMogsnv
+> Looking at the change, it does not appear that the exit path has been
+> updated correctly and so if a regulator is deferred then there is a
+> crash in the exit path. I am not sure that there is a simple way to
+
+Again, please be specific about the analysis you have done - in this
+case what specifically is the crash?
+
+> workaround this because of fix from commit 53032dafc6b9 ("regulator
+> core: fix double-free in regulator_register() error path") unless we
+> move regulator_ena_gpio_free() into regulator_dev_release().
+
+That seems like a sensible idea, do you forsee a problem doing that?
+
+--+/lp9f/wU8jZ28Xb
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQEcBAEBCAAGBQJWzSK/AAoJECTWi3JdVIfQ3MQH/isaO3NuP85twRRnceZJSZT8
-/xmDsR2e/UjX0CnJwhHZvY9yQYybV0ng6fQhzJkHwlQ71IRYL5ITu7XPA4tFj6gk
-I55tZi0HTab1MVICm5zs6/VNQvLXNsOe4RtVSJcEJU0bO84J7g9GDx2LW9o59Hhm
-dg0SGJWKdOxeRV2jc2Yy/6wVyipbFs1cm/aLTCLSiYoRmawW9HGId092ygaQhGkD
-CvqGSEekOdAAEeu2dxDxVPB0Jqnxf8RFims4Eo8VeMxOLCuqLBdYVFKhSdJOz2bn
-i4JWyRcOo6YgAxDPnjPfsrb4J9g9QbeOGREYFEY5E++9m1syaL6Fhe4M/XsELG0=
-=S1Rf
+iQEcBAEBCAAGBQJWzSgmAAoJECTWi3JdVIfQOfQH/AjUVB18zoaqwO5dzISlHreh
+zNjmdjkpRjuTqopL1dDy6pEZwxjVLKjmlKR2Wn/ffsMTzWJyKv5i3A31DqHil5AE
+oIBW9Sod8sXDne4WTrID/uaNAwvK84UMAJnBW3KkpQDUc60tsJzq8PJ4wA21SCG9
+TPS+yz3Qp62ot+I52iXYU7rYHoZ4+PSiYdf/lxRATT227fjVRw3vd8ejldwe52Yn
+eTvQRZVhXzMqirJB0fxQ9CiXuuiA7ixurVIJorMoS0sEX+FfG4/Nk6qmKcYA0X1i
+V1PNC2v8nyilGoV07i0DDP7KMepIAc/kgA9q90euTqiSE+opuf0Wmuw8k1653f0=
+=rUha
 -----END PGP SIGNATURE-----
 
---KE2MUCIIiXMogsnv--
+--+/lp9f/wU8jZ28Xb--
