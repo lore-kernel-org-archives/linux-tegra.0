@@ -1,94 +1,47 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] mmc: sdhci-tegra: Set DMA mask
-Date: Thu, 25 Feb 2016 18:49:06 +0900
-Message-ID: <CAAVeFu+oesnB9d3wOo5QmUR++UFekahwjOQWbJw_X=MxaimDHg@mail.gmail.com>
-References: <1456305079-27779-1-git-send-email-acourbot@nvidia.com> <2393024.oLdk3CGNWo@wuerfel>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH v3 2/2] gpu: host1x: Set the DMA mask for host1x devices
+Date: Thu, 25 Feb 2016 19:00:58 +0900
+Message-ID: <1456394458-15759-2-git-send-email-acourbot@nvidia.com>
+References: <1456394458-15759-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <2393024.oLdk3CGNWo@wuerfel>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Ulf Hansson <ulf.hansson@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-mmc <linux-mmc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1456394458-15759-1-git-send-email-acourbot@nvidia.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-tegra@vger.kernel.org, gnurou@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Feb 24, 2016 at 9:37 PM, Arnd Bergmann <arnd@arndb.de> wrote:
-> On Wednesday 24 February 2016 18:11:19 Alexandre Courbot wrote:
->> On T210, the sdhci controller can address more than 32 bits of address
->> space. Failing to express this fact results in the use of bounce
->> buffers and affects performance.
->>
->> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
->> ---
->> I am pretty sure this one is wrong in some way, but just to get the ball
->> rolling as the use of bounce buffers is currently quite heavy on Jetson TX1.
->>
->> Thierry, Stephen, could you confirm that I got the DMA masks correctly? I
->> am not sure about the actual addressable size on TX1, and also suspect TK1 can
->> also address more than 32 bits.
->>
->> Also, I noticed that sdhci_host has a dma_mask member which I thought would do
->> the trick but actually doesn't seem to be used for anything useful. Could the
->> MMC maintainers comment on this and let me know if the DMA mask setting should
->> be moved at the core level instead of being done per-driver?
->
-> So the question is what the DMA capabilities of the sdhci device are.
->
-> Usually I think SDHCI should just support a 64-bit mask, and you can
-> request that in the driver, but the platform might reject it, e.g.
-> if the parent bus is lacking a dma-ranges property.
->
-> On 32-bit platforms with no RAM above the 4GB boundary, setting a 64-bit
-> mask typically succeeds, because there is no harm in using it.
->
-> You should only set a 34-bit mask in the specific case that:
->
-> * SDHCI reports that it supports 64-bit addressing
-> * The parent bus supports 64-bit addressing and correctly sets up
->   its dma-ranges property
-> * The device is connected incorrectly to the parent bus and
->   any access above 0x400000000ull fail to end up in the correct
->   memory for this particular device, but not other devices on the
->   same bus.
-
-Thanks for the clarification. The hardware is definitely capable of >
-32 bits addressing (how much more exactly, I still have to figure out
-as Stephen pointed out). Parent bus is the platform bus (root node in
-the DT) so I'm not too sure how the dma-ranges property should be used
-in that case (as of today we have no dma-ranges property at all in
-Tegra DTs). We could maybe specify it at the root level (I see at
-least one arm device doing that), but then we need to make sure every
-platform device supports the same range.
-
-Actually even if we specify a dma-ranges on the parent DT node, the
-DMA range will still be limited to 32 bits because of the following
-code in of_dma_configure():
-
-    /*
-     * Set default coherent_dma_mask to 32 bit.  Drivers are expected to
-     * setup the correct supported mask.
-     */
-    if (!dev->coherent_dma_mask)
-        dev->coherent_dma_mask = DMA_BIT_MASK(32);
-
-    /*
-     * Set it to coherent_dma_mask by default if the architecture
-     * code has not set it.
-     */
-    if (!dev->dma_mask)
-        dev->dma_mask = &dev->coherent_dma_mask;
-
-    ....
-    /* gets dma-ranges into dma_addr and size */
-    ....
-
-
-    *dev->dma_mask = min((*dev->dma_mask),
-                 DMA_BIT_MASK(ilog2(dma_addr + size)));
-
-So unless the DMA mask is set on the device before of_dma_configure()
-is called, the min() statement will choose the 32 bits mask that has
-been previously set. So IIUC in any case, the driver will need to call
-dma_set_mask()
-
-Can I have your thoughts on this? Am I missing something?
+VGhlIGRlZmF1bHQgRE1BIG1hc2sgY292ZXJzIGEgMzIgYml0cyBhZGRyZXNzIHJhbmdlLCBidXQg
+ZGV2aWNlcyBjYW4KYWRkcmVzcyBtb3JlIHRoYW4gdGhhdC4gU2V0IHRoZSBETUEgbWFzayB0byB0
+aGUgYWN0dWFsIGFkZHJlc3NhYmxlIHJhbmdlCnRvIGF2b2lkIHRoZSB1c2Ugb2YgdW5uZWVkZWQg
+Ym91bmNlIGJ1ZmZlcnMuCgpTaWduZWQtb2ZmLWJ5OiBBbGV4YW5kcmUgQ291cmJvdCA8YWNvdXJi
+b3RAbnZpZGlhLmNvbT4KLS0tCkNoYW5nZXMgc2luY2UgdjE6Ci0gc2V0IHRoZSBtYXNrIGF0IHRo
+ZSBidXMgbGV2ZWwgc28gb2ZfZG1hX2NvbmZpZ3VyZSgpIGRvZXMgdGhlIHJpZ2h0IHRoaW5nCgog
+ZHJpdmVycy9ncHUvaG9zdDF4L2J1cy5jIHwgMyArKy0KIDEgZmlsZSBjaGFuZ2VkLCAyIGluc2Vy
+dGlvbnMoKyksIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9ob3N0MXgv
+YnVzLmMgYi9kcml2ZXJzL2dwdS9ob3N0MXgvYnVzLmMKaW5kZXggYzI3ODU4YWUwNTUyLi5lMDRj
+NzExNGY5NzYgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2hvc3QxeC9idXMuYworKysgYi9kcml2
+ZXJzL2dwdS9ob3N0MXgvYnVzLmMKQEAgLTE5LDYgKzE5LDcgQEAKICNpbmNsdWRlIDxsaW51eC9v
+Zi5oPgogI2luY2x1ZGUgPGxpbnV4L3NsYWIuaD4KICNpbmNsdWRlIDxsaW51eC9vZl9kZXZpY2Uu
+aD4KKyNpbmNsdWRlIDxsaW51eC9kbWEtbWFwcGluZy5oPgogCiAjaW5jbHVkZSAiYnVzLmgiCiAj
+aW5jbHVkZSAiZGV2LmgiCkBAIC0zOTQsNyArMzk1LDcgQEAgc3RhdGljIGludCBob3N0MXhfZGV2
+aWNlX2FkZChzdHJ1Y3QgaG9zdDF4ICpob3N0MXgsCiAJSU5JVF9MSVNUX0hFQUQoJmRldmljZS0+
+bGlzdCk7CiAJZGV2aWNlLT5kcml2ZXIgPSBkcml2ZXI7CiAKLQlkZXZpY2UtPmRldi5jb2hlcmVu
+dF9kbWFfbWFzayA9IGhvc3QxeC0+ZGV2LT5jb2hlcmVudF9kbWFfbWFzazsKKwlkZXZpY2UtPmRl
+di5jb2hlcmVudF9kbWFfbWFzayA9IERNQV9CSVRfTUFTSygzNCk7CiAJZGV2aWNlLT5kZXYuZG1h
+X21hc2sgPSAmZGV2aWNlLT5kZXYuY29oZXJlbnRfZG1hX21hc2s7CiAJZGV2X3NldF9uYW1lKCZk
+ZXZpY2UtPmRldiwgIiVzIiwgZHJpdmVyLT5kcml2ZXIubmFtZSk7CiAJb2ZfZG1hX2NvbmZpZ3Vy
+ZSgmZGV2aWNlLT5kZXYsIGhvc3QxeC0+ZGV2LT5vZl9ub2RlKTsKLS0gCjIuNy4xCgpfX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGlu
+ZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVl
+ZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
