@@ -1,49 +1,47 @@
-From: Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] regulator: core: fix error path of
- regulator_ena_gpio_free
-Date: Thu, 25 Feb 2016 10:46:29 +0900
-Message-ID: <20160225014629.GU18327@sirena.org.uk>
-References: <56CC7863.4080202@nvidia.com>
- <1456302479-14045-1-git-send-email-krzysztof.adamski@tieto.com>
- <56CD75D3.3070805@nvidia.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2] instmem/gk20a: set DMA mask early
+Date: Thu, 25 Feb 2016 15:08:42 +0900
+Message-ID: <1456380522-17520-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="8q6ApRMttMB4WTI6"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <56CD75D3.3070805@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Krzysztof Adamski <krzysztof.adamski@tieto.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
---8q6ApRMttMB4WTI6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Wed, Feb 24, 2016 at 09:20:19AM +0000, Jon Hunter wrote:
-
-> Make sure you tag the patch as V2, etc, so that Mark knows which version
-> to pick up.
-
-Versioning is nice but not totally essential.  What really helps is not
-burying new patches in the middle of threads, especially if it's a
-multi-patch series (not the case here but people do do that).
-
---8q6ApRMttMB4WTI6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJWzlyAAAoJECTWi3JdVIfQfKEH/3asolHtdsUAgjvGjRDFvfeY
-Abn6AI8K40rUWUUUiv2IlyH+8TVTTcRYUsnjijrM5RUFQDOkyyhPL70JmVofHCeM
-Eg7BDVdUzNR+ZExmUgxhhghWLxHM2Hvlg/M7YyGjeyolsPplqdOmZmCijMfmfy4B
-MialzV07Zj82nijEHL0dsg+5FthTxzNZTIqrCfaAZG+AdbNqk+YcMDXBJNt/0ndk
-eQzcu3fE0ByYrAocdIaKyxoZ+NdgeIIaMm5tvWp6wXSGlAzLIUX8BEDNsoxGQjkH
-DYItjUdtFnypUghyPTfbzcjkqP4QTr+PNkBIY7cQ4TEWqFSvVuHN8RDeX3uf6tg=
-=XV9a
------END PGP SIGNATURE-----
-
---8q6ApRMttMB4WTI6--
+RE1BIG1hc2sgaXMgdHlwaWNhbGx5IHNldCBpbiBub3V2ZWF1X3R0bV9pbml0KCksIGJ1dCB0aGlz
+IGZ1bmN0aW9uIGlzCmNhbGxlZCBsYXRlIGR1cmluZyBpbml0aWFsaXphdGlvbiBhbmQgR0syMEEn
+cyBpbnN0bWVtIHdpbGwgaGF2ZSBjYWxsZWQKRE1BIGZ1bmN0aW9ucyBiZWZvcmUgdGhpcyBoYXBw
+ZW5zLgoKSGF2aW5nIGEgd3JvbmdseSBzZXQgRE1BIG1hc2sgY2FuIHJlc3VsdCBpbiB0aGUgdXNl
+IG9mIHVubmVlZGVkIGJvdW5jZQpidWZmZXJzLiBTZXQgaXQgZWFybHkgdG8gYXZvaWQgdGhpcy4K
+ClNpZ25lZC1vZmYtYnk6IEFsZXhhbmRyZSBDb3VyYm90IDxhY291cmJvdEBudmlkaWEuY29tPgot
+LS0KQ2hhbmdlcyBzaW5jZSB2MToKLSBTZXQgbWFzayBpbiB0ZWdyYS5jIGluc3RlYWQgb2YgaW5z
+dG1lbSwgYXMgc3VnZ2VzdGVkIGJ5IEJlbi4KCiBkcm0vbm91dmVhdS9udmttL2VuZ2luZS9kZXZp
+Y2UvdGVncmEuYyB8IDkgKysrKysrKysrCiAxIGZpbGUgY2hhbmdlZCwgOSBpbnNlcnRpb25zKCsp
+CgpkaWZmIC0tZ2l0IGEvZHJtL25vdXZlYXUvbnZrbS9lbmdpbmUvZGV2aWNlL3RlZ3JhLmMgYi9k
+cm0vbm91dmVhdS9udmttL2VuZ2luZS9kZXZpY2UvdGVncmEuYwppbmRleCA2ZDg5NDE2ZjBiYzEu
+LmUxY2Q2NjVhZWUyYyAxMDA2NDQKLS0tIGEvZHJtL25vdXZlYXUvbnZrbS9lbmdpbmUvZGV2aWNl
+L3RlZ3JhLmMKKysrIGIvZHJtL25vdXZlYXUvbnZrbS9lbmdpbmUvZGV2aWNlL3RlZ3JhLmMKQEAg
+LTI3Miw2ICsyNzIsMTUgQEAgbnZrbV9kZXZpY2VfdGVncmFfbmV3KGNvbnN0IHN0cnVjdCBudmtt
+X2RldmljZV90ZWdyYV9mdW5jICpmdW5jLAogCWlmIChJU19FUlIodGRldi0+Y2xrX3B3cikpCiAJ
+CXJldHVybiBQVFJfRVJSKHRkZXYtPmNsa19wd3IpOwogCisJLyoqCisJICogVGhlIElPTU1VIGJp
+dCBkZWZpbmVzIHRoZSB1cHBlciBsaW1pdCBvZiB0aGUgR1BVLWFkZHJlc3NhYmxlIHNwYWNlLgor
+CSAqIFRoaXMgd2lsbCBiZSByZWZpbmVkIGluIG5vdXZlYXVfdHRtX2luaXQgYnV0IHdlIG5lZWQg
+dG8gZG8gaXQgZWFybHkKKwkgKiBmb3IgaW5zdG1lbSB0byBiZWhhdmUgcHJvcGVybHkKKwkgKi8K
+KwlyZXQgPSBkbWFfc2V0X21hc2soJnBkZXYtPmRldiwgRE1BX0JJVF9NQVNLKHRkZXYtPmZ1bmMt
+PmlvbW11X2JpdCkpOworCWlmIChyZXQpCisJCXJldHVybiByZXQ7CisKIAludmttX2RldmljZV90
+ZWdyYV9wcm9iZV9pb21tdSh0ZGV2KTsKIAogCXJldCA9IG52a21fZGV2aWNlX3RlZ3JhX3Bvd2Vy
+X3VwKHRkZXYpOwotLSAKMi43LjEKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCk5vdXZlYXUgbWFpbGluZyBsaXN0Ck5vdXZlYXVAbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vbm91
+dmVhdQo=
