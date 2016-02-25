@@ -1,33 +1,49 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] drm/nouveau: platform: Fix deferred probe
-Date: Thu, 25 Feb 2016 08:37:37 +0900
-Message-ID: <CAAVeFuKRrJmPrTbtA9N=xV1bLyCEUeUzR_JpVua8Ju7Jh=mbrg@mail.gmail.com>
-References: <1456335283-22097-1-git-send-email-thierry.reding@gmail.com>
+From: Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] regulator: core: fix error path of
+ regulator_ena_gpio_free
+Date: Thu, 25 Feb 2016 10:46:29 +0900
+Message-ID: <20160225014629.GU18327@sirena.org.uk>
+References: <56CC7863.4080202@nvidia.com>
+ <1456302479-14045-1-git-send-email-krzysztof.adamski@tieto.com>
+ <56CD75D3.3070805@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1456335283-22097-1-git-send-email-thierry.reding@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Nicolas Chauvet <kwizart@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Ben Skeggs <bskeggs@redhat.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="8q6ApRMttMB4WTI6"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <56CD75D3.3070805@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Krzysztof Adamski <krzysztof.adamski@tieto.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVGh1LCBGZWIgMjUsIDIwMTYgYXQgMjozNCBBTSwgVGhpZXJyeSBSZWRpbmcKPHRoaWVycnku
-cmVkaW5nQGdtYWlsLmNvbT4gd3JvdGU6Cj4gRnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdA
-bnZpZGlhLmNvbT4KPgo+IFRoZSBlcnJvciBjbGVhbnVwIHBhdGhzIGFyZW4ndCBxdWl0ZSBjb3Jy
-ZWN0IGFuZCB3aWxsIGNyYXNoIHVwb24KPiBkZWZlcnJlZCBwcm9iZS4KPgo+IENjOiBzdGFibGVA
-dmdlci5rZXJuZWwub3JnICMgdjQuMysKPiBTaWduZWQtb2ZmLWJ5OiBUaGllcnJ5IFJlZGluZyA8
-dHJlZGluZ0BudmlkaWEuY29tPgoKUmV2aWV3ZWQtYnk6IEFsZXhhbmRyZSBDb3VyYm90IDxhY291
-cmJvdEBudmlkaWEuY29tPgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWwK
+
+--8q6ApRMttMB4WTI6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Feb 24, 2016 at 09:20:19AM +0000, Jon Hunter wrote:
+
+> Make sure you tag the patch as V2, etc, so that Mark knows which version
+> to pick up.
+
+Versioning is nice but not totally essential.  What really helps is not
+burying new patches in the middle of threads, especially if it's a
+multi-patch series (not the case here but people do do that).
+
+--8q6ApRMttMB4WTI6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJWzlyAAAoJECTWi3JdVIfQfKEH/3asolHtdsUAgjvGjRDFvfeY
+Abn6AI8K40rUWUUUiv2IlyH+8TVTTcRYUsnjijrM5RUFQDOkyyhPL70JmVofHCeM
+Eg7BDVdUzNR+ZExmUgxhhghWLxHM2Hvlg/M7YyGjeyolsPplqdOmZmCijMfmfy4B
+MialzV07Zj82nijEHL0dsg+5FthTxzNZTIqrCfaAZG+AdbNqk+YcMDXBJNt/0ndk
+eQzcu3fE0ByYrAocdIaKyxoZ+NdgeIIaMm5tvWp6wXSGlAzLIUX8BEDNsoxGQjkH
+DYItjUdtFnypUghyPTfbzcjkqP4QTr+PNkBIY7cQ4TEWqFSvVuHN8RDeX3uf6tg=
+=XV9a
+-----END PGP SIGNATURE-----
+
+--8q6ApRMttMB4WTI6--
