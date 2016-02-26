@@ -1,91 +1,114 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: Re: [PATCH] mmc: tegra: Disable UHS-I modes for tegra114
-Date: Fri, 26 Feb 2016 18:47:24 +0100
-Message-ID: <1456508844.28237.1.camel@lynxeye.de>
-References: <1455806924-14967-1-git-send-email-jonathanh@nvidia.com>
-	 <1456479257-12147-1-git-send-email-jonathanh@nvidia.com>
+From: Mathieu Poirier <mathieu.poirier-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V2] soc: tegra: pmc: Ensure GPU partition can be toggled
+ on/off by PMC
+Date: Fri, 26 Feb 2016 10:47:40 -0700
+Message-ID: <CANLsYkzSfXUcK37thfu1gggQU4R_w-r_RkVDJN2+BC7ZtjZ2RA@mail.gmail.com>
+References: <1455213806-21871-9-git-send-email-jonathanh@nvidia.com>
+	<1455539891-6508-1-git-send-email-jonathanh@nvidia.com>
+	<CANLsYkwCx13YszW-67F2_KDwxgpzwKQft4eOpJvVM1nkNXGpXQ@mail.gmail.com>
+	<56D0809E.6060400@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1456479257-12147-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <56D0809E.6060400-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Am Freitag, den 26.02.2016, 09:34 +0000 schrieb Jon Hunter:
-> SD card support for Tegra114 started failing after commit
-> a8e326a911d3
-> ("mmc: tegra: implement module external clock change") was merged.
-> This
-> commit was part of a series to enable UHS-I modes for Tegra. To
-> workaround this problem for now, disable UHS-I modes for Tegra114 by
-> separating the soc data structures for Tegra114 and Tegra124 so that
-> UHS-I is still enabled for Tegra124 but not Tegra114.
->=20
-> Fixes: a8e326a911d3 ("mmc: tegra: implement module external clock
-> change")
->=20
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 26 February 2016 at 09:43, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>
+> On 26/02/16 16:06, Mathieu Poirier wrote:
+>> On 15 February 2016 at 05:38, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>> For Tegra124 and Tegra210, the GPU partition cannot be toggled on and
+>>> off via the APBDEV_PMC_PWRGATE_TOGGLE_0 register. For these devices, the
+>>> partition is simply powered up and down via an external regulator.
+>>> For these devices, there is a separate register for controlling the
+>>> signal clamping of the partition and this is described in the PMC SoC
+>>> data by the "has_gpu_clamp" variable. Use this variable to determine if
+>>> the GPU partition can be controlled via the APBDEV_PMC_PWRGATE_TOGGLE_0
+>>> register and ensure that no one can incorrectly try to toggle the GPU
+>>> partition via the APBDEV_PMC_PWRGATE_TOGGLE_0 register.
+>>>
+>>> Furthermore, we cannot use the APBDEV_PMC_PWRGATE_STATUS_0 register to
+>>> determine if the GPU partition is powered for Tegra124 and Tegra210.
+>>> However, if the GPU partition is powered, then the signal clamp for the
+>>> GPU partition should be removed and so use bit 0 of the
+>>> APBDEV_PMC_GPU_RG_CNTRL_0 register to determine if the clamp has been
+>>> removed (bit[0] = 0) and the GPU partition is powered.
+>>>
+>>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> ---
+>>>
+>>> Changes v1-v2:
+>>> - Drop the has_gpu_toggle and use has_gpu_clamps as it is not necessary
+>>>   to have two variables.
+>>> - Correct the register used for reading the clamps status for the GPU
+>>>   partition
+>>>
+>>>  drivers/soc/tegra/pmc.c | 8 +++++++-
+>>>  1 file changed, 7 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>>> index 8e358dbffaed..e4fd40fa27e8 100644
+>>> --- a/drivers/soc/tegra/pmc.c
+>>> +++ b/drivers/soc/tegra/pmc.c
+>>> @@ -176,7 +176,10 @@ static void tegra_pmc_writel(u32 value, unsigned long offset)
+>>>
+>>>  static inline bool tegra_powergate_state(int id)
+>>>  {
+>>> -       return (tegra_pmc_readl(PWRGATE_STATUS) & BIT(id)) != 0;
+>>> +       if (id == TEGRA_POWERGATE_3D && pmc->soc->has_gpu_clamps)
+>>> +               return (tegra_pmc_readl(GPU_RG_CNTRL) & 0x1) == 0;
+>>> +       else
+>>> +               return (tegra_pmc_readl(PWRGATE_STATUS) & BIT(id)) != 0;
+>>
+>> From what I deduce power is on if bit 0 of register GPU_RG_CNTRL is
+>> equal to 0.  In the other case power is on if bit 'id' of register
+>> PWRGATE_STATUS is equal to 1.  If I'm right this is highly confusing
+>> and some comments  would be appreciated.  Changing
+>>
+>> "return (tegra_pmc_readl(PWRGATE_STATUS) & BIT(id)) != 0;"
+>>
+>> for
+>>
+>> "return (tegra_pmc_readl(PWRGATE_STATUS) & BIT(id)) == 1;"
+>
+> Yes, it is a bit confusing, but the above does not work. You are
+> comparing a bit with 1. What you need is:
+>
+> "return (tegra_pmc_readl(PWRGATE_STATUS) & BIT(id)) == BIT(id);"
 
-This looks good to me now,
+Ah yes, of course.
 
-Reviewed-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+>
+>> would also help.
+>>
+>>>  }
+>>>
+>>>  static inline bool tegra_powergate_is_valid(int id)
+>>> @@ -191,6 +194,9 @@ static inline bool tegra_powergate_is_valid(int id)
+>>>   */
+>>>  static int tegra_powergate_set(unsigned int id, bool new_state)
+>>>  {
+>>> +       if (id == TEGRA_POWERGATE_3D && pmc->soc->has_gpu_clamps)
+>>> +               return -EINVAL;
+>>> +
+>>>         mutex_lock(&pmc->powergates_lock);
+>>>
+>>>         if (tegra_powergate_state(id) == new_state) {
+>>> --
+>>> 2.1.4
+>>
+>> With the above in mind:
+>>
+>> Reviewed-by: Mathieu Poirier <mathieu.poirier-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+>
+> Thanks. Thierry has queued this version and so if you feel strongly we
+> could update in a follow-up.
 
-> ---
-> =C2=A0drivers/mmc/host/sdhci-tegra.c | 12 +++++++++++-
-> =C2=A01 file changed, 11 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-
-> tegra.c
-> index 83c4bf7bc16c..212d51f08939 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -147,10 +147,16 @@ static void tegra_sdhci_reset(struct sdhci_host
-> *host, u8 mask)
-> =C2=A0	/* Advertise UHS modes as supported by host */
-> =C2=A0	if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR50)
-> =C2=A0		misc_ctrl |=3D SDHCI_MISC_CTRL_ENABLE_SDR50;
-> +	else
-> +		misc_ctrl &=3D ~SDHCI_MISC_CTRL_ENABLE_SDR50;
-> =C2=A0	if (soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
-> =C2=A0		misc_ctrl |=3D SDHCI_MISC_CTRL_ENABLE_DDR50;
-> +	else
-> +		misc_ctrl &=3D ~SDHCI_MISC_CTRL_ENABLE_DDR50;
-> =C2=A0	if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR104)
-> =C2=A0		misc_ctrl |=3D SDHCI_MISC_CTRL_ENABLE_SDR104;
-> +	else
-> +		misc_ctrl &=3D ~SDHCI_MISC_CTRL_ENABLE_SDR104;
-> =C2=A0	sdhci_writel(host, misc_ctrl, SDHCI_TEGRA_VENDOR_MISC_CTRL);
-> =C2=A0
-> =C2=A0	clk_ctrl =3D sdhci_readl(host, SDHCI_TEGRA_VENDOR_CLOCK_CTRL);
-> @@ -335,6 +341,10 @@ static const struct sdhci_pltfm_data
-> sdhci_tegra114_pdata =3D {
-> =C2=A0
-> =C2=A0static const struct sdhci_tegra_soc_data soc_data_tegra114 =3D =
-{
-> =C2=A0	.pdata =3D &sdhci_tegra114_pdata,
-> +};
-> +
-> +static const struct sdhci_tegra_soc_data soc_data_tegra124 =3D {
-> +	.pdata =3D &sdhci_tegra114_pdata,
-> =C2=A0	.nvquirks =3D NVQUIRK_ENABLE_SDR50 |
-> =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0NVQUIRK_ENABLE_DDR50 |
-> =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0NVQUIRK_ENABLE_SDR104,
-> @@ -357,7 +367,7 @@ static const struct sdhci_tegra_soc_data
-> soc_data_tegra210 =3D {
-> =C2=A0
-> =C2=A0static const struct of_device_id sdhci_tegra_dt_match[] =3D {
-> =C2=A0	{ .compatible =3D "nvidia,tegra210-sdhci", .data =3D
-> &soc_data_tegra210 },
-> -	{ .compatible =3D "nvidia,tegra124-sdhci", .data =3D
-> &soc_data_tegra114 },
-> +	{ .compatible =3D "nvidia,tegra124-sdhci", .data =3D
-> &soc_data_tegra124 },
-> =C2=A0	{ .compatible =3D "nvidia,tegra114-sdhci", .data =3D
-> &soc_data_tegra114 },
-> =C2=A0	{ .compatible =3D "nvidia,tegra30-sdhci", .data =3D
-> &soc_data_tegra30 },
-> =C2=A0	{ .compatible =3D "nvidia,tegra20-sdhci", .data =3D
-> &soc_data_tegra20 },
+The decision is for Thierry to make - I'm fine with the current code.
+
+>
+> Jon
+>
