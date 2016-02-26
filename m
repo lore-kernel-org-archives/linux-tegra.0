@@ -1,76 +1,71 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH] mmc: sdhci-tegra: Set DMA mask
-Date: Fri, 26 Feb 2016 16:24:34 +0900
-Message-ID: <CAAVeFuLL-SP3_x2GC4UWcH4KEVora6r-e5xmORQdVfjcjfWDOw@mail.gmail.com>
-References: <1456305079-27779-1-git-send-email-acourbot@nvidia.com>
- <2393024.oLdk3CGNWo@wuerfel> <CAAVeFu+oesnB9d3wOo5QmUR++UFekahwjOQWbJw_X=MxaimDHg@mail.gmail.com>
- <29473125.UhEGU5khX5@wuerfel>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] mmc: tegra: Disable UHS-I modes for tegra114
+Date: Fri, 26 Feb 2016 08:58:10 +0000
+Message-ID: <56D013A2.7080909@nvidia.com>
+References: <1455806924-14967-1-git-send-email-jonathanh@nvidia.com>
+ <CAPDyKFowEH=4PU1ErNxMA0=SiDT1Q86H0SfMuiH5jA+H7mvquA@mail.gmail.com>
+ <56CECC9E.9010501@nvidia.com> <1456428771.7433.4.camel@lynxeye.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <29473125.UhEGU5khX5@wuerfel>
+In-Reply-To: <1456428771.7433.4.camel@lynxeye.de>
 Sender: linux-mmc-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Alexandre Courbot <acourbot@nvidia.com>, Ulf Hansson <ulf.hansson@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-mmc <linux-mmc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To: Lucas Stach <dev@lynxeye.de>, Ulf Hansson <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-mmc <linux-mmc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Feb 25, 2016 at 11:52 PM, Arnd Bergmann <arnd@arndb.de> wrote:
->> Actually even if we specify a dma-ranges on the parent DT node, the
->> DMA range will still be limited to 32 bits because of the following
->> code in of_dma_configure():
->>
->>     /*
->>      * Set default coherent_dma_mask to 32 bit.  Drivers are expected to
->>      * setup the correct supported mask.
->>      */
->>     if (!dev->coherent_dma_mask)
->>         dev->coherent_dma_mask = DMA_BIT_MASK(32);
->>
->>     /*
->>      * Set it to coherent_dma_mask by default if the architecture
->>      * code has not set it.
->>      */
->>     if (!dev->dma_mask)
->>         dev->dma_mask = &dev->coherent_dma_mask;
->>
->>     ....
->>     /* gets dma-ranges into dma_addr and size */
->>     ....
->>
->>
->>     *dev->dma_mask = min((*dev->dma_mask),
->>                  DMA_BIT_MASK(ilog2(dma_addr + size)));
->>
->> So unless the DMA mask is set on the device before of_dma_configure()
->> is called, the min() statement will choose the 32 bits mask that has
->> been previously set. So IIUC in any case, the driver will need to call
->> dma_set_mask()
->
-> Yes, the driver definitely has to call dma_set_mask(), the property of
-> the parent bus is used to make that fail when the bus doesn't support
-> it.
 
-And that's where things seem to stop working: the driver's probe
-function is invoked by the platform bus, *after* of_dma_configure() is
-called. So unless I am missing something there is no way for the
-driver to set the DMA mask in such a way that of_dma_configure() can
-see it and do the right thing.
+On 25/02/16 19:32, Lucas Stach wrote:
+> Am Donnerstag, den 25.02.2016, 09:42 +0000 schrieb Jon Hunter:
+>> Hi Adrian, Lucas,
+>>
+>> On 18/02/16 16:07, Ulf Hansson wrote:
+>>> +Adrian
+>>>
+>>> On 18 February 2016 at 15:48, Jon Hunter <jonathanh@nvidia.com>
+>>> wrote:
+>>>> SD card support for Tegra114 started failing after commit
+>>>> a8e326a911d3
+>>>> ("mmc: tegra: implement module external clock change") was
+>>>> merged. This
+>>>> commit was part of a series to enable UHS-I modes for Tegra. To
+>>>> workaround this problem for now, only disable UHS-I modes for
+>>>> Tegra114
+>>>> and in order to do this it is necessary to revert changes from
+>>>> commits
+>>>> a8e326a911d3 ("mmc: tegra: implement module external clock
+>>>> change"),
+>>>> c3c2384c3ac0 ("mmc: tegra: implement UHS tuning"), 7ad2ed1dfcbe
+>>>> ("mmc: tegra: enable UHS-I modes") that impact Tegra114. To do
+>>>> this so
+>>>> that UHS-I mode can be disabled for Tegra114 but not for Tegra124
+>>>> separate the platform data, soc data and sdhci-ops so they are no
+>>>> longer
+>>>> common to both Tegra114 and Tegra124.
+>>>>
+>>>> Fixes: a8e326a911d3 ("mmc: tegra: implement module external clock
+>>>> change")
+>>>>
+>>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>>>
+>>> This looks okay to me, although I need and ack from Adrian to pick
+>>> up
+>>> this for fixes. Adrian did recently step in as the maintainer for
+>>> sdhci.
+>>
+>> Are you guys ok with this? It would be good to get your ACK's so that
+>> Ulf can pick it up.
+>>
+> I don't see why you need to duplicate the tegra114_sdhci_ops.
+> Together with the first hunk of this patch, having soc_data_tegra114
+> not set any UHS-I capabilities (quirks) should be enough to disable
+> UHS-I modes on Tegra114. The core should never call any of the UHS-I
+> related functions from tegra114_sdhci_ops in that case.
 
-In other words, most of the DMA mask logic in of_dma_configure()
-doesn't seem to have any effect (and a 32 bits mask will be set), at
-least on the platform bus.
+Ok, I will give that a try. I was not sure if I needed to completely
+remove all the changes or not and so I wanted to make it equivalent to
+what we had before to ensure there would be no other problems crop up. I
+will re-work and test and hopefully we can get this sorted.
 
->> Can I have your thoughts on this? Am I missing something?
->
-> One point: I think the dma_set_mask() probably should be in the
-> generic part of the sdhci driver, not the tegra specific portion.
-
-Ok, but then how does the generic part of the driver knows which DMA
-mask applies to the device?
-
-> I also forget how this really needs to interact with swiotlb. I know
-> we have discussed this a couple of times, but the result currently
-> is lost to me.
-> Maybe the answer was that if swiotlb or iommu are enabled, then
-> dma_set_mask() should always succeed, but the mask should not actually
-> be updated?
+Jon
