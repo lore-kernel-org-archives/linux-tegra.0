@@ -1,174 +1,30 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: [PATCH v2] ARM: dts: tegra: correct Beaver pinmux
-Date: Fri, 26 Feb 2016 20:18:30 +0100
-Message-ID: <1456514310-27605-1-git-send-email-dev@lynxeye.de>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v2] ARM: dts: tegra: correct Beaver pinmux
+Date: Fri, 26 Feb 2016 12:28:08 -0700
+Message-ID: <56D0A748.6060104@wwwdotorg.org>
+References: <1456514310-27605-1-git-send-email-dev@lynxeye.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1456514310-27605-1-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Update pinmux to get rid of invalid uses of the rsvd1 function, which lead
-to the mux settings on those pins to not be applied.
+On 02/26/2016 12:18 PM, Lucas Stach wrote:
+> Update pinmux to get rid of invalid uses of the rsvd1 function, which lead
+> to the mux settings on those pins to not be applied.
+>
+> Also add correct drive settings, derived from the Tegra3 TRM, for SDIO1,
+> which makes some more SD-cards work.
 
-Also add correct drive settings, derived from the Tegra3 TRM, for SDIO1,
-which makes some more SD-cards work.
+I replied the following to V1, which I don't see resolved:
 
-Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
----
- arch/arm/boot/dts/tegra30-beaver.dts | 39 ++++++++++++++++++++++--------------
- 1 file changed, 24 insertions(+), 15 deletions(-)
+ > I think it would be worth mentioning in the commit description where 
+ > this[1] data came from.
 
-diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
-index 3dede39..1daed40 100644
---- a/arch/arm/boot/dts/tegra30-beaver.dts
-+++ b/arch/arm/boot/dts/tegra30-beaver.dts
-@@ -255,14 +255,14 @@
- 			};
- 			sdmmc3_dat6_pd3 {
- 				nvidia,pins = "sdmmc3_dat6_pd3";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "spdif";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
- 			};
- 			sdmmc3_dat7_pd4 {
- 				nvidia,pins = "sdmmc3_dat7_pd4";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "spdif";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-@@ -276,14 +276,14 @@
- 			};
- 			vi_vsync_pd6 {
- 				nvidia,pins = "vi_vsync_pd6";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "ddr";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
- 			};
- 			vi_hsync_pd7 {
- 				nvidia,pins = "vi_hsync_pd7";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "ddr";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-@@ -801,7 +801,7 @@
- 			};
- 			hdmi_int_pn7 {
- 				nvidia,pins = "hdmi_int_pn7";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "hdmi";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-@@ -836,7 +836,7 @@
- 			};
- 			ulpi_data3_po4 {
- 				nvidia,pins = "ulpi_data3_po4";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "uarta";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-@@ -1102,21 +1102,21 @@
- 			};
- 			vi_d10_pt2 {
- 				nvidia,pins = "vi_d10_pt2";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "ddr";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
- 			};
- 			vi_d11_pt3 {
- 				nvidia,pins = "vi_d11_pt3";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "ddr";
- 				nvidia,pull = <TEGRA_PIN_PULL_UP>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
- 			};
- 			vi_d0_pt4 {
- 				nvidia,pins = "vi_d0_pt4";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "ddr";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-@@ -1146,7 +1146,7 @@
- 			};
- 			pu0 {
- 				nvidia,pins = "pu0";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "owr";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-@@ -1167,7 +1167,7 @@
- 			};
- 			pu3 {
- 				nvidia,pins = "pu3";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "pwm0";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-@@ -1188,7 +1188,7 @@
- 			};
- 			pu6 {
- 				nvidia,pins = "pu6";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "pwm3";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-@@ -1216,7 +1216,7 @@
- 			};
- 			pv3 {
- 				nvidia,pins = "pv3";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "clk_12m_out";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-@@ -1505,7 +1505,7 @@
- 			};
- 			pbb0 {
- 				nvidia,pins = "pbb0";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "i2s4";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-@@ -1570,7 +1570,7 @@
- 			};
- 			pcc1 {
- 				nvidia,pins = "pcc1";
--				nvidia,function = "rsvd1";
-+				nvidia,function = "i2s4";
- 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-@@ -1718,6 +1718,15 @@
- 				nvidia,slew-rate-rising = <1>;
- 				nvidia,slew-rate-falling = <1>;
- 			};
-+			sdio1 {
-+				nvidia,pins = "drive_sdio1";
-+				nvidia,high-speed-mode = <TEGRA_PIN_DISABLE>;
-+				nvidia,schmitt = <TEGRA_PIN_DISABLE>;
-+				nvidia,pull-down-strength = <46>;
-+				nvidia,pull-up-strength = <42>;
-+				nvidia,slew-rate-rising = <1>;
-+				nvidia,slew-rate-falling = <1>;
-+			};
- 			gpv {
- 				nvidia,pins = "drive_gpv";
- 				nvidia,pull-up-strength = <16>;
--- 
-2.5.0
+[1] that was in response to the addition of the sdio1 drive settings.
+
+Also, what is different in V2; is this actually V1 REPOST?
