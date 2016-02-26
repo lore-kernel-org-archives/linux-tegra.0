@@ -1,131 +1,78 @@
-From: Efrem Mc <efremmc2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [GIT,PULL] Signed firmware for NVIDIA Maxwell 2 GPUs
-Date: Fri, 26 Feb 2016 10:08:30 -0500
-Message-ID: <CAEhOZrfrn=XgqPQF8cEPS_uZ1tCPoMZD6LANgSECb8j-pu09hA@mail.gmail.com>
-References: <56CC2CAF.8080102@nvidia.com>
- <20160223211136.GB19431@merlin.infradead.org>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V6 00/10] Add generic PM domain support for Tegra
+Date: Fri, 26 Feb 2016 15:48:34 +0000
+Message-ID: <1456501724-28477-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0535068103=="
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <20160223211136.GB19431-J9mDPBBB+i8CUdFEqe4BF2D2FQJk+8+b@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Kyle McMartin <kyle-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
---===============0535068103==
-Content-Type: multipart/alternative; boundary=001a11434d8c067d64052cadac3d
+Adds generic PM domain support for Tegra SoCs but this series only
+enables support for it on Tegra 64-bit devices. There is no reason why
+this cannot be enable for Tegra 32-bit devices, but to keep the patch
+series to a minimum only 64-bit devices are enabled so far.
 
---001a11434d8c067d64052cadac3d
-Content-Type: text/plain; charset=UTF-8
+This series has been boot tested on Tegra210 as well as various 32-bit
+Tegra platforms.
 
-Thanks for the update.  Are you updating nouveau for GK208 and GM206?
+Summary of changes since V5 [2]:
+- Split series into 2 series, separating PMC fixes [3] from genpd changes
+- This series is based upon fixes series (which is now in -next)
+- Added patch to fix removal of genpd subdomain
+- Added patch to get last genpd that was added
+- Fixed locking in function to remove genpd
+- Updated Tegra PMC driver to ensure power-domains cannot be controlled
+  by both legacy Tegra APIs and generic PM domain framework
+- Removed powergate list from Tegra PMC driver and updated removal of
+  power domains to use new genpd APIs.
 
-Regards,
+Summary of changes since V4 [1]:
+- Re-worked fix to handle base address on probe failure
+- Added patch to lock around simultaneuous accesses to PMC registers
+- Added patch to change powergate and rail IDs to unsigned type
+- Added patch to fix testing of powergate state
+- Updated patch to check for valid powergates to use a bitmap
+- Updated Tegra DT PMC bindings per Rob H's feedback
+- Updated Tegra power domains binding per Thierry's feedback
+- Updated Tegra generic power domain support per Thierry's feedback
 
-On Tue, Feb 23, 2016 at 4:11 PM, Kyle McMartin <kyle-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org> wrote:
+Summary of changes since V3 [0]:
+- Dropped tegra124 support for now
+- Removed MC flush support per feedback from Thierry
+- Cleaned up the PMC changes per feedback from Thierry
+- Added support for tegra210
 
-> On Tue, Feb 23, 2016 at 06:55:59PM +0900, Alexandre Courbot wrote:
-> > Hi linux-firmware maintainers,
-> >
-> > The following changes since commit
-> f66eccaab7d605d433cb82e389441b21ec99b40f:
-> >
-> >   Update Intel OPA hfi1 firmware (2016-02-15 08:34:16 -0500)
-> >
-> > are available in the git repository at:
-> >
-> >   https://github.com/Gnurou/linux-firmware.git secboot
-> >
-> > for you to fetch changes up to 8d1fd61a3723ab8cb6b7bfeb8be38e16282cc1ed:
-> >
-> >   nvidia: Add GM20B signed firmware (2016-02-23 18:48:41 +0900)
-> >
-> > These two patches add the NVIDIA-released firmwares necessary to enable
-> > rendering on desktop and mobile Maxwell 2 GPUs. Kernel support is ready
-> to
-> > be merged once this pull request is officially accepted.
-> >
->
-> Pulled. Thanks Alexandre.
->
-> regards, --Kyle
-> _______________________________________________
-> Nouveau mailing list
-> Nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-> https://lists.freedesktop.org/mailman/listinfo/nouveau
->
+[0] http://comments.gmane.org/gmane.linux.ports.tegra/22944
+[1] http://marc.info/?l=linux-tegra&m=144924153600529&w=2
+[2] http://marc.info/?l=linux-tegra&m=145399885003830&w=2
+[3] http://marc.info/?l=linux-tegra&m=145521381331144&w=2
 
---001a11434d8c067d64052cadac3d
-Content-Type: text/html; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Jon Hunter (10):
+  PM / Domains: Fix removal of a subdomain
+  PM / Domains: Add function to get the last domain added
+  PM / Domains: Add function to remove a pm-domain
+  Documentation: DT: bindings: Update NVIDIA PMC for Tegra
+  Documentation: DT: bindings: Add power domain info for NVIDIA PMC
+  soc: tegra: pmc: Wait for powergate state to change
+  soc: tegra: pmc: Add generic PM domain support
+  soc: tegra: pmc: Move powergate definitions to dt-bindings
+  ARM64: tegra: select PM_GENERIC_DOMAINS
+  ARM64: tegra: Add audio PM domain device node for Tegra210
 
-<div dir=3D"ltr"><div>Thanks for the update.=C2=A0 Are you updating nouveau=
- for GK208 and GM206?<br><br></div>Regards,<br></div><div class=3D"gmail_ex=
-tra"><br><div class=3D"gmail_quote">On Tue, Feb 23, 2016 at 4:11 PM, Kyle M=
-cMartin <span dir=3D"ltr">&lt;<a href=3D"mailto:kyle-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org" target=
-=3D"_blank">kyle-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org</a>&gt;</span> wrote:<br><blockquote class=
-=3D"gmail_quote" style=3D"margin:0 0 0 .8ex;border-left:1px #ccc solid;padd=
-ing-left:1ex"><span class=3D"">On Tue, Feb 23, 2016 at 06:55:59PM +0900, Al=
-exandre Courbot wrote:<br>
-&gt; Hi linux-firmware maintainers,<br>
-&gt;<br>
-&gt; The following changes since commit f66eccaab7d605d433cb82e389441b21ec9=
-9b40f:<br>
-&gt;<br>
-&gt;=C2=A0 =C2=A0Update Intel OPA hfi1 firmware (2016-02-15 08:34:16 -0500)=
-<br>
-&gt;<br>
-&gt; are available in the git repository at:<br>
-&gt;<br>
-&gt;=C2=A0 =C2=A0<a href=3D"https://github.com/Gnurou/linux-firmware.git" r=
-el=3D"noreferrer" target=3D"_blank">https://github.com/Gnurou/linux-firmwar=
-e.git</a> secboot<br>
-&gt;<br>
-&gt; for you to fetch changes up to 8d1fd61a3723ab8cb6b7bfeb8be38e16282cc1e=
-d:<br>
-&gt;<br>
-&gt;=C2=A0 =C2=A0nvidia: Add GM20B signed firmware (2016-02-23 18:48:41 +09=
-00)<br>
-&gt;<br>
-&gt; These two patches add the NVIDIA-released firmwares necessary to enabl=
-e<br>
-&gt; rendering on desktop and mobile Maxwell 2 GPUs. Kernel support is read=
-y to<br>
-&gt; be merged once this pull request is officially accepted.<br>
-&gt;<br>
-<br>
-</span>Pulled. Thanks Alexandre.<br>
-<br>
-regards, --Kyle<br>
-<div class=3D"HOEnZb"><div class=3D"h5">___________________________________=
-____________<br>
-Nouveau mailing list<br>
-<a href=3D"mailto:Nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org">Nouveau-PD4FTy7X32lNgt0PjOBp9/rsn8yoX9R0@public.gmane.org=
-org</a><br>
-<a href=3D"https://lists.freedesktop.org/mailman/listinfo/nouveau" rel=3D"n=
-oreferrer" target=3D"_blank">https://lists.freedesktop.org/mailman/listinfo=
-/nouveau</a><br>
-</div></div></blockquote></div><br></div>
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      |  73 ++-
+ arch/arm/mach-tegra/platsmp.c                      |  16 +-
+ arch/arm64/Kconfig.platforms                       |   2 +
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  14 +-
+ drivers/base/power/domain.c                        |  58 +-
+ drivers/soc/tegra/pmc.c                            | 594 ++++++++++++++++++---
+ include/dt-bindings/power/tegra-powergate.h        |  88 +++
+ include/linux/pm_domain.h                          |  12 +
+ include/soc/tegra/pmc.h                            |  38 +-
+ 9 files changed, 776 insertions(+), 119 deletions(-)
+ create mode 100644 include/dt-bindings/power/tegra-powergate.h
 
---001a11434d8c067d64052cadac3d--
-
---===============0535068103==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KTm91dmVhdSBt
-YWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1Cg==
-
---===============0535068103==--
+-- 
+2.1.4
