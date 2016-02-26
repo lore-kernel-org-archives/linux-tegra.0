@@ -1,148 +1,174 @@
-From: Andrew Bresticker <abrestic-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3] ARM64: tegra: Add support for Google Pixel C
-Date: Fri, 26 Feb 2016 10:04:22 -0800
-Message-ID: <CAL1qeaEYTnm-MYYE+bGCHJ72Hb3t3cZ-7uo1Sbny9XB-3pqRfw@mail.gmail.com>
-References: <1454949199-27050-1-git-send-email-jonathanh@nvidia.com>
-	<1455020809-17531-1-git-send-email-jonathanh@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+Subject: [PATCH v2] ARM: dts: tegra: correct Beaver pinmux
+Date: Fri, 26 Feb 2016 20:18:30 +0100
+Message-ID: <1456514310-27605-1-git-send-email-dev@lynxeye.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1455020809-17531-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Olof Johansson <olofj-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Jon,
+Update pinmux to get rid of invalid uses of the rsvd1 function, which lead
+to the mux settings on those pins to not be applied.
 
-On Tue, Feb 9, 2016 at 4:26 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> Add initial device-tree support for Google Pixel C (a.k.a. Smaug) based
-> upon Tegra210 SoC with 3 GiB of LPDDR4 RAM.
->
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Also add correct drive settings, derived from the Tegra3 TRM, for SDIO1,
+which makes some more SD-cards work.
 
-Reviewed-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Tested-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra30-beaver.dts | 39 ++++++++++++++++++++++--------------
+ 1 file changed, 24 insertions(+), 15 deletions(-)
 
-> ---
->
-> Changes v2 -> v3:
-> - Added PSCI information to enable all 4 CPUs on boot
->
-> Changes v1 -> v2:
-> - Removed console boot parameter and added stdout-path
-> - Added 32k clock for PMC
->
->  arch/arm64/boot/dts/nvidia/Makefile           |  1 +
->  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 83 +++++++++++++++++++++++++++
->  2 files changed, 84 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
->
-> diff --git a/arch/arm64/boot/dts/nvidia/Makefile b/arch/arm64/boot/dts/nvidia/Makefile
-> index a7e865da1005..0f7cdf3e05c1 100644
-> --- a/arch/arm64/boot/dts/nvidia/Makefile
-> +++ b/arch/arm64/boot/dts/nvidia/Makefile
-> @@ -2,6 +2,7 @@ dtb-$(CONFIG_ARCH_TEGRA_132_SOC) += tegra132-norrin.dtb
->  dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2371-0000.dtb
->  dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2371-2180.dtb
->  dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2571.dtb
-> +dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-smaug.dtb
->
->  always         := $(dtb-y)
->  clean-files    := *.dtb
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> new file mode 100644
-> index 000000000000..750e85c45135
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> @@ -0,0 +1,83 @@
-> +/dts-v1/;
-> +
-> +#include "tegra210.dtsi"
-> +
-> +/ {
-> +       model = "Google Pixel C";
-> +       compatible = "google,smaug-rev8", "google,smaug-rev7",
-> +                    "google,smaug-rev6", "google,smaug-rev5",
-> +                    "google,smaug-rev4", "google,smaug-rev3",
-> +                    "google,smaug-rev1", "google,smaug", "nvidia,tegra210";
-> +
-> +       aliases {
-> +               serial0 = &uarta;
-> +       };
-> +
-> +       chosen {
-> +               bootargs = "earlycon";
-> +               stdout-path = "serial0:115200n8";
-> +       };
-> +
-> +       memory {
-> +               device_type = "memory";
-> +               reg = <0x0 0x80000000 0x0 0xc0000000>;
-> +       };
-> +
-> +       serial@0,70006000 {
-> +               status = "okay";
-> +       };
-> +
-> +       pmc@0,7000e400 {
-> +               nvidia,invert-interrupt;
-> +               nvidia,suspend-mode = <0>;
-> +               nvidia,cpu-pwr-good-time = <0>;
-> +               nvidia,cpu-pwr-off-time = <0>;
-> +               nvidia,core-pwr-good-time = <12000 6000>;
-> +               nvidia,core-pwr-off-time = <39053>;
-> +               nvidia,core-power-req-active-high;
-> +               nvidia,sys-clock-req-active-high;
-> +               status = "okay";
-> +       };
-> +
-> +       sdhci@0,700b0600 {
-> +               bus-width = <8>;
-> +               non-removable;
-> +               status = "okay";
-> +       };
-> +
-> +       clocks {
-> +               compatible = "simple-bus";
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +
-> +               clk32k_in: clock@0 {
-> +                       compatible = "fixed-clock";
-> +                       reg = <0>;
-> +                       #clock-cells = <0>;
-> +                       clock-frequency = <32768>;
-> +               };
-> +       };
-> +
-> +       cpus {
-> +               cpu@0 {
-> +                       enable-method = "psci";
-> +               };
-> +
-> +               cpu@1 {
-> +                       enable-method = "psci";
-> +               };
-> +
-> +               cpu@2 {
-> +                       enable-method = "psci";
-> +               };
-> +
-> +               cpu@3 {
-> +                       enable-method = "psci";
-> +               };
-> +       };
-> +
-> +       psci {
-> +               compatible = "arm,psci-1.0";
-> +               method = "smc";
-> +       };
-> +};
-> --
-> 2.1.4
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
+index 3dede39..1daed40 100644
+--- a/arch/arm/boot/dts/tegra30-beaver.dts
++++ b/arch/arm/boot/dts/tegra30-beaver.dts
+@@ -255,14 +255,14 @@
+ 			};
+ 			sdmmc3_dat6_pd3 {
+ 				nvidia,pins = "sdmmc3_dat6_pd3";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "spdif";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+ 			};
+ 			sdmmc3_dat7_pd4 {
+ 				nvidia,pins = "sdmmc3_dat7_pd4";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "spdif";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+@@ -276,14 +276,14 @@
+ 			};
+ 			vi_vsync_pd6 {
+ 				nvidia,pins = "vi_vsync_pd6";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "ddr";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+ 			};
+ 			vi_hsync_pd7 {
+ 				nvidia,pins = "vi_hsync_pd7";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "ddr";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+@@ -801,7 +801,7 @@
+ 			};
+ 			hdmi_int_pn7 {
+ 				nvidia,pins = "hdmi_int_pn7";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "hdmi";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+@@ -836,7 +836,7 @@
+ 			};
+ 			ulpi_data3_po4 {
+ 				nvidia,pins = "ulpi_data3_po4";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "uarta";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+@@ -1102,21 +1102,21 @@
+ 			};
+ 			vi_d10_pt2 {
+ 				nvidia,pins = "vi_d10_pt2";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "ddr";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+ 			};
+ 			vi_d11_pt3 {
+ 				nvidia,pins = "vi_d11_pt3";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "ddr";
+ 				nvidia,pull = <TEGRA_PIN_PULL_UP>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+ 			};
+ 			vi_d0_pt4 {
+ 				nvidia,pins = "vi_d0_pt4";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "ddr";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+@@ -1146,7 +1146,7 @@
+ 			};
+ 			pu0 {
+ 				nvidia,pins = "pu0";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "owr";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+@@ -1167,7 +1167,7 @@
+ 			};
+ 			pu3 {
+ 				nvidia,pins = "pu3";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "pwm0";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+@@ -1188,7 +1188,7 @@
+ 			};
+ 			pu6 {
+ 				nvidia,pins = "pu6";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "pwm3";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+@@ -1216,7 +1216,7 @@
+ 			};
+ 			pv3 {
+ 				nvidia,pins = "pv3";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "clk_12m_out";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+@@ -1505,7 +1505,7 @@
+ 			};
+ 			pbb0 {
+ 				nvidia,pins = "pbb0";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "i2s4";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+@@ -1570,7 +1570,7 @@
+ 			};
+ 			pcc1 {
+ 				nvidia,pins = "pcc1";
+-				nvidia,function = "rsvd1";
++				nvidia,function = "i2s4";
+ 				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+@@ -1718,6 +1718,15 @@
+ 				nvidia,slew-rate-rising = <1>;
+ 				nvidia,slew-rate-falling = <1>;
+ 			};
++			sdio1 {
++				nvidia,pins = "drive_sdio1";
++				nvidia,high-speed-mode = <TEGRA_PIN_DISABLE>;
++				nvidia,schmitt = <TEGRA_PIN_DISABLE>;
++				nvidia,pull-down-strength = <46>;
++				nvidia,pull-up-strength = <42>;
++				nvidia,slew-rate-rising = <1>;
++				nvidia,slew-rate-falling = <1>;
++			};
+ 			gpv {
+ 				nvidia,pins = "drive_gpv";
+ 				nvidia,pull-up-strength = <16>;
+-- 
+2.5.0
