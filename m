@@ -1,74 +1,76 @@
-From: Srikar Srimath Tirumala <srikars-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC][PATCH] thermal: add sysfs_notify on some attributes
-Date: Thu, 25 Feb 2016 16:24:45 -0800
-Message-ID: <56CF9B4D.4020704@nvidia.com>
-References: <1456287118-32510-1-git-send-email-srikars@nvidia.com>
- <1456345360.3860.9.camel@intel.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] mmc: sdhci-tegra: Set DMA mask
+Date: Fri, 26 Feb 2016 16:24:34 +0900
+Message-ID: <CAAVeFuLL-SP3_x2GC4UWcH4KEVora6r-e5xmORQdVfjcjfWDOw@mail.gmail.com>
+References: <1456305079-27779-1-git-send-email-acourbot@nvidia.com>
+ <2393024.oLdk3CGNWo@wuerfel> <CAAVeFu+oesnB9d3wOo5QmUR++UFekahwjOQWbJw_X=MxaimDHg@mail.gmail.com>
+ <29473125.UhEGU5khX5@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1456345360.3860.9.camel-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Pandruvada, Srinivas" <srinivas.pandruvada-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: mlongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <29473125.UhEGU5khX5@wuerfel>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Alexandre Courbot <acourbot@nvidia.com>, Ulf Hansson <ulf.hansson@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-mmc <linux-mmc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/24/2016 12:24 PM, Pandruvada, Srinivas wrote:
-> On Tue, 2016-02-23 at 20:11 -0800, Srikar Srimath Tirumala wrote:
->> Add a sysfs_notify on thermal_zone*/temp and cooling_device*/
->> cur_state whenever a passive or critical trip is triggered.
+On Thu, Feb 25, 2016 at 11:52 PM, Arnd Bergmann <arnd@arndb.de> wrote:
+>> Actually even if we specify a dma-ranges on the parent DT node, the
+>> DMA range will still be limited to 32 bits because of the following
+>> code in of_dma_configure():
 >>
->> This change allows usermode apps to register itself to get notified,
->> when certain thermal conditions occur and reduce their workload.
->> This workload throttling can reduce\prevent throttling of hardware
->> clocks while allowing some other critical apps to run longer
->> reliably.
->> Signed-off-by: Srikar Srimath Tirumala <srikars-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>   drivers/thermal/thermal_core.c | 3 +++
->>   1 file changed, 3 insertions(+)
+>>     /*
+>>      * Set default coherent_dma_mask to 32 bit.  Drivers are expected to
+>>      * setup the correct supported mask.
+>>      */
+>>     if (!dev->coherent_dma_mask)
+>>         dev->coherent_dma_mask = DMA_BIT_MASK(32);
 >>
->> diff --git a/drivers/thermal/thermal_core.c
->> b/drivers/thermal/thermal_core.c
->> index a0a8fd1..d8d257d 100644
->> --- a/drivers/thermal/thermal_core.c
->> +++ b/drivers/thermal/thermal_core.c
->> @@ -567,6 +567,8 @@ void thermal_zone_device_update(struct
->> thermal_zone_device *tz)
+>>     /*
+>>      * Set it to coherent_dma_mask by default if the architecture
+>>      * code has not set it.
+>>      */
+>>     if (!dev->dma_mask)
+>>         dev->dma_mask = &dev->coherent_dma_mask;
 >>
->>   	for (count = 0; count < tz->trips; count++)
->>   		handle_thermal_trip(tz, count);
->> +
->> +	sysfs_notify(&tz->device.kobj, NULL, "temp");
-> When user space governor is used this will result in two notifications
-> to user space.
-Agreed, when the first trip point is violated it would result in two
-notifications. But this change was also supposed to address the cooling
-cur state change that results from governor throttling after a trip
-point is violated. I realize this intent was not communicated well in
-the commit message, Patch V2 will fix it.
-> Also you want when a trip is violated. For some driver there will be
-> too many calls from irq thread, so you may want in handle_thermal_trip
-> when a trip is violated.
-Agreed, Patch V2 will do the notify only once per thermal zone and only
-when there is a trip violation.
+>>     ....
+>>     /* gets dma-ranges into dma_addr and size */
+>>     ....
+>>
+>>
+>>     *dev->dma_mask = min((*dev->dma_mask),
+>>                  DMA_BIT_MASK(ilog2(dma_addr + size)));
+>>
+>> So unless the DMA mask is set on the device before of_dma_configure()
+>> is called, the min() statement will choose the 32 bits mask that has
+>> been previously set. So IIUC in any case, the driver will need to call
+>> dma_set_mask()
 >
-> Thanks,
-> Srinivas
->>   }
->>   EXPORT_SYMBOL_GPL(thermal_zone_device_update);
->>
->> @@ -1638,6 +1640,7 @@ void thermal_cdev_update(struct
->> thermal_cooling_device *cdev)
->>   	cdev->updated = true;
->>   	trace_cdev_update(cdev, target);
->>   	dev_dbg(&cdev->device, "set to state %lu\n", target);
->> +	sysfs_notify(&cdev->device.kobj, NULL, "cur_state");
->>   }
->>   EXPORT_SYMBOL(thermal_cdev_update);
->>
-Thanks for your inputs Srinivas, please take a look at Patch V2 that
-addresses your comments.
-Best Regards
-Srikar
+> Yes, the driver definitely has to call dma_set_mask(), the property of
+> the parent bus is used to make that fail when the bus doesn't support
+> it.
+
+And that's where things seem to stop working: the driver's probe
+function is invoked by the platform bus, *after* of_dma_configure() is
+called. So unless I am missing something there is no way for the
+driver to set the DMA mask in such a way that of_dma_configure() can
+see it and do the right thing.
+
+In other words, most of the DMA mask logic in of_dma_configure()
+doesn't seem to have any effect (and a 32 bits mask will be set), at
+least on the platform bus.
+
+>> Can I have your thoughts on this? Am I missing something?
+>
+> One point: I think the dma_set_mask() probably should be in the
+> generic part of the sdhci driver, not the tegra specific portion.
+
+Ok, but then how does the generic part of the driver knows which DMA
+mask applies to the device?
+
+> I also forget how this really needs to interact with swiotlb. I know
+> we have discussed this a couple of times, but the result currently
+> is lost to me.
+> Maybe the answer was that if swiotlb or iommu are enabled, then
+> dma_set_mask() should always succeed, but the mask should not actually
+> be updated?
