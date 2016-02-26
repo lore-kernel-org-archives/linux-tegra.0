@@ -1,71 +1,95 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] mmc: tegra: Disable UHS-I modes for tegra114
-Date: Fri, 26 Feb 2016 08:58:10 +0000
-Message-ID: <56D013A2.7080909@nvidia.com>
-References: <1455806924-14967-1-git-send-email-jonathanh@nvidia.com>
- <CAPDyKFowEH=4PU1ErNxMA0=SiDT1Q86H0SfMuiH5jA+H7mvquA@mail.gmail.com>
- <56CECC9E.9010501@nvidia.com> <1456428771.7433.4.camel@lynxeye.de>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v4 1/2] gpu: host1x: Set DMA mask
+Date: Fri, 26 Feb 2016 18:06:52 +0900
+Message-ID: <1456477613-24995-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1456428771.7433.4.camel@lynxeye.de>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Lucas Stach <dev@lynxeye.de>, Ulf Hansson <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-mmc <linux-mmc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+The default DMA mask covers a 32 bits address range, but host1x devices
+can address a larger range on TK1 and TX1. Set the DMA mask to the range
+addressable when we use the IOMMU to prevent the use of bounce buffers.
 
-On 25/02/16 19:32, Lucas Stach wrote:
-> Am Donnerstag, den 25.02.2016, 09:42 +0000 schrieb Jon Hunter:
->> Hi Adrian, Lucas,
->>
->> On 18/02/16 16:07, Ulf Hansson wrote:
->>> +Adrian
->>>
->>> On 18 February 2016 at 15:48, Jon Hunter <jonathanh@nvidia.com>
->>> wrote:
->>>> SD card support for Tegra114 started failing after commit
->>>> a8e326a911d3
->>>> ("mmc: tegra: implement module external clock change") was
->>>> merged. This
->>>> commit was part of a series to enable UHS-I modes for Tegra. To
->>>> workaround this problem for now, only disable UHS-I modes for
->>>> Tegra114
->>>> and in order to do this it is necessary to revert changes from
->>>> commits
->>>> a8e326a911d3 ("mmc: tegra: implement module external clock
->>>> change"),
->>>> c3c2384c3ac0 ("mmc: tegra: implement UHS tuning"), 7ad2ed1dfcbe
->>>> ("mmc: tegra: enable UHS-I modes") that impact Tegra114. To do
->>>> this so
->>>> that UHS-I mode can be disabled for Tegra114 but not for Tegra124
->>>> separate the platform data, soc data and sdhci-ops so they are no
->>>> longer
->>>> common to both Tegra114 and Tegra124.
->>>>
->>>> Fixes: a8e326a911d3 ("mmc: tegra: implement module external clock
->>>> change")
->>>>
->>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->>>
->>> This looks okay to me, although I need and ack from Adrian to pick
->>> up
->>> this for fixes. Adrian did recently step in as the maintainer for
->>> sdhci.
->>
->> Are you guys ok with this? It would be good to get your ACK's so that
->> Ulf can pick it up.
->>
-> I don't see why you need to duplicate the tegra114_sdhci_ops.
-> Together with the first hunk of this patch, having soc_data_tegra114
-> not set any UHS-I capabilities (quirks) should be enough to disable
-> UHS-I modes on Tegra114. The core should never call any of the UHS-I
-> related functions from tegra114_sdhci_ops in that case.
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Change since v3:
+- Use the IOMMU-addressable range (when IOMMU is available) for each host1x
+  variation. This ensures that we can cover all physical memory while remaining
+  conservative if IOMMU is not used.
+- Set the DMA range on the host1x device itself so all its childs inherit from it
 
-Ok, I will give that a try. I was not sure if I needed to completely
-remove all the changes or not and so I wanted to make it equivalent to
-what we had before to ensure there would be no other problems crop up. I
-will re-work and test and hopefully we can get this sorted.
+ drivers/gpu/host1x/dev.c | 7 +++++++
+ drivers/gpu/host1x/dev.h | 1 +
+ 2 files changed, 8 insertions(+)
 
-Jon
+diff --git a/drivers/gpu/host1x/dev.c b/drivers/gpu/host1x/dev.c
+index 314bf3718cc7..ff348690df94 100644
+--- a/drivers/gpu/host1x/dev.c
++++ b/drivers/gpu/host1x/dev.c
+@@ -23,6 +23,7 @@
+ #include <linux/of_device.h>
+ #include <linux/clk.h>
+ #include <linux/io.h>
++#include <linux/dma-mapping.h>
+ 
+ #define CREATE_TRACE_POINTS
+ #include <trace/events/host1x.h>
+@@ -68,6 +69,7 @@ static const struct host1x_info host1x01_info = {
+ 	.nb_bases	= 8,
+ 	.init		= host1x01_init,
+ 	.sync_offset	= 0x3000,
++	.dma_mask	= DMA_BIT_MASK(32),
+ };
+ 
+ static const struct host1x_info host1x02_info = {
+@@ -77,6 +79,7 @@ static const struct host1x_info host1x02_info = {
+ 	.nb_bases = 12,
+ 	.init = host1x02_init,
+ 	.sync_offset = 0x3000,
++	.dma_mask = DMA_BIT_MASK(32),
+ };
+ 
+ static const struct host1x_info host1x04_info = {
+@@ -86,6 +89,7 @@ static const struct host1x_info host1x04_info = {
+ 	.nb_bases = 64,
+ 	.init = host1x04_init,
+ 	.sync_offset = 0x2100,
++	.dma_mask = DMA_BIT_MASK(34),
+ };
+ 
+ static const struct host1x_info host1x05_info = {
+@@ -95,6 +99,7 @@ static const struct host1x_info host1x05_info = {
+ 	.nb_bases = 64,
+ 	.init = host1x05_init,
+ 	.sync_offset = 0x2100,
++	.dma_mask = DMA_BIT_MASK(34),
+ };
+ 
+ static struct of_device_id host1x_of_match[] = {
+@@ -148,6 +153,8 @@ static int host1x_probe(struct platform_device *pdev)
+ 	if (IS_ERR(host->regs))
+ 		return PTR_ERR(host->regs);
+ 
++	dma_set_mask_and_coherent(host->dev, host->info->dma_mask);
++
+ 	if (host->info->init) {
+ 		err = host->info->init(host);
+ 		if (err)
+diff --git a/drivers/gpu/host1x/dev.h b/drivers/gpu/host1x/dev.h
+index 0b6e8e9629c5..dace124994bb 100644
+--- a/drivers/gpu/host1x/dev.h
++++ b/drivers/gpu/host1x/dev.h
+@@ -96,6 +96,7 @@ struct host1x_info {
+ 	int	nb_mlocks;		/* host1x: number of mlocks */
+ 	int	(*init)(struct host1x *); /* initialize per SoC ops */
+ 	int	sync_offset;
++	u64	dma_mask;		/* mask of addressable memory */
+ };
+ 
+ struct host1x {
+-- 
+2.7.1
