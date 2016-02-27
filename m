@@ -1,28 +1,54 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v2] ARM: dts: tegra: correct Beaver pinmux
-Date: Fri, 26 Feb 2016 12:53:38 -0700
-Message-ID: <56D0AD42.9050507@wwwdotorg.org>
-References: <1456514310-27605-1-git-send-email-dev@lynxeye.de>
- <56D0A748.6060104@wwwdotorg.org> <1456515384.20487.2.camel@lynxeye.de>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [GIT,PULL] Signed firmware for NVIDIA Maxwell 2 GPUs
+Date: Sat, 27 Feb 2016 12:24:25 +0900
+Message-ID: <56D116E9.4020403@nvidia.com>
+References: <56CC2CAF.8080102@nvidia.com>
+ <20160223211136.GB19431@merlin.infradead.org>
+ <CAEhOZrfrn=XgqPQF8cEPS_uZ1tCPoMZD6LANgSECb8j-pu09hA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1456515384.20487.2.camel-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, ARM kernel mailing list <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <CAEhOZrfrn=XgqPQF8cEPS_uZ1tCPoMZD6LANgSECb8j-pu09hA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Efrem Mc <efremmc2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kyle McMartin <kyle-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 02/26/2016 12:36 PM, Lucas Stach wrote:
-> Am Freitag, den 26.02.2016, 12:28 -0700 schrieb Stephen Warren:
->> On 02/26/2016 12:18 PM, Lucas Stach wrote:
->>> Update pinmux to get rid of invalid uses of the rsvd1 function,
->>> which lead
->>> to the mux settings on those pins to not be applied.
->>>
->>> Also add correct drive settings, derived from the Tegra3 TRM, for
- >
-> Your comment from v1 is addressed here  ^^^^^^^^^^^^^^^^^^^^^^^^
-
-Oh right, sorry about that.
+T24gMDIvMjcvMjAxNiAxMjowOCBBTSwgRWZyZW0gTWMgd3JvdGU6Cj4gVGhhbmtzIGZvciB0aGUg
+dXBkYXRlLiAgQXJlIHlvdSB1cGRhdGluZyBub3V2ZWF1IGZvciBHSzIwOCBhbmQgR00yMDY/CgpH
+TTIwNiBpcyBhbHJlYWR5IHN1cHBvcnRlZCAoYm90aCBmaXJtd2FyZSBhbmQga2VybmVsIHN1cHBv
+cnQgbWVyZ2UpLgoKR0syMDggc2hvdWxkIChBRkFJQ1QpIGJlIHN1cHBvcnRlZCBieSBOb3V2ZWF1
+IGFuZCBkb2VzIG5vdCByZXF1aXJlIApzaWduZWQgZmlybXdhcmUuCgo+Cj4gUmVnYXJkcywKPgo+
+IE9uIFR1ZSwgRmViIDIzLCAyMDE2IGF0IDQ6MTEgUE0sIEt5bGUgTWNNYXJ0aW4gPGt5bGVAaW5m
+cmFkZWFkLm9yZwo+IDxtYWlsdG86a3lsZUBpbmZyYWRlYWQub3JnPj4gd3JvdGU6Cj4KPiAgICAg
+T24gVHVlLCBGZWIgMjMsIDIwMTYgYXQgMDY6NTU6NTlQTSArMDkwMCwgQWxleGFuZHJlIENvdXJi
+b3Qgd3JvdGU6Cj4gICAgID4gSGkgbGludXgtZmlybXdhcmUgbWFpbnRhaW5lcnMsCj4gICAgID4K
+PiAgICAgPiBUaGUgZm9sbG93aW5nIGNoYW5nZXMgc2luY2UgY29tbWl0IGY2NmVjY2FhYjdkNjA1
+ZDQzM2NiODJlMzg5NDQxYjIxZWM5OWI0MGY6Cj4gICAgID4KPiAgICAgPiAgIFVwZGF0ZSBJbnRl
+bCBPUEEgaGZpMSBmaXJtd2FyZSAoMjAxNi0wMi0xNSAwODozNDoxNiAtMDUwMCkKPiAgICAgPgo+
+ICAgICA+IGFyZSBhdmFpbGFibGUgaW4gdGhlIGdpdCByZXBvc2l0b3J5IGF0Ogo+ICAgICA+Cj4g
+ICAgID5odHRwczovL2dpdGh1Yi5jb20vR251cm91L2xpbnV4LWZpcm13YXJlLmdpdCBzZWNib290
+Cj4gICAgID4KPiAgICAgPiBmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gOGQxZmQ2MWEz
+NzIzYWI4Y2I2YjdiZmViOGJlMzhlMTYyODJjYzFlZDoKPiAgICAgPgo+ICAgICA+ICAgbnZpZGlh
+OiBBZGQgR00yMEIgc2lnbmVkIGZpcm13YXJlICgyMDE2LTAyLTIzIDE4OjQ4OjQxICswOTAwKQo+
+ICAgICA+Cj4gICAgID4gVGhlc2UgdHdvIHBhdGNoZXMgYWRkIHRoZSBOVklESUEtcmVsZWFzZWQg
+ZmlybXdhcmVzIG5lY2Vzc2FyeSB0byBlbmFibGUKPiAgICAgPiByZW5kZXJpbmcgb24gZGVza3Rv
+cCBhbmQgbW9iaWxlIE1heHdlbGwgMiBHUFVzLiBLZXJuZWwgc3VwcG9ydCBpcyByZWFkeSB0bwo+
+ICAgICA+IGJlIG1lcmdlZCBvbmNlIHRoaXMgcHVsbCByZXF1ZXN0IGlzIG9mZmljaWFsbHkgYWNj
+ZXB0ZWQuCj4gICAgID4KPgo+ICAgICBQdWxsZWQuIFRoYW5rcyBBbGV4YW5kcmUuCj4KPiAgICAg
+cmVnYXJkcywgLS1LeWxlCj4gICAgIF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fCj4gICAgIE5vdXZlYXUgbWFpbGluZyBsaXN0Cj4gICAgIE5vdXZlYXVAbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnIDxtYWlsdG86Tm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmc+
+Cj4gICAgIGh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vbm91
+dmVhdQo+Cj4KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+Tm91dmVhdSBtYWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
+Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1Cg==
