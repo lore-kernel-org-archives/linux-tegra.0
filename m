@@ -1,54 +1,43 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [GIT,PULL] Signed firmware for NVIDIA Maxwell 2 GPUs
-Date: Sat, 27 Feb 2016 12:24:25 +0900
-Message-ID: <56D116E9.4020403@nvidia.com>
-References: <56CC2CAF.8080102@nvidia.com>
- <20160223211136.GB19431@merlin.infradead.org>
- <CAEhOZrfrn=XgqPQF8cEPS_uZ1tCPoMZD6LANgSECb8j-pu09hA@mail.gmail.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 00/61] gpio: Add and use devm_gpiochip_add_data()
+Date: Sun, 28 Feb 2016 20:02:02 +0530
+Message-ID: <56D304E2.7000608@nvidia.com>
+References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>	<CACRpkdbt+RiWMA74e40MNZVnDM0t0futtFnbyu9sRhv7p93-Tg@mail.gmail.com>	<56CC1FD4.1080905@nvidia.com>	<56CC7791.2000607@nvidia.com> <CACRpkdYsG8X5XiV2+Ss2GLJkFnLFzLi0uy0yy8R5sdi0b_Y+qA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <CAEhOZrfrn=XgqPQF8cEPS_uZ1tCPoMZD6LANgSECb8j-pu09hA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/nouveau>
-List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
- <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Efrem Mc <efremmc2-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kyle McMartin <kyle-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
-Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdYsG8X5XiV2+Ss2GLJkFnLFzLi0uy0yy8R5sdi0b_Y+qA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Michael Hennerich <michael.hennerich@analog.com>, Jon Corbet <corbet@lwn.net>, Alban Bedel <albeu@free.fr>, Ray Jui <rjui@broadcom.com>, Alexander Shiyan <shc_work@mail.ru>, Support Opensource <support.opensource@diasemi.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?B?IkFuZGVyc3NvbiwgQmrDtnJuIg==?= <bjorn.andersson@sonymobile.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Greg KH <gregkh@linuxfoundation.org>, Catalin Marinas <catalin.marinas@arm.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, WOLFSON MICROELECTRONICS DRIVERS <patches@opensource.wolfsonmicro.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, linux-arm-k
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMDIvMjcvMjAxNiAxMjowOCBBTSwgRWZyZW0gTWMgd3JvdGU6Cj4gVGhhbmtzIGZvciB0aGUg
-dXBkYXRlLiAgQXJlIHlvdSB1cGRhdGluZyBub3V2ZWF1IGZvciBHSzIwOCBhbmQgR00yMDY/CgpH
-TTIwNiBpcyBhbHJlYWR5IHN1cHBvcnRlZCAoYm90aCBmaXJtd2FyZSBhbmQga2VybmVsIHN1cHBv
-cnQgbWVyZ2UpLgoKR0syMDggc2hvdWxkIChBRkFJQ1QpIGJlIHN1cHBvcnRlZCBieSBOb3V2ZWF1
-IGFuZCBkb2VzIG5vdCByZXF1aXJlIApzaWduZWQgZmlybXdhcmUuCgo+Cj4gUmVnYXJkcywKPgo+
-IE9uIFR1ZSwgRmViIDIzLCAyMDE2IGF0IDQ6MTEgUE0sIEt5bGUgTWNNYXJ0aW4gPGt5bGVAaW5m
-cmFkZWFkLm9yZwo+IDxtYWlsdG86a3lsZUBpbmZyYWRlYWQub3JnPj4gd3JvdGU6Cj4KPiAgICAg
-T24gVHVlLCBGZWIgMjMsIDIwMTYgYXQgMDY6NTU6NTlQTSArMDkwMCwgQWxleGFuZHJlIENvdXJi
-b3Qgd3JvdGU6Cj4gICAgID4gSGkgbGludXgtZmlybXdhcmUgbWFpbnRhaW5lcnMsCj4gICAgID4K
-PiAgICAgPiBUaGUgZm9sbG93aW5nIGNoYW5nZXMgc2luY2UgY29tbWl0IGY2NmVjY2FhYjdkNjA1
-ZDQzM2NiODJlMzg5NDQxYjIxZWM5OWI0MGY6Cj4gICAgID4KPiAgICAgPiAgIFVwZGF0ZSBJbnRl
-bCBPUEEgaGZpMSBmaXJtd2FyZSAoMjAxNi0wMi0xNSAwODozNDoxNiAtMDUwMCkKPiAgICAgPgo+
-ICAgICA+IGFyZSBhdmFpbGFibGUgaW4gdGhlIGdpdCByZXBvc2l0b3J5IGF0Ogo+ICAgICA+Cj4g
-ICAgID5odHRwczovL2dpdGh1Yi5jb20vR251cm91L2xpbnV4LWZpcm13YXJlLmdpdCBzZWNib290
-Cj4gICAgID4KPiAgICAgPiBmb3IgeW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gOGQxZmQ2MWEz
-NzIzYWI4Y2I2YjdiZmViOGJlMzhlMTYyODJjYzFlZDoKPiAgICAgPgo+ICAgICA+ICAgbnZpZGlh
-OiBBZGQgR00yMEIgc2lnbmVkIGZpcm13YXJlICgyMDE2LTAyLTIzIDE4OjQ4OjQxICswOTAwKQo+
-ICAgICA+Cj4gICAgID4gVGhlc2UgdHdvIHBhdGNoZXMgYWRkIHRoZSBOVklESUEtcmVsZWFzZWQg
-ZmlybXdhcmVzIG5lY2Vzc2FyeSB0byBlbmFibGUKPiAgICAgPiByZW5kZXJpbmcgb24gZGVza3Rv
-cCBhbmQgbW9iaWxlIE1heHdlbGwgMiBHUFVzLiBLZXJuZWwgc3VwcG9ydCBpcyByZWFkeSB0bwo+
-ICAgICA+IGJlIG1lcmdlZCBvbmNlIHRoaXMgcHVsbCByZXF1ZXN0IGlzIG9mZmljaWFsbHkgYWNj
-ZXB0ZWQuCj4gICAgID4KPgo+ICAgICBQdWxsZWQuIFRoYW5rcyBBbGV4YW5kcmUuCj4KPiAgICAg
-cmVnYXJkcywgLS1LeWxlCj4gICAgIF9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fCj4gICAgIE5vdXZlYXUgbWFpbGluZyBsaXN0Cj4gICAgIE5vdXZlYXVAbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnIDxtYWlsdG86Tm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmc+
-Cj4gICAgIGh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vbm91
-dmVhdQo+Cj4KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
-Tm91dmVhdSBtYWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
-Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1Cg==
+
+On Thursday 25 February 2016 06:54 PM, Linus Walleij wrote:
+> On Tue, Feb 23, 2016 at 4:15 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+>
+>> I have made the repo in git hub as
+>>      https://github.com/ldewangan/linux-upstream.git
+> Awesome.
+>
+>> branch name is devm_gpiochip.
+>>      https://github.com/ldewangan/linux-upstream/tree/devm_gpiochip
+> I've pulled this branch into my tree on a separate branch for
+> testing. I pushed the tree to kernel.org so that the zeroday
+> autobuilders can have a go at it.
+
+Thanks you very much for taking care.
+
+>
+> If everything goes well I plan to merge this for v4.6, then we
+> can merge the changes in pin control and other subsystems
+> for v4.7.
+Yes, once this is there, we can grep all over subsystem and push the change.
+
+I am seeing lots of code reduction on pincontrol driver side once we 
+have devm_ for pincontrol register and gpiochip_add_data().
+
+Thanks,
+Laxman
+
