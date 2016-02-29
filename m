@@ -1,72 +1,72 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V6 06/10] soc: tegra: pmc: Wait for powergate state to
- change
-Date: Mon, 29 Feb 2016 13:14:33 +0100
-Message-ID: <20160229121433.GA1383@ulmo>
-References: <1456501724-28477-1-git-send-email-jonathanh@nvidia.com>
- <1456501724-28477-7-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v4.5-rc6
+Date: Mon, 29 Feb 2016 12:44:58 +0000
+Message-ID: <56D43D4A.4030300@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="envbJBWh7q8WU6mo"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1456501724-28477-7-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Here are some basic Tegra test results for Linux v4.5-rc6.
+Logs and other details at:
 
---envbJBWh7q8WU6mo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+    https://nvtb.github.io//linux/test_v4.5-rc6/20160228090104/
 
-On Fri, Feb 26, 2016 at 03:48:40PM +0000, Jon Hunter wrote:
-> Currently, the function tegra_powergate_set() simply sets the desired
-> powergate state but does not wait for the state to change. In most cases
-> we should wait for the state to change before proceeding. Currently, there
-> is a case for tegra114 and tegra124 devices where we do not wait when
-> starting the secondary CPU as this is not necessary. However, this is only
-> done at boot time and so waiting here will only have a small impact on
-> boot time. Therefore, update tegra_powergate_set() to wait when setting
-> the powergate.
->=20
-> By adding this feature, we can also eliminate the polling loop from
-> tegra30_boot_secondary().
->=20
-> A function has been added for checking the status of the powergate and
-> so update the tegra_powergate_is_powered() to use this macro as well.
->=20
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  arch/arm/mach-tegra/platsmp.c | 16 +++-------------
->  drivers/soc/tegra/pmc.c       |  9 ++++++++-
->  2 files changed, 11 insertions(+), 14 deletions(-)
 
-Applied, thanks.
+Test summary
+------------
 
-Thierry
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
 
---envbJBWh7q8WU6mo
-Content-Type: application/pgp-signature; name="signature.asc"
+Build: Image:
+    Pass: ( 1/ 1): defconfig
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Boot to userspace: defconfig:
+    Pass: ( 3/ 3): qemu-vexpress64, tegra132-norrin,
+		   tegra210-p2371-0000
 
-iQIcBAABCAAGBQJW1DYmAAoJEN0jrNd/PrOhtgwP/0fkP20whj0n26f55vx10A4u
-LDubiBwUig7oSIJF8WjfA+hCUS97LzeH253Hm4r8j7z/XLrNe2JwvZj+SiTc+hRF
-g+INo41LT30TCZOJIwDxEyViaHV+34SuSJg92DSdvaOMgZtkWd4diEqSk8n5N8uB
-V0clw3/aRWW+Ns7jpSNRP8lQLG+CBqS1g1JsU2mtEZpE7fq8LKIKOVu+a/UgbO65
-hffh4e0p/n5lYAY8uiwlzqn+CtUaO9wsk8uR8pqCaV67GF9z25yXrCaaAD3k/LGF
-jmc6Gz1MtD53tGDLxGRtJ/p3Rlxv1GZhAtAsbmtzDw53L6HiuPzd1VcmQVmGGkT1
-cdlGAmF7v/9YGZYyRrHOKuBbNNpTaMtFQJx0g27ZuRHkos7J/KJX0J/kN02IK6R4
-/4l847/HIpFHvJMd7P+f/wJuu/B255iRkaMoWobsg136bcjlqsBo5jQyDLJOm8Wq
-5iDNJ0wUIxbdDjzWewQSNvGnayvnyV3UfSO5a/ypmUYqb0mlVtTxjZfG90bt9kKn
-0j1Tni4y0x+3v8akr5LS7SHOK4SHykf1B9pnbdfDNkUqhucbHmG9lkaySZ6rSh1S
-PTcXuB2ed4ndn+NUyE3st4tU0GOcyXmg7WmAj9duPCIDCmCcI7kcr0TXbMlofRPT
-eMhG+YhooeNX+f1mdGK0
-=ek+G
------END PGP SIGNATURE-----
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
 
---envbJBWh7q8WU6mo--
+Boot to userspace: tegra_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: multi_v7_defconfig:
+    FAIL: ( 1/ 4): tegra114-dalmore-a04
+    Pass: ( 3/ 4): tegra124-jetson-tk1, tegra20-trimslice,
+		   tegra30-beaver
+
+PM: System suspend: tegra_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v4.5-rc5 (81f70ba233d5f660e1ea5fe23260ee323af5d53a)):
+   text     data      bss    total  kernel
+    -32        0        0      -32  defconfig
+  +2152     +160     +192    +2504  multi_v7_defconfig
+  +1976     +160        0    +2136  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.5-rc5 (81f70ba233d5f660e1ea5fe23260ee323af5d53a))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+        .        .        .        .      qemu-vexpress64            defconfig           __internal
+        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+      -8k       8k        .       4k tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+      -8k       8k        .       4k  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
+        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+      -8k       8k        .       4k    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
+        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+      -8k       8k        .       4k       tegra30-beaver      tegra_defconfig       tegra30-beaver
