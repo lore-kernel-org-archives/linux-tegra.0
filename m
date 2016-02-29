@@ -1,253 +1,128 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/2] arm64: tegra: Jetson-TX1: Add DT entry for system PMIC MAX77620
-Date: Mon, 29 Feb 2016 18:36:51 +0530
-Message-ID: <1456751211-14341-2-git-send-email-ldewangan@nvidia.com>
-References: <1456751211-14341-1-git-send-email-ldewangan@nvidia.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH V6 02/10] PM / Domains: Add function to get the last
+ domain added
+Date: Mon, 29 Feb 2016 14:32:23 +0100
+Message-ID: <CAPDyKFqi0o7sROm2sEgL7Gcf6F6yi4REWKHP7RVRrNBDRGTPjw@mail.gmail.com>
+References: <1456501724-28477-1-git-send-email-jonathanh@nvidia.com>
+	<1456501724-28477-3-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1456751211-14341-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1456501724-28477-3-git-send-email-jonathanh@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-NVIDIA's Tegra210 platform Jetson-TX1 uses the Maxim Semiconductor's
-PMIC MAX77620 as system PMIC.
+On 26 February 2016 at 16:48, Jon Hunter <jonathanh@nvidia.com> wrote:
+> To remove generic PM domains in a sane way, we need to remove them by
+> starting from the last PM domain added. The reason for this is that a PM
+> domain may be a subdomain of another and so we need to remove the child
+> PM domains for a given domain first. By removing PM domains in reverse
+> order we can ensure that the children are removed first.
+>
+> Add a new function to get the last PM domain that was added. In case PM
+> domains are added by more than one device in the system (for example,
+> on-chip domains and off-chip domains) add a 'owner' device structure
+> to the generic PM domain structure so that the ownership of a PM domain
+> can be identified by the device structure of the device that added it
+> Use this 'owner' device structure to return the last PM domain added by
+> this device.
+>
+> Note that because pm_genpd_init() simply adds each PM domain to the
+> head of the gpd_list object, list_for_each_entry() will start from the
+> last PM domain added.
+>
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 
-Add DT entry for this device which enabled core registration,
-GPIO, pin control, power sequencing and regulator functionalities.
+I don't have a strong opinion about what to call the device structure.
+Both "owner" or "dev" is okay by me.
 
-This patch is created based on downstream data and new DT properties.
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-The patches for drivers of MFD/GPIO/Pincontrol are in flight.
+Kind regards
+Uffe
 
- arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts | 205 +++++++++++++++++++++
- 1 file changed, 205 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-index 18147eb..1f0788b 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-@@ -2,12 +2,217 @@
- 
- #include "tegra210-p2180.dtsi"
- #include "tegra210-p2597.dtsi"
-+#include <dt-bindings/mfd/max77620.h>
- #include <dt-bindings/input/input.h>
- 
- / {
- 	model = "NVIDIA Jetson TX1 Developer Kit";
- 	compatible = "nvidia,p2371-2180", "nvidia,tegra210";
- 
-+	i2c@0,7000d000 {
-+		status = "okay";
-+		system-pmic@3c {
-+			compatible = "maxim,max77620";
-+			reg = <0x3c>;
-+			interrupts = <0 86 IRQ_TYPE_NONE>;
-+
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&system_pmic_default>;
-+
-+			in-ldo0-1-supply = <&spmic_sd2>;
-+			in-ldo7-8-supply = <&spmic_sd2>;
-+
-+			system_pmic_default: default {
-+				pin_gpio0 {
-+					pins = "gpio0";
-+					function = "gpio";
-+				};
-+
-+				pin_gpio1 {
-+					pins = "gpio1";
-+					function = "fps-out";
-+					drive-push-pull = <1>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
-+					maxim,active-fps-power-up-slot = <7>;
-+					maxim,active-fps-power-down-slot = <0>;
-+				};
-+
-+				pin_gpio2_3 {
-+					pins = "gpio2", "gpio3";
-+					function = "fps-out";
-+					drive-open-drain = <1>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
-+				};
-+
-+				pin_gpio4 {
-+					pins = "gpio4";
-+					function = "32k-out1";
-+				};
-+
-+				pin_gpio5_6_7 {
-+					pins = "gpio5", "gpio6", "gpio7";
-+					function = "gpio";
-+					drive-push-pull = <1>;
-+				};
-+			};
-+
-+			fps {
-+				fps0 {
-+					maxim,suspend-fps-time-period-us = <1280>;
-+					maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN0>;
-+				};
-+
-+				fps1 {
-+					maxim,suspend-fps-time-period-us = <1280>;
-+					maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN1>;
-+				};
-+
-+				fps2 {
-+					maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN0>;
-+				};
-+			};
-+
-+			regulators {
-+				sd0 {
-+					regulator-name = "vdd-core";
-+					regulator-min-microvolt = <600000>;
-+					regulator-max-microvolt = <1400000>;
-+					regulator-boot-on;
-+					regulator-always-on;
-+					regulator-enable-ramp-delay = <146>;
-+					regulator-ramp-delay = <27500>;
-+					maxim,fps-source = <MAX77620_FPS_SRC_1>;
-+				};
-+
-+				sd1 {
-+					regulator-name = "vddio-ddr";
-+					regulator-always-on;
-+					regulator-boot-on;
-+					regulator-enable-ramp-delay = <130>;
-+					regulator-ramp-delay = <27500>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
-+				};
-+
-+				spmic_sd2: sd2 {
-+					regulator-name = "vdd-pre-reg";
-+					regulator-min-microvolt = <1350000>;
-+					regulator-max-microvolt = <1350000>;
-+					regulator-enable-ramp-delay = <176>;
-+					regulator-ramp-delay = <27500>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
-+				};
-+
-+				sd3 {
-+					regulator-name = "vdd-1v8";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+					regulator-enable-ramp-delay = <242>;
-+					regulator-ramp-delay = <27500>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
-+				};
-+
-+				ldo0 {
-+					regulator-name = "avdd-sys";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+					regulator-enable-ramp-delay = <26>;
-+					regulator-ramp-delay = <100000>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+				};
-+
-+				ldo1 {
-+					regulator-name = "vdd-pex";
-+					regulator-min-microvolt = <1050000>;
-+					regulator-max-microvolt = <1050000>;
-+					regulator-always-on;
-+					regulator-enable-ramp-delay = <22>;
-+					regulator-ramp-delay = <100000>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
-+				};
-+
-+				ldo2 {
-+					regulator-name = "vddio-sdmmc1";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <3300000>;
-+					regulator-enable-ramp-delay = <62>;
-+					regulator-ramp-delay = <100000>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+				};
-+
-+				ldo3 {
-+					regulator-name = "vdd-cam-hv";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+					regulator-enable-ramp-delay = <50>;
-+					regulator-ramp-delay = <100000>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+				};
-+
-+				ldo4 {
-+					regulator-name = "vdd-rtc";
-+					regulator-min-microvolt = <850000>;
-+					regulator-max-microvolt = <850000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+					regulator-enable-ramp-delay = <22>;
-+					regulator-ramp-delay = <100000>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
-+				};
-+
-+				ldo5 {
-+					regulator-name = "avdd-ts-hv";
-+					regulator-min-microvolt = <3300000>;
-+					regulator-max-microvolt = <3300000>;
-+					regulator-enable-ramp-delay = <62>;
-+					regulator-ramp-delay = <100000>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+				};
-+
-+				ldo6 {
-+					regulator-name = "vdd-ts";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-enable-ramp-delay = <36>;
-+					regulator-ramp-delay = <100000>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
-+					maxim,active-fps-power-up-slot = <7>;
-+					maxim,active-fps-power-down-slot = <0>;
-+				};
-+
-+				ldo7 {
-+					regulator-name = "vdd-gen-pll-edp";
-+					regulator-min-microvolt = <1050000>;
-+					regulator-max-microvolt = <1050000>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+					regulator-enable-ramp-delay = <24>;
-+					regulator-ramp-delay = <100000>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
-+				};
-+
-+				ldo8 {
-+					regulator-name = "vdd-hdmi-dp";
-+					regulator-min-microvolt = <1050000>;
-+					regulator-max-microvolt = <1050000>;
-+					regulator-always-on;
-+					regulator-enable-ramp-delay = <22>;
-+					regulator-ramp-delay = <100000>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
-+				};
-+			};
-+		};
-+	};
-+
- 	gpio-keys {
- 		compatible = "gpio-keys";
- 		label = "gpio-keys";
--- 
-2.1.4
+> ---
+> This is the outcome from a discussion I had with Ulf on how best to
+> handle the removal of power-domains [0]. I opted to call the device
+> structure 'owner' because 'parent' could be misleading if a power
+> domain is a child of another power domain. However, open to suggestions!
+>
+> [0] http://marc.info/?l=linux-pm&m=145460070816340&w=2
+>
+>  drivers/base/power/domain.c | 25 +++++++++++++++++++++++++
+>  include/linux/pm_domain.h   |  7 +++++++
+>  2 files changed, 32 insertions(+)
+>
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index ea9f2aa3fc33..608bc00655ee 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -65,6 +65,31 @@ struct generic_pm_domain *pm_genpd_lookup_dev(struct device *dev)
+>  }
+>
+>  /*
+> + * Get the last generic PM domain added whose 'owner' device structure
+> + * matches the device structure provided. The 'owner' device structure
+> + * for a given PM domain should be initialised by the device that is
+> + * creating the PM domains and hence, calling pm_genpd_init().
+> + */
+> +struct generic_pm_domain *pm_genpd_list_get_tail(struct device *dev)
+> +{
+> +       struct generic_pm_domain *genpd = NULL, *gpd;
+> +
+> +       if (IS_ERR_OR_NULL(dev))
+> +               return NULL;
+> +
+> +       mutex_lock(&gpd_list_lock);
+> +       list_for_each_entry(gpd, &gpd_list, gpd_list_node) {
+> +               if (gpd->owner == dev) {
+> +                       genpd = gpd;
+> +                       break;
+> +               }
+> +       }
+> +       mutex_unlock(&gpd_list_lock);
+> +
+> +       return genpd;
+> +}
+> +
+> +/*
+>   * This should only be used where we are certain that the pm_domain
+>   * attached to the device is a genpd domain.
+>   */
+> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+> index 49cd8890b873..b38dd74dea9b 100644
+> --- a/include/linux/pm_domain.h
+> +++ b/include/linux/pm_domain.h
+> @@ -46,6 +46,7 @@ struct genpd_power_state {
+>
+>  struct generic_pm_domain {
+>         struct dev_pm_domain domain;    /* PM domain operations */
+> +       struct device *owner;           /* Identity of the domain owner */
+>         struct list_head gpd_list_node; /* Node in the global PM domains list */
+>         struct list_head master_links;  /* Links with PM domain as a master */
+>         struct list_head slave_links;   /* Links with PM domain as a slave */
+> @@ -120,6 +121,7 @@ static inline struct generic_pm_domain_data *dev_gpd_data(struct device *dev)
+>  }
+>
+>  extern struct generic_pm_domain *pm_genpd_lookup_dev(struct device *dev);
+> +extern struct generic_pm_domain *pm_genpd_list_get_tail(struct device *dev);
+>  extern int __pm_genpd_add_device(struct generic_pm_domain *genpd,
+>                                  struct device *dev,
+>                                  struct gpd_timing_data *td);
+> @@ -145,6 +147,11 @@ static inline struct generic_pm_domain *pm_genpd_lookup_dev(struct device *dev)
+>  {
+>         return NULL;
+>  }
+> +static inline
+> +struct generic_pm_domain *pm_genpd_list_get_tail(struct device *dev)
+> +{
+> +       return NULL;
+> +}
+>  static inline int __pm_genpd_add_device(struct generic_pm_domain *genpd,
+>                                         struct device *dev,
+>                                         struct gpd_timing_data *td)
+> --
+> 2.1.4
+>
