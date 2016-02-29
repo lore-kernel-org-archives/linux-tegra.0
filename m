@@ -1,60 +1,253 @@
 From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/2] arm64: tegra: Add DT entry for keys used in Jetson-TX1
-Date: Mon, 29 Feb 2016 18:36:50 +0530
-Message-ID: <1456751211-14341-1-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH 2/2] arm64: tegra: Jetson-TX1: Add DT entry for system PMIC MAX77620
+Date: Mon, 29 Feb 2016 18:36:51 +0530
+Message-ID: <1456751211-14341-2-git-send-email-ldewangan@nvidia.com>
+References: <1456751211-14341-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1456751211-14341-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add DT entry for keys used in Jetson-TX p2371-2180. This has
-three keys, POWER, VOLUME-UP and VOLUME-DOWN.
+NVIDIA's Tegra210 platform Jetson-TX1 uses the Maxim Semiconductor's
+PMIC MAX77620 as system PMIC.
+
+Add DT entry for this device which enabled core registration,
+GPIO, pin control, power sequencing and regulator functionalities.
+
+This patch is created based on downstream data and new DT properties.
 
 Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts | 25 ++++++++++++++++++++++
- 1 file changed, 25 insertions(+)
+The patches for drivers of MFD/GPIO/Pincontrol are in flight.
+
+ arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts | 205 +++++++++++++++++++++
+ 1 file changed, 205 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-index 683b339..18147eb 100644
+index 18147eb..1f0788b 100644
 --- a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
 +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-@@ -2,8 +2,33 @@
+@@ -2,12 +2,217 @@
  
  #include "tegra210-p2180.dtsi"
  #include "tegra210-p2597.dtsi"
-+#include <dt-bindings/input/input.h>
++#include <dt-bindings/mfd/max77620.h>
+ #include <dt-bindings/input/input.h>
  
  / {
  	model = "NVIDIA Jetson TX1 Developer Kit";
  	compatible = "nvidia,p2371-2180", "nvidia,tegra210";
+ 
++	i2c@0,7000d000 {
++		status = "okay";
++		system-pmic@3c {
++			compatible = "maxim,max77620";
++			reg = <0x3c>;
++			interrupts = <0 86 IRQ_TYPE_NONE>;
 +
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+		label = "gpio-keys";
++			#interrupt-cells = <2>;
++			interrupt-controller;
 +
-+		power {
-+			label = "Power";
-+			gpios = <&gpio TEGRA_GPIO(X, 5) GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_POWER>;
-+			gpio-key,wakeup;
-+		};
++			gpio-controller;
++			#gpio-cells = <2>;
 +
-+		volume_down {
-+			label = "Volume Down";
-+			gpios = <&gpio TEGRA_GPIO(Y, 0) GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEDOWN>;
-+		};
++			pinctrl-names = "default";
++			pinctrl-0 = <&system_pmic_default>;
 +
-+		volume_up {
-+			label = "Volume Up";
-+			gpios = <&gpio TEGRA_GPIO(X, 6) GPIO_ACTIVE_LOW>;
-+			linux,code = <KEY_VOLUMEUP>;
++			in-ldo0-1-supply = <&spmic_sd2>;
++			in-ldo7-8-supply = <&spmic_sd2>;
++
++			system_pmic_default: default {
++				pin_gpio0 {
++					pins = "gpio0";
++					function = "gpio";
++				};
++
++				pin_gpio1 {
++					pins = "gpio1";
++					function = "fps-out";
++					drive-push-pull = <1>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
++					maxim,active-fps-power-up-slot = <7>;
++					maxim,active-fps-power-down-slot = <0>;
++				};
++
++				pin_gpio2_3 {
++					pins = "gpio2", "gpio3";
++					function = "fps-out";
++					drive-open-drain = <1>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
++				};
++
++				pin_gpio4 {
++					pins = "gpio4";
++					function = "32k-out1";
++				};
++
++				pin_gpio5_6_7 {
++					pins = "gpio5", "gpio6", "gpio7";
++					function = "gpio";
++					drive-push-pull = <1>;
++				};
++			};
++
++			fps {
++				fps0 {
++					maxim,suspend-fps-time-period-us = <1280>;
++					maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN0>;
++				};
++
++				fps1 {
++					maxim,suspend-fps-time-period-us = <1280>;
++					maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN1>;
++				};
++
++				fps2 {
++					maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN0>;
++				};
++			};
++
++			regulators {
++				sd0 {
++					regulator-name = "vdd-core";
++					regulator-min-microvolt = <600000>;
++					regulator-max-microvolt = <1400000>;
++					regulator-boot-on;
++					regulator-always-on;
++					regulator-enable-ramp-delay = <146>;
++					regulator-ramp-delay = <27500>;
++					maxim,fps-source = <MAX77620_FPS_SRC_1>;
++				};
++
++				sd1 {
++					regulator-name = "vddio-ddr";
++					regulator-always-on;
++					regulator-boot-on;
++					regulator-enable-ramp-delay = <130>;
++					regulator-ramp-delay = <27500>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
++				};
++
++				spmic_sd2: sd2 {
++					regulator-name = "vdd-pre-reg";
++					regulator-min-microvolt = <1350000>;
++					regulator-max-microvolt = <1350000>;
++					regulator-enable-ramp-delay = <176>;
++					regulator-ramp-delay = <27500>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
++				};
++
++				sd3 {
++					regulator-name = "vdd-1v8";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++					regulator-boot-on;
++					regulator-enable-ramp-delay = <242>;
++					regulator-ramp-delay = <27500>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
++				};
++
++				ldo0 {
++					regulator-name = "avdd-sys";
++					regulator-min-microvolt = <1200000>;
++					regulator-max-microvolt = <1200000>;
++					regulator-always-on;
++					regulator-boot-on;
++					regulator-enable-ramp-delay = <26>;
++					regulator-ramp-delay = <100000>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
++				};
++
++				ldo1 {
++					regulator-name = "vdd-pex";
++					regulator-min-microvolt = <1050000>;
++					regulator-max-microvolt = <1050000>;
++					regulator-always-on;
++					regulator-enable-ramp-delay = <22>;
++					regulator-ramp-delay = <100000>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
++				};
++
++				ldo2 {
++					regulator-name = "vddio-sdmmc1";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <3300000>;
++					regulator-enable-ramp-delay = <62>;
++					regulator-ramp-delay = <100000>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
++				};
++
++				ldo3 {
++					regulator-name = "vdd-cam-hv";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-enable-ramp-delay = <50>;
++					regulator-ramp-delay = <100000>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
++				};
++
++				ldo4 {
++					regulator-name = "vdd-rtc";
++					regulator-min-microvolt = <850000>;
++					regulator-max-microvolt = <850000>;
++					regulator-always-on;
++					regulator-boot-on;
++					regulator-enable-ramp-delay = <22>;
++					regulator-ramp-delay = <100000>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
++				};
++
++				ldo5 {
++					regulator-name = "avdd-ts-hv";
++					regulator-min-microvolt = <3300000>;
++					regulator-max-microvolt = <3300000>;
++					regulator-enable-ramp-delay = <62>;
++					regulator-ramp-delay = <100000>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
++				};
++
++				ldo6 {
++					regulator-name = "vdd-ts";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-enable-ramp-delay = <36>;
++					regulator-ramp-delay = <100000>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
++					maxim,active-fps-power-up-slot = <7>;
++					maxim,active-fps-power-down-slot = <0>;
++				};
++
++				ldo7 {
++					regulator-name = "vdd-gen-pll-edp";
++					regulator-min-microvolt = <1050000>;
++					regulator-max-microvolt = <1050000>;
++					regulator-always-on;
++					regulator-boot-on;
++					regulator-enable-ramp-delay = <24>;
++					regulator-ramp-delay = <100000>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
++				};
++
++				ldo8 {
++					regulator-name = "vdd-hdmi-dp";
++					regulator-min-microvolt = <1050000>;
++					regulator-max-microvolt = <1050000>;
++					regulator-always-on;
++					regulator-enable-ramp-delay = <22>;
++					regulator-ramp-delay = <100000>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
++				};
++			};
 +		};
 +	};
- };
++
+ 	gpio-keys {
+ 		compatible = "gpio-keys";
+ 		label = "gpio-keys";
 -- 
 2.1.4
