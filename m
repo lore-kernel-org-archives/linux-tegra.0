@@ -1,106 +1,62 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v6 00/12] Add T210 support in Tegra soctherm
-Date: Mon, 29 Feb 2016 13:54:34 +0800
-Message-ID: <56D3DD1A.40208@nvidia.com>
-References: <1456128340-28800-1-git-send-email-wni@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] mmc: tegra: Disable UHS-I modes for tegra114
+Date: Mon, 29 Feb 2016 07:43:38 +0100
+Message-ID: <20160229064338.GC23745@ulmo>
+References: <1455806924-14967-1-git-send-email-jonathanh@nvidia.com>
+ <1456479257-12147-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="0vzXIDBeUiKkjNJl"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1456128340-28800-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1456479257-12147-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
-Does anyone have comments on this series?
 
-Thanks.
-Wei.
+--0vzXIDBeUiKkjNJl
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2016=E5=B9=B402=E6=9C=8822=E6=97=A5 16:05, Wei Ni wrote:
-> This patchset adds following functions for tegra_soctherm driver:
-> 1. add T210 support.
-> 2. export debugfs to show some registers.
-> 3. add thermtrip funciton.
-> 4. add suspend/resume function.
+On Fri, Feb 26, 2016 at 09:34:17AM +0000, Jon Hunter wrote:
+> SD card support for Tegra114 started failing after commit a8e326a911d3
+> ("mmc: tegra: implement module external clock change") was merged. This
+> commit was part of a series to enable UHS-I modes for Tegra. To
+> workaround this problem for now, disable UHS-I modes for Tegra114 by
+> separating the soc data structures for Tegra114 and Tegra124 so that
+> UHS-I is still enabled for Tegra124 but not Tegra114.
 >=20
-> The v5 serial is in:
-> http://www.spinics.net/lists/linux-tegra/msg25079.html
-> The v4 serial is in:
-> http://www.spinics.net/lists/linux-tegra/msg24972.html
-> The V3 serial is in:
-> http://www.spinics.net/lists/linux-tegra/msg24911.html
-> The V2 serial is in:
-> http://www.spinics.net/lists/linux-tegra/msg24901.html
-> The V1 serial is in:
-> http://www.spinics.net/lists/linux-tegra/msg24808.html
+> Fixes: a8e326a911d3 ("mmc: tegra: implement module external clock change")
 >=20
-> Main changes from V5:
-> 1. Change to use linux thermal framework to implement
-> thermtrip funciton, per Rob's comment.
-> 2. Add .set_trip_temp() in of-thermal driver, so that
-> we can set trips on hardware.
->=20
-> Main changes from V4:
-> 1. Change description of devicetree binding per Rob's comment.
-> 2. Call of_node_put to decrement refcount of the node.
->=20
-> Main changes from V3:
-> 1. Change structures to "const" in chip specific files.
-> 2. Minor changes per Thieery's comments.
->=20
-> Main changes from V2:
-> 1. Fix build error in patch [1/11].
-> 2. Use of_get_child_by_name instead of of_find_node_by_name in patch =
-[8/11].
-> 3. Use debugfs_remove_recursive to remove debugfs in patch [6/11].
->=20
-> Main changes from V1:
-> 1. Use the new type to handl different Tegra chips in one driver, whi=
-ch suggested by Thierry.
-> 2. Changes per Thieery's other comments.
->=20
-> Wei Ni (12):
->   thermal: tegra: move tegra thermal files into tegra directory
->   thermal: tegra: combine sensor group-related data
->   thermal: tegra: get rid of PDIV/HOTSPOT hack
->   thermal: tegra: split tegra_soctherm driver
->   thermal: tegra: add Tegra210 specific SOC_THERM driver
->   thermal: tegra: add a debugfs to show registers
->   thermal: of-thermal: allow setting trip_temp on hardware
->   of: add notes of critical trips for soctherm
->   thermal: tegra: add thermtrip function
->   thermal: tegra: add PM support
->   arm64: tegra: add soctherm node for Tegra210
->   arm: tegra: set critical trips for Tegra124
->=20
->  .../devicetree/bindings/thermal/tegra-soctherm.txt |  12 +
->  arch/arm/boot/dts/tegra124.dtsi                    |  16 +
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  60 ++
->  drivers/thermal/Kconfig                            |  12 +-
->  drivers/thermal/Makefile                           |   2 +-
->  drivers/thermal/of-thermal.c                       |   8 +
->  drivers/thermal/tegra/Kconfig                      |  13 +
->  drivers/thermal/tegra/Makefile                     |   5 +
->  drivers/thermal/tegra/soctherm-fuse.c              | 169 +++++
->  drivers/thermal/tegra/soctherm.c                   | 685 +++++++++++=
-++++++++++
->  drivers/thermal/tegra/soctherm.h                   | 123 ++++
->  drivers/thermal/tegra/tegra124-soctherm.c          | 196 ++++++
->  drivers/thermal/tegra/tegra210-soctherm.c          | 197 ++++++
->  drivers/thermal/tegra_soctherm.c                   | 476 -----------=
----
->  include/dt-bindings/thermal/tegra124-soctherm.h    |   1 +
->  include/linux/thermal.h                            |   1 +
->  16 files changed, 1489 insertions(+), 487 deletions(-)
->  create mode 100644 drivers/thermal/tegra/Kconfig
->  create mode 100644 drivers/thermal/tegra/Makefile
->  create mode 100644 drivers/thermal/tegra/soctherm-fuse.c
->  create mode 100644 drivers/thermal/tegra/soctherm.c
->  create mode 100644 drivers/thermal/tegra/soctherm.h
->  create mode 100644 drivers/thermal/tegra/tegra124-soctherm.c
->  create mode 100644 drivers/thermal/tegra/tegra210-soctherm.c
->  delete mode 100644 drivers/thermal/tegra_soctherm.c
->=20
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
+
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+--0vzXIDBeUiKkjNJl
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJW0+iaAAoJEN0jrNd/PrOh8wEP/0UGFZpcHnHh9ZIx8hgA4EBX
+smIwNkQb9Z89qo8BzBUQuh3jBgmwgvIzFPfL13gfc8929dQlaqsoS2dh1lXRR0xc
+T8e4edeiPeCF80C16lHvdTeizjAOJCg8XTjL6bH7/Rwa+Obb/V5fT8dJoZCYd45E
+DiW+IUle0dscXzZwMvGNs6VUC+s5vf8nNO7WcXwwyNZJbVI6B28IBwjt/ZdfDZap
+jEManeYRseuCJIaDvKh2RMC+qgo91xRXf17/+ReTCr6Mz+yAFt+hx05DI5HpAxGt
+6+95WNYIuVbWYCwN8nsi+V6YwNa8LMmuP6BPStp1FeLmSswLQYxOs83r2bXCdHbs
+ibHoBWEy58T01D+l7rRte667/qpXLhuqF2u+ZLRLCAODjMyb/dSjjxdgGC376u6c
+So4hgYCw/9L1VtD32L7wbNrA7N9HZMa7o5STCzPmSwBf+4k+AYiori+FgMx9AdlZ
+5lb4lTsRnu2V5TbuplZHbSkykn8DvnAS6G6UXtr8bE+UyFb8Go5tIyhoJDcJlmOK
+jRwH7bPOcBLpYQgJgXPl4Jb5oO06bS2+h7+AsKDemUfWiJe/VMd8GXFj8b+/768j
+PBW2BuUXJImgnmndi0FsiXjgho4iEHgw4Nb9SJYRB1jbo5XfD8BladZyZu2GooK3
+K9Mu139FBUZuM0yQu5Le
+=dSLp
+-----END PGP SIGNATURE-----
+
+--0vzXIDBeUiKkjNJl--
