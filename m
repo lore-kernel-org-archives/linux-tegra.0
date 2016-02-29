@@ -1,43 +1,106 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH 00/61] gpio: Add and use devm_gpiochip_add_data()
-Date: Sun, 28 Feb 2016 20:02:02 +0530
-Message-ID: <56D304E2.7000608@nvidia.com>
-References: <1456150130-2668-1-git-send-email-ldewangan@nvidia.com>	<CACRpkdbt+RiWMA74e40MNZVnDM0t0futtFnbyu9sRhv7p93-Tg@mail.gmail.com>	<56CC1FD4.1080905@nvidia.com>	<56CC7791.2000607@nvidia.com> <CACRpkdYsG8X5XiV2+Ss2GLJkFnLFzLi0uy0yy8R5sdi0b_Y+qA@mail.gmail.com>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v6 00/12] Add T210 support in Tegra soctherm
+Date: Mon, 29 Feb 2016 13:54:34 +0800
+Message-ID: <56D3DD1A.40208@nvidia.com>
+References: <1456128340-28800-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYsG8X5XiV2+Ss2GLJkFnLFzLi0uy0yy8R5sdi0b_Y+qA@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Michael Hennerich <michael.hennerich@analog.com>, Jon Corbet <corbet@lwn.net>, Alban Bedel <albeu@free.fr>, Ray Jui <rjui@broadcom.com>, Alexander Shiyan <shc_work@mail.ru>, Support Opensource <support.opensource@diasemi.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?B?IkFuZGVyc3NvbiwgQmrDtnJuIg==?= <bjorn.andersson@sonymobile.com>, Abhilash Kesavan <a.kesavan@samsung.com>, Greg KH <gregkh@linuxfoundation.org>, Catalin Marinas <catalin.marinas@arm.com>, "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, WOLFSON MICROELECTRONICS DRIVERS <patches@opensource.wolfsonmicro.com>, bcm-kernel-feedback-list <bcm-kernel-feedback-list@broadcom.com>, linux-arm-k
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1456128340-28800-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi,
+Does anyone have comments on this series?
 
-On Thursday 25 February 2016 06:54 PM, Linus Walleij wrote:
-> On Tue, Feb 23, 2016 at 4:15 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
->
->> I have made the repo in git hub as
->>      https://github.com/ldewangan/linux-upstream.git
-> Awesome.
->
->> branch name is devm_gpiochip.
->>      https://github.com/ldewangan/linux-upstream/tree/devm_gpiochip
-> I've pulled this branch into my tree on a separate branch for
-> testing. I pushed the tree to kernel.org so that the zeroday
-> autobuilders can have a go at it.
+Thanks.
+Wei.
 
-Thanks you very much for taking care.
-
->
-> If everything goes well I plan to merge this for v4.6, then we
-> can merge the changes in pin control and other subsystems
-> for v4.7.
-Yes, once this is there, we can grep all over subsystem and push the change.
-
-I am seeing lots of code reduction on pincontrol driver side once we 
-have devm_ for pincontrol register and gpiochip_add_data().
-
-Thanks,
-Laxman
-
+On 2016=E5=B9=B402=E6=9C=8822=E6=97=A5 16:05, Wei Ni wrote:
+> This patchset adds following functions for tegra_soctherm driver:
+> 1. add T210 support.
+> 2. export debugfs to show some registers.
+> 3. add thermtrip funciton.
+> 4. add suspend/resume function.
+>=20
+> The v5 serial is in:
+> http://www.spinics.net/lists/linux-tegra/msg25079.html
+> The v4 serial is in:
+> http://www.spinics.net/lists/linux-tegra/msg24972.html
+> The V3 serial is in:
+> http://www.spinics.net/lists/linux-tegra/msg24911.html
+> The V2 serial is in:
+> http://www.spinics.net/lists/linux-tegra/msg24901.html
+> The V1 serial is in:
+> http://www.spinics.net/lists/linux-tegra/msg24808.html
+>=20
+> Main changes from V5:
+> 1. Change to use linux thermal framework to implement
+> thermtrip funciton, per Rob's comment.
+> 2. Add .set_trip_temp() in of-thermal driver, so that
+> we can set trips on hardware.
+>=20
+> Main changes from V4:
+> 1. Change description of devicetree binding per Rob's comment.
+> 2. Call of_node_put to decrement refcount of the node.
+>=20
+> Main changes from V3:
+> 1. Change structures to "const" in chip specific files.
+> 2. Minor changes per Thieery's comments.
+>=20
+> Main changes from V2:
+> 1. Fix build error in patch [1/11].
+> 2. Use of_get_child_by_name instead of of_find_node_by_name in patch =
+[8/11].
+> 3. Use debugfs_remove_recursive to remove debugfs in patch [6/11].
+>=20
+> Main changes from V1:
+> 1. Use the new type to handl different Tegra chips in one driver, whi=
+ch suggested by Thierry.
+> 2. Changes per Thieery's other comments.
+>=20
+> Wei Ni (12):
+>   thermal: tegra: move tegra thermal files into tegra directory
+>   thermal: tegra: combine sensor group-related data
+>   thermal: tegra: get rid of PDIV/HOTSPOT hack
+>   thermal: tegra: split tegra_soctherm driver
+>   thermal: tegra: add Tegra210 specific SOC_THERM driver
+>   thermal: tegra: add a debugfs to show registers
+>   thermal: of-thermal: allow setting trip_temp on hardware
+>   of: add notes of critical trips for soctherm
+>   thermal: tegra: add thermtrip function
+>   thermal: tegra: add PM support
+>   arm64: tegra: add soctherm node for Tegra210
+>   arm: tegra: set critical trips for Tegra124
+>=20
+>  .../devicetree/bindings/thermal/tegra-soctherm.txt |  12 +
+>  arch/arm/boot/dts/tegra124.dtsi                    |  16 +
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  60 ++
+>  drivers/thermal/Kconfig                            |  12 +-
+>  drivers/thermal/Makefile                           |   2 +-
+>  drivers/thermal/of-thermal.c                       |   8 +
+>  drivers/thermal/tegra/Kconfig                      |  13 +
+>  drivers/thermal/tegra/Makefile                     |   5 +
+>  drivers/thermal/tegra/soctherm-fuse.c              | 169 +++++
+>  drivers/thermal/tegra/soctherm.c                   | 685 +++++++++++=
+++++++++++
+>  drivers/thermal/tegra/soctherm.h                   | 123 ++++
+>  drivers/thermal/tegra/tegra124-soctherm.c          | 196 ++++++
+>  drivers/thermal/tegra/tegra210-soctherm.c          | 197 ++++++
+>  drivers/thermal/tegra_soctherm.c                   | 476 -----------=
+---
+>  include/dt-bindings/thermal/tegra124-soctherm.h    |   1 +
+>  include/linux/thermal.h                            |   1 +
+>  16 files changed, 1489 insertions(+), 487 deletions(-)
+>  create mode 100644 drivers/thermal/tegra/Kconfig
+>  create mode 100644 drivers/thermal/tegra/Makefile
+>  create mode 100644 drivers/thermal/tegra/soctherm-fuse.c
+>  create mode 100644 drivers/thermal/tegra/soctherm.c
+>  create mode 100644 drivers/thermal/tegra/soctherm.h
+>  create mode 100644 drivers/thermal/tegra/tegra124-soctherm.c
+>  create mode 100644 drivers/thermal/tegra/tegra210-soctherm.c
+>  delete mode 100644 drivers/thermal/tegra_soctherm.c
+>=20
