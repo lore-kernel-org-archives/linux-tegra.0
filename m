@@ -1,44 +1,57 @@
-From: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH V6 07/10] soc: tegra: pmc: Add generic PM domain support
-Date: Tue, 01 Mar 2016 16:18:20 -0800
-Message-ID: <7hfuw968c3.fsf@baylibre.com>
-References: <1456501724-28477-1-git-send-email-jonathanh@nvidia.com>
-	<1456501724-28477-8-git-send-email-jonathanh@nvidia.com>
+From: Laison Computech Inc <7sales-mT95+eBjLkWwyptSkfDYNlaTQe2KTcn/@public.gmane.org>
+Subject: CISCO AND AVAYA IP Phones
+Date: Wed, 02 Mar 2016 03:10:35 +0700
+Message-ID: <20160301210942.70B54574BBB__13835.3543043651$1456883520$gmane$org@srv-mta.gcmillenium.com.br>
+Reply-To: sales-mT95+eBjLkWwyptSkfDYNlaTQe2KTcn/@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1456501724-28477-8-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> (Jon
-	Hunter's message of "Fri, 26 Feb 2016 15:48:41 +0000")
+Content-Description: Mail message body
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Recipients <7sales-mT95+eBjLkWwyptSkfDYNlaTQe2KTcn/@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> writes:
+Hi,
 
-> Adds generic PM support to the PMC driver where the PM domains are
-> populated from device-tree and the PM domain consumer devices are
-> bound to their relevant PM domains via device-tree as well.
->
-> Update the tegra_powergate_sequence_power_up() API so that internally
-> it calls the same tegra_powergate_xxx functions that are used by the
-> tegra generic power domain code for consistency.
->
-> To ensure that the Tegra power domains (a.k.a powergates) cannot be
-> controlled via both the legacy tegra_powergate_xxx functions as well
-> as the generic PM domain framework, add a bit map for available
-> powergates that can be controlled via the legacy powergate functions.
->
-> Move the majority of the tegra_powergate_remove_clamping() function
-> to a sub-function, so that this can be used by both the legacy and
-> generic power domain code.
->
-> This is based upon work by Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> and Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>.
->
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Clean tested working pulls CPUs and QTYs in stock.
 
-I didn't look in great detail at the SoC specifics, but for the for the
-general genpd approach:
+115 X X5650
+65 X E5410
+75 X X5660
+145 X E5530
+100 X E5645
+40 X X5680
+75 X X5690
 
-Acked-by: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Brand new sealed IP phones and QTYs in stock.
+
+55 x CP-7937G
+77 x CP-7942G
+54 x CP-7945G
+75 x CP-7962G
+=2E.....
+45 x Avaya 9630
+65 x Avaya 9641
+55 x Avaya 9640=20
+
+USED IT HARDWARE FROM:
+
+=46UJITSU       IBM         SUN        HP
+QUANTUM   DELL       HDS        STK
+NETAPP      SGI         Oracle      EMC=B2
+
+3Com, ADVA, Alcatel, Brocade, Cisco,
+Cabletron, Enterasys, Extreme Networks,
+Huawei, Marconi, Nortel, Qlogic, Avaya
+
+Let me know if you're interested. We are very open to offers and willin=
+g to work with you to make sure that we have a deal.
+
+Sincerely
+Barbara Johnson
+Laison Computech Inc
+Tel: +1-657-205-7860
+=46ax: +1-347-214-0478
+Email: sales-mT95+eBjLkWwyptSkfDYNlaTQe2KTcn/@public.gmane.org
+Web: www.laisoncomputech.com
