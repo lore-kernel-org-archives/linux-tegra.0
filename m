@@ -1,62 +1,37 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 1/2] arm64: tegra: Add DT entry for keys used in
- Jetson-TX1
-Date: Tue, 1 Mar 2016 15:28:12 +0100
-Message-ID: <20160301142812.GB26201@ulmo>
-References: <1456751211-14341-1-git-send-email-ldewangan@nvidia.com>
+From: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Subject: =?utf-8?Q?=D0=9A=D0=9B=D0=98=D0=95=D0=9D=D0=A2=D0=A1=D0?=
+	=?utf-8?Q?=9A=D0=98=D0=95_=D0=91=D0=90=D0=97=D0=AB!_=D0?=
+	=?utf-8?Q?=A2=D0=B5=D0=BB=5CViber=5CWhatsapp=3A_+79133913?=
+	=?utf-8?Q?837_Email=3A_mloginova19=40gmail=2Ecom_Skype=3A?=
+	=?utf-8?Q?_prodawez389?=
+Date: Tue, 1 Mar 2016 22:24:02 +0600
+Message-ID: <FF04B068C6123DFE22276ED1257BAB0C@vger.kernel.org>
+Reply-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <mloginova19-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="24zk1gE8NUlDmwG9"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1456751211-14341-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: swarren@wwwdotorg.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+=D0=9A=D0=9B=D0=98=D0=95=D0=9D=D0=A2=D0=A1=D0=9A=D0=98=D0=95 =D0=91=D0=90=
+=D0=97=D0=AB!
 
---24zk1gE8NUlDmwG9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Feb 29, 2016 at 06:36:50PM +0530, Laxman Dewangan wrote:
-> Add DT entry for keys used in Jetson-TX p2371-2180. This has
-> three keys, POWER, VOLUME-UP and VOLUME-DOWN.
->=20
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts | 25 ++++++++++++++++=
-++++++
->  1 file changed, 25 insertions(+)
-
-I've applied this with a slightly modified commit message and moved the
-gpio-keys node into the tegra210-p2597.dtsi file, because the GPIO keys
-are part of the P2597 I/O board.
-
-Thanks,
-Thierry
-
---24zk1gE8NUlDmwG9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJW1ab8AAoJEN0jrNd/PrOh4+sP/jsKzjsGBO8hjt2O3SOOeeMu
-dwBdFHfnle6S2N+8nwGjraY3tgv05dQRPBlROEqe8/nAeu+bAGNY4Ez4HnMNsO6H
-zMw3ZMUWSLIwM48+XQvuLPIQzmNc23ccLL0yp3VYxcHsn7ThwAKLU0a2RcoMaQ1A
-1Hv1HPK8/YPEUzTarfPmPozF7ESxNpAE+r77iUyfOUGTG1MVx7kMNGuPN5mdMA8+
-H+t08hqdOzwSXvpnonOLyDR8NzhQVt3SXCuORfmy0Np2Bsbyy+Jj2pY4oTVZdrRB
-Y3ZocFuJgx5q8CKLH04//xyDI67CAdqmeK0ncRs91IYT3z0r0Ur3sV7ippTpAYEd
-P3AlYC7tW73KmBa02EmkCJ00v8idZP5az+AizxZX8gDj7MITxn+h1cSeJopHnmkz
-mH9GP/ykgxBbrUGdYRStbeNJXl3C98B1XYSE7kvfymEsL+TeW9MDwpEE35u52mML
-s4OOzvuE7ecEvHBOTTCn9kJlXJsvIGKBGTpLvEDuxYXF/d2RX3BC7t5tRKGa9ec5
-/XZ/X5EMSHgxK5iMcH/GYUynt5KCCP8bjqe48U3OKpLoIq1u+pgW+py1XuHT8Bxt
-GQLnqerpPDkOIMkRolbzDwB/zSlkcRIcZUxFMswOcW7OX8C7o5yInF1kyhZLQJ3Y
-hxV7mHMM4emeBrJfbdM+
-=d2gL
------END PGP SIGNATURE-----
-
---24zk1gE8NUlDmwG9--
+=D0=A1=D0=BE=D0=B1=D0=B5=D1=80=D0=B5=D0=BC =D0=B4=D0=BB=D1=8F =D0=92=D0=
+=B0=D1=81 =D0=BF=D0=BE =D0=B8=D0=BD=D1=82=D0=B5=D1=80=D0=BD=D0=B5=D1=82=
+ =D0=B1=D0=B0=D0=B7=D1=83 =D0=B4=D0=B0=D0=BD=D0=BD=D1=8B=D1=85 =D0=BF=D0=
+=BE=D1=82=D0=B5=D0=BD=D1=86=D0=B8=D0=B0=D0=BB=D1=8C=D0=BD=D1=8B=D1=85 =D0=
+=BA=D0=BB=D0=B8=D0=B5=D0=BD=D1=82=D0=BE=D0=B2=20
+=D0=B4=D0=BB=D1=8F =D0=92=D0=B0=D1=88=D0=B5=D0=B3=D0=BE =D0=91=D0=B8=D0=
+=B7=D0=BD=D0=B5=D1=81=D0=B0!
+=D0=9C=D0=BD=D0=BE=D0=B3=D0=BE! =D0=91=D1=8B=D1=81=D1=82=D1=80=D0=BE! =D0=
+=9D=D0=B5=D0=B4=D0=BE=D1=80=D0=BE=D0=B3=D0=BE!=20
+=D0=A3=D0=B7=D0=BD=D0=B0=D0=B9=D1=82=D0=B5 =D0=BE=D0=B1 =D1=8D=D1=82=D0=
+=BE=D0=BC =D0=BF=D0=BE=D0=B4=D1=80=D0=BE=D0=B1=D0=BD=D0=B5=D0=B5 =D0=BF=
+=D0=BE=20
+=D0=A2=D0=B5=D0=BB: +79133913837
+Viber: +79133913837
+Whatsapp: +79133913837
+Skype: prodawez389
+Email: mloginova19-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
