@@ -1,51 +1,44 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH v2 2/2] mmc: sdhci-tegra: Specify valid DMA mask
-Date: Tue, 01 Mar 2016 22:34:02 +0100
-Message-ID: <10092864.HLRl1VM3vC@wuerfel>
-References: <1456806764-16467-1-git-send-email-acourbot@nvidia.com> <1456806764-16467-3-git-send-email-acourbot@nvidia.com>
+From: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH V6 07/10] soc: tegra: pmc: Add generic PM domain support
+Date: Tue, 01 Mar 2016 16:18:20 -0800
+Message-ID: <7hfuw968c3.fsf@baylibre.com>
+References: <1456501724-28477-1-git-send-email-jonathanh@nvidia.com>
+	<1456501724-28477-8-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1456806764-16467-3-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1456501724-28477-8-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> (Jon
+	Hunter's message of "Fri, 26 Feb 2016 15:48:41 +0000")
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 01 March 2016 13:32:44 Alexandre Courbot wrote:
-> On T210, the sdhci controller can address more than 32 bits of address
-> space. Failing to express this fact results in the use of bounce
-> buffers and affects performance.
-> 
-> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> writes:
 
-I don't get this one. Why don't you just set the (SDHCI_USE_SDMA | SDHCI_USE_ADMA)
-flags that are checked in the first patch?
+> Adds generic PM support to the PMC driver where the PM domains are
+> populated from device-tree and the PM domain consumer devices are
+> bound to their relevant PM domains via device-tree as well.
+>
+> Update the tegra_powergate_sequence_power_up() API so that internally
+> it calls the same tegra_powergate_xxx functions that are used by the
+> tegra generic power domain code for consistency.
+>
+> To ensure that the Tegra power domains (a.k.a powergates) cannot be
+> controlled via both the legacy tegra_powergate_xxx functions as well
+> as the generic PM domain framework, add a bit map for available
+> powergates that can be controlled via the legacy powergate functions.
+>
+> Move the majority of the tegra_powergate_remove_clamping() function
+> to a sub-function, so that this can be used by both the legacy and
+> generic power domain code.
+>
+> This is based upon work by Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> and Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>.
+>
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-> @@ -289,6 +291,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra20 = {
->  	.pdata = &sdhci_tegra20_pdata,
->  	.nvquirks = NVQUIRK_FORCE_SDHCI_SPEC_200 |
->  		    NVQUIRK_ENABLE_BLOCK_GAP_DET,
-> +	.dma_mask = DMA_BIT_MASK(32),
->  };
+I didn't look in great detail at the SoC specifics, but for the for the
+general genpd approach:
 
-Can you describe what the specific bug is in these controllers? Do you mean they
-support SDHCI_USE_SDMA or SDHCI_USE_ADMA in theory but you still have to prevent
-them from using high addresses?
-
-> @@ -353,6 +358,7 @@ static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
->  
->  static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
->  	.pdata = &sdhci_tegra210_pdata,
-> +	.dma_mask = DMA_BIT_MASK(34),
->  };
->  
->  static const struct of_device_id sdhci_tegra_dt_match[] = {
-
-This one still completely weirds me out. What kind of odd limitation does
-the controller have in Tegra 210?
-
-Are there actually any machines with more than 16GB?
-
-	Arnd
+Acked-by: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
