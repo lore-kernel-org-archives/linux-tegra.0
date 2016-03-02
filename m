@@ -1,63 +1,53 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4 2/2] gpu: host1x: Set DMA ops on device creation
-Date: Wed, 2 Mar 2016 18:08:38 +0100
-Message-ID: <20160302170838.GB486@ulmo.nvidia.com>
-References: <1456477613-24995-1-git-send-email-acourbot@nvidia.com>
- <1456477613-24995-2-git-send-email-acourbot@nvidia.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="LyciRD1jyfeSSjG0"
+From: Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] AsoC: tegra_max98090: honor headphone detect GPIO polarity
+Date: Wed,  2 Mar 2016 10:43:43 -0700
+Message-ID: <1456940623-1496-1-git-send-email-sctincman@gmail.com>
+References: <56CC9860.2060003@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1456477613-24995-2-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <56CC9860.2060003-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Terje =?utf-8?Q?Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org
+Cc: lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org, Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Set the invert property for the headphone jack depending on the GPIO polarity
+in the device-tree.
 
---LyciRD1jyfeSSjG0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ sound/soc/tegra/tegra_max98090.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-On Fri, Feb 26, 2016 at 06:06:53PM +0900, Alexandre Courbot wrote:
-> Currently host1x-instanciated devices have their dma_ops left to NULL,
-> which makes any DMA operation (like buffer import) on ARM64 fallback
-> to the dummy_dma_ops and fail with an error.
->=20
-> This patch calls of_dma_configure() with the host1x node when creating
-> such a device, so the proper DMA operations are set.
->=20
-> Suggested-by: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/gpu/host1x/bus.c | 2 ++
->  1 file changed, 2 insertions(+)
-
-Applied, thanks.
-
-Thierry
-
---LyciRD1jyfeSSjG0
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJW1x4VAAoJEN0jrNd/PrOhgQwP/2QrvrZjRFlnhN7piknbXR8z
-6Aihz2zB8e3qiZmiY0POn2LYxZDyAgvz3efvcrsH7/qQ4Idev23crxe4DN16sq3Y
-kpUMwy7lMcANAckVj365npppZHP+zYV8s9IX0gUuGti320F0bQ4JXGqiCLM0uvmK
-3Uu0RcYWiu5GGW9PaIPrFPijYVxuiVNvJAwloRKTND2XLoASt/3ZMF+D/3TlugSg
-kLcs+xdRhvwbHJjwu15d1Oq4FsOYyEl6Gfqdg8XDrSdNkqRhAvzZIJqD8jw2SSSa
-4P/313Wd+TqSHARO2ssmNTLppp65jSmownm+I6cppEmeXtr66yZD3XaSuhRq9axd
-dnwVq6TsARW+W6IahVfUIOOAhmdP1WYA5vXDNkQs+G2+ZUV550w3ipr7onow06J4
-J5bmP15PEYLWkQ5b4oQRXpEKL0PcXHbR8hdeurd3k/tzYcNuYixD7CSpuOI6bK3p
-mZrO+49P8ax2ag+ZKQ6fdAbu4g9fMybGTBU5xE/wqt57UhTaquB1UNil+K51a3cj
-pieg46UVodWVbIUr4qJuJ5hETskLlApLoocne1fN2mRvG2YNTXP7zqOFVdPKE4Ic
-xIhT2eIvylDKakZcCzkRFrmSmAa0NdxceFPY1D8bAZy1j2Bti5At6FW9MR+HGdTe
-+1Lv+Cnmj7LQAA5JxqMJ
-=7bQZ
------END PGP SIGNATURE-----
-
---LyciRD1jyfeSSjG0--
+diff --git a/sound/soc/tegra/tegra_max98090.c b/sound/soc/tegra/tegra_max98090.c
+index 902da36..da4e8d1 100644
+--- a/sound/soc/tegra/tegra_max98090.c
++++ b/sound/soc/tegra/tegra_max98090.c
+@@ -42,6 +42,7 @@
+ struct tegra_max98090 {
+ 	struct tegra_asoc_utils_data util_data;
+ 	int gpio_hp_det;
++	enum of_gpio_flags gpio_hp_det_flags;
+ 	int gpio_mic_det;
+ };
+ 
+@@ -155,6 +156,8 @@ static int tegra_max98090_asoc_init(struct snd_soc_pcm_runtime *rtd)
+ 				      ARRAY_SIZE(tegra_max98090_hp_jack_pins));
+ 
+ 		tegra_max98090_hp_jack_gpio.gpio = machine->gpio_hp_det;
++		tegra_max98090_hp_jack_gpio.invert =
++			machine->gpio_hp_det_flags & OF_GPIO_ACTIVE_LOW;
+ 		snd_soc_jack_add_gpios(&tegra_max98090_hp_jack,
+ 					1,
+ 					&tegra_max98090_hp_jack_gpio);
+@@ -234,7 +237,8 @@ static int tegra_max98090_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, card);
+ 	snd_soc_card_set_drvdata(card, machine);
+ 
+-	machine->gpio_hp_det = of_get_named_gpio(np, "nvidia,hp-det-gpios", 0);
++	machine->gpio_hp_det = of_get_named_gpio_flags(
++		np, "nvidia,hp-det-gpios", 0, &machine->gpio_hp_det_flags);
+ 	if (machine->gpio_hp_det == -EPROBE_DEFER)
+ 		return -EPROBE_DEFER;
+ 
+-- 
+2.7.2
