@@ -1,44 +1,25 @@
-From: Adrian Hunter <adrian.hunter@intel.com>
-Subject: Re: [PATCH 1/2] mmc: tegra: properly disable card clock
-Date: Thu, 3 Mar 2016 16:06:56 +0200
-Message-ID: <56D84500.1030807@intel.com>
-References: <1456779385-18996-1-git-send-email-dev@lynxeye.de>
+From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/1] dma: tegra: don't open code
+ of_device_get_match_data()
+Date: Thu, 3 Mar 2016 21:23:25 +0530
+Message-ID: <20160303155324.GU11154@localhost>
+References: <1456838680-3220-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1456779385-18996-1-git-send-email-dev@lynxeye.de>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Lucas Stach <dev@lynxeye.de>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1456838680-3220-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 29/02/16 22:56, Lucas Stach wrote:
-> The new code to do the clock rate setting externally to the SDMMC
-> module has a shortcut to not propagate changes with a 0 rate to
-> the CAR by simply bailing out. This breaks proper cutting of the
-> card clock. Fix it by directly calling the correct sdhci function.
-> 
-> Fixes: a8e326a911d3 "mmc: tegra: implement module external clock change"
-> Signed-off-by: Lucas Stach <dev@lynxeye.de>
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 212d51f..46a6bd1 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -194,7 +194,7 @@ static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
->  	unsigned long host_clk;
->  
->  	if (!clock)
-> -		return;
-> +		return sdhci_set_clock(host, clock);;
->  
->  	host_clk = tegra_host->ddr_signaling ? clock * 2 : clock;
->  	clk_set_rate(pltfm_host->clk, host_clk);
-> 
+On Tue, Mar 01, 2016 at 06:54:40PM +0530, Laxman Dewangan wrote:
+> Use of_device_get_match_data() for getting matched data
+> instead of implementing this locally.
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+I have applied this after fixing subsystem name. Please ensure you use the
+right name
 
+-- 
+~Vinod
