@@ -1,25 +1,34 @@
-From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/1] dma: tegra: don't open code
- of_device_get_match_data()
-Date: Thu, 3 Mar 2016 21:23:25 +0530
-Message-ID: <20160303155324.GU11154@localhost>
-References: <1456838680-3220-1-git-send-email-ldewangan@nvidia.com>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH V2] dma: tegra: don't open code of_device_get_match_data()
+Date: Thu, 3 Mar 2016 21:30:21 +0530
+Message-ID: <20160303160021.GV11154@localhost>
+References: <1456928966-1192-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1456838680-3220-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1456928966-1192-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: dan.j.williams@intel.com, swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Mar 01, 2016 at 06:54:40PM +0530, Laxman Dewangan wrote:
+On Wed, Mar 02, 2016 at 07:59:26PM +0530, Laxman Dewangan wrote:
 > Use of_device_get_match_data() for getting matched data
 > instead of implementing this locally.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> 
+> ---
+> Changes form V1:
+> - Found that it is possible to move of_device_id table to down
+>   where this is used i.e. just above the platform driver structure.
+>   Make this change on V2.
 
-I have applied this after fixing subsystem name. Please ensure you use the
-right name
+But that is just noise and not relevant to the title which patch says. If
+you want to do this code move please send that separately. I have picked v1
+for now
 
 -- 
 ~Vinod
