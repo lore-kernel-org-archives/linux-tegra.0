@@ -1,71 +1,39 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 1/2] PM / clk: Add stubs for pm_clk_suspend/resume
-Date: Fri, 4 Mar 2016 15:33:04 +0000
-Message-ID: <1457105585-25157-1-git-send-email-jonathanh@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [GIT PULL] drm/tegra: Fixes for v4.5-rc7
+Date: Fri,  4 Mar 2016 16:35:18 +0100
+Message-ID: <1457105718-12924-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dave Airlie <airlied@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-The functions pm_clk_suspend() and pm_clk_resume() cannot be used
-directly within the main body of a function, because when CONFIG_PM_CLK
-is not defined the functions are defined as NULL and this will lead to
-a compilation error.
-
-Add stubs functions for pm_clk_suspend() and pm_clk_resume() so that
-these functions may be called directly.
-
-Please note that these functions are currently assigned to function
-pointers in the PM domain core and so to avoid have a valid function
-pointer defined when CONFIG_PM_CLK is not defined, define
-GENPD_FLAG_PM_CLK as 0 when CONFIG_PM_CLK is not defined to ensure
-the stubs are not populated as valid function pointers.
-
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- include/linux/pm_clock.h  | 10 ++++++++--
- include/linux/pm_domain.h |  4 ++++
- 2 files changed, 12 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/pm_clock.h b/include/linux/pm_clock.h
-index 25266c600021..ffefbf2df1aa 100644
---- a/include/linux/pm_clock.h
-+++ b/include/linux/pm_clock.h
-@@ -72,8 +72,14 @@ static inline int pm_clk_add_clk(struct device *dev, struct clk *clk)
- static inline void pm_clk_remove(struct device *dev, const char *con_id)
- {
- }
--#define pm_clk_suspend	NULL
--#define pm_clk_resume	NULL
-+static inline int pm_clk_suspend(struct device *dev)
-+{
-+	return -EINVAL;
-+}
-+static inline int pm_clk_resume(struct device *dev)
-+{
-+	return -EINVAL;
-+}
- #endif
- 
- #ifdef CONFIG_HAVE_CLK
-diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-index 49cd8890b873..1074c2073df8 100644
---- a/include/linux/pm_domain.h
-+++ b/include/linux/pm_domain.h
-@@ -17,7 +17,11 @@
- #include <linux/notifier.h>
- 
- /* Defines used for the flags field in the struct generic_pm_domain */
-+#ifdef CONFIG_PM_CLK
- #define GENPD_FLAG_PM_CLK	(1U << 0) /* PM domain uses PM clk */
-+#else
-+#define GENPD_FLAG_PM_CLK	0
-+#endif
- 
- #define GENPD_MAX_NUM_STATES	8 /* Number of possible low power states */
- 
--- 
-2.1.4
+SGkgRGF2ZSwKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgOTJlOTYzZjUwZmM3
+NDA0MWI1ZTllNzQ0YzMzMGRjYTQ4ZTA0ZjA4ZDoKCiAgTGludXggNC41LXJjMSAoMjAxNi0wMS0y
+NCAxMzowNjo0NyAtMDgwMCkKCmFyZSBhdmFpbGFibGUgaW4gdGhlIGdpdCByZXBvc2l0b3J5IGF0
+OgoKICBnaXQ6Ly9hbm9uZ2l0LmZyZWVkZXNrdG9wLm9yZy90ZWdyYS9saW51eCB0YWdzL2RybS90
+ZWdyYS9mb3ItNC41LXJjNwoKZm9yIHlvdSB0byBmZXRjaCBjaGFuZ2VzIHVwIHRvIGM5NTQ2OWFh
+NWExODgzODRjY2Y4YWM1MjBlY2U5MzFjNjZjYWY4YWE6CgogIGdwdTogaG9zdDF4OiBTZXQgRE1B
+IG9wcyBvbiBkZXZpY2UgY3JlYXRpb24gKDIwMTYtMDMtMDQgMTY6MjQ6NTcgKzAxMDApCgpUaGFu
+a3MsClRoaWVycnkKCi0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0KZHJtL3RlZ3JhOiBGaXhlcyBmb3IgdjQuNS1yYzcKClR3byBz
+bWFsbCBmaXhlcyB0aGF0IHJlc3RvcmUgUFJJTUUgc3VwcG9ydC4KCi0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KQWxleGFuZHJl
+IENvdXJib3QgKDIpOgogICAgICBncHU6IGhvc3QxeDogU2V0IERNQSBtYXNrCiAgICAgIGdwdTog
+aG9zdDF4OiBTZXQgRE1BIG9wcyBvbiBkZXZpY2UgY3JlYXRpb24KCiBkcml2ZXJzL2dwdS9ob3N0
+MXgvYnVzLmMgfCAyICsrCiBkcml2ZXJzL2dwdS9ob3N0MXgvZGV2LmMgfCA3ICsrKysrKysKIGRy
+aXZlcnMvZ3B1L2hvc3QxeC9kZXYuaCB8IDEgKwogMyBmaWxlcyBjaGFuZ2VkLCAxMCBpbnNlcnRp
+b25zKCspCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRy
+aS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
+czovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
