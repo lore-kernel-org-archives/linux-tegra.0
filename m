@@ -1,54 +1,71 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] arm64: tegra210-smaug: Add gpio-key nodes
-Date: Fri, 4 Mar 2016 11:51:12 -0500
-Message-ID: <56D9BD00.3080005@nvidia.com>
-References: <1457034865-17826-1-git-send-email-rklein@nvidia.com>
- <20160304084729.GB4038@ulmo>
+From: Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] AsoC: tegra_max98090: honor headphone detect GPIO
+ polarity
+Date: Fri, 4 Mar 2016 10:42:57 -0700
+Message-ID: <56D9C921.7080802@gmail.com>
+References: <56CC9860.2060003@wwwdotorg.org>
+ <1456940623-1496-1-git-send-email-sctincman@gmail.com>
+ <56D8845A.4050704@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160304084729.GB4038@ulmo>
+In-Reply-To: <56D8845A.4050704-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Olof Johansson <olof-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Dylan Reid <dgreid-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 3/4/2016 3:47 AM, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Thu, Mar 03, 2016 at 02:54:25PM -0500, Rhyland Klein wrote:
->> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> [...]
->> +		lid {
->> +			label = "Lid";
->> +			gpios = <&gpio TEGRA_GPIO(B, 4) GPIO_ACTIVE_LOW>;
->> +			linux,input-type = <5>; /* EV_SW */
->> +			linux,code = <0>; /* SW_LID */
->> +			gpio-key,wakeup;
->> +		};
->> +
->> +		tablet_mode {
->> +			label = "Tablet Mode";
->> +			gpios = <&gpio TEGRA_GPIO(Z, 2) GPIO_ACTIVE_HIGH>;
->> +			linux,input-type = <5>; /* EV_SW */
->> +			linux,code = <1>; /* SW_TABLET_MODE */
->> +			gpio-key,wakeup;
->> +		};
-> 
-> Is there a way to trigger these on a DVT device? Power and volume
-> controls work fine, but I haven't found a way to test these two.
 
-First of all, thanks for catching the deprecated property and changes in
-the input.h.
 
-As for testing, both can be triggered with magnets. The lid switch is
-near the camera on the top of the display. For me, the tablet-mode
-sensor is around 1/3 up from the bottom (assuming camera is the top) on
-the back side of the device. Not sure how that would line up for you
-though...
+On 03/03/2016 11:37 AM, Stephen Warren wrote:
+> On 03/02/2016 10:43 AM, Jonathan Tinkham wrote:
+>> Set the invert property for the headphone jack depending on the GPIO 
+>> polarity
+>> in the device-tree.
+>>
+>> Signed-off-by: Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> ---
+>
+> I think this is an updatd version of a previous patch, so it should 
+> say "[PATCH V2]" in the subject, and have a description of the changes 
+> you made between the versions here, below the --- line.
 
--rhyland
-
--- 
-nvpublic
+Ah yes, my apologies. For the next version should I increment that to v3 
+or v2 then?
+>
+>> diff --git a/sound/soc/tegra/tegra_max98090.c 
+>> b/sound/soc/tegra/tegra_max98090.c
+>> index 902da36..da4e8d1 100644
+>> --- a/sound/soc/tegra/tegra_max98090.c
+>> +++ b/sound/soc/tegra/tegra_max98090.c
+>> @@ -42,6 +42,7 @@
+>>   struct tegra_max98090 {
+>>       struct tegra_asoc_utils_data util_data;
+>>       int gpio_hp_det;
+>> +    enum of_gpio_flags gpio_hp_det_flags;
+>>       int gpio_mic_det;
+>>   };
+>>
+>> @@ -155,6 +156,8 @@ static int tegra_max98090_asoc_init(struct 
+>> snd_soc_pcm_runtime *rtd)
+>> ARRAY_SIZE(tegra_max98090_hp_jack_pins));
+>>
+>>           tegra_max98090_hp_jack_gpio.gpio = machine->gpio_hp_det;
+>> +        tegra_max98090_hp_jack_gpio.invert =
+>> +            machine->gpio_hp_det_flags & OF_GPIO_ACTIVE_LOW;
+>
+> So now, this .invert flag is always set directly based on the GPIO 
+> flags. That's good.
+>
+> I believe this means you should remove the .invert assignment from 
+> static struct snd_soc_jack_gpio tegra_max98090_hp_jack_gpio too, since 
+> it's always over-written, so doesn't need a default value.
+>
+> Question: Should we make the same change for DT property 
+> nvidia,mic-det-gpios and value tegra_max98090_mic_jack_gpio.invert? 
+> tegra124-nyan.dts currently says GPIO_ACTIVE_HIGH for both 
+> hp-det-gpios and mic-det-gpios. I don't know if the DT is correct for 
+> both of those (and hence making the same change for the mic-det-gpios 
+> would break Nyan) or not.
+Hmmm, it is indeed the same logic. I will implement and test on nyan.
