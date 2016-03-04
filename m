@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 2/3] ARM: tegra: Devicetree changes for v4.6-rc1
-Date: Fri,  4 Mar 2016 15:57:00 +0100
-Message-ID: <1457103421-26006-2-git-send-email-thierry.reding@gmail.com>
+Subject: [GIT PULL 3/3] arm64: tegra: Devicetree changes for v4.6-rc1
+Date: Fri,  4 Mar 2016 15:57:01 +0100
+Message-ID: <1457103421-26006-3-git-send-email-thierry.reding@gmail.com>
 References: <1457103421-26006-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1457103421-26006-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -18,50 +18,43 @@ The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f08d:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.6-arm
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.6-arm64
 
-for you to fetch changes up to 2bd451d6f5a47eb79feddfa4af827e3b63ed99e9:
+for you to fetch changes up to e81b390f02aea3d9c2745a5ff7b3a2eaad2317e7:
 
-  ARM: tegra: Replace legacy *,wakeup property with wakeup-source (2016-02-16 11:32:40 +0100)
-
-----------------------------------------------------------------
-ARM: tegra: Devicetree changes for v4.6-rc1
-
-These patches clean up some of the 32-bit ARM device tree files and
-remove redundant Kconfig dependencies.
+  arm64: tegra: Add gpio-keys nodes for Smaug (2016-03-04 08:49:09 +0100)
 
 ----------------------------------------------------------------
-Maarten Lankhorst (1):
-      ARM: tegra: Enable watchdog support for Tegra114 and Tegra124
+arm64: tegra: Devicetree changes for v4.6-rc1
 
-Masahiro Yamada (1):
-      ARM: tegra: Remove redundant ARM_L1_CACHE_SHIFT_6 select
+The most interesting bit here is the addition of initial support for the
+Google Pixel C (a.k.a. Smaug). It's far from feature complete but allows
+booting to a login prompt from a root filesystem on the eMMC.
 
-Ralf Ramsauer (2):
-      ARM: tegra: Fix copy/paste typo in several DTS includes
-      ARM: tegra: Add high speed UARTs to Jetson TK1 device tree
+Other than that, this contains a selection of cleanups to various device
+tree source files.
+
+----------------------------------------------------------------
+Jon Hunter (1):
+      arm64: tegra: Add support for Google Pixel C
+
+Laxman Dewangan (1):
+      arm64: tegra: Enable power and volume keys on Jetson TX1
+
+Rhyland Klein (1):
+      arm64: tegra: Add gpio-keys nodes for Smaug
 
 Sudeep Holla (1):
-      ARM: tegra: Replace legacy *,wakeup property with wakeup-source
+      arm64: tegra: Replace legacy *,wakeup property with wakeup-source
 
- arch/arm/boot/dts/tegra114-dalmore.dts        |  2 +-
- arch/arm/boot/dts/tegra114-roth.dts           |  2 +-
- arch/arm/boot/dts/tegra114-tn7.dts            |  2 +-
- arch/arm/boot/dts/tegra114.dtsi               |  4 ++--
- arch/arm/boot/dts/tegra124-jetson-tk1.dts     | 28 ++++++++++++++++++++++++++-
- arch/arm/boot/dts/tegra124-nyan.dtsi          |  4 ++--
- arch/arm/boot/dts/tegra124-venice2.dts        |  2 +-
- arch/arm/boot/dts/tegra124.dtsi               |  4 ++--
- arch/arm/boot/dts/tegra20-harmony.dts         |  2 +-
- arch/arm/boot/dts/tegra20-paz00.dts           |  2 +-
- arch/arm/boot/dts/tegra20-seaboard.dts        |  4 ++--
- arch/arm/boot/dts/tegra20-trimslice.dts       |  2 +-
- arch/arm/boot/dts/tegra20-ventana.dts         |  2 +-
- arch/arm/boot/dts/tegra20-whistler.dts        |  2 +-
- arch/arm/boot/dts/tegra20.dtsi                |  2 +-
- arch/arm/boot/dts/tegra30-apalis-eval.dts     |  2 +-
- arch/arm/boot/dts/tegra30-cardhu.dtsi         |  2 +-
- arch/arm/boot/dts/tegra30-colibri-eval-v3.dts |  2 +-
- arch/arm/boot/dts/tegra30.dtsi                |  2 +-
- drivers/soc/tegra/Kconfig                     |  2 --
- 20 files changed, 49 insertions(+), 25 deletions(-)
+Thierry Reding (1):
+      arm64: tegra: Fix copy/paste typo in several DTS includes
+
+ arch/arm64/boot/dts/nvidia/Makefile            |   1 +
+ arch/arm64/boot/dts/nvidia/tegra132-norrin.dts |   4 +-
+ arch/arm64/boot/dts/nvidia/tegra132.dtsi       |   2 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi |  26 +++++
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts  | 126 +++++++++++++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi       |   2 +-
+ 6 files changed, 157 insertions(+), 4 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
