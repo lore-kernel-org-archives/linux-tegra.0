@@ -1,38 +1,83 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] AsoC: tegra_max98090: honor headphone detect GPIO
- polarity
-Date: Fri, 4 Mar 2016 10:47:41 -0700
-Message-ID: <56D9CA3D.5020205@wwwdotorg.org>
-References: <56CC9860.2060003@wwwdotorg.org>
- <1456940623-1496-1-git-send-email-sctincman@gmail.com>
- <56D8845A.4050704@wwwdotorg.org> <56D9C921.7080802@gmail.com>
+From: Andrew Bresticker <abrestic@chromium.org>
+Subject: Re: [PATCH v10 1/9] dt-bindings: phy: Add NVIDIA Tegra XUSB pad
+ controller binding
+Date: Fri, 4 Mar 2016 13:36:11 -0800
+Message-ID: <CAL1qeaGyd8PLm22XwGHUr+oFeVy2EnT0ipBYJGNkFL9FKrxvjw@mail.gmail.com>
+References: <1457108379-20794-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56D9C921.7080802-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Dylan Reid <dgreid-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1457108379-20794-1-git-send-email-thierry.reding@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/04/2016 10:42 AM, Jonathan Tinkham wrote:
->
->
-> On 03/03/2016 11:37 AM, Stephen Warren wrote:
->> On 03/02/2016 10:43 AM, Jonathan Tinkham wrote:
->>> Set the invert property for the headphone jack depending on the GPIO
->>> polarity
->>> in the device-tree.
->>>
->>> Signed-off-by: Jonathan Tinkham <sctincman-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>> ---
->>
->> I think this is an updatd version of a previous patch, so it should
->> say "[PATCH V2]" in the subject, and have a description of the changes
->> you made between the versions here, below the --- line.
->
-> Ah yes, my apologies. For the next version should I increment that to v3
-> or v2 then?
+Hi Thierry,
 
-May as well make it V3 since that's what it is:-)
+On Fri, Mar 4, 2016 at 8:19 AM, Thierry Reding <thierry.reding@gmail.com> wrote:
+> From: Thierry Reding <treding@nvidia.com>
+>
+> The NVIDIA Tegra XUSB pad controller provides a set of pads, each with a
+> set of lanes that are used for PCIe, SATA and USB.
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+
+Thanks, this binding looks much better, IMO.  A couple small comments below...
+
+> +Port nodes:
+> +===========
+> +
+> +A required child node named "ports" contains a list of all the ports exposed
+> +by the XUSB pad controller. Per-port configuration is only required for USB.
+> +
+> +USB2 ports:
+> +-----------
+> +
+> +Required properties:
+> +- status: Defines the operation status of the port. Valid values are:
+> +  - "disabled": the port is disabled
+> +  - "okay": the port is enabled
+> +- mode: A string that determines the mode in which to run the port. Valid
+> +  values are:
+> +  - "host": for USB host mode
+> +  - "device": for USB device mode
+> +  - "otg": for USB OTG mode
+> +
+> +Optional properties:
+> +- nvidia,internal: A boolean property whose presence determines that a port
+> +  is internal. In the absence of this property the port is considered to be
+> +  external.
+> +- vbus-supply: phandle to a regulator supplying the VBUS voltage.
+
+Both Blaze and Smaug require an offset to be applied to the fused
+HS_CURR_LEVEL value, so I think we need another property here for
+that.
+
+> +ULPI ports:
+> +-----------
+> +
+> +Optional properties:
+> +- status: Defines the operation status of the port. Valid values are:
+> +  - "disabled": the port is disabled
+> +  - "okay": the port is enabled
+> +- nvidia,internal: A boolean property whose presence determines that a port
+> +  is internal. In the absence of this property the port is considered to be
+> +  external.
+> +- vbus-supply: phandle to a regulator supplying the VBUS voltage.
+> +
+> +HSIC ports:
+> +-----------
+> +
+> +Required properties:
+> +- status: Defines the operation status of the port. Valid values are:
+> +  - "disabled": the port is disabled
+> +  - "okay": the port is enabled
+> +
+> +Optional properties:
+> +- vbus-supply: phandle to a regulator supplying the VBUS voltage.
+
+I believe this pin is named VDDIO_HSIC?
+
+Also there are several other HSIC pad parameters (STROBE_TRIM,
+DATA_TRIM, etc.) which probably should be supplied via DT.
