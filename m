@@ -1,37 +1,126 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH] =?UTF-8?q?MAINTAINERS:=20Remove=20Terje=20Bergstr=C3=B6m?=
- =?UTF-8?q?=20as=20Tegra=20DRM=20maintainer?=
-Date: Fri,  4 Mar 2016 12:58:07 +0100
-Message-ID: <1457092687-11904-1-git-send-email-thierry.reding@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH V7 2/4] Documentation: DT: bindings: Add power domain info for NVIDIA PMC
+Date: Fri, 4 Mar 2016 12:23:04 +0000
+Message-ID: <1457094186-15786-3-git-send-email-jonathanh@nvidia.com>
+References: <1457094186-15786-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, dri-devel@lists.freedesktop.org
+Content-Type: text/plain
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1457094186-15786-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-pm@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-RnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRlcmplIGRvZXNuJ3Qg
-d29yayBvbiBob3N0MXggYW55bW9yZSBhbmQgZG9lc24ndCBoYXZlIHRoZSB0aW1lIHRvIGhlbHAK
-bWFpbnRhaW4gdGhlIGhvc3QxeCBhbmQgcmVsYXRlZCBkcml2ZXJzLgoKU2lnbmVkLW9mZi1ieTog
-VGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KLS0tCiBNQUlOVEFJTkVSUyB8IDEg
-LQogMSBmaWxlIGNoYW5nZWQsIDEgZGVsZXRpb24oLSkKCmRpZmYgLS1naXQgYS9NQUlOVEFJTkVS
-UyBiL01BSU5UQUlORVJTCmluZGV4IDRhNGVkYWU5ZDJhYS4uZDJhMjg2NDYxNmUwIDEwMDY0NAot
-LS0gYS9NQUlOVEFJTkVSUworKysgYi9NQUlOVEFJTkVSUwpAQCAtMzg0NCw3ICszODQ0LDYgQEAg
-RjoJaW5jbHVkZS9kcm0vZ21hNTAwKgogCiBEUk0gRFJJVkVSUyBGT1IgTlZJRElBIFRFR1JBCiBN
-OglUaGllcnJ5IFJlZGluZyA8dGhpZXJyeS5yZWRpbmdAZ21haWwuY29tPgotTToJVGVyamUgQmVy
-Z3N0csO2bSA8dGJlcmdzdHJvbUBudmlkaWEuY29tPgogTDoJZHJpLWRldmVsQGxpc3RzLmZyZWVk
-ZXNrdG9wLm9yZwogTDoJbGludXgtdGVncmFAdmdlci5rZXJuZWwub3JnCiBUOglnaXQgZ2l0Oi8v
-YW5vbmdpdC5mcmVlZGVza3RvcC5vcmcvdGVncmEvbGludXguZ2l0Ci0tIAoyLjcuMQoKX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
-bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
-ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Add power-domain binding documentation for the NVIDIA PMC driver in
+order to support generic power-domains.
+
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 80 ++++++++++++++++++++++
+ 1 file changed, 80 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+index 53aa5496c5cf..7d52bbe99709 100644
+--- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
++++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+@@ -1,5 +1,7 @@
+ NVIDIA Tegra Power Management Controller (PMC)
+ 
++== Power Management Controller Node ==
++
+ The PMC block interacts with an external Power Management Unit. The PMC
+ mostly controls the entry and exit of the system from different sleep
+ modes. It provides power-gating controllers for SoC and CPU power-islands.
+@@ -70,6 +72,11 @@ Optional properties for hardware-triggered thermal reset (inside 'i2c-thermtrip'
+                      Defaults to 0. Valid values are described in section 12.5.2
+                      "Pinmux Support" of the Tegra4 Technical Reference Manual.
+ 
++Optional nodes:
++- powergates : This node contains a hierarchy of power domain nodes, which
++	       should match the powergates on the Tegra SoC. See "Powergate
++	       Nodes" below.
++
+ Example:
+ 
+ / SoC dts including file
+@@ -115,3 +122,76 @@ pmc@7000f400 {
+ 	};
+ 	...
+ };
++
++
++== Powergate Nodes ==
++
++Each of the powergate nodes represent a power-domain on the Tegra SoC
++that can be power-gated by the Tegra PMC. The name of the powergate node
++should be one of the below. Note that not every powergate is applicable
++to all Tegra devices and the following list shows which powergates are
++applicable to which devices. Please refer to the Tegra TRM for more
++details on the various powergates.
++
++ Name		Description			Devices Applicable
++ 3d		3D Graphics			Tegra20/114/124/210
++ 3d0		3D Graphics 0			Tegra30
++ 3d1		3D Graphics 1			Tegra30
++ aud		Audio				Tegra210
++ dfd		Debug				Tegra210
++ dis		Display A			Tegra114/124/210
++ disb		Display B			Tegra114/124/210
++ heg		2D Graphics			Tegra30/114/124/210
++ iram		Internal RAM			Tegra124/210
++ mpe		MPEG Encode			All
++ nvdec		NVIDIA Video Decode Engine	Tegra210
++ nvjpg		NVIDIA JPEG Engine		Tegra210
++ pcie		PCIE				Tegra20/30/124/210
++ sata		SATA				Tegra30/124/210
++ sor		Display interfaces		Tegra124/210
++ ve2		Video Encode Engine 2		Tegra210
++ venc		Video Encode Engine		All
++ vdec		Video Decode Engine		Tegra20/30/114/124
++ vic		Video Imaging Compositor	Tegra124/210
++ xusba		USB Partition A			Tegra114/124/210
++ xusbb		USB Partition B 		Tegra114/124/210
++ xusbc		USB Partition C			Tegra114/124/210
++
++Required properties:
++  - clocks: Must contain an entry for each clock required by the PMC for
++    controlling a power-gate. See ../clocks/clock-bindings.txt for details.
++  - resets: Must contain an entry for each reset required by the PMC for
++    controlling a power-gate. See ../reset/reset.txt for details.
++  - #power-domain-cells: Must be 0.
++
++Example:
++
++	pmc: pmc@0,7000e400 {
++		compatible = "nvidia,tegra210-pmc";
++		reg = <0x0 0x7000e400 0x0 0x400>;
++		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
++		clock-names = "pclk", "clk32k_in";
++
++		powergates {
++			pd_audio: aud {
++				clocks = <&tegra_car TEGRA210_CLK_APE>,
++					 <&tegra_car TEGRA210_CLK_APB2APE>;
++				resets = <&tegra_car 198>;
++				#power-domain-cells = <0>;
++			};
++		};
++	};
++
++
++== Powergate Clients ==
++
++Hardware blocks belonging to a power domain should contain a "power-domains"
++property that is a phandle pointing to the corresponding powergate node.
++
++Example:
++
++	adma: adma@702e2000 {
++		...
++		power-domains = <&pd_audio>;
++		...
++	};
+-- 
+2.1.4
+
