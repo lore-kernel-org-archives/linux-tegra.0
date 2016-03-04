@@ -1,83 +1,43 @@
-From: Andrew Bresticker <abrestic@chromium.org>
-Subject: Re: [PATCH v10 1/9] dt-bindings: phy: Add NVIDIA Tegra XUSB pad
- controller binding
-Date: Fri, 4 Mar 2016 13:36:11 -0800
-Message-ID: <CAL1qeaGyd8PLm22XwGHUr+oFeVy2EnT0ipBYJGNkFL9FKrxvjw@mail.gmail.com>
+From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH v10 3/9] dt-bindings: phy: tegra-xusb-padctl: Add Tegra210 support
+Date: Fri, 4 Mar 2016 13:41:11 -0800
+Message-ID: <CAL1qeaHq2FMPeF9vqPEkpz9v+rcdPoJf2oegZ1afYDL9N6ggKA@mail.gmail.com>
 References: <1457108379-20794-1-git-send-email-thierry.reding@gmail.com>
+	<1457108379-20794-3-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1457108379-20794-1-git-send-email-thierry.reding@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Kishon Vijay Abraham I <kishon@ti.com>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1457108379-20794-3-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry,
-
-On Fri, Mar 4, 2016 at 8:19 AM, Thierry Reding <thierry.reding@gmail.com> wrote:
-> From: Thierry Reding <treding@nvidia.com>
+On Fri, Mar 4, 2016 at 8:19 AM, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >
-> The NVIDIA Tegra XUSB pad controller provides a set of pads, each with a
-> set of lanes that are used for PCIe, SATA and USB.
+> Extend the binding to cover the set of feature found in Tegra210.
 >
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Thanks, this binding looks much better, IMO.  A couple small comments below...
-
-> +Port nodes:
-> +===========
-> +
-> +A required child node named "ports" contains a list of all the ports exposed
-> +by the XUSB pad controller. Per-port configuration is only required for USB.
-> +
-> +USB2 ports:
-> +-----------
+> +PCIe pad:
+> +---------
 > +
 > +Required properties:
-> +- status: Defines the operation status of the port. Valid values are:
-> +  - "disabled": the port is disabled
-> +  - "okay": the port is enabled
-> +- mode: A string that determines the mode in which to run the port. Valid
-> +  values are:
-> +  - "host": for USB host mode
-> +  - "device": for USB device mode
-> +  - "otg": for USB OTG mode
+> +- clocks: Must contain an entry for each entry in clock-names.
+> +- clock-names: Must contain the following entries:
+> +  - "pll": phandle and specifier referring to the PLLE
+> +- resets: Must contain an entry for each entry in reset-names.
+> +- reset-names: Must contain the following entries:
+> +  - "phy": reset for the PCIe UPHY block
 > +
-> +Optional properties:
-> +- nvidia,internal: A boolean property whose presence determines that a port
-> +  is internal. In the absence of this property the port is considered to be
-> +  external.
-> +- vbus-supply: phandle to a regulator supplying the VBUS voltage.
-
-Both Blaze and Smaug require an offset to be applied to the fused
-HS_CURR_LEVEL value, so I think we need another property here for
-that.
-
-> +ULPI ports:
-> +-----------
-> +
-> +Optional properties:
-> +- status: Defines the operation status of the port. Valid values are:
-> +  - "disabled": the port is disabled
-> +  - "okay": the port is enabled
-> +- nvidia,internal: A boolean property whose presence determines that a port
-> +  is internal. In the absence of this property the port is considered to be
-> +  external.
-> +- vbus-supply: phandle to a regulator supplying the VBUS voltage.
-> +
-> +HSIC ports:
-> +-----------
+> +SATA pad:
+> +---------
 > +
 > +Required properties:
-> +- status: Defines the operation status of the port. Valid values are:
-> +  - "disabled": the port is disabled
-> +  - "okay": the port is enabled
-> +
-> +Optional properties:
-> +- vbus-supply: phandle to a regulator supplying the VBUS voltage.
+> +- resets: Must contain an entry for each entry in reset-names.
+> +- reset-names: Must contain the following entries:
+> +  - "phy": reset for the SATA UPHY block
 
-I believe this pin is named VDDIO_HSIC?
-
-Also there are several other HSIC pad parameters (STROBE_TRIM,
-DATA_TRIM, etc.) which probably should be supplied via DT.
+Doesn't the SATA pad require PLLE as well?  You've included it in the
+example DT fragment, but it's absent here.
