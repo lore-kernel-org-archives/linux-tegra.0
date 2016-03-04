@@ -1,60 +1,26 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 3/3] arm64: tegra: Devicetree changes for v4.6-rc1
-Date: Fri,  4 Mar 2016 15:57:01 +0100
-Message-ID: <1457103421-26006-3-git-send-email-thierry.reding@gmail.com>
-References: <1457103421-26006-1-git-send-email-thierry.reding@gmail.com>
+From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH ] dmaengine: tegra: Move of_device_id table near to its
+ user
+Date: Fri, 4 Mar 2016 20:36:19 +0530
+Message-ID: <20160304150618.GB11154@localhost>
+References: <1457087111-15549-1-git-send-email-ldewangan@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1457103421-26006-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1457087111-15549-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
+On Fri, Mar 04, 2016 at 03:55:11PM +0530, Laxman Dewangan wrote:
+> After using the function of_device_get_match_data(), the
+> of_device_id table for tegra20 dma is not used by probe()
+> and hence moving it near to place where platform driver is
+> defined as this table used only on this data structure.
 
-The following changes since commit 92e963f50fc74041b5e9e744c330dca48e04f08d:
+Applied, thanks
 
-  Linux 4.5-rc1 (2016-01-24 13:06:47 -0800)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.6-arm64
-
-for you to fetch changes up to e81b390f02aea3d9c2745a5ff7b3a2eaad2317e7:
-
-  arm64: tegra: Add gpio-keys nodes for Smaug (2016-03-04 08:49:09 +0100)
-
-----------------------------------------------------------------
-arm64: tegra: Devicetree changes for v4.6-rc1
-
-The most interesting bit here is the addition of initial support for the
-Google Pixel C (a.k.a. Smaug). It's far from feature complete but allows
-booting to a login prompt from a root filesystem on the eMMC.
-
-Other than that, this contains a selection of cleanups to various device
-tree source files.
-
-----------------------------------------------------------------
-Jon Hunter (1):
-      arm64: tegra: Add support for Google Pixel C
-
-Laxman Dewangan (1):
-      arm64: tegra: Enable power and volume keys on Jetson TX1
-
-Rhyland Klein (1):
-      arm64: tegra: Add gpio-keys nodes for Smaug
-
-Sudeep Holla (1):
-      arm64: tegra: Replace legacy *,wakeup property with wakeup-source
-
-Thierry Reding (1):
-      arm64: tegra: Fix copy/paste typo in several DTS includes
-
- arch/arm64/boot/dts/nvidia/Makefile            |   1 +
- arch/arm64/boot/dts/nvidia/tegra132-norrin.dts |   4 +-
- arch/arm64/boot/dts/nvidia/tegra132.dtsi       |   2 +-
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi |  26 +++++
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts  | 126 +++++++++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra210.dtsi       |   2 +-
- 6 files changed, 157 insertions(+), 4 deletions(-)
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+-- 
+~Vinod
