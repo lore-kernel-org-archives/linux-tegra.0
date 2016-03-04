@@ -1,32 +1,44 @@
-From: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
-Subject: Re: [PATCH v10 1/9] dt-bindings: phy: Add NVIDIA Tegra XUSB pad
- controller binding
-Date: Fri, 4 Mar 2016 13:47:41 -0800
-Message-ID: <CAL1qeaEioMe05cAtVwnveHORB-y4dQkT0t1RSCsWNxVDvpps7Q@mail.gmail.com>
-References: <1457108379-20794-1-git-send-email-thierry.reding@gmail.com>
+From: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [tegrarcm PATCH v1 0/4] Add flashing support for T124 rsa fused board
+Date: Fri, 4 Mar 2016 15:44:43 -0800
+Message-ID: <1457135087-967-1-git-send-email-jimmzhang@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1457108379-20794-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-> +Required properties:
-> +--------------------
-> +- compatible: Must be:
-> +  - Tegra124: "nvidia,tegra124-xusb-padctl"
-> +  - Tegra132: "nvidia,tegra132-xusb-padctl", "nvidia,tegra124-xusb-padctl"
-> +- reg: Physical base address and length of the controller's registers.
-> +- resets: Must contain an entry for each entry in reset-names.
-> +- reset-names: Must include the following entries:
-> +  - "padctl"
+V1:
+1. Use option "--pkc" to sign and download bootloader. This option is
+   designed for developer. Patch 0001-Add-option-pkc.patch was originally
+   submitted by Alban Bedel.
+2. Use option "--ml_rcm" and "--pkc" to sign rcm messages and bootloader.
+   This signing only feature is intended for production where signging
+   is done at secured server and flashing can be done at different stage and
+   site without requiring keyfile being present. 
+3. Use option "--signed" to specify and download signed rcm messages.
+   This option is used for flashing on fused board. ie, a system with
+   security mode enabled.
 
-Also... there's a padctl interrupt that'll be necessary for LP0
-suspend/resume and runtime power-gating of the xHC.  We should
-probably include that here too.
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+Jimmy Zhang (4):
+  Add option "--pkc"
+  Add option --ml_rcm <rcm_ml_blob>
+  Add option --signed
+  Increate USB timeout value
+
+ src/Makefile.am |   2 +
+ src/main.c      | 412 ++++++++++++++++++++++++++++++++++++++++++++++++--------
+ src/rcm.c       |  16 ++-
+ src/rcm.h       |   3 +-
+ src/rsa-pss.cpp | 147 ++++++++++++++++++++
+ src/rsa-pss.h   |  46 +++++++
+ src/usb.c       |   2 +-
+ 7 files changed, 567 insertions(+), 61 deletions(-)
+ create mode 100644 src/rsa-pss.cpp
+ create mode 100644 src/rsa-pss.h
+
+-- 
+1.9.1
