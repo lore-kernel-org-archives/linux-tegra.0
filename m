@@ -1,80 +1,83 @@
-From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] mmc: tegra: Disable UHS-I modes for tegra114
-Date: Fri, 4 Mar 2016 10:41:15 +0100
-Message-ID: <CAPDyKFrvaLq3dD5qFJBLVTL5gXA9NaHxfc_mM9PCfczfwQiJLA@mail.gmail.com>
-References: <1455806924-14967-1-git-send-email-jonathanh@nvidia.com>
-	<1456479257-12147-1-git-send-email-jonathanh@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH ] dmaengine: tegra: Move of_device_id table near to its user
+Date: Fri, 4 Mar 2016 15:55:11 +0530
+Message-ID: <1457087111-15549-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1456479257-12147-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 26 February 2016 at 10:34, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> SD card support for Tegra114 started failing after commit a8e326a911d3
-> ("mmc: tegra: implement module external clock change") was merged. This
-> commit was part of a series to enable UHS-I modes for Tegra. To
-> workaround this problem for now, disable UHS-I modes for Tegra114 by
-> separating the soc data structures for Tegra114 and Tegra124 so that
-> UHS-I is still enabled for Tegra124 but not Tegra114.
->
-> Fixes: a8e326a911d3 ("mmc: tegra: implement module external clock change")
->
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+After using the function of_device_get_match_data(), the
+of_device_id table for tegra20 dma is not used by probe()
+and hence moving it near to place where platform driver is
+defined as this table used only on this data structure.
 
-Thanks, applied for fixes!
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+As per recommendation on patch
+Re: [PATCH V2] dma: tegra: don't open code of_device_get_match_data()
+to have movement of code in different patch.
 
-Kind regards
-Uffe
+ drivers/dma/tegra20-apb-dma.c | 37 ++++++++++++++++++-------------------
+ 1 file changed, 18 insertions(+), 19 deletions(-)
 
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 12 +++++++++++-
->  1 file changed, 11 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 83c4bf7bc16c..212d51f08939 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -147,10 +147,16 @@ static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
->         /* Advertise UHS modes as supported by host */
->         if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR50)
->                 misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDR50;
-> +       else
-> +               misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_SDR50;
->         if (soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
->                 misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_DDR50;
-> +       else
-> +               misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_DDR50;
->         if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR104)
->                 misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDR104;
-> +       else
-> +               misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_SDR104;
->         sdhci_writel(host, misc_ctrl, SDHCI_TEGRA_VENDOR_MISC_CTRL);
->
->         clk_ctrl = sdhci_readl(host, SDHCI_TEGRA_VENDOR_CLOCK_CTRL);
-> @@ -335,6 +341,10 @@ static const struct sdhci_pltfm_data sdhci_tegra114_pdata = {
->
->  static const struct sdhci_tegra_soc_data soc_data_tegra114 = {
->         .pdata = &sdhci_tegra114_pdata,
-> +};
-> +
-> +static const struct sdhci_tegra_soc_data soc_data_tegra124 = {
-> +       .pdata = &sdhci_tegra114_pdata,
->         .nvquirks = NVQUIRK_ENABLE_SDR50 |
->                     NVQUIRK_ENABLE_DDR50 |
->                     NVQUIRK_ENABLE_SDR104,
-> @@ -357,7 +367,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
->
->  static const struct of_device_id sdhci_tegra_dt_match[] = {
->         { .compatible = "nvidia,tegra210-sdhci", .data = &soc_data_tegra210 },
-> -       { .compatible = "nvidia,tegra124-sdhci", .data = &soc_data_tegra114 },
-> +       { .compatible = "nvidia,tegra124-sdhci", .data = &soc_data_tegra124 },
->         { .compatible = "nvidia,tegra114-sdhci", .data = &soc_data_tegra114 },
->         { .compatible = "nvidia,tegra30-sdhci", .data = &soc_data_tegra30 },
->         { .compatible = "nvidia,tegra20-sdhci", .data = &soc_data_tegra20 },
-> --
-> 2.1.4
->
+diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+index ced588f..3871f29 100644
+--- a/drivers/dma/tegra20-apb-dma.c
++++ b/drivers/dma/tegra20-apb-dma.c
+@@ -1292,25 +1292,6 @@ static const struct tegra_dma_chip_data tegra148_dma_chip_data = {
+ 	.support_separate_wcount_reg = true,
+ };
+ 
+-
+-static const struct of_device_id tegra_dma_of_match[] = {
+-	{
+-		.compatible = "nvidia,tegra148-apbdma",
+-		.data = &tegra148_dma_chip_data,
+-	}, {
+-		.compatible = "nvidia,tegra114-apbdma",
+-		.data = &tegra114_dma_chip_data,
+-	}, {
+-		.compatible = "nvidia,tegra30-apbdma",
+-		.data = &tegra30_dma_chip_data,
+-	}, {
+-		.compatible = "nvidia,tegra20-apbdma",
+-		.data = &tegra20_dma_chip_data,
+-	}, {
+-	},
+-};
+-MODULE_DEVICE_TABLE(of, tegra_dma_of_match);
+-
+ static int tegra_dma_probe(struct platform_device *pdev)
+ {
+ 	struct resource	*res;
+@@ -1610,6 +1591,24 @@ static const struct dev_pm_ops tegra_dma_dev_pm_ops = {
+ 	SET_SYSTEM_SLEEP_PM_OPS(tegra_dma_pm_suspend, tegra_dma_pm_resume)
+ };
+ 
++static const struct of_device_id tegra_dma_of_match[] = {
++	{
++		.compatible = "nvidia,tegra148-apbdma",
++		.data = &tegra148_dma_chip_data,
++	}, {
++		.compatible = "nvidia,tegra114-apbdma",
++		.data = &tegra114_dma_chip_data,
++	}, {
++		.compatible = "nvidia,tegra30-apbdma",
++		.data = &tegra30_dma_chip_data,
++	}, {
++		.compatible = "nvidia,tegra20-apbdma",
++		.data = &tegra20_dma_chip_data,
++	}, {
++	},
++};
++MODULE_DEVICE_TABLE(of, tegra_dma_of_match);
++
+ static struct platform_driver tegra_dmac_driver = {
+ 	.driver = {
+ 		.name	= "tegra-apbdma",
+-- 
+2.1.4
