@@ -1,83 +1,54 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH ] dmaengine: tegra: Move of_device_id table near to its user
-Date: Fri, 4 Mar 2016 15:55:11 +0530
-Message-ID: <1457087111-15549-1-git-send-email-ldewangan@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 1/2] PM / Domains: Fix removal of a subdomain
+Date: Fri, 4 Mar 2016 10:55:14 +0000
+Message-ID: <1457088915-17284-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-After using the function of_device_get_match_data(), the
-of_device_id table for tegra20 dma is not used by probe()
-and hence moving it near to place where platform driver is
-defined as this table used only on this data structure.
+Commit 30e7a65b3fdb ("PM / Domains: Ensure subdomain is not in use
+before removing") added a test to ensure that a subdomain is not a
+master to another subdomain or if any devices are using the subdomain
+before removing. This change incorrectly used the "slave_links" list to
+determine if the subdomain is a master to another subdomain, where it
+should have been using the "master_links" list instead. The
+"slave_links" list will never be empty for a subdomain and so a
+subdomain can never be removed. Fix this by testing if the
+"master_links" list is empty instead.
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Fixes: 30e7a65b3fdb ("PM / Domains: Ensure subdomain is not in use before removing")
+
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Reviewed-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
+Acked-by: Kevin Hilman <khilman@baylibre.com>
 ---
-As per recommendation on patch
-Re: [PATCH V2] dma: tegra: don't open code of_device_get_match_data()
-to have movement of code in different patch.
 
- drivers/dma/tegra20-apb-dma.c | 37 ++++++++++++++++++-------------------
- 1 file changed, 18 insertions(+), 19 deletions(-)
+This first was originally included in the series to add PM domain support [0].
+I am separating this for now, as it can be merged independently.
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index ced588f..3871f29 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -1292,25 +1292,6 @@ static const struct tegra_dma_chip_data tegra148_dma_chip_data = {
- 	.support_separate_wcount_reg = true,
- };
+[0] http://marc.info/?l=linux-pm&m=145650174525180&w=2
+
+ drivers/base/power/domain.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+index e8ca290dbf9d..ea9f2aa3fc33 100644
+--- a/drivers/base/power/domain.c
++++ b/drivers/base/power/domain.c
+@@ -1382,7 +1382,7 @@ int pm_genpd_remove_subdomain(struct generic_pm_domain *genpd,
+ 	mutex_lock(&subdomain->lock);
+ 	mutex_lock_nested(&genpd->lock, SINGLE_DEPTH_NESTING);
  
--
--static const struct of_device_id tegra_dma_of_match[] = {
--	{
--		.compatible = "nvidia,tegra148-apbdma",
--		.data = &tegra148_dma_chip_data,
--	}, {
--		.compatible = "nvidia,tegra114-apbdma",
--		.data = &tegra114_dma_chip_data,
--	}, {
--		.compatible = "nvidia,tegra30-apbdma",
--		.data = &tegra30_dma_chip_data,
--	}, {
--		.compatible = "nvidia,tegra20-apbdma",
--		.data = &tegra20_dma_chip_data,
--	}, {
--	},
--};
--MODULE_DEVICE_TABLE(of, tegra_dma_of_match);
--
- static int tegra_dma_probe(struct platform_device *pdev)
- {
- 	struct resource	*res;
-@@ -1610,6 +1591,24 @@ static const struct dev_pm_ops tegra_dma_dev_pm_ops = {
- 	SET_SYSTEM_SLEEP_PM_OPS(tegra_dma_pm_suspend, tegra_dma_pm_resume)
- };
- 
-+static const struct of_device_id tegra_dma_of_match[] = {
-+	{
-+		.compatible = "nvidia,tegra148-apbdma",
-+		.data = &tegra148_dma_chip_data,
-+	}, {
-+		.compatible = "nvidia,tegra114-apbdma",
-+		.data = &tegra114_dma_chip_data,
-+	}, {
-+		.compatible = "nvidia,tegra30-apbdma",
-+		.data = &tegra30_dma_chip_data,
-+	}, {
-+		.compatible = "nvidia,tegra20-apbdma",
-+		.data = &tegra20_dma_chip_data,
-+	}, {
-+	},
-+};
-+MODULE_DEVICE_TABLE(of, tegra_dma_of_match);
-+
- static struct platform_driver tegra_dmac_driver = {
- 	.driver = {
- 		.name	= "tegra-apbdma",
+-	if (!list_empty(&subdomain->slave_links) || subdomain->device_count) {
++	if (!list_empty(&subdomain->master_links) || subdomain->device_count) {
+ 		pr_warn("%s: unable to remove subdomain %s\n", genpd->name,
+ 			subdomain->name);
+ 		ret = -EBUSY;
 -- 
 2.1.4
+
