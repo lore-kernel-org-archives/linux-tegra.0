@@ -1,393 +1,154 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v10 3/9] dt-bindings: phy: tegra-xusb-padctl: Add Tegra210 support
-Date: Fri,  4 Mar 2016 17:19:33 +0100
-Message-ID: <1457108379-20794-3-git-send-email-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v10 6/9] dt-bindings: usb: Add NVIDIA Tegra XUSB controller binding
+Date: Fri,  4 Mar 2016 17:19:36 +0100
+Message-ID: <1457108379-20794-6-git-send-email-thierry.reding@gmail.com>
 References: <1457108379-20794-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1457108379-20794-1-git-send-email-thierry.reding@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Andrew Bresticker <abrestic@chromium.org>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1457108379-20794-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Extend the binding to cover the set of feature found in Tegra210.
+Add device-tree binding documentation for the XUSB controller present
+on Tegra124 and later SoCs. This controller supports USB 3.0 via an xHCI
+compliant interface.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Based on work by Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>.
+
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
+Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
+Cc: Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- .../bindings/phy/nvidia,tegra124-xusb-padctl.txt   | 327 +++++++++++++++++++++
- 1 file changed, 327 insertions(+)
+Changes in v9:
+- rename UTMI to USB2 to match hardware documentation
+- remove MFD and mailbox components from bindings
+- reference XUSB pad controller via phandle
 
-diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
-index 8b642d9e3433..8cbfeb60f864 100644
---- a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
-+++ b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
-@@ -35,6 +35,7 @@ Required properties:
- - compatible: Must be:
-   - Tegra124: "nvidia,tegra124-xusb-padctl"
-   - Tegra132: "nvidia,tegra132-xusb-padctl", "nvidia,tegra124-xusb-padctl"
-+  - Tegra210: "nvidia,tegra210-xusb-padctl"
- - reg: Physical base address and length of the controller's registers.
- - resets: Must contain an entry for each entry in reset-names.
- - reset-names: Must include the following entries:
-@@ -55,6 +56,44 @@ the pad and any of its lanes, this property must be set to "okay".
- For Tegra124 and Tegra132, the following pads exist: usb2, ulpi, hsic, pcie
- and sata. No extra resources are required for operation of these pads.
- 
-+For Tegra210, the following pads exist: usb2, hsic, pcie and sata. Below is
-+a description of the properties of each pad.
+ .../bindings/usb/nvidia,tegra124-xusb.txt          | 108 +++++++++++++++++++++
+ 1 file changed, 108 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
+
+diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
+new file mode 100644
+index 000000000000..79616f9268d8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
+@@ -0,0 +1,108 @@
++NVIDIA Tegra xHCI controller
++============================
 +
-+UTMI pad:
-+---------
++The Tegra xHCI controller supports both USB2 and USB3 interfaces exposed by
++the Tegra XUSB pad controller.
 +
 +Required properties:
++--------------------
++- compatible: Must be:
++  - Tegra124: "nvidia,tegra124-xusb"
++  - Tegra132: "nvidia,tegra132-xusb", "nvidia,tegra124-xusb"
++- reg: Must contain the base and length of the xHCI host registers, XUSB FPCI
++  registers and XUSB IPFS registers.
++- reg-names: Must contain the following entries:
++  - "hcd"
++  - "fpci"
++  - "ipfs"
++- interrupts: Must contain the xHCI host interrupt and the mailbox interrupt.
 +- clocks: Must contain an entry for each entry in clock-names.
-+- clock-names: Must contain the following entries:
-+  - "trk": phandle and specifier referring to the USB2 tracking clock
-+
-+HSIC pad:
-+---------
-+
-+Required properties:
-+- clocks: Must contain an entry for each entry in clock-names.
-+- clock-names: Must contain the following entries:
-+  - "trk": phandle and specifier referring to the HSIC tracking clock
-+
-+PCIe pad:
-+---------
-+
-+Required properties:
-+- clocks: Must contain an entry for each entry in clock-names.
-+- clock-names: Must contain the following entries:
-+  - "pll": phandle and specifier referring to the PLLE
++  See ../clock/clock-bindings.txt for details.
++- clock-names: Must include the following entries:
++   - xusb_host
++   - xusb_host_src
++   - xusb_falcon_src
++   - xusb_ss
++   - xusb_ss_src
++   - xusb_ss_div2
++   - xusb_hs_src
++   - xusb_fs_src
++   - pll_u_480m
++   - clk_m
++   - pll_e
 +- resets: Must contain an entry for each entry in reset-names.
-+- reset-names: Must contain the following entries:
-+  - "phy": reset for the PCIe UPHY block
++  See ../reset/reset.txt for details.
++- reset-names: Must include the following entries:
++  - xusb_host
++  - xusb_ss
++  - xusb_src
++  Note that xusb_src is the shared reset for xusb_{ss,hs,fs,falcon,host}_src.
++- nvidia,xusb-padctl: phandle to the XUSB pad controller that is used to
++  configure the USB pads used by the XHCI controller
 +
-+SATA pad:
-+---------
++For Tegra124 and Tegra132:
++- avddio-pex-supply: PCIe/USB3 analog logic power supply. Must supply 1.05 V.
++- dvddio-pex-supply: PCIe/USB3 digital logic power supply. Must supply 1.05 V.
++- avdd-usb-supply: USB controller power supply. Must supply 3.3 V.
++- avdd-pll-utmip-supply: UTMI PLL power supply. Must supply 1.8 V.
++- avdd-pll-erefe-supply: PLLE reference PLL power supply. Must supply 1.05 V.
++- avdd-usb-ss-pll-supply: PCIe/USB3 PLL power supply. Must supply 1.05 V.
++- hvdd-usb-ss-supply: High-voltage PCIe/USB3 power supply. Must supply 3.3 V.
++- hvdd-usb-ss-pll-e-supply: High-voltage PLLE power supply. Must supply 3.3 V.
 +
-+Required properties:
-+- resets: Must contain an entry for each entry in reset-names.
-+- reset-names: Must contain the following entries:
-+  - "phy": reset for the SATA UPHY block
++Optional properties:
++--------------------
++- phys: Must contain an entry for each entry in phy-names.
++  See ../phy/phy-bindings.txt for details.
++- phy-names: Should include an entry for each PHY used by the controller. The
++  following PHYs are available:
++  - Tegra124: usb2-0, usb2-1, usb2-2, hsic-0, hsic-1, usb3-0, usb3-1
++  - Tegra132: usb2-0, usb2-1, usb2-2, hsic-0, hsic-1, usb3-0, usb3-1
 +
- 
- PHY nodes:
- ==========
-@@ -84,6 +123,16 @@ For Tegra124 and Tegra132, the list of valid PHY nodes is given below:
- - sata: sata-0
-   - functions: "usb3-ss", "sata"
- 
-+For Tegra210, the list of valid PHY nodes is given below:
-+- utmi: utmi-0, utmi-1, utmi-2, utmi-3
-+  - functions: "snps", "xusb", "uart"
-+- hsic: hsic-0, hsic-1
-+  - functions: "snps", "xusb"
-+- pcie: pcie-0, pcie-1, pcie-2, pcie-3, pcie-4, pcie-5, pcie-6
-+  - functions: "pcie-x1", "usb3-ss", "pcie-x4"
-+- sata: sata-0
-+  - functions: "usb3-ss", "sata"
++Example:
++--------
 +
- 
- Port nodes:
- ===========
-@@ -144,6 +193,7 @@ Required properties:
-   to map this super-speed USB port to. The range of valid port numbers varies
-   with the SoC generation:
-   - 0-2: for Tegra124 and Tegra132
-+  - 0-3: for Tegra210
- 
- Optional properties:
- - nvidia,internal: A boolean property whose presence determines that a port
-@@ -157,6 +207,11 @@ ports:
- - 2x HSIC: hsic-0, hsic-1
- - 2x super-speed USB: usb3-0, usb3-1
- 
-+For Tegra210, the XUSB pad controller exposes the following ports:
-+- 4x USB2: usb2-0, usb2-1, usb2-2, usb2-3
-+- 2x HSIC: hsic-0, hsic-1
-+- 4x super-speed USB: usb3-0, usb3-1, usb3-2, usb3-3
++	usb@0,70090000 {
++		compatible = "nvidia,tegra124-xusb";
++		reg = <0x0 0x70090000 0x0 0x8000>,
++		      <0x0 0x70098000 0x0 0x1000>,
++		      <0x0 0x70099000 0x0 0x1000>;
++		reg-names = "hcd", "fpci", "ipfs";
 +
- 
- Examples:
- =========
-@@ -374,3 +429,275 @@ Board file:
- 			};
- 		};
- 	};
++		interrupts = <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>;
 +
-+Tegra210:
-+---------
++		clocks = <&tegra_car TEGRA124_CLK_XUSB_HOST>,
++			 <&tegra_car TEGRA124_CLK_XUSB_HOST_SRC>,
++			 <&tegra_car TEGRA124_CLK_XUSB_FALCON_SRC>,
++			 <&tegra_car TEGRA124_CLK_XUSB_SS>,
++			 <&tegra_car TEGRA124_CLK_XUSB_SS_DIV2>,
++			 <&tegra_car TEGRA124_CLK_XUSB_SS_SRC>,
++			 <&tegra_car TEGRA124_CLK_XUSB_HS_SRC>,
++			 <&tegra_car TEGRA124_CLK_XUSB_FS_SRC>,
++			 <&tegra_car TEGRA124_CLK_PLL_U_480M>,
++			 <&tegra_car TEGRA124_CLK_CLK_M>,
++			 <&tegra_car TEGRA124_CLK_PLL_E>;
++		clock-names = "xusb_host", "xusb_host_src", "xusb_falcon_src",
++			      "xusb_ss", "xusb_ss_div2", "xusb_ss_src",
++			      "xusb_hs_src", "xusb_fs_src", "pll_u_480m",
++			      "clk_m", "pll_e";
++		resets = <&tegra_car 89>, <&tegra_car 156>, <&tegra_car 143>;
++		reset-names = "xusb_host", "xusb_ss", "xusb_src";
 +
-+SoC include:
++		nvidia,xusb-padctl = <&padctl>;
 +
-+	padctl@0,7009f000 {
-+		compatible = "nvidia,tegra210-xusb-padctl";
-+		reg = <0x0 0x7009f000 0x0 0x1000>;
-+		resets = <&tegra_car 142>;
-+		reset-names = "padctl";
++		phys = <&{/padctl@0,7009f000/pads/usb2/usb2-1}>, /* mini-PCIe USB */
++		       <&{/padctl@0,7009f000/pads/usb2/usb2-2}>, /* USB A */
++		       <&{/padctl@0,7009f000/pads/pcie/pcie-0}>; /* USB A */
++		phy-names = "utmi-1", "utmi-2", "usb3-0";
 +
-+		status = "disabled";
-+
-+		pads {
-+			usb2 {
-+				clocks = <&tegra_car TEGRA210_CLK_USB2_TRK>;
-+				clock-names = "trk";
-+				status = "disabled";
-+
-+				usb2-0 {
-+					status = "disabled";
-+					#phy-cells = <0>;
-+				};
-+
-+				usb2-1 {
-+					status = "disabled";
-+					#phy-cells = <0>;
-+				};
-+
-+				usb2-2 {
-+					status = "disabled";
-+					#phy-cells = <0>;
-+				};
-+
-+				usb2-3 {
-+					status = "disabled";
-+					#phy-cells = <0>;
-+				};
-+			};
-+
-+			hsic {
-+				clocks = <&tegra_car TEGRA210_CLK_HSIC_TRK>;
-+				clock-names = "trk";
-+				status = "disabled";
-+
-+				hsic-0 {
-+					status = "disabled";
-+					#phy-cells = <0>;
-+				};
-+
-+				hsic-1 {
-+					status = "disabled";
-+					#phy-cells = <0>;
-+				};
-+			};
-+
-+			pcie {
-+				clocks = <&tegra_car TEGRA210_CLK_PLL_E>;
-+				clock-names = "pll";
-+				resets = <&tegra_car 205>;
-+				reset-names = "phy";
-+				status = "disabled";
-+
-+				pcie-0 {
-+					status = "disabled";
-+					#phy-cells = <0>;
-+				};
-+
-+				pcie-1 {
-+					status = "disabled";
-+					#phy-cells = <0>;
-+				};
-+
-+				pcie-2 {
-+					status = "disabled";
-+					#phy-cells = <0>;
-+				};
-+
-+				pcie-3 {
-+					status = "disabled";
-+					#phy-cells = <0>;
-+				};
-+
-+				pcie-4 {
-+					status = "disabled";
-+					#phy-cells = <0>;
-+				};
-+
-+				pcie-5 {
-+					status = "disabled";
-+					#phy-cells = <0>;
-+				};
-+
-+				pcie-6 {
-+					status = "disabled";
-+					#phy-cells = <0>;
-+				};
-+			};
-+
-+			sata {
-+				clocks = <&tegra_car TEGRA210_CLK_PLL_E>;
-+				clock-names = "pll";
-+				resets = <&tegra_car 204>;
-+				reset-names = "phy";
-+				status = "disabled";
-+
-+				sata-0 {
-+					status = "disabled";
-+					#phy-cells = <0>;
-+				};
-+			};
-+		};
-+
-+		ports {
-+			usb2-0 {
-+				status = "disabled";
-+			};
-+
-+			usb2-1 {
-+				status = "disabled";
-+			};
-+
-+			usb2-2 {
-+				status = "disabled";
-+			};
-+
-+			usb2-3 {
-+				status = "disabled";
-+			};
-+
-+			hsic-0 {
-+				status = "disabled";
-+			};
-+
-+			hsic-1 {
-+				status = "disabled";
-+			};
-+
-+			usb3-0 {
-+				status = "disabled";
-+			};
-+
-+			usb3-1 {
-+				status = "disabled";
-+			};
-+
-+			usb3-2 {
-+				status = "disabled";
-+			};
-+
-+			usb3-3 {
-+				status = "disabled";
-+			};
-+		};
-+	};
-+
-+Board file:
-+
-+	padctl@0,7009f000 {
-+		status = "okay";
-+
-+		pads {
-+			usb2 {
-+				status = "okay";
-+
-+				usb2-0 {
-+					nvidia,function = "xusb";
-+					status = "okay";
-+				};
-+
-+				usb2-1 {
-+					nvidia,function = "xusb";
-+					status = "okay";
-+				};
-+
-+				usb2-2 {
-+					nvidia,function = "xusb";
-+					status = "okay";
-+				};
-+
-+				usb2-3 {
-+					nvidia,function = "xusb";
-+					status = "okay";
-+				};
-+			};
-+
-+			pcie {
-+				status = "okay";
-+
-+				pcie-0 {
-+					nvidia,function = "pcie-x1";
-+					status = "okay";
-+				};
-+
-+				pcie-1 {
-+					nvidia,function = "pcie-x4";
-+					status = "okay";
-+				};
-+
-+				pcie-2 {
-+					nvidia,function = "pcie-x4";
-+					status = "okay";
-+				};
-+
-+				pcie-3 {
-+					nvidia,function = "pcie-x4";
-+					status = "okay";
-+				};
-+
-+				pcie-4 {
-+					nvidia,function = "pcie-x4";
-+					status = "okay";
-+				};
-+
-+				pcie-5 {
-+					nvidia,function = "usb3-ss";
-+					status = "okay";
-+				};
-+
-+				pcie-6 {
-+					nvidia,function = "usb3-ss";
-+					status = "okay";
-+				};
-+			};
-+
-+			sata {
-+				status = "okay";
-+
-+				sata-0 {
-+					nvidia,function = "sata";
-+					status = "okay";
-+				};
-+			};
-+		};
-+
-+		ports {
-+			usb2-0 {
-+				status = "okay";
-+				mode = "otg";
-+			};
-+
-+			usb2-1 {
-+				status = "okay";
-+				vbus-supply = <&vdd_5v0_rtl>;
-+				mode = "host";
-+			};
-+
-+			usb2-2 {
-+				status = "okay";
-+				vbus-supply = <&vdd_usb_vbus>;
-+				mode = "host";
-+			};
-+
-+			usb2-3 {
-+				status = "okay";
-+				mode = "host";
-+			};
-+
-+			usb3-0 {
-+				status = "okay";
-+				nvidia,lanes = "pcie-6";
-+				nvidia,port = <1>;
-+			};
-+
-+			usb3-1 {
-+				status = "okay";
-+				nvidia,lanes = "pcie-5";
-+				nvidia,port = <2>;
-+			};
-+		};
++		avddio-pex-supply = <&vdd_1v05_run>;
++		dvddio-pex-supply = <&vdd_1v05_run>;
++		avdd-usb-supply = <&vdd_3v3_lp0>;
++		avdd-pll-utmip-supply = <&vddio_1v8>;
++		avdd-pll-erefe-supply = <&avdd_1v05_run>;
++		avdd-usb-ss-pll-supply = <&vdd_1v05_run>;
++		hvdd-usb-ss-supply = <&vdd_3v3_lp0>;
++		hvdd-usb-ss-pll-e-supply = <&vdd_3v3_lp0>;
 +	};
 -- 
 2.7.1
