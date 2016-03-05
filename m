@@ -1,94 +1,49 @@
 From: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [tegrarcm PATCH v1 2/4] Add option --ml_rcm <rcm_ml_blob>
-Date: Fri, 4 Mar 2016 17:25:06 -0800
-Message-ID: <20160305012506.GA19189@nvidia.com>
+Subject: Re: [tegrarcm PATCH v1 1/4] Add option "--pkc"
+Date: Fri, 4 Mar 2016 17:43:01 -0800
+Message-ID: <20160305014301.GB19189@nvidia.com>
 References: <1457135087-967-1-git-send-email-jimmzhang@nvidia.com>
- <1457135087-967-3-git-send-email-jimmzhang@nvidia.com>
+ <1457135087-967-2-git-send-email-jimmzhang@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1457135087-967-3-git-send-email-jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1457135087-967-2-git-send-email-jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Mar 04, 2016 at 03:44:45PM -0800, Jimmy Zhang wrote:
-> This option along with "--pkc <keyfile>" allows user to generate signed
-> query version rcm, miniloader rcm and signed bootloader (flasher). With
-> these signed blob, user will then be able to run tegrarcm on a fused system
-> without keyfile.
+On Fri, Mar 04, 2016 at 03:44:44PM -0800, Jimmy Zhang wrote:
+> Add the support code needed to sign the RCM messages with RSA-PSS as
+> needed to communicate with secured production devices. This mode is
+> enabled by passing a key via the --pkc command line argument. If such
+> a key is set the RCM messages will be signed with it as well as the
+> bootloader.
 > 
-> Command syntax:
->  $ ./tegrarcm --ml_rcm <ml_rcm_blob> --pkc <keyfile>
-> 
-> Example:
-> 1. connect usb cable to recovery mode usb port
-> 2. put target in recovery mode
-> 3. run command as below:
-> $ sudo ./tegrarcm --ml_rcm t124_ml_rcm.bin --pkc rsa_priv.der
-> 
-
-Why this extra step to write the signed miniloader to a separate file?
-Why not just sign the miniloader in memory when using the --signed
-option?  It looks like this is also generating a file for the signed
-RCM messages, which should just be done in memory as well like we do
-when using CMAC signing.
+> Signed-off-by: Alban Bedel <alban.bedel@...>
+> ---
 
 
-> +static int initialize_rcm(uint16_t devid, usb_device_t *usb,
-> +			const char *keyfile, const char *ml_rcm_file)
-> +{
-> +	int ret = 0;
->  	uint8_t *msg_buff;
->  	int msg_len;
->  	uint32_t status;
->  	int actual_len;
-> +	#define query_rcm_ext	".qry"
+> diff --git a/src/main.c b/src/main.c
+> index 3db0ed8be506..fedeab2e1402 100644
+> --- a/src/main.c
+> +++ b/src/main.c
 
-Don't need this #define, just use ".qry" directly below
+> @@ -123,6 +126,10 @@ static void usage(char *progname)
+>  	fprintf(stderr, "\t\tminiloader\n");
+>  	fprintf(stderr, "\t--miniloader_entry=<mlentry>\n");
+>  	fprintf(stderr, "\t\tSpecify the entry point for the miniloader\n");
+> +	fprintf(stderr, "\t--pkc=<key.ber>\n");
 
+.der?
+Also "--pkcs" might be more accurate, or even better "--rsa-pss"
+Please update man page as well
 
-> +static int sign_blob(const char *blob_filename, const char *keyfile)
-> +{
-> +	int ret;
-> +	uint8_t rsa_pss_sig[2048 / 8];
-> +
-> +	#define sign_ext	".sig"
+> +extern "C" int rsa_pss_sign_file(const char *key_file, const char *msg_file,
+> +			unsigned char *sig_buf)
 
-Here too
+Make this function a wrapper around rsa_pss_sign() to avoid the code
+duplication. 
 
-
-> diff --git a/src/rcm.c b/src/rcm.c
-> index c7f0f8dddecc..cdf81309ae96 100644
-> --- a/src/rcm.c
-> +++ b/src/rcm.c
-> @@ -202,11 +202,12 @@ static int rcm35_sign_msg(uint8_t *buf)
->  		return -EMSGSIZE;
->  	}
->  
-> +	cmac_hash(msg->reserved, crypto_len, msg->object_sig.cmac_hash);
-> +
->  	if (rcm_keyfile)
->  		rsa_pss_sign(rcm_keyfile, msg->reserved, crypto_len,
->  			msg->object_sig.rsa_pss_sig, msg->modulus);
-> -	else
-> -		cmac_hash(msg->reserved, crypto_len, msg->object_sig.cmac_hash);
-
-I don't understand this part, this looks like it undoes what you put
-in the previous patch.
-
-
-> @@ -226,11 +227,10 @@ static int rcm40_sign_msg(uint8_t *buf)
->  		return -EMSGSIZE;
->  	}
->  
-> +	cmac_hash(msg->reserved, crypto_len, msg->object_sig.cmac_hash);
->  	if (rcm_keyfile)
->  		rsa_pss_sign(rcm_keyfile, msg->reserved, crypto_len,
->  			msg->object_sig.rsa_pss_sig, msg->modulus);
-> -	else
-> -		cmac_hash(msg->reserved, crypto_len, msg->object_sig.cmac_hash);
-
-Same here
+-Allen
