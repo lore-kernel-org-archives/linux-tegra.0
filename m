@@ -1,157 +1,94 @@
-From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
-Subject: Re: [PATCH 2/2] PM / clk: Add support for obtaining clocks from device-tree
-Date: Mon, 7 Mar 2016 12:06:23 +0100
-Message-ID: <CAMuHMdWe5x1pobvxjGV2Tr7RQ0ZgvcJ4DXzSLoRO2z0Pd2+0cg@mail.gmail.com>
-References: <1457105585-25157-1-git-send-email-jonathanh@nvidia.com>
-	<1457105585-25157-2-git-send-email-jonathanh@nvidia.com>
-	<CAMuHMdWU2-yaoaxPCQKqyLknFQH5f=dPXPr+y96N1ZPMib8kuA@mail.gmail.com>
-	<56DD5BE6.1070905@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v10 1/9] dt-bindings: phy: Add NVIDIA Tegra XUSB pad
+ controller binding
+Date: Mon, 7 Mar 2016 12:24:18 +0100
+Message-ID: <20160307112418.GA11152@ulmo.nvidia.com>
+References: <1457108379-20794-1-git-send-email-thierry.reding@gmail.com>
+ <20160305043145.GL13525@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="x+6KMIRAuhnl3hBn"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56DD5BE6.1070905-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20160305043145.GL13525@rob-hp-laptop>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Linux PM list <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Jon,
 
-On Mon, Mar 7, 2016 at 11:45 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> On 07/03/16 08:48, Geert Uytterhoeven wrote:
->> On Fri, Mar 4, 2016 at 4:33 PM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>> The PM clocks framework requires clients to pass either a con-id or a
->>> valid clk pointer in order to add a clock to a device. Add a new
->>> function pm_clk_add_clks_of() to allows device clocks to be retrieved
->>> from device-tree and populated for a given device. Note that there
->>> should be no need to add a stub function for this new function when
->>> CONFIG_OF is not selected because the OF functions used already have
->>> stubs functions.
->>>
->>> In order to handle errors encountered when adding clocks from
->>> device-tree, add a function pm_clk_remove_clk() to remove any clocks
->>> (using a pointer to the clk structure) that have been added
->>> successfully before the error occurred.
->>>
->>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>> ---
->>>  drivers/base/power/clock_ops.c | 85 ++++++++++++++++++++++++++++++++++++++++++
->>>  include/linux/pm_clock.h       |  9 +++++
->>>  2 files changed, 94 insertions(+)
->>>
->>> diff --git a/drivers/base/power/clock_ops.c b/drivers/base/power/clock_ops.c
->>> index 272a52ebafc0..5aa7365699c1 100644
->>> --- a/drivers/base/power/clock_ops.c
->>> +++ b/drivers/base/power/clock_ops.c
->>> @@ -138,6 +138,58 @@ int pm_clk_add_clk(struct device *dev, struct clk *clk)
->>>  }
->>>
->>>  /**
->>> + * pm_clk_add_clks_of - Start using device clock(s) for power management.
->>> + * @dev: Device whose clock(s) is going to be used for power management.
->>> + *
->>> + * Add a series of clocks described in the 'clocks' device-tree node for
->>> + * a device to the list of clocks used for the power management of @dev.
->>
->> This adds all clocks referenced by the device node, while not all clocks may
->> be suitable for power management, and some of them may be under explicit
->> driver control.
->> Cfr. drivers/clk/shmobile/renesas-cpg-mssr.c:cpg_mssr_attach_dev(), which
->> looks for module clocks, or core clocks explicitly listed in core_pm_clks[].
->>
->> What about adding an optional filter function to filter for suitable clocks?
->
-> Yes that sounds reasonable. Are you filtering on clock ID? Would it work
-> to allow the caller to pass a filter function which takes a struct *clk
-> as it's only argument?  Or do you prefer we call
-> of_parse_phandle_with_args(np, "clocks", "#clock-cells", i, &clkspec)
-> and return the clkspec info?
+--x+6KMIRAuhnl3hBn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-cpg_mssr_attach_dev() filters on clkspec.
+On Fri, Mar 04, 2016 at 10:31:45PM -0600, Rob Herring wrote:
+> On Fri, Mar 04, 2016 at 05:19:31PM +0100, Thierry Reding wrote:
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >=20
+> > The NVIDIA Tegra XUSB pad controller provides a set of pads, each with a
+> > set of lanes that are used for PCIe, SATA and USB.
+> >=20
+> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> > Changes in v10:
+> > - clarify that the hardware documentation means something different when
+> >   referring to a "port" (intra-SoC connectivity)
+> >=20
+> > Changes in v9:
+> > - rename UTMI -> USB2 to match hardware documentation
+> > - reword according to suggestions by Stephen Warren
+> > - make Tegra132 compatible string list consistent
+> > - remove mailbox support
+> >=20
+> >  .../bindings/phy/nvidia,tegra124-xusb-padctl.txt   | 376 +++++++++++++=
+++++++++
+> >  .../pinctrl/nvidia,tegra124-xusb-padctl.txt        |   5 +
+> >  2 files changed, 381 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/phy/nvidia,tegra1=
+24-xusb-padctl.txt
+>=20
+> Without really understanding the h/w here, looks okay to me.
+>=20
+> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+>=20
+> > +SoC include:
+> > +
+> > +	padctl@0,7009f000 {
+>=20
+> Drop the comma. Commas should only be used if there are distinct fields.
+>=20
+> If I get my dtc patch done, these are going to start warning, so you=20
+> might want to go fix dts files (assuming that's where this is coming=20
+> from).
 
-As pm_clk_add_clks_of() has "_of" in the name (BTW, should it be called
-of_pm_clk_add_clks()), I think passing the clkspec makes more sense than
-passing a struct clk *.
+I noticed that in today's next the updated DTC already complains about a
+lot of things in existing DTS files. For Tegra that's primarily the
+memory node, because it has a reg property but no unit name. Any hints
+as to how to solve that? I think I remember from way back that memory
+was supposed to be an exception, perhaps DTC needs to be taught that?
 
->>> +int pm_clk_add_clks_of(struct device *dev)
->>> +{
->>> +       struct clk **clks;
->>> +       unsigned int i, count;
->>> +       int ret;
->>> +
->>> +       if (!dev || !dev->of_node)
->>> +               return -EINVAL;
->>> +
->>> +       count = of_count_phandle_with_args(dev->of_node, "clocks",
->>> +                                          "#clock-cells");
->>> +       if (count == 0)
->>> +               return -ENODEV;
->>> +
->>> +       clks = kcalloc(count, sizeof(*clks), GFP_KERNEL);
->>> +       if (!clks)
->>> +               return -ENOMEM;
->>> +
->>
->> Don't you have to call pm_clk_create() here, to allocate a pm_subsys_data
->> structure that pm_clk_add_clk() can populate?
->
-> This function will return an error when pm_clk_add_clk() is called if
-> the user has not called pm_clk_create() first. It seems more natural to
-> me that the user should call pm_clk_create() before calling
-> pm_clk_add_clks_of() which is the same convention used for adding clocks
-> by the other APIs to add clocks.
+Thierry
 
-OK. That way the caller can add more clocks if needed. I missed that case.
+--x+6KMIRAuhnl3hBn
+Content-Type: application/pgp-signature; name="signature.asc"
 
->>> +       for (i = 0; i < count; i++) {
->>> +               clks[i] = of_clk_get(dev->of_node, i);
->>> +               if (IS_ERR(clks[i])) {
->>> +                       ret = PTR_ERR(clks[i]);
->>> +                       goto error;
->>> +               }
->>> +
->>> +               ret = pm_clk_add_clk(dev, clks[i]);
->>> +               if (ret) {
->>> +                       clk_put(clks[i]);
->>> +                       goto error;
->>> +               }
->>> +       }
->>> +
->>> +       kfree(clks);
->>> +
->>> +       return 0;
->>> +
->>> +error:
->>> +       while (i--)
->>> +               pm_clk_remove_clk(dev, clks[i]);
->>
->> Just pm_clk_destroy(dev) to destroy all at once?
->
-> Right, however, this will remove all clocks associated with the device
-> and not just those we have added. It is probably very unlikely that
-> someone would call pm_clk_add_clks_of() and had previously called
-> pm_clk_add(), but it seems best to not make any assumptions and only
-> remove the clocks that were actually added. I guess that it would be
-> possible to check to see if there were any clocks already added when
-> this function is called and return an error in that case.
->
-> All of that said, I do agree that it may be simpler, if we do call
-> pm_clk_create() from within pm_clk_add_clks_of() and this would allow us
-> to pmc_clk_destroy() in the error path. So if this is preferred I could
-> do that, but I think that I would not allow clocks to be added if
-> clock_list is not empty when this function is called.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Given the above, your code is fine.
+iQIcBAABCAAGBQJW3WTfAAoJEN0jrNd/PrOhi5IQALhVr9h9uBANbRMXYlcW0T3K
+coqmhlVo4xAWR0pOO+/8deZoS8q61wgEP/I5EG0o9fDPkZsBfmtMs67HRv1sp068
+DbBFywOl+S09EFR6SvDNoKCY2FKbSdaNmlHRD6gjKnYhoXU4o0j1ZImgUEjFXFxg
++2CtGox2kwFAFLcXK9NHJXRJ7WgaFJLSD8YnlaXvKq14pMuxsOQIh+u/mXBCCBz2
+E9PveL208HqB0PXQ0YdyIKLYKi7AiHkR3r/bMQkpndTIhtX1JJMEFrWducqygSu6
+okT96RuW0YvciniHdmv0opRXd5Vg+d+SJ4BK0d5dvfcaZMTkkxRspQ62ABMYrr5Y
+jpAPZBWwOgx/nrnWWbFlszKuJniUSqvyDORk1Flkau6coftAMj8O6ZlOu2518CwW
+/Jg7EbplM09uI68IzJgboU10W5NXXbHy+Shsdlo4/eXSySoYkPZ2EK98YLucjoWR
+UBEl26BQFj6Ve6P6yK6hfTb8G+DTBCRIaNAf5MARg1iwuZm4yRgaNQXrycEx0lkD
+dD4fq+ruKIQeyrmfqfKNseBmLWfDmUBQxxOTuO/ljwsJoyKCxRxQUMyhSKpsRuip
+Wu03b08MeEp3WD3koQipY/Ny4yA/n5wKzejx1m1tdLLNBg/+2l5nkzB6y43aMKLW
+wfUCFQ0HEw//5oMpBmL3
+=D435
+-----END PGP SIGNATURE-----
 
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+--x+6KMIRAuhnl3hBn--
