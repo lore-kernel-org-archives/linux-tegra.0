@@ -1,67 +1,74 @@
-From: Thierry Reding <thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Subject: Re: [PATCH] thermal: tegra_soctherm: fix sign bit of temperature
-Date: Mon, 7 Mar 2016 09:32:24 +0100
-Message-ID: <20160307083224.GB31189@ulmo.nvidia.com>
+Date: Mon, 7 Mar 2016 09:38:42 +0100
+Message-ID: <20160307083842.GC31189@ulmo.nvidia.com>
 References: <1456739480-3304-1-git-send-email-wni@nvidia.com>
- <56D698FE.7070706@nvidia.com>
- <56D78081.6050106@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Fba/0zbH8Xs+Fj9o"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="96YOpH+ONegL0A3E"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <56D78081.6050106@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Matt Longnecker <mlongnecker@nvidia.com>
-Cc: Wei Ni <wni@nvidia.com>, rui.zhang@intel.com, mikko.perttunen@kapsi.fi, swarren@wwwdotorg.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1456739480-3304-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---Fba/0zbH8Xs+Fj9o
+--96YOpH+ONegL0A3E
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 02, 2016 at 04:08:33PM -0800, Matt Longnecker wrote:
+On Mon, Feb 29, 2016 at 05:51:20PM +0800, Wei Ni wrote:
+> The sign bit of temperature readback is bit 0, not bit 1.
+> Change to BIT(0) to fix it.
 >=20
+> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/thermal/tegra_soctherm.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 >=20
-> On 03/01/2016 11:40 PM, Wei Ni wrote:
-> >>diff --git a/drivers/thermal/tegra_soctherm.c b/drivers/thermal/tegra_s=
-octherm.c
-> >>index 74ea5765938b..136975220c92 100644
-> >>--- a/drivers/thermal/tegra_soctherm.c
-> >>+++ b/drivers/thermal/tegra_soctherm.c
-> >>@@ -57,7 +57,7 @@
-> >>  #define READBACK_VALUE_MASK			0xff00
-> >>  #define READBACK_VALUE_SHIFT			8
-> >>  #define READBACK_ADD_HALF			BIT(7)
-> >>-#define READBACK_NEGATE				BIT(1)
-> >>+#define READBACK_NEGATE				BIT(0)
-> I confirm that this change is technically correct. It fixes a bug.
+> diff --git a/drivers/thermal/tegra_soctherm.c b/drivers/thermal/tegra_soc=
+therm.c
+> index 74ea5765938b..136975220c92 100644
+> --- a/drivers/thermal/tegra_soctherm.c
+> +++ b/drivers/thermal/tegra_soctherm.c
+> @@ -57,7 +57,7 @@
+>  #define READBACK_VALUE_MASK			0xff00
+>  #define READBACK_VALUE_SHIFT			8
+>  #define READBACK_ADD_HALF			BIT(7)
+> -#define READBACK_NEGATE				BIT(1)
+> +#define READBACK_NEGATE				BIT(0)
 
-That usually translates to a Reviewed-by: tag. =3D)
+I haven't found this documented anywhere. The register documentation
+indicates that the SOC_THERM_TSENSOR_TEMP1 and SOC_THERM_TSENSOR_TEMP2
+registers are in some kind of "temp readback format", but I can't find
+any specification of that format. Can you point me at the source for
+this information and file an internal bug report so that we can get
+the documentation updated?
 
 Thierry
 
---Fba/0zbH8Xs+Fj9o
+--96YOpH+ONegL0A3E
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJW3TyYAAoJEN0jrNd/PrOhQ9YP+wdTDT0yK5w5PtR03ih4Yd9w
-k4QfkoHJucs0Ep/H5wJJ77BBNzOx8l3G8tRpTkO9T+YR/V0RM4wMHKkZyMlaHgdz
-7EXysScz+ikrHl6L8UpxPT2/tGhR0N5SvE4tRJQNeEZh/HLmIEic1jGp5cHJRCMe
-MPaME4h29C3CKtMDTs/NPNiSEO/SgKNiKXlHBlJ2Mp6BFAEhIlO8CwMzu0UM+OOQ
-AAiyAGZE6D73V+VJr3RWTEBiNEcHi8Bcdzuqwo2VYUb5n2zThTV8i4xSuzuYOSQL
-OYx/pE1s5HgNUp8wWj+NeL5hRbVX+Hmoy+///Tuolgo9NN+ADUell40Pb8umYR1q
-QtQ7pMJ9zBGEkrhJZrOiV4w9M7DznmeO2JJk/lUk4dT4nsrTg3XTVxKZ0G5kXc0E
-DlL0x4EO+OX8E5IPet0pw3teHNZ9l+wJwTE0e7GDT0lnm1ARy2wJXrVBSJc8fNq+
-W0Af2N9F/W7Xb6MtZJKVFJioMP/xol9hOSuRqeubWTvAHapDhBRQehXxvLChVh4K
-N6AmGKtvC5P4D6NNUsVpDVB01X3aR1bvAlN/3J5xQSRRVPMFUoBJmAT426ErJYWP
-5e1wM19aqCqr3DxW6/nacL5QIku8Oym1mdDQr6/ZaSaMO0eiLjA9XN56m0w83d+q
-OVtYEAulOjdrWwel62F7
-=SEPi
+iQIcBAABCAAGBQJW3T4SAAoJEN0jrNd/PrOhse4QAI/h8xYt9W1wd2XPGKQeqZrX
+BuWzqUHYWrRkyPxWfjK7mHSwCvlRJeXbto40iZL5DDvVLjKI8wrB+8s2/5d0YQ5K
+s56io8NW9UQVn6WOO7wG2Y+jKLUoFECYrmSKItojVkzqi6IOk+dhMRPcvYH8FhOj
+edKX1uDd0IiFH6XsSXEymmrItm6a+Q1t/mhfyqGZAnG0Md/sat1Sic/jKN4hOU9x
+5ne18cks4r4mb4xB8IgguVCTXd0ykh8dZ8mDQeiFW9PWoS5jDkPYxDZclS0xkuVU
+ZB0W+DXS907i52cQ7KcJZ1ZdQ44dX6Y0VW4N/An7oR5r7SFIC9OiOk4OMFYBdBbK
+UpiEr/xxS8qioMRkJKe+F9O7S6DdISvx8ucZWHmCh/5YwuglbU7DWr3bgUQCzSoA
+R8D5GMZM6QVLE1hhvCcZAoadyZQOXnDxmDOr49/jvl96fIUHkTCoFjnwxbHfT+Or
+ZXhA0Vc4zU9xghUgK4xVPh99Ik8a644RNIhq4YCRRY/5O9WJJ7mVKowk4fmhmsLG
+C8fNSab4uWMI82SknMofOSrNriazTnTZRAHMmG4EKI9Oy7iqXrOmGKLVPNlyfD7U
+7VdopzHYhSPCIkYjh4Yd/3qPaXn9rHbcQvN+EWjWPuicz9C6AMpMMB6wNNqVScTx
++xZDdoBcOWm3Nic+coGK
+=b0j7
 -----END PGP SIGNATURE-----
 
---Fba/0zbH8Xs+Fj9o--
+--96YOpH+ONegL0A3E--
