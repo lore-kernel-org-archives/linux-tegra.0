@@ -1,94 +1,64 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v10 1/9] dt-bindings: phy: Add NVIDIA Tegra XUSB pad
- controller binding
-Date: Mon, 7 Mar 2016 12:24:18 +0100
-Message-ID: <20160307112418.GA11152@ulmo.nvidia.com>
-References: <1457108379-20794-1-git-send-email-thierry.reding@gmail.com>
- <20160305043145.GL13525@rob-hp-laptop>
+From: "Zhang, Rui" <rui.zhang@intel.com>
+Subject: RE: [PATCH] thermal: tegra_soctherm: fix sign bit of temperature
+Date: Mon, 7 Mar 2016 12:27:01 +0000
+Message-ID: <744357E9AAD1214791ACBA4B0B9092633A972237@SHSMSX101.ccr.corp.intel.com>
+References: <1456739480-3304-1-git-send-email-wni@nvidia.com>
+ <56D698FE.7070706@nvidia.com> <56D78081.6050106@nvidia.com>
+ <56DD3B1E.4030805@nvidia.com>
+ <744357E9AAD1214791ACBA4B0B9092633A9721DE@SHSMSX101.ccr.corp.intel.com>
+ <56DD46D3.3060708@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="x+6KMIRAuhnl3hBn"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20160305043145.GL13525@rob-hp-laptop>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <56DD46D3.3060708@nvidia.com>
+Content-Language: en-US
+Sender: linux-kernel-owner@vger.kernel.org
+To: Wei Ni <wni@nvidia.com>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "mikko.perttunen@kapsi.fi" <mikko.perttunen@kapsi.fi>, Eduardo Valentin <edubezval@gmail.com>
+Cc: Matt Longnecker <mlongnecker@nvidia.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
---x+6KMIRAuhnl3hBn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Mar 04, 2016 at 10:31:45PM -0600, Rob Herring wrote:
-> On Fri, Mar 04, 2016 at 05:19:31PM +0100, Thierry Reding wrote:
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >=20
-> > The NVIDIA Tegra XUSB pad controller provides a set of pads, each with a
-> > set of lanes that are used for PCIe, SATA and USB.
-> >=20
-> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> > Changes in v10:
-> > - clarify that the hardware documentation means something different when
-> >   referring to a "port" (intra-SoC connectivity)
-> >=20
-> > Changes in v9:
-> > - rename UTMI -> USB2 to match hardware documentation
-> > - reword according to suggestions by Stephen Warren
-> > - make Tegra132 compatible string list consistent
-> > - remove mailbox support
-> >=20
-> >  .../bindings/phy/nvidia,tegra124-xusb-padctl.txt   | 376 +++++++++++++=
-++++++++
-> >  .../pinctrl/nvidia,tegra124-xusb-padctl.txt        |   5 +
-> >  2 files changed, 381 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/phy/nvidia,tegra1=
-24-xusb-padctl.txt
->=20
-> Without really understanding the h/w here, looks okay to me.
->=20
-> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
->=20
-> > +SoC include:
-> > +
-> > +	padctl@0,7009f000 {
->=20
-> Drop the comma. Commas should only be used if there are distinct fields.
->=20
-> If I get my dtc patch done, these are going to start warning, so you=20
-> might want to go fix dts files (assuming that's where this is coming=20
-> from).
-
-I noticed that in today's next the updated DTC already complains about a
-lot of things in existing DTS files. For Tegra that's primarily the
-memory node, because it has a reg property but no unit name. Any hints
-as to how to solve that? I think I remember from way back that memory
-was supposed to be an exception, perhaps DTC needs to be taught that?
-
-Thierry
-
---x+6KMIRAuhnl3hBn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJW3WTfAAoJEN0jrNd/PrOhi5IQALhVr9h9uBANbRMXYlcW0T3K
-coqmhlVo4xAWR0pOO+/8deZoS8q61wgEP/I5EG0o9fDPkZsBfmtMs67HRv1sp068
-DbBFywOl+S09EFR6SvDNoKCY2FKbSdaNmlHRD6gjKnYhoXU4o0j1ZImgUEjFXFxg
-+2CtGox2kwFAFLcXK9NHJXRJ7WgaFJLSD8YnlaXvKq14pMuxsOQIh+u/mXBCCBz2
-E9PveL208HqB0PXQ0YdyIKLYKi7AiHkR3r/bMQkpndTIhtX1JJMEFrWducqygSu6
-okT96RuW0YvciniHdmv0opRXd5Vg+d+SJ4BK0d5dvfcaZMTkkxRspQ62ABMYrr5Y
-jpAPZBWwOgx/nrnWWbFlszKuJniUSqvyDORk1Flkau6coftAMj8O6ZlOu2518CwW
-/Jg7EbplM09uI68IzJgboU10W5NXXbHy+Shsdlo4/eXSySoYkPZ2EK98YLucjoWR
-UBEl26BQFj6Ve6P6yK6hfTb8G+DTBCRIaNAf5MARg1iwuZm4yRgaNQXrycEx0lkD
-dD4fq+ruKIQeyrmfqfKNseBmLWfDmUBQxxOTuO/ljwsJoyKCxRxQUMyhSKpsRuip
-Wu03b08MeEp3WD3koQipY/Ny4yA/n5wKzejx1m1tdLLNBg/+2l5nkzB6y43aMKLW
-wfUCFQ0HEw//5oMpBmL3
-=D435
------END PGP SIGNATURE-----
-
---x+6KMIRAuhnl3hBn--
+T2gsIEJUVywgeW91IG5lZWQgdG8gQ0MgbGludXgtcG1Admdlci5rZXJuZWwub3JnIGFzIHdlbGws
+IHNvIHRoYXQgd2UgY2FuIHNlZSB5b3VyIHBhdGNoIHZpYSBwYXRjaHdvcmsuDQoNClBsZWFzZSBy
+ZXNlbmQgcGF0Y2ggVjIgdG8gbGludXgtcG1Admdlci5rZXJuZWwub3JnLg0KDQpUaGFua3MsDQpy
+dWkNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBXZWkgTmkgW21haWx0
+bzp3bmlAbnZpZGlhLmNvbV0NCj4gU2VudDogTW9uZGF5LCBNYXJjaCAwNywgMjAxNiA1OjE2IFBN
+DQo+IFRvOiBaaGFuZywgUnVpIDxydWkuemhhbmdAaW50ZWwuY29tPjsgdGhpZXJyeS5yZWRpbmdA
+Z21haWwuY29tOw0KPiBtaWtrby5wZXJ0dHVuZW5Aa2Fwc2kuZmk7IEVkdWFyZG8gVmFsZW50aW4g
+PGVkdWJlenZhbEBnbWFpbC5jb20+DQo+IENjOiBNYXR0IExvbmduZWNrZXIgPG1sb25nbmVja2Vy
+QG52aWRpYS5jb20+OyBzd2FycmVuQHd3d2RvdG9yZy5vcmc7DQo+IGxpbnV4LXRlZ3JhQHZnZXIu
+a2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBSZTog
+W1BBVENIXSB0aGVybWFsOiB0ZWdyYV9zb2N0aGVybTogZml4IHNpZ24gYml0IG9mIHRlbXBlcmF0
+dXJlDQo+IEltcG9ydGFuY2U6IEhpZ2gNCj4gDQo+IA0KPiANCj4gT24gMjAxNuW5tDAz5pyIMDfm
+l6UgMTY6NTUsIFpoYW5nLCBSdWkgd3JvdGU6DQo+ID4gRm9yIHRoZSBzb2MgdGhlcm1hbCBkcml2
+ZXIgY2hhbmdlcywgeW91J2QgYmV0dGVyIGNjIEVkdWFyZG8gYXQgdGhlIHNhbWUNCj4gdGltZSBz
+byB0aGF0IGhlIGNhbiBpbmNsdWRlIHRoaXMgaW4gaGlzIHNvYy10aGVybWFsIHB1bGwgcmVxdWVz
+dC4NCj4gPiBTdXJlbHkgSSBjYW4gcXVldWUgdGhpcyBmb3IgNC42IGlmIEVkdWFyZG8gbWlzcyB0
+aGlzLg0KPiANCj4gVGhhbmtzIGZvciB5b3VyIGhlbHAuDQo+IA0KPiBCVFcsIHBsZWFzZSBhZGQ6
+DQo+IFJldmlld2VkLWJ5OiBNYXR0IExvbmduZWNrZXIgPG1sb25nbmVja2VyQG52aWRpYS5jb20+
+DQo+IA0KPiBPciBJIG5lZWQgdG8gc2VuZCB2MiBwYXRjaCB0byBhZGQgaXQ/DQo+IA0KPiBUaGFu
+a3MuDQo+IFdlaS4NCj4gDQo+ID4NCj4gPiBUaGFua3MsDQo+ID4gcnVpDQo+ID4NCj4gPj4gLS0t
+LS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPj4gRnJvbTogV2VpIE5pIFttYWlsdG86d25pQG52
+aWRpYS5jb21dDQo+ID4+IFNlbnQ6IE1vbmRheSwgTWFyY2ggMDcsIDIwMTYgNDoyNiBQTQ0KPiA+
+PiBUbzogdGhpZXJyeS5yZWRpbmdAZ21haWwuY29tOyBaaGFuZywgUnVpIDxydWkuemhhbmdAaW50
+ZWwuY29tPjsNCj4gPj4gbWlra28ucGVydHR1bmVuQGthcHNpLmZpDQo+ID4+IENjOiBNYXR0IExv
+bmduZWNrZXIgPG1sb25nbmVja2VyQG52aWRpYS5jb20+Ow0KPiBzd2FycmVuQHd3d2RvdG9yZy5v
+cmc7DQo+ID4+IGxpbnV4LXRlZ3JhQHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIu
+a2VybmVsLm9yZw0KPiA+PiBTdWJqZWN0OiBSZTogW1BBVENIXSB0aGVybWFsOiB0ZWdyYV9zb2N0
+aGVybTogZml4IHNpZ24gYml0IG9mDQo+ID4+IHRlbXBlcmF0dXJlDQo+ID4+IEltcG9ydGFuY2U6
+IEhpZ2gNCj4gPj4NCj4gPj4gSGksIFJ1aSBhbmQgVGhpZXJyeQ0KPiA+PiBDb3VsZCB5b3UgcGxl
+YXNlIHRha2UgYSBsb29rIGF0IHRoaXMgcGF0Y2g/DQo+ID4+DQo+ID4+IFRoYW5rcy4NCj4gPj4g
+V2VpLg0KPiA+Pg0KPiA+PiBPbiAyMDE25bm0MDPmnIgwM+aXpSAwODowOCwgTWF0dCBMb25nbmVj
+a2VyIHdyb3RlOg0KPiA+Pj4NCj4gPj4+DQo+ID4+PiBPbiAwMy8wMS8yMDE2IDExOjQwIFBNLCBX
+ZWkgTmkgd3JvdGU6DQo+ID4+Pj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL3RoZXJtYWwvdGVncmFf
+c29jdGhlcm0uYw0KPiA+PiBiL2RyaXZlcnMvdGhlcm1hbC90ZWdyYV9zb2N0aGVybS5jDQo+ID4+
+Pj4+IGluZGV4IDc0ZWE1NzY1OTM4Yi4uMTM2OTc1MjIwYzkyIDEwMDY0NA0KPiA+Pj4+PiAtLS0g
+YS9kcml2ZXJzL3RoZXJtYWwvdGVncmFfc29jdGhlcm0uYw0KPiA+Pj4+PiArKysgYi9kcml2ZXJz
+L3RoZXJtYWwvdGVncmFfc29jdGhlcm0uYw0KPiA+Pj4+PiBAQCAtNTcsNyArNTcsNyBAQA0KPiA+
+Pj4+PiAgI2RlZmluZSBSRUFEQkFDS19WQUxVRV9NQVNLICAgICAgICAgICAgMHhmZjAwDQo+ID4+
+Pj4+ICAjZGVmaW5lIFJFQURCQUNLX1ZBTFVFX1NISUZUICAgICAgICAgICAgOA0KPiA+Pj4+PiAg
+I2RlZmluZSBSRUFEQkFDS19BRERfSEFMRiAgICAgICAgICAgIEJJVCg3KQ0KPiA+Pj4+PiAtI2Rl
+ZmluZSBSRUFEQkFDS19ORUdBVEUgICAgICAgICAgICAgICAgQklUKDEpDQo+ID4+Pj4+ICsjZGVm
+aW5lIFJFQURCQUNLX05FR0FURSAgICAgICAgICAgICAgICBCSVQoMCkNCj4gPj4+IEkgY29uZmly
+bSB0aGF0IHRoaXMgY2hhbmdlIGlzIHRlY2huaWNhbGx5IGNvcnJlY3QuIEl0IGZpeGVzIGEgYnVn
+Lg0K
