@@ -1,69 +1,73 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] thermal: tegra_soctherm: fix sign bit of temperature
-Date: Mon, 7 Mar 2016 17:16:03 +0800
-Message-ID: <56DD46D3.3060708@nvidia.com>
-References: <1456739480-3304-1-git-send-email-wni@nvidia.com> <56D698FE.7070706@nvidia.com> <56D78081.6050106@nvidia.com> <56DD3B1E.4030805@nvidia.com> <744357E9AAD1214791ACBA4B0B9092633A9721DE@SHSMSX101.ccr.corp.intel.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v4.5-rc7
+Date: Mon, 7 Mar 2016 09:43:29 +0000
+Message-ID: <56DD4D41.6080900@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <744357E9AAD1214791ACBA4B0B9092633A9721DE-0J0gbvR4kThpB2pF5aRoyrfspsVTdybXVpNB7YpNyf8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Zhang, Rui" <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "mikko.perttunen-/1wQRMveznE@public.gmane.org" <mikko.perttunen-/1wQRMveznE@public.gmane.org>, Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Matt Longnecker <mlongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Here are some basic Tegra test results for Linux v4.5-rc7.
+Logs and other details at:
+
+    https://nvtb.github.io//linux/test_v4.5-rc7/20160306150102/
 
 
-On 2016=E5=B9=B403=E6=9C=8807=E6=97=A5 16:55, Zhang, Rui wrote:
-> For the soc thermal driver changes, you'd better cc Eduardo at the sa=
-me time so that he can include this in his soc-thermal pull request.
-> Surely I can queue this for 4.6 if Eduardo miss this.
+Test summary
+------------
 
-Thanks for your help.
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
 
-BTW, please add:
-Reviewed-by: Matt Longnecker <mlongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Build: Image:
+    Pass: ( 1/ 1): defconfig
 
-Or I need to send v2 patch to add it?
+Boot to userspace: defconfig:
+    Pass: ( 3/ 3): qemu-vexpress64, tegra132-norrin,
+		   tegra210-p2371-0000
 
-Thanks.
-Wei.
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
 
->=20
-> Thanks,
-> rui
->=20
->> -----Original Message-----
->> From: Wei Ni [mailto:wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org]
->> Sent: Monday, March 07, 2016 4:26 PM
->> To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org; Zhang, Rui <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>;
->> mikko.perttunen-/1wQRMveznE@public.gmane.org
->> Cc: Matt Longnecker <mlongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>; swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org;
->> linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> Subject: Re: [PATCH] thermal: tegra_soctherm: fix sign bit of temper=
-ature
->> Importance: High
->>
->> Hi, Rui and Thierry
->> Could you please take a look at this patch?
->>
->> Thanks.
->> Wei.
->>
->> On 2016=E5=B9=B403=E6=9C=8803=E6=97=A5 08:08, Matt Longnecker wrote:
->>>
->>>
->>> On 03/01/2016 11:40 PM, Wei Ni wrote:
->>>>> diff --git a/drivers/thermal/tegra_soctherm.c
->> b/drivers/thermal/tegra_soctherm.c
->>>>> index 74ea5765938b..136975220c92 100644
->>>>> --- a/drivers/thermal/tegra_soctherm.c
->>>>> +++ b/drivers/thermal/tegra_soctherm.c
->>>>> @@ -57,7 +57,7 @@
->>>>>  #define READBACK_VALUE_MASK            0xff00
->>>>>  #define READBACK_VALUE_SHIFT            8
->>>>>  #define READBACK_ADD_HALF            BIT(7)
->>>>> -#define READBACK_NEGATE                BIT(1)
->>>>> +#define READBACK_NEGATE                BIT(0)
->>> I confirm that this change is technically correct. It fixes a bug.
+Boot to userspace: tegra_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: multi_v7_defconfig:
+    FAIL: ( 1/ 4): tegra114-dalmore-a04
+    Pass: ( 3/ 4): tegra124-jetson-tk1, tegra20-trimslice,
+		   tegra30-beaver
+
+PM: System suspend: tegra_defconfig:
+    FAIL: ( 1/ 4): tegra114-dalmore-a04
+    Pass: ( 3/ 4): tegra124-jetson-tk1, tegra20-trimslice,
+		   tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v4.5-rc6 (fc77dbd34c5c99bce46d40a2491937c3bcbd10af)):
+   text     data      bss    total  kernel
+  +8586    -8192        0     +394  defconfig
+   +806        0        0     +806  multi_v7_defconfig
+  +4450        0        0    +4450  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.5-rc6 (fc77dbd34c5c99bce46d40a2491937c3bcbd10af))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+        .        .        .        .      qemu-vexpress64            defconfig           __internal
+        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+        .        .        .      -4k tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+        .        .        .      -4k  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
+        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+        .        .        .      -4k    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
+        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+        .        .        .      -4k       tegra30-beaver      tegra_defconfig       tegra30-beaver
