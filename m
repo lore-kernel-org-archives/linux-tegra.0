@@ -1,109 +1,159 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [tegrarcm PATCH v1 2/4] Add option --ml_rcm <rcm_ml_blob>
-Date: Mon, 7 Mar 2016 13:15:38 -0700
-Message-ID: <56DDE16A.8030809@wwwdotorg.org>
-References: <1457135087-967-1-git-send-email-jimmzhang@nvidia.com>
- <1457135087-967-3-git-send-email-jimmzhang@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH V7 2/4] Documentation: DT: bindings: Add power domain info
+ for NVIDIA PMC
+Date: Mon, 7 Mar 2016 13:29:44 -0700
+Message-ID: <56DDE4B8.6000408@wwwdotorg.org>
+References: <1457094186-15786-1-git-send-email-jonathanh@nvidia.com>
+ <1457094186-15786-3-git-send-email-jonathanh@nvidia.com>
+ <20160305043104.GG13525@rob-hp-laptop> <56DD515A.4020207@nvidia.com>
+ <56DDBEC6.7080102@wwwdotorg.org> <56DDD794.8090207@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1457135087-967-3-git-send-email-jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <56DDD794.8090207@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-pm@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/04/2016 04:44 PM, Jimmy Zhang wrote:
-> This option along with "--pkc <keyfile>" allows user to generate signed
-> query version rcm, miniloader rcm and signed bootloader (flasher). With
-> these signed blob, user will then be able to run tegrarcm on a fused system
-> without keyfile.
-
-That says "without keyfile", yet ...
-
-> Command syntax:
->   $ ./tegrarcm --ml_rcm <ml_rcm_blob> --pkc <keyfile>
+On 03/07/2016 12:33 PM, Jon Hunter wrote:
 >
-> Example:
-> 1. connect usb cable to recovery mode usb port
-> 2. put target in recovery mode
-> 3. run command as below:
-> $ sudo ./tegrarcm --ml_rcm t124_ml_rcm.bin --pkc rsa_priv.der
-
-... in both those examples, the PKC file is provided as an argument. 
-That seems inconsistent.
-
-Oh, having read more of the patch, I see this patch is all about 
-*generating* the signed messages, and presumably a later patch is about 
-executing them. That's not at all obvious from the patch subject or even 
-particularly obvious from the patch descriptions.
-
-Equally, I see that the parameter to --ml_rcm is the base part of a 
-filename, to which various extensions will be concatenated to form 
-various actual filenames that are written to. This needs to be more 
-clearly spelled out in the commit description. The help text:
-
-> +	fprintf(stderr, "\t--ml_rcm=ml_rcm_file\n");
-> +	fprintf(stderr, "\t\tSave rcm message prefixed miniloader\n");
-
-... is also not at all clear or illuminating.
-
-I don't see any changes to src/tegrarcm.1 in this series. The man page 
-needs to document all the new functionality.
-
-> diff --git a/src/main.c b/src/main.c
-> +	/* error check */
-> +	if (ml_rcm_file) {
-> +		/* ml_rcm option must also come along with pkc option */
-> +		if (pkc == NULL) {
-> +			fprintf(stderr, "PKC key file must be specified\n");
-
-I would add "if --ml_rcm is" or "with --mc_rcm" or something like that.
-
-> -		usage(argv[0]);
-> -		exit(EXIT_FAILURE);
-> +		goto usage_exit;
-
-That looks like an unrelated change; a cleanup patch.
-
-> +static int create_name_string(const char *in, char *out, char *ext)
-
-I would suggest re-ordering the parameters so all input and output 
-pointers are next to each-other. The existing order is a bit confusing. 
-(i.e. in ext out, or out in ext to be more like str/memcpy).
-
-> +	sprintf(out, "%s%s\n", in, ext);
-> +	*(out + len + strlen(ext)) = 0x0;
-
-Doesn't that happen automatically since you're using sprintf() not 
-snprintf()?
-
-Why use a temporary variable to store strlen(in) but not another to 
-store strlen(ext); they're both used twice.
-
-> +static int save_to_file(const char *filename, const uint8_t *msg_buff,
-> +			const uint32_t length)
->   {
-> +	FILE *raw_file;
-
-f, fp, or file would be more typical variable names; there aren't 
-multiple files (e.g. one raw, one not) to differentiate between, so 
-"raw_" doesn't seem necessary.
-
-> diff --git a/src/rcm.c b/src/rcm.c
-
-> @@ -202,11 +202,12 @@ static int rcm35_sign_msg(uint8_t *buf)
->   		return -EMSGSIZE;
->   	}
+> On 07/03/16 17:47, Stephen Warren wrote:
+>> On 03/07/2016 03:00 AM, Jon Hunter wrote:
+>>>
+>>> On 05/03/16 04:31, Rob Herring wrote:
+>>>> On Fri, Mar 04, 2016 at 12:23:04PM +0000, Jon Hunter wrote:
+>>>>> Add power-domain binding documentation for the NVIDIA PMC driver in
+>>>>> order to support generic power-domains.
+>>>>>
+>>>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>>>>> ---
+>>>>>    .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 80
+>>>>> ++++++++++++++++++++++
+>>>>>    1 file changed, 80 insertions(+)
+>>>>>
+>>>>> diff --git
+>>>>> a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+>>>>> b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+>>>>> index 53aa5496c5cf..7d52bbe99709 100644
+>>>>> ---
+>>>>> a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+>>>>> +++
+>>>>> b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+>>>>> @@ -1,5 +1,7 @@
+>>>>>    NVIDIA Tegra Power Management Controller (PMC)
+>>>>>
+>>>>> +== Power Management Controller Node ==
+>>>>> +
+>>>>>    The PMC block interacts with an external Power Management Unit.
+>>>>> The PMC
+>>>>>    mostly controls the entry and exit of the system from different sleep
+>>>>>    modes. It provides power-gating controllers for SoC and CPU
+>>>>> power-islands.
+>>>>> @@ -70,6 +72,11 @@ Optional properties for hardware-triggered
+>>>>> thermal reset (inside 'i2c-thermtrip'
+>>>>>                         Defaults to 0. Valid values are described in
+>>>>> section 12.5.2
+>>>>>                         "Pinmux Support" of the Tegra4 Technical
+>>>>> Reference Manual.
+>>>>>
+>>>>> +Optional nodes:
+>>>>> +- powergates : This node contains a hierarchy of power domain
+>>>>> nodes, which
+>>>>> +           should match the powergates on the Tegra SoC. See
+>>>>> "Powergate
+>>>>> +           Nodes" below.
+>>>>> +
+>>>>>    Example:
+>>>>>
+>>>>>    / SoC dts including file
+>>>>> @@ -115,3 +122,76 @@ pmc@7000f400 {
+>>>>>        };
+>>>>>        ...
+>>>>>    };
+>>>>> +
+>>>>> +
+>>>>> +== Powergate Nodes ==
+>>>>> +
+>>>>> +Each of the powergate nodes represent a power-domain on the Tegra SoC
+>>>>> +that can be power-gated by the Tegra PMC. The name of the powergate
+>>>>> node
+>>>>> +should be one of the below. Note that not every powergate is
+>>>>> applicable
+>>>>> +to all Tegra devices and the following list shows which powergates are
+>>>>> +applicable to which devices. Please refer to the Tegra TRM for more
+>>>>> +details on the various powergates.
+>>>>> +
+>>>>> + Name        Description            Devices Applicable
+>>>>> + 3d        3D Graphics            Tegra20/114/124/210
+>>>>> + 3d0        3D Graphics 0            Tegra30
+>>>>> + 3d1        3D Graphics 1            Tegra30
+>>>>> + aud        Audio                Tegra210
+>>>>> + dfd        Debug                Tegra210
+>>>>> + dis        Display A            Tegra114/124/210
+>>>>> + disb        Display B            Tegra114/124/210
+>>>>> + heg        2D Graphics            Tegra30/114/124/210
+>>>>> + iram        Internal RAM            Tegra124/210
+>>>>> + mpe        MPEG Encode            All
+>>>>> + nvdec        NVIDIA Video Decode Engine    Tegra210
+>>>>> + nvjpg        NVIDIA JPEG Engine        Tegra210
+>>>>> + pcie        PCIE                Tegra20/30/124/210
+>>>>> + sata        SATA                Tegra30/124/210
+>>>>> + sor        Display interfaces        Tegra124/210
+>>>>> + ve2        Video Encode Engine 2        Tegra210
+>>>>> + venc        Video Encode Engine        All
+>>>>> + vdec        Video Decode Engine        Tegra20/30/114/124
+>>>>> + vic        Video Imaging Compositor    Tegra124/210
+>>>>> + xusba        USB Partition A            Tegra114/124/210
+>>>>> + xusbb        USB Partition B         Tegra114/124/210
+>>>>> + xusbc        USB Partition C            Tegra114/124/210
+>>>>> +
+>>>>> +Required properties:
+>>>>> +  - clocks: Must contain an entry for each clock required by the
+>>>>> PMC for
+>>>>> +    controlling a power-gate. See ../clocks/clock-bindings.txt for
+>>>>> details.
+>>>>> +  - resets: Must contain an entry for each reset required by the
+>>>>> PMC for
+>>>>> +    controlling a power-gate. See ../reset/reset.txt for details.
+>>>>> +  - #power-domain-cells: Must be 0.
+>>>>> +
+>>>>> +Example:
+>>>>> +
+>>>>> +    pmc: pmc@0,7000e400 {
+>>>>
+>>>> Just pmc@7000e400. We were erronously using commas for 64-bit addresses
+>>>> briefly, but the correct usage is when there are distinct fields in reg
+>>>> like PCI bus,dev,func.
+>>>
+>>> Ok. Looks like we use this style quite widely across all Tegra 32-bit
+>>> and 64-bit devices for all peripheral devices.
+>>>
+>>> Thierry, Stephen,
+>>>
+>>> Do we need to correct this for existing devices?
+>>
+>> I don't think so; my understanding is that where reg has multiple
+>> address cells, they all get represented in the unit address. Otherwise,
+>> the node names couldn't be guaranteed unique.
 >
-> +	cmac_hash(msg->reserved, crypto_len, msg->object_sig.cmac_hash);
-> +
->   	if (rcm_keyfile)
->   		rsa_pss_sign(rcm_keyfile, msg->reserved, crypto_len,
->   			msg->object_sig.rsa_pss_sig, msg->modulus);
-> -	else
-> -		cmac_hash(msg->reserved, crypto_len, msg->object_sig.cmac_hash);
-> +
+> OK, but I am a bit confused as that does not sound exactly the same as
+> what Rob is saying?
 
-This looks like it should be part of patch 1/4? Same for rcm40_sign_msg()?
+Consider a SoC with two I2C ports at address 1_00000000 and 2_00000000 
+physical. The top 32-bits (2nd cell) of the address must be represented 
+in the unit address, or the nodes won't have a unique name.
+
+Perhaps Rob is simply saying that multi-cell values should be treated as 
+a single large integer, rather than comma-separating each cell value? I 
+perhaps mistakenly took his comment to mean that only a single address 
+cell should be used in the unit address.
+
+> Also, I see that starting with tegra124 we have #address-cells = <2> and
+> #size-cells = <2>, which I also don't understand either. Are the bus
+> addresses really 64-bit for tegra124?
+
+T124 has a >32-bit bus since it supports >2GB RAM (via LPAE) (although 
+not a full 64-bit bus I would imagine). That alone means we need two 
+cells in DT to represent large RAM layouts.
