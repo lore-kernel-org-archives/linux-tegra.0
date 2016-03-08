@@ -1,48 +1,84 @@
-From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/3] PCI: tegra: Remove unused field
-Date: Tue, 8 Mar 2016 15:44:42 -0600
-Message-ID: <20160308214442.GE27132@localhost>
-References: <1455029553-9460-1-git-send-email-thierry.reding@gmail.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH 1/2] PM / clk: Add stubs for pm_clk_suspend/resume
+Date: Tue, 08 Mar 2016 23:58:23 +0100
+Message-ID: <4293335.ArkqpzdFRe@vostro.rjw.lan>
+References: <1457105585-25157-1-git-send-email-jonathanh@nvidia.com> <56DF094E.4030809@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1455029553-9460-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <56DF094E.4030809@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Feb 09, 2016 at 03:52:31PM +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Tuesday, March 08, 2016 05:18:06 PM Jon Hunter wrote:
 > 
-> The num_ports field of the tegra_pcie structure is never used so it can
-> be safely removed.
+> On 04/03/16 15:33, Jon Hunter wrote:
+> > The functions pm_clk_suspend() and pm_clk_resume() cannot be used
+> > directly within the main body of a function, because when CONFIG_PM_CLK
+> > is not defined the functions are defined as NULL and this will lead to
+> > a compilation error.
+> > 
+> > Add stubs functions for pm_clk_suspend() and pm_clk_resume() so that
+> > these functions may be called directly.
+> > 
+> > Please note that these functions are currently assigned to function
+> > pointers in the PM domain core and so to avoid have a valid function
+> > pointer defined when CONFIG_PM_CLK is not defined, define
+> > GENPD_FLAG_PM_CLK as 0 when CONFIG_PM_CLK is not defined to ensure
+> > the stubs are not populated as valid function pointers.
+> > 
+> > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> > ---
+> >  include/linux/pm_clock.h  | 10 ++++++++--
+> >  include/linux/pm_domain.h |  4 ++++
+> >  2 files changed, 12 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/include/linux/pm_clock.h b/include/linux/pm_clock.h
+> > index 25266c600021..ffefbf2df1aa 100644
+> > --- a/include/linux/pm_clock.h
+> > +++ b/include/linux/pm_clock.h
+> > @@ -72,8 +72,14 @@ static inline int pm_clk_add_clk(struct device *dev, struct clk *clk)
+> >  static inline void pm_clk_remove(struct device *dev, const char *con_id)
+> >  {
+> >  }
+> > -#define pm_clk_suspend	NULL
+> > -#define pm_clk_resume	NULL
+> > +static inline int pm_clk_suspend(struct device *dev)
+> > +{
+> > +	return -EINVAL;
+> > +}
+> > +static inline int pm_clk_resume(struct device *dev)
+> > +{
+> > +	return -EINVAL;
+> > +}
+> >  #endif
+> >  
+> >  #ifdef CONFIG_HAVE_CLK
+> > diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+> > index 49cd8890b873..1074c2073df8 100644
+> > --- a/include/linux/pm_domain.h
+> > +++ b/include/linux/pm_domain.h
+> > @@ -17,7 +17,11 @@
+> >  #include <linux/notifier.h>
+> >  
+> >  /* Defines used for the flags field in the struct generic_pm_domain */
+> > +#ifdef CONFIG_PM_CLK
+> >  #define GENPD_FLAG_PM_CLK	(1U << 0) /* PM domain uses PM clk */
+> > +#else
+> > +#define GENPD_FLAG_PM_CLK	0
+> > +#endif
+> >  
+> >  #define GENPD_MAX_NUM_STATES	8 /* Number of possible low power states */
 > 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Thinking about this some more, the alternative is for drivers using
+> PM_CLK to select it. Would that be appropriate? If so, we would not need
+> these stubs.
 
-Applied all three of these to pci/host-tegra for v4.6, thanks!
+Well, I don't see why it might not be appropriate.
 
-> ---
->  drivers/pci/host/pci-tegra.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index 4cb8157a4678..82d7ad3a1c3a 100644
-> --- a/drivers/pci/host/pci-tegra.c
-> +++ b/drivers/pci/host/pci-tegra.c
-> @@ -295,7 +295,6 @@ struct tegra_pcie {
->  	struct tegra_msi msi;
->  
->  	struct list_head ports;
-> -	unsigned int num_ports;
->  	u32 xbar_config;
->  
->  	struct regulator_bulk_data *supplies;
-> -- 
-> 2.7.1
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pci" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thanks,
+Rafael
+
