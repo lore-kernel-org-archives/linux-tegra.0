@@ -1,94 +1,52 @@
-From: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: RE: [tegrarcm PATCH v1 4/4] Increate USB timeout value
-Date: Wed, 9 Mar 2016 19:56:57 +0000
-Message-ID: <548d327280fa44ffa887cf907506b5eb@HQMAIL103.nvidia.com>
-References: <1457135087-967-1-git-send-email-jimmzhang@nvidia.com>
- <1457135087-967-5-git-send-email-jimmzhang@nvidia.com>
- <56DDD90B.1040802@wwwdotorg.org>
- <973e4d88a8a24062964655a6ec3b2c71@HQMAIL103.nvidia.com>
- <56E06042.2060604@wwwdotorg.org>
+From: "Rafael J. Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V2] PM / clk: Add support for obtaining clocks from device-tree
+Date: Wed, 9 Mar 2016 21:32:44 +0100
+Message-ID: <CAJZ5v0hsRDP1O0_WtFicRnF7UCxtANE_ZaSpa8QNV7O5HNZfsQ@mail.gmail.com>
+References: <1457529213-2581-1-git-send-email-jonathanh@nvidia.com>
+	<CAJZ5v0iEo=jj+T-0bQypxs8VTb7kPpczSRu+8-+F7oyRMk9nSA@mail.gmail.com>
+	<56E05612.702@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56E06042.2060604-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Content-Language: en-US
+In-Reply-To: <56E05612.702-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Allen Martin <AMartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "Rafael J. Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, Mar 9, 2016 at 5:57 PM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>
+> On 09/03/16 14:04, Rafael J. Wysocki wrote:
+>> On Wed, Mar 9, 2016 at 2:13 PM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>> The PM clocks framework requires clients to pass either a con-id or a
+>>> valid clk pointer in order to add a clock to a device. Add a new
+>>> function of_pm_clk_add_clks() to allows device clocks to be retrieved
+>>> from device-tree and populated for a given device. Note that
+>>> of_clk_get_from_provider() is not defined if CONFIG_OF and
+>>> CONFIG_COMMON_CLK are not selected. Therefore, make of_pm_clk_add_clks()
+>>> dependent on these options.
+>>>
+>>> An optional function pointer may be passed to of_pm_clk_add_clks() that
+>>> can be used to filter the clocks that are added for a device when
+>>> calling of_pm_clk_add_clks().
+>>>
+>>> In order to handle errors encountered when adding clocks from
+>>> device-tree, add a function pm_clk_remove_clk() to remove any clocks
+>>> (using a pointer to the clk structure) that have been added
+>>> successfully before the error occurred.
+>>>
+>>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> ---
+>>>
+>>> Changes v1-v2:
+>>> - Added support for optional filter function as suggested by Geert U.
+>>
+>> I'd like to get an ACK on this from someone more familiar with the DT
+>> stuff than I am.
+>
+> No problem. Is Geert's ACK sufficient or is there someone else I should add?
 
+It would do.
 
-> -----Original Message-----
-> From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
-> Sent: Wednesday, March 09, 2016 9:41 AM
-> To: Jimmy Zhang
-> Cc: Allen Martin; Stephen Warren; alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org; linux-
-> tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Subject: Re: [tegrarcm PATCH v1 4/4] Increate USB timeout value
-> 
-> On 03/08/2016 06:41 PM, Jimmy Zhang wrote:
-> >
-> >
-> >> -----Original Message-----
-> >> From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
-> >> Sent: Monday, March 07, 2016 11:40 AM
-> >> To: Jimmy Zhang
-> >> Cc: Allen Martin; Stephen Warren; alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org;
-> >> linux- tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> >> Subject: Re: [tegrarcm PATCH v1 4/4] Increate USB timeout value
-> >>
-> >> On 03/04/2016 04:44 PM, Jimmy Zhang wrote:
-> >>> It has been observed that some times USB time out could occure when
-> >>> a long (3ft) usb cable is connected to recovery mode usb port
-> >>
-> >> This explanation makes no sense. 3ft is practically the shortest USB
-> >> cable anyone would use. Equally, assuming a compliant correctly
-> >> functioning cable, cable length doesn't affect the time it takes to execute
-> transactions.
-> >>
-> >> Is the issue more that if a low quality cable is used, then there are
-> >> lots of transfer errors, and the time taken for retries is large? If
-> >> so, there's not much guarantee that a larger timeout would help in
-> >> general, since there's no guarantee of any upper bound on the time it
-> >> takes for a packet not to get corrupted in this case. Still, I
-> >> suppose it's fine to increase the timeout to account for when it
-> accidentally works.
-> >>
-> >> In summary: a commit description that more accurately represents the
-> >> problem being solved is required.
-> >
-> > We have seen this problem since T30/T114. Initially we just retried by
-> downloading again. It may work after a few tries. Later, we found a simple
-> solution is replacing with a shorter cable. Then one day, for testing purpose,
-> when the timeout value was replaced with 0, ie, unlimited timeout, all cables
-> work fine. So, it may worth to figure out the root cause.
-> 
-> There's obviously some variability here, since you mention that the
-> communication works sometimes and not others.
-> 
-> When you tested the varying cable lengths, did you test at least 10x more
-> times than the percentage of times that pass or fail with the original cable
-> you used? Without testing a large number of times, you don't know if you
-> just got lucky the one time you tried a different cable, or whether it really
-> made a statistical difference.
-> 
-> Much more likely is that Tegra itself sometimes takes more time to respond,
-> or sometimes receives/sends packets that get corrupted somewhere and
-> have to be retried.
-> 
-> BTW, have you tried using Wireshark and usbmon to capture a trace of the
-> failures to try and diagnose the issue?
-> 
-> Finally, I'm not objecting to this patch if it does work around the problem. All
-> I'm objecting to is blaming the issue on cable length when I'm not convinced
-> that's been conclusively proven. A simple message such as the following
-> would work:
-> 
-Agree. We actually never pay much attention to the tool issue because the focus is always on the task performed at that moment.
-
-As Allen suggested, I will create a new usb_timeout command line parameter to allow user to set timeout value.
-  
-> RCM communication sometimes fails if the USB timeout is short. Increase the
-> timeout value to avoid this issue. The exact cause is not yet diagnosed.
+Thanks,
+Rafael
