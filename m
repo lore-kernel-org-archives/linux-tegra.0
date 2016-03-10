@@ -1,35 +1,28 @@
-From: Ben Marsh <bmarsh94-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] Staging: nvec: removes an unnecessary cast on a void pointer
-Date: Thu, 10 Mar 2016 21:24:59 +0100
-Message-ID: <20160310202456.GA8619@googlemail.com>
+From: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>
+Subject: Re: [PATCH 2/2] PM / Domains: Fix potential NULL pointer dereference
+Date: Fri, 11 Mar 2016 00:24:37 +0100
+Message-ID: <2444093.rvCdthdsgI@vostro.rjw.lan>
+References: <1457088915-17284-1-git-send-email-jonathanh@nvidia.com> <1457088915-17284-2-git-send-email-jonathanh@nvidia.com> <CAPDyKFpha7TQbvZ2B9aDuoRuOFEHzD5ZwOCADvs6=0pwCNSgQg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
+In-Reply-To: <CAPDyKFpha7TQbvZ2B9aDuoRuOFEHzD5ZwOCADvs6=0pwCNSgQg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, marvin24-Mmb7MZpHnFY@public.gmane.org
-Cc: ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org
+To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Patch to nvec_ps2.c to remove an unnecessary cast on a void pointer.
+On Friday, March 04, 2016 12:07:23 PM Ulf Hansson wrote:
+> On 4 March 2016 at 11:55, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> > In the function of_genpd_get_from_provider(), we never check to see if
+> > the argument 'genpdspec' is NULL before dereferencing it. Add error
+> > checking to handle any NULL pointers.
+> >
+> > Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Acked-by: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-Signed-off-by: Ben Marsh <bmarsh94-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/staging/nvec/nvec_ps2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Both this one and the [1/2] applied, thanks!
 
-diff --git a/drivers/staging/nvec/nvec_ps2.c b/drivers/staging/nvec/nvec_ps2.c
-index 0922dd3..a324322 100644
---- a/drivers/staging/nvec/nvec_ps2.c
-+++ b/drivers/staging/nvec/nvec_ps2.c
-@@ -78,7 +78,7 @@ static int nvec_ps2_notifier(struct notifier_block *nb,
- 			     unsigned long event_type, void *data)
- {
- 	int i;
--	unsigned char *msg = (unsigned char *)data;
-+	unsigned char *msg = data;
- 
- 	switch (event_type) {
- 	case NVEC_PS2_EVT:
--- 
-1.9.1
+Rafael
