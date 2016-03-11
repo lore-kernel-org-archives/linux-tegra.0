@@ -1,26 +1,104 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [cbootimage] Allow @ in paths consumed by cbootimage
-Date: Thu, 10 Mar 2016 16:53:52 -0700
-Message-ID: <56E20910.60406@wwwdotorg.org>
-References: <CAE-gjdUeMdnNcPOZJpCz1_V7FKAh0aHMpqkhkkWpA4XpjPOo4Q@mail.gmail.com>
+From: Wei Ni <wni@nvidia.com>
+Subject: [PATCH V7 01/12] thermal: tegra: move tegra thermal files into tegra directory
+Date: Fri, 11 Mar 2016 11:09:12 +0800
+Message-ID: <1457665763-29781-2-git-send-email-wni@nvidia.com>
+References: <1457665763-29781-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAE-gjdUeMdnNcPOZJpCz1_V7FKAh0aHMpqkhkkWpA4XpjPOo4Q-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Patrick Georgi <pgeorgi-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1457665763-29781-1-git-send-email-wni@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: rui.zhang@intel.com, edubezval@gmail.com, thierry.reding@gmail.com
+Cc: MLongnecker@nvidia.com, swarren@wwwdotorg.org, mikko.perttunen@kapsi.fi, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Wei Ni <wni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/10/2016 10:34 AM, Patrick Georgi wrote:
-> Signed-off-by: Patrick Georgi <pgeorgi-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Move Tegra soctherm driver to tegra directory, it's easy to maintain
+and add more new function support for Tegra platforms.
+This will also help to split soctherm driver into common parts and
+chip specific data related parts.
 
-This patch is corrupted; all the TABs seem to have been replaced with 
-spaces. Perhaps you pasted the patch into an email editor instead on 
-using git send-email?
+Signed-off-by: Wei Ni <wni@nvidia.com>
+---
+ drivers/thermal/Kconfig                                     | 12 ++----------
+ drivers/thermal/Makefile                                    |  2 +-
+ drivers/thermal/tegra/Kconfig                               | 13 +++++++++++++
+ drivers/thermal/tegra/Makefile                              |  1 +
+ .../thermal/{tegra_soctherm.c => tegra/tegra-soctherm.c}    |  0
+ 5 files changed, 17 insertions(+), 11 deletions(-)
+ create mode 100644 drivers/thermal/tegra/Kconfig
+ create mode 100644 drivers/thermal/tegra/Makefile
+ rename drivers/thermal/{tegra_soctherm.c => tegra/tegra-soctherm.c} (100%)
 
-This patch makes me dislike the current config file parsing code; I have 
-no idea why it works like it does rather than just using strsep(..., 
-",") to split up the input lines. Still, that's a pre-existing issue and 
-nothing to do with your patch.
+diff --git a/drivers/thermal/Kconfig b/drivers/thermal/Kconfig
+index 8cc4ac64a91c..1802629f5051 100644
+--- a/drivers/thermal/Kconfig
++++ b/drivers/thermal/Kconfig
+@@ -254,16 +254,6 @@ config ARMADA_THERMAL
+ 	  Enable this option if you want to have support for thermal management
+ 	  controller present in Armada 370 and Armada XP SoC.
+ 
+-config TEGRA_SOCTHERM
+-	tristate "Tegra SOCTHERM thermal management"
+-	depends on ARCH_TEGRA
+-	help
+-	  Enable this option for integrated thermal management support on NVIDIA
+-	  Tegra124 systems-on-chip. The driver supports four thermal zones
+-	  (CPU, GPU, MEM, PLLX). Cooling devices can be bound to the thermal
+-	  zones to manage temperatures. This option is also required for the
+-	  emergency thermal reset (thermtrip) feature to function.
+-
+ config DB8500_CPUFREQ_COOLING
+ 	tristate "DB8500 cpufreq cooling"
+ 	depends on ARCH_U8500
+@@ -380,6 +370,8 @@ depends on ARCH_STI && OF
+ source "drivers/thermal/st/Kconfig"
+ endmenu
+ 
++source "drivers/thermal/tegra/Kconfig"
++
+ config QCOM_SPMI_TEMP_ALARM
+ 	tristate "Qualcomm SPMI PMIC Temperature Alarm"
+ 	depends on OF && SPMI && IIO
+diff --git a/drivers/thermal/Makefile b/drivers/thermal/Makefile
+index cfae6a654793..119e25cdcc66 100644
+--- a/drivers/thermal/Makefile
++++ b/drivers/thermal/Makefile
+@@ -46,5 +46,5 @@ obj-$(CONFIG_TI_SOC_THERMAL)	+= ti-soc-thermal/
+ obj-$(CONFIG_INT340X_THERMAL)  += int340x_thermal/
+ obj-$(CONFIG_INTEL_PCH_THERMAL)	+= intel_pch_thermal.o
+ obj-$(CONFIG_ST_THERMAL)	+= st/
+-obj-$(CONFIG_TEGRA_SOCTHERM)	+= tegra_soctherm.o
++obj-$(CONFIG_TEGRA_SOCTHERM)	+= tegra/
+ obj-$(CONFIG_HISI_THERMAL)     += hisi_thermal.o
+diff --git a/drivers/thermal/tegra/Kconfig b/drivers/thermal/tegra/Kconfig
+new file mode 100644
+index 000000000000..0b719d8b629b
+--- /dev/null
++++ b/drivers/thermal/tegra/Kconfig
+@@ -0,0 +1,13 @@
++menu "NVIDIA Tegra thermal drivers"
++
++config TEGRA_SOCTHERM
++	tristate "Tegra SOCTHERM thermal management"
++	depends on ARCH_TEGRA
++	help
++	  Enable this option for integrated thermal management support on NVIDIA
++	  Tegra124 systems-on-chip. The driver supports four thermal zones
++	  (CPU, GPU, MEM, PLLX). Cooling devices can be bound to the thermal
++	  zones to manage temperatures. This option is also required for the
++	  emergency thermal reset (thermtrip) feature to function.
++
++endmenu
+diff --git a/drivers/thermal/tegra/Makefile b/drivers/thermal/tegra/Makefile
+new file mode 100644
+index 000000000000..d4dc4e7f279e
+--- /dev/null
++++ b/drivers/thermal/tegra/Makefile
+@@ -0,0 +1 @@
++obj-$(CONFIG_TEGRA_SOCTHERM)	+= tegra-soctherm.o
+diff --git a/drivers/thermal/tegra_soctherm.c b/drivers/thermal/tegra/tegra-soctherm.c
+similarity index 100%
+rename from drivers/thermal/tegra_soctherm.c
+rename to drivers/thermal/tegra/tegra-soctherm.c
+-- 
+1.9.1
