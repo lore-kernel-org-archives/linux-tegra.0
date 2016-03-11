@@ -1,39 +1,39 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH 1/5] dt-bindings: gk20a: Fix typo in compatible name
-Date: Fri, 11 Mar 2016 12:51:54 +0900
-Message-ID: <1457668318-2821-2-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 4/5] arm64: tegra210: Add pllg_ref clock to GM20B
+Date: Fri, 11 Mar 2016 12:51:57 +0900
+Message-ID: <1457668318-2821-5-git-send-email-acourbot@nvidia.com>
 References: <1457668318-2821-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1457668318-2821-1-git-send-email-acourbot@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1457668318-2821-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The correct compatible name is "nvidia,gk20a".
+This clock is required for the GPU to operate.
 
-Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt b/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt
-index 23bfe8e1f7cc..914f0ff4020e 100644
---- a/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt
-+++ b/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt
-@@ -1,9 +1,9 @@
- NVIDIA GK20A Graphics Processing Unit
- 
- Required properties:
--- compatible: "nvidia,<chip>-<gpu>"
-+- compatible: "nvidia,<gpu>"
-   Currently recognized values:
--  - nvidia,tegra124-gk20a
-+  - nvidia,gk20a
- - reg: Physical base address and length of the controller's registers.
-   Must contain two entries:
-   - first entry for bar0
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 362c269946ff..0c51ac3b0f56 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -309,8 +309,9 @@
+ 			     <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
+ 		interrupt-names = "stall", "nonstall";
+ 		clocks = <&tegra_car TEGRA210_CLK_GPU>,
+-			 <&tegra_car TEGRA210_CLK_PLL_P_OUT5>;
+-		clock-names = "gpu", "pwr";
++			 <&tegra_car TEGRA210_CLK_PLL_P_OUT5>,
++			 <&tegra_car TEGRA210_CLK_PLL_G_REF>;
++		clock-names = "gpu", "pwr", "pllg_ref";
+ 		resets = <&tegra_car 184>;
+ 		reset-names = "gpu";
+ 		status = "disabled";
 -- 
 2.7.2
