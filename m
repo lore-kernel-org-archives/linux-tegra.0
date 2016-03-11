@@ -1,38 +1,28 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 5/5] arm64: tegra210: Add IOMMU node to GM20B
-Date: Fri, 11 Mar 2016 12:51:58 +0900
-Message-ID: <1457668318-2821-6-git-send-email-acourbot@nvidia.com>
-References: <1457668318-2821-1-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH 0/5] arm64: tegra: fix DT definitions for GM20B GPU
+Date: Fri, 11 Mar 2016 12:51:53 +0900
+Message-ID: <1457668318-2821-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1457668318-2821-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Nouveau can take advantage of this declaration to remove the need for
-contiguous memory.
+Small series that fixes/completes DT bindings for Tegra GPUs and add two
+missing entries required for the Tegra210 GPU to operate properly.
 
-Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 3 +++
- 1 file changed, 3 insertions(+)
+Alexandre Courbot (5):
+  dt-bindings: gk20a: Fix typo in compatible name
+  dt-bindings: gk20a: Document iommus property
+  dt-bindings: Add documentation for GM20B GPU
+  arm64: tegra210: Add pllg_ref clock to GM20B
+  arm64: tegra210: Add IOMMU node to GM20B
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 0c51ac3b0f56..63063e56c1d9 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -314,6 +314,9 @@
- 		clock-names = "gpu", "pwr", "pllg_ref";
- 		resets = <&tegra_car 184>;
- 		reset-names = "gpu";
-+
-+		iommus = <&mc TEGRA_SWGROUP_GPU>;
-+
- 		status = "disabled";
- 	};
- 
+ .../devicetree/bindings/gpu/nvidia,gk20a.txt       | 35 +++++++++++++++++++---
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  8 +++--
+ 2 files changed, 37 insertions(+), 6 deletions(-)
+
 -- 
 2.7.2
