@@ -1,56 +1,38 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: [PATCH V7 12/12] arm: tegra: set critical trips for Tegra124
-Date: Fri, 11 Mar 2016 11:11:44 +0800
-Message-ID: <1457665904-30184-1-git-send-email-wni@nvidia.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 5/5] arm64: tegra210: Add IOMMU node to GM20B
+Date: Fri, 11 Mar 2016 12:51:58 +0900
+Message-ID: <1457668318-2821-6-git-send-email-acourbot@nvidia.com>
+References: <1457668318-2821-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: rui.zhang@intel.com, edubezval@gmail.com, thierry.reding@gmail.com
-Cc: MLongnecker@nvidia.com, swarren@wwwdotorg.org, mikko.perttunen@kapsi.fi, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Wei Ni <wni@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1457668318-2821-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Set "critical" trips for cpu and gpu thermal zones,
-which can trigger shut down or reset.
+Nouveau can take advantage of this declaration to remove the need for
+contiguous memory.
 
-Signed-off-by: Wei Ni <wni@nvidia.com>
+Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra124.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/boot/dts/tegra124.dtsi b/arch/arm/boot/dts/tegra124.dtsi
-index e4eac1f01e64..442fcf0cb394 100644
---- a/arch/arm/boot/dts/tegra124.dtsi
-+++ b/arch/arm/boot/dts/tegra124.dtsi
-@@ -996,6 +996,14 @@
- 
- 			thermal-sensors =
- 				<&soctherm TEGRA124_SOCTHERM_SENSOR_CPU>;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 0c51ac3b0f56..63063e56c1d9 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -314,6 +314,9 @@
+ 		clock-names = "gpu", "pwr", "pllg_ref";
+ 		resets = <&tegra_car 184>;
+ 		reset-names = "gpu";
 +
-+			trips {
-+				cpu_shutdown_trip: shutdown-trip {
-+					temperature = <103000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
- 		};
- 
- 		mem {
-@@ -1012,6 +1020,14 @@
- 
- 			thermal-sensors =
- 				<&soctherm TEGRA124_SOCTHERM_SENSOR_GPU>;
++		iommus = <&mc TEGRA_SWGROUP_GPU>;
 +
-+			trips {
-+				gpu_shutdown_trip: shutdown-trip {
-+					temperature = <101000>;
-+					hysteresis = <1000>;
-+					type = "critical";
-+				};
-+			};
- 		};
+ 		status = "disabled";
+ 	};
  
- 		pllx {
 -- 
-1.9.1
+2.7.2
