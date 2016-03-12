@@ -1,7 +1,7 @@
 From: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [tegrarcm PATCH V2 3/4] Add option --download-signed-msgs to download signed blobs
-Date: Fri, 11 Mar 2016 17:02:31 -0800
-Message-ID: <1457744552-30966-4-git-send-email-jimmzhang@nvidia.com>
+Subject: [tegrarcm PATCH V2 2/4] Add option --gen-signed-msgs and --signed-msgs-file to generate signed blobs
+Date: Fri, 11 Mar 2016 17:02:30 -0800
+Message-ID: <1457744552-30966-3-git-send-email-jimmzhang@nvidia.com>
 References: <1457744552-30966-1-git-send-email-jimmzhang@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,14 +12,17 @@ To: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+A
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-This feature allows user to download signed messages to devices
-secured with PKC.
+This feature allows generation of signed blobs that can later be used
+to communicate with a PKC-enabled Tegra device without access to the
+PKC. Option --bootloader, --soc and --pkc are also required when generating
+the blob.
 
 Example:
-tegrarcm --download-signed-msgs --signed-msgs-file rel_1001.bin \
-   --bct=jetson-tk1-bct.bct --bootloader=u-boot.bin --loadaddr=0x83d88000
+tegrarcm --gen-signed-msgs --signed-msgs-file rel_1001.bin \
+        --bootloader u-boot.bin --loadaddr 0x83d88000 --soc 124 \
+        --pkc rsa_priv.der
 
-Where the following blob files are downloaded to device sequentially:
+Where generated signed message files are:
 
 a) rel_1001.bin.qry
 b) rel_1001.bin.ml
@@ -27,459 +30,440 @@ c) rel_1001.bin.bl
 
 Signed-off-by: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- src/main.c | 257 +++++++++++++++++++++++++++++++++++++++++++++----------------
- 1 file changed, 191 insertions(+), 66 deletions(-)
+ src/main.c | 261 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 242 insertions(+), 19 deletions(-)
 
 diff --git a/src/main.c b/src/main.c
-index 17046e1efd6a..cb12138ae66c 100644
+index cbf400d565a9..17046e1efd6a 100644
 --- a/src/main.c
 +++ b/src/main.c
-@@ -64,20 +64,23 @@
- #define FILENAME_MAX_SIZE 256
+@@ -61,10 +61,16 @@
+ // tegra124 miniloader
+ #include "miniloader/tegra124-miniloader.h"
  
- static int initialize_rcm(uint16_t devid, usb_device_t *usb,
--		 const char *pkc_keyfile, const char *signed_msgs_file);
-+		const char *pkc_keyfile, const char *signed_msgs_file,
-+		bool download_signed_msgs);
- static int initialize_miniloader(uint16_t devid, usb_device_t *usb,
--		char *mlfile, uint32_t mlentry, const char *signed_msgs_file);
-+		char *mlfile, uint32_t mlentry, const char *signed_msgs_file,
-+		bool download_signed_msgs);
+-static int initialize_rcm(uint16_t devid, usb_device_t *usb, const char *pkc_keyfile);
+-static int initialize_miniloader(uint16_t devid, usb_device_t *usb, char *mlfile, uint32_t mlentry);
++#define FILENAME_MAX_SIZE 256
++
++static int initialize_rcm(uint16_t devid, usb_device_t *usb,
++		 const char *pkc_keyfile, const char *signed_msgs_file);
++static int initialize_miniloader(uint16_t devid, usb_device_t *usb,
++		char *mlfile, uint32_t mlentry, const char *signed_msgs_file);
  static int wait_status(nv3p_handle_t h3p);
  static int send_file(nv3p_handle_t h3p, const char *filename);
- static int create_miniloader_rcm(uint8_t *miniloader, uint32_t size,
- 			uint32_t entry, const char *signed_msgs_file);
++static int create_miniloader_rcm(uint8_t *miniloader, uint32_t size,
++			uint32_t entry, const char *signed_msgs_file);
  static int download_miniloader(usb_device_t *usb, uint8_t *miniloader,
--			       uint32_t size, uint32_t entry);
-+				uint32_t size, uint32_t entry,
-+				bool download_signed_msgs);
+ 			       uint32_t size, uint32_t entry);
  static void dump_platform_info(nv3p_platform_info_t *info);
- static int download_bct(nv3p_handle_t h3p, char *filename);
- static int download_bootloader(nv3p_handle_t h3p, char *filename,
--			       uint32_t entry, uint32_t loadaddr,
--			       const char *pkc_keyfile);
-+			uint32_t entry, uint32_t loadaddr,
-+			const char *pkc_keyfile, const char *signed_msgs_file);
+@@ -73,6 +79,8 @@ static int download_bootloader(nv3p_handle_t h3p, char *filename,
+ 			       uint32_t entry, uint32_t loadaddr,
+ 			       const char *pkc_keyfile);
  static int read_bct(nv3p_handle_t h3p, char *filename);
- static int sign_blob(const char *blob_filename, const char *pkc_keyfile,
- 				const char *signed_msgs_file);
-@@ -103,6 +106,7 @@ enum cmdline_opts {
- 	OPT_SIGN_MSGS,
- 	OPT_SIGNED_MSGS_FILE,
- 	OPT_SOC,
-+	OPT_DOWNLOAD_SIGNED_MSGS,
++static int sign_blob(const char *blob_filename, const char *pkc_keyfile,
++				const char *signed_msgs_file);
+ 
+ static void set_platform_info(nv3p_platform_info_t *info);
+ static uint32_t get_op_mode(void);
+@@ -92,6 +100,9 @@ enum cmdline_opts {
+ #ifdef HAVE_USB_PORT_MATCH
+ 	OPT_USBPORTPATH,
+ #endif
++	OPT_SIGN_MSGS,
++	OPT_SIGNED_MSGS_FILE,
++	OPT_SOC,
  	OPT_END,
  };
  
-@@ -151,6 +155,8 @@ static void usage(char *progname)
- 	fprintf(stderr, "\t\tSpecify message files prefix\n");
- 	fprintf(stderr, "\t--soc=<tegra soc #>\n");
- 	fprintf(stderr, "\t\tSpecify Tegra SoC chip model number, ie, 124.\n");
-+	fprintf(stderr, "\t--download-signed-msgs\n");
-+	fprintf(stderr, "\t\tDownload signed messages\n");
+@@ -134,7 +145,12 @@ static void usage(char *progname)
+ 	fprintf(stderr, "\t--pkc=<key.ber>\n");
+ 	fprintf(stderr, "\t\tSpecify the key file for secured devices. The private key should be\n");
+ 	fprintf(stderr, "\t\tin DER format\n");
+-
++	fprintf(stderr, "\t--gen-signed-msgs\n");
++	fprintf(stderr, "\t\tGenerate signed messages for pkc secured devices\n");
++	fprintf(stderr, "\t--signed-msgs-file=<msg_file_prefix>\n");
++	fprintf(stderr, "\t\tSpecify message files prefix\n");
++	fprintf(stderr, "\t--soc=<tegra soc #>\n");
++	fprintf(stderr, "\t\tSpecify Tegra SoC chip model number, ie, 124.\n");
  	fprintf(stderr, "\n");
  }
  
-@@ -236,6 +242,7 @@ int main(int argc, char **argv)
- 	bool sign_msgs = false;
- 	char *signed_msgs_file = NULL;
- 	uint32_t soc = 0;
-+	bool download_signed_msgs = false;
+@@ -168,6 +184,29 @@ static void parse_usb_port_path(char *argv0, char *path, uint8_t *match_bus,
+ }
+ #endif
+ 
++#define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
++static bool is_supported_soc(uint32_t soc, uint16_t *devid)
++{
++	struct _soc_to_devid {
++		uint32_t soc;
++		uint16_t usb_devid;
++	} soc_to_devid[] = {
++		{114,	USB_DEVID_NVIDIA_TEGRA114},
++		{124,	USB_DEVID_NVIDIA_TEGRA124},
++	};
++
++	uint32_t i;
++
++	for (i = 0; i < ARRAY_SIZE(soc_to_devid); ++i) {
++		if (soc_to_devid[i].soc == soc) {
++			*devid = soc_to_devid[i].usb_devid;
++			return true;
++		}
++	}
++
++	return false;
++}
++
+ int main(int argc, char **argv)
+ {
+ 	// discover devices
+@@ -194,6 +233,9 @@ int main(int argc, char **argv)
+ 	uint8_t match_ports[PORT_MATCH_MAX_PORTS];
+ 	int match_ports_len;
+ #endif
++	bool sign_msgs = false;
++	char *signed_msgs_file = NULL;
++	uint32_t soc = 0;
  
  	static struct option long_options[] = {
  		[OPT_BCT]        = {"bct", 1, 0, 0},
-@@ -253,6 +260,7 @@ int main(int argc, char **argv)
- 		[OPT_SIGN_MSGS] = {"gen-signed-msgs", 0, 0, 0},
- 		[OPT_SIGNED_MSGS_FILE] = {"signed-msgs-file", 1, 0, 0},
- 		[OPT_SOC]        = {"soc", 1, 0, 0},
-+		[OPT_DOWNLOAD_SIGNED_MSGS] = {"download-signed-msgs", 0, 0, 0},
+@@ -208,9 +250,11 @@ int main(int argc, char **argv)
+ #ifdef HAVE_USB_PORT_MATCH
+ 		[OPT_USBPORTPATH]  = {"usb-port-path", 1, 0, 0},
+ #endif
++		[OPT_SIGN_MSGS] = {"gen-signed-msgs", 0, 0, 0},
++		[OPT_SIGNED_MSGS_FILE] = {"signed-msgs-file", 1, 0, 0},
++		[OPT_SOC]        = {"soc", 1, 0, 0},
  		[OPT_END]        = {0, 0, 0, 0}
  	};
+-
  	// parse command line args
-@@ -307,6 +315,9 @@ int main(int argc, char **argv)
- 			case OPT_SOC:
- 				soc = strtoul(optarg, NULL, 0);
+ 	while (1) {
+ 		c = getopt_long(argc, argv, "h0",
+@@ -254,6 +298,15 @@ int main(int argc, char **argv)
+ 				match_port = true;
  				break;
-+			case OPT_DOWNLOAD_SIGNED_MSGS:
-+				download_signed_msgs = true;
+ #endif
++			case OPT_SIGN_MSGS:
++				sign_msgs = true;
++				break;
++			case OPT_SIGNED_MSGS_FILE:
++				signed_msgs_file = optarg;
++				break;
++			case OPT_SOC:
++				soc = strtoul(optarg, NULL, 0);
 +				break;
  			case OPT_HELP:
  			default:
  				usage(argv[0]);
-@@ -355,12 +366,36 @@ int main(int argc, char **argv)
- 		}
+@@ -279,12 +332,47 @@ int main(int argc, char **argv)
+ 		optind++;
  	}
  
+-	if (bctfile == NULL) {
 +	/* error check */
-+	if (download_signed_msgs == true) {
++	if (sign_msgs == true) {
++		/* must have pkc option */
++		if (pkc_keyfile == NULL) {
++			fprintf(stderr, "PKC key file must be specified\n");
++			goto usage_exit;
++		}
++
 +		/* must have signed_msgs_file option */
 +		if (signed_msgs_file == NULL) {
 +			fprintf(stderr, "signed msgs filename must be"
-+					" specified\n");
++				" specified\n");
 +			goto usage_exit;
 +		}
 +
-+		/* can not have pkc keyfile */
-+		if (pkc_keyfile) {
-+			fprintf(stderr, "No pkc keyfile is needed\n");
-+			goto usage_exit;
-+		}
-+
-+		/* can not load in unsigned ml */
-+		if (mlfile) {
-+			fprintf(stderr, "can not have option --miniloader\n");
++		/* must have --soc option */
++		if (soc == 0) {
++			fprintf(stderr, "soc model number must be"
++				" specified\n");
 +			goto usage_exit;
 +		}
 +	}
 +
- 	/*
- 	 * option --signed-msgs-file needs to work with option
--	 *  --gen-signed-msgs
-+	 *   either --gen-signed-msgs or --download-signed-msgs
- 	 */
--	if (signed_msgs_file && (sign_msgs == false)) {
--		fprintf(stderr, "missing option --gen-signed-msgs\n");
-+	if (signed_msgs_file && (sign_msgs == false) &&
-+			(download_signed_msgs == false)) {
-+		fprintf(stderr, "missing option either --gen-signed-msgs or"
-+				" --download-signed-msgs\n");
- 		goto usage_exit;
++	/*
++	 * option --signed-msgs-file needs to work with option
++	 *  --gen-signed-msgs
++	 */
++	if (signed_msgs_file && (sign_msgs == false)) {
++		fprintf(stderr, "missing option --gen-signed-msgs\n");
++		goto usage_exit;
++	}
++
++	/* specify bct file if no sign_msgs option */
++	if ((bctfile == NULL) && (sign_msgs == false)) {
+ 		fprintf(stderr, "BCT file must be specified\n");
+ 		usage(argv[0]);
+ 		exit(EXIT_FAILURE);
+ 	}
+-	printf("bct file: %s\n", bctfile);
++
++	if (bctfile)
++		printf("bct file: %s\n", bctfile);
+ 
+ 	if (!do_read) {
+ 		if (blfile == NULL) {
+@@ -305,6 +393,33 @@ int main(int argc, char **argv)
+ 		printf("entry addr 0x%x\n", entryaddr);
  	}
  
-@@ -405,12 +440,13 @@ int main(int argc, char **argv)
- 		}
- 
- 		// init and create signed query version rcm
--		if (initialize_rcm(devid, NULL, pkc_keyfile, signed_msgs_file))
-+		if (initialize_rcm(devid, NULL, pkc_keyfile, signed_msgs_file,
-+					download_signed_msgs))
- 			error(1, errno, "error initializing RCM protocol");
- 
- 		// create signed download miniloader rcm
- 		if (initialize_miniloader(devid, NULL, mlfile, mlentry,
--					signed_msgs_file))
-+				signed_msgs_file, download_signed_msgs))
- 			error(1, errno, "error initializing miniloader");
- 
- 		// create bl signature
-@@ -441,13 +477,13 @@ int main(int argc, char **argv)
++	/* if sign_msgs, generate signed msgs, then exit */
++	if (sign_msgs == true) {
++		/*
++		 * validate SoC value
++		 *  currently only verified soc is T124
++		 */
++		if (!is_supported_soc(soc, &devid)) {
++			fprintf(stderr, "Unrecognized soc: %u\n", soc);
++			goto usage_exit;
++		}
++
++		// init and create signed query version rcm
++		if (initialize_rcm(devid, NULL, pkc_keyfile, signed_msgs_file))
++			error(1, errno, "error initializing RCM protocol");
++
++		// create signed download miniloader rcm
++		if (initialize_miniloader(devid, NULL, mlfile, mlentry,
++					signed_msgs_file))
++			error(1, errno, "error initializing miniloader");
++
++		// create bl signature
++		sign_blob(blfile, pkc_keyfile, signed_msgs_file);
++
++		exit(0);
++	}
++
++	/* start nv3p protocol */
+ 	usb = usb_open(USB_VENID_NVIDIA, &devid
+ #ifdef HAVE_USB_PORT_MATCH
+ 		, &match_port, &match_bus, match_ports, &match_ports_len
+@@ -325,17 +440,20 @@ int main(int argc, char **argv)
+ 			error(1, errno, "USB read truncated");
  
  		// initialize rcm
- 		ret2 = initialize_rcm(devid, usb, pkc_keyfile,
--					signed_msgs_file);
-+					signed_msgs_file, download_signed_msgs);
+-		ret2 = initialize_rcm(devid, usb, pkc_keyfile);
++		ret2 = initialize_rcm(devid, usb, pkc_keyfile,
++					signed_msgs_file);
  		if (ret2)
  			error(1, errno, "error initializing RCM protocol");
  
- 		// download the miniloader to start nv3p or create ml rcm file
- 		ret2 = initialize_miniloader(devid, usb, mlfile, mlentry,
--						signed_msgs_file);
-+					signed_msgs_file, download_signed_msgs);
+-		// download the miniloader to start nv3p
+-		ret2 = initialize_miniloader(devid, usb, mlfile, mlentry);
++		// download the miniloader to start nv3p or create ml rcm file
++		ret2 = initialize_miniloader(devid, usb, mlfile, mlentry,
++						signed_msgs_file);
  		if (ret2)
  			error(1, errno, "error initializing miniloader");
  
-@@ -503,7 +539,8 @@ int main(int argc, char **argv)
- 	}
+ 		// device may have re-enumerated, so reopen USB
+ 		usb_close(usb);
++
+ 		usb = usb_open(USB_VENID_NVIDIA, &devid
+ #ifdef HAVE_USB_PORT_MATCH
+ 		, &match_port, &match_bus, match_ports, &match_ports_len
+@@ -391,18 +509,53 @@ int main(int argc, char **argv)
  
- 	// download the bootloader
--	ret = download_bootloader(h3p, blfile, entryaddr, loadaddr, pkc_keyfile);
-+	ret = download_bootloader(h3p, blfile, entryaddr, loadaddr,
-+				pkc_keyfile, signed_msgs_file);
- 	if (ret)
- 		error(1, ret, "error downloading bootloader: %s", blfile);
+ 	nv3p_close(h3p);
+ 	usb_close(usb);
++	return 0;
++
++usage_exit:
++	usage(argv[0]);
++	exit(EXIT_FAILURE);
++}
++
++static int create_name_string(char *out, const char *in, const char *ext)
++{
++	if ((strlen(in) + strlen(ext) + 1) > FILENAME_MAX_SIZE) {
++		fprintf(stderr, "error: name length %zu bytes exceed "
++				"limits for file %s\n",
++			strlen(in) + strlen(ext) + 1 - FILENAME_MAX_SIZE, in);
++		return -1;
++	}
++	snprintf(out, FILENAME_MAX_SIZE, "%s%s", in, ext);
++	return 0;
++}
++
++static int save_to_file(const char *filename, const uint8_t *msg_buff,
++			const uint32_t length)
++{
++	FILE *fp;
++
++	printf("Create file %s...\n", filename);
++
++	fp = fopen(filename, "wb");
++	if (fp == NULL) {
++		fprintf(stderr, "Error opening raw file %s.\n", filename);
++		return -1;
++	}
++
++	fwrite(msg_buff, 1, length, fp);
++	fclose(fp);
  
-@@ -548,7 +585,8 @@ static int save_to_file(const char *filename, const uint8_t *msg_buff,
+ 	return 0;
  }
  
  static int initialize_rcm(uint16_t devid, usb_device_t *usb,
--			const char *pkc_keyfile, const char *signed_msgs_file)
-+			const char *pkc_keyfile, const char *signed_msgs_file,
-+			bool download_signed_msgs)
+-			const char *pkc_keyfile)
++			const char *pkc_keyfile, const char *signed_msgs_file)
  {
- 	int ret = 0;
+-	int ret;
++	int ret = 0;
  	uint8_t *msg_buff;
-@@ -580,16 +618,55 @@ static int initialize_rcm(uint16_t devid, usb_device_t *usb,
+ 	int msg_len;
+ 	uint32_t status;
+ 	int actual_len;
++	char query_version_rcm_filename[FILENAME_MAX_SIZE];
+ 
+ 	// initialize RCM
+ 	if ((devid & 0xff) == USB_DEVID_NVIDIA_TEGRA20 ||
+@@ -427,6 +580,18 @@ static int initialize_rcm(uint16_t devid, usb_device_t *usb,
  	// create query version message
  	rcm_create_msg(RCM_CMD_QUERY_RCM_VERSION, NULL, 0, NULL, 0, &msg_buff);
  
--	/* save query version rcm blob */
-+	/* if signed_msgs_file is given */
- 	if (signed_msgs_file) {
-+		int fd;
-+		struct stat sb;
-+
- 		ret = create_name_string(query_version_rcm_filename,
- 					signed_msgs_file, ".qry");
- 		if (ret)
- 			goto done;
- 
--		ret = save_to_file(query_version_rcm_filename, msg_buff,
-+		/* either save query version rcm blob */
-+		if (download_signed_msgs == false) {
-+			ret = save_to_file(query_version_rcm_filename, msg_buff,
- 					rcm_get_msg_len(msg_buff));
--		goto done;
-+			goto done;
-+		}
-+
-+		/* or download signed query version rcm blob */
-+		printf("download signed query version rcm from file %s\n",
-+			 query_version_rcm_filename);
-+
-+		free(msg_buff); // release memory allocated by rcm_create_msg
-+		msg_buff = NULL;
-+
-+		fd = open(query_version_rcm_filename, O_RDONLY, 0);
-+		if (fd < 0) {
-+			fprintf(stderr, "error opening %s\n",
-+				query_version_rcm_filename);
-+			return errno;
-+		}
-+
-+		ret = fstat(fd, &sb);
-+		if (ret) {
-+			fprintf(stderr, "error on fstat of %s\n",
-+				query_version_rcm_filename);
-+			return ret;
-+		}
-+		msg_buff = (uint8_t *)malloc(sb.st_size);
-+		if (!msg_buff) {
-+			fprintf(stderr, "error allocating %zd bytes for query"
-+				" rcm\n", sb.st_size);
-+			return errno;
-+		}
-+		if (read(fd, msg_buff, sb.st_size) != sb.st_size) {
-+			fprintf(stderr,"error reading from %s\n",
-+				query_version_rcm_filename);
-+			free(msg_buff);
-+			return errno;
-+		}
- 	}
- 
- 	// write query version message to device
-@@ -625,25 +702,68 @@ done:
- }
- 
- static int initialize_miniloader(uint16_t devid, usb_device_t *usb,
--		 char *mlfile, uint32_t mlentry, const char *signed_msgs_file)
-+		char *mlfile, uint32_t mlentry, const char *signed_msgs_file,
-+		bool download_signed_msgs)
- {
- 	int fd;
- 	struct stat sb;
- 	int ret;
--	uint8_t *miniloader;
-+	uint8_t *miniloader = NULL;
-+	bool ml_buffer_alloc = false;
- 	uint32_t miniloader_size;
- 	uint32_t miniloader_entry;
-+	char ml_rcm_filename[FILENAME_MAX_SIZE];
-+	char *filename = NULL;
-+
-+	// use prebuilt miniloader if not loading from a file
-+	if ((devid & 0xff) == USB_DEVID_NVIDIA_TEGRA20) {
-+		miniloader = miniloader_tegra20;
-+		miniloader_size = sizeof(miniloader_tegra20);
-+		miniloader_entry = TEGRA20_MINILOADER_ENTRY;
-+	} else if ((devid & 0xff) == USB_DEVID_NVIDIA_TEGRA30) {
-+		miniloader = miniloader_tegra30;
-+		miniloader_size = sizeof(miniloader_tegra30);
-+		miniloader_entry = TEGRA30_MINILOADER_ENTRY;
-+	} else if ((devid & 0xff) == USB_DEVID_NVIDIA_TEGRA114) {
-+		miniloader = miniloader_tegra114;
-+		miniloader_size = sizeof(miniloader_tegra114);
-+		miniloader_entry = TEGRA114_MINILOADER_ENTRY;
-+	} else if ((devid & 0xff) == USB_DEVID_NVIDIA_TEGRA124) {
-+		miniloader = miniloader_tegra124;
-+		miniloader_size = sizeof(miniloader_tegra124);
-+		miniloader_entry = TEGRA124_MINILOADER_ENTRY;
-+	} else {
-+		fprintf(stderr, "unknown tegra device: 0x%x\n", devid);
-+		return ENODEV;
-+	}
-+
-+	// if loading unsigned ml from a file
-+	if (mlfile)
-+		filename = mlfile;
-+
-+	// if loading signed ml rcm file
-+	if (signed_msgs_file && (download_signed_msgs == true)) {
-+		filename = ml_rcm_filename;
-+		ret = create_name_string(ml_rcm_filename, signed_msgs_file,
-+					".ml");
++	/* save query version rcm blob */
++	if (signed_msgs_file) {
++		ret = create_name_string(query_version_rcm_filename,
++					signed_msgs_file, ".qry");
 +		if (ret)
 +			goto done;
 +
-+		/* download signed ml rcm blob */
-+		printf("download signed miniloader rcm from file %s\n",
-+			 ml_rcm_filename);
++		ret = save_to_file(query_version_rcm_filename, msg_buff,
++					rcm_get_msg_len(msg_buff));
++		goto done;
 +	}
- 
--	// if using miniloader from an exteranl file
--	if (mlfile) {
--		fd = open(mlfile, O_RDONLY, 0);
-+	// loading ml or signed ml rcm from a file
-+	if (filename) {
-+		fd = open(filename, O_RDONLY, 0);
- 		if (fd < 0) {
--			dprintf("error opening %s for reading\n", mlfile);
-+			dprintf("error opening %s\n", filename);
- 			return errno;
- 		}
- 		ret = fstat(fd, &sb);
- 		if (ret) {
--			dprintf("error on fstat of %s\n", mlfile);
-+			dprintf("error on fstat of %s\n", filename);
- 			return ret;
- 		}
- 		miniloader_size = sb.st_size;
-@@ -652,50 +772,37 @@ static int initialize_miniloader(uint16_t devid, usb_device_t *usb,
- 			dprintf("error allocating %d bytes for miniloader\n", miniloader_size);
- 			return errno;
- 		}
-+		ml_buffer_alloc = true;
- 		if (read(fd, miniloader, miniloader_size) != miniloader_size) {
- 			dprintf("error reading from miniloader file");
- 			return errno;
- 		}
--		miniloader_entry = mlentry;
--	} else {
--		if ((devid & 0xff) == USB_DEVID_NVIDIA_TEGRA20) {
--			miniloader = miniloader_tegra20;
--			miniloader_size = sizeof(miniloader_tegra20);
--			miniloader_entry = TEGRA20_MINILOADER_ENTRY;
--		} else if ((devid & 0xff) == USB_DEVID_NVIDIA_TEGRA30) {
--			miniloader = miniloader_tegra30;
--			miniloader_size = sizeof(miniloader_tegra30);
--			miniloader_entry = TEGRA30_MINILOADER_ENTRY;
--		} else if ((devid & 0xff) == USB_DEVID_NVIDIA_TEGRA114) {
--			miniloader = miniloader_tegra114;
--			miniloader_size = sizeof(miniloader_tegra114);
--			miniloader_entry = TEGRA114_MINILOADER_ENTRY;
--		} else if ((devid & 0xff) == USB_DEVID_NVIDIA_TEGRA124) {
--			miniloader = miniloader_tegra124;
--			miniloader_size = sizeof(miniloader_tegra124);
--			miniloader_entry = TEGRA124_MINILOADER_ENTRY;
--		} else {
--			fprintf(stderr, "unknown tegra device: 0x%x\n", devid);
--			return ENODEV;
--		}
- 	}
- 
--	if (signed_msgs_file) {
--		return create_miniloader_rcm(miniloader, miniloader_size,
-+	// if entry is specified
-+	if (mlentry)
-+		miniloader_entry = mlentry;
 +
-+	// if generating ml rcm file
-+	if (signed_msgs_file && (download_signed_msgs == false)) {
-+		ret = create_miniloader_rcm(miniloader, miniloader_size,
- 				miniloader_entry, signed_msgs_file);
+ 	// write query version message to device
+ 	msg_len = rcm_get_msg_len(msg_buff);
+ 	if (msg_len == 0) {
+@@ -436,28 +601,31 @@ static int initialize_rcm(uint16_t devid, usb_device_t *usb,
+ 	ret = usb_write(usb, msg_buff, msg_len);
+ 	if (ret) {
+ 		fprintf(stderr, "write RCM query version: USB transfer failure\n");
+-		return ret;
 +		goto done;
  	}
+-	free(msg_buff);
+-	msg_buff = NULL;
  
- 	printf("downloading miniloader to target at address 0x%x (%d bytes)...\n",
- 		miniloader_entry, miniloader_size);
- 	ret = download_miniloader(usb, miniloader, miniloader_size,
--				  miniloader_entry);
-+				  miniloader_entry, download_signed_msgs);
+ 	// read response
+ 	ret = usb_read(usb, (uint8_t *)&status, sizeof(status), &actual_len);
  	if (ret) {
- 		fprintf(stderr, "Error downloading miniloader\n");
- 		return ret;
+ 		fprintf(stderr, "read RCM query version: USB transfer failure\n");
+-		return ret;
++		goto done;
  	}
- 	printf("miniloader downloaded successfully\n");
--
+ 	if (actual_len < sizeof(status)) {
+ 		fprintf(stderr, "read RCM query version: USB read truncated\n");
+-		return EIO;
++		ret = EIO;
++		goto done;
+ 	}
+ 	printf("RCM version: %d.%d\n", RCM_VERSION_MAJOR(status),
+ 	       RCM_VERSION_MINOR(status));
+ 
 -	return 0;
 +done:
-+	if ((ml_buffer_alloc == true) && miniloader)
-+		free(miniloader);
++	if (msg_buff)
++		free(msg_buff);
 +	return ret;
  }
  
- static int wait_status(nv3p_handle_t h3p)
-@@ -836,17 +943,24 @@ done:
- }
- 
- static int download_miniloader(usb_device_t *usb, uint8_t *miniloader,
--			       uint32_t size, uint32_t entry)
-+				uint32_t size, uint32_t entry,
-+				bool download_signed_msgs)
+-static int initialize_miniloader(uint16_t devid, usb_device_t *usb, char *mlfile, uint32_t mlentry)
++static int initialize_miniloader(uint16_t devid, usb_device_t *usb,
++		 char *mlfile, uint32_t mlentry, const char *signed_msgs_file)
  {
--	uint8_t *msg_buff;
-+	uint8_t *msg_buff = NULL;
-+	bool msg_buff_alloc = false;
- 	int ret;
- 	uint32_t status;
- 	int actual_len;
+ 	int fd;
+ 	struct stat sb;
+@@ -466,7 +634,7 @@ static int initialize_miniloader(uint16_t devid, usb_device_t *usb, char *mlfile
+ 	uint32_t miniloader_size;
+ 	uint32_t miniloader_entry;
  
- 	// download the miniloader to the bootrom
--	rcm_create_msg(RCM_CMD_DL_MINILOADER,
--		       (uint8_t *)&entry, sizeof(entry), miniloader, size,
--		       &msg_buff);
-+	if (download_signed_msgs == true)	/* signed ml with rcm header */
-+		msg_buff = miniloader;
-+	else {
-+		rcm_create_msg(RCM_CMD_DL_MINILOADER, (uint8_t *)&entry,
-+				sizeof(entry), miniloader, size, &msg_buff);
-+		msg_buff_alloc = true;
+-	// use prebuilt miniloader if not loading from a file
++	// if using miniloader from an exteranl file
+ 	if (mlfile) {
+ 		fd = open(mlfile, O_RDONLY, 0);
+ 		if (fd < 0) {
+@@ -511,6 +679,12 @@ static int initialize_miniloader(uint16_t devid, usb_device_t *usb, char *mlfile
+ 			return ENODEV;
+ 		}
+ 	}
++
++	if (signed_msgs_file) {
++		return create_miniloader_rcm(miniloader, miniloader_size,
++				miniloader_entry, signed_msgs_file);
 +	}
 +
- 	ret = usb_write(usb, msg_buff, rcm_get_msg_len(msg_buff));
- 	if (ret)
- 		goto fail;
-@@ -864,7 +978,8 @@ static int download_miniloader(usb_device_t *usb, uint8_t *miniloader,
- 
- 	ret = 0;
- fail:
--	free(msg_buff);
-+	if ((msg_buff_alloc == true) && msg_buff)
-+		free(msg_buff);
+ 	printf("downloading miniloader to target at address 0x%x (%d bytes)...\n",
+ 		miniloader_entry, miniloader_size);
+ 	ret = download_miniloader(usb, miniloader, miniloader_size,
+@@ -636,6 +810,30 @@ fail:
  	return ret;
  }
  
-@@ -1032,8 +1147,8 @@ out:
++static int create_miniloader_rcm(uint8_t *miniloader, uint32_t size,
++			uint32_t entry, const char *signed_msgs_file)
++{
++	uint8_t *msg_buff;
++	int ret = 0;
++	char ml_rcm_filename[FILENAME_MAX_SIZE];
++
++	// create RCM_CMD_DL_MINILOADER blob
++	rcm_create_msg(RCM_CMD_DL_MINILOADER, (uint8_t *)&entry, sizeof(entry),
++		       miniloader, size, &msg_buff);
++
++	ret = create_name_string(ml_rcm_filename, signed_msgs_file, ".ml");
++	if (ret)
++		goto done;
++
++	// write to binary file
++	dprintf("Write miniloader rcm to %s\n", ml_rcm_filename);
++
++	ret = save_to_file(ml_rcm_filename, msg_buff,
++				rcm_get_msg_len(msg_buff));
++done:
++	free(msg_buff);
++	return ret;
++}
+ 
+ static int download_miniloader(usb_device_t *usb, uint8_t *miniloader,
+ 			       uint32_t size, uint32_t entry)
+@@ -906,6 +1104,31 @@ static int download_bootloader(nv3p_handle_t h3p, char *filename,
+ 	return 0;
  }
  
- static int download_bootloader(nv3p_handle_t h3p, char *filename,
--			       uint32_t entry, uint32_t loadaddr,
--			       const char *pkc_keyfile)
-+			uint32_t entry, uint32_t loadaddr,
-+			const char *pkc_keyfile, const char *signed_msgs_file)
++static int sign_blob(const char *blob_filename, const char *pkc_keyfile,
++			const char *signed_msgs_file)
++{
++	int ret;
++	uint8_t rsa_pss_sig[RCM_RSA_SIG_SIZE];
++
++	char signature_filename[FILENAME_MAX_SIZE];
++
++	ret = rsa_pss_sign_file(pkc_keyfile, blob_filename, rsa_pss_sig);
++	if (ret) {
++		fprintf(stderr, "error signing %s with %s\n",
++			blob_filename, pkc_keyfile);
++		return ret;
++	}
++
++	/* save signature to signed_msgs_file.bl */
++	ret = create_name_string(signature_filename, signed_msgs_file, ".bl");
++	if (ret)
++		return ret;
++
++	ret = save_to_file(signature_filename, rsa_pss_sig,
++				sizeof(rsa_pss_sig));
++	return ret;
++}
++
+ static void set_platform_info(nv3p_platform_info_t *info)
  {
- 	int ret;
- 	nv3p_cmd_dl_bl_t arg;
-@@ -1083,14 +1198,24 @@ static int download_bootloader(nv3p_handle_t h3p, char *filename,
- 			}
- 
- 			ret = nv3p_data_send(h3p, rsa_pss_sig, sizeof(rsa_pss_sig));
--			if (ret) {
--				dprintf("error sending bootloader signature\n");
-+		}
-+
-+		/* download bl's rsa_pss_sig */
-+		if (signed_msgs_file) {
-+			char signature_filename[FILENAME_MAX_SIZE];
-+
-+			ret = create_name_string(signature_filename,
-+						signed_msgs_file, ".bl");
-+			if (ret)
- 				return ret;
--			}
--		} else {
--			fprintf(stderr, "Error: missing pkc keyfile to sign"
--				" bootloader\n");
--			return -1;
-+
-+			// send the bootloader file
-+			ret = send_file(h3p, signature_filename);
-+		}
-+
-+		if (ret) {
-+			dprintf("error sending bootloader signature\n");
-+			return ret;
- 		}
- 	}
- 
+ 	g_platform_info = info;
 -- 
 1.9.1
