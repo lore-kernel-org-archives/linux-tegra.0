@@ -1,139 +1,58 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH v3 2/2] PCI: tegra: Support per-lane PHYs
-Date: Fri, 11 Mar 2016 17:54:27 -0600
-Message-ID: <20160311235427.GI4725@localhost>
-References: <1457452094-5409-1-git-send-email-thierry.reding@gmail.com>
- <1457452094-5409-2-git-send-email-thierry.reding@gmail.com>
+From: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [tegrarcm PATCH V2 0/4] Add support for flashing PKC secured board
+Date: Fri, 11 Mar 2016 17:02:28 -0800
+Message-ID: <1457744552-30966-1-git-send-email-jimmzhang@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1457452094-5409-2-git-send-email-thierry.reding@gmail.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Stephen, you had some comments on the previous version.  What do you
-think about this one?
+V2:
+1. Redefined sign and download command line parameters as below:
+    generate signed messages: --gen-signed-msgs --signed-msgs-file <msgs.bin>
+    download signed messages: --download-signed-msgs --signed-msgs-file <msgs.bin>
+2. Added option --soc=<soc#> to specify tegra soc model number so that generating
+   signed messages can be proceeded without accessing hardware.
+3. Re-enabled cmac_hash when generating signed messages so that signed messages
+   can also run on an unsecured board.
+4. Download bootloader's pkc signature only when the board is in secured pkc mode.
+5. Added error check on key length.
+6. Added option --usb-timeout to allow user to specify usb transfer timeout value.
 
-On Tue, Mar 08, 2016 at 04:48:14PM +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> The current XUSB pad controller bindings are insufficient to describe
-> PHY devices attached to USB controllers. New bindings have been created
-> to overcome these restrictions. As a side-effect each root port now is
-> assigned a set of PHY devices, one for each lane associated with the
-> root port. This has the benefit of allowing fine-grained control of the
-> power management for each lane.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ...
+V1:
+1. Use option "--pkc" to sign and download bootloader. This option is
+   designed for developer. Patch 0001-Add-option-pkc.patch was originally
+   submitted by Alban Bedel.
+2. Use option "--ml_rcm" and "--pkc" to sign rcm messages and bootloader.
+   This signing only feature is intended for production where signging
+   is done at secured server and flashing can be done at different stage and
+   site without requiring keyfile being present. 
+3. Use option "--signed" to specify and download signed rcm messages.
+   This option is used for flashing on fused board. ie, a system with
+   security mode enabled.
 
->  static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
->  {
->  	const struct tegra_pcie_soc_data *soc = pcie->soc_data;
-> @@ -883,14 +905,24 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
->  		afi_writel(pcie, value, AFI_FUSE);
->  	}
->  
-> -	if (!pcie->phy)
-> -		err = tegra_pcie_phy_enable(pcie);
-> -	else
-> -		err = phy_power_on(pcie->phy);
-> +	if (!pcie->legacy_phy) {
-> +		list_for_each_entry(port, &pcie->ports, list) {
-> +			err = tegra_pcie_port_phy_power_on(port);
-> +			if (err < 0) {
-> +				dev_err(pcie->dev,
-> +					"failed to power on PCIe port: %d\n",
-> +					err);
-> +				return err;
-> +			}
-> +		}
-> +	} else {
-> +		if (!pcie->phy)
-> +			err = tegra_pcie_phy_enable(pcie);
-> +		else
-> +			err = phy_power_on(pcie->phy);
->  
-> -	if (err < 0) {
-> -		dev_err(pcie->dev, "failed to power on PHY: %d\n", err);
-> -		return err;
-> +		if (err < 0)
-> +			dev_err(pcie->dev, "failed to power on PHY: %d\n", err);
+Alban Bedel (1):
+  Add support for production devices secured with PKC
 
-In the legacy_phy case, we used to bail out if tegra_pcie_phy_enable()
-or phy_power_on() failed, but now we don't.  I assume this is an
-unintentional change.
+Jimmy Zhang (3):
+  Add option --gen-signed-msgs and --signed-msgs-file to generate signed
+    blobs
+  Add option --download-signed-msgs to download signed blobs
+  Add option --usb-timeout=<value>
 
-I would personally write this as follows because I hate reading
-"if (!xxx) ... else ..." (this patch applies on top of the one you
-posted).  Note that this restores the legacy_phy error path also.
+ src/Makefile.am |   2 +
+ src/main.c      | 535 +++++++++++++++++++++++++++++++++++++++++++++++++-------
+ src/rcm.c       |  16 +-
+ src/rcm.h       |  13 +-
+ src/rsa-pss.cpp | 163 +++++++++++++++++
+ src/rsa-pss.h   |  46 +++++
+ src/usb.c       |   5 +-
+ 7 files changed, 713 insertions(+), 67 deletions(-)
+ create mode 100644 src/rsa-pss.cpp
+ create mode 100644 src/rsa-pss.h
 
-
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 625db7d..139b9ca 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -882,6 +882,31 @@ static int tegra_pcie_port_phy_power_on(struct tegra_pcie_port *port)
- 	return 0;
- }
- 
-+static int tegra_pcie_port_phy_enable(struct tegra_pcie *pcie)
-+{
-+	if (pcie->legacy_phy) {
-+		if (pcie->phy)
-+			err = phy_power_on(pcie->phy);
-+		else
-+			err = tegra_pcie_phy_enable(pcie);
-+
-+		if (err < 0)
-+			dev_err(pcie->dev, "failed to power on PHY: %d\n", err);
-+
-+		return err;
-+	}
-+
-+	list_for_each_entry(port, &pcie->ports, list) {
-+		err = tegra_pcie_port_phy_power_on(port);
-+		if (err < 0) {
-+			dev_err(pcie->dev, "failed to power on PCIe port: %d\n",
-+				err);
-+			return err;
-+		}
-+	}
-+	return 0;
-+}
-+
- static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
- {
- 	const struct tegra_pcie_soc_data *soc = pcie->soc_data;
-@@ -921,25 +946,9 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
- 		afi_writel(pcie, value, AFI_FUSE);
- 	}
- 
--	if (!pcie->legacy_phy) {
--		list_for_each_entry(port, &pcie->ports, list) {
--			err = tegra_pcie_port_phy_power_on(port);
--			if (err < 0) {
--				dev_err(pcie->dev,
--					"failed to power on PCIe port: %d\n",
--					err);
--				return err;
--			}
--		}
--	} else {
--		if (!pcie->phy)
--			err = tegra_pcie_phy_enable(pcie);
--		else
--			err = phy_power_on(pcie->phy);
--
--		if (err < 0)
--			dev_err(pcie->dev, "failed to power on PHY: %d\n", err);
--	}
-+	err = tegra_pcie_port_phy_enable(pcie);
-+	if (err < 0)
-+		return err;
- 
- 	/* take the PCIe interface module out of reset */
- 	reset_control_deassert(pcie->pcie_xrst);
+-- 
+1.9.1
