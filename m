@@ -1,141 +1,96 @@
-From: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V7 11/12] arm64: tegra: add soctherm node for Tegra210
-Date: Mon, 14 Mar 2016 12:25:01 -0700
-Message-ID: <20160314192500.GE1872@localhost.localdomain>
-References: <1457665894-30141-1-git-send-email-wni@nvidia.com>
+From: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [tegrarcm PATCH V2 3/4] Add option --download-signed-msgs to
+ download signed blobs
+Date: Mon, 14 Mar 2016 20:01:28 +0000
+Message-ID: <41214cca62234ce1b7f238fa8fcb71aa@HQMAIL103.nvidia.com>
+References: <1457744552-30966-1-git-send-email-jimmzhang@nvidia.com>
+ <1457744552-30966-4-git-send-email-jimmzhang@nvidia.com>
+ <56E70E4F.80307@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="tMbDGjvJuJijemkf"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1457665894-30141-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <56E70E4F.80307-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Language: en-US
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Allen Martin <AMartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---tMbDGjvJuJijemkf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 11, 2016 at 11:11:34AM +0800, Wei Ni wrote:
-> Adds soctherm node for Tegra210, and add cpu,
-> gpu, mem, pllx as thermal-zones. Set critical
-> trip temp for cpu and gpu thermal zone.
->=20
-> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 60 ++++++++++++++++++++++++++=
-++++++
->  1 file changed, 60 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/d=
-ts/nvidia/tegra210.dtsi
-> index cd4f45ccd6a7..c7ef500a347e 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> @@ -3,6 +3,7 @@
->  #include <dt-bindings/memory/tegra210-mc.h>
->  #include <dt-bindings/pinctrl/pinctrl-tegra.h>
->  #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/thermal/tegra124-soctherm.h>
-> =20
->  / {
->  	compatible =3D "nvidia,tegra210";
-> @@ -802,4 +803,63 @@
->  				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
->  		interrupt-parent =3D <&gic>;
->  	};
-> +
-> +	soctherm: thermal-sensor@0,700e2000 {
-> +		compatible =3D "nvidia,tegra210-soctherm";
-> +		reg =3D <0x0 0x700e2000 0x0 0x1000>;
-> +		interrupts =3D <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
-> +		clocks =3D <&tegra_car TEGRA210_CLK_TSENSOR>,
-> +			<&tegra_car TEGRA210_CLK_SOC_THERM>;
-> +		clock-names =3D "tsensor", "soctherm";
-> +		resets =3D <&tegra_car 78>;
-> +		reset-names =3D "soctherm";
-> +		#thermal-sensor-cells =3D <1>;
-> +	};
-> +
-> +	thermal-zones {
-> +		cpu {
-> +			polling-delay-passive =3D <1000>;
-> +			polling-delay =3D <0>;
-> +
-> +			thermal-sensors =3D
-> +				<&soctherm TEGRA124_SOCTHERM_SENSOR_CPU>;
-> +
-> +			trips {
-> +				cpu_shutdown_trip: shutdown-trip {
-> +					temperature =3D <102500>;
-> +					hysteresis =3D <1000>;
-> +					type =3D "critical";
-> +				};
-> +			};
-> +		};
-> +		mem {
-> +			polling-delay-passive =3D <0>;
-> +			polling-delay =3D <0>;
-> +
-> +			thermal-sensors =3D
-> +				<&soctherm TEGRA124_SOCTHERM_SENSOR_MEM>;
+> -----Original Message-----
+> From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
+> Sent: Monday, March 14, 2016 12:18 PM
+> To: Jimmy Zhang
+> Cc: Allen Martin; Stephen Warren; alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org; linux-
+> tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Subject: Re: [tegrarcm PATCH V2 3/4] Add option --download-signed-msgs to
+> download signed blobs
+> 
+> On 03/11/2016 06:02 PM, Jimmy Zhang wrote:
+> > This feature allows user to download signed messages to devices
+> > secured with PKC.
+> >
+> > Example:
+> > tegrarcm --download-signed-msgs --signed-msgs-file rel_1001.bin \
+> >     --bct=jetson-tk1-bct.bct --bootloader=u-boot.bin
+> > --loadaddr=0x83d88000
+> >
+> > Where the following blob files are downloaded to device sequentially:
+> >
+> > a) rel_1001.bin.qry
+> > b) rel_1001.bin.ml
+> > c) rel_1001.bin.bl
+> 
+> > @@ -1083,14 +1198,24 @@ static int download_bootloader(nv3p_handle_t
+> h3p, char *filename,
+> >   			}
+> >
+> >   			ret = nv3p_data_send(h3p, rsa_pss_sig,
+> sizeof(rsa_pss_sig));
+> > -			if (ret) {
+> > -				dprintf("error sending bootloader
+> signature\n");
+> > +		}
+> 
+> Doesn't this change (moving that error dprintf later) mean that any error
+> there potentially won't be reported, since the code below can overwrite
+> "ret" before the moved copy of that check? I'm not convinced the code
+> should be moved.
+> 
 
+No. This is because only one can be true between pkc_keyfile and signed_msgs_file. Ie, either when signing on fly or signed without keyfile option. This logic is ensured in main when checking command line options.
+  
+> > +		/* download bl's rsa_pss_sig */
+> > +		if (signed_msgs_file) {
+> > +			char signature_filename[FILENAME_MAX_SIZE];
+> > +
+> > +			ret = create_name_string(signature_filename,
+> > +						signed_msgs_file, ".bl");
+> > +			if (ret)
+> >   				return ret;
+> > +
+> > +			// send the bootloader file
 
-Why no trips for mem? Why should we  care ?
+The comment will be changed to "send the bootloader's signature file"
+ 
+> > +			ret = send_file(h3p, signature_filename);
+> > +		}
+> > +
+> > +		if (ret) {
+> > +			dprintf("error sending bootloader signature\n");
+> > +			return ret;
+> >   		}
+> >   	}
+> 
+> The resultant logic here seems to do the following for chips in SECURE_PKC
+> mode:
+> 
+> a) Always calculate and send the PKC.
+> b) if (signed_msgs_file), send the content of that file
+> c) continue to send the bootloader
+> 
+> I would have expected either (a) or (b) to happen, but never both.
 
-Please have a look on the binding to check for mandatory properties and
-sub nodes.
-
-> +		};
-> +		gpu {
-> +			polling-delay-passive =3D <1000>;
-> +			polling-delay =3D <0>;
-> +
-> +			thermal-sensors =3D
-> +				<&soctherm TEGRA124_SOCTHERM_SENSOR_GPU>;
-> +
-> +			trips {
-> +				gpu_shutdown_trip: shutdown-trip {
-> +					temperature =3D <103000>;
-> +					hysteresis =3D <1000>;
-> +					type =3D "critical";
-> +				};
-> +			};
-> +		};
-> +		pllx {
-> +			polling-delay-passive =3D <0>;
-> +			polling-delay =3D <0>;
-> +
-> +			thermal-sensors =3D
-> +				<&soctherm TEGRA124_SOCTHERM_SENSOR_PLLX>;
-
-ditto
-
-> +		};
-> +	};
->  };
-> --=20
-> 1.9.1
->=20
-
---tMbDGjvJuJijemkf
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQEcBAEBAgAGBQJW5xALAAoJEMLUO4d9pOJWsEcH/0P3RwxImVvxf/9cX8tY19Vh
-C5D+jZzSBPPbpcp4EF/OOMVKY+8gbTp6qX7KIPz8JGmRJHS7cFQ0POvZfa57XU3H
-JsLG1Xl4/Qi+WVUeR3C5g8OIekMGYKNtUi/ptvwhDdvhpHkbHq26OCR3P6sOwIIC
-cfrzwSAg6vM6cqit8BavHZFeIVMr/gt5FC4mil3yJpEK3xzN0/liCIyVK05hO0lp
-WGJNzBwzaWi1MZ97grkUz7Ql5DDcM9hrYcHMGE1y0T6PundzEpypyqMqYVEzWQph
-lv0BDM8JwC+U+afceBaaaQrrxo9IG8cZpKDsBgga+Bf/hbTd94pcQ+P22zcBc5c=
-=TRKa
------END PGP SIGNATURE-----
-
---tMbDGjvJuJijemkf--
+It is true. The answer is the same as above. Only one can be true between pkc_keyfile and signed_msgs_file.
