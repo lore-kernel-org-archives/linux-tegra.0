@@ -1,57 +1,133 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [tegrarcm PATCH V2 1/4] Add support for production devices
- secured with PKC
-Date: Mon, 14 Mar 2016 12:39:50 -0600
-Message-ID: <56E70576.3050000@wwwdotorg.org>
-References: <1457744552-30966-1-git-send-email-jimmzhang@nvidia.com>
- <1457744552-30966-2-git-send-email-jimmzhang@nvidia.com>
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH V7 05/12] thermal: tegra: add Tegra210 specific SOC_THERM
+ driver
+Date: Mon, 14 Mar 2016 11:57:40 -0700
+Message-ID: <20160314185739.GA1872@localhost.localdomain>
+References: <1457665825-29837-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1457744552-30966-2-git-send-email-jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ReaqsoxgOBHFXBhH"
+Return-path: <linux-pm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1457665825-29837-1-git-send-email-wni@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Wei Ni <wni@nvidia.com>
+Cc: rui.zhang@intel.com, thierry.reding@gmail.com, MLongnecker@nvidia.com, swarren@wwwdotorg.org, mikko.perttunen@kapsi.fi, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/11/2016 06:02 PM, Jimmy Zhang wrote:
-> From: Alban Bedel <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
->
-> Add the support code needed to sign the RCM messages with RSA-PSS as
-> needed to communicate with secured production devices. This mode is
-> enabled by passing a key via the --pkc command line argument. If such
-> a key is set the RCM messages will be signed with it as well as the
-> bootloader.
->
-> Signed-off-by: Alban Bedel <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
-> Signed-off-by: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> --
 
-Nit: That needs to be --- not -- for git to recognize it as the end of 
-the commit description.
+--ReaqsoxgOBHFXBhH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> Changelog:
-> V3: * Download bl sig only when op_mode is SECURE_PKC
->      * Generate cmac_hash even when --pkc option is present so that
->        an unfused board can still run with --pkc option.
->      * Added Error Check on key length
+On Fri, Mar 11, 2016 at 11:10:25AM +0800, Wei Ni wrote:
+> Add Tegra210 specific SOC_THERM driver.
+>=20
+> Signed-off-by: Wei Ni <wni@nvidia.com>
+> ---
+>  drivers/thermal/tegra/Makefile            |   1 +
+>  drivers/thermal/tegra/soctherm-fuse.c     |  11 ++
+>  drivers/thermal/tegra/soctherm.c          |   6 ++
+>  drivers/thermal/tegra/soctherm.h          |   4 +
+>  drivers/thermal/tegra/tegra210-soctherm.c | 173 ++++++++++++++++++++++++=
+++++++
 
-Nit: The message subject says "V2".
+No Kconfig change?
 
-In all the patches in this series, please make sure that all the files 
-you edit contain an NVIDIA copyright message which references the year 
-2016. If not, please add/update the message.
+>  5 files changed, 195 insertions(+)
+>  create mode 100644 drivers/thermal/tegra/tegra210-soctherm.c
+>=20
+> diff --git a/drivers/thermal/tegra/Makefile b/drivers/thermal/tegra/Makef=
+ile
+> index d5fb15377b97..bf9e028eba28 100644
+> --- a/drivers/thermal/tegra/Makefile
+> +++ b/drivers/thermal/tegra/Makefile
+> @@ -2,3 +2,4 @@ obj-$(CONFIG_TEGRA_SOCTHERM)	+=3D tegra-soctherm.o
+> =20
+>  tegra-soctherm-y				:=3D soctherm.o soctherm-fuse.o
+>  tegra-soctherm-$(CONFIG_ARCH_TEGRA_124_SOC)	+=3D tegra124-soctherm.o
+> +tegra-soctherm-$(CONFIG_ARCH_TEGRA_210_SOC)	+=3D tegra210-soctherm.o
+> diff --git a/drivers/thermal/tegra/soctherm-fuse.c b/drivers/thermal/tegr=
+a/soctherm-fuse.c
+> index 931c299ab0e8..29963180c453 100644
+> --- a/drivers/thermal/tegra/soctherm-fuse.c
+> +++ b/drivers/thermal/tegra/soctherm-fuse.c
+> @@ -28,7 +28,18 @@
+>  #define FUSE_TSENSOR_COMMON			0x180
+> =20
+>  /*
+> + * Tegra210: Layout of bits in FUSE_TSENSOR_COMMON:
+> + *    3                   2                   1                   0
+> + *  1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+> + * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+> + * |       BASE_FT       |      BASE_CP      | SHFT_FT | SHIFT_CP  |
+> + * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+> + *
+>   * Tegra12x, etc:
+> + * In chips prior to Tegra210, this fuse was incorrectly sized as 26 bit=
+s,
+> + * and didn't hold SHIFT_CP in [31:26]. Therefore these missing six bits
+> + * were obtained via the FUSE_SPARE_REALIGNMENT_REG register [5:0].
+> + *
+>   * FUSE_TSENSOR_COMMON:
+>   *    3                   2                   1                   0
+>   *  1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0 9 8 7 6 5 4 3 2 1 0
+> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soc=
+therm.c
+> index f56e5a11384e..52a33760e8e8 100644
+> --- a/drivers/thermal/tegra/soctherm.c
+> +++ b/drivers/thermal/tegra/soctherm.c
+> @@ -147,6 +147,12 @@ static const struct of_device_id tegra_soctherm_of_m=
+atch[] =3D {
+>  		.data =3D &tegra124_soctherm,
+>  	},
+>  #endif
+> +#ifdef CONFIG_ARCH_TEGRA_210_SOC
+> +	{
+> +		.compatible =3D "nvidia,tegra210-soctherm",
+> +		.data =3D &tegra210_soctherm,
+> +	},
+> +#endif
+>  	{ },
+>  };
+>  MODULE_DEVICE_TABLE(of, tegra_soctherm_of_match);
+> diff --git a/drivers/thermal/tegra/soctherm.h b/drivers/thermal/tegra/soc=
+therm.h
+> index f80ee1492ddb..69d317269af1 100644
+> --- a/drivers/thermal/tegra/soctherm.h
+> +++ b/drivers/thermal/tegra/soctherm.h
+> @@ -106,5 +106,9 @@ int tegra_calc_tsensor_calib(const struct tegra_tsens=
+or *sensor,
+>  extern const struct tegra_soctherm_soc tegra124_soctherm;
+>  #endif
+> =20
+> +#ifdef CONFIG_ARCH_TEGRA_210_SOC
+> +extern const struct tegra_soctherm_soc tegra210_soctherm;
+> +#endif
 
-> diff --git a/src/rsa-pss.cpp b/src/rsa-pss.cpp
+Is CONFIG_ARCH_TEGRA_210_SOC going to be tristate?
 
-> +extern "C" int rsa_pss_sign_file(const char *key_file, const char *msg_file,
-> +			unsigned char *sig_buf)
+If only bool, do you need to make the symbol extern?
 
-> +		int length = signature.length();
-> +		// error check
-> +		if (length != RCM_RSA_SIG_SIZE)
-> +			throw std::length_error("incorrect rsa key length");
+> --=20
+> 1.9.1
+>=20
 
-I think that check is required in rsa_pss_sign() too.
+--ReaqsoxgOBHFXBhH
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQEcBAEBAgAGBQJW5wmgAAoJEMLUO4d9pOJW8NsH/R0XPJy2yNbdHJYjmJCPKAHm
+MalLHllL9n131aKCG7tXbdFh/QTKou6D9sqIJ23wshZkaLm6NFH79VI4NqqiEAlz
+dFMOwhzg6WLseXoRHnM6dfGZZY9dRCR1Ib9O4gVA+ksicLYhb+EOtIT13oopVDXc
+P3Yr/1RKKs5HI7OIo1Ckwj4NgfiYZ71/wKmSeBlU2eYyrSZl5bKkNqXGli9u5jIB
+05aVo4Z4IX+/6AO/XaPr45KZYl8utIkgaCLgXegC4mfvcf07QRSChdOkWy/Uch7A
+B7xQxASkZoYz/cfUvnoO6QGNmsXi76qQ2fe0TpgvN3sfc+M6For/mYAf5wFXAJA=
+=NcPA
+-----END PGP SIGNATURE-----
+
+--ReaqsoxgOBHFXBhH--
