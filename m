@@ -1,141 +1,73 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH 12/13] thermal: convert tegra_thermal to use
- devm_thermal_zone_of_sensor_register
-Date: Mon, 14 Mar 2016 14:16:08 -0700
-Message-ID: <20160314211607.GC4740@localhost.localdomain>
-References: <1457559336-17652-1-git-send-email-edubezval@gmail.com>
- <1457559336-17652-13-git-send-email-edubezval@gmail.com>
- <56E1347F.8040406@nvidia.com>
+From: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: RE: [tegrarcm PATCH V2 1/4] Add support for production devices
+ secured with PKC
+Date: Tue, 15 Mar 2016 00:51:41 +0000
+Message-ID: <f0f79d636da2412f8dad980e4114a4c8@HQMAIL103.nvidia.com>
+References: <1457744552-30966-1-git-send-email-jimmzhang@nvidia.com>
+ <1457744552-30966-2-git-send-email-jimmzhang@nvidia.com>
+ <56E70576.3050000@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="lCAWRPmW1mITcIfM"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <56E1347F.8040406@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wei Ni <wni@nvidia.com>
-Cc: Rui Zhang <rui.zhang@intel.com>, Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, lm-sensors@lm-sensors.org, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <56E70576.3050000-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Allen Martin <AMartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---lCAWRPmW1mITcIfM
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 10, 2016 at 04:46:55PM +0800, Wei Ni wrote:
->=20
->=20
-> On 2016=E5=B9=B403=E6=9C=8810=E6=97=A5 05:35, Eduardo Valentin wrote:
-> > This changes the driver to use the devm_ version
-> > of thermal_zone_of_sensor_register and cleans
-> > up the  local points and unregister calls.
-> >=20
-> > Cc: Zhang Rui <rui.zhang@intel.com>
-> > Cc: Stephen Warren <swarren@wwwdotorg.org>
-> > Cc: Thierry Reding <thierry.reding@gmail.com>
-> > Cc: Alexandre Courbot <gnurou@gmail.com>
-> > Cc: linux-pm@vger.kernel.org
-> > Cc: linux-tegra@vger.kernel.org
-> > Cc: linux-kernel@vger.kernel.org
-> > Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
-> > ---
-> >  drivers/thermal/tegra_soctherm.c | 31 +++++++++----------------------
-> >  1 file changed, 9 insertions(+), 22 deletions(-)
-> >=20
-> > diff --git a/drivers/thermal/tegra_soctherm.c b/drivers/thermal/tegra_s=
-octherm.c
-> > index 74ea576..0018ccd 100644
-> > --- a/drivers/thermal/tegra_soctherm.c
-> > +++ b/drivers/thermal/tegra_soctherm.c
-> > @@ -168,7 +168,7 @@ struct tegra_soctherm {
-> >  	struct clk *clock_soctherm;
-> >  	void __iomem *regs;
-> > =20
-> > -	struct thermal_zone_device *thermctl_tzs[4];
-> > +#define ZONE_NUMBER		4
-> >  };
-> > =20
-> >  struct tsensor_shared_calibration {
-> > @@ -342,7 +342,7 @@ static const struct thermctl_zone_desc t124_thermct=
-l_temp_zones[] =3D {
-> >  static int tegra_soctherm_probe(struct platform_device *pdev)
-> >  {
-> >  	struct tegra_soctherm *tegra;
-> > -	struct thermal_zone_device *tz;
-> > +	struct thermal_zone_device *z;
-> >  	struct tsensor_shared_calibration shared_calib;
-> >  	struct resource *res;
-> >  	unsigned int i;
-> > @@ -408,36 +408,29 @@ static int tegra_soctherm_probe(struct platform_d=
-evice *pdev)
-> > =20
-> >  	/* Initialize thermctl sensors */
-> > =20
-> > -	for (i =3D 0; i < ARRAY_SIZE(tegra->thermctl_tzs); ++i) {
-> > +	for (i =3D 0; i < ZONE_NUMBER; ++i) {
-> >  		struct tegra_thermctl_zone *zone =3D
-> >  			devm_kzalloc(&pdev->dev, sizeof(*zone), GFP_KERNEL);
-> >  		if (!zone) {
-> >  			err =3D -ENOMEM;
-> > -			goto unregister_tzs;
-> > +			goto disable_clocks;
-> >  		}
-> > =20
-> >  		zone->reg =3D tegra->regs + t124_thermctl_temp_zones[i].offset;
-> >  		zone->shift =3D t124_thermctl_temp_zones[i].shift;
-> > =20
-> > -		tz =3D thermal_zone_of_sensor_register(&pdev->dev, i, zone,
-> > -						     &tegra_of_thermal_ops);
-> > -		if (IS_ERR(tz)) {
-> > -			err =3D PTR_ERR(tz);
-> > +		z =3D devm_thermal_zone_of_sensor_register(&pdev->dev, i, zone,
->=20
-> I prefer to still use "tz", it seems this line isn't over 80 characters, =
-or we
-> can add newline.
+> -----Original Message-----
+> From: Stephen Warren [mailto:swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org]
+> Sent: Monday, March 14, 2016 11:40 AM
+> To: Jimmy Zhang
+> Cc: Allen Martin; Stephen Warren; alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org; linux-
+> tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Subject: Re: [tegrarcm PATCH V2 1/4] Add support for production devices
+> secured with PKC
+> 
+> On 03/11/2016 06:02 PM, Jimmy Zhang wrote:
+> > From: Alban Bedel <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+> >
+> > Add the support code needed to sign the RCM messages with RSA-PSS as
+> > needed to communicate with secured production devices. This mode is
+> > enabled by passing a key via the --pkc command line argument. If such
+> > a key is set the RCM messages will be signed with it as well as the
+> > bootloader.
+> >
+> > Signed-off-by: Alban Bedel <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+> > Signed-off-by: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >
+> > --
+> 
+> Nit: That needs to be --- not -- for git to recognize it as the end of the commit
+> description.
+> 
+> > Changelog:
+> > V3: * Download bl sig only when op_mode is SECURE_PKC
+> >      * Generate cmac_hash even when --pkc option is present so that
+> >        an unfused board can still run with --pkc option.
+> >      * Added Error Check on key length
+> 
+> Nit: The message subject says "V2".
+> 
+> In all the patches in this series, please make sure that all the files you edit
+> contain an NVIDIA copyright message which references the year 2016. If not,
+> please add/update the message.
+> 
+> > diff --git a/src/rsa-pss.cpp b/src/rsa-pss.cpp
+> 
+> > +extern "C" int rsa_pss_sign_file(const char *key_file, const char
+> *msg_file,
+> > +			unsigned char *sig_buf)
+> 
+> > +		int length = signature.length();
+> > +		// error check
+> > +		if (length != RCM_RSA_SIG_SIZE)
+> > +			throw std::length_error("incorrect rsa key length");
+> 
+> I think that check is required in rsa_pss_sign() too.
 
-
-Yeah,
-
-
->=20
-> > +							 &tegra_of_thermal_ops);
-
-CHECK: Alignment should match open parenthesis
-#423: FILE: drivers/thermal/tegra_soctherm.c:423:
-+		tz =3D devm_thermal_zone_of_sensor_register(&pdev->dev, i, zone,
-+							 &tegra_of_thermal_ops);
-
-and if you align it, then, you get the warning:
-WARNING: line over 80 characters
-#423: FILE: drivers/thermal/tegra_soctherm.c:423:
-+							  &tegra_of_thermal_ops);
-
-And I did not want to add either of the above to the driver.=20
-
-But if you prefer tz over z, we can keep the first (check) then.
-
-What do you prefer?
-
-
-
-
-
---lCAWRPmW1mITcIfM
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQEcBAEBAgAGBQJW5yoUAAoJEMLUO4d9pOJWaHkIAJuNjRDD8szeiQYLKqZint/c
-cxUOhuHdIALaINV0dNPJICwQ3BBwiSne4kOCDV4kRtzkWMfE/kxCVvxpzO3DEa7q
-RfIz78/A4mtE8BuMQ3NRK/NjwQb9co7GcC6ClDUg2mm/O1uADv6F1TAyGOkByFME
-KiOEoatGfKMODBeICVl4sdW1RjA2RE8QZn1jvXLw/yxz2GVbTyLm6JzOwA8Mqbxi
-x/9UiQ45IemEYQ2C7orzdeZE41cGrD1yBkVeQ2b6NkLApUn3/ZEJAT048UihAbto
-2F3w4PUzZ8Hc216ZEOgjj6cQk0nUZrGmlGaP/Is8iqkjzDfKwlhB4sHF0YOjcrM=
-=ZPKv
------END PGP SIGNATURE-----
-
---lCAWRPmW1mITcIfM--
+I checked key's modulus length there. Once it passes, key's length should be correct.
