@@ -1,73 +1,37 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.5
-Date: Tue, 15 Mar 2016 08:45:30 +0000
-Message-ID: <56E7CBAA.3040004@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v10 2/9] dt-bindings: pinctrl: Deprecate Tegra XUSB pad
+ controller binding
+Date: Tue, 15 Mar 2016 10:01:25 +0100
+Message-ID: <CACRpkda_YvQQesSUiZB0cpotZWyyd+5nUqzz3HjnY9fCanWJwQ@mail.gmail.com>
+References: <1457108379-20794-1-git-send-email-thierry.reding@gmail.com>
+	<1457108379-20794-2-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1457108379-20794-2-git-send-email-thierry.reding@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Kishon Vijay Abraham I <kishon@ti.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Andrew Bresticker <abrestic@chromium.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.5.
-Logs and other details at:
+On Fri, Mar 4, 2016 at 5:19 PM, Thierry Reding <thierry.reding@gmail.com> wrote:
 
-    https://nvtb.github.io//linux/test_v4.5/20160314073105/
+> From: Thierry Reding <treding@nvidia.com>
+>
+> This is an old version of the binding that isn't flexible enough to
+> describe all aspects of the XUSB pad controller. Specifically with the
+> addition of XUSB support (for SuperSpeed USB) the existing binding is
+> no longer suitable.
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
+That's unfortunate, not to say unelegant. I want to know Stephen's
+opinion on these patches (probably they are in another mail)
+before merging.
 
-Test summary
-------------
+Will the new binding also work with SuperDuperSpeed USB and
+SuperSuperMegaUltraOrtonSpeed USB I wonder... or will we
+change the bindings again?
 
-Build: zImage:
-    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Build: Image:
-    Pass: ( 1/ 1): defconfig
-
-Boot to userspace: defconfig:
-    Pass: ( 3/ 3): qemu-vexpress64, tegra132-norrin,
-		   tegra210-p2371-0000
-
-Boot to userspace: multi_v7_defconfig:
-    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: multi_v7_defconfig:
-    FAIL: ( 1/ 4): tegra114-dalmore-a04
-    Pass: ( 3/ 4): tegra124-jetson-tk1, tegra20-trimslice,
-		   tegra30-beaver
-
-PM: System suspend: tegra_defconfig:
-    FAIL: ( 1/ 4): tegra114-dalmore-a04
-    Pass: ( 3/ 4): tegra124-jetson-tk1, tegra20-trimslice,
-		   tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v4.5-rc7 (f6cede5b49e822ebc41a099fe41ab4989f64e2cb)):
-   text     data      bss    total  kernel
-  +4212   +12288        0   +16500  defconfig
-  +1472        0        0    +1472  multi_v7_defconfig
-  -3224        0        0    -3224  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v4.5-rc7 (f6cede5b49e822ebc41a099fe41ab4989f64e2cb))
-    avail    rsrvd     high    freed                board              kconfig                  dtb
-        .        .        .        .      qemu-vexpress64            defconfig           __internal
-        .        .        .      -4k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-        .        .        .       4k tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-        .        .        .      -4k  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-        .        .        .       4k  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
-        .        .        .      -4k    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-        .        .        .       4k    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
-        .        .        .      -4k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-        .        .        .       4k       tegra30-beaver      tegra_defconfig       tegra30-beaver
+Yours,
+Linus Walleij
