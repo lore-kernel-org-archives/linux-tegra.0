@@ -1,7 +1,7 @@
 From: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [tegrarcm PATCH V3 1/4] Add support for production devices secured with PKC
-Date: Mon, 14 Mar 2016 19:42:44 -0700
-Message-ID: <1458009767-26615-2-git-send-email-jimmzhang@nvidia.com>
+Subject: [tegrarcm PATCH V3 2/4] Add option --gen-signed-msgs and --signed-msgs-file to generate signed blobs
+Date: Mon, 14 Mar 2016 19:42:45 -0700
+Message-ID: <1458009767-26615-3-git-send-email-jimmzhang@nvidia.com>
 References: <1458009767-26615-1-git-send-email-jimmzhang@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,608 +12,456 @@ To: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+A
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Alban Bedel <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+This feature allows generation of signed blobs that can later be used
+to communicate with a PKC-enabled Tegra device without access to the
+PKC. Option --bootloader, --soc and --pkc are also required when generating
+the blob.
 
-Add the support code needed to sign the RCM messages with RSA-PSS as
-needed to communicate with secured production devices. This mode is
-enabled by passing a key via the --pkc command line argument. If such
-a key is set the RCM messages will be signed with it as well as the
-bootloader.
+Example:
+tegrarcm --gen-signed-msgs --signed-msgs-file rel_1001.bin \
+        --bootloader u-boot.bin --loadaddr 0x83d88000 --soc 124 \
+        --pkc rsa_priv.der
 
-Signed-off-by: Alban Bedel <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+Where generated signed message files are:
+
+a) rel_1001.bin.qry
+b) rel_1001.bin.ml
+c) rel_1001.bin.bl
+
 Signed-off-by: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
 ---
-Changelog:
-V2: * Download bl sig only when op_mode is SECURE_PKC
-    * Generate cmac_hash even when --pkc option is present so that
-      an unfused board can still run with --pkc option.
-    * Added Error Check on either key modulus length or key length
-v1: * Added the missing bootloader signature
-    * Added the ODM secure PKC mode to the supported operating modes
-    * Renamed the --key option to --pkc to avoid potential ambiguities
-      if SKB mode is ever supported.
-    * Added a copyright header to the new files
----
- src/Makefile.am |   2 +
- src/main.c      |  81 ++++++++++++++++++++++++----
- src/rcm.c       |  18 ++++++-
- src/rcm.h       |  15 +++---
- src/rsa-pss.cpp | 163 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
- src/rsa-pss.h   |  46 ++++++++++++++++
- 6 files changed, 307 insertions(+), 18 deletions(-)
- create mode 100644 src/rsa-pss.cpp
- create mode 100644 src/rsa-pss.h
+ src/main.c | 259 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 240 insertions(+), 19 deletions(-)
 
-diff --git a/src/Makefile.am b/src/Makefile.am
-index 4b548859e075..3dad0e6d5e72 100644
---- a/src/Makefile.am
-+++ b/src/Makefile.am
-@@ -8,6 +8,8 @@ tegrarcm_SOURCES = \
- 	nv3p.c \
- 	debug.c \
- 	rcm.c \
-+	rsa-pss.cpp \
-+	rsa-pss.h \
- 	aes-cmac.cpp \
- 	aes-cmac.h \
- 	debug.h \
 diff --git a/src/main.c b/src/main.c
-index 3db0ed8be506..f175b19655a8 100644
+index f175b19655a8..93daef4867c2 100644
 --- a/src/main.c
 +++ b/src/main.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (c) 2011, NVIDIA CORPORATION
-+ * Copyright (c) 2011-2016, NVIDIA CORPORATION
-  * All rights reserved.
-  *
-  * Redistribution and use in source and binary forms, with or without
-@@ -44,6 +44,7 @@
- #include "nv3p.h"
- #include "nv3p_status.h"
- #include "aes-cmac.h"
-+#include "rsa-pss.h"
- #include "rcm.h"
- #include "debug.h"
- #include "config.h"
-@@ -60,7 +61,7 @@
+@@ -61,10 +61,14 @@
  // tegra124 miniloader
  #include "miniloader/tegra124-miniloader.h"
  
--static int initialize_rcm(uint16_t devid, usb_device_t *usb);
-+static int initialize_rcm(uint16_t devid, usb_device_t *usb, const char *pkc_keyfile);
- static int initialize_miniloader(uint16_t devid, usb_device_t *usb, char *mlfile, uint32_t mlentry);
+-static int initialize_rcm(uint16_t devid, usb_device_t *usb, const char *pkc_keyfile);
+-static int initialize_miniloader(uint16_t devid, usb_device_t *usb, char *mlfile, uint32_t mlentry);
++static int initialize_rcm(uint16_t devid, usb_device_t *usb,
++		 const char *pkc_keyfile, const char *signed_msgs_file);
++static int initialize_miniloader(uint16_t devid, usb_device_t *usb,
++		char *mlfile, uint32_t mlentry, const char *signed_msgs_file);
  static int wait_status(nv3p_handle_t h3p);
  static int send_file(nv3p_handle_t h3p, const char *filename);
-@@ -69,9 +70,15 @@ static int download_miniloader(usb_device_t *usb, uint8_t *miniloader,
++static int create_miniloader_rcm(uint8_t *miniloader, uint32_t size,
++			uint32_t entry, const char *signed_msgs_file);
+ static int download_miniloader(usb_device_t *usb, uint8_t *miniloader,
+ 			       uint32_t size, uint32_t entry);
  static void dump_platform_info(nv3p_platform_info_t *info);
- static int download_bct(nv3p_handle_t h3p, char *filename);
- static int download_bootloader(nv3p_handle_t h3p, char *filename,
--			       uint32_t entry, uint32_t loadaddr);
-+			       uint32_t entry, uint32_t loadaddr,
-+			       const char *pkc_keyfile);
+@@ -73,6 +77,8 @@ static int download_bootloader(nv3p_handle_t h3p, char *filename,
+ 			       uint32_t entry, uint32_t loadaddr,
+ 			       const char *pkc_keyfile);
  static int read_bct(nv3p_handle_t h3p, char *filename);
++static int sign_blob(const char *blob_filename, const char *pkc_keyfile,
++				const char *signed_msgs_file);
  
-+static void set_platform_info(nv3p_platform_info_t *info);
-+static uint32_t get_op_mode(void);
-+
-+static nv3p_platform_info_t *g_platform_info = NULL;
-+
- enum cmdline_opts {
- 	OPT_BCT,
- 	OPT_BOOTLOADER,
-@@ -81,6 +88,7 @@ enum cmdline_opts {
- 	OPT_VERSION,
- 	OPT_MINILOADER,
- 	OPT_MINIENTRY,
-+	OPT_PKC,
+ static void set_platform_info(nv3p_platform_info_t *info);
+ static uint32_t get_op_mode(void);
+@@ -92,6 +98,9 @@ enum cmdline_opts {
  #ifdef HAVE_USB_PORT_MATCH
  	OPT_USBPORTPATH,
  #endif
-@@ -123,6 +131,10 @@ static void usage(char *progname)
- 	fprintf(stderr, "\t\tminiloader\n");
- 	fprintf(stderr, "\t--miniloader_entry=<mlentry>\n");
- 	fprintf(stderr, "\t\tSpecify the entry point for the miniloader\n");
-+	fprintf(stderr, "\t--pkc=<key.ber>\n");
-+	fprintf(stderr, "\t\tSpecify the key file for secured devices. The private key should be\n");
-+	fprintf(stderr, "\t\tin DER format\n");
-+
++	OPT_SIGN_MSGS,
++	OPT_SIGNED_MSGS_FILE,
++	OPT_SOC,
+ 	OPT_END,
+ };
+ 
+@@ -134,7 +143,12 @@ static void usage(char *progname)
+ 	fprintf(stderr, "\t--pkc=<key.ber>\n");
+ 	fprintf(stderr, "\t\tSpecify the key file for secured devices. The private key should be\n");
+ 	fprintf(stderr, "\t\tin DER format\n");
+-
++	fprintf(stderr, "\t--gen-signed-msgs\n");
++	fprintf(stderr, "\t\tGenerate signed messages for pkc secured devices\n");
++	fprintf(stderr, "\t--signed-msgs-file=<msg_file_prefix>\n");
++	fprintf(stderr, "\t\tSpecify message files prefix\n");
++	fprintf(stderr, "\t--soc=<tegra soc #>\n");
++	fprintf(stderr, "\t\tSpecify Tegra SoC chip model number, ie, 124.\n");
  	fprintf(stderr, "\n");
  }
  
-@@ -175,6 +187,7 @@ int main(int argc, char **argv)
- 	int do_read = 0;
- 	char *mlfile = NULL;
- 	uint32_t mlentry = 0;
-+	char *pkc_keyfile = NULL;
- #ifdef HAVE_USB_PORT_MATCH
- 	bool match_port = false;
- 	uint8_t match_bus;
-@@ -191,6 +204,7 @@ int main(int argc, char **argv)
- 		[OPT_VERSION]    = {"version", 0, 0, 0},
- 		[OPT_MINILOADER] = {"miniloader", 1, 0, 0},
- 		[OPT_MINIENTRY]  = {"miniloader_entry", 1, 0, 0},
-+		[OPT_PKC]        = {"pkc", 1, 0, 0},
- #ifdef HAVE_USB_PORT_MATCH
- 		[OPT_USBPORTPATH]  = {"usb-port-path", 1, 0, 0},
+@@ -168,6 +182,29 @@ static void parse_usb_port_path(char *argv0, char *path, uint8_t *match_bus,
+ }
  #endif
-@@ -229,6 +243,9 @@ int main(int argc, char **argv)
- 			case OPT_MINIENTRY:
- 				mlentry = strtoul(optarg, NULL, 0);
- 				break;
-+			case OPT_PKC:
-+				pkc_keyfile = optarg;
-+				break;
- #ifdef HAVE_USB_PORT_MATCH
- 			case OPT_USBPORTPATH:
- 				parse_usb_port_path(argv[0], optarg,
-@@ -308,7 +325,7 @@ int main(int argc, char **argv)
- 			error(1, errno, "USB read truncated");
  
- 		// initialize rcm
--		ret2 = initialize_rcm(devid, usb);
-+		ret2 = initialize_rcm(devid, usb, pkc_keyfile);
- 		if (ret2)
- 			error(1, errno, "error initializing RCM protocol");
- 
-@@ -351,10 +368,12 @@ int main(int argc, char **argv)
- 	if (ret)
- 		error(1, errno, "wait status after platform info");
- 	dump_platform_info(&info);
-+	set_platform_info(&info);
- 
- 	if (info.op_mode != RCM_OP_MODE_DEVEL &&
- 	    info.op_mode != RCM_OP_MODE_ODM_OPEN &&
- 	    info.op_mode != RCM_OP_MODE_ODM_SECURE &&
-+	    info.op_mode != RCM_OP_MODE_ODM_SECURE_PKC &&
- 	    info.op_mode != RCM_OP_MODE_PRE_PRODUCTION)
- 		error(1, ENODEV, "device is not in developer, open, secure, "
- 		      "or pre-production mode, cannot flash");
-@@ -366,7 +385,7 @@ int main(int argc, char **argv)
- 	}
- 
- 	// download the bootloader
--	ret = download_bootloader(h3p, blfile, entryaddr, loadaddr);
-+	ret = download_bootloader(h3p, blfile, entryaddr, loadaddr, pkc_keyfile);
- 	if (ret)
- 		error(1, ret, "error downloading bootloader: %s", blfile);
- 
-@@ -376,7 +395,8 @@ int main(int argc, char **argv)
- 	return 0;
- }
- 
--static int initialize_rcm(uint16_t devid, usb_device_t *usb)
-+static int initialize_rcm(uint16_t devid, usb_device_t *usb,
-+			const char *pkc_keyfile)
- {
- 	int ret;
- 	uint8_t *msg_buff;
-@@ -388,13 +408,13 @@ static int initialize_rcm(uint16_t devid, usb_device_t *usb)
- 	if ((devid & 0xff) == USB_DEVID_NVIDIA_TEGRA20 ||
- 	    (devid & 0xff) == USB_DEVID_NVIDIA_TEGRA30) {
- 		dprintf("initializing RCM version 1\n");
--		ret = rcm_init(RCM_VERSION_1);
-+		ret = rcm_init(RCM_VERSION_1, pkc_keyfile);
- 	} else if ((devid & 0xff) == USB_DEVID_NVIDIA_TEGRA114) {
- 		dprintf("initializing RCM version 35\n");
--		ret = rcm_init(RCM_VERSION_35);
-+		ret = rcm_init(RCM_VERSION_35, pkc_keyfile);
- 	} else if ((devid & 0xff) == USB_DEVID_NVIDIA_TEGRA124) {
- 		dprintf("initializing RCM version 40\n");
--		ret = rcm_init(RCM_VERSION_40);
-+		ret = rcm_init(RCM_VERSION_40, pkc_keyfile);
- 	} else {
- 		fprintf(stderr, "unknown tegra device: 0x%x\n", devid);
- 		return errno;
-@@ -720,6 +740,7 @@ static void dump_platform_info(nv3p_platform_info_t *info)
- 	case RCM_OP_MODE_DEVEL:             op_mode = "developer mode"; break;
- 	case RCM_OP_MODE_ODM_OPEN:          op_mode = "odm open mode"; break;
- 	case RCM_OP_MODE_ODM_SECURE:        op_mode = "odm secure mode"; break;
-+	case RCM_OP_MODE_ODM_SECURE_PKC:    op_mode = "odm secure mode with PKC"; break;
- 	default:                            op_mode = "unknown"; break;
- 	}
- 	printf(" (%s)\n", op_mode);
-@@ -813,7 +834,8 @@ out:
- }
- 
- static int download_bootloader(nv3p_handle_t h3p, char *filename,
--			       uint32_t entry, uint32_t loadaddr)
-+			       uint32_t entry, uint32_t loadaddr,
-+			       const char *pkc_keyfile)
- {
- 	int ret;
- 	nv3p_cmd_dl_bl_t arg;
-@@ -849,6 +871,31 @@ static int download_bootloader(nv3p_handle_t h3p, char *filename,
- 		return ret;
- 	}
- 
-+	// For fused board, the bootloader hash must be sent first
-+	if (get_op_mode() == RCM_OP_MODE_ODM_SECURE_PKC) {
-+		/* sign and download */
-+		if (pkc_keyfile)  {
-+			uint8_t rsa_pss_sig[RCM_RSA_SIG_SIZE];
++#define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
++static bool is_soc_supported_for_signed_msgs(uint32_t soc, uint16_t *devid)
++{
++	struct {
++		uint32_t soc;
++		uint16_t usb_devid;
++	} soc_to_devid[] = {
++		{114,	USB_DEVID_NVIDIA_TEGRA114},
++		{124,	USB_DEVID_NVIDIA_TEGRA124},
++	};
 +
-+			ret = rsa_pss_sign_file(pkc_keyfile, filename, rsa_pss_sig);
-+			if (ret) {
-+				dprintf("error signing %s with %s\n",
-+					filename, pkc_keyfile);
-+				return ret;
-+			}
++	uint32_t i;
 +
-+			ret = nv3p_data_send(h3p, rsa_pss_sig, sizeof(rsa_pss_sig));
-+			if (ret) {
-+				dprintf("error sending bootloader signature\n");
-+				return ret;
-+			}
-+		} else {
-+			fprintf(stderr, "Error: missing pkc keyfile to sign"
-+				" bootloader\n");
-+			return -1;
++	for (i = 0; i < ARRAY_SIZE(soc_to_devid); ++i) {
++		if (soc_to_devid[i].soc == soc) {
++			*devid = soc_to_devid[i].usb_devid;
++			return true;
 +		}
 +	}
 +
- 	// send the bootloader file
- 	ret = send_file(h3p, filename);
- 	if (ret) {
-@@ -858,3 +905,17 @@ static int download_bootloader(nv3p_handle_t h3p, char *filename,
++	return false;
++}
++
+ int main(int argc, char **argv)
+ {
+ 	// discover devices
+@@ -194,6 +231,9 @@ int main(int argc, char **argv)
+ 	uint8_t match_ports[PORT_MATCH_MAX_PORTS];
+ 	int match_ports_len;
+ #endif
++	bool sign_msgs = false;
++	char *signed_msgs_file = NULL;
++	uint32_t soc = 0;
+ 
+ 	static struct option long_options[] = {
+ 		[OPT_BCT]        = {"bct", 1, 0, 0},
+@@ -208,9 +248,11 @@ int main(int argc, char **argv)
+ #ifdef HAVE_USB_PORT_MATCH
+ 		[OPT_USBPORTPATH]  = {"usb-port-path", 1, 0, 0},
+ #endif
++		[OPT_SIGN_MSGS] = {"gen-signed-msgs", 0, 0, 0},
++		[OPT_SIGNED_MSGS_FILE] = {"signed-msgs-file", 1, 0, 0},
++		[OPT_SOC]        = {"soc", 1, 0, 0},
+ 		[OPT_END]        = {0, 0, 0, 0}
+ 	};
+-
+ 	// parse command line args
+ 	while (1) {
+ 		c = getopt_long(argc, argv, "h0",
+@@ -254,6 +296,15 @@ int main(int argc, char **argv)
+ 				match_port = true;
+ 				break;
+ #endif
++			case OPT_SIGN_MSGS:
++				sign_msgs = true;
++				break;
++			case OPT_SIGNED_MSGS_FILE:
++				signed_msgs_file = optarg;
++				break;
++			case OPT_SOC:
++				soc = strtoul(optarg, NULL, 0);
++				break;
+ 			case OPT_HELP:
+ 			default:
+ 				usage(argv[0]);
+@@ -279,12 +330,47 @@ int main(int argc, char **argv)
+ 		optind++;
+ 	}
+ 
+-	if (bctfile == NULL) {
++	/* error check */
++	if (sign_msgs == true) {
++		/* must have pkc option */
++		if (pkc_keyfile == NULL) {
++			fprintf(stderr, "PKC key file must be specified\n");
++			goto usage_exit;
++		}
++
++		/* must have signed_msgs_file option */
++		if (signed_msgs_file == NULL) {
++			fprintf(stderr, "signed msgs filename must be"
++				" specified\n");
++			goto usage_exit;
++		}
++
++		/* must have --soc option */
++		if (soc == 0) {
++			fprintf(stderr, "soc model number must be"
++				" specified\n");
++			goto usage_exit;
++		}
++	}
++
++	/*
++	 * option --signed-msgs-file needs to work with option
++	 *  --gen-signed-msgs
++	 */
++	if (signed_msgs_file && (sign_msgs == false)) {
++		fprintf(stderr, "missing option --gen-signed-msgs\n");
++		goto usage_exit;
++	}
++
++	/* specify bct file if no sign_msgs option */
++	if ((bctfile == NULL) && (sign_msgs == false)) {
+ 		fprintf(stderr, "BCT file must be specified\n");
+ 		usage(argv[0]);
+ 		exit(EXIT_FAILURE);
+ 	}
+-	printf("bct file: %s\n", bctfile);
++
++	if (bctfile)
++		printf("bct file: %s\n", bctfile);
+ 
+ 	if (!do_read) {
+ 		if (blfile == NULL) {
+@@ -305,6 +391,33 @@ int main(int argc, char **argv)
+ 		printf("entry addr 0x%x\n", entryaddr);
+ 	}
+ 
++	/* if sign_msgs, generate signed msgs, then exit */
++	if (sign_msgs == true) {
++		/*
++		 * validate SoC value
++		 *  currently only verified soc is T124
++		 */
++		if (!is_soc_supported_for_signed_msgs(soc, &devid)) {
++			fprintf(stderr, "Unrecognized soc: %u\n", soc);
++			goto usage_exit;
++		}
++
++		// init and create signed query version rcm
++		if (initialize_rcm(devid, NULL, pkc_keyfile, signed_msgs_file))
++			error(1, errno, "error initializing RCM protocol");
++
++		// create signed download miniloader rcm
++		if (initialize_miniloader(devid, NULL, mlfile, mlentry,
++					signed_msgs_file))
++			error(1, errno, "error initializing miniloader");
++
++		// create bl signature
++		sign_blob(blfile, pkc_keyfile, signed_msgs_file);
++
++		exit(0);
++	}
++
++	/* start nv3p protocol */
+ 	usb = usb_open(USB_VENID_NVIDIA, &devid
+ #ifdef HAVE_USB_PORT_MATCH
+ 		, &match_port, &match_bus, match_ports, &match_ports_len
+@@ -325,17 +438,20 @@ int main(int argc, char **argv)
+ 			error(1, errno, "USB read truncated");
+ 
+ 		// initialize rcm
+-		ret2 = initialize_rcm(devid, usb, pkc_keyfile);
++		ret2 = initialize_rcm(devid, usb, pkc_keyfile,
++					signed_msgs_file);
+ 		if (ret2)
+ 			error(1, errno, "error initializing RCM protocol");
+ 
+-		// download the miniloader to start nv3p
+-		ret2 = initialize_miniloader(devid, usb, mlfile, mlentry);
++		// download the miniloader to start nv3p or create ml rcm file
++		ret2 = initialize_miniloader(devid, usb, mlfile, mlentry,
++						signed_msgs_file);
+ 		if (ret2)
+ 			error(1, errno, "error initializing miniloader");
+ 
+ 		// device may have re-enumerated, so reopen USB
+ 		usb_close(usb);
++
+ 		usb = usb_open(USB_VENID_NVIDIA, &devid
+ #ifdef HAVE_USB_PORT_MATCH
+ 		, &match_port, &match_bus, match_ports, &match_ports_len
+@@ -391,18 +507,53 @@ int main(int argc, char **argv)
+ 
+ 	nv3p_close(h3p);
+ 	usb_close(usb);
++	return 0;
++
++usage_exit:
++	usage(argv[0]);
++	exit(EXIT_FAILURE);
++}
++
++static int create_name_string(char *out, const char *in, const char *ext)
++{
++	if ((strlen(in) + strlen(ext) + 1) > PATH_MAX) {
++		fprintf(stderr, "error: name length %zu bytes exceed "
++				"limits for file %s\n",
++			strlen(in) + strlen(ext) + 1 - PATH_MAX, in);
++		return -1;
++	}
++	snprintf(out, PATH_MAX, "%s%s", in, ext);
++	return 0;
++}
++
++static int save_to_file(const char *filename, const uint8_t *msg_buff,
++			const uint32_t length)
++{
++	FILE *fp;
++
++	printf("Create file %s...\n", filename);
++
++	fp = fopen(filename, "wb");
++	if (fp == NULL) {
++		fprintf(stderr, "Error opening raw file %s.\n", filename);
++		return -1;
++	}
++
++	fwrite(msg_buff, 1, length, fp);
++	fclose(fp);
  
  	return 0;
  }
-+
-+static void set_platform_info(nv3p_platform_info_t *info)
-+{
-+	g_platform_info = info;
-+}
-+
-+static uint32_t get_op_mode(void)
-+{
-+	if (g_platform_info)
-+		return g_platform_info->op_mode;
-+
-+	fprintf(stderr, "Error: No platform info has been retrieved\n");
-+	return 0;
-+}
-diff --git a/src/rcm.c b/src/rcm.c
-index cb53d8f4f56d..aa8acf753586 100644
---- a/src/rcm.c
-+++ b/src/rcm.c
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (c) 2011, NVIDIA CORPORATION
-+ * Copyright (c) 2011-2016, NVIDIA CORPORATION
-  * All rights reserved.
-  *
-  * Redistribution and use in source and binary forms, with or without
-@@ -32,6 +32,7 @@
- #include <errno.h>
- #include "rcm.h"
- #include "aes-cmac.h"
-+#include "rsa-pss.h"
  
- static int rcm_sign_msg(uint8_t *buf);
- static int rcm1_sign_msg(uint8_t *buf);
-@@ -72,8 +73,9 @@ static uint32_t rcm_get_msg_buf_len(uint32_t payload_len);
- 
- static uint32_t rcm_version = 0;
- static uint32_t message_size = 0;
-+static const char *rcm_keyfile = NULL;
- 
--int rcm_init(uint32_t version)
-+int rcm_init(uint32_t version, const char *keyfile)
+ static int initialize_rcm(uint16_t devid, usb_device_t *usb,
+-			const char *pkc_keyfile)
++			const char *pkc_keyfile, const char *signed_msgs_file)
  {
- 	int ret = -EINVAL;
+-	int ret;
++	int ret = 0;
+ 	uint8_t *msg_buff;
+ 	int msg_len;
+ 	uint32_t status;
+ 	int actual_len;
++	char query_version_rcm_filename[PATH_MAX];
  
-@@ -92,6 +94,9 @@ int rcm_init(uint32_t version)
- 		message_size = sizeof(rcm40_msg_t);
- 		ret = 0;
+ 	// initialize RCM
+ 	if ((devid & 0xff) == USB_DEVID_NVIDIA_TEGRA20 ||
+@@ -427,6 +578,18 @@ static int initialize_rcm(uint16_t devid, usb_device_t *usb,
+ 	// create query version message
+ 	rcm_create_msg(RCM_CMD_QUERY_RCM_VERSION, NULL, 0, NULL, 0, &msg_buff);
+ 
++	/* save query version rcm blob */
++	if (signed_msgs_file) {
++		ret = create_name_string(query_version_rcm_filename,
++					signed_msgs_file, ".qry");
++		if (ret)
++			goto done;
++
++		ret = save_to_file(query_version_rcm_filename, msg_buff,
++					rcm_get_msg_len(msg_buff));
++		goto done;
++	}
++
+ 	// write query version message to device
+ 	msg_len = rcm_get_msg_len(msg_buff);
+ 	if (msg_len == 0) {
+@@ -436,28 +599,31 @@ static int initialize_rcm(uint16_t devid, usb_device_t *usb,
+ 	ret = usb_write(usb, msg_buff, msg_len);
+ 	if (ret) {
+ 		fprintf(stderr, "write RCM query version: USB transfer failure\n");
+-		return ret;
++		goto done;
+ 	}
+-	free(msg_buff);
+-	msg_buff = NULL;
+ 
+ 	// read response
+ 	ret = usb_read(usb, (uint8_t *)&status, sizeof(status), &actual_len);
+ 	if (ret) {
+ 		fprintf(stderr, "read RCM query version: USB transfer failure\n");
+-		return ret;
++		goto done;
+ 	}
+ 	if (actual_len < sizeof(status)) {
+ 		fprintf(stderr, "read RCM query version: USB read truncated\n");
+-		return EIO;
++		ret = EIO;
++		goto done;
+ 	}
+ 	printf("RCM version: %d.%d\n", RCM_VERSION_MAJOR(status),
+ 	       RCM_VERSION_MINOR(status));
+ 
+-	return 0;
++done:
++	if (msg_buff)
++		free(msg_buff);
++	return ret;
+ }
+ 
+-static int initialize_miniloader(uint16_t devid, usb_device_t *usb, char *mlfile, uint32_t mlentry)
++static int initialize_miniloader(uint16_t devid, usb_device_t *usb,
++		 char *mlfile, uint32_t mlentry, const char *signed_msgs_file)
+ {
+ 	int fd;
+ 	struct stat sb;
+@@ -466,7 +632,7 @@ static int initialize_miniloader(uint16_t devid, usb_device_t *usb, char *mlfile
+ 	uint32_t miniloader_size;
+ 	uint32_t miniloader_entry;
+ 
+-	// use prebuilt miniloader if not loading from a file
++	// if using miniloader from an external file
+ 	if (mlfile) {
+ 		fd = open(mlfile, O_RDONLY, 0);
+ 		if (fd < 0) {
+@@ -511,6 +677,12 @@ static int initialize_miniloader(uint16_t devid, usb_device_t *usb, char *mlfile
+ 			return ENODEV;
+ 		}
  	}
 +
-+	rcm_keyfile = keyfile;
++	if (signed_msgs_file) {
++		return create_miniloader_rcm(miniloader, miniloader_size,
++				miniloader_entry, signed_msgs_file);
++	}
 +
+ 	printf("downloading miniloader to target at address 0x%x (%d bytes)...\n",
+ 		miniloader_entry, miniloader_size);
+ 	ret = download_miniloader(usb, miniloader, miniloader_size,
+@@ -636,6 +808,30 @@ fail:
  	return ret;
  }
  
-@@ -198,6 +203,11 @@ static int rcm35_sign_msg(uint8_t *buf)
- 	}
++static int create_miniloader_rcm(uint8_t *miniloader, uint32_t size,
++			uint32_t entry, const char *signed_msgs_file)
++{
++	uint8_t *msg_buff;
++	int ret = 0;
++	char ml_rcm_filename[PATH_MAX];
++
++	// create RCM_CMD_DL_MINILOADER blob
++	rcm_create_msg(RCM_CMD_DL_MINILOADER, (uint8_t *)&entry, sizeof(entry),
++		       miniloader, size, &msg_buff);
++
++	ret = create_name_string(ml_rcm_filename, signed_msgs_file, ".ml");
++	if (ret)
++		goto done;
++
++	// write to binary file
++	dprintf("Write miniloader rcm to %s\n", ml_rcm_filename);
++
++	ret = save_to_file(ml_rcm_filename, msg_buff,
++				rcm_get_msg_len(msg_buff));
++done:
++	free(msg_buff);
++	return ret;
++}
  
- 	cmac_hash(msg->reserved, crypto_len, msg->object_sig.cmac_hash);
-+
-+	if (rcm_keyfile)
-+		rsa_pss_sign(rcm_keyfile, msg->reserved, crypto_len,
-+			msg->object_sig.rsa_pss_sig, msg->modulus);
-+
+ static int download_miniloader(usb_device_t *usb, uint8_t *miniloader,
+ 			       uint32_t size, uint32_t entry)
+@@ -906,6 +1102,31 @@ static int download_bootloader(nv3p_handle_t h3p, char *filename,
  	return 0;
  }
  
-@@ -218,6 +228,10 @@ static int rcm40_sign_msg(uint8_t *buf)
- 	}
- 
- 	cmac_hash(msg->reserved, crypto_len, msg->object_sig.cmac_hash);
-+	if (rcm_keyfile)
-+		rsa_pss_sign(rcm_keyfile, msg->reserved, crypto_len,
-+			msg->object_sig.rsa_pss_sig, msg->modulus);
-+
- 	return 0;
- }
- 
-diff --git a/src/rcm.h b/src/rcm.h
-index ab4bea2d8752..d5fef30fd9e2 100644
---- a/src/rcm.h
-+++ b/src/rcm.h
-@@ -1,5 +1,5 @@
- /*
-- * Copyright (c) 2011, NVIDIA CORPORATION
-+ * Copyright (c) 2011-2016, NVIDIA CORPORATION
-  * All rights reserved.
-  *
-  * Redistribution and use in source and binary forms, with or without
-@@ -50,6 +50,8 @@
- 
- // AES block size in bytes
- #define RCM_AES_BLOCK_SIZE      (128 / 8)
-+#define RCM_RSA_MODULUS_SIZE	(2048 / 8)
-+#define RCM_RSA_SIG_SIZE	RCM_RSA_MODULUS_SIZE
- 
- /*
-  * Defines the header for RCM messages from the host.
-@@ -72,10 +74,10 @@ typedef struct {
- 
- typedef struct {
- 	uint32_t len_insecure;		// 000-003
--	uint8_t modulus[2048 / 8];	// 004-103
-+	uint8_t modulus[RCM_RSA_MODULUS_SIZE];	// 004-103
- 	union {
- 		uint8_t cmac_hash[RCM_AES_BLOCK_SIZE];
--		uint8_t rsa_pss_sig[2048 / 8];
-+		uint8_t rsa_pss_sig[RCM_RSA_SIG_SIZE];
- 	} object_sig;			// 104-203
- 	uint8_t reserved[16];		// 204-213
- 	uint32_t ecid[4];		// 214-223
-@@ -89,10 +91,10 @@ typedef struct {
- 
- typedef struct {
- 	uint32_t len_insecure;		// 000-003
--	uint8_t modulus[2048 / 8];	// 004-103
-+	uint8_t modulus[RCM_RSA_MODULUS_SIZE];	// 004-103
- 	struct {
- 		uint8_t cmac_hash[RCM_AES_BLOCK_SIZE];
--		uint8_t rsa_pss_sig[2048 / 8];
-+		uint8_t rsa_pss_sig[RCM_RSA_SIG_SIZE];
- 	} object_sig;			// 104-213
- 	uint8_t reserved[16];		// 214-223
- 	uint32_t ecid[4];		// 224-233
-@@ -109,8 +111,9 @@ typedef struct {
- #define RCM_OP_MODE_DEVEL           0x3
- #define RCM_OP_MODE_ODM_SECURE      0x4
- #define RCM_OP_MODE_ODM_OPEN        0x5
-+#define RCM_OP_MODE_ODM_SECURE_PKC  0x6
- 
--int rcm_init(uint32_t version);
-+int rcm_init(uint32_t version, const char *keyfile);
- uint32_t rcm_get_msg_len(uint8_t *msg);
- int rcm_create_msg(
- 	uint32_t opcode,
-diff --git a/src/rsa-pss.cpp b/src/rsa-pss.cpp
-new file mode 100644
-index 000000000000..ab0a680af206
---- /dev/null
-+++ b/src/rsa-pss.cpp
-@@ -0,0 +1,163 @@
-+/*
-+ * Copyright (c) 2015-2016, Avionic Design GmbH
-+ * All rights reserved.
-+ *
-+ * Redistribution and use in source and binary forms, with or without
-+ * modification, are permitted provided that the following conditions
-+ * are met:
-+ *  * Redistributions of source code must retain the above copyright
-+ *    notice, this list of conditions and the following disclaimer.
-+ *  * Redistributions in binary form must reproduce the above copyright
-+ *    notice, this list of conditions and the following disclaimer in the
-+ *    documentation and/or other materials provided with the distribution.
-+ *  * Neither the name of Avionic Design GmbH nor the names of its
-+ *    contributors may be used to endorse or promote products derived
-+ *    from this software without specific prior written permission.
-+ *
-+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS'' AND ANY
-+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
-+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
-+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-+ */
-+#include <iostream>
-+using std::cout;
-+using std::cerr;
-+using std::endl;
-+
-+#include <iomanip>
-+using std::hex;
-+
-+#include <string>
-+using std::string;
-+
-+#include <cstdlib>
-+using std::exit;
-+
-+#include "cryptlib.h"
-+using CryptoPP::Exception;
-+
-+#include "integer.h"
-+using CryptoPP::Integer;
-+
-+#include "files.h"
-+using CryptoPP::FileSource;
-+
-+#include "filters.h"
-+using CryptoPP::StringSink;
-+using CryptoPP::SignerFilter;
-+
-+#include "queue.h"
-+using CryptoPP::ByteQueue;
-+
-+#include "rsa.h"
-+using CryptoPP::RSA;
-+using CryptoPP::RSASS;
-+
-+#include "pssr.h"
-+using CryptoPP::PSS;
-+
-+#include "sha.h"
-+using CryptoPP::SHA256;
-+
-+#include "secblock.h"
-+using CryptoPP::SecByteBlock;
-+
-+#include "osrng.h"
-+using CryptoPP::AutoSeededRandomPool;
-+
-+#include "rsa-pss.h"
-+#include <stdexcept>
-+#include "rcm.h"
-+
-+extern "C" int rsa_pss_sign(const char *key_file, const unsigned char *msg,
-+			int len, unsigned char *sig_buf, unsigned char *modulus_buf)
++static int sign_blob(const char *blob_filename, const char *pkc_keyfile,
++			const char *signed_msgs_file)
 +{
-+	try {
-+		AutoSeededRandomPool rng;
-+		FileSource file(key_file, true);
-+		RSA::PrivateKey key;
-+		ByteQueue bq;
++	int ret;
++	uint8_t rsa_pss_sig[RCM_RSA_SIG_SIZE];
 +
-+		// Load the key
-+		file.TransferTo(bq);
-+		bq.MessageEnd();
-+		key.BERDecodePrivateKey(bq, false, bq.MaxRetrievable());
++	char signature_filename[PATH_MAX];
 +
-+		// Write the modulus
-+		Integer mod = key.GetModulus();
-+		// error check
-+		if (mod.ByteCount() != RCM_RSA_MODULUS_SIZE)
-+			throw std::length_error("incorrect rsa key modulus length");
-+		for (int i = 0; i < mod.ByteCount(); i++)
-+			modulus_buf[i] = mod.GetByte(i);
-+
-+		// Sign the message
-+		RSASS<PSS, SHA256>::Signer signer(key);
-+		size_t length = signer.MaxSignatureLength();
-+		SecByteBlock signature(length);
-+
-+		length = signer.SignMessage(rng, msg, len, signature);
-+
-+		// Copy in reverse order
-+		for (int i = 0; i < length; i++)
-+			sig_buf[length - i - 1] = signature[i];
-+	}
-+	catch(const CryptoPP::Exception& e) {
-+		cerr << e.what() << endl;
-+		return 1;
-+	}
-+	catch(std::length_error& le) {
-+		cerr << "Error: " << le.what() << endl;
-+		return 1;
++	ret = rsa_pss_sign_file(pkc_keyfile, blob_filename, rsa_pss_sig);
++	if (ret) {
++		fprintf(stderr, "error signing %s with %s\n",
++			blob_filename, pkc_keyfile);
++		return ret;
 +	}
 +
-+	return 0;
++	/* save signature to signed_msgs_file.bl */
++	ret = create_name_string(signature_filename, signed_msgs_file, ".bl");
++	if (ret)
++		return ret;
++
++	ret = save_to_file(signature_filename, rsa_pss_sig,
++				sizeof(rsa_pss_sig));
++	return ret;
 +}
 +
-+extern "C" int rsa_pss_sign_file(const char *key_file, const char *msg_file,
-+			unsigned char *sig_buf)
-+{
-+	try {
-+		AutoSeededRandomPool rng;
-+		FileSource file(key_file, true);
-+		RSA::PrivateKey key;
-+		ByteQueue bq;
-+
-+		// Load the key
-+		file.TransferTo(bq);
-+		bq.MessageEnd();
-+		key.BERDecodePrivateKey(bq, false, bq.MaxRetrievable());
-+
-+		// Sign the message
-+		RSASS<PSS, SHA256>::Signer signer(key);
-+		string signature;
-+		FileSource src(msg_file, true,
-+			new SignerFilter(rng, signer,
-+					new StringSink(signature)));
-+		int length = signature.length();
-+		// error check
-+		if (length != RCM_RSA_SIG_SIZE)
-+			throw std::length_error("incorrect rsa key length");
-+
-+		// Copy in reverse order
-+		for (int i = 0; i < length; i++)
-+			sig_buf[length - i - 1] = signature[i];
-+	}
-+	catch(const CryptoPP::Exception& e) {
-+		cerr << e.what() << endl;
-+		return 1;
-+	}
-+	catch(std::length_error& le) {
-+		cerr << "Error: " << le.what() << endl;
-+		return 1;
-+	}
-+
-+	return 0;
-+}
-diff --git a/src/rsa-pss.h b/src/rsa-pss.h
-new file mode 100644
-index 000000000000..39e88c0f12a8
---- /dev/null
-+++ b/src/rsa-pss.h
-@@ -0,0 +1,46 @@
-+/*
-+ * Copyright (c) 2015-1016, Avionic Design GmbH
-+ * All rights reserved.
-+ *
-+ * Redistribution and use in source and binary forms, with or without
-+ * modification, are permitted provided that the following conditions
-+ * are met:
-+ *  * Redistributions of source code must retain the above copyright
-+ *    notice, this list of conditions and the following disclaimer.
-+ *  * Redistributions in binary form must reproduce the above copyright
-+ *    notice, this list of conditions and the following disclaimer in the
-+ *    documentation and/or other materials provided with the distribution.
-+ *  * Neither the name of Avionic Design GmbH nor the names of its
-+ *    contributors may be used to endorse or promote products derived
-+ *    from this software without specific prior written permission.
-+ *
-+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS ``AS IS'' AND ANY
-+ * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
-+ * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
-+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
-+ * OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-+ */
-+#ifndef _RSA_PSS_H
-+#define _RSA_PSS_H
-+
-+#ifdef __cplusplus
-+extern "C" {
-+#endif
-+
-+int rsa_pss_sign(const char *key_file, const unsigned char *msg,
-+		int len, unsigned char *sig_buf, unsigned char *modulus_buf);
-+
-+int rsa_pss_sign_file(const char *key_file, const char *msg_file,
-+		unsigned char *sig_buf);
-+
-+#ifdef __cplusplus
-+}
-+#endif
-+
-+#endif // _RSA_PSS_H
+ static void set_platform_info(nv3p_platform_info_t *info)
+ {
+ 	g_platform_info = info;
 -- 
 1.9.1
