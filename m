@@ -1,45 +1,51 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V4 0/3] Add support for Tegra210 ADMA
-Date: Tue, 15 Mar 2016 15:56:27 +0000
-Message-ID: <1458057390-20756-1-git-send-email-jonathanh@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [tegrarcm PATCH V2 1/4] Add support for production devices
+ secured with PKC
+Date: Tue, 15 Mar 2016 10:20:32 -0600
+Message-ID: <56E83650.507@wwwdotorg.org>
+References: <1457744552-30966-1-git-send-email-jimmzhang@nvidia.com>
+ <1457744552-30966-2-git-send-email-jimmzhang@nvidia.com>
+ <56E70576.3050000@wwwdotorg.org>
+ <f0f79d636da2412f8dad980e4114a4c8@HQMAIL103.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <f0f79d636da2412f8dad980e4114a4c8-wO81nVYWzR7YuxH7O460wFaTQe2KTcn/@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Allen Martin <AMartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org" <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add support for the Tegra210 Audio DMA (ADMA) controller which is part
-of the Audio Processing Engine and used for transferring audio data.
+On 03/14/2016 06:51 PM, Jimmy Zhang wrote:
+> Stephen Warren wrote atMonday, March 14, 2016 11:40 AM:
+>> On 03/11/2016 06:02 PM, Jimmy Zhang wrote:
+>>> From: Alban Bedel <alban.bedel-RM9K5IK7kjKj5M59NBduVrNAH6kLmebB@public.gmane.org>
+>>>
+>>> Add the support code needed to sign the RCM messages with RSA-PSS as
+>>> needed to communicate with secured production devices. This mode is
+>>> enabled by passing a key via the --pkc command line argument. If such
+>>> a key is set the RCM messages will be signed with it as well as the
+>>> bootloader.
 
-V4 changes:
-- Updated DT binding to include 'power-domains' entry for handling
-  the APE power domain inconjunction with runtime-pm.
-- Added missing clocks to the DT binding that were being handled by
-  the bootloader.
-- Added support for PM_CLK to simplify clock handling
+>>> diff --git a/src/rsa-pss.cpp b/src/rsa-pss.cpp
+>>
+>>> +extern "C" int rsa_pss_sign_file(const char *key_file, const char
+>> *msg_file,
+>>> +			unsigned char *sig_buf)
+>>
+>>> +		int length = signature.length();
+>>> +		// error check
+>>> +		if (length != RCM_RSA_SIG_SIZE)
+>>> +			throw std::length_error("incorrect rsa key length");
+>>
+>> I think that check is required in rsa_pss_sign() too.
+>
+> I checked key's modulus length there. Once it passes, key's length should be correct.
 
-V3 changes:
-- Updated DT binding per feedback from Mark and Stephen
-- Fixed up items mentioned by Vinod
-
-V2 changes:
-- Re-worked device-tree binding
-
-Jon Hunter (3):
-  Documentation: DT: Add binding documentation for NVIDIA ADMA
-  dmaengine: tegra-adma: Add support for Tegra210 ADMA
-  MAINTAINERS: Update Tegra DMA maintainers
-
- .../devicetree/bindings/dma/tegra210-adma.txt      |  61 ++
- MAINTAINERS                                        |   5 +-
- drivers/dma/Kconfig                                |  14 +
- drivers/dma/Makefile                               |   1 +
- drivers/dma/tegra210-adma.c                        | 869 +++++++++++++++++++++
- 5 files changed, 948 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/dma/tegra210-adma.txt
- create mode 100644 drivers/dma/tegra210-adma.c
-
--- 
-2.1.4
+Aren't the two functions essentially identical, the only difference 
+being that one signs an in-memory buffer and the other signs data read 
+from a file. As such, I don't see why they would be coded any 
+differently, apart from the file IO portion (and indeed, why doesn't 
+rsa_pss_sign_file() simply read file data into memory, then call the 
+other function?
