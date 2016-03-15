@@ -1,56 +1,73 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] clk: tegra210: Add SLCG override gate clocks
-Date: Tue, 15 Mar 2016 08:40:25 +0000
-Message-ID: <56E7CA79.7060106@nvidia.com>
-References: <1457638685-31007-1-git-send-email-rklein@nvidia.com>
- <20160314160551.GA21898@ulmo.nvidia.com> <56E6E20C.6020807@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v4.5
+Date: Tue, 15 Mar 2016 08:45:30 +0000
+Message-ID: <56E7CBAA.3040004@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <56E6E20C.6020807@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Rhyland Klein <rklein@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, Bill Huang <bilhuang@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Here are some basic Tegra test results for Linux v4.5.
+Logs and other details at:
 
-On 14/03/16 16:08, Rhyland Klein wrote:
-> On 3/14/2016 12:05 PM, Thierry Reding wrote:
->> * PGP Signed by an unknown key
->>
->> On Thu, Mar 10, 2016 at 02:38:05PM -0500, Rhyland Klein wrote:
->>> From: Bill Huang <bilhuang@nvidia.com>
->>>
->>> Add some SLCG (Second Level Clock Gating) override clocks to control
->>> gating and un-gating their logics.
->>>
->>> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
->>> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
->>> ---
->>>  drivers/clk/tegra/clk-id.h               | 16 ++++++
->>>  drivers/clk/tegra/clk-tegra210.c         | 91 ++++++++++++++++++++++++++++++++
->>>  include/dt-bindings/clock/tegra210-car.h | 32 +++++------
->>>  3 files changed, 123 insertions(+), 16 deletions(-)
->>
->> There's no rationale given here about why we need this. What will these
->> second level clock gates be used for? Why do we need these (seemingly)
->> duplicate clock entries.
->>
-> 
-> These are going to be used in the to-be posted patchset around
-> powergating. As of now they are unused, which is why I hadn't added them
-> previously. I just wanted to try to get this dependency in before the
-> powergate series was posted.
+    https://nvtb.github.io//linux/test_v4.5/20160314073105/
 
-Yes we are using these on the Pixel C (aka. Smaug) and I suggested to
-Rhyland that we upstream them. Eventually we will use them but only
-after the core GenPD changes for Tegra are merged. From my perspective I
-was thinking it is better to reduce the changes between the chromeos
-3.18 kernel and mainline. However, if you wish to wait until we need
-them I guess we can. Otherwise ...
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Test summary
+------------
 
-Cheers
-Jon
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Build: Image:
+    Pass: ( 1/ 1): defconfig
+
+Boot to userspace: defconfig:
+    Pass: ( 3/ 3): qemu-vexpress64, tegra132-norrin,
+		   tegra210-p2371-0000
+
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: multi_v7_defconfig:
+    FAIL: ( 1/ 4): tegra114-dalmore-a04
+    Pass: ( 3/ 4): tegra124-jetson-tk1, tegra20-trimslice,
+		   tegra30-beaver
+
+PM: System suspend: tegra_defconfig:
+    FAIL: ( 1/ 4): tegra114-dalmore-a04
+    Pass: ( 3/ 4): tegra124-jetson-tk1, tegra20-trimslice,
+		   tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v4.5-rc7 (f6cede5b49e822ebc41a099fe41ab4989f64e2cb)):
+   text     data      bss    total  kernel
+  +4212   +12288        0   +16500  defconfig
+  +1472        0        0    +1472  multi_v7_defconfig
+  -3224        0        0    -3224  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.5-rc7 (f6cede5b49e822ebc41a099fe41ab4989f64e2cb))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+        .        .        .        .      qemu-vexpress64            defconfig           __internal
+        .        .        .      -4k tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+        .        .        .       4k tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+        .        .        .      -4k  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+        .        .        .       4k  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
+        .        .        .      -4k    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+        .        .        .       4k    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
+        .        .        .      -4k       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+        .        .        .       4k       tegra30-beaver      tegra_defconfig       tegra30-beaver
