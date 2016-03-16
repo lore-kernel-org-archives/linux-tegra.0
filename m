@@ -1,161 +1,185 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: [PATCH V8 11/14] thermal: tegra: handle HW initialization in one funcotion
-Date: Wed, 16 Mar 2016 16:58:35 +0800
-Message-ID: <1458118715-30036-1-git-send-email-wni@nvidia.com>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH 2/2] mmc: tegra: implement memcomp pad calibration
+Date: Wed, 16 Mar 2016 12:37:38 +0100
+Message-ID: <CAPDyKFp7P3H-AZWs+kQa4eufs8gSeVaU8MWhy0_L2CsPspRX0A@mail.gmail.com>
+References: <1456779385-18996-1-git-send-email-dev@lynxeye.de>
+	<1456779385-18996-2-git-send-email-dev@lynxeye.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: edubezval@gmail.com, thierry.reding@gmail.com, rui.zhang@intel.com
-Cc: MLongnecker@nvidia.com, swarren@wwwdotorg.org, mikko.perttunen@kapsi.fi, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Wei Ni <wni@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1456779385-18996-2-git-send-email-dev@lynxeye.de>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Lucas Stach <dev@lynxeye.de>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, linux-mmc <linux-mmc@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Handle HW initialization in one function soctherm_init(),
-so that the codes are more clear.
+On 29 February 2016 at 21:56, Lucas Stach <dev@lynxeye.de> wrote:
+> The Tegra30+ SDMMC module has memcomp pads that are used to
+> automatically find and set the correct drive strength settings to
+> the sdmmc pads. The calibration needs to be manually kicked off
+> when the card signal voltage is changed, after the card clock is
+> supplied again.
+>
+> Signed-off-by: Lucas Stach <dev@lynxeye.de>
 
-Signed-off-by: Wei Ni <wni@nvidia.com>
----
- drivers/thermal/tegra/soctherm.c | 85 +++++++++++++++++++++-------------------
- 1 file changed, 44 insertions(+), 41 deletions(-)
+Thanks applied for next, with a minor trivial fixup to resolve the
+conflict when applying.
 
-diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-index f60106884ac4..52793132bd4e 100644
---- a/drivers/thermal/tegra/soctherm.c
-+++ b/drivers/thermal/tegra/soctherm.c
-@@ -95,19 +95,11 @@ struct tegra_soctherm {
- 	struct dentry *debugfs_dir;
- };
- 
--static int enable_tsensor(struct tegra_soctherm *tegra,
--			  unsigned int i,
--			  const struct tsensor_shared_calib *shared)
-+static void enable_tsensor(struct tegra_soctherm *tegra, unsigned int i)
- {
- 	const struct tegra_tsensor *sensor = &tegra->soc->tsensors[i];
- 	void __iomem *base = tegra->regs + sensor->base;
--	u32 *calib = &tegra->calib[i];
- 	unsigned int val;
--	int err;
--
--	err = tegra_calc_tsensor_calib(sensor, shared, calib);
--	if (err)
--		return err;
- 
- 	val = sensor->config->tall << SENSOR_CONFIG0_TALL_SHIFT;
- 	writel(val, base + SENSOR_CONFIG0);
-@@ -118,9 +110,7 @@ static int enable_tsensor(struct tegra_soctherm *tegra,
- 	val |= SENSOR_CONFIG1_TEMP_ENABLE;
- 	writel(val, base + SENSOR_CONFIG1);
- 
--	writel(*calib, base + SENSOR_CONFIG2);
--
--	return 0;
-+	writel(tegra->calib[i], base + SENSOR_CONFIG2);
- }
- 
- /*
-@@ -461,6 +451,34 @@ static int soctherm_clk_enable(struct platform_device *pdev, bool enable)
- 	return 0;
- }
- 
-+static void soctherm_init(struct platform_device *pdev)
-+{
-+	struct tegra_soctherm *tegra = platform_get_drvdata(pdev);
-+	const struct tegra_tsensor_group **ttgs = tegra->soc->ttgs;
-+	int i;
-+	u32 pdiv, hotspot;
-+
-+	/* Initialize raw sensors */
-+	for (i = 0; i < tegra->soc->num_tsensors; ++i)
-+		enable_tsensor(tegra, i);
-+
-+	/* program pdiv and hotspot offsets per THERM */
-+	pdiv = readl(tegra->regs + SENSOR_PDIV);
-+	hotspot = readl(tegra->regs + SENSOR_HOTSPOT_OFF);
-+	for (i = 0; i < tegra->soc->num_ttgs; ++i) {
-+		pdiv = REG_SET_MASK(pdiv, ttgs[i]->pdiv_mask,
-+				    ttgs[i]->pdiv);
-+		/* hotspot offset from PLLX, doesn't need to configure PLLX */
-+		if (ttgs[i]->id == TEGRA124_SOCTHERM_SENSOR_PLLX)
-+			continue;
-+		hotspot =  REG_SET_MASK(hotspot,
-+					ttgs[i]->pllx_hotspot_mask,
-+					ttgs[i]->pllx_hotspot_diff);
-+	}
-+	writel(pdiv, tegra->regs + SENSOR_PDIV);
-+	writel(hotspot, tegra->regs + SENSOR_HOTSPOT_OFF);
-+}
-+
- static const struct of_device_id tegra_soctherm_of_match[] = {
- #ifdef CONFIG_ARCH_TEGRA_124_SOC
- 	{
-@@ -488,7 +506,6 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
- 	struct tegra_soctherm_soc *soc;
- 	unsigned int i;
- 	int err;
--	u32 pdiv, hotspot;
- 
- 	match = of_match_node(tegra_soctherm_of_match, pdev->dev.of_node);
- 	if (!match)
-@@ -529,45 +546,31 @@ static int tegra_soctherm_probe(struct platform_device *pdev)
- 		return PTR_ERR(tegra->clock_soctherm);
- 	}
- 
--	err = soctherm_clk_enable(pdev, true);
--	if (err)
--		return err;
--
--	/* Initialize raw sensors */
--
- 	tegra->calib = devm_kzalloc(&pdev->dev,
- 				    sizeof(u32) * soc->num_tsensors,
- 				    GFP_KERNEL);
--	if (!tegra->calib) {
--		err = -ENOMEM;
--		goto disable_clocks;
--	}
-+	if (!tegra->calib)
-+		return -ENOMEM;
- 
-+	/* calculate shared calibration data */
- 	err = tegra_calc_shared_calib(soc->tfuse, &shared_calib);
- 	if (err)
--		goto disable_clocks;
-+		return err;
- 
-+	/* calculate tsensor calibaration data */
- 	for (i = 0; i < soc->num_tsensors; ++i) {
--		err = enable_tsensor(tegra, i, &shared_calib);
-+		err = tegra_calc_tsensor_calib(&soc->tsensors[i],
-+					       &shared_calib,
-+					       &tegra->calib[i]);
- 		if (err)
--			goto disable_clocks;
-+			return err;
- 	}
- 
--	/* Program pdiv and hotspot offsets per THERM */
--	pdiv = readl(tegra->regs + SENSOR_PDIV);
--	hotspot = readl(tegra->regs + SENSOR_HOTSPOT_OFF);
--	for (i = 0; i < soc->num_ttgs; ++i) {
--		pdiv = REG_SET_MASK(pdiv, soc->ttgs[i]->pdiv_mask,
--				    soc->ttgs[i]->pdiv);
--		/* hotspot offset from PLLX, doesn't need to configure PLLX */
--		if (soc->ttgs[i]->id == TEGRA124_SOCTHERM_SENSOR_PLLX)
--			continue;
--		hotspot =  REG_SET_MASK(hotspot,
--					soc->ttgs[i]->pllx_hotspot_mask,
--					soc->ttgs[i]->pllx_hotspot_diff);
--	}
--	writel(pdiv, tegra->regs + SENSOR_PDIV);
--	writel(hotspot, tegra->regs + SENSOR_HOTSPOT_OFF);
-+	err = soctherm_clk_enable(pdev, true);
-+	if (err)
-+		return err;
-+
-+	soctherm_init(pdev);
- 
- 	for (i = 0; i < soc->num_ttgs; ++i) {
- 		struct tegra_thermctl_zone *zone =
--- 
-1.9.1
+Kind regards
+Uffe
+
+> ---
+> This commit allows signal voltage changes on my Tegar30 Beaver to
+> succeed, making UHS-I modes work.
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 47 +++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 44 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index 46a6bd1..9971732 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -12,6 +12,7 @@
+>   *
+>   */
+>
+> +#include "linux/delay.h"
+>  #include <linux/err.h>
+>  #include <linux/module.h>
+>  #include <linux/init.h>
+> @@ -42,12 +43,17 @@
+>  #define SDHCI_MISC_CTRL_ENABLE_SDHCI_SPEC_300  0x20
+>  #define SDHCI_MISC_CTRL_ENABLE_DDR50           0x200
+>
+> +#define SDHCI_TEGRA_AUTO_CAL_CONFIG            0x1e4
+> +#define SDHCI_AUTO_CAL_START                   BIT(31)
+> +#define SDHCI_AUTO_CAL_ENABLE                  BIT(29)
+> +
+>  #define NVQUIRK_FORCE_SDHCI_SPEC_200   BIT(0)
+>  #define NVQUIRK_ENABLE_BLOCK_GAP_DET   BIT(1)
+>  #define NVQUIRK_ENABLE_SDHCI_SPEC_300  BIT(2)
+>  #define NVQUIRK_ENABLE_SDR50           BIT(3)
+>  #define NVQUIRK_ENABLE_SDR104          BIT(4)
+>  #define NVQUIRK_ENABLE_DDR50           BIT(5)
+> +#define NVQUIRK_HAS_PADCALIB           BIT(6)
+>
+>  struct sdhci_tegra_soc_data {
+>         const struct sdhci_pltfm_data *pdata;
+> @@ -58,6 +64,7 @@ struct sdhci_tegra {
+>         const struct sdhci_tegra_soc_data *soc_data;
+>         struct gpio_desc *power_gpio;
+>         bool ddr_signaling;
+> +       bool pad_calib_required;
+>  };
+>
+>  static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
+> @@ -165,6 +172,9 @@ static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
+>                 clk_ctrl |= SDHCI_CLOCK_CTRL_SDR50_TUNING_OVERRIDE;
+>         sdhci_writel(host, clk_ctrl, SDHCI_TEGRA_VENDOR_CLOCK_CTRL);
+>
+> +       if (soc_data->nvquirks & NVQUIRK_HAS_PADCALIB)
+> +               tegra_host->pad_calib_required = true;
+> +
+>         tegra_host->ddr_signaling = false;
+>  }
+>
+> @@ -187,6 +197,17 @@ static void tegra_sdhci_set_bus_width(struct sdhci_host *host, int bus_width)
+>         sdhci_writeb(host, ctrl, SDHCI_HOST_CONTROL);
+>  }
+>
+> +static void tegra_sdhci_pad_autocalib(struct sdhci_host *host)
+> +{
+> +       u32 val;
+> +
+> +       mdelay(1);
+> +
+> +       val = sdhci_readl(host, SDHCI_TEGRA_AUTO_CAL_CONFIG);
+> +       val |= SDHCI_AUTO_CAL_ENABLE | SDHCI_AUTO_CAL_START;
+> +       sdhci_writel(host,val, SDHCI_TEGRA_AUTO_CAL_CONFIG);
+> +}
+> +
+>  static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
+>  {
+>         struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> @@ -200,7 +221,12 @@ static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
+>         clk_set_rate(pltfm_host->clk, host_clk);
+>         host->max_clk = clk_get_rate(pltfm_host->clk);
+>
+> -       return sdhci_set_clock(host, clock);
+> +       sdhci_set_clock(host, clock);
+> +
+> +       if (tegra_host->pad_calib_required) {
+> +               tegra_sdhci_pad_autocalib(host);
+> +               tegra_host->pad_calib_required = false;
+> +       }
+>  }
+>
+>  static void tegra_sdhci_set_uhs_signaling(struct sdhci_host *host,
+> @@ -270,6 +296,16 @@ static int tegra_sdhci_execute_tuning(struct sdhci_host *host, u32 opcode)
+>         return mmc_send_tuning(host->mmc, opcode, NULL);
+>  }
+>
+> +static void tegra_sdhci_voltage_switch(struct sdhci_host *host)
+> +{
+> +       struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +       struct sdhci_tegra *tegra_host = pltfm_host->priv;
+> +       const struct sdhci_tegra_soc_data *soc_data = tegra_host->soc_data;
+> +
+> +       if (soc_data->nvquirks & NVQUIRK_HAS_PADCALIB)
+> +               tegra_host->pad_calib_required = true;
+> +}
+> +
+>  static const struct sdhci_ops tegra_sdhci_ops = {
+>         .get_ro     = tegra_sdhci_get_ro,
+>         .read_w     = tegra_sdhci_readw,
+> @@ -279,6 +315,7 @@ static const struct sdhci_ops tegra_sdhci_ops = {
+>         .reset      = tegra_sdhci_reset,
+>         .platform_execute_tuning = tegra_sdhci_execute_tuning,
+>         .set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
+> +       .voltage_switch = tegra_sdhci_voltage_switch,
+>         .get_max_clock = tegra_sdhci_get_max_clock,
+>  };
+>
+> @@ -312,7 +349,8 @@ static const struct sdhci_tegra_soc_data soc_data_tegra30 = {
+>         .pdata = &sdhci_tegra30_pdata,
+>         .nvquirks = NVQUIRK_ENABLE_SDHCI_SPEC_300 |
+>                     NVQUIRK_ENABLE_SDR50 |
+> -                   NVQUIRK_ENABLE_SDR104,
+> +                   NVQUIRK_ENABLE_SDR104 |
+> +                   NVQUIRK_HAS_PADCALIB,
+>  };
+>
+>  static const struct sdhci_ops tegra114_sdhci_ops = {
+> @@ -325,6 +363,7 @@ static const struct sdhci_ops tegra114_sdhci_ops = {
+>         .reset      = tegra_sdhci_reset,
+>         .platform_execute_tuning = tegra_sdhci_execute_tuning,
+>         .set_uhs_signaling = tegra_sdhci_set_uhs_signaling,
+> +       .voltage_switch = tegra_sdhci_voltage_switch,
+>         .get_max_clock = tegra_sdhci_get_max_clock,
+>  };
+>
+> @@ -347,7 +386,8 @@ static const struct sdhci_tegra_soc_data soc_data_tegra124 = {
+>         .pdata = &sdhci_tegra114_pdata,
+>         .nvquirks = NVQUIRK_ENABLE_SDR50 |
+>                     NVQUIRK_ENABLE_DDR50 |
+> -                   NVQUIRK_ENABLE_SDR104,
+> +                   NVQUIRK_ENABLE_SDR104 |
+> +                   NVQUIRK_HAS_PADCALIB,
+>  };
+>
+>  static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
+> @@ -402,6 +442,7 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+>                 goto err_alloc_tegra_host;
+>         }
+>         tegra_host->ddr_signaling = false;
+> +       tegra_host->pad_calib_required = false;
+>         tegra_host->soc_data = soc_data;
+>         pltfm_host->priv = tegra_host;
+>
+> --
+> 2.5.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-mmc" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
