@@ -1,127 +1,164 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: Re: [PATCH V7 03/12] thermal: tegra: get rid of PDIV/HOTSPOT hack
-Date: Wed, 16 Mar 2016 11:48:48 +0800
-Message-ID: <56E8D7A0.9070704@nvidia.com>
-References: <1457665763-29781-1-git-send-email-wni@nvidia.com> <1457665763-29781-4-git-send-email-wni@nvidia.com> <20160314200539.GH1872@localhost.localdomain> <56E7AA01.4000305@nvidia.com> <20160315195624.GE26619@localhost.localdomain>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V7 09/12] thermal: tegra: add thermtrip function
+Date: Wed, 16 Mar 2016 13:53:53 +0800
+Message-ID: <56E8F4F1.1060603@nvidia.com>
+References: <1457665872-30046-1-git-send-email-wni@nvidia.com> <20160314191637.GC1872@localhost.localdomain> <56E7D1EC.5090907@nvidia.com> <20160315194929.GB26619@localhost.localdomain>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160315195624.GE26619@localhost.localdomain>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>
-Cc: rui.zhang@intel.com, thierry.reding@gmail.com, MLongnecker@nvidia.com, swarren@wwwdotorg.org, mikko.perttunen@kapsi.fi, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160315194929.GB26619-bi+AKbBUZKY6gyzm1THtWbp2dZbC/Bob@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
 
-On 2016=E5=B9=B403=E6=9C=8816=E6=97=A5 03:56, Eduardo Valentin wrote:
+On 2016=E5=B9=B403=E6=9C=8816=E6=97=A5 03:49, Eduardo Valentin wrote:
 > * PGP Signed by an unknown key
 >=20
-> On Tue, Mar 15, 2016 at 02:21:53PM +0800, Wei Ni wrote:
+> On Tue, Mar 15, 2016 at 05:12:12PM +0800, Wei Ni wrote:
 >>
 >>
->> On 2016=E5=B9=B403=E6=9C=8815=E6=97=A5 04:05, Eduardo Valentin wrote=
+>> On 2016=E5=B9=B403=E6=9C=8815=E6=97=A5 03:16, Eduardo Valentin wrote=
 :
 >>>> Old Signed by an unknown key
 >>>
->>> On Fri, Mar 11, 2016 at 11:09:14AM +0800, Wei Ni wrote:
->>>> Get rid of T124-specific PDIV/HOTSPOT hack.
->>>> tegra-soctherm.c contained a hack to set the SENSOR_PDIV and
->>>> SENSOR_HOTSPOT_OFFSET registers - it just did two writes of
->>>> T124-specific opaque values.  Convert these into a form that can b=
-e
->>>> substituted on a per-chip basis, and into structure fields that ha=
-ve
->>>> at least some independent meaning.
+>>> On Fri, Mar 11, 2016 at 11:11:12AM +0800, Wei Ni wrote:
+>>>> Add support for hardware critical thermal limits to the
+>>>> SOC_THERM driver. It use the Linux thermal framework to
+>>>> create critical trip temp, and set it to SOC_THERM hardware.
+>>>> If these limits are breached, the chip will reset, and if
+>>>> appropriately configured, will turn off the PMIC.
 >>>>
->>>> Signed-off-by: Wei Ni <wni@nvidia.com>
+>>>> This support is critical for safe usage of the chip.
+>>>>
+>>>> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >>>> ---
->>>>  drivers/thermal/tegra/tegra-soctherm.c | 18 ++++++++++++++----
->>>>  1 file changed, 14 insertions(+), 4 deletions(-)
+>>>>  drivers/thermal/tegra/soctherm.c          | 166 +++++++++++++++++=
+++++++++++++-
+>>>>  drivers/thermal/tegra/soctherm.h          |   7 ++
+>>>>  drivers/thermal/tegra/tegra124-soctherm.c |  24 +++++
+>>>>  drivers/thermal/tegra/tegra210-soctherm.c |  24 +++++
+>>>>  4 files changed, 216 insertions(+), 5 deletions(-)
 >>>>
->>>> diff --git a/drivers/thermal/tegra/tegra-soctherm.c b/drivers/ther=
-mal/tegra/tegra-soctherm.c
->>>> index b3ec0faa2bee..b4b791ebfbb6 100644
->>>> --- a/drivers/thermal/tegra/tegra-soctherm.c
->>>> +++ b/drivers/thermal/tegra/tegra-soctherm.c
->>>> @@ -48,14 +48,12 @@
->>>>  #define SENSOR_CONFIG2_THERMB_SHIFT		0
+>>>> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/te=
+gra/soctherm.c
+>>>> index 02ac6d2e5a20..dbaab160baba 100644
+>>>> --- a/drivers/thermal/tegra/soctherm.c
+>>>> +++ b/drivers/thermal/tegra/soctherm.c
+>>>> @@ -73,9 +73,14 @@
+>>>>  #define REG_SET_MASK(r, m, v)	(((r) & ~(m)) | \
+>>>>  				 (((v) & (m >> (ffs(m) - 1))) << (ffs(m) - 1)))
 >>>> =20
->>>>  #define SENSOR_PDIV				0x1c0
->>>> -#define SENSOR_PDIV_T124			0x8888
->>>>  #define SENSOR_PDIV_CPU_MASK			(0xf << 12)
->>>>  #define SENSOR_PDIV_GPU_MASK			(0xf << 8)
->>>>  #define SENSOR_PDIV_MEM_MASK			(0xf << 4)
->>>>  #define SENSOR_PDIV_PLLX_MASK			(0xf << 0)
->>>> =20
->>>>  #define SENSOR_HOTSPOT_OFF			0x1c4
->>>> -#define SENSOR_HOTSPOT_OFF_T124			0x00060600
->>>>  #define SENSOR_HOTSPOT_CPU_MASK			(0xff << 16)
->>>>  #define SENSOR_HOTSPOT_GPU_MASK			(0xff << 8)
->>>>  #define SENSOR_HOTSPOT_MEM_MASK			(0xff << 0)
->>>> @@ -436,6 +434,7 @@ static int tegra_soctherm_probe(struct platfor=
-m_device *pdev)
->>>>  	struct resource *res;
->>>>  	unsigned int i;
->>>>  	int err;
->>>> +	u32 pdiv, hotspot;
->>>> =20
->>>>  	const struct tegra_tsensor *tsensors =3D t124_tsensors;
->>>>  	const struct tegra_tsensor_group **ttgs =3D tegra124_tsensor_gro=
-ups;
->>>> @@ -493,8 +492,19 @@ static int tegra_soctherm_probe(struct platfo=
-rm_device *pdev)
->>>>  			goto disable_clocks;
->>>>  	}
->>>> =20
->>>> -	writel(SENSOR_PDIV_T124, tegra->regs + SENSOR_PDIV);
->>>> -	writel(SENSOR_HOTSPOT_OFF_T124, tegra->regs + SENSOR_HOTSPOT_OFF=
-);
->>>> +	/* Program pdiv and hotspot offsets per THERM */
->>>> +	pdiv =3D readl(tegra->regs + SENSOR_PDIV);
->>>> +	hotspot =3D readl(tegra->regs + SENSOR_HOTSPOT_OFF);
->>>> +	for (i =3D 0; i < TEGRA124_SOCTHERM_SENSOR_NUM; ++i) {
->>>> +		pdiv =3D REG_SET_MASK(pdiv, ttgs[i]->pdiv_mask,
->>>> +				    ttgs[i]->pdiv);
->>>> +		if (ttgs[i]->id !=3D TEGRA124_SOCTHERM_SENSOR_PLLX)
->>>> +			hotspot =3D  REG_SET_MASK(hotspot,
->>>> +						ttgs[i]->pllx_hotspot_mask,
->>>> +						ttgs[i]->pllx_hotspot_diff);
->>>> +	}
->>>> +	writel(pdiv, tegra->regs + SENSOR_PDIV);
->>>> +	writel(hotspot, tegra->regs + SENSOR_HOTSPOT_OFF);
+>>>> +static const int min_low_temp =3D -127000;
+>>>> +static const int max_high_temp =3D 127000;
+>>>> +
+>>>>  struct tegra_thermctl_zone {
+>>>>  	void __iomem *reg;
+>>>> -	u32 mask;
+>>>> +	struct device *dev;
+>>>> +	struct thermal_zone_device *tz;
 >>>
->>> Is the above logic the same for all supported chips? e.g. do we alw=
-ays
->>> skip pllx for hotspot configuration?
+>>>
+>>> Why not using tz->dev for the *dev above?
 >>
->> Yes, this logic support Tegra124, Tegra210, and Tegra132 which I wil=
-l send out
->> in next series.
->=20
->=20
-> Ok. Could you please add a comment then explaining why pllx is not
-> needed for the hotspot configuration?
-
-This is the hotspot offset from PLLX, so we doesn't need to configure f=
-or PLLX,
-the Tegra DRM introduced it.
-I will add comment for it.
-
->=20
+>> The tz is thermal_zone_device, this structure doesn't have *dev.
+>> It only have the member "struct device device;", but this device is =
+created for
+>> the thermal class, not this tegra_soctherm device.
 >>
 >>>
->>>
+>>>> +	const struct tegra_tsensor_group *sg;
+>>>>  };
 >>>> =20
->>>>  	/* Initialize thermctl sensors */
+>>>>  struct tegra_soctherm {
+>>>> @@ -145,22 +150,158 @@ static int tegra_thermctl_get_temp(void *da=
+ta, int *out_temp)
+>>>>  	u32 val;
 >>>> =20
->>>> --=20
->>>> 1.9.1
->>>>
+>>>>  	val =3D readl(zone->reg);
+>>>> -	val =3D REG_GET_MASK(val, zone->mask);
+>>>> +	val =3D REG_GET_MASK(val, zone->sg->sensor_temp_mask);
+>>>>  	*out_temp =3D translate_temp(val);
+>>>> =20
+>>>>  	return 0;
+>>>>  }
+>>>> =20
+>>>> +static int
+>>>> +thermtrip_program(struct device *dev, const struct tegra_tsensor_=
+group *sg,
+>>>> +		  int trip_temp);
+>>>> +
+>>>> +static int tegra_thermctl_set_trip_temp(void *data, int trip, int=
+ temp)
+>>>> +{
+>>>> +	struct tegra_thermctl_zone *zone =3D data;
+>>>> +	struct thermal_zone_device *tz =3D zone->tz;
+>>>> +	const struct tegra_tsensor_group *sg =3D zone->sg;
+>>>> +	struct device *dev =3D zone->dev;
+>>>> +	enum thermal_trip_type type;
+>>>> +	int ret;
+>>>> +
+>>>> +	if (!tz)
+>>>> +		return -EINVAL;
 >>>
->>> * Unknown Key
->>> * 0x7DA4E256
+>>>
+>>> Is the above check needed? If you saw a case in which your function=
+ is
+>>> called without tz, would it be the case we have a but in the probe =
+(or
+>>> even worse, in thermal-core)?
+>>
+>> This tz isn't from thermal-core, it's from the "void *data".
+>> This *data is the private structure "struct tegra_thermctl_zone *zon=
+e =3D data;".
+>> It is registered in devm_thermal_zone_of_sensor_register(*dev, senso=
+r_id, *data,
+>> *ops). And when it register successful, I will set zone->tz =3D z, i=
+n here, the
+>> zone is the private data.
+>> Let's consider a special case, once the thermal_zone_of_sensor_regis=
+ter
+>> successful and didn't run to "zone->tz =3D z" yet, then the thermal_=
+core implement
+>> .set_trip(), then it may cause problems in here, although it's diffi=
+cult to hit
+>> this case. So I think we need to do this check.
+>=20
+>=20
+> Can you be more specific? I don't recall a case that core would call =
+any
+> driver callbacks before setting up the data structures properly.
+
+Sorry for the confusion, I mean this data structure is the private data=
+ pointer,
+it doesn't handled by thermal_core. Let me explain more:
+In this tegra soctherm driver, I run following steps in probe routine:
+step1:
+z =3D devm_thermal_zone_of_sensor_register(*dev, sensor_id, zone, ops);
+register thermal zone device, in here, the parameter "zone" is the priv=
+ate data
+pointer "structure tegra_thermctl_zone".
+step 2:
+After register, it return the "z", and I set it to the private data:
+zone->tz =3D z;
+
+In the .set_trip() callback, it will pass back this private data pointe=
+r.
+So if the callback was called between step1 and step2, at that time the=
+ zone->tz
+didn't be set yet, it will cause problems, although I didn't hit this c=
+ase.
+
+This check doesn't relate with core driver, it is used to check my priv=
+ate data
+pointer.
+
+Wei.
+
+>=20
 >>>
 >=20
 > * Unknown Key
