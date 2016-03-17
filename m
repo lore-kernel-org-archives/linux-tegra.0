@@ -1,50 +1,62 @@
-From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/2] mmc: tegra: properly disable card clock
-Date: Thu, 17 Mar 2016 14:55:47 +0100
-Message-ID: <CAPDyKFoxMbgbttRxGBoG2X1fMpg+fFMT+NHM0eVVmQFWpU8-WQ@mail.gmail.com>
-References: <1456779385-18996-1-git-send-email-dev@lynxeye.de>
-	<56EA952B.5020900@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 01/15] ARM: tegra: Correct interrupt type for ARM TWD
+Date: Thu, 17 Mar 2016 14:19:05 +0000
+Message-ID: <1458224359-32665-2-git-send-email-jonathanh@nvidia.com>
+References: <1458224359-32665-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56EA952B.5020900-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1458224359-32665-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 17 March 2016 at 12:29, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->
-> On 29/02/16 20:56, Lucas Stach wrote:
->> The new code to do the clock rate setting externally to the SDMMC
->> module has a shortcut to not propagate changes with a 0 rate to
->> the CAR by simply bailing out. This breaks proper cutting of the
->> card clock. Fix it by directly calling the correct sdhci function.
->>
->> Fixes: a8e326a911d3 "mmc: tegra: implement module external clock change"
->> Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
->> ---
->>  drivers/mmc/host/sdhci-tegra.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
->> index 212d51f..46a6bd1 100644
->> --- a/drivers/mmc/host/sdhci-tegra.c
->> +++ b/drivers/mmc/host/sdhci-tegra.c
->> @@ -194,7 +194,7 @@ static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
->>       unsigned long host_clk;
->>
->>       if (!clock)
->> -             return;
->> +             return sdhci_set_clock(host, clock);;
->
-> Looks like the above adds an unnecessary additional semi-colon.
->
-> Ulf, are you able to correct, or do you want a patch?
+The ARM TWD interrupt is a private peripheral interrupt (PPI) and per
+the ARM GIC documentation, whether the type for PPIs can be set is
+IMPLEMENTATION DEFINED. For Tegra20/30 devices the PPI type cannot be
+set and so when we attempt to set the type for the ARM TWD interrupt it
+fails. This has done unnoticed because it fails silently and because we
+cannot re-configure the type it has had no impact. Nevertheless fix the
+type for the TWD interrupt so that it matches the hardware configuration.
 
-Thanks for spotting this, I have amended the commit. No patch needed.
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 
-Thanks!
+---
+Ideally, we would not be attempting to set the type for an interrupt
+where it cannot be programmed but this would require changes to the
+device-tree bindings for the GIC. This series adds a WARNING to catch
+any of these silent failures.
+---
+ arch/arm/boot/dts/tegra20.dtsi | 2 +-
+ arch/arm/boot/dts/tegra30.dtsi | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-Kind regards
-Uffe
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 8fb61b93c226..2207c08e3fa3 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -145,7 +145,7 @@
+ 		interrupt-parent = <&intc>;
+ 		reg = <0x50040600 0x20>;
+ 		interrupts = <GIC_PPI 13
+-			(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
++			(GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_EDGE_RISING)>;
+ 		clocks = <&tegra_car TEGRA20_CLK_TWD>;
+ 	};
+ 
+diff --git a/arch/arm/boot/dts/tegra30.dtsi b/arch/arm/boot/dts/tegra30.dtsi
+index c6edc8cea34e..5030065cbdfe 100644
+--- a/arch/arm/boot/dts/tegra30.dtsi
++++ b/arch/arm/boot/dts/tegra30.dtsi
+@@ -230,7 +230,7 @@
+ 		reg = <0x50040600 0x20>;
+ 		interrupt-parent = <&intc>;
+ 		interrupts = <GIC_PPI 13
+-			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
++			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_EDGE_RISING)>;
+ 		clocks = <&tegra_car TEGRA30_CLK_TWD>;
+ 	};
+ 
+-- 
+2.1.4
