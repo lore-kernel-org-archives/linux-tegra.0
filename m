@@ -1,24 +1,45 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v10 7/9] dt-bindings: usb: xhci-tegra: Add Tegra210 XUSB
- controller support
-Date: Wed, 16 Mar 2016 12:08:45 -0600
-Message-ID: <56E9A12D.2030804@wwwdotorg.org>
-References: <1457108379-20794-1-git-send-email-thierry.reding@gmail.com>
- <1457108379-20794-7-git-send-email-thierry.reding@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 1/2] mmc: tegra: properly disable card clock
+Date: Thu, 17 Mar 2016 11:29:47 +0000
+Message-ID: <56EA952B.5020900@nvidia.com>
+References: <1456779385-18996-1-git-send-email-dev@lynxeye.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1457108379-20794-7-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1456779385-18996-1-git-send-email-dev@lynxeye.de>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Lucas Stach <dev@lynxeye.de>, Ulf Hansson <ulf.hansson@linaro.org>, Adrian Hunter <adrian.hunter@intel.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/04/2016 09:19 AM, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> Extend the Tegra XUSB controller device tree binding with Tegra210
-> support.
 
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 29/02/16 20:56, Lucas Stach wrote:
+> The new code to do the clock rate setting externally to the SDMMC
+> module has a shortcut to not propagate changes with a 0 rate to
+> the CAR by simply bailing out. This breaks proper cutting of the
+> card clock. Fix it by directly calling the correct sdhci function.
+> 
+> Fixes: a8e326a911d3 "mmc: tegra: implement module external clock change"
+> Signed-off-by: Lucas Stach <dev@lynxeye.de>
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index 212d51f..46a6bd1 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -194,7 +194,7 @@ static void tegra_sdhci_set_clock(struct sdhci_host *host, unsigned int clock)
+>  	unsigned long host_clk;
+>  
+>  	if (!clock)
+> -		return;
+> +		return sdhci_set_clock(host, clock);;
+
+Looks like the above adds an unnecessary additional semi-colon.
+
+Ulf, are you able to correct, or do you want a patch?
+
+Cheers
+Jon
