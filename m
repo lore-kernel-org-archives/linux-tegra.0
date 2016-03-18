@@ -1,86 +1,138 @@
-From: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH 02/15] ARM: OMAP: Correct interrupt type for ARM TWD
-Date: Fri, 18 Mar 2016 17:41:05 +0200
-Message-ID: <56EC2191.2060800@ti.com>
-References: <1458224359-32665-1-git-send-email-jonathanh@nvidia.com>
- <1458224359-32665-3-git-send-email-jonathanh@nvidia.com>
+From: Joe Perches <joe@perches.com>
+Subject: [PATCH] gpu/drm: Use u64_to_user_pointer
+Date: Fri, 18 Mar 2016 10:20:55 -0700
+Message-ID: <b70b7949e8344abe13d85d6e8e5a8e11bb9c5f02.1458321299.git.joe@perches.com>
+References: <1458315564.9556.56.camel@perches.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1458224359-32665-3-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1458315564.9556.56.camel@perches.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Gustavo Padovan <gustavo@padovan.org>, Russell King <rmk+kernel@arm.linux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, David Airlie <airlied@linux.ie>, Gerd Hoffmann <kraxel@redhat.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, linux-tegra@vger.kernel.org, Daniel Vetter <daniel.vetter@intel.com>, Andrew Morton <akpm@linux-foundation.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 03/17/2016 04:19 PM, Jon Hunter wrote:
-> The ARM TWD interrupt is a private peripheral interrupt (PPI) and per
-> the ARM GIC documentation, whether the type for PPIs can be set is
-> IMPLEMENTATION DEFINED. For OMAP4 devices the PPI type cannot be set and
-> so when we attempt to set the type for the ARM TWD interrupt it fails.
-> This has done unnoticed because it fails silently and because we cannot
-> re-configure the type it has had no impact. Nevertheless fix the type
-> for the TWD interrupt so that it matches the hardware configuration.
-> 
-> Reported-by: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> ---
-> 
-> Tony, Grygorii,
-> Please note that I have not tested this. Can you test this series and
-> see if you see any warnings on OMAP4? I am guessing that the configuration
-> should be LEVEL and not EDGE. This was reported here:
-
-Tested-by: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
-
-Tested on PandaBoard. Without this patch I can see below warning:
-
-
-[    0.000000] OMAP clockevent source: timer1 at 32768 Hz
-[    0.000000] ------------[ cut here ]------------
-[    0.000000] WARNING: CPU: 0 PID: 0 at drivers/irqchip/irq-gic-common.c:61 gic_configure_irq+0x84/0x90()
-[    0.000000] Modules linked in:
-[    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.5.0-05765-gd232fe5 #6
-[    0.000000] Hardware name: Generic OMAP4 (Flattened Device Tree)
-[    0.000000] Backtrace: 
-[    0.000000] [<c010bc80>] (dump_backtrace) from [<c010be78>] (show_stack+0x18/0x1c)
-[    0.000000]  r7:00000000 r6:c0a448a4 r5:200001d3 r4:00000000
-[    0.000000] [<c010be60>] (show_stack) from [<c03f223c>] (dump_stack+0x98/0xb4)
-[    0.000000] [<c03f21a4>] (dump_stack) from [<c0136b38>] (warn_slowpath_common+0x7c/0xb8)
-[    0.000000]  r7:c08664e0 r6:0000003d r5:00000009 r4:00000000
-[    0.000000] [<c0136abc>] (warn_slowpath_common) from [<c0136c18>] (warn_slowpath_null+0x24/0x2c)
-[    0.000000]  r8:00000004 r7:c0a02d98 r6:00000000 r5:ee805cc0 r4:00000000
-[    0.000000] [<c0136bf4>] (warn_slowpath_null) from [<c0420708>] (gic_configure_irq+0x84/0x90)
-[    0.000000] [<c0420684>] (gic_configure_irq) from [<c042024c>] (gic_set_type+0x50/0x60)
-[    0.000000] [<c04201fc>] (gic_set_type) from [<c017f968>] (__irq_set_trigger+0x64/0x158)
-[    0.000000]  r5:ee805cc0 r4:ee828540
-[    0.000000] [<c017f904>] (__irq_set_trigger) from [<c017ff7c>] (__setup_irq+0x520/0x614)
-[    0.000000]  r9:600001d3 r8:ee805d20 r7:00000011 r6:00000011 r5:ee805cc0 r4:ee828540
-[    0.000000] [<c017fa5c>] (__setup_irq) from [<c0180394>] (request_percpu_irq+0x8c/0xf0)
-[    0.000000]  r9:c0110004 r8:c083237c r7:c095da80 r6:00000011 r5:ee805cc0 r4:ee828540
-[    0.000000] [<c0180308>] (request_percpu_irq) from [<c09053e4>] (twd_local_timer_common_register+0x44/0x1bc)
-[    0.000000]  r9:efffc000 r8:c0a7b000 r7:c0a02900 r6:ef6c75c8 r5:ef6c75c8 r4:c0a7b2cc
-[    0.000000] [<c09053a0>] (twd_local_timer_common_register) from [<c09055ac>] (twd_local_timer_of_register+0x50/0x78)
-[    0.000000]  r9:efffc000 r8:c0a7b000 r7:c0a02900 r6:ffffffff r5:ef6c75c8 r4:c0a7b2cc
-[    0.000000] [<c090555c>] (twd_local_timer_of_register) from [<c0930ba4>] (clocksource_probe+0x50/0x90)
-[    0.000000]  r5:00000001 r4:ef6c75c8
-[    0.000000] [<c0930b54>] (clocksource_probe) from [<c090d5b0>] (omap4_local_timer_init+0x14/0x18)
-[    0.000000]  r5:c0a7b000 r4:00000000
-[    0.000000] [<c090d59c>] (omap4_local_timer_init) from [<c090494c>] (time_init+0x24/0x38)
-[    0.000000] [<c0904928>] (time_init) from [<c0900b84>] (start_kernel+0x220/0x3bc)
-[    0.000000] [<c0900964>] (start_kernel) from [<8000807c>] (0x8000807c)
-[    0.000000]  r10:00000000 r9:411fc092 r8:8000406a r7:c0a073e4 r6:c0940a2c r5:c0a029b0
-[    0.000000]  r4:c0a7b214
-[    0.000000] ---[ end trace cb88537fdc8fa200 ]---
-[    0.000000] sched_clock: 32 bits at 100 Hz, resolution 10000000ns, wraps every 21474836475000000ns
-
-
--- 
-regards,
--grygorii
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+VXNlIHRoZSBuZXdseSBhZGRlZCB1NjRfdG9fdXNlcl9wb2ludGVyIGEgYml0IG1vcmUgZnJlcXVl
+bnRseS4KClNpZ25lZC1vZmYtYnk6IEpvZSBQZXJjaGVzIDxqb2VAcGVyY2hlcy5jb20+Ci0tLQog
+ZHJpdmVycy9ncHUvZHJtL2FybWFkYS9hcm1hZGFfZ2VtLmMgICAgfCAgMiArLQogZHJpdmVycy9n
+cHUvZHJtL25vdXZlYXUvbm91dmVhdV9nZW0uYyAgfCAgNyArKysrLS0tCiBkcml2ZXJzL2dwdS9k
+cm0vdGVncmEvZHJtLmMgICAgICAgICAgICB8IDE1ICsrKysrKysrLS0tLS0tLQogZHJpdmVycy9n
+cHUvZHJtL3ZjNC92YzRfYm8uYyAgICAgICAgICAgfCAgNCArKy0tCiBkcml2ZXJzL2dwdS9kcm0v
+dmM0L3ZjNF9nZW0uYyAgICAgICAgICB8IDEwICsrKysrLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS92
+aXJ0aW8vdmlydGdwdV9pb2N0bC5jIHwgIDUgKystLS0KIDYgZmlsZXMgY2hhbmdlZCwgMjIgaW5z
+ZXJ0aW9ucygrKSwgMjEgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJt
+L2FybWFkYS9hcm1hZGFfZ2VtLmMgYi9kcml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9nZW0u
+YwppbmRleCA2ZTczMWRiLi43NjI5ZGQyIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vYXJt
+YWRhL2FybWFkYV9nZW0uYworKysgYi9kcml2ZXJzL2dwdS9kcm0vYXJtYWRhL2FybWFkYV9nZW0u
+YwpAQCAtMzgyLDcgKzM4Miw3IEBAIGludCBhcm1hZGFfZ2VtX3B3cml0ZV9pb2N0bChzdHJ1Y3Qg
+ZHJtX2RldmljZSAqZGV2LCB2b2lkICpkYXRhLAogCWlmIChhcmdzLT5zaXplID09IDApCiAJCXJl
+dHVybiAwOwogCi0JcHRyID0gKGNoYXIgX191c2VyICopKHVpbnRwdHJfdClhcmdzLT5wdHI7CisJ
+cHRyID0gdTY0X3RvX3VzZXJfcHRyKGFyZ3MtPnB0cik7CiAKIAlpZiAoIWFjY2Vzc19vayhWRVJJ
+RllfUkVBRCwgcHRyLCBhcmdzLT5zaXplKSkKIAkJcmV0dXJuIC1FRkFVTFQ7CmRpZmYgLS1naXQg
+YS9kcml2ZXJzL2dwdS9kcm0vbm91dmVhdS9ub3V2ZWF1X2dlbS5jIGIvZHJpdmVycy9ncHUvZHJt
+L25vdXZlYXUvbm91dmVhdV9nZW0uYwppbmRleCBhMDg2NWM0Li4xYTY2MDRjOSAxMDA2NDQKLS0t
+IGEvZHJpdmVycy9ncHUvZHJtL25vdXZlYXUvbm91dmVhdV9nZW0uYworKysgYi9kcml2ZXJzL2dw
+dS9kcm0vbm91dmVhdS9ub3V2ZWF1X2dlbS5jCkBAIC00NjcsMTEgKzQ2NywxMiBAQCB2YWxpZGF0
+ZV9saXN0KHN0cnVjdCBub3V2ZWF1X2NoYW5uZWwgKmNoYW4sIHN0cnVjdCBub3V2ZWF1X2NsaSAq
+Y2xpLAogCSAgICAgIHVpbnQ2NF90IHVzZXJfcGJib19wdHIpCiB7CiAJc3RydWN0IG5vdXZlYXVf
+ZHJtICpkcm0gPSBjaGFuLT5kcm07Ci0Jc3RydWN0IGRybV9ub3V2ZWF1X2dlbV9wdXNoYnVmX2Jv
+IF9fdXNlciAqdXBiYm8gPQotCQkJCSh2b2lkIF9fZm9yY2UgX191c2VyICopKHVpbnRwdHJfdCl1
+c2VyX3BiYm9fcHRyOworCXN0cnVjdCBkcm1fbm91dmVhdV9nZW1fcHVzaGJ1Zl9ibyBfX3VzZXIg
+KnVwYmJvOwogCXN0cnVjdCBub3V2ZWF1X2JvICpudmJvOwogCWludCByZXQsIHJlbG9jcyA9IDA7
+CiAKKwl1cGJibyA9IHU2NF90b191c2VyX3B0cih1c2VyX3BiYm9fcHRyKTsKKwogCWxpc3RfZm9y
+X2VhY2hfZW50cnkobnZibywgbGlzdCwgZW50cnkpIHsKIAkJc3RydWN0IGRybV9ub3V2ZWF1X2dl
+bV9wdXNoYnVmX2JvICpiID0gJnBiYm9bbnZiby0+cGJib19pbmRleF07CiAKQEAgLTU2NSw3ICs1
+NjYsNyBAQCBzdGF0aWMgaW5saW5lIHZvaWQgKgogdV9tZW1jcHlhKHVpbnQ2NF90IHVzZXIsIHVu
+c2lnbmVkIG5tZW1iLCB1bnNpZ25lZCBzaXplKQogewogCXZvaWQgKm1lbTsKLQl2b2lkIF9fdXNl
+ciAqdXNlcnB0ciA9ICh2b2lkIF9fZm9yY2UgX191c2VyICopKHVpbnRwdHJfdCl1c2VyOworCXZv
+aWQgX191c2VyICp1c2VycHRyID0gdTY0X3RvX3VzZXJfcHRyKHVzZXIpOwogCiAJc2l6ZSAqPSBu
+bWVtYjsKIApkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jIGIvZHJpdmVy
+cy9ncHUvZHJtL3RlZ3JhL2RybS5jCmluZGV4IDhlNmIxOGMuLmIyMGM4N2QgMTAwNjQ0Ci0tLSBh
+L2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYworKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEv
+ZHJtLmMKQEAgLTMyOSwxMiArMzI5LDkgQEAgaW50IHRlZ3JhX2RybV9zdWJtaXQoc3RydWN0IHRl
+Z3JhX2RybV9jb250ZXh0ICpjb250ZXh0LAogCXVuc2lnbmVkIGludCBudW1fY21kYnVmcyA9IGFy
+Z3MtPm51bV9jbWRidWZzOwogCXVuc2lnbmVkIGludCBudW1fcmVsb2NzID0gYXJncy0+bnVtX3Jl
+bG9jczsKIAl1bnNpZ25lZCBpbnQgbnVtX3dhaXRjaGtzID0gYXJncy0+bnVtX3dhaXRjaGtzOwot
+CXN0cnVjdCBkcm1fdGVncmFfY21kYnVmIF9fdXNlciAqY21kYnVmcyA9Ci0JCSh2b2lkIF9fdXNl
+ciAqKSh1aW50cHRyX3QpYXJncy0+Y21kYnVmczsKLQlzdHJ1Y3QgZHJtX3RlZ3JhX3JlbG9jIF9f
+dXNlciAqcmVsb2NzID0KLQkJKHZvaWQgX191c2VyICopKHVpbnRwdHJfdClhcmdzLT5yZWxvY3M7
+Ci0Jc3RydWN0IGRybV90ZWdyYV93YWl0Y2hrIF9fdXNlciAqd2FpdGNoa3MgPQotCQkodm9pZCBf
+X3VzZXIgKikodWludHB0cl90KWFyZ3MtPndhaXRjaGtzOworCXN0cnVjdCBkcm1fdGVncmFfY21k
+YnVmIF9fdXNlciAqY21kYnVmczsKKwlzdHJ1Y3QgZHJtX3RlZ3JhX3JlbG9jIF9fdXNlciAqcmVs
+b2NzOworCXN0cnVjdCBkcm1fdGVncmFfd2FpdGNoayBfX3VzZXIgKndhaXRjaGtzOwogCXN0cnVj
+dCBkcm1fdGVncmFfc3luY3B0IHN5bmNwdDsKIAlzdHJ1Y3QgaG9zdDF4X2pvYiAqam9iOwogCWlu
+dCBlcnI7CkBAIC0zNTQsNiArMzUxLDEwIEBAIGludCB0ZWdyYV9kcm1fc3VibWl0KHN0cnVjdCB0
+ZWdyYV9kcm1fY29udGV4dCAqY29udGV4dCwKIAlqb2ItPmNsYXNzID0gY29udGV4dC0+Y2xpZW50
+LT5iYXNlLmNsYXNzOwogCWpvYi0+c2VyaWFsaXplID0gdHJ1ZTsKIAorCWNtZGJ1ZnMgPSB1NjRf
+dG9fdXNlcl9wdHIoYXJncy0+Y21kYnVmcyk7CisJcmVsb2NzID0gdTY0X3RvX3VzZXJfcHRyKGFy
+Z3MtPnJlbG9jcyk7CisJd2FpdGNoa3MgPSB1NjRfdG9fdXNlcl9wdHIoYXJncy0+d2FpdGNoa3Mp
+OworCiAJd2hpbGUgKG51bV9jbWRidWZzKSB7CiAJCXN0cnVjdCBkcm1fdGVncmFfY21kYnVmIGNt
+ZGJ1ZjsKIAkJc3RydWN0IGhvc3QxeF9ibyAqYm87CkBAIC0zODksNyArMzkwLDcgQEAgaW50IHRl
+Z3JhX2RybV9zdWJtaXQoc3RydWN0IHRlZ3JhX2RybV9jb250ZXh0ICpjb250ZXh0LAogCQlnb3Rv
+IGZhaWw7CiAJfQogCi0JaWYgKGNvcHlfZnJvbV91c2VyKCZzeW5jcHQsICh2b2lkIF9fdXNlciAq
+KSh1aW50cHRyX3QpYXJncy0+c3luY3B0cywKKwlpZiAoY29weV9mcm9tX3VzZXIoJnN5bmNwdCwg
+dTY0X3RvX3VzZXJfcHRyKGFyZ3MtPnN5bmNwdHMpLAogCQkJICAgc2l6ZW9mKHN5bmNwdCkpKSB7
+CiAJCWVyciA9IC1FRkFVTFQ7CiAJCWdvdG8gZmFpbDsKZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1
+L2RybS92YzQvdmM0X2JvLmMgYi9kcml2ZXJzL2dwdS9kcm0vdmM0L3ZjNF9iby5jCmluZGV4IDk4
+MDdiYzkuLmZlM2E0YWEgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS92YzQvdmM0X2JvLmMK
+KysrIGIvZHJpdmVycy9ncHUvZHJtL3ZjNC92YzRfYm8uYwpAQCAtNDk5LDggKzQ5OSw4IEBAIHZj
+NF9jcmVhdGVfc2hhZGVyX2JvX2lvY3RsKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsIHZvaWQgKmRh
+dGEsCiAJCXJldHVybiBQVFJfRVJSKGJvKTsKIAogCWlmIChjb3B5X2Zyb21fdXNlcihiby0+YmFz
+ZS52YWRkciwKLQkJCSAgICAgKHZvaWQgX191c2VyICopKHVpbnRwdHJfdClhcmdzLT5kYXRhLAot
+CQkJICAgICBhcmdzLT5zaXplKSkgeworCQkJICAgdTY0X3RvX3VzZXJfcHRyKGFyZ3MtPmRhdGEp
+LAorCQkJICAgYXJncy0+c2l6ZSkpIHsKIAkJcmV0ID0gLUVGQVVMVDsKIAkJZ290byBmYWlsOwog
+CX0KZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS92YzQvdmM0X2dlbS5jIGIvZHJpdmVycy9n
+cHUvZHJtL3ZjNC92YzRfZ2VtLmMKaW5kZXggOGQ0Mzg0Zi4uODlkNzkzMSAxMDA2NDQKLS0tIGEv
+ZHJpdmVycy9ncHUvZHJtL3ZjNC92YzRfZ2VtLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3ZjNC92
+YzRfZ2VtLmMKQEAgLTEyMCw3ICsxMjAsNyBAQCB2YzRfZ2V0X2hhbmdfc3RhdGVfaW9jdGwoc3Ry
+dWN0IGRybV9kZXZpY2UgKmRldiwgdm9pZCAqZGF0YSwKIAkJYm9fc3RhdGVbaV0uc2l6ZSA9IHZj
+NF9iby0+YmFzZS5iYXNlLnNpemU7CiAJfQogCi0JaWYgKGNvcHlfdG9fdXNlcigodm9pZCBfX3Vz
+ZXIgKikodWludHB0cl90KWdldF9zdGF0ZS0+Ym8sCisJaWYgKGNvcHlfdG9fdXNlcih1NjRfdG9f
+dXNlcl9wdHIoZ2V0X3N0YXRlLT5ibyksCiAJCQkgYm9fc3RhdGUsCiAJCQkgc3RhdGUtPmJvX2Nv
+dW50ICogc2l6ZW9mKCpib19zdGF0ZSkpKQogCQlyZXQgPSAtRUZBVUxUOwpAQCAtNTUwLDcgKzU1
+MCw3IEBAIHZjNF9jbF9sb29rdXBfYm9zKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCiAJfQogCiAJ
+cmV0ID0gY29weV9mcm9tX3VzZXIoaGFuZGxlcywKLQkJCSAgICAgKHZvaWQgX191c2VyICopKHVp
+bnRwdHJfdClhcmdzLT5ib19oYW5kbGVzLAorCQkJICAgICB1NjRfdG9fdXNlcl9wdHIoYXJncy0+
+Ym9faGFuZGxlcyksCiAJCQkgICAgIGV4ZWMtPmJvX2NvdW50ICogc2l6ZW9mKHVpbnQzMl90KSk7
+CiAJaWYgKHJldCkgewogCQlEUk1fRVJST1IoIkZhaWxlZCB0byBjb3B5IGluIEdFTSBoYW5kbGVz
+XG4iKTsKQEAgLTYyNCwyMSArNjI0LDIxIEBAIHZjNF9nZXRfYmNsKHN0cnVjdCBkcm1fZGV2aWNl
+ICpkZXYsIHN0cnVjdCB2YzRfZXhlY19pbmZvICpleGVjKQogCWV4ZWMtPnNoYWRlcl9zdGF0ZV9z
+aXplID0gYXJncy0+c2hhZGVyX3JlY19jb3VudDsKIAogCWlmIChjb3B5X2Zyb21fdXNlcihiaW4s
+Ci0JCQkgICAodm9pZCBfX3VzZXIgKikodWludHB0cl90KWFyZ3MtPmJpbl9jbCwKKwkJCSAgIHU2
+NF90b191c2VyX3B0cihhcmdzLT5iaW5fY2wpLAogCQkJICAgYXJncy0+YmluX2NsX3NpemUpKSB7
+CiAJCXJldCA9IC1FRkFVTFQ7CiAJCWdvdG8gZmFpbDsKIAl9CiAKIAlpZiAoY29weV9mcm9tX3Vz
+ZXIoZXhlYy0+c2hhZGVyX3JlY191LAotCQkJICAgKHZvaWQgX191c2VyICopKHVpbnRwdHJfdClh
+cmdzLT5zaGFkZXJfcmVjLAorCQkJICAgdTY0X3RvX3VzZXJfcHRyKGFyZ3MtPnNoYWRlcl9yZWMp
+LAogCQkJICAgYXJncy0+c2hhZGVyX3JlY19zaXplKSkgewogCQlyZXQgPSAtRUZBVUxUOwogCQln
+b3RvIGZhaWw7CiAJfQogCiAJaWYgKGNvcHlfZnJvbV91c2VyKGV4ZWMtPnVuaWZvcm1zX3UsCi0J
+CQkgICAodm9pZCBfX3VzZXIgKikodWludHB0cl90KWFyZ3MtPnVuaWZvcm1zLAorCQkJICAgdTY0
+X3RvX3VzZXJfcHRyKGFyZ3MtPnVuaWZvcm1zKSwKIAkJCSAgIGFyZ3MtPnVuaWZvcm1zX3NpemUp
+KSB7CiAJCXJldCA9IC1FRkFVTFQ7CiAJCWdvdG8gZmFpbDsKZGlmZiAtLWdpdCBhL2RyaXZlcnMv
+Z3B1L2RybS92aXJ0aW8vdmlydGdwdV9pb2N0bC5jIGIvZHJpdmVycy9ncHUvZHJtL3ZpcnRpby92
+aXJ0Z3B1X2lvY3RsLmMKaW5kZXggYjRkZTE4ZS4uZTYwMmJiNiAxMDA2NDQKLS0tIGEvZHJpdmVy
+cy9ncHUvZHJtL3ZpcnRpby92aXJ0Z3B1X2lvY3RsLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3Zp
+cnRpby92aXJ0Z3B1X2lvY3RsLmMKQEAgLTEyMyw3ICsxMjMsNyBAQCBzdGF0aWMgaW50IHZpcnRp
+b19ncHVfZXhlY2J1ZmZlcihzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LAogCQkJcmV0dXJuIC1FTk9N
+RU07CiAJCX0KIAotCQl1c2VyX2JvX2hhbmRsZXMgPSAodm9pZCBfX3VzZXIgKikodWludHB0cl90
+KWV4YnVmLT5ib19oYW5kbGVzOworCQl1c2VyX2JvX2hhbmRsZXMgPSB1NjRfdG9fdXNlcl9wdHIo
+ZXhidWYtPmJvX2hhbmRsZXMpOwogCQlpZiAoY29weV9mcm9tX3VzZXIoYm9faGFuZGxlcywgdXNl
+cl9ib19oYW5kbGVzLAogCQkJCSAgIGV4YnVmLT5udW1fYm9faGFuZGxlcyAqIHNpemVvZih1aW50
+MzJfdCkpKSB7CiAJCQlyZXQgPSAtRUZBVUxUOwpAQCAtMTU4LDggKzE1OCw3IEBAIHN0YXRpYyBp
+bnQgdmlydGlvX2dwdV9leGVjYnVmZmVyKHN0cnVjdCBkcm1fZGV2aWNlICpkZXYsCiAJCXJldCA9
+IC1FTk9NRU07CiAJCWdvdG8gb3V0X3VucmVzdjsKIAl9Ci0JaWYgKGNvcHlfZnJvbV91c2VyKGJ1
+ZiwgKHZvaWQgX191c2VyICopKHVpbnRwdHJfdClleGJ1Zi0+Y29tbWFuZCwKLQkJCSAgIGV4YnVm
+LT5zaXplKSkgeworCWlmIChjb3B5X2Zyb21fdXNlcihidWYsIHU2NF90b191c2VyX3B0cihleGJ1
+Zi0+Y29tbWFuZCksIGV4YnVmLT5zaXplKSkgewogCQlrZnJlZShidWYpOwogCQlyZXQgPSAtRUZB
+VUxUOwogCQlnb3RvIG91dF91bnJlc3Y7Ci0tIAoyLjYuMy4zNjguZ2YzNGJlNDYKCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
+IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
+ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
