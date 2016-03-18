@@ -1,74 +1,71 @@
-From: Dan Carpenter <dan.carpenter@oracle.com>
-Subject: [patch] drm/tegra: fixup error handling in tegra_dc_init()
-Date: Fri, 18 Mar 2016 12:02:19 +0300
-Message-ID: <20160318090219.GB19233@mwanda>
+From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
+Subject: Re: [PATCH 14/15] dt-bindings: arm-gic: Drop 'clock-names' from
+ binding document
+Date: Fri, 18 Mar 2016 10:13:36 +0100
+Message-ID: <CAMuHMdV0QiWR0bML44zhAx+MStmQhQWKd=b_TMKnEdu_hw_ReA@mail.gmail.com>
+References: <1458224359-32665-1-git-send-email-jonathanh@nvidia.com>
+	<1458224359-32665-15-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1458224359-32665-15-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-MSkgIFRoZXJlIHdhcyBhIGNoYW5jZSB0aGF0ICJjdXJzb3IiIG9yICJwcmltYXJ5IiB3ZXJlIGVy
-cm9yIHBvaW50ZXJzCiAgICBsZWFkaW5nIHRvIGFuIG9vcHMuCjIpICBUaGUgZXJyb3IgaGFuZGxp
-bmcgd2Fzbid0IHZlcnkgY29tcGxldGUuCgpXaGVuIEkgc3RhcnRlZCB3b3JraW5nIG9uIHRoaXMs
-IHRoZSBvbmUgZXJyIGxhYmVsIHN0eWxlIGVycm9yIGhhbmRsaW5nCmJlY2FtZSB1bndpZWxkeSBz
-byBJIGp1c3QgcmUtd3JvdGUgaXQgd2l0aCBtdWx0aXBsZSBleGl0IGxhYmVscy4KClNpZ25lZC1v
-ZmYtYnk6IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4KLS0tCkNvbXBp
-bGUgdGVzdGVkIG9ubHkuCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RjLmMg
-Yi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZGMuYwppbmRleCBmYjJiNGIwLi44MTM0ZTMwIDEwMDY0
-NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZGMuYworKysgYi9kcml2ZXJzL2dwdS9kcm0v
-dGVncmEvZGMuYwpAQCAtMTY4Myw4ICsxNjgzLDggQEAgc3RhdGljIGludCB0ZWdyYV9kY19pbml0
-KHN0cnVjdCBob3N0MXhfY2xpZW50ICpjbGllbnQpCiAJdW5zaWduZWQgbG9uZyBmbGFncyA9IEhP
-U1QxWF9TWU5DUFRfQ0xJRU5UX01BTkFHRUQ7CiAJc3RydWN0IHRlZ3JhX2RjICpkYyA9IGhvc3Qx
-eF9jbGllbnRfdG9fZGMoY2xpZW50KTsKIAlzdHJ1Y3QgdGVncmFfZHJtICp0ZWdyYSA9IGRybS0+
-ZGV2X3ByaXZhdGU7Ci0Jc3RydWN0IGRybV9wbGFuZSAqcHJpbWFyeSA9IE5VTEw7Ci0Jc3RydWN0
-IGRybV9wbGFuZSAqY3Vyc29yID0gTlVMTDsKKwlzdHJ1Y3QgZHJtX3BsYW5lICpwcmltYXJ5Owor
-CXN0cnVjdCBkcm1fcGxhbmUgKmN1cnNvcjsKIAl1MzIgdmFsdWU7CiAJaW50IGVycjsKIApAQCAt
-MTcwNiwyMSArMTcwNiwyMiBAQCBzdGF0aWMgaW50IHRlZ3JhX2RjX2luaXQoc3RydWN0IGhvc3Qx
-eF9jbGllbnQgKmNsaWVudCkKIAlwcmltYXJ5ID0gdGVncmFfZGNfcHJpbWFyeV9wbGFuZV9jcmVh
-dGUoZHJtLCBkYyk7CiAJaWYgKElTX0VSUihwcmltYXJ5KSkgewogCQllcnIgPSBQVFJfRVJSKHBy
-aW1hcnkpOwotCQlnb3RvIGNsZWFudXA7CisJCWdvdG8gZGV0YWNoX2lvbW11OwogCX0KIAorCWN1
-cnNvciA9IE5VTEw7CiAJaWYgKGRjLT5zb2MtPnN1cHBvcnRzX2N1cnNvcikgewogCQljdXJzb3Ig
-PSB0ZWdyYV9kY19jdXJzb3JfcGxhbmVfY3JlYXRlKGRybSwgZGMpOwogCQlpZiAoSVNfRVJSKGN1
-cnNvcikpIHsKIAkJCWVyciA9IFBUUl9FUlIoY3Vyc29yKTsKLQkJCWdvdG8gY2xlYW51cDsKKwkJ
-CWdvdG8gY2xlYW51cF9wcmltYXJ5OwogCQl9CiAJfQogCiAJZXJyID0gZHJtX2NydGNfaW5pdF93
-aXRoX3BsYW5lcyhkcm0sICZkYy0+YmFzZSwgcHJpbWFyeSwgY3Vyc29yLAogCQkJCQkmdGVncmFf
-Y3J0Y19mdW5jcywgTlVMTCk7CiAJaWYgKGVyciA8IDApCi0JCWdvdG8gY2xlYW51cDsKKwkJZ290
-byBjbGVhbnVwX2N1cnNvcjsKIAogCWRybV9tb2RlX2NydGNfc2V0X2dhbW1hX3NpemUoJmRjLT5i
-YXNlLCAyNTYpOwogCWRybV9jcnRjX2hlbHBlcl9hZGQoJmRjLT5iYXNlLCAmdGVncmFfY3J0Y19o
-ZWxwZXJfZnVuY3MpOwpAQCAtMTczNSwxMiArMTczNiwxMiBAQCBzdGF0aWMgaW50IHRlZ3JhX2Rj
-X2luaXQoc3RydWN0IGhvc3QxeF9jbGllbnQgKmNsaWVudCkKIAllcnIgPSB0ZWdyYV9kY19yZ2Jf
-aW5pdChkcm0sIGRjKTsKIAlpZiAoZXJyIDwgMCAmJiBlcnIgIT0gLUVOT0RFVikgewogCQlkZXZf
-ZXJyKGRjLT5kZXYsICJmYWlsZWQgdG8gaW5pdGlhbGl6ZSBSR0Igb3V0cHV0OiAlZFxuIiwgZXJy
-KTsKLQkJZ290byBjbGVhbnVwOworCQlnb3RvIGNsZWFudXBfY3Vyc29yOwogCX0KIAogCWVyciA9
-IHRlZ3JhX2RjX2FkZF9wbGFuZXMoZHJtLCBkYyk7CiAJaWYgKGVyciA8IDApCi0JCWdvdG8gY2xl
-YW51cDsKKwkJZ290byByZ2JfZXhpdDsKIAogCWlmIChJU19FTkFCTEVEKENPTkZJR19ERUJVR19G
-UykpIHsKIAkJZXJyID0gdGVncmFfZGNfZGVidWdmc19pbml0KGRjLCBkcm0tPnByaW1hcnkpOwpA
-QCAtMTc1Myw3ICsxNzU0LDcgQEAgc3RhdGljIGludCB0ZWdyYV9kY19pbml0KHN0cnVjdCBob3N0
-MXhfY2xpZW50ICpjbGllbnQpCiAJaWYgKGVyciA8IDApIHsKIAkJZGV2X2VycihkYy0+ZGV2LCAi
-ZmFpbGVkIHRvIHJlcXVlc3QgSVJRIyV1OiAlZFxuIiwgZGMtPmlycSwKIAkJCWVycik7Ci0JCWdv
-dG8gY2xlYW51cDsKKwkJZ290byByZW1vdmVfZGVidWdmczsKIAl9CiAKIAkvKiBpbml0aWFsaXpl
-IGRpc3BsYXkgY29udHJvbGxlciAqLwpAQCAtMTc5OSwxMyArMTgwMCwxOCBAQCBzdGF0aWMgaW50
-IHRlZ3JhX2RjX2luaXQoc3RydWN0IGhvc3QxeF9jbGllbnQgKmNsaWVudCkKIAogCXJldHVybiAw
-OwogCi1jbGVhbnVwOgotCWlmIChjdXJzb3IpCityZW1vdmVfZGVidWdmczoKKwl0ZWdyYV9kY19k
-ZWJ1Z2ZzX2V4aXQoZGMpOworcmdiX2V4aXQ6CisJdGVncmFfZGNfcmdiX2V4aXQoZGMpOworY2xl
-YW51cF9jdXJzb3I6CisJaWYgKGRjLT5zb2MtPnN1cHBvcnRzX2N1cnNvcikKIAkJZHJtX3BsYW5l
-X2NsZWFudXAoY3Vyc29yKTsKIAotCWlmIChwcmltYXJ5KQotCQlkcm1fcGxhbmVfY2xlYW51cChw
-cmltYXJ5KTsKK2NsZWFudXBfcHJpbWFyeToKKwlkcm1fcGxhbmVfY2xlYW51cChwcmltYXJ5KTsK
-IAorZGV0YWNoX2lvbW11OgogCWlmICh0ZWdyYS0+ZG9tYWluKSB7CiAJCWlvbW11X2RldGFjaF9k
-ZXZpY2UodGVncmEtPmRvbWFpbiwgZGMtPmRldik7CiAJCWRjLT5kb21haW4gPSBOVUxMOwpfX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
-bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
-cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+Hi Jon,
+
+On Thu, Mar 17, 2016 at 3:19 PM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> Commit afbbd2338176 ("irqchip/gic: Document optional Clock and Power
+> Domain properties") documented optional clock and power-dmoain properties
+> for the ARM GIC. Currently, there are no users of these and for the
+> Tegra210 Audio GIC (based upon the GIC-400) there are two clocks, a
+> functional clock and interface clock, that need to be enabled.
+
+The reason that there are no users for this is twofold:
+  1. The GIC driver doesn't have Runtime PM support yet,
+  2. There was no clean way to prevent the GIC's clock from being disabled.
+Due to this, adding the clocks to the DTSes would mean that they will be
+disabled during boot up as unused clocks, leading to a system lock-up.
+
+I had hoped your series would fix part 1. I gave it a try on r8a7791/koelsch,
+but unfortunately it seems the platform driver only supports non-root
+controllers, while the r8a7791 GIC is the primary one...
+
+Alternatively, part 2 can to be fixed by "clk: introduce CLK_ENABLE_HAND_OFF
+flag", combined with the clock driver setting the flag when needed.
+Unfortunately that patch is not yet upstream, and not even in -next.
+Note that drivers/clk/renesas/renesas-cpg-mssr.c already handles
+CLK_ENABLE_HAND_OFF if present, and else just ignores the clock.
+So I could already add the clock to r8a7795.dtsi, which uses that driver.
+
+For older SoCs, the module clocks are described in the dtsi, and I would need a
+crude hack to enable CLK_ENABLE_HAND_OFF in the clock driver.
+
+> To allow flexibility, drop the 'clock-names' from the GIC binding and
+> just provide a list of clocks which the driver can parse. It is assumed
+> that any clocks that are listed, need to be enabled in order to access
+> the GIC.
+
+Originally I just wanted to have "clocks", and let the details be handled by
+SoC-specific code. However, Mark Rutland insisted on using the clock naming
+from the GIC TRMs, as the number of clocks and their names depend on the
+GIC variant.
+
+Apparently they also depend on the SoC...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
