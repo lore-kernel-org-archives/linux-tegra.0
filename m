@@ -1,71 +1,57 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 06/15] irqdomain: Ensure type settings match for an
- existing mapping
-Date: Fri, 18 Mar 2016 10:33:26 +0000
-Message-ID: <56EBD976.7090107@nvidia.com>
+From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
+Subject: Re: [PATCH 14/15] dt-bindings: arm-gic: Drop 'clock-names' from
+ binding document
+Date: Fri, 18 Mar 2016 11:52:17 +0100
+Message-ID: <CAMuHMdWXqS9cru74Ckr47gFVTf2MkmjZUtMt4MeXW_1V7x+KHw@mail.gmail.com>
 References: <1458224359-32665-1-git-send-email-jonathanh@nvidia.com>
- <1458224359-32665-7-git-send-email-jonathanh@nvidia.com>
- <56EAF4E1.5020201@nvidia.com> <56EBD272.1040404@ti.com>
+	<1458224359-32665-15-git-send-email-jonathanh@nvidia.com>
+	<CAMuHMdV0QiWR0bML44zhAx+MStmQhQWKd=b_TMKnEdu_hw_ReA@mail.gmail.com>
+	<56EBD4E5.1060002@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56EBD272.1040404-l0cyMroinI0@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <56EBD4E5.1060002-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Jon,
 
-On 18/03/16 10:03, Grygorii Strashko wrote:
-> On 03/17/2016 08:18 PM, Jon Hunter wrote:
+On Fri, Mar 18, 2016 at 11:13 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> On 18/03/16 09:13, Geert Uytterhoeven wrote:
+>> On Thu, Mar 17, 2016 at 3:19 PM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>> Commit afbbd2338176 ("irqchip/gic: Document optional Clock and Power
+>>> Domain properties") documented optional clock and power-dmoain properties
+>>> for the ARM GIC. Currently, there are no users of these and for the
+>>> Tegra210 Audio GIC (based upon the GIC-400) there are two clocks, a
+>>> functional clock and interface clock, that need to be enabled.
 >>
->> On 17/03/16 14:19, Jon Hunter wrote:
->>> When mapping an IRQ, if a mapping already exists, then we simply return
->>> the virtual IRQ number. However, we do not check that the type settings
->>> for the existing mapping match those for the mapping that is about to be
->>> created. It may be unlikely that the type settings would not match, but
->>> check for this and don't return a valid IRQ mapping if the type settings
->>> do not match.
->>>
->>> WARN if the type return by irq_domain_translate() has bits outside the
->>> sense mask set and then clear these bits. If these bits are not cleared
->>> then this will cause the comparision of the type settings for an
->>> existing mapping to fail with that of the new mapping even if the sense
->>> bit themselves match. The reason being is that the existing type
->>> settings are read by calling irq_get_trigger_type() which will clear
->>> any bits outside the sense mask. This will allow us to detect irqchips
->>> that are not correctly clearing these bits and fix them.
->>>
->>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>> ---
->>>   kernel/irq/irqdomain.c | 59
->>> ++++++++++++++++++++++++++++++++++++--------------
->>>   1 file changed, 43 insertions(+), 16 deletions(-)
->>>
->>> diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
->>> index 3a519a01118b..0ea285baa619 100644
->>> --- a/kernel/irq/irqdomain.c
->>> +++ b/kernel/irq/irqdomain.c
->>> @@ -549,6 +549,13 @@ static int irq_domain_translate(struct
->>> irq_domain *d,
->>>                        fwspec->param, fwspec->param_count,
->>>                        hwirq, type);
->>>
-> 
-> 
->>> +    /*
->>> +     * WARN if the irqchip returns a type with bits
->>> +     * outside the sense mask set and clear these bits.
->>> +     */
->>> +    if (WARN_ON(*type & ~IRQ_TYPE_SENSE_MASK))
->>> +        *type &= IRQ_TYPE_SENSE_MASK;
-> 
-> Not sure that this warn and in this place make sense.
-> type will come unchanged here from caller irq_create_fwspec_mapping()
+>> The reason that there are no users for this is twofold:
+>>   1. The GIC driver doesn't have Runtime PM support yet,
+>>   2. There was no clean way to prevent the GIC's clock from being disabled.
+>> Due to this, adding the clocks to the DTSes would mean that they will be
+>> disabled during boot up as unused clocks, leading to a system lock-up.
+>>
+>> I had hoped your series would fix part 1. I gave it a try on r8a7791/koelsch,
+>> but unfortunately it seems the platform driver only supports non-root
+>> controllers, while the r8a7791 GIC is the primary one...
+>
+> Can you try making the following change ...
 
-Yes you are right. I missed the return statement. I can move to
-irq_create_fwspec_mapping().
+Thanks! I gave it a try, but no difference.
 
-Cheers
-Jon
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
