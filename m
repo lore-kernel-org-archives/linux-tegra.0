@@ -1,57 +1,74 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 14/15] dt-bindings: arm-gic: Drop 'clock-names' from
- binding document
-Date: Fri, 18 Mar 2016 08:37:12 +0000
-Message-ID: <56EBBE38.6070303@nvidia.com>
-References: <1458224359-32665-1-git-send-email-jonathanh@nvidia.com>
- <1458224359-32665-15-git-send-email-jonathanh@nvidia.com>
- <CAL_JsqLwvhbCnQzkRd1cyz+O6HU8a3X3MYoX=ChhuDyvdTWQYA@mail.gmail.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [patch] drm/tegra: fixup error handling in tegra_dc_init()
+Date: Fri, 18 Mar 2016 12:02:19 +0300
+Message-ID: <20160318090219.GB19233@mwanda>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAL_JsqLwvhbCnQzkRd1cyz+O6HU8a3X3MYoX=ChhuDyvdTWQYA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linux-omap <linux-omap@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Terje =?iso-8859-1?Q?Bergstr=F6m?= <tbergstrom@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 17/03/16 20:14, Rob Herring wrote:
-> On Thu, Mar 17, 2016 at 9:19 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
->> Commit afbbd2338176 ("irqchip/gic: Document optional Clock and Power
->> Domain properties") documented optional clock and power-dmoain properties
->> for the ARM GIC. Currently, there are no users of these and for the
->> Tegra210 Audio GIC (based upon the GIC-400) there are two clocks, a
->> functional clock and interface clock, that need to be enabled.
->>
->> To allow flexibility, drop the 'clock-names' from the GIC binding and
->> just provide a list of clocks which the driver can parse. It is assumed
->> that any clocks that are listed, need to be enabled in order to access
->> the GIC.
->>
->> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->>
->> ---
->>
->> Please note that I am not sure if this will be popular, but I am trying
->> to come up with a generic way to handle multiple clocks that may be
->> required for accessing a GIC.
-> 
-> It's not. :)
-> 
-> We need to specify the number and order of clocks by compatible string
-> at a minimum. Sadly, ARM's GICs are well documented and include clock
-> names, so you can't just make up genericish names either which is
-> probably often the case.
-
-Do you have any suggestions then?
-
-I have had a look at the ARM TRMs and although I see that they do show
-the functional clock, there is no mention of whether there are any other
-clocks need in order to interface to the GIC (ie. bus clock). I know
-that for other SoCs such as OMAP it is common to have both a functional
-clock and interface clock. So I believe this is fairly common.
-
-Cheers
-Jon
+MSkgIFRoZXJlIHdhcyBhIGNoYW5jZSB0aGF0ICJjdXJzb3IiIG9yICJwcmltYXJ5IiB3ZXJlIGVy
+cm9yIHBvaW50ZXJzCiAgICBsZWFkaW5nIHRvIGFuIG9vcHMuCjIpICBUaGUgZXJyb3IgaGFuZGxp
+bmcgd2Fzbid0IHZlcnkgY29tcGxldGUuCgpXaGVuIEkgc3RhcnRlZCB3b3JraW5nIG9uIHRoaXMs
+IHRoZSBvbmUgZXJyIGxhYmVsIHN0eWxlIGVycm9yIGhhbmRsaW5nCmJlY2FtZSB1bndpZWxkeSBz
+byBJIGp1c3QgcmUtd3JvdGUgaXQgd2l0aCBtdWx0aXBsZSBleGl0IGxhYmVscy4KClNpZ25lZC1v
+ZmYtYnk6IERhbiBDYXJwZW50ZXIgPGRhbi5jYXJwZW50ZXJAb3JhY2xlLmNvbT4KLS0tCkNvbXBp
+bGUgdGVzdGVkIG9ubHkuCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RjLmMg
+Yi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZGMuYwppbmRleCBmYjJiNGIwLi44MTM0ZTMwIDEwMDY0
+NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZGMuYworKysgYi9kcml2ZXJzL2dwdS9kcm0v
+dGVncmEvZGMuYwpAQCAtMTY4Myw4ICsxNjgzLDggQEAgc3RhdGljIGludCB0ZWdyYV9kY19pbml0
+KHN0cnVjdCBob3N0MXhfY2xpZW50ICpjbGllbnQpCiAJdW5zaWduZWQgbG9uZyBmbGFncyA9IEhP
+U1QxWF9TWU5DUFRfQ0xJRU5UX01BTkFHRUQ7CiAJc3RydWN0IHRlZ3JhX2RjICpkYyA9IGhvc3Qx
+eF9jbGllbnRfdG9fZGMoY2xpZW50KTsKIAlzdHJ1Y3QgdGVncmFfZHJtICp0ZWdyYSA9IGRybS0+
+ZGV2X3ByaXZhdGU7Ci0Jc3RydWN0IGRybV9wbGFuZSAqcHJpbWFyeSA9IE5VTEw7Ci0Jc3RydWN0
+IGRybV9wbGFuZSAqY3Vyc29yID0gTlVMTDsKKwlzdHJ1Y3QgZHJtX3BsYW5lICpwcmltYXJ5Owor
+CXN0cnVjdCBkcm1fcGxhbmUgKmN1cnNvcjsKIAl1MzIgdmFsdWU7CiAJaW50IGVycjsKIApAQCAt
+MTcwNiwyMSArMTcwNiwyMiBAQCBzdGF0aWMgaW50IHRlZ3JhX2RjX2luaXQoc3RydWN0IGhvc3Qx
+eF9jbGllbnQgKmNsaWVudCkKIAlwcmltYXJ5ID0gdGVncmFfZGNfcHJpbWFyeV9wbGFuZV9jcmVh
+dGUoZHJtLCBkYyk7CiAJaWYgKElTX0VSUihwcmltYXJ5KSkgewogCQllcnIgPSBQVFJfRVJSKHBy
+aW1hcnkpOwotCQlnb3RvIGNsZWFudXA7CisJCWdvdG8gZGV0YWNoX2lvbW11OwogCX0KIAorCWN1
+cnNvciA9IE5VTEw7CiAJaWYgKGRjLT5zb2MtPnN1cHBvcnRzX2N1cnNvcikgewogCQljdXJzb3Ig
+PSB0ZWdyYV9kY19jdXJzb3JfcGxhbmVfY3JlYXRlKGRybSwgZGMpOwogCQlpZiAoSVNfRVJSKGN1
+cnNvcikpIHsKIAkJCWVyciA9IFBUUl9FUlIoY3Vyc29yKTsKLQkJCWdvdG8gY2xlYW51cDsKKwkJ
+CWdvdG8gY2xlYW51cF9wcmltYXJ5OwogCQl9CiAJfQogCiAJZXJyID0gZHJtX2NydGNfaW5pdF93
+aXRoX3BsYW5lcyhkcm0sICZkYy0+YmFzZSwgcHJpbWFyeSwgY3Vyc29yLAogCQkJCQkmdGVncmFf
+Y3J0Y19mdW5jcywgTlVMTCk7CiAJaWYgKGVyciA8IDApCi0JCWdvdG8gY2xlYW51cDsKKwkJZ290
+byBjbGVhbnVwX2N1cnNvcjsKIAogCWRybV9tb2RlX2NydGNfc2V0X2dhbW1hX3NpemUoJmRjLT5i
+YXNlLCAyNTYpOwogCWRybV9jcnRjX2hlbHBlcl9hZGQoJmRjLT5iYXNlLCAmdGVncmFfY3J0Y19o
+ZWxwZXJfZnVuY3MpOwpAQCAtMTczNSwxMiArMTczNiwxMiBAQCBzdGF0aWMgaW50IHRlZ3JhX2Rj
+X2luaXQoc3RydWN0IGhvc3QxeF9jbGllbnQgKmNsaWVudCkKIAllcnIgPSB0ZWdyYV9kY19yZ2Jf
+aW5pdChkcm0sIGRjKTsKIAlpZiAoZXJyIDwgMCAmJiBlcnIgIT0gLUVOT0RFVikgewogCQlkZXZf
+ZXJyKGRjLT5kZXYsICJmYWlsZWQgdG8gaW5pdGlhbGl6ZSBSR0Igb3V0cHV0OiAlZFxuIiwgZXJy
+KTsKLQkJZ290byBjbGVhbnVwOworCQlnb3RvIGNsZWFudXBfY3Vyc29yOwogCX0KIAogCWVyciA9
+IHRlZ3JhX2RjX2FkZF9wbGFuZXMoZHJtLCBkYyk7CiAJaWYgKGVyciA8IDApCi0JCWdvdG8gY2xl
+YW51cDsKKwkJZ290byByZ2JfZXhpdDsKIAogCWlmIChJU19FTkFCTEVEKENPTkZJR19ERUJVR19G
+UykpIHsKIAkJZXJyID0gdGVncmFfZGNfZGVidWdmc19pbml0KGRjLCBkcm0tPnByaW1hcnkpOwpA
+QCAtMTc1Myw3ICsxNzU0LDcgQEAgc3RhdGljIGludCB0ZWdyYV9kY19pbml0KHN0cnVjdCBob3N0
+MXhfY2xpZW50ICpjbGllbnQpCiAJaWYgKGVyciA8IDApIHsKIAkJZGV2X2VycihkYy0+ZGV2LCAi
+ZmFpbGVkIHRvIHJlcXVlc3QgSVJRIyV1OiAlZFxuIiwgZGMtPmlycSwKIAkJCWVycik7Ci0JCWdv
+dG8gY2xlYW51cDsKKwkJZ290byByZW1vdmVfZGVidWdmczsKIAl9CiAKIAkvKiBpbml0aWFsaXpl
+IGRpc3BsYXkgY29udHJvbGxlciAqLwpAQCAtMTc5OSwxMyArMTgwMCwxOCBAQCBzdGF0aWMgaW50
+IHRlZ3JhX2RjX2luaXQoc3RydWN0IGhvc3QxeF9jbGllbnQgKmNsaWVudCkKIAogCXJldHVybiAw
+OwogCi1jbGVhbnVwOgotCWlmIChjdXJzb3IpCityZW1vdmVfZGVidWdmczoKKwl0ZWdyYV9kY19k
+ZWJ1Z2ZzX2V4aXQoZGMpOworcmdiX2V4aXQ6CisJdGVncmFfZGNfcmdiX2V4aXQoZGMpOworY2xl
+YW51cF9jdXJzb3I6CisJaWYgKGRjLT5zb2MtPnN1cHBvcnRzX2N1cnNvcikKIAkJZHJtX3BsYW5l
+X2NsZWFudXAoY3Vyc29yKTsKIAotCWlmIChwcmltYXJ5KQotCQlkcm1fcGxhbmVfY2xlYW51cChw
+cmltYXJ5KTsKK2NsZWFudXBfcHJpbWFyeToKKwlkcm1fcGxhbmVfY2xlYW51cChwcmltYXJ5KTsK
+IAorZGV0YWNoX2lvbW11OgogCWlmICh0ZWdyYS0+ZG9tYWluKSB7CiAJCWlvbW11X2RldGFjaF9k
+ZXZpY2UodGVncmEtPmRvbWFpbiwgZGMtPmRldik7CiAJCWRjLT5kb21haW4gPSBOVUxMOwpfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFp
+bGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5m
+cmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
