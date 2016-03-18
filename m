@@ -1,43 +1,40 @@
-From: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 14/15] dt-bindings: arm-gic: Drop 'clock-names' from
- binding document
-Date: Thu, 17 Mar 2016 15:14:30 -0500
-Message-ID: <CAL_JsqLwvhbCnQzkRd1cyz+O6HU8a3X3MYoX=ChhuDyvdTWQYA@mail.gmail.com>
-References: <1458224359-32665-1-git-send-email-jonathanh@nvidia.com> <1458224359-32665-15-git-send-email-jonathanh@nvidia.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH V4] PM / clk: Add support for obtaining clocks from device-tree
+Date: Fri, 18 Mar 2016 01:46:17 +0100
+Message-ID: <1724113.VnPWaRLGz3@vostro.rjw.lan>
+References: <1458041620-27066-1-git-send-email-jonathanh@nvidia.com> <CAMuHMdV_PVnZ11BJ3FHe9Gc5nH-yk1u-NuHntOnRiQ4npVkd8g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1458224359-32665-15-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-omap <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdV_PVnZ11BJ3FHe9Gc5nH-yk1u-NuHntOnRiQ4npVkd8g@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>, Jon Hunter <jonathanh@nvidia.com>
+Cc: Linux PM list <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Mar 17, 2016 at 9:19 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> Commit afbbd2338176 ("irqchip/gic: Document optional Clock and Power
-> Domain properties") documented optional clock and power-dmoain properties
-> for the ARM GIC. Currently, there are no users of these and for the
-> Tegra210 Audio GIC (based upon the GIC-400) there are two clocks, a
-> functional clock and interface clock, that need to be enabled.
->
-> To allow flexibility, drop the 'clock-names' from the GIC binding and
-> just provide a list of clocks which the driver can parse. It is assumed
-> that any clocks that are listed, need to be enabled in order to access
-> the GIC.
->
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> ---
->
-> Please note that I am not sure if this will be popular, but I am trying
-> to come up with a generic way to handle multiple clocks that may be
-> required for accessing a GIC.
+On Tuesday, March 15, 2016 01:15:16 PM Geert Uytterhoeven wrote:
+> On Tue, Mar 15, 2016 at 12:33 PM, Jon Hunter <jonathanh@nvidia.com> wrote:
+> > The PM clocks framework requires clients to pass either a con-id or a
+> > valid clk pointer in order to add a clock to a device. Add a new
+> > function of_pm_clk_add_clks() to allows device clocks to be retrieved
+> > from device-tree and populated for a given device. Note that it is
+> > not necessary to make the compilation of this new function dependent
+> > upon CONFIG_OF because there are stubs functions for the device-tree
+> > APIs used.
+> >
+> > In order to handle errors encountered when adding clocks from
+> > device-tree, add a function pm_clk_remove_clk() to remove any clocks
+> > (using a pointer to the clk structure) that have been added
+> > successfully before the error occurred.
+> >
+> > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> 
+> Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> 
 
-It's not. :)
+Applied.
 
-We need to specify the number and order of clocks by compatible string
-at a minimum. Sadly, ARM's GICs are well documented and include clock
-names, so you can't just make up genericish names either which is
-probably often the case.
+Thanks,
+Rafael
 
-Rob
