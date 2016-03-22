@@ -1,38 +1,73 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 10/15] irqchip/gic: Remove static irq_chip definition for eoimode1
-Date: Tue, 22 Mar 2016 12:49:16 +0100
-Message-ID: <CACRpkdaFuQ9eSXTj_LK0Vf9ufw_d2XA9zUF_Lj1gPjkGkqkGuQ@mail.gmail.com>
-References: <1458224359-32665-1-git-send-email-jonathanh@nvidia.com>
-	<1458224359-32665-11-git-send-email-jonathanh@nvidia.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 3/5] dt-bindings: Add documentation for GM20B GPU
+Date: Tue, 22 Mar 2016 07:44:37 -0500
+Message-ID: <CAL_JsqKRm8cERK0JdvEym1e1SUgnis_MWW_t7Bfn5v6+qDfaew@mail.gmail.com>
+References: <1458010724-10945-1-git-send-email-acourbot@nvidia.com>
+ <1458010724-10945-4-git-send-email-acourbot@nvidia.com> <20160318204748.GA20243@rob-hp-laptop>
+ <CAAVeFuKQvjb20aEh9_MBnrzEUjKoVc8yQu3a4Ego6Qaqe70M6A@mail.gmail.com>
+ <CAL_Jsq+SEOC1s_j8u3hMyDj5i9ROyAAN_-qmbsLrNvR3v2cXwA@mail.gmail.com> <56F0C375.1030907@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1458224359-32665-11-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <56F0C375.1030907-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux-OMAP <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Mar 17, 2016 at 3:19 PM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-
-> There are only 3 differences (not including the name) in the definitions
-> of the gic_chip and gic_eoimode1_chip structures. Instead of statically
-> defining the gic_eoimode1_chip structure, remove it and populate the
-> eoimode1 functions dynamically for the appropriate GIC irqchips.
+On Mon, Mar 21, 2016 at 11:00 PM, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> On 03/22/2016 10:41 AM, Rob Herring wrote:
+>>
+>> On Sun, Mar 20, 2016 at 1:55 AM, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> wrote:
+>>>
+>>> On Sat, Mar 19, 2016 at 5:47 AM, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+>>>>
+>>>> On Tue, Mar 15, 2016 at 11:58:42AM +0900, Alexandre Courbot wrote:
+>>>>>
+>>>>> GM20B's definition is mostly similar to GK20A's, but requires an
+>>>>> additional clock.
+>>
+>>
+>> [...]
+>>
+>>>>>        gpu@0,57000000 {
+>>>>>                compatible = "nvidia,gk20a";
+>>>>> @@ -45,3 +49,22 @@ Example:
+>>>>>                iommus = <&mc TEGRA_SWGROUP_GPU>;
+>>>>>                status = "disabled";
+>>>>>        };
+>>>>> +
+>>>>> +Example for GM20B:
+>>>>> +
+>>>>> +     gpu@0,57000000 {
+>>>>
+>>>>
+>>>> Drop the comma and leading zero.
+>>>
+>>>
+>>> Even though this is how it appears in the actual DT?
+>>
+>>
+>> Yes, those will need to get fixed, too.
 >
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> Sorry, I just want to confirm that I understand why this needs to be fixed.
+> The parent node has #address-cells = <2>, and the practice of specifying two
+> cells in the node name is consistent with what I see in
+> http://www.devicetree.org/Device_Tree_Usage.
+>
+> However in the device tree usage example one can interpret the two cells as
+> being two different components of the address, whereas in our case we are
+> using two cells because the address is 64-bit - hence we should specify it
+> in the name as a single entity. Is this correct?
 
->         if (static_key_true(&supports_deactivate) && gic_nr == 0) {
-> -               gic->chip = gic_eoimode1_chip;
-> +               gic->chip.irq_mask = gic_eoimode1_mask_irq;
-> +               gic->chip.irq_eoi = gic_eoimode1_eoi_irq;
-> +               gic->chip.irq_set_vcpu_affinity = gic_irq_set_vcpu_affinity;
-> +               gic->chip.name = kasprintf(GFP_KERNEL, "GICv2");
+Exactly, commas are for separating distinct fields like chip select
+and offset in the wiki example. A 64-bit address is a single field.
 
-I think you can just = "GICv2" there. No need to kasprintf()
+The other reason to fix it is dtc is going to start warning for this.
 
-Yours,
-Linus Walleij
+Rob
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
