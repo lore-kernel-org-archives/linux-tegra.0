@@ -1,122 +1,67 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V8 00/14] Add T210 support in Tegra soctherm
-Date: Fri, 25 Mar 2016 13:37:17 +0800
-Message-ID: <56F4CE8D.5020108@nvidia.com>
-References: <1458118571-29717-1-git-send-email-wni@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+Subject: Re: [PATCH] clk: tegra210: Add SLCG override gate clocks
+Date: Fri, 25 Mar 2016 14:21:51 -0400
+Message-ID: <56F581BF.2070903@nvidia.com>
+References: <1457638685-31007-1-git-send-email-rklein@nvidia.com>
+ <20160314160551.GA21898@ulmo.nvidia.com> <56E6E20C.6020807@nvidia.com>
+ <56E7CA79.7060106@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1458118571-29717-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
-Cc: MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <56E7CA79.7060106@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, Bill Huang <bilhuang@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi, Eduardo
-Will you take this series, it seems no more comments.
+On 3/15/2016 4:40 AM, Jon Hunter wrote:
+> 
+> On 14/03/16 16:08, Rhyland Klein wrote:
+>> On 3/14/2016 12:05 PM, Thierry Reding wrote:
+>>> * PGP Signed by an unknown key
+>>>
+>>> On Thu, Mar 10, 2016 at 02:38:05PM -0500, Rhyland Klein wrote:
+>>>> From: Bill Huang <bilhuang@nvidia.com>
+>>>>
+>>>> Add some SLCG (Second Level Clock Gating) override clocks to control
+>>>> gating and un-gating their logics.
+>>>>
+>>>> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+>>>> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+>>>> ---
+>>>>  drivers/clk/tegra/clk-id.h               | 16 ++++++
+>>>>  drivers/clk/tegra/clk-tegra210.c         | 91 ++++++++++++++++++++++++++++++++
+>>>>  include/dt-bindings/clock/tegra210-car.h | 32 +++++------
+>>>>  3 files changed, 123 insertions(+), 16 deletions(-)
+>>>
+>>> There's no rationale given here about why we need this. What will these
+>>> second level clock gates be used for? Why do we need these (seemingly)
+>>> duplicate clock entries.
+>>>
+>>
+>> These are going to be used in the to-be posted patchset around
+>> powergating. As of now they are unused, which is why I hadn't added them
+>> previously. I just wanted to try to get this dependency in before the
+>> powergate series was posted.
+> 
+> Yes we are using these on the Pixel C (aka. Smaug) and I suggested to
+> Rhyland that we upstream them. Eventually we will use them but only
+> after the core GenPD changes for Tegra are merged. From my perspective I
+> was thinking it is better to reduce the changes between the chromeos
+> 3.18 kernel and mainline. However, if you wish to wait until we need
+> them I guess we can. Otherwise ...
+> 
+> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> 
+> Cheers
+> Jon
+> 
 
-Thanks.
-Wei.
+Thierry do you think we should hold off on this until Jon's patches are
+ready or merge this sooner?
 
-On 2016=E5=B9=B403=E6=9C=8816=E6=97=A5 16:55, Wei Ni wrote:
-> This patchset adds following functions for tegra_soctherm driver:
-> 1. add T210 support.
-> 2. export debugfs to show some registers.
-> 3. add thermtrip funciton.
-> 4. add suspend/resume function.
->=20
-> The v7 series is in:
-> https://patchwork.kernel.org/patch/8561681/
-> The v6 series is in:
-> https://lkml.org/lkml/2016/2/22/66
-> The v5 series is in:
-> http://www.spinics.net/lists/linux-tegra/msg25079.html
-> The v4 series is in:
-> http://www.spinics.net/lists/linux-tegra/msg24972.html
-> The V3 series is in:
-> http://www.spinics.net/lists/linux-tegra/msg24911.html
-> The V2 series is in:
-> http://www.spinics.net/lists/linux-tegra/msg24901.html
-> The V1 series is in:
-> http://www.spinics.net/lists/linux-tegra/msg24808.html
->=20
-> Main changes from V7:
-> 1. Split PM support patch into three smaller patches.
-> 2. Few changes per Eduardo's comments.
->=20
-> Main changes from V6:
-> 1. rebased patches on Eduardo's
-> [PATCH 00/13] thermal: convert users of thermal_zone_of_sensor_regist=
-er to devm_
->=20
-> Main changes from V5:
-> 1. Change to use linux thermal framework to implement
-> thermtrip funciton, per Rob's comment.
-> 2. Add .set_trip_temp() in of-thermal driver, so that
-> we can set trips on hardware.
->=20
-> Main changes from V4:
-> 1. Change description of devicetree binding per Rob's comment.
-> 2. Call of_node_put to decrement refcount of the node.
->=20
-> Main changes from V3:
-> 1. Change structures to "const" in chip specific files.
-> 2. Minor changes per Thieery's comments.
->=20
-> Main changes from V2:
-> 1. Fix build error in patch [1/11].
-> 2. Use of_get_child_by_name instead of of_find_node_by_name in patch =
-[8/11].
-> 3. Use debugfs_remove_recursive to remove debugfs in patch [6/11].
->=20
-> Main changes from V1:
-> 1. Use the new type to handl different Tegra chips in one driver, whi=
-ch suggested by Thierry.
-> 2. Changes per Thieery's other comments.
->=20
-> Wei Ni (14):
->   thermal: tegra: move tegra thermal files into tegra directory
->   thermal: tegra: combine sensor group-related data
->   thermal: tegra: get rid of PDIV/HOTSPOT hack
->   thermal: tegra: split tegra_soctherm driver
->   thermal: tegra: add Tegra210 specific SOC_THERM driver
->   thermal: tegra: add a debugfs to show registers
->   thermal: of-thermal: allow setting trip_temp on hardware
->   of: add notes of critical trips for soctherm
->   thermal: tegra: add thermtrip function
->   thermal: tegra: handle clocks in one function
->   thermal: tegra: handle HW initialization in one funcotion
->   thermal: tegra: add PM support
->   arm64: tegra: add soctherm node for Tegra210
->   arm: tegra: set critical trips for Tegra124
->=20
->  .../devicetree/bindings/thermal/tegra-soctherm.txt |  12 +
->  arch/arm/boot/dts/tegra124-jetson-tk1.dts          |  18 +-
->  arch/arm/boot/dts/tegra124.dtsi                    |  48 ++
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  92 +++
->  drivers/thermal/Kconfig                            |  12 +-
->  drivers/thermal/Makefile                           |   2 +-
->  drivers/thermal/of-thermal.c                       |   8 +
->  drivers/thermal/tegra/Kconfig                      |  13 +
->  drivers/thermal/tegra/Makefile                     |   5 +
->  drivers/thermal/tegra/soctherm-fuse.c              | 169 +++++
->  drivers/thermal/tegra/soctherm.c                   | 682 +++++++++++=
-++++++++++
->  drivers/thermal/tegra/soctherm.h                   | 123 ++++
->  drivers/thermal/tegra/tegra124-soctherm.c          | 196 ++++++
->  drivers/thermal/tegra/tegra210-soctherm.c          | 197 ++++++
->  drivers/thermal/tegra_soctherm.c                   | 463 -----------=
----
->  include/dt-bindings/thermal/tegra124-soctherm.h    |   1 +
->  include/linux/thermal.h                            |   1 +
->  17 files changed, 1553 insertions(+), 489 deletions(-)
->  create mode 100644 drivers/thermal/tegra/Kconfig
->  create mode 100644 drivers/thermal/tegra/Makefile
->  create mode 100644 drivers/thermal/tegra/soctherm-fuse.c
->  create mode 100644 drivers/thermal/tegra/soctherm.c
->  create mode 100644 drivers/thermal/tegra/soctherm.h
->  create mode 100644 drivers/thermal/tegra/tegra124-soctherm.c
->  create mode 100644 drivers/thermal/tegra/tegra210-soctherm.c
->  delete mode 100644 drivers/thermal/tegra_soctherm.c
->=20
+-rhyland
+
+-- 
+nvpublic
