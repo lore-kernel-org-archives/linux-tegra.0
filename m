@@ -1,57 +1,54 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH 0/8] PM / Domains: Add support for removing PM domains
-Date: Mon, 28 Mar 2016 13:38:49 +0100
-Message-ID: <56F925D9.3080703@nvidia.com>
-References: <1457090634-14785-1-git-send-email-jonathanh@nvidia.com>
- <CAPDyKFq3hNARzjSOoP+-NmcgfSWzG6GDmh7qVX6yx6QPgN9Arw@mail.gmail.com>
+Subject: Re: [PATCH V4 0/3] Add support for Tegra210 ADMA
+Date: Mon, 28 Mar 2016 13:39:44 +0100
+Message-ID: <56F92610.9030209@nvidia.com>
+References: <1458057390-20756-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAPDyKFq3hNARzjSOoP+-NmcgfSWzG6GDmh7qVX6yx6QPgN9Arw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <1458057390-20756-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alexander Aring <alex.aring-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Uffe,
+Hi Vinod,
 
-On 04/03/16 12:33, Ulf Hansson wrote:
-> On 4 March 2016 at 12:23, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> In order to safely remove PM domains there are a few changes that need to be
->> made to ensure that no one is holding an external reference to a PM domain
->> after it has been removed. One solution, implemented here, solves this by
->> eliminating external references to PM domain. Another alternative would be
->> to employ some reference counting for the PM domains, however, I did not see
->> a good reason for allowing external references in the first place (as always
->> there could be something that I have over-looked!).
->>
->> Jon Hunter (8):
->>   PM / Domains: Add new helper functions for device-tree
->>   ARM: EXYNOS: Remove calls to of_genpd_get_from_provider()
->>   staging: board: Remove calls to of_genpd_get_from_provider()
->>   PM / Domains: Don't expose generic_pm_domain structure
->>   PM / Domains: Verify the PM domain is present when adding a provider
->>   PM / Domains: Remove a provider by referencing the data pointer
->>   PM / Domains: Prepare for adding support to remove PM domains
->>   PM / Domains: Add support for removing PM domains
->>
->>  arch/arm/mach-exynos/pm_domains.c |  23 +--
->>  drivers/base/power/domain.c       | 324 +++++++++++++++++++++++++++++++++++---
->>  drivers/staging/board/board.c     |   9 +-
->>  include/linux/pm_domain.h         |  55 ++++---
->>  4 files changed, 348 insertions(+), 63 deletions(-)
->>
->> --
->> 2.1.4
->>
-> 
-> Jon, thanks for posting this!
-> My initial impressions is the I like the ideas for where you moves this.
-> 
-> I will review it in more details as soon as I can (travelling next week).
-
-Just wanted to see if you have had chance to look at this yet? Not urgent.
+Let me know if you have any comments on this.
 
 Cheers
 Jon
+
+On 15/03/16 15:56, Jon Hunter wrote:
+> Add support for the Tegra210 Audio DMA (ADMA) controller which is part
+> of the Audio Processing Engine and used for transferring audio data.
+> 
+> V4 changes:
+> - Updated DT binding to include 'power-domains' entry for handling
+>   the APE power domain inconjunction with runtime-pm.
+> - Added missing clocks to the DT binding that were being handled by
+>   the bootloader.
+> - Added support for PM_CLK to simplify clock handling
+> 
+> V3 changes:
+> - Updated DT binding per feedback from Mark and Stephen
+> - Fixed up items mentioned by Vinod
+> 
+> V2 changes:
+> - Re-worked device-tree binding
+> 
+> Jon Hunter (3):
+>   Documentation: DT: Add binding documentation for NVIDIA ADMA
+>   dmaengine: tegra-adma: Add support for Tegra210 ADMA
+>   MAINTAINERS: Update Tegra DMA maintainers
+> 
+>  .../devicetree/bindings/dma/tegra210-adma.txt      |  61 ++
+>  MAINTAINERS                                        |   5 +-
+>  drivers/dma/Kconfig                                |  14 +
+>  drivers/dma/Makefile                               |   1 +
+>  drivers/dma/tegra210-adma.c                        | 869 +++++++++++++++++++++
+>  5 files changed, 948 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/dma/tegra210-adma.txt
+>  create mode 100644 drivers/dma/tegra210-adma.c
+> 
