@@ -1,91 +1,45 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v3 3/5] dt-bindings: Add documentation for GM20B GPU
-Date: Mon, 28 Mar 2016 18:23:02 +0900
-Message-ID: <1459156984-32644-4-git-send-email-acourbot@nvidia.com>
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH v3 2/5] dt-bindings: gk20a: Document iommus property
+Date: Mon, 28 Mar 2016 18:23:01 +0900
+Message-ID: <1459156984-32644-3-git-send-email-acourbot@nvidia.com>
 References: <1459156984-32644-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1459156984-32644-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1459156984-32644-1-git-send-email-acourbot@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-GM20B's definition is mostly similar to GK20A's, but requires an
-additional clock.
+GK20A can optionally make use of an IOMMU.
 
-Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/gpu/nvidia,gk20a.txt       | 29 +++++++++++++++++++---
- 1 file changed, 26 insertions(+), 3 deletions(-)
+ Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt b/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt
-index 1e3748337319..ff3db65e50de 100644
+index 914f0ff4020e..1e3748337319 100644
 --- a/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt
 +++ b/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt
-@@ -1,9 +1,10 @@
--NVIDIA GK20A Graphics Processing Unit
-+NVIDIA Tegra Graphics Processing Units
- 
- Required properties:
- - compatible: "nvidia,<gpu>"
-   Currently recognized values:
-   - nvidia,gk20a
-+  - nvidia,gm20b
- - reg: Physical base address and length of the controller's registers.
-   Must contain two entries:
-   - first entry for bar0
-@@ -19,6 +20,9 @@ Required properties:
- - clock-names: Must include the following entries:
-   - gpu
-   - pwr
-+If the compatible string is "nvidia,gm20b", then the following clock
-+is also required:
-+  - ref
- - resets: Must contain an entry for each entry in reset-names.
-   See ../reset/reset.txt for details.
+@@ -24,6 +24,9 @@ Required properties:
  - reset-names: Must include the following entries:
-@@ -27,9 +31,9 @@ Required properties:
- Optional properties:
- - iommus: A reference to the IOMMU. See ../iommu/iommu.txt for details.
+   - gpu
  
--Example:
-+Example for GK20A:
++Optional properties:
++- iommus: A reference to the IOMMU. See ../iommu/iommu.txt for details.
++
+ Example:
  
--	gpu@0,57000000 {
-+	gpu@57000000 {
- 		compatible = "nvidia,gk20a";
- 		reg = <0x0 0x57000000 0x0 0x01000000>,
- 		      <0x0 0x58000000 0x0 0x01000000>;
-@@ -45,3 +49,22 @@ Example:
- 		iommus = <&mc TEGRA_SWGROUP_GPU>;
+ 	gpu@0,57000000 {
+@@ -39,5 +42,6 @@ Example:
+ 		clock-names = "gpu", "pwr";
+ 		resets = <&tegra_car 184>;
+ 		reset-names = "gpu";
++		iommus = <&mc TEGRA_SWGROUP_GPU>;
  		status = "disabled";
  	};
-+
-+Example for GM20B:
-+
-+	gpu@57000000 {
-+		compatible = "nvidia,gm20b";
-+		reg = <0x0 0x57000000 0x0 0x01000000>,
-+		      <0x0 0x58000000 0x0 0x01000000>;
-+		interrupts = <GIC_SPI 157 IRQ_TYPE_LEVEL_HIGH>,
-+			     <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "stall", "nonstall";
-+		clocks = <&tegra_car TEGRA210_CLK_GPU>,
-+			 <&tegra_car TEGRA210_CLK_PLL_P_OUT5>,
-+			 <&tegra_car TEGRA210_CLK_PLL_G_REF>;
-+		clock-names = "gpu", "pwr", "ref";
-+		resets = <&tegra_car 184>;
-+		reset-names = "gpu";
-+		iommus = <&mc TEGRA_SWGROUP_GPU>;
-+		status = "disabled";
-+	};
 -- 
 2.7.3
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
