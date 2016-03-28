@@ -1,7 +1,7 @@
 From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: [PATCH v3 2/5] dt-bindings: gk20a: Document iommus property
-Date: Mon, 28 Mar 2016 18:23:01 +0900
-Message-ID: <1459156984-32644-3-git-send-email-acourbot@nvidia.com>
+Subject: [PATCH v3 5/5] arm64: tegra210: Add IOMMU node to GM20B
+Date: Mon, 28 Mar 2016 18:23:04 +0900
+Message-ID: <1459156984-32644-6-git-send-email-acourbot@nvidia.com>
 References: <1459156984-32644-1-git-send-email-acourbot@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,34 +12,27 @@ To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, gnurou@gmail.com, Alexandre Courbot <acourbot@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-GK20A can optionally make use of an IOMMU.
+Nouveau can take advantage of this declaration to remove the need for
+contiguous memory.
 
 Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt b/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt
-index 914f0ff4020e..1e3748337319 100644
---- a/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt
-+++ b/Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt
-@@ -24,6 +24,9 @@ Required properties:
- - reset-names: Must include the following entries:
-   - gpu
- 
-+Optional properties:
-+- iommus: A reference to the IOMMU. See ../iommu/iommu.txt for details.
-+
- Example:
- 
- 	gpu@0,57000000 {
-@@ -39,5 +42,6 @@ Example:
- 		clock-names = "gpu", "pwr";
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 04898cb25f0c..478543f74863 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -314,6 +314,9 @@
+ 		clock-names = "gpu", "pwr", "ref";
  		resets = <&tegra_car 184>;
  		reset-names = "gpu";
++
 +		iommus = <&mc TEGRA_SWGROUP_GPU>;
++
  		status = "disabled";
  	};
+ 
 -- 
 2.7.3
