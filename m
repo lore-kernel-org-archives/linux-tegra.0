@@ -1,112 +1,77 @@
-From: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH v10 1/9] dt-bindings: phy: Add NVIDIA Tegra XUSB pad
- controller binding
-Date: Tue, 29 Mar 2016 17:24:59 +0200
-Message-ID: <1459265099.5073.29.camel@ziswiler.com>
-References: <1457108379-20794-1-git-send-email-thierry.reding@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 3/5] mmc: tegra: implement UHS tuning
+Date: Tue, 29 Mar 2016 17:37:45 +0100
+Message-ID: <56FAAF59.8080501@nvidia.com>
+References: <1450809664-11360-1-git-send-email-dev@lynxeye.de>
+ <1450809664-11360-4-git-send-email-dev@lynxeye.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1457108379-20794-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <public-abrestic-F7+t8E8rja9g9hUCZPvPmw-wOFGN7rlS/M9smdsby/KFg@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, public-devicetree-u79uwXL29TY76Z2rM5mHXA-wOFGN7rlS/M9smdsby/KFg@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, public-linux-kernel-u79uwXL29TY76Z2rM5mHXA-wOFGN7rlS/M9smdsby/KFg@public.gmane.org, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <1450809664-11360-4-git-send-email-dev@lynxeye.de>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Lucas Stach <dev@lynxeye.de>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry
+Hi Lucas,
 
-On Fri, 2016-03-04 at 17:19 +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA-XMD5yJDbdMReXY1tMh2IBg@public.gmane.org
-> >
+On 22/12/15 18:41, Lucas Stach wrote:
+> This implements the UHS tuning sequence in a similar way to the one
+> contained in the TRM. It deviates in the way how to check if the tap
+> value is passing, by using the common Linux MMC function, which does
+> not only check for data CRC errors, but also if the received block
+> pattern is correct.
 >=20
-> The NVIDIA Tegra XUSB pad controller provides a set of pads, each
-> with a
-> set of lanes that are used for PCIe, SATA and USB.
+> Signed-off-by: Lucas Stach <dev@lynxeye.de>
 
-I finally got around trying this both on Jetson TK1 as well as our own
-Toradex Apalis TK1 module we are about to mainline. I actually applied
-your patch set on top of 4.6.0-rc1. While USB 3.0 seems to work fine I
-noticed PCIe and SATA no more to come up right with the following
-message:
+I have been investigating a hang that occurs randomly during
+system-suspend on Tegra124 Jetson TK1 (I have also reproduced the
+problem on Tegra124 Nyan Big as well) with -next. The problem does not
+occur on every suspend transition but if I execute 100 transitions I
+will typically see it at some point. For example ...
 
-[=C2=A0=C2=A0=C2=A0=C2=A02.794458] tegra-pcie 1003000.pcie-controller: =
-PLL failed to lock:
--110
-[=C2=A0=C2=A0=C2=A0=C2=A02.801177] tegra-pcie 1003000.pcie-controller: =
-failed to power on
-PHY: -110
-[=C2=A0=C2=A0=C2=A0=C2=A02.809031] tegra-pcie: probe of 1003000.pcie-co=
-ntroller failed with
-error -110
+count=3D0; while [ $count -lt 100 ]; do rtcwake -d rtc0 -m mem -s 3; ec=
+ho
+Suspend iteration $count; count=3D`expr $count + 1`; done
 
-Do you happen to know what could be the issue?
+I was able to bisect this problem down to RMK's commit 71fcbda0fcdd
+(=93mmc: sdhci: fix command response CRC error handling=94). However,
+looking at RMK's change, I believe that this commit is not the problem
+but has exposed a problem with the tegra SDHCI driver.
 
-As for USB I do get some message about the endpoint companion but do
-not know whether or not this is to be expected:
+When the hang occurs I always see the following when starting the
+suspend sequence and after which the system continues to suspend but
+never exits suspend:
 
-[ 1021.575301] usb 4-1: new SuperSpeed USB device number 2 using tegra-
-xusb
-[ 1021.598913] usb 4-1: No SuperSpeed endpoint companion for config
-1=C2=A0=C2=A0interface 0 altsetting 0 ep 2: using minimum values
+	mmc0: Timeout waiting for hardware interrupt.
 
-Otherwise it looks good:
+The above message is a symptom of RMK's commit and I have found that
+when I see this, it always occurs during tegra_sdhci_execute_tuning()
+because sometimes we get a CRC error.
 
-ubuntu@tegra-ubuntu:~$ lsusb
-Bus 002 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
-Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
-Bus 004 Device 002: ID 0951:1666 Kingston Technology DataTraveler G4
-Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
-Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+I don't fully understand why the hang occurs in suspend, but putting
+this aside (as well as the CRC error and timeout), the more I look at
+the tuning code, the more it appears incomplete. Unfortunately, the
+Tegra TRM alone does not give the complete procedure for performing the
+tuning because there can be multiple windows where the tap values may
+pass and these windows will vary with voltage/frequency. Plus we need t=
+o
+ensure that the window is greater than a minimum width of 4 valid tap
+values. The 3.18 kernel that is used for chrome-os products with
+Tegra has a more complete implementation that is a good reference
+(although not that easy to follow without good documentation!) [0].
 
-And performs satisfactorily (up from around 24 MB/sec with just USB
-2.0):
-
-ubuntu@tegra-ubuntu:~$ sudo hdparm -t /dev/sda
-
-/dev/sda:
-=C2=A0Timing buffered disk reads:=C2=A0=C2=A094 MB in=C2=A0=C2=A03.05 s=
-econds =3D=C2=A0=C2=A030.81 MB/sec
-
-Apalis TK1 actually features two USB 3.0 host ports:
-
-ubuntu@tegra-ubuntu:~$ lsusb
-Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
-Bus 002 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
-Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
-Bus 005 Device 002: ID 0951:1666 Kingston Technology DataTraveler G4
-Bus 005 Device 003: ID 1f75:0902 Innostor Technology Corporation IS902
-UFD controller
-Bus 005 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
-Bus 004 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
-
-ubuntu@tegra-ubuntu:~$ sudo hdparm -t /dev/sda
-
-/dev/sda:
-=C2=A0Timing buffered disk reads: =C2=A096 MB in=C2=A0=C2=A03.00 second=
-s =3D=C2=A0=C2=A031.98 MB/sec
-
-ubuntu@tegra-ubuntu:~$ sudo hdparm -t /dev/sdb
-
-/dev/sdb:
-=C2=A0Timing buffered disk reads: 152 MB in=C2=A0=C2=A03.04 seconds =3D=
-=C2=A0=C2=A049.99 MB/sec
+We would definitely like to get this working in the mainline and I am
+not sure if this is something that you are keen to spend time on or not=
+?
+Let me know and we can decide what makes most sense here.
 
 Cheers
+Jon
 
-Marcel
+[0]
+https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chrom=
+eos-3.10/drivers/mmc/host/sdhci-tegra.c
 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.
-> gmane.org>
-> ---
-> Changes in v10:
-> - clarify that the hardware documentation means something different
-> when
-> =C2=A0 referring to a "port" (intra-SoC connectivity)
->=20
-> Changes in v9:
-> - rename UTMI -> USB2 to match hardware documentation
-> - reword according to suggestions by Stephen Warren
-> - make Tegra132 compatible string list consistent
-> - remove mailbox support
-> ...
+
