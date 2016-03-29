@@ -1,57 +1,38 @@
-From: Viresh Kumar <viresh.kumar@linaro.org>
-Subject: [PATCH] cpufreq: tegra124: No need of setting platform-data
-Date: Tue, 29 Mar 2016 19:35:12 +0530
-Message-ID: <60bdca9a8f31714d733ace7e7c25c46cd366082f.1459260280.git.viresh.kumar@linaro.org>
+From: Eduardo Valentin <edubezval@gmail.com>
+Subject: Re: [PATCH V9 RESEND 00/14] Add T210 support in Tegra soctherm
+Date: Tue, 29 Mar 2016 08:13:09 -0700
+Message-ID: <20160329151307.GA1855@localhost.localdomain>
+References: <1459247364-1139-1-git-send-email-wni@nvidia.com>
+ <56FA5AC0.1080400@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8BIT
 Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <56FA5AC0.1080400@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rafael Wysocki <rjw@rjwysocki.net>, ttynkkynen@nvidia.com, Viresh Kumar <viresh.kumar@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linaro-kernel@lists.linaro.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Wei Ni <wni@nvidia.com>
+Cc: rui.zhang@intel.com, thierry.reding@gmail.com, MLongnecker@nvidia.com, swarren@wwwdotorg.org, mikko.perttunen@kapsi.fi, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-All CPUs on Tegra platform share clock/voltage lines and there is
-absolutely no need of setting platform data for 'cpufreq-dt' platform
-device, as that's the default case.
+On Tue, Mar 29, 2016 at 06:36:48PM +0800, Wei Ni wrote:
+> Hi Eduardo,
+> I resent this V9 series in one mail thread.
 
-Stop setting platform data for cpufreq-dt device.
+I personally prefer in one mail thread, like
+you did here. But It is fine for me if you send either way,
+in one mail thread or each patch in its own thread. 
 
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
----
-Only compile tested.
+What I found strange is that in your v8 patches from 1 to 4 have the
+message id of patch 0 in its in-reply-to field (one email thread). But
+patches 5 to 14 don't (each patch in a single thread). Which made me
+wonder if this is a bug in git send email of if you intentionally did
+that, for some reason.
 
- drivers/cpufreq/tegra124-cpufreq.c | 7 -------
- 1 file changed, 7 deletions(-)
 
-diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
-index 20bcceb58ccc..43530254201a 100644
---- a/drivers/cpufreq/tegra124-cpufreq.c
-+++ b/drivers/cpufreq/tegra124-cpufreq.c
-@@ -14,7 +14,6 @@
- #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
- 
- #include <linux/clk.h>
--#include <linux/cpufreq-dt.h>
- #include <linux/err.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
-@@ -69,10 +68,6 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
- 	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
- }
- 
--static struct cpufreq_dt_platform_data cpufreq_dt_pd = {
--	.independent_clocks = false,
--};
--
- static int tegra124_cpufreq_probe(struct platform_device *pdev)
- {
- 	struct tegra124_cpufreq_priv *priv;
-@@ -129,8 +124,6 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
- 
- 	cpufreq_dt_devinfo.name = "cpufreq-dt";
- 	cpufreq_dt_devinfo.parent = &pdev->dev;
--	cpufreq_dt_devinfo.data = &cpufreq_dt_pd;
--	cpufreq_dt_devinfo.size_data = sizeof(cpufreq_dt_pd);
- 
- 	priv->cpufreq_dt_pdev =
- 		platform_device_register_full(&cpufreq_dt_devinfo);
--- 
-2.7.1.410.g6faf27b
+BTW, now the patch series applies fine.
+
+
+BR,
+
+Eduardo Valentin
