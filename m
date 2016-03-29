@@ -1,77 +1,148 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2 3/5] mmc: tegra: implement UHS tuning
-Date: Tue, 29 Mar 2016 17:37:45 +0100
-Message-ID: <56FAAF59.8080501@nvidia.com>
-References: <1450809664-11360-1-git-send-email-dev@lynxeye.de>
- <1450809664-11360-4-git-send-email-dev@lynxeye.de>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v10 1/9] dt-bindings: phy: Add NVIDIA Tegra XUSB pad
+ controller binding
+Date: Tue, 29 Mar 2016 19:08:44 +0200
+Message-ID: <20160329170844.GA26314@ulmo.nvidia.com>
+References: <1457108379-20794-1-git-send-email-thierry.reding@gmail.com>
+ <1459265099.5073.29.camel@ziswiler.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <1450809664-11360-4-git-send-email-dev@lynxeye.de>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Lucas Stach <dev@lynxeye.de>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="d6Gm4EdcadzBjdND"
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1459265099.5073.29.camel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marcel Ziswiler <marcel-mitwqZ+T+m9Wk0Htik3J/w@public.gmane.org>
+Cc: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <public-abrestic-F7+t8E8rja9g9hUCZPvPmw-wOFGN7rlS/M9smdsby/KFg@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, public-devicetree-u79uwXL29TY76Z2rM5mHXA-wOFGN7rlS/M9smdsby/KFg@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, public-linux-kernel-u79uwXL29TY76Z2rM5mHXA-wOFGN7rlS/M9smdsby/KFg@public.gmane.org, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-XVmvHMARGAS8U2dJNN8I7kB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Lucas,
 
-On 22/12/15 18:41, Lucas Stach wrote:
-> This implements the UHS tuning sequence in a similar way to the one
-> contained in the TRM. It deviates in the way how to check if the tap
-> value is passing, by using the common Linux MMC function, which does
-> not only check for data CRC errors, but also if the received block
-> pattern is correct.
+--d6Gm4EdcadzBjdND
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Mar 29, 2016 at 05:24:59PM +0200, Marcel Ziswiler wrote:
+> Hi Thierry
 >=20
-> Signed-off-by: Lucas Stach <dev@lynxeye.de>
+> On Fri, 2016-03-04 at 17:19 +0100, Thierry Reding wrote:
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA-XMD5yJDbdMReXY1tMh2IBg@public.gmane.org
+> > >
+> >=20
+> > The NVIDIA Tegra XUSB pad controller provides a set of pads, each
+> > with a
+> > set of lanes that are used for PCIe, SATA and USB.
+>=20
+> I finally got around trying this both on Jetson TK1 as well as our own
+> Toradex Apalis TK1 module we are about to mainline.
 
-I have been investigating a hang that occurs randomly during
-system-suspend on Tegra124 Jetson TK1 (I have also reproduced the
-problem on Tegra124 Nyan Big as well) with -next. The problem does not
-occur on every suspend transition but if I execute 100 transitions I
-will typically see it at some point. For example ...
+Looking forward to it.
 
-count=3D0; while [ $count -lt 100 ]; do rtcwake -d rtc0 -m mem -s 3; ec=
-ho
-Suspend iteration $count; count=3D`expr $count + 1`; done
+>                                                     I actually applied
+> your patch set on top of 4.6.0-rc1. While USB 3.0 seems to work fine I
+> noticed PCIe and SATA no more to come up right with the following
+> message:
+>=20
+> [=C2=A0=C2=A0=C2=A0=C2=A02.794458] tegra-pcie 1003000.pcie-controller: PL=
+L failed to lock:
+> -110
+> [=C2=A0=C2=A0=C2=A0=C2=A02.801177] tegra-pcie 1003000.pcie-controller: fa=
+iled to power on
+> PHY: -110
+> [=C2=A0=C2=A0=C2=A0=C2=A02.809031] tegra-pcie: probe of 1003000.pcie-cont=
+roller failed with
+> error -110
+>=20
+> Do you happen to know what could be the issue?
 
-I was able to bisect this problem down to RMK's commit 71fcbda0fcdd
-(=93mmc: sdhci: fix command response CRC error handling=94). However,
-looking at RMK's change, I believe that this commit is not the problem
-but has exposed a problem with the tegra SDHCI driver.
+That's to be expected. You'll need this one:
 
-When the hang occurs I always see the following when starting the
-suspend sequence and after which the system continues to suspend but
-never exits suspend:
+	http://patchwork.ozlabs.org/patch/596548/
 
-	mmc0: Timeout waiting for hardware interrupt.
+which I had hoped would make v4.6-rc1, but didn't. I'll have to respin
+and send out again. I didn't know that SATA failed in the same way, but
+I'll need to recheck and see if it needs a similar change.
 
-The above message is a symptom of RMK's commit and I have found that
-when I see this, it always occurs during tegra_sdhci_execute_tuning()
-because sometimes we get a CRC error.
+> As for USB I do get some message about the endpoint companion but do
+> not know whether or not this is to be expected:
+>=20
+> [ 1021.575301] usb 4-1: new SuperSpeed USB device number 2 using tegra-
+> xusb
+> [ 1021.598913] usb 4-1: No SuperSpeed endpoint companion for config
+> 1=C2=A0=C2=A0interface 0 altsetting 0 ep 2: using minimum values
 
-I don't fully understand why the hang occurs in suspend, but putting
-this aside (as well as the CRC error and timeout), the more I look at
-the tuning code, the more it appears incomplete. Unfortunately, the
-Tegra TRM alone does not give the complete procedure for performing the
-tuning because there can be multiple windows where the tap values may
-pass and these windows will vary with voltage/frequency. Plus we need t=
-o
-ensure that the window is greater than a minimum width of 4 valid tap
-values. The 3.18 kernel that is used for chrome-os products with
-Tegra has a more complete implementation that is a good reference
-(although not that easy to follow without good documentation!) [0].
+I'm not exactly sure why that message appears, but I think it is
+harmless.
 
-We would definitely like to get this working in the mainline and I am
-not sure if this is something that you are keen to spend time on or not=
-?
-Let me know and we can decide what makes most sense here.
+> Otherwise it looks good:
+>=20
+> ubuntu@tegra-ubuntu:~$ lsusb
+> Bus 002 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+> Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+> Bus 004 Device 002: ID 0951:1666 Kingston Technology DataTraveler G4
+> Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+> Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+>=20
+> And performs satisfactorily (up from around 24 MB/sec with just USB
+> 2.0):
+>=20
+> ubuntu@tegra-ubuntu:~$ sudo hdparm -t /dev/sda
+>=20
+> /dev/sda:
+> =C2=A0Timing buffered disk reads:=C2=A0=C2=A094 MB in=C2=A0=C2=A03.05 sec=
+onds =3D=C2=A0=C2=A030.81 MB/sec
+>=20
+> Apalis TK1 actually features two USB 3.0 host ports:
+>=20
+> ubuntu@tegra-ubuntu:~$ lsusb
+> Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+> Bus 002 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+> Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+> Bus 005 Device 002: ID 0951:1666 Kingston Technology DataTraveler G4
+> Bus 005 Device 003: ID 1f75:0902 Innostor Technology Corporation IS902
+> UFD controller
+> Bus 005 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
+> Bus 004 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
+>=20
+> ubuntu@tegra-ubuntu:~$ sudo hdparm -t /dev/sda
+>=20
+> /dev/sda:
+> =C2=A0Timing buffered disk reads: =C2=A096 MB in=C2=A0=C2=A03.00 seconds =
+=3D=C2=A0=C2=A031.98 MB/sec
+>=20
+> ubuntu@tegra-ubuntu:~$ sudo hdparm -t /dev/sdb
+>=20
+> /dev/sdb:
+> =C2=A0Timing buffered disk reads: 152 MB in=C2=A0=C2=A03.04 seconds =3D=
+=C2=A0=C2=A049.99 MB/sec
 
-Cheers
-Jon
+Looking great. Thanks for testing.
 
-[0]
-https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chrom=
-eos-3.10/drivers/mmc/host/sdhci-tegra.c
+Thierry
 
+--d6Gm4EdcadzBjdND
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJW+raaAAoJEN0jrNd/PrOhYSQQAKMe/PHyeVfd0s8fspyRvl15
+luLDCMWIEdkOPq4pmnNl89aKJwsj5v/ieU3vPRWHDCi5DvtPR5esGDjVkqL3vOlo
+j0MKa5Xgyvz8uXA227lguP1TI0itFnR+UqSzjOxCwgL2mGU0bEUfzu05QnCCy6wI
+W/Vu4/r65qT+tZswmdeqZSAtNw1WNrsb8ZzUvPcwYn1geuwxAvonF1xkugd550xR
+j+04wIh/kgj4IHEWoJ2aCzoPPfVtJqPuqK+fk16Zo1G5MP8G3YwW2/Z/vKc+l98+
+zryEPxqrQFR81k/PMTQ+Uo2BhxqqN/QCUk69ogEo8jj6pw9eRXjQ8xBUbzZFbx3I
+MA4v3blUEjLsA+Hyw1XXuOKDFat6YVWqRY+VLp2m3cRkt/G3ocf7vfeZJxJSqRwK
+73MhJT6gF2+v/VxIoRi+XA8mlLfkeKhPenizJ5P66dYQH77oqn+Pd4TeMfYGjpom
+9wIihh+GCHOE2wUcxOuLMHhV5cg+MAtN1bPGcliqqhMCsaBknEx+ODYKvExEbyQz
+vnLse5IxqoMxd24Ly1BnP9+UJY1uNvshmAyh/QMqJy85KXYVhX5Mk0MmB+IagXBJ
+DARPRT8GYrOgFn6kMbaWUldvWgrwPPq9dKtohJz8AsRmzi/AUrdnki3H70bq/dGm
+Losfw3aeYWeeUgd8bgTw
+=eMUm
+-----END PGP SIGNATURE-----
+
+--d6Gm4EdcadzBjdND--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
