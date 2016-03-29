@@ -1,38 +1,25 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH V9 RESEND 00/14] Add T210 support in Tegra soctherm
-Date: Tue, 29 Mar 2016 08:13:09 -0700
-Message-ID: <20160329151307.GA1855@localhost.localdomain>
+From: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V9 RESEND 13/14] arm64: tegra: add soctherm node for
+ Tegra210
+Date: Tue, 29 Mar 2016 08:16:30 -0700
+Message-ID: <20160329151629.GB1855@localhost.localdomain>
 References: <1459247364-1139-1-git-send-email-wni@nvidia.com>
- <56FA5AC0.1080400@nvidia.com>
+ <1459247364-1139-14-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <56FA5AC0.1080400@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wei Ni <wni@nvidia.com>
-Cc: rui.zhang@intel.com, thierry.reding@gmail.com, MLongnecker@nvidia.com, swarren@wwwdotorg.org, mikko.perttunen@kapsi.fi, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1459247364-1139-14-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Mar 29, 2016 at 06:36:48PM +0800, Wei Ni wrote:
-> Hi Eduardo,
-> I resent this V9 series in one mail thread.
+On Tue, Mar 29, 2016 at 06:29:23PM +0800, Wei Ni wrote:
+> Adds soctherm node for Tegra210, and add cpu,
+> gpu, mem, pllx as thermal-zones. Set critical
+> trip temperatures for them.
+> 
+> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I personally prefer in one mail thread, like
-you did here. But It is fine for me if you send either way,
-in one mail thread or each patch in its own thread. 
-
-What I found strange is that in your v8 patches from 1 to 4 have the
-message id of patch 0 in its in-reply-to field (one email thread). But
-patches 5 to 14 don't (each patch in a single thread). Which made me
-wonder if this is a bug in git send email of if you intentionally did
-that, for some reason.
-
-
-BTW, now the patch series applies fine.
-
-
-BR,
-
-Eduardo Valentin
+Acked-by: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
