@@ -1,69 +1,47 @@
-From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Subject: Re: [PATCH] regulator: Fix deadlock during regulator registration
-Date: Wed, 30 Mar 2016 19:25:49 -0400
-Message-ID: <56FC607D.3020108@osg.samsung.com>
+Date: Wed, 30 Mar 2016 16:34:27 -0700
+Message-ID: <20160330233427.GZ2350@sirena.org.uk>
 References: <1459354153-6352-1-git-send-email-jonathanh@nvidia.com>
+ <56FC607D.3020108@osg.samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="DG78IEnUmLKoW088"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1459354153-6352-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <56FC607D.3020108-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello Jon,
 
-On 03/30/2016 12:09 PM, Jon Hunter wrote:
-> Commit 5e3ca2b349b1 ("regulator: Try to resolve regulators supplies on
-> registration") added a call to regulator_resolve_supply() within
-> regulator_register() where the regulator_list_mutex is held. This causes
-> the following deadlock to occur on the Tegra114 Dalmore board when the
-> palmas PMIC is registered because regulator_register_resolve_supply()
-> calls regulator_dev_lookup() which may try to acquire the
-> regulator_list_mutex again.
->
+--DG78IEnUmLKoW088
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Sorry for missing that. I didn't notice because on my machine the regulators
-are looked up using OF and in that case the regulator_list_mutex isn't grabbed.
+On Wed, Mar 30, 2016 at 07:25:49PM -0400, Javier Martinez Canillas wrote:
 
-I believe your patch is correct, I have just one trivial comment below:
+> You are doing some cleanup of the clean and scrub error paths by removing
+> rdev and returning ERR_PTR(ret) directly. I believe that should be in a
+> separate patch since is not related to the fix.
 
->  
-> @@ -4016,15 +4015,16 @@ scrub:
->  	regulator_ena_gpio_free(rdev);
->  	device_unregister(&rdev->dev);
->  	/* device core frees rdev */
-> -	rdev = ERR_PTR(ret);
->  	goto out;
->  
->  wash:
->  	regulator_ena_gpio_free(rdev);
->  clean:
->  	kfree(rdev);
-> -	rdev = ERR_PTR(ret);
+There needs to be some reorganization due to the movement with the mutex
+handling.
 
-You are doing some cleanup of the clean and scrub error paths by removing
-rdev and returning ERR_PTR(ret) directly. I believe that should be in a
-separate patch since is not related to the fix.
+--DG78IEnUmLKoW088
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> -	goto out;
-> +out:
-> +	mutex_unlock(&regulator_list_mutex);
-> +	kfree(config);
-> +	return ERR_PTR(ret);
->  }
->  EXPORT_SYMBOL_GPL(regulator_register);
->  
-> 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-If you split the cleanup and address Mark's comments, feel free to add:
+iQEcBAEBCAAGBQJW/GKCAAoJECTWi3JdVIfQUlwH/05fAR11oeVz0zxKa3DLcxkZ
+hGzKFaSgQpwNEb9/NrgoJ5Z9Pk6+vdYHHDkLUieRN+Bh57nPTh2Ezvzlgu32RJ/c
+ceo9tjmo97vLgx9/qgFXutfTgxZsApCAYQfKCQx+9rgRHYM6tWMbR0AB3JaTEoHk
+Vmyw3/tdCC/IsfUiRD+AwBIO2YMJJjopEtzp69PnG0MiWQQBNG4PUe+su2xEQ572
+zRqd6BXT5air4Erg4A9m5NgGSw3pu1AZhw7j00oVjU3BK0prYFhUzrvPZgc1WTN5
+aygnamJs3OziTqMwf6+4gEncGeTf/PHL0nkTTEYYk7h6+Mln7XAOJSkMrF6J4ZE=
+=xyBh
+-----END PGP SIGNATURE-----
 
-Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
-
-Best regards,
--- 
-Javier Martinez Canillas
-Open Source Group
-Samsung Research America
+--DG78IEnUmLKoW088--
