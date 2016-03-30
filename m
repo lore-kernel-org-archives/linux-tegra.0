@@ -1,57 +1,69 @@
-From: Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>
-Subject: Re: [PATCH 02/15] ARM: OMAP: Correct interrupt type for ARM TWD
-Date: Wed, 30 Mar 2016 14:23:52 -0700
-Message-ID: <20160330212352.GF9329@atomide.com>
-References: <1458224359-32665-1-git-send-email-jonathanh@nvidia.com>
- <1458224359-32665-3-git-send-email-jonathanh@nvidia.com>
- <56EC2191.2060800@ti.com>
- <56FA8AEA.3000208@nvidia.com>
+From: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+Subject: Re: [PATCH] regulator: Fix deadlock during regulator registration
+Date: Wed, 30 Mar 2016 19:25:49 -0400
+Message-ID: <56FC607D.3020108@osg.samsung.com>
+References: <1459354153-6352-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <56FA8AEA.3000208-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1459354153-6352-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-* Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> [160329 07:03]:
-> Hi Tony,
-> 
-> On 18/03/16 15:41, Grygorii Strashko wrote:
-> > On 03/17/2016 04:19 PM, Jon Hunter wrote:
-> >> The ARM TWD interrupt is a private peripheral interrupt (PPI) and per
-> >> the ARM GIC documentation, whether the type for PPIs can be set is
-> >> IMPLEMENTATION DEFINED. For OMAP4 devices the PPI type cannot be set and
-> >> so when we attempt to set the type for the ARM TWD interrupt it fails.
-> >> This has done unnoticed because it fails silently and because we cannot
-> >> re-configure the type it has had no impact. Nevertheless fix the type
-> >> for the TWD interrupt so that it matches the hardware configuration.
-> >>
-> >> Reported-by: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
-> >> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >>
-> >> ---
-> >>
-> >> Tony, Grygorii,
-> >> Please note that I have not tested this. Can you test this series and
-> >> see if you see any warnings on OMAP4? I am guessing that the configuration
-> >> should be LEVEL and not EDGE. This was reported here:
-> > 
-> > Tested-by: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>
-> > 
-> > Tested on PandaBoard. Without this patch I can see below warning:
-> 
-> I think that you can pick up this fix independently of this series as it
-> is something that has been broken for sometime and should be fixed. I
-> included it here for completeness to highlight the issue but if you want
-> to take it now, please go ahead.
+Hello Jon,
 
-OK applying into omap-for-v4.6/fixes thanks.
+On 03/30/2016 12:09 PM, Jon Hunter wrote:
+> Commit 5e3ca2b349b1 ("regulator: Try to resolve regulators supplies on
+> registration") added a call to regulator_resolve_supply() within
+> regulator_register() where the regulator_list_mutex is held. This causes
+> the following deadlock to occur on the Tegra114 Dalmore board when the
+> palmas PMIC is registered because regulator_register_resolve_supply()
+> calls regulator_dev_lookup() which may try to acquire the
+> regulator_list_mutex again.
+>
 
-Tony
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Sorry for missing that. I didn't notice because on my machine the regulators
+are looked up using OF and in that case the regulator_list_mutex isn't grabbed.
+
+I believe your patch is correct, I have just one trivial comment below:
+
+>  
+> @@ -4016,15 +4015,16 @@ scrub:
+>  	regulator_ena_gpio_free(rdev);
+>  	device_unregister(&rdev->dev);
+>  	/* device core frees rdev */
+> -	rdev = ERR_PTR(ret);
+>  	goto out;
+>  
+>  wash:
+>  	regulator_ena_gpio_free(rdev);
+>  clean:
+>  	kfree(rdev);
+> -	rdev = ERR_PTR(ret);
+
+You are doing some cleanup of the clean and scrub error paths by removing
+rdev and returning ERR_PTR(ret) directly. I believe that should be in a
+separate patch since is not related to the fix.
+
+> -	goto out;
+> +out:
+> +	mutex_unlock(&regulator_list_mutex);
+> +	kfree(config);
+> +	return ERR_PTR(ret);
+>  }
+>  EXPORT_SYMBOL_GPL(regulator_register);
+>  
+> 
+
+If you split the cleanup and address Mark's comments, feel free to add:
+
+Reviewed-by: Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>
+
+Best regards,
+-- 
+Javier Martinez Canillas
+Open Source Group
+Samsung Research America
