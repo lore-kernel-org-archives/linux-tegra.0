@@ -1,62 +1,48 @@
-From: Srinivas Pandruvada <srinivas.pandruvada-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>
-Subject: Re: [PATCH v2] thermal: add sysfs_notify on some attributes
-Date: Wed, 30 Mar 2016 10:06:31 -0700
-Message-ID: <1459357591.13525.62.camel@linux.intel.com>
-References: <1457979156-10972-1-git-send-email-srikars@nvidia.com>
-	 <1458079520.4486.39.camel@intel.com>
-	 <20160329013540.GA15615@localhost.localdomain>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] regulator: Fix deadlock during regulator registration
+Date: Wed, 30 Mar 2016 18:41:03 +0100
+Message-ID: <56FC0FAF.3010200@nvidia.com>
+References: <1459354153-6352-1-git-send-email-jonathanh@nvidia.com>
+ <20160330161831.GE2350@sirena.org.uk> <56FC02CD.60107@nvidia.com>
+ <20160330170053.GK2350@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160329013540.GA15615-bi+AKbBUZKY6gyzm1THtWbp2dZbC/Bob@public.gmane.org>
+In-Reply-To: <20160330170053.GK2350-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: "Zhang, Rui" <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "srikars-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <srikars-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "mlongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <mlongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Javier Martinez Canillas <javier-JPH+aEBZ4P+UEJcrhfAQsw@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, 2016-03-28 at 18:35 -0700, Eduardo Valentin wrote:
-> On Tue, Mar 15, 2016 at 11:08:00PM +0000, Pandruvada, Srinivas wrote:
-> >=20
-> > On Mon, 2016-03-14 at 11:12 -0700, Srikar Srimath Tirumala wrote:
-> > >=20
-> > >=20
-[...]
-> >=20
-> The complexity of such communication (or even the current status of
-> sysfs ABI) starts to reach limit of such channel. We may definitely
-> consider other means, such as /dev interface, just like IIO does.
-Yes. Instead of loading netlink I/F, we need to have thermal channel to
-notify.
 
-> > During last LPC we discussed about using IIO for temperature
-> > threshold
-> > notifications and I submitted multiple changes for that. Looks like
-> > we
-> > also care of trip point changes. So I think we need more
-> > comprehensive
-> > mechanism to address this.
-> >=20
-> > May be we should have thermal mini summit during LPC again and
-> > decide a
-> > comprehensive plan to address all asynchronous thermal
-> > notifications.
-> >=20
-> I have created a wiki for LPC 2016
-> http://wiki.linuxplumbersconf.org/2016:thermal
->=20
-> Overall I believe we need to solve the (temperature) sensing in a
-> more
-> structured way within the kernel. We have three subsystem that allow
-> performing temperature sensing. They are different in design and
-> concept, but still solve similar problems.
->=20
-> Again, please lets generate enough quorum to run the micro conf.
->=20
-I am planning to attend.
+On 30/03/16 18:00, Mark Brown wrote:
+> * PGP Signed by an unknown key
+> 
+> On Wed, Mar 30, 2016 at 05:46:05PM +0100, Jon Hunter wrote:
+> 
+> Please fix your mail client to word wrap within paragraphs at something
+> substantially less than 80 columns.  Doing this makes your messages much
+> easier to read and reply to.
+> 
+>>> Please don't paste entire backlogs into changelogs, they're *enormous*,
+>>> mostly noise and obscure any actual content that's in there through
+>>> denial of service.  If they're useful then include edited subsets that
+>>> highlight the relevant sections of the backtrace so your changelog is
+>>> more legible.
+> 
+>> Ok, no problem. Are you happy with the patch otherwise? If so, do you
+>> want me to resend or do you wish to trim the backlog? I think that
+> 
+> I haven't reviwed it yet.
+> 
+>> this part is interesting ...
+> 
+> I'm really getting nothing at all from this, all it really does is point
+> to the call site but that's already much more clearly identified in the
+> changelog.  We certainly don't need to know which driver called this.
 
-Thanks,
-Srinivas
-> BR,=C2=A0
->=20
-> Eduardo Valentin
+Ok, fine with me. If you are happy with the actual change, feel free to
+remove the backlog or I can re-send if you wish.
+
+Jon
