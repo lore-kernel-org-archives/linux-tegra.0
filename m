@@ -1,56 +1,130 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Tegra boots failing due to as3722 I/O errors
-Date: Tue, 29 Mar 2016 12:03:19 -0700
-Message-ID: <20160329190319.GE2350@sirena.org.uk>
+From: Srikar Srimath Tirumala <srikars@nvidia.com>
+Subject: [PATCH v3 2/4] thermal: send notifications for tz temperature
+Date: Tue, 29 Mar 2016 17:41:35 -0700
+Message-ID: <1459298497-29481-3-git-send-email-srikars@nvidia.com>
+References: <1459298497-29481-1-git-send-email-srikars@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="z3ND3gJe4e1E4uwh"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "Maciej S. Szmigiero" <mail-APzI5cXaD1zVlRWJc41N0YvC60bnQu0Y@public.gmane.org>, Lee Jones <lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1459298497-29481-1-git-send-email-srikars@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: edubezval@gmail.com, rui.zhang@intel.com, srinivas.pandruvada@intel.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: mlongnecker@nvidia.com, Srikar Srimath Tirumala <srikars@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+* Update the 'temp' attr of a thermal_zone sysfs node, when the
+  temperature goes above\below a trip point. Use sysfs_notify to send
+  the notifications.
 
---z3ND3gJe4e1E4uwh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+* Send the notification only if the temperature notifications are
+  enabled. Use the hysteresis property to avoid sending too many
+  notifications when the temperatures are bouncing around.
 
-Hi,
+* Add ops that will allow thermal framework to:
+  * find out if a temperature notification can be sent when a given
+    trip point has been crossed.
+  * get/set the trip state.
 
-Currently the Jetson TK1 is failing to get regulators for MMC with at
-least my regulator tree and probably -next also due to:
+* Add a new state type for the trip points. A trip point can either
+  be 'TRIPPED' or 'NOT_TRIPPED'.
 
-[    1.665750] as3722 4-0040: AS3722 with revision 0x1 found
-[    1.682945] +VDDIO_SDMMC3: failed to get the current voltage(-22)
-[    1.689135] as3722-regulator as3722-regulator: regulator 13 register failed -22
-[    1.697593] as3722-regulator: probe of as3722-regulator failed with error -22
+Change-Id: If5b530b4045cdb2840eef855dc158cbce239ce79
+Signed-off-by: Srikar Srimath Tirumala <srikars@nvidia.com>
+---
+ drivers/thermal/thermal_core.c | 28 ++++++++++++++++++++++++++++
+ include/linux/thermal.h        | 12 ++++++++++++
+ 2 files changed, 40 insertions(+)
 
-The get voltage operation here is just a simple mapping of a bitfield in
-the regmap which suggests that the underlying problem is somewhere
-further down the stack like the MFD or I2C drivers.  The error is
--EINVAL which suggests something like the register not being marked as
-readable but the _VOLTAGE_REG registers appear to be marked as readable
-in the MFD.
+diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
+index b09fff1..37bdc32 100644
+--- a/drivers/thermal/thermal_core.c
++++ b/drivers/thermal/thermal_core.c
+@@ -419,6 +419,32 @@ static void monitor_thermal_zone(struct thermal_zone_device *tz)
+ 	mutex_unlock(&tz->lock);
+ }
+ 
++static void handle_temp_notify(struct thermal_zone_device *tz, int trip)
++{
++	int trip_temp, hyst = 0;
++	enum thermal_trip_state s, ns;
++
++	s = ns = THERMAL_TRIP_NOT_TRIPPED;
++	tz->ops->get_trip_temp(tz, trip, &trip_temp);
++	tz->ops->get_trip_hyst(tz, trip, &hyst);
++
++	if (tz->ops->get_trip_state)
++		tz->ops->get_trip_state(tz, trip, &s);
++
++	if (s == THERMAL_TRIP_TRIPPED && tz->temperature < trip_temp - hyst)
++		ns = THERMAL_TRIP_NOT_TRIPPED;
++	else if (s == THERMAL_TRIP_NOT_TRIPPED && tz->temperature >= trip_temp)
++		ns = THERMAL_TRIP_TRIPPED;
++
++	if (tz->ops->set_trip_state)
++		tz->ops->set_trip_state(tz, trip, ns);
++
++	/* send if notifications are enabled and state has changed */
++	if (s != ns && tz->ops->enb_temp_notify &&
++		tz->ops->enb_temp_notify(tz, trip))
++		sysfs_notify(&tz->device.kobj, NULL, "temp");
++}
++
+ static void handle_non_critical_trips(struct thermal_zone_device *tz,
+ 			int trip, enum thermal_trip_type trip_type)
+ {
+@@ -464,6 +490,8 @@ static void handle_thermal_trip(struct thermal_zone_device *tz, int trip)
+ 		handle_critical_trips(tz, trip, type);
+ 	else
+ 		handle_non_critical_trips(tz, trip, type);
++
++	handle_temp_notify(tz, trip);
+ 	/*
+ 	 * Alright, we handled this trip successfully.
+ 	 * So, start monitoring again.
+diff --git a/include/linux/thermal.h b/include/linux/thermal.h
+index a55d052..9182e36 100644
+--- a/include/linux/thermal.h
++++ b/include/linux/thermal.h
+@@ -84,6 +84,11 @@ enum thermal_trip_type {
+ 	THERMAL_TRIP_CRITICAL,
+ };
+ 
++enum thermal_trip_state {
++	THERMAL_TRIP_NOT_TRIPPED = 0,
++	THERMAL_TRIP_TRIPPED
++};
++
+ enum thermal_trend {
+ 	THERMAL_TREND_STABLE, /* temperature is stable */
+ 	THERMAL_TREND_RAISING, /* temperature is raising */
+@@ -114,6 +119,11 @@ struct thermal_zone_device_ops {
+ 			  enum thermal_trend *);
+ 	int (*notify) (struct thermal_zone_device *, int,
+ 		       enum thermal_trip_type);
++	int (*get_trip_state)(struct thermal_zone_device *, int,
++			enum thermal_trip_state *);
++	int (*set_trip_state)(struct thermal_zone_device *, int,
++			enum thermal_trip_state);
++	bool (*enb_temp_notify)(struct thermal_zone_device *, int);
+ };
+ 
+ struct thermal_cooling_device_ops {
+@@ -348,6 +358,7 @@ struct thermal_zone_of_device_ops {
+  * @temperature: temperature value in miliCelsius
+  * @hysteresis: relative hysteresis in miliCelsius
+  * @type: trip point type
++ * @state: trip point state
+  */
+ 
+ struct thermal_trip {
+@@ -355,6 +366,7 @@ struct thermal_trip {
+ 	unsigned long int temperature;
+ 	unsigned long int hysteresis;
+ 	enum thermal_trip_type type;
++	enum thermal_trip_state state;
+ };
+ 
+ /* Function declarations */
+-- 
+2.1.4
 
-Full log for one boot at:
-
-  https://storage.kernelci.org/broonie-regulator/v4.6-rc1-24-ga7e614dd1f91/arm-multi_v7_defconfig+CONFIG_SMP=n/lab-mhart/boot-tegra124-jetson-tk1.html
-
---z3ND3gJe4e1E4uwh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJW+tF2AAoJECTWi3JdVIfQKJIH/3fQx3h0JjeVZh9r71H6Ltly
-3fHrTFuGSST9CmcAdLouJvmhNls3hhnQ2bAHmqL7VRtsDE39gD9LzbWuG1v5i/Zn
-R5Qr6zTDqjI+047va0P1NQcVq8tFy//TcS3kd9H4dWHSVaQX3ge+zjNZzVfOZ1sU
-/AzQJ6JxJqUlGPsHvl/fe2xjfE5kl9qBJZzi5QIve/owHwtzIYHb1qucbGEwsLT0
-MJUNqmRK52FpPHJGguw0jGLXLW+rsTirvYmGgSt8U9sruclaoIKxggRg/7nlqoXo
-iFKhuzkNXeF8pqlIGRTrddJjv4GpHPmyH65Cnj2uToMgpGNnr11SbkPUKaOPKYs=
-=l9Hy
------END PGP SIGNATURE-----
-
---z3ND3gJe4e1E4uwh--
