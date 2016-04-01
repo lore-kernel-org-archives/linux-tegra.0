@@ -1,61 +1,42 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] regulator: core: Use parent voltage from the supply when
- bypassed
-Date: Thu, 31 Mar 2016 10:55:27 -0700
-Message-ID: <20160331175527.GP2350@sirena.org.uk>
-References: <1459359124-22436-1-git-send-email-broonie@kernel.org>
- <56FD33EE.6030109@nvidia.com>
+From: Wei Ni <wni@nvidia.com>
+Subject: Re: [PATCH V9 RESEND 13/14] arm64: tegra: add soctherm node for Tegra210
+Date: Fri, 1 Apr 2016 15:01:15 +0800
+Message-ID: <56FE1CBB.9000807@nvidia.com>
+References: <1459247364-1139-1-git-send-email-wni@nvidia.com> <1459247364-1139-14-git-send-email-wni@nvidia.com> <20160329151629.GB1855@localhost.localdomain>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="H5oeNUPfJ0vte6JU"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <56FD33EE.6030109-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160329151629.GB1855@localhost.localdomain>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>
+Cc: Eduardo Valentin <edubezval@gmail.com>, rui.zhang@intel.com, thierry.reding@gmail.com, MLongnecker@nvidia.com, swarren@wwwdotorg.org, mikko.perttunen@kapsi.fi, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Patches 1 to 12 in this series were accepted by Eduardo.
+Patches 13 and 14 need to go via platform or dt tree.
 
---H5oeNUPfJ0vte6JU
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Used get_maintainer.pl to get maintainers and open list, add them in To=
+: and Cc:
+list.
 
-On Thu, Mar 31, 2016 at 03:27:58PM +0100, Jon Hunter wrote:
-> On 30/03/16 18:32, Mark Brown wrote:
+To:
+Rob Herring <robh+dt@kernel.org>
+Pawel Moll <pawel.moll@arm.com>
+Mark Rutland <mark.rutland@arm.com>
+Ian Campbell <ijc+devicetree@hellion.org.uk>
+Kumar Gala <galak@codeaurora.org>
 
-> > +		if (bypassed) {
-> > +			if (rdev->supply) {
-> > +				ret = _regulator_get_voltage(rdev->supply->rdev);
+Cc:
+devicetree@vger.kernel.org
 
-> Should this be a return here?
-
-Gnargh, yes.
-
-> I gave this a quick test on tegra124 having populated the
-> get/set_bypass() operators for the as3722. In this case, there is still
-> a problem because _regulator_get_voltage() is called during regulator
-> registration when set_machine_constraints() is called, which is before
-> we have called regulator_register_resolve_supply(). Therefore, it seems
-> to me that we still need to resolve the supply before we call
-> set_machine_constraints().
-
-OK, we need to change the code there to defer probe in the case where
-the device is in bypass mode as well.
-
---H5oeNUPfJ0vte6JU
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQEcBAEBCAAGBQJW/WSOAAoJECTWi3JdVIfQaS4H/jVCVx5njN5peNNtClpVKLaH
-f7NzszhVjPHN34snXacZUU8fzaxCMHRjeZvU0/r45js7fndZS6hWQ6Xk92XMcJ3S
-kNrT38EwrCkql4KMiUFU6yvjlcePa7eZNw7t3CZtviJU7qzPF5KQZ/Iw6cwh84Pw
-ylTfyCNoJr+nhYkYhtjmMdqvR72Bm9NpR8kUmei1YmMtHO2OBvSQ6G2R8DrP5uue
-W1FE1al5U3CpDONHoRia7hLRFLg3YwHTeCvs28F3coi1T6WCIJaEDvEaO1l0JXOE
-IPjndUTE3hHKfXIkFRNJjoUI32EiNyDSeV173gl51GZVHjDQPOCELk1VLc2fBNE=
-=F9b/
------END PGP SIGNATURE-----
-
---H5oeNUPfJ0vte6JU--
+On 2016=E5=B9=B403=E6=9C=8829=E6=97=A5 23:16, Eduardo Valentin wrote:
+> On Tue, Mar 29, 2016 at 06:29:23PM +0800, Wei Ni wrote:
+>> Adds soctherm node for Tegra210, and add cpu,
+>> gpu, mem, pllx as thermal-zones. Set critical
+>> trip temperatures for them.
+>>
+>> Signed-off-by: Wei Ni <wni@nvidia.com>
+>=20
+> Acked-by: Eduardo Valentin <edubezval@gmail.com>
+>=20
