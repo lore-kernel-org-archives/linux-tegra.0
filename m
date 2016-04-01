@@ -1,81 +1,154 @@
-From: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Subject: re: spi/tegra114: add spi driver
-Date: Fri, 1 Apr 2016 16:52:27 +0300
-Message-ID: <20160401135227.GA24190@mwanda>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] regulator: core: Use parent voltage from the supply when
+ bypassed
+Date: Fri, 1 Apr 2016 18:58:37 +0200
+Message-ID: <20160401165837.GA17032@ulmo.nvidia.com>
+References: <1459359124-22436-1-git-send-email-broonie@kernel.org>
+ <56FD33EE.6030109@nvidia.com>
+ <20160331175527.GP2350@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="mP3DRpeJDSE+ciuQ"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-Sender: linux-spi-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-spi-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20160331175527.GP2350@sirena.org.uk>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Brown <broonie@kernel.org>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hello Laxman Dewangan,
 
-The patch f333a331adfa: "spi/tegra114: add spi driver" from Feb 22,
-2013, leads to the following static checker warning:
+--mP3DRpeJDSE+ciuQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-	drivers/spi/spi-tegra114.c:621 tegra_spi_init_dma_param()
-	error: uninitialized variable 'dma_phys'.
+On Thu, Mar 31, 2016 at 10:55:27AM -0700, Mark Brown wrote:
+> On Thu, Mar 31, 2016 at 03:27:58PM +0100, Jon Hunter wrote:
+> > On 30/03/16 18:32, Mark Brown wrote:
+>=20
+> > > +		if (bypassed) {
+> > > +			if (rdev->supply) {
+> > > +				ret =3D _regulator_get_voltage(rdev->supply->rdev);
+>=20
+> > Should this be a return here?
+>=20
+> Gnargh, yes.
+>=20
+> > I gave this a quick test on tegra124 having populated the
+> > get/set_bypass() operators for the as3722. In this case, there is still
+> > a problem because _regulator_get_voltage() is called during regulator
+> > registration when set_machine_constraints() is called, which is before
+> > we have called regulator_register_resolve_supply(). Therefore, it seems
+> > to me that we still need to resolve the supply before we call
+> > set_machine_constraints().
+>=20
+> OK, we need to change the code there to defer probe in the case where
+> the device is in bypass mode as well.
 
-drivers/spi/spi-tegra114.c
-   583          dma_addr_t dma_phys;
-                ^^^^^^^^^^^^^^^^^^^
-   584          int ret;
-   585          struct dma_slave_config dma_sconfig;
-   586  
-   587          dma_chan = dma_request_slave_channel_reason(tspi->dev,
-   588                                          dma_to_memory ? "rx" : "tx");
-   589          if (IS_ERR(dma_chan)) {
-   590                  ret = PTR_ERR(dma_chan);
-   591                  if (ret != -EPROBE_DEFER)
-   592                          dev_err(tspi->dev,
-   593                                  "Dma channel is not available: %d\n", ret);
-   594                  return ret;
-   595          }
-   596  
-   597          dma_buf = dma_alloc_coherent(tspi->dev, tspi->dma_buf_size,
-   598                                  &dma_phys, GFP_KERNEL);
+The following on top of your patch here and Jon's two patches to add
+bypass support for the LDO6 on AS3722 make Jetson TK1 boot fine for me
+again.
 
-The issue is that in dma_alloc_attrs() if we can dma_alloc_from_coherent()
-then dma_phys is not set.  I'm getting a couple similar errors and I'm
-not certian what to do about it.
+I can turn this into a proper commit if you want, or perhaps it might be
+worth splitting this into several patches, one rearranging the supply
+resolution vs. constraints application and another fixing up the bypass
+patch you sent earlier (probably best to fold it into your original).
 
-   599          if (!dma_buf) {
-   600                  dev_err(tspi->dev, " Not able to allocate the dma buffer\n");
-   601                  dma_release_channel(dma_chan);
-   602                  return -ENOMEM;
-   603          }
-   604  
-   605          if (dma_to_memory) {
-   606                  dma_sconfig.src_addr = tspi->phys + SPI_RX_FIFO;
-   607                  dma_sconfig.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-   608                  dma_sconfig.src_maxburst = 0;
-   609          } else {
-   610                  dma_sconfig.dst_addr = tspi->phys + SPI_TX_FIFO;
-   611                  dma_sconfig.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
-   612                  dma_sconfig.dst_maxburst = 0;
-   613          }
-   614  
-   615          ret = dmaengine_slave_config(dma_chan, &dma_sconfig);
-   616          if (ret)
-   617                  goto scrub;
-   618          if (dma_to_memory) {
-   619                  tspi->rx_dma_chan = dma_chan;
-   620                  tspi->rx_dma_buf = dma_buf;
-   621                  tspi->rx_dma_phys = dma_phys;
-                                            ^^^^^^^^
-Uninitialized.
+Thierry
 
-   622          } else {
-   623                  tspi->tx_dma_chan = dma_chan;
-   624                  tspi->tx_dma_buf = dma_buf;
-   625                  tspi->tx_dma_phys = dma_phys;
+--- >8 ---
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 6e5085034b77..23c8c4c86389 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -3125,11 +3125,11 @@ static int _regulator_get_voltage(struct regulator_=
+dev *rdev)
+ 		if (ret < 0)
+ 			return ret;
+ 		if (bypassed) {
+-			if (rdev->supply) {
+-				ret =3D _regulator_get_voltage(rdev->supply->rdev);
+-			} else {
++			/* if bypassed the regulator must have a supply */
++			if (!rdev->supply)
+ 				return -EINVAL;
+-			}
++
++			return _regulator_get_voltage(rdev->supply->rdev);
+ 		}
+ 	}
+=20
+@@ -3986,18 +3986,27 @@ regulator_register(const struct regulator_desc *reg=
+ulator_desc,
+=20
+ 	dev_set_drvdata(&rdev->dev, rdev);
+=20
++	if (init_data && init_data->supply_regulator)
++		rdev->supply_name =3D init_data->supply_regulator;
++	else if (regulator_desc->supply_name)
++		rdev->supply_name =3D regulator_desc->supply_name;
++
++	/*
++	 * set_machine_constraints() needs the supply to be resolved in order
++	 * to support querying the current voltage in bypass mode. Resolve it
++	 * here to more easily handle deferred probing.
++	 */
++	ret =3D regulator_resolve_supply(rdev);
++	if (ret < 0)
++		goto scrub;
++
+ 	/* set regulator constraints */
+ 	if (init_data)
+ 		constraints =3D &init_data->constraints;
+=20
+ 	ret =3D set_machine_constraints(rdev, constraints);
+ 	if (ret < 0)
+-		goto scrub;
+-
+-	if (init_data && init_data->supply_regulator)
+-		rdev->supply_name =3D init_data->supply_regulator;
+-	else if (regulator_desc->supply_name)
+-		rdev->supply_name =3D regulator_desc->supply_name;
++		goto tumble;
+=20
+ 	/* add consumers devices */
+ 	if (init_data) {
+@@ -4024,7 +4033,13 @@ regulator_register(const struct regulator_desc *regu=
+lator_desc,
+=20
+ unset_supplies:
+ 	unset_regulator_supplies(rdev);
++tumble:
++	if (rdev->supply) {
++		if (_regulator_is_enabled(rdev))
++			regulator_disable(rdev->supply);
+=20
++		_regulator_put(rdev->supply);
++	}
+ scrub:
+ 	regulator_ena_gpio_free(rdev);
+ 	device_unregister(&rdev->dev);
 
-regards,
-dan carpenter
---
-To unsubscribe from this list: send the line "unsubscribe linux-spi" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--mP3DRpeJDSE+ciuQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJW/qi5AAoJEN0jrNd/PrOhkv0P/3V+tET5mS/hp48flCT5L+5N
+45z6allq8crgG0bAa9+H8SpqkHUPfc/B6xgIrqZEp+T3E8E8RF+ZRdZxX5NPTcxt
+mXE/I9xrRA2RPzR082LswXiD3HBaVVaSyGzP6OscXO11IOWpaaPBD+FVb/xeqmBO
+3zOrHSNRgV1UlXRJ9EtUhdYGuslKKprtErdhsrFG8K81oRWEvXI4iU7nfEgCrcXO
+GjQOYoFUX5DeRYxbsenlisv//NqQR0KyBG4kz19I6DHaV06eHp+zu72bI1JLBKTF
+7AvjDf460NPxVIDNiCGFHu7/Ta1SWwPXoolJWRz3GlRZf41ZQ14gXNWDU35rUr61
+C90B+x+rz2LXjUkyVl6Cwe0gyVzZvwziUu4uHWhFB8r3Ga7NS76zIJ8Hfja4lIYX
+4NyJL1gr0iWMuYPh/dFqEu8p/uBY9sS9NqSYkXBHBG7mjSUKUXn6nHi9KI++Yr8L
+AFcQjbtj1OweYjiUJohtp0nktsIf1ZKZRheU1Z/ber4jxzZdKNDYRgVnNvxxH0WT
+dsA5C+F4pP3HXZP4USUtQfipgfXiIOpf7XGrbNwSi5N6/aeCnlqMwiPnyrXOy+1c
+kjbSCj9G5rsmqBSQ4T/9eK76RBUU6CSPhLV08focMWmxGTHHamjPv8VF3z/zGw60
+ssTKZtSztJ35GlFZYcKa
+=8489
+-----END PGP SIGNATURE-----
+
+--mP3DRpeJDSE+ciuQ--
