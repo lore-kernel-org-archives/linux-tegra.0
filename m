@@ -1,28 +1,41 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH V8 0/4] Add generic PM domain support for Tegra
-Date: Fri, 01 Apr 2016 16:47:10 -0700
-Message-ID: <7h1t6oops1.fsf@baylibre.com>
-References: <1459329316-27293-1-git-send-email-jonathanh@nvidia.com>
+From: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Subject: re: thermal: tegra: add thermtrip function
+Date: Sat, 2 Apr 2016 08:50:45 +0300
+Message-ID: <20160402055045.GA23902@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1459329316-27293-1-git-send-email-jonathanh@nvidia.com> (Jon
-	Hunter's message of "Wed, 30 Mar 2016 10:15:12 +0100")
-Sender: linux-pm-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Ulf Hansson <ulf.hansson@linaro.org>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Jon Hunter <jonathanh@nvidia.com> writes:
+Hello Wei Ni,
 
-> Adds generic PM domain support for Tegra SoCs but this series only
-> enables support for it on Tegra 64-bit devices. There is no reason why
-> this cannot be enable for Tegra 32-bit devices, but to keep the patch
-> series to a minimum only 64-bit devices are enabled so far.
->
-> This series has been boot tested on Tegra210 as well as various 32-bit
-> Tegra platforms.
+This is a semi-automatic email about new static checker warnings.
 
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+The patch ee6d79f202a4: "thermal: tegra: add thermtrip function" from 
+Mar 29, 2016, leads to the following Smatch complaint:
 
-Kevin
+drivers/thermal/tegra/soctherm.c:226 thermtrip_program()
+	 warn: variable dereferenced before check 'dev' (see line 222)
+
+drivers/thermal/tegra/soctherm.c
+   221	{
+   222		struct tegra_soctherm *ts = dev_get_drvdata(dev);
+                                            ^^^^^^^^^^^^^^^^^^^
+Dereference inside function.
+
+   223		int temp;
+   224		u32 r;
+   225	
+   226		if (!dev || !sg)
+                    ^^^^
+Too late.
+
+   227			return -EINVAL;
+   228	
+
+regards,
+dan carpenter
