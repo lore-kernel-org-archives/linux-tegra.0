@@ -1,70 +1,62 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 01/15] ARM: tegra: Correct interrupt type for ARM TWD
-Date: Tue, 5 Apr 2016 16:04:17 +0200
-Message-ID: <20160405140417.GB28814@ulmo.ba.sec>
-References: <1458224359-32665-1-git-send-email-jonathanh@nvidia.com>
- <1458224359-32665-2-git-send-email-jonathanh@nvidia.com>
+Subject: Re: [PATCH 1/2] ARM: tegra: Add stdout-path for various boards
+Date: Tue, 5 Apr 2016 16:04:52 +0200
+Message-ID: <20160405140452.GC28814@ulmo.ba.sec>
+References: <1455025920-21875-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="TRYliJ5NKNqkz5bu"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="LwW0XdcUbUexiWVK"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1458224359-32665-2-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1455025920-21875-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---TRYliJ5NKNqkz5bu
+--LwW0XdcUbUexiWVK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 17, 2016 at 02:19:05PM +0000, Jon Hunter wrote:
-> The ARM TWD interrupt is a private peripheral interrupt (PPI) and per
-> the ARM GIC documentation, whether the type for PPIs can be set is
-> IMPLEMENTATION DEFINED. For Tegra20/30 devices the PPI type cannot be
-> set and so when we attempt to set the type for the ARM TWD interrupt it
-> fails. This has done unnoticed because it fails silently and because we
-> cannot re-configure the type it has had no impact. Nevertheless fix the
-> type for the TWD interrupt so that it matches the hardware configuration.
+On Tue, Feb 09, 2016 at 01:51:59PM +0000, Jon Hunter wrote:
+> For Tegra boards, the device-tree alias serial0 is used for the console
+> and so add the stdout-path information so that the console no longer
+> needs to be passed via the kernel boot parameters.
+>=20
+> This has been tested on boards, tegra20-trimslice, tegra30-beaver,
+> tegra114-dalmore and tegra124-jetson-tk1.
 >=20
 > Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> ---
-> Ideally, we would not be attempting to set the type for an interrupt
-> where it cannot be programmed but this would require changes to the
-> device-tree bindings for the GIC. This series adds a WARNING to catch
-> any of these silent failures.
-> ---
->  arch/arm/boot/dts/tegra20.dtsi | 2 +-
->  arch/arm/boot/dts/tegra30.dtsi | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
 
 Applied, thanks.
 
 Thierry
 
---TRYliJ5NKNqkz5bu
+--LwW0XdcUbUexiWVK
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXA8XhAAoJEN0jrNd/PrOhmSIP/RpZIhUQLSn6Taxbhlrp3/qe
-UYoyMSNefCJo7iuP6fXp2DDYZ24bjwJLcqrZ6KVy8y8QKzQ2KLGjdJUk7pp4w5Ar
-fbGGLFVwNjnogxtXWp8rknJ7f49FqQLvZShvXJGsBDsBatyDF8fjuyqofzEaLXZj
-hZFMrWHDVSFYili3iNE2t0zu4zbLzv5SXgJn4PO98hhSY9FMe6MDh4qUGNbLf/qQ
-J92oJgetHx0cFf57G+BL6AGjwhaiaeSF1VwwOqz7P8sez+6X97FIaRUVud9lTB19
-75cEK1mEAvmFxNB7gD3jz/x0SJ+iYkPwzsRq5t+ZRPQf8AK1ACQXVl0Il6kqb9l+
-ndeE0PuFSOrykj5hzHD5+kI1ZBZun5Xil3jmXH1cdVscLpSDz9WJjWD6wLVcchXE
-dtjAQ8JQJHBNC92KQCzKUGF8PsaWPm5bxbflpattNvgprdPdemmURDrRE/Ajm7Zq
-7xUMcrSJwSwiH7dryYGunFLnHJ39OE01Sv+abPQ/3djctHB7OrIAl23WrDfscdzt
-j8FtlwvvoTjaxi40WRY6jhNoR9Ln7Hx6B5XVJQWg7KBqtefFBsVj9scRfTnQeUNX
-dhC3FeKKixsY359oEqxR6/sm8EQJnToSOVdQr2rkY+cNU2CpzN/ArCKIreNvlpkN
-Gx0Eky2xdyfuSGfverPJ
-=UF16
+iQIcBAABCAAGBQJXA8YDAAoJEN0jrNd/PrOhep4P/137qgcetS9ra8Aq5VcJUnBh
+wee2B+AOoZCLrT0KgPOyoHcsNe1eKPQPxCS+sXn78eogomGrOoDJjgpaUIAcJ4gC
+9coVVK/5h4zf6gJep7ejQpXF0Ll8/tHppZqreix2BknfWqICuhhvoaqBCClDHH0+
+9q7aTCPDVmwbzwU6KjzvYG8iVJ1zRF0UAxjHbFBszDsyEK3iKckiprkaPWcQn8iP
+ECxeIoaPyY1/9Y9U+H/izserNhupLpVI84LQ/7EJQYKRvCOP0u/AqUgT4Aa7nLFr
+j5YEUGKwexCYnkTc/TJ7mKzodKr0TMt2b37iwCVNqLnwXb7Jklcvz7OqGsuiivfj
+/L8V2zIVpe8nbGmkIqigbn5QTj9sk2Ja3rFecsHZSLlfeIgdvgGD+55pAPnohOmH
+M2iehEN1YIPOziAzYT11GGhNWUCXkLlfqHFS5KcX+YWiSLqSkLiSBnw6MAwQpzGL
+8WbJu6Amp6igsWvpBRixg2kgC7wOZrqbcmTJWsEJBS0/7E4A0CR+jB+8Kzt1dVmK
+IiYR+/dHRxrgAFPtrMekUqUBXa7z7dkcv4n0s8Dx8jT0vEdko1tcdzfy6DtIXjB3
+cG56+KCsR3nEk6OjgNJ/gQ+SjSUjXJ3UWTCZdRiYxzYx0NYvzF62u5sJmDYD54A8
+tZ1ck4Dgy6d38qzHhm7Y
+=emgI
 -----END PGP SIGNATURE-----
 
---TRYliJ5NKNqkz5bu--
+--LwW0XdcUbUexiWVK--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
