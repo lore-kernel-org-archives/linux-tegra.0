@@ -1,64 +1,109 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/2] ARM64: tegra: Add stdout-path for various boards
-Date: Tue, 5 Apr 2016 16:05:05 +0200
-Message-ID: <20160405140505.GD28814@ulmo.ba.sec>
-References: <1455025920-21875-1-git-send-email-jonathanh@nvidia.com>
- <1455025920-21875-2-git-send-email-jonathanh@nvidia.com>
+Subject: Re: [PATCH v10 3/9] dt-bindings: phy: tegra-xusb-padctl: Add
+ Tegra210 support
+Date: Tue, 5 Apr 2016 16:44:16 +0200
+Message-ID: <20160405144416.GA10809@ulmo.ba.sec>
+References: <1457108379-20794-1-git-send-email-thierry.reding@gmail.com>
+ <1457108379-20794-3-git-send-email-thierry.reding@gmail.com>
+ <56E99F10.1060508@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="rz+pwK2yUstbofK6"
+	protocol="application/pgp-signature"; boundary="EeQfGwPcQSOJBaQU"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1455025920-21875-2-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <56E99F10.1060508-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---rz+pwK2yUstbofK6
+--EeQfGwPcQSOJBaQU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Feb 09, 2016 at 01:52:00PM +0000, Jon Hunter wrote:
-> For Tegra boards, the device-tree alias serial0 is used for the console
-> and so add the stdout-path information so that the console no longer
-> needs to be passed via the kernel boot parameters.
+On Wed, Mar 16, 2016 at 11:59:44AM -0600, Stephen Warren wrote:
+> On 03/04/2016 09:19 AM, Thierry Reding wrote:
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >=20
+> > Extend the binding to cover the set of feature found in Tegra210.
 >=20
-> For tegra132-norrin the alias serial0 is not defined and so add this.
+> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >=20
-> This has been tested on tegra132-norrin and tegra210-p2371-0000.
+> > diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb=
+-padctl.txt b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-pa=
+dctl.txt
 >=20
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra132-norrin.dts | 5 ++++-
->  arch/arm64/boot/dts/nvidia/tegra210-p2530.dtsi | 4 ++++
->  2 files changed, 8 insertions(+), 1 deletion(-)
+> > +	padctl@0,7009f000 {
+> ...
+> > +		pads {
+> ...
+> > +		};
+> > +
+> > +		ports {
+> ...
+> > +		};
+>=20
+> As a comment not affecting my ack in any way: At the top-level, we place =
+all
+> the child nodes into "array container" nodes named "pads" and "ports". Th=
+is
+> is nice since it separates different types of child nodes and allows easi=
+ly
+> adding more types of child nodes in the future without interference, and =
+in
+> a way that allows us to explicitly know what each node is without having =
+to
+> interpret its name or compatible value to do so. However, we haven't done
+> this with the per-lane child nodes inside each pad. If we were to rev the
+> design, I'd be tempted to suggest:
+>=20
+> 	padctl@0,7009f000 {
+> 		pads {
+> 			usb2 {
+> 				lanes { // This level is new
+> 					usb2-0 {
 
-Applied, thanks.
+I tried to make this work, but it's unfortunately not possible with the
+current code. The reason is that the PHY subsystem assumes that either
+the provider DT node corresponds to that of the device (the usb2 pad in
+the above example) or one of its children. Hence, putting everything
+into one more level further down would require some mechanism to tell
+the subsystem about it so that it can be found.
+
+Arguably the current support code isn't a good argument for designing a
+binding, so perhaps it'd be useful to add this mechanism in order to get
+a better binding. On the other hand, I'm not sure it's really worth it,
+since we already have generic bindings that specify the layout of child
+devices, and those have been agreed upon broadly (presumably).
+
+In light of the recent discussion on DPAUX vs. I2C, I see how having the
+extra level would be useful to provide additional context. If you think
+it's worth it I can spend the extra time to get this implemented in the
+core.
 
 Thierry
 
---rz+pwK2yUstbofK6
+--EeQfGwPcQSOJBaQU
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXA8YRAAoJEN0jrNd/PrOh+EYQALxsuJDrbVBgVPeLSn+b6V/5
-xYrDyxkHr8MTp3sw2QX6660oKI8oANiQNv4ndCUBlRbG/CoMJZ+skTcIJQ7+d0n4
-49rko/2IggXjGTTfYhQ74BQS4teCMywo3XtScnVO/x05Mlv2dsJ+uWFONiE87ixk
-IokySIfZwDLkWbi0KEM7SIjA1B+DbVsBOy0zBmci/TiHR4HGzJg+15n2Kzix1eAc
-S9npDOogjP+mGSXFZ60l3MK1eOY3Y79RW0H0sJsKoHNX1CUaxBZRUwnXRce4rpF+
-MRTT8/jPyFHZcNlnJa5owKWdn/OeBCYr0h/DGlx2MucVXBG4ukRBJ5hK5pwlOJIx
-S+PET4XYhZiXQmQ5u4JIUrzR8hBBM3HE9uXG5O49Sq9y6k4m94nPwzDevYQtm2zf
-N6p/whAtDZ6/mKXe/1+v0G7TSM9J+1k/B4qeGrirAxOm+s9hG4qMbOHAjEYmg8Uf
-poaLOE2GReaV2LrKa0NrCJUXqZ5FYauVRv2DBS8gybFbD/eNy3BnJyeNcs0m1da5
-GnvrgAytPhayx2nQLIloJam2ckZuj4dOxgtXpus6NMiQqHdWGGlE0QEDtiPIfn7J
-RooGI2sgtv1vUFSsLro+8sMRWjbvcp1+MdOiMjy+lO6XNjaf+0c+OAJmz8Jsr4Fp
-/pO/6CZXlyRQTVL58d1A
-=hT56
+iQIcBAABCAAGBQJXA889AAoJEN0jrNd/PrOhrlwP/1s/hfQKGfeRZJDP4P7W8FRG
+7Q6HYYLy3S6Y69EigHnnKdjIDWiIYl/O3UpcxKmA3fGbIzGJzOn2cPvbAPMTnaVr
+cy0S531prsWOmRSsPk+ev/eLclRJov9Ccsapum0Hp5O7U2FyGFjRKdW1hxh18c/a
+ewt3hT4NqQgyy4yQ4eTC++RbdbLMd5N/taRDV6T/P9yTrm3Fsf75071qmADgh+2B
+5tX1Lofqum+4qEIj8KMJLv+umzj/t+b4eutxQwEsm+v6gAhJamhVdJr0lQ9UZKiH
+eFyk3UoDHHJBZCeqzoxbHtikVMHk7WzWFA0ZxqYR920Q5CbhAWA89FupDarA6HwO
+fB79dj8SN6AFxDhOCtggsY2DRrN2kVzBJNUI1OO+a31KNJjuXmpuq5UtXOFgkMtx
+zWWww8bZvQp6Cysa7RymTanPgTO/ZA0piW0q7kLVebBC7qTQWN/Rs3hVVBjQR/ji
+7YrRhcM8aQ/Vdci0SAKqgHog6D3byxThCrVBU/9XsCZceWEh8z/aTvDO2qhFnxDB
+LBCoxEOURcSttZhx+Wsgn9tOobXZP7KHvwDm1nHdTTHbov5AKUTv5UiO4xIGGu/v
+MBROApgPAs4vIFlelyVfzxw28F3DwnKUvv5EhWnrFKMPlRBoTdUE3HRWsmw5sgTL
+K5fQWtSqK2uxE9bl3mn8
+=NQmu
 -----END PGP SIGNATURE-----
 
---rz+pwK2yUstbofK6--
+--EeQfGwPcQSOJBaQU--
