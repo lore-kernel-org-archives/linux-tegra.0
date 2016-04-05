@@ -1,3467 +1,1471 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v10 4/9] phy: Add Tegra XUSB pad controller support
-Date: Tue, 5 Apr 2016 15:16:05 +0200
-Message-ID: <20160405131605.GA24972@ulmo.ba.sec>
+Subject: Re: [PATCH v10 8/9] usb: xhci: Add NVIDIA Tegra XUSB controller
+ driver
+Date: Tue, 5 Apr 2016 15:17:51 +0200
+Message-ID: <20160405131751.GB24972@ulmo.ba.sec>
 References: <1457108379-20794-1-git-send-email-thierry.reding@gmail.com>
- <1457108379-20794-4-git-send-email-thierry.reding@gmail.com>
+ <1457108379-20794-8-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="9amGYk9869ThD9tj"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="z6Eq5LdranGa6ru8"
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1457108379-20794-4-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+In-Reply-To: <1457108379-20794-8-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---9amGYk9869ThD9tj
+--z6Eq5LdranGa6ru8
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Kishon,
+Hi Mathias, Greg,
 
-The dependencies within this series somewhat complicated, so I'd prefer
-to take it all via one tree. Would you be willing to give an Acked-by on
-this patch?
+Due to the various dependencies within the series, I'd prefer this to go
+via the Tegra tree. Would you be okay with providing your Acked-by?
 
+Thanks,
 Thierry
 
-On Fri, Mar 04, 2016 at 05:19:34PM +0100, Thierry Reding wrote:
+On Fri, Mar 04, 2016 at 05:19:38PM +0100, Thierry Reding wrote:
 > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >=20
-> Add a new driver for the XUSB pad controller found on NVIDIA Tegra SoCs.
-> This hardware block used to be exposed as a pin controller, but it turns
-> out that this isn't a good fit. The new driver and DT binding much more
-> accurately describe the hardware and are more flexible in supporting new
-> SoC generations.
+> Add support for the on-chip XUSB controller present on Tegra SoCs. This
+> controller, when loaded with external firmware, exposes an interface
+> compliant with xHCI. This driver loads the firmware, starts the
+> controller, and is able to service host-specific messages sent by the
+> controller's firmware.
 >=20
+> The controller also supports USB device mode as well as powergating
+> of the SuperSpeed and host-controller logic when not in use, but
+> support for these is not yet implemented.
+>=20
+> Based on work by:
+>   Ajay Gupta <ajayg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>   Bharath Yadav <byadav-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>   Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+>=20
+> Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+> Cc: Mathias Nyman <mathias.nyman-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
-> Changes in v9:
-> - export public API for direct use by the xHCI driver (replaces mailbox
->   API which had introduced a nasty circular dependency)
->=20
->  drivers/phy/Kconfig                        |    2 +
->  drivers/phy/Makefile                       |    2 +
->  drivers/phy/tegra/Kconfig                  |    8 +
->  drivers/phy/tegra/Makefile                 |    5 +
->  drivers/phy/tegra/xusb-tegra124.c          | 1747 ++++++++++++++++++++++=
+>  drivers/usb/host/Kconfig      |    9 +
+>  drivers/usb/host/Makefile     |    1 +
+>  drivers/usb/host/xhci-tegra.c | 1332 +++++++++++++++++++++++++++++++++++=
 ++++++
->  drivers/phy/tegra/xusb.c                   | 1017 ++++++++++++++++
->  drivers/phy/tegra/xusb.h                   |  421 +++++++
->  drivers/pinctrl/tegra/pinctrl-tegra-xusb.c |   20 +-
->  include/linux/phy/tegra/xusb.h             |   30 +
->  9 files changed, 3236 insertions(+), 16 deletions(-)
->  create mode 100644 drivers/phy/tegra/Kconfig
->  create mode 100644 drivers/phy/tegra/Makefile
->  create mode 100644 drivers/phy/tegra/xusb-tegra124.c
->  create mode 100644 drivers/phy/tegra/xusb.c
->  create mode 100644 drivers/phy/tegra/xusb.h
->  create mode 100644 include/linux/phy/tegra/xusb.h
+>  3 files changed, 1342 insertions(+)
+>  create mode 100644 drivers/usb/host/xhci-tegra.c
 >=20
-> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> index 0124d17bd9fe..4bf65ceb3250 100644
-> --- a/drivers/phy/Kconfig
-> +++ b/drivers/phy/Kconfig
-> @@ -407,4 +407,6 @@ config PHY_CYGNUS_PCIE
->  	  Enable this to support the Broadcom Cygnus PCIe PHY.
->  	  If unsure, say N.
+> diff --git a/drivers/usb/host/Kconfig b/drivers/usb/host/Kconfig
+> index 8c20ebbc049c..191fdeb8b841 100644
+> --- a/drivers/usb/host/Kconfig
+> +++ b/drivers/usb/host/Kconfig
+> @@ -69,6 +69,15 @@ config USB_XHCI_RCAR
+>  	  Say 'Y' to enable the support for the xHCI host controller
+>  	  found in Renesas R-Car ARM SoCs.
 > =20
-> +source "drivers/phy/tegra/Kconfig"
+> +config USB_XHCI_TEGRA
+> +	tristate "xHCI support for NVIDIA Tegra SoCs"
+> +	depends on PHY_TEGRA_XUSB
+> +	depends on RESET_CONTROLLER
+> +	select FW_LOADER
+> +	---help---
+> +	  Say 'Y' to enable the support for the xHCI host controller
+> +	  found in NVIDIA Tegra124 and later SoCs.
 > +
->  endmenu
-> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
-> index c80f09df3bb8..82709141d072 100644
-> --- a/drivers/phy/Makefile
-> +++ b/drivers/phy/Makefile
-> @@ -50,3 +50,5 @@ obj-$(CONFIG_PHY_TUSB1210)		+=3D phy-tusb1210.o
->  obj-$(CONFIG_PHY_BRCMSTB_SATA)		+=3D phy-brcmstb-sata.o
->  obj-$(CONFIG_PHY_PISTACHIO_USB)		+=3D phy-pistachio-usb.o
->  obj-$(CONFIG_PHY_CYGNUS_PCIE)		+=3D phy-bcm-cygnus-pcie.o
-> +
-> +obj-$(CONFIG_ARCH_TEGRA) +=3D tegra/
-> diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
+>  endif # USB_XHCI_HCD
+> =20
+>  config USB_EHCI_HCD
+> diff --git a/drivers/usb/host/Makefile b/drivers/usb/host/Makefile
+> index a9ddd3c9ec94..6ef785b0ea8f 100644
+> --- a/drivers/usb/host/Makefile
+> +++ b/drivers/usb/host/Makefile
+> @@ -68,6 +68,7 @@ obj-$(CONFIG_USB_XHCI_HCD)	+=3D xhci-hcd.o
+>  obj-$(CONFIG_USB_XHCI_PCI)	+=3D xhci-pci.o
+>  obj-$(CONFIG_USB_XHCI_PLATFORM) +=3D xhci-plat-hcd.o
+>  obj-$(CONFIG_USB_XHCI_MTK)	+=3D xhci-mtk.o
+> +obj-$(CONFIG_USB_XHCI_TEGRA)	+=3D xhci-tegra.o
+>  obj-$(CONFIG_USB_SL811_HCD)	+=3D sl811-hcd.o
+>  obj-$(CONFIG_USB_SL811_CS)	+=3D sl811_cs.o
+>  obj-$(CONFIG_USB_U132_HCD)	+=3D u132-hcd.o
+> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
 > new file mode 100644
-> index 000000000000..a3b1de953fb7
+> index 000000000000..ab6f9856c5c4
 > --- /dev/null
-> +++ b/drivers/phy/tegra/Kconfig
-> @@ -0,0 +1,8 @@
-> +config PHY_TEGRA_XUSB
-> +	tristate "NVIDIA Tegra XUSB pad controller driver"
-> +	depends on ARCH_TEGRA
-> +	help
-> +	  Choose this option if you have an NVIDIA Tegra SoC.
-> +
-> +	  To compile this driver as a module, choose M here: the module will
-> +	  be called phy-tegra-xusb.
-> diff --git a/drivers/phy/tegra/Makefile b/drivers/phy/tegra/Makefile
-> new file mode 100644
-> index 000000000000..31150b4337cd
-> --- /dev/null
-> +++ b/drivers/phy/tegra/Makefile
-> @@ -0,0 +1,5 @@
-> +obj-$(CONFIG_PHY_TEGRA_XUSB) +=3D phy-tegra-xusb.o
-> +
-> +phy-tegra-xusb-y +=3D xusb.o
-> +phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_124_SOC) +=3D xusb-tegra124.o
-> +phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_132_SOC) +=3D xusb-tegra124.o
-> diff --git a/drivers/phy/tegra/xusb-tegra124.c b/drivers/phy/tegra/xusb-t=
-egra124.c
-> new file mode 100644
-> index 000000000000..6340d43688d3
-> --- /dev/null
-> +++ b/drivers/phy/tegra/xusb-tegra124.c
-> @@ -0,0 +1,1747 @@
+> +++ b/drivers/usb/host/xhci-tegra.c
+> @@ -0,0 +1,1332 @@
 > +/*
-> + * Copyright (c) 2014, NVIDIA CORPORATION.  All rights reserved.
+> + * NVIDIA Tegra xHCI host controller driver
+> + *
+> + * Copyright (C) 2014 NVIDIA Corporation
+> + * Copyright (C) 2014 Google, Inc.
 > + *
 > + * This program is free software; you can redistribute it and/or modify =
 it
 > + * under the terms and conditions of the GNU General Public License,
 > + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License=
- for
-> + * more details.
 > + */
 > +
+> +#include <linux/clk.h>
 > +#include <linux/delay.h>
-> +#include <linux/io.h>
-> +#include <linux/mailbox_client.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/firmware.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/kernel.h>
 > +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/phy/phy.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/reset.h>
-> +#include <linux/slab.h>
-> +
-> +#include <soc/tegra/fuse.h>
-> +
-> +#include "xusb.h"
-> +
-> +#define FUSE_SKU_CALIB_HS_CURR_LEVEL_PADX_SHIFT(x) ((x) ? 15 : 0)
-> +#define FUSE_SKU_CALIB_HS_CURR_LEVEL_PAD_MASK 0x3f
-> +#define FUSE_SKU_CALIB_HS_IREF_CAP_SHIFT 13
-> +#define FUSE_SKU_CALIB_HS_IREF_CAP_MASK 0x3
-> +#define FUSE_SKU_CALIB_HS_SQUELCH_LEVEL_SHIFT 11
-> +#define FUSE_SKU_CALIB_HS_SQUELCH_LEVEL_MASK 0x3
-> +#define FUSE_SKU_CALIB_HS_TERM_RANGE_ADJ_SHIFT 7
-> +#define FUSE_SKU_CALIB_HS_TERM_RANGE_ADJ_MASK 0xf
-> +
-> +#define XUSB_PADCTL_USB2_PORT_CAP 0x008
-> +#define XUSB_PADCTL_USB2_PORT_CAP_PORTX_CAP_SHIFT(x) ((x) * 4)
-> +#define XUSB_PADCTL_USB2_PORT_CAP_PORT_CAP_MASK 0x3
-> +#define XUSB_PADCTL_USB2_PORT_CAP_DISABLED 0x0
-> +#define XUSB_PADCTL_USB2_PORT_CAP_HOST 0x1
-> +#define XUSB_PADCTL_USB2_PORT_CAP_DEVICE 0x2
-> +#define XUSB_PADCTL_USB2_PORT_CAP_OTG 0x3
-> +
-> +#define XUSB_PADCTL_SS_PORT_MAP 0x014
-> +#define XUSB_PADCTL_SS_PORT_MAP_PORTX_INTERNAL(x) (1 << (((x) * 4) + 3))
-> +#define XUSB_PADCTL_SS_PORT_MAP_PORTX_MAP_SHIFT(x) ((x) * 4)
-> +#define XUSB_PADCTL_SS_PORT_MAP_PORTX_MAP_MASK(x) (0x7 << ((x) * 4))
-> +#define XUSB_PADCTL_SS_PORT_MAP_PORTX_MAP(x, v) (((v) & 0x7) << ((x) * 4=
-))
-> +#define XUSB_PADCTL_SS_PORT_MAP_PORT_MAP_MASK 0x7
-> +
-> +#define XUSB_PADCTL_ELPG_PROGRAM 0x01c
-> +#define XUSB_PADCTL_ELPG_PROGRAM_AUX_MUX_LP0_VCORE_DOWN (1 << 26)
-> +#define XUSB_PADCTL_ELPG_PROGRAM_AUX_MUX_LP0_CLAMP_EN_EARLY (1 << 25)
-> +#define XUSB_PADCTL_ELPG_PROGRAM_AUX_MUX_LP0_CLAMP_EN (1 << 24)
-> +#define XUSB_PADCTL_ELPG_PROGRAM_SSPX_ELPG_VCORE_DOWN(x) (1 << (18 + (x)=
- * 4))
-> +#define XUSB_PADCTL_ELPG_PROGRAM_SSPX_ELPG_CLAMP_EN_EARLY(x) \
-> +							(1 << (17 + (x) * 4))
-> +#define XUSB_PADCTL_ELPG_PROGRAM_SSPX_ELPG_CLAMP_EN(x) (1 << (16 + (x) *=
- 4))
-> +
-> +#define XUSB_PADCTL_IOPHY_PLL_P0_CTL1 0x040
-> +#define XUSB_PADCTL_IOPHY_PLL_P0_CTL1_PLL0_LOCKDET (1 << 19)
-> +#define XUSB_PADCTL_IOPHY_PLL_P0_CTL1_REFCLK_SEL_MASK (0xf << 12)
-> +#define XUSB_PADCTL_IOPHY_PLL_P0_CTL1_PLL_RST (1 << 1)
-> +
-> +#define XUSB_PADCTL_IOPHY_PLL_P0_CTL2 0x044
-> +#define XUSB_PADCTL_IOPHY_PLL_P0_CTL2_REFCLKBUF_EN (1 << 6)
-> +#define XUSB_PADCTL_IOPHY_PLL_P0_CTL2_TXCLKREF_EN (1 << 5)
-> +#define XUSB_PADCTL_IOPHY_PLL_P0_CTL2_TXCLKREF_SEL (1 << 4)
-> +
-> +#define XUSB_PADCTL_IOPHY_USB3_PADX_CTL2(x) (0x058 + (x) * 4)
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_CDR_CNTL_SHIFT 24
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_CDR_CNTL_MASK 0xff
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_CDR_CNTL_VAL 0x24
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_Z_SHIFT 16
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_Z_MASK 0x3f
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_G_SHIFT 8
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_G_MASK 0x3f
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_SHIFT 8
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_MASK 0xffff
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_VAL 0xf070
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_WANDER_SHIFT 4
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_WANDER_MASK 0xf
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_WANDER_VAL 0xf
-> +
-> +#define XUSB_PADCTL_IOPHY_USB3_PADX_CTL4(x) (0x068 + (x) * 4)
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_TAP_SHIFT 24
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_TAP_MASK 0x1f
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_AMP_SHIFT 16
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_AMP_MASK 0x7f
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_VAL 0x002008ee
-> +
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_PX_CTL2(x) ((x) < 2 ? 0x078 + (x) * 4=
- : \
-> +					       0x0f8 + (x) * 4)
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL2_SPARE_IN_SHIFT 28
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL2_SPARE_IN_MASK 0x3
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL2_SPARE_IN_VAL 0x1
-> +
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_PX_CTL5(x) ((x) < 2 ? 0x090 + (x) * 4=
- : \
-> +					       0x11c + (x) * 4)
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL5_RX_QEYE_EN (1 << 8)
-> +
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_PX_CTL6(x) ((x) < 2 ? 0x098 + (x) * 4=
- : \
-> +					       0x128 + (x) * 4)
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SHIFT 24
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_G_Z_MASK 0x3f
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_TAP_MASK 0x1f
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_AMP_MASK 0x7f
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_SHIFT 16
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_MASK 0xff
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_G_Z 0x21
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_TAP 0x32
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_AMP 0x33
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_CTLE_Z 0x48
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_LATCH_G_Z 0xa1
-> +
-> +#define XUSB_PADCTL_USB2_OTG_PADX_CTL0(x) (0x0a0 + (x) * 4)
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL0_PD_ZI (1 << 21)
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL0_PD2 (1 << 20)
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL0_PD (1 << 19)
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL0_LS_RSLEW_SHIFT 14
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL0_LS_RSLEW_MASK 0x3
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL0_LS_RSLEW_VAL(x) ((x) ? 0x0 : 0x3)
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL0_HS_SLEW_SHIFT 6
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL0_HS_SLEW_MASK 0x3f
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL0_HS_SLEW_VAL 0x0e
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL0_HS_CURR_LEVEL_SHIFT 0
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL0_HS_CURR_LEVEL_MASK 0x3f
-> +
-> +#define XUSB_PADCTL_USB2_OTG_PADX_CTL1(x) (0x0ac + (x) * 4)
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL1_HS_IREF_CAP_SHIFT 9
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL1_HS_IREF_CAP_MASK 0x3
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL1_TERM_RANGE_ADJ_SHIFT 3
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL1_TERM_RANGE_ADJ_MASK 0x7
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL1_PD_DR (1 << 2)
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL1_PD_DISC_FORCE_POWERUP (1 << 1)
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL1_PD_CHRP_FORCE_POWERUP (1 << 0)
-> +
-> +#define XUSB_PADCTL_USB2_BIAS_PAD_CTL0 0x0b8
-> +#define XUSB_PADCTL_USB2_BIAS_PAD_CTL0_PD (1 << 12)
-> +#define XUSB_PADCTL_USB2_BIAS_PAD_CTL0_HS_DISCON_LEVEL_SHIFT 2
-> +#define XUSB_PADCTL_USB2_BIAS_PAD_CTL0_HS_DISCON_LEVEL_MASK 0x7
-> +#define XUSB_PADCTL_USB2_BIAS_PAD_CTL0_HS_DISCON_LEVEL_VAL 0x5
-> +#define XUSB_PADCTL_USB2_BIAS_PAD_CTL0_HS_SQUELCH_LEVEL_SHIFT 0
-> +#define XUSB_PADCTL_USB2_BIAS_PAD_CTL0_HS_SQUELCH_LEVEL_MASK 0x3
-> +
-> +#define XUSB_PADCTL_HSIC_PADX_CTL0(x) (0x0c0 + (x) * 4)
-> +#define XUSB_PADCTL_HSIC_PAD_CTL0_TX_RSLEWN_SHIFT 12
-> +#define XUSB_PADCTL_HSIC_PAD_CTL0_TX_RSLEWN_MASK 0x7
-> +#define XUSB_PADCTL_HSIC_PAD_CTL0_TX_RSLEWP_SHIFT 8
-> +#define XUSB_PADCTL_HSIC_PAD_CTL0_TX_RSLEWP_MASK 0x7
-> +#define XUSB_PADCTL_HSIC_PAD_CTL0_TX_RTUNEN_SHIFT 4
-> +#define XUSB_PADCTL_HSIC_PAD_CTL0_TX_RTUNEN_MASK 0x7
-> +#define XUSB_PADCTL_HSIC_PAD_CTL0_TX_RTUNEP_SHIFT 0
-> +#define XUSB_PADCTL_HSIC_PAD_CTL0_TX_RTUNEP_MASK 0x7
-> +
-> +#define XUSB_PADCTL_HSIC_PADX_CTL1(x) (0x0c8 + (x) * 4)
-> +#define XUSB_PADCTL_HSIC_PAD_CTL1_RPU_STROBE (1 << 10)
-> +#define XUSB_PADCTL_HSIC_PAD_CTL1_RPU_DATA (1 << 9)
-> +#define XUSB_PADCTL_HSIC_PAD_CTL1_RPD_STROBE (1 << 8)
-> +#define XUSB_PADCTL_HSIC_PAD_CTL1_RPD_DATA (1 << 7)
-> +#define XUSB_PADCTL_HSIC_PAD_CTL1_PD_ZI (1 << 5)
-> +#define XUSB_PADCTL_HSIC_PAD_CTL1_PD_RX (1 << 4)
-> +#define XUSB_PADCTL_HSIC_PAD_CTL1_PD_TRX (1 << 3)
-> +#define XUSB_PADCTL_HSIC_PAD_CTL1_PD_TX (1 << 2)
-> +#define XUSB_PADCTL_HSIC_PAD_CTL1_AUTO_TERM_EN (1 << 0)
-> +
-> +#define XUSB_PADCTL_HSIC_PADX_CTL2(x) (0x0d0 + (x) * 4)
-> +#define XUSB_PADCTL_HSIC_PAD_CTL2_RX_STROBE_TRIM_SHIFT 4
-> +#define XUSB_PADCTL_HSIC_PAD_CTL2_RX_STROBE_TRIM_MASK 0x7
-> +#define XUSB_PADCTL_HSIC_PAD_CTL2_RX_DATA_TRIM_SHIFT 0
-> +#define XUSB_PADCTL_HSIC_PAD_CTL2_RX_DATA_TRIM_MASK 0x7
-> +
-> +#define XUSB_PADCTL_HSIC_STRB_TRIM_CONTROL 0x0e0
-> +#define XUSB_PADCTL_HSIC_STRB_TRIM_CONTROL_STRB_TRIM_MASK 0x1f
-> +
-> +#define XUSB_PADCTL_USB3_PAD_MUX 0x134
-> +#define XUSB_PADCTL_USB3_PAD_MUX_PCIE_IDDQ_DISABLE(x) (1 << (1 + (x)))
-> +#define XUSB_PADCTL_USB3_PAD_MUX_SATA_IDDQ_DISABLE(x) (1 << (6 + (x)))
-> +
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL1 0x138
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL1_LOCKDET (1 << 27)
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL1_MODE (1 << 24)
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL0_REFCLK_NDIV_SHIFT 20
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL0_REFCLK_NDIV_MASK 0x3
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL_PWR_OVRD (1 << 3)
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL_RST (1 << 1)
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL_IDDQ (1 << 0)
-> +
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL2 0x13c
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL2_PLL1_CP_CNTL_SHIFT 20
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL2_PLL1_CP_CNTL_MASK 0xf
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL2_PLL0_CP_CNTL_SHIFT 16
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL2_PLL0_CP_CNTL_MASK 0xf
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL2_TCLKOUT_EN (1 << 12)
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL2_TXCLKREF_SEL (1 << 4)
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL2_XDIGCLK_SEL_SHIFT 0
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL2_XDIGCLK_SEL_MASK 0x7
-> +
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL3 0x140
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL3_RCAL_BYPASS (1 << 7)
-> +
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL1 0x148
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL1_IDDQ_OVRD (1 << 1)
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL1_IDDQ (1 << 0)
-> +
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL2 0x14c
-> +
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL5 0x158
-> +
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL6 0x15c
-> +
-> +struct tegra124_xusb_fuse_calibration {
-> +	u32 hs_curr_level[3];
-> +	u32 hs_iref_cap;
-> +	u32 hs_term_range_adj;
-> +	u32 hs_squelch_level;
-> +};
-> +
-> +struct tegra124_xusb_padctl {
-> +	struct tegra_xusb_padctl base;
-> +
-> +	struct tegra124_xusb_fuse_calibration fuse;
-> +};
-> +
-> +static inline struct tegra124_xusb_padctl *
-> +to_tegra124_xusb_padctl(struct tegra_xusb_padctl *padctl)
-> +{
-> +	return container_of(padctl, struct tegra124_xusb_padctl, base);
-> +}
-> +
-> +static int tegra124_xusb_padctl_enable(struct tegra_xusb_padctl *padctl)
-> +{
-> +	u32 value;
-> +
-> +	mutex_lock(&padctl->lock);
-> +
-> +	if (padctl->enable++ > 0)
-> +		goto out;
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM);
-> +	value &=3D ~XUSB_PADCTL_ELPG_PROGRAM_AUX_MUX_LP0_CLAMP_EN;
-> +	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM);
-> +
-> +	usleep_range(100, 200);
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM);
-> +	value &=3D ~XUSB_PADCTL_ELPG_PROGRAM_AUX_MUX_LP0_CLAMP_EN_EARLY;
-> +	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM);
-> +
-> +	usleep_range(100, 200);
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM);
-> +	value &=3D ~XUSB_PADCTL_ELPG_PROGRAM_AUX_MUX_LP0_VCORE_DOWN;
-> +	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM);
-> +
-> +out:
-> +	mutex_unlock(&padctl->lock);
-> +	return 0;
-> +}
-> +
-> +static int tegra124_xusb_padctl_disable(struct tegra_xusb_padctl *padctl)
-> +{
-> +	u32 value;
-> +
-> +	mutex_lock(&padctl->lock);
-> +
-> +	if (WARN_ON(padctl->enable =3D=3D 0))
-> +		goto out;
-> +
-> +	if (--padctl->enable > 0)
-> +		goto out;
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM);
-> +	value |=3D XUSB_PADCTL_ELPG_PROGRAM_AUX_MUX_LP0_VCORE_DOWN;
-> +	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM);
-> +
-> +	usleep_range(100, 200);
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM);
-> +	value |=3D XUSB_PADCTL_ELPG_PROGRAM_AUX_MUX_LP0_CLAMP_EN_EARLY;
-> +	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM);
-> +
-> +	usleep_range(100, 200);
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM);
-> +	value |=3D XUSB_PADCTL_ELPG_PROGRAM_AUX_MUX_LP0_CLAMP_EN;
-> +	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM);
-> +
-> +out:
-> +	mutex_unlock(&padctl->lock);
-> +	return 0;
-> +}
-> +
-> +static int tegra124_usb3_save_context(struct tegra_xusb_padctl *padctl,
-> +				      unsigned int index)
-> +{
-> +	struct tegra_xusb_usb3_port *port;
-> +	struct tegra_xusb_lane *lane;
-> +	u32 value, offset;
-> +
-> +	port =3D tegra_xusb_find_usb3_port(padctl, index);
-> +	if (!port)
-> +		return -ENODEV;
-> +
-> +	port->context_saved =3D true;
-> +	lane =3D port->base.lane;
-> +
-> +	if (lane->pad =3D=3D padctl->pcie)
-> +		offset =3D XUSB_PADCTL_IOPHY_MISC_PAD_PX_CTL6(lane->index);
-> +	else
-> +		offset =3D XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL6;
-> +
-> +	value =3D padctl_readl(padctl, offset);
-> +	value &=3D ~(XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_MASK <<
-> +		   XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_SHIFT);
-> +	value |=3D XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_TAP <<
-> +		XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_SHIFT;
-> +	padctl_writel(padctl, value, offset);
-> +
-> +	value =3D padctl_readl(padctl, offset) >>
-> +		XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SHIFT;
-> +	port->tap1 =3D value & XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_TAP_MAS=
-K;
-> +
-> +	value =3D padctl_readl(padctl, offset);
-> +	value &=3D ~(XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_MASK <<
-> +		   XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_SHIFT);
-> +	value |=3D XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_AMP <<
-> +		XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_SHIFT;
-> +	padctl_writel(padctl, value, offset);
-> +
-> +	value =3D padctl_readl(padctl, offset) >>
-> +		XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SHIFT;
-> +	port->amp =3D value & XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_AMP_MASK;
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_USB3_PADX_CTL4(index));
-> +	value &=3D ~((XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_TAP_MASK <<
-> +		    XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_TAP_SHIFT) |
-> +		   (XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_AMP_MASK <<
-> +		    XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_AMP_SHIFT));
-> +	value |=3D (port->tap1 <<
-> +		  XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_TAP_SHIFT) |
-> +		 (port->amp <<
-> +		  XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_AMP_SHIFT);
-> +	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_USB3_PADX_CTL4(index));
-> +
-> +	value =3D padctl_readl(padctl, offset);
-> +	value &=3D ~(XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_MASK <<
-> +		   XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_SHIFT);
-> +	value |=3D XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_LATCH_G_Z <<
-> +		XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_SHIFT;
-> +	padctl_writel(padctl, value, offset);
-> +
-> +	value =3D padctl_readl(padctl, offset);
-> +	value &=3D ~(XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_MASK <<
-> +		   XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_SHIFT);
-> +	value |=3D XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_G_Z <<
-> +		XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_SHIFT;
-> +	padctl_writel(padctl, value, offset);
-> +
-> +	value =3D padctl_readl(padctl, offset) >>
-> +		XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SHIFT;
-> +	port->ctle_g =3D value &
-> +		XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_G_Z_MASK;
-> +
-> +	value =3D padctl_readl(padctl, offset);
-> +	value &=3D ~(XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_MASK <<
-> +		   XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_SHIFT);
-> +	value |=3D XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_CTLE_Z <<
-> +		XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_SHIFT;
-> +	padctl_writel(padctl, value, offset);
-> +
-> +	value =3D padctl_readl(padctl, offset) >>
-> +		XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SHIFT;
-> +	port->ctle_z =3D value &
-> +		XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_G_Z_MASK;
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_USB3_PADX_CTL2(index));
-> +	value &=3D ~((XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_G_MASK <<
-> +		    XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_G_SHIFT) |
-> +		   (XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_Z_MASK <<
-> +		    XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_Z_SHIFT));
-> +	value |=3D (port->ctle_g <<
-> +		  XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_G_SHIFT) |
-> +		 (port->ctle_z <<
-> +		  XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_Z_SHIFT);
-> +	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_USB3_PADX_CTL2(index));
-> +
-> +	return 0;
-> +}
-> +
-> +static int tegra124_hsic_set_idle(struct tegra_xusb_padctl *padctl,
-> +				  unsigned int index, bool idle)
-> +{
-> +	u32 value;
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_HSIC_PADX_CTL1(index));
-> +
-> +	if (idle)
-> +		value |=3D XUSB_PADCTL_HSIC_PAD_CTL1_RPD_DATA |
-> +			 XUSB_PADCTL_HSIC_PAD_CTL1_RPU_STROBE;
-> +	else
-> +		value &=3D ~(XUSB_PADCTL_HSIC_PAD_CTL1_RPD_DATA |
-> +			   XUSB_PADCTL_HSIC_PAD_CTL1_RPU_STROBE);
-> +
-> +	padctl_writel(padctl, value, XUSB_PADCTL_HSIC_PADX_CTL1(index));
-> +
-> +	return 0;
-> +}
-> +
-> +#define TEGRA124_LANE(_name, _offset, _shift, _mask, _type)		\
-> +	{								\
-> +		.name =3D _name,						\
-> +		.offset =3D _offset,					\
-> +		.shift =3D _shift,					\
-> +		.mask =3D _mask,						\
-> +		.num_funcs =3D ARRAY_SIZE(tegra124_##_type##_functions),	\
-> +		.funcs =3D tegra124_##_type##_functions,			\
-> +	}
-> +
-> +static const char * const tegra124_usb2_functions[] =3D {
-> +	"snps",
-> +	"xusb",
-> +	"uart",
-> +};
-> +
-> +static const struct tegra_xusb_lane_soc tegra124_usb2_lanes[] =3D {
-> +	TEGRA124_LANE("usb2-0", 0x004,  0, 0x3, usb2),
-> +	TEGRA124_LANE("usb2-1", 0x004,  2, 0x3, usb2),
-> +	TEGRA124_LANE("usb2-2", 0x004,  4, 0x3, usb2),
-> +};
-> +
-> +static struct tegra_xusb_lane *
-> +tegra124_usb2_lane_probe(struct tegra_xusb_pad *pad, struct device_node =
-*np,
-> +			 unsigned int index)
-> +{
-> +	struct tegra_xusb_usb2_lane *usb2;
-> +	int err;
-> +
-> +	usb2 =3D kzalloc(sizeof(*usb2), GFP_KERNEL);
-> +	if (!usb2)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	INIT_LIST_HEAD(&usb2->base.list);
-> +	usb2->base.soc =3D &pad->soc->lanes[index];
-> +	usb2->base.index =3D index;
-> +	usb2->base.pad =3D pad;
-> +	usb2->base.np =3D np;
-> +
-> +	err =3D tegra_xusb_lane_parse_dt(&usb2->base, np);
-> +	if (err < 0) {
-> +		kfree(usb2);
-> +		return ERR_PTR(err);
-> +	}
-> +
-> +	return &usb2->base;
-> +}
-> +
-> +static void tegra124_usb2_lane_remove(struct tegra_xusb_lane *lane)
-> +{
-> +	struct tegra_xusb_usb2_lane *usb2 =3D to_usb2_lane(lane);
-> +
-> +	kfree(usb2);
-> +}
-> +
-> +static const struct tegra_xusb_lane_ops tegra124_usb2_lane_ops =3D {
-> +	.probe =3D tegra124_usb2_lane_probe,
-> +	.remove =3D tegra124_usb2_lane_remove,
-> +};
-> +
-> +static int tegra124_usb2_phy_init(struct phy *phy)
-> +{
-> +	struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
-> +
-> +	return tegra124_xusb_padctl_enable(lane->pad->padctl);
-> +}
-> +
-> +static int tegra124_usb2_phy_exit(struct phy *phy)
-> +{
-> +	struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
-> +
-> +	return tegra124_xusb_padctl_disable(lane->pad->padctl);
-> +}
-> +
-> +static int tegra124_usb2_phy_power_on(struct phy *phy)
-> +{
-> +	struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
-> +	struct tegra_xusb_usb2_lane *usb2 =3D to_usb2_lane(lane);
-> +	struct tegra_xusb_usb2_pad *pad =3D to_usb2_pad(lane->pad);
-> +	struct tegra_xusb_padctl *padctl =3D lane->pad->padctl;
-> +	struct tegra124_xusb_padctl *priv;
-> +	struct tegra_xusb_usb2_port *port;
-> +	unsigned int index =3D lane->index;
-> +	u32 value;
-> +	int err;
-> +
-> +	port =3D tegra_xusb_find_usb2_port(padctl, index);
-> +	if (!port) {
-> +		dev_err(&phy->dev, "no port found for USB2 lane %u\n", index);
-> +		return -ENODEV;
-> +	}
-> +
-> +	priv =3D to_tegra124_xusb_padctl(padctl);
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_USB2_BIAS_PAD_CTL0);
-> +	value &=3D ~((XUSB_PADCTL_USB2_BIAS_PAD_CTL0_HS_SQUELCH_LEVEL_MASK <<
-> +		    XUSB_PADCTL_USB2_BIAS_PAD_CTL0_HS_SQUELCH_LEVEL_SHIFT) |
-> +		   (XUSB_PADCTL_USB2_BIAS_PAD_CTL0_HS_DISCON_LEVEL_MASK <<
-> +		    XUSB_PADCTL_USB2_BIAS_PAD_CTL0_HS_DISCON_LEVEL_SHIFT));
-> +	value |=3D (priv->fuse.hs_squelch_level <<
-> +		  XUSB_PADCTL_USB2_BIAS_PAD_CTL0_HS_SQUELCH_LEVEL_SHIFT) |
-> +		 (XUSB_PADCTL_USB2_BIAS_PAD_CTL0_HS_DISCON_LEVEL_VAL <<
-> +		  XUSB_PADCTL_USB2_BIAS_PAD_CTL0_HS_DISCON_LEVEL_SHIFT);
-> +	padctl_writel(padctl, value, XUSB_PADCTL_USB2_BIAS_PAD_CTL0);
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_USB2_PORT_CAP);
-> +	value &=3D ~(XUSB_PADCTL_USB2_PORT_CAP_PORT_CAP_MASK <<
-> +		   XUSB_PADCTL_USB2_PORT_CAP_PORTX_CAP_SHIFT(index));
-> +	value |=3D XUSB_PADCTL_USB2_PORT_CAP_HOST <<
-> +		XUSB_PADCTL_USB2_PORT_CAP_PORTX_CAP_SHIFT(index);
-> +	padctl_writel(padctl, value, XUSB_PADCTL_USB2_PORT_CAP);
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_USB2_OTG_PADX_CTL0(index));
-> +	value &=3D ~((XUSB_PADCTL_USB2_OTG_PAD_CTL0_HS_CURR_LEVEL_MASK <<
-> +		    XUSB_PADCTL_USB2_OTG_PAD_CTL0_HS_CURR_LEVEL_SHIFT) |
-> +		   (XUSB_PADCTL_USB2_OTG_PAD_CTL0_HS_SLEW_MASK <<
-> +		    XUSB_PADCTL_USB2_OTG_PAD_CTL0_HS_SLEW_SHIFT) |
-> +		   (XUSB_PADCTL_USB2_OTG_PAD_CTL0_LS_RSLEW_MASK <<
-> +		    XUSB_PADCTL_USB2_OTG_PAD_CTL0_LS_RSLEW_SHIFT) |
-> +		   XUSB_PADCTL_USB2_OTG_PAD_CTL0_PD |
-> +		   XUSB_PADCTL_USB2_OTG_PAD_CTL0_PD2 |
-> +		   XUSB_PADCTL_USB2_OTG_PAD_CTL0_PD_ZI);
-> +	value |=3D (priv->fuse.hs_curr_level[index] +
-> +		  usb2->hs_curr_level_offset) <<
-> +		XUSB_PADCTL_USB2_OTG_PAD_CTL0_HS_CURR_LEVEL_SHIFT;
-> +	value |=3D XUSB_PADCTL_USB2_OTG_PAD_CTL0_HS_SLEW_VAL <<
-> +		XUSB_PADCTL_USB2_OTG_PAD_CTL0_HS_SLEW_SHIFT;
-> +	value |=3D XUSB_PADCTL_USB2_OTG_PAD_CTL0_LS_RSLEW_VAL(index) <<
-> +		XUSB_PADCTL_USB2_OTG_PAD_CTL0_LS_RSLEW_SHIFT;
-> +	padctl_writel(padctl, value, XUSB_PADCTL_USB2_OTG_PADX_CTL0(index));
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_USB2_OTG_PADX_CTL1(index));
-> +	value &=3D ~((XUSB_PADCTL_USB2_OTG_PAD_CTL1_TERM_RANGE_ADJ_MASK <<
-> +		    XUSB_PADCTL_USB2_OTG_PAD_CTL1_TERM_RANGE_ADJ_SHIFT) |
-> +		   (XUSB_PADCTL_USB2_OTG_PAD_CTL1_HS_IREF_CAP_MASK <<
-> +		    XUSB_PADCTL_USB2_OTG_PAD_CTL1_HS_IREF_CAP_SHIFT) |
-> +		   XUSB_PADCTL_USB2_OTG_PAD_CTL1_PD_DR |
-> +		   XUSB_PADCTL_USB2_OTG_PAD_CTL1_PD_CHRP_FORCE_POWERUP |
-> +		   XUSB_PADCTL_USB2_OTG_PAD_CTL1_PD_DISC_FORCE_POWERUP);
-> +	value |=3D (priv->fuse.hs_term_range_adj <<
-> +		  XUSB_PADCTL_USB2_OTG_PAD_CTL1_TERM_RANGE_ADJ_SHIFT) |
-> +		 (priv->fuse.hs_iref_cap <<
-> +		  XUSB_PADCTL_USB2_OTG_PAD_CTL1_HS_IREF_CAP_SHIFT);
-> +	padctl_writel(padctl, value, XUSB_PADCTL_USB2_OTG_PADX_CTL1(index));
-> +
-> +	err =3D regulator_enable(port->supply);
-> +	if (err)
-> +		return err;
-> +
-> +	mutex_lock(&pad->lock);
-> +
-> +	if (pad->enable++ > 0)
-> +		goto out;
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_USB2_BIAS_PAD_CTL0);
-> +	value &=3D ~XUSB_PADCTL_USB2_BIAS_PAD_CTL0_PD;
-> +	padctl_writel(padctl, value, XUSB_PADCTL_USB2_BIAS_PAD_CTL0);
-> +
-> +out:
-> +	mutex_unlock(&pad->lock);
-> +	return 0;
-> +}
-> +
-> +static int tegra124_usb2_phy_power_off(struct phy *phy)
-> +{
-> +	struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
-> +	struct tegra_xusb_usb2_pad *pad =3D to_usb2_pad(lane->pad);
-> +	struct tegra_xusb_padctl *padctl =3D lane->pad->padctl;
-> +	struct tegra_xusb_usb2_port *port;
-> +	u32 value;
-> +
-> +	port =3D tegra_xusb_find_usb2_port(padctl, lane->index);
-> +	if (!port) {
-> +		dev_err(&phy->dev, "no port found for USB2 lane %u\n",
-> +			lane->index);
-> +		return -ENODEV;
-> +	}
-> +
-> +	mutex_lock(&pad->lock);
-> +
-> +	if (WARN_ON(pad->enable =3D=3D 0))
-> +		goto out;
-> +
-> +	if (--pad->enable > 0)
-> +		goto out;
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_USB2_BIAS_PAD_CTL0);
-> +	value |=3D XUSB_PADCTL_USB2_BIAS_PAD_CTL0_PD;
-> +	padctl_writel(padctl, value, XUSB_PADCTL_USB2_BIAS_PAD_CTL0);
-> +
-> +out:
-> +	regulator_disable(port->supply);
-> +	mutex_unlock(&pad->lock);
-> +	return 0;
-> +}
-> +
-> +static const struct phy_ops tegra124_usb2_phy_ops =3D {
-> +	.init =3D tegra124_usb2_phy_init,
-> +	.exit =3D tegra124_usb2_phy_exit,
-> +	.power_on =3D tegra124_usb2_phy_power_on,
-> +	.power_off =3D tegra124_usb2_phy_power_off,
-> +	.owner =3D THIS_MODULE,
-> +};
-> +
-> +static struct tegra_xusb_pad *
-> +tegra124_usb2_pad_probe(struct tegra_xusb_padctl *padctl,
-> +			const struct tegra_xusb_pad_soc *soc,
-> +			struct device_node *np)
-> +{
-> +	struct tegra_xusb_usb2_pad *usb2;
-> +	struct tegra_xusb_pad *pad;
-> +	int err;
-> +
-> +	usb2 =3D kzalloc(sizeof(*usb2), GFP_KERNEL);
-> +	if (!usb2)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	mutex_init(&usb2->lock);
-> +
-> +	pad =3D &usb2->base;
-> +	pad->ops =3D &tegra124_usb2_lane_ops;
-> +	pad->soc =3D soc;
-> +
-> +	err =3D tegra_xusb_pad_init(pad, padctl, np);
-> +	if (err < 0)
-> +		goto free;
-> +
-> +	err =3D tegra_xusb_pad_register(pad, &tegra124_usb2_phy_ops);
-> +	if (err < 0)
-> +		goto unregister;
-> +
-> +	dev_set_drvdata(&pad->dev, pad);
-> +
-> +	return pad;
-> +
-> +unregister:
-> +	device_unregister(&pad->dev);
-> +free:
-> +	kfree(usb2);
-> +	return ERR_PTR(err);
-> +}
-> +
-> +static void tegra124_usb2_pad_remove(struct tegra_xusb_pad *pad)
-> +{
-> +	struct tegra_xusb_usb2_pad *usb2 =3D to_usb2_pad(pad);
-> +
-> +	kfree(usb2);
-> +}
-> +
-> +static const struct tegra_xusb_pad_ops tegra124_usb2_ops =3D {
-> +	.probe =3D tegra124_usb2_pad_probe,
-> +	.remove =3D tegra124_usb2_pad_remove,
-> +};
-> +
-> +static const struct tegra_xusb_pad_soc tegra124_usb2_pad =3D {
-> +	.name =3D "usb2",
-> +	.num_lanes =3D ARRAY_SIZE(tegra124_usb2_lanes),
-> +	.lanes =3D tegra124_usb2_lanes,
-> +	.ops =3D &tegra124_usb2_ops,
-> +};
-> +
-> +static const char * const tegra124_ulpi_functions[] =3D {
-> +	"snps",
-> +	"xusb",
-> +};
-> +
-> +static const struct tegra_xusb_lane_soc tegra124_ulpi_lanes[] =3D {
-> +	TEGRA124_LANE("ulpi-0", 0x004, 12, 0x1, ulpi),
-> +};
-> +
-> +static struct tegra_xusb_lane *
-> +tegra124_ulpi_lane_probe(struct tegra_xusb_pad *pad, struct device_node =
-*np,
-> +			 unsigned int index)
-> +{
-> +	struct tegra_xusb_ulpi_lane *ulpi;
-> +	int err;
-> +
-> +	ulpi =3D kzalloc(sizeof(*ulpi), GFP_KERNEL);
-> +	if (!ulpi)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	INIT_LIST_HEAD(&ulpi->base.list);
-> +	ulpi->base.soc =3D &pad->soc->lanes[index];
-> +	ulpi->base.index =3D index;
-> +	ulpi->base.pad =3D pad;
-> +	ulpi->base.np =3D np;
-> +
-> +	err =3D tegra_xusb_lane_parse_dt(&ulpi->base, np);
-> +	if (err < 0) {
-> +		kfree(ulpi);
-> +		return ERR_PTR(err);
-> +	}
-> +
-> +	return &ulpi->base;
-> +}
-> +
-> +static void tegra124_ulpi_lane_remove(struct tegra_xusb_lane *lane)
-> +{
-> +	struct tegra_xusb_ulpi_lane *ulpi =3D to_ulpi_lane(lane);
-> +
-> +	kfree(ulpi);
-> +}
-> +
-> +static const struct tegra_xusb_lane_ops tegra124_ulpi_lane_ops =3D {
-> +	.probe =3D tegra124_ulpi_lane_probe,
-> +	.remove =3D tegra124_ulpi_lane_remove,
-> +};
-> +
-> +static int tegra124_ulpi_phy_init(struct phy *phy)
-> +{
-> +	struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
-> +
-> +	return tegra124_xusb_padctl_enable(lane->pad->padctl);
-> +}
-> +
-> +static int tegra124_ulpi_phy_exit(struct phy *phy)
-> +{
-> +	struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
-> +
-> +	return tegra124_xusb_padctl_disable(lane->pad->padctl);
-> +}
-> +
-> +static int tegra124_ulpi_phy_power_on(struct phy *phy)
-> +{
-> +	return 0;
-> +}
-> +
-> +static int tegra124_ulpi_phy_power_off(struct phy *phy)
-> +{
-> +	return 0;
-> +}
-> +
-> +static const struct phy_ops tegra124_ulpi_phy_ops =3D {
-> +	.init =3D tegra124_ulpi_phy_init,
-> +	.exit =3D tegra124_ulpi_phy_exit,
-> +	.power_on =3D tegra124_ulpi_phy_power_on,
-> +	.power_off =3D tegra124_ulpi_phy_power_off,
-> +	.owner =3D THIS_MODULE,
-> +};
-> +
-> +static struct tegra_xusb_pad *
-> +tegra124_ulpi_pad_probe(struct tegra_xusb_padctl *padctl,
-> +			const struct tegra_xusb_pad_soc *soc,
-> +			struct device_node *np)
-> +{
-> +	struct tegra_xusb_ulpi_pad *ulpi;
-> +	struct tegra_xusb_pad *pad;
-> +	int err;
-> +
-> +	ulpi =3D kzalloc(sizeof(*ulpi), GFP_KERNEL);
-> +	if (!ulpi)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	pad =3D &ulpi->base;
-> +	pad->ops =3D &tegra124_ulpi_lane_ops;
-> +	pad->soc =3D soc;
-> +
-> +	err =3D tegra_xusb_pad_init(pad, padctl, np);
-> +	if (err < 0)
-> +		goto free;
-> +
-> +	err =3D tegra_xusb_pad_register(pad, &tegra124_ulpi_phy_ops);
-> +	if (err < 0)
-> +		goto unregister;
-> +
-> +	dev_set_drvdata(&pad->dev, pad);
-> +
-> +	return pad;
-> +
-> +unregister:
-> +	device_unregister(&pad->dev);
-> +free:
-> +	kfree(ulpi);
-> +	return ERR_PTR(err);
-> +}
-> +
-> +static void tegra124_ulpi_pad_remove(struct tegra_xusb_pad *pad)
-> +{
-> +	struct tegra_xusb_ulpi_pad *ulpi =3D to_ulpi_pad(pad);
-> +
-> +	kfree(ulpi);
-> +}
-> +
-> +static const struct tegra_xusb_pad_ops tegra124_ulpi_ops =3D {
-> +	.probe =3D tegra124_ulpi_pad_probe,
-> +	.remove =3D tegra124_ulpi_pad_remove,
-> +};
-> +
-> +static const struct tegra_xusb_pad_soc tegra124_ulpi_pad =3D {
-> +	.name =3D "ulpi",
-> +	.num_lanes =3D ARRAY_SIZE(tegra124_ulpi_lanes),
-> +	.lanes =3D tegra124_ulpi_lanes,
-> +	.ops =3D &tegra124_ulpi_ops,
-> +};
-> +
-> +static const char * const tegra124_hsic_functions[] =3D {
-> +	"snps",
-> +	"xusb",
-> +};
-> +
-> +static const struct tegra_xusb_lane_soc tegra124_hsic_lanes[] =3D {
-> +	TEGRA124_LANE("hsic-0", 0x004, 14, 0x1, hsic),
-> +	TEGRA124_LANE("hsic-1", 0x004, 15, 0x1, hsic),
-> +};
-> +
-> +static struct tegra_xusb_lane *
-> +tegra124_hsic_lane_probe(struct tegra_xusb_pad *pad, struct device_node =
-*np,
-> +			 unsigned int index)
-> +{
-> +	struct tegra_xusb_hsic_lane *hsic;
-> +	int err;
-> +
-> +	hsic =3D kzalloc(sizeof(*hsic), GFP_KERNEL);
-> +	if (!hsic)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	INIT_LIST_HEAD(&hsic->base.list);
-> +	hsic->base.soc =3D &pad->soc->lanes[index];
-> +	hsic->base.index =3D index;
-> +	hsic->base.pad =3D pad;
-> +	hsic->base.np =3D np;
-> +
-> +	err =3D tegra_xusb_lane_parse_dt(&hsic->base, np);
-> +	if (err < 0) {
-> +		kfree(hsic);
-> +		return ERR_PTR(err);
-> +	}
-> +
-> +	return &hsic->base;
-> +}
-> +
-> +static void tegra124_hsic_lane_remove(struct tegra_xusb_lane *lane)
-> +{
-> +	struct tegra_xusb_hsic_lane *hsic =3D to_hsic_lane(lane);
-> +
-> +	kfree(hsic);
-> +}
-> +
-> +static const struct tegra_xusb_lane_ops tegra124_hsic_lane_ops =3D {
-> +	.probe =3D tegra124_hsic_lane_probe,
-> +	.remove =3D tegra124_hsic_lane_remove,
-> +};
-> +
-> +static int tegra124_hsic_phy_init(struct phy *phy)
-> +{
-> +	struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
-> +
-> +	return tegra124_xusb_padctl_enable(lane->pad->padctl);
-> +}
-> +
-> +static int tegra124_hsic_phy_exit(struct phy *phy)
-> +{
-> +	struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
-> +
-> +	return tegra124_xusb_padctl_disable(lane->pad->padctl);
-> +}
-> +
-> +static int tegra124_hsic_phy_power_on(struct phy *phy)
-> +{
-> +	struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
-> +	struct tegra_xusb_hsic_lane *hsic =3D to_hsic_lane(lane);
-> +	struct tegra_xusb_hsic_pad *pad =3D to_hsic_pad(lane->pad);
-> +	struct tegra_xusb_padctl *padctl =3D lane->pad->padctl;
-> +	unsigned int index =3D lane->index;
-> +	u32 value;
-> +	int err;
-> +
-> +	err =3D regulator_enable(pad->supply);
-> +	if (err)
-> +		return err;
-> +
-> +	padctl_writel(padctl, hsic->strobe_trim,
-> +		      XUSB_PADCTL_HSIC_STRB_TRIM_CONTROL);
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_HSIC_PADX_CTL1(index));
-> +
-> +	if (hsic->auto_term)
-> +		value |=3D XUSB_PADCTL_HSIC_PAD_CTL1_AUTO_TERM_EN;
-> +	else
-> +		value &=3D ~XUSB_PADCTL_HSIC_PAD_CTL1_AUTO_TERM_EN;
-> +
-> +	padctl_writel(padctl, value, XUSB_PADCTL_HSIC_PADX_CTL1(index));
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_HSIC_PADX_CTL0(index));
-> +	value &=3D ~((XUSB_PADCTL_HSIC_PAD_CTL0_TX_RTUNEN_MASK <<
-> +		    XUSB_PADCTL_HSIC_PAD_CTL0_TX_RTUNEN_SHIFT) |
-> +		   (XUSB_PADCTL_HSIC_PAD_CTL0_TX_RTUNEP_MASK <<
-> +		    XUSB_PADCTL_HSIC_PAD_CTL0_TX_RTUNEP_SHIFT) |
-> +		   (XUSB_PADCTL_HSIC_PAD_CTL0_TX_RSLEWN_MASK <<
-> +		    XUSB_PADCTL_HSIC_PAD_CTL0_TX_RSLEWN_SHIFT) |
-> +		   (XUSB_PADCTL_HSIC_PAD_CTL0_TX_RSLEWP_MASK <<
-> +		    XUSB_PADCTL_HSIC_PAD_CTL0_TX_RSLEWP_SHIFT));
-> +	value |=3D (hsic->tx_rtune_n <<
-> +		  XUSB_PADCTL_HSIC_PAD_CTL0_TX_RTUNEN_SHIFT) |
-> +		(hsic->tx_rtune_p <<
-> +		  XUSB_PADCTL_HSIC_PAD_CTL0_TX_RTUNEP_SHIFT) |
-> +		(hsic->tx_rslew_n <<
-> +		 XUSB_PADCTL_HSIC_PAD_CTL0_TX_RSLEWN_SHIFT) |
-> +		(hsic->tx_rslew_p <<
-> +		 XUSB_PADCTL_HSIC_PAD_CTL0_TX_RSLEWP_SHIFT);
-> +	padctl_writel(padctl, value, XUSB_PADCTL_HSIC_PADX_CTL0(index));
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_HSIC_PADX_CTL2(index));
-> +	value &=3D ~((XUSB_PADCTL_HSIC_PAD_CTL2_RX_STROBE_TRIM_MASK <<
-> +		    XUSB_PADCTL_HSIC_PAD_CTL2_RX_STROBE_TRIM_SHIFT) |
-> +		   (XUSB_PADCTL_HSIC_PAD_CTL2_RX_DATA_TRIM_MASK <<
-> +		    XUSB_PADCTL_HSIC_PAD_CTL2_RX_DATA_TRIM_SHIFT));
-> +	value |=3D (hsic->rx_strobe_trim <<
-> +		  XUSB_PADCTL_HSIC_PAD_CTL2_RX_STROBE_TRIM_SHIFT) |
-> +		(hsic->rx_data_trim <<
-> +		 XUSB_PADCTL_HSIC_PAD_CTL2_RX_DATA_TRIM_SHIFT);
-> +	padctl_writel(padctl, value, XUSB_PADCTL_HSIC_PADX_CTL2(index));
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_HSIC_PADX_CTL1(index));
-> +	value &=3D ~(XUSB_PADCTL_HSIC_PAD_CTL1_RPD_STROBE |
-> +		   XUSB_PADCTL_HSIC_PAD_CTL1_RPU_DATA |
-> +		   XUSB_PADCTL_HSIC_PAD_CTL1_PD_RX |
-> +		   XUSB_PADCTL_HSIC_PAD_CTL1_PD_ZI |
-> +		   XUSB_PADCTL_HSIC_PAD_CTL1_PD_TRX |
-> +		   XUSB_PADCTL_HSIC_PAD_CTL1_PD_TX);
-> +	value |=3D XUSB_PADCTL_HSIC_PAD_CTL1_RPD_DATA |
-> +		 XUSB_PADCTL_HSIC_PAD_CTL1_RPU_STROBE;
-> +	padctl_writel(padctl, value, XUSB_PADCTL_HSIC_PADX_CTL1(index));
-> +
-> +	return 0;
-> +}
-> +
-> +static int tegra124_hsic_phy_power_off(struct phy *phy)
-> +{
-> +	struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
-> +	struct tegra_xusb_hsic_pad *pad =3D to_hsic_pad(lane->pad);
-> +	struct tegra_xusb_padctl *padctl =3D lane->pad->padctl;
-> +	unsigned int index =3D lane->index;
-> +	u32 value;
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_HSIC_PADX_CTL1(index));
-> +	value |=3D XUSB_PADCTL_HSIC_PAD_CTL1_PD_RX |
-> +		 XUSB_PADCTL_HSIC_PAD_CTL1_PD_ZI |
-> +		 XUSB_PADCTL_HSIC_PAD_CTL1_PD_TRX |
-> +		 XUSB_PADCTL_HSIC_PAD_CTL1_PD_TX;
-> +	padctl_writel(padctl, value, XUSB_PADCTL_HSIC_PADX_CTL1(index));
-> +
-> +	regulator_disable(pad->supply);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct phy_ops tegra124_hsic_phy_ops =3D {
-> +	.init =3D tegra124_hsic_phy_init,
-> +	.exit =3D tegra124_hsic_phy_exit,
-> +	.power_on =3D tegra124_hsic_phy_power_on,
-> +	.power_off =3D tegra124_hsic_phy_power_off,
-> +	.owner =3D THIS_MODULE,
-> +};
-> +
-> +static struct tegra_xusb_pad *
-> +tegra124_hsic_pad_probe(struct tegra_xusb_padctl *padctl,
-> +			const struct tegra_xusb_pad_soc *soc,
-> +			struct device_node *np)
-> +{
-> +	struct tegra_xusb_hsic_pad *hsic;
-> +	struct tegra_xusb_pad *pad;
-> +	int err;
-> +
-> +	hsic =3D kzalloc(sizeof(*hsic), GFP_KERNEL);
-> +	if (!hsic)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	pad =3D &hsic->base;
-> +	pad->ops =3D &tegra124_hsic_lane_ops;
-> +	pad->soc =3D soc;
-> +
-> +	err =3D tegra_xusb_pad_init(pad, padctl, np);
-> +	if (err < 0)
-> +		goto free;
-> +
-> +	err =3D tegra_xusb_pad_register(pad, &tegra124_hsic_phy_ops);
-> +	if (err < 0)
-> +		goto unregister;
-> +
-> +	dev_set_drvdata(&pad->dev, pad);
-> +
-> +	return pad;
-> +
-> +unregister:
-> +	device_unregister(&pad->dev);
-> +free:
-> +	kfree(hsic);
-> +	return ERR_PTR(err);
-> +}
-> +
-> +static void tegra124_hsic_pad_remove(struct tegra_xusb_pad *pad)
-> +{
-> +	struct tegra_xusb_hsic_pad *hsic =3D to_hsic_pad(pad);
-> +
-> +	kfree(hsic);
-> +}
-> +
-> +static const struct tegra_xusb_pad_ops tegra124_hsic_ops =3D {
-> +	.probe =3D tegra124_hsic_pad_probe,
-> +	.remove =3D tegra124_hsic_pad_remove,
-> +};
-> +
-> +static const struct tegra_xusb_pad_soc tegra124_hsic_pad =3D {
-> +	.name =3D "hsic",
-> +	.num_lanes =3D ARRAY_SIZE(tegra124_hsic_lanes),
-> +	.lanes =3D tegra124_hsic_lanes,
-> +	.ops =3D &tegra124_hsic_ops,
-> +};
-> +
-> +static const char * const tegra124_pcie_functions[] =3D {
-> +	"pcie",
-> +	"usb3-ss",
-> +	"sata",
-> +};
-> +
-> +static const struct tegra_xusb_lane_soc tegra124_pcie_lanes[] =3D {
-> +	TEGRA124_LANE("pcie-0", 0x134, 16, 0x3, pcie),
-> +	TEGRA124_LANE("pcie-1", 0x134, 18, 0x3, pcie),
-> +	TEGRA124_LANE("pcie-2", 0x134, 20, 0x3, pcie),
-> +	TEGRA124_LANE("pcie-3", 0x134, 22, 0x3, pcie),
-> +	TEGRA124_LANE("pcie-4", 0x134, 24, 0x3, pcie),
-> +};
-> +
-> +static struct tegra_xusb_lane *
-> +tegra124_pcie_lane_probe(struct tegra_xusb_pad *pad, struct device_node =
-*np,
-> +			 unsigned int index)
-> +{
-> +	struct tegra_xusb_pcie_lane *pcie;
-> +	int err;
-> +
-> +	pcie =3D kzalloc(sizeof(*pcie), GFP_KERNEL);
-> +	if (!pcie)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	INIT_LIST_HEAD(&pcie->base.list);
-> +	pcie->base.soc =3D &pad->soc->lanes[index];
-> +	pcie->base.index =3D index;
-> +	pcie->base.pad =3D pad;
-> +	pcie->base.np =3D np;
-> +
-> +	err =3D tegra_xusb_lane_parse_dt(&pcie->base, np);
-> +	if (err < 0) {
-> +		kfree(pcie);
-> +		return ERR_PTR(err);
-> +	}
-> +
-> +	return &pcie->base;
-> +}
-> +
-> +static void tegra124_pcie_lane_remove(struct tegra_xusb_lane *lane)
-> +{
-> +	struct tegra_xusb_pcie_lane *pcie =3D to_pcie_lane(lane);
-> +
-> +	kfree(pcie);
-> +}
-> +
-> +static const struct tegra_xusb_lane_ops tegra124_pcie_lane_ops =3D {
-> +	.probe =3D tegra124_pcie_lane_probe,
-> +	.remove =3D tegra124_pcie_lane_remove,
-> +};
-> +
-> +static int tegra124_pcie_phy_init(struct phy *phy)
-> +{
-> +	struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
-> +
-> +	return tegra124_xusb_padctl_enable(lane->pad->padctl);
-> +}
-> +
-> +static int tegra124_pcie_phy_exit(struct phy *phy)
-> +{
-> +	struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
-> +
-> +	return tegra124_xusb_padctl_disable(lane->pad->padctl);
-> +}
-> +
-> +static int tegra124_pcie_phy_power_on(struct phy *phy)
-> +{
-> +	struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
-> +	struct tegra_xusb_padctl *padctl =3D lane->pad->padctl;
-> +	unsigned long timeout;
-> +	int err =3D -ETIMEDOUT;
-> +	u32 value;
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_P0_CTL1);
-> +	value &=3D ~XUSB_PADCTL_IOPHY_PLL_P0_CTL1_REFCLK_SEL_MASK;
-> +	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_PLL_P0_CTL1);
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_P0_CTL2);
-> +	value |=3D XUSB_PADCTL_IOPHY_PLL_P0_CTL2_REFCLKBUF_EN |
-> +		 XUSB_PADCTL_IOPHY_PLL_P0_CTL2_TXCLKREF_EN |
-> +		 XUSB_PADCTL_IOPHY_PLL_P0_CTL2_TXCLKREF_SEL;
-> +	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_PLL_P0_CTL2);
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_P0_CTL1);
-> +	value |=3D XUSB_PADCTL_IOPHY_PLL_P0_CTL1_PLL_RST;
-> +	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_PLL_P0_CTL1);
-> +
-> +	timeout =3D jiffies + msecs_to_jiffies(50);
-> +
-> +	while (time_before(jiffies, timeout)) {
-> +		value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_P0_CTL1);
-> +		if (value & XUSB_PADCTL_IOPHY_PLL_P0_CTL1_PLL0_LOCKDET) {
-> +			err =3D 0;
-> +			break;
-> +		}
-> +
-> +		usleep_range(100, 200);
-> +	}
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_USB3_PAD_MUX);
-> +	value |=3D XUSB_PADCTL_USB3_PAD_MUX_PCIE_IDDQ_DISABLE(lane->index);
-> +	padctl_writel(padctl, value, XUSB_PADCTL_USB3_PAD_MUX);
-> +
-> +	return err;
-> +}
-> +
-> +static int tegra124_pcie_phy_power_off(struct phy *phy)
-> +{
-> +	struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
-> +	struct tegra_xusb_padctl *padctl =3D lane->pad->padctl;
-> +	u32 value;
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_USB3_PAD_MUX);
-> +	value &=3D ~XUSB_PADCTL_USB3_PAD_MUX_PCIE_IDDQ_DISABLE(lane->index);
-> +	padctl_writel(padctl, value, XUSB_PADCTL_USB3_PAD_MUX);
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_P0_CTL1);
-> +	value &=3D ~XUSB_PADCTL_IOPHY_PLL_P0_CTL1_PLL_RST;
-> +	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_PLL_P0_CTL1);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct phy_ops tegra124_pcie_phy_ops =3D {
-> +	.init =3D tegra124_pcie_phy_init,
-> +	.exit =3D tegra124_pcie_phy_exit,
-> +	.power_on =3D tegra124_pcie_phy_power_on,
-> +	.power_off =3D tegra124_pcie_phy_power_off,
-> +	.owner =3D THIS_MODULE,
-> +};
-> +
-> +static struct tegra_xusb_pad *
-> +tegra124_pcie_pad_probe(struct tegra_xusb_padctl *padctl,
-> +			const struct tegra_xusb_pad_soc *soc,
-> +			struct device_node *np)
-> +{
-> +	struct tegra_xusb_pcie_pad *pcie;
-> +	struct tegra_xusb_pad *pad;
-> +	int err;
-> +
-> +	pcie =3D kzalloc(sizeof(*pcie), GFP_KERNEL);
-> +	if (!pcie)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	pad =3D &pcie->base;
-> +	pad->ops =3D &tegra124_pcie_lane_ops;
-> +	pad->soc =3D soc;
-> +
-> +	err =3D tegra_xusb_pad_init(pad, padctl, np);
-> +	if (err < 0)
-> +		goto free;
-> +
-> +	err =3D tegra_xusb_pad_register(pad, &tegra124_pcie_phy_ops);
-> +	if (err < 0)
-> +		goto unregister;
-> +
-> +	dev_set_drvdata(&pad->dev, pad);
-> +
-> +	return pad;
-> +
-> +unregister:
-> +	device_unregister(&pad->dev);
-> +free:
-> +	kfree(pcie);
-> +	return ERR_PTR(err);
-> +}
-> +
-> +static void tegra124_pcie_pad_remove(struct tegra_xusb_pad *pad)
-> +{
-> +	struct tegra_xusb_pcie_pad *pcie =3D to_pcie_pad(pad);
-> +
-> +	kfree(pcie);
-> +}
-> +
-> +static const struct tegra_xusb_pad_ops tegra124_pcie_ops =3D {
-> +	.probe =3D tegra124_pcie_pad_probe,
-> +	.remove =3D tegra124_pcie_pad_remove,
-> +};
-> +
-> +static const struct tegra_xusb_pad_soc tegra124_pcie_pad =3D {
-> +	.name =3D "pcie",
-> +	.num_lanes =3D ARRAY_SIZE(tegra124_pcie_lanes),
-> +	.lanes =3D tegra124_pcie_lanes,
-> +	.ops =3D &tegra124_pcie_ops,
-> +};
-> +
-> +static const struct tegra_xusb_lane_soc tegra124_sata_lanes[] =3D {
-> +	TEGRA124_LANE("sata-0", 0x134, 26, 0x3, pcie),
-> +};
-> +
-> +static struct tegra_xusb_lane *
-> +tegra124_sata_lane_probe(struct tegra_xusb_pad *pad, struct device_node =
-*np,
-> +			 unsigned int index)
-> +{
-> +	struct tegra_xusb_sata_lane *sata;
-> +	int err;
-> +
-> +	sata =3D kzalloc(sizeof(*sata), GFP_KERNEL);
-> +	if (!sata)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	INIT_LIST_HEAD(&sata->base.list);
-> +	sata->base.soc =3D &pad->soc->lanes[index];
-> +	sata->base.index =3D index;
-> +	sata->base.pad =3D pad;
-> +	sata->base.np =3D np;
-> +
-> +	err =3D tegra_xusb_lane_parse_dt(&sata->base, np);
-> +	if (err < 0) {
-> +		kfree(sata);
-> +		return ERR_PTR(err);
-> +	}
-> +
-> +	return &sata->base;
-> +}
-> +
-> +static void tegra124_sata_lane_remove(struct tegra_xusb_lane *lane)
-> +{
-> +	struct tegra_xusb_sata_lane *sata =3D to_sata_lane(lane);
-> +
-> +	kfree(sata);
-> +}
-> +
-> +static const struct tegra_xusb_lane_ops tegra124_sata_lane_ops =3D {
-> +	.probe =3D tegra124_sata_lane_probe,
-> +	.remove =3D tegra124_sata_lane_remove,
-> +};
-> +
-> +static int tegra124_sata_phy_init(struct phy *phy)
-> +{
-> +	struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
-> +
-> +	return tegra124_xusb_padctl_enable(lane->pad->padctl);
-> +}
-> +
-> +static int tegra124_sata_phy_exit(struct phy *phy)
-> +{
-> +	struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
-> +
-> +	return tegra124_xusb_padctl_disable(lane->pad->padctl);
-> +}
-> +
-> +static int tegra124_sata_phy_power_on(struct phy *phy)
-> +{
-> +	struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
-> +	struct tegra_xusb_padctl *padctl =3D lane->pad->padctl;
-> +	unsigned long timeout;
-> +	int err =3D -ETIMEDOUT;
-> +	u32 value;
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL1);
-> +	value &=3D ~XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL1_IDDQ_OVRD;
-> +	value &=3D ~XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL1_IDDQ;
-> +	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL1);
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
-> +	value &=3D ~XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL_PWR_OVRD;
-> +	value &=3D ~XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL_IDDQ;
-> +	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
-> +	value |=3D XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL1_MODE;
-> +	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
-> +	value |=3D XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL_RST;
-> +	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
-> +
-> +	timeout =3D jiffies + msecs_to_jiffies(50);
-> +
-> +	while (time_before(jiffies, timeout)) {
-> +		value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
-> +		if (value & XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL1_LOCKDET) {
-> +			err =3D 0;
-> +			break;
-> +		}
-> +
-> +		usleep_range(100, 200);
-> +	}
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_USB3_PAD_MUX);
-> +	value |=3D XUSB_PADCTL_USB3_PAD_MUX_SATA_IDDQ_DISABLE(lane->index);
-> +	padctl_writel(padctl, value, XUSB_PADCTL_USB3_PAD_MUX);
-> +
-> +	return err;
-> +}
-> +
-> +static int tegra124_sata_phy_power_off(struct phy *phy)
-> +{
-> +	struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
-> +	struct tegra_xusb_padctl *padctl =3D lane->pad->padctl;
-> +	u32 value;
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_USB3_PAD_MUX);
-> +	value &=3D ~XUSB_PADCTL_USB3_PAD_MUX_SATA_IDDQ_DISABLE(lane->index);
-> +	padctl_writel(padctl, value, XUSB_PADCTL_USB3_PAD_MUX);
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
-> +	value &=3D ~XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL_RST;
-> +	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
-> +	value &=3D ~XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL1_MODE;
-> +	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
-> +	value |=3D XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL_PWR_OVRD;
-> +	value |=3D XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL_IDDQ;
-> +	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL1);
-> +	value |=3D ~XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL1_IDDQ_OVRD;
-> +	value |=3D ~XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL1_IDDQ;
-> +	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL1);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct phy_ops tegra124_sata_phy_ops =3D {
-> +	.init =3D tegra124_sata_phy_init,
-> +	.exit =3D tegra124_sata_phy_exit,
-> +	.power_on =3D tegra124_sata_phy_power_on,
-> +	.power_off =3D tegra124_sata_phy_power_off,
-> +	.owner =3D THIS_MODULE,
-> +};
-> +
-> +static struct tegra_xusb_pad *
-> +tegra124_sata_pad_probe(struct tegra_xusb_padctl *padctl,
-> +			const struct tegra_xusb_pad_soc *soc,
-> +			struct device_node *np)
-> +{
-> +	struct tegra_xusb_sata_pad *sata;
-> +	struct tegra_xusb_pad *pad;
-> +	int err;
-> +
-> +	sata =3D kzalloc(sizeof(*sata), GFP_KERNEL);
-> +	if (!sata)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	pad =3D &sata->base;
-> +	pad->ops =3D &tegra124_sata_lane_ops;
-> +	pad->soc =3D soc;
-> +
-> +	err =3D tegra_xusb_pad_init(pad, padctl, np);
-> +	if (err < 0)
-> +		goto free;
-> +
-> +	err =3D tegra_xusb_pad_register(pad, &tegra124_sata_phy_ops);
-> +	if (err < 0)
-> +		goto unregister;
-> +
-> +	dev_set_drvdata(&pad->dev, pad);
-> +
-> +	return pad;
-> +
-> +unregister:
-> +	device_unregister(&pad->dev);
-> +free:
-> +	kfree(sata);
-> +	return ERR_PTR(err);
-> +}
-> +
-> +static void tegra124_sata_pad_remove(struct tegra_xusb_pad *pad)
-> +{
-> +	struct tegra_xusb_sata_pad *sata =3D to_sata_pad(pad);
-> +
-> +	kfree(sata);
-> +}
-> +
-> +static const struct tegra_xusb_pad_ops tegra124_sata_ops =3D {
-> +	.probe =3D tegra124_sata_pad_probe,
-> +	.remove =3D tegra124_sata_pad_remove,
-> +};
-> +
-> +static const struct tegra_xusb_pad_soc tegra124_sata_pad =3D {
-> +	.name =3D "sata",
-> +	.num_lanes =3D ARRAY_SIZE(tegra124_sata_lanes),
-> +	.lanes =3D tegra124_sata_lanes,
-> +	.ops =3D &tegra124_sata_ops,
-> +};
-> +
-> +static const struct tegra_xusb_pad_soc *tegra124_pads[] =3D {
-> +	&tegra124_usb2_pad,
-> +	&tegra124_ulpi_pad,
-> +	&tegra124_hsic_pad,
-> +	&tegra124_pcie_pad,
-> +	&tegra124_sata_pad,
-> +};
-> +
-> +static int tegra124_usb2_port_enable(struct tegra_xusb_port *port)
-> +{
-> +	return 0;
-> +}
-> +
-> +static void tegra124_usb2_port_disable(struct tegra_xusb_port *port)
-> +{
-> +}
-> +
-> +static struct tegra_xusb_lane *
-> +tegra124_usb2_port_map(struct tegra_xusb_port *port)
-> +{
-> +	return tegra_xusb_find_lane(port->padctl, "usb2", port->index);
-> +}
-> +
-> +static const struct tegra_xusb_port_ops tegra124_usb2_port_ops =3D {
-> +	.enable =3D tegra124_usb2_port_enable,
-> +	.disable =3D tegra124_usb2_port_disable,
-> +	.map =3D tegra124_usb2_port_map,
-> +};
-> +
-> +static int tegra124_ulpi_port_enable(struct tegra_xusb_port *port)
-> +{
-> +	return 0;
-> +}
-> +
-> +static void tegra124_ulpi_port_disable(struct tegra_xusb_port *port)
-> +{
-> +}
-> +
-> +static struct tegra_xusb_lane *
-> +tegra124_ulpi_port_map(struct tegra_xusb_port *port)
-> +{
-> +	return tegra_xusb_find_lane(port->padctl, "ulpi", port->index);
-> +}
-> +
-> +static const struct tegra_xusb_port_ops tegra124_ulpi_port_ops =3D {
-> +	.enable =3D tegra124_ulpi_port_enable,
-> +	.disable =3D tegra124_ulpi_port_disable,
-> +	.map =3D tegra124_ulpi_port_map,
-> +};
-> +
-> +static int tegra124_hsic_port_enable(struct tegra_xusb_port *port)
-> +{
-> +	return 0;
-> +}
-> +
-> +static void tegra124_hsic_port_disable(struct tegra_xusb_port *port)
-> +{
-> +}
-> +
-> +static struct tegra_xusb_lane *
-> +tegra124_hsic_port_map(struct tegra_xusb_port *port)
-> +{
-> +	return tegra_xusb_find_lane(port->padctl, "hsic", port->index);
-> +}
-> +
-> +static const struct tegra_xusb_port_ops tegra124_hsic_port_ops =3D {
-> +	.enable =3D tegra124_hsic_port_enable,
-> +	.disable =3D tegra124_hsic_port_disable,
-> +	.map =3D tegra124_hsic_port_map,
-> +};
-> +
-> +static int tegra124_usb3_port_enable(struct tegra_xusb_port *port)
-> +{
-> +	struct tegra_xusb_usb3_port *usb3 =3D to_usb3_port(port);
-> +	struct tegra_xusb_padctl *padctl =3D port->padctl;
-> +	struct tegra_xusb_lane *lane =3D usb3->base.lane;
-> +	unsigned int index =3D port->index, offset;
-> +	int ret =3D 0;
-> +	u32 value;
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_SS_PORT_MAP);
-> +
-> +	if (!usb3->internal)
-> +		value &=3D ~XUSB_PADCTL_SS_PORT_MAP_PORTX_INTERNAL(index);
-> +	else
-> +		value |=3D XUSB_PADCTL_SS_PORT_MAP_PORTX_INTERNAL(index);
-> +
-> +	value &=3D ~XUSB_PADCTL_SS_PORT_MAP_PORTX_MAP_MASK(index);
-> +	value |=3D XUSB_PADCTL_SS_PORT_MAP_PORTX_MAP(index, usb3->port);
-> +	padctl_writel(padctl, value, XUSB_PADCTL_SS_PORT_MAP);
-> +
-> +	/*
-> +	 * TODO: move this code into the PCIe/SATA PHY ->power_on() callbacks
-> +	 * and conditionalize based on mux function? This seems to work, but
-> +	 * might not be the exact proper sequence.
-> +	 */
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_USB3_PADX_CTL2(index));
-> +	value &=3D ~((XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_WANDER_MASK <<
-> +		    XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_WANDER_SHIFT) |
-> +		   (XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_MASK <<
-> +		    XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_SHIFT) |
-> +		   (XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_CDR_CNTL_MASK <<
-> +		    XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_CDR_CNTL_SHIFT));
-> +	value |=3D (XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_WANDER_VAL <<
-> +		  XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_WANDER_SHIFT) |
-> +		 (XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_CDR_CNTL_VAL <<
-> +		  XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_CDR_CNTL_SHIFT) |
-> +		 (XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_VAL <<
-> +		  XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_SHIFT);
-> +
-> +	if (usb3->context_saved) {
-> +		value &=3D ~((XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_G_MASK <<
-> +			    XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_G_SHIFT) |
-> +			   (XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_Z_MASK <<
-> +			    XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_Z_SHIFT));
-> +		value |=3D (usb3->ctle_g <<
-> +			  XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_G_SHIFT) |
-> +			 (usb3->ctle_z <<
-> +			  XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_Z_SHIFT);
-> +	}
-> +
-> +	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_USB3_PADX_CTL2(index));
-> +
-> +	value =3D XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_VAL;
-> +
-> +	if (usb3->context_saved) {
-> +		value &=3D ~((XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_TAP_MASK <<
-> +			    XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_TAP_SHIFT) |
-> +			   (XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_AMP_MASK <<
-> +			    XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_AMP_SHIFT));
-> +		value |=3D (usb3->tap1 <<
-> +			  XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_TAP_SHIFT) |
-> +			 (usb3->amp <<
-> +			  XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_AMP_SHIFT);
-> +	}
-> +
-> +	padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_USB3_PADX_CTL4(index));
-> +
-> +	if (lane->pad =3D=3D padctl->pcie)
-> +		offset =3D XUSB_PADCTL_IOPHY_MISC_PAD_PX_CTL2(lane->index);
-> +	else
-> +		offset =3D XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL2;
-> +
-> +	value =3D padctl_readl(padctl, offset);
-> +	value &=3D ~(XUSB_PADCTL_IOPHY_MISC_PAD_CTL2_SPARE_IN_MASK <<
-> +		   XUSB_PADCTL_IOPHY_MISC_PAD_CTL2_SPARE_IN_SHIFT);
-> +	value |=3D XUSB_PADCTL_IOPHY_MISC_PAD_CTL2_SPARE_IN_VAL <<
-> +		XUSB_PADCTL_IOPHY_MISC_PAD_CTL2_SPARE_IN_SHIFT;
-> +	padctl_writel(padctl, value, offset);
-> +
-> +	if (lane->pad =3D=3D padctl->pcie)
-> +		offset =3D XUSB_PADCTL_IOPHY_MISC_PAD_PX_CTL5(lane->index);
-> +	else
-> +		offset =3D XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL5;
-> +
-> +	value =3D padctl_readl(padctl, offset);
-> +	value |=3D XUSB_PADCTL_IOPHY_MISC_PAD_CTL5_RX_QEYE_EN;
-> +	padctl_writel(padctl, value, offset);
-> +
-> +	/* Enable SATA PHY when SATA lane is used */
-> +	if (lane->pad =3D=3D padctl->sata) {
-> +		value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
-> +		value &=3D ~(XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL0_REFCLK_NDIV_MASK <<
-> +			   XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL0_REFCLK_NDIV_SHIFT);
-> +		value |=3D 0x2 <<
-> +			XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL0_REFCLK_NDIV_SHIFT;
-> +		padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_PLL_S0_CTL1);
-> +
-> +		value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_S0_CTL2);
-> +		value &=3D ~((XUSB_PADCTL_IOPHY_PLL_S0_CTL2_XDIGCLK_SEL_MASK <<
-> +			    XUSB_PADCTL_IOPHY_PLL_S0_CTL2_XDIGCLK_SEL_SHIFT) |
-> +			   (XUSB_PADCTL_IOPHY_PLL_S0_CTL2_PLL1_CP_CNTL_MASK <<
-> +			    XUSB_PADCTL_IOPHY_PLL_S0_CTL2_PLL1_CP_CNTL_SHIFT) |
-> +			   (XUSB_PADCTL_IOPHY_PLL_S0_CTL2_PLL0_CP_CNTL_MASK <<
-> +			    XUSB_PADCTL_IOPHY_PLL_S0_CTL2_PLL0_CP_CNTL_SHIFT) |
-> +			   XUSB_PADCTL_IOPHY_PLL_S0_CTL2_TCLKOUT_EN);
-> +		value |=3D (0x7 <<
-> +			  XUSB_PADCTL_IOPHY_PLL_S0_CTL2_XDIGCLK_SEL_SHIFT) |
-> +			 (0x8 <<
-> +			  XUSB_PADCTL_IOPHY_PLL_S0_CTL2_PLL1_CP_CNTL_SHIFT) |
-> +			 (0x8 <<
-> +			  XUSB_PADCTL_IOPHY_PLL_S0_CTL2_PLL0_CP_CNTL_SHIFT) |
-> +			 XUSB_PADCTL_IOPHY_PLL_S0_CTL2_TXCLKREF_SEL;
-> +		padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_PLL_S0_CTL2);
-> +
-> +		value =3D padctl_readl(padctl, XUSB_PADCTL_IOPHY_PLL_S0_CTL3);
-> +		value &=3D ~XUSB_PADCTL_IOPHY_PLL_S0_CTL3_RCAL_BYPASS;
-> +		padctl_writel(padctl, value, XUSB_PADCTL_IOPHY_PLL_S0_CTL3);
-> +	}
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM);
-> +	value &=3D ~XUSB_PADCTL_ELPG_PROGRAM_SSPX_ELPG_VCORE_DOWN(index);
-> +	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM);
-> +
-> +	usleep_range(100, 200);
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM);
-> +	value &=3D ~XUSB_PADCTL_ELPG_PROGRAM_SSPX_ELPG_CLAMP_EN_EARLY(index);
-> +	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM);
-> +
-> +	usleep_range(100, 200);
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM);
-> +	value &=3D ~XUSB_PADCTL_ELPG_PROGRAM_SSPX_ELPG_CLAMP_EN(index);
-> +	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM);
-> +
-> +	return ret;
-> +}
-> +
-> +static void tegra124_usb3_port_disable(struct tegra_xusb_port *port)
-> +{
-> +	struct tegra_xusb_padctl *padctl =3D port->padctl;
-> +	u32 value;
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM);
-> +	value |=3D XUSB_PADCTL_ELPG_PROGRAM_SSPX_ELPG_CLAMP_EN_EARLY(port->inde=
-x);
-> +	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM);
-> +
-> +	usleep_range(100, 200);
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM);
-> +	value |=3D XUSB_PADCTL_ELPG_PROGRAM_SSPX_ELPG_CLAMP_EN(port->index);
-> +	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM);
-> +
-> +	usleep_range(250, 350);
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_ELPG_PROGRAM);
-> +	value |=3D XUSB_PADCTL_ELPG_PROGRAM_SSPX_ELPG_VCORE_DOWN(port->index);
-> +	padctl_writel(padctl, value, XUSB_PADCTL_ELPG_PROGRAM);
-> +
-> +	value =3D padctl_readl(padctl, XUSB_PADCTL_SS_PORT_MAP);
-> +	value &=3D ~XUSB_PADCTL_SS_PORT_MAP_PORTX_MAP_MASK(port->index);
-> +	value |=3D XUSB_PADCTL_SS_PORT_MAP_PORTX_MAP(port->index, 0x7);
-> +	padctl_writel(padctl, value, XUSB_PADCTL_SS_PORT_MAP);
-> +}
-> +
-> +static const struct tegra_xusb_lane_map tegra124_usb3_map[] =3D {
-> +	{ 0, "pcie", 0 },
-> +	{ 1, "pcie", 1 },
-> +	{ 1, "sata", 0 },
-> +	{ 0, NULL,   0 },
-> +};
-> +
-> +static struct tegra_xusb_lane *
-> +tegra124_usb3_port_map(struct tegra_xusb_port *port)
-> +{
-> +	return tegra_xusb_port_find_lane(port, tegra124_usb3_map, "usb3-ss");
-> +}
-> +
-> +static const struct tegra_xusb_port_ops tegra124_usb3_port_ops =3D {
-> +	.enable =3D tegra124_usb3_port_enable,
-> +	.disable =3D tegra124_usb3_port_disable,
-> +	.map =3D tegra124_usb3_port_map,
-> +};
-> +
-> +static int
-> +tegra124_xusb_read_fuse_calibration(struct tegra124_xusb_fuse_calibratio=
-n *fuse)
-> +{
-> +	unsigned int i;
-> +	int err;
-> +	u32 value;
-> +
-> +	err =3D tegra_fuse_readl(TEGRA_FUSE_SKU_CALIB_0, &value);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	for (i =3D 0; i < ARRAY_SIZE(fuse->hs_curr_level); i++) {
-> +		fuse->hs_curr_level[i] =3D
-> +			(value >> FUSE_SKU_CALIB_HS_CURR_LEVEL_PADX_SHIFT(i)) &
-> +			FUSE_SKU_CALIB_HS_CURR_LEVEL_PAD_MASK;
-> +	}
-> +	fuse->hs_iref_cap =3D
-> +		(value >> FUSE_SKU_CALIB_HS_IREF_CAP_SHIFT) &
-> +		FUSE_SKU_CALIB_HS_IREF_CAP_MASK;
-> +	fuse->hs_term_range_adj =3D
-> +		(value >> FUSE_SKU_CALIB_HS_TERM_RANGE_ADJ_SHIFT) &
-> +		FUSE_SKU_CALIB_HS_TERM_RANGE_ADJ_MASK;
-> +	fuse->hs_squelch_level =3D
-> +		(value >> FUSE_SKU_CALIB_HS_SQUELCH_LEVEL_SHIFT) &
-> +		FUSE_SKU_CALIB_HS_SQUELCH_LEVEL_MASK;
-> +
-> +	return 0;
-> +}
-> +
-> +static struct tegra_xusb_padctl *
-> +tegra124_xusb_padctl_probe(struct device *dev,
-> +			   const struct tegra_xusb_padctl_soc *soc)
-> +{
-> +	struct tegra124_xusb_padctl *padctl;
-> +	int err;
-> +
-> +	padctl =3D devm_kzalloc(dev, sizeof(*padctl), GFP_KERNEL);
-> +	if (!padctl)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	padctl->base.dev =3D dev;
-> +	padctl->base.soc =3D soc;
-> +
-> +	err =3D tegra124_xusb_read_fuse_calibration(&padctl->fuse);
-> +	if (err < 0)
-> +		return ERR_PTR(err);
-> +
-> +	return &padctl->base;
-> +}
-> +
-> +static void tegra124_xusb_padctl_remove(struct tegra_xusb_padctl *padctl)
-> +{
-> +}
-> +
-> +static const struct tegra_xusb_padctl_ops tegra124_xusb_padctl_ops =3D {
-> +	.probe =3D tegra124_xusb_padctl_probe,
-> +	.remove =3D tegra124_xusb_padctl_remove,
-> +	.usb3_save_context =3D tegra124_usb3_save_context,
-> +	.hsic_set_idle =3D tegra124_hsic_set_idle,
-> +};
-> +
-> +const struct tegra_xusb_padctl_soc tegra124_xusb_padctl_soc =3D {
-> +	.num_pads =3D ARRAY_SIZE(tegra124_pads),
-> +	.pads =3D tegra124_pads,
-> +	.ports =3D {
-> +		.usb2 =3D {
-> +			.ops =3D &tegra124_usb2_port_ops,
-> +			.count =3D 3,
-> +		},
-> +		.ulpi =3D {
-> +			.ops =3D &tegra124_ulpi_port_ops,
-> +			.count =3D 1,
-> +		},
-> +		.hsic =3D {
-> +			.ops =3D &tegra124_hsic_port_ops,
-> +			.count =3D 2,
-> +		},
-> +		.usb3 =3D {
-> +			.ops =3D &tegra124_usb3_port_ops,
-> +			.count =3D 2,
-> +		},
-> +	},
-> +	.ops =3D &tegra124_xusb_padctl_ops,
-> +};
-> +EXPORT_SYMBOL_GPL(tegra124_xusb_padctl_soc);
-> +
-> +MODULE_AUTHOR("Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
-> +MODULE_DESCRIPTION("NVIDIA Tegra 124 XUSB Pad Controller driver");
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-> new file mode 100644
-> index 000000000000..809998f6ce85
-> --- /dev/null
-> +++ b/drivers/phy/tegra/xusb.c
-> @@ -0,0 +1,1017 @@
-> +/*
-> + * Copyright (c) 2014-2015, NVIDIA CORPORATION.  All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify =
-it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License=
- for
-> + * more details.
-> + */
-> +
-> +#include <linux/delay.h>
-> +#include <linux/io.h>
-> +#include <linux/mailbox_client.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
 > +#include <linux/of_device.h>
 > +#include <linux/phy/phy.h>
+> +#include <linux/phy/tegra/xusb.h>
 > +#include <linux/platform_device.h>
+> +#include <linux/pm.h>
 > +#include <linux/regulator/consumer.h>
 > +#include <linux/reset.h>
 > +#include <linux/slab.h>
-> +#include <linux/workqueue.h>
 > +
-> +#include <soc/tegra/fuse.h>
+> +#include "xhci.h"
 > +
-> +#include "xusb.h"
+> +#define TEGRA_XHCI_SS_HIGH_SPEED 120000000
+> +#define TEGRA_XHCI_SS_LOW_SPEED   12000000
 > +
-> +static struct phy *tegra_xusb_pad_of_xlate(struct device *dev,
-> +					   struct of_phandle_args *args)
-> +{
-> +	struct tegra_xusb_pad *pad =3D dev_get_drvdata(dev);
-> +	struct phy *phy =3D NULL;
-> +	unsigned int i;
+> +/* FPCI CFG registers */
+> +#define XUSB_CFG_1				0x004
+> +#define  XUSB_IO_SPACE_EN			BIT(0)
+> +#define  XUSB_MEM_SPACE_EN			BIT(1)
+> +#define  XUSB_BUS_MASTER_EN			BIT(2)
+> +#define XUSB_CFG_4				0x010
+> +#define  XUSB_BASE_ADDR_SHIFT			15
+> +#define  XUSB_BASE_ADDR_MASK			0x1ffff
+> +#define XUSB_CFG_ARU_C11_CSBRANGE		0x41c
+> +#define XUSB_CFG_CSB_BASE_ADDR			0x800
 > +
-> +	if (args->args_count !=3D 0)
-> +		return ERR_PTR(-EINVAL);
+> +/* FPCI mailbox registers */
+> +#define XUSB_CFG_ARU_MBOX_CMD			0x0e4
+> +#define  MBOX_DEST_FALC				BIT(27)
+> +#define  MBOX_DEST_PME				BIT(28)
+> +#define  MBOX_DEST_SMI				BIT(29)
+> +#define  MBOX_DEST_XHCI				BIT(30)
+> +#define  MBOX_INT_EN				BIT(31)
+> +#define XUSB_CFG_ARU_MBOX_DATA_IN		0x0e8
+> +#define  CMD_DATA_SHIFT				0
+> +#define  CMD_DATA_MASK				0xffffff
+> +#define  CMD_TYPE_SHIFT				24
+> +#define  CMD_TYPE_MASK				0xff
+> +#define XUSB_CFG_ARU_MBOX_DATA_OUT		0x0ec
+> +#define XUSB_CFG_ARU_MBOX_OWNER			0x0f0
+> +#define  MBOX_OWNER_NONE			0
+> +#define  MBOX_OWNER_FW				1
+> +#define  MBOX_OWNER_SW				2
+> +#define XUSB_CFG_ARU_SMI_INTR			0x428
+> +#define  MBOX_SMI_INTR_FW_HANG			BIT(1)
+> +#define  MBOX_SMI_INTR_EN			BIT(3)
 > +
-> +	for (i =3D 0; i < pad->soc->num_lanes; i++) {
-> +		if (!pad->lanes[i])
-> +			continue;
+> +/* IPFS registers */
+> +#define IPFS_XUSB_HOST_CONFIGURATION_0		0x180
+> +#define  IPFS_EN_FPCI				BIT(0)
+> +#define IPFS_XUSB_HOST_INTR_MASK_0		0x188
+> +#define  IPFS_IP_INT_MASK			BIT(16)
+> +#define IPFS_XUSB_HOST_CLKGATE_HYSTERESIS_0	0x1bc
 > +
-> +		if (pad->lanes[i]->dev.of_node =3D=3D args->np) {
-> +			phy =3D pad->lanes[i];
-> +			break;
-> +		}
-> +	}
+> +#define CSB_PAGE_SELECT_MASK			0x7fffff
+> +#define CSB_PAGE_SELECT_SHIFT			9
+> +#define CSB_PAGE_OFFSET_MASK			0x1ff
+> +#define CSB_PAGE_SELECT(addr)	((addr) >> (CSB_PAGE_SELECT_SHIFT) &	\
+> +				 CSB_PAGE_SELECT_MASK)
+> +#define CSB_PAGE_OFFSET(addr)	((addr) & CSB_PAGE_OFFSET_MASK)
 > +
-> +	if (phy =3D=3D NULL)
-> +		phy =3D ERR_PTR(-ENODEV);
+> +/* Falcon CSB registers */
+> +#define XUSB_FALC_CPUCTL			0x100
+> +#define  CPUCTL_STARTCPU			BIT(1)
+> +#define  CPUCTL_STATE_HALTED			BIT(4)
+> +#define  CPUCTL_STATE_STOPPED			BIT(5)
+> +#define XUSB_FALC_BOOTVEC			0x104
+> +#define XUSB_FALC_DMACTL			0x10c
+> +#define XUSB_FALC_IMFILLRNG1			0x154
+> +#define  IMFILLRNG1_TAG_MASK			0xffff
+> +#define  IMFILLRNG1_TAG_LO_SHIFT		0
+> +#define  IMFILLRNG1_TAG_HI_SHIFT		16
+> +#define XUSB_FALC_IMFILLCTL			0x158
 > +
-> +	return phy;
-> +}
+> +/* MP CSB registers */
+> +#define XUSB_CSB_MP_ILOAD_ATTR			0x101a00
+> +#define XUSB_CSB_MP_ILOAD_BASE_LO		0x101a04
+> +#define XUSB_CSB_MP_ILOAD_BASE_HI		0x101a08
+> +#define XUSB_CSB_MP_L2IMEMOP_SIZE		0x101a10
+> +#define  L2IMEMOP_SIZE_SRC_OFFSET_SHIFT		8
+> +#define  L2IMEMOP_SIZE_SRC_OFFSET_MASK		0x3ff
+> +#define  L2IMEMOP_SIZE_SRC_COUNT_SHIFT		24
+> +#define  L2IMEMOP_SIZE_SRC_COUNT_MASK		0xff
+> +#define XUSB_CSB_MP_L2IMEMOP_TRIG		0x101a14
+> +#define  L2IMEMOP_ACTION_SHIFT			24
+> +#define  L2IMEMOP_INVALIDATE_ALL		(0x40 << L2IMEMOP_ACTION_SHIFT)
+> +#define  L2IMEMOP_LOAD_LOCKED_RESULT		(0x11 << L2IMEMOP_ACTION_SHIFT)
+> +#define XUSB_CSB_MP_APMAP			0x10181c
+> +#define  APMAP_BOOTPATH				BIT(31)
 > +
-> +static const struct of_device_id tegra_xusb_padctl_of_match[] =3D {
-> +#if defined(CONFIG_ARCH_TEGRA_124_SOC) || defined(CONFIG_ARCH_TEGRA_132_=
-SOC)
-> +	{
-> +		.compatible =3D "nvidia,tegra124-xusb-padctl",
-> +		.data =3D &tegra124_xusb_padctl_soc,
-> +	},
-> +#endif
-> +#if defined(CONFIG_ARCH_TEGRA_210_SOC)
-> +	{
-> +		.compatible =3D "nvidia,tegra210-xusb-padctl",
-> +		.data =3D &tegra210_xusb_padctl_soc,
-> +	},
-> +#endif
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, tegra_xusb_padctl_of_match);
+> +#define IMEM_BLOCK_SIZE				256
 > +
-> +static struct device_node *
-> +tegra_xusb_find_pad_node(struct tegra_xusb_padctl *padctl, const char *n=
-ame)
-> +{
-> +	/*
-> +	 * of_find_node_by_name() drops a reference, so make sure to grab one.
-> +	 */
-> +	struct device_node *np =3D of_node_get(padctl->dev->of_node);
-> +
-> +	np =3D of_find_node_by_name(np, "pads");
-> +	if (np)
-> +		np =3D of_find_node_by_name(np, name);
-> +
-> +	return np;
-> +}
-> +
-> +static struct device_node *
-> +tegra_xusb_pad_find_phy_node(struct tegra_xusb_pad *pad, unsigned int in=
-dex)
-> +{
-> +	/*
-> +	 * of_find_node_by_name() drops a reference, so make sure to grab one.
-> +	 */
-> +	struct device_node *np =3D of_node_get(pad->dev.of_node);
-> +	char *name;
-> +
-> +	name =3D kasprintf(GFP_KERNEL, "%s-%u", np->name, index);
-> +	if (!name) {
-> +		of_node_put(np);
-> +		return NULL;
-> +	}
-> +
-> +	np =3D of_find_node_by_name(np, name);
-> +
-> +	kfree(name);
-> +
-> +	return np;
-> +}
-> +
-> +int tegra_xusb_lane_lookup_function(struct tegra_xusb_lane *lane,
-> +				    const char *function)
-> +{
-> +	unsigned int i;
-> +
-> +	for (i =3D 0; i < lane->soc->num_funcs; i++)
-> +		if (strcmp(function, lane->soc->funcs[i]) =3D=3D 0)
-> +			return i;
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +int tegra_xusb_lane_parse_dt(struct tegra_xusb_lane *lane,
-> +			     struct device_node *np)
-> +{
-> +	struct device *dev =3D &lane->pad->dev;
-> +	const char *function;
-> +	int err;
-> +
-> +	err =3D of_property_read_string(np, "nvidia,function", &function);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	err =3D tegra_xusb_lane_lookup_function(lane, function);
-> +	if (err < 0) {
-> +		dev_err(dev, "invalid function \"%s\" for lane \"%s\"\n",
-> +			function, np->name);
-> +		return err;
-> +	}
-> +
-> +	lane->function =3D err;
-> +
-> +	return 0;
-> +}
-> +
-> +static void tegra_xusb_lane_destroy(struct phy *phy)
-> +{
-> +	if (phy) {
-> +		struct tegra_xusb_lane *lane =3D phy_get_drvdata(phy);
-> +
-> +		lane->pad->ops->remove(lane);
-> +		phy_destroy(phy);
-> +	}
-> +}
-> +
-> +static void tegra_xusb_pad_release(struct device *dev)
-> +{
-> +	struct tegra_xusb_pad *pad =3D to_tegra_xusb_pad(dev);
-> +
-> +	pad->soc->ops->remove(pad);
-> +}
-> +
-> +static struct device_type tegra_xusb_pad_type =3D {
-> +	.release =3D tegra_xusb_pad_release,
+> +struct tegra_xusb_fw_header {
+> +	u32 boot_loadaddr_in_imem;
+> +	u32 boot_codedfi_offset;
+> +	u32 boot_codetag;
+> +	u32 boot_codesize;
+> +	u32 phys_memaddr;
+> +	u16 reqphys_memsize;
+> +	u16 alloc_phys_memsize;
+> +	u32 rodata_img_offset;
+> +	u32 rodata_section_start;
+> +	u32 rodata_section_end;
+> +	u32 main_fnaddr;
+> +	u32 fwimg_cksum;
+> +	u32 fwimg_created_time;
+> +	u32 imem_resident_start;
+> +	u32 imem_resident_end;
+> +	u32 idirect_start;
+> +	u32 idirect_end;
+> +	u32 l2_imem_start;
+> +	u32 l2_imem_end;
+> +	u32 version_id;
+> +	u8 init_ddirect;
+> +	u8 reserved[3];
+> +	u32 phys_addr_log_buffer;
+> +	u32 total_log_entries;
+> +	u32 dequeue_ptr;
+> +	u32 dummy_var[2];
+> +	u32 fwimg_len;
+> +	u8 magic[8];
+> +	u32 ss_low_power_entry_timeout;
+> +	u8 num_hsic_port;
+> +	u8 padding[139]; /* Pad to 256 bytes */
 > +};
 > +
-> +int tegra_xusb_pad_init(struct tegra_xusb_pad *pad,
-> +			struct tegra_xusb_padctl *padctl,
-> +			struct device_node *np)
-> +{
-> +	int err;
-> +
-> +	device_initialize(&pad->dev);
-> +	INIT_LIST_HEAD(&pad->list);
-> +	pad->dev.parent =3D padctl->dev;
-> +	pad->dev.type =3D &tegra_xusb_pad_type;
-> +	pad->dev.of_node =3D np;
-> +	pad->padctl =3D padctl;
-> +
-> +	err =3D dev_set_name(&pad->dev, "%s", pad->soc->name);
-> +	if (err < 0)
-> +		goto unregister;
-> +
-> +	err =3D device_add(&pad->dev);
-> +	if (err < 0)
-> +		goto unregister;
-> +
-> +	return 0;
-> +
-> +unregister:
-> +	device_unregister(&pad->dev);
-> +	return err;
-> +}
-> +
-> +int tegra_xusb_pad_register(struct tegra_xusb_pad *pad,
-> +			    const struct phy_ops *ops)
-> +{
-> +	struct phy *lane;
-> +	unsigned int i;
-> +	int err;
-> +
-> +	pad->lanes =3D devm_kcalloc(&pad->dev, pad->soc->num_lanes, sizeof(lane=
-),
-> +				  GFP_KERNEL);
-> +	if (!pad->lanes)
-> +		return -ENOMEM;
-> +
-> +	for (i =3D 0; i < pad->soc->num_lanes; i++) {
-> +		struct device_node *np =3D tegra_xusb_pad_find_phy_node(pad, i);
-> +		struct tegra_xusb_lane *lane;
-> +
-> +		/* skip disabled lanes */
-> +		if (!np || !of_device_is_available(np))
-> +			continue;
-> +
-> +		pad->lanes[i] =3D phy_create(&pad->dev, np, ops);
-> +		if (IS_ERR(pad->lanes[i])) {
-> +			err =3D PTR_ERR(pad->lanes[i]);
-> +			goto remove;
-> +		}
-> +
-> +		lane =3D pad->ops->probe(pad, np, i);
-> +		if (IS_ERR(lane)) {
-> +			phy_destroy(pad->lanes[i]);
-> +			err =3D PTR_ERR(lane);
-> +			goto remove;
-> +		}
-> +
-> +		list_add_tail(&lane->list, &pad->padctl->lanes);
-> +		phy_set_drvdata(pad->lanes[i], lane);
-> +	}
-> +
-> +	pad->provider =3D of_phy_provider_register(&pad->dev,
-> +						 tegra_xusb_pad_of_xlate);
-> +	if (IS_ERR(pad->provider)) {
-> +		err =3D PTR_ERR(pad->provider);
-> +		goto remove;
-> +	}
-> +
-> +	return 0;
-> +
-> +remove:
-> +	while (i--)
-> +		tegra_xusb_lane_destroy(pad->lanes[i]);
-> +
-> +	return err;
-> +}
-> +
-> +void tegra_xusb_pad_unregister(struct tegra_xusb_pad *pad)
-> +{
-> +	unsigned int i =3D pad->soc->num_lanes;
-> +
-> +	of_phy_provider_unregister(pad->provider);
-> +
-> +	while (i--)
-> +		tegra_xusb_lane_destroy(pad->lanes[i]);
-> +
-> +	device_unregister(&pad->dev);
-> +}
-> +
-> +static struct tegra_xusb_pad *
-> +tegra_xusb_pad_create(struct tegra_xusb_padctl *padctl,
-> +		      const struct tegra_xusb_pad_soc *soc)
-> +{
-> +	struct tegra_xusb_pad *pad;
-> +	struct device_node *np;
-> +	int err;
-> +
-> +	np =3D tegra_xusb_find_pad_node(padctl, soc->name);
-> +	if (!np || !of_device_is_available(np))
-> +		return NULL;
-> +
-> +	pad =3D soc->ops->probe(padctl, soc, np);
-> +	if (IS_ERR(pad)) {
-> +		err =3D PTR_ERR(pad);
-> +		dev_err(padctl->dev, "failed to create pad %s: %d\n",
-> +			soc->name, err);
-> +		return ERR_PTR(err);
-> +	}
-> +
-> +	/* XXX move this into ->probe() to avoid string comparison */
-> +	if (strcmp(soc->name, "pcie") =3D=3D 0)
-> +		padctl->pcie =3D pad;
-> +
-> +	if (strcmp(soc->name, "sata") =3D=3D 0)
-> +		padctl->sata =3D pad;
-> +
-> +	if (strcmp(soc->name, "usb2") =3D=3D 0)
-> +		padctl->usb2 =3D pad;
-> +
-> +	if (strcmp(soc->name, "ulpi") =3D=3D 0)
-> +		padctl->ulpi =3D pad;
-> +
-> +	if (strcmp(soc->name, "hsic") =3D=3D 0)
-> +		padctl->hsic =3D pad;
-> +
-> +	return pad;
-> +}
-> +
-> +static void __tegra_xusb_remove_pads(struct tegra_xusb_padctl *padctl)
-> +{
-> +	struct tegra_xusb_pad *pad, *tmp;
-> +
-> +	list_for_each_entry_safe_reverse(pad, tmp, &padctl->pads, list) {
-> +		list_del(&pad->list);
-> +		tegra_xusb_pad_unregister(pad);
-> +	}
-> +}
-> +
-> +static void tegra_xusb_remove_pads(struct tegra_xusb_padctl *padctl)
-> +{
-> +	mutex_lock(&padctl->lock);
-> +	__tegra_xusb_remove_pads(padctl);
-> +	mutex_unlock(&padctl->lock);
-> +}
-> +
-> +static void tegra_xusb_lane_program(struct tegra_xusb_lane *lane)
-> +{
-> +	struct tegra_xusb_padctl *padctl =3D lane->pad->padctl;
-> +	const struct tegra_xusb_lane_soc *soc =3D lane->soc;
-> +	u32 value;
-> +
-> +	/* choose function */
-> +	value =3D padctl_readl(padctl, soc->offset);
-> +	value &=3D ~(soc->mask << soc->shift);
-> +	value |=3D lane->function << soc->shift;
-> +	padctl_writel(padctl, value, soc->offset);
-> +}
-> +
-> +static void tegra_xusb_pad_program(struct tegra_xusb_pad *pad)
-> +{
-> +	unsigned int i;
-> +
-> +	for (i =3D 0; i < pad->soc->num_lanes; i++) {
-> +		struct tegra_xusb_lane *lane;
-> +
-> +		if (pad->lanes[i]) {
-> +			lane =3D phy_get_drvdata(pad->lanes[i]);
-> +			tegra_xusb_lane_program(lane);
-> +		}
-> +	}
-> +}
-> +
-> +static int tegra_xusb_setup_pads(struct tegra_xusb_padctl *padctl)
-> +{
-> +	struct tegra_xusb_pad *pad;
-> +	unsigned int i;
-> +
-> +	mutex_lock(&padctl->lock);
-> +
-> +	for (i =3D 0; i < padctl->soc->num_pads; i++) {
-> +		const struct tegra_xusb_pad_soc *soc =3D padctl->soc->pads[i];
-> +		int err;
-> +
-> +		pad =3D tegra_xusb_pad_create(padctl, soc);
-> +		if (IS_ERR(pad)) {
-> +			err =3D PTR_ERR(pad);
-> +			dev_err(padctl->dev, "failed to create pad %s: %d\n",
-> +				soc->name, err);
-> +			__tegra_xusb_remove_pads(padctl);
-> +			mutex_unlock(&padctl->lock);
-> +			return err;
-> +		}
-> +
-> +		if (!pad)
-> +			continue;
-> +
-> +		list_add_tail(&pad->list, &padctl->pads);
-> +	}
-> +
-> +	list_for_each_entry(pad, &padctl->pads, list)
-> +		tegra_xusb_pad_program(pad);
-> +
-> +	mutex_unlock(&padctl->lock);
-> +	return 0;
-> +}
-> +
-> +static bool tegra_xusb_lane_check(struct tegra_xusb_lane *lane,
-> +				  const char *function)
-> +{
-> +	if (lane) {
-> +		const char *func =3D lane->soc->funcs[lane->function];
-> +
-> +		return strcmp(function, func) =3D=3D 0;
-> +	}
-> +
-> +	return false;
-> +}
-> +
-> +struct tegra_xusb_lane *tegra_xusb_find_lane(struct tegra_xusb_padctl *p=
-adctl,
-> +					     const char *type,
-> +					     unsigned int index)
-> +{
-> +	struct tegra_xusb_lane *lane, *hit =3D NULL;
-> +	char *name;
-> +
-> +	name =3D kasprintf(GFP_KERNEL, "%s-%u", type, index);
-> +	if (!name)
-> +		return NULL;
-> +
-> +	list_for_each_entry(lane, &padctl->lanes, list) {
-> +		if (strcmp(lane->soc->name, name) =3D=3D 0) {
-> +			hit =3D lane;
-> +			break;
-> +		}
-> +	}
-> +
-> +	kfree(name);
-> +	return hit;
-> +}
-> +
-> +struct tegra_xusb_lane *
-> +tegra_xusb_port_find_lane(struct tegra_xusb_port *port,
-> +			  const struct tegra_xusb_lane_map *map,
-> +			  const char *function)
-> +{
-> +	struct tegra_xusb_lane *lane, *match =3D NULL;
-> +
-> +	for (map =3D map; map->type; map++) {
-> +		if (port->index !=3D map->port)
-> +			continue;
-> +
-> +		lane =3D tegra_xusb_find_lane(port->padctl, map->type,
-> +					    map->index);
-> +		if (!tegra_xusb_lane_check(lane, function))
-> +			continue;
-> +
-> +		if (match)
-> +			dev_err(&port->dev, "conflicting match: %s-%u / %s\n",
-> +				map->type, map->index, match->soc->name);
-> +		else
-> +			match =3D lane;
-> +	}
-> +
-> +	return match;
-> +}
-> +
-> +static struct device_node *
-> +tegra_xusb_find_port_node(struct tegra_xusb_padctl *padctl, const char *=
-type,
-> +			  unsigned int index)
-> +{
-> +	/*
-> +	 * of_find_node_by_name() drops a reference, so make sure to grab one.
-> +	 */
-> +	struct device_node *np =3D of_node_get(padctl->dev->of_node);
-> +
-> +	np =3D of_find_node_by_name(np, "ports");
-> +	if (np) {
-> +		char *name;
-> +
-> +		name =3D kasprintf(GFP_KERNEL, "%s-%u", type, index);
-> +		np =3D of_find_node_by_name(np, name);
-> +		kfree(name);
-> +	}
-> +
-> +	return np;
-> +}
-> +
-> +struct tegra_xusb_port *
-> +tegra_xusb_find_port(struct tegra_xusb_padctl *padctl, const char *type,
-> +		     unsigned int index)
-> +{
-> +	struct tegra_xusb_port *port;
-> +	struct device_node *np;
-> +
-> +	np =3D tegra_xusb_find_port_node(padctl, type, index);
-> +	if (!np)
-> +		return NULL;
-> +
-> +	list_for_each_entry(port, &padctl->ports, list) {
-> +		if (np =3D=3D port->dev.of_node) {
-> +			of_node_put(np);
-> +			return port;
-> +		}
-> +	}
-> +
-> +	of_node_put(np);
-> +
-> +	return NULL;
-> +}
-> +
-> +struct tegra_xusb_usb2_port *
-> +tegra_xusb_find_usb2_port(struct tegra_xusb_padctl *padctl, unsigned int=
- index)
-> +{
-> +	struct tegra_xusb_port *port;
-> +
-> +	port =3D tegra_xusb_find_port(padctl, "usb2", index);
-> +	if (port)
-> +		return to_usb2_port(port);
-> +
-> +	return NULL;
-> +}
-> +
-> +struct tegra_xusb_usb3_port *
-> +tegra_xusb_find_usb3_port(struct tegra_xusb_padctl *padctl, unsigned int=
- index)
-> +{
-> +	struct tegra_xusb_port *port;
-> +
-> +	port =3D tegra_xusb_find_port(padctl, "usb3", index);
-> +	if (port)
-> +		return to_usb3_port(port);
-> +
-> +	return NULL;
-> +}
-> +
-> +static void tegra_xusb_port_release(struct device *dev)
-> +{
-> +}
-> +
-> +static struct device_type tegra_xusb_port_type =3D {
-> +	.release =3D tegra_xusb_port_release,
-> +};
-> +
-> +static int tegra_xusb_port_init(struct tegra_xusb_port *port,
-> +				struct tegra_xusb_padctl *padctl,
-> +				struct device_node *np,
-> +				const char *name,
-> +				unsigned int index)
-> +{
-> +	int err;
-> +
-> +	INIT_LIST_HEAD(&port->list);
-> +	port->padctl =3D padctl;
-> +	port->index =3D index;
-> +
-> +	device_initialize(&port->dev);
-> +	port->dev.type =3D &tegra_xusb_port_type;
-> +	port->dev.of_node =3D of_node_get(np);
-> +	port->dev.parent =3D padctl->dev;
-> +
-> +	err =3D dev_set_name(&port->dev, "%s-%u", name, index);
-> +	if (err < 0)
-> +		goto unregister;
-> +
-> +	err =3D device_add(&port->dev);
-> +	if (err < 0)
-> +		goto unregister;
-> +
-> +	return 0;
-> +
-> +unregister:
-> +	device_unregister(&port->dev);
-> +	return err;
-> +}
-> +
-> +static void tegra_xusb_port_unregister(struct tegra_xusb_port *port)
-> +{
-> +	device_unregister(&port->dev);
-> +}
-> +
-> +static int tegra_xusb_usb2_port_parse_dt(struct tegra_xusb_usb2_port *us=
-b2)
-> +{
-> +	struct tegra_xusb_port *port =3D &usb2->base;
-> +	struct device_node *np =3D port->dev.of_node;
-> +
-> +	usb2->internal =3D of_property_read_bool(np, "nvidia,internal");
-> +
-> +	usb2->supply =3D devm_regulator_get(&port->dev, "vbus");
-> +	if (IS_ERR(usb2->supply))
-> +		return PTR_ERR(usb2->supply);
-> +
-> +	return 0;
-> +}
-> +
-> +static int tegra_xusb_add_usb2_port(struct tegra_xusb_padctl *padctl,
-> +				    unsigned int index)
-> +{
-> +	struct tegra_xusb_usb2_port *usb2;
-> +	struct device_node *np;
-> +	int err =3D 0;
-> +
-> +	/*
-> +	 * USB2 ports don't require additional properties, but if the port is
-> +	 * marked as disabled there is no reason to register it.
-> +	 */
-> +	np =3D tegra_xusb_find_port_node(padctl, "usb2", index);
-> +	if (!np || !of_device_is_available(np))
-> +		goto out;
-> +
-> +	usb2 =3D devm_kzalloc(padctl->dev, sizeof(*usb2), GFP_KERNEL);
-> +	if (!usb2) {
-> +		err =3D -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	err =3D tegra_xusb_port_init(&usb2->base, padctl, np, "usb2", index);
-> +	if (err < 0)
-> +		goto out;
-> +
-> +	usb2->base.ops =3D padctl->soc->ports.usb2.ops;
-> +
-> +	usb2->base.lane =3D usb2->base.ops->map(&usb2->base);
-> +	if (IS_ERR(usb2->base.lane)) {
-> +		err =3D PTR_ERR(usb2->base.lane);
-> +		goto out;
-> +	}
-> +
-> +	err =3D tegra_xusb_usb2_port_parse_dt(usb2);
-> +	if (err < 0) {
-> +		tegra_xusb_port_unregister(&usb2->base);
-> +		goto out;
-> +	}
-> +
-> +	list_add_tail(&usb2->base.list, &padctl->ports);
-> +
-> +out:
-> +	of_node_put(np);
-> +	return err;
-> +}
-> +
-> +static int tegra_xusb_ulpi_port_parse_dt(struct tegra_xusb_ulpi_port *ul=
-pi)
-> +{
-> +	struct tegra_xusb_port *port =3D &ulpi->base;
-> +	struct device_node *np =3D port->dev.of_node;
-> +
-> +	ulpi->internal =3D of_property_read_bool(np, "nvidia,internal");
-> +
-> +	return 0;
-> +}
-> +
-> +static int tegra_xusb_add_ulpi_port(struct tegra_xusb_padctl *padctl,
-> +				    unsigned int index)
-> +{
-> +	struct tegra_xusb_ulpi_port *ulpi;
-> +	struct device_node *np;
-> +	int err =3D 0;
-> +
-> +	np =3D tegra_xusb_find_port_node(padctl, "ulpi", index);
-> +	if (!np || !of_device_is_available(np))
-> +		goto out;
-> +
-> +	ulpi =3D devm_kzalloc(padctl->dev, sizeof(*ulpi), GFP_KERNEL);
-> +	if (!ulpi) {
-> +		err =3D -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	err =3D tegra_xusb_port_init(&ulpi->base, padctl, np, "ulpi", index);
-> +	if (err < 0)
-> +		goto out;
-> +
-> +	ulpi->base.ops =3D padctl->soc->ports.ulpi.ops;
-> +
-> +	ulpi->base.lane =3D ulpi->base.ops->map(&ulpi->base);
-> +	if (IS_ERR(ulpi->base.lane)) {
-> +		err =3D PTR_ERR(ulpi->base.lane);
-> +		goto out;
-> +	}
-> +
-> +	err =3D tegra_xusb_ulpi_port_parse_dt(ulpi);
-> +	if (err < 0) {
-> +		tegra_xusb_port_unregister(&ulpi->base);
-> +		goto out;
-> +	}
-> +
-> +	list_add_tail(&ulpi->base.list, &padctl->ports);
-> +
-> +out:
-> +	of_node_put(np);
-> +	return err;
-> +}
-> +
-> +static int tegra_xusb_hsic_port_parse_dt(struct tegra_xusb_hsic_port *hs=
-ic)
-> +{
-> +	/* XXX */
-> +	return 0;
-> +}
-> +
-> +static int tegra_xusb_add_hsic_port(struct tegra_xusb_padctl *padctl,
-> +				    unsigned int index)
-> +{
-> +	struct tegra_xusb_hsic_port *hsic;
-> +	struct device_node *np;
-> +	int err =3D 0;
-> +
-> +	np =3D tegra_xusb_find_port_node(padctl, "hsic", index);
-> +	if (!np || !of_device_is_available(np))
-> +		goto out;
-> +
-> +	hsic =3D devm_kzalloc(padctl->dev, sizeof(*hsic), GFP_KERNEL);
-> +	if (!hsic) {
-> +		err =3D -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	err =3D tegra_xusb_port_init(&hsic->base, padctl, np, "hsic", index);
-> +	if (err < 0)
-> +		goto out;
-> +
-> +	hsic->base.ops =3D padctl->soc->ports.hsic.ops;
-> +
-> +	hsic->base.lane =3D hsic->base.ops->map(&hsic->base);
-> +	if (IS_ERR(hsic->base.lane)) {
-> +		err =3D PTR_ERR(hsic->base.lane);
-> +		goto out;
-> +	}
-> +
-> +	err =3D tegra_xusb_hsic_port_parse_dt(hsic);
-> +	if (err < 0) {
-> +		tegra_xusb_port_unregister(&hsic->base);
-> +		goto out;
-> +	}
-> +
-> +	list_add_tail(&hsic->base.list, &padctl->ports);
-> +
-> +out:
-> +	of_node_put(np);
-> +	return err;
-> +}
-> +
-> +static int tegra_xusb_usb3_port_parse_dt(struct tegra_xusb_usb3_port *us=
-b3)
-> +{
-> +	struct tegra_xusb_port *port =3D &usb3->base;
-> +	struct device_node *np =3D port->dev.of_node;
-> +	u32 value;
-> +	int err;
-> +
-> +	err =3D of_property_read_u32(np, "nvidia,usb2-companion", &value);
-> +	if (err < 0) {
-> +		dev_err(&port->dev, "failed to read port: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	usb3->port =3D value;
-> +
-> +	usb3->internal =3D of_property_read_bool(np, "nvidia,internal");
-> +
-> +	usb3->supply =3D devm_regulator_get(&port->dev, "vbus");
-> +	if (IS_ERR(usb3->supply))
-> +		return PTR_ERR(usb3->supply);
-> +
-> +	return 0;
-> +}
-> +
-> +static int tegra_xusb_add_usb3_port(struct tegra_xusb_padctl *padctl,
-> +				    unsigned int index)
-> +{
-> +	struct tegra_xusb_usb3_port *usb3;
-> +	struct device_node *np;
-> +	int err =3D 0;
-> +
-> +	/*
-> +	 * If there is no supplemental configuration in the device tree the
-> +	 * port is unusable. But it is valid to configure only a single port,
-> +	 * hence return 0 instead of an error to allow ports to be optional.
-> +	 */
-> +	np =3D tegra_xusb_find_port_node(padctl, "usb3", index);
-> +	if (!np || !of_device_is_available(np))
-> +		goto out;
-> +
-> +	usb3 =3D devm_kzalloc(padctl->dev, sizeof(*usb3), GFP_KERNEL);
-> +	if (!usb3) {
-> +		err =3D -ENOMEM;
-> +		goto out;
-> +	}
-> +
-> +	err =3D tegra_xusb_port_init(&usb3->base, padctl, np, "usb3", index);
-> +	if (err < 0)
-> +		goto out;
-> +
-> +	usb3->base.ops =3D padctl->soc->ports.usb3.ops;
-> +
-> +	usb3->base.lane =3D usb3->base.ops->map(&usb3->base);
-> +	if (IS_ERR(usb3->base.lane)) {
-> +		err =3D PTR_ERR(usb3->base.lane);
-> +		goto out;
-> +	}
-> +
-> +	err =3D tegra_xusb_usb3_port_parse_dt(usb3);
-> +	if (err < 0) {
-> +		tegra_xusb_port_unregister(&usb3->base);
-> +		goto out;
-> +	}
-> +
-> +	list_add_tail(&usb3->base.list, &padctl->ports);
-> +
-> +out:
-> +	of_node_put(np);
-> +	return err;
-> +}
-> +
-> +static void __tegra_xusb_remove_ports(struct tegra_xusb_padctl *padctl)
-> +{
-> +	struct tegra_xusb_port *port, *tmp;
-> +
-> +	list_for_each_entry_safe_reverse(port, tmp, &padctl->ports, list) {
-> +		list_del(&port->list);
-> +		tegra_xusb_port_unregister(port);
-> +	}
-> +}
-> +
-> +static int tegra_xusb_setup_ports(struct tegra_xusb_padctl *padctl)
-> +{
-> +	struct tegra_xusb_port *port;
-> +	unsigned int i;
-> +	int err =3D 0;
-> +
-> +	mutex_lock(&padctl->lock);
-> +
-> +	for (i =3D 0; i < padctl->soc->ports.usb2.count; i++) {
-> +		err =3D tegra_xusb_add_usb2_port(padctl, i);
-> +		if (err < 0)
-> +			goto remove_ports;
-> +	}
-> +
-> +	for (i =3D 0; i < padctl->soc->ports.ulpi.count; i++) {
-> +		err =3D tegra_xusb_add_ulpi_port(padctl, i);
-> +		if (err < 0)
-> +			goto remove_ports;
-> +	}
-> +
-> +	for (i =3D 0; i < padctl->soc->ports.hsic.count; i++) {
-> +		err =3D tegra_xusb_add_hsic_port(padctl, i);
-> +		if (err < 0)
-> +			goto remove_ports;
-> +	}
-> +
-> +	for (i =3D 0; i < padctl->soc->ports.usb3.count; i++) {
-> +		err =3D tegra_xusb_add_usb3_port(padctl, i);
-> +		if (err < 0)
-> +			goto remove_ports;
-> +	}
-> +
-> +	list_for_each_entry(port, &padctl->ports, list) {
-> +		err =3D port->ops->enable(port);
-> +		if (err < 0)
-> +			dev_err(padctl->dev, "failed to enable port %s: %d\n",
-> +				dev_name(&port->dev), err);
-> +	}
-> +
-> +	goto unlock;
-> +
-> +remove_ports:
-> +	__tegra_xusb_remove_ports(padctl);
-> +unlock:
-> +	mutex_unlock(&padctl->lock);
-> +	return err;
-> +}
-> +
-> +static void tegra_xusb_remove_ports(struct tegra_xusb_padctl *padctl)
-> +{
-> +	mutex_lock(&padctl->lock);
-> +	__tegra_xusb_remove_ports(padctl);
-> +	mutex_unlock(&padctl->lock);
-> +}
-> +
-> +static int tegra_xusb_padctl_probe(struct platform_device *pdev)
-> +{
-> +	struct device_node *np =3D of_node_get(pdev->dev.of_node);
-> +	const struct tegra_xusb_padctl_soc *soc;
-> +	struct tegra_xusb_padctl *padctl;
-> +	const struct of_device_id *match;
-> +	struct resource *res;
-> +	int err;
-> +
-> +	/* for backwards compatibility with old device trees */
-> +	np =3D of_find_node_by_name(np, "pads");
-> +	if (!np) {
-> +		dev_warn(&pdev->dev, "deprecated DT, using legacy driver\n");
-> +		return tegra_xusb_padctl_legacy_probe(pdev);
-> +	}
-> +
-> +	of_node_put(np);
-> +
-> +	match =3D of_match_node(tegra_xusb_padctl_of_match, pdev->dev.of_node);
-> +	soc =3D match->data;
-> +
-> +	padctl =3D soc->ops->probe(&pdev->dev, soc);
-> +	if (IS_ERR(padctl))
-> +		return PTR_ERR(padctl);
-> +
-> +	platform_set_drvdata(pdev, padctl);
-> +	INIT_LIST_HEAD(&padctl->ports);
-> +	INIT_LIST_HEAD(&padctl->lanes);
-> +	INIT_LIST_HEAD(&padctl->pads);
-> +	mutex_init(&padctl->lock);
-> +
-> +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	padctl->regs =3D devm_ioremap_resource(&pdev->dev, res);
-> +	if (IS_ERR(padctl->regs)) {
-> +		err =3D PTR_ERR(padctl->regs);
-> +		goto remove;
-> +	}
-> +
-> +	padctl->rst =3D devm_reset_control_get(&pdev->dev, NULL);
-> +	if (IS_ERR(padctl->rst)) {
-> +		err =3D PTR_ERR(padctl->rst);
-> +		goto remove;
-> +	}
-> +
-> +	err =3D reset_control_deassert(padctl->rst);
-> +	if (err < 0)
-> +		goto remove;
-> +
-> +	err =3D tegra_xusb_setup_pads(padctl);
-> +	if (err < 0) {
-> +		dev_err(&pdev->dev, "failed to setup pads: %d\n", err);
-> +		goto reset;
-> +	}
-> +
-> +	err =3D tegra_xusb_setup_ports(padctl);
-> +	if (err) {
-> +		dev_err(&pdev->dev, "failed to setup XUSB ports: %d\n", err);
-> +		goto remove_pads;
-> +	}
-> +
-> +	return 0;
-> +
-> +remove_pads:
-> +	tegra_xusb_remove_pads(padctl);
-> +reset:
-> +	reset_control_assert(padctl->rst);
-> +remove:
-> +	soc->ops->remove(padctl);
-> +	return err;
-> +}
-> +
-> +static int tegra_xusb_padctl_remove(struct platform_device *pdev)
-> +{
-> +	struct tegra_xusb_padctl *padctl =3D platform_get_drvdata(pdev);
-> +	int err;
-> +
-> +	tegra_xusb_remove_ports(padctl);
-> +	tegra_xusb_remove_pads(padctl);
-> +
-> +	err =3D reset_control_assert(padctl->rst);
-> +	if (err < 0)
-> +		dev_err(&pdev->dev, "failed to assert reset: %d\n", err);
-> +
-> +	padctl->soc->ops->remove(padctl);
-> +
-> +	return err;
-> +}
-> +
-> +static struct platform_driver tegra_xusb_padctl_driver =3D {
-> +	.driver =3D {
-> +		.name =3D "tegra-xusb-padctl",
-> +		.of_match_table =3D tegra_xusb_padctl_of_match,
-> +	},
-> +	.probe =3D tegra_xusb_padctl_probe,
-> +	.remove =3D tegra_xusb_padctl_remove,
-> +};
-> +module_platform_driver(tegra_xusb_padctl_driver);
-> +
-> +struct tegra_xusb_padctl *tegra_xusb_padctl_get(struct device *dev)
-> +{
-> +	struct tegra_xusb_padctl *padctl;
-> +	struct platform_device *pdev;
-> +	struct device_node *np;
-> +
-> +	np =3D of_parse_phandle(dev->of_node, "nvidia,xusb-padctl", 0);
-> +	if (!np)
-> +		return ERR_PTR(-EINVAL);
-> +
-> +	/*
-> +	 * This is slightly ugly. A better implementation would be to keep a
-> +	 * registry of pad controllers, but since there will almost certainly
-> +	 * only ever be one per SoC that would be a little overkill.
-> +	 */
-> +	pdev =3D of_find_device_by_node(np);
-> +	if (!pdev) {
-> +		of_node_put(np);
-> +		return ERR_PTR(-ENODEV);
-> +	}
-> +
-> +	of_node_put(np);
-> +
-> +	padctl =3D platform_get_drvdata(pdev);
-> +	if (!padctl) {
-> +		put_device(&pdev->dev);
-> +		return ERR_PTR(-EPROBE_DEFER);
-> +	}
-> +
-> +	return padctl;
-> +}
-> +EXPORT_SYMBOL_GPL(tegra_xusb_padctl_get);
-> +
-> +void tegra_xusb_padctl_put(struct tegra_xusb_padctl *padctl)
-> +{
-> +	if (padctl)
-> +		put_device(padctl->dev);
-> +}
-> +EXPORT_SYMBOL_GPL(tegra_xusb_padctl_put);
-> +
-> +int tegra_xusb_padctl_usb3_save_context(struct tegra_xusb_padctl *padctl,
-> +					unsigned int port)
-> +{
-> +	if (padctl->soc->ops->usb3_save_context)
-> +		return padctl->soc->ops->usb3_save_context(padctl, port);
-> +
-> +	return -ENOSYS;
-> +}
-> +EXPORT_SYMBOL_GPL(tegra_xusb_padctl_usb3_save_context);
-> +
-> +int tegra_xusb_padctl_hsic_set_idle(struct tegra_xusb_padctl *padctl,
-> +				    unsigned int port, bool idle)
-> +{
-> +	if (padctl->soc->ops->hsic_set_idle)
-> +		return padctl->soc->ops->hsic_set_idle(padctl, port, idle);
-> +
-> +	return -ENOSYS;
-> +}
-> +EXPORT_SYMBOL_GPL(tegra_xusb_padctl_hsic_set_idle);
-> +
-> +int tegra_xusb_padctl_usb3_set_lfps_detect(struct tegra_xusb_padctl *pad=
-ctl,
-> +					   unsigned int port, bool enable)
-> +{
-> +	if (padctl->soc->ops->usb3_set_lfps_detect)
-> +		return padctl->soc->ops->usb3_set_lfps_detect(padctl, port,
-> +							      enable);
-> +
-> +	return -ENOSYS;
-> +}
-> +EXPORT_SYMBOL_GPL(tegra_xusb_padctl_usb3_set_lfps_detect);
-> +
-> +MODULE_AUTHOR("Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
-> +MODULE_DESCRIPTION("Tegra XUSB Pad Controller driver");
-> +MODULE_LICENSE("GPL v2");
-> diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
-> new file mode 100644
-> index 000000000000..b49dbc36efa3
-> --- /dev/null
-> +++ b/drivers/phy/tegra/xusb.h
-> @@ -0,0 +1,421 @@
-> +/*
-> + * Copyright (c) 2014-2015, NVIDIA CORPORATION.  All rights reserved.
-> + * Copyright (c) 2015, Google Inc.
-> + *
-> + * This program is free software; you can redistribute it and/or modify =
-it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License=
- for
-> + * more details.
-> + */
-> +
-> +#ifndef __PHY_TEGRA_XUSB_H
-> +#define __PHY_TEGRA_XUSB_H
-> +
-> +#include <linux/io.h>
-> +#include <linux/mutex.h>
-> +#include <linux/workqueue.h>
-> +
-> +/* legacy entry points for backwards-compatibility */
-> +int tegra_xusb_padctl_legacy_probe(struct platform_device *pdev);
-> +int tegra_xusb_padctl_legacy_remove(struct platform_device *pdev);
-> +
-> +struct phy;
-> +struct phy_provider;
-> +struct platform_device;
-> +struct regulator;
-> +
-> +/*
-> + * lanes
-> + */
-> +struct tegra_xusb_lane_soc {
+> +struct tegra_xusb_phy_type {
 > +	const char *name;
-> +
-> +	unsigned int offset;
-> +	unsigned int shift;
-> +	unsigned int mask;
-> +
-> +	const char * const *funcs;
-> +	unsigned int num_funcs;
+> +	unsigned int num;
 > +};
 > +
-> +struct tegra_xusb_lane {
-> +	const struct tegra_xusb_lane_soc *soc;
-> +	struct tegra_xusb_pad *pad;
-> +	struct device_node *np;
-> +	struct list_head list;
-> +	unsigned int function;
-> +	unsigned int index;
-> +};
-> +
-> +int tegra_xusb_lane_parse_dt(struct tegra_xusb_lane *lane,
-> +			     struct device_node *np);
-> +
-> +struct tegra_xusb_usb2_lane {
-> +	struct tegra_xusb_lane base;
-> +
-> +	u32 hs_curr_level_offset;
-> +};
-> +
-> +static inline struct tegra_xusb_usb2_lane *
-> +to_usb2_lane(struct tegra_xusb_lane *lane)
-> +{
-> +	return container_of(lane, struct tegra_xusb_usb2_lane, base);
-> +}
-> +
-> +struct tegra_xusb_ulpi_lane {
-> +	struct tegra_xusb_lane base;
-> +};
-> +
-> +static inline struct tegra_xusb_ulpi_lane *
-> +to_ulpi_lane(struct tegra_xusb_lane *lane)
-> +{
-> +	return container_of(lane, struct tegra_xusb_ulpi_lane, base);
-> +}
-> +
-> +struct tegra_xusb_hsic_lane {
-> +	struct tegra_xusb_lane base;
-> +
-> +	u32 strobe_trim;
-> +	u32 rx_strobe_trim;
-> +	u32 rx_data_trim;
-> +	u32 tx_rtune_n;
-> +	u32 tx_rtune_p;
-> +	u32 tx_rslew_n;
-> +	u32 tx_rslew_p;
-> +	bool auto_term;
-> +};
-> +
-> +static inline struct tegra_xusb_hsic_lane *
-> +to_hsic_lane(struct tegra_xusb_lane *lane)
-> +{
-> +	return container_of(lane, struct tegra_xusb_hsic_lane, base);
-> +}
-> +
-> +struct tegra_xusb_pcie_lane {
-> +	struct tegra_xusb_lane base;
-> +};
-> +
-> +static inline struct tegra_xusb_pcie_lane *
-> +to_pcie_lane(struct tegra_xusb_lane *lane)
-> +{
-> +	return container_of(lane, struct tegra_xusb_pcie_lane, base);
-> +}
-> +
-> +struct tegra_xusb_sata_lane {
-> +	struct tegra_xusb_lane base;
-> +};
-> +
-> +static inline struct tegra_xusb_sata_lane *
-> +to_sata_lane(struct tegra_xusb_lane *lane)
-> +{
-> +	return container_of(lane, struct tegra_xusb_sata_lane, base);
-> +}
-> +
-> +struct tegra_xusb_lane_ops {
-> +	struct tegra_xusb_lane *(*probe)(struct tegra_xusb_pad *pad,
-> +					 struct device_node *np,
-> +					 unsigned int index);
-> +	void (*remove)(struct tegra_xusb_lane *lane);
-> +};
-> +
-> +/*
-> + * pads
-> + */
-> +struct tegra_xusb_pad_soc;
-> +struct tegra_xusb_padctl;
-> +
-> +struct tegra_xusb_pad_ops {
-> +	struct tegra_xusb_pad *(*probe)(struct tegra_xusb_padctl *padctl,
-> +					const struct tegra_xusb_pad_soc *soc,
-> +					struct device_node *np);
-> +	void (*remove)(struct tegra_xusb_pad *pad);
-> +};
-> +
-> +struct tegra_xusb_pad_soc {
-> +	const char *name;
-> +
-> +	const struct tegra_xusb_lane_soc *lanes;
-> +	unsigned int num_lanes;
-> +
-> +	const struct tegra_xusb_pad_ops *ops;
-> +};
-> +
-> +struct tegra_xusb_pad {
-> +	const struct tegra_xusb_pad_soc *soc;
-> +	struct tegra_xusb_padctl *padctl;
-> +	struct phy_provider *provider;
-> +	struct phy **lanes;
-> +	struct device dev;
-> +
-> +	const struct tegra_xusb_lane_ops *ops;
-> +
-> +	struct list_head list;
-> +};
-> +
-> +static inline struct tegra_xusb_pad *to_tegra_xusb_pad(struct device *de=
-v)
-> +{
-> +	return container_of(dev, struct tegra_xusb_pad, dev);
-> +}
-> +
-> +int tegra_xusb_pad_init(struct tegra_xusb_pad *pad,
-> +			struct tegra_xusb_padctl *padctl,
-> +			struct device_node *np);
-> +int tegra_xusb_pad_register(struct tegra_xusb_pad *pad,
-> +			    const struct phy_ops *ops);
-> +void tegra_xusb_pad_unregister(struct tegra_xusb_pad *pad);
-> +
-> +struct tegra_xusb_usb2_pad {
-> +	struct tegra_xusb_pad base;
-> +
-> +	struct clk *clk;
-> +	unsigned int enable;
-> +	struct mutex lock;
-> +};
-> +
-> +static inline struct tegra_xusb_usb2_pad *
-> +to_usb2_pad(struct tegra_xusb_pad *pad)
-> +{
-> +	return container_of(pad, struct tegra_xusb_usb2_pad, base);
-> +}
-> +
-> +struct tegra_xusb_ulpi_pad {
-> +	struct tegra_xusb_pad base;
-> +};
-> +
-> +static inline struct tegra_xusb_ulpi_pad *
-> +to_ulpi_pad(struct tegra_xusb_pad *pad)
-> +{
-> +	return container_of(pad, struct tegra_xusb_ulpi_pad, base);
-> +}
-> +
-> +struct tegra_xusb_hsic_pad {
-> +	struct tegra_xusb_pad base;
-> +
-> +	struct regulator *supply;
-> +	struct clk *clk;
-> +};
-> +
-> +static inline struct tegra_xusb_hsic_pad *
-> +to_hsic_pad(struct tegra_xusb_pad *pad)
-> +{
-> +	return container_of(pad, struct tegra_xusb_hsic_pad, base);
-> +}
-> +
-> +struct tegra_xusb_pcie_pad {
-> +	struct tegra_xusb_pad base;
-> +
-> +	struct reset_control *rst;
-> +	struct clk *pll;
-> +
-> +	unsigned int enable;
-> +};
-> +
-> +static inline struct tegra_xusb_pcie_pad *
-> +to_pcie_pad(struct tegra_xusb_pad *pad)
-> +{
-> +	return container_of(pad, struct tegra_xusb_pcie_pad, base);
-> +}
-> +
-> +struct tegra_xusb_sata_pad {
-> +	struct tegra_xusb_pad base;
-> +
-> +	struct reset_control *rst;
-> +	struct clk *pll;
-> +
-> +	unsigned int enable;
-> +};
-> +
-> +static inline struct tegra_xusb_sata_pad *
-> +to_sata_pad(struct tegra_xusb_pad *pad)
-> +{
-> +	return container_of(pad, struct tegra_xusb_sata_pad, base);
-> +}
-> +
-> +/*
-> + * ports
-> + */
-> +struct tegra_xusb_port_ops;
-> +
-> +struct tegra_xusb_port {
-> +	struct tegra_xusb_padctl *padctl;
-> +	struct tegra_xusb_lane *lane;
-> +	unsigned int index;
-> +
-> +	struct list_head list;
-> +	struct device dev;
-> +
-> +	const struct tegra_xusb_port_ops *ops;
-> +};
-> +
-> +struct tegra_xusb_lane_map {
-> +	unsigned int port;
-> +	const char *type;
-> +	unsigned int index;
-> +	const char *func;
-> +};
-> +
-> +struct tegra_xusb_lane *
-> +tegra_xusb_port_find_lane(struct tegra_xusb_port *port,
-> +			  const struct tegra_xusb_lane_map *map,
-> +			  const char *function);
-> +
-> +struct tegra_xusb_port *
-> +tegra_xusb_find_port(struct tegra_xusb_padctl *padctl, const char *type,
-> +		     unsigned int index);
-> +
-> +struct tegra_xusb_usb2_port {
-> +	struct tegra_xusb_port base;
-> +
-> +	struct regulator *supply;
-> +	bool internal;
-> +};
-> +
-> +static inline struct tegra_xusb_usb2_port *
-> +to_usb2_port(struct tegra_xusb_port *port)
-> +{
-> +	return container_of(port, struct tegra_xusb_usb2_port, base);
-> +}
-> +
-> +struct tegra_xusb_usb2_port *
-> +tegra_xusb_find_usb2_port(struct tegra_xusb_padctl *padctl,
-> +			  unsigned int index);
-> +
-> +struct tegra_xusb_ulpi_port {
-> +	struct tegra_xusb_port base;
-> +
-> +	struct regulator *supply;
-> +	bool internal;
-> +};
-> +
-> +static inline struct tegra_xusb_ulpi_port *
-> +to_ulpi_port(struct tegra_xusb_port *port)
-> +{
-> +	return container_of(port, struct tegra_xusb_ulpi_port, base);
-> +}
-> +
-> +struct tegra_xusb_hsic_port {
-> +	struct tegra_xusb_port base;
-> +};
-> +
-> +static inline struct tegra_xusb_hsic_port *
-> +to_hsic_port(struct tegra_xusb_port *port)
-> +{
-> +	return container_of(port, struct tegra_xusb_hsic_port, base);
-> +}
-> +
-> +struct tegra_xusb_usb3_port {
-> +	struct tegra_xusb_port base;
-> +	struct regulator *supply;
-> +	bool context_saved;
-> +	unsigned int port;
-> +	bool internal;
-> +
-> +	u32 tap1;
-> +	u32 amp;
-> +	u32 ctle_z;
-> +	u32 ctle_g;
-> +};
-> +
-> +static inline struct tegra_xusb_usb3_port *
-> +to_usb3_port(struct tegra_xusb_port *port)
-> +{
-> +	return container_of(port, struct tegra_xusb_usb3_port, base);
-> +}
-> +
-> +struct tegra_xusb_usb3_port *
-> +tegra_xusb_find_usb3_port(struct tegra_xusb_padctl *padctl,
-> +			  unsigned int index);
-> +
-> +struct tegra_xusb_port_ops {
-> +	int (*enable)(struct tegra_xusb_port *port);
-> +	void (*disable)(struct tegra_xusb_port *port);
-> +	struct tegra_xusb_lane *(*map)(struct tegra_xusb_port *port);
-> +};
-> +
-> +/*
-> + * pad controller
-> + */
-> +struct tegra_xusb_padctl_soc;
-> +
-> +struct tegra_xusb_padctl_ops {
-> +	struct tegra_xusb_padctl *
-> +		(*probe)(struct device *dev,
-> +			 const struct tegra_xusb_padctl_soc *soc);
-> +	void (*remove)(struct tegra_xusb_padctl *padctl);
-> +
-> +	int (*usb3_save_context)(struct tegra_xusb_padctl *padctl,
-> +				 unsigned int index);
-> +	int (*hsic_set_idle)(struct tegra_xusb_padctl *padctl,
-> +			     unsigned int index, bool idle);
-> +	int (*usb3_set_lfps_detect)(struct tegra_xusb_padctl *padctl,
-> +				    unsigned int index, bool enable);
-> +};
-> +
-> +struct tegra_xusb_padctl_soc {
-> +	const struct tegra_xusb_pad_soc * const *pads;
-> +	unsigned int num_pads;
+> +struct tegra_xusb_soc {
+> +	const char *firmware_file;
+> +	const char * const *supply_names;
+> +	unsigned int num_supplies;
+> +	const struct tegra_xusb_phy_type *phy_types;
+> +	unsigned int num_types;
 > +
 > +	struct {
 > +		struct {
-> +			const struct tegra_xusb_port_ops *ops;
+> +			unsigned int offset;
 > +			unsigned int count;
 > +		} usb2, ulpi, hsic, usb3;
 > +	} ports;
-> +
-> +	const struct tegra_xusb_padctl_ops *ops;
 > +};
 > +
-> +struct tegra_xusb_padctl {
+> +struct tegra_xusb {
 > +	struct device *dev;
-> +	void __iomem *regs;
+> +	struct usb_hcd *hcd;
+> +
 > +	struct mutex lock;
-> +	struct reset_control *rst;
 > +
-> +	const struct tegra_xusb_padctl_soc *soc;
+> +	int xhci_irq;
+> +	int mbox_irq;
 > +
-> +	struct tegra_xusb_pad *pcie;
-> +	struct tegra_xusb_pad *sata;
-> +	struct tegra_xusb_pad *ulpi;
-> +	struct tegra_xusb_pad *usb2;
-> +	struct tegra_xusb_pad *hsic;
+> +	void __iomem *ipfs_base;
+> +	void __iomem *fpci_base;
 > +
-> +	struct list_head ports;
-> +	struct list_head lanes;
-> +	struct list_head pads;
+> +	const struct tegra_xusb_soc *soc;
 > +
-> +	unsigned int enable;
+> +	struct regulator_bulk_data *supplies;
 > +
-> +	struct clk *clk;
+> +	struct tegra_xusb_padctl *padctl;
+> +
+> +	struct clk *host_clk;
+> +	struct clk *falcon_clk;
+> +	struct clk *ss_clk;
+> +	struct clk *ss_src_clk;
+> +	struct clk *hs_src_clk;
+> +	struct clk *fs_src_clk;
+> +	struct clk *pll_u_480m;
+> +	struct clk *clk_m;
+> +	struct clk *pll_e;
+> +
+> +	struct reset_control *host_rst;
+> +	struct reset_control *ss_rst;
+> +
+> +	struct phy **phys;
+> +	unsigned int num_phys;
+> +
+> +	/* Firmware loading related */
+> +	void *fw_data;
+> +	size_t fw_size;
+> +	dma_addr_t fw_dma_addr;
+> +	bool fw_loaded;
 > +};
 > +
-> +static inline void padctl_writel(struct tegra_xusb_padctl *padctl, u32 v=
-alue,
-> +				 unsigned long offset)
+> +static struct hc_driver __read_mostly tegra_xhci_hc_driver;
+> +
+> +static inline u32 fpci_readl(struct tegra_xusb *tegra, unsigned int offs=
+et)
 > +{
-> +	dev_dbg(padctl->dev, "%08lx < %08x\n", offset, value);
-> +	writel(value, padctl->regs + offset);
+> +	return readl(tegra->fpci_base + offset);
 > +}
 > +
-> +static inline u32 padctl_readl(struct tegra_xusb_padctl *padctl,
-> +			       unsigned long offset)
+> +static inline void fpci_writel(struct tegra_xusb *tegra, u32 value,
+> +			       unsigned int offset)
 > +{
-> +	u32 value =3D readl(padctl->regs + offset);
-> +	dev_dbg(padctl->dev, "%08lx > %08x\n", offset, value);
-> +	return value;
+> +	writel(value, tegra->fpci_base + offset);
 > +}
 > +
-> +struct tegra_xusb_lane *tegra_xusb_find_lane(struct tegra_xusb_padctl *p=
-adctl,
-> +					     const char *name,
-> +					     unsigned int index);
+> +static inline u32 ipfs_readl(struct tegra_xusb *tegra, unsigned int offs=
+et)
+> +{
+> +	return readl(tegra->ipfs_base + offset);
+> +}
 > +
-> +#if defined(CONFIG_ARCH_TEGRA_124_SOC) || defined(CONFIG_ARCH_TEGRA_132_=
-SOC)
-> +extern const struct tegra_xusb_padctl_soc tegra124_xusb_padctl_soc;
+> +static inline void ipfs_writel(struct tegra_xusb *tegra, u32 value,
+> +			       unsigned int offset)
+> +{
+> +	writel(value, tegra->ipfs_base + offset);
+> +}
+> +
+> +static u32 csb_readl(struct tegra_xusb *tegra, unsigned int offset)
+> +{
+> +	u32 page =3D CSB_PAGE_SELECT(offset);
+> +	u32 ofs =3D CSB_PAGE_OFFSET(offset);
+> +
+> +	fpci_writel(tegra, page, XUSB_CFG_ARU_C11_CSBRANGE);
+> +
+> +	return fpci_readl(tegra, XUSB_CFG_CSB_BASE_ADDR + ofs);
+> +}
+> +
+> +static void csb_writel(struct tegra_xusb *tegra, u32 value,
+> +		       unsigned int offset)
+> +{
+> +	u32 page =3D CSB_PAGE_SELECT(offset);
+> +	u32 ofs =3D CSB_PAGE_OFFSET(offset);
+> +
+> +	fpci_writel(tegra, page, XUSB_CFG_ARU_C11_CSBRANGE);
+> +	fpci_writel(tegra, value, XUSB_CFG_CSB_BASE_ADDR + ofs);
+> +}
+> +
+> +static int tegra_xusb_set_ss_clk(struct tegra_xusb *tegra,
+> +				 unsigned long rate)
+> +{
+> +	unsigned long new_parent_rate, old_parent_rate;
+> +	struct clk *clk =3D tegra->ss_src_clk;
+> +	unsigned int div;
+> +	int err;
+> +
+> +	if (clk_get_rate(clk) =3D=3D rate)
+> +		return 0;
+> +
+> +	switch (rate) {
+> +	case TEGRA_XHCI_SS_HIGH_SPEED:
+> +		/*
+> +		 * Reparent to PLLU_480M. Set divider first to avoid
+> +		 * overclocking.
+> +		 */
+> +		old_parent_rate =3D clk_get_rate(clk_get_parent(clk));
+> +		new_parent_rate =3D clk_get_rate(tegra->pll_u_480m);
+> +		div =3D new_parent_rate / rate;
+> +
+> +		err =3D clk_set_rate(clk, old_parent_rate / div);
+> +		if (err)
+> +			return err;
+> +
+> +		err =3D clk_set_parent(clk, tegra->pll_u_480m);
+> +		if (err)
+> +			return err;
+> +
+> +		/*
+> +		 * The rate should already be correct, but set it again just
+> +		 * to be sure.
+> +		 */
+> +		err =3D clk_set_rate(clk, rate);
+> +		if (err)
+> +			return err;
+> +
+> +		break;
+> +
+> +	case TEGRA_XHCI_SS_LOW_SPEED:
+> +		/* Reparent to CLK_M */
+> +		err =3D clk_set_parent(clk, tegra->clk_m);
+> +		if (err)
+> +			return err;
+> +
+> +		err =3D clk_set_rate(clk, rate);
+> +		if (err)
+> +			return err;
+> +
+> +		break;
+> +
+> +	default:
+> +		dev_err(tegra->dev, "Invalid SS rate: %lu Hz\n", rate);
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (clk_get_rate(clk) !=3D rate) {
+> +		dev_err(tegra->dev, "SS clock doesn't match requested rate\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static unsigned long extract_field(u32 value, unsigned int start,
+> +				   unsigned int count)
+> +{
+> +	return (value >> start) & ((1 << count) - 1);
+> +}
+> +
+> +/* Command requests from the firmware */
+> +enum tegra_xusb_mbox_cmd {
+> +	MBOX_CMD_MSG_ENABLED =3D 1,
+> +	MBOX_CMD_INC_FALC_CLOCK,
+> +	MBOX_CMD_DEC_FALC_CLOCK,
+> +	MBOX_CMD_INC_SSPI_CLOCK,
+> +	MBOX_CMD_DEC_SSPI_CLOCK,
+> +	MBOX_CMD_SET_BW, /* no ACK/NAK required */
+> +	MBOX_CMD_SET_SS_PWR_GATING,
+> +	MBOX_CMD_SET_SS_PWR_UNGATING,
+> +	MBOX_CMD_SAVE_DFE_CTLE_CTX,
+> +	MBOX_CMD_AIRPLANE_MODE_ENABLED, /* unused */
+> +	MBOX_CMD_AIRPLANE_MODE_DISABLED, /* unused */
+> +	MBOX_CMD_START_HSIC_IDLE,
+> +	MBOX_CMD_STOP_HSIC_IDLE,
+> +	MBOX_CMD_DBC_WAKE_STACK, /* unused */
+> +	MBOX_CMD_HSIC_PRETEND_CONNECT,
+> +	MBOX_CMD_RESET_SSPI,
+> +	MBOX_CMD_DISABLE_SS_LFPS_DETECTION,
+> +	MBOX_CMD_ENABLE_SS_LFPS_DETECTION,
+> +
+> +	MBOX_CMD_MAX,
+> +
+> +	/* Response message to above commands */
+> +	MBOX_CMD_ACK =3D 128,
+> +	MBOX_CMD_NAK
+> +};
+> +
+> +static const char * const mbox_cmd_name[] =3D {
+> +	[  1] =3D "MSG_ENABLE",
+> +	[  2] =3D "INC_FALCON_CLOCK",
+> +	[  3] =3D "DEC_FALCON_CLOCK",
+> +	[  4] =3D "INC_SSPI_CLOCK",
+> +	[  5] =3D "DEC_SSPI_CLOCK",
+> +	[  6] =3D "SET_BW",
+> +	[  7] =3D "SET_SS_PWR_GATING",
+> +	[  8] =3D "SET_SS_PWR_UNGATING",
+> +	[  9] =3D "SAVE_DFE_CTLE_CTX",
+> +	[ 10] =3D "AIRPLANE_MODE_ENABLED",
+> +	[ 11] =3D "AIRPLANE_MODE_DISABLED",
+> +	[ 12] =3D "START_HSIC_IDLE",
+> +	[ 13] =3D "STOP_HSIC_IDLE",
+> +	[ 14] =3D "DBC_WAKE_STACK",
+> +	[ 15] =3D "HSIC_PRETEND_CONNECT",
+> +	[ 16] =3D "RESET_SSPI",
+> +	[ 17] =3D "DISABLE_SS_LFPS_DETECTION",
+> +	[ 18] =3D "ENABLE_SS_LFPS_DETECTION",
+> +	[128] =3D "ACK",
+> +	[129] =3D "NAK",
+> +};
+> +
+> +struct tegra_xusb_mbox_msg {
+> +	u32 cmd;
+> +	u32 data;
+> +};
+> +
+> +static inline u32 tegra_xusb_mbox_pack(const struct tegra_xusb_mbox_msg =
+*msg)
+> +{
+> +	return (msg->cmd & CMD_TYPE_MASK) << CMD_TYPE_SHIFT |
+> +	       (msg->data & CMD_DATA_MASK) << CMD_DATA_SHIFT;
+> +}
+> +static inline void tegra_xusb_mbox_unpack(struct tegra_xusb_mbox_msg *ms=
+g,
+> +					  u32 value)
+> +{
+> +	msg->cmd =3D (value >> CMD_TYPE_SHIFT) & CMD_TYPE_MASK;
+> +	msg->data =3D (value >> CMD_DATA_SHIFT) & CMD_DATA_MASK;
+> +}
+> +
+> +static bool tegra_xusb_mbox_cmd_requires_ack(enum tegra_xusb_mbox_cmd cm=
+d)
+> +{
+> +	switch (cmd) {
+> +	case MBOX_CMD_SET_BW:
+> +	case MBOX_CMD_ACK:
+> +	case MBOX_CMD_NAK:
+> +		return false;
+> +
+> +	default:
+> +		return true;
+> +	}
+> +}
+> +
+> +static int tegra_xusb_mbox_send(struct tegra_xusb *tegra,
+> +				const struct tegra_xusb_mbox_msg *msg)
+> +{
+> +	bool wait_for_idle =3D false;
+> +	u32 value;
+> +
+> +	/*
+> +	 * Acquire the mailbox. The firmware still owns the mailbox for
+> +	 * ACK/NAK messages.
+> +	 */
+> +	if (!(msg->cmd =3D=3D MBOX_CMD_ACK || msg->cmd =3D=3D MBOX_CMD_NAK)) {
+> +		value =3D fpci_readl(tegra, XUSB_CFG_ARU_MBOX_OWNER);
+> +		if (value !=3D MBOX_OWNER_NONE) {
+> +			dev_err(tegra->dev, "mailbox is busy\n");
+> +			return -EBUSY;
+> +		}
+> +
+> +		fpci_writel(tegra, MBOX_OWNER_SW, XUSB_CFG_ARU_MBOX_OWNER);
+> +
+> +		value =3D fpci_readl(tegra, XUSB_CFG_ARU_MBOX_OWNER);
+> +		if (value !=3D MBOX_OWNER_SW) {
+> +			dev_err(tegra->dev, "failed to acquire mailbox\n");
+> +			return -EBUSY;
+> +		}
+> +
+> +		wait_for_idle =3D true;
+> +	}
+> +
+> +	value =3D tegra_xusb_mbox_pack(msg);
+> +	fpci_writel(tegra, value, XUSB_CFG_ARU_MBOX_DATA_IN);
+> +
+> +	value =3D fpci_readl(tegra, XUSB_CFG_ARU_MBOX_CMD);
+> +	value |=3D MBOX_INT_EN | MBOX_DEST_FALC;
+> +	fpci_writel(tegra, value, XUSB_CFG_ARU_MBOX_CMD);
+> +
+> +	if (wait_for_idle) {
+> +		unsigned long timeout =3D jiffies + msecs_to_jiffies(250);
+> +
+> +		while (time_before(jiffies, timeout)) {
+> +			value =3D fpci_readl(tegra, XUSB_CFG_ARU_MBOX_OWNER);
+> +			if (value =3D=3D MBOX_OWNER_NONE)
+> +				break;
+> +
+> +			usleep_range(10, 20);
+> +		}
+> +
+> +		if (time_after(jiffies, timeout))
+> +			value =3D fpci_readl(tegra, XUSB_CFG_ARU_MBOX_OWNER);
+> +
+> +		if (value !=3D MBOX_OWNER_NONE)
+> +			return -ETIMEDOUT;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static irqreturn_t tegra_xusb_mbox_irq(int irq, void *data)
+> +{
+> +	struct tegra_xusb *tegra =3D data;
+> +	u32 value;
+> +
+> +	/* clear mailbox interrupts */
+> +	value =3D fpci_readl(tegra, XUSB_CFG_ARU_SMI_INTR);
+> +	fpci_writel(tegra, value, XUSB_CFG_ARU_SMI_INTR);
+> +
+> +	if (value & MBOX_SMI_INTR_FW_HANG)
+> +		dev_err(tegra->dev, "controller firmware hang\n");
+> +
+> +	return IRQ_WAKE_THREAD;
+> +}
+> +
+> +static void tegra_xusb_mbox_handle(struct tegra_xusb *tegra,
+> +				   const struct tegra_xusb_mbox_msg *msg)
+> +{
+> +	struct tegra_xusb_padctl *padctl =3D tegra->padctl;
+> +	const struct tegra_xusb_soc *soc =3D tegra->soc;
+> +	struct device *dev =3D tegra->dev;
+> +	struct tegra_xusb_mbox_msg rsp;
+> +	unsigned long mask;
+> +	unsigned int port;
+> +	bool idle, enable;
+> +	int err;
+> +
+> +	memset(&rsp, 0, sizeof(rsp));
+> +
+> +	switch (msg->cmd) {
+> +	case MBOX_CMD_INC_FALC_CLOCK:
+> +	case MBOX_CMD_DEC_FALC_CLOCK:
+> +		rsp.data =3D clk_get_rate(tegra->falcon_clk) / 1000;
+> +		if (rsp.data !=3D msg->data)
+> +			rsp.cmd =3D MBOX_CMD_NAK;
+> +		else
+> +			rsp.cmd =3D MBOX_CMD_ACK;
+> +
+> +		break;
+> +
+> +	case MBOX_CMD_INC_SSPI_CLOCK:
+> +	case MBOX_CMD_DEC_SSPI_CLOCK:
+> +		err =3D tegra_xusb_set_ss_clk(tegra, msg->data * 1000);
+> +		if (err < 0)
+> +			rsp.cmd =3D MBOX_CMD_NAK;
+> +		else
+> +			rsp.cmd =3D MBOX_CMD_ACK;
+> +
+> +		rsp.data =3D clk_get_rate(tegra->ss_src_clk) / 1000;
+> +		break;
+> +
+> +	case MBOX_CMD_SET_BW:
+> +		/*
+> +		 * TODO: Request bandwidth once EMC scaling is supported.
+> +		 * Ignore for now since ACK/NAK is not required for SET_BW
+> +		 * messages.
+> +		 */
+> +		break;
+> +
+> +	case MBOX_CMD_SAVE_DFE_CTLE_CTX:
+> +		err =3D tegra_xusb_padctl_usb3_save_context(padctl, msg->data);
+> +		if (err < 0) {
+> +			dev_err(dev, "failed to save context for USB3#%u: %d\n",
+> +				msg->data, err);
+> +			rsp.cmd =3D MBOX_CMD_NAK;
+> +		} else {
+> +			rsp.cmd =3D MBOX_CMD_ACK;
+> +		}
+> +
+> +		rsp.data =3D msg->data;
+> +		break;
+> +
+> +	case MBOX_CMD_START_HSIC_IDLE:
+> +	case MBOX_CMD_STOP_HSIC_IDLE:
+> +		if (msg->cmd =3D=3D MBOX_CMD_STOP_HSIC_IDLE)
+> +			idle =3D false;
+> +		else
+> +			idle =3D true;
+> +
+> +		mask =3D extract_field(msg->data, 1 + soc->ports.hsic.offset,
+> +				     soc->ports.hsic.count);
+> +
+> +		for_each_set_bit(port, &mask, 32) {
+> +			err =3D tegra_xusb_padctl_hsic_set_idle(padctl, port,
+> +							      idle);
+> +			if (err < 0)
+> +				break;
+> +		}
+> +
+> +		if (err < 0) {
+> +			dev_err(dev, "failed to set HSIC#%u %s: %d\n", port,
+> +				idle ? "idle" : "busy", err);
+> +			rsp.cmd =3D MBOX_CMD_NAK;
+> +		} else {
+> +			rsp.cmd =3D MBOX_CMD_ACK;
+> +		}
+> +
+> +		rsp.data =3D msg->data;
+> +		break;
+> +
+> +	case MBOX_CMD_DISABLE_SS_LFPS_DETECTION:
+> +	case MBOX_CMD_ENABLE_SS_LFPS_DETECTION:
+> +		if (msg->cmd =3D=3D MBOX_CMD_DISABLE_SS_LFPS_DETECTION)
+> +			enable =3D false;
+> +		else
+> +			enable =3D true;
+> +
+> +		mask =3D extract_field(msg->data, 1 + soc->ports.usb3.offset,
+> +				     soc->ports.usb3.count);
+> +
+> +		for_each_set_bit(port, &mask, soc->ports.usb3.count) {
+> +			err =3D tegra_xusb_padctl_usb3_set_lfps_detect(padctl,
+> +								     port,
+> +								     enable);
+> +			if (err < 0)
+> +				break;
+> +		}
+> +
+> +		if (err < 0) {
+> +			dev_err(dev,
+> +				"failed to %s LFPS detection on USB3#%u: %d\n",
+> +				enable ? "enable" : "disable", port, err);
+> +			rsp.cmd =3D MBOX_CMD_NAK;
+> +		} else {
+> +			rsp.cmd =3D MBOX_CMD_ACK;
+> +		}
+> +
+> +		rsp.data =3D msg->data;
+> +		break;
+> +
+> +	default:
+> +		dev_warn(dev, "unknown message: %#x\n", msg->cmd);
+> +		break;
+> +	}
+> +
+> +	if (rsp.cmd) {
+> +		const char *cmd =3D (rsp.cmd =3D=3D MBOX_CMD_ACK) ? "ACK" : "NAK";
+> +
+> +		err =3D tegra_xusb_mbox_send(tegra, &rsp);
+> +		if (err < 0)
+> +			dev_err(dev, "failed to send %s: %d\n", cmd, err);
+> +	}
+> +}
+> +
+> +static irqreturn_t tegra_xusb_mbox_thread(int irq, void *data)
+> +{
+> +	struct tegra_xusb *tegra =3D data;
+> +	struct tegra_xusb_mbox_msg msg;
+> +	u32 value;
+> +
+> +	mutex_lock(&tegra->lock);
+> +
+> +	value =3D fpci_readl(tegra, XUSB_CFG_ARU_MBOX_DATA_OUT);
+> +	tegra_xusb_mbox_unpack(&msg, value);
+> +
+> +	value =3D fpci_readl(tegra, XUSB_CFG_ARU_MBOX_CMD);
+> +	value &=3D ~MBOX_DEST_SMI;
+> +	fpci_writel(tegra, value, XUSB_CFG_ARU_MBOX_CMD);
+> +
+> +	/* clear mailbox owner if no ACK/NAK is required */
+> +	if (!tegra_xusb_mbox_cmd_requires_ack(msg.cmd))
+> +		fpci_writel(tegra, MBOX_OWNER_NONE, XUSB_CFG_ARU_MBOX_OWNER);
+> +
+> +	tegra_xusb_mbox_handle(tegra, &msg);
+> +
+> +	mutex_unlock(&tegra->lock);
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static void tegra_xusb_ipfs_config(struct tegra_xusb *tegra)
+> +{
+> +	u32 value;
+> +
+> +	value =3D ipfs_readl(tegra, IPFS_XUSB_HOST_CONFIGURATION_0);
+> +	value |=3D IPFS_EN_FPCI;
+> +	ipfs_writel(tegra, value, IPFS_XUSB_HOST_CONFIGURATION_0);
+> +
+> +	usleep_range(10, 20);
+> +
+> +	/* Program BAR0 space */
+> +	value =3D fpci_readl(tegra, XUSB_CFG_4);
+> +	value &=3D ~(XUSB_BASE_ADDR_MASK << XUSB_BASE_ADDR_SHIFT);
+> +	value |=3D tegra->hcd->rsrc_start & (XUSB_BASE_ADDR_MASK <<
+> +						XUSB_BASE_ADDR_SHIFT);
+> +	fpci_writel(tegra, value, XUSB_CFG_4);
+> +
+> +	usleep_range(100, 200);
+> +
+> +	/* Enable bus master */
+> +	value =3D fpci_readl(tegra, XUSB_CFG_1);
+> +	value |=3D XUSB_IO_SPACE_EN | XUSB_MEM_SPACE_EN | XUSB_BUS_MASTER_EN;
+> +	fpci_writel(tegra, value, XUSB_CFG_1);
+> +
+> +	/* Enable interrupt assertion */
+> +	value =3D ipfs_readl(tegra, IPFS_XUSB_HOST_INTR_MASK_0);
+> +	value |=3D IPFS_IP_INT_MASK;
+> +	ipfs_writel(tegra, value, IPFS_XUSB_HOST_INTR_MASK_0);
+> +
+> +	/* Set hysteresis */
+> +	ipfs_writel(tegra, 0x80, IPFS_XUSB_HOST_CLKGATE_HYSTERESIS_0);
+> +}
+> +
+> +static int tegra_xusb_load_firmware(struct tegra_xusb *tegra)
+> +{
+> +	unsigned int code_tag_blocks, code_size_blocks, code_blocks;
+> +	struct tegra_xusb_fw_header *header;
+> +	struct device *dev =3D tegra->dev;
+> +	unsigned long timeout;
+> +	struct tm fw_tm;
+> +	time_t fw_time;
+> +	u64 fw_base;
+> +	u32 value;
+> +
+> +	if (csb_readl(tegra, XUSB_CSB_MP_ILOAD_BASE_LO) !=3D 0) {
+> +		dev_info(dev, "Firmware already loaded, Falcon state %#x\n",
+> +			 csb_readl(tegra, XUSB_FALC_CPUCTL));
+> +		return 0;
+> +	}
+> +
+> +	header =3D (struct tegra_xusb_fw_header *)tegra->fw_data;
+> +
+> +	/* Program the size of DFI into ILOAD_ATTR. */
+> +	csb_writel(tegra, tegra->fw_size, XUSB_CSB_MP_ILOAD_ATTR);
+> +
+> +	/*
+> +	 * Boot code of the firmware reads the ILOAD_BASE registers
+> +	 * to get to the start of the DFI in system memory.
+> +	 */
+> +	fw_base =3D tegra->fw_dma_addr + sizeof(*header);
+> +	csb_writel(tegra, fw_base, XUSB_CSB_MP_ILOAD_BASE_LO);
+> +	csb_writel(tegra, fw_base >> 32, XUSB_CSB_MP_ILOAD_BASE_HI);
+> +
+> +	/* Set BOOTPATH to 1 in APMAP. */
+> +	csb_writel(tegra, APMAP_BOOTPATH, XUSB_CSB_MP_APMAP);
+> +
+> +	/* Invalidate L2IMEM. */
+> +	csb_writel(tegra, L2IMEMOP_INVALIDATE_ALL, XUSB_CSB_MP_L2IMEMOP_TRIG);
+> +
+> +	/*
+> +	 * Initiate fetch of bootcode from system memory into L2IMEM.
+> +	 * Program bootcode location and size in system memory.
+> +	 */
+> +	code_tag_blocks =3D DIV_ROUND_UP(le32_to_cpu(header->boot_codetag),
+> +				       IMEM_BLOCK_SIZE);
+> +	code_size_blocks =3D DIV_ROUND_UP(le32_to_cpu(header->boot_codesize),
+> +					IMEM_BLOCK_SIZE);
+> +	code_blocks =3D code_tag_blocks + code_size_blocks;
+> +
+> +	value =3D ((code_tag_blocks & L2IMEMOP_SIZE_SRC_OFFSET_MASK) <<
+> +			L2IMEMOP_SIZE_SRC_OFFSET_SHIFT) |
+> +		((code_size_blocks & L2IMEMOP_SIZE_SRC_COUNT_MASK) <<
+> +			L2IMEMOP_SIZE_SRC_COUNT_SHIFT);
+> +	csb_writel(tegra, value, XUSB_CSB_MP_L2IMEMOP_SIZE);
+> +
+> +	/* Trigger L2IMEM load operation. */
+> +	csb_writel(tegra, L2IMEMOP_LOAD_LOCKED_RESULT,
+> +		   XUSB_CSB_MP_L2IMEMOP_TRIG);
+> +
+> +	/* Setup Falcon auto-fill. */
+> +	csb_writel(tegra, code_size_blocks, XUSB_FALC_IMFILLCTL);
+> +
+> +	value =3D ((code_tag_blocks & IMFILLRNG1_TAG_MASK) <<
+> +			IMFILLRNG1_TAG_LO_SHIFT) |
+> +		((code_blocks & IMFILLRNG1_TAG_MASK) <<
+> +			IMFILLRNG1_TAG_HI_SHIFT);
+> +	csb_writel(tegra, value, XUSB_FALC_IMFILLRNG1);
+> +
+> +	csb_writel(tegra, 0, XUSB_FALC_DMACTL);
+> +
+> +	msleep(50);
+> +
+> +	csb_writel(tegra, le32_to_cpu(header->boot_codetag),
+> +		   XUSB_FALC_BOOTVEC);
+> +
+> +	/* Boot Falcon CPU and wait for it to enter the STOPPED (idle) state. */
+> +	timeout =3D jiffies + msecs_to_jiffies(5);
+> +
+> +	csb_writel(tegra, CPUCTL_STARTCPU, XUSB_FALC_CPUCTL);
+> +
+> +	while (time_before(jiffies, timeout)) {
+> +		if (csb_readl(tegra, XUSB_FALC_CPUCTL) =3D=3D CPUCTL_STATE_STOPPED)
+> +			break;
+> +
+> +		usleep_range(100, 200);
+> +	}
+> +
+> +	if (csb_readl(tegra, XUSB_FALC_CPUCTL) !=3D CPUCTL_STATE_STOPPED) {
+> +		dev_err(dev, "Falcon failed to start, state: %#x\n",
+> +			csb_readl(tegra, XUSB_FALC_CPUCTL));
+> +		return -EIO;
+> +	}
+> +
+> +	fw_time =3D le32_to_cpu(header->fwimg_created_time);
+> +	time_to_tm(fw_time, 0, &fw_tm);
+> +
+> +	dev_info(dev, "Firmware timestamp: %ld-%02d-%02d %02d:%02d:%02d UTC\n",
+> +		 fw_tm.tm_year + 1900, fw_tm.tm_mon + 1, fw_tm.tm_mday,
+> +		 fw_tm.tm_hour, fw_tm.tm_min, fw_tm.tm_sec);
+> +
+> +	return 0;
+> +}
+> +
+> +static int tegra_xusb_clk_enable(struct tegra_xusb *tegra)
+> +{
+> +	int err;
+> +
+> +	err =3D clk_prepare_enable(tegra->pll_e);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	err =3D clk_prepare_enable(tegra->host_clk);
+> +	if (err < 0)
+> +		goto disable_plle;
+> +
+> +	err =3D clk_prepare_enable(tegra->ss_clk);
+> +	if (err < 0)
+> +		goto disable_host;
+> +
+> +	err =3D clk_prepare_enable(tegra->falcon_clk);
+> +	if (err < 0)
+> +		goto disable_ss;
+> +
+> +	err =3D clk_prepare_enable(tegra->fs_src_clk);
+> +	if (err < 0)
+> +		goto disable_falc;
+> +
+> +	err =3D clk_prepare_enable(tegra->hs_src_clk);
+> +	if (err < 0)
+> +		goto disable_fs_src;
+> +
+> +	err =3D tegra_xusb_set_ss_clk(tegra, TEGRA_XHCI_SS_HIGH_SPEED);
+> +	if (err < 0)
+> +		goto disable_hs_src;
+> +
+> +	return 0;
+> +
+> +disable_hs_src:
+> +	clk_disable_unprepare(tegra->hs_src_clk);
+> +disable_fs_src:
+> +	clk_disable_unprepare(tegra->fs_src_clk);
+> +disable_falc:
+> +	clk_disable_unprepare(tegra->falcon_clk);
+> +disable_ss:
+> +	clk_disable_unprepare(tegra->ss_clk);
+> +disable_host:
+> +	clk_disable_unprepare(tegra->host_clk);
+> +disable_plle:
+> +	clk_disable_unprepare(tegra->pll_e);
+> +	return err;
+> +}
+> +
+> +static void tegra_xusb_clk_disable(struct tegra_xusb *tegra)
+> +{
+> +	clk_disable_unprepare(tegra->pll_e);
+> +	clk_disable_unprepare(tegra->host_clk);
+> +	clk_disable_unprepare(tegra->ss_clk);
+> +	clk_disable_unprepare(tegra->falcon_clk);
+> +	clk_disable_unprepare(tegra->fs_src_clk);
+> +	clk_disable_unprepare(tegra->hs_src_clk);
+> +}
+> +
+> +static int tegra_xusb_phy_enable(struct tegra_xusb *tegra)
+> +{
+> +	unsigned int i;
+> +	int err;
+> +
+> +	for (i =3D 0; i < tegra->num_phys; i++) {
+> +		err =3D phy_init(tegra->phys[i]);
+> +		if (err)
+> +			goto disable_phy;
+> +
+> +		err =3D phy_power_on(tegra->phys[i]);
+> +		if (err) {
+> +			phy_exit(tegra->phys[i]);
+> +			goto disable_phy;
+> +		}
+> +	}
+> +
+> +	return 0;
+> +
+> +disable_phy:
+> +	while (i--) {
+> +		phy_power_off(tegra->phys[i]);
+> +		phy_exit(tegra->phys[i]);
+> +	}
+> +
+> +	return err;
+> +}
+> +
+> +static void tegra_xusb_phy_disable(struct tegra_xusb *tegra)
+> +{
+> +	unsigned int i;
+> +
+> +	for (i =3D 0; i < tegra->num_phys; i++) {
+> +		phy_power_off(tegra->phys[i]);
+> +		phy_exit(tegra->phys[i]);
+> +	}
+> +}
+> +
+> +static void tegra_xhci_quirks(struct device *dev, struct xhci_hcd *xhci)
+> +{
+> +	xhci->quirks |=3D XHCI_PLAT;
+> +}
+> +
+> +static int tegra_xhci_setup(struct usb_hcd *hcd)
+> +{
+> +	return xhci_gen_setup(hcd, tegra_xhci_quirks);
+> +}
+> +
+> +static const char * const tegra124_supply_names[] =3D {
+> +	"avddio-pex",
+> +	"dvddio-pex",
+> +	"avdd-usb",
+> +	"avdd-pll-utmip",
+> +	"avdd-pll-erefe",
+> +	"avdd-usb-ss-pll",
+> +	"hvdd-usb-ss",
+> +	"hvdd-usb-ss-pll-e",
+> +};
+> +
+> +static const struct tegra_xusb_phy_type tegra124_phy_types[] =3D {
+> +	{ .name =3D "usb3", .num =3D 2, },
+> +	{ .name =3D "usb2", .num =3D 3, },
+> +	{ .name =3D "hsic", .num =3D 2, },
+> +};
+> +
+> +static const struct tegra_xusb_soc tegra124_soc =3D {
+> +	.firmware_file =3D "nvidia/tegra124/xusb.bin",
+> +	.supply_names =3D tegra124_supply_names,
+> +	.num_supplies =3D ARRAY_SIZE(tegra124_supply_names),
+> +	.phy_types =3D tegra124_phy_types,
+> +	.num_types =3D ARRAY_SIZE(tegra124_phy_types),
+> +	.ports =3D {
+> +		.usb2 =3D { .offset =3D 4, .count =3D 4, },
+> +		.hsic =3D { .offset =3D 6, .count =3D 2, },
+> +		.usb3 =3D { .offset =3D 0, .count =3D 2, },
+> +	},
+> +};
+> +MODULE_FIRMWARE("nvidia/tegra124/xusb.bin");
+> +
+> +static const struct of_device_id tegra_xusb_of_match[] =3D {
+> +	{ .compatible =3D "nvidia,tegra124-xusb", .data =3D &tegra124_soc },
+> +	{ },
+> +};
+> +MODULE_DEVICE_TABLE(of, tegra_xusb_of_match);
+> +
+> +static void tegra_xusb_probe_finish(const struct firmware *fw, void *con=
+text)
+> +{
+> +	struct tegra_xusb_fw_header *header;
+> +	struct tegra_xusb *tegra =3D context;
+> +	struct device *dev =3D tegra->dev;
+> +	struct tegra_xusb_mbox_msg msg;
+> +	struct xhci_hcd *xhci =3D NULL;
+> +	int err;
+> +
+> +	if (!fw) {
+> +		dev_err(tegra->dev, "no firmware loaded\n");
+> +		goto put_usb2_hcd;
+> +	}
+> +
+> +	/* Load Falcon controller with its firmware. */
+> +	header =3D (struct tegra_xusb_fw_header *)fw->data;
+> +	tegra->fw_size =3D le32_to_cpu(header->fwimg_len);
+> +
+> +	tegra->fw_data =3D dma_alloc_coherent(dev, tegra->fw_size,
+> +					    &tegra->fw_dma_addr,
+> +					    GFP_KERNEL);
+> +	if (!tegra->fw_data) {
+> +		dev_err(tegra->dev, "failed to allocate memory for firmware\n");
+> +		goto put_usb2_hcd;
+> +	}
+> +
+> +	memcpy(tegra->fw_data, fw->data, tegra->fw_size);
+> +
+> +	err =3D tegra_xusb_load_firmware(tegra);
+> +	if (err < 0) {
+> +		dev_err(tegra->dev, "failed to parse firmware: %d\n", err);
+> +		goto put_usb2_hcd;
+> +	}
+> +
+> +	err =3D usb_add_hcd(tegra->hcd, tegra->xhci_irq, IRQF_SHARED);
+> +	if (err < 0) {
+> +		dev_err(tegra->dev, "failed to add USB HCD: %d\n", err);
+> +		goto put_usb2_hcd;
+> +	}
+> +
+> +	device_wakeup_enable(tegra->hcd->self.controller);
+> +
+> +	/*
+> +	 * USB 2.0 roothub is stored in drvdata now. Swap it with the Tegra HCD.
+> +	 */
+> +	tegra->hcd =3D dev_get_drvdata(dev);
+> +	dev_set_drvdata(dev, tegra);
+> +	xhci =3D hcd_to_xhci(tegra->hcd);
+> +
+> +	xhci->shared_hcd =3D usb_create_shared_hcd(&tegra_xhci_hc_driver,
+> +						 dev, dev_name(dev),
+> +						 tegra->hcd);
+> +	if (!xhci->shared_hcd) {
+> +		dev_err(tegra->dev, "failed to create shared HCD\n");
+> +		goto dealloc_usb2_hcd;
+> +	}
+> +
+> +	err =3D usb_add_hcd(xhci->shared_hcd, tegra->xhci_irq, IRQF_SHARED);
+> +	if (err < 0) {
+> +		dev_err(tegra->dev, "failed to add shared HCD: %d\n", err);
+> +		goto put_usb3_hcd;
+> +	}
+> +
+> +	mutex_lock(&tegra->lock);
+> +
+> +	/* Enable firmware messages from controller. */
+> +	msg.cmd =3D MBOX_CMD_MSG_ENABLED;
+> +	msg.data =3D 0;
+> +
+> +	err =3D tegra_xusb_mbox_send(tegra, &msg);
+> +	if (err < 0) {
+> +		dev_err(tegra->dev, "failed to enable messages: %d\n", err);
+> +		mutex_unlock(&tegra->lock);
+> +		goto dealloc_usb3_hcd;
+> +	}
+> +
+> +	mutex_unlock(&tegra->lock);
+> +
+> +	err =3D devm_request_threaded_irq(dev, tegra->mbox_irq,
+> +					tegra_xusb_mbox_irq,
+> +					tegra_xusb_mbox_thread, 0,
+> +					dev_name(dev), tegra);
+> +	if (err < 0) {
+> +		dev_err(tegra->dev, "failed to request IRQ: %d\n", err);
+> +		goto dealloc_usb3_hcd;
+> +	}
+> +
+> +	tegra->fw_loaded =3D true;
+> +	release_firmware(fw);
+> +
+> +	return;
+> +
+> +	/* Free up as much as we can and wait to be unbound. */
+> +dealloc_usb3_hcd:
+> +	usb_remove_hcd(xhci->shared_hcd);
+> +put_usb3_hcd:
+> +	usb_put_hcd(xhci->shared_hcd);
+> +dealloc_usb2_hcd:
+> +	usb_remove_hcd(tegra->hcd);
+> +put_usb2_hcd:
+> +	usb_put_hcd(tegra->hcd);
+> +	tegra->hcd =3D NULL;
+> +	release_firmware(fw);
+> +}
+> +
+> +static int tegra_xusb_probe(struct platform_device *pdev)
+> +{
+> +	const struct of_device_id *match;
+> +	struct tegra_xusb *tegra;
+> +	unsigned int i, j, k;
+> +	struct resource *res;
+> +	struct usb_hcd *hcd;
+> +	struct phy *phy;
+> +	int err;
+> +
+> +	BUILD_BUG_ON(sizeof(struct tegra_xusb_fw_header) !=3D 256);
+> +
+> +	tegra =3D devm_kzalloc(&pdev->dev, sizeof(*tegra), GFP_KERNEL);
+> +	if (!tegra)
+> +		return -ENOMEM;
+> +
+> +	platform_set_drvdata(pdev, tegra);
+> +	mutex_init(&tegra->lock);
+> +	tegra->dev =3D &pdev->dev;
+> +
+> +	match =3D of_match_device(tegra_xusb_of_match, &pdev->dev);
+> +	tegra->soc =3D match->data;
+> +
+> +	hcd =3D usb_create_hcd(&tegra_xhci_hc_driver, &pdev->dev,
+> +			     dev_name(&pdev->dev));
+> +	if (!hcd)
+> +		return -ENOMEM;
+> +
+> +	tegra->hcd =3D hcd;
+> +
+> +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	hcd->regs =3D devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(hcd->regs)) {
+> +		err =3D PTR_ERR(hcd->regs);
+> +		goto put_hcd;
+> +	}
+> +
+> +	hcd->rsrc_start =3D res->start;
+> +	hcd->rsrc_len =3D resource_size(res);
+> +
+> +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> +	tegra->fpci_base =3D devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(tegra->fpci_base)) {
+> +		err =3D PTR_ERR(tegra->fpci_base);
+> +		goto put_hcd;
+> +	}
+> +
+> +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 2);
+> +	tegra->ipfs_base =3D devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(tegra->ipfs_base)) {
+> +		err =3D PTR_ERR(tegra->ipfs_base);
+> +		goto put_hcd;
+> +	}
+> +
+> +	tegra->xhci_irq =3D platform_get_irq(pdev, 0);
+> +	if (tegra->xhci_irq < 0) {
+> +		err =3D tegra->xhci_irq;
+> +		goto put_hcd;
+> +	}
+> +
+> +	tegra->mbox_irq =3D platform_get_irq(pdev, 1);
+> +	if (tegra->mbox_irq < 0) {
+> +		err =3D tegra->mbox_irq;
+> +		goto put_hcd;
+> +	}
+> +
+> +	tegra->padctl =3D tegra_xusb_padctl_get(&pdev->dev);
+> +	if (IS_ERR(tegra->padctl)) {
+> +		err =3D PTR_ERR(tegra->padctl);
+> +		goto put_hcd;
+> +	}
+> +
+> +	tegra->host_rst =3D devm_reset_control_get(&pdev->dev, "xusb_host");
+> +	if (IS_ERR(tegra->host_rst)) {
+> +		err =3D PTR_ERR(tegra->host_rst);
+> +		dev_err(&pdev->dev, "failed to get xusb_host reset: %d\n", err);
+> +		goto put_padctl;
+> +	}
+> +
+> +	tegra->ss_rst =3D devm_reset_control_get(&pdev->dev, "xusb_ss");
+> +	if (IS_ERR(tegra->ss_rst)) {
+> +		err =3D PTR_ERR(tegra->ss_rst);
+> +		dev_err(&pdev->dev, "failed to get xusb_ss reset: %d\n", err);
+> +		goto put_padctl;
+> +	}
+> +
+> +	tegra->host_clk =3D devm_clk_get(&pdev->dev, "xusb_host");
+> +	if (IS_ERR(tegra->host_clk)) {
+> +		err =3D PTR_ERR(tegra->host_clk);
+> +		dev_err(&pdev->dev, "failed to get xusb_host: %d\n", err);
+> +		goto put_padctl;
+> +	}
+> +
+> +	tegra->falcon_clk =3D devm_clk_get(&pdev->dev, "xusb_falcon_src");
+> +	if (IS_ERR(tegra->falcon_clk)) {
+> +		err =3D PTR_ERR(tegra->falcon_clk);
+> +		dev_err(&pdev->dev, "failed to get xusb_falcon_src: %d\n", err);
+> +		goto put_padctl;
+> +	}
+> +
+> +	tegra->ss_clk =3D devm_clk_get(&pdev->dev, "xusb_ss");
+> +	if (IS_ERR(tegra->ss_clk)) {
+> +		err =3D PTR_ERR(tegra->ss_clk);
+> +		dev_err(&pdev->dev, "failed to get xusb_ss: %d\n", err);
+> +		goto put_padctl;
+> +	}
+> +
+> +	tegra->ss_src_clk =3D devm_clk_get(&pdev->dev, "xusb_ss_src");
+> +	if (IS_ERR(tegra->ss_src_clk)) {
+> +		err =3D PTR_ERR(tegra->ss_src_clk);
+> +		dev_err(&pdev->dev, "failed to get xusb_ss_src: %d\n", err);
+> +		goto put_padctl;
+> +	}
+> +
+> +	tegra->hs_src_clk =3D devm_clk_get(&pdev->dev, "xusb_hs_src");
+> +	if (IS_ERR(tegra->hs_src_clk)) {
+> +		err =3D PTR_ERR(tegra->hs_src_clk);
+> +		dev_err(&pdev->dev, "failed to get xusb_hs_src: %d\n", err);
+> +		goto put_padctl;
+> +	}
+> +
+> +	tegra->fs_src_clk =3D devm_clk_get(&pdev->dev, "xusb_fs_src");
+> +	if (IS_ERR(tegra->fs_src_clk)) {
+> +		err =3D PTR_ERR(tegra->fs_src_clk);
+> +		dev_err(&pdev->dev, "failed to get xusb_fs_src: %d\n", err);
+> +		goto put_padctl;
+> +	}
+> +
+> +	tegra->pll_u_480m =3D devm_clk_get(&pdev->dev, "pll_u_480m");
+> +	if (IS_ERR(tegra->pll_u_480m)) {
+> +		err =3D PTR_ERR(tegra->pll_u_480m);
+> +		dev_err(&pdev->dev, "failed to get pll_u_480m: %d\n", err);
+> +		goto put_padctl;
+> +	}
+> +
+> +	tegra->clk_m =3D devm_clk_get(&pdev->dev, "clk_m");
+> +	if (IS_ERR(tegra->clk_m)) {
+> +		err =3D PTR_ERR(tegra->clk_m);
+> +		dev_err(&pdev->dev, "failed to get clk_m: %d\n", err);
+> +		goto put_padctl;
+> +	}
+> +
+> +	tegra->pll_e =3D devm_clk_get(&pdev->dev, "pll_e");
+> +	if (IS_ERR(tegra->pll_e)) {
+> +		err =3D PTR_ERR(tegra->pll_e);
+> +		dev_err(&pdev->dev, "failed to get pll_e: %d\n", err);
+> +		goto put_padctl;
+> +	}
+> +
+> +	err =3D tegra_xusb_clk_enable(tegra);
+> +	if (err) {
+> +		dev_err(&pdev->dev, "failed to enable clocks: %d\n", err);
+> +		goto put_padctl;
+> +	}
+> +
+> +	tegra->supplies =3D devm_kcalloc(&pdev->dev, tegra->soc->num_supplies,
+> +				       sizeof(*tegra->supplies), GFP_KERNEL);
+> +	if (!tegra->supplies) {
+> +		err =3D -ENOMEM;
+> +		goto disable_clk;
+> +	}
+> +
+> +	for (i =3D 0; i < tegra->soc->num_supplies; i++)
+> +		tegra->supplies[i].supply =3D tegra->soc->supply_names[i];
+> +
+> +	err =3D devm_regulator_bulk_get(&pdev->dev, tegra->soc->num_supplies,
+> +				      tegra->supplies);
+> +	if (err) {
+> +		dev_err(&pdev->dev, "failed to get regulators: %d\n", err);
+> +		goto disable_clk;
+> +	}
+> +
+> +	err =3D regulator_bulk_enable(tegra->soc->num_supplies, tegra->supplies=
+);
+> +	if (err) {
+> +		dev_err(&pdev->dev, "failed to enable regulators: %d\n", err);
+> +		goto disable_clk;
+> +	}
+> +
+> +	for (i =3D 0; i < tegra->soc->num_types; i++)
+> +		tegra->num_phys +=3D tegra->soc->phy_types[i].num;
+> +
+> +	tegra->phys =3D devm_kcalloc(&pdev->dev, tegra->num_phys,
+> +				   sizeof(*tegra->phys), GFP_KERNEL);
+> +	if (!tegra->phys) {
+> +		dev_err(&pdev->dev, "failed to allocate PHY array\n");
+> +		err =3D -ENOMEM;
+> +		goto disable_regulator;
+> +	}
+> +
+> +	for (i =3D 0, k =3D 0; i < tegra->soc->num_types; i++) {
+> +		char prop[8];
+> +
+> +		for (j =3D 0; j < tegra->soc->phy_types[i].num; j++) {
+> +			snprintf(prop, sizeof(prop), "%s-%d",
+> +				 tegra->soc->phy_types[i].name, j);
+> +
+> +			phy =3D devm_phy_optional_get(&pdev->dev, prop);
+> +			if (IS_ERR(phy)) {
+> +				dev_err(&pdev->dev, "failed to get PHY %s: %ld\n", prop, PTR_ERR(phy=
+));
+> +				err =3D PTR_ERR(phy);
+> +				goto disable_regulator;
+> +			}
+> +
+> +			tegra->phys[k++] =3D phy;
+> +		}
+> +	}
+> +
+> +	tegra_xusb_ipfs_config(tegra);
+> +
+> +	err =3D tegra_xusb_phy_enable(tegra);
+> +	if (err < 0) {
+> +		dev_err(&pdev->dev, "failed to enable PHYs: %d\n", err);
+> +		goto disable_regulator;
+> +	}
+> +
+> +	err =3D request_firmware_nowait(THIS_MODULE, true,
+> +				      tegra->soc->firmware_file,
+> +				      tegra->dev, GFP_KERNEL, tegra,
+> +				      tegra_xusb_probe_finish);
+> +	if (err < 0) {
+> +		dev_err(&pdev->dev, "failed to request firmware: %d\n", err);
+> +		goto disable_phy;
+> +	}
+> +
+> +	return 0;
+> +
+> +disable_phy:
+> +	tegra_xusb_phy_disable(tegra);
+> +disable_regulator:
+> +	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
+> +disable_clk:
+> +	tegra_xusb_clk_disable(tegra);
+> +put_padctl:
+> +	tegra_xusb_padctl_put(tegra->padctl);
+> +put_hcd:
+> +	usb_put_hcd(hcd);
+> +	return err;
+> +}
+> +
+> +static int tegra_xusb_remove(struct platform_device *pdev)
+> +{
+> +	struct tegra_xusb *tegra =3D platform_get_drvdata(pdev);
+> +	struct usb_hcd *hcd =3D tegra->hcd;
+> +	struct xhci_hcd *xhci;
+> +
+> +	if (tegra->fw_loaded) {
+> +		xhci =3D hcd_to_xhci(hcd);
+> +		usb_remove_hcd(xhci->shared_hcd);
+> +		usb_put_hcd(xhci->shared_hcd);
+> +		usb_remove_hcd(hcd);
+> +		tegra_xusb_padctl_put(tegra->padctl);
+> +		usb_put_hcd(hcd);
+> +		kfree(xhci);
+> +	} else if (hcd) {
+> +		/* Unbound after probe(), but before firmware loading. */
+> +		tegra_xusb_padctl_put(tegra->padctl);
+> +		usb_put_hcd(hcd);
+> +	}
+> +
+> +	if (tegra->fw_data)
+> +		dma_free_coherent(tegra->dev, tegra->fw_size, tegra->fw_data,
+> +				  tegra->fw_dma_addr);
+> +
+> +	tegra_xusb_phy_disable(tegra);
+> +	regulator_bulk_disable(tegra->soc->num_supplies, tegra->supplies);
+> +	tegra_xusb_clk_disable(tegra);
+> +
+> +	return 0;
+> +}
+> +
+> +#ifdef CONFIG_PM_SLEEP
+> +static int tegra_xusb_suspend(struct device *dev)
+> +{
+> +	struct tegra_xusb *tegra =3D dev_get_drvdata(dev);
+> +	struct xhci_hcd *xhci =3D hcd_to_xhci(tegra->hcd);
+> +	bool wakeup =3D device_may_wakeup(dev);
+> +
+> +	/* TODO: Powergate controller across suspend/resume. */
+> +	return xhci_suspend(xhci, wakeup);
+> +}
+> +
+> +static int tegra_xusb_resume(struct device *dev)
+> +{
+> +	struct tegra_xusb *tegra =3D dev_get_drvdata(dev);
+> +	struct xhci_hcd *xhci =3D hcd_to_xhci(tegra->hcd);
+> +
+> +	return xhci_resume(xhci, 0);
+> +}
 > +#endif
-> +#if defined(CONFIG_ARCH_TEGRA_210_SOC)
-> +extern const struct tegra_xusb_padctl_soc tegra210_xusb_padctl_soc;
-> +#endif
 > +
-> +#endif /* __PHY_TEGRA_XUSB_H */
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c b/drivers/pinctrl=
-/tegra/pinctrl-tegra-xusb.c
-> index 2f06029c9405..946cda3fee35 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra-xusb.c
-> @@ -873,7 +873,7 @@ static const struct of_device_id tegra_xusb_padctl_of=
-_match[] =3D {
->  };
->  MODULE_DEVICE_TABLE(of, tegra_xusb_padctl_of_match);
-> =20
-> -static int tegra_xusb_padctl_probe(struct platform_device *pdev)
-> +int tegra_xusb_padctl_legacy_probe(struct platform_device *pdev)
->  {
->  	struct tegra_xusb_padctl *padctl;
->  	const struct of_device_id *match;
-> @@ -955,8 +955,9 @@ reset:
->  	reset_control_assert(padctl->rst);
->  	return err;
->  }
-> +EXPORT_SYMBOL_GPL(tegra_xusb_padctl_legacy_probe);
-> =20
-> -static int tegra_xusb_padctl_remove(struct platform_device *pdev)
-> +int tegra_xusb_padctl_legacy_remove(struct platform_device *pdev)
->  {
->  	struct tegra_xusb_padctl *padctl =3D platform_get_drvdata(pdev);
->  	int err;
-> @@ -969,17 +970,4 @@ static int tegra_xusb_padctl_remove(struct platform_=
-device *pdev)
-> =20
->  	return err;
->  }
-> -
-> -static struct platform_driver tegra_xusb_padctl_driver =3D {
-> -	.driver =3D {
-> -		.name =3D "tegra-xusb-padctl",
-> -		.of_match_table =3D tegra_xusb_padctl_of_match,
-> -	},
-> -	.probe =3D tegra_xusb_padctl_probe,
-> -	.remove =3D tegra_xusb_padctl_remove,
-> -};
-> -module_platform_driver(tegra_xusb_padctl_driver);
-> -
-> -MODULE_AUTHOR("Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
-> -MODULE_DESCRIPTION("Tegra 124 XUSB Pad Control driver");
-> -MODULE_LICENSE("GPL v2");
-> +EXPORT_SYMBOL_GPL(tegra_xusb_padctl_legacy_remove);
-> diff --git a/include/linux/phy/tegra/xusb.h b/include/linux/phy/tegra/xus=
-b.h
-> new file mode 100644
-> index 000000000000..8e1a57a78d9f
-> --- /dev/null
-> +++ b/include/linux/phy/tegra/xusb.h
-> @@ -0,0 +1,30 @@
-> +/*
-> + * Copyright (c) 2016, NVIDIA CORPORATION.  All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify =
-it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License=
- for
-> + * more details.
-> + */
+> +static const struct dev_pm_ops tegra_xusb_pm_ops =3D {
+> +	SET_SYSTEM_SLEEP_PM_OPS(tegra_xusb_suspend, tegra_xusb_resume)
+> +};
 > +
-> +#ifndef PHY_TEGRA_XUSB_H
-> +#define PHY_TEGRA_XUSB_H
+> +static struct platform_driver tegra_xusb_driver =3D {
+> +	.probe =3D tegra_xusb_probe,
+> +	.remove =3D tegra_xusb_remove,
+> +	.driver =3D {
+> +		.name =3D "tegra-xusb",
+> +		.pm =3D &tegra_xusb_pm_ops,
+> +		.of_match_table =3D tegra_xusb_of_match,
+> +	},
+> +};
 > +
-> +struct tegra_xusb_padctl;
-> +struct device;
+> +static const struct xhci_driver_overrides tegra_xhci_overrides __initcon=
+st =3D {
+> +	.extra_priv_size =3D sizeof(struct xhci_hcd),
+> +	.reset =3D tegra_xhci_setup,
+> +};
 > +
-> +struct tegra_xusb_padctl *tegra_xusb_padctl_get(struct device *dev);
-> +void tegra_xusb_padctl_put(struct tegra_xusb_padctl *padctl);
+> +static int __init tegra_xusb_init(void)
+> +{
+> +	xhci_init_driver(&tegra_xhci_hc_driver, &tegra_xhci_overrides);
 > +
-> +int tegra_xusb_padctl_usb3_save_context(struct tegra_xusb_padctl *padctl,
-> +					unsigned int port);
-> +int tegra_xusb_padctl_hsic_set_idle(struct tegra_xusb_padctl *padctl,
-> +				    unsigned int port, bool idle);
-> +int tegra_xusb_padctl_usb3_set_lfps_detect(struct tegra_xusb_padctl *pad=
-ctl,
-> +					   unsigned int port, bool enable);
+> +	return platform_driver_register(&tegra_xusb_driver);
+> +}
+> +module_init(tegra_xusb_init);
 > +
-> +#endif /* PHY_TEGRA_XUSB_H */
+> +static void __exit tegra_xusb_exit(void)
+> +{
+> +	platform_driver_unregister(&tegra_xusb_driver);
+> +}
+> +module_exit(tegra_xusb_exit);
+> +
+> +MODULE_AUTHOR("Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>");
+> +MODULE_DESCRIPTION("NVIDIA Tegra XUSB xHCI host-controller driver");
+> +MODULE_LICENSE("GPL v2");
 > --=20
 > 2.7.1
 >=20
 
---9amGYk9869ThD9tj
+--z6Eq5LdranGa6ru8
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXA7qRAAoJEN0jrNd/PrOhIjoQAKLgGEi0e8OtCpZbCNzRhtj9
-W9uH15U7NSHCq8DgDHd5aQlrS8iJ+oBxPWcP4Zi/N/0RCoeu4IXe84R8JenQ9bfJ
-uW3hsev2rg0rI9Hlhw0Vwuuul1mFk7UubheLUw5cGR3mDN27kp2gxRxv3YPZ7tmx
-VQHuc5/Z0XLt8T6XfndVCN3y1+IltTgMD9u3mmk6vwzOAtEYL7swiegV8KP/4v3q
-v1aw1U4ijfUwW6nrg6pZ8nLaiUzlWbwu82pZVayaKvLc5esyHo6Zwb8CXxZGI+X0
-rWEaMZf9Y8lYNdsChYF5s+FYSKRv69E1e6vGo5kX5Qgt7DPErKWVDjGkWS+b67R9
-JG1zI+RnK7dRwsNQwpiPhjkvlJ/XwKJiXCEaN3rB/OWQ+snEyIepjflS3ldeIOma
-Y8Pnsp3bROHQN1/HSjMrOmlvz77D2eTPEjnVRBVJQsA+gDorOwBsT6GQdGxTBUDr
-7ciH6xdfOu9vX/klHgPnY+62qhH0Ugns3z62zJ/A+rVx0WVm9m4pw8cSJ8ZftgnR
-p+Sn8tqloQt/GysbsYfWcY4UjLGRbxEqesZ76W+rLZekRMz1PL7O38Vo1Am0ixZK
-XDsTQEsgxI2ct6Q1IWsiOYEh+3p+13cgx8SK6ri7tZJxz4OX6DrkbBKMbPI2UUo5
-smSwue0H1wWyLXFLcAFd
-=3EBk
+iQIcBAABCAAGBQJXA7r/AAoJEN0jrNd/PrOhjQAP/RsOYscQoRnD/8A8pi0Gbfi1
+ur7iJjvawEr5bJ0zhb3hFVF2wFKy+Et3qmvE4ge2NDB8mL0YtwzVAdf/foT42hKe
+QTyG/tPzciRCnNmal0jl+CmrI2cMpNrGw1fY1sBSY5j6kRoH6vB40FCsidab7Zby
+yJRUnBQitF5TqJRbtk2ZfRCqgFnVNT928iJcE+VJXvsDgDaKdDPc8iRJRk9sVAVs
+lxTFJVAYDknXIJf+ChyVmCmyv7QZXeY3TZ7e+PAlMaW5mbSGMepdf2cMMepZNOkM
+z2wvGCGBOPyqQhLd1uXoZ2oYBGa+uBWeTZ5E4TMxvPmNPc5GEeruMsy5AN88A5qa
+m0J3UFdC7YPCn/+eZ4hzFnxHTHBcjj7KZ672ejoOIYyEhan4RWglYYunWbO/mz6u
+xWBQX+W4ijMI1g3/m7+mQFGEV4uq5JbGH0unv13r2+3LAJABqkpt6nBKhM9ZdMbi
+XQ2US90IOgSmDZ/MnJBoIrLU2zrtquqwz9Q5UATy6tH/fPAIk4I5f78kqe6JbHMF
+gHymWY3EmQfSjT8BTIRNnj6xqfshB3Wonk1r3oMgK4MXL3NZyWWywGh34gNzAWB9
+yIy58pVyNlMe/RXOc+aqKbYFqWai9mImJG9RZToLXW8rhp7XHFx7yJRBFuFl9vmA
+S9onSVyW2jjLuNGTa5zT
+=S8Yi
 -----END PGP SIGNATURE-----
 
---9amGYk9869ThD9tj--
+--z6Eq5LdranGa6ru8--
 --
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 More majordomo info at  http://vger.kernel.org/majordomo-info.html
