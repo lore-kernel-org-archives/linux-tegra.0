@@ -1,382 +1,414 @@
-From: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>
-Subject: Re: [PATCH v10 4/9] phy: Add Tegra XUSB pad controller support
-Date: Wed, 6 Apr 2016 18:13:42 +0530
-Message-ID: <5705047E.4050700@ti.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v10 3/9] dt-bindings: phy: tegra-xusb-padctl: Add
+ Tegra210 support
+Date: Wed, 6 Apr 2016 19:08:24 +0200
+Message-ID: <20160406170824.GA28843@ulmo.ba.sec>
 References: <1457108379-20794-1-git-send-email-thierry.reding@gmail.com>
- <1457108379-20794-4-git-send-email-thierry.reding@gmail.com>
+ <1457108379-20794-3-git-send-email-thierry.reding@gmail.com>
+ <56E99F10.1060508@wwwdotorg.org>
+ <20160405144416.GA10809@ulmo.ba.sec>
+ <570429B8.3060002@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Q68bSM7Ycu6FN28Q"
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1457108379-20794-4-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <570429B8.3060002-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
 
-On Friday 04 March 2016 09:49 PM, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Add a new driver for the XUSB pad controller found on NVIDIA Tegra SoCs.
-> This hardware block used to be exposed as a pin controller, but it turns
-> out that this isn't a good fit. The new driver and DT binding much more
-> accurately describe the hardware and are more flexible in supporting new
-> SoC generations.
-> 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Changes in v9:
-> - export public API for direct use by the xHCI driver (replaces mailbox
->   API which had introduced a nasty circular dependency)
-> 
->  drivers/phy/Kconfig                        |    2 +
->  drivers/phy/Makefile                       |    2 +
->  drivers/phy/tegra/Kconfig                  |    8 +
->  drivers/phy/tegra/Makefile                 |    5 +
->  drivers/phy/tegra/xusb-tegra124.c          | 1747 ++++++++++++++++++++++++++++
->  drivers/phy/tegra/xusb.c                   | 1017 ++++++++++++++++
->  drivers/phy/tegra/xusb.h                   |  421 +++++++
->  drivers/pinctrl/tegra/pinctrl-tegra-xusb.c |   20 +-
->  include/linux/phy/tegra/xusb.h             |   30 +
->  9 files changed, 3236 insertions(+), 16 deletions(-)
->  create mode 100644 drivers/phy/tegra/Kconfig
->  create mode 100644 drivers/phy/tegra/Makefile
->  create mode 100644 drivers/phy/tegra/xusb-tegra124.c
->  create mode 100644 drivers/phy/tegra/xusb.c
->  create mode 100644 drivers/phy/tegra/xusb.h
->  create mode 100644 include/linux/phy/tegra/xusb.h
-> 
-> diff --git a/drivers/phy/Kconfig b/drivers/phy/Kconfig
-> index 0124d17bd9fe..4bf65ceb3250 100644
-> --- a/drivers/phy/Kconfig
-> +++ b/drivers/phy/Kconfig
-> @@ -407,4 +407,6 @@ config PHY_CYGNUS_PCIE
->  	  Enable this to support the Broadcom Cygnus PCIe PHY.
->  	  If unsure, say N.
->  
-> +source "drivers/phy/tegra/Kconfig"
-> +
->  endmenu
-> diff --git a/drivers/phy/Makefile b/drivers/phy/Makefile
-> index c80f09df3bb8..82709141d072 100644
-> --- a/drivers/phy/Makefile
-> +++ b/drivers/phy/Makefile
-> @@ -50,3 +50,5 @@ obj-$(CONFIG_PHY_TUSB1210)		+= phy-tusb1210.o
->  obj-$(CONFIG_PHY_BRCMSTB_SATA)		+= phy-brcmstb-sata.o
->  obj-$(CONFIG_PHY_PISTACHIO_USB)		+= phy-pistachio-usb.o
->  obj-$(CONFIG_PHY_CYGNUS_PCIE)		+= phy-bcm-cygnus-pcie.o
-> +
-> +obj-$(CONFIG_ARCH_TEGRA) += tegra/
-> diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
-> new file mode 100644
-> index 000000000000..a3b1de953fb7
-> --- /dev/null
-> +++ b/drivers/phy/tegra/Kconfig
-> @@ -0,0 +1,8 @@
-> +config PHY_TEGRA_XUSB
-> +	tristate "NVIDIA Tegra XUSB pad controller driver"
-> +	depends on ARCH_TEGRA
-> +	help
-> +	  Choose this option if you have an NVIDIA Tegra SoC.
-> +
-> +	  To compile this driver as a module, choose M here: the module will
-> +	  be called phy-tegra-xusb.
-> diff --git a/drivers/phy/tegra/Makefile b/drivers/phy/tegra/Makefile
-> new file mode 100644
-> index 000000000000..31150b4337cd
-> --- /dev/null
-> +++ b/drivers/phy/tegra/Makefile
-> @@ -0,0 +1,5 @@
-> +obj-$(CONFIG_PHY_TEGRA_XUSB) += phy-tegra-xusb.o
-> +
-> +phy-tegra-xusb-y += xusb.o
-> +phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_124_SOC) += xusb-tegra124.o
-> +phy-tegra-xusb-$(CONFIG_ARCH_TEGRA_132_SOC) += xusb-tegra124.o
-> diff --git a/drivers/phy/tegra/xusb-tegra124.c b/drivers/phy/tegra/xusb-tegra124.c
-> new file mode 100644
-> index 000000000000..6340d43688d3
-> --- /dev/null
-> +++ b/drivers/phy/tegra/xusb-tegra124.c
-> @@ -0,0 +1,1747 @@
-> +/*
-> + * Copyright (c) 2014, NVIDIA CORPORATION.  All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> + * more details.
-> + */
-> +
-> +#include <linux/delay.h>
-> +#include <linux/io.h>
-> +#include <linux/mailbox_client.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/phy/phy.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/reset.h>
-> +#include <linux/slab.h>
-> +
-> +#include <soc/tegra/fuse.h>
-> +
-> +#include "xusb.h"
-> +
-> +#define FUSE_SKU_CALIB_HS_CURR_LEVEL_PADX_SHIFT(x) ((x) ? 15 : 0)
-> +#define FUSE_SKU_CALIB_HS_CURR_LEVEL_PAD_MASK 0x3f
-> +#define FUSE_SKU_CALIB_HS_IREF_CAP_SHIFT 13
-> +#define FUSE_SKU_CALIB_HS_IREF_CAP_MASK 0x3
-> +#define FUSE_SKU_CALIB_HS_SQUELCH_LEVEL_SHIFT 11
-> +#define FUSE_SKU_CALIB_HS_SQUELCH_LEVEL_MASK 0x3
-> +#define FUSE_SKU_CALIB_HS_TERM_RANGE_ADJ_SHIFT 7
-> +#define FUSE_SKU_CALIB_HS_TERM_RANGE_ADJ_MASK 0xf
-> +
-> +#define XUSB_PADCTL_USB2_PORT_CAP 0x008
-> +#define XUSB_PADCTL_USB2_PORT_CAP_PORTX_CAP_SHIFT(x) ((x) * 4)
-> +#define XUSB_PADCTL_USB2_PORT_CAP_PORT_CAP_MASK 0x3
-> +#define XUSB_PADCTL_USB2_PORT_CAP_DISABLED 0x0
-> +#define XUSB_PADCTL_USB2_PORT_CAP_HOST 0x1
-> +#define XUSB_PADCTL_USB2_PORT_CAP_DEVICE 0x2
-> +#define XUSB_PADCTL_USB2_PORT_CAP_OTG 0x3
-> +
-> +#define XUSB_PADCTL_SS_PORT_MAP 0x014
-> +#define XUSB_PADCTL_SS_PORT_MAP_PORTX_INTERNAL(x) (1 << (((x) * 4) + 3))
-> +#define XUSB_PADCTL_SS_PORT_MAP_PORTX_MAP_SHIFT(x) ((x) * 4)
-> +#define XUSB_PADCTL_SS_PORT_MAP_PORTX_MAP_MASK(x) (0x7 << ((x) * 4))
-> +#define XUSB_PADCTL_SS_PORT_MAP_PORTX_MAP(x, v) (((v) & 0x7) << ((x) * 4))
-> +#define XUSB_PADCTL_SS_PORT_MAP_PORT_MAP_MASK 0x7
-> +
-> +#define XUSB_PADCTL_ELPG_PROGRAM 0x01c
-> +#define XUSB_PADCTL_ELPG_PROGRAM_AUX_MUX_LP0_VCORE_DOWN (1 << 26)
-> +#define XUSB_PADCTL_ELPG_PROGRAM_AUX_MUX_LP0_CLAMP_EN_EARLY (1 << 25)
-> +#define XUSB_PADCTL_ELPG_PROGRAM_AUX_MUX_LP0_CLAMP_EN (1 << 24)
-> +#define XUSB_PADCTL_ELPG_PROGRAM_SSPX_ELPG_VCORE_DOWN(x) (1 << (18 + (x) * 4))
-> +#define XUSB_PADCTL_ELPG_PROGRAM_SSPX_ELPG_CLAMP_EN_EARLY(x) \
-> +							(1 << (17 + (x) * 4))
-> +#define XUSB_PADCTL_ELPG_PROGRAM_SSPX_ELPG_CLAMP_EN(x) (1 << (16 + (x) * 4))
-> +
-> +#define XUSB_PADCTL_IOPHY_PLL_P0_CTL1 0x040
-> +#define XUSB_PADCTL_IOPHY_PLL_P0_CTL1_PLL0_LOCKDET (1 << 19)
-> +#define XUSB_PADCTL_IOPHY_PLL_P0_CTL1_REFCLK_SEL_MASK (0xf << 12)
-> +#define XUSB_PADCTL_IOPHY_PLL_P0_CTL1_PLL_RST (1 << 1)
-> +
-> +#define XUSB_PADCTL_IOPHY_PLL_P0_CTL2 0x044
-> +#define XUSB_PADCTL_IOPHY_PLL_P0_CTL2_REFCLKBUF_EN (1 << 6)
-> +#define XUSB_PADCTL_IOPHY_PLL_P0_CTL2_TXCLKREF_EN (1 << 5)
-> +#define XUSB_PADCTL_IOPHY_PLL_P0_CTL2_TXCLKREF_SEL (1 << 4)
-> +
-> +#define XUSB_PADCTL_IOPHY_USB3_PADX_CTL2(x) (0x058 + (x) * 4)
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_CDR_CNTL_SHIFT 24
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_CDR_CNTL_MASK 0xff
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_CDR_CNTL_VAL 0x24
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_Z_SHIFT 16
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_Z_MASK 0x3f
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_G_SHIFT 8
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_G_MASK 0x3f
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_SHIFT 8
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_MASK 0xffff
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_EQ_VAL 0xf070
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_WANDER_SHIFT 4
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_WANDER_MASK 0xf
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL2_RX_WANDER_VAL 0xf
-> +
-> +#define XUSB_PADCTL_IOPHY_USB3_PADX_CTL4(x) (0x068 + (x) * 4)
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_TAP_SHIFT 24
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_TAP_MASK 0x1f
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_AMP_SHIFT 16
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_AMP_MASK 0x7f
-> +#define XUSB_PADCTL_IOPHY_USB3_PAD_CTL4_DFE_CNTL_VAL 0x002008ee
-> +
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_PX_CTL2(x) ((x) < 2 ? 0x078 + (x) * 4 : \
-> +					       0x0f8 + (x) * 4)
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL2_SPARE_IN_SHIFT 28
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL2_SPARE_IN_MASK 0x3
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL2_SPARE_IN_VAL 0x1
-> +
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_PX_CTL5(x) ((x) < 2 ? 0x090 + (x) * 4 : \
-> +					       0x11c + (x) * 4)
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL5_RX_QEYE_EN (1 << 8)
-> +
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_PX_CTL6(x) ((x) < 2 ? 0x098 + (x) * 4 : \
-> +					       0x128 + (x) * 4)
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SHIFT 24
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_G_Z_MASK 0x3f
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_TAP_MASK 0x1f
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_AMP_MASK 0x7f
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_SHIFT 16
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_MASK 0xff
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_G_Z 0x21
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_TAP 0x32
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_AMP 0x33
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_CTLE_Z 0x48
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_CTL6_MISC_OUT_SEL_LATCH_G_Z 0xa1
-> +
-> +#define XUSB_PADCTL_USB2_OTG_PADX_CTL0(x) (0x0a0 + (x) * 4)
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL0_PD_ZI (1 << 21)
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL0_PD2 (1 << 20)
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL0_PD (1 << 19)
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL0_LS_RSLEW_SHIFT 14
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL0_LS_RSLEW_MASK 0x3
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL0_LS_RSLEW_VAL(x) ((x) ? 0x0 : 0x3)
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL0_HS_SLEW_SHIFT 6
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL0_HS_SLEW_MASK 0x3f
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL0_HS_SLEW_VAL 0x0e
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL0_HS_CURR_LEVEL_SHIFT 0
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL0_HS_CURR_LEVEL_MASK 0x3f
-> +
-> +#define XUSB_PADCTL_USB2_OTG_PADX_CTL1(x) (0x0ac + (x) * 4)
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL1_HS_IREF_CAP_SHIFT 9
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL1_HS_IREF_CAP_MASK 0x3
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL1_TERM_RANGE_ADJ_SHIFT 3
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL1_TERM_RANGE_ADJ_MASK 0x7
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL1_PD_DR (1 << 2)
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL1_PD_DISC_FORCE_POWERUP (1 << 1)
-> +#define XUSB_PADCTL_USB2_OTG_PAD_CTL1_PD_CHRP_FORCE_POWERUP (1 << 0)
-> +
-> +#define XUSB_PADCTL_USB2_BIAS_PAD_CTL0 0x0b8
-> +#define XUSB_PADCTL_USB2_BIAS_PAD_CTL0_PD (1 << 12)
-> +#define XUSB_PADCTL_USB2_BIAS_PAD_CTL0_HS_DISCON_LEVEL_SHIFT 2
-> +#define XUSB_PADCTL_USB2_BIAS_PAD_CTL0_HS_DISCON_LEVEL_MASK 0x7
-> +#define XUSB_PADCTL_USB2_BIAS_PAD_CTL0_HS_DISCON_LEVEL_VAL 0x5
-> +#define XUSB_PADCTL_USB2_BIAS_PAD_CTL0_HS_SQUELCH_LEVEL_SHIFT 0
-> +#define XUSB_PADCTL_USB2_BIAS_PAD_CTL0_HS_SQUELCH_LEVEL_MASK 0x3
-> +
-> +#define XUSB_PADCTL_HSIC_PADX_CTL0(x) (0x0c0 + (x) * 4)
-> +#define XUSB_PADCTL_HSIC_PAD_CTL0_TX_RSLEWN_SHIFT 12
-> +#define XUSB_PADCTL_HSIC_PAD_CTL0_TX_RSLEWN_MASK 0x7
-> +#define XUSB_PADCTL_HSIC_PAD_CTL0_TX_RSLEWP_SHIFT 8
-> +#define XUSB_PADCTL_HSIC_PAD_CTL0_TX_RSLEWP_MASK 0x7
-> +#define XUSB_PADCTL_HSIC_PAD_CTL0_TX_RTUNEN_SHIFT 4
-> +#define XUSB_PADCTL_HSIC_PAD_CTL0_TX_RTUNEN_MASK 0x7
-> +#define XUSB_PADCTL_HSIC_PAD_CTL0_TX_RTUNEP_SHIFT 0
-> +#define XUSB_PADCTL_HSIC_PAD_CTL0_TX_RTUNEP_MASK 0x7
-> +
-> +#define XUSB_PADCTL_HSIC_PADX_CTL1(x) (0x0c8 + (x) * 4)
-> +#define XUSB_PADCTL_HSIC_PAD_CTL1_RPU_STROBE (1 << 10)
-> +#define XUSB_PADCTL_HSIC_PAD_CTL1_RPU_DATA (1 << 9)
-> +#define XUSB_PADCTL_HSIC_PAD_CTL1_RPD_STROBE (1 << 8)
-> +#define XUSB_PADCTL_HSIC_PAD_CTL1_RPD_DATA (1 << 7)
-> +#define XUSB_PADCTL_HSIC_PAD_CTL1_PD_ZI (1 << 5)
-> +#define XUSB_PADCTL_HSIC_PAD_CTL1_PD_RX (1 << 4)
-> +#define XUSB_PADCTL_HSIC_PAD_CTL1_PD_TRX (1 << 3)
-> +#define XUSB_PADCTL_HSIC_PAD_CTL1_PD_TX (1 << 2)
-> +#define XUSB_PADCTL_HSIC_PAD_CTL1_AUTO_TERM_EN (1 << 0)
-> +
-> +#define XUSB_PADCTL_HSIC_PADX_CTL2(x) (0x0d0 + (x) * 4)
-> +#define XUSB_PADCTL_HSIC_PAD_CTL2_RX_STROBE_TRIM_SHIFT 4
-> +#define XUSB_PADCTL_HSIC_PAD_CTL2_RX_STROBE_TRIM_MASK 0x7
-> +#define XUSB_PADCTL_HSIC_PAD_CTL2_RX_DATA_TRIM_SHIFT 0
-> +#define XUSB_PADCTL_HSIC_PAD_CTL2_RX_DATA_TRIM_MASK 0x7
-> +
-> +#define XUSB_PADCTL_HSIC_STRB_TRIM_CONTROL 0x0e0
-> +#define XUSB_PADCTL_HSIC_STRB_TRIM_CONTROL_STRB_TRIM_MASK 0x1f
-> +
-> +#define XUSB_PADCTL_USB3_PAD_MUX 0x134
-> +#define XUSB_PADCTL_USB3_PAD_MUX_PCIE_IDDQ_DISABLE(x) (1 << (1 + (x)))
-> +#define XUSB_PADCTL_USB3_PAD_MUX_SATA_IDDQ_DISABLE(x) (1 << (6 + (x)))
-> +
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL1 0x138
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL1_LOCKDET (1 << 27)
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL1_MODE (1 << 24)
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL0_REFCLK_NDIV_SHIFT 20
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL0_REFCLK_NDIV_MASK 0x3
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL_PWR_OVRD (1 << 3)
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL_RST (1 << 1)
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL1_PLL_IDDQ (1 << 0)
-> +
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL2 0x13c
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL2_PLL1_CP_CNTL_SHIFT 20
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL2_PLL1_CP_CNTL_MASK 0xf
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL2_PLL0_CP_CNTL_SHIFT 16
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL2_PLL0_CP_CNTL_MASK 0xf
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL2_TCLKOUT_EN (1 << 12)
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL2_TXCLKREF_SEL (1 << 4)
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL2_XDIGCLK_SEL_SHIFT 0
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL2_XDIGCLK_SEL_MASK 0x7
-> +
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL3 0x140
-> +#define XUSB_PADCTL_IOPHY_PLL_S0_CTL3_RCAL_BYPASS (1 << 7)
-> +
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL1 0x148
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL1_IDDQ_OVRD (1 << 1)
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL1_IDDQ (1 << 0)
-> +
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL2 0x14c
-> +
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL5 0x158
-> +
-> +#define XUSB_PADCTL_IOPHY_MISC_PAD_S0_CTL6 0x15c
-> +
-> +struct tegra124_xusb_fuse_calibration {
-> +	u32 hs_curr_level[3];
-> +	u32 hs_iref_cap;
-> +	u32 hs_term_range_adj;
-> +	u32 hs_squelch_level;
-> +};
+--Q68bSM7Ycu6FN28Q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-All these calibration data can come from dt and a generic PHY function to set
-these data to registers.
+On Tue, Apr 05, 2016 at 03:10:16PM -0600, Stephen Warren wrote:
+> On 04/05/2016 08:44 AM, Thierry Reding wrote:
+> > On Wed, Mar 16, 2016 at 11:59:44AM -0600, Stephen Warren wrote:
+> > > On 03/04/2016 09:19 AM, Thierry Reding wrote:
+> > > > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > >=20
+> > > > Extend the binding to cover the set of feature found in Tegra210.
+> > >=20
+> > > Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > >=20
+> > > > diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra124-=
+xusb-padctl.txt b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xus=
+b-padctl.txt
+> > >=20
+> > > > +	padctl@0,7009f000 {
+> > > ...
+> > > > +		pads {
+> > > ...
+> > > > +		};
+> > > > +
+> > > > +		ports {
+> > > ...
+> > > > +		};
+> > >=20
+> > > As a comment not affecting my ack in any way: At the top-level, we pl=
+ace all
+> > > the child nodes into "array container" nodes named "pads" and "ports"=
+=2E This
+> > > is nice since it separates different types of child nodes and allows =
+easily
+> > > adding more types of child nodes in the future without interference, =
+and in
+> > > a way that allows us to explicitly know what each node is without hav=
+ing to
+> > > interpret its name or compatible value to do so. However, we haven't =
+done
+> > > this with the per-lane child nodes inside each pad. If we were to rev=
+ the
+> > > design, I'd be tempted to suggest:
+> > >=20
+> > > 	padctl@0,7009f000 {
+> > > 		pads {
+> > > 			usb2 {
+> > > 				lanes { // This level is new
+> > > 					usb2-0 {
+> >=20
+> > I tried to make this work, but it's unfortunately not possible with the
+> > current code. The reason is that the PHY subsystem assumes that either
+> > the provider DT node corresponds to that of the device (the usb2 pad in
+> > the above example) or one of its children. Hence, putting everything
+> > into one more level further down would require some mechanism to tell
+> > the subsystem about it so that it can be found.
+>=20
+> When the padctl driver registers the PHY objects with the PHY subsystem, =
+can
+> it pass the lanes node as the DT node? That woulud mean each lane /was/ a
+> child of the node registered with the PHY subsystem.
+>=20
+> Perhaps the PHY subsystem requires a struct device rather than a DT node
+> registered with it?
 
-But before that can be done we have to standardize the bindings for every
-calibration data and then add a generic PHY function :-/ That might take some
-time to add, so for now I'm okay to have all calibration data in driver.
-> +
-> +struct tegra124_xusb_padctl {
-> +	struct tegra_xusb_padctl base;
-> +
-> +	struct tegra124_xusb_fuse_calibration fuse;
-> +};
-> +
-> +static inline struct tegra124_xusb_padctl *
-> +to_tegra124_xusb_padctl(struct tegra_xusb_padctl *padctl)
-> +{
-> +	return container_of(padctl, struct tegra124_xusb_padctl, base);
-> +}
-> +
-.
-.
-<snip>
-.
-.
+Yes, that's how the PHY subsystem works. You pass it a struct device *
+that it will wrap a struct phy_provider around. It will then use that
+struct device's ->of_node as the parent for the child lookup.
 
-> +
-> +static const char * const tegra124_ulpi_functions[] = {
-> +	"snps",
-> +	"xusb",
-> +};
-> +
-> +static const struct tegra_xusb_lane_soc tegra124_ulpi_lanes[] = {
-> +	TEGRA124_LANE("ulpi-0", 0x004, 12, 0x1, ulpi),
-> +};
-> +
-> +static struct tegra_xusb_lane *
-> +tegra124_ulpi_lane_probe(struct tegra_xusb_pad *pad, struct device_node *np,
-> +			 unsigned int index)
-> +{
-> +	struct tegra_xusb_ulpi_lane *ulpi;
-> +	int err;
-> +
-> +	ulpi = kzalloc(sizeof(*ulpi), GFP_KERNEL);
-> +	if (!ulpi)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	INIT_LIST_HEAD(&ulpi->base.list);
-> +	ulpi->base.soc = &pad->soc->lanes[index];
-> +	ulpi->base.index = index;
-> +	ulpi->base.pad = pad;
-> +	ulpi->base.np = np;
-> +
+> If so, does it make sense to create a separate struct device with the
+> of_node pointing at lanes{}?
 
-ulpi PHY's can be found dynamically right? Should this use the ulpi phy library?
+I suspect that that would work, but I'm already somewhat uncomfortable
+about how many devices the driver creates. Adding more dummy devices
+seems like a workaround.
 
-Thanks
-Kishon
+> > Arguably the current support code isn't a good argument for designing a
+> > binding, so perhaps it'd be useful to add this mechanism in order to get
+> > a better binding. On the other hand, I'm not sure it's really worth it,
+> > since we already have generic bindings that specify the layout of child
+> > devices, and those have been agreed upon broadly (presumably).
+> >=20
+> > In light of the recent discussion on DPAUX vs. I2C, I see how having the
+> > extra level would be useful to provide additional context. If you think
+> > it's worth it I can spend the extra time to get this implemented in the
+> > core.
+>=20
+> Naively, it sounds like it'd be a good idea to fix the PHY core. It really
+> shouldn't care about the parent of any object registered with it; it shou=
+ld
+> only interact with the specific object it was given, and any other data s=
+uch
+> as "ops" callbacks. Do you have any inkling how much work that would be?
+
+I attached what I came up with. It extends the OF PHY provider registry
+by allowing an additional node to be specified that if specified will
+serve as the parent for the child lookup (and hence overrides the
+default node that's taken from the struct device).
+
+It is a fairly trivial patch, and you'll notice the bulk of the changes
+is adding the additional parameter in a number of different places. The
+only thing I'm not quite happy about is that we start needing to pass a
+fairly large number of arguments. But perhaps it's still okay.
+
+An alternative would be to make struct phy_provider embeddable into
+driver private structures. That way they could be completely initialized
+by a driver before being passed to the __of_phy_provider_register()
+function (much like struct gpio_chip and others). That would be a fairly
+intrusive change, one that I'd be willing to take on, though I'd like to
+have Kishon's opinion on this before going ahead.
+
+For reference, here's what I'm imagining:
+
+	struct foo_phy_provider {
+		struct phy_provider base;
+		...
+	};
+
+	int foo_probe(struct platform_device *pdev)
+	{
+		struct foo_phy_provider *priv;
+		...
+
+		priv =3D devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+		if (!priv)
+			return -ENOMEM;
+
+		priv->base.dev =3D &pdev->dev;
+		priv->base.of_xlate =3D foo_of_xlate;
+
+		err =3D devm_of_phy_provider_register(&priv->base);
+		if (err < 0)
+			return err;
+
+		...
+	}
+
+And of course adapt the signature of the __of_phy_provider_register()
+function and remove the allocation from it.
+
+Thierry
+
+--- >8 ---
+=46rom 15e5348a1a63837efd00309fdce5cda979498f77 Mon Sep 17 00:00:00 2001
+=46rom: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Date: Tue, 5 Apr 2016 17:17:34 +0200
+Subject: [PATCH] phy: core: Allow children node to be overridden
+
+In order to more flexibly support device tree bindings, allow drivers to
+override the container of the child nodes. By default the device node of
+the PHY provider is assumed to be the parent for children, but bindings
+may decide to add additional levels for better organization.
+
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ Documentation/phy.txt   | 16 ++++++++++++++--
+ drivers/phy/phy-core.c  | 27 +++++++++++++++++++++------
+ include/linux/phy/phy.h | 31 +++++++++++++++++++++----------
+ 3 files changed, 56 insertions(+), 18 deletions(-)
+
+diff --git a/Documentation/phy.txt b/Documentation/phy.txt
+index b388c5af9e72..0aa994bd9a91 100644
+--- a/Documentation/phy.txt
++++ b/Documentation/phy.txt
+@@ -31,16 +31,28 @@ should provide its own implementation of of_xlate. of_x=
+late is used only for
+ dt boot case.
+=20
+ #define of_phy_provider_register(dev, xlate)    \
+-        __of_phy_provider_register((dev), THIS_MODULE, (xlate))
++        __of_phy_provider_register((dev), NULL, THIS_MODULE, (xlate))
+=20
+ #define devm_of_phy_provider_register(dev, xlate)       \
+-        __devm_of_phy_provider_register((dev), THIS_MODULE, (xlate))
++        __devm_of_phy_provider_register((dev), NULL, THIS_MODULE, (xlate))
+=20
+ of_phy_provider_register and devm_of_phy_provider_register macros can be u=
+sed to
+ register the phy_provider and it takes device and of_xlate as
+ arguments. For the dt boot case, all PHY providers should use one of the a=
+bove
+ 2 macros to register the PHY provider.
+=20
++Often the device tree nodes associated with a PHY provider will contain a =
+set
++of children that each represent a single PHY. Some bindings may nest the c=
+hild
++nodes within extra levels for context and extensibility, in which case the=
+ low
++level of_phy_provider_register_full() and devm_of_phy_provider_register_fu=
+ll()
++macros can be used to override the node containing the children.
++
++#define of_phy_provider_register_full(dev, children, xlate) \
++	__of_phy_provider_register(dev, children, THIS_MODULE, xlate)
++
++#define devm_of_phy_provider_register_full(dev, children, xlate) \
++	__devm_of_phy_provider_register_full(dev, children, THIS_MODULE, xlate)
++
+ void devm_of_phy_provider_unregister(struct device *dev,
+ 	struct phy_provider *phy_provider);
+ void of_phy_provider_unregister(struct phy_provider *phy_provider);
+diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+index e7e574dc667a..7f7da2138c82 100644
+--- a/drivers/phy/phy-core.c
++++ b/drivers/phy/phy-core.c
+@@ -135,13 +135,19 @@ static struct phy *phy_find(struct device *dev, const=
+ char *con_id)
+ static struct phy_provider *of_phy_provider_lookup(struct device_node *nod=
+e)
+ {
+ 	struct phy_provider *phy_provider;
++	struct device_node *children;
+ 	struct device_node *child;
+=20
+ 	list_for_each_entry(phy_provider, &phy_provider_list, list) {
+ 		if (phy_provider->dev->of_node =3D=3D node)
+ 			return phy_provider;
+=20
+-		for_each_child_of_node(phy_provider->dev->of_node, child)
++		if (!phy_provider->children)
++			children =3D phy_provider->dev->of_node;
++		else
++			children =3D phy_provider->children;
++
++		for_each_child_of_node(children, child)
+ 			if (child =3D=3D node)
+ 				return phy_provider;
+ 	}
+@@ -811,16 +817,22 @@ EXPORT_SYMBOL_GPL(devm_phy_destroy);
+ /**
+  * __of_phy_provider_register() - create/register phy provider with the fr=
+amework
+  * @dev: struct device of the phy provider
++ * @children: device node containing children (if different from dev->of_n=
+ode)
+  * @owner: the module owner containing of_xlate
+  * @of_xlate: function pointer to obtain phy instance from phy provider
+  *
+  * Creates struct phy_provider from dev and of_xlate function pointer.
+  * This is used in the case of dt boot for finding the phy instance from
+  * phy provider.
++ *
++ * If the PHY provider doesn't nest children directly but uses a separate
++ * child node to contain the individual children, the @children parameter
++ * can be used to override the default (i.e. dev->of_node).
+  */
+ struct phy_provider *__of_phy_provider_register(struct device *dev,
+-	struct module *owner, struct phy * (*of_xlate)(struct device *dev,
+-	struct of_phandle_args *args))
++	struct device_node *children, struct module *owner,
++	struct phy * (*of_xlate)(struct device *dev,
++				 struct of_phandle_args *args))
+ {
+ 	struct phy_provider *phy_provider;
+=20
+@@ -829,6 +841,7 @@ struct phy_provider *__of_phy_provider_register(struct =
+device *dev,
+ 		return ERR_PTR(-ENOMEM);
+=20
+ 	phy_provider->dev =3D dev;
++	phy_provider->children =3D children;
+ 	phy_provider->owner =3D owner;
+ 	phy_provider->of_xlate =3D of_xlate;
+=20
+@@ -854,8 +867,9 @@ EXPORT_SYMBOL_GPL(__of_phy_provider_register);
+  * on the devres data, then, devres data is freed.
+  */
+ struct phy_provider *__devm_of_phy_provider_register(struct device *dev,
+-	struct module *owner, struct phy * (*of_xlate)(struct device *dev,
+-	struct of_phandle_args *args))
++	struct device_node *children, struct module *owner,
++	struct phy * (*of_xlate)(struct device *dev,
++				 struct of_phandle_args *args))
+ {
+ 	struct phy_provider **ptr, *phy_provider;
+=20
+@@ -863,7 +877,8 @@ struct phy_provider *__devm_of_phy_provider_register(st=
+ruct device *dev,
+ 	if (!ptr)
+ 		return ERR_PTR(-ENOMEM);
+=20
+-	phy_provider =3D __of_phy_provider_register(dev, owner, of_xlate);
++	phy_provider =3D __of_phy_provider_register(dev, children, owner,
++						  of_xlate);
+ 	if (!IS_ERR(phy_provider)) {
+ 		*ptr =3D phy_provider;
+ 		devres_add(dev, ptr);
+diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
+index 8cf05e341cff..a810f2a18842 100644
+--- a/include/linux/phy/phy.h
++++ b/include/linux/phy/phy.h
+@@ -77,6 +77,7 @@ struct phy {
+  */
+ struct phy_provider {
+ 	struct device		*dev;
++	struct device_node	*children;
+ 	struct module		*owner;
+ 	struct list_head	list;
+ 	struct phy * (*of_xlate)(struct device *dev,
+@@ -93,10 +94,16 @@ struct phy_lookup {
+ #define	to_phy(a)	(container_of((a), struct phy, dev))
+=20
+ #define	of_phy_provider_register(dev, xlate)	\
+-	__of_phy_provider_register((dev), THIS_MODULE, (xlate))
++	__of_phy_provider_register((dev), NULL, THIS_MODULE, (xlate))
+=20
+ #define	devm_of_phy_provider_register(dev, xlate)	\
+-	__devm_of_phy_provider_register((dev), THIS_MODULE, (xlate))
++	__devm_of_phy_provider_register((dev), NULL, THIS_MODULE, (xlate))
++
++#define of_phy_provider_register_full(dev, children, xlate) \
++	__of_phy_provider_register(dev, children, THIS_MODULE, xlate)
++
++#define devm_of_phy_provider_register_full(dev, children, xlate) \
++	__devm_of_phy_provider_register(dev, children, THIS_MODULE, xlate)
+=20
+ static inline void phy_set_drvdata(struct phy *phy, void *data)
+ {
+@@ -147,11 +154,13 @@ struct phy *devm_phy_create(struct device *dev, struc=
+t device_node *node,
+ void phy_destroy(struct phy *phy);
+ void devm_phy_destroy(struct device *dev, struct phy *phy);
+ struct phy_provider *__of_phy_provider_register(struct device *dev,
+-	struct module *owner, struct phy * (*of_xlate)(struct device *dev,
+-	struct of_phandle_args *args));
++	struct device_node *children, struct module *owner,
++	struct phy * (*of_xlate)(struct device *dev,
++				 struct of_phandle_args *args));
+ struct phy_provider *__devm_of_phy_provider_register(struct device *dev,
+-	struct module *owner, struct phy * (*of_xlate)(struct device *dev,
+-	struct of_phandle_args *args));
++	struct device_node *children, struct module *owner,
++	struct phy * (*of_xlate)(struct device *dev,
++				 struct of_phandle_args *args));
+ void of_phy_provider_unregister(struct phy_provider *phy_provider);
+ void devm_of_phy_provider_unregister(struct device *dev,
+ 	struct phy_provider *phy_provider);
+@@ -312,15 +321,17 @@ static inline void devm_phy_destroy(struct device *de=
+v, struct phy *phy)
+ }
+=20
+ static inline struct phy_provider *__of_phy_provider_register(
+-	struct device *dev, struct module *owner, struct phy * (*of_xlate)(
+-	struct device *dev, struct of_phandle_args *args))
++	struct device *dev, struct device_node *children, struct module *owner,
++	struct phy * (*of_xlate)(struct device *dev,
++				 struct of_phandle_args *args))
+ {
+ 	return ERR_PTR(-ENOSYS);
+ }
+=20
+ static inline struct phy_provider *__devm_of_phy_provider_register(struct =
+device
+-	*dev, struct module *owner, struct phy * (*of_xlate)(struct device *dev,
+-	struct of_phandle_args *args))
++	*dev, struct device_node *children, struct module *owner,
++	struct phy * (*of_xlate)(struct device *dev,
++				 struct of_phandle_args *args))
+ {
+ 	return ERR_PTR(-ENOSYS);
+ }
+--=20
+2.8.0
+
+
+--Q68bSM7Ycu6FN28Q
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXBUKEAAoJEN0jrNd/PrOh8j8P/iTl8DsLLFmaDO/x/cSjXxB0
+tlI0X9d5hq3Wzu8seN200obmFO7UhmvPXLIHjb+U2q5PTa4DzeUWcHo8a6xpS4EG
+NQUuzaCM2fbgHvPNUXpavRDOwRJwD0X94hjAFKfxvc0Por+FtAOltQMUQgLgQjj7
+IKp9eE1RjdLb+w79It9KGGpjMgzgQc5R8IFfFAvNrNzI/zqPNFB5eL5NeuFXRL6r
+9WgJURj8hGsoefsFPfAbsIiGDE6Uv27RF/oxJO9iGt2fnXeVsfowgNkUoMHhdUJ7
+vq5+GZ62V62V+w9j5c1W1964C19QBhFb3e3Q+hBeflPRdpy6iIe7cmsisb+FaE68
+wF9f7mlWlDEoSh8MCw+8gWnLZ8VX8l2EvYjGJVDm3tN0AV0DFIdqcp5Dwq0ku7sX
+dtIiJv6PxMnt0+NeEGYEuqobm2h9kkccgeV++tNnu5GrmPGZxENlWMvuCd4TBqJW
+mcgynQTYO78WxJ4ruQXvzoaLiEkesikx9EwlxBC0nxyS6acJwVNMIyhsv6HkSlus
+Ab8Lr6ZE5CoNjuyn+qoINJposLnd9Kiv4lw/pc/f1CsDUDrUbPBE4NeMNz25o2ax
+EfOe3r0V087KCx5cY6AJycc24RaboohFqsSBRJhgyfjRqZ+BuiaZO+mzLyGy41yO
+JDF4vWbo3vdm0bt3hkXR
+=dOy5
+-----END PGP SIGNATURE-----
+
+--Q68bSM7Ycu6FN28Q--
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
