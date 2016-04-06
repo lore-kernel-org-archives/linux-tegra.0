@@ -1,51 +1,52 @@
-From: Hunter Laux <hunterlaux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] usb: phy: tegra: Add 38.4MHz clock table entry
-Date: Wed,  6 Apr 2016 00:54:05 -0700
-Message-ID: <1459929245-23449-1-git-send-email-hunterlaux@gmail.com>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: thermal: tegra: add thermtrip function
+Date: Wed, 6 Apr 2016 17:01:25 +0800
+Message-ID: <5704D065.4050507@nvidia.com>
+References: <20160402055045.GA23902@mwanda>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160402055045.GA23902@mwanda>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Hunter Laux <hunterlaux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The Tegra210 uses a 38.4MHz OSC. This clock table entry is required to
-use the ehci phy on the Jetson TX1.
+Thanks for your check, I will send out patch to fix it.
 
-The xtal_freq_count is actually a 12 bit value, so it should be a u16
-instead of u8.
+Thanks.
+Wei.
 
-Signed-off-by: Hunter Laux <hunterlaux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/usb/phy/phy-tegra-usb.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
-index 5fe4a57..f0431f0 100644
---- a/drivers/usb/phy/phy-tegra-usb.c
-+++ b/drivers/usb/phy/phy-tegra-usb.c
-@@ -164,7 +164,7 @@ struct tegra_xtal_freq {
- 	u8 enable_delay;
- 	u8 stable_count;
- 	u8 active_delay;
--	u8 xtal_freq_count;
-+	u16 xtal_freq_count;
- 	u16 debounce;
- };
- 
-@@ -201,6 +201,14 @@ static const struct tegra_xtal_freq tegra_freq_table[] = {
- 		.xtal_freq_count = 0xFE,
- 		.debounce = 0xFDE8,
- 	},
-+	{
-+		.freq = 38400000,
-+		.enable_delay = 0x00,
-+		.stable_count = 0x00,
-+		.active_delay = 0x18,
-+		.xtal_freq_count = 0x177,
-+		.debounce = 0xBB80,
-+	},
- };
- 
- static void set_pts(struct tegra_usb_phy *phy, u8 pts_val)
--- 
-1.9.1
+On 2016=E5=B9=B404=E6=9C=8802=E6=97=A5 13:50, Dan Carpenter wrote:
+> Hello Wei Ni,
+>=20
+> This is a semi-automatic email about new static checker warnings.
+>=20
+> The patch ee6d79f202a4: "thermal: tegra: add thermtrip function" from=
+=20
+> Mar 29, 2016, leads to the following Smatch complaint:
+>=20
+> drivers/thermal/tegra/soctherm.c:226 thermtrip_program()
+> 	 warn: variable dereferenced before check 'dev' (see line 222)
+>=20
+> drivers/thermal/tegra/soctherm.c
+>    221	{
+>    222		struct tegra_soctherm *ts =3D dev_get_drvdata(dev);
+>                                             ^^^^^^^^^^^^^^^^^^^
+> Dereference inside function.
+>=20
+>    223		int temp;
+>    224		u32 r;
+>    225=09
+>    226		if (!dev || !sg)
+>                     ^^^^
+> Too late.
+>=20
+>    227			return -EINVAL;
+>    228=09
+>=20
+> regards,
+> dan carpenter
+>=20
