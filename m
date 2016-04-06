@@ -1,52 +1,43 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: thermal: tegra: add thermtrip function
-Date: Wed, 6 Apr 2016 17:01:25 +0800
-Message-ID: <5704D065.4050507@nvidia.com>
-References: <20160402055045.GA23902@mwanda>
+From: Wei Ni <wni@nvidia.com>
+Subject: [PATCH] thermal: tegra: fix static checker warning
+Date: Wed, 6 Apr 2016 17:48:04 +0800
+Message-ID: <1459936084-11875-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160402055045.GA23902@mwanda>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: edubezval@gmail.com, rui.zhang@intel.com, dan.carpenter@oracle.com
+Cc: thierry.reding@gmail.com, MLongnecker@nvidia.com, swarren@wwwdotorg.org, mikko.perttunen@kapsi.fi, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Wei Ni <wni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Thanks for your check, I will send out patch to fix it.
+There has a static checker warning:
+warn: variable dereferenced before check 'dev' (see line 222)
 
-Thanks.
-Wei.
+Since check 'dev' is unnecessary, so remove this check.
 
+Fixes: ee6d79f202a4 ("thermal: tegra: add thermtrip function")
+Signed-off-by: Wei Ni <wni@nvidia.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/thermal/tegra/soctherm.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-On 2016=E5=B9=B404=E6=9C=8802=E6=97=A5 13:50, Dan Carpenter wrote:
-> Hello Wei Ni,
->=20
-> This is a semi-automatic email about new static checker warnings.
->=20
-> The patch ee6d79f202a4: "thermal: tegra: add thermtrip function" from=
-=20
-> Mar 29, 2016, leads to the following Smatch complaint:
->=20
-> drivers/thermal/tegra/soctherm.c:226 thermtrip_program()
-> 	 warn: variable dereferenced before check 'dev' (see line 222)
->=20
-> drivers/thermal/tegra/soctherm.c
->    221	{
->    222		struct tegra_soctherm *ts =3D dev_get_drvdata(dev);
->                                             ^^^^^^^^^^^^^^^^^^^
-> Dereference inside function.
->=20
->    223		int temp;
->    224		u32 r;
->    225=09
->    226		if (!dev || !sg)
->                     ^^^^
-> Too late.
->=20
->    227			return -EINVAL;
->    228=09
->=20
-> regards,
-> dan carpenter
->=20
+diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
+index 559c74279eb8..d3cc8c99726f 100644
+--- a/drivers/thermal/tegra/soctherm.c
++++ b/drivers/thermal/tegra/soctherm.c
+@@ -223,10 +223,7 @@ static int thermtrip_program(struct device *dev,
+ 	int temp;
+ 	u32 r;
+ 
+-	if (!dev || !sg)
+-		return -EINVAL;
+-
+-	if (!sg->thermtrip_threshold_mask)
++	if (!sg || !sg->thermtrip_threshold_mask)
+ 		return -EINVAL;
+ 
+ 	temp = enforce_temp_range(dev, trip_temp) / ts->soc->thresh_grain;
+-- 
+1.9.1
+
