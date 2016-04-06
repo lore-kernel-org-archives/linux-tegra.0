@@ -1,89 +1,51 @@
-From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V4 2/3] dmaengine: tegra-adma: Add support for Tegra210
- ADMA
-Date: Tue, 5 Apr 2016 14:36:50 -0700
-Message-ID: <20160405213649.GA11586@vkoul-mobl.iind.intel.com>
-References: <1458057390-20756-1-git-send-email-jonathanh@nvidia.com>
- <1458057390-20756-3-git-send-email-jonathanh@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Hunter Laux <hunterlaux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] usb: phy: tegra: Add 38.4MHz clock table entry
+Date: Wed,  6 Apr 2016 00:54:05 -0700
+Message-ID: <1459929245-23449-1-git-send-email-hunterlaux@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1458057390-20756-3-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Hunter Laux <hunterlaux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Mar 15, 2016 at 03:56:29PM +0000, Jon Hunter wrote:
+The Tegra210 uses a 38.4MHz OSC. This clock table entry is required to
+use the ehci phy on the Jetson TX1.
 
-> +static void tegra_adma_request_free(struct tegra_adma_chan *tdc)
-> +{
-> +	struct tegra_adma *tdma = tdc->tdma;
-> +
-> +	if (!tdc->sreq_reserved)
-> +		return;
-> +
-> +	switch (tdc->sreq_dir) {
-> +	case DMA_MEM_TO_DEV:
-> +		clear_bit(tdc->sreq_index, &tdma->tx_requests_reserved);
-> +		break;
+The xtal_freq_count is actually a 12 bit value, so it should be a u16
+instead of u8.
 
-empty line here woould be nicer
+Signed-off-by: Hunter Laux <hunterlaux-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/usb/phy/phy-tegra-usb.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-> +	ret = dma_cookie_status(dc, cookie, txstate);
-> +	if (ret == DMA_COMPLETE || !txstate)
-> +		return ret;
-> +
-> +	spin_lock_irqsave(&tdc->vc.lock, flags);
-> +
-> +	vd = vchan_find_desc(&tdc->vc, cookie);
-> +	if (vd) {
-> +		desc = to_tegra_adma_desc(&vd->tx);
-> +		residual = desc->ch_regs.tc;
-
-Here we are filling up residue for desc found in issued list
-
-> +	} else if (tdc->desc && tdc->desc->vd.tx.cookie == cookie) {
-> +		residual = tegra_adma_get_residue(tdc);
-
-Well if it is not issued then why we we need to caluclate, its full size of
-descriptor
-
-> +	} else {
-> +		residual = 0;
-
-why this?
-
-> +static struct dma_async_tx_descriptor *tegra_adma_prep_slave_sg(
-> +	struct dma_chan *dc, struct scatterlist *sgl, unsigned int sg_len,
-> +	enum dma_transfer_direction direction, unsigned long flags,
-> +	void *context)
-> +{
-> +	struct tegra_adma_chan *tdc = to_tegra_adma_chan(dc);
-> +
-> +	dev_warn(tdc2dev(tdc), "scatter-gather transfers are not supported\n");
-> +
-> +	return NULL;
-> +}
-
-Why do we need this placeholder, If you dont support slave_sg dont add this
-as capability
-
-> +static const struct tegra_adma_chip_data tegra210_chip_data = {
-> +	.nr_channels = 22,
-> +};
-
-why should this be hard coded in kernel and not queried from something like
-DT? This case seems to be hardware property
-
-> +	dma_cap_set(DMA_SLAVE, tdma->dma_dev.cap_mask);
-> +	dma_cap_set(DMA_PRIVATE, tdma->dma_dev.cap_mask);
-> +	dma_cap_set(DMA_CYCLIC, tdma->dma_dev.cap_mask);
-
-I think you should not set DMA_SLAVE, do you need caps to be exported. I
-think that should be exported for cyclic too, let me know if that was the
-issue?
-
+diff --git a/drivers/usb/phy/phy-tegra-usb.c b/drivers/usb/phy/phy-tegra-usb.c
+index 5fe4a57..f0431f0 100644
+--- a/drivers/usb/phy/phy-tegra-usb.c
++++ b/drivers/usb/phy/phy-tegra-usb.c
+@@ -164,7 +164,7 @@ struct tegra_xtal_freq {
+ 	u8 enable_delay;
+ 	u8 stable_count;
+ 	u8 active_delay;
+-	u8 xtal_freq_count;
++	u16 xtal_freq_count;
+ 	u16 debounce;
+ };
+ 
+@@ -201,6 +201,14 @@ static const struct tegra_xtal_freq tegra_freq_table[] = {
+ 		.xtal_freq_count = 0xFE,
+ 		.debounce = 0xFDE8,
+ 	},
++	{
++		.freq = 38400000,
++		.enable_delay = 0x00,
++		.stable_count = 0x00,
++		.active_delay = 0x18,
++		.xtal_freq_count = 0x177,
++		.debounce = 0xBB80,
++	},
+ };
+ 
+ static void set_pts(struct tegra_usb_phy *phy, u8 pts_val)
 -- 
-~Vinod
+1.9.1
