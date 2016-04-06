@@ -1,111 +1,66 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v10 4/9] phy: Add Tegra XUSB pad controller support
-Date: Wed, 6 Apr 2016 19:26:16 +0200
-Message-ID: <20160406172616.GB28843@ulmo.ba.sec>
-References: <1457108379-20794-1-git-send-email-thierry.reding@gmail.com>
- <1457108379-20794-4-git-send-email-thierry.reding@gmail.com>
- <5705047E.4050700@ti.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: fix naming in GPIO DT binding header
+Date: Wed, 6 Apr 2016 19:28:45 +0200
+Message-ID: <20160406172845.GC28843@ulmo.ba.sec>
+References: <1459884307-24043-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="l76fUT7nc3MelDdI"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="da4uJneut+ArUgXk"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <5705047E.4050700@ti.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Kishon Vijay Abraham I <kishon@ti.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Andrew Bresticker <abrestic@chromium.org>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+In-Reply-To: <1459884307-24043-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---l76fUT7nc3MelDdI
+--da4uJneut+ArUgXk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 06, 2016 at 06:13:42PM +0530, Kishon Vijay Abraham I wrote:
-> On Friday 04 March 2016 09:49 PM, Thierry Reding wrote:
-[...]
-> > +struct tegra124_xusb_fuse_calibration {
-> > +	u32 hs_curr_level[3];
-> > +	u32 hs_iref_cap;
-> > +	u32 hs_term_range_adj;
-> > +	u32 hs_squelch_level;
-> > +};
+On Tue, Apr 05, 2016 at 01:25:07PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >=20
-> All these calibration data can come from dt and a generic PHY function to=
- set
-> these data to registers.
-
-This calibration data is actually read from fuses within the chip. As I
-understand it the process is that these values are characterized during
-chip development and written to the fuses at the fab (or perhaps they
-are characterized even as late as at the fab). There should be no need
-to read these from DT.
-
-> > +static const char * const tegra124_ulpi_functions[] =3D {
-> > +	"snps",
-> > +	"xusb",
-> > +};
-> > +
-> > +static const struct tegra_xusb_lane_soc tegra124_ulpi_lanes[] =3D {
-> > +	TEGRA124_LANE("ulpi-0", 0x004, 12, 0x1, ulpi),
-> > +};
-> > +
-> > +static struct tegra_xusb_lane *
-> > +tegra124_ulpi_lane_probe(struct tegra_xusb_pad *pad, struct device_nod=
-e *np,
-> > +			 unsigned int index)
-> > +{
-> > +	struct tegra_xusb_ulpi_lane *ulpi;
-> > +	int err;
-> > +
-> > +	ulpi =3D kzalloc(sizeof(*ulpi), GFP_KERNEL);
-> > +	if (!ulpi)
-> > +		return ERR_PTR(-ENOMEM);
-> > +
-> > +	INIT_LIST_HEAD(&ulpi->base.list);
-> > +	ulpi->base.soc =3D &pad->soc->lanes[index];
-> > +	ulpi->base.index =3D index;
-> > +	ulpi->base.pad =3D pad;
-> > +	ulpi->base.np =3D np;
-> > +
+> According to the Tegra TRM, GPIOs are aggregated into /ports/ of 8 GPIOs,
+> not into /banks/. Fix <dt-bindings/gpio/tegra-gpio.h> to correctly reflect
+> this naming convention. While this seems like silly churn, it will become
+> slightly more important once we introduce the GPIO binding for upcoming
+> Tegra chips.
 >=20
-> ulpi PHY's can be found dynamically right? Should this use the ulpi
-> phy library?
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  include/dt-bindings/gpio/tegra-gpio.h | 68 +++++++++++++++++------------=
+------
+>  1 file changed, 34 insertions(+), 34 deletions(-)
 
-I don't think that would work here. The registered accessed by this code
-are all very Tegra specific as far as I can tell. I doubt that any kind
-of generic library would work here.
+It's not clear to me where this should be applied. This is technically
+part of the GPIO controller bindings, in which case it'd need to go via
+the GPIO tree. I'm fine with taking it through the Tegra tree, too, but
+in case you agree that it should go through the GPIO tree:
 
-Perhaps you can point me at the exact code you're thinking of. I only
-found drivers/phy/ulpi_phy.h and drivers/usb/common/ulpi.c in a quick
-search, neither of which seem to provide anything that would be useful
-in this context. The former contains a couple of small helpers that I
-don't think are appropriate here, whereas the latter seems to want the
-driver to implement a ULPI interface, something which the Tegra XUSB pad
-controller doesn't expose.
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Thierry
-
---l76fUT7nc3MelDdI
+--da4uJneut+ArUgXk
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXBUa1AAoJEN0jrNd/PrOhHvkP/2+uuOuKuLW6VaECcXqc/oe8
-w14/4rE2AUCO24MNimrP8NOenMk1abO+7aN8VCXmmks0PSC8FJ6/CKHxDGG0Lqkk
-49RDcbbvabTn3ayJ7/QZyJNiJTdJtJQD38INC8dV4lPH0JN9IVf2TVpN1wwqAnBh
-VGUHWGmMkUOs0F0ql3CBy+Gu/uyxOww7mAombFrK+gJEHdn8MYLWd/hHU5C+OEQA
-dNKFcvrcUBry0RN557Zuw2rZm+xoLS6Ug4e+vNsDPCRgNjn3kF/DKc7sUW5VnfsZ
-lkofyVi4MSJ3LXoIlcPE7/MAv8g3Yljhfv2IyQ1egOIjM5x/NMbB+oFZ/r5J/0ZV
-GUHvdfcxRZ00odpzAdqQmvA/Nb4p7FYX3J62Alu4XmvdWSI+JfdJxlGFvc3lDl/b
-iweqISBKdP14kovDlnkGx86+mycS9IwfjIdq50BrdUvgQ1j/sS9tNNUb4P/t8AF9
-4wvyBDSmInAQr5wcC2w3FlM+A+BK5qV1llRO68/vi7NZ6yy/uaXVSGehfoMyyeGp
-Tgcvls5M3Pb1skMN54PXRL9oOBbRbcal1Sf0BL5Fj8GPxq7nk54zXS/epFnKqwDV
-o9+tO9se2v5CstlJvhR/A+VyoAAm3VtdGNPA2Mv2g87ZjPZFhejquTJXyxpfSn8Y
-/G/d1b9OSwBwmhJsx8i1
-=Jkak
+iQIcBAABCAAGBQJXBUdMAAoJEN0jrNd/PrOhLUQP/RBq0IDla2ZA95ia2P0IZbx8
+t2MMjTZdZMX6i12YyDyYib92KDz5J6Nm6iIXvudxwHBF7S7Vt4wqviQx10d5j/TD
+n/zrubofXIF+ctLVDapSZqymRT2WIXV+oDpaPS+nudpSyxfBB6CncNXZ/G8rsFHl
+OPaz3F1pemebQaQPY8H8rrTpyfydJ/WNfhJnpaNwKj6kTV6pH08e0DIo/2wC8Eu5
++1YoRkkr43LF1nG63MYNkEDxKIWl3NZR8hmfm5su58a3gIgM4ILDBhVsmHNCd5F8
+QmXmbYXbMNzOs0MckC5Ib5B6XQrQq94AcMzZl7X7ZWhpraK+mobvulUf8SbgXfym
+couBjXjLpXg3jPRe9yj9e9UahkEHuVRvFfXLw9mQKfpgVi/wKP/mncM4BJagwQrR
+QXxDyzob00iwtiBEBQmJTdgpf6VLR+IIc2/BBXs9MQKKo4pL52k3F+KW4i4NJik4
+Q+QN/6At/yLUw673yDh+8n/TjQMBKL7G0GjSACwHzL8A8rQ+xuxv4A6DPUJo8M9F
+GXdekqITsPOrF7yRtohxQFPXpcKbcK4kGA2LOEy295Gm2kDSdweIk3wKxPzCY0eP
+YjUQFM2Az5Fj58Vde9H1gWtUVP73j9Yk0iBoj9x78EaLFTO+tYmufeZZJuJrP+ei
+YYS2GxXmhVEGmgBdveHl
+=2uBF
 -----END PGP SIGNATURE-----
 
---l76fUT7nc3MelDdI--
+--da4uJneut+ArUgXk--
