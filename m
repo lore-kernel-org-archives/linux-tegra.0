@@ -1,63 +1,70 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] cpufreq: tegra124: No need of setting platform-data
-Date: Thu, 7 Apr 2016 13:41:05 +0200
-Message-ID: <20160407114105.GB10231@ulmo.ba.sec>
-References: <60bdca9a8f31714d733ace7e7c25c46cd366082f.1459260280.git.viresh.kumar@linaro.org>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
+Subject: Re: [PATCH v10 8/9] usb: xhci: Add NVIDIA Tegra XUSB controller driver
+Date: Thu, 07 Apr 2016 14:50:25 +0300
+Message-ID: <57064981.2030004@linux.intel.com>
+References: <1457108379-20794-1-git-send-email-thierry.reding@gmail.com> <1457108379-20794-8-git-send-email-thierry.reding@gmail.com> <57063E91.1070202@linux.intel.com> <20160407110501.GA10231@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="8GpibOaaTibBMecb"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <60bdca9a8f31714d733ace7e7c25c46cd366082f.1459260280.git.viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Rafael Wysocki <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, ttynkkynen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160407110501.GA10231@ulmo.ba.sec>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Andrew Bresticker <abrestic@chromium.org>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 07.04.2016 14:05, Thierry Reding wrote:
+> On Thu, Apr 07, 2016 at 02:03:45PM +0300, Mathias Nyman wrote:
+>> On 04.03.2016 18:19, Thierry Reding wrote:
+>>> From: Thierry Reding <treding@nvidia.com>
+>>>
+>>> Add support for the on-chip XUSB controller present on Tegra SoCs. This
+>>> controller, when loaded with external firmware, exposes an interface
+>>> compliant with xHCI. This driver loads the firmware, starts the
+>>> controller, and is able to service host-specific messages sent by the
+>>> controller's firmware.
+>>>
+>>> The controller also supports USB device mode as well as powergating
+>>> of the SuperSpeed and host-controller logic when not in use, but
+>>> support for these is not yet implemented.
+>>>
+>>> Based on work by:
+>>>     Ajay Gupta <ajayg@nvidia.com>
+>>>     Bharath Yadav <byadav@nvidia.com>
+>>>     Andrew Bresticker <abrestic@chromium.org>
+>>>
+>>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>>> Cc: Mathias Nyman <mathias.nyman@intel.com>
+>>> Signed-off-by: Thierry Reding <treding@nvidia.com>
+>>> ---
+>>
+>> ...
+>>
+>>> +static int tegra_xusb_remove(struct platform_device *pdev)
+>>> +{
+>>> +	struct tegra_xusb *tegra = platform_get_drvdata(pdev);
+>>   > +	struct usb_hcd *hcd = tegra->hcd;
+>>> +	struct xhci_hcd *xhci;
+>>> +
+>>> +	if (tegra->fw_loaded) {
+>>> +		xhci = hcd_to_xhci(hcd);
+>>> +		usb_remove_hcd(xhci->shared_hcd);
+>>> +		usb_put_hcd(xhci->shared_hcd);
+>>> +		usb_remove_hcd(hcd);
+>>> +		tegra_xusb_padctl_put(tegra->padctl);
+>>> +		usb_put_hcd(hcd);
+>>> +		kfree(xhci);
+>>
+>> Don't free xhci here, xhci is a part of hcd (hcd_priv) and hcd is already freed in usb_put_hcd()
+>
+> Ah, this was indeed reported to me about two weeks ago and fixed since
+> then in my local tree.
+>
+>> Other than that I can't see any issues
+>
+> Thanks. Does this count as an Acked-by provided the kfree() is removed?
+>
 
---8GpibOaaTibBMecb
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+yes,
 
-On Tue, Mar 29, 2016 at 07:35:12PM +0530, Viresh Kumar wrote:
-> All CPUs on Tegra platform share clock/voltage lines and there is
-> absolutely no need of setting platform data for 'cpufreq-dt' platform
-> device, as that's the default case.
->=20
-> Stop setting platform data for cpufreq-dt device.
->=20
-> Signed-off-by: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> ---
-> Only compile tested.
->=20
->  drivers/cpufreq/tegra124-cpufreq.c | 7 -------
->  1 file changed, 7 deletions(-)
-
-Everything seems to be working fine after this:
-
-Tested-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
---8GpibOaaTibBMecb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXBkdOAAoJEN0jrNd/PrOhVmkQAIP1JXkU1FR7JWCPJdIi0wBK
-YoegQl4Kmp+7GmyJPOr96wdmMKKYRluaFHp4LWA7mmKH7omO+kEEZrBM6Ph09LZg
-g9h9Y9A+sOhH0oyyhR85vhzVpl7CJJo8YaTucb3sM2F4EZYnV2mKbK+U7HG7NGSu
-HNOELLDNEXevZmLQhPjhQyD0iyuO6DV2A9etYKc1uEUqTNvOohBaMLGmNs31uM7j
-hI0lp6vSmnWoZ9H/9FfcTvG5ay1Uz4Zddzxy+c/SwmF7mbfr14nQhe9OM7bWxMBi
-kfdbX41pXtGWFymeggin/0JmjD1Mn78iOJwZd3GVLRh0fS26hM2eM+l9FUBnQIpd
-5mOVuuTHCx+5UsucUMjgE7yoQvnEIvqdF3iVNtvzll1nDQwcLBy/KZMN36SRR+f9
-LPYVpRf8SjS8ayrJRWOzGwuA7Ai2PCSGEuRWKFKDdHREF7cdX39NlVyBLG+1vsgx
-zPmidCj2Beo8tVIYsiI2ojdvlajrrltlYvMGB4URacMUEjF9xmfSOEdcssASOeHj
-Gt9z96ZJ3IxuLYry2/dwcR1oWuI1LfFtbZz21s+dwFvUsad/fvrD2MIvFHXPYoSA
-+OXB1qE6R5T+o6xTql0fnHTdt7GSHS2wYwGqxl6xAUYQD18cjb0pAIfAsUafhzrz
-xUtAIYIZEVVlp4OSGarf
-=ocUn
------END PGP SIGNATURE-----
-
---8GpibOaaTibBMecb--
+Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
