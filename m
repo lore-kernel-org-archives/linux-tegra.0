@@ -1,60 +1,63 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [pinmux scripts PATCH] Add the Tegra210-smaug board
-Date: Thu, 7 Apr 2016 16:47:09 -0400
-Message-ID: <5706C74D.7060204@nvidia.com>
-References: <1459978380-8574-1-git-send-email-rklein@nvidia.com>
- <5706C36E.6090305@wwwdotorg.org> <5706C4AB.4000108@nvidia.com>
- <5706C6D4.8010007@wwwdotorg.org>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [pinmux scripts PATCH] soc: Add support for Parked bits for
+ Tegra210
+Date: Thu, 7 Apr 2016 14:49:23 -0600
+Message-ID: <5706C7D3.9030407@wwwdotorg.org>
+References: <1460060143-25086-1-git-send-email-rklein@nvidia.com>
+ <5706C475.7010102@wwwdotorg.org> <5706C634.80605@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5706C6D4.8010007-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <5706C634.80605-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 4/7/2016 4:45 PM, Stephen Warren wrote:
-> On 04/07/2016 02:35 PM, Rhyland Klein wrote:
->> On 4/7/2016 4:30 PM, Stephen Warren wrote:
->>> On 04/06/2016 03:33 PM, Rhyland Klein wrote:
->>>> Tegra210-smaug is the name for the Google Pixel C platform.
->>>
->>> I assume tegra210-smaug.dts is the DT filename that will appear in the
->>> mainline kernel, and the board name that will appear in U-Boot if U-Boot
->>> gets ported? In the past there have been disconnects between what Google
->>> wanted to call boards and what NVIDIA called boards. I'd like to avoid
->>> applying this and having to renaming everything later, if possible.
+On 04/07/2016 02:42 PM, Rhyland Klein wrote:
+> On 4/7/2016 4:35 PM, Stephen Warren wrote:
+>> On 04/07/2016 02:15 PM, Rhyland Klein wrote:
+>>> Tegra210 has a parked bit for each pin. Add code to express
+>>> this by updating the kernel driver MACROs to add in parked_*
+>>> fields so that the kernel can handle them as it sees fit.
 >>
->> Tegra210-smaug is the chosen kernel dt name for this board. That was
->> approved by Google before posting to the kernel. I believe therefore
->> that we should be fine to expect that name to be consistent between
->> kernel/uboot/etc.
-> 
-> Great:-)
-> 
->>> Does this table content match the production SW stack, and our Excel
->>> pinmux spreadsheet?
+>> I'd expect that wrapped around 74 characters. Our internal git
+>> auto-review thing's 50-character limit is a bit odd (I think it's only
+>> meant to apply to the synopsis not the full description but is either
+>> buggy or just doesn't make that clear).
+>
+> I'll fix the wrapping.
+>
 >>
->> Right now this matches the production SW stack. It has some variances
->> with the latest Excel pinmux spreadsheets, and I am working on trying to
->> verify that these are correct vs those, or vice-versa.
-> 
-> OK, if it matches the existing SW, that's probably good enough to just 
-> apply this. Do you want me to wait for V2, or just go ahead and apply it 
-> now? I imagine it might take a while to track down the differences, and 
-> the production SW works, so the configuration it's using obviously at 
-> least works even if it isn't perfect...
-> 
+>>> diff --git a/configs/tegra114.soc b/configs/tegra114.soc
+>>
+>>> +soc_pins_have_parked = False
+>>>    soc_drv_reg_base = 0x868
+>>>    soc_einput_b = 5
+>>>    soc_odrain_b = 6
+>>> +soc_parked_bank = 0
+>>> +soc_parked_bit = 0
+>>
+>> For SoCs with soc_pins_have_parked == False, can we simply omit the
+>> bank/bit values from the config file?
+>
+> I tried that originally, but I don't think I can. The reason is that
+> tegra_pmx_soc_parser uses a predefined array of attributes (copy_attrs)
+> and if the entry isn't in that, then it won't be populated and can't be
+> accessed later to fill in the values for say T210. If the entry IS in
+> the copy_attrs, then the script will fail if there isn't an entry in the
+> config file. Its unfortunate, and maybe someone more familiar with the
+> scripts might know of a way to get around this, something I haven't
+> found yet.
 
-I think, based on the fact that it is matching the existing production
-values, it should be good. If I eventually turn up differences, they
-will likely need to go to both places, so I will be making a patch
-anyway. So I say apply it.
+Oh yes, you're right; the parsing is all in one pass so we can't check 
+for the "have" attribute first and then conditionally act upon it to 
+copy the _b attributes.
 
--rhyland
-
-
--- 
-nvpublic
+But now you made me look at the code, I noticed that I think the new 
+Boolean value should be named soc_pins_all_have_parked, and the new 
+entry in copy_attrs should be sorted next to the existing 
+soc_pins_all_have_* entries:-) (That's because the _b value applies to 
+all pins, and is defined once at the SoC level, rather than potentially 
+having a different value per pin).
