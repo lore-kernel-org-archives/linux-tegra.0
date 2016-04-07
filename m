@@ -1,219 +1,66 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [pinmux scripts PATCH] Add the Tegra210-smaug board
-Date: Wed, 6 Apr 2016 17:33:00 -0400
-Message-ID: <1459978380-8574-1-git-send-email-rklein@nvidia.com>
+From: Viresh Kumar <viresh.kumar@linaro.org>
+Subject: Re: [PATCH] cpufreq: tegra124: No need of setting platform-data
+Date: Thu, 7 Apr 2016 13:51:43 +0530
+Message-ID: <20160407082143.GA3201@vireshk-i7>
+References: <60bdca9a8f31714d733ace7e7c25c46cd366082f.1459260280.git.viresh.kumar@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <60bdca9a8f31714d733ace7e7c25c46cd366082f.1459260280.git.viresh.kumar@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rafael Wysocki <rjw@rjwysocki.net>, ttynkkynen@nvidia.com, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linaro-kernel@lists.linaro.org, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra210-smaug is the name for the Google Pixel C platform.
+On 29-03-16, 19:35, Viresh Kumar wrote:
+> All CPUs on Tegra platform share clock/voltage lines and there is
+> absolutely no need of setting platform data for 'cpufreq-dt' platform
+> device, as that's the default case.
+> 
+> Stop setting platform data for cpufreq-dt device.
+> 
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+> Only compile tested.
+> 
+>  drivers/cpufreq/tegra124-cpufreq.c | 7 -------
+>  1 file changed, 7 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
+> index 20bcceb58ccc..43530254201a 100644
+> --- a/drivers/cpufreq/tegra124-cpufreq.c
+> +++ b/drivers/cpufreq/tegra124-cpufreq.c
+> @@ -14,7 +14,6 @@
+>  #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
+>  
+>  #include <linux/clk.h>
+> -#include <linux/cpufreq-dt.h>
+>  #include <linux/err.h>
+>  #include <linux/init.h>
+>  #include <linux/kernel.h>
+> @@ -69,10 +68,6 @@ static void tegra124_cpu_switch_to_pllx(struct tegra124_cpufreq_priv *priv)
+>  	clk_set_parent(priv->cpu_clk, priv->pllx_clk);
+>  }
+>  
+> -static struct cpufreq_dt_platform_data cpufreq_dt_pd = {
+> -	.independent_clocks = false,
+> -};
+> -
+>  static int tegra124_cpufreq_probe(struct platform_device *pdev)
+>  {
+>  	struct tegra124_cpufreq_priv *priv;
+> @@ -129,8 +124,6 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
+>  
+>  	cpufreq_dt_devinfo.name = "cpufreq-dt";
+>  	cpufreq_dt_devinfo.parent = &pdev->dev;
+> -	cpufreq_dt_devinfo.data = &cpufreq_dt_pd;
+> -	cpufreq_dt_devinfo.size_data = sizeof(cpufreq_dt_pd);
+>  
+>  	priv->cpufreq_dt_pdev =
+>  		platform_device_register_full(&cpufreq_dt_devinfo);
 
-Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- configs/tegra210-smaug.board | 173 +++++++++++++++++++++++++++++++++++++++++++
- csv-to-board.py              |   6 ++
- 2 files changed, 179 insertions(+)
- create mode 100644 configs/tegra210-smaug.board
+Ping !!
 
-diff --git a/configs/tegra210-smaug.board b/configs/tegra210-smaug.board
-new file mode 100644
-index 000000000000..5570c789dad2
---- /dev/null
-+++ b/configs/tegra210-smaug.board
-@@ -0,0 +1,173 @@
-+soc = 'tegra210'
-+
-+pins = (
-+    #pin,                    mux,          gpio_init, pull,   tri,   e_inp, od,    e_io_hv
-+    ('aud_mclk_pbb0',        'aud',        None,      'none', False, False, False, False),
-+    ('dvfs_pwm_pbb1',        'rsvd0',      None,      'down', True,  False, False, False),
-+    ('dvfs_clk_pbb2',        'rsvd0',      None,      'down', True,  False, False, False),
-+    ('gpio_x1_aud_pbb3',     None,         'out0',    'none', False, False, False, False),
-+    ('gpio_x3_aud_pbb4',     None,         'in',      'up',   False, True,  False, False),
-+    ('dap1_din_pb1',         'i2s1',       None,      'none', False, True,  False, False),
-+    ('dap1_dout_pb2',        'i2s1',       None,      'none', False, False, False, False),
-+    ('dap1_fs_pb0',          'i2s1',       None,      'none', False, False, False, False),
-+    ('dap1_sclk_pb3',        'i2s1',       None,      'none', False, False, False, False),
-+    ('spi2_mosi_pb4',        None,         'in',      'up',   False, True,  False, False),
-+    ('spi2_miso_pb5',        'rsvd2',      None,      'down', True,  False, False, False),
-+    ('spi2_sck_pb6',         'rsvd2',      None,      'down', True,  False, False, False),
-+    ('spi2_cs0_pb7',         'rsvd2',      None,      'down', True,  False, False, False),
-+    ('spi2_cs1_pdd0',        'rsvd1',      None,      'down', True,  False, False, False),
-+    ('dmic1_clk_pe0',        None,         'in',      'none', False, True,  False, False),
-+    ('dmic1_dat_pe1',        None,         'out0',    'none', False, False, False, False),
-+    ('dmic2_clk_pe2',        None,         'in',      'none', False, True,  False, False),
-+    ('dmic2_dat_pe3',        None,         'in',      'up',   False, True,  False, False),
-+    ('dmic3_clk_pe4',        None,         'in',      'none', False, True,  False, False),
-+    ('dmic3_dat_pe5',        'rsvd2',      None,      'down', True,  False, False, False),
-+    ('pe6',                  None,         'in',      'up',   False, True,  False, False),
-+    ('pe7',                  None,         'in',      'up',   False, True,  False, False),
-+    ('gen3_i2c_scl_pf0',     'i2c3',       None,      'none', False, True,  False, False),
-+    ('gen3_i2c_sda_pf1',     'i2c3',       None,      'none', False, True,  False, False),
-+    ('cam_i2c_scl_ps2',      'i2cvi',      None,      'none', False, True,  False, False),
-+    ('cam_i2c_sda_ps3',      'i2cvi',      None,      'none', False, True,  False, False),
-+    ('cam1_mclk_ps0',        'extperiph3', None,      'none', False, False, False, False),
-+    ('cam2_mclk_ps1',        'extperiph3', None,      'none', False, False, False, False),
-+    ('cam_rst_ps4',          'rsvd1',      None,      'down', True,  False, False, False),
-+    ('cam_af_en_ps5',        None,         'out0',    'none', False, False, False, False),
-+    ('cam_flash_en_ps6',     'rsvd2',      None,      'down', True,  False, False, False),
-+    ('cam1_pwdn_ps7',        None,         'out0',    'none', False, False, False, False),
-+    ('cam2_pwdn_pt0',        None,         'out0',    'none', False, False, False, False),
-+    ('cam1_strobe_pt1',      'rsvd1',      None,      'down', True,  False, False, False),
-+    ('pex_l0_clkreq_n_pa1',  'rsvd1',      None,      'down', True,  False, False, False),
-+    ('pex_l0_rst_n_pa0',     'rsvd1',      None,      'down', True,  False, False, False),
-+    ('pex_l1_clkreq_n_pa4',  'rsvd1',      None,      'down', True,  False, False, False),
-+    ('pex_l1_rst_n_pa3',     'rsvd1',      None,      'down', True,  False, False, False),
-+    ('pex_wake_n_pa2',       'rsvd1',      None,      'down', True,  False, False, False),
-+    ('sata_led_active_pa5',  'rsvd1',      None,      'down', True,  False, False, False),
-+    ('pa6',                  'rsvd1',      None,      'down', True,  False, False, False),
-+    ('sdmmc1_clk_pm0',       'rsvd1',      None,      'down', True,  False, False, False),
-+    ('sdmmc1_cmd_pm1',       'rsvd2',      None,      'down', True,  False, False, False),
-+    ('sdmmc1_dat0_pm5',      None,         'out1',    'none', False, False, False, False),
-+    ('sdmmc1_dat1_pm4',      None,         'in',      'none', False, True,  False, False),
-+    ('sdmmc1_dat2_pm3',      'rsvd2',      None,      'down', True,  False, False, False),
-+    ('sdmmc1_dat3_pm2',      'rsvd2',      None,      'down', True,  False, False, False),
-+    ('sdmmc3_clk_pp0',       'rsvd1',      None,      'down', True,  False, False, False),
-+    ('sdmmc3_cmd_pp1',       'rsvd1',      None,      'down', True,  False, False, False),
-+    ('sdmmc3_dat0_pp5',      'rsvd1',      None,      'down', True,  False, False, False),
-+    ('sdmmc3_dat1_pp4',      'rsvd1',      None,      'down', True,  False, False, False),
-+    ('sdmmc3_dat2_pp3',      'rsvd1',      None,      'down', True,  False, False, False),
-+    ('sdmmc3_dat3_pp2',      'rsvd1',      None,      'down', True,  False, False, False),
-+    ('als_prox_int_px3',     'rsvd0',      None,      'down', True,  False, False, False),
-+    ('temp_alert_px4',       None,         'in',      'up',   False, True,  False, False),
-+    ('motion_int_px2',       'rsvd0',      None,      'down', True,  False, False, False),
-+    ('touch_rst_pv6',        None,         'out0',    'none', False, False, False, False),
-+    ('touch_clk_pv7',        'touch',      None,      'none', False, False, False, False),
-+    ('touch_int_px1',        None,         'in',      'none', False, True,  False, False),
-+    ('modem_wake_ap_px0',    'rsvd0',      None,      'down', True,  False, False, False),
-+    ('shutdown',             'shutdown',   None,      'none', False, False, False, False),
-+    ('button_power_on_px5',  None,         'in',      'up',   False, True,  False, False),
-+    ('button_vol_up_px6',    None,         'in',      'none', False, True,  False, False),
-+    ('button_vol_down_px7',  None,         'in',      'up',   False, True,  False, False),
-+    ('button_slide_sw_py0',  None,         'in',      'up',   False, True,  False, False),
-+    ('button_home_py1',      None,         'in',      'up',   False, True,  False, False),
-+    ('lcd_te_py2',           'displaya',   None,      'none', False, True,  False, False),
-+    ('lcd_bl_pwm_pv0',       'rsvd3',      None,      'down', True,  False, False, False),
-+    ('lcd_bl_en_pv1',        None,         'out0',    'none', False, False, False, False),
-+    ('lcd_rst_pv2',          None,         'out0',    'none', False, False, False, False),
-+    ('lcd_gpio1_pv3',        None,         'out0',    'none', False, False, False, False),
-+    ('lcd_gpio2_pv4',        None,         'out0',    'none', False, False, False, False),
-+    ('ap_ready_pv5',         'rsvd0',      None,      'down', True,  False, False, False),
-+    ('pwr_i2c_scl_py3',      'i2cpmu',     None,      'none', False, True,  False, False),
-+    ('pwr_i2c_sda_py4',      'i2cpmu',     None,      'none', False, True,  False, False),
-+    ('clk_32k_in',           'clk',        None,      'none', False, True,  False, False),
-+    ('clk_32k_out_py5',      'soc',        None,      'up',   False, True,  False, False),
-+    ('pz0',                  None,         'in',      'up',   False, True,  False, False),
-+    ('pz1',                  None,         'in',      'up',   False, True,  False, False),
-+    ('pz2',                  None,         'in',      'up',   False, True,  False, False),
-+    ('pz3',                  'rsvd1',      None,      'down', True,  False, False, False),
-+    ('pz4',                  'rsvd1',      None,      'down', True,  False, False, False),
-+    ('pz5',                  'soc',        None,      'up',   False, True,  False, False),
-+    ('clk_req',              'rsvd1',      None,      'down', True,  False, False, False),
-+    ('core_pwr_req',         'core',       None,      'none', False, False, False, False),
-+    ('cpu_pwr_req',          'cpu',        None,      'none', False, False, False, False),
-+    ('pwr_int_n',            'pmi',        None,      'up',   False, True,  False, False),
-+    ('dap4_din_pj5',         'rsvd1',      None,      'down', True,  False, False, False),
-+    ('dap4_dout_pj6',        'rsvd1',      None,      'down', True,  False, False, False),
-+    ('dap4_fs_pj4',          'rsvd1',      None,      'down', True,  False, False, False),
-+    ('dap4_sclk_pj7',        'rsvd1',      None,      'down', True,  False, False, False),
-+    ('gen1_i2c_scl_pj1',     'i2c1',       None,      'none', False, True,  False, False),
-+    ('gen1_i2c_sda_pj0',     'i2c1',       None,      'none', False, True,  False, False),
-+    ('gen2_i2c_scl_pj2',     'i2c2',       None,      'none', False, True,  False, True),
-+    ('gen2_i2c_sda_pj3',     'i2c2',       None,      'none', False, True,  False, True),
-+    ('uart2_tx_pg0',         'uartb',      None,      'down', True,  False, False, False),
-+    ('uart2_rx_pg1',         'uartb',      None,      'down', True,  False, False, False),
-+    ('uart2_rts_pg2',        'rsvd2',      None,      'down', True,  False, False, False),
-+    ('uart2_cts_pg3',        None,         'out0',    'none', False, False, False, False),
-+    ('uart1_tx_pu0',         'uarta',      None,      'none', False, False, False, False),
-+    ('uart1_rx_pu1',         'uarta',      None,      'none', False, True,  False, False),
-+    ('uart1_rts_pu2',        'rsvd1',      None,      'down', True,  False, False, False),
-+    ('uart1_cts_pu3',        'rsvd1',      None,      'down', True,  False, False, False),
-+    ('jtag_rtck',            'jtag',       None,      'up',   False, False, False, False),
-+    ('pk0',                  None,         'in',      'none', False, True,  False, False),
-+    ('pk1',                  None,         'in',      'none', False, True,  False, False),
-+    ('pk2',                  None,         'in',      'none', False, True,  False, False),
-+    ('pk3',                  None,         'out0',    'none', False, False, False, False),
-+    ('pk4',                  'rsvd1',      None,      'down', True,  False, False, False),
-+    ('pk5',                  'rsvd1',      None,      'down', True,  False, False, False),
-+    ('pk6',                  'rsvd1',      None,      'down', True,  False, False, False),
-+    ('pk7',                  'rsvd1',      None,      'down', True,  False, False, False),
-+    ('pl0',                  'rsvd0',      None,      'down', True,  False, False, False),
-+    ('pl1',                  'rsvd1',      None,      'down', True,  False, False, False),
-+    ('spi1_mosi_pc0',        'spi1',       None,      'none', False, False, False, False),
-+    ('spi1_miso_pc1',        'spi1',       None,      'none', False, True,  False, False),
-+    ('spi1_sck_pc2',         'spi1',       None,      'none', False, False, False, False),
-+    ('spi1_cs0_pc3',         'spi1',       None,      'none', False, False, False, False),
-+    ('spi1_cs1_pc4',         'rsvd1',      None,      'down', True,  False, False, False),
-+    ('spi4_mosi_pc7',        'rsvd1',      None,      'down', True,  False, False, False),
-+    ('spi4_miso_pd0',        'rsvd1',      None,      'down', True,  False, False, False),
-+    ('spi4_sck_pc5',         'rsvd1',      None,      'down', True,  False, False, False),
-+    ('spi4_cs0_pc6',         'rsvd1',      None,      'down', True,  False, False, False),
-+    ('uart3_tx_pd1',         'uartc',      None,      'none', False, False, False, False),
-+    ('uart3_rx_pd2',         'uartc',      None,      'none', False, True,  False, False),
-+    ('uart3_rts_pd3',        'uartc',      None,      'none', False, False, False, False),
-+    ('uart3_cts_pd4',        'uartc',      None,      'none', False, True,  False, False),
-+    ('wifi_en_ph0',          None,         'out0',    'none', False, False, False, False),
-+    ('wifi_rst_ph1',         None,         'out0',    'none', False, False, False, False),
-+    ('wifi_wake_ap_ph2',     None,         'in',      'none', False, True,  False, False),
-+    ('ap_wake_bt_ph3',       None,         'out0',    'none', False, False, False, False),
-+    ('bt_rst_ph4',           None,         'out0',    'none', False, False, False, False),
-+    ('bt_wake_ap_ph5',       None,         'in',      'none', False, True,  False, False),
-+    ('ph6',                  None,         'in',      'none', False, True,  False, False),
-+    ('ap_wake_nfc_ph7',      'rsvd0',      None,      'down', True,  False, False, False),
-+    ('nfc_en_pi0',           'rsvd0',      None,      'down', True,  False, False, False),
-+    ('nfc_int_pi1',          'rsvd0',      None,      'down', True,  False, False, False),
-+    ('gps_en_pi2',           None,         'out0',    'none', False, False, False, False),
-+    ('gps_rst_pi3',          'rsvd0',      None,      'down', True,  False, False, False),
-+    ('uart4_tx_pi4',         'uartd',      None,      'none', False, False, False, False),
-+    ('uart4_rx_pi5',         'uartd',      None,      'none', False, True,  False, False),
-+    ('uart4_rts_pi6',        'uartd',      None,      'none', False, False, False, False),
-+    ('uart4_cts_pi7',        'uartd',      None,      'none', False, True,  False, False),
-+    ('qspi_io0_pee2',        'qspi',       None,      'none', False, False, False, False),
-+    ('qspi_io1_pee3',        'qspi',       None,      'none', False, True,  False, False),
-+    ('qspi_sck_pee0',        'qspi',       None,      'none', False, False, False, False),
-+    ('qspi_cs_n_pee1',       'qspi',       None,      'none', False, False, False, False),
-+    ('qspi_io2_pee4',        'rsvd1',      None,      'down', True,  False, False, False),
-+    ('qspi_io3_pee5',        'rsvd1',      None,      'down', True,  False, False, False),
-+    ('dap2_din_paa2',        'i2s2',       None,      'none', False, True,  False, False),
-+    ('dap2_dout_paa3',       'i2s2',       None,      'none', False, False, False, False),
-+    ('dap2_fs_paa0',         'i2s2',       None,      'none', False, False, False, False),
-+    ('dap2_sclk_paa1',       'i2s2',       None,      'none', False, False, False, False),
-+    ('pcc7',                 None,         'in',      'none', False, True,  False, False),
-+    ('spdif_out_pcc2',       'rsvd1',      None,      'down', True,  False, False, False),
-+    ('spdif_in_pcc3',        'rsvd1',      None,      'down', True,  False, False, False),
-+    ('usb_vbus_en0_pcc4',    'rsvd1',      None,      'down', True,  False, False, False),
-+    ('usb_vbus_en1_pcc5',    'rsvd1',      None,      'down', True,  False, False, False),
-+    ('dp_hpd0_pcc6',         None,         'in',      'none', False, True,  False, False),
-+    ('hdmi_int_dp_hpd_pcc1', None,         'in',      'none', False, True,  False, False),
-+    ('hdmi_cec_pcc0',        'rsvd1',      None,      'down', True,  False, False, False),
-+)
-+
-+drive_groups = (
-+)
-+
-+mipi_pad_ctrl_groups = (
-+    #pin, mux
-+)
-diff --git a/csv-to-board.py b/csv-to-board.py
-index 85b5d0c3f16c..2de66c527bc8 100755
---- a/csv-to-board.py
-+++ b/csv-to-board.py
-@@ -82,6 +82,12 @@ supported_boards = {
-         'rsvd_base': 0,
-         'soc': 'tegra210',
-     },
-+    'tegra210-smaug': {
-+        # erista_customer_pinmux_v04_0420.xlsm
-+        'filename': 'csv/tegra210-smaug-v04_0420.csv',
-+        'rsvd_base': 0,
-+        'soc': 'tegra210',
-+    },
-     'venice2': {
-         # Venice2_T124_customer_pinmux_based_on_P4_rev47_2013-07-12.xlsm worksheet Customer_Configuration (0-based rsvd)
-         'filename': 'nv-internal-data/Venice2_T124_customer_pinmux_based_on_P4_rev47_2013-07-12.csv',
 -- 
-1.9.1
+viresh
