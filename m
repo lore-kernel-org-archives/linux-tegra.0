@@ -1,70 +1,145 @@
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-Subject: Re: [PATCH v10 8/9] usb: xhci: Add NVIDIA Tegra XUSB controller driver
-Date: Thu, 07 Apr 2016 14:50:25 +0300
-Message-ID: <57064981.2030004@linux.intel.com>
-References: <1457108379-20794-1-git-send-email-thierry.reding@gmail.com> <1457108379-20794-8-git-send-email-thierry.reding@gmail.com> <57063E91.1070202@linux.intel.com> <20160407110501.GA10231@ulmo.ba.sec>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [pinmux scripts PATCH] soc: Add support for Parked bits for Tegra210
+Date: Thu, 7 Apr 2016 16:15:43 -0400
+Message-ID: <1460060143-25086-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160407110501.GA10231@ulmo.ba.sec>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Mathias Nyman <mathias.nyman@intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Andrew Bresticker <abrestic@chromium.org>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07.04.2016 14:05, Thierry Reding wrote:
-> On Thu, Apr 07, 2016 at 02:03:45PM +0300, Mathias Nyman wrote:
->> On 04.03.2016 18:19, Thierry Reding wrote:
->>> From: Thierry Reding <treding@nvidia.com>
->>>
->>> Add support for the on-chip XUSB controller present on Tegra SoCs. This
->>> controller, when loaded with external firmware, exposes an interface
->>> compliant with xHCI. This driver loads the firmware, starts the
->>> controller, and is able to service host-specific messages sent by the
->>> controller's firmware.
->>>
->>> The controller also supports USB device mode as well as powergating
->>> of the SuperSpeed and host-controller logic when not in use, but
->>> support for these is not yet implemented.
->>>
->>> Based on work by:
->>>     Ajay Gupta <ajayg@nvidia.com>
->>>     Bharath Yadav <byadav@nvidia.com>
->>>     Andrew Bresticker <abrestic@chromium.org>
->>>
->>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->>> Cc: Mathias Nyman <mathias.nyman@intel.com>
->>> Signed-off-by: Thierry Reding <treding@nvidia.com>
->>> ---
->>
->> ...
->>
->>> +static int tegra_xusb_remove(struct platform_device *pdev)
->>> +{
->>> +	struct tegra_xusb *tegra = platform_get_drvdata(pdev);
->>   > +	struct usb_hcd *hcd = tegra->hcd;
->>> +	struct xhci_hcd *xhci;
->>> +
->>> +	if (tegra->fw_loaded) {
->>> +		xhci = hcd_to_xhci(hcd);
->>> +		usb_remove_hcd(xhci->shared_hcd);
->>> +		usb_put_hcd(xhci->shared_hcd);
->>> +		usb_remove_hcd(hcd);
->>> +		tegra_xusb_padctl_put(tegra->padctl);
->>> +		usb_put_hcd(hcd);
->>> +		kfree(xhci);
->>
->> Don't free xhci here, xhci is a part of hcd (hcd_priv) and hcd is already freed in usb_put_hcd()
->
-> Ah, this was indeed reported to me about two weeks ago and fixed since
-> then in my local tree.
->
->> Other than that I can't see any issues
->
-> Thanks. Does this count as an Acked-by provided the kfree() is removed?
->
+Tegra210 has a parked bit for each pin. Add code to express
+this by updating the kernel driver MACROs to add in parked_*
+fields so that the kernel can handle them as it sees fit.
 
-yes,
+Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ configs/tegra114.soc            |  3 +++
+ configs/tegra124.soc            |  3 +++
+ configs/tegra210.soc            |  3 +++
+ configs/tegra30.soc             |  3 +++
+ soc-to-kernel-pinctrl-driver.py | 12 ++++++++++++
+ tegra_pmx_soc_parser.py         |  3 +++
+ 6 files changed, 27 insertions(+)
 
-Acked-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+diff --git a/configs/tegra114.soc b/configs/tegra114.soc
+index 64454c0625db..22db99726215 100644
+--- a/configs/tegra114.soc
++++ b/configs/tegra114.soc
+@@ -21,9 +21,12 @@ soc_pins_have_ior = True
+ soc_pins_have_od = True
+ soc_pins_have_rcv_sel = True
+ soc_pins_have_schmitt = False
++soc_pins_have_parked = False
+ soc_drv_reg_base = 0x868
+ soc_einput_b = 5
+ soc_odrain_b = 6
++soc_parked_bank = 0
++soc_parked_bit = 0
+ 
+ gpios = (
+     #name,                gpio,  reg,    f0,           f1,         f2,             f3,         od,    ior,   rcv_sel
+diff --git a/configs/tegra124.soc b/configs/tegra124.soc
+index aaeaab85caf7..18c00c12b0d3 100644
+--- a/configs/tegra124.soc
++++ b/configs/tegra124.soc
+@@ -22,10 +22,13 @@ soc_pins_have_ior = True
+ soc_pins_have_od = True
+ soc_pins_have_rcv_sel = True
+ soc_pins_have_schmitt = False
++soc_pins_have_parked = False
+ soc_drv_reg_base = 0x868
+ soc_mipipadctrl_reg_base = 0x820
+ soc_einput_b = 5
+ soc_odrain_b = 6
++soc_parked_bank = 0
++soc_parked_bit = 0
+ 
+ gpios = (
+     #name,                gpio,  reg,    f0,           f1,         f2,             f3,            od,    ior,   rcv_sel
+diff --git a/configs/tegra210.soc b/configs/tegra210.soc
+index 786b0950b85a..9fbea80fe287 100644
+--- a/configs/tegra210.soc
++++ b/configs/tegra210.soc
+@@ -18,9 +18,12 @@ soc_pins_have_ior = False
+ soc_pins_have_od = True
+ soc_pins_have_rcv_sel = False
+ soc_pins_have_schmitt = True
++soc_pins_have_parked = True
+ soc_drv_reg_base = 0x8d4
+ soc_einput_b = 6
+ soc_odrain_b = 11
++soc_parked_bank = 1
++soc_parked_bit = 5
+ 
+ gpios = (
+     #name,              gpio,  reg,    f0,           f1,       f2,      f3,      hsm,   drvtype, e_io_hv
+diff --git a/configs/tegra30.soc b/configs/tegra30.soc
+index fd6c6ad7e750..78354dff997d 100644
+--- a/configs/tegra30.soc
++++ b/configs/tegra30.soc
+@@ -18,9 +18,12 @@ soc_pins_have_ior = True
+ soc_pins_have_od = True
+ soc_pins_have_rcv_sel = False
+ soc_pins_have_schmitt = False
++soc_pins_have_parked = False
+ soc_drv_reg_base = 0x868
+ soc_einput_b = 5
+ soc_odrain_b = 6
++soc_parked_bank = 0
++soc_parked_bit = 0
+ 
+ gpios = (
+     #name,              gpio,  reg,    f0,            f1,         f2,         f3,         od,    ior
+diff --git a/soc-to-kernel-pinctrl-driver.py b/soc-to-kernel-pinctrl-driver.py
+index 46547b194d33..c78da5955782 100755
+--- a/soc-to-kernel-pinctrl-driver.py
++++ b/soc-to-kernel-pinctrl-driver.py
+@@ -259,6 +259,17 @@ s += '''\
+ 		.rcv_sel_bit = %(rcv_sel_val)s
+ ''' % globals()
+ 
++if soc.soc_pins_have_parked:
++    s += '''\
++		.parked_reg = PINGROUP_REG(r),
++		.parked_bank = %s,
++		.parked_bit = %s,
++''' % (soc.soc_parked_bank, soc.soc_parked_bit)
++else:
++    s+= '''\
++		.parked_reg = -1,
++'''
++
+ if soc.soc_pins_have_hsm:
+     s += '''\
+ 		.hsm_bit = PINGROUP_BIT_##hsm(9),
+@@ -358,6 +369,7 @@ s += '''\
+ 		.rcv_sel_bit = -1,
+ 		.drv_reg = DRV_PINGROUP_REG(r),
+ 		.drv_bank = 0,
++		.parked_reg = -1,
+ 		.hsm_bit = %(hsm_bit_val)s,
+ 		.schmitt_bit = %(schmitt_bit_val)s,
+ 		.lpmd_bit = %(lpmd_bit_val)s,
+diff --git a/tegra_pmx_soc_parser.py b/tegra_pmx_soc_parser.py
+index 2b5d17001e58..81a4e7375a84 100644
+--- a/tegra_pmx_soc_parser.py
++++ b/tegra_pmx_soc_parser.py
+@@ -158,10 +158,13 @@ class Soc(TopLevelParsedObj):
+             ('soc_pins_have_od', None),
+             ('soc_pins_have_rcv_sel', None),
+             ('soc_pins_have_schmitt', None),
++            ('soc_pins_have_parked', None),
+             ('soc_drv_reg_base', None),
+             ('soc_mipipadctrl_reg_base', 0),
+             ('soc_einput_b', None),
+             ('soc_odrain_b', None),
++            ('soc_parked_bank', None),
++            ('soc_parked_bit', None),
+         )
+         TopLevelParsedObj.__init__(self, name, copy_attrs, data)
+ 
+-- 
+1.9.1
