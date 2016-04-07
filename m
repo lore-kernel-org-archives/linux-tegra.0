@@ -1,56 +1,56 @@
 From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [pinmux scripts PATCH] Add the Tegra210-smaug board
-Date: Thu, 7 Apr 2016 16:35:55 -0400
-Message-ID: <5706C4AB.4000108@nvidia.com>
-References: <1459978380-8574-1-git-send-email-rklein@nvidia.com>
- <5706C36E.6090305@wwwdotorg.org>
+Subject: Re: [pinmux scripts PATCH] soc: Add support for Parked bits for
+ Tegra210
+Date: Thu, 7 Apr 2016 16:42:28 -0400
+Message-ID: <5706C634.80605@nvidia.com>
+References: <1460060143-25086-1-git-send-email-rklein@nvidia.com>
+ <5706C475.7010102@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5706C36E.6090305-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <5706C475.7010102-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 4/7/2016 4:30 PM, Stephen Warren wrote:
-> On 04/06/2016 03:33 PM, Rhyland Klein wrote:
->> Tegra210-smaug is the name for the Google Pixel C platform.
+On 4/7/2016 4:35 PM, Stephen Warren wrote:
+> On 04/07/2016 02:15 PM, Rhyland Klein wrote:
+>> Tegra210 has a parked bit for each pin. Add code to express
+>> this by updating the kernel driver MACROs to add in parked_*
+>> fields so that the kernel can handle them as it sees fit.
 > 
-> I assume tegra210-smaug.dts is the DT filename that will appear in the 
-> mainline kernel, and the board name that will appear in U-Boot if U-Boot 
-> gets ported? In the past there have been disconnects between what Google 
-> wanted to call boards and what NVIDIA called boards. I'd like to avoid 
-> applying this and having to renaming everything later, if possible.
+> I'd expect that wrapped around 74 characters. Our internal git 
+> auto-review thing's 50-character limit is a bit odd (I think it's only 
+> meant to apply to the synopsis not the full description but is either 
+> buggy or just doesn't make that clear).
 
-Tegra210-smaug is the chosen kernel dt name for this board. That was
-approved by Google before posting to the kernel. I believe therefore
-that we should be fine to expect that name to be consistent between
-kernel/uboot/etc.
+I'll fix the wrapping.
 
 > 
-> Does this table content match the production SW stack, and our Excel 
-> pinmux spreadsheet?
-
-Right now this matches the production SW stack. It has some variances
-with the latest Excel pinmux spreadsheets, and I am working on trying to
-verify that these are correct vs those, or vice-versa.
-
+>> diff --git a/configs/tegra114.soc b/configs/tegra114.soc
 > 
-> If so, I'll apply this.
+>> +soc_pins_have_parked = False
+>>   soc_drv_reg_base = 0x868
+>>   soc_einput_b = 5
+>>   soc_odrain_b = 6
+>> +soc_parked_bank = 0
+>> +soc_parked_bit = 0
 > 
-> If not, it would be good to at least document what the differences are, 
-> and hopefully track down why they exist and get our spreadsheet updated 
-> to match the production SW or vice-versa.
+> For SoCs with soc_pins_have_parked == False, can we simply omit the 
+> bank/bit values from the config file?
 
-Already working on tracking down differences with the spreadsheets and
-making sure we have the most correct version we have (and that
-appropriate spreadsheets get updated to reflect these settings).
-
-I'll post a v2 when I can get a final answer with either changes
-required or notes describing the differences.
+I tried that originally, but I don't think I can. The reason is that
+tegra_pmx_soc_parser uses a predefined array of attributes (copy_attrs)
+and if the entry isn't in that, then it won't be populated and can't be
+accessed later to fill in the values for say T210. If the entry IS in
+the copy_attrs, then the script will fail if there isn't an entry in the
+config file. Its unfortunate, and maybe someone more familiar with the
+scripts might know of a way to get around this, something I haven't
+found yet.
 
 -rhyland
+
 -- 
 nvpublic
