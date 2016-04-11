@@ -1,59 +1,42 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/2] dt-bindings: tegra: Rename some bindings for
- consistency
-Date: Mon, 11 Apr 2016 09:58:14 -0600
-Message-ID: <570BC996.3050804@wwwdotorg.org>
-References: <1460383086-26957-1-git-send-email-thierry.reding@gmail.com>
- <1460383086-26957-2-git-send-email-thierry.reding@gmail.com>
+Subject: Re: [PATCH] ARM: tegra: Remove 0, prefix from unit-addresses
+Date: Mon, 11 Apr 2016 10:05:21 -0600
+Message-ID: <570BCB41.2030504@wwwdotorg.org>
+References: <1460383271-27306-2-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1460383086-26957-2-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1460383271-27306-2-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/11/2016 07:58 AM, Thierry Reding wrote:
+On 04/11/2016 08:01 AM, Thierry Reding wrote:
 > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >
-> Device tree binding for NVIDIA Tegra have traditionally carried the
-> "nvidia," vendor prefix in the filename. A couple of odd ones don't, so
-> fix them up for consistency.
->
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->   .../devicetree/bindings/ata/nvidia,tegra-ahci.txt  |  32 ++
->   .../devicetree/bindings/ata/tegra-sata.txt         |  32 --
->   .../bindings/dma/nvidia,tegra20-apbdma.txt         |  44 +++
->   .../devicetree/bindings/dma/tegra20-apbdma.txt     |  44 ---
->   .../memory-controllers/nvidia,tegra-emc.txt        | 374 +++++++++++++++++++++
->   .../bindings/memory-controllers/tegra-emc.txt      | 374 ---------------------
->   .../bindings/thermal/nvidia,tegra-soctherm.txt     |  67 ++++
->   .../devicetree/bindings/thermal/tegra-soctherm.txt |  67 ----
->   8 files changed, 517 insertions(+), 517 deletions(-)
->   create mode 100644 Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.txt
+> When Tegra124 support was first merged the unit-addresses of all devices
+> were listed with a "0," prefix to encode the reg property's second cell.
+> It turns out that this notation is not correct, and the "," separator is
+> only used to separate fields in the unit address (such as the device and
+> function number in PCI devices), not individual cells for addresses with
+> more than one cell.
 
-The filenames should exactly match the (first) compatible value they 
-document for consistency with other bindings. That should be 
-nvidia,tegra124-ahci.txt.
+> diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
 
->   delete mode 100644 Documentation/devicetree/bindings/ata/tegra-sata.txt
->   create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra20-apbdma.txt
->   delete mode 100644 Documentation/devicetree/bindings/dma/tegra20-apbdma.txt
->   create mode 100644 Documentation/devicetree/bindings/memory-controllers/nvidia,tegra-emc.txt
+> -	gpu@0,57000000 {
+> +	gpu@57000000 {
+>   		/*
+>   		 * Node left disabled on purpose - the bootloader will enable
+>   		 * it after having set the VPR up
 
-That should be nvidia,tegra124-emc.txt.
+So the bootloader doesn't actually do that for the new node name at 
+present. I have written a patch to make it do so, but haven't sent it 
+yet since I wrote it in the middle of a large cleanup of U-Boot. I 
+expect I can shuffle it to the front of the series and send it soon 
+though. Without a new bootloader that contains this change, IIUC all 
+graphics will be non-operative if this change is applied.
 
->   delete mode 100644 Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
->   create mode 100644 Documentation/devicetree/bindings/thermal/nvidia,tegra-soctherm.txt
->   delete mode 100644 Documentation/devicetree/bindings/thermal/tegra-soctherm.txt
-
-That should be nvidia,tegra124-soctherm.txt.
-
-I assume the delete/create content is identical, although I didn't both 
-to check.
-
-With the fixes above,
+Aside from that,
 Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
