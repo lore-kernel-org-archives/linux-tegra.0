@@ -1,144 +1,197 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v4 2/2] PCI: tegra: Support per-lane PHYs
-Date: Mon, 11 Apr 2016 13:11:19 +0200
-Message-ID: <20160411111119.GB17743@ulmo.ba.sec>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v4 1/2] dt-bindings: pci: tegra: Update for per-lane PHYs
+Date: Mon, 11 Apr 2016 13:26:54 +0200
+Message-ID: <20160411112654.GC17743@ulmo.ba.sec>
 References: <1460131994-24493-1-git-send-email-thierry.reding@gmail.com>
- <1460131994-24493-2-git-send-email-thierry.reding@gmail.com>
- <20160408180528.GC15034@localhost>
+ <20160408191142.GD15034@localhost>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="5/uDoXvLw7AC5HRs"
-Return-path: <linux-pci-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="xesSdrSSBC0PokLI"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20160408180528.GC15034@localhost>
-Sender: linux-pci-owner@vger.kernel.org
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org
+In-Reply-To: <20160408191142.GD15034@localhost>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---5/uDoXvLw7AC5HRs
+--xesSdrSSBC0PokLI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 08, 2016 at 01:05:28PM -0500, Bjorn Helgaas wrote:
+On Fri, Apr 08, 2016 at 02:11:42PM -0500, Bjorn Helgaas wrote:
 > Hi Thierry,
 >=20
-> I think there are a couple typos (one in a message and one that
-> actually looks important), and one question below.
+> I have a couple more questions, probably just because I'm
+> DT-illiterate.
 >=20
-> On Fri, Apr 08, 2016 at 06:13:14PM +0200, Thierry Reding wrote:
-[...]
-> > +static int tegra_pcie_phy_power_off(struct tegra_pcie *pcie)
-> > +{
-> > +	struct tegra_pcie_port *port;
-> > +	int err;
-> > +
-> > +	if (pcie->legacy_phy) {
-> > +		if (pcie->phy)
-> > +			err =3D phy_power_on(pcie->phy);
->=20
-> s/phy_power_on/phy_power_off/
-
-Good catch. Fixed.
-
-> > @@ -899,13 +1025,9 @@ static int tegra_pcie_enable_controller(struct te=
-gra_pcie *pcie)
-> >  		afi_writel(pcie, value, AFI_FUSE);
-> >  	}
+> On Fri, Apr 08, 2016 at 06:13:13PM +0200, Thierry Reding wrote:
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >=20
+> > Changes to the pad controller device tree binding have required that
+> > each lane be associated with a separate PHY. Update the PCI host bridge
+> > device tree binding to allow each root port to define the list of PHYs
+> > required to drive the lanes associated with it.
+> >=20
+> > Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> > Changes in v4:
+> > - add additional lanes subnode when dereferencing PHYs from the XUSB pad
+> >   controller to reflect changes in its binding
+> >=20
+> >  .../devicetree/bindings/pci/nvidia,tegra20-pcie.txt    | 18 ++++++++++=
++++++++-
+> >  1 file changed, 17 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.=
+txt b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+> > index 75321ae23c08..f5364084b494 100644
+> > --- a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+> > +++ b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+> > @@ -60,11 +60,14 @@ Required properties:
+> >    - afi
+> >    - pcie_x
 > > =20
-> > -	if (!pcie->phy)
-> > -		err =3D tegra_pcie_phy_enable(pcie);
-> > -	else
-> > -		err =3D phy_power_on(pcie->phy);
-> > -
-> > +	err =3D tegra_pcie_phy_power_on(pcie);
-> >  	if (err < 0) {
-> > -		dev_err(pcie->dev, "failed to power on PHY: %d\n", err);
-> > +		dev_err(pcie->dev, "failed to power off PHY(s): %d\n", err);
->=20
-> s/off/on/
-
-Fixed.
-
-> > +static int tegra_pcie_phys_get(struct tegra_pcie *pcie)
-> > +{
-> > +	struct tegra_pcie_port *port;
-> > +	int err;
+> > -Required properties on Tegra124 and later:
+> > +Required properties on Tegra124 and later (deprecated):
+> >  - phys: Must contain an entry for each entry in phy-names.
+> >  - phy-names: Must include the following entries:
+> >    - pcie
+> > =20
+> > +These properties are deprecated in favour of per-lane PHYs define in e=
+ach of
+> > +the root ports (see below).
 > > +
-> > +	if (of_get_property(pcie->dev->of_node, "phys", NULL) !=3D NULL)
-> > +		return tegra_pcie_phys_get_legacy(pcie);
+> >  Power supplies for Tegra20:
+> >  - avdd-pex-supply: Power supply for analog PCIe logic. Must supply 1.0=
+5 V.
+> >  - vdd-pex-supply: Power supply for digital PCIe I/O. Must supply 1.05 =
+V.
+> > @@ -122,6 +125,13 @@ Required properties:
+> >    - Root port 0 uses 4 lanes, root port 1 is unused.
+> >    - Both root ports use 2 lanes.
+> > =20
+> > +Required properties for Tegra124 and later:
+>=20
+> I had a little trouble disambiguating this from the "Required
+> properties on Tegra124 and later (deprecated)" line above.  It might
+> help if they said:
+>=20
+>   Required PCIe controller properties on Tegra124 and later (deprecated):
+>   Required PCIe Root Port properties for Tegra124 and later:
+
+That's kind of implied by the structure of the binding. The first is in
+the section dedicated to the description of the host bridge controller,
+whereas the second in in the section for root port properties. Granted,
+the format for device tree bindings isn't very rich, so this isn't very
+easy to spot. Perhaps something like this could help:
+
+	NVIDIA Tegra PCIe controller
+
+	The top-level device tree node describes the host bridge
+	controller and properties listed therein apply to the controller
+	as a whole.
+
+	Required properties:
+	...
+
+	Root Ports:
+	-----------
+
+	Root ports are defined as subnodes of the PCIe controller node.
+
+	Required properties:
+	...
+
+Would that help clarify?
+
+> I'm not sure how to interpret the "deprecated" part.  Assume I'm
+> writing a DTS.  What am I supposed to include?
+>=20
+>   - "phys" and "phy-names" under the PCIe controller *and*
+>     "phys" and "phy-names" under the Root Port?
+>=20
+>   - "phys" and "phy-names" under the PCIe controller only if I don't
+>     supply "phys" and "phy-names" under the Root Port?
+>=20
+> My guess is that a board with more than one PHY for PCIe should omit
+> "phys" and "phy-names" under the PCIe controller and include them
+> under each Root Port.  And a board with only one PHY could conceivably
+> supply these properties either under the controller or the Root Port
+> or both.
+
+Whatever is marked as deprecated should not be used in new bindings at
+all. That is, new board files should move to per-lane PHYs, no matter
+how many lanes they enable.
+
+The XUSB pad controller that provides these PHYs can be driven by two
+different drivers: a pinctrl driver that exposes a single PHY for all
+PCI lanes (it uses per-lane nvidia,iddq properties to enable or disable
+each of the lanes) or a PHY driver that exposes one PHY per lane. Each
+PHY can separately be powered on.
+
+Perhaps a better approach would be to simply remove the deprecated
+properties to avoid any possible confusion. It does have the drawback
+that old device trees won't have a documentation counterpart.
+
+> > +- phys: Must contain an phandle to a PHY for each entry in phy-names.
+> > +- phy-names: Must include an entry for each active lane. Note that the=
+ number
+> > +  of entries does not have to (though usually will) be equal to the sp=
+ecified
+> > +  number of lanes in the nvidia,num-lanes property. Entries are of the=
+ form
+> > +  "pcie-N": where N ranges from 0 to the value specified in nvidia,num=
+-lanes.
 > > +
-> > +	list_for_each_entry(port, &pcie->ports, list) {
-> > +		err =3D tegra_pcie_port_get_phys(port);
-> > +		if (err < 0) {
-> > +			return err;
-> > +		}
-> > +	}
+> >  Example:
+> > =20
+> >  SoC DTSI:
+> > @@ -169,6 +179,9 @@ SoC DTSI:
+> >  			ranges;
+> > =20
+> >  			nvidia,num-lanes =3D <2>;
+> > +
+> > +			phys =3D <&{/padctl@0,7009f000/pads/pcie/lanes/pcie-4}>;
+> > +			phy-names =3D "pcie-0";
 >=20
-> This seems backwards: if I'm reading this right, you first check for
-> the legacy property ("phys") and use it if you find it.  If there is
-> no legacy property, you look for the new per-lane PHYs.
->=20
-> The usual pattern would be "look for the new stuff, and if you don't
-> find it, fall back to the old stuff." Is there a configuration that
-> could be described either way, e.g., something with only one lane and
-> only one PHY?
->=20
-> I'm not sure whether it matters, but if it *could* use the "new, fall
-> back to old" pattern, that would be nice and would keep people from
-> wondering whether it's safe to do it backwards.
+> I'm also a little confused here because it looks like this root port
+> supports two lanes, but there's only one entry in phy-names.  I
+> thought you needed one entry for each lane.
 
-The reason why I wrote it this way is to special case the legacy code.
-The alternative would be to do:
-
-	if (of_get_property(...) =3D=3D NULL) {
-		list_for_each_entry(port, &pcie->ports, list) {
-			err =3D tegra_pcie_port_get_phys(port);
-			if (err < 0)
-				return err;
-		}
-	}
-
-	return tegra_pcie_phys_get_legacy(pcie);
-
-Which is better in the way you describe (fall back to legacy if new
-binding is not found). But like I said, it makes, from the code flow,
-the new binding the exception, which looks odd to me as well.
-
-Perhaps this could be somewhat mitigated by wrapping the new code into
-a separate function:
-
-	if (of_get_property(...) =3D=3D NULL)
-		return tegra_pcie_phys_get_per_lane(pcie);
-
-	return tegra_pcie_phys_get_legacy(pcie);
-
-I don't feel very strongly in either direction. Do you have a
-preference?
+Not necessarily. I'm not sure if the wording in the description makes it
+clear, but there are a limited number of configurations that the root
+ports support. However the ports may not want (or need) to drive all of
+the lanes that they support. Consider for example one possible
+configuration on Tegra124, which is to have one root port operate in x1
+mode and the other in x2 mode. The x2 port may have a fixed card wired
+to it (onboard) that is x1. Enabling the second lane would be wasting
+power because it is never used.
 
 Thierry
 
---5/uDoXvLw7AC5HRs
+--xesSdrSSBC0PokLI
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXC4ZVAAoJEN0jrNd/PrOhtfMP/2K8QEyHd4IkJO3Fd5nCYcA1
-DdZAgJBo2ZpJMHiWClcQ/GgpF4sTcvuD1YBav1mQBDxvr3qkkpHsT9Y2z/vgbKB9
-hzk6p7fjwhuOw3qAQ5yBEYPG7MO8+LvImNXFzB57An2mRruvkoLeOcxNj21kAQw6
-Kwmt1dLi0bW33J/emAnUi6JqZYd+/HLew4lsS1u/H5xMz3jqDW9xpP74Z3l1s8fy
-RQhtIpOZ4x7LciTg8nVEdXaAXfBAqxtvRvd4VbJe6l5msEzgmZVNZK+6LHmtYHrW
-BIYZriC3uT2rjbdFTLksFIKE6qWEfTGc8PTJ+QIDdlZG7wF1xnNmZlyXtmCi/P2+
-b1qzj33jPq7KtypzSxxe0zaaXWEVqxX5q2TwwUF5eSCePtebgBbOMN0WJyDvbBzd
-3PEGrPng+LhFlyLBveCAJbWzpxjTaMFlcX8Gk98DxwmiplT8BGQYJQ3yvU9Huh4b
-YNT3ztjgu4LbzON/LHE1oLDimpVqT6cEoKy4kreS8b1O0rAnV258wSqRWdN9Jbwg
-OfY+tbtxeODI5ibwYV2L74/17iq80TuHzYXDa6roaZH4vcJvHnsVQjqfW8mfQD9k
-jExVH1s9E6zOjeGvaUn5nxXxZCP0TTF3V8ZM3p6pkE7iAOGSo18/LLUEpFAMHqNE
-t5AxGktQnmQjmwSbGFNS
-=IsIL
+iQIcBAABCAAGBQJXC4n8AAoJEN0jrNd/PrOhXeAQAIe4gUVQYHGxjT3iqqfW11bk
+1j4nxgPbW34aL48Ar7Yub4e3BcpMkvXhy0r3syBCRnDkRANrIxWdIQAZXeu8G6s5
+uFksh2m0/VmfEbDfSf5lHWewYtW3Zb1wEjaGBCPqgXcC3XgYel/GMykxs4pCBU5p
+eXLzigKPwUusx4mrgtYsafINBAtG5hyZVNtsAHjnW+0UUCn/UHYhFynN6aBxZzJH
+E/BjUKdL91gcv2+ypeIyvDXG60Su1lU2sCaeK1hwBO5NAJpseyureKTvGOaZasr7
+fOdSV344aZTzyc672QEMevDc+KnE3AJO4BHrMFQgVANavH3tCRm0BpBixo0mhEaH
+DSKqElQSH17f+mRkPo7XNEkT2Cv1vIr+X1uKiPiPzEr/nAqJ0gG+LIRaTEIcS6x9
+SkOzrhbnIIrYZYd9lJrU6wz6L1G9WBV5lanQRro6+VjTLYiej+w5O9vkkWk+aw1A
+ubV93mpOZLcH2b9dAFHaCABqlpPIWrcwJnE8RNmu5osz2ctCl/8mY6vbBQwZeqsr
+xOppeXj1qYdK7Pe/L55J12g+ni+ZLAq/4+xBHNAtVGWUxpXFBFyvUTA8ej3hqGCH
+foyVpn2ois+8iK47p2Cn/3WRDyegl7BanZY4k3nn4q3eDh7EJ3TbQ1lHDBwEwcX8
+0JLvRW0GlbxV7axkrc5w
+=40DO
 -----END PGP SIGNATURE-----
 
---5/uDoXvLw7AC5HRs--
+--xesSdrSSBC0PokLI--
