@@ -1,144 +1,124 @@
-From: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/1] sign.sh: Add more features
-Date: Mon, 11 Apr 2016 12:18:08 -0700
-Message-ID: <1460402288-19511-1-git-send-email-jimmzhang@nvidia.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: add DT binding for Tegra186 GPIO controllers
+Date: Mon, 11 Apr 2016 14:31:56 -0500
+Message-ID: <20160411193156.GA10323@rob-hp-laptop>
+References: <1460156668-27339-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1460156668-27339-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-1. Use parameter <soc> to specify boot image type. ie, tegra124, tegra210.
-   Previouly sign.sh can only sign for tegra210 boot image.
+On Fri, Apr 08, 2016 at 05:04:28PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> Tegra186 contains two separate but mostly similar GPIO controllers.
+> Register layout differs significantly from previous Tegra generations, and
+> so a new binding is required to describe them in device tree. This patch
+> adds that binding.
+> 
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  .../bindings/gpio/nvidia,tegra186-gpio.txt         | 157 +++++++++++++++++++++
+>  include/dt-bindings/gpio/tegra186-gpio.h           |  56 ++++++++
+>  2 files changed, 213 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
+>  create mode 100644 include/dt-bindings/gpio/tegra186-gpio.h
+> 
+> diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
+> new file mode 100644
+> index 000000000000..41d12cb79f8e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
+> @@ -0,0 +1,157 @@
+> +NVIDIA Tegra186 GPIO controllers
+> +
+> +Tegra186 contains two GPIO controllers; a main controller and an "AON"
+> +controller. This binding document applies to both controllers. The register
+> +layouts for the controllers share many similarities, but also some significant
+> +differences. Hence, this document describes closely related but different
+> +bindings and compatible values.
+> +
+> +The Tegra186 GPIO controller allows software to set the IO direction of, and
+> +read/write the value of, numerous GPIO signals. Routing of GPIO signals to
+> +package balls is under the control of a separate pin controller HW block. Two
+> +major sets of registers exist:
+> +
+> +a) Security registers, which allow configuration of allowed access to the GPIO
+> +register set. These registers exist in a single contguous block of physical
+> +address space. The size of this block, and the security features available,
+> +varies between the different GPIO controllers.
+> +
+> +Access to this set of registers is not necessary in all circumstances. Code
+> +that wishes to configure access to the GPIO registers needs access to these
+> +registers to do so. Code which simply wishes to read or write GPIO data does not
+> +need access to these registers.
+> +
+> +b) GPIO registers, which allow manipulation of the GPIO signals. In some GPIO
+> +controllers, these registers are exposed via multiple "physical aliases" in
+> +address space, each of which access the same underlying state. See the hardware
+> +documentation for rationale. Any particular GPIO client is expected to access
+> +just one of these physical aliases.
+> +
+> +Tegra HW documentation describes a unified naming convention for all GPIOs
+> +implemented by the SoC. Each GPIO is assigned to a port, and a port may control
+> +a number of GPIOs. Thus, each GPIO is named according to an alphabetical port
+> +name and an integer GPIO name within the port. For example, GPIO_PA0, GPIO_PN6,
+> +or GPIO_PCC3.
+> +
+> +The number of ports implemented by each GPIO controller varies. The number of
+> +implemented GPIOs within each port varies. GPIO registers within a controller
+> +are grouped and laid out according to the port they affect.
+> +
+> +The mapping from port name to the GPIO controller that implements that port, and
+> +the mapping from port name to register offset within a controller, are both
+> +extremely non-linear. The header file <dt-bindings/gpio/tegra186-gpio.h>
+> +describes the port-level mapping. In that file, the naming convention for ports
+> +matches the HW documentation. The values chosen for the names are alphabetically
+> +sorted within a particular controller. Drivers need to map between the DT GPIO
+> +IDs and HW register offsets using a lookup table.
+> +
+> +Each GPIO controller can generate a number of interrupt signals. Each signal
+> +represents the aggregate status for all GPIOs within a set of ports. Thus, the
+> +number of interrupt signals generated by a controller varies as a rough function
+> +of the number of ports it implements. Note that the HW documentation refers to
+> +both the overall controller HW module and the sets-of-ports as "controllers".
+> +
+> +Each GPIO controller in fact generates multiple interrupts signals for each set
+> +of ports. Each GPIO may be configured to feed into a specific one of the
+> +interrupt signals generated by a set-of-ports. The intent is for each generated
+> +signal to be routed to a different CPU, thus allowing different CPUs to each
+> +handle subsets of the interrupts within a port. The status of each of these
+> +per-port-set signals is reported via a separate register. Thus, a driver needs
+> +to know which status register to observe. This binding currently defines no
+> +configuration mechanism for this. By default, drivers should use register
+> +GPIO_${port}_INTERRUPT_STATUS_G1_0. Future revisions to the binding could
+> +define a property to configure this.
+> +
+> +Required properties:
+> +- compatible
+> +  Array of strings.
+> +  One of:
+> +  - "nvidia,tegra186-gpio".
+> +  - "nvidia,tegra186-gpio-aon".
 
-2. Automatically generate signed bct, ie, tegra124.bct, tegra210.bct.
-   A signed bct is needed when flashing target.
+Perhaps another level of indentation so the properties stick out.
 
-Command syntax:
-   $ ./sign.sh <soc> <bootimage> <rsa_key>
+Otherwise,
 
-Example:
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
-   $ ./sign.sh tegra124 t124.img rsa_priv.pem
-
-Signed-off-by: Jimmy Zhang <jimmzhang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- samples/sign.sh | 68 +++++++++++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 59 insertions(+), 9 deletions(-)
-
-diff --git a/samples/sign.sh b/samples/sign.sh
-index 2edd12695f4b..c9d237d1a10c 100755
---- a/samples/sign.sh
-+++ b/samples/sign.sh
-@@ -1,6 +1,6 @@
- #!/bin/bash
- #
--# Copyright (c) 2015, NVIDIA CORPORATION.  All rights reserved.
-+# Copyright (c) 2015-2016, NVIDIA CORPORATION.  All rights reserved.
- #
- # This program is free software; you can redistribute it and/or modify it
- # under the terms and conditions of the GNU General Public License,
-@@ -17,9 +17,49 @@
- # See file CREDITS for list of people who contributed to this
- # project.
- #
-+
-+Usage ()
-+{
-+	cat << EOF
-+Usage: ./sign.sh <soc> <boot_image> <rsa_priv_key>
-+  Where,
-+	soc: tegra124, tegra210
-+	boot_image: image generated by cbootimage,
-+	priv_key: rsa key file in .pem format.
-+EOF
-+	exit 1;
-+}
-+
- set -e
--IMAGE_FILE=$1
--KEY_FILE=$2
-+
-+soc=$1		# tegra124, tegra210
-+if [[ "${soc}" = tegra124 ]]; then
-+	bl_block_offset=16384;  # emmc: 16384, spi_flash: 32768: default: emmc
-+	bct_signed_offset=1712;
-+	bct_signed_length=6480;
-+elif [[ "${soc}" = tegra210 ]]; then
-+	bl_block_offset=32768;  # emmc: 16384, spi_flash: 32768: default: spi
-+	bct_signed_offset=1296;
-+	bct_signed_length=8944;
-+else
-+	echo "Error: Invalid target device: soc = $soc";
-+	Usage;
-+fi;
-+bct_length=$(($bct_signed_offset + $bct_signed_length));
-+
-+# more error check
-+if [ $# -lt 3 ]; then
-+	echo "Error: Missing parameter(s)";
-+	Usage;
-+fi;
-+
-+#
-+# In case to add more parameters in the future, we keep the last two as
-+# IMAGE_FILE and KEY_FILE
-+#
-+argv=($@);
-+IMAGE_FILE=${argv[$#-2]};
-+KEY_FILE=${argv[$#-1]};
- TARGET_IMAGE=$IMAGE_FILE
- CONFIG_FILE=config.tmp
- 
-@@ -33,15 +73,15 @@ MV=mv
- XXD=xxd
- CUT=cut
- 
--echo "Get rid of all temporary files: *.sig, *.tosig, *.tmp *.mod"
--$RM -f *.sig *.tosig *.tmp *.mod
-+echo "Sign ${soc} ${IMAGE_FILE} with key ${KEY_FILE}"
- 
- echo "Get bl length "
- BL_LENGTH=`$BCT_DUMP $IMAGE_FILE | grep "Bootloader\[0\].Length"\
-  | awk -F ' ' '{print $4}' | awk -F ';' '{print $1}'`
- 
- echo "Extract bootloader to $IMAGE_FILE.bl.tosig, length $BL_LENGTH"
--$DD bs=1 skip=32768 if=$IMAGE_FILE of=$IMAGE_FILE.bl.tosig count=$BL_LENGTH
-+$DD bs=1 skip=${bl_block_offset} if=$IMAGE_FILE of=$IMAGE_FILE.bl.tosig \
-+	 count=$BL_LENGTH
- 
- echo "Calculate rsa signature for bootloader and save to $IMAGE_FILE.bl.sig"
- $OPENSSL dgst -sha256 -sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:-1 \
-@@ -50,10 +90,11 @@ $OPENSSL dgst -sha256 -sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:-1 \
- echo "Update bootloader's rsa signature, aes hash and bct's aes hash"
- echo "RsaPssSigBlFile = $IMAGE_FILE.bl.sig;" > $CONFIG_FILE
- echo "RehashBl;" >> $CONFIG_FILE
--$CBOOTIMAGE -s tegra210 -u $CONFIG_FILE $IMAGE_FILE $IMAGE_FILE.tmp
-+$CBOOTIMAGE -s ${soc} -u $CONFIG_FILE $IMAGE_FILE $IMAGE_FILE.tmp
- 
- echo "Extract the part of bct which needs to be rsa signed"
--$DD bs=1 if=$IMAGE_FILE.tmp of=$IMAGE_FILE.bct.tosig count=8944 skip=1296
-+$DD bs=1 if=$IMAGE_FILE.tmp of=$IMAGE_FILE.bct.tosig skip=${bct_signed_offset} \
-+ count=${bct_signed_length}
- 
- echo "Calculate rsa signature for bct and save to $IMAGE_FILE.bct.sig"
- $OPENSSL dgst -sha256 -sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:-1 \
-@@ -70,4 +111,13 @@ $XXD -r -p -l 256 $KEY_FILE.mod.tmp $KEY_FILE.mod.bin
- echo "Update bct's rsa signature and modulus"
- echo "RsaPssSigBctFile = $IMAGE_FILE.bct.sig;" > $CONFIG_FILE
- echo "RsaKeyModulusFile = $KEY_FILE.mod.bin;" >> $CONFIG_FILE
--$CBOOTIMAGE -s tegra210 -u $CONFIG_FILE $IMAGE_FILE.tmp $TARGET_IMAGE
-+echo ""
-+$CBOOTIMAGE -s ${soc} -u $CONFIG_FILE $IMAGE_FILE.tmp $TARGET_IMAGE
-+
-+echo ""
-+$DD bs=1 if=$TARGET_IMAGE of=${soc}.bct count=${bct_length}
-+echo ""
-+echo "Signed bct ${soc}.bct has been successfully generated!";
-+
-+#echo "Get rid of all temporary files: *.sig, *.tosig, *.tmp, *.mod, *.mod.bin"
-+$RM -f *.sig *.tosig *.tmp *.mod *.mod.bin
--- 
-1.9.1
+> +- reg-names
+> +  Array of strings.
+> +  Contains a list of names for the register spaces described by the reg
+> +  property. May contain the following entries, in any order:
+> +  - "gpio": Mandatory. GPIO control registers. This may cover either:
+> +    a) The single physical alias that this OS should use.
+> +    b) All physical aliases that exist in the controller. This is appropriate
+> +       when the OS is responsible for managing assignment of the physical
+> +       aliass.
+> +  - "security": Optional. Security configuration registers.
