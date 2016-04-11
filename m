@@ -1,82 +1,144 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4 1/2] dt-bindings: pci: tegra: Update for per-lane PHYs
-Date: Mon, 11 Apr 2016 12:23:27 +0200
-Message-ID: <20160411102327.GA17743@ulmo.ba.sec>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v4 2/2] PCI: tegra: Support per-lane PHYs
+Date: Mon, 11 Apr 2016 13:11:19 +0200
+Message-ID: <20160411111119.GB17743@ulmo.ba.sec>
 References: <1460131994-24493-1-git-send-email-thierry.reding@gmail.com>
- <20160408164814.GB15034@localhost>
+ <1460131994-24493-2-git-send-email-thierry.reding@gmail.com>
+ <20160408180528.GC15034@localhost>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="k+w/mQv8wyuph6w0"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="5/uDoXvLw7AC5HRs"
+Return-path: <linux-pci-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20160408164814.GB15034@localhost>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20160408180528.GC15034@localhost>
+Sender: linux-pci-owner@vger.kernel.org
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---k+w/mQv8wyuph6w0
+--5/uDoXvLw7AC5HRs
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Apr 08, 2016 at 11:48:14AM -0500, Bjorn Helgaas wrote:
+On Fri, Apr 08, 2016 at 01:05:28PM -0500, Bjorn Helgaas wrote:
 > Hi Thierry,
 >=20
-> On Fri, Apr 08, 2016 at 06:13:13PM +0200, Thierry Reding wrote:
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >=20
-> > Changes to the pad controller device tree binding=20
+> I think there are a couple typos (one in a message and one that
+> actually looks important), and one question below.
 >=20
-> Is there a commit we can reference for this pad controller binding
-> change?  If so, I can fold it in.
+> On Fri, Apr 08, 2016 at 06:13:14PM +0200, Thierry Reding wrote:
+[...]
+> > +static int tegra_pcie_phy_power_off(struct tegra_pcie *pcie)
+> > +{
+> > +	struct tegra_pcie_port *port;
+> > +	int err;
+> > +
+> > +	if (pcie->legacy_phy) {
+> > +		if (pcie->phy)
+> > +			err =3D phy_power_on(pcie->phy);
+>=20
+> s/phy_power_on/phy_power_off/
 
-It hasn't been merged yet. Technically this patch is a prerequisite for
-getting the new binding merged. And there's a specific order that needs
-to be observed for this not to regress (albeit only temporarily).
+Good catch. Fixed.
 
-The correct sequence for merging this would be:
+> > @@ -899,13 +1025,9 @@ static int tegra_pcie_enable_controller(struct te=
+gra_pcie *pcie)
+> >  		afi_writel(pcie, value, AFI_FUSE);
+> >  	}
+> > =20
+> > -	if (!pcie->phy)
+> > -		err =3D tegra_pcie_phy_enable(pcie);
+> > -	else
+> > -		err =3D phy_power_on(pcie->phy);
+> > -
+> > +	err =3D tegra_pcie_phy_power_on(pcie);
+> >  	if (err < 0) {
+> > -		dev_err(pcie->dev, "failed to power on PHY: %d\n", err);
+> > +		dev_err(pcie->dev, "failed to power off PHY(s): %d\n", err);
+>=20
+> s/off/on/
 
-	1) XUSB pad controller binding & driver updates
-	2) PCI driver updates
-	3) DT changes that implement the new binding
+Fixed.
 
-Because of the above I'd prefer to merge everything through the Tegra
-tree. If that's okay with you, I can provide stable branches once its
-all in place for you to merge back into the PCI tree.
+> > +static int tegra_pcie_phys_get(struct tegra_pcie *pcie)
+> > +{
+> > +	struct tegra_pcie_port *port;
+> > +	int err;
+> > +
+> > +	if (of_get_property(pcie->dev->of_node, "phys", NULL) !=3D NULL)
+> > +		return tegra_pcie_phys_get_legacy(pcie);
+> > +
+> > +	list_for_each_entry(port, &pcie->ports, list) {
+> > +		err =3D tegra_pcie_port_get_phys(port);
+> > +		if (err < 0) {
+> > +			return err;
+> > +		}
+> > +	}
+>=20
+> This seems backwards: if I'm reading this right, you first check for
+> the legacy property ("phys") and use it if you find it.  If there is
+> no legacy property, you look for the new per-lane PHYs.
+>=20
+> The usual pattern would be "look for the new stuff, and if you don't
+> find it, fall back to the old stuff." Is there a configuration that
+> could be described either way, e.g., something with only one lane and
+> only one PHY?
+>=20
+> I'm not sure whether it matters, but if it *could* use the "new, fall
+> back to old" pattern, that would be nice and would keep people from
+> wondering whether it's safe to do it backwards.
 
-> Is there a benefit to keeping this binding patch separate from the
-> corresponding driver patch?  It seems like it'd nice to have a
-> connection between them.  (Sorry, I'm sure I've asked this before,
-> but I can't remember the answer.)
+The reason why I wrote it this way is to special case the legacy code.
+The alternative would be to do:
 
-I've seen both approaches applied. I think separate patches is (or was?)
-preferred because eventually the DT bindings were supposed to get moved
-to a separate repository. Having separate patches would make the
-transition easier by making it possible to cherry-pick between trees.
+	if (of_get_property(...) =3D=3D NULL) {
+		list_for_each_entry(port, &pcie->ports, list) {
+			err =3D tegra_pcie_port_get_phys(port);
+			if (err < 0)
+				return err;
+		}
+	}
+
+	return tegra_pcie_phys_get_legacy(pcie);
+
+Which is better in the way you describe (fall back to legacy if new
+binding is not found). But like I said, it makes, from the code flow,
+the new binding the exception, which looks odd to me as well.
+
+Perhaps this could be somewhat mitigated by wrapping the new code into
+a separate function:
+
+	if (of_get_property(...) =3D=3D NULL)
+		return tegra_pcie_phys_get_per_lane(pcie);
+
+	return tegra_pcie_phys_get_legacy(pcie);
+
+I don't feel very strongly in either direction. Do you have a
+preference?
 
 Thierry
 
---k+w/mQv8wyuph6w0
+--5/uDoXvLw7AC5HRs
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXC3scAAoJEN0jrNd/PrOhVnoQAJQawbj9su8FAjoJiaLXV+qw
-SlKUEiJrqe5UNOKDFG682fHscmFkONiM+tLxwvy0zLVmkkvxXUo//jHD0lNJvyt2
-GM0TJDCgCow7pZiWAv54wROyaJvvRpNrRZIErBO/sYjZJQlopdW6iKxS6zqAzJo4
-3mMV5wmrXnxNkjPR5Ah7PjX9E/HU/9LwgQhUbKCRfczH616htE6MU30XevNrtp/0
-3gcLVwXIH5jMcw8hACsb+gUlFHvtwDJogjqYqx9TkVThOrH+rRnmfn6KmP8s12Pn
-thFZKARcyiCuW0VY3Roz8X8Q3JR9W0xYodzqAXXwEMnOALZewodV4NrO54eq6VWV
-uQzIlz/EQfWV41nPCsCBKnkOi0+gYm0GYdokrMSwY59bazdhZfDqB+reDcf8DTga
-tftp+91kzC7/Vr+L+9Str2V9Z8qcu+3cWCBP5vhv4Czea9ShU+yFZaoD9Z6fvB07
-jLsh8IGqwcJm5TIUcVlkMh6xnKY3GMoAcnGN1v7YHw3M2hlk2BGs+KqkvZzD9AiU
-c1dHnRV1p5EPpF/me/ucx3tNBAKHrxrV2wor/9h+c0Puy/PQBrkD79fbVajdmVoQ
-h7/SsdslZaKGOmrePKUZJ26Xr6KAkvt29zM6Sl8TtbQcEuF0bS29osYprpNTpLzG
-y3pSYkJ7argu7KfzHelp
-=85h5
+iQIcBAABCAAGBQJXC4ZVAAoJEN0jrNd/PrOhtfMP/2K8QEyHd4IkJO3Fd5nCYcA1
+DdZAgJBo2ZpJMHiWClcQ/GgpF4sTcvuD1YBav1mQBDxvr3qkkpHsT9Y2z/vgbKB9
+hzk6p7fjwhuOw3qAQ5yBEYPG7MO8+LvImNXFzB57An2mRruvkoLeOcxNj21kAQw6
+Kwmt1dLi0bW33J/emAnUi6JqZYd+/HLew4lsS1u/H5xMz3jqDW9xpP74Z3l1s8fy
+RQhtIpOZ4x7LciTg8nVEdXaAXfBAqxtvRvd4VbJe6l5msEzgmZVNZK+6LHmtYHrW
+BIYZriC3uT2rjbdFTLksFIKE6qWEfTGc8PTJ+QIDdlZG7wF1xnNmZlyXtmCi/P2+
+b1qzj33jPq7KtypzSxxe0zaaXWEVqxX5q2TwwUF5eSCePtebgBbOMN0WJyDvbBzd
+3PEGrPng+LhFlyLBveCAJbWzpxjTaMFlcX8Gk98DxwmiplT8BGQYJQ3yvU9Huh4b
+YNT3ztjgu4LbzON/LHE1oLDimpVqT6cEoKy4kreS8b1O0rAnV258wSqRWdN9Jbwg
+OfY+tbtxeODI5ibwYV2L74/17iq80TuHzYXDa6roaZH4vcJvHnsVQjqfW8mfQD9k
+jExVH1s9E6zOjeGvaUn5nxXxZCP0TTF3V8ZM3p6pkE7iAOGSo18/LLUEpFAMHqNE
+t5AxGktQnmQjmwSbGFNS
+=IsIL
 -----END PGP SIGNATURE-----
 
---k+w/mQv8wyuph6w0--
+--5/uDoXvLw7AC5HRs--
