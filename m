@@ -1,131 +1,92 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V4 2/3] dmaengine: tegra-adma: Add support for Tegra210
- ADMA
-Date: Mon, 11 Apr 2016 15:09:05 +0100
-Message-ID: <570BB001.3020202@nvidia.com>
-References: <1458057390-20756-1-git-send-email-jonathanh@nvidia.com>
- <1458057390-20756-3-git-send-email-jonathanh@nvidia.com>
- <20160405213649.GA11586@vkoul-mobl.iind.intel.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 04/15] irqchip/gic: WARN if setting the interrupt type
+ fails
+Date: Mon, 11 Apr 2016 16:31:22 +0100
+Message-ID: <570BC34A.5030806@nvidia.com>
+References: <1458224359-32665-1-git-send-email-jonathanh@nvidia.com>
+ <1458224359-32665-5-git-send-email-jonathanh@nvidia.com>
+ <alpine.DEB.2.11.1603171550200.3978@nanos> <56EAC761.1040801@nvidia.com>
+ <20160409115854.492090a5@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160405213649.GA11586-bQVUxfxUtC13uc1i7fC1zK2pdiUAq4bhAL8bYrjMMd8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160409115854.492090a5@arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>, Tony Lindgren <tony@atomide.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Mark,
 
-On 05/04/16 22:36, Vinod Koul wrote:
-> On Tue, Mar 15, 2016 at 03:56:29PM +0000, Jon Hunter wrote:
+On 09/04/16 11:58, Marc Zyngier wrote:
+> On Thu, 17 Mar 2016 15:04:01 +0000
+> Jon Hunter <jonathanh@nvidia.com> wrote:
 > 
->> +static void tegra_adma_request_free(struct tegra_adma_chan *tdc)
->> +{
->> +	struct tegra_adma *tdma = tdc->tdma;
->> +
->> +	if (!tdc->sreq_reserved)
->> +		return;
->> +
->> +	switch (tdc->sreq_dir) {
->> +	case DMA_MEM_TO_DEV:
->> +		clear_bit(tdc->sreq_index, &tdma->tx_requests_reserved);
->> +		break;
+>>
+>> On 17/03/16 14:51, Thomas Gleixner wrote:
+>>> On Thu, 17 Mar 2016, Jon Hunter wrote:
+>>>
+>>>> Setting the interrupt type for private peripheral interrupts (PPIs) may
+>>>> not be supported by a given GIC because it is IMPLEMENTATION DEFINED
+>>>> whether this is allowed. There is no way to know if setting the type is
+>>>> supported for a given GIC and so the value written is read back to
+>>>> verify it matches the desired configuration. If it does not match then
+>>>> an error is return.
+>>>>
+>>>> There are cases where the interrupt configuration read from firmware
+>>>> (such as a device-tree blob), has been incorrect and hence
+>>>> gic_configure_irq() has returned an error. This error has gone
+>>>> undetected because the error code returned was ignored but the interrupt
+>>>> still worked fine because the configuration for the interrupt could not
+>>>> be overwritten.
+>>>>
+>>>> Given that this has done undetected and we should only fail to set the
+>>>> type for PPIs whose configuration cannot be changed anyway, don't return
+>>>> an error and simply WARN if this fails. This will allows us to fix up any
+>>>> places in the kernel where we should be checking the return status and
+>>>> maintain back compatibility with firmware images that may have incorrect
+>>>> interrupt configurations.
+>>>
+>>> Though silently returning 0 is really the wrong thing to do. You can add the
+>>> warn, but why do you want to return success?
+>>
+>> Yes that would be the correct thing to do I agree. However, the problem
+>> is that if we do this, then after the patch "irqdomain: Don't set type
+>> when mapping an IRQ" is applied, we may break interrupts for some
+>> existing device-tree binaries that have bad configuration (such as omap4
+>> and tegra20/30 ... see patches 1 and 2) that have gone unnoticed. So it
+>> is a back compatibility issue.
+>>
+>> If you are wondering why these interrupts break after "irqdomain: Don't
+>> set type when mapping an IRQ", it is because today
+>> irq_create_fwspec_mapping() does not check the return code from setting
+>> the type, but if we defer setting the type until __setup_irq() which
+>> does check the return code, then all of a sudden interrupts that were
+>> working (even with bad configurations) start to fail.
+>>
+>> The reason why I opted not to return an error code from
+>> gic_configure_irq() is it really can't fail. The failure being reported
+>> does not prevent the interrupt from working, but tells you your
+>> configuration does not match the hardware setting which you cannot
+>> overwrite.
+>>
+>> So to maintain back compatibility and avoid any silent errors, I opted
+>> to make it a WARN and not return an error.
+>>
+>> If people are ok with potentially breaking interrupts for device-tree
+>> binaries with bad settings, then I am ok to return an error here.
 > 
-> empty line here woould be nicer
-
-OK.
-
->> +	ret = dma_cookie_status(dc, cookie, txstate);
->> +	if (ret == DMA_COMPLETE || !txstate)
->> +		return ret;
->> +
->> +	spin_lock_irqsave(&tdc->vc.lock, flags);
->> +
->> +	vd = vchan_find_desc(&tdc->vc, cookie);
->> +	if (vd) {
->> +		desc = to_tegra_adma_desc(&vd->tx);
->> +		residual = desc->ch_regs.tc;
+> I think we need to phase things. Let's start with warning people for a
+> few kernel releases. Actively maintained platforms will quickly address
+> the issue (fixing their DT). As I see it, this issue seems rather
+> widespread (even kvmtool outputs a DT with the wrong triggering
+> information).
 > 
-> Here we are filling up residue for desc found in issued list
-> 
->> +	} else if (tdc->desc && tdc->desc->vd.tx.cookie == cookie) {
->> +		residual = tegra_adma_get_residue(tdc);
-> 
-> Well if it is not issued then why we we need to caluclate, its full size of
-> descriptor
+> Once we've fixed the bulk of the platforms and virtual environments, we
+> can start thinking about making it fail harder.
 
-This is the current/active descriptor which has been removed from the
-issued list and so it needs to be calculated.
-
->> +	} else {
->> +		residual = 0;
-> 
-> why this?
-
-So either the descriptor is still in the submitted list or it has
-completed but it has not been marked complete yet. In both cases, we
-don't have access to the descriptor and so the residue is marked as 0
-and we return the current status. Please note this is based upon the
-omap dma driver (drivers/dma/omap-dma.c) which does the same. Other dma
-driver do very similar things here as well.
-
->> +static struct dma_async_tx_descriptor *tegra_adma_prep_slave_sg(
->> +	struct dma_chan *dc, struct scatterlist *sgl, unsigned int sg_len,
->> +	enum dma_transfer_direction direction, unsigned long flags,
->> +	void *context)
->> +{
->> +	struct tegra_adma_chan *tdc = to_tegra_adma_chan(dc);
->> +
->> +	dev_warn(tdc2dev(tdc), "scatter-gather transfers are not supported\n");
->> +
->> +	return NULL;
->> +}
-> 
-> Why do we need this placeholder, If you dont support slave_sg dont add this
-> as capability
-
-So, AFAICT, dma_async_device_register() does not check to see if
-device_prep_slave_sg() is valid AND none of the functions
-dmaengine_prep_slave_single(), dmaengine_prep_slave_single() and
-dmaengine_prep_rio_sg() check to see if the function pointer is valid
-before calling chan->device->device_prep_slave_sg(). So it seems that we
-always expect this function pointer to be valid.
-
-So should the inline functions ensure the function pointer is valid
-before attempting to call them? If so I can add a patch for this.
-Otherwise it seems the driver needs a stub. It would be a massive change
-to add a new capability, say SLAVE_SG, and populate this for all
-existing drivers.
-
->> +static const struct tegra_adma_chip_data tegra210_chip_data = {
->> +	.nr_channels = 22,
->> +};
-> 
-> why should this be hard coded in kernel and not queried from something like
-> DT? This case seems to be hardware property
-
-Originally, I did have this in DT, however, the Tegra maintainers prefer
-this and this is consistent with the other Tegra DMA driver (see
-driver/dma/tegra20-apb-dma.c) [0].
-
->> +	dma_cap_set(DMA_SLAVE, tdma->dma_dev.cap_mask);
->> +	dma_cap_set(DMA_PRIVATE, tdma->dma_dev.cap_mask);
->> +	dma_cap_set(DMA_CYCLIC, tdma->dma_dev.cap_mask);
-> 
-> I think you should not set DMA_SLAVE, do you need caps to be exported. I
-> think that should be exported for cyclic too, let me know if that was the
-> issue?
-> 
-
-Why should I not be setting DMA_SLAVE? Should I not be calling
-dma_get_any_slave_channel() in the xlate?
-
-I think that I do want to set DMA_CYCLIC as well to ensure that we check
-that the device->device_prep_dma_cyclic() function pointer is populated
-when registering the DMA controller.
+Ok, so are you OK with this patch as-is? If so, can I add your ACK?
 
 Cheers
 Jon
-
-[0] http://marc.info/?l=linux-tegra&m=144423393825053&w=2
