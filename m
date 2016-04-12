@@ -1,65 +1,67 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 3/7] soc/tegra: pmc: Add interface to get IO rail power
- status
-Date: Tue, 12 Apr 2016 19:13:24 +0100
-Message-ID: <570D3AC4.2020105@nvidia.com>
-References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>
- <1460473007-11535-4-git-send-email-ldewangan@nvidia.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v2] i2c: tegra: enable multi master mode
+Date: Tue, 12 Apr 2016 23:57:45 +0200
+Message-ID: <20160412215745.GJ1526@katana>
+References: <1457961738-1927-1-git-send-email-smohammed@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1460473007-11535-4-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="gBdJBemW82xJqIAr"
+Return-path: <linux-i2c-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1457961738-1927-1-git-send-email-smohammed@nvidia.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Shardar Shariff Md <smohammed@nvidia.com>
+Cc: ldewangan@nvidia.com, swarren@wwwdotorg.org, thierry.reding@gmail.com, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 12/04/16 15:56, Laxman Dewangan wrote:
-> Add API to get the IO rail power status of the Tegra IO pads.
-> This will help client driver to get the current power status
-> of IO pads for handling IO pad power.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/soc/tegra/pmc.c | 16 ++++++++++++++++
->  include/soc/tegra/pmc.h |  6 ++++++
->  2 files changed, 22 insertions(+)
-> 
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 762f4fa..0bc8219 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -613,6 +613,22 @@ error:
->  }
->  EXPORT_SYMBOL(tegra_io_rail_power_off);
->  
-> +int tegra_io_rail_power_get_status(unsigned int id)
-> +{
-> +	unsigned long status, value;
-> +	unsigned int mask;
+--gBdJBemW82xJqIAr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-These should all be u32 as tegra_pmc_readl() returns a u32.
+On Mon, Mar 14, 2016 at 06:52:18PM +0530, Shardar Shariff Md wrote:
+> Enable multi-master mode in I2C_CNFG reg based on hw features.
+> Using single/multi-master mode bit introduced for Tegra210,
+> whereas multi-master mode is enabled by default in HW for T124 and
+> earlier Tegra SOC. Enabling this bit doesn't explicitly start
+> treating the bus has having multiple masters, but will start
+> checking for arbitration lost and reporting when it occurs.
+>=20
+> The Tegra210 I2C controller supports single/multi master mode.
+> Add chipdata for Tegra210 and its compatibility string so that
+> Tegra210 will select data that enables multi master mode correctly.
+>=20
+> Do below prerequisites for multi-master bus if "multi-master"
+> dt property entry is added.
+>  1. Enable 1st level clock always set.
+>  2. Disable 2nd level clock gating (slcg which
+>     is supported from T124 SOC and later chips)
+>=20
+> Signed-off-by: Shardar Shariff Md <smohammed@nvidia.com>
 
-Hmmm ... I see some of the other tegra_io_rail_xxx() APIs use a unsigned
-long here too. We should fix those as well.
+Applied to for-next, thanks!
 
-> +
-> +	if ((id > 63) || (id == 30) || (id == 31))
-> +		return -EINVAL;
 
-Seems that this could vary per SoC and so I am wondering if we need a
-bitmap for this?
+--gBdJBemW82xJqIAr
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> +
-> +	status = (id < 32) ? IO_DPD_STATUS : IO_DPD2_STATUS;
-> +	mask = BIT(id % 32);
-> +	value = tegra_pmc_readl(status);
-> +
-> +	return !!(value & mask);
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Nit-pick ... do you need this mask variable?
+iQIcBAEBAgAGBQJXDW9ZAAoJEBQN5MwUoCm2iZkP/R8+B77SXgzaBgjlwuldsrHb
+fKaAbmqPMrp7VxaT2Z4kL+nfWXnZcbju+LlxBsR6FTgOgCy/F4qG/VCkazH3GKVM
+mFqza7BdTnY0gMbqnWmULWdMGKdlomgnp6SOzVPkCqRiB7i3VqUCY7rWOhTn6oGn
+zflv/pY/08HhMyVF7SWZdlZ2lVdTcaY1BmykMmG4nDAK5NtHbDGtPXSTIXMNmNB7
+n0+huQr2nHAJ1ZmZRNFtPEic/+7kTyR4Ae0BfurarcyWtH/usSlKWFzUwLyHoMTK
+AkvWh0qyBZd+0btBVbkPTydQkug1o32vgdtFj8Ptt6lc6S2PMI6KG5+PM/dBR8o0
+jzccoEpYztS2214qRGTdMJ3Mmo44H18aUVxPP6hkrmH8yY8sh8uU/VLJfxz7fcUa
+WBp5Wm3yJmGghS0upuwodd5VtGezgS0+P612jKmFrj8dF94yQvc/lxOhSURNcRb8
+Kc3jhOwNWeNhfekbk92BMy2k2j868BXycFBnYP+dOhOR03qpuN0ixjcQ9KBGSHVM
+0oZfF2pEPN4xon3N5Z82Qoi2jG4zRn9H8P8hU3SBX5KD6rWdjE3GMEcYKc52P/k0
+pYrip+Kv/sIE3f2EfYmQshqZVydgkwEOZpnQzTcePQFkObziGruBdleyu8vL1vYk
+7zrdu8e4y2WtA5R/I2A9
+=wL1b
+-----END PGP SIGNATURE-----
 
-Cheers
-Jon
+--gBdJBemW82xJqIAr--
