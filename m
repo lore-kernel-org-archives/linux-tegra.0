@@ -1,58 +1,78 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/7] soc/tegra: pmc: Add new Tegra210 IO rails
-Date: Tue, 12 Apr 2016 22:29:43 +0530
-Message-ID: <570D297F.1080701@nvidia.com>
-References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com> <1460473007-11535-3-git-send-email-ldewangan@nvidia.com> <20160412152830.GB30211@ulmo.ba.sec>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] clk: tegra210: Add SLCG override gate clocks
+Date: Tue, 12 Apr 2016 18:41:50 +0100
+Message-ID: <570D335E.9020202@nvidia.com>
+References: <1457638685-31007-1-git-send-email-rklein@nvidia.com>
+ <20160314160551.GA21898@ulmo.nvidia.com> <56E6E20C.6020807@nvidia.com>
+ <56E7CA79.7060106@nvidia.com> <56F581BF.2070903@nvidia.com>
+ <20160412152026.GE25160@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160412152830.GB30211-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <20160412152026.GE25160@ulmo.ba.sec>
+Sender: linux-clk-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, Bill Huang <bilhuang@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On Tuesday 12 April 2016 08:58 PM, Thierry Reding wrote:
+On 12/04/16 16:20, Thierry Reding wrote:
 > * PGP Signed by an unknown key
->
-> On Tue, Apr 12, 2016 at 08:26:42PM +0530, Laxman Dewangan wrote:
->> NVIDIA Tegra210 has extended the IO rails for new IO pads
->> and added some new IO rails on top of its previous SoC.
+> 
+> On Fri, Mar 25, 2016 at 02:21:51PM -0400, Rhyland Klein wrote:
+>> On 3/15/2016 4:40 AM, Jon Hunter wrote:
+>>>
+>>> On 14/03/16 16:08, Rhyland Klein wrote:
+>>>> On 3/14/2016 12:05 PM, Thierry Reding wrote:
+>>>>>> Old Signed by an unknown key
+>>>>>
+>>>>> On Thu, Mar 10, 2016 at 02:38:05PM -0500, Rhyland Klein wrote:
+>>>>>> From: Bill Huang <bilhuang@nvidia.com>
+>>>>>>
+>>>>>> Add some SLCG (Second Level Clock Gating) override clocks to control
+>>>>>> gating and un-gating their logics.
+>>>>>>
+>>>>>> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
+>>>>>> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+>>>>>> ---
+>>>>>>  drivers/clk/tegra/clk-id.h               | 16 ++++++
+>>>>>>  drivers/clk/tegra/clk-tegra210.c         | 91 ++++++++++++++++++++++++++++++++
+>>>>>>  include/dt-bindings/clock/tegra210-car.h | 32 +++++------
+>>>>>>  3 files changed, 123 insertions(+), 16 deletions(-)
+>>>>>
+>>>>> There's no rationale given here about why we need this. What will these
+>>>>> second level clock gates be used for? Why do we need these (seemingly)
+>>>>> duplicate clock entries.
+>>>>>
+>>>>
+>>>> These are going to be used in the to-be posted patchset around
+>>>> powergating. As of now they are unused, which is why I hadn't added them
+>>>> previously. I just wanted to try to get this dependency in before the
+>>>> powergate series was posted.
+>>>
+>>> Yes we are using these on the Pixel C (aka. Smaug) and I suggested to
+>>> Rhyland that we upstream them. Eventually we will use them but only
+>>> after the core GenPD changes for Tegra are merged. From my perspective I
+>>> was thinking it is better to reduce the changes between the chromeos
+>>> 3.18 kernel and mainline. However, if you wish to wait until we need
+>>> them I guess we can. Otherwise ...
+>>>
+>>> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+>>>
+>>> Cheers
+>>> Jon
+>>>
 >>
->> Add all supported IO rails from Tegra210 to the Tegra PMC header.
->>
->> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>   include/soc/tegra/pmc.h | 14 ++++++++++++++
->>   1 file changed, 14 insertions(+)
->>
->> diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
->> index 07e332d..58fadc5 100644
->> --- a/include/soc/tegra/pmc.h
->> +++ b/include/soc/tegra/pmc.h
->> @@ -90,22 +90,36 @@ int tegra_pmc_cpu_remove_clamping(unsigned int cpuid);
->>   #define TEGRA_IO_RAIL_UART	14
->>   #define TEGRA_IO_RAIL_BB	15
->>   #define TEGRA_IO_RAIL_AUDIO	17
->> +#define TEGRA_IO_RAIL_USB3	18
->>   #define TEGRA_IO_RAIL_HSIC	19
->>   #define TEGRA_IO_RAIL_COMP	22
->> +#define TEGRA_IO_RAIL_DBG	25
->> +#define TEGRA_IO_RAIL_DBG_NONAO	26
->> +#define TEGRA_IO_RAIL_GPIO	27
->>   #define TEGRA_IO_RAIL_HDMI	28
->>   #define TEGRA_IO_RAIL_PEX_CNTRL	32
->>   #define TEGRA_IO_RAIL_SDMMC1	33
->>   #define TEGRA_IO_RAIL_SDMMC3	34
->>   #define TEGRA_IO_RAIL_SDMMC4	35
->> +#define TEGRA_IO_RAIL_EMMC	35
->>   #define TEGRA_IO_RAIL_CAM	36
->>   #define TEGRA_IO_RAIL_RES	37
->> +#define TEGRA_IO_RAIL_EMMC2	37
-> We have a duplicate entry for 37 now. The _RES might have meant
-> "reserved", in which case maybe just replace it with the new symbolic
-> name?
+>> Thierry do you think we should hold off on this until Jon's patches are
+>> ready or merge this sooner?
+> 
+> Jon, I think it would make sense for you to pick this up into your tree
+> along with the rest of the patches that make use of them. Even if they
+> end up being applied to different trees I'd like to see all of the work
+> as a whole first.
 
-OK, then make sense to replace RES with EMMC2.
+Ok. That is fine with me.
+
+Cheers
+Jon
