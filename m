@@ -1,82 +1,131 @@
-From: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: Remove 0, prefix from unit-addresses
-Date: Tue, 12 Apr 2016 11:18:14 -0500
-Message-ID: <CAL_JsqJohKH3zuLuffs_Ae5_bQe-BF7PP0dtYX0YPEzP0So1eg@mail.gmail.com>
-References: <1460383271-27306-2-git-send-email-thierry.reding@gmail.com>
- <570BCB41.2030504@wwwdotorg.org> <CAL_JsqLASP+cytYA7rWn-Ox2W47rkf3t+n3KwBexvBQNc4J_RQ@mail.gmail.com>
- <570BF13B.4060108@wwwdotorg.org> <20160412143946.GB25160@ulmo.ba.sec>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V4 2/3] dmaengine: tegra-adma: Add support for Tegra210
+ ADMA
+Date: Tue, 12 Apr 2016 17:23:32 +0100
+Message-ID: <570D2104.1040607@nvidia.com>
+References: <1458057390-20756-1-git-send-email-jonathanh@nvidia.com>
+ <1458057390-20756-3-git-send-email-jonathanh@nvidia.com>
+ <20160405213649.GA11586@vkoul-mobl.iind.intel.com>
+ <570BB001.3020202@nvidia.com> <20160412141025.GJ2274@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160412143946.GB25160-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
+In-Reply-To: <20160412141025.GJ2274@localhost>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Apr 12, 2016 at 9:39 AM, Thierry Reding
-<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Mon, Apr 11, 2016 at 12:47:23PM -0600, Stephen Warren wrote:
->> On 04/11/2016 12:32 PM, Rob Herring wrote:
->> > On Mon, Apr 11, 2016 at 11:05 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
->> > > On 04/11/2016 08:01 AM, Thierry Reding wrote:
->> > > >
->> > > > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> > > >
->> > > > When Tegra124 support was first merged the unit-addresses of all devices
->> > > > were listed with a "0," prefix to encode the reg property's second cell.
->> > > > It turns out that this notation is not correct, and the "," separator is
->> > > > only used to separate fields in the unit address (such as the device and
->> > > > function number in PCI devices), not individual cells for addresses with
->> > > > more than one cell.
->> > >
->> > >
->> > > > diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
->> > > > b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
->> > >
->> > >
->> > > > -       gpu@0,57000000 {
->> > > > +       gpu@57000000 {
->> > > >                  /*
->> > > >                   * Node left disabled on purpose - the bootloader will
->> > > > enable
->> > > >                   * it after having set the VPR up
->> > >
->> > >
->> > > So the bootloader doesn't actually do that for the new node name at present.
->> > > I have written a patch to make it do so, but haven't sent it yet since I
->> > > wrote it in the middle of a large cleanup of U-Boot. I expect I can shuffle
->> > > it to the front of the series and send it soon though. Without a new
->> > > bootloader that contains this change, IIUC all graphics will be
->> > > non-operative if this change is applied.
->> >
->> > Then you should leave this one alone for a while.
->> >
->> > I also found this looking at u-boot:
->> >
->> > arch/arm/dts/tegra124.dtsi:     gpu@57000000 {
+
+On 12/04/16 15:10, Vinod Koul wrote:
+> On Mon, Apr 11, 2016 at 03:09:05PM +0100, Jon Hunter wrote:
+>> On 05/04/16 22:36, Vinod Koul wrote:
+>>> On Tue, Mar 15, 2016 at 03:56:29PM +0000, Jon Hunter wrote:
+
+[snip]
+
+>> So, AFAICT, dma_async_device_register() does not check to see if
+>> device_prep_slave_sg() is valid AND none of the functions
+>> dmaengine_prep_slave_single(), dmaengine_prep_slave_single() and
+>> dmaengine_prep_rio_sg() check to see if the function pointer is valid
+>> before calling chan->device->device_prep_slave_sg(). So it seems that we
+>> always expect this function pointer to be valid.
 >>
->> FWIW, that's because the U-Boot DTs use #address-cells=<1> on this chip so
->> there was no question of using commas in the unit address or not. That may
->> have been because U-Boot imported the DTs (or parts of them) from Linux
->> before Linux switched to #address-cells=<2> on this chip.
->
-> I thought the reason had been that U-Boot didn't support any more than
-> 32-bits for addresses on 32-bit ARM anyway, hence we never bothered to
-> sync with the kernel DTS files regarding #address-cells.
+>> So should the inline functions ensure the function pointer is valid
+>> before attempting to call them? If so I can add a patch for this.
+>> Otherwise it seems the driver needs a stub. It would be a massive change
+>> to add a new capability, say SLAVE_SG, and populate this for all
+>> existing drivers.
+> 
+> No we should check here, it's indeed a miss, not sure why none complained
+> about this. I was assuming this is due to caps not considering cyclic case,
+> so I fixed that up.
+> 
+> I will fix these cases too, thanks for reporting
 
-Ah yes, there are lots of issues with u-boot around that. That's a
-wonderful work-around though.
+Ok, great.
 
-> Technically it would be possible for someone to write a DTS file with a
-> GPU node with yet another name (the binding after all doesn't specify
-> what the node name should be) so I think better matching would be safer
-> in any case.
+>>>> +static const struct tegra_adma_chip_data tegra210_chip_data = {
+>>>> +	.nr_channels = 22,
+>>>> +};
+>>>
+>>> why should this be hard coded in kernel and not queried from something like
+>>> DT? This case seems to be hardware property
+>>
+>> Originally, I did have this in DT, however, the Tegra maintainers prefer
+>> this and this is consistent with the other Tegra DMA driver (see
+>> driver/dma/tegra20-apb-dma.c) [0].
+> 
+> But this creates a problem when you have next generation of controller with
+> different channel count!
+> How do we solve then?
 
-Strictly speaking, the node name should be part of the binding. We're
-not too good at specifying it.
+Same way we solve this for the tegra20-apb-dma driver by having
+different chip data per SoC in the driver ...
 
-I've not looked, but I would think the compatible string would be
-unique in this case.
+1259 /* Tegra20 specific DMA controller information */
+1260 static const struct tegra_dma_chip_data tegra20_dma_chip_data = {
+1261         .nr_channels            = 16,
+1262         .channel_reg_size       = 0x20,
+1263         .max_dma_count          = 1024UL * 64,
+1264         .support_channel_pause  = false,
+1265         .support_separate_wcount_reg = false,
+1266 };
+1267
+1268 /* Tegra30 specific DMA controller information */
+1269 static const struct tegra_dma_chip_data tegra30_dma_chip_data = {
+1270         .nr_channels            = 32,
+1271         .channel_reg_size       = 0x20,
+1272         .max_dma_count          = 1024UL * 64,
+1273         .support_channel_pause  = false,
+1274         .support_separate_wcount_reg = false,
+1275 };
+1276
+1277 /* Tegra114 specific DMA controller information */
+1278 static const struct tegra_dma_chip_data tegra114_dma_chip_data = {
+1279         .nr_channels            = 32,
+1280         .channel_reg_size       = 0x20,
+1281         .max_dma_count          = 1024UL * 64,
+1282         .support_channel_pause  = true,
+1283         .support_separate_wcount_reg = false,
+1284 };
+1285
+1286 /* Tegra148 specific DMA controller information */
+1287 static const struct tegra_dma_chip_data tegra148_dma_chip_data = {
+1288         .nr_channels            = 32,
+1289         .channel_reg_size       = 0x40,
+1290         .max_dma_count          = 1024UL * 64,
+1291         .support_channel_pause  = true,
+1292         .support_separate_wcount_reg = true,
+1293 };
 
-Rob
+You may still say this should be in the DT, but the Tegra maintainers
+prefer this data in the driver.
+
+>>>> +	dma_cap_set(DMA_SLAVE, tdma->dma_dev.cap_mask);
+>>>> +	dma_cap_set(DMA_PRIVATE, tdma->dma_dev.cap_mask);
+>>>> +	dma_cap_set(DMA_CYCLIC, tdma->dma_dev.cap_mask);
+>>>
+>>> I think you should not set DMA_SLAVE, do you need caps to be exported. I
+>>> think that should be exported for cyclic too, let me know if that was the
+>>> issue?
+>>>
+>>
+>> Why should I not be setting DMA_SLAVE? Should I not be calling
+>> dma_get_any_slave_channel() in the xlate?
+>>
+>> I think that I do want to set DMA_CYCLIC as well to ensure that we check
+>> that the device->device_prep_dma_cyclic() function pointer is populated
+>> when registering the DMA controller.
+> 
+> Only setting DMA_CYCLIC should do, if you see any issues around that please
+> get back, we cna fix those :)
+
+It did not work for me because dma_get_any_slave_channel() wants a DMA
+device with the DMA_SLAVE bit capability set. So if I remove this above,
+then requesting the channel fails via dma_get_any_slave_channel() fails.
+Is there something I don't understand here?
+
+Cheers
+Jon
