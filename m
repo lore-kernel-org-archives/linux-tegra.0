@@ -1,46 +1,67 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: Re: [PATCH V9 RESEND 14/14] arm: tegra: set critical trips for Tegra124
-Date: Tue, 12 Apr 2016 16:53:52 +0800
-Message-ID: <570CB7A0.2080908@nvidia.com>
-References: <1459247364-1139-1-git-send-email-wni@nvidia.com> <1459247364-1139-15-git-send-email-wni@nvidia.com> <20160329151705.GC1855@localhost.localdomain> <56FE1D82.7090908@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 14/15] dt-bindings: arm-gic: Drop 'clock-names' from
+ binding document
+Date: Tue, 12 Apr 2016 09:54:32 +0100
+Message-ID: <570CB7C8.4090103@nvidia.com>
+References: <1458224359-32665-1-git-send-email-jonathanh@nvidia.com>
+ <1458224359-32665-15-git-send-email-jonathanh@nvidia.com>
+ <CAL_JsqLwvhbCnQzkRd1cyz+O6HU8a3X3MYoX=ChhuDyvdTWQYA@mail.gmail.com>
+ <56EBBE38.6070303@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <56FE1D82.7090908@nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Eduardo Valentin <edubezval@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, thierry.reding@gmail.com, swarren@wwwdotorg.org
-Cc: rui.zhang@intel.com, MLongnecker@nvidia.com, mikko.perttunen@kapsi.fi, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <56EBBE38.6070303-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-omap <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Could anyone take a look at this patch?
+Rob, Mark, Marc,
 
-On 2016=E5=B9=B404=E6=9C=8801=E6=97=A5 15:04, Wei Ni wrote:
-> To:
-> Rob Herring <robh+dt@kernel.org>
-> Pawel Moll <pawel.moll@arm.com>
-> Mark Rutland <mark.rutland@arm.com>
-> Ian Campbell <ijc+devicetree@hellion.org.uk>
-> Kumar Gala <galak@codeaurora.org>
->=20
-> Cc:
-> devicetree@vger.kernel.org
->=20
-> On 2016=E5=B9=B403=E6=9C=8829=E6=97=A5 23:17, Eduardo Valentin wrote:
->> On Tue, Mar 29, 2016 at 06:29:24PM +0800, Wei Ni wrote:
->>> Set general "critical" trip temperatures for cpu, gpu, mem and pllx
->>> thermal zones for all Tegra124 platform, these trips can trigger
->>> shut down or reset.
->>> Tegra124 Jetson TK1 was already set "critical" trips before, so it
->>> can overwrite the general values.
+On 18/03/16 08:37, Jon Hunter wrote:
+> 
+> On 17/03/16 20:14, Rob Herring wrote:
+>> On Thu, Mar 17, 2016 at 9:19 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>> Commit afbbd2338176 ("irqchip/gic: Document optional Clock and Power
+>>> Domain properties") documented optional clock and power-dmoain properties
+>>> for the ARM GIC. Currently, there are no users of these and for the
+>>> Tegra210 Audio GIC (based upon the GIC-400) there are two clocks, a
+>>> functional clock and interface clock, that need to be enabled.
 >>>
->>> Signed-off-by: Wei Ni <wni@nvidia.com>
+>>> To allow flexibility, drop the 'clock-names' from the GIC binding and
+>>> just provide a list of clocks which the driver can parse. It is assumed
+>>> that any clocks that are listed, need to be enabled in order to access
+>>> the GIC.
+>>>
+>>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>
+>>> ---
+>>>
+>>> Please note that I am not sure if this will be popular, but I am trying
+>>> to come up with a generic way to handle multiple clocks that may be
+>>> required for accessing a GIC.
 >>
->> Acked-by: Eduardo Valentin <edubezval@gmail.com>
+>> It's not. :)
 >>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pm" i=
-n
-> the body of a message to majordomo@vger.kernel.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->=20
+>> We need to specify the number and order of clocks by compatible string
+>> at a minimum. Sadly, ARM's GICs are well documented and include clock
+>> names, so you can't just make up genericish names either which is
+>> probably often the case.
+> 
+> Do you have any suggestions then?
+> 
+> I have had a look at the ARM TRMs and although I see that they do show
+> the functional clock, there is no mention of whether there are any other
+> clocks need in order to interface to the GIC (ie. bus clock). I know
+> that for other SoCs such as OMAP it is common to have both a functional
+> clock and interface clock. So I believe this is fairly common.
+
+Any thoughts on how I should handle this for the Tegra AGIC?
+
+Cheers
+Jon
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
