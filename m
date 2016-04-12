@@ -1,110 +1,111 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/2] dt-bindings: tegra: Rename some bindings for
- consistency
-Date: Tue, 12 Apr 2016 17:08:21 +0200
-Message-ID: <20160412150821.GC25160@ulmo.ba.sec>
-References: <1460383086-26957-1-git-send-email-thierry.reding@gmail.com>
- <1460383086-26957-2-git-send-email-thierry.reding@gmail.com>
- <570C4F2F.8050407@nvidia.com>
- <570C5CD6.2090700@wwwdotorg.org>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 1/7] soc/tegra: pmc: Use BIT macro for register field definition
+Date: Tue, 12 Apr 2016 20:26:41 +0530
+Message-ID: <1460473007-11535-2-git-send-email-ldewangan@nvidia.com>
+References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="lMM8JwqTlfDpEaS6"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <570C5CD6.2090700-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1460473007-11535-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Use BIT macro for register field definition and make constant as
+unsigned when using in shift operator like instead of (3 << 30),
+make it to (3U << 30).
 
---lMM8JwqTlfDpEaS6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/soc/tegra/pmc.c | 42 +++++++++++++++++++++---------------------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
 
-On Mon, Apr 11, 2016 at 08:26:30PM -0600, Stephen Warren wrote:
-> On 04/11/2016 07:28 PM, Joseph Lo wrote:
-> > On 04/11/2016 09:58 PM, Thierry Reding wrote:
-> > > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > >=20
-> > > Device tree binding for NVIDIA Tegra have traditionally carried the
-> > > "nvidia," vendor prefix in the filename. A couple of odd ones don't, =
-so
-> > > fix them up for consistency.
-> > >=20
-> > > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > ---
-> > >   .../devicetree/bindings/ata/nvidia,tegra-ahci.txt  |  32 ++
-> > >   .../devicetree/bindings/ata/tegra-sata.txt         |  32 --
-> > >   .../bindings/dma/nvidia,tegra20-apbdma.txt         |  44 +++
-> > >   .../devicetree/bindings/dma/tegra20-apbdma.txt     |  44 ---
-> > >   .../memory-controllers/nvidia,tegra-emc.txt        | 374
-> > > +++++++++++++++++++++
-> > >   .../bindings/memory-controllers/tegra-emc.txt      | 374
-> > > ---------------------
-> > >   .../bindings/thermal/nvidia,tegra-soctherm.txt     |  67 ++++
-> > >   .../devicetree/bindings/thermal/tegra-soctherm.txt |  67 ----
-> > >   8 files changed, 517 insertions(+), 517 deletions(-)
-> > >   create mode 100644
-> > > Documentation/devicetree/bindings/ata/nvidia,tegra-ahci.txt
-> > >   delete mode 100644 Documentation/devicetree/bindings/ata/tegra-sata=
-=2Etxt
-> > >   create mode 100644
-> > > Documentation/devicetree/bindings/dma/nvidia,tegra20-apbdma.txt
-> > >   delete mode 100644
-> > > Documentation/devicetree/bindings/dma/tegra20-apbdma.txt
-> > >   create mode 100644
-> > > Documentation/devicetree/bindings/memory-controllers/nvidia,tegra-emc=
-=2Etxt
-> > >   delete mode 100644
-> > > Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt
-> > >   create mode 100644
-> > > Documentation/devicetree/bindings/thermal/nvidia,tegra-soctherm.txt
-> > >   delete mode 100644
-> > > Documentation/devicetree/bindings/thermal/tegra-soctherm.txt
-> > >=20
-> >=20
-> > Hi,
-> >=20
-> > Could we use the "-M" and "-C" option to detect the difference if this
-> > is just rename or copy from the original file? That way we can still
-> > remain the connection of the history log that we can still check the
-> > file history by "git blame".
-> >=20
-> > If we do this by deleting and recreating the same file content with
-> > renamed filename, we will lose the history log.
->=20
-> When this is applied, git will actually realize it's a move not a delete/=
-add
-> and maintain the history just fine. It only looks like a delete/rename in
-> the "git format-patch" output when -M/-C isn't used.
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 08966c2..762f4fa 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -42,29 +42,29 @@
+ #include <soc/tegra/pmc.h>
+ 
+ #define PMC_CNTRL			0x0
+-#define  PMC_CNTRL_SYSCLK_POLARITY	(1 << 10)  /* sys clk polarity */
+-#define  PMC_CNTRL_SYSCLK_OE		(1 << 11)  /* system clock enable */
+-#define  PMC_CNTRL_SIDE_EFFECT_LP0	(1 << 14)  /* LP0 when CPU pwr gated */
+-#define  PMC_CNTRL_CPU_PWRREQ_POLARITY	(1 << 15)  /* CPU pwr req polarity */
+-#define  PMC_CNTRL_CPU_PWRREQ_OE	(1 << 16)  /* CPU pwr req enable */
+-#define  PMC_CNTRL_INTR_POLARITY	(1 << 17)  /* inverts INTR polarity */
++#define PMC_CNTRL_SYSCLK_POLARITY	BIT(10) /* sys clk polarity */
++#define PMC_CNTRL_SYSCLK_OE		BIT(11) /* system clock enable */
++#define PMC_CNTRL_SIDE_EFFECT_LP0	BIT(14) /* LP0 when CPU pwr gated */
++#define PMC_CNTRL_CPU_PWRREQ_POLARITY	BIT(15) /* CPU pwr req polarity */
++#define PMC_CNTRL_CPU_PWRREQ_OE		BIT(16) /* CPU pwr req enable */
++#define PMC_CNTRL_INTR_POLARITY		BIT(17)/* inverts INTR polarity */
+ 
+ #define DPD_SAMPLE			0x020
+-#define  DPD_SAMPLE_ENABLE		(1 << 0)
+-#define  DPD_SAMPLE_DISABLE		(0 << 0)
++#define DPD_SAMPLE_ENABLE		BIT(0)
++#define DPD_SAMPLE_DISABLE		(0 << 0)
+ 
+ #define PWRGATE_TOGGLE			0x30
+-#define  PWRGATE_TOGGLE_START		(1 << 8)
++#define PWRGATE_TOGGLE_START		BIT(8)
+ 
+ #define REMOVE_CLAMPING			0x34
+ 
+ #define PWRGATE_STATUS			0x38
+ 
+ #define PMC_SCRATCH0			0x50
+-#define  PMC_SCRATCH0_MODE_RECOVERY	(1 << 31)
+-#define  PMC_SCRATCH0_MODE_BOOTLOADER	(1 << 30)
+-#define  PMC_SCRATCH0_MODE_RCM		(1 << 1)
+-#define  PMC_SCRATCH0_MODE_MASK		(PMC_SCRATCH0_MODE_RECOVERY | \
++#define PMC_SCRATCH0_MODE_RECOVERY	BIT(31)
++#define PMC_SCRATCH0_MODE_BOOTLOADER	BIT(30)
++#define PMC_SCRATCH0_MODE_RCM		BIT(1)
++#define PMC_SCRATCH0_MODE_MASK		(PMC_SCRATCH0_MODE_RECOVERY | \
+ 					 PMC_SCRATCH0_MODE_BOOTLOADER | \
+ 					 PMC_SCRATCH0_MODE_RCM)
+ 
+@@ -74,14 +74,14 @@
+ #define PMC_SCRATCH41			0x140
+ 
+ #define PMC_SENSOR_CTRL			0x1b0
+-#define PMC_SENSOR_CTRL_SCRATCH_WRITE	(1 << 2)
+-#define PMC_SENSOR_CTRL_ENABLE_RST	(1 << 1)
++#define PMC_SENSOR_CTRL_SCRATCH_WRITE	BIT(2)
++#define PMC_SENSOR_CTRL_ENABLE_RST	BIT(1)
+ 
+ #define IO_DPD_REQ			0x1b8
+-#define  IO_DPD_REQ_CODE_IDLE		(0 << 30)
+-#define  IO_DPD_REQ_CODE_OFF		(1 << 30)
+-#define  IO_DPD_REQ_CODE_ON		(2 << 30)
+-#define  IO_DPD_REQ_CODE_MASK		(3 << 30)
++#define IO_DPD_REQ_CODE_IDLE		(0 << 30)
++#define IO_DPD_REQ_CODE_OFF		(1U << 30)
++#define IO_DPD_REQ_CODE_ON		(2U << 30)
++#define IO_DPD_REQ_CODE_MASK		(3U << 30)
+ 
+ #define IO_DPD_STATUS			0x1bc
+ #define IO_DPD2_REQ			0x1c0
+@@ -93,10 +93,10 @@
+ #define PMC_SCRATCH54_ADDR_SHIFT	0
+ 
+ #define PMC_SCRATCH55			0x25c
+-#define PMC_SCRATCH55_RESET_TEGRA	(1 << 31)
++#define PMC_SCRATCH55_RESET_TEGRA	BIT(31)
+ #define PMC_SCRATCH55_CNTRL_ID_SHIFT	27
+ #define PMC_SCRATCH55_PINMUX_SHIFT	24
+-#define PMC_SCRATCH55_16BITOP		(1 << 15)
++#define PMC_SCRATCH55_16BITOP		BIT(15)
+ #define PMC_SCRATCH55_CHECKSUM_SHIFT	16
+ #define PMC_SCRATCH55_I2CSLV1_SHIFT	0
+ 
+-- 
+2.1.4
 
-I've resent v2 generated with -M to make it obvious that there aren't
-any changes to the binding text.
-
-Thierry
-
---lMM8JwqTlfDpEaS6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXDQ9iAAoJEN0jrNd/PrOhzysQAIEdgNIUae7PHel3eil0uhJq
-EspUa+3MK74Hlah00Z/th0Pb2+XniDxd5bIkGTvIbJrrOroV5nG8eqCKUCMOl3mn
-LhiiCTqJUQLUFKEyz34xPj3bTFc0PoAxsWPmtY60iempLtHAwKSGU+cKU3Vx/59h
-GFfhkKfrc6yPGGTaRUz20QG2thySDc7ivx9LOOPehqXAdRWi/6vGonNsbjm8Kwqp
-sHBsPBjf7oiL4cLhvAroTw9jn/GcPFBKE+8JfYyq2i49PBn4CpDzDC1Ms/kOhTcZ
-et68qHT92KYj1lL7jU2PdhGnMgA2HwSrFewz3HMtgbCE6XANTONgolntcoBJw9/6
-O+yQ1ennVM7FPnsziKajKYcWUV5cXNuoHwfiXdjy2oDiD+149yIri9G7usmKPGC0
-1sUn9oSZniuNRc+WWQli5FbTUbtYsKIGuz2XnaQz9prK+xe61UxAC8wuKIas55dZ
-IykfU9XTG18ygQsgk0vHms59oTJtGsv/+t0NevrsAujko1T7rtk/4PAV/Sc8MgEd
-ZVhsMEV1J/qLmVuwoxJ/fm+3JuoHzVtXC7lwLvf/FtNQXwhk7fGcL+QNzqVjKSmG
-Zzf/mxMNcBp4u3/y//ySWfRWAMiQhFMpaa5Hm1k+zdR/x8adUN3uswgdv4yj73wC
-ayzAp5lc1nRNnvd4a1J7
-=xVZh
------END PGP SIGNATURE-----
-
---lMM8JwqTlfDpEaS6--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
