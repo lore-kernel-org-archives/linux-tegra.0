@@ -1,44 +1,65 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH 2/7] soc/tegra: pmc: Add new Tegra210 IO rails
-Date: Tue, 12 Apr 2016 23:27:29 +0530
-Message-ID: <570D3709.9030109@nvidia.com>
-References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com> <1460473007-11535-3-git-send-email-ldewangan@nvidia.com> <20160412152830.GB30211@ulmo.ba.sec> <570D297F.1080701@nvidia.com> <570D3856.6050404@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 3/7] soc/tegra: pmc: Add interface to get IO rail power
+ status
+Date: Tue, 12 Apr 2016 19:13:24 +0100
+Message-ID: <570D3AC4.2020105@nvidia.com>
+References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>
+ <1460473007-11535-4-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <570D3856.6050404@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: swarren@wwwdotorg.org, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1460473007-11535-4-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On Tuesday 12 April 2016 11:33 PM, Jon Hunter wrote:
-> On 12/04/16 17:59, Laxman Dewangan wrote:
->> On Tuesday 12 April 2016 08:58 PM, Thierry Reding wrote:
->>> * PGP Signed by an unknown key
->>>
->>> On Tue, Apr 12, 2016 at 08:26:42PM +0530, Laxman Dewangan wrote:
->>>> +#define TEGRA_IO_RAIL_EMMC    35
->>>>    #define TEGRA_IO_RAIL_CAM    36
->>>>    #define TEGRA_IO_RAIL_RES    37
->>>> +#define TEGRA_IO_RAIL_EMMC2    37
->>> We have a duplicate entry for 37 now. The _RES might have meant
->>> "reserved", in which case maybe just replace it with the new symbolic
->>> name?
->> OK, then make sense to replace RES with EMMC2.
-> Looking at the Tegra124 TRM it was reserved and so renaming makes sense
-> here. However, that also prompts the question how do we check to ensure
-> that the IO rail is valid for a given SoC?
->
-> Should we define a 'valid' mask for IO_DPD_STATUS and IO_DPD2_STATUS
-> registers in the SoC data so we can check if the rail is valid?
->
+On 12/04/16 15:56, Laxman Dewangan wrote:
+> Add API to get the IO rail power status of the Tegra IO pads.
+> This will help client driver to get the current power status
+> of IO pads for handling IO pad power.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/soc/tegra/pmc.c | 16 ++++++++++++++++
+>  include/soc/tegra/pmc.h |  6 ++++++
+>  2 files changed, 22 insertions(+)
+> 
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index 762f4fa..0bc8219 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -613,6 +613,22 @@ error:
+>  }
+>  EXPORT_SYMBOL(tegra_io_rail_power_off);
+>  
+> +int tegra_io_rail_power_get_status(unsigned int id)
+> +{
+> +	unsigned long status, value;
+> +	unsigned int mask;
 
-Yes, that is good idea.
-Infact, we should decouple  RAIL_ID with the bit location of register.
-This will help on mapping any rail ID to SoC specific bit location and 
-need not to worry if bit location of rail get changed on any generation. 
-Local lookup table from ID to bit location can make validation as well 
-as the decoupling.
+These should all be u32 as tegra_pmc_readl() returns a u32.
+
+Hmmm ... I see some of the other tegra_io_rail_xxx() APIs use a unsigned
+long here too. We should fix those as well.
+
+> +
+> +	if ((id > 63) || (id == 30) || (id == 31))
+> +		return -EINVAL;
+
+Seems that this could vary per SoC and so I am wondering if we need a
+bitmap for this?
+
+> +
+> +	status = (id < 32) ? IO_DPD_STATUS : IO_DPD2_STATUS;
+> +	mask = BIT(id % 32);
+> +	value = tegra_pmc_readl(status);
+> +
+> +	return !!(value & mask);
+
+Nit-pick ... do you need this mask variable?
+
+Cheers
+Jon
