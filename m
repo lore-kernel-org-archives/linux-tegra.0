@@ -1,86 +1,82 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/7] soc/tegra: pmc: Add new Tegra210 IO rails
-Date: Tue, 12 Apr 2016 17:28:30 +0200
-Message-ID: <20160412152830.GB30211@ulmo.ba.sec>
-References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>
- <1460473007-11535-3-git-send-email-ldewangan@nvidia.com>
+From: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: Remove 0, prefix from unit-addresses
+Date: Tue, 12 Apr 2016 11:18:14 -0500
+Message-ID: <CAL_JsqJohKH3zuLuffs_Ae5_bQe-BF7PP0dtYX0YPEzP0So1eg@mail.gmail.com>
+References: <1460383271-27306-2-git-send-email-thierry.reding@gmail.com>
+ <570BCB41.2030504@wwwdotorg.org> <CAL_JsqLASP+cytYA7rWn-Ox2W47rkf3t+n3KwBexvBQNc4J_RQ@mail.gmail.com>
+ <570BF13B.4060108@wwwdotorg.org> <20160412143946.GB25160@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="uZ3hkaAS1mZxFaxD"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1460473007-11535-3-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20160412143946.GB25160-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, Apr 12, 2016 at 9:39 AM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Mon, Apr 11, 2016 at 12:47:23PM -0600, Stephen Warren wrote:
+>> On 04/11/2016 12:32 PM, Rob Herring wrote:
+>> > On Mon, Apr 11, 2016 at 11:05 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+>> > > On 04/11/2016 08:01 AM, Thierry Reding wrote:
+>> > > >
+>> > > > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> > > >
+>> > > > When Tegra124 support was first merged the unit-addresses of all devices
+>> > > > were listed with a "0," prefix to encode the reg property's second cell.
+>> > > > It turns out that this notation is not correct, and the "," separator is
+>> > > > only used to separate fields in the unit address (such as the device and
+>> > > > function number in PCI devices), not individual cells for addresses with
+>> > > > more than one cell.
+>> > >
+>> > >
+>> > > > diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+>> > > > b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+>> > >
+>> > >
+>> > > > -       gpu@0,57000000 {
+>> > > > +       gpu@57000000 {
+>> > > >                  /*
+>> > > >                   * Node left disabled on purpose - the bootloader will
+>> > > > enable
+>> > > >                   * it after having set the VPR up
+>> > >
+>> > >
+>> > > So the bootloader doesn't actually do that for the new node name at present.
+>> > > I have written a patch to make it do so, but haven't sent it yet since I
+>> > > wrote it in the middle of a large cleanup of U-Boot. I expect I can shuffle
+>> > > it to the front of the series and send it soon though. Without a new
+>> > > bootloader that contains this change, IIUC all graphics will be
+>> > > non-operative if this change is applied.
+>> >
+>> > Then you should leave this one alone for a while.
+>> >
+>> > I also found this looking at u-boot:
+>> >
+>> > arch/arm/dts/tegra124.dtsi:     gpu@57000000 {
+>>
+>> FWIW, that's because the U-Boot DTs use #address-cells=<1> on this chip so
+>> there was no question of using commas in the unit address or not. That may
+>> have been because U-Boot imported the DTs (or parts of them) from Linux
+>> before Linux switched to #address-cells=<2> on this chip.
+>
+> I thought the reason had been that U-Boot didn't support any more than
+> 32-bits for addresses on 32-bit ARM anyway, hence we never bothered to
+> sync with the kernel DTS files regarding #address-cells.
 
---uZ3hkaAS1mZxFaxD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ah yes, there are lots of issues with u-boot around that. That's a
+wonderful work-around though.
 
-On Tue, Apr 12, 2016 at 08:26:42PM +0530, Laxman Dewangan wrote:
-> NVIDIA Tegra210 has extended the IO rails for new IO pads
-> and added some new IO rails on top of its previous SoC.
->=20
-> Add all supported IO rails from Tegra210 to the Tegra PMC header.
->=20
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  include/soc/tegra/pmc.h | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->=20
-> diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
-> index 07e332d..58fadc5 100644
-> --- a/include/soc/tegra/pmc.h
-> +++ b/include/soc/tegra/pmc.h
-> @@ -90,22 +90,36 @@ int tegra_pmc_cpu_remove_clamping(unsigned int cpuid);
->  #define TEGRA_IO_RAIL_UART	14
->  #define TEGRA_IO_RAIL_BB	15
->  #define TEGRA_IO_RAIL_AUDIO	17
-> +#define TEGRA_IO_RAIL_USB3	18
->  #define TEGRA_IO_RAIL_HSIC	19
->  #define TEGRA_IO_RAIL_COMP	22
-> +#define TEGRA_IO_RAIL_DBG	25
-> +#define TEGRA_IO_RAIL_DBG_NONAO	26
-> +#define TEGRA_IO_RAIL_GPIO	27
->  #define TEGRA_IO_RAIL_HDMI	28
->  #define TEGRA_IO_RAIL_PEX_CNTRL	32
->  #define TEGRA_IO_RAIL_SDMMC1	33
->  #define TEGRA_IO_RAIL_SDMMC3	34
->  #define TEGRA_IO_RAIL_SDMMC4	35
-> +#define TEGRA_IO_RAIL_EMMC	35
->  #define TEGRA_IO_RAIL_CAM	36
->  #define TEGRA_IO_RAIL_RES	37
-> +#define TEGRA_IO_RAIL_EMMC2	37
+> Technically it would be possible for someone to write a DTS file with a
+> GPU node with yet another name (the binding after all doesn't specify
+> what the node name should be) so I think better matching would be safer
+> in any case.
 
-We have a duplicate entry for 37 now. The _RES might have meant
-"reserved", in which case maybe just replace it with the new symbolic
-name?
+Strictly speaking, the node name should be part of the binding. We're
+not too good at specifying it.
 
-Thierry
+I've not looked, but I would think the compatible string would be
+unique in this case.
 
---uZ3hkaAS1mZxFaxD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXDRQeAAoJEN0jrNd/PrOhPyMQAMMhp39ztWiSajjTG/Ni2ZYk
-+qH3EwkqOLwttuhcRW6ZA86ph4qxgvBmFVKOSi6fw6I7/AtDJQNwqygtd1Pw9pTk
-u6RWmLdfs87bEbpE/p4GAQjQpdv0Q2bnQaUfCSM6xCOSYzRpFIQ8HQL/XXzmXTkJ
-uMmIFHY0xBeWJJMQ7NDj9790v8JJHEGSgsEQerSgc7GSH0u2g0CHI0E6lFA/TggF
-yrR40Pg+fT28Bc4D5JCOgIJsCNw+AaOfUXA8YBWIJX2LuSj/QQSzMoRixoGr0OIl
-yYphnMxK3USxQJbSzTlGfrofTqzzsWf/RHb/TCZySd/ES+1wGVmj4YlEoyPMmFEa
-ZLaQIlFejGIbzQj0slfMdminPfTNxcbhaajrTfKZwXtY8w9ZP5FOd/Kko2UxSjQs
-CCCJTFJKMF0wMGkUdz4Cchy2miOUrtOVj9hvnOlG35p19AtQbqEfaCZanJuoAh+l
-aIy4xZ3hBjRrBusPko1nVWNd3YjHDbHe6K/3hazSIqlTi3VM+MMP1qzbIjifmOtw
-eNMLJqA+FXXfeFILW/ff62l4gp4g4DlyxxkWV08ZxO6Aa9nzLjejMGS0srAzQ2d7
-lWF8xPOHnG13rYqpOsUkWk0c+N+0C/37B442cjmi7lv9xuIxO+CNVAfd+AHTfBD5
-v29u9fX4RGu+gPdAROsz
-=2vsL
------END PGP SIGNATURE-----
-
---uZ3hkaAS1mZxFaxD--
+Rob
