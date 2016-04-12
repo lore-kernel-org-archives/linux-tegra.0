@@ -1,78 +1,260 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] clk: tegra210: Add SLCG override gate clocks
-Date: Tue, 12 Apr 2016 18:41:50 +0100
-Message-ID: <570D335E.9020202@nvidia.com>
-References: <1457638685-31007-1-git-send-email-rklein@nvidia.com>
- <20160314160551.GA21898@ulmo.nvidia.com> <56E6E20C.6020807@nvidia.com>
- <56E7CA79.7060106@nvidia.com> <56F581BF.2070903@nvidia.com>
- <20160412152026.GE25160@ulmo.ba.sec>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <20160412152026.GE25160@ulmo.ba.sec>
-Sender: linux-clk-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Rhyland Klein <rklein@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, Bill Huang <bilhuang@nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: [PATCH V2] ARM: tegra: add DT binding for Tegra186 GPIO controllers
+Date: Tue, 12 Apr 2016 11:46:37 -0600
+Message-ID: <1460483197-5130-1-git-send-email-swarren@wwwdotorg.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+From: Stephen Warren <swarren@nvidia.com>
 
-On 12/04/16 16:20, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Fri, Mar 25, 2016 at 02:21:51PM -0400, Rhyland Klein wrote:
->> On 3/15/2016 4:40 AM, Jon Hunter wrote:
->>>
->>> On 14/03/16 16:08, Rhyland Klein wrote:
->>>> On 3/14/2016 12:05 PM, Thierry Reding wrote:
->>>>>> Old Signed by an unknown key
->>>>>
->>>>> On Thu, Mar 10, 2016 at 02:38:05PM -0500, Rhyland Klein wrote:
->>>>>> From: Bill Huang <bilhuang@nvidia.com>
->>>>>>
->>>>>> Add some SLCG (Second Level Clock Gating) override clocks to control
->>>>>> gating and un-gating their logics.
->>>>>>
->>>>>> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
->>>>>> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
->>>>>> ---
->>>>>>  drivers/clk/tegra/clk-id.h               | 16 ++++++
->>>>>>  drivers/clk/tegra/clk-tegra210.c         | 91 ++++++++++++++++++++++++++++++++
->>>>>>  include/dt-bindings/clock/tegra210-car.h | 32 +++++------
->>>>>>  3 files changed, 123 insertions(+), 16 deletions(-)
->>>>>
->>>>> There's no rationale given here about why we need this. What will these
->>>>> second level clock gates be used for? Why do we need these (seemingly)
->>>>> duplicate clock entries.
->>>>>
->>>>
->>>> These are going to be used in the to-be posted patchset around
->>>> powergating. As of now they are unused, which is why I hadn't added them
->>>> previously. I just wanted to try to get this dependency in before the
->>>> powergate series was posted.
->>>
->>> Yes we are using these on the Pixel C (aka. Smaug) and I suggested to
->>> Rhyland that we upstream them. Eventually we will use them but only
->>> after the core GenPD changes for Tegra are merged. From my perspective I
->>> was thinking it is better to reduce the changes between the chromeos
->>> 3.18 kernel and mainline. However, if you wish to wait until we need
->>> them I guess we can. Otherwise ...
->>>
->>> Acked-by: Jon Hunter <jonathanh@nvidia.com>
->>>
->>> Cheers
->>> Jon
->>>
->>
->> Thierry do you think we should hold off on this until Jon's patches are
->> ready or merge this sooner?
-> 
-> Jon, I think it would make sense for you to pick this up into your tree
-> along with the rest of the patches that make use of them. Even if they
-> end up being applied to different trees I'd like to see all of the work
-> as a whole first.
+Tegra186 contains two separate but mostly similar GPIO controllers.
+Register layout differs significantly from previous Tegra generations, and
+so a new binding is required to describe them in device tree. This patch
+adds that binding.
 
-Ok. That is fine with me.
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
+Acked-by: Rob Herring <robh@kernel.org>
+---
+v2: Increase indentation to make lists more readable.
 
-Cheers
-Jon
+ .../bindings/gpio/nvidia,tegra186-gpio.txt         | 161 +++++++++++++++++++++
+ include/dt-bindings/gpio/tegra186-gpio.h           |  56 +++++++
+ 2 files changed, 217 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
+ create mode 100644 include/dt-bindings/gpio/tegra186-gpio.h
+
+diff --git a/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
+new file mode 100644
+index 000000000000..34f111f79252
+--- /dev/null
++++ b/Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
+@@ -0,0 +1,161 @@
++NVIDIA Tegra186 GPIO controllers
++
++Tegra186 contains two GPIO controllers; a main controller and an "AON"
++controller. This binding document applies to both controllers. The register
++layouts for the controllers share many similarities, but also some significant
++differences. Hence, this document describes closely related but different
++bindings and compatible values.
++
++The Tegra186 GPIO controller allows software to set the IO direction of, and
++read/write the value of, numerous GPIO signals. Routing of GPIO signals to
++package balls is under the control of a separate pin controller HW block. Two
++major sets of registers exist:
++
++a) Security registers, which allow configuration of allowed access to the GPIO
++register set. These registers exist in a single contguous block of physical
++address space. The size of this block, and the security features available,
++varies between the different GPIO controllers.
++
++Access to this set of registers is not necessary in all circumstances. Code
++that wishes to configure access to the GPIO registers needs access to these
++registers to do so. Code which simply wishes to read or write GPIO data does not
++need access to these registers.
++
++b) GPIO registers, which allow manipulation of the GPIO signals. In some GPIO
++controllers, these registers are exposed via multiple "physical aliases" in
++address space, each of which access the same underlying state. See the hardware
++documentation for rationale. Any particular GPIO client is expected to access
++just one of these physical aliases.
++
++Tegra HW documentation describes a unified naming convention for all GPIOs
++implemented by the SoC. Each GPIO is assigned to a port, and a port may control
++a number of GPIOs. Thus, each GPIO is named according to an alphabetical port
++name and an integer GPIO name within the port. For example, GPIO_PA0, GPIO_PN6,
++or GPIO_PCC3.
++
++The number of ports implemented by each GPIO controller varies. The number of
++implemented GPIOs within each port varies. GPIO registers within a controller
++are grouped and laid out according to the port they affect.
++
++The mapping from port name to the GPIO controller that implements that port, and
++the mapping from port name to register offset within a controller, are both
++extremely non-linear. The header file <dt-bindings/gpio/tegra186-gpio.h>
++describes the port-level mapping. In that file, the naming convention for ports
++matches the HW documentation. The values chosen for the names are alphabetically
++sorted within a particular controller. Drivers need to map between the DT GPIO
++IDs and HW register offsets using a lookup table.
++
++Each GPIO controller can generate a number of interrupt signals. Each signal
++represents the aggregate status for all GPIOs within a set of ports. Thus, the
++number of interrupt signals generated by a controller varies as a rough function
++of the number of ports it implements. Note that the HW documentation refers to
++both the overall controller HW module and the sets-of-ports as "controllers".
++
++Each GPIO controller in fact generates multiple interrupts signals for each set
++of ports. Each GPIO may be configured to feed into a specific one of the
++interrupt signals generated by a set-of-ports. The intent is for each generated
++signal to be routed to a different CPU, thus allowing different CPUs to each
++handle subsets of the interrupts within a port. The status of each of these
++per-port-set signals is reported via a separate register. Thus, a driver needs
++to know which status register to observe. This binding currently defines no
++configuration mechanism for this. By default, drivers should use register
++GPIO_${port}_INTERRUPT_STATUS_G1_0. Future revisions to the binding could
++define a property to configure this.
++
++Required properties:
++- compatible
++    Array of strings.
++    One of:
++    - "nvidia,tegra186-gpio".
++    - "nvidia,tegra186-gpio-aon".
++- reg-names
++    Array of strings.
++    Contains a list of names for the register spaces described by the reg
++    property. May contain the following entries, in any order:
++    - "gpio": Mandatory. GPIO control registers. This may cover either:
++        a) The single physical alias that this OS should use.
++        b) All physical aliases that exist in the controller. This is
++           appropriate when the OS is responsible for managing assignment of
++           the physical aliass.
++    - "security": Optional. Security configuration registers.
++    Users of this binding MUST look up entries in the reg property by name,
++    using this reg-names property to do so.
++- reg
++    Array of (physical base address, length) tuples.
++    Must contain one entry per entry in the reg-names property, in a matching
++    order.
++- interrupts
++    Array of interrupt specifiers.
++    The interrupt outputs from the HW block, one per set of ports, in the
++    order the HW manual describes them. The number of entries required varies
++    depending on compatible value:
++    - "nvidia,tegra186-gpio": 6 entries.
++    - "nvidia,tegra186-gpio-aon": 1 entry.
++- gpio-controller
++    Boolean.
++    Marks the device node as a GPIO controller/provider.
++- #gpio-cells
++    Single-cell integer.
++    Must be <2>.
++    Indicates how many cells are used in a consumer's GPIO specifier.
++    In the specifier:
++    - The first cell is the pin number.
++        See <dt-bindings/gpio/tegra186-gpio.h>.
++    - The second cell contains flags:
++        - Bit 0 specifies polarity
++            - 0: Active-high (normal).
++            - 1: Active-low (inverted).
++- interrupt-controller
++    Boolean.
++    Marks the device node as an interrupt controller/provider.
++- #interrupt-cells
++    Single-cell integer.
++    Must be <2>.
++    Indicates how many cells are used in a consumer's interrupt specifier.
++    In the specifier:
++    - The first cell is the GPIO number.
++        See <dt-bindings/gpio/tegra186-gpio.h>.
++    - The second cell is contains flags:
++        - Bits [3:0] indicate trigger type and level:
++            - 1: Low-to-high edge triggered.
++            - 2: High-to-low edge triggered.
++            - 4: Active high level-sensitive.
++            - 8: Active low level-sensitive.
++            Valid combinations are 1, 2, 3, 4, 8.
++
++Example:
++
++#include <dt-bindings/interrupt-controller/irq.h>
++
++gpio@2200000 {
++	compatible = "nvidia,tegra186-gpio";
++	reg-names = "security", "gpio";
++	reg =
++		<0x0 0x2200000 0x0 0x10000>,
++		<0x0 0x2210000 0x0 0x10000>;
++	interrupts =
++		<0 47 IRQ_TYPE_LEVEL_HIGH>,
++		<0 50 IRQ_TYPE_LEVEL_HIGH>,
++		<0 53 IRQ_TYPE_LEVEL_HIGH>,
++		<0 56 IRQ_TYPE_LEVEL_HIGH>,
++		<0 59 IRQ_TYPE_LEVEL_HIGH>,
++		<0 180 IRQ_TYPE_LEVEL_HIGH>;
++	gpio-controller;
++	#gpio-cells = <2>;
++	interrupt-controller;
++	#interrupt-cells = <2>;
++};
++
++gpio@c2f0000 {
++	compatible = "nvidia,tegra186-gpio-aon";
++	reg-names = "security", "gpio";
++	reg =
++		<0x0 0xc2f0000 0x0 0x1000>,
++		<0x0 0xc2f1000 0x0 0x1000>;
++	interrupts =
++		<0 60 IRQ_TYPE_LEVEL_HIGH>;
++	gpio-controller;
++	#gpio-cells = <2>;
++	interrupt-controller;
++	#interrupt-cells = <2>;
++};
+diff --git a/include/dt-bindings/gpio/tegra186-gpio.h b/include/dt-bindings/gpio/tegra186-gpio.h
+new file mode 100644
+index 000000000000..38001c7023f1
+--- /dev/null
++++ b/include/dt-bindings/gpio/tegra186-gpio.h
+@@ -0,0 +1,56 @@
++/*
++ * This header provides constants for binding nvidia,tegra186-gpio*.
++ *
++ * The first cell in Tegra's GPIO specifier is the GPIO ID. The macros below
++ * provide names for this.
++ *
++ * The second cell contains standard flag values specified in gpio.h.
++ */
++
++#ifndef _DT_BINDINGS_GPIO_TEGRA_GPIO_H
++#define _DT_BINDINGS_GPIO_TEGRA_GPIO_H
++
++#include <dt-bindings/gpio/gpio.h>
++
++/* GPIOs implemented by main GPIO controller */
++#define TEGRA_MAIN_GPIO_PORT_A 0
++#define TEGRA_MAIN_GPIO_PORT_B 1
++#define TEGRA_MAIN_GPIO_PORT_C 2
++#define TEGRA_MAIN_GPIO_PORT_D 3
++#define TEGRA_MAIN_GPIO_PORT_E 4
++#define TEGRA_MAIN_GPIO_PORT_F 5
++#define TEGRA_MAIN_GPIO_PORT_G 6
++#define TEGRA_MAIN_GPIO_PORT_H 7
++#define TEGRA_MAIN_GPIO_PORT_I 8
++#define TEGRA_MAIN_GPIO_PORT_J 9
++#define TEGRA_MAIN_GPIO_PORT_K 10
++#define TEGRA_MAIN_GPIO_PORT_L 11
++#define TEGRA_MAIN_GPIO_PORT_M 12
++#define TEGRA_MAIN_GPIO_PORT_N 13
++#define TEGRA_MAIN_GPIO_PORT_O 14
++#define TEGRA_MAIN_GPIO_PORT_P 15
++#define TEGRA_MAIN_GPIO_PORT_Q 16
++#define TEGRA_MAIN_GPIO_PORT_R 17
++#define TEGRA_MAIN_GPIO_PORT_T 18
++#define TEGRA_MAIN_GPIO_PORT_X 19
++#define TEGRA_MAIN_GPIO_PORT_Y 20
++#define TEGRA_MAIN_GPIO_PORT_BB 21
++#define TEGRA_MAIN_GPIO_PORT_CC 22
++
++#define TEGRA_MAIN_GPIO(port, offset) \
++	((TEGRA_MAIN_GPIO_PORT_##port * 8) + offset)
++
++/* GPIOs implemented by AON GPIO controller */
++#define TEGRA_AON_GPIO_PORT_S 0
++#define TEGRA_AON_GPIO_PORT_U 1
++#define TEGRA_AON_GPIO_PORT_V 2
++#define TEGRA_AON_GPIO_PORT_W 3
++#define TEGRA_AON_GPIO_PORT_Z 4
++#define TEGRA_AON_GPIO_PORT_AA 5
++#define TEGRA_AON_GPIO_PORT_EE 6
++#define TEGRA_AON_GPIO_PORT_FF 7
++
++#define TEGRA_AON_GPIO(port, offset) \
++	((TEGRA_AON_GPIO_PORT_##port * 8) + offset)
++
++#endif
+-- 
+2.8.1
+
