@@ -1,111 +1,77 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 1/7] soc/tegra: pmc: Use BIT macro for register field definition
-Date: Tue, 12 Apr 2016 20:26:41 +0530
-Message-ID: <1460473007-11535-2-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH 3/7] soc/tegra: pmc: Add interface to get IO rail power status
+Date: Tue, 12 Apr 2016 20:26:43 +0530
+Message-ID: <1460473007-11535-4-git-send-email-ldewangan@nvidia.com>
 References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1460473007-11535-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: swarren@wwwdotorg.org, thierry.reding@gmail.com, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, jonathanh@nvidia.com
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Use BIT macro for register field definition and make constant as
-unsigned when using in shift operator like instead of (3 << 30),
-make it to (3U << 30).
+Add API to get the IO rail power status of the Tegra IO pads.
+This will help client driver to get the current power status
+of IO pads for handling IO pad power.
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 42 +++++++++++++++++++++---------------------
- 1 file changed, 21 insertions(+), 21 deletions(-)
+ drivers/soc/tegra/pmc.c | 16 ++++++++++++++++
+ include/soc/tegra/pmc.h |  6 ++++++
+ 2 files changed, 22 insertions(+)
 
 diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 08966c2..762f4fa 100644
+index 762f4fa..0bc8219 100644
 --- a/drivers/soc/tegra/pmc.c
 +++ b/drivers/soc/tegra/pmc.c
-@@ -42,29 +42,29 @@
- #include <soc/tegra/pmc.h>
+@@ -613,6 +613,22 @@ error:
+ }
+ EXPORT_SYMBOL(tegra_io_rail_power_off);
  
- #define PMC_CNTRL			0x0
--#define  PMC_CNTRL_SYSCLK_POLARITY	(1 << 10)  /* sys clk polarity */
--#define  PMC_CNTRL_SYSCLK_OE		(1 << 11)  /* system clock enable */
--#define  PMC_CNTRL_SIDE_EFFECT_LP0	(1 << 14)  /* LP0 when CPU pwr gated */
--#define  PMC_CNTRL_CPU_PWRREQ_POLARITY	(1 << 15)  /* CPU pwr req polarity */
--#define  PMC_CNTRL_CPU_PWRREQ_OE	(1 << 16)  /* CPU pwr req enable */
--#define  PMC_CNTRL_INTR_POLARITY	(1 << 17)  /* inverts INTR polarity */
-+#define PMC_CNTRL_SYSCLK_POLARITY	BIT(10) /* sys clk polarity */
-+#define PMC_CNTRL_SYSCLK_OE		BIT(11) /* system clock enable */
-+#define PMC_CNTRL_SIDE_EFFECT_LP0	BIT(14) /* LP0 when CPU pwr gated */
-+#define PMC_CNTRL_CPU_PWRREQ_POLARITY	BIT(15) /* CPU pwr req polarity */
-+#define PMC_CNTRL_CPU_PWRREQ_OE		BIT(16) /* CPU pwr req enable */
-+#define PMC_CNTRL_INTR_POLARITY		BIT(17)/* inverts INTR polarity */
++int tegra_io_rail_power_get_status(unsigned int id)
++{
++	unsigned long status, value;
++	unsigned int mask;
++
++	if ((id > 63) || (id == 30) || (id == 31))
++		return -EINVAL;
++
++	status = (id < 32) ? IO_DPD_STATUS : IO_DPD2_STATUS;
++	mask = BIT(id % 32);
++	value = tegra_pmc_readl(status);
++
++	return !!(value & mask);
++}
++EXPORT_SYMBOL(tegra_io_rail_power_get_status);
++
+ #ifdef CONFIG_PM_SLEEP
+ enum tegra_suspend_mode tegra_pmc_get_suspend_mode(void)
+ {
+diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
+index 58fadc5..4f3db41 100644
+--- a/include/soc/tegra/pmc.h
++++ b/include/soc/tegra/pmc.h
+@@ -133,6 +133,7 @@ int tegra_powergate_sequence_power_up(unsigned int id, struct clk *clk,
  
- #define DPD_SAMPLE			0x020
--#define  DPD_SAMPLE_ENABLE		(1 << 0)
--#define  DPD_SAMPLE_DISABLE		(0 << 0)
-+#define DPD_SAMPLE_ENABLE		BIT(0)
-+#define DPD_SAMPLE_DISABLE		(0 << 0)
+ int tegra_io_rail_power_on(unsigned int id);
+ int tegra_io_rail_power_off(unsigned int id);
++int tegra_io_rail_power_get_status(unsigned int id);
+ #else
+ static inline int tegra_powergate_is_powered(unsigned int id)
+ {
+@@ -170,6 +171,11 @@ static inline int tegra_io_rail_power_off(unsigned int id)
+ {
+ 	return -ENOSYS;
+ }
++
++static inline int tegra_io_rail_power_get_status(unsigned int id)
++{
++	return -ENOTSUP;
++}
+ #endif /* CONFIG_ARCH_TEGRA */
  
- #define PWRGATE_TOGGLE			0x30
--#define  PWRGATE_TOGGLE_START		(1 << 8)
-+#define PWRGATE_TOGGLE_START		BIT(8)
- 
- #define REMOVE_CLAMPING			0x34
- 
- #define PWRGATE_STATUS			0x38
- 
- #define PMC_SCRATCH0			0x50
--#define  PMC_SCRATCH0_MODE_RECOVERY	(1 << 31)
--#define  PMC_SCRATCH0_MODE_BOOTLOADER	(1 << 30)
--#define  PMC_SCRATCH0_MODE_RCM		(1 << 1)
--#define  PMC_SCRATCH0_MODE_MASK		(PMC_SCRATCH0_MODE_RECOVERY | \
-+#define PMC_SCRATCH0_MODE_RECOVERY	BIT(31)
-+#define PMC_SCRATCH0_MODE_BOOTLOADER	BIT(30)
-+#define PMC_SCRATCH0_MODE_RCM		BIT(1)
-+#define PMC_SCRATCH0_MODE_MASK		(PMC_SCRATCH0_MODE_RECOVERY | \
- 					 PMC_SCRATCH0_MODE_BOOTLOADER | \
- 					 PMC_SCRATCH0_MODE_RCM)
- 
-@@ -74,14 +74,14 @@
- #define PMC_SCRATCH41			0x140
- 
- #define PMC_SENSOR_CTRL			0x1b0
--#define PMC_SENSOR_CTRL_SCRATCH_WRITE	(1 << 2)
--#define PMC_SENSOR_CTRL_ENABLE_RST	(1 << 1)
-+#define PMC_SENSOR_CTRL_SCRATCH_WRITE	BIT(2)
-+#define PMC_SENSOR_CTRL_ENABLE_RST	BIT(1)
- 
- #define IO_DPD_REQ			0x1b8
--#define  IO_DPD_REQ_CODE_IDLE		(0 << 30)
--#define  IO_DPD_REQ_CODE_OFF		(1 << 30)
--#define  IO_DPD_REQ_CODE_ON		(2 << 30)
--#define  IO_DPD_REQ_CODE_MASK		(3 << 30)
-+#define IO_DPD_REQ_CODE_IDLE		(0 << 30)
-+#define IO_DPD_REQ_CODE_OFF		(1U << 30)
-+#define IO_DPD_REQ_CODE_ON		(2U << 30)
-+#define IO_DPD_REQ_CODE_MASK		(3U << 30)
- 
- #define IO_DPD_STATUS			0x1bc
- #define IO_DPD2_REQ			0x1c0
-@@ -93,10 +93,10 @@
- #define PMC_SCRATCH54_ADDR_SHIFT	0
- 
- #define PMC_SCRATCH55			0x25c
--#define PMC_SCRATCH55_RESET_TEGRA	(1 << 31)
-+#define PMC_SCRATCH55_RESET_TEGRA	BIT(31)
- #define PMC_SCRATCH55_CNTRL_ID_SHIFT	27
- #define PMC_SCRATCH55_PINMUX_SHIFT	24
--#define PMC_SCRATCH55_16BITOP		(1 << 15)
-+#define PMC_SCRATCH55_16BITOP		BIT(15)
- #define PMC_SCRATCH55_CHECKSUM_SHIFT	16
- #define PMC_SCRATCH55_I2CSLV1_SHIFT	0
- 
+ #endif /* __SOC_TEGRA_PMC_H__ */
 -- 
 2.1.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
