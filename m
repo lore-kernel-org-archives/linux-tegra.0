@@ -1,7 +1,7 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 3/7] soc/tegra: pmc: Add interface to get IO rail power status
-Date: Tue, 12 Apr 2016 20:26:43 +0530
-Message-ID: <1460473007-11535-4-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH 2/7] soc/tegra: pmc: Add new Tegra210 IO rails
+Date: Tue, 12 Apr 2016 20:26:42 +0530
+Message-ID: <1460473007-11535-3-git-send-email-ldewangan@nvidia.com>
 References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,66 +12,56 @@ To: swarren@wwwdotorg.org, thierry.reding@gmail.com, linus.walleij@linaro.org, g
 Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add API to get the IO rail power status of the Tegra IO pads.
-This will help client driver to get the current power status
-of IO pads for handling IO pad power.
+NVIDIA Tegra210 has extended the IO rails for new IO pads
+and added some new IO rails on top of its previous SoC.
+
+Add all supported IO rails from Tegra210 to the Tegra PMC header.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 16 ++++++++++++++++
- include/soc/tegra/pmc.h |  6 ++++++
- 2 files changed, 22 insertions(+)
+ include/soc/tegra/pmc.h | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 762f4fa..0bc8219 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -613,6 +613,22 @@ error:
- }
- EXPORT_SYMBOL(tegra_io_rail_power_off);
- 
-+int tegra_io_rail_power_get_status(unsigned int id)
-+{
-+	unsigned long status, value;
-+	unsigned int mask;
-+
-+	if ((id > 63) || (id == 30) || (id == 31))
-+		return -EINVAL;
-+
-+	status = (id < 32) ? IO_DPD_STATUS : IO_DPD2_STATUS;
-+	mask = BIT(id % 32);
-+	value = tegra_pmc_readl(status);
-+
-+	return !!(value & mask);
-+}
-+EXPORT_SYMBOL(tegra_io_rail_power_get_status);
-+
- #ifdef CONFIG_PM_SLEEP
- enum tegra_suspend_mode tegra_pmc_get_suspend_mode(void)
- {
 diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
-index 58fadc5..4f3db41 100644
+index 07e332d..58fadc5 100644
 --- a/include/soc/tegra/pmc.h
 +++ b/include/soc/tegra/pmc.h
-@@ -133,6 +133,7 @@ int tegra_powergate_sequence_power_up(unsigned int id, struct clk *clk,
+@@ -90,22 +90,36 @@ int tegra_pmc_cpu_remove_clamping(unsigned int cpuid);
+ #define TEGRA_IO_RAIL_UART	14
+ #define TEGRA_IO_RAIL_BB	15
+ #define TEGRA_IO_RAIL_AUDIO	17
++#define TEGRA_IO_RAIL_USB3	18
+ #define TEGRA_IO_RAIL_HSIC	19
+ #define TEGRA_IO_RAIL_COMP	22
++#define TEGRA_IO_RAIL_DBG	25
++#define TEGRA_IO_RAIL_DBG_NONAO	26
++#define TEGRA_IO_RAIL_GPIO	27
+ #define TEGRA_IO_RAIL_HDMI	28
+ #define TEGRA_IO_RAIL_PEX_CNTRL	32
+ #define TEGRA_IO_RAIL_SDMMC1	33
+ #define TEGRA_IO_RAIL_SDMMC3	34
+ #define TEGRA_IO_RAIL_SDMMC4	35
++#define TEGRA_IO_RAIL_EMMC	35
+ #define TEGRA_IO_RAIL_CAM	36
+ #define TEGRA_IO_RAIL_RES	37
++#define TEGRA_IO_RAIL_EMMC2	37
+ #define TEGRA_IO_RAIL_HV	38
+ #define TEGRA_IO_RAIL_DSIB	39
+ #define TEGRA_IO_RAIL_DSIC	40
+ #define TEGRA_IO_RAIL_DSID	41
++#define TEGRA_IO_RAIL_CSIC	42
++#define TEGRA_IO_RAIL_CSID	43
+ #define TEGRA_IO_RAIL_CSIE	44
++#define TEGRA_IO_RAIL_CSIF	45
++#define TEGRA_IO_RAIL_SPI	46
++#define TEGRA_IO_RAIL_SPI_HV	47
++#define TEGRA_IO_RAIL_DMIC	50
++#define TEGRA_IO_RAIL_DP	51
+ #define TEGRA_IO_RAIL_LVDS	57
+ #define TEGRA_IO_RAIL_SYS_DDC	58
++#define TEGRA_IO_RAIL_AUDIO_HV	61
  
- int tegra_io_rail_power_on(unsigned int id);
- int tegra_io_rail_power_off(unsigned int id);
-+int tegra_io_rail_power_get_status(unsigned int id);
- #else
- static inline int tegra_powergate_is_powered(unsigned int id)
- {
-@@ -170,6 +171,11 @@ static inline int tegra_io_rail_power_off(unsigned int id)
- {
- 	return -ENOSYS;
- }
-+
-+static inline int tegra_io_rail_power_get_status(unsigned int id)
-+{
-+	return -ENOTSUP;
-+}
- #endif /* CONFIG_ARCH_TEGRA */
- 
- #endif /* __SOC_TEGRA_PMC_H__ */
+ #ifdef CONFIG_ARCH_TEGRA
+ int tegra_powergate_is_powered(unsigned int id);
 -- 
 2.1.4
