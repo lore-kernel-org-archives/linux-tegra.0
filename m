@@ -1,105 +1,55 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] clk: tegra210: Add SLCG override gate clocks
-Date: Tue, 12 Apr 2016 17:20:26 +0200
-Message-ID: <20160412152026.GE25160@ulmo.ba.sec>
-References: <1457638685-31007-1-git-send-email-rklein@nvidia.com>
- <20160314160551.GA21898@ulmo.nvidia.com>
- <56E6E20C.6020807@nvidia.com>
- <56E7CA79.7060106@nvidia.com>
- <56F581BF.2070903@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/2] clk: tegra: Fix pllre Tegra210 and add pll_re_out1
+Date: Tue, 12 Apr 2016 17:23:36 +0200
+Message-ID: <20160412152336.GF25160@ulmo.ba.sec>
+References: <1458590333-8898-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="zaRBsRFn0XYhEU69"
-Return-path: <linux-clk-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="XStn23h1fwudRqtG"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <56F581BF.2070903@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, Bill Huang <bilhuang@nvidia.com>
+In-Reply-To: <1458590333-8898-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---zaRBsRFn0XYhEU69
+--XStn23h1fwudRqtG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Mar 25, 2016 at 02:21:51PM -0400, Rhyland Klein wrote:
-> On 3/15/2016 4:40 AM, Jon Hunter wrote:
-> >=20
-> > On 14/03/16 16:08, Rhyland Klein wrote:
-> >> On 3/14/2016 12:05 PM, Thierry Reding wrote:
-> >>> * PGP Signed by an unknown key
-> >>>
-> >>> On Thu, Mar 10, 2016 at 02:38:05PM -0500, Rhyland Klein wrote:
-> >>>> From: Bill Huang <bilhuang@nvidia.com>
-> >>>>
-> >>>> Add some SLCG (Second Level Clock Gating) override clocks to control
-> >>>> gating and un-gating their logics.
-> >>>>
-> >>>> Signed-off-by: Bill Huang <bilhuang@nvidia.com>
-> >>>> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-> >>>> ---
-> >>>>  drivers/clk/tegra/clk-id.h               | 16 ++++++
-> >>>>  drivers/clk/tegra/clk-tegra210.c         | 91 +++++++++++++++++++++=
-+++++++++++
-> >>>>  include/dt-bindings/clock/tegra210-car.h | 32 +++++------
-> >>>>  3 files changed, 123 insertions(+), 16 deletions(-)
-> >>>
-> >>> There's no rationale given here about why we need this. What will the=
-se
-> >>> second level clock gates be used for? Why do we need these (seemingly)
-> >>> duplicate clock entries.
-> >>>
-> >>
-> >> These are going to be used in the to-be posted patchset around
-> >> powergating. As of now they are unused, which is why I hadn't added th=
-em
-> >> previously. I just wanted to try to get this dependency in before the
-> >> powergate series was posted.
-> >=20
-> > Yes we are using these on the Pixel C (aka. Smaug) and I suggested to
-> > Rhyland that we upstream them. Eventually we will use them but only
-> > after the core GenPD changes for Tegra are merged. From my perspective I
-> > was thinking it is better to reduce the changes between the chromeos
-> > 3.18 kernel and mainline. However, if you wish to wait until we need
-> > them I guess we can. Otherwise ...
-> >=20
-> > Acked-by: Jon Hunter <jonathanh@nvidia.com>
-> >=20
-> > Cheers
-> > Jon
-> >=20
+On Mon, Mar 21, 2016 at 03:58:52PM -0400, Rhyland Klein wrote:
+> Use a new Tegra210 version of the pll_register_pllre function to
+> allow setting the proper settings for the m and n div fields.
 >=20
-> Thierry do you think we should hold off on this until Jon's patches are
-> ready or merge this sooner?
+> Additionally define PLL_RE_OUT1 on Tegra210.
 
-Jon, I think it would make sense for you to pick this up into your tree
-along with the rest of the patches that make use of them. Even if they
-end up being applied to different trees I'd like to see all of the work
-as a whole first.
+It'd be nice to specify what that additional clock is used for. No need
+to repost for that, I can add it when applying.
 
 Thierry
 
---zaRBsRFn0XYhEU69
+--XStn23h1fwudRqtG
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXDRI6AAoJEN0jrNd/PrOhru4QAJzOi9uG2dHQ/NlnTbWpTSbn
-5/dil9XVxEGjrtLGr3EYfiunWNTbczdqd26e2Wn1bMWUWekKoaG8FVzaNbwej992
-QKzGMphY0X9UYN5jxyohIOJoNg51efiS8cLFZRInAAglTW2rw0U4J7inYjKDKwmh
-Aw/wTPl9GA8yPXJyezSEJvoUM2ngQpo4RN3EfkrK1K3xZPpGgE8MmEx/OhuB/pWs
-MGNENRO2JirwI2XprJLJFhYvwcj4PurhPIj8EjfIrylnL9btk+5xCKLTzPhQuW0x
-UX3p2ctGgiPbQcCfU8GMTqeoR9tm/LmUEa7t6fu+1r4qGye7gfhOEq+vZmfyUKKr
-ao32nsL9c1MbGtLd30D8r4Fj50yifmhr+cIicvb+lxwhPb+Em4uiCca4jmkVWOio
-gZkJX7ATK8yxoK+QrCG+YViVy40jPw7XgrJ7Djq1wWL5AHGEcLmnbqLMpumLp9Fc
-lQdj0ii82cf6IM4ZjhXvv+bqUtauFHDxMCpp+Lbid3jyVL0pcNOfjv9ybMyxV0DQ
-mpR3nxg3iYAMD+dE81GPKu7zRjqaTZZN8WIP9PJatSEA6kTipPGO86OZusaf/6lP
-rv9L3MqZftwJTtDzxSdq775EjoCzVKGPImjuvmAyYp+2BfcBks9RWu4Tuzd4POcB
-9hHhv4+nyUYTWTBtwKRd
-=DWd+
+iQIcBAABCAAGBQJXDRL3AAoJEN0jrNd/PrOhJbEP/RJpLVn9zWjB/rtjdCKpyGam
+Xl21CWpu0q3nn5g0C7VSH4k8SAAKf+K3XvZT2L4tJfBDWncaFji/Py/J5DGrwrEL
+CvVWPH+XJvtteUJKh88+5CkINwXGCbdiIAY2/jRcBPS86WcXVKTwecXUabb5HUoD
+oMGMfi3eT+9irEsTcXvpPhmGajH/cfEMR8rqPAdFEjcq6HtciMcVXZvX3xD27Bho
+1JG3NcutOw6yUB1L4zQfCheZuTQ84rSLgKbSD1MQMbpF+Aj28ooQkWCOyGM2vOdX
+pNPg8SDu/Dz9tkh9VecgHm35A+1fsF+J5DOzZr2wc8TkXESXvWrChdOmCeTqvJQb
+6W3R91StCcz5njyFJ+nuloJaQCarZwg6ZBmjhU1nfQhOzvFeqMlgF5pOwYIEDVp8
+aU8pljGU4AkdL1S6G44mxQix+5kT3vXMbFK4ar2ojeg1eMjMkD1mN3Bx1Ay8N3a9
+uwJsKRjkrB9vCo274iQHbDbEbne2zWyDcmCOEpOPh/z7Ke7GCs//0uvWtURkbE7+
+UUEN6Gfqjrn/CLXxZSEacxp1UDqw8Pt3+x3SSPueZdCbrnAmBJnNZ3wEpIHwwYW1
+ex/izWjZZsQUnz9S85WNTMUecDgD09rT5k3UCUMsp6KmKn2TGa1al7q//TgmWzju
+75zA9fZOEQp/I88Ff2G2
+=4d7T
 -----END PGP SIGNATURE-----
 
---zaRBsRFn0XYhEU69--
+--XStn23h1fwudRqtG--
