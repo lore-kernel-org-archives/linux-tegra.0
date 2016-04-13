@@ -1,120 +1,118 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 2/2] PCI: tegra: Support per-lane PHYs
-Date: Wed, 13 Apr 2016 18:01:12 +0200
-Message-ID: <20160413160112.GA30129@ulmo.ba.sec>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/2] dt-bindings: pci: tegra: Update for per-lane PHYs
+Date: Wed, 13 Apr 2016 18:22:03 +0200
+Message-ID: <20160413162203.GB30129@ulmo.ba.sec>
 References: <1457452094-5409-1-git-send-email-thierry.reding@gmail.com>
- <1457452094-5409-2-git-send-email-thierry.reding@gmail.com>
- <56E9915F.9040608@wwwdotorg.org>
+ <56E98F2E.5010307@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ZPt4rx8FFjLCG7dd"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="uQr8t48UFsdbeI+V"
+Return-path: <linux-pci-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <56E9915F.9040608-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <56E98F2E.5010307@wwwdotorg.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---ZPt4rx8FFjLCG7dd
+--uQr8t48UFsdbeI+V
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 16, 2016 at 11:01:19AM -0600, Stephen Warren wrote:
+On Wed, Mar 16, 2016 at 10:51:58AM -0600, Stephen Warren wrote:
 > On 03/08/2016 08:48 AM, Thierry Reding wrote:
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > From: Thierry Reding <treding@nvidia.com>
 > >=20
-> > The current XUSB pad controller bindings are insufficient to describe
-> > PHY devices attached to USB controllers. New bindings have been created
-> > to overcome these restrictions. As a side-effect each root port now is
-> > assigned a set of PHY devices, one for each lane associated with the
-> > root port. This has the benefit of allowing fine-grained control of the
-> > power management for each lane.
+> > Changes to the pad controller device tree binding have required that
+> > each lane be associated with a separate PHY.
 >=20
-> > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> I still don't think this has anything to do with DT bindings. Rather, the
+> definition of a PHY (in HW and the Linux PHY subsystem) is a single lane.
+> That fact then requires drivers to support a PHY per lane rather than a
+> single multi-lane PHY, and equally means the DT bindings must be written
+> according to the correct definition of a PHY.
 >=20
-> > +static int tegra_pcie_port_phy_power_on(struct tegra_pcie_port *port)
-> > +{
-> > +	struct device *dev =3D port->pcie->dev;
-> > +	unsigned int i;
-> > +	int err;
-> > +
-> > +	for (i =3D 0; i < port->lanes; i++) {
-> > +		err =3D phy_power_on(port->phys[i]);
->=20
-> This assume the number of array entries is precisely the number of lanes.
-> That seems to contradict the binding update which said the number might n=
-ot
-> match. Perhaps there's an expectation that phy_power_on() is a no-op for
-> some "invalid" values like NULL or an error-pointer value? But...
->=20
-> > +static struct phy *devm_of_phy_optional_get_index(struct device *dev,
-> > +						  struct device_node *np,
-> > +						  const char *consumer,
-> > +						  unsigned int index)
-> > +{
-> > +	struct phy *phy;
-> > +	char *name;
-> > +
-> > +	name =3D kasprintf(GFP_KERNEL, "%s-%u", consumer, index);
-> > +	if (!name)
-> > +		return ERR_PTR(-ENOMEM);
-> > +
-> > +	phy =3D devm_of_phy_get(dev, np, name);
-> > +	kfree(name);
-> > +
-> > +	if (IS_ERR(phy) && PTR_ERR(phy) =3D=3D -ENODEV)
-> > +		phy =3D NULL;
-> > +
-> > +	return phy;
-> > +}
->=20
-> The error-handling there looks wrong. The function generally returns eith=
-er
-> a valid PHY or an error pointer. However, in the case of -ENODEV, NULL is
-> returned. Subsystems are supposed to encode their handles as, and functio=
-ns
-> are supposed to return, either NULL or an error pointer for error cases, =
-not
-> both/either. Is the PHY API broken in this regard? If so, then this code =
-is
-> fine, but if not it might need a fix.
+> Still, I suppose the commit description is fine as is.
 
-This function mimics phy_optional_get() which similarily returns NULL
-for -ENODEV. The remainder of the PHY API treats NULL pointers as
-"dummy" PHYs and returns early. I think that's a sensible approach to
-handling optional resources.
+I've reworded the commit message to give a more accurate rationale for
+the change. I'll be posting a v5 soon.
 
-It might have been more obvious had I implemented this function within
-phy-core.c, but I didn't think it universally useful because it uses a
-rather uncommon lookup pattern. I did keep a generic name in case it's
-ever deemed useful outside of this driver, at which point it could
-simply be moved into phy-core.c without requiring this driver to
-change.
+> > Update the PCI host bridge
+> > device tree binding to allow each root port to define the list of PHYs
+> > required to drive the lanes associated with it.
+>=20
+> > diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.=
+txt b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+>=20
+> > +Required properties for Tegra124 and later:
+> > +- phys: Must contain an phandle to a PHY for each entry in phy-names.
+> > +- phy-names: Must include an entry for each active lane. Note that the=
+ number
+> > +  of entries does not have to (though usually will) be equal to the sp=
+ecified
+> > +  number of lanes in the nvidia,num-lanes property. Entries are of the=
+ form
+> > +  "pcie-N": where N ranges from 0 to the value specified in nvidia,num=
+-lanes.
+>=20
+> When would the number of PHYs not equal the number of lanes? I thought the
+> whole point of this patch was to switch to per-lane PHYs? Perhaps I'm just
+> misremembering some exception, so there may be no need to change this.
+
+This is useful to support the case where we want to connect a x1 or x2
+device to a root port that is configured to drive more lanes. It's a
+rather unusual configuration, but it would be possible for example to
+have an onboard x1 ethernet card, but the board layout is such that it
+runs in x1/x2 mode, with the ethernet card connected to the x2 port.
+
+> >   Example:
+> >=20
+> >   SoC DTSI:
+> > @@ -169,6 +179,9 @@ SoC DTSI:
+> >   			ranges;
+> >=20
+> >   			nvidia,num-lanes =3D <2>;
+> > +
+> > +			phys =3D <&{/padctl@0,7009f000/pads/pcie/pcie-4}>;
+> > +			phy-names =3D "pcie-0";
+> >   		};
+>=20
+> The example shows a Tegra20 PCIe controller, yet includes
+> Tegra124-or-greater properties. That seems a bit odd. Should the changes =
+to
+> the example be dropped, or does "Required properties for Tegra124 and lat=
+er"
+> mean "Required for T124+, optional for earlier chips"?
+
+I've annotated these properties with "for Tegra124 and later", hopefully
+that clarifies that these properties are only valid on Tegra124 and
+later chips. The reason is that earlier (Tegra114 didn't support PCIe,
+Tegra30 and Tegra20 did but had PHY registers within the PCI host bridge
+I/O memory).
 
 Thierry
 
---ZPt4rx8FFjLCG7dd
+--uQr8t48UFsdbeI+V
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXDm1GAAoJEN0jrNd/PrOhsx8P/RdwUR2RReTGjrJTcVD3SbtX
-88/lQrxjc2PIuORz1olJrGsofkkvCxQjVnC2EzclviCsCjqg8A1GCJ8nUdC3LNz7
-narULEukh2hhLdtL1t6GhO6XZmmy2hZSOi1XTGAi8E34y4Qs9EcsYVG3dsDT+d6l
-O/egs1AwwbcS1IJNzTXl/j6159E61nKk7MwBUCMIIueiPLKX5W/EwUtUBnfk7utT
-NPyfisAP2LoCnUo3vsgV1FSfb/84KUofpnCsKv5+/kk9iOsCrbUoJQZ4VKSQ3Vg4
-EOYX4AbUhHjkwdfB47lhLvxdujajVU8yA85+MTXoNlRRe7ltM6txArvcryG9HGE3
-cxl897ztfepVLdPo/e+NUP9tUmsYhNo8JlZUMaoXFCRGx3XspHiLohc98HYGFeZb
-SKwbcbSl99f6VJzDpK4/ftdhjlsDCHjbXlZOcnGoCxJ8o2WtQuxxbach1xeOmkQ3
-dGFiN0Hfume2yuio3Zci3JxbgBtGSM/7zVGk6KS1bTCvDos7QolnWx3CeGqgnpz6
-pYfu/yN8iWTRJNl/4eBh1kgblrrhcRjuv4VpQeMMYmyG5KQmSCoVVj9SWhLTC2Cx
-pOitZ48pT2s+4i0aQ6IO4T1Nd+Vkuyl3MHUWzQDLGyoz/V+A1E1wItMD9QYSoE66
-08cjr1ZxWItFdHxe/DO0
-=kY+V
+iQIcBAABCAAGBQJXDnIpAAoJEN0jrNd/PrOh3DkP/0FrpZYpnWHkE13hyrqEdfsr
+HXbORfUCZVDdVjwgco3bhCzdW6lbJCk+mWECYtkqXG2mB1jvvQzSU/cpLVu75yyl
+n2sCLEI2a+8SM6NpAOfzbDArvJU/BKUj+g7oPpFuzgkBti7vrRvYX0cf7Nj5ew3j
+egFCZ96dyB56IZ7Xov+ztSBU00+rFsyvKydUvPpEQqebzXDJzTI68xEs3EcQe5iw
++vx3CHBGKPAN0Erz20lBlR2RuWqZFaDZpxVmrMU/3dA0Ef9V1vLtKAcdH+FOEfbU
+EPkykV6fI3WcjShkZaQtRj+i/jpU3+Sgx4GShAaz+cadEavagVeBXeiZ80l5KkHz
+t5rSaWZvofvB9Lnb9V5sM+AnOWWSiA48qyTm68MJzQ6w+EoXETLZtAw8CiF/3UhS
+Fl1jptCOE5lqxJy1EKoVeHn+5LQ5LgKD84bSaBb9mm7gCs66FZzzHMTJprNkMhO6
+ZZ62FImCzJdj2O2tuXqUc1qdUd6rXJ3C4GRFIRrX5svhrddBB8CAAV4a8cHoBUK4
+XIfwKjZJwNm7uuCdlJOJ/zN4S2+7O9gBY4vPzJ/fza8bVHZ8QGYYgGlTqfcK0/IS
+WbuTBdDw5b3xLQ1o1D19fMmySvUDjbsPd1r372MoXIuiPW8qM8Xwkp77DNkTpqKo
+LPu3z6ajLousVnVNw4m2
+=X1Xj
 -----END PGP SIGNATURE-----
 
---ZPt4rx8FFjLCG7dd--
+--uQr8t48UFsdbeI+V--
