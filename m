@@ -1,118 +1,69 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: pci: tegra: Update for per-lane PHYs
-Date: Wed, 13 Apr 2016 18:22:03 +0200
-Message-ID: <20160413162203.GB30129@ulmo.ba.sec>
-References: <1457452094-5409-1-git-send-email-thierry.reding@gmail.com>
- <56E98F2E.5010307@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v4 1/2] dt-bindings: pci: tegra: Update for per-lane PHYs
+Date: Wed, 13 Apr 2016 18:23:45 +0200
+Message-ID: <20160413162345.GC30129@ulmo.ba.sec>
+References: <1460131994-24493-1-git-send-email-thierry.reding@gmail.com>
+ <570BE129.40907@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="uQr8t48UFsdbeI+V"
-Return-path: <linux-pci-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="mvpLiMfbWzRoNl4x"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <56E98F2E.5010307@wwwdotorg.org>
-Sender: linux-pci-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
+In-Reply-To: <570BE129.40907-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---uQr8t48UFsdbeI+V
+--mvpLiMfbWzRoNl4x
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 16, 2016 at 10:51:58AM -0600, Stephen Warren wrote:
-> On 03/08/2016 08:48 AM, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
+On Mon, Apr 11, 2016 at 11:38:49AM -0600, Stephen Warren wrote:
+> On 04/08/2016 10:13 AM, Thierry Reding wrote:
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > >=20
 > > Changes to the pad controller device tree binding have required that
-> > each lane be associated with a separate PHY.
->=20
-> I still don't think this has anything to do with DT bindings. Rather, the
-> definition of a PHY (in HW and the Linux PHY subsystem) is a single lane.
-> That fact then requires drivers to support a PHY per lane rather than a
-> single multi-lane PHY, and equally means the DT bindings must be written
-> according to the correct definition of a PHY.
->=20
-> Still, I suppose the commit description is fine as is.
-
-I've reworded the commit message to give a more accurate rationale for
-the change. I'll be posting a v5 soon.
-
-> > Update the PCI host bridge
+> > each lane be associated with a separate PHY. Update the PCI host bridge
 > > device tree binding to allow each root port to define the list of PHYs
 > > required to drive the lanes associated with it.
 >=20
-> > diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.=
-txt b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+> I think the feedback I gave on v3 still applies here (I'm talking about t=
+he
+> comments on the patch, not the commit description).
 >=20
-> > +Required properties for Tegra124 and later:
-> > +- phys: Must contain an phandle to a PHY for each entry in phy-names.
-> > +- phy-names: Must include an entry for each active lane. Note that the=
- number
-> > +  of entries does not have to (though usually will) be equal to the sp=
-ecified
-> > +  number of lanes in the nvidia,num-lanes property. Entries are of the=
- form
-> > +  "pcie-N": where N ranges from 0 to the value specified in nvidia,num=
--lanes.
->=20
-> When would the number of PHYs not equal the number of lanes? I thought the
-> whole point of this patch was to switch to per-lane PHYs? Perhaps I'm just
-> misremembering some exception, so there may be no need to change this.
+> http://www.spinics.net/lists/linux-pci/msg49718.html
 
-This is useful to support the case where we want to connect a x1 or x2
-device to a root port that is configured to drive more lanes. It's a
-rather unusual configuration, but it would be possible for example to
-have an onboard x1 ethernet card, but the board layout is such that it
-runs in x1/x2 mode, with the ethernet card connected to the x2 port.
+Apologies, I had missed those when going over review comments. I think
+I've addressed all of them now, or provided rationale for why the code
+and binding are the way they are.
 
-> >   Example:
-> >=20
-> >   SoC DTSI:
-> > @@ -169,6 +179,9 @@ SoC DTSI:
-> >   			ranges;
-> >=20
-> >   			nvidia,num-lanes =3D <2>;
-> > +
-> > +			phys =3D <&{/padctl@0,7009f000/pads/pcie/pcie-4}>;
-> > +			phy-names =3D "pcie-0";
-> >   		};
->=20
-> The example shows a Tegra20 PCIe controller, yet includes
-> Tegra124-or-greater properties. That seems a bit odd. Should the changes =
-to
-> the example be dropped, or does "Required properties for Tegra124 and lat=
-er"
-> mean "Required for T124+, optional for earlier chips"?
-
-I've annotated these properties with "for Tegra124 and later", hopefully
-that clarifies that these properties are only valid on Tegra124 and
-later chips. The reason is that earlier (Tegra114 didn't support PCIe,
-Tegra30 and Tegra20 did but had PHY registers within the PCI host bridge
-I/O memory).
+I'll be sending out a v5 soon, hopefully that will have addressed any
+outstanding concerns.
 
 Thierry
 
---uQr8t48UFsdbeI+V
+--mvpLiMfbWzRoNl4x
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXDnIpAAoJEN0jrNd/PrOh3DkP/0FrpZYpnWHkE13hyrqEdfsr
-HXbORfUCZVDdVjwgco3bhCzdW6lbJCk+mWECYtkqXG2mB1jvvQzSU/cpLVu75yyl
-n2sCLEI2a+8SM6NpAOfzbDArvJU/BKUj+g7oPpFuzgkBti7vrRvYX0cf7Nj5ew3j
-egFCZ96dyB56IZ7Xov+ztSBU00+rFsyvKydUvPpEQqebzXDJzTI68xEs3EcQe5iw
-+vx3CHBGKPAN0Erz20lBlR2RuWqZFaDZpxVmrMU/3dA0Ef9V1vLtKAcdH+FOEfbU
-EPkykV6fI3WcjShkZaQtRj+i/jpU3+Sgx4GShAaz+cadEavagVeBXeiZ80l5KkHz
-t5rSaWZvofvB9Lnb9V5sM+AnOWWSiA48qyTm68MJzQ6w+EoXETLZtAw8CiF/3UhS
-Fl1jptCOE5lqxJy1EKoVeHn+5LQ5LgKD84bSaBb9mm7gCs66FZzzHMTJprNkMhO6
-ZZ62FImCzJdj2O2tuXqUc1qdUd6rXJ3C4GRFIRrX5svhrddBB8CAAV4a8cHoBUK4
-XIfwKjZJwNm7uuCdlJOJ/zN4S2+7O9gBY4vPzJ/fza8bVHZ8QGYYgGlTqfcK0/IS
-WbuTBdDw5b3xLQ1o1D19fMmySvUDjbsPd1r372MoXIuiPW8qM8Xwkp77DNkTpqKo
-LPu3z6ajLousVnVNw4m2
-=X1Xj
+iQIcBAABCAAGBQJXDnKRAAoJEN0jrNd/PrOhCKUQALhHG7ZwR4O8o40CFexq1sKx
+Oit9kQaM9s5922COpyFYEQp26URX7iBUSj9UjIx34JLGXcy6n2O+HPoOljQiNCc1
+kLqnWDNMUwIXL6TRZBheRStKzJlbiQqCP8PfhaL1putSGecTBJ7fPAN7lCviDfcQ
+keKh6ryelZy3FEAzl5O7iVzU8mkcdewdKzuBnIkwWSZUOHw0N9g3Itux198FRy6C
+kTxuTsrBAOLcxhaG8Oh7zQkl7p2SIhnY48djkRrfiUurydW2lA7S2PNf88uJUe5C
+xzaCTQTqBspks2N0CeSYVG78j1oKpiyMjQV0w5iOT6d3g7tMQB6V0SefHDMEZlNh
+sNP0pEWhgBy25vV11H5K4od7O1B5rKG6KcVk6RCGUQ03Z1BfYHchTQMW3UG90c6z
+2CRydCJZxeaXdEnuwvY9yifHRIxAtb6hjvefDahYR1eA4/R8BBN0czrmrh0A0fAH
+0QQdERZSBJmFM7CalGm8gI3pJR0fgJtN+4dbIOUIhdULNzVBpxs7xjazuOkiVO83
+eM0qguohR0IJMli13NEWGJL16MAtylX/3lORiNC/3D2RhmWisf8/x/Y+m/E5/nsG
+3Zy6Gh3O6ZOidgiw9iJEk5loQbOwaa45uRBdLk+yXLaHI9YGHDq0FL+1IhFW5V3J
+sDwsGIWXVfc9BddYAXXo
+=f4aV
 -----END PGP SIGNATURE-----
 
---uQr8t48UFsdbeI+V--
+--mvpLiMfbWzRoNl4x--
