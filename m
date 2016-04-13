@@ -1,88 +1,68 @@
 From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v3 2/2] PCI: tegra: Support per-lane PHYs
-Date: Wed, 13 Apr 2016 11:01:58 -0600
-Message-ID: <570E7B86.1040909@wwwdotorg.org>
+Subject: Re: [PATCH 1/2] dt-bindings: pci: tegra: Update for per-lane PHYs
+Date: Wed, 13 Apr 2016 11:04:56 -0600
+Message-ID: <570E7C38.3070005@wwwdotorg.org>
 References: <1457452094-5409-1-git-send-email-thierry.reding@gmail.com>
- <1457452094-5409-2-git-send-email-thierry.reding@gmail.com>
- <56E9915F.9040608@wwwdotorg.org> <20160413160112.GA30129@ulmo.ba.sec>
+ <56E98F2E.5010307@wwwdotorg.org> <20160413162203.GB30129@ulmo.ba.sec>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20160413160112.GA30129@ulmo.ba.sec>
+In-Reply-To: <20160413162203.GB30129@ulmo.ba.sec>
 Sender: linux-pci-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>
 Cc: Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/13/2016 10:01 AM, Thierry Reding wrote:
-> On Wed, Mar 16, 2016 at 11:01:19AM -0600, Stephen Warren wrote:
+On 04/13/2016 10:22 AM, Thierry Reding wrote:
+> On Wed, Mar 16, 2016 at 10:51:58AM -0600, Stephen Warren wrote:
 >> On 03/08/2016 08:48 AM, Thierry Reding wrote:
 >>> From: Thierry Reding <treding@nvidia.com>
 >>>
->>> The current XUSB pad controller bindings are insufficient to describe
->>> PHY devices attached to USB controllers. New bindings have been created
->>> to overcome these restrictions. As a side-effect each root port now is
->>> assigned a set of PHY devices, one for each lane associated with the
->>> root port. This has the benefit of allowing fine-grained control of the
->>> power management for each lane.
+>>> Changes to the pad controller device tree binding have required that
+>>> each lane be associated with a separate PHY.
 >>
->>> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+>> I still don't think this has anything to do with DT bindings. Rather, the
+>> definition of a PHY (in HW and the Linux PHY subsystem) is a single lane.
+>> That fact then requires drivers to support a PHY per lane rather than a
+>> single multi-lane PHY, and equally means the DT bindings must be written
+>> according to the correct definition of a PHY.
 >>
->>> +static int tegra_pcie_port_phy_power_on(struct tegra_pcie_port *port)
->>> +{
->>> +	struct device *dev = port->pcie->dev;
->>> +	unsigned int i;
->>> +	int err;
->>> +
->>> +	for (i = 0; i < port->lanes; i++) {
->>> +		err = phy_power_on(port->phys[i]);
->>
->> This assume the number of array entries is precisely the number of lanes.
->> That seems to contradict the binding update which said the number might not
->> match. Perhaps there's an expectation that phy_power_on() is a no-op for
->> some "invalid" values like NULL or an error-pointer value? But...
->>
->>> +static struct phy *devm_of_phy_optional_get_index(struct device *dev,
->>> +						  struct device_node *np,
->>> +						  const char *consumer,
->>> +						  unsigned int index)
->>> +{
->>> +	struct phy *phy;
->>> +	char *name;
->>> +
->>> +	name = kasprintf(GFP_KERNEL, "%s-%u", consumer, index);
->>> +	if (!name)
->>> +		return ERR_PTR(-ENOMEM);
->>> +
->>> +	phy = devm_of_phy_get(dev, np, name);
->>> +	kfree(name);
->>> +
->>> +	if (IS_ERR(phy) && PTR_ERR(phy) == -ENODEV)
->>> +		phy = NULL;
->>> +
->>> +	return phy;
->>> +}
->>
->> The error-handling there looks wrong. The function generally returns either
->> a valid PHY or an error pointer. However, in the case of -ENODEV, NULL is
->> returned. Subsystems are supposed to encode their handles as, and functions
->> are supposed to return, either NULL or an error pointer for error cases, not
->> both/either. Is the PHY API broken in this regard? If so, then this code is
->> fine, but if not it might need a fix.
+>> Still, I suppose the commit description is fine as is.
 >
-> This function mimics phy_optional_get() which similarily returns NULL
-> for -ENODEV. The remainder of the PHY API treats NULL pointers as
-> "dummy" PHYs and returns early. I think that's a sensible approach to
-> handling optional resources.
+> I've reworded the commit message to give a more accurate rationale for
+> the change. I'll be posting a v5 soon.
 >
-> It might have been more obvious had I implemented this function within
-> phy-core.c, but I didn't think it universally useful because it uses a
-> rather uncommon lookup pattern. I did keep a generic name in case it's
-> ever deemed useful outside of this driver, at which point it could
-> simply be moved into phy-core.c without requiring this driver to
-> change.
+>>> Update the PCI host bridge
+>>> device tree binding to allow each root port to define the list of PHYs
+>>> required to drive the lanes associated with it.
+>>
+>>> diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+>>
+>>> +Required properties for Tegra124 and later:
+>>> +- phys: Must contain an phandle to a PHY for each entry in phy-names.
+>>> +- phy-names: Must include an entry for each active lane. Note that the number
+>>> +  of entries does not have to (though usually will) be equal to the specified
+>>> +  number of lanes in the nvidia,num-lanes property. Entries are of the form
+>>> +  "pcie-N": where N ranges from 0 to the value specified in nvidia,num-lanes.
+>>
+>> When would the number of PHYs not equal the number of lanes? I thought the
+>> whole point of this patch was to switch to per-lane PHYs? Perhaps I'm just
+>> misremembering some exception, so there may be no need to change this.
+>
+> This is useful to support the case where we want to connect a x1 or x2
+> device to a root port that is configured to drive more lanes. It's a
+> rather unusual configuration, but it would be possible for example to
+> have an onboard x1 ethernet card, but the board layout is such that it
+> runs in x1/x2 mode, with the ethernet card connected to the x2 port.
 
-Ah OK, so if a caller of this function is expected to only use IS_ERR(), 
-and hence treat NULL as a perfectly valid PHY value, and all the PHY 
-APIs deal with NULL correctly, then this is probably OK.
+Does the controller HW actually work correctly in such a mode?
+
+Obviously a fully initialized x4 controller has to correctly handle 
+being attached solely to a x1 device. However, that's a different case 
+to simply not initializing 3 of the 4 PHYs. It's plausible the 
+controller handles this just fine, or that it hangs up or otherwise 
+misbehaves if some of the PHYs aren't enabled and hence it can't even 
+detect whether something is attached to them or not. Either way, adding 
+your explanation into the binding would be useful to highlight the 
+reason for the special case.
