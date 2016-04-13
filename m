@@ -1,110 +1,71 @@
-From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V4 2/3] dmaengine: tegra-adma: Add support for Tegra210
- ADMA
-Date: Wed, 13 Apr 2016 19:19:17 +0530
-Message-ID: <20160413134917.GP2274@localhost>
-References: <1458057390-20756-1-git-send-email-jonathanh@nvidia.com>
- <1458057390-20756-3-git-send-email-jonathanh@nvidia.com>
- <20160405213649.GA11586@vkoul-mobl.iind.intel.com>
- <570BB001.3020202@nvidia.com>
- <20160412141025.GJ2274@localhost>
- <570D2104.1040607@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] mmc: tegra: Disable UHS-I modes for tegra124
+Date: Wed, 13 Apr 2016 15:35:56 +0100
+Message-ID: <1460558156-10407-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <570D2104.1040607-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Apr 12, 2016 at 05:23:32PM +0100, Jon Hunter wrote:
-> >>> why should this be hard coded in kernel and not queried from something like
-> >>> DT? This case seems to be hardware property
-> >>
-> >> Originally, I did have this in DT, however, the Tegra maintainers prefer
-> >> this and this is consistent with the other Tegra DMA driver (see
-> >> driver/dma/tegra20-apb-dma.c) [0].
-> > 
-> > But this creates a problem when you have next generation of controller with
-> > different channel count!
-> > How do we solve then?
-> 
-> Same way we solve this for the tegra20-apb-dma driver by having
-> different chip data per SoC in the driver ...
-> 
-> 1259 /* Tegra20 specific DMA controller information */
-> 1260 static const struct tegra_dma_chip_data tegra20_dma_chip_data = {
-> 1261         .nr_channels            = 16,
-> 1262         .channel_reg_size       = 0x20,
-> 1263         .max_dma_count          = 1024UL * 64,
-> 1264         .support_channel_pause  = false,
-> 1265         .support_separate_wcount_reg = false,
-> 1266 };
-> 1267
-> 1268 /* Tegra30 specific DMA controller information */
-> 1269 static const struct tegra_dma_chip_data tegra30_dma_chip_data = {
-> 1270         .nr_channels            = 32,
-> 1271         .channel_reg_size       = 0x20,
-> 1272         .max_dma_count          = 1024UL * 64,
-> 1273         .support_channel_pause  = false,
-> 1274         .support_separate_wcount_reg = false,
-> 1275 };
-> 1276
-> 1277 /* Tegra114 specific DMA controller information */
-> 1278 static const struct tegra_dma_chip_data tegra114_dma_chip_data = {
-> 1279         .nr_channels            = 32,
-> 1280         .channel_reg_size       = 0x20,
-> 1281         .max_dma_count          = 1024UL * 64,
-> 1282         .support_channel_pause  = true,
-> 1283         .support_separate_wcount_reg = false,
-> 1284 };
-> 1285
-> 1286 /* Tegra148 specific DMA controller information */
-> 1287 static const struct tegra_dma_chip_data tegra148_dma_chip_data = {
-> 1288         .nr_channels            = 32,
-> 1289         .channel_reg_size       = 0x40,
-> 1290         .max_dma_count          = 1024UL * 64,
-> 1291         .support_channel_pause  = true,
-> 1292         .support_separate_wcount_reg = true,
-> 1293 };
-> 
-> You may still say this should be in the DT, but the Tegra maintainers
-> prefer this data in the driver.
+Tegra124 has been randomly hanging during system suspend when entering
+the Tegra LP1 low power state. The hang is caused by the tegra SDHCI
+driver and linked to the UHS-I tuning sequence. Disabling the UHS-I
+modes for Tegra124 prevents any hangs from occurring when entering
+system suspend.
 
-Okay I don't see a a rationale behind this not being in DT, Stephan?
+Unfortunately, the tuning sequence described in the public Tegra
+documentation is incomplete and on inspection of the current tuning
+sequence that has been implemented is also incomplete and may cause
+problems. In the short-term it is safer to disable UHS-I modes for now
+and fix later because it would be too large of a change to simply patch
+now. Therefore, disable UHS-I modes for Tegra124.
 
-> 
-> >>>> +	dma_cap_set(DMA_SLAVE, tdma->dma_dev.cap_mask);
-> >>>> +	dma_cap_set(DMA_PRIVATE, tdma->dma_dev.cap_mask);
-> >>>> +	dma_cap_set(DMA_CYCLIC, tdma->dma_dev.cap_mask);
-> >>>
-> >>> I think you should not set DMA_SLAVE, do you need caps to be exported. I
-> >>> think that should be exported for cyclic too, let me know if that was the
-> >>> issue?
-> >>>
-> >>
-> >> Why should I not be setting DMA_SLAVE? Should I not be calling
-> >> dma_get_any_slave_channel() in the xlate?
-> >>
-> >> I think that I do want to set DMA_CYCLIC as well to ensure that we check
-> >> that the device->device_prep_dma_cyclic() function pointer is populated
-> >> when registering the DMA controller.
-> > 
-> > Only setting DMA_CYCLIC should do, if you see any issues around that please
-> > get back, we cna fix those :)
-> 
-> It did not work for me because dma_get_any_slave_channel() wants a DMA
-> device with the DMA_SLAVE bit capability set. So if I remove this above,
-> then requesting the channel fails via dma_get_any_slave_channel() fails.
-> Is there something I don't understand here?
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
 
-You should use dma_request_channel() we cleaned up the APIs and recommend to
-use dma_request_channel() for slave usages. See Documentation update in 
-a8135d0d79e9: (dmaengine: core: Introduce new, universal API to request a
-channel)
+I previously brought up this issue in this thread [0], but there has
+been no resolution and so I think that for v4.6 we need to disable this
+for now. I also pointered out that there is a complete implementation
+available in the v3.18 kernel used by chromeos products [1]. We do plan
+to get better support for UHS-I modes for Tegra it is just a matter of
+bandwidth at the moment :-(
 
-Thanks
+[0] http://marc.info/?l=linux-tegra&m=145926947408663&w=2
+[1] https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-3.10/drivers/mmc/host/sdhci-tegra.c
+
+ drivers/mmc/host/sdhci-tegra.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
+
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index f8c4762bb48d..bcc0de47fe7e 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -382,14 +382,6 @@ static const struct sdhci_tegra_soc_data soc_data_tegra114 = {
+ 	.pdata = &sdhci_tegra114_pdata,
+ };
+ 
+-static const struct sdhci_tegra_soc_data soc_data_tegra124 = {
+-	.pdata = &sdhci_tegra114_pdata,
+-	.nvquirks = NVQUIRK_ENABLE_SDR50 |
+-		    NVQUIRK_ENABLE_DDR50 |
+-		    NVQUIRK_ENABLE_SDR104 |
+-		    NVQUIRK_HAS_PADCALIB,
+-};
+-
+ static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
+ 	.quirks = SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
+ 		  SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
+@@ -407,7 +399,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra210 = {
+ 
+ static const struct of_device_id sdhci_tegra_dt_match[] = {
+ 	{ .compatible = "nvidia,tegra210-sdhci", .data = &soc_data_tegra210 },
+-	{ .compatible = "nvidia,tegra124-sdhci", .data = &soc_data_tegra124 },
++	{ .compatible = "nvidia,tegra124-sdhci", .data = &soc_data_tegra114 },
+ 	{ .compatible = "nvidia,tegra114-sdhci", .data = &soc_data_tegra114 },
+ 	{ .compatible = "nvidia,tegra30-sdhci", .data = &soc_data_tegra30 },
+ 	{ .compatible = "nvidia,tegra20-sdhci", .data = &soc_data_tegra20 },
 -- 
-~Vinod
+2.1.4
