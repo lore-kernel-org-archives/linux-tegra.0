@@ -1,100 +1,138 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 6/7] pinctrl: tegra: Add DT binding for io pads control
-Date: Wed, 13 Apr 2016 14:38:28 +0530
-Message-ID: <570E0C8C.4070600@nvidia.com>
-References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com> <1460473007-11535-7-git-send-email-ldewangan@nvidia.com> <570E0BAE.8090404@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 4/7] soc/tegra: pmc: Add interface to set voltage of IO
+ rails
+Date: Wed, 13 Apr 2016 10:25:49 +0100
+Message-ID: <570E109D.6070805@nvidia.com>
+References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>
+ <1460473007-11535-5-git-send-email-ldewangan@nvidia.com>
+ <570E07B7.1070209@nvidia.com> <570E0AC9.9050701@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <570E0BAE.8090404-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <570E0AC9.9050701@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, swarren@wwwdotorg.org, thierry.reding@gmail.com, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On Wednesday 13 April 2016 02:34 PM, Jon Hunter wrote:
-> On 12/04/16 15:56, Laxman Dewangan wrote:
->> NVIDIA Tegra210 supports the IO pads which can operate at 1.8V
->> or 3.3V I/O voltage levels. Also IO pads can be configured for
->> power down state if it is not in used. SW needs to configure the
->> voltage level of IO pads based on IO rail voltage and its power
->> state based on platform usage.
+On 13/04/16 10:00, Laxman Dewangan wrote:
+> 
+> On Wednesday 13 April 2016 02:17 PM, Jon Hunter wrote:
+>> On 12/04/16 15:56, Laxman Dewangan wrote:
+>>> NVIDIA Tegra210 supports some of the IO interface which can operate
+>>> at 1.8V or 3.3V I/O rail voltage levels. SW needs to configure
+>>> Tegra PMC register to set different voltage level of IO interface based
+>>> on IO rail voltage from power supply i.e. power regulators.
+>>>
+>>> Add APIs to set and get IO rail voltage from the client driver.
+>> I think that we need some further explanation about the scenario when
+>> this is used. In other words, why this configuration needs to be done in
+>> the kernel versus the bootloader. Is this something that can change at
+>> runtime? I could see that for SD cards it may.
+> 
+> Yes, SDIO3.0 support needs dynamic IO rail voltage change and so pad
+> voltage change.
+> 
+>>>     #define GPU_RG_CNTRL            0x2d4
+>>>   +static DEFINE_SPINLOCK(tegra_pmc_access_lock);
+>>> +
+>> We already have a mutex for managing concurrent accesses, do we need
+>> this?
+> Mutex is sleeping calls and we really dont need this. This is sleep for
+> small duration and we should do this in spinlock.
+
+Yes but do you need to call it from a interrupt context? It seems that
+these are not called very often, may be on boot, or when swapping an SD
+card, and so although a spinlock would be faster, the overhead of the
+mutex would be negligible in this case. I think that you need to justify
+why this needs to be a spinlock with a use-case that requires it.
+
+>>>   +
+>>> +static struct tegra_io_rail_voltage_bit_info
+>>> tegra210_io_rail_voltage_info[] = {
+>>> +    TEGRA_IO_RAIL_VOLTAGE(SDMMC1, 12),
+>>> +    TEGRA_IO_RAIL_VOLTAGE(SDMMC3, 13),
+>>> +    TEGRA_IO_RAIL_VOLTAGE(AUDIO_HV, 18),
+>>> +    TEGRA_IO_RAIL_VOLTAGE(DMIC, 20),
+>>> +    TEGRA_IO_RAIL_VOLTAGE(GPIO, 21),
+>>> +    TEGRA_IO_RAIL_VOLTAGE(SPI_HV, 23),
+>>> +};
+>>> +
+>> You could simply this by having a look-up table similar to what we do
+>> for the powergates.
+> Revising the power gate code, it needs ID matches with bit location but
+> it is not the case here. We need to have lookup from ID to  bit position.
+
+I still don't see why you could not have ...
+
+static unsigned int tegra210_io_rail_voltage_bit[] = {
+	[TEGRA_IO_RAIL_SDMMC1] = 12,
+	...
+}
+
+You could avoid the for-loop in the lookup as well as all the extra
+definitions. Seems a lot simpler.
+
+> 
 >>
->> Add DT binding document for detailing the DT properties for
->> configuring IO pads voltage levels and its power state.
+>>>   static u32 tegra_pmc_readl(unsigned long offset)
+>>>   {
+>>>       return readl(pmc->base + offset);
+>>> @@ -175,6 +202,16 @@ static void tegra_pmc_writel(u32 value, unsigned
+>>> long offset)
+>>>       writel(value, pmc->base + offset);
+>>>   }
+>>>   +static void _tegra_pmc_register_update(unsigned long addr,
+>>> unsigned long mask,
+>>> +                       unsigned long val)
+>> u32 for mask and val. May be consider renaming to tegra_pmc_rmw().
+> 
+> update is common from the other framework like regmap so it is here.
+> 
+> 
 >>
->> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>   .../bindings/pinctrl/nvidia,tegra210-io-pad.txt    | 102 +++++++++++++++++++++
->>   .../dt-bindings/pinctrl/pinctrl-tegra210-io-pad.h  |  24 +++++
->>   2 files changed, 126 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-io-pad.txt
->>   create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra210-io-pad.h
+>>>   +static int tegra_io_rail_voltage_get_bit_pos(int io_rail_id)
+>> All the tegra_io_rail_xxx() APIs just use "id" and it is an unsigned
+>> int. Any reason this needs to be an int? We should keep the naming and
+>> type consistent.
+> 
+> OK, will do.
+> 
+>>> +
+>>> +int tegra_io_rail_voltage_set(int io_rail, int val)
+>> Same here w.r.t "io_rail".
 >>
->> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-io-pad.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-io-pad.txt
->> new file mode 100644
->> index 0000000..97cdd4f
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-io-pad.txt
->> @@ -0,0 +1,102 @@
->> +NVIDIA Tegra210 PMC IO pad controller
->> +
->> +NVIDIA Tegra210 supports IO pads which can operate at 1.8V or 3.3V I/O
->> +power rail voltages. SW needs to configure the voltage level of IO pads
->> +based on platform specific power tree.
->> +
->> +The voltage configurations of IO pads should be done in boot if it is not
->> +going to change other wise dynamically based on IO rail voltage on that
->> +IO pads.
->> +
->> +The node for the Tegra210 io-pad driver must be sub node of pmc@0,7000e400.
-> This should be 'pmc@7000e400'. We were incorrectly adding the '0,'
-> previously.
+>> Also it appears that "val" should only be 0 or 1 but we don't check for
+>> this. I see that you treat all non-zero values as '1' but that seems a
+>> bit funny. You may consider having the user pass uV and then you could
+>> check for either 3300000 or 1800000.
+> 
+> What about enums then?
+> May be we can use the DT binding header here.
 
-For T210, 64 bit, it is
-  tegra210.dtsi:    pmc: pmc@0,7000e400 {
+Seems better just to specify the voltage in uV in the DT and pass it to
+this function.
 
-For T124, it is
+>>
+>>> +
+>>> +    spin_lock_irqsave(&tegra_pmc_access_lock, flags);
+>>> +    _tegra_pmc_register_update(PMC_PWR_DET, mask, mask);
+>>> +    _tegra_pmc_register_update(PMC_PWR_DET_VAL, mask, bval);
+>> Hmmm ... this does not appear to be consistent with the TRM. It says to
+>> write to the PMC_PWR_DET register and then the PMC_PWR_LATCH register. I
+>> see in the Tegra210 TRM it says to only write the to ONLY the
+>> PMC_PWR_DET_VAL register in other places. The TRM appears to be quite
+>> confusing here, can you explain this?
+> 
+> The TRM needs to be update. There is no LATCH register in the T210.
+> PMC_PWR_DET and PMC_PWR_DET_VAL are registers for this. I have internal
+> tracking bug for correcting this.
 
-pmc@7000e400
+Why do you need to program both? I think that we should be clear here
+about the procedure. If the TRM is wrong, then there should be at least
+a comment here describing the correct sequence.
 
-
-
->
->> +
->> +Required properties:
->> +- compatible: "nvidia,tegra210-io-pad"
-> I think you have have "Must be ..." here. I am also wondering if the
-> pinctrl device should be registered by the pmc driver and so not a
-> separate driver to the PMC driver. In other words, the PMC driver calls
-> pinctrl_register() directly.
-
-I like to keep the pmc driver as main interface and other sub 
-functionalities like pad control for voltage and power states, no 
-iopower control etc as sub drivers. This will help in modular approach 
-of the driver.
-
-
->
->> +The voltage supported on the pads are 1.8V and 3.3V. The enums are defined as:
->> +	For 1.8V, use TEGRA210_IO_RAIL_1800000UV
->> +	For 3.3V, use TEGRA210_IO_RAIL_3300000UV
-> You may consider just using integer values here like we do for regulators.
-
-We just support two values 1.8V and 3.3V only. I am fine with either way 
-also.
-
->
->> +				  TEGRA210_IO_PAD_DEEP_POWER_DOWN_DISABLE for
->> +					disable.
->> +				  TEGRA210_IO_PAD_DEEP_POWER_DOWN_ENABLE for
->> +					enable.
-> Sounds like a boolean parameter. So may consider that if the property
-> 'nvidia,io-pad-deep-power-down' is present then it means enable
-> deep-power-down and if not present then don't. Then you do not need to
-> assign a value to it.
-
-Three states, enable, disable and left default. So absent will be left 
-default.
+Cheers
+Jon
