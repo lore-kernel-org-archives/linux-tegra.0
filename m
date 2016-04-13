@@ -1,106 +1,110 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 4/7] soc/tegra: pmc: Add interface to set voltage of IO
- rails
-Date: Wed, 13 Apr 2016 10:56:12 +0100
-Message-ID: <570E17BC.7010304@nvidia.com>
-References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>
- <1460473007-11535-5-git-send-email-ldewangan@nvidia.com>
- <570E07B7.1070209@nvidia.com> <570E0AC9.9050701@nvidia.com>
- <570E109D.6070805@nvidia.com> <570E0F7B.6060006@nvidia.com>
+From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V4 2/3] dmaengine: tegra-adma: Add support for Tegra210
+ ADMA
+Date: Wed, 13 Apr 2016 19:19:17 +0530
+Message-ID: <20160413134917.GP2274@localhost>
+References: <1458057390-20756-1-git-send-email-jonathanh@nvidia.com>
+ <1458057390-20756-3-git-send-email-jonathanh@nvidia.com>
+ <20160405213649.GA11586@vkoul-mobl.iind.intel.com>
+ <570BB001.3020202@nvidia.com>
+ <20160412141025.GJ2274@localhost>
+ <570D2104.1040607@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <570E0F7B.6060006@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, swarren@wwwdotorg.org, thierry.reding@gmail.com, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <570D2104.1040607-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 13/04/16 10:20, Laxman Dewangan wrote:
+On Tue, Apr 12, 2016 at 05:23:32PM +0100, Jon Hunter wrote:
+> >>> why should this be hard coded in kernel and not queried from something like
+> >>> DT? This case seems to be hardware property
+> >>
+> >> Originally, I did have this in DT, however, the Tegra maintainers prefer
+> >> this and this is consistent with the other Tegra DMA driver (see
+> >> driver/dma/tegra20-apb-dma.c) [0].
+> > 
+> > But this creates a problem when you have next generation of controller with
+> > different channel count!
+> > How do we solve then?
 > 
-> On Wednesday 13 April 2016 02:55 PM, Jon Hunter wrote:
->> On 13/04/16 10:00, Laxman Dewangan wrote:
->>> On Wednesday 13 April 2016 02:17 PM, Jon Hunter wrote:
->>>> On 12/04/16 15:56, Laxman Dewangan wrote:
->>>>> NVIDIA Tegra210 supports some of the IO interface which can operate
->>>>> at 1.8V or 3.3V I/O rail voltage levels. SW needs to configure
->>>>> Tegra PMC register to set different voltage level of IO interface
->>>>> based
->>>>> on IO rail voltage from power supply i.e. power regulators.
->>>>>
->>>>> Add APIs to set and get IO rail voltage from the client driver.
->>>> I think that we need some further explanation about the scenario when
->>>> this is used. In other words, why this configuration needs to be
->>>> done in
->>>> the kernel versus the bootloader. Is this something that can change at
->>>> runtime? I could see that for SD cards it may.
->>> Yes, SDIO3.0 support needs dynamic IO rail voltage change and so pad
->>> voltage change.
->>>
->>>>>      #define GPU_RG_CNTRL            0x2d4
->>>>>    +static DEFINE_SPINLOCK(tegra_pmc_access_lock);
->>>>> +
->>>> We already have a mutex for managing concurrent accesses, do we need
->>>> this?
->>> Mutex is sleeping calls and we really dont need this. This is sleep for
->>> small duration and we should do this in spinlock.
->> Yes but do you need to call it from a interrupt context? It seems that
->> these are not called very often, may be on boot, or when swapping an SD
->> card, and so although a spinlock would be faster, the overhead of the
->> mutex would be negligible in this case. I think that you need to justify
->> why this needs to be a spinlock with a use-case that requires it.
->>
+> Same way we solve this for the tegra20-apb-dma driver by having
+> different chip data per SoC in the driver ...
 > 
-> This is just based on my OS theory that if critical region is taking
-> less time, in order of us instead of ms then better to use spin lock
-> instead of mutex lock.
-
-Yes, but you also need to be practical. Furthermore, someone could be
-powering up/down a rail at the same time someone is setting the voltage.
-May be this is not a big deal ...
-
->>>>>    +
->>>>> +static struct tegra_io_rail_voltage_bit_info
->>>>> tegra210_io_rail_voltage_info[] = {
->>>>> +    TEGRA_IO_RAIL_VOLTAGE(SDMMC1, 12),
->>>>> +    TEGRA_IO_RAIL_VOLTAGE(SDMMC3, 13),
->>>>> +    TEGRA_IO_RAIL_VOLTAGE(AUDIO_HV, 18),
->>>>> +    TEGRA_IO_RAIL_VOLTAGE(DMIC, 20),
->>>>> +    TEGRA_IO_RAIL_VOLTAGE(GPIO, 21),
->>>>> +    TEGRA_IO_RAIL_VOLTAGE(SPI_HV, 23),
->>>>> +};
->>>>> +
->>>> You could simply this by having a look-up table similar to what we do
->>>> for the powergates.
->>> Revising the power gate code, it needs ID matches with bit location but
->>> it is not the case here. We need to have lookup from ID to  bit
->>> position.
->> I still don't see why you could not have ...
->>
->> static unsigned int tegra210_io_rail_voltage_bit[] = {
->>     [TEGRA_IO_RAIL_SDMMC1] = 12,
->>     ...
->> }
->>
->> You could avoid the for-loop in the lookup as well as all the extra
->> definitions. Seems a lot simpler.
+> 1259 /* Tegra20 specific DMA controller information */
+> 1260 static const struct tegra_dma_chip_data tegra20_dma_chip_data = {
+> 1261         .nr_channels            = 16,
+> 1262         .channel_reg_size       = 0x20,
+> 1263         .max_dma_count          = 1024UL * 64,
+> 1264         .support_channel_pause  = false,
+> 1265         .support_separate_wcount_reg = false,
+> 1266 };
+> 1267
+> 1268 /* Tegra30 specific DMA controller information */
+> 1269 static const struct tegra_dma_chip_data tegra30_dma_chip_data = {
+> 1270         .nr_channels            = 32,
+> 1271         .channel_reg_size       = 0x20,
+> 1272         .max_dma_count          = 1024UL * 64,
+> 1273         .support_channel_pause  = false,
+> 1274         .support_separate_wcount_reg = false,
+> 1275 };
+> 1276
+> 1277 /* Tegra114 specific DMA controller information */
+> 1278 static const struct tegra_dma_chip_data tegra114_dma_chip_data = {
+> 1279         .nr_channels            = 32,
+> 1280         .channel_reg_size       = 0x20,
+> 1281         .max_dma_count          = 1024UL * 64,
+> 1282         .support_channel_pause  = true,
+> 1283         .support_separate_wcount_reg = false,
+> 1284 };
+> 1285
+> 1286 /* Tegra148 specific DMA controller information */
+> 1287 static const struct tegra_dma_chip_data tegra148_dma_chip_data = {
+> 1288         .nr_channels            = 32,
+> 1289         .channel_reg_size       = 0x40,
+> 1290         .max_dma_count          = 1024UL * 64,
+> 1291         .support_channel_pause  = true,
+> 1292         .support_separate_wcount_reg = true,
+> 1293 };
 > 
-> This makes the table in larger size, max index is maximum of all the 
-> macros used in LHS.
+> You may still say this should be in the DT, but the Tegra maintainers
+> prefer this data in the driver.
 
-True. May be there is not a better way to do this ...
+Okay I don't see a a rationale behind this not being in DT, Stephan?
 
-> Also if we have 0 as valid (which is not there now) then it can be trouble.
->>> The TRM needs to be update. There is no LATCH register in the T210.
->>> PMC_PWR_DET and PMC_PWR_DET_VAL are registers for this. I have internal
->>> tracking bug for correcting this.
->> Why do you need to program both? I think that we should be clear here
->> about the procedure. If the TRM is wrong, then there should be at least
->> a comment here describing the correct sequence.
-> OK, will mention the details.
+> 
+> >>>> +	dma_cap_set(DMA_SLAVE, tdma->dma_dev.cap_mask);
+> >>>> +	dma_cap_set(DMA_PRIVATE, tdma->dma_dev.cap_mask);
+> >>>> +	dma_cap_set(DMA_CYCLIC, tdma->dma_dev.cap_mask);
+> >>>
+> >>> I think you should not set DMA_SLAVE, do you need caps to be exported. I
+> >>> think that should be exported for cyclic too, let me know if that was the
+> >>> issue?
+> >>>
+> >>
+> >> Why should I not be setting DMA_SLAVE? Should I not be calling
+> >> dma_get_any_slave_channel() in the xlate?
+> >>
+> >> I think that I do want to set DMA_CYCLIC as well to ensure that we check
+> >> that the device->device_prep_dma_cyclic() function pointer is populated
+> >> when registering the DMA controller.
+> > 
+> > Only setting DMA_CYCLIC should do, if you see any issues around that please
+> > get back, we cna fix those :)
+> 
+> It did not work for me because dma_get_any_slave_channel() wants a DMA
+> device with the DMA_SLAVE bit capability set. So if I remove this above,
+> then requesting the channel fails via dma_get_any_slave_channel() fails.
+> Is there something I don't understand here?
+
+You should use dma_request_channel() we cleaned up the APIs and recommend to
+use dma_request_channel() for slave usages. See Documentation update in 
+a8135d0d79e9: (dmaengine: core: Introduce new, universal API to request a
+channel)
 
 Thanks
-Jon
-
+-- 
+~Vinod
