@@ -1,80 +1,120 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] mmc: tegra: Disable UHS-I modes for tegra124
-Date: Wed, 13 Apr 2016 17:24:40 +0200
-Message-ID: <20160413152440.GD29509@ulmo.ba.sec>
-References: <1460558156-10407-1-git-send-email-jonathanh@nvidia.com>
+Subject: Re: [PATCH v3 2/2] PCI: tegra: Support per-lane PHYs
+Date: Wed, 13 Apr 2016 18:01:12 +0200
+Message-ID: <20160413160112.GA30129@ulmo.ba.sec>
+References: <1457452094-5409-1-git-send-email-thierry.reding@gmail.com>
+ <1457452094-5409-2-git-send-email-thierry.reding@gmail.com>
+ <56E9915F.9040608@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="SFyWQ0h3ruR435lw"
+	protocol="application/pgp-signature"; boundary="ZPt4rx8FFjLCG7dd"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1460558156-10407-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <56E9915F.9040608-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---SFyWQ0h3ruR435lw
+--ZPt4rx8FFjLCG7dd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 13, 2016 at 03:35:56PM +0100, Jon Hunter wrote:
-> Tegra124 has been randomly hanging during system suspend when entering
-> the Tegra LP1 low power state. The hang is caused by the tegra SDHCI
-> driver and linked to the UHS-I tuning sequence. Disabling the UHS-I
-> modes for Tegra124 prevents any hangs from occurring when entering
-> system suspend.
+On Wed, Mar 16, 2016 at 11:01:19AM -0600, Stephen Warren wrote:
+> On 03/08/2016 08:48 AM, Thierry Reding wrote:
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >=20
+> > The current XUSB pad controller bindings are insufficient to describe
+> > PHY devices attached to USB controllers. New bindings have been created
+> > to overcome these restrictions. As a side-effect each root port now is
+> > assigned a set of PHY devices, one for each lane associated with the
+> > root port. This has the benefit of allowing fine-grained control of the
+> > power management for each lane.
 >=20
-> Unfortunately, the tuning sequence described in the public Tegra
-> documentation is incomplete and on inspection of the current tuning
-> sequence that has been implemented is also incomplete and may cause
-> problems. In the short-term it is safer to disable UHS-I modes for now
-> and fix later because it would be too large of a change to simply patch
-> now. Therefore, disable UHS-I modes for Tegra124.
+> > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
 >=20
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
+> > +static int tegra_pcie_port_phy_power_on(struct tegra_pcie_port *port)
+> > +{
+> > +	struct device *dev =3D port->pcie->dev;
+> > +	unsigned int i;
+> > +	int err;
+> > +
+> > +	for (i =3D 0; i < port->lanes; i++) {
+> > +		err =3D phy_power_on(port->phys[i]);
 >=20
-> I previously brought up this issue in this thread [0], but there has
-> been no resolution and so I think that for v4.6 we need to disable this
-> for now. I also pointered out that there is a complete implementation
-> available in the v3.18 kernel used by chromeos products [1]. We do plan
-> to get better support for UHS-I modes for Tegra it is just a matter of
-> bandwidth at the moment :-(
+> This assume the number of array entries is precisely the number of lanes.
+> That seems to contradict the binding update which said the number might n=
+ot
+> match. Perhaps there's an expectation that phy_power_on() is a no-op for
+> some "invalid" values like NULL or an error-pointer value? But...
 >=20
-> [0] http://marc.info/?l=3Dlinux-tegra&m=3D145926947408663&w=3D2
-> [1] https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chr=
-omeos-3.10/drivers/mmc/host/sdhci-tegra.c
+> > +static struct phy *devm_of_phy_optional_get_index(struct device *dev,
+> > +						  struct device_node *np,
+> > +						  const char *consumer,
+> > +						  unsigned int index)
+> > +{
+> > +	struct phy *phy;
+> > +	char *name;
+> > +
+> > +	name =3D kasprintf(GFP_KERNEL, "%s-%u", consumer, index);
+> > +	if (!name)
+> > +		return ERR_PTR(-ENOMEM);
+> > +
+> > +	phy =3D devm_of_phy_get(dev, np, name);
+> > +	kfree(name);
+> > +
+> > +	if (IS_ERR(phy) && PTR_ERR(phy) =3D=3D -ENODEV)
+> > +		phy =3D NULL;
+> > +
+> > +	return phy;
+> > +}
 >=20
->  drivers/mmc/host/sdhci-tegra.c | 10 +---------
->  1 file changed, 1 insertion(+), 9 deletions(-)
+> The error-handling there looks wrong. The function generally returns eith=
+er
+> a valid PHY or an error pointer. However, in the case of -ENODEV, NULL is
+> returned. Subsystems are supposed to encode their handles as, and functio=
+ns
+> are supposed to return, either NULL or an error pointer for error cases, =
+not
+> both/either. Is the PHY API broken in this regard? If so, then this code =
+is
+> fine, but if not it might need a fix.
 
-Other than a couple of cases of inconsistent capitalization (tegra vs.
-Tegra, the latter being correct, of course), this looks fine to me:
+This function mimics phy_optional_get() which similarily returns NULL
+for -ENODEV. The remainder of the PHY API treats NULL pointers as
+"dummy" PHYs and returns early. I think that's a sensible approach to
+handling optional resources.
 
-Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+It might have been more obvious had I implemented this function within
+phy-core.c, but I didn't think it universally useful because it uses a
+rather uncommon lookup pattern. I did keep a generic name in case it's
+ever deemed useful outside of this driver, at which point it could
+simply be moved into phy-core.c without requiring this driver to
+change.
 
---SFyWQ0h3ruR435lw
+Thierry
+
+--ZPt4rx8FFjLCG7dd
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXDmS4AAoJEN0jrNd/PrOhvgUP/2e4Qj2QbBsLOsCECPhIOYTy
-8O/OmwgJ4IMVvDeEBdJx50PXvK9Pmc/1iGA8F45SjIrtn9AbVRJqWWTSkSLdcNII
-t5DXQzlBnolld1kEkc/caiW//7Bnu9prD3JR/ciETJ6PVThXgy15Cv/tTFN18AoZ
-UYhANotraa/PAoM5emUgyp/hTgXIC4R7dOOYRog9lkXB9GX1GlTSBsFMvnTJlrik
-X5h7Or3BDr6c0XUmEmwwGdWmIE32bk4CjZ+y+5zGtli2FLNEmrk1DQ+2Kg01kdHX
-gP+MXeLfYCkYXPQyt+Vr71z3a+XI02nBDmAItYQiPw2ewPxS4nbyXgbfsCGoPzmZ
-79KoWj8k3nlljPhbBefIzY/jHAG80TWOgYOaM/rwQjD4Ootg6ist9BPlg6v5SqMU
-belT49f3wWQzeXo5knEgItITEc1lnzC2Gs8sjml4eqU3fowugV061Zir8s5EnJCZ
-lxiBD/KQ74uzMb+SBd6pVKyMDXo51AqRj1V+PCLTahviZk1cs1b28KDOT7B3C8Os
-+57bkcVHQbOYq9suvjt29bDa4HE27F2POmF2Wja5zlsX8Fy5hwSISt7uTR1rfJ47
-PQ8ChvXH3C9JRJ3uRxQoFN7RGeedwqBWFO2LnGEP6DaBFcMEniVaQuo3IG7wIAHI
-hkCK9ck/biUv83cLz4pi
-=DEpY
+iQIcBAABCAAGBQJXDm1GAAoJEN0jrNd/PrOhsx8P/RdwUR2RReTGjrJTcVD3SbtX
+88/lQrxjc2PIuORz1olJrGsofkkvCxQjVnC2EzclviCsCjqg8A1GCJ8nUdC3LNz7
+narULEukh2hhLdtL1t6GhO6XZmmy2hZSOi1XTGAi8E34y4Qs9EcsYVG3dsDT+d6l
+O/egs1AwwbcS1IJNzTXl/j6159E61nKk7MwBUCMIIueiPLKX5W/EwUtUBnfk7utT
+NPyfisAP2LoCnUo3vsgV1FSfb/84KUofpnCsKv5+/kk9iOsCrbUoJQZ4VKSQ3Vg4
+EOYX4AbUhHjkwdfB47lhLvxdujajVU8yA85+MTXoNlRRe7ltM6txArvcryG9HGE3
+cxl897ztfepVLdPo/e+NUP9tUmsYhNo8JlZUMaoXFCRGx3XspHiLohc98HYGFeZb
+SKwbcbSl99f6VJzDpK4/ftdhjlsDCHjbXlZOcnGoCxJ8o2WtQuxxbach1xeOmkQ3
+dGFiN0Hfume2yuio3Zci3JxbgBtGSM/7zVGk6KS1bTCvDos7QolnWx3CeGqgnpz6
+pYfu/yN8iWTRJNl/4eBh1kgblrrhcRjuv4VpQeMMYmyG5KQmSCoVVj9SWhLTC2Cx
+pOitZ48pT2s+4i0aQ6IO4T1Nd+Vkuyl3MHUWzQDLGyoz/V+A1E1wItMD9QYSoE66
+08cjr1ZxWItFdHxe/DO0
+=kY+V
 -----END PGP SIGNATURE-----
 
---SFyWQ0h3ruR435lw--
+--ZPt4rx8FFjLCG7dd--
