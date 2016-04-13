@@ -1,69 +1,88 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4 1/2] dt-bindings: pci: tegra: Update for per-lane PHYs
-Date: Wed, 13 Apr 2016 18:23:45 +0200
-Message-ID: <20160413162345.GC30129@ulmo.ba.sec>
-References: <1460131994-24493-1-git-send-email-thierry.reding@gmail.com>
- <570BE129.40907@wwwdotorg.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v3 2/2] PCI: tegra: Support per-lane PHYs
+Date: Wed, 13 Apr 2016 11:01:58 -0600
+Message-ID: <570E7B86.1040909@wwwdotorg.org>
+References: <1457452094-5409-1-git-send-email-thierry.reding@gmail.com>
+ <1457452094-5409-2-git-send-email-thierry.reding@gmail.com>
+ <56E9915F.9040608@wwwdotorg.org> <20160413160112.GA30129@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="mvpLiMfbWzRoNl4x"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <570BE129.40907-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20160413160112.GA30129@ulmo.ba.sec>
+Sender: linux-pci-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 04/13/2016 10:01 AM, Thierry Reding wrote:
+> On Wed, Mar 16, 2016 at 11:01:19AM -0600, Stephen Warren wrote:
+>> On 03/08/2016 08:48 AM, Thierry Reding wrote:
+>>> From: Thierry Reding <treding@nvidia.com>
+>>>
+>>> The current XUSB pad controller bindings are insufficient to describe
+>>> PHY devices attached to USB controllers. New bindings have been created
+>>> to overcome these restrictions. As a side-effect each root port now is
+>>> assigned a set of PHY devices, one for each lane associated with the
+>>> root port. This has the benefit of allowing fine-grained control of the
+>>> power management for each lane.
+>>
+>>> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+>>
+>>> +static int tegra_pcie_port_phy_power_on(struct tegra_pcie_port *port)
+>>> +{
+>>> +	struct device *dev = port->pcie->dev;
+>>> +	unsigned int i;
+>>> +	int err;
+>>> +
+>>> +	for (i = 0; i < port->lanes; i++) {
+>>> +		err = phy_power_on(port->phys[i]);
+>>
+>> This assume the number of array entries is precisely the number of lanes.
+>> That seems to contradict the binding update which said the number might not
+>> match. Perhaps there's an expectation that phy_power_on() is a no-op for
+>> some "invalid" values like NULL or an error-pointer value? But...
+>>
+>>> +static struct phy *devm_of_phy_optional_get_index(struct device *dev,
+>>> +						  struct device_node *np,
+>>> +						  const char *consumer,
+>>> +						  unsigned int index)
+>>> +{
+>>> +	struct phy *phy;
+>>> +	char *name;
+>>> +
+>>> +	name = kasprintf(GFP_KERNEL, "%s-%u", consumer, index);
+>>> +	if (!name)
+>>> +		return ERR_PTR(-ENOMEM);
+>>> +
+>>> +	phy = devm_of_phy_get(dev, np, name);
+>>> +	kfree(name);
+>>> +
+>>> +	if (IS_ERR(phy) && PTR_ERR(phy) == -ENODEV)
+>>> +		phy = NULL;
+>>> +
+>>> +	return phy;
+>>> +}
+>>
+>> The error-handling there looks wrong. The function generally returns either
+>> a valid PHY or an error pointer. However, in the case of -ENODEV, NULL is
+>> returned. Subsystems are supposed to encode their handles as, and functions
+>> are supposed to return, either NULL or an error pointer for error cases, not
+>> both/either. Is the PHY API broken in this regard? If so, then this code is
+>> fine, but if not it might need a fix.
+>
+> This function mimics phy_optional_get() which similarily returns NULL
+> for -ENODEV. The remainder of the PHY API treats NULL pointers as
+> "dummy" PHYs and returns early. I think that's a sensible approach to
+> handling optional resources.
+>
+> It might have been more obvious had I implemented this function within
+> phy-core.c, but I didn't think it universally useful because it uses a
+> rather uncommon lookup pattern. I did keep a generic name in case it's
+> ever deemed useful outside of this driver, at which point it could
+> simply be moved into phy-core.c without requiring this driver to
+> change.
 
---mvpLiMfbWzRoNl4x
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Apr 11, 2016 at 11:38:49AM -0600, Stephen Warren wrote:
-> On 04/08/2016 10:13 AM, Thierry Reding wrote:
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >=20
-> > Changes to the pad controller device tree binding have required that
-> > each lane be associated with a separate PHY. Update the PCI host bridge
-> > device tree binding to allow each root port to define the list of PHYs
-> > required to drive the lanes associated with it.
->=20
-> I think the feedback I gave on v3 still applies here (I'm talking about t=
-he
-> comments on the patch, not the commit description).
->=20
-> http://www.spinics.net/lists/linux-pci/msg49718.html
-
-Apologies, I had missed those when going over review comments. I think
-I've addressed all of them now, or provided rationale for why the code
-and binding are the way they are.
-
-I'll be sending out a v5 soon, hopefully that will have addressed any
-outstanding concerns.
-
-Thierry
-
---mvpLiMfbWzRoNl4x
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXDnKRAAoJEN0jrNd/PrOhCKUQALhHG7ZwR4O8o40CFexq1sKx
-Oit9kQaM9s5922COpyFYEQp26URX7iBUSj9UjIx34JLGXcy6n2O+HPoOljQiNCc1
-kLqnWDNMUwIXL6TRZBheRStKzJlbiQqCP8PfhaL1putSGecTBJ7fPAN7lCviDfcQ
-keKh6ryelZy3FEAzl5O7iVzU8mkcdewdKzuBnIkwWSZUOHw0N9g3Itux198FRy6C
-kTxuTsrBAOLcxhaG8Oh7zQkl7p2SIhnY48djkRrfiUurydW2lA7S2PNf88uJUe5C
-xzaCTQTqBspks2N0CeSYVG78j1oKpiyMjQV0w5iOT6d3g7tMQB6V0SefHDMEZlNh
-sNP0pEWhgBy25vV11H5K4od7O1B5rKG6KcVk6RCGUQ03Z1BfYHchTQMW3UG90c6z
-2CRydCJZxeaXdEnuwvY9yifHRIxAtb6hjvefDahYR1eA4/R8BBN0czrmrh0A0fAH
-0QQdERZSBJmFM7CalGm8gI3pJR0fgJtN+4dbIOUIhdULNzVBpxs7xjazuOkiVO83
-eM0qguohR0IJMli13NEWGJL16MAtylX/3lORiNC/3D2RhmWisf8/x/Y+m/E5/nsG
-3Zy6Gh3O6ZOidgiw9iJEk5loQbOwaa45uRBdLk+yXLaHI9YGHDq0FL+1IhFW5V3J
-sDwsGIWXVfc9BddYAXXo
-=f4aV
------END PGP SIGNATURE-----
-
---mvpLiMfbWzRoNl4x--
+Ah OK, so if a caller of this function is expected to only use IS_ERR(), 
+and hence treat NULL as a perfectly valid PHY value, and all the PHY 
+APIs deal with NULL correctly, then this is probably OK.
