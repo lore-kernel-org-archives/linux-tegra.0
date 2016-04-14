@@ -1,35 +1,124 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] pinctrl: tegra: clear park bit for all pins
-Date: Thu, 14 Apr 2016 14:02:12 +0200
-Message-ID: <CACRpkdZYPhx_ma1RH7-HbW-ERg9jLO=5TdPo1-51T3MXypN=DQ@mail.gmail.com>
-References: <1460065028-26169-1-git-send-email-rklein@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH V2] ARM: tegra: add DT binding for Tegra186 GPIO controllers
+Date: Thu, 14 Apr 2016 14:42:28 +0200
+Message-ID: <CACRpkdYmcEQBN5QwjLa-Wyorv-otPdJh5C1KgKwUjUBWXvnb_w@mail.gmail.com>
+References: <1460483197-5130-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1460065028-26169-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1460483197-5130-1-git-send-email-swarren@wwwdotorg.org>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Apr 7, 2016 at 11:37 PM, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+On Tue, Apr 12, 2016 at 7:46 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
 
-> Parking bits might not be cleared by the bootloader properly (if for
-> instance it doesn't use the device configured by that pin). Clear
-> the park bits for all the pins during pinctrl probe.
+> From: Stephen Warren <swarren@nvidia.com>
 >
-> This is present on T210 platforms but not earlier ones, so for earlier
-> generations, set parked_reg = -1 to disable.
+> Tegra186 contains two separate but mostly similar GPIO controllers.
+> Register layout differs significantly from previous Tegra generations, and
+> so a new binding is required to describe them in device tree. This patch
+> adds that binding.
 >
-> The park bit is used to prevent glitching when reprogramming pinctrl
-> registers.
->
-> Based on work by:
-> Shravani Dingari <shravanid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+> Acked-by: Rob Herring <robh@kernel.org>
+> ---
+> v2: Increase indentation to make lists more readable.
 
-Patch applied with Stephen's ACK.
+Very interesting patch!
+
+> +a) Security registers, which allow configuration of allowed access to the GPIO
+> +register set. These registers exist in a single contguous block of physical
+
+^ speling: contiguous?
+
+> +Tegra HW documentation describes a unified naming convention for all GPIOs
+> +implemented by the SoC. Each GPIO is assigned to a port, and a port may control
+> +a number of GPIOs. Thus, each GPIO is named according to an alphabetical port
+> +name and an integer GPIO name within the port. For example, GPIO_PA0, GPIO_PN6,
+> +or GPIO_PCC3.
+
+I suspect that the Tegra definition of a "port" is close to what other people
+call a "bank" like I try to define in this patch?
+http://marc.info/?l=linux-gpio&m=145941547420164&w=2
+
+> +The mapping from port name to the GPIO controller that implements that port, and
+> +the mapping from port name to register offset within a controller, are both
+> +extremely non-linear.
+
+That actually warrants the concept of gpio-bank = <n>;
+
+> + The header file <dt-bindings/gpio/tegra186-gpio.h>
+> +describes the port-level mapping. In that file, the naming convention for ports
+> +matches the HW documentation. The values chosen for the names are alphabetically
+> +sorted within a particular controller. Drivers need to map between the DT GPIO
+> +IDs and HW register offsets using a lookup table.
+
+Again that use case. Can you please enter the mentioned thread
+and provide some input on how you see this working?
+
+Neil Armstrong provided a driver using the GPIO ranges for
+cross-reference to the pin controller as the basis for finding
+what is here the port ID. I don't know if that is such a great
+idea.
+
+I noticed that the #defines in that tegra186-gpio.h file are not used
+in the example below. Something seems wrong: this mapping must
+be important. I don't see which of the required properties it should go
+into either.
+
+> +Each GPIO controller in fact generates multiple interrupts signals for each set
+> +of ports. Each GPIO may be configured to feed into a specific one of the
+> +interrupt signals generated by a set-of-ports. The intent is for each generated
+> +signal to be routed to a different CPU, thus allowing different CPUs to each
+> +handle subsets of the interrupts within a port.
+
+Clever. Seems like something other hardware engineers should pick
+up on.
+
+> +/* GPIOs implemented by main GPIO controller */
+> +#define TEGRA_MAIN_GPIO_PORT_A 0
+> +#define TEGRA_MAIN_GPIO_PORT_B 1
+> +#define TEGRA_MAIN_GPIO_PORT_C 2
+> +#define TEGRA_MAIN_GPIO_PORT_D 3
+> +#define TEGRA_MAIN_GPIO_PORT_E 4
+> +#define TEGRA_MAIN_GPIO_PORT_F 5
+> +#define TEGRA_MAIN_GPIO_PORT_G 6
+> +#define TEGRA_MAIN_GPIO_PORT_H 7
+> +#define TEGRA_MAIN_GPIO_PORT_I 8
+> +#define TEGRA_MAIN_GPIO_PORT_J 9
+> +#define TEGRA_MAIN_GPIO_PORT_K 10
+> +#define TEGRA_MAIN_GPIO_PORT_L 11
+> +#define TEGRA_MAIN_GPIO_PORT_M 12
+> +#define TEGRA_MAIN_GPIO_PORT_N 13
+> +#define TEGRA_MAIN_GPIO_PORT_O 14
+> +#define TEGRA_MAIN_GPIO_PORT_P 15
+> +#define TEGRA_MAIN_GPIO_PORT_Q 16
+> +#define TEGRA_MAIN_GPIO_PORT_R 17
+> +#define TEGRA_MAIN_GPIO_PORT_T 18
+> +#define TEGRA_MAIN_GPIO_PORT_X 19
+> +#define TEGRA_MAIN_GPIO_PORT_Y 20
+> +#define TEGRA_MAIN_GPIO_PORT_BB 21
+> +#define TEGRA_MAIN_GPIO_PORT_CC 22
+> +
+> +#define TEGRA_MAIN_GPIO(port, offset) \
+> +       ((TEGRA_MAIN_GPIO_PORT_##port * 8) + offset)
+> +
+> +/* GPIOs implemented by AON GPIO controller */
+> +#define TEGRA_AON_GPIO_PORT_S 0
+> +#define TEGRA_AON_GPIO_PORT_U 1
+> +#define TEGRA_AON_GPIO_PORT_V 2
+> +#define TEGRA_AON_GPIO_PORT_W 3
+> +#define TEGRA_AON_GPIO_PORT_Z 4
+> +#define TEGRA_AON_GPIO_PORT_AA 5
+> +#define TEGRA_AON_GPIO_PORT_EE 6
+> +#define TEGRA_AON_GPIO_PORT_FF 7
+> +
+> +#define TEGRA_AON_GPIO(port, offset) \
+> +       ((TEGRA_AON_GPIO_PORT_##port * 8) + offset)
+
+So we definately need this stuff used in the example.
 
 Yours,
 Linus Walleij
