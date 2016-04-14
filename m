@@ -1,142 +1,126 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v3 2/2] PCI: tegra: Support per-lane PHYs
-Date: Thu, 14 Apr 2016 17:26:52 +0200
-Message-ID: <20160414152652.GA3366@ulmo.ba.sec>
+Subject: Re: [PATCH 1/2] dt-bindings: pci: tegra: Update for per-lane PHYs
+Date: Thu, 14 Apr 2016 17:29:05 +0200
+Message-ID: <20160414152905.GB3366@ulmo.ba.sec>
 References: <1457452094-5409-1-git-send-email-thierry.reding@gmail.com>
- <1457452094-5409-2-git-send-email-thierry.reding@gmail.com>
- <56E9915F.9040608@wwwdotorg.org>
- <20160413160112.GA30129@ulmo.ba.sec>
- <570E7B86.1040909@wwwdotorg.org>
+ <56E98F2E.5010307@wwwdotorg.org>
+ <20160413162203.GB30129@ulmo.ba.sec>
+ <570E7C38.3070005@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ReaqsoxgOBHFXBhH"
+	protocol="application/pgp-signature"; boundary="H+4ONPRPur6+Ovig"
 Return-path: <linux-pci-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <570E7B86.1040909@wwwdotorg.org>
+In-Reply-To: <570E7C38.3070005@wwwdotorg.org>
 Sender: linux-pci-owner@vger.kernel.org
 To: Stephen Warren <swarren@wwwdotorg.org>
 Cc: Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---ReaqsoxgOBHFXBhH
+--H+4ONPRPur6+Ovig
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 13, 2016 at 11:01:58AM -0600, Stephen Warren wrote:
-> On 04/13/2016 10:01 AM, Thierry Reding wrote:
-> > On Wed, Mar 16, 2016 at 11:01:19AM -0600, Stephen Warren wrote:
+On Wed, Apr 13, 2016 at 11:04:56AM -0600, Stephen Warren wrote:
+> On 04/13/2016 10:22 AM, Thierry Reding wrote:
+> > On Wed, Mar 16, 2016 at 10:51:58AM -0600, Stephen Warren wrote:
 > > > On 03/08/2016 08:48 AM, Thierry Reding wrote:
 > > > > From: Thierry Reding <treding@nvidia.com>
 > > > >=20
-> > > > The current XUSB pad controller bindings are insufficient to descri=
-be
-> > > > PHY devices attached to USB controllers. New bindings have been cre=
-ated
-> > > > to overcome these restrictions. As a side-effect each root port now=
- is
-> > > > assigned a set of PHY devices, one for each lane associated with the
-> > > > root port. This has the benefit of allowing fine-grained control of=
+> > > > Changes to the pad controller device tree binding have required that
+> > > > each lane be associated with a separate PHY.
+> > >=20
+> > > I still don't think this has anything to do with DT bindings. Rather,=
  the
-> > > > power management for each lane.
+> > > definition of a PHY (in HW and the Linux PHY subsystem) is a single l=
+ane.
+> > > That fact then requires drivers to support a PHY per lane rather than=
+ a
+> > > single multi-lane PHY, and equally means the DT bindings must be writ=
+ten
+> > > according to the correct definition of a PHY.
 > > >=20
-> > > > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-te=
-gra.c
-> > >=20
-> > > > +static int tegra_pcie_port_phy_power_on(struct tegra_pcie_port *po=
-rt)
-> > > > +{
-> > > > +	struct device *dev =3D port->pcie->dev;
-> > > > +	unsigned int i;
-> > > > +	int err;
-> > > > +
-> > > > +	for (i =3D 0; i < port->lanes; i++) {
-> > > > +		err =3D phy_power_on(port->phys[i]);
-> > >=20
-> > > This assume the number of array entries is precisely the number of la=
-nes.
-> > > That seems to contradict the binding update which said the number mig=
-ht not
-> > > match. Perhaps there's an expectation that phy_power_on() is a no-op =
-for
-> > > some "invalid" values like NULL or an error-pointer value? But...
-> > >=20
-> > > > +static struct phy *devm_of_phy_optional_get_index(struct device *d=
-ev,
-> > > > +						  struct device_node *np,
-> > > > +						  const char *consumer,
-> > > > +						  unsigned int index)
-> > > > +{
-> > > > +	struct phy *phy;
-> > > > +	char *name;
-> > > > +
-> > > > +	name =3D kasprintf(GFP_KERNEL, "%s-%u", consumer, index);
-> > > > +	if (!name)
-> > > > +		return ERR_PTR(-ENOMEM);
-> > > > +
-> > > > +	phy =3D devm_of_phy_get(dev, np, name);
-> > > > +	kfree(name);
-> > > > +
-> > > > +	if (IS_ERR(phy) && PTR_ERR(phy) =3D=3D -ENODEV)
-> > > > +		phy =3D NULL;
-> > > > +
-> > > > +	return phy;
-> > > > +}
-> > >=20
-> > > The error-handling there looks wrong. The function generally returns =
-either
-> > > a valid PHY or an error pointer. However, in the case of -ENODEV, NUL=
-L is
-> > > returned. Subsystems are supposed to encode their handles as, and fun=
-ctions
-> > > are supposed to return, either NULL or an error pointer for error cas=
-es, not
-> > > both/either. Is the PHY API broken in this regard? If so, then this c=
-ode is
-> > > fine, but if not it might need a fix.
+> > > Still, I suppose the commit description is fine as is.
 > >=20
-> > This function mimics phy_optional_get() which similarily returns NULL
-> > for -ENODEV. The remainder of the PHY API treats NULL pointers as
-> > "dummy" PHYs and returns early. I think that's a sensible approach to
-> > handling optional resources.
+> > I've reworded the commit message to give a more accurate rationale for
+> > the change. I'll be posting a v5 soon.
 > >=20
-> > It might have been more obvious had I implemented this function within
-> > phy-core.c, but I didn't think it universally useful because it uses a
-> > rather uncommon lookup pattern. I did keep a generic name in case it's
-> > ever deemed useful outside of this driver, at which point it could
-> > simply be moved into phy-core.c without requiring this driver to
-> > change.
+> > > > Update the PCI host bridge
+> > > > device tree binding to allow each root port to define the list of P=
+HYs
+> > > > required to drive the lanes associated with it.
+> > >=20
+> > > > diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra20-p=
+cie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+> > >=20
+> > > > +Required properties for Tegra124 and later:
+> > > > +- phys: Must contain an phandle to a PHY for each entry in phy-nam=
+es.
+> > > > +- phy-names: Must include an entry for each active lane. Note that=
+ the number
+> > > > +  of entries does not have to (though usually will) be equal to th=
+e specified
+> > > > +  number of lanes in the nvidia,num-lanes property. Entries are of=
+ the form
+> > > > +  "pcie-N": where N ranges from 0 to the value specified in nvidia=
+,num-lanes.
+> > >=20
+> > > When would the number of PHYs not equal the number of lanes? I though=
+t the
+> > > whole point of this patch was to switch to per-lane PHYs? Perhaps I'm=
+ just
+> > > misremembering some exception, so there may be no need to change this.
+> >=20
+> > This is useful to support the case where we want to connect a x1 or x2
+> > device to a root port that is configured to drive more lanes. It's a
+> > rather unusual configuration, but it would be possible for example to
+> > have an onboard x1 ethernet card, but the board layout is such that it
+> > runs in x1/x2 mode, with the ethernet card connected to the x2 port.
 >=20
-> Ah OK, so if a caller of this function is expected to only use IS_ERR(), =
-and
-> hence treat NULL as a perfectly valid PHY value, and all the PHY APIs deal
-> with NULL correctly, then this is probably OK.
+> Does the controller HW actually work correctly in such a mode?
 
-I think it's not completely consistently used, but at least the public
-API that we do use has the necessary guards, so we should be fine.
+I think it does, and up until a few minutes ago I was even sure that I
+had tested it once. But looking at the various boards that I have I
+don't think I actually have test equipment that's wired the proper way
+to test this.
+
+> Obviously a fully initialized x4 controller has to correctly handle being
+> attached solely to a x1 device. However, that's a different case to simply
+> not initializing 3 of the 4 PHYs. It's plausible the controller handles t=
+his
+> just fine, or that it hangs up or otherwise misbehaves if some of the PHYs
+> aren't enabled and hence it can't even detect whether something is attach=
+ed
+> to them or not. Either way, adding your explanation into the binding would
+> be useful to highlight the reason for the special case.
+
+Perhaps for now it would be better to make the binding stricter. The
+wording could be relaxed if we ever determine that it still works
+correctly with a number of PHYs smaller than the number of lanes.
 
 Thierry
 
---ReaqsoxgOBHFXBhH
+--H+4ONPRPur6+Ovig
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXD7a4AAoJEN0jrNd/PrOhGrwP/A9qDrlbO+2Bll2adS3SGlsa
-w1AXkVIMZ/ei9Rzdol2m8nsQza4Hd3ez6InBbU+G49HrjrmDhz+4E9hAQWaPykgv
-yzHr9g1p6FmMtbWf45eTAvAurkIcOSIEm7KgV2tgUpzfxzsbwVEOx+y2kvzcpKqy
-1ML3H0COa4NbbuH031UB1TLIGXG+GacrxPpgG0uiU6Mo4ioz+1BNv6PYjtzPiLSc
-X6nk8julCUcwHMXHKEWFytsA6zaLVJyYd5TbtGUEZxV+tJSHfobXnTyyjqcJpSKK
-Q66WFhDVXktyM+WD59gEeUqHgCfgMmBaHySPXecEcKOTr3VbEninazjzDXiEAKaw
-JfleVggQXaX0LMP+uD8AK3iF9Eh2RNvRYd+CjenPxW/IXuQdPWR3w/Rwpj/XDTyu
-xFD61wxzsqj7XeQ3MIcR8ix2vFaaXfyy6pXdB0AAz/AWl1bYv0txSo2CW0Y0NAMC
-llPgpeHxsu5wUCjldb6NRBVGviTrtboaA2/+YjzR7+65tTNWy7td/R5JBqGbwAQr
-+TpT5HBp7LR4uhklW5GRccdK35KlUjZ3AdOee6pjeFlPP/43eMRm8d+fTAUStiJ0
-W6ePZjnHE73vTn00fCnPIUS+ogJAK2coMc/AyTIBUouXywewPvVw4YdAZRZlKEZ8
-Y45LBdN4t/Z6vnfKDJhX
-=43Ah
+iQIcBAABCAAGBQJXD7dAAAoJEN0jrNd/PrOhUt0QAKGglDYSP4eAtVBraPIjawy1
+8/5SaSs925dpZvYDI5dpBR90ScHDi3g8L7CFU2S5LYqxnIailE368CT0PJXzwl63
+mfbRX0msqO4obxKw3JVoAtfjYw6vRQn9FOH1IcBCY+IMVMjqcH65qkOpjvlgz6nX
+zBqShtJvyUgRb7y31dZ6a4adRQ+y9mSd+aDbUDVc+OFrY5Cvz4hy2AtyTFwZMXwp
+Lon2+oFBSohz1+UZvd5tndAZ8A5c15cU+2/eTEsWEcy0ASj9Sy9nsj58/hHpDz1t
+cM7yHtK9rOdldlQlnb7Zyea3JQZmvMX2Yc6OdYY4vEvuH6SoA1AzLtQcRKRWOBwA
+Vqo+EhpB9BpZVACweauDx7f+/GLifHyFQdoAl4DBL2fMA0zvgmwqvoZQtBfWqRZ8
+m7WtUI3nbXBt7qokao7vBVdcPeOErqKXHD1YBtKYPB19mdYuO2NvIKJl5QyQmSU6
+8X4X1grnaFPcNBuVJQ7igcsi5QUt7G/4wCw/qeGQrZtYotOV3fTQr3WHwFnDRswP
+yOwXNigMJwyvl/k4yaL3hhcJ6BmSOBZwlPTgmcK7VVmzkp0fgIlovTZCHJmltkWE
+hKfRrUYNWSvW3R6rj+89/3/rLHLKF2qcCqt7aN1dAqiQeNlXZaHKbKkDAQzole6N
+umcOmzQHGfJhrhqRoY38
+=ETlq
 -----END PGP SIGNATURE-----
 
---ReaqsoxgOBHFXBhH--
+--H+4ONPRPur6+Ovig--
