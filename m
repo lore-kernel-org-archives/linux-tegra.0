@@ -1,128 +1,142 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH V2] ARM: tegra: add DT binding for Tegra186 GPIO
- controllers
-Date: Thu, 14 Apr 2016 09:16:41 -0600
-Message-ID: <570FB459.8090802@wwwdotorg.org>
-References: <1460483197-5130-1-git-send-email-swarren@wwwdotorg.org>
- <CACRpkdYmcEQBN5QwjLa-Wyorv-otPdJh5C1KgKwUjUBWXvnb_w@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v3 2/2] PCI: tegra: Support per-lane PHYs
+Date: Thu, 14 Apr 2016 17:26:52 +0200
+Message-ID: <20160414152652.GA3366@ulmo.ba.sec>
+References: <1457452094-5409-1-git-send-email-thierry.reding@gmail.com>
+ <1457452094-5409-2-git-send-email-thierry.reding@gmail.com>
+ <56E9915F.9040608@wwwdotorg.org>
+ <20160413160112.GA30129@ulmo.ba.sec>
+ <570E7B86.1040909@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <CACRpkdYmcEQBN5QwjLa-Wyorv-otPdJh5C1KgKwUjUBWXvnb_w@mail.gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Stephen Warren <swarren@nvidia.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ReaqsoxgOBHFXBhH"
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <570E7B86.1040909@wwwdotorg.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/14/2016 06:42 AM, Linus Walleij wrote:
-> On Tue, Apr 12, 2016 at 7:46 PM, Stephen Warren <swarren@wwwdotorg.org> wrote:
->
->> From: Stephen Warren <swarren@nvidia.com>
->>
->> Tegra186 contains two separate but mostly similar GPIO controllers.
->> Register layout differs significantly from previous Tegra generations, and
->> so a new binding is required to describe them in device tree. This patch
->> adds that binding.
->>
->> Signed-off-by: Stephen Warren <swarren@nvidia.com>
->> Acked-by: Rob Herring <robh@kernel.org>
->> ---
->> v2: Increase indentation to make lists more readable.
->
-> Very interesting patch!
->
->> +a) Security registers, which allow configuration of allowed access to the GPIO
->> +register set. These registers exist in a single contguous block of physical
->
-> ^ speling: contiguous?
->
->> +Tegra HW documentation describes a unified naming convention for all GPIOs
->> +implemented by the SoC. Each GPIO is assigned to a port, and a port may control
->> +a number of GPIOs. Thus, each GPIO is named according to an alphabetical port
->> +name and an integer GPIO name within the port. For example, GPIO_PA0, GPIO_PN6,
->> +or GPIO_PCC3.
->
-> I suspect that the Tegra definition of a "port" is close to what other people
-> call a "bank" like I try to define in this patch?
-> http://marc.info/?l=linux-gpio&m=145941547420164&w=2
 
-There are similarities, but the concepts are quite different. In that 
-thread, the term "bank" actually refers to an instance of a standalone 
-HW IP block. Here, "port" is definitely something internal to a single 
-HW block.
+--ReaqsoxgOBHFXBhH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
->> +The mapping from port name to the GPIO controller that implements that port, and
->> +the mapping from port name to register offset within a controller, are both
->> +extremely non-linear.
->
-> That actually warrants the concept of gpio-bank = <n>;
+On Wed, Apr 13, 2016 at 11:01:58AM -0600, Stephen Warren wrote:
+> On 04/13/2016 10:01 AM, Thierry Reding wrote:
+> > On Wed, Mar 16, 2016 at 11:01:19AM -0600, Stephen Warren wrote:
+> > > On 03/08/2016 08:48 AM, Thierry Reding wrote:
+> > > > From: Thierry Reding <treding@nvidia.com>
+> > > >=20
+> > > > The current XUSB pad controller bindings are insufficient to descri=
+be
+> > > > PHY devices attached to USB controllers. New bindings have been cre=
+ated
+> > > > to overcome these restrictions. As a side-effect each root port now=
+ is
+> > > > assigned a set of PHY devices, one for each lane associated with the
+> > > > root port. This has the benefit of allowing fine-grained control of=
+ the
+> > > > power management for each lane.
+> > >=20
+> > > > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-te=
+gra.c
+> > >=20
+> > > > +static int tegra_pcie_port_phy_power_on(struct tegra_pcie_port *po=
+rt)
+> > > > +{
+> > > > +	struct device *dev =3D port->pcie->dev;
+> > > > +	unsigned int i;
+> > > > +	int err;
+> > > > +
+> > > > +	for (i =3D 0; i < port->lanes; i++) {
+> > > > +		err =3D phy_power_on(port->phys[i]);
+> > >=20
+> > > This assume the number of array entries is precisely the number of la=
+nes.
+> > > That seems to contradict the binding update which said the number mig=
+ht not
+> > > match. Perhaps there's an expectation that phy_power_on() is a no-op =
+for
+> > > some "invalid" values like NULL or an error-pointer value? But...
+> > >=20
+> > > > +static struct phy *devm_of_phy_optional_get_index(struct device *d=
+ev,
+> > > > +						  struct device_node *np,
+> > > > +						  const char *consumer,
+> > > > +						  unsigned int index)
+> > > > +{
+> > > > +	struct phy *phy;
+> > > > +	char *name;
+> > > > +
+> > > > +	name =3D kasprintf(GFP_KERNEL, "%s-%u", consumer, index);
+> > > > +	if (!name)
+> > > > +		return ERR_PTR(-ENOMEM);
+> > > > +
+> > > > +	phy =3D devm_of_phy_get(dev, np, name);
+> > > > +	kfree(name);
+> > > > +
+> > > > +	if (IS_ERR(phy) && PTR_ERR(phy) =3D=3D -ENODEV)
+> > > > +		phy =3D NULL;
+> > > > +
+> > > > +	return phy;
+> > > > +}
+> > >=20
+> > > The error-handling there looks wrong. The function generally returns =
+either
+> > > a valid PHY or an error pointer. However, in the case of -ENODEV, NUL=
+L is
+> > > returned. Subsystems are supposed to encode their handles as, and fun=
+ctions
+> > > are supposed to return, either NULL or an error pointer for error cas=
+es, not
+> > > both/either. Is the PHY API broken in this regard? If so, then this c=
+ode is
+> > > fine, but if not it might need a fix.
+> >=20
+> > This function mimics phy_optional_get() which similarily returns NULL
+> > for -ENODEV. The remainder of the PHY API treats NULL pointers as
+> > "dummy" PHYs and returns early. I think that's a sensible approach to
+> > handling optional resources.
+> >=20
+> > It might have been more obvious had I implemented this function within
+> > phy-core.c, but I didn't think it universally useful because it uses a
+> > rather uncommon lookup pattern. I did keep a generic name in case it's
+> > ever deemed useful outside of this driver, at which point it could
+> > simply be moved into phy-core.c without requiring this driver to
+> > change.
+>=20
+> Ah OK, so if a caller of this function is expected to only use IS_ERR(), =
+and
+> hence treat NULL as a perfectly valid PHY value, and all the PHY APIs deal
+> with NULL correctly, then this is probably OK.
 
-The DT node itself represents a HW block that contains a set of ports. 
-There's no DT node per port, just one per GPIO controller. There's no 
-concept of numbered ID for the two GPIO controllers on Tegra, so I don't 
-think gpio-bank is appropriate.
+I think it's not completely consistently used, but at least the public
+API that we do use has the necessary guards, so we should be fine.
 
->> + The header file <dt-bindings/gpio/tegra186-gpio.h>
->> +describes the port-level mapping. In that file, the naming convention for ports
->> +matches the HW documentation. The values chosen for the names are alphabetically
->> +sorted within a particular controller. Drivers need to map between the DT GPIO
->> +IDs and HW register offsets using a lookup table.
->
-> Again that use case. Can you please enter the mentioned thread
-> and provide some input on how you see this working?
+Thierry
 
-I don't believe that thread applies to the Tegra GPIO controller.
+--ReaqsoxgOBHFXBhH
+Content-Type: application/pgp-signature; name="signature.asc"
 
-> Neil Armstrong provided a driver using the GPIO ranges for
-> cross-reference to the pin controller as the basis for finding
-> what is here the port ID. I don't know if that is such a great
-> idea.
->
-> I noticed that the #defines in that tegra186-gpio.h file are not used
-> in the example below. Something seems wrong: this mapping must
-> be important. I don't see which of the required properties it should go
-> into either.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-The defines would be used to calculate the GPIO ID cell of the GPIO 
-specifier in DT. They work in exactly the same way as other headers in 
-include/dt-bindings/gpio, in particular tegra-gpio.h is very similar in 
-structure.
+iQIcBAABCAAGBQJXD7a4AAoJEN0jrNd/PrOhGrwP/A9qDrlbO+2Bll2adS3SGlsa
+w1AXkVIMZ/ei9Rzdol2m8nsQza4Hd3ez6InBbU+G49HrjrmDhz+4E9hAQWaPykgv
+yzHr9g1p6FmMtbWf45eTAvAurkIcOSIEm7KgV2tgUpzfxzsbwVEOx+y2kvzcpKqy
+1ML3H0COa4NbbuH031UB1TLIGXG+GacrxPpgG0uiU6Mo4ioz+1BNv6PYjtzPiLSc
+X6nk8julCUcwHMXHKEWFytsA6zaLVJyYd5TbtGUEZxV+tJSHfobXnTyyjqcJpSKK
+Q66WFhDVXktyM+WD59gEeUqHgCfgMmBaHySPXecEcKOTr3VbEninazjzDXiEAKaw
+JfleVggQXaX0LMP+uD8AK3iF9Eh2RNvRYd+CjenPxW/IXuQdPWR3w/Rwpj/XDTyu
+xFD61wxzsqj7XeQ3MIcR8ix2vFaaXfyy6pXdB0AAz/AWl1bYv0txSo2CW0Y0NAMC
+llPgpeHxsu5wUCjldb6NRBVGviTrtboaA2/+YjzR7+65tTNWy7td/R5JBqGbwAQr
++TpT5HBp7LR4uhklW5GRccdK35KlUjZ3AdOee6pjeFlPP/43eMRm8d+fTAUStiJ0
+W6ePZjnHE73vTn00fCnPIUS+ogJAK2coMc/AyTIBUouXywewPvVw4YdAZRZlKEZ8
+Y45LBdN4t/Z6vnfKDJhX
+=43Ah
+-----END PGP SIGNATURE-----
 
-At present, there is no upstream-targeted Linux driver for this HW, and 
-the upstream DT has not been written. I'm working on a U-Boot driver, so 
-need the binding defined for that. You can find the U-Boot driver in 
-this commit list:
-
-https://github.com/swarren/u-boot/commits/tegra_dev
-
-Search for "gpio: add Tegra186 GPIO driver". I don't want to link to a 
-specific commit hash since that's my local development branch and it 
-gets rebased all the time. The most relevant parts are likely 
-tegra186_gpio_main_ports[], tegra186_gpio_aon_ports[], and 
-tegra186_gpio_ids[]. I'd expect those tables to appear almost 
-identically in any Linux driver.
-
->> +Each GPIO controller in fact generates multiple interrupts signals for each set
->> +of ports. Each GPIO may be configured to feed into a specific one of the
->> +interrupt signals generated by a set-of-ports. The intent is for each generated
->> +signal to be routed to a different CPU, thus allowing different CPUs to each
->> +handle subsets of the interrupts within a port.
->
-> Clever. Seems like something other hardware engineers should pick
-> up on.
->
->> +/* GPIOs implemented by main GPIO controller */
->> +#define TEGRA_MAIN_GPIO_PORT_A 0
-...
->> +#define TEGRA_AON_GPIO(port, offset) \
->> +       ((TEGRA_AON_GPIO_PORT_##port * 8) + offset)
->
-> So we definately need this stuff used in the example.
-
-Hmm. I really hope not. That would prevent getting DT bindings defined 
-early on for the HW, before drivers and DT are written for a platform. 
-Any existing Tegra DT file is a good example though; the structure of 
-this binding is essentially identical to the previous Tegra GPIO 
-controller binding. The only thing different is the exact values that go 
-into the properties, and the non-linear mapping of GPIO IDs.
+--ReaqsoxgOBHFXBhH--
