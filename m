@@ -1,80 +1,128 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 2/3] ARM: tegra: Changes for v4.7-rc1
-Date: Fri, 15 Apr 2016 16:42:02 +0200
-Message-ID: <1460731323-31001-2-git-send-email-thierry.reding@gmail.com>
-References: <1460731323-31001-1-git-send-email-thierry.reding@gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 6/7] pinctrl: tegra: Add DT binding for io pads control
+Date: Fri, 15 Apr 2016 16:14:40 +0100
+Message-ID: <57110560.80004@nvidia.com>
+References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>
+ <1460473007-11535-7-git-send-email-ldewangan@nvidia.com>
+ <5710F7A4.5070902@nvidia.com> <5710F6CA.6060700@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1460731323-31001-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <5710F6CA.6060700-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
 
-The following changes since commit f55532a0c0b8bb6148f4e07853b876ef73bc69ca:
+On 15/04/16 15:12, Laxman Dewangan wrote:
+> 
+> On Friday 15 April 2016 07:46 PM, Jon Hunter wrote:
+>> On 12/04/16 15:56, Laxman Dewangan wrote:
+>>> NVIDIA Tegra210 supports the IO pads which can operate at 1.8V
+>>> or 3.3V I/O voltage levels. Also IO pads can be configured for
+>>> power down state if it is not in used. SW needs to configure the
+>>> voltage level of IO pads based on IO rail voltage and its power
+>>> state based on platform usage.
+>>>
+>>> Add DT binding document for detailing the DT properties for
+>>> configuring IO pads voltage levels and its power state.
+>>>
+>>> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> [snip]
+>>
+>>> +Required subnode-properties:
+>>> +==========================
+>>> +- pins : An array of strings. Each string contains the name of an IO
+>>> pads. Valid
+>>> +     values for these names are listed below.
+>>> +
+>>> +Optional subnode-properties:
+>>> +==========================
+>>> +-nvidia,io-rail-voltage:    Integer. The voltage level of IO pads. The
+>>> +                valid values are 1.8V and 3.3V. Macros are
+>>> +                defined for these voltage levels in
+>>> +                <dt-bindings/pinctrl/pinctrl-tegra210-io-pad.h>
+>>> +                    Use TEGRA210_IO_RAIL_1800000UV for 1.8V
+>>> +                    Use TEGRA210_IO_RAIL_3300000UV for 3.3V
+>>> +
+>>> +-nvidia,io-pad-deep-power-down: Integer, representing the deep power
+>>> down state
+>>> +                of the IO pads. If this is enable then IO pads
+>>> +                will be in power down state and interface is not
+>>> +                enabled for any transaction. This is power
+>>> +                saving mode of the IO pads. The macros are
+>>> +                defined for enable/disable in
+>>> +                <dt-bindings/pinctrl/pinctrl-tegra210-io-pad.h>
+>>> +                  TEGRA210_IO_PAD_DEEP_POWER_DOWN_DISABLE for
+>>> +                    disable.
+>>> +                  TEGRA210_IO_PAD_DEEP_POWER_DOWN_ENABLE for
+>>> +                    enable.
+>>> +Valid values for pin are:
+>>> +    audio, audio-hv, cam, csia, csib, csic, csid, csie, csif,
+>>> +    dbg, debug-nonao, dmic, dp, dsi, dsib, dsic, dsid, emmc, emmc2,
+>>> +    gpio, hdmi, hsic, lvds, mipi-bias, pex-bias, pex-clk1, pex-clk2,
+>>> +    pex-ctrl, sdmmc1, sdmmc3, spi, spi-hv, uart, usb-bias, usb0,
+>>> +    usb1, usb2, usb3.
+>> Thinking about this some more, the above are not IO pads but supply
+>> pads, AFAICT. And these supply pads, are supplying the voltage to
+>> various IO pads. I am not sure if these should be named vddio_xxx. The
+>> 'pins' properties says these are IO pads, but this does not seem correct.
+> 
+> These are IO pads. One IO rail  have multiple sub pads to power down
+> some of interface when not used. Like if CSIA is active, we can power
+> down CSIB, CSIC etc.
 
-  Linux 4.6-rc1 (2016-03-26 16:03:24 -0700)
+To me, 'IO rail' implies a supply rail, but this is not the same as an
+IO pad (or pin/ball). And hence, I think the terminology here is confusing.
 
-are available in the git repository at:
+For example, audio_hv powers the following IO pads ...
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.7-arm
+DAP1_DIN
+DAP1_DOUT
+DAP1_FS
+DAP1_SCLK
+SPI2_MOSI
+SPI2_MISO
+SPI2_SCK
+SPI2_CS0
+SPI2_CS1
 
-for you to fetch changes up to e7d9b2709ab04059b6a5f0ff016826dc4d4f96e4:
+And sdmmc1 powers the following IO pads ...
 
-  ARM: tegra: Correct interrupt type for ARM TWD (2016-04-12 17:10:26 +0200)
+SDMMC1_CLK
+SDMMC1_CMD
+SDMMC1_DAT0
+SDMMC1_DAT1
+SDMMC1_DAT2
+SDMMC1_DAT3
+SDMMC1_COMP
 
-Thanks,
-Thierry
+As for CSIA, I don't think this is a pin/pad at all, but a software
+means to control the power down for the CSI_A_xxx pads. If CSIA is an IO
+pad then what is the ball number for Tegra210? In the datasheet I only
+see ...
 
-----------------------------------------------------------------
-ARM: tegra: Changes for v4.7-rc1
+CSI_A_CLK_N Y6
+CSI_A_CLK_P Y7
+CSI_A_D0_N Y4
+CSI_A_D0_P Y5
+CSI_A_D1_N Y1
+CSI_A_D1_P AA1
 
-A couple of patches that cleanup some Kconfig, enable various features,
-use stdout-path to define the debug serial port (so that it doesn't have
-to be manually specified on the kernel command-line) and cleanup and fix
-some minor device trees bugs.
+> All CSI pads are lined to single IO rail.
 
-----------------------------------------------------------------
-Jon Hunter (2):
-      ARM: tegra: Add stdout-path for various boards
-      ARM: tegra: Correct interrupt type for ARM TWD
+I agree with this and from the data-sheet I see the rail that powers the
+CSI (and DSI) interfaces is called AVDD_DSI_CSI. But again, in the DT
+document you are referring to csia, csib, csic, csid, csie, csif as
+pins, but these don't appear to be physical pins, and this appears to be
+more of a software means to control power to the various csi_x pins.
 
-Maarten Lankhorst (1):
-      ARM: tegra: Enable watchdog support for Tegra114 and Tegra124
+It seems to me that each of the existing CSI_A_xxx pins/pads should be
+mapped to or register with the appropriate power-down control and when
+all pads are set to inactive this then triggers the power-down of all
+the CSI_A_xxx pads.
 
-Masahiro Yamada (1):
-      ARM: tegra: Remove redundant ARM_L1_CACHE_SHIFT_6 select
-
-Ralf Ramsauer (2):
-      ARM: tegra: Fix copy/paste typo in several DTS includes
-      ARM: tegra: Add high speed UARTs to Jetson TK1 device tree
-
-Sudeep Holla (1):
-      ARM: tegra: Replace legacy *,wakeup property with wakeup-source
-
- arch/arm/boot/dts/tegra114-dalmore.dts        |  6 ++++-
- arch/arm/boot/dts/tegra114-roth.dts           |  2 +-
- arch/arm/boot/dts/tegra114-tn7.dts            |  2 +-
- arch/arm/boot/dts/tegra114.dtsi               |  4 ++--
- arch/arm/boot/dts/tegra124-jetson-tk1.dts     | 32 ++++++++++++++++++++++++++-
- arch/arm/boot/dts/tegra124-nyan.dtsi          |  8 +++++--
- arch/arm/boot/dts/tegra124-venice2.dts        |  6 ++++-
- arch/arm/boot/dts/tegra124.dtsi               |  4 ++--
- arch/arm/boot/dts/tegra20-harmony.dts         |  6 ++++-
- arch/arm/boot/dts/tegra20-iris-512.dts        |  4 ++++
- arch/arm/boot/dts/tegra20-medcom-wide.dts     |  4 ++++
- arch/arm/boot/dts/tegra20-paz00.dts           |  6 ++++-
- arch/arm/boot/dts/tegra20-seaboard.dts        |  8 +++++--
- arch/arm/boot/dts/tegra20-tamonten.dtsi       |  4 ++++
- arch/arm/boot/dts/tegra20-trimslice.dts       |  6 ++++-
- arch/arm/boot/dts/tegra20-ventana.dts         |  6 ++++-
- arch/arm/boot/dts/tegra20-whistler.dts        |  6 ++++-
- arch/arm/boot/dts/tegra20.dtsi                |  4 ++--
- arch/arm/boot/dts/tegra30-apalis-eval.dts     |  6 ++++-
- arch/arm/boot/dts/tegra30-beaver.dts          |  4 ++++
- arch/arm/boot/dts/tegra30-cardhu.dtsi         |  6 ++++-
- arch/arm/boot/dts/tegra30-colibri-eval-v3.dts |  6 ++++-
- arch/arm/boot/dts/tegra30.dtsi                |  4 ++--
- drivers/soc/tegra/Kconfig                     |  2 --
- 24 files changed, 119 insertions(+), 27 deletions(-)
+Cheers
+Jon
