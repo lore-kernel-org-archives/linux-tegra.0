@@ -1,58 +1,98 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 4/7] soc/tegra: pmc: Add interface to set voltage of IO
- rails
-Date: Fri, 15 Apr 2016 13:55:39 +0530
-Message-ID: <5710A583.2010102@nvidia.com>
-References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com> <1460473007-11535-5-git-send-email-ldewangan@nvidia.com> <CACRpkdbueJ=0+WtNefQ7GHoqU5HY7WFYjL2geFq4vkpTbZesZA@mail.gmail.com> <20160415080027.GB3217@sirena.org.uk>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 7/7] pinctrl: tegra: Add driver to configure voltage and
+ power state of io pads
+Date: Fri, 15 Apr 2016 14:09:00 +0530
+Message-ID: <5710A8A4.90309@nvidia.com>
+References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>	<1460473007-11535-8-git-send-email-ldewangan@nvidia.com> <CACRpkdZyYiNJfuiTPeivvgVTZwdwh64nkf=f8JczSAVvnT7QeA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160415080027.GB3217-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <CACRpkdZyYiNJfuiTPeivvgVTZwdwh64nkf=f8JczSAVvnT7QeA@mail.gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jon Hunter <jonathanh@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On Friday 15 April 2016 01:30 PM, Mark Brown wrote:
-> * PGP Signed by an unknown key
+On Friday 15 April 2016 01:38 PM, Linus Walleij wrote:
+> On Tue, Apr 12, 2016 at 4:56 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 >
-> On Fri, Apr 15, 2016 at 09:54:34AM +0200, Linus Walleij wrote:
->> On Tue, Apr 12, 2016 at 4:56 PM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>> NVIDIA Tegra210 supports some of the IO interface which can operate
->>> at 1.8V or 3.3V I/O rail voltage levels. SW needs to configure
->>> Tegra PMC register to set different voltage level of IO interface based
->>> on IO rail voltage from power supply i.e. power regulators.
->> Nobody seems to mention the elephant in the room: why is this
->> not using the regulator subsystem and instead using custom
->> code under drivers/soc? We have worried before about drivers/soc
->> becoming a dumping ground akin to drivers/misc
-> The above changelog sounds like a regulator consumer not a regulator -
-> based on what I'm reading there it's a driver that looks at the voltage
-> being supplied to the device and sets some configuration in the device
-> based on that voltage.  This isn't that unusual for analogue circuits
-> but it's definitely not something that's actually doing voltage
-> regulation.
+>> NVIDIA Tegra210 supports the IO pads which can operate at 1.8V
+>> or 3.3V I/O voltage levels. Also the IO pads can be configured
+>> for power down state if it is not used. SW needs to configure the
+>> voltage level of IO pads based on IO rail voltage and its power
+>> state based on platform usage.
+>>
+>> The voltage and power state configurations of pads are provided
+>> through pin control frameworks. Add pin control driver for Tegra's
+>> IO pads' voltage and power state configurations.
+>>
+>> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> (...)
+>> +config PINCTRL_TEGRA210_IO_PAD
+> Why does this need its own Kconfig option?
+> Can't you just unconditionally compile it in if
+> PINCTRL_TEGRA210 is selected, you seem to say
+> it is there on all these platforms anyway.
 
-Yes, this is not the voltage regulation or supply the voltage and hence 
-can not be in regulator.
+Yes, it can be done. The reason I kept is that this driver needed T210 
+onwards and not for older generation of SoC.
+
+May be we can select from T210 pincontrol.
 
 
-The IO pads voltage need to be configure by SW based on voltage level on 
-this it is connected.
-Some of tegra IO pads design like that they do not have auto detect for 
-voltage level and SW needs to explicitly  set.
+>
+>> +static const struct pinconf_generic_params tegra_io_pads_cfg_params[] = {
+>> +       {
+>> +               .property = "nvidia,io-rail-voltage",
+>> +               .param = TEGRA_IO_RAIL_VOLTAGE,
+>> +       }, {
+> What's so nvidia-specific about this?
+> We have power-source in
+> Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+> which takes a custom argument. This is obviously what you
+> are doing (selecting one of two rails), so use that binding.
 
-Because this is for making IO interface to be proper functioning, I put 
-this in the pin controller rather than some other folder.
-Other place my be soc/tegra but as the interfaces are from pin control 
-framework, it is here.
+Yes, I looked for the common property but did not found anything near to 
+this.
+My understating for power-source is that selecting the source of supply, 
+not the voltages.
+I am looking something  power-source-voltage-level.
+Should we add this?
 
-Hope I have not confused  with APIs, tegra_io_rail_voltage_set(). 
-Otherwise, tegra_io_rail_voltage_configure()??
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+
+
+>
+>> +               .property = "nvidia,io-pad-deep-power-down",
+>> +               .param = TEGRA_IO_PAD_DEEP_POWER_DOWN,
+>> +       },
+> Likewise the generic bindings have low-power-enable and
+> low-power-disable, this seems like a copy of low-power-enable;
+When writing, I considered this property but was not able to fully 
+convinced myself to use this but I think now I am fine to use this as 
+you suggested.
+
+
+
+>
+> Even if Tegra is not using the generic code for handling the
+> standard bindings (GENERIC_PINCONF) it doesn't stop
+> you from using the generic bindings and contributing to them.
+>
+> Historically you have a few custom bindings like these:
+>
+> nvidia,pins
+> nvidia,function
+> nvidia,pull
+> nvidia,tristate
+>
+> etc etc, but that is just unfortunate and due to preceding the
+> generic bindings. I would appreciate if you started to support
+> the generic bindings in parallel, but I'm not gonna push that issue.
+
+Yaah, these are in my plate to cleanup. Let me work with Stephen, what 
+he think here.
+
+
