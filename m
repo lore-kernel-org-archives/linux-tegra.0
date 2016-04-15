@@ -1,50 +1,58 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 7/7] pinctrl: tegra: Add driver to configure voltage and
- power state of io pads
-Date: Fri, 15 Apr 2016 17:17:46 +0530
-Message-ID: <5710D4E2.2030801@nvidia.com>
-References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>	<1460473007-11535-8-git-send-email-ldewangan@nvidia.com>	<CACRpkdZyYiNJfuiTPeivvgVTZwdwh64nkf=f8JczSAVvnT7QeA@mail.gmail.com>	<5710A8A4.90309@nvidia.com>	<CACRpkdZLEozAmv6REcb7ubCNSLxGsYj1whZEKUkdiodZoS=vzg@mail.gmail.com>	<5710BA75.2010503@nvidia.com> <CACRpkdbr-9Z1JKMVmwNFyMq+Pg+3hT5c9rKZ1y4wZecnidW9Cg@mail.gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] arm64: tegra: Enable cros-ec and charger on Smaug
+Date: Fri, 15 Apr 2016 15:38:02 +0200
+Message-ID: <20160415133802.GA3472@ulmo.ba.sec>
+References: <1460663838-27175-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdbr-9Z1JKMVmwNFyMq+Pg+3hT5c9rKZ1y4wZecnidW9Cg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="mP3DRpeJDSE+ciuQ"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1460663838-27175-1-git-send-email-rklein@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Andrew Bresticker <abrestic@chromium.org>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On Friday 15 April 2016 04:45 PM, Linus Walleij wrote:
-> On Fri, Apr 15, 2016 at 11:55 AM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> On Friday 15 April 2016 02:55 PM, Linus Walleij wrote:
->>> If the pin could actually set a voltage level it would have a regulator.
->>> I don't believe that. I think it is selecting one of two rails which
->>> could theoretically hold two totally different voltages.
->>>
->>> And that is what power-source is about.
->> The IO rails connected to PMIC rail and connection does not get change.
->> We change the voltage of PMIC rails via regulator calls. And then configure
->> pads for the new voltage.
-> Aha I get it! So you adjust something in the I/O-cell so that it is adapted
-> for the new voltage.
->
-> OK that seems to be something new. I suspect
-> power-voltage-select = <n>; where N i in uV would solve this?
-> (We should use uV since regulators use this.)
+--mP3DRpeJDSE+ciuQ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks for new property. I will make the unit and type same as the 
-regulator framework.
+On Thu, Apr 14, 2016 at 03:57:18PM -0400, Rhyland Klein wrote:
+> Add nodes for the ChromeOS Embedded Controller and for the gas gauge
+> connected to the I2C bus that it controls.
+>=20
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 27 +++++++++++++++++++++=
+++++++
+>  1 file changed, 27 insertions(+)
 
+Applied, thanks.
 
+Thierry
 
->
-> But to be sure we would like to know what is actually happening,
-> electronically speaking, when you set this up. Do you have any
-> idea?
->
+--mP3DRpeJDSE+ciuQ
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
- From electronic point of view, the value of VIL, VIH, VOL, VOH 
-(Input/output voltage level for low and high state) are different when 
-talking for 0 t 1.8V and 0 to 3.3V.
+iQIcBAABCAAGBQJXEO60AAoJEN0jrNd/PrOhLE0P/A5H/y53ruVd3MqR/P2Kvy7O
+vChiGgcr4wtJlKT0DOW6nUsOtvv5Kp06Qrx31aXHb8CN4lGJr3TWLGNvlu1g+Irj
+r1HrwbB58jh7RSuaAx14dbaZBs//sbassS7aXx7jZ3fZ5kSiAZzW80hKIfpwjxLV
+r5+VdBM+it9H8tp+Yrms9Lh8ljfT2xRfHHYK6KFV3b0aFa61JDIug/hVDbYndpVX
+ihfYsoTYvD1sddlQuya1iaW+mu+6q9ZS32hSJ7aANzT7o4DqqeQo43BO2r/LZFIC
+Q0R4TskgfZ62SfSF/cOfp/XpgADjUUH8OngGTistr04jgyq6pOb8JW7V6iwJoRcX
+nS/HwWPmPvEATMIp7SY1gjKWz2+62VBJN/5SAs32EEAPyUh2D/vL9e/yoV/1b5si
+3ugLP95Di6EJjm/EEsxfTflBQUIUA495igT5+R+9Wjxb988+ma2VMZ/2g0F/22Ts
+tJaDGESOy4SN+lC2TPEowSeAP3kWTzCz6Amm/3tgwJXu2eqSNKE/H9ucBlha+vka
+YJJDNbq4fxWIrf9gFO4yN581BxHvwDnwJneqHXsqKRRRqueYmbC42/n5x8D3RyZa
+9II/4sfg2WLUuhCuIB77EtcrDvGneekgnwJMefJA4ZfX3MpUZs669wLu2sRyqSNm
+VKYytaUlGPyBpST1/azr
+=s4h9
+-----END PGP SIGNATURE-----
+
+--mP3DRpeJDSE+ciuQ--
