@@ -1,81 +1,52 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: tegra: Remove 0, prefix from
- unit-addresses
-Date: Fri, 15 Apr 2016 15:41:02 +0200
-Message-ID: <20160415134102.GB3472@ulmo.ba.sec>
-References: <1460473656-27209-1-git-send-email-thierry.reding@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 7/7] pinctrl: tegra: Add driver to configure voltage and
+ power state of io pads
+Date: Fri, 15 Apr 2016 16:03:32 +0200
+Message-ID: <CACRpkdbqjjha6GJnQBzvKjGTswx5Kp_y5nWoj8+AS6H+ds5agQ@mail.gmail.com>
+References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>
+	<1460473007-11535-8-git-send-email-ldewangan@nvidia.com>
+	<CACRpkdZyYiNJfuiTPeivvgVTZwdwh64nkf=f8JczSAVvnT7QeA@mail.gmail.com>
+	<5710A8A4.90309@nvidia.com>
+	<CACRpkdZLEozAmv6REcb7ubCNSLxGsYj1whZEKUkdiodZoS=vzg@mail.gmail.com>
+	<5710BA75.2010503@nvidia.com>
+	<CACRpkdbr-9Z1JKMVmwNFyMq+Pg+3hT5c9rKZ1y4wZecnidW9Cg@mail.gmail.com>
+	<5710D4E2.2030801@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="cvVnyQ+4j833TQvp"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1460473656-27209-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5710D4E2.2030801@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jon Hunter <jonathanh@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, Apr 15, 2016 at 1:47 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+> On Friday 15 April 2016 04:45 PM, Linus Walleij wrote:
+>> On Fri, Apr 15, 2016 at 11:55 AM, Laxman Dewangan <ldewangan@nvidia.com>
+>> wrote:
 
---cvVnyQ+4j833TQvp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>> But to be sure we would like to know what is actually happening,
+>> electronically speaking, when you set this up. Do you have any
+>> idea?
+>
+> From electronic point of view, the value of VIL, VIH, VOL, VOH (Input/output
+> voltage level for low and high state) are different when talking for 0 t
+> 1.8V and 0 to 3.3V.
 
-On Tue, Apr 12, 2016 at 05:07:35PM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> When Tegra124 support was first merged the unit-addresses of all devices
-> were listed with a "0," prefix to encode the reg property's second cell.
-> It turns out that this notation is not correct, and the "," separator is
-> only used to separate fields in the unit address (such as the device and
-> function number in PCI devices), not individual cells for addresses
-> with more than one cell.
->=20
-> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt    | 2 =
-+-
->  Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt              | 2 =
-+-
->  .../devicetree/bindings/memory-controllers/nvidia,tegra-mc.txt      | 6 =
-+++---
->  Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt  | 4 =
-++--
->  .../devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt     | 6 =
-+++---
->  Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.txt      | 2 =
-+-
->  Documentation/devicetree/bindings/thermal/tegra-soctherm.txt        | 2 =
-+-
->  7 files changed, 12 insertions(+), 12 deletions(-)
+Yeah that I get. But since it is switched on a per-pin basis, and
+this is not about what voltage is actually supplied to the I/O cell,
+because that comes from the outside, it is a mystery why it is
+even needed.
 
-Hi Rob,
+I understand that there is a bit selecting driving voltage level in
+the register range, what I don't understand is what that is
+doing in the I/O cell.
 
-Is this (and patch 2/2) something that you could pick up into the DT
-tree, or would you rather have me take it through the Tegra tree?
+The bit in the register must be routed to somehing in the I/O cell
+and I would like to know what. I take it that an ordinary CMOS
+totem-pole push-pull output is going to work the same with 1.8
+and 3.3V alike so it's obviously not enabling any extra transistors
+or anything.
 
-Thierry
-
---cvVnyQ+4j833TQvp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXEO9uAAoJEN0jrNd/PrOhSRAP/0cm7E0E2Mwj8NLMf9I6n96A
-wbhN1BhSZ3y3CGpykY9enQoeRZsVaAhONQwP8bdkgOYdB6R8rcUsPeFun3CNRNTZ
-UtLfj86x82V0yQqF/Ca+UrLJYM6OLbKimMYII3NLbOOZH6XrnHrJQsiWWR9Q1Pww
-39C02pPQ9NNC7NwK/OYJyqMiRbdi88ytd2xeCYytoVNW8vCbgXlgCfoEW2TJcMGm
-7tHDLFh2xIcn4NTYXD86MfozMX6F3Q309gvYt9ZwJQSk6Mir6sJnanTxe/Nqkihq
-4ztC+cSeaJUUN/0JGKxubf2gim5ybj4WAHoTJdBPeT0ttX6pmgJ1aN9366yY1a4S
-7vp6/8NkiZTrwfoJcn0ngZOf3wae2r4vX0eKc50Ze0+BrBdQy2RjrEAvDMvhewpo
-WhssgY7M2bkBuLPth+tbqt3fgQAdV6mGfeYYnBzEzdsMEnSxcaRErDq9+c7NjfOv
-342Nu8zVGCEDwXrac1hNNT/3JF2nF9xcNPdW/QbqzyO7kUON0l0gp+ffQOQFttd/
-WquNJQenrw7Cd3uDnZg94G/AnEy1vE0Iurh6I4L2GCDm3YwhCujJY5P/BIFsgi78
-9vrtfLWKyLVkpObeeHwpycxrosrdEn1yb/lPydndA3oI23cbp1VZcFCtHw862Nnt
-hGpH5AfgjFx1ROq2jktP
-=Iemu
------END PGP SIGNATURE-----
-
---cvVnyQ+4j833TQvp--
+Yours,
+Linus Walleij
