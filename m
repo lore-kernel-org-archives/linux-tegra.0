@@ -1,75 +1,48 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 4/7] soc/tegra: pmc: Add interface to set voltage of IO
- rails
-Date: Fri, 15 Apr 2016 22:03:57 +0530
-Message-ID: <571117F5.2090504@nvidia.com>
-References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com> <1460473007-11535-5-git-send-email-ldewangan@nvidia.com> <571115CE.50906@wwwdotorg.org> <57111524.60708@nvidia.com> <571119D5.3040309@wwwdotorg.org>
+From: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: tegra: Remove 0, prefix from unit-addresses
+Date: Fri, 15 Apr 2016 11:46:00 -0500
+Message-ID: <CAL_JsqKy8QicB6k8_OSJ9-iJLa6tXujFyCdDMvnsXaYWLVGc-w@mail.gmail.com>
+References: <1460473656-27209-1-git-send-email-thierry.reding@gmail.com> <20160415134102.GB3472@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <571119D5.3040309-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20160415134102.GB3472-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On Friday 15 April 2016 10:11 PM, Stephen Warren wrote:
-> On 04/15/2016 10:21 AM, Laxman Dewangan wrote:
+On Fri, Apr 15, 2016 at 8:41 AM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Tue, Apr 12, 2016 at 05:07:35PM +0200, Thierry Reding wrote:
+>> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >>
->> On Friday 15 April 2016 09:54 PM, Stephen Warren wrote:
->>> On 04/12/2016 08:56 AM, Laxman Dewangan wrote:
->>>> NVIDIA Tegra210 supports some of the IO interface which can operate
->>>> at 1.8V or 3.3V I/O rail voltage levels. SW needs to configure
->>>> Tegra PMC register to set different voltage level of IO interface 
->>>> based
->>>> on IO rail voltage from power supply i.e. power regulators.
->>>>
->>>> Add APIs to set and get IO rail voltage from the client driver.
->>>
->>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->>>
->>>> +static struct tegra_io_rail_voltage_bit_info
->>>> tegra210_io_rail_voltage_info[] = {
->>>> +    TEGRA_IO_RAIL_VOLTAGE(SDMMC1, 12),
->>>> +    TEGRA_IO_RAIL_VOLTAGE(SDMMC3, 13),
->>>> +    TEGRA_IO_RAIL_VOLTAGE(AUDIO_HV, 18),
->>>> +    TEGRA_IO_RAIL_VOLTAGE(DMIC, 20),
->>>> +    TEGRA_IO_RAIL_VOLTAGE(GPIO, 21),
->>>> +    TEGRA_IO_RAIL_VOLTAGE(SPI_HV, 23),
->>>> +};
->>>
->>> That table is likely specific to Tegra210, yet ...
->>>
->>>> +static int tegra_io_rail_voltage_get_bit_pos(int io_rail_id)
->>>> +int tegra_io_rail_voltage_set(int io_rail, int val)
->>>> +int tegra_io_rail_voltage_get(int io_rail)
->>>
->>> ... these functions are all named as if they are generic. Presumably
->>> they will indeed be needed for the next chip too? How will you prevent
->>> their use, or turn these functions into no-ops, or return errors, on
->>> other SoCs?
+>> When Tegra124 support was first merged the unit-addresses of all devices
+>> were listed with a "0," prefix to encode the reg property's second cell.
+>> It turns out that this notation is not correct, and the "," separator is
+>> only used to separate fields in the unit address (such as the device and
+>> function number in PCI devices), not individual cells for addresses
+>> with more than one cell.
 >>
->> It will return error for the Soc which does to support or the parameter
->> to the apis which are not applicable.
+>> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt    | 2 +-
+>>  Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt              | 2 +-
+>>  .../devicetree/bindings/memory-controllers/nvidia,tegra-mc.txt      | 6 +++---
+>>  Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt  | 4 ++--
+>>  .../devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt     | 6 +++---
+>>  Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.txt      | 2 +-
+>>  Documentation/devicetree/bindings/thermal/tegra-soctherm.txt        | 2 +-
+>>  7 files changed, 12 insertions(+), 12 deletions(-)
 >
-> Are you saying that will happen in the current code? I don't see where 
-> there's anything that validates that.
+> Hi Rob,
 >
-> Or does "will" mean "I will do that in the next patch revision"?
+> Is this (and patch 2/2) something that you could pick up into the DT
+> tree, or would you rather have me take it through the Tegra tree?
 
-I have code like this in this patch
+I have them queued up.
 
-
-+int tegra_pmc_pad_voltage_update(unsigned long offset, unsigned long mask,
-+                                unsigned long val)
-+{
-+       unsigned long flags;
-+
-+       if (!pmc->soc->has_pad_voltage_config)
-+               return -ENODEV;
-+
-
-
-So this flag is try only for T210 and all previous chip has false setting.
+Rob
+>
+> Thierry
