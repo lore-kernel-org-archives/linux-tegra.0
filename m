@@ -1,8 +1,10 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 1/3] soc/tegra: Changes for v4.7-rc1
-Date: Fri, 15 Apr 2016 16:42:01 +0200
-Message-ID: <1460731323-31001-1-git-send-email-thierry.reding@gmail.com>
+Subject: [GIT PULL 3/3] arm64: tegra: Changes for v4.7-rc1
+Date: Fri, 15 Apr 2016 16:42:03 +0200
+Message-ID: <1460731323-31001-3-git-send-email-thierry.reding@gmail.com>
+References: <1460731323-31001-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1460731323-31001-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
@@ -16,41 +18,53 @@ The following changes since commit f55532a0c0b8bb6148f4e07853b876ef73bc69ca:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.7-soc
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.7-arm64
 
-for you to fetch changes up to 605aa5e48bfc3dbf0272bc4aac8674e06c19c1b3:
+for you to fetch changes up to 8d53957c66e5cc0f1e8d33807800271d0f4fa009:
 
-  dt-bindings: Update NVIDIA PMC for Tegra (2016-04-05 15:22:54 +0200)
+  arm64: tegra: Enable cros-ec and charger on Smaug (2016-04-15 15:36:38 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-soc/tegra: Changes for v4.7-rc1
+arm64: tegra: Changes for v4.7-rc1
 
-This contains a bunch of preparatory patches to the PMC driver which are
-a prerequisite to moving the driver to generic power domains.
+A couple of cleanups and fixes to various device trees, enable power and
+volume keys on Jetson TX1, use stdout-path to define the serial port (so
+it doesn't have to be specified on the kernel command-line) and add
+Google Pixel C (a.k.a. Smaug) support.
 
 ----------------------------------------------------------------
-Jon Hunter (14):
-      soc/tegra: pmc: Add missing structure members to kernel-doc
-      soc/tegra: pmc: Fix sparse warning for tegra_pmc_init_tsense_reset()
-      soc/tegra: pmc: Remove debugfs entry on probe failure
-      soc/tegra: pmc: Remove non-existing power partitions for Tegra210
-      soc/tegra: pmc: Remove non-existing L2 partition for Tegra124
-      soc/tegra: pmc: Restore base address on probe failure
-      soc/tegra: pmc: Protect public functions from potential race conditions
-      soc/tegra: pmc: Change powergate and rail IDs to be an unsigned type
-      soc/tegra: pmc: Fix testing of powergate state
-      soc/tegra: pmc: Fix verification of valid partitions
-      soc/tegra: pmc: Remove additional check for a valid partition
-      soc/tegra: pmc: Ensure GPU partition can be toggled on/off by PMC
-      soc/tegra: pmc: Wait for powergate state to change
-      dt-bindings: Update NVIDIA PMC for Tegra
+Jon Hunter (3):
+      arm64: tegra: Add support for Google Pixel C
+      arm64: tegra: Remove unused #power-domain-cells property
+      arm64: tegra: Add stdout-path for various boards
 
- .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      |  12 +-
- arch/arm/mach-tegra/platsmp.c                      |  16 +--
- drivers/gpu/drm/tegra/drm.h                        |   2 +-
- drivers/soc/tegra/pmc.c                            | 150 +++++++++++++--------
- include/soc/tegra/pmc.h                            |  35 ++---
- 5 files changed, 124 insertions(+), 91 deletions(-)
+Laxman Dewangan (1):
+      arm64: tegra: Enable power and volume keys on Jetson TX1
+
+Rhyland Klein (3):
+      arm64: tegra: Add gpio-keys nodes for Smaug
+      arm64: tegra: Add pinmux for Smaug board
+      arm64: tegra: Enable cros-ec and charger on Smaug
+
+Sudeep Holla (1):
+      arm64: tegra: Replace legacy *,wakeup property with wakeup-source
+
+Thierry Reding (2):
+      arm64: tegra: Remove 0, prefix from unit-addresses
+      arm64: tegra: Fix copy/paste typo in several DTS includes
+
+ arch/arm64/boot/dts/nvidia/Makefile            |    1 +
+ arch/arm64/boot/dts/nvidia/tegra132-norrin.dts |   55 +-
+ arch/arm64/boot/dts/nvidia/tegra132.dtsi       |  120 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi |    8 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p2530.dtsi |   14 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p2571.dts  |    2 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p2595.dtsi |    2 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi |   30 +-
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts  | 1424 ++++++++++++++++++++++++
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi       |  122 +-
+ 10 files changed, 1617 insertions(+), 161 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
