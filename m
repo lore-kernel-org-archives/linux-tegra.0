@@ -1,48 +1,38 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 6/7] pinctrl: tegra: Add DT binding for io pads control
-Date: Fri, 15 Apr 2016 20:44:32 +0530
-Message-ID: <57110558.8010209@nvidia.com>
-References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com> <1460473007-11535-7-git-send-email-ldewangan@nvidia.com> <5710F7A4.5070902@nvidia.com> <5710F6CA.6060700@nvidia.com> <57110560.80004@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+Subject: Re: [PATCH 1/2] clk: tegra: Fix pllre Tegra210 and add pll_re_out1
+Date: Fri, 15 Apr 2016 11:29:22 -0400
+Message-ID: <571108D2.2040501@nvidia.com>
+References: <1458590333-8898-1-git-send-email-rklein@nvidia.com>
+ <20160412152336.GF25160@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <57110560.80004-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <20160412152336.GF25160@ulmo.ba.sec>
+Sender: linux-clk-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On Friday 15 April 2016 08:44 PM, Jon Hunter wrote:
-> On 15/04/16 15:12, Laxman Dewangan wrote:
+On 4/12/2016 11:23 AM, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Mon, Mar 21, 2016 at 03:58:52PM -0400, Rhyland Klein wrote:
+>> Use a new Tegra210 version of the pll_register_pllre function to
+>> allow setting the proper settings for the m and n div fields.
 >>
->>
->> All CSI pads are lined to single IO rail.
-> I agree with this and from the data-sheet I see the rail that powers the
-> CSI (and DSI) interfaces is called AVDD_DSI_CSI. But again, in the DT
-> document you are referring to csia, csib, csic, csid, csie, csif as
-> pins, but these don't appear to be physical pins, and this appears to be
-> more of a software means to control power to the various csi_x pins.
->
-> It seems to me that each of the existing CSI_A_xxx pins/pads should be
-> mapped to or register with the appropriate power-down control and when
-> all pads are set to inactive this then triggers the power-down of all
-> the CSI_A_xxx pads.
+>> Additionally define PLL_RE_OUT1 on Tegra210.
+> 
+> It'd be nice to specify what that additional clock is used for. No need
+> to repost for that, I can add it when applying.
+> 
 
-I used pins as this is the property from pincon generic so that I can 
-use the generic implementation.
+Its not currently directly used on the A44 platform I was testing with,
+but from what I understand, it is connected to the Tegra210 debug
+interfaces and so its probably good to have it defined in case it is
+needed for some debugging.
 
-Here, I will not go to the pin level control as HW does not support pin 
-level control.
+-rhyland
 
-I will say the unit should be interface level. Should we say 
-IO_GROUP_CSIA, IO_GROUP_CSIB etc?
-
-
->
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+nvpublic
