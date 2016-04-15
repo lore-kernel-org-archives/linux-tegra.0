@@ -1,38 +1,86 @@
-From: Rhyland Klein <rklein@nvidia.com>
-Subject: Re: [PATCH 1/2] clk: tegra: Fix pllre Tegra210 and add pll_re_out1
-Date: Fri, 15 Apr 2016 11:29:22 -0400
-Message-ID: <571108D2.2040501@nvidia.com>
-References: <1458590333-8898-1-git-send-email-rklein@nvidia.com>
- <20160412152336.GF25160@ulmo.ba.sec>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [RFC] i2c: device-tree: Handling child nodes which are not i2c
+ devices
+Date: Fri, 15 Apr 2016 16:35:17 +0100
+Message-ID: <57110A35.2070509@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <20160412152336.GF25160@ulmo.ba.sec>
-Sender: linux-clk-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-i2c-owner@vger.kernel.org>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>, Thierry Reding <treding@nvidia.com>, Stephen Warren <swarren@nvidia.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linux-i2c@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 4/12/2016 11:23 AM, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Mon, Mar 21, 2016 at 03:58:52PM -0400, Rhyland Klein wrote:
->> Use a new Tegra210 version of the pll_register_pllre function to
->> allow setting the proper settings for the m and n div fields.
->>
->> Additionally define PLL_RE_OUT1 on Tegra210.
-> 
-> It'd be nice to specify what that additional clock is used for. No need
-> to repost for that, I can add it when applying.
-> 
+Hi all,
 
-Its not currently directly used on the A44 platform I was testing with,
-but from what I understand, it is connected to the Tegra210 debug
-interfaces and so its probably good to have it defined in case it is
-needed for some debugging.
+For Tegra we have an i2c device for display port, namely the display
+port auxiliary channel (or dpaux) as specified by the display port
+standard. If an design using Tegra does not utilise the display port
+interface, then the pads assigned to the dpaux can be re-assigned to
+another generic i2c controller (i2c6 for Tegra124/210). In other words,
+the pads can be re-used for a generic i2c interface.
 
--rhyland
+The registers that control whether the pads are mapped to the dpaux or
+i2c6 are located in the dpaux register space. Therefore, I am looking at
+adding pin controller support for dpaux so that i2c6 can request these
+pads if it is enabled and I was hoping to add a pinmux node the to dpaux
+device in device-tree to do this. For example, something like ...
 
--- 
-nvpublic
+	dpaux@0,545c0000 {
+		...
+
+		/* pinctrl node */
+		pinmux {
+			...
+		};
+	};
+
+Although the above works, when doing this I noticed that when the device
+booted, I would seeing the following error messages on boot ...
+
+ i2c i2c-5: of_i2c: modalias failure on ...
+
+These error messages being caused by the new pinmux node because it is
+not recognised as an i2c device. To avoid this error messages we have
+come up with a couple solutions but wanted to get some feedback on the
+best approach.
+
+1. Add a i2c-bus sub-node to the dpaux binding (suggested by Stephen
+   Warren), so we would have something like the below. Then i2c devices
+   for dpaux would be place in the i2c-bus sub-node.
+
+	dpaux@0,545c0000 {
+		...
+
+		/* pinctrl node */
+		pinmux {
+			...
+		};
+
+		/* place-holder for i2c devices */
+		i2c-bus {
+			...
+		};
+	};	
+
+   To make the above work ideally we would like to make the 'i2c-bus'
+   node a generic solution for all i2c devices, so the i2c core would
+   check for the presence of this node and if it is found then would
+   default to this node for looking for i2c-devices.
+
+2. When registering i2c devices via device-tree, the function
+   of_i2c_register_devices() checks to see if OF_POPULATED flag is set
+   for a given node. If it is set, then the node is skipped. I believe
+   this was added for device-tree overlays (commit 4f001fd30145 i2c:
+   Mark instantiated device nodes with OF_POPULATE). Another option is
+   for the dpaux driver to mark the pinmux node as populated before
+   registering the i2c adapter and this will prevent the i2c core from
+   trying to parse the pinmux node. I am not sure if this would be
+   frowned upon in anyway or if we can guarantee that no future changes
+   to DT overlays would change this in a way where it would not work.
+
+Let me know your thoughts.
+
+Cheers
+Jon
