@@ -1,58 +1,81 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] arm64: tegra: Enable cros-ec and charger on Smaug
-Date: Fri, 15 Apr 2016 15:38:02 +0200
-Message-ID: <20160415133802.GA3472@ulmo.ba.sec>
-References: <1460663838-27175-1-git-send-email-rklein@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] dt-bindings: tegra: Remove 0, prefix from
+ unit-addresses
+Date: Fri, 15 Apr 2016 15:41:02 +0200
+Message-ID: <20160415134102.GB3472@ulmo.ba.sec>
+References: <1460473656-27209-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="mP3DRpeJDSE+ciuQ"
-Return-path: <linux-kernel-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="cvVnyQ+4j833TQvp"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1460663838-27175-1-git-send-email-rklein@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Andrew Bresticker <abrestic@chromium.org>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <1460473656-27209-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---mP3DRpeJDSE+ciuQ
+--cvVnyQ+4j833TQvp
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Apr 14, 2016 at 03:57:18PM -0400, Rhyland Klein wrote:
-> Add nodes for the ChromeOS Embedded Controller and for the gas gauge
-> connected to the I2C bus that it controls.
+On Tue, Apr 12, 2016 at 05:07:35PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >=20
-> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> When Tegra124 support was first merged the unit-addresses of all devices
+> were listed with a "0," prefix to encode the reg property's second cell.
+> It turns out that this notation is not correct, and the "," separator is
+> only used to separate fields in the unit address (such as the device and
+> function number in PCI devices), not individual cells for addresses
+> with more than one cell.
+>=20
+> Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 27 +++++++++++++++++++++=
-++++++
->  1 file changed, 27 insertions(+)
+>  Documentation/devicetree/bindings/clock/nvidia,tegra124-dfll.txt    | 2 =
++-
+>  Documentation/devicetree/bindings/gpu/nvidia,gk20a.txt              | 2 =
++-
+>  .../devicetree/bindings/memory-controllers/nvidia,tegra-mc.txt      | 6 =
++++---
+>  Documentation/devicetree/bindings/memory-controllers/tegra-emc.txt  | 4 =
+++--
+>  .../devicetree/bindings/pinctrl/nvidia,tegra124-xusb-padctl.txt     | 6 =
++++---
+>  Documentation/devicetree/bindings/sound/nvidia,tegra30-hda.txt      | 2 =
++-
+>  Documentation/devicetree/bindings/thermal/tegra-soctherm.txt        | 2 =
++-
+>  7 files changed, 12 insertions(+), 12 deletions(-)
 
-Applied, thanks.
+Hi Rob,
+
+Is this (and patch 2/2) something that you could pick up into the DT
+tree, or would you rather have me take it through the Tegra tree?
 
 Thierry
 
---mP3DRpeJDSE+ciuQ
+--cvVnyQ+4j833TQvp
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXEO60AAoJEN0jrNd/PrOhLE0P/A5H/y53ruVd3MqR/P2Kvy7O
-vChiGgcr4wtJlKT0DOW6nUsOtvv5Kp06Qrx31aXHb8CN4lGJr3TWLGNvlu1g+Irj
-r1HrwbB58jh7RSuaAx14dbaZBs//sbassS7aXx7jZ3fZ5kSiAZzW80hKIfpwjxLV
-r5+VdBM+it9H8tp+Yrms9Lh8ljfT2xRfHHYK6KFV3b0aFa61JDIug/hVDbYndpVX
-ihfYsoTYvD1sddlQuya1iaW+mu+6q9ZS32hSJ7aANzT7o4DqqeQo43BO2r/LZFIC
-Q0R4TskgfZ62SfSF/cOfp/XpgADjUUH8OngGTistr04jgyq6pOb8JW7V6iwJoRcX
-nS/HwWPmPvEATMIp7SY1gjKWz2+62VBJN/5SAs32EEAPyUh2D/vL9e/yoV/1b5si
-3ugLP95Di6EJjm/EEsxfTflBQUIUA495igT5+R+9Wjxb988+ma2VMZ/2g0F/22Ts
-tJaDGESOy4SN+lC2TPEowSeAP3kWTzCz6Amm/3tgwJXu2eqSNKE/H9ucBlha+vka
-YJJDNbq4fxWIrf9gFO4yN581BxHvwDnwJneqHXsqKRRRqueYmbC42/n5x8D3RyZa
-9II/4sfg2WLUuhCuIB77EtcrDvGneekgnwJMefJA4ZfX3MpUZs669wLu2sRyqSNm
-VKYytaUlGPyBpST1/azr
-=s4h9
+iQIcBAABCAAGBQJXEO9uAAoJEN0jrNd/PrOhSRAP/0cm7E0E2Mwj8NLMf9I6n96A
+wbhN1BhSZ3y3CGpykY9enQoeRZsVaAhONQwP8bdkgOYdB6R8rcUsPeFun3CNRNTZ
+UtLfj86x82V0yQqF/Ca+UrLJYM6OLbKimMYII3NLbOOZH6XrnHrJQsiWWR9Q1Pww
+39C02pPQ9NNC7NwK/OYJyqMiRbdi88ytd2xeCYytoVNW8vCbgXlgCfoEW2TJcMGm
+7tHDLFh2xIcn4NTYXD86MfozMX6F3Q309gvYt9ZwJQSk6Mir6sJnanTxe/Nqkihq
+4ztC+cSeaJUUN/0JGKxubf2gim5ybj4WAHoTJdBPeT0ttX6pmgJ1aN9366yY1a4S
+7vp6/8NkiZTrwfoJcn0ngZOf3wae2r4vX0eKc50Ze0+BrBdQy2RjrEAvDMvhewpo
+WhssgY7M2bkBuLPth+tbqt3fgQAdV6mGfeYYnBzEzdsMEnSxcaRErDq9+c7NjfOv
+342Nu8zVGCEDwXrac1hNNT/3JF2nF9xcNPdW/QbqzyO7kUON0l0gp+ffQOQFttd/
+WquNJQenrw7Cd3uDnZg94G/AnEy1vE0Iurh6I4L2GCDm3YwhCujJY5P/BIFsgi78
+9vrtfLWKyLVkpObeeHwpycxrosrdEn1yb/lPydndA3oI23cbp1VZcFCtHw862Nnt
+hGpH5AfgjFx1ROq2jktP
+=Iemu
 -----END PGP SIGNATURE-----
 
---mP3DRpeJDSE+ciuQ--
+--cvVnyQ+4j833TQvp--
