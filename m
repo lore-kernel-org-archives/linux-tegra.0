@@ -1,64 +1,62 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 7/7] pinctrl: tegra: Add driver to configure voltage and
- power state of io pads
-Date: Fri, 15 Apr 2016 10:38:46 -0600
-Message-ID: <57111916.8030304@wwwdotorg.org>
+Subject: Re: [PATCH 4/7] soc/tegra: pmc: Add interface to set voltage of IO
+ rails
+Date: Fri, 15 Apr 2016 10:41:57 -0600
+Message-ID: <571119D5.3040309@wwwdotorg.org>
 References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>
- <1460473007-11535-8-git-send-email-ldewangan@nvidia.com>
- <CACRpkdZyYiNJfuiTPeivvgVTZwdwh64nkf=f8JczSAVvnT7QeA@mail.gmail.com>
- <5710A8A4.90309@nvidia.com>
+ <1460473007-11535-5-git-send-email-ldewangan@nvidia.com>
+ <571115CE.50906@wwwdotorg.org> <57111524.60708@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5710A8A4.90309-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <57111524.60708-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/15/2016 02:39 AM, Laxman Dewangan wrote:
+On 04/15/2016 10:21 AM, Laxman Dewangan wrote:
 >
-> On Friday 15 April 2016 01:38 PM, Linus Walleij wrote:
->> On Tue, Apr 12, 2016 at 4:56 PM, Laxman Dewangan
->> <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>
->>> NVIDIA Tegra210 supports the IO pads which can operate at 1.8V
->>> or 3.3V I/O voltage levels. Also the IO pads can be configured
->>> for power down state if it is not used. SW needs to configure the
->>> voltage level of IO pads based on IO rail voltage and its power
->>> state based on platform usage.
+> On Friday 15 April 2016 09:54 PM, Stephen Warren wrote:
+>> On 04/12/2016 08:56 AM, Laxman Dewangan wrote:
+>>> NVIDIA Tegra210 supports some of the IO interface which can operate
+>>> at 1.8V or 3.3V I/O rail voltage levels. SW needs to configure
+>>> Tegra PMC register to set different voltage level of IO interface based
+>>> on IO rail voltage from power supply i.e. power regulators.
 >>>
->>> The voltage and power state configurations of pads are provided
->>> through pin control frameworks. Add pin control driver for Tegra's
->>> IO pads' voltage and power state configurations.
-
->> Even if Tegra is not using the generic code for handling the
->> standard bindings (GENERIC_PINCONF) it doesn't stop
->> you from using the generic bindings and contributing to them.
+>>> Add APIs to set and get IO rail voltage from the client driver.
 >>
->> Historically you have a few custom bindings like these:
+>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
 >>
->> nvidia,pins
->> nvidia,function
->> nvidia,pull
->> nvidia,tristate
+>>> +static struct tegra_io_rail_voltage_bit_info
+>>> tegra210_io_rail_voltage_info[] = {
+>>> +    TEGRA_IO_RAIL_VOLTAGE(SDMMC1, 12),
+>>> +    TEGRA_IO_RAIL_VOLTAGE(SDMMC3, 13),
+>>> +    TEGRA_IO_RAIL_VOLTAGE(AUDIO_HV, 18),
+>>> +    TEGRA_IO_RAIL_VOLTAGE(DMIC, 20),
+>>> +    TEGRA_IO_RAIL_VOLTAGE(GPIO, 21),
+>>> +    TEGRA_IO_RAIL_VOLTAGE(SPI_HV, 23),
+>>> +};
 >>
->> etc etc, but that is just unfortunate and due to preceding the
->> generic bindings. I would appreciate if you started to support
->> the generic bindings in parallel, but I'm not gonna push that issue.
+>> That table is likely specific to Tegra210, yet ...
+>>
+>>> +static int tegra_io_rail_voltage_get_bit_pos(int io_rail_id)
+>>> +int tegra_io_rail_voltage_set(int io_rail, int val)
+>>> +int tegra_io_rail_voltage_get(int io_rail)
+>>
+>> ... these functions are all named as if they are generic. Presumably
+>> they will indeed be needed for the next chip too? How will you prevent
+>> their use, or turn these functions into no-ops, or return errors, on
+>> other SoCs?
 >
-> Yaah, these are in my plate to cleanup. Let me work with Stephen, what
-> he think here.
+> It will return error for the Soc which does to support or the parameter
+> to the apis which are not applicable.
 
-For existing chips, we must always support the existing bindings. 
-There's no point moving to the new bindings since it'll just add more 
-code that just does the same thing.
+Are you saying that will happen in the current code? I don't see where 
+there's anything that validates that.
 
-For new chips perhaps it makes sense to move to the new standardized 
-properties. That said, I don't expect we'll need pinmux on those chips 
-since it's guaranteed that FW will set up the static pinmux, and HW 
-explicitly doesn't support dynamic pinmuxing?
+Or does "will" mean "I will do that in the next patch revision"?
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
