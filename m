@@ -1,71 +1,56 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH 6/7] pinctrl: tegra: Add DT binding for io pads control
-Date: Fri, 15 Apr 2016 19:42:26 +0530
-Message-ID: <5710F6CA.6060700@nvidia.com>
-References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com> <1460473007-11535-7-git-send-email-ldewangan@nvidia.com> <5710F7A4.5070902@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <5710F7A4.5070902@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, swarren@wwwdotorg.org, thierry.reding@gmail.com, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [GIT PULL 1/3] soc/tegra: Changes for v4.7-rc1
+Date: Fri, 15 Apr 2016 16:42:01 +0200
+Message-ID: <1460731323-31001-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi ARM SoC maintainers,
 
-On Friday 15 April 2016 07:46 PM, Jon Hunter wrote:
-> On 12/04/16 15:56, Laxman Dewangan wrote:
->> NVIDIA Tegra210 supports the IO pads which can operate at 1.8V
->> or 3.3V I/O voltage levels. Also IO pads can be configured for
->> power down state if it is not in used. SW needs to configure the
->> voltage level of IO pads based on IO rail voltage and its power
->> state based on platform usage.
->>
->> Add DT binding document for detailing the DT properties for
->> configuring IO pads voltage levels and its power state.
->>
->> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> [snip]
->
->> +Required subnode-properties:
->> +==========================
->> +- pins : An array of strings. Each string contains the name of an IO pads. Valid
->> +	 values for these names are listed below.
->> +
->> +Optional subnode-properties:
->> +==========================
->> +-nvidia,io-rail-voltage:	Integer. The voltage level of IO pads. The
->> +				valid values are 1.8V and 3.3V. Macros are
->> +				defined for these voltage levels in
->> +				<dt-bindings/pinctrl/pinctrl-tegra210-io-pad.h>
->> +					Use TEGRA210_IO_RAIL_1800000UV for 1.8V
->> +					Use TEGRA210_IO_RAIL_3300000UV for 3.3V
->> +
->> +-nvidia,io-pad-deep-power-down: Integer, representing the deep power down state
->> +				of the IO pads. If this is enable then IO pads
->> +				will be in power down state and interface is not
->> +				enabled for any transaction. This is power
->> +				saving mode of the IO pads. The macros are
->> +				defined for enable/disable in
->> +				<dt-bindings/pinctrl/pinctrl-tegra210-io-pad.h>
->> +				  TEGRA210_IO_PAD_DEEP_POWER_DOWN_DISABLE for
->> +					disable.
->> +				  TEGRA210_IO_PAD_DEEP_POWER_DOWN_ENABLE for
->> +					enable.
->> +Valid values for pin are:
->> +	audio, audio-hv, cam, csia, csib, csic, csid, csie, csif,
->> +	dbg, debug-nonao, dmic, dp, dsi, dsib, dsic, dsid, emmc, emmc2,
->> +	gpio, hdmi, hsic, lvds, mipi-bias, pex-bias, pex-clk1, pex-clk2,
->> +	pex-ctrl, sdmmc1, sdmmc3, spi, spi-hv, uart, usb-bias, usb0,
->> +	usb1, usb2, usb3.
-> Thinking about this some more, the above are not IO pads but supply
-> pads, AFAICT. And these supply pads, are supplying the voltage to
-> various IO pads. I am not sure if these should be named vddio_xxx. The
-> 'pins' properties says these are IO pads, but this does not seem correct.
+The following changes since commit f55532a0c0b8bb6148f4e07853b876ef73bc69ca:
 
-These are IO pads. One IO rail  have multiple sub pads to power down 
-some of interface when not used. Like if CSIA is active, we can power 
-down CSIB, CSIC etc.
-All CSI pads are lined to single IO rail.
+  Linux 4.6-rc1 (2016-03-26 16:03:24 -0700)
 
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.7-soc
+
+for you to fetch changes up to 605aa5e48bfc3dbf0272bc4aac8674e06c19c1b3:
+
+  dt-bindings: Update NVIDIA PMC for Tegra (2016-04-05 15:22:54 +0200)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+soc/tegra: Changes for v4.7-rc1
+
+This contains a bunch of preparatory patches to the PMC driver which are
+a prerequisite to moving the driver to generic power domains.
+
+----------------------------------------------------------------
+Jon Hunter (14):
+      soc/tegra: pmc: Add missing structure members to kernel-doc
+      soc/tegra: pmc: Fix sparse warning for tegra_pmc_init_tsense_reset()
+      soc/tegra: pmc: Remove debugfs entry on probe failure
+      soc/tegra: pmc: Remove non-existing power partitions for Tegra210
+      soc/tegra: pmc: Remove non-existing L2 partition for Tegra124
+      soc/tegra: pmc: Restore base address on probe failure
+      soc/tegra: pmc: Protect public functions from potential race conditions
+      soc/tegra: pmc: Change powergate and rail IDs to be an unsigned type
+      soc/tegra: pmc: Fix testing of powergate state
+      soc/tegra: pmc: Fix verification of valid partitions
+      soc/tegra: pmc: Remove additional check for a valid partition
+      soc/tegra: pmc: Ensure GPU partition can be toggled on/off by PMC
+      soc/tegra: pmc: Wait for powergate state to change
+      dt-bindings: Update NVIDIA PMC for Tegra
+
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      |  12 +-
+ arch/arm/mach-tegra/platsmp.c                      |  16 +--
+ drivers/gpu/drm/tegra/drm.h                        |   2 +-
+ drivers/soc/tegra/pmc.c                            | 150 +++++++++++++--------
+ include/soc/tegra/pmc.h                            |  35 ++---
+ 5 files changed, 124 insertions(+), 91 deletions(-)
