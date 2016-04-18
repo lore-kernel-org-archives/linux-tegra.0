@@ -1,302 +1,357 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v5 1/2] dt-bindings: pci: tegra: Update for per-lane PHYs
-Date: Mon, 18 Apr 2016 16:51:44 +0200
-Message-ID: <1460991105-22861-1-git-send-email-thierry.reding@gmail.com>
-Return-path: <linux-pci-owner@vger.kernel.org>
-Sender: linux-pci-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, devicetree@vger.kernel.org
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v5 2/2] PCI: tegra: Support per-lane PHYs
+Date: Mon, 18 Apr 2016 16:51:45 +0200
+Message-ID: <1460991105-22861-2-git-send-email-thierry.reding@gmail.com>
+References: <1460991105-22861-1-git-send-email-thierry.reding@gmail.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1460991105-22861-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The XUSB pad controller allows PCIe lanes to be controlled individually,
-providing fine-grained control over their power state. Previous attempts
-at describing the XUSB pad controller in DT had erroneously assumed that
-all PCIe lanes were driven by the same PHY, and hence the PCI host
-controller would reference only a single PHY.
+The current XUSB pad controller bindings are insufficient to describe
+PHY devices attached to USB controllers. New bindings have been created
+to overcome these restrictions. As a side-effect each root port now is
+assigned a set of PHY devices, one for each lane associated with the
+root port. This has the benefit of allowing fine-grained control of the
+power management for each lane.
 
-Moving to a representation of per-lane PHYs requires that the operating
-system driver for the PCI host controller have access to the set of PHY
-devices that make up the connection of each root port in order to power
-up and down all of the lanes as necessary.
-
-Acked-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 Changes in v5:
-- add per-SoC examples to clarify what properties are relevant on each
-  generation
-- clarify the rationale for moving the per-lane PHYs
+- fix power off sequence
 
 Changes in v4:
-- add additional lanes subnode when dereferencing PHYs from the XUSB pad
-  controller to reflect changes in its binding
+- propagate failure from PHY power on
+- refactor PHY power off sequence
 
- .../bindings/pci/nvidia,tegra20-pcie.txt           | 224 ++++++++++++++++++++-
- 1 file changed, 219 insertions(+), 5 deletions(-)
+Changes in v3:
+- cache result of check for new PHY bindings usage (Stephen Warren)
 
-diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
-index 75321ae23c08..b8cc395fffea 100644
---- a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
-@@ -60,11 +60,14 @@ Required properties:
-   - afi
-   - pcie_x
+Changes in v2:
+- rework commit message to more accurately describe this change
+
+ drivers/pci/host/pci-tegra.c | 243 ++++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 226 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index 68d1f41b3cbf..12d581130645 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -295,6 +295,7 @@ struct tegra_pcie {
+ 	struct reset_control *afi_rst;
+ 	struct reset_control *pcie_xrst;
  
--Required properties on Tegra124 and later:
-+Required properties on Tegra124 and later (deprecated):
- - phys: Must contain an entry for each entry in phy-names.
- - phy-names: Must include the following entries:
-   - pcie
++	bool legacy_phy;
+ 	struct phy *phy;
  
-+These properties are deprecated in favour of per-lane PHYs define in each of
-+the root ports (see below).
+ 	struct tegra_msi msi;
+@@ -311,11 +312,14 @@ struct tegra_pcie {
+ 
+ struct tegra_pcie_port {
+ 	struct tegra_pcie *pcie;
++	struct device_node *np;
+ 	struct list_head list;
+ 	struct resource regs;
+ 	void __iomem *base;
+ 	unsigned int index;
+ 	unsigned int lanes;
 +
- Power supplies for Tegra20:
- - avdd-pex-supply: Power supply for analog PCIe logic. Must supply 1.05 V.
- - vdd-pex-supply: Power supply for digital PCIe I/O. Must supply 1.05 V.
-@@ -122,11 +125,22 @@ Required properties:
-   - Root port 0 uses 4 lanes, root port 1 is unused.
-   - Both root ports use 2 lanes.
++	struct phy **phys;
+ };
  
--Example:
-+Required properties for Tegra124 and later:
-+- phys: Must contain an phandle to a PHY for each entry in phy-names.
-+- phy-names: Must include an entry for each active lane. Note that the number
-+  of entries does not have to (though usually will) be equal to the specified
-+  number of lanes in the nvidia,num-lanes property. Entries are of the form
-+  "pcie-N": where N ranges from 0 to the value specified in nvidia,num-lanes.
+ struct tegra_pcie_bus {
+@@ -860,6 +864,128 @@ static int tegra_pcie_phy_enable(struct tegra_pcie *pcie)
+ 	return 0;
+ }
+ 
++static int tegra_pcie_phy_disable(struct tegra_pcie *pcie)
++{
++	const struct tegra_pcie_soc_data *soc = pcie->soc_data;
++	u32 value;
 +
-+Examples:
-+=========
++	/* disable TX/RX data */
++	value = pads_readl(pcie, PADS_CTL);
++	value &= ~(PADS_CTL_TX_DATA_EN_1L | PADS_CTL_RX_DATA_EN_1L);
++	pads_writel(pcie, value, PADS_CTL);
 +
-+Tegra20:
-+--------
++	/* override IDDQ */
++	value = pads_readl(pcie, PADS_CTL);
++	value |= PADS_CTL_IDDQ_1L;
++	pads_writel(pcie, PADS_CTL, value);
++
++	/* reset PLL */
++	value = pads_readl(pcie, soc->pads_pll_ctl);
++	value &= ~PADS_PLL_CTL_RST_B4SM;
++	pads_writel(pcie, value, soc->pads_pll_ctl);
++
++	usleep_range(20, 100);
++
++	return 0;
++}
++
++static int tegra_pcie_port_phy_power_on(struct tegra_pcie_port *port)
++{
++	struct device *dev = port->pcie->dev;
++	unsigned int i;
++	int err;
++
++	for (i = 0; i < port->lanes; i++) {
++		err = phy_power_on(port->phys[i]);
++		if (err < 0) {
++			dev_err(dev, "failed to power on PHY#%u: %d\n", i,
++				err);
++			return err;
++		}
++	}
++
++	return 0;
++}
++
++static int tegra_pcie_port_phy_power_off(struct tegra_pcie_port *port)
++{
++	struct device *dev = port->pcie->dev;
++	unsigned int i;
++	int err;
++
++	for (i = 0; i < port->lanes; i++) {
++		err = phy_power_off(port->phys[i]);
++		if (err < 0) {
++			dev_err(dev, "failed to power off PHY#%u: %d\n", i,
++				err);
++			return err;
++		}
++	}
++
++	return 0;
++}
++
++static int tegra_pcie_phy_power_on(struct tegra_pcie *pcie)
++{
++	struct tegra_pcie_port *port;
++	int err;
++
++	if (pcie->legacy_phy) {
++		if (pcie->phy)
++			err = phy_power_on(pcie->phy);
++		else
++			err = tegra_pcie_phy_enable(pcie);
++
++		if (err < 0)
++			dev_err(pcie->dev, "failed to power on PHY: %d\n", err);
++
++		return err;
++	}
++
++	list_for_each_entry(port, &pcie->ports, list) {
++		err = tegra_pcie_port_phy_power_on(port);
++		if (err < 0) {
++			dev_err(pcie->dev,
++				"failed to power on PCIe port %u PHY: %d\n",
++				port->index, err);
++			return err;
++		}
++	}
++
++	return 0;
++}
++
++static int tegra_pcie_phy_power_off(struct tegra_pcie *pcie)
++{
++	struct tegra_pcie_port *port;
++	int err;
++
++	if (pcie->legacy_phy) {
++		if (pcie->phy)
++			err = phy_power_off(pcie->phy);
++		else
++			err = tegra_pcie_phy_disable(pcie);
++
++		if (err < 0)
++			dev_err(pcie->dev, "failed to power off PHY: %d\n",
++				err);
++
++		return err;
++	}
++
++	list_for_each_entry(port, &pcie->ports, list) {
++		err = tegra_pcie_port_phy_power_off(port);
++		if (err < 0) {
++			dev_err(pcie->dev,
++				"failed to power off PCIe port %u PHY: %d\n",
++				port->index, err);
++			return err;
++		}
++	}
++
++	return 0;
++}
++
+ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
+ {
+ 	const struct tegra_pcie_soc_data *soc = pcie->soc_data;
+@@ -899,13 +1025,9 @@ static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
+ 		afi_writel(pcie, value, AFI_FUSE);
+ 	}
  
- SoC DTSI:
- 
--	pcie-controller {
-+	pcie-controller@80003000 {
- 		compatible = "nvidia,tegra20-pcie";
- 		device_type = "pci";
- 		reg = <0x80003000 0x00000800   /* PADS registers */
-@@ -186,10 +200,9 @@ SoC DTSI:
- 		};
- 	};
- 
+-	if (!pcie->phy)
+-		err = tegra_pcie_phy_enable(pcie);
+-	else
+-		err = phy_power_on(pcie->phy);
 -
- Board DTS:
++	err = tegra_pcie_phy_power_on(pcie);
+ 	if (err < 0) {
+-		dev_err(pcie->dev, "failed to power on PHY: %d\n", err);
++		dev_err(pcie->dev, "failed to power on PHY(s): %d\n", err);
+ 		return err;
+ 	}
  
--	pcie-controller {
-+	pcie-controller@80003000 {
- 		status = "okay";
+@@ -942,9 +1064,9 @@ static void tegra_pcie_power_off(struct tegra_pcie *pcie)
  
- 		vdd-supply = <&pci_vdd_reg>;
-@@ -222,3 +235,204 @@ if a device on the PCI bus provides a non-probeable bus such as I2C or SPI,
- device nodes need to be added in order to allow the bus' children to be
- instantiated at the proper location in the operating system's device tree (as
- illustrated by the optional nodes in the example above).
+ 	/* TODO: disable and unprepare clocks? */
+ 
+-	err = phy_power_off(pcie->phy);
++	err = tegra_pcie_phy_power_off(pcie);
+ 	if (err < 0)
+-		dev_warn(pcie->dev, "failed to power off PHY: %d\n", err);
++		dev_err(pcie->dev, "failed to power off PHY(s): %d\n", err);
+ 
+ 	reset_control_assert(pcie->pcie_xrst);
+ 	reset_control_assert(pcie->afi_rst);
+@@ -1049,6 +1171,99 @@ static int tegra_pcie_resets_get(struct tegra_pcie *pcie)
+ 	return 0;
+ }
+ 
++static int tegra_pcie_phys_get_legacy(struct tegra_pcie *pcie)
++{
++	int err;
 +
-+Tegra30:
-+--------
++	pcie->phy = devm_phy_optional_get(pcie->dev, "pcie");
++	if (IS_ERR(pcie->phy)) {
++		err = PTR_ERR(pcie->phy);
++		dev_err(pcie->dev, "failed to get PHY: %d\n", err);
++		return err;
++	}
 +
-+SoC DTSI:
++	err = phy_init(pcie->phy);
++	if (err < 0) {
++		dev_err(pcie->dev, "failed to initialize PHY: %d\n", err);
++		return err;
++	}
 +
-+	pcie-controller@00003000 {
-+		compatible = "nvidia,tegra30-pcie";
-+		device_type = "pci";
-+		reg = <0x00003000 0x00000800   /* PADS registers */
-+		       0x00003800 0x00000200   /* AFI registers */
-+		       0x10000000 0x10000000>; /* configuration space */
-+		reg-names = "pads", "afi", "cs";
-+		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH   /* controller interrupt */
-+			      GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>; /* MSI interrupt */
-+		interrupt-names = "intr", "msi";
++	pcie->legacy_phy = true;
 +
-+		#interrupt-cells = <1>;
-+		interrupt-map-mask = <0 0 0 0>;
-+		interrupt-map = <0 0 0 0 &intc GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
++	return 0;
++}
 +
-+		bus-range = <0x00 0xff>;
-+		#address-cells = <3>;
-+		#size-cells = <2>;
++static struct phy *devm_of_phy_optional_get_index(struct device *dev,
++						  struct device_node *np,
++						  const char *consumer,
++						  unsigned int index)
++{
++	struct phy *phy;
++	char *name;
 +
-+		ranges = <0x82000000 0 0x00000000 0x00000000 0 0x00001000   /* port 0 configuration space */
-+			  0x82000000 0 0x00001000 0x00001000 0 0x00001000   /* port 1 configuration space */
-+			  0x82000000 0 0x00004000 0x00004000 0 0x00001000   /* port 2 configuration space */
-+			  0x81000000 0 0          0x02000000 0 0x00010000   /* downstream I/O */
-+			  0x82000000 0 0x20000000 0x20000000 0 0x08000000   /* non-prefetchable memory */
-+			  0xc2000000 0 0x28000000 0x28000000 0 0x18000000>; /* prefetchable memory */
++	name = kasprintf(GFP_KERNEL, "%s-%u", consumer, index);
++	if (!name)
++		return ERR_PTR(-ENOMEM);
 +
-+		clocks = <&tegra_car TEGRA30_CLK_PCIE>,
-+			 <&tegra_car TEGRA30_CLK_AFI>,
-+			 <&tegra_car TEGRA30_CLK_PLL_E>,
-+			 <&tegra_car TEGRA30_CLK_CML0>;
-+		clock-names = "pex", "afi", "pll_e", "cml";
-+		resets = <&tegra_car 70>,
-+			 <&tegra_car 72>,
-+			 <&tegra_car 74>;
-+		reset-names = "pex", "afi", "pcie_x";
-+		status = "disabled";
++	phy = devm_of_phy_get(dev, np, name);
++	kfree(name);
 +
-+		pci@1,0 {
-+			device_type = "pci";
-+			assigned-addresses = <0x82000800 0 0x00000000 0 0x1000>;
-+			reg = <0x000800 0 0 0 0>;
-+			status = "disabled";
++	if (IS_ERR(phy) && PTR_ERR(phy) == -ENODEV)
++		phy = NULL;
 +
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			ranges;
++	return phy;
++}
 +
-+			nvidia,num-lanes = <2>;
-+		};
++static int tegra_pcie_port_get_phys(struct tegra_pcie_port *port)
++{
++	struct device *dev = port->pcie->dev;
++	struct phy *phy;
++	unsigned int i;
++	int err;
 +
-+		pci@2,0 {
-+			device_type = "pci";
-+			assigned-addresses = <0x82001000 0 0x00001000 0 0x1000>;
-+			reg = <0x001000 0 0 0 0>;
-+			status = "disabled";
++	port->phys = devm_kcalloc(dev, sizeof(phy), port->lanes, GFP_KERNEL);
++	if (!port->phys)
++		return -ENOMEM;
 +
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			ranges;
++	for (i = 0; i < port->lanes; i++) {
++		phy = devm_of_phy_optional_get_index(dev, port->np, "pcie", i);
++		if (IS_ERR(phy)) {
++			dev_err(dev, "failed to get PHY#%u: %ld\n", i,
++				PTR_ERR(phy));
++			return PTR_ERR(phy);
++		}
 +
-+			nvidia,num-lanes = <2>;
-+		};
++		err = phy_init(phy);
++		if (err < 0) {
++			dev_err(dev, "failed to initialize PHY#%u: %d\n", i,
++				err);
++			return err;
++		}
 +
-+		pci@3,0 {
-+			device_type = "pci";
-+			assigned-addresses = <0x82001800 0 0x00004000 0 0x1000>;
-+			reg = <0x001800 0 0 0 0>;
-+			status = "disabled";
++		port->phys[i] = phy;
++	}
 +
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			ranges;
++	return 0;
++}
 +
-+			nvidia,num-lanes = <2>;
-+		};
-+	};
++static int tegra_pcie_phys_get(struct tegra_pcie *pcie)
++{
++	struct tegra_pcie_port *port;
++	int err;
 +
-+Board DTS:
++	if (of_get_property(pcie->dev->of_node, "phys", NULL) != NULL)
++		return tegra_pcie_phys_get_legacy(pcie);
 +
-+	pcie-controller@00003000 {
-+		status = "okay";
++	list_for_each_entry(port, &pcie->ports, list) {
++		err = tegra_pcie_port_get_phys(port);
++		if (err < 0) {
++			return err;
++		}
++	}
 +
-+		avdd-pexa-supply = <&ldo1_reg>;
-+		vdd-pexa-supply = <&ldo1_reg>;
-+		avdd-pexb-supply = <&ldo1_reg>;
-+		vdd-pexb-supply = <&ldo1_reg>;
-+		avdd-pex-pll-supply = <&ldo1_reg>;
-+		avdd-plle-supply = <&ldo1_reg>;
-+		vddio-pex-ctl-supply = <&sys_3v3_reg>;
-+		hvdd-pex-supply = <&sys_3v3_pexs_reg>;
++	return 0;
++}
 +
-+		pci@1,0 {
-+			status = "okay";
-+		};
-+
-+		pci@3,0 {
-+			status = "okay";
-+		};
-+	};
-+
-+Tegra124:
-+---------
-+
-+SoC DTSI:
-+
-+	pcie-controller@01003000 {
-+		compatible = "nvidia,tegra124-pcie";
-+		device_type = "pci";
-+		reg = <0x0 0x01003000 0x0 0x00000800   /* PADS registers */
-+		       0x0 0x01003800 0x0 0x00000800   /* AFI registers */
-+		       0x0 0x02000000 0x0 0x10000000>; /* configuration space */
-+		reg-names = "pads", "afi", "cs";
-+		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>, /* controller interrupt */
-+			     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>; /* MSI interrupt */
-+		interrupt-names = "intr", "msi";
-+
-+		#interrupt-cells = <1>;
-+		interrupt-map-mask = <0 0 0 0>;
-+		interrupt-map = <0 0 0 0 &gic GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		bus-range = <0x00 0xff>;
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+
-+		ranges = <0x82000000 0 0x01000000 0x0 0x01000000 0 0x00001000   /* port 0 configuration space */
-+			  0x82000000 0 0x01001000 0x0 0x01001000 0 0x00001000   /* port 1 configuration space */
-+			  0x81000000 0 0x0        0x0 0x12000000 0 0x00010000   /* downstream I/O (64 KiB) */
-+			  0x82000000 0 0x13000000 0x0 0x13000000 0 0x0d000000   /* non-prefetchable memory (208 MiB) */
-+			  0xc2000000 0 0x20000000 0x0 0x20000000 0 0x20000000>; /* prefetchable memory (512 MiB) */
-+
-+		clocks = <&tegra_car TEGRA124_CLK_PCIE>,
-+			 <&tegra_car TEGRA124_CLK_AFI>,
-+			 <&tegra_car TEGRA124_CLK_PLL_E>,
-+			 <&tegra_car TEGRA124_CLK_CML0>;
-+		clock-names = "pex", "afi", "pll_e", "cml";
-+		resets = <&tegra_car 70>,
-+			 <&tegra_car 72>,
-+			 <&tegra_car 74>;
-+		reset-names = "pex", "afi", "pcie_x";
-+		status = "disabled";
-+
-+		pci@1,0 {
-+			device_type = "pci";
-+			assigned-addresses = <0x82000800 0 0x01000000 0 0x1000>;
-+			reg = <0x000800 0 0 0 0>;
-+			status = "disabled";
-+
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			ranges;
-+
-+			nvidia,num-lanes = <2>;
-+		};
-+
-+		pci@2,0 {
-+			device_type = "pci";
-+			assigned-addresses = <0x82001000 0 0x01001000 0 0x1000>;
-+			reg = <0x001000 0 0 0 0>;
-+			status = "disabled";
-+
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			ranges;
-+
-+			nvidia,num-lanes = <1>;
-+		};
-+	};
-+
-+Board DTS:
-+
-+	pcie-controller@01003000 {
-+		status = "okay";
-+
-+		avddio-pex-supply = <&vdd_1v05_run>;
-+		dvddio-pex-supply = <&vdd_1v05_run>;
-+		avdd-pex-pll-supply = <&vdd_1v05_run>;
-+		hvdd-pex-supply = <&vdd_3v3_lp0>;
-+		hvdd-pex-pll-e-supply = <&vdd_3v3_lp0>;
-+		vddio-pex-ctl-supply = <&vdd_3v3_lp0>;
-+		avdd-pll-erefe-supply = <&avdd_1v05_run>;
-+
-+		/* Mini PCIe */
-+		pci@1,0 {
-+			phys = <&{/padctl@7009f000/pads/pcie/lanes/pcie-4}>;
-+			phy-names = "pcie-0";
-+			status = "okay";
-+		};
-+
-+		/* Gigabit Ethernet */
-+		pci@2,0 {
-+			phys = <&{/padctl@7009f000/pads/pcie/lanes/pcie-2}>;
-+			phy-names = "pcie-0";
-+			status = "okay";
-+		};
-+	};
+ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
+ {
+ 	struct platform_device *pdev = to_platform_device(pcie->dev);
+@@ -1067,16 +1282,9 @@ static int tegra_pcie_get_resources(struct tegra_pcie *pcie)
+ 		return err;
+ 	}
+ 
+-	pcie->phy = devm_phy_optional_get(pcie->dev, "pcie");
+-	if (IS_ERR(pcie->phy)) {
+-		err = PTR_ERR(pcie->phy);
+-		dev_err(&pdev->dev, "failed to get PHY: %d\n", err);
+-		return err;
+-	}
+-
+-	err = phy_init(pcie->phy);
++	err = tegra_pcie_phys_get(pcie);
+ 	if (err < 0) {
+-		dev_err(&pdev->dev, "failed to initialize PHY: %d\n", err);
++		dev_err(&pdev->dev, "failed to get PHYs: %d\n", err);
+ 		return err;
+ 	}
+ 
+@@ -1752,6 +1960,7 @@ static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
+ 		rp->index = index;
+ 		rp->lanes = value;
+ 		rp->pcie = pcie;
++		rp->np = port;
+ 
+ 		rp->base = devm_ioremap_resource(pcie->dev, &rp->regs);
+ 		if (IS_ERR(rp->base))
 -- 
 2.8.0
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
