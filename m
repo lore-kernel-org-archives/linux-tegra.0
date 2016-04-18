@@ -1,70 +1,72 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] thermal: tegra: mark PM functions __maybe_unused
-Date: Mon, 18 Apr 2016 09:15:13 +0200
-Message-ID: <20160418071513.GA13078@ulmo.ba.sec>
-References: <1460838026-1242452-1-git-send-email-arnd@arndb.de>
+Subject: Re: [PATCH] i2c: tegra: proper handling of error cases
+Date: Mon, 18 Apr 2016 09:26:06 +0200
+Message-ID: <20160418072606.GB13078@ulmo.ba.sec>
+References: <1460726507-9170-1-git-send-email-smohammed@nvdiia.com>
+ <20160415141558.GC3472@ulmo.ba.sec>
+ <73535dcc422441d3a981208dae1a2bad@bgmail102.nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="6TrnltStXW4iwmi0"
-Return-path: <linux-pm-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="wzJLGUyc3ArbnUjN"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1460838026-1242452-1-git-send-email-arnd@arndb.de>
-Sender: linux-pm-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Eduardo Valentin <edubezval@gmail.com>, Wei Ni <wni@nvidia.com>, Zhang Rui <rui.zhang@intel.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <73535dcc422441d3a981208dae1a2bad@bgmail102.nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Shardar Mohammed <smohammed@nvidia.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "wsa@the-dreams.de" <wsa@the-dreams.de>, "gnurou@gmail.com" <gnurou@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---6TrnltStXW4iwmi0
+--wzJLGUyc3ArbnUjN
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Apr 16, 2016 at 10:19:33PM +0200, Arnd Bergmann wrote:
-> After the PM support has been added to this driver, we get
-> a harmless warning when that support is disabled at compile
-> time:
+On Sat, Apr 16, 2016 at 08:08:50AM +0000, Shardar Mohammed wrote:
+[...]
+> > >  	if (!(msg->flags & I2C_M_RD))
+> > >  		tegra_i2c_fill_tx_fifo(i2c_dev);
+> > >
+> > > -	int_mask =3D I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
+> > >  	if (i2c_dev->hw->has_per_pkt_xfer_complete_irq)
+> > >  		int_mask |=3D I2C_INT_PACKET_XFER_COMPLETE;
+> > >  	if (msg->flags & I2C_M_RD)
+> > >  		int_mask |=3D I2C_INT_RX_FIFO_DATA_REQ;
+> > >  	else if (i2c_dev->msg_buf_remaining)
+> > >  		int_mask |=3D I2C_INT_TX_FIFO_DATA_REQ;
+> > > +
+> > >  	tegra_i2c_unmask_irq(i2c_dev, int_mask);
+> >=20
+> > Can this line be removed? The NO_ACK and ARBITRATION_LOST interrupts
+> > are already unmasked earlier.
 >=20
-> drivers/thermal/tegra/soctherm.c:641:12: error: 'soctherm_resume' defined=
- but not used [-Werror=3Dunused-function]
->  static int soctherm_resume(struct device *dev)
->=20
-> This marks the two PM functions as __maybe_unused to shut up
-> the warning. This is preferred over adding an #ifdef around
-> them, as it is harder to get wrong, and provides better
-> compile-time coverage.
->=20
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Fixes: a134b4143b65 ("thermal: tegra: add PM support")
-> ---
->  drivers/thermal/tegra/soctherm.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> [Shardar] unmask_irq() here is enabling other interrupts
+> (PACKET_XFER_COMPLETE/TX_FIFO_DATA_REQ/RX_FIFO_DATA_REQ). please let
+> me know if my understanding is wrong from your comment.
 
-The need for this should go away when Jon's generic power domain series
-gets merged (hopefully very soon now) and enabled on 32-bit ARM. In the
-meantime:
+You're right, I obviously wasn't looking closely enough.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Thierry
 
---6TrnltStXW4iwmi0
+--wzJLGUyc3ArbnUjN
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXFImBAAoJEN0jrNd/PrOh5jMP/22Y1tJfiD6Yp8OvE+6eIqeO
-i2FRrGik4l0jvzoUASH5O05yCq8aN4DI4Ieut/HC+/mOFj6ektDKOOu3Kz+fI76u
-Ia5xDRvygbVaLDLjtdWvaceKa+XZxVx+iLQuEOL8KVPZwH3QAHeZp8b0udv4JkMk
-g+9v4dBrmQhsDsfNKsUcW2bS7/0jaW9ZhorNR7/80JmAFr5mZCxQV1rklRoFPbR5
-dPZKvDyiboKVRLSnmGGuF6Y/rhb43TA8sUPCaU1GRJlzryWpAEy6U4z0gtpyfboN
-bsOR9ulIJsSy00+5u3x7x0YYZnC6gFHLi8Qpn3orlnimyfYPCPp9LYNU6Unz7JqA
-Z7lOfWtrVIYoemnpPUMevk9D2uuI3/rPb2sOOnFLrbUuP1NhAEKsR4upiJo4Dmzs
-NCSU5pMyutblHIZz3bi9mpsUMZEs9e79rUSy05BdqjxYCZdDdFBPqyVNW5aGm9ko
-oG2/hZEHn3klhEp2uqq2uWwCC97dVJpwhSQdMdpnE3QHJPHD8gv10+mkaWKU4Azh
-KVTbuThXRaPDR44IcyhFyLVUhbBnuGQQ4TQlLE8Yx343i2Zis0tcJyxDJc6/xhXF
-7MSIvcQCiUpnLl0uTme/EnZRL+R8ACCgp5HnFwkd2kLz0gdp09PIJUE+6UKAOtmE
-/6QnzBkwk80H+32dUPBP
-=Peyb
+iQIcBAABCAAGBQJXFIwLAAoJEN0jrNd/PrOhdW0P/Rhpv/akkjgYuW5DoyFo+dR1
+t9a51ZUkzlkb4xsSm71Kd3BwxHaxN3xR3lPCxYA4xPEbZw1N7EvsZmcpnGk7JuH7
+iL746n7T0IoUr4CvCpHBguiJinvOv5dHvFZkyJVfiHae4/UiTnHTM1g3pJ11EMj/
+z/2dW6wbChIWz1A+UnE8MSxr8Bwozg7vNgV9bnnf5NMIjag3DSwyPxGKWr0T2B7E
+FWTumxI00U/wXIiKgtaEMB4wd5ZszqOeRX5WgaI9DyZLPOwgB70IHFkwp/Ln4FAR
+gEGqD6Ru9wpwSYPYfTBtvEb2ctDM100ABOvBa/O4jbInVwyvbADZskr6f8DYPbOF
+I4Qvfr8XT6P61xH63xLL9p1BgEZuqMlC151Rf5cTDuNUb4lkCWvIXOPis0fsY2E1
+AeQGMwiBUGslQKNJVyqhYQjJbFMq2176FBrIJZTAUKHvWxRoDKBo0FpfYQjCCyUi
+w+cmykIs0+QOgEuiwNGKNu69I32VIABdeJcdRAK31NMiCXw/XxJQlbPD0qKOciBB
+dRcGTsmQGE+rULCglri1wF6eQN7d+Cy0GmhIxIHqUMpqucL8wXDkNSJ+DFegKWyy
+BZHy2B/hhwPvB5OAuv0Tdq96EXsMUynVJBymwpF0p8pIHaJeRg3ys1IzeG69xhyY
+161PrsrSCzLkd5I8CWMi
+=qFSH
 -----END PGP SIGNATURE-----
 
---6TrnltStXW4iwmi0--
+--wzJLGUyc3ArbnUjN--
