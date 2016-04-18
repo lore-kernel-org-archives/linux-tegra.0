@@ -1,31 +1,33 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v5 1/2] dt-bindings: pci: tegra: Update for per-lane PHYs
-Date: Mon, 18 Apr 2016 10:50:16 -0600
-Message-ID: <57151048.2090806@wwwdotorg.org>
-References: <1460991105-22861-1-git-send-email-thierry.reding@gmail.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/3] gpio: tegra: Remove the need of keeping device handle
+ for gpio driver
+Date: Mon, 18 Apr 2016 22:30:32 +0530
+Message-ID: <571512B0.90303@nvidia.com>
+References: <1460969178-20914-1-git-send-email-ldewangan@nvidia.com> <1460969178-20914-2-git-send-email-ldewangan@nvidia.com> <57150B81.6040104@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1460991105-22861-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <57150B81.6040104-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
+Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/18/2016 08:51 AM, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> The XUSB pad controller allows PCIe lanes to be controlled individually,
-> providing fine-grained control over their power state. Previous attempts
-> at describing the XUSB pad controller in DT had erroneously assumed that
-> all PCIe lanes were driven by the same PHY, and hence the PCI host
-> controller would reference only a single PHY.
->
-> Moving to a representation of per-lane PHYs requires that the operating
-> system driver for the PCI host controller have access to the set of PHY
-> devices that make up the connection of each root port in order to power
-> up and down all of the lanes as necessary.
 
-The series,
-Acked-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Monday 18 April 2016 09:59 PM, Stephen Warren wrote:
+> On 04/18/2016 02:46 AM, Laxman Dewangan wrote:
+>> Remove the file static device handle variable as this is just
+>> required for prints. The required handle can be stored in
+>> tegra_gpio_chip and hence it become redundancy.
+>
+> This seems fine as far as it goes, but if it's worth doing this, 
+> please move all the globals into the GPIO chip rather than just one of 
+> the 7 globals.
+
+the device pointer is part of the gpiochip and so it is better to use 
+gpiochip parent member instead of locally duplicating.
+
+However, moving to other global variables needs some major changes and I 
+think it should be treated as independent of this patch.
+This patch just utilizes the gpiochip.parent here.
