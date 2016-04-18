@@ -1,33 +1,74 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/3] gpio: tegra: Remove the need of keeping device handle
- for gpio driver
-Date: Mon, 18 Apr 2016 22:30:32 +0530
-Message-ID: <571512B0.90303@nvidia.com>
-References: <1460969178-20914-1-git-send-email-ldewangan@nvidia.com> <1460969178-20914-2-git-send-email-ldewangan@nvidia.com> <57150B81.6040104@wwwdotorg.org>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 3/3] gpio: tegra: Add support for gpio debounce
+Date: Mon, 18 Apr 2016 22:36:18 +0530
+Message-ID: <5715140A.6030502@nvidia.com>
+References: <1460969178-20914-1-git-send-email-ldewangan@nvidia.com> <1460969178-20914-3-git-send-email-ldewangan@nvidia.com> <57150D8C.7020100@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <57150B81.6040104-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org
-Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <57150D8C.7020100@wwwdotorg.org>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, linus.walleij@linaro.org
+Cc: gnurou@gmail.com, thierry.reding@gmail.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On Monday 18 April 2016 09:59 PM, Stephen Warren wrote:
+On Monday 18 April 2016 10:08 PM, Stephen Warren wrote:
 > On 04/18/2016 02:46 AM, Laxman Dewangan wrote:
->> Remove the file static device handle variable as this is just
->> required for prints. The required handle can be stored in
->> tegra_gpio_chip and hence it become redundancy.
 >
-> This seems fine as far as it goes, but if it's worth doing this, 
-> please move all the globals into the GPIO chip rather than just one of 
-> the 7 globals.
+>>
+>> +
+>> +    /* There is only one debounce count register per port and hence
+>> +     * set the maximum of current and requested debounce time.
+>> +     */
+>> +    max_dbc = tegra_gpio_readl(GPIO_DBC_CNT(offset));
+>
+> What if the system boots with random values in that register, or some 
+> code that runs before the kernel programs large values into the 
+> register? That would (incorrectly) impose a lower bound on the 
+> possible values the kernel driver can impose. Perhaps the kernel 
+> should clear the DBC_CNT registers at probe(), or should store a 
+> shadow copy of the DBC_CNT register, use that value here rather than 
+> re-reading the registers, and clear that SW shadow at probe().
+>
 
-the device pointer is part of the gpiochip and so it is better to use 
-gpiochip parent member instead of locally duplicating.
+Clearing in probe is better option than shadowing it. If we shadow then 
+need loop as there is only one register per port which have 8 pins and 
+this function get called per pin basis.
 
-However, moving to other global variables needs some major changes and I 
-think it should be treated as independent of this patch.
-This patch just utilizes the gpiochip.parent here.
+
+
+
+>> +    max_dbc = max(max_dbc, debounce_ms);
+>
+> I wonder if there should be more discussion of how to honor 
+> conflicting requests. Perhaps we should only allow exactly equal 
+> values (someone might strictly care about latency, and increasing the 
+> latency of GPIO X1 just because GPIO X5 wanted a longer debounce 
+> period might not be acceptable). Does the GPIO subsystem define 
+> explicit semantics for this case?
+>
+
+
+Not seen form  GOIO subsystem as GOIO subsystem assume this 
+configuration is per GPIO, not for group of GPIO.
+
+However, everywhere, the debounce parameter should be provided as 
+platform specific from DT and on this case, the platform developer knows 
+what is best common value.
+
+
+>> + tegra_gpio_mask_write(GPIO_MSK_DBC_EN(offset), offset, 1);
+>> +    tegra_gpio_writel(max_dbc, GPIO_DBC_CNT(offset));
+>
+> I think DBC_CNT should be written first; the debounce process uses 
+> that data to configure itself. The process shouldn't be enabled before 
+> it's configured.
+>
+
+OK, make sense as safe game.
+The debounce is in effect when any change in the pin and this call 
+should be happen before any state change in pin.
+
+
