@@ -1,99 +1,135 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v3 1/2] i2c: tegra: add separate function for config_load
-Date: Mon, 18 Apr 2016 16:10:40 +0200
-Message-ID: <20160418141040.GA20508@ulmo.ba.sec>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v3 2/2] i2c: tegra: proper handling of error cases
+Date: Mon, 18 Apr 2016 16:17:05 +0200
+Message-ID: <20160418141705.GB20508@ulmo.ba.sec>
 References: <1460985355-28901-1-git-send-email-smohammed@nvidia.com>
+ <1460985355-28901-2-git-send-email-smohammed@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="EVF5PPMfhYS0aIcm"
-Return-path: <linux-i2c-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="61jdw2sOBCFtR2d/"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1460985355-28901-1-git-send-email-smohammed@nvidia.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Shardar Shariff Md <smohammed@nvidia.com>
-Cc: ldewangan@nvidia.com, swarren@wwwdotorg.org, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, wsa@the-dreams.de, gnurou@gmail.com
+In-Reply-To: <1460985355-28901-2-git-send-email-smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---EVF5PPMfhYS0aIcm
+--61jdw2sOBCFtR2d/
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 18, 2016 at 06:45:54PM +0530, Shardar Shariff Md wrote:
-> - Define separate function for configuration load register handling
-> to make it use by different functions later.
-> - Instead of calculating timeout for the config load during init,
-> calculate it when config load register is written. Also use the
-> msecs_to_jiffies for timeout calculation instead of macro HZ.
-
-Looking really good now. One minor nit: If you need to resort to lists
-in the commit message, it's usually a sign that you can split things up
-into further patches. In this particular case I think moving the timeout
-computation can be considered implicit in splitting apart the function.
-That is, I'd simply skip the second list item (and remove the - from the
-first line).
-
-> Signed-off-by: Shardar Shariff Md <smohammed@nvidia.com>
+On Mon, Apr 18, 2016 at 06:45:55PM +0530, Shardar Shariff Md wrote:
+> To summarize the issue observed in error cases:
+>=20
+> SW Flow: For i2c message transfer, packet header and data payload is
+> posted and then required error/packet completion interrupts are enabled
+> later.
+>=20
+> HW flow: HW process the packet just after packet header is posted, if
+> ARB lost/NACK error occurs (SW will not handle immediately when error
+> happens as error interrupts are not enabled at this point). HW assumes
+> error is acknowledged and clears current data in FIFO, But SW here posts
+> the remaining data payload which still stays in FIFO as stale data
+> (data without packet header).
+>=20
+> Now once the interrupts are enabled, SW handles ARB lost/NACK error by
+> clearing the ARB lost/NACK interrupt. Now HW assumes that SW attended
+> the error and will parse/process stale data (data without packet header)
+> present in FIFO which causes invalid NACK errors.
+>=20
+> Fix: Enable the error interrupts before posting the packet into FIFO
+> which make sure HW to not clear the fifo. Also disable the packet mode
+> before acknowledging errors (ARB lost/NACK error) to not process any
+> stale data. As error interrupts are enabled before posting the packet
+> header use spinlock to avoid preempting.
+>=20
+> Signed-off-by: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >=20
 > Changes since v1:
-> - Add separate function for config load handling
+> - Align the commit message to 72 characters per line.
+> - Removing unnecessary paranthesis.
+> - Printing error if tegra_i2c_disable_packet_mode() fails
+>   is already present and handling error is not taken cared
+>   in ISR which was done in v2.
+
+I think I didn't express myself very clearly, or gave insufficient
+information. The changelog reads easier if you have one entry per
+revision. The above would then read:
+
+Changes in v3:
+- Printing error if tegra_i2c_disable_packet_mode() fails
+  is already present and handling error is not taken cared
+  in ISR which was done in v2.
+
+Changes in v2:
+- Align the commit message to 72 characters per line.
+- Removing unnecessary paranthesis.
+
+And it should go below the --- separator.
+
+One more nitpick below.
+
 > ---
-
-Almost perfect. The changelog should go *below* the --- separator. This
-is somewhat tricky to do because the separator will only be added by git
-format-patch. You can either manually move it after git format-patch or
-add the separator to the commit message. If you do the latter you'll get
-two separators, but git send-email/apply/am will do the right things and
-skip everything after the first separator and the beginning of the diff.
-
-Finally, one nitpick below, which you don't necessarily have to address.
-
->  drivers/i2c/busses/i2c-tegra.c | 39 +++++++++++++++++++++++++-----------=
----
->  1 file changed, 25 insertions(+), 14 deletions(-)
+>  drivers/i2c/busses/i2c-tegra.c | 28 ++++++++++++++++++++++++++--
+>  1 file changed, 26 insertions(+), 2 deletions(-)
 >=20
 > diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegr=
 a.c
-> index d764d64..6235f16 100644
+> index 6235f16..7922892 100644
 > --- a/drivers/i2c/busses/i2c-tegra.c
 > +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -423,12 +423,31 @@ static inline void tegra_i2c_clock_disable(struct t=
-egra_i2c_dev *i2c_dev)
->  		clk_disable(i2c_dev->fast_clk);
+> @@ -191,6 +191,7 @@ struct tegra_i2c_dev {
+>  	u16 clk_divisor_non_hs_mode;
+>  	bool is_suspended;
+>  	bool is_multimaster_mode;
+> +	spinlock_t xfer_lock;
+>  };
+> =20
+>  static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val, unsigned =
+long reg)
+> @@ -510,14 +511,27 @@ err:
+>  	return err;
 >  }
 > =20
-> +static int tegra_i2c_wait_for_config_load(struct tegra_i2c_dev *i2c_dev)
+> +static int tegra_i2c_disable_packet_mode(struct tegra_i2c_dev *i2c_dev)
 > +{
-> +	unsigned long timeout;
+> +	u32 cnfg;
 > +
-> +	if (i2c_dev->hw->has_config_load_reg) {
+> +	cnfg =3D i2c_readl(i2c_dev, I2C_CNFG);
+> +	if (cnfg & I2C_CNFG_PACKET_MODE_EN)
+> +		i2c_writel(i2c_dev, cnfg & ~I2C_CNFG_PACKET_MODE_EN, I2C_CNFG);
+> +
+> +	return tegra_i2c_wait_for_config_load(i2c_dev);
+> +}
 
-You could move the timeout variable declaration into the conditional
-block and initialize it immediately. That saves one line of code and
-restricts the scope of the variable to the conditional.
+Since you no longer use the return value you might as well just make the
+function return void. I don't feel very strongly about it, though, so
+I'll defer to Wolfram.
 
 Thierry
 
---EVF5PPMfhYS0aIcm
+--61jdw2sOBCFtR2d/
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXFOrdAAoJEN0jrNd/PrOhgwgP/00FRHmjTw8Od0v/mtimrUf0
-YSIE7Ubs2WSeuKw0deCBOFFeNHm77rCfUlfFQe9O+DRpG98mvl7MfXYnRFGlZW0b
-IniOXxVGsSdWi0pQT9Dq7JutRU6YtDOLT4vudWBN4uzLLJhuNMvkSswrL3xaGAuN
-wMxm9gHP2a2irA8QLDslhwI4Mj1l2g75mT8r+BUheyui7t5kHWJJDsoLf2IUGowA
-oR43g2zuGo6D+q4aE2pNBFxXJlrqvTXusp+1TtJm7leVi1UFT2eFhN0j0Y6jsfc7
-QwXuqNG36/FiRlmsvXiD2XOAWgx2HTznnRKTkj0hs4MQJTHXbXxzGzP2V98wAXLe
-lyaLB9FeigYrDiu1VdDNgeHQezs+wokJ1TdXyV9mj1ihjGIzGkfn5ZFXBT1Af81U
-igjO7jbIANpDZm3jm/d4Om5CdnmNo+RW0iPrzdWM327B41ZspavqCS/K/VVPhKBM
-Pf24Zid1CFLiPzNZYdbVvl6Kb6WclmUvmMHCHMPg4c/OJnBmb4U5CoDBmTwyle3v
-DAibrenqROHXCQKomn3ZV2Y52eaO4BUnHLNAyKXSmEbR47DAfVAMJdER2GY/ZB2a
-j0gLpX79MAvy8nlHZ24jP9gyhDlLuYSGCyIICGyTtCYOQG5FIieqBzRKKQSJ7U4A
-FIBj+he2b400M/6GPWsd
-=rqPa
+iQIcBAABCAAGBQJXFOxhAAoJEN0jrNd/PrOhiQQP/jR9dv5aUEdLqoO/1BKEX3v2
+AF4Cx+6YlIYZ9KUuDvyav0pEydKXSYirWVG8ruRGr96ZH95EXyJ2JM/d1NVmun8t
+SYnaUnJeJZ40TkzQPkR2EfarKzoxkT+FeDfRpK3UUcPuVk3al9C7Rhth+mwkjV8h
+CkLs80vAdMCkYYdTKZ7992+quNh3M2/BG4CcPI357xGeeCWTGGGWFq/ZtF7ZbaGH
+Fet0xj8SYNq3RJRb3W9dPYV43TdRqF6ECisyaWukDZQQ8fX51Oip0NXJFUuQIoU9
+gGUVlNDJI92C+m9gGTjZjVZAiIV48mSC0kgFIvNIp5LfXjc9d0MWnI5qTq3PGGrA
+V7R5WwbtQbegPKv7o4zQ+AuJ50rilP/ph6IQw39H8Quxla1lqq/T+YRSWnn73JYH
+2rFurqCiGD0caXalKLmcT3T0WoalS7bzwFcstLJm5LVet15zG91EHusSqHVPm5UH
+/CZ31hbNcBCNnhV7XAqXxwQGcafO32rRJlgsBqi05h8JbbWn2jGNAh07tRqhkIzS
++sjwt4o9a0YcWsNl4CfLGuOoahYdUGrEdBuGyP9olIRc2fh4Ui1Debw4gteBPrUS
++RbjSAWPePRNLRwDSwdGTmMz2isr24YEGUr+jD47KP7EAdRBreD6xYWxdyqIy2FO
+vh+mNgO+NffpnJvCmWHI
+=rtI0
 -----END PGP SIGNATURE-----
 
---EVF5PPMfhYS0aIcm--
+--61jdw2sOBCFtR2d/--
