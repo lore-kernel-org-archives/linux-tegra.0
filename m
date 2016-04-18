@@ -1,135 +1,151 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 2/2] i2c: tegra: proper handling of error cases
-Date: Mon, 18 Apr 2016 16:17:05 +0200
-Message-ID: <20160418141705.GB20508@ulmo.ba.sec>
-References: <1460985355-28901-1-git-send-email-smohammed@nvidia.com>
- <1460985355-28901-2-git-send-email-smohammed@nvidia.com>
+Subject: Re: [PATCH 1/2] dt-bindings: pci: tegra: Update for per-lane PHYs
+Date: Mon, 18 Apr 2016 16:48:09 +0200
+Message-ID: <20160418144809.GC20508@ulmo.ba.sec>
+References: <1457452094-5409-1-git-send-email-thierry.reding@gmail.com>
+ <56E98F2E.5010307@wwwdotorg.org>
+ <20160413162203.GB30129@ulmo.ba.sec>
+ <570E7C38.3070005@wwwdotorg.org>
+ <20160414152905.GB3366@ulmo.ba.sec>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="61jdw2sOBCFtR2d/"
+	protocol="application/pgp-signature"; boundary="S1BNGpv0yoYahz37"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1460985355-28901-2-git-send-email-smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20160414152905.GB3366-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---61jdw2sOBCFtR2d/
+--S1BNGpv0yoYahz37
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 18, 2016 at 06:45:55PM +0530, Shardar Shariff Md wrote:
-> To summarize the issue observed in error cases:
+On Thu, Apr 14, 2016 at 05:29:05PM +0200, Thierry Reding wrote:
+> On Wed, Apr 13, 2016 at 11:04:56AM -0600, Stephen Warren wrote:
+> > On 04/13/2016 10:22 AM, Thierry Reding wrote:
+> > > On Wed, Mar 16, 2016 at 10:51:58AM -0600, Stephen Warren wrote:
+> > > > On 03/08/2016 08:48 AM, Thierry Reding wrote:
+> > > > > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > > >=20
+> > > > > Changes to the pad controller device tree binding have required t=
+hat
+> > > > > each lane be associated with a separate PHY.
+> > > >=20
+> > > > I still don't think this has anything to do with DT bindings. Rathe=
+r, the
+> > > > definition of a PHY (in HW and the Linux PHY subsystem) is a single=
+ lane.
+> > > > That fact then requires drivers to support a PHY per lane rather th=
+an a
+> > > > single multi-lane PHY, and equally means the DT bindings must be wr=
+itten
+> > > > according to the correct definition of a PHY.
+> > > >=20
+> > > > Still, I suppose the commit description is fine as is.
+> > >=20
+> > > I've reworded the commit message to give a more accurate rationale for
+> > > the change. I'll be posting a v5 soon.
+> > >=20
+> > > > > Update the PCI host bridge
+> > > > > device tree binding to allow each root port to define the list of=
+ PHYs
+> > > > > required to drive the lanes associated with it.
+> > > >=20
+> > > > > diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra20=
+-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+> > > >=20
+> > > > > +Required properties for Tegra124 and later:
+> > > > > +- phys: Must contain an phandle to a PHY for each entry in phy-n=
+ames.
+> > > > > +- phy-names: Must include an entry for each active lane. Note th=
+at the number
+> > > > > +  of entries does not have to (though usually will) be equal to =
+the specified
+> > > > > +  number of lanes in the nvidia,num-lanes property. Entries are =
+of the form
+> > > > > +  "pcie-N": where N ranges from 0 to the value specified in nvid=
+ia,num-lanes.
+> > > >=20
+> > > > When would the number of PHYs not equal the number of lanes? I thou=
+ght the
+> > > > whole point of this patch was to switch to per-lane PHYs? Perhaps I=
+'m just
+> > > > misremembering some exception, so there may be no need to change th=
+is.
+> > >=20
+> > > This is useful to support the case where we want to connect a x1 or x2
+> > > device to a root port that is configured to drive more lanes. It's a
+> > > rather unusual configuration, but it would be possible for example to
+> > > have an onboard x1 ethernet card, but the board layout is such that it
+> > > runs in x1/x2 mode, with the ethernet card connected to the x2 port.
+> >=20
+> > Does the controller HW actually work correctly in such a mode?
 >=20
-> SW Flow: For i2c message transfer, packet header and data payload is
-> posted and then required error/packet completion interrupts are enabled
-> later.
+> I think it does, and up until a few minutes ago I was even sure that I
+> had tested it once. But looking at the various boards that I have I
+> don't think I actually have test equipment that's wired the proper way
+> to test this.
 >=20
-> HW flow: HW process the packet just after packet header is posted, if
-> ARB lost/NACK error occurs (SW will not handle immediately when error
-> happens as error interrupts are not enabled at this point). HW assumes
-> error is acknowledged and clears current data in FIFO, But SW here posts
-> the remaining data payload which still stays in FIFO as stale data
-> (data without packet header).
+> > Obviously a fully initialized x4 controller has to correctly handle bei=
+ng
+> > attached solely to a x1 device. However, that's a different case to sim=
+ply
+> > not initializing 3 of the 4 PHYs. It's plausible the controller handles=
+ this
+> > just fine, or that it hangs up or otherwise misbehaves if some of the P=
+HYs
+> > aren't enabled and hence it can't even detect whether something is atta=
+ched
+> > to them or not. Either way, adding your explanation into the binding wo=
+uld
+> > be useful to highlight the reason for the special case.
 >=20
-> Now once the interrupts are enabled, SW handles ARB lost/NACK error by
-> clearing the ARB lost/NACK interrupt. Now HW assumes that SW attended
-> the error and will parse/process stale data (data without packet header)
-> present in FIFO which causes invalid NACK errors.
->=20
-> Fix: Enable the error interrupts before posting the packet into FIFO
-> which make sure HW to not clear the fifo. Also disable the packet mode
-> before acknowledging errors (ARB lost/NACK error) to not process any
-> stale data. As error interrupts are enabled before posting the packet
-> header use spinlock to avoid preempting.
->=20
-> Signed-off-by: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> Changes since v1:
-> - Align the commit message to 72 characters per line.
-> - Removing unnecessary paranthesis.
-> - Printing error if tegra_i2c_disable_packet_mode() fails
->   is already present and handling error is not taken cared
->   in ISR which was done in v2.
+> Perhaps for now it would be better to make the binding stricter. The
+> wording could be relaxed if we ever determine that it still works
+> correctly with a number of PHYs smaller than the number of lanes.
 
-I think I didn't express myself very clearly, or gave insufficient
-information. The changelog reads easier if you have one entry per
-revision. The above would then read:
+Going over the patches again I realized that Jetson TK1 is actually one
+such case. The PCI host bridge controller is configured to run root port
+0 using two lanes, and root port 1 using one lane. However, only one
+lane is connected to each port. Root port 0 goes to the miniPCIe slot,
+which takes a single lane (PEX4), while root port 1 goes to the onboard
+NIC, which takes a single lane (PEX2) as well. x1 + x1 is an unsupported
+configuration for the root complex, though, hence why it is configured
+to be x2 + x1.
 
-Changes in v3:
-- Printing error if tegra_i2c_disable_packet_mode() fails
-  is already present and handling error is not taken cared
-  in ISR which was done in v2.
+I've tested that both the onboard NIC as well as a miniPCIe card work
+correctly with the setup.
 
-Changes in v2:
-- Align the commit message to 72 characters per line.
-- Removing unnecessary paranthesis.
-
-And it should go below the --- separator.
-
-One more nitpick below.
-
-> ---
->  drivers/i2c/busses/i2c-tegra.c | 28 ++++++++++++++++++++++++++--
->  1 file changed, 26 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegr=
-a.c
-> index 6235f16..7922892 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -191,6 +191,7 @@ struct tegra_i2c_dev {
->  	u16 clk_divisor_non_hs_mode;
->  	bool is_suspended;
->  	bool is_multimaster_mode;
-> +	spinlock_t xfer_lock;
->  };
-> =20
->  static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val, unsigned =
-long reg)
-> @@ -510,14 +511,27 @@ err:
->  	return err;
->  }
-> =20
-> +static int tegra_i2c_disable_packet_mode(struct tegra_i2c_dev *i2c_dev)
-> +{
-> +	u32 cnfg;
-> +
-> +	cnfg =3D i2c_readl(i2c_dev, I2C_CNFG);
-> +	if (cnfg & I2C_CNFG_PACKET_MODE_EN)
-> +		i2c_writel(i2c_dev, cnfg & ~I2C_CNFG_PACKET_MODE_EN, I2C_CNFG);
-> +
-> +	return tegra_i2c_wait_for_config_load(i2c_dev);
-> +}
-
-Since you no longer use the return value you might as well just make the
-function return void. I don't feel very strongly about it, though, so
-I'll defer to Wolfram.
+So I think the wording in the binding, as well as the example, are
+correct. So I left the original wording in place, but instead added a
+couple more examples so that we have one per SoC generation, which will
+hopefully clarify what properties should and shouldn't be used.
 
 Thierry
 
---61jdw2sOBCFtR2d/
+--S1BNGpv0yoYahz37
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXFOxhAAoJEN0jrNd/PrOhiQQP/jR9dv5aUEdLqoO/1BKEX3v2
-AF4Cx+6YlIYZ9KUuDvyav0pEydKXSYirWVG8ruRGr96ZH95EXyJ2JM/d1NVmun8t
-SYnaUnJeJZ40TkzQPkR2EfarKzoxkT+FeDfRpK3UUcPuVk3al9C7Rhth+mwkjV8h
-CkLs80vAdMCkYYdTKZ7992+quNh3M2/BG4CcPI357xGeeCWTGGGWFq/ZtF7ZbaGH
-Fet0xj8SYNq3RJRb3W9dPYV43TdRqF6ECisyaWukDZQQ8fX51Oip0NXJFUuQIoU9
-gGUVlNDJI92C+m9gGTjZjVZAiIV48mSC0kgFIvNIp5LfXjc9d0MWnI5qTq3PGGrA
-V7R5WwbtQbegPKv7o4zQ+AuJ50rilP/ph6IQw39H8Quxla1lqq/T+YRSWnn73JYH
-2rFurqCiGD0caXalKLmcT3T0WoalS7bzwFcstLJm5LVet15zG91EHusSqHVPm5UH
-/CZ31hbNcBCNnhV7XAqXxwQGcafO32rRJlgsBqi05h8JbbWn2jGNAh07tRqhkIzS
-+sjwt4o9a0YcWsNl4CfLGuOoahYdUGrEdBuGyP9olIRc2fh4Ui1Debw4gteBPrUS
-+RbjSAWPePRNLRwDSwdGTmMz2isr24YEGUr+jD47KP7EAdRBreD6xYWxdyqIy2FO
-vh+mNgO+NffpnJvCmWHI
-=rtI0
+iQIcBAABCAAGBQJXFPOnAAoJEN0jrNd/PrOhe90P/RQkdtw7v450sx3y/I4LIkTC
+GIr3Wqr/TrBlmMojqt7buyqgLcBbcCQrDCdC4NKv2F8cC0mw0PEcUr7VbzjApMcd
+PN/ZwfCsbTwBkqaThjL4H4Nshx34Q8ePUFAf8iq/ZxrU/NHQFNFxeKlO+eHChdlS
+1IR/WTk2QEqixWIoe85rZrFKLxVCCDV5FVlFADzRQkG1H7lvPI3Xb8G0RS7A2899
+XNQfWzMvDF9Bk7srMcd2guVp4CtlnQrcquvE3evUCiN5dxINd5q4gNJ7yFlLbrip
+fTFG7iQOQ6oWfLnt0FyDg5T3zZJ7hskm24x0GjYgdekX8CMRcwRbrGEJCIeABtBk
+b1oZ9dVlCYegurLUPBMjXaSkqZSOyIBRyPQXdEvQtuIHHbg9CErgmSIYjkJ1y1N8
+L1GXMneMpsFIrWkVH0i+6FWfBqgCQt9skRpVR5Azili73EhamHLetjdXiQYq/5GV
+Dj+vqKF6PDwmjdqBYZn0ow9PeEJAm7pfkNhQWGl8jBAP7CYdrvkLUcACatB6n1o7
+SyiufscgVr41nmYlVZ2yeWQR9xfh62CI5hBHeLxKnbW8CLfIkR5YFLrGfRhHkmYt
+mlej0bz7ogNWYiX1ZG7Ijhzjkp/jlOBNtoz5tsWtts7ydS/LhlayznEahSisMkx0
+sMr0p4XzJe8ByS074qiT
+=NC8e
 -----END PGP SIGNATURE-----
 
---61jdw2sOBCFtR2d/--
+--S1BNGpv0yoYahz37--
