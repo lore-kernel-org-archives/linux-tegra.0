@@ -1,62 +1,61 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 3/3] gpio: tegra: Add support for gpio debounce
-Date: Tue, 19 Apr 2016 11:43:25 +0100
-Message-ID: <57160BCD.4080005@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH V2 1/3] gpio: tegra: Don't open code
+ of_device_get_match_data()
+Date: Tue, 19 Apr 2016 14:06:06 +0200
+Message-ID: <20160419120606.GB8284@ulmo.ba.sec>
 References: <1461059020-25373-1-git-send-email-ldewangan@nvidia.com>
- <1461059020-25373-3-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1461059020-25373-3-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="IrhDeMKUP4DT/M7F"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1461059020-25373-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, swarren@wwwdotorg.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 19/04/16 10:43, Laxman Dewangan wrote:
-> NVIDIA's Tegra210 support the HW debounce in the GPIO
-> controller for all its GPIO pins.
-> 
-> Add support for setting debounce timing by implementing the
-> set_debounce callback of gpiochip.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
+--IrhDeMKUP4DT/M7F
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Apr 19, 2016 at 03:13:38PM +0530, Laxman Dewangan wrote:
+> Use of_device_get_match_data() for getting matched data
+> instead of implementing this locally.
+>=20
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Reviewed-by: Stephen Warren <swarren@nvidia.com>
+>=20
 > ---
-> Changes from V1:
-> - Write debounce count before enable.
-> - Make sure the debounce count do not have any boot residuals.
+> Collected reviewed by from Stephen.
 > ---
->  drivers/gpio/gpio-tegra.c | 49 +++++++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 49 insertions(+)
+>  drivers/gpio/gpio-tegra.c | 50 +++++++++++++++++++++++------------------=
+------
+>  1 file changed, 24 insertions(+), 26 deletions(-)
 
-[snip]
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-> @@ -327,6 +360,9 @@ static int tegra_gpio_resume(struct device *dev)
->  			tegra_gpio_writel(bank->oe[p], GPIO_OE(gpio));
->  			tegra_gpio_writel(bank->int_lvl[p], GPIO_INT_LVL(gpio));
->  			tegra_gpio_writel(bank->int_enb[p], GPIO_INT_ENB(gpio));
-> +			tegra_gpio_writel(bank->dbc_cnt[p], GPIO_DBC_CNT(gpio));
-> +			tegra_gpio_writel(bank->dbc_enb[p],
-> +					  GPIO_MSK_DBC_EN(gpio));
+--IrhDeMKUP4DT/M7F
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If these registers are not valid on Tegra devices prior to Tegra210, I
-don't think we should write to these locations on those devices (even if
-we are writing back the values read).
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-> @@ -351,6 +387,10 @@ static int tegra_gpio_suspend(struct device *dev)
->  			bank->oe[p] = tegra_gpio_readl(GPIO_OE(gpio));
->  			bank->int_enb[p] = tegra_gpio_readl(GPIO_INT_ENB(gpio));
->  			bank->int_lvl[p] = tegra_gpio_readl(GPIO_INT_LVL(gpio));
-> +			bank->dbc_enb[p] = tegra_gpio_readl(
-> +							GPIO_MSK_DBC_EN(gpio));
-> +			bank->dbc_enb[p] = (bank->dbc_enb[p] << 8) ||
-> +						bank->dbc_enb[p];
+iQIcBAABCAAGBQJXFh8sAAoJEN0jrNd/PrOhiIkP/0wV7SKpcXd4XToCv1GbzBUI
+EJTVHAcyzrIDmYDZz5KJTYQnc5rCDVw3g2iEqgyE/D5LHXviLLiFZTXETHTTN333
+l0ctfsPsYEHzphDx/ickfsXqQWUZHYNzVKnu7g8DsavBzJNnvp/1bFgJ0nPCPkG3
+qZOQmSNW1PwIGI4rCEDDv9c6Rzh9Rq37xrWwRAaUAXzfoRvrySVizFaxOk9RmjPC
+JQr1g8aKu4V8pEHiuZaXd6Dgk0SrcxNZevh98jDPGZo0ZxR80VQ7gveJUIv6wEXy
+wTzzKvL8nZ7rECJcmSzypxnienlaRoMQ0+XDi+PwFsihqE8nAW4zavPu8fCslq/d
+2XU3Ht3VIEB5MFlbg21HSuIP8t+jnC0kDKqqZtPz8keIewwqUq1luxjzlxpTbSZT
+n+4gViy7Y5PJnueAdPe7bLXctpeuQqVmgw6mPisbKWsaOccp6hjtvbWyDAdB1jso
+fkKB63+GHk5WmcIqyAzZpu3Wmwa5Op9MSn4VMsWTr29LWh2J/318MdoE7eUAO3Ly
+bTC5O+JWp6eiiQQQZKMdQFEvdy/tQNTM8Y/8jMftBD3kfJcieBg9i8SM0hlmQWOb
+zWBSJAcJWmMTK55mVteChoIVFtEaQCJGiWbHuZffM5JxlKbUMLpG4MqsGNRjUMa3
+38ZRJjW3bqzUlKClOYbl
+=XJF7
+-----END PGP SIGNATURE-----
 
-Same here, not sure we should even bother reading these for Tegra's
-before Tegra210.
-
-Cheers
-Jon
+--IrhDeMKUP4DT/M7F--
