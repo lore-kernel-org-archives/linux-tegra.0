@@ -1,76 +1,95 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V4 2/3] dmaengine: tegra-adma: Add support for Tegra210
- ADMA
-Date: Tue, 19 Apr 2016 14:59:49 +0100
-Message-ID: <571639D5.10108@nvidia.com>
-References: <1458057390-20756-1-git-send-email-jonathanh@nvidia.com>
- <1458057390-20756-3-git-send-email-jonathanh@nvidia.com>
- <20160405213649.GA11586@vkoul-mobl.iind.intel.com>
- <570BB001.3020202@nvidia.com> <20160412141025.GJ2274@localhost>
- <570D2104.1040607@nvidia.com> <20160413134917.GP2274@localhost>
- <570F7952.2030606@nvidia.com> <5714F7EF.5000605@nvidia.com>
- <20160419132556.GP2274@localhost>
+Subject: Re: [PATCH 05/15] irqchip: Mask the non-type/sense bits when
+ translating an IRQ
+Date: Tue, 19 Apr 2016 15:14:07 +0100
+Message-ID: <57163D2F.5020005@nvidia.com>
+References: <1458224359-32665-1-git-send-email-jonathanh@nvidia.com>
+ <1458224359-32665-6-git-send-email-jonathanh@nvidia.com>
+ <20160409120333.3982c53b@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160419132556.GP2274@localhost>
+In-Reply-To: <20160409120333.3982c53b-5wv7dgnIgG8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 19/04/16 14:25, Vinod Koul wrote:
-> On Mon, Apr 18, 2016 at 04:06:23PM +0100, Jon Hunter wrote:
->> On 14/04/16 12:04, Jon Hunter wrote:
-
-[snip]
-
->>> I had a look at this, but actually, I don't think this is going to work.
->>>
->>> Looking at dma_request_channel(), it is going to get a DMA channel that
->>> matches the mask for any DMA controller. In the xlate I already know
->>> which DMA controller I am and I just want one of the channels. The flow
->>> here is ...
->>>
->>> dma_request_chan()
->>>   --> of_dma_request_slave_channel()
->>>     --> xlate()
->>>       --> dma_get_any_slave_channel()
->>>
->>> There are several other DMA drivers that are calling
->>> dma_get_any_slave_channel() from their xlate function which makes sense
->>> because they are requesting one of their own channels.
->>>
->>> I can understand that you wish to consolidate the APIs for requesting a
->>> channel, but it seems to me that you still need to have an API that DMA
->>> controller drivers can call where they can pass their dma_device
->>> structure to ensure you get a channel for the appropriate DMA controller.
+On 09/04/16 12:03, Marc Zyngier wrote:
+> On Thu, 17 Mar 2016 14:19:09 +0000
+> Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 > 
-> Yes but the idea was that xlate will help you to get the right channel. The
-> whole dmaengine property was supposed to help you with that
+>> The firmware parameter that contains the IRQ sense bits may also contain
+>> other data. When return the IRQ type, bits outside of these sense bits
+>> should be masked. If these bits are not masked and
+>> irq_create_fwspec_mapping() is called to map an IRQ, then the comparison
+>> of the type returned from irq_domain_translate() will never match
+>> that returned by irq_get_trigger_type() (because this function masks the
+>> none sense bits) and so we will always call irq_set_irq_type() to program
+>> the type even if it was not really necessary.
+>>
+>> Currently, the downside to this is unnecessarily re-programmming the type
+>> but nevertheless this should be avoided.
+>>
+>> The Tegra LIC, TI Crossbar and GIC-V3 irqchips all have client instances
+>> (from reviewing the device-tree sources) where bits outside the IRQ sense
+>> bits are set, but do not mask these bits. Therefore, ensure these bits
+>> are masked for these irqchips.
+> 
+> For GICv3, this shouldn't be the case. The DT clearly says that the 3rd
+> field should only contain the trigger description. It looks like people
+> have been copying their GICv2 DT and simply slapped the v3 description
+> in the middle, without changing their interrupt specifiers. Duh.
 
-Well it depends on the DMA controller. In the case of tegra the xlate
-helps you extract the slave request ID for a given device. However,
-because any channel can be used with any slave request ID, we don't care
-about the exact channel. So we request any available channel for the DMA
-controller in question and program it with the slave request we got from
-the xlate.
+Hmmm ... I was just double checking on this for the gic-v3 by wading
+through the DTS files, and may be there is no issue here. However,
+looking at the current code it is a bit inconsistent between firmware
+types ...
 
-> Please check the omap code which gets a specfic channel using this
+ static int gic_irq_domain_translate(struct irq_domain *d,
+                                     struct irq_fwspec *fwspec,
+                                     unsigned long *hwirq,
+                                     unsigned int *type)
+ {
+         if (is_of_node(fwspec->fwnode)) {
+                 if (fwspec->param_count < 3)
+                         return -EINVAL;
 
-Yes I have already seen this and it does not help here, because OMAP
-uses of_dma_simple_xlate() which calls dma_request_channel() and again
-this will get a channel from any DMA controller that matches the caps
-flags. For tegra we have two DMA controllers and both support CYCLIC
-transfers and so I am concerned we would get a channel from the wrong
-DMA controller.
+                 switch (fwspec->param[0]) {
+                 case 0:                 /* SPI */
+                         *hwirq = fwspec->param[1] + 32;
+                         break;
+                 case 1:                 /* PPI */
+                         *hwirq = fwspec->param[1] + 16;
+                         break;
+                 case GIC_IRQ_TYPE_LPI:  /* LPI */
+                         *hwirq = fwspec->param[1];
+                         break;
+                 default:
+                         return -EINVAL;
+                 }
 
-I have seen some DMA drivers (such as imx-dma) use the filter function
-to match the DMA controller, but it seems daft to use the filter
-function to match the DMA controller when we already know in the xlate
-which DMA controller we are.
+                 *type = fwspec->param[2] & IRQ_TYPE_SENSE_MASK;
+                 return 0;
+         }
+
+         if (is_fwnode_irqchip(fwspec->fwnode)) {
+                 if(fwspec->param_count != 2)
+                         return -EINVAL;
+
+                 *hwirq = fwspec->param[0];
+                 *type = fwspec->param[1];
+                 return 0;
+         }
+
+         return -EINVAL;
+
+> I guess this patch doesn't hurt though.
+
+Yes, it doesn't but I think I will leave this alone for now, given that
+I can't find a case where this would be a problem.
 
 Cheers
 Jon
