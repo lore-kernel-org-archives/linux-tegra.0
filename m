@@ -1,44 +1,117 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH V2 3/3] gpio: tegra: Add support for gpio debounce
-Date: Tue, 19 Apr 2016 10:36:58 -0600
-Message-ID: <57165EAA.7080304@wwwdotorg.org>
-References: <1461059020-25373-1-git-send-email-ldewangan@nvidia.com>
- <1461059020-25373-3-git-send-email-ldewangan@nvidia.com>
- <571658CE.1040306@wwwdotorg.org> <57165AAE.8050108@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <57165AAE.8050108@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: linus.walleij@linaro.org, gnurou@gmail.com, thierry.reding@gmail.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: [tegrarcm PATCH] Don't assume cryptopp is system-wide installed
+Date: Tue, 19 Apr 2016 22:25:17 +0200
+Message-ID: <1461097517-21626-1-git-send-email-thomas.petazzoni@free-electrons.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/19/2016 10:19 AM, Laxman Dewangan wrote:
->
-> On Tuesday 19 April 2016 09:41 PM, Stephen Warren wrote:
->> On 04/19/2016 03:43 AM, Laxman Dewangan wrote:
->>> NVIDIA's Tegra210 support the HW debounce in the GPIO
->>> controller for all its GPIO pins.
->>>
->>> Add support for setting debounce timing by implementing the
->>> set_debounce callback of gpiochip.
->>
->>> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
->>
->>> @@ -327,6 +360,9 @@ static int tegra_gpio_resume(struct device *dev)
->>>               tegra_gpio_writel(bank->oe[p], GPIO_OE(gpio));
->>>               tegra_gpio_writel(bank->int_lvl[p], GPIO_INT_LVL(gpio));
->>>               tegra_gpio_writel(bank->int_enb[p], GPIO_INT_ENB(gpio));
->>> +            tegra_gpio_writel(bank->dbc_cnt[p], GPIO_DBC_CNT(gpio));
->>> +            tegra_gpio_writel(bank->dbc_enb[p],
->>> +                      GPIO_MSK_DBC_EN(gpio));
->>
->> Why not just write to the "regular" register rather than the mask
->> register here...
->
-> There is no regular register for enabling debounce. Only masked register
-> exist.
+The current build system adds "-isystem /usr/include/$(CRYPTOLIB)" to
+AM_CPPFLAGS, but this is wrong because cryptopp might not be installed
+in this location. Instead, the build system should simply include
+<cryptopp/...> or <crypto++/...> and rely on the compiler include
+path.
 
-Sigh. Ignore that comment then:-)
+The tricky part is that it can be <cryptopp/...> or <crypto++/...>. To
+solve this, we use a solution similar to the one used in
+https://github.com/bingmann/crypto-speedtest/blob/master/m4/cryptopp.m4
+and
+https://github.com/bingmann/crypto-speedtest/blob/master/src/speedtest_cryptopp.cpp:
+the configure script fills in a variable called
+CRYPTOLIB_HEADER_PREFIX, and we use that in the C++ code to include
+the right header file.
+
+It is worth mentioning that doing #include
+<CRYPTOLIB_HEADER_PREFIX/foobar.h> doesn't work, and we have to use an
+intermediate #define'd constant to overcome this C preprocessor
+limitation.
+
+Signed-off-by: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+---
+ configure.ac     |  1 +
+ src/Makefile.am  |  2 +-
+ src/aes-cmac.cpp | 28 +++++++++++++++++-----------
+ 3 files changed, 19 insertions(+), 12 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 943654f..620e158 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -33,6 +33,7 @@ AC_LINK_IFELSE(
+ 		[AC_MSG_ERROR([libcrypto++/libcryptopp is not installed.])])]
+ )
+ AC_SUBST(CRYPTOLIB)
++AC_DEFINE_UNQUOTED([CRYPTOLIB_HEADER_PREFIX], [$CRYPTOLIB], [Location of cryptolib header])
+ LDFLAGS=$SAVED_LDFLAGS
+ AC_LANG(C)
+ 
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 3dad0e6..35a606f 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -1,5 +1,5 @@
+ AM_CFLAGS = -Wall -std=c99
+-AM_CPPFLAGS = -isystem /usr/include/$(CRYPTOLIB) $(LIBUSB_CFLAGS)
++AM_CPPFLAGS = $(LIBUSB_CFLAGS)
+ 
+ bin_PROGRAMS = tegrarcm
+ tegrarcm_SOURCES = \
+diff --git a/src/aes-cmac.cpp b/src/aes-cmac.cpp
+index 24c89f8..da8be5a 100644
+--- a/src/aes-cmac.cpp
++++ b/src/aes-cmac.cpp
+@@ -26,6 +26,9 @@
+  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
++
++#include "config.h"
++
+ #include <iostream>
+ using std::cout;
+ using std::cerr;
+@@ -40,26 +43,29 @@ using std::string;
+ #include <cstdlib>
+ using std::exit;
+ 
+-#include "cryptlib.h"
+-using CryptoPP::Exception;
++#define CRYPTOPP_INCLUDE_CRYPTLIB	<CRYPTOLIB_HEADER_PREFIX/cryptlib.h>
++#define CRYPTOPP_INCLUDE_CMAC		<CRYPTOLIB_HEADER_PREFIX/cmac.h>
++#define CRYPTOPP_INCLUDE_AES		<CRYPTOLIB_HEADER_PREFIX/aes.h>
++#define CRYPTOPP_INCLUDE_HEX		<CRYPTOLIB_HEADER_PREFIX/hex.h>
++#define CRYPTOPP_INCLUDE_FILTERS	<CRYPTOLIB_HEADER_PREFIX/filters.h>
++#define CRYPTOPP_INCLUDE_SECBLOCK	<CRYPTOLIB_HEADER_PREFIX/secblock.h>
+ 
+-#include "cmac.h"
+-using CryptoPP::CMAC;
++#include CRYPTOPP_INCLUDE_CRYPTLIB
++#include CRYPTOPP_INCLUDE_CMAC
++#include CRYPTOPP_INCLUDE_AES
++#include CRYPTOPP_INCLUDE_HEX
++#include CRYPTOPP_INCLUDE_FILTERS
++#include CRYPTOPP_INCLUDE_SECBLOCK
+ 
+-#include "aes.h"
++using CryptoPP::Exception;
++using CryptoPP::CMAC;
+ using CryptoPP::AES;
+-
+-#include "hex.h"
+ using CryptoPP::HexEncoder;
+ using CryptoPP::HexDecoder;
+-
+-#include "filters.h"
+ using CryptoPP::StringSink;
+ using CryptoPP::StringSource;
+ using CryptoPP::HashFilter;
+ using CryptoPP::HashVerificationFilter;
+-
+-#include "secblock.h"
+ using CryptoPP::SecByteBlock;
+ 
+ extern "C" int cmac_hash(const unsigned char *msg, int len, unsigned char *cmac_buf)
+-- 
+2.6.4
