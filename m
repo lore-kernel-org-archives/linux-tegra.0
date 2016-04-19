@@ -1,58 +1,118 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 1/2] i2c: tegra: add separate function for config_load
-Date: Tue, 19 Apr 2016 10:31:41 +0100
-Message-ID: <5715FAFD.2070303@nvidia.com>
-References: <1460985355-28901-1-git-send-email-smohammed@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2 1/3] gpio: tegra: Don't open code of_device_get_match_data()
+Date: Tue, 19 Apr 2016 15:13:38 +0530
+Message-ID: <1461059020-25373-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1460985355-28901-1-git-send-email-smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Use of_device_get_match_data() for getting matched data
+instead of implementing this locally.
 
-On 18/04/16 14:15, Shardar Shariff Md wrote:
-> - Define separate function for configuration load register handling
-> to make it use by different functions later.
-> - Instead of calculating timeout for the config load during init,
-> calculate it when config load register is written. Also use the
-> msecs_to_jiffies for timeout calculation instead of macro HZ.
-> 
-> Signed-off-by: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Changes since v1:
-> - Add separate function for config load handling
-> ---
->  drivers/i2c/busses/i2c-tegra.c | 39 +++++++++++++++++++++++++--------------
->  1 file changed, 25 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index d764d64..6235f16 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -423,12 +423,31 @@ static inline void tegra_i2c_clock_disable(struct tegra_i2c_dev *i2c_dev)
->  		clk_disable(i2c_dev->fast_clk);
->  }
->  
-> +static int tegra_i2c_wait_for_config_load(struct tegra_i2c_dev *i2c_dev)
-> +{
-> +	unsigned long timeout;
-> +
-> +	if (i2c_dev->hw->has_config_load_reg) {
-> +		i2c_writel(i2c_dev, I2C_MSTR_CONFIG_LOAD, I2C_CONFIG_LOAD);
-> +		timeout = jiffies + msecs_to_jiffies(1000);
-> +		while (i2c_readl(i2c_dev, I2C_CONFIG_LOAD) != 0) {
-> +			if (time_after(jiffies, timeout)) {
-> +				dev_warn(i2c_dev->dev,
-> +					 "timeout waiting for config load\n");
-> +				return -ETIMEDOUT;
-> +			}
-> +			msleep(1);
-> +		}
+Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Reviewed-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-How about using the readx_poll_timeout() (include/linux/iopoll.h) here?
+---
+Collected reviewed by from Stephen.
+---
+ drivers/gpio/gpio-tegra.c | 50 +++++++++++++++++++++++------------------------
+ 1 file changed, 24 insertions(+), 26 deletions(-)
 
-Cheers
-Jon
+diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+index 790bb11..1b0c497 100644
+--- a/drivers/gpio/gpio-tegra.c
++++ b/drivers/gpio/gpio-tegra.c
+@@ -75,6 +75,11 @@ struct tegra_gpio_bank {
+ #endif
+ };
+ 
++struct tegra_gpio_soc_config {
++	u32 bank_stride;
++	u32 upper_offset;
++};
++
+ static struct device *dev;
+ static struct irq_domain *irq_domain;
+ static void __iomem *regs;
+@@ -445,27 +450,6 @@ static const struct dev_pm_ops tegra_gpio_pm_ops = {
+ 	SET_SYSTEM_SLEEP_PM_OPS(tegra_gpio_suspend, tegra_gpio_resume)
+ };
+ 
+-struct tegra_gpio_soc_config {
+-	u32 bank_stride;
+-	u32 upper_offset;
+-};
+-
+-static struct tegra_gpio_soc_config tegra20_gpio_config = {
+-	.bank_stride = 0x80,
+-	.upper_offset = 0x800,
+-};
+-
+-static struct tegra_gpio_soc_config tegra30_gpio_config = {
+-	.bank_stride = 0x100,
+-	.upper_offset = 0x80,
+-};
+-
+-static const struct of_device_id tegra_gpio_of_match[] = {
+-	{ .compatible = "nvidia,tegra30-gpio", .data = &tegra30_gpio_config },
+-	{ .compatible = "nvidia,tegra20-gpio", .data = &tegra20_gpio_config },
+-	{ },
+-};
+-
+ /* This lock class tells lockdep that GPIO irqs are in a different
+  * category than their parents, so it won't report false recursion.
+  */
+@@ -473,8 +457,7 @@ static struct lock_class_key gpio_lock_class;
+ 
+ static int tegra_gpio_probe(struct platform_device *pdev)
+ {
+-	const struct of_device_id *match;
+-	struct tegra_gpio_soc_config *config;
++	const struct tegra_gpio_soc_config *config;
+ 	struct resource *res;
+ 	struct tegra_gpio_bank *bank;
+ 	int ret;
+@@ -484,12 +467,11 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+ 
+ 	dev = &pdev->dev;
+ 
+-	match = of_match_device(tegra_gpio_of_match, &pdev->dev);
+-	if (!match) {
++	config = of_device_get_match_data(&pdev->dev);
++	if (!config) {
+ 		dev_err(&pdev->dev, "Error: No device match found\n");
+ 		return -ENODEV;
+ 	}
+-	config = (struct tegra_gpio_soc_config *)match->data;
+ 
+ 	tegra_gpio_bank_stride = config->bank_stride;
+ 	tegra_gpio_upper_offset = config->upper_offset;
+@@ -578,6 +560,22 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static struct tegra_gpio_soc_config tegra20_gpio_config = {
++	.bank_stride = 0x80,
++	.upper_offset = 0x800,
++};
++
++static struct tegra_gpio_soc_config tegra30_gpio_config = {
++	.bank_stride = 0x100,
++	.upper_offset = 0x80,
++};
++
++static const struct of_device_id tegra_gpio_of_match[] = {
++	{ .compatible = "nvidia,tegra30-gpio", .data = &tegra30_gpio_config },
++	{ .compatible = "nvidia,tegra20-gpio", .data = &tegra20_gpio_config },
++	{ },
++};
++
+ static struct platform_driver tegra_gpio_driver = {
+ 	.driver		= {
+ 		.name	= "tegra-gpio",
+-- 
+2.1.4
