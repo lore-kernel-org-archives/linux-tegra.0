@@ -1,7 +1,7 @@
 From: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [tegrarcm PATCH] Don't assume cryptopp is system-wide installed
-Date: Tue, 19 Apr 2016 15:50:20 -0700
-Message-ID: <20160419225020.GA12475@nvidia.com>
+Date: Tue, 19 Apr 2016 16:57:45 -0700
+Message-ID: <20160419235745.GA28796@nvidia.com>
 References: <1461097517-21626-1-git-send-email-thomas.petazzoni@free-electrons.com>
  <5716B20E.8050607@wwwdotorg.org>
 Mime-Version: 1.0
@@ -39,7 +39,18 @@ On Tue, Apr 19, 2016 at 04:32:46PM -0600, Stephen Warren wrote:
 > I think this looks conceptually OK. CC += Allen to double-check
 > since he wrote the original cryptopp autoconf support.
 
-Won't the same problem with the naming happen when we link as well?
-(The "-lcryptopp") ?  Can pkg-config help here?
+What about the following as an alternative?
 
--Allen
+--
+diff --git a/src/Makefile.am b/src/Makefile.am
+index 3dad0e6d5e72..22410b3f81bf 100644
+--- a/src/Makefile.am
++++ b/src/Makefile.am
+@@ -1,5 +1,6 @@
+ AM_CFLAGS = -Wall -std=c99
+-AM_CPPFLAGS = -isystem /usr/include/$(CRYPTOLIB) $(LIBUSB_CFLAGS)
++CRYPTO_PREFIX = $(shell pkg-config --variable=includedir libcrypto++)
++AM_CPPFLAGS = -isystem $(CRYPTO_PREFIX)/$(CRYPTOLIB) $(LIBUSB_CFLAGS)
+ 
+ bin_PROGRAMS = tegrarcm
+ tegrarcm_SOURCES = \
