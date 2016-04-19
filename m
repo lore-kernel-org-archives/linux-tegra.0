@@ -1,74 +1,59 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH 3/3] gpio: tegra: Add support for gpio debounce
-Date: Mon, 18 Apr 2016 22:36:18 +0530
-Message-ID: <5715140A.6030502@nvidia.com>
-References: <1460969178-20914-1-git-send-email-ldewangan@nvidia.com> <1460969178-20914-3-git-send-email-ldewangan@nvidia.com> <57150D8C.7020100@wwwdotorg.org>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] thermal: tegra: mark PM functions __maybe_unused
+Date: Tue, 19 Apr 2016 10:35:55 +0800
+Message-ID: <5715998B.6080607@nvidia.com>
+References: <1460838026-1242452-1-git-send-email-arnd@arndb.de> <20160418071513.GA13078@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <57150D8C.7020100@wwwdotorg.org>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, linus.walleij@linaro.org
-Cc: gnurou@gmail.com, thierry.reding@gmail.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160418071513.GA13078-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Zhang Rui <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On Monday 18 April 2016 10:08 PM, Stephen Warren wrote:
-> On 04/18/2016 02:46 AM, Laxman Dewangan wrote:
->
+
+On 2016=E5=B9=B404=E6=9C=8818=E6=97=A5 15:15, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+>=20
+> On Sat, Apr 16, 2016 at 10:19:33PM +0200, Arnd Bergmann wrote:
+>> After the PM support has been added to this driver, we get
+>> a harmless warning when that support is disabled at compile
+>> time:
 >>
->> +
->> +    /* There is only one debounce count register per port and hence
->> +     * set the maximum of current and requested debounce time.
->> +     */
->> +    max_dbc = tegra_gpio_readl(GPIO_DBC_CNT(offset));
->
-> What if the system boots with random values in that register, or some 
-> code that runs before the kernel programs large values into the 
-> register? That would (incorrectly) impose a lower bound on the 
-> possible values the kernel driver can impose. Perhaps the kernel 
-> should clear the DBC_CNT registers at probe(), or should store a 
-> shadow copy of the DBC_CNT register, use that value here rather than 
-> re-reading the registers, and clear that SW shadow at probe().
->
+>> drivers/thermal/tegra/soctherm.c:641:12: error: 'soctherm_resume' de=
+fined but not used [-Werror=3Dunused-function]
+>>  static int soctherm_resume(struct device *dev)
+>>
+>> This marks the two PM functions as __maybe_unused to shut up
+>> the warning. This is preferred over adding an #ifdef around
+>> them, as it is harder to get wrong, and provides better
+>> compile-time coverage.
+>>
+>> Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+>> Fixes: a134b4143b65 ("thermal: tegra: add PM support")
+>> ---
+>>  drivers/thermal/tegra/soctherm.c | 4 ++--
+>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> The need for this should go away when Jon's generic power domain seri=
+es
 
-Clearing in probe is better option than shadowing it. If we shadow then 
-need loop as there is only one register per port which have 8 pins and 
-this function get called per pin basis.
+Hi Thierry,
+Could you please show me the Jon's generic power domain series, so that=
+ I can
+verify it.
 
+Thanks.
 
-
-
->> +    max_dbc = max(max_dbc, debounce_ms);
->
-> I wonder if there should be more discussion of how to honor 
-> conflicting requests. Perhaps we should only allow exactly equal 
-> values (someone might strictly care about latency, and increasing the 
-> latency of GPIO X1 just because GPIO X5 wanted a longer debounce 
-> period might not be acceptable). Does the GPIO subsystem define 
-> explicit semantics for this case?
->
-
-
-Not seen form  GOIO subsystem as GOIO subsystem assume this 
-configuration is per GPIO, not for group of GPIO.
-
-However, everywhere, the debounce parameter should be provided as 
-platform specific from DT and on this case, the platform developer knows 
-what is best common value.
-
-
->> + tegra_gpio_mask_write(GPIO_MSK_DBC_EN(offset), offset, 1);
->> +    tegra_gpio_writel(max_dbc, GPIO_DBC_CNT(offset));
->
-> I think DBC_CNT should be written first; the debounce process uses 
-> that data to configure itself. The process shouldn't be enabled before 
-> it's configured.
->
-
-OK, make sense as safe game.
-The debounce is in effect when any change in the pin and this call 
-should be happen before any state change in pin.
-
-
+> gets merged (hopefully very soon now) and enabled on 32-bit ARM. In t=
+he
+> meantime:
+>=20
+> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> * Unknown Key
+> * 0x7F3EB3A1
+>=20
