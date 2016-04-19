@@ -1,69 +1,66 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 3/3] gpio: tegra: Add support for gpio debounce
-Date: Tue, 19 Apr 2016 10:01:15 -0600
-Message-ID: <5716564B.90407@wwwdotorg.org>
-References: <1460969178-20914-1-git-send-email-ldewangan@nvidia.com>
- <1460969178-20914-3-git-send-email-ldewangan@nvidia.com>
- <57150D8C.7020100@wwwdotorg.org> <5715140A.6030502@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V2 2/3] gpio: tegra: Remove the need of keeping device
+ handle for gpio driver
+Date: Tue, 19 Apr 2016 10:04:20 -0600
+Message-ID: <57165704.9010403@wwwdotorg.org>
+References: <1461059020-25373-1-git-send-email-ldewangan@nvidia.com>
+ <1461059020-25373-2-git-send-email-ldewangan@nvidia.com>
+ <20160419123323.GC8284@ulmo.ba.sec> <571627F5.7000307@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <5715140A.6030502@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, linus.walleij@linaro.org
-Cc: gnurou@gmail.com, thierry.reding@gmail.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <571627F5.7000307-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/18/2016 11:06 AM, Laxman Dewangan wrote:
+On 04/19/2016 06:43 AM, Laxman Dewangan wrote:
 >
-> On Monday 18 April 2016 10:08 PM, Stephen Warren wrote:
->> On 04/18/2016 02:46 AM, Laxman Dewangan wrote:
+> On Tuesday 19 April 2016 06:03 PM, Thierry Reding wrote:
+>> * PGP Signed by an unknown key
 >>
+>> On Tue, Apr 19, 2016 at 03:13:39PM +0530, Laxman Dewangan wrote:
+>>> Remove the file static device handle variable for keeping device handle
+>>> of driver as this is just required for error prints. The required device
+>>> handle are available from gpiochip structure.
 >>>
->>> +
->>> +    /* There is only one debounce count register per port and hence
->>> +     * set the maximum of current and requested debounce time.
->>> +     */
->>> +    max_dbc = tegra_gpio_readl(GPIO_DBC_CNT(offset));
->>
->> What if the system boots with random values in that register, or some
->> code that runs before the kernel programs large values into the
->> register? That would (incorrectly) impose a lower bound on the
->> possible values the kernel driver can impose. Perhaps the kernel
->> should clear the DBC_CNT registers at probe(), or should store a
->> shadow copy of the DBC_CNT register, use that value here rather than
->> re-reading the registers, and clear that SW shadow at probe().
+>>> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> ---
+>>>   drivers/gpio/gpio-tegra.c | 8 ++++----
+>>>   1 file changed, 4 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+>>> index 1b0c497..de022a9 100644
+>>> --- a/drivers/gpio/gpio-tegra.c
+>>> +++ b/drivers/gpio/gpio-tegra.c
+>>> @@ -80,7 +80,6 @@ struct tegra_gpio_soc_config {
+>>>       u32 upper_offset;
+>>>   };
+>>> -static struct device *dev;
+>>>   static struct irq_domain *irq_domain;
+>>>   static void __iomem *regs;
+>>>   static u32 tegra_gpio_bank_count;
+>>> @@ -240,7 +239,8 @@ static int tegra_gpio_irq_set_type(struct
+>>> irq_data *d, unsigned int type)
+>>>       ret = gpiochip_lock_as_irq(&tegra_gpio_chip, gpio);
+>>>       if (ret) {
+>>> -        dev_err(dev, "unable to lock Tegra GPIO %d as IRQ\n", gpio);
+>>> +        dev_err(tegra_gpio_chip.parent,
+>>> +            "unable to lock Tegra GPIO %d as IRQ\n", gpio);
+>> Can't we get rid of the tegra_gpio_chip global variable altogether? We
+>> set a struct tegra_gpio_bank * as the chip data for each of the
+>> interrupts, so if we added a back link to the GPIO chip to each bank
+>> we could easily get at the GPIO chip (and its parent device) from the
+>> IRQ chip implementation.
 >>
 >
-> Clearing in probe is better option than shadowing it.
+> We can get rid of all the global variables and can have only one (this
+> is because our REGS macros uses the stride and changing then part of
+> argument is too much change for single patch) as suggested by Stephen.
 
-Sounds fine.
-
- > If we shadow then
-> need loop as there is only one register per port which have 8 pins and
-> this function get called per pin basis.
-
-Note that there is a per-bank data structure "struct tegra_gpio_bank" 
-that could be used to store the data, so no need for any loops. You 
-could just store an integer per port there, and do the same "max" 
-algorithm as in the current patch, just on that variable. Still, just 
-clearing the register sounds fine too.
-
->>> +    max_dbc = max(max_dbc, debounce_ms);
->>
->> I wonder if there should be more discussion of how to honor
->> conflicting requests. Perhaps we should only allow exactly equal
->> values (someone might strictly care about latency, and increasing the
->> latency of GPIO X1 just because GPIO X5 wanted a longer debounce
->> period might not be acceptable). Does the GPIO subsystem define
->> explicit semantics for this case?
->
-> Not seen form  GOIO subsystem as GOIO subsystem assume this
-> configuration is per GPIO, not for group of GPIO.
->
-> However, everywhere, the debounce parameter should be provided as
-> platform specific from DT and on this case, the platform developer knows
-> what is best common value.
-
-Hopefully true, yes:-)
+The REGS macro can take a parameter that points to the struct 
+tegra_gpio_chip, which in turn can point at the struct 
+tegra_gpio_soc_config. That doesn't sound like too many parameters/... 
+to me. There's little point getting rid of all-but-one global.
