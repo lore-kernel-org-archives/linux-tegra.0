@@ -1,54 +1,58 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Tegra baseline test results for v4.6-rc1
-Date: Tue, 19 Apr 2016 10:26:51 +0100
-Message-ID: <5715F9DB.5040403@nvidia.com>
-References: <5715F45E.3080305@nvidia.com>
+Subject: Re: [PATCH v3 1/2] i2c: tegra: add separate function for config_load
+Date: Tue, 19 Apr 2016 10:31:41 +0100
+Message-ID: <5715FAFD.2070303@nvidia.com>
+References: <1460985355-28901-1-git-send-email-smohammed@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5715F45E.3080305-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1460985355-28901-1-git-send-email-smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 19/04/16 10:03, Jon Hunter wrote:
-> Here are some basic Tegra test results for Linux v4.6-rc1.
-> Logs and other details at:
+On 18/04/16 14:15, Shardar Shariff Md wrote:
+> - Define separate function for configuration load register handling
+> to make it use by different functions later.
+> - Instead of calculating timeout for the config load during init,
+> calculate it when config load register is written. Also use the
+> msecs_to_jiffies for timeout calculation instead of macro HZ.
 > 
->     https://nvtb.github.io//linux/test_v4.6-rc1/20160330013102/
+> Signed-off-by: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
+> Changes since v1:
+> - Add separate function for config load handling
+> ---
+>  drivers/i2c/busses/i2c-tegra.c | 39 +++++++++++++++++++++++++--------------
+>  1 file changed, 25 insertions(+), 14 deletions(-)
 > 
-> Test summary
-> ------------
-> 
-> Build: zImage:
->     Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-> 
-> Build: Image:
->     Pass: ( 1/ 1): defconfig
-> 
-> Boot to userspace: defconfig:
->     Pass: ( 3/ 3): qemu-vexpress64, tegra132-norrin,
-> 		   tegra210-p2371-0000
-> 
-> Boot to userspace: multi_v7_defconfig:
->     Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
-> 		   tegra20-trimslice, tegra30-beaver
-> 
-> Boot to userspace: tegra_defconfig:
->     Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
-> 		   tegra20-trimslice, tegra30-beaver
-> 
-> PM: System suspend: multi_v7_defconfig:
->     FAIL: ( 1/ 4): tegra124-jetson-tk1
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index d764d64..6235f16 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -423,12 +423,31 @@ static inline void tegra_i2c_clock_disable(struct tegra_i2c_dev *i2c_dev)
+>  		clk_disable(i2c_dev->fast_clk);
+>  }
+>  
+> +static int tegra_i2c_wait_for_config_load(struct tegra_i2c_dev *i2c_dev)
+> +{
+> +	unsigned long timeout;
+> +
+> +	if (i2c_dev->hw->has_config_load_reg) {
+> +		i2c_writel(i2c_dev, I2C_MSTR_CONFIG_LOAD, I2C_CONFIG_LOAD);
+> +		timeout = jiffies + msecs_to_jiffies(1000);
+> +		while (i2c_readl(i2c_dev, I2C_CONFIG_LOAD) != 0) {
+> +			if (time_after(jiffies, timeout)) {
+> +				dev_warn(i2c_dev->dev,
+> +					 "timeout waiting for config load\n");
+> +				return -ETIMEDOUT;
+> +			}
+> +			msleep(1);
+> +		}
 
-This failure occurs intermittently and was caused by enabling the UHS-I
-modes for Tegra124. To workaround this we have disabled these mode for
-now [0].
+How about using the readx_poll_timeout() (include/linux/iopoll.h) here?
 
+Cheers
 Jon
-
-[0] http://www.spinics.net/lists/linux-mmc/msg36245.html
