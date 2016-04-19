@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.6-rc2
-Date: Tue, 19 Apr 2016 10:04:26 +0100
-Message-ID: <5715F49A.7060707@nvidia.com>
+Subject: Tegra baseline test results for v4.6-rc4
+Date: Tue, 19 Apr 2016 10:06:22 +0100
+Message-ID: <5715F50E.9000407@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
@@ -11,10 +11,10 @@ To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29
 Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.6-rc2.
+Here are some basic Tegra test results for Linux v4.6-rc4.
 Logs and other details at:
 
-    https://nvtb.github.io//linux/test_v4.6-rc2/20160403073102/
+    https://nvtb.github.io//linux/test_v4.6-rc4/20160417193103/
 
 
 Test summary
@@ -43,21 +43,20 @@ PM: System suspend: multi_v7_defconfig:
 		   tegra20-trimslice, tegra30-beaver
 
 PM: System suspend: tegra_defconfig:
-    FAIL: ( 1/ 4): tegra124-jetson-tk1
-    Pass: ( 3/ 4): tegra114-dalmore-a04, tegra20-trimslice,
-		   tegra30-beaver
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
 
 
 vmlinux object size
-(delta in bytes from test_v4.6-rc1 (f55532a0c0b8bb6148f4e07853b876ef73bc69ca)):
+(delta in bytes from test_v4.6-rc3 (bf16200689118d19de1b8d2a3c314fc21f5dc7bb)):
    text     data      bss    total  kernel
-+244819    +9896     +512  +255227  defconfig
-   +344     -128        0     +216  multi_v7_defconfig
-   +200        0        0     +200  tegra_defconfig
+     +1        0        0       +1  defconfig
+   -667        0      -64     -731  multi_v7_defconfig
+   -607        0      -64     -671  tegra_defconfig
 
 
 Boot-time memory difference
-(delta in bytes from test_v4.6-rc1 (f55532a0c0b8bb6148f4e07853b876ef73bc69ca))
+(delta in bytes from test_v4.6-rc3 (bf16200689118d19de1b8d2a3c314fc21f5dc7bb))
     avail    rsrvd     high    freed                board              kconfig                  dtb
         .        .        .        .      qemu-vexpress64            defconfig           __internal
         .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
