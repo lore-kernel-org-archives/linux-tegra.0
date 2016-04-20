@@ -1,152 +1,58 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3 4/4] gpio: tegra: Add support for gpio debounce
-Date: Wed, 20 Apr 2016 19:00:58 +0530
-Message-ID: <1461159058-1439-5-git-send-email-ldewangan@nvidia.com>
-References: <1461159058-1439-1-git-send-email-ldewangan@nvidia.com>
+From: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH V2 07/14] genirq: Add runtime power management support for IRQ chips
+Date: Wed, 20 Apr 2016 10:11:53 -0700
+Message-ID: <7h37qgb3xi.fsf@baylibre.com>
+References: <1461150237-15580-1-git-send-email-jonathanh@nvidia.com>
+	<1461150237-15580-8-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1461159058-1439-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1461150237-15580-8-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> (Jon
+	Hunter's message of "Wed, 20 Apr 2016 12:03:50 +0100")
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-NVIDIA's Tegra210 support the HW debounce in the GPIO
-controller for all its GPIO pins.
+Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> writes:
 
-Add support for setting debounce timing by implementing the
-set_debounce callback of gpiochip.
+> Some IRQ chips may be located in a power domain outside of the CPU
+> subsystem and hence will require device specific runtime power
+> management. In order to support such IRQ chips, add a pointer for a
+> device structure to the irq_chip structure, and if this pointer is
+> populated by the IRQ chip driver and CONFIG_PM is selected in the kernel
+> configuration, then the pm_runtime_get/put APIs for this chip will be
+> called when an IRQ is requested/freed, respectively.
+>
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+[...]
 
----
-Changes from V1:
-- Write debounce count before enable.
-- Make sure the debounce count do not have any boot residuals.
+> @@ -1891,10 +1906,18 @@ int setup_percpu_irq(unsigned int irq, struct irqaction *act)
+>  
+>  	if (!desc || !irq_settings_is_per_cpu_devid(desc))
+>  		return -EINVAL;
+> +
+> +	retval = irq_chip_pm_get(&desc->irq_data);
+> +	if (retval < 0)
+> +		return retval;
+> +
+>  	chip_bus_lock(desc);
+>  	retval = __setup_irq(irq, desc, act);
+>  	chip_bus_sync_unlock(desc);
+>  
+> +	if (retval)
+> +		irq_chip_pm_get(&desc->irq_data);
+> +
 
-Changes from V2:
-- Only access register fo debounce when SoC support debounce.
----
- drivers/gpio/gpio-tegra.c | 58 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 58 insertions(+)
+Shouldn't this one be a _put() ?
 
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 36e865f..1f8ec24 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -76,11 +76,14 @@ struct tegra_gpio_bank {
- 	u32 int_enb[4];
- 	u32 int_lvl[4];
- 	u32 wake_enb[4];
-+	u32 dbc_enb[4];
- #endif
-+	u32 dbc_cnt[4];
- 	struct tegra_gpio_info *tgi;
- };
- 
- struct tegra_gpio_soc_config {
-+	bool debounce_supported;
- 	u32 bank_stride;
- 	u32 upper_offset;
- };
-@@ -184,6 +187,35 @@ static int tegra_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
- 	return 0;
- }
- 
-+static int tegra_gpio_set_debounce(struct gpio_chip *chip, unsigned int offset,
-+				   unsigned int debounce)
-+{
-+	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
-+	unsigned int debounce_ms = DIV_ROUND_UP(debounce, 1000);
-+	int port = GPIO_PORT(offset);
-+	int bank = GPIO_BANK(offset);
-+
-+	if (!debounce_ms) {
-+		tegra_gpio_mask_write(tgi, GPIO_MSK_DBC_EN(tgi, offset),
-+				      offset, 0);
-+		return 0;
-+	}
-+
-+	debounce_ms = min(debounce_ms, 255U);
-+
-+	/* There is only one debounce count register per port and hence
-+	 * set the maximum of current and requested debounce time.
-+	 */
-+	if (tgi->bank_info[bank].dbc_cnt[port] < debounce_ms) {
-+		tegra_gpio_writel(tgi, debounce_ms, GPIO_DBC_CNT(tgi, offset));
-+		tgi->bank_info[bank].dbc_cnt[port] = debounce_ms;
-+	}
-+
-+	tegra_gpio_mask_write(tgi, GPIO_MSK_DBC_EN(tgi, offset), offset, 1);
-+
-+	return 0;
-+}
-+
- static int tegra_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
- {
- 	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
-@@ -199,6 +231,7 @@ static struct gpio_chip tegra_gpio_chip = {
- 	.get			= tegra_gpio_get,
- 	.direction_output	= tegra_gpio_direction_output,
- 	.set			= tegra_gpio_set,
-+	.set_debounce		= tegra_gpio_set_debounce,
- 	.to_irq			= tegra_gpio_to_irq,
- 	.base			= 0,
- };
-@@ -363,6 +396,14 @@ static int tegra_gpio_resume(struct device *dev)
- 			unsigned int gpio = (b<<5) | (p<<3);
- 			tegra_gpio_writel(tgi, bank->cnf[p],
- 					  GPIO_CNF(tgi, gpio));
-+
-+			if (tgi->soc->debounce_supported) {
-+				tegra_gpio_writel(tgi, bank->dbc_cnt[p],
-+						  GPIO_DBC_CNT(tgi, gpio));
-+				tegra_gpio_writel(tgi, bank->dbc_enb[p],
-+						  GPIO_MSK_DBC_EN(tgi, gpio));
-+			}
-+
- 			tegra_gpio_writel(tgi, bank->out[p],
- 					  GPIO_OUT(tgi, gpio));
- 			tegra_gpio_writel(tgi, bank->oe[p],
-@@ -398,6 +439,13 @@ static int tegra_gpio_suspend(struct device *dev)
- 							GPIO_OUT(tgi, gpio));
- 			bank->oe[p] = tegra_gpio_readl(tgi,
- 						       GPIO_OE(tgi, gpio));
-+			if (tgi->soc->debounce_supported) {
-+				bank->dbc_enb[p] = tegra_gpio_readl(tgi,
-+						GPIO_MSK_DBC_EN(tgi, gpio));
-+				bank->dbc_enb[p] = (bank->dbc_enb[p] << 8) |
-+							bank->dbc_enb[p];
-+			}
-+
- 			bank->int_enb[p] = tegra_gpio_readl(tgi,
- 						GPIO_INT_ENB(tgi, gpio));
- 			bank->int_lvl[p] = tegra_gpio_readl(tgi,
-@@ -550,6 +598,9 @@ static int tegra_gpio_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, tgi);
- 
-+	if (!config->debounce_supported)
-+		tgi->gc->set_debounce = NULL;
-+
- 	tgi->bank_info = devm_kzalloc(&pdev->dev, tgi->bank_count *
- 				      sizeof(*tgi->bank_info), GFP_KERNEL);
- 	if (!tgi->bank_info)
-@@ -629,7 +680,14 @@ static const struct tegra_gpio_soc_config tegra30_gpio_config = {
- 	.upper_offset = 0x80,
- };
- 
-+static const struct tegra_gpio_soc_config tegra210_gpio_config = {
-+	.debounce_supported = true,
-+	.bank_stride = 0x100,
-+	.upper_offset = 0x80,
-+};
-+
- static const struct of_device_id tegra_gpio_of_match[] = {
-+	{ .compatible = "nvidia,tegra210-gpio", .data = &tegra210_gpio_config },
- 	{ .compatible = "nvidia,tegra30-gpio", .data = &tegra30_gpio_config },
- 	{ .compatible = "nvidia,tegra20-gpio", .data = &tegra20_gpio_config },
- 	{ },
--- 
-2.1.4
+Otherwise, LGTM
+
+Reviewed-by: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+
+Kevin
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
