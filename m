@@ -1,49 +1,27 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 01/14] irqchip/gic: Don't unnecessarily write the IRQ configuration
-Date: Wed, 20 Apr 2016 12:03:44 +0100
-Message-ID: <1461150237-15580-2-git-send-email-jonathanh@nvidia.com>
-References: <1461150237-15580-1-git-send-email-jonathanh@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH V3 0/4] gpio: tegra: Cleanups and support fro debounce
+Date: Wed, 20 Apr 2016 19:00:54 +0530
+Message-ID: <1461159058-1439-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1461150237-15580-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
+To: linus.walleij@linaro.org, swarren@wwwdotorg.org, gnurou@gmail.com, thierry.reding@gmail.com
+Cc: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-If the interrupt configuration matches the current configuration, then
-don't bother writing the configuration again.
+Add support for the debounce as Tegra210 support debounce in HW.
+Also do the clenaups to remove all global variables.
 
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
----
- drivers/irqchip/irq-gic-common.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Laxman Dewangan (4):
+  gpio: tegra: Don't open code of_device_get_match_data()
+  gpio: tegra: Make of_device_id compatible data to constant
+  gpio: tegra: Get rid of all file scoped global variables
+  gpio: tegra: Add support for gpio debounce
 
-diff --git a/drivers/irqchip/irq-gic-common.c b/drivers/irqchip/irq-gic-common.c
-index f174ce0ca361..ffff5a45f1e3 100644
---- a/drivers/irqchip/irq-gic-common.c
-+++ b/drivers/irqchip/irq-gic-common.c
-@@ -50,13 +50,17 @@ int gic_configure_irq(unsigned int irq, unsigned int type,
- 	else if (type & IRQ_TYPE_EDGE_BOTH)
- 		val |= confmask;
- 
-+	/* If the current configuration is the same, then we are done */
-+	if (val == oldval)
-+		return 0;
-+
- 	/*
- 	 * Write back the new configuration, and possibly re-enable
--	 * the interrupt. If we tried to write a new configuration and failed,
-+	 * the interrupt. If we fail to write a new configuration,
- 	 * return an error.
- 	 */
- 	writel_relaxed(val, base + GIC_DIST_CONFIG + confoff);
--	if (readl_relaxed(base + GIC_DIST_CONFIG + confoff) != val && val != oldval)
-+	if (readl_relaxed(base + GIC_DIST_CONFIG + confoff) != val)
- 		ret = -EINVAL;
- 
- 	if (sync_access)
+ drivers/gpio/gpio-tegra.c | 407 +++++++++++++++++++++++++++++-----------------
+ 1 file changed, 261 insertions(+), 146 deletions(-)
+
 -- 
 2.1.4
+
