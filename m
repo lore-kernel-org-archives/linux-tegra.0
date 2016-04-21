@@ -1,43 +1,56 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: Re: [PATCH 1/2] clk: tegra30: init PLL_C to sane rate
-Date: Thu, 21 Apr 2016 20:16:54 +0200
-Message-ID: <1461262614.2494.1.camel@lynxeye.de>
-References: <1456778767-18413-1-git-send-email-dev@lynxeye.de>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH V3 3/4] gpio: tegra: Get rid of all file scoped global
+ variables
+Date: Thu, 21 Apr 2016 12:33:46 -0600
+Message-ID: <57191D0A.8010005@wwwdotorg.org>
+References: <1461159058-1439-1-git-send-email-ldewangan@nvidia.com>
+ <1461159058-1439-4-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1456778767-18413-1-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1461159058-1439-4-git-send-email-ldewangan@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: linus.walleij@linaro.org, gnurou@gmail.com, thierry.reding@gmail.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Am Montag, den 29.02.2016, 21:46 +0100 schrieb Lucas Stach:
-> If the bootloader does not touch PLL_C it will stay in its reset
-> state, failing to lock when enabled. This leads to consumers of
-> this clock to fail probing. Fix this by always programming the
-> PLL with a sane rate, which allows it to lock, at startup.
->=20
-Those 2 patches haven't been applied, as far as I can see. Any comments
-on them?
+On 04/20/2016 07:30 AM, Laxman Dewangan wrote:
+> Move the file scoped multiple global variable from Tegra GPIO
+> driver to the structure and make this as gpiochip data which
+> can be referred from GPIO chip callbacks.
 
-> Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-> ---
-> =C2=A0drivers/clk/tegra/clk-tegra30.c | 1 +
-> =C2=A01 file changed, 1 insertion(+)
->=20
-> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-
-> tegra30.c
-> index 0478565..236e2db 100644
-> --- a/drivers/clk/tegra/clk-tegra30.c
-> +++ b/drivers/clk/tegra/clk-tegra30.c
-> @@ -1372,6 +1372,7 @@ static struct tegra_clk_init_table init_table[]
-> __initdata =3D {
-> =C2=A0	{ TEGRA30_CLK_SBC4, TEGRA30_CLK_PLL_P, 100000000, 0 },
-> =C2=A0	{ TEGRA30_CLK_SBC5, TEGRA30_CLK_PLL_P, 100000000, 0 },
-> =C2=A0	{ TEGRA30_CLK_SBC6, TEGRA30_CLK_PLL_P, 100000000, 0 },
-> +	{ TEGRA30_CLK_PLL_C, TEGRA30_CLK_CLK_MAX, 600000000, 0 },
-> =C2=A0	{ TEGRA30_CLK_HOST1X, TEGRA30_CLK_PLL_C, 150000000, 0 },
-> =C2=A0	{ TEGRA30_CLK_DISP1, TEGRA30_CLK_PLL_P, 600000000, 0 },
-> =C2=A0	{ TEGRA30_CLK_DISP2, TEGRA30_CLK_PLL_P, 600000000, 0 },
+> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
+
+> +#define GPIO_MSK_CNF(t, x)	(GPIO_REG(t, x) + t->soc->upper_offset + 0x00)
+> +#define GPIO_MSK_OE(t, x)	(GPIO_REG(t, x) + t->soc->upper_offset + 0x10)
+> +#define GPIO_MSK_OUT(t, x)	(GPIO_REG(t, x) + t->soc->upper_offset + 0X20)
+> +#define GPIO_MSK_INT_STA(t, x)	(GPIO_REG(t, x) + t->soc->upper_offset + 0x40)
+> +#define GPIO_MSK_INT_ENB(t, x)	(GPIO_REG(t, x) + t->soc->upper_offset + 0x50)
+> +#define GPIO_MSK_INT_LVL(t, x)	(GPIO_REG(t, x) + t->soc->upper_offset + 0x60)
+> +#define GPIO_MSK_DBC_EN(t, x)	(GPIO_REG(t, x) + t->soc->upper_offset + 0x30)
+
+DBC_EN/0x30 should be sorted correctly with the rest, and likely added 
+in patch 4 instead.
+
+> @@ -276,19 +307,25 @@ static void tegra_gpio_irq_handler(struct irq_desc *desc)
+
+> +	struct tegra_gpio_info *tgi = bank->tgi;
+> +
+>
+>   	chained_irq_enter(chip, desc);
+
+No need for 2 blank lines there.
+
+> @@ -410,7 +462,7 @@ static int dbg_gpio_show(struct seq_file *s, void *unused)
+>
+>   static int dbg_gpio_open(struct inode *inode, struct file *file)
+>   {
+> -	return single_open(file, dbg_gpio_show, &inode->i_private);
+> +	return single_open(file, dbg_gpio_show, inode->i_private);
+
+Can you explain that change? I'm not sure it's correct, but don't know 
+why it was made.
+
+Once those are fixed,
+Reviewed-by: Stephen Warren <swarren@nvidia.com>
