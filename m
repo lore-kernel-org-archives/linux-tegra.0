@@ -1,92 +1,127 @@
-From: Allen Martin <amartin-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [tegrarcm PATCH] Don't assume cryptopp is system-wide installed
-Date: Thu, 21 Apr 2016 11:13:59 -0700
-Message-ID: <20160421181359.GA17433@nvidia.com>
-References: <1461097517-21626-1-git-send-email-thomas.petazzoni@free-electrons.com>
- <5716B20E.8050607@wwwdotorg.org> <20160419235745.GA28796@nvidia.com>
- <20160420112735.16eca48a@free-electrons.com>
+From: Lucas Stach <dev@lynxeye.de>
+Subject: Re: [PATCH v2] ARM: dts: tegra: correct Beaver pinmux
+Date: Thu, 21 Apr 2016 20:16:12 +0200
+Message-ID: <1461262572.2494.0.camel@lynxeye.de>
+References: <1456514310-27605-1-git-send-email-dev@lynxeye.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160420112735.16eca48a-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Content-Disposition: inline
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1456514310-27605-1-git-send-email-dev@lynxeye.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <acourbot@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>
+Cc: linux-tegra@vger.kernel.org, ARM kernel mailing list <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Apr 20, 2016 at 11:27:35AM +0200, Thomas Petazzoni wrote:
-> On Tue, 19 Apr 2016 16:57:45 -0700, Allen Martin wrote:
-> 
-> > What about the following as an alternative?
-> > 
-> > --
-> > diff --git a/src/Makefile.am b/src/Makefile.am
-> > index 3dad0e6d5e72..22410b3f81bf 100644
-> > --- a/src/Makefile.am
-> > +++ b/src/Makefile.am
-> > @@ -1,5 +1,6 @@
-> >  AM_CFLAGS = -Wall -std=c99
-> > -AM_CPPFLAGS = -isystem /usr/include/$(CRYPTOLIB) $(LIBUSB_CFLAGS)
-> > +CRYPTO_PREFIX = $(shell pkg-config --variable=includedir libcrypto++)
-> 
-> Using pkg-config is indeed a much better option. However, there are
-> several gotchas:
-> 
->  - First, calling pkg-config like this is not the correct way of using
->    pkg-config in autoconf/automake based packages. Instead, you should
->    use the PKG_CHECK_MODULES() autoconf macro, which will fill in for
->    you the <foo>_CFLAGS and <foo>_LIBS variables. Look at your
->    configure.ac, it is already used for the detection of libusb!
-
-Unfortunately, libcrypto++ doesn't export any CFLAGS, so
-PKG_CHECK_MODULES() doesn't work:
-
-  arm@chrome~$ pkg-config --cflags libcrypto++
- 
-  arm@chrome~$ pkg-config --libs libcrypto++
-  -lcrypto++  
-  arm@chrome~$ pkg-config --print-variables libcrypto++
-  exec_prefix
-  prefix
-  libdir
-  includedir
-  arm@chrome~$ pkg-config --variable=includedir libcrypto++
-  /usr/include
-
-
-> 
->  - Second, your logic assumes that libcrypto is called libcrypto++
->    while the crux of the matter is that on some platforms it is named
->    libcryptopp, on others it's called libcrypto++. Of course, this can
->    be solved in the configure.ac by calling PKG_CHECK_MODULES() for
->    both.
-
-Looking at configure.ac I think there's another assumption baked in
-too.  The compile test uses:
-
-  LDFLAGS="$LDFLAGS -lcryptopp -lpthread"
-
-> 
->  - Third, the upstream version of libcrypto++ does *not* install a
->    pkg-config file. The Debian packagers have added one, so you
->    probably have one on your Debian system, but if you build
->    libcrypto++ from source and simply "make install" it, you won't have
->    a .pc file that describes it for pkg-config.
-> 
-> The last point is the very reason why my patch didn't switch to simply
-> use pkg-config.
-> 
-
-Well that sucks.  What about a command line option to configure to
-specify the libcrypto++ include path?  My issue here is that if you
-have the headers in a non standard location (like $HOME/include), the
-compiler probably won't know how to find them either, and the compile
-check will fail at configure time.
-
-I'd like to change the -isystem to a plain -I too.  I think I added
-that because the source code used #include "foo.h" instead of 
-#include <foo.h> and I didn't want to make any source code changes
-with the automake changes. 
-
--Allen
+QW0gRnJlaXRhZywgZGVuIDI2LjAyLjIwMTYsIDIwOjE4ICswMTAwIHNjaHJpZWIgTHVjYXMgU3Rh
+Y2g6Cj4gVXBkYXRlIHBpbm11eCB0byBnZXQgcmlkIG9mIGludmFsaWQgdXNlcyBvZiB0aGUgcnN2
+ZDEgZnVuY3Rpb24sIHdoaWNoCj4gbGVhZAo+IHRvIHRoZSBtdXggc2V0dGluZ3Mgb24gdGhvc2Ug
+cGlucyB0byBub3QgYmUgYXBwbGllZC4KPiAKPiBBbHNvIGFkZCBjb3JyZWN0IGRyaXZlIHNldHRp
+bmdzLCBkZXJpdmVkIGZyb20gdGhlIFRlZ3JhMyBUUk0sIGZvcgo+IFNESU8xLAo+IHdoaWNoIG1h
+a2VzIHNvbWUgbW9yZSBTRC1jYXJkcyB3b3JrLgo+IApKdXN0IGEgZ2VudGxlIHBpbmcgb24gdGhp
+cyBwYXRjaCwgYXMgSSBoYXZlbid0IHNlZW4gaXQgYmVpbmcgYXBwbGllZAphbnl3aGVyZS4KCj4g
+U2lnbmVkLW9mZi1ieTogTHVjYXMgU3RhY2ggPGRldkBseW54ZXllLmRlPgo+IC0tLQo+IMKgYXJj
+aC9hcm0vYm9vdC9kdHMvdGVncmEzMC1iZWF2ZXIuZHRzIHwgMzkgKysrKysrKysrKysrKysrKysr
+KysrKy0tCj4gLS0tLS0tLS0tLS0tCj4gwqAxIGZpbGUgY2hhbmdlZCwgMjQgaW5zZXJ0aW9ucygr
+KSwgMTUgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL3Rl
+Z3JhMzAtYmVhdmVyLmR0cwo+IGIvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmEzMC1iZWF2ZXIuZHRz
+Cj4gaW5kZXggM2RlZGUzOS4uMWRhZWQ0MCAxMDA2NDQKPiAtLS0gYS9hcmNoL2FybS9ib290L2R0
+cy90ZWdyYTMwLWJlYXZlci5kdHMKPiArKysgYi9hcmNoL2FybS9ib290L2R0cy90ZWdyYTMwLWJl
+YXZlci5kdHMKPiBAQCAtMjU1LDE0ICsyNTUsMTQgQEAKPiDCoAkJCX07Cj4gwqAJCQlzZG1tYzNf
+ZGF0Nl9wZDMgewo+IMKgCQkJCW52aWRpYSxwaW5zID0gInNkbW1jM19kYXQ2X3BkMyI7Cj4gLQkJ
+CQludmlkaWEsZnVuY3Rpb24gPSAicnN2ZDEiOwo+ICsJCQkJbnZpZGlhLGZ1bmN0aW9uID0gInNw
+ZGlmIjsKPiDCoAkJCQludmlkaWEscHVsbCA9IDxURUdSQV9QSU5fUFVMTF9OT05FPjsKPiDCoAkJ
+CQludmlkaWEsdHJpc3RhdGUgPQo+IDxURUdSQV9QSU5fRElTQUJMRT47Cj4gwqAJCQkJbnZpZGlh
+LGVuYWJsZS1pbnB1dCA9Cj4gPFRFR1JBX1BJTl9FTkFCTEU+Owo+IMKgCQkJfTsKPiDCoAkJCXNk
+bW1jM19kYXQ3X3BkNCB7Cj4gwqAJCQkJbnZpZGlhLHBpbnMgPSAic2RtbWMzX2RhdDdfcGQ0IjsK
+PiAtCQkJCW52aWRpYSxmdW5jdGlvbiA9ICJyc3ZkMSI7Cj4gKwkJCQludmlkaWEsZnVuY3Rpb24g
+PSAic3BkaWYiOwo+IMKgCQkJCW52aWRpYSxwdWxsID0gPFRFR1JBX1BJTl9QVUxMX05PTkU+Owo+
+IMKgCQkJCW52aWRpYSx0cmlzdGF0ZSA9Cj4gPFRFR1JBX1BJTl9ESVNBQkxFPjsKPiDCoAkJCQlu
+dmlkaWEsZW5hYmxlLWlucHV0ID0KPiA8VEVHUkFfUElOX0VOQUJMRT47Cj4gQEAgLTI3NiwxNCAr
+Mjc2LDE0IEBACj4gwqAJCQl9Owo+IMKgCQkJdmlfdnN5bmNfcGQ2IHsKPiDCoAkJCQludmlkaWEs
+cGlucyA9ICJ2aV92c3luY19wZDYiOwo+IC0JCQkJbnZpZGlhLGZ1bmN0aW9uID0gInJzdmQxIjsK
+PiArCQkJCW52aWRpYSxmdW5jdGlvbiA9ICJkZHIiOwo+IMKgCQkJCW52aWRpYSxwdWxsID0gPFRF
+R1JBX1BJTl9QVUxMX05PTkU+Owo+IMKgCQkJCW52aWRpYSx0cmlzdGF0ZSA9Cj4gPFRFR1JBX1BJ
+Tl9ESVNBQkxFPjsKPiDCoAkJCQludmlkaWEsZW5hYmxlLWlucHV0ID0KPiA8VEVHUkFfUElOX0VO
+QUJMRT47Cj4gwqAJCQl9Owo+IMKgCQkJdmlfaHN5bmNfcGQ3IHsKPiDCoAkJCQludmlkaWEscGlu
+cyA9ICJ2aV9oc3luY19wZDciOwo+IC0JCQkJbnZpZGlhLGZ1bmN0aW9uID0gInJzdmQxIjsKPiAr
+CQkJCW52aWRpYSxmdW5jdGlvbiA9ICJkZHIiOwo+IMKgCQkJCW52aWRpYSxwdWxsID0gPFRFR1JB
+X1BJTl9QVUxMX05PTkU+Owo+IMKgCQkJCW52aWRpYSx0cmlzdGF0ZSA9Cj4gPFRFR1JBX1BJTl9E
+SVNBQkxFPjsKPiDCoAkJCQludmlkaWEsZW5hYmxlLWlucHV0ID0KPiA8VEVHUkFfUElOX0VOQUJM
+RT47Cj4gQEAgLTgwMSw3ICs4MDEsNyBAQAo+IMKgCQkJfTsKPiDCoAkJCWhkbWlfaW50X3BuNyB7
+Cj4gwqAJCQkJbnZpZGlhLHBpbnMgPSAiaGRtaV9pbnRfcG43IjsKPiAtCQkJCW52aWRpYSxmdW5j
+dGlvbiA9ICJyc3ZkMSI7Cj4gKwkJCQludmlkaWEsZnVuY3Rpb24gPSAiaGRtaSI7Cj4gwqAJCQkJ
+bnZpZGlhLHB1bGwgPSA8VEVHUkFfUElOX1BVTExfTk9ORT47Cj4gwqAJCQkJbnZpZGlhLHRyaXN0
+YXRlID0KPiA8VEVHUkFfUElOX0VOQUJMRT47Cj4gwqAJCQkJbnZpZGlhLGVuYWJsZS1pbnB1dCA9
+Cj4gPFRFR1JBX1BJTl9FTkFCTEU+Owo+IEBAIC04MzYsNyArODM2LDcgQEAKPiDCoAkJCX07Cj4g
+wqAJCQl1bHBpX2RhdGEzX3BvNCB7Cj4gwqAJCQkJbnZpZGlhLHBpbnMgPSAidWxwaV9kYXRhM19w
+bzQiOwo+IC0JCQkJbnZpZGlhLGZ1bmN0aW9uID0gInJzdmQxIjsKPiArCQkJCW52aWRpYSxmdW5j
+dGlvbiA9ICJ1YXJ0YSI7Cj4gwqAJCQkJbnZpZGlhLHB1bGwgPSA8VEVHUkFfUElOX1BVTExfTk9O
+RT47Cj4gwqAJCQkJbnZpZGlhLHRyaXN0YXRlID0KPiA8VEVHUkFfUElOX0RJU0FCTEU+Owo+IMKg
+CQkJCW52aWRpYSxlbmFibGUtaW5wdXQgPQo+IDxURUdSQV9QSU5fRU5BQkxFPjsKPiBAQCAtMTEw
+MiwyMSArMTEwMiwyMSBAQAo+IMKgCQkJfTsKPiDCoAkJCXZpX2QxMF9wdDIgewo+IMKgCQkJCW52
+aWRpYSxwaW5zID0gInZpX2QxMF9wdDIiOwo+IC0JCQkJbnZpZGlhLGZ1bmN0aW9uID0gInJzdmQx
+IjsKPiArCQkJCW52aWRpYSxmdW5jdGlvbiA9ICJkZHIiOwo+IMKgCQkJCW52aWRpYSxwdWxsID0g
+PFRFR1JBX1BJTl9QVUxMX05PTkU+Owo+IMKgCQkJCW52aWRpYSx0cmlzdGF0ZSA9Cj4gPFRFR1JB
+X1BJTl9ESVNBQkxFPjsKPiDCoAkJCQludmlkaWEsZW5hYmxlLWlucHV0ID0KPiA8VEVHUkFfUElO
+X0VOQUJMRT47Cj4gwqAJCQl9Owo+IMKgCQkJdmlfZDExX3B0MyB7Cj4gwqAJCQkJbnZpZGlhLHBp
+bnMgPSAidmlfZDExX3B0MyI7Cj4gLQkJCQludmlkaWEsZnVuY3Rpb24gPSAicnN2ZDEiOwo+ICsJ
+CQkJbnZpZGlhLGZ1bmN0aW9uID0gImRkciI7Cj4gwqAJCQkJbnZpZGlhLHB1bGwgPSA8VEVHUkFf
+UElOX1BVTExfVVA+Owo+IMKgCQkJCW52aWRpYSx0cmlzdGF0ZSA9Cj4gPFRFR1JBX1BJTl9ESVNB
+QkxFPjsKPiDCoAkJCQludmlkaWEsZW5hYmxlLWlucHV0ID0KPiA8VEVHUkFfUElOX0VOQUJMRT47
+Cj4gwqAJCQl9Owo+IMKgCQkJdmlfZDBfcHQ0IHsKPiDCoAkJCQludmlkaWEscGlucyA9ICJ2aV9k
+MF9wdDQiOwo+IC0JCQkJbnZpZGlhLGZ1bmN0aW9uID0gInJzdmQxIjsKPiArCQkJCW52aWRpYSxm
+dW5jdGlvbiA9ICJkZHIiOwo+IMKgCQkJCW52aWRpYSxwdWxsID0gPFRFR1JBX1BJTl9QVUxMX05P
+TkU+Owo+IMKgCQkJCW52aWRpYSx0cmlzdGF0ZSA9Cj4gPFRFR1JBX1BJTl9ESVNBQkxFPjsKPiDC
+oAkJCQludmlkaWEsZW5hYmxlLWlucHV0ID0KPiA8VEVHUkFfUElOX0VOQUJMRT47Cj4gQEAgLTEx
+NDYsNyArMTE0Niw3IEBACj4gwqAJCQl9Owo+IMKgCQkJcHUwIHsKPiDCoAkJCQludmlkaWEscGlu
+cyA9ICJwdTAiOwo+IC0JCQkJbnZpZGlhLGZ1bmN0aW9uID0gInJzdmQxIjsKPiArCQkJCW52aWRp
+YSxmdW5jdGlvbiA9ICJvd3IiOwo+IMKgCQkJCW52aWRpYSxwdWxsID0gPFRFR1JBX1BJTl9QVUxM
+X05PTkU+Owo+IMKgCQkJCW52aWRpYSx0cmlzdGF0ZSA9Cj4gPFRFR1JBX1BJTl9ESVNBQkxFPjsK
+PiDCoAkJCQludmlkaWEsZW5hYmxlLWlucHV0ID0KPiA8VEVHUkFfUElOX0VOQUJMRT47Cj4gQEAg
+LTExNjcsNyArMTE2Nyw3IEBACj4gwqAJCQl9Owo+IMKgCQkJcHUzIHsKPiDCoAkJCQludmlkaWEs
+cGlucyA9ICJwdTMiOwo+IC0JCQkJbnZpZGlhLGZ1bmN0aW9uID0gInJzdmQxIjsKPiArCQkJCW52
+aWRpYSxmdW5jdGlvbiA9ICJwd20wIjsKPiDCoAkJCQludmlkaWEscHVsbCA9IDxURUdSQV9QSU5f
+UFVMTF9OT05FPjsKPiDCoAkJCQludmlkaWEsdHJpc3RhdGUgPQo+IDxURUdSQV9QSU5fRElTQUJM
+RT47Cj4gwqAJCQkJbnZpZGlhLGVuYWJsZS1pbnB1dCA9Cj4gPFRFR1JBX1BJTl9FTkFCTEU+Owo+
+IEBAIC0xMTg4LDcgKzExODgsNyBAQAo+IMKgCQkJfTsKPiDCoAkJCXB1NiB7Cj4gwqAJCQkJbnZp
+ZGlhLHBpbnMgPSAicHU2IjsKPiAtCQkJCW52aWRpYSxmdW5jdGlvbiA9ICJyc3ZkMSI7Cj4gKwkJ
+CQludmlkaWEsZnVuY3Rpb24gPSAicHdtMyI7Cj4gwqAJCQkJbnZpZGlhLHB1bGwgPSA8VEVHUkFf
+UElOX1BVTExfTk9ORT47Cj4gwqAJCQkJbnZpZGlhLHRyaXN0YXRlID0KPiA8VEVHUkFfUElOX0RJ
+U0FCTEU+Owo+IMKgCQkJCW52aWRpYSxlbmFibGUtaW5wdXQgPQo+IDxURUdSQV9QSU5fRU5BQkxF
+PjsKPiBAQCAtMTIxNiw3ICsxMjE2LDcgQEAKPiDCoAkJCX07Cj4gwqAJCQlwdjMgewo+IMKgCQkJ
+CW52aWRpYSxwaW5zID0gInB2MyI7Cj4gLQkJCQludmlkaWEsZnVuY3Rpb24gPSAicnN2ZDEiOwo+
+ICsJCQkJbnZpZGlhLGZ1bmN0aW9uID0gImNsa18xMm1fb3V0IjsKPiDCoAkJCQludmlkaWEscHVs
+bCA9IDxURUdSQV9QSU5fUFVMTF9OT05FPjsKPiDCoAkJCQludmlkaWEsdHJpc3RhdGUgPQo+IDxU
+RUdSQV9QSU5fRElTQUJMRT47Cj4gwqAJCQkJbnZpZGlhLGVuYWJsZS1pbnB1dCA9Cj4gPFRFR1JB
+X1BJTl9ESVNBQkxFPjsKPiBAQCAtMTUwNSw3ICsxNTA1LDcgQEAKPiDCoAkJCX07Cj4gwqAJCQlw
+YmIwIHsKPiDCoAkJCQludmlkaWEscGlucyA9ICJwYmIwIjsKPiAtCQkJCW52aWRpYSxmdW5jdGlv
+biA9ICJyc3ZkMSI7Cj4gKwkJCQludmlkaWEsZnVuY3Rpb24gPSAiaTJzNCI7Cj4gwqAJCQkJbnZp
+ZGlhLHB1bGwgPSA8VEVHUkFfUElOX1BVTExfTk9ORT47Cj4gwqAJCQkJbnZpZGlhLHRyaXN0YXRl
+ID0KPiA8VEVHUkFfUElOX0RJU0FCTEU+Owo+IMKgCQkJCW52aWRpYSxlbmFibGUtaW5wdXQgPQo+
+IDxURUdSQV9QSU5fRU5BQkxFPjsKPiBAQCAtMTU3MCw3ICsxNTcwLDcgQEAKPiDCoAkJCX07Cj4g
+wqAJCQlwY2MxIHsKPiDCoAkJCQludmlkaWEscGlucyA9ICJwY2MxIjsKPiAtCQkJCW52aWRpYSxm
+dW5jdGlvbiA9ICJyc3ZkMSI7Cj4gKwkJCQludmlkaWEsZnVuY3Rpb24gPSAiaTJzNCI7Cj4gwqAJ
+CQkJbnZpZGlhLHB1bGwgPSA8VEVHUkFfUElOX1BVTExfTk9ORT47Cj4gwqAJCQkJbnZpZGlhLHRy
+aXN0YXRlID0KPiA8VEVHUkFfUElOX0RJU0FCTEU+Owo+IMKgCQkJCW52aWRpYSxlbmFibGUtaW5w
+dXQgPQo+IDxURUdSQV9QSU5fRU5BQkxFPjsKPiBAQCAtMTcxOCw2ICsxNzE4LDE1IEBACj4gwqAJ
+CQkJbnZpZGlhLHNsZXctcmF0ZS1yaXNpbmcgPSA8MT47Cj4gwqAJCQkJbnZpZGlhLHNsZXctcmF0
+ZS1mYWxsaW5nID0gPDE+Owo+IMKgCQkJfTsKPiArCQkJc2RpbzEgewo+ICsJCQkJbnZpZGlhLHBp
+bnMgPSAiZHJpdmVfc2RpbzEiOwo+ICsJCQkJbnZpZGlhLGhpZ2gtc3BlZWQtbW9kZSA9Cj4gPFRF
+R1JBX1BJTl9ESVNBQkxFPjsKPiArCQkJCW52aWRpYSxzY2htaXR0ID0KPiA8VEVHUkFfUElOX0RJ
+U0FCTEU+Owo+ICsJCQkJbnZpZGlhLHB1bGwtZG93bi1zdHJlbmd0aCA9IDw0Nj47Cj4gKwkJCQlu
+dmlkaWEscHVsbC11cC1zdHJlbmd0aCA9IDw0Mj47Cj4gKwkJCQludmlkaWEsc2xldy1yYXRlLXJp
+c2luZyA9IDwxPjsKPiArCQkJCW52aWRpYSxzbGV3LXJhdGUtZmFsbGluZyA9IDwxPjsKPiArCQkJ
+fTsKPiDCoAkJCWdwdiB7Cj4gwqAJCQkJbnZpZGlhLHBpbnMgPSAiZHJpdmVfZ3B2IjsKPiDCoAkJ
+CQludmlkaWEscHVsbC11cC1zdHJlbmd0aCA9IDwxNj47CgpfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdAps
+aW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVh
+ZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
