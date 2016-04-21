@@ -1,91 +1,128 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH V2 04/14] irqdomain: Fix handling of type settings for
- existing mappings
-Date: Thu, 21 Apr 2016 12:31:55 +0100
-Message-ID: <5718BA2B.2060708@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2 06/14] irqdomain: Don't set type when mapping an IRQ
+Date: Thu, 21 Apr 2016 16:45:23 +0100
+Message-ID: <5718F593.40605@nvidia.com>
 References: <1461150237-15580-1-git-send-email-jonathanh@nvidia.com>
- <1461150237-15580-5-git-send-email-jonathanh@nvidia.com>
+ <1461150237-15580-7-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1461150237-15580-5-git-send-email-jonathanh@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1461150237-15580-7-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
 On 20/04/16 12:03, Jon Hunter wrote:
-> When mapping an IRQ, it is possible that a mapping for the IRQ already
-> exists. If mapping does exist then there are the following issues with
-> regard to the handling of the IRQ type settings ...
-> 1. If the domain is part of a hierarchy, then:
->    a. We do not check that the type settings for the existing mapping
->       match those of the new mapping.
->    b. We do not check to see if the type settings have been programmed
->       yet (and they might not have been) and so we may never set the
->       type.
-> 2. If the domain is NOT part of a hierarchy, we will overwrite the
->    current type settings programmed if they are different from the
->    previous mapping. Please note that irq_create_mapping()
->    calls irq_find_mapping() to check if a mapping already exists.
+> Some IRQ chips, such as GPIO controllers or secondary level interrupt
+> controllers, may require require additional runtime power management
+> control to ensure they are accessible. For such IRQ chips, it makes sense
+> to enable the IRQ chip when interrupts are requested and disabled them
+> again once all interrupts have been freed.
 > 
-> Although, it may be unlikely that the type settings for a shared
-> interrupt would not match, nonetheless we should check for this.
-> Therefore, to fix this check if a mapping exists (regardless of whether
-> the domain is part of a hierarchy or not) and if it does then:
-> 1. Return the IRQ number if the type settings match or are not
->    specified.
-> 2. Program the type settings and return the IRQ number if the type
->    settings have not been programmed yet.
-> 3. Otherwise if the type setting do not match, then print a warning
->    and don't return the IRQ number.
+> When mapping an IRQ, the IRQ type settings are read and then programmed.
+> The mapping of the IRQ happens before the IRQ is requested and so the
+> programming of the type settings occurs before the IRQ is requested. This
+> is a problem for IRQ chips that require additional power management
+> control because they may not be accessible yet. Therefore, when mapping
+> the IRQ, don't program the type settings, just save them and then program
+> these saved settings when the IRQ is requested (so long as if they are not
+> overridden via the call to request the IRQ).
 > 
-> Furthermore, add a warning if the type return by irq_domain_translate()
-> has bits outside the sense mask set and then clear these bits. If these
-> bits are not cleared then this will cause the comparision of the type
-> settings for an existing mapping to fail with that of the new mapping
-> even if the sense bit themselves match. The reason being is that the
-> existing type settings are read by calling irq_get_trigger_type() which
-> will clear any bits outside the sense mask. This will allow us to detect
-> irqchips that are not correctly clearing these bits and fix them.
+> Add a stub function for irq_domain_free_irqs() to avoid any compilation
+> errors when CONFIG_IRQ_DOMAIN_HIERARCHY is not selected.
 > 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  kernel/irq/irqdomain.c | 38 +++++++++++++++++++++++++++++++++-----
->  1 file changed, 33 insertions(+), 5 deletions(-)
-> 
-> diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-> index 245a485ffb61..88e9328b7aab 100644
-> --- a/kernel/irq/irqdomain.c
-> +++ b/kernel/irq/irqdomain.c
-> @@ -592,15 +592,43 @@ unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec)
->  	if (irq_domain_translate(domain, fwspec, &hwirq, &type))
->  		return 0;
->  
-> -	if (irq_domain_is_hierarchy(domain)) {
-> +	/*
-> +	 * WARN if the irqchip returns a type with bits
-> +	 * outside the sense mask set and clear these bits.
-> +	 */
-> +	if (WARN_ON(type & ~IRQ_TYPE_SENSE_MASK))
-> +		type &= IRQ_TYPE_SENSE_MASK;
+>  include/linux/irqdomain.h |  3 +++
+>  kernel/irq/irqdomain.c    | 17 +++++++++++++----
+>  2 files changed, 16 insertions(+), 4 deletions(-)
+
+[snip]
+ 
+> -	/* Set type if specified and different than the current one */
+> -	if (type != IRQ_TYPE_NONE &&
+> -	    type != irq_get_trigger_type(virq))
+> -		irq_set_irq_type(virq, type);
+> +	irq_data = irq_get_irq_data(virq);
+> +	if (!irq_data) {
+> +		if (irq_domain_is_hierarchy(domain))
+> +			irq_domain_free_irqs(virq, 1);
+> +		else
+> +			irq_dispose_mapping(virq);
+> +		return 0;
+> +	}
 > +
-> +	/*
-> +	 * If we've already configured this interrupt,
-> +	 * don't do it again, or hell will break loose.
-> +	 */
-> +	virq = irq_find_mapping(domain, hwirq);
-> +	if (virq) {
->  		/*
-> -		 * If we've already configured this interrupt,
-> -		 * don't do it again, or hell will break loose.
-> +		 * If the trigger type is not specified or matches the
-> +		 * current trigger type then we are done so return the
-> +		 * interrupt number. Otherwise, if the trigger type does
-> +		 * not match return 0.
+> +	/* Store trigger type */
+> +	irqd_set_trigger_type(irq_data, type);
+> +
 
-I think I should have dropped this 'otherwise' sentence from here.
+I appear to have missed another place for saving the irq type
+which I had change in this version. Next time I will triple
+check! Should have been ...
 
-Jon
+
+diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
+index 2aed04396210..fc66876d1965 100644
+--- a/include/linux/irqdomain.h
++++ b/include/linux/irqdomain.h
+@@ -440,6 +440,9 @@ static inline int irq_domain_alloc_irqs(struct irq_domain *domain,
+        return -1;
+ }
+ 
++static inline void irq_domain_free_irqs(unsigned int virq,
++                                       unsigned int nr_irqs) { }
++
+ static inline bool irq_domain_is_hierarchy(struct irq_domain *domain)
+ {
+        return false;
+diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+index 3d6ef5527b71..46ecf5d468b2 100644
+--- a/kernel/irq/irqdomain.c
++++ b/kernel/irq/irqdomain.c
+@@ -569,6 +569,7 @@ static void of_phandle_args_to_fwspec(struct of_phandle_args *irq_data,
+ unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec)
+ {
+        struct irq_domain *domain;
++       struct irq_data *irq_data;
+        irq_hw_number_t hwirq;
+        unsigned int type = IRQ_TYPE_NONE;
+        int virq;
+@@ -619,7 +620,11 @@ unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec)
+                 * it now and return the interrupt number.
+                 */
+                if (IRQ_TYPE_NONE == irq_get_trigger_type(virq)) {
+-                       irq_set_irq_type(virq, type);
++                       irq_data = irq_get_irq_data(virq);
++                       if (!irq_data)
++                               return 0;
++
++                       irqd_set_trigger_type(irq_data, type);
+                        return virq;
+                }
+ 
+@@ -639,10 +644,18 @@ unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec)
+                        return virq;
+        }
+ 
+-       /* Set type if specified and different than the current one */
+-       if (type != IRQ_TYPE_NONE &&
+-           type != irq_get_trigger_type(virq))
+-               irq_set_irq_type(virq, type);
++       irq_data = irq_get_irq_data(virq);
++       if (!irq_data) {
++               if (irq_domain_is_hierarchy(domain))
++                       irq_domain_free_irqs(virq, 1);
++               else
++                       irq_dispose_mapping(virq);
++               return 0;
++       }
++
++       /* Store trigger type */
++       irqd_set_trigger_type(irq_data, type);
++
+        return virq;
+ }
+ EXPORT_SYMBOL_GPL(irq_create_fwspec_mapping);
