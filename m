@@ -1,82 +1,97 @@
-From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH V2 13/14] dt-bindings: arm-gic: Add documentation for
- Tegra210 AGIC
-Date: Fri, 22 Apr 2016 12:22:39 +0100
-Message-ID: <20160422112239.GF10606@leverpostej>
-References: <1461150237-15580-1-git-send-email-jonathanh@nvidia.com>
- <1461150237-15580-14-git-send-email-jonathanh@nvidia.com>
- <20160422100052.GA10606@leverpostej>
- <571A0739.3090502@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: fix naming in GPIO DT binding header
+Date: Fri, 22 Apr 2016 13:24:06 +0200
+Message-ID: <20160422112406.GB9047@ulmo.ba.sec>
+References: <1459884307-24043-1-git-send-email-swarren@wwwdotorg.org>
+ <20160406172845.GC28843@ulmo.ba.sec>
+ <5705481D.3030700@wwwdotorg.org>
+ <CACRpkdZxeV07_rb2xL+HRGp-ay1B-U=_tEbPCYqvM+ZYD-wpYQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="QTprm0S8XgL7H0Dt"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <571A0739.3090502-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <CACRpkdZxeV07_rb2xL+HRGp-ay1B-U=_tEbPCYqvM+ZYD-wpYQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Apr 22, 2016 at 12:12:57PM +0100, Jon Hunter wrote:
-> 
-> On 22/04/16 11:00, Mark Rutland wrote:
-> > On Wed, Apr 20, 2016 at 12:03:56PM +0100, Jon Hunter wrote:
-> >> The Tegra AGIC interrupt controller is compatible with the ARM GIC-400
-> >> interrupt controller.
-> > 
-> > The cover letter says it _is_ a GIC-400, just used in a slightly unusual
-> > manner (i.e. not directly connected to CPUs).
-> 
-> Correct.
-> 
-> >> The Tegra AGIC requires two clocks, namely the
-> >> "ape" (functional) and "apb2ape" (interface) clocks, to operate. Add
-> >> the compatible string and clock information for the AGIC to the GIC
-> >> device-tree binding documentation.
-> > 
-> > The GIC-400 spec only describes "CLK" (which is what I imagine "ape" is.
-> > There isn't an APB clock described, and the manual seems to show GIC-400
-> > directly connected to AXI rather than APB, so that doesn't seem to even
-> > be the usual "apb_pclk".
-> > 
-> > Is there some wrapper logic around a GIC-400 to giove it an APB
-> > interface? Or am I misudnerstanding the spec?
-> 
-> Looking at the Tegra documentation what we have is ...
-> 
-> APB --> AXI switch --> AGIC (GIC400)
-> 
-> I am not sure how such a switch would typically be modeled in DT but we
-> need the apb clock to interface to the GIC registers. I am not sure if
-> something like simple-pm-bus is appropriate here.
 
-I think we need some representation of that AXI switch in the DT;
-whether simple-pm-bus is appropriate is another question. We probably
-need a specific compatible string / binding regardless.
+--QTprm0S8XgL7H0Dt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Mark.
-
-> 
-> >> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >> ---
+On Mon, Apr 11, 2016 at 09:04:09AM +0200, Linus Walleij wrote:
+> On Wed, Apr 6, 2016 at 7:32 PM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wr=
+ote:
+> > On 04/06/2016 11:28 AM, Thierry Reding wrote:
 > >>
-> >> I am not sure if it will be popular to add Tegra specific clock names
-> >> to the GIC DT docs. However, in that case, then possibly the only
-> >> alternative is to move the Tegra AGIC driver into its own file and
-> >> expose the GIC APIs for it to use. Then we could add our own DT doc
-> >> for the Tegra AGIC as well (based upon the ARM GIC).
-> > 
-> > The clock-names don't seem right to me, as they sound like provide names
-> > or global clock line names rather than consumer-side names ("clk" and
-> > "apb_pclk").
-> 
-> Yes that would be fine with me.
+> >> On Tue, Apr 05, 2016 at 01:25:07PM -0600, Stephen Warren wrote:
+> >>>
+> >>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>>
+> >>> According to the Tegra TRM, GPIOs are aggregated into /ports/ of 8 GP=
+IOs,
+> >>> not into /banks/. Fix <dt-bindings/gpio/tegra-gpio.h> to correctly
+> >>> reflect
+> >>> this naming convention. While this seems like silly churn, it will be=
+come
+> >>> slightly more important once we introduce the GPIO binding for upcomi=
+ng
+> >>> Tegra chips.
+> >>>
+> >>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>> ---
+> >>>   include/dt-bindings/gpio/tegra-gpio.h | 68
+> >>> +++++++++++++++++------------------
+> >>>   1 file changed, 34 insertions(+), 34 deletions(-)
+> >>
+> >>
+> >> It's not clear to me where this should be applied. This is technically
+> >> part of the GPIO controller bindings, in which case it'd need to go via
+> >> the GPIO tree. I'm fine with taking it through the Tegra tree, too, but
+> >> in case you agree that it should go through the GPIO tree:
+> >>
+> >> Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >
+> > I typically consider bindings part of the SoC code-base they related to=
+, so
+> > I'd imagine this going through the Tegra tree. I didn't Cc LinusW on the
+> > patch because of that thinking and oversight, but have done so now just=
+ in
+> > case he feels strongly.
+>=20
+> No strong opinion, only time I care is when we merge a new driver
+> and it #includes <dt-bindings/...>.
+>=20
+> Take it through the tegra tree.
+> Acked-by: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 
-Ok; if we model the apb_pclk as owned by the AXI switch (which it is),
-then there's no change for the GIC binding, short of the additional
-compatible string as an extension of "arm,gic-400", as we already model
-that clock in the GIC-400 binding.
+Applied, thanks.
 
-Thanks,
-Mark.
+Thierry
+
+--QTprm0S8XgL7H0Dt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXGgnUAAoJEN0jrNd/PrOhm+wP/3uqH7t79yyewub5qGsyyNro
+DvFnPvP7hMD2a2vQu6V7ezZin1VLFfmTqIM1PKE3g746HBd+GZuB9hlEqLGELUkn
+sxdJVOoe+JUCT7mb8gOqnxLS2+ekF+BRhL9KX1q2dgkcRiY8UTBAmJHq6cN/KTP2
+48c3qHqmwYzb1cMo2OaVR22SBXefkNprNIedx/ZbghxD1rIZlmeI6cN5BDBqucfi
+sgiUok9RXJ/7uNka9pt6Q3yojLs/PzA6eRXt7+/VXOORjCkZkG7823KGxbGyZkPs
+BOthOtflQT6191rY30CKjyy7zY625NwA9ChhC8LM+DgHXvPTSR4skcNjygQmLrxG
+x8107S8IFdzKih2ujfAurka7Vj+hp4OutFnhL04AJp5oAQHDX5lFHkrcdu6I+Ufz
+mMOD+alsrK39TEWf5qEdpY1RE/ZmIoAHOXoUEpiky3hBtFBIj/l49QtktkVhJzJJ
+YbfI9kaKNNY5H2e0k+lnhqk83v9LEA0GrdmrZ8TfcZK610Ay6uIa63NFrrNRZs3Z
+NXgg/oe/cx8ApW1JvjkiwCma5a9jh4wkrSXINJJUQIQjsTefbG3ukmGuBjdUToPR
+zVv8ix2ut7Rcb37U5L81g4OGSFa+Te/JkEoRaSyPF3eSMbxV69hG2gYEkHe0ojBr
+VlwIzX514pDIXQbWwV9A
+=Qm2N
+-----END PGP SIGNATURE-----
+
+--QTprm0S8XgL7H0Dt--
