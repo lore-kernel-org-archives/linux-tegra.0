@@ -1,99 +1,75 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3] dmaengine: tegra-apb: proper default init of channel
- slave_id
-Date: Fri, 22 Apr 2016 15:43:19 +0100
-Message-ID: <571A3887.4020704@nvidia.com>
-References: <1461334479-27985-1-git-send-email-smohammed@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH V2 13/14] dt-bindings: arm-gic: Add documentation for
+ Tegra210 AGIC
+Date: Fri, 22 Apr 2016 15:57:12 +0100
+Message-ID: <571A3BC8.90906@nvidia.com>
+References: <1461150237-15580-1-git-send-email-jonathanh@nvidia.com>
+ <1461150237-15580-14-git-send-email-jonathanh@nvidia.com>
+ <20160422100052.GA10606@leverpostej> <571A0739.3090502@nvidia.com>
+ <20160422112239.GF10606@leverpostej>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1461334479-27985-1-git-send-email-smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160422112239.GF10606@leverpostej>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 22/04/16 15:14, Shardar Shariff Md wrote:
-> Initialize default channel slave_id(req_sel) to invalid id
-> (i.e max supported slave id + 1) to avoid overwriting of slave_id
-> during tegra_dma_slave_config() with client data if slave_id
-> is not initialized through DT
+On 22/04/16 12:22, Mark Rutland wrote:
+> On Fri, Apr 22, 2016 at 12:12:57PM +0100, Jon Hunter wrote:
+>>
+>> On 22/04/16 11:00, Mark Rutland wrote:
+>>> On Wed, Apr 20, 2016 at 12:03:56PM +0100, Jon Hunter wrote:
+>>>> The Tegra AGIC interrupt controller is compatible with the ARM GIC-400
+>>>> interrupt controller.
+>>>
+>>> The cover letter says it _is_ a GIC-400, just used in a slightly unusual
+>>> manner (i.e. not directly connected to CPUs).
+>>
+>> Correct.
+>>
+>>>> The Tegra AGIC requires two clocks, namely the
+>>>> "ape" (functional) and "apb2ape" (interface) clocks, to operate. Add
+>>>> the compatible string and clock information for the AGIC to the GIC
+>>>> device-tree binding documentation.
+>>>
+>>> The GIC-400 spec only describes "CLK" (which is what I imagine "ape" is.
+>>> There isn't an APB clock described, and the manual seems to show GIC-400
+>>> directly connected to AXI rather than APB, so that doesn't seem to even
+>>> be the usual "apb_pclk".
+>>>
+>>> Is there some wrapper logic around a GIC-400 to giove it an APB
+>>> interface? Or am I misudnerstanding the spec?
+>>
+>> Looking at the Tegra documentation what we have is ...
+>>
+>> APB --> AXI switch --> AGIC (GIC400)
+>>
+>> I am not sure how such a switch would typically be modeled in DT but we
+>> need the apb clock to interface to the GIC registers. I am not sure if
+>> something like simple-pm-bus is appropriate here.
 > 
-> Signed-off-by: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> I think we need some representation of that AXI switch in the DT;
+> whether simple-pm-bus is appropriate is another question. We probably
+> need a specific compatible string / binding regardless.
+
+OK, I will have a look at that.
+
+>>> The clock-names don't seem right to me, as they sound like provide names
+>>> or global clock line names rather than consumer-side names ("clk" and
+>>> "apb_pclk").
+>>
+>> Yes that would be fine with me.
 > 
-> ---
-> Changes from v1:
-> - Instead of initializing the slave id to -1 define macros for
->   max slave id and invalid slave id and do the checks accordingly.
-> 
-> Changes from v2:
-> - Check slave id boundary before dma channel is allocated to
->   avoid channel leakage.
-> ---
->  drivers/dma/tegra20-apb-dma.c | 18 +++++++++++++++---
->  1 file changed, 15 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-> index 3871f29..f57cee85 100644
-> --- a/drivers/dma/tegra20-apb-dma.c
-> +++ b/drivers/dma/tegra20-apb-dma.c
-> @@ -54,6 +54,7 @@
->  #define TEGRA_APBDMA_CSR_ONCE			BIT(27)
->  #define TEGRA_APBDMA_CSR_FLOW			BIT(21)
->  #define TEGRA_APBDMA_CSR_REQ_SEL_SHIFT		16
-> +#define TEGRA_APBDMA_CSR_REQ_SEL_MASK		0x1F
->  #define TEGRA_APBDMA_CSR_WCOUNT_MASK		0xFFFC
->  
->  /* STATUS register */
-> @@ -114,6 +115,9 @@
->  /* Channel base address offset from APBDMA base address */
->  #define TEGRA_APBDMA_CHANNEL_BASE_ADD_OFFSET	0x1000
->  
-> +#define TEGRA_APBDMA_SLAVE_ID_MAX		TEGRA_APBDMA_CSR_REQ_SEL_MASK
-> +#define TEGRA_APBDMA_SLAVE_ID_INVALID		(TEGRA_APBDMA_SLAVE_ID_MAX + 1)
-> +
->  struct tegra_dma;
->  
->  /*
-> @@ -353,7 +357,7 @@ static int tegra_dma_slave_config(struct dma_chan *dc,
->  	}
->  
->  	memcpy(&tdc->dma_sconfig, sconfig, sizeof(*sconfig));
-> -	if (!tdc->slave_id)
-> +	if (tdc->slave_id == TEGRA_APBDMA_SLAVE_ID_INVALID)
->  		tdc->slave_id = sconfig->slave_id;
+> Ok; if we model the apb_pclk as owned by the AXI switch (which it is),
+> then there's no change for the GIC binding, short of the additional
+> compatible string as an extension of "arm,gic-400", as we already model
+> that clock in the GIC-400 binding.
 
-I think we still need to check sconfig->slave_id is less than the MAX here.
+Yes that makes sense.
 
->  	tdc->config_init = true;
->  	return 0;
-> @@ -1236,7 +1240,7 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
->  	}
->  	pm_runtime_put(tdma->dev);
->  
-> -	tdc->slave_id = 0;
-> +	tdc->slave_id = TEGRA_APBDMA_SLAVE_ID_INVALID;
->  }
->  
->  static struct dma_chan *tegra_dma_of_xlate(struct of_phandle_args *dma_spec,
-> @@ -1245,13 +1249,20 @@ static struct dma_chan *tegra_dma_of_xlate(struct of_phandle_args *dma_spec,
->  	struct tegra_dma *tdma = ofdma->of_dma_data;
->  	struct dma_chan *chan;
->  	struct tegra_dma_channel *tdc;
-> +	unsigned int slave_id;
-
-We don't need this definition.
-
-> +
-> +	slave_id = dma_spec->args[0];
-> +	if (slave_id > TEGRA_APBDMA_SLAVE_ID_MAX) {
-
-Use dma_spec->args[0] here directly.
-
-> +		dev_err(tdma->dev, "Invalid slave id: %d\n", slave_id);
-
-And here.
-
-Cheers
+Thanks
 Jon
