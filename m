@@ -1,24 +1,28 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH V4 4/4] gpio: tegra: Add support for gpio debounce
-Date: Fri, 22 Apr 2016 13:53:03 -0600
-Message-ID: <571A811F.6030102@wwwdotorg.org>
-References: <1461319754-12040-1-git-send-email-ldewangan@nvidia.com>
- <1461319754-12040-4-git-send-email-ldewangan@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [pinmux scripts PATCH] Import latest Jetson TK1 spreadsheet
+Date: Fri, 22 Apr 2016 13:54:32 -0600
+Message-ID: <571A8178.4080705@wwwdotorg.org>
+References: <1461275892-3798-1-git-send-email-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <1461319754-12040-4-git-send-email-ldewangan@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, linus.walleij@linaro.org
-Cc: gnurou@gmail.com, thierry.reding@gmail.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1461275892-3798-1-git-send-email-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/22/2016 04:09 AM, Laxman Dewangan wrote:
-> NVIDIA's Tegra210 support the HW debounce in the GPIO controller
-> for all its GPIO pins.
+On 04/21/2016 03:58 PM, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >
-> Add support for setting debounce timing by implementing the
-> set_debounce callback of gpiochip.
+> This imports v11 of "Jetson TK1 Development Platform Pin Mux" from
+> https://developer.nvidia.com/embedded/downloads.
+>
+> The new version defines the mux option for the MIPI pad ctrl selection.
+> The OWR pin no longer has an entry in the configuration table because
+> the only mux option it support is OWR, that feature isn't supported, and
+> hence can't conflict with any other pin. This pin can only usefully be
+> used as a GPIO.
 
-Reviewed-by: Stephen Warren <swarren@nvidia.com>
+Applied.
