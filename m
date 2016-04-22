@@ -1,10 +1,10 @@
 From: Mark Brown <broonie@kernel.org>
-Subject: Applied "regulator: core: Clear the supply pointer if enabling fails" to the regulator tree
-Date: Fri, 22 Apr 2016 11:49:43 +0100
-Message-ID: <E1atYed-0002jb-Dw@debutante>
-References: <1461255121-5245-3-git-send-email-jonathanh@nvidia.com>
+Subject: Applied "regulator: core: Don't terminate supply resolution early" to the regulator tree
+Date: Fri, 22 Apr 2016 11:49:46 +0100
+Message-ID: <E1atYeg-0002kG-CI@debutante>
+References: <1461255121-5245-2-git-send-email-jonathanh@nvidia.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1461255121-5245-3-git-send-email-jonathanh@nvidia.com>
+In-Reply-To: <1461255121-5245-2-git-send-email-jonathanh@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jon Hunter <jonathanh@nvidia.com>
 Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>
@@ -12,7 +12,7 @@ List-Id: linux-tegra@vger.kernel.org
 
 The patch
 
-   regulator: core: Clear the supply pointer if enabling fails
+   regulator: core: Don't terminate supply resolution early
 
 has been applied to the regulator tree at
 
@@ -37,37 +37,47 @@ to this mail.
 Thanks,
 Mark
 
-From 8e5356a73604f53da6a1e0756727cb8f9f7bba17 Mon Sep 17 00:00:00 2001
+From 7ddede6a58a0bd26efcfd2a5055611195411f514 Mon Sep 17 00:00:00 2001
 From: Jon Hunter <jonathanh@nvidia.com>
-Date: Thu, 21 Apr 2016 17:11:58 +0100
-Subject: [PATCH] regulator: core: Clear the supply pointer if enabling fails
+Date: Thu, 21 Apr 2016 17:11:57 +0100
+Subject: [PATCH] regulator: core: Don't terminate supply resolution early
 
-During the resolution of a regulator's supply, we may attempt to enable
-the supply if the regulator itself is already enabled. If enabling the
-supply fails, then we will call _regulator_put() for the supply.
-However, the pointer to the supply has not been cleared for the
-regulator and this will cause a crash if we then unregister the
-regulator and attempt to call regulator_put() a second time for the
-supply. Fix this by clearing the supply pointer if enabling the supply
-after fails when resolving the supply for a regulator.
+The function regulator_register_resolve_supply() is called from the
+context of class_for_each_dev() (during the regulator registration) to
+resolve any supplies added. regulator_register_resolve_supply() will
+return an error if a regulator's supply cannot be resolved and this will
+terminate the loop in class_for_each_dev(). This means that we will not
+attempt to resolve any other supplies after one has failed. Hence, this
+may delay the resolution of other regulator supplies until the failing
+one itself can be resolved.
+
+Rather than terminating the loop early, don't return an error code and
+keep attempting to resolve any other supplies for regulators that have
+been registered.
 
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/core.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/regulator/core.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 9922922ce6bd..bd9ec309b707 100644
+index fd0e4e37f4e1..9922922ce6bd 100644
 --- a/drivers/regulator/core.c
 +++ b/drivers/regulator/core.c
-@@ -1536,6 +1536,7 @@ static int regulator_resolve_supply(struct regulator_dev *rdev)
- 		ret = regulator_enable(rdev->supply);
- 		if (ret < 0) {
- 			_regulator_put(rdev->supply);
-+			rdev->supply = NULL;
- 			return ret;
- 		}
- 	}
+@@ -3842,7 +3842,12 @@ static void rdev_init_debugfs(struct regulator_dev *rdev)
+ 
+ static int regulator_register_resolve_supply(struct device *dev, void *data)
+ {
+-	return regulator_resolve_supply(dev_to_rdev(dev));
++	struct regulator_dev *rdev = dev_to_rdev(dev);
++
++	if (regulator_resolve_supply(rdev))
++		rdev_dbg(rdev, "unable to resolve supply\n");
++
++	return 0;
+ }
+ 
+ /**
 -- 
 2.8.0.rc3
