@@ -1,77 +1,55 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v2] dmaengine: tegra-apb: proper default init of channel
- slave_id
-Date: Fri, 22 Apr 2016 14:43:24 +0100
-Message-ID: <571A2A7C.5010305@nvidia.com>
-References: <1461329093-20300-1-git-send-email-smohammed@nvidia.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 4/5] regulator: core: Add early supply resolution for a
+ bypassed regulator
+Date: Fri, 22 Apr 2016 14:53:39 +0100
+Message-ID: <20160422135339.GD3217@sirena.org.uk>
+References: <1461255121-5245-1-git-send-email-jonathanh@nvidia.com>
+ <1461255121-5245-5-git-send-email-jonathanh@nvidia.com>
+ <20160422104837.GC3217@sirena.org.uk>
+ <571A0A81.4010009@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="yqoYZO0eSM9FLp66"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1461329093-20300-1-git-send-email-smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <571A0A81.4010009-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 22/04/16 13:44, Shardar Shariff Md wrote:
-> Initialize default channel slave_id(req_sel) to invalid id
-> (i.e max supported slave id + 1) to avoid overwriting of slave_id
-> during tegra_dma_slave_config() with client data if slave_id
-> is not initialized through DT
-> 
-> Signed-off-by: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> ---
-> - Instead of initializing the slave id to -1 define macros for
->   max slave id and invalid slave id and do the checks accordingly.
-> ---
->  drivers/dma/tegra20-apb-dma.c | 13 +++++++++++--
->  1 file changed, 11 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-> index 3871f29..2957e26 100644
-> --- a/drivers/dma/tegra20-apb-dma.c
-> +++ b/drivers/dma/tegra20-apb-dma.c
-> @@ -114,6 +114,9 @@
->  /* Channel base address offset from APBDMA base address */
->  #define TEGRA_APBDMA_CHANNEL_BASE_ADD_OFFSET	0x1000
->  
-> +#define TEGRA_APBDMA_SLAVE_ID_MAX		31
-> +#define TEGRA_APBDMA_SLAVE_ID_INVALID		(TEGRA_APBDMA_SLAVE_ID_MAX + 1)
-> +
->  struct tegra_dma;
->  
->  /*
-> @@ -353,7 +356,7 @@ static int tegra_dma_slave_config(struct dma_chan *dc,
->  	}
->  
->  	memcpy(&tdc->dma_sconfig, sconfig, sizeof(*sconfig));
-> -	if (!tdc->slave_id)
-> +	if (tdc->slave_id == TEGRA_APBDMA_SLAVE_ID_INVALID)
->  		tdc->slave_id = sconfig->slave_id;
->  	tdc->config_init = true;
->  	return 0;
-> @@ -1236,7 +1239,7 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
->  	}
->  	pm_runtime_put(tdma->dev);
->  
-> -	tdc->slave_id = 0;
-> +	tdc->slave_id = TEGRA_APBDMA_SLAVE_ID_INVALID;
->  }
->  
->  static struct dma_chan *tegra_dma_of_xlate(struct of_phandle_args *dma_spec,
-> @@ -1253,6 +1256,11 @@ static struct dma_chan *tegra_dma_of_xlate(struct of_phandle_args *dma_spec,
->  	tdc = to_tegra_dma_chan(chan);
->  	tdc->slave_id = dma_spec->args[0];
->  
-> +	if (tdc->slave_id > TEGRA_APBDMA_SLAVE_ID_MAX) {
-> +		dev_err(tdc2dev(tdc), "Invalid slave id\n");
-> +		return NULL;
-> +	}
+--yqoYZO0eSM9FLp66
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Please move this test to before the dma_get_any_slave_channel(),
-otherwise we could leak the DMA channel!
+On Fri, Apr 22, 2016 at 12:26:57PM +0100, Jon Hunter wrote:
 
-Cheers
-Jon
+> OK. Sorry if I have misunderstood you here, but this sounds more like
+> Thierry's initial proposal [0] but ignoring the any errors returned (and
+> we need to fix-up the locking in this patch). In the discussion that
+
+Yes!
+
+> followed I thought we agreed to only do this for the bypass case [1]. As
+> far as I am concerned either will work, but to confirm we should just
+> always try to resolve the supply early during regulator_register(), correct?
+
+We need to only *fail* in the bypass case.
+
+--yqoYZO0eSM9FLp66
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQEcBAEBCAAGBQJXGiziAAoJECTWi3JdVIfQbrsH/2EuI5jdXL0dJeJjOncahUZ+
+AIjgY2kulfOH6oRXFrksWa3l0Xs9ZTvlyb+pve8T84QCFo05ywhdG89Ia/IBWgU3
+bRI1lphrTk5ZRZXiQkyBvWFgM56bIi6Ha5Zjp+qBiMgrzDQjf44pNP01dH+5T+ai
+wmoLLvC7j8J4zdglAIfYo4ts5kt3wlMiGo7OdGYzXpo2Lkq4loECdDzk5z5MynZG
+WX4/F2n2KEh50oJEsTfag1NX7kkaQuudGLXUtzaRrEG1ORaTzcnnRv58hUKuAhmA
+2p9L9JLI00ZTNzSahlVizcS5JglPJxYKKm8+JbDzrPLQJ3mBEpuRWw2aNar86KA=
+=/n4j
+-----END PGP SIGNATURE-----
+
+--yqoYZO0eSM9FLp66--
