@@ -1,57 +1,73 @@
-From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 4/5] regulator: core: Add early supply resolution for a
- bypassed regulator
-Date: Fri, 22 Apr 2016 11:48:37 +0100
-Message-ID: <20160422104837.GC3217@sirena.org.uk>
-References: <1461255121-5245-1-git-send-email-jonathanh@nvidia.com>
- <1461255121-5245-5-git-send-email-jonathanh@nvidia.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="StZ26hC3DS27TACW"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1461255121-5245-5-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "regulator: core: Clear the supply pointer if enabling fails" to the regulator tree
+Date: Fri, 22 Apr 2016 11:49:43 +0100
+Message-ID: <E1atYed-0002jb-Dw@debutante>
+References: <1461255121-5245-3-git-send-email-jonathanh@nvidia.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1461255121-5245-3-git-send-email-jonathanh@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Thierry Reding <treding@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+The patch
 
---StZ26hC3DS27TACW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+   regulator: core: Clear the supply pointer if enabling fails
 
-On Thu, Apr 21, 2016 at 05:12:00PM +0100, Jon Hunter wrote:
+has been applied to the regulator tree at
 
-> A regulator that is in bypass will fail to be registered because we will
-> attempt to get the voltage of the regulator (ie. it's bypass voltage)
-> before the supply for the regulator has been resolved. Therefore, when
-> getting the voltage for a bypassed regulator, if the supply has not been
-> resolved, then attempt to resolve it. Additionally, move the setup of
-> the regulator's supply name to before the call to
-> set_machine_constraints() so that it can be resolved.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
-The basic pattern here makes sense but rather than doing this
-specifically in the case where we have a bypassed supply we didn't=20
-resolve yet I think we should instead always try to resolve the supply
-but ignore the error unless we actively need the supply.  I'd be
-surprised if we didn't run into other cases where we need to do this so
-it seems better to try the resolution in one place.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
---StZ26hC3DS27TACW
-Content-Type: application/pgp-signature; name="signature.asc"
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-iQEcBAEBCAAGBQJXGgGDAAoJECTWi3JdVIfQwI8H/iJMAC2fqr4iE8b8NAsFpFfd
-Q3g+wmblHmyEPY4LqrEZtJzKAcvwx5I3gWfaj0Ojp/0PJH0iGptJ0K4ZK9cRX8En
-QV1G6jrlmSzLz1nMzhnYp1huga5PW/sxfLPtnc/cWFV0ItH1eqW+XvMkBYli408v
-FCy+IFKtFTaFYaB4kK5e5qY5rTLNep33JtdHoc8mScYwAmrd71QfF1v3wiB/Qnf9
-8YRvtE3B5EBg4Xo+ZL7nyF5DAWCyxD1jdOFtYhYof0bY9txMa8ewMJ0QArZ39gZy
-h4OOoG+E5IKJEVZ/TMtj4uGnNls9W0O79WVqjkAj2AJnUT0L96dInhE1Z0NHG7o=
-=p/OG
------END PGP SIGNATURE-----
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
---StZ26hC3DS27TACW--
+Thanks,
+Mark
+
+From 8e5356a73604f53da6a1e0756727cb8f9f7bba17 Mon Sep 17 00:00:00 2001
+From: Jon Hunter <jonathanh@nvidia.com>
+Date: Thu, 21 Apr 2016 17:11:58 +0100
+Subject: [PATCH] regulator: core: Clear the supply pointer if enabling fails
+
+During the resolution of a regulator's supply, we may attempt to enable
+the supply if the regulator itself is already enabled. If enabling the
+supply fails, then we will call _regulator_put() for the supply.
+However, the pointer to the supply has not been cleared for the
+regulator and this will cause a crash if we then unregister the
+regulator and attempt to call regulator_put() a second time for the
+supply. Fix this by clearing the supply pointer if enabling the supply
+after fails when resolving the supply for a regulator.
+
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/core.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 9922922ce6bd..bd9ec309b707 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -1536,6 +1536,7 @@ static int regulator_resolve_supply(struct regulator_dev *rdev)
+ 		ret = regulator_enable(rdev->supply);
+ 		if (ret < 0) {
+ 			_regulator_put(rdev->supply);
++			rdev->supply = NULL;
+ 			return ret;
+ 		}
+ 	}
+-- 
+2.8.0.rc3
