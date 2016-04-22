@@ -1,103 +1,74 @@
-From: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v3] dmaengine: tegra-apb: proper default init of channel slave_id
-Date: Fri, 22 Apr 2016 19:44:39 +0530
-Message-ID: <1461334479-27985-1-git-send-email-smohammed@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v3] dmaengine: tegra-apb: proper default init of channel
+ slave_id
+Date: Fri, 22 Apr 2016 16:37:00 +0200
+Message-ID: <20160422143700.GA7068@ulmo.ba.sec>
+References: <1461334479-27985-1-git-send-email-smohammed@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ReaqsoxgOBHFXBhH"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1461334479-27985-1-git-send-email-smohammed@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Shardar Shariff Md <smohammed@nvidia.com>
+Cc: ldewangan@nvidia.com, vinod.koul@intel.com, dan.j.williams@intel.com, swarren@wwwdotorg.org, gnurou@gmail.com, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, jonathanh@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-Initialize default channel slave_id(req_sel) to invalid id
-(i.e max supported slave id + 1) to avoid overwriting of slave_id
-during tegra_dma_slave_config() with client data if slave_id
-is not initialized through DT
 
-Signed-off-by: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+--ReaqsoxgOBHFXBhH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
----
-Changes from v1:
-- Instead of initializing the slave id to -1 define macros for
-  max slave id and invalid slave id and do the checks accordingly.
+On Fri, Apr 22, 2016 at 07:44:39PM +0530, Shardar Shariff Md wrote:
+> Initialize default channel slave_id(req_sel) to invalid id
+> (i.e max supported slave id + 1) to avoid overwriting of slave_id
+> during tegra_dma_slave_config() with client data if slave_id
+> is not initialized through DT
+>=20
+> Signed-off-by: Shardar Shariff Md <smohammed@nvidia.com>
+>=20
+> ---
+> Changes from v1:
+> - Instead of initializing the slave id to -1 define macros for
+>   max slave id and invalid slave id and do the checks accordingly.
+>=20
+> Changes from v2:
+> - Check slave id boundary before dma channel is allocated to
+>   avoid channel leakage.
+> ---
+>  drivers/dma/tegra20-apb-dma.c | 18 +++++++++++++++---
+>  1 file changed, 15 insertions(+), 3 deletions(-)
 
-Changes from v2:
-- Check slave id boundary before dma channel is allocated to
-  avoid channel leakage.
----
- drivers/dma/tegra20-apb-dma.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+Looks good to me, though I'm not a DMA engine export, so I'll only
+offer:
 
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 3871f29..f57cee85 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -54,6 +54,7 @@
- #define TEGRA_APBDMA_CSR_ONCE			BIT(27)
- #define TEGRA_APBDMA_CSR_FLOW			BIT(21)
- #define TEGRA_APBDMA_CSR_REQ_SEL_SHIFT		16
-+#define TEGRA_APBDMA_CSR_REQ_SEL_MASK		0x1F
- #define TEGRA_APBDMA_CSR_WCOUNT_MASK		0xFFFC
- 
- /* STATUS register */
-@@ -114,6 +115,9 @@
- /* Channel base address offset from APBDMA base address */
- #define TEGRA_APBDMA_CHANNEL_BASE_ADD_OFFSET	0x1000
- 
-+#define TEGRA_APBDMA_SLAVE_ID_MAX		TEGRA_APBDMA_CSR_REQ_SEL_MASK
-+#define TEGRA_APBDMA_SLAVE_ID_INVALID		(TEGRA_APBDMA_SLAVE_ID_MAX + 1)
-+
- struct tegra_dma;
- 
- /*
-@@ -353,7 +357,7 @@ static int tegra_dma_slave_config(struct dma_chan *dc,
- 	}
- 
- 	memcpy(&tdc->dma_sconfig, sconfig, sizeof(*sconfig));
--	if (!tdc->slave_id)
-+	if (tdc->slave_id == TEGRA_APBDMA_SLAVE_ID_INVALID)
- 		tdc->slave_id = sconfig->slave_id;
- 	tdc->config_init = true;
- 	return 0;
-@@ -1236,7 +1240,7 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
- 	}
- 	pm_runtime_put(tdma->dev);
- 
--	tdc->slave_id = 0;
-+	tdc->slave_id = TEGRA_APBDMA_SLAVE_ID_INVALID;
- }
- 
- static struct dma_chan *tegra_dma_of_xlate(struct of_phandle_args *dma_spec,
-@@ -1245,13 +1249,20 @@ static struct dma_chan *tegra_dma_of_xlate(struct of_phandle_args *dma_spec,
- 	struct tegra_dma *tdma = ofdma->of_dma_data;
- 	struct dma_chan *chan;
- 	struct tegra_dma_channel *tdc;
-+	unsigned int slave_id;
-+
-+	slave_id = dma_spec->args[0];
-+	if (slave_id > TEGRA_APBDMA_SLAVE_ID_MAX) {
-+		dev_err(tdma->dev, "Invalid slave id: %d\n", slave_id);
-+		return NULL;
-+	}
- 
- 	chan = dma_get_any_slave_channel(&tdma->dma_dev);
- 	if (!chan)
- 		return NULL;
- 
- 	tdc = to_tegra_dma_chan(chan);
--	tdc->slave_id = dma_spec->args[0];
-+	tdc->slave_id = slave_id;
- 
- 	return chan;
- }
-@@ -1389,6 +1400,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 				&tdma->dma_dev.channels);
- 		tdc->tdma = tdma;
- 		tdc->id = i;
-+		tdc->slave_id = TEGRA_APBDMA_SLAVE_ID_INVALID;
- 
- 		tasklet_init(&tdc->tasklet, tegra_dma_tasklet,
- 				(unsigned long)tdc);
--- 
-1.8.1.5
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+Perhaps Jon would be comfortable enough to give a Reviewed-by?
+
+Thierry
+
+--ReaqsoxgOBHFXBhH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXGjcMAAoJEN0jrNd/PrOhSW0P/2mg/QFl0oTs98Xg1ryWqSut
+fkeZf5EVk1gxZORT2jQ+Z0mjLujPFarSjtQboGbGE3v/xUhQCosi7QODqSKJ4NIk
+KHLs81EjtqezTVcW6sJhMJw3QkUVAdoyxvjcvThwB3NDLU3FnUARNU9AW4f5c74k
+2b4sSFpbrKfbnOWwwI9YmZggivs52ujJq4igZ3VpQpMimr5TrsJd5CunNqjrwHuM
+XVLNAUyL1nQg3XGITCm0pihYC/mUKlf3xAZly3w2WkULMmdvVYaHx74C+XWopxAj
+vQItawC7+8XwlHy9X6fT2WNTAdP60x84nPWZ2Fjt/FnVHnZORvoBw/jISdsEpLfc
+9//Adhkoj/5hLyDl/+/delyFwntmLh7nBIHOlIrwrPR4RK6/idpWxHBUk0EDKbBG
+QulDqqrjI/juX49WEaL7xOxQzlu5M+g501OBb4CiYzUOjxkwqdlzGWPFreDw9dH+
+/uF+hyktpNDLOSC5+gNtApX8JK+pTFJlyxZswqlU6pvLsnIqpjkiBF5OixuqmsJ0
+Ah6KTz8Rmgt/5/F5srf9f2eT3WWpYxpAs91+zso3Yfjn8Ddjf30IOEFdqnH44cGs
+atyhCD8/RrVoGp8+iRQwIvbxjI2qHsw1YYfLLGnM9vo3Ypl5HBngmhgZA1sd4a87
+DmTvaTMHoZRAuSUN7ILI
+=EkYE
+-----END PGP SIGNATURE-----
+
+--ReaqsoxgOBHFXBhH--
