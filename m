@@ -1,27 +1,28 @@
-From: Shardar Mohammed <smohammed@nvidia.com>
+From: Shardar Mohammed <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: RE: [PATCH v2] dmaengine: tegra-apb: proper default init of channel
  slave_id
-Date: Fri, 22 Apr 2016 13:57:16 +0000
-Message-ID: <a73db69dcb9e4ca484d9dbb947966fa4@bgmail102.nvidia.com>
+Date: Fri, 22 Apr 2016 13:58:03 +0000
+Message-ID: <f683ecd6d18e46b0a33090dfca27f919@bgmail102.nvidia.com>
 References: <1461329093-20300-1-git-send-email-smohammed@nvidia.com>
- <571A2A7C.5010305@nvidia.com>
+ <20160422133551.GP9047@ulmo.ba.sec>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <571A2A7C.5010305@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160422133551.GP9047-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
 Content-Language: en-US
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jonathan Hunter <jonathanh@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, "vinod.koul@intel.com" <vinod.koul@intel.com>, "dan.j.williams@intel.com" <dan.j.williams@intel.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "gnurou@gmail.com" <gnurou@gmail.com>, "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-> On 22/04/16 13:44, Shardar Shariff Md wrote:
+> On Fri, Apr 22, 2016 at 06:14:53PM +0530, Shardar Shariff Md wrote:
 > > Initialize default channel slave_id(req_sel) to invalid id (i.e max
 > > supported slave id + 1) to avoid overwriting of slave_id during
 > > tegra_dma_slave_config() with client data if slave_id is not
 > > initialized through DT
 > >
-> > Signed-off-by: Shardar Shariff Md <smohammed@nvidia.com>
+> > Signed-off-by: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > >
 > > ---
 > > - Instead of initializing the slave id to -1 define macros for
@@ -75,10 +76,15 @@ List-Id: linux-tegra@vger.kernel.org
 > > +		return NULL;
 > > +	}
 > 
-> Please move this test to before the dma_get_any_slave_channel(),
-> otherwise we could leak the DMA channel!
-
-[Shardar] Will take care of this.
+> Should this check happen before the channel is requested? As it is, you're
+> setting up the private data of the channel with a slave_id and error out after
+> that. As I understand the channel would already have its ID set to the invalid
+> ID, but without going too deep into the DMA engine core code it looks as
+> though once requested, the channel needs to be released again (which the
+> invalid ID handling code here doesn't).	
+[Shardar] Thanks will correct this.
 > 
-> Cheers
-> Jon
+> Thierry
+> 
+> * Unknown Key
+> * 0x7F3EB3A1
