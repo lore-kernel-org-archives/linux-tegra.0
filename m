@@ -1,7 +1,7 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V4 2/4] gpio: tegra: Make of_device_id compatible data to constant
-Date: Fri, 22 Apr 2016 15:39:12 +0530
-Message-ID: <1461319754-12040-2-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH V4 4/4] gpio: tegra: Add support for gpio debounce
+Date: Fri, 22 Apr 2016 15:39:14 +0530
+Message-ID: <1461319754-12040-4-git-send-email-ldewangan@nvidia.com>
 References: <1461319754-12040-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,42 +12,182 @@ To: swarren@wwwdotorg.org, linus.walleij@linaro.org, gnurou@gmail.com, thierry.r
 Cc: Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The data member of the of_device_id is the constant type
-and hence all static structure which is used for this
-initialisation as static.
+NVIDIA's Tegra210 support the HW debounce in the GPIO controller
+for all its GPIO pins.
+
+Add support for setting debounce timing by implementing the
+set_debounce callback of gpiochip.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-Suggested-by: Thierry Reding <treding@nvidia.com>
-Reviewed-by: Stephen Warren <swarren@nvidia.com>
 
 ---
+Changes from V1:
+- Write debounce count before enable.
+- Make sure the debounce count do not have any boot residuals.
+
 Changes from V2:
--This is new in series based on discussion on previous patches.
+- Only access register for debounce when SoC support debounce.
 
 Changes from V3:
-- Collected RB of Stephen.
+- Add locking mechanism in debounce count register update.
+- Move DBC register from prev patch to here.
 
- drivers/gpio/gpio-tegra.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-tegra.c | 69 ++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 68 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index 1b0c497..cd69422 100644
+index 6af5eb2..45d80ec 100644
 --- a/drivers/gpio/gpio-tegra.c
 +++ b/drivers/gpio/gpio-tegra.c
-@@ -560,12 +560,12 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+@@ -46,10 +46,13 @@
+ #define GPIO_INT_ENB(t, x)	(GPIO_REG(t, x) + 0x50)
+ #define GPIO_INT_LVL(t, x)	(GPIO_REG(t, x) + 0x60)
+ #define GPIO_INT_CLR(t, x)	(GPIO_REG(t, x) + 0x70)
++#define GPIO_DBC_CNT(t, x)	(GPIO_REG(t, x) + 0xF0)
++
+ 
+ #define GPIO_MSK_CNF(t, x)	(GPIO_REG(t, x) + t->soc->upper_offset + 0x00)
+ #define GPIO_MSK_OE(t, x)	(GPIO_REG(t, x) + t->soc->upper_offset + 0x10)
+ #define GPIO_MSK_OUT(t, x)	(GPIO_REG(t, x) + t->soc->upper_offset + 0X20)
++#define GPIO_MSK_DBC_EN(t, x)	(GPIO_REG(t, x) + t->soc->upper_offset + 0x30)
+ #define GPIO_MSK_INT_STA(t, x)	(GPIO_REG(t, x) + t->soc->upper_offset + 0x40)
+ #define GPIO_MSK_INT_ENB(t, x)	(GPIO_REG(t, x) + t->soc->upper_offset + 0x50)
+ #define GPIO_MSK_INT_LVL(t, x)	(GPIO_REG(t, x) + t->soc->upper_offset + 0x60)
+@@ -67,6 +70,7 @@ struct tegra_gpio_bank {
+ 	int bank;
+ 	int irq;
+ 	spinlock_t lvl_lock[4];
++	spinlock_t dbc_lock[4];	/* Lock for updating debounce count register */
+ #ifdef CONFIG_PM_SLEEP
+ 	u32 cnf[4];
+ 	u32 out[4];
+@@ -74,11 +78,14 @@ struct tegra_gpio_bank {
+ 	u32 int_enb[4];
+ 	u32 int_lvl[4];
+ 	u32 wake_enb[4];
++	u32 dbc_enb[4];
+ #endif
++	u32 dbc_cnt[4];
+ 	struct tegra_gpio_info *tgi;
+ };
+ 
+ struct tegra_gpio_soc_config {
++	bool debounce_supported;
+ 	u32 bank_stride;
+ 	u32 upper_offset;
+ };
+@@ -182,6 +189,38 @@ static int tegra_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
  	return 0;
  }
  
--static struct tegra_gpio_soc_config tegra20_gpio_config = {
-+static const struct tegra_gpio_soc_config tegra20_gpio_config = {
- 	.bank_stride = 0x80,
- 	.upper_offset = 0x800,
++static int tegra_gpio_set_debounce(struct gpio_chip *chip, unsigned int offset,
++				   unsigned int debounce)
++{
++	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
++	unsigned int debounce_ms = DIV_ROUND_UP(debounce, 1000);
++	unsigned long flags;
++	int port = GPIO_PORT(offset);
++	int bank = GPIO_BANK(offset);
++
++	if (!debounce_ms) {
++		tegra_gpio_mask_write(tgi, GPIO_MSK_DBC_EN(tgi, offset),
++				      offset, 0);
++		return 0;
++	}
++
++	debounce_ms = min(debounce_ms, 255U);
++
++	/* There is only one debounce count register per port and hence
++	 * set the maximum of current and requested debounce time.
++	 */
++	spin_lock_irqsave(&tgi->bank_info[bank].dbc_lock[port], flags);
++	if (tgi->bank_info[bank].dbc_cnt[port] < debounce_ms) {
++		tegra_gpio_writel(tgi, debounce_ms, GPIO_DBC_CNT(tgi, offset));
++		tgi->bank_info[bank].dbc_cnt[port] = debounce_ms;
++	}
++	spin_unlock_irqrestore(&tgi->bank_info[bank].dbc_lock[port], flags);
++
++	tegra_gpio_mask_write(tgi, GPIO_MSK_DBC_EN(tgi, offset), offset, 1);
++
++	return 0;
++}
++
+ static int tegra_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
+ {
+ 	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
+@@ -197,6 +236,7 @@ static struct gpio_chip tegra_gpio_chip = {
+ 	.get			= tegra_gpio_get,
+ 	.direction_output	= tegra_gpio_direction_output,
+ 	.set			= tegra_gpio_set,
++	.set_debounce		= tegra_gpio_set_debounce,
+ 	.to_irq			= tegra_gpio_to_irq,
+ 	.base			= 0,
  };
+@@ -360,6 +400,14 @@ static int tegra_gpio_resume(struct device *dev)
+ 			unsigned int gpio = (b<<5) | (p<<3);
+ 			tegra_gpio_writel(tgi, bank->cnf[p],
+ 					  GPIO_CNF(tgi, gpio));
++
++			if (tgi->soc->debounce_supported) {
++				tegra_gpio_writel(tgi, bank->dbc_cnt[p],
++						  GPIO_DBC_CNT(tgi, gpio));
++				tegra_gpio_writel(tgi, bank->dbc_enb[p],
++						  GPIO_MSK_DBC_EN(tgi, gpio));
++			}
++
+ 			tegra_gpio_writel(tgi, bank->out[p],
+ 					  GPIO_OUT(tgi, gpio));
+ 			tegra_gpio_writel(tgi, bank->oe[p],
+@@ -395,6 +443,13 @@ static int tegra_gpio_suspend(struct device *dev)
+ 							GPIO_OUT(tgi, gpio));
+ 			bank->oe[p] = tegra_gpio_readl(tgi,
+ 						       GPIO_OE(tgi, gpio));
++			if (tgi->soc->debounce_supported) {
++				bank->dbc_enb[p] = tegra_gpio_readl(tgi,
++						GPIO_MSK_DBC_EN(tgi, gpio));
++				bank->dbc_enb[p] = (bank->dbc_enb[p] << 8) |
++							bank->dbc_enb[p];
++			}
++
+ 			bank->int_enb[p] = tegra_gpio_readl(tgi,
+ 						GPIO_INT_ENB(tgi, gpio));
+ 			bank->int_lvl[p] = tegra_gpio_readl(tgi,
+@@ -547,6 +602,9 @@ static int tegra_gpio_probe(struct platform_device *pdev)
  
--static struct tegra_gpio_soc_config tegra30_gpio_config = {
-+static const struct tegra_gpio_soc_config tegra30_gpio_config = {
- 	.bank_stride = 0x100,
+ 	platform_set_drvdata(pdev, tgi);
+ 
++	if (!config->debounce_supported)
++		tgi->gc->set_debounce = NULL;
++
+ 	tgi->bank_info = devm_kzalloc(&pdev->dev, tgi->bank_count *
+ 				      sizeof(*tgi->bank_info), GFP_KERNEL);
+ 	if (!tgi->bank_info)
+@@ -607,8 +665,10 @@ static int tegra_gpio_probe(struct platform_device *pdev)
+ 		irq_set_chained_handler_and_data(bank->irq,
+ 						 tegra_gpio_irq_handler, bank);
+ 
+-		for (j = 0; j < 4; j++)
++		for (j = 0; j < 4; j++) {
+ 			spin_lock_init(&bank->lvl_lock[j]);
++			spin_lock_init(&bank->dbc_lock[j]);
++		}
+ 	}
+ 
+ 	tegra_gpio_debuginit(tgi);
+@@ -626,7 +686,14 @@ static const struct tegra_gpio_soc_config tegra30_gpio_config = {
  	.upper_offset = 0x80,
  };
+ 
++static const struct tegra_gpio_soc_config tegra210_gpio_config = {
++	.debounce_supported = true,
++	.bank_stride = 0x100,
++	.upper_offset = 0x80,
++};
++
+ static const struct of_device_id tegra_gpio_of_match[] = {
++	{ .compatible = "nvidia,tegra210-gpio", .data = &tegra210_gpio_config },
+ 	{ .compatible = "nvidia,tegra30-gpio", .data = &tegra30_gpio_config },
+ 	{ .compatible = "nvidia,tegra20-gpio", .data = &tegra20_gpio_config },
+ 	{ },
 -- 
 2.1.4
