@@ -1,72 +1,124 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 13/14] dt-bindings: arm-gic: Add documentation for
- Tegra210 AGIC
-Date: Fri, 22 Apr 2016 12:12:57 +0100
-Message-ID: <571A0739.3090502@nvidia.com>
-References: <1461150237-15580-1-git-send-email-jonathanh@nvidia.com>
- <1461150237-15580-14-git-send-email-jonathanh@nvidia.com>
- <20160422100052.GA10606@leverpostej>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] clk: tegra210: Add SLCG override gate clocks
+Date: Fri, 22 Apr 2016 13:12:45 +0200
+Message-ID: <20160422111245.GA9047@ulmo.ba.sec>
+References: <1457638685-31007-1-git-send-email-rklein@nvidia.com>
+ <20160314160551.GA21898@ulmo.nvidia.com>
+ <56E6E20C.6020807@nvidia.com>
+ <56E7CA79.7060106@nvidia.com>
+ <56F581BF.2070903@nvidia.com>
+ <20160412152026.GE25160@ulmo.ba.sec>
+ <570D335E.9020202@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="azLHFNyN32YCQGCU"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160422100052.GA10606@leverpostej>
+Content-Disposition: inline
+In-Reply-To: <570D335E.9020202-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 22/04/16 11:00, Mark Rutland wrote:
-> On Wed, Apr 20, 2016 at 12:03:56PM +0100, Jon Hunter wrote:
->> The Tegra AGIC interrupt controller is compatible with the ARM GIC-400
->> interrupt controller.
-> 
-> The cover letter says it _is_ a GIC-400, just used in a slightly unusual
-> manner (i.e. not directly connected to CPUs).
+--azLHFNyN32YCQGCU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Correct.
+On Tue, Apr 12, 2016 at 06:41:50PM +0100, Jon Hunter wrote:
+>=20
+> On 12/04/16 16:20, Thierry Reding wrote:
+> > * PGP Signed by an unknown key
+> >=20
+> > On Fri, Mar 25, 2016 at 02:21:51PM -0400, Rhyland Klein wrote:
+> >> On 3/15/2016 4:40 AM, Jon Hunter wrote:
+> >>>
+> >>> On 14/03/16 16:08, Rhyland Klein wrote:
+> >>>> On 3/14/2016 12:05 PM, Thierry Reding wrote:
+> >>>>>> Old Signed by an unknown key
+> >>>>>
+> >>>>> On Thu, Mar 10, 2016 at 02:38:05PM -0500, Rhyland Klein wrote:
+> >>>>>> From: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>>>>>
+> >>>>>> Add some SLCG (Second Level Clock Gating) override clocks to contr=
+ol
+> >>>>>> gating and un-gating their logics.
+> >>>>>>
+> >>>>>> Signed-off-by: Bill Huang <bilhuang-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>>>>> Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>>>>> ---
+> >>>>>>  drivers/clk/tegra/clk-id.h               | 16 ++++++
+> >>>>>>  drivers/clk/tegra/clk-tegra210.c         | 91 +++++++++++++++++++=
++++++++++++++
+> >>>>>>  include/dt-bindings/clock/tegra210-car.h | 32 +++++------
+> >>>>>>  3 files changed, 123 insertions(+), 16 deletions(-)
+> >>>>>
+> >>>>> There's no rationale given here about why we need this. What will t=
+hese
+> >>>>> second level clock gates be used for? Why do we need these (seeming=
+ly)
+> >>>>> duplicate clock entries.
+> >>>>>
+> >>>>
+> >>>> These are going to be used in the to-be posted patchset around
+> >>>> powergating. As of now they are unused, which is why I hadn't added =
+them
+> >>>> previously. I just wanted to try to get this dependency in before the
+> >>>> powergate series was posted.
+> >>>
+> >>> Yes we are using these on the Pixel C (aka. Smaug) and I suggested to
+> >>> Rhyland that we upstream them. Eventually we will use them but only
+> >>> after the core GenPD changes for Tegra are merged. From my perspectiv=
+e I
+> >>> was thinking it is better to reduce the changes between the chromeos
+> >>> 3.18 kernel and mainline. However, if you wish to wait until we need
+> >>> them I guess we can. Otherwise ...
+> >>>
+> >>> Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>>
+> >>> Cheers
+> >>> Jon
+> >>>
+> >>
+> >> Thierry do you think we should hold off on this until Jon's patches are
+> >> ready or merge this sooner?
+> >=20
+> > Jon, I think it would make sense for you to pick this up into your tree
+> > along with the rest of the patches that make use of them. Even if they
+> > end up being applied to different trees I'd like to see all of the work
+> > as a whole first.
+>=20
+> Ok. That is fine with me.
 
->> The Tegra AGIC requires two clocks, namely the
->> "ape" (functional) and "apb2ape" (interface) clocks, to operate. Add
->> the compatible string and clock information for the AGIC to the GIC
->> device-tree binding documentation.
-> 
-> The GIC-400 spec only describes "CLK" (which is what I imagine "ape" is.
-> There isn't an APB clock described, and the manual seems to show GIC-400
-> directly connected to AXI rather than APB, so that doesn't seem to even
-> be the usual "apb_pclk".
-> 
-> Is there some wrapper logic around a GIC-400 to giove it an APB
-> interface? Or am I misudnerstanding the spec?
+I've had a brief discussion about this with Peter and it seems like
+these are only used to make sure that IP blocks don't hang during reset.
+If that's so I'm inclined to request this code to be hidden within the
+clock & reset driver to contain the knowledge to that driver where the
+workaround can be applied without having to make every driver (or at
+least the powergate driver) aware of this need.
 
-Looking at the Tegra documentation what we have is ...
+Thierry
 
-APB --> AXI switch --> AGIC (GIC400)
+--azLHFNyN32YCQGCU
+Content-Type: application/pgp-signature; name="signature.asc"
 
-I am not sure how such a switch would typically be modeled in DT but we
-need the apb clock to interface to the GIC registers. I am not sure if
-something like simple-pm-bus is appropriate here.
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
->> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>
->> I am not sure if it will be popular to add Tegra specific clock names
->> to the GIC DT docs. However, in that case, then possibly the only
->> alternative is to move the Tegra AGIC driver into its own file and
->> expose the GIC APIs for it to use. Then we could add our own DT doc
->> for the Tegra AGIC as well (based upon the ARM GIC).
-> 
-> The clock-names don't seem right to me, as they sound like provide names
-> or global clock line names rather than consumer-side names ("clk" and
-> "apb_pclk").
+iQIcBAABCAAGBQJXGgcqAAoJEN0jrNd/PrOhx8AQAIIlnQbEFZYjGY75A2nPDRnq
+jBdj+Tes6umc45qU6KtQ3bR2bag9km18f+ZyG47K+XaqXFjlkXyjNj2ODmMqku54
+iC4/hVl/rBJTaV9oWziQyfO5HtwxdRB+7u0JtouVkS0P27iyfKA0RbKuGqYsPq7r
+4n45V2BRhVYaAM4kagOVeS6pTP7kyVw7LHt1P0njkgzV/QHGr8Vxhw2quJNUY6gK
+suKHkw2NI59jKuT+ugeRwmHtJ4kmw2p84YKRhfY4zZEv2QtkBRcQqoADjwrfnN9s
+YsGHmktutqnCsdWd/Q8sDM2DozH1YgOy8W/OA/WKSXYNk3lZyx2APeWCEw3zy2yz
+JgVoNjW++KxBNF8iza9FkjDmYkXM6bunvyxuLRIQMUwbf5GoSGjaedgaRNBT+yMa
+5ATczVJm+RdxwVQOIMHTI4H99all8XFeStM4yPU4QsYDPvb/2wWzT5C5dZH2AmQ8
+8pkHRj4Tr03i8po9XEnoKy2PoGJFmHF1SMpTBTPBYpDN5nNiAQQJPGXCmUx9Yno3
+RqKgrsGiIHnnCqsYzuewyw++ijjfStCVujeFpkgNgmhKokDpkmh4Fz6QftYs14s2
+z/5Dc41HFl/FpkMPhZPwhp68vqhR8Hxglg61Bo45HIGdp4v6ltmYxfIvzeQ3eJQi
++kdT6hr/SXaTGJUKjqYl
+=9tmM
+-----END PGP SIGNATURE-----
 
-Yes that would be fine with me.
-
-> I'm also not certain about the compatible string; if this really is a
-> GIC-400 then I would at least expect "arm,gic-400" as a fallback.
-
-OK.
-
-Cheers
-Jon
+--azLHFNyN32YCQGCU--
