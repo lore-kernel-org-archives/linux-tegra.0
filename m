@@ -1,103 +1,92 @@
-From: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v4] dmaengine: tegra-apb: proper default init of channel slave_id
-Date: Sat, 23 Apr 2016 15:06:00 +0530
-Message-ID: <1461404160-19612-1-git-send-email-smohammed@nvidia.com>
+From: Shardar Shariff Md <smohammed@nvidia.com>
+Subject: [PATCH v4 1/3] i2c: tegra: calculate timeout for config load when needed
+Date: Sat, 23 Apr 2016 16:33:57 +0530
+Message-ID: <1461409439-32385-1-git-send-email-smohammed@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: ldewangan@nvidia.com, wsa@the-dreams.de, swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, jonathanh@nvidia.com
+Cc: Shardar Shariff Md <smohammed@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Initialize default channel slave_id(req_sel) to invalid id
-(i.e max supported slave id + 1) to avoid overwriting of slave_id
-during tegra_dma_slave_config() with client data if slave_id
-is not initialized through DT
+Instead of calculating timeout for the config load during init,
+calculate it after config load register is written by using
+readx_poll_timeout().
 
-Signed-off-by: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Shardar Shariff Md <smohammed@nvidia.com>
 
+Changes since v1:
+- Split timeout calculation to seperate patch
 ---
-Changes from v1:
-- Instead of initializing the slave id to -1 define macros for
-  max slave id and invalid slave id and do the checks accordingly.
+ drivers/i2c/busses/i2c-tegra.c | 25 +++++++++++++++----------
+ 1 file changed, 15 insertions(+), 10 deletions(-)
 
-Changes from v2:
-- Check slave id boundary before dma channel is allocated to
-  avoid channel leakage.
-- Calculate the max slave id from the CSR slave id(req sel)
-  mask bits.
-
-Changes from v3:
-- Remove *MAX_SLAVD_ID macro and instead use *REQ_SEL_MASK
-- During tegra_dma_slave_config() check for slave_id boundary
-  condition
----
- drivers/dma/tegra20-apb-dma.c | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-index 3871f29..01e316f 100644
---- a/drivers/dma/tegra20-apb-dma.c
-+++ b/drivers/dma/tegra20-apb-dma.c
-@@ -54,6 +54,7 @@
- #define TEGRA_APBDMA_CSR_ONCE			BIT(27)
- #define TEGRA_APBDMA_CSR_FLOW			BIT(21)
- #define TEGRA_APBDMA_CSR_REQ_SEL_SHIFT		16
-+#define TEGRA_APBDMA_CSR_REQ_SEL_MASK		0x1F
- #define TEGRA_APBDMA_CSR_WCOUNT_MASK		0xFFFC
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index d764d64..c1b02c7 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -28,6 +28,7 @@
+ #include <linux/of_device.h>
+ #include <linux/module.h>
+ #include <linux/reset.h>
++#include <linux/iopoll.h>
  
- /* STATUS register */
-@@ -114,6 +115,8 @@
- /* Channel base address offset from APBDMA base address */
- #define TEGRA_APBDMA_CHANNEL_BASE_ADD_OFFSET	0x1000
+ #include <asm/unaligned.h>
  
-+#define TEGRA_APBDMA_SLAVE_ID_INVALID	(TEGRA_APBDMA_CSR_REQ_SEL_MASK + 1)
+@@ -110,6 +111,8 @@
+ #define I2C_CLKEN_OVERRIDE			0x090
+ #define I2C_MST_CORE_CLKEN_OVR			(1 << 0)
+ 
++#define I2C_CONFIG_LOAD_TIMEOUT			1000000
 +
- struct tegra_dma;
- 
  /*
-@@ -353,8 +356,11 @@ static int tegra_dma_slave_config(struct dma_chan *dc,
- 	}
+  * msg_end_type: The bus control which need to be send at end of transfer.
+  * @MSG_END_STOP: Send stop pulse at end of transfer.
+@@ -428,7 +431,6 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+ 	u32 val;
+ 	int err = 0;
+ 	u32 clk_divisor;
+-	unsigned long timeout = jiffies + HZ;
  
- 	memcpy(&tdc->dma_sconfig, sconfig, sizeof(*sconfig));
--	if (!tdc->slave_id)
-+	if (tdc->slave_id == TEGRA_APBDMA_SLAVE_ID_INVALID) {
-+		if (sconfig->slave_id > TEGRA_APBDMA_CSR_REQ_SEL_MASK)
-+			return -EINVAL;
- 		tdc->slave_id = sconfig->slave_id;
-+	}
- 	tdc->config_init = true;
- 	return 0;
- }
-@@ -1236,7 +1242,7 @@ static void tegra_dma_free_chan_resources(struct dma_chan *dc)
- 	}
- 	pm_runtime_put(tdma->dev);
+ 	err = tegra_i2c_clock_enable(i2c_dev);
+ 	if (err < 0) {
+@@ -478,24 +480,27 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+ 		i2c_writel(i2c_dev, I2C_MST_CORE_CLKEN_OVR, I2C_CLKEN_OVERRIDE);
  
--	tdc->slave_id = 0;
-+	tdc->slave_id = TEGRA_APBDMA_SLAVE_ID_INVALID;
- }
- 
- static struct dma_chan *tegra_dma_of_xlate(struct of_phandle_args *dma_spec,
-@@ -1246,6 +1252,11 @@ static struct dma_chan *tegra_dma_of_xlate(struct of_phandle_args *dma_spec,
- 	struct dma_chan *chan;
- 	struct tegra_dma_channel *tdc;
- 
-+	if (dma_spec->args[0] > TEGRA_APBDMA_CSR_REQ_SEL_MASK) {
-+		dev_err(tdma->dev, "Invalid slave id: %d\n", dma_spec->args[0]);
-+		return NULL;
-+	}
+ 	if (i2c_dev->hw->has_config_load_reg) {
++		u32 val;
 +
- 	chan = dma_get_any_slave_channel(&tdma->dma_dev);
- 	if (!chan)
- 		return NULL;
-@@ -1389,6 +1400,7 @@ static int tegra_dma_probe(struct platform_device *pdev)
- 				&tdma->dma_dev.channels);
- 		tdc->tdma = tdma;
- 		tdc->id = i;
-+		tdc->slave_id = TEGRA_APBDMA_SLAVE_ID_INVALID;
+ 		i2c_writel(i2c_dev, I2C_MSTR_CONFIG_LOAD, I2C_CONFIG_LOAD);
+-		while (i2c_readl(i2c_dev, I2C_CONFIG_LOAD) != 0) {
+-			if (time_after(jiffies, timeout)) {
+-				dev_warn(i2c_dev->dev,
+-					"timeout waiting for config load\n");
+-				return -ETIMEDOUT;
+-			}
+-			msleep(1);
++		err = readx_poll_timeout(readl, i2c_dev->base +
++					 tegra_i2c_reg_addr(i2c_dev,
++					 I2C_CONFIG_LOAD), val, val == 0,
++					 1000, I2C_CONFIG_LOAD_TIMEOUT);
++		if (err) {
++			dev_warn(i2c_dev->dev,
++				 "timeout waiting for config load\n");
++			goto err;
+ 		}
+ 	}
  
- 		tasklet_init(&tdc->tasklet, tegra_dma_tasklet,
- 				(unsigned long)tdc);
+-	tegra_i2c_clock_disable(i2c_dev);
+-
+ 	if (i2c_dev->irq_disabled) {
+ 		i2c_dev->irq_disabled = 0;
+ 		enable_irq(i2c_dev->irq);
+ 	}
+ 
++err:
++	tegra_i2c_clock_disable(i2c_dev);
+ 	return err;
+ }
+ 
 -- 
 1.8.1.5
