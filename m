@@ -1,32 +1,53 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4] dmaengine: tegra-apb: proper default init of channel
- slave_id
-Date: Mon, 25 Apr 2016 12:29:40 +0100
-Message-ID: <571DFFA4.1040701@nvidia.com>
-References: <1461404160-19612-1-git-send-email-smohammed@nvidia.com>
+From: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v5 1/4] i2c: tegra: disable clock before returning error
+Date: Mon, 25 Apr 2016 17:15:15 +0530
+Message-ID: <1461584718-23217-1-git-send-email-smohammed@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1461404160-19612-1-git-send-email-smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Disable clock before returning error in tegra_i2c_init()
 
-On 23/04/16 10:36, Shardar Shariff Md wrote:
-> Initialize default channel slave_id(req_sel) to invalid id
-> (i.e max supported slave id + 1) to avoid overwriting of slave_id
-> during tegra_dma_slave_config() with client data if slave_id
-> is not initialized through DT
-> 
-> Signed-off-by: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Thanks for the update. I have tested this on Tegra124 using the serial
-port with DMA.
+---
+Changes since v1:
+- Move current patch as separate patch
+---
+ drivers/i2c/busses/i2c-tegra.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-Reviewed-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Tested-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Cheers
-Jon
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index d764d64..e8507f6 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -483,19 +483,21 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+ 			if (time_after(jiffies, timeout)) {
+ 				dev_warn(i2c_dev->dev,
+ 					"timeout waiting for config load\n");
+-				return -ETIMEDOUT;
++				err = -ETIMEDOUT;
++				goto err;
+ 			}
+ 			msleep(1);
+ 		}
+ 	}
+ 
+-	tegra_i2c_clock_disable(i2c_dev);
+ 
+ 	if (i2c_dev->irq_disabled) {
+ 		i2c_dev->irq_disabled = 0;
+ 		enable_irq(i2c_dev->irq);
+ 	}
+ 
++err:
++	tegra_i2c_clock_disable(i2c_dev);
+ 	return err;
+ }
+ 
+-- 
+1.8.1.5
