@@ -1,66 +1,140 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH v7 1/4] i2c: tegra: disable clock before returning error
-Date: Mon, 25 Apr 2016 15:54:48 +0200
-Message-ID: <20160425135448.GA5897@katana>
-References: <1461591519-24602-1-git-send-email-smohammed@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 4/5] regulator: core: Add early supply resolution for a
+ bypassed regulator
+Date: Mon, 25 Apr 2016 15:44:24 +0100
+Message-ID: <571E2D48.10509@nvidia.com>
+References: <1461255121-5245-1-git-send-email-jonathanh@nvidia.com>
+ <1461255121-5245-5-git-send-email-jonathanh@nvidia.com>
+ <20160422104837.GC3217@sirena.org.uk> <571A0A81.4010009@nvidia.com>
+ <20160422135339.GD3217@sirena.org.uk>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="ikeVEW9yuYc//A+q"
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1461591519-24602-1-git-send-email-smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20160422135339.GD3217-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---ikeVEW9yuYc//A+q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 22/04/16 14:53, Mark Brown wrote:
+> * PGP Signed by an unknown key
+> 
+> On Fri, Apr 22, 2016 at 12:26:57PM +0100, Jon Hunter wrote:
+> 
+>> OK. Sorry if I have misunderstood you here, but this sounds more like
+>> Thierry's initial proposal [0] but ignoring the any errors returned (and
+>> we need to fix-up the locking in this patch). In the discussion that
+> 
+> Yes!
+> 
+>> followed I thought we agreed to only do this for the bypass case [1]. As
+>> far as I am concerned either will work, but to confirm we should just
+>> always try to resolve the supply early during regulator_register(), correct?
+> 
+> We need to only *fail* in the bypass case.
 
-On Mon, Apr 25, 2016 at 07:08:36PM +0530, Shardar Shariff Md wrote:
-> Disable clock before returning error in tegra_i2c_init() as its leaves
-> i2c clock ON in case of error and never turns off again as it will have
-> unbalanced clock enable/disable
->=20
-> Signed-off-by: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> ---
-> Changes in v5:
-> - Move current patch as separate patch
->=20
-> Changes in v6:
-> - Remove unnecessary line
->=20
-> Changes in v7
-> - Updated commit message with description of issue
+OK. So this is what I have now. Is it weird to return EPROBE_DEFER in 
+_regulator_get_voltage()? If so, I could add a test for bypass in the
+regulator_register().
 
-I know 'release often' but maybe you could wait like a day and collect
-review responses before submitting a new version? That would make my
-life as a maintainer easier...
-
-
---ikeVEW9yuYc//A+q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXHiGoAAoJEBQN5MwUoCm2N0EP/AhMcc8Bubv0v68Toejljjlv
-sfg3S5eOLZDaDXycNNISFagHZpWQLgKSDwsfU8pvJP0wmkaw6sbRX3AQP7xbMTf4
-EbZCpb8DdCI2JoeyxufJDyCHXKkgjfeZ9V+miNRUCpnPMDk5fF167g3fcSMa7+rR
-M46v+SrHHfY4rsgXJKwxlbAF7T3QMLicdcI4aX6LGc9GlTGJs5Tl/aB8EOdFUqJC
-Qsn39ycEG0r17kSsgmkJ1eBnbhJPIXj1usFPGkAod4fpwIF8ZRO3eiss0HKtqMu4
-w496Iamwaf2fup1SGo5TPohJXtNM8Yl2ZaGJ9HcrNJl9vbKYfA2a8A9W6DIi4AUE
-zgo4zOXKpF/gSnCs25djL3tDVsOn3AxfXrW3qt1L51PE5pF5maHQrBekxFa3//Ue
-f9/SmCTjJgBFrLNPi9+JYCYusQmzQ0pRtubTu40S6w3W3dCCk5G9kVN8NAUDmXTy
-S6q88ILTmCS9/Gf6WYU6GOvGrFMvK8tbJ2BABZMPIL1Y3CfKwjvqA6xwxCDNqts+
-E/Wt8Yl7ZRdzEG3SCnwc1tMUZDrvyt6uXqTtH51xEkZw1hWNSG5Xl06ZTiz1OxNp
-Fw3PVtMGLpmXY/HCMQYCPtkL20F6sweSDlstaZI/Ub9ggESJcANsSnsFognsjts5
-tX6EXzAAcTKkp5IdM+2l
-=Qf+i
------END PGP SIGNATURE-----
-
---ikeVEW9yuYc//A+q--
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 5b46d907e61d..7a6b7f667bcb 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -3126,7 +3126,7 @@ static int _regulator_get_voltage(struct regulator_dev *rdev)
+ 		if (bypassed) {
+ 			/* if bypassed the regulator must have a supply */
+ 			if (!rdev->supply)
+-				return -EINVAL;
++				return -EPROBE_DEFER;
+ 
+ 			return _regulator_get_voltage(rdev->supply->rdev);
+ 		}
+@@ -3943,8 +3943,6 @@ regulator_register(const struct regulator_desc *regulator_desc,
+ 		rdev->dev.of_node = of_node_get(config->of_node);
+ 	}
+ 
+-	mutex_lock(&regulator_list_mutex);
+-
+ 	mutex_init(&rdev->mutex);
+ 	rdev->reg_data = config->driver_data;
+ 	rdev->owner = regulator_desc->owner;
+@@ -3969,7 +3967,9 @@ regulator_register(const struct regulator_desc *regulator_desc,
+ 
+ 	if ((config->ena_gpio || config->ena_gpio_initialized) &&
+ 	    gpio_is_valid(config->ena_gpio)) {
++		mutex_lock(&regulator_list_mutex);
+ 		ret = regulator_ena_gpio_request(rdev, config);
++		mutex_unlock(&regulator_list_mutex);
+ 		if (ret != 0) {
+ 			rdev_err(rdev, "Failed to request enable GPIO%d: %d\n",
+ 				 config->ena_gpio, ret);
+@@ -3987,31 +3987,40 @@ regulator_register(const struct regulator_desc *regulator_desc,
+ 	if (init_data)
+ 		constraints = &init_data->constraints;
+ 
+-	ret = set_machine_constraints(rdev, constraints);
+-	if (ret < 0)
+-		goto wash;
+-
+ 	if (init_data && init_data->supply_regulator)
+ 		rdev->supply_name = init_data->supply_regulator;
+ 	else if (regulator_desc->supply_name)
+ 		rdev->supply_name = regulator_desc->supply_name;
+ 
++	/*
++	 * Attempt to resolve the regulator supply, if specified,
++	 * but don't return an error if we fail because we will try
++	 * to resolve it again later as more regulators are added.
++	 */
++	if (regulator_resolve_supply(rdev))
++		rdev_dbg(rdev, "unable to resolve supply\n");
++
++	ret = set_machine_constraints(rdev, constraints);
++	if (ret < 0)
++		goto wash;
++
+ 	/* add consumers devices */
+ 	if (init_data) {
++		mutex_lock(&regulator_list_mutex);
+ 		for (i = 0; i < init_data->num_consumer_supplies; i++) {
+ 			ret = set_consumer_device_supply(rdev,
+ 				init_data->consumer_supplies[i].dev_name,
+ 				init_data->consumer_supplies[i].supply);
+ 			if (ret < 0) {
++				mutex_unlock(&regulator_list_mutex);
+ 				dev_err(dev, "Failed to set supply %s\n",
+ 					init_data->consumer_supplies[i].supply);
+ 				goto unset_supplies;
+ 			}
+ 		}
++		mutex_unlock(&regulator_list_mutex);
+ 	}
+ 
+-	mutex_unlock(&regulator_list_mutex);
+-
+ 	ret = device_register(&rdev->dev);
+ 	if (ret != 0) {
+ 		put_device(&rdev->dev);
+@@ -4028,13 +4037,16 @@ regulator_register(const struct regulator_desc *regulator_desc,
+ 	return rdev;
+ 
+ unset_supplies:
++	mutex_lock(&regulator_list_mutex);
+ 	unset_regulator_supplies(rdev);
++	mutex_unlock(&regulator_list_mutex);
+ wash:
+ 	kfree(rdev->constraints);
++	mutex_lock(&regulator_list_mutex);
+ 	regulator_ena_gpio_free(rdev);
++	mutex_unlock(&regulator_list_mutex);
+ clean:
+ 	kfree(rdev);
+-	mutex_unlock(&regulator_list_mutex);
+ 	kfree(config);
+ 	return ERR_PTR(ret);
+ }
+-- 
+2.1.4
