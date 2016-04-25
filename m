@@ -1,90 +1,71 @@
-From: Shardar Shariff Md <smohammed@nvidia.com>
-Subject: [PATCH v6 3/4] i2c: tegra: add separate function for config_load
-Date: Mon, 25 Apr 2016 17:27:37 +0530
-Message-ID: <1461585458-23948-3-git-send-email-smohammed@nvidia.com>
-References: <1461585458-23948-1-git-send-email-smohammed@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v4.6-rc5
+Date: Mon, 25 Apr 2016 13:07:19 +0100
+Message-ID: <571E0877.10403@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1461585458-23948-1-git-send-email-smohammed@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: ldewangan@nvidia.com, wsa@the-dreams.de, swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, jonathanh@nvidia.com
-Cc: Shardar Shariff Md <smohammed@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Define separate function for configuration load register handling
-to make it use by different functions later.
+Here are some basic Tegra test results for Linux v4.6-rc5.
+Logs and other details at:
 
-Signed-off-by: Shardar Shariff Md <smohammed@nvidia.com>
+    https://nvtb.github.io//linux/test_v4.6-rc5/20160424163103/
 
----
-Changes in v2:
-- Remove unnecessary paranthesis and align to 80 characters per line
 
-Changes in v3:
-- Add separate function for config load handling
+Test summary
+------------
 
-Changes in v4:
-- Move timeout calculation to separate patch
----
- drivers/i2c/busses/i2c-tegra.c | 38 ++++++++++++++++++++++++--------------
- 1 file changed, 24 insertions(+), 14 deletions(-)
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index c1b02c7..8d49995 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -426,6 +426,27 @@ static inline void tegra_i2c_clock_disable(struct tegra_i2c_dev *i2c_dev)
- 		clk_disable(i2c_dev->fast_clk);
- }
- 
-+static int tegra_i2c_wait_for_config_load(struct tegra_i2c_dev *i2c_dev)
-+{
-+	if (i2c_dev->hw->has_config_load_reg) {
-+		u32 val;
-+		int err;
-+
-+		i2c_writel(i2c_dev, I2C_MSTR_CONFIG_LOAD, I2C_CONFIG_LOAD);
-+		err = readx_poll_timeout(readl, i2c_dev->base +
-+					 tegra_i2c_reg_addr(i2c_dev,
-+					 I2C_CONFIG_LOAD), val, val == 0,
-+					 1000, I2C_CONFIG_LOAD_TIMEOUT);
-+		if (err) {
-+			dev_warn(i2c_dev->dev,
-+				 "timeout waiting for config load\n");
-+			return err;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- {
- 	u32 val;
-@@ -479,20 +500,9 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 	if (i2c_dev->is_multimaster_mode && i2c_dev->hw->has_slcg_override_reg)
- 		i2c_writel(i2c_dev, I2C_MST_CORE_CLKEN_OVR, I2C_CLKEN_OVERRIDE);
- 
--	if (i2c_dev->hw->has_config_load_reg) {
--		u32 val;
--
--		i2c_writel(i2c_dev, I2C_MSTR_CONFIG_LOAD, I2C_CONFIG_LOAD);
--		err = readx_poll_timeout(readl, i2c_dev->base +
--					 tegra_i2c_reg_addr(i2c_dev,
--					 I2C_CONFIG_LOAD), val, val == 0,
--					 1000, I2C_CONFIG_LOAD_TIMEOUT);
--		if (err) {
--			dev_warn(i2c_dev->dev,
--				 "timeout waiting for config load\n");
--			goto err;
--		}
--	}
-+	err = tegra_i2c_wait_for_config_load(i2c_dev);
-+	if (err)
-+		goto err;
- 
- 	if (i2c_dev->irq_disabled) {
- 		i2c_dev->irq_disabled = 0;
--- 
-1.8.1.5
+Build: Image:
+    Pass: ( 1/ 1): defconfig
+
+Boot to userspace: defconfig:
+    Pass: ( 3/ 3): qemu-vexpress64, tegra132-norrin,
+		   tegra210-p2371-0000
+
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: multi_v7_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: tegra_defconfig:
+    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra20-trimslice, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v4.6-rc4 (c3b46c73264b03000d1e18b22f5caf63332547c9)):
+   text     data      bss    total  kernel
+    +82        0        0      +82  defconfig
+  +2456        0        0    +2456  multi_v7_defconfig
+  +2136        0        0    +2136  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.6-rc4 (c3b46c73264b03000d1e18b22f5caf63332547c9))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+        .        .        .        .      qemu-vexpress64            defconfig           __internal
+        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
+        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
+        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
