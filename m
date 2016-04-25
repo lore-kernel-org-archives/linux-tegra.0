@@ -1,140 +1,102 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 4/5] regulator: core: Add early supply resolution for a
- bypassed regulator
-Date: Mon, 25 Apr 2016 15:44:24 +0100
-Message-ID: <571E2D48.10509@nvidia.com>
-References: <1461255121-5245-1-git-send-email-jonathanh@nvidia.com>
- <1461255121-5245-5-git-send-email-jonathanh@nvidia.com>
- <20160422104837.GC3217@sirena.org.uk> <571A0A81.4010009@nvidia.com>
- <20160422135339.GD3217@sirena.org.uk>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [RFC] i2c: device-tree: Handling child nodes which are not i2c
+ devices
+Date: Mon, 25 Apr 2016 15:51:16 +0100
+Message-ID: <571E2EE4.90104@nvidia.com>
+References: <57110A35.2070509@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160422135339.GD3217-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <57110A35.2070509@nvidia.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>, Thierry Reding <treding@nvidia.com>, Stephen Warren <swarren@nvidia.com>
+Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linux-i2c@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi all,
 
-On 22/04/16 14:53, Mark Brown wrote:
-> * PGP Signed by an unknown key
-> 
-> On Fri, Apr 22, 2016 at 12:26:57PM +0100, Jon Hunter wrote:
-> 
->> OK. Sorry if I have misunderstood you here, but this sounds more like
->> Thierry's initial proposal [0] but ignoring the any errors returned (and
->> we need to fix-up the locking in this patch). In the discussion that
-> 
-> Yes!
-> 
->> followed I thought we agreed to only do this for the bypass case [1]. As
->> far as I am concerned either will work, but to confirm we should just
->> always try to resolve the supply early during regulator_register(), correct?
-> 
-> We need to only *fail* in the bypass case.
+Any thoughts on this? Let me know if this is not clear in anyway.
 
-OK. So this is what I have now. Is it weird to return EPROBE_DEFER in 
-_regulator_get_voltage()? If so, I could add a test for bypass in the
-regulator_register().
+Cheers
+Jon
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 5b46d907e61d..7a6b7f667bcb 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -3126,7 +3126,7 @@ static int _regulator_get_voltage(struct regulator_dev *rdev)
- 		if (bypassed) {
- 			/* if bypassed the regulator must have a supply */
- 			if (!rdev->supply)
--				return -EINVAL;
-+				return -EPROBE_DEFER;
- 
- 			return _regulator_get_voltage(rdev->supply->rdev);
- 		}
-@@ -3943,8 +3943,6 @@ regulator_register(const struct regulator_desc *regulator_desc,
- 		rdev->dev.of_node = of_node_get(config->of_node);
- 	}
- 
--	mutex_lock(&regulator_list_mutex);
--
- 	mutex_init(&rdev->mutex);
- 	rdev->reg_data = config->driver_data;
- 	rdev->owner = regulator_desc->owner;
-@@ -3969,7 +3967,9 @@ regulator_register(const struct regulator_desc *regulator_desc,
- 
- 	if ((config->ena_gpio || config->ena_gpio_initialized) &&
- 	    gpio_is_valid(config->ena_gpio)) {
-+		mutex_lock(&regulator_list_mutex);
- 		ret = regulator_ena_gpio_request(rdev, config);
-+		mutex_unlock(&regulator_list_mutex);
- 		if (ret != 0) {
- 			rdev_err(rdev, "Failed to request enable GPIO%d: %d\n",
- 				 config->ena_gpio, ret);
-@@ -3987,31 +3987,40 @@ regulator_register(const struct regulator_desc *regulator_desc,
- 	if (init_data)
- 		constraints = &init_data->constraints;
- 
--	ret = set_machine_constraints(rdev, constraints);
--	if (ret < 0)
--		goto wash;
--
- 	if (init_data && init_data->supply_regulator)
- 		rdev->supply_name = init_data->supply_regulator;
- 	else if (regulator_desc->supply_name)
- 		rdev->supply_name = regulator_desc->supply_name;
- 
-+	/*
-+	 * Attempt to resolve the regulator supply, if specified,
-+	 * but don't return an error if we fail because we will try
-+	 * to resolve it again later as more regulators are added.
-+	 */
-+	if (regulator_resolve_supply(rdev))
-+		rdev_dbg(rdev, "unable to resolve supply\n");
-+
-+	ret = set_machine_constraints(rdev, constraints);
-+	if (ret < 0)
-+		goto wash;
-+
- 	/* add consumers devices */
- 	if (init_data) {
-+		mutex_lock(&regulator_list_mutex);
- 		for (i = 0; i < init_data->num_consumer_supplies; i++) {
- 			ret = set_consumer_device_supply(rdev,
- 				init_data->consumer_supplies[i].dev_name,
- 				init_data->consumer_supplies[i].supply);
- 			if (ret < 0) {
-+				mutex_unlock(&regulator_list_mutex);
- 				dev_err(dev, "Failed to set supply %s\n",
- 					init_data->consumer_supplies[i].supply);
- 				goto unset_supplies;
- 			}
- 		}
-+		mutex_unlock(&regulator_list_mutex);
- 	}
- 
--	mutex_unlock(&regulator_list_mutex);
--
- 	ret = device_register(&rdev->dev);
- 	if (ret != 0) {
- 		put_device(&rdev->dev);
-@@ -4028,13 +4037,16 @@ regulator_register(const struct regulator_desc *regulator_desc,
- 	return rdev;
- 
- unset_supplies:
-+	mutex_lock(&regulator_list_mutex);
- 	unset_regulator_supplies(rdev);
-+	mutex_unlock(&regulator_list_mutex);
- wash:
- 	kfree(rdev->constraints);
-+	mutex_lock(&regulator_list_mutex);
- 	regulator_ena_gpio_free(rdev);
-+	mutex_unlock(&regulator_list_mutex);
- clean:
- 	kfree(rdev);
--	mutex_unlock(&regulator_list_mutex);
- 	kfree(config);
- 	return ERR_PTR(ret);
- }
--- 
-2.1.4
+On 15/04/16 16:35, Jon Hunter wrote:
+> Hi all,
+> 
+> For Tegra we have an i2c device for display port, namely the display
+> port auxiliary channel (or dpaux) as specified by the display port
+> standard. If an design using Tegra does not utilise the display port
+> interface, then the pads assigned to the dpaux can be re-assigned to
+> another generic i2c controller (i2c6 for Tegra124/210). In other words,
+> the pads can be re-used for a generic i2c interface.
+> 
+> The registers that control whether the pads are mapped to the dpaux or
+> i2c6 are located in the dpaux register space. Therefore, I am looking at
+> adding pin controller support for dpaux so that i2c6 can request these
+> pads if it is enabled and I was hoping to add a pinmux node the to dpaux
+> device in device-tree to do this. For example, something like ...
+> 
+> 	dpaux@0,545c0000 {
+> 		...
+> 
+> 		/* pinctrl node */
+> 		pinmux {
+> 			...
+> 		};
+> 	};
+> 
+> Although the above works, when doing this I noticed that when the device
+> booted, I would seeing the following error messages on boot ...
+> 
+>  i2c i2c-5: of_i2c: modalias failure on ...
+> 
+> These error messages being caused by the new pinmux node because it is
+> not recognised as an i2c device. To avoid this error messages we have
+> come up with a couple solutions but wanted to get some feedback on the
+> best approach.
+> 
+> 1. Add a i2c-bus sub-node to the dpaux binding (suggested by Stephen
+>    Warren), so we would have something like the below. Then i2c devices
+>    for dpaux would be place in the i2c-bus sub-node.
+> 
+> 	dpaux@0,545c0000 {
+> 		...
+> 
+> 		/* pinctrl node */
+> 		pinmux {
+> 			...
+> 		};
+> 
+> 		/* place-holder for i2c devices */
+> 		i2c-bus {
+> 			...
+> 		};
+> 	};	
+> 
+>    To make the above work ideally we would like to make the 'i2c-bus'
+>    node a generic solution for all i2c devices, so the i2c core would
+>    check for the presence of this node and if it is found then would
+>    default to this node for looking for i2c-devices.
+> 
+> 2. When registering i2c devices via device-tree, the function
+>    of_i2c_register_devices() checks to see if OF_POPULATED flag is set
+>    for a given node. If it is set, then the node is skipped. I believe
+>    this was added for device-tree overlays (commit 4f001fd30145 i2c:
+>    Mark instantiated device nodes with OF_POPULATE). Another option is
+>    for the dpaux driver to mark the pinmux node as populated before
+>    registering the i2c adapter and this will prevent the i2c core from
+>    trying to parse the pinmux node. I am not sure if this would be
+>    frowned upon in anyway or if we can guarantee that no future changes
+>    to DT overlays would change this in a way where it would not work.
+> 
+> Let me know your thoughts.
+> 
+> Cheers
+> Jon
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
