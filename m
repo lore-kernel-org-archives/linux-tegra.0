@@ -1,64 +1,34 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH 7/7] pinctrl: tegra: Add driver to configure voltage and
- power state of io pads
-Date: Tue, 26 Apr 2016 19:02:21 +0530
-Message-ID: <571F6DE5.5020605@nvidia.com>
-References: <1460473007-11535-1-git-send-email-ldewangan@nvidia.com>	<1460473007-11535-8-git-send-email-ldewangan@nvidia.com>	<CACRpkdZyYiNJfuiTPeivvgVTZwdwh64nkf=f8JczSAVvnT7QeA@mail.gmail.com>	<5710A8A4.90309@nvidia.com>	<CACRpkdZLEozAmv6REcb7ubCNSLxGsYj1whZEKUkdiodZoS=vzg@mail.gmail.com>	<5710BA75.2010503@nvidia.com> <CACRpkdbr-9Z1JKMVmwNFyMq+Pg+3hT5c9rKZ1y4wZecnidW9Cg@mail.gmail.com> <5710D4E2.2030801@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v10 4/9] phy: Add Tegra XUSB pad controller support
+Date: Tue, 26 Apr 2016 15:44:43 +0200
+Message-ID: <CACRpkdYRt4t+XrV_6Ac6VvNDsdNdsLZJDuW6aRR2u-rV-J=HtA@mail.gmail.com>
+References: <1457108379-20794-1-git-send-email-thierry.reding@gmail.com>
+	<1457108379-20794-4-git-send-email-thierry.reding@gmail.com>
+	<20160418114318.GC17716@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <5710D4E2.2030801@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jon Hunter <jonathanh@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160418114318.GC17716@ulmo.ba.sec>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Andrew Bresticker <abrestic@chromium.org>, Kishon Vijay Abraham I <kishon@ti.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On Friday 15 April 2016 05:17 PM, Laxman Dewangan wrote:
+On Mon, Apr 18, 2016 at 1:43 PM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
+> On Fri, Mar 04, 2016 at 05:19:34PM +0100, Thierry Reding wrote:
+>> -MODULE_LICENSE("GPL v2");
+>> +EXPORT_SYMBOL_GPL(tegra_xusb_padctl_legacy_remove);
 >
-> On Friday 15 April 2016 04:45 PM, Linus Walleij wrote:
->> On Fri, Apr 15, 2016 at 11:55 AM, Laxman Dewangan 
->> <ldewangan@nvidia.com> wrote:
->>> On Friday 15 April 2016 02:55 PM, Linus Walleij wrote:
->>>> If the pin could actually set a voltage level it would have a 
->>>> regulator.
->>>> I don't believe that. I think it is selecting one of two rails which
->>>> could theoretically hold two totally different voltages.
->>>>
->>>> And that is what power-source is about.
->>> The IO rails connected to PMIC rail and connection does not get change.
->>> We change the voltage of PMIC rails via regulator calls. And then 
->>> configure
->>> pads for the new voltage.
->> Aha I get it! So you adjust something in the I/O-cell so that it is 
->> adapted
->> for the new voltage.
->>
->> OK that seems to be something new. I suspect
->> power-voltage-select = <n>; where N i in uV would solve this?
->> (We should use uV since regulators use this.)
->
-> Thanks for new property. I will make the unit and type same as the 
-> regulator framework.
+> Since this merely implements the binding change, does your Acked-by on
+> the binding apply to this part as well?
 
-We have the ops for configuring the pin config as
+Sure
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-         int (*pin_config_group_set) (struct pinctrl_dev *pctldev,
-                                      unsigned selector,
-                                      unsigned long *configs,
-                                      unsigned num_configs);
+Sorry for missing to reply to this, have been swamped.
 
+Basically I trust anything that you and Stephen agree on.
 
-The config is 32 bit, upper 16 for config argument and  and lower 16 for 
-the config param.
-
-So we can not accommodate 3300000uV until we change it to mV i.e. 3300mV.
-
-So on interface, we can read uV from DT but when making config, we can 
-translate it to mV before passing to pin_config_group_set.
-
-
-
-
-
+Yours,
+Linus Walleij
