@@ -1,105 +1,68 @@
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-Subject: Re: [PATCH 02/41] Documentation: sysfs: fix spelling mistakes
-Date: Mon, 25 Apr 2016 16:57:32 -0600
-Message-ID: <CANLsYkxYp6hNtX4vRCaH6HdcxzHvfcUFGG_OJFc22mF2YeJX=g@mail.gmail.com>
-References: <1461543878-3639-1-git-send-email-eric@engestrom.ch>
-	<1461543878-3639-3-git-send-email-eric@engestrom.ch>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V9 RESEND 13/14] arm64: tegra: add soctherm node for Tegra210
+Date: Tue, 26 Apr 2016 11:36:00 +0800
+Message-ID: <571EE220.3070609@nvidia.com>
+References: <1459247364-1139-1-git-send-email-wni@nvidia.com> <1459247364-1139-14-git-send-email-wni@nvidia.com> <20160329151629.GB1855@localhost.localdomain> <56FE1CBB.9000807@nvidia.com> <570CB781.8040208@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1461543878-3639-3-git-send-email-eric@engestrom.ch>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Eric Engestrom <eric@engestrom.ch>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <570CB781.8040208-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 24 April 2016 at 18:23, Eric Engestrom <eric@engestrom.ch> wrote:
-> Signed-off-by: Eric Engestrom <eric@engestrom.ch>
-> ---
->  Documentation/ABI/testing/sysfs-bus-coresight-devices-etm4x      | 2 +-
->  Documentation/ABI/testing/sysfs-bus-event_source-devices-events  | 4 ++--
->  Documentation/ABI/testing/sysfs-bus-event_source-devices-hv_24x7 | 2 +-
->  Documentation/ABI/testing/sysfs-driver-tegra-fuse                | 2 +-
->  Documentation/ABI/testing/sysfs-fs-xfs                           | 2 +-
->  5 files changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices-etm4x b/Documentation/ABI/testing/sysfs-bus-coresight-devices-etm4x
-> index 2355ed8..19b83f4 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-coresight-devices-etm4x
-> +++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-etm4x
-> @@ -378,7 +378,7 @@ Date:               April 2015
->  KernelVersion: 4.01
->  Contact:       Mathieu Poirier <mathieu.poirier@linaro.org>
->  Description:   (R) Returns the maximum size of the data value, data address,
-> -               VMID, context ID and instuction address in the trace unit
-> +               VMID, context ID and instruction address in the trace unit
->                 (0x1E8).  The value is taken directly from the HW.
+Hi Thierry,
 
-For this part: Acked-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Do you know who can take these patch 13 and 14?
+The corresponding driver was merged to linux-next several weeks ago.
+Does I need to send these two patches again?
 
->
->  What:          /sys/bus/coresight/devices/<memory_map>.etm/trcidr/trcidr3
-> diff --git a/Documentation/ABI/testing/sysfs-bus-event_source-devices-events b/Documentation/ABI/testing/sysfs-bus-event_source-devices-events
-> index 505f080..77de58d 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-event_source-devices-events
-> +++ b/Documentation/ABI/testing/sysfs-bus-event_source-devices-events
-> @@ -47,7 +47,7 @@ Description:  Per-pmu performance monitoring events specific to the running syste
->                 If a <term> is specified alone (without an assigned value), it
->                 is implied that 0x1 is assigned to that <term>.
->
-> -               Examples (each of these lines would be in a seperate file):
-> +               Examples (each of these lines would be in a separate file):
->
->                         event=0x2abc
->                         event=0x423,inv,cmask=0x3
-> @@ -83,7 +83,7 @@ Description:  Perf event scaling factors
->
->                 A string representing a floating point value expressed in
->                 scientific notation to be multiplied by the event count
-> -               recieved from the kernel to match the unit specified in the
-> +               received from the kernel to match the unit specified in the
->                 <event>.unit file.
->
->                 Example:
-> diff --git a/Documentation/ABI/testing/sysfs-bus-event_source-devices-hv_24x7 b/Documentation/ABI/testing/sysfs-bus-event_source-devices-hv_24x7
-> index f893337..ec27c6c 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-event_source-devices-hv_24x7
-> +++ b/Documentation/ABI/testing/sysfs-bus-event_source-devices-hv_24x7
-> @@ -4,7 +4,7 @@ Contact:        Linux on PowerPC Developer List <linuxppc-dev@lists.ozlabs.org>
->  Description:
->                 Provides access to the binary "24x7 catalog" provided by the
->                 hypervisor on POWER7 and 8 systems. This catalog lists events
-> -               avaliable from the powerpc "hv_24x7" pmu. Its format is
-> +               available from the powerpc "hv_24x7" pmu. Its format is
->                 documented here:
->                 https://raw.githubusercontent.com/jmesmon/catalog-24x7/master/hv-24x7-catalog.h
->
-> diff --git a/Documentation/ABI/testing/sysfs-driver-tegra-fuse b/Documentation/ABI/testing/sysfs-driver-tegra-fuse
-> index 69f5af6..b8936fa 100644
-> --- a/Documentation/ABI/testing/sysfs-driver-tegra-fuse
-> +++ b/Documentation/ABI/testing/sysfs-driver-tegra-fuse
-> @@ -3,7 +3,7 @@ Date:           February 2014
->  Contact:       Peter De Schrijver <pdeschrijver@nvidia.com>
->  Description:   read-only access to the efuses on Tegra20, Tegra30, Tegra114
->                 and Tegra124 SoC's from NVIDIA. The efuses contain write once
-> -               data programmed at the factory. The data is layed out in 32bit
-> +               data programmed at the factory. The data is laid out in 32bit
->                 words in LSB first format. Each bit represents a single value
->                 as decoded from the fuse registers. Bits order/assignment
->                 exactly matches the HW registers, including any unused bits.
-> diff --git a/Documentation/ABI/testing/sysfs-fs-xfs b/Documentation/ABI/testing/sysfs-fs-xfs
-> index ea0cc8c..f704925 100644
-> --- a/Documentation/ABI/testing/sysfs-fs-xfs
-> +++ b/Documentation/ABI/testing/sysfs-fs-xfs
-> @@ -33,7 +33,7 @@ Contact:      xfs@oss.sgi.com
->  Description:
->                 The current state of the log write grant head. It
->                 represents the total log reservation of all currently
-> -               oustanding transactions, including regrants due to
-> +               outstanding transactions, including regrants due to
->                 rolling transactions. The grant head is exported in
->                 "cycle:bytes" format.
->  Users:         xfstests
+Thanks.
+Wei.
+
+On 2016=E5=B9=B404=E6=9C=8812=E6=97=A5 16:53, Wei Ni wrote:
+> Could anyone take a look this patch?
+>=20
+> On 2016=E5=B9=B404=E6=9C=8801=E6=97=A5 15:01, Wei Ni wrote:
+>> Patches 1 to 12 in this series were accepted by Eduardo.
+>> Patches 13 and 14 need to go via platform or dt tree.
+>>
+>> Used get_maintainer.pl to get maintainers and open list, add them in=
+ To: and Cc:
+>> list.
+>>
+>> To:
+>> Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+>> Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
+>> Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+>> Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
+>> Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+>>
+>> Cc:
+>> devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>>
+>> On 2016=E5=B9=B403=E6=9C=8829=E6=97=A5 23:16, Eduardo Valentin wrote=
+:
+>>> On Tue, Mar 29, 2016 at 06:29:23PM +0800, Wei Ni wrote:
+>>>> Adds soctherm node for Tegra210, and add cpu,
+>>>> gpu, mem, pllx as thermal-zones. Set critical
+>>>> trip temperatures for them.
+>>>>
+>>>> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>
+>>> Acked-by: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>>
+>> --
+>> To unsubscribe from this list: send the line "unsubscribe linux-pm" =
+in
+>> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+>> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>>
 > --
-> 2.8.0
->
+> To unsubscribe from this list: send the line "unsubscribe linux-pm" i=
+n
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>=20
