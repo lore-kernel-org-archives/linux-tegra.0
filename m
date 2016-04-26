@@ -1,68 +1,151 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V9 RESEND 13/14] arm64: tegra: add soctherm node for Tegra210
-Date: Tue, 26 Apr 2016 11:36:00 +0800
-Message-ID: <571EE220.3070609@nvidia.com>
-References: <1459247364-1139-1-git-send-email-wni@nvidia.com> <1459247364-1139-14-git-send-email-wni@nvidia.com> <20160329151629.GB1855@localhost.localdomain> <56FE1CBB.9000807@nvidia.com> <570CB781.8040208@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2] regulator: core: Add early supply resolution for regulators
+Date: Tue, 26 Apr 2016 11:29:45 +0100
+Message-ID: <1461666585-11306-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <570CB781.8040208-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry,
+The call to set_machine_constraints() in regulator_register(), will
+attempt to get the voltage for the regulator. If a regulator is in
+bypass will fail to get the voltage (ie. it's bypass voltage) and
+hence register the regulator, because the supply for the regulator has
+not been resolved yet.
 
-Do you know who can take these patch 13 and 14?
-The corresponding driver was merged to linux-next several weeks ago.
-Does I need to send these two patches again?
+To fix this, add a call to regulator_resolve_supply() before we call
+set_machine_constraints(). If the call to regulator_resolve_supply()
+fails, rather than returning an error at this point, allow the
+registration of the regulator to continue because for some regulators
+resolving the supply at this point may not be necessary and it will be
+resolved later as more regulators are added. Furthermore, if the supply
+is still not resolved for a bypassed regulator, this will be detected
+when we attempt to get the voltage for the regulator and an error will
+be propagated at this point.
 
-Thanks.
-Wei.
+If a bypassed regulator does not have a supply when we attempt to get
+the voltage, rather than returing -EINVAL, return -EPROBE_DEFER instead
+to allow the registration of the regulator to be deferred and tried
+again later.
 
-On 2016=E5=B9=B404=E6=9C=8812=E6=97=A5 16:53, Wei Ni wrote:
-> Could anyone take a look this patch?
->=20
-> On 2016=E5=B9=B404=E6=9C=8801=E6=97=A5 15:01, Wei Ni wrote:
->> Patches 1 to 12 in this series were accepted by Eduardo.
->> Patches 13 and 14 need to go via platform or dt tree.
->>
->> Used get_maintainer.pl to get maintainers and open list, add them in=
- To: and Cc:
->> list.
->>
->> To:
->> Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
->> Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>
->> Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
->> Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>
->> Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
->>
->> Cc:
->> devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->>
->> On 2016=E5=B9=B403=E6=9C=8829=E6=97=A5 23:16, Eduardo Valentin wrote=
-:
->>> On Tue, Mar 29, 2016 at 06:29:23PM +0800, Wei Ni wrote:
->>>> Adds soctherm node for Tegra210, and add cpu,
->>>> gpu, mem, pllx as thermal-zones. Set critical
->>>> trip temperatures for them.
->>>>
->>>> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>
->>> Acked-by: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>>
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-pm" =
-in
->> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->>
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pm" i=
-n
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->=20
+Please note that regulator_resolve_supply() will call
+regulator_dev_lookup() which may acquire the regulator_list_mutex. To
+avoid any deadlocks we cannot hold the regulator_list_mutex when calling
+regulator_resolve_supply(). Therefore, rather than holding the lock
+around a large portion of the registration code, just hold the lock when
+aquiring any GPIOs and setting up supplies because these sections may
+add entries to the regulator_map_list and regulator_ena_gpio_list,
+respectively.
+
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/regulator/core.c | 37 ++++++++++++++++++++++++++-----------
+ 1 file changed, 26 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index a9c731cdaeeb..ec8184d53f13 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -3148,8 +3148,11 @@ static int _regulator_get_voltage(struct regulator_dev *rdev)
+ 			return ret;
+ 		if (bypassed) {
+ 			/* if bypassed the regulator must have a supply */
+-			if (!rdev->supply)
+-				return -EINVAL;
++			if (!rdev->supply) {
++				rdev_err(rdev,
++					 "bypassed regulator has no supply!\n");
++				return -EPROBE_DEFER;
++			}
+ 
+ 			return _regulator_get_voltage(rdev->supply->rdev);
+ 		}
+@@ -3965,8 +3968,6 @@ regulator_register(const struct regulator_desc *regulator_desc,
+ 		rdev->dev.of_node = of_node_get(config->of_node);
+ 	}
+ 
+-	mutex_lock(&regulator_list_mutex);
+-
+ 	mutex_init(&rdev->mutex);
+ 	rdev->reg_data = config->driver_data;
+ 	rdev->owner = regulator_desc->owner;
+@@ -3991,7 +3992,9 @@ regulator_register(const struct regulator_desc *regulator_desc,
+ 
+ 	if ((config->ena_gpio || config->ena_gpio_initialized) &&
+ 	    gpio_is_valid(config->ena_gpio)) {
++		mutex_lock(&regulator_list_mutex);
+ 		ret = regulator_ena_gpio_request(rdev, config);
++		mutex_unlock(&regulator_list_mutex);
+ 		if (ret != 0) {
+ 			rdev_err(rdev, "Failed to request enable GPIO%d: %d\n",
+ 				 config->ena_gpio, ret);
+@@ -4009,31 +4012,40 @@ regulator_register(const struct regulator_desc *regulator_desc,
+ 	if (init_data)
+ 		constraints = &init_data->constraints;
+ 
+-	ret = set_machine_constraints(rdev, constraints);
+-	if (ret < 0)
+-		goto wash;
+-
+ 	if (init_data && init_data->supply_regulator)
+ 		rdev->supply_name = init_data->supply_regulator;
+ 	else if (regulator_desc->supply_name)
+ 		rdev->supply_name = regulator_desc->supply_name;
+ 
++	/*
++	 * Attempt to resolve the regulator supply, if specified,
++	 * but don't return an error if we fail because we will try
++	 * to resolve it again later as more regulators are added.
++	 */
++	if (regulator_resolve_supply(rdev))
++		rdev_dbg(rdev, "unable to resolve supply\n");
++
++	ret = set_machine_constraints(rdev, constraints);
++	if (ret < 0)
++		goto wash;
++
+ 	/* add consumers devices */
+ 	if (init_data) {
++		mutex_lock(&regulator_list_mutex);
+ 		for (i = 0; i < init_data->num_consumer_supplies; i++) {
+ 			ret = set_consumer_device_supply(rdev,
+ 				init_data->consumer_supplies[i].dev_name,
+ 				init_data->consumer_supplies[i].supply);
+ 			if (ret < 0) {
++				mutex_unlock(&regulator_list_mutex);
+ 				dev_err(dev, "Failed to set supply %s\n",
+ 					init_data->consumer_supplies[i].supply);
+ 				goto unset_supplies;
+ 			}
+ 		}
++		mutex_unlock(&regulator_list_mutex);
+ 	}
+ 
+-	mutex_unlock(&regulator_list_mutex);
+-
+ 	ret = device_register(&rdev->dev);
+ 	if (ret != 0) {
+ 		put_device(&rdev->dev);
+@@ -4050,13 +4062,16 @@ regulator_register(const struct regulator_desc *regulator_desc,
+ 	return rdev;
+ 
+ unset_supplies:
++	mutex_lock(&regulator_list_mutex);
+ 	unset_regulator_supplies(rdev);
++	mutex_unlock(&regulator_list_mutex);
+ wash:
+ 	kfree(rdev->constraints);
++	mutex_lock(&regulator_list_mutex);
+ 	regulator_ena_gpio_free(rdev);
++	mutex_unlock(&regulator_list_mutex);
+ clean:
+ 	kfree(rdev);
+-	mutex_unlock(&regulator_list_mutex);
+ 	kfree(config);
+ 	return ERR_PTR(ret);
+ }
+-- 
+2.1.4
