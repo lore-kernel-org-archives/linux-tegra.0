@@ -1,78 +1,40 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 0/5] arm64: tegra: fix DT definitions for GM20B GPU
-Date: Tue, 26 Apr 2016 18:58:55 +0200
-Message-ID: <20160426165855.GA2388@ulmo.ba.sec>
-References: <1459156984-32644-1-git-send-email-acourbot@nvidia.com>
+From: Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>
+Subject: [PATCH 27/35] drm/tegra: Use lockless gem BO free callback
+Date: Tue, 26 Apr 2016 19:30:00 +0200
+Message-ID: <1461691808-12414-28-git-send-email-daniel.vetter@ffwll.ch>
+References: <1461691808-12414-1-git-send-email-daniel.vetter@ffwll.ch>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Dxnq1zWXvFF0Q93v"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1459156984-32644-1-git-send-email-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1461691808-12414-1-git-send-email-daniel.vetter-/w4YWyX8dFk@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: DRI Development <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Cc: Intel Graphics Development <intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Daniel Vetter <daniel.vetter-/w4YWyX8dFk@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, =?UTF-8?q?Terje=20Bergstr=C3=B6m?= <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+No dev->struct_mutex anywhere to be seen.
 
---Dxnq1zWXvFF0Q93v
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Terje Bergstr=C3=B6m <tbergstrom-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Signed-off-by: Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+---
+ drivers/gpu/drm/tegra/drm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Mon, Mar 28, 2016 at 06:22:59PM +0900, Alexandre Courbot wrote:
-> Small series that fixes/completes DT bindings for Tegra GPUs and add two
-> missing entries required for the Tegra210 GPU to operate properly.
->=20
-> Without these fixes, GM20B will crash during probe on 4.6 because a
-> required clock is not activated.
->=20
-> Changes since v2:
-> - Fixed device address in DT examples
-> - Carried Acked-bys
->=20
-> Changes since v1:
-> - Renamed "pllg_ref" clock to "ref" in DT bindings
->=20
-> Alexandre Courbot (5):
->   dt-bindings: gk20a: Fix typo in compatible name
->   dt-bindings: gk20a: Document iommus property
->   dt-bindings: Add documentation for GM20B GPU
->   arm64: tegra210: Add reference clock to GM20B
->   arm64: tegra210: Add IOMMU node to GM20B
->=20
->  .../devicetree/bindings/gpu/nvidia,gk20a.txt       | 37 ++++++++++++++++=
-+++---
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  8 +++--
->  2 files changed, 38 insertions(+), 7 deletions(-)
-
-Applied, thanks.
-
-Thierry
-
---Dxnq1zWXvFF0Q93v
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXH55PAAoJEN0jrNd/PrOhmlwP/ReNvShAryeIt5rm4ZKQTFxH
-v2xT3FexDr7tFmK9PwF0BXWQ8H6bTrCrlkBcl7giuLODwSXiIIz7hvjawcrZ6VnW
-d5tT/QfDm7RXg/3YaLBx+Um3VXr+H4dkDqvmoJ+UA5DCJdh7IA6epB0pzqKHSxLr
-9YCvyfYfORdsM+d11j/QafFmcQlcasrrqFhoHIw2dpmeJKy+9qbQbyXUmhAsAv9j
-uEu9HLP+A6Hci8UdCfgHwzKbPsFWB5n3cz4mm4cdZvbabdDGqB/g/q8fYS5MDOo1
-P2vhoZeexwz5/iH2rxOi+7oZtcW8zW30nDVjr9GwXp9+LUxY/L7W+Tafv4xw0SGS
-x9HJB8t8F6FY5GX8LjWfUfVsilRPGQzHN92QwA/mwDxGkdglObYUvdOZw4Oh+crr
-0a87zFCgpIlKvjSm6BMRvDDEUT8ekvw1mbQ0M1IyXCvU56vWEGu0jpQ+6aPw4lgs
-QZZ0kT3c60hEL1YZkJToEM1oBf66+QiIaxfKJxOjwPayK4zIe6ZQxeo4BcSEUpOX
-syPny+plNaXZrmx68cJJDIELk02ZbgJK8x6i2UqoRVVyRwGVuq5ZIJL6xUYIRmgc
-Y7MpCba15ocfdC84BGoq2FpC3JjWKdtjhMTHrFAxW6CLNzB1pY05K2fvZE2f/XOs
-IN8rQkzJtOTdkvGD5OFP
-=Er54
------END PGP SIGNATURE-----
-
---Dxnq1zWXvFF0Q93v--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index 2be88eb0cb83..3d9241482f81 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -932,7 +932,7 @@ static struct drm_driver tegra_drm_driver =3D {
+ 	.debugfs_cleanup =3D tegra_debugfs_cleanup,
+ #endif
+=20
+-	.gem_free_object =3D tegra_bo_free_object,
++	.gem_free_object_unlocked =3D tegra_bo_free_object,
+ 	.gem_vm_ops =3D &tegra_bo_vm_ops,
+=20
+ 	.prime_handle_to_fd =3D drm_gem_prime_handle_to_fd,
+--=20
+2.8.1
