@@ -1,63 +1,93 @@
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: next-20160427 build: 1 failures 15 warnings (next-20160427)
-Date: Wed, 27 Apr 2016 16:48:04 +0200
-Message-ID: <20160427144802.GA4176@ulmo.ba.sec>
-References: <E1avM7P-0002LM-3R@optimist>
- <20160427122438.GK3217@sirena.org.uk>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2 13/14] dt-bindings: arm-gic: Add documentation for
+ Tegra210 AGIC
+Date: Wed, 27 Apr 2016 16:34:53 +0100
+Message-ID: <5720DC1D.1080802@nvidia.com>
+References: <1461150237-15580-1-git-send-email-jonathanh@nvidia.com>
+ <1461150237-15580-14-git-send-email-jonathanh@nvidia.com>
+ <20160422100052.GA10606@leverpostej> <571A0739.3090502@nvidia.com>
+ <20160422112239.GF10606@leverpostej>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Qxx1br4bt0+wmkIi"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160427122438.GK3217-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Content-Disposition: inline
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linaro-kernel-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, linux-next-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160422112239.GF10606@leverpostej>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
---Qxx1br4bt0+wmkIi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Apr 27, 2016 at 01:24:38PM +0100, Mark Brown wrote:
-> * PGP Signed by an unknown key
->=20
-> On Wed, Apr 27, 2016 at 10:50:51AM +0100, Build bot for Mark Brown wrote:
->=20
-> Today's next fails to build an arm64 allmodconfig due to:
->=20
-> > 	arm64-allmodconfig
-> > ../drivers/phy/tegra/xusb-tegra210.c:1721:3: error: label 'out' used bu=
-t not defined
->=20
-> caused by 44f5d38eaa21d (phy: tegra: Add Tegra210 support).
+On 22/04/16 12:22, Mark Rutland wrote:
 
-Yes, I just realized this now as well. I pushed a fix to Tegra's
-for-next, so this should be fixed in tomorrow's linux-next.
+[snip]
 
-Sorry for this.
-Thierry
+>>>> I am not sure if it will be popular to add Tegra specific clock names
+>>>> to the GIC DT docs. However, in that case, then possibly the only
+>>>> alternative is to move the Tegra AGIC driver into its own file and
+>>>> expose the GIC APIs for it to use. Then we could add our own DT doc
+>>>> for the Tegra AGIC as well (based upon the ARM GIC).
+>>>
+>>> The clock-names don't seem right to me, as they sound like provide names
+>>> or global clock line names rather than consumer-side names ("clk" and
+>>> "apb_pclk").
+>>
+>> Yes that would be fine with me.
+> 
+> Ok; if we model the apb_pclk as owned by the AXI switch (which it is),
+> then there's no change for the GIC binding, short of the additional
+> compatible string as an extension of "arm,gic-400", as we already model
+> that clock in the GIC-400 binding.
 
---Qxx1br4bt0+wmkIi
-Content-Type: application/pgp-signature; name="signature.asc"
+I have been re-working this based upon the feedback received. In the GIC
+driver we have the following definitions ...
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+ IRQCHIP_DECLARE(gic_400, "arm,gic-400", gic_of_init);
+ IRQCHIP_DECLARE(arm11mp_gic, "arm,arm11mp-gic", gic_of_init);
+ IRQCHIP_DECLARE(arm1176jzf_dc_gic, "arm,arm1176jzf-devchip-gic", gic_of_init);
+ IRQCHIP_DECLARE(cortex_a15_gic, "arm,cortex-a15-gic", gic_of_init);
+ IRQCHIP_DECLARE(cortex_a9_gic, "arm,cortex-a9-gic", gic_of_init);
+ IRQCHIP_DECLARE(cortex_a7_gic, "arm,cortex-a7-gic", gic_of_init);
+ IRQCHIP_DECLARE(msm_8660_qgic, "qcom,msm-8660-qgic", gic_of_init);
+ IRQCHIP_DECLARE(msm_qgic2, "qcom,msm-qgic2", gic_of_init);
+ IRQCHIP_DECLARE(pl390, "arm,pl390", gic_of_init);
 
-iQIcBAABCAAGBQJXINEeAAoJEN0jrNd/PrOhtSIQAMMF6Co9755PX2n2ERXH/YBm
-dW6f5WAlUSkjO6OKfgz+jn9HuI6l/2TJuIX9faNkg8T3Ub/gGd4tGH2+gTzWMhiE
-2jyfEE4JchfGcrMBPhMH1ccpg12OFNAoS3/i0zMem4lCy57cdMDLxRlo3b001Dzv
-M2RhGKNI0buqpyokUnLkLn2R1dmuynQwC1BxVhHER+NuxQqKFnMO93mas/E+2lpV
-RbW0oez4bk6S+pjE9wHpN5RobBv534M9l6hKLLH6v0Ae976I9MOgcC8cgc15QEjd
-kM/xCUvkn5w3drlDr1FSCUSp3Cd+KFuS7YrAg7ZzifUb/er+osaF9XSauidZwm9O
-H9DB1/FbaWHODH9sXMERYEKYClNiT/ncnBvl+9kwo+zOWeqlCoeVo0bTA3XrAz8U
-dqC8kcd9Ew0bbKj6S56L5r5HPFH7TEK8Cl5QxuYhmebdQM7W7AiVC7Mkda1raAK0
-iOquZZkR8p1oW8hFTiKPnrWeIAHxCW/0824H8vyS+peGjyYrFFvVRPxgpBo5jXd/
-SMEFqQ1lpX8Ug7wKdVNJZKaznui9AW0gdp5lpoIw9Iw/priSastylS9I4pw3ZhxN
-nOLdCTodn2zB6xy1Y2ILOz8fu7vX71mDyC9DaShjoYtP6kZsaVpLvU/aMrjwf2vN
-ekNxp5HJPSNUQxRopVYx
-=YzX7
------END PGP SIGNATURE-----
 
---Qxx1br4bt0+wmkIi--
+If I have something like the following in my dts ...
+
+	agic: interrupt-controller@702f9000 {
+		compatible = "nvidia,tegra210-agic", "arm,gic-400";
+		...
+	};
+
+The problem with this is that it tries to register the interrupt controller
+early during of_irq_init() before the platform driver has chance to
+initialise it. To avoid this I got rid of the "nvidia,tegra210-agic" string
+and added the following for the platform driver ...
+
+static const struct of_device_id gic_match[] = {
+       { .compatible = "arm,arm11mp-gic-pm",    .data = &arm11mp_gic_data   },
+       { .compatible = "arm,cortex-a15-gic-pm", .data = &cortexa15_gic_data },
+       { .compatible = "arm,cortex-a9-gic-pm",  .data = &cortexa9_gic_data  },
+       { .compatible = "arm,gic400-pm",         .data = &gic400_data        },
+       { .compatible = "arm,pl390-pm",          .data = &pl390_data         },
+       {},
+};
+
+It is not ideal as now we have a *-pm variant of each compatible string :-(
+
+Another option would be to add some code in gic_of_init() to check for the
+presence of a "clocks" node in the DT binding and bail out of the early 
+initialisation if found but may be that is a bit of a hack.
+
+Mark, what are your thoughts on this?
+
+Cheers
+Jon
+
+
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
