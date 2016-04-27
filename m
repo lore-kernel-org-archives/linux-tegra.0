@@ -1,114 +1,196 @@
-From: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
-Subject: Re: [PATCH V2 13/14] dt-bindings: arm-gic: Add documentation for
- Tegra210 AGIC
-Date: Wed, 27 Apr 2016 20:02:51 +0200
-Message-ID: <CAMuHMdVbDrD2_yun14iSPYx=Wn93g=g535L=mHwGX=4bF-1tSg@mail.gmail.com>
-References: <1461150237-15580-1-git-send-email-jonathanh@nvidia.com>
-	<1461150237-15580-14-git-send-email-jonathanh@nvidia.com>
-	<20160422100052.GA10606@leverpostej>
-	<571A0739.3090502@nvidia.com>
-	<20160422112239.GF10606@leverpostej>
-	<5720DC1D.1080802@nvidia.com>
-	<20160427173810.GC7359@leverpostej>
+From: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 4/9] of: Add bindings of hw throttle for soctherm
+Date: Wed, 27 Apr 2016 16:30:55 -0700
+Message-ID: <20160427233054.GA26451@localhost.localdomain>
+References: <1461727554-15065-1-git-send-email-wni@nvidia.com>
+ <1461727554-15065-5-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160427173810.GC7359@leverpostej>
+Content-Disposition: inline
+In-Reply-To: <1461727554-15065-5-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Apr 27, 2016 at 7:38 PM, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org> wrote:
-> On Wed, Apr 27, 2016 at 04:34:53PM +0100, Jon Hunter wrote:
->> On 22/04/16 12:22, Mark Rutland wrote:
->> [snip]
->>
->> >>>> I am not sure if it will be popular to add Tegra specific clock names
->> >>>> to the GIC DT docs. However, in that case, then possibly the only
->> >>>> alternative is to move the Tegra AGIC driver into its own file and
->> >>>> expose the GIC APIs for it to use. Then we could add our own DT doc
->> >>>> for the Tegra AGIC as well (based upon the ARM GIC).
->> >>>
->> >>> The clock-names don't seem right to me, as they sound like provide names
->> >>> or global clock line names rather than consumer-side names ("clk" and
->> >>> "apb_pclk").
->> >>
->> >> Yes that would be fine with me.
->> >
->> > Ok; if we model the apb_pclk as owned by the AXI switch (which it is),
->> > then there's no change for the GIC binding, short of the additional
->> > compatible string as an extension of "arm,gic-400", as we already model
->> > that clock in the GIC-400 binding.
->>
->> I have been re-working this based upon the feedback received. In the GIC
->> driver we have the following definitions ...
->>
->>  IRQCHIP_DECLARE(gic_400, "arm,gic-400", gic_of_init);
->>  IRQCHIP_DECLARE(arm11mp_gic, "arm,arm11mp-gic", gic_of_init);
->>  IRQCHIP_DECLARE(arm1176jzf_dc_gic, "arm,arm1176jzf-devchip-gic", gic_of_init);
->>  IRQCHIP_DECLARE(cortex_a15_gic, "arm,cortex-a15-gic", gic_of_init);
->>  IRQCHIP_DECLARE(cortex_a9_gic, "arm,cortex-a9-gic", gic_of_init);
->>  IRQCHIP_DECLARE(cortex_a7_gic, "arm,cortex-a7-gic", gic_of_init);
->>  IRQCHIP_DECLARE(msm_8660_qgic, "qcom,msm-8660-qgic", gic_of_init);
->>  IRQCHIP_DECLARE(msm_qgic2, "qcom,msm-qgic2", gic_of_init);
->>  IRQCHIP_DECLARE(pl390, "arm,pl390", gic_of_init);
->>
->>
->> If I have something like the following in my dts ...
->>
->>       agic: interrupt-controller@702f9000 {
->>               compatible = "nvidia,tegra210-agic", "arm,gic-400";
->>               ...
->>       };
->>
->> The problem with this is that it tries to register the interrupt controller
->> early during of_irq_init() before the platform driver has chance to
->> initialise it.
->
-> Probe order strikes again...
->
->> To avoid this I got rid of the "nvidia,tegra210-agic" string and added
->> the following for the platform driver ...
->>
->> static const struct of_device_id gic_match[] = {
->>        { .compatible = "arm,arm11mp-gic-pm",    .data = &arm11mp_gic_data   },
->>        { .compatible = "arm,cortex-a15-gic-pm", .data = &cortexa15_gic_data },
->>        { .compatible = "arm,cortex-a9-gic-pm",  .data = &cortexa9_gic_data  },
->>        { .compatible = "arm,gic400-pm",         .data = &gic400_data        },
->>        { .compatible = "arm,pl390-pm",          .data = &pl390_data         },
->>        {},
->> };
->>
->> It is not ideal as now we have a *-pm variant of each compatible string :-(
->
-> Yeah, that's a non-starter. :(
->
->> Another option would be to add some code in gic_of_init() to check for the
->> presence of a "clocks" node in the DT binding and bail out of the early
->> initialisation if found but may be that is a bit of a hack.
+From: Eduardo Valentin <edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org,
+	MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org,
+	mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org,
+	linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org,
+	linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Bcc: 
+Subject: Re: [PATCH v2 4/9] of: Add bindings of hw throttle for soctherm
+Reply-To: 
+In-Reply-To: <1461727554-15065-5-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Or the presence of a power-domains property...
+The patch title must say something about the fact that this is specific
+to nvidia thermal driver.
 
-> I fear that someone may validly have a clocks property in their root GIC
-> node, at which point things would fall apart. I was under the impression
-> this was the case for some Renesas boards (though I didn't find an
-> example in tree).
+On Wed, Apr 27, 2016 at 11:25:49AM +0800, Wei Ni wrote:
+> Add HW throttle configuration sub-node for soctherm, which
+> is used to describe the throttle event, and worked as a
+> cooling device. The "hot" type trip in thermal zone can
+> be bound to this cooling device, and trigger the throttle
+> function.
+> 
+> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  .../bindings/thermal/nvidia,tegra124-soctherm.txt  | 89 +++++++++++++++++++++-
+>  1 file changed, 87 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
+> index edebfa0a985e..dc337d139f49 100644
+> --- a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
+> +++ b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
+> @@ -10,8 +10,14 @@ Required properties :
+>  - compatible : For Tegra124, must contain "nvidia,tegra124-soctherm".
+>    For Tegra132, must contain "nvidia,tegra132-soctherm".
+>    For Tegra210, must contain "nvidia,tegra210-soctherm".
+> -- reg : Should contain 1 entry:
+> +- reg : Should contain at least 2 entries for each entry in reg-names:
+>    - SOCTHERM register set
+> +  - Tegra CAR register set: Required for Tegra124 and Tegra210.
+> +  - CCROC register set: Required for Tegra132.
+> +- reg-names :  Should contain at least 2 entries:
+> +  - soctherm-reg
+> +  - car-reg
+> +  - ccroc-reg
+>  - interrupts : Defines the interrupt used by SOCTHERM
+>  - clocks : Must contain an entry for each entry in clock-names.
+>    See ../clocks/clock-bindings.txt for details.
+> @@ -25,17 +31,44 @@ Required properties :
+>  - #thermal-sensor-cells : Should be 1. See ./thermal.txt for a description
+>      of this property. See <dt-bindings/thermal/tegra124-soctherm.h> for a
+>      list of valid values when referring to thermal sensors.
+> +- throttle-cfgs: A sub-node which is a container of configuration for each
+> +    hardware throttle events. These events can be set as cooling devices.
+> +  * throttle events: Sub-nodes must be named as "light" or "heavy".
+> +      Properties:
+> +      - priority: Each throttles has its own throttle settings, so the SW need
+> +        to set priorities for various throttle, the HW arbiter can select the
+> +        final throttle settings.
+> +        Bigger value indicates higher priority, In general, higher priority
+> +        translates to lower target frequency. SW needs to ensure that critical
+> +        thermal alarms are given higher priority, and ensure that there is
+> +        no race if priority of two vectors is set to the same value.
+> +      - cpu-throt-depth:  This property is for Tegra124 and Tegra210. It is
+> +        the throttling depth of pulse skippers, it's the percentage
+> +        throttling.
+> +      - cpu-throt-level: This property is only for Tegra132, it is the level
+> +        of pulse skippers, which used to throttle clock frequencies. It
+> +        indicates cpu clock throttling depth, and the depth can be programmed.
+> +        Must set as following values:
+> +        TEGRA_SOCTHERM_THROT_LEVEL_LOW, TEGRA_SOCTHERM_THROT_LEVEL_MED
+> +        TEGRA_SOCTHERM_THROT_LEVEL_HIGH, TEGRA_SOCTHERM_THROT_LEVEL_NONE
 
-We don't have the GIC clocks in the GIC nodes yet, as there's no suitable
-mechanism (e.g. CLK_ENABLE_HAND_OFF) in upstream yet to prevent them
-from being disabled ("unused" clocks are disabled).
+These properties are not generic properties. My understanding is that
+you must have vendor prefix in such case. Same applies to the new nodes.
 
-Gr{oetje,eeting}s,
+> +      - #cooling-cells: Should be 1. This cooling device only support on/off state.
+> +        See ./thermal.txt for a description of this property.
+>  
+>  Note:
+>  - the "critical" type trip points will be set to SOC_THERM hardware as the
+>  shut down temperature. Once the temperature of this thermal zone is higher
+>  than it, the system will be shutdown or reset by hardware.
+> +- the "hot" type trip points will be set to SOC_THERM hardware as the throttle
+> +temperature. Once the the temperature of this thermal zone is higher
+> +than it, it will trigger the HW throttle event.
+>  
+>  Example :
+>  
+>  	soctherm@700e2000 {
+>  		compatible = "nvidia,tegra124-soctherm";
+> -		reg = <0x0 0x700e2000 0x0 0x1000>;
+> +		reg = <0x0 0x700e2000 0x0 0x600  /* SOC_THERM reg_base */
+> +			0x0 0x60006000 0x0 0x400 /* CAR reg_base */
+> +		reg-names = "soctherm-reg", "car-reg";
+>  		interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
+>  		clocks = <&tegra_car TEGRA124_CLK_TSENSOR>,
+>  			<&tegra_car TEGRA124_CLK_SOC_THERM>;
+> @@ -44,6 +77,45 @@ Example :
+>  		reset-names = "soctherm";
+>  
+>  		#thermal-sensor-cells = <1>;
+> +
+> +		throttle-cfgs {
+> +			throttle_heavy: heavy {
+> +				priority = <100>;
+> +				cpu-throt-depth = <85>;
+> +
+> +				#cooling-cells = <1>;
+> +			};
+> +			throttle_light: light {
+> +				priority = <80>;
+> +				cpu-throt-depth = <50>;
+> +
+> +				#cooling-cells = <1>;
+> +			};
+> +		};
 
-                        Geert
+This is a sensor, which at the same time, has sub nodes that can be
+cooling devices. Is my understanding correct of what you are trying to
+do?
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> +	};
+> +
+> +Example: referring to Tegra132's "reg", "reg-names" and "throttle-cfgs" :
+> +
+> +	soctherm@0,700e2000 {
+> +		compatible = "nvidia,tegra132-soctherm";
+> +		reg = <0x0 0x700e2000 0x0 0x600  /* SOC_THERM reg_base */
+> +			0x0 0x70040000 0x0 0x200>; /* CCROC reg_base */;
+> +		reg-names = "soctherm-reg", "ccroc-reg";
+> +
+> +		throttle-cfgs {
+> +			throttle_heavy: heavy {
+> +				priority = <100>;
+> +				cpu-throt-level = <TEGRA_SOCTHERM_THROT_LEVEL_HIGH>;
+> +
+> +				#cooling-cells = <1>;
+> +			};
+> +			throttle_light: light {
+> +				priority = <80>;
+> +				cpu-throt-level = <TEGRA_SOCTHERM_THROT_LEVEL_MED>;
+> +
+> +				#cooling-cells = <1>;
+
+Could you please describe a little here what to expect of the above
+setup?
+
+
+> +			};
+> +		};
+>  	};
+>  
+>  Example: referring to thermal sensors :
+> @@ -62,6 +134,19 @@ Example: referring to thermal sensors :
+>  					hysteresis = <1000>;
+>  					type = "critical";
+>  				};
+> +
+> +				cpu_throttle_trip: throttle-trip {
+> +					temperature = <100000>;
+> +					hysteresis = <1000>;
+> +					type = "hot";
+> +				};
+> +			};
+> +
+> +			cooling-maps {
+> +				map0 {
+> +					trip = <&cpu_throttle_trip>;
+> +					cooling-device = <&throttle_heavy 1 1>;
+> +				};
+>  			};
+>                  };
+>  	};
+> -- 
+> 1.9.1
+> 
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
