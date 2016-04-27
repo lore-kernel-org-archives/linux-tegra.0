@@ -1,93 +1,184 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 13/14] dt-bindings: arm-gic: Add documentation for
- Tegra210 AGIC
-Date: Wed, 27 Apr 2016 16:34:53 +0100
-Message-ID: <5720DC1D.1080802@nvidia.com>
-References: <1461150237-15580-1-git-send-email-jonathanh@nvidia.com>
- <1461150237-15580-14-git-send-email-jonathanh@nvidia.com>
- <20160422100052.GA10606@leverpostej> <571A0739.3090502@nvidia.com>
- <20160422112239.GF10606@leverpostej>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160422112239.GF10606@leverpostej>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "regulator: core: Add early supply resolution for regulators" to the regulator tree
+Date: Wed, 27 Apr 2016 17:35:15 +0100
+Message-ID: <E1avSQl-0004YH-Jk@debutante>
+References: <1461666585-11306-1-git-send-email-jonathanh@nvidia.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1461666585-11306-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
+The patch
 
-On 22/04/16 12:22, Mark Rutland wrote:
+   regulator: core: Add early supply resolution for regulators
 
-[snip]
+has been applied to the regulator tree at
 
->>>> I am not sure if it will be popular to add Tegra specific clock names
->>>> to the GIC DT docs. However, in that case, then possibly the only
->>>> alternative is to move the Tegra AGIC driver into its own file and
->>>> expose the GIC APIs for it to use. Then we could add our own DT doc
->>>> for the Tegra AGIC as well (based upon the ARM GIC).
->>>
->>> The clock-names don't seem right to me, as they sound like provide names
->>> or global clock line names rather than consumer-side names ("clk" and
->>> "apb_pclk").
->>
->> Yes that would be fine with me.
-> 
-> Ok; if we model the apb_pclk as owned by the AXI switch (which it is),
-> then there's no change for the GIC binding, short of the additional
-> compatible string as an extension of "arm,gic-400", as we already model
-> that clock in the GIC-400 binding.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
-I have been re-working this based upon the feedback received. In the GIC
-driver we have the following definitions ...
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
- IRQCHIP_DECLARE(gic_400, "arm,gic-400", gic_of_init);
- IRQCHIP_DECLARE(arm11mp_gic, "arm,arm11mp-gic", gic_of_init);
- IRQCHIP_DECLARE(arm1176jzf_dc_gic, "arm,arm1176jzf-devchip-gic", gic_of_init);
- IRQCHIP_DECLARE(cortex_a15_gic, "arm,cortex-a15-gic", gic_of_init);
- IRQCHIP_DECLARE(cortex_a9_gic, "arm,cortex-a9-gic", gic_of_init);
- IRQCHIP_DECLARE(cortex_a7_gic, "arm,cortex-a7-gic", gic_of_init);
- IRQCHIP_DECLARE(msm_8660_qgic, "qcom,msm-8660-qgic", gic_of_init);
- IRQCHIP_DECLARE(msm_qgic2, "qcom,msm-qgic2", gic_of_init);
- IRQCHIP_DECLARE(pl390, "arm,pl390", gic_of_init);
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
 
-If I have something like the following in my dts ...
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
 
-	agic: interrupt-controller@702f9000 {
-		compatible = "nvidia,tegra210-agic", "arm,gic-400";
-		...
-	};
+Thanks,
+Mark
 
-The problem with this is that it tries to register the interrupt controller
-early during of_irq_init() before the platform driver has chance to
-initialise it. To avoid this I got rid of the "nvidia,tegra210-agic" string
-and added the following for the platform driver ...
+From 45389c47526d1eca70f96872c172aea0941e8520 Mon Sep 17 00:00:00 2001
+From: Jon Hunter <jonathanh@nvidia.com>
+Date: Tue, 26 Apr 2016 11:29:45 +0100
+Subject: [PATCH] regulator: core: Add early supply resolution for regulators
 
-static const struct of_device_id gic_match[] = {
-       { .compatible = "arm,arm11mp-gic-pm",    .data = &arm11mp_gic_data   },
-       { .compatible = "arm,cortex-a15-gic-pm", .data = &cortexa15_gic_data },
-       { .compatible = "arm,cortex-a9-gic-pm",  .data = &cortexa9_gic_data  },
-       { .compatible = "arm,gic400-pm",         .data = &gic400_data        },
-       { .compatible = "arm,pl390-pm",          .data = &pl390_data         },
-       {},
-};
+The call to set_machine_constraints() in regulator_register(), will
+attempt to get the voltage for the regulator. If a regulator is in
+bypass will fail to get the voltage (ie. it's bypass voltage) and
+hence register the regulator, because the supply for the regulator has
+not been resolved yet.
 
-It is not ideal as now we have a *-pm variant of each compatible string :-(
+To fix this, add a call to regulator_resolve_supply() before we call
+set_machine_constraints(). If the call to regulator_resolve_supply()
+fails, rather than returning an error at this point, allow the
+registration of the regulator to continue because for some regulators
+resolving the supply at this point may not be necessary and it will be
+resolved later as more regulators are added. Furthermore, if the supply
+is still not resolved for a bypassed regulator, this will be detected
+when we attempt to get the voltage for the regulator and an error will
+be propagated at this point.
 
-Another option would be to add some code in gic_of_init() to check for the
-presence of a "clocks" node in the DT binding and bail out of the early 
-initialisation if found but may be that is a bit of a hack.
+If a bypassed regulator does not have a supply when we attempt to get
+the voltage, rather than returing -EINVAL, return -EPROBE_DEFER instead
+to allow the registration of the regulator to be deferred and tried
+again later.
 
-Mark, what are your thoughts on this?
+Please note that regulator_resolve_supply() will call
+regulator_dev_lookup() which may acquire the regulator_list_mutex. To
+avoid any deadlocks we cannot hold the regulator_list_mutex when calling
+regulator_resolve_supply(). Therefore, rather than holding the lock
+around a large portion of the registration code, just hold the lock when
+aquiring any GPIOs and setting up supplies because these sections may
+add entries to the regulator_map_list and regulator_ena_gpio_list,
+respectively.
 
-Cheers
-Jon
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/regulator/core.c | 37 ++++++++++++++++++++++++++-----------
+ 1 file changed, 26 insertions(+), 11 deletions(-)
 
-
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index f6d624dfcf9f..f4ab8c8bab23 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -3118,8 +3118,11 @@ static int _regulator_get_voltage(struct regulator_dev *rdev)
+ 			return ret;
+ 		if (bypassed) {
+ 			/* if bypassed the regulator must have a supply */
+-			if (!rdev->supply)
+-				return -EINVAL;
++			if (!rdev->supply) {
++				rdev_err(rdev,
++					 "bypassed regulator has no supply!\n");
++				return -EPROBE_DEFER;
++			}
+ 
+ 			return _regulator_get_voltage(rdev->supply->rdev);
+ 		}
+@@ -3936,8 +3939,6 @@ regulator_register(const struct regulator_desc *regulator_desc,
+ 		rdev->dev.of_node = of_node_get(config->of_node);
+ 	}
+ 
+-	mutex_lock(&regulator_list_mutex);
+-
+ 	mutex_init(&rdev->mutex);
+ 	rdev->reg_data = config->driver_data;
+ 	rdev->owner = regulator_desc->owner;
+@@ -3962,7 +3963,9 @@ regulator_register(const struct regulator_desc *regulator_desc,
+ 
+ 	if ((config->ena_gpio || config->ena_gpio_initialized) &&
+ 	    gpio_is_valid(config->ena_gpio)) {
++		mutex_lock(&regulator_list_mutex);
+ 		ret = regulator_ena_gpio_request(rdev, config);
++		mutex_unlock(&regulator_list_mutex);
+ 		if (ret != 0) {
+ 			rdev_err(rdev, "Failed to request enable GPIO%d: %d\n",
+ 				 config->ena_gpio, ret);
+@@ -3980,31 +3983,40 @@ regulator_register(const struct regulator_desc *regulator_desc,
+ 	if (init_data)
+ 		constraints = &init_data->constraints;
+ 
+-	ret = set_machine_constraints(rdev, constraints);
+-	if (ret < 0)
+-		goto wash;
+-
+ 	if (init_data && init_data->supply_regulator)
+ 		rdev->supply_name = init_data->supply_regulator;
+ 	else if (regulator_desc->supply_name)
+ 		rdev->supply_name = regulator_desc->supply_name;
+ 
++	/*
++	 * Attempt to resolve the regulator supply, if specified,
++	 * but don't return an error if we fail because we will try
++	 * to resolve it again later as more regulators are added.
++	 */
++	if (regulator_resolve_supply(rdev))
++		rdev_dbg(rdev, "unable to resolve supply\n");
++
++	ret = set_machine_constraints(rdev, constraints);
++	if (ret < 0)
++		goto wash;
++
+ 	/* add consumers devices */
+ 	if (init_data) {
++		mutex_lock(&regulator_list_mutex);
+ 		for (i = 0; i < init_data->num_consumer_supplies; i++) {
+ 			ret = set_consumer_device_supply(rdev,
+ 				init_data->consumer_supplies[i].dev_name,
+ 				init_data->consumer_supplies[i].supply);
+ 			if (ret < 0) {
++				mutex_unlock(&regulator_list_mutex);
+ 				dev_err(dev, "Failed to set supply %s\n",
+ 					init_data->consumer_supplies[i].supply);
+ 				goto unset_supplies;
+ 			}
+ 		}
++		mutex_unlock(&regulator_list_mutex);
+ 	}
+ 
+-	mutex_unlock(&regulator_list_mutex);
+-
+ 	ret = device_register(&rdev->dev);
+ 	if (ret != 0) {
+ 		put_device(&rdev->dev);
+@@ -4021,13 +4033,16 @@ regulator_register(const struct regulator_desc *regulator_desc,
+ 	return rdev;
+ 
+ unset_supplies:
++	mutex_lock(&regulator_list_mutex);
+ 	unset_regulator_supplies(rdev);
++	mutex_unlock(&regulator_list_mutex);
+ wash:
+ 	kfree(rdev->constraints);
++	mutex_lock(&regulator_list_mutex);
+ 	regulator_ena_gpio_free(rdev);
++	mutex_unlock(&regulator_list_mutex);
+ clean:
+ 	kfree(rdev);
+-	mutex_unlock(&regulator_list_mutex);
+ 	kfree(config);
+ 	return ERR_PTR(ret);
+ }
+-- 
+2.8.0.rc3
