@@ -1,47 +1,47 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 3/3] arm64: tegra: Add ACONNECT bus node for Tegra210
-Date: Fri, 29 Apr 2016 14:53:47 +0100
-Message-ID: <1461938027-23034-4-git-send-email-jonathanh@nvidia.com>
-References: <1461938027-23034-1-git-send-email-jonathanh@nvidia.com>
+Subject: Re: [PATCH 0/3] bus: Add support for Tegra210 ACONNECT
+Date: Fri, 29 Apr 2016 14:55:51 +0100
+Message-ID: <572367E7.10207@nvidia.com>
+References: <1461937604-18481-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1461938027-23034-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1461937604-18481-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add the ACONNECT bus node for Tegra210 which is used to interface to
-the various devices in the Audio Processing Engine (APE).
+Ignore this, I ballsed it up!
 
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 76fe31faa1a5..02491ec88ab2 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -673,6 +673,18 @@
- 		#nvidia,mipi-calibrate-cells = <1>;
- 	};
- 
-+	aconnect@702c0000 {
-+		compatible = "nvidia,tegra210-aconnect";
-+		clocks = <&tegra_car TEGRA210_CLK_APE>,
-+			 <&tegra_car TEGRA210_CLK_APB2APE>;
-+		clock-names = "ape", "apb2ape";
-+		power-domains = <&pd_audio>;
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges = <0x0 0x702c0000 0x0 0x702c0000 0x0 0x00040000>;
-+		status = "disabled";
-+	};
-+
- 	spi@70410000 {
- 		compatible = "nvidia,tegra210-qspi";
- 		reg = <0x0 0x70410000 0x0 0x1000>;
--- 
-2.1.4
+On 29/04/16 14:46, Jon Hunter wrote:
+> Add support for the ACONNECT bus which is part of the audio sub-system
+> on Tegra210.
+> 
+> I did look to see if we could use the simple-pm-bus infrastructure for
+> this, however, in the end I found that it did was not a good fit because
+> of the way clocks for the bus are handled. The simple-pm-bus is tightly
+> coupled to the genpd subsystem and is reliant on the power-domain
+> associated with the bus to have the flag GENPD_FLAG_PM_CLK set and uses
+> the genpd function pointer, attach_dev(), as a hook to populate the
+> clocks. For Tegra this does not work because the power-domains are
+> instantiated from device-tree rather than platform code. In this case
+> for Tegra it is simpler to keep the clock management of devices within
+> the power-domain separated from the power-domain itself.
+> 
+> Jon Hunter (2):
+>   dt-bindings: bus: Add documentation for Tegra210 ACONNECT
+>   bus: Add support for Tegra ACONNECT
+> 
+> Shardar Shariff Md (1):
+>   dmaengine: tegra-apb: proper default init of channel slave_id
+> 
+>  .../bindings/bus/nvidia,tegra210-aconnect.txt      |  45 ++++++++
+>  drivers/bus/Kconfig                                |   9 ++
+>  drivers/bus/Makefile                               |   1 +
+>  drivers/bus/tegra-aconnect.c                       | 113 +++++++++++++++++++++
+>  drivers/dma/tegra20-apb-dma.c                      |  16 ++-
+>  5 files changed, 182 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
+>  create mode 100644 drivers/bus/tegra-aconnect.c
