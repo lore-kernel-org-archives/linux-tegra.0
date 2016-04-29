@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL] ARM: tegra: Default configuration updates for v4.7-rc1
-Date: Fri, 29 Apr 2016 18:21:09 +0200
-Message-ID: <1461946869-26124-4-git-send-email-thierry.reding@gmail.com>
+Subject: [GIT PULL] arm64: tegra: Enable GM20B GPU on Tegra210
+Date: Fri, 29 Apr 2016 18:21:08 +0200
+Message-ID: <1461946869-26124-3-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
@@ -16,26 +16,29 @@ The following changes since commit f55532a0c0b8bb6148f4e07853b876ef73bc69ca:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.7-defconfig
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.7-gm20b
 
-for you to fetch changes up to fe42f031765e2cfaf5363b52664a634a4fe19c1a:
+for you to fetch changes up to 30f949bc6682d4912dbc74e7e757c66b3e3a6469:
 
-  ARM: multi_v7: Enable Tegra XUSB controller in defconfig (2016-04-29 18:13:52 +0200)
+  arm64: tegra: Add IOMMU node to GM20B on Tegra210 (2016-04-26 18:41:43 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-ARM: tegra: Default configuration updates for v4.7-rc1
+arm64: tegra: Enable GM20B GPU on Tegra210
 
-Enable the XUSB pad controller and XUSB controller drivers on the Tegra
-and multi-v7 default configurations.
+Complement the GM20B GPU device tree node on Tegra210 with missing
+properties to make it usable.
 
 ----------------------------------------------------------------
-Thierry Reding (2):
-      ARM: tegra: Enable XUSB controller in defconfig
-      ARM: multi_v7: Enable Tegra XUSB controller in defconfig
+Alexandre Courbot (5):
+      dt-bindings: gk20a: Fix typo in compatible name
+      dt-bindings: gk20a: Document iommus property
+      dt-bindings: Add documentation for GM20B GPU
+      arm64: tegra: Add reference clock to GM20B on Tegra210
+      arm64: tegra: Add IOMMU node to GM20B on Tegra210
 
- arch/arm/configs/multi_v7_defconfig | 2 ++
- arch/arm/configs/tegra_defconfig    | 2 ++
- 2 files changed, 4 insertions(+)
+ .../devicetree/bindings/gpu/nvidia,gk20a.txt       | 37 +++++++++++++++++++---
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  8 +++--
+ 2 files changed, 38 insertions(+), 7 deletions(-)
