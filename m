@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL] soc/tegra: Add generic PM domain support
-Date: Fri, 29 Apr 2016 18:21:06 +0200
-Message-ID: <1461946869-26124-1-git-send-email-thierry.reding@gmail.com>
+Subject: [GIT PULL] dt-bindings: gpio: tegra: Add Tegra186 support
+Date: Fri, 29 Apr 2016 18:21:07 +0200
+Message-ID: <1461946869-26124-2-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
@@ -10,37 +10,35 @@ List-Id: linux-tegra@vger.kernel.org
 
 Hi ARM-SoC maintainers,
 
-The following changes since commit 605aa5e48bfc3dbf0272bc4aac8674e06c19c1b3:
+The following changes since commit f55532a0c0b8bb6148f4e07853b876ef73bc69ca:
 
-  dt-bindings: Update NVIDIA PMC for Tegra (2016-04-05 15:22:54 +0200)
+  Linux 4.6-rc1 (2016-03-26 16:03:24 -0700)
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.7-genpd
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.7-gpio
 
-for you to fetch changes up to a38045121bf42110e6043d07315a7626b021a0db:
+for you to fetch changes up to ec6b925579b40225d58f0374ada0e40a003cde16:
 
-  soc/tegra: pmc: Add generic PM domain support (2016-04-29 17:17:47 +0200)
+  ARM: tegra: Add DT binding for Tegra186 GPIO controllers (2016-04-22 13:32:29 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-soc/tegra: Add generic PM domain support
+dt-bindings: gpio: tegra: Add Tegra186 support
 
-Implements generic PM domain support on top of the existing Tegra power-
-gate API. Drivers are thus allowed to move away from the Tegra-specific
-API and towards using generic power domains directly.
+Adds device tree bindings for the GPIO and AON controllers found on the
+Tegra186 SoC.
 
 ----------------------------------------------------------------
-Jon Hunter (2):
-      dt-bindings: Add power domain info for NVIDIA PMC
-      soc/tegra: pmc: Add generic PM domain support
+Stephen Warren (2):
+      ARM: tegra: Fix naming in GPIO DT binding header
+      ARM: tegra: Add DT binding for Tegra186 GPIO controllers
 
-Thierry Reding (1):
-      Merge branch 'for-4.7/soc' into for-4.7/genpd
-
- .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      |  80 ++++
- drivers/soc/tegra/pmc.c                            | 485 ++++++++++++++++++---
- include/soc/tegra/pmc.h                            |   1 +
- 3 files changed, 505 insertions(+), 61 deletions(-)
+ .../bindings/gpio/nvidia,tegra186-gpio.txt         | 161 +++++++++++++++++++++
+ include/dt-bindings/gpio/tegra-gpio.h              |  68 ++++-----
+ include/dt-bindings/gpio/tegra186-gpio.h           |  56 +++++++
+ 3 files changed, 251 insertions(+), 34 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/nvidia,tegra186-gpio.txt
+ create mode 100644 include/dt-bindings/gpio/tegra186-gpio.h
