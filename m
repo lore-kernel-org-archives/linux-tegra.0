@@ -1,71 +1,44 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH] gpio: tegra: Implement gpio_get_direction callback
-Date: Fri, 29 Apr 2016 18:01:18 +0530
-Message-ID: <1461933078-20366-1-git-send-email-ldewangan@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 0/3] bus: Add support for Tegra210 ACONNECT
+Date: Fri, 29 Apr 2016 14:46:38 +0100
+Message-ID: <1461937604-18481-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Sender: linux-gpio-owner@vger.kernel.org
-To: linus.walleij@linaro.org, swarren@wwwdotorg.org, thierry.reding@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Implement gpio_get_direction() callback for Tegra GPIO.
-The direction is only valid if the pin is configured as
-GPIO. If pin is not configured in GPIO mode then this
-function return error.
+Add support for the ACONNECT bus which is part of the audio sub-system
+on Tegra210.
 
-This makes debugfs and initial reading of the state of
-the lines more accurate.
+I did look to see if we could use the simple-pm-bus infrastructure for
+this, however, in the end I found that it did was not a good fit because
+of the way clocks for the bus are handled. The simple-pm-bus is tightly
+coupled to the genpd subsystem and is reliant on the power-domain
+associated with the bus to have the flag GENPD_FLAG_PM_CLK set and uses
+the genpd function pointer, attach_dev(), as a hook to populate the
+clocks. For Tegra this does not work because the power-domains are
+instantiated from device-tree rather than platform code. In this case
+for Tegra it is simpler to keep the clock management of devices within
+the power-domain separated from the power-domain itself.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
----
-This patch is based on discussion on series 
-Re: [PATCH V5 0/4] gpio: tegra: Cleanups and support for debounce
-From Linus W:
-It would be nice if you also implement .get_direction() which makes
-debugfs and initial reading of the state of the lines more accurate.
+Jon Hunter (2):
+  dt-bindings: bus: Add documentation for Tegra210 ACONNECT
+  bus: Add support for Tegra ACONNECT
 
- drivers/gpio/gpio-tegra.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+Shardar Shariff Md (1):
+  dmaengine: tegra-apb: proper default init of channel slave_id
 
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index b3ddd92..6f2292b 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -191,6 +191,24 @@ static int tegra_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
- 	return 0;
- }
- 
-+static int tegra_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
-+{
-+	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
-+	u32 pin_mask = BIT(GPIO_BIT(offset));
-+	u32 cnf, oe;
-+
-+	cnf = tegra_gpio_readl(tgi, GPIO_CNF(tgi, offset));
-+	oe = tegra_gpio_readl(tgi, GPIO_OE(tgi, offset));
-+	if (cnf & pin_mask) {
-+		if (oe & pin_mask)
-+			return GPIOF_DIR_OUT;
-+
-+		return GPIOF_DIR_IN;
-+	}
-+
-+	return -EINVAL;
-+}
-+
- static int tegra_gpio_set_debounce(struct gpio_chip *chip, unsigned int offset,
- 				   unsigned int debounce)
- {
-@@ -575,6 +593,7 @@ static int tegra_gpio_probe(struct platform_device *pdev)
- 	tgi->gc.get			= tegra_gpio_get;
- 	tgi->gc.direction_output	= tegra_gpio_direction_output;
- 	tgi->gc.set			= tegra_gpio_set;
-+	tgi->gc.get_direction		= tegra_gpio_get_direction;
- 	tgi->gc.to_irq			= tegra_gpio_to_irq;
- 	tgi->gc.base			= 0;
- 	tgi->gc.ngpio			= tgi->bank_count * 32;
+ .../bindings/bus/nvidia,tegra210-aconnect.txt      |  45 ++++++++
+ drivers/bus/Kconfig                                |   9 ++
+ drivers/bus/Makefile                               |   1 +
+ drivers/bus/tegra-aconnect.c                       | 113 +++++++++++++++++++++
+ drivers/dma/tegra20-apb-dma.c                      |  16 ++-
+ 5 files changed, 182 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
+ create mode 100644 drivers/bus/tegra-aconnect.c
+
 -- 
 2.1.4
-
