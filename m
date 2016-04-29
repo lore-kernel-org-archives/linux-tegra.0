@@ -1,55 +1,46 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] gpio: tegra: Implement gpio_get_direction callback
-Date: Fri, 29 Apr 2016 10:17:23 -0600
-Message-ID: <57238913.4080905@wwwdotorg.org>
-References: <1461933078-20366-1-git-send-email-ldewangan@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [GIT PULL] soc/tegra: Add generic PM domain support
+Date: Fri, 29 Apr 2016 18:21:06 +0200
+Message-ID: <1461946869-26124-1-git-send-email-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1461933078-20366-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 04/29/2016 06:31 AM, Laxman Dewangan wrote:
-> Implement gpio_get_direction() callback for Tegra GPIO.
-> The direction is only valid if the pin is configured as
-> GPIO. If pin is not configured in GPIO mode then this
-> function return error.
->
-> This makes debugfs and initial reading of the state of
-> the lines more accurate.
+Hi ARM-SoC maintainers,
 
-> +static int tegra_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
-> +{
-> +	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
-> +	u32 pin_mask = BIT(GPIO_BIT(offset));
-> +	u32 cnf, oe;
-> +
-> +	cnf = tegra_gpio_readl(tgi, GPIO_CNF(tgi, offset));
-> +	oe = tegra_gpio_readl(tgi, GPIO_OE(tgi, offset));
-> +	if (cnf & pin_mask) {
-> +		if (oe & pin_mask)
-> +			return GPIOF_DIR_OUT;
-> +
-> +		return GPIOF_DIR_IN;
-> +	}
-> +
-> +	return -EINVAL;
-> +}
+The following changes since commit 605aa5e48bfc3dbf0272bc4aac8674e06c19c1b3:
 
-Conceptually looks fine, but I have similar comments to Jon; whenever 
-there's an error condition, just fail immediately. That way you avoid 
-the entire rest of the function being indented:
+  dt-bindings: Update NVIDIA PMC for Tegra (2016-04-05 15:22:54 +0200)
 
-cnf = ...
-if (!(cnf ...)
-     return -EINVAL;
-oe = ...
-return ...
+are available in the git repository at:
 
-The only indented code there is the error handling. At least to me, this 
-makes the code a lot more readable since there are far fewer 
-combinations of conditionals.
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.7-genpd
+
+for you to fetch changes up to a38045121bf42110e6043d07315a7626b021a0db:
+
+  soc/tegra: pmc: Add generic PM domain support (2016-04-29 17:17:47 +0200)
+
+Thanks,
+Thierry
+
+----------------------------------------------------------------
+soc/tegra: Add generic PM domain support
+
+Implements generic PM domain support on top of the existing Tegra power-
+gate API. Drivers are thus allowed to move away from the Tegra-specific
+API and towards using generic power domains directly.
+
+----------------------------------------------------------------
+Jon Hunter (2):
+      dt-bindings: Add power domain info for NVIDIA PMC
+      soc/tegra: pmc: Add generic PM domain support
+
+Thierry Reding (1):
+      Merge branch 'for-4.7/soc' into for-4.7/genpd
+
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      |  80 ++++
+ drivers/soc/tegra/pmc.c                            | 485 ++++++++++++++++++---
+ include/soc/tegra/pmc.h                            |   1 +
+ 3 files changed, 505 insertions(+), 61 deletions(-)
