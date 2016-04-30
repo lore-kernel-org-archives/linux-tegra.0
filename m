@@ -1,78 +1,81 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH V2] gpio: tegra: Implement gpio_get_direction callback
-Date: Fri, 29 Apr 2016 18:15:04 +0100
-Message-ID: <57239698.80901@nvidia.com>
-References: <1461947123-18170-1-git-send-email-ldewangan@nvidia.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V5 0/4] gpio: tegra: Cleanups and support for debounce
+Date: Sat, 30 Apr 2016 13:07:33 +0200
+Message-ID: <CACRpkdZ-muOGvtKbKNP66Bv5FSPeMeYvmArC5GAM92EcKp+kgQ@mail.gmail.com>
+References: <1461580714-22479-1-git-send-email-ldewangan@nvidia.com>
+	<CACRpkda7HqPLSRLzaSdO-7chjUBL9C2VAMB0nyVZUw=PSGL3VQ@mail.gmail.com>
+	<5723274B.3050209@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <1461947123-18170-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, linus.walleij@linaro.org, swarren@wwwdotorg.org, thierry.reding@gmail.com
-Cc: linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5723274B.3050209-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, Apr 29, 2016 at 11:20 AM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> On Friday 29 April 2016 02:37 PM, Linus Walleij wrote:
+>> On Mon, Apr 25, 2016 at 12:38 PM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> wrote:
+>>
+>>> Add support for the debounce as Tegra210 support debounce in HW.
+>>> Also do the clenaups to remove all global variables.
+>>
+>> OK this v5 is applied.
+>>
+>> Laxman does this GPIO also have open drain and/or open source
+>> handling?
+>
+>
+> Some of the pins support the open drain and these are part of pinmux
+> register set.
+> For that we have property for setting open drain.
+>
+> Is it possible to link the gpio APIs to pincontrol for setting that pin?
 
-On 29/04/16 17:25, Laxman Dewangan wrote:
-> Implement gpio_get_direction() callback for Tegra GPIO.
-> The direction is only valid if the pin is configured as
-> GPIO. If pin is not configured in GPIO mode then this
-> function return error.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> 
-> ---
-> This patch is based on discussion on series
-> Re: [PATCH V5 0/4] gpio: tegra: Cleanups and support for debounce
-> From Linus W:
-> It would be nice if you also implement .get_direction() which makes
-> debugfs and initial reading of the state of the lines more accurate.
-> 
-> V1->V2:
-> - Rearrange the calls to optimise the register access and avoid
->  much indenting based on Stephen's and Jon review.
-> 
->  drivers/gpio/gpio-tegra.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
-> 
-> diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-> index b3ddd92..ec891a27 100644
-> --- a/drivers/gpio/gpio-tegra.c
-> +++ b/drivers/gpio/gpio-tegra.c
-> @@ -191,6 +191,21 @@ static int tegra_gpio_direction_output(struct gpio_chip *chip, unsigned offset,
->  	return 0;
->  }
->  
-> +static int tegra_gpio_get_direction(struct gpio_chip *chip, unsigned offset)
-> +{
-> +	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
-> +	u32 pin_mask = BIT(GPIO_BIT(offset));
-> +	u32 cnf, oe;
-> +
-> +	cnf = tegra_gpio_readl(tgi, GPIO_CNF(tgi, offset));
-> +	if (!(cnf & pin_mask))
-> +		return -EINVAL;
-> +
-> +	oe = tegra_gpio_readl(tgi, GPIO_OE(tgi, offset));
-> +
-> +	return (oe & pin_mask) ? GPIOF_DIR_OUT : GPIOF_DIR_IN;
-> +}
-> +
->  static int tegra_gpio_set_debounce(struct gpio_chip *chip, unsigned int offset,
->  				   unsigned int debounce)
->  {
-> @@ -575,6 +590,7 @@ static int tegra_gpio_probe(struct platform_device *pdev)
->  	tgi->gc.get			= tegra_gpio_get;
->  	tgi->gc.direction_output	= tegra_gpio_direction_output;
->  	tgi->gc.set			= tegra_gpio_set;
-> +	tgi->gc.get_direction		= tegra_gpio_get_direction;
->  	tgi->gc.to_irq			= tegra_gpio_to_irq;
->  	tgi->gc.base			= 0;
->  	tgi->gc.ngpio			= tgi->bank_count * 32;
+I have the same issue with Nomadik pin control that I use as a
+testbed: there is a backend in pin control to the GPIO side.
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+I was thinking about adding a new cross call. We now have this:
 
-Cheers
-Jon
+/* External interface to pin control */
+extern int pinctrl_request_gpio(unsigned gpio);
+extern void pinctrl_free_gpio(unsigned gpio);
+extern int pinctrl_gpio_direction_input(unsigned gpio);
+extern int pinctrl_gpio_direction_output(unsigned gpio);
 
+I was going to add:
+
+extern int pinctrl_gpio_set_config(unsigned gpio, unsigned long config);
+
+That can be used by GPIO drivers to call back into pincontrol
+and set up any config flags using the conventions of the
+corresponding pin control back-end.
+
+This could be used for as well open drain as other things (like
+pull-up) as the userspace ABI matures (it currently only has
+in/out and open drain/source).
+
+What do you think about this idea?
+
+>> Then you might want to look into supporting that too as I just added
+>> support for native single-endedness to gpiolib, c.f.:
+>> http://marc.info/?l=linux-gpio&m=146011780301280&w=2
+>
+> Yaah, Some of PMIC's (which I am handling) gpios support open drain and I
+> think I can have changes for the PMIC gpio driver.
+
+Nice! :)
+
+>> It would be nice if you also implement .get_direction() which
+>> makes debugfs and initial reading of the state of the lines
+>> more accurate.
+>
+> Sure, this can be implemented.
+> Will post the patch on top of the series soon.
+
+Thanks.
+
+Yours,
+Linus Walleij
