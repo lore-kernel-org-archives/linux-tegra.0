@@ -1,51 +1,64 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH V2] pinctrl: tegra: Correctly check the supported
- configuration
-Date: Mon, 2 May 2016 11:47:49 -0600
-Message-ID: <572792C5.1030403@wwwdotorg.org>
-References: <1462209804-16582-1-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V5 0/4] gpio: tegra: Cleanups and support for debounce
+Date: Mon, 2 May 2016 23:28:12 +0530
+Message-ID: <57279534.5010409@nvidia.com>
+References: <1461580714-22479-1-git-send-email-ldewangan@nvidia.com> <CACRpkda7HqPLSRLzaSdO-7chjUBL9C2VAMB0nyVZUw=PSGL3VQ@mail.gmail.com> <5723274B.3050209@nvidia.com> <CACRpkdZ-muOGvtKbKNP66Bv5FSPeMeYvmArC5GAM92EcKp+kgQ@mail.gmail.com> <57277C70.5080204@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <1462209804-16582-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, linus.walleij@linaro.org
-Cc: thierry.reding@gmail.com, gnurou@gmail.com, rklein@nvidia.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <57277C70.5080204-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/02/2016 11:23 AM, Laxman Dewangan wrote:
-> The pincontrol registers of Tegra chips has multiple filed per
-> registers. There is two type of registers mux and drive. All
-> configurations belongs to one of these registers.
->
-> If any configurations are supported then <config>_bit is set to
-> bit position of these registers otherwise -1 to not support it.
-> The member is defined as
-> 	s32 <config>_bit:6;
->
-> So if config is not supported ifor given SoC then it is set to -1
-> in soc pinmmux table.
-> In common driver code, to find out that given config is supported
-> or not, it is checked as:
->
-> s8 bit = <config>_bit;
-> if (bit > 31) {
-> 	/* Not supported config */
-> }
->
-> But in this case, bit is s8 and hence for non supporting it is -1.
->
-> Correct the check as:
-> if (bit < 0) {
-> 	/* Not supported config */
-> }
->
-> Fixes: e4c02dced975cb ("pinctrl: tegra: use signed bitfields for optional fields")
->
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 
-Nit: There shouldn't be a blank line between the Fixes: and 
-Signed-off-by: lines. I assume this can be fixed when the patch is applied.
+On Monday 02 May 2016 09:42 PM, Stephen Warren wrote:
+> On 04/30/2016 05:07 AM, Linus Walleij wrote:
+>> On Fri, Apr 29, 2016 at 11:20 AM, Laxman Dewangan 
+>> <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>> On Friday 29 April 2016 02:37 PM, Linus Walleij wrote:
+>>>> On Mon, Apr 25, 2016 at 12:38 PM, Laxman Dewangan 
+>>>> <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>> wrote:
+>>>>
+>>>>> Add support for the debounce as Tegra210 support debounce in HW.
+>>>>> Also do the clenaups to remove all global variables.
+>>>>
+>>>> OK this v5 is applied.
+>>>>
+>>>> Laxman does this GPIO also have open drain and/or open source
+>>>> handling?
+>>>
+>>>
+>>> Some of the pins support the open drain and these are part of pinmux
+>>> register set.
+>>> For that we have property for setting open drain.
+>
+> IIRC, Tegra has open-drain control in both the GPIO controller for all 
+> pins (OE bit) and in the pinmux controller for a small subset of pins. 
+> For GPIOs, why wouldn't we just use the control bit in the GPIO 
+> controller for all GPIOs. This would avoid any special-cases, and 
+> minimize coupling between the GPIO and pinctrl drivers.
 
-Acked-by: Stephen Warren <swarren@nvidia.com>
+
+Toggling OE bit is something emulating the open drain here.
+
+I think idea is that when we configure the pin in open drain then it 
+should be automatically handled by HW  when we want to set pin state 
+high or low. When we set low, the pin should be driven and when high 
+then it should be tristated input. We should not need any direction bit 
+setting.
+
+Otherwise, if pin is configured as open drain then:
+
+Set out = 0
+
+and when it need to set pin to high then oe = 0 else oe =1. Do not 
+toggle any other bits.
+
+On this case, we need to store that pin is configured as open drain so 
+that set_value should toggle OE instead of OUT.
+
+Or do you want to have different implementation?
