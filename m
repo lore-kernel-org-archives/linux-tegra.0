@@ -1,357 +1,199 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 6/6] pinctrl: tegra: Add driver to configure voltage and power state of io pads
-Date: Mon, 2 May 2016 17:47:14 +0530
-Message-ID: <1462191434-28933-7-git-send-email-ldewangan@nvidia.com>
-References: <1462191434-28933-1-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH 1/1] pinctrl: tegra: avoid parked_reg and parked_bank
+Date: Mon, 2 May 2016 19:58:49 +0530
+Message-ID: <1462199330-1536-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <1462191434-28933-1-git-send-email-ldewangan@nvidia.com>
 Sender: linux-gpio-owner@vger.kernel.org
-To: swarren@wwwdotorg.org, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, jonathanh@nvidia.com, thierry.reding@gmail.com
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+To: linus.walleij@linaro.org, swarren@wwwdotorg.org, thierry.reding@gmail.com
+Cc: gnurou@gmail.com, rklein@nvidia.com, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-NVIDIA Tegra210 supports the IO pads which can operate at 1.8V
-or 3.3V I/O voltage levels. Also the IO pads can be configured
-for power down state if it is not used. SW needs to configure the
-voltage level of IO pads based on IO rail voltage and its power
-state based on platform usage.
+NVIDIA's Tegra210 support the park bit to make pinmux configuration
+enable/disable. If parked bit is 1 then configuration does not apply
+and if it is 0 then pinmux configuration applies. This is to support
+to avoid any glitch in pinmux configurations.
 
-The voltage and power state configurations of pads are provided
-through pin control frameworks. Add pin control driver for Tegra's
-IO pads' voltage and power state configurations.
+The parked bit is part of mux register and mux bank and hence it is
+not required to have member for the parked_reg and parked bank very
+similar to other bit field of the same register.
+
+Remove the need of the parked register and parked bank and get whether
+parked function supported or not by parked_bit.
+
+This is to make the parked bit handling same as other fields of mux
+registers.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-
 ---
-Changes from V1:
-- Use the generic pincontrol property for low power enable/disable.
-- sync with latest and remove all MODULE* macros
-- Use renamed APIs form PMC
----
- drivers/pinctrl/tegra/Makefile                  |   1 +
- drivers/pinctrl/tegra/pinctrl-tegra210-io-pad.c | 301 ++++++++++++++++++++++++
- 2 files changed, 302 insertions(+)
- create mode 100644 drivers/pinctrl/tegra/pinctrl-tegra210-io-pad.c
+ drivers/pinctrl/tegra/pinctrl-tegra.c    | 8 ++++----
+ drivers/pinctrl/tegra/pinctrl-tegra.h    | 6 +-----
+ drivers/pinctrl/tegra/pinctrl-tegra114.c | 4 ++--
+ drivers/pinctrl/tegra/pinctrl-tegra124.c | 4 ++--
+ drivers/pinctrl/tegra/pinctrl-tegra20.c  | 4 ++--
+ drivers/pinctrl/tegra/pinctrl-tegra210.c | 4 +---
+ drivers/pinctrl/tegra/pinctrl-tegra30.c  | 4 ++--
+ 7 files changed, 14 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/pinctrl/tegra/Makefile b/drivers/pinctrl/tegra/Makefile
-index a927379..8c4519f 100644
---- a/drivers/pinctrl/tegra/Makefile
-+++ b/drivers/pinctrl/tegra/Makefile
-@@ -4,4 +4,5 @@ obj-$(CONFIG_PINCTRL_TEGRA30)		+= pinctrl-tegra30.o
- obj-$(CONFIG_PINCTRL_TEGRA114)		+= pinctrl-tegra114.o
- obj-$(CONFIG_PINCTRL_TEGRA124)		+= pinctrl-tegra124.o
- obj-$(CONFIG_PINCTRL_TEGRA210)		+= pinctrl-tegra210.o
-+obj-$(CONFIG_PINCTRL_TEGRA210)		+= pinctrl-tegra210-io-pad.o
- obj-$(CONFIG_PINCTRL_TEGRA_XUSB)	+= pinctrl-tegra-xusb.o
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210-io-pad.c b/drivers/pinctrl/tegra/pinctrl-tegra210-io-pad.c
-new file mode 100644
-index 0000000..ab06c71
---- /dev/null
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra210-io-pad.c
-@@ -0,0 +1,301 @@
-+/*
-+ * Generic ADC thermal driver
-+ *
-+ * Copyright (C) 2016 NVIDIA CORPORATION. All rights reserved.
-+ *
-+ * Author: Laxman Dewangan <ldewangan@nvidia.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/pinctrl/pinconf-generic.h>
-+#include <linux/pinctrl/pinconf.h>
-+#include <linux/pinctrl/pinmux.h>
-+#include <linux/platform_device.h>
-+#include <linux/delay.h>
-+#include <soc/tegra/pmc.h>
-+
-+#include "../core.h"
-+#include "../pinconf.h"
-+#include "../pinctrl-utils.h"
-+
-+enum tegra_io_rail_pads_params {
-+	TEGRA_IO_PAD_POWER_SOURCE_VOLTAGE = PIN_CONFIG_END + 1,
-+};
-+
-+static const struct pinconf_generic_params tegra_io_pads_cfg_params[] = {
-+	{
-+		.property = "nvidia,power-source-voltage",
-+		.param = TEGRA_IO_PAD_POWER_SOURCE_VOLTAGE,
-+	},
-+};
-+
-+struct tegra_io_pads_cfg_info {
-+	const char *name;
-+	const unsigned int pins[1];
-+	int pad_id;
-+	bool voltage_can_change;
-+	bool support_low_power_state;
-+};
-+
-+#define TEGRA210_PAD_INFO_TABLE(_entry_)			\
-+	_entry_(0, "audio", AUDIO, true, false),		\
-+	_entry_(1, "audio-hv", AUDIO_HV, true, true),		\
-+	_entry_(2, "cam", CAM, true, false),			\
-+	_entry_(3, "csia", CSIA, true, false),			\
-+	_entry_(4, "csib", CSIB, true, false),			\
-+	_entry_(5, "csic", CSIC, true, false),			\
-+	_entry_(6, "csid", CSID, true, false),			\
-+	_entry_(7, "csie", CSIE, true, false),			\
-+	_entry_(8, "csif", CSIF, true, false),			\
-+	_entry_(9, "dbg", DBG, true, false),			\
-+	_entry_(10, "debug-nonao", DEBUG_NONAO, true, false),	\
-+	_entry_(11, "dmic", DMIC, true, false),			\
-+	_entry_(12, "dp", DP, true, false),			\
-+	_entry_(13, "dsi", DSI, true, false),			\
-+	_entry_(14, "dsib", DSIB, true, false),			\
-+	_entry_(15, "dsic", DSIC, true, false),			\
-+	_entry_(16, "dsid", DSID, true, false),			\
-+	_entry_(17, "emmc", SDMMC4, true, false),		\
-+	_entry_(18, "emmc2", EMMC2, true, false),		\
-+	_entry_(19, "gpio", GPIO, true, true),			\
-+	_entry_(20, "hdmi", HDMI, true, false),			\
-+	_entry_(21, "hsic", HSIC, true, false),			\
-+	_entry_(22, "lvds", LVDS, true, false),			\
-+	_entry_(23, "mipi-bias", MIPI_BIAS, true, false),	\
-+	_entry_(24, "pex-bias", PEX_BIAS, true, false),		\
-+	_entry_(25, "pex-clk1", PEX_CLK1, true, false),		\
-+	_entry_(26, "pex-clk2", PEX_CLK2, true, false),		\
-+	_entry_(27, "pex-ctrl", PEX_CNTRL, true, false),	\
-+	_entry_(28, "sdmmc1", SDMMC1, true, true),		\
-+	_entry_(29, "sdmmc3", SDMMC3, true, true),		\
-+	_entry_(30, "spi", SPI, true, false),			\
-+	_entry_(31, "spi-hv", SPI_HV, true, true),		\
-+	_entry_(32, "uart", UART, true, false),			\
-+	_entry_(33, "usb-bias", USB_BIAS, true, false),		\
-+	_entry_(34, "usb0", USB0, true, false),			\
-+	_entry_(35, "usb1", USB1, true, false),			\
-+	_entry_(36, "usb2", USB2, true, false),			\
-+	_entry_(37, "usb3", USB3, true, false)
-+
-+#define TEGRA_IO_PAD_INFO(_id, _name, _pad_id, _vchange, _lpstate)	\
-+	{								\
-+		.name = _name,						\
-+		.pins = {(_id)},					\
-+		.pad_id = TEGRA_IO_PAD_##_pad_id,			\
-+		.voltage_can_change = (_vchange),			\
-+		.support_low_power_state = (_lpstate),			\
-+	}
-+
-+static struct tegra_io_pads_cfg_info tegra210_io_pads_cfg_info[] = {
-+	TEGRA210_PAD_INFO_TABLE(TEGRA_IO_PAD_INFO),
-+};
-+
-+#define TEGRA_IO_PAD_DESC(_id, _name, _pad_id,  _vchange, _lpstate)	\
-+	PINCTRL_PIN(_id, _name)
-+
-+static const struct pinctrl_pin_desc tegra210_io_pads_pinctrl_desc[] = {
-+	TEGRA210_PAD_INFO_TABLE(TEGRA_IO_PAD_DESC),
-+};
-+
-+struct tegra_io_pads_info {
-+	struct device *dev;
-+	struct pinctrl_dev *pctl;
-+	struct tegra_io_pads_cfg_info *pads_cfg;
-+	unsigned int num_pads_cfg;
-+};
-+
-+static int tegra_iop_pinctrl_get_groups_count(struct pinctrl_dev *pctldev)
-+{
-+	struct tegra_io_pads_info *tiopi = pinctrl_dev_get_drvdata(pctldev);
-+
-+	return tiopi->num_pads_cfg;
-+}
-+
-+static const char *tegra_iop_pinctrl_get_group_name(struct pinctrl_dev *pctldev,
-+						    unsigned int group)
-+{
-+	struct tegra_io_pads_info *tiopi = pinctrl_dev_get_drvdata(pctldev);
-+
-+	return tiopi->pads_cfg[group].name;
-+}
-+
-+static int tegra_iop_pinctrl_get_group_pins(struct pinctrl_dev *pctldev,
-+					    unsigned int group,
-+					    const unsigned int **pins,
-+					    unsigned int *num_pins)
-+{
-+	struct tegra_io_pads_info *tiopi = pinctrl_dev_get_drvdata(pctldev);
-+
-+	*pins = tiopi->pads_cfg[group].pins;
-+	*num_pins = 1;
-+
-+	return 0;
-+}
-+
-+static const struct pinctrl_ops tegra_iop_pinctrl_ops = {
-+	.get_groups_count = tegra_iop_pinctrl_get_groups_count,
-+	.get_group_name = tegra_iop_pinctrl_get_group_name,
-+	.get_group_pins = tegra_iop_pinctrl_get_group_pins,
-+	.dt_node_to_map = pinconf_generic_dt_node_to_map_pin,
-+	.dt_free_map = pinctrl_utils_free_map,
-+};
-+
-+static int tegra_io_pad_pinconf_get(struct pinctrl_dev *pctldev,
-+				    unsigned int pin, unsigned long *config)
-+{
-+	struct tegra_io_pads_info *tiopi = pinctrl_dev_get_drvdata(pctldev);
-+	int param = pinconf_to_config_param(*config);
-+	struct tegra_io_pads_cfg_info *pad_cfg = &tiopi->pads_cfg[pin];
-+	int pad_id = pad_cfg->pad_id;
-+	int arg = 0;
-+	int ret;
-+
-+	switch (param) {
-+	case TEGRA_IO_PAD_POWER_SOURCE_VOLTAGE:
-+		ret = tegra_io_pads_get_configured_voltage(pad_id);
-+		if (ret < 0)
-+			return ret;
-+		arg = (ret =  3300000) ? 1 : 0;
-+		break;
-+
-+	case PIN_CONFIG_LOW_POWER_MODE:
-+		ret = tegra_io_pads_power_is_enabled(pad_id);
-+		if (ret < 0)
-+			return ret;
-+		arg = !ret;
-+		break;
-+
-+	default:
-+		dev_err(tiopi->dev, "The parameter %d not supported\n", param);
-+		return -EINVAL;
-+	}
-+
-+	*config = pinconf_to_config_packed(param, (u16)arg);
-+	return 0;
-+}
-+
-+static int tegra_io_pad_pinconf_set(struct pinctrl_dev *pctldev,
-+				    unsigned int pin, unsigned long *configs,
-+				    unsigned int num_configs)
-+{
-+	struct tegra_io_pads_info *tiopi = pinctrl_dev_get_drvdata(pctldev);
-+	struct tegra_io_pads_cfg_info *pad_cfg = &tiopi->pads_cfg[pin];
-+	u16 param_val;
-+	int pad_id = pad_cfg->pad_id;
-+	int volt;
-+	int param;
-+	int ret;
-+	int i;
-+
-+	for (i = 0; i < num_configs; i++) {
-+		param = pinconf_to_config_param(configs[i]);
-+		param_val = pinconf_to_config_argument(configs[i]);
-+
-+		switch (param) {
-+		case TEGRA_IO_PAD_POWER_SOURCE_VOLTAGE:
-+			volt = (param_val) ? 3300000 : 1800000;
-+			ret = tegra_io_pads_configure_voltage(pad_id, volt);
-+			if (ret < 0) {
-+				dev_err(tiopi->dev,
-+					"Failed to configure pad %s for voltage %d: %d\n",
-+					pad_cfg->name, param_val, ret);
-+				return ret;
-+			}
-+			break;
-+
-+		case PIN_CONFIG_LOW_POWER_MODE:
-+			if (param_val)
-+				ret = tegra_io_pads_power_disable(pad_id);
-+			else
-+				ret = tegra_io_pads_power_enable(pad_id);
-+			if (ret < 0) {
-+				dev_err(tiopi->dev,
-+					"Failed to set low power %s of pad %s: %d\n",
-+					param_val ? "enable" : "disable",
-+					pad_cfg->name, ret);
-+				return ret;
-+			}
-+			break;
-+
-+		default:
-+			dev_err(tiopi->dev, "The parameter %d not supported\n",
-+				param);
-+			return -EINVAL;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct pinconf_ops tegra_io_pad_pinconf_ops = {
-+	.pin_config_get = tegra_io_pad_pinconf_get,
-+	.pin_config_set = tegra_io_pad_pinconf_set,
-+};
-+
-+static struct pinctrl_desc tegra_iop_pinctrl_desc = {
-+	.name = "pinctrl-tegra-io-pads",
-+	.pctlops = &tegra_iop_pinctrl_ops,
-+	.confops = &tegra_io_pad_pinconf_ops,
-+	.pins = tegra210_io_pads_pinctrl_desc,
-+	.npins = ARRAY_SIZE(tegra210_io_pads_pinctrl_desc),
-+	.custom_params = tegra_io_pads_cfg_params,
-+	.num_custom_params = ARRAY_SIZE(tegra_io_pads_cfg_params),
-+};
-+
-+static int tegra_iop_pinctrl_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np_parent = pdev->dev.parent->of_node;
-+	struct tegra_io_pads_info *tiopi;
-+
-+	if (!np_parent) {
-+		dev_err(&pdev->dev, "PMC should be register from DT\n");
-+		return -ENODEV;
-+	}
-+
-+	pdev->dev.of_node = np_parent;
-+
-+	tiopi = devm_kzalloc(&pdev->dev, sizeof(*tiopi), GFP_KERNEL);
-+	if (!tiopi)
-+		return -ENOMEM;
-+
-+	tiopi->dev = &pdev->dev;
-+	tiopi->dev->of_node = pdev->dev.of_node;
-+	tiopi->pads_cfg = tegra210_io_pads_cfg_info;
-+	tiopi->num_pads_cfg = ARRAY_SIZE(tegra210_io_pads_cfg_info);
-+
-+	platform_set_drvdata(pdev, tiopi);
-+
-+	tiopi->pctl = pinctrl_register(&tegra_iop_pinctrl_desc, dev, tiopi);
-+	if (IS_ERR(tiopi->pctl)) {
-+		dev_err(&pdev->dev, "Couldn't register pinctrl driver\n");
-+		return PTR_ERR(tiopi->pctl);
-+	}
-+
-+	return 0;
-+}
-+
-+static int tegra_iop_pinctrl_remove(struct platform_device *pdev)
-+{
-+	struct tegra_io_pads_info *tiopi = platform_get_drvdata(pdev);
-+
-+	pinctrl_unregister(tiopi->pctl);
-+
-+	return 0;
-+}
-+
-+static struct platform_driver tegra_iop_pinctrl_driver = {
-+	.driver = {
-+		.name = "pinctrl-tegra210-io-pad",
-+	},
-+	.probe = tegra_iop_pinctrl_probe,
-+	.remove = tegra_iop_pinctrl_remove,
-+};
-+
-+builtin_platform_driver(tegra_iop_pinctrl_driver);
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegra/pinctrl-tegra.c
+index 861baf2..fb00129 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+@@ -632,11 +632,11 @@ static void tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
+ 	u32 val;
+ 
+ 	for (i = 0; i < pmx->soc->ngroups; ++i) {
+-		if (pmx->soc->groups[i].parked_reg >= 0) {
+-			g = &pmx->soc->groups[i];
+-			val = pmx_readl(pmx, g->parked_bank, g->parked_reg);
++		g = &pmx->soc->groups[i];
++		if ((g->parked_bit >= 0) && (g->parked_bit <= 31)) {
++			val = pmx_readl(pmx, g->mux_bank, g->mux_reg);
+ 			val &= ~(1 << g->parked_bit);
+-			pmx_writel(pmx, val, g->parked_bank, g->parked_reg);
++			pmx_writel(pmx, val, g->mux_bank, g->mux_reg);
+ 		}
+ 	}
+ }
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.h b/drivers/pinctrl/tegra/pinctrl-tegra.h
+index d2ced17..33b17cb 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra.h
++++ b/drivers/pinctrl/tegra/pinctrl-tegra.h
+@@ -93,9 +93,7 @@ struct tegra_function {
+  * @tri_reg:		Tri-state register offset.
+  * @tri_bank:		Tri-state register bank.
+  * @tri_bit:		Tri-state register bit.
+- * @parked_reg:		Parked register offset. -1 if unsupported.
+- * @parked_bank:	Parked register bank. 0 if unsupported.
+- * @parked_bit:		Parked register bit. 0 if unsupported.
++ * @parked_bit:		Parked register bit. -1 if unsupported.
+  * @einput_bit:		Enable-input register bit.
+  * @odrain_bit:		Open-drain register bit.
+  * @lock_bit:		Lock register bit.
+@@ -138,12 +136,10 @@ struct tegra_pingroup {
+ 	s16 pupd_reg;
+ 	s16 tri_reg;
+ 	s16 drv_reg;
+-	s16 parked_reg;
+ 	u32 mux_bank:2;
+ 	u32 pupd_bank:2;
+ 	u32 tri_bank:2;
+ 	u32 drv_bank:2;
+-	u32 parked_bank:2;
+ 	s32 mux_bit:6;
+ 	s32 pupd_bit:6;
+ 	s32 tri_bit:6;
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra114.c b/drivers/pinctrl/tegra/pinctrl-tegra114.c
+index 4851d16..952132c 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra114.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra114.c
+@@ -1578,7 +1578,7 @@ static struct tegra_function tegra114_functions[] = {
+ 		.lock_bit = 7,						\
+ 		.ioreset_bit = PINGROUP_BIT_##ior(8),			\
+ 		.rcv_sel_bit = PINGROUP_BIT_##rcv_sel(9),		\
+-		.parked_reg = -1,					\
++		.parked_bit = -1,					\
+ 		.drv_reg = -1,						\
+ 	}
+ 
+@@ -1599,7 +1599,7 @@ static struct tegra_function tegra114_functions[] = {
+ 		.rcv_sel_bit = -1,					\
+ 		.drv_reg = DRV_PINGROUP_REG(r),				\
+ 		.drv_bank = 0,						\
+-		.parked_reg = -1,					\
++		.parked_bit = -1,					\
+ 		.hsm_bit = hsm_b,					\
+ 		.schmitt_bit = schmitt_b,				\
+ 		.lpmd_bit = lpmd_b,					\
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra124.c b/drivers/pinctrl/tegra/pinctrl-tegra124.c
+index a0ce723..bca239e 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra124.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra124.c
+@@ -1747,7 +1747,7 @@ static struct tegra_function tegra124_functions[] = {
+ 		.lock_bit = 7,						\
+ 		.ioreset_bit = PINGROUP_BIT_##ior(8),			\
+ 		.rcv_sel_bit = PINGROUP_BIT_##rcv_sel(9),		\
+-		.parked_reg = -1,					\
++		.parked_bit = -1,					\
+ 		.drv_reg = -1,						\
+ 	}
+ 
+@@ -1768,7 +1768,7 @@ static struct tegra_function tegra124_functions[] = {
+ 		.rcv_sel_bit = -1,					\
+ 		.drv_reg = DRV_PINGROUP_REG(r),				\
+ 		.drv_bank = 0,						\
+-		.parked_reg = -1,					\
++		.parked_bit = -1,					\
+ 		.hsm_bit = hsm_b,					\
+ 		.schmitt_bit = schmitt_b,				\
+ 		.lpmd_bit = lpmd_b,					\
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra20.c b/drivers/pinctrl/tegra/pinctrl-tegra20.c
+index 09bad69..91254d0 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra20.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra20.c
+@@ -1994,7 +1994,7 @@ static struct tegra_function tegra20_functions[] = {
+ 		.tri_reg = ((tri_r) - TRISTATE_REG_A),		\
+ 		.tri_bank = 0,					\
+ 		.tri_bit = tri_b,				\
+-		.parked_reg = -1,				\
++		.parked_bit = -1,				\
+ 		.einput_bit = -1,				\
+ 		.odrain_bit = -1,				\
+ 		.lock_bit = -1,					\
+@@ -2014,7 +2014,7 @@ static struct tegra_function tegra20_functions[] = {
+ 		.pupd_bank = 2,					\
+ 		.pupd_bit = pupd_b,				\
+ 		.drv_reg = -1,					\
+-		.parked_reg = -1,				\
++		.parked_bit = -1,				\
+ 	}
+ 
+ /* Pin groups for drive strength registers (configurable version) */
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+index 2d856af..2b70e93 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+@@ -1310,8 +1310,6 @@ static struct tegra_function tegra210_functions[] = {
+ 		.lock_bit = 7,						\
+ 		.ioreset_bit = -1,					\
+ 		.rcv_sel_bit = PINGROUP_BIT_##e_io_hv(10),		\
+-		.parked_reg = PINGROUP_REG(r),				\
+-		.parked_bank = 1,					\
+ 		.parked_bit = 5,					\
+ 		.hsm_bit = PINGROUP_BIT_##hsm(9),			\
+ 		.schmitt_bit = 12,					\
+@@ -1345,7 +1343,7 @@ static struct tegra_function tegra210_functions[] = {
+ 		.rcv_sel_bit = -1,					\
+ 		.drv_reg = DRV_PINGROUP_REG(r),				\
+ 		.drv_bank = 0,						\
+-		.parked_reg = -1,					\
++		.parked_bit = -1,					\
+ 		.hsm_bit = -1,						\
+ 		.schmitt_bit = -1,					\
+ 		.lpmd_bit = -1,						\
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra30.c b/drivers/pinctrl/tegra/pinctrl-tegra30.c
+index fb7817f..474ac6d 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra30.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra30.c
+@@ -2139,7 +2139,7 @@ static struct tegra_function tegra30_functions[] = {
+ 		.lock_bit = 7,						\
+ 		.ioreset_bit = PINGROUP_BIT_##ior(8),			\
+ 		.rcv_sel_bit = -1,					\
+-		.parked_reg = -1,					\
++		.parked_bit = -1,					\
+ 		.drv_reg = -1,						\
+ 	}
+ 
+@@ -2160,7 +2160,7 @@ static struct tegra_function tegra30_functions[] = {
+ 		.rcv_sel_bit = -1,					\
+ 		.drv_reg = DRV_PINGROUP_REG(r),				\
+ 		.drv_bank = 0,						\
+-		.parked_reg = -1,					\
++		.parked_bit = -1,					\
+ 		.hsm_bit = hsm_b,					\
+ 		.schmitt_bit = schmitt_b,				\
+ 		.lpmd_bit = lpmd_b,					\
 -- 
 2.1.4
 
