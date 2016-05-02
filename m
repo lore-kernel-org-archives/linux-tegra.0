@@ -1,388 +1,159 @@
 From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH 3/6] soc/tegra: pmc: Add support for IO pads power state and voltage
-Date: Mon, 2 May 2016 17:47:11 +0530
-Message-ID: <1462191434-28933-4-git-send-email-ldewangan@nvidia.com>
+Subject: [PATCH 5/6] pinctrl: tegra: Add DT binding for io pads control
+Date: Mon, 2 May 2016 17:47:13 +0530
+Message-ID: <1462191434-28933-6-git-send-email-ldewangan@nvidia.com>
 References: <1462191434-28933-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1462191434-28933-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: swarren@wwwdotorg.org, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, jonathanh@nvidia.com, thierry.reding@gmail.com
 Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The IO pins of Tegra SoCs are grouped for common control of IO
-interface like setting voltage signal levels and power state of
-the interface. The group is generally referred as IO pads. The
-power state and voltage control of IO pins can be done at IO pads
-level.
+NVIDIA Tegra210 supports the IO pads which can operate at 1.8V
+or 3.3V I/O voltage levels. Also IO pads can be configured for
+power down state if it is not in used. SW needs to configure the
+voltage level of IO pads based on IO rail voltage and its power
+state based on platform usage.
 
-Tegra generation SoC supports the power down of IO pads when it
-is not used even in the active state of system. This saves power
-from that IO interface.
-
-Tegra generation SoC supports multiple voltage level in IO pins for
-interfacing on some of pads. Till Tegra124, the IO rail voltage was
-detected automatically and IO pads power voltage level sets accordingly.
-But from Tegra210, it is required to program by SW explicitly.
-
-Add support to set the power states and voltage level of the IO pads
-from client driver. The implementation for the APIs are in generic
-which is applicable for all generation os Tegra SoC.
-
-IO pads ID and information of bit field for power state and voltage
-level controls are added for Tegra210.
+Add DT binding document for detailing the DT properties for
+configuring IO pads voltage levels and its power state.
 
 Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 
 ---
 Changes from V1:
-This is reworked on earlier path to have separation between IO rails and
-io pads and add power state and voltage control APIs in single call.
+- Reworked on DT properties to use generic pinconf DT. Also add macros
+for voltage support. Now all DT properties are in flat DT instead of
+sub node based.
 ---
- drivers/soc/tegra/pmc.c | 182 +++++++++++++++++++++++++++++++++++++++++++++++-
- include/soc/tegra/pmc.h |  87 +++++++++++++++++++++++
- 2 files changed, 268 insertions(+), 1 deletion(-)
+ .../bindings/pinctrl/nvidia,tegra210-io-pad.txt    | 88 ++++++++++++++++++++++
+ .../dt-bindings/pinctrl/pinctrl-tegra210-io-pad.h  | 20 +++++
+ 2 files changed, 108 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-io-pad.txt
+ create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra210-io-pad.h
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index fc4f7b2..b3be4b9 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -76,6 +76,10 @@
- 
- #define PMC_SCRATCH41			0x140
- 
-+/* Power detect for pad voltage */
-+#define PMC_PWR_DET			0x48
-+#define PMC_PWR_DET_VAL			0xe4
+diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-io-pad.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-io-pad.txt
+new file mode 100644
+index 0000000..7616380
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-io-pad.txt
+@@ -0,0 +1,88 @@
++NVIDIA Tegra210 PMC IO pad controller
 +
- #define PMC_SENSOR_CTRL			0x1b0
- #define PMC_SENSOR_CTRL_SCRATCH_WRITE	BIT(2)
- #define PMC_SENSOR_CTRL_ENABLE_RST	BIT(1)
-@@ -115,12 +119,19 @@ struct tegra_powergate {
- 	unsigned int num_resets;
- };
- 
-+struct tegra_io_pads_control {
-+	int pad_id;
-+	int dpd_bit_pos;
-+	int pwr_val_pos;
-+};
++NVIDIA Tegra210 supports IO pads which can operate at 1.8V or 3.3V I/O
++power rail source. SW needs to configure the voltage level of IO pads
++based on platform specific power tree.
 +
- struct tegra_pmc_soc {
- 	unsigned int num_powergates;
- 	const char *const *powergates;
- 	unsigned int num_cpu_powergates;
- 	const u8 *cpu_powergates;
--
-+	const struct tegra_io_pads_control *io_pads_control;
-+	unsigned int num_io_pads;
- 	bool has_tsense_reset;
- 	bool has_gpu_clamps;
- };
-@@ -196,6 +207,14 @@ static void tegra_pmc_writel(u32 value, unsigned long offset)
- 	writel(value, pmc->base + offset);
- }
- 
-+static void tegra_pmc_read_modify_write(unsigned long offset, u32 mask, u32 val)
-+{
-+	u32 pmc_reg = tegra_pmc_readl(offset);
++The voltage configurations of IO pads should be done in boot if it is not
++going to change other wise dynamically based on IO rail voltage on that
++IO pads.
 +
-+	pmc_reg = (pmc_reg & ~mask) | (val & mask);
-+	tegra_pmc_writel(pmc_reg, offset);
-+}
++The DT property of the io pads must be under the node of pmc i.e.
++pmc@7000e400 for Tegra210.
 +
- static inline bool tegra_powergate_state(int id)
- {
- 	if (id == TEGRA_POWERGATE_3D && pmc->soc->has_gpu_clamps)
-@@ -970,6 +989,165 @@ error:
- }
- EXPORT_SYMBOL(tegra_io_rail_power_off);
- 
-+#define TEGRA_IO_PADS_CONTROL(_pad, _dpd, _pwr)		\
-+{							\
-+	.pad_id = (TEGRA_IO_PAD_##_pad),		\
-+	.dpd_bit_pos = (_dpd),				\
-+	.pwr_val_pos = (_pwr),				\
-+}
++Please refer to <pinctrl-bindings.txt> in this directory for details of the
++common pinctrl bindings used by client devices, including the meaning of the
++phrase "pin configuration node".
 +
-+struct tegra_io_pads_control tegra210_io_pads_control[] = {
-+	TEGRA_IO_PADS_CONTROL(CSIA, 0, -1),
-+	TEGRA_IO_PADS_CONTROL(CSIB, 1, -1),
-+	TEGRA_IO_PADS_CONTROL(DSI, 2, -1),
-+	TEGRA_IO_PADS_CONTROL(MIPI_BIAS, 3, -1),
-+	TEGRA_IO_PADS_CONTROL(PEX_BIAS, 4, -1),
-+	TEGRA_IO_PADS_CONTROL(PEX_CLK1, 5, -1),
-+	TEGRA_IO_PADS_CONTROL(PEX_CLK2, 6, -1),
-+	TEGRA_IO_PADS_CONTROL(USB0, 9, -1),
-+	TEGRA_IO_PADS_CONTROL(USB1, 10, -1),
-+	TEGRA_IO_PADS_CONTROL(USB2, 11, -1),
-+	TEGRA_IO_PADS_CONTROL(USB_BIAS, 12, -1),
-+	TEGRA_IO_PADS_CONTROL(UART, 14, -1),
-+	TEGRA_IO_PADS_CONTROL(AUDIO, 17, -1),
-+	TEGRA_IO_PADS_CONTROL(USB3, 18, -1),
-+	TEGRA_IO_PADS_CONTROL(HSIC, 19, -1),
-+	TEGRA_IO_PADS_CONTROL(DBG, 25, -1),
-+	TEGRA_IO_PADS_CONTROL(DEBUG_NONAO, 26, -1),
-+	TEGRA_IO_PADS_CONTROL(GPIO, 27, 21),
-+	TEGRA_IO_PADS_CONTROL(HDMI, 28, -1),
-+	TEGRA_IO_PADS_CONTROL(SDMMC1, 33, 12),
-+	TEGRA_IO_PADS_CONTROL(SDMMC3, 34, 13),
-+	TEGRA_IO_PADS_CONTROL(EMMC, 35, -1),
-+	TEGRA_IO_PADS_CONTROL(CAM, 36, -1),
-+	TEGRA_IO_PADS_CONTROL(EMMC2, 37, -1),
-+	TEGRA_IO_PADS_CONTROL(DSIB, 39, -1),
-+	TEGRA_IO_PADS_CONTROL(DSIC, 40, -1),
-+	TEGRA_IO_PADS_CONTROL(DSID, 41, -1),
-+	TEGRA_IO_PADS_CONTROL(CSIC, 42, -1),
-+	TEGRA_IO_PADS_CONTROL(CSID, 43, -1),
-+	TEGRA_IO_PADS_CONTROL(CSIE, 44, -1),
-+	TEGRA_IO_PADS_CONTROL(CSIF, 45, -1),
-+	TEGRA_IO_PADS_CONTROL(SPI, 46, -1),
-+	TEGRA_IO_PADS_CONTROL(SPI_HV, 47, 23),
-+	TEGRA_IO_PADS_CONTROL(DMIC, 50, -1),
-+	TEGRA_IO_PADS_CONTROL(DP, 51, -1),
-+	TEGRA_IO_PADS_CONTROL(LVDS, 57, -1),
-+	TEGRA_IO_PADS_CONTROL(AUDIO_HV, 61, 18),
-+};
++Tegra's pin configuration nodes act as a container for an arbitrary number of
++subnodes. Each of these subnodes represents some desired configuration for an
++IO pads, or a list of IO pads. This configuration can include the voltage and
++power enable/disable control
 +
-+static int tegra_io_pads_to_dpd(const struct tegra_pmc_soc *soc, int pad_id)
-+{
-+	int i;
++The name of each subnode is not important; all subnodes should be enumerated
++and processed purely based on their content. Each subnode only affects those
++parameters that are explicitly listed. Unspecified is represented as an absent
++property,
 +
-+	if (!soc || !soc->num_io_pads)
-+		return -EINVAL;
++See the TRM to determine which properties and values apply to each IO pads.
++Macro values for property values are defined in
++<dt-bindings/pinctrl/pinctrl-tegra210-io-pad.h>
 +
-+	for (i = 0; i < soc->num_io_pads; ++i) {
-+		if (soc->io_pads_control[i].pad_id == pad_id)
-+			return soc->io_pads_control[i].dpd_bit_pos;
-+	}
++The voltage supported on the pads are 1.8V and 3.3V. The enums are defined as:
++	For 1.8V, use TEGRA_IO_PAD_POWER_SOURCE_1800000UV
++	For 3.3V, use TEGRA_IO_PAD_POWER_SOURCE_3300000UV
 +
-+	return -EINVAL;
-+}
++Required subnode-properties:
++==========================
++- pins : An array of strings. Each string contains the name of an IO pads. Valid
++	 values for these names are listed below.
 +
-+static int tegra_io_pads_to_power_val(const struct tegra_pmc_soc *soc,
-+				      int pad_id)
-+{
-+	int i;
++Optional subnode-properties:
++==========================
++-nvidia,power-source-voltage:	Integer. The voltage level of IO pads. The
++				valid values are 1.8V and 3.3V. Macros are
++				defined for these voltage levels in
++				<dt-bindings/pinctrl/pinctrl-tegra210-io-pad.h>
++				Use TEGRA_IO_PAD_POWER_SOURCE_1800000UV for 1.8V
++				Use TEGRA_IO_PAD_POWER_SOURCE_3300000UV for 3.3V
 +
-+	if (!soc || !soc->num_io_pads)
-+		return -EINVAL;
++				All IO pads do not support the 1.8V/3.3V
++				configurations. Valid values for "pins" are
++				audio-hv, dmic, gpio, sdmmc1, sdmmc3, spi-hv.
 +
-+	for (i = 0; i < soc->num_io_pads; ++i) {
-+		if (soc->io_pads_control[i].pad_id == pad_id)
-+			return soc->io_pads_control[i].pwr_val_pos;
-+	}
++Other than above, following properties are supported from generic pin
++configuration explained in <dt-bindings/pinctrl/pinctrl-binding.txt>.
++low-power-enable:		enable low power mode.
++low-power-disable:		disable low power mode.
 +
-+	return -EINVAL;
-+}
++Valid values for pin for low power mode supports are:
++	audio, audio-hv, cam, csia, csib, csic, csid, csie, csif,
++	dbg, debug-nonao, dmic, dp, dsi, dsib, dsic, dsid, emmc, emmc2,
++	gpio, hdmi, hsic, lvds, mipi-bias, pex-bias, pex-clk1, pex-clk2,
++	pex-ctrl, sdmmc1, sdmmc3, spi, spi-hv, uart, usb-bias, usb0,
++	usb1, usb2, usb3.
 +
-+int tegra_io_pads_power_enable(int io_pad_id)
-+{
-+	int dpd_bit;
++Example:
++	#include <dt-bindings/pinctrl/pinctrl-tegra210-io-pad.h>
++	pmc@7000e400 {
 +
-+	dpd_bit = tegra_io_pads_to_dpd(pmc->soc, io_pad_id);
-+	if (dpd_bit < 0)
-+		return dpd_bit;
++		pinctrl-names = "default";
++		pinctrl-0 = <&tegra_io_pad_volt_default>;
++		tegra_io_pad_volt_default: common {
++			audio-hv {
++				pins = "audio-hv";
++				nvidia,power-source-voltage = <TEGRA_IO_PAD_POWER_SOURCE_3300000UV>;
++			};
 +
-+	return tegra_io_rail_power_on(dpd_bit);
-+}
-+EXPORT_SYMBOL(tegra_io_pads_power_enable);
++			gpio {
++				pins = "gpio";
++				invidia,power-source-voltage = <TEGRA_IO_PAD_POWER_SOURCE_1800000UV>;
++			};
 +
-+int tegra_io_pads_power_disable(int io_pad_id)
-+{
-+	int dpd_bit;
-+
-+	dpd_bit = tegra_io_pads_to_dpd(pmc->soc, io_pad_id);
-+	if (dpd_bit < 0)
-+		return dpd_bit;
-+
-+	return tegra_io_rail_power_off(dpd_bit);
-+}
-+EXPORT_SYMBOL(tegra_io_pads_power_disable);
-+
-+int tegra_io_pads_power_is_enabled(int io_pad_id)
-+{
-+	unsigned long status_reg;
-+	u32 status;
-+	int dpd_bit;
-+
-+	dpd_bit = tegra_io_pads_to_dpd(pmc->soc, io_pad_id);
-+	if (dpd_bit < 0)
-+		return dpd_bit;
-+
-+	status_reg = (dpd_bit < 32) ? IO_DPD_STATUS : IO_DPD2_STATUS;
-+	status = tegra_pmc_readl(status_reg);
-+
-+	return !!(status & BIT(dpd_bit % 32));
-+}
-+EXPORT_SYMBOL(tegra_io_pads_power_is_enabled);
-+
-+int tegra_io_pads_configure_voltage(int io_pad_id, int io_volt_uv)
-+{
-+	int pwr_bit;
-+	u32 bval;
-+
-+	if ((io_volt_uv != 3300000) && (io_volt_uv != 1800000))
-+		return -EINVAL;
-+
-+	pwr_bit = tegra_io_pads_to_power_val(pmc->soc, io_pad_id);
-+	if (pwr_bit < 0)
-+		return pwr_bit;
-+
-+	bval = (io_volt_uv == 3300000) ? BIT(pwr_bit) : 0;
-+
-+	mutex_lock(&pmc->powergates_lock);
-+	tegra_pmc_read_modify_write(PMC_PWR_DET, BIT(pwr_bit), BIT(pwr_bit));
-+	tegra_pmc_read_modify_write(PMC_PWR_DET_VAL, BIT(pwr_bit), bval);
-+	mutex_unlock(&pmc->powergates_lock);
-+
-+	usleep_range(100, 250);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(tegra_io_pads_configure_voltage);
-+
-+int tegra_io_pads_get_configured_voltage(int io_pad_id)
-+{
-+	int pwr_bit;
-+	u32 pwr_det_val;
-+
-+	pwr_bit = tegra_io_pads_to_power_val(pmc->soc, io_pad_id);
-+	if (pwr_bit < 0)
-+		return pwr_bit;
-+
-+	pwr_det_val = tegra_pmc_readl(PMC_PWR_DET_VAL);
-+
-+	return (pwr_det_val & BIT(pwr_bit)) ? 3300000 : 1800000;
-+}
-+EXPORT_SYMBOL(tegra_io_pads_get_configured_voltage);
-+
- #ifdef CONFIG_PM_SLEEP
- enum tegra_suspend_mode tegra_pmc_get_suspend_mode(void)
- {
-@@ -1443,6 +1621,8 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
- 	.powergates = tegra210_powergates,
- 	.num_cpu_powergates = ARRAY_SIZE(tegra210_cpu_powergates),
- 	.cpu_powergates = tegra210_cpu_powergates,
-+	.io_pads_control = tegra210_io_pads_control,
-+	.num_io_pads = ARRAY_SIZE(tegra210_io_pads_control),
- 	.has_tsense_reset = true,
- 	.has_gpu_clamps = true,
- };
-diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
-index e9e5347..79e38f5 100644
---- a/include/soc/tegra/pmc.h
-+++ b/include/soc/tegra/pmc.h
-@@ -108,6 +108,58 @@ int tegra_pmc_cpu_remove_clamping(unsigned int cpuid);
- #define TEGRA_IO_RAIL_LVDS	57
- #define TEGRA_IO_RAIL_SYS_DDC	58
- 
-+/* TEGRA_IO_PAD: The IO pins of Tegra SoCs are grouped for common control
-+ * of IO interface like setting voltage signal levels, power state of the
-+ * interface. The group is generally referred as io-pads. The power and
-+ * voltage control of IO pins are available at io-pads level.
-+ * The following macros make the super list all IO pads found on Tegra SoC
-+ * generations.
++			audio {
++				pins = "audio", "dmic", "sdmmc1", "sdmmc3";
++				low-power-enable;
++			};
++		};
++	};
+diff --git a/include/dt-bindings/pinctrl/pinctrl-tegra210-io-pad.h b/include/dt-bindings/pinctrl/pinctrl-tegra210-io-pad.h
+new file mode 100644
+index 0000000..77fd448
+--- /dev/null
++++ b/include/dt-bindings/pinctrl/pinctrl-tegra210-io-pad.h
+@@ -0,0 +1,20 @@
++/*
++ * This header provides constants for Tegra210 IO pads pinctrl bindings.
++ *
++ * Copyright (c) 2016, NVIDIA CORPORATION.  All rights reserved.
++ *
++ * Author: Laxman Dewangan <ldewangan@nvidia.com>
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
 + */
-+#define TEGRA_IO_PAD_AUDIO		0
-+#define TEGRA_IO_PAD_AUDIO_HV		1
-+#define TEGRA_IO_PAD_BB			2
-+#define TEGRA_IO_PAD_CAM		3
-+#define TEGRA_IO_PAD_COMP		4
-+#define TEGRA_IO_PAD_CSIA		5
-+#define TEGRA_IO_PAD_CSIB		6
-+#define TEGRA_IO_PAD_CSIC		7
-+#define TEGRA_IO_PAD_CSID		8
-+#define TEGRA_IO_PAD_CSIE		9
-+#define TEGRA_IO_PAD_CSIF		10
-+#define TEGRA_IO_PAD_DBG		11
-+#define TEGRA_IO_PAD_DEBUG_NONAO	12
-+#define TEGRA_IO_PAD_DMIC		13
-+#define TEGRA_IO_PAD_DP			14
-+#define TEGRA_IO_PAD_DSI		15
-+#define TEGRA_IO_PAD_DSIB		16
-+#define TEGRA_IO_PAD_DSIC		17
-+#define TEGRA_IO_PAD_DSID		18
-+#define TEGRA_IO_PAD_EMMC		19
-+#define TEGRA_IO_PAD_EMMC2		20
-+#define TEGRA_IO_PAD_GPIO		21
-+#define TEGRA_IO_PAD_HDMI		22
-+#define TEGRA_IO_PAD_HSIC		23
-+#define TEGRA_IO_PAD_HV			24
-+#define TEGRA_IO_PAD_LVDS		25
-+#define TEGRA_IO_PAD_MIPI_BIAS		26
-+#define TEGRA_IO_PAD_NAND		27
-+#define TEGRA_IO_PAD_PEX_BIAS		28
-+#define TEGRA_IO_PAD_PEX_CLK1		29
-+#define TEGRA_IO_PAD_PEX_CLK2		30
-+#define TEGRA_IO_PAD_PEX_CNTRL		31
-+#define TEGRA_IO_PAD_SDMMC1		32
-+#define TEGRA_IO_PAD_SDMMC3		33
-+#define TEGRA_IO_PAD_SDMMC4		34
-+#define TEGRA_IO_PAD_SPI		35
-+#define TEGRA_IO_PAD_SPI_HV		36
-+#define TEGRA_IO_PAD_SYS_DDC		37
-+#define TEGRA_IO_PAD_UART		38
-+#define TEGRA_IO_PAD_USB0		39
-+#define TEGRA_IO_PAD_USB1		40
-+#define TEGRA_IO_PAD_USB2		41
-+#define TEGRA_IO_PAD_USB3		42
-+#define TEGRA_IO_PAD_USB_BIAS		43
 +
- #ifdef CONFIG_ARCH_TEGRA
- int tegra_powergate_is_powered(unsigned int id);
- int tegra_powergate_power_on(unsigned int id);
-@@ -120,6 +172,16 @@ int tegra_powergate_sequence_power_up(unsigned int id, struct clk *clk,
- 
- int tegra_io_rail_power_on(unsigned int id);
- int tegra_io_rail_power_off(unsigned int id);
++#ifndef _DT_BINDINGS_PINCTRL_TEGRA210_IO_PAD_H
++#define _DT_BINDINGS_PINCTRL_TEGRA210_IO_PAD_H
 +
-+/* Power enable/disable of the IO pads */
-+int tegra_io_pads_power_enable(int io_pad_id);
-+int tegra_io_pads_power_disable(int io_pad_id);
-+int tegra_io_pads_power_is_enabled(int io_pad_id);
++/* Power source voltage for Tegra IO Pad. */
++#define TEGRA_IO_PAD_POWER_SOURCE_1800000UV		0
++#define TEGRA_IO_PAD_POWER_SOURCE_3300000UV		1
 +
-+/* Set/Get of IO pad voltage */
-+int tegra_io_pads_configure_voltage(int io_pad_id, int io_volt_uv);
-+int tegra_io_pads_get_configured_voltage(int io_pad_id);
-+
- #else
- static inline int tegra_powergate_is_powered(unsigned int id)
- {
-@@ -157,6 +219,31 @@ static inline int tegra_io_rail_power_off(unsigned int id)
- {
- 	return -ENOSYS;
- }
-+
-+static inline int tegra_io_pads_power_enable(int io_pad_id)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+static inline int tegra_io_pads_power_disable(int io_pad_id)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+static inline int tegra_io_pads_power_is_enabled(int io_pad_id)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+static inline int tegra_io_pads_configure_voltage(int io_pad_id, int io_volt_uv)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+static inline int tegra_io_pads_get_configured_voltage(int io_pad_id)
-+{
-+	return -ENOTSUPP;
-+}
- #endif /* CONFIG_ARCH_TEGRA */
- 
- #endif /* __SOC_TEGRA_PMC_H__ */
++#endif
 -- 
 2.1.4
-
