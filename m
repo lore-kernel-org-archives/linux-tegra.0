@@ -1,47 +1,37 @@
-From: Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: [PATCH v3 4/4] thermal: update documentation for new device ops
-Date: Mon, 2 May 2016 20:27:11 -0700
-Message-ID: <20160503032710.GB18752@localhost.localdomain>
-References: <1459298497-29481-1-git-send-email-srikars@nvidia.com>
- <1459298497-29481-5-git-send-email-srikars@nvidia.com>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] arm64: tegra: fix compatible string for Tegra132 fuse node
+Date: Tue, 3 May 2016 17:09:37 +0800
+Message-ID: <1462266577-951-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1459298497-29481-5-git-send-email-srikars@nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Srikar Srimath Tirumala <srikars@nvidia.com>
-Cc: rui.zhang@intel.com, srinivas.pandruvada@intel.com, linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, mlongnecker@nvidia.com
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Mar 29, 2016 at 05:41:37PM -0700, Srikar Srimath Tirumala wrote:
-> Add documentation for two new thermal_zone_device_ops.
-> 
-> Change-Id: Id1c5cc2ae4051a398dfe81c7ff0b27c1eab02579
-> Signed-off-by: Srikar Srimath Tirumala <srikars@nvidia.com>
-> ---
->  Documentation/thermal/sysfs-api.txt | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/Documentation/thermal/sysfs-api.txt b/Documentation/thermal/sysfs-api.txt
-> index ed419d6..13344167 100644
-> --- a/Documentation/thermal/sysfs-api.txt
-> +++ b/Documentation/thermal/sysfs-api.txt
-> @@ -59,6 +59,11 @@ temperature) and throttle appropriate devices.
->  			will be fired.
->  	.set_emul_temp: set the emulation temperature which helps in debugging
->  			different threshold temperature points.
-> +	.get_trip_state: get the current state (TRIPPED or NOT_TRIPPED) of a
-> +		certain trip point.
-> +	.set_trip_state: set the state of a certain trip point.
-> +	.enb_temp_notify: check if temperature notifications are enabled for a
-> +		certain trip point.
+This patch changes the compatible of Tegra132 fuse node
+to "nvidia,tegra132-efuse", instead of "nvidia,tegra1124-efuse".
+Because the CONFIG_ARCH_TEGRA_124_SOC will not be enabled for
+Tegra132, the fuse driver can't find the corresponding node.
 
-I would prefer we merge this to the patch which is adding them.
+Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm64/boot/dts/nvidia/tegra132.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->      tzp: thermal zone platform parameters.
->      passive_delay: number of milliseconds to wait between polls when
->  	performing passive cooling.
-> -- 
-> 2.1.4
-> 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra132.dtsi b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+index 5d013809448b..ee101cb52f70 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra132.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
+@@ -582,7 +582,7 @@
+ 	};
+ 
+ 	fuse@7000f800 {
+-		compatible = "nvidia,tegra124-efuse";
++		compatible = "nvidia,tegra132-efuse";
+ 		reg = <0x0 0x7000f800 0x0 0x400>;
+ 		clocks = <&tegra_car TEGRA124_CLK_FUSE>;
+ 		clock-names = "fuse";
+-- 
+1.9.1
