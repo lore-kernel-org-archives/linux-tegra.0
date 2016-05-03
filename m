@@ -1,54 +1,73 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH 3/6] soc/tegra: pmc: Add support for IO pads power state
- and voltage
-Date: Tue, 3 May 2016 18:37:14 +0530
-Message-ID: <5728A282.5020208@nvidia.com>
-References: <1462191434-28933-1-git-send-email-ldewangan@nvidia.com> <1462191434-28933-4-git-send-email-ldewangan@nvidia.com> <57289AC0.4090604@nvidia.com> <57289A2B.7040501@nvidia.com> <57289FB5.5040705@nvidia.com> <57289E35.8040400@nvidia.com> <5728A3A1.2030304@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 5/6] pinctrl: tegra: Add DT binding for io pads control
+Date: Tue, 3 May 2016 14:33:25 +0100
+Message-ID: <5728A8A5.4080603@nvidia.com>
+References: <1462191434-28933-1-git-send-email-ldewangan@nvidia.com>
+ <1462191434-28933-6-git-send-email-ldewangan@nvidia.com>
+ <57289D3D.40301@nvidia.com> <57289F88.6040203@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <5728A3A1.2030304@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, swarren@wwwdotorg.org, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <57289F88.6040203@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, swarren@wwwdotorg.org, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com
 Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On Tuesday 03 May 2016 06:42 PM, Jon Hunter wrote:
-> On 03/05/16 13:48, Laxman Dewangan wrote:
->> On Tuesday 03 May 2016 06:25 PM, Jon Hunter wrote:
->>>> Currently SOR driver is using the tegra_io_rail_power_off/on() APIs.
->>>> Once the proper interface available then I will move sor driver to use
->>>> new method and then we can full get rid of older APIs and macros.
->>>>
->>>> Till that, we need to have this.
->>> I prefer it is done before this series. In other words, if we need a
->>> proper enum for the rail/pad IDs then add one and convert any existing
->>> drivers over to use any new APIs first.
->> But the converting to new API can be done after this patch only.
-> Yes but before you add the pinctrl driver. May be you should separate
-> the two.
->
-> My point is that any follow-up series to this, would have to touch the
-> pmc and the sor driver. So why not make the changes for the pmc and sor
-> now, and once in place then add the pinctrl driver?
+On 03/05/16 13:54, Laxman Dewangan wrote:
+> 
+> On Tuesday 03 May 2016 06:14 PM, Jon Hunter wrote:
+>> On 02/05/16 13:17, Laxman Dewangan wrote:
+>>> +
+>>> +The voltage supported on the pads are 1.8V and 3.3V. The enums are
+>>> defined as:
+>>> +    For 1.8V, use TEGRA_IO_PAD_POWER_SOURCE_1800000UV
+>>> +    For 3.3V, use TEGRA_IO_PAD_POWER_SOURCE_3300000UV
+>> Are these still necessary now that the driver is using uV? Can't we just
+>> use integer values for 1800000 and 3300000 in the DTS directly?
+>>
+> The config param and value are packed in u32 with 16bit each So we can
+> not make uV in 16bit until we do conversion of uV->mV.
+> Hence suggestion came from Stephen that we can have enum for Nvidia
+> specific and what actually it supports by HW. HW does not support any
+> other voltage.
 
-I will be happy on this approach also. I added pincontrol driver for 
-following purpose:
-- To show how new APIs used. This will help on understanding of need and 
-whole as a design.
-- To get reviewed the whole design/method.
-- To get accepted the pmc changes on this cycle so that if possible, we 
-can have pincntrl driver in next cycle to avoid cross subsystem approach.
+Ah yes I see.
 
+> 
+>>> +Required subnode-properties:
+>>> +==========================
+>>> +- pins : An array of strings. Each string contains the name of an IO
+>>> pads. Valid
+>>> +     values for these names are listed below.
+>> Please see my previous comments.
+> 
+> This is taken from other dt binding docs for description. We can have
+> array of string.
 
+OK.
 
+> As all value of pins are not supporting all property and hence I
+> explicitly wrote under properties.
 
+I don't find it very clear. I thought all pins support the low power
+modes so I think it is clearer to list all the pin names under the pins
+description.
 
+>>> +Optional subnode-properties:
+>>> +==========================
+>>> +-nvidia,power-source-voltage:    Integer. The voltage level of IO
+>>> pads. The
+>> I think I prefer nvidia,io-voltage or something. You can describe what
+>> this means in this doc. In fact, the current description here does not
+>> explicitly state that this voltage, is the voltage the pad is configured
+>> to operate at versus the voltage of the IO rail.
+> 
+> Linus suggested this dt property name to make more readable and generic
+> and meaningful with other property :power-source.
 
+OK.
 
-
-
-
-
+Jon
