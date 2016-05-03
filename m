@@ -1,81 +1,108 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] base: dd: don't remove driver_data in -EPROBE_DEFER case
-Date: Tue, 3 May 2016 17:14:59 +0200
-Message-ID: <20160503151459.GA19539@ulmo.ba.sec>
-References: <1457450122-5792-1-git-send-email-yizhang_hust@163.com>
- <20160503131126.GA18494@ulmo.ba.sec>
- <20160503150739.GA14897@kroah.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [RFC] i2c: device-tree: Handling child nodes which are not i2c
+ devices
+Date: Tue, 3 May 2016 16:16:30 +0100
+Message-ID: <5728C0CE.3050300@nvidia.com>
+References: <57110A35.2070509@nvidia.com> <571E2EE4.90104@nvidia.com>
+ <571E3D07.9040503@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="h31gzZEtNLTqOjlF"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20160503150739.GA14897@kroah.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Yi Zhang <yizhang_hust@163.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <571E3D07.9040503@wwwdotorg.org>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Wolfram Sang <wsa@the-dreams.de>, Stephen Warren <swarren@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <treding@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linux-i2c@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Wolfram,
 
---h31gzZEtNLTqOjlF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Any thoughts on this? Would you accept option #1 below?
 
-On Tue, May 03, 2016 at 08:07:39AM -0700, Greg KH wrote:
-> On Tue, May 03, 2016 at 03:11:26PM +0200, Thierry Reding wrote:
-> > On Tue, Mar 08, 2016 at 11:15:22PM +0800, Yi Zhang wrote:
-> > > the driver_data may be used for sanity check, it fails the
-> > > probe() if driver_data is NULL after it is re-triggered.
-> > > for example, soc_probe() in sound/soc/soc-core.c
-> > >=20
-> > > Signed-off-by: Yi Zhang <yizhang_hust@163.com>
-> > > ---
-> > >  drivers/base/dd.c | 3 ++-
-> > >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >=20
-> > Hi Greg,
-> >=20
-> > This causes a boot regression on at least one board, caused by one of
-> > the drivers looking at driver data to check whether or not the driver
-> > has properly loaded. If the code encounters a non-NULL pointer it
-> > tries to dereference it, but because it's already been freed there is
-> > no memory backing it and things crash.
-> >=20
-> > I don't think keeping stale pointers around is a good idea. The whole
-> > point of setting this to NULL in the core is so that probe failures
-> > result in the same starting conditions no matter what.
-> >=20
-> > Can we please get this reverted?
-> >=20
-> > Cc'ing linux-tegra for visibility since that's where the boot regression
-> > is observed.
->=20
-> Now reverted, thanks for letting me know.
+Cheers
+Jon
 
-Thanks Greg.
-
-Thierry
-
---h31gzZEtNLTqOjlF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXKMBzAAoJEN0jrNd/PrOhP5cP/RtJXQpK4yMd0txlawDlUt5E
-cFheN8OSWN6l9rWk/XzgPNYyCJhSEGWCbDZRu1MU+L7h3ewssaGtJ2Wo8zXymegc
-oXRsoQ4tflYxjtwJuDgNLlMLuh2nPnoXyKAf/mrJ2IvNSNg6WASLa5URQ6FW1O+5
-Vx3ecQW+yuaFlIeop/1XEuQTJlkIzdaAKnZFTBlr3adEHMbtOQ/dPYEG9fvx/GQ9
-RKNlYo8os2Jq5iO6TqsUU1DFc9EaaKuaR4srfR9wsPRWSKALFsqeuex8Jn4a7MuX
-cn57XGxHMe7/uTnYWYiHleI3gB1hTeRDzRR/C0sWogcMv/u8M1BCd8+OYQJOcI8m
-J6MyW7uC8VLfGosDIAqBJDkAeMnm+WUFU3XsPXQhdDOwonRJeokZiwgfD+zwRG+m
-pYiAaZ13s77qdSDGjdbFvP3p5OPyENwKqJ3GEUzL0lG4TyFZqve0w86tFj848Bnx
-o3pzZL/izChcl4mz8SRtLdsNcHMjNeVs3mgZZMFVJoxfqxIfgkczkU9ZmEci2jHi
-yCK+zzRVI0cZm5c6AgjtWl0GY48M08a0h4b/hqZsaTt17Le+nanIAadcQtCSnc5l
-IDjw+eAwDRehx3KXI9CbyGjiAk0Go1lyf1MVT595nvlR897c75Ixj/s4reMpa8dQ
-giWUfWfdM3P0mFiiH4cY
-=uj9I
------END PGP SIGNATURE-----
-
---h31gzZEtNLTqOjlF--
+On 25/04/16 16:51, Stephen Warren wrote:
+> On 04/25/2016 08:51 AM, Jon Hunter wrote:
+>> Hi all,
+>>
+>> Any thoughts on this? Let me know if this is not clear in anyway.
+> 
+> I'm not sure if you're expecting comment from me since I suggested
+> option (1) below. For the record though I do think that's the better
+> option; it's very general/explicit, should apply well to any OS
+> environment, and relying on OF_POPULATED implies an order that the
+> driver must initialize things in, so that it ensures OF_POPULATED is set
+> before any I2C children are handled.
+> 
+>> On 15/04/16 16:35, Jon Hunter wrote:
+>>> Hi all,
+>>>
+>>> For Tegra we have an i2c device for display port, namely the display
+>>> port auxiliary channel (or dpaux) as specified by the display port
+>>> standard. If an design using Tegra does not utilise the display port
+>>> interface, then the pads assigned to the dpaux can be re-assigned to
+>>> another generic i2c controller (i2c6 for Tegra124/210). In other words,
+>>> the pads can be re-used for a generic i2c interface.
+>>>
+>>> The registers that control whether the pads are mapped to the dpaux or
+>>> i2c6 are located in the dpaux register space. Therefore, I am looking at
+>>> adding pin controller support for dpaux so that i2c6 can request these
+>>> pads if it is enabled and I was hoping to add a pinmux node the to dpaux
+>>> device in device-tree to do this. For example, something like ...
+>>>
+>>>     dpaux@0,545c0000 {
+>>>         ...
+>>>
+>>>         /* pinctrl node */
+>>>         pinmux {
+>>>             ...
+>>>         };
+>>>     };
+>>>
+>>> Although the above works, when doing this I noticed that when the device
+>>> booted, I would seeing the following error messages on boot ...
+>>>
+>>>   i2c i2c-5: of_i2c: modalias failure on ...
+>>>
+>>> These error messages being caused by the new pinmux node because it is
+>>> not recognised as an i2c device. To avoid this error messages we have
+>>> come up with a couple solutions but wanted to get some feedback on the
+>>> best approach.
+>>>
+>>> 1. Add a i2c-bus sub-node to the dpaux binding (suggested by Stephen
+>>>     Warren), so we would have something like the below. Then i2c devices
+>>>     for dpaux would be place in the i2c-bus sub-node.
+>>>
+>>>     dpaux@0,545c0000 {
+>>>         ...
+>>>
+>>>         /* pinctrl node */
+>>>         pinmux {
+>>>             ...
+>>>         };
+>>>
+>>>         /* place-holder for i2c devices */
+>>>         i2c-bus {
+>>>             ...
+>>>         };
+>>>     };   
+>>>
+>>>     To make the above work ideally we would like to make the 'i2c-bus'
+>>>     node a generic solution for all i2c devices, so the i2c core would
+>>>     check for the presence of this node and if it is found then would
+>>>     default to this node for looking for i2c-devices.
+>>>
+>>> 2. When registering i2c devices via device-tree, the function
+>>>     of_i2c_register_devices() checks to see if OF_POPULATED flag is set
+>>>     for a given node. If it is set, then the node is skipped. I believe
+>>>     this was added for device-tree overlays (commit 4f001fd30145 i2c:
+>>>     Mark instantiated device nodes with OF_POPULATE). Another option is
+>>>     for the dpaux driver to mark the pinmux node as populated before
+>>>     registering the i2c adapter and this will prevent the i2c core from
+>>>     trying to parse the pinmux node. I am not sure if this would be
+>>>     frowned upon in anyway or if we can guarantee that no future changes
+>>>     to DT overlays would change this in a way where it would not work.
+>>>
+>>> Let me know your thoughts.
+> 
