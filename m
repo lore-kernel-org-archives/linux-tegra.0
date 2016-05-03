@@ -1,142 +1,70 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5/6] pinctrl: tegra: Add DT binding for io pads control
-Date: Tue, 3 May 2016 13:44:45 +0100
-Message-ID: <57289D3D.40301@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 3/6] soc/tegra: pmc: Add support for IO pads power state
+ and voltage
+Date: Tue, 3 May 2016 13:55:17 +0100
+Message-ID: <57289FB5.5040705@nvidia.com>
 References: <1462191434-28933-1-git-send-email-ldewangan@nvidia.com>
- <1462191434-28933-6-git-send-email-ldewangan@nvidia.com>
+ <1462191434-28933-4-git-send-email-ldewangan@nvidia.com>
+ <57289AC0.4090604@nvidia.com> <57289A2B.7040501@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <1462191434-28933-6-git-send-email-ldewangan@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, swarren@wwwdotorg.org, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <57289A2B.7040501-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 02/05/16 13:17, Laxman Dewangan wrote:
-> NVIDIA Tegra210 supports the IO pads which can operate at 1.8V
-> or 3.3V I/O voltage levels. Also IO pads can be configured for
-> power down state if it is not in used. SW needs to configure the
-> voltage level of IO pads based on IO rail voltage and its power
-> state based on platform usage.
+On 03/05/16 13:31, Laxman Dewangan wrote:
 > 
-> Add DT binding document for detailing the DT properties for
-> configuring IO pads voltage levels and its power state.
+> On Tuesday 03 May 2016 06:04 PM, Jon Hunter wrote:
+>> On 02/05/16 13:17, Laxman Dewangan wrote:
+>>> +
+>>> +    return tegra_io_rail_power_on(dpd_bit);
+>>  From a readability standpoint the above seems weird because
+>> tegra_io_pads_power_enable() takes an ID as the argument, translates it
+>> to a bit value and passes it to tegra_io_rail_power_on() which also
+>> takes an ID for the argument.
 > 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Yaah, I did not want to duplicate the implementation and hence it is there.
+> We will get rid of the older APIs once this is IN and new mechanism there.
 > 
-> ---
-> Changes from V1:
-> - Reworked on DT properties to use generic pinconf DT. Also add macros
-> for voltage support. Now all DT properties are in flat DT instead of
-> sub node based.
-> ---
->  .../bindings/pinctrl/nvidia,tegra210-io-pad.txt    | 88 ++++++++++++++++++++++
->  .../dt-bindings/pinctrl/pinctrl-tegra210-io-pad.h  | 20 +++++
->  2 files changed, 108 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-io-pad.txt
->  create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra210-io-pad.h
 > 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-io-pad.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-io-pad.txt
-> new file mode 100644
-> index 0000000..7616380
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra210-io-pad.txt
-> @@ -0,0 +1,88 @@
-> +NVIDIA Tegra210 PMC IO pad controller
-> +
-> +NVIDIA Tegra210 supports IO pads which can operate at 1.8V or 3.3V I/O
-> +power rail source. SW needs to configure the voltage level of IO pads
-> +based on platform specific power tree.
-> +
-> +The voltage configurations of IO pads should be done in boot if it is not
-> +going to change other wise dynamically based on IO rail voltage on that
-> +IO pads.
-> +
-> +The DT property of the io pads must be under the node of pmc i.e.
-> +pmc@7000e400 for Tegra210.
-> +
-> +Please refer to <pinctrl-bindings.txt> in this directory for details of the
-> +common pinctrl bindings used by client devices, including the meaning of the
-> +phrase "pin configuration node".
-> +
-> +Tegra's pin configuration nodes act as a container for an arbitrary number of
-> +subnodes. Each of these subnodes represents some desired configuration for an
-> +IO pads, or a list of IO pads. This configuration can include the voltage and
-> +power enable/disable control
-> +
-> +The name of each subnode is not important; all subnodes should be enumerated
-> +and processed purely based on their content. Each subnode only affects those
-> +parameters that are explicitly listed. Unspecified is represented as an absent
-> +property,
-> +
-> +See the TRM to determine which properties and values apply to each IO pads.
-> +Macro values for property values are defined in
-> +<dt-bindings/pinctrl/pinctrl-tegra210-io-pad.h>
-> +
-> +The voltage supported on the pads are 1.8V and 3.3V. The enums are defined as:
-> +	For 1.8V, use TEGRA_IO_PAD_POWER_SOURCE_1800000UV
-> +	For 3.3V, use TEGRA_IO_PAD_POWER_SOURCE_3300000UV
+> 
+>>> +
+>>> +    bval = (io_volt_uv == 3300000) ? BIT(pwr_bit) : 0;
+>>> +
+>>> +    mutex_lock(&pmc->powergates_lock);
+>>> +    tegra_pmc_read_modify_write(PMC_PWR_DET, BIT(pwr_bit),
+>>> BIT(pwr_bit));
+>>> +    tegra_pmc_read_modify_write(PMC_PWR_DET_VAL, BIT(pwr_bit), bval);
+>>> +    mutex_unlock(&pmc->powergates_lock);
+>> There are 4 instances of BIT(pwr_bit). May be we should do this once or
+>> have tegra_io_pads_to_power_val() return the bit?
+> 
+> OK, will re-write this part.
+> 
+> 
+>>
+>>> +int tegra_io_pads_power_disable(int io_pad_id);
+>>> +int tegra_io_pads_power_is_enabled(int io_pad_id);
+>> What I don't like here, is now we have two public APIs to do the same
+>> job because tegra_io_pads_power_enable/disable() calls
+>> tegra_io_rail_power_off/on() internally. Furthermore, the two APIs use
+>> different ID definitions to accomplish the same job. This shouldn't be
+>> necessary.
+> 
+> Currently SOR driver is using the tegra_io_rail_power_off/on() APIs.
+> Once the proper interface available then I will move sor driver to use
+> new method and then we can full get rid of older APIs and macros.
+> 
+> Till that, we need to have this.
 
-Are these still necessary now that the driver is using uV? Can't we just
-use integer values for 1800000 and 3300000 in the DTS directly?
-
-> +Required subnode-properties:
-> +==========================
-> +- pins : An array of strings. Each string contains the name of an IO pads. Valid
-> +	 values for these names are listed below.
-
-Please see my previous comments.
-
-> +Optional subnode-properties:
-> +==========================
-> +-nvidia,power-source-voltage:	Integer. The voltage level of IO pads. The
-
-I think I prefer nvidia,io-voltage or something. You can describe what
-this means in this doc. In fact, the current description here does not
-explicitly state that this voltage, is the voltage the pad is configured
-to operate at versus the voltage of the IO rail.
-
-> +				valid values are 1.8V and 3.3V. Macros are
-> +				defined for these voltage levels in
-> +				<dt-bindings/pinctrl/pinctrl-tegra210-io-pad.h>
-> +				Use TEGRA_IO_PAD_POWER_SOURCE_1800000UV for 1.8V
-> +				Use TEGRA_IO_PAD_POWER_SOURCE_3300000UV for 3.3V
-> +
-> +				All IO pads do not support the 1.8V/3.3V
-> +				configurations. Valid values for "pins" are
-> +				audio-hv, dmic, gpio, sdmmc1, sdmmc3, spi-hv.
-> +
-> +Other than above, following properties are supported from generic pin
-> +configuration explained in <dt-bindings/pinctrl/pinctrl-binding.txt>.
-> +low-power-enable:		enable low power mode.
-> +low-power-disable:		disable low power mode.
-> +
-> +Valid values for pin for low power mode supports are:
-> +	audio, audio-hv, cam, csia, csib, csic, csid, csie, csif,
-> +	dbg, debug-nonao, dmic, dp, dsi, dsib, dsic, dsid, emmc, emmc2,
-> +	gpio, hdmi, hsic, lvds, mipi-bias, pex-bias, pex-clk1, pex-clk2,
-> +	pex-ctrl, sdmmc1, sdmmc3, spi, spi-hv, uart, usb-bias, usb0,
-> +	usb1, usb2, usb3.
-> +
-> +Example:
-> +	#include <dt-bindings/pinctrl/pinctrl-tegra210-io-pad.h>
-> +	pmc@7000e400 {
-> +
-> +		pinctrl-names = "default";
-> +		pinctrl-0 = <&tegra_io_pad_volt_default>;
-> +		tegra_io_pad_volt_default: common {
-> +			audio-hv {
-> +				pins = "audio-hv";
-> +				nvidia,power-source-voltage = <TEGRA_IO_PAD_POWER_SOURCE_3300000UV>;
-> +			};
-> +
-> +			gpio {
-> +				pins = "gpio";
-> +				invidia,power-source-voltage = <TEGRA_IO_PAD_POWER_SOURCE_1800000UV>;
-
-Typo. "invidia,power-source-voltage".
+I prefer it is done before this series. In other words, if we need a
+proper enum for the rail/pad IDs then add one and convert any existing
+drivers over to use any new APIs first. The other option is to live with
+the existing API names.
 
 Jon
