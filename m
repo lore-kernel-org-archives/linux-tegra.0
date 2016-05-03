@@ -1,73 +1,63 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5/6] pinctrl: tegra: Add DT binding for io pads control
-Date: Tue, 3 May 2016 14:33:25 +0100
-Message-ID: <5728A8A5.4080603@nvidia.com>
-References: <1462191434-28933-1-git-send-email-ldewangan@nvidia.com>
- <1462191434-28933-6-git-send-email-ldewangan@nvidia.com>
- <57289D3D.40301@nvidia.com> <57289F88.6040203@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] dmaengine: tegra: crash fix observed during dma
+ client(UART) stress testing
+Date: Tue, 3 May 2016 15:09:16 +0100
+Message-ID: <5728B10C.1090608@nvidia.com>
+References: <1462277698-11360-1-git-send-email-smohammed@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <57289F88.6040203@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, swarren@wwwdotorg.org, linus.walleij@linaro.org, gnurou@gmail.com, robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com
-Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1462277698-11360-1-git-send-email-smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 03/05/16 13:54, Laxman Dewangan wrote:
+On 03/05/16 13:14, Shardar Shariff Md wrote:
+> During DMA client(UART) stress testing, observed below crash:
 > 
-> On Tuesday 03 May 2016 06:14 PM, Jon Hunter wrote:
->> On 02/05/16 13:17, Laxman Dewangan wrote:
->>> +
->>> +The voltage supported on the pads are 1.8V and 3.3V. The enums are
->>> defined as:
->>> +    For 1.8V, use TEGRA_IO_PAD_POWER_SOURCE_1800000UV
->>> +    For 3.3V, use TEGRA_IO_PAD_POWER_SOURCE_3300000UV
->> Are these still necessary now that the driver is using uV? Can't we just
->> use integer values for 1800000 and 3300000 in the DTS directly?
->>
-> The config param and value are packed in u32 with 16bit each So we can
-> not make uV in 16bit until we do conversion of uV->mV.
-> Hence suggestion came from Stephen that we can have enum for Nvidia
-> specific and what actually it supports by HW. HW does not support any
-> other voltage.
+> [  167.041591] Unable to handle kernel paging request at virtual address 00100108
+> [  167.048818] pgd = ffffffc0de7ee000
+> [  167.052222] [00100108] *pgd=0000000000000000
+> [  167.056513] Internal error: Oops: 96000045 [#1] PREEMPT SMP
+> [  167.084048] Modules linked in:
+> [  167.087126] CPU: 0 PID: 1786 Comm: uarttest Tainted: G        W    3.10.33-gb76f6f9 #5
+> [  167.095040] task: ffffffc0a5ba6ac0 ti: ffffffc094380000 task.ti: ffffffc094380000
+> [  167.102529] PC is at tegra_dma_tasklet+0x50/0xf4
+> [  167.107148] LR is at tegra_dma_tasklet+0xc0/0xf4
+> [  167.111767] pc : [<ffffffc00044acc8>] lr : [<ffffffc00044ad38>] pstate: 800001c5
+> [  167.119155] sp : ffffffc094383a60
+> [  167.122469] x29: ffffffc094383a60 x28: 0000000000000000
 
-Ah yes I see.
+This appears to be from quite an old kernel. I assume that this is still
+valid for the latest mainline?
 
-> 
->>> +Required subnode-properties:
->>> +==========================
->>> +- pins : An array of strings. Each string contains the name of an IO
->>> pads. Valid
->>> +     values for these names are listed below.
->> Please see my previous comments.
-> 
-> This is taken from other dt binding docs for description. We can have
-> array of string.
+> Issue: UART RX channel DMA completion EOC(End of completion) interrupt
+> occurs and dma driver schedules tasklet() to execute callback function
+> and empty the cb_desc (callback descriptor). Before dma driver tasklet
+> runs, UART RX EORD (end of receive data) interrupt occurs. Here UART RX
+> ISR handler calls tegra_dma_terminate_all() and re-configures the DMA
+> for RX. While re-configuring, the cb_node data is re-initialized but the
+> cb_desc list is not emptied. Now when dma driver tasklet callback function
+> tries to check cb_desc and delete the cb_node (re-initialized node) kernel
+> crashes.
 
-OK.
+I am wondering if we can simplify the description a bit here.
 
-> As all value of pins are not supporting all property and hence I
-> explicitly wrote under properties.
+Is the problem that the current implementation assumes that the tasklet
+will run before the next transfer has been configured? And if this does
+not happen then we may request the same descriptor for the next tranfer
+that is currently on the callback queue waiting for the tasklet to run?
 
-I don't find it very clear. I thought all pins support the low power
-modes so I think it is clearer to list all the pin names under the pins
-description.
+> Fix: Empty the cb_desc data structure during tegra_dma_terminate_all()
+> routine if there are no pending transfers.
 
->>> +Optional subnode-properties:
->>> +==========================
->>> +-nvidia,power-source-voltage:    Integer. The voltage level of IO
->>> pads. The
->> I think I prefer nvidia,io-voltage or something. You can describe what
->> this means in this doc. In fact, the current description here does not
->> explicitly state that this voltage, is the voltage the pad is configured
->> to operate at versus the voltage of the IO rail.
-> 
-> Linus suggested this dt property name to make more readable and generic
-> and meaningful with other property :power-source.
+Does note really describe the fix. We are emptying a list of descriptors
+that have a callback pending.
 
-OK.
+I would be tempted to change the subject slightly as this is fixing a
+race condition that could be seen by various different clients.
 
+Cheers
 Jon
