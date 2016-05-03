@@ -1,89 +1,52 @@
-From: Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [RFC] i2c: device-tree: Handling child nodes which are not i2c
- devices
-Date: Tue, 3 May 2016 16:30:25 +0100
-Message-ID: <20160503153024.GB6850@leverpostej>
-References: <57110A35.2070509@nvidia.com>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] arm64: defconfig: Enable cros-ec and battery driver
+Date: Tue, 3 May 2016 11:45:18 -0400
+Message-ID: <1462290318-9074-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <57110A35.2070509@nvidia.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Wolfram Sang <wsa@the-dreams.de>, Thierry Reding <treding@nvidia.com>, Stephen Warren <swarren@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linux-i2c@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Apr 15, 2016 at 04:35:17PM +0100, Jon Hunter wrote:
-> Hi all,
-> 
-> For Tegra we have an i2c device for display port, namely the display
-> port auxiliary channel (or dpaux) as specified by the display port
-> standard. If an design using Tegra does not utilise the display port
-> interface, then the pads assigned to the dpaux can be re-assigned to
-> another generic i2c controller (i2c6 for Tegra124/210). In other words,
-> the pads can be re-used for a generic i2c interface.
-> 
-> The registers that control whether the pads are mapped to the dpaux or
-> i2c6 are located in the dpaux register space. Therefore, I am looking at
-> adding pin controller support for dpaux so that i2c6 can request these
-> pads if it is enabled and I was hoping to add a pinmux node the to dpaux
-> device in device-tree to do this. For example, something like ...
-> 
-> 	dpaux@0,545c0000 {
-> 		...
-> 
-> 		/* pinctrl node */
-> 		pinmux {
-> 			...
-> 		};
-> 	};
-> 
-> Although the above works, when doing this I noticed that when the device
-> booted, I would seeing the following error messages on boot ...
-> 
->  i2c i2c-5: of_i2c: modalias failure on ...
-> 
-> These error messages being caused by the new pinmux node because it is
-> not recognised as an i2c device. To avoid this error messages we have
-> come up with a couple solutions but wanted to get some feedback on the
-> best approach.
-> 
-> 1. Add a i2c-bus sub-node to the dpaux binding (suggested by Stephen
->    Warren), so we would have something like the below. Then i2c devices
->    for dpaux would be place in the i2c-bus sub-node.
-> 
-> 	dpaux@0,545c0000 {
-> 		...
-> 
-> 		/* pinctrl node */
-> 		pinmux {
-> 			...
-> 		};
-> 
-> 		/* place-holder for i2c devices */
-> 		i2c-bus {
-> 			...
-> 		};
-> 	};	
+Enable the ChromeOS Embedded Controller, its I2C tunnel driver, and
+the BA27XXX battery driver. These are all used on the Tegra210 Smaug
+platform.
 
-From a binding perspective, this makes the most sense to me.
+Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm64/configs/defconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-I believe we have variants of this (container nodes for actual busses
-owned by a controller) in practice today elsewhere. 
-
->    To make the above work ideally we would like to make the 'i2c-bus'
->    node a generic solution for all i2c devices, so the i2c core would
->    check for the presence of this node and if it is found then would
->    default to this node for looking for i2c-devices.
-
-I don't have strong opinions on this (having a generic subnode name for
-the actual bus exposed by a controller) either way.
-
-I can imagine that it would be possible for a single controller to
-expose multiple I2C (or other) busses, so it might make sense for this
-to be the preferred style, but not necessarily enforeced as a generic
-binding.
-
-Thanks,
-Mark
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 53f7ded14efb..043fab2d2c53 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -174,6 +174,7 @@ CONFIG_I2C_QUP=y
+ CONFIG_I2C_TEGRA=y
+ CONFIG_I2C_UNIPHIER_F=y
+ CONFIG_I2C_RCAR=y
++CONFIG_I2C_CROS_EC_TUNNEL=y
+ CONFIG_SPI=y
+ CONFIG_SPI_PL022=y
+ CONFIG_SPI_QUP=y
+@@ -188,6 +189,7 @@ CONFIG_GPIO_PL061=y
+ CONFIG_GPIO_RCAR=y
+ CONFIG_GPIO_XGENE=y
+ CONFIG_POWER_RESET_MSM=y
++CONFIG_BATTERY_BQ27XXX=y
+ CONFIG_POWER_RESET_XGENE=y
+ CONFIG_POWER_RESET_SYSCON=y
+ CONFIG_SENSORS_LM90=m
+@@ -199,6 +201,8 @@ CONFIG_MFD_SPMI_PMIC=y
+ CONFIG_MFD_SEC_CORE=y
+ CONFIG_MFD_HI655X_PMIC=y
+ CONFIG_REGULATOR=y
++CONFIG_MFD_CROS_EC=y
++CONFIG_MFD_CROS_EC_I2C=y
+ CONFIG_REGULATOR_FIXED_VOLTAGE=y
+ CONFIG_REGULATOR_HI655X=y
+ CONFIG_REGULATOR_QCOM_SMD_RPM=y
+-- 
+1.9.1
