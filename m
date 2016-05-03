@@ -1,90 +1,58 @@
-From: Alan Stern <stern@rowland.harvard.edu>
-Subject: Re: [PATCH] usb: host: ehci-tegra: Avoid getting the same reset
- twice
-Date: Tue, 3 May 2016 15:16:56 -0400 (EDT)
-Message-ID: <Pine.LNX.4.44L0.1605031512430.1163-100000@netrider.rowland.org>
-References: <1462298755-20857-1-git-send-email-thierry.reding@gmail.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH] phy: tegra-xusb: add pinctrl dependency
+Date: Tue, 03 May 2016 22:10:02 +0200
+Message-ID: <1959742.2n4CUJfeCu@wuerfel>
+References: <1462289101-797073-1-git-send-email-arnd@arndb.de> <20160503160708.GA20266@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1462298755-20857-1-git-send-email-thierry.reding@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>, Hans de Goede <hdegoede@redhat.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160503160708.GA20266-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, 3 May 2016, Thierry Reding wrote:
-
-> From: Thierry Reding <treding@nvidia.com>
+On Tuesday 03 May 2016 18:07:08 Thierry Reding wrote:
+> Wouldn't that be more of a case for a select dependency? I'm thinking
+> something like the below (untested, yet).
 > 
-> Starting with commit 0b52297f2288 ("reset: Add support for shared reset
-> controls") there is a reference count for reset control assertions. The
-> goal is to allow resets to be shared by multiple devices and an assert
-> will take effect only when all instances have asserted the reset.
-> 
-> In order to preserve backwards-compatibility, all reset controls become
-> exclusive by default. This is to ensure that reset_control_assert() can
-> immediately assert in hardware.
-> 
-> However, this new behaviour triggers the following warning in the EHCI
-> driver for Tegra:
 
-...
+I usually prefer 'depends on' in a case like this, but it doesn't make
+a huge difference. If we end up using 'select' here, we should
+make the other symbol invisible though.
 
-> The reason is that the EHCI implements three ports, each with a separate
-> reset line. However the first port's reset also serves as a means to
-> reset the UTMI pad for all ports. There is special code in the driver to
-> assert and deassert this shared reset at probe time. It needs to do this
-> regardless of which port is probed first. Unfortunately this means that
-> if the first port is probed first, it will request its own reset line
-> and subsequently request the same reset line again (temporarily) to
-> perform the reset. This used to work fine before the above-mentioned
-> commit, but now triggers the new WARN.
-> 
-> Work around this by making sure we reuse the port's reset if it happens
-> to be the same as the UTMI pad reset.
-> 
-> Cc: Philipp Zabel <p.zabel@pengutronix.de>
-> Cc: Hans de Goede <hdegoede@redhat.com>
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-
-Possibly related to the problems you are still seeing, I noticed 
-something odd about the patch.
-
-> --- a/drivers/usb/host/ehci-tegra.c
-> +++ b/drivers/usb/host/ehci-tegra.c
-> @@ -81,15 +81,23 @@ static int tegra_reset_usb_controller(struct platform_device *pdev)
->  	struct usb_hcd *hcd = platform_get_drvdata(pdev);
->  	struct tegra_ehci_hcd *tegra =
->  		(struct tegra_ehci_hcd *)hcd_to_ehci(hcd)->priv;
-> +	bool has_utmi_pad_registers = false;
+> --- >8 ---
+> diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
+> index a3b1de953fb7..59e0dba9259a 100644
+> --- a/drivers/phy/tegra/Kconfig
+> +++ b/drivers/phy/tegra/Kconfig
+> @@ -1,6 +1,7 @@
+>  config PHY_TEGRA_XUSB
+>         tristate "NVIDIA Tegra XUSB pad controller driver"
+>         depends on ARCH_TEGRA
+> +       select PINCTRL_TEGRA_XUSB
+>         help
+>           Choose this option if you have an NVIDIA Tegra SoC.
 >  
->  	phy_np = of_parse_phandle(pdev->dev.of_node, "nvidia,phy", 0);
->  	if (!phy_np)
->  		return -ENOENT;
->  
-> +	if (of_property_read_bool(phy_np, "nvidia,has-utmi-pad-registers"))
-> +		has_utmi_pad_registers = true;
+> diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+> index e4bc1151e04f..42a5c1dddfef 100644
+> --- a/drivers/pinctrl/Makefile
+> +++ b/drivers/pinctrl/Makefile
+> @@ -23,7 +23,7 @@ obj-$(CONFIG_PINCTRL_PISTACHIO)       += pinctrl-pistachio.o
+>  obj-$(CONFIG_PINCTRL_ROCKCHIP) += pinctrl-rockchip.o
+>  obj-$(CONFIG_PINCTRL_SINGLE)   += pinctrl-single.o
+>  obj-$(CONFIG_PINCTRL_SIRF)     += sirf/
+> -obj-$(CONFIG_PINCTRL_TEGRA)    += tegra/
+> +obj-$(CONFIG_ARCH_TEGRA)       += tegra/
+>  obj-$(CONFIG_PINCTRL_TZ1090)   += pinctrl-tz1090.o
+>  obj-$(CONFIG_PINCTRL_TZ1090_PDC)       += pinctrl-tz1090-pdc.o
+>  obj-$(CONFIG_PINCTRL_U300)     += pinctrl-u300.o
 
-I would have writte simply:
+This change helps, but feels a little unclean. It also prevents us
+from adding a '|| COMPILE_TEST' dependency.
 
-	has_utmi_pad_registers = of_property_read_bool(phy_np, 
-			"nvidia,has-utmi-pad-registers");
+How about making PHY_TEGRA_XUSB silent, and adding the 'select'
+in the phy driver along with 'depends on PINCTRL_TEGRA'?
 
-Regardless, notice that has_utmi_pad_registers gets set to true if the 
-OF property value is true.
-
-...
-
-> -	if (!of_property_read_bool(phy_np, "nvidia,has-utmi-pad-registers")) {
-> +	if (has_utmi_pad_registers) {
-
-But down here the sense of the test is reversed.  Now the conditional 
-block gets executed if the property is true, whereas the original code 
-executed it if the property was false.
-
->  		reset_control_assert(tegra->rst);
->  		udelay(1);
->  		reset_control_deassert(tegra->rst);
-
-Alan Stern
+	Arnd
