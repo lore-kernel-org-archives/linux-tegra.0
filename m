@@ -1,66 +1,45 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH V5 0/4] gpio: tegra: Cleanups and support for debounce
-Date: Tue, 3 May 2016 00:36:29 +0530
-Message-ID: <5727A535.2060808@nvidia.com>
-References: <1461580714-22479-1-git-send-email-ldewangan@nvidia.com> <CACRpkda7HqPLSRLzaSdO-7chjUBL9C2VAMB0nyVZUw=PSGL3VQ@mail.gmail.com> <5723274B.3050209@nvidia.com> <CACRpkdZ-muOGvtKbKNP66Bv5FSPeMeYvmArC5GAM92EcKp+kgQ@mail.gmail.com> <57277C70.5080204@wwwdotorg.org> <57279534.5010409@nvidia.com> <5727A001.5030609@wwwdotorg.org>
+From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Subject: Re: [GIT PULL] clk: tegra: Changes for v4.7-rc1
+Date: Mon, 2 May 2016 17:02:48 -0700
+Message-ID: <20160503000248.GB3492@codeaurora.org>
+References: <1461945596-24090-1-git-send-email-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <5727A001.5030609@wwwdotorg.org>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1461945596-24090-1-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On 04/29, Thierry Reding wrote:
+> Hi Michael, Stephen,
+> 
+> The following changes since commit f55532a0c0b8bb6148f4e07853b876ef73bc69ca:
+> 
+>   Linux 4.6-rc1 (2016-03-26 16:03:24 -0700)
+> 
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.7-clk
+> 
+> for you to fetch changes up to 2690e912644e610854c4c3b23d0a0daec9d030ca:
+> 
+>   clk: tegra: dfll: Reformat CVB frequency table (2016-04-28 12:41:54 +0200)
+> 
+> Note that the first patch is this pull request is a dependency for a
+> larger series that will have to go in through the ARM-SoC tree in order
+> to properly handle the dependencies.
+> 
 
-On Tuesday 03 May 2016 12:14 AM, Stephen Warren wrote:
-> On 05/02/2016 11:58 AM, Laxman Dewangan wrote:
->>
->>
->> Toggling OE bit is something emulating the open drain here.
->
-> From the perspective of the external HW that's attached to the GPIO, I 
-> believe there's no difference.
->
->> I think idea is that when we configure the pin in open drain then it
->> should be automatically handled by HW  when we want to set pin state
->> high or low. When we set low, the pin should be driven and when high
->> then it should be tristated input. We should not need any direction bit
->> setting.
->
-> I don't imagine anything in the kernel cares, so long as the correct 
-> logic level is present on the pin based on whatever GPIO API was last 
-> called.
->
-> I'd be very surprised if there wasn't hardware that could only 
-> implement open-drain by this "emulation" method, so I'd be very 
-> surprised if something prohibited that implementation style.
->
+Thanks. Pulled.
 
-The emulation method implemented just to not drive high for open drain.
-Recently, proper callback added for hw control for open drain and hence 
-emulation method is not needed for such HW.
+Are there any thoughts on making that hw control stuff more
+generic? Perhaps using something like power domains to do that
+instead of having drivers cross-call to the clk driver with
+custom tegra APIs?
 
-I think if HW support the callback to implement the open drain then use 
-the HW method otherwise fallback to emulation method.
-
-
->> Otherwise, if pin is configured as open drain then:
->>
->> Set out = 0
->>
->> and when it need to set pin to high then oe = 0 else oe =1. Do not
->> toggle any other bits.
->>
->> On this case, we need to store that pin is configured as open drain so
->> that set_value should toggle OE instead of OUT.
->
-> That sounds like a reasonable implementation.
->
-
-Let me create the patch for review and further discussion.
-
->> Or do you want to have different implementation?
->
-
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
