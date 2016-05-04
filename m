@@ -1,46 +1,95 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V3 0/4] soc/tegra: Add support for IO pads power and voltage control
-Date: Wed, 4 May 2016 17:09:29 +0530
-Message-ID: <1462361973-27990-1-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH V3 2/4] soc/tegra: pmc: Correct type of variable for tegra_pmc_readl()
+Date: Wed, 4 May 2016 17:09:31 +0530
+Message-ID: <1462361973-27990-3-git-send-email-ldewangan@nvidia.com>
+References: <1462361973-27990-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org
-Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1462361973-27990-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: thierry.reding@gmail.com, swarren@wwwdotorg.org, jonathanh@nvidia.com, airlied@linux.ie
+Cc: gnurou@gmail.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The IO pins of Tegra SoCs are grouped for common control of IO interface
-like setting voltage signal levels and power state of the interface. The
-group is generally referred as IO pads. The power state and voltage control
-of IO pins can be done at IO pads level.
+The function tegra_pmc_readl() returns the u32 type data and hence
+change the data type of variable where this data is stored to u32
+type.
 
-Tegra124 onwards IO pads support the power down state when system is
-active. The voltage levels on IO pads are auto detected on Tegra124/
-Tegra132 but it is not in Tegra210. For Tegra210, the SW need to
-explicitly configure the voltage levels of IO pads
-
-This series add the interface for the IO pad power state and voltage
-configurations. Modifies the client to use new APIs.
-Register the child devices to provide the client interface to configure
-IO pads power state and voltage from Device tree.
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 
 ---
+Changes from V1:
+-This is new in series as per discussion on V1 series to use u32 for
+tegra_pmc_readl.
+
 Changes from V2:
-- Drop the pinctrl driver from series till pmc interfce is finalise.
-- Move client to use the new APIs.
-- Remove older APIs to configure IO rail and related macros.
+- Make unsigned long to u32 for some missed variable from V1.
+---
+ drivers/soc/tegra/pmc.c | 24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
 
-Laxman Dewangan (4):
-  soc/tegra: pmc: Use BIT macro for register field definition
-  soc/tegra: pmc: Correct type of variable for tegra_pmc_readl()
-  soc/tegra: pmc: Add support for IO pads power state and voltage
-  soc/tegra: pmc: Register PMC child devices as platform device
-
- drivers/gpu/drm/tegra/sor.c |   8 +-
- drivers/soc/tegra/pmc.c     | 382 +++++++++++++++++++++++++++++++++++++-------
- include/soc/tegra/pmc.h     | 116 +++++++++-----
- 3 files changed, 410 insertions(+), 96 deletions(-)
-
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 2c3f1f9..eff9425 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -844,7 +844,8 @@ static void tegra_powergate_init(struct tegra_pmc *pmc)
+ static int tegra_io_rail_prepare(unsigned int id, unsigned long *request,
+ 				 unsigned long *status, unsigned int *bit)
+ {
+-	unsigned long rate, value;
++	unsigned long rate;
++	u32 value;
+ 
+ 	*bit = id % 32;
+ 
+@@ -868,17 +869,18 @@ static int tegra_io_rail_prepare(unsigned int id, unsigned long *request,
+ 	tegra_pmc_writel(DPD_SAMPLE_ENABLE, DPD_SAMPLE);
+ 
+ 	/* must be at least 200 ns, in APB (PCLK) clock cycles */
+-	value = DIV_ROUND_UP(1000000000, rate);
+-	value = DIV_ROUND_UP(200, value);
++	rate = DIV_ROUND_UP(1000000000, rate);
++	rate = DIV_ROUND_UP(200, rate);
++	value = (u32)rate;
+ 	tegra_pmc_writel(value, SEL_DPD_TIM);
+ 
+ 	return 0;
+ }
+ 
+-static int tegra_io_rail_poll(unsigned long offset, unsigned long mask,
+-			      unsigned long val, unsigned long timeout)
++static int tegra_io_rail_poll(unsigned long offset, u32 mask,
++			      u32 val, unsigned long timeout)
+ {
+-	unsigned long value;
++	u32 value;
+ 
+ 	timeout = jiffies + msecs_to_jiffies(timeout);
+ 
+@@ -900,8 +902,9 @@ static void tegra_io_rail_unprepare(void)
+ 
+ int tegra_io_rail_power_on(unsigned int id)
+ {
+-	unsigned long request, status, value;
+-	unsigned int bit, mask;
++	unsigned long request, status;
++	unsigned int bit;
++	u32 value, mask;
+ 	int err;
+ 
+ 	mutex_lock(&pmc->powergates_lock);
+@@ -935,8 +938,9 @@ EXPORT_SYMBOL(tegra_io_rail_power_on);
+ 
+ int tegra_io_rail_power_off(unsigned int id)
+ {
+-	unsigned long request, status, value;
+-	unsigned int bit, mask;
++	unsigned long request, status;
++	unsigned int bit;
++	u32 value, mask;
+ 	int err;
+ 
+ 	mutex_lock(&pmc->powergates_lock);
 -- 
 2.1.4
