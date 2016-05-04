@@ -1,58 +1,76 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH] phy: tegra-xusb: add pinctrl dependency
-Date: Tue, 03 May 2016 22:10:02 +0200
-Message-ID: <1959742.2n4CUJfeCu@wuerfel>
-References: <1462289101-797073-1-git-send-email-arnd@arndb.de> <20160503160708.GA20266@ulmo.ba.sec>
+From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] arm64: tegra: fix compatible string for Tegra132 fuse
+ node
+Date: Wed, 4 May 2016 10:25:51 +0800
+Message-ID: <57295DAF.1050800@nvidia.com>
+References: <1462266577-951-1-git-send-email-wni@nvidia.com> <20160503152111.GC19539@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160503160708.GA20266-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160503152111.GC19539-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Kishon Vijay Abraham I <kishon-l0cyMroinI0@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday 03 May 2016 18:07:08 Thierry Reding wrote:
-> Wouldn't that be more of a case for a select dependency? I'm thinking
-> something like the below (untested, yet).
-> 
 
-I usually prefer 'depends on' in a case like this, but it doesn't make
-a huge difference. If we end up using 'select' here, we should
-make the other symbol invisible though.
 
-> --- >8 ---
-> diff --git a/drivers/phy/tegra/Kconfig b/drivers/phy/tegra/Kconfig
-> index a3b1de953fb7..59e0dba9259a 100644
-> --- a/drivers/phy/tegra/Kconfig
-> +++ b/drivers/phy/tegra/Kconfig
-> @@ -1,6 +1,7 @@
->  config PHY_TEGRA_XUSB
->         tristate "NVIDIA Tegra XUSB pad controller driver"
->         depends on ARCH_TEGRA
-> +       select PINCTRL_TEGRA_XUSB
->         help
->           Choose this option if you have an NVIDIA Tegra SoC.
->  
-> diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
-> index e4bc1151e04f..42a5c1dddfef 100644
-> --- a/drivers/pinctrl/Makefile
-> +++ b/drivers/pinctrl/Makefile
-> @@ -23,7 +23,7 @@ obj-$(CONFIG_PINCTRL_PISTACHIO)       += pinctrl-pistachio.o
->  obj-$(CONFIG_PINCTRL_ROCKCHIP) += pinctrl-rockchip.o
->  obj-$(CONFIG_PINCTRL_SINGLE)   += pinctrl-single.o
->  obj-$(CONFIG_PINCTRL_SIRF)     += sirf/
-> -obj-$(CONFIG_PINCTRL_TEGRA)    += tegra/
-> +obj-$(CONFIG_ARCH_TEGRA)       += tegra/
->  obj-$(CONFIG_PINCTRL_TZ1090)   += pinctrl-tz1090.o
->  obj-$(CONFIG_PINCTRL_TZ1090_PDC)       += pinctrl-tz1090-pdc.o
->  obj-$(CONFIG_PINCTRL_U300)     += pinctrl-u300.o
+On 2016=E5=B9=B405=E6=9C=8803=E6=97=A5 23:21, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+>=20
+> On Tue, May 03, 2016 at 05:09:37PM +0800, Wei Ni wrote:
+>> This patch changes the compatible of Tegra132 fuse node
+>> to "nvidia,tegra132-efuse", instead of "nvidia,tegra1124-efuse".
+>> Because the CONFIG_ARCH_TEGRA_124_SOC will not be enabled for
+>> Tegra132, the fuse driver can't find the corresponding node.
+>=20
+> Okay, that's not really a good reason to modify the DTS. What we shou=
+ld
+> do instead is make sure that the OF table contains the entry on Tegra=
+132
+> builds. Unless the IP block really is different and Tegra124 and
+> Tegra132 aren't compatible in this regard after all.
+>=20
+> In the latter case the commit message should reflect the real reason.
 
-This change helps, but feels a little unclean. It also prevents us
-from adding a '|| COMPILE_TEST' dependency.
+Hi Thierry,
 
-How about making PHY_TEGRA_XUSB silent, and adding the 'select'
-in the phy driver along with 'depends on PINCTRL_TEGRA'?
+The fuse driver fuse-tegra.c has following OF table:
+#ifdef CONFIG_ARCH_TEGRA_132_SOC
+        { .compatible =3D "nvidia,tegra132-efuse", .data =3D &tegra124_=
+fuse_soc },
+#endif
+#ifdef CONFIG_ARCH_TEGRA_124_SOC
+        { .compatible =3D "nvidia,tegra124-efuse", .data =3D &tegra124_=
+fuse_soc },
+#endif
 
-	Arnd
+It defined "nvidia,tegra124-efuse" under CONFIG_ARCH_TEGRA_124_SOC, so =
+if we
+don't change the DTS file, we should change it as:
+-#ifdef CONFIG_ARCH_TEGRA_132_SOC
+-       { .compatible =3D "nvidia,tegra132-efuse", .data =3D &tegra124_=
+fuse_soc },
+-#endif
+-#ifdef CONFIG_ARCH_TEGRA_124_SOC
++#if defined CONFIG_ARCH_TEGRA_124_SOC || defined CONFIG_ARCH_TEGRA_132=
+_SOC
+        { .compatible =3D "nvidia,tegra124-efuse", .data =3D &tegra124_=
+fuse_soc },
+ #endif
+ #ifdef CONFIG_ARCH_TEGRA_114_SOC
+
+I will send it out.
+
+>=20
+> Thierry
+>=20
+> * Unknown Key
+> * 0x7F3EB3A1
+>=20
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" i=
+n
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
