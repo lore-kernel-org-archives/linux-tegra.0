@@ -1,66 +1,46 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V5 0/3] Add support for Tegra210 ADMA
-Date: Wed, 4 May 2016 09:04:41 +0100
-Message-ID: <5729AD19.2010807@nvidia.com>
-References: <1461940758-25722-1-git-send-email-jonathanh@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V3 0/4] soc/tegra: Add support for IO pads power and voltage control
+Date: Wed, 4 May 2016 17:09:29 +0530
+Message-ID: <1462361973-27990-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1461940758-25722-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org
+Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Vinod,
+The IO pins of Tegra SoCs are grouped for common control of IO interface
+like setting voltage signal levels and power state of the interface. The
+group is generally referred as IO pads. The power state and voltage control
+of IO pins can be done at IO pads level.
 
-Let me know if you are ok to pick up this version?
+Tegra124 onwards IO pads support the power down state when system is
+active. The voltage levels on IO pads are auto detected on Tegra124/
+Tegra132 but it is not in Tegra210. For Tegra210, the SW need to
+explicitly configure the voltage levels of IO pads
 
-Cheers
-Jon
+This series add the interface for the IO pad power state and voltage
+configurations. Modifies the client to use new APIs.
+Register the child devices to provide the client interface to configure
+IO pads power state and voltage from Device tree.
 
-On 29/04/16 15:39, Jon Hunter wrote:
-> Add support for the Tegra210 Audio DMA (ADMA) controller which is part
-> of the Audio Processing Engine and used for transferring audio data.
-> 
-> V5 changes:
-> - Removed APE and APE2APB clocks as these clocks rightfully belong
->   in the ACONNECT bus driver [0] and the ADMA is child of this device.
->   Dropped power-domain from DT binding as this will be handled by
->   ACONNECT bus driver as well.
-> - Minor update to case statement formatting based upon feedback from
->   Vinod.
-> - Make ADMA dependent on Tegra210 as this is the only device
->   (currently) that supports it.
-> 
-> V4 changes:
-> - Updated DT binding to include 'power-domains' entry for handling
->   the APE power domain inconjunction with runtime-pm.
-> - Added missing clocks to the DT binding that were being handled by
->   the bootloader.
-> - Added support for PM_CLK to simplify clock handling
-> 
-> V3 changes:
-> - Updated DT binding per feedback from Mark and Stephen
-> - Fixed up items mentioned by Vinod
-> 
-> V2 changes:
-> - Re-worked device-tree binding
-> 
-> [0] http://marc.info/?l=devicetree&m=146193804830747&w=2
-> 
-> Jon Hunter (3):
->   Documentation: DT: Add binding documentation for NVIDIA ADMA
->   dmaengine: tegra-adma: Add support for Tegra210 ADMA
->   MAINTAINERS: Update Tegra DMA maintainers
-> 
->  .../bindings/dma/nvidia,tegra210-adma.txt          |  57 ++
->  MAINTAINERS                                        |   5 +-
->  drivers/dma/Kconfig                                |  14 +
->  drivers/dma/Makefile                               |   1 +
->  drivers/dma/tegra210-adma.c                        | 853 +++++++++++++++++++++
->  5 files changed, 928 insertions(+), 2 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra210-adma.txt
->  create mode 100644 drivers/dma/tegra210-adma.c
-> 
+---
+Changes from V2:
+- Drop the pinctrl driver from series till pmc interfce is finalise.
+- Move client to use the new APIs.
+- Remove older APIs to configure IO rail and related macros.
+
+Laxman Dewangan (4):
+  soc/tegra: pmc: Use BIT macro for register field definition
+  soc/tegra: pmc: Correct type of variable for tegra_pmc_readl()
+  soc/tegra: pmc: Add support for IO pads power state and voltage
+  soc/tegra: pmc: Register PMC child devices as platform device
+
+ drivers/gpu/drm/tegra/sor.c |   8 +-
+ drivers/soc/tegra/pmc.c     | 382 +++++++++++++++++++++++++++++++++++++-------
+ include/soc/tegra/pmc.h     | 116 +++++++++-----
+ 3 files changed, 410 insertions(+), 96 deletions(-)
+
+-- 
+2.1.4
