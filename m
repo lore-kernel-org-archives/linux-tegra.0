@@ -1,96 +1,97 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 1/2] usb: host: ehci-tegra: Grab the correct UTMI pads
- reset
-Date: Wed, 4 May 2016 17:26:48 +0200
-Message-ID: <20160504152648.GA31420@ulmo.ba.sec>
-References: <1462372800-30900-1-git-send-email-thierry.reding@gmail.com>
- <20160504145710.GA14708@kroah.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V3 00/17] Add support for Tegra210 AGIC
+Date: Wed, 4 May 2016 17:25:13 +0100
+Message-ID: <1462379130-11742-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="sm4nu43k4a2Rpi4c"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20160504145710.GA14708-U8xfFu+wG4EAvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
-Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tuomas Tynkkynen <tuomas.tynkkynen-X3B1VOXEql0@public.gmane.org>
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+The Tegra210 has a 2nd level interrupt controller located in a separate
+power domain to the main GIC interrupt controller and hence requires
+runtime-pm support.
 
---sm4nu43k4a2Rpi4c
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add a platform driver for the GICs that require runtime-pm and make the
+necessary changes to the genirq and irqdomain core to support IRQ chips
+that require runtime-pm.
 
-On Wed, May 04, 2016 at 07:57:10AM -0700, Greg Kroah-Hartman wrote:
-> On Wed, May 04, 2016 at 04:39:59PM +0200, Thierry Reding wrote:
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >=20
-> > There are three EHCI controllers on Tegra SoCs, each with its own reset
-> > line. However, the first controller contains a set of UTMI configuration
-> > registers that are shared with its siblings. These registers will only
-> > be reset as part of the first controller's reset. For proper operation
-> > it must be ensured that the UTMI configuration registers are reset
-> > before any of the EHCI controllers are enabled, irrespective of the
-> > probe order.
-> >=20
-> > Commit a47cc24cd1e5 ("USB: EHCI: tegra: Fix probe order issue leading to
-> > broken USB") introduced code that ensures the first controller is always
-> > reset before setting up any of the controllers, and is never again reset
-> > afterwards.
-> >=20
-> > This code, however, grabs the wrong reset. Each EHCI controller has two
-> > reset controls attached: 1) the USB controller reset and 2) the UTMI
-> > pads reset (really the first controller's reset). In order to reset the
-> > UTMI pads registers the code must grab the second reset, but instead it
-> > grabbing the first.
-> >=20
-> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> Any reason you don't want this backported to stable kernels?
+Please note that although as the subject states this adds support for
+the Tegra210 AGIC, in this current version there is really nothing
+specific in this series for Tegra. However, rather than changing the
+subject I opted to keep it the same so people recognise this is a
+continuation of that work.
 
-There's a brief note below the commit message that explains why I'm not
-sure if there's a need to backport:
+Changes since V2:
+- Corrected RPM support for irqchips in genirq core as pointed out by
+  Kevin Hilman.
+- Corrected patch to save the irq type when mapping the interrupt.
+- Dropped changes to DT binding documentation and added patch to prevent
+  early init of GICs if the 'clocks' and/or 'power-domains' DT
+  properties are present (as we have discussed).
+- Moved platform driver code into it's own source file.
+- Separate changes for preparing for the platform driver into 3 patches
+  in an attempt to make it more readable!
+- Added fix for checking an interrupt descriptor is valid during IRQ
+  setup.
 
-> Stephen, Alex, Jon, have you ever encountered cases where UTMI might not
-> have worked correctly? It seems that this code was pulsing the wrong
-> reset line and therefore the UTMI pads would never be reset unless the
-> first USB controller was probed before all others. I've never seen any
-> such problems myself, so I'm unsure about whether it's worth Cc'ing the
-> patch to stable-u79uwXL29TaiAVqoAR/hOA@public.gmane.org
+Changes since V1:
+- Updated GIC to only WARN and not return an error if configuring a PPI
+  fails but will still return an error if an SPI fails (per discussion
+  with Marc).
+- Dropped change to mask sense bits for GIC-v3 (as this is not
+  necessary)
+- Split patch to avoid setting interrupt type when mapping the IRQ into
+  two patches per TGLX's feedback.
+- Changed name of irqchip device structure to "parent_device"
+- Moved call to irq_chip_pm_get() outside of chip_bus_lock().
+- Dropped patch to remove clock names from GIC DT documentation and
+  added AGIC clock names.
+- Update GIC platform driver to look-up clocks names from static list.
 
-So the bottom line is that I have no evidence that this fixes any real
-issue, hence I'm not sure if it's worth bothering the stable kernel
-maintainers with it.
+Jon Hunter (17):
+  irqchip/gic: Don't unnecessarily write the IRQ configuration
+  irqchip/gic: WARN if setting the interrupt type for a PPI fails
+  irqchip: Mask the non-type/sense bits when translating an IRQ
+  irqdomain: Fix handling of type settings for existing mappings
+  genirq: Look-up trigger type if not specified by caller
+  irqdomain: Don't set type when mapping an IRQ
+  genirq: Ensure IRQ descriptor is valid when setting-up the IRQ
+  genirq: Add runtime power management support for IRQ chips
+  irqchip/gic: Don't initialise chip if mapping IO space fails
+  irqchip/gic: Remove static irq_chip definition for eoimode1
+  irqchip/gic: Return an error if GIC initialisation fails
+  irqchip/gic: Pass GIC pointer to save/restore functions
+  irqchip/gic: Don't allow early initialisation if GIC requires RPM
+  irqchip/gic: Add helper function for configuring a GIC via device-tree
+  irqchip/gic: Split GIC init in preparation for platform driver
+  irqchip/gic: Prepare for adding platform driver
+  irqchip/gic: Add platform driver for non-root GICs that require RPM
 
-While at it, adding Tuomas who wrote the original probe order fix.
-Tuomas, does this patch look correct to you? Here's the patch in full if
-you don't have it in your inbox:
+ drivers/irqchip/Kconfig          |   6 +
+ drivers/irqchip/Makefile         |   1 +
+ drivers/irqchip/irq-crossbar.c   |   2 +-
+ drivers/irqchip/irq-gic-common.c |  19 ++-
+ drivers/irqchip/irq-gic-pm.c     | 241 ++++++++++++++++++++++++++++++++++
+ drivers/irqchip/irq-gic.c        | 277 +++++++++++++++++++++++----------------
+ drivers/irqchip/irq-gic.h        |  63 +++++++++
+ drivers/irqchip/irq-tegra.c      |   2 +-
+ include/linux/irq.h              |   4 +
+ include/linux/irqdomain.h        |   3 +
+ kernel/irq/chip.c                |  35 +++++
+ kernel/irq/internals.h           |   1 +
+ kernel/irq/irqdomain.c           |  58 ++++++--
+ kernel/irq/manage.c              |  40 +++++-
+ 14 files changed, 617 insertions(+), 135 deletions(-)
+ create mode 100644 drivers/irqchip/irq-gic-pm.c
+ create mode 100644 drivers/irqchip/irq-gic.h
 
-	http://patchwork.ozlabs.org/patch/618488/
+-- 
+2.1.4
 
-Thanks,
-Thierry
-
---sm4nu43k4a2Rpi4c
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXKhS2AAoJEN0jrNd/PrOh1ogP/2yL+ccwki8GgvJXJX517+UV
-8sElO4Qr4BuXOQkLst90gtr/W+HrpAlVo/jNTrw+tRbXNSPEsSpM7qi4efyXbtBI
-VymOpGS6/NGXM4LZXdrpGldpR0IEnmglr++eEJHc5TDx8WfErcM+YSQ9MTaQVXEs
-cih+G9XQ5mEbaQNgohhOLN+rjzdYwWNDFuTbJed3DTaYtNHoOEIPYz4/jWGZHky0
-6xokxQpi7NctJKhWfTMNFq5TEGnA0sdtkOpFOATML9/XyxdeTM+aDxnpeA6T6XZU
-nY+3/CZ52M4UmFLZBcXzCH77aXboqO+nfOBc6aNY/LSDoZpWptuJTQUoyCmPT410
-i5HqCPwNAFi+dIgqrg08UgpKI2IFLFuuNaS5LRgkEz5TRnhxSwz2uOgXXuFC9DBP
-TZNMvknfWi1dNlTioE2DBL7qEJmGcLPbdquRMzi/scCy9oE3ldvogWX1M3Aoa/iX
-0IxVxEnU7jLWo4BI7MbpYsoSG0dez6QtXaCKtLqdMjAAco5e0OPW20uhZA7o/efg
-7BQVRipeuyc0KHaHM3EbH0/SR0lyKFdJyigTB9ZIZtQ8ZmDnQrAztrlJSSwkoP46
-N//pOvKBfOmRy8DwkHe7ASZ4S9o1z1LxQpzmHli34V8DX9aJXOEgTlL6y+p2TtvH
-KRh8qM4g3aJLdnyhoTTS
-=PLI6
------END PGP SIGNATURE-----
-
---sm4nu43k4a2Rpi4c--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
