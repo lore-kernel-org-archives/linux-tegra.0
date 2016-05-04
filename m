@@ -1,617 +1,207 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH V3 3/4] soc/tegra: pmc: Add support for IO pads power state and voltage
-Date: Wed, 4 May 2016 17:09:32 +0530
-Message-ID: <1462361973-27990-4-git-send-email-ldewangan@nvidia.com>
-References: <1462361973-27990-1-git-send-email-ldewangan@nvidia.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v3 01/11] of: Add bindings of hw throttle for Tegra
+ soctherm
+Date: Wed, 4 May 2016 08:35:18 -0500
+Message-ID: <20160504133518.GA28191@rob-hp-laptop>
+References: <1462270410-2425-1-git-send-email-wni@nvidia.com>
+ <1462270410-2425-2-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1462361973-27990-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, swarren@wwwdotorg.org, jonathanh@nvidia.com, airlied@linux.ie
-Cc: gnurou@gmail.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1462270410-2425-2-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The IO pins of Tegra SoCs are grouped for common control of IO
-interface like setting voltage signal levels and power state of
-the interface. The group is generally referred as IO pads. The
-power state and voltage control of IO pins can be done at IO pads
-level.
+On Tue, May 03, 2016 at 06:13:20PM +0800, Wei Ni wrote:
+> Add HW throttle configuration sub-node for soctherm, which
+> is used to describe the throttle event, and worked as a
+> cooling device. The "hot" type trip in thermal zone can
+> be bound to this cooling device, and trigger the throttle
+> function.
+> 
+> Signed-off-by: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  .../bindings/thermal/nvidia,tegra124-soctherm.txt  | 120 ++++++++++++++++++++-
+>  1 file changed, 118 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
+> index edebfa0a985e..6ba8ae3f59ed 100644
+> --- a/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
+> +++ b/Documentation/devicetree/bindings/thermal/nvidia,tegra124-soctherm.txt
+> @@ -10,8 +10,14 @@ Required properties :
+>  - compatible : For Tegra124, must contain "nvidia,tegra124-soctherm".
+>    For Tegra132, must contain "nvidia,tegra132-soctherm".
+>    For Tegra210, must contain "nvidia,tegra210-soctherm".
+> -- reg : Should contain 1 entry:
+> +- reg : Should contain at least 2 entries for each entry in reg-names:
+>    - SOCTHERM register set
+> +  - Tegra CAR register set: Required for Tegra124 and Tegra210.
+> +  - CCROC register set: Required for Tegra132.
+> +- reg-names :  Should contain at least 2 entries:
+> +  - soctherm-reg
+> +  - car-reg
+> +  - ccroc-reg
+>  - interrupts : Defines the interrupt used by SOCTHERM
+>  - clocks : Must contain an entry for each entry in clock-names.
+>    See ../clocks/clock-bindings.txt for details.
+> @@ -25,17 +31,44 @@ Required properties :
+>  - #thermal-sensor-cells : Should be 1. See ./thermal.txt for a description
+>      of this property. See <dt-bindings/thermal/tegra124-soctherm.h> for a
+>      list of valid values when referring to thermal sensors.
+> +- nvidia,throttle-cfgs: A sub-node which is a container of configuration for
+> +    each hardware throttle events. These events can be set as cooling devices.
+> +  * throttle events: Sub-nodes must be named as "nvidia,light" or "nvidia,heavy".
+> +      Properties:
+> +      - nvidia,priority: Each throttles has its own throttle settings, so the
+> +        SW need to set priorities for various throttle, the HW arbiter can select
+> +        the final throttle settings.
+> +        Bigger value indicates higher priority, In general, higher priority
+> +        translates to lower target frequency. SW needs to ensure that critical
+> +        thermal alarms are given higher priority, and ensure that there is
+> +        no race if priority of two vectors is set to the same value.
 
-Tegra generation SoC supports the power down of IO pads when it
-is not used even in the active state of system. This saves power
-from that IO interface. Also it supports multiple voltage level
-in IO pins for interfacing on some of pads. The IO pad voltage is
-automatically detected till T124, hence SW need not to configure
-this. But from T210, the automatically detection logic has been
-removed, hence SW need to explicitly set the IO pad voltage into
-IO pad configuration registers.
+What are valid range of values?
 
-Add support to set the power states and voltage level of the IO pads
-from client driver. The implementation for the APIs are in generic
-which is applicable for all generation os Tegra SoC.
+> +      - nvidia,cpu-throt-depth:  This property is for Tegra124 and Tegra210.
+> +        It is the throttling depth of pulse skippers, it's the percentage
+> +        throttling.
 
-IO pads ID and information of bit field for power state and voltage
-level controls are added for Tegra124, Tegra132 and Tegra210. The sor
-driver is modified to use the new APIs.
+Add unit suffix (-percent)
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> +      - nvidia,cpu-throt-level: This property is only for Tegra132, it is the
+> +        level of pulse skippers, which used to throttle clock frequencies. It
+> +        indicates cpu clock throttling depth, and the depth can be programmed.
+> +        Must set as following values:
+> +        TEGRA_SOCTHERM_THROT_LEVEL_LOW, TEGRA_SOCTHERM_THROT_LEVEL_MED
+> +        TEGRA_SOCTHERM_THROT_LEVEL_HIGH, TEGRA_SOCTHERM_THROT_LEVEL_NONE
+> +      - #cooling-cells: Should be 1. This cooling device only support on/off state.
+> +        See ./thermal.txt for a description of this property.
+>  
+>  Note:
+>  - the "critical" type trip points will be set to SOC_THERM hardware as the
+>  shut down temperature. Once the temperature of this thermal zone is higher
+>  than it, the system will be shutdown or reset by hardware.
+> +- the "hot" type trip points will be set to SOC_THERM hardware as the throttle
+> +temperature. Once the the temperature of this thermal zone is higher
+> +than it, it will trigger the HW throttle event.
+>  
+>  Example :
+>  
+>  	soctherm@700e2000 {
+>  		compatible = "nvidia,tegra124-soctherm";
+> -		reg = <0x0 0x700e2000 0x0 0x1000>;
+> +		reg = <0x0 0x700e2000 0x0 0x600  /* SOC_THERM reg_base */
+> +			0x0 0x60006000 0x0 0x400 /* CAR reg_base */
+> +		reg-names = "soctherm-reg", "car-reg";
+>  		interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
+>  		clocks = <&tegra_car TEGRA124_CLK_TSENSOR>,
+>  			<&tegra_car TEGRA124_CLK_SOC_THERM>;
+> @@ -44,6 +77,76 @@ Example :
+>  		reset-names = "soctherm";
+>  
+>  		#thermal-sensor-cells = <1>;
+> +
+> +		nvidia,throttle-cfgs {
 
----
-Changes from V1:
-This is reworked on earlier path to have separation between IO rails and
-io pads and add power state and voltage control APIs in single call.
+Drop the vendor prefix in node names.
 
-Changes from V2:
-- Remove the tegra_io_rail_power_off/on() apis and change client (sor) driver
-to use the new APIs for IO pad power.
-- Remove the TEGRA_IO_RAIL_ macros.
----
- drivers/gpu/drm/tegra/sor.c |   8 +-
- drivers/soc/tegra/pmc.c     | 242 +++++++++++++++++++++++++++++++++++++++-----
- include/soc/tegra/pmc.h     | 116 ++++++++++++++-------
- 3 files changed, 299 insertions(+), 67 deletions(-)
+> +			/*
+> +			 * When the "heavy" cooling device triggered,
+> +			 * the HW will skip cpu clock's pulse in 85% depth
+> +			 */
+> +			throttle_heavy: nvidia,heavy {
+> +				nvidia,priority = <100>;
+> +				nvidia,cpu-throt-depth = <85>;
+> +
+> +				#cooling-cells = <1>;
+> +			};
+> +
+> +			/*
+> +			 * When the "light" cooling device triggered,
+> +			 * the HW will skip cpu clock's pulse in 50% depth
+> +			 */
+> +			throttle_light: nvidia,light {
+> +				nvidia,priority = <80>;
+> +				nvidia,cpu-throt-depth = <50>;
+> +
+> +				#cooling-cells = <1>;
+> +			};
+> +
+> +			/*
+> +			 * If these two devices are triggered in same time, the HW throttle
+> +			 * arbiter will select the highest priority as the final throttle
+> +			 * settings to skip cpu pulse.
+> +			 */
+> +		};
+> +	};
+> +
+> +Example: referring to Tegra132's "reg", "reg-names" and "throttle-cfgs" :
+> +
+> +	soctherm@0,700e2000 {
 
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index 757c6e8..1d90171 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -1134,7 +1134,7 @@ static void tegra_sor_edp_disable(struct drm_encoder *encoder)
- 			dev_err(sor->dev, "failed to disable DP: %d\n", err);
- 	}
- 
--	err = tegra_io_rail_power_off(TEGRA_IO_RAIL_LVDS);
-+	err = tegra_io_pads_power_disable(TEGRA_IO_PAD_LVDS);
- 	if (err < 0)
- 		dev_err(sor->dev, "failed to power off I/O rail: %d\n", err);
- 
-@@ -1296,7 +1296,7 @@ static void tegra_sor_edp_enable(struct drm_encoder *encoder)
- 	tegra_sor_writel(sor, value, SOR_DP_PADCTL0);
- 
- 	/* step 2 */
--	err = tegra_io_rail_power_on(TEGRA_IO_RAIL_LVDS);
-+	err = tegra_io_pads_power_enable(TEGRA_IO_PAD_LVDS);
- 	if (err < 0)
- 		dev_err(sor->dev, "failed to power on I/O rail: %d\n", err);
- 
-@@ -1748,7 +1748,7 @@ static void tegra_sor_hdmi_disable(struct drm_encoder *encoder)
- 	if (err < 0)
- 		dev_err(sor->dev, "failed to power down SOR: %d\n", err);
- 
--	err = tegra_io_rail_power_off(TEGRA_IO_RAIL_HDMI);
-+	err = tegra_io_pads_power_disable(TEGRA_IO_PAD_HDMI);
- 	if (err < 0)
- 		dev_err(sor->dev, "failed to power off HDMI rail: %d\n", err);
- 
-@@ -1787,7 +1787,7 @@ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
- 
- 	div = clk_get_rate(sor->clk) / 1000000 * 4;
- 
--	err = tegra_io_rail_power_on(TEGRA_IO_RAIL_HDMI);
-+	err = tegra_io_pads_power_enable(TEGRA_IO_PAD_HDMI);
- 	if (err < 0)
- 		dev_err(sor->dev, "failed to power on HDMI rail: %d\n", err);
- 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index eff9425..0611cea 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -76,6 +76,10 @@
- 
- #define PMC_SCRATCH41			0x140
- 
-+/* Power detect for pad voltage */
-+#define PMC_PWR_DET			0x48
-+#define PMC_PWR_DET_VAL			0xe4
-+
- #define PMC_SENSOR_CTRL			0x1b0
- #define PMC_SENSOR_CTRL_SCRATCH_WRITE	BIT(2)
- #define PMC_SENSOR_CTRL_ENABLE_RST	BIT(1)
-@@ -115,12 +119,19 @@ struct tegra_powergate {
- 	unsigned int num_resets;
- };
- 
-+struct tegra_io_pads_control {
-+	int pad_id;
-+	int dpd_bit_pos;
-+	int pwr_bit_pos;
-+};
-+
- struct tegra_pmc_soc {
- 	unsigned int num_powergates;
- 	const char *const *powergates;
- 	unsigned int num_cpu_powergates;
- 	const u8 *cpu_powergates;
--
-+	const struct tegra_io_pads_control *io_pads_control;
-+	unsigned int num_io_pads;
- 	bool has_tsense_reset;
- 	bool has_gpu_clamps;
- };
-@@ -196,6 +207,14 @@ static void tegra_pmc_writel(u32 value, unsigned long offset)
- 	writel(value, pmc->base + offset);
- }
- 
-+static void tegra_pmc_read_modify_write(unsigned long offset, u32 mask, u32 val)
-+{
-+	u32 pmc_reg = tegra_pmc_readl(offset);
-+
-+	pmc_reg = (pmc_reg & ~mask) | (val & mask);
-+	tegra_pmc_writel(pmc_reg, offset);
-+}
-+
- static inline bool tegra_powergate_state(int id)
- {
- 	if (id == TEGRA_POWERGATE_3D && pmc->soc->has_gpu_clamps)
-@@ -841,22 +860,51 @@ static void tegra_powergate_init(struct tegra_pmc *pmc)
- 	of_node_put(np);
- }
- 
--static int tegra_io_rail_prepare(unsigned int id, unsigned long *request,
--				 unsigned long *status, unsigned int *bit)
-+static int tegra_io_pads_to_dpd_bit(const struct tegra_pmc_soc *soc, int pad_id)
-+{
-+	int i;
-+
-+	if (!soc || !soc->num_io_pads)
-+		return -EINVAL;
-+
-+	for (i = 0; i < soc->num_io_pads; ++i) {
-+		if (soc->io_pads_control[i].pad_id == pad_id)
-+			return soc->io_pads_control[i].dpd_bit_pos;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int tegra_io_pads_to_power_bit(const struct tegra_pmc_soc *soc,
-+				      int pad_id)
-+{
-+	int i;
-+
-+	if (!soc || !soc->num_io_pads)
-+		return -EINVAL;
-+
-+	for (i = 0; i < soc->num_io_pads; ++i) {
-+		if (soc->io_pads_control[i].pad_id == pad_id)
-+			return soc->io_pads_control[i].pwr_bit_pos;
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int tegra_io_pad_dpd_prepare(int pad_id, unsigned long *request,
-+				    unsigned long *status, unsigned int *bit)
- {
- 	unsigned long rate;
- 	u32 value;
-+	int dpd_bit;
- 
--	*bit = id % 32;
-+	dpd_bit = tegra_io_pads_to_dpd_bit(pmc->soc, pad_id);
-+	if (dpd_bit < 0)
-+		return dpd_bit;
- 
--	/*
--	 * There are two sets of 30 bits to select IO rails, but bits 30 and
--	 * 31 are control bits rather than IO rail selection bits.
--	 */
--	if (id > 63 || *bit == 30 || *bit == 31)
--		return -EINVAL;
-+	*bit = dpd_bit % 32;
- 
--	if (id < 32) {
-+	if (dpd_bit < 32) {
- 		*status = IO_DPD_STATUS;
- 		*request = IO_DPD_REQ;
- 	} else {
-@@ -877,8 +925,8 @@ static int tegra_io_rail_prepare(unsigned int id, unsigned long *request,
- 	return 0;
- }
- 
--static int tegra_io_rail_poll(unsigned long offset, u32 mask,
--			      u32 val, unsigned long timeout)
-+static int tegra_io_pad_dpd_poll(unsigned long offset, u32 mask,
-+				 u32 val, unsigned long timeout)
- {
- 	u32 value;
- 
-@@ -895,12 +943,12 @@ static int tegra_io_rail_poll(unsigned long offset, u32 mask,
- 	return -ETIMEDOUT;
- }
- 
--static void tegra_io_rail_unprepare(void)
-+static void tegra_io_pad_dpd_unprepare(void)
- {
- 	tegra_pmc_writel(DPD_SAMPLE_DISABLE, DPD_SAMPLE);
- }
- 
--int tegra_io_rail_power_on(unsigned int id)
-+int tegra_io_pads_power_enable(int pad_id)
- {
- 	unsigned long request, status;
- 	unsigned int bit;
-@@ -909,7 +957,7 @@ int tegra_io_rail_power_on(unsigned int id)
- 
- 	mutex_lock(&pmc->powergates_lock);
- 
--	err = tegra_io_rail_prepare(id, &request, &status, &bit);
-+	err = tegra_io_pad_dpd_prepare(pad_id, &request, &status, &bit);
- 	if (err)
- 		goto error;
- 
-@@ -921,22 +969,22 @@ int tegra_io_rail_power_on(unsigned int id)
- 	value |= IO_DPD_REQ_CODE_OFF;
- 	tegra_pmc_writel(value, request);
- 
--	err = tegra_io_rail_poll(status, mask, 0, 250);
-+	err = tegra_io_pad_dpd_poll(status, mask, 0, 250);
- 	if (err) {
--		pr_info("tegra_io_rail_poll() failed: %d\n", err);
-+		pr_info("tegra_io_pad_dpd_poll() failed: %d\n", err);
- 		goto error;
- 	}
- 
--	tegra_io_rail_unprepare();
-+	tegra_io_pad_dpd_unprepare();
- 
- error:
- 	mutex_unlock(&pmc->powergates_lock);
- 
- 	return err;
- }
--EXPORT_SYMBOL(tegra_io_rail_power_on);
-+EXPORT_SYMBOL(tegra_io_pads_power_enable);
- 
--int tegra_io_rail_power_off(unsigned int id)
-+int tegra_io_pads_power_disable(int pad_id)
- {
- 	unsigned long request, status;
- 	unsigned int bit;
-@@ -945,9 +993,9 @@ int tegra_io_rail_power_off(unsigned int id)
- 
- 	mutex_lock(&pmc->powergates_lock);
- 
--	err = tegra_io_rail_prepare(id, &request, &status, &bit);
-+	err = tegra_io_pad_dpd_prepare(pad_id, &request, &status, &bit);
- 	if (err) {
--		pr_info("tegra_io_rail_prepare() failed: %d\n", err);
-+		pr_info("tegra_io_pad_dpd_prepare() failed: %d\n", err);
- 		goto error;
- 	}
- 
-@@ -959,18 +1007,77 @@ int tegra_io_rail_power_off(unsigned int id)
- 	value |= IO_DPD_REQ_CODE_ON;
- 	tegra_pmc_writel(value, request);
- 
--	err = tegra_io_rail_poll(status, mask, mask, 250);
-+	err = tegra_io_pad_dpd_poll(status, mask, mask, 250);
- 	if (err)
- 		goto error;
- 
--	tegra_io_rail_unprepare();
-+	tegra_io_pad_dpd_unprepare();
- 
- error:
- 	mutex_unlock(&pmc->powergates_lock);
- 
- 	return err;
- }
--EXPORT_SYMBOL(tegra_io_rail_power_off);
-+EXPORT_SYMBOL(tegra_io_pads_power_disable);
-+
-+int tegra_io_pads_power_is_enabled(int io_pad_id)
-+{
-+	unsigned long status_reg;
-+	u32 status;
-+	int dpd_bit;
-+
-+	dpd_bit = tegra_io_pads_to_dpd_bit(pmc->soc, io_pad_id);
-+	if (dpd_bit < 0)
-+		return dpd_bit;
-+
-+	status_reg = (dpd_bit < 32) ? IO_DPD_STATUS : IO_DPD2_STATUS;
-+	status = tegra_pmc_readl(status_reg);
-+
-+	return !!(status & BIT(dpd_bit % 32));
-+}
-+EXPORT_SYMBOL(tegra_io_pads_power_is_enabled);
-+
-+int tegra_io_pads_configure_voltage(int io_pad_id, int io_volt_uv)
-+{
-+	int pwr_bit;
-+	u32 pwr_mask;
-+	u32 bval;
-+
-+	if ((io_volt_uv != 3300000) && (io_volt_uv != 1800000))
-+		return -EINVAL;
-+
-+	pwr_bit = tegra_io_pads_to_power_bit(pmc->soc, io_pad_id);
-+	if (pwr_bit < 0)
-+		return pwr_bit;
-+
-+	pwr_mask = BIT(pwr_bit);
-+	bval = (io_volt_uv == 3300000) ? pwr_mask : 0;
-+
-+	mutex_lock(&pmc->powergates_lock);
-+	tegra_pmc_read_modify_write(PMC_PWR_DET, pwr_mask, pwr_mask);
-+	tegra_pmc_read_modify_write(PMC_PWR_DET_VAL, pwr_mask, bval);
-+	mutex_unlock(&pmc->powergates_lock);
-+
-+	usleep_range(100, 250);
-+
-+	return 0;
-+}
-+EXPORT_SYMBOL(tegra_io_pads_configure_voltage);
-+
-+int tegra_io_pads_get_configured_voltage(int io_pad_id)
-+{
-+	int pwr_bit;
-+	u32 pwr_det_val;
-+
-+	pwr_bit = tegra_io_pads_to_power_bit(pmc->soc, io_pad_id);
-+	if (pwr_bit < 0)
-+		return pwr_bit;
-+
-+	pwr_det_val = tegra_pmc_readl(PMC_PWR_DET_VAL);
-+
-+	return (pwr_det_val & BIT(pwr_bit)) ? 3300000 : 1800000;
-+}
-+EXPORT_SYMBOL(tegra_io_pads_get_configured_voltage);
- 
- #ifdef CONFIG_PM_SLEEP
- enum tegra_suspend_mode tegra_pmc_get_suspend_mode(void)
-@@ -1397,11 +1504,53 @@ static const u8 tegra124_cpu_powergates[] = {
- 	TEGRA_POWERGATE_CPU3,
- };
- 
-+#define TEGRA_IO_PADS_CONTROL(_pad, _dpd, _pwr)		\
-+{							\
-+	.pad_id = (TEGRA_IO_PAD_##_pad),		\
-+	.dpd_bit_pos = (_dpd),				\
-+	.pwr_bit_pos = (_pwr),				\
-+}
-+
-+struct tegra_io_pads_control tegra124_io_pads_control[] = {
-+	TEGRA_IO_PADS_CONTROL(CSIA, 0, -1),
-+	TEGRA_IO_PADS_CONTROL(CSIB, 1, -1),
-+	TEGRA_IO_PADS_CONTROL(DSI, 2, -1),
-+	TEGRA_IO_PADS_CONTROL(MIPI_BIAS, 3, -1),
-+	TEGRA_IO_PADS_CONTROL(PEX_BIAS, 4, -1),
-+	TEGRA_IO_PADS_CONTROL(PEX_CLK1, 5, -1),
-+	TEGRA_IO_PADS_CONTROL(PEX_CLK2, 6, -1),
-+	TEGRA_IO_PADS_CONTROL(USB0, 9, -1),
-+	TEGRA_IO_PADS_CONTROL(USB1, 10, -1),
-+	TEGRA_IO_PADS_CONTROL(USB2, 11, -1),
-+	TEGRA_IO_PADS_CONTROL(USB_BIAS, 12, -1),
-+	TEGRA_IO_PADS_CONTROL(NAND, 13, -1),
-+	TEGRA_IO_PADS_CONTROL(UART, 14, -1),
-+	TEGRA_IO_PADS_CONTROL(BB, 15, -1),
-+	TEGRA_IO_PADS_CONTROL(AUDIO, 17, -1),
-+	TEGRA_IO_PADS_CONTROL(HSIC, 19, -1),
-+	TEGRA_IO_PADS_CONTROL(COMP, 22, -1),
-+	TEGRA_IO_PADS_CONTROL(HDMI, 28, -1),
-+	TEGRA_IO_PADS_CONTROL(PEX_CNTRL, 32, -1),
-+	TEGRA_IO_PADS_CONTROL(SDMMC1, 33, -1),
-+	TEGRA_IO_PADS_CONTROL(SDMMC3, 34, -1),
-+	TEGRA_IO_PADS_CONTROL(SDMMC4, 35, -1),
-+	TEGRA_IO_PADS_CONTROL(CAM, 36, -1),
-+	TEGRA_IO_PADS_CONTROL(HV, 38, -1),
-+	TEGRA_IO_PADS_CONTROL(DSIB, 39, -1),
-+	TEGRA_IO_PADS_CONTROL(DSIC, 40, -1),
-+	TEGRA_IO_PADS_CONTROL(DSID, 41, -1),
-+	TEGRA_IO_PADS_CONTROL(CSIE, 44, -1),
-+	TEGRA_IO_PADS_CONTROL(LVDS, 57, -1),
-+	TEGRA_IO_PADS_CONTROL(SYS_DDC, 58, -1),
-+};
-+
- static const struct tegra_pmc_soc tegra124_pmc_soc = {
- 	.num_powergates = ARRAY_SIZE(tegra124_powergates),
- 	.powergates = tegra124_powergates,
- 	.num_cpu_powergates = ARRAY_SIZE(tegra124_cpu_powergates),
- 	.cpu_powergates = tegra124_cpu_powergates,
-+	.io_pads_control = tegra124_io_pads_control,
-+	.num_io_pads = ARRAY_SIZE(tegra124_io_pads_control),
- 	.has_tsense_reset = true,
- 	.has_gpu_clamps = true,
- };
-@@ -1440,11 +1589,52 @@ static const u8 tegra210_cpu_powergates[] = {
- 	TEGRA_POWERGATE_CPU3,
- };
- 
-+struct tegra_io_pads_control tegra210_io_pads_control[] = {
-+	TEGRA_IO_PADS_CONTROL(CSIA, 0, -1),
-+	TEGRA_IO_PADS_CONTROL(CSIB, 1, -1),
-+	TEGRA_IO_PADS_CONTROL(DSI, 2, -1),
-+	TEGRA_IO_PADS_CONTROL(MIPI_BIAS, 3, -1),
-+	TEGRA_IO_PADS_CONTROL(PEX_BIAS, 4, -1),
-+	TEGRA_IO_PADS_CONTROL(PEX_CLK1, 5, -1),
-+	TEGRA_IO_PADS_CONTROL(PEX_CLK2, 6, -1),
-+	TEGRA_IO_PADS_CONTROL(USB0, 9, -1),
-+	TEGRA_IO_PADS_CONTROL(USB1, 10, -1),
-+	TEGRA_IO_PADS_CONTROL(USB2, 11, -1),
-+	TEGRA_IO_PADS_CONTROL(USB_BIAS, 12, -1),
-+	TEGRA_IO_PADS_CONTROL(UART, 14, -1),
-+	TEGRA_IO_PADS_CONTROL(AUDIO, 17, -1),
-+	TEGRA_IO_PADS_CONTROL(USB3, 18, -1),
-+	TEGRA_IO_PADS_CONTROL(HSIC, 19, -1),
-+	TEGRA_IO_PADS_CONTROL(DBG, 25, -1),
-+	TEGRA_IO_PADS_CONTROL(DEBUG_NONAO, 26, -1),
-+	TEGRA_IO_PADS_CONTROL(GPIO, 27, 21),
-+	TEGRA_IO_PADS_CONTROL(HDMI, 28, -1),
-+	TEGRA_IO_PADS_CONTROL(SDMMC1, 33, 12),
-+	TEGRA_IO_PADS_CONTROL(SDMMC3, 34, 13),
-+	TEGRA_IO_PADS_CONTROL(EMMC, 35, -1),
-+	TEGRA_IO_PADS_CONTROL(CAM, 36, -1),
-+	TEGRA_IO_PADS_CONTROL(EMMC2, 37, -1),
-+	TEGRA_IO_PADS_CONTROL(DSIB, 39, -1),
-+	TEGRA_IO_PADS_CONTROL(DSIC, 40, -1),
-+	TEGRA_IO_PADS_CONTROL(DSID, 41, -1),
-+	TEGRA_IO_PADS_CONTROL(CSIC, 42, -1),
-+	TEGRA_IO_PADS_CONTROL(CSID, 43, -1),
-+	TEGRA_IO_PADS_CONTROL(CSIE, 44, -1),
-+	TEGRA_IO_PADS_CONTROL(CSIF, 45, -1),
-+	TEGRA_IO_PADS_CONTROL(SPI, 46, -1),
-+	TEGRA_IO_PADS_CONTROL(SPI_HV, 47, 23),
-+	TEGRA_IO_PADS_CONTROL(DMIC, 50, -1),
-+	TEGRA_IO_PADS_CONTROL(DP, 51, -1),
-+	TEGRA_IO_PADS_CONTROL(LVDS, 57, -1),
-+	TEGRA_IO_PADS_CONTROL(AUDIO_HV, 61, 18),
-+};
- static const struct tegra_pmc_soc tegra210_pmc_soc = {
- 	.num_powergates = ARRAY_SIZE(tegra210_powergates),
- 	.powergates = tegra210_powergates,
- 	.num_cpu_powergates = ARRAY_SIZE(tegra210_cpu_powergates),
- 	.cpu_powergates = tegra210_cpu_powergates,
-+	.io_pads_control = tegra210_io_pads_control,
-+	.num_io_pads = ARRAY_SIZE(tegra210_io_pads_control),
- 	.has_tsense_reset = true,
- 	.has_gpu_clamps = true,
- };
-diff --git a/include/soc/tegra/pmc.h b/include/soc/tegra/pmc.h
-index e9e5347..763bd6d 100644
---- a/include/soc/tegra/pmc.h
-+++ b/include/soc/tegra/pmc.h
-@@ -76,37 +76,57 @@ int tegra_pmc_cpu_remove_clamping(unsigned int cpuid);
- 
- #define TEGRA_POWERGATE_3D0	TEGRA_POWERGATE_3D
- 
--#define TEGRA_IO_RAIL_CSIA	0
--#define TEGRA_IO_RAIL_CSIB	1
--#define TEGRA_IO_RAIL_DSI	2
--#define TEGRA_IO_RAIL_MIPI_BIAS	3
--#define TEGRA_IO_RAIL_PEX_BIAS	4
--#define TEGRA_IO_RAIL_PEX_CLK1	5
--#define TEGRA_IO_RAIL_PEX_CLK2	6
--#define TEGRA_IO_RAIL_USB0	9
--#define TEGRA_IO_RAIL_USB1	10
--#define TEGRA_IO_RAIL_USB2	11
--#define TEGRA_IO_RAIL_USB_BIAS	12
--#define TEGRA_IO_RAIL_NAND	13
--#define TEGRA_IO_RAIL_UART	14
--#define TEGRA_IO_RAIL_BB	15
--#define TEGRA_IO_RAIL_AUDIO	17
--#define TEGRA_IO_RAIL_HSIC	19
--#define TEGRA_IO_RAIL_COMP	22
--#define TEGRA_IO_RAIL_HDMI	28
--#define TEGRA_IO_RAIL_PEX_CNTRL	32
--#define TEGRA_IO_RAIL_SDMMC1	33
--#define TEGRA_IO_RAIL_SDMMC3	34
--#define TEGRA_IO_RAIL_SDMMC4	35
--#define TEGRA_IO_RAIL_CAM	36
--#define TEGRA_IO_RAIL_RES	37
--#define TEGRA_IO_RAIL_HV	38
--#define TEGRA_IO_RAIL_DSIB	39
--#define TEGRA_IO_RAIL_DSIC	40
--#define TEGRA_IO_RAIL_DSID	41
--#define TEGRA_IO_RAIL_CSIE	44
--#define TEGRA_IO_RAIL_LVDS	57
--#define TEGRA_IO_RAIL_SYS_DDC	58
-+/* TEGRA_IO_PAD: The IO pins of Tegra SoCs are grouped for common control
-+ * of IO interface like setting voltage signal levels, power state of the
-+ * interface. The group is generally referred as io-pads. The power and
-+ * voltage control of IO pins are available at io-pads level.
-+ * The following macros make the super list all IO pads found on Tegra SoC
-+ * generations.
-+ */
-+#define TEGRA_IO_PAD_AUDIO		0
-+#define TEGRA_IO_PAD_AUDIO_HV		1
-+#define TEGRA_IO_PAD_BB			2
-+#define TEGRA_IO_PAD_CAM		3
-+#define TEGRA_IO_PAD_COMP		4
-+#define TEGRA_IO_PAD_CSIA		5
-+#define TEGRA_IO_PAD_CSIB		6
-+#define TEGRA_IO_PAD_CSIC		7
-+#define TEGRA_IO_PAD_CSID		8
-+#define TEGRA_IO_PAD_CSIE		9
-+#define TEGRA_IO_PAD_CSIF		10
-+#define TEGRA_IO_PAD_DBG		11
-+#define TEGRA_IO_PAD_DEBUG_NONAO	12
-+#define TEGRA_IO_PAD_DMIC		13
-+#define TEGRA_IO_PAD_DP			14
-+#define TEGRA_IO_PAD_DSI		15
-+#define TEGRA_IO_PAD_DSIB		16
-+#define TEGRA_IO_PAD_DSIC		17
-+#define TEGRA_IO_PAD_DSID		18
-+#define TEGRA_IO_PAD_EMMC		19
-+#define TEGRA_IO_PAD_EMMC2		20
-+#define TEGRA_IO_PAD_GPIO		21
-+#define TEGRA_IO_PAD_HDMI		22
-+#define TEGRA_IO_PAD_HSIC		23
-+#define TEGRA_IO_PAD_HV			24
-+#define TEGRA_IO_PAD_LVDS		25
-+#define TEGRA_IO_PAD_MIPI_BIAS		26
-+#define TEGRA_IO_PAD_NAND		27
-+#define TEGRA_IO_PAD_PEX_BIAS		28
-+#define TEGRA_IO_PAD_PEX_CLK1		29
-+#define TEGRA_IO_PAD_PEX_CLK2		30
-+#define TEGRA_IO_PAD_PEX_CNTRL		31
-+#define TEGRA_IO_PAD_SDMMC1		32
-+#define TEGRA_IO_PAD_SDMMC3		33
-+#define TEGRA_IO_PAD_SDMMC4		34
-+#define TEGRA_IO_PAD_SPI		35
-+#define TEGRA_IO_PAD_SPI_HV		36
-+#define TEGRA_IO_PAD_SYS_DDC		37
-+#define TEGRA_IO_PAD_UART		38
-+#define TEGRA_IO_PAD_USB0		39
-+#define TEGRA_IO_PAD_USB1		40
-+#define TEGRA_IO_PAD_USB2		41
-+#define TEGRA_IO_PAD_USB3		42
-+#define TEGRA_IO_PAD_USB_BIAS		43
- 
- #ifdef CONFIG_ARCH_TEGRA
- int tegra_powergate_is_powered(unsigned int id);
-@@ -118,8 +138,15 @@ int tegra_powergate_remove_clamping(unsigned int id);
- int tegra_powergate_sequence_power_up(unsigned int id, struct clk *clk,
- 				      struct reset_control *rst);
- 
--int tegra_io_rail_power_on(unsigned int id);
--int tegra_io_rail_power_off(unsigned int id);
-+/* Power enable/disable of the IO pads */
-+int tegra_io_pads_power_enable(int io_pad_id);
-+int tegra_io_pads_power_disable(int io_pad_id);
-+int tegra_io_pads_power_is_enabled(int io_pad_id);
-+
-+/* Set/Get of IO pad voltage */
-+int tegra_io_pads_configure_voltage(int io_pad_id, int io_volt_uv);
-+int tegra_io_pads_get_configured_voltage(int io_pad_id);
-+
- #else
- static inline int tegra_powergate_is_powered(unsigned int id)
- {
-@@ -148,14 +175,29 @@ static inline int tegra_powergate_sequence_power_up(unsigned int id,
- 	return -ENOSYS;
- }
- 
--static inline int tegra_io_rail_power_on(unsigned int id)
-+static inline int tegra_io_pads_power_enable(int io_pad_id)
- {
--	return -ENOSYS;
-+	return -ENOTSUPP;
- }
- 
--static inline int tegra_io_rail_power_off(unsigned int id)
-+static inline int tegra_io_pads_power_disable(int io_pad_id)
- {
--	return -ENOSYS;
-+	return -ENOTSUPP;
-+}
-+
-+static inline int tegra_io_pads_power_is_enabled(int io_pad_id)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+static inline int tegra_io_pads_configure_voltage(int io_pad_id, int io_volt_uv)
-+{
-+	return -ENOTSUPP;
-+}
-+
-+static inline int tegra_io_pads_get_configured_voltage(int io_pad_id)
-+{
-+	return -ENOTSUPP;
- }
- #endif /* CONFIG_ARCH_TEGRA */
- 
--- 
-2.1.4
+Drop the comma in the unit address.
+
+> +		compatible = "nvidia,tegra132-soctherm";
+> +		reg = <0x0 0x700e2000 0x0 0x600  /* SOC_THERM reg_base */
+> +			0x0 0x70040000 0x0 0x200>; /* CCROC reg_base */;
+> +		reg-names = "soctherm-reg", "ccroc-reg";
+> +
+> +		nvidia,throttle-cfgs {
+> +			/*
+> +			 * When the "heavy" cooling device triggered,
+> +			 * the HW will skip cpu clock's pulse in HIGH level
+> +			 */
+> +			throttle_heavy: nvidia,heavy {
+> +				nvidia,priority = <100>;
+> +				nvidia,cpu-throt-level = <TEGRA_SOCTHERM_THROT_LEVEL_HIGH>;
+> +
+> +				#cooling-cells = <1>;
+> +			};
+> +
+> +			/*
+> +			 * When the "light" cooling device triggered,
+> +			 * the HW will skip cpu clock's pulse in MED level
+> +			 */
+> +			throttle_light: nvidia,light {
+> +				nvidia,priority = <80>;
+> +				nvidia,cpu-throt-level = <TEGRA_SOCTHERM_THROT_LEVEL_MED>;
+> +
+> +				#cooling-cells = <1>;
+> +			};
+> +
+> +			/*
+> +			 * If these two devices are triggered in same time, the HW throttle
+> +			 * arbiter will select the highest priority as the final throttle
+> +			 * settings to skip cpu pulse.
+> +			 */
+> +
+> +		};
+>  	};
+>  
+>  Example: referring to thermal sensors :
+> @@ -62,6 +165,19 @@ Example: referring to thermal sensors :
+>  					hysteresis = <1000>;
+>  					type = "critical";
+>  				};
+> +
+> +				cpu_throttle_trip: throttle-trip {
+> +					temperature = <100000>;
+> +					hysteresis = <1000>;
+> +					type = "hot";
+> +				};
+> +			};
+> +
+> +			cooling-maps {
+> +				map0 {
+> +					trip = <&cpu_throttle_trip>;
+> +					cooling-device = <&throttle_heavy 1 1>;
+> +				};
+>  			};
+>                  };
+>  	};
+> -- 
+> 1.9.1
+> 
