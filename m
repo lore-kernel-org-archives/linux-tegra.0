@@ -1,114 +1,66 @@
-From: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH V3 02/17] irqchip/gic: WARN if setting the interrupt type
- for a PPI fails
-Date: Thu, 5 May 2016 13:06:09 +0100
-Message-ID: <572B3731.80602@arm.com>
-References: <1462379130-11742-1-git-send-email-jonathanh@nvidia.com>
- <1462379130-11742-3-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH V3 2/4] soc/tegra: pmc: Correct type of variable for
+ tegra_pmc_readl()
+Date: Thu, 5 May 2016 13:43:37 +0100
+Message-ID: <572B3FF9.8080202@nvidia.com>
+References: <1462361973-27990-1-git-send-email-ldewangan@nvidia.com>
+ <1462361973-27990-3-git-send-email-ldewangan@nvidia.com>
+ <572B173D.6030108@nvidia.com> <572B17DA.901@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1462379130-11742-3-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <572B17DA.901@nvidia.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Laxman Dewangan <ldewangan@nvidia.com>, thierry.reding@gmail.com, swarren@wwwdotorg.org, airlied@linux.ie
+Cc: linux-tegra@vger.kernel.org, gnurou@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Jon,
-
-On 04/05/16 17:25, Jon Hunter wrote:
-> Setting the interrupt type for private peripheral interrupts (PPIs) may
-> not be supported by a given GIC because it is IMPLEMENTATION DEFINED
-> whether this is allowed. There is no way to know if setting the type is
-> supported for a given GIC and so the value written is read back to
-> verify it matches the desired configuration. If it does not match then
-> an error is return.
-> 
-> There are cases where the interrupt configuration read from firmware
-> (such as a device-tree blob), has been incorrect and hence
-> gic_configure_irq() has returned an error. This error has gone
-> undetected because the error code returned was ignored but the interrupt
-> still worked fine because the configuration for the interrupt could not
-> be overwritten.
-> 
-> Given that this has done undetected and that failing to set the
-> configuration for a PPI may not be a catastrophic, don't return an error
-> but WARN if we fail to configure a PPI. This will allows us to fix up
-> any places in the kernel where we should be checking the return status
-> and maintain backward compatibility with firmware images that may have
-> incorrect PPI configurations.
-> 
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Acked-by: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
-> ---
->  drivers/irqchip/irq-gic-common.c | 11 +++++++----
->  1 file changed, 7 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-gic-common.c b/drivers/irqchip/irq-gic-common.c
-> index ffff5a45f1e3..9fa92a17225c 100644
-> --- a/drivers/irqchip/irq-gic-common.c
-> +++ b/drivers/irqchip/irq-gic-common.c
-> @@ -56,12 +56,15 @@ int gic_configure_irq(unsigned int irq, unsigned int type,
->  
->  	/*
->  	 * Write back the new configuration, and possibly re-enable
-> -	 * the interrupt. If we fail to write a new configuration,
-> -	 * return an error.
-> +	 * the interrupt. WARN if we fail to write a new configuration
-> +	 * and return an error if we failed to write the configuration
-> +	 * for an SPI. If we fail to write the configuration for a PPI
-> +	 * this is most likely because the GIC does not allow us to set
-> +	 * the configuration and so it is not a catastrophic failure.
->  	 */
->  	writel_relaxed(val, base + GIC_DIST_CONFIG + confoff);
-> -	if (readl_relaxed(base + GIC_DIST_CONFIG + confoff) != val)
-> -		ret = -EINVAL;
-> +	if (WARN_ON(readl_relaxed(base + GIC_DIST_CONFIG + confoff) != val))
-> +		ret = irq < 32 ? 0 : -EINVAL;
->  
->  	if (sync_access)
->  		sync_access();
-> 
-
-I'm going to slightly backpedal on that one:
-
-When running in non-secure mode, you can reconfigure secure interrupts
-(for obvious reasons). But you don't know which mode you're running in
-either. A typical example is the arch timer, which requests both secure
-and non-secure interrupts, because we cannot know which side of the CPU
-we're running on. In the non-secure case, we end-up with a splat that
-is rather undeserved.
-
-So I'm tempted to tone down the splat in the PPI case like this:
-
-diff --git a/drivers/irqchip/irq-gic-common.c b/drivers/irqchip/irq-gic-common.c
-index 083c303..1605e42 100644
---- a/drivers/irqchip/irq-gic-common.c
-+++ b/drivers/irqchip/irq-gic-common.c
-@@ -63,8 +63,17 @@ int gic_configure_irq(unsigned int irq, unsigned int type,
- 	 * the configuration and so it is not a catastrophic failure.
- 	 */
- 	writel_relaxed(val, base + GIC_DIST_CONFIG + confoff);
--	if (WARN_ON(readl_relaxed(base + GIC_DIST_CONFIG + confoff) != val))
--		ret = irq < 32 ? 0 : -EINVAL;
-+	oldval = readl_relaxed(base + GIC_DIST_CONFIG + confoff);
-+	if (oldval != val) {
-+		if (irq < 32) {
-+			pr_warn("GIC: PPI%d is either secure or misconfigured\n",
-+				irq - 16);
-+			ret = 0;
-+		} else {
-+			WARN_ON(1);
-+			ret = -EINVAL;
-+		}
-+	}
- 
- 	if (sync_access)
- 		sync_access();
-
-Thoughts?
-
-	M.
--- 
-Jazz is not dead. It just smells funny...
+Ck9uIDA1LzA1LzE2IDEwOjUyLCBMYXhtYW4gRGV3YW5nYW4gd3JvdGU6Cj4gCj4gT24gVGh1cnNk
+YXkgMDUgTWF5IDIwMTYgMDM6MTkgUE0sIEpvbiBIdW50ZXIgd3JvdGU6Cj4+IE9uIDA0LzA1LzE2
+IDEyOjM5LCBMYXhtYW4gRGV3YW5nYW4gd3JvdGU6Cj4+PiBUaGUgZnVuY3Rpb24gdGVncmFfcG1j
+X3JlYWRsKCkgcmV0dXJucyB0aGUgdTMyIHR5cGUgZGF0YSBhbmQgaGVuY2UKPj4+IGNoYW5nZSB0
+aGUgZGF0YSB0eXBlIG9mIHZhcmlhYmxlIHdoZXJlIHRoaXMgZGF0YSBpcyBzdG9yZWQgdG8gdTMy
+Cj4+PiB0eXBlLgo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IExheG1hbiBEZXdhbmdhbiA8bGRld2Fu
+Z2FuQG52aWRpYS5jb20+Cj4+Pgo+Pj4gLS0tCj4+PiBDaGFuZ2VzIGZyb20gVjE6Cj4+PiAtVGhp
+cyBpcyBuZXcgaW4gc2VyaWVzIGFzIHBlciBkaXNjdXNzaW9uIG9uIFYxIHNlcmllcyB0byB1c2Ug
+dTMyIGZvcgo+Pj4gdGVncmFfcG1jX3JlYWRsLgo+Pj4KPj4+IENoYW5nZXMgZnJvbSBWMjoKPj4+
+IC0gTWFrZSB1bnNpZ25lZCBsb25nIHRvIHUzMiBmb3Igc29tZSBtaXNzZWQgdmFyaWFibGUgZnJv
+bSBWMS4KPj4+IC0tLQo+Pj4gICBkcml2ZXJzL3NvYy90ZWdyYS9wbWMuYyB8IDI0ICsrKysrKysr
+KysrKysrLS0tLS0tLS0tLQo+Pj4gICAxIGZpbGUgY2hhbmdlZCwgMTQgaW5zZXJ0aW9ucygrKSwg
+MTAgZGVsZXRpb25zKC0pCj4+Pgo+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc29jL3RlZ3JhL3Bt
+Yy5jIGIvZHJpdmVycy9zb2MvdGVncmEvcG1jLmMKPj4+IGluZGV4IDJjM2YxZjkuLmVmZjk0MjUg
+MTAwNjQ0Cj4+PiAtLS0gYS9kcml2ZXJzL3NvYy90ZWdyYS9wbWMuYwo+Pj4gKysrIGIvZHJpdmVy
+cy9zb2MvdGVncmEvcG1jLmMKPj4+IEBAIC04NDQsNyArODQ0LDggQEAgc3RhdGljIHZvaWQgdGVn
+cmFfcG93ZXJnYXRlX2luaXQoc3RydWN0IHRlZ3JhX3BtYwo+Pj4gKnBtYykKPj4+ICAgc3RhdGlj
+IGludCB0ZWdyYV9pb19yYWlsX3ByZXBhcmUodW5zaWduZWQgaW50IGlkLCB1bnNpZ25lZCBsb25n
+Cj4+PiAqcmVxdWVzdCwKPj4+ICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBsb25nICpzdGF0
+dXMsIHVuc2lnbmVkIGludCAqYml0KQo+Pj4gICB7Cj4+PiAtICAgIHVuc2lnbmVkIGxvbmcgcmF0
+ZSwgdmFsdWU7Cj4+PiArICAgIHVuc2lnbmVkIGxvbmcgcmF0ZTsKPj4+ICsgICAgdTMyIHZhbHVl
+Owo+Pj4gICAgICAgICAqYml0ID0gaWQgJSAzMjsKPj4+ICAgQEAgLTg2OCwxNyArODY5LDE4IEBA
+IHN0YXRpYyBpbnQgdGVncmFfaW9fcmFpbF9wcmVwYXJlKHVuc2lnbmVkIGludAo+Pj4gaWQsIHVu
+c2lnbmVkIGxvbmcgKnJlcXVlc3QsCj4+PiAgICAgICB0ZWdyYV9wbWNfd3JpdGVsKERQRF9TQU1Q
+TEVfRU5BQkxFLCBEUERfU0FNUExFKTsKPj4+ICAgICAgICAgLyogbXVzdCBiZSBhdCBsZWFzdCAy
+MDAgbnMsIGluIEFQQiAoUENMSykgY2xvY2sgY3ljbGVzICovCj4+PiAtICAgIHZhbHVlID0gRElW
+X1JPVU5EX1VQKDEwMDAwMDAwMDAsIHJhdGUpOwo+Pj4gLSAgICB2YWx1ZSA9IERJVl9ST1VORF9V
+UCgyMDAsIHZhbHVlKTsKPj4+ICsgICAgcmF0ZSA9IERJVl9ST1VORF9VUCgxMDAwMDAwMDAwLCBy
+YXRlKTsKPj4+ICsgICAgcmF0ZSA9IERJVl9ST1VORF9VUCgyMDAsIHJhdGUpOwo+Pj4gKyAgICB2
+YWx1ZSA9ICh1MzIpcmF0ZTsKPj4gQWx0aG91Z2ggaXQgaXMgdW5saWtlbHksIEkgdGhpbmsgdGhh
+dCB3ZSBzaG91bGQgY2hlY2sgaXQgaXMgbGVzcwo+PiB0aGFuIFUzMl9NQVgsIHJldHVybiBhbiBl
+cnJvciBpZiBpdCBpcyBub3QuCj4gCj4gcmF0ZSA9IERJVl9ST1VOQ19VUCgyMDAsIHJhdGUpIG1l
+YW5zCj4gCj4gcmF0ZSA9ICgyMDAgKyByYXRlIC0xKS9yYXRlCj4gCj4gYW5kIGNhbiBub3QgYmUg
+bW9yZSB0aGFuIDIwMCBpbiBhbnkgY2FzZSAoaWYgcmF0ZSA9MSkuCj4gU28gbm8gbmVlZCBvZiB0
+aGUgZXJyb3IgY2hlY2suCgpPSywgeWVzIHlvdSBhcmUgcmlnaHQuIEluIHRoYXQgY2FzZSB0aGVy
+ZSBpcyBubyBuZWVkIHRvIGNhc3QgYW5kIHNvIEkKd291bGQgbGVhdmUgdGhpcyBjb2RlIGFzLWlz
+IGFuZCBub3QgY2hhbmdlIHRoZSB0eXBlLgoKSm9uCgoKCgpfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
+bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
