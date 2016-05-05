@@ -1,109 +1,56 @@
-From: Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v3 2/2] usb: host: ehci-tegra: Avoid getting the same
- reset twice
-Date: Thu, 5 May 2016 10:05:39 +0200
-Message-ID: <fdf3583d-636e-5619-5df6-17b6ae331ac9@redhat.com>
-References: <1462372800-30900-1-git-send-email-thierry.reding@gmail.com>
- <1462372800-30900-2-git-send-email-thierry.reding@gmail.com>
- <572A3008.4020602@wwwdotorg.org> <20160504202544.GB21480@mithrandir.ba.sec>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH V3 2/4] soc/tegra: pmc: Correct type of variable for
+ tegra_pmc_readl()
+Date: Thu, 5 May 2016 10:49:49 +0100
+Message-ID: <572B173D.6030108@nvidia.com>
+References: <1462361973-27990-1-git-send-email-ldewangan@nvidia.com>
+ <1462361973-27990-3-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160504202544.GB21480@mithrandir.ba.sec>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>
-Cc: Alan Stern <stern@rowland.harvard.edu>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1462361973-27990-3-git-send-email-ldewangan@nvidia.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Laxman Dewangan <ldewangan@nvidia.com>, thierry.reding@gmail.com, swarren@wwwdotorg.org, airlied@linux.ie
+Cc: linux-tegra@vger.kernel.org, gnurou@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
-
-On 04-05-16 22:25, Thierry Reding wrote:
-> On Wed, May 04, 2016 at 11:23:20AM -0600, Stephen Warren wrote:
->> On 05/04/2016 08:40 AM, Thierry Reding wrote:
->>> From: Thierry Reding <treding@nvidia.com>
->>>
->>> Starting with commit 0b52297f2288 ("reset: Add support for shared reset
->>> controls") there is a reference count for reset control assertions. The
->>> goal is to allow resets to be shared by multiple devices and an assert
->>> will take effect only when all instances have asserted the reset.
->>>
->>> In order to preserve backwards-compatibility, all reset controls become
->>> exclusive by default. This is to ensure that reset_control_assert() can
->>> immediately assert in hardware.
->>>
->>> However, this new behaviour triggers the following warning in the EHCI
->>> driver for Tegra:
->> ...
->>> The reason is that Tegra SoCs have three EHCI controllers, each with a
->>> separate reset line. However the first controller contains UTMI pads
->>> configuration registers that are shared with its siblings and that are
->>> reset as part of the first controller's reset. There is special code in
->>> the driver to assert and deassert this shared reset at probe time, and
->>> it does so irrespective of which controller is probed first to ensure
->>> that these shared registers are reset before any of the controllers are
->>> initialized. Unfortunately this means that if the first controller gets
->>> probed first, it will request its own reset line and will subsequently
->>> request the same reset line again (temporarily) to perform the reset.
->>> This used to work fine before the above-mentioned commit, but now
->>> triggers the new WARN.
->>>
->>> Work around this by making sure we reuse the controller's reset if the
->>> controller happens to be the first controller.
->>
->>> diff --git a/drivers/usb/host/ehci-tegra.c b/drivers/usb/host/ehci-tegra.c
->>
->>> @@ -81,15 +81,23 @@ static int tegra_reset_usb_controller(struct platform_device *pdev)
->>
->>> +	bool has_utmi_pad_registers = false;
->>>
->>>   	phy_np = of_parse_phandle(pdev->dev.of_node, "nvidia,phy", 0);
->>>   	if (!phy_np)
->>>   		return -ENOENT;
->>>
->>> +	if (of_property_read_bool(phy_np, "nvidia,has-utmi-pad-registers"))
->>> +		has_utmi_pad_registers = true;
->>
->> Isn't that just:
->>
->> has_utmi_pad_registers = of_property_read_bool(phy_np,
->>     "nvidia,has-utmi-pad-registers");
->>
->> ... and then you can remove " = false" from the declaration too?
->
-> Yes. This is really only for aesthetics. The direct assignment doesn't
-> fit within 80 columns, and wrapping it looks ugly whichever way you do
-> it.
->
->>>   	if (!usb1_reset_attempted) {
->>>   		struct reset_control *usb1_reset;
->>>
->>> -		usb1_reset = of_reset_control_get(phy_np, "utmi-pads");
->>> +		if (!has_utmi_pad_registers)
->>> +			usb1_reset = of_reset_control_get(phy_np, "utmi-pads");
->>> +		else
->>> +			usb1_reset = tegra->rst;
->> ...
->>>   		usb1_reset_attempted = true;
->>>   	}
->>
->> This is a pre-existing issue, but what happens if the probes for two USB
->> controllers run in parallel; there seems to be missing locking related to
->> testing/setting usb1_reset_attempted, which could cause multiple parallel
->> attempts to get the "utmi-pads" reset object, which would presumably cause
->> essentially the same issue this patch is solving in other cases?
->
-> Hah! Interestingly my initial attempt at fixing this was to introduce a
-> lock to serialize these, because I thought that was what was going on. I
-> don't think this function can ever run concurrently for different
-> devices because the driver core already serializes probes (unless a
-> driver specifically requests asynchronous probing, which this one
-> doesn't).
-
-Why not just use the new shared reset functionality ? It is easy to use,
-that way you can drop some of the special handling in the driver and
-you're code actually reflects the hardware (which IMHO has a shared reset).
-
-Regards,
-
-Hans
+Ck9uIDA0LzA1LzE2IDEyOjM5LCBMYXhtYW4gRGV3YW5nYW4gd3JvdGU6Cj4gVGhlIGZ1bmN0aW9u
+IHRlZ3JhX3BtY19yZWFkbCgpIHJldHVybnMgdGhlIHUzMiB0eXBlIGRhdGEgYW5kIGhlbmNlCj4g
+Y2hhbmdlIHRoZSBkYXRhIHR5cGUgb2YgdmFyaWFibGUgd2hlcmUgdGhpcyBkYXRhIGlzIHN0b3Jl
+ZCB0byB1MzIKPiB0eXBlLgo+IAo+IFNpZ25lZC1vZmYtYnk6IExheG1hbiBEZXdhbmdhbiA8bGRl
+d2FuZ2FuQG52aWRpYS5jb20+Cj4gCj4gLS0tCj4gQ2hhbmdlcyBmcm9tIFYxOgo+IC1UaGlzIGlz
+IG5ldyBpbiBzZXJpZXMgYXMgcGVyIGRpc2N1c3Npb24gb24gVjEgc2VyaWVzIHRvIHVzZSB1MzIg
+Zm9yCj4gdGVncmFfcG1jX3JlYWRsLgo+IAo+IENoYW5nZXMgZnJvbSBWMjoKPiAtIE1ha2UgdW5z
+aWduZWQgbG9uZyB0byB1MzIgZm9yIHNvbWUgbWlzc2VkIHZhcmlhYmxlIGZyb20gVjEuCj4gLS0t
+Cj4gIGRyaXZlcnMvc29jL3RlZ3JhL3BtYy5jIHwgMjQgKysrKysrKysrKysrKystLS0tLS0tLS0t
+Cj4gIDEgZmlsZSBjaGFuZ2VkLCAxNCBpbnNlcnRpb25zKCspLCAxMCBkZWxldGlvbnMoLSkKPiAK
+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zb2MvdGVncmEvcG1jLmMgYi9kcml2ZXJzL3NvYy90ZWdy
+YS9wbWMuYwo+IGluZGV4IDJjM2YxZjkuLmVmZjk0MjUgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9z
+b2MvdGVncmEvcG1jLmMKPiArKysgYi9kcml2ZXJzL3NvYy90ZWdyYS9wbWMuYwo+IEBAIC04NDQs
+NyArODQ0LDggQEAgc3RhdGljIHZvaWQgdGVncmFfcG93ZXJnYXRlX2luaXQoc3RydWN0IHRlZ3Jh
+X3BtYyAqcG1jKQo+ICBzdGF0aWMgaW50IHRlZ3JhX2lvX3JhaWxfcHJlcGFyZSh1bnNpZ25lZCBp
+bnQgaWQsIHVuc2lnbmVkIGxvbmcgKnJlcXVlc3QsCj4gIAkJCQkgdW5zaWduZWQgbG9uZyAqc3Rh
+dHVzLCB1bnNpZ25lZCBpbnQgKmJpdCkKPiAgewo+IC0JdW5zaWduZWQgbG9uZyByYXRlLCB2YWx1
+ZTsKPiArCXVuc2lnbmVkIGxvbmcgcmF0ZTsKPiArCXUzMiB2YWx1ZTsKPiAgCj4gIAkqYml0ID0g
+aWQgJSAzMjsKPiAgCj4gQEAgLTg2OCwxNyArODY5LDE4IEBAIHN0YXRpYyBpbnQgdGVncmFfaW9f
+cmFpbF9wcmVwYXJlKHVuc2lnbmVkIGludCBpZCwgdW5zaWduZWQgbG9uZyAqcmVxdWVzdCwKPiAg
+CXRlZ3JhX3BtY193cml0ZWwoRFBEX1NBTVBMRV9FTkFCTEUsIERQRF9TQU1QTEUpOwo+ICAKPiAg
+CS8qIG11c3QgYmUgYXQgbGVhc3QgMjAwIG5zLCBpbiBBUEIgKFBDTEspIGNsb2NrIGN5Y2xlcyAq
+Lwo+IC0JdmFsdWUgPSBESVZfUk9VTkRfVVAoMTAwMDAwMDAwMCwgcmF0ZSk7Cj4gLQl2YWx1ZSA9
+IERJVl9ST1VORF9VUCgyMDAsIHZhbHVlKTsKPiArCXJhdGUgPSBESVZfUk9VTkRfVVAoMTAwMDAw
+MDAwMCwgcmF0ZSk7Cj4gKwlyYXRlID0gRElWX1JPVU5EX1VQKDIwMCwgcmF0ZSk7Cj4gKwl2YWx1
+ZSA9ICh1MzIpcmF0ZTsKCkFsdGhvdWdoIGl0IGlzIHVubGlrZWx5LCBJIHRoaW5rIHRoYXQgd2Ug
+c2hvdWxkIGNoZWNrIGl0IGlzIGxlc3MKdGhhbiBVMzJfTUFYLCByZXR1cm4gYW4gZXJyb3IgaWYg
+aXQgaXMgbm90LgoKQ2hlZXJzCkpvbgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
+ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9kcmktZGV2ZWwK
