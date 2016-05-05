@@ -1,89 +1,731 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH V3 3/4] soc/tegra: pmc: Add support for IO pads power
- state and voltage
-Date: Thu, 5 May 2016 14:50:17 +0100
-Message-ID: <572B4F99.9000608@nvidia.com>
-References: <1462361973-27990-1-git-send-email-ldewangan@nvidia.com>
- <1462361973-27990-4-git-send-email-ldewangan@nvidia.com>
- <572B1CCA.5060502@nvidia.com> <572B2122.2080609@nvidia.com>
- <572B45C6.5090605@nvidia.com> <572B45FE.40801@nvidia.com>
- <572B4BAC.4070104@nvidia.com> <572B4C3F.1050700@nvidia.com>
+From: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH V3 16/17] irqchip/gic: Prepare for adding platform driver
+Date: Thu, 5 May 2016 15:13:08 +0100
+Message-ID: <572B54F4.2080103@arm.com>
+References: <1462379130-11742-1-git-send-email-jonathanh@nvidia.com>
+ <1462379130-11742-17-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <572B4C3F.1050700@nvidia.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Laxman Dewangan <ldewangan@nvidia.com>, thierry.reding@gmail.com, swarren@wwwdotorg.org, airlied@linux.ie
-Cc: linux-tegra@vger.kernel.org, gnurou@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1462379130-11742-17-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDA1LzA1LzE2IDE0OjM1LCBMYXhtYW4gRGV3YW5nYW4gd3JvdGU6Cj4gCj4gT24gVGh1cnNk
-YXkgMDUgTWF5IDIwMTYgMDc6MDMgUE0sIEpvbiBIdW50ZXIgd3JvdGU6Cj4+IE9uIDA1LzA1LzE2
-IDE0OjA5LCBMYXhtYW4gRGV3YW5nYW4gd3JvdGU6Cj4+PiBPbiBUaHVyc2RheSAwNSBNYXkgMjAx
-NiAwNjozOCBQTSwgSm9uIEh1bnRlciB3cm90ZToKPj4+PiBPbiAwNS8wNS8xNiAxMTozMiwgTGF4
-bWFuIERld2FuZ2FuIHdyb3RlOgo+Pj4+PiBPbiBUaHVyc2RheSAwNSBNYXkgMjAxNiAwMzo0MyBQ
-TSwgSm9uIEh1bnRlciB3cm90ZToKPj4+Pj4+IE9uIDA0LzA1LzE2IDEyOjM5LCBMYXhtYW4gRGV3
-YW5nYW4gd3JvdGU6Cj4+Pj4+PiArICAgICAgICByZXR1cm4gLUVJTlZBTDsKPj4+Pj4+ICsKPj4+
-Pj4+ICsgICAgZm9yIChpID0gMDsgaSA8IHNvYy0+bnVtX2lvX3BhZHM7ICsraSkgewo+Pj4+Pj4g
-KyAgICAgICAgaWYgKHNvYy0+aW9fcGFkc19jb250cm9sW2ldLnBhZF9pZCA9PSBwYWRfaWQpCj4+
-Pj4+PiArICAgICAgICAgICAgcmV0dXJuIHNvYy0+aW9fcGFkc19jb250cm9sW2ldLmRwZF9iaXRf
-cG9zOwo+Pj4+Pj4gKyAgICB9Cj4+Pj4+PiBEbyB3ZSBuZWVkIGEgbG9vcCBoZXJlPyBDYW4ndCB3
-ZSBqdXN0IG1ha2UgdGhlIHRhYmxlIGEgbG9vay11cCB0YWJsZQo+Pj4+Pj4gbm93Cj4+Pj4+PiB0
-aGF0IHRoZSBJRCBpcyBqdXN0IGFuIGluZGV4Pwo+Pj4+PiBXZSBkbyBub3Qgc3VwcG9ydCB0aGUg
-dGFibGUgZm9yIGFsbCBwYWRzIGFuZCBzbyBmb3IgdGhvc2Ugbm9uCj4+Pj4+IHN1cHBvcnRlZAo+
-Pj4+PiBwYWQgaW5kZXgsIGl0IHdpbGwgYmUgMCAoZGVmYXVsdCkgYW5kIDAgaXMgdGhlIHZhbGlk
-IGJpdCBwb3NpdGlvbgo+Pj4+PiBoZXJlLgo+Pj4+IFRoYXQgZG9lcyBtYWtlIGl0IHRyaWNreS4K
-Pj4+Pgo+Pj4+PiBJZiB5b3Ugd2FudCB0YWJsZSB0aGVuIHdlIHdpbGwgbmVlZCBvbmUgbW9yZSBp
-bmZvcm1hdGlvbiBmb3IgbWFraW5nCj4+Pj4+IHRoYXQKPj4+Pj4gaW5kZXggYXMgdmFsaWQvaW52
-YWxpZC4KPj4+Pj4gV2UgY2FuIHBhY2sgdGhlIHZhbGlkL2ludmFsaWQgd2l0aCBiaXQgcG9zaXRp
-b24gdG8gbWFrZSB1MzIuCj4+Pj4gQW5vdGhlciBvcHRpb24gd291bGQgYmUsIHRvIGhhdmUgYSBz
-aW5nbGUgdGFibGUgZm9yIGFsbCBkZXZpY2VzIGFuZCB0aGUKPj4+PiBtYWtlIHRoZSB2YWxpZCBm
-aWVsZCBhIHZhbGlkIG1hc2sgd2hpY2ggaGFzIGEgYml0IGZvciBlYWNoIFNvQy4KPj4+IFdlIGhh
-dmUgMiByZWdpc3RlciBmb3IgRFBEIGFuZCBoZW5jZSBtYWtpbmcgdGhlIG1hc2sgYml0IHdpbGwg
-bmVlZCB1NjQuCj4+Pgo+Pj4gSSB0aGluayB3ZSBjYW4gaGF2ZSBsaWtlIGJlbG93IHRvIGF2b2lk
-IGxvb3AuCj4+PiBzdHJ1Y3QgdGVncmFfaW9fcGFkc19jb250cm9sIHsKPj4+ICAgICAgICAgIGlu
-dCBkcGRfc3VwcG9ydGVkOwo+Pj4gICAgICAgICAgaW50IHZvbHRhZ2VfY2hhbmdlX3N1cHBvcnRl
-ZDsKPj4+ICAgICAgICAgIGludCBkcGRfY29uZmlnX2JpdDsKPj4+ICAgICAgICAgIGludCB2b2x0
-YWdlX2NvbmZpZ19iaXQ7Cj4+PiB9Owo+PiBXaHkgY2FuJ3Qgd2UgaGF2ZSAuLi4KPj4KPj4gc3Ry
-dWN0IHRlZ3JhX2lvX3BhZHNfY29udHJvbCB7Cj4+ICAgICAgICAgIGludCBkcGRfY29uZmlnX2Jp
-dDsKPj4gICAgICAgICAgaW50IHZvbHRhZ2VfY29uZmlnX2JpdDsKPj4gICAgIHVuc2lnbmVkIGlu
-dCBzb2NfbWFzazsKPj4gfTsKPj4KPj4gVGhlbiAudmFsaWQgc2hvdWxkIGluZGljYXRlIGlmIGl0
-IHRoZSBJTyBwYWRzIGdyb3VwIGlzIHZhbGlkIGZvciB0aGUKPj4gZGV2aWNlIC4uLgo+Pgo+PiAg
-ICAgLnNvY19tYXNrID0gVEVHUkFfSU9fUEFEU19UMTI0Cj4+IG9yCj4+ICAgICAuc29jX21hc2sg
-PSBURUdSQV9JT19QQURTX1QyMTAKPj4gb3IKPj4gICAgIC5zb2NfbWFzayA9IFRFR1JBX0lPX1BB
-RFNfVDEyNCB8IFRFR1JBX0lPX1BBRFNfVDIxMAo+Pgo+PiBZb3UgY2FuIHVzZSAtMSB0byBpbmRp
-Y2F0ZSB0aGUgZm9yIHRoZSBkcGQgYW5kIHZvbHRhZ2UgYml0IHRvIGluZGljYXRlCj4+IGlmIHRo
-ZXkgYXJlIHZhbGlkLiBJbiBvdGhlciB3b3JkcywgeW91IG5lZWQgdG8gY2hlY2sgdGhlIElPIHBh
-ZCBpcyB2YWxpZAo+PiBmb3IgdGhlIHNvYyBhbmQgdGhlbiB0aGUgYml0IGlzIHZhbGlkLgo+IAo+
-IFRoaXMgd2lsbCBhbHNvIHdvcmsuCj4gVGhlbiB0aGlzIGlzIG5vdCByZXF1aXJlZCBwYXJ0IG9m
-IHRoZSBzb2MgZGF0YS4KPiBPbmx5IHNvY19pb19tYXNrIG5lZWQgdG8gYmUgcGFydCBvZiBzb2Mg
-ZGF0YS4KPiBUaGlzIHRhYmxlIGNhbiBiZSBmaWxlIHN0YXRpYy4KCk9rLgoKCj4+Pj4KPj4+PiBJ
-IHRoaW5rIHRoYXQgdGhpcyBpcyBleGFjdGx5IHdoYXQgZW51bXMgYXJlIGZvciwgdGhlbiB5b3Ug
-ZG9uJ3QgaGF2ZSB0bwo+Pj4+IGV4cGxpY2l0bHkgZGVmaW5lIGVhY2ggbnVtYmVyLgo+Pj4+Cj4+
-PiBXZSBoYXZlIGRlZmluZXMgaW4gdGhlIGR0IGJpbmRpbmcgaGVhZGVyLgo+PiBOb3RoaW5nIHRv
-IHN0b3AgdXMgaW5jbHVkaW5nIHRoZSBkdCBiaW5kaW5nIGhlYWRlciBpbiB0aGUgcG1jLmMuIFdl
-IGRvCj4+IHRoaXMgZm9yIHRlZ3JhIGNsa3MuCj4gVGhlIGR0IGJpbmRpbmcgaGVhZGVyIGlzIG5v
-dCB0aGVyZSBhbmQgbmVlZCB0byBhZGQuCj4gUGFydCBvZiB0aGlzIHBhdGNoIG9yIGRpZmZlcmVu
-dCBwYXRjaD8KPiAKPiBBbHNvIHdlIGNhbiBub3QgaGF2ZSBlbnVtcyBpbiBiaW5kaW5nIGhlYWRl
-ci4gT25seSBtYWNyb3MvZGVmaW5lcy4KPiAKPiBXZSBkbyBub3QgaGF2ZSB0aGUgZHQgYmluZGlu
-ZyBkb2MgeWV0IGFzIGl0IHdpbGwgYmUgaW4gZnV0dXJlIHBhdGNoLgoKT0suIEZvciBub3cgcHV0
-IGl0IGluIHRoZSBwbWMuaCBhbmQgd2UgY2FuIGFsd2F5cyBtb3ZlIHRvIGR0LWJpbmRpbmdzIGxh
-dGVyLgoKPj4+IEJUVywgYXJlIHlvdSBmaW5lIHRvIGtlZXAgVEVHUkFfSU9fUEFEXyogYXMgZGVm
-aW5lcyBpbnN0ZWFkIG9mIGVudW1zLgo+Pj4gVGhpcyBpcyB3aGF0IFBPV0VSR0FURSBhcmUgdGhl
-cmUuCj4+IFVwIHRvIHlvdSwgSSBwcmVmZXIgYW4gZW51bS4gVGhlIFBPV0VSR0FURSBJRHMgZGVm
-aW5lcyBtYXRjaCB0aGUgYml0IGluCj4+IHRoZSByZWdpc3RlciBzbyBpdCBtYWtlcyBzZW5zZSB0
-aGVzZSBhcmUgZXhwbGljaXQuCj4+Cj4gT0ssIGxldCBtZSBtYWtlIGVudW1zLiBMYXN0IG1lbWJl
-ciBhcyBNQVggc28gdGhhdCBJIGNhbiBpbml0aWFsaXplIHRoZQo+IHRlZ3JhX2lvX3BhZF9pbmZv
-W1RFR1JBX0lPX1BBRF9NQVhdID0KCk9LLgoKQ2hlZXJzCkpvbgoKX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
-ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
-L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+On 04/05/16 17:25, Jon Hunter wrote:
+> To support GICs that require runtime-pm, it is necessary to add a
+> platform driver, so that the probing of the chip can be deferred if
+> resources, such as a power-domain, is not yet available.
+> 
+> To prepare for adding a platform driver:
+>  1. Drop the __init section from the gic_dist_config(), gic_dist_init()
+>     and gic_pm_init() so these can be re-used by the platform driver.
+>  2. Move the definitions for gic_base and gic_chip_data structures to a
+>     local header files along with prototypes for functions required by
+>     the platform driver.
+> 
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/irqchip/irq-gic-common.c |  4 +--
+>  drivers/irqchip/irq-gic.c        | 57 +++++++++++-------------------------
+>  drivers/irqchip/irq-gic.h        | 63 ++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 82 insertions(+), 42 deletions(-)
+>  create mode 100644 drivers/irqchip/irq-gic.h
+> 
+> diff --git a/drivers/irqchip/irq-gic-common.c b/drivers/irqchip/irq-gic-common.c
+> index 9fa92a17225c..083c30390aa3 100644
+> --- a/drivers/irqchip/irq-gic-common.c
+> +++ b/drivers/irqchip/irq-gic-common.c
+> @@ -72,8 +72,8 @@ int gic_configure_irq(unsigned int irq, unsigned int type,
+>  	return ret;
+>  }
+>  
+> -void __init gic_dist_config(void __iomem *base, int gic_irqs,
+> -			    void (*sync_access)(void))
+> +void gic_dist_config(void __iomem *base, int gic_irqs,
+> +		     void (*sync_access)(void))
+>  {
+>  	unsigned int i;
+>  
+> diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+> index 15e8a12813cc..bf9a256a1269 100644
+> --- a/drivers/irqchip/irq-gic.c
+> +++ b/drivers/irqchip/irq-gic.c
+> @@ -48,6 +48,7 @@
+>  #include <asm/smp_plat.h>
+>  #include <asm/virt.h>
+>  
+> +#include "irq-gic.h"
+>  #include "irq-gic-common.h"
+>  
+>  #ifdef CONFIG_ARM64
+> @@ -63,31 +64,6 @@ static void gic_check_cpu_features(void)
+>  #define gic_check_cpu_features()	do { } while(0)
+>  #endif
+>  
+> -union gic_base {
+> -	void __iomem *common_base;
+> -	void __percpu * __iomem *percpu_base;
+> -};
+> -
+> -struct gic_chip_data {
+> -	struct irq_chip chip;
+> -	union gic_base dist_base;
+> -	union gic_base cpu_base;
+> -#ifdef CONFIG_CPU_PM
+> -	u32 saved_spi_enable[DIV_ROUND_UP(1020, 32)];
+> -	u32 saved_spi_active[DIV_ROUND_UP(1020, 32)];
+> -	u32 saved_spi_conf[DIV_ROUND_UP(1020, 16)];
+> -	u32 saved_spi_target[DIV_ROUND_UP(1020, 4)];
+> -	u32 __percpu *saved_ppi_enable;
+> -	u32 __percpu *saved_ppi_active;
+> -	u32 __percpu *saved_ppi_conf;
+> -#endif
+> -	struct irq_domain *domain;
+> -	unsigned int gic_irqs;
+> -#ifdef CONFIG_GIC_NON_BANKED
+> -	void __iomem *(*get_base)(union gic_base *);
+> -#endif
+> -};
+> -
+>  static DEFINE_RAW_SPINLOCK(irq_controller_lock);
+>  
+>  /*
+> @@ -352,7 +328,7 @@ static void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
+>  	} while (1);
+>  }
+>  
+> -static void gic_handle_cascade_irq(struct irq_desc *desc)
+> +void gic_handle_cascade_irq(struct irq_desc *desc)
+>  {
+>  	struct gic_chip_data *chip_data = irq_desc_get_handler_data(desc);
+>  	struct irq_chip *chip = irq_desc_get_chip(desc);
+> @@ -436,7 +412,7 @@ static void gic_cpu_if_up(struct gic_chip_data *gic)
+>  }
+>  
+>  
+> -static void __init gic_dist_init(struct gic_chip_data *gic)
+> +void gic_dist_init(struct gic_chip_data *gic)
+>  {
+>  	unsigned int i;
+>  	u32 cpumask;
+> @@ -459,7 +435,7 @@ static void __init gic_dist_init(struct gic_chip_data *gic)
+>  	writel_relaxed(GICD_ENABLE, base + GIC_DIST_CTRL);
+>  }
+>  
+> -static void gic_cpu_init(struct gic_chip_data *gic)
+> +void gic_cpu_init(struct gic_chip_data *gic)
+>  {
+>  	void __iomem *dist_base = gic_data_dist_base(gic);
+>  	void __iomem *base = gic_data_cpu_base(gic);
+> @@ -518,7 +494,7 @@ int gic_cpu_if_down(unsigned int gic_nr)
+>   * this function, no interrupts will be delivered by the GIC, and another
+>   * platform-specific wakeup source must be enabled.
+>   */
+> -static void gic_dist_save(struct gic_chip_data *gic)
+> +void gic_dist_save(struct gic_chip_data *gic)
+>  {
+>  	unsigned int gic_irqs;
+>  	void __iomem *dist_base;
+> @@ -557,7 +533,7 @@ static void gic_dist_save(struct gic_chip_data *gic)
+>   * handled normally, but any edge interrupts that occured will not be seen by
+>   * the GIC and need to be handled by the platform-specific wakeup source.
+>   */
+> -static void gic_dist_restore(struct gic_chip_data *gic)
+> +void gic_dist_restore(struct gic_chip_data *gic)
+>  {
+>  	unsigned int gic_irqs;
+>  	unsigned int i;
+> @@ -603,7 +579,7 @@ static void gic_dist_restore(struct gic_chip_data *gic)
+>  	writel_relaxed(GICD_ENABLE, dist_base + GIC_DIST_CTRL);
+>  }
+>  
+> -static void gic_cpu_save(struct gic_chip_data *gic)
+> +void gic_cpu_save(struct gic_chip_data *gic)
+>  {
+>  	int i;
+>  	u32 *ptr;
+> @@ -633,7 +609,7 @@ static void gic_cpu_save(struct gic_chip_data *gic)
+>  
+>  }
+>  
+> -static void gic_cpu_restore(struct gic_chip_data *gic)
+> +void gic_cpu_restore(struct gic_chip_data *gic)
+>  {
+>  	int i;
+>  	u32 *ptr;
+> @@ -710,7 +686,7 @@ static struct notifier_block gic_notifier_block = {
+>  	.notifier_call = gic_notifier,
+>  };
+>  
+> -static void __init gic_pm_init(struct gic_chip_data *gic)
+> +void gic_pm_init(struct gic_chip_data *gic)
+>  {
+>  	gic->saved_ppi_enable = __alloc_percpu(DIV_ROUND_UP(32, 32) * 4,
+>  		sizeof(u32));
+> @@ -728,7 +704,7 @@ static void __init gic_pm_init(struct gic_chip_data *gic)
+>  		cpu_pm_register_notifier(&gic_notifier_block);
+>  }
+>  #else
+> -static void __init gic_pm_init(struct gic_chip_data *gic)
+> +void gic_pm_init(struct gic_chip_data *gic)
+>  {
+>  }
+>  #endif
+> @@ -1002,10 +978,10 @@ static const struct irq_domain_ops gic_irq_domain_ops = {
+>  	.unmap = gic_irq_domain_unmap,
+>  };
+>  
+> -static int gic_init_bases(struct gic_chip_data *gic, int irq_start,
+> -			  void __iomem *dist_base, void __iomem *cpu_base,
+> -			  u32 percpu_offset, struct fwnode_handle *handle,
+> -			  const char *name)
+> +int gic_init_bases(struct gic_chip_data *gic, int irq_start,
+> +		   void __iomem *dist_base, void __iomem *cpu_base,
+> +		   u32 percpu_offset, struct fwnode_handle *handle,
+> +		   const char *name)
+>  {
+>  	irq_hw_number_t hwirq_base;
+>  	int gic_irqs, irq_base, ret;
+> @@ -1153,6 +1129,7 @@ static int __init __gic_init_bases(unsigned int gic_nr, int irq_start,
+>  		set_smp_cross_call(gic_raise_softirq);
+>  		register_cpu_notifier(&gic_cpu_notifier);
+>  #endif
+> +
+>  		set_handle_irq(gic_handle_irq);
+>  		if (static_key_true(&supports_deactivate))
+>  			pr_info("GIC: Using split EOI/Deactivate mode\n");
+> @@ -1217,8 +1194,8 @@ static bool gic_check_eoimode(struct device_node *node, void __iomem **base)
+>  	return true;
+>  }
+>  
+> -static int gic_of_setup(struct device_node *node, void __iomem **dist_base,
+> -			void __iomem **cpu_base, u32 *percpu_offset)
+> +int gic_of_setup(struct device_node *node, void __iomem **dist_base,
+> +		 void __iomem **cpu_base, u32 *percpu_offset)
+>  {
+>  	if (!node || !dist_base || !cpu_base || !percpu_offset)
+>  		return -EINVAL;
+> diff --git a/drivers/irqchip/irq-gic.h b/drivers/irqchip/irq-gic.h
+> new file mode 100644
+> index 000000000000..59198d5e7175
+> --- /dev/null
+> +++ b/drivers/irqchip/irq-gic.h
+> @@ -0,0 +1,63 @@
+> +/*
+> + * Copyright (C) 2016 NVIDIA CORPORATION, All Rights Reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+> + */
+> +
+> +#ifndef _IRQ_GIC_H
+> +#define _IRQ_GIC_H
+> +
+> +union gic_base {
+> +	void __iomem *common_base;
+> +	void __percpu * __iomem *percpu_base;
+> +};
+> +
+> +struct gic_chip_data {
+> +	struct irq_chip chip;
+> +	union gic_base dist_base;
+> +	union gic_base cpu_base;
+> +#ifdef CONFIG_CPU_PM
+> +	u32 saved_spi_enable[DIV_ROUND_UP(1020, 32)];
+> +	u32 saved_spi_active[DIV_ROUND_UP(1020, 32)];
+> +	u32 saved_spi_conf[DIV_ROUND_UP(1020, 16)];
+> +	u32 saved_spi_target[DIV_ROUND_UP(1020, 4)];
+> +	u32 __percpu *saved_ppi_enable;
+> +	u32 __percpu *saved_ppi_active;
+> +	u32 __percpu *saved_ppi_conf;
+> +#endif
+> +	struct irq_domain *domain;
+> +	unsigned int gic_irqs;
+> +#ifdef CONFIG_GIC_NON_BANKED
+> +	void __iomem *(*get_base)(union gic_base *);
+> +#endif
+> +};
+
+Gahhh. No. Please. Last time we did that, it took 6 months to untangle
+the mess people made by adding their own hacks in this structure, 
+so I definitely want to keep it completely private, forever. Same goes
+for the gic_{dist,cpu.pm}_init() functions.
+
+I've had a go at this, and came up with the following patch. I've only
+briefly tested it on a host and a VM, so it is likely to break some stuff
+somewhere, but you'll get the idea: The gic_chip_data struct is entirely
+opaque, allocated by the GIC driver itself, with a few new fields in
+it so that it becomes self-contained. This applies on top of your series.
+
+It should also make it easy to switch to a model where we allocate
+the structure dynamically instead of the old static crap.
+
+Thoughts?
+
+	M.
+
+diff --git a/drivers/irqchip/irq-gic-pm.c b/drivers/irqchip/irq-gic-pm.c
+index 0a86da6..c4d0621 100644
+--- a/drivers/irqchip/irq-gic-pm.c
++++ b/drivers/irqchip/irq-gic-pm.c
+@@ -97,9 +97,6 @@ static int gic_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	const struct gic_clk_data *data;
+ 	struct gic_chip_data *gic;
+-	void __iomem *dist_base;
+-	void __iomem *cpu_base;
+-	u32 percpu_offset;
+ 	int ret, irq;
+ 
+ 	data = of_device_get_match_data(&pdev->dev);
+@@ -108,16 +105,10 @@ static int gic_probe(struct platform_device *pdev)
+ 		return -ENODEV;
+ 	}
+ 
+-	gic = devm_kzalloc(dev, sizeof(*gic), GFP_KERNEL);
+-	if (!gic)
+-		return -ENOMEM;
+-
+ 	ret = gic_get_clocks(dev, data);
+ 	if (ret)
+ 		return ret;
+ 
+-	platform_set_drvdata(pdev, gic);
+-
+ 	pm_runtime_enable(dev);
+ 
+ 	ret = pm_runtime_get_sync(dev);
+@@ -131,21 +122,16 @@ static int gic_probe(struct platform_device *pdev)
+ 		goto rpm_put;
+ 	}
+ 
+-	ret = gic_of_setup(dev->of_node, &dist_base, &cpu_base, &percpu_offset);
++	ret = gic_of_setup(dev->of_node, dev, &gic);
+ 	if (ret)
+ 		goto irq_dispose;
+ 
+-	ret = gic_init_bases(gic, -1, dist_base, cpu_base,
+-			     percpu_offset, &dev->of_node->fwnode,
++	ret = gic_init_bases(gic, -1, gic, &dev->of_node->fwnode,
+ 			     dev->of_node->name);
+ 	if (ret)
+ 		goto gic_unmap;
+ 
+-	gic_dist_init(gic);
+-	gic_cpu_init(gic);
+-	gic_pm_init(gic);
+-
+-	gic->chip.parent_device = dev;
++	platform_set_drvdata(pdev, gic);
+ 
+ 	irq_set_chained_handler_and_data(irq, gic_handle_cascade_irq, gic);
+ 
+@@ -156,8 +142,7 @@ static int gic_probe(struct platform_device *pdev)
+ 	return 0;
+ 
+ gic_unmap:
+-	iounmap(dist_base);
+-	iounmap(cpu_base);
++	gic_of_teardown(gic);
+ irq_dispose:
+ 	irq_dispose_mapping(irq);
+ rpm_put:
+diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+index 5108a85..e779c5d 100644
+--- a/drivers/irqchip/irq-gic.c
++++ b/drivers/irqchip/irq-gic.c
+@@ -51,6 +51,34 @@
+ #include "irq-gic.h"
+ #include "irq-gic-common.h"
+ 
++union gic_base {
++	void __iomem *common_base;
++	void __percpu * __iomem *percpu_base;
++};
++
++struct gic_chip_data {
++	struct irq_chip chip;
++	union gic_base dist_base;
++	union gic_base cpu_base;
++	void __iomem *raw_dist_base;
++	void __iomem *raw_cpu_base;
++	u32 percpu_offset;
++#if defined(CONFIG_CPU_PM) || defined(ARM_GIC_PM)
++	u32 saved_spi_enable[DIV_ROUND_UP(1020, 32)];
++	u32 saved_spi_active[DIV_ROUND_UP(1020, 32)];
++	u32 saved_spi_conf[DIV_ROUND_UP(1020, 16)];
++	u32 saved_spi_target[DIV_ROUND_UP(1020, 4)];
++	u32 __percpu *saved_ppi_enable;
++	u32 __percpu *saved_ppi_active;
++	u32 __percpu *saved_ppi_conf;
++#endif
++	struct irq_domain *domain;
++	unsigned int gic_irqs;
++#ifdef CONFIG_GIC_NON_BANKED
++	void __iomem *(*get_base)(union gic_base *);
++#endif
++};
++
+ #ifdef CONFIG_ARM64
+ #include <asm/cpufeature.h>
+ 
+@@ -420,7 +448,7 @@ static void gic_cpu_if_up(struct gic_chip_data *gic)
+ }
+ 
+ 
+-void gic_dist_init(struct gic_chip_data *gic)
++static void gic_dist_init(struct gic_chip_data *gic)
+ {
+ 	unsigned int i;
+ 	u32 cpumask;
+@@ -443,7 +471,7 @@ void gic_dist_init(struct gic_chip_data *gic)
+ 	writel_relaxed(GICD_ENABLE, base + GIC_DIST_CTRL);
+ }
+ 
+-void gic_cpu_init(struct gic_chip_data *gic)
++static void gic_cpu_init(struct gic_chip_data *gic)
+ {
+ 	void __iomem *dist_base = gic_data_dist_base(gic);
+ 	void __iomem *base = gic_data_cpu_base(gic);
+@@ -693,7 +721,7 @@ static struct notifier_block gic_notifier_block = {
+ 	.notifier_call = gic_notifier,
+ };
+ 
+-void gic_pm_init(struct gic_chip_data *gic)
++static void gic_pm_init(struct gic_chip_data *gic)
+ {
+ 	gic->saved_ppi_enable = __alloc_percpu(DIV_ROUND_UP(32, 32) * 4,
+ 		sizeof(u32));
+@@ -711,7 +739,7 @@ void gic_pm_init(struct gic_chip_data *gic)
+ 		cpu_pm_register_notifier(&gic_notifier_block);
+ }
+ #else
+-void gic_pm_init(struct gic_chip_data *gic)
++static void gic_pm_init(struct gic_chip_data *gic)
+ {
+ }
+ #endif
+@@ -986,9 +1014,7 @@ static const struct irq_domain_ops gic_irq_domain_ops = {
+ };
+ 
+ int gic_init_bases(struct gic_chip_data *gic, int irq_start,
+-		   void __iomem *dist_base, void __iomem *cpu_base,
+-		   u32 percpu_offset, struct fwnode_handle *handle,
+-		   const char *name)
++		   struct fwnode_handle *handle, const char *name)
+ {
+ 	irq_hw_number_t hwirq_base;
+ 	int gic_irqs, irq_base, ret;
+@@ -1013,7 +1039,7 @@ int gic_init_bases(struct gic_chip_data *gic, int irq_start,
+ 		gic->chip.irq_set_affinity = gic_set_affinity;
+ #endif
+ 
+-	if (IS_ENABLED(CONFIG_GIC_NON_BANKED) && percpu_offset) {
++	if (IS_ENABLED(CONFIG_GIC_NON_BANKED) && gic->percpu_offset) {
+ 		/* Frankein-GIC without banked registers... */
+ 		unsigned int cpu;
+ 
+@@ -1028,19 +1054,19 @@ int gic_init_bases(struct gic_chip_data *gic, int irq_start,
+ 		for_each_possible_cpu(cpu) {
+ 			u32 mpidr = cpu_logical_map(cpu);
+ 			u32 core_id = MPIDR_AFFINITY_LEVEL(mpidr, 0);
+-			unsigned long offset = percpu_offset * core_id;
+-			*per_cpu_ptr(gic->dist_base.percpu_base, cpu) = dist_base + offset;
+-			*per_cpu_ptr(gic->cpu_base.percpu_base, cpu) = cpu_base + offset;
++			unsigned long offset = gic->percpu_offset * core_id;
++			*per_cpu_ptr(gic->dist_base.percpu_base, cpu) = gic->raw_dist_base + offset;
++			*per_cpu_ptr(gic->cpu_base.percpu_base, cpu) = gic->raw_cpu_base + offset;
+ 		}
+ 
+ 		gic_set_base_accessor(gic, gic_get_percpu_base);
+ 	} else {
+ 		/* Normal, sane GIC... */
+-		WARN(percpu_offset,
++		WARN(gic->percpu_offset,
+ 		     "GIC_NON_BANKED not enabled, ignoring %08x offset!",
+-		     percpu_offset);
+-		gic->dist_base.common_base = dist_base;
+-		gic->cpu_base.common_base = cpu_base;
++		     gic->percpu_offset);
++		gic->dist_base.common_base = gic->raw_dist_base;
++		gic->cpu_base.common_base = gic->raw_cpu_base;
+ 		gic_set_base_accessor(gic, gic_get_common_base);
+ 	}
+ 
+@@ -1090,10 +1116,14 @@ int gic_init_bases(struct gic_chip_data *gic, int irq_start,
+ 		goto error;
+ 	}
+ 
++	gic_dist_init(gic);
++	gic_cpu_init(gic);
++	gic_pm_init(gic);
++
+ 	return 0;
+ 
+ error:
+-	if (IS_ENABLED(CONFIG_GIC_NON_BANKED) && percpu_offset) {
++	if (IS_ENABLED(CONFIG_GIC_NON_BANKED) && gic->percpu_offset) {
+ 		free_percpu(gic->dist_base.percpu_base);
+ 		free_percpu(gic->cpu_base.percpu_base);
+ 	}
+@@ -1101,37 +1131,24 @@ error:
+ 	return ret;
+ }
+ 
+-static int __init __gic_init_bases(unsigned int gic_nr, int irq_start,
+-			   void __iomem *dist_base, void __iomem *cpu_base,
+-			   u32 percpu_offset, struct fwnode_handle *handle)
++static int __init __gic_init_bases(struct gic_chip_data *gic, int irq_start,
++				   struct fwnode_handle *handle)
+ {
+-	struct gic_chip_data *gic;
+ 	char *name;
+-	int i, ret;
+-
+-	if (WARN_ON(gic_nr >= CONFIG_ARM_GIC_MAX_NR))
+-		return -EINVAL;
+-
+-	gic = &gic_data[gic_nr];
++	int ret;
+ 
+-	if (static_key_true(&supports_deactivate) && gic_nr == 0)
++	if (static_key_true(&supports_deactivate) && gic == &gic_data[0])
+ 		name = kasprintf(GFP_KERNEL, "GICv2");
+ 	else
+-		name = kasprintf(GFP_KERNEL, "GIC-%d", gic_nr);
++		name = kasprintf(GFP_KERNEL, "GIC-%d", (int)(gic - &gic_data[0]));
+ 
+-	ret = gic_init_bases(gic, irq_start, dist_base, cpu_base, percpu_offset,
+-			     handle, name);
+-	if (ret) {
+-		kfree(name);
+-		return ret;
+-	}
+-
+-	if (gic_nr == 0) {
++	if (gic == &gic_data[0]) {
+ 		/*
+ 		 * Initialize the CPU interface map to all CPUs.
+ 		 * It will be refined as each CPU probes its ID.
+ 		 * This is only necessary for the primary GIC.
+ 		 */
++		int i;
+ 		for (i = 0; i < NR_GIC_CPU_IF; i++)
+ 			gic_cpu_map[i] = 0xff;
+ #ifdef CONFIG_SMP
+@@ -1144,22 +1161,26 @@ static int __init __gic_init_bases(unsigned int gic_nr, int irq_start,
+ 			pr_info("GIC: Using split EOI/Deactivate mode\n");
+ 	}
+ 
+-	gic_dist_init(gic);
+-	gic_cpu_init(gic);
+-	gic_pm_init(gic);
++	ret = gic_init_bases(gic, irq_start, handle, name);
++	if (ret)
++		kfree(name);
+ 
+-	return 0;
++	return ret;
+ }
+ 
+ void __init gic_init(unsigned int gic_nr, int irq_start,
+ 		     void __iomem *dist_base, void __iomem *cpu_base)
+ {
++	struct gic_chip_data *gic = &gic_data[gic_nr];
++
+ 	/*
+ 	 * Non-DT/ACPI systems won't run a hypervisor, so let's not
+ 	 * bother with these...
+ 	 */
+ 	static_key_slow_dec(&supports_deactivate);
+-	__gic_init_bases(gic_nr, irq_start, dist_base, cpu_base, 0, NULL);
++	gic->raw_dist_base = dist_base;
++	gic->raw_cpu_base = cpu_base;
++	__gic_init_bases(gic, irq_start, NULL);
+ }
+ 
+ #ifdef CONFIG_OF
+@@ -1203,34 +1224,52 @@ static bool gic_check_eoimode(struct device_node *node, void __iomem **base)
+ 	return true;
+ }
+ 
+-int gic_of_setup(struct device_node *node, void __iomem **dist_base,
+-		 void __iomem **cpu_base, u32 *percpu_offset)
++void gic_of_teardown(struct gic_chip_data *gic)
+ {
+-	if (!node || !dist_base || !cpu_base || !percpu_offset)
+-		return -EINVAL;
++	if (gic->raw_dist_base)
++		iounmap(gic->raw_dist_base);
++	if (gic->raw_cpu_base)
++		iounmap(gic->raw_cpu_base);
++}
+ 
+-	*dist_base = of_iomap(node, 0);
+-	if (WARN(!*dist_base, "unable to map gic dist registers\n"))
+-		return -ENOMEM;
++int gic_of_setup(struct device_node *node, struct device *dev,
++		 struct gic_chip_data **gicp)
++{
++	struct gic_chip_data *gic;
+ 
+-	*cpu_base = of_iomap(node, 1);
+-	if (WARN(!*cpu_base, "unable to map gic cpu registers\n")) {
+-		iounmap(*dist_base);
+-		return -ENOMEM;
++	if (!node || !gicp)
++		return -EINVAL;
++
++	if (dev) {
++		*gicp = devm_kzalloc(dev, sizeof(*gic), GFP_KERNEL);
++		if (!*gicp)
++			return -ENOMEM;
+ 	}
+ 
+-	if (of_property_read_u32(node, "cpu-offset", percpu_offset))
+-		*percpu_offset = 0;
++	gic = *gicp;
++
++	gic->raw_dist_base = of_iomap(node, 0);
++	if (WARN(!gic->raw_dist_base, "unable to map gic dist registers\n"))
++		goto err;
++
++	gic->raw_cpu_base = of_iomap(node, 1);
++	if (WARN(!gic->raw_cpu_base, "unable to map gic cpu registers\n"))
++		goto err;
++
++	if (of_property_read_u32(node, "cpu-offset", &gic->percpu_offset))
++		gic->percpu_offset = 0;
+ 
++	gic->chip.parent_device = dev;
+ 	return 0;
++err:
++	gic_of_teardown(gic);
++	return -ENOMEM;
+ }
+ 
+ int __init
+ gic_of_init(struct device_node *node, struct device_node *parent)
+ {
+-	void __iomem *cpu_base;
+-	void __iomem *dist_base;
+-	u32 percpu_offset;
++	struct gic_chip_data *gic;
+ 	int irq, ret;
+ 
+ 	if (WARN_ON(!node))
+@@ -1245,7 +1284,8 @@ gic_of_init(struct device_node *node, struct device_node *parent)
+ 	    of_property_read_bool(node, "power-domains"))
+ 		return 0;
+ 
+-	ret = gic_of_setup(node, &dist_base, &cpu_base, &percpu_offset);
++	gic = &gic_data[gic_cnt];
++	ret = gic_of_setup(node, NULL, &gic);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1253,14 +1293,13 @@ gic_of_init(struct device_node *node, struct device_node *parent)
+ 	 * Disable split EOI/Deactivate if either HYP is not available
+ 	 * or the CPU interface is too small.
+ 	 */
+-	if (gic_cnt == 0 && !gic_check_eoimode(node, &cpu_base))
++	if (gic_cnt == 0 && !gic_check_eoimode(node, &gic->raw_cpu_base))
+ 		static_key_slow_dec(&supports_deactivate);
+ 
+-	ret = __gic_init_bases(gic_cnt, -1, dist_base, cpu_base, percpu_offset,
+-			 &node->fwnode);
++	ret = __gic_init_bases(gic, -1, &node->fwnode);
+ 	if (ret) {
+-		iounmap(dist_base);
+-		iounmap(cpu_base);
++		iounmap(gic->raw_dist_base);
++		iounmap(gic->raw_cpu_base);
+ 		return ret;
+ 	}
+ 
+@@ -1395,7 +1434,9 @@ static int __init gic_v2_acpi_init(struct acpi_subtable_header *header,
+ 		return -ENOMEM;
+ 	}
+ 
+-	ret = __gic_init_bases(0, -1, dist_base, cpu_base, 0, domain_handle);
++	gic_data[0].raw_dist_base = dist_base;
++	gic_data[0].raw_cpu_base = cpu_base;
++	ret = __gic_init_bases(&gic_data[0], -1, domain_handle);
+ 	if (ret) {
+ 		pr_err("Failed to initialise GIC\n");
+ 		irq_domain_free_fwnode(domain_handle);
+diff --git a/drivers/irqchip/irq-gic.h b/drivers/irqchip/irq-gic.h
+index 31e7733..77d4001 100644
+--- a/drivers/irqchip/irq-gic.h
++++ b/drivers/irqchip/irq-gic.h
+@@ -17,46 +17,18 @@
+ #ifndef _IRQ_GIC_H
+ #define _IRQ_GIC_H
+ 
+-union gic_base {
+-	void __iomem *common_base;
+-	void __percpu * __iomem *percpu_base;
+-};
++struct gic_chip_data;
+ 
+-struct gic_chip_data {
+-	struct irq_chip chip;
+-	union gic_base dist_base;
+-	union gic_base cpu_base;
+-#if defined(CONFIG_CPU_PM) || defined(ARM_GIC_PM)
+-	u32 saved_spi_enable[DIV_ROUND_UP(1020, 32)];
+-	u32 saved_spi_active[DIV_ROUND_UP(1020, 32)];
+-	u32 saved_spi_conf[DIV_ROUND_UP(1020, 16)];
+-	u32 saved_spi_target[DIV_ROUND_UP(1020, 4)];
+-	u32 __percpu *saved_ppi_enable;
+-	u32 __percpu *saved_ppi_active;
+-	u32 __percpu *saved_ppi_conf;
+-#endif
+-	struct irq_domain *domain;
+-	unsigned int gic_irqs;
+-#ifdef CONFIG_GIC_NON_BANKED
+-	void __iomem *(*get_base)(union gic_base *);
+-#endif
+-};
+-
+-void gic_cpu_init(struct gic_chip_data *gic);
+ void gic_cpu_save(struct gic_chip_data *gic);
+ void gic_cpu_restore(struct gic_chip_data *gic);
+-void gic_dist_init(struct gic_chip_data *gic);
+ void gic_dist_save(struct gic_chip_data *gic);
+ void gic_dist_restore(struct gic_chip_data *gic);
+-void gic_pm_init(struct gic_chip_data *gic);
+-
+-int gic_of_setup(struct device_node *node, void __iomem **dist_base,
+-		 void __iomem **cpu_base, u32 *percpu_offset);
+ 
++int gic_of_setup(struct device_node *node, struct device *dev,
++		 struct gic_chip_data **gic);
++void gic_of_teardown(struct gic_chip_data *gic);
+ int gic_init_bases(struct gic_chip_data *gic, int irq_start,
+-		   void __iomem *dist_base, void __iomem *cpu_base,
+-		   u32 percpu_offset, struct fwnode_handle *handle,
+-		   const char *name);
++		   struct fwnode_handle *handle, const char *name);
+ 
+ void gic_handle_cascade_irq(struct irq_desc *desc);
+ 
+
+-- 
+Jazz is not dead. It just smells funny...
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
