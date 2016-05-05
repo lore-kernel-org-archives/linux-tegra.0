@@ -1,139 +1,122 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH V3 02/17] irqchip/gic: WARN if setting the interrupt type
- for a PPI fails
-Date: Thu, 5 May 2016 15:41:07 +0100
-Message-ID: <572B5B82.4040902@nvidia.com>
-References: <1462379130-11742-1-git-send-email-jonathanh@nvidia.com>
- <1462379130-11742-3-git-send-email-jonathanh@nvidia.com>
- <572B3731.80602@arm.com> <572B48FE.20707@nvidia.com>
- <20160505144025.50c02f3d@arm.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v3 2/2] usb: host: ehci-tegra: Avoid getting the same
+ reset twice
+Date: Thu, 5 May 2016 10:00:27 -0600
+Message-ID: <572B6E1B.3060901@wwwdotorg.org>
+References: <1462372800-30900-1-git-send-email-thierry.reding@gmail.com>
+ <1462372800-30900-2-git-send-email-thierry.reding@gmail.com>
+ <572A3008.4020602@wwwdotorg.org> <20160504202544.GB21480@mithrandir.ba.sec>
+ <fdf3583d-636e-5619-5df6-17b6ae331ac9@redhat.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160505144025.50c02f3d@arm.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <fdf3583d-636e-5619-5df6-17b6ae331ac9-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Hans de Goede <hdegoede-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 05/05/2016 02:05 AM, Hans de Goede wrote:
+> Hi,
+>
+> On 04-05-16 22:25, Thierry Reding wrote:
+>> On Wed, May 04, 2016 at 11:23:20AM -0600, Stephen Warren wrote:
+>>> On 05/04/2016 08:40 AM, Thierry Reding wrote:
+>>>> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>>
+>>>> Starting with commit 0b52297f2288 ("reset: Add support for shared reset
+>>>> controls") there is a reference count for reset control assertions. The
+>>>> goal is to allow resets to be shared by multiple devices and an assert
+>>>> will take effect only when all instances have asserted the reset.
+>>>>
+>>>> In order to preserve backwards-compatibility, all reset controls become
+>>>> exclusive by default. This is to ensure that reset_control_assert() can
+>>>> immediately assert in hardware.
+>>>>
+>>>> However, this new behaviour triggers the following warning in the EHCI
+>>>> driver for Tegra:
+>>> ...
+>>>> The reason is that Tegra SoCs have three EHCI controllers, each with a
+>>>> separate reset line. However the first controller contains UTMI pads
+>>>> configuration registers that are shared with its siblings and that are
+>>>> reset as part of the first controller's reset. There is special code in
+>>>> the driver to assert and deassert this shared reset at probe time, and
+>>>> it does so irrespective of which controller is probed first to ensure
+>>>> that these shared registers are reset before any of the controllers are
+>>>> initialized. Unfortunately this means that if the first controller gets
+>>>> probed first, it will request its own reset line and will subsequently
+>>>> request the same reset line again (temporarily) to perform the reset.
+>>>> This used to work fine before the above-mentioned commit, but now
+>>>> triggers the new WARN.
+>>>>
+>>>> Work around this by making sure we reuse the controller's reset if the
+>>>> controller happens to be the first controller.
+>>>
+>>>> diff --git a/drivers/usb/host/ehci-tegra.c
+>>>> b/drivers/usb/host/ehci-tegra.c
+>>>
+>>>> @@ -81,15 +81,23 @@ static int tegra_reset_usb_controller(struct
+>>>> platform_device *pdev)
+>>>
+>>>> +    bool has_utmi_pad_registers = false;
+>>>>
+>>>>       phy_np = of_parse_phandle(pdev->dev.of_node, "nvidia,phy", 0);
+>>>>       if (!phy_np)
+>>>>           return -ENOENT;
+>>>>
+>>>> +    if (of_property_read_bool(phy_np,
+>>>> "nvidia,has-utmi-pad-registers"))
+>>>> +        has_utmi_pad_registers = true;
+>>>
+>>> Isn't that just:
+>>>
+>>> has_utmi_pad_registers = of_property_read_bool(phy_np,
+>>>     "nvidia,has-utmi-pad-registers");
+>>>
+>>> ... and then you can remove " = false" from the declaration too?
+>>
+>> Yes. This is really only for aesthetics. The direct assignment doesn't
+>> fit within 80 columns, and wrapping it looks ugly whichever way you do
+>> it.
+>>
+>>>>       if (!usb1_reset_attempted) {
+>>>>           struct reset_control *usb1_reset;
+>>>>
+>>>> -        usb1_reset = of_reset_control_get(phy_np, "utmi-pads");
+>>>> +        if (!has_utmi_pad_registers)
+>>>> +            usb1_reset = of_reset_control_get(phy_np, "utmi-pads");
+>>>> +        else
+>>>> +            usb1_reset = tegra->rst;
+>>> ...
+>>>>           usb1_reset_attempted = true;
+>>>>       }
+>>>
+>>> This is a pre-existing issue, but what happens if the probes for two USB
+>>> controllers run in parallel; there seems to be missing locking
+>>> related to
+>>> testing/setting usb1_reset_attempted, which could cause multiple
+>>> parallel
+>>> attempts to get the "utmi-pads" reset object, which would presumably
+>>> cause
+>>> essentially the same issue this patch is solving in other cases?
+>>
+>> Hah! Interestingly my initial attempt at fixing this was to introduce a
+>> lock to serialize these, because I thought that was what was going on. I
+>> don't think this function can ever run concurrently for different
+>> devices because the driver core already serializes probes (unless a
+>> driver specifically requests asynchronous probing, which this one
+>> doesn't).
+>
+> Why not just use the new shared reset functionality ? It is easy to use,
+> that way you can drop some of the special handling in the driver and
+> you're code actually reflects the hardware (which IMHO has a shared reset).
 
-On 05/05/16 14:40, Marc Zyngier wrote:
-> On Thu, 5 May 2016 14:22:06 +0100
-> Jon Hunter <jonathanh@nvidia.com> wrote:
-> 
->> Hi Marc,
->>
->> On 05/05/16 13:06, Marc Zyngier wrote:
->>> Hi Jon,
->>>
->>> On 04/05/16 17:25, Jon Hunter wrote:
->>>> Setting the interrupt type for private peripheral interrupts (PPIs) may
->>>> not be supported by a given GIC because it is IMPLEMENTATION DEFINED
->>>> whether this is allowed. There is no way to know if setting the type is
->>>> supported for a given GIC and so the value written is read back to
->>>> verify it matches the desired configuration. If it does not match then
->>>> an error is return.
->>>>
->>>> There are cases where the interrupt configuration read from firmware
->>>> (such as a device-tree blob), has been incorrect and hence
->>>> gic_configure_irq() has returned an error. This error has gone
->>>> undetected because the error code returned was ignored but the interrupt
->>>> still worked fine because the configuration for the interrupt could not
->>>> be overwritten.
->>>>
->>>> Given that this has done undetected and that failing to set the
->>>> configuration for a PPI may not be a catastrophic, don't return an error
->>>> but WARN if we fail to configure a PPI. This will allows us to fix up
->>>> any places in the kernel where we should be checking the return status
->>>> and maintain backward compatibility with firmware images that may have
->>>> incorrect PPI configurations.
->>>>
->>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->>>> Acked-by: Marc Zyngier <marc.zyngier@arm.com>
->>>> ---
->>>>  drivers/irqchip/irq-gic-common.c | 11 +++++++----
->>>>  1 file changed, 7 insertions(+), 4 deletions(-)
->>>>
->>>> diff --git a/drivers/irqchip/irq-gic-common.c b/drivers/irqchip/irq-gic-common.c
->>>> index ffff5a45f1e3..9fa92a17225c 100644
->>>> --- a/drivers/irqchip/irq-gic-common.c
->>>> +++ b/drivers/irqchip/irq-gic-common.c
->>>> @@ -56,12 +56,15 @@ int gic_configure_irq(unsigned int irq, unsigned int type,
->>>>  
->>>>  	/*
->>>>  	 * Write back the new configuration, and possibly re-enable
->>>> -	 * the interrupt. If we fail to write a new configuration,
->>>> -	 * return an error.
->>>> +	 * the interrupt. WARN if we fail to write a new configuration
->>>> +	 * and return an error if we failed to write the configuration
->>>> +	 * for an SPI. If we fail to write the configuration for a PPI
->>>> +	 * this is most likely because the GIC does not allow us to set
->>>> +	 * the configuration and so it is not a catastrophic failure.
->>>>  	 */
->>>>  	writel_relaxed(val, base + GIC_DIST_CONFIG + confoff);
->>>> -	if (readl_relaxed(base + GIC_DIST_CONFIG + confoff) != val)
->>>> -		ret = -EINVAL;
->>>> +	if (WARN_ON(readl_relaxed(base + GIC_DIST_CONFIG + confoff) != val))
->>>> +		ret = irq < 32 ? 0 : -EINVAL;
->>>>  
->>>>  	if (sync_access)
->>>>  		sync_access();
->>>>
->>>
->>> I'm going to slightly backpedal on that one:
->>>
->>> When running in non-secure mode, you can reconfigure secure interrupts
->>
->> Do you mean 'cannot'?
-> 
-> Yes, sorry.
-> 
->>> (for obvious reasons). But you don't know which mode you're running in
->>> either. A typical example is the arch timer, which requests both secure
->>> and non-secure interrupts, because we cannot know which side of the CPU
->>> we're running on. In the non-secure case, we end-up with a splat that
->>> is rather undeserved.
->>
->> Yes seems sensible.
->>
->>> So I'm tempted to tone down the splat in the PPI case like this:
->>>
->>> diff --git a/drivers/irqchip/irq-gic-common.c b/drivers/irqchip/irq-gic-common.c
->>> index 083c303..1605e42 100644
->>> --- a/drivers/irqchip/irq-gic-common.c
->>> +++ b/drivers/irqchip/irq-gic-common.c
->>> @@ -63,8 +63,17 @@ int gic_configure_irq(unsigned int irq, unsigned int type,
->>>  	 * the configuration and so it is not a catastrophic failure.
->>>  	 */
->>>  	writel_relaxed(val, base + GIC_DIST_CONFIG + confoff);
->>> -	if (WARN_ON(readl_relaxed(base + GIC_DIST_CONFIG + confoff) != val))
->>> -		ret = irq < 32 ? 0 : -EINVAL;
->>> +	oldval = readl_relaxed(base + GIC_DIST_CONFIG + confoff);
->>> +	if (oldval != val) {
->>> +		if (irq < 32) {
->>> +			pr_warn("GIC: PPI%d is either secure or misconfigured\n",
->>> +				irq - 16);
->>> +			ret = 0;
->>> +		} else {
->>> +			WARN_ON(1);
->>> +			ret = -EINVAL;
->>> +		}
->>> +	}
->>>  
->>>  	if (sync_access)
->>>  		sync_access();
->>>
->>> Thoughts?
->>
->> That is fine with me. Do you want me to re-spin or do you want to apply
->> your change on top? However, before I re-spin would like to get your
->> thoughts on patches 13-17.
-> 
-> I can squash this into your own patch if you're OK with it. I'll reply
-> to your other patches shortly, as I have a number of comments there.
-
-Yes that is fine with me.
-
-Cheers
-Jon
+Judging purely by the descriptions of the shared reset functionality in 
+this thread, I doubt that will work. A varying number of USB controllers 
+will be enabled in DT on a board-by-board basis, so anything that 
+attempts to wait for "all devices to assert reset" can't be implemented, 
+since it won't be known ahead of time how many reset assertions to wait 
+for. Equally, if device probes are serialized, the reset will not happen 
+at the right time since it can't happen until the nth probe (when each 
+device has asserted reset) but we want it to happen during the 1st probe.
