@@ -1,75 +1,139 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 1/3] dt-bindings: bus: Add documentation for Tegra210
- ACONNECT
-Date: Thu, 5 May 2016 15:39:16 +0100
-Message-ID: <572B5B14.6060603@nvidia.com>
-References: <1461938027-23034-1-git-send-email-jonathanh@nvidia.com>
- <1461938027-23034-2-git-send-email-jonathanh@nvidia.com>
- <20160503182215.GA4341@rob-hp-laptop>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH V3 02/17] irqchip/gic: WARN if setting the interrupt type
+ for a PPI fails
+Date: Thu, 5 May 2016 15:41:07 +0100
+Message-ID: <572B5B82.4040902@nvidia.com>
+References: <1462379130-11742-1-git-send-email-jonathanh@nvidia.com>
+ <1462379130-11742-3-git-send-email-jonathanh@nvidia.com>
+ <572B3731.80602@arm.com> <572B48FE.20707@nvidia.com>
+ <20160505144025.50c02f3d@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160503182215.GA4341@rob-hp-laptop>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160505144025.50c02f3d@arm.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Marc Zyngier <marc.zyngier@arm.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, linux-tegra@vger.kernel.org, linux-omap@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 03/05/16 19:22, Rob Herring wrote:
-> On Fri, Apr 29, 2016 at 02:53:45PM +0100, Jon Hunter wrote:
->> Add binding documentation for the Tegra ACONNECT bus that is part of the
->> Audio Processing Engine (APE) on Tegra210. The ACONNECT bus is used to
->> access devices within the APE subsystem. The APE is located in a
->> separate power domain and so accesses made to the ACONNECT require the
->> power domain to be enabled as well as some platform specific clocks.
->>
->> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  .../bindings/bus/nvidia,tegra210-aconnect.txt      | 45 ++++++++++++++++++++++
->>  1 file changed, 45 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
->>
->> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
->> new file mode 100644
->> index 000000000000..e5e915f8fca7
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
->> @@ -0,0 +1,45 @@
->> +NVIDIA Tegra ACONNECT Bus
->> +
->> +The Tegra ACONNECT bus is an AXI switch which is used to connnect various
->> +components inside the Audio Processing Engine (APE). All CPU accesses to
->> +the APE subsystem go through the ACONNECT via an APB to AXI wrapper.
->> +
->> +Required properties:
->> +- compatible: Must be "nvidia,tegra210-aconnect".
->> +- clocks: Must contain the entries for the APE clock (TEGRA210_CLK_APE),
->> +  and APE interface clock (TEGRA210_CLK_APB2APE).
->> +- clock-names: Must contain the names "ape" and "apb2ape" for the corresponding
->> +  'clocks' entries.
->> +- power-domains: Must contain a phandle that points to the audio powergate
->> +  (namely 'aud') for Tegra210.
->> +- #address-cells: The number of cells used to represent physical base addresses
->> +  in the host1x address space. Should be 2.
->> +- #size-cells: The number of cells used to represent the size of an address
->> +  range in the host1x address space. Should be 2.
+On 05/05/16 14:40, Marc Zyngier wrote:
+> On Thu, 5 May 2016 14:22:06 +0100
+> Jon Hunter <jonathanh@nvidia.com> wrote:
 > 
-> Do you really need >4GB of child addresses?
-
-Sounds rather silly when you put it like that. No, its not needed. I
-will fix that.
-
->> +- ranges: 1:1 mapping of the aconnect address space to the CPU address space.
+>> Hi Marc,
+>>
+>> On 05/05/16 13:06, Marc Zyngier wrote:
+>>> Hi Jon,
+>>>
+>>> On 04/05/16 17:25, Jon Hunter wrote:
+>>>> Setting the interrupt type for private peripheral interrupts (PPIs) may
+>>>> not be supported by a given GIC because it is IMPLEMENTATION DEFINED
+>>>> whether this is allowed. There is no way to know if setting the type is
+>>>> supported for a given GIC and so the value written is read back to
+>>>> verify it matches the desired configuration. If it does not match then
+>>>> an error is return.
+>>>>
+>>>> There are cases where the interrupt configuration read from firmware
+>>>> (such as a device-tree blob), has been incorrect and hence
+>>>> gic_configure_irq() has returned an error. This error has gone
+>>>> undetected because the error code returned was ignored but the interrupt
+>>>> still worked fine because the configuration for the interrupt could not
+>>>> be overwritten.
+>>>>
+>>>> Given that this has done undetected and that failing to set the
+>>>> configuration for a PPI may not be a catastrophic, don't return an error
+>>>> but WARN if we fail to configure a PPI. This will allows us to fix up
+>>>> any places in the kernel where we should be checking the return status
+>>>> and maintain backward compatibility with firmware images that may have
+>>>> incorrect PPI configurations.
+>>>>
+>>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>>>> Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+>>>> ---
+>>>>  drivers/irqchip/irq-gic-common.c | 11 +++++++----
+>>>>  1 file changed, 7 insertions(+), 4 deletions(-)
+>>>>
+>>>> diff --git a/drivers/irqchip/irq-gic-common.c b/drivers/irqchip/irq-gic-common.c
+>>>> index ffff5a45f1e3..9fa92a17225c 100644
+>>>> --- a/drivers/irqchip/irq-gic-common.c
+>>>> +++ b/drivers/irqchip/irq-gic-common.c
+>>>> @@ -56,12 +56,15 @@ int gic_configure_irq(unsigned int irq, unsigned int type,
+>>>>  
+>>>>  	/*
+>>>>  	 * Write back the new configuration, and possibly re-enable
+>>>> -	 * the interrupt. If we fail to write a new configuration,
+>>>> -	 * return an error.
+>>>> +	 * the interrupt. WARN if we fail to write a new configuration
+>>>> +	 * and return an error if we failed to write the configuration
+>>>> +	 * for an SPI. If we fail to write the configuration for a PPI
+>>>> +	 * this is most likely because the GIC does not allow us to set
+>>>> +	 * the configuration and so it is not a catastrophic failure.
+>>>>  	 */
+>>>>  	writel_relaxed(val, base + GIC_DIST_CONFIG + confoff);
+>>>> -	if (readl_relaxed(base + GIC_DIST_CONFIG + confoff) != val)
+>>>> -		ret = -EINVAL;
+>>>> +	if (WARN_ON(readl_relaxed(base + GIC_DIST_CONFIG + confoff) != val))
+>>>> +		ret = irq < 32 ? 0 : -EINVAL;
+>>>>  
+>>>>  	if (sync_access)
+>>>>  		sync_access();
+>>>>
+>>>
+>>> I'm going to slightly backpedal on that one:
+>>>
+>>> When running in non-secure mode, you can reconfigure secure interrupts
+>>
+>> Do you mean 'cannot'?
 > 
-> Why 1:1 for 256KB of address space?
+> Yes, sorry.
+> 
+>>> (for obvious reasons). But you don't know which mode you're running in
+>>> either. A typical example is the arch timer, which requests both secure
+>>> and non-secure interrupts, because we cannot know which side of the CPU
+>>> we're running on. In the non-secure case, we end-up with a splat that
+>>> is rather undeserved.
+>>
+>> Yes seems sensible.
+>>
+>>> So I'm tempted to tone down the splat in the PPI case like this:
+>>>
+>>> diff --git a/drivers/irqchip/irq-gic-common.c b/drivers/irqchip/irq-gic-common.c
+>>> index 083c303..1605e42 100644
+>>> --- a/drivers/irqchip/irq-gic-common.c
+>>> +++ b/drivers/irqchip/irq-gic-common.c
+>>> @@ -63,8 +63,17 @@ int gic_configure_irq(unsigned int irq, unsigned int type,
+>>>  	 * the configuration and so it is not a catastrophic failure.
+>>>  	 */
+>>>  	writel_relaxed(val, base + GIC_DIST_CONFIG + confoff);
+>>> -	if (WARN_ON(readl_relaxed(base + GIC_DIST_CONFIG + confoff) != val))
+>>> -		ret = irq < 32 ? 0 : -EINVAL;
+>>> +	oldval = readl_relaxed(base + GIC_DIST_CONFIG + confoff);
+>>> +	if (oldval != val) {
+>>> +		if (irq < 32) {
+>>> +			pr_warn("GIC: PPI%d is either secure or misconfigured\n",
+>>> +				irq - 16);
+>>> +			ret = 0;
+>>> +		} else {
+>>> +			WARN_ON(1);
+>>> +			ret = -EINVAL;
+>>> +		}
+>>> +	}
+>>>  
+>>>  	if (sync_access)
+>>>  		sync_access();
+>>>
+>>> Thoughts?
+>>
+>> That is fine with me. Do you want me to re-spin or do you want to apply
+>> your change on top? However, before I re-spin would like to get your
+>> thoughts on patches 13-17.
+> 
+> I can squash this into your own patch if you're OK with it. I'll reply
+> to your other patches shortly, as I have a number of comments there.
 
-No good reason. I have looking at what we did for host1x and ahub which
-also have a ranges property and use a 1:1 mapping. For ahub this makes
-sense because it is more of a cross-bar/switch. The aconnect bus is also
-a switch and thought may be that is the easiest thing to do. What is
-recommended here?
+Yes that is fine with me.
 
 Cheers
 Jon
