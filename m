@@ -1,56 +1,67 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH V3 2/4] soc/tegra: pmc: Correct type of variable for
- tegra_pmc_readl()
-Date: Thu, 5 May 2016 10:49:49 +0100
-Message-ID: <572B173D.6030108@nvidia.com>
-References: <1462361973-27990-1-git-send-email-ldewangan@nvidia.com>
- <1462361973-27990-3-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V3 2/4] soc/tegra: pmc: Correct type of variable for tegra_pmc_readl()
+Date: Thu, 5 May 2016 15:22:26 +0530
+Message-ID: <572B17DA.901@nvidia.com>
+References: <1462361973-27990-1-git-send-email-ldewangan@nvidia.com> <1462361973-27990-3-git-send-email-ldewangan@nvidia.com> <572B173D.6030108@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1462361973-27990-3-git-send-email-ldewangan@nvidia.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Laxman Dewangan <ldewangan@nvidia.com>, thierry.reding@gmail.com, swarren@wwwdotorg.org, airlied@linux.ie
-Cc: linux-tegra@vger.kernel.org, gnurou@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <572B173D.6030108-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org
+Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDA0LzA1LzE2IDEyOjM5LCBMYXhtYW4gRGV3YW5nYW4gd3JvdGU6Cj4gVGhlIGZ1bmN0aW9u
-IHRlZ3JhX3BtY19yZWFkbCgpIHJldHVybnMgdGhlIHUzMiB0eXBlIGRhdGEgYW5kIGhlbmNlCj4g
-Y2hhbmdlIHRoZSBkYXRhIHR5cGUgb2YgdmFyaWFibGUgd2hlcmUgdGhpcyBkYXRhIGlzIHN0b3Jl
-ZCB0byB1MzIKPiB0eXBlLgo+IAo+IFNpZ25lZC1vZmYtYnk6IExheG1hbiBEZXdhbmdhbiA8bGRl
-d2FuZ2FuQG52aWRpYS5jb20+Cj4gCj4gLS0tCj4gQ2hhbmdlcyBmcm9tIFYxOgo+IC1UaGlzIGlz
-IG5ldyBpbiBzZXJpZXMgYXMgcGVyIGRpc2N1c3Npb24gb24gVjEgc2VyaWVzIHRvIHVzZSB1MzIg
-Zm9yCj4gdGVncmFfcG1jX3JlYWRsLgo+IAo+IENoYW5nZXMgZnJvbSBWMjoKPiAtIE1ha2UgdW5z
-aWduZWQgbG9uZyB0byB1MzIgZm9yIHNvbWUgbWlzc2VkIHZhcmlhYmxlIGZyb20gVjEuCj4gLS0t
-Cj4gIGRyaXZlcnMvc29jL3RlZ3JhL3BtYy5jIHwgMjQgKysrKysrKysrKysrKystLS0tLS0tLS0t
-Cj4gIDEgZmlsZSBjaGFuZ2VkLCAxNCBpbnNlcnRpb25zKCspLCAxMCBkZWxldGlvbnMoLSkKPiAK
-PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9zb2MvdGVncmEvcG1jLmMgYi9kcml2ZXJzL3NvYy90ZWdy
-YS9wbWMuYwo+IGluZGV4IDJjM2YxZjkuLmVmZjk0MjUgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9z
-b2MvdGVncmEvcG1jLmMKPiArKysgYi9kcml2ZXJzL3NvYy90ZWdyYS9wbWMuYwo+IEBAIC04NDQs
-NyArODQ0LDggQEAgc3RhdGljIHZvaWQgdGVncmFfcG93ZXJnYXRlX2luaXQoc3RydWN0IHRlZ3Jh
-X3BtYyAqcG1jKQo+ICBzdGF0aWMgaW50IHRlZ3JhX2lvX3JhaWxfcHJlcGFyZSh1bnNpZ25lZCBp
-bnQgaWQsIHVuc2lnbmVkIGxvbmcgKnJlcXVlc3QsCj4gIAkJCQkgdW5zaWduZWQgbG9uZyAqc3Rh
-dHVzLCB1bnNpZ25lZCBpbnQgKmJpdCkKPiAgewo+IC0JdW5zaWduZWQgbG9uZyByYXRlLCB2YWx1
-ZTsKPiArCXVuc2lnbmVkIGxvbmcgcmF0ZTsKPiArCXUzMiB2YWx1ZTsKPiAgCj4gIAkqYml0ID0g
-aWQgJSAzMjsKPiAgCj4gQEAgLTg2OCwxNyArODY5LDE4IEBAIHN0YXRpYyBpbnQgdGVncmFfaW9f
-cmFpbF9wcmVwYXJlKHVuc2lnbmVkIGludCBpZCwgdW5zaWduZWQgbG9uZyAqcmVxdWVzdCwKPiAg
-CXRlZ3JhX3BtY193cml0ZWwoRFBEX1NBTVBMRV9FTkFCTEUsIERQRF9TQU1QTEUpOwo+ICAKPiAg
-CS8qIG11c3QgYmUgYXQgbGVhc3QgMjAwIG5zLCBpbiBBUEIgKFBDTEspIGNsb2NrIGN5Y2xlcyAq
-Lwo+IC0JdmFsdWUgPSBESVZfUk9VTkRfVVAoMTAwMDAwMDAwMCwgcmF0ZSk7Cj4gLQl2YWx1ZSA9
-IERJVl9ST1VORF9VUCgyMDAsIHZhbHVlKTsKPiArCXJhdGUgPSBESVZfUk9VTkRfVVAoMTAwMDAw
-MDAwMCwgcmF0ZSk7Cj4gKwlyYXRlID0gRElWX1JPVU5EX1VQKDIwMCwgcmF0ZSk7Cj4gKwl2YWx1
-ZSA9ICh1MzIpcmF0ZTsKCkFsdGhvdWdoIGl0IGlzIHVubGlrZWx5LCBJIHRoaW5rIHRoYXQgd2Ug
-c2hvdWxkIGNoZWNrIGl0IGlzIGxlc3MKdGhhbiBVMzJfTUFYLCByZXR1cm4gYW4gZXJyb3IgaWYg
-aXQgaXMgbm90LgoKQ2hlZXJzCkpvbgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
-ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9kcmktZGV2ZWwK
+
+On Thursday 05 May 2016 03:19 PM, Jon Hunter wrote:
+> On 04/05/16 12:39, Laxman Dewangan wrote:
+>> The function tegra_pmc_readl() returns the u32 type data and hence
+>> change the data type of variable where this data is stored to u32
+>> type.
+>>
+>> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> ---
+>> Changes from V1:
+>> -This is new in series as per discussion on V1 series to use u32 for
+>> tegra_pmc_readl.
+>>
+>> Changes from V2:
+>> - Make unsigned long to u32 for some missed variable from V1.
+>> ---
+>>   drivers/soc/tegra/pmc.c | 24 ++++++++++++++----------
+>>   1 file changed, 14 insertions(+), 10 deletions(-)
+>>
+>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>> index 2c3f1f9..eff9425 100644
+>> --- a/drivers/soc/tegra/pmc.c
+>> +++ b/drivers/soc/tegra/pmc.c
+>> @@ -844,7 +844,8 @@ static void tegra_powergate_init(struct tegra_pmc *pmc)
+>>   static int tegra_io_rail_prepare(unsigned int id, unsigned long *request,
+>>   				 unsigned long *status, unsigned int *bit)
+>>   {
+>> -	unsigned long rate, value;
+>> +	unsigned long rate;
+>> +	u32 value;
+>>   
+>>   	*bit = id % 32;
+>>   
+>> @@ -868,17 +869,18 @@ static int tegra_io_rail_prepare(unsigned int id, unsigned long *request,
+>>   	tegra_pmc_writel(DPD_SAMPLE_ENABLE, DPD_SAMPLE);
+>>   
+>>   	/* must be at least 200 ns, in APB (PCLK) clock cycles */
+>> -	value = DIV_ROUND_UP(1000000000, rate);
+>> -	value = DIV_ROUND_UP(200, value);
+>> +	rate = DIV_ROUND_UP(1000000000, rate);
+>> +	rate = DIV_ROUND_UP(200, rate);
+>> +	value = (u32)rate;
+> Although it is unlikely, I think that we should check it is less
+> than U32_MAX, return an error if it is not.
+
+rate = DIV_ROUNC_UP(200, rate) means
+
+rate = (200 + rate -1)/rate
+
+and can not be more than 200 in any case (if rate =1).
+So no need of the error check.
