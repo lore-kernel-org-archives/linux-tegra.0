@@ -1,47 +1,75 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH] soc/tegra: pmc: Fix "scheduling while atomic"
-Date: Thu, 5 May 2016 17:24:26 +0300
-Message-ID: <c4a3fb3f-adb8-c167-d660-55d3f803c9c3@gmail.com>
-References: <1460900051-3065-1-git-send-email-digetx@gmail.com>
- <572B47DE.1090804@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/3] dt-bindings: bus: Add documentation for Tegra210
+ ACONNECT
+Date: Thu, 5 May 2016 15:39:16 +0100
+Message-ID: <572B5B14.6060603@nvidia.com>
+References: <1461938027-23034-1-git-send-email-jonathanh@nvidia.com>
+ <1461938027-23034-2-git-send-email-jonathanh@nvidia.com>
+ <20160503182215.GA4341@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <572B47DE.1090804@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160503182215.GA4341@rob-hp-laptop>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hello, Jon!
 
-On 05.05.2016 16:17, Jon Hunter wrote:
->
-> Thanks for the report. I have been unable to reproduce this, but then I
-> don't see my tegra20 entering LP2 during cpuidle. I did force my tegra20
-> into LP2 during suspend which will exercise the same code but I did not
-> trigger this either. However, from looking at the code it does appear
-> that we could hit this.
->
+On 03/05/16 19:22, Rob Herring wrote:
+> On Fri, Apr 29, 2016 at 02:53:45PM +0100, Jon Hunter wrote:
+>> Add binding documentation for the Tegra ACONNECT bus that is part of the
+>> Audio Processing Engine (APE) on Tegra210. The ACONNECT bus is used to
+>> access devices within the APE subsystem. The APE is located in a
+>> separate power domain and so accesses made to the ACONNECT require the
+>> power domain to be enabled as well as some platform specific clocks.
+>>
+>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  .../bindings/bus/nvidia,tegra210-aconnect.txt      | 45 ++++++++++++++++++++++
+>>  1 file changed, 45 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
+>> new file mode 100644
+>> index 000000000000..e5e915f8fca7
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
+>> @@ -0,0 +1,45 @@
+>> +NVIDIA Tegra ACONNECT Bus
+>> +
+>> +The Tegra ACONNECT bus is an AXI switch which is used to connnect various
+>> +components inside the Audio Processing Engine (APE). All CPU accesses to
+>> +the APE subsystem go through the ACONNECT via an APB to AXI wrapper.
+>> +
+>> +Required properties:
+>> +- compatible: Must be "nvidia,tegra210-aconnect".
+>> +- clocks: Must contain the entries for the APE clock (TEGRA210_CLK_APE),
+>> +  and APE interface clock (TEGRA210_CLK_APB2APE).
+>> +- clock-names: Must contain the names "ape" and "apb2ape" for the corresponding
+>> +  'clocks' entries.
+>> +- power-domains: Must contain a phandle that points to the audio powergate
+>> +  (namely 'aud') for Tegra210.
+>> +- #address-cells: The number of cells used to represent physical base addresses
+>> +  in the host1x address space. Should be 2.
+>> +- #size-cells: The number of cells used to represent the size of an address
+>> +  range in the host1x address space. Should be 2.
+> 
+> Do you really need >4GB of child addresses?
 
-As I wrote before, it's quite difficult to reproduce.
+Sounds rather silly when you put it like that. No, its not needed. I
+will fix that.
 
->
-> Ideally, it would be great if we did not need to add another custom API
-> for this, but I did not find anything in the CCF that would allow us to
-> avoid but that was only a quick look. However, we could ask the CCF folks.
->
+>> +- ranges: 1:1 mapping of the aconnect address space to the CPU address space.
+> 
+> Why 1:1 for 256KB of address space?
 
-Yes, CCF doesn't expose locked API. Code should be designed to avoid it.
+No good reason. I have looking at what we did for host1x and ahub which
+also have a ranges property and use a 1:1 mapping. For ahub this makes
+sense because it is more of a cross-bar/switch. The aconnect bus is also
+a switch and thought may be that is the easiest thing to do. What is
+recommended here?
 
-> What I plan to do next is to understand if the pclk is likely to change.
-> I know that it comes from one of the plls but I am not sure if we ever
-> change the rate. If not we may be able to move this to probe time and
-> avoid this.
->
-
-That's reasonable, I'd also take a look at it. Thanks for the comment!
-
--- 
-Dmitry
+Cheers
+Jon
