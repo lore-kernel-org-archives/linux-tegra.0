@@ -1,219 +1,94 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3 4/4] soc/tegra: pmc: Register PMC child devices as
- platform device
-Date: Thu, 5 May 2016 11:15:05 +0100
-Message-ID: <572B1D29.7020708@nvidia.com>
-References: <1462361973-27990-1-git-send-email-ldewangan@nvidia.com>
- <1462361973-27990-5-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V3 3/4] soc/tegra: pmc: Add support for IO pads power
+ state and voltage
+Date: Thu, 5 May 2016 16:02:02 +0530
+Message-ID: <572B2122.2080609@nvidia.com>
+References: <1462361973-27990-1-git-send-email-ldewangan@nvidia.com> <1462361973-27990-4-git-send-email-ldewangan@nvidia.com> <572B1CCA.5060502@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="windows-1252"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1462361973-27990-5-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <572B1CCA.5060502-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org
 Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 04/05/16 12:39, Laxman Dewangan wrote:
-> Power Management Controller(PMC) of Tegra does the multiple chip
-> power related functionality for internal and IO interfacing.
-> Some of the functionalities are power gating of IP blocks, IO pads
-> voltage and power state configuration, system power state configurations,
-> wakeup controls etc.
-> 
-> Different functionalities of the PMC are provided through different
-> framework like IO pads control can be provided through pinctrl framework,
-> IO power control is via misc driver etc. All sub functionalities are
-> represented as PMC child devices.
-> 
-> Register the PMC child devices as platform device and fill the child
-> devices table for Tegra124 and Tegra210.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> ---
-> Changes from V1:
-> Reworked on DT for having flat entry and register all child devices
-> as simple platform device instead of of_populate_device().
-> 
-> Changes from V2:
-> - Handling of the release of child devices on error.
-> - Register sub devices for T124 and T210 as T124 supports the DPD of IO
->   pads.
-> ---
->  drivers/soc/tegra/pmc.c | 82 +++++++++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 80 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 0611cea..0eb652f 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -132,6 +132,8 @@ struct tegra_pmc_soc {
->  	const u8 *cpu_powergates;
->  	const struct tegra_io_pads_control *io_pads_control;
->  	unsigned int num_io_pads;
-> +	const char **sub_devs_name;
-> +	unsigned int num_sub_devs;
->  	bool has_tsense_reset;
->  	bool has_gpu_clamps;
->  };
-> @@ -158,6 +160,7 @@ struct tegra_pmc_soc {
->   * @lp0_vec_size: size of the LP0 warm boot code
->   * @powergates_available: Bitmap of available power gates
->   * @powergates_lock: mutex for power gate register access
-> + * @pdevs: Platform device for PMC child devices.
->   */
->  struct tegra_pmc {
->  	struct device *dev;
-> @@ -184,6 +187,8 @@ struct tegra_pmc {
->  	DECLARE_BITMAP(powergates_available, TEGRA_POWERGATE_MAX);
->  
->  	struct mutex powergates_lock;
-> +
-> +	struct platform_device **pdevs;
->  };
->  
->  static struct tegra_pmc *pmc = &(struct tegra_pmc) {
-> @@ -1310,6 +1315,57 @@ out:
->  	of_node_put(np);
->  }
->  
-> +static int  tegra_pmc_init_sub_devs(struct tegra_pmc *pmc)
-> +{
-> +	int ret, i;
-> +
-> +	if (!pmc->soc->num_sub_devs)
-> +		return 0;
-> +
-> +	pmc->pdevs = devm_kzalloc(pmc->dev, pmc->soc->num_sub_devs *
-> +				  sizeof(**pmc->pdevs), GFP_KERNEL);
-> +	if (!pmc->pdevs)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < pmc->soc->num_sub_devs; ++i) {
-> +		pmc->pdevs[i] = platform_device_register_data(pmc->dev,
-> +						pmc->soc->sub_devs_name[i],
-> +						0, NULL, 0);
-> +		if (IS_ERR(pmc->pdevs[i])) {
-> +			ret = PTR_ERR(pmc->pdevs[i]);
-> +			dev_err(pmc->dev,
-> +				"Failed to register platform device for %s: %d\n",
-> +				pmc->soc->sub_devs_name[i], ret);
-> +			goto pdev_cleanups;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +
-> +pdev_cleanups:
-> +	while (--i >= 0) {
-> +		platform_device_unregister(pmc->pdevs[i]);
-> +		pmc->pdevs[i] = NULL;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static void tegra_pmc_deinit_sub_devs(struct tegra_pmc *pmc)
-> +{
-> +	int i;
-> +
-> +	if (!pmc->soc->num_sub_devs || !pmc->pdevs)
-> +		return;
-> +
-> +	for (i = 0; i < pmc->soc->num_sub_devs; ++i) {
-> +		if (pmc->pdevs[i]) {
-> +			platform_device_unregister(pmc->pdevs[i]);
-> +			pmc->pdevs[i] = NULL;
-> +		}
-> +	}
-> +}
-> +
->  static int tegra_pmc_probe(struct platform_device *pdev)
->  {
->  	void __iomem *base;
-> @@ -1339,10 +1395,14 @@ static int tegra_pmc_probe(struct platform_device *pdev)
->  
->  	tegra_pmc_init_tsense_reset(pmc);
->  
-> +	err = tegra_pmc_init_sub_devs(pmc);
-> +	if (err < 0)
-> +		dev_warn(pmc->dev, "Failed to register sub devices: %d\n", err);
-> +
->  	if (IS_ENABLED(CONFIG_DEBUG_FS)) {
->  		err = tegra_powergate_debugfs_init();
->  		if (err < 0)
-> -			return err;
-> +			goto cleanups;
->  	}
->  
->  	err = register_restart_handler(&tegra_pmc_restart_handler);
-> @@ -1350,7 +1410,7 @@ static int tegra_pmc_probe(struct platform_device *pdev)
->  		debugfs_remove(pmc->debugfs);
->  		dev_err(&pdev->dev, "unable to register restart handler, %d\n",
->  			err);
-> -		return err;
-> +		goto cleanups;
->  	}
->  
->  	tegra_powergate_init(pmc);
-> @@ -1361,6 +1421,11 @@ static int tegra_pmc_probe(struct platform_device *pdev)
->  	mutex_unlock(&pmc->powergates_lock);
->  
->  	return 0;
-> +
-> +cleanups:
-> +	tegra_pmc_deinit_sub_devs(pmc);
-> +
-> +	return err;
->  }
->  
->  #if defined(CONFIG_PM_SLEEP) && defined(CONFIG_ARM)
-> @@ -1544,6 +1609,10 @@ struct tegra_io_pads_control tegra124_io_pads_control[] = {
->  	TEGRA_IO_PADS_CONTROL(SYS_DDC, 58, -1),
->  };
->  
-> +static const char *tegra124_sub_devs_name[] = {
-> +	"pinctrl-tegra124-io-pad",
-> +};
-> +
->  static const struct tegra_pmc_soc tegra124_pmc_soc = {
->  	.num_powergates = ARRAY_SIZE(tegra124_powergates),
->  	.powergates = tegra124_powergates,
-> @@ -1551,6 +1620,8 @@ static const struct tegra_pmc_soc tegra124_pmc_soc = {
->  	.cpu_powergates = tegra124_cpu_powergates,
->  	.io_pads_control = tegra124_io_pads_control,
->  	.num_io_pads = ARRAY_SIZE(tegra124_io_pads_control),
-> +	.sub_devs_name = tegra124_sub_devs_name,
-> +	.num_sub_devs = ARRAY_SIZE(tegra124_sub_devs_name),
->  	.has_tsense_reset = true,
->  	.has_gpu_clamps = true,
->  };
-> @@ -1628,6 +1699,11 @@ struct tegra_io_pads_control tegra210_io_pads_control[] = {
->  	TEGRA_IO_PADS_CONTROL(LVDS, 57, -1),
->  	TEGRA_IO_PADS_CONTROL(AUDIO_HV, 61, 18),
->  };
-> +
-> +static const char *tegra210_sub_devs_name[] = {
-> +	"pinctrl-tegra210-io-pad",
-> +};
-> +
->  static const struct tegra_pmc_soc tegra210_pmc_soc = {
->  	.num_powergates = ARRAY_SIZE(tegra210_powergates),
->  	.powergates = tegra210_powergates,
-> @@ -1635,6 +1711,8 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
->  	.cpu_powergates = tegra210_cpu_powergates,
->  	.io_pads_control = tegra210_io_pads_control,
->  	.num_io_pads = ARRAY_SIZE(tegra210_io_pads_control),
-> +	.sub_devs_name = tegra210_sub_devs_name,
-> +	.num_sub_devs = ARRAY_SIZE(tegra210_sub_devs_name),
->  	.has_tsense_reset = true,
->  	.has_gpu_clamps = true,
->  };
+On Thursday 05 May 2016 03:43 PM, Jon Hunter wrote:
+> On 04/05/16 12:39, Laxman Dewangan wrote:
 
-I don't think that it makes sense to include this in this series. This
-should be with the pinctrl driver.
+> +		return -EINVAL;
+> +
+> +	for (i = 0; i < soc->num_io_pads; ++i) {
+> +		if (soc->io_pads_control[i].pad_id == pad_id)
+> +			return soc->io_pads_control[i].dpd_bit_pos;
+> +	}
+> Do we need a loop here? Can't we just make the table a look-up table now
+> that the ID is just an index?
 
-Jon
+We do not support the table for all pads and so for those non supported 
+pad index, it will be 0 (default) and 0 is the valid bit position here.
+
+If you want table then we will need one more information for making that 
+index as valid/invalid.
+We can pack the valid/invalid with bit position to make u32.
+
+
+> +	return !!(status & BIT(dpd_bit % 32));
+> +}
+> +EXPORT_SYMBOL(tegra_io_pads_power_is_enabled);
+> +
+> +int tegra_io_pads_configure_voltage(int io_pad_id, int io_volt_uv)
+> s/io_pad_id/id/
+>
+> I think I prefer tegra_io_pads_set/get_voltage_conf(). What is the point
+> in passing uV here if in device-tree you are using the enum for the
+> voltage level? I know that I had suggested this, but given we are not
+> going to use voltage in the DT then, not sure it has any value here.
+This is generic interface and hence. So in future if we have more 
+option, we will not need change in interface.
+
+Otherwise, make enums for 1.8/3.3 and pass as enum here. So in future if 
+we have any other voltage then again add enums.
+I wanted to avoid this.
+
+
+
+>   
+> +#define TEGRA_IO_PADS_CONTROL(_pad, _dpd, _pwr)		\
+> +{							\
+> +	.pad_id = (TEGRA_IO_PAD_##_pad),		\
+> Not sure this needs to be part of the structure as it is just an index.
+
+it is there for matching.
+
+>> +#define TEGRA_IO_PAD_USB2		41
+>> +#define TEGRA_IO_PAD_USB3		42
+>> +#define TEGRA_IO_PAD_USB_BIAS		43
+> Enum?
+>
+
+Yaah, that will also be possible. Then then argument is
+
+enum tegra_io_pad_id id
+
+instead of unsigned int.
+
+May be not much benifit here.
+
+>>   
+>>
+>>   #endif /* CONFIG_ARCH_TEGRA */
+> In genernal this feels like 3 patches ...
+>
+> 1. Patch to add the new APIs
+> 2. Patch to convert SOR to use new APIs
+> 3. Patch to remove old APIs
+>
+> May be let's see what Thierry thinks.
+>
+
+OK,
+I saw when such changes happen, we can have in single patch. This is 
+exactly we did in the RTC patches for rtc + MFD.
