@@ -1,95 +1,93 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3 3/4] soc/tegra: pmc: Add support for IO pads power
- state and voltage
-Date: Thu, 5 May 2016 14:08:22 +0100
-Message-ID: <572B45C6.5090605@nvidia.com>
-References: <1462361973-27990-1-git-send-email-ldewangan@nvidia.com>
- <1462361973-27990-4-git-send-email-ldewangan@nvidia.com>
- <572B1CCA.5060502@nvidia.com> <572B2122.2080609@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] soc/tegra: pmc: Fix "scheduling while atomic"
+Date: Thu, 5 May 2016 14:17:18 +0100
+Message-ID: <572B47DE.1090804@nvidia.com>
+References: <1460900051-3065-1-git-send-email-digetx@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <572B2122.2080609-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org
-Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1460900051-3065-1-git-send-email-digetx@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Dmitry Osipenko <digetx@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 05/05/16 11:32, Laxman Dewangan wrote:
+On 17/04/16 14:34, Dmitry Osipenko wrote:
+> clk_get_rate() takes a mutex, hence cannot be used while IRQ's been
+> disabled. Replace it with a locked version.
 > 
-> On Thursday 05 May 2016 03:43 PM, Jon Hunter wrote:
->> On 04/05/16 12:39, Laxman Dewangan wrote:
+> [    3.430853] [<c0850fcc>] (dump_stack) from [<c00411f8>] (__schedule_bug+0x50/0x64)
+> [    3.431079] [<c00411f8>] (__schedule_bug) from [<c08553a8>] (__schedule+0x5c8/0x688)
+> [    3.431453] [<c08553a8>] (__schedule) from [<c08558f4>] (schedule_preempt_disabled+0x24/0x34)
+> [    3.431835] [<c08558f4>] (schedule_preempt_disabled) from [<c0856f24>] (__mutex_lock_slowpath+0xbc/0x170)
+> [    3.432204] [<c0856f24>] (__mutex_lock_slowpath) from [<c0857024>] (mutex_lock+0x4c/0x50)
+> [    3.432427] [<c0857024>] (mutex_lock) from [<c0610368>] (clk_prepare_lock+0x88/0xfc)
+> [    3.432800] [<c0610368>] (clk_prepare_lock) from [<c0611034>] (clk_get_rate+0xc/0x60)
+> [    3.433177] [<c0611034>] (clk_get_rate) from [<c034f10c>] (tegra_pmc_enter_suspend_mode+0x188/0x20c)
+> [    3.433580] [<c034f10c>] (tegra_pmc_enter_suspend_mode) from [<c0020d48>] (tegra_idle_lp2_last+0xc/0x40)
+> [    3.433795] [<c0020d48>] (tegra_idle_lp2_last) from [<c0021e1c>] (tegra20_idle_lp2_coupled+0x118/0x1fc)
+> [    3.434171] [<c0021e1c>] (tegra20_idle_lp2_coupled) from [<c055ec24>] (cpuidle_enter_state+0x3c/0x160)
+> [    3.434551] [<c055ec24>] (cpuidle_enter_state) from [<c0560ce8>] (cpuidle_enter_state_coupled+0x3dc/0x3f4)
+> [    3.434959] [<c0560ce8>] (cpuidle_enter_state_coupled) from [<c0055f1c>] (cpu_startup_entry+0x240/0x288)
+> [    3.435340] [<c0055f1c>] (cpu_startup_entry) from [<c0b29c84>] (start_kernel+0x3b4/0x3c0)
+> [    3.435557] [<c0b29c84>] (start_kernel) from [<00008074>] (0x8074)
 > 
->> +        return -EINVAL;
->> +
->> +    for (i = 0; i < soc->num_io_pads; ++i) {
->> +        if (soc->io_pads_control[i].pad_id == pad_id)
->> +            return soc->io_pads_control[i].dpd_bit_pos;
->> +    }
->> Do we need a loop here? Can't we just make the table a look-up table now
->> that the ID is just an index?
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+
+Thanks for the report. I have been unable to reproduce this, but then I
+don't see my tegra20 entering LP2 during cpuidle. I did force my tegra20
+into LP2 during suspend which will exercise the same code but I did not
+trigger this either. However, from looking at the code it does appear
+that we could hit this.
+
+> ---
+>  drivers/clk/tegra/clk-tegra-pmc.c | 9 +++++++++
+>  drivers/soc/tegra/pmc.c           | 2 +-
+>  include/linux/clk/tegra.h         | 2 ++
+>  3 files changed, 12 insertions(+), 1 deletion(-)
 > 
-> We do not support the table for all pads and so for those non supported
-> pad index, it will be 0 (default) and 0 is the valid bit position here.
+> diff --git a/drivers/clk/tegra/clk-tegra-pmc.c b/drivers/clk/tegra/clk-tegra-pmc.c
+> index 91377ab..1ccf414 100644
+> --- a/drivers/clk/tegra/clk-tegra-pmc.c
+> +++ b/drivers/clk/tegra/clk-tegra-pmc.c
+> @@ -78,6 +78,8 @@ static struct pmc_clk_init_data pmc_clks[] = {
+>  	PMC_CLK(3, 22, 18),
+>  };
+>  
+> +static struct clk_hw *pclk_hw;
+> +
+>  void __init tegra_pmc_clk_init(void __iomem *pmc_base,
+>  				struct tegra_clk *tegra_clks)
+>  {
+> @@ -112,6 +114,9 @@ void __init tegra_pmc_clk_init(void __iomem *pmc_base,
+>  		clk_register_clkdev(clk, data->dev_name, data->gate_name);
+>  	}
+>  
+> +	dt_clk = tegra_lookup_dt_id(tegra_clk_pclk, tegra_clks);
+> +	pclk_hw = __clk_get_hw(*dt_clk);
+> +
+>  	/* blink */
+>  	writel_relaxed(0, pmc_base + PMC_BLINK_TIMER);
+>  	clk = clk_register_gate(NULL, "blink_override", "clk_32k", 0,
+> @@ -129,3 +134,7 @@ void __init tegra_pmc_clk_init(void __iomem *pmc_base,
+>  	*dt_clk = clk;
+>  }
+>  
+> +unsigned long tegra_pmc_get_pclk_rate(void)
+> +{
+> +	return clk_hw_get_rate(pclk_hw);
+> +}
 
-That does make it tricky.
+Ideally, it would be great if we did not need to add another custom API
+for this, but I did not find anything in the CCF that would allow us to
+avoid but that was only a quick look. However, we could ask the CCF folks.
 
-> If you want table then we will need one more information for making that
-> index as valid/invalid.
-> We can pack the valid/invalid with bit position to make u32.
-
-Another option would be, to have a single table for all devices and the
-make the valid field a valid mask which has a bit for each SoC.
-
->> +    return !!(status & BIT(dpd_bit % 32));
->> +}
->> +EXPORT_SYMBOL(tegra_io_pads_power_is_enabled);
->> +
->> +int tegra_io_pads_configure_voltage(int io_pad_id, int io_volt_uv)
->> s/io_pad_id/id/
->>
->> I think I prefer tegra_io_pads_set/get_voltage_conf(). What is the point
->> in passing uV here if in device-tree you are using the enum for the
->> voltage level? I know that I had suggested this, but given we are not
->> going to use voltage in the DT then, not sure it has any value here.
-> This is generic interface and hence. So in future if we have more
-> option, we will not need change in interface.
-
-Yes but apart from the SOR driver should only be used by the pinctrl
-driver (I hope).
-
-> Otherwise, make enums for 1.8/3.3 and pass as enum here. So in future if
-> we have any other voltage then again add enums.
-> I wanted to avoid this.
-
-You already have added the enum for the pinctrl driver and you would
-have to change that enum in the future anyway. So why not use it here?
-
->>   +#define TEGRA_IO_PADS_CONTROL(_pad, _dpd, _pwr)        \
->> +{                            \
->> +    .pad_id = (TEGRA_IO_PAD_##_pad),        \
->> Not sure this needs to be part of the structure as it is just an index.
-> 
-> it is there for matching.
-> 
->>> +#define TEGRA_IO_PAD_USB2        41
->>> +#define TEGRA_IO_PAD_USB3        42
->>> +#define TEGRA_IO_PAD_USB_BIAS        43
->> Enum?
->>
-> 
-> Yaah, that will also be possible. Then then argument is
-> 
-> enum tegra_io_pad_id id
-> 
-> instead of unsigned int.
-> 
-> May be not much benifit here.
-
-I think that this is exactly what enums are for, then you don't have to
-explicitly define each number.
+What I plan to do next is to understand if the pclk is likely to change.
+I know that it comes from one of the plls but I am not sure if we ever
+change the rate. If not we may be able to move this to probe time and
+avoid this.
 
 Cheers
 Jon
