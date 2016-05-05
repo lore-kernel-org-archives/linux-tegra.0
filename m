@@ -1,95 +1,63 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 1/2] usb: host: ehci-tegra: Grab the correct UTMI pads
- reset
-Date: Wed, 4 May 2016 22:30:45 +0200
-Message-ID: <20160504203037.GC21480@mithrandir.ba.sec>
-References: <1462372800-30900-1-git-send-email-thierry.reding@gmail.com>
- <572A2E0A.8040408@wwwdotorg.org>
+From: <factcoalition-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: linux-tegra
+Date: Wed, 05 May 2016 03:47:08 0000
+Message-ID: <000101d1a680$cc980636$c0a80001@comstar.ru>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="XWOWbaMNXpFDWE00"
+Content-Type: application/zip; name="linux-tegra.zip"
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <572A2E0A.8040408-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: attachment
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---XWOWbaMNXpFDWE00
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 04, 2016 at 11:14:50AM -0600, Stephen Warren wrote:
-> On 05/04/2016 08:39 AM, Thierry Reding wrote:
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >=20
-> > There are three EHCI controllers on Tegra SoCs, each with its own reset
-> > line. However, the first controller contains a set of UTMI configuration
-> > registers that are shared with its siblings. These registers will only
-> > be reset as part of the first controller's reset. For proper operation
-> > it must be ensured that the UTMI configuration registers are reset
-> > before any of the EHCI controllers are enabled, irrespective of the
-> > probe order.
-> >=20
-> > Commit a47cc24cd1e5 ("USB: EHCI: tegra: Fix probe order issue leading to
-> > broken USB") introduced code that ensures the first controller is always
-> > reset before setting up any of the controllers, and is never again reset
-> > afterwards.
-> >=20
-> > This code, however, grabs the wrong reset. Each EHCI controller has two
-> > reset controls attached: 1) the USB controller reset and 2) the UTMI
-> > pads reset (really the first controller's reset). In order to reset the
-> > UTMI pads registers the code must grab the second reset, but instead it
-> > grabbing the first.
-> >=20
-> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> > Stephen, Alex, Jon, have you ever encountered cases where UTMI might not
-> > have worked correctly? It seems that this code was pulsing the wrong
-> > reset line and therefore the UTMI pads would never be reset unless the
-> > first USB controller was probed before all others. I've never seen any
-> > such problems myself, so I'm unsure about whether it's worth Cc'ing the
-> > patch to stable-u79uwXL29TaiAVqoAR/hOA@public.gmane.org
->=20
-> I don't think I recall seeing USB issues like that, although I don't use =
-USB
-> a huge amount. Perhaps the issue just never happens because we always have
-> USB1 enabled, and it's physically present in the DTB first, so it always
-> happens to get probed first?
-
-Actually for Jetson TK1 we don't enable USB1. It's interesting because
-v1 of patch 2/2 only fixed the issue for device where USB1 was indeed
-enabled and probed first (I tested on TrimSlice). Running these fixes
-through EIMT I noticed that it didn't fix it in the general case and I
-was still seeing the warning on Jetson TK1 for example.
-
-That's in fact what tipped me off about the consumer name, because I was
-seeing reset 58 (USB2) being requested twice.
-
-Thierry
-
---XWOWbaMNXpFDWE00
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXKlvtAAoJEN0jrNd/PrOhheAP/3m+iyvGsllSrqCN/p+VhFVs
-nrBCZ8HkkCbGFQDWedpxAIHkolPKFfppGOcvYxQQYrqGnDbzpPSlXlgwARAA9rjy
-S+TbzjTG3UDr6H6mgeoZIFPeb4AQJlU3s2i0jsIlMfqPnlLHSIVkNa0cXdR8Qmho
-FSDQ8oerglAHBiwT5GwXzjKhSMpIzfngRxbugI5hWIEE8WffU7C6yQZnfSk9QMar
-eYipAyGuBQiP0kJBgbX98J+/ypylwns0Cnu4yktNEYg/iY5aVu0lIhwYJMA6L7+g
-qQLtumI/es6fkiyLwiSLG7Absl9YBJrQxia3tN2PgsSfizVB+88IAWEiE2lLGfPL
-cfooKGI+MtJgoBaJbq6fpzq8UIGteSRE9ZEI+xzqdX6froIWqZbFoaSloNtC8mqJ
-EzGTZW+gJaLJMm57d1uClwuIo+d1qOcP3HgvlwBjHzVG6GJ2yuPnK+FmvMP57Az/
-XKhNTo/Qy1P5cziH9L4rIRQ5Yb1+kIOmHVq4COFu1zauySdXZYrDD0+/jEe/KiSp
-z+Sk1vAFi2ccM7fvEoKOKbmS43/McDcNPNkpLPDw+hjephUaxvHnI6A+mMMQEp5E
-Q4JMFGJ/mSZx1LUqabMdGt9m6/GGxHVOeHowQ2c9ubnqNxR5GICXm6eZDwTkVVoz
-2ZW5jmwaJTYrwhcoXjt1
-=S7BZ
------END PGP SIGNATURE-----
-
---XWOWbaMNXpFDWE00--
+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
