@@ -1,54 +1,77 @@
-From: Tuomas Tynkkynen <tuomas.tynkkynen-X3B1VOXEql0@public.gmane.org>
-Subject: Re: [PATCH v3 1/2] usb: host: ehci-tegra: Grab the correct UTMI pads
- reset
-Date: Thu, 5 May 2016 19:05:05 +0300
-Message-ID: <e3626bf0-3637-2013-5b36-21250de982a3@gmail.com>
-References: <1462372800-30900-1-git-send-email-thierry.reding@gmail.com>
- <20160504145710.GA14708@kroah.com> <20160504152648.GA31420@ulmo.ba.sec>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 1/3] dt-bindings: bus: Add documentation for Tegra210 ACONNECT
+Date: Thu, 5 May 2016 11:48:46 -0500
+Message-ID: <CAL_JsqL66dY-qatCpESqhpqHQ+g+419pk5cF266xT=Jhp4zSLA@mail.gmail.com>
+References: <1461938027-23034-1-git-send-email-jonathanh@nvidia.com>
+ <1461938027-23034-2-git-send-email-jonathanh@nvidia.com> <20160503182215.GA4341@rob-hp-laptop>
+ <572B5B14.6060603@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160504152648.GA31420-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
+In-Reply-To: <572B5B14.6060603-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Alan Stern <stern-nwvwT67g6+6dFdvTe/nMLpVzexx5G7lz@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tuomas Tynkkynen <tuomas.tynkkynen-X3B1VOXEql0@public.gmane.org>
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/04/2016 06:26 PM, Thierry Reding wrote:
-> On Wed, May 04, 2016 at 07:57:10AM -0700, Greg Kroah-Hartman wrote:
->> On Wed, May 04, 2016 at 04:39:59PM +0200, Thierry Reding wrote:
->>> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>
->>> There are three EHCI controllers on Tegra SoCs, each with its own reset
->>> line. However, the first controller contains a set of UTMI configuration
->>> registers that are shared with its siblings. These registers will only
->>> be reset as part of the first controller's reset. For proper operation
->>> it must be ensured that the UTMI configuration registers are reset
->>> before any of the EHCI controllers are enabled, irrespective of the
->>> probe order.
->>>
->>> Commit a47cc24cd1e5 ("USB: EHCI: tegra: Fix probe order issue leading to
->>> broken USB") introduced code that ensures the first controller is always
->>> reset before setting up any of the controllers, and is never again reset
->>> afterwards.
->>>
->>> This code, however, grabs the wrong reset. Each EHCI controller has two
->>> reset controls attached: 1) the USB controller reset and 2) the UTMI
->>> pads reset (really the first controller's reset). In order to reset the
->>> UTMI pads registers the code must grab the second reset, but instead it
->>> grabbing the first.
->>>
->>> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-...snip ...
+On Thu, May 5, 2016 at 9:39 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 >
-> While at it, adding Tuomas who wrote the original probe order fix.
-> Tuomas, does this patch look correct to you? Here's the patch in full if
-> you don't have it in your inbox:
+> On 03/05/16 19:22, Rob Herring wrote:
+>> On Fri, Apr 29, 2016 at 02:53:45PM +0100, Jon Hunter wrote:
+>>> Add binding documentation for the Tegra ACONNECT bus that is part of the
+>>> Audio Processing Engine (APE) on Tegra210. The ACONNECT bus is used to
+>>> access devices within the APE subsystem. The APE is located in a
+>>> separate power domain and so accesses made to the ACONNECT require the
+>>> power domain to be enabled as well as some platform specific clocks.
+>>>
+>>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> ---
+>>>  .../bindings/bus/nvidia,tegra210-aconnect.txt      | 45 ++++++++++++++++++++++
+>>>  1 file changed, 45 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
+>>> new file mode 100644
+>>> index 000000000000..e5e915f8fca7
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
+>>> @@ -0,0 +1,45 @@
+>>> +NVIDIA Tegra ACONNECT Bus
+>>> +
+>>> +The Tegra ACONNECT bus is an AXI switch which is used to connnect various
+>>> +components inside the Audio Processing Engine (APE). All CPU accesses to
+>>> +the APE subsystem go through the ACONNECT via an APB to AXI wrapper.
+>>> +
+>>> +Required properties:
+>>> +- compatible: Must be "nvidia,tegra210-aconnect".
+>>> +- clocks: Must contain the entries for the APE clock (TEGRA210_CLK_APE),
+>>> +  and APE interface clock (TEGRA210_CLK_APB2APE).
+>>> +- clock-names: Must contain the names "ape" and "apb2ape" for the corresponding
+>>> +  'clocks' entries.
+>>> +- power-domains: Must contain a phandle that points to the audio powergate
+>>> +  (namely 'aud') for Tegra210.
+>>> +- #address-cells: The number of cells used to represent physical base addresses
+>>> +  in the host1x address space. Should be 2.
+>>> +- #size-cells: The number of cells used to represent the size of an address
+>>> +  range in the host1x address space. Should be 2.
+>>
+>> Do you really need >4GB of child addresses?
 >
-> 	http://patchwork.ozlabs.org/patch/618488/
+> Sounds rather silly when you put it like that. No, its not needed. I
+> will fix that.
 >
+>>> +- ranges: 1:1 mapping of the aconnect address space to the CPU address space.
+>>
+>> Why 1:1 for 256KB of address space?
+>
+> No good reason. I have looking at what we did for host1x and ahub which
+> also have a ranges property and use a 1:1 mapping. For ahub this makes
+> sense because it is more of a cross-bar/switch. The aconnect bus is also
+> a switch and thought may be that is the easiest thing to do. What is
+> recommended here?
 
-D'oh! Yes, that patch looks correct.
+Use of non-empty ranges is preferred though there is not much benefit
+if the parent and child sizes are the same. However, it does also
+limit what is a valid address for those child nodes.
 
-- Tuomas
+Rob
