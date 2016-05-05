@@ -1,99 +1,89 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Jon Hunter <jonathanh@nvidia.com>
 Subject: Re: [PATCH V3 3/4] soc/tegra: pmc: Add support for IO pads power
  state and voltage
-Date: Thu, 5 May 2016 19:05:59 +0530
-Message-ID: <572B4C3F.1050700@nvidia.com>
-References: <1462361973-27990-1-git-send-email-ldewangan@nvidia.com> <1462361973-27990-4-git-send-email-ldewangan@nvidia.com> <572B1CCA.5060502@nvidia.com> <572B2122.2080609@nvidia.com> <572B45C6.5090605@nvidia.com> <572B45FE.40801@nvidia.com> <572B4BAC.4070104@nvidia.com>
+Date: Thu, 5 May 2016 14:50:17 +0100
+Message-ID: <572B4F99.9000608@nvidia.com>
+References: <1462361973-27990-1-git-send-email-ldewangan@nvidia.com>
+ <1462361973-27990-4-git-send-email-ldewangan@nvidia.com>
+ <572B1CCA.5060502@nvidia.com> <572B2122.2080609@nvidia.com>
+ <572B45C6.5090605@nvidia.com> <572B45FE.40801@nvidia.com>
+ <572B4BAC.4070104@nvidia.com> <572B4C3F.1050700@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <572B4BAC.4070104-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org
-Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <572B4C3F.1050700@nvidia.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Laxman Dewangan <ldewangan@nvidia.com>, thierry.reding@gmail.com, swarren@wwwdotorg.org, airlied@linux.ie
+Cc: linux-tegra@vger.kernel.org, gnurou@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On Thursday 05 May 2016 07:03 PM, Jon Hunter wrote:
-> On 05/05/16 14:09, Laxman Dewangan wrote:
->> On Thursday 05 May 2016 06:38 PM, Jon Hunter wrote:
->>> On 05/05/16 11:32, Laxman Dewangan wrote:
->>>> On Thursday 05 May 2016 03:43 PM, Jon Hunter wrote:
->>>>> On 04/05/16 12:39, Laxman Dewangan wrote:
->>>>> +        return -EINVAL;
->>>>> +
->>>>> +    for (i = 0; i < soc->num_io_pads; ++i) {
->>>>> +        if (soc->io_pads_control[i].pad_id == pad_id)
->>>>> +            return soc->io_pads_control[i].dpd_bit_pos;
->>>>> +    }
->>>>> Do we need a loop here? Can't we just make the table a look-up table
->>>>> now
->>>>> that the ID is just an index?
->>>> We do not support the table for all pads and so for those non supported
->>>> pad index, it will be 0 (default) and 0 is the valid bit position here.
->>> That does make it tricky.
->>>
->>>> If you want table then we will need one more information for making that
->>>> index as valid/invalid.
->>>> We can pack the valid/invalid with bit position to make u32.
->>> Another option would be, to have a single table for all devices and the
->>> make the valid field a valid mask which has a bit for each SoC.
->> We have 2 register for DPD and hence making the mask bit will need u64.
->>
->> I think we can have like below to avoid loop.
->> struct tegra_io_pads_control {
->>          int dpd_supported;
->>          int voltage_change_supported;
->>          int dpd_config_bit;
->>          int voltage_config_bit;
->> };
-> Why can't we have ...
->
-> struct tegra_io_pads_control {
->          int dpd_config_bit;
->          int voltage_config_bit;
-> 	unsigned int soc_mask;
-> };
->
-> Then .valid should indicate if it the IO pads group is valid for the
-> device ...
->
-> 	.soc_mask = TEGRA_IO_PADS_T124
-> or
-> 	.soc_mask = TEGRA_IO_PADS_T210
-> or
-> 	.soc_mask = TEGRA_IO_PADS_T124 | TEGRA_IO_PADS_T210
->
-> You can use -1 to indicate the for the dpd and voltage bit to indicate
-> if they are valid. In other words, you need to check the IO pad is valid
-> for the soc and then the bit is valid.
-
-This will also work.
-Then this is not required part of the soc data.
-Only soc_io_mask need to be part of soc data.
-This table can be file static.
-
-
->>>
->>> I think that this is exactly what enums are for, then you don't have to
->>> explicitly define each number.
->>>
->> We have defines in the dt binding header.
-> Nothing to stop us including the dt binding header in the pmc.c. We do
-> this for tegra clks.
-The dt binding header is not there and need to add.
-Part of this patch or different patch?
-
-Also we can not have enums in binding header. Only macros/defines.
-
-We do not have the dt binding doc yet as it will be in future patch.
-
-
->> BTW, are you fine to keep TEGRA_IO_PAD_* as defines instead of enums.
->> This is what POWERGATE are there.
-> Up to you, I prefer an enum. The POWERGATE IDs defines match the bit in
-> the register so it makes sense these are explicit.
->
-OK, let me make enums. Last member as MAX so that I can initialize the 
-tegra_io_pad_info[TEGRA_IO_PAD_MAX] =
+Ck9uIDA1LzA1LzE2IDE0OjM1LCBMYXhtYW4gRGV3YW5nYW4gd3JvdGU6Cj4gCj4gT24gVGh1cnNk
+YXkgMDUgTWF5IDIwMTYgMDc6MDMgUE0sIEpvbiBIdW50ZXIgd3JvdGU6Cj4+IE9uIDA1LzA1LzE2
+IDE0OjA5LCBMYXhtYW4gRGV3YW5nYW4gd3JvdGU6Cj4+PiBPbiBUaHVyc2RheSAwNSBNYXkgMjAx
+NiAwNjozOCBQTSwgSm9uIEh1bnRlciB3cm90ZToKPj4+PiBPbiAwNS8wNS8xNiAxMTozMiwgTGF4
+bWFuIERld2FuZ2FuIHdyb3RlOgo+Pj4+PiBPbiBUaHVyc2RheSAwNSBNYXkgMjAxNiAwMzo0MyBQ
+TSwgSm9uIEh1bnRlciB3cm90ZToKPj4+Pj4+IE9uIDA0LzA1LzE2IDEyOjM5LCBMYXhtYW4gRGV3
+YW5nYW4gd3JvdGU6Cj4+Pj4+PiArICAgICAgICByZXR1cm4gLUVJTlZBTDsKPj4+Pj4+ICsKPj4+
+Pj4+ICsgICAgZm9yIChpID0gMDsgaSA8IHNvYy0+bnVtX2lvX3BhZHM7ICsraSkgewo+Pj4+Pj4g
+KyAgICAgICAgaWYgKHNvYy0+aW9fcGFkc19jb250cm9sW2ldLnBhZF9pZCA9PSBwYWRfaWQpCj4+
+Pj4+PiArICAgICAgICAgICAgcmV0dXJuIHNvYy0+aW9fcGFkc19jb250cm9sW2ldLmRwZF9iaXRf
+cG9zOwo+Pj4+Pj4gKyAgICB9Cj4+Pj4+PiBEbyB3ZSBuZWVkIGEgbG9vcCBoZXJlPyBDYW4ndCB3
+ZSBqdXN0IG1ha2UgdGhlIHRhYmxlIGEgbG9vay11cCB0YWJsZQo+Pj4+Pj4gbm93Cj4+Pj4+PiB0
+aGF0IHRoZSBJRCBpcyBqdXN0IGFuIGluZGV4Pwo+Pj4+PiBXZSBkbyBub3Qgc3VwcG9ydCB0aGUg
+dGFibGUgZm9yIGFsbCBwYWRzIGFuZCBzbyBmb3IgdGhvc2Ugbm9uCj4+Pj4+IHN1cHBvcnRlZAo+
+Pj4+PiBwYWQgaW5kZXgsIGl0IHdpbGwgYmUgMCAoZGVmYXVsdCkgYW5kIDAgaXMgdGhlIHZhbGlk
+IGJpdCBwb3NpdGlvbgo+Pj4+PiBoZXJlLgo+Pj4+IFRoYXQgZG9lcyBtYWtlIGl0IHRyaWNreS4K
+Pj4+Pgo+Pj4+PiBJZiB5b3Ugd2FudCB0YWJsZSB0aGVuIHdlIHdpbGwgbmVlZCBvbmUgbW9yZSBp
+bmZvcm1hdGlvbiBmb3IgbWFraW5nCj4+Pj4+IHRoYXQKPj4+Pj4gaW5kZXggYXMgdmFsaWQvaW52
+YWxpZC4KPj4+Pj4gV2UgY2FuIHBhY2sgdGhlIHZhbGlkL2ludmFsaWQgd2l0aCBiaXQgcG9zaXRp
+b24gdG8gbWFrZSB1MzIuCj4+Pj4gQW5vdGhlciBvcHRpb24gd291bGQgYmUsIHRvIGhhdmUgYSBz
+aW5nbGUgdGFibGUgZm9yIGFsbCBkZXZpY2VzIGFuZCB0aGUKPj4+PiBtYWtlIHRoZSB2YWxpZCBm
+aWVsZCBhIHZhbGlkIG1hc2sgd2hpY2ggaGFzIGEgYml0IGZvciBlYWNoIFNvQy4KPj4+IFdlIGhh
+dmUgMiByZWdpc3RlciBmb3IgRFBEIGFuZCBoZW5jZSBtYWtpbmcgdGhlIG1hc2sgYml0IHdpbGwg
+bmVlZCB1NjQuCj4+Pgo+Pj4gSSB0aGluayB3ZSBjYW4gaGF2ZSBsaWtlIGJlbG93IHRvIGF2b2lk
+IGxvb3AuCj4+PiBzdHJ1Y3QgdGVncmFfaW9fcGFkc19jb250cm9sIHsKPj4+ICAgICAgICAgIGlu
+dCBkcGRfc3VwcG9ydGVkOwo+Pj4gICAgICAgICAgaW50IHZvbHRhZ2VfY2hhbmdlX3N1cHBvcnRl
+ZDsKPj4+ICAgICAgICAgIGludCBkcGRfY29uZmlnX2JpdDsKPj4+ICAgICAgICAgIGludCB2b2x0
+YWdlX2NvbmZpZ19iaXQ7Cj4+PiB9Owo+PiBXaHkgY2FuJ3Qgd2UgaGF2ZSAuLi4KPj4KPj4gc3Ry
+dWN0IHRlZ3JhX2lvX3BhZHNfY29udHJvbCB7Cj4+ICAgICAgICAgIGludCBkcGRfY29uZmlnX2Jp
+dDsKPj4gICAgICAgICAgaW50IHZvbHRhZ2VfY29uZmlnX2JpdDsKPj4gICAgIHVuc2lnbmVkIGlu
+dCBzb2NfbWFzazsKPj4gfTsKPj4KPj4gVGhlbiAudmFsaWQgc2hvdWxkIGluZGljYXRlIGlmIGl0
+IHRoZSBJTyBwYWRzIGdyb3VwIGlzIHZhbGlkIGZvciB0aGUKPj4gZGV2aWNlIC4uLgo+Pgo+PiAg
+ICAgLnNvY19tYXNrID0gVEVHUkFfSU9fUEFEU19UMTI0Cj4+IG9yCj4+ICAgICAuc29jX21hc2sg
+PSBURUdSQV9JT19QQURTX1QyMTAKPj4gb3IKPj4gICAgIC5zb2NfbWFzayA9IFRFR1JBX0lPX1BB
+RFNfVDEyNCB8IFRFR1JBX0lPX1BBRFNfVDIxMAo+Pgo+PiBZb3UgY2FuIHVzZSAtMSB0byBpbmRp
+Y2F0ZSB0aGUgZm9yIHRoZSBkcGQgYW5kIHZvbHRhZ2UgYml0IHRvIGluZGljYXRlCj4+IGlmIHRo
+ZXkgYXJlIHZhbGlkLiBJbiBvdGhlciB3b3JkcywgeW91IG5lZWQgdG8gY2hlY2sgdGhlIElPIHBh
+ZCBpcyB2YWxpZAo+PiBmb3IgdGhlIHNvYyBhbmQgdGhlbiB0aGUgYml0IGlzIHZhbGlkLgo+IAo+
+IFRoaXMgd2lsbCBhbHNvIHdvcmsuCj4gVGhlbiB0aGlzIGlzIG5vdCByZXF1aXJlZCBwYXJ0IG9m
+IHRoZSBzb2MgZGF0YS4KPiBPbmx5IHNvY19pb19tYXNrIG5lZWQgdG8gYmUgcGFydCBvZiBzb2Mg
+ZGF0YS4KPiBUaGlzIHRhYmxlIGNhbiBiZSBmaWxlIHN0YXRpYy4KCk9rLgoKCj4+Pj4KPj4+PiBJ
+IHRoaW5rIHRoYXQgdGhpcyBpcyBleGFjdGx5IHdoYXQgZW51bXMgYXJlIGZvciwgdGhlbiB5b3Ug
+ZG9uJ3QgaGF2ZSB0bwo+Pj4+IGV4cGxpY2l0bHkgZGVmaW5lIGVhY2ggbnVtYmVyLgo+Pj4+Cj4+
+PiBXZSBoYXZlIGRlZmluZXMgaW4gdGhlIGR0IGJpbmRpbmcgaGVhZGVyLgo+PiBOb3RoaW5nIHRv
+IHN0b3AgdXMgaW5jbHVkaW5nIHRoZSBkdCBiaW5kaW5nIGhlYWRlciBpbiB0aGUgcG1jLmMuIFdl
+IGRvCj4+IHRoaXMgZm9yIHRlZ3JhIGNsa3MuCj4gVGhlIGR0IGJpbmRpbmcgaGVhZGVyIGlzIG5v
+dCB0aGVyZSBhbmQgbmVlZCB0byBhZGQuCj4gUGFydCBvZiB0aGlzIHBhdGNoIG9yIGRpZmZlcmVu
+dCBwYXRjaD8KPiAKPiBBbHNvIHdlIGNhbiBub3QgaGF2ZSBlbnVtcyBpbiBiaW5kaW5nIGhlYWRl
+ci4gT25seSBtYWNyb3MvZGVmaW5lcy4KPiAKPiBXZSBkbyBub3QgaGF2ZSB0aGUgZHQgYmluZGlu
+ZyBkb2MgeWV0IGFzIGl0IHdpbGwgYmUgaW4gZnV0dXJlIHBhdGNoLgoKT0suIEZvciBub3cgcHV0
+IGl0IGluIHRoZSBwbWMuaCBhbmQgd2UgY2FuIGFsd2F5cyBtb3ZlIHRvIGR0LWJpbmRpbmdzIGxh
+dGVyLgoKPj4+IEJUVywgYXJlIHlvdSBmaW5lIHRvIGtlZXAgVEVHUkFfSU9fUEFEXyogYXMgZGVm
+aW5lcyBpbnN0ZWFkIG9mIGVudW1zLgo+Pj4gVGhpcyBpcyB3aGF0IFBPV0VSR0FURSBhcmUgdGhl
+cmUuCj4+IFVwIHRvIHlvdSwgSSBwcmVmZXIgYW4gZW51bS4gVGhlIFBPV0VSR0FURSBJRHMgZGVm
+aW5lcyBtYXRjaCB0aGUgYml0IGluCj4+IHRoZSByZWdpc3RlciBzbyBpdCBtYWtlcyBzZW5zZSB0
+aGVzZSBhcmUgZXhwbGljaXQuCj4+Cj4gT0ssIGxldCBtZSBtYWtlIGVudW1zLiBMYXN0IG1lbWJl
+ciBhcyBNQVggc28gdGhhdCBJIGNhbiBpbml0aWFsaXplIHRoZQo+IHRlZ3JhX2lvX3BhZF9pbmZv
+W1RFR1JBX0lPX1BBRF9NQVhdID0KCk9LLgoKQ2hlZXJzCkpvbgoKX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmkt
+ZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3Jn
+L21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
