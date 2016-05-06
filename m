@@ -1,87 +1,73 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V4 2/3] soc/tegra: pmc: Correct type of variable for
- tegra_pmc_readl()
-Date: Fri, 6 May 2016 15:15:32 +0100
-Message-ID: <572CA704.2060405@nvidia.com>
-References: <1462531548-12914-1-git-send-email-ldewangan@nvidia.com>
- <1462531548-12914-3-git-send-email-ldewangan@nvidia.com>
+From: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH V3 16/17] irqchip/gic: Prepare for adding platform
+ driver
+Date: Fri, 6 May 2016 15:27:24 +0100
+Message-ID: <20160506152724.32c9000b@arm.com>
+References: <1462379130-11742-1-git-send-email-jonathanh@nvidia.com>
+	<1462379130-11742-17-git-send-email-jonathanh@nvidia.com>
+	<572B54F4.2080103@arm.com>
+	<572CA5AF.7080504@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1462531548-12914-3-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <572CA5AF.7080504-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, 6 May 2016 15:09:51 +0100
+Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 
-On 06/05/16 11:45, Laxman Dewangan wrote:
-> The function tegra_pmc_readl() returns the u32 type data and hence
-> change the data type of variable where this data is stored to u32
-> type.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> ---
-> Changes from V1:
-> -This is new in series as per discussion on V1 series to use u32 for
-> tegra_pmc_readl.
-> 
-> Changes from V2:
-> - Make unsigned long to u32 for some missed variable from V1.
-> 
-> Changes from V3:
-> - Revert back the value to ulong where time calcualtion is done.
-> ---
->  drivers/soc/tegra/pmc.c | 16 +++++++++-------
->  1 file changed, 9 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 2c3f1f9..09c2b97 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -875,10 +875,10 @@ static int tegra_io_rail_prepare(unsigned int id, unsigned long *request,
->  	return 0;
->  }
->  
-> -static int tegra_io_rail_poll(unsigned long offset, unsigned long mask,
-> -			      unsigned long val, unsigned long timeout)
-> +static int tegra_io_rail_poll(unsigned long offset, u32 mask,
-> +			      u32 val, unsigned long timeout)
->  {
-> -	unsigned long value;
-> +	u32 value;
->  
->  	timeout = jiffies + msecs_to_jiffies(timeout);
->  
-> @@ -900,8 +900,9 @@ static void tegra_io_rail_unprepare(void)
->  
->  int tegra_io_rail_power_on(unsigned int id)
->  {
-> -	unsigned long request, status, value;
-> -	unsigned int bit, mask;
-> +	unsigned long request, status;
-> +	unsigned int bit;
-> +	u32 value, mask;
->  	int err;
->  
->  	mutex_lock(&pmc->powergates_lock);
-> @@ -935,8 +936,9 @@ EXPORT_SYMBOL(tegra_io_rail_power_on);
->  
->  int tegra_io_rail_power_off(unsigned int id)
->  {
-> -	unsigned long request, status, value;
-> -	unsigned int bit, mask;
-> +	unsigned long request, status;
-> +	unsigned int bit;
-> +	u32 value, mask;
->  	int err;
->  
->  	mutex_lock(&pmc->powergates_lock);
-> 
+Hi Jon,
 
-Reviewed-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+[...]
 
-Cheers
-Jon
+> > +int gic_of_setup(struct device_node *node, struct device *dev,
+> > +		 struct gic_chip_data **gicp)
+> > +{
+> > +	struct gic_chip_data *gic;
+> >  
+> > -	*cpu_base = of_iomap(node, 1);
+> > -	if (WARN(!*cpu_base, "unable to map gic cpu registers\n")) {
+> > -		iounmap(*dist_base);
+> > -		return -ENOMEM;
+> > +	if (!node || !gicp)
+> > +		return -EINVAL;
+> > +
+> > +	if (dev) {
+> > +		*gicp = devm_kzalloc(dev, sizeof(*gic), GFP_KERNEL);
+> > +		if (!*gicp)
+> > +			return -ENOMEM;
+> >  	}
+> >  
+> > -	if (of_property_read_u32(node, "cpu-offset", percpu_offset))
+> > -		*percpu_offset = 0;
+> > +	gic = *gicp;
+> > +
+> > +	gic->raw_dist_base = of_iomap(node, 0);
+> > +	if (WARN(!gic->raw_dist_base, "unable to map gic dist registers\n"))
+> > +		goto err;
+> > +
+> > +	gic->raw_cpu_base = of_iomap(node, 1);
+> > +	if (WARN(!gic->raw_cpu_base, "unable to map gic cpu registers\n"))
+> > +		goto err;
+> > +
+> > +	if (of_property_read_u32(node, "cpu-offset", &gic->percpu_offset))
+> > +		gic->percpu_offset = 0;
+> >  
+> > +	gic->chip.parent_device = dev;
+> 
+> We can't initialise the device here as it gets overwritten in the
+> gic_init_bases. So I have had to re-organise things a bit. Good news is
+> that I have eliminated the call from the platform driver to
+> gic_init_bases so we only have a single call to initialise the GIC.
+
+Ah, good. That sounds a lot better. Looking forward to v4.
+
+Thanks,
+
+	M.
+-- 
+Jazz is not dead. It just smells funny.
