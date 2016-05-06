@@ -1,93 +1,87 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH V4 1/3] soc/tegra: pmc: Use BIT macro for register field
- definition
-Date: Fri, 6 May 2016 15:12:25 +0100
-Message-ID: <572CA649.70401@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V4 2/3] soc/tegra: pmc: Correct type of variable for
+ tegra_pmc_readl()
+Date: Fri, 6 May 2016 15:15:32 +0100
+Message-ID: <572CA704.2060405@nvidia.com>
 References: <1462531548-12914-1-git-send-email-ldewangan@nvidia.com>
- <1462531548-12914-2-git-send-email-ldewangan@nvidia.com>
+ <1462531548-12914-3-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1462531548-12914-2-git-send-email-ldewangan@nvidia.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Laxman Dewangan <ldewangan@nvidia.com>, thierry.reding@gmail.com, airlied@linux.ie, swarren@wwwdotorg.org, gnurou@gmail.com
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1462531548-12914-3-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDA2LzA1LzE2IDExOjQ1LCBMYXhtYW4gRGV3YW5nYW4gd3JvdGU6Cj4gVXNlIEJJVCBtYWNy
-byBmb3IgcmVnaXN0ZXIgZmllbGQgZGVmaW5pdGlvbiBhbmQgbWFrZSBjb25zdGFudCBhcyBVCj4g
-d2hlbiB1c2luZyBpbiBzaGlmdCBvcGVyYXRvciBsaWtlICgzIDw8IDMwKSB0byAoM1UgPDwgMzAp
-Cj4gCj4gU2lnbmVkLW9mZi1ieTogTGF4bWFuIERld2FuZ2FuIDxsZGV3YW5nYW5AbnZpZGlhLmNv
-bT4KPiAKPiAtLS0KPiBDaGFuZ2VzIGZyb20gVjE6Cj4gLSBSZW1vdmUgdGhlIGluZGVudGluZyBv
-ZiBsaW5lIHdoaWNoIGlzIG5vdCBmb3IgQklUIG1hY3JvIHVzYWdlLgo+IENoYW5nZXMgZnJvbSBW
-MjoKPiAtIE5vbmUKPiAtLS0KPiAgZHJpdmVycy9zb2MvdGVncmEvcG1jLmMgfCA0MCArKysrKysr
-KysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0tLS0tCj4gIDEgZmlsZSBjaGFuZ2VkLCAyMCBp
-bnNlcnRpb25zKCspLCAyMCBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9z
-b2MvdGVncmEvcG1jLmMgYi9kcml2ZXJzL3NvYy90ZWdyYS9wbWMuYwo+IGluZGV4IGJiMTczNDUu
-LjJjM2YxZjkgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9zb2MvdGVncmEvcG1jLmMKPiArKysgYi9k
-cml2ZXJzL3NvYy90ZWdyYS9wbWMuYwo+IEBAIC00NSwyOCArNDUsMjggQEAKPiAgI2luY2x1ZGUg
-PHNvYy90ZWdyYS9wbWMuaD4KPiAgCj4gICNkZWZpbmUgUE1DX0NOVFJMCQkJMHgwCj4gLSNkZWZp
-bmUgIFBNQ19DTlRSTF9TWVNDTEtfUE9MQVJJVFkJKDEgPDwgMTApICAvKiBzeXMgY2xrIHBvbGFy
-aXR5ICovCj4gLSNkZWZpbmUgIFBNQ19DTlRSTF9TWVNDTEtfT0UJCSgxIDw8IDExKSAgLyogc3lz
-dGVtIGNsb2NrIGVuYWJsZSAqLwo+IC0jZGVmaW5lICBQTUNfQ05UUkxfU0lERV9FRkZFQ1RfTFAw
-CSgxIDw8IDE0KSAgLyogTFAwIHdoZW4gQ1BVIHB3ciBnYXRlZCAqLwo+IC0jZGVmaW5lICBQTUNf
-Q05UUkxfQ1BVX1BXUlJFUV9QT0xBUklUWQkoMSA8PCAxNSkgIC8qIENQVSBwd3IgcmVxIHBvbGFy
-aXR5ICovCj4gLSNkZWZpbmUgIFBNQ19DTlRSTF9DUFVfUFdSUkVRX09FCSgxIDw8IDE2KSAgLyog
-Q1BVIHB3ciByZXEgZW5hYmxlICovCj4gLSNkZWZpbmUgIFBNQ19DTlRSTF9JTlRSX1BPTEFSSVRZ
-CSgxIDw8IDE3KSAgLyogaW52ZXJ0cyBJTlRSIHBvbGFyaXR5ICovCj4gKyNkZWZpbmUgUE1DX0NO
-VFJMX1NZU0NMS19QT0xBUklUWQlCSVQoMTApIC8qIHN5cyBjbGsgcG9sYXJpdHkgKi8KPiArI2Rl
-ZmluZSBQTUNfQ05UUkxfU1lTQ0xLX09FCQlCSVQoMTEpIC8qIHN5c3RlbSBjbG9jayBlbmFibGUg
-Ki8KPiArI2RlZmluZSBQTUNfQ05UUkxfU0lERV9FRkZFQ1RfTFAwCUJJVCgxNCkgLyogTFAwIHdo
-ZW4gQ1BVIHB3ciBnYXRlZCAqLwo+ICsjZGVmaW5lIFBNQ19DTlRSTF9DUFVfUFdSUkVRX1BPTEFS
-SVRZCUJJVCgxNSkgLyogQ1BVIHB3ciByZXEgcG9sYXJpdHkgKi8KPiArI2RlZmluZSBQTUNfQ05U
-UkxfQ1BVX1BXUlJFUV9PRQkJQklUKDE2KSAvKiBDUFUgcHdyIHJlcSBlbmFibGUgKi8KPiArI2Rl
-ZmluZSBQTUNfQ05UUkxfSU5UUl9QT0xBUklUWQkJQklUKDE3KS8qIGludmVydHMgSU5UUiBwb2xh
-cml0eSAqLwo+ICAKPiAgI2RlZmluZSBEUERfU0FNUExFCQkJMHgwMjAKPiAtI2RlZmluZSAgRFBE
-X1NBTVBMRV9FTkFCTEUJCSgxIDw8IDApCj4gLSNkZWZpbmUgIERQRF9TQU1QTEVfRElTQUJMRQkJ
-KDAgPDwgMCkKPiArI2RlZmluZSBEUERfU0FNUExFX0VOQUJMRQkJQklUKDApCj4gKyNkZWZpbmUg
-RFBEX1NBTVBMRV9ESVNBQkxFCQkoMCA8PCAwKQo+ICAKPiAgI2RlZmluZSBQV1JHQVRFX1RPR0dM
-RQkJCTB4MzAKPiAtI2RlZmluZSAgUFdSR0FURV9UT0dHTEVfU1RBUlQJCSgxIDw8IDgpCj4gKyNk
-ZWZpbmUgUFdSR0FURV9UT0dHTEVfU1RBUlQJCUJJVCg4KQo+ICAKPiAgI2RlZmluZSBSRU1PVkVf
-Q0xBTVBJTkcJCQkweDM0Cj4gIAo+ICAjZGVmaW5lIFBXUkdBVEVfU1RBVFVTCQkJMHgzOAo+ICAK
-PiAgI2RlZmluZSBQTUNfU0NSQVRDSDAJCQkweDUwCj4gLSNkZWZpbmUgIFBNQ19TQ1JBVENIMF9N
-T0RFX1JFQ09WRVJZCSgxIDw8IDMxKQo+IC0jZGVmaW5lICBQTUNfU0NSQVRDSDBfTU9ERV9CT09U
-TE9BREVSCSgxIDw8IDMwKQo+IC0jZGVmaW5lICBQTUNfU0NSQVRDSDBfTU9ERV9SQ00JCSgxIDw8
-IDEpCj4gKyNkZWZpbmUgUE1DX1NDUkFUQ0gwX01PREVfUkVDT1ZFUlkJQklUKDMxKQo+ICsjZGVm
-aW5lIFBNQ19TQ1JBVENIMF9NT0RFX0JPT1RMT0FERVIJQklUKDMwKQo+ICsjZGVmaW5lIFBNQ19T
-Q1JBVENIMF9NT0RFX1JDTQkJQklUKDEpCj4gICNkZWZpbmUgIFBNQ19TQ1JBVENIMF9NT0RFX01B
-U0sJCShQTUNfU0NSQVRDSDBfTU9ERV9SRUNPVkVSWSB8IFwKPiAgCQkJCQkgUE1DX1NDUkFUQ0gw
-X01PREVfQk9PVExPQURFUiB8IFwKPiAgCQkJCQkgUE1DX1NDUkFUQ0gwX01PREVfUkNNKQo+IEBA
-IC03NywxNCArNzcsMTQgQEAKPiAgI2RlZmluZSBQTUNfU0NSQVRDSDQxCQkJMHgxNDAKPiAgCj4g
-ICNkZWZpbmUgUE1DX1NFTlNPUl9DVFJMCQkJMHgxYjAKPiAtI2RlZmluZSBQTUNfU0VOU09SX0NU
-UkxfU0NSQVRDSF9XUklURQkoMSA8PCAyKQo+IC0jZGVmaW5lIFBNQ19TRU5TT1JfQ1RSTF9FTkFC
-TEVfUlNUCSgxIDw8IDEpCj4gKyNkZWZpbmUgUE1DX1NFTlNPUl9DVFJMX1NDUkFUQ0hfV1JJVEUJ
-QklUKDIpCj4gKyNkZWZpbmUgUE1DX1NFTlNPUl9DVFJMX0VOQUJMRV9SU1QJQklUKDEpCj4gIAo+
-ICAjZGVmaW5lIElPX0RQRF9SRVEJCQkweDFiOAo+IC0jZGVmaW5lICBJT19EUERfUkVRX0NPREVf
-SURMRQkJKDAgPDwgMzApCj4gLSNkZWZpbmUgIElPX0RQRF9SRVFfQ09ERV9PRkYJCSgxIDw8IDMw
-KQo+IC0jZGVmaW5lICBJT19EUERfUkVRX0NPREVfT04JCSgyIDw8IDMwKQo+IC0jZGVmaW5lICBJ
-T19EUERfUkVRX0NPREVfTUFTSwkJKDMgPDwgMzApCj4gKyNkZWZpbmUgSU9fRFBEX1JFUV9DT0RF
-X0lETEUJCSgwIDw8IDMwKQo+ICsjZGVmaW5lIElPX0RQRF9SRVFfQ09ERV9PRkYJCSgxVSA8PCAz
-MCkKPiArI2RlZmluZSBJT19EUERfUkVRX0NPREVfT04JCSgyVSA8PCAzMCkKPiArI2RlZmluZSBJ
-T19EUERfUkVRX0NPREVfTUFTSwkJKDNVIDw8IDMwKQo+ICAKPiAgI2RlZmluZSBJT19EUERfU1RB
-VFVTCQkJMHgxYmMKPiAgI2RlZmluZSBJT19EUEQyX1JFUQkJCTB4MWMwCj4gQEAgLTk2LDEwICs5
-NiwxMCBAQAo+ICAjZGVmaW5lIFBNQ19TQ1JBVENINTRfQUREUl9TSElGVAkwCj4gIAo+ICAjZGVm
-aW5lIFBNQ19TQ1JBVENINTUJCQkweDI1Ywo+IC0jZGVmaW5lIFBNQ19TQ1JBVENINTVfUkVTRVRf
-VEVHUkEJKDEgPDwgMzEpCj4gKyNkZWZpbmUgUE1DX1NDUkFUQ0g1NV9SRVNFVF9URUdSQQlCSVQo
-MzEpCj4gICNkZWZpbmUgUE1DX1NDUkFUQ0g1NV9DTlRSTF9JRF9TSElGVAkyNwo+ICAjZGVmaW5l
-IFBNQ19TQ1JBVENINTVfUElOTVVYX1NISUZUCTI0Cj4gLSNkZWZpbmUgUE1DX1NDUkFUQ0g1NV8x
-NkJJVE9QCQkoMSA8PCAxNSkKPiArI2RlZmluZSBQTUNfU0NSQVRDSDU1XzE2QklUT1AJCUJJVCgx
-NSkKPiAgI2RlZmluZSBQTUNfU0NSQVRDSDU1X0NIRUNLU1VNX1NISUZUCTE2Cj4gICNkZWZpbmUg
-UE1DX1NDUkFUQ0g1NV9JMkNTTFYxX1NISUZUCTAKCkFja2VkLWJ5OiBKb24gSHVudGVyIDxqb25h
-dGhhbmhAbnZpZGlhLmNvbT4KCkNoZWVycwpKb24KX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
-bGlzdGluZm8vZHJpLWRldmVsCg==
+
+On 06/05/16 11:45, Laxman Dewangan wrote:
+> The function tegra_pmc_readl() returns the u32 type data and hence
+> change the data type of variable where this data is stored to u32
+> type.
+> 
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> ---
+> Changes from V1:
+> -This is new in series as per discussion on V1 series to use u32 for
+> tegra_pmc_readl.
+> 
+> Changes from V2:
+> - Make unsigned long to u32 for some missed variable from V1.
+> 
+> Changes from V3:
+> - Revert back the value to ulong where time calcualtion is done.
+> ---
+>  drivers/soc/tegra/pmc.c | 16 +++++++++-------
+>  1 file changed, 9 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index 2c3f1f9..09c2b97 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -875,10 +875,10 @@ static int tegra_io_rail_prepare(unsigned int id, unsigned long *request,
+>  	return 0;
+>  }
+>  
+> -static int tegra_io_rail_poll(unsigned long offset, unsigned long mask,
+> -			      unsigned long val, unsigned long timeout)
+> +static int tegra_io_rail_poll(unsigned long offset, u32 mask,
+> +			      u32 val, unsigned long timeout)
+>  {
+> -	unsigned long value;
+> +	u32 value;
+>  
+>  	timeout = jiffies + msecs_to_jiffies(timeout);
+>  
+> @@ -900,8 +900,9 @@ static void tegra_io_rail_unprepare(void)
+>  
+>  int tegra_io_rail_power_on(unsigned int id)
+>  {
+> -	unsigned long request, status, value;
+> -	unsigned int bit, mask;
+> +	unsigned long request, status;
+> +	unsigned int bit;
+> +	u32 value, mask;
+>  	int err;
+>  
+>  	mutex_lock(&pmc->powergates_lock);
+> @@ -935,8 +936,9 @@ EXPORT_SYMBOL(tegra_io_rail_power_on);
+>  
+>  int tegra_io_rail_power_off(unsigned int id)
+>  {
+> -	unsigned long request, status, value;
+> -	unsigned int bit, mask;
+> +	unsigned long request, status;
+> +	unsigned int bit;
+> +	u32 value, mask;
+>  	int err;
+>  
+>  	mutex_lock(&pmc->powergates_lock);
+> 
+
+Reviewed-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Cheers
+Jon
