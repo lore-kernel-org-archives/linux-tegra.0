@@ -1,60 +1,57 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 13/14] dt-bindings: arm-gic: Add documentation for
- Tegra210 AGIC
-Date: Fri, 6 May 2016 09:32:38 +0100
-Message-ID: <572C56A6.7020408@nvidia.com>
-References: <1461150237-15580-1-git-send-email-jonathanh@nvidia.com>
- <1461150237-15580-14-git-send-email-jonathanh@nvidia.com>
- <20160422100052.GA10606@leverpostej> <571A0739.3090502@nvidia.com>
- <20160422112239.GF10606@leverpostej> <5720DC1D.1080802@nvidia.com>
- <20160427173810.GC7359@leverpostej> <5721C597.1010105@nvidia.com>
- <20160428095525.GB21145@leverpostej>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V4 0/3] soc/tegra: Add support for IO pads power and voltage control
+Date: Fri, 6 May 2016 16:15:45 +0530
+Message-ID: <1462531548-12914-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160428095525.GB21145@leverpostej>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Mark,
+The IO pins of Tegra SoCs are grouped for common control of IO interface
+like setting voltage signal levels and power state of the interface. The 
+group is generally referred as IO pads. The power state and voltage control
+of IO pins can be done at IO pads level.
 
-On 28/04/16 10:55, Mark Rutland wrote:
+Tegra124 onwards IO pads support the power down state when system is
+active. The voltage levels on IO pads are auto detected on Tegra124/
+Tegra132 but it is not in Tegra210. For Tegra210, the SW need to
+explicitly configure the voltage levels of IO pads
 
-[...]
+This series add the interface for the IO pad power state and voltage
+configurations. Modifies the client to use new APIs.
+Register the child devices to provide the client interface to configure
+IO pads power state and voltage from Device tree.
 
-> The "nvidia,tegra210-agic" string can be taken as describing any
-> Tegra-210 specific integration quirks, though I agree that's also not
-> fantastic for extending PM support beyond Tegra 210 and variants
-> thereof.
-> 
-> So maybe the best approach is bailing out in the presence of clocks
-> and/or power domains after all, on the assumption that nothing today has
-> those properties, though I fear we may have problems with that later
-> down the line if/when people describe those for the root GIC to describe
-> those must be hogged, even if not explicitly managed.
+---
+Changes from V2: 
+- Drop the pinctrl driver from series till pmc interfce is finalise.
+- Move client to use the new APIs.
+- Remove older APIs to configure IO rail and related macros.
 
-On further testing, by bailing out in the presence of clocks and/or
-power-domains, the problem I now see is that although the primary gic-400
-has been registered, we still try to probe it again later as it matches
-the platform driver. One way to avoid this would be ...
+Changes from V2: 
+- keep value  to be unsigned long in the dpd_prepare.
+- Make all pad_id/io_pad_id to id.
+- tegra_io_pad_ -> tegra_io_pads
+- dpd_bit -> bit, pwr_mask/bit to mask/bit.
+- Rename function to tegra_io_pads_{set,get}_voltage_config
+- Make the io pad tables common for all SoC.
+- Make io_pads enums.
+- Add enums for voltage.
+- Drop patch of adding sub devs
 
-diff --git a/drivers/of/irq.c b/drivers/of/irq.c
-index e7bfc175b8e1..631da7ad0dbf 100644
---- a/drivers/of/irq.c
-+++ b/drivers/of/irq.c
-@@ -556,6 +556,8 @@ void __init of_irq_init(const struct of_device_id *matches)
-                         * its children can get processed in a subsequent pass.
-                         */
-                        list_add_tail(&desc->list, &intc_parent_list);
-+
-+                       of_node_set_flag(desc->dev, OF_POPULATED);
-                }
 
-If this is not appropriate then I guess I will just need to use
-"tegra210-agic" for the compatibility flag.
+Laxman Dewangan (3):
+  soc/tegra: pmc: Use BIT macro for register field definition
+  soc/tegra: pmc: Correct type of variable for tegra_pmc_readl()
+  soc/tegra: pmc: Add support for IO pads power state and voltage
 
-Cheers
-Jon
+ drivers/gpu/drm/tegra/sor.c |   8 +-
+ drivers/soc/tegra/pmc.c     | 273 +++++++++++++++++++++++++++++++++++---------
+ include/soc/tegra/pmc.h     | 132 +++++++++++++++------
+ 3 files changed, 321 insertions(+), 92 deletions(-)
+
+-- 
+2.1.4
