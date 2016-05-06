@@ -1,73 +1,113 @@
-From: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH V3 16/17] irqchip/gic: Prepare for adding platform
- driver
-Date: Fri, 6 May 2016 15:27:24 +0100
-Message-ID: <20160506152724.32c9000b@arm.com>
-References: <1462379130-11742-1-git-send-email-jonathanh@nvidia.com>
-	<1462379130-11742-17-git-send-email-jonathanh@nvidia.com>
-	<572B54F4.2080103@arm.com>
-	<572CA5AF.7080504@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH V4 3/3] soc/tegra: pmc: Add support for IO pads power
+ state and voltage
+Date: Fri, 6 May 2016 15:37:20 +0100
+Message-ID: <572CAC20.9030307@nvidia.com>
+References: <1462531548-12914-1-git-send-email-ldewangan@nvidia.com>
+ <1462531548-12914-4-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <572CA5AF.7080504-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1462531548-12914-4-git-send-email-ldewangan@nvidia.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Laxman Dewangan <ldewangan@nvidia.com>, thierry.reding@gmail.com, airlied@linux.ie, swarren@wwwdotorg.org, gnurou@gmail.com
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, 6 May 2016 15:09:51 +0100
-Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-
-Hi Jon,
-
-[...]
-
-> > +int gic_of_setup(struct device_node *node, struct device *dev,
-> > +		 struct gic_chip_data **gicp)
-> > +{
-> > +	struct gic_chip_data *gic;
-> >  
-> > -	*cpu_base = of_iomap(node, 1);
-> > -	if (WARN(!*cpu_base, "unable to map gic cpu registers\n")) {
-> > -		iounmap(*dist_base);
-> > -		return -ENOMEM;
-> > +	if (!node || !gicp)
-> > +		return -EINVAL;
-> > +
-> > +	if (dev) {
-> > +		*gicp = devm_kzalloc(dev, sizeof(*gic), GFP_KERNEL);
-> > +		if (!*gicp)
-> > +			return -ENOMEM;
-> >  	}
-> >  
-> > -	if (of_property_read_u32(node, "cpu-offset", percpu_offset))
-> > -		*percpu_offset = 0;
-> > +	gic = *gicp;
-> > +
-> > +	gic->raw_dist_base = of_iomap(node, 0);
-> > +	if (WARN(!gic->raw_dist_base, "unable to map gic dist registers\n"))
-> > +		goto err;
-> > +
-> > +	gic->raw_cpu_base = of_iomap(node, 1);
-> > +	if (WARN(!gic->raw_cpu_base, "unable to map gic cpu registers\n"))
-> > +		goto err;
-> > +
-> > +	if (of_property_read_u32(node, "cpu-offset", &gic->percpu_offset))
-> > +		gic->percpu_offset = 0;
-> >  
-> > +	gic->chip.parent_device = dev;
-> 
-> We can't initialise the device here as it gets overwritten in the
-> gic_init_bases. So I have had to re-organise things a bit. Good news is
-> that I have eliminated the call from the platform driver to
-> gic_init_bases so we only have a single call to initialise the GIC.
-
-Ah, good. That sounds a lot better. Looking forward to v4.
-
-Thanks,
-
-	M.
--- 
-Jazz is not dead. It just smells funny.
+Ck9uIDA2LzA1LzE2IDExOjQ1LCBMYXhtYW4gRGV3YW5nYW4gd3JvdGU6Cj4gVGhlIElPIHBpbnMg
+b2YgVGVncmEgU29DcyBhcmUgZ3JvdXBlZCBmb3IgY29tbW9uIGNvbnRyb2wgb2YgSU8KPiBpbnRl
+cmZhY2UgbGlrZSBzZXR0aW5nIHZvbHRhZ2Ugc2lnbmFsIGxldmVscyBhbmQgcG93ZXIgc3RhdGUg
+b2YKPiB0aGUgaW50ZXJmYWNlLiBUaGUgZ3JvdXAgaXMgZ2VuZXJhbGx5IHJlZmVycmVkIGFzIElP
+IHBhZHMuIFRoZQo+IHBvd2VyIHN0YXRlIGFuZCB2b2x0YWdlIGNvbnRyb2wgb2YgSU8gcGlucyBj
+YW4gYmUgZG9uZSBhdCBJTyBwYWRzCj4gbGV2ZWwuCj4gCj4gVGVncmEgZ2VuZXJhdGlvbiBTb0Mg
+c3VwcG9ydHMgdGhlIHBvd2VyIGRvd24gb2YgSU8gcGFkcyB3aGVuIGl0Cj4gaXMgbm90IHVzZWQg
+ZXZlbiBpbiB0aGUgYWN0aXZlIHN0YXRlIG9mIHN5c3RlbS4gVGhpcyBzYXZlcyBwb3dlcgo+IGZy
+b20gdGhhdCBJTyBpbnRlcmZhY2UuIEFsc28gaXQgc3VwcG9ydHMgbXVsdGlwbGUgdm9sdGFnZSBs
+ZXZlbAo+IGluIElPIHBpbnMgZm9yIGludGVyZmFjaW5nIG9uIHNvbWUgb2YgcGFkcy4gVGhlIElP
+IHBhZCB2b2x0YWdlIGlzCj4gYXV0b21hdGljYWxseSBkZXRlY3RlZCB0aWxsIFQxMjQsIGhlbmNl
+IFNXIG5lZWQgbm90IHRvIGNvbmZpZ3VyZQo+IHRoaXMuIEJ1dCBmcm9tIFQyMTAsIHRoZSBhdXRv
+bWF0aWNhbGx5IGRldGVjdGlvbiBsb2dpYyBoYXMgYmVlbgo+IHJlbW92ZWQsIGhlbmNlIFNXIG5l
+ZWQgdG8gZXhwbGljaXRpbHkgc2V0IHRoZSBJTyBwYWQgdm9sdGFnZSBpbnRvCj4gSU8gcGFkIGNv
+bmZpZ3VyYXRpb24gcmVnaXN0ZXJzLgo+IAo+IEFkZCBzdXBwb3J0IHRvIHNldCB0aGUgcG93ZXIg
+c3RhdGVzIGFuZCB2b2x0YWdlIGxldmVsIG9mIHRoZSBJTyBwYWRzCj4gZnJvbSBjbGllbnQgZHJp
+dmVyLiBUaGUgaW1wbGVtZW50YXRpb24gZm9yIHRoZSBBUElzIGFyZSBpbiBnZW5lcmljCj4gd2hp
+Y2ggaXMgYXBwbGljYWJsZSBmb3IgYWxsIGdlbmVyYXRpb24gb3MgVGVncmEgU29DLgo+IAo+IElP
+IHBhZHMgSUQgYW5kIGluZm9ybWF0aW9uIG9mIGJpdCBmaWVsZCBmb3IgcG93ZXIgc3RhdGUgYW5k
+IHZvbHRhZ2UKPiBsZXZlbCBjb250cm9scyBhcmUgYWRkZWQgZm9yIFRlZ3JhMTI0LCBUZWdyYTEz
+MiBhbmQgVGVncmEyMTAuIFRoZSBTT1IKPiBkcml2ZXIgaXMgbW9kaWZpZWQgdG8gdXNlIHRoZSBu
+ZXcgQVBJcy4KPiAKPiBTaWduZWQtb2ZmLWJ5OiBMYXhtYW4gRGV3YW5nYW4gPGxkZXdhbmdhbkBu
+dmlkaWEuY29tPgo+IAo+IC0tLQo+IENoYW5nZXMgZnJvbSBWMToKPiBUaGlzIGlzIHJld29ya2Vk
+IG9uIGVhcmxpZXIgcGF0aCB0byBoYXZlIHNlcGFyYXRpb24gYmV0d2VlbiBJTyByYWlscyBhbmQK
+PiBpbyBwYWRzIGFuZCBhZGQgcG93ZXIgc3RhdGUgYW5kIHZvbHRhZ2UgY29udHJvbCBBUElzIGlu
+IHNpbmdsZSBjYWxsLgo+IAo+IENoYW5nZXMgZnJvbSBWMjoKPiAtIFJlbW92ZSB0aGUgdGVncmFf
+aW9fcmFpbF9wb3dlcl9vZmYvb24oKSBhcGlzIGFuZCBjaGFuZ2UgY2xpZW50IChzb3IpIGRyaXZl
+cgo+IHRvIHVzZSB0aGUgbmV3IEFQSXMgZm9yIElPIHBhZCBwb3dlci4KPiAtIFJlbW92ZSB0aGUg
+VEVHUkFfSU9fUkFJTF8gbWFjcm9zLgo+IAo+IENoYW5nZXMgZnJvbSBWMzoKPiAtIE1ha2UgYWxs
+IHBhZF9pZC9pb19wYWRfaWQgdG8gaWQuCj4gLSB0ZWdyYV9pb19wYWRfIC0+IHRlZ3JhX2lvX3Bh
+ZHMKPiAtIGRwZF9iaXQgLT4gYml0LCBwd3JfbWFzay9iaXQgdG8gbWFzay9iaXQuCj4gLSBSZW5h
+bWUgZnVuY3Rpb24gdG8gdGVncmFfaW9fcGFkc197c2V0LGdldH1fdm9sdGFnZV9jb25maWcKPiAt
+IE1ha2UgdGhlIGlvIHBhZCB0YWJsZXMgY29tbW9uIGZvciBhbGwgU29DLgo+IC0gTWFrZSBpb19w
+YWRzIGVudW1zLgo+IC0gQWRkIGVudW1zIGZvciB2b2x0YWdlLgo+IC0tLQo+ICBkcml2ZXJzL2dw
+dS9kcm0vdGVncmEvc29yLmMgfCAgIDggKy0KPiAgZHJpdmVycy9zb2MvdGVncmEvcG1jLmMgICAg
+IHwgMjIxICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tCj4gIGlu
+Y2x1ZGUvc29jL3RlZ3JhL3BtYy5oICAgICB8IDEzMiArKysrKysrKysrKysrKysrKystLS0tLS0t
+LQo+ICAzIGZpbGVzIGNoYW5nZWQsIDI5NCBpbnNlcnRpb25zKCspLCA2NyBkZWxldGlvbnMoLSkK
+ClsuLi5dCgo+ICsvKiBURUdSQV9JT19QQUQ6IFRoZSBJTyBwaW5zIG9mIFRlZ3JhIFNvQ3MgYXJl
+IGdyb3VwZWQgZm9yIGNvbW1vbiBjb250cm9sCj4gKyAqIG9mIElPIGludGVyZmFjZSBsaWtlIHNl
+dHRpbmcgdm9sdGFnZSBzaWduYWwgbGV2ZWxzLCBwb3dlciBzdGF0ZSBvZiB0aGUKPiArICogaW50
+ZXJmYWNlLiBUaGUgZ3JvdXAgaXMgZ2VuZXJhbGx5IHJlZmVycmVkIGFzIGlvLXBhZHMuIFRoZSBw
+b3dlciBhbmQKPiArICogdm9sdGFnZSBjb250cm9sIG9mIElPIHBpbnMgYXJlIGF2YWlsYWJsZSBh
+dCBpby1wYWRzIGxldmVsLgo+ICsgKiBUaGUgZm9sbG93aW5nIG1hY3JvcyBtYWtlIHRoZSBzdXBl
+ciBsaXN0IGFsbCBJTyBwYWRzIGZvdW5kIG9uIFRlZ3JhIFNvQwo+ICsgKiBnZW5lcmF0aW9ucy4K
+PiArICovCj4gK2VudW0gdGVncmFfaW9fcGFkcyB7Cj4gKwlURUdSQV9JT19QQURfQVVESU8sCj4g
+KwlURUdSQV9JT19QQURfQVVESU9fSFYsCj4gKwlURUdSQV9JT19QQURfQkIsCj4gKwlURUdSQV9J
+T19QQURfQ0FNLAo+ICsJVEVHUkFfSU9fUEFEX0NPTVAsCj4gKwlURUdSQV9JT19QQURfQ1NJQSwK
+PiArCVRFR1JBX0lPX1BBRF9DU0lCLAo+ICsJVEVHUkFfSU9fUEFEX0NTSUMsCj4gKwlURUdSQV9J
+T19QQURfQ1NJRCwKPiArCVRFR1JBX0lPX1BBRF9DU0lFLAo+ICsJVEVHUkFfSU9fUEFEX0NTSUYs
+Cj4gKwlURUdSQV9JT19QQURfREJHLAo+ICsJVEVHUkFfSU9fUEFEX0RFQlVHX05PTkFPLAo+ICsJ
+VEVHUkFfSU9fUEFEX0RNSUMsCj4gKwlURUdSQV9JT19QQURfRFAsCj4gKwlURUdSQV9JT19QQURf
+RFNJLAo+ICsJVEVHUkFfSU9fUEFEX0RTSUIsCj4gKwlURUdSQV9JT19QQURfRFNJQywKPiArCVRF
+R1JBX0lPX1BBRF9EU0lELAo+ICsJVEVHUkFfSU9fUEFEX0VNTUMsCj4gKwlURUdSQV9JT19QQURf
+RU1NQzIsCj4gKwlURUdSQV9JT19QQURfR1BJTywKPiArCVRFR1JBX0lPX1BBRF9IRE1JLAo+ICsJ
+VEVHUkFfSU9fUEFEX0hTSUMsCj4gKwlURUdSQV9JT19QQURfSFYsCj4gKwlURUdSQV9JT19QQURf
+TFZEUywKPiArCVRFR1JBX0lPX1BBRF9NSVBJX0JJQVMsCj4gKwlURUdSQV9JT19QQURfTkFORCwK
+PiArCVRFR1JBX0lPX1BBRF9QRVhfQklBUywKPiArCVRFR1JBX0lPX1BBRF9QRVhfQ0xLMSwKPiAr
+CVRFR1JBX0lPX1BBRF9QRVhfQ0xLMiwKPiArCVRFR1JBX0lPX1BBRF9QRVhfQ05UUkwsCj4gKwlU
+RUdSQV9JT19QQURfU0RNTUMxLAo+ICsJVEVHUkFfSU9fUEFEX1NETU1DMywKPiArCVRFR1JBX0lP
+X1BBRF9TRE1NQzQsCj4gKwlURUdSQV9JT19QQURfU1BJLAo+ICsJVEVHUkFfSU9fUEFEX1NQSV9I
+ViwKPiArCVRFR1JBX0lPX1BBRF9TWVNfRERDLAo+ICsJVEVHUkFfSU9fUEFEX1VBUlQsCj4gKwlU
+RUdSQV9JT19QQURfVVNCMCwKPiArCVRFR1JBX0lPX1BBRF9VU0IxLAo+ICsJVEVHUkFfSU9fUEFE
+X1VTQjIsCj4gKwlURUdSQV9JT19QQURfVVNCMywKPiArCVRFR1JBX0lPX1BBRF9VU0JfQklBUywK
+PiArCj4gKwkvKiBMYXN0IGVudHJ5ICovCj4gKwlURUdSQV9JT19QQURfTUFYLAoKTml0IHNob3Vs
+ZCB0aGVzZSBiZSBURUdSQV9JT19QQURTX3h4eD8KCj4gK307Cj4gKwo+ICsvKiB0ZWdyYV9pb19w
+YWRzX3NvdXJjZV92b2x0YWdlOiBUaGUgdm9sdGFnZSBsZXZlbCBvZiBJTyByYWlscyB3aGljaCBz
+b3VyY2UKPiArICoJCQkJIHRoZSBJTyBwYWRzLgo+ICsgKi8KPiArZW51bSB0ZWdyYV9pb19wYWRz
+X3NvdXJjZV92b2x0YWdlIHsKPiArCVRFR1JBX0lPX1BBRFNfU09VUkNFX1ZPTFRBR0VfMTgwMDAw
+MFVWLAo+ICsJVEVHUkFfSU9fUEFEU19TT1VSQ0VfVk9MVEFHRV8zMzAwMDAwVVYsCj4gK307CgpO
+aXQgSSB3b25kZXIgaWYgd2UgY2FuIG1ha2UgdGhpcyBzaG9ydGVyIC4uLgoKZW51bSB0ZWdyYV9p
+b19wYWRzX3Zjb25mIHsKCVRFR1JBX0lPX1BBRFNfVkNPTkZfMVY4LAoJVEVHUkFfSU9fUEFEU19W
+Q09ORl8zVjMsCgoKPiAtaW50IHRlZ3JhX2lvX3JhaWxfcG93ZXJfb24odW5zaWduZWQgaW50IGlk
+KTsKPiAtaW50IHRlZ3JhX2lvX3JhaWxfcG93ZXJfb2ZmKHVuc2lnbmVkIGludCBpZCk7Cj4gKy8q
+IFBvd2VyIGVuYWJsZS9kaXNhYmxlIG9mIHRoZSBJTyBwYWRzICovCj4gK2ludCB0ZWdyYV9pb19w
+YWRzX3Bvd2VyX2VuYWJsZShlbnVtIHRlZ3JhX2lvX3BhZHMgaWQpOwo+ICtpbnQgdGVncmFfaW9f
+cGFkc19wb3dlcl9kaXNhYmxlKGVudW0gdGVncmFfaW9fcGFkcyBpZCk7Cj4gK2ludCB0ZWdyYV9p
+b19wYWRzX3Bvd2VyX2lzX2VuYWJsZWQoZW51bSB0ZWdyYV9pb19wYWRzIGlkKTsKPiArCj4gKy8q
+IFNldC9nZXQgVGVncmEgSU8gcGFkcyB2b2x0YWdlIGNvbmZpZyByZWdpc3RlcnMgKi8KPiAraW50
+IHRlZ3JhX2lvX3BhZHNfc2V0X3ZvbHRhZ2VfY29uZmlnKGVudW0gdGVncmFfaW9fcGFkcyBpZCwK
+PiArCQkJCSAgICAgZW51bSB0ZWdyYV9pb19wYWRzX3NvdXJjZV92b2x0YWdlIHJhaWxfdXYpOwo+
+ICtpbnQgdGVncmFfaW9fcGFkc19nZXRfdm9sdGFnZV9jb25maWcoZW51bSB0ZWdyYV9pb19wYWRz
+IGlkKTsKCklkZWFsbHksIGZvciBwdWJsaWMgZnVuY3Rpb24gd2Ugc2hvdWxkIGhhdmUga2VybmVs
+LWRvYyBkZXNjcmlwdGlvbnMuCgpPdGhlcndpc2UgbG9va3MgZmluZS4gSSB3b3VsZCBub3QgcmV2
+IHRoaXMgdW5sZXNzIFRoaWVycnkgaGFzIHNvbWUgY29tbWVudHMuCgpDaGVlcnMKSm9uCl9fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWls
+aW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZy
+ZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
