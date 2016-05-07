@@ -1,40 +1,25 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 05/11] pwm: tegra-dfll: Add driver for Tegra DFLL PWM
- controller
-Date: Fri, 6 May 2016 17:21:11 -0600
-Message-ID: <572D26E7.2060406@wwwdotorg.org>
-References: <1461321071-6431-1-git-send-email-pchiu@nvidia.com>
- <1461321071-6431-6-git-send-email-pchiu@nvidia.com>
- <20160422125513.GJ9047@ulmo.ba.sec> <20160506231532.GK3492@codeaurora.org>
+From: "Acct. Dept. Bank Of China" <jslee-WECj+/h0nqhWk0Htik3J/w@public.gmane.org>
+Subject: STRICTLY CONFIDENTIAL.
+Date: Sat, 7 May 2016 01:22:27 -0500
+Message-ID: <201605070609.u47698OI002826__28892.3131920912$1462602658$gmane$org@infonetg.com>
+Reply-To: <zhu.shumin-/E1597aS9LTXPF5Rlphj1Q@public.gmane.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain;
+	charset="Windows-1251"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <20160506231532.GK3492@codeaurora.org>
-Sender: linux-clk-owner@vger.kernel.org
-To: Stephen Boyd <sboyd@codeaurora.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Penny Chiu <pchiu@nvidia.com>, gnurou@gmail.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, rjw@rjwysocki.net, viresh.kumar@linaro.org, mturquette@baylibre.com, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-pwm@vger.kernel.org, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/06/2016 05:15 PM, Stephen Boyd wrote:
-> On 04/22, Thierry Reding wrote:
->> On Fri, Apr 22, 2016 at 06:31:05PM +0800, Penny Chiu wrote:
->>> diff --git a/Documentation/devicetree/bindings/pwm/nvidia,tegra-dfll-pwm.txt b/Documentation/devicetree/bindings/pwm/nvidia,tegra-dfll-pwm.txt
->>> new file mode 100644
->>> index 0000000..bd0d247
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/pwm/nvidia,tegra-dfll-pwm.txt
->>> @@ -0,0 +1,48 @@
->>> +Tegra SoC DFLL PWM controller
->>
->> Stephen, we have in the past used tegra124 in names, even if the IP was
->> already included in tegra114, but we never supported it on Tegra114 and
->> hence couldn't even verify that the binding was valid. Any preference as
->> to the name in this particular case?
->
-> You meant Stephen Warren right? I don't care either way.
+I have important transaction for you as next of kin to claim US$8.37m  email me at   zhu.shumin-/E1597aS9LTXPF5Rlphj1Q@public.gmane.org   so i can send you more details
 
-Sorry, I wasn't really paying attention to patches.
+Thanks
 
-Yes, using "124" seems to make sense; we can always expand the binding 
-to cover "114" later if there's any demand.
+Mr.Zhu Shumin
+
+(Security Code 00746igit)
+= = = = = = = = = = = = =
+
+
+
+                 Move to inbox
