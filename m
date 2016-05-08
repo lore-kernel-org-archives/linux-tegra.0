@@ -1,71 +1,86 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 13/14] dt-bindings: arm-gic: Add documentation for
- Tegra210 AGIC
-Date: Sun, 8 May 2016 13:25:14 +0100
-Message-ID: <572F302A.6010506@nvidia.com>
-References: <1461150237-15580-1-git-send-email-jonathanh@nvidia.com>
- <1461150237-15580-14-git-send-email-jonathanh@nvidia.com>
- <20160422100052.GA10606@leverpostej> <571A0739.3090502@nvidia.com>
- <20160422112239.GF10606@leverpostej> <5720DC1D.1080802@nvidia.com>
- <20160427173810.GC7359@leverpostej> <5721C597.1010105@nvidia.com>
- <20160428095525.GB21145@leverpostej> <572C56A6.7020408@nvidia.com>
- <CAMuHMdX+egbNPP4QQ2R28GbyVkg9qBrwYfUy8EE0PdB6od+LBg@mail.gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 1/3] dt-bindings: bus: Add documentation for Tegra210
+ ACONNECT
+Date: Sun, 8 May 2016 13:45:34 +0100
+Message-ID: <572F34EE.8090404@nvidia.com>
+References: <1461938027-23034-1-git-send-email-jonathanh@nvidia.com>
+ <1461938027-23034-2-git-send-email-jonathanh@nvidia.com>
+ <20160503182215.GA4341@rob-hp-laptop> <572B5B14.6060603@nvidia.com>
+ <CAL_JsqL66dY-qatCpESqhpqHQ+g+419pk5cF266xT=Jhp4zSLA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAMuHMdX+egbNPP4QQ2R28GbyVkg9qBrwYfUy8EE0PdB6od+LBg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>
-Cc: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAL_JsqL66dY-qatCpESqhpqHQ+g+419pk5cF266xT=Jhp4zSLA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Geert,
 
-On 07/05/16 15:10, Geert Uytterhoeven wrote:
-> Hi Jon,
-> 
-> On Fri, May 6, 2016 at 10:32 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>> The "nvidia,tegra210-agic" string can be taken as describing any
->>> Tegra-210 specific integration quirks, though I agree that's also not
->>> fantastic for extending PM support beyond Tegra 210 and variants
->>> thereof.
+On 05/05/16 17:48, Rob Herring wrote:
+> On Thu, May 5, 2016 at 9:39 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
+>>
+>> On 03/05/16 19:22, Rob Herring wrote:
+>>> On Fri, Apr 29, 2016 at 02:53:45PM +0100, Jon Hunter wrote:
+>>>> Add binding documentation for the Tegra ACONNECT bus that is part of the
+>>>> Audio Processing Engine (APE) on Tegra210. The ACONNECT bus is used to
+>>>> access devices within the APE subsystem. The APE is located in a
+>>>> separate power domain and so accesses made to the ACONNECT require the
+>>>> power domain to be enabled as well as some platform specific clocks.
+>>>>
+>>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>>>> ---
+>>>>  .../bindings/bus/nvidia,tegra210-aconnect.txt      | 45 ++++++++++++++++++++++
+>>>>  1 file changed, 45 insertions(+)
+>>>>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
+>>>> new file mode 100644
+>>>> index 000000000000..e5e915f8fca7
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
+>>>> @@ -0,0 +1,45 @@
+>>>> +NVIDIA Tegra ACONNECT Bus
+>>>> +
+>>>> +The Tegra ACONNECT bus is an AXI switch which is used to connnect various
+>>>> +components inside the Audio Processing Engine (APE). All CPU accesses to
+>>>> +the APE subsystem go through the ACONNECT via an APB to AXI wrapper.
+>>>> +
+>>>> +Required properties:
+>>>> +- compatible: Must be "nvidia,tegra210-aconnect".
+>>>> +- clocks: Must contain the entries for the APE clock (TEGRA210_CLK_APE),
+>>>> +  and APE interface clock (TEGRA210_CLK_APB2APE).
+>>>> +- clock-names: Must contain the names "ape" and "apb2ape" for the corresponding
+>>>> +  'clocks' entries.
+>>>> +- power-domains: Must contain a phandle that points to the audio powergate
+>>>> +  (namely 'aud') for Tegra210.
+>>>> +- #address-cells: The number of cells used to represent physical base addresses
+>>>> +  in the host1x address space. Should be 2.
+>>>> +- #size-cells: The number of cells used to represent the size of an address
+>>>> +  range in the host1x address space. Should be 2.
 >>>
->>> So maybe the best approach is bailing out in the presence of clocks
->>> and/or power domains after all, on the assumption that nothing today has
->>> those properties, though I fear we may have problems with that later
->>> down the line if/when people describe those for the root GIC to describe
->>> those must be hogged, even if not explicitly managed.
+>>> Do you really need >4GB of child addresses?
 >>
->> On further testing, by bailing out in the presence of clocks and/or
->> power-domains, the problem I now see is that although the primary gic-400
->> has been registered, we still try to probe it again later as it matches
->> the platform driver. One way to avoid this would be ...
+>> Sounds rather silly when you put it like that. No, its not needed. I
+>> will fix that.
 >>
->> diff --git a/drivers/of/irq.c b/drivers/of/irq.c
->> index e7bfc175b8e1..631da7ad0dbf 100644
->> --- a/drivers/of/irq.c
->> +++ b/drivers/of/irq.c
->> @@ -556,6 +556,8 @@ void __init of_irq_init(const struct of_device_id *matches)
->>                          * its children can get processed in a subsequent pass.
->>                          */
->>                         list_add_tail(&desc->list, &intc_parent_list);
->> +
->> +                       of_node_set_flag(desc->dev, OF_POPULATED);
->>                 }
+>>>> +- ranges: 1:1 mapping of the aconnect address space to the CPU address space.
+>>>
+>>> Why 1:1 for 256KB of address space?
+>>
+>> No good reason. I have looking at what we did for host1x and ahub which
+>> also have a ranges property and use a 1:1 mapping. For ahub this makes
+>> sense because it is more of a cross-bar/switch. The aconnect bus is also
+>> a switch and thought may be that is the easiest thing to do. What is
+>> recommended here?
 > 
-> That sounds like the right thing to do to me...
+> Use of non-empty ranges is preferred though there is not much benefit
+> if the parent and child sizes are the same. However, it does also
+> limit what is a valid address for those child nodes.
 
-OK. The more I think about this, it does seem silly to create a device
-and pdata for a device that has already been instantiated.
-
->> If this is not appropriate then I guess I will just need to use
->> "tegra210-agic" for the compatibility flag.
-> 
-> As I want this for plain gic-400, I'd be unhappy ;-)
-
-No problem. However, there is more work that would be needed to get this
-to work for root controllers which I think that you want.
+Thanks. Yes if I change the child sizes to be 1, then I guess I need to
+have a non-empty ranges anyway.
 
 Cheers
 Jon
