@@ -1,87 +1,126 @@
-From: Wei Ni <wni@nvidia.com>
-Subject: [PATCH v4 06/11] arm64: tegra: use tegra132-soctherm for Tegra132
-Date: Mon, 9 May 2016 14:53:59 +0800
-Message-ID: <1462776844-2152-7-git-send-email-wni@nvidia.com>
-References: <1462776844-2152-1-git-send-email-wni@nvidia.com>
+From: Jiri Slaby <jslaby@suse.cz>
+Subject: [PATCH v2] TTY: serial, handle platform_get_irq retval properly
+Date: Mon,  9 May 2016 09:23:35 +0200
+Message-ID: <1462778615-14718-1-git-send-email-jslaby@suse.cz>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1462776844-2152-1-git-send-email-wni@nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: edubezval@gmail.com, thierry.reding@gmail.com, robh+dt@kernel.org, rui.zhang@intel.com
-Cc: MLongnecker@nvidia.com, swarren@wwwdotorg.org, mikko.perttunen@kapsi.fi, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Wei Ni <wni@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: gregkh@linuxfoundation.org
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, Russell King <linux@arm.linux.org.uk>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <kernel@pengutronix.de>, Russell King <linux@armlinux.org.uk>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linuxppc-dev@lists.ozlabs.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The Tegra132 has the specific settings for soctherm,
-so change to use campatible "nvidia,tegra132-soctherm" for it.
-And adds cpu, gpu, mem and pllx thermal zones.
+platform_get_irq can fail, so we should handle negative value when
+returned.
 
-Signed-off-by: Wei Ni <wni@nvidia.com>
+[v2]
+
+platform_get_irq can actually return zero on some platforms. So do not
+remove checks for irq =3D=3D 0 there.
+
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Cc: Russell King <linux@arm.linux.org.uk>
+Cc: "Uwe Kleine-K=C3=B6nig" <kernel@pengutronix.de>
+Cc: Russell King <linux@armlinux.org.uk>
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Paul Mackerras <paulus@samba.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-serial@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linuxppc-dev@lists.ozlabs.org
+Cc: linux-tegra@vger.kernel.org
 ---
- arch/arm64/boot/dts/nvidia/tegra132.dtsi | 36 ++++++++++++++++++++++++++++++--
- 1 file changed, 34 insertions(+), 2 deletions(-)
+ drivers/tty/serial/amba-pl011.c   | 8 +++++++-
+ drivers/tty/serial/fsl_lpuart.c   | 8 +++++++-
+ drivers/tty/serial/pmac_zilog.c   | 2 +-
+ drivers/tty/serial/serial-tegra.c | 7 ++++++-
+ 4 files changed, 21 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra132.dtsi b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
-index 2013f8916084..e41d8e82d7ed 100644
---- a/arch/arm64/boot/dts/nvidia/tegra132.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
-@@ -4,6 +4,7 @@
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
- #include <dt-bindings/pinctrl/pinctrl-tegra-xusb.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/thermal/tegra124-soctherm.h>
- 
- / {
- 	compatible = "nvidia,tegra132", "nvidia,tegra124";
-@@ -727,8 +728,8 @@
- 	};
- 
- 	soctherm: thermal-sensor@700e2000 {
--		compatible = "nvidia,tegra124-soctherm";
--		reg = <0x0 0x700e2000 0x0 0x1000>;
-+		compatible = "nvidia,tegra132-soctherm";
-+		reg = <0x0 0x700e2000 0x0 0x600>;
- 		interrupts = <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
- 		clocks = <&tegra_car TEGRA124_CLK_TSENSOR>,
- 			<&tegra_car TEGRA124_CLK_SOC_THERM>;
-@@ -738,6 +739,37 @@
- 		#thermal-sensor-cells = <1>;
- 	};
- 
-+	thermal-zones {
-+		cpu {
-+			polling-delay-passive = <1000>;
-+			polling-delay = <0>;
+diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-=
+pl011.c
+index a2aa655f56c4..c70bb41800f1 100644
+--- a/drivers/tty/serial/amba-pl011.c
++++ b/drivers/tty/serial/amba-pl011.c
+@@ -2553,11 +2553,17 @@ static int sbsa_uart_probe(struct platform_devi=
+ce *pdev)
+ 	if (!uap)
+ 		return -ENOMEM;
+=20
++	ret =3D platform_get_irq(pdev, 0);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "cannot obtain irq\n");
++		return ret;
++	}
++	uap->port.irq	=3D ret;
 +
-+			thermal-sensors =
-+				<&soctherm TEGRA124_SOCTHERM_SENSOR_CPU>;
-+		};
-+		mem {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
+ 	uap->reg_offset	=3D vendor_sbsa.reg_offset;
+ 	uap->vendor	=3D &vendor_sbsa;
+ 	uap->fifosize	=3D 32;
+ 	uap->port.iotype =3D vendor_sbsa.access_32b ? UPIO_MEM32 : UPIO_MEM;
+-	uap->port.irq	=3D platform_get_irq(pdev, 0);
+ 	uap->port.ops	=3D &sbsa_uart_pops;
+ 	uap->fixed_baud =3D baudrate;
+=20
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_l=
+puart.c
+index 3d790033744e..7f95f782a485 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -1830,7 +1830,13 @@ static int lpuart_probe(struct platform_device *=
+pdev)
+ 	sport->port.dev =3D &pdev->dev;
+ 	sport->port.type =3D PORT_LPUART;
+ 	sport->port.iotype =3D UPIO_MEM;
+-	sport->port.irq =3D platform_get_irq(pdev, 0);
++	ret =3D platform_get_irq(pdev, 0);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "cannot obtain irq\n");
++		return ret;
++	}
++	sport->port.irq =3D ret;
 +
-+			thermal-sensors =
-+				<&soctherm TEGRA124_SOCTHERM_SENSOR_MEM>;
-+		};
-+		gpu {
-+			polling-delay-passive = <1000>;
-+			polling-delay = <0>;
-+
-+			thermal-sensors =
-+				<&soctherm TEGRA124_SOCTHERM_SENSOR_GPU>;
-+		};
-+		pllx {
-+			polling-delay-passive = <0>;
-+			polling-delay = <0>;
-+
-+			thermal-sensors =
-+				<&soctherm TEGRA124_SOCTHERM_SENSOR_PLLX>;
-+		};
-+	};
-+
- 	ahub@70300000 {
- 		compatible = "nvidia,tegra124-ahub";
- 		reg = <0x0 0x70300000 0x0 0x200>,
--- 
-1.9.1
-
+ 	if (sport->lpuart32)
+ 		sport->port.ops =3D &lpuart32_pops;
+ 	else
+diff --git a/drivers/tty/serial/pmac_zilog.c b/drivers/tty/serial/pmac_=
+zilog.c
+index e156e39d620c..b24b0556f5a8 100644
+--- a/drivers/tty/serial/pmac_zilog.c
++++ b/drivers/tty/serial/pmac_zilog.c
+@@ -1720,7 +1720,7 @@ static int __init pmz_init_port(struct uart_pmac_=
+port *uap)
+=20
+ 	r_ports =3D platform_get_resource(uap->pdev, IORESOURCE_MEM, 0);
+ 	irq =3D platform_get_irq(uap->pdev, 0);
+-	if (!r_ports || !irq)
++	if (!r_ports || irq <=3D 0)
+ 		return -ENODEV;
+=20
+ 	uap->port.mapbase  =3D r_ports->start;
+diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/ser=
+ial-tegra.c
+index bee1e5867426..4c4674b51db9 100644
+--- a/drivers/tty/serial/serial-tegra.c
++++ b/drivers/tty/serial/serial-tegra.c
+@@ -1310,7 +1310,12 @@ static int tegra_uart_probe(struct platform_devi=
+ce *pdev)
+ 	}
+=20
+ 	u->iotype =3D UPIO_MEM32;
+-	u->irq =3D platform_get_irq(pdev, 0);
++	ret =3D platform_get_irq(pdev, 0);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Couldn't get IRQ\n");
++		return ret;
++	}
++	u->irq =3D ret;
+ 	u->regshift =3D 2;
+ 	ret =3D uart_add_one_port(&tegra_uart_driver, u);
+ 	if (ret < 0) {
+--=20
+2.8.2
