@@ -1,84 +1,45 @@
-From: Rhyland Klein <rklein@nvidia.com>
-Subject: Re: [PATCH v2] clk: tegra: Initialize UTMIPLL when enabling PLLU
-Date: Mon, 9 May 2016 18:25:36 -0400
-Message-ID: <57310E60.1080000@nvidia.com>
-References: <1462566015-12306-1-git-send-email-rklein@nvidia.com>
- <20160509052500.GB18753@ulmo.ba.sec>
+From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Subject: Re: [GIT PULL] clk: tegra: Changes for v4.7-rc1
+Date: Mon, 9 May 2016 15:42:19 -0700
+Message-ID: <20160509224219.GY3492@codeaurora.org>
+References: <1461945596-24090-1-git-send-email-thierry.reding@gmail.com>
+ <20160503000248.GB3492@codeaurora.org>
+ <20160509051946.GA18753@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <20160509052500.GB18753@ulmo.ba.sec>
-Sender: linux-clk-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, Peter De Schrijver <pdeschrijver@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20160509051946.GA18753-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 5/9/2016 1:25 AM, Thierry Reding wrote:
-> * PGP Signed by an unknown key
+On 05/09, Thierry Reding wrote:
+>
+> I'm not aware of any API that would fit in this case. Power domains
+> would be misleading because power management isn't involved. One other
+> alternative that I had thought about is to make it a "virtual" reset,
+> but that is equally misleading because nothing is really being reset
+> here.
 > 
-> On Fri, May 06, 2016 at 04:20:15PM -0400, Rhyland Klein wrote:
->> From: Andrew Bresticker <abrestic@chromium.org>
->>
->> Move the UTMIPLL initialization code from the clk-tegra<chip>.c
->> files into clk-pll.c and perform the initialization sequence when
->> PLLU is enabled.
->>
->> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
->>
->> [rklein: Merged in some later fixes for potential deadlocks]
->>
->> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
->> ---
->> v2:
->>  - Swapped out __clk_lookup for 2 calls to clk_hw_get_parent
->>
->>  drivers/clk/tegra/clk-pll.c      | 484 +++++++++++++++++++++++++++++++++++++++
->>  drivers/clk/tegra/clk-tegra114.c | 155 +------------
->>  drivers/clk/tegra/clk-tegra124.c | 156 +------------
->>  drivers/clk/tegra/clk-tegra210.c | 182 +--------------
->>  drivers/clk/tegra/clk-tegra30.c  | 113 +--------
->>  drivers/clk/tegra/clk.h          |  17 ++
->>  6 files changed, 510 insertions(+), 597 deletions(-)
+> Yet another option might be to make it a "virtual" clock, though it'd
+> have to be somewhat hacky because we need two steps (one to enable HW
+> control and another to start the HW sequencer). That could be
+> implemented using ->prepare() and ->enable(), respectively, but it's
+> really not a clock either.
 > 
-> The commit message should mention *why* this change is necessary. It's
-> fairly obvious what you're doing by looking at the code, but the commit
-> message is an opportunity to let others know why this is necessary or
-> worthwhile. Does it fix a bug? Is this clean up? It seems important to
-> me when you say "perform the initialization sequence when PLLU is
-> enabled", but as it is I don't understand why.
-> 
+> I welcome any ideas on how to turn this into something generic, though.
 > 
 
-How about something along these lines as a better description:
-
-Move the UTMIPLL initialization code form clk-tegra<chip>.c files into
-clk-pll.c. UTMIPLL was being configured and set in HW control right
-after registration. However, when the clock init_table is processed and
-child clks of PLLU are enabled, it will call in and enable PLLU as well,
-and initiate SW enabling sequence even though PLLU is already in HW
-control. This leads to getting UTMIPLL stuck with a SEQ_BUSY status.
-Doing the initialization once during pllu_enable means we configure it
-properly into HW control.
-
-A side effect of the commonization/localization of the UTMIPLL init
-code, is that it corrects some errors that were present for earlier
-generations. For instance, in clk-tegra124.c, it used to have:
-
-#define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 6)
-
-when the correct shift to use is present in the new version:
-
-#define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 27)
-
-which matches the Tegra124 TRM register definition.
-
--rhyland
-
-P.S. I can also see the correction of the bit offsets could be moved to
-another patch too, but with the reorg, I wasn't sure if it was worth it.
-If you think it makes sense, I can do a patch to correct those first,
-and then this one.
+I suggested power domains because it looks like SoC glue code
+that we need to do when the device is powered on and off? Unless
+I totally misread how it was used. And I suppose I should have
+said generic power domains (genpd) instead of power domains,
+because I agree it's not actual power management, just some SoC
+runtime PM stuff it seems. But who knows, I probably misread it
+all.
 
 -- 
-nvpublic
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
