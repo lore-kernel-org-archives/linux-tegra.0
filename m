@@ -1,126 +1,79 @@
-From: Jiri Slaby <jslaby@suse.cz>
-Subject: [PATCH v2] TTY: serial, handle platform_get_irq retval properly
-Date: Mon,  9 May 2016 09:23:35 +0200
-Message-ID: <1462778615-14718-1-git-send-email-jslaby@suse.cz>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V5 0/3] Add support for Tegra210 ADMA
+Date: Mon, 9 May 2016 09:48:26 +0100
+Message-ID: <57304EDA.3050704@nvidia.com>
+References: <1461940758-25722-1-git-send-email-jonathanh@nvidia.com>
+ <5729AD19.2010807@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: gregkh@linuxfoundation.org
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, Jiri Slaby <jslaby@suse.cz>, Russell King <linux@arm.linux.org.uk>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <kernel@pengutronix.de>, Russell King <linux@armlinux.org.uk>, Benjamin Herrenschmidt <benh@kernel.crashing.org>, Paul Mackerras <paulus@samba.org>, Michael Ellerman <mpe@ellerman.id.au>, Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linuxppc-dev@lists.ozlabs.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5729AD19.2010807-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-platform_get_irq can fail, so we should handle negative value when
-returned.
+Hi Vinod,
 
-[v2]
+Ping?
 
-platform_get_irq can actually return zero on some platforms. So do not
-remove checks for irq =3D=3D 0 there.
+Jon
 
-Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-Cc: Russell King <linux@arm.linux.org.uk>
-Cc: "Uwe Kleine-K=C3=B6nig" <kernel@pengutronix.de>
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Paul Mackerras <paulus@samba.org>
-Cc: Michael Ellerman <mpe@ellerman.id.au>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-serial@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: linux-tegra@vger.kernel.org
----
- drivers/tty/serial/amba-pl011.c   | 8 +++++++-
- drivers/tty/serial/fsl_lpuart.c   | 8 +++++++-
- drivers/tty/serial/pmac_zilog.c   | 2 +-
- drivers/tty/serial/serial-tegra.c | 7 ++++++-
- 4 files changed, 21 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/tty/serial/amba-pl011.c b/drivers/tty/serial/amba-=
-pl011.c
-index a2aa655f56c4..c70bb41800f1 100644
---- a/drivers/tty/serial/amba-pl011.c
-+++ b/drivers/tty/serial/amba-pl011.c
-@@ -2553,11 +2553,17 @@ static int sbsa_uart_probe(struct platform_devi=
-ce *pdev)
- 	if (!uap)
- 		return -ENOMEM;
-=20
-+	ret =3D platform_get_irq(pdev, 0);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "cannot obtain irq\n");
-+		return ret;
-+	}
-+	uap->port.irq	=3D ret;
-+
- 	uap->reg_offset	=3D vendor_sbsa.reg_offset;
- 	uap->vendor	=3D &vendor_sbsa;
- 	uap->fifosize	=3D 32;
- 	uap->port.iotype =3D vendor_sbsa.access_32b ? UPIO_MEM32 : UPIO_MEM;
--	uap->port.irq	=3D platform_get_irq(pdev, 0);
- 	uap->port.ops	=3D &sbsa_uart_pops;
- 	uap->fixed_baud =3D baudrate;
-=20
-diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_l=
-puart.c
-index 3d790033744e..7f95f782a485 100644
---- a/drivers/tty/serial/fsl_lpuart.c
-+++ b/drivers/tty/serial/fsl_lpuart.c
-@@ -1830,7 +1830,13 @@ static int lpuart_probe(struct platform_device *=
-pdev)
- 	sport->port.dev =3D &pdev->dev;
- 	sport->port.type =3D PORT_LPUART;
- 	sport->port.iotype =3D UPIO_MEM;
--	sport->port.irq =3D platform_get_irq(pdev, 0);
-+	ret =3D platform_get_irq(pdev, 0);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "cannot obtain irq\n");
-+		return ret;
-+	}
-+	sport->port.irq =3D ret;
-+
- 	if (sport->lpuart32)
- 		sport->port.ops =3D &lpuart32_pops;
- 	else
-diff --git a/drivers/tty/serial/pmac_zilog.c b/drivers/tty/serial/pmac_=
-zilog.c
-index e156e39d620c..b24b0556f5a8 100644
---- a/drivers/tty/serial/pmac_zilog.c
-+++ b/drivers/tty/serial/pmac_zilog.c
-@@ -1720,7 +1720,7 @@ static int __init pmz_init_port(struct uart_pmac_=
-port *uap)
-=20
- 	r_ports =3D platform_get_resource(uap->pdev, IORESOURCE_MEM, 0);
- 	irq =3D platform_get_irq(uap->pdev, 0);
--	if (!r_ports || !irq)
-+	if (!r_ports || irq <=3D 0)
- 		return -ENODEV;
-=20
- 	uap->port.mapbase  =3D r_ports->start;
-diff --git a/drivers/tty/serial/serial-tegra.c b/drivers/tty/serial/ser=
-ial-tegra.c
-index bee1e5867426..4c4674b51db9 100644
---- a/drivers/tty/serial/serial-tegra.c
-+++ b/drivers/tty/serial/serial-tegra.c
-@@ -1310,7 +1310,12 @@ static int tegra_uart_probe(struct platform_devi=
-ce *pdev)
- 	}
-=20
- 	u->iotype =3D UPIO_MEM32;
--	u->irq =3D platform_get_irq(pdev, 0);
-+	ret =3D platform_get_irq(pdev, 0);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "Couldn't get IRQ\n");
-+		return ret;
-+	}
-+	u->irq =3D ret;
- 	u->regshift =3D 2;
- 	ret =3D uart_add_one_port(&tegra_uart_driver, u);
- 	if (ret < 0) {
---=20
-2.8.2
+On 04/05/16 09:04, Jon Hunter wrote:
+> Hi Vinod,
+> 
+> Let me know if you are ok to pick up this version?
+> 
+> Cheers
+> Jon
+> 
+> On 29/04/16 15:39, Jon Hunter wrote:
+>> Add support for the Tegra210 Audio DMA (ADMA) controller which is part
+>> of the Audio Processing Engine and used for transferring audio data.
+>>
+>> V5 changes:
+>> - Removed APE and APE2APB clocks as these clocks rightfully belong
+>>   in the ACONNECT bus driver [0] and the ADMA is child of this device.
+>>   Dropped power-domain from DT binding as this will be handled by
+>>   ACONNECT bus driver as well.
+>> - Minor update to case statement formatting based upon feedback from
+>>   Vinod.
+>> - Make ADMA dependent on Tegra210 as this is the only device
+>>   (currently) that supports it.
+>>
+>> V4 changes:
+>> - Updated DT binding to include 'power-domains' entry for handling
+>>   the APE power domain inconjunction with runtime-pm.
+>> - Added missing clocks to the DT binding that were being handled by
+>>   the bootloader.
+>> - Added support for PM_CLK to simplify clock handling
+>>
+>> V3 changes:
+>> - Updated DT binding per feedback from Mark and Stephen
+>> - Fixed up items mentioned by Vinod
+>>
+>> V2 changes:
+>> - Re-worked device-tree binding
+>>
+>> [0] http://marc.info/?l=devicetree&m=146193804830747&w=2
+>>
+>> Jon Hunter (3):
+>>   Documentation: DT: Add binding documentation for NVIDIA ADMA
+>>   dmaengine: tegra-adma: Add support for Tegra210 ADMA
+>>   MAINTAINERS: Update Tegra DMA maintainers
+>>
+>>  .../bindings/dma/nvidia,tegra210-adma.txt          |  57 ++
+>>  MAINTAINERS                                        |   5 +-
+>>  drivers/dma/Kconfig                                |  14 +
+>>  drivers/dma/Makefile                               |   1 +
+>>  drivers/dma/tegra210-adma.c                        | 853 +++++++++++++++++++++
+>>  5 files changed, 928 insertions(+), 2 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra210-adma.txt
+>>  create mode 100644 drivers/dma/tegra210-adma.c
+>>
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
