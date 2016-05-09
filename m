@@ -1,86 +1,92 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 1/3] dt-bindings: bus: Add documentation for Tegra210
- ACONNECT
-Date: Sun, 8 May 2016 13:45:34 +0100
-Message-ID: <572F34EE.8090404@nvidia.com>
-References: <1461938027-23034-1-git-send-email-jonathanh@nvidia.com>
- <1461938027-23034-2-git-send-email-jonathanh@nvidia.com>
- <20160503182215.GA4341@rob-hp-laptop> <572B5B14.6060603@nvidia.com>
- <CAL_JsqL66dY-qatCpESqhpqHQ+g+419pk5cF266xT=Jhp4zSLA@mail.gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [GIT PULL] clk: tegra: Changes for v4.7-rc1
+Date: Mon, 9 May 2016 07:19:46 +0200
+Message-ID: <20160509051946.GA18753@ulmo.ba.sec>
+References: <1461945596-24090-1-git-send-email-thierry.reding@gmail.com>
+ <20160503000248.GB3492@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAL_JsqL66dY-qatCpESqhpqHQ+g+419pk5cF266xT=Jhp4zSLA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="zYM0uCDKw75PZbzx"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20160503000248.GB3492-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 05/05/16 17:48, Rob Herring wrote:
-> On Thu, May 5, 2016 at 9:39 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
->>
->> On 03/05/16 19:22, Rob Herring wrote:
->>> On Fri, Apr 29, 2016 at 02:53:45PM +0100, Jon Hunter wrote:
->>>> Add binding documentation for the Tegra ACONNECT bus that is part of the
->>>> Audio Processing Engine (APE) on Tegra210. The ACONNECT bus is used to
->>>> access devices within the APE subsystem. The APE is located in a
->>>> separate power domain and so accesses made to the ACONNECT require the
->>>> power domain to be enabled as well as some platform specific clocks.
->>>>
->>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->>>> ---
->>>>  .../bindings/bus/nvidia,tegra210-aconnect.txt      | 45 ++++++++++++++++++++++
->>>>  1 file changed, 45 insertions(+)
->>>>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
->>>> new file mode 100644
->>>> index 000000000000..e5e915f8fca7
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
->>>> @@ -0,0 +1,45 @@
->>>> +NVIDIA Tegra ACONNECT Bus
->>>> +
->>>> +The Tegra ACONNECT bus is an AXI switch which is used to connnect various
->>>> +components inside the Audio Processing Engine (APE). All CPU accesses to
->>>> +the APE subsystem go through the ACONNECT via an APB to AXI wrapper.
->>>> +
->>>> +Required properties:
->>>> +- compatible: Must be "nvidia,tegra210-aconnect".
->>>> +- clocks: Must contain the entries for the APE clock (TEGRA210_CLK_APE),
->>>> +  and APE interface clock (TEGRA210_CLK_APB2APE).
->>>> +- clock-names: Must contain the names "ape" and "apb2ape" for the corresponding
->>>> +  'clocks' entries.
->>>> +- power-domains: Must contain a phandle that points to the audio powergate
->>>> +  (namely 'aud') for Tegra210.
->>>> +- #address-cells: The number of cells used to represent physical base addresses
->>>> +  in the host1x address space. Should be 2.
->>>> +- #size-cells: The number of cells used to represent the size of an address
->>>> +  range in the host1x address space. Should be 2.
->>>
->>> Do you really need >4GB of child addresses?
->>
->> Sounds rather silly when you put it like that. No, its not needed. I
->> will fix that.
->>
->>>> +- ranges: 1:1 mapping of the aconnect address space to the CPU address space.
->>>
->>> Why 1:1 for 256KB of address space?
->>
->> No good reason. I have looking at what we did for host1x and ahub which
->> also have a ranges property and use a 1:1 mapping. For ahub this makes
->> sense because it is more of a cross-bar/switch. The aconnect bus is also
->> a switch and thought may be that is the easiest thing to do. What is
->> recommended here?
-> 
-> Use of non-empty ranges is preferred though there is not much benefit
-> if the parent and child sizes are the same. However, it does also
-> limit what is a valid address for those child nodes.
+--zYM0uCDKw75PZbzx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks. Yes if I change the child sizes to be 1, then I guess I need to
-have a non-empty ranges anyway.
+On Mon, May 02, 2016 at 05:02:48PM -0700, Stephen Boyd wrote:
+> On 04/29, Thierry Reding wrote:
+> > Hi Michael, Stephen,
+> >=20
+> > The following changes since commit f55532a0c0b8bb6148f4e07853b876ef73bc=
+69ca:
+> >=20
+> >   Linux 4.6-rc1 (2016-03-26 16:03:24 -0700)
+> >=20
+> > are available in the git repository at:
+> >=20
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/te=
+gra-for-4.7-clk
+> >=20
+> > for you to fetch changes up to 2690e912644e610854c4c3b23d0a0daec9d030ca:
+> >=20
+> >   clk: tegra: dfll: Reformat CVB frequency table (2016-04-28 12:41:54 +=
+0200)
+> >=20
+> > Note that the first patch is this pull request is a dependency for a
+> > larger series that will have to go in through the ARM-SoC tree in order
+> > to properly handle the dependencies.
+> >=20
+>=20
+> Thanks. Pulled.
+>=20
+> Are there any thoughts on making that hw control stuff more
+> generic? Perhaps using something like power domains to do that
+> instead of having drivers cross-call to the clk driver with
+> custom tegra APIs?
 
-Cheers
-Jon
+I'm not aware of any API that would fit in this case. Power domains
+would be misleading because power management isn't involved. One other
+alternative that I had thought about is to make it a "virtual" reset,
+but that is equally misleading because nothing is really being reset
+here.
+
+Yet another option might be to make it a "virtual" clock, though it'd
+have to be somewhat hacky because we need two steps (one to enable HW
+control and another to start the HW sequencer). That could be
+implemented using ->prepare() and ->enable(), respectively, but it's
+really not a clock either.
+
+I welcome any ideas on how to turn this into something generic, though.
+
+Thierry
+
+--zYM0uCDKw75PZbzx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXMB3wAAoJEN0jrNd/PrOhoH0P/RylW5YmAMUy6r06Wwo953kC
+zNDYwfGpOwRBfTdvjNR2iAvqcpXSfT8pRB0v/wzQxpZSR5K66g8VVi9LsRP8WyrM
+ZoJlMlOE3oJC/xw/j7rBNsnqcAM5h7F8qbL0U06DV4SDNkKpA71x1laBlhdpmrku
+mWBDCg720zr1loU0SZlT8nZ7jKW2Ucy/Ruz11FHPbx0EnR9VRWY82FvxSYchBE1f
+SSl/qzcdk6DqitaYH41OBf3ML2Mj/kZahh6H9ZFzjpatUBsXrkpFg4W8UcPXCfw6
+6mr+LqQIbBCsIN6EkFsjc0HuzhRJtO2RCdRthSaGjF73+2k5cKxnMxD1Odojy/1H
+qNvSKnCHbk849MEX3mWhDO0VBXJPbmbq0GdKR+24AmemWwzfEefJKila56UjPLwy
+m6GtxpipoCaDguy6Mm4OAbxE/ntKFSk2IRmiLnoyxX/pfeGaPEAl1YZR1ViX81d5
+j6ALsHdWVBH/+mPs4V+E99JGCib0ozE31Aa/taZgXgP/5oxHXpShLI8p2tmDjOvC
+nNKIcWt8hA90Sa2zk/ccHOBgl4U7Gx6jC8l/lrUeyM6C+iBxaxsM6H/m7PHJIDBE
+7jXTGgl6dH7aIphhmnWZmn5fGFy4WUrbqPMANs3QsbGUWc/Ez98VbXeG6TkVI+Hh
+sboBBurG6x2hpmlW2xKd
+=cxO+
+-----END PGP SIGNATURE-----
+
+--zYM0uCDKw75PZbzx--
