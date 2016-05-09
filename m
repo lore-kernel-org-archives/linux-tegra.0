@@ -1,48 +1,86 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] mmc: tegra: Disable UHS-I modes for tegra30
-Date: Mon, 9 May 2016 16:15:03 +0100
-Message-ID: <1462806903-13860-1-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V3 06/17] irqdomain: Don't set type when mapping an IRQ
+Date: Mon, 9 May 2016 16:44:56 +0100
+Message-ID: <5730B078.8090908@nvidia.com>
+References: <1462379130-11742-1-git-send-email-jonathanh@nvidia.com>
+ <1462379130-11742-7-git-send-email-jonathanh@nvidia.com>
+ <5730813B.7060206@arm.com> <57308D0D.4080800@nvidia.com>
+ <5730A867.9070504@arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5730A867.9070504-5wv7dgnIgG8@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Support for SD cards is not working on the Tegra30 Beaver board and on
-boot the following error message is seen if an SD card is present:
 
- mmc0: error -110 whilst initialising SD card
+On 09/05/16 16:10, Marc Zyngier wrote:
+> On 09/05/16 14:13, Jon Hunter wrote:
+>> On 09/05/16 13:23, Marc Zyngier wrote:
 
-In addition to this, Tegra30 is also randomly hanging during system
-suspend when entering and is caused by the Tegra SDHCI driver. Similar
-issues have been seen on the Tegra124 Jetson TK1 and are linked to the
-UHS-I tuning sequence. Disabling the UHS-I modes for Tegra30 fixes SD
-card support and prevents any hangs from occurring when entering system
-suspend. Therefore, disable the UHS-I modes for Tegra30 for now until
-we can correct the tuning sequence for Tegra.
+[snip]
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- drivers/mmc/host/sdhci-tegra.c | 4 ----
- 1 file changed, 4 deletions(-)
+>>> This patch have the effect of making misconfigured PPIs absolutely
+>>> obvious. I still need to wrap my head around the root cause, but here's
+>>> the findings I have so far:
+>>>
+>>> - kvmtool generates a DT with the wrong trigger information (edge
+>>> instead of level) for the timer.
+>>> - with this patch applied, "cyclictest -S" reliably locks up when run in
+>>> a guest (missing a timer interrupt, goodbye CPU).
+>>> - Either fixing kvmtool or reverting that patch makes it work reliably
+>>> again.
+>>>
+>>> My gut feeling is that until that patch, the failing irq_set_irq_type()
+>>> wasn't affecting the kernel's view of the trigger (it was still treated
+>>> as level). With this patch, the kernel now trusts whatever is coming
+>>> from the firmware, and the misconfiguration becomes obvious. And just
+>>> grepping through the DT files for arm and arm64 sends makes me thing
+>>> "Holly effin' crap!".
+>>>
+>>> I'm not saying that we shouldn't perform this change though. But it is
+>>> quite obvious that it is going to break an awful lot of existing code
+>>> and platforms. I'm also cooking a small patch for the arch timer (which
+>>> seems to be described in DT with a fairly high level of brokenness), so
+>>> that we can mop-up most of the brain damage.
+>>
+>> Hmmm ... yes I see. I wonder if we should make the setting of the type
+>> here dependent upon PM being enabled for an irqchip? We could check to
+>> see if the .parent_device is populated and if so only then save the type
+>> and otherwise just set it as we do today.
+> 
+> I don't really like the idea of having multiple code paths for the same thing.
+> This is very error prone, and likely to bitrot pretty quickly.
 
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index bcc0de47fe7e..24c33aee8e7c 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -347,10 +347,6 @@ static const struct sdhci_pltfm_data sdhci_tegra30_pdata = {
- 
- static const struct sdhci_tegra_soc_data soc_data_tegra30 = {
- 	.pdata = &sdhci_tegra30_pdata,
--	.nvquirks = NVQUIRK_ENABLE_SDHCI_SPEC_300 |
--		    NVQUIRK_ENABLE_SDR50 |
--		    NVQUIRK_ENABLE_SDR104 |
--		    NVQUIRK_HAS_PADCALIB,
- };
- 
- static const struct sdhci_ops tegra114_sdhci_ops = {
--- 
-2.1.4
+True. However, we really need this change for irqchips and runtime-pm.
+So to confirm what are you suggesting we do? We could add a WARN around
+irq_set_irq_type() in irq_create_fwspec_mapping() for v4.7 and see how
+many complaints we get :-)
 
+>> We could add a WARN to the existing irq_set_irq_type() or may be just a
+>> pr_warn() if a WARN is too verbose so people can fix up any issues.
+>>
+>> I am also wondering if patch 4/17 "iqdomain: Fix handling of type
+>> settings for existing mappings" could generate a lot of reports
+>> interrupts failing due to bad firmware? I wonder if I should tone this
+>> patch down to a warning message as well as opposed to a complete failure.
+> 
+> We'll see. We can always tone it down a notch, should it prove to be too noisy...
+> So far, I haven't seen it firing. On the other hand, I get the following stuff
+> on my APM board:
+> 
+> [    0.000000] GIC: PPI0 is either secure or misconfigured
+> [    0.000000] GIC: PPI13 is either secure or misconfigured
+> [    0.000000] arm_arch_timer: WARNING: Invalid trigger for IRQ1, assuming level low
+> [    0.000000] arm_arch_timer: WARNING: Please fix your firmware
+> [    0.000000] arm_arch_timer: WARNING: Invalid trigger for IRQ2, assuming level low
+> [    0.000000] arm_arch_timer: WARNING: Please fix your firmware
+> 
+> Pretty awesome...
+
+Indeed.
+
+Jon
