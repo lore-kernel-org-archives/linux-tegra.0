@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 02/11] irqdomain: Warn if we fail to set the IRQ type
-Date: Tue, 10 May 2016 16:14:36 +0100
-Message-ID: <1462893285-13515-3-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH 07/11] irqchip/gic: Remove static irq_chip definition for eoimode1
+Date: Tue, 10 May 2016 16:14:41 +0100
+Message-ID: <1462893285-13515-8-git-send-email-jonathanh@nvidia.com>
 References: <1462893285-13515-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,34 +12,58 @@ To: Marc Zyngier <marc.zyngier@arm.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-When setting the IRQ type we don't check the return value to see if it
-is set correctly. Due to this, failures to set the IRQ type have gone
-unnoticed and because these failures were not catastrophic have not had
-an impact on the system.
-
-Ideally, we should return an error if we fail to set the type, however,
-this could cause non-catastrophic failures to prevent devices from
-working. Therefore, for now add a warning so that any bad interrupt
-configurations can be corrected.
+There are only 3 differences (not including the name) in the definitions
+of the gic_chip and gic_eoimode1_chip structures. Instead of statically
+defining the gic_eoimode1_chip structure, remove it and populate the
+eoimode1 functions dynamically for the appropriate GIC irqchips.
 
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 ---
- kernel/irq/irqdomain.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/irqchip/irq-gic.c | 22 ++++++----------------
+ 1 file changed, 6 insertions(+), 16 deletions(-)
 
-diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
-index 8798b6c9e945..09060072cc28 100644
---- a/kernel/irq/irqdomain.c
-+++ b/kernel/irq/irqdomain.c
-@@ -610,7 +610,8 @@ unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec)
- 	/* Set type if specified and different than the current one */
- 	if (type != IRQ_TYPE_NONE &&
- 	    type != irq_get_trigger_type(virq))
--		irq_set_irq_type(virq, type);
-+		if (irq_set_irq_type(virq, type))
-+			pr_warn("failed to set type for irq %d\n", virq);
- 	return virq;
- }
- EXPORT_SYMBOL_GPL(irq_create_fwspec_mapping);
+diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+index 070c87bbfce8..d84fa36a7932 100644
+--- a/drivers/irqchip/irq-gic.c
++++ b/drivers/irqchip/irq-gic.c
+@@ -393,20 +393,6 @@ static struct irq_chip gic_chip = {
+ 				  IRQCHIP_MASK_ON_SUSPEND,
+ };
+ 
+-static struct irq_chip gic_eoimode1_chip = {
+-	.name			= "GICv2",
+-	.irq_mask		= gic_eoimode1_mask_irq,
+-	.irq_unmask		= gic_unmask_irq,
+-	.irq_eoi		= gic_eoimode1_eoi_irq,
+-	.irq_set_type		= gic_set_type,
+-	.irq_get_irqchip_state	= gic_irq_get_irqchip_state,
+-	.irq_set_irqchip_state	= gic_irq_set_irqchip_state,
+-	.irq_set_vcpu_affinity	= gic_irq_set_vcpu_affinity,
+-	.flags			= IRQCHIP_SET_TYPE_MASKED |
+-				  IRQCHIP_SKIP_SET_WAKE |
+-				  IRQCHIP_MASK_ON_SUSPEND,
+-};
+-
+ void __init gic_cascade_irq(unsigned int gic_nr, unsigned int irq)
+ {
+ 	BUG_ON(gic_nr >= CONFIG_ARM_GIC_MAX_NR);
+@@ -1027,10 +1013,14 @@ static void __init __gic_init_bases(unsigned int gic_nr, int irq_start,
+ 	gic = &gic_data[gic_nr];
+ 
+ 	/* Initialize irq_chip */
++	gic->chip = gic_chip;
++
+ 	if (static_key_true(&supports_deactivate) && gic_nr == 0) {
+-		gic->chip = gic_eoimode1_chip;
++		gic->chip.irq_mask = gic_eoimode1_mask_irq;
++		gic->chip.irq_eoi = gic_eoimode1_eoi_irq;
++		gic->chip.irq_set_vcpu_affinity = gic_irq_set_vcpu_affinity;
++		gic->chip.name = "GICv2";
+ 	} else {
+-		gic->chip = gic_chip;
+ 		gic->chip.name = kasprintf(GFP_KERNEL, "GIC-%d", gic_nr);
+ 	}
+ 
 -- 
 2.1.4
