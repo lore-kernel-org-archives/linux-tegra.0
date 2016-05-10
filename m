@@ -1,43 +1,26 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 01/11] genirq: Ensure IRQ descriptor is valid when setting-up the IRQ
-Date: Tue, 10 May 2016 16:14:35 +0100
-Message-ID: <1462893285-13515-2-git-send-email-jonathanh@nvidia.com>
-References: <1462893285-13515-1-git-send-email-jonathanh@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] rtc: rename so the tps6586x-rtc module can be autoloaded
+ at boot
+Date: Tue, 10 May 2016 09:43:41 -0600
+Message-ID: <573201AD.7080705@wwwdotorg.org>
+References: <1462876002-6462-1-git-send-email-kwizart@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1462893285-13515-1-git-send-email-jonathanh@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1462876002-6462-1-git-send-email-kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-In the function, setup_irq(), we don't check that the descriptor
-returned from irq_to_desc() is valid before we start using it. For
-example chip_bus_lock() called from setup_irq(), assumes that the
-descriptor pointer is valid and doesn't check before dereferencing it.
+On 05/10/2016 04:26 AM, Nicolas Chauvet wrote:
+> This module is loaded by the related mfd driver which has
+> the needed MODULE_DEVICE_TABLE(i2c,...).
+>
+> This patch fix the modalias when the rtc driver is built
+> as a module, so the right name is used.
+> Everything operates correctly when this module is builtin.
 
-In many other functions including setup/free_percpu_irq() we do check
-that the descriptor returned is not NULL and therefore add the same test
-to setup_irq() to ensure the descriptor returned is valid.
-
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- kernel/irq/manage.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index cc1cc641d653..ef0bc02c3a70 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -1407,7 +1407,7 @@ int setup_irq(unsigned int irq, struct irqaction *act)
- 	int retval;
- 	struct irq_desc *desc = irq_to_desc(irq);
- 
--	if (WARN_ON(irq_settings_is_per_cpu_devid(desc)))
-+	if (!desc || WARN_ON(irq_settings_is_per_cpu_devid(desc)))
- 		return -EINVAL;
- 	chip_bus_lock(desc);
- 	retval = __setup_irq(irq, desc, act);
--- 
-2.1.4
+I'm sure this used to work. Do you know when/why it broke? Perhaps a 
+Fixes: tag would be useful, and perhaps a Cc: stable?
