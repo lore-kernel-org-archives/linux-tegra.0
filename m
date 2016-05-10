@@ -1,25 +1,43 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [GIT PULL] arm64: tegra: Enable GM20B GPU on Tegra210
-Date: Tue, 10 May 2016 22:18:20 +0200
-Message-ID: <2527075.TJdy0Md9Y9@wuerfel>
-References: <1461946869-26124-3-git-send-email-thierry.reding@gmail.com>
+From: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] rtc: rename so the tps6586x-rtc module can be autoloaded
+ at boot
+Date: Tue, 10 May 2016 23:44:37 +0200
+Message-ID: <CABr+WTnFodrRSThovUCwY+8Th0TjeOPSAFkCKcupfjAXE4bUAA@mail.gmail.com>
+References: <1462876002-6462-1-git-send-email-kwizart@gmail.com>
+	<573201AD.7080705@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1461946869-26124-3-git-send-email-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <573201AD.7080705-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday 29 April 2016 18:21:08 Thierry Reding wrote:
-> arm64: tegra: Enable GM20B GPU on Tegra210
-> 
-> Complement the GM20B GPU device tree node on Tegra210 with missing
-> properties to make it usable.
-> 
+2016-05-10 17:43 GMT+02:00 Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>:
+> On 05/10/2016 04:26 AM, Nicolas Chauvet wrote:
+>>
+>> This module is loaded by the related mfd driver which has
+>> the needed MODULE_DEVICE_TABLE(i2c,...).
+>>
+>> This patch fix the modalias when the rtc driver is built
+>> as a module, so the right name is used.
+>> Everything operates correctly when this module is builtin.
+>
+>
+> I'm sure this used to work. Do you know when/why it broke? Perhaps a Fixes:
+> tag would be useful, and perhaps a Cc: stable?
 
-Pulled into next/dt64, thanks!
+I don't remember autoloading of rtc-tps6586x.ko has ever worked. Then
+there is still the issue of rtc modules loaded too late for the kernel
+(or the kernel not capable to defer the read of hw clock), but that's
+another issue.
 
-	Arnd
+I first tried to report the issue on this bug tracker and at that
+time, autoloading wasn't working (was in 2014).
+https://bugzilla.redhat.com/show_bug.cgi?id=1074002
+
+I'm sure current distros using an arm generic kernel (with all
+modules) will rebase on kernel 4.4, but technically the bug is present
+in kernel 3.10 from the oldest current maintained branch (since the
+driver introduction).
