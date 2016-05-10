@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 04/11] irqchip/gic: Don't unnecessarily write the IRQ configuration
-Date: Tue, 10 May 2016 16:14:38 +0100
-Message-ID: <1462893285-13515-5-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH 01/11] genirq: Ensure IRQ descriptor is valid when setting-up the IRQ
+Date: Tue, 10 May 2016 16:14:35 +0100
+Message-ID: <1462893285-13515-2-git-send-email-jonathanh@nvidia.com>
 References: <1462893285-13515-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,38 +12,32 @@ To: Marc Zyngier <marc.zyngier@arm.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-If the interrupt configuration matches the current configuration, then
-don't bother writing the configuration again.
+In the function, setup_irq(), we don't check that the descriptor
+returned from irq_to_desc() is valid before we start using it. For
+example chip_bus_lock() called from setup_irq(), assumes that the
+descriptor pointer is valid and doesn't check before dereferencing it.
+
+In many other functions including setup/free_percpu_irq() we do check
+that the descriptor returned is not NULL and therefore add the same test
+to setup_irq() to ensure the descriptor returned is valid.
 
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 ---
- drivers/irqchip/irq-gic-common.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ kernel/irq/manage.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/irq-gic-common.c b/drivers/irqchip/irq-gic-common.c
-index 2e9443be2b14..eeeefa244933 100644
---- a/drivers/irqchip/irq-gic-common.c
-+++ b/drivers/irqchip/irq-gic-common.c
-@@ -63,13 +63,17 @@ int gic_configure_irq(unsigned int irq, unsigned int type,
- 	else if (type & IRQ_TYPE_EDGE_BOTH)
- 		val |= confmask;
+diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
+index cc1cc641d653..ef0bc02c3a70 100644
+--- a/kernel/irq/manage.c
++++ b/kernel/irq/manage.c
+@@ -1407,7 +1407,7 @@ int setup_irq(unsigned int irq, struct irqaction *act)
+ 	int retval;
+ 	struct irq_desc *desc = irq_to_desc(irq);
  
-+	/* If the current configuration is the same, then we are done */
-+	if (val == oldval)
-+		return 0;
-+
- 	/*
- 	 * Write back the new configuration, and possibly re-enable
--	 * the interrupt. If we tried to write a new configuration and failed,
-+	 * the interrupt. If we fail to write a new configuration,
- 	 * return an error.
- 	 */
- 	writel_relaxed(val, base + GIC_DIST_CONFIG + confoff);
--	if (readl_relaxed(base + GIC_DIST_CONFIG + confoff) != val && val != oldval)
-+	if (readl_relaxed(base + GIC_DIST_CONFIG + confoff) != val)
- 		ret = -EINVAL;
- 
- 	if (sync_access)
+-	if (WARN_ON(irq_settings_is_per_cpu_devid(desc)))
++	if (!desc || WARN_ON(irq_settings_is_per_cpu_devid(desc)))
+ 		return -EINVAL;
+ 	chip_bus_lock(desc);
+ 	retval = __setup_irq(irq, desc, act);
 -- 
 2.1.4
