@@ -1,58 +1,69 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] mmc: tegra: Disable UHS-I modes for tegra30
-Date: Tue, 10 May 2016 18:16:08 +0100
-Message-ID: <57321758.5020308@nvidia.com>
-References: <1462806903-13860-1-git-send-email-jonathanh@nvidia.com>
- <573208AD.4090506@nvidia.com> <57320DA8.1090809@wwwdotorg.org>
+From: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH 02/11] irqdomain: Warn if we fail to set the IRQ type
+Date: Tue, 10 May 2016 18:25:44 +0100
+Message-ID: <57321998.2060008@arm.com>
+References: <1462893285-13515-1-git-send-email-jonathanh@nvidia.com>
+ <1462893285-13515-3-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <57320DA8.1090809@wwwdotorg.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Lucas Stach <dev@lynxeye.de>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1462893285-13515-3-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 10/05/16 17:34, Stephen Warren wrote:
-> On 05/10/2016 10:13 AM, Jon Hunter wrote:
-
-[snip]
-
->> Stephen, for your u-boot testing, do you are set the bit in the vendor
->> misc register to enable version 3.0 support for sdhci on tegra30? This
->> is what the above quirk is doing (and has done so for a very long time).
+On 10/05/16 16:14, Jon Hunter wrote:
+> When setting the IRQ type we don't check the return value to see if it
+> is set correctly. Due to this, failures to set the IRQ type have gone
+> unnoticed and because these failures were not catastrophic have not had
+> an impact on the system.
 > 
-> I don't see anything in the U-Boot driver that is equivalent to the
-> kernel's NVQUIRK_ENABLE_SDHCI_SPEC_300. I assume that means the
-> controller advertises an early spec version when in U-Boot, which simply
-> means U-Boot doesn't know to take advantage of any faster transfer modes
-> enabled by later specification versions, but I'm not entirely sure what
-> effect the following kernel code has on the HW:
+> Ideally, we should return an error if we fail to set the type, however,
+> this could cause non-catastrophic failures to prevent devices from
+> working. Therefore, for now add a warning so that any bad interrupt
+> configurations can be corrected.
 > 
->>     /* Erratum: Enable SDHCI spec v3.00 support */
->>     if (soc_data->nvquirks & NVQUIRK_ENABLE_SDHCI_SPEC_300)
->>         misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDHCI_SPEC_300;
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  kernel/irq/irqdomain.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/kernel/irq/irqdomain.c b/kernel/irq/irqdomain.c
+> index 8798b6c9e945..09060072cc28 100644
+> --- a/kernel/irq/irqdomain.c
+> +++ b/kernel/irq/irqdomain.c
+> @@ -610,7 +610,8 @@ unsigned int irq_create_fwspec_mapping(struct irq_fwspec *fwspec)
+>  	/* Set type if specified and different than the current one */
+>  	if (type != IRQ_TYPE_NONE &&
+>  	    type != irq_get_trigger_type(virq))
+> -		irq_set_irq_type(virq, type);
+> +		if (irq_set_irq_type(virq, type))
+> +			pr_warn("failed to set type for irq %d\n", virq);
 
-Do you see it touch the SDHCI_TEGRA_VENDOR_MISC_CTRL register?
+This warning triggers on all per-cpu interrupts, because
+irq_set_irq_type() uses IRQ_GET_DESC_CHECK_GLOBAL and not
+IRQ_GET_DESC_CHECK_PERCPU. Which sort of makes sense because the trigger
+is per-cpu and not global. We'd need some similar check in
+enable_percpu_irq, but at that stage, we've already lost the context
+coming from the firmware.
 
-The TRM states ...
+Which only proves one thing: per-cpu interrupts have never been
+configured on the allocation path, and we've been living pretty
+dangerously so far. They do work (at least on ARM) because of the
+following reasons:
 
-"SDMMC_SPARE0[4] : When set, SD3.0 support is advertised in
-SDMMC_SLOT_INTERRUPT_STATUS_0_SPECIFICATION_VERSION_NUMBER Otherwise,
-only SD2.0 support is advertised"
+1) the triggers are already configured (firmware, read-only...)
+2) the handle_percpu_devid_irq handler doesn't distinguish between flows
 
-So I *believe* this means that the sdhci version will now appear as 3.0
-and so the host->version == SDHCI_SPEC_300. There are many places in the
-sdhci driver where it is checking ...
+It is probably broken on all other architectures, which kind of sucks.
+At this point, I'm really tempted to drop this patch and to aim towards
+something similar to what you had in patches 5 and 6 in your previous
+series. I'll have a think tonight.
 
- if (host->version >= SDHCI_SPEC_300)
-	 ...
+Thanks,
 
-> Perhaps the kernel driver should pulse the controller's CAR reset signal
-> in probe() to ensure that the HW is in a known state?
-
-I will take a look.
-
-Jon
+	M.
+-- 
+Jazz is not dead. It just smells funny...
