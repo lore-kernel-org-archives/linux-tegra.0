@@ -1,45 +1,57 @@
-From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: [GIT PULL] clk: tegra: Changes for v4.7-rc1
-Date: Mon, 9 May 2016 15:42:19 -0700
-Message-ID: <20160509224219.GY3492@codeaurora.org>
-References: <1461945596-24090-1-git-send-email-thierry.reding@gmail.com>
- <20160503000248.GB3492@codeaurora.org>
- <20160509051946.GA18753@ulmo.ba.sec>
+From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] mmc: tegra: Disable UHS-I modes for tegra30
+Date: Tue, 10 May 2016 08:25:28 +0200
+Message-ID: <CAPDyKFpJAdwkWzC0yqdv5mdzBQiMf=8JXYc9r8kCdXCOQsgmXw@mail.gmail.com>
+References: <1462806903-13860-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20160509051946.GA18753-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
+In-Reply-To: <1462806903-13860-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/09, Thierry Reding wrote:
+On 9 May 2016 at 17:15, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> Support for SD cards is not working on the Tegra30 Beaver board and on
+> boot the following error message is seen if an SD card is present:
 >
-> I'm not aware of any API that would fit in this case. Power domains
-> would be misleading because power management isn't involved. One other
-> alternative that I had thought about is to make it a "virtual" reset,
-> but that is equally misleading because nothing is really being reset
-> here.
-> 
-> Yet another option might be to make it a "virtual" clock, though it'd
-> have to be somewhat hacky because we need two steps (one to enable HW
-> control and another to start the HW sequencer). That could be
-> implemented using ->prepare() and ->enable(), respectively, but it's
-> really not a clock either.
-> 
-> I welcome any ideas on how to turn this into something generic, though.
-> 
+>  mmc0: error -110 whilst initialising SD card
+>
+> In addition to this, Tegra30 is also randomly hanging during system
+> suspend when entering and is caused by the Tegra SDHCI driver. Similar
+> issues have been seen on the Tegra124 Jetson TK1 and are linked to the
+> UHS-I tuning sequence. Disabling the UHS-I modes for Tegra30 fixes SD
+> card support and prevents any hangs from occurring when entering system
+> suspend. Therefore, disable the UHS-I modes for Tegra30 for now until
+> we can correct the tuning sequence for Tegra.
+>
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I suggested power domains because it looks like SoC glue code
-that we need to do when the device is powered on and off? Unless
-I totally misread how it was used. And I suppose I should have
-said generic power domains (genpd) instead of power domains,
-because I agree it's not actual power management, just some SoC
-runtime PM stuff it seems. But who knows, I probably misread it
-all.
+Perhaps we should add a fixes/stable tag as well?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Kind regards
+Uffe
+
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 4 ----
+>  1 file changed, 4 deletions(-)
+>
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index bcc0de47fe7e..24c33aee8e7c 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -347,10 +347,6 @@ static const struct sdhci_pltfm_data sdhci_tegra30_pdata = {
+>
+>  static const struct sdhci_tegra_soc_data soc_data_tegra30 = {
+>         .pdata = &sdhci_tegra30_pdata,
+> -       .nvquirks = NVQUIRK_ENABLE_SDHCI_SPEC_300 |
+> -                   NVQUIRK_ENABLE_SDR50 |
+> -                   NVQUIRK_ENABLE_SDR104 |
+> -                   NVQUIRK_HAS_PADCALIB,
+>  };
+>
+>  static const struct sdhci_ops tegra114_sdhci_ops = {
+> --
+> 2.1.4
+>
