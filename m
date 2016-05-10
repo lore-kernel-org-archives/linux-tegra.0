@@ -1,59 +1,44 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] mmc: tegra: Disable UHS-I modes for tegra30
-Date: Tue, 10 May 2016 12:15:26 +0100
-Message-ID: <5731C2CE.2030007@nvidia.com>
-References: <1462806903-13860-1-git-send-email-jonathanh@nvidia.com>
- <1462864193.13327.2.camel@lynxeye.de>
+Subject: [PATCH V2 0/4] Add support for Tegra210 ACONNECT bus
+Date: Tue, 10 May 2016 12:35:36 +0100
+Message-ID: <1462880140-5938-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1462864193.13327.2.camel-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Add support for the ACONNECT bus which is part of the audio sub-system
+on Tegra210.
 
-On 10/05/16 08:09, Lucas Stach wrote:
-> Hi Jon,
-> 
-> Am Montag, den 09.05.2016, 16:15 +0100 schrieb Jon Hunter:
->> Support for SD cards is not working on the Tegra30 Beaver board and
->> on
->> boot the following error message is seen if an SD card is present:
->>
->>  mmc0: error -110 whilst initialising SD card
->>
-> Can you please tell me what kind of SD card you used and at which point
-> in the initialization it is hanging? I've tested this change on Beaver
-> and haven't seen any failures after I implemented the memcomppad
-> calibration.
+Changes from V1:
+- Updated ACONNECT DT binding documentation and DT binding per feedback
+  from Rob H.
+- Added patch to populate the audio power-domain which is needed to
+  successfully build the DT blob (this was missed as it was part of
+  my local testing tree).
 
-Yes it is an SDHC 4GB I believe. The board is remote and so I have not
-seen the exact card. However, here are some more details from sysfs:
+Jon Hunter (4):
+  dt-bindings: bus: Add documentation for Tegra210 ACONNECT
+  bus: Add support for Tegra ACONNECT
+  ARM64: tegra: Add audio PM domain device node for Tegra210
+  arm64: tegra: Add ACONNECT bus node for Tegra210
 
-root@(none):/# cat /sys/class/mmc_host/mmc0/mmc0\:aaaa/name
-SS04G
-root@(none):/# cat /sys/class/mmc_host/mmc0/mmc0\:aaaa/csd
-400e00325b5900001d8a7f800a404000
-root@(none):/# cat /sys/class/mmc_host/mmc0/mmc0\:aaaa/cid
-03534453533034478029b1301800f900
-root@(none):/# cat /sys/class/mmc_host/mmc0/mmc0\:aaaa/oemid
-0x5344
-root@(none):/# cat /sys/class/mmc_host/mmc0/mmc0\:aaaa/manfid
-0x000003
- 
->> In addition to this, Tegra30 is also randomly hanging during system
->> suspend when entering and is caused by the Tegra SDHCI driver. 
-> 
-> I'll have a look at this soonish.
+ .../bindings/bus/nvidia,tegra210-aconnect.txt      |  45 ++++++++
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  21 ++++
+ drivers/bus/Kconfig                                |   9 ++
+ drivers/bus/Makefile                               |   1 +
+ drivers/bus/tegra-aconnect.c                       | 113 +++++++++++++++++++++
+ 5 files changed, 189 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
+ create mode 100644 drivers/bus/tegra-aconnect.c
 
-Thanks. I think I have mentioned this before, but I run a loop test
-for example ...
+-- 
+2.1.4
 
-count=0; while [ $count -lt 100 ]; do rtcwake -d rtc0 -m mem -s 3; echo
-Suspend iteration $count; count=`expr $count + 1`; done
-
-Cheers
-Jon
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
