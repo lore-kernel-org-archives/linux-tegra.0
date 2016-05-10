@@ -1,37 +1,59 @@
-From: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] rtc: rename so the tps6586x-rtc module can be autoloaded at boot
-Date: Tue, 10 May 2016 12:26:42 +0200
-Message-ID: <1462876002-6462-1-git-send-email-kwizart@gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] mmc: tegra: Disable UHS-I modes for tegra30
+Date: Tue, 10 May 2016 12:15:26 +0100
+Message-ID: <5731C2CE.2030007@nvidia.com>
+References: <1462806903-13860-1-git-send-email-jonathanh@nvidia.com>
+ <1462864193.13327.2.camel@lynxeye.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1462864193.13327.2.camel-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Cc: linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This module is loaded by the related mfd driver which has
-the needed MODULE_DEVICE_TABLE(i2c,...).
 
-This patch fix the modalias when the rtc driver is built
-as a module, so the right name is used.
-Everything operates correctly when this module is builtin.
+On 10/05/16 08:09, Lucas Stach wrote:
+> Hi Jon,
+> 
+> Am Montag, den 09.05.2016, 16:15 +0100 schrieb Jon Hunter:
+>> Support for SD cards is not working on the Tegra30 Beaver board and
+>> on
+>> boot the following error message is seen if an SD card is present:
+>>
+>>  mmc0: error -110 whilst initialising SD card
+>>
+> Can you please tell me what kind of SD card you used and at which point
+> in the initialization it is hanging? I've tested this change on Beaver
+> and haven't seen any failures after I implemented the memcomppad
+> calibration.
 
-Signed-off-by: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
----
- drivers/rtc/rtc-tps6586x.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Yes it is an SDHC 4GB I believe. The board is remote and so I have not
+seen the exact card. However, here are some more details from sysfs:
 
-diff --git a/drivers/rtc/rtc-tps6586x.c b/drivers/rtc/rtc-tps6586x.c
-index e404faa..a3418a8 100644
---- a/drivers/rtc/rtc-tps6586x.c
-+++ b/drivers/rtc/rtc-tps6586x.c
-@@ -344,7 +344,7 @@ static struct platform_driver tps6586x_rtc_driver = {
- };
- module_platform_driver(tps6586x_rtc_driver);
+root@(none):/# cat /sys/class/mmc_host/mmc0/mmc0\:aaaa/name
+SS04G
+root@(none):/# cat /sys/class/mmc_host/mmc0/mmc0\:aaaa/csd
+400e00325b5900001d8a7f800a404000
+root@(none):/# cat /sys/class/mmc_host/mmc0/mmc0\:aaaa/cid
+03534453533034478029b1301800f900
+root@(none):/# cat /sys/class/mmc_host/mmc0/mmc0\:aaaa/oemid
+0x5344
+root@(none):/# cat /sys/class/mmc_host/mmc0/mmc0\:aaaa/manfid
+0x000003
  
--MODULE_ALIAS("platform:rtc-tps6586x");
-+MODULE_ALIAS("platform:tps6586x-rtc");
- MODULE_DESCRIPTION("TI TPS6586x RTC driver");
- MODULE_AUTHOR("Laxman dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
- MODULE_LICENSE("GPL v2");
--- 
-2.4.11
+>> In addition to this, Tegra30 is also randomly hanging during system
+>> suspend when entering and is caused by the Tegra SDHCI driver. 
+> 
+> I'll have a look at this soonish.
+
+Thanks. I think I have mentioned this before, but I run a loop test
+for example ...
+
+count=0; while [ $count -lt 100 ]; do rtcwake -d rtc0 -m mem -s 3; echo
+Suspend iteration $count; count=`expr $count + 1`; done
+
+Cheers
+Jon
