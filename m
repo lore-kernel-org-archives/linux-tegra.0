@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH V2 1/4] dt-bindings: bus: Add documentation for Tegra210 ACONNECT
-Date: Tue, 10 May 2016 12:35:37 +0100
-Message-ID: <1462880140-5938-2-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH V2 3/4] ARM64: tegra: Add audio PM domain device node for Tegra210
+Date: Tue, 10 May 2016 12:35:39 +0100
+Message-ID: <1462880140-5938-4-git-send-email-jonathanh@nvidia.com>
 References: <1462880140-5938-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,68 +12,33 @@ To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add binding documentation for the Tegra ACONNECT bus that is part of the
-Audio Processing Engine (APE) on Tegra210. The ACONNECT bus is used to
-access devices within the APE subsystem. The APE is located in a
-separate power domain and so accesses made to the ACONNECT require the
-power domain to be enabled as well as some platform specific clocks.
+Add the device-tree node for the Tegra210 audio power-domain so that
+audio devices that are dependent on this power-domain can be populated.
 
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- .../bindings/bus/nvidia,tegra210-aconnect.txt      | 45 ++++++++++++++++++++++
- 1 file changed, 45 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
-new file mode 100644
-index 000000000000..81668f588eca
---- /dev/null
-+++ b/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
-@@ -0,0 +1,45 @@
-+NVIDIA Tegra ACONNECT Bus
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 76fe31faa1a5..d649aef0455f 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -584,6 +584,15 @@
+ 		reg = <0x0 0x7000e400 0x0 0x400>;
+ 		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
+ 		clock-names = "pclk", "clk32k_in";
 +
-+The Tegra ACONNECT bus is an AXI switch which is used to connnect various
-+components inside the Audio Processing Engine (APE). All CPU accesses to
-+the APE subsystem go through the ACONNECT via an APB to AXI wrapper.
-+
-+Required properties:
-+- compatible: Must be "nvidia,tegra210-aconnect".
-+- clocks: Must contain the entries for the APE clock (TEGRA210_CLK_APE),
-+  and APE interface clock (TEGRA210_CLK_APB2APE).
-+- clock-names: Must contain the names "ape" and "apb2ape" for the corresponding
-+  'clocks' entries.
-+- power-domains: Must contain a phandle that points to the audio powergate
-+  (namely 'aud') for Tegra210.
-+- #address-cells: The number of cells used to represent physical base addresses
-+  in the aconnect address space. Should be 2.
-+- #size-cells: The number of cells used to represent the size of an address
-+  range in the aconnect address space. Should be 2.
-+- ranges: Mapping of the aconnect address space to the CPU address space.
-+
-+All devices accessed via the ACONNNECT are described by child-nodes.
-+
-+Example:
-+
-+	aconnect@702c0000 {
-+		compatible = "nvidia,tegra210-aconnect";
-+		clocks = <&tegra_car TEGRA210_CLK_APE>,
-+			 <&tegra_car TEGRA210_CLK_APB2APE>;
-+		clock-names = "ape", "apb2ape";
-+		power-domains = <&pd_audio>;
-+
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0x702c0000 0x0 0x702c0000 0x00040000>;
-+
-+		status = "disabled";
-+
-+		child1 {
-+			...
++		powergates {
++			pd_audio: aud {
++				clocks = <&tegra_car TEGRA210_CLK_APE>,
++					 <&tegra_car TEGRA210_CLK_APB2APE>;
++				resets = <&tegra_car 198>;
++				#power-domain-cells = <0>;
++			};
 +		};
-+
-+		child2 {
-+			...
-+		};
-+	};
+ 	};
+ 
+ 	fuse@7000f800 {
 -- 
 2.1.4
