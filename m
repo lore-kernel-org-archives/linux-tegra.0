@@ -1,71 +1,49 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RFC PATCH] drivers/of: Fix depth when unflattening devicetree
-Date: Tue, 10 May 2016 18:43:14 -0400
-Message-ID: <1462920194-28803-1-git-send-email-rklein@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH] rtc: rename so the tps6586x-rtc module can be autoloaded
+ at boot
+Date: Tue, 10 May 2016 17:02:27 -0600
+Message-ID: <57326883.6020000@wwwdotorg.org>
+References: <1462876002-6462-1-git-send-email-kwizart@gmail.com>
+ <573201AD.7080705@wwwdotorg.org>
+ <CABr+WTnFodrRSThovUCwY+8Th0TjeOPSAFkCKcupfjAXE4bUAA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CABr+WTnFodrRSThovUCwY+8Th0TjeOPSAFkCKcupfjAXE4bUAA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Gavin Shan <gwshan-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>
-Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Nicolas Chauvet <kwizart-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-When the implementation for unflatten_dt_node() changed from being
-recursive to being non-recursive, it had a side effect of increasing the
-depth passed to fdt_next_node() by 1. This is fine most of the time, but
-it seems that when the end of the dtb is being parsed, it will cause the
-FDT_END condition in fdt_next_node() to return a different value
-(returning nextoffset instead of -FDT_ERR_NOTFOUND). This ends up passing
-an FDT_ERR_TRUNCATED error back to the unflatten_dt_node() which then
-sees that and complains "Error -8 processing FDT" causing boot to fail.
+On 05/10/2016 03:44 PM, Nicolas Chauvet wrote:
+> 2016-05-10 17:43 GMT+02:00 Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>:
+>> On 05/10/2016 04:26 AM, Nicolas Chauvet wrote:
+>>>
+>>> This module is loaded by the related mfd driver which has
+>>> the needed MODULE_DEVICE_TABLE(i2c,...).
+>>>
+>>> This patch fix the modalias when the rtc driver is built
+>>> as a module, so the right name is used.
+>>> Everything operates correctly when this module is builtin.
+>>
+>>
+>> I'm sure this used to work. Do you know when/why it broke? Perhaps a Fixes:
+>> tag would be useful, and perhaps a Cc: stable?
+>
+> I don't remember autoloading of rtc-tps6586x.ko has ever worked. Then
+> there is still the issue of rtc modules loaded too late for the kernel
+> (or the kernel not capable to defer the read of hw clock), but that's
+> another issue.
+>
+> I first tried to report the issue on this bug tracker and at that
+> time, autoloading wasn't working (was in 2014).
+> https://bugzilla.redhat.com/show_bug.cgi?id=1074002
+>
+> I'm sure current distros using an arm generic kernel (with all
+> modules) will rebase on kernel 4.4, but technically the bug is present
+> in kernel 3.10 from the oldest current maintained branch (since the
+> driver introduction).
 
-This patch simply avoids incrementing depth and uses modified accesses
-for local array indices so that the depth is the same as it was before
-the change as far as fdt_next_node() is concerned.
-
-This problem was discovered trying to boot Tegra210-Smaug platforms.
-
-Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/of/fdt.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
-index f3da1878eea2..8855ba4f7470 100644
---- a/drivers/of/fdt.c
-+++ b/drivers/of/fdt.c
-@@ -407,24 +407,24 @@ static int unflatten_dt_node(const void *blob,
- 
- 	root = dad;
- 	fpsizes[depth] = dad ? strlen(of_node_full_name(dad)) : 0;
--	nps[depth++] = dad;
-+	nps[depth+1] = dad;
- 	for (offset = 0;
- 	     offset >= 0;
- 	     offset = fdt_next_node(blob, offset, &depth)) {
- 		if (WARN_ON_ONCE(depth >= FDT_MAX_DEPTH))
- 			continue;
- 
--		fpsizes[depth] = populate_node(blob, offset, &mem,
--					       nps[depth - 1],
--					       fpsizes[depth - 1],
--					       &nps[depth], dryrun);
--		if (!fpsizes[depth])
-+		fpsizes[depth+1] = populate_node(blob, offset, &mem,
-+					       nps[depth],
-+					       fpsizes[depth],
-+					       &nps[depth+1], dryrun);
-+		if (!fpsizes[depth+1])
- 			return mem - base;
- 
- 		if (!dryrun && nodepp && !*nodepp)
--			*nodepp = nps[depth];
-+			*nodepp = nps[depth+1];
- 		if (!dryrun && !root)
--			root = nps[depth];
-+			root = nps[depth+1];
- 	}
- 
- 	if (offset < 0 && offset != -FDT_ERR_NOTFOUND) {
--- 
-1.9.1
+Ah, all the cases I used previous did indeed have the RTC driver 
+built-in not a module, so that explains it.
