@@ -1,65 +1,55 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V4 3/3] soc/tegra: pmc: Add support for IO pads power
- state and voltage
-Date: Wed, 11 May 2016 18:58:06 +0530
-Message-ID: <57333366.2040500@nvidia.com>
-References: <1462531548-12914-1-git-send-email-ldewangan@nvidia.com> <1462531548-12914-4-git-send-email-ldewangan@nvidia.com> <572CAC20.9030307@nvidia.com> <572CB906.3090004@nvidia.com> <572F2D84.3060505@nvidia.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v7 1/4] i2c: tegra: disable clock before returning error
+Date: Wed, 11 May 2016 16:33:00 +0200
+Message-ID: <20160511143300.GB1716@katana>
+References: <1461591519-24602-1-git-send-email-smohammed@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <572F2D84.3060505-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="gj572EiMnwbLXET9"
+Return-path: <linux-i2c-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1461591519-24602-1-git-send-email-smohammed@nvidia.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Shardar Shariff Md <smohammed@nvidia.com>
+Cc: ldewangan@nvidia.com, swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, jonathanh@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
 
-On Sunday 08 May 2016 05:43 PM, Jon Hunter wrote:
-> On 06/05/16 16:32, Laxman Dewangan wrote:
->> On Friday 06 May 2016 08:07 PM, Jon Hunter wrote:
->>> On 06/05/16 11:45, Laxman Dewangan wrote:
->>> +
->>> +    /* Last entry */
->>> +    TEGRA_IO_PAD_MAX,
->>> Nit should these be TEGRA_IO_PADS_xxx?
->> Because this was name of single pad and hence I said TEGRA_IO_PAD_XXX.
-> Aren't these used to set the voltage level and power state for the
-> entire group of IOs? Confused :-(
+--gj572EiMnwbLXET9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-One IO pad can have multiple IO pins.
-IO Pad control the power state and voltage of all pins belongs to that 
-IO pad.
+On Mon, Apr 25, 2016 at 07:08:36PM +0530, Shardar Shariff Md wrote:
+> Disable clock before returning error in tegra_i2c_init() as its leaves
+> i2c clock ON in case of error and never turns off again as it will have
+> unbalanced clock enable/disable
+>=20
+> Signed-off-by: Shardar Shariff Md <smohammed@nvidia.com>
+>=20
 
-
-Now what should we say PADS or PAD here? TEGRA_IO_PAD_UART or 
-TEGRA_IO_PADS_UART?
+Applied to for-next, thanks!
 
 
->>>> +};
->>>> +
->>>> +/* tegra_io_pads_source_voltage: The voltage level of IO rails which
->>>> source
->>>> + *                 the IO pads.
->>>> + */
->>>> +enum tegra_io_pads_source_voltage {
->>>> +    TEGRA_IO_PADS_SOURCE_VOLTAGE_1800000UV,
->>>> +    TEGRA_IO_PADS_SOURCE_VOLTAGE_3300000UV,
->>>> +};
->>> Nit I wonder if we can make this shorter ...
->>>
->>> enum tegra_io_pads_vconf {
->>>      TEGRA_IO_PADS_VCONF_1V8,
->>>      TEGRA_IO_PADS_VCONF_3V3,
->> This looks good but for voltage and current, unit is used uV/uV across
->> the system. So wanted to have same unit.
-> Now it is an enum does it matter? Or maybe just have ...
->
-> enum tegra_io_pads_vconf {
-> 	TEGRA_IO_PADS_1800000UV,
-> 	TEGRA_IO_PADS_3300000UV,
-> };
->
+--gj572EiMnwbLXET9
+Content-Type: application/pgp-signature; name="signature.asc"
 
-OK, TEGRA_IO_PADS_VCONF_1800000UV and TEGRA_IO_PADS_VCONF_3300000UV.
-Fine?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXM0KcAAoJEBQN5MwUoCm29PwP/i4PPCCy1egRPCnugylUq7Z0
+xdozIhd3DOBPAfwSM7ZAxhpo3driSnUqVTB8ZIU9huQTx7kalB6q/IZqmC5xBV9G
+oRCUNF+qgpGL+gEM1c0A9yAcPbzJ6SXuLfBKNKLEzXvmjGW/lyqRbCBs4ilpN5pG
+frYrbhQd5NdZ2ioE1p8i8AeVxU97y1UFoJL4oWd4lZWCjMK6jw9DC9WOsuKFXBqy
+AReXkMpMAB5wOs+mYsetYsaW38/bjiMNBxBCIHmHhFG8vey5vFvoZQj2nywbidP5
+z7oYRgsnfzCfxzQr3UC8rrylci4DJI2ctk6RVssyAN5tgpWiO37pEqoyN8WHuN7a
+y8HwrO2TDwxrS8buVIxw7hTFtecvI3wjEefOH3XsTHt7MsIRhvJIMWsCCAESjsno
+R2NyfYH9EeaWcy3c5+BGrdfKRflYYis5mhAmTTr3CuYR35daCtzj8s7vsamcDymM
+KibpgdW/TDYxFaiMLuxQigdQWBTSePukK8Exk8GkPo7RdKUJauozyXC/oCnhqk6P
+Tqrii5NbVr/L5UPgNef4zlh6FB4xwqoqD1L7ZulAt3FV/kcKqfXWGugAWoGF9rij
+mgy8by20Lakhoa5AMsDNtCvgOc3RdUq2OE8Ng+LaOd3khaCylbv89M6iX61Vbfqh
+JN3CiNF7qkfLSkiNhZ6o
+=Ep7y
+-----END PGP SIGNATURE-----
+
+--gj572EiMnwbLXET9--
