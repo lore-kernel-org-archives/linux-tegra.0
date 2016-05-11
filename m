@@ -1,44 +1,49 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 6/6] pinctrl: tegra: Add driver to configure voltage and
- power state of io pads
-Date: Wed, 11 May 2016 11:19:15 +0200
-Message-ID: <CACRpkdbvCQr11hjCBoeOO+8-MLUbwXAjv9xW=jKR=Y9hZO5sjA@mail.gmail.com>
-References: <1462191434-28933-1-git-send-email-ldewangan@nvidia.com>
-	<1462191434-28933-7-git-send-email-ldewangan@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH V2] pinctrl: tegra: Correctly check the supported configuration
+Date: Wed, 11 May 2016 11:24:00 +0200
+Message-ID: <CACRpkdYaFN3YMh9_AOWxL2edw=RmE5ZfTF5zzM6Pu1OVPV4wQg@mail.gmail.com>
+References: <1462209804-16582-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1462191434-28933-7-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1462209804-16582-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rhyland Klein <rklein@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, May 2, 2016 at 2:17 PM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+On Mon, May 2, 2016 at 7:23 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 
-> NVIDIA Tegra210 supports the IO pads which can operate at 1.8V
-> or 3.3V I/O voltage levels. Also the IO pads can be configured
-> for power down state if it is not used. SW needs to configure the
-> voltage level of IO pads based on IO rail voltage and its power
-> state based on platform usage.
+> The pincontrol registers of Tegra chips has multiple filed per
+> registers. There is two type of registers mux and drive. All
+> configurations belongs to one of these registers.
 >
-> The voltage and power state configurations of pads are provided
-> through pin control frameworks. Add pin control driver for Tegra's
-> IO pads' voltage and power state configurations.
+> If any configurations are supported then <config>_bit is set to
+> bit position of these registers otherwise -1 to not support it.
+> The member is defined as
+>         s32 <config>_bit:6;
 >
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> So if config is not supported ifor given SoC then it is set to -1
+> in soc pinmmux table.
+> In common driver code, to find out that given config is supported
+> or not, it is checked as:
 >
-> ---
-> Changes from V1:
-> - Use the generic pincontrol property for low power enable/disable.
-> - sync with latest and remove all MODULE* macros
-> - Use renamed APIs form PMC
+> s8 bit = <config>_bit;
+> if (bit > 31) {
+>         /* Not supported config */
+> }
+>
+> But in this case, bit is s8 and hence for non supporting it is -1.
+>
+> Correct the check as:
+> if (bit < 0) {
+>         /* Not supported config */
+> }
+>
+> Fixes: e4c02dced975cb ("pinctrl: tegra: use signed bitfields for optional fields")
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 
-Looks OK to me, need Stephen's ACK though!
+Patch applied with Stephen's ACK.
 
 Yours,
 Linus Walleij
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
