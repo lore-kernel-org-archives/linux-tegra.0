@@ -1,79 +1,49 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V4 3/3] soc/tegra: pmc: Add support for IO pads power
- state and voltage
-Date: Wed, 11 May 2016 16:35:26 +0100
-Message-ID: <5733513E.9080606@nvidia.com>
-References: <1462531548-12914-1-git-send-email-ldewangan@nvidia.com>
- <1462531548-12914-4-git-send-email-ldewangan@nvidia.com>
- <572CAC20.9030307@nvidia.com> <572CB906.3090004@nvidia.com>
- <572F2D84.3060505@nvidia.com> <57333366.2040500@nvidia.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [RFC PATCH] drivers/of: Fix depth when unflattening devicetree
+Date: Wed, 11 May 2016 10:37:33 -0500
+Message-ID: <CAL_JsqJN1M_1GZGJHMcymDbDokJQtCqUsbWQ_zqjDvR2SyD_Dw@mail.gmail.com>
+References: <1462920194-28803-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <57333366.2040500-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1462920194-28803-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Gavin Shan <gwshan-23VcF4HTsmIX0ybBhKVfKdBPR1lH4CV8@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, May 10, 2016 at 5:43 PM, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> When the implementation for unflatten_dt_node() changed from being
+> recursive to being non-recursive, it had a side effect of increasing the
+> depth passed to fdt_next_node() by 1. This is fine most of the time, but
+> it seems that when the end of the dtb is being parsed, it will cause the
+> FDT_END condition in fdt_next_node() to return a different value
+> (returning nextoffset instead of -FDT_ERR_NOTFOUND). This ends up passing
+> an FDT_ERR_TRUNCATED error back to the unflatten_dt_node() which then
+> sees that and complains "Error -8 processing FDT" causing boot to fail.
+>
+> This patch simply avoids incrementing depth and uses modified accesses
+> for local array indices so that the depth is the same as it was before
+> the change as far as fdt_next_node() is concerned.
+>
+> This problem was discovered trying to boot Tegra210-Smaug platforms.
 
-On 11/05/16 14:28, Laxman Dewangan wrote:
-> On Sunday 08 May 2016 05:43 PM, Jon Hunter wrote:
->> On 06/05/16 16:32, Laxman Dewangan wrote:
->>> On Friday 06 May 2016 08:07 PM, Jon Hunter wrote:
->>>> On 06/05/16 11:45, Laxman Dewangan wrote:
->>>> +
->>>> +    /* Last entry */
->>>> +    TEGRA_IO_PAD_MAX,
->>>> Nit should these be TEGRA_IO_PADS_xxx?
->>> Because this was name of single pad and hence I said TEGRA_IO_PAD_XXX.
->> Aren't these used to set the voltage level and power state for the
->> entire group of IOs? Confused :-(
-> 
-> One IO pad can have multiple IO pins.
-> IO Pad control the power state and voltage of all pins belongs to that
-> IO pad.
+Please reference the commit hash and summary. It is stable at this point.
 
-Ugh ... I remember for xusb there was something similar we the Tegra
-docs used pad to imply multiple. However, in general pad == pin == ball
-or at least should.
+> Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/of/fdt.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/of/fdt.c b/drivers/of/fdt.c
+> index f3da1878eea2..8855ba4f7470 100644
+> --- a/drivers/of/fdt.c
+> +++ b/drivers/of/fdt.c
+> @@ -407,24 +407,24 @@ static int unflatten_dt_node(const void *blob,
 
-> Now what should we say PADS or PAD here? TEGRA_IO_PAD_UART or
-> TEGRA_IO_PADS_UART?
+This needs to be based on the top of my dt/next (or linux-next) branch
+which renamed this function.
 
-Personally, I think pads and that is purely because it aligns with the
-APIs. I think that the APIs names, tegra_io_pads_xxx() should be
-consistent with the enum naming.
+Otherwise, looks fine to me.
 
->>>>> +};
->>>>> +
->>>>> +/* tegra_io_pads_source_voltage: The voltage level of IO rails which
->>>>> source
->>>>> + *                 the IO pads.
->>>>> + */
->>>>> +enum tegra_io_pads_source_voltage {
->>>>> +    TEGRA_IO_PADS_SOURCE_VOLTAGE_1800000UV,
->>>>> +    TEGRA_IO_PADS_SOURCE_VOLTAGE_3300000UV,
->>>>> +};
->>>> Nit I wonder if we can make this shorter ...
->>>>
->>>> enum tegra_io_pads_vconf {
->>>>      TEGRA_IO_PADS_VCONF_1V8,
->>>>      TEGRA_IO_PADS_VCONF_3V3,
->>> This looks good but for voltage and current, unit is used uV/uV across
->>> the system. So wanted to have same unit.
->> Now it is an enum does it matter? Or maybe just have ...
->>
->> enum tegra_io_pads_vconf {
->>     TEGRA_IO_PADS_1800000UV,
->>     TEGRA_IO_PADS_3300000UV,
->> };
->>
-> 
-> OK, TEGRA_IO_PADS_VCONF_1800000UV and TEGRA_IO_PADS_VCONF_3300000UV.
-> Fine?
-
-Fine :-)
-
-Jon
+Rob
