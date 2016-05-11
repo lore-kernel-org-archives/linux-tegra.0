@@ -1,49 +1,75 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V2] pinctrl: tegra: Correctly check the supported configuration
-Date: Wed, 11 May 2016 11:24:00 +0200
-Message-ID: <CACRpkdYaFN3YMh9_AOWxL2edw=RmE5ZfTF5zzM6Pu1OVPV4wQg@mail.gmail.com>
-References: <1462209804-16582-1-git-send-email-ldewangan@nvidia.com>
+From: Wei Ni <wni@nvidia.com>
+Subject: [PATCH v5 00/11] Add HW throttle for Tegra soctherm
+Date: Wed, 11 May 2016 18:20:15 +0800
+Message-ID: <1462962026-19653-1-git-send-email-wni@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <1462209804-16582-1-git-send-email-ldewangan@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rhyland Klein <rklein@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: edubezval@gmail.com, thierry.reding@gmail.com, robh+dt@kernel.org, rui.zhang@intel.com
+Cc: MLongnecker@nvidia.com, swarren@wwwdotorg.org, mikko.perttunen@kapsi.fi, linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Wei Ni <wni@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, May 2, 2016 at 7:23 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+This series add following functions for Tegra soctherm:
+1. add HW throttle function.
+2. enable soctherm node for Tegra124, Tegra132, Tegra210, and
+set "critical", "hot" trips for them.
 
-> The pincontrol registers of Tegra chips has multiple filed per
-> registers. There is two type of registers mux and drive. All
-> configurations belongs to one of these registers.
->
-> If any configurations are supported then <config>_bit is set to
-> bit position of these registers otherwise -1 to not support it.
-> The member is defined as
->         s32 <config>_bit:6;
->
-> So if config is not supported ifor given SoC then it is set to -1
-> in soc pinmmux table.
-> In common driver code, to find out that given config is supported
-> or not, it is checked as:
->
-> s8 bit = <config>_bit;
-> if (bit > 31) {
->         /* Not supported config */
-> }
->
-> But in this case, bit is s8 and hence for non supporting it is -1.
->
-> Correct the check as:
-> if (bit < 0) {
->         /* Not supported config */
-> }
->
-> Fixes: e4c02dced975cb ("pinctrl: tegra: use signed bitfields for optional fields")
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+Main changes from v4:
+1. drop the "nvidia" prefix from the node name, per Rob's comments.
 
-Patch applied with Stephen's ACK.
+Main changes from v3:
+1. change some properties'name and descriptions, per Rob's comments.
+2. change the corresponding driver codes.
 
-Yours,
-Linus Walleij
+Main changes from v2:
+1. improve the of-binding, per Eduardo's comments, and
+change the corresponding driver codes.
+2. move two setting critical trip patches in this series,
+3. fix some bugs in dts changes.
+
+Main changes from v1:
+1. use readl/writel instead of __raw_readl/__raw_writel.
+2. rebase on the linux-next.
+
+The v1 series is in:
+https://lkml.org/lkml/2016/3/31/230
+
+The v2 series is in:
+https://lkml.org/lkml/2016/4/26/1577
+
+The v3 series is in:
+https://lkml.org/lkml/2016/5/3/274
+
+The v4 series is in:
+https://lkml.org/lkml/2016/5/9/45
+
+Wei Ni (11):
+  of: Add bindings of hw throttle for Tegra soctherm
+  thermal: tegra: add hw-throttle function
+  thermal: tegra: add hw-throttle for Tegra132
+  arm: tegra: set critical trips for Tegra124
+  arm: tegra: set hot trips for Tegra124
+  arm64: tegra: use tegra132-soctherm for Tegra132
+  arm64: tegra: set critical trips for Tegra132
+  arm64: tegra: set hot trips for Tegra132
+  arm64: tegra: add soctherm node for Tegra210
+  arm64: tegra: set critical trips for Tegra210
+  arm64: tegra: set hot trips for Tegra210
+
+ .../bindings/thermal/nvidia,tegra124-soctherm.txt  | 121 ++-
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts          |  18 +-
+ arch/arm/boot/dts/tegra124.dtsi                    |  83 +-
+ arch/arm64/boot/dts/nvidia/tegra132.dtsi           | 119 ++-
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           | 127 ++++
+ drivers/thermal/tegra/soctherm.c                   | 842 ++++++++++++++++++++-
+ drivers/thermal/tegra/soctherm.h                   |  10 +
+ drivers/thermal/tegra/tegra124-soctherm.c          |  18 +
+ drivers/thermal/tegra/tegra132-soctherm.c          |  18 +
+ drivers/thermal/tegra/tegra210-soctherm.c          |  18 +
+ include/dt-bindings/thermal/tegra124-soctherm.h    |   5 +
+ 11 files changed, 1344 insertions(+), 35 deletions(-)
+
+-- 
+1.9.1
+
