@@ -1,47 +1,38 @@
-From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH V2 13/14] dt-bindings: arm-gic: Add documentation for
- Tegra210 AGIC
-Date: Wed, 11 May 2016 18:28:23 +0100
-Message-ID: <20160511172823.GC18829@leverpostej>
-References: <20160427173810.GC7359@leverpostej>
- <5721C597.1010105@nvidia.com>
- <20160428095525.GB21145@leverpostej>
- <572C56A6.7020408@nvidia.com>
- <CAMuHMdX+egbNPP4QQ2R28GbyVkg9qBrwYfUy8EE0PdB6od+LBg@mail.gmail.com>
- <CAL_Jsq+HSH7e1T9y47nHV_x5NvZ-52cfDEKKFkr16ax671FxSw@mail.gmail.com>
- <573358F9.6000108@nvidia.com>
- <57335AD3.7070109@nvidia.com>
- <CAL_Jsq+ZhwUOSfQG-8V9xgxiXBj2j3Q6k48d=BWtWK9pEHH_MQ@mail.gmail.com>
- <57336397.4000401@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V4 3/3] soc/tegra: pmc: Add support for IO pads power
+ state and voltage
+Date: Wed, 11 May 2016 22:52:10 +0530
+Message-ID: <57336A42.3090507@nvidia.com>
+References: <1462531548-12914-1-git-send-email-ldewangan@nvidia.com> <1462531548-12914-4-git-send-email-ldewangan@nvidia.com> <572CAC20.9030307@nvidia.com> <572CB906.3090004@nvidia.com> <572F2D84.3060505@nvidia.com> <57333366.2040500@nvidia.com> <5733513E.9080606@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <57336397.4000401-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <5733513E.9080606-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, May 11, 2016 at 05:53:43PM +0100, Jon Hunter wrote:
-> Hi Rob, Mark,
-> 
-> On 11/05/16 17:30, Rob Herring wrote:
-> > A platform driver for just gic-400 is wrong IMO until we have platform
-> > drivers for all interrupt controllers.
-> 
-> Yes, that is fine with me, but can we decide on whether the platform
-> driver should match "tegra210-agic" or the early driver should bail-out
-> if clocks/power-domains are present?
-> 
-> I am fine with either, but I think that Rob prefers the tegra210-agic
-> compat string and Mark prefers to bail-out of the early driver if
-> clocks/power-domains are present.
 
-If anything, I wasn't too keen on bailing out becuase of those
-properties, as I mentioned for the case of a root interrupt controller.
+On Wednesday 11 May 2016 09:05 PM, Jon Hunter wrote:
+> On 11/05/16 14:28, Laxman Dewangan wrote:
+>> On Sunday 08 May 2016 05:43 PM, Jon Hunter wrote:
+>>> On 06/05/16 16:32, Laxman Dewangan wrote:
+>>>> On Friday 06 May 2016 08:07 PM, Jon Hunter wrote:
+>>>>> On 06/05/16 11:45, Laxman Dewangan wrote:
+>>>>> +
+>>>>> +    /* Last entry */
+>>>>> +    TEGRA_IO_PAD_MAX,
+>>>>> Nit should these be TEGRA_IO_PADS_xxx?
+>>>> Because this was name of single pad and hence I said TEGRA_IO_PAD_XXX.
+>>> Aren't these used to set the voltage level and power state for the
+>>> entire group of IOs? Confused :-(
+>> One IO pad can have multiple IO pins.
+>> IO Pad control the power state and voltage of all pins belongs to that
+>> IO pad.
+> Ugh ... I remember for xusb there was something similar we the Tegra
+> docs used pad to imply multiple. However, in general pad == pin == ball
+> or at least should.
 
-I am happy to match the "tegra210-agic" string specifically.
-
-Thanks,
-Mark.
+when we say sddmc3 IO pads, we deal with all signal pins of sdmm3.
