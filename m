@@ -1,48 +1,52 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH V2 13/14] dt-bindings: arm-gic: Add documentation for
- Tegra210 AGIC
-Date: Wed, 11 May 2016 20:49:31 +0100
-Message-ID: <57338CCB.2080805@nvidia.com>
-References: <20160427173810.GC7359@leverpostej> <5721C597.1010105@nvidia.com>
- <20160428095525.GB21145@leverpostej> <572C56A6.7020408@nvidia.com>
- <CAMuHMdX+egbNPP4QQ2R28GbyVkg9qBrwYfUy8EE0PdB6od+LBg@mail.gmail.com>
- <CAL_Jsq+HSH7e1T9y47nHV_x5NvZ-52cfDEKKFkr16ax671FxSw@mail.gmail.com>
- <573358F9.6000108@nvidia.com> <57335AD3.7070109@nvidia.com>
- <CAL_Jsq+ZhwUOSfQG-8V9xgxiXBj2j3Q6k48d=BWtWK9pEHH_MQ@mail.gmail.com>
- <57336397.4000401@nvidia.com> <20160511172823.GC18829@leverpostej>
+Subject: Re: [PATCH V4 3/3] soc/tegra: pmc: Add support for IO pads power
+ state and voltage
+Date: Wed, 11 May 2016 20:59:08 +0100
+Message-ID: <57338F0C.2030101@nvidia.com>
+References: <1462531548-12914-1-git-send-email-ldewangan@nvidia.com>
+ <1462531548-12914-4-git-send-email-ldewangan@nvidia.com>
+ <572CAC20.9030307@nvidia.com> <572CB906.3090004@nvidia.com>
+ <572F2D84.3060505@nvidia.com> <57333366.2040500@nvidia.com>
+ <5733513E.9080606@nvidia.com> <57336A42.3090507@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160511172823.GC18829@leverpostej>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>, Pawel Moll <pawel.moll@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Kevin Hilman <khilman@kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <57336A42.3090507@nvidia.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Laxman Dewangan <ldewangan@nvidia.com>, thierry.reding@gmail.com, airlied@linux.ie, swarren@wwwdotorg.org, gnurou@gmail.com
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 11/05/16 18:28, Mark Rutland wrote:
-> On Wed, May 11, 2016 at 05:53:43PM +0100, Jon Hunter wrote:
->> Hi Rob, Mark,
->>
->> On 11/05/16 17:30, Rob Herring wrote:
->>> A platform driver for just gic-400 is wrong IMO until we have platform
->>> drivers for all interrupt controllers.
->>
->> Yes, that is fine with me, but can we decide on whether the platform
->> driver should match "tegra210-agic" or the early driver should bail-out
->> if clocks/power-domains are present?
->>
->> I am fine with either, but I think that Rob prefers the tegra210-agic
->> compat string and Mark prefers to bail-out of the early driver if
->> clocks/power-domains are present.
-> 
-> If anything, I wasn't too keen on bailing out becuase of those
-> properties, as I mentioned for the case of a root interrupt controller.
-> 
-> I am happy to match the "tegra210-agic" string specifically.
-
-Thanks guys. I will stick with tegra210-agic for now.
-
-Cheers
-Jon
+Ck9uIDExLzA1LzE2IDE4OjIyLCBMYXhtYW4gRGV3YW5nYW4gd3JvdGU6Cj4gCj4gT24gV2VkbmVz
+ZGF5IDExIE1heSAyMDE2IDA5OjA1IFBNLCBKb24gSHVudGVyIHdyb3RlOgo+PiBPbiAxMS8wNS8x
+NiAxNDoyOCwgTGF4bWFuIERld2FuZ2FuIHdyb3RlOgo+Pj4gT24gU3VuZGF5IDA4IE1heSAyMDE2
+IDA1OjQzIFBNLCBKb24gSHVudGVyIHdyb3RlOgo+Pj4+IE9uIDA2LzA1LzE2IDE2OjMyLCBMYXht
+YW4gRGV3YW5nYW4gd3JvdGU6Cj4+Pj4+IE9uIEZyaWRheSAwNiBNYXkgMjAxNiAwODowNyBQTSwg
+Sm9uIEh1bnRlciB3cm90ZToKPj4+Pj4+IE9uIDA2LzA1LzE2IDExOjQ1LCBMYXhtYW4gRGV3YW5n
+YW4gd3JvdGU6Cj4+Pj4+PiArCj4+Pj4+PiArICAgIC8qIExhc3QgZW50cnkgKi8KPj4+Pj4+ICsg
+ICAgVEVHUkFfSU9fUEFEX01BWCwKPj4+Pj4+IE5pdCBzaG91bGQgdGhlc2UgYmUgVEVHUkFfSU9f
+UEFEU194eHg/Cj4+Pj4+IEJlY2F1c2UgdGhpcyB3YXMgbmFtZSBvZiBzaW5nbGUgcGFkIGFuZCBo
+ZW5jZSBJIHNhaWQgVEVHUkFfSU9fUEFEX1hYWC4KPj4+PiBBcmVuJ3QgdGhlc2UgdXNlZCB0byBz
+ZXQgdGhlIHZvbHRhZ2UgbGV2ZWwgYW5kIHBvd2VyIHN0YXRlIGZvciB0aGUKPj4+PiBlbnRpcmUg
+Z3JvdXAgb2YgSU9zPyBDb25mdXNlZCA6LSgKPj4+IE9uZSBJTyBwYWQgY2FuIGhhdmUgbXVsdGlw
+bGUgSU8gcGlucy4KPj4+IElPIFBhZCBjb250cm9sIHRoZSBwb3dlciBzdGF0ZSBhbmQgdm9sdGFn
+ZSBvZiBhbGwgcGlucyBiZWxvbmdzIHRvIHRoYXQKPj4+IElPIHBhZC4KPj4gVWdoIC4uLiBJIHJl
+bWVtYmVyIGZvciB4dXNiIHRoZXJlIHdhcyBzb21ldGhpbmcgc2ltaWxhciB3ZSB0aGUgVGVncmEK
+Pj4gZG9jcyB1c2VkIHBhZCB0byBpbXBseSBtdWx0aXBsZS4gSG93ZXZlciwgaW4gZ2VuZXJhbCBw
+YWQgPT0gcGluID09IGJhbGwKPj4gb3IgYXQgbGVhc3Qgc2hvdWxkLgo+IAo+IHdoZW4gd2Ugc2F5
+IHNkZG1jMyBJTyBwYWRzLCB3ZSBkZWFsIHdpdGggYWxsIHNpZ25hbCBwaW5zIG9mIHNkbW0zLgoK
+UmlnaHQgYnV0IG5vdyB5b3UgYXJlIHNheWluZyBpby1wYWRzIGFuZCBub3QgaW8tcGFkLiBZZXMg
+aW8tcGFkcyB3b3VsZAptZWFuIG1vcmUgdGhhbiBvbmUsIGJ1dCBJTU8gaW8tcGFkIGltcGxpZXMg
+c2luZ3VsYXIuIEFueXdheSwgZW5vdWdoCmJpa2Utc2hlZGRpbmcgLi4uCgpKb24KCl9fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5n
+IGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVk
+ZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
