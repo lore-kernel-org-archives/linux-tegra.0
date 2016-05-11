@@ -1,55 +1,66 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH v7 1/4] i2c: tegra: disable clock before returning error
-Date: Wed, 11 May 2016 16:33:00 +0200
-Message-ID: <20160511143300.GB1716@katana>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH v7 2/4] i2c: tegra: calculate timeout for config load
+ when needed
+Date: Wed, 11 May 2016 16:42:31 +0200
+Message-ID: <20160511144230.GC1716@katana>
 References: <1461591519-24602-1-git-send-email-smohammed@nvidia.com>
+ <1461591519-24602-2-git-send-email-smohammed@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="gj572EiMnwbLXET9"
-Return-path: <linux-i2c-owner@vger.kernel.org>
+	protocol="application/pgp-signature"; boundary="4jXrM3lyYWu4nBt5"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1461591519-24602-1-git-send-email-smohammed@nvidia.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Shardar Shariff Md <smohammed@nvidia.com>
-Cc: ldewangan@nvidia.com, swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, jonathanh@nvidia.com
+In-Reply-To: <1461591519-24602-2-git-send-email-smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---gj572EiMnwbLXET9
+--4jXrM3lyYWu4nBt5
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Apr 25, 2016 at 07:08:36PM +0530, Shardar Shariff Md wrote:
-> Disable clock before returning error in tegra_i2c_init() as its leaves
-> i2c clock ON in case of error and never turns off again as it will have
-> unbalanced clock enable/disable
->=20
-> Signed-off-by: Shardar Shariff Md <smohammed@nvidia.com>
->=20
+On Mon, Apr 25, 2016 at 07:08:37PM +0530, Shardar Shariff Md wrote:
+> Instead of calculating timeout for the config load during init,
+> calculate it after config load register is written by using
+> readx_poll_timeout().
 
-Applied to for-next, thanks!
+I don't understand this description. You replace the open coded timeout
+routine with readx_poll_timeout. But I don't see any calculation moved?
+
+> +		err = readx_poll_timeout(readl, i2c_dev->base +
+> +					 tegra_i2c_reg_addr(i2c_dev,
+> +					 I2C_CONFIG_LOAD), val, val == 0,
+> +					 1000, I2C_CONFIG_LOAD_TIMEOUT);
+
+readl_poll_timeout? And probably assign the address to a variable to
+make the above code block more readable.
+
+Thanks,
+
+   Wolfram
 
 
---gj572EiMnwbLXET9
+--4jXrM3lyYWu4nBt5
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJXM0KcAAoJEBQN5MwUoCm29PwP/i4PPCCy1egRPCnugylUq7Z0
-xdozIhd3DOBPAfwSM7ZAxhpo3driSnUqVTB8ZIU9huQTx7kalB6q/IZqmC5xBV9G
-oRCUNF+qgpGL+gEM1c0A9yAcPbzJ6SXuLfBKNKLEzXvmjGW/lyqRbCBs4ilpN5pG
-frYrbhQd5NdZ2ioE1p8i8AeVxU97y1UFoJL4oWd4lZWCjMK6jw9DC9WOsuKFXBqy
-AReXkMpMAB5wOs+mYsetYsaW38/bjiMNBxBCIHmHhFG8vey5vFvoZQj2nywbidP5
-z7oYRgsnfzCfxzQr3UC8rrylci4DJI2ctk6RVssyAN5tgpWiO37pEqoyN8WHuN7a
-y8HwrO2TDwxrS8buVIxw7hTFtecvI3wjEefOH3XsTHt7MsIRhvJIMWsCCAESjsno
-R2NyfYH9EeaWcy3c5+BGrdfKRflYYis5mhAmTTr3CuYR35daCtzj8s7vsamcDymM
-KibpgdW/TDYxFaiMLuxQigdQWBTSePukK8Exk8GkPo7RdKUJauozyXC/oCnhqk6P
-Tqrii5NbVr/L5UPgNef4zlh6FB4xwqoqD1L7ZulAt3FV/kcKqfXWGugAWoGF9rij
-mgy8by20Lakhoa5AMsDNtCvgOc3RdUq2OE8Ng+LaOd3khaCylbv89M6iX61Vbfqh
-JN3CiNF7qkfLSkiNhZ6o
-=Ep7y
+iQIcBAEBAgAGBQJXM0TWAAoJEBQN5MwUoCm2+SsP/jJ/MZ7vnawSbtuP6Q3sp9xH
+qbdiL3yOEQgRKnslt6SaGvLrZ57srdSp12vlVd8J0ZozBD7jUa0JNfNwLsxeKg0p
+TVcS0usAMwppSQ0cv6+olCSE3bUge522x8DtqQVmjt+hQkh+7/SWCVtFGQZjP2ed
+saq1S1nAc3RVLCxRc98BARCt7O8aTe6ABtSB3akdkhKwbYZhn87aOl8uo9xM2RPB
+zTVigtiHt9TnQMh39whTwm6dK4Cw37H1iJfwzaZvZrQg4E3PSsmOxU8UlXdQVEYf
+ybUNlTl8sg3yYJcml1HInPA1teKr1V/G3JIlydRq3ytIo43/INYJZcvaci7oYQNM
+LwWwjidOtx3xkvCcB3ZG7YxOvw/G5bEjVQ3hxWNnt3yIzhRAIcE0r30WZltAjymD
+pDg8faUwhPJEFVNcTkOihPe3FOXS0DY7iqXdo3+/Hl8q4XaQ9Les0fmomFpXMrQZ
+gFWbpxzOi8ScI3/dBaIEoAvg2vFL87rw2illSLGk4fqxboeWla0EY2g/b8PIxuFW
+3YbMpkoQWxozb3zZeIyCP58KiXmdkubDjqaj+1mUXS9OyBFc56oWe+pWo88UlVkd
+Iz649J6OLe6W/HqX7Lole60yIY8jODSVfNct1PqwJFi2bAIsepJxlAx5V9YCiCzP
+Ihn+zDfhj4Pdza7OzcHn
+=6ic2
 -----END PGP SIGNATURE-----
 
---gj572EiMnwbLXET9--
+--4jXrM3lyYWu4nBt5--
