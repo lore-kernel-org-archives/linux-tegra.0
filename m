@@ -1,30 +1,37 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH] mfd: max77620: Fix FPS switch statements
-Date: Thu, 12 May 2016 23:22:02 +0530
-Message-ID: <5734C2C2.2060207@nvidia.com>
-References: <1463075104-26924-1-git-send-email-rklein@nvidia.com>
+From: Javier Martinez Canillas <javier@dowhile0.org>
+Subject: Re: [PATCH 6/6] pinctrl: tegra: Add driver to configure voltage and
+ power state of io pads
+Date: Thu, 12 May 2016 15:02:49 -0400
+Message-ID: <CABxcv=mFRGWQXTxRYEKMbY3=XvrGL2713kUu9o2M4zgRVCje0Q@mail.gmail.com>
+References: <1462191434-28933-1-git-send-email-ldewangan@nvidia.com>
+	<1462191434-28933-7-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1463075104-26924-1-git-send-email-rklein@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Rhyland Klein <rklein@nvidia.com>, Lee Jones <lee.jones@linaro.org>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1462191434-28933-7-git-send-email-ldewangan@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Linux Kernel <linux-kernel@vger.kernel.org>, Linux GPIO List <linux-gpio@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hello Laxman,
 
-On Thursday 12 May 2016 11:15 PM, Rhyland Klein wrote:
-> When configuring FPS during probe, assuming a DT node is present for
-> FPS, the code can run into a problem with the switch statements in
-> max77620_config_fps() and max77620_get_fps_period_reg_value(). Namely,
-> in the case of chip->chip_id == MAX77620, it will set
-> fps_[mix|max]_period but then fall through to the default switch case
-> and return -EINVAL. Returning this from max77620_config_fps() will
-> cause probe to fail.
->
+On Mon, May 2, 2016 at 8:17 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 
-Thanks for fixes.
-Missed when converting if-else to switch.
+[snip]
 
-Reviewed-by: Laxman Dewangan <ldewangan@nvidia.com>
+> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210-io-pad.c b/drivers/pinctrl/tegra/pinctrl-tegra210-io-pad.c
+> new file mode 100644
+> index 0000000..ab06c71
+> --- /dev/null
+> +++ b/drivers/pinctrl/tegra/pinctrl-tegra210-io-pad.c
+> @@ -0,0 +1,301 @@
+> +/*
+> + * Generic ADC thermal driver
+> + *
+
+This seems to be a copy and paste error from
+drivers/thermal/thermal-generic-adc.c since this is a pinctrl driver.
+
+Best regards,
+Javier
