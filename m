@@ -1,64 +1,42 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V7 0/3] Add support for Tegra210 ADMA
-Date: Thu, 12 May 2016 18:02:21 +0100
-Message-ID: <1463072544-14906-1-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH V7 3/3] MAINTAINERS: Update Tegra DMA maintainers
+Date: Thu, 12 May 2016 18:02:24 +0100
+Message-ID: <1463072544-14906-4-git-send-email-jonathanh@nvidia.com>
+References: <1463072544-14906-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1463072544-14906-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add support for the Tegra210 Audio DMA (ADMA) controller which is part
-of the Audio Processing Engine and used for transferring audio data.
+Update the Tegra DMA driver maintainer field to include the newly added
+Tegra210 ADMA and add Jon Hunter as a co-maintainer for Tegra DMA.
 
-V7 changes:
-- Corrected year for copyright
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ MAINTAINERS | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-V6 changes:
-- Removed stub function tegra_adma_prep_slave_sg() as it is no longer
-  needed.
-
-V5 changes:
-- Removed APE and APE2APB clocks as these clocks rightfully belong
-  in the ACONNECT bus driver [0] and the ADMA is child of this device.
-  Dropped power-domain from DT binding as this will be handled by
-  ACONNECT bus driver as well.
-- Minor update to case statement formatting based upon feedback from
-  Vinod.
-- Make ADMA dependent on Tegra210 as this is the only device
-  (currently) that supports it.
-
-V4 changes:
-- Updated DT binding to include 'power-domains' entry for handling
-  the APE power domain inconjunction with runtime-pm.
-- Added missing clocks to the DT binding that were being handled by
-  the bootloader.
-- Added support for PM_CLK to simplify clock handling
-
-V3 changes:
-- Updated DT binding per feedback from Mark and Stephen
-- Fixed up items mentioned by Vinod
-
-V2 changes:
-- Re-worked device-tree binding
-
-[0] http://marc.info/?l=devicetree&m=146193804830747&w=2
-
-Jon Hunter (3):
-  Documentation: DT: Add binding documentation for NVIDIA ADMA
-  dmaengine: tegra-adma: Add support for Tegra210 ADMA
-  MAINTAINERS: Update Tegra DMA maintainers
-
- .../bindings/dma/nvidia,tegra210-adma.txt          |  55 ++
- MAINTAINERS                                        |   5 +-
- drivers/dma/Kconfig                                |  14 +
- drivers/dma/Makefile                               |   1 +
- drivers/dma/tegra210-adma.c                        | 840 +++++++++++++++++++++
- 5 files changed, 913 insertions(+), 2 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/dma/nvidia,tegra210-adma.txt
- create mode 100644 drivers/dma/tegra210-adma.c
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 09744d2fefc6..b756cd245897 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -11188,10 +11188,11 @@ M:	Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+ S:	Supported
+ F:	drivers/clk/tegra/
+ 
+-TEGRA DMA DRIVER
++TEGRA DMA DRIVERS
+ M:	Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
++M:	Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+ S:	Supported
+-F:	drivers/dma/tegra20-apb-dma.c
++F:	drivers/dma/tegra*
+ 
+ TEGRA I2C DRIVER
+ M:	Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 -- 
 2.1.4
