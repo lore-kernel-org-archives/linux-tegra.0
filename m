@@ -1,63 +1,96 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: beaver: allow SD card voltage to be changed
-Date: Fri, 13 May 2016 09:25:31 +0200
-Message-ID: <1463124331.2459.0.camel@lynxeye.de>
-References: <1456779678-20173-1-git-send-email-dev@lynxeye.de>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH 3/3] mmc: core: support hs speed mode if hs200 mode fails
+Date: Fri, 13 May 2016 09:06:38 +0000
+Message-ID: <1463130397.3151.13.camel@toradex.com>
+References: <1461171092-30631-1-git-send-email-aisheng.dong@nxp.com>
+ <1461171092-30631-3-git-send-email-aisheng.dong@nxp.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1456779678-20173-1-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1461171092-30631-3-git-send-email-aisheng.dong@nxp.com>
+Content-Language: en-US
+Content-ID: <CC036658EE65124EBA86298DC6F9B61E@eurprd05.prod.outlook.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, "aisheng.dong@nxp.com" <aisheng.dong@nxp.com>
+Cc: "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>, "dev@lynxeye.de" <dev@lynxeye.de>, "dongas86@gmail.com" <dongas86@gmail.com>, "chris@printf.net" <chris@printf.net>, "haibo.chen@nxp.com" <haibo.chen@nxp.com>, "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "adrian.hunter@intel.com" <adrian.hunter@intel.com>, "shawnguo@kernel.org" <shawnguo@kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Am Montag, den 29.02.2016, 22:01 +0100 schrieb Lucas Stach:
-> This allows to switch the card signal voltage level to 1.8V,
-> which is needed for any ultra high speed modes to work.
->=20
-> Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-> ---
-> This needs the SDMMC memcomp pad calibration patches I just
-> sent out to be applied, otherwise the card voltage change will
-> fail with a message in the kernel log and a fall back to
-> high speed operation.
-
-The patches this one depends on have been applied for some time now.
-Please pick up this patch.
-
-Thanks,
-Lucas
-> ---
-> =C2=A0arch/arm/boot/dts/tegra30-beaver.dts | 3 ++-
-> =C2=A01 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/arch/arm/boot/dts/tegra30-beaver.dts
-> b/arch/arm/boot/dts/tegra30-beaver.dts
-> index 1daed40..6b237f2 100644
-> --- a/arch/arm/boot/dts/tegra30-beaver.dts
-> +++ b/arch/arm/boot/dts/tegra30-beaver.dts
-> @@ -1848,7 +1848,7 @@
-> =C2=A0
-> =C2=A0				ldo5_reg: ldo5 {
-> =C2=A0					regulator-name =3D
-> "vddio_sdmmc,avdd_vdac";
-> -					regulator-min-microvolt =3D
-> <3300000>;
-> +					regulator-min-microvolt =3D
-> <1800000>;
-> =C2=A0					regulator-max-microvolt =3D
-> <3300000>;
-> =C2=A0					regulator-always-on;
-> =C2=A0				};
-> @@ -1919,6 +1919,7 @@
-> =C2=A0
-> =C2=A0	sdhci@78000000 {
-> =C2=A0		status =3D "okay";
-> +		vqmmc-supply =3D <&ldo5_reg>;
-> =C2=A0		cd-gpios =3D <&gpio TEGRA_GPIO(I, 5) GPIO_ACTIVE_LOW>;
-> =C2=A0		wp-gpios =3D <&gpio TEGRA_GPIO(T, 3)
-> GPIO_ACTIVE_HIGH>;
-> =C2=A0		power-gpios =3D <&gpio TEGRA_GPIO(D, 7)
-> GPIO_ACTIVE_HIGH>;
+T24gVGh1LCAyMDE2LTA0LTIxIGF0IDAwOjUxICswODAwLCBEb25nIEFpc2hlbmcgd3JvdGU6DQo+
+IEN1cnJlbnRseSBpZiBtbWNfc2VsZWN0X2hzMjAwIG1vZGUgc3dpdGNoIGZhaWxzLCBNTUMgY29y
+ZQ0KPiBjYW4gb25seSB1c2UgbGVnYWN5IG1vZGUgdG8gcnVuIHRoZSBjYXJkLg0KPiBMZXQncyBy
+ZXRyeSBIUyBzcGVlZCBtb2RlIGlmIEhTMjAwIGZhaWxzLg0KPiANCj4gQmVmb3JlIHRoZSBmaXg6
+DQo+IG1tYzA6IG1tY19zZWxlY3RfaHMyMDAgZmFpbGVkLCBlcnJvciAtNzQNCj4gOiBzd2l0Y2gg
+dG8gbW1jMCBmYWlsZWQNCj4gbW1jMDogbmV3IE1NQyBjYXJkIGF0IGFkZHJlc3MgMDAwMQ0KPiBt
+bWNibGswOiBtbWMwOjAwMDEgUTJKNTVMIDcuMTIgR2lCDQo+IG1tY2JsazBib290MDogbW1jMDow
+MDAxIFEySjU1TCBwYXJ0aXRpb24gMSAyLjAwIE1pQg0KPiBtbWNibGswYm9vdDE6IG1tYzA6MDAw
+MSBRMko1NUwgcGFydGl0aW9uIDIgMi4wMCBNaUINCj4gbW1jYmxrMHJwbWI6IG1tYzA6MDAwMSBR
+Mko1NUwgcGFydGl0aW9uIDMgNC4wMCBNaUINCj4gwqBtbWNibGswOiBwMSBwMg0KPiANCj4gQWZ0
+ZXIgdGhlIGZpeDoNCj4gbW1jMDogbW1jX3NlbGVjdF9oczIwMCBmYWlsZWQsIGVycm9yIC03NA0K
+PiBtbWMwOiBuZXcgRERSIE1NQyBjYXJkIGF0IGFkZHJlc3MgMDAwMQ0KPiBtbWNibGswOiBtbWMw
+OjAwMDEgUTJKNTVMIDcuMTIgR2lCDQo+IG1tY2JsazBib290MDogbW1jMDowMDAxIFEySjU1TCBw
+YXJ0aXRpb24gMSAyLjAwIE1pQg0KPiBtbWNibGswYm9vdDE6IG1tYzA6MDAwMSBRMko1NUwgcGFy
+dGl0aW9uIDIgMi4wMCBNaUINCj4gbW1jYmxrMHJwbWI6IG1tYzA6MDAwMSBRMko1NUwgcGFydGl0
+aW9uIDMgNC4wMCBNaUINCj4gwqBtbWNibGswOiBwMSBwMg0KPiANCj4gU2lnbmVkLW9mZi1ieTog
+RG9uZyBBaXNoZW5nIDxhaXNoZW5nLmRvbmdAbnhwLmNvbT4NCj4gLS0tDQo+IMKgZHJpdmVycy9t
+bWMvY29yZS9tbWMuYyB8IDMgKystDQo+IMKgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygr
+KSwgMSBkZWxldGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvbW1jL2NvcmUvbW1j
+LmMgYi9kcml2ZXJzL21tYy9jb3JlL21tYy5jDQo+IGluZGV4IDU1YzgyMDEuLmI1NzNkYzcgMTAw
+NjQ0DQo+IC0tLSBhL2RyaXZlcnMvbW1jL2NvcmUvbW1jLmMNCj4gKysrIGIvZHJpdmVycy9tbWMv
+Y29yZS9tbWMuYw0KPiBAQCAtMTMxNSw3ICsxMzE1LDggQEAgc3RhdGljIGludCBtbWNfc2VsZWN0
+X3RpbWluZyhzdHJ1Y3QgbW1jX2NhcmQNCj4gKmNhcmQpDQo+IMKgDQo+IMKgCWlmIChjYXJkLT5t
+bWNfYXZhaWxfdHlwZSAmIEVYVF9DU0RfQ0FSRF9UWVBFX0hTMjAwKQ0KPiDCoAkJZXJyID0gbW1j
+X3NlbGVjdF9oczIwMChjYXJkKTsNCj4gLQllbHNlIGlmIChjYXJkLT5tbWNfYXZhaWxfdHlwZSAm
+IEVYVF9DU0RfQ0FSRF9UWVBFX0hTKQ0KPiArDQo+ICsJaWYgKGVyciAmJiAoY2FyZC0+bW1jX2F2
+YWlsX3R5cGUgJiBFWFRfQ1NEX0NBUkRfVFlQRV9IUykpDQo+IMKgCQllcnIgPSBtbWNfc2VsZWN0
+X2hzKGNhcmQpOw0KPiDCoA0KPiDCoAlpZiAoZXJyICYmIGVyciAhPSAtRUJBRE1TRykNCg0KDQpU
+aGlzIHNlZW1zIHRvIGJyZWFrIG9uIFRLMSB3aGVyZSBlTU1DIHNvIGZhciB3YXMgZGV0ZWN0ZWQg
+YXMgYW4gOC1iaXQNCmhpZ2ggc3BlZWQgTU1DIGNhcmQuIFdpdGggdGhpcyBwYXRjaCBpdCByZXZl
+cnRzIHRvIGRldGVjdGluZyBhIDEtYml0IG9ubHkNCk1NQyBjYXJkISBUaGlzIGhhcyBiZWVuIG9i
+c2VydmVkIGJvdGggb24gYSBOVklESUEncyBKZXRzb24gVEsxIGFzIHdlbGwgYXMNCm91ciBuZXcg
+VG9yYWRleCBBcGFsaXMgVEsxwqAoQ0MgVGVncmEgbWFpbGluZyBsaXN0LMKgSm9uIEh1bnRlciBh
+bmTCoEx1Y2FzDQpTdGFjaCBhcyB3ZWxsKS4gU28gZmFyIFQzMCBpcyBub3QgYWZmZWN0ZWQgYXMg
+dGhlcmUgd2UgYXJlIHN0aWxsIGRvaW5nDQpmdWxsIEhTMjAwIHdpdGggd2hhdGV2ZXIgaXNzdWVz
+IHRoYXQgaGFzLg0KDQpCZWZvcmU6DQpbwqDCoMKgwqAzLjcyNjg5NF0gc2RoY2k6IFNlY3VyZSBE
+aWdpdGFsIEhvc3QgQ29udHJvbGxlciBJbnRlcmZhY2UgZHJpdmVyDQpbwqDCoMKgwqAzLjczMzA4
+MV0gc2RoY2k6IENvcHlyaWdodChjKSBQaWVycmUgT3NzbWFuDQpbwqDCoMKgwqAzLjczNzQ2Ml0g
+c2RoY2ktcGx0Zm06IFNESENJIHBsYXRmb3JtIGFuZCBPRiBkcml2ZXIgaGVscGVyDQpbwqDCoMKg
+wqAzLjc1MzQxMV0gbW1jMDogVW5rbm93biBjb250cm9sbGVyIHZlcnNpb24gKDMpLiBZb3UgbWF5
+IGV4cGVyaWVuY2UNCiBwcm9ibGVtcy4NClvCoMKgwqDCoDMuNzY4MzQ1XSBtbWMwOiBJbnZhbGlk
+IG1heGltdW0gYmxvY2sgc2l6ZSwgYXNzdW1pbmcgNTEyIGJ5dGVzDQpbwqDCoMKgwqAzLjgxNDg5
+Nl0gbW1jMDogU0RIQ0kgY29udHJvbGxlciBvbiA3MDBiMDYwMC5zZGhjaSBbNzAwYjA2MDAuc2Ro
+Y2ldDQogdXNpbmcgQURNQSA2NC1iaXQNClvCoMKgwqDCoDMuODkyMDg4XSBtbWMwOiBuZXcgaGln
+aCBzcGVlZCBNTUMgY2FyZCBhdCBhZGRyZXNzIDAwMDENClvCoMKgwqDCoDMuODk5MTk0XSBtbWNi
+bGswOiBtbWMwOjAwMDEgU0VNMTZHIDE0LjcgR2lCDQpbwqDCoMKgwqAzLjkwNDIxN10gbW1jYmxr
+MGJvb3QwOiBtbWMwOjAwMDEgU0VNMTZHIHBhcnRpdGlvbiAxIDQuMDAgTWlCDQpbwqDCoMKgwqAz
+LjkxMDY0NV0gbW1jYmxrMGJvb3QxOiBtbWMwOjAwMDEgU0VNMTZHIHBhcnRpdGlvbiAyIDQuMDAg
+TWlCDQpbwqDCoMKgwqAzLjkxNzExOV0gbW1jYmxrMHJwbWI6IG1tYzA6MDAwMSBTRU0xNkcgcGFy
+dGl0aW9uIDMgNC4wMCBNaUINClvCoMKgwqDCoDMuOTI2MDA2XcKgwqBtbWNibGswOiBwMSBwMiBw
+MyBwNCBwNSBwNiBwNyBwOCBwOQ0Kcm9vdEBqZXRzb25fdGsxOn4jIGNhdCAvc3lzL2tlcm5lbC9k
+ZWJ1Zy9tbWMwL2lvc8KgDQpjbG9jazrCoMKgwqDCoMKgwqDCoMKgwqDCoDUyMDAwMDAwIEh6DQph
+Y3R1YWwgY2xvY2s6wqDCoMKgNTEwMDAwMDAgSHoNCnZkZDrCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqAyMSAoMy4zIH4gMy40IFYpDQpidXMgbW9kZTrCoMKgwqDCoMKgwqDCoDIgKHB1c2gtcHVsbCkN
+CmNoaXAgc2VsZWN0OsKgwqDCoMKgMCAoZG9uJ3QgY2FyZSkNCnBvd2VyIG1vZGU6wqDCoMKgwqDC
+oDIgKG9uKQ0KYnVzIHdpZHRoOsKgwqDCoMKgwqDCoDMgKDggYml0cykNCnRpbWluZyBzcGVjOsKg
+wqDCoMKgMSAobW1jIGhpZ2gtc3BlZWQpDQpzaWduYWwgdm9sdGFnZTogMCAoMy4zMCBWKQ0KZHJp
+dmVyIHR5cGU6wqDCoMKgwqAwIChkcml2ZXIgdHlwZSBCKQ0KDQpBZnRlcjoNClvCoMKgwqDCoDMu
+ODk5OTE4XSBtbWMwOiBuZXcgTU1DIGNhcmQgYXQgYWRkcmVzcyAwMDAxDQpyb290QGpldHNvbl90
+azE6fiMgY2F0IC9zeXMva2VybmVsL2RlYnVnL21tYzAvaW9zwqANCmNsb2NrOsKgwqDCoMKgwqDC
+oMKgwqDCoMKgMjUwMDAwMDAgSHoNCmFjdHVhbCBjbG9jazrCoMKgwqAyNDcyNzI3MyBIeg0KdmRk
+OsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoDIxICgzLjMgfiAzLjQgVikNCmJ1cyBtb2RlOsKgwqDC
+oMKgwqDCoMKgMiAocHVzaC1wdWxsKQ0KY2hpcCBzZWxlY3Q6wqDCoMKgwqAwIChkb24ndCBjYXJl
+KQ0KcG93ZXIgbW9kZTrCoMKgwqDCoMKgMiAob24pDQpidXMgd2lkdGg6wqDCoMKgwqDCoMKgMCAo
+MSBiaXRzKQ0KdGltaW5nIHNwZWM6wqDCoMKgwqAwIChsZWdhY3kpDQpzaWduYWwgdm9sdGFnZTog
+MCAoMy4zMCBWKQ0KZHJpdmVyIHR5cGU6wqDCoMKgwqAwIChkcml2ZXIgdHlwZSBCKQ0KDQpfX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpsaW51eC1hcm0ta2Vy
+bmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0
+cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1hbi9saXN0aW5mby9saW51eC1hcm0ta2VybmVs
+Cg==
