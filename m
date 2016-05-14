@@ -1,48 +1,60 @@
-From: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: beaver: allow SD card voltage to be changed
-Date: Fri, 13 May 2016 21:08:50 +0200
-Message-ID: <1463166530.2556.5.camel@lynxeye.de>
-References: <1456779678-20173-1-git-send-email-dev@lynxeye.de>
-	 <1463124331.2459.0.camel@lynxeye.de> <20160513172704.GA498@ulmo.ba.sec>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH V2 1/4] dt-bindings: bus: Add documentation for Tegra210
+ ACONNECT
+Date: Sat, 14 May 2016 09:22:08 -0500
+Message-ID: <20160514142208.GA1462@rob-hp-laptop>
+References: <1462880140-5938-1-git-send-email-jonathanh@nvidia.com>
+ <1462880140-5938-2-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160513172704.GA498-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1462880140-5938-2-git-send-email-jonathanh@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Am Freitag, den 13.05.2016, 19:27 +0200 schrieb Thierry Reding:
-> On Fri, May 13, 2016 at 09:25:31AM +0200, Lucas Stach wrote:
-> > 
-> > Am Montag, den 29.02.2016, 22:01 +0100 schrieb Lucas Stach:
-> > > 
-> > > This allows to switch the card signal voltage level to 1.8V,
-> > > which is needed for any ultra high speed modes to work.
-> > > 
-> > > Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-> > > ---
-> > > This needs the SDMMC memcomp pad calibration patches I just
-> > > sent out to be applied, otherwise the card voltage change will
-> > > fail with a message in the kernel log and a fall back to
-> > > high speed operation.
-> > The patches this one depends on have been applied for some time
-> > now.
-> > Please pick up this patch.
-> My understanding is that UHS modes currently cause problems on
-> Beaver.
-> What I don't understand about that is how it will even try those
-> modes
-> if the voltage regulator can't be set to 1.8 V? Shouldn't that
-> actively
-> prevent those modes from even being attempted?
+On Tue, May 10, 2016 at 12:35:37PM +0100, Jon Hunter wrote:
+> Add binding documentation for the Tegra ACONNECT bus that is part of the
+> Audio Processing Engine (APE) on Tegra210. The ACONNECT bus is used to
+> access devices within the APE subsystem. The APE is located in a
+> separate power domain and so accesses made to the ACONNECT require the
+> power domain to be enabled as well as some platform specific clocks.
 > 
-AFAIK this is right. I haven't re-tested with v4.6 yet, but on v4.5
-without this change the high-speed modes using 1.8V signaling would not
-be used on the SD card. As eMMC doesn't need the voltage switch, this
-one will work in high-speed mode on Beaver.
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  .../bindings/bus/nvidia,tegra210-aconnect.txt      | 45 ++++++++++++++++++++++
+>  1 file changed, 45 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
+> new file mode 100644
+> index 000000000000..81668f588eca
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
+> @@ -0,0 +1,45 @@
+> +NVIDIA Tegra ACONNECT Bus
+> +
+> +The Tegra ACONNECT bus is an AXI switch which is used to connnect various
+> +components inside the Audio Processing Engine (APE). All CPU accesses to
+> +the APE subsystem go through the ACONNECT via an APB to AXI wrapper.
+> +
+> +Required properties:
+> +- compatible: Must be "nvidia,tegra210-aconnect".
+> +- clocks: Must contain the entries for the APE clock (TEGRA210_CLK_APE),
+> +  and APE interface clock (TEGRA210_CLK_APB2APE).
+> +- clock-names: Must contain the names "ape" and "apb2ape" for the corresponding
+> +  'clocks' entries.
+> +- power-domains: Must contain a phandle that points to the audio powergate
+> +  (namely 'aud') for Tegra210.
+> +- #address-cells: The number of cells used to represent physical base addresses
+> +  in the aconnect address space. Should be 2.
+> +- #size-cells: The number of cells used to represent the size of an address
+> +  range in the aconnect address space. Should be 2.
 
-Regards,
-Lucas
+You forgot to update these. With that,
+
+Acked-by: Rob Herring <robh@kernel.org>
+
+Rob
