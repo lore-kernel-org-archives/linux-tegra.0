@@ -1,75 +1,41 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.6
-Date: Mon, 16 May 2016 13:15:48 +0100
-Message-ID: <5739B9F4.1060400@nvidia.com>
+From: Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH] drivers/of: Fix depth when unflattening devicetree
+Date: Mon, 16 May 2016 09:10:54 -0500
+Message-ID: <20160516141054.GB21849@rob-hp-laptop>
+References: <1462988217-29314-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <stable-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1462988217-29314-1-git-send-email-rklein@nvidia.com>
+Sender: stable-owner@vger.kernel.org
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Gavin Shan <gwshan@linux.vnet.ibm.com>, Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, stable@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.6.
-Logs and other details at:
+On Wed, May 11, 2016 at 01:36:57PM -0400, Rhyland Klein wrote:
+> When the implementation for unflatten_dt_node() changed from being
+> recursive to being non-recursive, it had a side effect of increasing the
+> depth passed to fdt_next_node() by 1. This is fine most of the time, but
+> it seems that when the end of the dtb is being parsed, it will cause the
+> FDT_END condition in fdt_next_node() to return a different value
+> (returning nextoffset instead of -FDT_ERR_NOTFOUND). This ends up passing
+> an FDT_ERR_TRUNCATED error back to the unflatten_dt_node() which then
+> sees that and complains "Error -8 processing FDT" causing boot to fail.
+> 
+> This patch simply avoids incrementing depth and uses modified accesses
+> for local array indices so that the depth is the same as it was before
+> the change as far as fdt_next_node() is concerned.
+> 
+> This problem was discovered trying to boot Tegra210-Smaug platforms.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: 9ffa9eb41763 ("drivers/of: Avoid recursively calling unflatten_dt_node()")
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> ---
+>  drivers/of/fdt.c | 16 ++++++++--------
+>  1 file changed, 8 insertions(+), 8 deletions(-)
 
-    https://nvtb.github.io//linux/test_v4.6/20160515160102/
+Applied, thanks.
 
-
-Test summary
-------------
-
-Build: zImage:
-    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Build: Image:
-    Pass: ( 1/ 1): defconfig
-
-Boot to userspace: defconfig:
-    Pass: ( 3/ 3): qemu-vexpress64, tegra132-norrin,
-		   tegra210-p2371-0000
-
-Boot to userspace: multi_v7_defconfig:
-    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: multi_v7_defconfig:
-    FAIL: ( 1/ 4): tegra30-beaver
-    Pass: ( 3/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice
-
-PM: System suspend: tegra_defconfig:
-    Pass: ( 4/ 4): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra20-trimslice, tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v4.6-rc7 (44549e8f5eea4e0a41b487b63e616cb089922b99)):
-   text     data      bss    total  kernel
-  +4103    -4096        0       +7  defconfig
-  +2247        0        0    +2247  multi_v7_defconfig
-  +1287        0        0    +1287  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v4.6-rc7 (44549e8f5eea4e0a41b487b63e616cb089922b99))
-    avail    rsrvd     high    freed                board              kconfig                  dtb
-        .        .        .        .      qemu-vexpress64            defconfig           __internal
-        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
-        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
-        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
-
---
-nvpublic
+Rob
