@@ -1,85 +1,99 @@
-From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Subject: Re: [PATCH] drm/tegra: Fix crash caused by reference count imbalance
-Date: Wed, 18 May 2016 12:26:47 +0200
-Message-ID: <20160518102647.GE27098@phenom.ffwll.local>
-References: <1463502435-29217-1-git-send-email-jonathanh@nvidia.com>
- <20160517164632.GT27098@phenom.ffwll.local>
- <573B54F2.4010300@nvidia.com>
- <CAKMK7uHNKPfKAQ49rboWSiXe_OrxK6On6ZrFrtSaCwmU7VfQGA@mail.gmail.com>
- <573C337C.3030009@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2] drm/tegra: Fix crash caused by reference count imbalance
+Date: Wed, 18 May 2016 12:11:29 +0100
+Message-ID: <1463569889-14632-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <573C337C.3030009-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, May 18, 2016 at 10:18:52AM +0100, Jon Hunter wrote:
-> 
-> On 17/05/16 18:36, Daniel Vetter wrote:
-> > On Tue, May 17, 2016 at 7:29 PM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> >>>> @@ -764,6 +769,9 @@ tegra_dsi_connector_duplicate_state(struct drm_connector *connector)
-> >>>>      if (!copy)
-> >>>>              return NULL;
-> >>>>
-> >>>> +    if (copy->base.crtc)
-> >>>> +            drm_connector_reference(connector);
-> >>>> +
-> >>>
-> >>> Please use __drm_atomic_helper_connector_duplicate_state instead of
-> >>> open-coding it.
-> >>
-> >> Unfortunately, tegra is allocating and duplicating memory for the entire
-> >> tegra_dsi_state structure (of which drm_connector_state is a member) in
-> >> this function and so I was not able to do that. However, may be Thierry
-> >> can comment on whether that is completely necessary and if we can move
-> >> to using __drm_atomic_helper_connector_duplicate_state() instead.
-> > 
-> > Check out how other drivers are using this helper - it is explicitly
-> > for the case where you duplicate the entire struct, and it just
-> > initializes the core part from drm. You can then add your own fixup
-> > code afterwards. It also doesn't matter whether you do kmalloc or
-> > kcalloc or kmemdup - it does a memcpy of its own to make sure state
-> > gets copied.
-> 
-> I had a look but I don't see anyone using the
-> __drm_atomic_helper_connector_duplicate_state() helper, I only see that
->  drivers are using drm_atomic_helper_connector_duplicate_state()
-> directly.  
-> 
-> Yes I understand that this helper is doing an explicit copy of the
-> entire drm_connector_state struct and yes I could do something like the
-> following ...
-> 
->  static struct drm_connector_state *
->  tegra_dsi_connector_duplicate_state(struct drm_connector *connector)
->  {
->          struct tegra_dsi_state *state = to_dsi_state(connector->state);
->          struct tegra_dsi_state *copy;
->  
->          copy = kmemdup(state, sizeof(*state), GFP_KERNEL);
->          if (!copy)
->                  return NULL;
-> 
->          __drm_atomic_helper_connector_duplicate_state(connector,
-> 						       &copy->base);
->  
->          return &copy->base;
->  }
-> 
-> ... however, this means that I am copying the drm_connector_state twice
-> and this is what I was trying to avoid. Sorry if I am misunderstanding
-> you here, but I don't see how I can avoid the 2nd copy if I use 
-> __drm_atomic_helper_connector_duplicate_state().
+Commit d2307dea14a4 ("drm/atomic: use connector references (v3)") added
+reference counting for DRM connectors and this caused a crash when
+exercising system suspend on Tegra114 Dalmore.
 
-The copying twice should be harmless - this function is only called when
-changing connector states, i.e. full modeset. And modesets aren't fast
-anyway.
--Daniel
+The Tegra DSI driver implements a Tegra specific function,
+tegra_dsi_connector_duplicate_state(), to duplicate the connector state
+and destroys the state using the generic helper function,
+drm_atomic_helper_connector_destroy_state(). Following commit
+d2307dea14a4 ("drm/atomic: use connector references (v3)") there is
+now an imbalance in the connector reference count because the Tegra
+function to duplicate state does not take a reference when duplicating
+the state information. However, the generic helper function to destroy
+the state information assumes a reference has been taken and during
+system suspend, when the connector state is destroyed, this leads to a
+crash because we attempt to put the reference for an object that has
+already been freed.
+
+Fix this by calling __drm_atomic_helper_connector_duplicate_state() from
+tegra_dsi_connector_duplicate_state() to ensure that we take a reference
+on a connector if crtc is set. Note that this will also copy the
+connector state a 2nd time, but this should be harmless.
+
+By fixing tegra_dsi_connector_duplicate_state() to take a reference,
+although a crash was no longer seen, it was then observed that after
+each system suspend-resume cycle, the reference would be one greater
+than before the suspend-resume cycle. Following commit d2307dea14a4
+("drm/atomic: use connector references (v3)"), it was found that we
+also need to put the reference when calling the function
+tegra_dsi_connector_reset() before freeing the state. Fix this by
+updating tegra_dsi_connector_reset() to call the function
+__drm_atomic_helper_connector_destroy_state() in order to put the
+reference for the connector.
+
+Finally, add a warning if allocating memory for the state information
+fails in tegra_dsi_connector_reset().
+
+Fixes: d2307dea14a4 ("drm/atomic: use connector references (v3)")
+
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+
+V2 changes:
+- Updated to next-20160518
+- Replaced open coding of call to drm_connector_reference() with
+  __drm_atomic_helper_connector_duplicate_state() per Daniel's feedback.
+
+ drivers/gpu/drm/tegra/dsi.c | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+index 44e102799195..a49bb006182d 100644
+--- a/drivers/gpu/drm/tegra/dsi.c
++++ b/drivers/gpu/drm/tegra/dsi.c
+@@ -745,13 +745,17 @@ static void tegra_dsi_soft_reset(struct tegra_dsi *dsi)
+ 
+ static void tegra_dsi_connector_reset(struct drm_connector *connector)
+ {
+-	struct tegra_dsi_state *state =
+-		kzalloc(sizeof(*state), GFP_KERNEL);
++	struct tegra_dsi_state *state = kzalloc(sizeof(*state), GFP_KERNEL);
+ 
+-	if (state) {
++	if (WARN_ON(!state))
++		return;
++
++	if (connector->state) {
++		__drm_atomic_helper_connector_destroy_state(connector->state);
+ 		kfree(connector->state);
+-		__drm_atomic_helper_connector_reset(connector, &state->base);
+ 	}
++
++	__drm_atomic_helper_connector_reset(connector, &state->base);
+ }
+ 
+ static struct drm_connector_state *
+@@ -764,6 +768,9 @@ tegra_dsi_connector_duplicate_state(struct drm_connector *connector)
+ 	if (!copy)
+ 		return NULL;
+ 
++	__drm_atomic_helper_connector_duplicate_state(connector,
++						      &copy->base);
++
+ 	return &copy->base;
+ }
+ 
 -- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+2.1.4
