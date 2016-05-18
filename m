@@ -1,14 +1,12 @@
-From: Daniel Vetter <daniel@ffwll.ch>
+From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: [PATCH V2] drm/tegra: Fix crash caused by reference count
  imbalance
-Date: Wed, 18 May 2016 14:17:09 +0200
-Message-ID: <20160518121709.GF27098@phenom.ffwll.local>
+Date: Wed, 18 May 2016 16:12:14 +0200
+Message-ID: <20160518141214.GA26795@ulmo.ba.sec>
 References: <1463569889-14632-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============0217598868=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
 In-Reply-To: <1463569889-14632-1-git-send-email-jonathanh@nvidia.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
@@ -23,75 +21,164 @@ To: Jon Hunter <jonathanh@nvidia.com>
 Cc: Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gV2VkLCBNYXkgMTgsIDIwMTYgYXQgMTI6MTE6MjlQTSArMDEwMCwgSm9uIEh1bnRlciB3cm90
-ZToKPiBDb21taXQgZDIzMDdkZWExNGE0ICgiZHJtL2F0b21pYzogdXNlIGNvbm5lY3RvciByZWZl
-cmVuY2VzICh2MykiKSBhZGRlZAo+IHJlZmVyZW5jZSBjb3VudGluZyBmb3IgRFJNIGNvbm5lY3Rv
-cnMgYW5kIHRoaXMgY2F1c2VkIGEgY3Jhc2ggd2hlbgo+IGV4ZXJjaXNpbmcgc3lzdGVtIHN1c3Bl
-bmQgb24gVGVncmExMTQgRGFsbW9yZS4KPiAKPiBUaGUgVGVncmEgRFNJIGRyaXZlciBpbXBsZW1l
-bnRzIGEgVGVncmEgc3BlY2lmaWMgZnVuY3Rpb24sCj4gdGVncmFfZHNpX2Nvbm5lY3Rvcl9kdXBs
-aWNhdGVfc3RhdGUoKSwgdG8gZHVwbGljYXRlIHRoZSBjb25uZWN0b3Igc3RhdGUKPiBhbmQgZGVz
-dHJveXMgdGhlIHN0YXRlIHVzaW5nIHRoZSBnZW5lcmljIGhlbHBlciBmdW5jdGlvbiwKPiBkcm1f
-YXRvbWljX2hlbHBlcl9jb25uZWN0b3JfZGVzdHJveV9zdGF0ZSgpLiBGb2xsb3dpbmcgY29tbWl0
-Cj4gZDIzMDdkZWExNGE0ICgiZHJtL2F0b21pYzogdXNlIGNvbm5lY3RvciByZWZlcmVuY2VzICh2
-MykiKSB0aGVyZSBpcwo+IG5vdyBhbiBpbWJhbGFuY2UgaW4gdGhlIGNvbm5lY3RvciByZWZlcmVu
-Y2UgY291bnQgYmVjYXVzZSB0aGUgVGVncmEKPiBmdW5jdGlvbiB0byBkdXBsaWNhdGUgc3RhdGUg
-ZG9lcyBub3QgdGFrZSBhIHJlZmVyZW5jZSB3aGVuIGR1cGxpY2F0aW5nCj4gdGhlIHN0YXRlIGlu
-Zm9ybWF0aW9uLiBIb3dldmVyLCB0aGUgZ2VuZXJpYyBoZWxwZXIgZnVuY3Rpb24gdG8gZGVzdHJv
-eQo+IHRoZSBzdGF0ZSBpbmZvcm1hdGlvbiBhc3N1bWVzIGEgcmVmZXJlbmNlIGhhcyBiZWVuIHRh
-a2VuIGFuZCBkdXJpbmcKPiBzeXN0ZW0gc3VzcGVuZCwgd2hlbiB0aGUgY29ubmVjdG9yIHN0YXRl
-IGlzIGRlc3Ryb3llZCwgdGhpcyBsZWFkcyB0byBhCj4gY3Jhc2ggYmVjYXVzZSB3ZSBhdHRlbXB0
-IHRvIHB1dCB0aGUgcmVmZXJlbmNlIGZvciBhbiBvYmplY3QgdGhhdCBoYXMKPiBhbHJlYWR5IGJl
-ZW4gZnJlZWQuCj4gCj4gRml4IHRoaXMgYnkgY2FsbGluZyBfX2RybV9hdG9taWNfaGVscGVyX2Nv
-bm5lY3Rvcl9kdXBsaWNhdGVfc3RhdGUoKSBmcm9tCj4gdGVncmFfZHNpX2Nvbm5lY3Rvcl9kdXBs
-aWNhdGVfc3RhdGUoKSB0byBlbnN1cmUgdGhhdCB3ZSB0YWtlIGEgcmVmZXJlbmNlCj4gb24gYSBj
-b25uZWN0b3IgaWYgY3J0YyBpcyBzZXQuIE5vdGUgdGhhdCB0aGlzIHdpbGwgYWxzbyBjb3B5IHRo
-ZQo+IGNvbm5lY3RvciBzdGF0ZSBhIDJuZCB0aW1lLCBidXQgdGhpcyBzaG91bGQgYmUgaGFybWxl
-c3MuCj4gCj4gQnkgZml4aW5nIHRlZ3JhX2RzaV9jb25uZWN0b3JfZHVwbGljYXRlX3N0YXRlKCkg
-dG8gdGFrZSBhIHJlZmVyZW5jZSwKPiBhbHRob3VnaCBhIGNyYXNoIHdhcyBubyBsb25nZXIgc2Vl
-biwgaXQgd2FzIHRoZW4gb2JzZXJ2ZWQgdGhhdCBhZnRlcgo+IGVhY2ggc3lzdGVtIHN1c3BlbmQt
-cmVzdW1lIGN5Y2xlLCB0aGUgcmVmZXJlbmNlIHdvdWxkIGJlIG9uZSBncmVhdGVyCj4gdGhhbiBi
-ZWZvcmUgdGhlIHN1c3BlbmQtcmVzdW1lIGN5Y2xlLiBGb2xsb3dpbmcgY29tbWl0IGQyMzA3ZGVh
-MTRhNAo+ICgiZHJtL2F0b21pYzogdXNlIGNvbm5lY3RvciByZWZlcmVuY2VzICh2MykiKSwgaXQg
-d2FzIGZvdW5kIHRoYXQgd2UKPiBhbHNvIG5lZWQgdG8gcHV0IHRoZSByZWZlcmVuY2Ugd2hlbiBj
-YWxsaW5nIHRoZSBmdW5jdGlvbgo+IHRlZ3JhX2RzaV9jb25uZWN0b3JfcmVzZXQoKSBiZWZvcmUg
-ZnJlZWluZyB0aGUgc3RhdGUuIEZpeCB0aGlzIGJ5Cj4gdXBkYXRpbmcgdGVncmFfZHNpX2Nvbm5l
-Y3Rvcl9yZXNldCgpIHRvIGNhbGwgdGhlIGZ1bmN0aW9uCj4gX19kcm1fYXRvbWljX2hlbHBlcl9j
-b25uZWN0b3JfZGVzdHJveV9zdGF0ZSgpIGluIG9yZGVyIHRvIHB1dCB0aGUKPiByZWZlcmVuY2Ug
-Zm9yIHRoZSBjb25uZWN0b3IuCj4gCj4gRmluYWxseSwgYWRkIGEgd2FybmluZyBpZiBhbGxvY2F0
-aW5nIG1lbW9yeSBmb3IgdGhlIHN0YXRlIGluZm9ybWF0aW9uCj4gZmFpbHMgaW4gdGVncmFfZHNp
-X2Nvbm5lY3Rvcl9yZXNldCgpLgo+IAo+IEZpeGVzOiBkMjMwN2RlYTE0YTQgKCJkcm0vYXRvbWlj
-OiB1c2UgY29ubmVjdG9yIHJlZmVyZW5jZXMgKHYzKSIpCj4gCj4gU2lnbmVkLW9mZi1ieTogSm9u
-IEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+CgpSZXZpZXdlZC1ieTogRGFuaWVsIFZldHRl
-ciA8ZGFuaWVsLnZldHRlckBmZndsbC5jaD4KClRoaWVycnksIHNpbmNlIERhdmUgaGFzbid0IHB1
-bGxlZCBpbiB0aGUgZHJtLW1pc2MgcHVsbCB3aXRoIHRoZQpyZWZhY3RvcmluZywgc2hvdWxkIEkg
-YXBwbHkgdGhpcyB0byBkcm0tbWlzYz8KLURhbmllbAoKCj4gLS0tCj4gCj4gVjIgY2hhbmdlczoK
-PiAtIFVwZGF0ZWQgdG8gbmV4dC0yMDE2MDUxOAo+IC0gUmVwbGFjZWQgb3BlbiBjb2Rpbmcgb2Yg
-Y2FsbCB0byBkcm1fY29ubmVjdG9yX3JlZmVyZW5jZSgpIHdpdGgKPiAgIF9fZHJtX2F0b21pY19o
-ZWxwZXJfY29ubmVjdG9yX2R1cGxpY2F0ZV9zdGF0ZSgpIHBlciBEYW5pZWwncyBmZWVkYmFjay4K
-PiAKPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RzaS5jIHwgMTUgKysrKysrKysrKystLS0tCj4g
-IDEgZmlsZSBjaGFuZ2VkLCAxMSBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQo+IAo+IGRp
-ZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHNpLmMgYi9kcml2ZXJzL2dwdS9kcm0v
-dGVncmEvZHNpLmMKPiBpbmRleCA0NGUxMDI3OTkxOTUuLmE0OWJiMDA2MTgyZCAxMDA2NDQKPiAt
-LS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHNpLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0v
-dGVncmEvZHNpLmMKPiBAQCAtNzQ1LDEzICs3NDUsMTcgQEAgc3RhdGljIHZvaWQgdGVncmFfZHNp
-X3NvZnRfcmVzZXQoc3RydWN0IHRlZ3JhX2RzaSAqZHNpKQo+ICAKPiAgc3RhdGljIHZvaWQgdGVn
-cmFfZHNpX2Nvbm5lY3Rvcl9yZXNldChzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yKQo+
-ICB7Cj4gLQlzdHJ1Y3QgdGVncmFfZHNpX3N0YXRlICpzdGF0ZSA9Cj4gLQkJa3phbGxvYyhzaXpl
-b2YoKnN0YXRlKSwgR0ZQX0tFUk5FTCk7Cj4gKwlzdHJ1Y3QgdGVncmFfZHNpX3N0YXRlICpzdGF0
-ZSA9IGt6YWxsb2Moc2l6ZW9mKCpzdGF0ZSksIEdGUF9LRVJORUwpOwo+ICAKPiAtCWlmIChzdGF0
-ZSkgewo+ICsJaWYgKFdBUk5fT04oIXN0YXRlKSkKPiArCQlyZXR1cm47Cj4gKwo+ICsJaWYgKGNv
-bm5lY3Rvci0+c3RhdGUpIHsKPiArCQlfX2RybV9hdG9taWNfaGVscGVyX2Nvbm5lY3Rvcl9kZXN0
-cm95X3N0YXRlKGNvbm5lY3Rvci0+c3RhdGUpOwo+ICAJCWtmcmVlKGNvbm5lY3Rvci0+c3RhdGUp
-Owo+IC0JCV9fZHJtX2F0b21pY19oZWxwZXJfY29ubmVjdG9yX3Jlc2V0KGNvbm5lY3RvciwgJnN0
-YXRlLT5iYXNlKTsKPiAgCX0KPiArCj4gKwlfX2RybV9hdG9taWNfaGVscGVyX2Nvbm5lY3Rvcl9y
-ZXNldChjb25uZWN0b3IsICZzdGF0ZS0+YmFzZSk7Cj4gIH0KPiAgCj4gIHN0YXRpYyBzdHJ1Y3Qg
-ZHJtX2Nvbm5lY3Rvcl9zdGF0ZSAqCj4gQEAgLTc2NCw2ICs3NjgsOSBAQCB0ZWdyYV9kc2lfY29u
-bmVjdG9yX2R1cGxpY2F0ZV9zdGF0ZShzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yKQo+
-ICAJaWYgKCFjb3B5KQo+ICAJCXJldHVybiBOVUxMOwo+ICAKPiArCV9fZHJtX2F0b21pY19oZWxw
-ZXJfY29ubmVjdG9yX2R1cGxpY2F0ZV9zdGF0ZShjb25uZWN0b3IsCj4gKwkJCQkJCSAgICAgICZj
-b3B5LT5iYXNlKTsKPiArCj4gIAlyZXR1cm4gJmNvcHktPmJhc2U7Cj4gIH0KPiAgCj4gLS0gCj4g
-Mi4xLjQKPiAKCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jw
-b3JhdGlvbgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0
-cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
-aXN0aW5mby9kcmktZGV2ZWwK
+
+--===============0217598868==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="1yeeQ81UyVL57Vl7"
+Content-Disposition: inline
+
+
+--1yeeQ81UyVL57Vl7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, May 18, 2016 at 12:11:29PM +0100, Jon Hunter wrote:
+> Commit d2307dea14a4 ("drm/atomic: use connector references (v3)") added
+> reference counting for DRM connectors and this caused a crash when
+> exercising system suspend on Tegra114 Dalmore.
+>=20
+> The Tegra DSI driver implements a Tegra specific function,
+> tegra_dsi_connector_duplicate_state(), to duplicate the connector state
+> and destroys the state using the generic helper function,
+> drm_atomic_helper_connector_destroy_state(). Following commit
+> d2307dea14a4 ("drm/atomic: use connector references (v3)") there is
+> now an imbalance in the connector reference count because the Tegra
+> function to duplicate state does not take a reference when duplicating
+> the state information. However, the generic helper function to destroy
+> the state information assumes a reference has been taken and during
+> system suspend, when the connector state is destroyed, this leads to a
+> crash because we attempt to put the reference for an object that has
+> already been freed.
+>=20
+> Fix this by calling __drm_atomic_helper_connector_duplicate_state() from
+> tegra_dsi_connector_duplicate_state() to ensure that we take a reference
+> on a connector if crtc is set. Note that this will also copy the
+> connector state a 2nd time, but this should be harmless.
+
+Initially when I wrote these subclassing helpers the idea was that
+drivers would allocate a new structure, call the subclassing helpers and
+then duplicate the driver-specific data. Here's what the implementation
+would look like the way I imagined it at the time:
+
+	copy =3D kzalloc(sizeof(*state), GFP_KERNEL);
+	if (!copy)
+		return NULL;
+
+	__drm_atomic_helper_connector_duplicate_state(connector, &copy->base);
+	copy->timing =3D state->timing;
+	copy->period =3D state->period;
+	copy->vrefresh =3D state->vrefresh;
+	copy->lanes =3D state->lanes;
+	copy->pclk =3D state->pclk;
+	copy->bclk =3D state->bclk;
+	copy->format =3D state->format;
+	copy->mul =3D state->mul;
+	copy->div =3D state->div;
+
+	return &copy->base;
+
+Of course that has the slight drawback of having to remember that this
+implementation needs to be updated when the state structure is changed.
+On the other hand that might not be a bad thing, because some of the
+data may end up being non-trivial to copy (reference count, ...).
+
+The above has the advantage of avoiding the extra copy, but at the same
+time it's a little verbose. I don't feel very strongly either way, so
+the current proposal is fine with me.
+
+> By fixing tegra_dsi_connector_duplicate_state() to take a reference,
+> although a crash was no longer seen, it was then observed that after
+> each system suspend-resume cycle, the reference would be one greater
+> than before the suspend-resume cycle. Following commit d2307dea14a4
+> ("drm/atomic: use connector references (v3)"), it was found that we
+> also need to put the reference when calling the function
+> tegra_dsi_connector_reset() before freeing the state. Fix this by
+> updating tegra_dsi_connector_reset() to call the function
+> __drm_atomic_helper_connector_destroy_state() in order to put the
+> reference for the connector.
+>=20
+> Finally, add a warning if allocating memory for the state information
+> fails in tegra_dsi_connector_reset().
+
+I don't think that's necessary. The allocator will already provide a
+strong warning if the allocation fails, so an additional WARN_ON() is
+not going to help much, and in the worst case may even add confusion.
+
+> diff --git a/drivers/gpu/drm/tegra/dsi.c b/drivers/gpu/drm/tegra/dsi.c
+> index 44e102799195..a49bb006182d 100644
+> --- a/drivers/gpu/drm/tegra/dsi.c
+> +++ b/drivers/gpu/drm/tegra/dsi.c
+> @@ -745,13 +745,17 @@ static void tegra_dsi_soft_reset(struct tegra_dsi *=
+dsi)
+> =20
+>  static void tegra_dsi_connector_reset(struct drm_connector *connector)
+>  {
+> -	struct tegra_dsi_state *state =3D
+> -		kzalloc(sizeof(*state), GFP_KERNEL);
+> +	struct tegra_dsi_state *state =3D kzalloc(sizeof(*state), GFP_KERNEL);
+> =20
+> -	if (state) {
+> +	if (WARN_ON(!state))
+> +		return;
+> +
+> +	if (connector->state) {
+> +		__drm_atomic_helper_connector_destroy_state(connector->state);
+>  		kfree(connector->state);
+> -		__drm_atomic_helper_connector_reset(connector, &state->base);
+>  	}
+> +
+> +	__drm_atomic_helper_connector_reset(connector, &state->base);
+>  }
+> =20
+>  static struct drm_connector_state *
+> @@ -764,6 +768,9 @@ tegra_dsi_connector_duplicate_state(struct drm_connec=
+tor *connector)
+>  	if (!copy)
+>  		return NULL;
+> =20
+> +	__drm_atomic_helper_connector_duplicate_state(connector,
+> +						      &copy->base);
+> +
+>  	return &copy->base;
+>  }
+> =20
+
+With the WARN_ON() dropped this looks good to me:
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--1yeeQ81UyVL57Vl7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXPHg7AAoJEN0jrNd/PrOhTjgP/24elfQTXEsmn5xSQegm8dR6
+tdhJ6PkIEVKDm6U8cow7MDughCLker/O5HZX9Aozn8faWyPPZzpBBc1nFqxhOV38
+nEs2zTwrgxzkOw+yyvnXs5eUaECIDyH1zgG4ZQ7+f604u0tT+Wt/gdioXG0Acy+N
+BUFNGTTRwopfCCUPvr7s2M96VzBOpmOcuBCIPDXYgBIF80UtYYcMSFXvStO8QuBs
+C3Kj/90MuqPL2i4ObTRI/osIczSKGg8cf7a77BEHDtVjuOWT7c6Ph7A2d7CszhWy
+N7cA6BJxAAz31f3FfhjPNeS6Si9nS1tKKZN10O44AnhYCDB44AySZq+ep0h1USGx
+w/OKsOt2DL053fYjVIXAE8IDu7kZ0AWkWYAHWw5BK3nnUkfeEsSxezDU4KP2Kq+D
+c/y8zg4I0jNwnNs2b0Z7BB1TAR6Mb4Ot4NaBJvn4F1nhNRksvqNvdn3ReafNWwrS
+KF/6v4vpXGJ5/XjhL6po9h7i+21FkVG0OsEA3JIAvqoX1JHwIs+YIs5vxB5jWYkX
+K1EaybwzBOHuJRwGVEGQ4s9aHpr6Ui3xPJcYPZMpX1R2jlizAF7WCNREZ+8yMZWj
+R0WvE9269h0FEGFZ5/Mpfpup1lfwid6YqsteG0mzSFlCA+18ol2SlufmViczfynK
+/vcPShClklcBIqzRobe7
+=mWoZ
+-----END PGP SIGNATURE-----
+
+--1yeeQ81UyVL57Vl7--
+
+--===============0217598868==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0217598868==--
