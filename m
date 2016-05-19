@@ -1,67 +1,88 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: beaver: allow SD card voltage to be changed
-Date: Thu, 19 May 2016 15:31:31 +0100
-Message-ID: <573DCE43.70906@nvidia.com>
-References: <1456779678-20173-1-git-send-email-dev@lynxeye.de>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH V5 3/3] soc/tegra: pmc: Add support for IO pads power
+ state and voltage
+Date: Thu, 19 May 2016 16:54:04 +0100
+Message-ID: <573DE19C.8090704@nvidia.com>
+References: <1463055706-17744-1-git-send-email-ldewangan@nvidia.com>
+ <1463055706-17744-4-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1456779678-20173-1-git-send-email-dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1463055706-17744-4-git-send-email-ldewangan@nvidia.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Laxman Dewangan <ldewangan@nvidia.com>, thierry.reding@gmail.com, airlied@linux.ie, swarren@wwwdotorg.org
+Cc: linux-tegra@vger.kernel.org, gnurou@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 29/02/16 21:01, Lucas Stach wrote:
-> This allows to switch the card signal voltage level to 1.8V,
-> which is needed for any ultra high speed modes to work.
-> 
-> Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
-> ---
-> This needs the SDMMC memcomp pad calibration patches I just
-> sent out to be applied, otherwise the card voltage change will
-> fail with a message in the kernel log and a fall back to
-> high speed operation.
-> ---
->  arch/arm/boot/dts/tegra30-beaver.dts | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
-> index 1daed40..6b237f2 100644
-> --- a/arch/arm/boot/dts/tegra30-beaver.dts
-> +++ b/arch/arm/boot/dts/tegra30-beaver.dts
-> @@ -1848,7 +1848,7 @@
->  
->  				ldo5_reg: ldo5 {
->  					regulator-name = "vddio_sdmmc,avdd_vdac";
-
-Stephen, looking at the schematics, I don't see that this is connected
-to the avdd_vdac (which appears to be unconnected) and so I am wondering
-if this name should be just "vddio_sdmmc"?
-
-> -					regulator-min-microvolt = <3300000>;
-> +					regulator-min-microvolt = <1800000>;
->  					regulator-max-microvolt = <3300000>;
->  					regulator-always-on;
->  				};
-> @@ -1919,6 +1919,7 @@
->  
->  	sdhci@78000000 {
->  		status = "okay";
-> +		vqmmc-supply = <&ldo5_reg>;
->  		cd-gpios = <&gpio TEGRA_GPIO(I, 5) GPIO_ACTIVE_LOW>;
->  		wp-gpios = <&gpio TEGRA_GPIO(T, 3) GPIO_ACTIVE_HIGH>;
->  		power-gpios = <&gpio TEGRA_GPIO(D, 7) GPIO_ACTIVE_HIGH>;
-> 
-
-Otherwise ...
-
-Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Cheers
-Jon
-
--- 
-nvpublic
+Ck9uIDEyLzA1LzE2IDEzOjIxLCBMYXhtYW4gRGV3YW5nYW4gd3JvdGU6Cj4gVGhlIElPIHBpbnMg
+b2YgVGVncmEgU29DcyBhcmUgZ3JvdXBlZCBmb3IgY29tbW9uIGNvbnRyb2wgb2YgSU8KPiBpbnRl
+cmZhY2UgbGlrZSBzZXR0aW5nIHZvbHRhZ2Ugc2lnbmFsIGxldmVscyBhbmQgcG93ZXIgc3RhdGUg
+b2YKPiB0aGUgaW50ZXJmYWNlLiBUaGUgZ3JvdXAgaXMgZ2VuZXJhbGx5IHJlZmVycmVkIGFzIElP
+IHBhZHMuIFRoZQo+IHBvd2VyIHN0YXRlIGFuZCB2b2x0YWdlIGNvbnRyb2wgb2YgSU8gcGlucyBj
+YW4gYmUgZG9uZSBhdCBJTyBwYWRzCj4gbGV2ZWwuCj4gCj4gVGVncmEgZ2VuZXJhdGlvbiBTb0Mg
+c3VwcG9ydHMgdGhlIHBvd2VyIGRvd24gb2YgSU8gcGFkcyB3aGVuIGl0Cj4gaXMgbm90IHVzZWQg
+ZXZlbiBpbiB0aGUgYWN0aXZlIHN0YXRlIG9mIHN5c3RlbS4gVGhpcyBzYXZlcyBwb3dlcgo+IGZy
+b20gdGhhdCBJTyBpbnRlcmZhY2UuIEFsc28gaXQgc3VwcG9ydHMgbXVsdGlwbGUgdm9sdGFnZSBs
+ZXZlbAo+IGluIElPIHBpbnMgZm9yIGludGVyZmFjaW5nIG9uIHNvbWUgb2YgcGFkcy4gVGhlIElP
+IHBhZCB2b2x0YWdlIGlzCj4gYXV0b21hdGljYWxseSBkZXRlY3RlZCB0aWxsIFQxMjQsIGhlbmNl
+IFNXIG5lZWQgbm90IHRvIGNvbmZpZ3VyZQo+IHRoaXMuIEJ1dCBmcm9tIFQyMTAsIHRoZSBhdXRv
+bWF0aWNhbGx5IGRldGVjdGlvbiBsb2dpYyBoYXMgYmVlbgo+IHJlbW92ZWQsIGhlbmNlIFNXIG5l
+ZWQgdG8gZXhwbGljaXRseSBzZXQgdGhlIElPIHBhZCB2b2x0YWdlIGludG8KPiBJTyBwYWQgY29u
+ZmlndXJhdGlvbiByZWdpc3RlcnMuCj4gCj4gQWRkIHN1cHBvcnQgdG8gc2V0IHRoZSBwb3dlciBz
+dGF0ZXMgYW5kIHZvbHRhZ2UgbGV2ZWwgb2YgdGhlIElPIHBhZHMKPiBmcm9tIGNsaWVudCBkcml2
+ZXIuIFRoZSBpbXBsZW1lbnRhdGlvbiBmb3IgdGhlIEFQSXMgYXJlIGluIGdlbmVyaWMKPiB3aGlj
+aCBpcyBhcHBsaWNhYmxlIGZvciBhbGwgZ2VuZXJhdGlvbiBvcyBUZWdyYSBTb0MuCj4gCj4gSU8g
+cGFkcyBJRCBhbmQgaW5mb3JtYXRpb24gb2YgYml0IGZpZWxkIGZvciBwb3dlciBzdGF0ZSBhbmQg
+dm9sdGFnZQo+IGxldmVsIGNvbnRyb2xzIGFyZSBhZGRlZCBmb3IgVGVncmExMjQsIFRlZ3JhMTMy
+IGFuZCBUZWdyYTIxMC4gVGhlIFNPUgo+IGRyaXZlciBpcyBtb2RpZmllZCB0byB1c2UgdGhlIG5l
+dyBBUElzLgo+IAo+IFNpZ25lZC1vZmYtYnk6IExheG1hbiBEZXdhbmdhbiA8bGRld2FuZ2FuQG52
+aWRpYS5jb20+Cj4gCj4gLS0tCj4gQ2hhbmdlcyBmcm9tIFYxOgo+IFRoaXMgaXMgcmV3b3JrZWQg
+b24gZWFybGllciBwYXRoIHRvIGhhdmUgc2VwYXJhdGlvbiBiZXR3ZWVuIElPIHJhaWxzIGFuZAo+
+IGlvIHBhZHMgYW5kIGFkZCBwb3dlciBzdGF0ZSBhbmQgdm9sdGFnZSBjb250cm9sIEFQSXMgaW4g
+c2luZ2xlIGNhbGwuCj4gCj4gQ2hhbmdlcyBmcm9tIFYyOgo+IC0gUmVtb3ZlIHRoZSB0ZWdyYV9p
+b19yYWlsX3Bvd2VyX29mZi9vbigpIGFwaXMgYW5kIGNoYW5nZSBjbGllbnQgKHNvcikgZHJpdmVy
+Cj4gdG8gdXNlIHRoZSBuZXcgQVBJcyBmb3IgSU8gcGFkIHBvd2VyLgo+IC0gUmVtb3ZlIHRoZSBU
+RUdSQV9JT19SQUlMXyBtYWNyb3MuCj4gCj4gQ2hhbmdlcyBmcm9tIFYzOgo+IC0gTWFrZSBhbGwg
+cGFkX2lkL2lvX3BhZF9pZCB0byBpZC4KPiAtIHRlZ3JhX2lvX3BhZF8gLT4gdGVncmFfaW9fcGFk
+cwo+IC0gZHBkX2JpdCAtPiBiaXQsIHB3cl9tYXNrL2JpdCB0byBtYXNrL2JpdC4KPiAtIFJlbmFt
+ZSBmdW5jdGlvbiB0byB0ZWdyYV9pb19wYWRzX3tzZXQsZ2V0fV92b2x0YWdlX2NvbmZpZwo+IC0g
+TWFrZSB0aGUgaW8gcGFkIHRhYmxlcyBjb21tb24gZm9yIGFsbCBTb0MuCj4gLSBNYWtlIGlvX3Bh
+ZHMgZW51bXMuCj4gLSBBZGQgZW51bXMgZm9yIHZvbHRhZ2UuCj4gCj4gQ2hhbmdlcyBmcm9tIFY0
+Ogo+IC0gSU9fUEFELT5JT19QQURTCj4gLSBURUdSQV9JT19QQURTX1BPV0VSX1NPVVJDRV8gLT4g
+VEVHUkFfSU9fUEFEU19WQ09ORl8KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3Nvci5j
+IHwgICA4ICstCj4gIGRyaXZlcnMvc29jL3RlZ3JhL3BtYy5jICAgICB8IDIyMSArKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLQo+ICBpbmNsdWRlL3NvYy90ZWdyYS9w
+bWMuaCAgICAgfCAxMzIgKysrKysrKysrKysrKysrKysrLS0tLS0tLS0KPiAgMyBmaWxlcyBjaGFu
+Z2VkLCAyOTQgaW5zZXJ0aW9ucygrKSwgNjcgZGVsZXRpb25zKC0pCgpbc25pcF0KCj4gK3N0YXRp
+YyBpbnQgdGVncmFfaW9fcGFkc190b192b2x0YWdlX2JpdChjb25zdCBzdHJ1Y3QgdGVncmFfcG1j
+X3NvYyAqc29jLAo+ICsJCQkJCWVudW0gdGVncmFfaW9fcGFkcyBpZCkKPiArewo+ICsJLyogVDIx
+MCBvbmx5IHN1cHBvcnRzIGlvLXBhZCB2b2x0YWdlIGNvbmZpZyBiaXQgKi8KPiArCWlmIChzb2Mt
+PmlvX3BhZHNfc29jX21hc2sgIT0gVEVHUkFfSU9fUEFEU19UMjEwKQo+ICAJCXJldHVybiAtRUlO
+VkFMOwoKSWYgdGhpcyBpcyBvbmx5IHN1cHBvcnRlZCBmb3IgVGVncmEyMTAsIHNob3VsZCB0aGVz
+ZSB2b2x0YWdlIGZ1bmN0aW9ucwpiZSBkZXBlbmRlbnQgb24gQ09ORklHX0FSQ0hfVEVHUkFfMjEw
+X1NPQz8gSWYgc28sIHRoZW4gSSBhbSBhbHNvCndvbmRlcmluZyBpZiB3ZSBzaG91bGQgYm90aGVy
+IGhhdmluZyB0aGUgbWFzc2l2ZSBsb29rLXVwIHRhYmxlIGFuZCBqdXN0CmhhdmUgYSBzbWFsbGVy
+IHRhYmxlIHRvIHRyYW5zbGF0ZSB0aGUgSUQgdG8gYml0IGZvciB2b2x0YWdlIGFzIHlvdSBoYWQK
+aW4geW91ciBpbml0aWFsIHBhdGNoPyBTZWVtcyB0aGVyZSBhcmUgZmV3IGlvLXBhZHMgdGhhdCBz
+dXBwb3J0IHRoZQp2b2x0YWdlIGNvbmZpZ3VyYXRpb24uCgorI2RlZmluZSBURUdSQV9JT19SQUlM
+X1ZPTFRBR0UoX2lvX3JhaWwsIF9wb3MpCQlcCit7CQkJCQkJCVwKKwkuaW9fcmFpbF9pZCA9IFRF
+R1JBX0lPX1JBSUxfIyNfaW9fcmFpbCwJCVwKKwkuYml0X3Bvc2l0aW9uID0gX3BvcywJCQkJXAor
+fQorCitzdGF0aWMgc3RydWN0IHRlZ3JhX2lvX3JhaWxfdm9sdGFnZV9iaXRfaW5mbwp0ZWdyYTIx
+MF9pb19yYWlsX3ZvbHRhZ2VfaW5mb1tdID0geworCVRFR1JBX0lPX1JBSUxfVk9MVEFHRShTRE1N
+QzEsIDEyKSwKKwlURUdSQV9JT19SQUlMX1ZPTFRBR0UoU0RNTUMzLCAxMyksCisJVEVHUkFfSU9f
+UkFJTF9WT0xUQUdFKEFVRElPX0hWLCAxOCksCisJVEVHUkFfSU9fUkFJTF9WT0xUQUdFKERNSUMs
+IDIwKSwKKwlURUdSQV9JT19SQUlMX1ZPTFRBR0UoR1BJTywgMjEpLAorCVRFR1JBX0lPX1JBSUxf
+Vk9MVEFHRShTUElfSFYsIDIzKSwKK307CgpPdGhlcndpc2UsIGxvb2tzIGZpbmUgdG8gbWUuCgpD
+aGVlcnMKSm9uCgotLQpudnB1YmxpYwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
+ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9kcmktZGV2ZWwK
