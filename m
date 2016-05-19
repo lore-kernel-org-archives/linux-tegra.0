@@ -1,95 +1,36 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH V3] drm/tegra: Fix crash caused by reference count
- imbalance
-Date: Wed, 18 May 2016 18:03:49 +0200
-Message-ID: <20160518160349.GH27098@phenom.ffwll.local>
-References: <1463585856-16606-1-git-send-email-jonathanh@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH V5 0/3] soc/tegra: Add support for IO pads power and voltage
+ control
+Date: Thu, 19 May 2016 13:23:12 +0530
+Message-ID: <573D70E8.3070802@nvidia.com>
+References: <1463055706-17744-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <1463585856-16606-1-git-send-email-jonathanh@nvidia.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1463055706-17744-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: thierry.reding@gmail.com, airlied@linux.ie, swarren@wwwdotorg.org, jonathanh@nvidia.com
+Cc: gnurou@gmail.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gV2VkLCBNYXkgMTgsIDIwMTYgYXQgMDQ6Mzc6MzZQTSArMDEwMCwgSm9uIEh1bnRlciB3cm90
-ZToKPiBDb21taXQgZDIzMDdkZWExNGE0ICgiZHJtL2F0b21pYzogdXNlIGNvbm5lY3RvciByZWZl
-cmVuY2VzICh2MykiKSBhZGRlZAo+IHJlZmVyZW5jZSBjb3VudGluZyBmb3IgRFJNIGNvbm5lY3Rv
-cnMgYW5kIHRoaXMgY2F1c2VkIGEgY3Jhc2ggd2hlbgo+IGV4ZXJjaXNpbmcgc3lzdGVtIHN1c3Bl
-bmQgb24gVGVncmExMTQgRGFsbW9yZS4KPiAKPiBUaGUgVGVncmEgRFNJIGRyaXZlciBpbXBsZW1l
-bnRzIGEgVGVncmEgc3BlY2lmaWMgZnVuY3Rpb24sCj4gdGVncmFfZHNpX2Nvbm5lY3Rvcl9kdXBs
-aWNhdGVfc3RhdGUoKSwgdG8gZHVwbGljYXRlIHRoZSBjb25uZWN0b3Igc3RhdGUKPiBhbmQgZGVz
-dHJveXMgdGhlIHN0YXRlIHVzaW5nIHRoZSBnZW5lcmljIGhlbHBlciBmdW5jdGlvbiwKPiBkcm1f
-YXRvbWljX2hlbHBlcl9jb25uZWN0b3JfZGVzdHJveV9zdGF0ZSgpLiBGb2xsb3dpbmcgY29tbWl0
-Cj4gZDIzMDdkZWExNGE0ICgiZHJtL2F0b21pYzogdXNlIGNvbm5lY3RvciByZWZlcmVuY2VzICh2
-MykiKSB0aGVyZSBpcwo+IG5vdyBhbiBpbWJhbGFuY2UgaW4gdGhlIGNvbm5lY3RvciByZWZlcmVu
-Y2UgY291bnQgYmVjYXVzZSB0aGUgVGVncmEKPiBmdW5jdGlvbiB0byBkdXBsaWNhdGUgc3RhdGUg
-ZG9lcyBub3QgdGFrZSBhIHJlZmVyZW5jZSB3aGVuIGR1cGxpY2F0aW5nCj4gdGhlIHN0YXRlIGlu
-Zm9ybWF0aW9uLiBIb3dldmVyLCB0aGUgZ2VuZXJpYyBoZWxwZXIgZnVuY3Rpb24gdG8gZGVzdHJv
-eQo+IHRoZSBzdGF0ZSBpbmZvcm1hdGlvbiBhc3N1bWVzIGEgcmVmZXJlbmNlIGhhcyBiZWVuIHRh
-a2VuIGFuZCBkdXJpbmcKPiBzeXN0ZW0gc3VzcGVuZCwgd2hlbiB0aGUgY29ubmVjdG9yIHN0YXRl
-IGlzIGRlc3Ryb3llZCwgdGhpcyBsZWFkcyB0byBhCj4gY3Jhc2ggYmVjYXVzZSB3ZSBhdHRlbXB0
-IHRvIHB1dCB0aGUgcmVmZXJlbmNlIGZvciBhbiBvYmplY3QgdGhhdCBoYXMKPiBhbHJlYWR5IGJl
-ZW4gZnJlZWQuCj4gCj4gRml4IHRoaXMgYnkgY2FsbGluZyBfX2RybV9hdG9taWNfaGVscGVyX2Nv
-bm5lY3Rvcl9kdXBsaWNhdGVfc3RhdGUoKSBmcm9tCj4gdGVncmFfZHNpX2Nvbm5lY3Rvcl9kdXBs
-aWNhdGVfc3RhdGUoKSB0byBlbnN1cmUgdGhhdCB3ZSB0YWtlIGEgcmVmZXJlbmNlCj4gb24gYSBj
-b25uZWN0b3IgaWYgY3J0YyBpcyBzZXQuIE5vdGUgdGhhdCB0aGlzIHdpbGwgYWxzbyBjb3B5IHRo
-ZQo+IGNvbm5lY3RvciBzdGF0ZSBhIDJuZCB0aW1lLCBidXQgdGhpcyBzaG91bGQgYmUgaGFybWxl
-c3MuCj4gCj4gQnkgZml4aW5nIHRlZ3JhX2RzaV9jb25uZWN0b3JfZHVwbGljYXRlX3N0YXRlKCkg
-dG8gdGFrZSBhIHJlZmVyZW5jZSwKPiBhbHRob3VnaCBhIGNyYXNoIHdhcyBubyBsb25nZXIgc2Vl
-biwgaXQgd2FzIHRoZW4gb2JzZXJ2ZWQgdGhhdCBhZnRlcgo+IGVhY2ggc3lzdGVtIHN1c3BlbmQt
-cmVzdW1lIGN5Y2xlLCB0aGUgcmVmZXJlbmNlIHdvdWxkIGJlIG9uZSBncmVhdGVyCj4gdGhhbiBi
-ZWZvcmUgdGhlIHN1c3BlbmQtcmVzdW1lIGN5Y2xlLiBGb2xsb3dpbmcgY29tbWl0IGQyMzA3ZGVh
-MTRhNAo+ICgiZHJtL2F0b21pYzogdXNlIGNvbm5lY3RvciByZWZlcmVuY2VzICh2MykiKSwgaXQg
-d2FzIGZvdW5kIHRoYXQgd2UKPiBhbHNvIG5lZWQgdG8gcHV0IHRoZSByZWZlcmVuY2Ugd2hlbiBj
-YWxsaW5nIHRoZSBmdW5jdGlvbgo+IHRlZ3JhX2RzaV9jb25uZWN0b3JfcmVzZXQoKSBiZWZvcmUg
-ZnJlZWluZyB0aGUgc3RhdGUuIEZpeCB0aGlzIGJ5Cj4gdXBkYXRpbmcgdGVncmFfZHNpX2Nvbm5l
-Y3Rvcl9yZXNldCgpIHRvIGNhbGwgdGhlIGZ1bmN0aW9uCj4gX19kcm1fYXRvbWljX2hlbHBlcl9j
-b25uZWN0b3JfZGVzdHJveV9zdGF0ZSgpIGluIG9yZGVyIHRvIHB1dCB0aGUKPiByZWZlcmVuY2Ug
-Zm9yIHRoZSBjb25uZWN0b3IuCj4gCj4gRml4ZXM6IGQyMzA3ZGVhMTRhNCAoImRybS9hdG9taWM6
-IHVzZSBjb25uZWN0b3IgcmVmZXJlbmNlcyAodjMpIikKPiAKPiBTaWduZWQtb2ZmLWJ5OiBKb24g
-SHVudGVyIDxqb25hdGhhbmhAbnZpZGlhLmNvbT4KPiBSZXZpZXdlZC1ieTogRGFuaWVsIFZldHRl
-ciA8ZGFuaWVsLnZldHRlckBmZndsbC5jaD4KPiBBY2tlZC1ieTogVGhpZXJyeSBSZWRpbmcgPHRy
-ZWRpbmdAbnZpZGlhLmNvbT4KCkFwcGxpZWQgdG8gZHJtLW1pc2MsIHRoYW5rcy4KLURhbmllbAoK
-PiAtLS0KPiAKPiBWMyBjaGFuZ2VzOgo+IC0gRHJvcHBlZCBXQVJOX09OCj4gCj4gVjIgY2hhbmdl
-czoKPiAtIFVwZGF0ZWQgdG8gbmV4dC0yMDE2MDUxOAo+IC0gUmVwbGFjZWQgb3BlbiBjb2Rpbmcg
-b2YgY2FsbCB0byBkcm1fY29ubmVjdG9yX3JlZmVyZW5jZSgpIHdpdGgKPiAgIF9fZHJtX2F0b21p
-Y19oZWxwZXJfY29ubmVjdG9yX2R1cGxpY2F0ZV9zdGF0ZSgpIHBlciBEYW5pZWwncyBmZWVkYmFj
-ay4KPiAKPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RzaS5jIHwgMTUgKysrKysrKysrKystLS0t
-Cj4gIDEgZmlsZSBjaGFuZ2VkLCAxMSBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQo+IAo+
-IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHNpLmMgYi9kcml2ZXJzL2dwdS9k
-cm0vdGVncmEvZHNpLmMKPiBpbmRleCA0NGUxMDI3OTkxOTUuLmQxMjM5ZWJjMTkwZiAxMDA2NDQK
-PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHNpLmMKPiArKysgYi9kcml2ZXJzL2dwdS9k
-cm0vdGVncmEvZHNpLmMKPiBAQCAtNzQ1LDEzICs3NDUsMTcgQEAgc3RhdGljIHZvaWQgdGVncmFf
-ZHNpX3NvZnRfcmVzZXQoc3RydWN0IHRlZ3JhX2RzaSAqZHNpKQo+ICAKPiAgc3RhdGljIHZvaWQg
-dGVncmFfZHNpX2Nvbm5lY3Rvcl9yZXNldChzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9y
-KQo+ICB7Cj4gLQlzdHJ1Y3QgdGVncmFfZHNpX3N0YXRlICpzdGF0ZSA9Cj4gLQkJa3phbGxvYyhz
-aXplb2YoKnN0YXRlKSwgR0ZQX0tFUk5FTCk7Cj4gKwlzdHJ1Y3QgdGVncmFfZHNpX3N0YXRlICpz
-dGF0ZSA9IGt6YWxsb2Moc2l6ZW9mKCpzdGF0ZSksIEdGUF9LRVJORUwpOwo+ICAKPiAtCWlmIChz
-dGF0ZSkgewo+ICsJaWYgKCFzdGF0ZSkKPiArCQlyZXR1cm47Cj4gKwo+ICsJaWYgKGNvbm5lY3Rv
-ci0+c3RhdGUpIHsKPiArCQlfX2RybV9hdG9taWNfaGVscGVyX2Nvbm5lY3Rvcl9kZXN0cm95X3N0
-YXRlKGNvbm5lY3Rvci0+c3RhdGUpOwo+ICAJCWtmcmVlKGNvbm5lY3Rvci0+c3RhdGUpOwo+IC0J
-CV9fZHJtX2F0b21pY19oZWxwZXJfY29ubmVjdG9yX3Jlc2V0KGNvbm5lY3RvciwgJnN0YXRlLT5i
-YXNlKTsKPiAgCX0KPiArCj4gKwlfX2RybV9hdG9taWNfaGVscGVyX2Nvbm5lY3Rvcl9yZXNldChj
-b25uZWN0b3IsICZzdGF0ZS0+YmFzZSk7Cj4gIH0KPiAgCj4gIHN0YXRpYyBzdHJ1Y3QgZHJtX2Nv
-bm5lY3Rvcl9zdGF0ZSAqCj4gQEAgLTc2NCw2ICs3NjgsOSBAQCB0ZWdyYV9kc2lfY29ubmVjdG9y
-X2R1cGxpY2F0ZV9zdGF0ZShzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yKQo+ICAJaWYg
-KCFjb3B5KQo+ICAJCXJldHVybiBOVUxMOwo+ICAKPiArCV9fZHJtX2F0b21pY19oZWxwZXJfY29u
-bmVjdG9yX2R1cGxpY2F0ZV9zdGF0ZShjb25uZWN0b3IsCj4gKwkJCQkJCSAgICAgICZjb3B5LT5i
-YXNlKTsKPiArCj4gIAlyZXR1cm4gJmNvcHktPmJhc2U7Cj4gIH0KPiAgCj4gLS0gCj4gMi4xLjQK
-PiAKCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlv
-bgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
-ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9kcmktZGV2ZWwK
+Hi Jon/Thierry,
+
+On Thursday 12 May 2016 05:51 PM, Laxman Dewangan wrote:
+> The IO pins of Tegra SoCs are grouped for common control of IO interface
+> like setting voltage signal levels and power state of the interface. The
+> group is generally referred as IO pads. The power state and voltage control
+> of IO pins can be done at IO pads level.
+>
+> Tegra124 onwards IO pads support the power down state when system is
+> active. The voltage levels on IO pads are auto detected on Tegra124/
+> Tegra132 but it is not in Tegra210. For Tegra210, the SW need to
+> explicitly configure the voltage levels of IO pads
+>
+> This series add the interface for the IO pad power state and voltage
+> configurations. Modifies the client to use new APIs.
+> Register the child devices to provide the client interface to configure
+> IO pads power state and voltage from Device tree.
+>
+
+Any comment on this series?
