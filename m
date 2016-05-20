@@ -1,165 +1,157 @@
-From: Jon Hunter <jonathanh@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH V5 3/3] soc/tegra: pmc: Add support for IO pads power
  state and voltage
-Date: Fri, 20 May 2016 11:02:51 +0100
-Message-ID: <573EE0CB.7000807@nvidia.com>
-References: <1463055706-17744-1-git-send-email-ldewangan@nvidia.com>
- <1463055706-17744-4-git-send-email-ldewangan@nvidia.com>
+Date: Fri, 20 May 2016 15:29:49 +0530
+Message-ID: <573EE015.6050600@nvidia.com>
+References: <1463055706-17744-1-git-send-email-ldewangan@nvidia.com> <1463055706-17744-4-git-send-email-ldewangan@nvidia.com> <573EE0CB.7000807@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1463055706-17744-4-git-send-email-ldewangan@nvidia.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Laxman Dewangan <ldewangan@nvidia.com>, thierry.reding@gmail.com, airlied@linux.ie, swarren@wwwdotorg.org
-Cc: linux-tegra@vger.kernel.org, gnurou@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <573EE0CB.7000807-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDEyLzA1LzE2IDEzOjIxLCBMYXhtYW4gRGV3YW5nYW4gd3JvdGU6Cj4gVGhlIElPIHBpbnMg
-b2YgVGVncmEgU29DcyBhcmUgZ3JvdXBlZCBmb3IgY29tbW9uIGNvbnRyb2wgb2YgSU8KPiBpbnRl
-cmZhY2UgbGlrZSBzZXR0aW5nIHZvbHRhZ2Ugc2lnbmFsIGxldmVscyBhbmQgcG93ZXIgc3RhdGUg
-b2YKPiB0aGUgaW50ZXJmYWNlLiBUaGUgZ3JvdXAgaXMgZ2VuZXJhbGx5IHJlZmVycmVkIGFzIElP
-IHBhZHMuIFRoZQo+IHBvd2VyIHN0YXRlIGFuZCB2b2x0YWdlIGNvbnRyb2wgb2YgSU8gcGlucyBj
-YW4gYmUgZG9uZSBhdCBJTyBwYWRzCj4gbGV2ZWwuCj4gCj4gVGVncmEgZ2VuZXJhdGlvbiBTb0Mg
-c3VwcG9ydHMgdGhlIHBvd2VyIGRvd24gb2YgSU8gcGFkcyB3aGVuIGl0Cj4gaXMgbm90IHVzZWQg
-ZXZlbiBpbiB0aGUgYWN0aXZlIHN0YXRlIG9mIHN5c3RlbS4gVGhpcyBzYXZlcyBwb3dlcgo+IGZy
-b20gdGhhdCBJTyBpbnRlcmZhY2UuIEFsc28gaXQgc3VwcG9ydHMgbXVsdGlwbGUgdm9sdGFnZSBs
-ZXZlbAo+IGluIElPIHBpbnMgZm9yIGludGVyZmFjaW5nIG9uIHNvbWUgb2YgcGFkcy4gVGhlIElP
-IHBhZCB2b2x0YWdlIGlzCj4gYXV0b21hdGljYWxseSBkZXRlY3RlZCB0aWxsIFQxMjQsIGhlbmNl
-IFNXIG5lZWQgbm90IHRvIGNvbmZpZ3VyZQo+IHRoaXMuIEJ1dCBmcm9tIFQyMTAsIHRoZSBhdXRv
-bWF0aWNhbGx5IGRldGVjdGlvbiBsb2dpYyBoYXMgYmVlbgo+IHJlbW92ZWQsIGhlbmNlIFNXIG5l
-ZWQgdG8gZXhwbGljaXRseSBzZXQgdGhlIElPIHBhZCB2b2x0YWdlIGludG8KPiBJTyBwYWQgY29u
-ZmlndXJhdGlvbiByZWdpc3RlcnMuCj4gCj4gQWRkIHN1cHBvcnQgdG8gc2V0IHRoZSBwb3dlciBz
-dGF0ZXMgYW5kIHZvbHRhZ2UgbGV2ZWwgb2YgdGhlIElPIHBhZHMKPiBmcm9tIGNsaWVudCBkcml2
-ZXIuIFRoZSBpbXBsZW1lbnRhdGlvbiBmb3IgdGhlIEFQSXMgYXJlIGluIGdlbmVyaWMKPiB3aGlj
-aCBpcyBhcHBsaWNhYmxlIGZvciBhbGwgZ2VuZXJhdGlvbiBvcyBUZWdyYSBTb0MuCj4gCj4gSU8g
-cGFkcyBJRCBhbmQgaW5mb3JtYXRpb24gb2YgYml0IGZpZWxkIGZvciBwb3dlciBzdGF0ZSBhbmQg
-dm9sdGFnZQo+IGxldmVsIGNvbnRyb2xzIGFyZSBhZGRlZCBmb3IgVGVncmExMjQsIFRlZ3JhMTMy
-IGFuZCBUZWdyYTIxMC4gVGhlIFNPUgo+IGRyaXZlciBpcyBtb2RpZmllZCB0byB1c2UgdGhlIG5l
-dyBBUElzLgo+IAo+IFNpZ25lZC1vZmYtYnk6IExheG1hbiBEZXdhbmdhbiA8bGRld2FuZ2FuQG52
-aWRpYS5jb20+Cj4gCj4gLS0tCj4gQ2hhbmdlcyBmcm9tIFYxOgo+IFRoaXMgaXMgcmV3b3JrZWQg
-b24gZWFybGllciBwYXRoIHRvIGhhdmUgc2VwYXJhdGlvbiBiZXR3ZWVuIElPIHJhaWxzIGFuZAo+
-IGlvIHBhZHMgYW5kIGFkZCBwb3dlciBzdGF0ZSBhbmQgdm9sdGFnZSBjb250cm9sIEFQSXMgaW4g
-c2luZ2xlIGNhbGwuCj4gCj4gQ2hhbmdlcyBmcm9tIFYyOgo+IC0gUmVtb3ZlIHRoZSB0ZWdyYV9p
-b19yYWlsX3Bvd2VyX29mZi9vbigpIGFwaXMgYW5kIGNoYW5nZSBjbGllbnQgKHNvcikgZHJpdmVy
-Cj4gdG8gdXNlIHRoZSBuZXcgQVBJcyBmb3IgSU8gcGFkIHBvd2VyLgo+IC0gUmVtb3ZlIHRoZSBU
-RUdSQV9JT19SQUlMXyBtYWNyb3MuCj4gCj4gQ2hhbmdlcyBmcm9tIFYzOgo+IC0gTWFrZSBhbGwg
-cGFkX2lkL2lvX3BhZF9pZCB0byBpZC4KPiAtIHRlZ3JhX2lvX3BhZF8gLT4gdGVncmFfaW9fcGFk
-cwo+IC0gZHBkX2JpdCAtPiBiaXQsIHB3cl9tYXNrL2JpdCB0byBtYXNrL2JpdC4KPiAtIFJlbmFt
-ZSBmdW5jdGlvbiB0byB0ZWdyYV9pb19wYWRzX3tzZXQsZ2V0fV92b2x0YWdlX2NvbmZpZwo+IC0g
-TWFrZSB0aGUgaW8gcGFkIHRhYmxlcyBjb21tb24gZm9yIGFsbCBTb0MuCj4gLSBNYWtlIGlvX3Bh
-ZHMgZW51bXMuCj4gLSBBZGQgZW51bXMgZm9yIHZvbHRhZ2UuCj4gCj4gQ2hhbmdlcyBmcm9tIFY0
-Ogo+IC0gSU9fUEFELT5JT19QQURTCj4gLSBURUdSQV9JT19QQURTX1BPV0VSX1NPVVJDRV8gLT4g
-VEVHUkFfSU9fUEFEU19WQ09ORl8KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3Nvci5j
-IHwgICA4ICstCj4gIGRyaXZlcnMvc29jL3RlZ3JhL3BtYy5jICAgICB8IDIyMSArKysrKysrKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tLS0tLQo+ICBpbmNsdWRlL3NvYy90ZWdyYS9w
-bWMuaCAgICAgfCAxMzIgKysrKysrKysrKysrKysrKysrLS0tLS0tLS0KPiAgMyBmaWxlcyBjaGFu
-Z2VkLCAyOTQgaW5zZXJ0aW9ucygrKSwgNjcgZGVsZXRpb25zKC0pCgouLi4KCj4gKy8qIERlZmlu
-ZSB0aGUgSU9fUEFEUyBTT0MgZm9yIFNPQyBtYXNrIHRvIGZpbmQgb3V0IHRoYXQgSU8gcGFkcyBz
-dXBwb3J0ZWQKClBlciBjb2Rpbmctc3R5bGUgdGhpcyBzaG91bGQgYmUgLi4uCgovKgogKiBEZWZp
-bmUgdGhlIElPX1BBRFMgU09DIC4uLgoKPiArICogb3Igbm90IGluIGdpdmVuIFNvQy4KPiArICov
-Cj4gKyNkZWZpbmUgVEVHUkFfSU9fUEFEU19UMTI0CQkweDEKPiArI2RlZmluZSBURUdSQV9JT19Q
-QURTX1QyMTAJCTB4Mgo+ICsjZGVmaW5lIFRFR1JBX0lPX1BBRFNfVDEyNF9UMjEwCQkoVEVHUkFf
-SU9fUEFEU19UMTI0IHwJXAo+ICsJCQkJCVRFR1JBX0lPX1BBRFNfVDIxMCkKPiArCgpXaGF0IGFi
-b3V0IFQzMCBhbmQgVDExND8gVGhlIFRSTSBpbmNsdWRlcyB0aGUgRFBEIFJFUS9TVEFUVVMgcmVn
-aXN0ZXJzCmZvciB0aGVzZT8KCj4gIHN0cnVjdCB0ZWdyYV9wb3dlcmdhdGUgewo+ICAJc3RydWN0
-IGdlbmVyaWNfcG1fZG9tYWluIGdlbnBkOwo+ICAJc3RydWN0IHRlZ3JhX3BtYyAqcG1jOwo+IEBA
-IC0xMTUsMTIgKzEyNywyMyBAQCBzdHJ1Y3QgdGVncmFfcG93ZXJnYXRlIHsKPiAgCXVuc2lnbmVk
-IGludCBudW1fcmVzZXRzOwo+ICB9Owo+ICAKPiArLyogdGVncmFfaW9fcGFkc19jb25maWdfaW5m
-bzogVGVncmEgSU8gcGFkcyBiaXQgY29uZmlnIGluZm8uCj4gKyAqIEBkcGRfY29uZmlnX2JpdDog
-RFBEIGNvbmZpZ3VyYXRpb24gYml0IHBvc2l0aW9uLiAtMSBpZiBub3Qgc3VwcG9ydGVkLgo+ICsg
-KiBAdm9sdGFnZV9jb25maWdfYml0OiBWb2x0YWdlIGNvbmZpZ3VyYXRpb24gYml0IHBvc2l0aW9u
-LiAtMSBpZiBub3Qgc3VwcG9ydGVkLgo+ICsgKiBAc29jX21hc2s6IEJpdHdpc2UgT1Igb2YgU29D
-IG1hc2tzIGlmIElPIHBhZHMgc3VwcG9ydGVkIG9uIHRoYXQgU29DLgo+ICsgKi8KPiArc3RydWN0
-IHRlZ3JhX2lvX3BhZHNfY29uZmlnX2luZm8gewo+ICsJaW50IGRwZF9jb25maWdfYml0Owo+ICsJ
-aW50IHZvbHRhZ2VfY29uZmlnX2JpdDsKPiArCWludCBzb2NfbWFzazsKPiArfTsKPiArCj4gIHN0
-cnVjdCB0ZWdyYV9wbWNfc29jIHsKPiAgCXVuc2lnbmVkIGludCBudW1fcG93ZXJnYXRlczsKPiAg
-CWNvbnN0IGNoYXIgKmNvbnN0ICpwb3dlcmdhdGVzOwo+ICAJdW5zaWduZWQgaW50IG51bV9jcHVf
-cG93ZXJnYXRlczsKPiAgCWNvbnN0IHU4ICpjcHVfcG93ZXJnYXRlczsKPiAtCj4gKwlpbnQgaW9f
-cGFkc19zb2NfbWFzazsKPiAgCWJvb2wgaGFzX3RzZW5zZV9yZXNldDsKPiAgCWJvb2wgaGFzX2dw
-dV9jbGFtcHM7Cj4gIH07Cj4gQEAgLTE5Niw2ICsyMTksMTQgQEAgc3RhdGljIHZvaWQgdGVncmFf
-cG1jX3dyaXRlbCh1MzIgdmFsdWUsIHVuc2lnbmVkIGxvbmcgb2Zmc2V0KQo+ICAJd3JpdGVsKHZh
-bHVlLCBwbWMtPmJhc2UgKyBvZmZzZXQpOwo+ICB9Cj4gIAo+ICtzdGF0aWMgdm9pZCB0ZWdyYV9w
-bWNfcm13KHVuc2lnbmVkIGxvbmcgb2Zmc2V0LCB1MzIgbWFzaywgdTMyIHZhbCkKPiArewo+ICsJ
-dTMyIHBtY19yZWcgPSB0ZWdyYV9wbWNfcmVhZGwob2Zmc2V0KTsKPiArCj4gKwlwbWNfcmVnID0g
-KHBtY19yZWcgJiB+bWFzaykgfCAodmFsICYgbWFzayk7Cj4gKwl0ZWdyYV9wbWNfd3JpdGVsKHBt
-Y19yZWcsIG9mZnNldCk7Cj4gK30KPiArCj4gIHN0YXRpYyBpbmxpbmUgYm9vbCB0ZWdyYV9wb3dl
-cmdhdGVfc3RhdGUoaW50IGlkKQo+ICB7Cj4gIAlpZiAoaWQgPT0gVEVHUkFfUE9XRVJHQVRFXzNE
-ICYmIHBtYy0+c29jLT5oYXNfZ3B1X2NsYW1wcykKPiBAQCAtODQxLDIxICs4NzIsOTkgQEAgc3Rh
-dGljIHZvaWQgdGVncmFfcG93ZXJnYXRlX2luaXQoc3RydWN0IHRlZ3JhX3BtYyAqcG1jKQo+ICAJ
-b2Zfbm9kZV9wdXQobnApOwo+ICB9Cj4gIAo+IC1zdGF0aWMgaW50IHRlZ3JhX2lvX3JhaWxfcHJl
-cGFyZSh1bnNpZ25lZCBpbnQgaWQsIHVuc2lnbmVkIGxvbmcgKnJlcXVlc3QsCj4gLQkJCQkgdW5z
-aWduZWQgbG9uZyAqc3RhdHVzLCB1bnNpZ25lZCBpbnQgKmJpdCkKPiArI2RlZmluZSBURUdSQV9J
-T19QQURTX0NPTkZJRyhfaWQsIF9kcGQsIF92b2x0LCBfc29jKQkJXAo+ICtbVEVHUkFfSU9fUEFE
-U18jI19pZF0gPSB7CQkJCQlcCj4gKwkuZHBkX2NvbmZpZ19iaXQgPSAoX2RwZCksCQkJCVwKPiAr
-CS52b2x0YWdlX2NvbmZpZ19iaXQgPSAoX3ZvbHQpLAkJCQlcCj4gKwkuc29jX21hc2sgPSAoX3Nv
-YyksCQkJCQlcCj4gK30KPiArCj4gK3N0cnVjdCB0ZWdyYV9pb19wYWRzX2NvbmZpZ19pbmZvIHRl
-Z3JhX2lvX3BhZHNfY29uZmlnc1tURUdSQV9JT19QQURTX01BWF0gPSB7Cj4gKwlURUdSQV9JT19Q
-QURTX0NPTkZJRyhDU0lBLCAwLCAtMSwgVEVHUkFfSU9fUEFEU19UMTI0X1QyMTApLAo+ICsJVEVH
-UkFfSU9fUEFEU19DT05GSUcoQ1NJQiwgMSwgLTEsIFRFR1JBX0lPX1BBRFNfVDEyNF9UMjEwKSwK
-PiArCVRFR1JBX0lPX1BBRFNfQ09ORklHKERTSSwgMiwgLTEsIFRFR1JBX0lPX1BBRFNfVDEyNF9U
-MjEwKSwKPiArCVRFR1JBX0lPX1BBRFNfQ09ORklHKE1JUElfQklBUywgMywgLTEsIFRFR1JBX0lP
-X1BBRFNfVDEyNF9UMjEwKSwKPiArCVRFR1JBX0lPX1BBRFNfQ09ORklHKFBFWF9CSUFTLCA0LCAt
-MSwgVEVHUkFfSU9fUEFEU19UMTI0X1QyMTApLAo+ICsJVEVHUkFfSU9fUEFEU19DT05GSUcoUEVY
-X0NMSzEsIDUsIC0xLCBURUdSQV9JT19QQURTX1QxMjRfVDIxMCksCj4gKwlURUdSQV9JT19QQURT
-X0NPTkZJRyhQRVhfQ0xLMiwgNiwgLTEsIFRFR1JBX0lPX1BBRFNfVDEyNF9UMjEwKSwKPiArCVRF
-R1JBX0lPX1BBRFNfQ09ORklHKFVTQjAsIDksIC0xLCBURUdSQV9JT19QQURTX1QxMjRfVDIxMCks
-Cj4gKwlURUdSQV9JT19QQURTX0NPTkZJRyhVU0IxLCAxMCwgLTEsIFRFR1JBX0lPX1BBRFNfVDEy
-NF9UMjEwKSwKPiArCVRFR1JBX0lPX1BBRFNfQ09ORklHKFVTQjIsIDExLCAtMSwgVEVHUkFfSU9f
-UEFEU19UMTI0X1QyMTApLAo+ICsJVEVHUkFfSU9fUEFEU19DT05GSUcoVVNCX0JJQVMsIDEyLCAt
-MSwgVEVHUkFfSU9fUEFEU19UMTI0X1QyMTApLAo+ICsJVEVHUkFfSU9fUEFEU19DT05GSUcoTkFO
-RCwgMTMsIC0xLCBURUdSQV9JT19QQURTX1QxMjQpLAo+ICsJVEVHUkFfSU9fUEFEU19DT05GSUco
-VUFSVCwgMTQsIC0xLCBURUdSQV9JT19QQURTX1QxMjRfVDIxMCksCj4gKwlURUdSQV9JT19QQURT
-X0NPTkZJRyhCQiwgMTUsIC0xLCBURUdSQV9JT19QQURTX1QxMjQpLAo+ICsJVEVHUkFfSU9fUEFE
-U19DT05GSUcoQVVESU8sIDE3LCAtMSwgVEVHUkFfSU9fUEFEU19UMTI0X1QyMTApLAo+ICsJVEVH
-UkFfSU9fUEFEU19DT05GSUcoVVNCMywgMTgsIC0xLCBURUdSQV9JT19QQURTX1QyMTApLAo+ICsJ
-VEVHUkFfSU9fUEFEU19DT05GSUcoSFNJQywgMTksIC0xLCBURUdSQV9JT19QQURTX1QxMjRfVDIx
-MCksCj4gKwlURUdSQV9JT19QQURTX0NPTkZJRyhDT01QLCAyMiwgLTEsIFRFR1JBX0lPX1BBRFNf
-VDEyNCksCj4gKwlURUdSQV9JT19QQURTX0NPTkZJRyhEQkcsIDI1LCAtMSwgVEVHUkFfSU9fUEFE
-U19UMjEwKSwKPiArCVRFR1JBX0lPX1BBRFNfQ09ORklHKERFQlVHX05PTkFPLCAyNiwgLTEsIFRF
-R1JBX0lPX1BBRFNfVDIxMCksCj4gKwlURUdSQV9JT19QQURTX0NPTkZJRyhHUElPLCAyNywgMjEs
-IFRFR1JBX0lPX1BBRFNfVDIxMCksCj4gKwlURUdSQV9JT19QQURTX0NPTkZJRyhIRE1JLCAyOCwg
-LTEsIFRFR1JBX0lPX1BBRFNfVDEyNF9UMjEwKSwKPiArCVRFR1JBX0lPX1BBRFNfQ09ORklHKFBF
-WF9DTlRSTCwgMzIsIC0xLCBURUdSQV9JT19QQURTX1QxMjQpLAo+ICsJVEVHUkFfSU9fUEFEU19D
-T05GSUcoU0RNTUMxLCAzMywgMTIsIFRFR1JBX0lPX1BBRFNfVDEyNF9UMjEwKSwKPiArCVRFR1JB
-X0lPX1BBRFNfQ09ORklHKFNETU1DMywgMzQsIDEzLCBURUdSQV9JT19QQURTX1QxMjRfVDIxMCks
-Cj4gKwlURUdSQV9JT19QQURTX0NPTkZJRyhTRE1NQzQsIDM1LCAtMSwgVEVHUkFfSU9fUEFEU19U
-MTI0KSwKPiArCVRFR1JBX0lPX1BBRFNfQ09ORklHKEVNTUMsIDM1LCAtMSwgVEVHUkFfSU9fUEFE
-U19UMjEwKSwKPiArCVRFR1JBX0lPX1BBRFNfQ09ORklHKENBTSwgMzYsIC0xLCBURUdSQV9JT19Q
-QURTX1QxMjRfVDIxMCksCj4gKwlURUdSQV9JT19QQURTX0NPTkZJRyhFTU1DMiwgMzcsIC0xLCBU
-RUdSQV9JT19QQURTX1QyMTApLAo+ICsJVEVHUkFfSU9fUEFEU19DT05GSUcoSFYsIDM4LCAtMSwg
-VEVHUkFfSU9fUEFEU19UMTI0KSwKPiArCVRFR1JBX0lPX1BBRFNfQ09ORklHKERTSUIsIDM5LCAt
-MSwgVEVHUkFfSU9fUEFEU19UMTI0X1QyMTApLAo+ICsJVEVHUkFfSU9fUEFEU19DT05GSUcoRFNJ
-QywgNDAsIC0xLCBURUdSQV9JT19QQURTX1QxMjRfVDIxMCksCj4gKwlURUdSQV9JT19QQURTX0NP
-TkZJRyhEU0lELCA0MSwgLTEsIFRFR1JBX0lPX1BBRFNfVDEyNF9UMjEwKSwKPiArCVRFR1JBX0lP
-X1BBRFNfQ09ORklHKENTSUMsIDQyLCAtMSwgVEVHUkFfSU9fUEFEU19UMjEwKSwKPiArCVRFR1JB
-X0lPX1BBRFNfQ09ORklHKENTSUQsIDQzLCAtMSwgVEVHUkFfSU9fUEFEU19UMjEwKSwKPiArCVRF
-R1JBX0lPX1BBRFNfQ09ORklHKENTSUUsIDQ0LCAtMSwgVEVHUkFfSU9fUEFEU19UMTI0X1QyMTAp
-LAo+ICsJVEVHUkFfSU9fUEFEU19DT05GSUcoQ1NJRiwgNDUsIC0xLCBURUdSQV9JT19QQURTX1Qy
-MTApLAo+ICsJVEVHUkFfSU9fUEFEU19DT05GSUcoU1BJLCA0NiwgLTEsIFRFR1JBX0lPX1BBRFNf
-VDIxMCksCj4gKwlURUdSQV9JT19QQURTX0NPTkZJRyhTUElfSFYsIDQ3LCAyMywgVEVHUkFfSU9f
-UEFEU19UMjEwKSwKPiArCVRFR1JBX0lPX1BBRFNfQ09ORklHKERNSUMsIDUwLCAtMSwgVEVHUkFf
-SU9fUEFEU19UMjEwKSwKPiArCVRFR1JBX0lPX1BBRFNfQ09ORklHKERQLCA1MSwgLTEsIFRFR1JB
-X0lPX1BBRFNfVDIxMCksCj4gKwlURUdSQV9JT19QQURTX0NPTkZJRyhMVkRTLCA1NywgLTEsIFRF
-R1JBX0lPX1BBRFNfVDEyNF9UMjEwKSwKPiArCVRFR1JBX0lPX1BBRFNfQ09ORklHKFNZU19EREMs
-IDU4LCAtMSwgVEVHUkFfSU9fUEFEU19UMTI0KSwKPiArCVRFR1JBX0lPX1BBRFNfQ09ORklHKEFV
-RElPX0hWLCA2MSwgMTgsIFRFR1JBX0lPX1BBRFNfVDIxMCksCj4gK307Cj4gKwo+ICtzdGF0aWMg
-aW5saW5lIGludCB0ZWdyYV9pb19wYWRzX3RvX2RwZF9iaXQoY29uc3Qgc3RydWN0IHRlZ3JhX3Bt
-Y19zb2MgKnNvYywKPiArCQkJCQkgICBlbnVtIHRlZ3JhX2lvX3BhZHMgaWQpCj4gIHsKPiAtCXVu
-c2lnbmVkIGxvbmcgcmF0ZSwgdmFsdWU7Cj4gKwlpZiAoISh0ZWdyYV9pb19wYWRzX2NvbmZpZ3Nb
-aWRdLnNvY19tYXNrICYgc29jLT5pb19wYWRzX3NvY19tYXNrKSB8fAo+ICsJICAgICh0ZWdyYV9p
-b19wYWRzX2NvbmZpZ3NbaWRdLmRwZF9jb25maWdfYml0IDwgMCkpCj4gKwkJcmV0dXJuIC1FSU5W
-QUw7CgpTZWVtcyB0aGF0IHlvdSBtYXkgYXMgd2VsbCBzdG9yZSAtRU5PREVWLy1FTk9UU1VQUCBp
-biB0aGUgdGFibGUgYW5kIHRoZW4KeW91IGNhbiBnZXQgcmlkIG9mIHRoaXMgdGVzdC4KCkNoZWVy
-cwpKb24KCi0tIApudnB1YmxpYwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
-a3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
-cmktZGV2ZWwK
+
+On Friday 20 May 2016 03:32 PM, Jon Hunter wrote:
+> On 12/05/16 13:21, Laxman Dewangan wrote:
+> +#define TEGRA_IO_PADS_T124_T210		(TEGRA_IO_PADS_T124 |	\
+> +					TEGRA_IO_PADS_T210)
+> +
+> What about T30 and T114? The TRM includes the DPD REQ/STATUS registers
+> for these?
+
+The current user is sor driver. I queried this to Thierry that which 
+ship is for sor1 and it is for T124/T132.
+So only focused on this.
+
+My ultimate focus is on T210 without regression.
+Not inclined to add any specific feature for T30/T114.
+
+Do you agree?
+
+
+
+>>   struct tegra_powergate {
+>>   	struct generic_pm_domain genpd;
+>>   	struct tegra_pmc *pmc;
+>> @@ -115,12 +127,23 @@ struct tegra_powergate {
+>>   	unsigned int num_resets;
+>>   };
+>>   
+>> +/* tegra_io_pads_config_info: Tegra IO pads bit config info.
+>> + * @dpd_config_bit: DPD configuration bit position. -1 if not supported.
+>> + * @voltage_config_bit: Voltage configuration bit position. -1 if not supported.
+>> + * @soc_mask: Bitwise OR of SoC masks if IO pads supported on that SoC.
+>> + */
+>> +struct tegra_io_pads_config_info {
+>> +	int dpd_config_bit;
+>> +	int voltage_config_bit;
+>> +	int soc_mask;
+>> +};
+>> +
+>>   struct tegra_pmc_soc {
+>>   	unsigned int num_powergates;
+>>   	const char *const *powergates;
+>>   	unsigned int num_cpu_powergates;
+>>   	const u8 *cpu_powergates;
+>> -
+>> +	int io_pads_soc_mask;
+>>   	bool has_tsense_reset;
+>>   	bool has_gpu_clamps;
+>>   };
+>> @@ -196,6 +219,14 @@ static void tegra_pmc_writel(u32 value, unsigned long offset)
+>>   	writel(value, pmc->base + offset);
+>>   }
+>>   
+>> +static void tegra_pmc_rmw(unsigned long offset, u32 mask, u32 val)
+>> +{
+>> +	u32 pmc_reg = tegra_pmc_readl(offset);
+>> +
+>> +	pmc_reg = (pmc_reg & ~mask) | (val & mask);
+>> +	tegra_pmc_writel(pmc_reg, offset);
+>> +}
+>> +
+>>   static inline bool tegra_powergate_state(int id)
+>>   {
+>>   	if (id == TEGRA_POWERGATE_3D && pmc->soc->has_gpu_clamps)
+>> @@ -841,21 +872,99 @@ static void tegra_powergate_init(struct tegra_pmc *pmc)
+>>   	of_node_put(np);
+>>   }
+>>   
+>> -static int tegra_io_rail_prepare(unsigned int id, unsigned long *request,
+>> -				 unsigned long *status, unsigned int *bit)
+>> +#define TEGRA_IO_PADS_CONFIG(_id, _dpd, _volt, _soc)		\
+>> +[TEGRA_IO_PADS_##_id] = {					\
+>> +	.dpd_config_bit = (_dpd),				\
+>> +	.voltage_config_bit = (_volt),				\
+>> +	.soc_mask = (_soc),					\
+>> +}
+>> +
+>> +struct tegra_io_pads_config_info tegra_io_pads_configs[TEGRA_IO_PADS_MAX] = {
+>> +	TEGRA_IO_PADS_CONFIG(CSIA, 0, -1, TEGRA_IO_PADS_T124_T210),
+>> +	TEGRA_IO_PADS_CONFIG(CSIB, 1, -1, TEGRA_IO_PADS_T124_T210),
+>> +	TEGRA_IO_PADS_CONFIG(DSI, 2, -1, TEGRA_IO_PADS_T124_T210),
+>> +	TEGRA_IO_PADS_CONFIG(MIPI_BIAS, 3, -1, TEGRA_IO_PADS_T124_T210),
+>> +	TEGRA_IO_PADS_CONFIG(PEX_BIAS, 4, -1, TEGRA_IO_PADS_T124_T210),
+>> +	TEGRA_IO_PADS_CONFIG(PEX_CLK1, 5, -1, TEGRA_IO_PADS_T124_T210),
+>> +	TEGRA_IO_PADS_CONFIG(PEX_CLK2, 6, -1, TEGRA_IO_PADS_T124_T210),
+>> +	TEGRA_IO_PADS_CONFIG(USB0, 9, -1, TEGRA_IO_PADS_T124_T210),
+>> +	TEGRA_IO_PADS_CONFIG(USB1, 10, -1, TEGRA_IO_PADS_T124_T210),
+>> +	TEGRA_IO_PADS_CONFIG(USB2, 11, -1, TEGRA_IO_PADS_T124_T210),
+>> +	TEGRA_IO_PADS_CONFIG(USB_BIAS, 12, -1, TEGRA_IO_PADS_T124_T210),
+>> +	TEGRA_IO_PADS_CONFIG(NAND, 13, -1, TEGRA_IO_PADS_T124),
+>> +	TEGRA_IO_PADS_CONFIG(UART, 14, -1, TEGRA_IO_PADS_T124_T210),
+>> +	TEGRA_IO_PADS_CONFIG(BB, 15, -1, TEGRA_IO_PADS_T124),
+>> +	TEGRA_IO_PADS_CONFIG(AUDIO, 17, -1, TEGRA_IO_PADS_T124_T210),
+>> +	TEGRA_IO_PADS_CONFIG(USB3, 18, -1, TEGRA_IO_PADS_T210),
+>> +	TEGRA_IO_PADS_CONFIG(HSIC, 19, -1, TEGRA_IO_PADS_T124_T210),
+>> +	TEGRA_IO_PADS_CONFIG(COMP, 22, -1, TEGRA_IO_PADS_T124),
+>> +	TEGRA_IO_PADS_CONFIG(DBG, 25, -1, TEGRA_IO_PADS_T210),
+>> +	TEGRA_IO_PADS_CONFIG(DEBUG_NONAO, 26, -1, TEGRA_IO_PADS_T210),
+>> +	TEGRA_IO_PADS_CONFIG(GPIO, 27, 21, TEGRA_IO_PADS_T210),
+>> +	TEGRA_IO_PADS_CONFIG(HDMI, 28, -1, TEGRA_IO_PADS_T124_T210),
+>> +	TEGRA_IO_PADS_CONFIG(PEX_CNTRL, 32, -1, TEGRA_IO_PADS_T124),
+>> +	TEGRA_IO_PADS_CONFIG(SDMMC1, 33, 12, TEGRA_IO_PADS_T124_T210),
+>> +	TEGRA_IO_PADS_CONFIG(SDMMC3, 34, 13, TEGRA_IO_PADS_T124_T210),
+>> +	TEGRA_IO_PADS_CONFIG(SDMMC4, 35, -1, TEGRA_IO_PADS_T124),
+>> +	TEGRA_IO_PADS_CONFIG(EMMC, 35, -1, TEGRA_IO_PADS_T210),
+>> +	TEGRA_IO_PADS_CONFIG(CAM, 36, -1, TEGRA_IO_PADS_T124_T210),
+>> +	TEGRA_IO_PADS_CONFIG(EMMC2, 37, -1, TEGRA_IO_PADS_T210),
+>> +	TEGRA_IO_PADS_CONFIG(HV, 38, -1, TEGRA_IO_PADS_T124),
+>> +	TEGRA_IO_PADS_CONFIG(DSIB, 39, -1, TEGRA_IO_PADS_T124_T210),
+>> +	TEGRA_IO_PADS_CONFIG(DSIC, 40, -1, TEGRA_IO_PADS_T124_T210),
+>> +	TEGRA_IO_PADS_CONFIG(DSID, 41, -1, TEGRA_IO_PADS_T124_T210),
+>> +	TEGRA_IO_PADS_CONFIG(CSIC, 42, -1, TEGRA_IO_PADS_T210),
+>> +	TEGRA_IO_PADS_CONFIG(CSID, 43, -1, TEGRA_IO_PADS_T210),
+>> +	TEGRA_IO_PADS_CONFIG(CSIE, 44, -1, TEGRA_IO_PADS_T124_T210),
+>> +	TEGRA_IO_PADS_CONFIG(CSIF, 45, -1, TEGRA_IO_PADS_T210),
+>> +	TEGRA_IO_PADS_CONFIG(SPI, 46, -1, TEGRA_IO_PADS_T210),
+>> +	TEGRA_IO_PADS_CONFIG(SPI_HV, 47, 23, TEGRA_IO_PADS_T210),
+>> +	TEGRA_IO_PADS_CONFIG(DMIC, 50, -1, TEGRA_IO_PADS_T210),
+>> +	TEGRA_IO_PADS_CONFIG(DP, 51, -1, TEGRA_IO_PADS_T210),
+>> +	TEGRA_IO_PADS_CONFIG(LVDS, 57, -1, TEGRA_IO_PADS_T124_T210),
+>> +	TEGRA_IO_PADS_CONFIG(SYS_DDC, 58, -1, TEGRA_IO_PADS_T124),
+>> +	TEGRA_IO_PADS_CONFIG(AUDIO_HV, 61, 18, TEGRA_IO_PADS_T210),
+>> +};
+>> +
+>> +static inline int tegra_io_pads_to_dpd_bit(const struct tegra_pmc_soc *soc,
+>> +					   enum tegra_io_pads id)
+>>   {
+>> -	unsigned long rate, value;
+>> +	if (!(tegra_io_pads_configs[id].soc_mask & soc->io_pads_soc_mask) ||
+>> +	    (tegra_io_pads_configs[id].dpd_config_bit < 0))
+>> +		return -EINVAL;
+> Seems that you may as well store -ENODEV/-ENOTSUPP in the table and then
+> you can get rid of this test.
+>
+
+Need help, how can we avoid this?
+We need to check for the chip mask anyway.
+
+Can you please explain more here?
+
+Thanks,
+Laxman
