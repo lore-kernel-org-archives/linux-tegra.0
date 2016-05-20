@@ -1,103 +1,94 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V4 0/9] Add support for Tegra210 AGIC
-Date: Fri, 20 May 2016 10:07:40 +0100
-Message-ID: <573ED3DC.6010900@nvidia.com>
-References: <1463066372-13115-1-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH V5 3/3] soc/tegra: pmc: Add support for IO pads power
+ state and voltage
+Date: Fri, 20 May 2016 10:34:44 +0100
+Message-ID: <573EDA34.2030708@nvidia.com>
+References: <1463055706-17744-1-git-send-email-ldewangan@nvidia.com>
+ <1463055706-17744-4-git-send-email-ldewangan@nvidia.com>
+ <573DE19C.8090704@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1463066372-13115-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <573DE19C.8090704@nvidia.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Laxman Dewangan <ldewangan@nvidia.com>, thierry.reding@gmail.com, airlied@linux.ie, swarren@wwwdotorg.org
+Cc: linux-tegra@vger.kernel.org, gnurou@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Marc,
-
-Let me know if you have any thoughts on this.
-
-Cheers
-Jon
-
-On 12/05/16 16:19, Jon Hunter wrote:
-> The Tegra210 has a 2nd level interrupt controller located in a separate
-> power domain to the main GIC interrupt controller and hence requires
-> runtime-pm support.
-> 
-> Add a platform driver for the GICs that require runtime-pm and make the
-> necessary changes to the genirq and irqdomain core to support IRQ chips
-> that require runtime-pm.
-> 
-> This series is based upon Marc Z's irq/irqchip-v4.7 branch [0].
-> 
-> Changes since V3:
-> - Split the series into two, placing the clean-up/fixes patches into
->   another series [1]. The remaining patches in this series are for
->   adding runtime-pm support for irqchips and adding a platform driver
->   of second level GICs.
-> - Dropped the patch to prevent early init of GICs if 'clocks' or
->   'power-domains' properties are present and re-added the patch to add
->   the compatibilty string for the Tegra210 AGIC.
-> 
-> Changes since V2:
-> - Corrected RPM support for irqchips in genirq core as pointed out by
->   Kevin Hilman.
-> - Corrected patch to save the irq type when mapping the interrupt.
-> - Dropped changes to DT binding documentation and added patch to prevent
->   early init of GICs if the 'clocks' and/or 'power-domains' DT
->   properties are present (as we have discussed).
-> - Moved platform driver code into it's own source file.
-> - Separate changes for preparing for the platform driver into 3 patches
->   in an attempt to make it more readable!
-> - Added fix for checking an interrupt descriptor is valid during IRQ
->   setup.
-> 
-> Changes since V1:
-> - Updated GIC to only WARN and not return an error if configuring a PPI
->   fails but will still return an error if an SPI fails (per discussion
->   with Marc).
-> - Dropped change to mask sense bits for GIC-v3 (as this is not
->   necessary)
-> - Split patch to avoid setting interrupt type when mapping the IRQ into
->   two patches per TGLX's feedback.
-> - Changed name of irqchip device structure to "parent_device"
-> - Moved call to irq_chip_pm_get() outside of chip_bus_lock().
-> - Dropped patch to remove clock names from GIC DT documentation and
->   added AGIC clock names.
-> - Update GIC platform driver to look-up clocks names from static list.
-> 
-> [0] http://git.kernel.org/cgit/linux/kernel/git/maz/arm-platforms.git/log/?h=irq/irqchip-4.7
-> [1] http://marc.info/?l=linux-tegra&m=146289329915585&w=2
-> 
-> Jon Hunter (9):
->   irqdomain: Fix handling of type settings for existing mappings
->   genirq: Look-up trigger type if not specified by caller
->   irqdomain: Don't set type when mapping an IRQ
->   genirq: Add runtime power management support for IRQ chips
->   irqchip/gic: Isolate early GIC initialisation code
->   irqchip/gic: Add helper function for chip initialisation
->   irqchip/gic: Prepare for adding platform driver
->   dt-bindings: arm-gic: Add documentation for Tegra210 AGIC
->   irqchip/gic: Add platform driver for non-root GICs that require RPM
-> 
->  .../bindings/interrupt-controller/arm,gic.txt      |   3 +-
->  drivers/irqchip/Kconfig                            |   6 +
->  drivers/irqchip/Makefile                           |   1 +
->  drivers/irqchip/irq-gic-common.c                   |   4 +-
->  drivers/irqchip/irq-gic-pm.c                       | 187 +++++++++++++++++++++
->  drivers/irqchip/irq-gic.c                          | 136 ++++++++++-----
->  drivers/irqchip/irq-gic.h                          |  30 ++++
->  include/linux/irq.h                                |   4 +
->  include/linux/irqdomain.h                          |   3 +
->  kernel/irq/chip.c                                  |  35 ++++
->  kernel/irq/internals.h                             |   1 +
->  kernel/irq/irqdomain.c                             |  58 ++++++-
->  kernel/irq/manage.c                                |  38 ++++-
->  13 files changed, 451 insertions(+), 55 deletions(-)
->  create mode 100644 drivers/irqchip/irq-gic-pm.c
->  create mode 100644 drivers/irqchip/irq-gic.h
-> 
-
--- 
-nvpublic
+Ck9uIDE5LzA1LzE2IDE2OjU0LCBKb24gSHVudGVyIHdyb3RlOgo+IAo+IE9uIDEyLzA1LzE2IDEz
+OjIxLCBMYXhtYW4gRGV3YW5nYW4gd3JvdGU6Cj4+IFRoZSBJTyBwaW5zIG9mIFRlZ3JhIFNvQ3Mg
+YXJlIGdyb3VwZWQgZm9yIGNvbW1vbiBjb250cm9sIG9mIElPCj4+IGludGVyZmFjZSBsaWtlIHNl
+dHRpbmcgdm9sdGFnZSBzaWduYWwgbGV2ZWxzIGFuZCBwb3dlciBzdGF0ZSBvZgo+PiB0aGUgaW50
+ZXJmYWNlLiBUaGUgZ3JvdXAgaXMgZ2VuZXJhbGx5IHJlZmVycmVkIGFzIElPIHBhZHMuIFRoZQo+
+PiBwb3dlciBzdGF0ZSBhbmQgdm9sdGFnZSBjb250cm9sIG9mIElPIHBpbnMgY2FuIGJlIGRvbmUg
+YXQgSU8gcGFkcwo+PiBsZXZlbC4KPj4KPj4gVGVncmEgZ2VuZXJhdGlvbiBTb0Mgc3VwcG9ydHMg
+dGhlIHBvd2VyIGRvd24gb2YgSU8gcGFkcyB3aGVuIGl0Cj4+IGlzIG5vdCB1c2VkIGV2ZW4gaW4g
+dGhlIGFjdGl2ZSBzdGF0ZSBvZiBzeXN0ZW0uIFRoaXMgc2F2ZXMgcG93ZXIKPj4gZnJvbSB0aGF0
+IElPIGludGVyZmFjZS4gQWxzbyBpdCBzdXBwb3J0cyBtdWx0aXBsZSB2b2x0YWdlIGxldmVsCj4+
+IGluIElPIHBpbnMgZm9yIGludGVyZmFjaW5nIG9uIHNvbWUgb2YgcGFkcy4gVGhlIElPIHBhZCB2
+b2x0YWdlIGlzCj4+IGF1dG9tYXRpY2FsbHkgZGV0ZWN0ZWQgdGlsbCBUMTI0LCBoZW5jZSBTVyBu
+ZWVkIG5vdCB0byBjb25maWd1cmUKPj4gdGhpcy4gQnV0IGZyb20gVDIxMCwgdGhlIGF1dG9tYXRp
+Y2FsbHkgZGV0ZWN0aW9uIGxvZ2ljIGhhcyBiZWVuCj4+IHJlbW92ZWQsIGhlbmNlIFNXIG5lZWQg
+dG8gZXhwbGljaXRseSBzZXQgdGhlIElPIHBhZCB2b2x0YWdlIGludG8KPj4gSU8gcGFkIGNvbmZp
+Z3VyYXRpb24gcmVnaXN0ZXJzLgo+Pgo+PiBBZGQgc3VwcG9ydCB0byBzZXQgdGhlIHBvd2VyIHN0
+YXRlcyBhbmQgdm9sdGFnZSBsZXZlbCBvZiB0aGUgSU8gcGFkcwo+PiBmcm9tIGNsaWVudCBkcml2
+ZXIuIFRoZSBpbXBsZW1lbnRhdGlvbiBmb3IgdGhlIEFQSXMgYXJlIGluIGdlbmVyaWMKPj4gd2hp
+Y2ggaXMgYXBwbGljYWJsZSBmb3IgYWxsIGdlbmVyYXRpb24gb3MgVGVncmEgU29DLgo+Pgo+PiBJ
+TyBwYWRzIElEIGFuZCBpbmZvcm1hdGlvbiBvZiBiaXQgZmllbGQgZm9yIHBvd2VyIHN0YXRlIGFu
+ZCB2b2x0YWdlCj4+IGxldmVsIGNvbnRyb2xzIGFyZSBhZGRlZCBmb3IgVGVncmExMjQsIFRlZ3Jh
+MTMyIGFuZCBUZWdyYTIxMC4gVGhlIFNPUgo+PiBkcml2ZXIgaXMgbW9kaWZpZWQgdG8gdXNlIHRo
+ZSBuZXcgQVBJcy4KPj4KPj4gU2lnbmVkLW9mZi1ieTogTGF4bWFuIERld2FuZ2FuIDxsZGV3YW5n
+YW5AbnZpZGlhLmNvbT4KPj4KPj4gLS0tCj4+IENoYW5nZXMgZnJvbSBWMToKPj4gVGhpcyBpcyBy
+ZXdvcmtlZCBvbiBlYXJsaWVyIHBhdGggdG8gaGF2ZSBzZXBhcmF0aW9uIGJldHdlZW4gSU8gcmFp
+bHMgYW5kCj4+IGlvIHBhZHMgYW5kIGFkZCBwb3dlciBzdGF0ZSBhbmQgdm9sdGFnZSBjb250cm9s
+IEFQSXMgaW4gc2luZ2xlIGNhbGwuCj4+Cj4+IENoYW5nZXMgZnJvbSBWMjoKPj4gLSBSZW1vdmUg
+dGhlIHRlZ3JhX2lvX3JhaWxfcG93ZXJfb2ZmL29uKCkgYXBpcyBhbmQgY2hhbmdlIGNsaWVudCAo
+c29yKSBkcml2ZXIKPj4gdG8gdXNlIHRoZSBuZXcgQVBJcyBmb3IgSU8gcGFkIHBvd2VyLgo+PiAt
+IFJlbW92ZSB0aGUgVEVHUkFfSU9fUkFJTF8gbWFjcm9zLgo+Pgo+PiBDaGFuZ2VzIGZyb20gVjM6
+Cj4+IC0gTWFrZSBhbGwgcGFkX2lkL2lvX3BhZF9pZCB0byBpZC4KPj4gLSB0ZWdyYV9pb19wYWRf
+IC0+IHRlZ3JhX2lvX3BhZHMKPj4gLSBkcGRfYml0IC0+IGJpdCwgcHdyX21hc2svYml0IHRvIG1h
+c2svYml0Lgo+PiAtIFJlbmFtZSBmdW5jdGlvbiB0byB0ZWdyYV9pb19wYWRzX3tzZXQsZ2V0fV92
+b2x0YWdlX2NvbmZpZwo+PiAtIE1ha2UgdGhlIGlvIHBhZCB0YWJsZXMgY29tbW9uIGZvciBhbGwg
+U29DLgo+PiAtIE1ha2UgaW9fcGFkcyBlbnVtcy4KPj4gLSBBZGQgZW51bXMgZm9yIHZvbHRhZ2Uu
+Cj4+Cj4+IENoYW5nZXMgZnJvbSBWNDoKPj4gLSBJT19QQUQtPklPX1BBRFMKPj4gLSBURUdSQV9J
+T19QQURTX1BPV0VSX1NPVVJDRV8gLT4gVEVHUkFfSU9fUEFEU19WQ09ORl8KPj4gLS0tCj4+ICBk
+cml2ZXJzL2dwdS9kcm0vdGVncmEvc29yLmMgfCAgIDggKy0KPj4gIGRyaXZlcnMvc29jL3RlZ3Jh
+L3BtYy5jICAgICB8IDIyMSArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0t
+LS0tLQo+PiAgaW5jbHVkZS9zb2MvdGVncmEvcG1jLmggICAgIHwgMTMyICsrKysrKysrKysrKysr
+KysrKy0tLS0tLS0tCj4+ICAzIGZpbGVzIGNoYW5nZWQsIDI5NCBpbnNlcnRpb25zKCspLCA2NyBk
+ZWxldGlvbnMoLSkKPiAKPiBbc25pcF0KPiAKPj4gK3N0YXRpYyBpbnQgdGVncmFfaW9fcGFkc190
+b192b2x0YWdlX2JpdChjb25zdCBzdHJ1Y3QgdGVncmFfcG1jX3NvYyAqc29jLAo+PiArCQkJCQll
+bnVtIHRlZ3JhX2lvX3BhZHMgaWQpCj4+ICt7Cj4+ICsJLyogVDIxMCBvbmx5IHN1cHBvcnRzIGlv
+LXBhZCB2b2x0YWdlIGNvbmZpZyBiaXQgKi8KPj4gKwlpZiAoc29jLT5pb19wYWRzX3NvY19tYXNr
+ICE9IFRFR1JBX0lPX1BBRFNfVDIxMCkKPj4gIAkJcmV0dXJuIC1FSU5WQUw7Cj4gCj4gSWYgdGhp
+cyBpcyBvbmx5IHN1cHBvcnRlZCBmb3IgVGVncmEyMTAsIHNob3VsZCB0aGVzZSB2b2x0YWdlIGZ1
+bmN0aW9ucwo+IGJlIGRlcGVuZGVudCBvbiBDT05GSUdfQVJDSF9URUdSQV8yMTBfU09DPyBJZiBz
+bywgdGhlbiBJIGFtIGFsc28KPiB3b25kZXJpbmcgaWYgd2Ugc2hvdWxkIGJvdGhlciBoYXZpbmcg
+dGhlIG1hc3NpdmUgbG9vay11cCB0YWJsZSBhbmQganVzdAo+IGhhdmUgYSBzbWFsbGVyIHRhYmxl
+IHRvIHRyYW5zbGF0ZSB0aGUgSUQgdG8gYml0IGZvciB2b2x0YWdlIGFzIHlvdSBoYWQKPiBpbiB5
+b3VyIGluaXRpYWwgcGF0Y2g/IFNlZW1zIHRoZXJlIGFyZSBmZXcgaW8tcGFkcyB0aGF0IHN1cHBv
+cnQgdGhlCj4gdm9sdGFnZSBjb25maWd1cmF0aW9uLgo+IAo+ICsjZGVmaW5lIFRFR1JBX0lPX1JB
+SUxfVk9MVEFHRShfaW9fcmFpbCwgX3BvcykJCVwKPiArewkJCQkJCQlcCj4gKwkuaW9fcmFpbF9p
+ZCA9IFRFR1JBX0lPX1JBSUxfIyNfaW9fcmFpbCwJCVwKPiArCS5iaXRfcG9zaXRpb24gPSBfcG9z
+LAkJCQlcCj4gK30KPiArCj4gK3N0YXRpYyBzdHJ1Y3QgdGVncmFfaW9fcmFpbF92b2x0YWdlX2Jp
+dF9pbmZvCj4gdGVncmEyMTBfaW9fcmFpbF92b2x0YWdlX2luZm9bXSA9IHsKPiArCVRFR1JBX0lP
+X1JBSUxfVk9MVEFHRShTRE1NQzEsIDEyKSwKPiArCVRFR1JBX0lPX1JBSUxfVk9MVEFHRShTRE1N
+QzMsIDEzKSwKPiArCVRFR1JBX0lPX1JBSUxfVk9MVEFHRShBVURJT19IViwgMTgpLAo+ICsJVEVH
+UkFfSU9fUkFJTF9WT0xUQUdFKERNSUMsIDIwKSwKPiArCVRFR1JBX0lPX1JBSUxfVk9MVEFHRShH
+UElPLCAyMSksCj4gKwlURUdSQV9JT19SQUlMX1ZPTFRBR0UoU1BJX0hWLCAyMyksCj4gK307CgpT
+b3JyeSwgSSBmb3Jnb3QgdGhhdCB3ZSBuZWVkIHRoZSBiaWcgbG9vay11cCB0YWJsZSB0byBkZXRl
+cm1pbmUgaWYgdGhlCkRQRCBiaXRzIGFyZSB2YWxpZCBmb3IgYSBnaXZlbiBTT0MgYXMgc29tZSBt
+aWdodCBub3QgYmUuIFNvIG1heSBiZSB0aGlzCnNtYWxsZXIgbWFwcGluZyB0YWJsZSBpcyBub3Qg
+c3VmZmljaWVudCBhZnRlciBhbGwuCgpKb24KCi0tIApudnB1YmxpYwpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
+aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
