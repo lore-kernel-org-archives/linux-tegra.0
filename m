@@ -1,114 +1,103 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V5 3/3] soc/tegra: pmc: Add support for IO pads power
- state and voltage
-Date: Fri, 20 May 2016 09:58:10 +0100
-Message-ID: <573ED1A2.1050205@nvidia.com>
-References: <1463055706-17744-1-git-send-email-ldewangan@nvidia.com>
- <1463055706-17744-4-git-send-email-ldewangan@nvidia.com>
- <573DE19C.8090704@nvidia.com> <573DE61D.6080203@nvidia.com>
+Subject: Re: [PATCH V4 0/9] Add support for Tegra210 AGIC
+Date: Fri, 20 May 2016 10:07:40 +0100
+Message-ID: <573ED3DC.6010900@nvidia.com>
+References: <1463066372-13115-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <573DE61D.6080203-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1463066372-13115-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Marc,
 
-On 19/05/16 17:13, Laxman Dewangan wrote:
-> On Thursday 19 May 2016 09:24 PM, Jon Hunter wrote:
->> On 12/05/16 13:21, Laxman Dewangan wrote:
->>> The IO pins of Tegra SoCs are grouped for common control of IO
->>> interface like setting voltage signal levels and power state of
->>> the interface. The group is generally referred as IO pads. The
->>> power state and voltage control of IO pins can be done at IO pads
->>> level.
->>>
->>> Tegra generation SoC supports the power down of IO pads when it
->>> is not used even in the active state of system. This saves power
->>> from that IO interface. Also it supports multiple voltage level
->>> in IO pins for interfacing on some of pads. The IO pad voltage is
->>> automatically detected till T124, hence SW need not to configure
->>> this. But from T210, the automatically detection logic has been
->>> removed, hence SW need to explicitly set the IO pad voltage into
->>> IO pad configuration registers.
->>>
->>> Add support to set the power states and voltage level of the IO pads
->>> from client driver. The implementation for the APIs are in generic
->>> which is applicable for all generation os Tegra SoC.
->>>
->>> IO pads ID and information of bit field for power state and voltage
->>> level controls are added for Tegra124, Tegra132 and Tegra210. The SOR
->>> driver is modified to use the new APIs.
->>>
->>> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>
->>> ---
->>> Changes from V1:
->>> This is reworked on earlier path to have separation between IO rails and
->>> io pads and add power state and voltage control APIs in single call.
->>>
->>> Changes from V2:
->>> - Remove the tegra_io_rail_power_off/on() apis and change client
->>> (sor) driver
->>> to use the new APIs for IO pad power.
->>> - Remove the TEGRA_IO_RAIL_ macros.
->>>
->>> Changes from V3:
->>> - Make all pad_id/io_pad_id to id.
->>> - tegra_io_pad_ -> tegra_io_pads
->>> - dpd_bit -> bit, pwr_mask/bit to mask/bit.
->>> - Rename function to tegra_io_pads_{set,get}_voltage_config
->>> - Make the io pad tables common for all SoC.
->>> - Make io_pads enums.
->>> - Add enums for voltage.
->>>
->>> Changes from V4:
->>> - IO_PAD->IO_PADS
->>> - TEGRA_IO_PADS_POWER_SOURCE_ -> TEGRA_IO_PADS_VCONF_
->>> ---
->>>   drivers/gpu/drm/tegra/sor.c |   8 +-
->>>   drivers/soc/tegra/pmc.c     | 221
->>> ++++++++++++++++++++++++++++++++++++++------
->>>   include/soc/tegra/pmc.h     | 132 ++++++++++++++++++--------
->>>   3 files changed, 294 insertions(+), 67 deletions(-)
->> [snip]
->>
->>> +static int tegra_io_pads_to_voltage_bit(const struct tegra_pmc_soc
->>> *soc,
->>> +                    enum tegra_io_pads id)
->>> +{
->>> +    /* T210 only supports io-pad voltage config bit */
->>> +    if (soc->io_pads_soc_mask != TEGRA_IO_PADS_T210)
->>>           return -EINVAL;
->> If this is only supported for Tegra210, should these voltage functions
->> be dependent on CONFIG_ARCH_TEGRA_210_SOC? If so, then I am also
->> wondering if we should bother having the massive look-up table and just
->> have a smaller table to translate the ID to bit for voltage as you had
->> in your initial patch? Seems there are few io-pads that support the
->> voltage configuration.
->>
-> 
-> Voltage config supported from T210 onwards. Earlier it was auto detected
-> and so SW need not to write it.
-> 
-> I think let's have this as of now and we will make the different table
-> for voltage config in future when we add another chip support.
-
-Sorry, I don't follow, won't that be a massive churn to change the table
-again later?
-
-> We will not use the SOC config for this, we will use only compatible
-> property and its data for getting the support.
-
-Right, but this means that all these voltage functions are present in
-the kernel image for 32-bit Tegra devices that will never use them.
-Hence, I was suggesting that they should only be compiled for T210 onwards.
+Let me know if you have any thoughts on this.
 
 Cheers
 Jon
+
+On 12/05/16 16:19, Jon Hunter wrote:
+> The Tegra210 has a 2nd level interrupt controller located in a separate
+> power domain to the main GIC interrupt controller and hence requires
+> runtime-pm support.
+> 
+> Add a platform driver for the GICs that require runtime-pm and make the
+> necessary changes to the genirq and irqdomain core to support IRQ chips
+> that require runtime-pm.
+> 
+> This series is based upon Marc Z's irq/irqchip-v4.7 branch [0].
+> 
+> Changes since V3:
+> - Split the series into two, placing the clean-up/fixes patches into
+>   another series [1]. The remaining patches in this series are for
+>   adding runtime-pm support for irqchips and adding a platform driver
+>   of second level GICs.
+> - Dropped the patch to prevent early init of GICs if 'clocks' or
+>   'power-domains' properties are present and re-added the patch to add
+>   the compatibilty string for the Tegra210 AGIC.
+> 
+> Changes since V2:
+> - Corrected RPM support for irqchips in genirq core as pointed out by
+>   Kevin Hilman.
+> - Corrected patch to save the irq type when mapping the interrupt.
+> - Dropped changes to DT binding documentation and added patch to prevent
+>   early init of GICs if the 'clocks' and/or 'power-domains' DT
+>   properties are present (as we have discussed).
+> - Moved platform driver code into it's own source file.
+> - Separate changes for preparing for the platform driver into 3 patches
+>   in an attempt to make it more readable!
+> - Added fix for checking an interrupt descriptor is valid during IRQ
+>   setup.
+> 
+> Changes since V1:
+> - Updated GIC to only WARN and not return an error if configuring a PPI
+>   fails but will still return an error if an SPI fails (per discussion
+>   with Marc).
+> - Dropped change to mask sense bits for GIC-v3 (as this is not
+>   necessary)
+> - Split patch to avoid setting interrupt type when mapping the IRQ into
+>   two patches per TGLX's feedback.
+> - Changed name of irqchip device structure to "parent_device"
+> - Moved call to irq_chip_pm_get() outside of chip_bus_lock().
+> - Dropped patch to remove clock names from GIC DT documentation and
+>   added AGIC clock names.
+> - Update GIC platform driver to look-up clocks names from static list.
+> 
+> [0] http://git.kernel.org/cgit/linux/kernel/git/maz/arm-platforms.git/log/?h=irq/irqchip-4.7
+> [1] http://marc.info/?l=linux-tegra&m=146289329915585&w=2
+> 
+> Jon Hunter (9):
+>   irqdomain: Fix handling of type settings for existing mappings
+>   genirq: Look-up trigger type if not specified by caller
+>   irqdomain: Don't set type when mapping an IRQ
+>   genirq: Add runtime power management support for IRQ chips
+>   irqchip/gic: Isolate early GIC initialisation code
+>   irqchip/gic: Add helper function for chip initialisation
+>   irqchip/gic: Prepare for adding platform driver
+>   dt-bindings: arm-gic: Add documentation for Tegra210 AGIC
+>   irqchip/gic: Add platform driver for non-root GICs that require RPM
+> 
+>  .../bindings/interrupt-controller/arm,gic.txt      |   3 +-
+>  drivers/irqchip/Kconfig                            |   6 +
+>  drivers/irqchip/Makefile                           |   1 +
+>  drivers/irqchip/irq-gic-common.c                   |   4 +-
+>  drivers/irqchip/irq-gic-pm.c                       | 187 +++++++++++++++++++++
+>  drivers/irqchip/irq-gic.c                          | 136 ++++++++++-----
+>  drivers/irqchip/irq-gic.h                          |  30 ++++
+>  include/linux/irq.h                                |   4 +
+>  include/linux/irqdomain.h                          |   3 +
+>  kernel/irq/chip.c                                  |  35 ++++
+>  kernel/irq/internals.h                             |   1 +
+>  kernel/irq/irqdomain.c                             |  58 ++++++-
+>  kernel/irq/manage.c                                |  38 ++++-
+>  13 files changed, 451 insertions(+), 55 deletions(-)
+>  create mode 100644 drivers/irqchip/irq-gic-pm.c
+>  create mode 100644 drivers/irqchip/irq-gic.h
+> 
 
 -- 
 nvpublic
