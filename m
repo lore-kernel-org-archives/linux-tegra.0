@@ -1,20 +1,21 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Jon Hunter <jonathanh@nvidia.com>
 Subject: Re: [PATCH V6 3/3] soc/tegra: pmc: Add support for IO pads power
  state and voltage
-Date: Fri, 20 May 2016 15:06:30 +0100
-Message-ID: <573F19E6.8000507@nvidia.com>
+Date: Fri, 20 May 2016 15:11:10 +0100
+Message-ID: <573F1AFE.3080906@nvidia.com>
 References: <1463745564-19297-1-git-send-email-ldewangan@nvidia.com>
  <1463745564-19297-4-git-send-email-ldewangan@nvidia.com>
  <573F11F5.7010702@nvidia.com> <573F125A.20102@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <573F125A.20102-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <573F125A.20102@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, thierry.reding@gmail.com, airlied@linux.ie, swarren@wwwdotorg.org
+Cc: gnurou@gmail.com, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
+
 
 
 On 20/05/16 14:34, Laxman Dewangan wrote:
@@ -40,51 +41,9 @@ On 20/05/16 14:34, Laxman Dewangan wrote:
 > but for function, it can have in single line.
 > 
 > Anyhow, I will correct in next cycle.
-> 
-> 
->>
->>> +static inline int tegra_io_pads_to_dpd_bit(const struct
->>> tegra_pmc_soc *soc,
->>> +                       enum tegra_io_pads id)
->>>   {
->>> -    unsigned long rate, value;
->>> +    if (tegra_io_pads_configs[id].soc_mask & soc->io_pads_soc_mask)
->>> +        return tegra_io_pads_configs[id].dpd_config_bit;
->> I realise now that we are not checking if 'id' is greater than
->> TEGRA_IO_PADS_MAX anywhere. This should probably be handled here.
-> 
-> Do we need to check? Our parameter type is enum type and hence it is not
-> expected to have outside of the MAX.
-> I think it will be unnecessarily check here.
 
-The enum does not prevent someone from passing a large number so I think
-we should check.
+Actually, this should be in kernel-doc format [0].
 
->>>  
->>> +    int ret;
->>> +
->>> +    ret = tegra_io_pads_to_dpd_bit(pmc->soc, id);
->>> +    if (ret < 0)
->>> +        return ret;
->>> +
->>> +    *bit = ret % 32;
->>> +
->>> +    if (*bit < 32) {
->> Isn't bit always less than 32 here now?
->>
-> Yaah this is bug. should be if (ret < 32)
-> 
-> My testcase has the pad name whose dpd bit is < 32 and hence did not
-> catch it..
-> 
-> BTW, do you have the T124 based platform for SOR testing? I have T210
-> platforms where I am testing.
-
-Yes, I should be able to test on the t124-nyan-big.
-
-Cheers
 Jon
 
-
--- 
-nvpublic
+[0] Documentation/kernel-doc-nano-HOWTO.txt
