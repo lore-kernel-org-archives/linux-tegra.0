@@ -1,62 +1,30 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH V7 3/3] soc/tegra: pmc: Add support for IO pads power
- state and voltage
-Date: Tue, 24 May 2016 11:48:51 +0100
-Message-ID: <57443193.5010900@nvidia.com>
-References: <1463755530-20941-1-git-send-email-ldewangan@nvidia.com>
- <1463755530-20941-4-git-send-email-ldewangan@nvidia.com>
- <5742C773.6080609@nvidia.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH ] pinctrl: tegra: Get rid of parked_reg
+Date: Tue, 24 May 2016 13:00:47 +0200
+Message-ID: <CACRpkdbPaYH+w9R7UrTOXi_Xg_yKqJHeo=GvryNKQhAORTJjVA@mail.gmail.com>
+References: <1463060569-9213-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5742C773.6080609@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, thierry.reding@gmail.com, airlied@linux.ie, swarren@wwwdotorg.org
-Cc: gnurou@gmail.com, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1463060569-9213-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Thu, May 12, 2016 at 3:42 PM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
 
-On 23/05/16 10:03, Jon Hunter wrote:
-> 
-> On 20/05/16 15:45, Laxman Dewangan wrote:
->> The IO pins of Tegra SoCs are grouped for common control of IO
->> interface like setting voltage signal levels and power state of
->> the interface. The group is generally referred as IO pads. The
->> power state and voltage control of IO pins can be done at IO pads
->> level.
->>
->> Tegra generation SoC supports the power down of IO pads when it
->> is not used even in the active state of system. This saves power
->> from that IO interface. Also it supports multiple voltage level
->> in IO pins for interfacing on some of pads. The IO pad voltage is
->> automatically detected till T124, hence SW need not to configure
->> this. But from T210, the automatically detection logic has been
->> removed, hence SW need to explicitly set the IO pad voltage into
->> IO pad configuration registers.
->>
->> Add support to set the power states and voltage level of the IO pads
->> from client driver. The implementation for the APIs are in generic
->> which is applicable for all generation os Tegra SoC.
->>
->> IO pads ID and information of bit field for power state and voltage
->> level controls are added for Tegra124, Tegra132 and Tegra210. The SOR
->> driver is modified to use the new APIs.
->>
->> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
-> 
-> Thanks. I will defer to Thierry on how this should be organised for
-> merging but I am happy with the code. There is one minor typo below, but
-> otherwise ...
-> 
-> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> Remove the use of parked_reg and use parked_bit for to know
+> whether field is supported or not.
+>
+> This is fix for the patch
+> commit 1d18a3f0f0809f6c71f1f6e9e268ee904ce0b588
+> "pinctrl: tegra: avoid parked_reg and parked_bank
+>
+> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-I have tested this on a Tegra124 Nyan Big and verified that the SOR IO
-pads are turning on and off and no errors are seen. I have also boot
-tested this series on our upstream test farm and not seen any
-regressions. So ...
+I reverted my revert and applied this fix on top, let's hope it
+works...
 
-Tested-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
-Jon
+Yours,
+Linus Walleij
