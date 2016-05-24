@@ -1,30 +1,66 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH ] pinctrl: tegra: Get rid of parked_reg
-Date: Tue, 24 May 2016 13:00:47 +0200
-Message-ID: <CACRpkdbPaYH+w9R7UrTOXi_Xg_yKqJHeo=GvryNKQhAORTJjVA@mail.gmail.com>
-References: <1463060569-9213-1-git-send-email-ldewangan@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH V3 0/2] Add support for Tegra210 ADMA
+Date: Tue, 24 May 2016 12:19:54 +0100
+Message-ID: <574438DA.2080307@nvidia.com>
+References: <1444980919-20331-1-git-send-email-jonathanh@nvidia.com>
+ <CAP=VYLpnREnW1a6++0qW=1N6EcUpKTTfiCnfbuA3DHktKmf22Q@mail.gmail.com>
+ <20160524035329.GO2735@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1463060569-9213-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160524035329.GO2735@localhost>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Vinod Koul <vinod.koul@intel.com>, Paul Gortmaker <paul.gortmaker@windriver.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, May 12, 2016 at 3:42 PM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+Hi Paul,
 
-> Remove the use of parked_reg and use parked_bit for to know
-> whether field is supported or not.
->
-> This is fix for the patch
-> commit 1d18a3f0f0809f6c71f1f6e9e268ee904ce0b588
-> "pinctrl: tegra: avoid parked_reg and parked_bank
->
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 24/05/16 04:53, Vinod Koul wrote:
+> On Fri, May 20, 2016 at 02:51:14PM -0400, Paul Gortmaker wrote:
+>> On Fri, Oct 16, 2015 at 3:35 AM, Jon Hunter <jonathanh@nvidia.com> wrote:
+>>> Add support for the Tegra210 Audio DMA (ADMA) controller. This was
+>>> originally distributed as an RFC [0] based upon the existing tegra
+>>> APB-DMA driver. Since then the driver has been significantly
+>>> re-worked to remove a lot of the unused/unnecessary functionality
+>>> that was carried over from the APB-DMA. This version is no longer
+>>> derived from the APB-DMA driver and has been updated to use the
+>>> virt-dma helpers.
+>>
+>> Does this driver make sense to support modular use?  I ask because
+>> it inherits the inconsistency of being a bool Kconfig but using some
+>> modular infrastructure from the APB driver.
+>>
+>> Sometime ago  when I sent patches to dma/* to "demodularize" other
+>> bools, the general consensus of reviewers/maintainers was that
+>> (to paraphrase) "if it can be modular, it should be modular" -- in
+>> order to keep the multi platform bzImage size as small as can be.
+>>
+>> I did a quick test with it tristate, but that fails as follows:
+>>
+>> ERROR: "pm_clk_add_clk" [drivers/dma/tegra210-adma.ko] undefined!
+>> ERROR: "pm_clk_create" [drivers/dma/tegra210-adma.ko] undefined!
+>> ERROR: "pm_clk_destroy" [drivers/dma/tegra210-adma.ko] undefined!
+>> ERROR: "pm_clk_suspend" [drivers/dma/tegra210-adma.ko] undefined!
+>> ERROR: "pm_clk_resume" [drivers/dma/tegra210-adma.ko] undefined!
 
-I reverted my revert and applied this fix on top, let's hope it
-works...
+Thanks for reporting.
 
-Yours,
-Linus Walleij
+>> ...since drivers/base/power/clock_ops.c does not currently have any of
+>> those fcns as EXPORT_SYMBOL.  Not a show-stopper, but I don't
+>> want to blindly export those fcns if it doesn't make sense.
+> 
+> Sure, patch is welcome!
+
+I don't have strong feeling either way. I think that long-term it would
+be nice to add EXPORTS because I could see a lot of drivers starting to
+use these. However, seeing that the ADMA is currently the only one it is
+fine to demodularise the ADMA driver for now. Let me know if you want me
+to send a patch or not.
+
+Cheers
+Jon
+
+-- 
+nvpublic
