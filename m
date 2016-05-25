@@ -1,64 +1,140 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH] arm64: tegra: Fix CPU compatible string for Tegra132
-Date: Wed, 25 May 2016 09:42:28 -0600
-Message-ID: <5745C7E4.2050908@wwwdotorg.org>
-References: <20160523074221.7135-1-josephl@nvidia.com>
- <574509E7.4030208@nvidia.com>
+From: Thierry Reding <treding@nvidia.com>
+Subject: Re: [PATCH] arm64: defconfig: Enable cros-ec and battery driver
+Date: Wed, 25 May 2016 17:46:19 +0200
+Message-ID: <20160525154618.GD13765@ulmo.ba.sec>
+References: <1462290318-9074-1-git-send-email-rklein@nvidia.com>
+ <5744609A.1000008@nvidia.com>
+ <324dfe74-4fc0-d500-91ac-2a802562e92f@nvidia.com>
+ <5745853B.1040304@nvidia.com>
+ <57458693.3050700@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <574509E7.4030208-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="eqp4TxRxnD4KrmFZ"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <57458693.3050700@nvidia.com>
+Content-Disposition: inline
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Rhyland Klein <rklein@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/24/2016 08:11 PM, Joseph Lo wrote:
-> On 05/23/2016 03:42 PM, Joseph Lo wrote:
->> As per commit f634da375fc96 ("Documentation: DT bindings: add nvidia,
->> tegra132-denver compatible string"), fixing the CPU compatible string for
->> Tegra132 to match the binding document currently.
->>
->> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>   arch/arm64/boot/dts/nvidia/tegra132.dtsi | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/nvidia/tegra132.dtsi
->> b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
->> index 2013f8916084..7b1cdc029de3 100644
->> --- a/arch/arm64/boot/dts/nvidia/tegra132.dtsi
->> +++ b/arch/arm64/boot/dts/nvidia/tegra132.dtsi
->> @@ -964,13 +964,13 @@
->>
->>           cpu@0 {
->>               device_type = "cpu";
->> -            compatible = "nvidia,denver", "arm,armv8";
->> +            compatible = "nvidia,tegra132-denver", "arm,armv8";
->
-> Hi Stephen, Thierry,
->
-> Should we fix this or fix the compatible string in the binding document
-> as just "nvidia,denver" to represent all the Devner CPU revisions just
-> like some other CPUs did? e.g. arm,cortex-a57, which represents all the
-> A57 revisions.
+--eqp4TxRxnD4KrmFZ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I would expect compatible to be:
+On Wed, May 25, 2016 at 12:03:47PM +0100, Jon Hunter wrote:
+>=20
+> On 25/05/16 11:58, Jon Hunter wrote:
+>=20
+> ...
+>=20
+> > Looking at this a bit more I am wondering if we should prevent the
+> > battery for being polled before the registration has completed ...
+> >=20
+> > diff --git a/drivers/power/bq27xxx_battery.c
+> > b/drivers/power/bq27xxx_battery.c
+> > index 45f6ebf88df6..32649183ecd9 100644
+> > --- a/drivers/power/bq27xxx_battery.c
+> > +++ b/drivers/power/bq27xxx_battery.c
+> > @@ -871,12 +871,14 @@ static int bq27xxx_battery_get_property(struct
+> > power_supply *psy,
+> >         int ret =3D 0;
+> >         struct bq27xxx_device_info *di =3D power_supply_get_drvdata(psy=
+);
+> >=20
+> > -       mutex_lock(&di->lock);
+> > -       if (time_is_before_jiffies(di->last_update + 5 * HZ)) {
+> > -               cancel_delayed_work_sync(&di->work);
+> > -               bq27xxx_battery_poll(&di->work.work);
+> > +       if (di->bat) {
+> > +               mutex_lock(&di->lock);
+> > +               if (time_is_before_jiffies(di->last_update + 5 * HZ)) {
+> > +                       cancel_delayed_work_sync(&di->work);
+> > +                       bq27xxx_battery_poll(&di->work.work);
+> > +               }
+> > +               mutex_unlock(&di->lock);
+> >         }
+> > -       mutex_unlock(&di->lock);
+>=20
+> Alternatively, maybe the following is simpler ...
+>=20
+> diff --git a/drivers/power/bq27xxx_battery.c
+> b/drivers/power/bq27xxx_battery.c
+> index 45f6ebf88df6..8a713b52e9f6 100644
+> --- a/drivers/power/bq27xxx_battery.c
+> +++ b/drivers/power/bq27xxx_battery.c
+> @@ -733,7 +733,8 @@ static void bq27xxx_battery_poll(struct work_struct
+> *work)
+>                         container_of(work, struct bq27xxx_device_info,
+>                                      work.work);
+>=20
+> -       bq27xxx_battery_update(di);
+> +       if (di->bat)
+> +               bq27xxx_battery_update(di);
 
-compatible = "nvidia,tegra132-denver", "nvidia,denver", "arm,armv8";
+How about this, which should be the most minimal to fix it (though it's
+completely untested) and still update the internal cache (it just won't
+signal an supply change, which wouldn't work at this point anyway). The
+patch makes up for the supply change notification by doing that instead
+of a full bq27xxx_battery_update() at the end of ->probe(). This should
+take care of always sending out a uevent on successful probe, whereas a
+bq27xxx_battery_update() at the end of ->probe() may not send one if it
+is presented with the same data.
 
-The "nvidia,denver" entry is already present, and hence probably 
-shouldn't be removed. It can represent "Denver 1.0". We should add the 
-T132 entry to indicate the specific implementation. Admittedly right now 
-there's a 1:1 relation between SoC and Denver version. Either/both of 
-those could in theory be required to trigger specific bug-fixes/WARs.
+Thierry
+--- >8 ---
+diff --git a/drivers/power/bq27xxx_battery.c b/drivers/power/bq27xxx_batter=
+y.c
+index 45f6ebf88df6..df1b4cb2bbc2 100644
+--- a/drivers/power/bq27xxx_battery.c
++++ b/drivers/power/bq27xxx_battery.c
+@@ -717,7 +717,13 @@ void bq27xxx_battery_update(struct bq27xxx_device_info=
+ *di)
+ 			di->charge_design_full =3D bq27xxx_battery_read_dcap(di);
+ 	}
+=20
+-	if (di->cache.capacity !=3D cache.capacity)
++	/*
++	 * This function ends up being called while the power supply is being
++	 * registered, hence di->bat will be NULL on the first call, causing
++	 * power_supply_changed() to oops. Avoid that by checking if we have
++	 * been registered already or not.
++	 */
++	if (di->bat && di->cache.capacity !=3D cache.capacity)
+ 		power_supply_changed(di->bat);
+=20
+ 	if (memcmp(&di->cache, &cache, sizeof(cache)) !=3D 0)
+@@ -984,7 +990,7 @@ int bq27xxx_battery_setup(struct bq27xxx_device_info *d=
+i)
+=20
+ 	dev_info(di->dev, "support ver. %s enabled\n", DRIVER_VERSION);
+=20
+-	bq27xxx_battery_update(di);
++	power_supply_changed(di->bat);
+=20
+ 	return 0;
+ }
 
-For later chips which have a different Denver version, I'd expect to see 
-something like:
+--eqp4TxRxnD4KrmFZ
+Content-Type: application/pgp-signature; name="signature.asc"
 
-compatible = "nvidia,tegraNNN-denver", "nvidia,denverMMM", "arm,armv8";
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-... where NNN is the SoC version/name and MMM is the Denver version. 
-There could be extra entries in the property if the new versions are 
-backwards-compatible with old versions.
+iQIcBAABCAAGBQJXRcjIAAoJEN0jrNd/PrOh8HEQALzJSiiQiDPk9ORMZjBE+YSG
+huj3pp3It6vU+uiQ8AfsyEMQ3b9bRpq+E4o+Mbnwziby4FvGji8ulDwZp/J6+P/l
+6M/7/+9E1ZrisFTWjWexsnAXFCl82OcqJBdcCkG6dSIzVlp4QT8j4oHxTVLk4OOd
+9UyywIOBrVzytHs4M7fIJDe1nttM9JAQ1JvT9T+MEloiL9Vz90YbhazgQUJ2dTmd
+oCC3eTzmRxdtm8ZmXQtElXHJNfX/cIkEqg7dVMANWC0CxA1CEeqXXnwe1PWEXPCW
+z/WkUzoUREFPF7fJjOxXpvVgiY0p8ypSvm0drrvpAB7CA3I9XLohdSGYgqVyl/lB
+v9+yuu3jrBAReLo8yGqFtuhxLM2wUZHL8v/YiBYDvgX27xbvi7pD5G4VREXX6X+9
+09I489e2KunpQc8Gh0F0vgqxJ+x0LkVgzmAeEe5SVJCK9Ww0GHktV28drWuGB+Bo
+oRy93GICQxOiyiLtmi9PlA5QrIlD4oDLYBx59tUpKLy3W8ZuBTOBJmhq8ZVQYgNx
+aKP5UP2wdmETEFgIzcDmysA1KYSsIMiikHCuqkEHmYSTYghn+83nKp+SrH/EMipk
+Nk85Iage9xAtBOIH6KZyfDF2l9zJ7+lL8tQix684RMd5zNQIr1YefI90MBnHUVlB
+wWWove3Q67sITMkhHdmK
+=YJHu
+-----END PGP SIGNATURE-----
+
+--eqp4TxRxnD4KrmFZ--
