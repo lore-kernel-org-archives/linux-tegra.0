@@ -1,7 +1,7 @@
 From: Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 08/11] clk: tegra210: Mark required clks as CRITICAL
-Date: Wed, 25 May 2016 18:24:28 -0400
-Message-ID: <1464215071-28696-9-git-send-email-rklein@nvidia.com>
+Subject: [PATCH 10/11] clk: Show CRITICAL clks in clk_summary output
+Date: Wed, 25 May 2016 18:24:30 -0400
+Message-ID: <1464215071-28696-11-git-send-email-rklein@nvidia.com>
 References: <1464215071-28696-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,25 +12,38 @@ To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding <thierry.reding
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Rhyland Klein <rklein@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Mark clks that are required to be on as CRITICAL clks.
+Add a '^' character to the beginning of clk entries that are for
+CRITICAL clks.
 
 Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- drivers/clk/tegra/clk-tegra210.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/clk.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index b8551813ec43..156dc8ec6bf6 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2655,7 +2655,7 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 874c7dd8ef66..22dd0ca1e491 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1948,8 +1948,9 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
+ 	if (!c)
+ 		return;
  
- 	/* PLLRE */
- 	clk = tegra_clk_register_pllre_tegra210("pll_re_vco", "pll_ref",
--						clk_base, pmc, 0,
-+						clk_base, pmc, CLK_IS_CRITICAL,
- 						&pll_re_vco_params,
- 						&pll_re_lock, pll_ref_freq);
- 	clk_register_clkdev(clk, "pll_re_vco", NULL);
+-	seq_printf(s, "%*s%-*s %11d %12d %11lu %10lu %-3d\n",
+-		   level * 3 + 1, "",
++	seq_printf(s, "%s%*s%-*s %11d %12d %11lu %10lu %-3d\n",
++		   (c->flags & CLK_IS_CRITICAL ? "^" : ""),
++		   level * 3 + (c->flags & CLK_IS_CRITICAL ? 0 : 1), "",
+ 		   30 - level * 3, c->name,
+ 		   c->enable_count, c->prepare_count, clk_core_get_rate(c),
+ 		   clk_core_get_accuracy(c), clk_core_get_phase(c));
+@@ -1985,6 +1986,8 @@ static int clk_summary_show(struct seq_file *s, void *data)
+ 
+ 	clk_prepare_unlock();
+ 
++	seq_puts(s, "clocks starting with ^ are marked as CRITICAL\n");
++
+ 	return 0;
+ }
+ 
 -- 
 1.9.1
