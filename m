@@ -1,72 +1,49 @@
 From: Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 03/11] clk: tegra20: clean up init_table
-Date: Wed, 25 May 2016 18:24:23 -0400
-Message-ID: <1464215071-28696-4-git-send-email-rklein@nvidia.com>
-References: <1464215071-28696-1-git-send-email-rklein@nvidia.com>
+Subject: [PATCH 00/11] Switch to using CRITICAL clks for Tegra
+Date: Wed, 25 May 2016 18:24:20 -0400
+Message-ID: <1464215071-28696-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1464215071-28696-1-git-send-email-rklein@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Rhyland Klein <rklein@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Remove entries from the init_table where the clks are now defined
-as CRITICAL clks, if we were only enabling them in the init_table.
+Switch to defining clks that need to be on as CRITICAL rather than
+using the init_tables defined to enable clks. Some of these may be
+able to be converted to HAND_OFF clks, when that is supported.
 
-Remove the flag to signal to enable CRITICAL clks if they are still
-needed in the init_table to set other properties.
+I added a patch to mark CRITICAL clks in the clk_summary table, figuring
+it would be handy to be able to easily tell what clks are CRITICAL
+through the table.
 
-Signed-off-by: Rhyland Klein <rklein@nvidia.com>
----
- drivers/clk/tegra/clk-tegra20.c | 29 ++++++++++++-----------------
- 1 file changed, 12 insertions(+), 17 deletions(-)
+I added a warning for using the init_table to enable clks. I considered
+removing it entirely, but I thought phasing it out might be better.
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 4a60a25d7e61..c5bbd84735b8 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1021,28 +1021,23 @@ static struct tegra_cpu_car_ops tegra20_cpu_car_ops = {
- };
- 
- static struct tegra_clk_init_table init_table[] __initdata = {
--	{ TEGRA20_CLK_PLL_P, TEGRA20_CLK_CLK_MAX, 216000000, 1 },
--	{ TEGRA20_CLK_PLL_P_OUT1, TEGRA20_CLK_CLK_MAX, 28800000, 1 },
--	{ TEGRA20_CLK_PLL_P_OUT2, TEGRA20_CLK_CLK_MAX, 48000000, 1 },
--	{ TEGRA20_CLK_PLL_P_OUT3, TEGRA20_CLK_CLK_MAX, 72000000, 1 },
--	{ TEGRA20_CLK_PLL_P_OUT4, TEGRA20_CLK_CLK_MAX, 24000000, 1 },
--	{ TEGRA20_CLK_PLL_C, TEGRA20_CLK_CLK_MAX, 600000000, 1 },
--	{ TEGRA20_CLK_PLL_C_OUT1, TEGRA20_CLK_CLK_MAX, 120000000, 1 },
--	{ TEGRA20_CLK_SCLK, TEGRA20_CLK_PLL_C_OUT1, 0, 1 },
--	{ TEGRA20_CLK_HCLK, TEGRA20_CLK_CLK_MAX, 0, 1 },
--	{ TEGRA20_CLK_PCLK, TEGRA20_CLK_CLK_MAX, 60000000, 1 },
--	{ TEGRA20_CLK_CSITE, TEGRA20_CLK_CLK_MAX, 0, 1 },
--	{ TEGRA20_CLK_EMC, TEGRA20_CLK_CLK_MAX, 0, 1 },
--	{ TEGRA20_CLK_CCLK, TEGRA20_CLK_CLK_MAX, 0, 1 },
-+	{ TEGRA20_CLK_PLL_P, TEGRA20_CLK_CLK_MAX, 216000000, 0 },
-+	{ TEGRA20_CLK_PLL_P_OUT1, TEGRA20_CLK_CLK_MAX, 28800000, 0 },
-+	{ TEGRA20_CLK_PLL_P_OUT2, TEGRA20_CLK_CLK_MAX, 48000000, 0 },
-+	{ TEGRA20_CLK_PLL_P_OUT3, TEGRA20_CLK_CLK_MAX, 72000000, 0 },
-+	{ TEGRA20_CLK_PLL_P_OUT4, TEGRA20_CLK_CLK_MAX, 24000000, 0 },
-+	{ TEGRA20_CLK_PLL_C, TEGRA20_CLK_CLK_MAX, 600000000, 0 },
-+	{ TEGRA20_CLK_PLL_C_OUT1, TEGRA20_CLK_CLK_MAX, 120000000, 0 },
-+	{ TEGRA20_CLK_SCLK, TEGRA20_CLK_PLL_C_OUT1, 0, 0 },
-+	{ TEGRA20_CLK_PCLK, TEGRA20_CLK_CLK_MAX, 60000000, 0 },
- 	{ TEGRA20_CLK_UARTA, TEGRA20_CLK_PLL_P, 0, 0 },
- 	{ TEGRA20_CLK_UARTB, TEGRA20_CLK_PLL_P, 0, 0 },
- 	{ TEGRA20_CLK_UARTC, TEGRA20_CLK_PLL_P, 0, 0 },
- 	{ TEGRA20_CLK_UARTD, TEGRA20_CLK_PLL_P, 0, 0 },
- 	{ TEGRA20_CLK_UARTE, TEGRA20_CLK_PLL_P, 0, 0 },
--	{ TEGRA20_CLK_PLL_A, TEGRA20_CLK_CLK_MAX, 56448000, 1 },
--	{ TEGRA20_CLK_PLL_A_OUT0, TEGRA20_CLK_CLK_MAX, 11289600, 1 },
--	{ TEGRA20_CLK_CDEV1, TEGRA20_CLK_CLK_MAX, 0, 1 },
--	{ TEGRA20_CLK_BLINK, TEGRA20_CLK_CLK_MAX, 32768, 1 },
-+	{ TEGRA20_CLK_PLL_A, TEGRA20_CLK_CLK_MAX, 56448000, 0 },
-+	{ TEGRA20_CLK_PLL_A_OUT0, TEGRA20_CLK_CLK_MAX, 11289600, 0 },
-+	{ TEGRA20_CLK_BLINK, TEGRA20_CLK_CLK_MAX, 32768, 0 },
- 	{ TEGRA20_CLK_I2S1, TEGRA20_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA20_CLK_I2S2, TEGRA20_CLK_PLL_A_OUT0, 11289600, 0 },
- 	{ TEGRA20_CLK_SDMMC1, TEGRA20_CLK_PLL_P, 48000000, 0 },
+Rhyland Klein (11):
+  clk: tegra: Switch to using critical/handoff clks
+  clk: tegra20: Mark required clks as CRITICAL
+  clk: tegra20: clean up init_table
+  clk: tegra30: Mark certain clks as critical
+  clk: tegra30: clean up init_table
+  clk: tegra114: clean up init_table
+  clk: tegra124: clean up init_table
+  clk: tegra210: Mark required clks as CRITICAL
+  clk: tegra210: clean up init_table
+  clk: Show CRITICAL clks in clk_summary output
+  clk: tegra: WARN if clk in the init_table has enable
+
+ drivers/clk/clk.c                        |  7 ++++--
+ drivers/clk/tegra/clk-tegra-periph.c     | 21 ++++++++++------
+ drivers/clk/tegra/clk-tegra-super-gen4.c | 12 ++++++----
+ drivers/clk/tegra/clk-tegra114.c         | 11 ++++-----
+ drivers/clk/tegra/clk-tegra124.c         | 19 ++++++---------
+ drivers/clk/tegra/clk-tegra20.c          | 41 +++++++++++++++-----------------
+ drivers/clk/tegra/clk-tegra210.c         | 28 ++++++++--------------
+ drivers/clk/tegra/clk-tegra30.c          | 28 ++++++++--------------
+ drivers/clk/tegra/clk.c                  |  5 ++++
+ 9 files changed, 81 insertions(+), 91 deletions(-)
+
 -- 
 1.9.1
