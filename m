@@ -1,41 +1,36 @@
 From: Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH 11/11] clk: tegra: WARN if clk in the init_table has enable
-Date: Wed, 25 May 2016 18:24:31 -0400
-Message-ID: <1464215071-28696-12-git-send-email-rklein@nvidia.com>
+Subject: [PATCH 08/11] clk: tegra210: Mark required clks as CRITICAL
+Date: Wed, 25 May 2016 18:24:28 -0400
+Message-ID: <1464215071-28696-9-git-send-email-rklein@nvidia.com>
 References: <1464215071-28696-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-clk-owner@vger.kernel.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <1464215071-28696-1-git-send-email-rklein@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
+Sender: linux-kernel-owner@vger.kernel.org
 To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Rhyland Klein <rklein@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Enabling clocks through the init_table mechanism is deprecated. Clocks
-that need to be enabled early and stay on should be marked as CRITICAL.
+Mark clks that are required to be on as CRITICAL clks.
 
 Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- drivers/clk/tegra/clk.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/clk/tegra/clk-tegra210.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-index b2cdd9a235f4..898fe922c742 100644
---- a/drivers/clk/tegra/clk.c
-+++ b/drivers/clk/tegra/clk.c
-@@ -262,6 +262,11 @@ void __init tegra_init_from_table(struct tegra_clk_init_table *tbl,
- 				WARN_ON(1);
- 			}
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index b8551813ec43..156dc8ec6bf6 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -2655,7 +2655,7 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
  
-+		/* Using the init_table to enable clks at boot is
-+		 * deprecated. Clks that need to be enabled through early
-+		 * boot, they should be marked as CLK_IS_CRITICAL
-+		 */
-+		WARN_ON_ONCE(tbl->state);
- 		if (tbl->state)
- 			if (clk_prepare_enable(clk)) {
- 				pr_err("%s: Failed to enable %s\n", __func__,
+ 	/* PLLRE */
+ 	clk = tegra_clk_register_pllre_tegra210("pll_re_vco", "pll_ref",
+-						clk_base, pmc, 0,
++						clk_base, pmc, CLK_IS_CRITICAL,
+ 						&pll_re_vco_params,
+ 						&pll_re_lock, pll_ref_freq);
+ 	clk_register_clkdev(clk, "pll_re_vco", NULL);
 -- 
 1.9.1
-
