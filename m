@@ -1,122 +1,92 @@
-From: Dong Aisheng <dongas86-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 3/3] mmc: core: support hs speed mode if hs200 mode fails
-Date: Thu, 26 May 2016 19:27:18 +0800
-Message-ID: <CAA+hA=SZQSjSU73_8sityJ_FZHngqaHZwspyg-iMBRzr_z7vRA@mail.gmail.com>
-References: <1461171092-30631-1-git-send-email-aisheng.dong@nxp.com>
-	<1461171092-30631-3-git-send-email-aisheng.dong@nxp.com>
-	<1463130397.3151.13.camel@toradex.com>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: Re: [PATCH] soc/tegra: pmc: Fix "scheduling while atomic"
+Date: Thu, 26 May 2016 14:42:33 +0300
+Message-ID: <e10126b7-de8d-3cee-a1be-d38eb1d7021f@gmail.com>
+References: <1460900051-3065-1-git-send-email-digetx@gmail.com>
+ <572B47DE.1090804@nvidia.com>
+ <c4a3fb3f-adb8-c167-d660-55d3f803c9c3@gmail.com> <5745C02A.20308@nvidia.com>
+ <d3552444-75b6-a624-589d-5391d7c09526@gmail.com>
+ <5746B6F7.9040101@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1463130397.3151.13.camel-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
-Cc: "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "aisheng.dong-3arQi8VN3Tc@public.gmane.org" <aisheng.dong-3arQi8VN3Tc@public.gmane.org>, "jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org" <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, "chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org" <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, "shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "haibo.chen-3arQi8VN3Tc@public.gmane.org" <haibo.chen-3arQi8VN3Tc@public.gmane.org>, "ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <5746B6F7.9040101@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, May 13, 2016 at 5:06 PM, Marcel Ziswiler
-<marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org> wrote:
-> On Thu, 2016-04-21 at 00:51 +0800, Dong Aisheng wrote:
->> Currently if mmc_select_hs200 mode switch fails, MMC core
->> can only use legacy mode to run the card.
->> Let's retry HS speed mode if HS200 fails.
->>
->> Before the fix:
->> mmc0: mmc_select_hs200 failed, error -74
->> : switch to mmc0 failed
->> mmc0: new MMC card at address 0001
->> mmcblk0: mmc0:0001 Q2J55L 7.12 GiB
->> mmcblk0boot0: mmc0:0001 Q2J55L partition 1 2.00 MiB
->> mmcblk0boot1: mmc0:0001 Q2J55L partition 2 2.00 MiB
->> mmcblk0rpmb: mmc0:0001 Q2J55L partition 3 4.00 MiB
->>  mmcblk0: p1 p2
->>
->> After the fix:
->> mmc0: mmc_select_hs200 failed, error -74
->> mmc0: new DDR MMC card at address 0001
->> mmcblk0: mmc0:0001 Q2J55L 7.12 GiB
->> mmcblk0boot0: mmc0:0001 Q2J55L partition 1 2.00 MiB
->> mmcblk0boot1: mmc0:0001 Q2J55L partition 2 2.00 MiB
->> mmcblk0rpmb: mmc0:0001 Q2J55L partition 3 4.00 MiB
->>  mmcblk0: p1 p2
->>
->> Signed-off-by: Dong Aisheng <aisheng.dong-3arQi8VN3Tc@public.gmane.org>
->> ---
->>  drivers/mmc/core/mmc.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
->> index 55c8201..b573dc7 100644
->> --- a/drivers/mmc/core/mmc.c
->> +++ b/drivers/mmc/core/mmc.c
->> @@ -1315,7 +1315,8 @@ static int mmc_select_timing(struct mmc_card
->> *card)
->>
->>       if (card->mmc_avail_type & EXT_CSD_CARD_TYPE_HS200)
->>               err = mmc_select_hs200(card);
->> -     else if (card->mmc_avail_type & EXT_CSD_CARD_TYPE_HS)
->> +
->> +     if (err && (card->mmc_avail_type & EXT_CSD_CARD_TYPE_HS))
->>               err = mmc_select_hs(card);
->>
->>       if (err && err != -EBADMSG)
+On 26.05.2016 11:42, Jon Hunter wrote:
 >
+> On 25/05/16 19:51, Dmitry Osipenko wrote:
+>> On 25.05.2016 18:09, Jon Hunter wrote:
 >
-> This seems to break on TK1 where eMMC so far was detected as an 8-bit
-> high speed MMC card. With this patch it reverts to detecting a 1-bit only
-> MMC card! This has been observed both on a NVIDIA's Jetson TK1 as well as
-> our new Toradex Apalis TK1 (CC Tegra mailing list, Jon Hunter and Lucas
-> Stach as well). So far T30 is not affected as there we are still doing
-> full HS200 with whatever issues that has.
+> ...
+>
+>>> If you are able to reproduce this on v3.18, then it would be good if you
+>>> could trace the CCF calls around this WARNING to see what is causing the
+>>> contention.
+>>
+>> I managed to reproduce it with some CCF "tracing".
+>> Full kmsg log is here: https://bpaste.net/show/d8ab7b7534b7
+>>
+>> Looks like CPU freq governor thread yields during clk_set_rate() and
+>> then CPU idle kicks in, taking the same mutex.
+>
+> On the surface that sounds odd to me, but without understanding the
+> details, I guess I don't know if this is a valid thing to be doing or
+> even how that actually works!
 >
 
-Oh, sorry, just found there's a logic error in the patch.
-It may wrongly bypass the HS mode select for non hs200 mode eMMCs
-due to the 'err' condition.
+The reason of that happening should be that I'm using clk PRE/POST rate change 
+notifiers in my DVFS driver that takes other mutexes and they could be locked, 
+causing schedule. I haven't mentioned it before, sorry.
 
-Will send a fixed version.
+ From drivers/clk/clk.c:
 
-Regards
-Dong Aisheng
+static struct task_struct *prepare_owner;
 
-> Before:
-> [    3.726894] sdhci: Secure Digital Host Controller Interface driver
-> [    3.733081] sdhci: Copyright(c) Pierre Ossman
-> [    3.737462] sdhci-pltfm: SDHCI platform and OF driver helper
-> [    3.753411] mmc0: Unknown controller version (3). You may experience
->  problems.
-> [    3.768345] mmc0: Invalid maximum block size, assuming 512 bytes
-> [    3.814896] mmc0: SDHCI controller on 700b0600.sdhci [700b0600.sdhci]
->  using ADMA 64-bit
-> [    3.892088] mmc0: new high speed MMC card at address 0001
-> [    3.899194] mmcblk0: mmc0:0001 SEM16G 14.7 GiB
-> [    3.904217] mmcblk0boot0: mmc0:0001 SEM16G partition 1 4.00 MiB
-> [    3.910645] mmcblk0boot1: mmc0:0001 SEM16G partition 2 4.00 MiB
-> [    3.917119] mmcblk0rpmb: mmc0:0001 SEM16G partition 3 4.00 MiB
-> [    3.926006]  mmcblk0: p1 p2 p3 p4 p5 p6 p7 p8 p9
-> root@jetson_tk1:~# cat /sys/kernel/debug/mmc0/ios
-> clock:          52000000 Hz
-> actual clock:   51000000 Hz
-> vdd:            21 (3.3 ~ 3.4 V)
-> bus mode:       2 (push-pull)
-> chip select:    0 (don't care)
-> power mode:     2 (on)
-> bus width:      3 (8 bits)
-> timing spec:    1 (mmc high-speed)
-> signal voltage: 0 (3.30 V)
-> driver type:    0 (driver type B)
+...
+
+/***           locking             ***/
+static void clk_prepare_lock(void)
+{
+	if (!mutex_trylock(&prepare_lock)) {
+		if (prepare_owner == current) {
+			prepare_refcnt++;
+			return;
+		}
+		mutex_lock(&prepare_lock);
+	}
+
+You can see that it would lock the mutex if prepare_owner != current, in my case 
+it's idle thread != interactive gov. thread.
+
+>> However, cpufreq_interactive governor is android specific governor and
+>> isn't in upstream kernel yet. Quick googling shows that recent
+>> "upstreaming" patch uses same cpufreq_interactive_speedchange_task:
+>> https://lkml.org/lkml/2016/5/20/41
 >
-> After:
-> [    3.899918] mmc0: new MMC card at address 0001
-> root@jetson_tk1:~# cat /sys/kernel/debug/mmc0/ios
-> clock:          25000000 Hz
-> actual clock:   24727273 Hz
-> vdd:            21 (3.3 ~ 3.4 V)
-> bus mode:       2 (push-pull)
-> chip select:    0 (don't care)
-> power mode:     2 (on)
-> bus width:      0 (1 bits)
-> timing spec:    0 (legacy)
-> signal voltage: 0 (3.30 V)
-> driver type:    0 (driver type B)
+> Do you know if this version they are upstreaming could also yield during
+> the clk_set_rate()?
 >
+
+I think it should be assumed that any clk_set_rate() potentially could. Please 
+correct me if I'm wrong.
+
+>> I'm not aware of other possibility to reproduce this issue, it needs
+>> some CCF interaction from a separate task. So the current upstream
+>> kernel shouldn't be affected, I guess.
+>
+> What still does not make sense to me is why any frequency changes have
+> not completed before we attempt to enter the LP2 state?
+>
+
+Why not? I don't see any CPUIDLE <-> CPUFREQ interlocking. Do you think it could 
+be harmful somehow?
+
+> OK, well may be we will hold off on this change for the moment.
+
+-- 
+Dmitry
