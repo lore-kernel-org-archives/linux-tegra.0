@@ -1,133 +1,122 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] arm64: defconfig: Enable cros-ec and battery driver
-Date: Thu, 26 May 2016 11:35:49 +0100
-Message-ID: <5746D185.30006@nvidia.com>
-References: <1462290318-9074-1-git-send-email-rklein@nvidia.com>
- <5744609A.1000008@nvidia.com>
- <324dfe74-4fc0-d500-91ac-2a802562e92f@nvidia.com>
- <5745853B.1040304@nvidia.com> <57458693.3050700@nvidia.com>
- <20160525154618.GD13765@ulmo.ba.sec>
- <9411ff33-e375-8286-8690-fe7fcac1c14b@nvidia.com>
- <5745CE75.7010603@nvidia.com> <5745D2DD.6080300@nvidia.com>
- <1c6df907-ea1f-201b-a36e-8311c5b2b3b1@nvidia.com>
- <5745E031.7010406@nvidia.com>
- <5c03a025-f31d-fa18-b973-0b026ede9c5c@nvidia.com>
+From: Dong Aisheng <dongas86-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 3/3] mmc: core: support hs speed mode if hs200 mode fails
+Date: Thu, 26 May 2016 19:27:18 +0800
+Message-ID: <CAA+hA=SZQSjSU73_8sityJ_FZHngqaHZwspyg-iMBRzr_z7vRA@mail.gmail.com>
+References: <1461171092-30631-1-git-send-email-aisheng.dong@nxp.com>
+	<1461171092-30631-3-git-send-email-aisheng.dong@nxp.com>
+	<1463130397.3151.13.camel@toradex.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5c03a025-f31d-fa18-b973-0b026ede9c5c-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1463130397.3151.13.camel-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+Cc: "linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "aisheng.dong-3arQi8VN3Tc@public.gmane.org" <aisheng.dong-3arQi8VN3Tc@public.gmane.org>, "jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org" <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, "chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org" <chris-OsFVWbfNK3isTnJN9+BGXg@public.gmane.org>, "shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <shawnguo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "haibo.chen-3arQi8VN3Tc@public.gmane.org" <haibo.chen-3arQi8VN3Tc@public.gmane.org>, "ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org" <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Fri, May 13, 2016 at 5:06 PM, Marcel Ziswiler
+<marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org> wrote:
+> On Thu, 2016-04-21 at 00:51 +0800, Dong Aisheng wrote:
+>> Currently if mmc_select_hs200 mode switch fails, MMC core
+>> can only use legacy mode to run the card.
+>> Let's retry HS speed mode if HS200 fails.
+>>
+>> Before the fix:
+>> mmc0: mmc_select_hs200 failed, error -74
+>> : switch to mmc0 failed
+>> mmc0: new MMC card at address 0001
+>> mmcblk0: mmc0:0001 Q2J55L 7.12 GiB
+>> mmcblk0boot0: mmc0:0001 Q2J55L partition 1 2.00 MiB
+>> mmcblk0boot1: mmc0:0001 Q2J55L partition 2 2.00 MiB
+>> mmcblk0rpmb: mmc0:0001 Q2J55L partition 3 4.00 MiB
+>>  mmcblk0: p1 p2
+>>
+>> After the fix:
+>> mmc0: mmc_select_hs200 failed, error -74
+>> mmc0: new DDR MMC card at address 0001
+>> mmcblk0: mmc0:0001 Q2J55L 7.12 GiB
+>> mmcblk0boot0: mmc0:0001 Q2J55L partition 1 2.00 MiB
+>> mmcblk0boot1: mmc0:0001 Q2J55L partition 2 2.00 MiB
+>> mmcblk0rpmb: mmc0:0001 Q2J55L partition 3 4.00 MiB
+>>  mmcblk0: p1 p2
+>>
+>> Signed-off-by: Dong Aisheng <aisheng.dong-3arQi8VN3Tc@public.gmane.org>
+>> ---
+>>  drivers/mmc/core/mmc.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+>> index 55c8201..b573dc7 100644
+>> --- a/drivers/mmc/core/mmc.c
+>> +++ b/drivers/mmc/core/mmc.c
+>> @@ -1315,7 +1315,8 @@ static int mmc_select_timing(struct mmc_card
+>> *card)
+>>
+>>       if (card->mmc_avail_type & EXT_CSD_CARD_TYPE_HS200)
+>>               err = mmc_select_hs200(card);
+>> -     else if (card->mmc_avail_type & EXT_CSD_CARD_TYPE_HS)
+>> +
+>> +     if (err && (card->mmc_avail_type & EXT_CSD_CARD_TYPE_HS))
+>>               err = mmc_select_hs(card);
+>>
+>>       if (err && err != -EBADMSG)
+>
+>
+> This seems to break on TK1 where eMMC so far was detected as an 8-bit
+> high speed MMC card. With this patch it reverts to detecting a 1-bit only
+> MMC card! This has been observed both on a NVIDIA's Jetson TK1 as well as
+> our new Toradex Apalis TK1 (CC Tegra mailing list, Jon Hunter and Lucas
+> Stach as well). So far T30 is not affected as there we are still doing
+> full HS200 with whatever issues that has.
+>
 
-On 25/05/16 20:44, Rhyland Klein wrote:
+Oh, sorry, just found there's a logic error in the patch.
+It may wrongly bypass the HS mode select for non hs200 mode eMMCs
+due to the 'err' condition.
 
-...
+Will send a fixed version.
 
-> And you might be completely correct, that is something that can only
-> happen specifically with the bq27xxx driver. In which case, making the
-> fix there should be the fix. I just know from the commit log (and some
-> previous work with power supply drivers) that the case of get_property
-> being called during registration has caused problems before. That's why
-> I am trying to make sure we cover the generic case if it exists. Using
-> scheduled work is common for power_supplies to regularly update their
-> status.
+Regards
+Dong Aisheng
 
-Yes but only appears to be the bq27xxx and seems to be related to this
-issue. To be honest, if the maintainers are ok with your proposal then
-it is fine with me, but I was just thinking that this feels like a
-bq27xxx issue.
- 
-> As for your proposed patches for bq27xxx, I think the latest one you
-> suggested (@12:36PM EST) with the change for
-> battery_update->battery_poll as well makes the most sense for bq27xxx. I
-> would like to point out though that if we patch this, the cache won't be
-> populated for the first TEMP request, which has the same end effect as
-> the patch I proposed to power_supply_read_temp. I believe both will
-> return 0 for the temp.
-
-Actually, I gave it a test and instead of returning zero it returns
-absolute zero (0K or -273C!). So that is probably no good. Something
-like Thierry was suggesting could work. Another thought I had was ...
-
-diff --git a/drivers/power/bq27xxx_battery.c b/drivers/power/bq27xxx_battery.c
-index 45f6ebf88df6..77488183df6b 100644
---- a/drivers/power/bq27xxx_battery.c
-+++ b/drivers/power/bq27xxx_battery.c
-@@ -674,12 +674,15 @@ static int bq27xxx_battery_read_health(struct bq27xxx_device_info *di)
- 	return POWER_SUPPLY_HEALTH_GOOD;
- }
- 
--void bq27xxx_battery_update(struct bq27xxx_device_info *di)
-+static void __bq27xxx_battery_update(struct bq27xxx_device_info *di,
-+				     struct power_supply *psy)
- {
- 	struct bq27xxx_reg_cache cache = {0, };
- 	bool has_ci_flag = di->chip == BQ27000 || di->chip == BQ27010;
- 	bool has_singe_flag = di->chip == BQ27000 || di->chip == BQ27010;
- 
-+	WARN_ON(!psy);
-+
- 	cache.flags = bq27xxx_read(di, BQ27XXX_REG_FLAGS, has_singe_flag);
- 	if ((cache.flags & 0xff) == 0xff)
- 		cache.flags = -1; /* read error */
-@@ -717,13 +720,25 @@ void bq27xxx_battery_update(struct bq27xxx_device_info *di)
- 			di->charge_design_full = bq27xxx_battery_read_dcap(di);
- 	}
- 
--	if (di->cache.capacity != cache.capacity)
--		power_supply_changed(di->bat);
-+	if (psy && di->cache.capacity != cache.capacity)
-+		power_supply_changed(psy);
- 
- 	if (memcmp(&di->cache, &cache, sizeof(cache)) != 0)
- 		di->cache = cache;
- 
- 	di->last_update = jiffies;
-+
-+	if (poll_interval > 0) {
-+		/* The timer does not have to be accurate. */
-+		set_timer_slack(&di->work.timer, poll_interval * HZ / 4);
-+		schedule_delayed_work(&di->work, poll_interval * HZ);
-+	}
-+}
-+
-+void bq27xxx_battery_update(struct bq27xxx_device_info *di)
-+{
-+	cancel_delayed_work_sync(&di->work);
-+	__bq27xxx_battery_update(di, di->bat);
- }
- EXPORT_SYMBOL_GPL(bq27xxx_battery_update);
- 
-@@ -733,13 +748,7 @@ static void bq27xxx_battery_poll(struct work_struct *work)
- 			container_of(work, struct bq27xxx_device_info,
- 				     work.work);
- 
--	bq27xxx_battery_update(di);
--
--	if (poll_interval > 0) {
--		/* The timer does not have to be accurate. */
--		set_timer_slack(&di->work.timer, poll_interval * HZ / 4);
--		schedule_delayed_work(&di->work, poll_interval * HZ);
--	}
-+	__bq27xxx_battery_update(di, di->bat);
- }
- 
- /*
-@@ -874,7 +883,7 @@ static int bq27xxx_battery_get_property(struct power_supply *psy,
- 	mutex_lock(&di->lock);
- 	if (time_is_before_jiffies(di->last_update + 5 * HZ)) {
- 		cancel_delayed_work_sync(&di->work);
--		bq27xxx_battery_poll(&di->work.work);
-+		__bq27xxx_battery_update(di, psy);
- 	}
- 	mutex_unlock(&di->lock);
- 
-Cheers
-Jon
-
--- 
-nvpublic
+> Before:
+> [    3.726894] sdhci: Secure Digital Host Controller Interface driver
+> [    3.733081] sdhci: Copyright(c) Pierre Ossman
+> [    3.737462] sdhci-pltfm: SDHCI platform and OF driver helper
+> [    3.753411] mmc0: Unknown controller version (3). You may experience
+>  problems.
+> [    3.768345] mmc0: Invalid maximum block size, assuming 512 bytes
+> [    3.814896] mmc0: SDHCI controller on 700b0600.sdhci [700b0600.sdhci]
+>  using ADMA 64-bit
+> [    3.892088] mmc0: new high speed MMC card at address 0001
+> [    3.899194] mmcblk0: mmc0:0001 SEM16G 14.7 GiB
+> [    3.904217] mmcblk0boot0: mmc0:0001 SEM16G partition 1 4.00 MiB
+> [    3.910645] mmcblk0boot1: mmc0:0001 SEM16G partition 2 4.00 MiB
+> [    3.917119] mmcblk0rpmb: mmc0:0001 SEM16G partition 3 4.00 MiB
+> [    3.926006]  mmcblk0: p1 p2 p3 p4 p5 p6 p7 p8 p9
+> root@jetson_tk1:~# cat /sys/kernel/debug/mmc0/ios
+> clock:          52000000 Hz
+> actual clock:   51000000 Hz
+> vdd:            21 (3.3 ~ 3.4 V)
+> bus mode:       2 (push-pull)
+> chip select:    0 (don't care)
+> power mode:     2 (on)
+> bus width:      3 (8 bits)
+> timing spec:    1 (mmc high-speed)
+> signal voltage: 0 (3.30 V)
+> driver type:    0 (driver type B)
+>
+> After:
+> [    3.899918] mmc0: new MMC card at address 0001
+> root@jetson_tk1:~# cat /sys/kernel/debug/mmc0/ios
+> clock:          25000000 Hz
+> actual clock:   24727273 Hz
+> vdd:            21 (3.3 ~ 3.4 V)
+> bus mode:       2 (push-pull)
+> chip select:    0 (don't care)
+> power mode:     2 (on)
+> bus width:      0 (1 bits)
+> timing spec:    0 (legacy)
+> signal voltage: 0 (3.30 V)
+> driver type:    0 (driver type B)
+>
