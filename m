@@ -1,87 +1,133 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v5 00/11] Add HW throttle for Tegra soctherm
-Date: Thu, 26 May 2016 17:42:21 +0800
-Message-ID: <5746C4FD.9070909@nvidia.com>
-References: <1462962026-19653-1-git-send-email-wni@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] arm64: defconfig: Enable cros-ec and battery driver
+Date: Thu, 26 May 2016 11:35:49 +0100
+Message-ID: <5746D185.30006@nvidia.com>
+References: <1462290318-9074-1-git-send-email-rklein@nvidia.com>
+ <5744609A.1000008@nvidia.com>
+ <324dfe74-4fc0-d500-91ac-2a802562e92f@nvidia.com>
+ <5745853B.1040304@nvidia.com> <57458693.3050700@nvidia.com>
+ <20160525154618.GD13765@ulmo.ba.sec>
+ <9411ff33-e375-8286-8690-fe7fcac1c14b@nvidia.com>
+ <5745CE75.7010603@nvidia.com> <5745D2DD.6080300@nvidia.com>
+ <1c6df907-ea1f-201b-a36e-8311c5b2b3b1@nvidia.com>
+ <5745E031.7010406@nvidia.com>
+ <5c03a025-f31d-fa18-b973-0b026ede9c5c@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1462962026-19653-1-git-send-email-wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org
-Cc: MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5c03a025-f31d-fa18-b973-0b026ede9c5c-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
-Does there have any comments on this series?
-Let me know if someone has suggestions.
 
-Thanks.
-Wei.
+On 25/05/16 20:44, Rhyland Klein wrote:
 
-On 05/11/2016 06:20 PM, Wei Ni wrote:
-> This series add following functions for Tegra soctherm:
-> 1. add HW throttle function.
-> 2. enable soctherm node for Tegra124, Tegra132, Tegra210, and
-> set "critical", "hot" trips for them.
-> 
-> Main changes from v4:
-> 1. drop the "nvidia" prefix from the node name, per Rob's comments.
-> 
-> Main changes from v3:
-> 1. change some properties'name and descriptions, per Rob's comments.
-> 2. change the corresponding driver codes.
-> 
-> Main changes from v2:
-> 1. improve the of-binding, per Eduardo's comments, and
-> change the corresponding driver codes.
-> 2. move two setting critical trip patches in this series,
-> 3. fix some bugs in dts changes.
-> 
-> Main changes from v1:
-> 1. use readl/writel instead of __raw_readl/__raw_writel.
-> 2. rebase on the linux-next.
-> 
-> The v1 series is in:
-> https://lkml.org/lkml/2016/3/31/230
-> 
-> The v2 series is in:
-> https://lkml.org/lkml/2016/4/26/1577
-> 
-> The v3 series is in:
-> https://lkml.org/lkml/2016/5/3/274
-> 
-> The v4 series is in:
-> https://lkml.org/lkml/2016/5/9/45
-> 
-> Wei Ni (11):
->   of: Add bindings of hw throttle for Tegra soctherm
->   thermal: tegra: add hw-throttle function
->   thermal: tegra: add hw-throttle for Tegra132
->   arm: tegra: set critical trips for Tegra124
->   arm: tegra: set hot trips for Tegra124
->   arm64: tegra: use tegra132-soctherm for Tegra132
->   arm64: tegra: set critical trips for Tegra132
->   arm64: tegra: set hot trips for Tegra132
->   arm64: tegra: add soctherm node for Tegra210
->   arm64: tegra: set critical trips for Tegra210
->   arm64: tegra: set hot trips for Tegra210
-> 
->  .../bindings/thermal/nvidia,tegra124-soctherm.txt  | 121 ++-
->  arch/arm/boot/dts/tegra124-jetson-tk1.dts          |  18 +-
->  arch/arm/boot/dts/tegra124.dtsi                    |  83 +-
->  arch/arm64/boot/dts/nvidia/tegra132.dtsi           | 119 ++-
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi           | 127 ++++
->  drivers/thermal/tegra/soctherm.c                   | 842 ++++++++++++++++++++-
->  drivers/thermal/tegra/soctherm.h                   |  10 +
->  drivers/thermal/tegra/tegra124-soctherm.c          |  18 +
->  drivers/thermal/tegra/tegra132-soctherm.c          |  18 +
->  drivers/thermal/tegra/tegra210-soctherm.c          |  18 +
->  include/dt-bindings/thermal/tegra124-soctherm.h    |   5 +
->  11 files changed, 1344 insertions(+), 35 deletions(-)
-> 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+...
+
+> And you might be completely correct, that is something that can only
+> happen specifically with the bq27xxx driver. In which case, making the
+> fix there should be the fix. I just know from the commit log (and some
+> previous work with power supply drivers) that the case of get_property
+> being called during registration has caused problems before. That's why
+> I am trying to make sure we cover the generic case if it exists. Using
+> scheduled work is common for power_supplies to regularly update their
+> status.
+
+Yes but only appears to be the bq27xxx and seems to be related to this
+issue. To be honest, if the maintainers are ok with your proposal then
+it is fine with me, but I was just thinking that this feels like a
+bq27xxx issue.
+ 
+> As for your proposed patches for bq27xxx, I think the latest one you
+> suggested (@12:36PM EST) with the change for
+> battery_update->battery_poll as well makes the most sense for bq27xxx. I
+> would like to point out though that if we patch this, the cache won't be
+> populated for the first TEMP request, which has the same end effect as
+> the patch I proposed to power_supply_read_temp. I believe both will
+> return 0 for the temp.
+
+Actually, I gave it a test and instead of returning zero it returns
+absolute zero (0K or -273C!). So that is probably no good. Something
+like Thierry was suggesting could work. Another thought I had was ...
+
+diff --git a/drivers/power/bq27xxx_battery.c b/drivers/power/bq27xxx_battery.c
+index 45f6ebf88df6..77488183df6b 100644
+--- a/drivers/power/bq27xxx_battery.c
++++ b/drivers/power/bq27xxx_battery.c
+@@ -674,12 +674,15 @@ static int bq27xxx_battery_read_health(struct bq27xxx_device_info *di)
+ 	return POWER_SUPPLY_HEALTH_GOOD;
+ }
+ 
+-void bq27xxx_battery_update(struct bq27xxx_device_info *di)
++static void __bq27xxx_battery_update(struct bq27xxx_device_info *di,
++				     struct power_supply *psy)
+ {
+ 	struct bq27xxx_reg_cache cache = {0, };
+ 	bool has_ci_flag = di->chip == BQ27000 || di->chip == BQ27010;
+ 	bool has_singe_flag = di->chip == BQ27000 || di->chip == BQ27010;
+ 
++	WARN_ON(!psy);
++
+ 	cache.flags = bq27xxx_read(di, BQ27XXX_REG_FLAGS, has_singe_flag);
+ 	if ((cache.flags & 0xff) == 0xff)
+ 		cache.flags = -1; /* read error */
+@@ -717,13 +720,25 @@ void bq27xxx_battery_update(struct bq27xxx_device_info *di)
+ 			di->charge_design_full = bq27xxx_battery_read_dcap(di);
+ 	}
+ 
+-	if (di->cache.capacity != cache.capacity)
+-		power_supply_changed(di->bat);
++	if (psy && di->cache.capacity != cache.capacity)
++		power_supply_changed(psy);
+ 
+ 	if (memcmp(&di->cache, &cache, sizeof(cache)) != 0)
+ 		di->cache = cache;
+ 
+ 	di->last_update = jiffies;
++
++	if (poll_interval > 0) {
++		/* The timer does not have to be accurate. */
++		set_timer_slack(&di->work.timer, poll_interval * HZ / 4);
++		schedule_delayed_work(&di->work, poll_interval * HZ);
++	}
++}
++
++void bq27xxx_battery_update(struct bq27xxx_device_info *di)
++{
++	cancel_delayed_work_sync(&di->work);
++	__bq27xxx_battery_update(di, di->bat);
+ }
+ EXPORT_SYMBOL_GPL(bq27xxx_battery_update);
+ 
+@@ -733,13 +748,7 @@ static void bq27xxx_battery_poll(struct work_struct *work)
+ 			container_of(work, struct bq27xxx_device_info,
+ 				     work.work);
+ 
+-	bq27xxx_battery_update(di);
+-
+-	if (poll_interval > 0) {
+-		/* The timer does not have to be accurate. */
+-		set_timer_slack(&di->work.timer, poll_interval * HZ / 4);
+-		schedule_delayed_work(&di->work, poll_interval * HZ);
+-	}
++	__bq27xxx_battery_update(di, di->bat);
+ }
+ 
+ /*
+@@ -874,7 +883,7 @@ static int bq27xxx_battery_get_property(struct power_supply *psy,
+ 	mutex_lock(&di->lock);
+ 	if (time_is_before_jiffies(di->last_update + 5 * HZ)) {
+ 		cancel_delayed_work_sync(&di->work);
+-		bq27xxx_battery_poll(&di->work.work);
++		__bq27xxx_battery_update(di, psy);
+ 	}
+ 	mutex_unlock(&di->lock);
+ 
+Cheers
+Jon
+
+-- 
+nvpublic
