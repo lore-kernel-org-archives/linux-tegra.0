@@ -1,42 +1,49 @@
 From: Rhyland Klein <rklein@nvidia.com>
-Subject: Re: [PATCH] mfd: max77620: Fix FPS switch statements
-Date: Fri, 27 May 2016 16:31:25 -0400
-Message-ID: <9716c1c8-dd2b-8444-6ec9-567d07fe8971@nvidia.com>
-References: <1463075104-26924-1-git-send-email-rklein@nvidia.com>
- <5734C2C2.2060207@nvidia.com>
+Subject: [PATCH v2 00/11] Switch to using CRITICAL clks for Tegra
+Date: Fri, 27 May 2016 16:38:03 -0400
+Message-ID: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5734C2C2.2060207@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Lee Jones <lee.jones@linaro.org>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Rhyland Klein <rklein@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 5/12/2016 1:52 PM, Laxman Dewangan wrote:
-> 
-> On Thursday 12 May 2016 11:15 PM, Rhyland Klein wrote:
->> When configuring FPS during probe, assuming a DT node is present for
->> FPS, the code can run into a problem with the switch statements in
->> max77620_config_fps() and max77620_get_fps_period_reg_value(). Namely,
->> in the case of chip->chip_id == MAX77620, it will set
->> fps_[mix|max]_period but then fall through to the default switch case
->> and return -EINVAL. Returning this from max77620_config_fps() will
->> cause probe to fail.
->>
-> 
-> Thanks for fixes.
-> Missed when converting if-else to switch.
-> 
-> Reviewed-by: Laxman Dewangan <ldewangan@nvidia.com>
-> 
+Switch to defining clks that need to be on as CRITICAL rather than
+using the init_tables defined to enable clks. Some of these may be
+able to be converted to HAND_OFF clks, when that is supported.
 
-Lee, I noticed this hasn't been merged yet, but without it platforms
-using the max77620 can easily (if it has FPS nodes) fail to probe. Is
-there anything blocking it?
+I added a patch to mark CRITICAL clks in the clk_summary table, figuring
+it would be handy to be able to easily tell what clks are CRITICAL
+through the table.
 
--rhyland
+I added a warning for using the init_table to enable clks. I considered
+removing it entirely, but I thought phasing it out might be better.
+
+Rhyland Klein (11):
+  clk: tegra: Switch to using critical clks
+  clk: tegra20: Mark required clks as CRITICAL
+  clk: tegra20: clean up init_table
+  clk: tegra30: Mark certain clks as critical
+  clk: tegra30: clean up init_table
+  clk: tegra114: clean up init_table
+  clk: tegra124: clean up init_table
+  clk: tegra210: Mark required clks as CRITICAL
+  clk: tegra210: clean up init_table
+  clk: Show CRITICAL clks in clk_summary output
+  clk: tegra: WARN if clk in the init_table has enable
+
+ drivers/clk/clk.c                        |  7 ++++--
+ drivers/clk/tegra/clk-tegra-periph.c     | 21 ++++++++++------
+ drivers/clk/tegra/clk-tegra-super-gen4.c | 12 ++++++----
+ drivers/clk/tegra/clk-tegra114.c         | 11 ++++-----
+ drivers/clk/tegra/clk-tegra124.c         | 19 ++++++---------
+ drivers/clk/tegra/clk-tegra20.c          | 41 +++++++++++++++-----------------
+ drivers/clk/tegra/clk-tegra210.c         | 28 ++++++++--------------
+ drivers/clk/tegra/clk-tegra30.c          | 28 ++++++++--------------
+ drivers/clk/tegra/clk.c                  |  5 ++++
+ 9 files changed, 81 insertions(+), 91 deletions(-)
 
 -- 
-nvpublic
+1.9.1
