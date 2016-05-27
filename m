@@ -1,76 +1,103 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] soc/tegra: pmc: Fix "scheduling while atomic"
-Date: Fri, 27 May 2016 13:46:37 +0100
-Message-ID: <574841AD.8090601@nvidia.com>
-References: <1460900051-3065-1-git-send-email-digetx@gmail.com>
- <572B47DE.1090804@nvidia.com>
- <c4a3fb3f-adb8-c167-d660-55d3f803c9c3@gmail.com> <5745C02A.20308@nvidia.com>
- <d3552444-75b6-a624-589d-5391d7c09526@gmail.com>
- <5746B6F7.9040101@nvidia.com>
- <e10126b7-de8d-3cee-a1be-d38eb1d7021f@gmail.com>
- <574708E8.3060308@nvidia.com>
- <d7a01310-869e-197e-9fbe-5b4783629e10@gmail.com>
- <574715D7.4060004@nvidia.com>
- <6bfd97bc-7e09-973d-e3c3-7e86b08a4550@gmail.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] arm64: defconfig: Enable cros-ec and battery driver
+Date: Fri, 27 May 2016 14:55:48 +0200
+Message-ID: <574843D4.4080303@samsung.com>
+References: <1462290318-9074-1-git-send-email-rklein@nvidia.com>
+ <5744609A.1000008@nvidia.com>
+ <324dfe74-4fc0-d500-91ac-2a802562e92f@nvidia.com>
+ <5745853B.1040304@nvidia.com> <57458693.3050700@nvidia.com>
+ <20160525154618.GD13765@ulmo.ba.sec>
+ <9411ff33-e375-8286-8690-fe7fcac1c14b@nvidia.com>
+ <5745CE75.7010603@nvidia.com> <5745D2DD.6080300@nvidia.com>
+ <1c6df907-ea1f-201b-a36e-8311c5b2b3b1@nvidia.com>
+ <5745E031.7010406@nvidia.com>
+ <5c03a025-f31d-fa18-b973-0b026ede9c5c@nvidia.com>
+ <5748073F.1030704@samsung.com> <57482162.20306@nvidia.com>
+ <5748339E.9080504@samsung.com> <57483AC8.6010007@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <6bfd97bc-7e09-973d-e3c3-7e86b08a4550@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-reply-to: <57483AC8.6010007@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Rhyland Klein <rklein@nvidia.com>, Thierry Reding <treding@nvidia.com>, Sebastian Reichel <sre@kernel.org>, David Woodhouse <dwmw2@infradead.org>, Dmitry Eremin-Solenikov <dbaryshkov@gmail.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 26/05/16 18:01, Dmitry Osipenko wrote:
-> On 26.05.2016 18:27, Jon Hunter wrote:
->> On 26/05/16 15:57, Dmitry Osipenko wrote:
-
-...
-
->>> That's how I see it:
->>>
->>> +----------------------------------------------+
->>> |                    CPU 0                     |
->>> +-------------------+--------------------------+
->>> |    Idle thread    | Interactive gov. thread  |
->>> +----------------------------------------------+
->>> |     inactive      |                          |
->>> |                   |                          |
->>> |                   |   CPU freq. change       |
->>> |                   |                          |
->>> |                   |   clk_set_rate()         |
->>> |                   |                          |
->>> |       ...         |   clk_prepare_lock()     |
->>> |                   |                          |
->>> |                   |   PRE rate notifier call |
->>> |                   |                          |
->>> |                   |   schedule               |
->>
->> What is this notifier doing? Is there some sort of hardware activity
->> that it is waiting for to complete?
->>
+On 05/27/2016 02:17 PM, Jon Hunter wrote:
 > 
-> It changes regulator voltage if required. So at least I2C would cause
-> scheduling on wait_for_completion_timeout().
+> On 27/05/16 12:46, Krzysztof Kozlowski wrote:
+>> On 05/27/2016 12:28 PM, Jon Hunter wrote:
+>>> Hi Krzysztof,
+>>>
+>>> On 27/05/16 09:37, Krzysztof Kozlowski wrote:
+>>>
+>>> ...
+>>>
+>>>> Indeed I was struggling with similar issue in bq27x00_battery. The issue
+>>>> was introduced by... me :(  when moving the ownership of power supply
+>>>> structure from driver to the core. However IMHO my change exposed the
+>>>> fundamental problem with power supply.
+>>>>
+>>>> Anyway a fix for this issue was:
+>>>> 7f1a57fdd6cb6e7b (power_supply: Fix possible NULL pointer dereference on
+>>>> early uevent)
+>>>> AFAIU, this fix no longer fixes all the issues, right?
+>>>>
+>>>> As for the fundamental problem, the power supply core should not call
+>>>> back the driver (get_property()) until the probe ends. Even if the
+>>>> di->bat was initialized, some other fields of driver could not be set
+>>>> yet. In general, the probe did not end so we should avoid calling driver
+>>>> internal functions.
+>>>
+>>> For my understanding, can you elaborate why the power-supply core should
+>>> not call back to the drivers ->get_property() before the probe ends? I
+>>> assume that registering the power-supply should be the last thing done
+>>> in the probe and so the power-supply should be configured at that point.
+>>
+>> It is not only about power supply but other resources allocated by the
+>> driver. If the power_supply_register() is a last call, then no problem.
+>> But if not, then these resources won't be available.
+>>
+>> Actually I exaggerated a little bit as a fundamental problem as this is
+>> quite common pattern. When driver provides something (like power supply)
+>> then after registration it should be ready for calls coming from the
+>> core or user space. It does not have to be power supply. It might be
+>> exposing sysfs entries or file operations (exposed before calling
+>> power_supply_register()).
+> 
+> Right, exactly when you register with the power-supply core the device
+> better be ready so that handle any incoming calls.
 
-Yes, of course that would make sense. What is interesting/odd in this
-case is that the frequency is increasing (voltage scaled pre frequency
-change) but yet you are entering LP2. May be that is possible? I guess
-this problem may also occur on reducing frequency as well?
+Yes, the unusual thing here is that the device is called back directly
+from the power_supply_register() call.
 
-What are you using in the v3.18 kernel for exit_latency and
-target_residency? The current mainline has 5000us and 10000us,
-respectively.
+> 
+>>> The problems with the bq27xxx seem to stem from the periodic update of
+>>> the bq27xxx status and so it is not clear to me that this is a generic
+>>> problem for all power-supply devices.
+>>
+>> Initially, the generic problem was that the core would call back the
+>> driver from power_supply_register() in a synchronous way through
+>> power_supply_changed(). The commit 7f1a57fdd6c changed it to an
+>> asynchronous call. Here it looks like the same problem - the
+>> power_supply_register() calls thermal which calls
+>> thermal_zone_device_update() and we are back at the driver... before
+>> finishing power_supply_register() call.
+> 
+> So I am still not convinced this is a generic problem but a problem with
+> the bq27xxx. In fact, I think that commit 7f1a57fdd6c could be avoided
+> if we did something like ...
+> 
+> http://marc.info/?l=linux-kernel&m=146425896332433&w=2
+> 
+> AFAICT in most cases, in ->get_property() you should have no need to
+> access a driver's equivalent of di->bat, because you have already been
+> passed a pointer to this via the *psy argument.
 
-It does seem that this could be triggered in the right circumstances and
-I have to say I don't like the fact that this could be fragile as it is
-today. Have you thought about adding a post clock notifier for pclk in
-the PMC driver as an alternative to the change you are suggesting?
+I agree that get_property() shouldn't access di->bat. However if it is
+not forbidden (at least by documentation) then someone might just do it
+because he does not know about such requirement.
 
-Cheers
-Jon
-
--- 
-nvpublic
+Best regards,
+Krzysztof
