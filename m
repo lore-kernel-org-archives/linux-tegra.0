@@ -1,7 +1,7 @@
 From: Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v2 02/11] clk: tegra20: Mark required clks as CRITICAL
-Date: Fri, 27 May 2016 16:38:05 -0400
-Message-ID: <1464381494-27096-3-git-send-email-rklein@nvidia.com>
+Subject: [PATCH v2 10/11] clk: Show CRITICAL clks in clk_summary output
+Date: Fri, 27 May 2016 16:38:13 -0400
+Message-ID: <1464381494-27096-11-git-send-email-rklein@nvidia.com>
 References: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,49 +12,38 @@ To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding <thierry.reding
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Rhyland Klein <rklein@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Mark clks that are required to be on as CRITICAL clks.
+Add a '^' character to the beginning of clk entries that are for
+CRITICAL clks.
 
 Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- drivers/clk/tegra/clk-tegra20.c | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+ drivers/clk/clk.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 837e5cbd60e9..4a60a25d7e61 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -715,13 +715,15 @@ static void tegra20_super_clk_init(void)
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 874c7dd8ef66..22dd0ca1e491 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -1948,8 +1948,9 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
+ 	if (!c)
+ 		return;
  
- 	/* CCLK */
- 	clk = tegra_clk_register_super_mux("cclk", cclk_parents,
--			      ARRAY_SIZE(cclk_parents), CLK_SET_RATE_PARENT,
-+			      ARRAY_SIZE(cclk_parents),
-+			      CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 			      clk_base + CCLK_BURST_POLICY, 0, 4, 0, 0, NULL);
- 	clks[TEGRA20_CLK_CCLK] = clk;
+-	seq_printf(s, "%*s%-*s %11d %12d %11lu %10lu %-3d\n",
+-		   level * 3 + 1, "",
++	seq_printf(s, "%s%*s%-*s %11d %12d %11lu %10lu %-3d\n",
++		   (c->flags & CLK_IS_CRITICAL ? "^" : ""),
++		   level * 3 + (c->flags & CLK_IS_CRITICAL ? 0 : 1), "",
+ 		   30 - level * 3, c->name,
+ 		   c->enable_count, c->prepare_count, clk_core_get_rate(c),
+ 		   clk_core_get_accuracy(c), clk_core_get_phase(c));
+@@ -1985,6 +1986,8 @@ static int clk_summary_show(struct seq_file *s, void *data)
  
- 	/* SCLK */
- 	clk = tegra_clk_register_super_mux("sclk", sclk_parents,
--			      ARRAY_SIZE(sclk_parents), CLK_SET_RATE_PARENT,
-+			      ARRAY_SIZE(sclk_parents),
-+			      CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
- 			      clk_base + SCLK_BURST_POLICY, 0, 4, 0, 0, NULL);
- 	clks[TEGRA20_CLK_SCLK] = clk;
+ 	clk_prepare_unlock();
  
-@@ -814,11 +816,11 @@ static void __init tegra20_periph_clk_init(void)
- 	/* emc */
- 	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
- 			       ARRAY_SIZE(mux_pllmcp_clkm),
--			       CLK_SET_RATE_NO_REPARENT,
-+			       CLK_SET_RATE_NO_REPARENT | CLK_IS_CRITICAL,
- 			       clk_base + CLK_SOURCE_EMC,
- 			       30, 2, 0, &emc_lock);
--	clk = tegra_clk_register_periph_gate("emc", "emc_mux", 0, clk_base, 0,
--				    57, periph_clk_enb_refcnt);
-+	clk = tegra_clk_register_periph_gate("emc", "emc_mux", 0, clk_base,
-+				    CLK_IS_CRITICAL, 57, periph_clk_enb_refcnt);
- 	clks[TEGRA20_CLK_EMC] = clk;
++	seq_puts(s, "clocks starting with ^ are marked as CRITICAL\n");
++
+ 	return 0;
+ }
  
- 	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
 -- 
 1.9.1
