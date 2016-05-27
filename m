@@ -1,48 +1,49 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [RFC 1/5] usb: chipidea: Add support for Tegra20/30/114/124
-Date: Thu, 26 May 2016 15:22:23 -0600
-Message-ID: <5747690F.20707@wwwdotorg.org>
+From: Peter Chen <hzpeterchen-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC 0/5] usb: chipidea: Add support for Tegra20 through Tegra124
+Date: Fri, 27 May 2016 11:16:24 +0800
+Message-ID: <20160527031624.GA3034@shlinux2>
 References: <20160526154005.11558-1-thierry.reding@gmail.com>
- <20160526154005.11558-2-thierry.reding@gmail.com>
- <574767D8.8020203@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <574767D8.8020203-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20160526154005.11558-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Peter Chen <Peter.Chen-3arQi8VN3Tc@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Peter Chen <Peter.Chen-3arQi8VN3Tc@public.gmane.org>, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/26/2016 03:17 PM, Stephen Warren wrote:
-> On 05/26/2016 09:40 AM, Thierry Reding wrote:
->> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> All of these Tegra SoC generations have a ChipIdea UDC IP block that can
->> be used for device mode communication with a host. Implement rudimentary
->> support that doesn't allow switching between host and device modes.
->
-> Are you sure this is correct for Tegra20? I ask because for the /host/
-> mode driver, there's a "has_hostpc" flag which is set to false for
-> Tegra20 and true for all other SoCs. In the U-Boot device mode driver
-> (if not in the kernel driver; I didn't check), there's a concept of "has
-> hostpc" too. I might expect that flag to be set the same way for both
-> drivers. That said, I /think/ the host and device HW are unrelated, so
-> it's possible has_hostpc might be set differently for them.
-> Unfortunately, we haven't enabled the device mode driver for any Tegra20
-> system in U-Boot so I can't tell whether we should enable has_hostpc for
-> Tegra20's device mode driver.
->
-> Still, if this code works then I guess it's likely correct...
+On Thu, May 26, 2016 at 05:40:00PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> All Tegra SoC generations from Tegra20 through Tegra124 have a ChipIdea
+> USB device controller. This set of patches adds very rudimentary support
+> for it to the existing ChipIdea driver and enables them on the set of
+> boards that I could easily test on.
+> 
+> I'm sending this out as RFC because I'm not sure yet how to merge this.
+> While the driver seems to work fine (tested by exporting a USB driver or
+> eMMC via the mass storage function) I don't yet understand how to make
+> the driver switch between host and device modes dynamically. It might be
+> useful to get this merged before, but I'd like to have some feedback on
+> this, because doing so would mean that we need to use device mode on the
+> devices where it's enabled and can't use the USBD port in host mode.
+> 
 
-On the other hand, it looks like the kernel device mode driver might 
-auto-detect this; in core.c:hw_device_init(), I see:
+Chipidea driver supports many ways to switch between host and device
+mode. It can support switching with/without disconnecting cable.
 
-         reg = hw_read(ci, CAP_HCCPARAMS, HCCPARAMS_LEN) >>
-                 __ffs(HCCPARAMS_LEN);
-         ci->hw_bank.lpm  = reg;
+Most of cases need to disconnect cable (Micro-AB) to switch between
+host and device mode, I just take this as an example:
 
-... and in host.c:host_start(), I see:
+Using ID pin which is at Micro-B receptacle on the board to determine host (ID = 0)
+or device (ID = 1 )mode.
 
-	ehci->has_hostpc = ci->hw_bank.lpm;
+- ID pin connects to CPU, and ID interrupt and value can be get through
+register OTGSC.
+- ID pin does not connect to CPU, and there is a dedicated GPIO for ID.
+
+-- 
+
+Best Regards,
+Peter Chen
