@@ -1,7 +1,7 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Subject: Re: [PATCH] arm64: defconfig: Enable cros-ec and battery driver
-Date: Fri, 27 May 2016 11:28:50 +0100
-Message-ID: <57482162.20306@nvidia.com>
+Date: Fri, 27 May 2016 13:46:38 +0200
+Message-ID: <5748339E.9080504@samsung.com>
 References: <1462290318-9074-1-git-send-email-rklein@nvidia.com>
  <5744609A.1000008@nvidia.com>
  <324dfe74-4fc0-d500-91ac-2a802562e92f@nvidia.com>
@@ -12,50 +12,67 @@ References: <1462290318-9074-1-git-send-email-rklein@nvidia.com>
  <1c6df907-ea1f-201b-a36e-8311c5b2b3b1@nvidia.com>
  <5745E031.7010406@nvidia.com>
  <5c03a025-f31d-fa18-b973-0b026ede9c5c@nvidia.com>
- <5748073F.1030704@samsung.com>
+ <5748073F.1030704@samsung.com> <57482162.20306@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5748073F.1030704-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+In-reply-to: <57482162.20306-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Krzysztof,
-
-On 27/05/16 09:37, Krzysztof Kozlowski wrote:
-
-...
-
-> Indeed I was struggling with similar issue in bq27x00_battery. The issue
-> was introduced by... me :(  when moving the ownership of power supply
-> structure from driver to the core. However IMHO my change exposed the
-> fundamental problem with power supply.
+On 05/27/2016 12:28 PM, Jon Hunter wrote:
+> Hi Krzysztof,
 > 
-> Anyway a fix for this issue was:
-> 7f1a57fdd6cb6e7b (power_supply: Fix possible NULL pointer dereference on
-> early uevent)
-> AFAIU, this fix no longer fixes all the issues, right?
+> On 27/05/16 09:37, Krzysztof Kozlowski wrote:
 > 
-> As for the fundamental problem, the power supply core should not call
-> back the driver (get_property()) until the probe ends. Even if the
-> di->bat was initialized, some other fields of driver could not be set
-> yet. In general, the probe did not end so we should avoid calling driver
-> internal functions.
+> ...
+> 
+>> Indeed I was struggling with similar issue in bq27x00_battery. The issue
+>> was introduced by... me :(  when moving the ownership of power supply
+>> structure from driver to the core. However IMHO my change exposed the
+>> fundamental problem with power supply.
+>>
+>> Anyway a fix for this issue was:
+>> 7f1a57fdd6cb6e7b (power_supply: Fix possible NULL pointer dereference on
+>> early uevent)
+>> AFAIU, this fix no longer fixes all the issues, right?
+>>
+>> As for the fundamental problem, the power supply core should not call
+>> back the driver (get_property()) until the probe ends. Even if the
+>> di->bat was initialized, some other fields of driver could not be set
+>> yet. In general, the probe did not end so we should avoid calling driver
+>> internal functions.
+> 
+> For my understanding, can you elaborate why the power-supply core should
+> not call back to the drivers ->get_property() before the probe ends? I
+> assume that registering the power-supply should be the last thing done
+> in the probe and so the power-supply should be configured at that point.
 
-For my understanding, can you elaborate why the power-supply core should
-not call back to the drivers ->get_property() before the probe ends? I
-assume that registering the power-supply should be the last thing done
-in the probe and so the power-supply should be configured at that point.
+It is not only about power supply but other resources allocated by the
+driver. If the power_supply_register() is a last call, then no problem.
+But if not, then these resources won't be available.
 
-The problems with the bq27xxx seem to stem from the periodic update of
-the bq27xxx status and so it is not clear to me that this is a generic
-problem for all power-supply devices.
+Actually I exaggerated a little bit as a fundamental problem as this is
+quite common pattern. When driver provides something (like power supply)
+then after registration it should be ready for calls coming from the
+core or user space. It does not have to be power supply. It might be
+exposing sysfs entries or file operations (exposed before calling
+power_supply_register()).
 
-Cheers
-Jon
+> The problems with the bq27xxx seem to stem from the periodic update of
+> the bq27xxx status and so it is not clear to me that this is a generic
+> problem for all power-supply devices.
 
--- 
-nvpublic
+Initially, the generic problem was that the core would call back the
+driver from power_supply_register() in a synchronous way through
+power_supply_changed(). The commit 7f1a57fdd6c changed it to an
+asynchronous call. Here it looks like the same problem - the
+power_supply_register() calls thermal which calls
+thermal_zone_device_update() and we are back at the driver... before
+finishing power_supply_register() call.
+
+Best regards,
+Krzysztof
