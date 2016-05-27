@@ -1,40 +1,42 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] arm: tegra124: remove commas from unit addresses
-Date: Fri, 27 May 2016 12:35:12 -0600
-Message-ID: <57489360.1030300@wwwdotorg.org>
-References: <1464366471-23832-1-git-send-email-marcel.ziswiler@toradex.com>
+From: Rhyland Klein <rklein@nvidia.com>
+Subject: Re: [PATCH] mfd: max77620: Fix FPS switch statements
+Date: Fri, 27 May 2016 16:31:25 -0400
+Message-ID: <9716c1c8-dd2b-8444-6ec9-567d07fe8971@nvidia.com>
+References: <1463075104-26924-1-git-send-email-rklein@nvidia.com>
+ <5734C2C2.2060207@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1464366471-23832-1-git-send-email-marcel.ziswiler@toradex.com>
+In-Reply-To: <5734C2C2.2060207@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Cc: devicetree@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, linux-kernel@vger.kernel.org, Ian Campbell <ijc+devicetree@hellion.org.uk>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, linux-tegra@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, Lee Jones <lee.jones@linaro.org>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 05/27/2016 10:27 AM, Marcel Ziswiler wrote:
-> Remove commas from unit addresses as suggested by Rob Herring upon me
-> posting initial Apalis TK1 support:
->
-> http://article.gmane.org/gmane.linux.ports.tegra/26608
+On 5/12/2016 1:52 PM, Laxman Dewangan wrote:
+> 
+> On Thursday 12 May 2016 11:15 PM, Rhyland Klein wrote:
+>> When configuring FPS during probe, assuming a DT node is present for
+>> FPS, the code can run into a problem with the switch statements in
+>> max77620_config_fps() and max77620_get_fps_period_reg_value(). Namely,
+>> in the case of chip->chip_id == MAX77620, it will set
+>> fps_[mix|max]_period but then fall through to the default switch case
+>> and return -EINVAL. Returning this from max77620_config_fps() will
+>> cause probe to fail.
+>>
+> 
+> Thanks for fixes.
+> Missed when converting if-else to switch.
+> 
+> Reviewed-by: Laxman Dewangan <ldewangan@nvidia.com>
+> 
 
-> diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+Lee, I noticed this hasn't been merged yet, but without it platforms
+using the max77620 can easily (if it has FPS nodes) fail to probe. Is
+there anything blocking it?
 
-> -	gpu@0,57000000 {
-> +	gpu@57000000 {
->   		/*
->   		 * Node left disabled on purpose - the bootloader will enable
->   		 * it after having set the VPR up
+-rhyland
 
-The last time a similar patch was proposed[1], I pointed out that U-Boot 
-uses the node name to enable the node, so this change will break GPU 
-functionality on this board. U-Boot has since been updated to find the 
-node to enable using compatible value rather than hard-coding the node 
-name, but this doesn't help people with existing bootloader binaries; 
-kernel changes shouldn't force them to upgrade the bootloader. I think 
-the DT node names are part of the ABI and shouldn't be changed. We can 
-fix this for completely new SoCs, but not existing SoCs.
-
-[1] http://www.spinics.net/lists/devicetree/msg122164.html "[PATCH] ARM: 
-tegra: Remove 0, prefix from unit-addresses".
+-- 
+nvpublic
