@@ -1,7 +1,7 @@
 From: Rhyland Klein <rklein@nvidia.com>
-Subject: [PATCH v2 10/11] clk: Show CRITICAL clks in clk_summary output
-Date: Fri, 27 May 2016 16:38:13 -0400
-Message-ID: <1464381494-27096-11-git-send-email-rklein@nvidia.com>
+Subject: [PATCH v2 11/11] clk: tegra: WARN if clk in the init_table has enable
+Date: Fri, 27 May 2016 16:38:14 -0400
+Message-ID: <1464381494-27096-12-git-send-email-rklein@nvidia.com>
 References: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,38 +12,29 @@ To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding <thierry.reding
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Rhyland Klein <rklein@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add a '^' character to the beginning of clk entries that are for
-CRITICAL clks.
+Enabling clocks through the init_table mechanism is deprecated. Clocks
+that need to be enabled early and stay on should be marked as CRITICAL.
 
 Signed-off-by: Rhyland Klein <rklein@nvidia.com>
 ---
- drivers/clk/clk.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/clk/tegra/clk.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 874c7dd8ef66..22dd0ca1e491 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1948,8 +1948,9 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
- 	if (!c)
- 		return;
+diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
+index b2cdd9a235f4..898fe922c742 100644
+--- a/drivers/clk/tegra/clk.c
++++ b/drivers/clk/tegra/clk.c
+@@ -262,6 +262,11 @@ void __init tegra_init_from_table(struct tegra_clk_init_table *tbl,
+ 				WARN_ON(1);
+ 			}
  
--	seq_printf(s, "%*s%-*s %11d %12d %11lu %10lu %-3d\n",
--		   level * 3 + 1, "",
-+	seq_printf(s, "%s%*s%-*s %11d %12d %11lu %10lu %-3d\n",
-+		   (c->flags & CLK_IS_CRITICAL ? "^" : ""),
-+		   level * 3 + (c->flags & CLK_IS_CRITICAL ? 0 : 1), "",
- 		   30 - level * 3, c->name,
- 		   c->enable_count, c->prepare_count, clk_core_get_rate(c),
- 		   clk_core_get_accuracy(c), clk_core_get_phase(c));
-@@ -1985,6 +1986,8 @@ static int clk_summary_show(struct seq_file *s, void *data)
- 
- 	clk_prepare_unlock();
- 
-+	seq_puts(s, "clocks starting with ^ are marked as CRITICAL\n");
-+
- 	return 0;
- }
- 
++		/* Using the init_table to enable clks at boot is
++		 * deprecated. Clks that need to be enabled through early
++		 * boot, they should be marked as CLK_IS_CRITICAL
++		 */
++		WARN_ON_ONCE(tbl->state);
+ 		if (tbl->state)
+ 			if (clk_prepare_enable(clk)) {
+ 				pr_err("%s: Failed to enable %s\n", __func__,
 -- 
 1.9.1
