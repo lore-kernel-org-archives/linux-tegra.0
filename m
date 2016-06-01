@@ -1,78 +1,69 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.7-rc1
-Date: Wed, 1 Jun 2016 09:02:11 +0100
-Message-ID: <574E9683.4020405@nvidia.com>
+From: Marcel Ziswiler <marcel@ziswiler.com>
+Subject: Re: [PATCH 1/3] mmc: fix mmc mode selection for HS-DDR and higher
+Date: Wed, 01 Jun 2016 11:19:06 +0200
+Message-ID: <1464772746.3079.4.camel@ziswiler.com>
+References: <1464505484-3661-1-git-send-email-wens@csie.org>
+	 <1464505484-3661-2-git-send-email-wens@csie.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1464505484-3661-2-git-send-email-wens@csie.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Chen-Yu Tsai <wens@csie.org>, Ulf Hansson <ulf.hansson@linaro.org>, Maxime Ripard <maxime.ripard@free-electrons.com>
+Cc: Hans de Goede <hdegoede@redhat.com>, linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.7-rc1.
-Logs and other details at:
+On Sun, 2016-05-29 at 15:04 +0800, Chen-Yu Tsai wrote:
+> When IS_ERR_VALUE was removed from the mmc core code, it was replaced
+> with a simple not-zero check. This does not work, as the value
+> checked
+> is the return value for mmc_select_bus_width, which returns the set
+> bit width on success. This made eMMC modes higher than HS-DDR
+> unusable.
+>=20
+> Fix this by checking for a positive return value instead.
+>=20
+> Fixes: 287980e49ffc ("remove lots of IS_ERR_VALUE abuses")
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 
-    https://nvtb.github.io//linux/test_v4.7-rc1/20160531073102/
+This fixes the following eMMC issue as experienced on Apalis T30 as
+well:
 
+[=C2=A0=C2=A0=C2=A0=C2=A07.194625] mmc1: mmc_select_hs200 failed, error=
+ 3
+[=C2=A0=C2=A0=C2=A0=C2=A07.201549] mmc1: error 3 whilst initialising MM=
+C card
 
-Test summary
-------------
+Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Build: zImage:
-    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Build: Image:
-    Pass: ( 1/ 1): defconfig
-
-Boot to userspace: defconfig:
-    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
-		   tegra210-p2371-0000, tegra210-smaug
-
-Boot to userspace: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: multi_v7_defconfig:
-    FAIL: ( 1/ 5): tegra30-beaver
-    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice
-
-PM: System suspend: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v4.6 (2dcd0af568b0cf583645c8a317dd12e344b1c72a)):
-   text     data      bss    total  kernel
-+929034   +88176   +17288  +1034498  defconfig
-+225509  +415328    +1928  +642765  multi_v7_defconfig
-+103892  +319480    +4372  +427744  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v4.6 (2dcd0af568b0cf583645c8a317dd12e344b1c72a))
-    avail    rsrvd     high    freed                board              kconfig                  dtb
-        .        .        .        .      qemu-vexpress64            defconfig           __internal
-     -16k      16k        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-     -20k      20k        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-     -28k      28k        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-     -32k      32k        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-        .        .        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
-        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
-        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
-      -8k       8k        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-     -12k      12k        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
-        .        .        .        .       tegra210-smaug            defconfig       tegra210-smaug
-     -16k      16k        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-     -20k      20k        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
-
---
-nvpublic
+> ---
+> =C2=A0drivers/mmc/core/mmc.c | 4 ++--
+> =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/mmc/core/mmc.c b/drivers/mmc/core/mmc.c
+> index c984321d1881..aafb73d080ca 100644
+> --- a/drivers/mmc/core/mmc.c
+> +++ b/drivers/mmc/core/mmc.c
+> @@ -1276,7 +1276,7 @@ static int mmc_select_hs200(struct mmc_card
+> *card)
+> =C2=A0	=C2=A0* switch to HS200 mode if bus width is set successfully.
+> =C2=A0	=C2=A0*/
+> =C2=A0	err =3D mmc_select_bus_width(card);
+> -	if (!err) {
+> +	if (err > 0) {
+> =C2=A0		val =3D EXT_CSD_TIMING_HS200 |
+> =C2=A0		=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0card->drive_strength << E=
+XT_CSD_DRV_STR_SHIFT;
+> =C2=A0		err =3D __mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+> @@ -1583,7 +1583,7 @@ static int mmc_init_card(struct mmc_host *host,
+> u32 ocr,
+> =C2=A0	} else if (mmc_card_hs(card)) {
+> =C2=A0		/* Select the desired bus width optionally */
+> =C2=A0		err =3D mmc_select_bus_width(card);
+> -		if (!err) {
+> +		if (err > 0) {
+> =C2=A0			err =3D mmc_select_hs_ddr(card);
+> =C2=A0			if (err)
+> =C2=A0				goto free_card;
