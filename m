@@ -1,89 +1,77 @@
 From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH 04/20] drm: exynos: Rely on the default
-	->best_encoder() behavior
-Date: Thu,  2 Jun 2016 16:31:31 +0200
-Message-ID: <1464877907-27723-5-git-send-email-boris.brezillon@free-electrons.com>
+Subject: [PATCH 01/20] drm/atomic: Fix remaining places where
+	!funcs->best_encoder is valid
+Date: Thu,  2 Jun 2016 16:31:28 +0200
+Message-ID: <1464877907-27723-2-git-send-email-boris.brezillon@free-electrons.com>
 References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <virtualization-bounces@lists.linux-foundation.org>
 In-Reply-To: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
+List-Post: <mailto:virtualization@lists.linux-foundation.org>
+List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
+Sender: virtualization-bounces@lists.linux-foundation.org
+Errors-To: virtualization-bounces@lists.linux-foundation.org
 To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Stefan Agner <stefan@agner.ch>, virtualization@lists.linux-foundation.org, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Alexey Brodkin <abrodkin@synopsys.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, linux-tegra@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Stefan Agner <stefan@agner.ch>, virtualization@lists.linux-foundation.org, Eric Anholt <eric@anholt.net>, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Alexey Brodkin <abrodkin@synopsys.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, linux-tegra@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, Jani Nikula <jani.nikula@linux.intel.com>, Inki Dae <inki.dae@sam>
 List-Id: linux-tegra@vger.kernel.org
 
-V2UgaGF2ZSAxOjEgcmVsYXRpb25zaGlwIGJldHdlZW4gY29ubmVjdG9ycyBhbmQgZW5jb2RlcnMg
-YW5kIHRoZSBkcml2ZXIKaXMgcmVseWluZyBvbiB0aGUgYXRvbWljIGhlbHBlcnM6IHdlIGNhbiBk
-cm9wIHRoZSBjdXN0b20gLT5iZXN0X2VuY29kZXIoKQppbXBsZW1lbnRhdGlvbnMgYW5kIGxldCB0
-aGUgY29yZSBjYWxsIGRybV9hdG9taWNfaGVscGVyX2Jlc3RfZW5jb2RlcigpCmZvciB1cy4KClNp
-Z25lZC1vZmYtYnk6IEJvcmlzIEJyZXppbGxvbiA8Ym9yaXMuYnJlemlsbG9uQGZyZWUtZWxlY3Ry
-b25zLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHBpLmMgIHwg
-OSAtLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYyAgfCA5
-IC0tLS0tLS0tLQogZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYyB8IDgg
-LS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2hkbWkuYyAgICAgfCA4IC0t
-LS0tLS0tCiA0IGZpbGVzIGNoYW5nZWQsIDM0IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcGkuYyBiL2RyaXZlcnMvZ3B1L2RybS9l
-eHlub3MvZXh5bm9zX2RybV9kcGkuYwppbmRleCA1ZTM4ZTc0Li5hZDZiNzNjIDEwMDY0NAotLS0g
-YS9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHBpLmMKKysrIGIvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RwaS5jCkBAIC05MywxNyArOTMsOCBAQCBzdGF0aWMg
-aW50IGV4eW5vc19kcGlfZ2V0X21vZGVzKHN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3Ip
-CiAJcmV0dXJuIDA7CiB9CiAKLXN0YXRpYyBzdHJ1Y3QgZHJtX2VuY29kZXIgKgotZXh5bm9zX2Rw
-aV9iZXN0X2VuY29kZXIoc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvcikKLXsKLQlzdHJ1
-Y3QgZXh5bm9zX2RwaSAqY3R4ID0gY29ubmVjdG9yX3RvX2RwaShjb25uZWN0b3IpOwotCi0JcmV0
-dXJuICZjdHgtPmVuY29kZXI7Ci19Ci0KIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX2Nvbm5lY3Rv
-cl9oZWxwZXJfZnVuY3MgZXh5bm9zX2RwaV9jb25uZWN0b3JfaGVscGVyX2Z1bmNzID0gewogCS5n
-ZXRfbW9kZXMgPSBleHlub3NfZHBpX2dldF9tb2RlcywKLQkuYmVzdF9lbmNvZGVyID0gZXh5bm9z
-X2RwaV9iZXN0X2VuY29kZXIsCiB9OwogCiBzdGF0aWMgaW50IGV4eW5vc19kcGlfY3JlYXRlX2Nv
-bm5lY3RvcihzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIpCmRpZmYgLS1naXQgYS9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19kcm1fZHNpLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19kcm1fZHNpLmMKaW5kZXggNjAxZWNmOC4uZTA3Y2IxZiAxMDA2NDQKLS0tIGEvZHJp
-dmVycy9ncHUvZHJtL2V4eW5vcy9leHlub3NfZHJtX2RzaS5jCisrKyBiL2RyaXZlcnMvZ3B1L2Ry
-bS9leHlub3MvZXh5bm9zX2RybV9kc2kuYwpAQCAtMTU2NiwxNyArMTU2Niw4IEBAIHN0YXRpYyBp
-bnQgZXh5bm9zX2RzaV9nZXRfbW9kZXMoc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvcikK
-IAlyZXR1cm4gMDsKIH0KIAotc3RhdGljIHN0cnVjdCBkcm1fZW5jb2RlciAqCi1leHlub3NfZHNp
-X2Jlc3RfZW5jb2RlcihzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yKQotewotCXN0cnVj
-dCBleHlub3NfZHNpICpkc2kgPSBjb25uZWN0b3JfdG9fZHNpKGNvbm5lY3Rvcik7Ci0KLQlyZXR1
-cm4gJmRzaS0+ZW5jb2RlcjsKLX0KLQogc3RhdGljIGNvbnN0IHN0cnVjdCBkcm1fY29ubmVjdG9y
-X2hlbHBlcl9mdW5jcyBleHlub3NfZHNpX2Nvbm5lY3Rvcl9oZWxwZXJfZnVuY3MgPSB7CiAJLmdl
-dF9tb2RlcyA9IGV4eW5vc19kc2lfZ2V0X21vZGVzLAotCS5iZXN0X2VuY29kZXIgPSBleHlub3Nf
-ZHNpX2Jlc3RfZW5jb2RlciwKIH07CiAKIHN0YXRpYyBpbnQgZXh5bm9zX2RzaV9jcmVhdGVfY29u
-bmVjdG9yKHN0cnVjdCBkcm1fZW5jb2RlciAqZW5jb2RlcikKZGlmZiAtLWdpdCBhL2RyaXZlcnMv
-Z3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9z
-L2V4eW5vc19kcm1fdmlkaS5jCmluZGV4IDYwOGIwYWYuLmU4ZjZjOTIgMTAwNjQ0Ci0tLSBhL2Ry
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92aWRpLmMKKysrIGIvZHJpdmVycy9ncHUv
-ZHJtL2V4eW5vcy9leHlub3NfZHJtX3ZpZGkuYwpAQCAtMzc4LDE2ICszNzgsOCBAQCBzdGF0aWMg
-aW50IHZpZGlfZ2V0X21vZGVzKHN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3IpCiAJcmV0
-dXJuIGRybV9hZGRfZWRpZF9tb2Rlcyhjb25uZWN0b3IsIGVkaWQpOwogfQogCi1zdGF0aWMgc3Ry
-dWN0IGRybV9lbmNvZGVyICp2aWRpX2Jlc3RfZW5jb2RlcihzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAq
-Y29ubmVjdG9yKQotewotCXN0cnVjdCB2aWRpX2NvbnRleHQgKmN0eCA9IGN0eF9mcm9tX2Nvbm5l
-Y3Rvcihjb25uZWN0b3IpOwotCi0JcmV0dXJuICZjdHgtPmVuY29kZXI7Ci19Ci0KIHN0YXRpYyBj
-b25zdCBzdHJ1Y3QgZHJtX2Nvbm5lY3Rvcl9oZWxwZXJfZnVuY3MgdmlkaV9jb25uZWN0b3JfaGVs
-cGVyX2Z1bmNzID0gewogCS5nZXRfbW9kZXMgPSB2aWRpX2dldF9tb2RlcywKLQkuYmVzdF9lbmNv
-ZGVyID0gdmlkaV9iZXN0X2VuY29kZXIsCiB9OwogCiBzdGF0aWMgaW50IHZpZGlfY3JlYXRlX2Nv
-bm5lY3RvcihzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIpCmRpZmYgLS1naXQgYS9kcml2ZXJz
-L2dwdS9kcm0vZXh5bm9zL2V4eW5vc19oZG1pLmMgYi9kcml2ZXJzL2dwdS9kcm0vZXh5bm9zL2V4
-eW5vc19oZG1pLmMKaW5kZXggNThkZTVhNC4uMTYyNWQ3YyAxMDA2NDQKLS0tIGEvZHJpdmVycy9n
-cHUvZHJtL2V4eW5vcy9leHlub3NfaGRtaS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9leHlub3Mv
-ZXh5bm9zX2hkbWkuYwpAQCAtOTM3LDE3ICs5MzcsOSBAQCBzdGF0aWMgaW50IGhkbWlfbW9kZV92
-YWxpZChzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yLAogCXJldHVybiBNT0RFX09LOwog
-fQogCi1zdGF0aWMgc3RydWN0IGRybV9lbmNvZGVyICpoZG1pX2Jlc3RfZW5jb2RlcihzdHJ1Y3Qg
-ZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yKQotewotCXN0cnVjdCBoZG1pX2NvbnRleHQgKmhkYXRh
-ID0gY29ubmVjdG9yX3RvX2hkbWkoY29ubmVjdG9yKTsKLQotCXJldHVybiAmaGRhdGEtPmVuY29k
-ZXI7Ci19Ci0KIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX2Nvbm5lY3Rvcl9oZWxwZXJfZnVuY3Mg
-aGRtaV9jb25uZWN0b3JfaGVscGVyX2Z1bmNzID0gewogCS5nZXRfbW9kZXMgPSBoZG1pX2dldF9t
-b2RlcywKIAkubW9kZV92YWxpZCA9IGhkbWlfbW9kZV92YWxpZCwKLQkuYmVzdF9lbmNvZGVyID0g
-aGRtaV9iZXN0X2VuY29kZXIsCiB9OwogCiBzdGF0aWMgaW50IGhkbWlfY3JlYXRlX2Nvbm5lY3Rv
-cihzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIpCi0tIAoyLjcuNAoKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJ
-bnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
+Adapt drm_pick_crtcs() and update_connector_routing() to fallback to
+drm_atomic_helper_best_encoder() if funcs->best_encoder() is NULL so
+that DRM drivers can leave this hook unassigned if they know they want
+to use drm_atomic_helper_best_encoder().
+
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/gpu/drm/drm_atomic_helper.c |  4 +++-
+ drivers/gpu/drm/drm_fb_helper.c     | 13 ++++++++++++-
+ 2 files changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
+index f6a3350..849d029 100644
+--- a/drivers/gpu/drm/drm_atomic_helper.c
++++ b/drivers/gpu/drm/drm_atomic_helper.c
+@@ -300,8 +300,10 @@ update_connector_routing(struct drm_atomic_state *state,
+ 	if (funcs->atomic_best_encoder)
+ 		new_encoder = funcs->atomic_best_encoder(connector,
+ 							 connector_state);
+-	else
++	else if (funcs->best_encoder)
+ 		new_encoder = funcs->best_encoder(connector);
++	else
++		new_encoder = drm_atomic_helper_best_encoder(connector);
+ 
+ 	if (!new_encoder) {
+ 		DRM_DEBUG_ATOMIC("No suitable encoder found for [CONNECTOR:%d:%s]\n",
+diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+index 7c2eb75..d44389a 100644
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -2000,7 +2000,18 @@ static int drm_pick_crtcs(struct drm_fb_helper *fb_helper,
+ 		my_score++;
+ 
+ 	connector_funcs = connector->helper_private;
+-	encoder = connector_funcs->best_encoder(connector);
++
++	/*
++	 * If the DRM device implements atomic hooks and ->best_encoder() is
++	 * NULL we fallback to the default drm_atomic_helper_best_encoder()
++	 * helper.
++	 */
++	if (fb_helper->dev->mode_config.funcs->atomic_commit &&
++	    !connector_funcs->best_encoder)
++		encoder = drm_atomic_helper_best_encoder(connector);
++	else
++		encoder = connector_funcs->best_encoder(connector);
++
+ 	if (!encoder)
+ 		goto out;
+ 
+-- 
+2.7.4
