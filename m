@@ -1,13 +1,13 @@
 From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 16/20] drm: omap: Rely on the default ->best_encoder() behavior
-Date: Fri, 03 Jun 2016 00:00:07 +0300
-Message-ID: <3702911.4V6efqXNem@avalon>
-References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com> <1464877907-27723-17-git-send-email-boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH 01/20] drm/atomic: Fix remaining places where !funcs->best_encoder is valid
+Date: Fri, 03 Jun 2016 00:05:46 +0300
+Message-ID: <8671722.LHaiaBNqfE@avalon>
+References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com> <1464877907-27723-2-git-send-email-boris.brezillon@free-electrons.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7Bit
 Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <1464877907-27723-17-git-send-email-boris.brezillon@free-electrons.com>
+In-Reply-To: <1464877907-27723-2-git-send-email-boris.brezillon@free-electrons.com>
 Sender: linux-samsung-soc-owner@vger.kernel.org
 To: Boris Brezillon <boris.brezillon@free-electrons.com>
 Cc: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Jani Nikula <jani.nikula@linux.intel.com>, Alexey Brodkin <abrodkin@synopsys.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@freescale.com>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Mark Yao <mark.yao@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Vincent
@@ -17,51 +17,65 @@ Hi Boris,
 
 Thank you for the patch.
 
-On Thursday 02 Jun 2016 16:31:43 Boris Brezillon wrote:
-> We have a 1:1 relationship between connectors and encoders and the
-> driver is relying on the atomic helpers: we can drop the custom
-> ->best_encoder() implementation and let the core call
-> drm_atomic_helper_best_encoder() for us.
-> 
+On Thursday 02 Jun 2016 16:31:28 Boris Brezillon wrote:
+> Adapt drm_pick_crtcs() and update_connector_routing() to fallback to
+> drm_atomic_helper_best_encoder() if funcs->best_encoder() is NULL so
+> that DRM drivers can leave this hook unassigned if they know they want
+> to use drm_atomic_helper_best_encoder().
+
+Could you please update include/drm/drm_modeset_helper_vtables.h to document 
+this new behaviour ?
+
+The only drawback I see in this patch is the additional object lookup 
+performed by drm_atomic_helper_best_encoder() at runtime. I wonder if we could 
+somehow cache the information, as the assignment can't change when there's a 
+1:1 correspondence between encoders and connectors.
+
 > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 > ---
->  drivers/gpu/drm/omapdrm/omap_connector.c | 8 --------
->  1 file changed, 8 deletions(-)
+>  drivers/gpu/drm/drm_atomic_helper.c |  4 +++-
+>  drivers/gpu/drm/drm_fb_helper.c     | 13 ++++++++++++-
+>  2 files changed, 15 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/omapdrm/omap_connector.c
-> b/drivers/gpu/drm/omapdrm/omap_connector.c index ce2d67b..80af5e1 100644
-> --- a/drivers/gpu/drm/omapdrm/omap_connector.c
-> +++ b/drivers/gpu/drm/omapdrm/omap_connector.c
-> @@ -256,13 +256,6 @@ static int omap_connector_mode_valid(struct
-> drm_connector *connector, return ret;
->  }
+> diff --git a/drivers/gpu/drm/drm_atomic_helper.c
+> b/drivers/gpu/drm/drm_atomic_helper.c index f6a3350..849d029 100644
+> --- a/drivers/gpu/drm/drm_atomic_helper.c
+> +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> @@ -300,8 +300,10 @@ update_connector_routing(struct drm_atomic_state
+> *state, if (funcs->atomic_best_encoder)
+>  		new_encoder = funcs->atomic_best_encoder(connector,
+>  							 connector_state);
+> -	else
+> +	else if (funcs->best_encoder)
+>  		new_encoder = funcs->best_encoder(connector);
+> +	else
+> +		new_encoder = drm_atomic_helper_best_encoder(connector);
 > 
-> -struct drm_encoder *omap_connector_attached_encoder(
-> -		struct drm_connector *connector)
-> -{
-> -	struct omap_connector *omap_connector = to_omap_connector(connector);
-> -	return omap_connector->encoder;
-
-The omap_connector::encoder field is assigned but not used anymore, you can 
-remove it.
-
-With that fixed,
-
-Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-
-> -}
-> -
->  static const struct drm_connector_funcs omap_connector_funcs = {
->  	.dpms = drm_atomic_helper_connector_dpms,
->  	.reset = drm_atomic_helper_connector_reset,
-> @@ -276,7 +269,6 @@ static const struct drm_connector_funcs
-> omap_connector_funcs = { static const struct drm_connector_helper_funcs
-> omap_connector_helper_funcs = { .get_modes = omap_connector_get_modes,
->  	.mode_valid = omap_connector_mode_valid,
-> -	.best_encoder = omap_connector_attached_encoder,
->  };
+>  	if (!new_encoder) {
+>  		DRM_DEBUG_ATOMIC("No suitable encoder found for [CONNECTOR:%d:%s]\n",
+> diff --git a/drivers/gpu/drm/drm_fb_helper.c
+> b/drivers/gpu/drm/drm_fb_helper.c index 7c2eb75..d44389a 100644
+> --- a/drivers/gpu/drm/drm_fb_helper.c
+> +++ b/drivers/gpu/drm/drm_fb_helper.c
+> @@ -2000,7 +2000,18 @@ static int drm_pick_crtcs(struct drm_fb_helper
+> *fb_helper, my_score++;
 > 
->  /* initialize connector */
+>  	connector_funcs = connector->helper_private;
+> -	encoder = connector_funcs->best_encoder(connector);
+> +
+> +	/*
+> +	 * If the DRM device implements atomic hooks and ->best_encoder() is
+> +	 * NULL we fallback to the default drm_atomic_helper_best_encoder()
+> +	 * helper.
+> +	 */
+> +	if (fb_helper->dev->mode_config.funcs->atomic_commit &&
+> +	    !connector_funcs->best_encoder)
+> +		encoder = drm_atomic_helper_best_encoder(connector);
+> +	else
+> +		encoder = connector_funcs->best_encoder(connector);
+> +
+>  	if (!encoder)
+>  		goto out;
 
 -- 
 Regards,
