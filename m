@@ -1,57 +1,46 @@
 From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH 20/20] drm/bridge: dw-hdmi: Use drm_atomic_helper_best_encoder()
-Date: Thu,  2 Jun 2016 16:31:47 +0200
-Message-ID: <1464877907-27723-21-git-send-email-boris.brezillon@free-electrons.com>
+Subject: [PATCH 18/20] drm/bridge: ptn3460: Rely on the default
+	->best_encoder() behavior
+Date: Thu,  2 Jun 2016 16:31:45 +0200
+Message-ID: <1464877907-27723-19-git-send-email-boris.brezillon@free-electrons.com>
 References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
 In-Reply-To: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
 To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Jani Nikula <jani.nikula@linux.intel.com>, Alexey Brodkin <abrodkin@synopsys.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@freescale.com>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mark Yao <mark.yao@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Vincent Abriou <vincent.abriou@st.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Stefan Agner <stefan@agner.ch>, virtualization@lists.linux-foundation.org, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Alexey Brodkin <abrodkin@synopsys.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, linux-tegra@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.>
 List-Id: linux-tegra@vger.kernel.org
 
-We have a 1:1 relationship between connectors and encoders, which means
-we can rely on the drm_atomic_helper_best_encoder() behavior.
-
-We still have to explicitly assign ->best_encoder() to
-drm_atomic_helper_best_encoder(), because the automated fallback to
-drm_atomic_helper_best_encoder() when ->best_encoder() is NULL is only
-available when the DRM device is using the atomic helpers, and this bridge
-is compatible with non-atomic and atomic devices.
-
-Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
----
- drivers/gpu/drm/bridge/dw-hdmi.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/dw-hdmi.c b/drivers/gpu/drm/bridge/dw-hdmi.c
-index c9d9412..70b1f7d 100644
---- a/drivers/gpu/drm/bridge/dw-hdmi.c
-+++ b/drivers/gpu/drm/bridge/dw-hdmi.c
-@@ -1476,15 +1476,6 @@ dw_hdmi_connector_mode_valid(struct drm_connector *connector,
- 	return mode_status;
- }
- 
--static struct drm_encoder *dw_hdmi_connector_best_encoder(struct drm_connector
--							   *connector)
--{
--	struct dw_hdmi *hdmi = container_of(connector, struct dw_hdmi,
--					     connector);
--
--	return hdmi->encoder;
--}
--
- static void dw_hdmi_connector_destroy(struct drm_connector *connector)
- {
- 	drm_connector_unregister(connector);
-@@ -1525,7 +1516,7 @@ static const struct drm_connector_funcs dw_hdmi_atomic_connector_funcs = {
- static const struct drm_connector_helper_funcs dw_hdmi_connector_helper_funcs = {
- 	.get_modes = dw_hdmi_connector_get_modes,
- 	.mode_valid = dw_hdmi_connector_mode_valid,
--	.best_encoder = dw_hdmi_connector_best_encoder,
-+	.best_encoder = drm_atomic_helper_best_encoder,
- };
- 
- static const struct drm_bridge_funcs dw_hdmi_bridge_funcs = {
--- 
-2.7.4
+V2UgaGF2ZSBhIDE6MSByZWxhdGlvbnNoaXAgYmV0d2VlbiBjb25uZWN0b3JzIGFuZCBlbmNvZGVy
+cywgYW5kIHRoZSBkcml2ZXIKaXMgcmVseWluZyBvbiB0aGUgYXRvbWljIGhlbHBlcnM6IHdlIGNh
+biBkcm9wIHRoZSBjdXN0b20gLT5iZXN0X2VuY29kZXIoKSwKYW5kIGxldCB0aGUgY29yZSBjYWxs
+IGRybV9hdG9taWNfaGVscGVyX2Jlc3RfZW5jb2RlcigpIGZvciB1cy4KClNpZ25lZC1vZmYtYnk6
+IEJvcmlzIEJyZXppbGxvbiA8Ym9yaXMuYnJlemlsbG9uQGZyZWUtZWxlY3Ryb25zLmNvbT4KLS0t
+CiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL254cC1wdG4zNDYwLmMgfCA4IC0tLS0tLS0tCiAxIGZp
+bGUgY2hhbmdlZCwgOCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
+YnJpZGdlL254cC1wdG4zNDYwLmMgYi9kcml2ZXJzL2dwdS9kcm0vYnJpZGdlL254cC1wdG4zNDYw
+LmMKaW5kZXggN2VjZDU5Zi4uOTNmM2RhYyAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL2Jy
+aWRnZS9ueHAtcHRuMzQ2MC5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvbnhwLXB0bjM0
+NjAuYwpAQCAtMjM1LDE2ICsyMzUsOCBAQCBvdXQ6CiAJcmV0dXJuIG51bV9tb2RlczsKIH0KIAot
+c3RhdGljIHN0cnVjdCBkcm1fZW5jb2RlciAqcHRuMzQ2MF9iZXN0X2VuY29kZXIoc3RydWN0IGRy
+bV9jb25uZWN0b3IgKmNvbm5lY3RvcikKLXsKLQlzdHJ1Y3QgcHRuMzQ2MF9icmlkZ2UgKnB0bl9i
+cmlkZ2UgPSBjb25uZWN0b3JfdG9fcHRuMzQ2MChjb25uZWN0b3IpOwotCi0JcmV0dXJuIHB0bl9i
+cmlkZ2UtPmJyaWRnZS5lbmNvZGVyOwotfQotCiBzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9jb25u
+ZWN0b3JfaGVscGVyX2Z1bmNzIHB0bjM0NjBfY29ubmVjdG9yX2hlbHBlcl9mdW5jcyA9IHsKIAku
+Z2V0X21vZGVzID0gcHRuMzQ2MF9nZXRfbW9kZXMsCi0JLmJlc3RfZW5jb2RlciA9IHB0bjM0NjBf
+YmVzdF9lbmNvZGVyLAogfTsKIAogc3RhdGljIGVudW0gZHJtX2Nvbm5lY3Rvcl9zdGF0dXMgcHRu
+MzQ2MF9kZXRlY3Qoc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvciwKLS0gCjIuNy40Cgpf
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZngg
+bWFpbGluZyBsaXN0CkludGVsLWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0
+cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZngK
