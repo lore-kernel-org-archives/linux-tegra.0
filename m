@@ -1,83 +1,91 @@
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 01/20] drm/atomic: Fix remaining places where !funcs->best_encoder is valid
-Date: Fri, 03 Jun 2016 00:05:46 +0300
-Message-ID: <8671722.LHaiaBNqfE@avalon>
-References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com> <1464877907-27723-2-git-send-email-boris.brezillon@free-electrons.com>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 01/20] drm/atomic: Fix remaining places
+ where !funcs->best_encoder is valid
+Date: Thu, 2 Jun 2016 23:57:02 +0200
+Message-ID: <CAKMK7uHyqNbA8Scw2fE0geAyNt0a0XVtzf81nwWjEhbZ-gAvKw@mail.gmail.com>
+References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1464877907-27723-2-git-send-email-boris.brezillon@free-electrons.com>
+ <8671722.LHaiaBNqfE@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-samsung-soc-owner@vger.kernel.org>
-In-Reply-To: <1464877907-27723-2-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-samsung-soc-owner@vger.kernel.org
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Jani Nikula <jani.nikula@linux.intel.com>, Alexey Brodkin <abrodkin@synopsys.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@freescale.com>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Mark Yao <mark.yao@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Vincent
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <8671722.LHaiaBNqfE@avalon>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>, "open list:VIRTIO CORE,
+ NET..." <virtualization@lists.linux-foundation.org>, Thierry Re ding <thierry.reding@gmail.com>, Gerd Hoffmann <kraxel@redhat.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Daniel Vetter <daniel.vetter@intel.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Alexey Brodkin <abrodkin@synopsys.com>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>inte
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Boris,
-
-Thank you for the patch.
-
-On Thursday 02 Jun 2016 16:31:28 Boris Brezillon wrote:
-> Adapt drm_pick_crtcs() and update_connector_routing() to fallback to
-> drm_atomic_helper_best_encoder() if funcs->best_encoder() is NULL so
-> that DRM drivers can leave this hook unassigned if they know they want
-> to use drm_atomic_helper_best_encoder().
-
-Could you please update include/drm/drm_modeset_helper_vtables.h to document 
-this new behaviour ?
-
-The only drawback I see in this patch is the additional object lookup 
-performed by drm_atomic_helper_best_encoder() at runtime. I wonder if we could 
-somehow cache the information, as the assignment can't change when there's a 
-1:1 correspondence between encoders and connectors.
-
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-> ---
->  drivers/gpu/drm/drm_atomic_helper.c |  4 +++-
->  drivers/gpu/drm/drm_fb_helper.c     | 13 ++++++++++++-
->  2 files changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/drm_atomic_helper.c
-> b/drivers/gpu/drm/drm_atomic_helper.c index f6a3350..849d029 100644
-> --- a/drivers/gpu/drm/drm_atomic_helper.c
-> +++ b/drivers/gpu/drm/drm_atomic_helper.c
-> @@ -300,8 +300,10 @@ update_connector_routing(struct drm_atomic_state
-> *state, if (funcs->atomic_best_encoder)
->  		new_encoder = funcs->atomic_best_encoder(connector,
->  							 connector_state);
-> -	else
-> +	else if (funcs->best_encoder)
->  		new_encoder = funcs->best_encoder(connector);
-> +	else
-> +		new_encoder = drm_atomic_helper_best_encoder(connector);
-> 
->  	if (!new_encoder) {
->  		DRM_DEBUG_ATOMIC("No suitable encoder found for [CONNECTOR:%d:%s]\n",
-> diff --git a/drivers/gpu/drm/drm_fb_helper.c
-> b/drivers/gpu/drm/drm_fb_helper.c index 7c2eb75..d44389a 100644
-> --- a/drivers/gpu/drm/drm_fb_helper.c
-> +++ b/drivers/gpu/drm/drm_fb_helper.c
-> @@ -2000,7 +2000,18 @@ static int drm_pick_crtcs(struct drm_fb_helper
-> *fb_helper, my_score++;
-> 
->  	connector_funcs = connector->helper_private;
-> -	encoder = connector_funcs->best_encoder(connector);
-> +
-> +	/*
-> +	 * If the DRM device implements atomic hooks and ->best_encoder() is
-> +	 * NULL we fallback to the default drm_atomic_helper_best_encoder()
-> +	 * helper.
-> +	 */
-> +	if (fb_helper->dev->mode_config.funcs->atomic_commit &&
-> +	    !connector_funcs->best_encoder)
-> +		encoder = drm_atomic_helper_best_encoder(connector);
-> +	else
-> +		encoder = connector_funcs->best_encoder(connector);
-> +
->  	if (!encoder)
->  		goto out;
-
--- 
-Regards,
-
-Laurent Pinchart
+T24gVGh1LCBKdW4gMiwgMjAxNiBhdCAxMTowNSBQTSwgTGF1cmVudCBQaW5jaGFydAo8bGF1cmVu
+dC5waW5jaGFydEBpZGVhc29uYm9hcmQuY29tPiB3cm90ZToKPiBIaSBCb3JpcywKPgo+IFRoYW5r
+IHlvdSBmb3IgdGhlIHBhdGNoLgo+Cj4gT24gVGh1cnNkYXkgMDIgSnVuIDIwMTYgMTY6MzE6Mjgg
+Qm9yaXMgQnJlemlsbG9uIHdyb3RlOgo+PiBBZGFwdCBkcm1fcGlja19jcnRjcygpIGFuZCB1cGRh
+dGVfY29ubmVjdG9yX3JvdXRpbmcoKSB0byBmYWxsYmFjayB0bwo+PiBkcm1fYXRvbWljX2hlbHBl
+cl9iZXN0X2VuY29kZXIoKSBpZiBmdW5jcy0+YmVzdF9lbmNvZGVyKCkgaXMgTlVMTCBzbwo+PiB0
+aGF0IERSTSBkcml2ZXJzIGNhbiBsZWF2ZSB0aGlzIGhvb2sgdW5hc3NpZ25lZCBpZiB0aGV5IGtu
+b3cgdGhleSB3YW50Cj4+IHRvIHVzZSBkcm1fYXRvbWljX2hlbHBlcl9iZXN0X2VuY29kZXIoKS4K
+Pgo+IENvdWxkIHlvdSBwbGVhc2UgdXBkYXRlIGluY2x1ZGUvZHJtL2RybV9tb2Rlc2V0X2hlbHBl
+cl92dGFibGVzLmggdG8gZG9jdW1lbnQKPiB0aGlzIG5ldyBiZWhhdmlvdXIgPwoKVGhhbmtzIGZv
+ciByZW1pbmRpbmcgbWUuIFBsZWFzZSB1cGRhdGUgaG9va3MgZm9yIGJvdGgKYXRvbWljX2Jlc3Rf
+ZW5jb2RlciBhbmQgYmVzdF9lbmNvZGVyLiBBbHNvIG1lbnRpb24gdGhhdCBpdCdzIG9ubHkKb3B0
+aW9uYWwgZm9yIGF0b21pYyBkcml2ZXJzLiBUaGVyZSdzIGxvdHMgb2YgZXhhbXBsZXMgaW4gdGhh
+dCBmaWxlIGZvcgp0aGUgd29yZGluZyB1c3VhbGx5IHVzZWQuCgo+IFRoZSBvbmx5IGRyYXdiYWNr
+IEkgc2VlIGluIHRoaXMgcGF0Y2ggaXMgdGhlIGFkZGl0aW9uYWwgb2JqZWN0IGxvb2t1cAo+IHBl
+cmZvcm1lZCBieSBkcm1fYXRvbWljX2hlbHBlcl9iZXN0X2VuY29kZXIoKSBhdCBydW50aW1lLiBJ
+IHdvbmRlciBpZiB3ZSBjb3VsZAo+IHNvbWVob3cgY2FjaGUgdGhlIGluZm9ybWF0aW9uLCBhcyB0
+aGUgYXNzaWdubWVudCBjYW4ndCBjaGFuZ2Ugd2hlbiB0aGVyZSdzIGEKPiAxOjEgY29ycmVzcG9u
+ZGVuY2UgYmV0d2VlbiBlbmNvZGVycyBhbmQgY29ubmVjdG9ycy4KCmRybV9lbmNvZGVyX2ZpbmQg
+aXMgYW4gaWRyIGxvb2t1cC4gVGhhdCBzaG91bGQgYmUgcGxlbnR5IGZhc3QsCmVzcGVjaWFsbHkg
+Zm9yIG1vZGVzZXQgY29kZS4gVXN1YWxseSB3aGF0J3MgdG9vIGV4cGVuc2l2ZSBldmVuIGZvcgpt
+b2Rlc2V0IGNvZGUgaXMgbGluZWFyIGxpc3Qgd2Fsa3MuIEJ1dCBDaHJpcyBqdXN0IHN1Ym1pdHRl
+ZCBwYXRjaGVzIHRvCmNvbnZlcnQgbW9zdCBvZiB0aGVtIGludG8gc2ltcGxlIGxvb2t1cHMuCi1E
+YW5pZWwKCj4+PiBTaWduZWQtb2ZmLWJ5OiBCb3JpcyBCcmV6aWxsb24gPGJvcmlzLmJyZXppbGxv
+bkBmcmVlLWVsZWN0cm9ucy5jb20+Cj4+IC0tLQo+PiAgZHJpdmVycy9ncHUvZHJtL2RybV9hdG9t
+aWNfaGVscGVyLmMgfCAgNCArKystCj4+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2ZiX2hlbHBlci5j
+ICAgICB8IDEzICsrKysrKysrKysrKy0KPj4gIDIgZmlsZXMgY2hhbmdlZCwgMTUgaW5zZXJ0aW9u
+cygrKSwgMiBkZWxldGlvbnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9k
+cm1fYXRvbWljX2hlbHBlci5jCj4+IGIvZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWNfaGVscGVy
+LmMgaW5kZXggZjZhMzM1MC4uODQ5ZDAyOSAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJt
+L2RybV9hdG9taWNfaGVscGVyLmMKPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9hdG9taWNf
+aGVscGVyLmMKPj4gQEAgLTMwMCw4ICszMDAsMTAgQEAgdXBkYXRlX2Nvbm5lY3Rvcl9yb3V0aW5n
+KHN0cnVjdCBkcm1fYXRvbWljX3N0YXRlCj4+ICpzdGF0ZSwgaWYgKGZ1bmNzLT5hdG9taWNfYmVz
+dF9lbmNvZGVyKQo+PiAgICAgICAgICAgICAgIG5ld19lbmNvZGVyID0gZnVuY3MtPmF0b21pY19i
+ZXN0X2VuY29kZXIoY29ubmVjdG9yLAo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgY29ubmVjdG9yX3N0YXRlKTsKPj4gLSAgICAgZWxzZQo+
+PiArICAgICBlbHNlIGlmIChmdW5jcy0+YmVzdF9lbmNvZGVyKQo+PiAgICAgICAgICAgICAgIG5l
+d19lbmNvZGVyID0gZnVuY3MtPmJlc3RfZW5jb2Rlcihjb25uZWN0b3IpOwo+PiArICAgICBlbHNl
+Cj4+ICsgICAgICAgICAgICAgbmV3X2VuY29kZXIgPSBkcm1fYXRvbWljX2hlbHBlcl9iZXN0X2Vu
+Y29kZXIoY29ubmVjdG9yKTsKPj4KPj4gICAgICAgaWYgKCFuZXdfZW5jb2Rlcikgewo+PiAgICAg
+ICAgICAgICAgIERSTV9ERUJVR19BVE9NSUMoIk5vIHN1aXRhYmxlIGVuY29kZXIgZm91bmQgZm9y
+IFtDT05ORUNUT1I6JWQ6JXNdXG4iLAo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2Ry
+bV9mYl9oZWxwZXIuYwo+PiBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fZmJfaGVscGVyLmMgaW5kZXgg
+N2MyZWI3NS4uZDQ0Mzg5YSAxMDA2NDQKPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2RybV9mYl9o
+ZWxwZXIuYwo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2ZiX2hlbHBlci5jCj4+IEBAIC0y
+MDAwLDcgKzIwMDAsMTggQEAgc3RhdGljIGludCBkcm1fcGlja19jcnRjcyhzdHJ1Y3QgZHJtX2Zi
+X2hlbHBlcgo+PiAqZmJfaGVscGVyLCBteV9zY29yZSsrOwo+Pgo+PiAgICAgICBjb25uZWN0b3Jf
+ZnVuY3MgPSBjb25uZWN0b3ItPmhlbHBlcl9wcml2YXRlOwo+PiAtICAgICBlbmNvZGVyID0gY29u
+bmVjdG9yX2Z1bmNzLT5iZXN0X2VuY29kZXIoY29ubmVjdG9yKTsKPj4gKwo+PiArICAgICAvKgo+
+PiArICAgICAgKiBJZiB0aGUgRFJNIGRldmljZSBpbXBsZW1lbnRzIGF0b21pYyBob29rcyBhbmQg
+LT5iZXN0X2VuY29kZXIoKSBpcwo+PiArICAgICAgKiBOVUxMIHdlIGZhbGxiYWNrIHRvIHRoZSBk
+ZWZhdWx0IGRybV9hdG9taWNfaGVscGVyX2Jlc3RfZW5jb2RlcigpCj4+ICsgICAgICAqIGhlbHBl
+ci4KPj4gKyAgICAgICovCj4+ICsgICAgIGlmIChmYl9oZWxwZXItPmRldi0+bW9kZV9jb25maWcu
+ZnVuY3MtPmF0b21pY19jb21taXQgJiYKPj4gKyAgICAgICAgICFjb25uZWN0b3JfZnVuY3MtPmJl
+c3RfZW5jb2RlcikKPj4gKyAgICAgICAgICAgICBlbmNvZGVyID0gZHJtX2F0b21pY19oZWxwZXJf
+YmVzdF9lbmNvZGVyKGNvbm5lY3Rvcik7Cj4+ICsgICAgIGVsc2UKPj4gKyAgICAgICAgICAgICBl
+bmNvZGVyID0gY29ubmVjdG9yX2Z1bmNzLT5iZXN0X2VuY29kZXIoY29ubmVjdG9yKTsKPj4gKwo+
+PiAgICAgICBpZiAoIWVuY29kZXIpCj4+ICAgICAgICAgICAgICAgZ290byBvdXQ7Cj4KPiAtLQo+
+IFJlZ2FyZHMsCj4KPiBMYXVyZW50IFBpbmNoYXJ0Cj4KCgoKLS0gCkRhbmllbCBWZXR0ZXIKU29m
+dHdhcmUgRW5naW5lZXIsIEludGVsIENvcnBvcmF0aW9uCis0MSAoMCkgNzkgMzY1IDU3IDQ4IC0g
+aHR0cDovL2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
+aW50ZWwtZ2Z4Cg==
