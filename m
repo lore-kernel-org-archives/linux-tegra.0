@@ -1,52 +1,130 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH 07/20] drm: mediatek: Rely on the default
-	->best_encoder() behavior
-Date: Thu,  2 Jun 2016 16:31:34 +0200
-Message-ID: <1464877907-27723-8-git-send-email-boris.brezillon@free-electrons.com>
-References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 09/20] drm: rcar-du: Rely on the default ->best_encoder() behavior
+Date: Thu, 02 Jun 2016 23:57:14 +0300
+Message-ID: <5863270.jtrd0Kruzj@avalon>
+References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com> <1464877907-27723-10-git-send-email-boris.brezillon@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Stefan Agner <stefan@agner.ch>, virtualization@lists.linux-foundation.org, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Alexey Brodkin <abrodkin@synopsys.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, linux-tegra@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1464877907-27723-10-git-send-email-boris.brezillon@free-electrons.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Jani Nikula <jani.nikula@linux.intel.com>, Alexey Brodkin <abrodkin@synopsys.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@freescale.com>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Mark Yao <mark.yao@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Vincent
 List-Id: linux-tegra@vger.kernel.org
 
-V2UgaGF2ZSBhIDE6MSByZWxhdGlvbnNoaXAgYmV0d2VlbiBjb25uZWN0b3JzIGFuZCBlbmNvZGVy
-cyBhbmQgdGhlCmRyaXZlciBpcyByZWx5aW5nIG9uIHRoZSBhdG9taWMgaGVscGVyczogd2UgY2Fu
-IGRyb3AgdGhlIGN1c3RvbQotPmJlc3RfZW5jb2RlcigpIGltcGxlbWVudGF0aW9uIGFuZCBsZXQg
-dGhlIGNvcmUgY2FsbApkcm1fYXRvbWljX2hlbHBlcl9iZXN0X2VuY29kZXIoKSBmb3IgdXMuCgpT
-aWduZWQtb2ZmLWJ5OiBCb3JpcyBCcmV6aWxsb24gPGJvcmlzLmJyZXppbGxvbkBmcmVlLWVsZWN0
-cm9ucy5jb20+Ci0tLQogZHJpdmVycy9ncHUvZHJtL21lZGlhdGVrL210a19kc2kuYyB8IDkgLS0t
-LS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgOSBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2
-ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2RzaS5jIGIvZHJpdmVycy9ncHUvZHJtL21lZGlhdGVr
-L210a19kc2kuYwppbmRleCAyZDgwOGU1Li43MzQzZmZjIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dw
-dS9kcm0vbWVkaWF0ZWsvbXRrX2RzaS5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9tZWRpYXRlay9t
-dGtfZHNpLmMKQEAgLTU3NSwxNCArNTc1LDYgQEAgc3RhdGljIGludCBtdGtfZHNpX2Nvbm5lY3Rv
-cl9nZXRfbW9kZXMoc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvcikKIAlyZXR1cm4gZHJt
-X3BhbmVsX2dldF9tb2Rlcyhkc2ktPnBhbmVsKTsKIH0KIAotc3RhdGljIHN0cnVjdCBkcm1fZW5j
-b2RlciAqbXRrX2RzaV9jb25uZWN0b3JfYmVzdF9lbmNvZGVyKAotCQlzdHJ1Y3QgZHJtX2Nvbm5l
-Y3RvciAqY29ubmVjdG9yKQotewotCXN0cnVjdCBtdGtfZHNpICpkc2kgPSBjb25uZWN0b3JfdG9f
-ZHNpKGNvbm5lY3Rvcik7Ci0KLQlyZXR1cm4gJmRzaS0+ZW5jb2RlcjsKLX0KLQogc3RhdGljIGNv
-bnN0IHN0cnVjdCBkcm1fZW5jb2Rlcl9oZWxwZXJfZnVuY3MgbXRrX2RzaV9lbmNvZGVyX2hlbHBl
-cl9mdW5jcyA9IHsKIAkubW9kZV9maXh1cCA9IG10a19kc2lfZW5jb2Rlcl9tb2RlX2ZpeHVwLAog
-CS5tb2RlX3NldCA9IG10a19kc2lfZW5jb2Rlcl9tb2RlX3NldCwKQEAgLTYwMyw3ICs1OTUsNiBA
-QCBzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9jb25uZWN0b3JfZnVuY3MgbXRrX2RzaV9jb25uZWN0
-b3JfZnVuY3MgPSB7CiBzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9jb25uZWN0b3JfaGVscGVyX2Z1
-bmNzCiAJbXRrX2RzaV9jb25uZWN0b3JfaGVscGVyX2Z1bmNzID0gewogCS5nZXRfbW9kZXMgPSBt
-dGtfZHNpX2Nvbm5lY3Rvcl9nZXRfbW9kZXMsCi0JLmJlc3RfZW5jb2RlciA9IG10a19kc2lfY29u
-bmVjdG9yX2Jlc3RfZW5jb2RlciwKIH07CiAKIHN0YXRpYyBpbnQgbXRrX2RybV9hdHRhY2hfYnJp
-ZGdlKHN0cnVjdCBkcm1fYnJpZGdlICpicmlkZ2UsCi0tIAoyLjcuNAoKX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJ
-bnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Au
-b3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
+Hi Boris,
+
+Thank you for the patch.
+
+On Thursday 02 Jun 2016 16:31:36 Boris Brezillon wrote:
+> All outputs have a 1:1 relationship between connectors and encoders,
+> and the driver is relying on the atomic helpers: we can drop the custom
+> ->best_encoder() implementations and let the core call
+> drm_atomic_helper_best_encoder() for us.
+> 
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> ---
+>  drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 12 ------------
+>  drivers/gpu/drm/rcar-du/rcar_du_encoder.h |  3 ---
+>  drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c |  1 -
+>  drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c |  1 -
+>  drivers/gpu/drm/rcar-du/rcar_du_vgacon.c  |  1 -
+>  5 files changed, 18 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c index 4e939e4..55149e9 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
+> @@ -27,18 +27,6 @@
+>  #include "rcar_du_vgacon.h"
+> 
+>  /*
+> ---------------------------------------------------------------------------
+> -- - * Common connector functions
+> - */
+> -
+> -struct drm_encoder *
+> -rcar_du_connector_best_encoder(struct drm_connector *connector)
+> -{
+> -	struct rcar_du_connector *rcon = to_rcar_connector(connector);
+> -
+> -	return rcar_encoder_to_drm_encoder(rcon->encoder);
+> -}
+> -
+> -/*
+> ---------------------------------------------------------------------------
+> -- * Encoder
+>   */
+> 
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
+> b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h index 719b6f2a..a8669c3 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
+> @@ -49,9 +49,6 @@ struct rcar_du_connector {
+>  #define to_rcar_connector(c) \
+>  	container_of(c, struct rcar_du_connector, connector)
+> 
+> -struct drm_encoder *
+> -rcar_du_connector_best_encoder(struct drm_connector *connector);
+> -
+>  int rcar_du_encoder_init(struct rcar_du_device *rcdu,
+>  			 enum rcar_du_encoder_type type,
+>  			 enum rcar_du_output output,
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c index 6c92714..612b4d5 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c
+> @@ -52,7 +52,6 @@ static int rcar_du_hdmi_connector_mode_valid(struct
+> drm_connector *connector, static const struct drm_connector_helper_funcs
+> connector_helper_funcs = { .get_modes = rcar_du_hdmi_connector_get_modes,
+>  	.mode_valid = rcar_du_hdmi_connector_mode_valid,
+> -	.best_encoder = rcar_du_connector_best_encoder,
+>  };
+> 
+>  static enum drm_connector_status
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c index e905f5d..6afd0af 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
+> @@ -59,7 +59,6 @@ static int rcar_du_lvds_connector_get_modes(struct
+> drm_connector *connector)
+> 
+>  static const struct drm_connector_helper_funcs connector_helper_funcs = {
+>  	.get_modes = rcar_du_lvds_connector_get_modes,
+> -	.best_encoder = rcar_du_connector_best_encoder,
+>  };
+> 
+>  static enum drm_connector_status
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c
+> b/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c index 9d7e5c9..68f7ffa 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c
+> @@ -28,7 +28,6 @@ static int rcar_du_vga_connector_get_modes(struct
+> drm_connector *connector)
+> 
+>  static const struct drm_connector_helper_funcs connector_helper_funcs = {
+>  	.get_modes = rcar_du_vga_connector_get_modes,
+> -	.best_encoder = rcar_du_connector_best_encoder,
+>  };
+> 
+>  static enum drm_connector_status
+
+You can also remove
+
+        rcon->encoder = renc;
+
+from rcar_du_vga_connector_init(), it's not needed anymore. The same code in 
+rcar_du_hdmi_connector_init() has to stay for now though, as it's used to 
+locate the slave encoder in the HDMI support code. That should change when the 
+driver will be converted to use drm_bridge.
+
+I can also fix this during the conversion to drm_bridge if you don't want to 
+resubmit. In any case,
+
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+
+-- 
+Regards,
+
+Laurent Pinchart
