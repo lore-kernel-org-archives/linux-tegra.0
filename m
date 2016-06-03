@@ -1,110 +1,395 @@
-From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Subject: Re: [PATCH 01/20] drm/atomic: Fix remaining places
- where !funcs->best_encoder is valid
-Date: Fri, 3 Jun 2016 21:01:51 +0200
-Message-ID: <20160603190151.GD7231@phenom.ffwll.local>
-References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
- <1464877907-27723-2-git-send-email-boris.brezillon@free-electrons.com>
- <8671722.LHaiaBNqfE@avalon>
- <CAKMK7uHyqNbA8Scw2fE0geAyNt0a0XVtzf81nwWjEhbZ-gAvKw@mail.gmail.com>
- <20160603093743.000ef95b@bbrezillon>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] ARM64: boot: dts: Add regulators for Tegra210 Smaug
+Date: Fri, 3 Jun 2016 16:22:45 -0400
+Message-ID: <1464985365-11612-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20160603093743.000ef95b@bbrezillon>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/freedreno>
-List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "open list:VIRTIO CORE,
- NET..." <virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thierry Re ding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alexey Brodkin <abrodkin-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gRnJpLCBKdW4gMDMsIDIwMTYgYXQgMDk6Mzc6NDNBTSArMDIwMCwgQm9yaXMgQnJlemlsbG9u
-IHdyb3RlOgo+IE9uIFRodSwgMiBKdW4gMjAxNiAyMzo1NzowMiArMDIwMAo+IERhbmllbCBWZXR0
-ZXIgPGRhbmllbEBmZndsbC5jaD4gd3JvdGU6Cj4gCj4gPiBPbiBUaHUsIEp1biAyLCAyMDE2IGF0
-IDExOjA1IFBNLCBMYXVyZW50IFBpbmNoYXJ0Cj4gPiA8bGF1cmVudC5waW5jaGFydEBpZGVhc29u
-Ym9hcmQuY29tPiB3cm90ZToKPiA+ID4gSGkgQm9yaXMsCj4gPiA+Cj4gPiA+IFRoYW5rIHlvdSBm
-b3IgdGhlIHBhdGNoLgo+ID4gPgo+ID4gPiBPbiBUaHVyc2RheSAwMiBKdW4gMjAxNiAxNjozMToy
-OCBCb3JpcyBCcmV6aWxsb24gd3JvdGU6ICAKPiA+ID4+IEFkYXB0IGRybV9waWNrX2NydGNzKCkg
-YW5kIHVwZGF0ZV9jb25uZWN0b3Jfcm91dGluZygpIHRvIGZhbGxiYWNrIHRvCj4gPiA+PiBkcm1f
-YXRvbWljX2hlbHBlcl9iZXN0X2VuY29kZXIoKSBpZiBmdW5jcy0+YmVzdF9lbmNvZGVyKCkgaXMg
-TlVMTCBzbwo+ID4gPj4gdGhhdCBEUk0gZHJpdmVycyBjYW4gbGVhdmUgdGhpcyBob29rIHVuYXNz
-aWduZWQgaWYgdGhleSBrbm93IHRoZXkgd2FudAo+ID4gPj4gdG8gdXNlIGRybV9hdG9taWNfaGVs
-cGVyX2Jlc3RfZW5jb2RlcigpLiAgCj4gPiA+Cj4gPiA+IENvdWxkIHlvdSBwbGVhc2UgdXBkYXRl
-IGluY2x1ZGUvZHJtL2RybV9tb2Rlc2V0X2hlbHBlcl92dGFibGVzLmggdG8gZG9jdW1lbnQKPiA+
-ID4gdGhpcyBuZXcgYmVoYXZpb3VyID8gIAo+ID4gCj4gPiBUaGFua3MgZm9yIHJlbWluZGluZyBt
-ZS4gUGxlYXNlIHVwZGF0ZSBob29rcyBmb3IgYm90aAo+ID4gYXRvbWljX2Jlc3RfZW5jb2RlciBh
-bmQgYmVzdF9lbmNvZGVyLiBBbHNvIG1lbnRpb24gdGhhdCBpdCdzIG9ubHkKPiA+IG9wdGlvbmFs
-IGZvciBhdG9taWMgZHJpdmVycy4gVGhlcmUncyBsb3RzIG9mIGV4YW1wbGVzIGluIHRoYXQgZmls
-ZSBmb3IKPiA+IHRoZSB3b3JkaW5nIHVzdWFsbHkgdXNlZC4KPiAKPiBIbSwgSSBoYXZlbid0IGNo
-YW5nZWQgYW55dGhpbmcgZm9yIHRoZSAtPmF0b21pY19iZXN0X2VuY29kZXIoKSBob29rLCBvcgo+
-IGFtIEkgbWlzc2luZyBzb21ldGhpbmc/CgpCZWZvcmUgeW91IG5lZWRlZCBhdG9taWNfYmVzdF9l
-bmNvZGVyIG9yIGJlc3RfZW5jb2RlciAod2VsbCB0aGF0J3MgdGhlCmlkZWEgYXQgbGVhc3QpLCBu
-b3cgYm90aCBhcmUgb3B0aW9uYWwuIEtlcm5lbGRvYyBuZWVkcyB0byBiZSBhZGp1c3RlZCBpbgpi
-b3RoIHBsYWNlcyB0byBtYXRjaCBuZXcgcmVhbGl0eSBhZnRlciB5b3VyIHBhdGNoLgotRGFuaWVs
-Cgo+IAo+ID4gCj4gPiA+IFRoZSBvbmx5IGRyYXdiYWNrIEkgc2VlIGluIHRoaXMgcGF0Y2ggaXMg
-dGhlIGFkZGl0aW9uYWwgb2JqZWN0IGxvb2t1cAo+ID4gPiBwZXJmb3JtZWQgYnkgZHJtX2F0b21p
-Y19oZWxwZXJfYmVzdF9lbmNvZGVyKCkgYXQgcnVudGltZS4gSSB3b25kZXIgaWYgd2UgY291bGQK
-PiA+ID4gc29tZWhvdyBjYWNoZSB0aGUgaW5mb3JtYXRpb24sIGFzIHRoZSBhc3NpZ25tZW50IGNh
-bid0IGNoYW5nZSB3aGVuIHRoZXJlJ3MgYQo+ID4gPiAxOjEgY29ycmVzcG9uZGVuY2UgYmV0d2Vl
-biBlbmNvZGVycyBhbmQgY29ubmVjdG9ycy4gIAo+ID4gCj4gPiBkcm1fZW5jb2Rlcl9maW5kIGlz
-IGFuIGlkciBsb29rdXAuIFRoYXQgc2hvdWxkIGJlIHBsZW50eSBmYXN0LAo+ID4gZXNwZWNpYWxs
-eSBmb3IgbW9kZXNldCBjb2RlLiBVc3VhbGx5IHdoYXQncyB0b28gZXhwZW5zaXZlIGV2ZW4gZm9y
-Cj4gPiBtb2Rlc2V0IGNvZGUgaXMgbGluZWFyIGxpc3Qgd2Fsa3MuIEJ1dCBDaHJpcyBqdXN0IHN1
-Ym1pdHRlZCBwYXRjaGVzIHRvCj4gPiBjb252ZXJ0IG1vc3Qgb2YgdGhlbSBpbnRvIHNpbXBsZSBs
-b29rdXBzLgo+ID4gLURhbmllbAo+ID4gCj4gPiA+Pj4gU2lnbmVkLW9mZi1ieTogQm9yaXMgQnJl
-emlsbG9uIDxib3Jpcy5icmV6aWxsb25AZnJlZS1lbGVjdHJvbnMuY29tPiAgCj4gPiA+PiAtLS0K
-PiA+ID4+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pY19oZWxwZXIuYyB8ICA0ICsrKy0KPiA+
-ID4+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2ZiX2hlbHBlci5jICAgICB8IDEzICsrKysrKysrKysr
-Ky0KPiA+ID4+ICAyIGZpbGVzIGNoYW5nZWQsIDE1IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25z
-KC0pCj4gPiA+Pgo+ID4gPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWlj
-X2hlbHBlci5jCj4gPiA+PiBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWljX2hlbHBlci5jIGlu
-ZGV4IGY2YTMzNTAuLjg0OWQwMjkgMTAwNjQ0Cj4gPiA+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0v
-ZHJtX2F0b21pY19oZWxwZXIuYwo+ID4gPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9hdG9t
-aWNfaGVscGVyLmMKPiA+ID4+IEBAIC0zMDAsOCArMzAwLDEwIEBAIHVwZGF0ZV9jb25uZWN0b3Jf
-cm91dGluZyhzdHJ1Y3QgZHJtX2F0b21pY19zdGF0ZQo+ID4gPj4gKnN0YXRlLCBpZiAoZnVuY3Mt
-PmF0b21pY19iZXN0X2VuY29kZXIpCj4gPiA+PiAgICAgICAgICAgICAgIG5ld19lbmNvZGVyID0g
-ZnVuY3MtPmF0b21pY19iZXN0X2VuY29kZXIoY29ubmVjdG9yLAo+ID4gPj4gICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbm5lY3Rvcl9zdGF0
-ZSk7Cj4gPiA+PiAtICAgICBlbHNlCj4gPiA+PiArICAgICBlbHNlIGlmIChmdW5jcy0+YmVzdF9l
-bmNvZGVyKQo+ID4gPj4gICAgICAgICAgICAgICBuZXdfZW5jb2RlciA9IGZ1bmNzLT5iZXN0X2Vu
-Y29kZXIoY29ubmVjdG9yKTsKPiA+ID4+ICsgICAgIGVsc2UKPiA+ID4+ICsgICAgICAgICAgICAg
-bmV3X2VuY29kZXIgPSBkcm1fYXRvbWljX2hlbHBlcl9iZXN0X2VuY29kZXIoY29ubmVjdG9yKTsK
-PiA+ID4+Cj4gPiA+PiAgICAgICBpZiAoIW5ld19lbmNvZGVyKSB7Cj4gPiA+PiAgICAgICAgICAg
-ICAgIERSTV9ERUJVR19BVE9NSUMoIk5vIHN1aXRhYmxlIGVuY29kZXIgZm91bmQgZm9yIFtDT05O
-RUNUT1I6JWQ6JXNdXG4iLAo+ID4gPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1f
-ZmJfaGVscGVyLmMKPiA+ID4+IGIvZHJpdmVycy9ncHUvZHJtL2RybV9mYl9oZWxwZXIuYyBpbmRl
-eCA3YzJlYjc1Li5kNDQzODlhIDEwMDY0NAo+ID4gPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2Ry
-bV9mYl9oZWxwZXIuYwo+ID4gPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9mYl9oZWxwZXIu
-Ywo+ID4gPj4gQEAgLTIwMDAsNyArMjAwMCwxOCBAQCBzdGF0aWMgaW50IGRybV9waWNrX2NydGNz
-KHN0cnVjdCBkcm1fZmJfaGVscGVyCj4gPiA+PiAqZmJfaGVscGVyLCBteV9zY29yZSsrOwo+ID4g
-Pj4KPiA+ID4+ICAgICAgIGNvbm5lY3Rvcl9mdW5jcyA9IGNvbm5lY3Rvci0+aGVscGVyX3ByaXZh
-dGU7Cj4gPiA+PiAtICAgICBlbmNvZGVyID0gY29ubmVjdG9yX2Z1bmNzLT5iZXN0X2VuY29kZXIo
-Y29ubmVjdG9yKTsKPiA+ID4+ICsKPiA+ID4+ICsgICAgIC8qCj4gPiA+PiArICAgICAgKiBJZiB0
-aGUgRFJNIGRldmljZSBpbXBsZW1lbnRzIGF0b21pYyBob29rcyBhbmQgLT5iZXN0X2VuY29kZXIo
-KSBpcwo+ID4gPj4gKyAgICAgICogTlVMTCB3ZSBmYWxsYmFjayB0byB0aGUgZGVmYXVsdCBkcm1f
-YXRvbWljX2hlbHBlcl9iZXN0X2VuY29kZXIoKQo+ID4gPj4gKyAgICAgICogaGVscGVyLgo+ID4g
-Pj4gKyAgICAgICovCj4gPiA+PiArICAgICBpZiAoZmJfaGVscGVyLT5kZXYtPm1vZGVfY29uZmln
-LmZ1bmNzLT5hdG9taWNfY29tbWl0ICYmCj4gPiA+PiArICAgICAgICAgIWNvbm5lY3Rvcl9mdW5j
-cy0+YmVzdF9lbmNvZGVyKQo+ID4gPj4gKyAgICAgICAgICAgICBlbmNvZGVyID0gZHJtX2F0b21p
-Y19oZWxwZXJfYmVzdF9lbmNvZGVyKGNvbm5lY3Rvcik7Cj4gPiA+PiArICAgICBlbHNlCj4gPiA+
-PiArICAgICAgICAgICAgIGVuY29kZXIgPSBjb25uZWN0b3JfZnVuY3MtPmJlc3RfZW5jb2Rlcihj
-b25uZWN0b3IpOwo+ID4gPj4gKwo+ID4gPj4gICAgICAgaWYgKCFlbmNvZGVyKQo+ID4gPj4gICAg
-ICAgICAgICAgICBnb3RvIG91dDsgIAo+ID4gPgo+ID4gPiAtLQo+ID4gPiBSZWdhcmRzLAo+ID4g
-Pgo+ID4gPiBMYXVyZW50IFBpbmNoYXJ0Cj4gPiA+ICAKPiA+IAo+ID4gCj4gPiAKPiAKPiAKPiAK
-PiAtLSAKPiBCb3JpcyBCcmV6aWxsb24sIEZyZWUgRWxlY3Ryb25zCj4gRW1iZWRkZWQgTGludXgg
-YW5kIEtlcm5lbCBlbmdpbmVlcmluZwo+IGh0dHA6Ly9mcmVlLWVsZWN0cm9ucy5jb20KCi0tIApE
-YW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8v
-YmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fXwpGcmVlZHJlbm8gbWFpbGluZyBsaXN0CkZyZWVkcmVub0BsaXN0cy5mcmVlZGVza3RvcC5v
-cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9mcmVlZHJl
-bm8K
+Add regulators to the Tegra210 Smaug DTS file including
+support for the max77620 PMIC.
+
+Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 350 ++++++++++++++++++++++++++
+ 1 file changed, 350 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+index 4d89f4e02d98..fdca5b5d79e8 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+@@ -1,6 +1,7 @@
+ /dts-v1/;
+ 
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/mfd/max77620.h>
+ #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+ 
+ #include "tegra210.dtsi"
+@@ -1327,6 +1328,269 @@
+ 		};
+ 	};
+ 
++	i2c@7000d000 {
++		status = "okay";
++		clock-frequency = <1000000>;
++
++		max77620: max77620@3c {
++			compatible = "maxim,max77620";
++			reg = <0x3c>;
++			interrupts = <0 86 IRQ_TYPE_NONE>;
++
++			#interrupt-cells = <2>;
++			interrupt-controller;
++
++			gpio-controller;
++			#gpio-cells = <2>;
++
++			pinctrl-names = "default";
++			pinctrl-0 = <&max77620_default>;
++
++			max77620_default: pinmux@0 {
++				pin_gpio {
++					pins = "gpio0", "gpio1", "gpio2", "gpio5",
++					       "gpio6", "gpio7";
++					function = "gpio";
++				};
++
++				/*
++				 * GPIO3 is used to en_pp3300, and it is part of power
++				 * sequence, So it must be sequenced up (automatically
++				 * set by OTP) and down properly.
++				 */
++				pin_gpio3 {
++					pins = "gpio3";
++					function = "fps-out";
++					drive-open-drain = <1>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
++					maxim,active-fps-power-up-slot = <4>;
++					maxim,active-fps-power-down-slot = <2>;
++				};
++
++				pin_gpio5_6_7 {
++					pins = "gpio5", "gpio6";
++					function = "gpio";
++					drive-push-pull = <1>;
++				};
++
++				pin_32k {
++					pins = "gpio4";
++					function = "32k-out1";
++				};
++			};
++
++			fps {
++				fps0 {
++					maxim,shutdown-fps-time-period-us = <5120>;
++					maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN0>;
++				};
++
++				fps1 {
++					maxim,shutdown-fps-time-period-us = <5120>;
++					maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN1>;
++					maxim,enable-sleep;
++				};
++
++				fps2 {
++					maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN0>;
++				};
++			};
++
++			regulators {
++				in-ldo0-1-supply = <&pp1350>;
++				in-ldo2-supply = <&pp3300>;
++				in-ldo3-5-supply = <&pp3300>;
++				in-ldo7-8-supply = <&pp1350>;
++
++				ppvar_soc: sd0 {
++					regulator-name = "PPVAR_SOC";
++					regulator-min-microvolt = <825000>;
++					regulator-max-microvolt = <1125000>;
++					regulator-enable-ramp-delay = <146>;
++					regulator-disable-ramp-delay = <4080>;
++					regulator-ramp-delay = <27500>;
++					regulator-ramp-delay-scale = <300>;
++					regulator-always-on;
++					regulator-boot-on;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
++					maxim,active-fps-power-up-slot = <1>;
++					maxim,active-fps-power-down-slot = <7>;
++				};
++
++				pp1100_sd1: sd1 {
++					regulator-name = "PP1100";
++					regulator-min-microvolt = <1125000>;
++					regulator-max-microvolt = <1125000>;
++					regulator-enable-ramp-delay = <130>;
++					regulator-disable-ramp-delay = <145800>;
++					regulator-ramp-delay = <27500>;
++					regulator-ramp-delay-scale = <300>;
++					regulator-always-on;
++					regulator-boot-on;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
++					maxim,active-fps-power-up-slot = <5>;
++					maxim,active-fps-power-down-slot = <1>;
++				};
++
++				pp1350: sd2 {
++					regulator-name = "PP1350";
++					regulator-min-microvolt = <1350000>;
++					regulator-max-microvolt = <1350000>;
++					regulator-enable-ramp-delay = <176>;
++					regulator-disable-ramp-delay = <32000>;
++					regulator-ramp-delay = <27500>;
++					regulator-ramp-delay-scale = <350>;
++					regulator-always-on;
++					regulator-boot-on;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
++					maxim,active-fps-power-up-slot = <2>;
++					maxim,active-fps-power-down-slot = <5>;
++				};
++
++				pp1800: sd3 {
++					regulator-name = "PP1800";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-enable-ramp-delay = <242>;
++					regulator-disable-ramp-delay = <118000>;
++					regulator-ramp-delay = <27500>;
++					regulator-ramp-delay-scale = <360>;
++					regulator-always-on;
++					regulator-boot-on;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
++					maxim,active-fps-power-up-slot = <3>;
++					maxim,active-fps-power-down-slot = <3>;
++				};
++
++				pp1200_avdd: ldo0 {
++					regulator-name = "PP1200_AVDD";
++					regulator-min-microvolt = <1200000>;
++					regulator-max-microvolt = <1200000>;
++					regulator-enable-ramp-delay = <26>;
++					regulator-disable-ramp-delay = <626>;
++					regulator-ramp-delay = <100000>;
++					regulator-ramp-delay-scale = <200>;
++					regulator-boot-on;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
++					maxim,active-fps-power-up-slot = <0>;
++					maxim,active-fps-power-down-slot = <7>;
++				};
++
++				pp1200_rcam: ldo1 {
++					regulator-name = "PP1200_RCAM";
++					regulator-min-microvolt = <1200000>;
++					regulator-max-microvolt = <1200000>;
++					regulator-enable-ramp-delay = <22>;
++					regulator-disable-ramp-delay = <630>;
++					regulator-ramp-delay = <100000>;
++					regulator-ramp-delay-scale = <200>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
++					maxim,active-fps-power-up-slot = <0>;
++					maxim,active-fps-power-down-slot = <7>;
++				};
++
++				pp_ldo2: ldo2 {
++					regulator-name = "PP_LDO2";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-enable-ramp-delay = <62>;
++					regulator-disable-ramp-delay = <650>;
++					regulator-ramp-delay = <100000>;
++					regulator-ramp-delay-scale = <200>;
++					regulator-always-on;
++					regulator-boot-on;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
++					maxim,active-fps-power-up-slot = <0>;
++					maxim,active-fps-power-down-slot = <7>;
++				};
++
++				pp2800l_rcam: ldo3 {
++					regulator-name = "PP2800L_RCAM";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-enable-ramp-delay = <50>;
++					regulator-disable-ramp-delay = <1110>;
++					regulator-ramp-delay = <100000>;
++					regulator-ramp-delay-scale = <200>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
++					maxim,active-fps-power-up-slot = <0>;
++					maxim,active-fps-power-down-slot = <7>;
++				};
++
++				pp100_soc_rtc: ldo4 {
++					regulator-name = "PP1100_SOC_RTC";
++					regulator-min-microvolt = <850000>;
++					regulator-max-microvolt = <850000>;
++					regulator-enable-ramp-delay = <22>;
++					regulator-disable-ramp-delay = <610>;
++					regulator-ramp-delay = <100000>;
++					regulator-ramp-delay-scale = <200>;
++					regulator-always-on; /* Check this */
++					regulator-boot-on;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
++					maxim,active-fps-power-up-slot = <1>;
++					maxim,active-fps-power-down-slot = <7>;
++				};
++
++				pp2800l_fcam: ldo5 {
++					regulator-name = "PP2800L_FCAM";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-enable-ramp-delay = <62>;
++					regulator-disable-ramp-delay = <640>;
++					regulator-ramp-delay = <100000>;
++					regulator-ramp-delay-scale = <200>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
++					maxim,active-fps-power-up-slot = <0>;
++					maxim,active-fps-power-down-slot = <7>;
++				};
++
++				ldo6 {
++					/* Unused. */
++					regulator-name = "PP_LDO6";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-enable-ramp-delay = <36>;
++					regulator-disable-ramp-delay = <674>;
++					regulator-ramp-delay = <100000>;
++					regulator-ramp-delay-scale = <200>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
++					maxim,active-fps-power-up-slot = <0>;
++					maxim,active-fps-power-down-slot = <7>;
++				};
++
++				pp1050_avdd: ldo7 {
++					regulator-name = "PP1050_AVDD";
++					regulator-min-microvolt = <1050000>;
++					regulator-max-microvolt = <1050000>;
++					regulator-enable-ramp-delay = <24>;
++					regulator-disable-ramp-delay = <2768>;
++					regulator-ramp-delay = <100000>;
++					regulator-ramp-delay-scale = <200>;
++					regulator-always-on;
++					regulator-boot-on;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
++					maxim,active-fps-power-up-slot = <3>;
++					maxim,active-fps-power-down-slot = <4>;
++				};
++
++				avddio_1v05: ldo8 {
++					regulator-name = "AVDDIO_1V05";
++					regulator-min-microvolt = <1050000>;
++					regulator-max-microvolt = <1050000>;
++					regulator-enable-ramp-delay = <22>;
++					regulator-disable-ramp-delay = <1160>;
++					regulator-ramp-delay = <100000>;
++					regulator-ramp-delay-scale = <200>;
++					regulator-boot-on;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
++					maxim,active-fps-power-up-slot = <0>;
++					maxim,active-fps-power-down-slot = <7>;
++				};
++			};
++		};
++	};
++
+ 	pmc@7000e400 {
+ 		nvidia,invert-interrupt;
+ 		nvidia,suspend-mode = <0>;
+@@ -1421,4 +1685,90 @@
+ 		compatible = "arm,psci-1.0";
+ 		method = "smc";
+ 	};
++
++	regulators {
++		compatible = "simple-bus";
++		device_type = "fixed-regulators";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ppvar_sys: regulator@0 {
++			compatible = "regulator-fixed";
++			reg = <0>;
++			regulator-name = "PPVAR_SYS";
++			regulator-min-microvolt = <4400000>;
++			regulator-max-microvolt = <4400000>;
++			regulator-always-on;
++		};
++
++		pplcd_vdd: regulator@1 {
++			compatible = "regulator-fixed";
++			reg = <1>;
++			regulator-name = "PPLCD_VDD";
++			regulator-min-microvolt = <4400000>;
++			regulator-max-microvolt = <4400000>;
++			gpio = <&gpio TEGRA_GPIO(V, 4) 0>;
++			enable-active-high;
++			regulator-boot-on;
++		};
++
++		pp3000_always: regulator@2 {
++			compatible = "regulator-fixed";
++			reg = <2>;
++			regulator-name = "PP3000_ALWAYS";
++			regulator-min-microvolt = <3000000>;
++			regulator-max-microvolt = <3000000>;
++			regulator-always-on;
++		};
++
++		pp3300: regulator@3 {
++			compatible = "regulator-fixed";
++			reg = <3>;
++			regulator-name = "PP3300";
++			regulator-min-microvolt = <3300000>;
++			regulator-max-microvolt = <3300000>;
++			regulator-boot-on;
++			regulator-always-on;
++			gpio = <&max77620 3 0>;
++			enable-active-high;
++		};
++
++		pp5000: regulator@4 {
++			compatible = "regulator-fixed";
++			reg = <4>;
++			regulator-name = "PP5000";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			regulator-always-on;
++		};
++
++		pp1800_lcdio: regulator@5 {
++			compatible = "regulator-fixed";
++			reg = <5>;
++			regulator-name = "PP1800_LCDIO";
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1800000>;
++			gpio = <&gpio TEGRA_GPIO(V, 3) 0>;
++			enable-active-high;
++			regulator-boot-on;
++		};
++
++		pp1800_cam: regulator@6 {
++			compatible = "regulator-fixed";
++			reg= <6>;
++			regulator-name = "PP1800_CAM";
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1800000>;
++			gpio = <&gpio TEGRA_GPIO(K, 3) 0>;
++			enable-active-high;
++		};
++
++		usbc_vbus: regulator@7 {
++			compatible = "regulator-fixed";
++			reg = <7>;
++			regulator-name = "USBC_VBUS";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++		};
++	};
+ };
+-- 
+1.9.1
