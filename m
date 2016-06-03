@@ -1,42 +1,103 @@
-From: Chris Wilson <chris@chris-wilson.co.uk>
-Subject: Re: [PATCH 01/20] drm/atomic: Fix remaining places
- where !funcs->best_encoder is valid
-Date: Thu, 2 Jun 2016 23:40:04 +0100
-Message-ID: <20160602224004.GA1819@nuc-i3427.alporthouse.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: Re: [PATCH 01/20] drm/atomic: Fix remaining places where
+	!funcs->best_encoder is valid
+Date: Fri, 3 Jun 2016 09:36:15 +0200
+Message-ID: <20160603093615.14ba5fb8@bbrezillon>
 References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
- <1464877907-27723-2-git-send-email-boris.brezillon@free-electrons.com>
- <8671722.LHaiaBNqfE@avalon>
- <CAKMK7uHyqNbA8Scw2fE0geAyNt0a0XVtzf81nwWjEhbZ-gAvKw@mail.gmail.com>
+	<1464877907-27723-2-git-send-email-boris.brezillon@free-electrons.com>
+	<8671722.LHaiaBNqfE@avalon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <CAKMK7uHyqNbA8Scw2fE0geAyNt0a0XVtzf81nwWjEhbZ-gAvKw@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Daniel Vetter <daniel@ffwll.ch>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, David Airlie <airlied@linux.ie>, dri-devel <dri-devel@lists.freedesktop.org>, "open list:VIRTIO CORE,
- NET..." <virtualization@lists.linux-foundation.org>, Matthias Brugger <matthias.bgg@gmail.com>, Thierry Re ding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Daniel Vetter <daniel.vetter@intel.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, linux-samsung-soc <linux-samsung-soc@vger.kernel.org>, Joonyoung Shim <jy0922.shim@samsung.com>, Alexey Brodkin <abrodkin@synopsys.com>, "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-msm <linux-arm-msm@vger.kernel.org>in
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <virtualization-bounces@lists.linux-foundation.org>
+In-Reply-To: <8671722.LHaiaBNqfE@avalon>
+List-Unsubscribe: <https://lists.linuxfoundation.org/mailman/options/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=unsubscribe>
+List-Archive: <http://lists.linuxfoundation.org/pipermail/virtualization/>
+List-Post: <mailto:virtualization@lists.linux-foundation.org>
+List-Help: <mailto:virtualization-request@lists.linux-foundation.org?subject=help>
+List-Subscribe: <https://lists.linuxfoundation.org/mailman/listinfo/virtualization>,
+	<mailto:virtualization-request@lists.linux-foundation.org?subject=subscribe>
+Sender: virtualization-bounces@lists.linux-foundation.org
+Errors-To: virtualization-bounces@lists.linux-foundation.org
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, Eric Anholt <eric@anholt.net>, Thierry Re ding <thierry.reding@gmail.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Daniel Vetter <daniel.vetter@intel.com>, Alexandre Courbot <gnurou@gmail.com>, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Alexey Brodkin <abrodkin@synopsys.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, linux-tegra@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, Jani Nikula <jani.nikula@linux.intel.com>, Inki Dae <inki.dae@samsung.com>, linux-mediatek@lists
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVGh1LCBKdW4gMDIsIDIwMTYgYXQgMTE6NTc6MDJQTSArMDIwMCwgRGFuaWVsIFZldHRlciB3
-cm90ZToKPiBkcm1fZW5jb2Rlcl9maW5kIGlzIGFuIGlkciBsb29rdXAuIFRoYXQgc2hvdWxkIGJl
-IHBsZW50eSBmYXN0LAo+IGVzcGVjaWFsbHkgZm9yIG1vZGVzZXQgY29kZS4gVXN1YWxseSB3aGF0
-J3MgdG9vIGV4cGVuc2l2ZSBldmVuIGZvcgo+IG1vZGVzZXQgY29kZSBpcyBsaW5lYXIgbGlzdCB3
-YWxrcy4gQnV0IENocmlzIGp1c3Qgc3VibWl0dGVkIHBhdGNoZXMgdG8KPiBjb252ZXJ0IG1vc3Qg
-b2YgdGhlbSBpbnRvIHNpbXBsZSBsb29rdXBzLgoKRm9yIHRoZSBpZHJfZmluZCwgSSdtIHRlbXB0
-ZWQgdG8gcmVwbGFjZSB0aGUgbXV0ZXggd2l0aCBhIHJ3bG9jay4gSXQKaGVscHMgcGF0aG9sb2dp
-Y2FsIGNhc2VzLCBidXQgaW4gcmVhbGl0eSB0aGVyZSBhcmUgbW9yZSBjcnVjaWFsCmxvY2tzIGFy
-b3VuZCB0aGUgaHcgdGhhdCBsaW1pdCBjb25jdXJyZW5jeS4gOy0pCi1DaHJpcwoKLS0gCkNocmlz
-IFdpbHNvbiwgSW50ZWwgT3BlbiBTb3VyY2UgVGVjaG5vbG9neSBDZW50cmUKX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlz
-dApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
+On Fri, 03 Jun 2016 00:05:46 +0300
+Laurent Pinchart <laurent.pinchart@ideasonboard.com> wrote:
+
+> Hi Boris,
+> 
+> Thank you for the patch.
+> 
+> On Thursday 02 Jun 2016 16:31:28 Boris Brezillon wrote:
+> > Adapt drm_pick_crtcs() and update_connector_routing() to fallback to
+> > drm_atomic_helper_best_encoder() if funcs->best_encoder() is NULL so
+> > that DRM drivers can leave this hook unassigned if they know they want
+> > to use drm_atomic_helper_best_encoder().  
+> 
+> Could you please update include/drm/drm_modeset_helper_vtables.h to document 
+> this new behaviour ?
+
+Sure.
+
+> 
+> The only drawback I see in this patch is the additional object lookup 
+> performed by drm_atomic_helper_best_encoder() at runtime. I wonder if we could 
+> somehow cache the information, as the assignment can't change when there's a 
+> 1:1 correspondence between encoders and connectors.
+> 
+> > Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+> > ---
+> >  drivers/gpu/drm/drm_atomic_helper.c |  4 +++-
+> >  drivers/gpu/drm/drm_fb_helper.c     | 13 ++++++++++++-
+> >  2 files changed, 15 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/drm_atomic_helper.c
+> > b/drivers/gpu/drm/drm_atomic_helper.c index f6a3350..849d029 100644
+> > --- a/drivers/gpu/drm/drm_atomic_helper.c
+> > +++ b/drivers/gpu/drm/drm_atomic_helper.c
+> > @@ -300,8 +300,10 @@ update_connector_routing(struct drm_atomic_state
+> > *state, if (funcs->atomic_best_encoder)
+> >  		new_encoder = funcs->atomic_best_encoder(connector,
+> >  							 connector_state);
+> > -	else
+> > +	else if (funcs->best_encoder)
+> >  		new_encoder = funcs->best_encoder(connector);
+> > +	else
+> > +		new_encoder = drm_atomic_helper_best_encoder(connector);
+> > 
+> >  	if (!new_encoder) {
+> >  		DRM_DEBUG_ATOMIC("No suitable encoder found for [CONNECTOR:%d:%s]\n",
+> > diff --git a/drivers/gpu/drm/drm_fb_helper.c
+> > b/drivers/gpu/drm/drm_fb_helper.c index 7c2eb75..d44389a 100644
+> > --- a/drivers/gpu/drm/drm_fb_helper.c
+> > +++ b/drivers/gpu/drm/drm_fb_helper.c
+> > @@ -2000,7 +2000,18 @@ static int drm_pick_crtcs(struct drm_fb_helper
+> > *fb_helper, my_score++;
+> > 
+> >  	connector_funcs = connector->helper_private;
+> > -	encoder = connector_funcs->best_encoder(connector);
+> > +
+> > +	/*
+> > +	 * If the DRM device implements atomic hooks and ->best_encoder() is
+> > +	 * NULL we fallback to the default drm_atomic_helper_best_encoder()
+> > +	 * helper.
+> > +	 */
+> > +	if (fb_helper->dev->mode_config.funcs->atomic_commit &&
+> > +	    !connector_funcs->best_encoder)
+> > +		encoder = drm_atomic_helper_best_encoder(connector);
+> > +	else
+> > +		encoder = connector_funcs->best_encoder(connector);
+> > +
+> >  	if (!encoder)
+> >  		goto out;  
+> 
+
+
+
+-- 
+Boris Brezillon, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
