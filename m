@@ -1,144 +1,110 @@
-From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH 09/20] drm: rcar-du: Rely on the default
- ->best_encoder() behavior
-Date: Fri, 3 Jun 2016 09:38:49 +0200
-Message-ID: <20160603093849.136858be@bbrezillon>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [PATCH 01/20] drm/atomic: Fix remaining places
+ where !funcs->best_encoder is valid
+Date: Fri, 3 Jun 2016 21:01:51 +0200
+Message-ID: <20160603190151.GD7231@phenom.ffwll.local>
 References: <1464877907-27723-1-git-send-email-boris.brezillon@free-electrons.com>
-	<1464877907-27723-10-git-send-email-boris.brezillon@free-electrons.com>
-	<5863270.jtrd0Kruzj@avalon>
+ <1464877907-27723-2-git-send-email-boris.brezillon@free-electrons.com>
+ <8671722.LHaiaBNqfE@avalon>
+ <CAKMK7uHyqNbA8Scw2fE0geAyNt0a0XVtzf81nwWjEhbZ-gAvKw@mail.gmail.com>
+ <20160603093743.000ef95b@bbrezillon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5863270.jtrd0Kruzj@avalon>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jani Nikula <jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Alexey Brodkin <abrodkin-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Inki Dae <inki.dae-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Seung-Woo Kim <sw0312.kim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, Alison Wang <alison.wang-KZfg59tc24xl57MIdRCFDg@public.gmane.org>, Matthias Brugger <matthias.bgg-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rob Clark <robdclark-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Yao <mark.yao-TNX95d0MmH7DzftRWevZcw@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Vincent
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20160603093743.000ef95b@bbrezillon>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/freedreno>
+List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "open list:VIRTIO CORE,
+ NET..." <virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thierry Re ding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alexey Brodkin <abrodkin-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "open list:ARM/Rockchip SoC..." <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, 02 Jun 2016 23:57:14 +0300
-Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org> wrote:
-
-> Hi Boris,
-> 
-> Thank you for the patch.
-> 
-> On Thursday 02 Jun 2016 16:31:36 Boris Brezillon wrote:
-> > All outputs have a 1:1 relationship between connectors and encoders,
-> > and the driver is relying on the atomic helpers: we can drop the custom  
-> > ->best_encoder() implementations and let the core call  
-> > drm_atomic_helper_best_encoder() for us.
-> > 
-> > Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> > ---
-> >  drivers/gpu/drm/rcar-du/rcar_du_encoder.c | 12 ------------
-> >  drivers/gpu/drm/rcar-du/rcar_du_encoder.h |  3 ---
-> >  drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c |  1 -
-> >  drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c |  1 -
-> >  drivers/gpu/drm/rcar-du/rcar_du_vgacon.c  |  1 -
-> >  5 files changed, 18 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-> > b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c index 4e939e4..55149e9 100644
-> > --- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.c
-> > @@ -27,18 +27,6 @@
-> >  #include "rcar_du_vgacon.h"
-> > 
-> >  /*
-> > ---------------------------------------------------------------------------
-> > -- - * Common connector functions
-> > - */
-> > -
-> > -struct drm_encoder *
-> > -rcar_du_connector_best_encoder(struct drm_connector *connector)
-> > -{
-> > -	struct rcar_du_connector *rcon = to_rcar_connector(connector);
-> > -
-> > -	return rcar_encoder_to_drm_encoder(rcon->encoder);
-> > -}
-> > -
-> > -/*
-> > ---------------------------------------------------------------------------
-> > -- * Encoder
-> >   */
-> > 
-> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-> > b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h index 719b6f2a..a8669c3 100644
-> > --- a/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_encoder.h
-> > @@ -49,9 +49,6 @@ struct rcar_du_connector {
-> >  #define to_rcar_connector(c) \
-> >  	container_of(c, struct rcar_du_connector, connector)
-> > 
-> > -struct drm_encoder *
-> > -rcar_du_connector_best_encoder(struct drm_connector *connector);
-> > -
-> >  int rcar_du_encoder_init(struct rcar_du_device *rcdu,
-> >  			 enum rcar_du_encoder_type type,
-> >  			 enum rcar_du_output output,
-> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c
-> > b/drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c index 6c92714..612b4d5 100644
-> > --- a/drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c
-> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_hdmicon.c
-> > @@ -52,7 +52,6 @@ static int rcar_du_hdmi_connector_mode_valid(struct
-> > drm_connector *connector, static const struct drm_connector_helper_funcs
-> > connector_helper_funcs = { .get_modes = rcar_du_hdmi_connector_get_modes,
-> >  	.mode_valid = rcar_du_hdmi_connector_mode_valid,
-> > -	.best_encoder = rcar_du_connector_best_encoder,
-> >  };
-> > 
-> >  static enum drm_connector_status
-> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
-> > b/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c index e905f5d..6afd0af 100644
-> > --- a/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
-> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_lvdscon.c
-> > @@ -59,7 +59,6 @@ static int rcar_du_lvds_connector_get_modes(struct
-> > drm_connector *connector)
-> > 
-> >  static const struct drm_connector_helper_funcs connector_helper_funcs = {
-> >  	.get_modes = rcar_du_lvds_connector_get_modes,
-> > -	.best_encoder = rcar_du_connector_best_encoder,
-> >  };
-> > 
-> >  static enum drm_connector_status
-> > diff --git a/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c
-> > b/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c index 9d7e5c9..68f7ffa 100644
-> > --- a/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c
-> > +++ b/drivers/gpu/drm/rcar-du/rcar_du_vgacon.c
-> > @@ -28,7 +28,6 @@ static int rcar_du_vga_connector_get_modes(struct
-> > drm_connector *connector)
-> > 
-> >  static const struct drm_connector_helper_funcs connector_helper_funcs = {
-> >  	.get_modes = rcar_du_vga_connector_get_modes,
-> > -	.best_encoder = rcar_du_connector_best_encoder,
-> >  };
-> > 
-> >  static enum drm_connector_status  
-> 
-> You can also remove
-> 
->         rcon->encoder = renc;
-> 
-> from rcar_du_vga_connector_init(), it's not needed anymore. The same code in 
-> rcar_du_hdmi_connector_init() has to stay for now though, as it's used to 
-> locate the slave encoder in the HDMI support code. That should change when the 
-> driver will be converted to use drm_bridge.
-> 
-> I can also fix this during the conversion to drm_bridge if you don't want to 
-> resubmit. In any case,
-
-There will be a v2 anyway, so I'll squash this change in the patch.
-
-> 
-> Reviewed-by: Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>
-> 
-
-Thanks,
-
-Boris
-
--- 
-Boris Brezillon, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+T24gRnJpLCBKdW4gMDMsIDIwMTYgYXQgMDk6Mzc6NDNBTSArMDIwMCwgQm9yaXMgQnJlemlsbG9u
+IHdyb3RlOgo+IE9uIFRodSwgMiBKdW4gMjAxNiAyMzo1NzowMiArMDIwMAo+IERhbmllbCBWZXR0
+ZXIgPGRhbmllbEBmZndsbC5jaD4gd3JvdGU6Cj4gCj4gPiBPbiBUaHUsIEp1biAyLCAyMDE2IGF0
+IDExOjA1IFBNLCBMYXVyZW50IFBpbmNoYXJ0Cj4gPiA8bGF1cmVudC5waW5jaGFydEBpZGVhc29u
+Ym9hcmQuY29tPiB3cm90ZToKPiA+ID4gSGkgQm9yaXMsCj4gPiA+Cj4gPiA+IFRoYW5rIHlvdSBm
+b3IgdGhlIHBhdGNoLgo+ID4gPgo+ID4gPiBPbiBUaHVyc2RheSAwMiBKdW4gMjAxNiAxNjozMToy
+OCBCb3JpcyBCcmV6aWxsb24gd3JvdGU6ICAKPiA+ID4+IEFkYXB0IGRybV9waWNrX2NydGNzKCkg
+YW5kIHVwZGF0ZV9jb25uZWN0b3Jfcm91dGluZygpIHRvIGZhbGxiYWNrIHRvCj4gPiA+PiBkcm1f
+YXRvbWljX2hlbHBlcl9iZXN0X2VuY29kZXIoKSBpZiBmdW5jcy0+YmVzdF9lbmNvZGVyKCkgaXMg
+TlVMTCBzbwo+ID4gPj4gdGhhdCBEUk0gZHJpdmVycyBjYW4gbGVhdmUgdGhpcyBob29rIHVuYXNz
+aWduZWQgaWYgdGhleSBrbm93IHRoZXkgd2FudAo+ID4gPj4gdG8gdXNlIGRybV9hdG9taWNfaGVs
+cGVyX2Jlc3RfZW5jb2RlcigpLiAgCj4gPiA+Cj4gPiA+IENvdWxkIHlvdSBwbGVhc2UgdXBkYXRl
+IGluY2x1ZGUvZHJtL2RybV9tb2Rlc2V0X2hlbHBlcl92dGFibGVzLmggdG8gZG9jdW1lbnQKPiA+
+ID4gdGhpcyBuZXcgYmVoYXZpb3VyID8gIAo+ID4gCj4gPiBUaGFua3MgZm9yIHJlbWluZGluZyBt
+ZS4gUGxlYXNlIHVwZGF0ZSBob29rcyBmb3IgYm90aAo+ID4gYXRvbWljX2Jlc3RfZW5jb2RlciBh
+bmQgYmVzdF9lbmNvZGVyLiBBbHNvIG1lbnRpb24gdGhhdCBpdCdzIG9ubHkKPiA+IG9wdGlvbmFs
+IGZvciBhdG9taWMgZHJpdmVycy4gVGhlcmUncyBsb3RzIG9mIGV4YW1wbGVzIGluIHRoYXQgZmls
+ZSBmb3IKPiA+IHRoZSB3b3JkaW5nIHVzdWFsbHkgdXNlZC4KPiAKPiBIbSwgSSBoYXZlbid0IGNo
+YW5nZWQgYW55dGhpbmcgZm9yIHRoZSAtPmF0b21pY19iZXN0X2VuY29kZXIoKSBob29rLCBvcgo+
+IGFtIEkgbWlzc2luZyBzb21ldGhpbmc/CgpCZWZvcmUgeW91IG5lZWRlZCBhdG9taWNfYmVzdF9l
+bmNvZGVyIG9yIGJlc3RfZW5jb2RlciAod2VsbCB0aGF0J3MgdGhlCmlkZWEgYXQgbGVhc3QpLCBu
+b3cgYm90aCBhcmUgb3B0aW9uYWwuIEtlcm5lbGRvYyBuZWVkcyB0byBiZSBhZGp1c3RlZCBpbgpi
+b3RoIHBsYWNlcyB0byBtYXRjaCBuZXcgcmVhbGl0eSBhZnRlciB5b3VyIHBhdGNoLgotRGFuaWVs
+Cgo+IAo+ID4gCj4gPiA+IFRoZSBvbmx5IGRyYXdiYWNrIEkgc2VlIGluIHRoaXMgcGF0Y2ggaXMg
+dGhlIGFkZGl0aW9uYWwgb2JqZWN0IGxvb2t1cAo+ID4gPiBwZXJmb3JtZWQgYnkgZHJtX2F0b21p
+Y19oZWxwZXJfYmVzdF9lbmNvZGVyKCkgYXQgcnVudGltZS4gSSB3b25kZXIgaWYgd2UgY291bGQK
+PiA+ID4gc29tZWhvdyBjYWNoZSB0aGUgaW5mb3JtYXRpb24sIGFzIHRoZSBhc3NpZ25tZW50IGNh
+bid0IGNoYW5nZSB3aGVuIHRoZXJlJ3MgYQo+ID4gPiAxOjEgY29ycmVzcG9uZGVuY2UgYmV0d2Vl
+biBlbmNvZGVycyBhbmQgY29ubmVjdG9ycy4gIAo+ID4gCj4gPiBkcm1fZW5jb2Rlcl9maW5kIGlz
+IGFuIGlkciBsb29rdXAuIFRoYXQgc2hvdWxkIGJlIHBsZW50eSBmYXN0LAo+ID4gZXNwZWNpYWxs
+eSBmb3IgbW9kZXNldCBjb2RlLiBVc3VhbGx5IHdoYXQncyB0b28gZXhwZW5zaXZlIGV2ZW4gZm9y
+Cj4gPiBtb2Rlc2V0IGNvZGUgaXMgbGluZWFyIGxpc3Qgd2Fsa3MuIEJ1dCBDaHJpcyBqdXN0IHN1
+Ym1pdHRlZCBwYXRjaGVzIHRvCj4gPiBjb252ZXJ0IG1vc3Qgb2YgdGhlbSBpbnRvIHNpbXBsZSBs
+b29rdXBzLgo+ID4gLURhbmllbAo+ID4gCj4gPiA+Pj4gU2lnbmVkLW9mZi1ieTogQm9yaXMgQnJl
+emlsbG9uIDxib3Jpcy5icmV6aWxsb25AZnJlZS1lbGVjdHJvbnMuY29tPiAgCj4gPiA+PiAtLS0K
+PiA+ID4+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pY19oZWxwZXIuYyB8ICA0ICsrKy0KPiA+
+ID4+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2ZiX2hlbHBlci5jICAgICB8IDEzICsrKysrKysrKysr
+Ky0KPiA+ID4+ICAyIGZpbGVzIGNoYW5nZWQsIDE1IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25z
+KC0pCj4gPiA+Pgo+ID4gPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWlj
+X2hlbHBlci5jCj4gPiA+PiBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWljX2hlbHBlci5jIGlu
+ZGV4IGY2YTMzNTAuLjg0OWQwMjkgMTAwNjQ0Cj4gPiA+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0v
+ZHJtX2F0b21pY19oZWxwZXIuYwo+ID4gPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9hdG9t
+aWNfaGVscGVyLmMKPiA+ID4+IEBAIC0zMDAsOCArMzAwLDEwIEBAIHVwZGF0ZV9jb25uZWN0b3Jf
+cm91dGluZyhzdHJ1Y3QgZHJtX2F0b21pY19zdGF0ZQo+ID4gPj4gKnN0YXRlLCBpZiAoZnVuY3Mt
+PmF0b21pY19iZXN0X2VuY29kZXIpCj4gPiA+PiAgICAgICAgICAgICAgIG5ld19lbmNvZGVyID0g
+ZnVuY3MtPmF0b21pY19iZXN0X2VuY29kZXIoY29ubmVjdG9yLAo+ID4gPj4gICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbm5lY3Rvcl9zdGF0
+ZSk7Cj4gPiA+PiAtICAgICBlbHNlCj4gPiA+PiArICAgICBlbHNlIGlmIChmdW5jcy0+YmVzdF9l
+bmNvZGVyKQo+ID4gPj4gICAgICAgICAgICAgICBuZXdfZW5jb2RlciA9IGZ1bmNzLT5iZXN0X2Vu
+Y29kZXIoY29ubmVjdG9yKTsKPiA+ID4+ICsgICAgIGVsc2UKPiA+ID4+ICsgICAgICAgICAgICAg
+bmV3X2VuY29kZXIgPSBkcm1fYXRvbWljX2hlbHBlcl9iZXN0X2VuY29kZXIoY29ubmVjdG9yKTsK
+PiA+ID4+Cj4gPiA+PiAgICAgICBpZiAoIW5ld19lbmNvZGVyKSB7Cj4gPiA+PiAgICAgICAgICAg
+ICAgIERSTV9ERUJVR19BVE9NSUMoIk5vIHN1aXRhYmxlIGVuY29kZXIgZm91bmQgZm9yIFtDT05O
+RUNUT1I6JWQ6JXNdXG4iLAo+ID4gPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1f
+ZmJfaGVscGVyLmMKPiA+ID4+IGIvZHJpdmVycy9ncHUvZHJtL2RybV9mYl9oZWxwZXIuYyBpbmRl
+eCA3YzJlYjc1Li5kNDQzODlhIDEwMDY0NAo+ID4gPj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL2Ry
+bV9mYl9oZWxwZXIuYwo+ID4gPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL2RybV9mYl9oZWxwZXIu
+Ywo+ID4gPj4gQEAgLTIwMDAsNyArMjAwMCwxOCBAQCBzdGF0aWMgaW50IGRybV9waWNrX2NydGNz
+KHN0cnVjdCBkcm1fZmJfaGVscGVyCj4gPiA+PiAqZmJfaGVscGVyLCBteV9zY29yZSsrOwo+ID4g
+Pj4KPiA+ID4+ICAgICAgIGNvbm5lY3Rvcl9mdW5jcyA9IGNvbm5lY3Rvci0+aGVscGVyX3ByaXZh
+dGU7Cj4gPiA+PiAtICAgICBlbmNvZGVyID0gY29ubmVjdG9yX2Z1bmNzLT5iZXN0X2VuY29kZXIo
+Y29ubmVjdG9yKTsKPiA+ID4+ICsKPiA+ID4+ICsgICAgIC8qCj4gPiA+PiArICAgICAgKiBJZiB0
+aGUgRFJNIGRldmljZSBpbXBsZW1lbnRzIGF0b21pYyBob29rcyBhbmQgLT5iZXN0X2VuY29kZXIo
+KSBpcwo+ID4gPj4gKyAgICAgICogTlVMTCB3ZSBmYWxsYmFjayB0byB0aGUgZGVmYXVsdCBkcm1f
+YXRvbWljX2hlbHBlcl9iZXN0X2VuY29kZXIoKQo+ID4gPj4gKyAgICAgICogaGVscGVyLgo+ID4g
+Pj4gKyAgICAgICovCj4gPiA+PiArICAgICBpZiAoZmJfaGVscGVyLT5kZXYtPm1vZGVfY29uZmln
+LmZ1bmNzLT5hdG9taWNfY29tbWl0ICYmCj4gPiA+PiArICAgICAgICAgIWNvbm5lY3Rvcl9mdW5j
+cy0+YmVzdF9lbmNvZGVyKQo+ID4gPj4gKyAgICAgICAgICAgICBlbmNvZGVyID0gZHJtX2F0b21p
+Y19oZWxwZXJfYmVzdF9lbmNvZGVyKGNvbm5lY3Rvcik7Cj4gPiA+PiArICAgICBlbHNlCj4gPiA+
+PiArICAgICAgICAgICAgIGVuY29kZXIgPSBjb25uZWN0b3JfZnVuY3MtPmJlc3RfZW5jb2Rlcihj
+b25uZWN0b3IpOwo+ID4gPj4gKwo+ID4gPj4gICAgICAgaWYgKCFlbmNvZGVyKQo+ID4gPj4gICAg
+ICAgICAgICAgICBnb3RvIG91dDsgIAo+ID4gPgo+ID4gPiAtLQo+ID4gPiBSZWdhcmRzLAo+ID4g
+Pgo+ID4gPiBMYXVyZW50IFBpbmNoYXJ0Cj4gPiA+ICAKPiA+IAo+ID4gCj4gPiAKPiAKPiAKPiAK
+PiAtLSAKPiBCb3JpcyBCcmV6aWxsb24sIEZyZWUgRWxlY3Ryb25zCj4gRW1iZWRkZWQgTGludXgg
+YW5kIEtlcm5lbCBlbmdpbmVlcmluZwo+IGh0dHA6Ly9mcmVlLWVsZWN0cm9ucy5jb20KCi0tIApE
+YW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8v
+YmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fXwpGcmVlZHJlbm8gbWFpbGluZyBsaXN0CkZyZWVkcmVub0BsaXN0cy5mcmVlZGVza3RvcC5v
+cmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9mcmVlZHJl
+bm8K
