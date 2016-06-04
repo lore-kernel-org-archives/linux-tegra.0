@@ -1,395 +1,60 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH] ARM64: boot: dts: Add regulators for Tegra210 Smaug
-Date: Fri, 3 Jun 2016 16:22:45 -0400
-Message-ID: <1464985365-11612-1-git-send-email-rklein@nvidia.com>
+From: Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH] pinctrl: tegra: Fix build dependency
+Date: Sat, 04 Jun 2016 14:35:56 +0800
+Message-ID: <1465022156.547.2.camel@ingics.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add regulators to the Tegra210 Smaug DTS file including
-support for the max77620 PMIC.
+I got below build error:
+ERROR: "tegra_xusb_padctl_legacy_probe" [drivers/phy/tegra/phy-tegra-xusb.ko] undefined!
+with below build configuration:
+CONFIG_ARCH_TEGRA=y
+CONFIG_PINCTRL_TEGRA_XUSB=y
+CONFIG_PHY_TEGRA_XUSB=y
 
-Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+The problem is below line in drivers/pinctrl/Makefile
+obj-$(CONFIG_PINCTRL_TEGRA)     += tegra/
+
+So even CONFIG_PINCTRL_TEGRA_XUSB=y is set, kbuild still does not compile
+the code in drivers/pinctrl/tegra folder if !CONFIG_PINCTRL_TEGRA.
+
+phy-tegra-xusb.c does not use any symbol from pinctrl-tegra.c,
+so build pinctrl-tegra.c only when CONFIG_PINCTRL_TEGRA is set.
+
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 350 ++++++++++++++++++++++++++
- 1 file changed, 350 insertions(+)
+ drivers/pinctrl/Makefile       | 2 +-
+ drivers/pinctrl/tegra/Makefile | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-index 4d89f4e02d98..fdca5b5d79e8 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-@@ -1,6 +1,7 @@
- /dts-v1/;
- 
- #include <dt-bindings/input/input.h>
-+#include <dt-bindings/mfd/max77620.h>
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
- 
- #include "tegra210.dtsi"
-@@ -1327,6 +1328,269 @@
- 		};
- 	};
- 
-+	i2c@7000d000 {
-+		status = "okay";
-+		clock-frequency = <1000000>;
-+
-+		max77620: max77620@3c {
-+			compatible = "maxim,max77620";
-+			reg = <0x3c>;
-+			interrupts = <0 86 IRQ_TYPE_NONE>;
-+
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&max77620_default>;
-+
-+			max77620_default: pinmux@0 {
-+				pin_gpio {
-+					pins = "gpio0", "gpio1", "gpio2", "gpio5",
-+					       "gpio6", "gpio7";
-+					function = "gpio";
-+				};
-+
-+				/*
-+				 * GPIO3 is used to en_pp3300, and it is part of power
-+				 * sequence, So it must be sequenced up (automatically
-+				 * set by OTP) and down properly.
-+				 */
-+				pin_gpio3 {
-+					pins = "gpio3";
-+					function = "fps-out";
-+					drive-open-drain = <1>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
-+					maxim,active-fps-power-up-slot = <4>;
-+					maxim,active-fps-power-down-slot = <2>;
-+				};
-+
-+				pin_gpio5_6_7 {
-+					pins = "gpio5", "gpio6";
-+					function = "gpio";
-+					drive-push-pull = <1>;
-+				};
-+
-+				pin_32k {
-+					pins = "gpio4";
-+					function = "32k-out1";
-+				};
-+			};
-+
-+			fps {
-+				fps0 {
-+					maxim,shutdown-fps-time-period-us = <5120>;
-+					maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN0>;
-+				};
-+
-+				fps1 {
-+					maxim,shutdown-fps-time-period-us = <5120>;
-+					maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN1>;
-+					maxim,enable-sleep;
-+				};
-+
-+				fps2 {
-+					maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN0>;
-+				};
-+			};
-+
-+			regulators {
-+				in-ldo0-1-supply = <&pp1350>;
-+				in-ldo2-supply = <&pp3300>;
-+				in-ldo3-5-supply = <&pp3300>;
-+				in-ldo7-8-supply = <&pp1350>;
-+
-+				ppvar_soc: sd0 {
-+					regulator-name = "PPVAR_SOC";
-+					regulator-min-microvolt = <825000>;
-+					regulator-max-microvolt = <1125000>;
-+					regulator-enable-ramp-delay = <146>;
-+					regulator-disable-ramp-delay = <4080>;
-+					regulator-ramp-delay = <27500>;
-+					regulator-ramp-delay-scale = <300>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
-+					maxim,active-fps-power-up-slot = <1>;
-+					maxim,active-fps-power-down-slot = <7>;
-+				};
-+
-+				pp1100_sd1: sd1 {
-+					regulator-name = "PP1100";
-+					regulator-min-microvolt = <1125000>;
-+					regulator-max-microvolt = <1125000>;
-+					regulator-enable-ramp-delay = <130>;
-+					regulator-disable-ramp-delay = <145800>;
-+					regulator-ramp-delay = <27500>;
-+					regulator-ramp-delay-scale = <300>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
-+					maxim,active-fps-power-up-slot = <5>;
-+					maxim,active-fps-power-down-slot = <1>;
-+				};
-+
-+				pp1350: sd2 {
-+					regulator-name = "PP1350";
-+					regulator-min-microvolt = <1350000>;
-+					regulator-max-microvolt = <1350000>;
-+					regulator-enable-ramp-delay = <176>;
-+					regulator-disable-ramp-delay = <32000>;
-+					regulator-ramp-delay = <27500>;
-+					regulator-ramp-delay-scale = <350>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+					maxim,active-fps-power-up-slot = <2>;
-+					maxim,active-fps-power-down-slot = <5>;
-+				};
-+
-+				pp1800: sd3 {
-+					regulator-name = "PP1800";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-enable-ramp-delay = <242>;
-+					regulator-disable-ramp-delay = <118000>;
-+					regulator-ramp-delay = <27500>;
-+					regulator-ramp-delay-scale = <360>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
-+					maxim,active-fps-power-up-slot = <3>;
-+					maxim,active-fps-power-down-slot = <3>;
-+				};
-+
-+				pp1200_avdd: ldo0 {
-+					regulator-name = "PP1200_AVDD";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+					regulator-enable-ramp-delay = <26>;
-+					regulator-disable-ramp-delay = <626>;
-+					regulator-ramp-delay = <100000>;
-+					regulator-ramp-delay-scale = <200>;
-+					regulator-boot-on;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+					maxim,active-fps-power-up-slot = <0>;
-+					maxim,active-fps-power-down-slot = <7>;
-+				};
-+
-+				pp1200_rcam: ldo1 {
-+					regulator-name = "PP1200_RCAM";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+					regulator-enable-ramp-delay = <22>;
-+					regulator-disable-ramp-delay = <630>;
-+					regulator-ramp-delay = <100000>;
-+					regulator-ramp-delay-scale = <200>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+					maxim,active-fps-power-up-slot = <0>;
-+					maxim,active-fps-power-down-slot = <7>;
-+				};
-+
-+				pp_ldo2: ldo2 {
-+					regulator-name = "PP_LDO2";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-enable-ramp-delay = <62>;
-+					regulator-disable-ramp-delay = <650>;
-+					regulator-ramp-delay = <100000>;
-+					regulator-ramp-delay-scale = <200>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+					maxim,active-fps-power-up-slot = <0>;
-+					maxim,active-fps-power-down-slot = <7>;
-+				};
-+
-+				pp2800l_rcam: ldo3 {
-+					regulator-name = "PP2800L_RCAM";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+					regulator-enable-ramp-delay = <50>;
-+					regulator-disable-ramp-delay = <1110>;
-+					regulator-ramp-delay = <100000>;
-+					regulator-ramp-delay-scale = <200>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+					maxim,active-fps-power-up-slot = <0>;
-+					maxim,active-fps-power-down-slot = <7>;
-+				};
-+
-+				pp100_soc_rtc: ldo4 {
-+					regulator-name = "PP1100_SOC_RTC";
-+					regulator-min-microvolt = <850000>;
-+					regulator-max-microvolt = <850000>;
-+					regulator-enable-ramp-delay = <22>;
-+					regulator-disable-ramp-delay = <610>;
-+					regulator-ramp-delay = <100000>;
-+					regulator-ramp-delay-scale = <200>;
-+					regulator-always-on; /* Check this */
-+					regulator-boot-on;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
-+					maxim,active-fps-power-up-slot = <1>;
-+					maxim,active-fps-power-down-slot = <7>;
-+				};
-+
-+				pp2800l_fcam: ldo5 {
-+					regulator-name = "PP2800L_FCAM";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+					regulator-enable-ramp-delay = <62>;
-+					regulator-disable-ramp-delay = <640>;
-+					regulator-ramp-delay = <100000>;
-+					regulator-ramp-delay-scale = <200>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+					maxim,active-fps-power-up-slot = <0>;
-+					maxim,active-fps-power-down-slot = <7>;
-+				};
-+
-+				ldo6 {
-+					/* Unused. */
-+					regulator-name = "PP_LDO6";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-enable-ramp-delay = <36>;
-+					regulator-disable-ramp-delay = <674>;
-+					regulator-ramp-delay = <100000>;
-+					regulator-ramp-delay-scale = <200>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+					maxim,active-fps-power-up-slot = <0>;
-+					maxim,active-fps-power-down-slot = <7>;
-+				};
-+
-+				pp1050_avdd: ldo7 {
-+					regulator-name = "PP1050_AVDD";
-+					regulator-min-microvolt = <1050000>;
-+					regulator-max-microvolt = <1050000>;
-+					regulator-enable-ramp-delay = <24>;
-+					regulator-disable-ramp-delay = <2768>;
-+					regulator-ramp-delay = <100000>;
-+					regulator-ramp-delay-scale = <200>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
-+					maxim,active-fps-power-up-slot = <3>;
-+					maxim,active-fps-power-down-slot = <4>;
-+				};
-+
-+				avddio_1v05: ldo8 {
-+					regulator-name = "AVDDIO_1V05";
-+					regulator-min-microvolt = <1050000>;
-+					regulator-max-microvolt = <1050000>;
-+					regulator-enable-ramp-delay = <22>;
-+					regulator-disable-ramp-delay = <1160>;
-+					regulator-ramp-delay = <100000>;
-+					regulator-ramp-delay-scale = <200>;
-+					regulator-boot-on;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+					maxim,active-fps-power-up-slot = <0>;
-+					maxim,active-fps-power-down-slot = <7>;
-+				};
-+			};
-+		};
-+	};
-+
- 	pmc@7000e400 {
- 		nvidia,invert-interrupt;
- 		nvidia,suspend-mode = <0>;
-@@ -1421,4 +1685,90 @@
- 		compatible = "arm,psci-1.0";
- 		method = "smc";
- 	};
-+
-+	regulators {
-+		compatible = "simple-bus";
-+		device_type = "fixed-regulators";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ppvar_sys: regulator@0 {
-+			compatible = "regulator-fixed";
-+			reg = <0>;
-+			regulator-name = "PPVAR_SYS";
-+			regulator-min-microvolt = <4400000>;
-+			regulator-max-microvolt = <4400000>;
-+			regulator-always-on;
-+		};
-+
-+		pplcd_vdd: regulator@1 {
-+			compatible = "regulator-fixed";
-+			reg = <1>;
-+			regulator-name = "PPLCD_VDD";
-+			regulator-min-microvolt = <4400000>;
-+			regulator-max-microvolt = <4400000>;
-+			gpio = <&gpio TEGRA_GPIO(V, 4) 0>;
-+			enable-active-high;
-+			regulator-boot-on;
-+		};
-+
-+		pp3000_always: regulator@2 {
-+			compatible = "regulator-fixed";
-+			reg = <2>;
-+			regulator-name = "PP3000_ALWAYS";
-+			regulator-min-microvolt = <3000000>;
-+			regulator-max-microvolt = <3000000>;
-+			regulator-always-on;
-+		};
-+
-+		pp3300: regulator@3 {
-+			compatible = "regulator-fixed";
-+			reg = <3>;
-+			regulator-name = "PP3300";
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3300000>;
-+			regulator-boot-on;
-+			regulator-always-on;
-+			gpio = <&max77620 3 0>;
-+			enable-active-high;
-+		};
-+
-+		pp5000: regulator@4 {
-+			compatible = "regulator-fixed";
-+			reg = <4>;
-+			regulator-name = "PP5000";
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			regulator-always-on;
-+		};
-+
-+		pp1800_lcdio: regulator@5 {
-+			compatible = "regulator-fixed";
-+			reg = <5>;
-+			regulator-name = "PP1800_LCDIO";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			gpio = <&gpio TEGRA_GPIO(V, 3) 0>;
-+			enable-active-high;
-+			regulator-boot-on;
-+		};
-+
-+		pp1800_cam: regulator@6 {
-+			compatible = "regulator-fixed";
-+			reg= <6>;
-+			regulator-name = "PP1800_CAM";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			gpio = <&gpio TEGRA_GPIO(K, 3) 0>;
-+			enable-active-high;
-+		};
-+
-+		usbc_vbus: regulator@7 {
-+			compatible = "regulator-fixed";
-+			reg = <7>;
-+			regulator-name = "USBC_VBUS";
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+		};
-+	};
- };
+diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+index 2ed0b3f..25ec450 100644
+--- a/drivers/pinctrl/Makefile
++++ b/drivers/pinctrl/Makefile
+@@ -25,7 +25,7 @@ obj-$(CONFIG_PINCTRL_PISTACHIO)	+= pinctrl-pistachio.o
+ obj-$(CONFIG_PINCTRL_ROCKCHIP)	+= pinctrl-rockchip.o
+ obj-$(CONFIG_PINCTRL_SINGLE)	+= pinctrl-single.o
+ obj-$(CONFIG_PINCTRL_SIRF)	+= sirf/
+-obj-$(CONFIG_PINCTRL_TEGRA)	+= tegra/
++obj-$(CONFIG_ARCH_TEGRA)	+= tegra/
+ obj-$(CONFIG_PINCTRL_TZ1090)	+= pinctrl-tz1090.o
+ obj-$(CONFIG_PINCTRL_TZ1090_PDC)	+= pinctrl-tz1090-pdc.o
+ obj-$(CONFIG_PINCTRL_U300)	+= pinctrl-u300.o
+diff --git a/drivers/pinctrl/tegra/Makefile b/drivers/pinctrl/tegra/Makefile
+index a927379..d9ea2be 100644
+--- a/drivers/pinctrl/tegra/Makefile
++++ b/drivers/pinctrl/tegra/Makefile
+@@ -1,4 +1,4 @@
+-obj-y					+= pinctrl-tegra.o
++obj-$(CONFIG_PINCTRL_TEGRA)		+= pinctrl-tegra.o
+ obj-$(CONFIG_PINCTRL_TEGRA20)		+= pinctrl-tegra20.o
+ obj-$(CONFIG_PINCTRL_TEGRA30)		+= pinctrl-tegra30.o
+ obj-$(CONFIG_PINCTRL_TEGRA114)		+= pinctrl-tegra114.o
 -- 
-1.9.1
+2.5.0
