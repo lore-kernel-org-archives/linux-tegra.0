@@ -1,60 +1,41 @@
-From: Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] pinctrl: tegra: Fix build dependency
-Date: Sat, 04 Jun 2016 14:35:56 +0800
-Message-ID: <1465022156.547.2.camel@ingics.com>
+From: Marc Zyngier <marc.zyngier@arm.com>
+Subject: Re: [PATCH V4 2/9] genirq: Look-up trigger type if not specified by
+ caller
+Date: Sat, 4 Jun 2016 10:41:17 +0100
+Message-ID: <20160604104117.7d22bdb2@arm.com>
+References: <1463066372-13115-1-git-send-email-jonathanh@nvidia.com>
+	<1463066372-13115-3-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1463066372-13115-3-git-send-email-jonathanh@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-I got below build error:
-ERROR: "tegra_xusb_padctl_legacy_probe" [drivers/phy/tegra/phy-tegra-xusb.ko] undefined!
-with below build configuration:
-CONFIG_ARCH_TEGRA=y
-CONFIG_PINCTRL_TEGRA_XUSB=y
-CONFIG_PHY_TEGRA_XUSB=y
+On Thu, 12 May 2016 16:19:25 +0100
+Jon Hunter <jonathanh@nvidia.com> wrote:
 
-The problem is below line in drivers/pinctrl/Makefile
-obj-$(CONFIG_PINCTRL_TEGRA)     += tegra/
+> For some devices the IRQ trigger type for a device is read from
+> firmware, such as device-tree. The IRQ trigger type is typically read
+> when the mapping for IRQ is created, which is before the IRQ is
+> requested. Hence, the IRQ trigger type is programmed when mapping the
+> IRQ and not when requesting the IRQ.
+> 
+> Although this works for most cases, in order to support IRQ chips which
+> require runtime power management, which may not be accessible prior
+> to requesting the IRQ, it is desirable to look-up the IRQ trigger type
+> when it is requested. Therefore, if the IRQ trigger type is not
+> specified when __setup_irq() is called, look-up the saved IRQ trigger
+> type. This will allow us to defer the programming of the trigger type
+> from when the IRQ is mapped to when it is actually requested.
+> 
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 
-So even CONFIG_PINCTRL_TEGRA_XUSB=y is set, kbuild still does not compile
-the code in drivers/pinctrl/tegra folder if !CONFIG_PINCTRL_TEGRA.
+Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
 
-phy-tegra-xusb.c does not use any symbol from pinctrl-tegra.c,
-so build pinctrl-tegra.c only when CONFIG_PINCTRL_TEGRA is set.
-
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/pinctrl/Makefile       | 2 +-
- drivers/pinctrl/tegra/Makefile | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
-index 2ed0b3f..25ec450 100644
---- a/drivers/pinctrl/Makefile
-+++ b/drivers/pinctrl/Makefile
-@@ -25,7 +25,7 @@ obj-$(CONFIG_PINCTRL_PISTACHIO)	+= pinctrl-pistachio.o
- obj-$(CONFIG_PINCTRL_ROCKCHIP)	+= pinctrl-rockchip.o
- obj-$(CONFIG_PINCTRL_SINGLE)	+= pinctrl-single.o
- obj-$(CONFIG_PINCTRL_SIRF)	+= sirf/
--obj-$(CONFIG_PINCTRL_TEGRA)	+= tegra/
-+obj-$(CONFIG_ARCH_TEGRA)	+= tegra/
- obj-$(CONFIG_PINCTRL_TZ1090)	+= pinctrl-tz1090.o
- obj-$(CONFIG_PINCTRL_TZ1090_PDC)	+= pinctrl-tz1090-pdc.o
- obj-$(CONFIG_PINCTRL_U300)	+= pinctrl-u300.o
-diff --git a/drivers/pinctrl/tegra/Makefile b/drivers/pinctrl/tegra/Makefile
-index a927379..d9ea2be 100644
---- a/drivers/pinctrl/tegra/Makefile
-+++ b/drivers/pinctrl/tegra/Makefile
-@@ -1,4 +1,4 @@
--obj-y					+= pinctrl-tegra.o
-+obj-$(CONFIG_PINCTRL_TEGRA)		+= pinctrl-tegra.o
- obj-$(CONFIG_PINCTRL_TEGRA20)		+= pinctrl-tegra20.o
- obj-$(CONFIG_PINCTRL_TEGRA30)		+= pinctrl-tegra30.o
- obj-$(CONFIG_PINCTRL_TEGRA114)		+= pinctrl-tegra114.o
+	M.
 -- 
-2.5.0
+Jazz is not dead. It just smells funny.
