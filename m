@@ -1,7 +1,7 @@
 From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH v1 17/25] PCI: generic: Simplify host bridge window iteration
-Date: Mon, 06 Jun 2016 18:06:51 -0500
-Message-ID: <20160606230651.20936.73053.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+Subject: [PATCH v1 14/25] PCI: altera: Simplify host bridge window iteration
+Date: Mon, 06 Jun 2016 18:06:29 -0500
+Message-ID: <20160606230629.20936.61795.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -15,39 +15,44 @@ List-Id: linux-tegra@vger.kernel.org
 
 The switch is the only statement in the resource_list_for_each_entry()
 loop, so remove unnecessary "continue" statements in the switch.  Simplify
-checking for the required non-prefetchable memory aperture.
+checking for the required non-prefetchable memory aperture.  Inline
+altera_pcie_release_of_pci_ranges(), which is only called once.
 
 No functional change intended.
 
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- drivers/pci/host/pci-host-common.c |   17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
+ drivers/pci/host/pcie-altera.c |   24 ++++++------------------
+ 1 file changed, 6 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/pci/host/pci-host-common.c b/drivers/pci/host/pci-host-common.c
-index e7515fd..bb03120 100644
---- a/drivers/pci/host/pci-host-common.c
-+++ b/drivers/pci/host/pci-host-common.c
-@@ -46,29 +46,24 @@ static int gen_pci_parse_request_of_pci_ranges(struct device *dev,
- 		switch (resource_type(res)) {
- 		case IORESOURCE_IO:
- 			err = pci_remap_iospace(res, iobase);
--			if (err) {
-+			if (err)
- 				dev_warn(dev, "error %d: failed to map resource %pR\n",
- 					 err, res);
--				continue;
--			}
- 			break;
- 		case IORESOURCE_MEM:
+diff --git a/drivers/pci/host/pcie-altera.c b/drivers/pci/host/pcie-altera.c
+index b97abbc..cf20c67 100644
+--- a/drivers/pci/host/pcie-altera.c
++++ b/drivers/pci/host/pcie-altera.c
+@@ -415,11 +415,6 @@ static void altera_pcie_isr(struct irq_desc *desc)
+ 	chained_irq_exit(chip, desc);
+ }
+ 
+-static void altera_pcie_release_of_pci_ranges(struct altera_pcie *pcie)
+-{
+-	pci_free_resource_list(&pcie->resources);
+-}
+-
+ static int altera_pcie_parse_request_of_pci_ranges(struct altera_pcie *pcie)
+ {
+ 	int err, res_valid = 0;
+@@ -439,25 +434,18 @@ static int altera_pcie_parse_request_of_pci_ranges(struct altera_pcie *pcie)
+ 	resource_list_for_each_entry(win, &pcie->resources) {
+ 		struct resource *res = win->res;
+ 
+-		switch (resource_type(res)) {
+-		case IORESOURCE_MEM:
++		if (resource_type(res) == IORESOURCE_MEM)
  			res_valid |= !(res->flags & IORESOURCE_PREFETCH);
- 			break;
- 		case IORESOURCE_BUS:
- 			*bus_range = res;
+-			break;
 -		default:
 -			continue;
-+			break;
- 		}
+-		}
  	}
  
 -	if (!res_valid) {
@@ -63,4 +68,8 @@ index e7515fd..bb03120 100644
 +	err = -EINVAL;
  
  out_release_res:
- 	pci_free_resource_list(resources);
+-	altera_pcie_release_of_pci_ranges(pcie);
++	pci_free_resource_list(&pcie->resources);
+ 	return err;
+ }
+ 
