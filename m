@@ -1,69 +1,97 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH 0/8] PM / Domains: Add support for removing PM domains
-Date: Mon, 6 Jun 2016 14:19:56 +0100
-Message-ID: <5755787C.2050807@nvidia.com>
-References: <1457090634-14785-1-git-send-email-jonathanh@nvidia.com>
- <CAPDyKFq3hNARzjSOoP+-NmcgfSWzG6GDmh7qVX6yx6QPgN9Arw@mail.gmail.com>
- <56F925D9.3080703@nvidia.com>
+From: Grygorii Strashko <grygorii.strashko@ti.com>
+Subject: Re: [PATCH V5 4/9] genirq: Add runtime power management support for
+ IRQ chips
+Date: Mon, 6 Jun 2016 17:13:55 +0300
+Message-ID: <57558523.9070700@ti.com>
+References: <1465214023-8299-1-git-send-email-jonathanh@nvidia.com>
+ <1465214023-8299-5-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <56F925D9.3080703-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alexander Aring <alex.aring-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1465214023-8299-5-git-send-email-jonathanh@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Ulf,
-
-On 28/03/16 13:38, Jon Hunter wrote:
-> Hi Uffe,
+On 06/06/2016 02:53 PM, Jon Hunter wrote:
+> Some IRQ chips may be located in a power domain outside of the CPU
+> subsystem and hence will require device specific runtime power
+> management. In order to support such IRQ chips, add a pointer for a
+> device structure to the irq_chip structure, and if this pointer is
+> populated by the IRQ chip driver and CONFIG_PM is selected in the kernel
+> configuration, then the pm_runtime_get/put APIs for this chip will be
+> called when an IRQ is requested/freed, respectively.
 > 
-> On 04/03/16 12:33, Ulf Hansson wrote:
->> On 4 March 2016 at 12:23, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>> In order to safely remove PM domains there are a few changes that need to be
->>> made to ensure that no one is holding an external reference to a PM domain
->>> after it has been removed. One solution, implemented here, solves this by
->>> eliminating external references to PM domain. Another alternative would be
->>> to employ some reference counting for the PM domains, however, I did not see
->>> a good reason for allowing external references in the first place (as always
->>> there could be something that I have over-looked!).
->>>
->>> Jon Hunter (8):
->>>   PM / Domains: Add new helper functions for device-tree
->>>   ARM: EXYNOS: Remove calls to of_genpd_get_from_provider()
->>>   staging: board: Remove calls to of_genpd_get_from_provider()
->>>   PM / Domains: Don't expose generic_pm_domain structure
->>>   PM / Domains: Verify the PM domain is present when adding a provider
->>>   PM / Domains: Remove a provider by referencing the data pointer
->>>   PM / Domains: Prepare for adding support to remove PM domains
->>>   PM / Domains: Add support for removing PM domains
->>>
->>>  arch/arm/mach-exynos/pm_domains.c |  23 +--
->>>  drivers/base/power/domain.c       | 324 +++++++++++++++++++++++++++++++++++---
->>>  drivers/staging/board/board.c     |   9 +-
->>>  include/linux/pm_domain.h         |  55 ++++---
->>>  4 files changed, 348 insertions(+), 63 deletions(-)
->>>
->>> --
->>> 2.1.4
->>>
->>
->> Jon, thanks for posting this!
->> My initial impressions is the I like the ideas for where you moves this.
->>
->> I will review it in more details as soon as I can (travelling next week).
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+> Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
+> ---
+>   include/linux/irq.h    |  4 ++++
+>   kernel/irq/chip.c      | 35 +++++++++++++++++++++++++++++++++++
+>   kernel/irq/internals.h |  1 +
+>   kernel/irq/manage.c    | 31 ++++++++++++++++++++++++++++++-
+>   4 files changed, 70 insertions(+), 1 deletion(-)
 > 
-> Just wanted to see if you have had chance to look at this yet? Not urgent.
+> diff --git a/include/linux/irq.h b/include/linux/irq.h
+> index 4d758a7c604a..6c92a847394d 100644
+> --- a/include/linux/irq.h
+> +++ b/include/linux/irq.h
+> @@ -315,6 +315,7 @@ static inline irq_hw_number_t irqd_to_hwirq(struct irq_data *d)
+>   /**
+>    * struct irq_chip - hardware interrupt chip descriptor
+>    *
+> + * @parent_device:	pointer to parent device for irqchip
+>    * @name:		name for /proc/interrupts
+>    * @irq_startup:	start up the interrupt (defaults to ->enable if NULL)
+>    * @irq_shutdown:	shut down the interrupt (defaults to ->disable if NULL)
+> @@ -354,6 +355,7 @@ static inline irq_hw_number_t irqd_to_hwirq(struct irq_data *d)
+>    * @flags:		chip specific flags
+>    */
+>   struct irq_chip {
+> +	struct device	*parent_device;
+>   	const char	*name;
+>   	unsigned int	(*irq_startup)(struct irq_data *data);
+>   	void		(*irq_shutdown)(struct irq_data *data);
+> @@ -488,6 +490,8 @@ extern void handle_bad_irq(struct irq_desc *desc);
+>   extern void handle_nested_irq(unsigned int irq);
+>   
+>   extern int irq_chip_compose_msi_msg(struct irq_data *data, struct msi_msg *msg);
+> +extern int irq_chip_pm_get(struct irq_data *data);
+> +extern int irq_chip_pm_put(struct irq_data *data);
+>   #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
+>   extern void irq_chip_enable_parent(struct irq_data *data);
+>   extern void irq_chip_disable_parent(struct irq_data *data);
+> diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+> index 2f9f2b0e79f2..b09226e895c7 100644
+> --- a/kernel/irq/chip.c
+> +++ b/kernel/irq/chip.c
+> @@ -1093,3 +1093,38 @@ int irq_chip_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
+>   
+>   	return 0;
+>   }
+> +
+> +/**
+> + * irq_chip_pm_get - Enable power for an IRQ chip
+> + * @data:	Pointer to interrupt specific data
+> + *
+> + * Enable the power to the IRQ chip referenced by the interrupt data
+> + * structure.
+> + */
+> +int irq_chip_pm_get(struct irq_data *data)
+> +{
+> +	int retval = 0;
+> +
+> +	if (IS_ENABLED(CONFIG_PM) && data->chip->parent_device)
+> +		retval = pm_runtime_get_sync(data->chip->parent_device);
 
-Any feedback on this?
+Sry, for the late comment - above require pm_runtime_put_noidle(data->chip->parent_device);
+in case of failure.
 
-FYI, patch #2 does not apply cleanly on the latest -next but the others
-should.
+[...]
 
-Cheers
-Jon
 
 -- 
-nvpublic
+regards,
+-grygorii
