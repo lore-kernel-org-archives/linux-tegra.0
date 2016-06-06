@@ -1,130 +1,68 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH V5 7/9] irqchip/gic: Prepare for adding platform driver
-Date: Mon, 6 Jun 2016 13:39:43 +0100
-Message-ID: <57556F0F.9030605@nvidia.com>
-References: <1465214023-8299-1-git-send-email-jonathanh@nvidia.com>
- <1465214023-8299-8-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC PATCH 0/8] PM / Domains: Add support for removing PM domains
+Date: Mon, 6 Jun 2016 14:19:56 +0100
+Message-ID: <5755787C.2050807@nvidia.com>
+References: <1457090634-14785-1-git-send-email-jonathanh@nvidia.com>
+ <CAPDyKFq3hNARzjSOoP+-NmcgfSWzG6GDmh7qVX6yx6QPgN9Arw@mail.gmail.com>
+ <56F925D9.3080703@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1465214023-8299-8-git-send-email-jonathanh@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <56F925D9.3080703-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alexander Aring <alex.aring-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Ulf,
 
-On 06/06/16 12:53, Jon Hunter wrote:
-> To support GICs that require runtime power management, it is necessary
-> to add a platform driver, so that the probing of the chip can be
-> deferred if resources, such as a power-domain, is not yet available.
+On 28/03/16 13:38, Jon Hunter wrote:
+> Hi Uffe,
 > 
-> To prepare for adding a platform driver:
->  1. Drop the __init section from the gic_dist_config() so this can be
->     re-used by the platform driver.
->  2. Add prototypes for functions required by the platform driver to the
->     GIC header file so they can be re-used.
+> On 04/03/16 12:33, Ulf Hansson wrote:
+>> On 4 March 2016 at 12:23, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>> In order to safely remove PM domains there are a few changes that need to be
+>>> made to ensure that no one is holding an external reference to a PM domain
+>>> after it has been removed. One solution, implemented here, solves this by
+>>> eliminating external references to PM domain. Another alternative would be
+>>> to employ some reference counting for the PM domains, however, I did not see
+>>> a good reason for allowing external references in the first place (as always
+>>> there could be something that I have over-looked!).
+>>>
+>>> Jon Hunter (8):
+>>>   PM / Domains: Add new helper functions for device-tree
+>>>   ARM: EXYNOS: Remove calls to of_genpd_get_from_provider()
+>>>   staging: board: Remove calls to of_genpd_get_from_provider()
+>>>   PM / Domains: Don't expose generic_pm_domain structure
+>>>   PM / Domains: Verify the PM domain is present when adding a provider
+>>>   PM / Domains: Remove a provider by referencing the data pointer
+>>>   PM / Domains: Prepare for adding support to remove PM domains
+>>>   PM / Domains: Add support for removing PM domains
+>>>
+>>>  arch/arm/mach-exynos/pm_domains.c |  23 +--
+>>>  drivers/base/power/domain.c       | 324 +++++++++++++++++++++++++++++++++++---
+>>>  drivers/staging/board/board.c     |   9 +-
+>>>  include/linux/pm_domain.h         |  55 ++++---
+>>>  4 files changed, 348 insertions(+), 63 deletions(-)
+>>>
+>>> --
+>>> 2.1.4
+>>>
+>>
+>> Jon, thanks for posting this!
+>> My initial impressions is the I like the ideas for where you moves this.
+>>
+>> I will review it in more details as soon as I can (travelling next week).
 > 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  drivers/irqchip/irq-gic-common.c |  4 ++--
->  drivers/irqchip/irq-gic.c        | 15 ++++++++-------
->  include/linux/irqchip/arm-gic.h  |  5 +++++
->  3 files changed, 15 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-gic-common.c b/drivers/irqchip/irq-gic-common.c
-> index 89e7423f0ebb..9ae71804b5dd 100644
-> --- a/drivers/irqchip/irq-gic-common.c
-> +++ b/drivers/irqchip/irq-gic-common.c
-> @@ -90,8 +90,8 @@ int gic_configure_irq(unsigned int irq, unsigned int type,
->  	return ret;
->  }
->  
-> -void __init gic_dist_config(void __iomem *base, int gic_irqs,
-> -			    void (*sync_access)(void))
-> +void gic_dist_config(void __iomem *base, int gic_irqs,
-> +		     void (*sync_access)(void))
->  {
->  	unsigned int i;
->  
-> diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
-> index 94eab6e23124..3d3ab9045244 100644
-> --- a/drivers/irqchip/irq-gic.c
-> +++ b/drivers/irqchip/irq-gic.c
-> @@ -449,7 +449,7 @@ static void gic_cpu_if_up(struct gic_chip_data *gic)
->  }
->  
->  
-> -static void __init gic_dist_init(struct gic_chip_data *gic)
-> +static void gic_dist_init(struct gic_chip_data *gic)
->  {
->  	unsigned int i;
->  	u32 cpumask;
-> @@ -535,7 +535,7 @@ int gic_cpu_if_down(unsigned int gic_nr)
->   * this function, no interrupts will be delivered by the GIC, and another
->   * platform-specific wakeup source must be enabled.
->   */
-> -static void gic_dist_save(struct gic_chip_data *gic)
-> +void gic_dist_save(struct gic_chip_data *gic)
->  {
->  	unsigned int gic_irqs;
->  	void __iomem *dist_base;
-> @@ -574,7 +574,7 @@ static void gic_dist_save(struct gic_chip_data *gic)
->   * handled normally, but any edge interrupts that occured will not be seen by
->   * the GIC and need to be handled by the platform-specific wakeup source.
->   */
-> -static void gic_dist_restore(struct gic_chip_data *gic)
-> +void gic_dist_restore(struct gic_chip_data *gic)
->  {
->  	unsigned int gic_irqs;
->  	unsigned int i;
-> @@ -620,7 +620,7 @@ static void gic_dist_restore(struct gic_chip_data *gic)
->  	writel_relaxed(GICD_ENABLE, dist_base + GIC_DIST_CTRL);
->  }
->  
-> -static void gic_cpu_save(struct gic_chip_data *gic)
-> +void gic_cpu_save(struct gic_chip_data *gic)
->  {
->  	int i;
->  	u32 *ptr;
-> @@ -650,7 +650,7 @@ static void gic_cpu_save(struct gic_chip_data *gic)
->  
->  }
->  
-> -static void gic_cpu_restore(struct gic_chip_data *gic)
-> +void gic_cpu_restore(struct gic_chip_data *gic)
->  {
->  	int i;
->  	u32 *ptr;
-> @@ -727,7 +727,7 @@ static struct notifier_block gic_notifier_block = {
->  	.notifier_call = gic_notifier,
->  };
->  
-> -static int __init gic_pm_init(struct gic_chip_data *gic)
-> +static int gic_pm_init(struct gic_chip_data *gic)
->  {
->  	gic->saved_ppi_enable = __alloc_percpu(DIV_ROUND_UP(32, 32) * 4,
->  		sizeof(u32));
-> @@ -757,7 +757,7 @@ free_ppi_enable:
->  	return -ENOMEM;
->  }
->  #else
-> -static int __init gic_pm_init(struct gic_chip_data *gic)
-> +static int gic_pm_init(struct gic_chip_data *gic)
->  {
->  	return 0;
->  }
-> @@ -1179,6 +1179,7 @@ static int __init __gic_init_bases(struct gic_chip_data *gic,
->  		set_smp_cross_call(gic_raise_softirq);
->  		register_cpu_notifier(&gic_cpu_notifier);
->  #endif
-> +
+> Just wanted to see if you have had chance to look at this yet? Not urgent.
 
-Not sure where this extra line came from but shouldn't be here.
+Any feedback on this?
 
-Marc let me know if you want me to resend.
+FYI, patch #2 does not apply cleanly on the latest -next but the others
+should.
 
+Cheers
 Jon
 
 -- 
