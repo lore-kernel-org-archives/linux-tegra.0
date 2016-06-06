@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 5/8] arm64: tegra: Add Tegra210 XUSB pad controller
-Date: Mon,  6 Jun 2016 18:36:34 +0200
-Message-ID: <20160606163637.14234-5-thierry.reding@gmail.com>
+Subject: [PATCH 2/8] arm64: tegra: p2597: Add basic power supplies
+Date: Mon,  6 Jun 2016 18:36:31 +0200
+Message-ID: <20160606163637.14234-2-thierry.reding@gmail.com>
 References: <20160606163637.14234-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20160606163637.14234-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,178 +12,76 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Add a device tree node for the XUSB pad controller found on Tegra210.
-
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 155 +++++++++++++++++++++++++++++++
- 1 file changed, 155 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 55 ++++++++++++++++++++++++++
+ 1 file changed, 55 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index 76fe31faa1a5..694228b9cdf4 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -621,6 +621,161 @@
- 		status = "disabled";
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+index a2480c0c7e72..27bb835d6bcb 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+@@ -1270,6 +1270,61 @@
+ 		cd-gpios = <&gpio TEGRA_GPIO(Z, 1) GPIO_ACTIVE_LOW>;
  	};
  
-+	padctl: padctl@7009f000 {
-+		compatible = "nvidia,tegra210-xusb-padctl";
-+		reg = <0x0 0x7009f000 0x0 0x1000>;
-+		resets = <&tegra_car 142>;
-+		reset-names = "padctl";
++	regulators {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <0>;
 +
-+		status = "disabled";
-+
-+		pads {
-+			usb2 {
-+				clocks = <&tegra_car TEGRA210_CLK_USB2_TRK>;
-+				clock-names = "trk";
-+				status = "disabled";
-+
-+				lanes {
-+					usb2-0 {
-+						status = "disabled";
-+						#phy-cells = <0>;
-+					};
-+
-+					usb2-1 {
-+						status = "disabled";
-+						#phy-cells = <0>;
-+					};
-+
-+					usb2-2 {
-+						status = "disabled";
-+						#phy-cells = <0>;
-+					};
-+
-+					usb2-3 {
-+						status = "disabled";
-+						#phy-cells = <0>;
-+					};
-+				};
-+			};
-+
-+			hsic {
-+				clocks = <&tegra_car TEGRA210_CLK_HSIC_TRK>;
-+				clock-names = "trk";
-+				status = "disabled";
-+
-+				lanes {
-+					hsic-0 {
-+						status = "disabled";
-+						#phy-cells = <0>;
-+					};
-+
-+					hsic-1 {
-+						status = "disabled";
-+						#phy-cells = <0>;
-+					};
-+				};
-+			};
-+
-+			pcie {
-+				clocks = <&tegra_car TEGRA210_CLK_PLL_E>;
-+				clock-names = "pll";
-+				resets = <&tegra_car 205>;
-+				reset-names = "phy";
-+				status = "disabled";
-+
-+				lanes {
-+					pcie-0 {
-+						status = "disabled";
-+						#phy-cells = <0>;
-+					};
-+
-+					pcie-1 {
-+						status = "disabled";
-+						#phy-cells = <0>;
-+					};
-+
-+					pcie-2 {
-+						status = "disabled";
-+						#phy-cells = <0>;
-+					};
-+
-+					pcie-3 {
-+						status = "disabled";
-+						#phy-cells = <0>;
-+					};
-+
-+					pcie-4 {
-+						status = "disabled";
-+						#phy-cells = <0>;
-+					};
-+
-+					pcie-5 {
-+						status = "disabled";
-+						#phy-cells = <0>;
-+					};
-+
-+					pcie-6 {
-+						status = "disabled";
-+						#phy-cells = <0>;
-+					};
-+				};
-+			};
-+
-+			sata {
-+				clocks = <&tegra_car TEGRA210_CLK_PLL_E>;
-+				clock-names = "pll";
-+				resets = <&tegra_car 204>;
-+				reset-names = "phy";
-+				status = "disabled";
-+
-+				lanes {
-+					sata-0 {
-+						status = "disabled";
-+						#phy-cells = <0>;
-+					};
-+				};
-+			};
++		vdd_sys_mux: regulator@0 {
++			compatible = "regulator-fixed";
++			reg = <0>;
++			regulator-name = "VDD_SYS_MUX";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			regulator-always-on;
++			regulator-boot-on;
 +		};
 +
-+		ports {
-+			usb2-0 {
-+				status = "disabled";
-+			};
++		vdd_5v0_sys: regulator@1 {
++			compatible = "regulator-fixed";
++			reg = <1>;
++			regulator-name = "VDD_5V0_SYS";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			regulator-always-on;
++			regulator-boot-on;
++			gpio = <&pmic 1 GPIO_ACTIVE_HIGH>;
++			enable-active-high;
++			vin-supply = <&vdd_sys_mux>;
++		};
 +
-+			usb2-1 {
-+				status = "disabled";
-+			};
++		vdd_3v3_sys: regulator@2 {
++			compatible = "regulator-fixed";
++			reg = <2>;
++			regulator-name = "VDD_3V3_SYS";
++			regulator-min-microvolt = <3300000>;
++			regulator-max-microvolt = <3300000>;
++			regulator-always-on;
++			regulator-boot-on;
++			gpio = <&pmic 3 GPIO_ACTIVE_HIGH>;
++			enable-active-high;
++			vin-supply = <&vdd_sys_mux>;
 +
-+			usb2-2 {
-+				status = "disabled";
-+			};
++			regulator-enable-ramp-delay = <160>;
++			regulator-disable-ramp-delay = <10000>;
++		};
 +
-+			usb2-3 {
-+				status = "disabled";
-+			};
-+
-+			hsic-0 {
-+				status = "disabled";
-+			};
-+
-+			usb3-0 {
-+				status = "disabled";
-+			};
-+
-+			usb3-1 {
-+				status = "disabled";
-+			};
-+
-+			usb3-2 {
-+				status = "disabled";
-+			};
-+
-+			usb3-3 {
-+				status = "disabled";
-+			};
++		vdd_5v0_io: regulator@3 {
++			compatible = "regulator-fixed";
++			reg = <3>;
++			regulator-name = "VDD_5V0_IO_SYS";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			regulator-always-on;
++			regulator-boot-on;
 +		};
 +	};
 +
- 	sdhci@700b0000 {
- 		compatible = "nvidia,tegra210-sdhci", "nvidia,tegra124-sdhci";
- 		reg = <0x0 0x700b0000 0x0 0x200>;
+ 	gpio-keys {
+ 		compatible = "gpio-keys";
+ 		label = "gpio-keys";
 -- 
 2.8.3
