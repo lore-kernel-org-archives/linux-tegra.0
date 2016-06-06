@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V5 9/9] irqchip/gic: Add platform driver for non-root GICs that require RPM
-Date: Mon, 6 Jun 2016 12:53:43 +0100
-Message-ID: <1465214023-8299-10-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH V5 6/9] irqchip/gic: Add helper function for chip initialisation
+Date: Mon, 6 Jun 2016 12:53:40 +0100
+Message-ID: <1465214023-8299-7-git-send-email-jonathanh@nvidia.com>
 References: <1465214023-8299-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,351 +12,107 @@ To: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper
 Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add a platform driver to support non-root GICs that require runtime
-power-management. Currently, only non-root GICs are supported because
-the functions, smp_cross_call() and set_handle_irq(), that need to
-be called for a root controller are located in the __init section and
-so cannot be called by the platform driver.
+For GICs that require runtime power-management it is necessary to
+populate the 'parent_device' member of the irqchip structure. In
+preparation for supporting such GICs, move the code that initialises
+the irqchip structure for a GIC into its own function called
+gic_init_chip() where the parent device pointer is also set.
 
-The GIC platform driver re-uses many functions from the existing GIC
-driver including some functions to save and restore the GIC context
-during power transitions. The functions for saving and restoring the
-GIC context are currently only defined if CONFIG_CPU_PM is enabled and
-to ensure that these functions are always defined when the platform
-driver is enabled, a dependency on CONFIG_ARM_GIC_PM (which selects the
-platform driver) has been added.
-
-In order to re-use the private GIC initialisation code, a new public
-function, gic_of_init_child(), has been added which calls various
-private functions to initialise the GIC. This is different from the
-existing gic_of_init() because it only supports non-root GICs (ie. does
-not call smp_cross_call() is set_handle_irq()) and is not located in
-the __init section (so can be used by platform drivers). Furthermore,
-gic_of_init_child() dynamically allocates memory for the GIC chip data
-which is also different from gic_of_init().
-
-There is no specific suspend handling for GICs registered as platform
-devices. Non-wakeup interrupts will be disabled by the kernel during
-late suspend, however, this alone will not power down the GIC if
-interrupts have been requested and not freed. Therefore, requestors of
-non-wakeup interrupts will need to free them on entering suspend in
-order to power-down the GIC.
+Instead of calling gic_init_chip() from within gic_init_bases(), move
+the calls to outside of this function, so that in the future we can
+avoid having to pass additional parameters to gic_init_bases() in order
+set the parent device pointer or set the name to a specific string.
 
 Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/irqchip/Kconfig         |   6 ++
- drivers/irqchip/Makefile        |   1 +
- drivers/irqchip/irq-gic-pm.c    | 184 ++++++++++++++++++++++++++++++++++++++++
- drivers/irqchip/irq-gic.c       |  38 ++++++++-
- include/linux/irqchip/arm-gic.h |   6 ++
- 5 files changed, 232 insertions(+), 3 deletions(-)
- create mode 100644 drivers/irqchip/irq-gic-pm.c
+ drivers/irqchip/irq-gic.c | 41 +++++++++++++++++++++++++++--------------
+ 1 file changed, 27 insertions(+), 14 deletions(-)
 
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index fa33c50b0e5a..5495a5ba8039 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -8,6 +8,12 @@ config ARM_GIC
- 	select IRQ_DOMAIN_HIERARCHY
- 	select MULTI_IRQ_HANDLER
- 
-+config ARM_GIC_PM
-+	bool
-+	depends on PM
-+	select ARM_GIC
-+	select PM_CLK
-+
- config ARM_GIC_MAX_NR
- 	int
- 	default 2 if ARCH_REALVIEW
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index 38853a187607..bd0257e0aab6 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -24,6 +24,7 @@ obj-$(CONFIG_ARCH_SUNXI)		+= irq-sun4i.o
- obj-$(CONFIG_ARCH_SUNXI)		+= irq-sunxi-nmi.o
- obj-$(CONFIG_ARCH_SPEAR3XX)		+= spear-shirq.o
- obj-$(CONFIG_ARM_GIC)			+= irq-gic.o irq-gic-common.o
-+obj-$(CONFIG_ARM_GIC_PM)		+= irq-gic-pm.o
- obj-$(CONFIG_REALVIEW_DT)		+= irq-gic-realview.o
- obj-$(CONFIG_ARM_GIC_V2M)		+= irq-gic-v2m.o
- obj-$(CONFIG_ARM_GIC_V3)		+= irq-gic-v3.o irq-gic-common.o
-diff --git a/drivers/irqchip/irq-gic-pm.c b/drivers/irqchip/irq-gic-pm.c
-new file mode 100644
-index 000000000000..4cbffba3ff13
---- /dev/null
-+++ b/drivers/irqchip/irq-gic-pm.c
-@@ -0,0 +1,184 @@
-+/*
-+ * Copyright (C) 2016 NVIDIA CORPORATION, All Rights Reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope that it will be useful,
-+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
-+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-+ * GNU General Public License for more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+#include <linux/module.h>
-+#include <linux/clk.h>
-+#include <linux/of_device.h>
-+#include <linux/of_irq.h>
-+#include <linux/irqchip/arm-gic.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_clock.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/slab.h>
-+
-+struct gic_clk_data {
-+	unsigned int num_clocks;
-+	const char *const *clocks;
-+};
-+
-+static int gic_runtime_resume(struct device *dev)
-+{
-+	struct gic_chip_data *gic = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = pm_clk_resume(dev);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * On the very first resume, the pointer to the driver data
-+	 * will be NULL and this is intentional, because we do not
-+	 * want to restore the GIC on the very first resume. So if
-+	 * the pointer is not valid just return.
-+	 */
-+	if (!gic)
-+		return 0;
-+
-+	gic_dist_restore(gic);
-+	gic_cpu_restore(gic);
-+
-+	return 0;
-+}
-+
-+static int gic_runtime_suspend(struct device *dev)
-+{
-+	struct gic_chip_data *gic = dev_get_drvdata(dev);
-+
-+	gic_dist_save(gic);
-+	gic_cpu_save(gic);
-+
-+	return pm_clk_suspend(dev);
-+}
-+
-+static int gic_get_clocks(struct device *dev, const struct gic_clk_data *data)
-+{
-+	struct clk *clk;
-+	unsigned int i;
-+	int ret;
-+
-+	if (!dev || !data)
-+		return -EINVAL;
-+
-+	ret = pm_clk_create(dev);
-+	if (ret)
-+		return ret;
-+
-+	for (i = 0; i < data->num_clocks; i++) {
-+		clk = of_clk_get_by_name(dev->of_node, data->clocks[i]);
-+		if (IS_ERR(clk)) {
-+			dev_err(dev, "failed to get clock %s\n",
-+				data->clocks[i]);
-+			ret = PTR_ERR(clk);
-+			goto error;
-+		}
-+
-+		ret = pm_clk_add_clk(dev, clk);
-+		if (ret) {
-+			dev_err(dev, "failed to add clock at index %d\n", i);
-+			clk_put(clk);
-+			goto error;
-+		}
-+	}
-+
-+	return 0;
-+
-+error:
-+	pm_clk_destroy(dev);
-+
-+	return ret;
-+}
-+
-+static int gic_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	const struct gic_clk_data *data;
-+	struct gic_chip_data *gic;
-+	int ret, irq;
-+
-+	data = of_device_get_match_data(&pdev->dev);
-+	if (!data) {
-+		dev_err(&pdev->dev, "no device match found\n");
-+		return -ENODEV;
-+	}
-+
-+	irq = irq_of_parse_and_map(dev->of_node, 0);
-+	if (!irq) {
-+		dev_err(dev, "no parent interrupt found!\n");
-+		return -EINVAL;
-+	}
-+
-+	ret = gic_get_clocks(dev, data);
-+	if (ret)
-+		goto irq_dispose;
-+
-+	pm_runtime_enable(dev);
-+
-+	ret = pm_runtime_get_sync(dev);
-+	if (ret < 0)
-+		goto rpm_disable;
-+
-+	ret = gic_of_init_child(dev, &gic, irq);
-+	if (ret)
-+		goto rpm_put;
-+
-+	platform_set_drvdata(pdev, gic);
-+
-+	pm_runtime_put(dev);
-+
-+	dev_info(dev, "GIC IRQ controller registered\n");
-+
-+	return 0;
-+
-+rpm_put:
-+	pm_runtime_put_sync(dev);
-+rpm_disable:
-+	pm_runtime_disable(dev);
-+	pm_clk_destroy(dev);
-+irq_dispose:
-+	irq_dispose_mapping(irq);
-+
-+	return ret;
-+}
-+
-+static const struct dev_pm_ops gic_pm_ops = {
-+	SET_RUNTIME_PM_OPS(gic_runtime_suspend,
-+			   gic_runtime_resume, NULL)
-+};
-+
-+static const char * const gic400_clocks[] = {
-+	"clk",
-+};
-+
-+static const struct gic_clk_data gic400_data = {
-+	.num_clocks = ARRAY_SIZE(gic400_clocks),
-+	.clocks = gic400_clocks,
-+};
-+
-+static const struct of_device_id gic_match[] = {
-+	{ .compatible = "nvidia,tegra210-agic",	.data = &gic400_data },
-+	{},
-+};
-+MODULE_DEVICE_TABLE(of, gic_match);
-+
-+static struct platform_driver gic_driver = {
-+	.probe		= gic_probe,
-+	.driver		= {
-+		.name	= "gic",
-+		.of_match_table	= gic_match,
-+		.pm	= &gic_pm_ops,
-+	}
-+};
-+
-+builtin_platform_driver(gic_driver);
 diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
-index 3d3ab9045244..f15b7d1a66d3 100644
+index fa0dd98993fa..94eab6e23124 100644
 --- a/drivers/irqchip/irq-gic.c
 +++ b/drivers/irqchip/irq-gic.c
-@@ -75,7 +75,7 @@ struct gic_chip_data {
- 	void __iomem *raw_dist_base;
- 	void __iomem *raw_cpu_base;
- 	u32 percpu_offset;
--#ifdef CONFIG_CPU_PM
-+#if defined(CONFIG_CPU_PM) || defined(CONFIG_ARM_GIC_PM)
- 	u32 saved_spi_enable[DIV_ROUND_UP(1020, 32)];
- 	u32 saved_spi_active[DIV_ROUND_UP(1020, 32)];
- 	u32 saved_spi_conf[DIV_ROUND_UP(1020, 16)];
-@@ -528,7 +528,7 @@ int gic_cpu_if_down(unsigned int gic_nr)
- 	return 0;
- }
+@@ -1032,29 +1032,31 @@ static const struct irq_domain_ops gic_irq_domain_ops = {
+ 	.unmap = gic_irq_domain_unmap,
+ };
  
--#ifdef CONFIG_CPU_PM
-+#if defined(CONFIG_CPU_PM) || defined(CONFIG_ARM_GIC_PM)
- /*
-  * Saves the GIC distributor registers during suspend or idle.  Must be called
-  * with interrupts disabled but before powering down the GIC.  After calling
-@@ -1297,6 +1297,34 @@ error:
- 	return -ENOMEM;
- }
+-static int gic_init_bases(struct gic_chip_data *gic, int irq_start,
+-			  struct fwnode_handle *handle)
++static void gic_init_chip(struct gic_chip_data *gic, struct device *dev,
++			  const char *name, bool use_eoimode1)
+ {
+-	irq_hw_number_t hwirq_base;
+-	int gic_irqs, irq_base, ret;
+-
+ 	/* Initialize irq_chip */
+ 	gic->chip = gic_chip;
++	gic->chip.name = name;
++	gic->chip.parent_device = dev;
  
-+int gic_of_init_child(struct device *dev, struct gic_chip_data **gic, int irq)
+-	if (static_key_true(&supports_deactivate) && gic == &gic_data[0]) {
++	if (use_eoimode1) {
+ 		gic->chip.irq_mask = gic_eoimode1_mask_irq;
+ 		gic->chip.irq_eoi = gic_eoimode1_eoi_irq;
+ 		gic->chip.irq_set_vcpu_affinity = gic_irq_set_vcpu_affinity;
+-		gic->chip.name = kasprintf(GFP_KERNEL, "GICv2");
+-	} else {
+-		gic->chip.name = kasprintf(GFP_KERNEL, "GIC-%d",
+-					   (int)(gic - &gic_data[0]));
+ 	}
+ 
+ #ifdef CONFIG_SMP
+ 	if (gic == &gic_data[0])
+ 		gic->chip.irq_set_affinity = gic_set_affinity;
+ #endif
++}
++
++static int gic_init_bases(struct gic_chip_data *gic, int irq_start,
++			  struct fwnode_handle *handle)
 +{
-+	int ret;
-+
-+	if (!dev || !dev->of_node || !gic || !irq)
-+		return -EINVAL;
-+
-+	*gic = devm_kzalloc(dev, sizeof(**gic), GFP_KERNEL);
-+	if (!*gic)
-+		return -ENOMEM;
-+
-+	gic_init_chip(*gic, dev, dev->of_node->name, false);
-+
-+	ret = gic_of_setup(*gic, dev->of_node);
-+	if (ret)
-+		return ret;
-+
-+	ret = gic_init_bases(*gic, -1, &dev->of_node->fwnode);
-+	if (ret) {
-+		gic_teardown(*gic);
-+		return ret;
++	irq_hw_number_t hwirq_base;
++	int gic_irqs, irq_base, ret;
+ 
+ 	if (IS_ENABLED(CONFIG_GIC_NON_BANKED) && gic->percpu_offset) {
+ 		/* Frankein-GIC without banked registers... */
+@@ -1152,8 +1154,6 @@ error:
+ 		free_percpu(gic->cpu_base.percpu_base);
+ 	}
+ 
+-	kfree(gic->chip.name);
+-
+ 	return ret;
+ }
+ 
+@@ -1161,7 +1161,8 @@ static int __init __gic_init_bases(struct gic_chip_data *gic,
+ 				   int irq_start,
+ 				   struct fwnode_handle *handle)
+ {
+-	int i;
++	char *name;
++	int i, ret;
+ 
+ 	if (WARN_ON(!gic || gic->domain))
+ 		return -EINVAL;
+@@ -1183,7 +1184,19 @@ static int __init __gic_init_bases(struct gic_chip_data *gic,
+ 			pr_info("GIC: Using split EOI/Deactivate mode\n");
+ 	}
+ 
+-	return gic_init_bases(gic, irq_start, handle);
++	if (static_key_true(&supports_deactivate) && gic == &gic_data[0]) {
++		name = kasprintf(GFP_KERNEL, "GICv2");
++		gic_init_chip(gic, NULL, name, true);
++	} else {
++		name = kasprintf(GFP_KERNEL, "GIC-%d", (int)(gic-&gic_data[0]));
++		gic_init_chip(gic, NULL, name, false);
 +	}
 +
-+	irq_set_chained_handler_and_data(irq, gic_handle_cascade_irq, *gic);
++	ret = gic_init_bases(gic, irq_start, handle);
++	if (ret)
++		kfree(name);
 +
-+	return 0;
-+}
-+
- static void __init gic_of_setup_kvm_info(struct device_node *node)
- {
- 	int ret;
-@@ -1376,7 +1404,11 @@ IRQCHIP_DECLARE(cortex_a7_gic, "arm,cortex-a7-gic", gic_of_init);
- IRQCHIP_DECLARE(msm_8660_qgic, "qcom,msm-8660-qgic", gic_of_init);
- IRQCHIP_DECLARE(msm_qgic2, "qcom,msm-qgic2", gic_of_init);
- IRQCHIP_DECLARE(pl390, "arm,pl390", gic_of_init);
--
-+#else
-+int gic_of_init_child(struct device *dev, struct gic_chip_data **gic, int irq)
-+{
-+	return -ENOTSUPP;
-+}
- #endif
++	return ret;
+ }
  
- #ifdef CONFIG_ACPI
-diff --git a/include/linux/irqchip/arm-gic.h b/include/linux/irqchip/arm-gic.h
-index ffcbd8b9a4ff..eafc965b3eb8 100644
---- a/include/linux/irqchip/arm-gic.h
-+++ b/include/linux/irqchip/arm-gic.h
-@@ -117,6 +117,12 @@ void gic_dist_restore(struct gic_chip_data *gic);
- int gic_of_init(struct device_node *node, struct device_node *parent);
- 
- /*
-+ * Initialises and registers a non-root or child GIC chip. Memory for
-+ * the gic_chip_data structure is dynamically allocated.
-+ */
-+int gic_of_init_child(struct device *dev, struct gic_chip_data **gic, int irq);
-+
-+/*
-  * Legacy platforms not converted to DT yet must use this to init
-  * their GIC
-  */
+ void __init gic_init(unsigned int gic_nr, int irq_start,
 -- 
 2.1.4
