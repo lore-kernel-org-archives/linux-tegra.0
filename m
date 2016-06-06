@@ -1,109 +1,47 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH v1 02/25] PCI: designware: Free bridge resource list on failure
-Date: Mon, 06 Jun 2016 18:05:01 -0500
-Message-ID: <20160606230501.20936.71818.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+From: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v1 07/25] PCI: xgene: Request host bridge window resources
+Date: Mon, 06 Jun 2016 18:05:37 -0500
+Message-ID: <20160606230537.20936.2892.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-pci@vger.kernel.org
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, Jingoo Han <jingoohan1@gmail.com>, Pratyush Anand <pratyush.anand@gmail.com>, linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org, linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>, linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>, Michal Simek <michal.simek@xilinx.com>, =?utf-8?b?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160606225630.20936.77349.stgit-1RhO1Y9PlrlHTL0Zs8A6p/gx64E7kk8eUsxypvmhUTTZJqsBc5GL+g@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Jon Mason <jonmason-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pratyush Anand <pratyush.anand-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rfi-g9ZBwUv/Ih/yUk5EbOjzuce+I+R0W71w@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tanmay Inamdar <tinamdar-qTEPVZfXA3Y@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ley Foon Tan <lftan-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, =?utf-8?b?U8O2cmVu?= Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-of_pci_get_host_bridge_resources() allocates a list of resources for host
-bridge windows.  If we fail after allocating that list, free it before we
-return error.
+Request host bridge window resources so they appear in ioport_resource and
+iomem_resource and are reflected in /proc/ioports and /proc/iomem.
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+For example, the following entries did not previously appear in /proc/iomem:
+
+  e180000000-e1ffffffff : /soc/pcie@1f2b0000
+    e180000000-e182ffffff : PCI Bus 0000:01
+      e180000000-e181ffffff : 0000:01:00.0
+      e182000000-e1820fffff : 0000:01:00.0
+      e182100000-e1821fffff : 0000:01:00.0
+  f000000000-ffffffffff : /soc/pcie@1f2b0000
+
+Signed-off-by: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/pci/host/pcie-designware.c |   24 +++++++++++++++++-------
- 1 file changed, 17 insertions(+), 7 deletions(-)
+ drivers/pci/host/pci-xgene.c |    4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/pci/host/pcie-designware.c b/drivers/pci/host/pcie-designware.c
-index aafd766..9ade767 100644
---- a/drivers/pci/host/pcie-designware.c
-+++ b/drivers/pci/host/pcie-designware.c
-@@ -493,7 +493,8 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 					resource_size(pp->cfg));
- 		if (!pp->dbi_base) {
- 			dev_err(pp->dev, "error with ioremap\n");
--			return -ENOMEM;
-+			ret = -ENOMEM;
-+			goto error;
- 		}
- 	}
+diff --git a/drivers/pci/host/pci-xgene.c b/drivers/pci/host/pci-xgene.c
+index bc4e1c6..7eb20cc 100644
+--- a/drivers/pci/host/pci-xgene.c
++++ b/drivers/pci/host/pci-xgene.c
+@@ -540,6 +540,10 @@ static int xgene_pcie_probe_bridge(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
  
-@@ -504,7 +505,8 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 						pp->cfg0_size);
- 		if (!pp->va_cfg0_base) {
- 			dev_err(pp->dev, "error with ioremap in function\n");
--			return -ENOMEM;
-+			ret = -ENOMEM;
-+			goto error;
- 		}
- 	}
- 
-@@ -513,7 +515,8 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 						pp->cfg1_size);
- 		if (!pp->va_cfg1_base) {
- 			dev_err(pp->dev, "error with ioremap\n");
--			return -ENOMEM;
-+			ret = -ENOMEM;
-+			goto error;
- 		}
- 	}
- 
-@@ -528,7 +531,8 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 						&dw_pcie_msi_chip);
- 			if (!pp->irq_domain) {
- 				dev_err(pp->dev, "irq domain init failed\n");
--				return -ENXIO;
-+				ret = -ENXIO;
-+				goto error;
- 			}
- 
- 			for (i = 0; i < MAX_MSI_IRQS; i++)
-@@ -536,7 +540,7 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 		} else {
- 			ret = pp->ops->msi_host_init(pp, &dw_pcie_msi_chip);
- 			if (ret < 0)
--				return ret;
-+				goto error;
- 		}
- 	}
- 
-@@ -552,8 +556,10 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 	} else
- 		bus = pci_scan_root_bus(pp->dev, pp->root_bus_nr, &dw_pcie_ops,
- 					pp, &res);
--	if (!bus)
--		return -ENOMEM;
-+	if (!bus) {
-+		ret = -ENOMEM;
++	ret = devm_request_pci_bus_resources(&pdev->dev, &res);
++	if (ret)
 +		goto error;
-+	}
- 
- 	if (pp->ops->scan_bus)
- 		pp->ops->scan_bus(pp);
-@@ -571,6 +577,10 @@ int dw_pcie_host_init(struct pcie_port *pp)
- 
- 	pci_bus_add_devices(bus);
- 	return 0;
 +
-+error:
-+	pci_free_resource_list(&res);
-+	return ret;
- }
- 
- static int dw_pcie_rd_other_conf(struct pcie_port *pp, struct pci_bus *bus,
+ 	ret = xgene_pcie_setup(port, &res, iobase);
+ 	if (ret)
+ 		goto error;
