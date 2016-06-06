@@ -1,8 +1,8 @@
 From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH v1 23/25] PCI: tegra: Request host bridge window resources
- with core function
-Date: Mon, 06 Jun 2016 18:07:36 -0500
-Message-ID: <20160606230736.20936.41942.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+Subject: [PATCH v1 24/25] PCI: versatile: Request host bridge window
+ resources with core function
+Date: Mon, 06 Jun 2016 18:07:44 -0500
+Message-ID: <20160606230744.20936.46906.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -21,40 +21,47 @@ No functional change intended.
 
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- drivers/pci/host/pci-tegra.c |   16 ++++------------
- 1 file changed, 4 insertions(+), 12 deletions(-)
+ drivers/pci/host/pci-versatile.c |   12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 920a899..048a35e 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -626,17 +626,7 @@ static int tegra_pcie_setup(int nr, struct pci_sys_data *sys)
- 	if (err < 0)
+diff --git a/drivers/pci/host/pci-versatile.c b/drivers/pci/host/pci-versatile.c
+index f843a72..273edac 100644
+--- a/drivers/pci/host/pci-versatile.c
++++ b/drivers/pci/host/pci-versatile.c
+@@ -80,12 +80,15 @@ static int versatile_pci_parse_request_of_pci_ranges(struct device *dev,
+ 	if (err)
  		return err;
  
--	err = devm_request_resource(pcie->dev, &ioport_resource, &pcie->pio);
--	if (err < 0)
--		return err;
++	err = devm_request_pci_bus_resources(dev, res);
++	if (err)
++		goto out_release_res;
++
+ 	resource_list_for_each_entry(win, res) {
+-		struct resource *parent, *res = win->res;
++		struct resource *res = win->res;
+ 
+ 		switch (resource_type(res)) {
+ 		case IORESOURCE_IO:
+-			parent = &ioport_resource;
+ 			err = pci_remap_iospace(res, iobase);
+ 			if (err) {
+ 				dev_warn(dev, "error %d: failed to map resource %pR\n",
+@@ -94,7 +97,6 @@ static int versatile_pci_parse_request_of_pci_ranges(struct device *dev,
+ 			}
+ 			break;
+ 		case IORESOURCE_MEM:
+-			parent = &iomem_resource;
+ 			res_valid |= !(res->flags & IORESOURCE_PREFETCH);
+ 
+ 			writel(res->start >> 28, PCI_IMAP(mem));
+@@ -106,10 +108,6 @@ static int versatile_pci_parse_request_of_pci_ranges(struct device *dev,
+ 		default:
+ 			continue;
+ 		}
 -
--	err = devm_request_resource(pcie->dev, &iomem_resource, &pcie->mem);
--	if (err < 0)
--		return err;
--
--	err = devm_request_resource(pcie->dev, &iomem_resource, &pcie->prefetch);
--	if (err)
--		return err;
-+	pci_ioremap_io(pcie->pio.start, pcie->io.start);
+-		err = devm_request_resource(dev, parent, res);
+-		if (err)
+-			goto out_release_res;
+ 	}
  
- 	pci_add_resource_offset(&sys->resources, &pcie->pio, sys->io_offset);
- 	pci_add_resource_offset(&sys->resources, &pcie->mem, sys->mem_offset);
-@@ -644,7 +634,9 @@ static int tegra_pcie_setup(int nr, struct pci_sys_data *sys)
- 				sys->mem_offset);
- 	pci_add_resource(&sys->resources, &pcie->busn);
- 
--	pci_ioremap_io(pcie->pio.start, pcie->io.start);
-+	err = devm_request_pci_bus_resources(&pcie->dev, &sys->resources);
-+	if (err < 0)
-+		return err;
- 
- 	return 1;
- }
+ 	if (!res_valid) {
