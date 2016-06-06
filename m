@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH V5 5/9] irqchip/gic: Isolate early GIC initialisation code
-Date: Mon, 6 Jun 2016 12:53:39 +0100
-Message-ID: <1465214023-8299-6-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH V5 7/9] irqchip/gic: Prepare for adding platform driver
+Date: Mon, 6 Jun 2016 12:53:41 +0100
+Message-ID: <1465214023-8299-8-git-send-email-jonathanh@nvidia.com>
 References: <1465214023-8299-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,109 +12,131 @@ To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, M
 Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-To re-use the code that initialises the GIC (found in
-__gic_init_bases()), from within a platform driver, it is necessary to
-move the code from the __init section so that it is always present and
-not removed. Unfortunately, it is not possible to simply drop the __init
-from the function declaration for __gic_init_bases() because it contains
-calls to set_smp_cross_call() and set_handle_irq() which are both
-located in the __init section. Fortunately, these calls are only
-required for the root controller and because the initial platform driver
-will only support non-root controllers that can be initialised later in
-the boot process, we can move these calls to another function.
+To support GICs that require runtime power management, it is necessary
+to add a platform driver, so that the probing of the chip can be
+deferred if resources, such as a power-domain, is not yet available.
 
-Move the bulk of the code from __gic_init_bases() to a new function
-called gic_init_bases() which is not located in the __init section and
-can be used by the platform driver. Update __gic_init_bases() to call
-gic_init_bases() and if necessary, set_smp_cross_call() and
-set_handle_irq().
+To prepare for adding a platform driver:
+ 1. Drop the __init section from the gic_dist_config() so this can be
+    re-used by the platform driver.
+ 2. Add prototypes for functions required by the platform driver to the
+    GIC header file so they can be re-used.
 
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/irqchip/irq-gic.c | 55 +++++++++++++++++++++++++++--------------------
- 1 file changed, 32 insertions(+), 23 deletions(-)
+ drivers/irqchip/irq-gic-common.c |  4 ++--
+ drivers/irqchip/irq-gic.c        | 15 ++++++++-------
+ include/linux/irqchip/arm-gic.h  |  5 +++++
+ 3 files changed, 15 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
-index fbc4ae2afd29..fa0dd98993fa 100644
---- a/drivers/irqchip/irq-gic.c
-+++ b/drivers/irqchip/irq-gic.c
-@@ -1032,14 +1032,11 @@ static const struct irq_domain_ops gic_irq_domain_ops = {
- 	.unmap = gic_irq_domain_unmap,
- };
- 
--static int __init __gic_init_bases(struct gic_chip_data *gic, int irq_start,
--				   struct fwnode_handle *handle)
-+static int gic_init_bases(struct gic_chip_data *gic, int irq_start,
-+			  struct fwnode_handle *handle)
- {
- 	irq_hw_number_t hwirq_base;
--	int gic_irqs, irq_base, i, ret;
--
--	if (WARN_ON(!gic || gic->domain))
--		return -EINVAL;
-+	int gic_irqs, irq_base, ret;
- 
- 	/* Initialize irq_chip */
- 	gic->chip = gic_chip;
-@@ -1138,23 +1135,6 @@ static int __init __gic_init_bases(struct gic_chip_data *gic, int irq_start,
- 		goto error;
- 	}
- 
--	if (gic == &gic_data[0]) {
--		/*
--		 * Initialize the CPU interface map to all CPUs.
--		 * It will be refined as each CPU probes its ID.
--		 * This is only necessary for the primary GIC.
--		 */
--		for (i = 0; i < NR_GIC_CPU_IF; i++)
--			gic_cpu_map[i] = 0xff;
--#ifdef CONFIG_SMP
--		set_smp_cross_call(gic_raise_softirq);
--		register_cpu_notifier(&gic_cpu_notifier);
--#endif
--		set_handle_irq(gic_handle_irq);
--		if (static_key_true(&supports_deactivate))
--			pr_info("GIC: Using split EOI/Deactivate mode\n");
--	}
--
- 	gic_dist_init(gic);
- 	ret = gic_cpu_init(gic);
- 	if (ret)
-@@ -1177,6 +1157,35 @@ error:
+diff --git a/drivers/irqchip/irq-gic-common.c b/drivers/irqchip/irq-gic-common.c
+index 89e7423f0ebb..9ae71804b5dd 100644
+--- a/drivers/irqchip/irq-gic-common.c
++++ b/drivers/irqchip/irq-gic-common.c
+@@ -90,8 +90,8 @@ int gic_configure_irq(unsigned int irq, unsigned int type,
  	return ret;
  }
  
-+static int __init __gic_init_bases(struct gic_chip_data *gic,
-+				   int irq_start,
-+				   struct fwnode_handle *handle)
-+{
-+	int i;
-+
-+	if (WARN_ON(!gic || gic->domain))
-+		return -EINVAL;
-+
-+	if (gic == &gic_data[0]) {
-+		/*
-+		 * Initialize the CPU interface map to all CPUs.
-+		 * It will be refined as each CPU probes its ID.
-+		 * This is only necessary for the primary GIC.
-+		 */
-+		for (i = 0; i < NR_GIC_CPU_IF; i++)
-+			gic_cpu_map[i] = 0xff;
-+#ifdef CONFIG_SMP
-+		set_smp_cross_call(gic_raise_softirq);
-+		register_cpu_notifier(&gic_cpu_notifier);
-+#endif
-+		set_handle_irq(gic_handle_irq);
-+		if (static_key_true(&supports_deactivate))
-+			pr_info("GIC: Using split EOI/Deactivate mode\n");
-+	}
-+
-+	return gic_init_bases(gic, irq_start, handle);
-+}
-+
- void __init gic_init(unsigned int gic_nr, int irq_start,
- 		     void __iomem *dist_base, void __iomem *cpu_base)
+-void __init gic_dist_config(void __iomem *base, int gic_irqs,
+-			    void (*sync_access)(void))
++void gic_dist_config(void __iomem *base, int gic_irqs,
++		     void (*sync_access)(void))
  {
+ 	unsigned int i;
+ 
+diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+index 94eab6e23124..3d3ab9045244 100644
+--- a/drivers/irqchip/irq-gic.c
++++ b/drivers/irqchip/irq-gic.c
+@@ -449,7 +449,7 @@ static void gic_cpu_if_up(struct gic_chip_data *gic)
+ }
+ 
+ 
+-static void __init gic_dist_init(struct gic_chip_data *gic)
++static void gic_dist_init(struct gic_chip_data *gic)
+ {
+ 	unsigned int i;
+ 	u32 cpumask;
+@@ -535,7 +535,7 @@ int gic_cpu_if_down(unsigned int gic_nr)
+  * this function, no interrupts will be delivered by the GIC, and another
+  * platform-specific wakeup source must be enabled.
+  */
+-static void gic_dist_save(struct gic_chip_data *gic)
++void gic_dist_save(struct gic_chip_data *gic)
+ {
+ 	unsigned int gic_irqs;
+ 	void __iomem *dist_base;
+@@ -574,7 +574,7 @@ static void gic_dist_save(struct gic_chip_data *gic)
+  * handled normally, but any edge interrupts that occured will not be seen by
+  * the GIC and need to be handled by the platform-specific wakeup source.
+  */
+-static void gic_dist_restore(struct gic_chip_data *gic)
++void gic_dist_restore(struct gic_chip_data *gic)
+ {
+ 	unsigned int gic_irqs;
+ 	unsigned int i;
+@@ -620,7 +620,7 @@ static void gic_dist_restore(struct gic_chip_data *gic)
+ 	writel_relaxed(GICD_ENABLE, dist_base + GIC_DIST_CTRL);
+ }
+ 
+-static void gic_cpu_save(struct gic_chip_data *gic)
++void gic_cpu_save(struct gic_chip_data *gic)
+ {
+ 	int i;
+ 	u32 *ptr;
+@@ -650,7 +650,7 @@ static void gic_cpu_save(struct gic_chip_data *gic)
+ 
+ }
+ 
+-static void gic_cpu_restore(struct gic_chip_data *gic)
++void gic_cpu_restore(struct gic_chip_data *gic)
+ {
+ 	int i;
+ 	u32 *ptr;
+@@ -727,7 +727,7 @@ static struct notifier_block gic_notifier_block = {
+ 	.notifier_call = gic_notifier,
+ };
+ 
+-static int __init gic_pm_init(struct gic_chip_data *gic)
++static int gic_pm_init(struct gic_chip_data *gic)
+ {
+ 	gic->saved_ppi_enable = __alloc_percpu(DIV_ROUND_UP(32, 32) * 4,
+ 		sizeof(u32));
+@@ -757,7 +757,7 @@ free_ppi_enable:
+ 	return -ENOMEM;
+ }
+ #else
+-static int __init gic_pm_init(struct gic_chip_data *gic)
++static int gic_pm_init(struct gic_chip_data *gic)
+ {
+ 	return 0;
+ }
+@@ -1179,6 +1179,7 @@ static int __init __gic_init_bases(struct gic_chip_data *gic,
+ 		set_smp_cross_call(gic_raise_softirq);
+ 		register_cpu_notifier(&gic_cpu_notifier);
+ #endif
++
+ 		set_handle_irq(gic_handle_irq);
+ 		if (static_key_true(&supports_deactivate))
+ 			pr_info("GIC: Using split EOI/Deactivate mode\n");
+diff --git a/include/linux/irqchip/arm-gic.h b/include/linux/irqchip/arm-gic.h
+index fd051855539b..ffcbd8b9a4ff 100644
+--- a/include/linux/irqchip/arm-gic.h
++++ b/include/linux/irqchip/arm-gic.h
+@@ -101,9 +101,14 @@
+ #include <linux/irqdomain.h>
+ 
+ struct device_node;
++struct gic_chip_data;
+ 
+ void gic_cascade_irq(unsigned int gic_nr, unsigned int irq);
+ int gic_cpu_if_down(unsigned int gic_nr);
++void gic_cpu_save(struct gic_chip_data *gic);
++void gic_cpu_restore(struct gic_chip_data *gic);
++void gic_dist_save(struct gic_chip_data *gic);
++void gic_dist_restore(struct gic_chip_data *gic);
+ 
+ /*
+  * Subdrivers that need some preparatory work can initialize their
 -- 
 2.1.4
