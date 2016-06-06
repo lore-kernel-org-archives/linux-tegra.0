@@ -1,46 +1,66 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH v1 19/25] PCI: rcar Gen2: Request host bridge window
- resources
-Date: Mon, 06 Jun 2016 18:07:06 -0500
-Message-ID: <20160606230706.20936.13086.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+From: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v1 20/25] PCI: rcar: Request host bridge window resources
+ with core function
+Date: Mon, 06 Jun 2016 18:07:13 -0500
+Message-ID: <20160606230713.20936.51279.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-pci@vger.kernel.org
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Herring <robh@kernel.org>, Jason Cooper <jason@lakedaemon.net>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, Jingoo Han <jingoohan1@gmail.com>, Pratyush Anand <pratyush.anand@gmail.com>, linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org, linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>, linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>, Michal Simek <michal.simek@xilinx.com>, =?utf-8?b?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160606225630.20936.77349.stgit-1RhO1Y9PlrlHTL0Zs8A6p/gx64E7kk8eUsxypvmhUTTZJqsBc5GL+g@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Jon Mason <jonmason-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pratyush Anand <pratyush.anand-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rfi-g9ZBwUv/Ih/yUk5EbOjzuce+I+R0W71w@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tanmay Inamdar <tinamdar-qTEPVZfXA3Y@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ley Foon Tan <lftan-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, =?utf-8?b?U8O2cmVu?= Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Request host bridge window resources so they appear in ioport_resource and
-iomem_resource and are reflected in /proc/ioports and /proc/iomem.
+Use devm_request_pci_bus_resources() to request host bridge window
+resources instead of doing it by hand in the driver.
 
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+No functional change intended.
+
+Signed-off-by: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/pci/host/pci-rcar-gen2.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/pci/host/pcie-rcar.c |   12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/pci/host/pci-rcar-gen2.c b/drivers/pci/host/pci-rcar-gen2.c
-index 9980a4b..617a6b2 100644
---- a/drivers/pci/host/pci-rcar-gen2.c
-+++ b/drivers/pci/host/pci-rcar-gen2.c
-@@ -194,6 +194,7 @@ static int rcar_pci_setup(int nr, struct pci_sys_data *sys)
- 	struct rcar_pci_priv *priv = sys->private_data;
- 	void __iomem *reg = priv->reg;
- 	u32 val;
-+	int ret;
+diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
+index 3509218..ce096db 100644
+--- a/drivers/pci/host/pcie-rcar.c
++++ b/drivers/pci/host/pcie-rcar.c
+@@ -955,12 +955,15 @@ static int rcar_pcie_parse_request_of_pci_ranges(struct rcar_pcie *pci)
+ 	if (err)
+ 		return err;
  
- 	pm_runtime_enable(priv->dev);
- 	pm_runtime_get_sync(priv->dev);
-@@ -275,6 +276,9 @@ static int rcar_pci_setup(int nr, struct pci_sys_data *sys)
- 	/* Add PCI resources */
- 	pci_add_resource(&sys->resources, &priv->io_res);
- 	pci_add_resource(&sys->resources, &priv->mem_res);
-+	ret = devm_request_pci_bus_resources(priv->dev, &sys->resources);
-+	if (ret < 0)
-+		return ret;
++	err = devm_request_pci_bus_resources(dev, &pci->resources);
++	if (err)
++		goto out_release_res;
++
+ 	resource_list_for_each_entry(win, &pci->resources) {
+-		struct resource *parent, *res = win->res;
++		struct resource *res = win->res;
  
- 	/* Setup bus number based on platform device id / of bus-range */
- 	sys->busnr = priv->busnr;
+ 		switch (resource_type(res)) {
+ 		case IORESOURCE_IO:
+-			parent = &ioport_resource;
+ 			err = pci_remap_iospace(res, iobase);
+ 			if (err) {
+ 				dev_warn(dev, "error %d: failed to map resource %pR\n",
+@@ -969,17 +972,12 @@ static int rcar_pcie_parse_request_of_pci_ranges(struct rcar_pcie *pci)
+ 			}
+ 			break;
+ 		case IORESOURCE_MEM:
+-			parent = &iomem_resource;
+ 			break;
+ 
+ 		case IORESOURCE_BUS:
+ 		default:
+ 			continue;
+ 		}
+-
+-		err = devm_request_resource(dev, parent, res);
+-		if (err)
+-			goto out_release_res;
+ 	}
+ 
+ 	return 0;
