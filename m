@@ -1,7 +1,7 @@
 From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH v1 05/25] PCI: iproc: Request host bridge window resources
-Date: Mon, 06 Jun 2016 18:05:23 -0500
-Message-ID: <20160606230523.20936.1752.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+Subject: [PATCH v1 09/25] PCI: xilinx: Request host bridge window resources
+Date: Mon, 06 Jun 2016 18:05:52 -0500
+Message-ID: <20160606230552.20936.38959.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
@@ -18,21 +18,22 @@ iomem_resource and are reflected in /proc/ioports and /proc/iomem.
 
 Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
 ---
- drivers/pci/host/pcie-iproc.c |    4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/pci/host/pcie-xilinx.c |    5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/pci/host/pcie-iproc.c b/drivers/pci/host/pcie-iproc.c
-index a576aee..e167b2f 100644
---- a/drivers/pci/host/pcie-iproc.c
-+++ b/drivers/pci/host/pcie-iproc.c
-@@ -462,6 +462,10 @@ int iproc_pcie_setup(struct iproc_pcie *pcie, struct list_head *res)
- 	if (!pcie || !pcie->dev || !pcie->base)
- 		return -EINVAL;
- 
-+	ret = devm_request_pci_bus_resources(pcie->dev, res);
-+	if (ret)
-+		return ret;
+diff --git a/drivers/pci/host/pcie-xilinx.c b/drivers/pci/host/pcie-xilinx.c
+index 5c456db..4703aa3 100644
+--- a/drivers/pci/host/pcie-xilinx.c
++++ b/drivers/pci/host/pcie-xilinx.c
+@@ -693,6 +693,11 @@ static int xilinx_pcie_probe(struct platform_device *pdev)
+ 		dev_err(dev, "Getting bridge resources failed\n");
+ 		return err;
+ 	}
 +
- 	ret = phy_init(pcie->phy);
- 	if (ret) {
- 		dev_err(pcie->dev, "unable to initialize PCIe PHY\n");
++	err = devm_request_pci_bus_resources(dev, &res);
++	if (err)
++		goto error;
++
+ 	bus = pci_create_root_bus(&pdev->dev, 0,
+ 				  &xilinx_pcie_ops, port, &res);
+ 	if (!bus) {
