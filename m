@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 4/8] arm64: tegra: Add DSI panel on Jetson TX1
-Date: Mon,  6 Jun 2016 18:36:33 +0200
-Message-ID: <20160606163637.14234-4-thierry.reding@gmail.com>
+Subject: [PATCH 8/8] arm64: tegra: Enable XUSB controller on Jetson TX1
+Date: Mon,  6 Jun 2016 18:36:37 +0200
+Message-ID: <20160606163637.14234-8-thierry.reding@gmail.com>
 References: <20160606163637.14234-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20160606163637.14234-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,133 +12,187 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Some variants of the Jetson TX1 ship with a 8.0" WUXGA TFT LCD panel
-connected via four DSI lanes.
-
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts | 45 +++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     | 50 ++++++++++++++++++++++
- 2 files changed, 95 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 162 +++++++++++++++++++++++++
+ 1 file changed, 162 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-index 683b339a980c..983775e637a4 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-@@ -6,4 +6,49 @@
- / {
- 	model = "NVIDIA Jetson TX1 Developer Kit";
- 	compatible = "nvidia,p2371-2180", "nvidia,tegra210";
-+
-+	host1x@50000000 {
-+		dsi@54300000 {
-+			status = "okay";
-+
-+			avdd-dsi-csi-supply = <&vdd_dsi_csi>;
-+
-+			panel@0 {
-+				compatible = "auo,b080uan01";
-+				reg = <0>;
-+
-+				enable-gpios = <&gpio TEGRA_GPIO(V, 2)
-+						GPIO_ACTIVE_HIGH>;
-+				power-supply = <&vdd_5v0_io>;
-+				backlight = <&backlight>;
-+			};
-+		};
-+	};
-+
-+	i2c@7000c400 {
-+		backlight: backlight@2c {
-+			compatible = "ti,lp8557";
-+			reg = <0x2c>;
-+
-+			dev-ctrl = /bits/ 8 <0x80>;
-+			init-brt = /bits/ 8 <0xff>;
-+
-+			pwm-period = <29334>;
-+
-+			pwms = <&pwm 0 29334>;
-+			pwm-names = "lp8557";
-+
-+			/* 3 LED string */
-+			rom_14h {
-+				rom-addr = /bits/ 8 <0x14>;
-+				rom-val = /bits/ 8 <0x87>;
-+			};
-+
-+			/* boost frequency 1 MHz */
-+			rom_13h {
-+				rom-addr = /bits/ 8 <0x13>;
-+				rom-val = /bits/ 8 <0x01>;
-+			};
-+		};
-+	};
- };
 diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-index b28aff5e104d..78a16a57fec7 100644
+index 78a16a57fec7..8bba178d8d0f 100644
 --- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
 +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
-@@ -1261,6 +1261,23 @@
+@@ -1278,6 +1278,146 @@
  		};
  	};
  
-+	pwm@7000a000 {
++	usb@70090000 {
++		phys = <&{/padctl@7009f000/pads/usb2/lanes/usb2-0}>,
++		       <&{/padctl@7009f000/pads/usb2/lanes/usb2-1}>,
++		       <&{/padctl@7009f000/pads/usb2/lanes/usb2-2}>,
++		       <&{/padctl@7009f000/pads/usb2/lanes/usb2-3}>,
++		       <&{/padctl@7009f000/pads/pcie/lanes/pcie-6}>,
++		       <&{/padctl@7009f000/pads/pcie/lanes/pcie-5}>;
++		phy-names = "usb2-0", "usb2-1", "usb2-2", "usb2-3", "usb3-0",
++			    "usb3-1";
++
++		dvddio-pex-supply = <&vdd_pex_1v05>;
++		hvddio-pex-supply = <&vdd_1v8>;
++		avdd-usb-supply = <&vdd_3v3_sys>;
++		/* XXX what are these? */
++		avdd-pll-utmip-supply = <&vdd_1v8>;
++		avdd-pll-uerefe-supply = <&vdd_pex_1v05>;
++		dvdd-usb-ss-pll-supply = <&vdd_pex_1v05>;
++		hvdd-usb-ss-pll-e-supply = <&vdd_1v8>;
++
 +		status = "okay";
 +	};
 +
-+	i2c@7000c400 {
++	padctl@7009f000 {
 +		status = "okay";
-+		clock-frequency = <100000>;
 +
-+		exp1: gpio@74 {
-+			compatible = "ti,tca9539";
-+			reg = <0x74>;
++		pads {
++			usb2 {
++				status = "okay";
 +
-+			#gpio-cells = <2>;
-+			gpio-controller;
++				lanes {
++					usb2-0 {
++						nvidia,function = "xusb";
++						status = "okay";
++					};
++
++					usb2-1 {
++						nvidia,function = "xusb";
++						status = "okay";
++					};
++
++					usb2-2 {
++						nvidia,function = "xusb";
++						status = "okay";
++					};
++
++					usb2-3 {
++						nvidia,function = "xusb";
++						status = "okay";
++					};
++				};
++			};
++
++			pcie {
++				status = "okay";
++
++				lanes {
++					pcie-0 {
++						nvidia,function = "pcie-x1";
++						status = "okay";
++					};
++
++					pcie-1 {
++						nvidia,function = "pcie-x4";
++						status = "okay";
++					};
++
++					pcie-2 {
++						nvidia,function = "pcie-x4";
++						status = "okay";
++					};
++
++					pcie-3 {
++						nvidia,function = "pcie-x4";
++						status = "okay";
++					};
++
++					pcie-4 {
++						nvidia,function = "pcie-x4";
++						status = "okay";
++					};
++
++					pcie-5 {
++						nvidia,function = "usb3-ss";
++						status = "okay";
++					};
++
++					pcie-6 {
++						nvidia,function = "usb3-ss";
++						status = "okay";
++					};
++				};
++			};
++
++			sata {
++				status = "okay";
++
++				lanes {
++					sata-0 {
++						nvidia,function = "sata";
++						status = "okay";
++					};
++				};
++			};
++		};
++
++		ports {
++			usb2-0 {
++				status = "okay";
++				mode = "otg";
++			};
++
++			usb2-1 {
++				status = "okay";
++				vbus-supply = <&vdd_5v0_rtl>;
++				mode = "host";
++			};
++
++			usb2-2 {
++				status = "okay";
++				vbus-supply = <&vdd_usb_vbus>;
++				mode = "host";
++			};
++
++			usb2-3 {
++				status = "okay";
++				mode = "host";
++			};
++
++			usb3-0 {
++				nvidia,usb2-companion = <1>;
++				status = "okay";
++			};
++
++			usb3-1 {
++				nvidia,usb2-companion = <2>;
++				status = "okay";
++			};
 +		};
 +	};
 +
  	/* MMC/SD */
  	sdhci@700b0000 {
  		status = "okay";
-@@ -1340,6 +1357,39 @@
- 			regulator-enable-ramp-delay = <472>;
- 			regulator-disable-ramp-delay = <4880>;
+@@ -1390,6 +1530,28 @@
+ 			enable-active-high;
+ 			vin-supply = <&vdd_1v8>;
  		};
 +
-+		vdd_dsi_csi: regulator@5 {
++		vdd_5v0_rtl: regulator@8 {
 +			compatible = "regulator-fixed";
-+			reg = <5>;
-+			regulator-name = "AVDD_DSI_CSI_1V2";
-+			regulator-min-microvolt = <1200000>;
-+			regulator-max-microvolt = <1200000>;
-+			vin-supply = <&vdd_sys_1v2>;
++			reg = <8>;
++			regulator-name = "RTL_5V";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			gpio = <&gpio TEGRA_GPIO(H, 1) GPIO_ACTIVE_HIGH>;
++			enable-active-high;
++			vin-supply = <&vdd_5v0_sys>;
 +		};
 +
-+		vdd_3v3_dis: regulator@6 {
++		vdd_usb_vbus: regulator@9 {
 +			compatible = "regulator-fixed";
-+			reg = <6>;
-+			regulator-name = "VDD_DIS_3V3_LCD";
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3300000>;
-+			regulator-always-on;
-+			gpio = <&exp1 3 GPIO_ACTIVE_HIGH>;
++			reg = <9>;
++			regulator-name = "USB_VBUS_EN1";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			gpio = <&gpio TEGRA_GPIO(CC, 5) GPIO_ACTIVE_HIGH>;
 +			enable-active-high;
-+			vin-supply = <&vdd_3v3_sys>;
-+		};
-+
-+		vdd_1v8_dis: regulator@7 {
-+			compatible = "regulator-fixed";
-+			reg = <7>;
-+			regulator-name = "VDD_LCD_1V8_DIS";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			regulator-always-on;
-+			gpio = <&exp1 14 GPIO_ACTIVE_HIGH>;
-+			enable-active-high;
-+			vin-supply = <&vdd_1v8>;
++			vin-supply = <&vdd_5v0_sys>;
 +		};
  	};
  
