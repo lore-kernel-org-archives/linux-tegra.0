@@ -1,56 +1,39 @@
-From: Rithvik Patibandla <rithvikp98@gmail.com>
-Subject: [PATCH] Code cleanup - nvec
-Date: Tue,  7 Jun 2016 04:35:18 +0530
-Message-ID: <1465254318-17124-1-git-send-email-rithvikp98@gmail.com>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH v1 03/25] PCI: designware: Request host bridge window
+ resources
+Date: Mon, 06 Jun 2016 18:05:08 -0500
+Message-ID: <20160606230508.20936.81845.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: marvin24@gmx.de
-Cc: linux-tegra@vger.kernel.org, gregkh@linuxfoundation.org, devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org, ac100@lists.launchpad.net
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-pci@vger.kernel.org
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Herring <robh@kernel.org>, Jason Cooper <jason@lakedaemon.net>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, Jingoo Han <jingoohan1@gmail.com>, Pratyush Anand <pratyush.anand@gmail.com>, linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org, linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>, linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>, Michal Simek <michal.simek@xilinx.com>, =?utf-8?b?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Signed-off-by: Rithvik Patibandla <rithvikp98@gmail.com>
----
- drivers/staging/nvec/nvec-keytable.h | 3 +--
- drivers/staging/nvec/nvec_power.c    | 2 +-
- 2 files changed, 2 insertions(+), 3 deletions(-)
+Request host bridge window resources so they appear in ioport_resource and
+iomem_resource and are reflected in /proc/ioports and /proc/iomem.
 
-diff --git a/drivers/staging/nvec/nvec-keytable.h b/drivers/staging/nvec/nvec-keytable.h
-index 1dc22cb..b51f756 100644
---- a/drivers/staging/nvec/nvec-keytable.h
-+++ b/drivers/staging/nvec/nvec-keytable.h
-@@ -17,8 +17,7 @@
-  * more details.
-  *
-  * You should have received a copy of the GNU General Public License along
-- * with this program; if not, write to the Free Software Foundation, Inc.,
-- * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-+ * with this program; if not, it is already included in Linux.
-  */
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+---
+ drivers/pci/host/pcie-designware.c |    4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/drivers/pci/host/pcie-designware.c b/drivers/pci/host/pcie-designware.c
+index 9ade767..8304aeb 100644
+--- a/drivers/pci/host/pcie-designware.c
++++ b/drivers/pci/host/pcie-designware.c
+@@ -452,6 +452,10 @@ int dw_pcie_host_init(struct pcie_port *pp)
+ 	if (ret)
+ 		return ret;
  
- static unsigned short code_tab_102us[] = {
-diff --git a/drivers/staging/nvec/nvec_power.c b/drivers/staging/nvec/nvec_power.c
-index fcbb0fa..09befbb 100644
---- a/drivers/staging/nvec/nvec_power.c
-+++ b/drivers/staging/nvec/nvec_power.c
-@@ -442,7 +442,7 @@ static struct platform_driver nvec_power_driver = {
- 	.remove = nvec_power_remove,
- 	.driver = {
- 		   .name = "nvec-power",
--		   }
-+		}
- };
- 
- module_platform_driver(nvec_power_driver);
--- 
-2.7.4
++	ret = devm_request_pci_bus_resources(&pdev->dev, &res);
++	if (ret)
++		goto error;
++
+ 	/* Get the I/O and memory ranges from DT */
+ 	resource_list_for_each_entry(win, &res) {
+ 		switch (resource_type(win->res)) {
