@@ -1,74 +1,20 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH v1 21/25] PCI: rcar: Simplify host bridge window iteration
-Date: Mon, 06 Jun 2016 18:07:21 -0500
-Message-ID: <20160606230721.20936.25605.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+From: Greg KH <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>
+Subject: Re: [PATCH] Code cleanup - nvec
+Date: Mon, 6 Jun 2016 16:28:49 -0700
+Message-ID: <20160606232849.GA6753@kroah.com>
+References: <1465254318-17124-1-git-send-email-rithvikp98@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-pci@vger.kernel.org
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Herring <robh@kernel.org>, Jason Cooper <jason@lakedaemon.net>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, Jingoo Han <jingoohan1@gmail.com>, Pratyush Anand <pratyush.anand@gmail.com>, linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org, linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>, linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>, Michal Simek <michal.simek@xilinx.com>, =?utf-8?b?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1465254318-17124-1-git-send-email-rithvikp98-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rithvik Patibandla <rithvikp98-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: marvin24-Mmb7MZpHnFY@public.gmane.org, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The switch is the only statement in the resource_list_for_each_entry()
-loop, so remove unnecessary cases and "continue" statements in the switch.
-Inline rcar_pcie_release_of_pci_ranges(), which is only called once.
+On Tue, Jun 07, 2016 at 04:35:18AM +0530, Rithvik Patibandla wrote:
+> Signed-off-by: Rithvik Patibandla <rithvikp98-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
 
-No functional change intended.
-
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
----
- drivers/pci/host/pcie-rcar.c |   21 +++------------------
- 1 file changed, 3 insertions(+), 18 deletions(-)
-
-diff --git a/drivers/pci/host/pcie-rcar.c b/drivers/pci/host/pcie-rcar.c
-index ce096db..6546ca7 100644
---- a/drivers/pci/host/pcie-rcar.c
-+++ b/drivers/pci/host/pcie-rcar.c
-@@ -938,11 +938,6 @@ static const struct of_device_id rcar_pcie_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, rcar_pcie_of_match);
- 
--static void rcar_pcie_release_of_pci_ranges(struct rcar_pcie *pci)
--{
--	pci_free_resource_list(&pci->resources);
--}
--
- static int rcar_pcie_parse_request_of_pci_ranges(struct rcar_pcie *pci)
- {
- 	int err;
-@@ -962,28 +957,18 @@ static int rcar_pcie_parse_request_of_pci_ranges(struct rcar_pcie *pci)
- 	resource_list_for_each_entry(win, &pci->resources) {
- 		struct resource *res = win->res;
- 
--		switch (resource_type(res)) {
--		case IORESOURCE_IO:
-+		if (resource_type(res) == IORESOURCE_IO) {
- 			err = pci_remap_iospace(res, iobase);
--			if (err) {
-+			if (err)
- 				dev_warn(dev, "error %d: failed to map resource %pR\n",
- 					 err, res);
--				continue;
--			}
--			break;
--		case IORESOURCE_MEM:
--			break;
--
--		case IORESOURCE_BUS:
--		default:
--			continue;
- 		}
- 	}
- 
- 	return 0;
- 
- out_release_res:
--	rcar_pcie_release_of_pci_ranges(pci);
-+	pci_free_resource_list(&pci->resources);
- 	return err;
- }
- 
+I can't take patches with no changelog text, sorry.
