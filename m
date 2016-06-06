@@ -1,92 +1,85 @@
-From: Rhyland Klein <rklein@nvidia.com>
-Subject: Re: [PATCH] ARM64: boot: dts: Add regulators for Tegra210 Smaug
-Date: Mon, 6 Jun 2016 17:52:14 -0400
-Message-ID: <b28b44d9-7f3e-c1bb-7df8-238191ab1941@nvidia.com>
-References: <1464985365-11612-1-git-send-email-rklein@nvidia.com>
- <57551AAD.2020805@nvidia.com>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH v1 00/25] PCI: Request host bridge window resources
+Date: Mon, 06 Jun 2016 18:04:44 -0500
+Message-ID: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <57551AAD.2020805@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Jon Hunter <jonathanh@nvidia.com>, Alexandre Courbot <gnurou@gmail.com>, Andrew Bresticker <abrestic@chromium.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: linux-pci@vger.kernel.org
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Herring <robh@kernel.org>, Jason Cooper <jason@lakedaemon.net>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, Jingoo Han <jingoohan1@gmail.com>, Pratyush Anand <pratyush.anand@gmail.com>, linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org, linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>, linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>, Michal Simek <michal.simek@xilinx.com>, =?utf-8?b?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 6/6/2016 2:39 AM, Laxman Dewangan wrote:
-> 
-> On Saturday 04 June 2016 01:52 AM, Rhyland Klein wrote:
->> +
->> +			max77620_default: pinmux@0 {
->> +				pin_gpio {
->> +					pins = "gpio0", "gpio1", "gpio2", "gpio5",
->> +					       "gpio6", "gpio7";
-> gpio5 and gpio6 are already there in below nodes and hence it is not 
-> needed here.
+Several host bridge drivers (designware and all derivatives, iproc,
+xgene, xilinx, and xilinx-nwl) don't request the MMIO and I/O port
+windows they forward downstream to the PCI bus.
 
-Yep thanks.
+That means the PCI core can't request resources for PCI bridge
+windows and PCI BARs.
 
-> 
->> +					function = "gpio";
->> +				};
->> +
->> +				/*
->> +				 * GPIO3 is used to en_pp3300, and it is part of power
->> +				 * sequence, So it must be sequenced up (automatically
->> +				 * set by OTP) and down properly.
->> +				 */
->> +				pin_gpio3 {
->> +					pins = "gpio3";
->> +					function = "fps-out";
->> +					drive-open-drain = <1>;
->> +					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
->> +					maxim,active-fps-power-up-slot = <4>;
->> +					maxim,active-fps-power-down-slot = <2>;
->> +				};
->> +
->> +				pin_gpio5_6_7 {
-> node name should be gpio5_6 as there is no gpio7 inside this node.
+Several other drivers (altera, generic, mvebu, rcar, tegra) do request
+the windows, but use some duplicated code to do it.
 
-Thanks.
-> 
-> 
->> +
->> +			regulators {
->> +				in-ldo0-1-supply = <&pp1350>;
->> +				in-ldo2-supply = <&pp3300>;
->> +				in-ldo3-5-supply = <&pp3300>;
->> +				in-ldo7-8-supply = <&pp1350>;
->> +
->> +				ppvar_soc: sd0 {
->> +					regulator-name = "PPVAR_SOC";
->> +					regulator-min-microvolt = <825000>;
->> +					regulator-max-microvolt = <1125000>;
->> +					regulator-enable-ramp-delay = <146>;
->> +					regulator-disable-ramp-delay = <4080>;
->> +					regulator-ramp-delay = <27500>;
->> +					regulator-ramp-delay-scale = <300>;
-> 
-> There is no disable-ramp-delay in mainline.
-> Please use the correct value for property as:
->                                       regulator-ramp-delay = <9000>;
->                                       maxim,ramp-rate-setting = <27500>;
-> 
-> 
-> instead of regulator-ramp-delay and regulator-ramp-delay-scale.
-> The property differs from downstream.
-> 
-> regulator-ramp-delay is what you see in platform and 
-> maxim,ramp-rate-setting is what you want in register.
+This adds a new devm_request_pci_bus_resources() interface and changes
+these drivers to use it.  It also fixes several error paths where we failed
+to free the resource list allocated by of_pci_get_host_bridge_resources().
 
-Where does "<9000>" come from in the above comment? It looks like
-maxim,ramp-rate-setting sets the slew rate, and regulator-ramp-delay
-will as well, but will be ignored if maxim,ramp-delay-setting is set. So
-does it ever make sense to have both defined for a regulator? And if
-not, should max77620 regulators just use the maxim property and not the
-regulator core property?
+Tegra guys, please take a look at "PCI: tegra: Remove top-level resource
+from hierarchy" in particular.  Removing the top-level resource definitely
+makes /proc/iomem look uglier (although it will look more like that of
+other drivers).  A short-term fix could be to include device information in
+the resource name.  I think a better long-term fix would be to make the DT
+or platform device core request all the resources from the DT.
 
--rhyland
+Comments welcome.  I expect we'll trip over something here, so I marked
+this "v1" and I don't plan to put it into -next for a while.
 
--- 
-nvpublic
+This is on my pci/host-request-windows branch, which you can pull or view
+at https://git.kernel.org/cgit/linux/kernel/git/helgaas/pci.git/log/?h=pci/host-request-windows
+
+---
+
+Bjorn Helgaas (25):
+      PCI: Add devm_request_pci_bus_resources()
+      PCI: designware: Free bridge resource list on failure
+      PCI: designware: Request host bridge window resources
+      PCI: designware: Simplify host bridge window iteration
+      PCI: iproc: Request host bridge window resources
+      PCI: xgene: Free bridge resource list on failure
+      PCI: xgene: Request host bridge window resources
+      PCI: xilinx: Free bridge resource list on failure
+      PCI: xilinx: Request host bridge window resources
+      PCI: xilinx-nwl: Free bridge resource list on failure
+      PCI: xilinx-nwl: Request host bridge window resources
+      PCI: xilinx-nwl: Use dev_printk() when possible
+      PCI: altera: Request host bridge window resources with core function
+      PCI: altera: Simplify host bridge window iteration
+      PCI: generic: Free resource list close to where it's allocated
+      PCI: generic: Request host bridge window resources with core function
+      PCI: generic: Simplify host bridge window iteration
+      PCI: mvebu: Request host bridge window resources with core function
+      PCI: rcar Gen2: Request host bridge window resources
+      PCI: rcar: Request host bridge window resources with core function
+      PCI: rcar: Simplify host bridge window iteration
+      PCI: tegra: Remove top-level resource from hierarchy
+      PCI: tegra: Request host bridge window resources with core function
+      PCI: versatile: Request host bridge window resources with core function
+      PCI: versatile: Simplify host bridge window iteration
+
+
+ drivers/pci/bus.c                  |   29 +++++++++++++++++
+ drivers/pci/host/pci-host-common.c |   61 +++++++++++++++---------------------
+ drivers/pci/host/pci-mvebu.c       |   17 ++++------
+ drivers/pci/host/pci-rcar-gen2.c   |    4 ++
+ drivers/pci/host/pci-tegra.c       |   35 +++------------------
+ drivers/pci/host/pci-versatile.c   |   29 ++++++-----------
+ drivers/pci/host/pci-xgene.c       |   16 ++++++++-
+ drivers/pci/host/pcie-altera.c     |   35 ++++++---------------
+ drivers/pci/host/pcie-designware.c |   34 +++++++++++++-------
+ drivers/pci/host/pcie-iproc.c      |    4 ++
+ drivers/pci/host/pcie-rcar.c       |   33 +++++--------------
+ drivers/pci/host/pcie-xilinx-nwl.c |   20 +++++++++---
+ drivers/pci/host/pcie-xilinx.c     |   16 ++++++++-
+ include/linux/pci.h                |    5 ++-
+ 14 files changed, 170 insertions(+), 168 deletions(-)
