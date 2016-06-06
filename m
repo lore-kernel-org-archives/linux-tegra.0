@@ -1,194 +1,102 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V4 7/9] irqchip/gic: Prepare for adding platform driver
-Date: Mon, 6 Jun 2016 09:24:13 +0100
-Message-ID: <5755332D.5010506@nvidia.com>
-References: <1463066372-13115-1-git-send-email-jonathanh@nvidia.com>
- <1463066372-13115-8-git-send-email-jonathanh@nvidia.com>
- <20160604110638.6aa47123@arm.com>
+Subject: [PATCH V5 0/9] Add support for Tegra210 AGIC
+Date: Mon, 6 Jun 2016 12:53:34 +0100
+Message-ID: <1465214023-8299-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160604110638.6aa47123-5wv7dgnIgG8@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
-Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+The Tegra210 has a 2nd level interrupt controller located in a separate
+power domain to the main GIC interrupt controller and hence requires
+runtime-pm support.
 
-On 04/06/16 11:06, Marc Zyngier wrote:
-> On Thu, 12 May 2016 16:19:30 +0100
-> Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> 
->> To support GICs that require runtime power management, it is necessary
->> to add a platform driver, so that the probing of the chip can be
->> deferred if resources, such as a power-domain, is not yet available.
->>
->> To prepare for adding a platform driver:
->>  1. Drop the __init section from the gic_dist_config() so this can be
->>     re-used by the platform driver.
->>  2. Add prototypes for functions required by the platform driver to a
->>     local header file so they can be re-used.
->>
->> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  drivers/irqchip/irq-gic-common.c |  4 ++--
->>  drivers/irqchip/irq-gic.c        | 18 ++++++++++--------
->>  drivers/irqchip/irq-gic.h        | 28 ++++++++++++++++++++++++++++
->>  3 files changed, 40 insertions(+), 10 deletions(-)
->>  create mode 100644 drivers/irqchip/irq-gic.h
->>
->> diff --git a/drivers/irqchip/irq-gic-common.c b/drivers/irqchip/irq-gic-common.c
->> index 97c0028e8388..c510cbd264b1 100644
->> --- a/drivers/irqchip/irq-gic-common.c
->> +++ b/drivers/irqchip/irq-gic-common.c
->> @@ -77,8 +77,8 @@ int gic_configure_irq(unsigned int irq, unsigned int type,
->>  	return ret;
->>  }
->>  
->> -void __init gic_dist_config(void __iomem *base, int gic_irqs,
->> -			    void (*sync_access)(void))
->> +void gic_dist_config(void __iomem *base, int gic_irqs,
->> +		     void (*sync_access)(void))
->>  {
->>  	unsigned int i;
->>  
->> diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
->> index e043a19631b1..9f8ab124898b 100644
->> --- a/drivers/irqchip/irq-gic.c
->> +++ b/drivers/irqchip/irq-gic.c
->> @@ -48,6 +48,7 @@
->>  #include <asm/smp_plat.h>
->>  #include <asm/virt.h>
->>  
->> +#include "irq-gic.h"
->>  #include "irq-gic-common.h"
->>  
->>  #ifdef CONFIG_ARM64
->> @@ -363,7 +364,7 @@ static void __exception_irq_entry gic_handle_irq(struct pt_regs *regs)
->>  	} while (1);
->>  }
->>  
->> -static void gic_handle_cascade_irq(struct irq_desc *desc)
->> +void gic_handle_cascade_irq(struct irq_desc *desc)
->>  {
->>  	struct gic_chip_data *chip_data = irq_desc_get_handler_data(desc);
->>  	struct irq_chip *chip = irq_desc_get_chip(desc);
->> @@ -447,7 +448,7 @@ static void gic_cpu_if_up(struct gic_chip_data *gic)
->>  }
->>  
->>  
->> -static void __init gic_dist_init(struct gic_chip_data *gic)
->> +static void gic_dist_init(struct gic_chip_data *gic)
->>  {
->>  	unsigned int i;
->>  	u32 cpumask;
->> @@ -532,7 +533,7 @@ int gic_cpu_if_down(unsigned int gic_nr)
->>   * this function, no interrupts will be delivered by the GIC, and another
->>   * platform-specific wakeup source must be enabled.
->>   */
->> -static void gic_dist_save(struct gic_chip_data *gic)
->> +void gic_dist_save(struct gic_chip_data *gic)
->>  {
->>  	unsigned int gic_irqs;
->>  	void __iomem *dist_base;
->> @@ -571,7 +572,7 @@ static void gic_dist_save(struct gic_chip_data *gic)
->>   * handled normally, but any edge interrupts that occured will not be seen by
->>   * the GIC and need to be handled by the platform-specific wakeup source.
->>   */
->> -static void gic_dist_restore(struct gic_chip_data *gic)
->> +void gic_dist_restore(struct gic_chip_data *gic)
->>  {
->>  	unsigned int gic_irqs;
->>  	unsigned int i;
->> @@ -617,7 +618,7 @@ static void gic_dist_restore(struct gic_chip_data *gic)
->>  	writel_relaxed(GICD_ENABLE, dist_base + GIC_DIST_CTRL);
->>  }
->>  
->> -static void gic_cpu_save(struct gic_chip_data *gic)
->> +void gic_cpu_save(struct gic_chip_data *gic)
->>  {
->>  	int i;
->>  	u32 *ptr;
->> @@ -647,7 +648,7 @@ static void gic_cpu_save(struct gic_chip_data *gic)
->>  
->>  }
->>  
->> -static void gic_cpu_restore(struct gic_chip_data *gic)
->> +void gic_cpu_restore(struct gic_chip_data *gic)
->>  {
->>  	int i;
->>  	u32 *ptr;
->> @@ -724,7 +725,7 @@ static struct notifier_block gic_notifier_block = {
->>  	.notifier_call = gic_notifier,
->>  };
->>  
->> -static int __init gic_pm_init(struct gic_chip_data *gic)
->> +static int gic_pm_init(struct gic_chip_data *gic)
->>  {
->>  	gic->saved_ppi_enable = __alloc_percpu(DIV_ROUND_UP(32, 32) * 4,
->>  		sizeof(u32));
->> @@ -754,7 +755,7 @@ free_ppi_enable:
->>  	return -ENOMEM;
->>  }
->>  #else
->> -static int __init gic_pm_init(struct gic_chip_data *gic)
->> +static int gic_pm_init(struct gic_chip_data *gic)
->>  {
->>  	return 0;
->>  }
->> @@ -1178,6 +1179,7 @@ static int __init __gic_init_bases(struct gic_chip_data *gic,
->>  		set_smp_cross_call(gic_raise_softirq);
->>  		register_cpu_notifier(&gic_cpu_notifier);
->>  #endif
->> +
->>  		set_handle_irq(gic_handle_irq);
->>  		if (static_key_true(&supports_deactivate))
->>  			pr_info("GIC: Using split EOI/Deactivate mode\n");
->> diff --git a/drivers/irqchip/irq-gic.h b/drivers/irqchip/irq-gic.h
->> new file mode 100644
->> index 000000000000..646e92614b2c
->> --- /dev/null
->> +++ b/drivers/irqchip/irq-gic.h
->> @@ -0,0 +1,28 @@
->> +/*
->> + * Copyright (C) 2016 NVIDIA CORPORATION, All Rights Reserved.
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + *
->> + * This program is distributed in the hope that it will be useful,
->> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->> + * GNU General Public License for more details.
->> + *
->> + * You should have received a copy of the GNU General Public License
->> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
->> + */
->> +
->> +#ifndef _IRQ_GIC_H
->> +#define _IRQ_GIC_H
->> +
->> +struct gic_chip_data;
->> +
->> +void gic_cpu_save(struct gic_chip_data *gic);
->> +void gic_cpu_restore(struct gic_chip_data *gic);
->> +void gic_dist_save(struct gic_chip_data *gic);
->> +void gic_dist_restore(struct gic_chip_data *gic);
->> +void gic_handle_cascade_irq(struct irq_desc *desc);
->> +
->> +#endif /* _IRQ_GIC_H */
-> 
-> Any reason why all of this is not part of include/irqchip/arm-gic.h
-> instead of creating yet another include file?
+Add a platform driver for the GICs that require runtime-pm and make the
+necessary changes to the genirq and irqdomain core to support IRQ chips
+that require runtime-pm.
 
-No not really, I can definitely move to that header and avoid adding
-this one.
+This series is based upon Marc Z's irq/irqchip-v4.7-rc1 branch [0].
 
-Cheers
-Jon
+Changes since V4:
+- Removed header file drivers/irqchip/irq-gic.h.
+- Avoid exporting gic_handle_cascade_irq entry point.
+- Renamed of_gic_init() to gic_of_init_child() to distinguish it from the
+  existing gic_of_int().
+- Corrected preprocessor directive for CONFIG_ARM_GIC_PM.
 
+Changes since V3:
+- Split the series into two, placing the clean-up/fixes patches into
+  another series [1]. The remaining patches in this series are for
+  adding runtime-pm support for irqchips and adding a platform driver
+  of second level GICs.
+- Dropped the patch to prevent early init of GICs if 'clocks' or
+  'power-domains' properties are present and re-added the patch to add
+  the compatibilty string for the Tegra210 AGIC.
+
+Changes since V2:
+- Corrected RPM support for irqchips in genirq core as pointed out by
+  Kevin Hilman.
+- Corrected patch to save the irq type when mapping the interrupt.
+- Dropped changes to DT binding documentation and added patch to prevent
+  early init of GICs if the 'clocks' and/or 'power-domains' DT
+  properties are present (as we have discussed).
+- Moved platform driver code into it's own source file.
+- Separate changes for preparing for the platform driver into 3 patches
+  in an attempt to make it more readable!
+- Added fix for checking an interrupt descriptor is valid during IRQ
+  setup.
+
+Changes since V1:
+- Updated GIC to only WARN and not return an error if configuring a PPI
+  fails but will still return an error if an SPI fails (per discussion
+  with Marc).
+- Dropped change to mask sense bits for GIC-v3 (as this is not
+  necessary)
+- Split patch to avoid setting interrupt type when mapping the IRQ into
+  two patches per TGLX's feedback.
+- Changed name of irqchip device structure to "parent_device"
+- Moved call to irq_chip_pm_get() outside of chip_bus_lock().
+- Dropped patch to remove clock names from GIC DT documentation and
+  added AGIC clock names.
+- Update GIC platform driver to look-up clocks names from static list.
+
+[0] http://git.kernel.org/cgit/linux/kernel/git/maz/arm-platforms.git/log/?h=irq/irqchip-4.7-rc1
+[1] http://marc.info/?l=linux-tegra&m=146289329915585&w=2
+
+Jon Hunter (9):
+  irqdomain: Fix handling of type settings for existing mappings
+  genirq: Look-up trigger type if not specified by caller
+  irqdomain: Don't set type when mapping an IRQ
+  genirq: Add runtime power management support for IRQ chips
+  irqchip/gic: Isolate early GIC initialisation code
+  irqchip/gic: Add helper function for chip initialisation
+  irqchip/gic: Prepare for adding platform driver
+  dt-bindings: arm-gic: Add documentation for Tegra210 AGIC
+  irqchip/gic: Add platform driver for non-root GICs that require RPM
+
+ .../bindings/interrupt-controller/arm,gic.txt      |   3 +-
+ drivers/irqchip/Kconfig                            |   6 +
+ drivers/irqchip/Makefile                           |   1 +
+ drivers/irqchip/irq-gic-common.c                   |   4 +-
+ drivers/irqchip/irq-gic-pm.c                       | 184 +++++++++++++++++++++
+ drivers/irqchip/irq-gic.c                          | 133 ++++++++++-----
+ include/linux/irq.h                                |   4 +
+ include/linux/irqchip/arm-gic.h                    |  11 ++
+ include/linux/irqdomain.h                          |   3 +
+ kernel/irq/chip.c                                  |  35 ++++
+ kernel/irq/internals.h                             |   1 +
+ kernel/irq/irqdomain.c                             |  58 ++++++-
+ kernel/irq/manage.c                                |  38 ++++-
+ 13 files changed, 429 insertions(+), 52 deletions(-)
+ create mode 100644 drivers/irqchip/irq-gic-pm.c
 
 -- 
-nvpublic
+2.1.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
