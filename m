@@ -1,69 +1,92 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH] gpio: tegra: Make lockdep class file-scoped
-Date: Mon,  6 Jun 2016 18:56:27 +0200
-Message-ID: <20160606165627.32676-1-thierry.reding@gmail.com>
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Laxman Dewangan <ldewangan@nvidia.com>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
+From: Rhyland Klein <rklein@nvidia.com>
+Subject: Re: [PATCH] ARM64: boot: dts: Add regulators for Tegra210 Smaug
+Date: Mon, 6 Jun 2016 17:52:14 -0400
+Message-ID: <b28b44d9-7f3e-c1bb-7df8-238191ab1941@nvidia.com>
+References: <1464985365-11612-1-git-send-email-rklein@nvidia.com>
+ <57551AAD.2020805@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <57551AAD.2020805@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Jon Hunter <jonathanh@nvidia.com>, Alexandre Courbot <gnurou@gmail.com>, Andrew Bresticker <abrestic@chromium.org>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+On 6/6/2016 2:39 AM, Laxman Dewangan wrote:
+> 
+> On Saturday 04 June 2016 01:52 AM, Rhyland Klein wrote:
+>> +
+>> +			max77620_default: pinmux@0 {
+>> +				pin_gpio {
+>> +					pins = "gpio0", "gpio1", "gpio2", "gpio5",
+>> +					       "gpio6", "gpio7";
+> gpio5 and gpio6 are already there in below nodes and hence it is not 
+> needed here.
 
-Commit b546be0db955 ("gpio: tegra: Get rid of all file scoped global
-variables") moved all file scoped variables into the driver-private
-structure to allow potentially multiple instances of the driver. The
-change also included turning the lockdep class into a driver-private
-field, which doesn't work and produces error messages such as this:
+Yep thanks.
 
-	[    0.142310] BUG: key ffff8000fb3f7ab0 not in .data!
+> 
+>> +					function = "gpio";
+>> +				};
+>> +
+>> +				/*
+>> +				 * GPIO3 is used to en_pp3300, and it is part of power
+>> +				 * sequence, So it must be sequenced up (automatically
+>> +				 * set by OTP) and down properly.
+>> +				 */
+>> +				pin_gpio3 {
+>> +					pins = "gpio3";
+>> +					function = "fps-out";
+>> +					drive-open-drain = <1>;
+>> +					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
+>> +					maxim,active-fps-power-up-slot = <4>;
+>> +					maxim,active-fps-power-down-slot = <2>;
+>> +				};
+>> +
+>> +				pin_gpio5_6_7 {
+> node name should be gpio5_6 as there is no gpio7 inside this node.
 
-Make the lockdep class file-scoped again to fix this issue.
+Thanks.
+> 
+> 
+>> +
+>> +			regulators {
+>> +				in-ldo0-1-supply = <&pp1350>;
+>> +				in-ldo2-supply = <&pp3300>;
+>> +				in-ldo3-5-supply = <&pp3300>;
+>> +				in-ldo7-8-supply = <&pp1350>;
+>> +
+>> +				ppvar_soc: sd0 {
+>> +					regulator-name = "PPVAR_SOC";
+>> +					regulator-min-microvolt = <825000>;
+>> +					regulator-max-microvolt = <1125000>;
+>> +					regulator-enable-ramp-delay = <146>;
+>> +					regulator-disable-ramp-delay = <4080>;
+>> +					regulator-ramp-delay = <27500>;
+>> +					regulator-ramp-delay-scale = <300>;
+> 
+> There is no disable-ramp-delay in mainline.
+> Please use the correct value for property as:
+>                                       regulator-ramp-delay = <9000>;
+>                                       maxim,ramp-rate-setting = <27500>;
+> 
+> 
+> instead of regulator-ramp-delay and regulator-ramp-delay-scale.
+> The property differs from downstream.
+> 
+> regulator-ramp-delay is what you see in platform and 
+> maxim,ramp-rate-setting is what you want in register.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
-Hi Linus,
+Where does "<9000>" come from in the above comment? It looks like
+maxim,ramp-rate-setting sets the slew rate, and regulator-ramp-delay
+will as well, but will be ignored if maxim,ramp-delay-setting is set. So
+does it ever make sense to have both defined for a regulator? And if
+not, should max77620 regulators just use the maxim property and not the
+regulator core property?
 
-The commit that broke this went into v4.7-rc1, so it'd be good to get
-this merged within the v4.7 release cycle.
+-rhyland
 
- drivers/gpio/gpio-tegra.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpio/gpio-tegra.c b/drivers/gpio/gpio-tegra.c
-index ec891a27952f..661b0e34e067 100644
---- a/drivers/gpio/gpio-tegra.c
-+++ b/drivers/gpio/gpio-tegra.c
-@@ -98,7 +98,6 @@ struct tegra_gpio_info {
- 	const struct tegra_gpio_soc_config	*soc;
- 	struct gpio_chip			gc;
- 	struct irq_chip				ic;
--	struct lock_class_key			lock_class;
- 	u32					bank_count;
- };
- 
-@@ -547,6 +546,12 @@ static const struct dev_pm_ops tegra_gpio_pm_ops = {
- 	SET_SYSTEM_SLEEP_PM_OPS(tegra_gpio_suspend, tegra_gpio_resume)
- };
- 
-+/*
-+ * This lock class tells lockdep that GPIO irqs are in a different category
-+ * than their parents, so it won't report false recursion.
-+ */
-+static struct lock_class_key gpio_lock_class;
-+
- static int tegra_gpio_probe(struct platform_device *pdev)
- {
- 	const struct tegra_gpio_soc_config *config;
-@@ -660,7 +665,7 @@ static int tegra_gpio_probe(struct platform_device *pdev)
- 
- 		bank = &tgi->bank_info[GPIO_BANK(gpio)];
- 
--		irq_set_lockdep_class(irq, &tgi->lock_class);
-+		irq_set_lockdep_class(irq, &gpio_lock_class);
- 		irq_set_chip_data(irq, bank);
- 		irq_set_chip_and_handler(irq, &tgi->ic, handle_simple_irq);
- 	}
 -- 
-2.8.3
-
+nvpublic
