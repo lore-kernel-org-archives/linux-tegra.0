@@ -1,137 +1,286 @@
-From: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH V5 4/9] genirq: Add runtime power management support for
- IRQ chips
-Date: Mon, 6 Jun 2016 17:08:26 +0100
-Message-ID: <57559FFA.7080300@arm.com>
-References: <1465214023-8299-1-git-send-email-jonathanh@nvidia.com>
- <1465214023-8299-5-git-send-email-jonathanh@nvidia.com>
- <57558523.9070700@ti.com> <57558909.9090309@nvidia.com>
- <57558A83.1000603@ti.com> <5755917A.7070704@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 1/8] arm64: tegra: p2180: Add PMIC support
+Date: Mon,  6 Jun 2016 18:36:30 +0200
+Message-ID: <20160606163637.14234-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5755917A.7070704-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/06/16 16:06, Jon Hunter wrote:
-> 
-> On 06/06/16 15:36, Grygorii Strashko wrote:
->> On 06/06/2016 05:30 PM, Jon Hunter wrote:
->>>
->>> On 06/06/16 15:13, Grygorii Strashko wrote:
->>>> On 06/06/2016 02:53 PM, Jon Hunter wrote:
->>>>> Some IRQ chips may be located in a power domain outside of the CPU
->>>>> subsystem and hence will require device specific runtime power
->>>>> management. In order to support such IRQ chips, add a pointer for a
->>>>> device structure to the irq_chip structure, and if this pointer is
->>>>> populated by the IRQ chip driver and CONFIG_PM is selected in the kernel
->>>>> configuration, then the pm_runtime_get/put APIs for this chip will be
->>>>> called when an IRQ is requested/freed, respectively.
->>>>>
->>>>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>>> Reviewed-by: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
->>>>> Reviewed-by: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
->>>>> ---
->>>>>    include/linux/irq.h    |  4 ++++
->>>>>    kernel/irq/chip.c      | 35 +++++++++++++++++++++++++++++++++++
->>>>>    kernel/irq/internals.h |  1 +
->>>>>    kernel/irq/manage.c    | 31 ++++++++++++++++++++++++++++++-
->>>>>    4 files changed, 70 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/include/linux/irq.h b/include/linux/irq.h
->>>>> index 4d758a7c604a..6c92a847394d 100644
->>>>> --- a/include/linux/irq.h
->>>>> +++ b/include/linux/irq.h
->>>>> @@ -315,6 +315,7 @@ static inline irq_hw_number_t irqd_to_hwirq(struct irq_data *d)
->>>>>    /**
->>>>>     * struct irq_chip - hardware interrupt chip descriptor
->>>>>     *
->>>>> + * @parent_device:	pointer to parent device for irqchip
->>>>>     * @name:		name for /proc/interrupts
->>>>>     * @irq_startup:	start up the interrupt (defaults to ->enable if NULL)
->>>>>     * @irq_shutdown:	shut down the interrupt (defaults to ->disable if NULL)
->>>>> @@ -354,6 +355,7 @@ static inline irq_hw_number_t irqd_to_hwirq(struct irq_data *d)
->>>>>     * @flags:		chip specific flags
->>>>>     */
->>>>>    struct irq_chip {
->>>>> +	struct device	*parent_device;
->>>>>    	const char	*name;
->>>>>    	unsigned int	(*irq_startup)(struct irq_data *data);
->>>>>    	void		(*irq_shutdown)(struct irq_data *data);
->>>>> @@ -488,6 +490,8 @@ extern void handle_bad_irq(struct irq_desc *desc);
->>>>>    extern void handle_nested_irq(unsigned int irq);
->>>>>    
->>>>>    extern int irq_chip_compose_msi_msg(struct irq_data *data, struct msi_msg *msg);
->>>>> +extern int irq_chip_pm_get(struct irq_data *data);
->>>>> +extern int irq_chip_pm_put(struct irq_data *data);
->>>>>    #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
->>>>>    extern void irq_chip_enable_parent(struct irq_data *data);
->>>>>    extern void irq_chip_disable_parent(struct irq_data *data);
->>>>> diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
->>>>> index 2f9f2b0e79f2..b09226e895c7 100644
->>>>> --- a/kernel/irq/chip.c
->>>>> +++ b/kernel/irq/chip.c
->>>>> @@ -1093,3 +1093,38 @@ int irq_chip_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
->>>>>    
->>>>>    	return 0;
->>>>>    }
->>>>> +
->>>>> +/**
->>>>> + * irq_chip_pm_get - Enable power for an IRQ chip
->>>>> + * @data:	Pointer to interrupt specific data
->>>>> + *
->>>>> + * Enable the power to the IRQ chip referenced by the interrupt data
->>>>> + * structure.
->>>>> + */
->>>>> +int irq_chip_pm_get(struct irq_data *data)
->>>>> +{
->>>>> +	int retval = 0;
->>>>> +
->>>>> +	if (IS_ENABLED(CONFIG_PM) && data->chip->parent_device)
->>>>> +		retval = pm_runtime_get_sync(data->chip->parent_device);
->>>>
->>>> Sry, for the late comment - above require pm_runtime_put_noidle(data->chip->parent_device);
->>>> in case of failure.
->>>
->>> No problem. Sorry, can you elaborate? I am not familiar with the
->>> _put_noidle().
->>>
->>
->> Question here in use counter - pm_runtime_get_sync() will increment usage_count
->> always and it will not decrement it in case of failure.
->> pm_runtime_put_noidle() expected to restore usage_count state (-1).
-> 
-> Thanks was not aware of that. 
-> 
-> Kevin, Marc, given that you have reviewed this one, are you ok with the
-> above change Grygorii is proposing? 
-> 
-> diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-> index b09226e895c7..63f1860acc4c 100644
-> --- a/kernel/irq/chip.c
-> +++ b/kernel/irq/chip.c
-> @@ -1105,8 +1105,11 @@ int irq_chip_pm_get(struct irq_data *data)
->  {
->         int retval = 0;
->  
-> -       if (IS_ENABLED(CONFIG_PM) && data->chip->parent_device)
-> +       if (IS_ENABLED(CONFIG_PM) && data->chip->parent_device) {
->                 retval = pm_runtime_get_sync(data->chip->parent_device);
-> +               if (retval < 0)
-> +                       pm_runtime_put_noidle(data->chip->parent_device);
-> +       }
->  
->         return (retval < 0) ? retval : 0;
->  }
->  
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-That looks correct to me (having had a look at
-Documentation/power/runtime_pm.txt).
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 245 +++++++++++++++++++++++++
+ 1 file changed, 245 insertions(+)
 
-	M.
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+index 316c92c03821..8335bbe3ab6c 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
+@@ -1,3 +1,5 @@
++#include <dt-bindings/mfd/max77620.h>
++
+ #include "tegra210.dtsi"
+ 
+ / {
+@@ -5,6 +7,7 @@
+ 	compatible = "nvidia,p2180", "nvidia,tegra210";
+ 
+ 	aliases {
++		rtc0 = "/i2c@7000d000/pmic@3c";
+ 		rtc1 = "/rtc@7000e000";
+ 		serial0 = &uarta;
+ 	};
+@@ -19,6 +22,248 @@
+ 		status = "okay";
+ 	};
+ 
++	i2c@7000d000 {
++		status = "okay";
++		clock-frequency = <400000>;
++
++		pmic: pmic@3c {
++			compatible = "maxim,max77620";
++			reg = <0x3c>;
++			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
++
++			#interrupt-cells = <2>;
++			interrupt-controller;
++
++			#gpio-cells = <2>;
++			gpio-controller;
++
++			pinctrl-names = "default";
++			pinctrl-0 = <&max77620_default>;
++
++			max77620_default: pinmux {
++				gpio0 {
++					pins = "gpio0";
++					function = "gpio";
++				};
++
++				gpio1 {
++					pins = "gpio1";
++					function = "fps-out";
++					drive-push-pull = <1>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
++					maxim,active-fps-power-up-slot = <7>;
++					maxim,active-fps-power-down-slot = <0>;
++				};
++
++				gpio2_3 {
++					pins = "gpio2", "gpio3";
++					function = "fps-out";
++					drive-open-drain = <1>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
++				};
++
++				gpio4 {
++					pins = "gpio4";
++					function = "32k-out1";
++				};
++
++				gpio5_6_7 {
++					pins = "gpio5", "gpio6", "gpio7";
++					function = "gpio";
++					drive-push-pull = <1>;
++				};
++			};
++
++			fps {
++				fps0 {
++					maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN0>;
++					maxim,suspend-fps-time-period-us = <1280>;
++				};
++
++				fps1 {
++					maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN1>;
++					maxim,suspend-fps-time-period-us = <1280>;
++				};
++
++				fps2 {
++					maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN0>;
++				};
++			};
++
++			regulators {
++				in-ldo0-1-supply = <&vdd_pre>;
++				in-ldo7-8-supply = <&vdd_pre>;
++				in-sd3-supply = <&vdd_5v0_sys>;
++
++				vdd_soc: sd0 {
++					regulator-name = "VDD_SOC";
++					regulator-min-microvolt = <600000>;
++					regulator-max-microvolt = <1400000>;
++					regulator-always-on;
++					regulator-boot-on;
++
++					regulator-enable-ramp-delay = <146>;
++					regulator-ramp-delay = <27500>;
++
++					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
++				};
++
++				vdd_ddr: sd1 {
++					regulator-name = "VDD_DDR_1V1_PMIC";
++					regulator-always-on;
++					regulator-boot-on;
++
++					regulator-enable-ramp-delay = <130>;
++					regulator-ramp-delay = <27500>;
++
++					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
++				};
++
++				vdd_pre: sd2 {
++					regulator-name = "VDD_PRE_REG_1V35";
++					regulator-min-microvolt = <1350000>;
++					regulator-max-microvolt = <1350000>;
++
++					regulator-enable-ramp-delay = <176>;
++					regulator-ramp-delay = <27500>;
++
++					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
++				};
++
++				vdd_1v8: sd3 {
++					regulator-name = "VDD_1V8";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++					regulator-boot-on;
++
++					regulator-enable-ramp-delay = <242>;
++					regulator-ramp-delay = <27500>;
++
++					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
++				};
++
++				vdd_sys_1v2: ldo0 {
++					regulator-name = "AVDD_SYS_1V2";
++					regulator-min-microvolt = <1200000>;
++					regulator-max-microvolt = <1200000>;
++					regulator-always-on;
++					regulator-boot-on;
++
++					regulator-enable-ramp-delay = <26>;
++					regulator-ramp-delay = <100000>;
++
++					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
++				};
++
++				vdd_pex_1v05: ldo1 {
++					regulator-name = "VDD_PEX_1V05";
++					regulator-min-microvolt = <1050000>;
++					regulator-max-microvolt = <1050000>;
++
++					regulator-enable-ramp-delay = <22>;
++					regulator-ramp-delay = <100000>;
++
++					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
++				};
++
++				vddio_sdmmc: ldo2 {
++					regulator-name = "VDDIO_SDMMC";
++					/*
++					 * Technically this supply should have
++					 * a supported range from 1.8 - 3.3 V.
++					 * However, that would cause the SDHCI
++					 * driver to request 2.7 V upon access
++					 * and that in turn will cause traffic
++					 * to be broken. Leave it at 3.3 V for
++					 * now.
++					 */
++					regulator-min-microvolt = <3300000>;
++					regulator-max-microvolt = <3300000>;
++					regulator-always-on;
++					regulator-boot-on;
++
++					regulator-enable-ramp-delay = <62>;
++					regulator-ramp-delay = <100000>;
++
++					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
++				};
++
++				vdd_cam_hv: ldo3 {
++					regulator-name = "VDD_CAM_HV";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++
++					regulator-enable-ramp-delay = <50>;
++					regulator-ramp-delay = <100000>;
++
++					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
++				};
++
++				vdd_rtc: ldo4 {
++					regulator-name = "VDD_RTC";
++					regulator-min-microvolt = <850000>;
++					regulator-max-microvolt = <850000>;
++					regulator-always-on;
++					regulator-boot-on;
++
++					regulator-enable-ramp-delay = <22>;
++					regulator-ramp-delay = <100000>;
++
++					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
++				};
++
++				vdd_ts_hv: ldo5 {
++					regulator-name = "VDD_TS_HV";
++					regulator-min-microvolt = <3300000>;
++					regulator-max-microvolt = <3300000>;
++
++					regulator-enable-ramp-delay = <62>;
++					regulator-ramp-delay = <100000>;
++
++					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
++				};
++
++				vdd_ts: ldo6 {
++					regulator-name = "VDD_TS_1V8";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++
++					regulator-enable-ramp-delay = <36>;
++					regulator-ramp-delay = <100000>;
++
++					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
++					maxim,active-fps-power-up-slot = <7>;
++					maxim,active-fps-power-down-slot = <0>;
++				};
++
++				avdd_1v05_pll: ldo7 {
++					regulator-name = "AVDD_1V05_PLL";
++					regulator-min-microvolt = <1050000>;
++					regulator-max-microvolt = <1050000>;
++					regulator-always-on;
++					regulator-boot-on;
++
++					regulator-enable-ramp-delay = <24>;
++					regulator-ramp-delay = <100000>;
++
++					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
++				};
++
++				avdd_1v05: ldo8 {
++					regulator-name = "AVDD_SATA_HDMI_DP_1V05";
++					regulator-min-microvolt = <1050000>;
++					regulator-max-microvolt = <1050000>;
++
++					regulator-enable-ramp-delay = <22>;
++					regulator-ramp-delay = <100000>;
++
++					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
++				};
++			};
++		};
++	};
++
+ 	pmc@7000e400 {
+ 		nvidia,invert-interrupt;
+ 	};
 -- 
-Jazz is not dead. It just smells funny...
+2.8.3
