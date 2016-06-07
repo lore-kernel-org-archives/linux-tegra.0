@@ -1,98 +1,35 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 Subject: Re: [PATCH v1 00/25] PCI: Request host bridge window resources
-Date: Tue, 7 Jun 2016 08:11:05 -0500
-Message-ID: <20160607131105.GA2543@localhost>
-References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
- <3416214.BpvATlfaN7@wuerfel>
+Date: Tue, 07 Jun 2016 15:25:46 +0200
+Message-ID: <3552943.lb56sJA8nL@wuerfel>
+References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com> <3416214.BpvATlfaN7@wuerfel> <20160607131105.GA2543@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <3416214.BpvATlfaN7@wuerfel>
-Sender: linux-pci-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, Jingoo Han <jingoohan1@gmail.com>, Pratyush Anand <pratyush.anand@gmail.com>, linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org, linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>, linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>, Michal Simek <michal.simek@xilinx.com>, =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160607131105.GA2543@localhost>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Jon Mason <jonmason-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pratyush Anand <pratyush.anand-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rfi-g9ZBwUv/Ih/yUk5EbOjzuce+I+R0W71w@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tanmay Inamdar <tinamdar-qTEPVZfXA3Y@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ley Foon Tan <lftan-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, =?ISO-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jun 07, 2016 at 10:21:36AM +0200, Arnd Bergmann wrote:
-> On Monday, June 6, 2016 6:04:44 PM CEST Bjorn Helgaas wrote:
-> > Several host bridge drivers (designware and all derivatives, iproc,
-> > xgene, xilinx, and xilinx-nwl) don't request the MMIO and I/O port
-> > windows they forward downstream to the PCI bus.
+On Tuesday, June 7, 2016 8:11:05 AM CEST Bjorn Helgaas wrote:
 > > 
-> > That means the PCI core can't request resources for PCI bridge
-> > windows and PCI BARs.
-> > 
-> > Several other drivers (altera, generic, mvebu, rcar, tegra) do request
-> > the windows, but use some duplicated code to do it.
-> > 
-> > This adds a new devm_request_pci_bus_resources() interface and changes
-> > these drivers to use it.  It also fixes several error paths where we failed
-> > to free the resource list allocated by of_pci_get_host_bridge_resources().
-> > 
-> > Tegra guys, please take a look at "PCI: tegra: Remove top-level resource
-> > from hierarchy" in particular.  Removing the top-level resource definitely
-> > makes /proc/iomem look uglier (although it will look more like that of
-> > other drivers).  A short-term fix could be to include device information in
-> > the resource name.  I think a better long-term fix would be to make the DT
-> > or platform device core request all the resources from the DT.
-> > 
-> > Comments welcome.  I expect we'll trip over something here, so I marked
-> > this "v1" and I don't plan to put it into -next for a while.
-> > 
-> > This is on my pci/host-request-windows branch, which you can pull or view
-> > at https://git.kernel.org/cgit/linux/kernel/git/helgaas/pci.git/log/?h=pci/host-request-windows
+> > What do you think is the correct behavior here, should the driver only
+> > request the PIO range with parent=ioport_resource, or should it also
+> > request the MMIO window for the I/O ports with parent=iomem_resource?
+> > In the latter case, any idea how that can be generalized?
 > 
-> This looks very nice. There is one related aspect that I have been
-> grumbling about for a while, but I don't know what the driver is
-> actually supposed to do there:
-> 
-> For the IORESOURCE_IO resources, some drivers request the MMIO address
-> that the window is mapped into, some drivers request the PIO range, and
-> some of them request both. I also believe the resource that gets put
-> into the bridge resources list is not always the same one (or maybe
-> that got fixed by now).
-> 
-> What do you think is the correct behavior here, should the driver only
-> request the PIO range with parent=ioport_resource, or should it also
-> request the MMIO window for the I/O ports with parent=iomem_resource?
-> In the latter case, any idea how that can be generalized?
+> I think it should request both because I think iomem_resource should
+> contain everything in the memory map.  This would be required if we ever
+> did any significant reassignment of top-level devices, e.g., ACPI devices.
 
-I think it should request both because I think iomem_resource should
-contain everything in the memory map.  This would be required if we ever
-did any significant reassignment of top-level devices, e.g., ACPI devices.
-For example, on ia64, we do this:
+Ok. Should we try to pass the mmio resource for the I/O window to
+the devm_request_pci_bus_resources() function along with the other
+arguments then?
 
-  /proc/ioports:
-  00000000-00003fff : PCI Bus 0000:00
-  00004000-00009fff : PCI Bus 0000:80
-  0000a000-0000bfff : PCI Bus 0000:a0
-  0000c000-0000ffff : PCI Bus 0000:c0
+As far as I can tell, it should not go into the resource list
+because it is not something the PCI core code should access the
+way it handles the other resources.
 
-  /proc/iomem:
-  80000000-9fffffff : PCI Bus 0000:00
-  a0000000-cfffffff : PCI Bus 0000:80
-  d0000000-dfffffff : PCI Bus 0000:a0
-  e0000000-fdffffff : PCI Bus 0000:c0
-  80004000000-80103fffffe : PCI Bus 0000:00
-  c0004000000-c0103fffffe : PCI Bus 0000:80
-  d0004000000-d0103fffffe : PCI Bus 0000:a0
-  e0004000000-e0103fffffe : PCI Bus 0000:c0
-  3fffffc000000-3fffffcffffff : PCI Bus 0000:00 I/O Ports 00000000-00003fff
-  3fffffd000000-3fffffe7fffff : PCI Bus 0000:80 I/O Ports 00004000-00009fff
-  3fffffe800000-3fffffeffffff : PCI Bus 0000:a0 I/O Ports 0000a000-0000bfff
-  3ffffff000000-3ffffffffffff : PCI Bus 0000:c0 I/O Ports 0000c000-0000ffff
-
-> Another aspect is that we already have the
-> gen_pci_parse_request_of_pci_ranges() function that does the same as your
-> new devm_request_pci_bus_resources() and then a few other things. I
-> have been wondering whether we could move that function into common
-> code convert drivers to use that wherever possible, but I guess we can
-> always do that as a follow-up after this series.
-
-Oh, I didn't notice that; thanks for pointing it out.  That should be
-consolidated somehow.  It also checks to be sure there is a
-non-prefetchable memory resource.  A few other drivers also do that, but
-most don't.  I suppose that will mostly catch DT errors.
-
-Bjorn
+	Arnd
