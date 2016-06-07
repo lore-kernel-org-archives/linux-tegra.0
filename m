@@ -1,35 +1,62 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH] gpio: tegra: Make lockdep class file-scoped
-Date: Tue, 7 Jun 2016 11:34:10 +0530
-Message-ID: <575663DA.7040609@nvidia.com>
-References: <20160606165627.32676-1-thierry.reding@gmail.com>
+From: Lee Jones <lee.jones@linaro.org>
+Subject: Re: [PATCH] mfd: max77620: Fix FPS switch statements
+Date: Tue, 7 Jun 2016 09:05:38 +0100
+Message-ID: <20160607080538.GG1525@dell>
+References: <1463075104-26924-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <20160606165627.32676-1-thierry.reding@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1463075104-26924-1-git-send-email-rklein@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Thu, 12 May 2016, Rhyland Klein wrote:
 
-On Monday 06 June 2016 10:26 PM, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
->
-> Commit b546be0db955 ("gpio: tegra: Get rid of all file scoped global
-> variables") moved all file scoped variables into the driver-private
-> structure to allow potentially multiple instances of the driver. The
-> change also included turning the lockdep class into a driver-private
-> field, which doesn't work and produces error messages such as this:
->
-> 	[    0.142310] BUG: key ffff8000fb3f7ab0 not in .data!
->
-> Make the lockdep class file-scoped again to fix this issue.
->
+> When configuring FPS during probe, assuming a DT node is present for
+> FPS, the code can run into a problem with the switch statements in
+> max77620_config_fps() and max77620_get_fps_period_reg_value(). Namely=
+,
+> in the case of chip->chip_id =3D=3D MAX77620, it will set
+> fps_[mix|max]_period but then fall through to the default switch case
+> and return -EINVAL. Returning this from max77620_config_fps() will
+> cause probe to fail.
+>=20
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> ---
+>  drivers/mfd/max77620.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-When I tested on T210, I did not get this issue. Want to know that how 
-did you get this issue so that I can add that part on my testing.
+Applied to -fixes with Thierry and Laxman's Acks.
 
+> diff --git a/drivers/mfd/max77620.c b/drivers/mfd/max77620.c
+> index 199d261990be..f32fbb8e8129 100644
+> --- a/drivers/mfd/max77620.c
+> +++ b/drivers/mfd/max77620.c
+> @@ -203,6 +203,7 @@ static int max77620_get_fps_period_reg_value(stru=
+ct max77620_chip *chip,
+>  		break;
+>  	case MAX77620:
+>  		fps_min_period =3D MAX77620_FPS_PERIOD_MIN_US;
+> +		break;
+>  	default:
+>  		return -EINVAL;
+>  	}
+> @@ -236,6 +237,7 @@ static int max77620_config_fps(struct max77620_ch=
+ip *chip,
+>  		break;
+>  	case MAX77620:
+>  		fps_max_period =3D MAX77620_FPS_PERIOD_MAX_US;
+> +		break;
+>  	default:
+>  		return -EINVAL;
+>  	}
 
-
+--=20
+Lee Jones
+Linaro STMicroelectronics Landing Team Lead
+Linaro.org =E2=94=82 Open source software for ARM SoCs
+=46ollow Linaro: Facebook | Twitter | Blog
