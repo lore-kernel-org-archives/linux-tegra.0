@@ -1,66 +1,84 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v1 00/25] PCI: Request host bridge window resources
-Date: Tue, 07 Jun 2016 10:21:36 +0200
-Message-ID: <3416214.BpvATlfaN7@wuerfel>
-References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] pinctrl: tegra: Fix build dependency
+Date: Tue, 7 Jun 2016 10:17:51 +0100
+Message-ID: <5756913F.1000108@nvidia.com>
+References: <1465022156.547.2.camel@ingics.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: linux-arm-kernel@lists.infradead.org
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, Jingoo Han <jingoohan1@gmail.com>, Pratyush Anand <pratyush.anand@gmail.com>, linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org, linux-renesas-soc@vger.kernel.org, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>, linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>, Michal Simek <michal.simek@xilinx.com>, =?ISO-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1465022156.547.2.camel@ingics.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Axel Lin <axel.lin@ingics.com>, Linus Walleij <linus.walleij@linaro.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday, June 6, 2016 6:04:44 PM CEST Bjorn Helgaas wrote:
-> Several host bridge drivers (designware and all derivatives, iproc,
-> xgene, xilinx, and xilinx-nwl) don't request the MMIO and I/O port
-> windows they forward downstream to the PCI bus.
-> 
-> That means the PCI core can't request resources for PCI bridge
-> windows and PCI BARs.
-> 
-> Several other drivers (altera, generic, mvebu, rcar, tegra) do request
-> the windows, but use some duplicated code to do it.
-> 
-> This adds a new devm_request_pci_bus_resources() interface and changes
-> these drivers to use it.  It also fixes several error paths where we failed
-> to free the resource list allocated by of_pci_get_host_bridge_resources().
-> 
-> Tegra guys, please take a look at "PCI: tegra: Remove top-level resource
-> from hierarchy" in particular.  Removing the top-level resource definitely
-> makes /proc/iomem look uglier (although it will look more like that of
-> other drivers).  A short-term fix could be to include device information in
-> the resource name.  I think a better long-term fix would be to make the DT
-> or platform device core request all the resources from the DT.
-> 
-> Comments welcome.  I expect we'll trip over something here, so I marked
-> this "v1" and I don't plan to put it into -next for a while.
-> 
-> This is on my pci/host-request-windows branch, which you can pull or view
-> at https://git.kernel.org/cgit/linux/kernel/git/helgaas/pci.git/log/?h=pci/host-request-windows
 
-This looks very nice. There is one related aspect that I have been
-grumbling about for a while, but I don't know what the driver is
-actually supposed to do there:
+On 04/06/16 07:35, Axel Lin wrote:
+> I got below build error:
+> ERROR: "tegra_xusb_padctl_legacy_probe" [drivers/phy/tegra/phy-tegra-xusb.ko] undefined!
+> with below build configuration:
+> CONFIG_ARCH_TEGRA=y
+> CONFIG_PINCTRL_TEGRA_XUSB=y
+> CONFIG_PHY_TEGRA_XUSB=y
 
-For the IORESOURCE_IO resources, some drivers request the MMIO address
-that the window is mapped into, some drivers request the PIO range, and
-some of them request both. I also believe the resource that gets put
-into the bridge resources list is not always the same one (or maybe
-that got fixed by now).
+The above does not make sense because the error is from building a
+module but you say you have CONFIG_PINCTRL_TEGRA_XUSB=y. Shouldn't this
+be CONFIG_PINCTRL_TEGRA_XUSB=m? However, the error will occur either if
+you compile as a module or not, but the changelog should be accurate
+nonetheless.
 
-What do you think is the correct behavior here, should the driver only
-request the PIO range with parent=ioport_resource, or should it also
-request the MMIO window for the I/O ports with parent=iomem_resource?
-In the latter case, any idea how that can be generalized?
+> The problem is below line in drivers/pinctrl/Makefile
+> obj-$(CONFIG_PINCTRL_TEGRA)     += tegra/
+> 
+> So even CONFIG_PINCTRL_TEGRA_XUSB=y is set, kbuild still does not compile
+> the code in drivers/pinctrl/tegra folder if !CONFIG_PINCTRL_TEGRA.
 
-Another aspect is that we already have the
-gen_pci_parse_request_of_pci_ranges() function that does the same as your
-new devm_request_pci_bus_resources() and then a few other things. I
-have been wondering whether we could move that function into common
-code convert drivers to use that wherever possible, but I guess we can
-always do that as a follow-up after this series.
+I was able to reproduce this by having CONFIG_PINCTRL_TEGRA_XUSB=y and
+!CONFIG_PINCTRL_TEGRA. So maybe that's all you need to say in the
+changelog with regard to the kernel config and get rid of the initial
+statement about kernel config.
 
-	Arnd
+> phy-tegra-xusb.c does not use any symbol from pinctrl-tegra.c,
+> so build pinctrl-tegra.c only when CONFIG_PINCTRL_TEGRA is set.
+> 
+> Signed-off-by: Axel Lin <axel.lin@ingics.com>
+> ---
+>  drivers/pinctrl/Makefile       | 2 +-
+>  drivers/pinctrl/tegra/Makefile | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pinctrl/Makefile b/drivers/pinctrl/Makefile
+> index 2ed0b3f..25ec450 100644
+> --- a/drivers/pinctrl/Makefile
+> +++ b/drivers/pinctrl/Makefile
+> @@ -25,7 +25,7 @@ obj-$(CONFIG_PINCTRL_PISTACHIO)	+= pinctrl-pistachio.o
+>  obj-$(CONFIG_PINCTRL_ROCKCHIP)	+= pinctrl-rockchip.o
+>  obj-$(CONFIG_PINCTRL_SINGLE)	+= pinctrl-single.o
+>  obj-$(CONFIG_PINCTRL_SIRF)	+= sirf/
+> -obj-$(CONFIG_PINCTRL_TEGRA)	+= tegra/
+> +obj-$(CONFIG_ARCH_TEGRA)	+= tegra/
+>  obj-$(CONFIG_PINCTRL_TZ1090)	+= pinctrl-tz1090.o
+>  obj-$(CONFIG_PINCTRL_TZ1090_PDC)	+= pinctrl-tz1090-pdc.o
+>  obj-$(CONFIG_PINCTRL_U300)	+= pinctrl-u300.o
+> diff --git a/drivers/pinctrl/tegra/Makefile b/drivers/pinctrl/tegra/Makefile
+> index a927379..d9ea2be 100644
+> --- a/drivers/pinctrl/tegra/Makefile
+> +++ b/drivers/pinctrl/tegra/Makefile
+> @@ -1,4 +1,4 @@
+> -obj-y					+= pinctrl-tegra.o
+> +obj-$(CONFIG_PINCTRL_TEGRA)		+= pinctrl-tegra.o
+>  obj-$(CONFIG_PINCTRL_TEGRA20)		+= pinctrl-tegra20.o
+>  obj-$(CONFIG_PINCTRL_TEGRA30)		+= pinctrl-tegra30.o
+>  obj-$(CONFIG_PINCTRL_TEGRA114)		+= pinctrl-tegra114.o
+
+This works for me. So, if you could fix up the changelog, you could add
+my ...
+
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+
+Cheers
+Jon
+
+-- 
+nvpublic
