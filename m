@@ -1,61 +1,114 @@
-From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: [PATCH v2 12/20] drm: sun4i: Rely on the default
-	->best_encoder() behavior
-Date: Tue,  7 Jun 2016 13:48:07 +0200
-Message-ID: <1465300095-16971-13-git-send-email-boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v2 04/20] drm: exynos: Rely on the default ->best_encoder() behavior
+Date: Tue,  7 Jun 2016 13:47:59 +0200
+Message-ID: <1465300095-16971-5-git-send-email-boris.brezillon@free-electrons.com>
 References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/freedreno>
-List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
- <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Alexey Brodkin <abrodkin-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jani Nikula <jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Inki Dae <inki.dae@sams>
+Return-path: <linux-samsung-soc-owner@vger.kernel.org>
+In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
+Sender: linux-samsung-soc-owner@vger.kernel.org
+To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Jani Nikula <jani.nikula@linux.intel.com>, Alexey Brodkin <abrodkin@synopsys.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@freescale.com>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mark Yao <mark.yao@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Vincent Abriou <vincent.abriou@st.com>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu
 List-Id: linux-tegra@vger.kernel.org
 
-QWxsIG91dHB1dHMgaGF2ZSBhIDE6MSByZWxhdGlvbnNoaXAgYmV0d2VlbiBjb25uZWN0b3JzIGFu
-ZCBlbmNvZGVycwphbmQgdGhlIGRyaXZlciBpcyByZWx5aW5nIG9uIHRoZSBhdG9taWMgaGVscGVy
-czogd2UgY2FuIGRyb3AgdGhlIGN1c3RvbQotPmJlc3RfZW5jb2RlcigpIGltcGxlbWVudGF0aW9u
-cyBhbmQgbGV0IHRoZSBjb3JlIGNhbGwKZHJtX2F0b21pY19oZWxwZXJfYmVzdF9lbmNvZGVyKCkg
-Zm9yIHVzLgoKU2lnbmVkLW9mZi1ieTogQm9yaXMgQnJlemlsbG9uIDxib3Jpcy5icmV6aWxsb25A
-ZnJlZS1lbGVjdHJvbnMuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW40aV9yZ2Iu
-YyB8IDEwIC0tLS0tLS0tLS0KIGRyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW40aV90di5jICB8ICA5
-IC0tLS0tLS0tLQogMiBmaWxlcyBjaGFuZ2VkLCAxOSBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQg
-YS9kcml2ZXJzL2dwdS9kcm0vc3VuNGkvc3VuNGlfcmdiLmMgYi9kcml2ZXJzL2dwdS9kcm0vc3Vu
-NGkvc3VuNGlfcmdiLmMKaW5kZXggYWI2NDk0OC4uNDQyY2ZlMiAxMDA2NDQKLS0tIGEvZHJpdmVy
-cy9ncHUvZHJtL3N1bjRpL3N1bjRpX3JnYi5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9zdW40aS9z
-dW40aV9yZ2IuYwpAQCAtOTAsMTkgKzkwLDkgQEAgc3RhdGljIGludCBzdW40aV9yZ2JfbW9kZV92
-YWxpZChzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yLAogCXJldHVybiBNT0RFX09LOwog
-fQogCi1zdGF0aWMgc3RydWN0IGRybV9lbmNvZGVyICoKLXN1bjRpX3JnYl9iZXN0X2VuY29kZXIo
-c3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvcikKLXsKLQlzdHJ1Y3Qgc3VuNGlfcmdiICpy
-Z2IgPQotCQlkcm1fY29ubmVjdG9yX3RvX3N1bjRpX3JnYihjb25uZWN0b3IpOwotCi0JcmV0dXJu
-ICZyZ2ItPmVuY29kZXI7Ci19Ci0KIHN0YXRpYyBzdHJ1Y3QgZHJtX2Nvbm5lY3Rvcl9oZWxwZXJf
-ZnVuY3Mgc3VuNGlfcmdiX2Nvbl9oZWxwZXJfZnVuY3MgPSB7CiAJLmdldF9tb2Rlcwk9IHN1bjRp
-X3JnYl9nZXRfbW9kZXMsCiAJLm1vZGVfdmFsaWQJPSBzdW40aV9yZ2JfbW9kZV92YWxpZCwKLQku
-YmVzdF9lbmNvZGVyCT0gc3VuNGlfcmdiX2Jlc3RfZW5jb2RlciwKIH07CiAKIHN0YXRpYyBlbnVt
-IGRybV9jb25uZWN0b3Jfc3RhdHVzCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vc3VuNGkv
-c3VuNGlfdHYuYyBiL2RyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW40aV90di5jCmluZGV4IGJjMDQ3
-ZjkuLmI4NDE0NzggMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW40aV90di5j
-CisrKyBiL2RyaXZlcnMvZ3B1L2RybS9zdW40aS9zdW40aV90di5jCkBAIC01MjYsMTggKzUyNiw5
-IEBAIHN0YXRpYyBpbnQgc3VuNGlfdHZfY29tcF9tb2RlX3ZhbGlkKHN0cnVjdCBkcm1fY29ubmVj
-dG9yICpjb25uZWN0b3IsCiAJcmV0dXJuIE1PREVfT0s7CiB9CiAKLXN0YXRpYyBzdHJ1Y3QgZHJt
-X2VuY29kZXIgKgotc3VuNGlfdHZfY29tcF9iZXN0X2VuY29kZXIoc3RydWN0IGRybV9jb25uZWN0
-b3IgKmNvbm5lY3RvcikKLXsKLQlzdHJ1Y3Qgc3VuNGlfdHYgKnR2ID0gZHJtX2Nvbm5lY3Rvcl90
-b19zdW40aV90dihjb25uZWN0b3IpOwotCi0JcmV0dXJuICZ0di0+ZW5jb2RlcjsKLX0KLQogc3Rh
-dGljIHN0cnVjdCBkcm1fY29ubmVjdG9yX2hlbHBlcl9mdW5jcyBzdW40aV90dl9jb21wX2Nvbm5l
-Y3Rvcl9oZWxwZXJfZnVuY3MgPSB7CiAJLmdldF9tb2Rlcwk9IHN1bjRpX3R2X2NvbXBfZ2V0X21v
-ZGVzLAogCS5tb2RlX3ZhbGlkCT0gc3VuNGlfdHZfY29tcF9tb2RlX3ZhbGlkLAotCS5iZXN0X2Vu
-Y29kZXIJPSBzdW40aV90dl9jb21wX2Jlc3RfZW5jb2RlciwKIH07CiAKIHN0YXRpYyBlbnVtIGRy
-bV9jb25uZWN0b3Jfc3RhdHVzCi0tIAoyLjcuNAoKX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX18KRnJlZWRyZW5vIG1haWxpbmcgbGlzdApGcmVlZHJlbm9AbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
-bGlzdGluZm8vZnJlZWRyZW5vCg==
+We have 1:1 relationship between connectors and encoders and the driver
+is relying on the atomic helpers: we can drop the custom ->best_encoder()
+implementations and let the core call drm_atomic_helper_best_encoder()
+for us.
+
+Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
+---
+ drivers/gpu/drm/exynos/exynos_drm_dpi.c  | 9 ---------
+ drivers/gpu/drm/exynos/exynos_drm_dsi.c  | 9 ---------
+ drivers/gpu/drm/exynos/exynos_drm_vidi.c | 8 --------
+ drivers/gpu/drm/exynos/exynos_hdmi.c     | 8 --------
+ 4 files changed, 34 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dpi.c b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+index 5e38e74..ad6b73c 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dpi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dpi.c
+@@ -93,17 +93,8 @@ static int exynos_dpi_get_modes(struct drm_connector *connector)
+ 	return 0;
+ }
+ 
+-static struct drm_encoder *
+-exynos_dpi_best_encoder(struct drm_connector *connector)
+-{
+-	struct exynos_dpi *ctx = connector_to_dpi(connector);
+-
+-	return &ctx->encoder;
+-}
+-
+ static const struct drm_connector_helper_funcs exynos_dpi_connector_helper_funcs = {
+ 	.get_modes = exynos_dpi_get_modes,
+-	.best_encoder = exynos_dpi_best_encoder,
+ };
+ 
+ static int exynos_dpi_create_connector(struct drm_encoder *encoder)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_dsi.c b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+index 601ecf8..e07cb1f 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_dsi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_dsi.c
+@@ -1566,17 +1566,8 @@ static int exynos_dsi_get_modes(struct drm_connector *connector)
+ 	return 0;
+ }
+ 
+-static struct drm_encoder *
+-exynos_dsi_best_encoder(struct drm_connector *connector)
+-{
+-	struct exynos_dsi *dsi = connector_to_dsi(connector);
+-
+-	return &dsi->encoder;
+-}
+-
+ static const struct drm_connector_helper_funcs exynos_dsi_connector_helper_funcs = {
+ 	.get_modes = exynos_dsi_get_modes,
+-	.best_encoder = exynos_dsi_best_encoder,
+ };
+ 
+ static int exynos_dsi_create_connector(struct drm_encoder *encoder)
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_vidi.c b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+index 608b0af..e8f6c92 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_vidi.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_vidi.c
+@@ -378,16 +378,8 @@ static int vidi_get_modes(struct drm_connector *connector)
+ 	return drm_add_edid_modes(connector, edid);
+ }
+ 
+-static struct drm_encoder *vidi_best_encoder(struct drm_connector *connector)
+-{
+-	struct vidi_context *ctx = ctx_from_connector(connector);
+-
+-	return &ctx->encoder;
+-}
+-
+ static const struct drm_connector_helper_funcs vidi_connector_helper_funcs = {
+ 	.get_modes = vidi_get_modes,
+-	.best_encoder = vidi_best_encoder,
+ };
+ 
+ static int vidi_create_connector(struct drm_encoder *encoder)
+diff --git a/drivers/gpu/drm/exynos/exynos_hdmi.c b/drivers/gpu/drm/exynos/exynos_hdmi.c
+index 58de5a4..1625d7c 100644
+--- a/drivers/gpu/drm/exynos/exynos_hdmi.c
++++ b/drivers/gpu/drm/exynos/exynos_hdmi.c
+@@ -937,17 +937,9 @@ static int hdmi_mode_valid(struct drm_connector *connector,
+ 	return MODE_OK;
+ }
+ 
+-static struct drm_encoder *hdmi_best_encoder(struct drm_connector *connector)
+-{
+-	struct hdmi_context *hdata = connector_to_hdmi(connector);
+-
+-	return &hdata->encoder;
+-}
+-
+ static const struct drm_connector_helper_funcs hdmi_connector_helper_funcs = {
+ 	.get_modes = hdmi_get_modes,
+ 	.mode_valid = hdmi_mode_valid,
+-	.best_encoder = hdmi_best_encoder,
+ };
+ 
+ static int hdmi_create_connector(struct drm_encoder *encoder)
+-- 
+2.7.4
