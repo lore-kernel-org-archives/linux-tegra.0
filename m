@@ -1,216 +1,134 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V6 4/9] genirq: Add runtime power management support for IRQ chips
-Date: Tue, 7 Jun 2016 16:12:29 +0100
-Message-ID: <1465312354-27778-5-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH V6 7/9] irqchip/gic: Prepare for adding platform driver
+Date: Tue, 7 Jun 2016 16:12:32 +0100
+Message-ID: <1465312354-27778-8-git-send-email-jonathanh@nvidia.com>
 References: <1465312354-27778-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1465312354-27778-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1465312354-27778-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Some IRQ chips may be located in a power domain outside of the CPU
-subsystem and hence will require device specific runtime power
-management. In order to support such IRQ chips, add a pointer for a
-device structure to the irq_chip structure, and if this pointer is
-populated by the IRQ chip driver and CONFIG_PM is selected in the kernel
-configuration, then the pm_runtime_get/put APIs for this chip will be
-called when an IRQ is requested/freed, respectively.
+To support GICs that require runtime power management, it is necessary
+to add a platform driver, so that the probing of the chip can be
+deferred if resources, such as a power-domain, is not yet available.
 
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To prepare for adding a platform driver:
+ 1. Drop the __init section from the gic_dist_config() so this can be
+    re-used by the platform driver.
+ 2. Add prototypes for functions required by the platform driver to the
+    GIC header file so they can be re-used.
+
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- include/linux/irq.h    |  4 ++++
- kernel/irq/chip.c      | 40 ++++++++++++++++++++++++++++++++++++++++
- kernel/irq/internals.h |  1 +
- kernel/irq/manage.c    | 31 ++++++++++++++++++++++++++++++-
- 4 files changed, 75 insertions(+), 1 deletion(-)
+ drivers/irqchip/irq-gic-common.c |  4 ++--
+ drivers/irqchip/irq-gic.c        | 14 +++++++-------
+ include/linux/irqchip/arm-gic.h  |  5 +++++
+ 3 files changed, 14 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/irq.h b/include/linux/irq.h
-index 4d758a7c604a..6c92a847394d 100644
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -315,6 +315,7 @@ static inline irq_hw_number_t irqd_to_hwirq(struct irq_data *d)
- /**
-  * struct irq_chip - hardware interrupt chip descriptor
-  *
-+ * @parent_device:	pointer to parent device for irqchip
-  * @name:		name for /proc/interrupts
-  * @irq_startup:	start up the interrupt (defaults to ->enable if NULL)
-  * @irq_shutdown:	shut down the interrupt (defaults to ->disable if NULL)
-@@ -354,6 +355,7 @@ static inline irq_hw_number_t irqd_to_hwirq(struct irq_data *d)
-  * @flags:		chip specific flags
+diff --git a/drivers/irqchip/irq-gic-common.c b/drivers/irqchip/irq-gic-common.c
+index 89e7423f0ebb..9ae71804b5dd 100644
+--- a/drivers/irqchip/irq-gic-common.c
++++ b/drivers/irqchip/irq-gic-common.c
+@@ -90,8 +90,8 @@ int gic_configure_irq(unsigned int irq, unsigned int type,
+ 	return ret;
+ }
+ 
+-void __init gic_dist_config(void __iomem *base, int gic_irqs,
+-			    void (*sync_access)(void))
++void gic_dist_config(void __iomem *base, int gic_irqs,
++		     void (*sync_access)(void))
+ {
+ 	unsigned int i;
+ 
+diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+index 94eab6e23124..141ea5801784 100644
+--- a/drivers/irqchip/irq-gic.c
++++ b/drivers/irqchip/irq-gic.c
+@@ -449,7 +449,7 @@ static void gic_cpu_if_up(struct gic_chip_data *gic)
+ }
+ 
+ 
+-static void __init gic_dist_init(struct gic_chip_data *gic)
++static void gic_dist_init(struct gic_chip_data *gic)
+ {
+ 	unsigned int i;
+ 	u32 cpumask;
+@@ -535,7 +535,7 @@ int gic_cpu_if_down(unsigned int gic_nr)
+  * this function, no interrupts will be delivered by the GIC, and another
+  * platform-specific wakeup source must be enabled.
   */
- struct irq_chip {
-+	struct device	*parent_device;
- 	const char	*name;
- 	unsigned int	(*irq_startup)(struct irq_data *data);
- 	void		(*irq_shutdown)(struct irq_data *data);
-@@ -488,6 +490,8 @@ extern void handle_bad_irq(struct irq_desc *desc);
- extern void handle_nested_irq(unsigned int irq);
+-static void gic_dist_save(struct gic_chip_data *gic)
++void gic_dist_save(struct gic_chip_data *gic)
+ {
+ 	unsigned int gic_irqs;
+ 	void __iomem *dist_base;
+@@ -574,7 +574,7 @@ static void gic_dist_save(struct gic_chip_data *gic)
+  * handled normally, but any edge interrupts that occured will not be seen by
+  * the GIC and need to be handled by the platform-specific wakeup source.
+  */
+-static void gic_dist_restore(struct gic_chip_data *gic)
++void gic_dist_restore(struct gic_chip_data *gic)
+ {
+ 	unsigned int gic_irqs;
+ 	unsigned int i;
+@@ -620,7 +620,7 @@ static void gic_dist_restore(struct gic_chip_data *gic)
+ 	writel_relaxed(GICD_ENABLE, dist_base + GIC_DIST_CTRL);
+ }
  
- extern int irq_chip_compose_msi_msg(struct irq_data *data, struct msi_msg *msg);
-+extern int irq_chip_pm_get(struct irq_data *data);
-+extern int irq_chip_pm_put(struct irq_data *data);
- #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
- extern void irq_chip_enable_parent(struct irq_data *data);
- extern void irq_chip_disable_parent(struct irq_data *data);
-diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
-index 2f9f2b0e79f2..ad8131473774 100644
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -1093,3 +1093,43 @@ int irq_chip_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
+-static void gic_cpu_save(struct gic_chip_data *gic)
++void gic_cpu_save(struct gic_chip_data *gic)
+ {
+ 	int i;
+ 	u32 *ptr;
+@@ -650,7 +650,7 @@ static void gic_cpu_save(struct gic_chip_data *gic)
  
+ }
+ 
+-static void gic_cpu_restore(struct gic_chip_data *gic)
++void gic_cpu_restore(struct gic_chip_data *gic)
+ {
+ 	int i;
+ 	u32 *ptr;
+@@ -727,7 +727,7 @@ static struct notifier_block gic_notifier_block = {
+ 	.notifier_call = gic_notifier,
+ };
+ 
+-static int __init gic_pm_init(struct gic_chip_data *gic)
++static int gic_pm_init(struct gic_chip_data *gic)
+ {
+ 	gic->saved_ppi_enable = __alloc_percpu(DIV_ROUND_UP(32, 32) * 4,
+ 		sizeof(u32));
+@@ -757,7 +757,7 @@ free_ppi_enable:
+ 	return -ENOMEM;
+ }
+ #else
+-static int __init gic_pm_init(struct gic_chip_data *gic)
++static int gic_pm_init(struct gic_chip_data *gic)
+ {
  	return 0;
  }
-+
-+/**
-+ * irq_chip_pm_get - Enable power for an IRQ chip
-+ * @data:	Pointer to interrupt specific data
-+ *
-+ * Enable the power to the IRQ chip referenced by the interrupt data
-+ * structure.
-+ */
-+int irq_chip_pm_get(struct irq_data *data)
-+{
-+	int retval;
-+
-+	if (IS_ENABLED(CONFIG_PM) && data->chip->parent_device) {
-+		retval = pm_runtime_get_sync(data->chip->parent_device);
-+		if (retval < 0) {
-+			pm_runtime_put_noidle(data->chip->parent_device);
-+			return retval;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+/**
-+ * irq_chip_pm_put - Disable power for an IRQ chip
-+ * @data:	Pointer to interrupt specific data
-+ *
-+ * Disable the power to the IRQ chip referenced by the interrupt data
-+ * structure, belongs. Note that power will only be disabled, once this
-+ * function has been called for all IRQs that have called irq_chip_pm_get().
-+ */
-+int irq_chip_pm_put(struct irq_data *data)
-+{
-+	int retval = 0;
-+
-+	if (IS_ENABLED(CONFIG_PM) && data->chip->parent_device)
-+		retval = pm_runtime_put(data->chip->parent_device);
-+
-+	return (retval < 0) ? retval : 0;
-+}
-diff --git a/kernel/irq/internals.h b/kernel/irq/internals.h
-index 09be2c903c6d..d5edcdc9382a 100644
---- a/kernel/irq/internals.h
-+++ b/kernel/irq/internals.h
-@@ -7,6 +7,7 @@
-  */
- #include <linux/irqdesc.h>
- #include <linux/kernel_stat.h>
-+#include <linux/pm_runtime.h>
+diff --git a/include/linux/irqchip/arm-gic.h b/include/linux/irqchip/arm-gic.h
+index fd051855539b..ffcbd8b9a4ff 100644
+--- a/include/linux/irqchip/arm-gic.h
++++ b/include/linux/irqchip/arm-gic.h
+@@ -101,9 +101,14 @@
+ #include <linux/irqdomain.h>
  
- #ifdef CONFIG_SPARSE_IRQ
- # define IRQ_BITMAP_BITS	(NR_IRQS + 8196)
-diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
-index eaedeb74b49d..f8fd1fbc02ea 100644
---- a/kernel/irq/manage.c
-+++ b/kernel/irq/manage.c
-@@ -1416,10 +1416,18 @@ int setup_irq(unsigned int irq, struct irqaction *act)
+ struct device_node;
++struct gic_chip_data;
  
- 	if (!desc || WARN_ON(irq_settings_is_per_cpu_devid(desc)))
- 		return -EINVAL;
-+
-+	retval = irq_chip_pm_get(&desc->irq_data);
-+	if (retval < 0)
-+		return retval;
-+
- 	chip_bus_lock(desc);
- 	retval = __setup_irq(irq, desc, act);
- 	chip_bus_sync_unlock(desc);
+ void gic_cascade_irq(unsigned int gic_nr, unsigned int irq);
+ int gic_cpu_if_down(unsigned int gic_nr);
++void gic_cpu_save(struct gic_chip_data *gic);
++void gic_cpu_restore(struct gic_chip_data *gic);
++void gic_dist_save(struct gic_chip_data *gic);
++void gic_dist_restore(struct gic_chip_data *gic);
  
-+	if (retval)
-+		irq_chip_pm_put(&desc->irq_data);
-+
- 	return retval;
- }
- EXPORT_SYMBOL_GPL(setup_irq);
-@@ -1513,6 +1521,7 @@ static struct irqaction *__free_irq(unsigned int irq, void *dev_id)
- 		}
- 	}
- 
-+	irq_chip_pm_put(&desc->irq_data);
- 	module_put(desc->owner);
- 	kfree(action->secondary);
- 	return action;
-@@ -1655,11 +1664,16 @@ int request_threaded_irq(unsigned int irq, irq_handler_t handler,
- 	action->name = devname;
- 	action->dev_id = dev_id;
- 
-+	retval = irq_chip_pm_get(&desc->irq_data);
-+	if (retval < 0)
-+		return retval;
-+
- 	chip_bus_lock(desc);
- 	retval = __setup_irq(irq, desc, action);
- 	chip_bus_sync_unlock(desc);
- 
- 	if (retval) {
-+		irq_chip_pm_put(&desc->irq_data);
- 		kfree(action->secondary);
- 		kfree(action);
- 	}
-@@ -1829,6 +1843,7 @@ static struct irqaction *__free_percpu_irq(unsigned int irq, void __percpu *dev_
- 
- 	unregister_handler_proc(irq, action);
- 
-+	irq_chip_pm_put(&desc->irq_data);
- 	module_put(desc->owner);
- 	return action;
- 
-@@ -1891,10 +1906,18 @@ int setup_percpu_irq(unsigned int irq, struct irqaction *act)
- 
- 	if (!desc || !irq_settings_is_per_cpu_devid(desc))
- 		return -EINVAL;
-+
-+	retval = irq_chip_pm_get(&desc->irq_data);
-+	if (retval < 0)
-+		return retval;
-+
- 	chip_bus_lock(desc);
- 	retval = __setup_irq(irq, desc, act);
- 	chip_bus_sync_unlock(desc);
- 
-+	if (retval)
-+		irq_chip_pm_put(&desc->irq_data);
-+
- 	return retval;
- }
- 
-@@ -1938,12 +1961,18 @@ int request_percpu_irq(unsigned int irq, irq_handler_t handler,
- 	action->name = devname;
- 	action->percpu_dev_id = dev_id;
- 
-+	retval = irq_chip_pm_get(&desc->irq_data);
-+	if (retval < 0)
-+		return retval;
-+
- 	chip_bus_lock(desc);
- 	retval = __setup_irq(irq, desc, action);
- 	chip_bus_sync_unlock(desc);
- 
--	if (retval)
-+	if (retval) {
-+		irq_chip_pm_put(&desc->irq_data);
- 		kfree(action);
-+	}
- 
- 	return retval;
- }
+ /*
+  * Subdrivers that need some preparatory work can initialize their
 -- 
 2.1.4
