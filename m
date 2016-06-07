@@ -1,55 +1,50 @@
-From: Peter Griffin <peter.griffin@linaro.org>
-Subject: [PATCH 4/8] dmaengine: s3c24xx: Simplify code in
- s3c24xx_dma_tx_status()
-Date: Tue,  7 Jun 2016 18:38:37 +0100
-Message-ID: <1465321121-22238-5-git-send-email-peter.griffin@linaro.org>
-References: <1465321121-22238-1-git-send-email-peter.griffin@linaro.org>
+From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v1 00/25] PCI: Request host bridge window resources
+Date: Tue, 7 Jun 2016 18:34:27 -0500
+Message-ID: <20160607233427.GB4759@localhost>
+References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+ <3416214.BpvATlfaN7@wuerfel>
+ <20160607131105.GA2543@localhost>
+ <3552943.lb56sJA8nL@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1465321121-22238-1-git-send-email-peter.griffin@linaro.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, linus.walleij@linaro.org, dan.j.williams@intel.com, leoli@freescale.com, zw@zh-kernel.org, baohua@kernel.org, maxime.ripard@free-electrons.com, wens@csie.org, ldewangan@nvidia.com, jonathanh@nvidia.com, swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com
-Cc: peter.griffin@linaro.org, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, lee.jones@linaro.org, linuxppc-dev@lists.ozlabs.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <3552943.lb56sJA8nL@wuerfel>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Jon Mason <jonmason-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pratyush Anand <pratyush.anand-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rfi-g9ZBwUv/Ih/yUk5EbOjzuce+I+R0W71w@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tanmay Inamdar <tinamdar-qTEPVZfXA3Y@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ley Foon Tan <lftan-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Doing so saves a few lines of code in the driver.
+On Tue, Jun 07, 2016 at 03:25:46PM +0200, Arnd Bergmann wrote:
+> On Tuesday, June 7, 2016 8:11:05 AM CEST Bjorn Helgaas wrote:
+> > > 
+> > > What do you think is the correct behavior here, should the driver only
+> > > request the PIO range with parent=ioport_resource, or should it also
+> > > request the MMIO window for the I/O ports with parent=iomem_resource?
+> > > In the latter case, any idea how that can be generalized?
+> > 
+> > I think it should request both because I think iomem_resource should
+> > contain everything in the memory map.  This would be required if we ever
+> > did any significant reassignment of top-level devices, e.g., ACPI devices.
+> 
+> Ok. Should we try to pass the mmio resource for the I/O window to
+> the devm_request_pci_bus_resources() function along with the other
+> arguments then?
 
-Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
----
- drivers/dma/s3c24xx-dma.c | 6 +-----
- 1 file changed, 1 insertion(+), 5 deletions(-)
+I think memory-mapped I/O port windows are different enough that maybe
+we ought to handle them separately.  It seems like there are several
+things related to setting up those windows (requesting the resource,
+ioremapping it, allocating the CPU port number space, etc.), and maybe
+if we keep this out, a pattern will emerge.
 
-diff --git a/drivers/dma/s3c24xx-dma.c b/drivers/dma/s3c24xx-dma.c
-index 17ccdfd..f7d2c7a 100644
---- a/drivers/dma/s3c24xx-dma.c
-+++ b/drivers/dma/s3c24xx-dma.c
-@@ -768,16 +768,12 @@ static enum dma_status s3c24xx_dma_tx_status(struct dma_chan *chan,
- 
- 	spin_lock_irqsave(&s3cchan->vc.lock, flags);
- 	ret = dma_cookie_status(chan, cookie, txstate);
--	if (ret == DMA_COMPLETE) {
--		spin_unlock_irqrestore(&s3cchan->vc.lock, flags);
--		return ret;
--	}
- 
- 	/*
- 	 * There's no point calculating the residue if there's
- 	 * no txstate to store the value.
- 	 */
--	if (!txstate) {
-+	if (ret == DMA_COMPLETE || !txstate) {
- 		spin_unlock_irqrestore(&s3cchan->vc.lock, flags);
- 		return ret;
- 	}
--- 
-1.9.1
+Maybe I should rename this to "devm_request_pci_host_windows()" or
+something?
+
+> As far as I can tell, it should not go into the resource list
+> because it is not something the PCI core code should access the
+> way it handles the other resources.
+
+Right.
+
+Bjorn
