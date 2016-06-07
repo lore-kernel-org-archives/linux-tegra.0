@@ -1,35 +1,94 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH v1 00/25] PCI: Request host bridge window resources
-Date: Tue, 07 Jun 2016 15:25:46 +0200
-Message-ID: <3552943.lb56sJA8nL@wuerfel>
-References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com> <3416214.BpvATlfaN7@wuerfel> <20160607131105.GA2543@localhost>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [PATCH v2 01/20] drm/atomic: Fix remaining places
+ where !funcs->best_encoder is valid
+Date: Tue, 7 Jun 2016 16:39:34 +0200
+Message-ID: <20160607143934.GA3363@phenom.ffwll.local>
+References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1465300095-16971-2-git-send-email-boris.brezillon@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160607131105.GA2543@localhost>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Jon Mason <jonmason-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pratyush Anand <pratyush.anand-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rfi-g9ZBwUv/Ih/yUk5EbOjzuce+I+R0W71w@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tanmay Inamdar <tinamdar-qTEPVZfXA3Y@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ley Foon Tan <lftan-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, =?ISO-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1465300095-16971-2-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/freedreno>
+List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alexey Brodkin <abrodkin-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jani Nikula <jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Ink
 List-Id: linux-tegra@vger.kernel.org
 
-On Tuesday, June 7, 2016 8:11:05 AM CEST Bjorn Helgaas wrote:
-> > 
-> > What do you think is the correct behavior here, should the driver only
-> > request the PIO range with parent=ioport_resource, or should it also
-> > request the MMIO window for the I/O ports with parent=iomem_resource?
-> > In the latter case, any idea how that can be generalized?
-> 
-> I think it should request both because I think iomem_resource should
-> contain everything in the memory map.  This would be required if we ever
-> did any significant reassignment of top-level devices, e.g., ACPI devices.
-
-Ok. Should we try to pass the mmio resource for the I/O window to
-the devm_request_pci_bus_resources() function along with the other
-arguments then?
-
-As far as I can tell, it should not go into the resource list
-because it is not something the PCI core code should access the
-way it handles the other resources.
-
-	Arnd
+T24gVHVlLCBKdW4gMDcsIDIwMTYgYXQgMDE6NDc6NTZQTSArMDIwMCwgQm9yaXMgQnJlemlsbG9u
+IHdyb3RlOgo+IEFkYXB0IGRybV9waWNrX2NydGNzKCkgYW5kIHVwZGF0ZV9jb25uZWN0b3Jfcm91
+dGluZygpIHRvIGZhbGxiYWNrIHRvCj4gZHJtX2F0b21pY19oZWxwZXJfYmVzdF9lbmNvZGVyKCkg
+aWYgZnVuY3MtPmJlc3RfZW5jb2RlcigpIGlzIE5VTEwgc28KPiB0aGF0IERSTSBkcml2ZXJzIGNh
+biBsZWF2ZSB0aGlzIGhvb2sgdW5hc3NpZ25lZCBpZiB0aGV5IGtub3cgdGhleSB3YW50Cj4gdG8g
+dXNlIGRybV9hdG9taWNfaGVscGVyX2Jlc3RfZW5jb2RlcigpLgo+IAo+IFVwZGF0ZSB0aGUgdnRh
+YmxlcyBkb2N1bWVudGF0aW9uIGFjY29yZGluZ2x5Lgo+IAo+IFNpZ25lZC1vZmYtYnk6IEJvcmlz
+IEJyZXppbGxvbiA8Ym9yaXMuYnJlemlsbG9uQGZyZWUtZWxlY3Ryb25zLmNvbT4KCkFwcGxpZWQg
+dG8gZHJtLW1pc2MsIHRoYW5rcy4gSSB0aGluayBJJ2xsIHdhaXQgd2l0aCB0aGUgZHJpdmVyIHBh
+dGNoZXMKdW50aWwgbmV4dCB3ZWVrIG9yIHNvLgotRGFuaWVsCgo+IC0tLQo+ICBkcml2ZXJzL2dw
+dS9kcm0vZHJtX2F0b21pY19oZWxwZXIuYyAgICAgIHwgIDQgKysrLQo+ICBkcml2ZXJzL2dwdS9k
+cm0vZHJtX2ZiX2hlbHBlci5jICAgICAgICAgIHwgMTMgKysrKysrKysrKysrLQo+ICBpbmNsdWRl
+L2RybS9kcm1fbW9kZXNldF9oZWxwZXJfdnRhYmxlcy5oIHwgMTAgKysrKysrKystLQo+ICAzIGZp
+bGVzIGNoYW5nZWQsIDIzIGluc2VydGlvbnMoKyksIDQgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWljX2hlbHBlci5jIGIvZHJpdmVycy9ncHUv
+ZHJtL2RybV9hdG9taWNfaGVscGVyLmMKPiBpbmRleCBmNmEzMzUwLi44NDlkMDI5IDEwMDY0NAo+
+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWljX2hlbHBlci5jCj4gKysrIGIvZHJpdmVy
+cy9ncHUvZHJtL2RybV9hdG9taWNfaGVscGVyLmMKPiBAQCAtMzAwLDggKzMwMCwxMCBAQCB1cGRh
+dGVfY29ubmVjdG9yX3JvdXRpbmcoc3RydWN0IGRybV9hdG9taWNfc3RhdGUgKnN0YXRlLAo+ICAJ
+aWYgKGZ1bmNzLT5hdG9taWNfYmVzdF9lbmNvZGVyKQo+ICAJCW5ld19lbmNvZGVyID0gZnVuY3Mt
+PmF0b21pY19iZXN0X2VuY29kZXIoY29ubmVjdG9yLAo+ICAJCQkJCQkJIGNvbm5lY3Rvcl9zdGF0
+ZSk7Cj4gLQllbHNlCj4gKwllbHNlIGlmIChmdW5jcy0+YmVzdF9lbmNvZGVyKQo+ICAJCW5ld19l
+bmNvZGVyID0gZnVuY3MtPmJlc3RfZW5jb2Rlcihjb25uZWN0b3IpOwo+ICsJZWxzZQo+ICsJCW5l
+d19lbmNvZGVyID0gZHJtX2F0b21pY19oZWxwZXJfYmVzdF9lbmNvZGVyKGNvbm5lY3Rvcik7Cj4g
+IAo+ICAJaWYgKCFuZXdfZW5jb2Rlcikgewo+ICAJCURSTV9ERUJVR19BVE9NSUMoIk5vIHN1aXRh
+YmxlIGVuY29kZXIgZm91bmQgZm9yIFtDT05ORUNUT1I6JWQ6JXNdXG4iLAo+IGRpZmYgLS1naXQg
+YS9kcml2ZXJzL2dwdS9kcm0vZHJtX2ZiX2hlbHBlci5jIGIvZHJpdmVycy9ncHUvZHJtL2RybV9m
+Yl9oZWxwZXIuYwo+IGluZGV4IDdjMmViNzUuLmQ0NDM4OWEgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVy
+cy9ncHUvZHJtL2RybV9mYl9oZWxwZXIuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fZmJf
+aGVscGVyLmMKPiBAQCAtMjAwMCw3ICsyMDAwLDE4IEBAIHN0YXRpYyBpbnQgZHJtX3BpY2tfY3J0
+Y3Moc3RydWN0IGRybV9mYl9oZWxwZXIgKmZiX2hlbHBlciwKPiAgCQlteV9zY29yZSsrOwo+ICAK
+PiAgCWNvbm5lY3Rvcl9mdW5jcyA9IGNvbm5lY3Rvci0+aGVscGVyX3ByaXZhdGU7Cj4gLQllbmNv
+ZGVyID0gY29ubmVjdG9yX2Z1bmNzLT5iZXN0X2VuY29kZXIoY29ubmVjdG9yKTsKPiArCj4gKwkv
+Kgo+ICsJICogSWYgdGhlIERSTSBkZXZpY2UgaW1wbGVtZW50cyBhdG9taWMgaG9va3MgYW5kIC0+
+YmVzdF9lbmNvZGVyKCkgaXMKPiArCSAqIE5VTEwgd2UgZmFsbGJhY2sgdG8gdGhlIGRlZmF1bHQg
+ZHJtX2F0b21pY19oZWxwZXJfYmVzdF9lbmNvZGVyKCkKPiArCSAqIGhlbHBlci4KPiArCSAqLwo+
+ICsJaWYgKGZiX2hlbHBlci0+ZGV2LT5tb2RlX2NvbmZpZy5mdW5jcy0+YXRvbWljX2NvbW1pdCAm
+Jgo+ICsJICAgICFjb25uZWN0b3JfZnVuY3MtPmJlc3RfZW5jb2RlcikKPiArCQllbmNvZGVyID0g
+ZHJtX2F0b21pY19oZWxwZXJfYmVzdF9lbmNvZGVyKGNvbm5lY3Rvcik7Cj4gKwllbHNlCj4gKwkJ
+ZW5jb2RlciA9IGNvbm5lY3Rvcl9mdW5jcy0+YmVzdF9lbmNvZGVyKGNvbm5lY3Rvcik7Cj4gKwo+
+ICAJaWYgKCFlbmNvZGVyKQo+ICAJCWdvdG8gb3V0Owo+ICAKPiBkaWZmIC0tZ2l0IGEvaW5jbHVk
+ZS9kcm0vZHJtX21vZGVzZXRfaGVscGVyX3Z0YWJsZXMuaCBiL2luY2x1ZGUvZHJtL2RybV9tb2Rl
+c2V0X2hlbHBlcl92dGFibGVzLmgKPiBpbmRleCBkNDYxOWRjLi40ZTdhNTNiIDEwMDY0NAo+IC0t
+LSBhL2luY2x1ZGUvZHJtL2RybV9tb2Rlc2V0X2hlbHBlcl92dGFibGVzLmgKPiArKysgYi9pbmNs
+dWRlL2RybS9kcm1fbW9kZXNldF9oZWxwZXJfdnRhYmxlcy5oCj4gQEAgLTczNiw2ICs3MzYsMTEg
+QEAgc3RydWN0IGRybV9jb25uZWN0b3JfaGVscGVyX2Z1bmNzIHsKPiAgCSAqIGluc3BlY3QgZHlu
+YW1pYyBjb25maWd1cmF0aW9uIHN0YXRlIHNob3VsZCBpbnN0ZWFkIHVzZQo+ICAJICogQGF0b21p
+Y19iZXN0X2VuY29kZXIuCj4gIAkgKgo+ICsJICogWW91IGNhbiBsZWF2ZSB0aGlzIGZ1bmN0aW9u
+IHRvIE5VTEwgaWYgdGhlIGNvbm5lY3RvciBpcyBvbmx5Cj4gKwkgKiBhdHRhY2hlZCB0byBhIHNp
+bmdsZSBlbmNvZGVyIGFuZCB5b3UgYXJlIHVzaW5nIHRoZSBhdG9taWMgaGVscGVycy4KPiArCSAq
+IEluIHRoaXMgY2FzZSwgdGhlIGNvcmUgd2lsbCBjYWxsIGRybV9hdG9taWNfaGVscGVyX2Jlc3Rf
+ZW5jb2RlcigpCj4gKwkgKiBmb3IgeW91Lgo+ICsJICoKPiAgCSAqIFJFVFVSTlM6Cj4gIAkgKgo+
+ICAJICogRW5jb2RlciB0aGF0IHNob3VsZCBiZSB1c2VkIGZvciB0aGUgZ2l2ZW4gY29ubmVjdG9y
+IGFuZCBjb25uZWN0b3IKPiBAQCAtNzUyLDggKzc1Nyw5IEBAIHN0cnVjdCBkcm1fY29ubmVjdG9y
+X2hlbHBlcl9mdW5jcyB7Cj4gIAkgKiBuZWVkIHRvIHNlbGVjdCB0aGUgYmVzdCBlbmNvZGVyIGRl
+cGVuZGluZyB1cG9uIHRoZSBkZXNpcmVkCj4gIAkgKiBjb25maWd1cmF0aW9uIGFuZCBjYW4ndCBz
+ZWxlY3QgaXQgc3RhdGljYWxseS4KPiAgCSAqCj4gLQkgKiBUaGlzIGZ1bmN0aW9uIGlzIHVzZWQg
+YnkgZHJtX2F0b21pY19oZWxwZXJfY2hlY2tfbW9kZXNldCgpIGFuZCBlaXRoZXIKPiAtCSAqIHRo
+aXMgb3IgQGJlc3RfZW5jb2RlciBpcyByZXF1aXJlZC4KPiArCSAqIFRoaXMgZnVuY3Rpb24gaXMg
+dXNlZCBieSBkcm1fYXRvbWljX2hlbHBlcl9jaGVja19tb2Rlc2V0KCkuCj4gKwkgKiBJZiBpdCBp
+cyBub3QgaW1wbGVtZW50ZWQsIHRoZSBjb3JlIHdpbGwgZmFsbGJhY2sgdG8gQGJlc3RfZW5jb2Rl
+cgo+ICsJICogKG9yIGRybV9hdG9taWNfaGVscGVyX2Jlc3RfZW5jb2RlcigpIGlmIEBiZXN0X2Vu
+Y29kZXIgaXMgTlVMTCkuCj4gIAkgKgo+ICAJICogTk9URToKPiAgCSAqCj4gLS0gCj4gMi43LjQK
+PiAKCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlv
+bgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpGcmVlZHJlbm8gbWFpbGluZyBsaXN0CkZyZWVkcmVub0BsaXN0cy5mcmVl
+ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
+by9mcmVlZHJlbm8K
