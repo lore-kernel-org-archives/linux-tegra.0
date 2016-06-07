@@ -1,52 +1,84 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] ARM64: boot: dts: Add regulators for Tegra210 Smaug
-Date: Tue, 7 Jun 2016 17:05:16 +0530
-Message-ID: <5756B174.5090909@nvidia.com>
-References: <1464985365-11612-1-git-send-email-rklein@nvidia.com> <57551AAD.2020805@nvidia.com> <b28b44d9-7f3e-c1bb-7df8-238191ab1941@nvidia.com>
+From: Boris Brezillon <boris.brezillon@free-electrons.com>
+Subject: [PATCH v2 01/20] drm/atomic: Fix remaining places where
+	!funcs->best_encoder is valid
+Date: Tue,  7 Jun 2016 13:47:56 +0200
+Message-ID: <1465300095-16971-2-git-send-email-boris.brezillon@free-electrons.com>
+References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <b28b44d9-7f3e-c1bb-7df8-238191ab1941-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Stefan Agner <stefan@agner.ch>, virtualization@lists.linux-foundation.org, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Alexey Brodkin <abrodkin@synopsys.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, linux-tegra@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On Tuesday 07 June 2016 03:22 AM, Rhyland Klein wrote:
-> On 6/6/2016 2:39 AM, Laxman Dewangan wrote:
->> On Saturday 04 June 2016 01:52 AM, Rhyland Klein wrote:
->>> +					regulator-disable-ramp-delay = <4080>;
->>> +					regulator-ramp-delay = <27500>;
->>> +					regulator-ramp-delay-scale = <300>;
->> There is no disable-ramp-delay in mainline.
->> Please use the correct value for property as:
->>                                        regulator-ramp-delay = <9000>;
->>                                        maxim,ramp-rate-setting = <27500>;
->>
->>
->> instead of regulator-ramp-delay and regulator-ramp-delay-scale.
->> The property differs from downstream.
->>
->> regulator-ramp-delay is what you see in platform and
->> maxim,ramp-rate-setting is what you want in register.
-> Where does "<9000>" come from in the above comment? It looks like
-> maxim,ramp-rate-setting sets the slew rate, and regulator-ramp-delay
-> will as well, but will be ignored if maxim,ramp-delay-setting is set. So
-> does it ever make sense to have both defined for a regulator? And if
-> not, should max77620 regulators just use the maxim property and not the
-> regulator core property?
->
-
-
-9000uV/us is what measured ramp delay in the platform after setting the 
-device register to 27500uV/us.
-
-This is derived from our downstream table as ramp-delay *100/scale
-so here 27500 *100/300 is approx to 9000.
-
-This is used when your measured is varied from register configuration 
-which is true in most of our platform.
-If your platform does not have diff then please provide 
-regulator-ramp-delay only with what you measured.
+QWRhcHQgZHJtX3BpY2tfY3J0Y3MoKSBhbmQgdXBkYXRlX2Nvbm5lY3Rvcl9yb3V0aW5nKCkgdG8g
+ZmFsbGJhY2sgdG8KZHJtX2F0b21pY19oZWxwZXJfYmVzdF9lbmNvZGVyKCkgaWYgZnVuY3MtPmJl
+c3RfZW5jb2RlcigpIGlzIE5VTEwgc28KdGhhdCBEUk0gZHJpdmVycyBjYW4gbGVhdmUgdGhpcyBo
+b29rIHVuYXNzaWduZWQgaWYgdGhleSBrbm93IHRoZXkgd2FudAp0byB1c2UgZHJtX2F0b21pY19o
+ZWxwZXJfYmVzdF9lbmNvZGVyKCkuCgpVcGRhdGUgdGhlIHZ0YWJsZXMgZG9jdW1lbnRhdGlvbiBh
+Y2NvcmRpbmdseS4KClNpZ25lZC1vZmYtYnk6IEJvcmlzIEJyZXppbGxvbiA8Ym9yaXMuYnJlemls
+bG9uQGZyZWUtZWxlY3Ryb25zLmNvbT4KLS0tCiBkcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pY19o
+ZWxwZXIuYyAgICAgIHwgIDQgKysrLQogZHJpdmVycy9ncHUvZHJtL2RybV9mYl9oZWxwZXIuYyAg
+ICAgICAgICB8IDEzICsrKysrKysrKysrKy0KIGluY2x1ZGUvZHJtL2RybV9tb2Rlc2V0X2hlbHBl
+cl92dGFibGVzLmggfCAxMCArKysrKysrKy0tCiAzIGZpbGVzIGNoYW5nZWQsIDIzIGluc2VydGlv
+bnMoKyksIDQgZGVsZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL2RybV9h
+dG9taWNfaGVscGVyLmMgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pY19oZWxwZXIuYwppbmRl
+eCBmNmEzMzUwLi44NDlkMDI5IDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21p
+Y19oZWxwZXIuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pY19oZWxwZXIuYwpAQCAt
+MzAwLDggKzMwMCwxMCBAQCB1cGRhdGVfY29ubmVjdG9yX3JvdXRpbmcoc3RydWN0IGRybV9hdG9t
+aWNfc3RhdGUgKnN0YXRlLAogCWlmIChmdW5jcy0+YXRvbWljX2Jlc3RfZW5jb2RlcikKIAkJbmV3
+X2VuY29kZXIgPSBmdW5jcy0+YXRvbWljX2Jlc3RfZW5jb2Rlcihjb25uZWN0b3IsCiAJCQkJCQkJ
+IGNvbm5lY3Rvcl9zdGF0ZSk7Ci0JZWxzZQorCWVsc2UgaWYgKGZ1bmNzLT5iZXN0X2VuY29kZXIp
+CiAJCW5ld19lbmNvZGVyID0gZnVuY3MtPmJlc3RfZW5jb2Rlcihjb25uZWN0b3IpOworCWVsc2UK
+KwkJbmV3X2VuY29kZXIgPSBkcm1fYXRvbWljX2hlbHBlcl9iZXN0X2VuY29kZXIoY29ubmVjdG9y
+KTsKIAogCWlmICghbmV3X2VuY29kZXIpIHsKIAkJRFJNX0RFQlVHX0FUT01JQygiTm8gc3VpdGFi
+bGUgZW5jb2RlciBmb3VuZCBmb3IgW0NPTk5FQ1RPUjolZDolc11cbiIsCmRpZmYgLS1naXQgYS9k
+cml2ZXJzL2dwdS9kcm0vZHJtX2ZiX2hlbHBlci5jIGIvZHJpdmVycy9ncHUvZHJtL2RybV9mYl9o
+ZWxwZXIuYwppbmRleCA3YzJlYjc1Li5kNDQzODlhIDEwMDY0NAotLS0gYS9kcml2ZXJzL2dwdS9k
+cm0vZHJtX2ZiX2hlbHBlci5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fZmJfaGVscGVyLmMK
+QEAgLTIwMDAsNyArMjAwMCwxOCBAQCBzdGF0aWMgaW50IGRybV9waWNrX2NydGNzKHN0cnVjdCBk
+cm1fZmJfaGVscGVyICpmYl9oZWxwZXIsCiAJCW15X3Njb3JlKys7CiAKIAljb25uZWN0b3JfZnVu
+Y3MgPSBjb25uZWN0b3ItPmhlbHBlcl9wcml2YXRlOwotCWVuY29kZXIgPSBjb25uZWN0b3JfZnVu
+Y3MtPmJlc3RfZW5jb2Rlcihjb25uZWN0b3IpOworCisJLyoKKwkgKiBJZiB0aGUgRFJNIGRldmlj
+ZSBpbXBsZW1lbnRzIGF0b21pYyBob29rcyBhbmQgLT5iZXN0X2VuY29kZXIoKSBpcworCSAqIE5V
+TEwgd2UgZmFsbGJhY2sgdG8gdGhlIGRlZmF1bHQgZHJtX2F0b21pY19oZWxwZXJfYmVzdF9lbmNv
+ZGVyKCkKKwkgKiBoZWxwZXIuCisJICovCisJaWYgKGZiX2hlbHBlci0+ZGV2LT5tb2RlX2NvbmZp
+Zy5mdW5jcy0+YXRvbWljX2NvbW1pdCAmJgorCSAgICAhY29ubmVjdG9yX2Z1bmNzLT5iZXN0X2Vu
+Y29kZXIpCisJCWVuY29kZXIgPSBkcm1fYXRvbWljX2hlbHBlcl9iZXN0X2VuY29kZXIoY29ubmVj
+dG9yKTsKKwllbHNlCisJCWVuY29kZXIgPSBjb25uZWN0b3JfZnVuY3MtPmJlc3RfZW5jb2Rlcihj
+b25uZWN0b3IpOworCiAJaWYgKCFlbmNvZGVyKQogCQlnb3RvIG91dDsKIApkaWZmIC0tZ2l0IGEv
+aW5jbHVkZS9kcm0vZHJtX21vZGVzZXRfaGVscGVyX3Z0YWJsZXMuaCBiL2luY2x1ZGUvZHJtL2Ry
+bV9tb2Rlc2V0X2hlbHBlcl92dGFibGVzLmgKaW5kZXggZDQ2MTlkYy4uNGU3YTUzYiAxMDA2NDQK
+LS0tIGEvaW5jbHVkZS9kcm0vZHJtX21vZGVzZXRfaGVscGVyX3Z0YWJsZXMuaAorKysgYi9pbmNs
+dWRlL2RybS9kcm1fbW9kZXNldF9oZWxwZXJfdnRhYmxlcy5oCkBAIC03MzYsNiArNzM2LDExIEBA
+IHN0cnVjdCBkcm1fY29ubmVjdG9yX2hlbHBlcl9mdW5jcyB7CiAJICogaW5zcGVjdCBkeW5hbWlj
+IGNvbmZpZ3VyYXRpb24gc3RhdGUgc2hvdWxkIGluc3RlYWQgdXNlCiAJICogQGF0b21pY19iZXN0
+X2VuY29kZXIuCiAJICoKKwkgKiBZb3UgY2FuIGxlYXZlIHRoaXMgZnVuY3Rpb24gdG8gTlVMTCBp
+ZiB0aGUgY29ubmVjdG9yIGlzIG9ubHkKKwkgKiBhdHRhY2hlZCB0byBhIHNpbmdsZSBlbmNvZGVy
+IGFuZCB5b3UgYXJlIHVzaW5nIHRoZSBhdG9taWMgaGVscGVycy4KKwkgKiBJbiB0aGlzIGNhc2Us
+IHRoZSBjb3JlIHdpbGwgY2FsbCBkcm1fYXRvbWljX2hlbHBlcl9iZXN0X2VuY29kZXIoKQorCSAq
+IGZvciB5b3UuCisJICoKIAkgKiBSRVRVUk5TOgogCSAqCiAJICogRW5jb2RlciB0aGF0IHNob3Vs
+ZCBiZSB1c2VkIGZvciB0aGUgZ2l2ZW4gY29ubmVjdG9yIGFuZCBjb25uZWN0b3IKQEAgLTc1Miw4
+ICs3NTcsOSBAQCBzdHJ1Y3QgZHJtX2Nvbm5lY3Rvcl9oZWxwZXJfZnVuY3MgewogCSAqIG5lZWQg
+dG8gc2VsZWN0IHRoZSBiZXN0IGVuY29kZXIgZGVwZW5kaW5nIHVwb24gdGhlIGRlc2lyZWQKIAkg
+KiBjb25maWd1cmF0aW9uIGFuZCBjYW4ndCBzZWxlY3QgaXQgc3RhdGljYWxseS4KIAkgKgotCSAq
+IFRoaXMgZnVuY3Rpb24gaXMgdXNlZCBieSBkcm1fYXRvbWljX2hlbHBlcl9jaGVja19tb2Rlc2V0
+KCkgYW5kIGVpdGhlcgotCSAqIHRoaXMgb3IgQGJlc3RfZW5jb2RlciBpcyByZXF1aXJlZC4KKwkg
+KiBUaGlzIGZ1bmN0aW9uIGlzIHVzZWQgYnkgZHJtX2F0b21pY19oZWxwZXJfY2hlY2tfbW9kZXNl
+dCgpLgorCSAqIElmIGl0IGlzIG5vdCBpbXBsZW1lbnRlZCwgdGhlIGNvcmUgd2lsbCBmYWxsYmFj
+ayB0byBAYmVzdF9lbmNvZGVyCisJICogKG9yIGRybV9hdG9taWNfaGVscGVyX2Jlc3RfZW5jb2Rl
+cigpIGlmIEBiZXN0X2VuY29kZXIgaXMgTlVMTCkuCiAJICoKIAkgKiBOT1RFOgogCSAqCi0tIAoy
+LjcuNAoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50
+ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBz
+Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
