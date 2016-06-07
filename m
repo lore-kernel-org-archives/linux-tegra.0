@@ -1,54 +1,48 @@
-From: Boris Brezillon <boris.brezillon@free-electrons.com>
-Subject: [PATCH v2 15/20] drm: virtgpu: Rely on the default
-	->best_encoder() behavior
-Date: Tue,  7 Jun 2016 13:48:10 +0200
-Message-ID: <1465300095-16971-16-git-send-email-boris.brezillon@free-electrons.com>
+From: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: [PATCH v2 19/20] drm/bridge: ps8622: Rely on the
+	default ->best_encoder() behavior
+Date: Tue,  7 Jun 2016 13:48:14 +0200
+Message-ID: <1465300095-16971-20-git-send-email-boris.brezillon@free-electrons.com>
 References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
-In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Stefan Agner <stefan@agner.ch>, virtualization@lists.linux-foundation.org, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Boris Brezillon <boris.brezillon@free-electrons.com>, Alexey Brodkin <abrodkin@synopsys.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, linux-tegra@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.>
+Return-path: <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/freedreno>
+List-Post: <mailto:freedreno-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/freedreno>,
+ <mailto:freedreno-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Freedreno" <freedreno-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Alexey Brodkin <abrodkin-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-arm-msm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, intel-gfx-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Jani Nikula <jani.nikula-VuQAYsv1563Yd54FQh9/CA@public.gmane.org>, Inki Dae <inki.dae@sams>
 List-Id: linux-tegra@vger.kernel.org
 
-VGhlIHZpcnRncHUgb3V0cHV0IGV4cG9zZXMgYSAxOjEgcmVsYXRpb25zaGlwIGJldHdlZW4gY29u
-bmVjdG9ycyBhbmQKZW5jb2RlcnMgYW5kIHRoZSBkcml2ZXIgaXMgcmVseWluZyBvbiB0aGUgYXRv
-bWljIGhlbHBlcnM6IHdlIGNhbiBkcm9wCnRoZSBjdXN0b20gLT5iZXN0X2VuY29kZXIoKSBpbXBs
-ZW1lbnRhdGlvbiBhbmQgbGV0IHRoZSBjb3JlIGNhbGwKZHJtX2F0b21pY19oZWxwZXJfYmVzdF9l
-bmNvZGVyKCkgZm9yIHVzLgoKU2lnbmVkLW9mZi1ieTogQm9yaXMgQnJlemlsbG9uIDxib3Jpcy5i
-cmV6aWxsb25AZnJlZS1lbGVjdHJvbnMuY29tPgotLS0KIGRyaXZlcnMvZ3B1L2RybS92aXJ0aW8v
-dmlydGdwdV9kaXNwbGF5LmMgfCAxMCAtLS0tLS0tLS0tCiAxIGZpbGUgY2hhbmdlZCwgMTAgZGVs
-ZXRpb25zKC0pCgpkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3ZpcnRpby92aXJ0Z3B1X2Rp
-c3BsYXkuYyBiL2RyaXZlcnMvZ3B1L2RybS92aXJ0aW8vdmlydGdwdV9kaXNwbGF5LmMKaW5kZXgg
-ZDQzMDVkYS4uNGQ0MWRjYiAxMDA2NDQKLS0tIGEvZHJpdmVycy9ncHUvZHJtL3ZpcnRpby92aXJ0
-Z3B1X2Rpc3BsYXkuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vdmlydGlvL3ZpcnRncHVfZGlzcGxh
-eS5jCkBAIC0zNDEsMTUgKzM0MSw2IEBAIHN0YXRpYyBpbnQgdmlydGlvX2dwdV9jb25uX21vZGVf
-dmFsaWQoc3RydWN0IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvciwKIAlyZXR1cm4gTU9ERV9CQUQ7
-CiB9CiAKLXN0YXRpYyBzdHJ1Y3QgZHJtX2VuY29kZXIqCi12aXJ0aW9fZ3B1X2Jlc3RfZW5jb2Rl
-cihzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yKQotewotCXN0cnVjdCB2aXJ0aW9fZ3B1
-X291dHB1dCAqdmlydGlvX2dwdV9vdXRwdXQgPQotCQlkcm1fY29ubmVjdG9yX3RvX3ZpcnRpb19n
-cHVfb3V0cHV0KGNvbm5lY3Rvcik7Ci0KLQlyZXR1cm4gJnZpcnRpb19ncHVfb3V0cHV0LT5lbmM7
-Ci19Ci0KIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX2VuY29kZXJfaGVscGVyX2Z1bmNzIHZpcnRp
-b19ncHVfZW5jX2hlbHBlcl9mdW5jcyA9IHsKIAkubW9kZV9zZXQgICA9IHZpcnRpb19ncHVfZW5j
-X21vZGVfc2V0LAogCS5lbmFibGUgICAgID0gdmlydGlvX2dwdV9lbmNfZW5hYmxlLApAQCAtMzU5
-LDcgKzM1MCw2IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX2VuY29kZXJfaGVscGVyX2Z1bmNz
-IHZpcnRpb19ncHVfZW5jX2hlbHBlcl9mdW5jcyA9IHsKIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZHJt
-X2Nvbm5lY3Rvcl9oZWxwZXJfZnVuY3MgdmlydGlvX2dwdV9jb25uX2hlbHBlcl9mdW5jcyA9IHsK
-IAkuZ2V0X21vZGVzICAgID0gdmlydGlvX2dwdV9jb25uX2dldF9tb2RlcywKIAkubW9kZV92YWxp
-ZCAgID0gdmlydGlvX2dwdV9jb25uX21vZGVfdmFsaWQsCi0JLmJlc3RfZW5jb2RlciA9IHZpcnRp
-b19ncHVfYmVzdF9lbmNvZGVyLAogfTsKIAogc3RhdGljIGVudW0gZHJtX2Nvbm5lY3Rvcl9zdGF0
-dXMgdmlydGlvX2dwdV9jb25uX2RldGVjdCgKLS0gCjIuNy40CgpfX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fXwpJbnRlbC1nZnggbWFpbGluZyBsaXN0CkludGVs
-LWdmeEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcv
-bWFpbG1hbi9saXN0aW5mby9pbnRlbC1nZngK
+V2UgaGF2ZSBhIDE6MSByZWxhdGlvbnNoaXAgYmV0d2VlbiBjb25uZWN0b3JzIGFuZCBlbmNvZGVy
+cywgYW5kIHRoZSBkcml2ZXIKaXMgcmVseWluZyBvbiB0aGUgYXRvbWljIGhlbHBlcnM6IHdlIGNh
+biBkcm9wIHRoZSBjdXN0b20gLT5iZXN0X2VuY29kZXIoKSwKYW5kIGxldCB0aGUgY29yZSBjYWxs
+IGRybV9hdG9taWNfaGVscGVyX2Jlc3RfZW5jb2RlcigpIGZvciB1cy4KClNpZ25lZC1vZmYtYnk6
+IEJvcmlzIEJyZXppbGxvbiA8Ym9yaXMuYnJlemlsbG9uQGZyZWUtZWxlY3Ryb25zLmNvbT4KLS0t
+CiBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL3BhcmFkZS1wczg2MjIuYyB8IDEwIC0tLS0tLS0tLS0K
+IDEgZmlsZSBjaGFuZ2VkLCAxMCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dw
+dS9kcm0vYnJpZGdlL3BhcmFkZS1wczg2MjIuYyBiL2RyaXZlcnMvZ3B1L2RybS9icmlkZ2UvcGFy
+YWRlLXBzODYyMi5jCmluZGV4IGJlODgxZTkuLjVjZDhkZDcgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMv
+Z3B1L2RybS9icmlkZ2UvcGFyYWRlLXBzODYyMi5jCisrKyBiL2RyaXZlcnMvZ3B1L2RybS9icmlk
+Z2UvcGFyYWRlLXBzODYyMi5jCkBAIC00NzQsMTggKzQ3NCw4IEBAIHN0YXRpYyBpbnQgcHM4NjIy
+X2dldF9tb2RlcyhzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yKQogCXJldHVybiBkcm1f
+cGFuZWxfZ2V0X21vZGVzKHBzODYyMi0+cGFuZWwpOwogfQogCi1zdGF0aWMgc3RydWN0IGRybV9l
+bmNvZGVyICpwczg2MjJfYmVzdF9lbmNvZGVyKHN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0
+b3IpCi17Ci0Jc3RydWN0IHBzODYyMl9icmlkZ2UgKnBzODYyMjsKLQotCXBzODYyMiA9IGNvbm5l
+Y3Rvcl90b19wczg2MjIoY29ubmVjdG9yKTsKLQotCXJldHVybiBwczg2MjItPmJyaWRnZS5lbmNv
+ZGVyOwotfQotCiBzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9jb25uZWN0b3JfaGVscGVyX2Z1bmNz
+IHBzODYyMl9jb25uZWN0b3JfaGVscGVyX2Z1bmNzID0gewogCS5nZXRfbW9kZXMgPSBwczg2MjJf
+Z2V0X21vZGVzLAotCS5iZXN0X2VuY29kZXIgPSBwczg2MjJfYmVzdF9lbmNvZGVyLAogfTsKIAog
+c3RhdGljIGVudW0gZHJtX2Nvbm5lY3Rvcl9zdGF0dXMgcHM4NjIyX2RldGVjdChzdHJ1Y3QgZHJt
+X2Nvbm5lY3RvciAqY29ubmVjdG9yLAotLSAKMi43LjQKCl9fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fCkZyZWVkcmVubyBtYWlsaW5nIGxpc3QKRnJlZWRyZW5v
+QGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWls
+bWFuL2xpc3RpbmZvL2ZyZWVkcmVubwo=
