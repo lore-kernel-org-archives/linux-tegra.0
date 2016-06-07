@@ -1,118 +1,53 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH V6 6/9] irqchip/gic: Add helper function for chip initialisation
-Date: Tue, 7 Jun 2016 16:12:31 +0100
-Message-ID: <1465312354-27778-7-git-send-email-jonathanh@nvidia.com>
-References: <1465312354-27778-1-git-send-email-jonathanh@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1465312354-27778-1-git-send-email-jonathanh@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thomas Gleixner <tglx@linutronix.de>, Jason Cooper <jason@lakedaemon.net>, Marc Zyngier <marc.zyngier@arm.com>
-Cc: Rob Herring <robh+dt@kernel.org>, Pawel Moll <pawel.moll@arm.com>, Mark Rutland <mark.rutland@arm.com>, Ian Campbell <ijc+devicetree@hellion.org.uk>, Kumar Gala <galak@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Kevin Hilman <khilman@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, Grygorii Strashko <grygorii.strashko@ti.com>, Lars-Peter Clausen <lars@metafoo.de>, Linus Walleij <linus.walleij@linaro.org>, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+From: Peter Griffin <peter.griffin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: [PATCH 0/8]  Various dmaengine cleanups
+Date: Tue,  7 Jun 2016 18:38:33 +0100
+Message-ID: <1465321121-22238-1-git-send-email-peter.griffin@linaro.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, leoli-KZfg59tc24xl57MIdRCFDg@public.gmane.org, zw-aYo+Mbtxn2uXDw4h08c5KA@public.gmane.org, baohua-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: peter.griffin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-For GICs that require runtime power-management it is necessary to
-populate the 'parent_device' member of the irqchip structure. In
-preparation for supporting such GICs, move the code that initialises
-the irqchip structure for a GIC into its own function called
-gic_init_chip() where the parent device pointer is also set.
+Hi Vinod,
 
-Instead of calling gic_init_chip() from within gic_init_bases(), move
-the calls to outside of this function, so that in the future we can
-avoid having to pass additional parameters to gic_init_bases() in order
-set the parent device pointer or set the name to a specific string.
+This series is a bunch of cleanup updates to various
+dmaengine drivers, based on some of the review feeback to my fdma series.
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- drivers/irqchip/irq-gic.c | 41 +++++++++++++++++++++++++++--------------
- 1 file changed, 27 insertions(+), 14 deletions(-)
+regards,
 
-diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
-index fa0dd98993fa..94eab6e23124 100644
---- a/drivers/irqchip/irq-gic.c
-+++ b/drivers/irqchip/irq-gic.c
-@@ -1032,29 +1032,31 @@ static const struct irq_domain_ops gic_irq_domain_ops = {
- 	.unmap = gic_irq_domain_unmap,
- };
- 
--static int gic_init_bases(struct gic_chip_data *gic, int irq_start,
--			  struct fwnode_handle *handle)
-+static void gic_init_chip(struct gic_chip_data *gic, struct device *dev,
-+			  const char *name, bool use_eoimode1)
- {
--	irq_hw_number_t hwirq_base;
--	int gic_irqs, irq_base, ret;
--
- 	/* Initialize irq_chip */
- 	gic->chip = gic_chip;
-+	gic->chip.name = name;
-+	gic->chip.parent_device = dev;
- 
--	if (static_key_true(&supports_deactivate) && gic == &gic_data[0]) {
-+	if (use_eoimode1) {
- 		gic->chip.irq_mask = gic_eoimode1_mask_irq;
- 		gic->chip.irq_eoi = gic_eoimode1_eoi_irq;
- 		gic->chip.irq_set_vcpu_affinity = gic_irq_set_vcpu_affinity;
--		gic->chip.name = kasprintf(GFP_KERNEL, "GICv2");
--	} else {
--		gic->chip.name = kasprintf(GFP_KERNEL, "GIC-%d",
--					   (int)(gic - &gic_data[0]));
- 	}
- 
- #ifdef CONFIG_SMP
- 	if (gic == &gic_data[0])
- 		gic->chip.irq_set_affinity = gic_set_affinity;
- #endif
-+}
-+
-+static int gic_init_bases(struct gic_chip_data *gic, int irq_start,
-+			  struct fwnode_handle *handle)
-+{
-+	irq_hw_number_t hwirq_base;
-+	int gic_irqs, irq_base, ret;
- 
- 	if (IS_ENABLED(CONFIG_GIC_NON_BANKED) && gic->percpu_offset) {
- 		/* Frankein-GIC without banked registers... */
-@@ -1152,8 +1154,6 @@ error:
- 		free_percpu(gic->cpu_base.percpu_base);
- 	}
- 
--	kfree(gic->chip.name);
--
- 	return ret;
- }
- 
-@@ -1161,7 +1161,8 @@ static int __init __gic_init_bases(struct gic_chip_data *gic,
- 				   int irq_start,
- 				   struct fwnode_handle *handle)
- {
--	int i;
-+	char *name;
-+	int i, ret;
- 
- 	if (WARN_ON(!gic || gic->domain))
- 		return -EINVAL;
-@@ -1183,7 +1184,19 @@ static int __init __gic_init_bases(struct gic_chip_data *gic,
- 			pr_info("GIC: Using split EOI/Deactivate mode\n");
- 	}
- 
--	return gic_init_bases(gic, irq_start, handle);
-+	if (static_key_true(&supports_deactivate) && gic == &gic_data[0]) {
-+		name = kasprintf(GFP_KERNEL, "GICv2");
-+		gic_init_chip(gic, NULL, name, true);
-+	} else {
-+		name = kasprintf(GFP_KERNEL, "GIC-%d", (int)(gic-&gic_data[0]));
-+		gic_init_chip(gic, NULL, name, false);
-+	}
-+
-+	ret = gic_init_bases(gic, irq_start, handle);
-+	if (ret)
-+		kfree(name);
-+
-+	return ret;
- }
- 
- void __init gic_init(unsigned int gic_nr, int irq_start,
+Peter.
+
+Peter Griffin (8):
+  dmaengine: fsl-edma: Fix clock handling error paths
+  dmaengine: fsl-edma: print error code in error messages.
+  dmaengine: coh901318: Only calculate residue if txstate exists.
+  dmaengine: s3c24xx: Simplify code in s3c24xx_dma_tx_status()
+  dmaengine: ste_dma40: Only calculate residue if txstate exists.
+  dmaengine: sun6i-dma: Only calculate residue if state exists.
+  dmaengine: tegra20-apb-dma: Only calculate residue if txstate exists.
+  dmaengine: Remove site specific OOM error messages on kzalloc
+
+ drivers/dma/amba-pl08x.c        | 10 +---------
+ drivers/dma/bestcomm/bestcomm.c |  2 --
+ drivers/dma/coh901318.c         |  2 +-
+ drivers/dma/edma.c              | 16 ++++------------
+ drivers/dma/fsl-edma.c          | 25 +++++++++++++++++++------
+ drivers/dma/fsldma.c            |  2 --
+ drivers/dma/k3dma.c             | 10 ++++------
+ drivers/dma/mmp_tdma.c          |  5 ++---
+ drivers/dma/moxart-dma.c        |  4 +---
+ drivers/dma/nbpfaxi.c           |  5 ++---
+ drivers/dma/pl330.c             |  5 +----
+ drivers/dma/ppc4xx/adma.c       |  2 --
+ drivers/dma/s3c24xx-dma.c       | 11 ++---------
+ drivers/dma/sh/shdmac.c         |  9 ++-------
+ drivers/dma/sh/sudmac.c         |  9 ++-------
+ drivers/dma/sirf-dma.c          |  5 ++---
+ drivers/dma/ste_dma40.c         |  6 ++----
+ drivers/dma/sun6i-dma.c         |  2 +-
+ drivers/dma/tegra20-apb-dma.c   | 13 ++++---------
+ drivers/dma/timb_dma.c          |  8 ++------
+ 20 files changed, 52 insertions(+), 99 deletions(-)
+
 -- 
-2.1.4
+1.9.1
