@@ -1,123 +1,102 @@
-From: Vincent ABRIOU <vincent.abriou-qxv4g6HH51o@public.gmane.org>
-Subject: Re: [PATCH v2 11/20] drm: sti: Rely on the default ->best_encoder()
- behavior
-Date: Wed, 8 Jun 2016 11:35:40 +0200
-Message-ID: <5757E6EC.1050802@st.com>
+From: Archit Taneja <architt@codeaurora.org>
+Subject: Re: [PATCH v2 08/20] drm: msm: Rely on the default
+ ->best_encoder() behavior where appropriate
+Date: Wed, 8 Jun 2016 15:39:03 +0530
+Message-ID: <5757EEBF.1010501@codeaurora.org>
 References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
- <1465300095-16971-12-git-send-email-boris.brezillon@free-electrons.com>
+ <1465300095-16971-9-git-send-email-boris.brezillon@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1465300095-16971-12-git-send-email-boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Content-Language: en-US
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Daniel Vetter <daniel.vetter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Stefan Agner <stefan-XLVq0VzYD2Y@public.gmane.org>, "virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org" <virtualization-cunTk1MwBs9QetFLy7KEm3xJsTq8ys+cHZ5vskTnxNA@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Laurent Pinchart <laurent.pinchart-ryLnwIuWjnjg/C1BVhZhaw@public.gmane.org>, Benjamin Gaignard <benjamin.gaignard-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Joonyoung Shim <jy0922.shim-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alexey Brodkin <abrodkin-HKixBCOQz3hWk0Htik3J/w@public.gmane.org>, Kyungmin Park <kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, "linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Chen-Yu Tsai <wens-jdAy2FN1RRM@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-arm-msm-u79uwXL29TasMV2rI37PzA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+In-Reply-To: <1465300095-16971-9-git-send-email-boris.brezillon@free-electrons.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
+To: Boris Brezillon <boris.brezillon@free-electrons.com>, David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, Stefan Agner <stefan@agner.ch>, virtualization@lists.linux-foundation.org, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Alexandre Courbot <gnurou@gmail.com>, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Alexey Brodkin <abrodkin@synopsys.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, linux-tegra@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, linux-mediatek@lists.infradead.org, Matthias Brugger <matthias.bgg@gmail.com>, Vincent Abriou <vincent.abriou@st.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Boris,
-
-Thanks for the patch.
-
-Acked-by: Vincent Abriou <vincent.abriou-qxv4g6HH51o@public.gmane.org>
-
-Vincent
-
-On 06/07/2016 01:48 PM, Boris Brezillon wrote:
-> All outputs have a 1:1 relationship between connectors and encoders
-> and the driver is relying on the atomic helpers: we can drop the custom
-> ->best_encoder() implementations and let the core call
-> drm_atomic_helper_best_encoder() for us.
->
-> Signed-off-by: Boris Brezillon <boris.brezillon-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-> ---
->   drivers/gpu/drm/sti/sti_dvo.c  | 10 ----------
->   drivers/gpu/drm/sti/sti_hda.c  | 10 ----------
->   drivers/gpu/drm/sti/sti_hdmi.c | 10 ----------
->   3 files changed, 30 deletions(-)
->
-> diff --git a/drivers/gpu/drm/sti/sti_dvo.c b/drivers/gpu/drm/sti/sti_dvo.c
-> index 25f7663..d5627d1 100644
-> --- a/drivers/gpu/drm/sti/sti_dvo.c
-> +++ b/drivers/gpu/drm/sti/sti_dvo.c
-> @@ -384,20 +384,10 @@ static int sti_dvo_connector_mode_valid(struct drm_connector *connector,
->   	return MODE_OK;
->   }
->
-> -struct drm_encoder *sti_dvo_best_encoder(struct drm_connector *connector)
-> -{
-> -	struct sti_dvo_connector *dvo_connector
-> -		= to_sti_dvo_connector(connector);
-> -
-> -	/* Best encoder is the one associated during connector creation */
-> -	return dvo_connector->encoder;
-> -}
-> -
->   static const
->   struct drm_connector_helper_funcs sti_dvo_connector_helper_funcs = {
->   	.get_modes = sti_dvo_connector_get_modes,
->   	.mode_valid = sti_dvo_connector_mode_valid,
-> -	.best_encoder = sti_dvo_best_encoder,
->   };
->
->   static enum drm_connector_status
-> diff --git a/drivers/gpu/drm/sti/sti_hda.c b/drivers/gpu/drm/sti/sti_hda.c
-> index f7d3464..c4649f5 100644
-> --- a/drivers/gpu/drm/sti/sti_hda.c
-> +++ b/drivers/gpu/drm/sti/sti_hda.c
-> @@ -676,20 +676,10 @@ static int sti_hda_connector_mode_valid(struct drm_connector *connector,
->   	return MODE_OK;
->   }
->
-> -struct drm_encoder *sti_hda_best_encoder(struct drm_connector *connector)
-> -{
-> -	struct sti_hda_connector *hda_connector
-> -		= to_sti_hda_connector(connector);
-> -
-> -	/* Best encoder is the one associated during connector creation */
-> -	return hda_connector->encoder;
-> -}
-> -
->   static const
->   struct drm_connector_helper_funcs sti_hda_connector_helper_funcs = {
->   	.get_modes = sti_hda_connector_get_modes,
->   	.mode_valid = sti_hda_connector_mode_valid,
-> -	.best_encoder = sti_hda_best_encoder,
->   };
->
->   static enum drm_connector_status
-> diff --git a/drivers/gpu/drm/sti/sti_hdmi.c b/drivers/gpu/drm/sti/sti_hdmi.c
-> index 6ef0715..dc9ab6e 100644
-> --- a/drivers/gpu/drm/sti/sti_hdmi.c
-> +++ b/drivers/gpu/drm/sti/sti_hdmi.c
-> @@ -897,20 +897,10 @@ static int sti_hdmi_connector_mode_valid(struct drm_connector *connector,
->   	return MODE_OK;
->   }
->
-> -struct drm_encoder *sti_hdmi_best_encoder(struct drm_connector *connector)
-> -{
-> -	struct sti_hdmi_connector *hdmi_connector
-> -		= to_sti_hdmi_connector(connector);
-> -
-> -	/* Best encoder is the one associated during connector creation */
-> -	return hdmi_connector->encoder;
-> -}
-> -
->   static const
->   struct drm_connector_helper_funcs sti_hdmi_connector_helper_funcs = {
->   	.get_modes = sti_hdmi_connector_get_modes,
->   	.mode_valid = sti_hdmi_connector_mode_valid,
-> -	.best_encoder = sti_hdmi_best_encoder,
->   };
->
->   /* get detection status of display device */
->
+SGksCgpPbiAwNi8wNy8yMDE2IDA1OjE4IFBNLCBCb3JpcyBCcmV6aWxsb24gd3JvdGU6Cj4gRm9y
+IGFsbCBvdXRwdXRzIGV4Y2VwdCBEU0kgd2UgaGF2ZSBhIDE6MSByZWxhdGlvbnNoaXAgYmV0d2Vl
+biBjb25uZWN0b3JzCj4gYW5kIGVuY29kZXJzIGFuZCB0aGUgZHJpdmVyIGlzIHJlbHlpbmcgb24g
+dGhlIGF0b21pYyBoZWxwZXJzOiB3ZSBjYW4KPiBkcm9wIHRoZSBjdXN0b20gLT5iZXN0X2VuY29k
+ZXIoKSBhbmQgbGV0IHRoZSBjb3JlIGNhbGwKPiBkcm1fYXRvbWljX2hlbHBlcl9iZXN0X2VuY29k
+ZXIoKSBmb3IgdXMuCgpXb3JrcyBmaW5lIHdpdGggbXNtLgoKVGVzdGVkLWJ5OiBBcmNoaXQgVGFu
+ZWphIDxhcmNoaXR0QGNvZGVhdXJvcmEub3JnPgoKVGhhbmtzLApBcmNoaXQKCj4KPiBTaWduZWQt
+b2ZmLWJ5OiBCb3JpcyBCcmV6aWxsb24gPGJvcmlzLmJyZXppbGxvbkBmcmVlLWVsZWN0cm9ucy5j
+b20+Cj4gLS0tCj4gICBkcml2ZXJzL2dwdS9kcm0vbXNtL2VkcC9lZHBfY29ubmVjdG9yLmMgICAg
+ICAgICAgICB8IDEwIC0tLS0tLS0tLS0KPiAgIGRyaXZlcnMvZ3B1L2RybS9tc20vaGRtaS9oZG1p
+X2Nvbm5lY3Rvci5jICAgICAgICAgIHwgIDggLS0tLS0tLS0KPiAgIGRyaXZlcnMvZ3B1L2RybS9t
+c20vbWRwL21kcDQvbWRwNF9sdmRzX2Nvbm5lY3Rvci5jIHwgIDkgLS0tLS0tLS0tCj4gICAzIGZp
+bGVzIGNoYW5nZWQsIDI3IGRlbGV0aW9ucygtKQo+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1
+L2RybS9tc20vZWRwL2VkcF9jb25uZWN0b3IuYyBiL2RyaXZlcnMvZ3B1L2RybS9tc20vZWRwL2Vk
+cF9jb25uZWN0b3IuYwo+IGluZGV4IDcyMzYwY2QuLjU5NjA2MjggMTAwNjQ0Cj4gLS0tIGEvZHJp
+dmVycy9ncHUvZHJtL21zbS9lZHAvZWRwX2Nvbm5lY3Rvci5jCj4gKysrIGIvZHJpdmVycy9ncHUv
+ZHJtL21zbS9lZHAvZWRwX2Nvbm5lY3Rvci5jCj4gQEAgLTkxLDE1ICs5MSw2IEBAIHN0YXRpYyBp
+bnQgZWRwX2Nvbm5lY3Rvcl9tb2RlX3ZhbGlkKHN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0
+b3IsCj4gICAJcmV0dXJuIE1PREVfT0s7Cj4gICB9Cj4KPiAtc3RhdGljIHN0cnVjdCBkcm1fZW5j
+b2RlciAqCj4gLWVkcF9jb25uZWN0b3JfYmVzdF9lbmNvZGVyKHN0cnVjdCBkcm1fY29ubmVjdG9y
+ICpjb25uZWN0b3IpCj4gLXsKPiAtCXN0cnVjdCBlZHBfY29ubmVjdG9yICplZHBfY29ubmVjdG9y
+ID0gdG9fZWRwX2Nvbm5lY3Rvcihjb25uZWN0b3IpOwo+IC0KPiAtCURCRygiIik7Cj4gLQlyZXR1
+cm4gZWRwX2Nvbm5lY3Rvci0+ZWRwLT5lbmNvZGVyOwo+IC19Cj4gLQo+ICAgc3RhdGljIGNvbnN0
+IHN0cnVjdCBkcm1fY29ubmVjdG9yX2Z1bmNzIGVkcF9jb25uZWN0b3JfZnVuY3MgPSB7Cj4gICAJ
+LmRwbXMgPSBkcm1fYXRvbWljX2hlbHBlcl9jb25uZWN0b3JfZHBtcywKPiAgIAkuZGV0ZWN0ID0g
+ZWRwX2Nvbm5lY3Rvcl9kZXRlY3QsCj4gQEAgLTExMyw3ICsxMDQsNiBAQCBzdGF0aWMgY29uc3Qg
+c3RydWN0IGRybV9jb25uZWN0b3JfZnVuY3MgZWRwX2Nvbm5lY3Rvcl9mdW5jcyA9IHsKPiAgIHN0
+YXRpYyBjb25zdCBzdHJ1Y3QgZHJtX2Nvbm5lY3Rvcl9oZWxwZXJfZnVuY3MgZWRwX2Nvbm5lY3Rv
+cl9oZWxwZXJfZnVuY3MgPSB7Cj4gICAJLmdldF9tb2RlcyA9IGVkcF9jb25uZWN0b3JfZ2V0X21v
+ZGVzLAo+ICAgCS5tb2RlX3ZhbGlkID0gZWRwX2Nvbm5lY3Rvcl9tb2RlX3ZhbGlkLAo+IC0JLmJl
+c3RfZW5jb2RlciA9IGVkcF9jb25uZWN0b3JfYmVzdF9lbmNvZGVyLAo+ICAgfTsKPgo+ICAgLyog
+aW5pdGlhbGl6ZSBjb25uZWN0b3IgKi8KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL21z
+bS9oZG1pL2hkbWlfY29ubmVjdG9yLmMgYi9kcml2ZXJzL2dwdS9kcm0vbXNtL2hkbWkvaGRtaV9j
+b25uZWN0b3IuYwo+IGluZGV4IGIxNWQ3MjYuLmEyNTE1YjQgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVy
+cy9ncHUvZHJtL21zbS9oZG1pL2hkbWlfY29ubmVjdG9yLmMKPiArKysgYi9kcml2ZXJzL2dwdS9k
+cm0vbXNtL2hkbWkvaGRtaV9jb25uZWN0b3IuYwo+IEBAIC00MDYsMTMgKzQwNiw2IEBAIHN0YXRp
+YyBpbnQgbXNtX2hkbWlfY29ubmVjdG9yX21vZGVfdmFsaWQoc3RydWN0IGRybV9jb25uZWN0b3Ig
+KmNvbm5lY3RvciwKPiAgIAlyZXR1cm4gMDsKPiAgIH0KPgo+IC1zdGF0aWMgc3RydWN0IGRybV9l
+bmNvZGVyICoKPiAtbXNtX2hkbWlfY29ubmVjdG9yX2Jlc3RfZW5jb2RlcihzdHJ1Y3QgZHJtX2Nv
+bm5lY3RvciAqY29ubmVjdG9yKQo+IC17Cj4gLQlzdHJ1Y3QgaGRtaV9jb25uZWN0b3IgKmhkbWlf
+Y29ubmVjdG9yID0gdG9faGRtaV9jb25uZWN0b3IoY29ubmVjdG9yKTsKPiAtCXJldHVybiBoZG1p
+X2Nvbm5lY3Rvci0+aGRtaS0+ZW5jb2RlcjsKPiAtfQo+IC0KPiAgIHN0YXRpYyBjb25zdCBzdHJ1
+Y3QgZHJtX2Nvbm5lY3Rvcl9mdW5jcyBoZG1pX2Nvbm5lY3Rvcl9mdW5jcyA9IHsKPiAgIAkuZHBt
+cyA9IGRybV9hdG9taWNfaGVscGVyX2Nvbm5lY3Rvcl9kcG1zLAo+ICAgCS5kZXRlY3QgPSBoZG1p
+X2Nvbm5lY3Rvcl9kZXRlY3QsCj4gQEAgLTQyNiw3ICs0MTksNiBAQCBzdGF0aWMgY29uc3Qgc3Ry
+dWN0IGRybV9jb25uZWN0b3JfZnVuY3MgaGRtaV9jb25uZWN0b3JfZnVuY3MgPSB7Cj4gICBzdGF0
+aWMgY29uc3Qgc3RydWN0IGRybV9jb25uZWN0b3JfaGVscGVyX2Z1bmNzIG1zbV9oZG1pX2Nvbm5l
+Y3Rvcl9oZWxwZXJfZnVuY3MgPSB7Cj4gICAJLmdldF9tb2RlcyA9IG1zbV9oZG1pX2Nvbm5lY3Rv
+cl9nZXRfbW9kZXMsCj4gICAJLm1vZGVfdmFsaWQgPSBtc21faGRtaV9jb25uZWN0b3JfbW9kZV92
+YWxpZCwKPiAtCS5iZXN0X2VuY29kZXIgPSBtc21faGRtaV9jb25uZWN0b3JfYmVzdF9lbmNvZGVy
+LAo+ICAgfTsKPgo+ICAgLyogaW5pdGlhbGl6ZSBjb25uZWN0b3IgKi8KPiBkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy9ncHUvZHJtL21zbS9tZHAvbWRwNC9tZHA0X2x2ZHNfY29ubmVjdG9yLmMgYi9kcml2
+ZXJzL2dwdS9kcm0vbXNtL21kcC9tZHA0L21kcDRfbHZkc19jb25uZWN0b3IuYwo+IGluZGV4IDI2
+NDhjZDcuLjM1MzQyOWIgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL21zbS9tZHAvbWRw
+NC9tZHA0X2x2ZHNfY29ubmVjdG9yLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vbXNtL21kcC9t
+ZHA0L21kcDRfbHZkc19jb25uZWN0b3IuYwo+IEBAIC05MCwxNCArOTAsNiBAQCBzdGF0aWMgaW50
+IG1kcDRfbHZkc19jb25uZWN0b3JfbW9kZV92YWxpZChzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29u
+bmVjdG9yLAo+ICAgCXJldHVybiBNT0RFX09LOwo+ICAgfQo+Cj4gLXN0YXRpYyBzdHJ1Y3QgZHJt
+X2VuY29kZXIgKgo+IC1tZHA0X2x2ZHNfY29ubmVjdG9yX2Jlc3RfZW5jb2RlcihzdHJ1Y3QgZHJt
+X2Nvbm5lY3RvciAqY29ubmVjdG9yKQo+IC17Cj4gLQlzdHJ1Y3QgbWRwNF9sdmRzX2Nvbm5lY3Rv
+ciAqbWRwNF9sdmRzX2Nvbm5lY3RvciA9Cj4gLQkJCXRvX21kcDRfbHZkc19jb25uZWN0b3IoY29u
+bmVjdG9yKTsKPiAtCXJldHVybiBtZHA0X2x2ZHNfY29ubmVjdG9yLT5lbmNvZGVyOwo+IC19Cj4g
+LQo+ICAgc3RhdGljIGNvbnN0IHN0cnVjdCBkcm1fY29ubmVjdG9yX2Z1bmNzIG1kcDRfbHZkc19j
+b25uZWN0b3JfZnVuY3MgPSB7Cj4gICAJLmRwbXMgPSBkcm1fYXRvbWljX2hlbHBlcl9jb25uZWN0
+b3JfZHBtcywKPiAgIAkuZGV0ZWN0ID0gbWRwNF9sdmRzX2Nvbm5lY3Rvcl9kZXRlY3QsCj4gQEAg
+LTExMSw3ICsxMDMsNiBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGRybV9jb25uZWN0b3JfZnVuY3Mg
+bWRwNF9sdmRzX2Nvbm5lY3Rvcl9mdW5jcyA9IHsKPiAgIHN0YXRpYyBjb25zdCBzdHJ1Y3QgZHJt
+X2Nvbm5lY3Rvcl9oZWxwZXJfZnVuY3MgbWRwNF9sdmRzX2Nvbm5lY3Rvcl9oZWxwZXJfZnVuY3Mg
+PSB7Cj4gICAJLmdldF9tb2RlcyA9IG1kcDRfbHZkc19jb25uZWN0b3JfZ2V0X21vZGVzLAo+ICAg
+CS5tb2RlX3ZhbGlkID0gbWRwNF9sdmRzX2Nvbm5lY3Rvcl9tb2RlX3ZhbGlkLAo+IC0JLmJlc3Rf
+ZW5jb2RlciA9IG1kcDRfbHZkc19jb25uZWN0b3JfYmVzdF9lbmNvZGVyLAo+ICAgfTsKPgo+ICAg
+LyogaW5pdGlhbGl6ZSBjb25uZWN0b3IgKi8KPgoKLS0gClRoZSBRdWFsY29tbSBJbm5vdmF0aW9u
+IENlbnRlciwgSW5jLiBpcyBhIG1lbWJlciBvZiB0aGUgQ29kZSBBdXJvcmEgCkZvcnVtLCBob3N0
+ZWQgYnkgVGhlIExpbnV4IEZvdW5kYXRpb24KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX18KSW50ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMu
+ZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
+dGluZm8vaW50ZWwtZ2Z4Cg==
