@@ -1,50 +1,93 @@
-From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v1 00/25] PCI: Request host bridge window resources
-Date: Tue, 7 Jun 2016 18:34:27 -0500
-Message-ID: <20160607233427.GB4759@localhost>
-References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
- <3416214.BpvATlfaN7@wuerfel>
- <20160607131105.GA2543@localhost>
- <3552943.lb56sJA8nL@wuerfel>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 8/8] dmaengine: Remove site specific OOM error messages on
+ kzalloc
+Date: Wed, 8 Jun 2016 09:22:51 +0100
+Message-ID: <5757D5DB.5030401@nvidia.com>
+References: <1465321121-22238-1-git-send-email-peter.griffin@linaro.org>
+ <1465321121-22238-9-git-send-email-peter.griffin@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <3552943.lb56sJA8nL@wuerfel>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Jon Mason <jonmason-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pratyush Anand <pratyush.anand-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rfi-g9ZBwUv/Ih/yUk5EbOjzuce+I+R0W71w@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tanmay Inamdar <tinamdar-qTEPVZfXA3Y@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ley Foon Tan <lftan-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1465321121-22238-9-git-send-email-peter.griffin@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, vinod.koul@intel.com, linus.walleij@linaro.org, dan.j.williams@intel.com, leoli@freescale.com, zw@zh-kernel.org, baohua@kernel.org, maxime.ripard@free-electrons.com, wens@csie.org, ldewangan@nvidia.com, swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com
+Cc: lee.jones@linaro.org, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jun 07, 2016 at 03:25:46PM +0200, Arnd Bergmann wrote:
-> On Tuesday, June 7, 2016 8:11:05 AM CEST Bjorn Helgaas wrote:
-> > > 
-> > > What do you think is the correct behavior here, should the driver only
-> > > request the PIO range with parent=ioport_resource, or should it also
-> > > request the MMIO window for the I/O ports with parent=iomem_resource?
-> > > In the latter case, any idea how that can be generalized?
-> > 
-> > I think it should request both because I think iomem_resource should
-> > contain everything in the memory map.  This would be required if we ever
-> > did any significant reassignment of top-level devices, e.g., ACPI devices.
+
+On 07/06/16 18:38, Peter Griffin wrote:
+> If kzalloc() fails it will issue it's own error message including
+> a dump_stack(). So remove the site specific error messages.
 > 
-> Ok. Should we try to pass the mmio resource for the I/O window to
-> the devm_request_pci_bus_resources() function along with the other
-> arguments then?
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> ---
+>  drivers/dma/amba-pl08x.c        | 10 +---------
+>  drivers/dma/bestcomm/bestcomm.c |  2 --
+>  drivers/dma/edma.c              | 16 ++++------------
+>  drivers/dma/fsldma.c            |  2 --
+>  drivers/dma/k3dma.c             | 10 ++++------
+>  drivers/dma/mmp_tdma.c          |  5 ++---
+>  drivers/dma/moxart-dma.c        |  4 +---
+>  drivers/dma/nbpfaxi.c           |  5 ++---
+>  drivers/dma/pl330.c             |  5 +----
+>  drivers/dma/ppc4xx/adma.c       |  2 --
+>  drivers/dma/s3c24xx-dma.c       |  5 +----
+>  drivers/dma/sh/shdmac.c         |  9 ++-------
+>  drivers/dma/sh/sudmac.c         |  9 ++-------
+>  drivers/dma/sirf-dma.c          |  5 ++---
+>  drivers/dma/ste_dma40.c         |  4 +---
+>  drivers/dma/tegra20-apb-dma.c   | 11 +++--------
+>  drivers/dma/timb_dma.c          |  8 ++------
+>  17 files changed, 28 insertions(+), 84 deletions(-)
 
-I think memory-mapped I/O port windows are different enough that maybe
-we ought to handle them separately.  It seems like there are several
-things related to setting up those windows (requesting the resource,
-ioremapping it, allocating the CPU port number space, etc.), and maybe
-if we keep this out, a pattern will emerge.
+[snip]
 
-Maybe I should rename this to "devm_request_pci_host_windows()" or
-something?
+> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+> index 7f4af8c..032884f 100644
+> --- a/drivers/dma/tegra20-apb-dma.c
+> +++ b/drivers/dma/tegra20-apb-dma.c
+> @@ -300,10 +300,8 @@ static struct tegra_dma_desc *tegra_dma_desc_get(
+>  
+>  	/* Allocate DMA desc */
+>  	dma_desc = kzalloc(sizeof(*dma_desc), GFP_NOWAIT);
+> -	if (!dma_desc) {
+> -		dev_err(tdc2dev(tdc), "dma_desc alloc failed\n");
+> +	if (!dma_desc)
+>  		return NULL;
+> -	}
+>  
+>  	dma_async_tx_descriptor_init(&dma_desc->txd, &tdc->dma_chan);
+>  	dma_desc->txd.tx_submit = tegra_dma_tx_submit;
+> @@ -340,8 +338,7 @@ static struct tegra_dma_sg_req *tegra_dma_sg_req_get(
+>  	spin_unlock_irqrestore(&tdc->lock, flags);
+>  
+>  	sg_req = kzalloc(sizeof(struct tegra_dma_sg_req), GFP_NOWAIT);
+> -	if (!sg_req)
+> -		dev_err(tdc2dev(tdc), "sg_req alloc failed\n");
+> +
+>  	return sg_req;
+>  }
+>  
+> @@ -1319,10 +1316,8 @@ static int tegra_dma_probe(struct platform_device *pdev)
+>  
+>  	tdma = devm_kzalloc(&pdev->dev, sizeof(*tdma) + cdata->nr_channels *
+>  			sizeof(struct tegra_dma_channel), GFP_KERNEL);
+> -	if (!tdma) {
+> -		dev_err(&pdev->dev, "Error: memory allocation failed\n");
+> +	if (!tdma)
+>  		return -ENOMEM;
+> -	}
+>  
+>  	tdma->dev = &pdev->dev;
+>  	tdma->chip_data = cdata;
 
-> As far as I can tell, it should not go into the resource list
-> because it is not something the PCI core code should access the
-> way it handles the other resources.
+For the tegra portion ...
 
-Right.
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
-Bjorn
+Cheers
+Jon
+
+-- 
+nvpublic
