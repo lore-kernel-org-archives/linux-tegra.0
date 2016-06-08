@@ -1,32 +1,36 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] gpio: tegra: Make lockdep class file-scoped
-Date: Wed, 8 Jun 2016 13:41:05 +0200
-Message-ID: <CACRpkdadWc68-vqZejwBwTA2agFCSxAzxA1V5s4KcwSZFwarCg@mail.gmail.com>
-References: <20160606165627.32676-1-thierry.reding@gmail.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] pinctrl: tegra: Fix build dependency
+Date: Wed, 8 Jun 2016 13:50:47 +0200
+Message-ID: <CACRpkdajyr1YqvyWv2YEjk-StvFMZM_6k1a4t0yBuSznptVtRQ@mail.gmail.com>
+References: <1465022156.547.2.camel@ingics.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <20160606165627.32676-1-thierry.reding@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1465022156.547.2.camel-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jun 6, 2016 at 6:56 PM, Thierry Reding <thierry.reding@gmail.com> wrote:
+On Sat, Jun 4, 2016 at 8:35 AM, Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org> wrote:
 
-> From: Thierry Reding <treding@nvidia.com>
+> I got below build error:
+> ERROR: "tegra_xusb_padctl_legacy_probe" [drivers/phy/tegra/phy-tegra-xusb.ko] undefined!
+> with below build configuration:
+> CONFIG_ARCH_TEGRA=y
+> CONFIG_PINCTRL_TEGRA_XUSB=y
+> CONFIG_PHY_TEGRA_XUSB=y
 >
-> Commit b546be0db955 ("gpio: tegra: Get rid of all file scoped global
-> variables") moved all file scoped variables into the driver-private
-> structure to allow potentially multiple instances of the driver. The
-> change also included turning the lockdep class into a driver-private
-> field, which doesn't work and produces error messages such as this:
+> The problem is below line in drivers/pinctrl/Makefile
+> obj-$(CONFIG_PINCTRL_TEGRA)     += tegra/
 >
->         [    0.142310] BUG: key ffff8000fb3f7ab0 not in .data!
+> So even CONFIG_PINCTRL_TEGRA_XUSB=y is set, kbuild still does not compile
+> the code in drivers/pinctrl/tegra folder if !CONFIG_PINCTRL_TEGRA.
 >
-> Make the lockdep class file-scoped again to fix this issue.
+> phy-tegra-xusb.c does not use any symbol from pinctrl-tegra.c,
+> so build pinctrl-tegra.c only when CONFIG_PINCTRL_TEGRA is set.
 >
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> Signed-off-by: Axel Lin <axel.lin-8E1dMatC8ynQT0dZR+AlfA@public.gmane.org>
 
 Patch applied for fixes.
 
