@@ -1,371 +1,114 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2] ARM64: boot: dts: Add regulators for Tegra210 Smaug
-Date: Thu, 9 Jun 2016 13:38:43 -0400
-Message-ID: <1465493923-23313-1-git-send-email-rklein@nvidia.com>
+From: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Subject: Re: [PATCH V5 4/9] genirq: Add runtime power management support for IRQ chips
+Date: Thu, 09 Jun 2016 15:56:54 -0700
+Message-ID: <7htwh2c6o9.fsf@baylibre.com>
+References: <1465214023-8299-1-git-send-email-jonathanh@nvidia.com>
+	<1465214023-8299-5-git-send-email-jonathanh@nvidia.com>
+	<57558523.9070700@ti.com> <57558909.9090309@nvidia.com>
+	<57558A83.1000603@ti.com> <5755917A.7070704@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5755917A.7070704-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> (Jon Hunter's message of "Mon, 6
+	Jun 2016 16:06:34 +0100")
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add regulators to the Tegra210 Smaug DTS file including
-support for the max77620 PMIC.
+Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> writes:
 
-Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-v2:
- - Updated reg properties to match current binding
+> On 06/06/16 15:36, Grygorii Strashko wrote:
+>> On 06/06/2016 05:30 PM, Jon Hunter wrote:
+>>>
+>>> On 06/06/16 15:13, Grygorii Strashko wrote:
+>>>> On 06/06/2016 02:53 PM, Jon Hunter wrote:
+>>>>> Some IRQ chips may be located in a power domain outside of the CPU
+>>>>> subsystem and hence will require device specific runtime power
+>>>>> management. In order to support such IRQ chips, add a pointer for a
+>>>>> device structure to the irq_chip structure, and if this pointer is
+>>>>> populated by the IRQ chip driver and CONFIG_PM is selected in the kernel
+>>>>> configuration, then the pm_runtime_get/put APIs for this chip will be
+>>>>> called when an IRQ is requested/freed, respectively.
+>>>>>
+>>>>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>>>> Reviewed-by: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+>>>>> Reviewed-by: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+>>>>> ---
+>>>>>    include/linux/irq.h    |  4 ++++
+>>>>>    kernel/irq/chip.c      | 35 +++++++++++++++++++++++++++++++++++
+>>>>>    kernel/irq/internals.h |  1 +
+>>>>>    kernel/irq/manage.c    | 31 ++++++++++++++++++++++++++++++-
+>>>>>    4 files changed, 70 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/include/linux/irq.h b/include/linux/irq.h
+>>>>> index 4d758a7c604a..6c92a847394d 100644
+>>>>> --- a/include/linux/irq.h
+>>>>> +++ b/include/linux/irq.h
+>>>>> @@ -315,6 +315,7 @@ static inline irq_hw_number_t irqd_to_hwirq(struct irq_data *d)
+>>>>>    /**
+>>>>>     * struct irq_chip - hardware interrupt chip descriptor
+>>>>>     *
+>>>>> + * @parent_device:	pointer to parent device for irqchip
+>>>>>     * @name:		name for /proc/interrupts
+>>>>>     * @irq_startup:	start up the interrupt (defaults to ->enable if NULL)
+>>>>>     * @irq_shutdown:	shut down the interrupt (defaults to ->disable if NULL)
+>>>>> @@ -354,6 +355,7 @@ static inline irq_hw_number_t irqd_to_hwirq(struct irq_data *d)
+>>>>>     * @flags:		chip specific flags
+>>>>>     */
+>>>>>    struct irq_chip {
+>>>>> +	struct device	*parent_device;
+>>>>>    	const char	*name;
+>>>>>    	unsigned int	(*irq_startup)(struct irq_data *data);
+>>>>>    	void		(*irq_shutdown)(struct irq_data *data);
+>>>>> @@ -488,6 +490,8 @@ extern void handle_bad_irq(struct irq_desc *desc);
+>>>>>    extern void handle_nested_irq(unsigned int irq);
+>>>>>    
+>>>>>    extern int irq_chip_compose_msi_msg(struct irq_data *data, struct msi_msg *msg);
+>>>>> +extern int irq_chip_pm_get(struct irq_data *data);
+>>>>> +extern int irq_chip_pm_put(struct irq_data *data);
+>>>>>    #ifdef	CONFIG_IRQ_DOMAIN_HIERARCHY
+>>>>>    extern void irq_chip_enable_parent(struct irq_data *data);
+>>>>>    extern void irq_chip_disable_parent(struct irq_data *data);
+>>>>> diff --git a/kernel/irq/chip.c b/kernel/irq/chip.c
+>>>>> index 2f9f2b0e79f2..b09226e895c7 100644
+>>>>> --- a/kernel/irq/chip.c
+>>>>> +++ b/kernel/irq/chip.c
+>>>>> @@ -1093,3 +1093,38 @@ int irq_chip_compose_msi_msg(struct irq_data *data, struct msi_msg *msg)
+>>>>>    
+>>>>>    	return 0;
+>>>>>    }
+>>>>> +
+>>>>> +/**
+>>>>> + * irq_chip_pm_get - Enable power for an IRQ chip
+>>>>> + * @data:	Pointer to interrupt specific data
+>>>>> + *
+>>>>> + * Enable the power to the IRQ chip referenced by the interrupt data
+>>>>> + * structure.
+>>>>> + */
+>>>>> +int irq_chip_pm_get(struct irq_data *data)
+>>>>> +{
+>>>>> +	int retval = 0;
+>>>>> +
+>>>>> +	if (IS_ENABLED(CONFIG_PM) && data->chip->parent_device)
+>>>>> +		retval = pm_runtime_get_sync(data->chip->parent_device);
+>>>>
+>>>> Sry, for the late comment - above require pm_runtime_put_noidle(data->chip->parent_device);
+>>>> in case of failure.
+>>>
+>>> No problem. Sorry, can you elaborate? I am not familiar with the
+>>> _put_noidle().
+>>>
+>> 
+>> Question here in use counter - pm_runtime_get_sync() will increment usage_count
+>> always and it will not decrement it in case of failure.
+>> pm_runtime_put_noidle() expected to restore usage_count state (-1).
+>
+> Thanks was not aware of that. 
+>
+> Kevin, Marc, given that you have reviewed this one, are you ok with the
+> above change Grygorii is proposing? 
 
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 323 ++++++++++++++++++++++++++
- 1 file changed, 323 insertions(+)
+Yes, that's the right thing to do on error.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-index 4d89f4e02d98..b2d16b7c6809 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-@@ -1,6 +1,7 @@
- /dts-v1/;
- 
- #include <dt-bindings/input/input.h>
-+#include <dt-bindings/mfd/max77620.h>
- #include <dt-bindings/pinctrl/pinctrl-tegra.h>
- 
- #include "tegra210.dtsi"
-@@ -1327,6 +1328,242 @@
- 		};
- 	};
- 
-+	i2c@7000d000 {
-+		status = "okay";
-+		clock-frequency = <1000000>;
-+
-+		max77620: max77620@3c {
-+			compatible = "maxim,max77620";
-+			reg = <0x3c>;
-+			interrupts = <0 86 IRQ_TYPE_NONE>;
-+
-+			#interrupt-cells = <2>;
-+			interrupt-controller;
-+
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&max77620_default>;
-+
-+			max77620_default: pinmux@0 {
-+				pin_gpio {
-+					pins = "gpio0", "gpio1", "gpio2", "gpio7";
-+					function = "gpio";
-+				};
-+
-+				/*
-+				 * GPIO3 is used to en_pp3300, and it is part of power
-+				 * sequence, So it must be sequenced up (automatically
-+				 * set by OTP) and down properly.
-+				 */
-+				pin_gpio3 {
-+					pins = "gpio3";
-+					function = "fps-out";
-+					drive-open-drain = <1>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
-+					maxim,active-fps-power-up-slot = <4>;
-+					maxim,active-fps-power-down-slot = <2>;
-+				};
-+
-+				pin_gpio5_6 {
-+					pins = "gpio5", "gpio6";
-+					function = "gpio";
-+					drive-push-pull = <1>;
-+				};
-+
-+				pin_32k {
-+					pins = "gpio4";
-+					function = "32k-out1";
-+				};
-+			};
-+
-+			fps {
-+				fps0 {
-+					maxim,shutdown-fps-time-period-us = <5120>;
-+					maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN0>;
-+				};
-+
-+				fps1 {
-+					maxim,shutdown-fps-time-period-us = <5120>;
-+					maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN1>;
-+					maxim,enable-sleep;
-+				};
-+
-+				fps2 {
-+					maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN0>;
-+				};
-+			};
-+
-+			regulators {
-+				in-ldo0-1-supply = <&pp1350>;
-+				in-ldo2-supply = <&pp3300>;
-+				in-ldo3-5-supply = <&pp3300>;
-+				in-ldo7-8-supply = <&pp1350>;
-+
-+				ppvar_soc: sd0 {
-+					regulator-name = "PPVAR_SOC";
-+					regulator-min-microvolt = <825000>;
-+					regulator-max-microvolt = <1125000>;
-+					regulator-enable-ramp-delay = <146>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+					maxim,ramp-rate-setting = <27500>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
-+					maxim,active-fps-power-up-slot = <1>;
-+					maxim,active-fps-power-down-slot = <7>;
-+				};
-+
-+				pp1100_sd1: sd1 {
-+					regulator-name = "PP1100";
-+					regulator-min-microvolt = <1125000>;
-+					regulator-max-microvolt = <1125000>;
-+					regulator-enable-ramp-delay = <130>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+					maxim,ramp-rate-setting = <27500>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
-+					maxim,active-fps-power-up-slot = <5>;
-+					maxim,active-fps-power-down-slot = <1>;
-+				};
-+
-+				pp1350: sd2 {
-+					regulator-name = "PP1350";
-+					regulator-min-microvolt = <1350000>;
-+					regulator-max-microvolt = <1350000>;
-+					regulator-enable-ramp-delay = <176>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+					maxim,ramp-rate-setting = <27500>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+					maxim,active-fps-power-up-slot = <2>;
-+					maxim,active-fps-power-down-slot = <5>;
-+				};
-+
-+				pp1800: sd3 {
-+					regulator-name = "PP1800";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-enable-ramp-delay = <242>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+					maxim,ramp-rate-setting = <27500>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
-+					maxim,active-fps-power-up-slot = <3>;
-+					maxim,active-fps-power-down-slot = <3>;
-+				};
-+
-+				pp1200_avdd: ldo0 {
-+					regulator-name = "PP1200_AVDD";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+					regulator-enable-ramp-delay = <26>;
-+					regulator-boot-on;
-+					maxim,ramp-rate-setting = <100000>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+					maxim,active-fps-power-up-slot = <0>;
-+					maxim,active-fps-power-down-slot = <7>;
-+				};
-+
-+				pp1200_rcam: ldo1 {
-+					regulator-name = "PP1200_RCAM";
-+					regulator-min-microvolt = <1200000>;
-+					regulator-max-microvolt = <1200000>;
-+					regulator-enable-ramp-delay = <22>;
-+					maxim,ramp-rate-setting = <100000>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+					maxim,active-fps-power-up-slot = <0>;
-+					maxim,active-fps-power-down-slot = <7>;
-+				};
-+
-+				pp_ldo2: ldo2 {
-+					regulator-name = "PP_LDO2";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-enable-ramp-delay = <62>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+					maxim,ramp-rate-setting = <100000>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+					maxim,active-fps-power-up-slot = <0>;
-+					maxim,active-fps-power-down-slot = <7>;
-+				};
-+
-+				pp2800l_rcam: ldo3 {
-+					regulator-name = "PP2800L_RCAM";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+					regulator-enable-ramp-delay = <50>;
-+					maxim,ramp-rate-setting = <100000>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+					maxim,active-fps-power-up-slot = <0>;
-+					maxim,active-fps-power-down-slot = <7>;
-+				};
-+
-+				pp100_soc_rtc: ldo4 {
-+					regulator-name = "PP1100_SOC_RTC";
-+					regulator-min-microvolt = <850000>;
-+					regulator-max-microvolt = <850000>;
-+					regulator-enable-ramp-delay = <22>;
-+					regulator-always-on; /* Check this */
-+					regulator-boot-on;
-+					maxim,ramp-rate-setting = <100000>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
-+					maxim,active-fps-power-up-slot = <1>;
-+					maxim,active-fps-power-down-slot = <7>;
-+				};
-+
-+				pp2800l_fcam: ldo5 {
-+					regulator-name = "PP2800L_FCAM";
-+					regulator-min-microvolt = <2800000>;
-+					regulator-max-microvolt = <2800000>;
-+					regulator-enable-ramp-delay = <62>;
-+					maxim,ramp-rate-setting = <100000>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+					maxim,active-fps-power-up-slot = <0>;
-+					maxim,active-fps-power-down-slot = <7>;
-+				};
-+
-+				ldo6 {
-+					/* Unused. */
-+					regulator-name = "PP_LDO6";
-+					regulator-min-microvolt = <1800000>;
-+					regulator-max-microvolt = <1800000>;
-+					regulator-enable-ramp-delay = <36>;
-+					maxim,ramp-rate-setting = <100000>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+					maxim,active-fps-power-up-slot = <0>;
-+					maxim,active-fps-power-down-slot = <7>;
-+				};
-+
-+				pp1050_avdd: ldo7 {
-+					regulator-name = "PP1050_AVDD";
-+					regulator-min-microvolt = <1050000>;
-+					regulator-max-microvolt = <1050000>;
-+					regulator-enable-ramp-delay = <24>;
-+					regulator-always-on;
-+					regulator-boot-on;
-+					maxim,ramp-rate-setting = <100000>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
-+					maxim,active-fps-power-up-slot = <3>;
-+					maxim,active-fps-power-down-slot = <4>;
-+				};
-+
-+				avddio_1v05: ldo8 {
-+					regulator-name = "AVDDIO_1V05";
-+					regulator-min-microvolt = <1050000>;
-+					regulator-max-microvolt = <1050000>;
-+					regulator-enable-ramp-delay = <22>;
-+					regulator-boot-on;
-+					maxim,ramp-rate-setting = <100000>;
-+					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
-+					maxim,active-fps-power-up-slot = <0>;
-+					maxim,active-fps-power-down-slot = <7>;
-+				};
-+			};
-+		};
-+	};
-+
- 	pmc@7000e400 {
- 		nvidia,invert-interrupt;
- 		nvidia,suspend-mode = <0>;
-@@ -1421,4 +1658,90 @@
- 		compatible = "arm,psci-1.0";
- 		method = "smc";
- 	};
-+
-+	regulators {
-+		compatible = "simple-bus";
-+		device_type = "fixed-regulators";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ppvar_sys: regulator@0 {
-+			compatible = "regulator-fixed";
-+			reg = <0>;
-+			regulator-name = "PPVAR_SYS";
-+			regulator-min-microvolt = <4400000>;
-+			regulator-max-microvolt = <4400000>;
-+			regulator-always-on;
-+		};
-+
-+		pplcd_vdd: regulator@1 {
-+			compatible = "regulator-fixed";
-+			reg = <1>;
-+			regulator-name = "PPLCD_VDD";
-+			regulator-min-microvolt = <4400000>;
-+			regulator-max-microvolt = <4400000>;
-+			gpio = <&gpio TEGRA_GPIO(V, 4) 0>;
-+			enable-active-high;
-+			regulator-boot-on;
-+		};
-+
-+		pp3000_always: regulator@2 {
-+			compatible = "regulator-fixed";
-+			reg = <2>;
-+			regulator-name = "PP3000_ALWAYS";
-+			regulator-min-microvolt = <3000000>;
-+			regulator-max-microvolt = <3000000>;
-+			regulator-always-on;
-+		};
-+
-+		pp3300: regulator@3 {
-+			compatible = "regulator-fixed";
-+			reg = <3>;
-+			regulator-name = "PP3300";
-+			regulator-min-microvolt = <3300000>;
-+			regulator-max-microvolt = <3300000>;
-+			regulator-boot-on;
-+			regulator-always-on;
-+			gpio = <&max77620 3 0>;
-+			enable-active-high;
-+		};
-+
-+		pp5000: regulator@4 {
-+			compatible = "regulator-fixed";
-+			reg = <4>;
-+			regulator-name = "PP5000";
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+			regulator-always-on;
-+		};
-+
-+		pp1800_lcdio: regulator@5 {
-+			compatible = "regulator-fixed";
-+			reg = <5>;
-+			regulator-name = "PP1800_LCDIO";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			gpio = <&gpio TEGRA_GPIO(V, 3) 0>;
-+			enable-active-high;
-+			regulator-boot-on;
-+		};
-+
-+		pp1800_cam: regulator@6 {
-+			compatible = "regulator-fixed";
-+			reg= <6>;
-+			regulator-name = "PP1800_CAM";
-+			regulator-min-microvolt = <1800000>;
-+			regulator-max-microvolt = <1800000>;
-+			gpio = <&gpio TEGRA_GPIO(K, 3) 0>;
-+			enable-active-high;
-+		};
-+
-+		usbc_vbus: regulator@7 {
-+			compatible = "regulator-fixed";
-+			reg = <7>;
-+			regulator-name = "USBC_VBUS";
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+		};
-+	};
- };
--- 
-1.9.1
+Kevin
