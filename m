@@ -1,178 +1,143 @@
 From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v2 06/20] drm: i915: Rely on the default ->best_encoder()
- behavior where appropriate
-Date: Fri, 10 Jun 2016 17:24:12 +0200
-Message-ID: <20160610152412.GL3363@phenom.ffwll.local>
+Subject: Re: [PATCH v2 00/20] drm/atomic: Provide default
+ ->best_encoder() behavior
+Date: Fri, 10 Jun 2016 17:25:58 +0200
+Message-ID: <20160610152558.GM3363@phenom.ffwll.local>
 References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
- <1465300095-16971-7-git-send-email-boris.brezillon@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <intel-gfx-bounces@lists.freedesktop.org>
 Content-Disposition: inline
-In-Reply-To: <1465300095-16971-7-git-send-email-boris.brezillon@free-electrons.com>
-Sender: linux-arm-msm-owner@vger.kernel.org
+In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
+List-Post: <mailto:intel-gfx@lists.freedesktop.org>
+List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
+ <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: intel-gfx-bounces@lists.freedesktop.org
+Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
 To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Jani Nikula <jani.nikula@linux.intel.com>, Alexey Brodkin <abrodkin@synopsys.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@freescale.com>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mark Yao <mark.yao@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Benjamin
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Daniel Vetter <daniel.vetter@intel.com>, Alexandre Courbot <gnurou@gmail.com>, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Alexey Brodkin <abrodkin@synopsys.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, linux-tegra@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, linux-mediatek@lists.infradead.org, Stefan
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jun 07, 2016 at 01:48:01PM +0200, Boris Brezillon wrote:
-> For all outputs except dp_mst, we have a 1:1 relationship between
-> connectors and encoders and the driver is relying on the atomic helpers:
-> we can drop the custom ->best_encoder() implementation and let the core
-> call drm_atomic_helper_best_encoder() for us.
-> 
-> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
-
-You can also drop the best_encoder from intel_dp_mst, we only need the
-atomic_best_encoder. The best_encoder there was needed to help out the
-fbdev emulation. Care to respin?
--Daniel
-
-> ---
->  drivers/gpu/drm/i915/intel_crt.c     | 1 -
->  drivers/gpu/drm/i915/intel_display.c | 8 --------
->  drivers/gpu/drm/i915/intel_dp.c      | 1 -
->  drivers/gpu/drm/i915/intel_drv.h     | 1 -
->  drivers/gpu/drm/i915/intel_dsi.c     | 1 -
->  drivers/gpu/drm/i915/intel_dvo.c     | 1 -
->  drivers/gpu/drm/i915/intel_hdmi.c    | 1 -
->  drivers/gpu/drm/i915/intel_lvds.c    | 1 -
->  drivers/gpu/drm/i915/intel_sdvo.c    | 1 -
->  drivers/gpu/drm/i915/intel_tv.c      | 1 -
->  10 files changed, 17 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/i915/intel_crt.c b/drivers/gpu/drm/i915/intel_crt.c
-> index 3fbb6fc..bd0cd68 100644
-> --- a/drivers/gpu/drm/i915/intel_crt.c
-> +++ b/drivers/gpu/drm/i915/intel_crt.c
-> @@ -753,7 +753,6 @@ static const struct drm_connector_funcs intel_crt_connector_funcs = {
->  static const struct drm_connector_helper_funcs intel_crt_connector_helper_funcs = {
->  	.mode_valid = intel_crt_mode_valid,
->  	.get_modes = intel_crt_get_modes,
-> -	.best_encoder = intel_best_encoder,
->  };
->  
->  static const struct drm_encoder_funcs intel_crt_enc_funcs = {
-> diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
-> index 2113f40..77026ce 100644
-> --- a/drivers/gpu/drm/i915/intel_display.c
-> +++ b/drivers/gpu/drm/i915/intel_display.c
-> @@ -16113,14 +16113,6 @@ void intel_modeset_cleanup(struct drm_device *dev)
->  	intel_teardown_gmbus(dev);
->  }
->  
-> -/*
-> - * Return which encoder is currently attached for connector.
-> - */
-> -struct drm_encoder *intel_best_encoder(struct drm_connector *connector)
-> -{
-> -	return &intel_attached_encoder(connector)->base;
-> -}
-> -
->  void intel_connector_attach_encoder(struct intel_connector *connector,
->  				    struct intel_encoder *encoder)
->  {
-> diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
-> index f192f58..21b2833 100644
-> --- a/drivers/gpu/drm/i915/intel_dp.c
-> +++ b/drivers/gpu/drm/i915/intel_dp.c
-> @@ -4935,7 +4935,6 @@ static const struct drm_connector_funcs intel_dp_connector_funcs = {
->  static const struct drm_connector_helper_funcs intel_dp_connector_helper_funcs = {
->  	.get_modes = intel_dp_get_modes,
->  	.mode_valid = intel_dp_mode_valid,
-> -	.best_encoder = intel_best_encoder,
->  };
->  
->  static const struct drm_encoder_funcs intel_dp_enc_funcs = {
-> diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
-> index a28b4aa..79a4d6b 100644
-> --- a/drivers/gpu/drm/i915/intel_drv.h
-> +++ b/drivers/gpu/drm/i915/intel_drv.h
-> @@ -1128,7 +1128,6 @@ struct intel_connector *intel_connector_alloc(void);
->  bool intel_connector_get_hw_state(struct intel_connector *connector);
->  void intel_connector_attach_encoder(struct intel_connector *connector,
->  				    struct intel_encoder *encoder);
-> -struct drm_encoder *intel_best_encoder(struct drm_connector *connector);
->  struct drm_display_mode *intel_crtc_mode_get(struct drm_device *dev,
->  					     struct drm_crtc *crtc);
->  enum pipe intel_get_pipe_from_connector(struct intel_connector *connector);
-> diff --git a/drivers/gpu/drm/i915/intel_dsi.c b/drivers/gpu/drm/i915/intel_dsi.c
-> index 366ad6c..ec51952 100644
-> --- a/drivers/gpu/drm/i915/intel_dsi.c
-> +++ b/drivers/gpu/drm/i915/intel_dsi.c
-> @@ -1378,7 +1378,6 @@ static const struct drm_encoder_funcs intel_dsi_funcs = {
->  static const struct drm_connector_helper_funcs intel_dsi_connector_helper_funcs = {
->  	.get_modes = intel_dsi_get_modes,
->  	.mode_valid = intel_dsi_mode_valid,
-> -	.best_encoder = intel_best_encoder,
->  };
->  
->  static const struct drm_connector_funcs intel_dsi_connector_funcs = {
-> diff --git a/drivers/gpu/drm/i915/intel_dvo.c b/drivers/gpu/drm/i915/intel_dvo.c
-> index 286baec..34b7e3f 100644
-> --- a/drivers/gpu/drm/i915/intel_dvo.c
-> +++ b/drivers/gpu/drm/i915/intel_dvo.c
-> @@ -351,7 +351,6 @@ static const struct drm_connector_funcs intel_dvo_connector_funcs = {
->  static const struct drm_connector_helper_funcs intel_dvo_connector_helper_funcs = {
->  	.mode_valid = intel_dvo_mode_valid,
->  	.get_modes = intel_dvo_get_modes,
-> -	.best_encoder = intel_best_encoder,
->  };
->  
->  static void intel_dvo_enc_destroy(struct drm_encoder *encoder)
-> diff --git a/drivers/gpu/drm/i915/intel_hdmi.c b/drivers/gpu/drm/i915/intel_hdmi.c
-> index 2c3bd9c..aef4bc8 100644
-> --- a/drivers/gpu/drm/i915/intel_hdmi.c
-> +++ b/drivers/gpu/drm/i915/intel_hdmi.c
-> @@ -2114,7 +2114,6 @@ static const struct drm_connector_funcs intel_hdmi_connector_funcs = {
->  static const struct drm_connector_helper_funcs intel_hdmi_connector_helper_funcs = {
->  	.get_modes = intel_hdmi_get_modes,
->  	.mode_valid = intel_hdmi_mode_valid,
-> -	.best_encoder = intel_best_encoder,
->  };
->  
->  static const struct drm_encoder_funcs intel_hdmi_enc_funcs = {
-> diff --git a/drivers/gpu/drm/i915/intel_lvds.c b/drivers/gpu/drm/i915/intel_lvds.c
-> index bc53c0d..d4faa5a 100644
-> --- a/drivers/gpu/drm/i915/intel_lvds.c
-> +++ b/drivers/gpu/drm/i915/intel_lvds.c
-> @@ -547,7 +547,6 @@ static int intel_lvds_set_property(struct drm_connector *connector,
->  static const struct drm_connector_helper_funcs intel_lvds_connector_helper_funcs = {
->  	.get_modes = intel_lvds_get_modes,
->  	.mode_valid = intel_lvds_mode_valid,
-> -	.best_encoder = intel_best_encoder,
->  };
->  
->  static const struct drm_connector_funcs intel_lvds_connector_funcs = {
-> diff --git a/drivers/gpu/drm/i915/intel_sdvo.c b/drivers/gpu/drm/i915/intel_sdvo.c
-> index 2128fae..5cd48ff 100644
-> --- a/drivers/gpu/drm/i915/intel_sdvo.c
-> +++ b/drivers/gpu/drm/i915/intel_sdvo.c
-> @@ -2191,7 +2191,6 @@ static const struct drm_connector_funcs intel_sdvo_connector_funcs = {
->  static const struct drm_connector_helper_funcs intel_sdvo_connector_helper_funcs = {
->  	.get_modes = intel_sdvo_get_modes,
->  	.mode_valid = intel_sdvo_mode_valid,
-> -	.best_encoder = intel_best_encoder,
->  };
->  
->  static void intel_sdvo_enc_destroy(struct drm_encoder *encoder)
-> diff --git a/drivers/gpu/drm/i915/intel_tv.c b/drivers/gpu/drm/i915/intel_tv.c
-> index 223129d..47fe241 100644
-> --- a/drivers/gpu/drm/i915/intel_tv.c
-> +++ b/drivers/gpu/drm/i915/intel_tv.c
-> @@ -1512,7 +1512,6 @@ static const struct drm_connector_funcs intel_tv_connector_funcs = {
->  static const struct drm_connector_helper_funcs intel_tv_connector_helper_funcs = {
->  	.mode_valid = intel_tv_mode_valid,
->  	.get_modes = intel_tv_get_modes,
-> -	.best_encoder = intel_best_encoder,
->  };
->  
->  static const struct drm_encoder_funcs intel_tv_enc_funcs = {
-> -- 
-> 2.7.4
-> 
-
--- 
-Daniel Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+T24gVHVlLCBKdW4gMDcsIDIwMTYgYXQgMDE6NDc6NTVQTSArMDIwMCwgQm9yaXMgQnJlemlsbG9u
+IHdyb3RlOgo+IEhlbGxvLAo+IAo+IFRoaXMgcGF0Y2ggc2VyaWVzIGFpbXMgYXQgcmVwbGFjaW5n
+IGFsbCBkdW1teSAtPmJlc3RfZW5jb2RlcigpCj4gaW1wbGVtZW50YXRpb25zIHdoZXJlIHdlIGhh
+dmUgYSAxOjEgcmVsYXRpb25zaGlwIGJldHdlZW4gZW5jb2RlcnMKPiBhbmQgY29ubmVjdG9ycy4K
+PiBUaGUgY29yZSBhbHJlYWR5IHByb3ZpZGVzIHRoZSBkcm1fYXRvbWljX2hlbHBlcl9iZXN0X2Vu
+Y29kZXIoKQo+IGZ1bmN0aW9uIHdoaWNoIGlzIHRha2luZyB0aGUgZmlyc3QgZW5jb2RlciBhdHRh
+Y2hlZCB0byB0aGUKPiBjb25uZWN0b3IgKGFmdGVyIG1ha2luZyBzdXJlIG9ubHkgb25lIGVuY29k
+ZXIgd2FzIGF0dGFjaGVkIHRvIHRoZQo+IGNvbm5lY3RvciksIGJ1dCBpdCdzIG5vdCBhdXRvbWF0
+aWNhbGx5IHVzZWQsIGFuZCBkcml2ZXJzIHdhbnRpbmcKPiB0byByZWx5IG9uIHRoaXMgZGVmYXVs
+dCBiZWhhdmlvciBoYXZlIHRvIGV4cGxpY2l0bHkgYXNzaWduIHRoZWlyCj4gLT5iZXN0X2VuY29k
+ZXIoKSBob29rIHRvIGRybV9hdG9taWNfaGVscGVyX2Jlc3RfZW5jb2RlcigpLgo+IAo+IFRoZSBm
+aXJzdCBwYXRjaCBmaXhlcyByZW1haW5pbmcgcGxhY2VzIHdoZXJlCj4gZHJtX2F0b21pY19oZWxw
+ZXJfYmVzdF9lbmNvZGVyKCkgc2hvdWxkIGJlIGNhbGxlZCB3aGVuIC0+YmVzdF9lbmNvZGVyKCkK
+PiBpcyBOVUxMLCBzbyB0aGF0IGRyaXZlcnMgdXNpbmcgdGhlIGF0b21pYyBoZWxwZXJzIGNhbiBn
+ZXQgcmlkIG9mIHRoZQo+IGV4cGxpY2l0IC0+YmVzdF9lbmNvZGVyIGFzc2lnbm1lbnQgaWYgdGhl
+eSBuZWVkIHRvIHJlbHkgb24gdGhlIGRlZmF1bHQKPiBkcm1fYXRvbWljX2hlbHBlcl9iZXN0X2Vu
+Y29kZXIoKSBpbXBsZW1lbnRhdGlvbi4KPiAKPiBUaGUgZm9sbG93aW5nIHBhdGNoZXMgYXJlIGtp
+bGxpbmcgYWxsIG9wZW4gY29kZWQgLT5iZXN0X2VuY29kZXIoKQo+IGltcGxlbWVudGF0aW9ucyB0
+aGF0IGNvdWxkIGJlIHJlcGxhY2VkIGJ5Cj4gZHJtX2F0b21pY19oZWxwZXJfYmVzdF9lbmNvZGVy
+KCkuCj4gCj4gQWxsIG1vZGlmaWNhdGlvbnMgaGF2ZSBiZWVuIGNvbXBpbGUgdGVzdGVkIGV4Y2Vw
+dCBmb3IgdGhlIGNoYW5nZWQgb24KPiB0aGUgaW50ZWwgZHJpdmVyLgo+IEkndmUgYWxzbyB0ZXN0
+ZWQgb24gYW4gYXRtZWwgYm9hcmQsIGJ1dCBJIHJlY29tbWVuZCB3YWl0aW5nIGZvciBEUk0KPiBk
+cml2ZXIgbWFpbnRhaW5lcnMgZmVlZGJhY2sgYmVmb3JlIGFwcGx5aW5nIHRoZSBhc3NvY2lhdGVk
+IGNoYW5nZXMuCj4gCj4gTm90ZSB0aGF0IG9uY2UgcGF0Y2ggMSBpcyBhcHBsaWVkLCB0aGUgb3Ro
+ZXIgcGF0Y2hlcyBjYW4gYmUgYXBwbGllZAo+IGluZGVwZW5kZW50bHkuCgpPbmUgY29tbWVudCBv
+biB0aGUgaTkxNSBwYXRjaCwgYWxsIG90aGVycyBzaG91bGQgbm93IGJlIGluIGRybS1taXNjLgpU
+aGFua3MgYSBsb3QgZm9yIGRvaW5nIHRoaXMuCi1EYW5pZWwKCj4gCj4gQmVzdCBSZWdhcmRzLAo+
+IAo+IEJvcmlzCj4gCj4gQ2hhbmdlcyBzaW5jZSB2MToKPiAtIHJlbW92ZSB1c2VsZXNzIC0+ZW5j
+b2RlciBiYWNrcG9pbnRlcnMgaW4gc29tZSBpbXBsZW1lbnRhdGlvbnMKPiAtIGRvY3VtZW50ZWQg
+dGhlIGRlZmF1bHQgYmVoYXZpb3IgaW4gdGhlIHZ0YWJsZSBkb2MKPiAtIGFkZGVkIFItYi9BLWIg
+dGFncwo+IAo+IEJvcmlzIEJyZXppbGxvbiAoMjApOgo+ICAgZHJtL2F0b21pYzogRml4IHJlbWFp
+bmluZyBwbGFjZXMgd2hlcmUgIWZ1bmNzLT5iZXN0X2VuY29kZXIgaXMgdmFsaWQKPiAgIGRybTog
+YXJjOiBSZWx5IG9uIHRoZSBkZWZhdWx0IC0+YmVzdF9lbmNvZGVyKCkgYmVoYXZpb3IKPiAgIGRy
+bTogYXRtZWwtaGxjZGM6IFJlbHkgb24gdGhlIGRlZmF1bHQgLT5iZXN0X2VuY29kZXIoKSBiZWhh
+dmlvcgo+ICAgZHJtOiBleHlub3M6IFJlbHkgb24gdGhlIGRlZmF1bHQgLT5iZXN0X2VuY29kZXIo
+KSBiZWhhdmlvcgo+ICAgZHJtOiBmc2wtZGN1OiBSZWx5IG9uIHRoZSBkZWZhdWx0IC0+YmVzdF9l
+bmNvZGVyKCkgYmVoYXZpb3IKPiAgIGRybTogaTkxNTogUmVseSBvbiB0aGUgZGVmYXVsdCAtPmJl
+c3RfZW5jb2RlcigpIGJlaGF2aW9yIHdoZXJlCj4gICAgIGFwcHJvcHJpYXRlCj4gICBkcm06IG1l
+ZGlhdGVrOiBSZWx5IG9uIHRoZSBkZWZhdWx0IC0+YmVzdF9lbmNvZGVyKCkgYmVoYXZpb3IKPiAg
+IGRybTogbXNtOiBSZWx5IG9uIHRoZSBkZWZhdWx0IC0+YmVzdF9lbmNvZGVyKCkgYmVoYXZpb3Ig
+d2hlcmUKPiAgICAgYXBwcm9wcmlhdGUKPiAgIGRybTogcmNhci1kdTogUmVseSBvbiB0aGUgZGVm
+YXVsdCAtPmJlc3RfZW5jb2RlcigpIGJlaGF2aW9yCj4gICBkcm06IHJvY2tjaGlwOiBSZWx5IG9u
+IHRoZSBkZWZhdWx0IC0+YmVzdF9lbmNvZGVyKCkgYmVoYXZpb3IKPiAgIGRybTogc3RpOiBSZWx5
+IG9uIHRoZSBkZWZhdWx0IC0+YmVzdF9lbmNvZGVyKCkgYmVoYXZpb3IKPiAgIGRybTogc3VuNGk6
+IFJlbHkgb24gdGhlIGRlZmF1bHQgLT5iZXN0X2VuY29kZXIoKSBiZWhhdmlvcgo+ICAgZHJtOiB0
+ZWdyYTogUmVseSBvbiB0aGUgZGVmYXVsdCAtPmJlc3RfZW5jb2RlcigpIGJlaGF2aW9yCj4gICBk
+cm06IHZjNDogUmVseSBvbiB0aGUgZGVmYXVsdCAtPmJlc3RfZW5jb2RlcigpIGJlaGF2aW9yCj4g
+ICBkcm06IHZpcnRncHU6IFJlbHkgb24gdGhlIGRlZmF1bHQgLT5iZXN0X2VuY29kZXIoKSBiZWhh
+dmlvcgo+ICAgZHJtOiBvbWFwOiBSZWx5IG9uIHRoZSBkZWZhdWx0IC0+YmVzdF9lbmNvZGVyKCkg
+YmVoYXZpb3IKPiAgIGRybS9icmlkZ2U6IGFueDc4eHg6IFJlbHkgb24gdGhlIGRlZmF1bHQgLT5i
+ZXN0X2VuY29kZXIoKSBiZWhhdmlvcgo+ICAgZHJtL2JyaWRnZTogcHRuMzQ2MDogUmVseSBvbiB0
+aGUgZGVmYXVsdCAtPmJlc3RfZW5jb2RlcigpIGJlaGF2aW9yCj4gICBkcm0vYnJpZGdlOiBwczg2
+MjI6IFJlbHkgb24gdGhlIGRlZmF1bHQgLT5iZXN0X2VuY29kZXIoKSBiZWhhdmlvcgo+ICAgZHJt
+L2JyaWRnZTogZHctaGRtaTogVXNlIGRybV9hdG9taWNfaGVscGVyX2Jlc3RfZW5jb2RlcigpCj4g
+Cj4gIGRyaXZlcnMvZ3B1L2RybS9hcmMvYXJjcGd1X2hkbWkuYyAgICAgICAgICAgICAgICAgIHwg
+MTggLS0tLS0tLS0tLS0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9hdG1lbC1obGNkYy9hdG1l
+bF9obGNkY19vdXRwdXQuYyAgIHwgMTIgLS0tLS0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9i
+cmlkZ2UvYW5hbG9naXgtYW54Nzh4eC5jICAgICAgICAgIHwgIDggLS0tLS0tLS0KPiAgZHJpdmVy
+cy9ncHUvZHJtL2JyaWRnZS9kdy1oZG1pLmMgICAgICAgICAgICAgICAgICAgfCAxMSArLS0tLS0t
+LS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL254cC1wdG4zNDYwLmMgICAgICAgICAgICAg
+ICB8ICA4IC0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvcGFyYWRlLXBzODYyMi5j
+ICAgICAgICAgICAgIHwgMTAgLS0tLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21p
+Y19oZWxwZXIuYyAgICAgICAgICAgICAgICB8ICA0ICsrKy0KPiAgZHJpdmVycy9ncHUvZHJtL2Ry
+bV9mYl9oZWxwZXIuYyAgICAgICAgICAgICAgICAgICAgfCAxMyArKysrKysrKysrKystCj4gIGRy
+aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcGkuYyAgICAgICAgICAgIHwgIDkgLS0t
+LS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYyAgICAgICAg
+ICAgIHwgIDkgLS0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92
+aWRpLmMgICAgICAgICAgIHwgIDggLS0tLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
+eHlub3NfaGRtaS5jICAgICAgICAgICAgICAgfCAgOCAtLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9k
+cm0vZnNsLWRjdS9mc2xfZGN1X2RybV9yZ2IuYyAgICAgICAgICB8ICA5IC0tLS0tLS0tLQo+ICBk
+cml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9jcnQuYyAgICAgICAgICAgICAgICAgICB8ICAxIC0K
+PiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfZGlzcGxheS5jICAgICAgICAgICAgICAgfCAg
+OCAtLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9kcC5jICAgICAgICAgICAg
+ICAgICAgICB8ICAxIC0KPiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfZHJ2LmggICAgICAg
+ICAgICAgICAgICAgfCAgMSAtCj4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX2RzaS5jICAg
+ICAgICAgICAgICAgICAgIHwgIDEgLQo+ICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9kdm8u
+YyAgICAgICAgICAgICAgICAgICB8ICAxIC0KPiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxf
+aGRtaS5jICAgICAgICAgICAgICAgICAgfCAgMSAtCj4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2lu
+dGVsX2x2ZHMuYyAgICAgICAgICAgICAgICAgIHwgIDEgLQo+ICBkcml2ZXJzL2dwdS9kcm0vaTkx
+NS9pbnRlbF9zZHZvLmMgICAgICAgICAgICAgICAgICB8ICAxIC0KPiAgZHJpdmVycy9ncHUvZHJt
+L2k5MTUvaW50ZWxfdHYuYyAgICAgICAgICAgICAgICAgICAgfCAgMSAtCj4gIGRyaXZlcnMvZ3B1
+L2RybS9tZWRpYXRlay9tdGtfZHNpLmMgICAgICAgICAgICAgICAgIHwgIDkgLS0tLS0tLS0tCj4g
+IGRyaXZlcnMvZ3B1L2RybS9tc20vZWRwL2VkcF9jb25uZWN0b3IuYyAgICAgICAgICAgIHwgMTAg
+LS0tLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vbXNtL2hkbWkvaGRtaV9jb25uZWN0b3IuYyAg
+ICAgICAgICB8ICA4IC0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9tc20vbWRwL21kcDQvbWRw
+NF9sdmRzX2Nvbm5lY3Rvci5jIHwgIDkgLS0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9vbWFw
+ZHJtL29tYXBfY29ubmVjdG9yLmMgICAgICAgICAgIHwgMTAgLS0tLS0tLS0tLQo+ICBkcml2ZXJz
+L2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2VuY29kZXIuYyAgICAgICAgICB8IDEyIC0tLS0tLS0t
+LS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2VuY29kZXIuaCAgICAgICAg
+ICB8ICAzIC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2hkbWljb24uYyAg
+ICAgICAgICB8ICAxIC0KPiAgZHJpdmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9sdmRzY29u
+LmMgICAgICAgICAgfCAgMSAtCj4gIGRyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfdmdh
+Y29uLmMgICAgICAgICAgIHwgIDMgLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9kdy1t
+aXBpLWRzaS5jICAgICAgICAgICAgIHwgIDkgLS0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9y
+b2NrY2hpcC9pbm5vX2hkbWkuYyAgICAgICAgICAgICAgIHwgIDkgLS0tLS0tLS0tCj4gIGRyaXZl
+cnMvZ3B1L2RybS9zdGkvc3RpX2R2by5jICAgICAgICAgICAgICAgICAgICAgIHwgMTAgLS0tLS0t
+LS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZGEuYyAgICAgICAgICAgICAgICAgICAg
+ICB8IDEwIC0tLS0tLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRtaS5jICAgICAg
+ICAgICAgICAgICAgICAgfCAxMCAtLS0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9zdW40aS9z
+dW40aV9yZ2IuYyAgICAgICAgICAgICAgICAgIHwgMTAgLS0tLS0tLS0tLQo+ICBkcml2ZXJzL2dw
+dS9kcm0vc3VuNGkvc3VuNGlfdHYuYyAgICAgICAgICAgICAgICAgICB8ICA5IC0tLS0tLS0tLQo+
+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmggICAgICAgICAgICAgICAgICAgICAgICB8ICAy
+IC0tCj4gIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kc2kuYyAgICAgICAgICAgICAgICAgICAgICAg
+IHwgIDEgLQo+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5jICAgICAgICAgICAgICAgICAg
+ICAgICB8ICAxIC0KPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL291dHB1dC5jICAgICAgICAgICAg
+ICAgICAgICAgfCAgOCAtLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvcmdiLmMgICAg
+ICAgICAgICAgICAgICAgICAgICB8ICAxIC0KPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3Nvci5j
+ICAgICAgICAgICAgICAgICAgICAgICAgfCAgMSAtCj4gIGRyaXZlcnMvZ3B1L2RybS92YzQvdmM0
+X2RwaS5jICAgICAgICAgICAgICAgICAgICAgIHwgIDkgLS0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1
+L2RybS92YzQvdmM0X2hkbWkuYyAgICAgICAgICAgICAgICAgICAgIHwgIDkgLS0tLS0tLS0tCj4g
+IGRyaXZlcnMvZ3B1L2RybS92aXJ0aW8vdmlydGdwdV9kaXNwbGF5LmMgICAgICAgICAgIHwgMTAg
+LS0tLS0tLS0tLQo+ICBpbmNsdWRlL2RybS9kcm1fbW9kZXNldF9oZWxwZXJfdnRhYmxlcy5oICAg
+ICAgICAgICB8IDEwICsrKysrKysrLS0KPiAgNTAgZmlsZXMgY2hhbmdlZCwgMjQgaW5zZXJ0aW9u
+cygrKSwgMzA1IGRlbGV0aW9ucygtKQo+IAo+IC0tIAo+IDIuNy40Cj4gCgotLSAKRGFuaWVsIFZl
+dHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9yYXRpb24KaHR0cDovL2Jsb2cuZmZ3
+bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50
+ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBz
+Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
