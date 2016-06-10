@@ -1,143 +1,87 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH v2 00/20] drm/atomic: Provide default
- ->best_encoder() behavior
-Date: Fri, 10 Jun 2016 17:25:58 +0200
-Message-ID: <20160610152558.GM3363@phenom.ffwll.local>
-References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] irqchip/tegra: fix fix sparse warnings on __iomem
+Date: Fri, 10 Jun 2016 17:49:27 +0200
+Message-ID: <20160610154927.GR27142@ulmo.ba.sec>
+References: <1465302292-4840-1-git-send-email-ben.dooks@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <intel-gfx-bounces@lists.freedesktop.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="magLDk5D4XGaUXcd"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/intel-gfx>
-List-Post: <mailto:intel-gfx@lists.freedesktop.org>
-List-Help: <mailto:intel-gfx-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/intel-gfx>,
- <mailto:intel-gfx-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: intel-gfx-bounces@lists.freedesktop.org
-Sender: "Intel-gfx" <intel-gfx-bounces@lists.freedesktop.org>
-To: Boris Brezillon <boris.brezillon@free-electrons.com>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Heiko Stuebner <heiko@sntech.de>, David Airlie <airlied@linux.ie>, dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org, Thierry Reding <thierry.reding@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Benjamin Gaignard <benjamin.gaignard@linaro.org>, Daniel Vetter <daniel.vetter@intel.com>, Alexandre Courbot <gnurou@gmail.com>, linux-samsung-soc@vger.kernel.org, Joonyoung Shim <jy0922.shim@samsung.com>, Alexey Brodkin <abrodkin@synopsys.com>, Kyungmin Park <kyungmin.park@samsung.com>, linux-rockchip@lists.infradead.org, Chen-Yu Tsai <wens@csie.org>, Kukjin Kim <kgene@kernel.org>, linux-tegra@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, linux-arm-msm@vger.kernel.org, intel-gfx@lists.freedesktop.org, Inki Dae <inki.dae@samsung.com>, linux-mediatek@lists.infradead.org, Stefan
+In-Reply-To: <1465302292-4840-1-git-send-email-ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
+Cc: linux-kernel-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCBKdW4gMDcsIDIwMTYgYXQgMDE6NDc6NTVQTSArMDIwMCwgQm9yaXMgQnJlemlsbG9u
-IHdyb3RlOgo+IEhlbGxvLAo+IAo+IFRoaXMgcGF0Y2ggc2VyaWVzIGFpbXMgYXQgcmVwbGFjaW5n
-IGFsbCBkdW1teSAtPmJlc3RfZW5jb2RlcigpCj4gaW1wbGVtZW50YXRpb25zIHdoZXJlIHdlIGhh
-dmUgYSAxOjEgcmVsYXRpb25zaGlwIGJldHdlZW4gZW5jb2RlcnMKPiBhbmQgY29ubmVjdG9ycy4K
-PiBUaGUgY29yZSBhbHJlYWR5IHByb3ZpZGVzIHRoZSBkcm1fYXRvbWljX2hlbHBlcl9iZXN0X2Vu
-Y29kZXIoKQo+IGZ1bmN0aW9uIHdoaWNoIGlzIHRha2luZyB0aGUgZmlyc3QgZW5jb2RlciBhdHRh
-Y2hlZCB0byB0aGUKPiBjb25uZWN0b3IgKGFmdGVyIG1ha2luZyBzdXJlIG9ubHkgb25lIGVuY29k
-ZXIgd2FzIGF0dGFjaGVkIHRvIHRoZQo+IGNvbm5lY3RvciksIGJ1dCBpdCdzIG5vdCBhdXRvbWF0
-aWNhbGx5IHVzZWQsIGFuZCBkcml2ZXJzIHdhbnRpbmcKPiB0byByZWx5IG9uIHRoaXMgZGVmYXVs
-dCBiZWhhdmlvciBoYXZlIHRvIGV4cGxpY2l0bHkgYXNzaWduIHRoZWlyCj4gLT5iZXN0X2VuY29k
-ZXIoKSBob29rIHRvIGRybV9hdG9taWNfaGVscGVyX2Jlc3RfZW5jb2RlcigpLgo+IAo+IFRoZSBm
-aXJzdCBwYXRjaCBmaXhlcyByZW1haW5pbmcgcGxhY2VzIHdoZXJlCj4gZHJtX2F0b21pY19oZWxw
-ZXJfYmVzdF9lbmNvZGVyKCkgc2hvdWxkIGJlIGNhbGxlZCB3aGVuIC0+YmVzdF9lbmNvZGVyKCkK
-PiBpcyBOVUxMLCBzbyB0aGF0IGRyaXZlcnMgdXNpbmcgdGhlIGF0b21pYyBoZWxwZXJzIGNhbiBn
-ZXQgcmlkIG9mIHRoZQo+IGV4cGxpY2l0IC0+YmVzdF9lbmNvZGVyIGFzc2lnbm1lbnQgaWYgdGhl
-eSBuZWVkIHRvIHJlbHkgb24gdGhlIGRlZmF1bHQKPiBkcm1fYXRvbWljX2hlbHBlcl9iZXN0X2Vu
-Y29kZXIoKSBpbXBsZW1lbnRhdGlvbi4KPiAKPiBUaGUgZm9sbG93aW5nIHBhdGNoZXMgYXJlIGtp
-bGxpbmcgYWxsIG9wZW4gY29kZWQgLT5iZXN0X2VuY29kZXIoKQo+IGltcGxlbWVudGF0aW9ucyB0
-aGF0IGNvdWxkIGJlIHJlcGxhY2VkIGJ5Cj4gZHJtX2F0b21pY19oZWxwZXJfYmVzdF9lbmNvZGVy
-KCkuCj4gCj4gQWxsIG1vZGlmaWNhdGlvbnMgaGF2ZSBiZWVuIGNvbXBpbGUgdGVzdGVkIGV4Y2Vw
-dCBmb3IgdGhlIGNoYW5nZWQgb24KPiB0aGUgaW50ZWwgZHJpdmVyLgo+IEkndmUgYWxzbyB0ZXN0
-ZWQgb24gYW4gYXRtZWwgYm9hcmQsIGJ1dCBJIHJlY29tbWVuZCB3YWl0aW5nIGZvciBEUk0KPiBk
-cml2ZXIgbWFpbnRhaW5lcnMgZmVlZGJhY2sgYmVmb3JlIGFwcGx5aW5nIHRoZSBhc3NvY2lhdGVk
-IGNoYW5nZXMuCj4gCj4gTm90ZSB0aGF0IG9uY2UgcGF0Y2ggMSBpcyBhcHBsaWVkLCB0aGUgb3Ro
-ZXIgcGF0Y2hlcyBjYW4gYmUgYXBwbGllZAo+IGluZGVwZW5kZW50bHkuCgpPbmUgY29tbWVudCBv
-biB0aGUgaTkxNSBwYXRjaCwgYWxsIG90aGVycyBzaG91bGQgbm93IGJlIGluIGRybS1taXNjLgpU
-aGFua3MgYSBsb3QgZm9yIGRvaW5nIHRoaXMuCi1EYW5pZWwKCj4gCj4gQmVzdCBSZWdhcmRzLAo+
-IAo+IEJvcmlzCj4gCj4gQ2hhbmdlcyBzaW5jZSB2MToKPiAtIHJlbW92ZSB1c2VsZXNzIC0+ZW5j
-b2RlciBiYWNrcG9pbnRlcnMgaW4gc29tZSBpbXBsZW1lbnRhdGlvbnMKPiAtIGRvY3VtZW50ZWQg
-dGhlIGRlZmF1bHQgYmVoYXZpb3IgaW4gdGhlIHZ0YWJsZSBkb2MKPiAtIGFkZGVkIFItYi9BLWIg
-dGFncwo+IAo+IEJvcmlzIEJyZXppbGxvbiAoMjApOgo+ICAgZHJtL2F0b21pYzogRml4IHJlbWFp
-bmluZyBwbGFjZXMgd2hlcmUgIWZ1bmNzLT5iZXN0X2VuY29kZXIgaXMgdmFsaWQKPiAgIGRybTog
-YXJjOiBSZWx5IG9uIHRoZSBkZWZhdWx0IC0+YmVzdF9lbmNvZGVyKCkgYmVoYXZpb3IKPiAgIGRy
-bTogYXRtZWwtaGxjZGM6IFJlbHkgb24gdGhlIGRlZmF1bHQgLT5iZXN0X2VuY29kZXIoKSBiZWhh
-dmlvcgo+ICAgZHJtOiBleHlub3M6IFJlbHkgb24gdGhlIGRlZmF1bHQgLT5iZXN0X2VuY29kZXIo
-KSBiZWhhdmlvcgo+ICAgZHJtOiBmc2wtZGN1OiBSZWx5IG9uIHRoZSBkZWZhdWx0IC0+YmVzdF9l
-bmNvZGVyKCkgYmVoYXZpb3IKPiAgIGRybTogaTkxNTogUmVseSBvbiB0aGUgZGVmYXVsdCAtPmJl
-c3RfZW5jb2RlcigpIGJlaGF2aW9yIHdoZXJlCj4gICAgIGFwcHJvcHJpYXRlCj4gICBkcm06IG1l
-ZGlhdGVrOiBSZWx5IG9uIHRoZSBkZWZhdWx0IC0+YmVzdF9lbmNvZGVyKCkgYmVoYXZpb3IKPiAg
-IGRybTogbXNtOiBSZWx5IG9uIHRoZSBkZWZhdWx0IC0+YmVzdF9lbmNvZGVyKCkgYmVoYXZpb3Ig
-d2hlcmUKPiAgICAgYXBwcm9wcmlhdGUKPiAgIGRybTogcmNhci1kdTogUmVseSBvbiB0aGUgZGVm
-YXVsdCAtPmJlc3RfZW5jb2RlcigpIGJlaGF2aW9yCj4gICBkcm06IHJvY2tjaGlwOiBSZWx5IG9u
-IHRoZSBkZWZhdWx0IC0+YmVzdF9lbmNvZGVyKCkgYmVoYXZpb3IKPiAgIGRybTogc3RpOiBSZWx5
-IG9uIHRoZSBkZWZhdWx0IC0+YmVzdF9lbmNvZGVyKCkgYmVoYXZpb3IKPiAgIGRybTogc3VuNGk6
-IFJlbHkgb24gdGhlIGRlZmF1bHQgLT5iZXN0X2VuY29kZXIoKSBiZWhhdmlvcgo+ICAgZHJtOiB0
-ZWdyYTogUmVseSBvbiB0aGUgZGVmYXVsdCAtPmJlc3RfZW5jb2RlcigpIGJlaGF2aW9yCj4gICBk
-cm06IHZjNDogUmVseSBvbiB0aGUgZGVmYXVsdCAtPmJlc3RfZW5jb2RlcigpIGJlaGF2aW9yCj4g
-ICBkcm06IHZpcnRncHU6IFJlbHkgb24gdGhlIGRlZmF1bHQgLT5iZXN0X2VuY29kZXIoKSBiZWhh
-dmlvcgo+ICAgZHJtOiBvbWFwOiBSZWx5IG9uIHRoZSBkZWZhdWx0IC0+YmVzdF9lbmNvZGVyKCkg
-YmVoYXZpb3IKPiAgIGRybS9icmlkZ2U6IGFueDc4eHg6IFJlbHkgb24gdGhlIGRlZmF1bHQgLT5i
-ZXN0X2VuY29kZXIoKSBiZWhhdmlvcgo+ICAgZHJtL2JyaWRnZTogcHRuMzQ2MDogUmVseSBvbiB0
-aGUgZGVmYXVsdCAtPmJlc3RfZW5jb2RlcigpIGJlaGF2aW9yCj4gICBkcm0vYnJpZGdlOiBwczg2
-MjI6IFJlbHkgb24gdGhlIGRlZmF1bHQgLT5iZXN0X2VuY29kZXIoKSBiZWhhdmlvcgo+ICAgZHJt
-L2JyaWRnZTogZHctaGRtaTogVXNlIGRybV9hdG9taWNfaGVscGVyX2Jlc3RfZW5jb2RlcigpCj4g
-Cj4gIGRyaXZlcnMvZ3B1L2RybS9hcmMvYXJjcGd1X2hkbWkuYyAgICAgICAgICAgICAgICAgIHwg
-MTggLS0tLS0tLS0tLS0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9hdG1lbC1obGNkYy9hdG1l
-bF9obGNkY19vdXRwdXQuYyAgIHwgMTIgLS0tLS0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9i
-cmlkZ2UvYW5hbG9naXgtYW54Nzh4eC5jICAgICAgICAgIHwgIDggLS0tLS0tLS0KPiAgZHJpdmVy
-cy9ncHUvZHJtL2JyaWRnZS9kdy1oZG1pLmMgICAgICAgICAgICAgICAgICAgfCAxMSArLS0tLS0t
-LS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vYnJpZGdlL254cC1wdG4zNDYwLmMgICAgICAgICAgICAg
-ICB8ICA4IC0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9icmlkZ2UvcGFyYWRlLXBzODYyMi5j
-ICAgICAgICAgICAgIHwgMTAgLS0tLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21p
-Y19oZWxwZXIuYyAgICAgICAgICAgICAgICB8ICA0ICsrKy0KPiAgZHJpdmVycy9ncHUvZHJtL2Ry
-bV9mYl9oZWxwZXIuYyAgICAgICAgICAgICAgICAgICAgfCAxMyArKysrKysrKysrKystCj4gIGRy
-aXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kcGkuYyAgICAgICAgICAgIHwgIDkgLS0t
-LS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV9kc2kuYyAgICAgICAg
-ICAgIHwgIDkgLS0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9leHlub3MvZXh5bm9zX2RybV92
-aWRpLmMgICAgICAgICAgIHwgIDggLS0tLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL2V4eW5vcy9l
-eHlub3NfaGRtaS5jICAgICAgICAgICAgICAgfCAgOCAtLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9k
-cm0vZnNsLWRjdS9mc2xfZGN1X2RybV9yZ2IuYyAgICAgICAgICB8ICA5IC0tLS0tLS0tLQo+ICBk
-cml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9jcnQuYyAgICAgICAgICAgICAgICAgICB8ICAxIC0K
-PiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfZGlzcGxheS5jICAgICAgICAgICAgICAgfCAg
-OCAtLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9kcC5jICAgICAgICAgICAg
-ICAgICAgICB8ICAxIC0KPiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxfZHJ2LmggICAgICAg
-ICAgICAgICAgICAgfCAgMSAtCj4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2ludGVsX2RzaS5jICAg
-ICAgICAgICAgICAgICAgIHwgIDEgLQo+ICBkcml2ZXJzL2dwdS9kcm0vaTkxNS9pbnRlbF9kdm8u
-YyAgICAgICAgICAgICAgICAgICB8ICAxIC0KPiAgZHJpdmVycy9ncHUvZHJtL2k5MTUvaW50ZWxf
-aGRtaS5jICAgICAgICAgICAgICAgICAgfCAgMSAtCj4gIGRyaXZlcnMvZ3B1L2RybS9pOTE1L2lu
-dGVsX2x2ZHMuYyAgICAgICAgICAgICAgICAgIHwgIDEgLQo+ICBkcml2ZXJzL2dwdS9kcm0vaTkx
-NS9pbnRlbF9zZHZvLmMgICAgICAgICAgICAgICAgICB8ICAxIC0KPiAgZHJpdmVycy9ncHUvZHJt
-L2k5MTUvaW50ZWxfdHYuYyAgICAgICAgICAgICAgICAgICAgfCAgMSAtCj4gIGRyaXZlcnMvZ3B1
-L2RybS9tZWRpYXRlay9tdGtfZHNpLmMgICAgICAgICAgICAgICAgIHwgIDkgLS0tLS0tLS0tCj4g
-IGRyaXZlcnMvZ3B1L2RybS9tc20vZWRwL2VkcF9jb25uZWN0b3IuYyAgICAgICAgICAgIHwgMTAg
-LS0tLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vbXNtL2hkbWkvaGRtaV9jb25uZWN0b3IuYyAg
-ICAgICAgICB8ICA4IC0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9tc20vbWRwL21kcDQvbWRw
-NF9sdmRzX2Nvbm5lY3Rvci5jIHwgIDkgLS0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9vbWFw
-ZHJtL29tYXBfY29ubmVjdG9yLmMgICAgICAgICAgIHwgMTAgLS0tLS0tLS0tLQo+ICBkcml2ZXJz
-L2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2VuY29kZXIuYyAgICAgICAgICB8IDEyIC0tLS0tLS0t
-LS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2VuY29kZXIuaCAgICAgICAg
-ICB8ICAzIC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vcmNhci1kdS9yY2FyX2R1X2hkbWljb24uYyAg
-ICAgICAgICB8ICAxIC0KPiAgZHJpdmVycy9ncHUvZHJtL3JjYXItZHUvcmNhcl9kdV9sdmRzY29u
-LmMgICAgICAgICAgfCAgMSAtCj4gIGRyaXZlcnMvZ3B1L2RybS9yY2FyLWR1L3JjYXJfZHVfdmdh
-Y29uLmMgICAgICAgICAgIHwgIDMgLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9yb2NrY2hpcC9kdy1t
-aXBpLWRzaS5jICAgICAgICAgICAgIHwgIDkgLS0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9y
-b2NrY2hpcC9pbm5vX2hkbWkuYyAgICAgICAgICAgICAgIHwgIDkgLS0tLS0tLS0tCj4gIGRyaXZl
-cnMvZ3B1L2RybS9zdGkvc3RpX2R2by5jICAgICAgICAgICAgICAgICAgICAgIHwgMTAgLS0tLS0t
-LS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vc3RpL3N0aV9oZGEuYyAgICAgICAgICAgICAgICAgICAg
-ICB8IDEwIC0tLS0tLS0tLS0KPiAgZHJpdmVycy9ncHUvZHJtL3N0aS9zdGlfaGRtaS5jICAgICAg
-ICAgICAgICAgICAgICAgfCAxMCAtLS0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS9zdW40aS9z
-dW40aV9yZ2IuYyAgICAgICAgICAgICAgICAgIHwgMTAgLS0tLS0tLS0tLQo+ICBkcml2ZXJzL2dw
-dS9kcm0vc3VuNGkvc3VuNGlfdHYuYyAgICAgICAgICAgICAgICAgICB8ICA5IC0tLS0tLS0tLQo+
-ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmggICAgICAgICAgICAgICAgICAgICAgICB8ICAy
-IC0tCj4gIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kc2kuYyAgICAgICAgICAgICAgICAgICAgICAg
-IHwgIDEgLQo+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvaGRtaS5jICAgICAgICAgICAgICAgICAg
-ICAgICB8ICAxIC0KPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL291dHB1dC5jICAgICAgICAgICAg
-ICAgICAgICAgfCAgOCAtLS0tLS0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvcmdiLmMgICAg
-ICAgICAgICAgICAgICAgICAgICB8ICAxIC0KPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3Nvci5j
-ICAgICAgICAgICAgICAgICAgICAgICAgfCAgMSAtCj4gIGRyaXZlcnMvZ3B1L2RybS92YzQvdmM0
-X2RwaS5jICAgICAgICAgICAgICAgICAgICAgIHwgIDkgLS0tLS0tLS0tCj4gIGRyaXZlcnMvZ3B1
-L2RybS92YzQvdmM0X2hkbWkuYyAgICAgICAgICAgICAgICAgICAgIHwgIDkgLS0tLS0tLS0tCj4g
-IGRyaXZlcnMvZ3B1L2RybS92aXJ0aW8vdmlydGdwdV9kaXNwbGF5LmMgICAgICAgICAgIHwgMTAg
-LS0tLS0tLS0tLQo+ICBpbmNsdWRlL2RybS9kcm1fbW9kZXNldF9oZWxwZXJfdnRhYmxlcy5oICAg
-ICAgICAgICB8IDEwICsrKysrKysrLS0KPiAgNTAgZmlsZXMgY2hhbmdlZCwgMjQgaW5zZXJ0aW9u
-cygrKSwgMzA1IGRlbGV0aW9ucygtKQo+IAo+IC0tIAo+IDIuNy40Cj4gCgotLSAKRGFuaWVsIFZl
-dHRlcgpTb2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9yYXRpb24KaHR0cDovL2Jsb2cuZmZ3
-bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KSW50
-ZWwtZ2Z4IG1haWxpbmcgbGlzdApJbnRlbC1nZnhAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBz
-Oi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vaW50ZWwtZ2Z4Cg==
+
+--magLDk5D4XGaUXcd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Jun 07, 2016 at 01:24:52PM +0100, Ben Dooks wrote:
+> Fix the following warnings from sparse due to casting to/from __iomem
+> annotated variables:
+>=20
+> drivers/irqchip/irq-tegra.c:93:31: warning: incorrect type in initializer=
+ (different address spaces)
+> drivers/irqchip/irq-tegra.c:93:31:    expected void [noderef] <asn:2>*base
+> drivers/irqchip/irq-tegra.c:93:31:    got void *chip_data
+> drivers/irqchip/irq-tegra.c:93:31: warning: incorrect type in initializer=
+ (different address spaces)
+> drivers/irqchip/irq-tegra.c:93:31:    expected void [noderef] <asn:2>*base
+> drivers/irqchip/irq-tegra.c:93:31:    got void *chip_data
+> drivers/irqchip/irq-tegra.c:93:31: warning: incorrect type in initializer=
+ (different address spaces)
+> drivers/irqchip/irq-tegra.c:93:31:    expected void [noderef] <asn:2>*base
+> drivers/irqchip/irq-tegra.c:93:31:    got void *chip_data
+> drivers/irqchip/irq-tegra.c:93:31: warning: incorrect type in initializer=
+ (different address spaces)
+> drivers/irqchip/irq-tegra.c:93:31:    expected void [noderef] <asn:2>*base
+> drivers/irqchip/irq-tegra.c:93:31:    got void *chip_data
+> drivers/irqchip/irq-tegra.c:269:57: warning: incorrect type in argument 5=
+ (different address spaces)
+> drivers/irqchip/irq-tegra.c:269:57:    expected void *chip_data
+> drivers/irqchip/irq-tegra.c:269:57:    got void [noderef] <asn:2>*<noiden=
+t>
+>=20
+> Signed-off-by: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
+> ---
+> Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+> Cc: Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>
+> Cc: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+> Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> ---
+>  drivers/irqchip/irq-tegra.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+--magLDk5D4XGaUXcd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXWuGEAAoJEN0jrNd/PrOh6kcP/R0lCf+s1pkmAzhYBtlq4pMi
+Og8crTaHmtMSX7BjRfr44SHEEY6bW/abMAKEBxFLgDunPvzjLwSKGC9LLKVziwHs
++hqZJ+Vrys5OeqSCJ5mgIjuPcBihnP+8KC2rlK3gdkUQKH6zIP+nhFr29mOi5w0J
+UAC8lnE6G1nELtTIjYPlgGvrsj5EQwB8M8rCDIwc5bCco2w+UtluOp4Lh5Zk0C+9
+8UCDAJnVPIFXCzREIDmfLhkmBsOS8mKRs1BJ1CoL5JuFeYuOAPNlhAmChU9qUG1c
+yBQynH7YFuGTBo3BT0neA3bE9PvFwIlgUPtDjnEi0sZwK7mmxku/uzycUF9VDLqC
+s/I+9Zbb6HrxJ+ZnUS40gZnj+wWMu6mLY0S7M6FBHMPjK5OWEIqvTiigvuXRB8He
+CnRckKCmd4iboVKoJziO+kOhfbzxouqsSnGBCbDf4ZZj2YvENLuoq8y5cLP+DNTP
+wQ9bY79of/ih3gXN2FfNCfq5r8aPQnBRkt5oIVo1Nge03lQzqd4Q4Uv+mCAE0dKr
+CSn43nKtTgVarJqzOq7TqSiZLkYcVllbClYsjDD5A9WdBjEtBAL0XjWUnyR5hcbn
+WJzOsRFzctd2qkkFRbgUc3emt8pNI2MvVTBmyP87G8CI1jlXjc/8qx+UgkvN2kPY
+Ow6p6v+oVCS21AE195CH
+=3K1v
+-----END PGP SIGNATURE-----
+
+--magLDk5D4XGaUXcd--
