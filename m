@@ -1,67 +1,178 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: fix missing include <soc/tegra/cpuidle.h>
-Date: Fri, 10 Jun 2016 16:07:32 +0100
-Message-ID: <575AD7B4.4040609@nvidia.com>
-References: <1465404897-16654-1-git-send-email-ben.dooks@codethink.co.uk>
- <20160610142210.GN27142@ulmo.ba.sec> <575ACFB5.4070706@nvidia.com>
- <20160610145520.GP27142@ulmo.ba.sec>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH v2 06/20] drm: i915: Rely on the default ->best_encoder()
+ behavior where appropriate
+Date: Fri, 10 Jun 2016 17:24:12 +0200
+Message-ID: <20160610152412.GL3363@phenom.ffwll.local>
+References: <1465300095-16971-1-git-send-email-boris.brezillon@free-electrons.com>
+ <1465300095-16971-7-git-send-email-boris.brezillon@free-electrons.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160610145520.GP27142-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>, linux-kernel-81qHHgoATdFT9dQujB1mzip2UmYkHbXO@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-arm-msm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1465300095-16971-7-git-send-email-boris.brezillon@free-electrons.com>
+Sender: linux-arm-msm-owner@vger.kernel.org
+To: Boris Brezillon <boris.brezillon@free-electrons.com>
+Cc: David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, Daniel Vetter <daniel.vetter@intel.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-samsung-soc@vger.kernel.org, intel-gfx@lists.freedesktop.org, Jani Nikula <jani.nikula@linux.intel.com>, Alexey Brodkin <abrodkin@synopsys.com>, Inki Dae <inki.dae@samsung.com>, Joonyoung Shim <jy0922.shim@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@freescale.com>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Clark <robdclark@gmail.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Mark Yao <mark.yao@rock-chips.com>, Heiko Stuebner <heiko@sntech.de>, Benjamin
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 10/06/16 15:55, Thierry Reding wrote:
-> * PGP Signed by an unknown key
+On Tue, Jun 07, 2016 at 01:48:01PM +0200, Boris Brezillon wrote:
+> For all outputs except dp_mst, we have a 1:1 relationship between
+> connectors and encoders and the driver is relying on the atomic helpers:
+> we can drop the custom ->best_encoder() implementation and let the core
+> call drm_atomic_helper_best_encoder() for us.
 > 
-> On Fri, Jun 10, 2016 at 03:33:25PM +0100, Jon Hunter wrote:
->>
->> On 10/06/16 15:22, Thierry Reding wrote:
->>>> Old Signed by an unknown key
->>>
->>> On Wed, Jun 08, 2016 at 05:54:57PM +0100, Ben Dooks wrote:
->>>> The prototype of tegra_cpuidle_pcie_irqs_in_use() is missing
->>>> from the cpuidle.c file, it is defined in <soc/tegra/cpuidle.h>
->>>> so add that include to avoid the following warning:
->>>>
->>>> arch/arm/mach-tegra/cpuidle.c:51:6: warning: symbol 'tegra_cpuidle_pcie_irqs_in_use' was not declared. Should it be static?
->>>>
->>>> Signed-off-by: Ben Dooks <ben.dooks-4yDnlxn2s6sWdaTGBSpHTA@public.gmane.org>
->>>> ---
->>>> Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
->>>> Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>>> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>>> Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
->>>> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->>>> ---
->>>>  arch/arm/mach-tegra/cpuidle.c | 1 +
->>>>  1 file changed, 1 insertion(+)
->>>
->>> I've been carrying a set of patches to fix these, and a couple of other
->>> sparse warnings, in my tree locally, but never sent them out because
->>> they were so trivial. I probably should've to avoid the duplication of
->>> effort. Sorry about that.
->>
->> I think you did send them out ;-)
->>
->> http://patchwork.ozlabs.org/patch/616249/
->> http://patchwork.ozlabs.org/patch/616250/
->> http://patchwork.ozlabs.org/patch/616251/
->> http://patchwork.ozlabs.org/patch/616252/
-> 
-> Hah! Excellent. No more guilty conscience for me. =)
-> 
-> I've pulled those patches into the Tegra tree now.
+> Signed-off-by: Boris Brezillon <boris.brezillon@free-electrons.com>
 
-Great! I have sent you a list of some others from patchwork that I think
-we should merge as well.
+You can also drop the best_encoder from intel_dp_mst, we only need the
+atomic_best_encoder. The best_encoder there was needed to help out the
+fbdev emulation. Care to respin?
+-Daniel
 
-Jon
+> ---
+>  drivers/gpu/drm/i915/intel_crt.c     | 1 -
+>  drivers/gpu/drm/i915/intel_display.c | 8 --------
+>  drivers/gpu/drm/i915/intel_dp.c      | 1 -
+>  drivers/gpu/drm/i915/intel_drv.h     | 1 -
+>  drivers/gpu/drm/i915/intel_dsi.c     | 1 -
+>  drivers/gpu/drm/i915/intel_dvo.c     | 1 -
+>  drivers/gpu/drm/i915/intel_hdmi.c    | 1 -
+>  drivers/gpu/drm/i915/intel_lvds.c    | 1 -
+>  drivers/gpu/drm/i915/intel_sdvo.c    | 1 -
+>  drivers/gpu/drm/i915/intel_tv.c      | 1 -
+>  10 files changed, 17 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/i915/intel_crt.c b/drivers/gpu/drm/i915/intel_crt.c
+> index 3fbb6fc..bd0cd68 100644
+> --- a/drivers/gpu/drm/i915/intel_crt.c
+> +++ b/drivers/gpu/drm/i915/intel_crt.c
+> @@ -753,7 +753,6 @@ static const struct drm_connector_funcs intel_crt_connector_funcs = {
+>  static const struct drm_connector_helper_funcs intel_crt_connector_helper_funcs = {
+>  	.mode_valid = intel_crt_mode_valid,
+>  	.get_modes = intel_crt_get_modes,
+> -	.best_encoder = intel_best_encoder,
+>  };
+>  
+>  static const struct drm_encoder_funcs intel_crt_enc_funcs = {
+> diff --git a/drivers/gpu/drm/i915/intel_display.c b/drivers/gpu/drm/i915/intel_display.c
+> index 2113f40..77026ce 100644
+> --- a/drivers/gpu/drm/i915/intel_display.c
+> +++ b/drivers/gpu/drm/i915/intel_display.c
+> @@ -16113,14 +16113,6 @@ void intel_modeset_cleanup(struct drm_device *dev)
+>  	intel_teardown_gmbus(dev);
+>  }
+>  
+> -/*
+> - * Return which encoder is currently attached for connector.
+> - */
+> -struct drm_encoder *intel_best_encoder(struct drm_connector *connector)
+> -{
+> -	return &intel_attached_encoder(connector)->base;
+> -}
+> -
+>  void intel_connector_attach_encoder(struct intel_connector *connector,
+>  				    struct intel_encoder *encoder)
+>  {
+> diff --git a/drivers/gpu/drm/i915/intel_dp.c b/drivers/gpu/drm/i915/intel_dp.c
+> index f192f58..21b2833 100644
+> --- a/drivers/gpu/drm/i915/intel_dp.c
+> +++ b/drivers/gpu/drm/i915/intel_dp.c
+> @@ -4935,7 +4935,6 @@ static const struct drm_connector_funcs intel_dp_connector_funcs = {
+>  static const struct drm_connector_helper_funcs intel_dp_connector_helper_funcs = {
+>  	.get_modes = intel_dp_get_modes,
+>  	.mode_valid = intel_dp_mode_valid,
+> -	.best_encoder = intel_best_encoder,
+>  };
+>  
+>  static const struct drm_encoder_funcs intel_dp_enc_funcs = {
+> diff --git a/drivers/gpu/drm/i915/intel_drv.h b/drivers/gpu/drm/i915/intel_drv.h
+> index a28b4aa..79a4d6b 100644
+> --- a/drivers/gpu/drm/i915/intel_drv.h
+> +++ b/drivers/gpu/drm/i915/intel_drv.h
+> @@ -1128,7 +1128,6 @@ struct intel_connector *intel_connector_alloc(void);
+>  bool intel_connector_get_hw_state(struct intel_connector *connector);
+>  void intel_connector_attach_encoder(struct intel_connector *connector,
+>  				    struct intel_encoder *encoder);
+> -struct drm_encoder *intel_best_encoder(struct drm_connector *connector);
+>  struct drm_display_mode *intel_crtc_mode_get(struct drm_device *dev,
+>  					     struct drm_crtc *crtc);
+>  enum pipe intel_get_pipe_from_connector(struct intel_connector *connector);
+> diff --git a/drivers/gpu/drm/i915/intel_dsi.c b/drivers/gpu/drm/i915/intel_dsi.c
+> index 366ad6c..ec51952 100644
+> --- a/drivers/gpu/drm/i915/intel_dsi.c
+> +++ b/drivers/gpu/drm/i915/intel_dsi.c
+> @@ -1378,7 +1378,6 @@ static const struct drm_encoder_funcs intel_dsi_funcs = {
+>  static const struct drm_connector_helper_funcs intel_dsi_connector_helper_funcs = {
+>  	.get_modes = intel_dsi_get_modes,
+>  	.mode_valid = intel_dsi_mode_valid,
+> -	.best_encoder = intel_best_encoder,
+>  };
+>  
+>  static const struct drm_connector_funcs intel_dsi_connector_funcs = {
+> diff --git a/drivers/gpu/drm/i915/intel_dvo.c b/drivers/gpu/drm/i915/intel_dvo.c
+> index 286baec..34b7e3f 100644
+> --- a/drivers/gpu/drm/i915/intel_dvo.c
+> +++ b/drivers/gpu/drm/i915/intel_dvo.c
+> @@ -351,7 +351,6 @@ static const struct drm_connector_funcs intel_dvo_connector_funcs = {
+>  static const struct drm_connector_helper_funcs intel_dvo_connector_helper_funcs = {
+>  	.mode_valid = intel_dvo_mode_valid,
+>  	.get_modes = intel_dvo_get_modes,
+> -	.best_encoder = intel_best_encoder,
+>  };
+>  
+>  static void intel_dvo_enc_destroy(struct drm_encoder *encoder)
+> diff --git a/drivers/gpu/drm/i915/intel_hdmi.c b/drivers/gpu/drm/i915/intel_hdmi.c
+> index 2c3bd9c..aef4bc8 100644
+> --- a/drivers/gpu/drm/i915/intel_hdmi.c
+> +++ b/drivers/gpu/drm/i915/intel_hdmi.c
+> @@ -2114,7 +2114,6 @@ static const struct drm_connector_funcs intel_hdmi_connector_funcs = {
+>  static const struct drm_connector_helper_funcs intel_hdmi_connector_helper_funcs = {
+>  	.get_modes = intel_hdmi_get_modes,
+>  	.mode_valid = intel_hdmi_mode_valid,
+> -	.best_encoder = intel_best_encoder,
+>  };
+>  
+>  static const struct drm_encoder_funcs intel_hdmi_enc_funcs = {
+> diff --git a/drivers/gpu/drm/i915/intel_lvds.c b/drivers/gpu/drm/i915/intel_lvds.c
+> index bc53c0d..d4faa5a 100644
+> --- a/drivers/gpu/drm/i915/intel_lvds.c
+> +++ b/drivers/gpu/drm/i915/intel_lvds.c
+> @@ -547,7 +547,6 @@ static int intel_lvds_set_property(struct drm_connector *connector,
+>  static const struct drm_connector_helper_funcs intel_lvds_connector_helper_funcs = {
+>  	.get_modes = intel_lvds_get_modes,
+>  	.mode_valid = intel_lvds_mode_valid,
+> -	.best_encoder = intel_best_encoder,
+>  };
+>  
+>  static const struct drm_connector_funcs intel_lvds_connector_funcs = {
+> diff --git a/drivers/gpu/drm/i915/intel_sdvo.c b/drivers/gpu/drm/i915/intel_sdvo.c
+> index 2128fae..5cd48ff 100644
+> --- a/drivers/gpu/drm/i915/intel_sdvo.c
+> +++ b/drivers/gpu/drm/i915/intel_sdvo.c
+> @@ -2191,7 +2191,6 @@ static const struct drm_connector_funcs intel_sdvo_connector_funcs = {
+>  static const struct drm_connector_helper_funcs intel_sdvo_connector_helper_funcs = {
+>  	.get_modes = intel_sdvo_get_modes,
+>  	.mode_valid = intel_sdvo_mode_valid,
+> -	.best_encoder = intel_best_encoder,
+>  };
+>  
+>  static void intel_sdvo_enc_destroy(struct drm_encoder *encoder)
+> diff --git a/drivers/gpu/drm/i915/intel_tv.c b/drivers/gpu/drm/i915/intel_tv.c
+> index 223129d..47fe241 100644
+> --- a/drivers/gpu/drm/i915/intel_tv.c
+> +++ b/drivers/gpu/drm/i915/intel_tv.c
+> @@ -1512,7 +1512,6 @@ static const struct drm_connector_funcs intel_tv_connector_funcs = {
+>  static const struct drm_connector_helper_funcs intel_tv_connector_helper_funcs = {
+>  	.mode_valid = intel_tv_mode_valid,
+>  	.get_modes = intel_tv_get_modes,
+> -	.best_encoder = intel_best_encoder,
+>  };
+>  
+>  static const struct drm_encoder_funcs intel_tv_enc_funcs = {
+> -- 
+> 2.7.4
+> 
 
 -- 
-nvpublic
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
