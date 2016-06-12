@@ -1,34 +1,31 @@
-From: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-Subject: Re: [PATCH V6 4/9] genirq: Add runtime power management support for IRQ chips
-Date: Fri, 10 Jun 2016 15:08:30 -0700
-Message-ID: <m2eg84y9wh.fsf@baylibre.com>
-References: <1465312354-27778-1-git-send-email-jonathanh@nvidia.com>
-	<1465312354-27778-5-git-send-email-jonathanh@nvidia.com>
+From: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
+Subject: tegra-devfreq hangs TK1 with R21.4 u-boot
+Date: Sat, 11 Jun 2016 20:45:41 -0700
+Message-ID: <20160612034541.GA31426@jirafa.cyrius.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1465312354-27778-5-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> (Jon
-	Hunter's message of "Tue, 7 Jun 2016 16:12:29 +0100")
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> writes:
+I noticed that the Jetson TK1 hangs during boot (when/before mounting
+the SD disk) when CONFIG_ARM_TEGRA_DEVFREQ=y is set and when u-boot
+from R21.4 is used (2014.10-rc2).
 
-> Some IRQ chips may be located in a power domain outside of the CPU
-> subsystem and hence will require device specific runtime power
-> management. In order to support such IRQ chips, add a pointer for a
-> device structure to the irq_chip structure, and if this pointer is
-> populated by the IRQ chip driver and CONFIG_PM is selected in the kernel
-> configuration, then the pm_runtime_get/put APIs for this chip will be
-> called when an IRQ is requested/freed, respectively.
->
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+The hang does not occur when I disable tegra-devfreq or when I use
+tegra-devfreq in combination with u-boot 2016.03 (from DENX upstream,
+built by Debian).
 
-Reviewed-by: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Steps to reproduce:
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+ARCH=arm make multi_v7_defconfig
+Set CONFIG_ARM_TEGRA_DEVFREQ=y
+Boot from an external SD card and it will hang when/before mounting the
+SD card.
+
+-- 
+Martin Michlmayr
+http://www.cyrius.com/
