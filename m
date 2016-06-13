@@ -1,116 +1,64 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: beaver: allow SD card voltage to be changed
-Date: Mon, 13 Jun 2016 11:22:50 +0100
-Message-ID: <575E897A.5080508@nvidia.com>
-References: <1456779678-20173-1-git-send-email-dev@lynxeye.de>
- <1463124331.2459.0.camel@lynxeye.de> <20160513172704.GA498@ulmo.ba.sec>
- <573DCDB3.80202@nvidia.com>
+Subject: Re: [PATCH V6 9/9] irqchip/gic: Add platform driver for non-root GICs
+ that require RPM
+Date: Mon, 13 Jun 2016 11:27:38 +0100
+Message-ID: <575E8A9A.1040907@nvidia.com>
+References: <1465312354-27778-1-git-send-email-jonathanh@nvidia.com>
+ <1465312354-27778-10-git-send-email-jonathanh@nvidia.com>
+ <575E789F.3050509@arm.com> <575E83B8.2050602@nvidia.com>
+ <575E8741.8060902@arm.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <573DCDB3.80202-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <575E8741.8060902-5wv7dgnIgG8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Adding Adrian and Ulf ...
 
-On 19/05/16 15:29, Jon Hunter wrote:
-> 
-> On 13/05/16 18:27, Thierry Reding wrote:
->> * PGP Signed by an unknown key
+On 13/06/16 11:13, Marc Zyngier wrote:
+
+...
+
+> OK, that's because ARM_GIC_PM is never selected (and there is no way I
+> can actually select). Do you have some additional patches that selects
+> it for Tegra?
+
+Yes locally, I have the following for testing ...
+
+diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
+index 03089ad2fc65..ffd02a3c093a 100644
+--- a/drivers/soc/tegra/Kconfig
++++ b/drivers/soc/tegra/Kconfig
+@@ -63,6 +63,7 @@ config ARCH_TEGRA_132_SOC
+
+ config ARCH_TEGRA_210_SOC
+        bool "NVIDIA Tegra210 SoC"
++       select ARM_GIC_PM
+        select PINCTRL_TEGRA210
+
+>> The correct fix is ...
 >>
->> On Fri, May 13, 2016 at 09:25:31AM +0200, Lucas Stach wrote:
->>> Am Montag, den 29.02.2016, 22:01 +0100 schrieb Lucas Stach:
->>>> This allows to switch the card signal voltage level to 1.8V,
->>>> which is needed for any ultra high speed modes to work.
->>>>
->>>> Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
->>>> ---
->>>> This needs the SDMMC memcomp pad calibration patches I just
->>>> sent out to be applied, otherwise the card voltage change will
->>>> fail with a message in the kernel log and a fall back to
->>>> high speed operation.
->>>
->>> The patches this one depends on have been applied for some time now.
->>> Please pick up this patch.
->>
->> My understanding is that UHS modes currently cause problems on Beaver.
->> What I don't understand about that is how it will even try those modes
->> if the voltage regulator can't be set to 1.8 V? Shouldn't that actively
->> prevent those modes from even being attempted?
+>> diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
+>> index 57423f3b218b..1de07eb5839c 100644
+>> --- a/drivers/irqchip/irq-gic.c
+>> +++ b/drivers/irqchip/irq-gic.c
+>> @@ -1272,7 +1272,7 @@ static bool gic_check_eoimode(struct device_node *node, void __iomem **base)
+>>         return true;
+>>  }
+>>  
+>> -static int __init gic_of_setup(struct gic_chip_data *gic, struct device_node *node)
+>> +static int gic_of_setup(struct gic_chip_data *gic, struct device_node *node)
+>>  {
+>>         if (!gic || !node)
+>>                 return -EINVAL;
 > 
-> Looking at the sdhci code, if the regulator is missing then we still
-> attempt to place the controller is 1.8V mode ...
-> 
->  static int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
->                                               struct mmc_ios *ios)
->  {
-> 
->  ...
-> 
->          case MMC_SIGNAL_VOLTAGE_180:
->                  if (!IS_ERR(mmc->supply.vqmmc)) {
->                          ret = regulator_set_voltage(mmc->supply.vqmmc,
->                                          1700000, 1950000);
->                          if (ret) {
->                                  pr_warn("%s: Switching to 1.8V signalling voltage failed\n",
->                                          mmc_hostname(mmc));
->                                  return -EIO;
->                          }
->                  }
-> 
->                  /*
->                   * Enable 1.8V Signal Enable in the Host Control2
->                   * register
->                   */
->                  ctrl |= SDHCI_CTRL_VDD_180;
->                  sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
->  
->                  /* Some controller need to do more when switching */
->                  if (host->ops->voltage_switch)
->                          host->ops->voltage_switch(host);
->  
->                  /* 1.8V regulator output should be stable within 5 ms */
->                  ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
->                  if (ctrl & SDHCI_CTRL_VDD_180)
->                          return 0;
->  
->                  pr_warn("%s: 1.8V regulator output did not became stable\n",
->                          mmc_hostname(mmc));
->  
->                  return -EAGAIN;
-> 
-> Ideally, the above *should* fail if the regulator is missing. However, what
-> I have found, is that in my case, even though the regulator is missing, the
-> above succeeds and the host thinks we are operating at 1.8V even though we
-> are still at 3.3V! It seems that this does not happen with all SD cards that
-> support UHS. 
-> 
-> This patch resolves the problems I am seeing on beaver with SD card
-> initialisation failing. I am surprised this is not causing problems for
-> others?
+> OK, I've applied this locally (no need to resend).
 
-Adrian, Ulf, per the above, I have found that on a Tegra30 beaver board,
-if we enable UHS-I modes for Tegra30 but the device-tree for the board
-is missing the regulator to select 1.8V mode operation, then the above
-code sequence may still return success (ie. SDHCI_CTRL_VDD_180 bit is
-set in SDHCI_HOST_CONTROL2) even though we have not changed the voltage.
-This leads to other problems later on during SD initialisation.
+Great. Thanks. Sorry about this.
 
-Would you expect that an SDHCI controller should fail to set the
-SDHCI_CTRL_VDD_180 bit in the SDHCI_HOST_CONTROL2 register if we did not
-change the voltage?
-
-We want to ensure that Tegra devices do not attempt to switch the UHS-I
-modes if the regulator is not present and it is not clear to me if there
-is a problem with the Tegra SDHCI controller or how this should be handled.
-
-Let me know if this makes sense.
-
-Cheers
 Jon
 
 -- 
