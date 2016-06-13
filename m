@@ -1,363 +1,117 @@
-From: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH V6 9/9] irqchip/gic: Add platform driver for non-root GICs
- that require RPM
-Date: Mon, 13 Jun 2016 11:13:21 +0100
-Message-ID: <575E8741.8060902@arm.com>
-References: <1465312354-27778-1-git-send-email-jonathanh@nvidia.com>
- <1465312354-27778-10-git-send-email-jonathanh@nvidia.com>
- <575E789F.3050509@arm.com> <575E83B8.2050602@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: beaver: allow SD card voltage to be changed
+Date: Mon, 13 Jun 2016 11:22:50 +0100
+Message-ID: <575E897A.5080508@nvidia.com>
+References: <1456779678-20173-1-git-send-email-dev@lynxeye.de>
+ <1463124331.2459.0.camel@lynxeye.de> <20160513172704.GA498@ulmo.ba.sec>
+ <573DCDB3.80202@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <575E83B8.2050602-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <573DCDB3.80202-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 13/06/16 10:58, Jon Hunter wrote:
-> Hi Marc,
-> 
-> On 13/06/16 10:10, Marc Zyngier wrote:
->> Hi Jon,
->>
->> On 07/06/16 16:12, Jon Hunter wrote:
->>> Add a platform driver to support non-root GICs that require runtime
->>> power-management. Currently, only non-root GICs are supported because
->>> the functions, smp_cross_call() and set_handle_irq(), that need to
->>> be called for a root controller are located in the __init section and
->>> so cannot be called by the platform driver.
->>>
->>> The GIC platform driver re-uses many functions from the existing GIC
->>> driver including some functions to save and restore the GIC context
->>> during power transitions. The functions for saving and restoring the
->>> GIC context are currently only defined if CONFIG_CPU_PM is enabled and
->>> to ensure that these functions are always defined when the platform
->>> driver is enabled, a dependency on CONFIG_ARM_GIC_PM (which selects the
->>> platform driver) has been added.
->>>
->>> In order to re-use the private GIC initialisation code, a new public
->>> function, gic_of_init_child(), has been added which calls various
->>> private functions to initialise the GIC. This is different from the
->>> existing gic_of_init() because it only supports non-root GICs (ie. does
->>> not call smp_cross_call() is set_handle_irq()) and is not located in
->>> the __init section (so can be used by platform drivers). Furthermore,
->>> gic_of_init_child() dynamically allocates memory for the GIC chip data
->>> which is also different from gic_of_init().
->>>
->>> There is no specific suspend handling for GICs registered as platform
->>> devices. Non-wakeup interrupts will be disabled by the kernel during
->>> late suspend, however, this alone will not power down the GIC if
->>> interrupts have been requested and not freed. Therefore, requestors of
->>> non-wakeup interrupts will need to free them on entering suspend in
->>> order to power-down the GIC.
->>>
->>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>> ---
->>>  drivers/irqchip/Kconfig         |   6 ++
->>>  drivers/irqchip/Makefile        |   1 +
->>>  drivers/irqchip/irq-gic-pm.c    | 184 ++++++++++++++++++++++++++++++++++++++++
->>>  drivers/irqchip/irq-gic.c       |  38 ++++++++-
->>>  include/linux/irqchip/arm-gic.h |   6 ++
->>>  5 files changed, 232 insertions(+), 3 deletions(-)
->>>  create mode 100644 drivers/irqchip/irq-gic-pm.c
->>>
->>> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
->>> index fa33c50b0e5a..5495a5ba8039 100644
->>> --- a/drivers/irqchip/Kconfig
->>> +++ b/drivers/irqchip/Kconfig
->>> @@ -8,6 +8,12 @@ config ARM_GIC
->>>  	select IRQ_DOMAIN_HIERARCHY
->>>  	select MULTI_IRQ_HANDLER
->>>  
->>> +config ARM_GIC_PM
->>> +	bool
->>> +	depends on PM
->>> +	select ARM_GIC
->>> +	select PM_CLK
->>> +
->>>  config ARM_GIC_MAX_NR
->>>  	int
->>>  	default 2 if ARCH_REALVIEW
->>> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
->>> index 38853a187607..bd0257e0aab6 100644
->>> --- a/drivers/irqchip/Makefile
->>> +++ b/drivers/irqchip/Makefile
->>> @@ -24,6 +24,7 @@ obj-$(CONFIG_ARCH_SUNXI)		+= irq-sun4i.o
->>>  obj-$(CONFIG_ARCH_SUNXI)		+= irq-sunxi-nmi.o
->>>  obj-$(CONFIG_ARCH_SPEAR3XX)		+= spear-shirq.o
->>>  obj-$(CONFIG_ARM_GIC)			+= irq-gic.o irq-gic-common.o
->>> +obj-$(CONFIG_ARM_GIC_PM)		+= irq-gic-pm.o
->>>  obj-$(CONFIG_REALVIEW_DT)		+= irq-gic-realview.o
->>>  obj-$(CONFIG_ARM_GIC_V2M)		+= irq-gic-v2m.o
->>>  obj-$(CONFIG_ARM_GIC_V3)		+= irq-gic-v3.o irq-gic-common.o
->>> diff --git a/drivers/irqchip/irq-gic-pm.c b/drivers/irqchip/irq-gic-pm.c
->>> new file mode 100644
->>> index 000000000000..4cbffba3ff13
->>> --- /dev/null
->>> +++ b/drivers/irqchip/irq-gic-pm.c
->>> @@ -0,0 +1,184 @@
->>> +/*
->>> + * Copyright (C) 2016 NVIDIA CORPORATION, All Rights Reserved.
->>> + *
->>> + * This program is free software; you can redistribute it and/or modify
->>> + * it under the terms of the GNU General Public License version 2 as
->>> + * published by the Free Software Foundation.
->>> + *
->>> + * This program is distributed in the hope that it will be useful,
->>> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
->>> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
->>> + * GNU General Public License for more details.
->>> + *
->>> + * You should have received a copy of the GNU General Public License
->>> + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
->>> + */
->>> +#include <linux/module.h>
->>> +#include <linux/clk.h>
->>> +#include <linux/of_device.h>
->>> +#include <linux/of_irq.h>
->>> +#include <linux/irqchip/arm-gic.h>
->>> +#include <linux/platform_device.h>
->>> +#include <linux/pm_clock.h>
->>> +#include <linux/pm_runtime.h>
->>> +#include <linux/slab.h>
->>> +
->>> +struct gic_clk_data {
->>> +	unsigned int num_clocks;
->>> +	const char *const *clocks;
->>> +};
->>> +
->>> +static int gic_runtime_resume(struct device *dev)
->>> +{
->>> +	struct gic_chip_data *gic = dev_get_drvdata(dev);
->>> +	int ret;
->>> +
->>> +	ret = pm_clk_resume(dev);
->>> +	if (ret)
->>> +		return ret;
->>> +
->>> +	/*
->>> +	 * On the very first resume, the pointer to the driver data
->>> +	 * will be NULL and this is intentional, because we do not
->>> +	 * want to restore the GIC on the very first resume. So if
->>> +	 * the pointer is not valid just return.
->>> +	 */
->>> +	if (!gic)
->>> +		return 0;
->>> +
->>> +	gic_dist_restore(gic);
->>> +	gic_cpu_restore(gic);
->>> +
->>> +	return 0;
->>> +}
->>> +
->>> +static int gic_runtime_suspend(struct device *dev)
->>> +{
->>> +	struct gic_chip_data *gic = dev_get_drvdata(dev);
->>> +
->>> +	gic_dist_save(gic);
->>> +	gic_cpu_save(gic);
->>> +
->>> +	return pm_clk_suspend(dev);
->>> +}
->>> +
->>> +static int gic_get_clocks(struct device *dev, const struct gic_clk_data *data)
->>> +{
->>> +	struct clk *clk;
->>> +	unsigned int i;
->>> +	int ret;
->>> +
->>> +	if (!dev || !data)
->>> +		return -EINVAL;
->>> +
->>> +	ret = pm_clk_create(dev);
->>> +	if (ret)
->>> +		return ret;
->>> +
->>> +	for (i = 0; i < data->num_clocks; i++) {
->>> +		clk = of_clk_get_by_name(dev->of_node, data->clocks[i]);
->>> +		if (IS_ERR(clk)) {
->>> +			dev_err(dev, "failed to get clock %s\n",
->>> +				data->clocks[i]);
->>> +			ret = PTR_ERR(clk);
->>> +			goto error;
->>> +		}
->>> +
->>> +		ret = pm_clk_add_clk(dev, clk);
->>> +		if (ret) {
->>> +			dev_err(dev, "failed to add clock at index %d\n", i);
->>> +			clk_put(clk);
->>> +			goto error;
->>> +		}
->>> +	}
->>> +
->>> +	return 0;
->>> +
->>> +error:
->>> +	pm_clk_destroy(dev);
->>> +
->>> +	return ret;
->>> +}
->>> +
->>> +static int gic_probe(struct platform_device *pdev)
->>> +{
->>> +	struct device *dev = &pdev->dev;
->>> +	const struct gic_clk_data *data;
->>> +	struct gic_chip_data *gic;
->>> +	int ret, irq;
->>> +
->>> +	data = of_device_get_match_data(&pdev->dev);
->>> +	if (!data) {
->>> +		dev_err(&pdev->dev, "no device match found\n");
->>> +		return -ENODEV;
->>> +	}
->>> +
->>> +	irq = irq_of_parse_and_map(dev->of_node, 0);
->>> +	if (!irq) {
->>> +		dev_err(dev, "no parent interrupt found!\n");
->>> +		return -EINVAL;
->>> +	}
->>> +
->>> +	ret = gic_get_clocks(dev, data);
->>> +	if (ret)
->>> +		goto irq_dispose;
->>> +
->>> +	pm_runtime_enable(dev);
->>> +
->>> +	ret = pm_runtime_get_sync(dev);
->>> +	if (ret < 0)
->>> +		goto rpm_disable;
->>> +
->>> +	ret = gic_of_init_child(dev, &gic, irq);
->>> +	if (ret)
->>> +		goto rpm_put;
->>> +
->>> +	platform_set_drvdata(pdev, gic);
->>> +
->>> +	pm_runtime_put(dev);
->>> +
->>> +	dev_info(dev, "GIC IRQ controller registered\n");
->>> +
->>> +	return 0;
->>> +
->>> +rpm_put:
->>> +	pm_runtime_put_sync(dev);
->>> +rpm_disable:
->>> +	pm_runtime_disable(dev);
->>> +	pm_clk_destroy(dev);
->>> +irq_dispose:
->>> +	irq_dispose_mapping(irq);
->>> +
->>> +	return ret;
->>> +}
->>> +
->>> +static const struct dev_pm_ops gic_pm_ops = {
->>> +	SET_RUNTIME_PM_OPS(gic_runtime_suspend,
->>> +			   gic_runtime_resume, NULL)
->>> +};
->>> +
->>> +static const char * const gic400_clocks[] = {
->>> +	"clk",
->>> +};
->>> +
->>> +static const struct gic_clk_data gic400_data = {
->>> +	.num_clocks = ARRAY_SIZE(gic400_clocks),
->>> +	.clocks = gic400_clocks,
->>> +};
->>> +
->>> +static const struct of_device_id gic_match[] = {
->>> +	{ .compatible = "nvidia,tegra210-agic",	.data = &gic400_data },
->>> +	{},
->>> +};
->>> +MODULE_DEVICE_TABLE(of, gic_match);
->>> +
->>> +static struct platform_driver gic_driver = {
->>> +	.probe		= gic_probe,
->>> +	.driver		= {
->>> +		.name	= "gic",
->>> +		.of_match_table	= gic_match,
->>> +		.pm	= &gic_pm_ops,
->>> +	}
->>> +};
->>> +
->>> +builtin_platform_driver(gic_driver);
->>> diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
->>> index 141ea5801784..57423f3b218b 100644
->>> --- a/drivers/irqchip/irq-gic.c
->>> +++ b/drivers/irqchip/irq-gic.c
->>> @@ -75,7 +75,7 @@ struct gic_chip_data {
->>>  	void __iomem *raw_dist_base;
->>>  	void __iomem *raw_cpu_base;
->>>  	u32 percpu_offset;
->>> -#ifdef CONFIG_CPU_PM
->>> +#if defined(CONFIG_CPU_PM) || defined(CONFIG_ARM_GIC_PM)
->>>  	u32 saved_spi_enable[DIV_ROUND_UP(1020, 32)];
->>>  	u32 saved_spi_active[DIV_ROUND_UP(1020, 32)];
->>>  	u32 saved_spi_conf[DIV_ROUND_UP(1020, 16)];
->>> @@ -528,7 +528,7 @@ int gic_cpu_if_down(unsigned int gic_nr)
->>>  	return 0;
->>>  }
->>>  
->>> -#ifdef CONFIG_CPU_PM
->>> +#if defined(CONFIG_CPU_PM) || defined(CONFIG_ARM_GIC_PM)
->>>  /*
->>>   * Saves the GIC distributor registers during suspend or idle.  Must be called
->>>   * with interrupts disabled but before powering down the GIC.  After calling
->>> @@ -1296,6 +1296,34 @@ error:
->>>  	return -ENOMEM;
->>>  }
->>>  
->>> +int gic_of_init_child(struct device *dev, struct gic_chip_data **gic, int irq)
->>
->> I got this:
->>
->> WARNING: drivers/built-in.o(.text+0x2464): Section mismatch in reference from the function gic_of_init_child() to the function .init.text:gic_of_setup()
->> The function gic_of_init_child() references
->> the function __init gic_of_setup().
->> This is often because gic_of_init_child lacks a __init 
->> annotation or the annotation of gic_of_setup is wrong.
-> 
-> Ugh! A lot of the changes were to avoid these section mismatches. Somehow I missed that one :-(
->  
->> I've fixed it locally by making the function __init.
-> 
-> So gic_of_init_child() cannot be __init because it is called by the driver. If you do this you should get ...
-> 
-> WARNING: drivers/irqchip/built-in.o(.text+0x2314): Section mismatch in reference from the function gic_probe() to the function .init.text:gic_of_init_child()
-> The function gic_probe() references
-> the function __init gic_of_init_child().
-> This is often because gic_probe lacks a __init 
-> annotation or the annotation of gic_of_init_child is wrong.
+Adding Adrian and Ulf ...
 
-Odd, I'm not getting that one... [digging]
-
-OK, that's because ARM_GIC_PM is never selected (and there is no way I
-can actually select). Do you have some additional patches that selects
-it for Tegra?
-
+On 19/05/16 15:29, Jon Hunter wrote:
 > 
+> On 13/05/16 18:27, Thierry Reding wrote:
+>> * PGP Signed by an unknown key
+>>
+>> On Fri, May 13, 2016 at 09:25:31AM +0200, Lucas Stach wrote:
+>>> Am Montag, den 29.02.2016, 22:01 +0100 schrieb Lucas Stach:
+>>>> This allows to switch the card signal voltage level to 1.8V,
+>>>> which is needed for any ultra high speed modes to work.
+>>>>
+>>>> Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
+>>>> ---
+>>>> This needs the SDMMC memcomp pad calibration patches I just
+>>>> sent out to be applied, otherwise the card voltage change will
+>>>> fail with a message in the kernel log and a fall back to
+>>>> high speed operation.
+>>>
+>>> The patches this one depends on have been applied for some time now.
+>>> Please pick up this patch.
+>>
+>> My understanding is that UHS modes currently cause problems on Beaver.
+>> What I don't understand about that is how it will even try those modes
+>> if the voltage regulator can't be set to 1.8 V? Shouldn't that actively
+>> prevent those modes from even being attempted?
 > 
-> The correct fix is ...
+> Looking at the sdhci code, if the regulator is missing then we still
+> attempt to place the controller is 1.8V mode ...
 > 
-> diff --git a/drivers/irqchip/irq-gic.c b/drivers/irqchip/irq-gic.c
-> index 57423f3b218b..1de07eb5839c 100644
-> --- a/drivers/irqchip/irq-gic.c
-> +++ b/drivers/irqchip/irq-gic.c
-> @@ -1272,7 +1272,7 @@ static bool gic_check_eoimode(struct device_node *node, void __iomem **base)
->         return true;
->  }
->  
-> -static int __init gic_of_setup(struct gic_chip_data *gic, struct device_node *node)
-> +static int gic_of_setup(struct gic_chip_data *gic, struct device_node *node)
+>  static int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
+>                                               struct mmc_ios *ios)
 >  {
->         if (!gic || !node)
->                 return -EINVAL;
+> 
+>  ...
+> 
+>          case MMC_SIGNAL_VOLTAGE_180:
+>                  if (!IS_ERR(mmc->supply.vqmmc)) {
+>                          ret = regulator_set_voltage(mmc->supply.vqmmc,
+>                                          1700000, 1950000);
+>                          if (ret) {
+>                                  pr_warn("%s: Switching to 1.8V signalling voltage failed\n",
+>                                          mmc_hostname(mmc));
+>                                  return -EIO;
+>                          }
+>                  }
+> 
+>                  /*
+>                   * Enable 1.8V Signal Enable in the Host Control2
+>                   * register
+>                   */
+>                  ctrl |= SDHCI_CTRL_VDD_180;
+>                  sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
+>  
+>                  /* Some controller need to do more when switching */
+>                  if (host->ops->voltage_switch)
+>                          host->ops->voltage_switch(host);
+>  
+>                  /* 1.8V regulator output should be stable within 5 ms */
+>                  ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+>                  if (ctrl & SDHCI_CTRL_VDD_180)
+>                          return 0;
+>  
+>                  pr_warn("%s: 1.8V regulator output did not became stable\n",
+>                          mmc_hostname(mmc));
+>  
+>                  return -EAGAIN;
+> 
+> Ideally, the above *should* fail if the regulator is missing. However, what
+> I have found, is that in my case, even though the regulator is missing, the
+> above succeeds and the host thinks we are operating at 1.8V even though we
+> are still at 3.3V! It seems that this does not happen with all SD cards that
+> support UHS. 
+> 
+> This patch resolves the problems I am seeing on beaver with SD card
+> initialisation failing. I am surprised this is not causing problems for
+> others?
 
-OK, I've applied this locally (no need to resend).
+Adrian, Ulf, per the above, I have found that on a Tegra30 beaver board,
+if we enable UHS-I modes for Tegra30 but the device-tree for the board
+is missing the regulator to select 1.8V mode operation, then the above
+code sequence may still return success (ie. SDHCI_CTRL_VDD_180 bit is
+set in SDHCI_HOST_CONTROL2) even though we have not changed the voltage.
+This leads to other problems later on during SD initialisation.
 
-Thanks,
+Would you expect that an SDHCI controller should fail to set the
+SDHCI_CTRL_VDD_180 bit in the SDHCI_HOST_CONTROL2 register if we did not
+change the voltage?
 
-	M.
+We want to ensure that Tegra devices do not attempt to switch the UHS-I
+modes if the regulator is not present and it is not clear to me if there
+is a problem with the Tegra SDHCI controller or how this should be handled.
+
+Let me know if this makes sense.
+
+Cheers
+Jon
+
 -- 
-Jazz is not dead. It just smells funny...
+nvpublic
