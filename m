@@ -1,66 +1,45 @@
-From: Jason Cooper <jason@lakedaemon.net>
-Subject: Re: [PATCH] irqchip/tegra: fix fix sparse warnings on __iomem
-Date: Mon, 13 Jun 2016 00:54:01 +0000
-Message-ID: <20160613005401.GH24391@io.lakedaemon.net>
-References: <1465302292-4840-1-git-send-email-ben.dooks@codethink.co.uk>
+From: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>
+Subject: Re: tegra-devfreq hangs TK1 with R21.4 u-boot
+Date: Mon, 13 Jun 2016 07:45:10 +0200
+Message-ID: <CAAObsKAEGzuXQCHsgGLzHMjCW9akTqfcn3DFT6+YuN0yi9S7oA@mail.gmail.com>
+References: <20160612034541.GA31426@jirafa.cyrius.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <1465302292-4840-1-git-send-email-ben.dooks@codethink.co.uk>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Ben Dooks <ben.dooks@codethink.co.uk>
-Cc: linux-kernel@lists.codethink.co.uk, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Marc Zyngier <marc.zyngier@arm.com>, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160612034541.GA31426-IRMp5PtgtdoigzW5ZibpNwC/G2K4zDHf@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Ben,
+On 12 June 2016 at 05:45, Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org> wrote:
+> I noticed that the Jetson TK1 hangs during boot (when/before mounting
+> the SD disk) when CONFIG_ARM_TEGRA_DEVFREQ=y is set and when u-boot
+> from R21.4 is used (2014.10-rc2).
+>
+> The hang does not occur when I disable tegra-devfreq or when I use
+> tegra-devfreq in combination with u-boot 2016.03 (from DENX upstream,
+> built by Debian).
 
-On Tue, Jun 07, 2016 at 01:24:52PM +0100, Ben Dooks wrote:
-> Fix the following warnings from sparse due to casting to/from __iomem
-> annotated variables:
-> 
-> drivers/irqchip/irq-tegra.c:93:31: warning: incorrect type in initializer (different address spaces)
-> drivers/irqchip/irq-tegra.c:93:31:    expected void [noderef] <asn:2>*base
-> drivers/irqchip/irq-tegra.c:93:31:    got void *chip_data
-> drivers/irqchip/irq-tegra.c:93:31: warning: incorrect type in initializer (different address spaces)
-> drivers/irqchip/irq-tegra.c:93:31:    expected void [noderef] <asn:2>*base
-> drivers/irqchip/irq-tegra.c:93:31:    got void *chip_data
-> drivers/irqchip/irq-tegra.c:93:31: warning: incorrect type in initializer (different address spaces)
-> drivers/irqchip/irq-tegra.c:93:31:    expected void [noderef] <asn:2>*base
-> drivers/irqchip/irq-tegra.c:93:31:    got void *chip_data
-> drivers/irqchip/irq-tegra.c:93:31: warning: incorrect type in initializer (different address spaces)
-> drivers/irqchip/irq-tegra.c:93:31:    expected void [noderef] <asn:2>*base
-> drivers/irqchip/irq-tegra.c:93:31:    got void *chip_data
-> drivers/irqchip/irq-tegra.c:269:57: warning: incorrect type in argument 5 (different address spaces)
-> drivers/irqchip/irq-tegra.c:269:57:    expected void *chip_data
-> drivers/irqchip/irq-tegra.c:269:57:    got void [noderef] <asn:2>*<noident>
-> 
-> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> ---
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Jason Cooper <jason@lakedaemon.net>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: Stephen Warren <swarren@wwwdotorg.org>
-> Cc: Thierry Reding <thierry.reding@gmail.com>
-> Cc: Alexandre Courbot <gnurou@gmail.com>
-> Cc: linux-tegra@vger.kernel.org
-> ---
->  drivers/irqchip/irq-tegra.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+Works as well with 2015.01, which is closer to the one in R21.4.
 
-Applied to irqchip/misc with Thierry's Ack.
+https://lava.collabora.co.uk/scheduler/job/238991/log_file#L_3_5
 
-thx,
+Regards,
 
-Jason.
+Tomeu
+
+> Steps to reproduce:
+>
+> ARCH=arm make multi_v7_defconfig
+> Set CONFIG_ARM_TEGRA_DEVFREQ=y
+> Boot from an external SD card and it will hang when/before mounting the
+> SD card.
+>
+> --
+> Martin Michlmayr
+> http://www.cyrius.com/
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
