@@ -1,38 +1,66 @@
-From: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: tegra-devfreq hangs TK1 with R21.4 u-boot
-Date: Sun, 12 Jun 2016 10:31:06 -0700
-Message-ID: <20160612173106.GA31522@jirafa.cyrius.com>
-References: <20160612034541.GA31426@jirafa.cyrius.com>
- <loom.20160612T175114-608@post.gmane.org>
+From: Jason Cooper <jason@lakedaemon.net>
+Subject: Re: [PATCH] irqchip/tegra: fix fix sparse warnings on __iomem
+Date: Mon, 13 Jun 2016 00:54:01 +0000
+Message-ID: <20160613005401.GH24391@io.lakedaemon.net>
+References: <1465302292-4840-1-git-send-email-ben.dooks@codethink.co.uk>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 Content-Disposition: inline
-In-Reply-To: <loom.20160612T175114-608-eS7Uydv5nfjZ+VzJOa5vwg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Shreshtha <shreshthakumar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1465302292-4840-1-git-send-email-ben.dooks@codethink.co.uk>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Ben Dooks <ben.dooks@codethink.co.uk>
+Cc: linux-kernel@lists.codethink.co.uk, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Marc Zyngier <marc.zyngier@arm.com>, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-* Shreshtha <shreshthakumar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> [2016-06-12 17:15]:
-> > I noticed that the Jetson TK1 hangs during boot (when/before mounting
-> > the SD disk) when CONFIG_ARM_TEGRA_DEVFREQ=y is set and when u-boot
-> > from R21.4 is used (2014.10-rc2).
+Hi Ben,
+
+On Tue, Jun 07, 2016 at 01:24:52PM +0100, Ben Dooks wrote:
+> Fix the following warnings from sparse due to casting to/from __iomem
+> annotated variables:
 > 
-> I cannot find CONFIG_ARM_TEGRA_DEVFREQ in r21.4 codeline. With default
-> "tegra12_defconfig", CONFIG_PM_DEVFREQ is getting enabled.
+> drivers/irqchip/irq-tegra.c:93:31: warning: incorrect type in initializer (different address spaces)
+> drivers/irqchip/irq-tegra.c:93:31:    expected void [noderef] <asn:2>*base
+> drivers/irqchip/irq-tegra.c:93:31:    got void *chip_data
+> drivers/irqchip/irq-tegra.c:93:31: warning: incorrect type in initializer (different address spaces)
+> drivers/irqchip/irq-tegra.c:93:31:    expected void [noderef] <asn:2>*base
+> drivers/irqchip/irq-tegra.c:93:31:    got void *chip_data
+> drivers/irqchip/irq-tegra.c:93:31: warning: incorrect type in initializer (different address spaces)
+> drivers/irqchip/irq-tegra.c:93:31:    expected void [noderef] <asn:2>*base
+> drivers/irqchip/irq-tegra.c:93:31:    got void *chip_data
+> drivers/irqchip/irq-tegra.c:93:31: warning: incorrect type in initializer (different address spaces)
+> drivers/irqchip/irq-tegra.c:93:31:    expected void [noderef] <asn:2>*base
+> drivers/irqchip/irq-tegra.c:93:31:    got void *chip_data
+> drivers/irqchip/irq-tegra.c:269:57: warning: incorrect type in argument 5 (different address spaces)
+> drivers/irqchip/irq-tegra.c:269:57:    expected void *chip_data
+> drivers/irqchip/irq-tegra.c:269:57:    got void [noderef] <asn:2>*<noident>
 > 
-> Can you please share some more details about CONFIG_ARM_TEGRA_DEVFREQ, which
-> file it complies and if it is really present in code or pulled from other git.
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> ---
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Jason Cooper <jason@lakedaemon.net>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: Stephen Warren <swarren@wwwdotorg.org>
+> Cc: Thierry Reding <thierry.reding@gmail.com>
+> Cc: Alexandre Courbot <gnurou@gmail.com>
+> Cc: linux-tegra@vger.kernel.org
+> ---
+>  drivers/irqchip/irq-tegra.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Sorry for not being clear.  I'm talking about the mainline kernel from
-kernel.org:
-drivers/devfreq/Makefile:obj-$(CONFIG_ARM_TEGRA_DEVFREQ)                += tegra-devfreq.o
+Applied to irqchip/misc with Thierry's Ack.
 
-Booting a mainline kernel with tegra-devfreq enabled will hang my machine
-during bootup when I use the u-boot from R21.4 (which I believe is the
-latest provided by NVIDIA).
+thx,
 
--- 
-Martin Michlmayr
-http://www.cyrius.com/
+Jason.
