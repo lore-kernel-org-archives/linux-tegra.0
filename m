@@ -1,140 +1,88 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: beaver: allow SD card voltage to be changed
-Date: Tue, 14 Jun 2016 09:23:01 +0100
-Message-ID: <575FBEE5.50905@nvidia.com>
-References: <1456779678-20173-1-git-send-email-dev@lynxeye.de>
- <1463124331.2459.0.camel@lynxeye.de> <20160513172704.GA498@ulmo.ba.sec>
- <573DCDB3.80202@nvidia.com> <575E897A.5080508@nvidia.com>
- <575FA21E.80309@intel.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 2/2] memory: tegra: tegra124-emc: Add missing
+ of_node_put
+Date: Tue, 14 Jun 2016 11:36:14 +0200
+Message-ID: <20160614093614.GB22567@ulmo.ba.sec>
+References: <20160125172748.GA26252@amitoj-Inspiron-3542>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="zx4FCpZtqtKETZ7O"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <575FA21E.80309-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20160125172748.GA26252@amitoj-Inspiron-3542>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Amitoj Kaur Chawla <amitoj1606-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, julia.lawall-L2FTfq7BK8M@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 14/06/16 07:20, Adrian Hunter wrote:
-> On 13/06/16 13:22, Jon Hunter wrote:
->> Adding Adrian and Ulf ...
->>
->> On 19/05/16 15:29, Jon Hunter wrote:
->>>
->>> On 13/05/16 18:27, Thierry Reding wrote:
->>>> * PGP Signed by an unknown key
->>>>
->>>> On Fri, May 13, 2016 at 09:25:31AM +0200, Lucas Stach wrote:
->>>>> Am Montag, den 29.02.2016, 22:01 +0100 schrieb Lucas Stach:
->>>>>> This allows to switch the card signal voltage level to 1.8V,
->>>>>> which is needed for any ultra high speed modes to work.
->>>>>>
->>>>>> Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
->>>>>> ---
->>>>>> This needs the SDMMC memcomp pad calibration patches I just
->>>>>> sent out to be applied, otherwise the card voltage change will
->>>>>> fail with a message in the kernel log and a fall back to
->>>>>> high speed operation.
->>>>>
->>>>> The patches this one depends on have been applied for some time now.
->>>>> Please pick up this patch.
->>>>
->>>> My understanding is that UHS modes currently cause problems on Beaver.
->>>> What I don't understand about that is how it will even try those modes
->>>> if the voltage regulator can't be set to 1.8 V? Shouldn't that actively
->>>> prevent those modes from even being attempted?
->>>
->>> Looking at the sdhci code, if the regulator is missing then we still
->>> attempt to place the controller is 1.8V mode ...
->>>
->>>  static int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
->>>                                               struct mmc_ios *ios)
->>>  {
->>>
->>>  ...
->>>
->>>          case MMC_SIGNAL_VOLTAGE_180:
->>>                  if (!IS_ERR(mmc->supply.vqmmc)) {
->>>                          ret = regulator_set_voltage(mmc->supply.vqmmc,
->>>                                          1700000, 1950000);
->>>                          if (ret) {
->>>                                  pr_warn("%s: Switching to 1.8V signalling voltage failed\n",
->>>                                          mmc_hostname(mmc));
->>>                                  return -EIO;
->>>                          }
->>>                  }
->>>
->>>                  /*
->>>                   * Enable 1.8V Signal Enable in the Host Control2
->>>                   * register
->>>                   */
->>>                  ctrl |= SDHCI_CTRL_VDD_180;
->>>                  sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
->>>  
->>>                  /* Some controller need to do more when switching */
->>>                  if (host->ops->voltage_switch)
->>>                          host->ops->voltage_switch(host);
->>>  
->>>                  /* 1.8V regulator output should be stable within 5 ms */
->>>                  ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
->>>                  if (ctrl & SDHCI_CTRL_VDD_180)
->>>                          return 0;
->>>  
->>>                  pr_warn("%s: 1.8V regulator output did not became stable\n",
->>>                          mmc_hostname(mmc));
->>>  
->>>                  return -EAGAIN;
->>>
->>> Ideally, the above *should* fail if the regulator is missing. However, what
->>> I have found, is that in my case, even though the regulator is missing, the
->>> above succeeds and the host thinks we are operating at 1.8V even though we
->>> are still at 3.3V! It seems that this does not happen with all SD cards that
->>> support UHS. 
->>>
->>> This patch resolves the problems I am seeing on beaver with SD card
->>> initialisation failing. I am surprised this is not causing problems for
->>> others?
->>
->> Adrian, Ulf, per the above, I have found that on a Tegra30 beaver board,
->> if we enable UHS-I modes for Tegra30 but the device-tree for the board
->> is missing the regulator to select 1.8V mode operation, then the above
->> code sequence may still return success (ie. SDHCI_CTRL_VDD_180 bit is
->> set in SDHCI_HOST_CONTROL2) even though we have not changed the voltage.
->> This leads to other problems later on during SD initialisation.
->>
->> Would you expect that an SDHCI controller should fail to set the
->> SDHCI_CTRL_VDD_180 bit in the SDHCI_HOST_CONTROL2 register if we did not
->> change the voltage?
-> 
-> What is meant to happen is that sdhci should wait 5ms and then check
-> SDHCI_CTRL_VDD_180 - which it used to do but then someone took the 5ms wait
-> away.
+--zx4FCpZtqtKETZ7O
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Do you plan to add the 5ms delay again?
+On Mon, Jan 25, 2016 at 10:57:48PM +0530, Amitoj Kaur Chawla wrote:
+> for_each_child_of_node performs an of_node_get on each iteration, so
+> to break out of the loop an of_node_put is required.
+>=20
+> Found using Coccinelle. The semantic patch used for this is as follows:
+>=20
+> // <smpl>
+> @@
+> expression e;
+> local idexpression n;
+> @@
+>=20
+>  for_each_child_of_node(..., n) {
+>    ... when !=3D of_node_put(n)
+>        when !=3D e =3D n
+> (
+>    return n;
+> |
+> +  of_node_put(n);
+> ?  return ...;
+> )
+>    ...
+>  }
+> // </smpl
+>=20
+> Signed-off-by: Amitoj Kaur Chawla <amitoj1606-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+> Changes in v2:
+>         -Modified the note underneath ---
+>=20
+> There is an extra of_node_put() before a continue in the same file on
+> line 1001 which should be deleted too. Julia Lawall has already sent a pa=
+tch=20
+> to delete this but if preferred I can send one patch to do both the chang=
+es.
+>=20
+>  drivers/memory/tegra/tegra124-emc.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
-> In any case, if you are using a regulator there is no knowing what sdhci is
-> meant to do.
+Applied, thanks.
 
-Ok, seems fragile.
+Thierry
 
->>
->> We want to ensure that Tegra devices do not attempt to switch the UHS-I
->> modes if the regulator is not present and it is not clear to me if there
->> is a problem with the Tegra SDHCI controller or how this should be handled.
-> 
-> If the driver doesn't support UHS-I modes then it must remove the cap flags.
+--zx4FCpZtqtKETZ7O
+Content-Type: application/pgp-signature; name="signature.asc"
 
-So the controller itself supports UHS-I modes, but a given board may not
-have the regulator to support them. We need a way to determine if the
-board can support the UHS-I modes. Now we could check to see if the
-regulator is present in the Tegra SDHCI driver and if not remove the cap
-flags. However, I was not sure if this is applicable to other sdhci
-controllers and so there should be a generic solution for this?
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Cheers
-Jon
+iQIcBAABCAAGBQJXX9AOAAoJEN0jrNd/PrOhOW0P/jkfQ37N5rtUkoOd6Z6+tCwg
+Fdv9K/LI7b65NcPIull6Ps8dfDUpxYNfppUWPLVOJjq9ztxNHiTj86LqzDLDqWZ2
+YQgvvfSxjUt44aRhnxkNVznCIX4DBBtJDl8fgRYTYbcxtNbBbhRxEhPhS0wXIbuG
+/YlTf3gV7Lwsg0meWbVZqz+yIKtHsxTLfq7q4I+iMSoJiNpKcnxvLplQMKTxl5Nj
+Ck5vpMBdRB2Esw3xeIodJOFEl290+tugiGMKaimaoM6KsEdrsmprU2SScJxp+l3u
+kpeZXnXF0oSO2mEyTTevkH7YrLdkheSaeroFmkdH7xjslZ+9NdTnG67TxiVihzto
+7CX0fWNz2FxZ3Cs9hcopj/ah9O4mcIPv4063QeQ0bsfjZAP3R5psoxQD6QeKJwAH
+A5zg+1hMaOOzg93nZAHB/Enf/Jol3X3DiYLSrMy1NqB2ylg95JE1Ox/xKJWuoYDO
+OrWpLYmFdIbcuHO7xs6TOtVkGXMm21TVVaw5Ea7DR2Ez7se9rQyj37DbvOMm2Wmq
+l/fEhpwwwlbxz1VUE++7mHDE69IWAOQ0Z8svCh+XXrDKCZ4nykWDUcozcZLtlHxg
+hx4Vmhcp1NilPF0zROjk8SlgKy+tXIkXAMDZY2vY/tnCdGGTXEvcn0pdbOyXITpu
+FAY2SNbbZv0FePQAD5Jg
+=1dFB
+-----END PGP SIGNATURE-----
 
--- 
-nvpublic
+--zx4FCpZtqtKETZ7O--
