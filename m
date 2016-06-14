@@ -1,60 +1,42 @@
-From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 3/3] clk: tegra: Enable sor1 and sor1_src on Tegra210
-Date: Tue, 14 Jun 2016 11:37:10 -0400
-Message-ID: <a9bdfd66-5571-287f-3928-6cbe6967a0a6@nvidia.com>
-References: <20160614120044.30734-1-thierry.reding@gmail.com>
- <20160614120044.30734-3-thierry.reding@gmail.com>
+From: Rhyland Klein <rklein@nvidia.com>
+Subject: Re: [PATCH] mfd: max77620: Fix FPS switch statements
+Date: Tue, 14 Jun 2016 12:50:24 -0400
+Message-ID: <8e25e615-e2db-ad9b-2aad-cc44599c58d1@nvidia.com>
+References: <1463075104-26924-1-git-send-email-rklein@nvidia.com>
+ <20160607080538.GG1525@dell>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160614120044.30734-3-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160607080538.GG1525@dell>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 6/14/2016 8:00 AM, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 6/7/2016 4:05 AM, Lee Jones wrote:
+> On Thu, 12 May 2016, Rhyland Klein wrote:
 > 
-> Make the sor1 and sor1_src clocks available on Tegra210. They will be
-> used by the display driver to support HDMI and DP.
+>> When configuring FPS during probe, assuming a DT node is present for
+>> FPS, the code can run into a problem with the switch statements in
+>> max77620_config_fps() and max77620_get_fps_period_reg_value(). Namely,
+>> in the case of chip->chip_id == MAX77620, it will set
+>> fps_[mix|max]_period but then fall through to the default switch case
+>> and return -EINVAL. Returning this from max77620_config_fps() will
+>> cause probe to fail.
+>>
+>> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+>> ---
+>>  drivers/mfd/max77620.c | 2 ++
+>>  1 file changed, 2 insertions(+)
 > 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/clk/tegra/clk-tegra210.c         | 2 ++
->  include/dt-bindings/clock/tegra210-car.h | 2 +-
->  2 files changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-> index cd141a364c9d..8e37eda37449 100644
-> --- a/drivers/clk/tegra/clk-tegra210.c
-> +++ b/drivers/clk/tegra/clk-tegra210.c
-> @@ -2093,6 +2093,8 @@ static struct tegra_clk tegra210_clks[tegra_clk_max] __initdata = {
->  	[tegra_clk_dpaux1] = { .dt_id = TEGRA210_CLK_DPAUX1, .present = true },
->  	[tegra_clk_sor0] = { .dt_id = TEGRA210_CLK_SOR0, .present = true },
->  	[tegra_clk_sor0_lvds] = { .dt_id = TEGRA210_CLK_SOR0_LVDS, .present = true },
-> +	[tegra_clk_sor1] = { .dt_id = TEGRA210_CLK_SOR1, .present = true },
-> +	[tegra_clk_sor1_src] = { .dt_id = TEGRA210_CLK_SOR1_SRC, .present = true },
->  	[tegra_clk_gpu] = { .dt_id = TEGRA210_CLK_GPU, .present = true },
->  	[tegra_clk_pll_g_ref] = { .dt_id = TEGRA210_CLK_PLL_G_REF, .present = true, },
->  	[tegra_clk_uartb_8] = { .dt_id = TEGRA210_CLK_UARTB, .present = true },
-> diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
-> index bd3530e56d46..35288b20f2c9 100644
-> --- a/include/dt-bindings/clock/tegra210-car.h
-> +++ b/include/dt-bindings/clock/tegra210-car.h
-> @@ -308,7 +308,7 @@
->  #define TEGRA210_CLK_CLK_OUT_3 279
->  #define TEGRA210_CLK_BLINK 280
->  /* 281 */
-> -/* 282 */
-> +#define TEGRA210_CLK_SOR1_SRC 282
->  /* 283 */
->  #define TEGRA210_CLK_XUSB_HOST_SRC 284
->  #define TEGRA210_CLK_XUSB_FALCON_SRC 285
+> Applied to -fixes with Thierry and Laxman's Acks.
 > 
 
-Acked-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+I don't see this in linux-next yet (as of 20160614). Can we get this
+merged there to.
+
+-rhyland
 
 -- 
 nvpublic
