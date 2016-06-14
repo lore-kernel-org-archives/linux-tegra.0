@@ -1,148 +1,97 @@
-From: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: beaver: allow SD card voltage to be changed
-Date: Tue, 14 Jun 2016 13:05:20 +0300
-Message-ID: <575FD6E0.7070201@intel.com>
-References: <1456779678-20173-1-git-send-email-dev@lynxeye.de>
- <1463124331.2459.0.camel@lynxeye.de> <20160513172704.GA498@ulmo.ba.sec>
- <573DCDB3.80202@nvidia.com> <575E897A.5080508@nvidia.com>
- <575FA21E.80309@intel.com> <575FBEE5.50905@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v5] clk: tegra: Initialize UTMIPLL when enabling PLLU
+Date: Tue, 14 Jun 2016 13:33:01 +0200
+Message-ID: <20160614113301.GB30021@ulmo.ba.sec>
+References: <1464280891-23036-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <575FBEE5.50905-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="mxv5cy4qt+RJ9ypb"
+Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1464280891-23036-1-git-send-email-rklein@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 14/06/16 11:23, Jon Hunter wrote:
-> 
-> On 14/06/16 07:20, Adrian Hunter wrote:
->> On 13/06/16 13:22, Jon Hunter wrote:
->>> Adding Adrian and Ulf ...
->>>
->>> On 19/05/16 15:29, Jon Hunter wrote:
->>>>
->>>> On 13/05/16 18:27, Thierry Reding wrote:
->>>>> * PGP Signed by an unknown key
->>>>>
->>>>> On Fri, May 13, 2016 at 09:25:31AM +0200, Lucas Stach wrote:
->>>>>> Am Montag, den 29.02.2016, 22:01 +0100 schrieb Lucas Stach:
->>>>>>> This allows to switch the card signal voltage level to 1.8V,
->>>>>>> which is needed for any ultra high speed modes to work.
->>>>>>>
->>>>>>> Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
->>>>>>> ---
->>>>>>> This needs the SDMMC memcomp pad calibration patches I just
->>>>>>> sent out to be applied, otherwise the card voltage change will
->>>>>>> fail with a message in the kernel log and a fall back to
->>>>>>> high speed operation.
->>>>>>
->>>>>> The patches this one depends on have been applied for some time now.
->>>>>> Please pick up this patch.
->>>>>
->>>>> My understanding is that UHS modes currently cause problems on Beaver.
->>>>> What I don't understand about that is how it will even try those modes
->>>>> if the voltage regulator can't be set to 1.8 V? Shouldn't that actively
->>>>> prevent those modes from even being attempted?
->>>>
->>>> Looking at the sdhci code, if the regulator is missing then we still
->>>> attempt to place the controller is 1.8V mode ...
->>>>
->>>>  static int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
->>>>                                               struct mmc_ios *ios)
->>>>  {
->>>>
->>>>  ...
->>>>
->>>>          case MMC_SIGNAL_VOLTAGE_180:
->>>>                  if (!IS_ERR(mmc->supply.vqmmc)) {
->>>>                          ret = regulator_set_voltage(mmc->supply.vqmmc,
->>>>                                          1700000, 1950000);
->>>>                          if (ret) {
->>>>                                  pr_warn("%s: Switching to 1.8V signalling voltage failed\n",
->>>>                                          mmc_hostname(mmc));
->>>>                                  return -EIO;
->>>>                          }
->>>>                  }
->>>>
->>>>                  /*
->>>>                   * Enable 1.8V Signal Enable in the Host Control2
->>>>                   * register
->>>>                   */
->>>>                  ctrl |= SDHCI_CTRL_VDD_180;
->>>>                  sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
->>>>  
->>>>                  /* Some controller need to do more when switching */
->>>>                  if (host->ops->voltage_switch)
->>>>                          host->ops->voltage_switch(host);
->>>>  
->>>>                  /* 1.8V regulator output should be stable within 5 ms */
->>>>                  ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
->>>>                  if (ctrl & SDHCI_CTRL_VDD_180)
->>>>                          return 0;
->>>>  
->>>>                  pr_warn("%s: 1.8V regulator output did not became stable\n",
->>>>                          mmc_hostname(mmc));
->>>>  
->>>>                  return -EAGAIN;
->>>>
->>>> Ideally, the above *should* fail if the regulator is missing. However, what
->>>> I have found, is that in my case, even though the regulator is missing, the
->>>> above succeeds and the host thinks we are operating at 1.8V even though we
->>>> are still at 3.3V! It seems that this does not happen with all SD cards that
->>>> support UHS. 
->>>>
->>>> This patch resolves the problems I am seeing on beaver with SD card
->>>> initialisation failing. I am surprised this is not causing problems for
->>>> others?
->>>
->>> Adrian, Ulf, per the above, I have found that on a Tegra30 beaver board,
->>> if we enable UHS-I modes for Tegra30 but the device-tree for the board
->>> is missing the regulator to select 1.8V mode operation, then the above
->>> code sequence may still return success (ie. SDHCI_CTRL_VDD_180 bit is
->>> set in SDHCI_HOST_CONTROL2) even though we have not changed the voltage.
->>> This leads to other problems later on during SD initialisation.
->>>
->>> Would you expect that an SDHCI controller should fail to set the
->>> SDHCI_CTRL_VDD_180 bit in the SDHCI_HOST_CONTROL2 register if we did not
->>> change the voltage?
->>
->> What is meant to happen is that sdhci should wait 5ms and then check
->> SDHCI_CTRL_VDD_180 - which it used to do but then someone took the 5ms wait
->> away.
-> 
-> Do you plan to add the 5ms delay again?
 
-I guess the assumption is the card will fail to switch voltage, so the check
-is unnecessary.
+--mxv5cy4qt+RJ9ypb
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 
->> In any case, if you are using a regulator there is no knowing what sdhci is
->> meant to do.
-> 
-> Ok, seems fragile.
+On Thu, May 26, 2016 at 12:41:31PM -0400, Rhyland Klein wrote:
+> From: Andrew Bresticker <abrestic@chromium.org>
+>=20
+> Move the UTMIPLL initialization code form clk-tegra<chip>.c files into
+> clk-pll.c. UTMIPLL was being configured and set in HW control right
+> after registration. However, when the clock init_table is processed and
+> child clks of PLLU are enabled, it will call in and enable PLLU as
+> well, and initiate SW enabling sequence even though PLLU is already in
+> HW control. This leads to getting UTMIPLL stuck with a SEQ_BUSY status.
+>=20
+> Doing the initialization once during pllu_enable means we configure it
+> properly into HW control.
+>=20
+> A side effect of the commonization/localization of the UTMIPLL init
+> code, is that it corrects some errors that were present for earlier
+> generations. For instance, in clk-tegra124.c, it used to have:
+>=20
+> define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 6)
+>=20
+> when the correct shift to use is present in the new version:
+>=20
+> define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 27)
+>=20
+> which matches the Tegra124 TRM register definition.
+>=20
+> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+>=20
+> [rklein: Merged in some later fixes for potential deadlocks]
+>=20
+> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> ---
+> v5:
+>  - Initialized flags to 0 to avoid harmless spinlock warnings
+>=20
+> v4:
+>  - Re-added examples in patch description
+>=20
+> v3:
+>  - Flushed out description to describe this patch.
+>=20
+>  drivers/clk/tegra/clk-pll.c      | 484 +++++++++++++++++++++++++++++++++=
+++++++
+>  drivers/clk/tegra/clk-tegra114.c | 155 +------------
+>  drivers/clk/tegra/clk-tegra124.c | 156 +------------
+>  drivers/clk/tegra/clk-tegra210.c | 182 +--------------
+>  drivers/clk/tegra/clk-tegra30.c  | 113 +--------
+>  drivers/clk/tegra/clk.h          |  17 ++
+>  6 files changed, 510 insertions(+), 597 deletions(-)
 
-In what way.
+Applied, thanks.
 
-> 
->>>
->>> We want to ensure that Tegra devices do not attempt to switch the UHS-I
->>> modes if the regulator is not present and it is not clear to me if there
->>> is a problem with the Tegra SDHCI controller or how this should be handled.
->>
->> If the driver doesn't support UHS-I modes then it must remove the cap flags.
-> 
-> So the controller itself supports UHS-I modes, but a given board may not
-> have the regulator to support them. We need a way to determine if the
-> board can support the UHS-I modes. Now we could check to see if the
-> regulator is present in the Tegra SDHCI driver and if not remove the cap
-> flags. However, I was not sure if this is applicable to other sdhci
-> controllers and so there should be a generic solution for this?
+Thierry
 
-There is SDHCI_QUIRK2_NO_1_8_V but it doesn't cover the eMMC 1.8V DDR52 case
-at present.  Dong Aisheng wanted to plug that gap but I wanted to get rid of
-SDHCI_QUIRK2_NO_1_8_V:
+--mxv5cy4qt+RJ9ypb
+Content-Type: application/pgp-signature; name="signature.asc"
 
-	http://marc.info/?l=linux-mmc&m=146132847206423&w=2
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXX+ttAAoJEN0jrNd/PrOhNDEP/AwhUcJRLncW3fNxoYOYwdt/
+Ogfam6N+jS1+5pndvIYDZb8WbgFAQsLg3d7XZOb02KglrXQUaycMCV08F6kIB362
+Wp3YMaLwBMqKt9NDEAFtYr1W/vVfUUUS1PJgLXDbcZj6gzfFl/acN8oCpPpGYSU2
+J/Fjaka//i8zn4eRGj6Gvh8OZzqb10wgoevj6elWVqoHhMJ2fK8VLa/yvjbcGG6L
+WcHgQf15rNUAH/2k5pXKn0nCgD9dL4sqYdJcK5EuWst6SvPwb2kjU+FgwaLY5CB3
+RkM/ykMWAmfE+6/WeKySCi1+mcB1BNPBEtRuZ9dMyLQCLSbaATtN3hUTL+kAwejp
+pV7A4N0ZjqIDfKubqcoNCqqmN6DNrcah6sfK9x6Y2kXxXG98r6B5V6fn/4cOrN+p
+0wZDlrsdyQa1nuCNM3iepFxvlUUr1vqGegeuROttdMbApj/UlGXXm7ulqvzhXJS0
+Ocrho/CT16XP3v4gd0c21hJMS4vRedi+iJ53+7MtaOCKp1xn17Sz3ZjOEEEaQ3w0
+9W15pqSBOchCF1QM/IAoQgoGnUCGGZDMNB38pCZCvkRI12Gd21kjNsPx7ILFCOts
+9weikvyiSc84j6bz2RNDzDXER3Gju7U6DzZJGh2tITumTVWx0anMkMH8NDFu3YUH
++x8CkfemBvGjjWQMTzHf
+=po9c
+-----END PGP SIGNATURE-----
+
+--mxv5cy4qt+RJ9ypb--
