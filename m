@@ -1,115 +1,120 @@
-From: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH V6 2/9] genirq: Look-up trigger type if not specified by
- caller
-Date: Mon, 13 Jun 2016 13:33:58 +0100
-Message-ID: <575EA836.4010406@arm.com>
-References: <1465312354-27778-1-git-send-email-jonathanh@nvidia.com>
- <1465312354-27778-3-git-send-email-jonathanh@nvidia.com>
- <575E8E29.3090808@arm.com> <575E9457.8010100@nvidia.com>
- <575EA03D.5070706@arm.com> <575EA603.7090002@nvidia.com>
+From: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: beaver: allow SD card voltage to be changed
+Date: Tue, 14 Jun 2016 09:20:14 +0300
+Message-ID: <575FA21E.80309@intel.com>
+References: <1456779678-20173-1-git-send-email-dev@lynxeye.de>
+ <1463124331.2459.0.camel@lynxeye.de> <20160513172704.GA498@ulmo.ba.sec>
+ <573DCDB3.80202@nvidia.com> <575E897A.5080508@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <575EA603.7090002-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <575E897A.5080508-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thomas Gleixner <tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pawel Moll <pawel.moll-5wv7dgnIgG8@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Ian Campbell <ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org>, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Geert Uytterhoeven <geert-Td1EMuHUCqxL1ZNQvxDV9g@public.gmane.org>, Grygorii Strashko <grygorii.strashko-l0cyMroinI0@public.gmane.org>, Lars-Peter Clausen <lars-Qo5EllUWu/uELgA04lAiVw@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 13/06/16 13:24, Jon Hunter wrote:
+On 13/06/16 13:22, Jon Hunter wrote:
+> Adding Adrian and Ulf ...
 > 
-> On 13/06/16 12:59, Marc Zyngier wrote:
->> On 13/06/16 12:09, Jon Hunter wrote:
+> On 19/05/16 15:29, Jon Hunter wrote:
+>>
+>> On 13/05/16 18:27, Thierry Reding wrote:
+>>> * PGP Signed by an unknown key
 >>>
->>> On 13/06/16 11:42, Marc Zyngier wrote:
->>>> On 07/06/16 16:12, Jon Hunter wrote:
->>>>> For some devices the IRQ trigger type for a device is read from
->>>>> firmware, such as device-tree. The IRQ trigger type is typically read
->>>>> when the mapping for IRQ is created, which is before the IRQ is
->>>>> requested. Hence, the IRQ trigger type is programmed when mapping the
->>>>> IRQ and not when requesting the IRQ.
+>>> On Fri, May 13, 2016 at 09:25:31AM +0200, Lucas Stach wrote:
+>>>> Am Montag, den 29.02.2016, 22:01 +0100 schrieb Lucas Stach:
+>>>>> This allows to switch the card signal voltage level to 1.8V,
+>>>>> which is needed for any ultra high speed modes to work.
 >>>>>
->>>>> Although this works for most cases, in order to support IRQ chips which
->>>>> require runtime power management, which may not be accessible prior
->>>>> to requesting the IRQ, it is desirable to look-up the IRQ trigger type
->>>>> when it is requested. Therefore, if the IRQ trigger type is not
->>>>> specified when __setup_irq() is called, look-up the saved IRQ trigger
->>>>> type. This will allow us to defer the programming of the trigger type
->>>>> from when the IRQ is mapped to when it is actually requested.
->>>>>
->>>>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>>> Reviewed-by: Marc Zyngier <marc.zyngier-5wv7dgnIgG8@public.gmane.org>
+>>>>> Signed-off-by: Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>
 >>>>> ---
->>>>>  kernel/irq/manage.c | 7 +++++++
->>>>>  1 file changed, 7 insertions(+)
->>>>>
->>>>> diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
->>>>> index ef0bc02c3a70..eaedeb74b49d 100644
->>>>> --- a/kernel/irq/manage.c
->>>>> +++ b/kernel/irq/manage.c
->>>>> @@ -1117,6 +1117,13 @@ __setup_irq(unsigned int irq, struct irq_desc *desc, struct irqaction *new)
->>>>>  	new->irq = irq;
->>>>>  
->>>>>  	/*
->>>>> +	 * If the trigger type is not specified by the caller,
->>>>> +	 * then use the default for this interrupt.
->>>>> +	 */
->>>>> +	if (!(new->flags & IRQF_TRIGGER_MASK))
->>>>> +		new->flags |= irqd_get_trigger_type(&desc->irq_data);
->>>>> +
->>>>> +	/*
->>>>>  	 * Check whether the interrupt nests into another interrupt
->>>>>  	 * thread.
->>>>>  	 */
->>>>>
+>>>>> This needs the SDMMC memcomp pad calibration patches I just
+>>>>> sent out to be applied, otherwise the card voltage change will
+>>>>> fail with a message in the kernel log and a fall back to
+>>>>> high speed operation.
 >>>>
->>>> I've added the following patch to the queue, in order to deal with
->>>> percpu interrupts that were not handled by this patch:
->>>>
->>>> diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
->>>> index f8fd1fb..00cfc85 100644
->>>> --- a/kernel/irq/manage.c
->>>> +++ b/kernel/irq/manage.c
->>>> @@ -1751,7 +1751,14 @@ void enable_percpu_irq(unsigned int irq, unsigned int type)
->>>>  	if (!desc)
->>>>  		return;
->>>>  
->>>> +	/*
->>>> +	 * If the trigger type is not specified by the caller, then
->>>> +	 * use the default for this interrupt.
->>>> +	 */
->>>>  	type &= IRQ_TYPE_SENSE_MASK;
->>>> +	if (type == IRQ_TYPE_NONE)
->>>> +		type = irqd_get_trigger_type(&desc->irq_data);
->>>> +
+>>>> The patches this one depends on have been applied for some time now.
+>>>> Please pick up this patch.
 >>>
->>> I am wondering if you need this here because now __setup_irq(), called
->>> by request_percpu_irq(), will actually look-up the saved type even for a
->>> percpu-irq. So shouldn't this already be handled? Or am I missing something?
+>>> My understanding is that UHS modes currently cause problems on Beaver.
+>>> What I don't understand about that is how it will even try those modes
+>>> if the voltage regulator can't be set to 1.8 V? Shouldn't that actively
+>>> prevent those modes from even being attempted?
 >>
->> You are overlooking the fact that the configuration registers are
->> themselves per-CPU, which means that __setup_irq() will only configure
->> the interrupt on the CPU it runs on. And you can't even tell which one,
->> since you are in a preemptible context.
+>> Looking at the sdhci code, if the regulator is missing then we still
+>> attempt to place the controller is 1.8V mode ...
 >>
->> Does it make more sense?
+>>  static int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
+>>                                               struct mmc_ios *ios)
+>>  {
+>>
+>>  ...
+>>
+>>          case MMC_SIGNAL_VOLTAGE_180:
+>>                  if (!IS_ERR(mmc->supply.vqmmc)) {
+>>                          ret = regulator_set_voltage(mmc->supply.vqmmc,
+>>                                          1700000, 1950000);
+>>                          if (ret) {
+>>                                  pr_warn("%s: Switching to 1.8V signalling voltage failed\n",
+>>                                          mmc_hostname(mmc));
+>>                                  return -EIO;
+>>                          }
+>>                  }
+>>
+>>                  /*
+>>                   * Enable 1.8V Signal Enable in the Host Control2
+>>                   * register
+>>                   */
+>>                  ctrl |= SDHCI_CTRL_VDD_180;
+>>                  sdhci_writew(host, ctrl, SDHCI_HOST_CONTROL2);
+>>  
+>>                  /* Some controller need to do more when switching */
+>>                  if (host->ops->voltage_switch)
+>>                          host->ops->voltage_switch(host);
+>>  
+>>                  /* 1.8V regulator output should be stable within 5 ms */
+>>                  ctrl = sdhci_readw(host, SDHCI_HOST_CONTROL2);
+>>                  if (ctrl & SDHCI_CTRL_VDD_180)
+>>                          return 0;
+>>  
+>>                  pr_warn("%s: 1.8V regulator output did not became stable\n",
+>>                          mmc_hostname(mmc));
+>>  
+>>                  return -EAGAIN;
+>>
+>> Ideally, the above *should* fail if the regulator is missing. However, what
+>> I have found, is that in my case, even though the regulator is missing, the
+>> above succeeds and the host thinks we are operating at 1.8V even though we
+>> are still at 3.3V! It seems that this does not happen with all SD cards that
+>> support UHS. 
+>>
+>> This patch resolves the problems I am seeing on beaver with SD card
+>> initialisation failing. I am surprised this is not causing problems for
+>> others?
 > 
-> Yes it does thanks. I am guessing we don't need to worry about there
-> being different type configurations for the different CPUs for a given
-> interrupt?
+> Adrian, Ulf, per the above, I have found that on a Tegra30 beaver board,
+> if we enable UHS-I modes for Tegra30 but the device-tree for the board
+> is missing the regulator to select 1.8V mode operation, then the above
+> code sequence may still return success (ie. SDHCI_CTRL_VDD_180 bit is
+> set in SDHCI_HOST_CONTROL2) even though we have not changed the voltage.
+> This leads to other problems later on during SD initialisation.
+> 
+> Would you expect that an SDHCI controller should fail to set the
+> SDHCI_CTRL_VDD_180 bit in the SDHCI_HOST_CONTROL2 register if we did not
+> change the voltage?
 
-I don't know of any firmware that would allow this configuration to be
-described (neither DT nor ACPI support this braindeadness). So if that
-happens, the only way to support it is to actively pass the trigger type
-to enable_percpu_irq().
+What is meant to happen is that sdhci should wait 5ms and then check
+SDHCI_CTRL_VDD_180 - which it used to do but then someone took the 5ms wait
+away.
 
-Should we want to support it from the PoV of a firmware description,
-we'd need to expand the trigger to be per-cpu as well, which feels a bit
-mad. I'm not in any hurry here!
+In any case, if you are using a regulator there is no knowing what sdhci is
+meant to do.
 
-Thanks,
+> 
+> We want to ensure that Tegra devices do not attempt to switch the UHS-I
+> modes if the regulator is not present and it is not clear to me if there
+> is a problem with the Tegra SDHCI controller or how this should be handled.
 
-	M.
--- 
-Jazz is not dead. It just smells funny...
+If the driver doesn't support UHS-I modes then it must remove the cap flags.
