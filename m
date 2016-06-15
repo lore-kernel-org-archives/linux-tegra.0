@@ -1,42 +1,41 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] i2c: tegra: Correct error path in probe
-Date: Tue, 14 Jun 2016 21:26:46 +0100
-Message-ID: <1465936007-18599-1-git-send-email-jonathanh@nvidia.com>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] mfd: max77620: Fix FPS switch statements
+Date: Wed, 15 Jun 2016 15:11:13 +0900
+Message-ID: <CAAVeFuKHEtQyX0YYmbGXLX+JFrEu7qrYmwKZ4tEWzu2qMCLxUw@mail.gmail.com>
+References: <1463075104-26924-1-git-send-email-rklein@nvidia.com>
+ <20160607080538.GG1525@dell> <8e25e615-e2db-ad9b-2aad-cc44599c58d1@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Shardar Shariff Md <smohammed@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <8e25e615-e2db-ad9b-2aad-cc44599c58d1@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Lee Jones <lee.jones@linaro.org>, Laxman Dewangan <ldewangan@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Commit 497fbe24987b ("i2c: tegra: enable multi master mode for tegra210")
-enables the Tegra I2C 'div_clk' for adapters using the multi-master mode
-during the device probe. Although the probe error path was updated to
-disable the clock on probe failure, there is one place after calling
-tegra_i2c_init() where the clock will not be disabled on failure. Correct
-the error path so that the 'div_clk' is disabled if calling
-tegra_i2c_init() fails.
+On Wed, Jun 15, 2016 at 1:50 AM, Rhyland Klein <rklein@nvidia.com> wrote:
+> On 6/7/2016 4:05 AM, Lee Jones wrote:
+>> On Thu, 12 May 2016, Rhyland Klein wrote:
+>>
+>>> When configuring FPS during probe, assuming a DT node is present for
+>>> FPS, the code can run into a problem with the switch statements in
+>>> max77620_config_fps() and max77620_get_fps_period_reg_value(). Namely,
+>>> in the case of chip->chip_id == MAX77620, it will set
+>>> fps_[mix|max]_period but then fall through to the default switch case
+>>> and return -EINVAL. Returning this from max77620_config_fps() will
+>>> cause probe to fail.
+>>>
+>>> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+>>> ---
+>>>  drivers/mfd/max77620.c | 2 ++
+>>>  1 file changed, 2 insertions(+)
+>>
+>> Applied to -fixes with Thierry and Laxman's Acks.
+>>
+>
+> I don't see this in linux-next yet (as of 20160614). Can we get this
+> merged there to.
 
-Fixes: 497fbe24987b ("i2c: tegra: enable multi master mode for tegra210")
+Was about to say the same thing. FWIW:
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- drivers/i2c/busses/i2c-tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 445398c314a3..b126dbaa47e3 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -912,7 +912,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	ret = tegra_i2c_init(i2c_dev);
- 	if (ret) {
- 		dev_err(&pdev->dev, "Failed to initialize i2c controller");
--		goto unprepare_div_clk;
-+		goto disable_div_clk;
- 	}
- 
- 	ret = devm_request_irq(&pdev->dev, i2c_dev->irq,
--- 
-2.1.4
+Tested-by: Alexandre Courbot <acourbot@nvidia.com>
