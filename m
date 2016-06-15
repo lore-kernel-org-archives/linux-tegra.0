@@ -1,58 +1,39 @@
-From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC PATCH 0/8] PM / Domains: Add support for removing PM domains
-Date: Wed, 15 Jun 2016 16:46:38 +0200
-Message-ID: <CAPDyKFoUxknMzF-TReS+3LkRLvw-X1SeBCw83_y_bsXVGJVnXA@mail.gmail.com>
-References: <1457090634-14785-1-git-send-email-jonathanh@nvidia.com>
+From: Vinod Koul <vinod.koul@intel.com>
+Subject: Re: [PATCH 8/8] dmaengine: Remove site specific OOM error messages
+ on kzalloc
+Date: Wed, 15 Jun 2016 22:38:28 +0530
+Message-ID: <20160615170828.GD16910@localhost>
+References: <1465321121-22238-1-git-send-email-peter.griffin@linaro.org>
+ <1465321121-22238-9-git-send-email-peter.griffin@linaro.org>
+ <CACRpkdaf1d8CvBmFCT+bWiXR9ddJ0Mpu5hMi2fzR6sLCXt3EqA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1457090634-14785-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alexander Aring <alex.aring-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CACRpkdaf1d8CvBmFCT+bWiXR9ddJ0Mpu5hMi2fzR6sLCXt3EqA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Peter Griffin <peter.griffin@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:ARM/STI ARCHITECTURE" <kernel@stlinux.com>, Dan Williams <dan.j.williams@intel.com>, Leo Li <leoli@freescale.com>, Zhang Wei <zw@zh-kernel.org>, Barry Song <baohua@kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Laxman Dewangan <ldewangan@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Lee Jones <lee.jones@linaro.org>, dmaengine@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org list" <linuxppc-dev@lists.ozlabs.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 4 March 2016 at 12:23, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> In order to safely remove PM domains there are a few changes that need to be
-> made to ensure that no one is holding an external reference to a PM domain
-> after it has been removed. One solution, implemented here, solves this by
-> eliminating external references to PM domain. Another alternative would be
-> to employ some reference counting for the PM domains, however, I did not see
-> a good reason for allowing external references in the first place (as always
-> there could be something that I have over-looked!).
->
-> Jon Hunter (8):
->   PM / Domains: Add new helper functions for device-tree
->   ARM: EXYNOS: Remove calls to of_genpd_get_from_provider()
->   staging: board: Remove calls to of_genpd_get_from_provider()
->   PM / Domains: Don't expose generic_pm_domain structure
->   PM / Domains: Verify the PM domain is present when adding a provider
->   PM / Domains: Remove a provider by referencing the data pointer
->   PM / Domains: Prepare for adding support to remove PM domains
->   PM / Domains: Add support for removing PM domains
->
->  arch/arm/mach-exynos/pm_domains.c |  23 +--
->  drivers/base/power/domain.c       | 324 +++++++++++++++++++++++++++++++++++---
->  drivers/staging/board/board.c     |   9 +-
->  include/linux/pm_domain.h         |  55 ++++---
->  4 files changed, 348 insertions(+), 63 deletions(-)
->
-> --
-> 2.1.4
->
+On Wed, Jun 08, 2016 at 02:12:27PM +0200, Linus Walleij wrote:
+> On Tue, Jun 7, 2016 at 7:38 PM, Peter Griffin <peter.griffin@linaro.org> wrote:
+> 
+> > If kzalloc() fails it will issue it's own error message including
+> > a dump_stack(). So remove the site specific error messages.
+> >
+> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> 
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> A few subsystems may use a cleanup like this...
+> I wonder how many unnecessary prints I've introduced
+> myself :P
 
-Apologize for the long delay!
+Yes that should be case with mine too :)
 
-I have looked through this now and I really like this!
+I think adding a coccinelle script and doing this treewise might be great
 
-There were a few comments, but those should be easily taken care of.
-So please go ahead and re-spin a new version!
-
-There are a few outstanding genpd patches which I have posted a while
-ago but which isn't yet queued for 4.8.
-I don't know whether those will conflict with this series (if they get
-merged prior to this), but I guess it's better if you anyway base you
-series on Rafael's latest changes instead of on top of mine...
-
-Kind regards
-Uffe
+Thanks
+-- 
+~Vinod
