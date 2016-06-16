@@ -1,58 +1,168 @@
-From: Alexandre Courbot <acourbot@nvidia.com>
-Subject: Re: [PATCH RFC] Revert "cpufreq: dt: Identify cpu-sharing for
- platforms without operating-points-v2"
-Date: Thu, 16 Jun 2016 15:57:06 +0900
-Message-ID: <5db9eb89-1026-e710-755b-c7a0fa87819e@nvidia.com>
-References: <20160616053524.19921-1-acourbot@nvidia.com>
- <20160616063529.GA5726@vireshk-i7>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH] PM / OPP: 'UNKNOWN' status of opp-table->shared
+Date: Thu, 16 Jun 2016 14:25:31 +0200
+Message-ID: <CAJZ5v0gqbU8bc0k8ZHare6Tv4Nno5o4pYQwwzTP6Ha1xS3WDOg@mail.gmail.com>
+References: <87bd097db7b673b1f75ca2086dfa76f4dfbf7f8c.1466058619.git.viresh.kumar@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160616063529.GA5726@vireshk-i7>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Thierry Reding <treding@nvidia.com>
-Cc: linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, gnurou@gmail.com
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <87bd097db7b673b1f75ca2086dfa76f4dfbf7f8c.1466058619.git.viresh.kumar@linaro.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Rafael Wysocki <rjw@rjwysocki.net>, acourbot@nvidia.com, Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@codeaurora.org>, Lists linaro-kernel <linaro-kernel@lists.linaro.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/16/2016 03:35 PM, Viresh Kumar wrote:
-> +Rafael
+On Thu, Jun 16, 2016 at 8:33 AM, Viresh Kumar <viresh.kumar@linaro.org> wrote:
+> dev_pm_opp_get_sharing_cpus() returns 0 even in the case where the OPP
+> core doesn't know if the table is shared or not. It is working for most
+> of the platforms, as the OPP table was never created and we returned
+> -ENODEV then.
 >
-> On 16-06-16, 14:35, Alexandre Courbot wrote:
->> This is not an actual request for revert, but rather for comments about
->> the observed behavior since I am not really familiar with cpufreq.
->>
->> I am observing a serious performance regression on Jetson TK1 since 4.7-rc1:
->> namely, moving windows under X would become unsufferably slow, and graphical
->> performance under X in general is seriously degraded. After bisecting, I
->> found the regression to be visible since commit 1530b9963eeb ("cpufreq: dt:
->> Identify cpu-sharing for platforms without operating-points-v2")
->>
->> If I revert this commit, I noticed that the CPU frequency immediately jumps to
->> a higher frequency once I start moving windows (resulting in a smooth and
->> responsive action), whereas enabling this commit causes the CPU frequency to
->> remain low (typically 204 Mhz) in that case, resulting in CPU-bound slowness.
->>
->> What happens is that with 1530b9963eeb applied, dev_pm_opp_get_sharing_cpus()
->> returns zero causing the fallback variable to remain false, whereas without it
->> opp_v1 is set to true.
->>
->> It is not clear to me whether this is a cpufreq issue or a Tegra issue, so I am
->> posting this in the hope to get clarifications from either side.
->>
->> Thanks!
+> But in case of one of the platforms (Jetson TK1) at least, the situation
+> is a bit different. The OPP table is created (somehow) before
+> dev_pm_opp_get_sharing_cpus() is called and so we returned 0. The caller
+> of this routine treated that as 'CPUs don't share OPPs' and that had bad
+> consequences on performance.
 >
-> Yeah, you just hit a corner case. Sorry about that :(
+> Fix this by converting 'shared_opp' to an integer and have an extra
+> value when its state in undefined. dev_pm_opp_get_sharing_cpus() returns
+> -EINVAL now in that case, so that the caller can handle it accordingly
+> (cpufreq-dt considers that as 'all CPUs share the table').
 >
-> Can you try a patch that I sent to you instead? Its subject is:
+> Fixes: 6f707daa3833 ("PM / OPP: Add dev_pm_opp_get_sharing_cpus()")
+> Reported-by: Alexandre Courbot <acourbot@nvidia.com>
+> Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+> Hi Alexandre,
 >
-> [PATCH] PM / OPP: 'UNKNOWN' status of opp-table->shared
+> This is untested, can you please confirm if this fixes it for you?
+>
+>  drivers/base/power/opp/core.c |  3 +++
+>  drivers/base/power/opp/cpu.c  | 12 +++++++++---
+>  drivers/base/power/opp/of.c   | 10 ++++++++--
+>  drivers/base/power/opp/opp.h  |  5 ++++-
+>  4 files changed, 24 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/base/power/opp/core.c b/drivers/base/power/opp/core.c
+> index 7c04c87738a6..14d212885098 100644
+> --- a/drivers/base/power/opp/core.c
+> +++ b/drivers/base/power/opp/core.c
+> @@ -764,6 +764,9 @@ static struct opp_table *_add_opp_table(struct device *dev)
+>         /* Set regulator to a non-NULL error value */
+>         opp_table->regulator = ERR_PTR(-ENXIO);
+>
+> +       /* Set sharing information as unknown */
+> +       opp_table->shared_opp = OPP_TABLE_SHARED_UNKNOWN;
+> +
+>         /* Find clk for the device */
+>         opp_table->clk = clk_get(dev, NULL);
+>         if (IS_ERR(opp_table->clk)) {
+> diff --git a/drivers/base/power/opp/cpu.c b/drivers/base/power/opp/cpu.c
+> index 83d6e7ba1a34..4ca86df8a451 100644
+> --- a/drivers/base/power/opp/cpu.c
+> +++ b/drivers/base/power/opp/cpu.c
+> @@ -211,7 +211,7 @@ int dev_pm_opp_set_sharing_cpus(struct device *cpu_dev,
+>                 }
+>
+>                 /* Mark opp-table as multiple CPUs are sharing it now */
+> -               opp_table->shared_opp = true;
+> +               opp_table->shared_opp = OPP_TABLE_IS_SHARED;
+>         }
+>  unlock:
+>         mutex_unlock(&opp_table_lock);
+> @@ -227,7 +227,8 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_set_sharing_cpus);
+>   *
+>   * This updates the @cpumask with CPUs that are sharing OPPs with @cpu_dev.
+>   *
+> - * Returns -ENODEV if OPP table isn't already present.
+> + * Returns -ENODEV if OPP table isn't already present and -EINVAL if the OPP
+> + * table's status is shared-unknown.
+>   *
+>   * Locking: The internal opp_table and opp structures are RCU protected.
+>   * Hence this function internally uses RCU updater strategy with mutex locks
+> @@ -249,9 +250,14 @@ int dev_pm_opp_get_sharing_cpus(struct device *cpu_dev, struct cpumask *cpumask)
+>                 goto unlock;
+>         }
+>
+> +       if (opp_table->shared_opp == OPP_TABLE_SHARED_UNKNOWN) {
+> +               ret = -EINVAL;
+> +               goto unlock;
+> +       }
+> +
+>         cpumask_clear(cpumask);
+>
+> -       if (opp_table->shared_opp) {
+> +       if (opp_table->shared_opp == OPP_TABLE_IS_SHARED) {
+>                 list_for_each_entry(opp_dev, &opp_table->dev_list, node)
+>                         cpumask_set_cpu(opp_dev->dev->id, cpumask);
+>         } else {
+> diff --git a/drivers/base/power/opp/of.c b/drivers/base/power/opp/of.c
+> index 94d2010558e3..83ad3a6a16f1 100644
+> --- a/drivers/base/power/opp/of.c
+> +++ b/drivers/base/power/opp/of.c
+> @@ -34,7 +34,10 @@ static struct opp_table *_managed_opp(const struct device_node *np)
+>                          * But the OPPs will be considered as shared only if the
+>                          * OPP table contains a "opp-shared" property.
+>                          */
+> -                       return opp_table->shared_opp ? opp_table : NULL;
+> +                       if (opp_table->shared_opp == OPP_TABLE_IS_SHARED)
+> +                               return opp_table;
+> +
+> +                       return NULL;
 
-Thanks, this seems to solve the issue.
+That still can be
 
-> Also I would like to know one more thing. You can hit this bug only if
-> some other piece of code for your platform is creating OPP table for
-> the CPUs. Which code is doing that ?
+return opp_table->shared_opp == OPP_TABLE_IS_SHARED ? opp_table : NULL;
 
-Good question. I am still educating myself about OPP - adding Thierry in 
-the meantime who may have an answer.
+>                 }
+>         }
+>
+> @@ -353,7 +356,10 @@ static int _of_add_opp_table_v2(struct device *dev, struct device_node *opp_np)
+>         }
+>
+>         opp_table->np = opp_np;
+> -       opp_table->shared_opp = of_property_read_bool(opp_np, "opp-shared");
+> +       if (of_property_read_bool(opp_np, "opp-shared"))
+> +               opp_table->shared_opp = OPP_TABLE_IS_SHARED;
+> +       else
+> +               opp_table->shared_opp = OPP_TABLE_IS_NOT_SHARED;
+
+And here
+
+opp_table->shared_opp = of_property_read_bool(opp_np, "opp-shared") ?
+                                            OPP_TABLE_IS_SHARED :
+OPP_TABLE_IS_NOT_SHARED;
+
+>
+>         mutex_unlock(&opp_table_lock);
+>
+> diff --git a/drivers/base/power/opp/opp.h b/drivers/base/power/opp/opp.h
+> index 20f3be22e060..ffd0b54e7894 100644
+> --- a/drivers/base/power/opp/opp.h
+> +++ b/drivers/base/power/opp/opp.h
+> @@ -166,7 +166,10 @@ struct opp_table {
+>         /* For backward compatibility with v1 bindings */
+>         unsigned int voltage_tolerance_v1;
+>
+> -       bool shared_opp;
+> +#define OPP_TABLE_IS_NOT_SHARED                0
+> +#define OPP_TABLE_IS_SHARED            1
+> +#define OPP_TABLE_SHARED_UNKNOWN       UINT_MAX
+
+Please change this into an enum type.
+
+Besides, I'd call them OPP_TABLE_ACCESS_SHARED,
+OPP_TABLE_ACCESS_EXCLUSIVE, OPP_TABLE_ACCESS_UNKNOWN or similar, but I
+don't care that much either.
+
+> +       unsigned int shared_opp;
+>         struct dev_pm_opp *suspend_opp;
+>
+>         unsigned int *supported_hw;
+> --
+> 2.7.1.410.g6faf27b
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-pm" in
+> the body of a message to majordomo@vger.kernel.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
