@@ -1,63 +1,120 @@
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: tegra-devfreq hangs TK1 with R21.4 u-boot
-Date: Thu, 16 Jun 2016 18:16:12 +0200
-Message-ID: <20160616161611.GC19360@ulmo.ba.sec>
-References: <20160612034541.GA31426@jirafa.cyrius.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="H8ygTp4AXg6deix2"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160612034541.GA31426-IRMp5PtgtdoigzW5ZibpNwC/G2K4zDHf@public.gmane.org>
-Content-Disposition: inline
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
-Cc: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <srwarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH V2 33/63] clocksource/drivers/time-armada-370-xp: Convert init function to return error
+Date: Thu, 16 Jun 2016 23:26:52 +0200
+Message-ID: <1466112442-31105-34-git-send-email-daniel.lezcano@linaro.org>
+References: <1466112442-31105-1-git-send-email-daniel.lezcano@linaro.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1466112442-31105-1-git-send-email-daniel.lezcano@linaro.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: daniel.lezcano@linaro.org, tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "open list:TEGRA ARCHITECTUR..." <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
---H8ygTp4AXg6deix2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The init functions do not return any error. They behave as the following:
 
-On Sat, Jun 11, 2016 at 08:45:41PM -0700, Martin Michlmayr wrote:
-> I noticed that the Jetson TK1 hangs during boot (when/before mounting
-> the SD disk) when CONFIG_ARM_TEGRA_DEVFREQ=3Dy is set and when u-boot
-> from R21.4 is used (2014.10-rc2).
->=20
-> The hang does not occur when I disable tegra-devfreq or when I use
-> tegra-devfreq in combination with u-boot 2016.03 (from DENX upstream,
-> built by Debian).
->=20
-> Steps to reproduce:
->=20
-> ARCH=3Darm make multi_v7_defconfig
-> Set CONFIG_ARM_TEGRA_DEVFREQ=3Dy
-> Boot from an external SD card and it will hang when/before mounting the
-> SD card.
+  - panic, thus leading to a kernel crash while another timer may work and
+       make the system boot up correctly
 
-Stephen, any ideas what might be going on here?
+  or
 
-Thierry
+  - print an error and let the caller unaware if the state of the system
 
---H8ygTp4AXg6deix2
-Content-Type: application/pgp-signature; name="signature.asc"
+Change that by converting the init functions to return an error conforming
+to the CLOCKSOURCE_OF_RET prototype.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Proper error handling (rollback, errno value) will be changed later case
+by case, thus this change just return back an error or success in the init
+function.
 
-iQIcBAABCAAGBQJXYtDKAAoJEN0jrNd/PrOhesMP/i8W3/c4WZPcYk5QvPVeeyu9
-JlZtRmVQvhfNGyk7rlsNjZalhDOySrpHJITPx4M4em/PE1PBO1XUdKd2Gn+fwU4C
-WtyNkjepEFzhNEoMUvjG4v655BZOHCKhOns1KTBomstQenljgsR25pS9wS+K3zkU
-vOseOqgxQt+ugVLDw2NaCIdY2NI9Q/Qm6ocvdh0kAv0YRnfjk6ALOpEMMwXhDPm1
-2vXxcmfPUdcQZDFnsI6BZ1QQWYPQjT/3XZeEpKuhuIyEDI2lV+YadRRfeJwWCLcz
-Tfh+aGty5WWZ5FO6yKUImVXQTvUYRdeZ6I5B1Jufio6TG6AydW2876STZVQyEjDu
-wrPhS5hokCVu0z6BD95SknXe7//khHcg37fWU26mMw1RAqdEqcRiTo3hjIRvQKNT
-hP6nPBhRIo5w4UCu2uToEfcz/SiUk0U9mYmMo3bqEF2MLmFc/KA7C4l8gmdJxZiW
-e5GcMYe/jdF0xdYB3O/HxxvHun/cz9RxJroHZ5JSUYBPrYMAWzctjlE7darKq54G
-1uXIKv2/fEQZaVDi+2sLVMXM7PxWE50Vim//hYr1BPICYfsSThJGlfbZeAbx/2L5
-sjg8Jp8/OVvtn+V7TattAlOCyxOn1jeOhDeXrulkGlw4wzBhZ5AFqW4wrEB6ogZW
-B9XiJ0DqguK/EDrq6Jtq
-=Or/v
------END PGP SIGNATURE-----
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ drivers/clocksource/tegra20_timer.c | 28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
 
---H8ygTp4AXg6deix2--
+diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
+index 7b94ad2..543c37e 100644
+--- a/drivers/clocksource/tegra20_timer.c
++++ b/drivers/clocksource/tegra20_timer.c
+@@ -165,7 +165,7 @@ static struct irqaction tegra_timer_irq = {
+ 	.dev_id		= &tegra_clockevent,
+ };
+ 
+-static void __init tegra20_init_timer(struct device_node *np)
++static int __init tegra20_init_timer(struct device_node *np)
+ {
+ 	struct clk *clk;
+ 	unsigned long rate;
+@@ -174,13 +174,13 @@ static void __init tegra20_init_timer(struct device_node *np)
+ 	timer_reg_base = of_iomap(np, 0);
+ 	if (!timer_reg_base) {
+ 		pr_err("Can't map timer registers\n");
+-		BUG();
++		return -ENXIO;
+ 	}
+ 
+ 	tegra_timer_irq.irq = irq_of_parse_and_map(np, 2);
+ 	if (tegra_timer_irq.irq <= 0) {
+ 		pr_err("Failed to map timer IRQ\n");
+-		BUG();
++		return -EINVAL;
+ 	}
+ 
+ 	clk = of_clk_get(np, 0);
+@@ -211,10 +211,12 @@ static void __init tegra20_init_timer(struct device_node *np)
+ 
+ 	sched_clock_register(tegra_read_sched_clock, 32, 1000000);
+ 
+-	if (clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
+-		"timer_us", 1000000, 300, 32, clocksource_mmio_readl_up)) {
++	ret = clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
++				    "timer_us", 1000000, 300, 32,
++				    clocksource_mmio_readl_up);
++	if (ret) {
+ 		pr_err("Failed to register clocksource\n");
+-		BUG();
++		return ret;
+ 	}
+ 
+ 	tegra_delay_timer.read_current_timer =
+@@ -225,24 +227,26 @@ static void __init tegra20_init_timer(struct device_node *np)
+ 	ret = setup_irq(tegra_timer_irq.irq, &tegra_timer_irq);
+ 	if (ret) {
+ 		pr_err("Failed to register timer IRQ: %d\n", ret);
+-		BUG();
++		return ret;
+ 	}
+ 
+ 	tegra_clockevent.cpumask = cpu_all_mask;
+ 	tegra_clockevent.irq = tegra_timer_irq.irq;
+ 	clockevents_config_and_register(&tegra_clockevent, 1000000,
+ 					0x1, 0x1fffffff);
++
++	return 0;
+ }
+-CLOCKSOURCE_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
++CLOCKSOURCE_OF_DECLARE_RET(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
+ 
+-static void __init tegra20_init_rtc(struct device_node *np)
++static int __init tegra20_init_rtc(struct device_node *np)
+ {
+ 	struct clk *clk;
+ 
+ 	rtc_base = of_iomap(np, 0);
+ 	if (!rtc_base) {
+ 		pr_err("Can't map RTC registers");
+-		BUG();
++		return -ENXIO;
+ 	}
+ 
+ 	/*
+@@ -255,6 +259,6 @@ static void __init tegra20_init_rtc(struct device_node *np)
+ 	else
+ 		clk_prepare_enable(clk);
+ 
+-	register_persistent_clock(NULL, tegra_read_persistent_clock64);
++	return register_persistent_clock(NULL, tegra_read_persistent_clock64);
+ }
+-CLOCKSOURCE_OF_DECLARE(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
++CLOCKSOURCE_OF_DECLARE_RET(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
+-- 
+1.9.1
