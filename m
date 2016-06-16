@@ -1,39 +1,85 @@
-From: Vinod Koul <vinod.koul@intel.com>
-Subject: Re: [PATCH 8/8] dmaengine: Remove site specific OOM error messages
- on kzalloc
-Date: Wed, 15 Jun 2016 22:38:28 +0530
-Message-ID: <20160615170828.GD16910@localhost>
-References: <1465321121-22238-1-git-send-email-peter.griffin@linaro.org>
- <1465321121-22238-9-git-send-email-peter.griffin@linaro.org>
- <CACRpkdaf1d8CvBmFCT+bWiXR9ddJ0Mpu5hMi2fzR6sLCXt3EqA@mail.gmail.com>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH RFC] Revert "cpufreq: dt: Identify cpu-sharing for platforms without operating-points-v2"
+Date: Thu, 16 Jun 2016 14:35:24 +0900
+Message-ID: <20160616053524.19921-1-acourbot@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <CACRpkdaf1d8CvBmFCT+bWiXR9ddJ0Mpu5hMi2fzR6sLCXt3EqA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Peter Griffin <peter.griffin@linaro.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "open list:ARM/STI ARCHITECTURE" <kernel@stlinux.com>, Dan Williams <dan.j.williams@intel.com>, Leo Li <leoli@freescale.com>, Zhang Wei <zw@zh-kernel.org>, Barry Song <baohua@kernel.org>, Maxime Ripard <maxime.ripard@free-electrons.com>, Chen-Yu Tsai <wens@csie.org>, Laxman Dewangan <ldewangan@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Lee Jones <lee.jones@linaro.org>, dmaengine@vger.kernel.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linuxppc-dev@lists.ozlabs.org list" <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Viresh Kumar <viresh.kumar-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jun 08, 2016 at 02:12:27PM +0200, Linus Walleij wrote:
-> On Tue, Jun 7, 2016 at 7:38 PM, Peter Griffin <peter.griffin@linaro.org> wrote:
-> 
-> > If kzalloc() fails it will issue it's own error message including
-> > a dump_stack(). So remove the site specific error messages.
-> >
-> > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> 
-> Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> 
-> A few subsystems may use a cleanup like this...
-> I wonder how many unnecessary prints I've introduced
-> myself :P
+This is not an actual request for revert, but rather for comments about
+the observed behavior since I am not really familiar with cpufreq.
 
-Yes that should be case with mine too :)
+I am observing a serious performance regression on Jetson TK1 since 4.7-rc1:
+namely, moving windows under X would become unsufferably slow, and graphical
+performance under X in general is seriously degraded. After bisecting, I
+found the regression to be visible since commit 1530b9963eeb ("cpufreq: dt: 
+Identify cpu-sharing for platforms without operating-points-v2")
 
-I think adding a coccinelle script and doing this treewise might be great
+If I revert this commit, I noticed that the CPU frequency immediately jumps to
+a higher frequency once I start moving windows (resulting in a smooth and
+responsive action), whereas enabling this commit causes the CPU frequency to
+remain low (typically 204 Mhz) in that case, resulting in CPU-bound slowness.
 
-Thanks
+What happens is that with 1530b9963eeb applied, dev_pm_opp_get_sharing_cpus()
+returns zero causing the fallback variable to remain false, whereas without it
+opp_v1 is set to true.
+
+It is not clear to me whether this is a cpufreq issue or a Tegra issue, so I am
+posting this in the hope to get clarifications from either side.
+
+Thanks!
+
+---
+ drivers/cpufreq/cpufreq-dt.c | 16 +++++++---------
+ 1 file changed, 7 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
+index 3957de801ae8..eef245cd4b7f 100644
+--- a/drivers/cpufreq/cpufreq-dt.c
++++ b/drivers/cpufreq/cpufreq-dt.c
+@@ -146,7 +146,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 	struct clk *cpu_clk;
+ 	struct dev_pm_opp *suspend_opp;
+ 	unsigned int transition_latency;
+-	bool fallback = false;
++	bool opp_v1 = false;
+ 	const char *name;
+ 	int ret;
+ 
+@@ -166,16 +166,14 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 	/* Get OPP-sharing information from "operating-points-v2" bindings */
+ 	ret = dev_pm_opp_of_get_sharing_cpus(cpu_dev, policy->cpus);
+ 	if (ret) {
+-		if (ret != -ENOENT)
+-			goto out_put_clk;
+-
+ 		/*
+ 		 * operating-points-v2 not supported, fallback to old method of
+-		 * finding shared-OPPs for backward compatibility if the
+-		 * platform hasn't set sharing CPUs.
++		 * finding shared-OPPs for backward compatibility.
+ 		 */
+-		if (dev_pm_opp_get_sharing_cpus(cpu_dev, policy->cpus))
+-			fallback = true;
++		if (ret == -ENOENT)
++			opp_v1 = true;
++		else
++			goto out_put_clk;
+ 	}
+ 
+ 	/*
+@@ -215,7 +213,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
+ 		goto out_free_opp;
+ 	}
+ 
+-	if (fallback) {
++	if (opp_v1) {
+ 		cpumask_setall(policy->cpus);
+ 
+ 		/*
 -- 
-~Vinod
+2.8.3
