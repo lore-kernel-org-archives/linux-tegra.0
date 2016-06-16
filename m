@@ -1,50 +1,63 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V7 3/3] soc/tegra: pmc: Add support for IO pads power
- state and voltage
-Date: Thu, 16 Jun 2016 18:46:20 +0530
-Message-ID: <5762A6A4.6030604@nvidia.com>
-References: <1463755530-20941-1-git-send-email-ldewangan@nvidia.com> <1463755530-20941-4-git-send-email-ldewangan@nvidia.com> <5742C773.6080609@nvidia.com> <57443193.5010900@nvidia.com>
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: tegra-devfreq hangs TK1 with R21.4 u-boot
+Date: Thu, 16 Jun 2016 18:16:12 +0200
+Message-ID: <20160616161611.GC19360@ulmo.ba.sec>
+References: <20160612034541.GA31426@jirafa.cyrius.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="H8ygTp4AXg6deix2"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <57443193.5010900-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20160612034541.GA31426-IRMp5PtgtdoigzW5ZibpNwC/G2K4zDHf@public.gmane.org>
+Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
+Cc: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <srwarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Thierry,
+--H8ygTp4AXg6deix2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tuesday 24 May 2016 04:18 PM, Jon Hunter wrote:
-> On 23/05/16 10:03, Jon Hunter wrote:
->> On 20/05/16 15:45, Laxman Dewangan wrote:
->>> The IO pins of Tegra SoCs are grouped for common control of IO
->>> interface like setting voltage signal levels and power state of
->>> the interface. The group is generally referred as IO pads. The
->>> power state and voltage control of IO pins can be done at IO pads
->>> level.
->>>
->>> Tegra generation SoC supports the power down of IO pads when it
->>> is not used even in the active state of system. This saves power
->>> from that IO interface. Also it supports multiple voltage level
->>> in IO pins for interfacing on some of pads. The IO pad voltage is
->>> automatically detected till T124, hence SW need not to configure
->>> this. But from T210, the automatically detection logic has been
->>> removed, hence SW need to explicitly set the IO pad voltage into
->>> IO pad configuration registers.
->>>
->>> Add support to set the power states and voltage level of the IO pads
->>> from client driver. The implementation for the APIs are in generic
->>> which is applicable for all generation os Tegra SoC.
->>>
->>> IO pads ID and information of bit field for power state and voltage
->>> level controls are added for Tegra124, Tegra132 and Tegra210. The SOR
->>> driver is modified to use the new APIs.
->>>
->>> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Sat, Jun 11, 2016 at 08:45:41PM -0700, Martin Michlmayr wrote:
+> I noticed that the Jetson TK1 hangs during boot (when/before mounting
+> the SD disk) when CONFIG_ARM_TEGRA_DEVFREQ=3Dy is set and when u-boot
+> from R21.4 is used (2014.10-rc2).
+>=20
+> The hang does not occur when I disable tegra-devfreq or when I use
+> tegra-devfreq in combination with u-boot 2016.03 (from DENX upstream,
+> built by Debian).
+>=20
+> Steps to reproduce:
+>=20
+> ARCH=3Darm make multi_v7_defconfig
+> Set CONFIG_ARM_TEGRA_DEVFREQ=3Dy
+> Boot from an external SD card and it will hang when/before mounting the
+> SD card.
 
-Can you please review this?
+Stephen, any ideas what might be going on here?
 
-Thanks,
-Laxman
+Thierry
+
+--H8ygTp4AXg6deix2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXYtDKAAoJEN0jrNd/PrOhesMP/i8W3/c4WZPcYk5QvPVeeyu9
+JlZtRmVQvhfNGyk7rlsNjZalhDOySrpHJITPx4M4em/PE1PBO1XUdKd2Gn+fwU4C
+WtyNkjepEFzhNEoMUvjG4v655BZOHCKhOns1KTBomstQenljgsR25pS9wS+K3zkU
+vOseOqgxQt+ugVLDw2NaCIdY2NI9Q/Qm6ocvdh0kAv0YRnfjk6ALOpEMMwXhDPm1
+2vXxcmfPUdcQZDFnsI6BZ1QQWYPQjT/3XZeEpKuhuIyEDI2lV+YadRRfeJwWCLcz
+Tfh+aGty5WWZ5FO6yKUImVXQTvUYRdeZ6I5B1Jufio6TG6AydW2876STZVQyEjDu
+wrPhS5hokCVu0z6BD95SknXe7//khHcg37fWU26mMw1RAqdEqcRiTo3hjIRvQKNT
+hP6nPBhRIo5w4UCu2uToEfcz/SiUk0U9mYmMo3bqEF2MLmFc/KA7C4l8gmdJxZiW
+e5GcMYe/jdF0xdYB3O/HxxvHun/cz9RxJroHZ5JSUYBPrYMAWzctjlE7darKq54G
+1uXIKv2/fEQZaVDi+2sLVMXM7PxWE50Vim//hYr1BPICYfsSThJGlfbZeAbx/2L5
+sjg8Jp8/OVvtn+V7TattAlOCyxOn1jeOhDeXrulkGlw4wzBhZ5AFqW4wrEB6ogZW
+B9XiJ0DqguK/EDrq6Jtq
+=Or/v
+-----END PGP SIGNATURE-----
+
+--H8ygTp4AXg6deix2--
