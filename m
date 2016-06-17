@@ -1,116 +1,97 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [RFC PATCH 07/13] dt-bindings: i2c: Add support for 'i2c-bus'
- subnode
-Date: Fri, 17 Jun 2016 18:23:24 +0200
-Message-ID: <20160617162324.GF27475@ulmo.ba.sec>
+Subject: Re: [RFC PATCH 08/13] i2c: core: Add support for 'i2c-bus' subnode
+Date: Fri, 17 Jun 2016 18:24:29 +0200
+Message-ID: <20160617162429.GG27475@ulmo.ba.sec>
 References: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
- <1466165027-17917-8-git-send-email-jonathanh@nvidia.com>
+ <1466165027-17917-9-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1542311797=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1466165027-17917-8-git-send-email-jonathanh@nvidia.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="gvF4niNJ+uBMJnEh"
+Return-path: <linux-i2c-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1466165027-17917-9-git-send-email-jonathanh@nvidia.com>
+Sender: linux-i2c-owner@vger.kernel.org
 To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Stephen Warren <swarren@wwwdotorg.org>, dri-devel@lists.freedesktop.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============1542311797==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="AH+kv8CCoFf6qPuz"
-Content-Disposition: inline
-
-
---AH+kv8CCoFf6qPuz
+--gvF4niNJ+uBMJnEh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 17, 2016 at 01:03:41PM +0100, Jon Hunter wrote:
-> The I2C driver core for boards using device-tree assumes any subnode of
-> an I2C adapter in the device-tree blob as being a I2C slave device.
-> Although this makes complete sense, some I2C adapters may have subnodes
-> which are not I2C slaves but subnodes presenting other features. For
-> example some Tegra devices have an I2C interface which may share its
-> pins with other devices and to share these pins subnodes for
-> representing these pins so they have be shared via the pinctrl framework
-> are needed.
->=20
-> To allow I2C adapters to have non-I2C specific subnodes in device-tree
-> that are not parsed by the I2C driver core by adding support for a
-> 'i2c-bus' subnode where I2C slaves can be placed. If the 'i2c-bus'
-> subnode is present then all I2C slaves must be placed under this subnode.
+On Fri, Jun 17, 2016 at 01:03:42PM +0100, Jon Hunter wrote:
+> If the 'i2c-bus' device-tree node is present for an I2C adapter then
+> parse this subnode for I2C slaves.
 >=20
 > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
->  Documentation/devicetree/bindings/i2c/i2c.txt | 8 ++++++++
->  1 file changed, 8 insertions(+)
-
-I think this makes a lot of sense, so:
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
-One minor inconsistency below...
-
-> diff --git a/Documentation/devicetree/bindings/i2c/i2c.txt b/Documentatio=
-n/devicetree/bindings/i2c/i2c.txt
-> index f31b2ad1552b..ed56b08c7e6e 100644
-> --- a/Documentation/devicetree/bindings/i2c/i2c.txt
-> +++ b/Documentation/devicetree/bindings/i2c/i2c.txt
-> @@ -32,6 +32,14 @@ wants to support one of the below features, it should =
-adapt the bindings below.
->  - clock-frequency
->  	frequency of bus clock in Hz.
+>  drivers/i2c/i2c-core.c | 11 +++++++++--
+>  1 file changed, 9 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
+> index 952d2f0c02c5..f552d97bad32 100644
+> --- a/drivers/i2c/i2c-core.c
+> +++ b/drivers/i2c/i2c-core.c
+> @@ -1452,7 +1452,7 @@ static struct i2c_client *of_i2c_register_device(st=
+ruct i2c_adapter *adap,
 > =20
-> +- i2c-bus
-> +	For I2C adapters that have child nodes that are a mixture of both I2C
-> +	devices and non-I2C devices (such as a pin controller), the 'i2c-bus'
-> +	subnode can be used for populating I2C devices to prevent the I2C core
-> +	from attempting to add any non-i2c nodes as I2C devices. If 'i2c-bus'
+>  static void of_i2c_register_devices(struct i2c_adapter *adap)
+>  {
+> -	struct device_node *node;
+> +	struct device_node *bus, *node;
+> =20
+>  	/* Only register child devices if the adapter has a node pointer set */
+>  	if (!adap->dev.of_node)
+> @@ -1460,11 +1460,18 @@ static void of_i2c_register_devices(struct i2c_ad=
+apter *adap)
+> =20
+>  	dev_dbg(&adap->dev, "of_i2c: walking child nodes\n");
+> =20
+> -	for_each_available_child_of_node(adap->dev.of_node, node) {
+> +	bus =3D of_get_child_by_name(adap->dev.of_node, "i2c-bus");
+> +	if (!bus)
+> +		bus =3D adap->dev.of_node;
 
-"non-I2C"
+Maybe
+		bus =3D of_node_get(adap->dev.of_node);
+
+here...
+
+> +
+> +	for_each_available_child_of_node(bus, node) {
+>  		if (of_node_test_and_set_flag(node, OF_POPULATED))
+>  			continue;
+>  		of_i2c_register_device(adap, node);
+>  	}
+> +
+> +	if (bus !=3D adap->dev.of_node)
+> +		of_node_put(bus);
+
+=2E.. and drop the extra check here?
 
 Thierry
 
---AH+kv8CCoFf6qPuz
+--gvF4niNJ+uBMJnEh
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXZCP7AAoJEN0jrNd/PrOh5GQP/j1RAg4xj0cnLPnh7R+kYUp8
-dhEm7LU5ryn21pH06NJqAlvevGeLhvobLqiL386/EoTK8rD8L6VLzzufz+7b6fwL
-QQXf2/7lfEBxR6KFTPft2bCT1tP9DfNResNMpUYY51rtTIcY0HGEjlkiq7+UF6mA
-05MPfDQAKP0F5t3yq4VTVv9KXaAK9ZAGbcO+GqSk+WOyWT1Rdj0GSdCR33yQ0Of3
-+Y4Nu15PnlVNDdgf6nANFWZiEc7VuCaGXweBDTyew0yH8kdzBYzrJnXuHF6wUn1J
-TX8ewSnU66c2M44R+xHwkeEscYrbeFL3GC60VwoeIvF8eyoCX5Bnen0WUM4rcczH
-eoSk+NpJEO7grbL4SscPb3rk8JQ7T3js9gS6fe9UhWe+PjHmg6Q1YV5xol2zXUq/
-Ke6C56XtzxEIp0ZI+bRoPt59YJtbwF/8h/J+uRwBuOvw9swwGfwy6Ocr5ZXfZWi8
-iwW1l3r6z39KOAJtoHqTQ0R2/K2gmwtpiy8KiLhLeooAxkhAds1APatfj2YATcB0
-SSAZwCQOdHLb25d0VbV5Jsx2Fac1xoUwovSX4sIyOv5b4qHdrkGde8ZUCy/Ewrhy
-7Obi4f0+LV2WbfBh8ELr3JzZZghPoBAP3TNzADQfGruo2RPkU4QmjPrmn7ubgMmj
-Ny0+QV8hH8SiWljHfEWL
-=CLvV
+iQIcBAABCAAGBQJXZCQ8AAoJEN0jrNd/PrOhdZYP/1wY+NhmNXmVn1KnCHvxdA+7
+BTnFDqczvsXo/xdBSPVmvmCMnt1bvL8RQj2PKkrRNuODFaEBfyIjeezG49fTfkZV
+GOyVPQoW/h9Ndaj6nquGgL/mBOcyDd7BA2soNX7vLsx43+r7q4ADzdKjJ/OAHU/p
+cgZ3raIIRsRkVMOuJBSc7+qM11J0L1Txsza2yWbPCqkLKoB/535Ow7gp9Rf1JKBk
+QP+HsNwI1MZxQhX55cAOpZ8+ANaVQiLxXNcvaQqnWGuL/YuCllQRVHapinB0QLMc
+Q/nxSGJ9hDmHWg+pSZmW1nLJmG6DXAk0VUH8LIJZFGS0Q16ED0GJggbWXdKco4LU
+WYiwn6kIqBj+Gn3dJ8JL7uSLv4fxAnkac2wfds9ZYhN2Pp3sgdHWzwYbiGNbIsqP
+Pmkx9rnqtHNUlHgFsIqflzPjMCmQiAt/Q23O6nZKetGsd079tsyAZ+T8ozXQVI/v
+RFGt9WaTT+cVQMq6uIqOqeILaLoDzoMGfhxZgo4eAcnL0bF3qFToI0AW7EFLchg2
+HSVaCxTvxuZdCNdY5LtO33UBFMdNEap2VvkkIlqj2Pnln0V8q6Za3TOdvVHFazZf
+9dVomWe0Vj6mGo2TN8m2BmFYNpDCwhrlZyaYX2I8m4z3aFBZ1D3icUczet3+xbKd
+19KqpJV+o2kQUuglI+zN
+=tTEE
 -----END PGP SIGNATURE-----
 
---AH+kv8CCoFf6qPuz--
-
---===============1542311797==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============1542311797==--
+--gvF4niNJ+uBMJnEh--
