@@ -1,32 +1,45 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH 10/13] drm/tegra: Add pinctrl support for DPAUX
-Date: Fri, 17 Jun 2016 13:42:14 +0100
-Message-ID: <5763F026.40001@nvidia.com>
-References: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
- <1466165027-17917-11-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH V3 0/4] Add support for Tegra210 ACONNECT bus
+Date: Fri, 17 Jun 2016 13:40:30 +0100
+Message-ID: <1466167234-8288-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1466165027-17917-11-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+Add support for the ACONNECT bus which is part of the audio sub-system
+on Tegra210.
 
+Changes from V2:
+- Updated ACONNECT DT binding documentation to really fix some items
+  that should have been updated in V2 (thanks Rob).
+- Made the ACONNECT driver tristate in the Kconfig seeing that it has
+  a remove function (and verified it builds ok as a module).
 
-On 17/06/16 13:03, Jon Hunter wrote:
-> The DPAUX pins are shared with an internal I2C controller. To allow
-> these pins to be muxed to the I2C controller, register a pinctrl device
-> for the DPAUX device. Make Tegra DRM support dependent on PINCTRL to
-> avoid any compilation issues.
+Changes from V1:
+- Updated ACONNECT DT binding documentation and DT binding per feedback
+  from Rob H.
+- Added patch to populate the audio power-domain which is needed to
+  successfully build the DT blob (this was missed as it was part of
+  my local testing tree).
 
-I forgot to add a comment here to say that this is based upon work from
-Thierry Reding and give credit for that.
+Jon Hunter (4):
+  dt-bindings: bus: Add documentation for Tegra210 ACONNECT
+  bus: Add support for Tegra ACONNECT
+  ARM64: tegra: Add audio PM domain device node for Tegra210
+  arm64: tegra: Add ACONNECT bus node for Tegra210
 
-Cheers
-Jon
+ .../bindings/bus/nvidia,tegra210-aconnect.txt      |  45 ++++++++
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  21 ++++
+ drivers/bus/Kconfig                                |   9 ++
+ drivers/bus/Makefile                               |   1 +
+ drivers/bus/tegra-aconnect.c                       | 113 +++++++++++++++++++++
+ 5 files changed, 189 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
+ create mode 100644 drivers/bus/tegra-aconnect.c
 
 -- 
-nvpublic
+2.1.4
