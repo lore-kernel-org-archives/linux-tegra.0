@@ -1,74 +1,120 @@
-From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
-Subject: Re: [PATCH V2 63/63] clocksources: Switch back to the clksrc table
-Date: Fri, 17 Jun 2016 10:36:59 +0200
-Message-ID: <5763B6AB.3010201@samsung.com>
-References: <1466112442-31105-1-git-send-email-daniel.lezcano@linaro.org>
- <1466112442-31105-64-git-send-email-daniel.lezcano@linaro.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-reply-to: <1466112442-31105-64-git-send-email-daniel.lezcano@linaro.org>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>, Russell King <linux@armlinux.org.uk>, Michal Simek <monstr@monstr.eu>, John Crispin <john@phrozen.org>, Ralf Baechle <ralf@linux-mips.org>, Ley Foon Tan <lftan@altera.com>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, Maxime Coquelin <maxime.coquelin@st.com>, Patrice Chotard <patrice.chotard@st.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Linus Walleij <linus.walleij@linaro.org>, Alexander Shiyan <shc_work@mail.ru>, Kukjin Kim <kgene@kernel.org>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH V3] clocksource/drivers/tegra20: Convert init function to return error
+Date: Fri, 17 Jun 2016 11:06:51 +0200
+Message-ID: <1466154411-19922-1-git-send-email-daniel.lezcano@linaro.org>
+References: <5763A4F4.30102@nvidia.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5763A4F4.30102@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: daniel.lezcano@linaro.org, jonathanh@nvidia.com, tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org, thierry.reding@gmail.com, swarren@wwwdotorg.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/16/2016 11:27 PM, Daniel Lezcano wrote:
-> All the clocksource drivers's init function are now converted to return
-> an error code. CLOCKSOURCE_OF_DECLARE is no longer used as well as the
-> clksrc-of table.
-> 
-> Let's convert back the names:
->  - CLOCKSOURCE_OF_DECLARE_RET => CLOCKSOURCE_OF_DECLARE
->  - clksrc-of-ret              => clksrc-of
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  arch/arc/kernel/time.c                    |  6 +++---
->  arch/arm/kernel/smp_twd.c                 |  6 +++---
->  arch/microblaze/kernel/timer.c            |  2 +-
->  arch/mips/ralink/cevt-rt3352.c            |  2 +-
->  arch/nios2/kernel/time.c                  |  2 +-
->  drivers/clocksource/arm_arch_timer.c      |  6 +++---
->  drivers/clocksource/arm_global_timer.c    |  2 +-
->  drivers/clocksource/armv7m_systick.c      |  2 +-
->  drivers/clocksource/asm9260_timer.c       |  2 +-
->  drivers/clocksource/bcm2835_timer.c       |  2 +-
->  drivers/clocksource/bcm_kona_timer.c      |  4 ++--
->  drivers/clocksource/cadence_ttc_timer.c   |  2 +-
->  drivers/clocksource/clksrc-dbx500-prcmu.c |  2 +-
->  drivers/clocksource/clksrc-probe.c        | 14 --------------
->  drivers/clocksource/clksrc_st_lpc.c       |  2 +-
->  drivers/clocksource/clps711x-timer.c      |  2 +-
->  drivers/clocksource/dw_apb_timer_of.c     |  8 ++++----
->  drivers/clocksource/exynos_mct.c          |  4 ++--
->  drivers/clocksource/fsl_ftm_timer.c       |  2 +-
->  drivers/clocksource/h8300_timer16.c       |  2 +-
->  drivers/clocksource/h8300_timer8.c        |  2 +-
->  drivers/clocksource/h8300_tpu.c           |  2 +-
->  drivers/clocksource/meson6_timer.c        |  2 +-
->  drivers/clocksource/mips-gic-timer.c      |  2 +-
->  drivers/clocksource/moxart_timer.c        |  2 +-
->  drivers/clocksource/mps2-timer.c          |  2 +-
->  drivers/clocksource/mtk_timer.c           |  2 +-
->  drivers/clocksource/mxs_timer.c           |  2 +-
->  drivers/clocksource/nomadik-mtu.c         |  2 +-
->  drivers/clocksource/pxa_timer.c           |  2 +-
->  drivers/clocksource/qcom-timer.c          |  4 ++--
->  drivers/clocksource/rockchip_timer.c      |  8 ++++----
->  drivers/clocksource/samsung_pwm_timer.c   |  8 ++++----
+The init functions do not return any error. They behave as the following:
 
-For exynos_mct and samsung_pwm_timer:
-Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+  - panic, thus leading to a kernel crash while another timer may work and
+    make the system boot up correctly
 
-Best regards,
-Krzysztof
+  or
+
+  - print an error and let the caller unaware if the state of the system
+
+Change that by converting the init functions to return an error conforming
+to the CLOCKSOURCE_OF_RET prototype.
+
+Proper error handling (rollback, errno value) will be changed later case
+by case, thus this change just return back an error or success in the init
+function.
+
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ drivers/clocksource/tegra20_timer.c | 28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
+index 7b94ad2..543c37e 100644
+--- a/drivers/clocksource/tegra20_timer.c
++++ b/drivers/clocksource/tegra20_timer.c
+@@ -165,7 +165,7 @@ static struct irqaction tegra_timer_irq = {
+ 	.dev_id		= &tegra_clockevent,
+ };
+ 
+-static void __init tegra20_init_timer(struct device_node *np)
++static int __init tegra20_init_timer(struct device_node *np)
+ {
+ 	struct clk *clk;
+ 	unsigned long rate;
+@@ -174,13 +174,13 @@ static void __init tegra20_init_timer(struct device_node *np)
+ 	timer_reg_base = of_iomap(np, 0);
+ 	if (!timer_reg_base) {
+ 		pr_err("Can't map timer registers\n");
+-		BUG();
++		return -ENXIO;
+ 	}
+ 
+ 	tegra_timer_irq.irq = irq_of_parse_and_map(np, 2);
+ 	if (tegra_timer_irq.irq <= 0) {
+ 		pr_err("Failed to map timer IRQ\n");
+-		BUG();
++		return -EINVAL;
+ 	}
+ 
+ 	clk = of_clk_get(np, 0);
+@@ -211,10 +211,12 @@ static void __init tegra20_init_timer(struct device_node *np)
+ 
+ 	sched_clock_register(tegra_read_sched_clock, 32, 1000000);
+ 
+-	if (clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
+-		"timer_us", 1000000, 300, 32, clocksource_mmio_readl_up)) {
++	ret = clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
++				    "timer_us", 1000000, 300, 32,
++				    clocksource_mmio_readl_up);
++	if (ret) {
+ 		pr_err("Failed to register clocksource\n");
+-		BUG();
++		return ret;
+ 	}
+ 
+ 	tegra_delay_timer.read_current_timer =
+@@ -225,24 +227,26 @@ static void __init tegra20_init_timer(struct device_node *np)
+ 	ret = setup_irq(tegra_timer_irq.irq, &tegra_timer_irq);
+ 	if (ret) {
+ 		pr_err("Failed to register timer IRQ: %d\n", ret);
+-		BUG();
++		return ret;
+ 	}
+ 
+ 	tegra_clockevent.cpumask = cpu_all_mask;
+ 	tegra_clockevent.irq = tegra_timer_irq.irq;
+ 	clockevents_config_and_register(&tegra_clockevent, 1000000,
+ 					0x1, 0x1fffffff);
++
++	return 0;
+ }
+-CLOCKSOURCE_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
++CLOCKSOURCE_OF_DECLARE_RET(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
+ 
+-static void __init tegra20_init_rtc(struct device_node *np)
++static int __init tegra20_init_rtc(struct device_node *np)
+ {
+ 	struct clk *clk;
+ 
+ 	rtc_base = of_iomap(np, 0);
+ 	if (!rtc_base) {
+ 		pr_err("Can't map RTC registers");
+-		BUG();
++		return -ENXIO;
+ 	}
+ 
+ 	/*
+@@ -255,6 +259,6 @@ static void __init tegra20_init_rtc(struct device_node *np)
+ 	else
+ 		clk_prepare_enable(clk);
+ 
+-	register_persistent_clock(NULL, tegra_read_persistent_clock64);
++	return register_persistent_clock(NULL, tegra_read_persistent_clock64);
+ }
+-CLOCKSOURCE_OF_DECLARE(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
++CLOCKSOURCE_OF_DECLARE_RET(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
+-- 
+1.9.1
