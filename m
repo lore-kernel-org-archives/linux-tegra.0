@@ -1,53 +1,148 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [RFC PATCH 00/13] Add support for Tegra DPAUX pinctrl
-Date: Fri, 17 Jun 2016 13:03:34 +0100
-Message-ID: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
+Subject: [RFC PATCH 02/13] drm/tegra: Add helper functions for setting up DPAUX pads
+Date: Fri, 17 Jun 2016 13:03:36 +0100
+Message-ID: <1466165027-17917-3-git-send-email-jonathanh@nvidia.com>
+References: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, Jon Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-VGhlIERpc3BsYXkgUG9ydCBBdXhpbGlhcnkgKERQQVVYKSBjaGFubmVsIHBhZHMgY2FuIGJlIHNo
-YXJlZCB3aXRoIGFuCmludGVybmFsIEkyQyBjb250cm9sbGVyLiBBZGQgcGluY3RybCBzdXBwb3J0
-IGZvciB0aGVzZSBwYWRzIHNvIHRoYXQgdGhlCkkyQyBjb250cm9sbGVyIGNhbiByZXF1ZXN0IGFu
-ZCB1c2UgdGhlc2UgcGFkcy4KCkpvbiBIdW50ZXIgKDEzKToKICBkcm0vdGVncmE6IENsZWFuLXVw
-IGlmIHByb2JpbmcgRFBBVVggZmFpbHMKICBkcm0vdGVncmE6IEFkZCBoZWxwZXIgZnVuY3Rpb25z
-IGZvciBzZXR0aW5nIHVwIERQQVVYIHBhZHMKICBkdC1iaW5kaW5nczogZHJtL3RlZ3JhOiBVcGRh
-dGUgRFBBVVggZG9jdW1lbnRhdGlvbgogIGRybS90ZWdyYTogQWRkIHNvci1zYWZlIGNsb2NrIGZv
-ciBEUEFVWCBvbiBUZWdyYTIxMAogIGRybS90ZWdyYTogUHJlcGFyZSBEUEFVWCBmb3Igc3VwcG9y
-dGluZyBnZW5lcmljIFBNIGRvbWFpbnMKICBwaW5jdHJsOiBwaW5jb25mOiBBZGQgZ2VuZXJpYyBo
-ZWxwZXIgZnVuY3Rpb24gZm9yIGZyZWVpbmcgbWFwcGluZ3MKICBkdC1iaW5kaW5nczogaTJjOiBB
-ZGQgc3VwcG9ydCBmb3IgJ2kyYy1idXMnIHN1Ym5vZGUKICBpMmM6IGNvcmU6IEFkZCBzdXBwb3J0
-IGZvciAnaTJjLWJ1cycgc3Vibm9kZQogIGR0LWJpbmRpbmdzOiBkcm0vdGVncmE6IEFkZCBEUEFV
-WCBwaW5jdHJsIGRvY3VtZW50YXRpb24KICBkcm0vdGVncmE6IEFkZCBwaW5jdHJsIHN1cHBvcnQg
-Zm9yIERQQVVYCiAgYXJtNjQ6IHRlZ3JhOiBBZGQgU09SIHBvd2VyLWRvbWFpbiBub2RlCiAgYXJt
-NjQ6IHRlZ3JhOiBBZGQgc29yLXNhZmUgY2xvY2sgdG8gRFBBVVggYmluZGluZwogIGFybTY0OiB0
-ZWdyYTogQWRkIERQQVVYIHBpbmN0cmwgYmluZGluZ3MKCiAuLi4vZGlzcGxheS90ZWdyYS9udmlk
-aWEsdGVncmEyMC1ob3N0MXgudHh0ICAgICAgICB8ICAxMSArLQogRG9jdW1lbnRhdGlvbi9kZXZp
-Y2V0cmVlL2JpbmRpbmdzL2kyYy9pMmMudHh0ICAgICAgfCAgIDggKwogLi4uL3BpbmN0cmwvbnZp
-ZGlhLHRlZ3JhMTI0LWRwYXV4LXBhZGN0bC50eHQgICAgICAgfCAgNjAgKysrKysKIGFyY2gvYXJt
-NjQvYm9vdC9kdHMvbnZpZGlhL3RlZ3JhMjEwLmR0c2kgICAgICAgICAgIHwgIDc4ICsrKysrKy0K
-IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9LY29uZmlnICAgICAgICAgICAgICAgICAgICAgIHwgICAx
-ICsKIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcGF1eC5jICAgICAgICAgICAgICAgICAgICAgIHwg
-MjU1ICsrKysrKysrKysrKysrKysrLS0tLQogZHJpdmVycy9pMmMvaTJjLWNvcmUuYyAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgfCAgMTEgKy0KIGRyaXZlcnMvcGluY3RybC9waW5jb25mLWdl
-bmVyaWMuYyAgICAgICAgICAgICAgICAgIHwgICA4ICsKIGluY2x1ZGUvbGludXgvcGluY3RybC9w
-aW5jb25mLWdlbmVyaWMuaCAgICAgICAgICAgIHwgICAyICsKIDkgZmlsZXMgY2hhbmdlZCwgMzgw
-IGluc2VydGlvbnMoKyksIDU0IGRlbGV0aW9ucygtKQogY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3Vt
-ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9waW5jdHJsL252aWRpYSx0ZWdyYTEyNC1kcGF1
-eC1wYWRjdGwudHh0CgotLSAKMi4xLjQKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
-ZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2RyaS1kZXZlbAo=
+In preparation for adding pinctrl support for the DPAUX pads, add
+helpers functions for configuring the pads and controlling the power
+for the pads.
+
+Please note that although a simple if-statement could be used instead
+of a case statement for configuring the pads as there are only two
+possible modes, a case statement is used because when integrating with
+the pinctrl framework, we need to be able to handle invalid modes that
+could be passed.
+
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/gpu/drm/tegra/dpaux.c | 75 ++++++++++++++++++++++++++-----------------
+ 1 file changed, 45 insertions(+), 30 deletions(-)
+
+diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
+index 0874a7e5b37b..aa3a037fcd3b 100644
+--- a/drivers/gpu/drm/tegra/dpaux.c
++++ b/drivers/gpu/drm/tegra/dpaux.c
+@@ -267,6 +267,45 @@ static irqreturn_t tegra_dpaux_irq(int irq, void *data)
+ 	return ret;
+ }
+ 
++static void tegra_dpaux_powerdown(struct tegra_dpaux *dpaux, bool enable)
++{
++	u32 value = tegra_dpaux_readl(dpaux, DPAUX_HYBRID_SPARE);
++
++	if (enable)
++		value |= DPAUX_HYBRID_SPARE_PAD_POWER_DOWN;
++	else
++		value &= ~DPAUX_HYBRID_SPARE_PAD_POWER_DOWN;
++
++	tegra_dpaux_writel(dpaux, value, DPAUX_HYBRID_SPARE);
++}
++
++static int tegra_dpaux_config(struct tegra_dpaux *dpaux, int function)
++{
++	u32 value;
++
++	switch (function) {
++	case DPAUX_HYBRID_PADCTL_MODE_AUX:
++		value = DPAUX_HYBRID_PADCTL_AUX_CMH(2) |
++			DPAUX_HYBRID_PADCTL_AUX_DRVZ(4) |
++			DPAUX_HYBRID_PADCTL_AUX_DRVI(0x18) |
++			DPAUX_HYBRID_PADCTL_AUX_INPUT_RCV |
++			DPAUX_HYBRID_PADCTL_MODE_AUX;
++		break;
++	case DPAUX_HYBRID_PADCTL_MODE_I2C:
++		value = DPAUX_HYBRID_PADCTL_I2C_SDA_INPUT_RCV |
++			DPAUX_HYBRID_PADCTL_I2C_SCL_INPUT_RCV |
++			DPAUX_HYBRID_PADCTL_MODE_I2C;
++		break;
++	default:
++		return -ENOTSUPP;
++	}
++
++	tegra_dpaux_writel(dpaux, value, DPAUX_HYBRID_PADCTL);
++	tegra_dpaux_powerdown(dpaux, false);
++
++	return 0;
++}
++
+ static int tegra_dpaux_probe(struct platform_device *pdev)
+ {
+ 	struct tegra_dpaux *dpaux;
+@@ -372,15 +411,9 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
+ 	 * is no possibility to perform the I2C mode configuration in the
+ 	 * HDMI path.
+ 	 */
+-	value = tegra_dpaux_readl(dpaux, DPAUX_HYBRID_SPARE);
+-	value &= ~DPAUX_HYBRID_SPARE_PAD_POWER_DOWN;
+-	tegra_dpaux_writel(dpaux, value, DPAUX_HYBRID_SPARE);
+-
+-	value = tegra_dpaux_readl(dpaux, DPAUX_HYBRID_PADCTL);
+-	value = DPAUX_HYBRID_PADCTL_I2C_SDA_INPUT_RCV |
+-		DPAUX_HYBRID_PADCTL_I2C_SCL_INPUT_RCV |
+-		DPAUX_HYBRID_PADCTL_MODE_I2C;
+-	tegra_dpaux_writel(dpaux, value, DPAUX_HYBRID_PADCTL);
++	err = tegra_dpaux_config(dpaux, DPAUX_HYBRID_PADCTL_MODE_I2C);
++	if (err < 0)
++		return err;
+ 
+ 	/* enable and clear all interrupts */
+ 	value = DPAUX_INTR_AUX_DONE | DPAUX_INTR_IRQ_EVENT |
+@@ -408,12 +441,9 @@ assert_reset:
+ static int tegra_dpaux_remove(struct platform_device *pdev)
+ {
+ 	struct tegra_dpaux *dpaux = platform_get_drvdata(pdev);
+-	u32 value;
+ 
+ 	/* make sure pads are powered down when not in use */
+-	value = tegra_dpaux_readl(dpaux, DPAUX_HYBRID_SPARE);
+-	value |= DPAUX_HYBRID_SPARE_PAD_POWER_DOWN;
+-	tegra_dpaux_writel(dpaux, value, DPAUX_HYBRID_SPARE);
++	tegra_dpaux_powerdown(dpaux, true);
+ 
+ 	drm_dp_aux_unregister(&dpaux->aux);
+ 
+@@ -538,30 +568,15 @@ enum drm_connector_status drm_dp_aux_detect(struct drm_dp_aux *aux)
+ int drm_dp_aux_enable(struct drm_dp_aux *aux)
+ {
+ 	struct tegra_dpaux *dpaux = to_dpaux(aux);
+-	u32 value;
+-
+-	value = DPAUX_HYBRID_PADCTL_AUX_CMH(2) |
+-		DPAUX_HYBRID_PADCTL_AUX_DRVZ(4) |
+-		DPAUX_HYBRID_PADCTL_AUX_DRVI(0x18) |
+-		DPAUX_HYBRID_PADCTL_AUX_INPUT_RCV |
+-		DPAUX_HYBRID_PADCTL_MODE_AUX;
+-	tegra_dpaux_writel(dpaux, value, DPAUX_HYBRID_PADCTL);
+-
+-	value = tegra_dpaux_readl(dpaux, DPAUX_HYBRID_SPARE);
+-	value &= ~DPAUX_HYBRID_SPARE_PAD_POWER_DOWN;
+-	tegra_dpaux_writel(dpaux, value, DPAUX_HYBRID_SPARE);
+ 
+-	return 0;
++	return tegra_dpaux_config(dpaux, DPAUX_HYBRID_PADCTL_MODE_AUX);
+ }
+ 
+ int drm_dp_aux_disable(struct drm_dp_aux *aux)
+ {
+ 	struct tegra_dpaux *dpaux = to_dpaux(aux);
+-	u32 value;
+ 
+-	value = tegra_dpaux_readl(dpaux, DPAUX_HYBRID_SPARE);
+-	value |= DPAUX_HYBRID_SPARE_PAD_POWER_DOWN;
+-	tegra_dpaux_writel(dpaux, value, DPAUX_HYBRID_SPARE);
++	tegra_dpaux_powerdown(dpaux, true);
+ 
+ 	return 0;
+ }
+-- 
+2.1.4
+
