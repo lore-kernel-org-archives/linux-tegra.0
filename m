@@ -1,89 +1,102 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [RFC PATCH 05/13] drm/tegra: Prepare DPAUX for supporting generic PM domains
-Date: Fri, 17 Jun 2016 13:03:39 +0100
-Message-ID: <1466165027-17917-6-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [RFC PATCH 01/13] drm/tegra: Clean-up if probing DPAUX fails
+Date: Fri, 17 Jun 2016 13:03:35 +0100
+Message-ID: <1466165027-17917-2-git-send-email-jonathanh@nvidia.com>
 References: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1466165027-17917-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-To utilise the DPAUX on Tegra, the SOR power partition must be enabled.
-Now that Tegra supports the generic PM domain framework we manage the
-SOR power partition via this framework for DPAUX. However, the sequence
-for gating/ungating the SOR power partition requires that the DPAUX
-reset is asserted/de-asserted at the time the SOR power partition is
-gated/ungated, respectively. Now that the reset control core assumes
-that resets are exclusive, the Tegra generic PM domain code and the
-DPAUX driver cannot request the same reset unless we mark the resets as
-shared. Sharing resets we will not work in this case because we cannot
-guarantee that the reset is asserted/de-asserted at the appropriate
-time. Therefore, given that the Tegra generic PM domain code will handle
-the DPAUX reset, do not request the reset in the DPAUX driver if the
-DPAUX device has a PM domain associated.
+If the probing of the DPAUX fails, then clocks are left enabled and the
+DPAUX reset de-asserted. Add code to perform the necessary clean-up on
+probe failure by disabling clocks and asserting the reset.
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/dpaux.c | 22 ++++++++++++++--------
- 1 file changed, 14 insertions(+), 8 deletions(-)
+ drivers/gpu/drm/tegra/dpaux.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
-index d696a7e45935..289bb064ca1e 100644
+index b24a0f14821a..0874a7e5b37b 100644
 --- a/drivers/gpu/drm/tegra/dpaux.c
 +++ b/drivers/gpu/drm/tegra/dpaux.c
-@@ -334,11 +334,14 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
- 		return -ENXIO;
- 	}
- 
--	dpaux->rst = devm_reset_control_get(&pdev->dev, "dpaux");
--	if (IS_ERR(dpaux->rst)) {
--		dev_err(&pdev->dev, "failed to get reset control: %ld\n",
--			PTR_ERR(dpaux->rst));
--		return PTR_ERR(dpaux->rst);
-+	if (!pdev->dev.pm_domain) {
-+		dpaux->rst = devm_reset_control_get(&pdev->dev, "dpaux");
-+		if (IS_ERR(dpaux->rst)) {
-+			dev_err(&pdev->dev,
-+				"failed to get reset control: %ld\n",
-+				PTR_ERR(dpaux->rst));
-+			return PTR_ERR(dpaux->rst);
-+		}
- 	}
- 
- 	if (of_device_is_compatible(pdev->dev.of_node,
-@@ -374,7 +377,8 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
- 		goto disable_sor_clk;
- 	}
- 
--	reset_control_deassert(dpaux->rst);
-+	if (dpaux->rst)
-+		reset_control_deassert(dpaux->rst);
- 
- 	dpaux->clk_parent = devm_clk_get(&pdev->dev, "parent");
+@@ -321,28 +321,30 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
  	if (IS_ERR(dpaux->clk_parent)) {
-@@ -452,7 +456,8 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
- disable_parent_clk:
- 	clk_disable_unprepare(dpaux->clk_parent);
- assert_reset:
--	reset_control_assert(dpaux->rst);
-+	if (dpaux->rst)
-+		reset_control_assert(dpaux->rst);
- 	clk_disable_unprepare(dpaux->clk);
- disable_sor_clk:
- 	if (dpaux->clk_sor)
-@@ -477,7 +482,8 @@ static int tegra_dpaux_remove(struct platform_device *pdev)
- 	cancel_work_sync(&dpaux->work);
+ 		dev_err(&pdev->dev, "failed to get parent clock: %ld\n",
+ 			PTR_ERR(dpaux->clk_parent));
+-		return PTR_ERR(dpaux->clk_parent);
++		err = PTR_ERR(dpaux->clk_parent);
++		goto assert_reset;
+ 	}
  
- 	clk_disable_unprepare(dpaux->clk_parent);
--	reset_control_assert(dpaux->rst);
-+	if (dpaux->rst)
-+		reset_control_assert(dpaux->rst);
- 	clk_disable_unprepare(dpaux->clk);
- 	if (dpaux->clk_sor)
- 		clk_disable_unprepare(dpaux->clk_sor);
+ 	err = clk_prepare_enable(dpaux->clk_parent);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to enable parent clock: %d\n",
+ 			err);
+-		return err;
++		goto assert_reset;
+ 	}
+ 
+ 	err = clk_set_rate(dpaux->clk_parent, 270000000);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to set clock to 270 MHz: %d\n",
+ 			err);
+-		return err;
++		goto disable_parent_clk;
+ 	}
+ 
+ 	dpaux->vdd = devm_regulator_get(&pdev->dev, "vdd");
+ 	if (IS_ERR(dpaux->vdd)) {
+ 		dev_err(&pdev->dev, "failed to get VDD supply: %ld\n",
+ 			PTR_ERR(dpaux->vdd));
+-		return PTR_ERR(dpaux->vdd);
++		err = PTR_ERR(dpaux->vdd);
++		goto disable_parent_clk;
+ 	}
+ 
+ 	err = devm_request_irq(dpaux->dev, dpaux->irq, tegra_dpaux_irq, 0,
+@@ -350,7 +352,7 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
+ 	if (err < 0) {
+ 		dev_err(dpaux->dev, "failed to request IRQ#%u: %d\n",
+ 			dpaux->irq, err);
+-		return err;
++		goto disable_parent_clk;
+ 	}
+ 
+ 	disable_irq(dpaux->irq);
+@@ -360,7 +362,7 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
+ 
+ 	err = drm_dp_aux_register(&dpaux->aux);
+ 	if (err < 0)
+-		return err;
++		goto disable_parent_clk;
+ 
+ 	/*
+ 	 * Assume that by default the DPAUX/I2C pads will be used for HDMI,
+@@ -393,6 +395,14 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, dpaux);
+ 
+ 	return 0;
++
++disable_parent_clk:
++	clk_disable_unprepare(dpaux->clk_parent);
++assert_reset:
++	reset_control_assert(dpaux->rst);
++	clk_disable_unprepare(dpaux->clk);
++
++	return err;
+ }
+ 
+ static int tegra_dpaux_remove(struct platform_device *pdev)
 -- 
 2.1.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
