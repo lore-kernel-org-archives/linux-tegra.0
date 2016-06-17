@@ -1,56 +1,48 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: [PATCH RESEND V2] ARM64: config: Enable MAX77620 pinctrl/gpio/rtc for Tegra210 P2180
-Date: Fri, 17 Jun 2016 11:35:56 +0530
-Message-ID: <1466143556-31849-1-git-send-email-ldewangan@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2 33/63] clocksource/drivers/time-armada-370-xp: Convert
+ init function to return error
+Date: Fri, 17 Jun 2016 08:21:24 +0100
+Message-ID: <5763A4F4.30102@nvidia.com>
+References: <1466112442-31105-1-git-send-email-daniel.lezcano@linaro.org>
+ <1466112442-31105-34-git-send-email-daniel.lezcano@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: catalin.marinas@arm.com, will.deacon@arm.com, treding@nvidia.com
-Cc: arnd@arndb.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1466112442-31105-34-git-send-email-daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, tglx-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "open list:TEGRA ARCHITECTUR..." <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-NVIDIA's Tegra210 Jetson platform (P2180) uses the MAX77620 as PMIC.
-Enable GPIO, Pincontrol and RTC driver for this device.
 
-Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
----
-Changes from V1:
-- MFD and regulator is already enabled, enabling remaining driver.
+On 16/06/16 22:26, Daniel Lezcano wrote:
+> The init functions do not return any error. They behave as the following:
+> 
+>   - panic, thus leading to a kernel crash while another timer may work and
+>        make the system boot up correctly
+> 
+>   or
+> 
+>   - print an error and let the caller unaware if the state of the system
+> 
+> Change that by converting the init functions to return an error conforming
+> to the CLOCKSOURCE_OF_RET prototype.
+> 
+> Proper error handling (rollback, errno value) will be changed later case
+> by case, thus this change just return back an error or success in the init
+> function.
+> 
+> Signed-off-by: Daniel Lezcano <daniel.lezcano-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> ---
+>  drivers/clocksource/tegra20_timer.c | 28 ++++++++++++++++------------
+>  1 file changed, 16 insertions(+), 12 deletions(-)
 
-Resending to linux-tegra group also.
+The $subject does not appear to match with the driver you are modifying
+here.
 
+Cheers
+Jon
 
- arch/arm64/configs/defconfig | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 9af9ba5..90a6705 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -186,6 +186,7 @@ CONFIG_SPI_QUP=y
- CONFIG_SPI_SPIDEV=m
- CONFIG_SPMI=y
- CONFIG_PINCTRL_SINGLE=y
-+CONFIG_PINCTRL_MAX77620=y
- CONFIG_PINCTRL_MSM8916=y
- CONFIG_PINCTRL_QCOM_SPMI_PMIC=y
- CONFIG_GPIO_SYSFS=y
-@@ -194,6 +195,7 @@ CONFIG_GPIO_PL061=y
- CONFIG_GPIO_RCAR=y
- CONFIG_GPIO_XGENE=y
- CONFIG_GPIO_PCA953X=m
-+CONFIG_GPIO_MAX77620=y
- CONFIG_POWER_RESET_MSM=y
- CONFIG_POWER_RESET_XGENE=y
- CONFIG_POWER_RESET_SYSCON=y
-@@ -274,6 +276,7 @@ CONFIG_LEDS_TRIGGERS=y
- CONFIG_LEDS_TRIGGER_HEARTBEAT=y
- CONFIG_LEDS_TRIGGER_CPU=y
- CONFIG_RTC_CLASS=y
-+CONFIG_RTC_DRV_MAX77686=y
- CONFIG_RTC_DRV_S5M=y
- CONFIG_RTC_DRV_DS3232=y
- CONFIG_RTC_DRV_EFI=y
 -- 
-2.1.4
+nvpublic
