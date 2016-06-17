@@ -1,22 +1,34 @@
 From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: [RFC PATCH 11/13] arm64: tegra: Add SOR power-domain node
-Date: Fri, 17 Jun 2016 18:42:02 +0200
-Message-ID: <20160617164202.GJ27475@ulmo.ba.sec>
+Date: Fri, 17 Jun 2016 18:44:46 +0200
+Message-ID: <20160617164446.GK27475@ulmo.ba.sec>
 References: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
  <1466165027-17917-12-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="HcccYpVZDxQ8hzPO"
-Return-path: <linux-gpio-owner@vger.kernel.org>
-Content-Disposition: inline
+Content-Type: multipart/mixed; boundary="===============1596427612=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
 In-Reply-To: <1466165027-17917-12-git-send-email-jonathanh@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
 To: Jon Hunter <jonathanh@nvidia.com>
-Cc: David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Stephen Warren <swarren@wwwdotorg.org>, dri-devel@lists.freedesktop.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---HcccYpVZDxQ8hzPO
+--===============1596427612==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="W2ydbIOJmkm74tJ2"
+Content-Disposition: inline
+
+
+--W2ydbIOJmkm74tJ2
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
@@ -35,32 +47,97 @@ On Fri, Jun 17, 2016 at 01:03:45PM +0100, Jon Hunter wrote:
 > ---
 >  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 18 ++++++++++++++++++
 >  1 file changed, 18 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/d=
+ts/nvidia/tegra210.dtsi
+> index ebf44f4059f8..94f780b43037 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> @@ -34,6 +34,7 @@
+>  			clock-names =3D "dpaux", "parent";
+>  			resets =3D <&tegra_car 207>;
+>  			reset-names =3D "dpaux";
+> +			power-domains =3D <&pd_sor>;
+>  			status =3D "disabled";
+>  		};
+> =20
+> @@ -154,6 +155,7 @@
+>  			clock-names =3D "sor", "parent", "dp", "safe";
+>  			resets =3D <&tegra_car 182>;
+>  			reset-names =3D "sor";
+> +			power-domains =3D <&pd_sor>;
+>  			status =3D "disabled";
+>  		};
+> =20
+> @@ -168,6 +170,7 @@
+>  			clock-names =3D "sor", "parent", "dp", "safe";
+>  			resets =3D <&tegra_car 183>;
+>  			reset-names =3D "sor";
+> +			power-domains =3D <&pd_sor>;
+>  			status =3D "disabled";
+>  		};
+> =20
+> @@ -180,6 +183,7 @@
+>  			clock-names =3D "dpaux", "parent";
+>  			resets =3D <&tegra_car 181>;
+>  			reset-names =3D "dpaux";
+> +			power-domains =3D <&pd_sor>;
+>  			status =3D "disabled";
+>  		};
+> =20
+> @@ -592,6 +596,20 @@
+>  				resets =3D <&tegra_car 198>;
+>  				#power-domain-cells =3D <0>;
+>  			};
+> +
+> +			pd_sor: sor {
+> +				clocks =3D <&tegra_car TEGRA210_CLK_SOR0>,
+> +					 <&tegra_car TEGRA210_CLK_DSIA>,
+> +					 <&tegra_car TEGRA210_CLK_DSIB>,
+> +					 <&tegra_car TEGRA210_CLK_MIPI_CAL>,
 
-I've got patches queued in my drm-tegra tree to add support for runtime
-PM for the SOR driver. Will that in some way clash with this work if
-merged in parallel?
+Does this mean that all of these clocks will be running while the SOR
+partition is enabled? Seems like a waste because we rarely need MIPI_CAL
+and DSIA and DSIB are completely unused on boards that for example have
+only an HDMI output.
+
+I vaguely remember the power domain driver only making sure these are
+enabled during the partition power transitions, so perhaps my concerns
+aren't justified?
 
 Thierry
 
---HcccYpVZDxQ8hzPO
+--W2ydbIOJmkm74tJ2
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXZChaAAoJEN0jrNd/PrOhlDgP/2Q7shmXSdCM1gr237rbLzy2
-+w01Uc0h98GKJ7NgwasyC7d7hwqxgO/Te+PGxXcEenr1Fg1NkTPjDQGR+LCJsUqX
-MbL0lYiwo2rGEJXNLcclzBadlvTs/rrxFksBHfObxRqhq1pmTXlxULmw/EsY1JfL
-9QBaKOIevGqqUIRH25SXORgUDoGjPlofv+Cz7BoOmoelL5VsemKd+beLb1TBtOGX
-Ca/rqXIyb6GYfKwrlyoq0oGa0OngoZI2imLUziZenhca4oQnwvFYu7Jl2Ij5/t/N
-M/VDOpKQmyzODycaayLswDf/sOn/4UtAaKJuxjhPbu1Awn1knzMkh78sppPDA/fy
-z3X5VtywVtodLiinDUQ3Rrr4d/dzOSRgUr5Zv8S7fR85ATW+RoBtr8PWNfcDzXST
-G8y4PIMH+rtOjt9rOFIHNo9vwlRSDv6ei5YPoqI+7z1tG/XCUbfviNx9Hip0PJC3
-Aw8IS/K0K8PfR1V1uEDDZKrvscfqsUN+pHRm67OP2hzVl/jQt/ODXX3lVw3UD13P
-SG+C55BfMi7cKSfHGtGdDHjpArFJvJ2GawklB/WWgQCB9lED+HUTj/5XJJCWEJ/u
-kJUmWAkFHjrekAtYh5jEWbNvv4qhE9aMzWGN7CwTCo2SF7SejbipmkDLCjCducvx
-G1faXWzZcLR+FuRLE/O5
-=HyVL
+iQIcBAABCAAGBQJXZCj+AAoJEN0jrNd/PrOhKHAP/0i6uSOk458Cu7qsbQvOYT3c
+XYP9G93dLfu2gEz9Dtbnz3e/mEYgMAfk7GBH/3IoFbyspflRYrstSi0a+iUIt4FZ
+g6+6O+3zcUXrUTpqEG2jhmMSFqc1BKU8ufHseOyAL2TaNP0mJ7BUCOQgdkq8R/+O
+A4Radpanu0Kg+G3tBvAmc12y3/9j0aVfdETvK06m84zC3PSZfuMDQWElTIbYwwCg
+nW1UrTbNXAgXHKc3I2x8ZXX4XOILjNj+BErnsvqcuwp8hdgBWa4vmzWK+fMhqAMC
+F7tjwAiPyJR4x+MsWrQx9AYfTSmy8XCobJ64h0T+M+5z/ABaavJU0mP3XOqxpZM3
+hRIoIBn64tUMfAeP/yXJ/KL7qBQhe4eHu79nKegPeAsAVij4AtRfJvrLIPBb5sJI
+q1ZIHkRp4GBy5t4S223wKM3C3RUM3IDUBaPNswFWlSihAo5t2ZUaMGCiAMLylVIm
+TXtEVK1rjPyGEY3+hVc7SR9AJjapMIfGAaGieuMKM1Fa1RxD2bLyl/cppK7ce9FY
+ji8krESWDFou/ahEABTSb+Tsl3Le8SDHVWfk9hZBUFJnBpYNI+qduwEazqahRrMC
+MOXv6IsGgHfE5KEYxJYPmxyT6S6fEzIr50FI/Pxt6LzhX858HDVfB0T4MjY8uksM
+a2cV0ZRrp43n558UDkW5
+=lFhB
 -----END PGP SIGNATURE-----
 
---HcccYpVZDxQ8hzPO--
+--W2ydbIOJmkm74tJ2--
+
+--===============1596427612==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============1596427612==--
