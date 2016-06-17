@@ -1,120 +1,53 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH V3] clocksource/drivers/tegra20: Convert init function to return error
-Date: Fri, 17 Jun 2016 11:06:51 +0200
-Message-ID: <1466154411-19922-1-git-send-email-daniel.lezcano@linaro.org>
-References: <5763A4F4.30102@nvidia.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5763A4F4.30102@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: daniel.lezcano@linaro.org, jonathanh@nvidia.com, tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org, thierry.reding@gmail.com, swarren@wwwdotorg.org, linux-tegra@vger.kernel.org
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [RFC PATCH 00/13] Add support for Tegra DPAUX pinctrl
+Date: Fri, 17 Jun 2016 13:03:34 +0100
+Message-ID: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, Jon Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The init functions do not return any error. They behave as the following:
-
-  - panic, thus leading to a kernel crash while another timer may work and
-    make the system boot up correctly
-
-  or
-
-  - print an error and let the caller unaware if the state of the system
-
-Change that by converting the init functions to return an error conforming
-to the CLOCKSOURCE_OF_RET prototype.
-
-Proper error handling (rollback, errno value) will be changed later case
-by case, thus this change just return back an error or success in the init
-function.
-
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/clocksource/tegra20_timer.c | 28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
-index 7b94ad2..543c37e 100644
---- a/drivers/clocksource/tegra20_timer.c
-+++ b/drivers/clocksource/tegra20_timer.c
-@@ -165,7 +165,7 @@ static struct irqaction tegra_timer_irq = {
- 	.dev_id		= &tegra_clockevent,
- };
- 
--static void __init tegra20_init_timer(struct device_node *np)
-+static int __init tegra20_init_timer(struct device_node *np)
- {
- 	struct clk *clk;
- 	unsigned long rate;
-@@ -174,13 +174,13 @@ static void __init tegra20_init_timer(struct device_node *np)
- 	timer_reg_base = of_iomap(np, 0);
- 	if (!timer_reg_base) {
- 		pr_err("Can't map timer registers\n");
--		BUG();
-+		return -ENXIO;
- 	}
- 
- 	tegra_timer_irq.irq = irq_of_parse_and_map(np, 2);
- 	if (tegra_timer_irq.irq <= 0) {
- 		pr_err("Failed to map timer IRQ\n");
--		BUG();
-+		return -EINVAL;
- 	}
- 
- 	clk = of_clk_get(np, 0);
-@@ -211,10 +211,12 @@ static void __init tegra20_init_timer(struct device_node *np)
- 
- 	sched_clock_register(tegra_read_sched_clock, 32, 1000000);
- 
--	if (clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
--		"timer_us", 1000000, 300, 32, clocksource_mmio_readl_up)) {
-+	ret = clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
-+				    "timer_us", 1000000, 300, 32,
-+				    clocksource_mmio_readl_up);
-+	if (ret) {
- 		pr_err("Failed to register clocksource\n");
--		BUG();
-+		return ret;
- 	}
- 
- 	tegra_delay_timer.read_current_timer =
-@@ -225,24 +227,26 @@ static void __init tegra20_init_timer(struct device_node *np)
- 	ret = setup_irq(tegra_timer_irq.irq, &tegra_timer_irq);
- 	if (ret) {
- 		pr_err("Failed to register timer IRQ: %d\n", ret);
--		BUG();
-+		return ret;
- 	}
- 
- 	tegra_clockevent.cpumask = cpu_all_mask;
- 	tegra_clockevent.irq = tegra_timer_irq.irq;
- 	clockevents_config_and_register(&tegra_clockevent, 1000000,
- 					0x1, 0x1fffffff);
-+
-+	return 0;
- }
--CLOCKSOURCE_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
-+CLOCKSOURCE_OF_DECLARE_RET(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
- 
--static void __init tegra20_init_rtc(struct device_node *np)
-+static int __init tegra20_init_rtc(struct device_node *np)
- {
- 	struct clk *clk;
- 
- 	rtc_base = of_iomap(np, 0);
- 	if (!rtc_base) {
- 		pr_err("Can't map RTC registers");
--		BUG();
-+		return -ENXIO;
- 	}
- 
- 	/*
-@@ -255,6 +259,6 @@ static void __init tegra20_init_rtc(struct device_node *np)
- 	else
- 		clk_prepare_enable(clk);
- 
--	register_persistent_clock(NULL, tegra_read_persistent_clock64);
-+	return register_persistent_clock(NULL, tegra_read_persistent_clock64);
- }
--CLOCKSOURCE_OF_DECLARE(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
-+CLOCKSOURCE_OF_DECLARE_RET(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
--- 
-1.9.1
+VGhlIERpc3BsYXkgUG9ydCBBdXhpbGlhcnkgKERQQVVYKSBjaGFubmVsIHBhZHMgY2FuIGJlIHNo
+YXJlZCB3aXRoIGFuCmludGVybmFsIEkyQyBjb250cm9sbGVyLiBBZGQgcGluY3RybCBzdXBwb3J0
+IGZvciB0aGVzZSBwYWRzIHNvIHRoYXQgdGhlCkkyQyBjb250cm9sbGVyIGNhbiByZXF1ZXN0IGFu
+ZCB1c2UgdGhlc2UgcGFkcy4KCkpvbiBIdW50ZXIgKDEzKToKICBkcm0vdGVncmE6IENsZWFuLXVw
+IGlmIHByb2JpbmcgRFBBVVggZmFpbHMKICBkcm0vdGVncmE6IEFkZCBoZWxwZXIgZnVuY3Rpb25z
+IGZvciBzZXR0aW5nIHVwIERQQVVYIHBhZHMKICBkdC1iaW5kaW5nczogZHJtL3RlZ3JhOiBVcGRh
+dGUgRFBBVVggZG9jdW1lbnRhdGlvbgogIGRybS90ZWdyYTogQWRkIHNvci1zYWZlIGNsb2NrIGZv
+ciBEUEFVWCBvbiBUZWdyYTIxMAogIGRybS90ZWdyYTogUHJlcGFyZSBEUEFVWCBmb3Igc3VwcG9y
+dGluZyBnZW5lcmljIFBNIGRvbWFpbnMKICBwaW5jdHJsOiBwaW5jb25mOiBBZGQgZ2VuZXJpYyBo
+ZWxwZXIgZnVuY3Rpb24gZm9yIGZyZWVpbmcgbWFwcGluZ3MKICBkdC1iaW5kaW5nczogaTJjOiBB
+ZGQgc3VwcG9ydCBmb3IgJ2kyYy1idXMnIHN1Ym5vZGUKICBpMmM6IGNvcmU6IEFkZCBzdXBwb3J0
+IGZvciAnaTJjLWJ1cycgc3Vibm9kZQogIGR0LWJpbmRpbmdzOiBkcm0vdGVncmE6IEFkZCBEUEFV
+WCBwaW5jdHJsIGRvY3VtZW50YXRpb24KICBkcm0vdGVncmE6IEFkZCBwaW5jdHJsIHN1cHBvcnQg
+Zm9yIERQQVVYCiAgYXJtNjQ6IHRlZ3JhOiBBZGQgU09SIHBvd2VyLWRvbWFpbiBub2RlCiAgYXJt
+NjQ6IHRlZ3JhOiBBZGQgc29yLXNhZmUgY2xvY2sgdG8gRFBBVVggYmluZGluZwogIGFybTY0OiB0
+ZWdyYTogQWRkIERQQVVYIHBpbmN0cmwgYmluZGluZ3MKCiAuLi4vZGlzcGxheS90ZWdyYS9udmlk
+aWEsdGVncmEyMC1ob3N0MXgudHh0ICAgICAgICB8ICAxMSArLQogRG9jdW1lbnRhdGlvbi9kZXZp
+Y2V0cmVlL2JpbmRpbmdzL2kyYy9pMmMudHh0ICAgICAgfCAgIDggKwogLi4uL3BpbmN0cmwvbnZp
+ZGlhLHRlZ3JhMTI0LWRwYXV4LXBhZGN0bC50eHQgICAgICAgfCAgNjAgKysrKysKIGFyY2gvYXJt
+NjQvYm9vdC9kdHMvbnZpZGlhL3RlZ3JhMjEwLmR0c2kgICAgICAgICAgIHwgIDc4ICsrKysrKy0K
+IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9LY29uZmlnICAgICAgICAgICAgICAgICAgICAgIHwgICAx
+ICsKIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcGF1eC5jICAgICAgICAgICAgICAgICAgICAgIHwg
+MjU1ICsrKysrKysrKysrKysrKysrLS0tLQogZHJpdmVycy9pMmMvaTJjLWNvcmUuYyAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgfCAgMTEgKy0KIGRyaXZlcnMvcGluY3RybC9waW5jb25mLWdl
+bmVyaWMuYyAgICAgICAgICAgICAgICAgIHwgICA4ICsKIGluY2x1ZGUvbGludXgvcGluY3RybC9w
+aW5jb25mLWdlbmVyaWMuaCAgICAgICAgICAgIHwgICAyICsKIDkgZmlsZXMgY2hhbmdlZCwgMzgw
+IGluc2VydGlvbnMoKyksIDU0IGRlbGV0aW9ucygtKQogY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3Vt
+ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9waW5jdHJsL252aWRpYSx0ZWdyYTEyNC1kcGF1
+eC1wYWRjdGwudHh0CgotLSAKMi4xLjQKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
+ZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
+bmZvL2RyaS1kZXZlbAo=
