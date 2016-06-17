@@ -1,97 +1,40 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [RFC PATCH 08/13] i2c: core: Add support for 'i2c-bus' subnode
-Date: Fri, 17 Jun 2016 18:24:29 +0200
-Message-ID: <20160617162429.GG27475@ulmo.ba.sec>
-References: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
- <1466165027-17917-9-git-send-email-jonathanh@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: tegra-devfreq hangs TK1 with R21.4 u-boot
+Date: Fri, 17 Jun 2016 10:30:07 -0600
+Message-ID: <5764258F.3060207@wwwdotorg.org>
+References: <20160612034541.GA31426@jirafa.cyrius.com>
+ <20160616161611.GC19360@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="gvF4niNJ+uBMJnEh"
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1466165027-17917-9-git-send-email-jonathanh@nvidia.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160616161611.GC19360-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
+Cc: Tomeu Vizoso <tomeu.vizoso-ZGY8ohtN/8qB+jHODAdFcQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <srwarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 06/16/2016 10:16 AM, Thierry Reding wrote:
+> On Sat, Jun 11, 2016 at 08:45:41PM -0700, Martin Michlmayr wrote:
+>> I noticed that the Jetson TK1 hangs during boot (when/before mounting
+>> the SD disk) when CONFIG_ARM_TEGRA_DEVFREQ=y is set and when u-boot
+>> from R21.4 is used (2014.10-rc2).
+>>
+>> The hang does not occur when I disable tegra-devfreq or when I use
+>> tegra-devfreq in combination with u-boot 2016.03 (from DENX upstream,
+>> built by Debian).
+>>
+>> Steps to reproduce:
+>>
+>> ARCH=arm make multi_v7_defconfig
+>> Set CONFIG_ARM_TEGRA_DEVFREQ=y
+>> Boot from an external SD card and it will hang when/before mounting the
+>> SD card.
+>
+> Stephen, any ideas what might be going on here?
 
---gvF4niNJ+uBMJnEh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Jun 17, 2016 at 01:03:42PM +0100, Jon Hunter wrote:
-> If the 'i2c-bus' device-tree node is present for an I2C adapter then
-> parse this subnode for I2C slaves.
->=20
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  drivers/i2c/i2c-core.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
-> index 952d2f0c02c5..f552d97bad32 100644
-> --- a/drivers/i2c/i2c-core.c
-> +++ b/drivers/i2c/i2c-core.c
-> @@ -1452,7 +1452,7 @@ static struct i2c_client *of_i2c_register_device(st=
-ruct i2c_adapter *adap,
-> =20
->  static void of_i2c_register_devices(struct i2c_adapter *adap)
->  {
-> -	struct device_node *node;
-> +	struct device_node *bus, *node;
-> =20
->  	/* Only register child devices if the adapter has a node pointer set */
->  	if (!adap->dev.of_node)
-> @@ -1460,11 +1460,18 @@ static void of_i2c_register_devices(struct i2c_ad=
-apter *adap)
-> =20
->  	dev_dbg(&adap->dev, "of_i2c: walking child nodes\n");
-> =20
-> -	for_each_available_child_of_node(adap->dev.of_node, node) {
-> +	bus =3D of_get_child_by_name(adap->dev.of_node, "i2c-bus");
-> +	if (!bus)
-> +		bus =3D adap->dev.of_node;
-
-Maybe
-		bus =3D of_node_get(adap->dev.of_node);
-
-here...
-
-> +
-> +	for_each_available_child_of_node(bus, node) {
->  		if (of_node_test_and_set_flag(node, OF_POPULATED))
->  			continue;
->  		of_i2c_register_device(adap, node);
->  	}
-> +
-> +	if (bus !=3D adap->dev.of_node)
-> +		of_node_put(bus);
-
-=2E.. and drop the extra check here?
-
-Thierry
-
---gvF4niNJ+uBMJnEh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXZCQ8AAoJEN0jrNd/PrOhdZYP/1wY+NhmNXmVn1KnCHvxdA+7
-BTnFDqczvsXo/xdBSPVmvmCMnt1bvL8RQj2PKkrRNuODFaEBfyIjeezG49fTfkZV
-GOyVPQoW/h9Ndaj6nquGgL/mBOcyDd7BA2soNX7vLsx43+r7q4ADzdKjJ/OAHU/p
-cgZ3raIIRsRkVMOuJBSc7+qM11J0L1Txsza2yWbPCqkLKoB/535Ow7gp9Rf1JKBk
-QP+HsNwI1MZxQhX55cAOpZ8+ANaVQiLxXNcvaQqnWGuL/YuCllQRVHapinB0QLMc
-Q/nxSGJ9hDmHWg+pSZmW1nLJmG6DXAk0VUH8LIJZFGS0Q16ED0GJggbWXdKco4LU
-WYiwn6kIqBj+Gn3dJ8JL7uSLv4fxAnkac2wfds9ZYhN2Pp3sgdHWzwYbiGNbIsqP
-Pmkx9rnqtHNUlHgFsIqflzPjMCmQiAt/Q23O6nZKetGsd079tsyAZ+T8ozXQVI/v
-RFGt9WaTT+cVQMq6uIqOqeILaLoDzoMGfhxZgo4eAcnL0bF3qFToI0AW7EFLchg2
-HSVaCxTvxuZdCNdY5LtO33UBFMdNEap2VvkkIlqj2Pnln0V8q6Za3TOdvVHFazZf
-9dVomWe0Vj6mGo2TN8m2BmFYNpDCwhrlZyaYX2I8m4z3aFBZ1D3icUczet3+xbKd
-19KqpJV+o2kQUuglI+zN
-=tTEE
------END PGP SIGNATURE-----
-
---gvF4niNJ+uBMJnEh--
+I can't think of anything obvious, and the commit history of the L4T 
+U-Boot is constructed in such a way that's it's essentially impossible 
+to follow, so I can't easily tell what changes exist in the L4T U-Boot 
+release that weren't upstream or vice-versa. If simply using mainline 
+U-Boot works and is an option for you, I'd suggest that.
