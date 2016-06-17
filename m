@@ -1,87 +1,80 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [RFC PATCH 11/13] arm64: tegra: Add SOR power-domain node
-Date: Fri, 17 Jun 2016 13:03:45 +0100
-Message-ID: <1466165027-17917-12-git-send-email-jonathanh@nvidia.com>
-References: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V3 1/4] dt-bindings: bus: Add documentation for Tegra210 ACONNECT
+Date: Fri, 17 Jun 2016 13:40:31 +0100
+Message-ID: <1466167234-8288-2-git-send-email-jonathanh@nvidia.com>
+References: <1466167234-8288-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1466167234-8288-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add node for SOR power-domain for Tegra210 and populate the SOR
-power-domain phandle for SOR and DPAUX nodes that are dependent
-on this power-domain.
+Add binding documentation for the Tegra ACONNECT bus that is part of the
+Audio Processing Engine (APE) on Tegra210. The ACONNECT bus is used to
+access devices within the APE subsystem. The APE is located in a
+separate power domain and so accesses made to the ACONNECT require the
+power domain to be enabled as well as some platform specific clocks.
 
-Please note that although neither the SOR or DPAUX drivers currently
-support runtime power-management, by populating the power-domain node
-the SOR power-domain will be turned on before probing SOR or DPAUX
-devices and kept on while the devices are bound.
-
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ .../bindings/bus/nvidia,tegra210-aconnect.txt      | 45 ++++++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index ebf44f4059f8..94f780b43037 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -34,6 +34,7 @@
- 			clock-names = "dpaux", "parent";
- 			resets = <&tegra_car 207>;
- 			reset-names = "dpaux";
-+			power-domains = <&pd_sor>;
- 			status = "disabled";
- 		};
- 
-@@ -154,6 +155,7 @@
- 			clock-names = "sor", "parent", "dp", "safe";
- 			resets = <&tegra_car 182>;
- 			reset-names = "sor";
-+			power-domains = <&pd_sor>;
- 			status = "disabled";
- 		};
- 
-@@ -168,6 +170,7 @@
- 			clock-names = "sor", "parent", "dp", "safe";
- 			resets = <&tegra_car 183>;
- 			reset-names = "sor";
-+			power-domains = <&pd_sor>;
- 			status = "disabled";
- 		};
- 
-@@ -180,6 +183,7 @@
- 			clock-names = "dpaux", "parent";
- 			resets = <&tegra_car 181>;
- 			reset-names = "dpaux";
-+			power-domains = <&pd_sor>;
- 			status = "disabled";
- 		};
- 
-@@ -592,6 +596,20 @@
- 				resets = <&tegra_car 198>;
- 				#power-domain-cells = <0>;
- 			};
+diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
+new file mode 100644
+index 000000000000..7ff13be1750b
+--- /dev/null
++++ b/Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
+@@ -0,0 +1,45 @@
++NVIDIA Tegra ACONNECT Bus
 +
-+			pd_sor: sor {
-+				clocks = <&tegra_car TEGRA210_CLK_SOR0>,
-+					 <&tegra_car TEGRA210_CLK_DSIA>,
-+					 <&tegra_car TEGRA210_CLK_DSIB>,
-+					 <&tegra_car TEGRA210_CLK_MIPI_CAL>,
-+					 <&tegra_car TEGRA210_CLK_DPAUX>;
-+				resets = <&tegra_car TEGRA210_CLK_SOR0>,
-+					 <&tegra_car TEGRA210_CLK_DSIA>,
-+					 <&tegra_car TEGRA210_CLK_DSIB>,
-+					 <&tegra_car TEGRA210_CLK_DPAUX>,
-+					 <&tegra_car TEGRA210_CLK_MIPI_CAL>;
-+				#power-domain-cells = <0>;
-+			};
- 		};
- 	};
- 
++The Tegra ACONNECT bus is an AXI switch which is used to connnect various
++components inside the Audio Processing Engine (APE). All CPU accesses to
++the APE subsystem go through the ACONNECT via an APB to AXI wrapper.
++
++Required properties:
++- compatible: Must be "nvidia,tegra210-aconnect".
++- clocks: Must contain the entries for the APE clock (TEGRA210_CLK_APE),
++  and APE interface clock (TEGRA210_CLK_APB2APE).
++- clock-names: Must contain the names "ape" and "apb2ape" for the corresponding
++  'clocks' entries.
++- power-domains: Must contain a phandle that points to the audio powergate
++  (namely 'aud') for Tegra210.
++- #address-cells: The number of cells used to represent physical base addresses
++  in the aconnect address space. Should be 1.
++- #size-cells: The number of cells used to represent the size of an address
++  range in the aconnect address space. Should be 1.
++- ranges: Mapping of the aconnect address space to the CPU address space.
++
++All devices accessed via the ACONNNECT are described by child-nodes.
++
++Example:
++
++	aconnect@702c0000 {
++		compatible = "nvidia,tegra210-aconnect";
++		clocks = <&tegra_car TEGRA210_CLK_APE>,
++			 <&tegra_car TEGRA210_CLK_APB2APE>;
++		clock-names = "ape", "apb2ape";
++		power-domains = <&pd_audio>;
++
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x702c0000 0x0 0x702c0000 0x00040000>;
++
++		status = "disabled";
++
++		child1 {
++			...
++		};
++
++		child2 {
++			...
++		};
++	};
 -- 
 2.1.4
