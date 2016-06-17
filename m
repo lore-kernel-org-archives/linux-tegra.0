@@ -1,23 +1,39 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [flasher scripts PATCH] Fix flash --flash-image option
-Date: Fri, 17 Jun 2016 10:04:54 -0600
-Message-ID: <57641FA6.50706@wwwdotorg.org>
-References: <20160617023435.GA22135@jirafa.cyrius.com>
+From: Santosh Shilimkar <santosh.shilimkar@oracle.com>
+Subject: Re: [PATCH V2 63/63] clocksources: Switch back to the clksrc table
+Date: Fri, 17 Jun 2016 09:04:47 -0700
+Message-ID: <afeed273-b0b9-eef6-5e9b-78f069ebe743@oracle.com>
+References: <1466112442-31105-1-git-send-email-daniel.lezcano@linaro.org>
+ <1466112442-31105-64-git-send-email-daniel.lezcano@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160617023435.GA22135-IRMp5PtgtdoigzW5ZibpNwC/G2K4zDHf@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <1466112442-31105-64-git-send-email-daniel.lezcano@linaro.org>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>, Russell King <linux@armlinux.org.uk>, Michal Simek <monstr@monstr.eu>, John Crispin <john@phrozen.org>, Ralf Baechle <ralf@linux-mips.org>, Ley Foon Tan <lftan@altera.com>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, Maxime Coquelin <maxime.coquelin@st.com>, Patrice Chotard <patrice.chotard@st.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Linus Walleij <linus.walleij@linaro.org>, Alexander Shiyan <shc_work@mail.ru>, Kukjin Kim <kgene@kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/16/2016 08:34 PM, Martin Michlmayr wrote:
-> Pass correct variable to avoid the following error:
+On 6/16/2016 2:27 PM, Daniel Lezcano wrote:
+> All the clocksource drivers's init function are now converted to return
+> an error code. CLOCKSOURCE_OF_DECLARE is no longer used as well as the
+> clksrc-of table.
 >
->    File "./tegra-uboot-flasher", line 139, in func_flash
->      flash_img = args.flash_img
-> AttributeError: 'Namespace' object has no attribute 'flash_img'
+> Let's convert back the names:
+>  - CLOCKSOURCE_OF_DECLARE_RET => CLOCKSOURCE_OF_DECLARE
+>  - clksrc-of-ret              => clksrc-of
+>
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
 
-Hmm. Guess I never tested that:-) Applied, thanks.
+>  drivers/clocksource/timer-keystone.c      |  2 +-
+
+Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
