@@ -1,42 +1,56 @@
-From: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
-Subject: [flasher scripts PATCH] Fix flash --flash-image option
-Date: Thu, 16 Jun 2016 19:34:35 -0700
-Message-ID: <20160617023435.GA22135@jirafa.cyrius.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH RESEND V2] ARM64: config: Enable MAX77620 pinctrl/gpio/rtc for Tegra210 P2180
+Date: Fri, 17 Jun 2016 11:35:56 +0530
+Message-ID: <1466143556-31849-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: catalin.marinas@arm.com, will.deacon@arm.com, treding@nvidia.com
+Cc: arnd@arndb.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Pass correct variable to avoid the following error:
+NVIDIA's Tegra210 Jetson platform (P2180) uses the MAX77620 as PMIC.
+Enable GPIO, Pincontrol and RTC driver for this device.
 
-  File "./tegra-uboot-flasher", line 139, in func_flash
-    flash_img = args.flash_img
-AttributeError: 'Namespace' object has no attribute 'flash_img'
-
-Signed-off-by: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 ---
- tegra-uboot-flasher | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changes from V1:
+- MFD and regulator is already enabled, enabling remaining driver.
 
-diff --git a/tegra-uboot-flasher b/tegra-uboot-flasher
-index 153db0d..ddce70d 100755
---- a/tegra-uboot-flasher
-+++ b/tegra-uboot-flasher
-@@ -136,7 +136,7 @@ def func_flash():
-         print 'u_boot_dtb_size %d 0x%x' % (u_boot_dtb_size, u_boot_dtb_size)
- 
-     if args.flash_image:
--        flash_img = args.flash_img
-+        flash_img = args.flash_image
-     else:
-         flash_img = os.path.join(out_board_dir, config['flash-image'])
-     flash_img_size = os.path.getsize(flash_img)
+Resending to linux-tegra group also.
+
+
+ arch/arm64/configs/defconfig | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 9af9ba5..90a6705 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -186,6 +186,7 @@ CONFIG_SPI_QUP=y
+ CONFIG_SPI_SPIDEV=m
+ CONFIG_SPMI=y
+ CONFIG_PINCTRL_SINGLE=y
++CONFIG_PINCTRL_MAX77620=y
+ CONFIG_PINCTRL_MSM8916=y
+ CONFIG_PINCTRL_QCOM_SPMI_PMIC=y
+ CONFIG_GPIO_SYSFS=y
+@@ -194,6 +195,7 @@ CONFIG_GPIO_PL061=y
+ CONFIG_GPIO_RCAR=y
+ CONFIG_GPIO_XGENE=y
+ CONFIG_GPIO_PCA953X=m
++CONFIG_GPIO_MAX77620=y
+ CONFIG_POWER_RESET_MSM=y
+ CONFIG_POWER_RESET_XGENE=y
+ CONFIG_POWER_RESET_SYSCON=y
+@@ -274,6 +276,7 @@ CONFIG_LEDS_TRIGGERS=y
+ CONFIG_LEDS_TRIGGER_HEARTBEAT=y
+ CONFIG_LEDS_TRIGGER_CPU=y
+ CONFIG_RTC_CLASS=y
++CONFIG_RTC_DRV_MAX77686=y
+ CONFIG_RTC_DRV_S5M=y
+ CONFIG_RTC_DRV_DS3232=y
+ CONFIG_RTC_DRV_EFI=y
 -- 
 2.1.4
-
--- 
-Martin Michlmayr
-http://www.cyrius.com/
