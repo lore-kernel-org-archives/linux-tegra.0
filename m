@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [RFC PATCH 02/13] drm/tegra: Add helper functions for setting up DPAUX pads
-Date: Fri, 17 Jun 2016 13:03:36 +0100
-Message-ID: <1466165027-17917-3-git-send-email-jonathanh@nvidia.com>
+Subject: [RFC PATCH 04/13] drm/tegra: Add sor-safe clock for DPAUX on Tegra210
+Date: Fri, 17 Jun 2016 13:03:38 +0100
+Message-ID: <1466165027-17917-5-git-send-email-jonathanh@nvidia.com>
 References: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,134 +12,82 @@ To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, 
 Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-In preparation for adding pinctrl support for the DPAUX pads, add
-helpers functions for configuring the pads and controlling the power
-for the pads.
-
-Please note that although a simple if-statement could be used instead
-of a case statement for configuring the pads as there are only two
-possible modes, a case statement is used because when integrating with
-the pinctrl framework, we need to be able to handle invalid modes that
-could be passed.
+For Tegra210 the 'sor-safe' clock needs to be enabled when using DPAUX.
+Add support to the DPAUX driver for enabling this clock on Tegra210.
 
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/gpu/drm/tegra/dpaux.c | 75 ++++++++++++++++++++++++++-----------------
- 1 file changed, 45 insertions(+), 30 deletions(-)
+ drivers/gpu/drm/tegra/dpaux.c | 29 +++++++++++++++++++++++++++--
+ 1 file changed, 27 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
-index 0874a7e5b37b..aa3a037fcd3b 100644
+index aa3a037fcd3b..d696a7e45935 100644
 --- a/drivers/gpu/drm/tegra/dpaux.c
 +++ b/drivers/gpu/drm/tegra/dpaux.c
-@@ -267,6 +267,45 @@ static irqreturn_t tegra_dpaux_irq(int irq, void *data)
- 	return ret;
- }
+@@ -37,6 +37,7 @@ struct tegra_dpaux {
  
-+static void tegra_dpaux_powerdown(struct tegra_dpaux *dpaux, bool enable)
-+{
-+	u32 value = tegra_dpaux_readl(dpaux, DPAUX_HYBRID_SPARE);
+ 	struct reset_control *rst;
+ 	struct clk *clk_parent;
++	struct clk *clk_sor;
+ 	struct clk *clk;
+ 
+ 	struct regulator *vdd;
+@@ -340,18 +341,37 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
+ 		return PTR_ERR(dpaux->rst);
+ 	}
+ 
++	if (of_device_is_compatible(pdev->dev.of_node,
++				    "nvidia,tegra210-dpaux")) {
++		dpaux->clk_sor = devm_clk_get(&pdev->dev, "sor-safe");
++		if (IS_ERR(dpaux->clk_sor)) {
++			dev_err(&pdev->dev,
++				"failed to get sor-safe clock: %ld\n",
++				PTR_ERR(dpaux->clk_sor));
++			return PTR_ERR(dpaux->clk_sor);
++		}
 +
-+	if (enable)
-+		value |= DPAUX_HYBRID_SPARE_PAD_POWER_DOWN;
-+	else
-+		value &= ~DPAUX_HYBRID_SPARE_PAD_POWER_DOWN;
-+
-+	tegra_dpaux_writel(dpaux, value, DPAUX_HYBRID_SPARE);
-+}
-+
-+static int tegra_dpaux_config(struct tegra_dpaux *dpaux, int function)
-+{
-+	u32 value;
-+
-+	switch (function) {
-+	case DPAUX_HYBRID_PADCTL_MODE_AUX:
-+		value = DPAUX_HYBRID_PADCTL_AUX_CMH(2) |
-+			DPAUX_HYBRID_PADCTL_AUX_DRVZ(4) |
-+			DPAUX_HYBRID_PADCTL_AUX_DRVI(0x18) |
-+			DPAUX_HYBRID_PADCTL_AUX_INPUT_RCV |
-+			DPAUX_HYBRID_PADCTL_MODE_AUX;
-+		break;
-+	case DPAUX_HYBRID_PADCTL_MODE_I2C:
-+		value = DPAUX_HYBRID_PADCTL_I2C_SDA_INPUT_RCV |
-+			DPAUX_HYBRID_PADCTL_I2C_SCL_INPUT_RCV |
-+			DPAUX_HYBRID_PADCTL_MODE_I2C;
-+		break;
-+	default:
-+		return -ENOTSUPP;
++		err = clk_prepare_enable(dpaux->clk_sor);
++		if (err < 0) {
++			dev_err(&pdev->dev,
++				"failed to enable sor-safe clock: %d\n", err);
++			return err;
++		}
 +	}
 +
-+	tegra_dpaux_writel(dpaux, value, DPAUX_HYBRID_PADCTL);
-+	tegra_dpaux_powerdown(dpaux, false);
-+
-+	return 0;
-+}
-+
- static int tegra_dpaux_probe(struct platform_device *pdev)
- {
- 	struct tegra_dpaux *dpaux;
-@@ -372,15 +411,9 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
- 	 * is no possibility to perform the I2C mode configuration in the
- 	 * HDMI path.
- 	 */
--	value = tegra_dpaux_readl(dpaux, DPAUX_HYBRID_SPARE);
--	value &= ~DPAUX_HYBRID_SPARE_PAD_POWER_DOWN;
--	tegra_dpaux_writel(dpaux, value, DPAUX_HYBRID_SPARE);
--
--	value = tegra_dpaux_readl(dpaux, DPAUX_HYBRID_PADCTL);
--	value = DPAUX_HYBRID_PADCTL_I2C_SDA_INPUT_RCV |
--		DPAUX_HYBRID_PADCTL_I2C_SCL_INPUT_RCV |
--		DPAUX_HYBRID_PADCTL_MODE_I2C;
--	tegra_dpaux_writel(dpaux, value, DPAUX_HYBRID_PADCTL);
-+	err = tegra_dpaux_config(dpaux, DPAUX_HYBRID_PADCTL_MODE_I2C);
-+	if (err < 0)
-+		return err;
+ 	dpaux->clk = devm_clk_get(&pdev->dev, NULL);
+ 	if (IS_ERR(dpaux->clk)) {
+ 		dev_err(&pdev->dev, "failed to get module clock: %ld\n",
+ 			PTR_ERR(dpaux->clk));
+-		return PTR_ERR(dpaux->clk);
++		err = PTR_ERR(dpaux->clk);
++		goto disable_sor_clk;
+ 	}
  
- 	/* enable and clear all interrupts */
- 	value = DPAUX_INTR_AUX_DONE | DPAUX_INTR_IRQ_EVENT |
-@@ -408,12 +441,9 @@ assert_reset:
- static int tegra_dpaux_remove(struct platform_device *pdev)
- {
- 	struct tegra_dpaux *dpaux = platform_get_drvdata(pdev);
--	u32 value;
+ 	err = clk_prepare_enable(dpaux->clk);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to enable module clock: %d\n",
+ 			err);
+-		return err;
++		goto disable_sor_clk;
+ 	}
  
- 	/* make sure pads are powered down when not in use */
--	value = tegra_dpaux_readl(dpaux, DPAUX_HYBRID_SPARE);
--	value |= DPAUX_HYBRID_SPARE_PAD_POWER_DOWN;
--	tegra_dpaux_writel(dpaux, value, DPAUX_HYBRID_SPARE);
-+	tegra_dpaux_powerdown(dpaux, true);
+ 	reset_control_deassert(dpaux->rst);
+@@ -434,6 +454,9 @@ disable_parent_clk:
+ assert_reset:
+ 	reset_control_assert(dpaux->rst);
+ 	clk_disable_unprepare(dpaux->clk);
++disable_sor_clk:
++	if (dpaux->clk_sor)
++		clk_disable_unprepare(dpaux->clk_sor);
  
- 	drm_dp_aux_unregister(&dpaux->aux);
- 
-@@ -538,30 +568,15 @@ enum drm_connector_status drm_dp_aux_detect(struct drm_dp_aux *aux)
- int drm_dp_aux_enable(struct drm_dp_aux *aux)
- {
- 	struct tegra_dpaux *dpaux = to_dpaux(aux);
--	u32 value;
--
--	value = DPAUX_HYBRID_PADCTL_AUX_CMH(2) |
--		DPAUX_HYBRID_PADCTL_AUX_DRVZ(4) |
--		DPAUX_HYBRID_PADCTL_AUX_DRVI(0x18) |
--		DPAUX_HYBRID_PADCTL_AUX_INPUT_RCV |
--		DPAUX_HYBRID_PADCTL_MODE_AUX;
--	tegra_dpaux_writel(dpaux, value, DPAUX_HYBRID_PADCTL);
--
--	value = tegra_dpaux_readl(dpaux, DPAUX_HYBRID_SPARE);
--	value &= ~DPAUX_HYBRID_SPARE_PAD_POWER_DOWN;
--	tegra_dpaux_writel(dpaux, value, DPAUX_HYBRID_SPARE);
- 
--	return 0;
-+	return tegra_dpaux_config(dpaux, DPAUX_HYBRID_PADCTL_MODE_AUX);
+ 	return err;
  }
- 
- int drm_dp_aux_disable(struct drm_dp_aux *aux)
- {
- 	struct tegra_dpaux *dpaux = to_dpaux(aux);
--	u32 value;
- 
--	value = tegra_dpaux_readl(dpaux, DPAUX_HYBRID_SPARE);
--	value |= DPAUX_HYBRID_SPARE_PAD_POWER_DOWN;
--	tegra_dpaux_writel(dpaux, value, DPAUX_HYBRID_SPARE);
-+	tegra_dpaux_powerdown(dpaux, true);
+@@ -456,6 +479,8 @@ static int tegra_dpaux_remove(struct platform_device *pdev)
+ 	clk_disable_unprepare(dpaux->clk_parent);
+ 	reset_control_assert(dpaux->rst);
+ 	clk_disable_unprepare(dpaux->clk);
++	if (dpaux->clk_sor)
++		clk_disable_unprepare(dpaux->clk_sor);
  
  	return 0;
  }
