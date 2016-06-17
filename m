@@ -1,102 +1,55 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [RFC PATCH 01/13] drm/tegra: Clean-up if probing DPAUX fails
-Date: Fri, 17 Jun 2016 13:03:35 +0100
-Message-ID: <1466165027-17917-2-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [RFC PATCH 07/13] dt-bindings: i2c: Add support for 'i2c-bus' subnode
+Date: Fri, 17 Jun 2016 13:03:41 +0100
+Message-ID: <1466165027-17917-8-git-send-email-jonathanh@nvidia.com>
 References: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1466165027-17917-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-If the probing of the DPAUX fails, then clocks are left enabled and the
-DPAUX reset de-asserted. Add code to perform the necessary clean-up on
-probe failure by disabling clocks and asserting the reset.
+The I2C driver core for boards using device-tree assumes any subnode of
+an I2C adapter in the device-tree blob as being a I2C slave device.
+Although this makes complete sense, some I2C adapters may have subnodes
+which are not I2C slaves but subnodes presenting other features. For
+example some Tegra devices have an I2C interface which may share its
+pins with other devices and to share these pins subnodes for
+representing these pins so they have be shared via the pinctrl framework
+are needed.
 
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To allow I2C adapters to have non-I2C specific subnodes in device-tree
+that are not parsed by the I2C driver core by adding support for a
+'i2c-bus' subnode where I2C slaves can be placed. If the 'i2c-bus'
+subnode is present then all I2C slaves must be placed under this subnode.
+
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/gpu/drm/tegra/dpaux.c | 22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
+ Documentation/devicetree/bindings/i2c/i2c.txt | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
-index b24a0f14821a..0874a7e5b37b 100644
---- a/drivers/gpu/drm/tegra/dpaux.c
-+++ b/drivers/gpu/drm/tegra/dpaux.c
-@@ -321,28 +321,30 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
- 	if (IS_ERR(dpaux->clk_parent)) {
- 		dev_err(&pdev->dev, "failed to get parent clock: %ld\n",
- 			PTR_ERR(dpaux->clk_parent));
--		return PTR_ERR(dpaux->clk_parent);
-+		err = PTR_ERR(dpaux->clk_parent);
-+		goto assert_reset;
- 	}
+diff --git a/Documentation/devicetree/bindings/i2c/i2c.txt b/Documentation/devicetree/bindings/i2c/i2c.txt
+index f31b2ad1552b..ed56b08c7e6e 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c.txt
++++ b/Documentation/devicetree/bindings/i2c/i2c.txt
+@@ -32,6 +32,14 @@ wants to support one of the below features, it should adapt the bindings below.
+ - clock-frequency
+ 	frequency of bus clock in Hz.
  
- 	err = clk_prepare_enable(dpaux->clk_parent);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to enable parent clock: %d\n",
- 			err);
--		return err;
-+		goto assert_reset;
- 	}
- 
- 	err = clk_set_rate(dpaux->clk_parent, 270000000);
- 	if (err < 0) {
- 		dev_err(&pdev->dev, "failed to set clock to 270 MHz: %d\n",
- 			err);
--		return err;
-+		goto disable_parent_clk;
- 	}
- 
- 	dpaux->vdd = devm_regulator_get(&pdev->dev, "vdd");
- 	if (IS_ERR(dpaux->vdd)) {
- 		dev_err(&pdev->dev, "failed to get VDD supply: %ld\n",
- 			PTR_ERR(dpaux->vdd));
--		return PTR_ERR(dpaux->vdd);
-+		err = PTR_ERR(dpaux->vdd);
-+		goto disable_parent_clk;
- 	}
- 
- 	err = devm_request_irq(dpaux->dev, dpaux->irq, tegra_dpaux_irq, 0,
-@@ -350,7 +352,7 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
- 	if (err < 0) {
- 		dev_err(dpaux->dev, "failed to request IRQ#%u: %d\n",
- 			dpaux->irq, err);
--		return err;
-+		goto disable_parent_clk;
- 	}
- 
- 	disable_irq(dpaux->irq);
-@@ -360,7 +362,7 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
- 
- 	err = drm_dp_aux_register(&dpaux->aux);
- 	if (err < 0)
--		return err;
-+		goto disable_parent_clk;
- 
- 	/*
- 	 * Assume that by default the DPAUX/I2C pads will be used for HDMI,
-@@ -393,6 +395,14 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, dpaux);
- 
- 	return 0;
++- i2c-bus
++	For I2C adapters that have child nodes that are a mixture of both I2C
++	devices and non-I2C devices (such as a pin controller), the 'i2c-bus'
++	subnode can be used for populating I2C devices to prevent the I2C core
++	from attempting to add any non-i2c nodes as I2C devices. If 'i2c-bus'
++	subnode is present then all I2C slaves must be added under this
++	subnode.
 +
-+disable_parent_clk:
-+	clk_disable_unprepare(dpaux->clk_parent);
-+assert_reset:
-+	reset_control_assert(dpaux->rst);
-+	clk_disable_unprepare(dpaux->clk);
-+
-+	return err;
- }
- 
- static int tegra_dpaux_remove(struct platform_device *pdev)
+ - i2c-scl-falling-time-ns
+ 	Number of nanoseconds the SCL signal takes to fall; t(f) in the I2C
+ 	specification.
 -- 
 2.1.4
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
