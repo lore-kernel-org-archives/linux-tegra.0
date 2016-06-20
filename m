@@ -1,55 +1,69 @@
-From: Patrice Chotard <patrice.chotard@st.com>
-Subject: Re: [PATCH V2 63/63] clocksources: Switch back to the clksrc table
-Date: Mon, 20 Jun 2016 09:43:21 +0200
-Message-ID: <57679E99.6090607@st.com>
-References: <1466112442-31105-1-git-send-email-daniel.lezcano@linaro.org>
- <1466112442-31105-64-git-send-email-daniel.lezcano@linaro.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [RFC PATCH 02/13] drm/tegra: Add helper functions for setting up
+ DPAUX pads
+Date: Mon, 20 Jun 2016 08:59:19 +0100
+Message-ID: <5767A257.6080106@nvidia.com>
+References: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
+ <1466165027-17917-3-git-send-email-jonathanh@nvidia.com>
+ <20160617161138.GC27475@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <1466112442-31105-64-git-send-email-daniel.lezcano@linaro.org>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>, Russell King <linux@armlinux.org.uk>, Michal Simek <monstr@monstr.eu>, John Crispin <john@phrozen.org>, Ralf Baechle <ralf@linux-mips.org>, Ley Foon Tan <lftan@altera.com>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, Maxime Coquelin <maxime.coquelin@st.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Linus Walleij <linus.walleij@linaro.org>, Alexander Shiyan <shc_work@mail.ru>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.co>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20160617161138.GC27475@ulmo.ba.sec>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Stephen Warren <swarren@wwwdotorg.org>, dri-devel@lists.freedesktop.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-
-On 06/16/2016 11:27 PM, Daniel Lezcano wrote:
-> All the clocksource drivers's init function are now converted to return
-> an error code. CLOCKSOURCE_OF_DECLARE is no longer used as well as the
-> clksrc-of table.
->
-> Let's convert back the names:
->   - CLOCKSOURCE_OF_DECLARE_RET => CLOCKSOURCE_OF_DECLARE
->   - clksrc-of-ret              => clksrc-of
->
->
->   drivers/clocksource/clksrc_st_lpc.c       |  2 +-
-> diff --git a/drivers/clocksource/clksrc_st_lpc.c b/drivers/clocksource/clksrc_st_lpc.c
-> index c9022a9..03cc492 100644
-> --- a/drivers/clocksource/clksrc_st_lpc.c
-> +++ b/drivers/clocksource/clksrc_st_lpc.c
-> @@ -132,4 +132,4 @@ static int __init st_clksrc_of_register(struct device_node *np)
->   
->   	return ret;
->   }
-> -CLOCKSOURCE_OF_DECLARE_RET(ddata, "st,stih407-lpc", st_clksrc_of_register);
-> +CLOCKSOURCE_OF_DECLARE(ddata, "st,stih407-lpc", st_clksrc_of_register);
->
-
-
-For STi :
-
-Acked-by: Patrice Chotard <patrice.chotard@st.com>
-
-Thanks
+Ck9uIDE3LzA2LzE2IDE3OjExLCBUaGllcnJ5IFJlZGluZyB3cm90ZToKPiAqIFBHUCBTaWduZWQg
+YnkgYW4gdW5rbm93biBrZXkKPiAKPiBPbiBGcmksIEp1biAxNywgMjAxNiBhdCAwMTowMzozNlBN
+ICswMTAwLCBKb24gSHVudGVyIHdyb3RlOgo+PiBJbiBwcmVwYXJhdGlvbiBmb3IgYWRkaW5nIHBp
+bmN0cmwgc3VwcG9ydCBmb3IgdGhlIERQQVVYIHBhZHMsIGFkZAo+PiBoZWxwZXJzIGZ1bmN0aW9u
+cyBmb3IgY29uZmlndXJpbmcgdGhlIHBhZHMgYW5kIGNvbnRyb2xsaW5nIHRoZSBwb3dlcgo+PiBm
+b3IgdGhlIHBhZHMuCj4+Cj4+IFBsZWFzZSBub3RlIHRoYXQgYWx0aG91Z2ggYSBzaW1wbGUgaWYt
+c3RhdGVtZW50IGNvdWxkIGJlIHVzZWQgaW5zdGVhZAo+PiBvZiBhIGNhc2Ugc3RhdGVtZW50IGZv
+ciBjb25maWd1cmluZyB0aGUgcGFkcyBhcyB0aGVyZSBhcmUgb25seSB0d28KPj4gcG9zc2libGUg
+bW9kZXMsIGEgY2FzZSBzdGF0ZW1lbnQgaXMgdXNlZCBiZWNhdXNlIHdoZW4gaW50ZWdyYXRpbmcg
+d2l0aAo+PiB0aGUgcGluY3RybCBmcmFtZXdvcmssIHdlIG5lZWQgdG8gYmUgYWJsZSB0byBoYW5k
+bGUgaW52YWxpZCBtb2RlcyB0aGF0Cj4+IGNvdWxkIGJlIHBhc3NlZC4KPj4KPj4gU2lnbmVkLW9m
+Zi1ieTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+Cj4+IC0tLQo+PiAgZHJpdmVy
+cy9ncHUvZHJtL3RlZ3JhL2RwYXV4LmMgfCA3NSArKysrKysrKysrKysrKysrKysrKysrKysrKy0t
+LS0tLS0tLS0tLS0tLS0tCj4+ICAxIGZpbGUgY2hhbmdlZCwgNDUgaW5zZXJ0aW9ucygrKSwgMzAg
+ZGVsZXRpb25zKC0pCj4+Cj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHBh
+dXguYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcGF1eC5jCj4+IGluZGV4IDA4NzRhN2U1YjM3
+Yi4uYWEzYTAzN2ZjZDNiIDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHBh
+dXguYwo+PiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHBhdXguYwo+PiBAQCAtMjY3LDYg
+KzI2Nyw0NSBAQCBzdGF0aWMgaXJxcmV0dXJuX3QgdGVncmFfZHBhdXhfaXJxKGludCBpcnEsIHZv
+aWQgKmRhdGEpCj4+ICAJcmV0dXJuIHJldDsKPj4gIH0KPj4gIAo+PiArc3RhdGljIHZvaWQgdGVn
+cmFfZHBhdXhfcG93ZXJkb3duKHN0cnVjdCB0ZWdyYV9kcGF1eCAqZHBhdXgsIGJvb2wgZW5hYmxl
+KQo+PiArewo+PiArCXUzMiB2YWx1ZSA9IHRlZ3JhX2RwYXV4X3JlYWRsKGRwYXV4LCBEUEFVWF9I
+WUJSSURfU1BBUkUpOwo+PiArCj4+ICsJaWYgKGVuYWJsZSkKPj4gKwkJdmFsdWUgfD0gRFBBVVhf
+SFlCUklEX1NQQVJFX1BBRF9QT1dFUl9ET1dOOwo+PiArCWVsc2UKPj4gKwkJdmFsdWUgJj0gfkRQ
+QVVYX0hZQlJJRF9TUEFSRV9QQURfUE9XRVJfRE9XTjsKPj4gKwo+PiArCXRlZ3JhX2RwYXV4X3dy
+aXRlbChkcGF1eCwgdmFsdWUsIERQQVVYX0hZQlJJRF9TUEFSRSk7Cj4+ICt9Cj4gCj4gSSdkIGxp
+a2UgZm9yIHRoaXMgdG8gYmUgdHdvIGZ1bmN0aW9ucyB3aXRob3V0IHRoZSBib29sZWFuIHBhcmFt
+ZXRlci4gVGhlCj4gcmVhc29uIGlzIHRoYXQgd2l0aG91dCBsb29raW5nIGF0IHRoZSBpbXBsZW1l
+bnRhdGlvbiB0aGVyZSdzIG5vIHdheSB0bwo+IHVuZGVyc3RhbmQgd2hhdCB0aGUgbWVhbmluZyBv
+ZiB0cnVlIGFuZCBmYWxzZSBpcy4gSWYgaW5zdGVhZCB5b3UgY2FsbAo+IHRoaXM6Cj4gCj4gCXN0
+YXRpYyB2b2lkIHRlZ3JhX2RwYXV4X3BhZF9wb3dlcl9kb3duKHN0cnVjdCB0ZWdyYV9kcGF1eCAq
+ZHBhdXgpCj4gCXsKPiAJCS4uLgo+IAl9Cj4gCj4gYW5kCj4gCj4gCXN0YXRpYyB2b2lkIHRlZ3Jh
+X2RwYXV4X3BhZF9wb3dlcl91cChzdHJ1Y3QgdGVncmFfZHBhdXggKmRwYXV4KQo+IAl7Cj4gCQku
+Li4KPiAJfQo+IAo+IHlvdSBjYW4gZWFzaWx5IGRlZHVjZSBmcm9tIHRoZSBuYW1lIHdoYXQncyBn
+b2luZyBvbi4KCk9LLCBmaW5lIHdpdGggbWUuIEkgd2FzIG5vdCBzdXJlIGlmIGl0IHdhcyBvYnZp
+b3VzIG9yIG5vdC4KCj4+ICtzdGF0aWMgaW50IHRlZ3JhX2RwYXV4X2NvbmZpZyhzdHJ1Y3QgdGVn
+cmFfZHBhdXggKmRwYXV4LCBpbnQgZnVuY3Rpb24pCj4gCj4gQ2FuIGZ1bmN0aW9uIG5vdCBiZSB1
+bnNpZ25lZD8KClllcyBpdCBjYW4gYW5kIGluIGZhY3Qgc2hvdWxkIGJlLiBJIGhhZCB0aG91Z2h0
+IHRoYXQgaXQgbmVlZGVkIHRvIGJlCnNpZ25lZCB0byBtYXRjaCB3aXRoIHRoZSBwaW5jdHJsLW9w
+cyBidXQgb24gY2xvc2VyIGluc3BlY3Rpb24gdGhhdCBpcwpub3QgdGhlIGNhc2UuCgpKb24KCi0t
+IApudnB1YmxpYwpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
+aHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
