@@ -1,65 +1,196 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v1 15/25] PCI: generic: Free resource list close to where
- it's allocated
-Date: Mon, 20 Jun 2016 18:22:40 +0100
-Message-ID: <20160620172240.GA30625@red-moon>
-References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
- <20160606230636.20936.29083.stgit@bhelgaas-glaptop2.roam.corp.google.com>
- <CANMBJr41muA9mTNAa6MtWuMmeNLQxT4NjLe45=ExdFiH8vwzyw@mail.gmail.com>
+From: Rhyland Klein <rklein@nvidia.com>
+Subject: Re: [PATCH v5] clk: tegra: Initialize UTMIPLL when enabling PLLU
+Date: Mon, 20 Jun 2016 13:24:07 -0400
+Message-ID: <5f8aa644-27cb-457f-c7cc-e84014054272@nvidia.com>
+References: <1464280891-23036-1-git-send-email-rklein@nvidia.com>
+ <5763FFF5.5000303@nvidia.com> <20160617152336.GA27475@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CANMBJr41muA9mTNAa6MtWuMmeNLQxT4NjLe45=ExdFiH8vwzyw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tyler Baker <tyler.baker-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Jon Mason <jonmason-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Pratyush Anand <pratyush.anand-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, rfi-g9ZBwUv/Ih/yUk5EbOjzuce+I+R0W71w@public.gmane.org, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tanmay Inamdar <tinamdar-qTEPVZfXA3Y@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ley Foon Tan <lftan-EIB2kfCEclfQT0dZR+AlfA@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, S??ren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Kevin's boot bot <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Alex Benn??e <alex.bennee>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <20160617152336.GA27475@ulmo.ba.sec>
+Sender: linux-clk-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jun 20, 2016 at 09:56:45AM -0700, Tyler Baker wrote:
-> Hi Bjorn,
+On 6/17/2016 11:23 AM, Thierry Reding wrote:
+> * PGP Signed by an unknown key
 > 
-> On 6 June 2016 at 16:06, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org> wrote:
-> > Previously we allocated the PCI resource list in
-> > gen_pci_parse_request_of_pci_ranges(), but if we had an error, we freed it
-> > on error in gen_pci_init().
-> >
-> > Reorder gen_pci_init() so we can take care of error path cleanup in
-> > gen_pci_parse_request_of_pci_ranges() instead.
-> >
-> > Signed-off-by: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+> On Fri, Jun 17, 2016 at 02:49:41PM +0100, Jon Hunter wrote:
+>> Hi Thierry,
+>>
+>> On 26/05/16 17:41, Rhyland Klein wrote:
+>>> From: Andrew Bresticker <abrestic@chromium.org>
+>>>
+>>> Move the UTMIPLL initialization code form clk-tegra<chip>.c files into
+>>> clk-pll.c. UTMIPLL was being configured and set in HW control right
+>>> after registration. However, when the clock init_table is processed and
+>>> child clks of PLLU are enabled, it will call in and enable PLLU as
+>>> well, and initiate SW enabling sequence even though PLLU is already in
+>>> HW control. This leads to getting UTMIPLL stuck with a SEQ_BUSY status.
+>>>
+>>> Doing the initialization once during pllu_enable means we configure it
+>>> properly into HW control.
+>>>
+>>> A side effect of the commonization/localization of the UTMIPLL init
+>>> code, is that it corrects some errors that were present for earlier
+>>> generations. For instance, in clk-tegra124.c, it used to have:
+>>>
+>>> define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 6)
+>>>
+>>> when the correct shift to use is present in the new version:
+>>>
+>>> define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 27)
+>>>
+>>> which matches the Tegra124 TRM register definition.
+>>>
+>>> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+>>>
+>>> [rklein: Merged in some later fixes for potential deadlocks]
+>>>
+>>> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+>>> ---
+>>> v5:
+>>>  - Initialized flags to 0 to avoid harmless spinlock warnings
+>>>
+>>> v4:
+>>>  - Re-added examples in patch description
+>>>
+>>> v3:
+>>>  - Flushed out description to describe this patch.
+>>>
+>>>  drivers/clk/tegra/clk-pll.c      | 484 +++++++++++++++++++++++++++++++++++++++
+>>>  drivers/clk/tegra/clk-tegra114.c | 155 +------------
+>>>  drivers/clk/tegra/clk-tegra124.c | 156 +------------
+>>>  drivers/clk/tegra/clk-tegra210.c | 182 +--------------
+>>>  drivers/clk/tegra/clk-tegra30.c  | 113 +--------
+>>>  drivers/clk/tegra/clk.h          |  17 ++
+>>>  6 files changed, 510 insertions(+), 597 deletions(-)
+>>>
+>>> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
+>>> index 4e194ecc8d5e..31e20110fae4 100644
+>>> --- a/drivers/clk/tegra/clk-pll.c
+>>> +++ b/drivers/clk/tegra/clk-pll.c
+>>
+>> ...
+>>
+>>> +static int clk_pllu_tegra210_enable(struct clk_hw *hw)
+>>> +{
+>>> +	struct tegra_clk_pll *pll = to_clk_pll(hw);
+>>> +	struct clk_hw *pll_ref = clk_hw_get_parent(hw);
+>>> +	struct clk_hw *osc = clk_hw_get_parent(pll_ref);
+>>> +	unsigned long flags = 0, input_rate;
+>>> +	unsigned int i;
+>>> +	int ret = 0;
+>>> +	u32 val;
+>>> +
+>>> +	if (!osc) {
+>>> +		pr_err("%s: failed to get OSC clock\n", __func__);
+>>> +		return -EINVAL;
+>>> +	}
+>>> +	input_rate = clk_hw_get_rate(osc);
+>>> +
+>>> +	if (pll->lock)
+>>> +		spin_lock_irqsave(pll->lock, flags);
+>>> +
+>>> +	_clk_pll_enable(hw);
+>>> +	ret = clk_pll_wait_for_lock(pll);
+>>> +	if (ret < 0)
+>>> +		goto out;
+>>> +
+>>> +	for (i = 0; i < ARRAY_SIZE(utmi_parameters); i++) {
+>>> +		if (input_rate == utmi_parameters[i].osc_frequency)
+>>> +			break;
+>>> +	}
+>>> +
+>>> +	if (i == ARRAY_SIZE(utmi_parameters)) {
+>>> +		pr_err("%s: Unexpected input rate %lu\n", __func__, input_rate);
+>>> +		ret = -EINVAL;
+>>> +		goto out;
+>>> +	}
+>>> +
+>>> +	val = pll_readl_base(pll);
+>>> +	val &= ~PLLU_BASE_OVERRIDE;
+>>> +	pll_writel_base(val, pll);
+>>> +
+>>> +	/* Put PLLU under HW control */
+>>> +	val = readl_relaxed(pll->clk_base + PLLU_HW_PWRDN_CFG0);
+>>> +	val |= PLLU_HW_PWRDN_CFG0_IDDQ_PD_INCLUDE |
+>>> +	       PLLU_HW_PWRDN_CFG0_USE_SWITCH_DETECT |
+>>> +	       PLLU_HW_PWRDN_CFG0_USE_LOCKDET;
+>>> +	val &= ~(PLLU_HW_PWRDN_CFG0_CLK_ENABLE_SWCTL |
+>>> +		  PLLU_HW_PWRDN_CFG0_CLK_SWITCH_SWCTL);
+>>> +	writel_relaxed(val, pll->clk_base + PLLU_HW_PWRDN_CFG0);
+>>> +
+>>> +	val = readl_relaxed(pll->clk_base + XUSB_PLL_CFG0);
+>>> +	val &= ~XUSB_PLL_CFG0_PLLU_LOCK_DLY;
+>>> +	writel_relaxed(val, pll->clk_base + XUSB_PLL_CFG0);
+>>> +	udelay(1);
+>>> +
+>>> +	val = readl_relaxed(pll->clk_base + PLLU_HW_PWRDN_CFG0);
+>>> +	val |= PLLU_HW_PWRDN_CFG0_SEQ_ENABLE;
+>>> +	writel_relaxed(val, pll->clk_base + PLLU_HW_PWRDN_CFG0);
+>>> +	udelay(1);
+>>> +
+>>> +	/* Disable PLLU clock branch to UTMIPLL since it uses OSC */
+>>> +	val = pll_readl_base(pll);
+>>> +	val &= ~PLLU_BASE_CLKENABLE_USB;
+>>> +	pll_writel_base(val, pll);
+>>> +
+>>> +	val = readl_relaxed(pll->clk_base + UTMIPLL_HW_PWRDN_CFG0);
+>>> +	if (val & UTMIPLL_HW_PWRDN_CFG0_SEQ_ENABLE) {
+>>> +		pr_debug("UTMIPLL already enabled\n");
+>>> +		goto out;
+>>> +	}
+>>> +	val &= ~UTMIPLL_HW_PWRDN_CFG0_IDDQ_OVERRIDE;
+>>> +	writel_relaxed(val, pll->clk_base + UTMIPLL_HW_PWRDN_CFG0);
+>>> +
+>>> +	/* Program UTMIP PLL stable and active counts */
+>>> +	val = readl_relaxed(pll->clk_base + UTMIP_PLL_CFG2);
+>>> +	val &= ~UTMIP_PLL_CFG2_STABLE_COUNT(~0);
+>>> +	val |= UTMIP_PLL_CFG2_STABLE_COUNT(utmi_parameters[i].stable_count);
+>>> +	val &= ~UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(~0);
+>>> +	val |= UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(
+>>> +			utmi_parameters[i].active_delay_count);
+>>> +	val |= UTMIP_PLL_CFG2_PHY_XTAL_CLOCKEN;
+>>> +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG2);
+>>> +
+>>> +	/* Program UTMIP PLL delay and oscillator frequency counts */
+>>> +	val = readl_relaxed(pll->clk_base + UTMIP_PLL_CFG1);
+>>> +	val &= ~UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(~0);
+>>> +	val |= UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(
+>>> +		utmi_parameters[i].enable_delay_count);
+>>> +	val &= ~UTMIP_PLL_CFG1_XTAL_FREQ_COUNT(~0);
+>>> +	val |= UTMIP_PLL_CFG1_XTAL_FREQ_COUNT(
+>>> +		utmi_parameters[i].xtal_freq_count);
+>>> +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG1);
+>>> +
+>>> +	/* Remove power downs from UTMIP PLL control bits */
+>>> +	val = readl_relaxed(pll->clk_base + UTMIP_PLL_CFG1);
+>>> +	val &= ~UTMIP_PLL_CFG1_FORCE_PLL_ENABLE_POWERDOWN;
+>>> +	val |= UTMIP_PLL_CFG1_FORCE_PLL_ENABLE_POWERUP;
+>>> +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG1);
+>>> +	udelay(100);
+>>
+>> In next-20160617 I see that this udelay is now a usleep_range(100, 200)
+>> and this is causing the following splat when the clock is enabled. I
+>> don't think that we can use usleep here ...
 > 
-> The kernelci.org bot has reported[0] new qemu-aarch64
-> (arm64-defconfig) boot failures[1][2] in next-20160620. I've
-> bisected[3] this boot failure down to this patch, and confirmed
-> reverting it on top of next-20160620 resolves the boot issue.
+> Okay, I'll back out the patch. I'd really prefer to avoid busy-looping
+> for 100 microseconds here, so can we please find another way to do this?
 > 
-> I have not investigated further, but you can easily reproduce[4] the
-> boot failure on an x86 host running qemu-system-aarch64 (I'm running
-> qemu-system 2.6).
 
-That's most likely because pci_ecam_create() requires the bus_range
-resource (its busr parameter) to be initialized when it is called
-and that's not the case after this patch is applied if I read it
-correctly.
+I discussed this with some people downstream, and they said we should
+never need to wait 100 microseconds, and should never need more then
+1-2us for delays to take effect.
 
-It is probably a NULL pointer dereference in pci_ecam_create().
+Therefore I would think changing this to a udelay(2) should be alright.
+I simply enabled the clock, and it seemed to be fine. I'll send a new
+version with that change if you want.
 
-Thanks,
-Lorenzo
+-rhyland
 
-> 
-> Cheers,
-> 
-> Tyler
-> 
-> [0] https://kernelci.org/boot/all/job/next/kernel/next-20160620/
-> [1] https://storage.kernelci.org/next/next-20160620/arm64-defconfig/lab-cambridge/boot-apm-mustang-kvm-guest.txt
-> [2] https://storage.kernelci.org/next/next-20160620/arm64-defconfig/lab-tbaker/boot-qemu-aarch64,legacy.txt
-> [3] http://hastebin.com/segiruribu.vbs
-> [4] http://hastebin.com/dafuzicuyi.avrasm
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pci" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> 
+
+-- 
+nvpublic
