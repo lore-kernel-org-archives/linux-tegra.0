@@ -1,35 +1,55 @@
-From: Shardar Mohammed <smohammed@nvidia.com>
-Subject: RE: [PATCH v8 1/3] i2c: tegra: use readx_poll_timeout after
- config_load reg programmed
-Date: Sun, 19 Jun 2016 18:21:18 +0000
-Message-ID: <6d21b4bd199844e3a359cc52823045db@bgmail102.nvidia.com>
-References: <1464356224-10339-1-git-send-email-smohammed@nvidia.com>
- <20160619172136.GE2933@tetsubishi>
+From: Patrice Chotard <patrice.chotard@st.com>
+Subject: Re: [PATCH V2 63/63] clocksources: Switch back to the clksrc table
+Date: Mon, 20 Jun 2016 09:43:21 +0200
+Message-ID: <57679E99.6090607@st.com>
+References: <1466112442-31105-1-git-send-email-daniel.lezcano@linaro.org>
+ <1466112442-31105-64-git-send-email-daniel.lezcano@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <20160619172136.GE2933@tetsubishi>
-Content-Language: en-US
-Sender: linux-i2c-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, "gnurou@gmail.com" <gnurou@gmail.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <1466112442-31105-64-git-send-email-daniel.lezcano@linaro.org>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>, Russell King <linux@armlinux.org.uk>, Michal Simek <monstr@monstr.eu>, John Crispin <john@phrozen.org>, Ralf Baechle <ralf@linux-mips.org>, Ley Foon Tan <lftan@altera.com>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, Maxime Coquelin <maxime.coquelin@st.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Linus Walleij <linus.walleij@linaro.org>, Alexander Shiyan <shc_work@mail.ru>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.co>
 List-Id: linux-tegra@vger.kernel.org
 
-> Subject: Re: [PATCH v8 1/3] i2c: tegra: use readx_poll_timeout after
-> config_load reg programmed
-> 
-> * PGP Signed by an unknown key
-> 
-> 
-> > +		err = readx_poll_timeout(readl, i2c_dev->base + reg_offset,
-> > +					 val, val == 0, 1000,
-> > +					 I2C_CONFIG_LOAD_TIMEOUT);
-> 
-> Any reason we can't use readl_poll_timeout() here?
-[Shardar] Can be used, will change and push the new patchset.
 
-> 
-> 
-> * Unknown Key
-> * 0x14A029B6
+
+On 06/16/2016 11:27 PM, Daniel Lezcano wrote:
+> All the clocksource drivers's init function are now converted to return
+> an error code. CLOCKSOURCE_OF_DECLARE is no longer used as well as the
+> clksrc-of table.
+>
+> Let's convert back the names:
+>   - CLOCKSOURCE_OF_DECLARE_RET => CLOCKSOURCE_OF_DECLARE
+>   - clksrc-of-ret              => clksrc-of
+>
+>
+>   drivers/clocksource/clksrc_st_lpc.c       |  2 +-
+> diff --git a/drivers/clocksource/clksrc_st_lpc.c b/drivers/clocksource/clksrc_st_lpc.c
+> index c9022a9..03cc492 100644
+> --- a/drivers/clocksource/clksrc_st_lpc.c
+> +++ b/drivers/clocksource/clksrc_st_lpc.c
+> @@ -132,4 +132,4 @@ static int __init st_clksrc_of_register(struct device_node *np)
+>   
+>   	return ret;
+>   }
+> -CLOCKSOURCE_OF_DECLARE_RET(ddata, "st,stih407-lpc", st_clksrc_of_register);
+> +CLOCKSOURCE_OF_DECLARE(ddata, "st,stih407-lpc", st_clksrc_of_register);
+>
+
+
+For STi :
+
+Acked-by: Patrice Chotard <patrice.chotard@st.com>
+
+Thanks
