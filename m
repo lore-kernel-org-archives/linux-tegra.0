@@ -1,15 +1,14 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [RFC PATCH 04/13] drm/tegra: Add sor-safe clock for DPAUX on
- Tegra210
-Date: Mon, 20 Jun 2016 18:33:29 +0200
-Message-ID: <20160620163329.GA6175@ulmo.ba.sec>
+Subject: Re: [RFC PATCH 11/13] arm64: tegra: Add SOR power-domain node
+Date: Mon, 20 Jun 2016 18:37:32 +0200
+Message-ID: <20160620163732.GB6175@ulmo.ba.sec>
 References: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
- <1466165027-17917-5-git-send-email-jonathanh@nvidia.com>
- <20160617161819.GE27475@ulmo.ba.sec> <5767ACBE.3090008@nvidia.com>
+ <1466165027-17917-12-git-send-email-jonathanh@nvidia.com>
+ <20160617164202.GJ27475@ulmo.ba.sec> <5767B4F2.2090306@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1561937231=="
+Content-Type: multipart/mixed; boundary="===============2083512556=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <5767ACBE.3090008@nvidia.com>
+In-Reply-To: <5767B4F2.2090306@nvidia.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -24,97 +23,90 @@ Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, W
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============1561937231==
+--===============2083512556==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="zYM0uCDKw75PZbzx"
+	protocol="application/pgp-signature"; boundary="p4qYPpj5QlsIQJ0K"
 Content-Disposition: inline
 
 
---zYM0uCDKw75PZbzx
+--p4qYPpj5QlsIQJ0K
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 20, 2016 at 09:43:42AM +0100, Jon Hunter wrote:
-> On 17/06/16 17:18, Thierry Reding wrote:
-> > On Fri, Jun 17, 2016 at 01:03:38PM +0100, Jon Hunter wrote:
-> >> diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpa=
-ux.c
-[...]
-> >> +	if (of_device_is_compatible(pdev->dev.of_node,
-> >> +				    "nvidia,tegra210-dpaux")) {
-> >> +		dpaux->clk_sor =3D devm_clk_get(&pdev->dev, "sor-safe");
-> >> +		if (IS_ERR(dpaux->clk_sor)) {
-> >> +			dev_err(&pdev->dev,
-> >> +				"failed to get sor-safe clock: %ld\n",
-> >> +				PTR_ERR(dpaux->clk_sor));
-> >> +			return PTR_ERR(dpaux->clk_sor);
-> >> +		}
-> >> +
-> >> +		err =3D clk_prepare_enable(dpaux->clk_sor);
-> >> +		if (err < 0) {
-> >> +			dev_err(&pdev->dev,
-> >> +				"failed to enable sor-safe clock: %d\n", err);
-> >> +			return err;
-> >> +		}
-> >> +	}
-> >=20
-> > Please make this part of a struct tegra_dpaux_soc, so that we don't have
-> > to check the compatible string again here. This could look like:
-> >=20
-> > 	struct tegra_dpaux_soc {
-> > 		bool needs_safe_clock;
-> > 	};
-> >=20
-> > 	static const struct tegra_dpaux_soc tegra124_dpaux_soc =3D {
-> > 		.needs_safe_clock =3D false,
-> > 	};
-> >=20
-> > 	static const struct tegra_dpaux_soc tegra210_dpaux_soc =3D {
-> > 		.needs_safe_clock =3D true,
-> > 	};
-> >=20
-> > 	...
-> >=20
-> > 	static const struct of_device_id tegra_dpaux_of_match[] =3D {
-> > 		{ .compatible =3D "nvidia,tegra210-dpaux", .data =3D &tegra210_dpaux_=
-soc },
-> > 		{ .compatible =3D "nvidia,tegra124-dpaux", .data =3D &tegra124_dpaux_=
-soc },
-> > 		{ },
-> > 	};
+On Mon, Jun 20, 2016 at 10:18:42AM +0100, Jon Hunter wrote:
 >=20
-> OK. I wonder if we should call it 'has_safe_clock' because this clock
-> does not exist for tegra124 AFAICT. #bikeshed ;-)
+> On 17/06/16 17:42, Thierry Reding wrote:
+> > * PGP Signed by an unknown key
+> >=20
+> > On Fri, Jun 17, 2016 at 01:03:45PM +0100, Jon Hunter wrote:
+> >> Add node for SOR power-domain for Tegra210 and populate the SOR
+> >> power-domain phandle for SOR and DPAUX nodes that are dependent
+> >> on this power-domain.
+> >>
+> >> Please note that although neither the SOR or DPAUX drivers currently
+> >> support runtime power-management, by populating the power-domain node
+> >> the SOR power-domain will be turned on before probing SOR or DPAUX
+> >> devices and kept on while the devices are bound.
+> >>
+> >> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> >> ---
+> >>  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 18 ++++++++++++++++++
+> >>  1 file changed, 18 insertions(+)
+> >=20
+> > I've got patches queued in my drm-tegra tree to add support for runtime
+> > PM for the SOR driver. Will that in some way clash with this work if
+> > merged in parallel?
+>=20
+> Yes I had seen those. I was wondering if I should include them here but
+> opted not too (as it was becoming a massive series). It should be fine
+> to enable RPM later, you just need to be aware that the partition could
+> turn off on a RPM put so you just need to ensure that any register
+> context is saved and restored.
 
-has_safe_clock is fine with me, too.
+This doesn't matter much for Tegra DRM because we always program the
+entire set of registers after pm_runtime_get(), which already resets
+the IP block anyway.
+
+> By the way, one item I am not certain about is the relationship between
+> the HDMI device and the SOR device. If the HDMI is in the SOR partition
+> it should also have the SOR power-domain populated, but it just uses the
+> SOR, then the SOR driver should handle this.
+
+On Tegra210 the HDMI output is driven by the SOR, and that's implemented
+by the SOR driver, too, so the partition setup should be correct
+already.
+
+On Tegra124 and earlier the HDMI output is driven by a separate IP block
+that's not at all related to SOR, and I haven't found any evidence that
+it would be in the SOR power partition either.
 
 Thierry
 
---zYM0uCDKw75PZbzx
+--p4qYPpj5QlsIQJ0K
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXaBrWAAoJEN0jrNd/PrOhSfcP/1tybgKZ9kyRDxSdbv8E9s8g
-4H9ZvxkZvtzmdDYcOnA21ElSvTie3WCJ5pwqb0qbHTyyzeJQp1LA6fhqm0Aph1WA
-S2u6Gbu7IdkYf45mmy1ecPAU238gZ8LiqD1LhFGvPYXrInX+8USnaJIQqhVh9/2z
-rrhpO71cHhkvI8DXC3wCH8dzQjcy+jLOEY3RG5XVO3l61MhBHlbpsI2m95CJA5lz
-9+sAheigT9ovFbgIdxMxTnC1rOYQGdheeXAceE9uf5Puel2o3dz4Y4aHTx/Gy+ML
-uNrxMltNsD7tl4M74xXWGA/KUjuCCFWTrJ5+5USNEdXxqCOr5KkVt49ALytsC4BZ
-cKkaM/UznSb22/pjRURAUmPw90CMouAeEhSaK3AxxjW2VTH/Hr7Qa6W138buVw4E
-SPs4WY1Pm4PXXBZgRHfr62qZRGG6bnScI1BM2XNa0OrWxGTMAc+MEjdOwmjgDs00
-noo9Su1NGK5ronrUxkJqTE2je5+l8nhDNCpqYF6Y1C/fIqlayfiJF0ZvCANCmnP7
-LIDBfUo8QY++96uS5VjWy9BqaE7boHqaHOOc6isl37GgYWaqLhsO11reYQbKOlT0
-M1g7DLMsuALhCi8AfmCddwfv1Hvrx3BHpNp9K5wCYOHEY5FqufsXFBqwAVBG6OrC
-qq9F3v8egab573NulY3D
-=yVGW
+iQIcBAABCAAGBQJXaBvMAAoJEN0jrNd/PrOhNGIQAKUF6vpzHHT0vCZ2QfFAaVdx
+Jle+ZGr05RrfIKVzwHtFe08r+0AAvQgK3/Gjy9Q8XEzGnYv6Yyl9L5v/MdI14eG9
+Lb/KmyaETGCsFyELz+mlZdfIbBktgOIG0g7YqEfpxDBMpEuAjgAPR+LPRF2dFeJk
+7uSp+FOr4b0t1ttJHFV1EZb4CcXvEv3bJdzWbMKKiDTRPPcr9673cUYaRTCcq7mq
+Y3H+G/pYvJsLdL8hzAOu0DdiHrZMFC9W5spt8bMfs1nbNCfafRNHs9Cu0aYZ39R5
+ZaiTumYAHybCJzr2sDvoG9wRKlHcSV+DjWi2QzYJRivMTSQoJcNYl/lddOs8lvie
+0Cw1kLaZveLC+/c4SSWI+G0mfU6PefhypD2io5UBGXQoT8WTPRQTCh+H+okCGdbo
+hXuezFA0gQaIticoWo8Axp+d1/M8KHrTQCs1HLScgpT0G95r/AjnuqXWllvRWs/4
+wwREf0cRd/uwazGoilLRn+sWlMgsYZMg83XIfK+n/Innn7p3lAG8/47INUaef554
+aPxsCYYa8rZHeMEB9OIXIAUDTnNsF4Jk84Zpq7tfp2ZGJSIPIoCJKbEL3m2Ch1SB
+MxyOzvLJ1DsqI/s7rx6M85PMZz/gMb/5Z6kAsbBSyNL3TD27SNi881HZ+iE3Z2Bf
+kZrhPxCc9mZTYDn3uxei
+=s3vL
 -----END PGP SIGNATURE-----
 
---zYM0uCDKw75PZbzx--
+--p4qYPpj5QlsIQJ0K--
 
---===============1561937231==
+--===============2083512556==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: base64
@@ -124,4 +116,4 @@ X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
 IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
 dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
 
---===============1561937231==--
+--===============2083512556==--
