@@ -1,47 +1,30 @@
-From: Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v2] gpu: host1x: hw: intr_hw: Remove create_workqueue
-Date: Mon, 20 Jun 2016 11:11:23 -0400
-Message-ID: <20160620151123.GY3262@mtj.duckdns.org>
-References: <20160618090632.GA11246@Karyakshetra>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH v2] arm: tegra124: remove commas from unit addresses
+Date: Mon, 20 Jun 2016 09:50:26 -0600
+Message-ID: <576810C2.1030401@wwwdotorg.org>
+References: <1466298275-15753-1-git-send-email-marcel.ziswiler@toradex.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20160618090632.GA11246@Karyakshetra>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Bhaktipriya Shridhar <bhaktipriya96@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"; Format="flowed"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1466298275-15753-1-git-send-email-marcel.ziswiler@toradex.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gU2F0LCBKdW4gMTgsIDIwMTYgYXQgMDI6MzY6MzJQTSArMDUzMCwgQmhha3RpcHJpeWEgU2hy
-aWRoYXIgd3JvdGU6Cj4gU3lzdGVtIHdvcmtxdWV1ZXMgaGF2ZSBiZWVuIGFibGUgdG8gaGFuZGxl
-IGhpZ2ggbGV2ZWwgb2YgY29uY3VycmVuY3kKPiBmb3IgYSBsb25nIHRpbWUgbm93IGFuZCB0aGVy
-ZSdzIG5vIHJlYXNvbiB0byB1c2UgZGVkaWNhdGVkIHdvcmtxdWV1ZXMKPiBqdXN0IHRvIGdhaW4g
-Y29uY3VycmVuY3kuIFNpbmNlIHRoZSB3b3JrcXVldWUgaG9zdC0+aW50cl93cSBpcyBpbnZvbHZl
-ZAo+IGluIHN5bmMgcG9pbnQgaW50ZXJydXB0cywgYW5kIHN5bmMgcG9pbnQgd2FpdCBhbmQgaXMg
-bm90IGJlaW5nIHVzZWQgb24KPiBhIG1lbW9yeSByZWNsYWltIHBhdGgsIGRlZGljYXRlZCBob3N0
-LT5pbnRyX3dxIGhhcyBiZWVuIHJlcGxhY2VkIHdpdGggdGhlCj4gdXNlIG9mIHN5c3RlbV93cS4K
-PiAKPiBVbmxpa2UgYSBkZWRpY2F0ZWQgcGVyLWNwdSB3b3JrcXVldWUgY3JlYXRlZCB3aXRoIGNy
-ZWF0ZV93b3JrcXVldWUoKSwKPiBzeXN0ZW1fd3EgYWxsb3dzIG11bHRpcGxlIHdvcmsgaXRlbXMg
-dG8gb3ZlcmxhcCBleGVjdXRpb25zIGV2ZW4gb24KPiB0aGUgc2FtZSBDUFU7IGhvd2V2ZXIsIGEg
-cGVyLWNwdSB3b3JrcXVldWUgZG9lc24ndCBoYXZlIGFueSBDUFUKPiBsb2NhbGl0eSBvciBnbG9i
-YWwgb3JkZXJpbmcgZ3VhcmFudGVlcyB1bmxlc3MgdGhlIHRhcmdldCBDUFUgaXMKPiBleHBsaWNp
-dGx5IHNwZWNpZmllZCBhbmQgdGh1cyB0aGUgaW5jcmVhc2Ugb2YgbG9jYWwgY29uY3VycmVuY3kK
-PiBzaG91bGRuJ3QgbWFrZSBhbnkgZGlmZmVyZW5jZS4KPiAKPiBjYW5jZWxfd29ya19zeW5jKCkg
-aGFzIGJlZW4gdXNlZCAgaW4gX2hvc3QxeF9mcmVlX3N5bmNwdF9pcnEoKSB0byBlbnN1cmUKPiB0
-aGF0IG5vIHdvcmsgaXMgcGVuZGluZyBieSB0aGUgdGltZSBleGl0IHBhdGggcnVucy4KCkFsdGVy
-bmF0aXZlbHksIHRoaXMgY291bGQgaGF2ZSB1c2VkIGFsbG9jX3dvcmtxdWV1ZSgpIHcvbwpXUV9N
-RU1fUkVDTEFJTSBhbmQgdXNlZCBpdCBqdXN0IGFzIGEgZmx1c2ggZG9tYWluLiAgRWl0aGVyIHdh
-eSBpcwpmaW5lLgoKQWNrZWQtYnk6IFRlanVuIEhlbyA8dGpAa2VybmVsLm9yZz4KClRoYW5rcy4K
-Ci0tIAp0ZWp1bgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-XwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcK
-aHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+On 06/18/2016 07:04 PM, Marcel Ziswiler wrote:
+> Remove commas from unit addresses as suggested by Rob Herring upon me
+> posting initial Apalis TK1 support:
+>
+> http://article.gmane.org/gmane.linux.ports.tegra/26608
+
+Acked-by: Stephen Warren <swarren@nvidia.com>
