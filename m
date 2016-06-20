@@ -1,69 +1,85 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [RFC PATCH 10/13] drm/tegra: Add pinctrl support for DPAUX
-Date: Mon, 20 Jun 2016 11:45:26 +0100
-Message-ID: <5767C946.3010209@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC PATCH 07/13] dt-bindings: i2c: Add support for 'i2c-bus'
+ subnode
+Date: Mon, 20 Jun 2016 12:15:39 +0100
+Message-ID: <5767D05B.5000709@nvidia.com>
 References: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
- <1466165027-17917-11-git-send-email-jonathanh@nvidia.com>
- <20160617163752.GI27475@ulmo.ba.sec>
+ <1466165027-17917-8-git-send-email-jonathanh@nvidia.com>
+ <20160617163054.GD32754@leverpostej> <20160617164525.GL27475@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20160617163752.GI27475@ulmo.ba.sec>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Stephen Warren <swarren@wwwdotorg.org>, dri-devel@lists.freedesktop.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160617164525.GL27475-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDE3LzA2LzE2IDE3OjM3LCBUaGllcnJ5IFJlZGluZyB3cm90ZToKPiAqIFBHUCBTaWduZWQg
-YnkgYW4gdW5rbm93biBrZXkKPiAKPiBPbiBGcmksIEp1biAxNywgMjAxNiBhdCAwMTowMzo0NFBN
-ICswMTAwLCBKb24gSHVudGVyIHdyb3RlOgo+PiBUaGUgRFBBVVggcGlucyBhcmUgc2hhcmVkIHdp
-dGggYW4gaW50ZXJuYWwgSTJDIGNvbnRyb2xsZXIuIFRvIGFsbG93Cj4+IHRoZXNlIHBpbnMgdG8g
-YmUgbXV4ZWQgdG8gdGhlIEkyQyBjb250cm9sbGVyLCByZWdpc3RlciBhIHBpbmN0cmwgZGV2aWNl
-Cj4+IGZvciB0aGUgRFBBVVggZGV2aWNlLiBNYWtlIFRlZ3JhIERSTSBzdXBwb3J0IGRlcGVuZGVu
-dCBvbiBQSU5DVFJMIHRvCj4+IGF2b2lkIGFueSBjb21waWxhdGlvbiBpc3N1ZXMuCj4+Cj4+IFNp
-Z25lZC1vZmYtYnk6IEpvbiBIdW50ZXIgPGpvbmF0aGFuaEBudmlkaWEuY29tPgo+PiAtLS0KPj4g
-IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9LY29uZmlnIHwgICAxICsKPj4gIGRyaXZlcnMvZ3B1L2Ry
-bS90ZWdyYS9kcGF1eC5jIHwgMTE3ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysr
-KysrKystLQo+PiAgMiBmaWxlcyBjaGFuZ2VkLCAxMTUgaW5zZXJ0aW9ucygrKSwgMyBkZWxldGlv
-bnMoLSkKPj4KPj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9LY29uZmlnIGIv
-ZHJpdmVycy9ncHUvZHJtL3RlZ3JhL0tjb25maWcKPj4gaW5kZXggNjNlYmIxNTRiOWI1Li5kMzQ5
-MzdhOTZmOTQgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9LY29uZmlnCj4+
-ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9LY29uZmlnCj4+IEBAIC00LDYgKzQsNyBAQCBj
-b25maWcgRFJNX1RFR1JBCj4+ICAJZGVwZW5kcyBvbiBDT01NT05fQ0xLCj4+ICAJZGVwZW5kcyBv
-biBEUk0KPj4gIAlkZXBlbmRzIG9uIFJFU0VUX0NPTlRST0xMRVIKPj4gKwlkZXBlbmRzIG9uIFBJ
-TkNUUkwKPiAKPiBDb3VsZCB3ZSBpbnN0ZWFkIG1ha2UgdGhlIGNvZGUgb3B0aW9uYWw/IEkgZG9u
-J3QgY2FyZSBtdWNoIGFib3V0IHB1bGxpbmcKPiBpbiB0aGUgZXh0cmEgZGVwZW5kZW5jeSAoZm9y
-IFRlZ3JhIHdlIGFsd2F5cyBlbmFibGUgUElOQ1RSTCBhbnl3YXkpLCBidXQKPiBJIHdvcnJ5IHRo
-YXQgc29tZWJvZHkgbWF5IGVuZCB1cCBzZWFyY2hpbmcgZm9yIERSTV9URUdSQSBhbmQgbm90IGZp
-bmQgaXQKPiBiZWNhdXNlIFBJTkNUUkwgaGFwcGVucyB0byBiZSBkaXNhYmxlZCBpbiB0aGV5IC5j
-b25maWcuCgpZZXMgd2UgY291bGQgaWYgeW91IGRvbid0IG1pbmQgdGhlICNpZmRlZiBpbiB0aGUg
-c291cmNlIGZpbGUuIFRoZQphbHRlcm5hdGl2ZSBoZXJlIHdvdWxkIGJlIHRvIHNlbGVjdCBQSU5D
-VFJMIGFuZCBsaWtlIHlvdSBzYWlkIHRoaXMKc2hvdWxkIGFsd2F5cyBiZSB0aGUgY2FzZSBhcyBU
-ZWdyYSBzZWxlY3RzIGluIGFueXdheS4KCj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0v
-dGVncmEvZHBhdXguYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcGF1eC5jCj4gWy4uLl0KPj4g
-QEAgLTQzOSw2ICs1MzcsMTkgQEAgc3RhdGljIGludCB0ZWdyYV9kcGF1eF9wcm9iZShzdHJ1Y3Qg
-cGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+PiAgCWlmIChlcnIgPCAwKQo+PiAgCQlyZXR1cm4gZXJy
-Owo+PiAgCj4+ICsJZHBhdXgtPmRlc2MubmFtZSA9IGRldl9uYW1lKCZwZGV2LT5kZXYpOwo+PiAr
-CWRwYXV4LT5kZXNjLnBpbnMgPSB0ZWdyYV9kcGF1eF9waW5zOwo+PiArCWRwYXV4LT5kZXNjLm5w
-aW5zID0gQVJSQVlfU0laRSh0ZWdyYV9kcGF1eF9waW5zKTsKPj4gKwlkcGF1eC0+ZGVzYy5wY3Rs
-b3BzID0gJnRlZ3JhX2RwYXV4X3BpbmN0cmxfb3BzOwo+PiArCWRwYXV4LT5kZXNjLnBteG9wcyA9
-ICZ0ZWdyYV9kcGF1eF9waW5tdXhfb3BzOwo+PiArCWRwYXV4LT5kZXNjLm93bmVyID0gVEhJU19N
-T0RVTEU7Cj4+ICsKPj4gKwlkcGF1eC0+cGluY3RybCA9IHBpbmN0cmxfcmVnaXN0ZXIoJmRwYXV4
-LT5kZXNjLCAmcGRldi0+ZGV2LCBkcGF1eCk7Cj4+ICsJaWYgKCFkcGF1eC0+cGluY3RybCkgewo+
-PiArCQlkZXZfZXJyKCZwZGV2LT5kZXYsICJmYWlsZWQgdG8gcmVnaXN0ZXIgcGluY29udHJvbFxu
-Iik7Cj4+ICsJCXJldHVybiAtRU5PREVWOwo+PiArCX0KPiAKPiBEaWQgeW91IG1lYW4gdG8gdXNl
-IHRoZSBkZXZtXyB2YXJpYW50IGhlcmU/IEJlY2F1c2UgSSBkb24ndCBzZWUgYQo+IHBpbmN0cmxf
-dW5yZWdpc3RlcigpIGluIHRlZ3JhX2RwYXV4X3JlbW92ZSgpLgoKWWVzIGdvb2QgY2F0Y2guIFdp
-bGwgZml4LgoKSm9uCgotLSAKbnZwdWJsaWMKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
-dGluZm8vZHJpLWRldmVsCg==
+
+On 17/06/16 17:45, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Fri, Jun 17, 2016 at 05:30:54PM +0100, Mark Rutland wrote:
+>> On Fri, Jun 17, 2016 at 01:03:41PM +0100, Jon Hunter wrote:
+>>> The I2C driver core for boards using device-tree assumes any subnode of
+>>> an I2C adapter in the device-tree blob as being a I2C slave device.
+>>> Although this makes complete sense, some I2C adapters may have subnodes
+>>> which are not I2C slaves but subnodes presenting other features. For
+>>> example some Tegra devices have an I2C interface which may share its
+>>> pins with other devices and to share these pins subnodes for
+>>> representing these pins so they have be shared via the pinctrl framework
+>>> are needed.
+>>>
+>>> To allow I2C adapters to have non-I2C specific subnodes in device-tree
+>>> that are not parsed by the I2C driver core by adding support for a
+>>> 'i2c-bus' subnode where I2C slaves can be placed. If the 'i2c-bus'
+>>> subnode is present then all I2C slaves must be placed under this subnode.
+>>>
+>>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> ---
+>>>  Documentation/devicetree/bindings/i2c/i2c.txt | 8 ++++++++
+>>>  1 file changed, 8 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/i2c/i2c.txt b/Documentation/devicetree/bindings/i2c/i2c.txt
+>>> index f31b2ad1552b..ed56b08c7e6e 100644
+>>> --- a/Documentation/devicetree/bindings/i2c/i2c.txt
+>>> +++ b/Documentation/devicetree/bindings/i2c/i2c.txt
+>>> @@ -32,6 +32,14 @@ wants to support one of the below features, it should adapt the bindings below.
+>>>  - clock-frequency
+>>>  	frequency of bus clock in Hz.
+>>>  
+>>> +- i2c-bus
+>>> +	For I2C adapters that have child nodes that are a mixture of both I2C
+>>> +	devices and non-I2C devices (such as a pin controller), the 'i2c-bus'
+>>> +	subnode can be used for populating I2C devices to prevent the I2C core
+>>> +	from attempting to add any non-i2c nodes as I2C devices. If 'i2c-bus'
+>>> +	subnode is present then all I2C slaves must be added under this
+>>> +	subnode.
+>>
+>> The general idea seems sound.
+>>
+>> It would be good if we could remove the mention of the I2C core,
+>> something like:
+>>
+>>   - i2c-bus
+>> 	For I2C adapters that have child nodes that are a mixture of both I2C
+>> 	devices and non-I2C devices (such as a pin controller), the 'i2c-bus'
+>> 	subnode can be used for populating I2C devices. If an 'i2c-bus'
+>> 	subnode is present, only subnodes of this will be considered as
+>> 	I2C slaves.
+>>
+>> How are #address-cells and #size-cells handled in this case? I assume
+>> that they should live under the i2c-bus subnode, which should be called
+>> out.
+> 
+> Good catch. Yes, I think the i2c-bus subnode would be the right place
+> for #address-cells and #size-cells.
+
+Yes, indeed. Thanks. Will fix.
+
+Cheers
+Jon
+
+-- 
+nvpublic
