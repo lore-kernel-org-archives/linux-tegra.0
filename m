@@ -1,14 +1,15 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [RFC PATCH 11/13] arm64: tegra: Add SOR power-domain node
-Date: Mon, 20 Jun 2016 18:37:32 +0200
-Message-ID: <20160620163732.GB6175@ulmo.ba.sec>
+Subject: Re: [RFC PATCH 12/13] arm64: tegra: Add sor-safe clock to DPAUX
+ binding
+Date: Mon, 20 Jun 2016 18:38:42 +0200
+Message-ID: <20160620163842.GC6175@ulmo.ba.sec>
 References: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
- <1466165027-17917-12-git-send-email-jonathanh@nvidia.com>
- <20160617164202.GJ27475@ulmo.ba.sec> <5767B4F2.2090306@nvidia.com>
+ <1466165027-17917-13-git-send-email-jonathanh@nvidia.com>
+ <20160617164746.GM27475@ulmo.ba.sec> <5767B61A.3090102@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2083512556=="
+Content-Type: multipart/mixed; boundary="===============0333713361=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <5767B4F2.2090306@nvidia.com>
+In-Reply-To: <5767B61A.3090102@nvidia.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -23,90 +24,67 @@ Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, W
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============2083512556==
+--===============0333713361==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="p4qYPpj5QlsIQJ0K"
+	protocol="application/pgp-signature"; boundary="B4IIlcmfBL/1gGOG"
 Content-Disposition: inline
 
 
---p4qYPpj5QlsIQJ0K
+--B4IIlcmfBL/1gGOG
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 20, 2016 at 10:18:42AM +0100, Jon Hunter wrote:
+On Mon, Jun 20, 2016 at 10:23:38AM +0100, Jon Hunter wrote:
 >=20
-> On 17/06/16 17:42, Thierry Reding wrote:
+> On 17/06/16 17:47, Thierry Reding wrote:
 > > * PGP Signed by an unknown key
 > >=20
-> > On Fri, Jun 17, 2016 at 01:03:45PM +0100, Jon Hunter wrote:
-> >> Add node for SOR power-domain for Tegra210 and populate the SOR
-> >> power-domain phandle for SOR and DPAUX nodes that are dependent
-> >> on this power-domain.
-> >>
-> >> Please note that although neither the SOR or DPAUX drivers currently
-> >> support runtime power-management, by populating the power-domain node
-> >> the SOR power-domain will be turned on before probing SOR or DPAUX
-> >> devices and kept on while the devices are bound.
-> >>
-> >> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> >> ---
-> >>  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 18 ++++++++++++++++++
-> >>  1 file changed, 18 insertions(+)
+> > On Fri, Jun 17, 2016 at 01:03:46PM +0100, Jon Hunter wrote:
+> >> Populate the 'sor-safe' clock for DPAUX devices on Tegra210 that requi=
+re
+> >> this clock for operation. Update the compatability string for the DPAUX
+> >> instance at address 0x545c0000 to be "nvidia,tegra210-dpaux" to ensure
+> >> that the 'sor-safe' clock is enabled for this device.
 > >=20
-> > I've got patches queued in my drm-tegra tree to add support for runtime
-> > PM for the SOR driver. Will that in some way clash with this work if
-> > merged in parallel?
+> > Does the second DPAUX need this, too? I have a vague recollection that
+> > they were both slightly different.
 >=20
-> Yes I had seen those. I was wondering if I should include them here but
-> opted not too (as it was becoming a massive series). It should be fine
-> to enable RPM later, you just need to be aware that the partition could
-> turn off on a RPM put so you just need to ensure that any register
-> context is saved and restored.
+> I have assumed so, but I am checking with the h/w folks on this. Right
+> now the TRM only describes the procedure for configuring the DPAUX pads
+> for i2c6. I am also asking about sharing the DPAUX1 pads with i2c4.
 
-This doesn't matter much for Tegra DRM because we always program the
-entire set of registers after pm_runtime_get(), which already resets
-the IP block anyway.
+Yes, last time I looked it wasn't documented anywhere with which I2C
+controller the other DPAUX shared its pads.
 
-> By the way, one item I am not certain about is the relationship between
-> the HDMI device and the SOR device. If the HDMI is in the SOR partition
-> it should also have the SOR power-domain populated, but it just uses the
-> SOR, then the SOR driver should handle this.
-
-On Tegra210 the HDMI output is driven by the SOR, and that's implemented
-by the SOR driver, too, so the partition setup should be correct
-already.
-
-On Tegra124 and earlier the HDMI output is driven by a separate IP block
-that's not at all related to SOR, and I haven't found any evidence that
-it would be in the SOR power partition either.
+It'd be good to get all of that documented in the TRM.
 
 Thierry
 
---p4qYPpj5QlsIQJ0K
+--B4IIlcmfBL/1gGOG
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXaBvMAAoJEN0jrNd/PrOhNGIQAKUF6vpzHHT0vCZ2QfFAaVdx
-Jle+ZGr05RrfIKVzwHtFe08r+0AAvQgK3/Gjy9Q8XEzGnYv6Yyl9L5v/MdI14eG9
-Lb/KmyaETGCsFyELz+mlZdfIbBktgOIG0g7YqEfpxDBMpEuAjgAPR+LPRF2dFeJk
-7uSp+FOr4b0t1ttJHFV1EZb4CcXvEv3bJdzWbMKKiDTRPPcr9673cUYaRTCcq7mq
-Y3H+G/pYvJsLdL8hzAOu0DdiHrZMFC9W5spt8bMfs1nbNCfafRNHs9Cu0aYZ39R5
-ZaiTumYAHybCJzr2sDvoG9wRKlHcSV+DjWi2QzYJRivMTSQoJcNYl/lddOs8lvie
-0Cw1kLaZveLC+/c4SSWI+G0mfU6PefhypD2io5UBGXQoT8WTPRQTCh+H+okCGdbo
-hXuezFA0gQaIticoWo8Axp+d1/M8KHrTQCs1HLScgpT0G95r/AjnuqXWllvRWs/4
-wwREf0cRd/uwazGoilLRn+sWlMgsYZMg83XIfK+n/Innn7p3lAG8/47INUaef554
-aPxsCYYa8rZHeMEB9OIXIAUDTnNsF4Jk84Zpq7tfp2ZGJSIPIoCJKbEL3m2Ch1SB
-MxyOzvLJ1DsqI/s7rx6M85PMZz/gMb/5Z6kAsbBSyNL3TD27SNi881HZ+iE3Z2Bf
-kZrhPxCc9mZTYDn3uxei
-=s3vL
+iQIcBAABCAAGBQJXaBwSAAoJEN0jrNd/PrOhDqoP/2tQZOsbsuW+Jkw87H62ryTc
+snkxZO/XvsXPTHicO5A/JU7f3eAtdSmd8sj2DJgtourMOhnx6FYNMjyQssAuNrex
++ZGXenIcbasvcqy30LEjPVaFOVw+fhuhdKxrt2iXhMTZ032VzTabRzr7CJxgEJ3X
+Nh7NdwExVd32VdpJcEIID8LS/OMXt3eFGJbzTG3y+Od17txJG+jkqmRoQWUY6rCV
+45Im9GTjF727mPA7aGCXEzaLP5/LoWHOrmtdqM/lWDArwYq0a3uepMFG2RHZZS/E
+IrSG+gnnTuNagH/gI+nNGWJ0lPcoAFhejFEsEtJGEzSjuC0exMR4AZOWdOCrk/ct
+iUeVMBY5arHAf+Uz1W4W+/Cz3X4tZzuAEy7Xkpnf+2e1TEHlOQwhuh9J5CC+vo6R
+9nJiR48JOZggt3oS8F1z6UiiVDXejdoMYYnJ/00g9nOdnyme4Sb0ZBq/BJFCDWO9
+TbpcXEowGB9tDSzsGH5U1wfMewNLy8asVeaQFP2pXyB+Rc2n/KbwOP8LjzGHRm7e
+npCQ8Ya0yVGMwWKRL7F7x87kMtUhUDDOGoHqKAnupGQQPIMFAfn3XgR6dM09Uat5
+P2ne1xwuq605/PEKNfml88mshwIWPFSgTghCr9BbON4jp3Ba/TerN5QDU/tlsWEe
+5IAblJrx4or7VFV+uXnN
+=mHRj
 -----END PGP SIGNATURE-----
 
---p4qYPpj5QlsIQJ0K--
+--B4IIlcmfBL/1gGOG--
 
---===============2083512556==
+--===============0333713361==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: base64
@@ -116,4 +94,4 @@ X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
 IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
 dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
 
---===============2083512556==--
+--===============0333713361==--
