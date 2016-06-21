@@ -1,66 +1,41 @@
-From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v1 15/25] PCI: generic: Free resource list close to where
- it's allocated
-Date: Tue, 21 Jun 2016 10:14:07 -0500
-Message-ID: <20160621151407.GC31917@localhost>
-References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
- <20160606230636.20936.29083.stgit@bhelgaas-glaptop2.roam.corp.google.com>
- <CANMBJr41muA9mTNAa6MtWuMmeNLQxT4NjLe45=ExdFiH8vwzyw@mail.gmail.com>
- <20160620172240.GA30625@red-moon>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] clk: tegra: Mark timer clock as critical
+Date: Tue, 21 Jun 2016 17:30:35 +0200
+Message-ID: <20160621153035.22172-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20160620172240.GA30625@red-moon>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Cc: Tyler Baker <tyler.baker-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rfi-g9ZBwUv/Ih/yUk5EbOjzuce+I+R0W71w@public.gmane.org, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tanmay Inamdar <tinamdar-qTEPVZfXA3Y@public.gmane.org>, Kevin's boot bot <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pratyush Anand <pratyush.anand-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Jon Mason <jonmason-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alex Benn??e <alex.bennee-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, S??ren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ley
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jun 20, 2016 at 06:22:40PM +0100, Lorenzo Pieralisi wrote:
-> On Mon, Jun 20, 2016 at 09:56:45AM -0700, Tyler Baker wrote:
-> > Hi Bjorn,
-> > 
-> > On 6 June 2016 at 16:06, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org> wrote:
-> > > Previously we allocated the PCI resource list in
-> > > gen_pci_parse_request_of_pci_ranges(), but if we had an error, we freed it
-> > > on error in gen_pci_init().
-> > >
-> > > Reorder gen_pci_init() so we can take care of error path cleanup in
-> > > gen_pci_parse_request_of_pci_ranges() instead.
-> > >
-> > > Signed-off-by: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-> > 
-> > The kernelci.org bot has reported[0] new qemu-aarch64
-> > (arm64-defconfig) boot failures[1][2] in next-20160620. I've
-> > bisected[3] this boot failure down to this patch, and confirmed
-> > reverting it on top of next-20160620 resolves the boot issue.
-> > 
-> > I have not investigated further, but you can easily reproduce[4] the
-> > boot failure on an x86 host running qemu-system-aarch64 (I'm running
-> > qemu-system 2.6).
-> 
-> That's most likely because pci_ecam_create() requires the bus_range
-> resource (its busr parameter) to be initialized when it is called
-> and that's not the case after this patch is applied if I read it
-> correctly.
-> 
-> It is probably a NULL pointer dereference in pci_ecam_create().
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Yep, thanks everybody, I dropped that ill-considered patch altogether.
+The timer clock feeds the timer block, which, among other things, is
+used to drive the SOR lane sequencer. Since the Tegra timer driver is
+not enabled on 64-bit ARM, nothing currently claims that clock and it
+gets disabled by the common clock framework at late_init time.
 
-> > [0] https://kernelci.org/boot/all/job/next/kernel/next-20160620/
-> > [1] https://storage.kernelci.org/next/next-20160620/arm64-defconfig/lab-cambridge/boot-apm-mustang-kvm-guest.txt
-> > [2] https://storage.kernelci.org/next/next-20160620/arm64-defconfig/lab-tbaker/boot-qemu-aarch64,legacy.txt
-> > [3] http://hastebin.com/segiruribu.vbs
-> > [4] http://hastebin.com/dafuzicuyi.avrasm
-> > --
-> > To unsubscribe from this list: send the line "unsubscribe linux-pci" in
-> > the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
-> > 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+Given the non-obvious dependencies, the timer clock can be considered
+a critical part of the SoC infrastructure, requiring its clock source
+to be always on.
+
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index af85c8aeaf5a..4ce4e7fb1124 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -792,7 +792,7 @@ static struct tegra_periph_init_data periph_clks[] = {
+ 
+ static struct tegra_periph_init_data gate_clks[] = {
+ 	GATE("rtc", "clk_32k", 4, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_rtc, 0),
+-	GATE("timer", "clk_m", 5, 0, tegra_clk_timer, 0),
++	GATE("timer", "clk_m", 5, 0, tegra_clk_timer, CLK_IS_CRITICAL),
+ 	GATE("isp", "clk_m", 23, 0, tegra_clk_isp, 0),
+ 	GATE("vcp", "clk_m", 29, 0, tegra_clk_vcp, 0),
+ 	GATE("apbdma", "clk_m", 34, 0, tegra_clk_apbdma, 0),
+-- 
+2.8.3
