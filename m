@@ -1,15 +1,17 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [RFC PATCH 8/8] PM / Domains: Add support for removing PM domains
-Date: Tue, 21 Jun 2016 15:08:50 +0100
-Message-ID: <57694A72.6090202@nvidia.com>
-References: <1457090634-14785-1-git-send-email-jonathanh@nvidia.com>
- <1457090634-14785-9-git-send-email-jonathanh@nvidia.com>
- <CAPDyKFrKCB00hHhpSaJZ57wThPFRjnp+3xMz_YW9k+zqafppHg@mail.gmail.com>
+From: Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH v1 19/25] PCI: rcar Gen2: Request host bridge window
+ resources
+Date: Tue, 21 Jun 2016 09:26:23 -0500
+Message-ID: <20160621142623.GA29966@localhost>
+References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+ <20160606230706.20936.13086.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+ <CAMuHMdVgLfTD-BjRZ+gVKgYE8dkDZzQ6DnYtkUs+jVPthJsEdQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <CAPDyKFrKCB00hHhpSaJZ57wThPFRjnp+3xMz_YW9k+zqafppHg@mail.gmail.com>
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdVgLfTD-BjRZ+gVKgYE8dkDZzQ6DnYtkUs+jVPthJsEdQ@mail.gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -19,139 +21,125 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Alexander Aring <alex.aring@gmail.com>, Eric Anholt <eric@anholt.net>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-pci@vger.kernel.org, rfi@lists.rocketboards.org, Bjorn Helgaas <bhelgaas@google.com>, Thierry Reding <thierry.reding@gmail.com>, Tanmay Inamdar <tinamdar@apm.com>, Pratyush Anand <pratyush.anand@gmail.com>, Michal Simek <michal.simek@xilinx.com>, Valentine Barshak <valentine.barshak@cogentembedded.com>, linux-arm-kernel@lists.infradead.org, Jason Cooper <jason@lakedaemon.net>, Jon Mason <jonmason@broadcom.com>, Ray Jui <rjui@broadcom.com>, Simon Horman <horms@verge.net.au>, linux-tegra@vger.kernel.org, =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Scott Branden <sbranden@broadcom.com>, Jingoo Han <jingoohan1@gmail.com>, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Ley Foon Tan <lftan@altera.com>
 List-Id: linux-tegra@vger.kernel.org
 
+[+cc Valentine]
 
-On 15/06/16 15:33, Ulf Hansson wrote:
-> On 4 March 2016 at 12:23, Jon Hunter <jonathanh@nvidia.com> wrote:
->> The genpd framework allows users to add PM domains via the pm_genpd_init()
->> function, however, there is no corresponding function to remove a PM
->> domain. For most devices this may be fine as the PM domains are never
->> removed, however, for devices that wish to populate the PM domains from
->> within a driver, having the ability to remove a PM domain if the probing
->> of the device fails or the driver is unloaded is necessary.
->>
->> Add the function pm_genpd_remove() to remove a PM domain by referencing
->> it's generic_pm_domain structure.
->>
->> If a device supports nested or subdomains, then the PM domains
->> should be removed in reverse order to ensure that the subdomains are
->> removed first. Hence, add the function pm_genpd_remove_tail() to remove
->> the last PM domain added by a given provider and return the
->> generic_pm_domain structure for the PM domain that was removed.
+Hi Geert,
+
+Thanks a lot for testing this, and sorry for the breakage.
+
+On Tue, Jun 21, 2016 at 12:41:31PM +0200, Geert Uytterhoeven wrote:
+> On Tue, Jun 7, 2016 at 1:07 AM, Bjorn Helgaas <bhelgaas@google.com> wrote:
+> > Request host bridge window resources so they appear in ioport_resource and
+> > iomem_resource and are reflected in /proc/ioports and /proc/iomem.
+> >
+> > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> > ---
+> >  drivers/pci/host/pci-rcar-gen2.c |    4 ++++
+> >  1 file changed, 4 insertions(+)
+> >
+> > diff --git a/drivers/pci/host/pci-rcar-gen2.c b/drivers/pci/host/pci-rcar-gen2.c
+> > index 9980a4b..617a6b2 100644
+> > --- a/drivers/pci/host/pci-rcar-gen2.c
+> > +++ b/drivers/pci/host/pci-rcar-gen2.c
+> > @@ -194,6 +194,7 @@ static int rcar_pci_setup(int nr, struct pci_sys_data *sys)
+> >         struct rcar_pci_priv *priv = sys->private_data;
+> >         void __iomem *reg = priv->reg;
+> >         u32 val;
+> > +       int ret;
+> >
+> >         pm_runtime_enable(priv->dev);
+> >         pm_runtime_get_sync(priv->dev);
+> > @@ -275,6 +276,9 @@ static int rcar_pci_setup(int nr, struct pci_sys_data *sys)
+> >         /* Add PCI resources */
+> >         pci_add_resource(&sys->resources, &priv->io_res);
+> >         pci_add_resource(&sys->resources, &priv->mem_res);
+> > +       ret = devm_request_pci_bus_resources(priv->dev, &sys->resources);
+> > +       if (ret < 0)
+> > +               return ret;
+> >
+> >         /* Setup bus number based on platform device id / of bus-range */
+> >         sys->busnr = priv->busnr;
 > 
-> Perhaps split this up, so the pm_genpd_remove_tail() gets added in a
-> separate patch on top.
-
-OK.
-
->>
->> PM domains can only be removed if they are not a parent domain to
->> another PM domain and have no devices associated with them.
->>
->> When removing PM domains, the PM domain will also be removed from the
->> list of providers, if it was registered.
->>
->> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->> ---
->>  drivers/base/power/domain.c | 96 +++++++++++++++++++++++++++++++++++++++++++++
->>  include/linux/pm_domain.h   | 12 ++++++
->>  2 files changed, 108 insertions(+)
->>
->> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
->> index 9b33377bf01b..17090e1c91d6 100644
->> --- a/drivers/base/power/domain.c
->> +++ b/drivers/base/power/domain.c
->> @@ -1556,6 +1556,102 @@ void pm_genpd_init(struct generic_pm_domain *genpd,
->>  }
->>  EXPORT_SYMBOL_GPL(pm_genpd_init);
->>
->> +/**
->> + * __pm_genpd_remove - Remove a generic I/O PM domain
->> + * @genpd: Pointer to PM domain that is to be removed.
->> + *
->> + * To remove the PM domain, this function:
->> + *  - Removes the PM domain from the list of providers, if registered.
->> + *  - Removes the PM domain as a subdomain to any parent domains,
->> + *    if it was added.
->> + *  - Removes the PM domain from the list of registered PM domains.
->> + *
->> + * The PM domain will only be removed, if it is not a parent to any
->> + * other PM domain and has no devices associated with it. Must be called
->> + * with the gpd_list_lock held.
->> + */
->> +static int __pm_genpd_remove(struct generic_pm_domain *genpd)
+> This patch (commit 1bd019707b7c9249d34c5d348f1ef75eb4d83e89 in pci/next)
+> broke PCI on r8a7791/koelsch. Dmesg differences are:
 > 
-> Please rename to genpd_remove() as it's a static function.
+>  pci-rcar-gen2 ee090000.pci: PCI: bus0 revision 11
+> -pci-rcar-gen2 ee090000.pci: PCI host bridge to bus 0000:00
+> -pci_bus 0000:00: root bus resource [io  0xee080000-0xee0810ff]
+> -pci_bus 0000:00: root bus resource [mem 0xee080000-0xee0810ff]
 
-OK.
+This is probably a result of this code in drivers/pci/host/pci-rcar-gen2.c:
 
->> +{
->> +       struct gpd_link *l, *link;
->> +       int ret = 0;
->> +
->> +       if (IS_ERR_OR_NULL(genpd))
->> +               return -EINVAL;
->> +
->> +       if (genpd->provider_data)
->> +               of_genpd_del_provider_by_data(genpd->provider_data);
->> +
->> +       mutex_lock(&genpd->lock);
->> +
->> +       if (!list_empty(&genpd->master_links) || genpd->device_count) {
->> +               mutex_unlock(&genpd->lock);
->> +               pr_err("%s: unable to remove %s\n", __func__, genpd->name);
->> +               return -EBUSY;
->> +       }
->> +
->> +       list_for_each_entry_safe(link, l, &genpd->slave_links, slave_node) {
->> +               list_del(&link->master_node);
->> +               list_del(&link->slave_node);
->> +               kfree(link);
->> +       }
->> +
->> +       list_del(&genpd->gpd_list_node);
->> +       mutex_unlock(&genpd->lock);
->> +       cancel_work_sync(&genpd->power_off_work);
->> +       pr_debug("%s: removed %s\n", __func__, genpd->name);
->> +
->> +       return ret;
->> +}
->> +
->> +/**
->> + * pm_genpd_remove - Remove a generic I/O PM domain
->> + * @genpd: Pointer to PM domain that is to be removed.
->> + */
->> +int pm_genpd_remove(struct generic_pm_domain *genpd)
->> +{
->> +       int ret;
->> +
->> +       mutex_lock(&gpd_list_lock);
->> +       ret = __pm_genpd_remove(genpd);
->> +       mutex_unlock(&gpd_list_lock);
->> +
->> +       return ret;
->> +}
->> +
->> +/**
->> + * pm_genpd_remove_tail - Remove the last PM domain registered for a provider
->> + * @provider: Pointer to device structure associated with provider
->> + *
->> + * Find the last PM domain that was added by the provider whose 'provider'
->> + * device structure matches the device structure given. The 'provider'
->> + * device structure for a given PM domain should be initialised by the
->> + * device that is creating the PM domains and hence, calling
->> + * pm_genpd_init().
-> 
-> Maybe make this a bigger "Important note" as what is needed to
-> actually benefit from using this function.
+        /*
+         * The controller does not support/use port I/O,
+         * so setup a dummy port I/O region here.
+         */
+        priv->io_res.start = priv->mem_res.start;
+        priv->io_res.end = priv->mem_res.end;
+        priv->io_res.flags = IORESOURCE_IO;
 
-Yes, good point. Will update.
+We try to avoid adding dummy regions like this, but maybe we missed
+this one.  I haven't found any email discussion about it yet, so I
+don't know what the reason for this one is.  Valentine, do you
+remember?
 
-Cheers
-Jon
+Can you try the patch below (apply it before the 1bd019707b7c patch
+that broke things)?
 
--- 
-nvpublic
+
+commit b64dc28f5f2b3afe47ee4a42fb79db84ec4227f8
+Author: Bjorn Helgaas <bhelgaas@google.com>
+Date:   Tue Jun 21 09:19:34 2016 -0500
+
+    PCI: rcar: Drop gen2 dummy I/O port region
+    
+    Previously we added a dummy I/O port region even though the R-Car
+    controller doesn't support PCI port I/O.  This resulted in bogus root bus
+    resources like this:
+    
+      pci_bus 0000:00: root bus resource [io  0xee080000-0xee0810ff]
+      pci_bus 0000:00: root bus resource [mem 0xee080000-0xee0810ff]
+    
+    Drop the unused dummy I/O port region.
+    
+    Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+
+diff --git a/drivers/pci/host/pci-rcar-gen2.c b/drivers/pci/host/pci-rcar-gen2.c
+index 9980a4b..53ae619 100644
+--- a/drivers/pci/host/pci-rcar-gen2.c
++++ b/drivers/pci/host/pci-rcar-gen2.c
+@@ -97,7 +97,6 @@
+ struct rcar_pci_priv {
+ 	struct device *dev;
+ 	void __iomem *reg;
+-	struct resource io_res;
+ 	struct resource mem_res;
+ 	struct resource *cfg_res;
+ 	unsigned busnr;
+@@ -273,7 +272,6 @@ static int rcar_pci_setup(int nr, struct pci_sys_data *sys)
+ 		rcar_pci_setup_errirq(priv);
+ 
+ 	/* Add PCI resources */
+-	pci_add_resource(&sys->resources, &priv->io_res);
+ 	pci_add_resource(&sys->resources, &priv->mem_res);
+ 
+ 	/* Setup bus number based on platform device id / of bus-range */
+@@ -371,14 +369,6 @@ static int rcar_pci_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	priv->mem_res = *mem_res;
+-	/*
+-	 * The controller does not support/use port I/O,
+-	 * so setup a dummy port I/O region here.
+-	 */
+-	priv->io_res.start = priv->mem_res.start;
+-	priv->io_res.end = priv->mem_res.end;
+-	priv->io_res.flags = IORESOURCE_IO;
+-
+ 	priv->cfg_res = cfg_res;
+ 
+ 	priv->irq = platform_get_irq(pdev, 0);
