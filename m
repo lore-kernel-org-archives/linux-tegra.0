@@ -1,72 +1,58 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 7/8] dmaengine: tegra20-apb-dma: Only calculate residue if
- txstate exists.
-Date: Tue, 21 Jun 2016 18:19:50 +0100
-Message-ID: <57697736.4050008@nvidia.com>
-References: <1465321121-22238-1-git-send-email-peter.griffin@linaro.org>
- <1465321121-22238-8-git-send-email-peter.griffin@linaro.org>
- <5757DCAD.1090106@nvidia.com> <20160621160139.GC16910@localhost>
+From: Rhyland Klein <rklein@nvidia.com>
+Subject: Re: [PATCH v2 00/11] Switch to using CRITICAL clks for Tegra
+Date: Tue, 21 Jun 2016 14:05:03 -0400
+Message-ID: <c2c42a27-d705-0db0-36ab-4660c9dbc848@nvidia.com>
+References: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160621160139.GC16910@localhost>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kernel@stlinux.com, linus.walleij@linaro.org, dan.j.williams@intel.com, leoli@freescale.com, zw@zh-kernel.org, baohua@kernel.org, maxime.ripard@free-electrons.com, wens@csie.org, ldewangan@nvidia.com, swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, lee.jones@linaro.org, dmaengine@vger.kernel.org, linux-tegra@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Peter De Schrijver <pdeschrijver@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 21/06/16 17:01, Vinod Koul wrote:
-> On Wed, Jun 08, 2016 at 09:51:57AM +0100, Jon Hunter wrote:
->> Hi Peter,
->>
->> On 07/06/16 18:38, Peter Griffin wrote:
->>> There is no point calculating the residue if there is
->>> no txstate to store the value.
->>>
->>> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
->>> ---
->>>  drivers/dma/tegra20-apb-dma.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
->>> index 01e316f..7f4af8c 100644
->>> --- a/drivers/dma/tegra20-apb-dma.c
->>> +++ b/drivers/dma/tegra20-apb-dma.c
->>> @@ -814,7 +814,7 @@ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
->>>  	unsigned int residual;
->>>  
->>>  	ret = dma_cookie_status(dc, cookie, txstate);
->>> -	if (ret == DMA_COMPLETE)
->>> +	if (ret == DMA_COMPLETE || !txstate)
->>>  		return ret;
->>
->> Thanks for reporting this. I agree that we should not do this, however, 
->> looking at the code for Tegra, I am wondering if this could change the
->> actual state that is returned. Looking at dma_cookie_status() it will
->> call dma_async_is_complete() which will return either DMA_COMPLETE or
->> DMA_IN_PROGRESS. It could be possible that the actual state for the
->> DMA transfer in the tegra driver is DMA_ERROR, so I am wondering if we
->> should do something like the following  ...
+On 5/27/2016 4:38 PM, Rhyland Klein wrote:
+> Switch to defining clks that need to be on as CRITICAL rather than
+> using the init_tables defined to enable clks. Some of these may be
+> able to be converted to HAND_OFF clks, when that is supported.
 > 
-> This one is stopping code execution when residue is not valid. Do notice
-> that it check for DMA_COMPLETE OR txstate. In other cases, wit will return
-> 'that' state when txstate is NULL.
+> I added a patch to mark CRITICAL clks in the clk_summary table, figuring
+> it would be handy to be able to easily tell what clks are CRITICAL
+> through the table.
+> 
+> I added a warning for using the init_table to enable clks. I considered
+> removing it entirely, but I thought phasing it out might be better.
+> 
+> Rhyland Klein (11):
+>   clk: tegra: Switch to using critical clks
+>   clk: tegra20: Mark required clks as CRITICAL
+>   clk: tegra20: clean up init_table
+>   clk: tegra30: Mark certain clks as critical
+>   clk: tegra30: clean up init_table
+>   clk: tegra114: clean up init_table
+>   clk: tegra124: clean up init_table
+>   clk: tegra210: Mark required clks as CRITICAL
+>   clk: tegra210: clean up init_table
+>   clk: Show CRITICAL clks in clk_summary output
+>   clk: tegra: WARN if clk in the init_table has enable
+> 
+>  drivers/clk/clk.c                        |  7 ++++--
+>  drivers/clk/tegra/clk-tegra-periph.c     | 21 ++++++++++------
+>  drivers/clk/tegra/clk-tegra-super-gen4.c | 12 ++++++----
+>  drivers/clk/tegra/clk-tegra114.c         | 11 ++++-----
+>  drivers/clk/tegra/clk-tegra124.c         | 19 ++++++---------
+>  drivers/clk/tegra/clk-tegra20.c          | 41 +++++++++++++++-----------------
+>  drivers/clk/tegra/clk-tegra210.c         | 28 ++++++++--------------
+>  drivers/clk/tegra/clk-tegra30.c          | 28 ++++++++--------------
+>  drivers/clk/tegra/clk.c                  |  5 ++++
+>  9 files changed, 81 insertions(+), 91 deletions(-)
+> 
 
-Sorry what do you mean by "this one"?
+Has anyone had a change to take a look at these patches yet?
 
-My point is that if the status is not DMA_COMPLETE, then it is possible
-that it could be DMA_ERROR (for tegra that is). However,
-dma_cookie_status will only return DMA_IN_PROGRESS or DMA_COMPLETE and
-so if 'txstate' is NULL we will not see the DMA_ERROR status anymore and
-just think it is in progress when it is actually an error.
-
-I do agree that the driver is broken as we are not checking for
-!txstate, but this also changes the behaviour a bit.
-
-Cheers
-Jon
+-rhyland
 
 -- 
 nvpublic
