@@ -1,122 +1,81 @@
-From: Noam Camus <noamca@mellanox.com>
-Subject: RE: [PATCH V2 63/63] clocksources: Switch back to the clksrc table
-Date: Tue, 21 Jun 2016 06:45:58 +0000
-Message-ID: <HE1PR05MB162581196C0157F45749344FAA2B0@HE1PR05MB1625.eurprd05.prod.outlook.com>
-References: <1466112442-31105-1-git-send-email-daniel.lezcano@linaro.org>
- <1466112442-31105-64-git-send-email-daniel.lezcano@linaro.org>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: Re: [PATCH v2] arm: tegra124: remove commas from unit addresses
+Date: Tue, 21 Jun 2016 07:56:41 +0000
+Message-ID: <1466495800.4742.1.camel@toradex.com>
+References: <1466298275-15753-1-git-send-email-marcel.ziswiler@toradex.com>
+ <576810C2.1030401@wwwdotorg.org> <20160620164057.GD6175@ulmo.ba.sec>
+ <57681DC3.9090801@wwwdotorg.org> <20160620171124.GA6333@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7BIT
-Return-path: <linux-mips-bounce@linux-mips.org>
-In-Reply-To: <1466112442-31105-64-git-send-email-daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20160620171124.GA6333@ulmo.ba.sec>
 Content-Language: en-US
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, "tglx@linutronix.de" <tglx@linutronix.de>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Vineet Gupta <vgupta@synopsys.com>, Russell King <linux@armlinux.org.uk>, Michal Simek <monstr@monstr.eu>, John Crispin <john@phrozen.org>, Ralf Baechle <ralf@linux-mips.org>, Ley Foon Tan <lftan@altera.com>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, Maxime Coquelin <maxime.coquelin@st.com>, Patrice Chotard <patrice.chotard@st.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, S?ren Brinkmann <soren.brinkmann@xilinx.com>, Linus Walleij <linus.walleij@linaro.org>, Alexander Shiyan <shc_work@mail.ru>, Kukjin Kim <kg>
+Content-ID: <792C77FF8362D14FA983F57CB1E94295@eurprd05.prod.outlook.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>
+Cc: "mark.rutland@arm.com" <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "gnurou@gmail.com" <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
->From: Daniel Lezcano [mailto:daniel.lezcano@linaro.org] 
->Sent: Friday, June 17, 2016 12:27 AM
+On Mon, 2016-06-20 at 19:11 +0200, Thierry Reding wrote:
+> On Mon, Jun 20, 2016 at 10:45:55AM -0600, Stephen Warren wrote:
+> > 
+> > On 06/20/2016 10:40 AM, Thierry Reding wrote:
+> > > 
+> > > On Mon, Jun 20, 2016 at 09:50:26AM -0600, Stephen Warren wrote:
+> > > > 
+> > > > On 06/18/2016 07:04 PM, Marcel Ziswiler wrote:
+> > > > > 
+> > > > > Remove commas from unit addresses as suggested by Rob Herring
+> > > > > upon me
+> > > > > posting initial Apalis TK1 support:
+> > > > > 
+> > > > > http://article.gmane.org/gmane.linux.ports.tegra/26608
+> > > > Acked-by: Stephen Warren <swarren@nvidia.com>
+> > > I'm confused now. I posted almost exactly the same patch a while
+> > > ago and
+> > > we agreed that we couldn't do this because the node names were to
+> > > be
+> > > considered part of the ABI.
+> > > 
+> > > Is it or is it not?
+> > The particular case where it matters is the GPU node, which U-Boot
+> > manipulates. This revised patch version no longer renames the GPU
+> > node and
+> > so in practice avoids any issues that I'm aware of.
+> > 
+> > If there's a more general rule that node names are part of the ABI,
+> > then
+> > indeed we shouldn't take this patch.
+> I'm somewhat uncomfortable with this notion. Just because we don't
+> know
+> of any other cases doesn't mean there aren't any. My understanding is
+> that it's fairly common to look up device tree nodes by name, however
+> brittle that may be.
+> 
+> There's also the matter of consistency to consider here. I suspect
+> that
+> if we make this change somebody will notice the odd one out and send
+> patches to "fix it up". So if we get confirmation about this change
+> being okay, I'd request that a comment be added to the GPU node as to
+> why it is not converted.
 
->All the clocksource drivers's init function are now converted to return an error code. CLOCKSOURCE_OF_DECLARE is no longer used as well as the clksrc-of table.
+Sure, let me add such a comment in a v3 that it is crystal clear why we
+did so.
 
->Let's convert back the names:
-> - CLOCKSOURCE_OF_DECLARE_RET => CLOCKSOURCE_OF_DECLARE
-> - clksrc-of-ret              => clksrc-of
+> Thierry
 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
-> arch/arc/kernel/time.c                    |  6 +++---
-> arch/arm/kernel/smp_twd.c                 |  6 +++---
-> arch/microblaze/kernel/timer.c            |  2 +-
-> arch/mips/ralink/cevt-rt3352.c            |  2 +-
-> arch/nios2/kernel/time.c                  |  2 +-
-> drivers/clocksource/arm_arch_timer.c      |  6 +++---
-> drivers/clocksource/arm_global_timer.c    |  2 +-
-> drivers/clocksource/armv7m_systick.c      |  2 +-
-> drivers/clocksource/asm9260_timer.c       |  2 +-
-> drivers/clocksource/bcm2835_timer.c       |  2 +-
-> drivers/clocksource/bcm_kona_timer.c      |  4 ++--
-> drivers/clocksource/cadence_ttc_timer.c   |  2 +-
-> drivers/clocksource/clksrc-dbx500-prcmu.c |  2 +-
-> drivers/clocksource/clksrc-probe.c        | 14 --------------
-> drivers/clocksource/clksrc_st_lpc.c       |  2 +-
-> drivers/clocksource/clps711x-timer.c      |  2 +-
-> drivers/clocksource/dw_apb_timer_of.c     |  8 ++++----
-> drivers/clocksource/exynos_mct.c          |  4 ++--
-> drivers/clocksource/fsl_ftm_timer.c       |  2 +-
-> drivers/clocksource/h8300_timer16.c       |  2 +-
-> drivers/clocksource/h8300_timer8.c        |  2 +-
-> drivers/clocksource/h8300_tpu.c           |  2 +-
-> drivers/clocksource/meson6_timer.c        |  2 +-
-> drivers/clocksource/mips-gic-timer.c      |  2 +-
-> drivers/clocksource/moxart_timer.c        |  2 +-
-> drivers/clocksource/mps2-timer.c          |  2 +-
-> drivers/clocksource/mtk_timer.c           |  2 +-
-> drivers/clocksource/mxs_timer.c           |  2 +-
-> drivers/clocksource/nomadik-mtu.c         |  2 +-
-> drivers/clocksource/pxa_timer.c           |  2 +-
-> drivers/clocksource/qcom-timer.c          |  4 ++--
-> drivers/clocksource/rockchip_timer.c      |  8 ++++----
-> drivers/clocksource/samsung_pwm_timer.c   |  8 ++++----
-> drivers/clocksource/sun4i_timer.c         |  2 +-
-> drivers/clocksource/tango_xtal.c          |  2 +-
-> drivers/clocksource/tegra20_timer.c       |  4 ++--
-> drivers/clocksource/time-armada-370-xp.c  |  6 +++---
-> drivers/clocksource/time-efm32.c          |  4 ++--
-> drivers/clocksource/time-lpc32xx.c        |  2 +-
-> drivers/clocksource/time-orion.c          |  2 +-
-> drivers/clocksource/time-pistachio.c      |  2 +-
-> drivers/clocksource/timer-atlas7.c        |  2 +-
-> drivers/clocksource/timer-atmel-pit.c     |  2 +-
-> drivers/clocksource/timer-atmel-st.c      |  2 +-
-> drivers/clocksource/timer-digicolor.c     |  2 +-
-> drivers/clocksource/timer-imx-gpt.c       | 24 ++++++++++++------------
-> drivers/clocksource/timer-integrator-ap.c |  2 +-
-> drivers/clocksource/timer-keystone.c      |  2 +-
-> drivers/clocksource/timer-nps.c           |  4 ++--
-> drivers/clocksource/timer-oxnas-rps.c     |  4 ++--
-> drivers/clocksource/timer-prima2.c        |  2 +-
-> drivers/clocksource/timer-sp804.c         |  4 ++--
-> drivers/clocksource/timer-stm32.c         |  2 +-
-> drivers/clocksource/timer-sun5i.c         |  4 ++--
-> drivers/clocksource/timer-ti-32k.c        |  2 +-
-> drivers/clocksource/timer-u300.c          |  2 +-
-> drivers/clocksource/versatile.c           |  4 ++--
-> drivers/clocksource/vf_pit_timer.c        |  2 +-
-> drivers/clocksource/vt8500_timer.c        |  2 +-
-> drivers/clocksource/zevio-timer.c         |  2 +-
-> include/asm-generic/vmlinux.lds.h         |  2 --
-> include/linux/clocksource.h               |  5 +----
-> 62 files changed, 98 insertions(+), 117 deletions(-)
 
-[..]
+Thanks Thierry.
 
-> diff --git a/drivers/clocksource/timer-nps.c b/drivers/clocksource/timer-nps.c index b5c7b2b..70c149a 100644
-> --- a/drivers/clocksource/timer-nps.c
-> +++ b/drivers/clocksource/timer-nps.c
-> @@ -96,5 +96,5 @@ static int __init nps_timer_init(struct device_node *node)
-> 	return nps_setup_clocksource(node, clk);  }
- 
-> -CLOCKSOURCE_OF_DECLARE_RET(ezchip_nps400_clksrc, "ezchip,nps400-timer",
-> -			   nps_timer_init);
-> +CLOCKSOURCE_OF_DECLARE(ezchip_nps400_clksrc, "ezchip,nps400-timer",
-> +		       nps_timer_init);
-> diff --git a/drivers/clocksource/timer-oxnas-rps.c b/drivers/clocksource/timer-oxnas-rps.c
-> index 0d99f40..bd887e2 100644
-> --- a/drivers/clocksource/timer-oxnas-rps.c
-> +++ b/drivers/clocksource/timer-oxnas-rps.c
-> @@ -293,5 +293,5 @@ err_alloc:
->  	return ret;
-> }
- 
+Cheers
 
-Acked-by: Noam Camus <noamca@mellanox.com>
+Marcel
