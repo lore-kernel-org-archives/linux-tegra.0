@@ -1,73 +1,51 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH 6/8] PM / Domains: Remove a provider by referencing
- the data pointer
-Date: Tue, 21 Jun 2016 15:45:09 +0100
-Message-ID: <576952F5.5020808@nvidia.com>
-References: <1457090634-14785-1-git-send-email-jonathanh@nvidia.com>
- <1457090634-14785-7-git-send-email-jonathanh@nvidia.com>
+From: Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [PATCH v1 00/25] PCI: Request host bridge window resources
+Date: Tue, 21 Jun 2016 10:03:52 -0500
+Message-ID: <20160621150352.GB31917@localhost>
+References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+ <20160618180735.GB20504@localhost> <57692BD0.6030609@huawei.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1457090634-14785-7-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alexander Aring <alex.aring-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Disposition: inline
+In-Reply-To: <57692BD0.6030609@huawei.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: wangyijing <wangyijing@huawei.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Scott Branden <sbranden@broadcom.com>, Jingoo Han <jingoohan1@gmail.com>, Jon Mason <jonmason@broadcom.com>, linux-pci@vger.kernel.org, Pratyush Anand <pratyush.anand@gmail.com>, linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org, linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>, Bjorn Helgaas <bhelgaas@google.com>, Ley Foon Tan <lftan@altera.com>, Michal Simek <michal.simek@xilinx.com>, =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 04/03/16 11:23, Jon Hunter wrote:
-> To remove a PM domain from the system, it is necessary to ensure
-> that any PM domain providers associated with the PM domain have
-> been removed. Otherwise it could be possible to obtain a pointer
-> to a PM domain structure that has been removed.
+On Tue, Jun 21, 2016 at 07:58:08PM +0800, wangyijing wrote:
+> Hi Bjorn, use devm_request_resource() for host bridge resource is cool,
+> what about do the similar change for x86, now we request host bridge resource
+> in pci_acpi_root_add_resources() in x86, and we would release the host bridge
+> resource when host bridge device refcount reach 0. This logic may introduce issue,
+> E.g.
+> If we try to remove a pci host bridge, but there is a child pci device which refcount
+> cannot decrease to 0 after remove the device, in this case, its parent pci_bus and
+> parent device, all their refcount cannot reach to 0, the result is pci host bridge
+> refcount can not reach 0, so its .release_fn() won't be called, and host bridge
+> resouces can not release. If we want to add the pci host bridge again, all pci devices
+> can not work because the resource is conflict with the old.
 > 
-> PM domains now have a reference to the pointer for the PM domain
-> provider's data variable. Add a function so that a PM domain can
-> remove a PM domain provider by referencing the data pointer.
-> 
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/base/power/domain.c | 24 ++++++++++++++++++++++++
->  include/linux/pm_domain.h   |  2 ++
->  2 files changed, 26 insertions(+)
-> 
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index 72055fef6256..438885f2455f 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -1738,6 +1738,30 @@ void of_genpd_del_provider(struct device_node *np)
->  EXPORT_SYMBOL_GPL(of_genpd_del_provider);
->  
->  /**
-> + * of_genpd_del_provider_by_data() - Remove a registered PM domain provider
-> + * @data: Pointer to the data associated with the PM domain provider
-> + *
-> + * Look up a PM domain provider based upon a pointer to it's data and
-> + * remove the PM domain provider from the list of providers.
-> + */
-> +void of_genpd_del_provider_by_data(void *data)
-> +{
-> +	struct of_genpd_provider *c, *cp;
-> +
-> +	mutex_lock(&of_genpd_mutex);
-> +	list_for_each_entry_safe(cp, c, &of_genpd_providers, link) {
-> +		if (cp->data == data) {
-> +			list_del(&cp->link);
-> +			of_node_put(cp->node);
-> +			kfree(cp);
-> +			break;
-> +		}
-> +	}
-> +	mutex_unlock(&of_genpd_mutex);
+> devm resource would be released when the driver detach, this is better than what we do now, I think.
 
-On further the thought I believe that the above does not need to be safe
-variant of list_for_each_entry because we are breaking out of the loop
-when we find the one we are looking for. of_genpd_del_provider() does
-the same.
+I'm not going to convert pci_root.c to use devm right now.  That might
+be a good thing, but this current series is mostly trivial.  I think
+changing pci_root.c would not be trivial, so that looks like a project
+all by itself.
 
-Cheers
-Jon
+I don't quite follow the example of removing a host bridge while a
+child PCI device refcount is non-zero.  That sounds like an invalid
+scenario regardless of whether the resources are released by a
+.release_fn() or by devm.
 
--- 
-nvpublic
+Bjorn
