@@ -1,196 +1,127 @@
-From: Rhyland Klein <rklein@nvidia.com>
-Subject: Re: [PATCH v5] clk: tegra: Initialize UTMIPLL when enabling PLLU
-Date: Mon, 20 Jun 2016 13:24:07 -0400
-Message-ID: <5f8aa644-27cb-457f-c7cc-e84014054272@nvidia.com>
-References: <1464280891-23036-1-git-send-email-rklein@nvidia.com>
- <5763FFF5.5000303@nvidia.com> <20160617152336.GA27475@ulmo.ba.sec>
+From: Ray Jui <ray.jui@broadcom.com>
+Subject: Re: [PATCH V2 63/63] clocksources: Switch back to the clksrc table
+Date: Mon, 20 Jun 2016 23:00:22 -0700
+Message-ID: <35869d12-1686-98d3-185c-cedacbc7eed1@broadcom.com>
+References: <1466112442-31105-1-git-send-email-daniel.lezcano@linaro.org>
+ <1466112442-31105-64-git-send-email-daniel.lezcano@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <20160617152336.GA27475@ulmo.ba.sec>
-Sender: linux-clk-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>
+Return-path: <linux-mips-bounce@linux-mips.org>
+In-Reply-To: <1466112442-31105-64-git-send-email-daniel.lezcano@linaro.org>
+Sender: linux-mips-bounce@linux-mips.org
+Errors-to: linux-mips-bounce@linux-mips.org
+List-help: <mailto:ecartis@linux-mips.org?Subject=help>
+List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
+List-software: Ecartis version 1.0.0
+List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
+List-owner: <mailto:ralf@linux-mips.org>
+List-post: <mailto:linux-mips@linux-mips.org>
+List-archive: <http://www.linux-mips.org/archives/linux-mips/>
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>, Russell King <linux@armlinux.org.uk>, Michal Simek <monstr@monstr.eu>, John Crispin <john@phrozen.org>, Ralf Baechle <ralf@linux-mips.org>, Ley Foon Tan <lftan@altera.com>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, Maxime Coquelin <maxime.coquelin@st.com>, Patrice Chotard <patrice.chotard@st.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, =?UTF-8?Q?S=c3=b6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, Linus Walleij <linus.walleij@linaro.org>, Alexander Shiyan <shc_work@mail.ru>, Kukjin Kim <kgene@kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 6/17/2016 11:23 AM, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Fri, Jun 17, 2016 at 02:49:41PM +0100, Jon Hunter wrote:
->> Hi Thierry,
->>
->> On 26/05/16 17:41, Rhyland Klein wrote:
->>> From: Andrew Bresticker <abrestic@chromium.org>
->>>
->>> Move the UTMIPLL initialization code form clk-tegra<chip>.c files into
->>> clk-pll.c. UTMIPLL was being configured and set in HW control right
->>> after registration. However, when the clock init_table is processed and
->>> child clks of PLLU are enabled, it will call in and enable PLLU as
->>> well, and initiate SW enabling sequence even though PLLU is already in
->>> HW control. This leads to getting UTMIPLL stuck with a SEQ_BUSY status.
->>>
->>> Doing the initialization once during pllu_enable means we configure it
->>> properly into HW control.
->>>
->>> A side effect of the commonization/localization of the UTMIPLL init
->>> code, is that it corrects some errors that were present for earlier
->>> generations. For instance, in clk-tegra124.c, it used to have:
->>>
->>> define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 6)
->>>
->>> when the correct shift to use is present in the new version:
->>>
->>> define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 27)
->>>
->>> which matches the Tegra124 TRM register definition.
->>>
->>> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
->>>
->>> [rklein: Merged in some later fixes for potential deadlocks]
->>>
->>> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
->>> ---
->>> v5:
->>>  - Initialized flags to 0 to avoid harmless spinlock warnings
->>>
->>> v4:
->>>  - Re-added examples in patch description
->>>
->>> v3:
->>>  - Flushed out description to describe this patch.
->>>
->>>  drivers/clk/tegra/clk-pll.c      | 484 +++++++++++++++++++++++++++++++++++++++
->>>  drivers/clk/tegra/clk-tegra114.c | 155 +------------
->>>  drivers/clk/tegra/clk-tegra124.c | 156 +------------
->>>  drivers/clk/tegra/clk-tegra210.c | 182 +--------------
->>>  drivers/clk/tegra/clk-tegra30.c  | 113 +--------
->>>  drivers/clk/tegra/clk.h          |  17 ++
->>>  6 files changed, 510 insertions(+), 597 deletions(-)
->>>
->>> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
->>> index 4e194ecc8d5e..31e20110fae4 100644
->>> --- a/drivers/clk/tegra/clk-pll.c
->>> +++ b/drivers/clk/tegra/clk-pll.c
->>
->> ...
->>
->>> +static int clk_pllu_tegra210_enable(struct clk_hw *hw)
->>> +{
->>> +	struct tegra_clk_pll *pll = to_clk_pll(hw);
->>> +	struct clk_hw *pll_ref = clk_hw_get_parent(hw);
->>> +	struct clk_hw *osc = clk_hw_get_parent(pll_ref);
->>> +	unsigned long flags = 0, input_rate;
->>> +	unsigned int i;
->>> +	int ret = 0;
->>> +	u32 val;
->>> +
->>> +	if (!osc) {
->>> +		pr_err("%s: failed to get OSC clock\n", __func__);
->>> +		return -EINVAL;
->>> +	}
->>> +	input_rate = clk_hw_get_rate(osc);
->>> +
->>> +	if (pll->lock)
->>> +		spin_lock_irqsave(pll->lock, flags);
->>> +
->>> +	_clk_pll_enable(hw);
->>> +	ret = clk_pll_wait_for_lock(pll);
->>> +	if (ret < 0)
->>> +		goto out;
->>> +
->>> +	for (i = 0; i < ARRAY_SIZE(utmi_parameters); i++) {
->>> +		if (input_rate == utmi_parameters[i].osc_frequency)
->>> +			break;
->>> +	}
->>> +
->>> +	if (i == ARRAY_SIZE(utmi_parameters)) {
->>> +		pr_err("%s: Unexpected input rate %lu\n", __func__, input_rate);
->>> +		ret = -EINVAL;
->>> +		goto out;
->>> +	}
->>> +
->>> +	val = pll_readl_base(pll);
->>> +	val &= ~PLLU_BASE_OVERRIDE;
->>> +	pll_writel_base(val, pll);
->>> +
->>> +	/* Put PLLU under HW control */
->>> +	val = readl_relaxed(pll->clk_base + PLLU_HW_PWRDN_CFG0);
->>> +	val |= PLLU_HW_PWRDN_CFG0_IDDQ_PD_INCLUDE |
->>> +	       PLLU_HW_PWRDN_CFG0_USE_SWITCH_DETECT |
->>> +	       PLLU_HW_PWRDN_CFG0_USE_LOCKDET;
->>> +	val &= ~(PLLU_HW_PWRDN_CFG0_CLK_ENABLE_SWCTL |
->>> +		  PLLU_HW_PWRDN_CFG0_CLK_SWITCH_SWCTL);
->>> +	writel_relaxed(val, pll->clk_base + PLLU_HW_PWRDN_CFG0);
->>> +
->>> +	val = readl_relaxed(pll->clk_base + XUSB_PLL_CFG0);
->>> +	val &= ~XUSB_PLL_CFG0_PLLU_LOCK_DLY;
->>> +	writel_relaxed(val, pll->clk_base + XUSB_PLL_CFG0);
->>> +	udelay(1);
->>> +
->>> +	val = readl_relaxed(pll->clk_base + PLLU_HW_PWRDN_CFG0);
->>> +	val |= PLLU_HW_PWRDN_CFG0_SEQ_ENABLE;
->>> +	writel_relaxed(val, pll->clk_base + PLLU_HW_PWRDN_CFG0);
->>> +	udelay(1);
->>> +
->>> +	/* Disable PLLU clock branch to UTMIPLL since it uses OSC */
->>> +	val = pll_readl_base(pll);
->>> +	val &= ~PLLU_BASE_CLKENABLE_USB;
->>> +	pll_writel_base(val, pll);
->>> +
->>> +	val = readl_relaxed(pll->clk_base + UTMIPLL_HW_PWRDN_CFG0);
->>> +	if (val & UTMIPLL_HW_PWRDN_CFG0_SEQ_ENABLE) {
->>> +		pr_debug("UTMIPLL already enabled\n");
->>> +		goto out;
->>> +	}
->>> +	val &= ~UTMIPLL_HW_PWRDN_CFG0_IDDQ_OVERRIDE;
->>> +	writel_relaxed(val, pll->clk_base + UTMIPLL_HW_PWRDN_CFG0);
->>> +
->>> +	/* Program UTMIP PLL stable and active counts */
->>> +	val = readl_relaxed(pll->clk_base + UTMIP_PLL_CFG2);
->>> +	val &= ~UTMIP_PLL_CFG2_STABLE_COUNT(~0);
->>> +	val |= UTMIP_PLL_CFG2_STABLE_COUNT(utmi_parameters[i].stable_count);
->>> +	val &= ~UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(~0);
->>> +	val |= UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(
->>> +			utmi_parameters[i].active_delay_count);
->>> +	val |= UTMIP_PLL_CFG2_PHY_XTAL_CLOCKEN;
->>> +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG2);
->>> +
->>> +	/* Program UTMIP PLL delay and oscillator frequency counts */
->>> +	val = readl_relaxed(pll->clk_base + UTMIP_PLL_CFG1);
->>> +	val &= ~UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(~0);
->>> +	val |= UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(
->>> +		utmi_parameters[i].enable_delay_count);
->>> +	val &= ~UTMIP_PLL_CFG1_XTAL_FREQ_COUNT(~0);
->>> +	val |= UTMIP_PLL_CFG1_XTAL_FREQ_COUNT(
->>> +		utmi_parameters[i].xtal_freq_count);
->>> +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG1);
->>> +
->>> +	/* Remove power downs from UTMIP PLL control bits */
->>> +	val = readl_relaxed(pll->clk_base + UTMIP_PLL_CFG1);
->>> +	val &= ~UTMIP_PLL_CFG1_FORCE_PLL_ENABLE_POWERDOWN;
->>> +	val |= UTMIP_PLL_CFG1_FORCE_PLL_ENABLE_POWERUP;
->>> +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG1);
->>> +	udelay(100);
->>
->> In next-20160617 I see that this udelay is now a usleep_range(100, 200)
->> and this is causing the following splat when the clock is enabled. I
->> don't think that we can use usleep here ...
-> 
-> Okay, I'll back out the patch. I'd really prefer to avoid busy-looping
-> for 100 microseconds here, so can we please find another way to do this?
-> 
+Hi Daniel,
 
-I discussed this with some people downstream, and they said we should
-never need to wait 100 microseconds, and should never need more then
-1-2us for delays to take effect.
+On 6/16/2016 2:27 PM, Daniel Lezcano wrote:
+> All the clocksource drivers's init function are now converted to return
+> an error code. CLOCKSOURCE_OF_DECLARE is no longer used as well as the
+> clksrc-of table.
+>
+> Let's convert back the names:
+>  - CLOCKSOURCE_OF_DECLARE_RET => CLOCKSOURCE_OF_DECLARE
+>  - clksrc-of-ret              => clksrc-of
+>
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>  arch/arc/kernel/time.c                    |  6 +++---
+>  arch/arm/kernel/smp_twd.c                 |  6 +++---
+>  arch/microblaze/kernel/timer.c            |  2 +-
+>  arch/mips/ralink/cevt-rt3352.c            |  2 +-
+>  arch/nios2/kernel/time.c                  |  2 +-
+>  drivers/clocksource/arm_arch_timer.c      |  6 +++---
+>  drivers/clocksource/arm_global_timer.c    |  2 +-
+>  drivers/clocksource/armv7m_systick.c      |  2 +-
+>  drivers/clocksource/asm9260_timer.c       |  2 +-
+>  drivers/clocksource/bcm2835_timer.c       |  2 +-
+>  drivers/clocksource/bcm_kona_timer.c      |  4 ++--
+>  drivers/clocksource/cadence_ttc_timer.c   |  2 +-
+>  drivers/clocksource/clksrc-dbx500-prcmu.c |  2 +-
+>  drivers/clocksource/clksrc-probe.c        | 14 --------------
+>  drivers/clocksource/clksrc_st_lpc.c       |  2 +-
+>  drivers/clocksource/clps711x-timer.c      |  2 +-
+>  drivers/clocksource/dw_apb_timer_of.c     |  8 ++++----
+>  drivers/clocksource/exynos_mct.c          |  4 ++--
+>  drivers/clocksource/fsl_ftm_timer.c       |  2 +-
+>  drivers/clocksource/h8300_timer16.c       |  2 +-
+>  drivers/clocksource/h8300_timer8.c        |  2 +-
+>  drivers/clocksource/h8300_tpu.c           |  2 +-
+>  drivers/clocksource/meson6_timer.c        |  2 +-
+>  drivers/clocksource/mips-gic-timer.c      |  2 +-
+>  drivers/clocksource/moxart_timer.c        |  2 +-
+>  drivers/clocksource/mps2-timer.c          |  2 +-
+>  drivers/clocksource/mtk_timer.c           |  2 +-
+>  drivers/clocksource/mxs_timer.c           |  2 +-
+>  drivers/clocksource/nomadik-mtu.c         |  2 +-
+>  drivers/clocksource/pxa_timer.c           |  2 +-
+>  drivers/clocksource/qcom-timer.c          |  4 ++--
+>  drivers/clocksource/rockchip_timer.c      |  8 ++++----
+>  drivers/clocksource/samsung_pwm_timer.c   |  8 ++++----
+>  drivers/clocksource/sun4i_timer.c         |  2 +-
+>  drivers/clocksource/tango_xtal.c          |  2 +-
+>  drivers/clocksource/tegra20_timer.c       |  4 ++--
+>  drivers/clocksource/time-armada-370-xp.c  |  6 +++---
+>  drivers/clocksource/time-efm32.c          |  4 ++--
+>  drivers/clocksource/time-lpc32xx.c        |  2 +-
+>  drivers/clocksource/time-orion.c          |  2 +-
+>  drivers/clocksource/time-pistachio.c      |  2 +-
+>  drivers/clocksource/timer-atlas7.c        |  2 +-
+>  drivers/clocksource/timer-atmel-pit.c     |  2 +-
+>  drivers/clocksource/timer-atmel-st.c      |  2 +-
+>  drivers/clocksource/timer-digicolor.c     |  2 +-
+>  drivers/clocksource/timer-imx-gpt.c       | 24 ++++++++++++------------
+>  drivers/clocksource/timer-integrator-ap.c |  2 +-
+>  drivers/clocksource/timer-keystone.c      |  2 +-
+>  drivers/clocksource/timer-nps.c           |  4 ++--
+>  drivers/clocksource/timer-oxnas-rps.c     |  4 ++--
+>  drivers/clocksource/timer-prima2.c        |  2 +-
+>  drivers/clocksource/timer-sp804.c         |  4 ++--
+>  drivers/clocksource/timer-stm32.c         |  2 +-
+>  drivers/clocksource/timer-sun5i.c         |  4 ++--
+>  drivers/clocksource/timer-ti-32k.c        |  2 +-
+>  drivers/clocksource/timer-u300.c          |  2 +-
+>  drivers/clocksource/versatile.c           |  4 ++--
+>  drivers/clocksource/vf_pit_timer.c        |  2 +-
+>  drivers/clocksource/vt8500_timer.c        |  2 +-
+>  drivers/clocksource/zevio-timer.c         |  2 +-
+>  include/asm-generic/vmlinux.lds.h         |  2 --
+>  include/linux/clocksource.h               |  5 +----
+>  62 files changed, 98 insertions(+), 117 deletions(-)
 
-Therefore I would think changing this to a udelay(2) should be alright.
-I simply enabled the clock, and it seemed to be fine. I'll send a new
-version with that change if you want.
+[..]
 
--rhyland
+> diff --git a/drivers/clocksource/bcm_kona_timer.c b/drivers/clocksource/bcm_kona_timer.c
+> index 98bc2a2..ee07e7e3 100644
+> --- a/drivers/clocksource/bcm_kona_timer.c
+> +++ b/drivers/clocksource/bcm_kona_timer.c
+> @@ -200,9 +200,9 @@ static int __init kona_timer_init(struct device_node *node)
+>  	return 0;
+>  }
+>
+> -CLOCKSOURCE_OF_DECLARE_RET(brcm_kona, "brcm,kona-timer", kona_timer_init);
+> +CLOCKSOURCE_OF_DECLARE(brcm_kona, "brcm,kona-timer", kona_timer_init);
+>  /*
+>   * bcm,kona-timer is deprecated by brcm,kona-timer
+>   * being kept here for driver compatibility
+>   */
+> -CLOCKSOURCE_OF_DECLARE_RET(bcm_kona, "bcm,kona-timer", kona_timer_init);
+> +CLOCKSOURCE_OF_DECLARE(bcm_kona, "bcm,kona-timer", kona_timer_init);
 
+For Broadcom Kona timer change:
 
--- 
-nvpublic
+Acked-by: Ray Jui <ray.jui@broadcom.com>
+
+Thanks!
+
+Ray
