@@ -1,51 +1,66 @@
-From: Bjorn Helgaas <helgaas@kernel.org>
-Subject: Re: [PATCH v1 00/25] PCI: Request host bridge window resources
-Date: Tue, 21 Jun 2016 10:03:52 -0500
-Message-ID: <20160621150352.GB31917@localhost>
+From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v1 15/25] PCI: generic: Free resource list close to where
+ it's allocated
+Date: Tue, 21 Jun 2016 10:14:07 -0500
+Message-ID: <20160621151407.GC31917@localhost>
 References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
- <20160618180735.GB20504@localhost> <57692BD0.6030609@huawei.com>
+ <20160606230636.20936.29083.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+ <CANMBJr41muA9mTNAa6MtWuMmeNLQxT4NjLe45=ExdFiH8vwzyw@mail.gmail.com>
+ <20160620172240.GA30625@red-moon>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <57692BD0.6030609@huawei.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: wangyijing <wangyijing@huawei.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Jason Cooper <jason@lakedaemon.net>, Scott Branden <sbranden@broadcom.com>, Jingoo Han <jingoohan1@gmail.com>, Jon Mason <jonmason@broadcom.com>, linux-pci@vger.kernel.org, Pratyush Anand <pratyush.anand@gmail.com>, linux-kernel@vger.kernel.org, rfi@lists.rocketboards.org, linux-renesas-soc@vger.kernel.org, linux-tegra@vger.kernel.org, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>, Bjorn Helgaas <bhelgaas@google.com>, Ley Foon Tan <lftan@altera.com>, Michal Simek <michal.simek@xilinx.com>, =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>, linux-arm-kernel@lists.infradead.org
+In-Reply-To: <20160620172240.GA30625@red-moon>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
+Cc: Tyler Baker <tyler.baker-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, rfi-g9ZBwUv/Ih/yUk5EbOjzuce+I+R0W71w@public.gmane.org, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Tanmay Inamdar <tinamdar-qTEPVZfXA3Y@public.gmane.org>, Kevin's boot bot <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Pratyush Anand <pratyush.anand-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Jason Cooper <jason-NLaQJdtUoK4Be96aLqz0jA@public.gmane.org>, Jon Mason <jonmason-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Ray Jui <rjui-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Simon Horman <horms-/R6kz+dDXgpPR4JQBCEnsQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alex Benn??e <alex.bennee-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, S??ren Brinkmann <soren.brinkmann-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, Thomas Petazzoni <thomas.petazzoni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Scott Branden <sbranden-dY08KVG/lbpWk0Htik3J/w@public.gmane.org>, Jingoo Han <jingoohan1-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-renesas-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Ley
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jun 21, 2016 at 07:58:08PM +0800, wangyijing wrote:
-> Hi Bjorn, use devm_request_resource() for host bridge resource is cool,
-> what about do the similar change for x86, now we request host bridge resource
-> in pci_acpi_root_add_resources() in x86, and we would release the host bridge
-> resource when host bridge device refcount reach 0. This logic may introduce issue,
-> E.g.
-> If we try to remove a pci host bridge, but there is a child pci device which refcount
-> cannot decrease to 0 after remove the device, in this case, its parent pci_bus and
-> parent device, all their refcount cannot reach to 0, the result is pci host bridge
-> refcount can not reach 0, so its .release_fn() won't be called, and host bridge
-> resouces can not release. If we want to add the pci host bridge again, all pci devices
-> can not work because the resource is conflict with the old.
+On Mon, Jun 20, 2016 at 06:22:40PM +0100, Lorenzo Pieralisi wrote:
+> On Mon, Jun 20, 2016 at 09:56:45AM -0700, Tyler Baker wrote:
+> > Hi Bjorn,
+> > 
+> > On 6 June 2016 at 16:06, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org> wrote:
+> > > Previously we allocated the PCI resource list in
+> > > gen_pci_parse_request_of_pci_ranges(), but if we had an error, we freed it
+> > > on error in gen_pci_init().
+> > >
+> > > Reorder gen_pci_init() so we can take care of error path cleanup in
+> > > gen_pci_parse_request_of_pci_ranges() instead.
+> > >
+> > > Signed-off-by: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+> > 
+> > The kernelci.org bot has reported[0] new qemu-aarch64
+> > (arm64-defconfig) boot failures[1][2] in next-20160620. I've
+> > bisected[3] this boot failure down to this patch, and confirmed
+> > reverting it on top of next-20160620 resolves the boot issue.
+> > 
+> > I have not investigated further, but you can easily reproduce[4] the
+> > boot failure on an x86 host running qemu-system-aarch64 (I'm running
+> > qemu-system 2.6).
 > 
-> devm resource would be released when the driver detach, this is better than what we do now, I think.
+> That's most likely because pci_ecam_create() requires the bus_range
+> resource (its busr parameter) to be initialized when it is called
+> and that's not the case after this patch is applied if I read it
+> correctly.
+> 
+> It is probably a NULL pointer dereference in pci_ecam_create().
 
-I'm not going to convert pci_root.c to use devm right now.  That might
-be a good thing, but this current series is mostly trivial.  I think
-changing pci_root.c would not be trivial, so that looks like a project
-all by itself.
+Yep, thanks everybody, I dropped that ill-considered patch altogether.
 
-I don't quite follow the example of removing a host bridge while a
-child PCI device refcount is non-zero.  That sounds like an invalid
-scenario regardless of whether the resources are released by a
-.release_fn() or by devm.
-
-Bjorn
+> > [0] https://kernelci.org/boot/all/job/next/kernel/next-20160620/
+> > [1] https://storage.kernelci.org/next/next-20160620/arm64-defconfig/lab-cambridge/boot-apm-mustang-kvm-guest.txt
+> > [2] https://storage.kernelci.org/next/next-20160620/arm64-defconfig/lab-tbaker/boot-qemu-aarch64,legacy.txt
+> > [3] http://hastebin.com/segiruribu.vbs
+> > [4] http://hastebin.com/dafuzicuyi.avrasm
+> > --
+> > To unsubscribe from this list: send the line "unsubscribe linux-pci" in
+> > the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> > More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> > 
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
