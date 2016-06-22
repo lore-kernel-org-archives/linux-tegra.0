@@ -1,87 +1,49 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] ARM: tegra: remove board_init_funcs array
-Date: Wed, 22 Jun 2016 15:34:57 +0200
-Message-ID: <20160622133457.GM26943@ulmo.ba.sec>
-References: <20160622124052.1263574-1-arnd@arndb.de>
- <20160622125013.GH26943@ulmo.ba.sec>
- <40780752.S2fyoFjsUW@wuerfel>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [RFC PATCH 1/8] PM / Domains: Add new helper functions for
+ device-tree
+Date: Wed, 22 Jun 2016 15:58:58 +0100
+Message-ID: <576AA7B2.5030004@nvidia.com>
+References: <1457090634-14785-1-git-send-email-jonathanh@nvidia.com>
+ <1457090634-14785-2-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Aaj1jBvBEV7KRjLi"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <40780752.S2fyoFjsUW@wuerfel>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1457090634-14785-2-git-send-email-jonathanh@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pm@vger.kernel.org, Alexander Aring <alex.aring@gmail.com>, Eric Anholt <eric@anholt.net>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Ulf,
 
---Aaj1jBvBEV7KRjLi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 04/03/16 11:23, Jon Hunter wrote:
+> Ideally, if we are returning a reference to a PM domain via a call to
+> of_genpd_get_from_provider(), then we should keep track of such
+> references via a reference count. The reference count could then be used
+> to determine if a PM domain can be safely removed. Alternatively, it is
+> possible to avoid such external references by providing APIs to access
+> the PM domain and hence, eliminate any calls to
+> of_genpd_get_from_provider().
+> 
+> Add new helper functions for adding a device and a subdomain to a PM
+> domain when using device-tree, so that external calls to
+> of_genpd_get_from_provider() can be removed.
 
-On Wed, Jun 22, 2016 at 03:05:35PM +0200, Arnd Bergmann wrote:
-> On Wednesday, June 22, 2016 2:50:13 PM CEST Thierry Reding wrote:
-> >=20
-> > Not enough information to check signature validity.
-> > On Wed, Jun 22, 2016 at 02:39:41PM +0200, Arnd Bergmann wrote:
-> > > In a configuration that enables CONFIG_UBSAN_SANITIZE_ALL, I am getti=
-ng
-> > > a section mismatch warning for tegra20:
-> > >=20
-> > > WARNING: arch/arm/mach-tegra/built-in.o(.data+0x6e0): Section mismatc=
-h in reference from the variable board_init_funcs to the function .init.tex=
-t:paz00_init()
-> > >=20
-> > > The array is no longer useful here since there is only one entry,
-> > > so we can simply call the function directly after checking
-> > > of_machine_is_compatible(). This fixes the section mismatch
-> > > and is easier to read.
-> > >=20
-> > > Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> > > ---
-> > >  arch/arm/mach-tegra/tegra.c | 24 +++---------------------
-> > >  1 file changed, 3 insertions(+), 21 deletions(-)
-> >=20
-> > Shouldn't these section mismatches show up with default builds? I
-> > haven't seen any when building Tegra configurations.
-> >=20
-> > I'm going to apply this patch because I think it's useful, but it sure
-> > would be nice to know why I need to enable this new UBSAN stuff to get
-> > these warnings now.
->=20
-> It depends on the how aggressive the inlining works. Without UBSAN,
-> gcc seems to completely optimze away the loop and just the function
-> directly, which it can do because 'board_init_funcs' is static.
->=20
-> I assume that the UBSAN object overflow check has the effect of
-> not dropping the symbol so it can check the size.
+While we are at it, does it make sense to add helpers for
+of_genpd_remove_device/subdomain() as well? Seems that these could be
+useful for doing the inverse when cleaning up.
 
-Ah, I see. Thanks.
+Cheers
+Jon
 
-Thierry
-
---Aaj1jBvBEV7KRjLi
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXapQBAAoJEN0jrNd/PrOhbUYQAJRL+Ir32EzcU8Doqqc/t+KT
-+8SOvUrX0OdKSSjUjxYtWhrQ9ziSArOmDNDtoygF1feA+yX4ACjzP5Ju9lpl7fb1
-tOEJf3pntIaLCLgYbr8EXZaoxLE7VblSj55G72LSA4+03kC+yDZpq0rkLadtgFMy
-pAGQobbHKPBEcrymDfvOSDm4zHRSFmO0ywhmb+Xpo4OQQha69GmU2PoU7caD6N8H
-fFUIp9voGe7QZ5VHPpNGlQkSAEhmAbmWmVLIETROzkN4iq3Aogqr+wiPThOCKnyF
-3cutbW1uP7b1PB/LXbelqbAMzpIzquv2f7zBY6X4av1zg0heABvigOGAVyqm7AdA
-1434RkHNEk/AFaRGatDiYduXw4arOcUmYcAVBKxIupxXATBXeGnIlcA7GgtkSR4d
-/TVdj3VXz53oACF+aEb4wqDw+l4EBzHhBTo8wi2JaV4pZMQTXzhzdsLjzpLvOwRL
-HJUezWJzAofrSVTdthRvK2QFSsGX45YjcqGLylh/JgkELiyj/wLIrt+4OgzIta5C
-HDIMq6+DZ0TthLEG1plfu1V4cCud92cPMmG6mW4iy5ptZHJAbKAzcFCJxah97FCU
-vppKFPjnv27mVA8qxbA4+gLdUj30KzPvSqL+BREEWeY7tFMYUKdTXPxTJuIbzun5
-hOpJFzV0n6Zn9HeuhDVF
-=toHr
------END PGP SIGNATURE-----
-
---Aaj1jBvBEV7KRjLi--
+-- 
+nvpublic
