@@ -1,69 +1,63 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [RFC PATCH 1/8] PM / Domains: Add new helper functions for
- device-tree
-Date: Wed, 22 Jun 2016 16:22:51 +0100
-Message-ID: <576AAD4B.2020905@nvidia.com>
-References: <1457090634-14785-1-git-send-email-jonathanh@nvidia.com>
- <1457090634-14785-2-git-send-email-jonathanh@nvidia.com>
- <576AA7B2.5030004@nvidia.com>
- <CAPDyKFqEis0OX68eFD0dbneYOngGQfvu4JYbWzm7tTbs8WPS5A@mail.gmail.com>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v2 10/11] clk: Show CRITICAL clks in clk_summary output
+Date: Wed, 22 Jun 2016 11:31:08 -0400
+Message-ID: <0db7c9c8-d934-acba-2dbf-c704372ee541@nvidia.com>
+References: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
+ <1464381494-27096-11-git-send-email-rklein@nvidia.com>
+ <20160622122419.GC26943@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CAPDyKFqEis0OX68eFD0dbneYOngGQfvu4JYbWzm7tTbs8WPS5A@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alexander Aring <alex.aring@gmail.com>, Eric Anholt <eric@anholt.net>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160622122419.GC26943-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 22/06/16 16:08, Ulf Hansson wrote:
-> On 22 June 2016 at 16:58, Jon Hunter <jonathanh@nvidia.com> wrote:
->> Hi Ulf,
->>
->> On 04/03/16 11:23, Jon Hunter wrote:
->>> Ideally, if we are returning a reference to a PM domain via a call to
->>> of_genpd_get_from_provider(), then we should keep track of such
->>> references via a reference count. The reference count could then be used
->>> to determine if a PM domain can be safely removed. Alternatively, it is
->>> possible to avoid such external references by providing APIs to access
->>> the PM domain and hence, eliminate any calls to
->>> of_genpd_get_from_provider().
->>>
->>> Add new helper functions for adding a device and a subdomain to a PM
->>> domain when using device-tree, so that external calls to
->>> of_genpd_get_from_provider() can be removed.
->>
->> While we are at it, does it make sense to add helpers for
->> of_genpd_remove_device/subdomain() as well? Seems that these could be
->> useful for doing the inverse when cleaning up.
+On 6/22/2016 8:24 AM, Thierry Reding wrote:
+> * PGP Signed by an unknown key
 > 
-> I would prefer if we could avoid adding new APIs until we really see
-> the need for it.
+> On Fri, May 27, 2016 at 04:38:13PM -0400, Rhyland Klein wrote:
+>> Add a '^' character to the beginning of clk entries that are for
+>> CRITICAL clks.
+>>
+>> Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  drivers/clk/clk.c | 7 +++++--
+>>  1 file changed, 5 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+>> index 874c7dd8ef66..22dd0ca1e491 100644
+>> --- a/drivers/clk/clk.c
+>> +++ b/drivers/clk/clk.c
+>> @@ -1948,8 +1948,9 @@ static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
+>>  	if (!c)
+>>  		return;
+>>  
+>> -	seq_printf(s, "%*s%-*s %11d %12d %11lu %10lu %-3d\n",
+>> -		   level * 3 + 1, "",
+>> +	seq_printf(s, "%s%*s%-*s %11d %12d %11lu %10lu %-3d\n",
+>> +		   (c->flags & CLK_IS_CRITICAL ? "^" : ""),
+>> +		   level * 3 + (c->flags & CLK_IS_CRITICAL ? 0 : 1), "",
 > 
-> Moreover, I would like to avoid us adding OF specific APIs, unless
-> those can be really justified.
-> Hope that made sense.
+> Maybe output " " instead of "" for CLK_IS_CRITICAL, that way you can
+> omit the second conditional.
+> 
+> I wonder if it might be easier to read if this flag was at the end of
+> the line. There's also the fact that someone may have written a script
+> that expects the clock name as the first word on the line and may get
+> confused by this change. If you put it at the very end of the line the
+> likelihood of upsetting scripts will be reduced.
 
-Yes makes sense. However, after this series, the
-pm_genpd_remove_device/subdomain really become provider only APIs
-because clients can no longer get access to the genpd struct. Although
-today none of the users of the new of_genpd_add_device/subdomain do any
-clean-up on failure, it is possible that someone may. Therefore, I was
-thinking that we should have a way for a client to remove a subdomain or
-device it has added.
+Yah we can put the mark at the end of the line. I wasn't sure if there
+was a strong motivation to avoid extending the the width of each line,
+as sometimes people prefer to try to keep it close to 80 char as
+possible. I think right now, it was close to that, but might be a little
+over already. I can switch to that though, as it is less likely to break
+any automatic parsing scripts.
 
-Does that make sense? I guess we could always add those as needed.
-
-I am looking at a use-case for usb where we are populating the
-pm-domains at runtime and we may need to clean-up on failure. However, I
-can always wait to add more APIs until we really need them.
-
-Let me know what you think about my response to patch 6/8.
-
-Cheers
-Jon
+-rhyland
 
 -- 
 nvpublic
