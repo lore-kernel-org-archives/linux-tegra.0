@@ -1,65 +1,139 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: import latest Jetson TK1 spreadsheet
-Date: Wed, 22 Jun 2016 14:54:07 +0200
-Message-ID: <20160622125407.GI26943@ulmo.ba.sec>
-References: <20160621185149.20625-1-swarren@wwwdotorg.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] pci: tegra: correctly program PADS_REFCLK registers
+Date: Wed, 22 Jun 2016 14:57:49 +0200
+Message-ID: <20160622125749.GJ26943@ulmo.ba.sec>
+References: <20160621184640.19885-1-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="a7XSrSxqzVsaECgU"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="VSaCG/zfRnOiPJtU"
+Return-path: <linux-pci-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20160621185149.20625-1-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20160621184640.19885-1-swarren@wwwdotorg.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---a7XSrSxqzVsaECgU
+--VSaCG/zfRnOiPJtU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 21, 2016 at 12:51:49PM -0600, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Tue, Jun 21, 2016 at 12:46:40PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren@nvidia.com>
 >=20
-> This imports v11 of "Jetson TK1 Development Platform Pin Mux" from
-> https://developer.nvidia.com/embedded/downloads.
+> The value that should be programmed into the PADS_REFCLK register varies
+> per SoC. Fix the Tegra PCIe driver to program the correct values. Future
+> SoCs will require different values in cfg0/1, so the two values are stored
+> separately in the per-SoC data structures.
 >=20
-> The new version defines the mux option for the MIPI pad ctrl selection.
-> The OWR pin no longer has an entry in the configuration table because
-> the only mux option it support is OWR, that feature isn't supported, and
-> hence can't conflict with any other pin. This pin can only usefully be
-> used as a GPIO.
+> For reference, the values are all documented in NV bug 1771116 comment 20.
+> Rhe ASIC team has validated all these values, except for the Tegra20 value
+> which is simply left unchanged in this patch.
 >=20
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
 > ---
->  arch/arm/boot/dts/tegra124-jetson-tk1.dts | 12 ++++--------
->  1 file changed, 4 insertions(+), 8 deletions(-)
+>  drivers/pci/host/pci-tegra.c | 20 ++++++++------------
+>  1 file changed, 8 insertions(+), 12 deletions(-)
+>=20
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> index c388468c202a..74887fedc3d4 100644
+> --- a/drivers/pci/host/pci-tegra.c
+> +++ b/drivers/pci/host/pci-tegra.c
+> @@ -228,15 +228,6 @@
+>  #define PADS_REFCLK_CFG_PREDI_SHIFT		8  /* 11:8 */
+>  #define PADS_REFCLK_CFG_DRVI_SHIFT		12 /* 15:12 */
+> =20
+> -/* Default value provided by HW engineering is 0xfa5c */
+> -#define PADS_REFCLK_CFG_VALUE \
+> -	( \
+> -		(0x17 << PADS_REFCLK_CFG_TERM_SHIFT)   | \
+> -		(0    << PADS_REFCLK_CFG_E_TERM_SHIFT) | \
+> -		(0xa  << PADS_REFCLK_CFG_PREDI_SHIFT)  | \
+> -		(0xf  << PADS_REFCLK_CFG_DRVI_SHIFT)     \
+> -	)
+> -
+>  struct tegra_msi {
+>  	struct msi_controller chip;
+>  	DECLARE_BITMAP(used, INT_PCI_MSI_NR);
+> @@ -252,6 +243,8 @@ struct tegra_pcie_soc_data {
+>  	unsigned int msi_base_shift;
+>  	u32 pads_pll_ctl;
+>  	u32 tx_ref_sel;
+> +	u32 pads_refclk_cfg0;
+> +	u32 pads_refclk_cfg1;
+>  	bool has_pex_clkreq_en;
+>  	bool has_pex_bias_ctrl;
+>  	bool has_intr_prsnt_sense;
+> @@ -839,10 +832,9 @@ static int tegra_pcie_phy_enable(struct tegra_pcie *=
+pcie)
+>  	pads_writel(pcie, value, soc->pads_pll_ctl);
+> =20
+>  	/* Configure the reference clock driver */
+> -	value =3D PADS_REFCLK_CFG_VALUE | (PADS_REFCLK_CFG_VALUE << 16);
+> -	pads_writel(pcie, value, PADS_REFCLK_CFG0);
+> +	pads_writel(pcie, soc->pads_refclk_cfg0, PADS_REFCLK_CFG0);
+>  	if (soc->num_ports > 2)
+> -		pads_writel(pcie, PADS_REFCLK_CFG_VALUE, PADS_REFCLK_CFG1);
+> +		pads_writel(pcie, soc->pads_refclk_cfg1, PADS_REFCLK_CFG1);
+> =20
+>  	/* wait for the PLL to lock */
+>  	err =3D tegra_pcie_pll_wait(pcie, 500);
+> @@ -2078,6 +2070,7 @@ static const struct tegra_pcie_soc_data tegra20_pci=
+e_data =3D {
+>  	.msi_base_shift =3D 0,
+>  	.pads_pll_ctl =3D PADS_PLL_CTL_TEGRA20,
+>  	.tx_ref_sel =3D PADS_PLL_CTL_TXCLKREF_DIV10,
+> +	.pads_refclk_cfg0 =3D 0xfa5cfa5c,
+>  	.has_pex_clkreq_en =3D false,
+>  	.has_pex_bias_ctrl =3D false,
+>  	.has_intr_prsnt_sense =3D false,
+> @@ -2090,6 +2083,8 @@ static const struct tegra_pcie_soc_data tegra30_pci=
+e_data =3D {
+>  	.msi_base_shift =3D 8,
+>  	.pads_pll_ctl =3D PADS_PLL_CTL_TEGRA30,
+>  	.tx_ref_sel =3D PADS_PLL_CTL_TXCLKREF_BUF_EN,
+> +	.pads_refclk_cfg0 =3D 0xfa5cfa5c,
+> +	.pads_refclk_cfg1 =3D 0xfa5cfa5c,
+>  	.has_pex_clkreq_en =3D true,
+>  	.has_pex_bias_ctrl =3D true,
+>  	.has_intr_prsnt_sense =3D true,
+> @@ -2102,6 +2097,7 @@ static const struct tegra_pcie_soc_data tegra124_pc=
+ie_data =3D {
+>  	.msi_base_shift =3D 8,
+>  	.pads_pll_ctl =3D PADS_PLL_CTL_TEGRA30,
+>  	.tx_ref_sel =3D PADS_PLL_CTL_TXCLKREF_BUF_EN,
+> +	.pads_refclk_cfg0 =3D 0x44ac44ac,
+>  	.has_pex_clkreq_en =3D true,
+>  	.has_pex_bias_ctrl =3D true,
+>  	.has_intr_prsnt_sense =3D true,
 
-Applied, thanks.
+I think it'd be nice to have these decoded into their individual fields,
+to reduce the magic. We already define the register fields, so it seems
+sensible to use them.
 
 Thierry
 
---a7XSrSxqzVsaECgU
+--VSaCG/zfRnOiPJtU
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXaopvAAoJEN0jrNd/PrOhGDkP/2UaoJEfcdzVNP3fviO8DJAx
-h3GFw+hK2D6EY2R9so7aXhN6oJVm7wI8xIJe+PCrSiIfXsSVY5F3iiONqV6bvp7u
-pKEMfQ5Qoc8xLCHSp8pKGQiNT/i0C9GRHhTrYs1nuueiPMMrlzGtgd8ec1sVl2LM
-3dGJUOAgNZr/VhKi5z+QkfvumlDzzjhrFm3U9fF441CyszaC1E57MoP52Lu7SyOW
-gMHEuDcF2oNV4euQ1D8Vu0zzUtrnhL+BvKuoAMJE/9x1ZAlu6Mwi6VH3iei5Fnl8
-AdP35JqjW3IXznJK2hsiCZFN/I83Hl57keuBFyj3cLNiOF7q9GrjroqOYbYYiErY
-/1m6f1iJWc/p4tc2AJ3jzwxR1ZIgV/Z99DasnMA4tKwU3ZueAL9z1yb05Ip0DAei
-yLpVM/5Uyh3foMCpVoVJbEDUxz0LImv9fpo88WkbCzq6Z3AFDBQpahfwkbFNp0XR
-We7SEbWjq6EShDLbgw6KSxB9huxuhQ1qAvNAoJzPvA9r5q7ZJ6DmnZE9tYrBfD19
-zInWx1T2o1b6T4aUu0AuSvNiaerNTg0QfFaXqeajCOBWhhsGN3P5jswptPJfHlIM
-fPCxVuefl/+PcMGDsyUkyYMe2cyqXl9zSPGBmi0zKRKVlj0P766aZ/tQ2HXrUuEB
-u8ipwFOjEsbwcfoTqpOC
-=OY6o
+iQIcBAABCAAGBQJXaotNAAoJEN0jrNd/PrOhLTYP/jlaSo0vXY4K4M1a+drSuS5u
+MYN6ZKFKboEMRf2NAxjLkV2dCwqjLkPWnClao8cL3/WL1I38KEAMEr8XD/GLW9b+
+Fhh3iTH6VY94SwsWuAGUCxZt8aBRtRWwfyAwuPv2kRT5h6xhAJirVHNDiELlDbtg
+iXfYxIF/qQo+vJjPNcsZV+Q37USD88PNHB6Ls3iXQ9BRyFYSuOZI3nqQMuW9xwEo
+vgvrEzuBrC39g0S0i/RtaPoNcedt3cYFmZLAXJUX5EHo6QkyZfxte+RIAx1zPOzy
+hFqAqe4RXAlAU9jdTPiPnqGMnrBW20xAvr7I12Gu3LCx7X+aA+hY4LJloT8wUZmJ
+Yt2VhjlohoPH7BJrGtYPmT4uwFjz/I6lji0cC8/BUqNU4RcOtP1bm6AhsFJQA6Xk
++n7OmlDphp3yIj1mkYbLja18GlzAyp2zHwf4QI80u0d7kEfUNShgByRuANcNcp+W
+VVsXYBAWZLxQKK0fQc8mgkYsM3AwczffnCAQb4E2CTQ1ADTBckJW9Y6wCdlBkllZ
+8pIGHiFrvc3VQ6bX0+UJa+IbcvrP+wqfHvr9b4lKJlvC9MMT6G6m/GWtMeUF8X5K
+caySnnhTT1loVGPeF9OqfqYVbu5RY1QZqZEsUI1L0/vm+SE32GIFwzD7LVt9+0XN
+ACyd7oJi6AS5rT8QC664
+=GKtd
 -----END PGP SIGNATURE-----
 
---a7XSrSxqzVsaECgU--
+--VSaCG/zfRnOiPJtU--
