@@ -1,97 +1,65 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] ARM: tegra: remove board_init_funcs array
-Date: Wed, 22 Jun 2016 14:50:13 +0200
-Message-ID: <20160622125013.GH26943@ulmo.ba.sec>
-References: <20160622124052.1263574-1-arnd@arndb.de>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: import latest Jetson TK1 spreadsheet
+Date: Wed, 22 Jun 2016 14:54:07 +0200
+Message-ID: <20160622125407.GI26943@ulmo.ba.sec>
+References: <20160621185149.20625-1-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============7200773269277608684=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20160622124052.1263574-1-arnd@arndb.de>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Stephen Warren <swarren@wwwdotorg.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="a7XSrSxqzVsaECgU"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20160621185149.20625-1-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============7200773269277608684==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="QDd5rp1wjxlDmy9q"
-Content-Disposition: inline
-
-
---QDd5rp1wjxlDmy9q
+--a7XSrSxqzVsaECgU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 22, 2016 at 02:39:41PM +0200, Arnd Bergmann wrote:
-> In a configuration that enables CONFIG_UBSAN_SANITIZE_ALL, I am getting
-> a section mismatch warning for tegra20:
+On Tue, Jun 21, 2016 at 12:51:49PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >=20
-> WARNING: arch/arm/mach-tegra/built-in.o(.data+0x6e0): Section mismatch in=
- reference from the variable board_init_funcs to the function .init.text:pa=
-z00_init()
+> This imports v11 of "Jetson TK1 Development Platform Pin Mux" from
+> https://developer.nvidia.com/embedded/downloads.
 >=20
-> The array is no longer useful here since there is only one entry,
-> so we can simply call the function directly after checking
-> of_machine_is_compatible(). This fixes the section mismatch
-> and is easier to read.
+> The new version defines the mux option for the MIPI pad ctrl selection.
+> The OWR pin no longer has an entry in the configuration table because
+> the only mux option it support is OWR, that feature isn't supported, and
+> hence can't conflict with any other pin. This pin can only usefully be
+> used as a GPIO.
 >=20
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  arch/arm/mach-tegra/tegra.c | 24 +++---------------------
->  1 file changed, 3 insertions(+), 21 deletions(-)
+>  arch/arm/boot/dts/tegra124-jetson-tk1.dts | 12 ++++--------
+>  1 file changed, 4 insertions(+), 8 deletions(-)
 
-Shouldn't these section mismatches show up with default builds? I
-haven't seen any when building Tegra configurations.
-
-I'm going to apply this patch because I think it's useful, but it sure
-would be nice to know why I need to enable this new UBSAN stuff to get
-these warnings now.
+Applied, thanks.
 
 Thierry
 
---QDd5rp1wjxlDmy9q
+--a7XSrSxqzVsaECgU
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXaomFAAoJEN0jrNd/PrOh75YP/3UiN/pDybfXcayFnlvBPmpx
-XRWKAk7QmsEtB87UtlZX0D9JFs1zVMyeB5IGLBBhyS2wNOLUF334aJrHG0rglFDL
-3F5VVZixprwLSddIcaUJf16AHmTiPuYKEDljOh3AmMR1nKLnG5U+YChffwrM0eBJ
-kpfVJ/SWzyyKAUwUVNJOWMeZSxUqhMCHklCHXu5v7ry5ZM1qf44Zd/ReAXVsGyXq
-oNGzotdy7WhCLbP1ZIAXwRgNT1spTcd57xfaaYJVY94eUC2djnrUIh25yTdQ7M4L
-Z9sBlSaxTcXcRYldZMku2SEk1JUT17U/biwsWaBxFLdbJII/XuPb6otDr/cpBnS8
-pTPvgZ8+zL6J3cllpbocfb8Sq0luTKWYYODCRCcGsdiMJNCKOrP2cOYdqrWcZ4Ek
-W1Xc6YCdCDX8hjguI95SSBxIF1zZT+pVA2L5OY7s8qQcoBasIZTv6jiNdBPOe+u9
-sBiZfIhGT28f79q9+bn/Lur9AccyJEeS37juNiKJSI0OckRL0jPkVExUbP2AMVut
-27x3HMXoVgaZ6KoUO7xaPrYSIu0gHpLXOMV9s0uJXzm6poGp/QZpb+mi2zaDQcXk
-PWVstjVfInrCExc9f05BGdvbk/23LZOcdggtRhBUp5GDTM3EiYLwVgIvG5cfAkVy
-Sy4yvyy0badK1Ds1BaAE
-=LJ85
+iQIcBAABCAAGBQJXaopvAAoJEN0jrNd/PrOhGDkP/2UaoJEfcdzVNP3fviO8DJAx
+h3GFw+hK2D6EY2R9so7aXhN6oJVm7wI8xIJe+PCrSiIfXsSVY5F3iiONqV6bvp7u
+pKEMfQ5Qoc8xLCHSp8pKGQiNT/i0C9GRHhTrYs1nuueiPMMrlzGtgd8ec1sVl2LM
+3dGJUOAgNZr/VhKi5z+QkfvumlDzzjhrFm3U9fF441CyszaC1E57MoP52Lu7SyOW
+gMHEuDcF2oNV4euQ1D8Vu0zzUtrnhL+BvKuoAMJE/9x1ZAlu6Mwi6VH3iei5Fnl8
+AdP35JqjW3IXznJK2hsiCZFN/I83Hl57keuBFyj3cLNiOF7q9GrjroqOYbYYiErY
+/1m6f1iJWc/p4tc2AJ3jzwxR1ZIgV/Z99DasnMA4tKwU3ZueAL9z1yb05Ip0DAei
+yLpVM/5Uyh3foMCpVoVJbEDUxz0LImv9fpo88WkbCzq6Z3AFDBQpahfwkbFNp0XR
+We7SEbWjq6EShDLbgw6KSxB9huxuhQ1qAvNAoJzPvA9r5q7ZJ6DmnZE9tYrBfD19
+zInWx1T2o1b6T4aUu0AuSvNiaerNTg0QfFaXqeajCOBWhhsGN3P5jswptPJfHlIM
+fPCxVuefl/+PcMGDsyUkyYMe2cyqXl9zSPGBmi0zKRKVlj0P766aZ/tQ2HXrUuEB
+u8ipwFOjEsbwcfoTqpOC
+=OY6o
 -----END PGP SIGNATURE-----
 
---QDd5rp1wjxlDmy9q--
-
-
---===============7200773269277608684==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============7200773269277608684==--
+--a7XSrSxqzVsaECgU--
