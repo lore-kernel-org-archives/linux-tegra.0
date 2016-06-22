@@ -1,14 +1,15 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH RESEND V2] ARM64: config: Enable MAX77620 pinctrl/gpio/rtc
- for Tegra210 P2180
-Date: Wed, 22 Jun 2016 10:20:17 +0100
-Message-ID: <576A5851.1070106@nvidia.com>
-References: <1466143556-31849-1-git-send-email-ldewangan@nvidia.com>
+Subject: Re: [RFC PATCH 1/8] PM / Domains: Add new helper functions for
+ device-tree
+Date: Wed, 22 Jun 2016 12:00:22 +0100
+Message-ID: <576A6FC6.4000307@nvidia.com>
+References: <1457090634-14785-1-git-send-email-jonathanh@nvidia.com>
+ <1457090634-14785-2-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1466143556-31849-1-git-send-email-ldewangan@nvidia.com>
+In-Reply-To: <1457090634-14785-2-git-send-email-jonathanh@nvidia.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -18,60 +19,109 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, catalin.marinas@arm.com, will.deacon@arm.com, treding@nvidia.com
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, arnd@arndb.de, linux-kernel@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, linux-pm@vger.kernel.org, Alexander Aring <alex.aring@gmail.com>, Eric Anholt <eric@anholt.net>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 17/06/16 07:05, Laxman Dewangan wrote:
-> NVIDIA's Tegra210 Jetson platform (P2180) uses the MAX77620 as PMIC.
-> Enable GPIO, Pincontrol and RTC driver for this device.
+On 04/03/16 11:23, Jon Hunter wrote:
+> Ideally, if we are returning a reference to a PM domain via a call to
+> of_genpd_get_from_provider(), then we should keep track of such
+> references via a reference count. The reference count could then be used
+> to determine if a PM domain can be safely removed. Alternatively, it is
+> possible to avoid such external references by providing APIs to access
+> the PM domain and hence, eliminate any calls to
+> of_genpd_get_from_provider().
 > 
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> Add new helper functions for adding a device and a subdomain to a PM
+> domain when using device-tree, so that external calls to
+> of_genpd_get_from_provider() can be removed.
+> 
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
-> Changes from V1:
-> - MFD and regulator is already enabled, enabling remaining driver.
+>  drivers/base/power/domain.c | 44 ++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/pm_domain.h   | 16 ++++++++++++++++
+>  2 files changed, 60 insertions(+)
 > 
-> Resending to linux-tegra group also.
-> 
-> 
->  arch/arm64/configs/defconfig | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 9af9ba5..90a6705 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -186,6 +186,7 @@ CONFIG_SPI_QUP=y
->  CONFIG_SPI_SPIDEV=m
->  CONFIG_SPMI=y
->  CONFIG_PINCTRL_SINGLE=y
-> +CONFIG_PINCTRL_MAX77620=y
->  CONFIG_PINCTRL_MSM8916=y
->  CONFIG_PINCTRL_QCOM_SPMI_PMIC=y
->  CONFIG_GPIO_SYSFS=y
-> @@ -194,6 +195,7 @@ CONFIG_GPIO_PL061=y
->  CONFIG_GPIO_RCAR=y
->  CONFIG_GPIO_XGENE=y
->  CONFIG_GPIO_PCA953X=m
-> +CONFIG_GPIO_MAX77620=y
->  CONFIG_POWER_RESET_MSM=y
->  CONFIG_POWER_RESET_XGENE=y
->  CONFIG_POWER_RESET_SYSCON=y
-> @@ -274,6 +276,7 @@ CONFIG_LEDS_TRIGGERS=y
->  CONFIG_LEDS_TRIGGER_HEARTBEAT=y
->  CONFIG_LEDS_TRIGGER_CPU=y
->  CONFIG_RTC_CLASS=y
-> +CONFIG_RTC_DRV_MAX77686=y
->  CONFIG_RTC_DRV_S5M=y
->  CONFIG_RTC_DRV_DS3232=y
->  CONFIG_RTC_DRV_EFI=y
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index 5bdb42bf40f4..b24893499454 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -1706,6 +1706,50 @@ struct generic_pm_domain *of_genpd_get_from_provider(
+>  EXPORT_SYMBOL_GPL(of_genpd_get_from_provider);
+>  
+>  /**
+> + * of_genpd_add_device() - Add a device to an I/O PM domain
+> + * @genpdspec: OF phandle args to use for look-up PM domain
+> + * @dev: Device to be added.
+> + *
+> + * Looks-up an I/O PM domain based upon phandle args provided and adds
+> + * the device to the PM domain. Returns a negative error code on failure.
+> + */
+> +int of_genpd_add_device(struct of_phandle_args *genpdspec, struct device *dev)
+> +{
+> +	struct generic_pm_domain *genpd;
+> +
+> +	genpd = of_genpd_get_from_provider(genpdspec);
+> +	if (IS_ERR(genpd))
+> +		return PTR_ERR(genpd);
+> +
+> +	return pm_genpd_add_device(genpd, dev);
+> +}
+> +
+> +/**
+> + * of_genpd_add_subdomain - Add a subdomain to an I/O PM domain.
+> + * @parent_spec: OF phandle args to use for parent PM domain look-up
+> + * @subdomain_spec: OF phandle args to use for subdomain look-up
+> + *
+> + * Looks-up a parent PM domain and subdomain based upon phandle args
+> + * provided and adds the subdomain to the parent PM domain. Returns a
+> + * negative error code on failure.
+> + */
+> +int of_genpd_add_subdomain(struct of_phandle_args *parent_spec,
+> +			   struct of_phandle_args *subdomain_spec)
+> +{
+> +	struct generic_pm_domain *parent, *subdomain;
+> +
+> +	parent = of_genpd_get_from_provider(parent_spec);
+> +	if (IS_ERR(parent))
+> +		return PTR_ERR(parent);
+> +
+> +	subdomain = of_genpd_get_from_provider(subdomain_spec);
+> +	if (IS_ERR(subdomain))
+> +		return PTR_ERR(subdomain);
+> +
+> +	return pm_genpd_add_subdomain(parent, subdomain);
+> +}
+> +
+> +/**
+>   * genpd_dev_pm_detach - Detach a device from its PM domain.
+>   * @dev: Device to detach.
+>   * @power_off: Currently not used
+> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+> index 49cd8890b873..2b6ee670b231 100644
+> --- a/include/linux/pm_domain.h
+> +++ b/include/linux/pm_domain.h
+> @@ -210,6 +210,10 @@ struct generic_pm_domain *__of_genpd_xlate_simple(
+>  struct generic_pm_domain *__of_genpd_xlate_onecell(
+>  					struct of_phandle_args *genpdspec,
+>  					void *data);
+> +extern int of_genpd_add_device(struct of_phandle_args *args,
+> +			       struct device *dev);
+> +extern int of_genpd_add_subdomain(struct of_phandle_args *parent,
+> +				  struct of_phandle_args *new_subdomain);
+>  
+>  int genpd_dev_pm_attach(struct device *dev);
+>  #else /* !CONFIG_PM_GENERIC_DOMAINS_OF */
+> @@ -229,6 +233,18 @@ static inline struct generic_pm_domain *of_genpd_get_from_provider(
+>  #define __of_genpd_xlate_simple		NULL
+>  #define __of_genpd_xlate_onecell	NULL
+>  
+> +static inline int of_pm_genpd_add_device(struct of_phandle_args *args,
+> +					 struct device *dev)
 
-We need this for Tegra210 Smaug as well.
+This should be of_genpd_add_device. Will fix.
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-
-Cheers
 Jon
 
 -- 
