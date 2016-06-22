@@ -1,67 +1,84 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] pci: tegra: correctly program PADS_REFCLK registers
-Date: Wed, 22 Jun 2016 09:34:21 -0600
-Message-ID: <576AAFFD.4050404@wwwdotorg.org>
-References: <20160621184640.19885-1-swarren@wwwdotorg.org>
- <20160622125749.GJ26943@ulmo.ba.sec>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [RFC PATCH 1/8] PM / Domains: Add new helper functions for
+ device-tree
+Date: Wed, 22 Jun 2016 17:36:23 +0200
+Message-ID: <CAPDyKFpk2QMC3R+V3fiF5wK=9ExPrvCPUmD98ZL54q02TDAFEA@mail.gmail.com>
+References: <1457090634-14785-1-git-send-email-jonathanh@nvidia.com>
+ <1457090634-14785-2-git-send-email-jonathanh@nvidia.com>
+ <576AA7B2.5030004@nvidia.com>
+ <CAPDyKFqEis0OX68eFD0dbneYOngGQfvu4JYbWzm7tTbs8WPS5A@mail.gmail.com>
+ <576AAD4B.2020905@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20160622125749.GJ26943@ulmo.ba.sec>
-Sender: linux-pci-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <576AAD4B.2020905@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Krzysztof Kozlowski <k.kozlowski@samsung.com>, Kevin Hilman <khilman@kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Alexander Aring <alex.aring@gmail.com>, Eric Anholt <eric@anholt.net>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/22/2016 06:57 AM, Thierry Reding wrote:
-> On Tue, Jun 21, 2016 at 12:46:40PM -0600, Stephen Warren wrote:
->> From: Stephen Warren <swarren@nvidia.com>
->>
->> The value that should be programmed into the PADS_REFCLK register varies
->> per SoC. Fix the Tegra PCIe driver to program the correct values. Future
->> SoCs will require different values in cfg0/1, so the two values are stored
->> separately in the per-SoC data structures.
->>
->> For reference, the values are all documented in NV bug 1771116 comment 20.
->> Rhe ASIC team has validated all these values, except for the Tegra20 value
->> which is simply left unchanged in this patch.
-
->> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-
->> @@ -2078,6 +2070,7 @@ static const struct tegra_pcie_soc_data tegra20_pcie_data = {
->>   	.msi_base_shift = 0,
->>   	.pads_pll_ctl = PADS_PLL_CTL_TEGRA20,
->>   	.tx_ref_sel = PADS_PLL_CTL_TXCLKREF_DIV10,
->> +	.pads_refclk_cfg0 = 0xfa5cfa5c,
->>   	.has_pex_clkreq_en = false,
->>   	.has_pex_bias_ctrl = false,
->>   	.has_intr_prsnt_sense = false,
->> @@ -2090,6 +2083,8 @@ static const struct tegra_pcie_soc_data tegra30_pcie_data = {
->>   	.msi_base_shift = 8,
->>   	.pads_pll_ctl = PADS_PLL_CTL_TEGRA30,
->>   	.tx_ref_sel = PADS_PLL_CTL_TXCLKREF_BUF_EN,
->> +	.pads_refclk_cfg0 = 0xfa5cfa5c,
->> +	.pads_refclk_cfg1 = 0xfa5cfa5c,
->>   	.has_pex_clkreq_en = true,
->>   	.has_pex_bias_ctrl = true,
->>   	.has_intr_prsnt_sense = true,
->> @@ -2102,6 +2097,7 @@ static const struct tegra_pcie_soc_data tegra124_pcie_data = {
->>   	.msi_base_shift = 8,
->>   	.pads_pll_ctl = PADS_PLL_CTL_TEGRA30,
->>   	.tx_ref_sel = PADS_PLL_CTL_TXCLKREF_BUF_EN,
->> +	.pads_refclk_cfg0 = 0x44ac44ac,
->>   	.has_pex_clkreq_en = true,
->>   	.has_pex_bias_ctrl = true,
->>   	.has_intr_prsnt_sense = true,
+On 22 June 2016 at 17:22, Jon Hunter <jonathanh@nvidia.com> wrote:
 >
-> I think it'd be nice to have these decoded into their individual fields,
-> to reduce the magic. We already define the register fields, so it seems
-> sensible to use them.
+> On 22/06/16 16:08, Ulf Hansson wrote:
+>> On 22 June 2016 at 16:58, Jon Hunter <jonathanh@nvidia.com> wrote:
+>>> Hi Ulf,
+>>>
+>>> On 04/03/16 11:23, Jon Hunter wrote:
+>>>> Ideally, if we are returning a reference to a PM domain via a call to
+>>>> of_genpd_get_from_provider(), then we should keep track of such
+>>>> references via a reference count. The reference count could then be used
+>>>> to determine if a PM domain can be safely removed. Alternatively, it is
+>>>> possible to avoid such external references by providing APIs to access
+>>>> the PM domain and hence, eliminate any calls to
+>>>> of_genpd_get_from_provider().
+>>>>
+>>>> Add new helper functions for adding a device and a subdomain to a PM
+>>>> domain when using device-tree, so that external calls to
+>>>> of_genpd_get_from_provider() can be removed.
+>>>
+>>> While we are at it, does it make sense to add helpers for
+>>> of_genpd_remove_device/subdomain() as well? Seems that these could be
+>>> useful for doing the inverse when cleaning up.
+>>
+>> I would prefer if we could avoid adding new APIs until we really see
+>> the need for it.
+>>
+>> Moreover, I would like to avoid us adding OF specific APIs, unless
+>> those can be really justified.
+>> Hope that made sense.
+>
+> Yes makes sense. However, after this series, the
+> pm_genpd_remove_device/subdomain really become provider only APIs
+> because clients can no longer get access to the genpd struct. Although
+> today none of the users of the new of_genpd_add_device/subdomain do any
+> clean-up on failure, it is possible that someone may. Therefore, I was
+> thinking that we should have a way for a client to remove a subdomain or
+> device it has added.
+>
+> Does that make sense? I guess we could always add those as needed.
+>
+> I am looking at a use-case for usb where we are populating the
+> pm-domains at runtime and we may need to clean-up on failure. However, I
+> can always wait to add more APIs until we really need them.
 
-I did consider that. However, the specification from the ASIC team is 
-always the raw values. Decoding them into bitfields is only going to 
-make it harder to verify whether the correct values are present (since 
-the reader has to manually expand the math), and introduce the 
-possibility of errors during the expansion process. I think using raw 
-numbers is better in this case.
+You may very well be right that these will be needed.
+
+How about posting those patches as separate change and on top of the
+series. Then we can decide if we want to pick them now or later.
+
+>
+> Let me know what you think about my response to patch 6/8.
+
+I am on it.
+
+Kind regards
+Uffe
