@@ -1,88 +1,97 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 4/5] pwm: tegra: Add DT node compatible for Tegra186
-Date: Wed, 22 Jun 2016 14:46:14 +0200
-Message-ID: <20160622124614.GG26943@ulmo.ba.sec>
-References: <1466596043-27262-1-git-send-email-ldewangan@nvidia.com>
- <1466596043-27262-5-git-send-email-ldewangan@nvidia.com>
+Subject: Re: [PATCH] ARM: tegra: remove board_init_funcs array
+Date: Wed, 22 Jun 2016 14:50:13 +0200
+Message-ID: <20160622125013.GH26943@ulmo.ba.sec>
+References: <20160622124052.1263574-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ulDeV4rPMk/y39in"
-Return-path: <linux-pwm-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1466596043-27262-5-git-send-email-ldewangan@nvidia.com>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, swarren@wwwdotorg.org, gnurou@gmail.com, linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/mixed; boundary="===============7200773269277608684=="
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20160622124052.1263574-1-arnd@arndb.de>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---ulDeV4rPMk/y39in
+--===============7200773269277608684==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="QDd5rp1wjxlDmy9q"
+Content-Disposition: inline
+
+
+--QDd5rp1wjxlDmy9q
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 22, 2016 at 05:17:22PM +0530, Laxman Dewangan wrote:
-> Tegra186 has 8 different PWM controller and each controller has only
-> one output. Earlier generation SoCs have the 4 PWM output per controller.
+On Wed, Jun 22, 2016 at 02:39:41PM +0200, Arnd Bergmann wrote:
+> In a configuration that enables CONFIG_UBSAN_SANITIZE_ALL, I am getting
+> a section mismatch warning for tegra20:
 >=20
-> Add DT node compatible for Tegra186.
+> WARNING: arch/arm/mach-tegra/built-in.o(.data+0x6e0): Section mismatch in=
+ reference from the variable board_init_funcs to the function .init.text:pa=
+z00_init()
 >=20
-> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+> The array is no longer useful here since there is only one entry,
+> so we can simply call the function directly after checking
+> of_machine_is_compatible(). This fixes the section mismatch
+> and is easier to read.
+>=20
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->  Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt | 10 ++++++=
-----
->  1 file changed, 6 insertions(+), 4 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt=
- b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
-> index c52f03b..2851b2d 100644
-> --- a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
-> +++ b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
-> @@ -1,10 +1,12 @@
->  Tegra SoC PWFM controller
-> =20
->  Required properties:
-> -- compatible: For Tegra20, must contain "nvidia,tegra20-pwm".  For Tegra=
-30,
-> -  must contain "nvidia,tegra30-pwm".  Otherwise, must contain
-> -  "nvidia,<chip>-pwm", plus one of the above, where <chip> is tegra114,
-> -  tegra124, tegra132, or tegra210.
-> +- compatible: For Tegra20, must contain "nvidia,tegra20-pwm".
-> +	      For Tegra30, must contain "nvidia,tegra30-pwm".
-> +	      For Tegra114, Tegra124, Tegra132, Tegra210 must contain
-> +	      "nvidia,<chip>-pwm", plus one of the above, where <chip> is
-> +	      tegra114, tegra124, tegra132, or tegra210.
-> +	      For Tegra186, must contain "nvidia,tegra186-pwm".
+>  arch/arm/mach-tegra/tegra.c | 24 +++---------------------
+>  1 file changed, 3 insertions(+), 21 deletions(-)
 
-Rob, I recall discussing this with you a couple of weeks ago, but fail
-to remember the outcome and can't find a link to the discussion either.
-Wasn't there a new standard way of documenting this kind of compatible
-string list?
+Shouldn't these section mismatches show up with default builds? I
+haven't seen any when building Tegra configurations.
 
-Or did you say it didn't matter much until we moved to a YAML-based
-description?
+I'm going to apply this patch because I think it's useful, but it sure
+would be nice to know why I need to enable this new UBSAN stuff to get
+these warnings now.
 
 Thierry
 
---ulDeV4rPMk/y39in
+--QDd5rp1wjxlDmy9q
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXaoiVAAoJEN0jrNd/PrOhBcIP/3OgHrcpV580PDw9Um1h4ZV/
-aRTWHRhDjdKZ/TTKrhUeIuh8jNzQV69eIkUBaR2pK38c3wziA5k+oBpFGt0uC0WG
-rujfoXYccl3eiJXZCSTPCmM6RDFeSdfblkT8YpWQwF3jEsDJPFMwXSpWBWMEMHpU
-td0qxcbuQGSTKmiESckOD6ck8GpjoFwtK74HRpz03VmJgOwr7betfCkoKaoBTOJZ
-cXnPWUsG0TOnIVT3f8xo4Zf3p2WWQuBPs1nVx4kFoTzgO90a+cWW0Ak4dQobPUDB
-eqhbdfdZWR6kjm/uJsG3TBa5yQv2XIeSo58JTbkZJ8CX8YpDfqyP48I9phmM2zL8
-X6ipgzsbS4+/4cYKp9dAMoQITuFTpu9ODdvGvzuJNKVQU6nLShgBTDKFtnNTcFSE
-SNazWBZCfAMwUyJNk79x8eHFz7ZYNFCYEAAlwIxRJCKVPKnttdVSkd6eqWNh66bO
-qaI1MfOUOYayEZWh+Fy24XQu0OMoxpnJLRgSRcY/+g9LQXOUXoRerunIyj/15dpB
-2HEDHb/M0K7q/MxOnpckbJbqpOuIXS7vYfRcEoLHVnn8SimgMT2DEsnZpGvScJyp
-4blMUeJ0bgZfNKGIdrJCYLlrizMo28ULgoNB56TbmA9GGH3Yy9ZWfJuOh7/WuD9p
-eLDxYpBHXFKrxaMY4jSP
-=c/7R
+iQIcBAABCAAGBQJXaomFAAoJEN0jrNd/PrOh75YP/3UiN/pDybfXcayFnlvBPmpx
+XRWKAk7QmsEtB87UtlZX0D9JFs1zVMyeB5IGLBBhyS2wNOLUF334aJrHG0rglFDL
+3F5VVZixprwLSddIcaUJf16AHmTiPuYKEDljOh3AmMR1nKLnG5U+YChffwrM0eBJ
+kpfVJ/SWzyyKAUwUVNJOWMeZSxUqhMCHklCHXu5v7ry5ZM1qf44Zd/ReAXVsGyXq
+oNGzotdy7WhCLbP1ZIAXwRgNT1spTcd57xfaaYJVY94eUC2djnrUIh25yTdQ7M4L
+Z9sBlSaxTcXcRYldZMku2SEk1JUT17U/biwsWaBxFLdbJII/XuPb6otDr/cpBnS8
+pTPvgZ8+zL6J3cllpbocfb8Sq0luTKWYYODCRCcGsdiMJNCKOrP2cOYdqrWcZ4Ek
+W1Xc6YCdCDX8hjguI95SSBxIF1zZT+pVA2L5OY7s8qQcoBasIZTv6jiNdBPOe+u9
+sBiZfIhGT28f79q9+bn/Lur9AccyJEeS37juNiKJSI0OckRL0jPkVExUbP2AMVut
+27x3HMXoVgaZ6KoUO7xaPrYSIu0gHpLXOMV9s0uJXzm6poGp/QZpb+mi2zaDQcXk
+PWVstjVfInrCExc9f05BGdvbk/23LZOcdggtRhBUp5GDTM3EiYLwVgIvG5cfAkVy
+Sy4yvyy0badK1Ds1BaAE
+=LJ85
 -----END PGP SIGNATURE-----
 
---ulDeV4rPMk/y39in--
+--QDd5rp1wjxlDmy9q--
+
+
+--===============7200773269277608684==
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: inline
+
+_______________________________________________
+linux-arm-kernel mailing list
+linux-arm-kernel@lists.infradead.org
+http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+
+--===============7200773269277608684==--
