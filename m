@@ -1,29 +1,32 @@
 From: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
-Subject: nouveau: DRM: failed to create ce channel, -22 on Jetson TK1
-Date: Wed, 22 Jun 2016 20:59:13 -0700
-Message-ID: <20160623035913.GA22402@jirafa.cyrius.com>
+Subject: poweroff on TK1: 7000d000.i2c: i2c transfer timed out
+Date: Wed, 22 Jun 2016 21:08:39 -0700
+Message-ID: <20160623040839.GA22569@jirafa.cyrius.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-I see the following on a Jetson TK1:
+I get the following when I run 'poweroff' on a Jetson TK1 with the
+Debian kernel:
 
-[    9.495425] [TTM] Initializing DMA pool allocator
-[    9.495513] nouveau 57000000.gpu: DRM: VRAM: 0 MiB
-[    9.495520] nouveau 57000000.gpu: DRM: GART: 1048576 MiB
-[    9.508076] nouveau 57000000.gpu: DRM: failed to create ce channel, -22
+[  938.650925] systemd-shutdown[1]: Powering off.
+[  939.677570] reboot: Power down
+[  940.680206] tegra-i2c 7000d000.i2c: i2c transfer timed out
+[  940.685751] as3722-power-off as3722-power-off: RESET_CONTROL_REG update failed, -110
+[  940.694297] Kernel panic - not syncing: Attempted to kill init!  exitcode=0x00000000
 
-A Google search suggests that I'm not the only one with this, but I
-don't see it being discussed anywhere.
+Interestingly, a kernel compiled with the multi_v7 defconfig powers
+off correctly.  I believe all of the obvious options are enabled in
+the Debian kernel.  I played around with multi_v7_defconfig and
+eventually saw it there as well but it wasn't obvious what options
+mattered. (Sorry, I know this is a lousy bug report!)   I'm wonder if
+it's a timing issue.
 
-Is this known / expected?
-
-This is with 4.6 and 4.7-rc4.  The firmware is installed.
+Has anyone seen this before?
 
 -- 
 Martin Michlmayr
