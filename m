@@ -1,63 +1,36 @@
-From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 2/2] arm64: tegra: Add VDD_GPU regulator to Jetson TX1
-Date: Thu, 23 Jun 2016 16:39:45 +0900
-Message-ID: <20160623073945.11642-2-acourbot@nvidia.com>
-References: <20160623073945.11642-1-acourbot@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [RFC PATCH 13/13] arm64: tegra: Add DPAUX pinctrl bindings
+Date: Thu, 23 Jun 2016 09:46:48 +0200
+Message-ID: <CACRpkdY5po-1Bwd8_5ynVQZhRVqur=x=QjiM_D4YsgHsMbnGwg@mail.gmail.com>
+References: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com> <1466165027-17917-14-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160623073945.11642-1-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <1466165027-17917-14-git-send-email-jonathanh@nvidia.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add the VDD_GPU regulator (a GPIO-enabled PWM regulator) to the Jetson
-TX1 board. This addition allows the GPU to be used provided the
-bootloader properly enabled the GPU node.
+On Fri, Jun 17, 2016 at 2:03 PM, Jon Hunter <jonathanh@nvidia.com> wrote:
 
-Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-Changes since v1:
-- Include this patch into the series to make sure it is merged after 1/2,
-  otherwise Jetson TX1 will lock when trying to enable the regulator.
+> Add the DPAUX pinctrl states for the DPAUX nodes defining all three
+> possible states of "aux", "i2c" and "off". Also add the 'i2c-bus'
+> node for the DPAUX nodes so that the I2C driver core does not attempt
+> to parse the pinctrl state nodes.
+>
+> Populate the nodes for the pinctrl clients of the DPAUX pin controller.
+> There are two clients for each DPAUX instance, namely the SOR and one of
+> the I2C adapters. The SOR clients may used the DPAUX pins in either AUX
+> or I2C modes and so for these devices we don't define any of the generic
+> pinctrl states (default, idle, etc) because the SOR driver will directly
+> set the state needed. For I2C clients only the I2C mode is used and so
+> we can simplify matters by using the generic pinctrl states for default
+> and idle.
+>
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 
- arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-index 983775e637a4..cc9fb5207f9d 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
-@@ -25,6 +25,10 @@
- 		};
- 	};
- 
-+	gpu@57000000 {
-+		vdd-supply = <&vdd_gpu>;
-+	};
-+
- 	i2c@7000c400 {
- 		backlight: backlight@2c {
- 			compatible = "ti,lp8557";
-@@ -51,4 +55,18 @@
- 			};
- 		};
- 	};
-+
-+	regulators {
-+		vdd_gpu: regulator@100 {
-+			compatible = "pwm-regulator";
-+			reg = <100>;
-+			pwms = <&pwm 1 4880>;
-+			regulator-name = "VDD_GPU";
-+			regulator-min-microvolt = <710000>;
-+			regulator-max-microvolt = <1320000>;
-+			enable-gpios = <&pmic 6 GPIO_ACTIVE_HIGH>;
-+			regulator-ramp-delay = <80>;
-+			regulator-enable-ramp-delay = <1000>;
-+		};
-+	};
- };
--- 
-2.8.3
+Yours
+Linus Walleij
