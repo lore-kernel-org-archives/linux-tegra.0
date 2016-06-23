@@ -1,113 +1,42 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] pci: tegra: correctly program PADS_REFCLK registers
-Date: Thu, 23 Jun 2016 10:44:48 +0200
-Message-ID: <20160623084448.GA8608@ulmo.ba.sec>
-References: <20160621184640.19885-1-swarren@wwwdotorg.org>
- <20160622125749.GJ26943@ulmo.ba.sec>
- <576AAFFD.4050404@wwwdotorg.org>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [RFC PATCH 00/13] Add support for Tegra DPAUX pinctrl
+Date: Thu, 23 Jun 2016 11:21:05 +0200
+Message-ID: <CACRpkdYGT9zwyi2Lsd6tyG5dVnPNH+1w9wo+w3=b7YX1pfBJUw@mail.gmail.com>
+References: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
+ <20160617165611.GO27475@ulmo.ba.sec> <20160617165842.GP27475@ulmo.ba.sec>
+ <CACRpkdaEUUCs3UR9U331wuFTkRswU4tFEg6JLoMVkHeSXfS_sA@mail.gmail.com> <20160623080400.GA8136@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <576AAFFD.4050404@wwwdotorg.org>
-Sender: linux-pci-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160623080400.GA8136-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "open list:DRM PANEL DRIVERS" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Thu, Jun 23, 2016 at 10:04 AM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+> On Thu, Jun 23, 2016 at 09:49:20AM +0200, Linus Walleij wrote:
+>> On Fri, Jun 17, 2016 at 6:58 PM, Thierry Reding
+>> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>>
+>> > Oh wait... there's the pinctrl helper function that is a build-
+>> > dependency. Linus, would you be okay if I took that through the
+>> > drm-tegra tree along with the DPAUX driver change, and provide a
+>> > stable branch for you to resolve conflicts against if needed?
+>>
+>> I have already applied it, but I can rebase and pull that patch out
+>> on a separate immutable branch and then  merge that branch
+>> into my devel and then you can pull it too.
+>>
+>> Would that work?
+>
+> Yes, that would be just fine.
 
---XsQoSWH+UP9D9v3l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+OK use this:
+https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-pinctrl.git/log/?h=devel-dt-free-map
 
-On Wed, Jun 22, 2016 at 09:34:21AM -0600, Stephen Warren wrote:
-> On 06/22/2016 06:57 AM, Thierry Reding wrote:
-> > On Tue, Jun 21, 2016 at 12:46:40PM -0600, Stephen Warren wrote:
-> > > From: Stephen Warren <swarren@nvidia.com>
-> > >=20
-> > > The value that should be programmed into the PADS_REFCLK register var=
-ies
-> > > per SoC. Fix the Tegra PCIe driver to program the correct values. Fut=
-ure
-> > > SoCs will require different values in cfg0/1, so the two values are s=
-tored
-> > > separately in the per-SoC data structures.
-> > >=20
-> > > For reference, the values are all documented in NV bug 1771116 commen=
-t 20.
-> > > Rhe ASIC team has validated all these values, except for the Tegra20 =
-value
-> > > which is simply left unchanged in this patch.
->=20
-> > > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegr=
-a.c
->=20
-> > > @@ -2078,6 +2070,7 @@ static const struct tegra_pcie_soc_data tegra20=
-_pcie_data =3D {
-> > >   	.msi_base_shift =3D 0,
-> > >   	.pads_pll_ctl =3D PADS_PLL_CTL_TEGRA20,
-> > >   	.tx_ref_sel =3D PADS_PLL_CTL_TXCLKREF_DIV10,
-> > > +	.pads_refclk_cfg0 =3D 0xfa5cfa5c,
-> > >   	.has_pex_clkreq_en =3D false,
-> > >   	.has_pex_bias_ctrl =3D false,
-> > >   	.has_intr_prsnt_sense =3D false,
-> > > @@ -2090,6 +2083,8 @@ static const struct tegra_pcie_soc_data tegra30=
-_pcie_data =3D {
-> > >   	.msi_base_shift =3D 8,
-> > >   	.pads_pll_ctl =3D PADS_PLL_CTL_TEGRA30,
-> > >   	.tx_ref_sel =3D PADS_PLL_CTL_TXCLKREF_BUF_EN,
-> > > +	.pads_refclk_cfg0 =3D 0xfa5cfa5c,
-> > > +	.pads_refclk_cfg1 =3D 0xfa5cfa5c,
-> > >   	.has_pex_clkreq_en =3D true,
-> > >   	.has_pex_bias_ctrl =3D true,
-> > >   	.has_intr_prsnt_sense =3D true,
-> > > @@ -2102,6 +2097,7 @@ static const struct tegra_pcie_soc_data tegra12=
-4_pcie_data =3D {
-> > >   	.msi_base_shift =3D 8,
-> > >   	.pads_pll_ctl =3D PADS_PLL_CTL_TEGRA30,
-> > >   	.tx_ref_sel =3D PADS_PLL_CTL_TXCLKREF_BUF_EN,
-> > > +	.pads_refclk_cfg0 =3D 0x44ac44ac,
-> > >   	.has_pex_clkreq_en =3D true,
-> > >   	.has_pex_bias_ctrl =3D true,
-> > >   	.has_intr_prsnt_sense =3D true,
-> >=20
-> > I think it'd be nice to have these decoded into their individual fields,
-> > to reduce the magic. We already define the register fields, so it seems
-> > sensible to use them.
->=20
-> I did consider that. However, the specification from the ASIC team is alw=
-ays
-> the raw values. Decoding them into bitfields is only going to make it har=
-der
-> to verify whether the correct values are present (since the reader has to
-> manually expand the math), and introduce the possibility of errors during
-> the expansion process. I think using raw numbers is better in this case.
+I merged that into my devel branch too.
 
-Alright, fine with me:
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---XsQoSWH+UP9D9v3l
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXa6GAAAoJEN0jrNd/PrOhq+AQALiKwNrnKCq+BGRpsG+2P4QQ
-31qWZDyzGdnW8383JdqtZpbvy+x9DIRd0nXFB82BKOzkcrZ28CUkZeG5lxPABQGh
-bhaC6QJMJT56nhCXbEbdB4SqAT0OO+FODJfHay3hMRHPsOeI2OyGPWayQqCYdQlw
-2j6kmcSFVukhQG1WKcV4cOrKEU8/bo5S7Hd1rLvYCPXNyQ6+ULyJj+9uDa9nyTwj
-hFmyJOW7jd9wsmRjGBrumI/VMDdvjGw1vL0if6hvctX4PY5eKVQc9DnkkRDa0oNY
-Y8CYMHe2P9jmeflR3YshnJRCmJXSjHdTFafab9biDsqSMX14yY1Vb1khNFt0C+6e
-qf9VCrr7tJ1ZfHu6VwGMgewm55c8gkjAARFz/QrDU3aBgAlopt3ATGzT4fpyXH0o
-I5JbboBoNJY0PLfX5ekyFsKfLs+YxyyVtwOgZq6OS1JoZ433tQq90xG0eeOoyNS+
-jd2uJsGZr5lNtRLb+5qrCYzJ5Z2lNFBRnLvPSixFBwL+sBY9c7mfHl0drJgy3Can
-YnbIBA/QpD36/ujP0LZm6n33sRwpCjuFIRJiLOKAgzUj5SoN647PTaNI6qNGbj6S
-DORyW7ToHlnLCnQrUUIi+XStWfLULh7HxokgZauqc1IZPb80VupaswddiiIQ9wXV
-UJiAxKzDpvZt6b+WtcdL
-=RxoY
------END PGP SIGNATURE-----
-
---XsQoSWH+UP9D9v3l--
+Yours,
+Linus Walleij
