@@ -1,74 +1,41 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 00/12] Add support for Tegra DPAUX pinctrl
-Date: Thu, 23 Jun 2016 16:58:53 +0100
-Message-ID: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH 04/12] dt-bindings: display: Update Tegra DPAUX documentation
+Date: Thu, 23 Jun 2016 16:58:57 +0100
+Message-ID: <1466697545-11868-5-git-send-email-jonathanh@nvidia.com>
+References: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+Content-Type: text/plain
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-i2c-owner@vger.kernel.org
 To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, dri-devel@lists.freedesktop.org, Jon Hunter <jonathanh@nvidia.com>, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-VGhlIERpc3BsYXkgUG9ydCBBdXhpbGlhcnkgKERQQVVYKSBjaGFubmVsIHBhZHMgY2FuIGJlIHNo
-YXJlZCB3aXRoIGFuCmludGVybmFsIEkyQyBjb250cm9sbGVyLiBBZGQgcGluY3RybCBzdXBwb3J0
-IGZvciB0aGVzZSBwYWRzIHNvIHRoYXQgdGhlCkkyQyBjb250cm9sbGVyIGNhbiByZXF1ZXN0IGFu
-ZCB1c2UgdGhlc2UgcGFkcy4KClRoaXMgc2VyaWVzIGhhcyBiZWVuIHRlc3RlZCB3aXRoIFRoaWVy
-cnkncyBwYXRjaGVzIGZvciBjb3JyZWN0aW5nIHRoZQpwYXJlbnQgY2xvY2sgZm9yIHRoZSBEUEFV
-WCBkZXZpY2VzIFswXS4KClBsZWFzZSBub3RlIHRoYXQgSSBoYXZlIGtlcHQgdGhlIHBhdGNoIHRo
-YXQgYWRkcyB0aGUgcGluY3RybCBmdW5jdGlvbiwKcGluY29uZl9nZW5lcmljX2R0X2ZyZWVfbWFw
-KCksIGluIHRoaXMgc2VyaWVzIGZvciBjb21wbGV0ZW5lc3MsIGFsdGhvdWdoCkxpbnVzIFcgaGFz
-IGFscmVhZHkgcGlja2VkIHRoaXMgdXAgKGFzIGl0IGlzIG5vdCBpbiAtbmV4dCBBRkFJQ1QgeWV0
-KS4KCkNoYW5nZXMgZnJvbSBpbml0aWFsIFJGQzoKLSBEcm9wcGVkIHBhdGNoZXMgZm9yIGFkZGlu
-ZyBzb3Itc2FmZSBjbG9ja3MgdG8gRFBBVVggaW4gZmF2b3VyIG9mIHRoZQogIHBhdGNoZXMgZnJv
-bSBUaGllcnJ5IFswXS4KLSBTcGxpdCB0aGUgRFBBVVggZnVuY3Rpb24gdG8gZW5hYmxlIHRoZSBE
-UEFVWCBwYWRzIGludG8gdHdvIGZ1bmN0aW9uczoKICBvbmUgZm9yIHR1cm5pbmcgb24gYW5kIG9u
-ZSBmb3IgdHVybmluZyBvZmYgdGhlIHBhZHMuCi0gVXBkYXRlZCB0aGUgZGVzY3JpcHRpb24gZm9y
-IHRoZSAnaTJjLWJ1cycgbm9kZSBiYXNlZCB1cG9uIE1hcmsgUidzCiAgZmVlZGJhY2suCi0gRHJv
-cHBlZCB0aGUgc2Vjb25kIHRlc3QgaWYgdGhlIGkyYy1jb3JlIHdoZW4gY2hlY2tpbmcgZm9yIHRo
-ZSBwcmVzZW5jZQogIG9mIHRoZSAnaTJjLWJ1cycgbm9kZSBiYXNlZCB1cG9uIFRoaWVycnkncyBm
-ZWVkYmFjay4KLSBSZW1vdmVkIGRlcGVkZW5jeSBvbiBDT05GSUdfUElOQ1RSTCBpbiB0aGUgRFBB
-VVggZHJpdmVyIGluIGZhdm91ciBvZgogIHVzaW5nICNpZmRlZidzIHBlciBUaGllcnJ5J3MgZmVl
-ZGJhY2sgKG5vdGUgYnkgcmVtb3ZpbmcgdGhlIGRlcGVuZGVuY3kKICBvbiBDT05GSUdfUElOQ1RS
-TCBJIGhhZCB0byB1c2UgI2lmZGVmcyBhcyBhbGwgdGhlIHN0cnVjdHVyZXMsIGZ1bmN0aW9uCiAg
-dGFibGVzLCBhbmQgZnVuY3Rpb25zIG1heSBub3QgYmUgZGVmaW5lZCkuCi0gVXBkYXRlZCBTT1Ig
-cG93ZXIgcGFydGl0aW9uIGRldmljZS10cmVlIG5vZGUgdG8gaW5jbHVkZSBhbGwgY2xvY2tzIGFu
-ZAogIHJlc2V0cyBhcyBkZXNjcmliZWQgaW4gdGhlIFRlZ3JhMjEwIFRSTS4KClswXSBodHRwOi8v
-bWFyYy5pbmZvLz9sPWxpbnV4LXRlZ3JhJm09MTQ2NjY3OTE1ODAyMDE5Jnc9MgoKSm9uIEh1bnRl
-ciAoMTIpOgogIHNvYy90ZWdyYTogcG1jOiBJbml0aWFsaXNlIHJlc2V0cyBhc3NvY2lhdGVkIHdp
-dGggYSBwb3dlciBwYXJ0aXRpb24KICBkcm0vdGVncmE6IENsZWFuLXVwIGlmIHByb2JpbmcgRFBB
-VVggZmFpbHMKICBkcm0vdGVncmE6IEFkZCBoZWxwZXIgZnVuY3Rpb25zIGZvciBzZXR0aW5nIHVw
-IERQQVVYIHBhZHMKICBkdC1iaW5kaW5nczogZGlzcGxheTogVXBkYXRlIFRlZ3JhIERQQVVYIGRv
-Y3VtZW50YXRpb24KICBkcm0vdGVncmE6IFByZXBhcmUgRFBBVVggZm9yIHN1cHBvcnRpbmcgZ2Vu
-ZXJpYyBQTSBkb21haW5zCiAgcGluY3RybDogcGluY29uZjogQWRkIGdlbmVyaWMgaGVscGVyIGZ1
-bmN0aW9uIGZvciBmcmVlaW5nIG1hcHBpbmdzCiAgZHQtYmluZGluZ3M6IGkyYzogQWRkIHN1cHBv
-cnQgZm9yICdpMmMtYnVzJyBzdWJub2RlCiAgaTJjOiBjb3JlOiBBZGQgc3VwcG9ydCBmb3IgJ2ky
-Yy1idXMnIHN1Ym5vZGUKICBkdC1iaW5kaW5nczogQWRkIGJpbmRpbmdzIGZvciBUZWdyYSBEUEFV
-WCBwaW5jdHJsIGRyaXZlcgogIGRybS90ZWdyYTogQWRkIHBpbmN0cmwgc3VwcG9ydCBmb3IgRFBB
-VVgKICBhcm02NDogdGVncmE6IEFkZCBTT1IgcG93ZXItZG9tYWluIG5vZGUKICBhcm02NDogdGVn
-cmE6IEFkZCBEUEFVWCBwaW5jdHJsIGJpbmRpbmdzCgogLi4uL2Rpc3BsYXkvdGVncmEvbnZpZGlh
-LHRlZ3JhMjAtaG9zdDF4LnR4dCAgICAgICAgfCAgMTIgKy0KIERvY3VtZW50YXRpb24vZGV2aWNl
-dHJlZS9iaW5kaW5ncy9pMmMvaTJjLnR4dCAgICAgIHwgICA4ICsKIC4uLi9waW5jdHJsL252aWRp
-YSx0ZWdyYTEyNC1kcGF1eC1wYWRjdGwudHh0ICAgICAgIHwgIDYwICsrKysrKwogYXJjaC9hcm02
-NC9ib290L2R0cy9udmlkaWEvdGVncmEyMTAuZHRzaSAgICAgICAgICAgfCAgNzggKysrKysrKwog
-ZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RwYXV4LmMgICAgICAgICAgICAgICAgICAgICAgfCAyMzkg
-KysrKysrKysrKysrKysrKystLS0tCiBkcml2ZXJzL2kyYy9pMmMtY29yZS5jICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICB8ICAxMCArLQogZHJpdmVycy9waW5jdHJsL3BpbmNvbmYtZ2VuZXJp
-Yy5jICAgICAgICAgICAgICAgICAgfCAgIDggKwogZHJpdmVycy9zb2MvdGVncmEvcG1jLmMgICAg
-ICAgICAgICAgICAgICAgICAgICAgICAgfCAgMTggKy0KIGluY2x1ZGUvbGludXgvcGluY3RybC9w
-aW5jb25mLWdlbmVyaWMuaCAgICAgICAgICAgIHwgICAyICsKIDkgZmlsZXMgY2hhbmdlZCwgMzgz
-IGluc2VydGlvbnMoKyksIDUyIGRlbGV0aW9ucygtKQogY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3Vt
-ZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9waW5jdHJsL252aWRpYSx0ZWdyYTEyNC1kcGF1
-eC1wYWRjdGwudHh0CgotLSAKMi4xLjQKCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZy
-ZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3Rp
-bmZvL2RyaS1kZXZlbAo=
+Update the DPAUX compatibility string information for Tegra124, Tegra132
+and Tegra210.
+
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ .../devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt     | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+index a3bd8c050c4e..275f45680892 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+@@ -226,9 +226,9 @@ of the following host1x client modules:
+   - nvidia,dpaux: phandle to a DispayPort AUX interface
+ 
+ - dpaux: DisplayPort AUX interface
+-  - compatible: For Tegra124, must contain "nvidia,tegra124-dpaux".  Otherwise,
+-    must contain '"nvidia,<chip>-dpaux", "nvidia,tegra124-dpaux"', where
+-    <chip> is tegra132.
++  - compatible : Should contain one of the following:
++    - "nvidia,tegra124-dpaux": for Tegra124 and Tegra132
++    - "nvidia,tegra210-dpaux": for Tegra210
+   - reg: Physical base address and length of the controller's registers.
+   - interrupts: The interrupt outputs from the controller.
+   - clocks: Must contain an entry for each entry in clock-names.
+-- 
+2.1.4
