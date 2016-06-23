@@ -1,42 +1,34 @@
-From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC PATCH 00/13] Add support for Tegra DPAUX pinctrl
-Date: Thu, 23 Jun 2016 11:21:05 +0200
-Message-ID: <CACRpkdYGT9zwyi2Lsd6tyG5dVnPNH+1w9wo+w3=b7YX1pfBJUw@mail.gmail.com>
-References: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
- <20160617165611.GO27475@ulmo.ba.sec> <20160617165842.GP27475@ulmo.ba.sec>
- <CACRpkdaEUUCs3UR9U331wuFTkRswU4tFEg6JLoMVkHeSXfS_sA@mail.gmail.com> <20160623080400.GA8136@ulmo.ba.sec>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+From: Colin King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+Subject: [PATCH] input: tegra-kbc: fix spelling mistake: "porperly" -> "properly"
+Date: Thu, 23 Jun 2016 10:58:27 +0100
+Message-ID: <1466675907-3366-1-git-send-email-colin.king@canonical.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160623080400.GA8136-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "open list:DRM PANEL DRIVERS" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Rakesh Iyer <riyer-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dmitry Torokhov <dmitry.torokhov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-input-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jun 23, 2016 at 10:04 AM, Thierry Reding
-<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Thu, Jun 23, 2016 at 09:49:20AM +0200, Linus Walleij wrote:
->> On Fri, Jun 17, 2016 at 6:58 PM, Thierry Reding
->> <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->>
->> > Oh wait... there's the pinctrl helper function that is a build-
->> > dependency. Linus, would you be okay if I took that through the
->> > drm-tegra tree along with the DPAUX driver change, and provide a
->> > stable branch for you to resolve conflicts against if needed?
->>
->> I have already applied it, but I can rebase and pull that patch out
->> on a separate immutable branch and then  merge that branch
->> into my devel and then you can pull it too.
->>
->> Would that work?
->
-> Yes, that would be just fine.
+From: Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
 
-OK use this:
-https://git.kernel.org/cgit/linux/kernel/git/linusw/linux-pinctrl.git/log/?h=devel-dt-free-map
+trivial fix to spelling mistake in dev_err message
 
-I merged that into my devel branch too.
+Signed-off-by: Colin Ian King <colin.king-Z7WLFzj8eWMS+FvcfC7Uqw@public.gmane.org>
+---
+ drivers/input/keyboard/tegra-kbc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
+index acc5394..7d61439 100644
+--- a/drivers/input/keyboard/tegra-kbc.c
++++ b/drivers/input/keyboard/tegra-kbc.c
+@@ -552,7 +552,7 @@ static int tegra_kbc_parse_dt(struct tegra_kbc *kbc)
+ 
+ 	if (!num_rows || !num_cols || ((num_rows + num_cols) > KBC_MAX_GPIO)) {
+ 		dev_err(kbc->dev,
+-			"keypad rows/columns not porperly specified\n");
++			"keypad rows/columns not properly specified\n");
+ 		return -EINVAL;
+ 	}
+ 
+-- 
+2.8.1
