@@ -1,93 +1,158 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 01/12] soc/tegra: pmc: Initialise resets associated with a power partition
-Date: Thu, 23 Jun 2016 16:58:54 +0100
-Message-ID: <1466697545-11868-2-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 03/12] drm/tegra: Add helper functions for setting up DPAUX pads
+Date: Thu, 23 Jun 2016 16:58:56 +0100
+Message-ID: <1466697545-11868-4-git-send-email-jonathanh@nvidia.com>
 References: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1466697545-11868-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-When registering the Tegra power partitions with the generic PM domain
-framework, the current state of the each partition is checked and used
-as the default state for the partition. However, the state of each reset
-associated with the partition is not initialised and so it is possible
-that the state of the resets are not in the expected state. For example,
-if a partition is on, then the resets should be de-asserted and if the
-partition is off, the resets should be asserted.
+In preparation for adding pinctrl support for the DPAUX pads, add
+helpers functions for configuring the pads and controlling the power
+for the pads.
 
-There have been cases where the bootloader has powered on a partition
-and only de-asserted some of the resets to some of the devices in the
-partition. This can cause accesses to these devices to hang the system
-when the kernel boots and attempts to probe these devices.
+Please note that although a simple if-statement could be used instead
+of a case statement for configuring the pads as there are only two
+possible modes, a case statement is used because when integrating with
+the pinctrl framework, we need to be able to handle invalid modes that
+could be passed.
 
-Ideally, the driver for the device should ensure the reset has been
-de-asserted when probing, but the resets cannot be shared between the
-PMC driver (that needs to de-assert/assert the reset when turning the
-partition on or off) and another driver because we cannot ensure the
-reset is in the correct state.
-
-To ensure the resets are in the correct state, when using the generic
-PM domain framework, put each reset associated with the partition in
-the correct state (based upon the partition's current state) when
-obtaining the resets for a partition.
-
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/soc/tegra/pmc.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/tegra/dpaux.c | 81 +++++++++++++++++++++++++++----------------
+ 1 file changed, 51 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index d13516981629..8a421a0b1ece 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -738,7 +738,7 @@ err:
+diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
+index 0874a7e5b37b..4014ec57ed31 100644
+--- a/drivers/gpu/drm/tegra/dpaux.c
++++ b/drivers/gpu/drm/tegra/dpaux.c
+@@ -267,6 +267,51 @@ static irqreturn_t tegra_dpaux_irq(int irq, void *data)
+ 	return ret;
  }
  
- static int tegra_powergate_of_get_resets(struct tegra_powergate *pg,
--					 struct device_node *np)
-+					 struct device_node *np, bool off)
++static void tegra_dpaux_pad_power_down(struct tegra_dpaux *dpaux)
++{
++	u32 value = tegra_dpaux_readl(dpaux, DPAUX_HYBRID_SPARE);
++
++	value |= DPAUX_HYBRID_SPARE_PAD_POWER_DOWN;
++
++	tegra_dpaux_writel(dpaux, value, DPAUX_HYBRID_SPARE);
++}
++
++static void tegra_dpaux_pad_power_up(struct tegra_dpaux *dpaux)
++{
++	u32 value = tegra_dpaux_readl(dpaux, DPAUX_HYBRID_SPARE);
++
++	value &= ~DPAUX_HYBRID_SPARE_PAD_POWER_DOWN;
++
++	tegra_dpaux_writel(dpaux, value, DPAUX_HYBRID_SPARE);
++}
++
++static int tegra_dpaux_pad_config(struct tegra_dpaux *dpaux, unsigned function)
++{
++	u32 value;
++
++	switch (function) {
++	case DPAUX_HYBRID_PADCTL_MODE_AUX:
++		value = DPAUX_HYBRID_PADCTL_AUX_CMH(2) |
++			DPAUX_HYBRID_PADCTL_AUX_DRVZ(4) |
++			DPAUX_HYBRID_PADCTL_AUX_DRVI(0x18) |
++			DPAUX_HYBRID_PADCTL_AUX_INPUT_RCV |
++			DPAUX_HYBRID_PADCTL_MODE_AUX;
++		break;
++	case DPAUX_HYBRID_PADCTL_MODE_I2C:
++		value = DPAUX_HYBRID_PADCTL_I2C_SDA_INPUT_RCV |
++			DPAUX_HYBRID_PADCTL_I2C_SCL_INPUT_RCV |
++			DPAUX_HYBRID_PADCTL_MODE_I2C;
++		break;
++	default:
++		return -ENOTSUPP;
++	}
++
++	tegra_dpaux_writel(dpaux, value, DPAUX_HYBRID_PADCTL);
++	tegra_dpaux_pad_power_up(dpaux);
++
++	return 0;
++}
++
+ static int tegra_dpaux_probe(struct platform_device *pdev)
  {
- 	struct reset_control *rst;
- 	unsigned int i, count;
-@@ -758,6 +758,16 @@ static int tegra_powergate_of_get_resets(struct tegra_powergate *pg,
- 			err = PTR_ERR(pg->resets[i]);
- 			goto error;
- 		}
-+
-+		if (off)
-+			err = reset_control_assert(pg->resets[i]);
-+		else
-+			err = reset_control_deassert(pg->resets[i]);
-+
-+		if (err) {
-+			reset_control_put(pg->resets[i]);
-+			goto error;
-+		}
- 	}
- 
- 	pg->num_resets = count;
-@@ -798,14 +808,14 @@ static void tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
- 	pg->genpd.power_on = tegra_genpd_power_on;
- 	pg->pmc = pmc;
- 
-+	off = !tegra_powergate_is_powered(pg->id);
-+
- 	if (tegra_powergate_of_get_clks(pg, np))
- 		goto set_available;
- 
--	if (tegra_powergate_of_get_resets(pg, np))
-+	if (tegra_powergate_of_get_resets(pg, np, off))
- 		goto remove_clks;
- 
--	off = !tegra_powergate_is_powered(pg->id);
+ 	struct tegra_dpaux *dpaux;
+@@ -372,15 +417,9 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
+ 	 * is no possibility to perform the I2C mode configuration in the
+ 	 * HDMI path.
+ 	 */
+-	value = tegra_dpaux_readl(dpaux, DPAUX_HYBRID_SPARE);
+-	value &= ~DPAUX_HYBRID_SPARE_PAD_POWER_DOWN;
+-	tegra_dpaux_writel(dpaux, value, DPAUX_HYBRID_SPARE);
 -
- 	pm_genpd_init(&pg->genpd, NULL, off);
+-	value = tegra_dpaux_readl(dpaux, DPAUX_HYBRID_PADCTL);
+-	value = DPAUX_HYBRID_PADCTL_I2C_SDA_INPUT_RCV |
+-		DPAUX_HYBRID_PADCTL_I2C_SCL_INPUT_RCV |
+-		DPAUX_HYBRID_PADCTL_MODE_I2C;
+-	tegra_dpaux_writel(dpaux, value, DPAUX_HYBRID_PADCTL);
++	err = tegra_dpaux_pad_config(dpaux, DPAUX_HYBRID_PADCTL_MODE_I2C);
++	if (err < 0)
++		return err;
  
- 	if (of_genpd_add_provider_simple(np, &pg->genpd))
+ 	/* enable and clear all interrupts */
+ 	value = DPAUX_INTR_AUX_DONE | DPAUX_INTR_IRQ_EVENT |
+@@ -408,12 +447,9 @@ assert_reset:
+ static int tegra_dpaux_remove(struct platform_device *pdev)
+ {
+ 	struct tegra_dpaux *dpaux = platform_get_drvdata(pdev);
+-	u32 value;
+ 
+ 	/* make sure pads are powered down when not in use */
+-	value = tegra_dpaux_readl(dpaux, DPAUX_HYBRID_SPARE);
+-	value |= DPAUX_HYBRID_SPARE_PAD_POWER_DOWN;
+-	tegra_dpaux_writel(dpaux, value, DPAUX_HYBRID_SPARE);
++	tegra_dpaux_pad_power_down(dpaux);
+ 
+ 	drm_dp_aux_unregister(&dpaux->aux);
+ 
+@@ -538,30 +574,15 @@ enum drm_connector_status drm_dp_aux_detect(struct drm_dp_aux *aux)
+ int drm_dp_aux_enable(struct drm_dp_aux *aux)
+ {
+ 	struct tegra_dpaux *dpaux = to_dpaux(aux);
+-	u32 value;
+-
+-	value = DPAUX_HYBRID_PADCTL_AUX_CMH(2) |
+-		DPAUX_HYBRID_PADCTL_AUX_DRVZ(4) |
+-		DPAUX_HYBRID_PADCTL_AUX_DRVI(0x18) |
+-		DPAUX_HYBRID_PADCTL_AUX_INPUT_RCV |
+-		DPAUX_HYBRID_PADCTL_MODE_AUX;
+-	tegra_dpaux_writel(dpaux, value, DPAUX_HYBRID_PADCTL);
+ 
+-	value = tegra_dpaux_readl(dpaux, DPAUX_HYBRID_SPARE);
+-	value &= ~DPAUX_HYBRID_SPARE_PAD_POWER_DOWN;
+-	tegra_dpaux_writel(dpaux, value, DPAUX_HYBRID_SPARE);
+-
+-	return 0;
++	return tegra_dpaux_pad_config(dpaux, DPAUX_HYBRID_PADCTL_MODE_AUX);
+ }
+ 
+ int drm_dp_aux_disable(struct drm_dp_aux *aux)
+ {
+ 	struct tegra_dpaux *dpaux = to_dpaux(aux);
+-	u32 value;
+ 
+-	value = tegra_dpaux_readl(dpaux, DPAUX_HYBRID_SPARE);
+-	value |= DPAUX_HYBRID_SPARE_PAD_POWER_DOWN;
+-	tegra_dpaux_writel(dpaux, value, DPAUX_HYBRID_SPARE);
++	tegra_dpaux_pad_power_down(dpaux);
+ 
+ 	return 0;
+ }
 -- 
 2.1.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
