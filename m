@@ -1,33 +1,38 @@
-From: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
-Subject: poweroff on TK1: 7000d000.i2c: i2c transfer timed out
-Date: Wed, 22 Jun 2016 21:08:39 -0700
-Message-ID: <20160623040839.GA22569@jirafa.cyrius.com>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: nouveau: DRM: failed to create ce channel, -22 on Jetson TK1
+Date: Thu, 23 Jun 2016 14:48:34 +0900
+Message-ID: <CAAVeFuLZVXj+8mYk0W-cHBd8qKjU68+LXKdK2R3CLNE4kRDD9g@mail.gmail.com>
+References: <20160623035913.GA22402@jirafa.cyrius.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
+In-Reply-To: <20160623035913.GA22402-IRMp5PtgtdoigzW5ZibpNwC/G2K4zDHf@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-I get the following when I run 'poweroff' on a Jetson TK1 with the
-Debian kernel:
+Hi,
 
-[  938.650925] systemd-shutdown[1]: Powering off.
-[  939.677570] reboot: Power down
-[  940.680206] tegra-i2c 7000d000.i2c: i2c transfer timed out
-[  940.685751] as3722-power-off as3722-power-off: RESET_CONTROL_REG update failed, -110
-[  940.694297] Kernel panic - not syncing: Attempted to kill init!  exitcode=0x00000000
+On Thu, Jun 23, 2016 at 12:59 PM, Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org> wrote:
+> I see the following on a Jetson TK1:
+>
+> [    9.495425] [TTM] Initializing DMA pool allocator
+> [    9.495513] nouveau 57000000.gpu: DRM: VRAM: 0 MiB
+> [    9.495520] nouveau 57000000.gpu: DRM: GART: 1048576 MiB
+> [    9.508076] nouveau 57000000.gpu: DRM: failed to create ce channel, -22
+>
+> A Google search suggests that I'm not the only one with this, but I
+> don't see it being discussed anywhere.
+>
+> Is this known / expected?
+>
+> This is with 4.6 and 4.7-rc4.  The firmware is installed.
 
-Interestingly, a kernel compiled with the multi_v7 defconfig powers
-off correctly.  I believe all of the obvious options are enabled in
-the Debian kernel.  I played around with multi_v7_defconfig and
-eventually saw it there as well but it wasn't obvious what options
-mattered. (Sorry, I know this is a lousy bug report!)   I'm wonder if
-it's a timing issue.
+It is expected - Tegra does not have a CE channel and Nouveau
+complains about it, but then falls back to using GR for copy and
+everything should work. I tried to silence that message in the past
+but the proposed patch was rejected (too complex for too little
+benefit IIRC).
 
-Has anyone seen this before?
-
--- 
-Martin Michlmayr
-http://www.cyrius.com/
+Is the GPU working fine otherwise? Your output suggests it should.
