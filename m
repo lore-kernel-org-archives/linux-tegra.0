@@ -1,135 +1,94 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 12/12] arm64: tegra: Add DPAUX pinctrl bindings
-Date: Thu, 23 Jun 2016 16:59:05 +0100
-Message-ID: <1466697545-11868-13-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 11/12] arm64: tegra: Add SOR power-domain node
+Date: Thu, 23 Jun 2016 16:59:04 +0100
+Message-ID: <1466697545-11868-12-git-send-email-jonathanh@nvidia.com>
 References: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1466697545-11868-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add the DPAUX pinctrl states for the DPAUX nodes defining all three
-possible states of "aux", "i2c" and "off". Also add the 'i2c-bus'
-node for the DPAUX nodes so that the I2C driver core does not attempt
-to parse the pinctrl state nodes.
+Add node for SOR power-domain for Tegra210 and populate the SOR
+power-domain phandle for SOR and DPAUX nodes that are dependent
+on this power-domain.
 
-Populate the nodes for the pinctrl clients of the DPAUX pin controller.
-There are two clients for each DPAUX instance, namely the SOR and one of
-the I2C adapters. The SOR clients may used the DPAUX pins in either AUX
-or I2C modes and so for these devices we don't define any of the generic
-pinctrl states (default, idle, etc) because the SOR driver will directly
-set the state needed. For I2C clients only the I2C mode is used and so
-we can simplify matters by using the generic pinctrl states for default
-and idle.
+Please note that although neither the SOR or DPAUX drivers currently
+support runtime power-management, by populating the power-domain node
+the SOR power-domain will be turned on before probing SOR or DPAUX
+devices and kept on while the devices are bound.
 
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 54 ++++++++++++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index ef317f0d773f..32af84e404d6 100644
+index ebf44f4059f8..ef317f0d773f 100644
 --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
 +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -36,6 +36,26 @@
+@@ -34,6 +34,7 @@
+ 			clock-names = "dpaux", "parent";
+ 			resets = <&tegra_car 207>;
  			reset-names = "dpaux";
- 			power-domains = <&pd_sor>;
++			power-domains = <&pd_sor>;
  			status = "disabled";
-+
-+			state_dpaux1_aux: pinmux_aux {
-+				groups = "dpaux-io";
-+				function = "aux";
-+			};
-+
-+			state_dpaux1_i2c: pinmux_i2c {
-+				groups = "dpaux-io";
-+				function = "i2c";
-+			};
-+
-+			state_dpaux1_off: pinmux_off {
-+				groups = "dpaux-io";
-+				function = "off";
-+			};
-+
-+			i2c-bus {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
  		};
  
- 		vi@54080000 {
-@@ -155,6 +175,10 @@
+@@ -154,6 +155,7 @@
  			clock-names = "sor", "parent", "dp", "safe";
  			resets = <&tegra_car 182>;
  			reset-names = "sor";
-+			pinctrl-0 = <&state_dpaux_aux>;
-+			pinctrl-1 = <&state_dpaux_i2c>;
-+			pinctrl-2 = <&state_dpaux_off>;
-+			pinctrl-names = "aux", "i2c", "off";
- 			power-domains = <&pd_sor>;
++			power-domains = <&pd_sor>;
  			status = "disabled";
  		};
-@@ -170,6 +194,10 @@
+ 
+@@ -168,6 +170,7 @@
  			clock-names = "sor", "parent", "dp", "safe";
  			resets = <&tegra_car 183>;
  			reset-names = "sor";
-+			pinctrl-0 = <&state_dpaux1_aux>;
-+			pinctrl-1 = <&state_dpaux1_i2c>;
-+			pinctrl-2 = <&state_dpaux1_off>;
-+			pinctrl-names = "aux", "i2c", "off";
- 			power-domains = <&pd_sor>;
++			power-domains = <&pd_sor>;
  			status = "disabled";
  		};
-@@ -185,6 +213,26 @@
+ 
+@@ -180,6 +183,7 @@
+ 			clock-names = "dpaux", "parent";
+ 			resets = <&tegra_car 181>;
  			reset-names = "dpaux";
- 			power-domains = <&pd_sor>;
++			power-domains = <&pd_sor>;
  			status = "disabled";
-+
-+			state_dpaux_aux: pinmux_aux {
-+				groups = "dpaux-io";
-+				function = "aux";
-+			};
-+
-+			state_dpaux_i2c: pinmux_i2c {
-+				groups = "dpaux-io";
-+				function = "i2c";
-+			};
-+
-+			state_dpaux_off: pinmux_off {
-+				groups = "dpaux-io";
-+				function = "off";
-+			};
-+
-+			i2c-bus {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
  		};
  
- 		isp@54600000 {
-@@ -482,6 +530,9 @@
- 		reset-names = "i2c";
- 		dmas = <&apbdma 26>, <&apbdma 26>;
- 		dma-names = "rx", "tx";
-+		pinctrl-0 = <&state_dpaux1_i2c>;
-+		pinctrl-1 = <&state_dpaux1_off>;
-+		pinctrl-names = "default", "idle";
- 		status = "disabled";
- 	};
- 
-@@ -512,6 +563,9 @@
- 		reset-names = "i2c";
- 		dmas = <&apbdma 30>, <&apbdma 30>;
- 		dma-names = "rx", "tx";
-+		pinctrl-0 = <&state_dpaux_i2c>;
-+		pinctrl-1 = <&state_dpaux_off>;
-+		pinctrl-names = "default", "idle";
- 		status = "disabled";
+@@ -592,6 +596,26 @@
+ 				resets = <&tegra_car 198>;
+ 				#power-domain-cells = <0>;
+ 			};
++
++			pd_sor: sor {
++				clocks = <&tegra_car TEGRA210_CLK_SOR0>,
++					 <&tegra_car TEGRA210_CLK_SOR1>,
++					 <&tegra_car TEGRA210_CLK_CSI>,
++					 <&tegra_car TEGRA210_CLK_DSIA>,
++					 <&tegra_car TEGRA210_CLK_DSIB>,
++					 <&tegra_car TEGRA210_CLK_DPAUX>,
++					 <&tegra_car TEGRA210_CLK_DPAUX1>,
++					 <&tegra_car TEGRA210_CLK_MIPI_CAL>;
++				resets = <&tegra_car TEGRA210_CLK_SOR0>,
++					 <&tegra_car TEGRA210_CLK_SOR1>,
++					 <&tegra_car TEGRA210_CLK_CSI>,
++					 <&tegra_car TEGRA210_CLK_DSIA>,
++					 <&tegra_car TEGRA210_CLK_DSIB>,
++					 <&tegra_car TEGRA210_CLK_DPAUX>,
++					 <&tegra_car TEGRA210_CLK_DPAUX1>,
++					 <&tegra_car TEGRA210_CLK_MIPI_CAL>;
++				#power-domain-cells = <0>;
++			};
+ 		};
  	};
  
 -- 
 2.1.4
+
