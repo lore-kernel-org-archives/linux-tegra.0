@@ -1,34 +1,39 @@
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Subject: Re: [PATCH] input: tegra-kbc: fix spelling mistake: "porperly" ->
- "properly"
-Date: Thu, 23 Jun 2016 09:56:19 -0700
-Message-ID: <20160623165619.GA32561@dtor-ws>
-References: <1466675907-3366-1-git-send-email-colin.king@canonical.com>
- <20160623154804.GB30196@ulmo.ba.sec>
+From: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
+Subject: [tegrarcm PATCH 1/2] Fix command in man page
+Date: Thu, 23 Jun 2016 11:53:12 -0700
+Message-ID: <20160623185312.GA29066@jirafa.cyrius.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-input-owner@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20160623154804.GB30196@ulmo.ba.sec>
-Sender: linux-input-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Colin King <colin.king@canonical.com>, Rakesh Iyer <riyer@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jun 23, 2016 at 05:48:04PM +0200, Thierry Reding wrote:
-> On Thu, Jun 23, 2016 at 10:58:27AM +0100, Colin King wrote:
-> > From: Colin Ian King <colin.king@canonical.com>
-> > 
-> > trivial fix to spelling mistake in dev_err message
-> > 
-> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> > ---
-> >  drivers/input/keyboard/tegra-kbc.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> Acked-by: Thierry Reding <treding@nvidia.com>
+The command .fi is used after .nf to turn on paragraph filling mode
+again.  Fix the obvious typo.
 
-Applied, thank you.
+Signed-off-by: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
+---
+ src/tegrarcm.1.in | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/tegrarcm.1.in b/src/tegrarcm.1.in
+index 2b91f49..210f2e4 100644
+--- a/src/tegrarcm.1.in
++++ b/src/tegrarcm.1.in
+@@ -151,7 +151,7 @@ $ lsusb
+ Bus 003 Device 039: ID 0955:7721 NVidia Corp.
+ Bus 003 Device 045: ID 0955:7140 NVidia Corp.
+ ...
+-fi
++.fi
+ 
+ Then, to determine the USB port path, do one of:
+ 
+-- 
+2.1.4
 
 -- 
-Dmitry
+Martin Michlmayr
+http://www.cyrius.com/
