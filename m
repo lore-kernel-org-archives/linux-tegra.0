@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 04/12] dt-bindings: display: Update Tegra DPAUX documentation
-Date: Thu, 23 Jun 2016 16:58:57 +0100
-Message-ID: <1466697545-11868-5-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH 05/12] drm/tegra: Prepare DPAUX for supporting generic PM domains
+Date: Thu, 23 Jun 2016 16:58:58 +0100
+Message-ID: <1466697545-11868-6-git-send-email-jonathanh@nvidia.com>
 References: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,30 +12,78 @@ To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, 
 Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Update the DPAUX compatibility string information for Tegra124, Tegra132
-and Tegra210.
+To utilise the DPAUX on Tegra, the SOR power partition must be enabled.
+Now that Tegra supports the generic PM domain framework we manage the
+SOR power partition via this framework for DPAUX. However, the sequence
+for gating/ungating the SOR power partition requires that the DPAUX
+reset is asserted/de-asserted at the time the SOR power partition is
+gated/ungated, respectively. Now that the reset control core assumes
+that resets are exclusive, the Tegra generic PM domain code and the
+DPAUX driver cannot request the same reset unless we mark the resets as
+shared. Sharing resets we will not work in this case because we cannot
+guarantee that the reset is asserted/de-asserted at the appropriate
+time. Therefore, given that the Tegra generic PM domain code will handle
+the DPAUX reset, do not request the reset in the DPAUX driver if the
+DPAUX device has a PM domain associated.
 
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- .../devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt     | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/tegra/dpaux.c | 22 ++++++++++++++--------
+ 1 file changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-index a3bd8c050c4e..275f45680892 100644
---- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-+++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-@@ -226,9 +226,9 @@ of the following host1x client modules:
-   - nvidia,dpaux: phandle to a DispayPort AUX interface
+diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
+index 4014ec57ed31..61821f457209 100644
+--- a/drivers/gpu/drm/tegra/dpaux.c
++++ b/drivers/gpu/drm/tegra/dpaux.c
+@@ -339,11 +339,14 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
+ 		return -ENXIO;
+ 	}
  
- - dpaux: DisplayPort AUX interface
--  - compatible: For Tegra124, must contain "nvidia,tegra124-dpaux".  Otherwise,
--    must contain '"nvidia,<chip>-dpaux", "nvidia,tegra124-dpaux"', where
--    <chip> is tegra132.
-+  - compatible : Should contain one of the following:
-+    - "nvidia,tegra124-dpaux": for Tegra124 and Tegra132
-+    - "nvidia,tegra210-dpaux": for Tegra210
-   - reg: Physical base address and length of the controller's registers.
-   - interrupts: The interrupt outputs from the controller.
-   - clocks: Must contain an entry for each entry in clock-names.
+-	dpaux->rst = devm_reset_control_get(&pdev->dev, "dpaux");
+-	if (IS_ERR(dpaux->rst)) {
+-		dev_err(&pdev->dev, "failed to get reset control: %ld\n",
+-			PTR_ERR(dpaux->rst));
+-		return PTR_ERR(dpaux->rst);
++	if (!pdev->dev.pm_domain) {
++		dpaux->rst = devm_reset_control_get(&pdev->dev, "dpaux");
++		if (IS_ERR(dpaux->rst)) {
++			dev_err(&pdev->dev,
++				"failed to get reset control: %ld\n",
++				PTR_ERR(dpaux->rst));
++			return PTR_ERR(dpaux->rst);
++		}
+ 	}
+ 
+ 	dpaux->clk = devm_clk_get(&pdev->dev, NULL);
+@@ -360,7 +363,8 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
+-	reset_control_deassert(dpaux->rst);
++	if (dpaux->rst)
++		reset_control_deassert(dpaux->rst);
+ 
+ 	dpaux->clk_parent = devm_clk_get(&pdev->dev, "parent");
+ 	if (IS_ERR(dpaux->clk_parent)) {
+@@ -438,7 +442,8 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
+ disable_parent_clk:
+ 	clk_disable_unprepare(dpaux->clk_parent);
+ assert_reset:
+-	reset_control_assert(dpaux->rst);
++	if (dpaux->rst)
++		reset_control_assert(dpaux->rst);
+ 	clk_disable_unprepare(dpaux->clk);
+ 
+ 	return err;
+@@ -460,7 +465,8 @@ static int tegra_dpaux_remove(struct platform_device *pdev)
+ 	cancel_work_sync(&dpaux->work);
+ 
+ 	clk_disable_unprepare(dpaux->clk_parent);
+-	reset_control_assert(dpaux->rst);
++	if (dpaux->rst)
++		reset_control_assert(dpaux->rst);
+ 	clk_disable_unprepare(dpaux->clk);
+ 
+ 	return 0;
 -- 
 2.1.4
