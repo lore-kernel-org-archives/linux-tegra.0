@@ -1,94 +1,34 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 11/12] arm64: tegra: Add SOR power-domain node
-Date: Thu, 23 Jun 2016 16:59:04 +0100
-Message-ID: <1466697545-11868-12-git-send-email-jonathanh@nvidia.com>
-References: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH] input: tegra-kbc: fix spelling mistake: "porperly" ->
+ "properly"
+Date: Thu, 23 Jun 2016 09:56:19 -0700
+Message-ID: <20160623165619.GA32561@dtor-ws>
+References: <1466675907-3366-1-git-send-email-colin.king@canonical.com>
+ <20160623154804.GB30196@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-input-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20160623154804.GB30196@ulmo.ba.sec>
+Sender: linux-input-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Colin King <colin.king@canonical.com>, Rakesh Iyer <riyer@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-input@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add node for SOR power-domain for Tegra210 and populate the SOR
-power-domain phandle for SOR and DPAUX nodes that are dependent
-on this power-domain.
+On Thu, Jun 23, 2016 at 05:48:04PM +0200, Thierry Reding wrote:
+> On Thu, Jun 23, 2016 at 10:58:27AM +0100, Colin King wrote:
+> > From: Colin Ian King <colin.king@canonical.com>
+> > 
+> > trivial fix to spelling mistake in dev_err message
+> > 
+> > Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> > ---
+> >  drivers/input/keyboard/tegra-kbc.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Acked-by: Thierry Reding <treding@nvidia.com>
 
-Please note that although neither the SOR or DPAUX drivers currently
-support runtime power-management, by populating the power-domain node
-the SOR power-domain will be turned on before probing SOR or DPAUX
-devices and kept on while the devices are bound.
+Applied, thank you.
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index ebf44f4059f8..ef317f0d773f 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -34,6 +34,7 @@
- 			clock-names = "dpaux", "parent";
- 			resets = <&tegra_car 207>;
- 			reset-names = "dpaux";
-+			power-domains = <&pd_sor>;
- 			status = "disabled";
- 		};
- 
-@@ -154,6 +155,7 @@
- 			clock-names = "sor", "parent", "dp", "safe";
- 			resets = <&tegra_car 182>;
- 			reset-names = "sor";
-+			power-domains = <&pd_sor>;
- 			status = "disabled";
- 		};
- 
-@@ -168,6 +170,7 @@
- 			clock-names = "sor", "parent", "dp", "safe";
- 			resets = <&tegra_car 183>;
- 			reset-names = "sor";
-+			power-domains = <&pd_sor>;
- 			status = "disabled";
- 		};
- 
-@@ -180,6 +183,7 @@
- 			clock-names = "dpaux", "parent";
- 			resets = <&tegra_car 181>;
- 			reset-names = "dpaux";
-+			power-domains = <&pd_sor>;
- 			status = "disabled";
- 		};
- 
-@@ -592,6 +596,26 @@
- 				resets = <&tegra_car 198>;
- 				#power-domain-cells = <0>;
- 			};
-+
-+			pd_sor: sor {
-+				clocks = <&tegra_car TEGRA210_CLK_SOR0>,
-+					 <&tegra_car TEGRA210_CLK_SOR1>,
-+					 <&tegra_car TEGRA210_CLK_CSI>,
-+					 <&tegra_car TEGRA210_CLK_DSIA>,
-+					 <&tegra_car TEGRA210_CLK_DSIB>,
-+					 <&tegra_car TEGRA210_CLK_DPAUX>,
-+					 <&tegra_car TEGRA210_CLK_DPAUX1>,
-+					 <&tegra_car TEGRA210_CLK_MIPI_CAL>;
-+				resets = <&tegra_car TEGRA210_CLK_SOR0>,
-+					 <&tegra_car TEGRA210_CLK_SOR1>,
-+					 <&tegra_car TEGRA210_CLK_CSI>,
-+					 <&tegra_car TEGRA210_CLK_DSIA>,
-+					 <&tegra_car TEGRA210_CLK_DSIB>,
-+					 <&tegra_car TEGRA210_CLK_DPAUX>,
-+					 <&tegra_car TEGRA210_CLK_DPAUX1>,
-+					 <&tegra_car TEGRA210_CLK_MIPI_CAL>;
-+				#power-domain-cells = <0>;
-+			};
- 		};
- 	};
- 
 -- 
-2.1.4
-
+Dmitry
