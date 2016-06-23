@@ -1,64 +1,158 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 2/2] drm/tegra: sor: Use sor1_src clock to set parent for HDMI
-Date: Thu, 23 Jun 2016 12:27:59 +0200
-Message-ID: <20160623102759.23078-2-thierry.reding@gmail.com>
-References: <20160623102759.23078-1-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160623102759.23078-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Mark Brown <broonie@kernel.org>
+Subject: Applied "regulator: pwm: Support for enable GPIO" to the regulator tree
+Date: Thu, 23 Jun 2016 11:36:30 +0100
+Message-ID: <E1bG1zq-0001lE-Kq@debutante>
+References: <20160623073945.11642-1-acourbot@nvidia.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160623073945.11642-1-acourbot@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, gnurou@gmail.com
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+The patch
 
-When running in HDMI mode, the sor1 IP block needs to use the sor1_src
-as parent clock, and in turn configure the sor1_src to use pll_d2_out0
-as its parent.
+   regulator: pwm: Support for enable GPIO
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+has been applied to the regulator tree at
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 27bfa8893b15a3fa22a593c90a48c8bcb1f9c75b Mon Sep 17 00:00:00 2001
+From: Alexandre Courbot <acourbot@nvidia.com>
+Date: Thu, 23 Jun 2016 16:39:44 +0900
+Subject: [PATCH] regulator: pwm: Support for enable GPIO
+
+Add an optional enable GPIO to the pwm-regulator driver.
+
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/gpu/drm/tegra/sor.c | 14 +++++++++++++-
- 1 file changed, 13 insertions(+), 1 deletion(-)
+ .../bindings/regulator/pwm-regulator.txt           |  7 +++++-
+ drivers/regulator/pwm-regulator.c                  | 26 ++++++++++++++++++++++
+ 2 files changed, 32 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index 6887e52318e2..7405c39f6db3 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -172,6 +172,7 @@ struct tegra_sor {
- 	struct clk *clk_parent;
- 	struct clk *clk_brick;
- 	struct clk *clk_safe;
-+	struct clk *clk_src;
- 	struct clk *clk_dp;
- 	struct clk *clk;
+diff --git a/Documentation/devicetree/bindings/regulator/pwm-regulator.txt b/Documentation/devicetree/bindings/regulator/pwm-regulator.txt
+index ed936f0f34f2..dd6f59cf1455 100644
+--- a/Documentation/devicetree/bindings/regulator/pwm-regulator.txt
++++ b/Documentation/devicetree/bindings/regulator/pwm-regulator.txt
+@@ -38,13 +38,18 @@ NB: To be clear, if voltage-table is provided, then the device will be used
+ in Voltage Table Mode.  If no voltage-table is provided, then the device will
+ be used in Continuous Voltage Mode.
  
-@@ -2140,7 +2141,11 @@ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
- 	tegra_sor_writel(sor, 0x00000000, SOR_XBAR_POL);
- 
- 	/* switch to parent clock */
--	err = tegra_sor_set_parent_clock(clk, sor->clk_parent);
-+	err = clk_set_parent(sor->clk_src, sor->clk_parent);
-+	if (err < 0)
-+		dev_err(sor->dev, "failed to set source clock: %d\n", err);
++Optional properties:
++--------------------
++- enable-gpios:		GPIO to use to enable/disable the regulator
 +
-+	err = tegra_sor_set_parent_clock(sor, sor->clk_src);
- 	if (err < 0)
- 		dev_err(sor->dev, "failed to set parent clock: %d\n", err);
+ Any property defined as part of the core regulator binding can also be used.
+ (See: ../regulator/regulator.txt)
  
-@@ -2645,6 +2650,13 @@ static int tegra_sor_probe(struct platform_device *pdev)
- 		goto remove;
+-Continuous Voltage Example:
++Continuous Voltage With Enable GPIO Example:
+ 	pwm_regulator {
+ 		compatible = "pwm-regulator;
+ 		pwms = <&pwm1 0 8448 0>;
++		enable-gpios = <&gpio0 23 GPIO_ACTIVE_HIGH>;
+ 		regulator-min-microvolt = <1016000>;
+ 		regulator-max-microvolt = <1114000>;
+ 		regulator-name = "vdd_logic";
+diff --git a/drivers/regulator/pwm-regulator.c b/drivers/regulator/pwm-regulator.c
+index ab3cc0235843..90f8b7fd0437 100644
+--- a/drivers/regulator/pwm-regulator.c
++++ b/drivers/regulator/pwm-regulator.c
+@@ -20,6 +20,7 @@
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+ #include <linux/pwm.h>
++#include <linux/gpio/consumer.h>
+ 
+ struct pwm_regulator_data {
+ 	/*  Shared */
+@@ -38,6 +39,9 @@ struct pwm_regulator_data {
+ 
+ 	/* Continuous voltage */
+ 	int volt_uV;
++
++	/* Enable GPIO */
++	struct gpio_desc *enb_gpio;
+ };
+ 
+ struct pwm_voltages {
+@@ -94,6 +98,9 @@ static int pwm_regulator_enable(struct regulator_dev *dev)
+ {
+ 	struct pwm_regulator_data *drvdata = rdev_get_drvdata(dev);
+ 
++	if (drvdata->enb_gpio)
++		gpiod_set_value_cansleep(drvdata->enb_gpio, 1);
++
+ 	return pwm_enable(drvdata->pwm);
+ }
+ 
+@@ -103,6 +110,9 @@ static int pwm_regulator_disable(struct regulator_dev *dev)
+ 
+ 	pwm_disable(drvdata->pwm);
+ 
++	if (drvdata->enb_gpio)
++		gpiod_set_value_cansleep(drvdata->enb_gpio, 0);
++
+ 	return 0;
+ }
+ 
+@@ -110,6 +120,9 @@ static int pwm_regulator_is_enabled(struct regulator_dev *dev)
+ {
+ 	struct pwm_regulator_data *drvdata = rdev_get_drvdata(dev);
+ 
++	if (drvdata->enb_gpio && !gpiod_get_value_cansleep(drvdata->enb_gpio))
++		return false;
++
+ 	return pwm_is_enabled(drvdata->pwm);
+ }
+ 
+@@ -248,6 +261,7 @@ static int pwm_regulator_probe(struct platform_device *pdev)
+ 	struct regulator_dev *regulator;
+ 	struct regulator_config config = { };
+ 	struct device_node *np = pdev->dev.of_node;
++	enum gpiod_flags gpio_flags;
+ 	int ret;
+ 
+ 	if (!np) {
+@@ -285,6 +299,18 @@ static int pwm_regulator_probe(struct platform_device *pdev)
+ 		return ret;
  	}
  
-+	sor->clk_src = devm_clk_get(&pdev->dev, "source");
-+	if (IS_ERR(sor->clk_src)) {
-+		err = PTR_ERR(sor->clk_src);
-+		dev_err(&pdev->dev, "failed to get source clock: %d\n", err);
-+		goto remove;
++	if (init_data->constraints.boot_on || init_data->constraints.always_on)
++		gpio_flags = GPIOD_OUT_HIGH;
++	else
++		gpio_flags = GPIOD_OUT_LOW;
++	drvdata->enb_gpio = devm_gpiod_get_optional(&pdev->dev, "enable",
++						    gpio_flags);
++	if (IS_ERR(drvdata->enb_gpio)) {
++		ret = PTR_ERR(drvdata->enb_gpio);
++		dev_err(&pdev->dev, "Failed to get enable GPIO: %d\n", ret);
++		return ret;
 +	}
 +
- 	sor->clk_parent = devm_clk_get(&pdev->dev, "parent");
- 	if (IS_ERR(sor->clk_parent)) {
- 		err = PTR_ERR(sor->clk_parent);
+ 	/*
+ 	 * FIXME: pwm_apply_args() should be removed when switching to the
+ 	 * atomic PWM API.
 -- 
-2.8.3
+2.8.1
