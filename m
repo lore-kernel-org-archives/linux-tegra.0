@@ -1,90 +1,113 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [RFC PATCH 00/13] Add support for Tegra DPAUX pinctrl
-Date: Thu, 23 Jun 2016 10:04:00 +0200
-Message-ID: <20160623080400.GA8136@ulmo.ba.sec>
-References: <1466165027-17917-1-git-send-email-jonathanh@nvidia.com>
- <20160617165611.GO27475@ulmo.ba.sec>
- <20160617165842.GP27475@ulmo.ba.sec>
- <CACRpkdaEUUCs3UR9U331wuFTkRswU4tFEg6JLoMVkHeSXfS_sA@mail.gmail.com>
+Subject: Re: [PATCH] pci: tegra: correctly program PADS_REFCLK registers
+Date: Thu, 23 Jun 2016 10:44:48 +0200
+Message-ID: <20160623084448.GA8608@ulmo.ba.sec>
+References: <20160621184640.19885-1-swarren@wwwdotorg.org>
+ <20160622125749.GJ26943@ulmo.ba.sec>
+ <576AAFFD.4050404@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0557355303=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <CACRpkdaEUUCs3UR9U331wuFTkRswU4tFEg6JLoMVkHeSXfS_sA@mail.gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Stephen Warren <swarren@wwwdotorg.org>, "open list:DRM PANEL DRIVERS" <dri-devel@lists.freedesktop.org>, Jon Hunter <jonathanh@nvidia.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <576AAFFD.4050404@wwwdotorg.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0557355303==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="LQksG6bCIzRHxTLp"
-Content-Disposition: inline
-
-
---LQksG6bCIzRHxTLp
+--XsQoSWH+UP9D9v3l
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 23, 2016 at 09:49:20AM +0200, Linus Walleij wrote:
-> On Fri, Jun 17, 2016 at 6:58 PM, Thierry Reding
-> <thierry.reding@gmail.com> wrote:
+On Wed, Jun 22, 2016 at 09:34:21AM -0600, Stephen Warren wrote:
+> On 06/22/2016 06:57 AM, Thierry Reding wrote:
+> > On Tue, Jun 21, 2016 at 12:46:40PM -0600, Stephen Warren wrote:
+> > > From: Stephen Warren <swarren@nvidia.com>
+> > >=20
+> > > The value that should be programmed into the PADS_REFCLK register var=
+ies
+> > > per SoC. Fix the Tegra PCIe driver to program the correct values. Fut=
+ure
+> > > SoCs will require different values in cfg0/1, so the two values are s=
+tored
+> > > separately in the per-SoC data structures.
+> > >=20
+> > > For reference, the values are all documented in NV bug 1771116 commen=
+t 20.
+> > > Rhe ASIC team has validated all these values, except for the Tegra20 =
+value
+> > > which is simply left unchanged in this patch.
 >=20
-> > Oh wait... there's the pinctrl helper function that is a build-
-> > dependency. Linus, would you be okay if I took that through the
-> > drm-tegra tree along with the DPAUX driver change, and provide a
-> > stable branch for you to resolve conflicts against if needed?
+> > > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegr=
+a.c
 >=20
-> I have already applied it, but I can rebase and pull that patch out
-> on a separate immutable branch and then  merge that branch
-> into my devel and then you can pull it too.
+> > > @@ -2078,6 +2070,7 @@ static const struct tegra_pcie_soc_data tegra20=
+_pcie_data =3D {
+> > >   	.msi_base_shift =3D 0,
+> > >   	.pads_pll_ctl =3D PADS_PLL_CTL_TEGRA20,
+> > >   	.tx_ref_sel =3D PADS_PLL_CTL_TXCLKREF_DIV10,
+> > > +	.pads_refclk_cfg0 =3D 0xfa5cfa5c,
+> > >   	.has_pex_clkreq_en =3D false,
+> > >   	.has_pex_bias_ctrl =3D false,
+> > >   	.has_intr_prsnt_sense =3D false,
+> > > @@ -2090,6 +2083,8 @@ static const struct tegra_pcie_soc_data tegra30=
+_pcie_data =3D {
+> > >   	.msi_base_shift =3D 8,
+> > >   	.pads_pll_ctl =3D PADS_PLL_CTL_TEGRA30,
+> > >   	.tx_ref_sel =3D PADS_PLL_CTL_TXCLKREF_BUF_EN,
+> > > +	.pads_refclk_cfg0 =3D 0xfa5cfa5c,
+> > > +	.pads_refclk_cfg1 =3D 0xfa5cfa5c,
+> > >   	.has_pex_clkreq_en =3D true,
+> > >   	.has_pex_bias_ctrl =3D true,
+> > >   	.has_intr_prsnt_sense =3D true,
+> > > @@ -2102,6 +2097,7 @@ static const struct tegra_pcie_soc_data tegra12=
+4_pcie_data =3D {
+> > >   	.msi_base_shift =3D 8,
+> > >   	.pads_pll_ctl =3D PADS_PLL_CTL_TEGRA30,
+> > >   	.tx_ref_sel =3D PADS_PLL_CTL_TXCLKREF_BUF_EN,
+> > > +	.pads_refclk_cfg0 =3D 0x44ac44ac,
+> > >   	.has_pex_clkreq_en =3D true,
+> > >   	.has_pex_bias_ctrl =3D true,
+> > >   	.has_intr_prsnt_sense =3D true,
+> >=20
+> > I think it'd be nice to have these decoded into their individual fields,
+> > to reduce the magic. We already define the register fields, so it seems
+> > sensible to use them.
 >=20
-> Would that work?
+> I did consider that. However, the specification from the ASIC team is alw=
+ays
+> the raw values. Decoding them into bitfields is only going to make it har=
+der
+> to verify whether the correct values are present (since the reader has to
+> manually expand the math), and introduce the possibility of errors during
+> the expansion process. I think using raw numbers is better in this case.
 
-Yes, that would be just fine.
+Alright, fine with me:
 
-Thierry
+Acked-by: Thierry Reding <treding@nvidia.com>
 
---LQksG6bCIzRHxTLp
+--XsQoSWH+UP9D9v3l
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXa5fsAAoJEN0jrNd/PrOhr3IP/2BsqiFy2AOUFDDVY3CUSinw
-vZan6TbE0yv7c47WoxtYq+c7luEbksr5gOEsdNlY4/kuYvDE0D8jG7X2MIm7xQBE
-T8Gn5S4t/zRE/XdOIhsl0nqBT3KozWn+L5ZsHfPM8S/sI84IdJB9G8o5asMTAb2J
-RJVXIyeJW2i+QrALLgluC1MkyqgJSqyPNlxsYCy9vuxRnyj7e+dU+61EnPPzIkAV
-fJt10IBT0CDR0Zr//CxwDW6DNkZGV8RYlxJdp57/y4DwL223m9N8gPpnpb3t1Nk9
-GUdUHO7geC5qRbhgdMmf4wyICov5mbf3bIT8XiUE9/xzeGv38dHVMx/DmU+5hhm0
-qWZVubYL/6642OcnK1IdmsEiTQrYhXWLoCnOt0F9ICKFfIDjmApZqI4bnnwsrygy
-Yvb2H9jkRGJARTUTpc6xaJxYNb4wuhCs4Q4K4Jj2A9+ynyz4F6kZdLE4OD5wnWRi
-R2w/t2zm5AOmJ24PIbyLTxEd+wwlgfjcZg4DfvZuuhdM9Rw6cubThR6czTu36moY
-pK3JVQ6CGMTi6ABbqOASHUTQ0tE6WKX2uqvpXKAq7xhSuZb3vUreKhk7vxjALqYB
-w0PpTWwITcaJfaJ9pTrX9zdCCDQsJcE8pUcGIGKUFv/ufrxNov0i2lOIYdPkwn5f
-zPmjDtDgGgEeLQA9DFJ0
-=w9Ex
+iQIcBAABCAAGBQJXa6GAAAoJEN0jrNd/PrOhq+AQALiKwNrnKCq+BGRpsG+2P4QQ
+31qWZDyzGdnW8383JdqtZpbvy+x9DIRd0nXFB82BKOzkcrZ28CUkZeG5lxPABQGh
+bhaC6QJMJT56nhCXbEbdB4SqAT0OO+FODJfHay3hMRHPsOeI2OyGPWayQqCYdQlw
+2j6kmcSFVukhQG1WKcV4cOrKEU8/bo5S7Hd1rLvYCPXNyQ6+ULyJj+9uDa9nyTwj
+hFmyJOW7jd9wsmRjGBrumI/VMDdvjGw1vL0if6hvctX4PY5eKVQc9DnkkRDa0oNY
+Y8CYMHe2P9jmeflR3YshnJRCmJXSjHdTFafab9biDsqSMX14yY1Vb1khNFt0C+6e
+qf9VCrr7tJ1ZfHu6VwGMgewm55c8gkjAARFz/QrDU3aBgAlopt3ATGzT4fpyXH0o
+I5JbboBoNJY0PLfX5ekyFsKfLs+YxyyVtwOgZq6OS1JoZ433tQq90xG0eeOoyNS+
+jd2uJsGZr5lNtRLb+5qrCYzJ5Z2lNFBRnLvPSixFBwL+sBY9c7mfHl0drJgy3Can
+YnbIBA/QpD36/ujP0LZm6n33sRwpCjuFIRJiLOKAgzUj5SoN647PTaNI6qNGbj6S
+DORyW7ToHlnLCnQrUUIi+XStWfLULh7HxokgZauqc1IZPb80VupaswddiiIQ9wXV
+UJiAxKzDpvZt6b+WtcdL
+=RxoY
 -----END PGP SIGNATURE-----
 
---LQksG6bCIzRHxTLp--
-
---===============0557355303==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0557355303==--
+--XsQoSWH+UP9D9v3l--
