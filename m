@@ -1,143 +1,77 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [PATCH v1 19/25] PCI: rcar Gen2: Request host bridge window resources
-Date: Fri, 24 Jun 2016 16:19:34 +0200
-Message-ID: <CAMuHMdVuwniXPZszPH8jTd8x0j+f__JjT6yY04RA_gw87sQidg@mail.gmail.com>
-References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
- <20160606230706.20936.13086.stgit@bhelgaas-glaptop2.roam.corp.google.com>
- <CAMuHMdVgLfTD-BjRZ+gVKgYE8dkDZzQ6DnYtkUs+jVPthJsEdQ@mail.gmail.com>
- <20160621142623.GA29966@localhost> <20160621154100.GA4782@cogentembedded.com> <20160621164947.GA7603@localhost>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <20160621164947.GA7603@localhost>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Valentine Barshak <valentine.barshak@cogentembedded.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci <linux-pci@vger.kernel.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Herring <robh@kernel.org>, Jason Cooper <jason@lakedaemon.net>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, Jingoo Han <jingoohan1@gmail.com>, Pratyush Anand <pratyush.anand@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, rfi@lists.rocketboards.org, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>, linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, linux-arm-kernel@
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH] pci: tegra: actually program REFCLK_CFG* on recent SoCs
+Date: Fri, 24 Jun 2016 08:37:03 -0600
+Message-ID: <20160624143703.13231-1-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Bjorn,
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-On Tue, Jun 21, 2016 at 6:49 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> On Tue, Jun 21, 2016 at 06:41:00PM +0300, Valentine Barshak wrote:
->> On Tue, Jun 21, 2016 at 09:26:23AM -0500, Bjorn Helgaas wrote:
->> > On Tue, Jun 21, 2016 at 12:41:31PM +0200, Geert Uytterhoeven wrote:
->> > > On Tue, Jun 7, 2016 at 1:07 AM, Bjorn Helgaas <bhelgaas@google.com> wrote:
->> > > > Request host bridge window resources so they appear in ioport_resource and
->> > > > iomem_resource and are reflected in /proc/ioports and /proc/iomem.
->> > > >
->> > > > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
->> > > > ---
->> > > >  drivers/pci/host/pci-rcar-gen2.c |    4 ++++
->> > > >  1 file changed, 4 insertions(+)
->> > > >
->> > > > diff --git a/drivers/pci/host/pci-rcar-gen2.c b/drivers/pci/host/pci-rcar-gen2.c
->> > > > index 9980a4b..617a6b2 100644
->> > > > --- a/drivers/pci/host/pci-rcar-gen2.c
->> > > > +++ b/drivers/pci/host/pci-rcar-gen2.c
->> > > > @@ -194,6 +194,7 @@ static int rcar_pci_setup(int nr, struct pci_sys_data *sys)
->> > > >         struct rcar_pci_priv *priv = sys->private_data;
->> > > >         void __iomem *reg = priv->reg;
->> > > >         u32 val;
->> > > > +       int ret;
->> > > >
->> > > >         pm_runtime_enable(priv->dev);
->> > > >         pm_runtime_get_sync(priv->dev);
->> > > > @@ -275,6 +276,9 @@ static int rcar_pci_setup(int nr, struct pci_sys_data *sys)
->> > > >         /* Add PCI resources */
->> > > >         pci_add_resource(&sys->resources, &priv->io_res);
->> > > >         pci_add_resource(&sys->resources, &priv->mem_res);
->> > > > +       ret = devm_request_pci_bus_resources(priv->dev, &sys->resources);
->> > > > +       if (ret < 0)
->> > > > +               return ret;
->> > > >
->> > > >         /* Setup bus number based on platform device id / of bus-range */
->> > > >         sys->busnr = priv->busnr;
->> > >
->> > > This patch (commit 1bd019707b7c9249d34c5d348f1ef75eb4d83e89 in pci/next)
->> > > broke PCI on r8a7791/koelsch. Dmesg differences are:
->> > >
->> > >  pci-rcar-gen2 ee090000.pci: PCI: bus0 revision 11
->> > > -pci-rcar-gen2 ee090000.pci: PCI host bridge to bus 0000:00
->> > > -pci_bus 0000:00: root bus resource [io  0xee080000-0xee0810ff]
->> > > -pci_bus 0000:00: root bus resource [mem 0xee080000-0xee0810ff]
->> >
->> > This is probably a result of this code in drivers/pci/host/pci-rcar-gen2.c:
->> >
->> >         /*
->> >          * The controller does not support/use port I/O,
->> >          * so setup a dummy port I/O region here.
->> >          */
->> >         priv->io_res.start = priv->mem_res.start;
->> >         priv->io_res.end = priv->mem_res.end;
->> >         priv->io_res.flags = IORESOURCE_IO;
->> >
->> > We try to avoid adding dummy regions like this, but maybe we missed
->> > this one.  I haven't found any email discussion about it yet, so I
->> > don't know what the reason for this one is.  Valentine, do you
->> > remember?
->>
->> I do not, but I think I've found something in my mailbox.
->> Below is the quote from the original conversation with:
->> (Re: [PATCH] pci: Add R-Car Gen2 internal PCI support)
->>
->> [quote starts]
->>  >>+    priv->mem_res = *mem_res;
->>  >>+    /*
->>  >>+     * The controller does not support/use port I/O,
->>  >>+     * so setup a dummy port I/O region here.
->>  >>+     */
->>  >>+    priv->io_res.start = priv->mem_res.start;
->>  >>+    priv->io_res.end = priv->mem_res.end;
->>  >>+    priv->io_res.flags = IORESOURCE_IO;
->>  >>
->>  > I don't understand this.  There's no requirement (at least as far as the
->>  > PCI core is concerned) to supply an I/O aperture at all, and I think it
->>  > would be better if you didn't.
->>  >
->>  > Oh, I see ... maybe pcibios_init_resources() forces you to have an
->>  > I/O resource to avoid having it give you a default one?  And I
->>  > suppose that since you have several host bridges, these dummy I/O
->>  > regions have to be distinct.  Ugh.  Well, I guess this is something
->>  > you'd have to fix here or in the ARM code, it's up to you what to do.
->>
->>  Exactly. This is to avoid assigning default I/O resources.
->> [quote ends]
->
-> Oh, right, now I remember.  Thanks for digging that out.
->
-> I propose the patches below to remove the requirement for having an
-> I/O space.  Any chance one of you could test them?
+On recent SoCs, tegra_pcie_phy_enable() isn't called; but instead
+tegra_pcie_enable_controller() calls tegra_xusb_phy_enable(). However,
+part of tegra_pcie_phy_enable() needs to happen in all cases. Move that
+code to tegra_pcie_port_enable() instead.
 
-Thanks!
-PCI seems to be working again on r8a7791/koelsch using today's pci/next,
-which includes these patches. Lspci shows the USB controllers again.
+For reference, NVIDIA's downstream Linux kernel performs this operation
+in tegra_pcie_enable_rp_features(), which is called immediately after
+tegra_pcie_port_enable(). Since that function doesn't exist in the mainline
+driver, we'll just add it to the tail of tegra_pcie_port_enable() instead.
 
-/proc/iomem gained a few entries:
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/pci/host/pci-tegra.c | 17 +++++++++--------
+ 1 file changed, 9 insertions(+), 8 deletions(-)
 
- ec700000-ec70ffff : /dma-controller@ec700000
- ec720000-ec72ffff : /dma-controller@ec720000
- ec740000-ec7401ff : audmapp
-+ee080000-ee0810ff : /pci@ee090000
-+  ee080000-ee080fff : 0000:00:01.0
-+  ee081000-ee0810ff : 0000:00:02.0
- ee090000-ee090bff : /pci@ee090000
-+ee0c0000-ee0c10ff : /pci@ee0d0000
-+  ee0c0000-ee0c0fff : 0001:01:01.0
-+  ee0c1000-ee0c10ff : 0001:01:02.0
- ee0d0000-ee0d0bff : /pci@ee0d0000
- ee300000-ee301fff : /sata@ee300000
- ee700000-ee7003ff : /ethernet@ee700000
-
-Hence
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index 74887fedc3d4..2ec64a9e7943 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -541,12 +541,13 @@ static void tegra_pcie_port_reset(struct tegra_pcie_port *port)
+ 
+ static void tegra_pcie_port_enable(struct tegra_pcie_port *port)
+ {
+-	const struct tegra_pcie_soc_data *soc = port->pcie->soc_data;
++	struct tegra_pcie *pcie = port->pcie;
++	const struct tegra_pcie_soc_data *soc = pcie->soc_data;
+ 	unsigned long ctrl = tegra_pcie_port_get_pex_ctrl(port);
+ 	unsigned long value;
+ 
+ 	/* enable reference clock */
+-	value = afi_readl(port->pcie, ctrl);
++	value = afi_readl(pcie, ctrl);
+ 	value |= AFI_PEX_CTRL_REFCLK_EN;
+ 
+ 	if (soc->has_pex_clkreq_en)
+@@ -554,9 +555,14 @@ static void tegra_pcie_port_enable(struct tegra_pcie_port *port)
+ 
+ 	value |= AFI_PEX_CTRL_OVERRIDE_EN;
+ 
+-	afi_writel(port->pcie, value, ctrl);
++	afi_writel(pcie, value, ctrl);
+ 
+ 	tegra_pcie_port_reset(port);
++
++	/* Configure the reference clock driver */
++	pads_writel(pcie, soc->pads_refclk_cfg0, PADS_REFCLK_CFG0);
++	if (soc->num_ports > 2)
++		pads_writel(pcie, soc->pads_refclk_cfg1, PADS_REFCLK_CFG1);
+ }
+ 
+ static void tegra_pcie_port_disable(struct tegra_pcie_port *port)
+@@ -831,11 +837,6 @@ static int tegra_pcie_phy_enable(struct tegra_pcie *pcie)
+ 	value |= PADS_PLL_CTL_RST_B4SM;
+ 	pads_writel(pcie, value, soc->pads_pll_ctl);
+ 
+-	/* Configure the reference clock driver */
+-	pads_writel(pcie, soc->pads_refclk_cfg0, PADS_REFCLK_CFG0);
+-	if (soc->num_ports > 2)
+-		pads_writel(pcie, soc->pads_refclk_cfg1, PADS_REFCLK_CFG1);
+-
+ 	/* wait for the PLL to lock */
+ 	err = tegra_pcie_pll_wait(pcie, 500);
+ 	if (err < 0) {
+-- 
+2.9.0
