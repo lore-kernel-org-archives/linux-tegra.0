@@ -1,66 +1,74 @@
 From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 4/5] pwm: tegra: Add DT node compatible for Tegra186
-Date: Fri, 24 Jun 2016 11:10:15 -0500
-Message-ID: <20160624161015.GA13727@rob-hp-laptop>
-References: <1466596043-27262-1-git-send-email-ldewangan@nvidia.com>
- <1466596043-27262-5-git-send-email-ldewangan@nvidia.com>
- <20160622124614.GG26943@ulmo.ba.sec>
+Subject: Re: [PATCH 2/2] drm/tegra: sor: Use sor1_src clock to set parent for
+ HDMI
+Date: Fri, 24 Jun 2016 14:16:45 -0500
+Message-ID: <20160624191645.GA23255@rob-hp-laptop>
+References: <20160623102759.23078-1-thierry.reding@gmail.com>
+ <20160623102759.23078-2-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20160622124614.GG26943-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
+In-Reply-To: <20160623102759.23078-2-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-pwm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jun 22, 2016 at 02:46:14PM +0200, Thierry Reding wrote:
-> On Wed, Jun 22, 2016 at 05:17:22PM +0530, Laxman Dewangan wrote:
-> > Tegra186 has 8 different PWM controller and each controller has only
-> > one output. Earlier generation SoCs have the 4 PWM output per controller.
-> > 
-> > Add DT node compatible for Tegra186.
-> > 
-> > Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt | 10 ++++++----
-> >  1 file changed, 6 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
-> > index c52f03b..2851b2d 100644
-> > --- a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
-> > +++ b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
-> > @@ -1,10 +1,12 @@
-> >  Tegra SoC PWFM controller
-> >  
-> >  Required properties:
-> > -- compatible: For Tegra20, must contain "nvidia,tegra20-pwm".  For Tegra30,
-> > -  must contain "nvidia,tegra30-pwm".  Otherwise, must contain
-> > -  "nvidia,<chip>-pwm", plus one of the above, where <chip> is tegra114,
-> > -  tegra124, tegra132, or tegra210.
-> > +- compatible: For Tegra20, must contain "nvidia,tegra20-pwm".
-> > +	      For Tegra30, must contain "nvidia,tegra30-pwm".
-> > +	      For Tegra114, Tegra124, Tegra132, Tegra210 must contain
-> > +	      "nvidia,<chip>-pwm", plus one of the above, where <chip> is
-> > +	      tegra114, tegra124, tegra132, or tegra210.
-> > +	      For Tegra186, must contain "nvidia,tegra186-pwm".
+On Thu, Jun 23, 2016 at 12:27:59PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Rob, I recall discussing this with you a couple of weeks ago, but fail
-> to remember the outcome and can't find a link to the discussion either.
-> Wasn't there a new standard way of documenting this kind of compatible
-> string list?
+> When running in HDMI mode, the sor1 IP block needs to use the sor1_src
+> as parent clock, and in turn configure the sor1_src to use pll_d2_out0
+> as its parent.
+> 
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/gpu/drm/tegra/sor.c | 14 +++++++++++++-
+>  1 file changed, 13 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
+> index 6887e52318e2..7405c39f6db3 100644
+> --- a/drivers/gpu/drm/tegra/sor.c
+> +++ b/drivers/gpu/drm/tegra/sor.c
+> @@ -172,6 +172,7 @@ struct tegra_sor {
+>  	struct clk *clk_parent;
+>  	struct clk *clk_brick;
+>  	struct clk *clk_safe;
+> +	struct clk *clk_src;
+>  	struct clk *clk_dp;
+>  	struct clk *clk;
+>  
+> @@ -2140,7 +2141,11 @@ static void tegra_sor_hdmi_enable(struct drm_encoder *encoder)
+>  	tegra_sor_writel(sor, 0x00000000, SOR_XBAR_POL);
+>  
+>  	/* switch to parent clock */
+> -	err = tegra_sor_set_parent_clock(clk, sor->clk_parent);
+> +	err = clk_set_parent(sor->clk_src, sor->clk_parent);
+> +	if (err < 0)
+> +		dev_err(sor->dev, "failed to set source clock: %d\n", err);
+> +
+> +	err = tegra_sor_set_parent_clock(sor, sor->clk_src);
+>  	if (err < 0)
+>  		dev_err(sor->dev, "failed to set parent clock: %d\n", err);
+>  
+> @@ -2645,6 +2650,13 @@ static int tegra_sor_probe(struct platform_device *pdev)
+>  		goto remove;
+>  	}
+>  
+> +	sor->clk_src = devm_clk_get(&pdev->dev, "source");
+> +	if (IS_ERR(sor->clk_src)) {
+> +		err = PTR_ERR(sor->clk_src);
+> +		dev_err(&pdev->dev, "failed to get source clock: %d\n", err);
+> +		goto remove;
 
-We did? This is fine for me. However, "plus one of the above" is not 
-clear. That means either is valid? If all are "the same" I would expect 
-that only nvidia,tegra20-pwm is the fallback. I'm guessing this is 
-docuemnting what happened in practice though. Probably should update the 
-doc and dts files to reflect desired practice rather than what may be in 
-the wild.
+Shouldn't this fallback to current behavior without this clock?
 
-> Or did you say it didn't matter much until we moved to a YAML-based
-> description?
-
-Yes, that sounds like something I would have said.
-
-Rob
+> +	}
+> +
+>  	sor->clk_parent = devm_clk_get(&pdev->dev, "parent");
+>  	if (IS_ERR(sor->clk_parent)) {
+>  		err = PTR_ERR(sor->clk_parent);
+> -- 
+> 2.8.3
+> 
