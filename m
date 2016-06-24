@@ -1,38 +1,76 @@
-From: Carlo Caione <carlo@caione.org>
-Subject: Re: [PATCH V2 63/63] clocksources: Switch back to the clksrc table
-Date: Fri, 24 Jun 2016 22:12:52 +0200
-Message-ID: <20160624201252.GA2382@localhost>
-References: <1466112442-31105-1-git-send-email-daniel.lezcano@linaro.org>
- <1466112442-31105-64-git-send-email-daniel.lezcano@linaro.org>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH 4/5] pwm: tegra: Add DT node compatible for Tegra186
+Date: Fri, 24 Jun 2016 15:30:32 -0600
+Message-ID: <576DA678.7020907@wwwdotorg.org>
+References: <1466596043-27262-1-git-send-email-ldewangan@nvidia.com>
+ <1466596043-27262-5-git-send-email-ldewangan@nvidia.com>
+ <20160622124614.GG26943@ulmo.ba.sec> <20160624161015.GA13727@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Return-path: <linux-mips-bounce@linux-mips.org>
-Content-Disposition: inline
-In-Reply-To: <1466112442-31105-64-git-send-email-daniel.lezcano@linaro.org>
-Sender: linux-mips-bounce@linux-mips.org
-Errors-to: linux-mips-bounce@linux-mips.org
-List-help: <mailto:ecartis@linux-mips.org?Subject=help>
-List-unsubscribe: <mailto:ecartis@linux-mips.org?subject=unsubscribe%20linux-mips>
-List-software: Ecartis version 1.0.0
-List-subscribe: <mailto:ecartis@linux-mips.org?subject=subscribe%20linux-mips>
-List-owner: <mailto:ralf@linux-mips.org>
-List-post: <mailto:linux-mips@linux-mips.org>
-List-archive: <http://www.linux-mips.org/archives/linux-mips/>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: tglx@linutronix.de, linux-kernel@vger.kernel.org, Vineet Gupta <vgupta@synopsys.com>, Russell King <linux@armlinux.org.uk>, Michal Simek <monstr@monstr.eu>, John Crispin <john@phrozen.org>, Ralf Baechle <ralf@linux-mips.org>, Ley Foon Tan <lftan@altera.com>, Srinivas Kandagatla <srinivas.kandagatla@gmail.com>, Maxime Coquelin <maxime.coquelin@st.com>, Patrice Chotard <patrice.chotard@st.com>, Stephen Warren <swarren@wwwdotorg.org>, Lee Jones <lee@kernel.org>, Eric Anholt <eric@anholt.net>, Florian Fainelli <f.fainelli@gmail.com>, Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, =?utf-8?B?U8O2cmVu?= Brinkmann <soren.brinkmann@xilinx.com>, Linus Walleij <linus.walleij@linaro.org>, Alexander Shiyan <shc_work@mail.ru>, Kukjin
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pwm-owner@vger.kernel.org>
+In-Reply-To: <20160624161015.GA13727@rob-hp-laptop>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Rob Herring <robh@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, gnurou@gmail.com, linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 16/06/16 23:27, Daniel Lezcano wrote:
-> All the clocksource drivers's init function are now converted to return
-> an error code. CLOCKSOURCE_OF_DECLARE is no longer used as well as the
-> clksrc-of table.
-> 
-> Let's convert back the names:
->  - CLOCKSOURCE_OF_DECLARE_RET => CLOCKSOURCE_OF_DECLARE
->  - clksrc-of-ret              => clksrc-of
-> 
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->  drivers/clocksource/meson6_timer.c        |  2 +-
+On 06/24/2016 10:10 AM, Rob Herring wrote:
+> On Wed, Jun 22, 2016 at 02:46:14PM +0200, Thierry Reding wrote:
+>> On Wed, Jun 22, 2016 at 05:17:22PM +0530, Laxman Dewangan wrote:
+>>> Tegra186 has 8 different PWM controller and each controller has only
+>>> one output. Earlier generation SoCs have the 4 PWM output per controller.
+>>>
+>>> Add DT node compatible for Tegra186.
+>>>
+>>> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+>>> ---
+>>>   Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt | 10 ++++++----
+>>>   1 file changed, 6 insertions(+), 4 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
+>>> index c52f03b..2851b2d 100644
+>>> --- a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
+>>> +++ b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
+>>> @@ -1,10 +1,12 @@
+>>>   Tegra SoC PWFM controller
+>>>
+>>>   Required properties:
+>>> -- compatible: For Tegra20, must contain "nvidia,tegra20-pwm".  For Tegra30,
+>>> -  must contain "nvidia,tegra30-pwm".  Otherwise, must contain
+>>> -  "nvidia,<chip>-pwm", plus one of the above, where <chip> is tegra114,
+>>> -  tegra124, tegra132, or tegra210.
+>>> +- compatible: For Tegra20, must contain "nvidia,tegra20-pwm".
+>>> +	      For Tegra30, must contain "nvidia,tegra30-pwm".
+>>> +	      For Tegra114, Tegra124, Tegra132, Tegra210 must contain
+>>> +	      "nvidia,<chip>-pwm", plus one of the above, where <chip> is
+>>> +	      tegra114, tegra124, tegra132, or tegra210.
+>>> +	      For Tegra186, must contain "nvidia,tegra186-pwm".
+>>
+>> Rob, I recall discussing this with you a couple of weeks ago, but fail
+>> to remember the outcome and can't find a link to the discussion either.
+>> Wasn't there a new standard way of documenting this kind of compatible
+>> string list?
+>
+> We did? This is fine for me. However, "plus one of the above" is not
+> clear. That means either is valid? If all are "the same" I would expect
+> that only nvidia,tegra20-pwm is the fallback. I'm guessing this is
+> docuemnting what happened in practice though. Probably should update the
+> doc and dts files to reflect desired practice rather than what may be in
+> the wild.
 
-Acked-by: Carlo Caione <carlo@caione.org>
+FWIW, I've started listing the legal values as explicit separate bullet 
+items rather than prose. See the example below - all those entries are 
+just one string simply due to the HW design it represents, but each 
+entry could be a list (i.e. is a complete compatible value):
+
+- compatible
+     Array of strings.
+     One of:
+     - "nvidia,tegra186-gpio".
+     - "nvidia,tegra186-gpio-aon".
+
+could be expanded as e.g.
+
+     - "nvidia,tegra999-gpio", "nvidia,tegra186-gpio"
+     ...
