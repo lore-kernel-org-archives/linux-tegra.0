@@ -1,51 +1,143 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: beaver: allow SD card voltage to be changed
-Date: Fri, 24 Jun 2016 10:14:27 +0100
-Message-ID: <576CF9F3.7090406@nvidia.com>
-References: <1456779678-20173-1-git-send-email-dev@lynxeye.de>
- <1463124331.2459.0.camel@lynxeye.de> <20160513172704.GA498@ulmo.ba.sec>
- <573DCDB3.80202@nvidia.com> <575E897A.5080508@nvidia.com>
- <575FA21E.80309@intel.com> <575FBEE5.50905@nvidia.com>
- <575FD6E0.7070201@intel.com> <5760125A.8030102@nvidia.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [PATCH v1 19/25] PCI: rcar Gen2: Request host bridge window resources
+Date: Fri, 24 Jun 2016 16:19:34 +0200
+Message-ID: <CAMuHMdVuwniXPZszPH8jTd8x0j+f__JjT6yY04RA_gw87sQidg@mail.gmail.com>
+References: <20160606225630.20936.77349.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+ <20160606230706.20936.13086.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+ <CAMuHMdVgLfTD-BjRZ+gVKgYE8dkDZzQ6DnYtkUs+jVPthJsEdQ@mail.gmail.com>
+ <20160621142623.GA29966@localhost> <20160621154100.GA4782@cogentembedded.com> <20160621164947.GA7603@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5760125A.8030102-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Lucas Stach <dev-8ppwABl0HbeELgA04lAiVw@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <20160621164947.GA7603@localhost>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Valentine Barshak <valentine.barshak@cogentembedded.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-pci <linux-pci@vger.kernel.org>, Thomas Petazzoni <thomas.petazzoni@free-electrons.com>, Rob Herring <robh@kernel.org>, Jason Cooper <jason@lakedaemon.net>, Scott Branden <sbranden@broadcom.com>, Jon Mason <jonmason@broadcom.com>, Jingoo Han <jingoohan1@gmail.com>, Pratyush Anand <pratyush.anand@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, rfi@lists.rocketboards.org, Linux-Renesas <linux-renesas-soc@vger.kernel.org>, Simon Horman <horms@verge.net.au>, Thierry Reding <thierry.reding@gmail.com>, Tanmay Inamdar <tinamdar@apm.com>, Ray Jui <rjui@broadcom.com>, linux-tegra@vger.kernel.org, Ley Foon Tan <lftan@altera.com>, Michal Simek <michal.simek@xilinx.com>, =?UTF-8?Q?S=C3=B6ren_Brinkmann?= <soren.brinkmann@xilinx.com>, linux-arm-kernel@
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Adrian,
+Hi Bjorn,
 
-On 14/06/16 15:19, Jon Hunter wrote:
-
-...
-
->>> So the controller itself supports UHS-I modes, but a given board may not
->>> have the regulator to support them. We need a way to determine if the
->>> board can support the UHS-I modes. Now we could check to see if the
->>> regulator is present in the Tegra SDHCI driver and if not remove the cap
->>> flags. However, I was not sure if this is applicable to other sdhci
->>> controllers and so there should be a generic solution for this?
+On Tue, Jun 21, 2016 at 6:49 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> On Tue, Jun 21, 2016 at 06:41:00PM +0300, Valentine Barshak wrote:
+>> On Tue, Jun 21, 2016 at 09:26:23AM -0500, Bjorn Helgaas wrote:
+>> > On Tue, Jun 21, 2016 at 12:41:31PM +0200, Geert Uytterhoeven wrote:
+>> > > On Tue, Jun 7, 2016 at 1:07 AM, Bjorn Helgaas <bhelgaas@google.com> wrote:
+>> > > > Request host bridge window resources so they appear in ioport_resource and
+>> > > > iomem_resource and are reflected in /proc/ioports and /proc/iomem.
+>> > > >
+>> > > > Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+>> > > > ---
+>> > > >  drivers/pci/host/pci-rcar-gen2.c |    4 ++++
+>> > > >  1 file changed, 4 insertions(+)
+>> > > >
+>> > > > diff --git a/drivers/pci/host/pci-rcar-gen2.c b/drivers/pci/host/pci-rcar-gen2.c
+>> > > > index 9980a4b..617a6b2 100644
+>> > > > --- a/drivers/pci/host/pci-rcar-gen2.c
+>> > > > +++ b/drivers/pci/host/pci-rcar-gen2.c
+>> > > > @@ -194,6 +194,7 @@ static int rcar_pci_setup(int nr, struct pci_sys_data *sys)
+>> > > >         struct rcar_pci_priv *priv = sys->private_data;
+>> > > >         void __iomem *reg = priv->reg;
+>> > > >         u32 val;
+>> > > > +       int ret;
+>> > > >
+>> > > >         pm_runtime_enable(priv->dev);
+>> > > >         pm_runtime_get_sync(priv->dev);
+>> > > > @@ -275,6 +276,9 @@ static int rcar_pci_setup(int nr, struct pci_sys_data *sys)
+>> > > >         /* Add PCI resources */
+>> > > >         pci_add_resource(&sys->resources, &priv->io_res);
+>> > > >         pci_add_resource(&sys->resources, &priv->mem_res);
+>> > > > +       ret = devm_request_pci_bus_resources(priv->dev, &sys->resources);
+>> > > > +       if (ret < 0)
+>> > > > +               return ret;
+>> > > >
+>> > > >         /* Setup bus number based on platform device id / of bus-range */
+>> > > >         sys->busnr = priv->busnr;
+>> > >
+>> > > This patch (commit 1bd019707b7c9249d34c5d348f1ef75eb4d83e89 in pci/next)
+>> > > broke PCI on r8a7791/koelsch. Dmesg differences are:
+>> > >
+>> > >  pci-rcar-gen2 ee090000.pci: PCI: bus0 revision 11
+>> > > -pci-rcar-gen2 ee090000.pci: PCI host bridge to bus 0000:00
+>> > > -pci_bus 0000:00: root bus resource [io  0xee080000-0xee0810ff]
+>> > > -pci_bus 0000:00: root bus resource [mem 0xee080000-0xee0810ff]
+>> >
+>> > This is probably a result of this code in drivers/pci/host/pci-rcar-gen2.c:
+>> >
+>> >         /*
+>> >          * The controller does not support/use port I/O,
+>> >          * so setup a dummy port I/O region here.
+>> >          */
+>> >         priv->io_res.start = priv->mem_res.start;
+>> >         priv->io_res.end = priv->mem_res.end;
+>> >         priv->io_res.flags = IORESOURCE_IO;
+>> >
+>> > We try to avoid adding dummy regions like this, but maybe we missed
+>> > this one.  I haven't found any email discussion about it yet, so I
+>> > don't know what the reason for this one is.  Valentine, do you
+>> > remember?
 >>
->> There is SDHCI_QUIRK2_NO_1_8_V but it doesn't cover the eMMC 1.8V DDR52 case
->> at present.  Dong Aisheng wanted to plug that gap but I wanted to get rid of
->> SDHCI_QUIRK2_NO_1_8_V:
+>> I do not, but I think I've found something in my mailbox.
+>> Below is the quote from the original conversation with:
+>> (Re: [PATCH] pci: Add R-Car Gen2 internal PCI support)
 >>
->> 	http://marc.info/?l=linux-mmc&m=146132847206423&w=2
-> 
-> Ok, that would require the tegra sdhci driver to set this quirk for a
-> board, which is do-able, I guess. However, given the above I am not sure
-> what path you are suggesting we take to resolve this? Does not sound
-> like we should be looking at using SDHCI_QUIRK2_NO_1_8_V anyway.
+>> [quote starts]
+>>  >>+    priv->mem_res = *mem_res;
+>>  >>+    /*
+>>  >>+     * The controller does not support/use port I/O,
+>>  >>+     * so setup a dummy port I/O region here.
+>>  >>+     */
+>>  >>+    priv->io_res.start = priv->mem_res.start;
+>>  >>+    priv->io_res.end = priv->mem_res.end;
+>>  >>+    priv->io_res.flags = IORESOURCE_IO;
+>>  >>
+>>  > I don't understand this.  There's no requirement (at least as far as the
+>>  > PCI core is concerned) to supply an I/O aperture at all, and I think it
+>>  > would be better if you didn't.
+>>  >
+>>  > Oh, I see ... maybe pcibios_init_resources() forces you to have an
+>>  > I/O resource to avoid having it give you a default one?  And I
+>>  > suppose that since you have several host bridges, these dummy I/O
+>>  > regions have to be distinct.  Ugh.  Well, I guess this is something
+>>  > you'd have to fix here or in the ARM code, it's up to you what to do.
+>>
+>>  Exactly. This is to avoid assigning default I/O resources.
+>> [quote ends]
+>
+> Oh, right, now I remember.  Thanks for digging that out.
+>
+> I propose the patches below to remove the requirement for having an
+> I/O space.  Any chance one of you could test them?
 
-Any feedback here? Are you still planning to get rid of
-SDHCI_QUIRK2_NO_1_8_V or should we use this?
+Thanks!
+PCI seems to be working again on r8a7791/koelsch using today's pci/next,
+which includes these patches. Lspci shows the USB controllers again.
 
-Cheers
-Jon
+/proc/iomem gained a few entries:
 
--- 
-nvpublic
+ ec700000-ec70ffff : /dma-controller@ec700000
+ ec720000-ec72ffff : /dma-controller@ec720000
+ ec740000-ec7401ff : audmapp
++ee080000-ee0810ff : /pci@ee090000
++  ee080000-ee080fff : 0000:00:01.0
++  ee081000-ee0810ff : 0000:00:02.0
+ ee090000-ee090bff : /pci@ee090000
++ee0c0000-ee0c10ff : /pci@ee0d0000
++  ee0c0000-ee0c0fff : 0001:01:01.0
++  ee0c1000-ee0c10ff : 0001:01:02.0
+ ee0d0000-ee0d0bff : /pci@ee0d0000
+ ee300000-ee301fff : /sata@ee300000
+ ee700000-ee7003ff : /ethernet@ee700000
+
+Hence
+Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
