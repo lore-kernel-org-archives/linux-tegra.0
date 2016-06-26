@@ -1,76 +1,33 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH 4/5] pwm: tegra: Add DT node compatible for Tegra186
-Date: Fri, 24 Jun 2016 15:30:32 -0600
-Message-ID: <576DA678.7020907@wwwdotorg.org>
-References: <1466596043-27262-1-git-send-email-ldewangan@nvidia.com>
- <1466596043-27262-5-git-send-email-ldewangan@nvidia.com>
- <20160622124614.GG26943@ulmo.ba.sec> <20160624161015.GA13727@rob-hp-laptop>
+From: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
+Subject: Re: [PATCH] pci: tegra: actually program REFCLK_CFG* on recent SoCs
+Date: Sat, 25 Jun 2016 20:54:02 -0600
+Message-ID: <CAPnjgZ05T4+wEH4WwP4c_QWjwFvU6=3j4d+GnzqvpwJ3o5R3Bw@mail.gmail.com>
+References: <20160624143703.13231-1-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pwm-owner@vger.kernel.org>
-In-Reply-To: <20160624161015.GA13727@rob-hp-laptop>
-Sender: linux-pwm-owner@vger.kernel.org
-To: Rob Herring <robh@kernel.org>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, gnurou@gmail.com, linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160624143703.13231-1-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, lak <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/24/2016 10:10 AM, Rob Herring wrote:
-> On Wed, Jun 22, 2016 at 02:46:14PM +0200, Thierry Reding wrote:
->> On Wed, Jun 22, 2016 at 05:17:22PM +0530, Laxman Dewangan wrote:
->>> Tegra186 has 8 different PWM controller and each controller has only
->>> one output. Earlier generation SoCs have the 4 PWM output per controller.
->>>
->>> Add DT node compatible for Tegra186.
->>>
->>> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
->>> ---
->>>   Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt | 10 ++++++----
->>>   1 file changed, 6 insertions(+), 4 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
->>> index c52f03b..2851b2d 100644
->>> --- a/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
->>> +++ b/Documentation/devicetree/bindings/pwm/nvidia,tegra20-pwm.txt
->>> @@ -1,10 +1,12 @@
->>>   Tegra SoC PWFM controller
->>>
->>>   Required properties:
->>> -- compatible: For Tegra20, must contain "nvidia,tegra20-pwm".  For Tegra30,
->>> -  must contain "nvidia,tegra30-pwm".  Otherwise, must contain
->>> -  "nvidia,<chip>-pwm", plus one of the above, where <chip> is tegra114,
->>> -  tegra124, tegra132, or tegra210.
->>> +- compatible: For Tegra20, must contain "nvidia,tegra20-pwm".
->>> +	      For Tegra30, must contain "nvidia,tegra30-pwm".
->>> +	      For Tegra114, Tegra124, Tegra132, Tegra210 must contain
->>> +	      "nvidia,<chip>-pwm", plus one of the above, where <chip> is
->>> +	      tegra114, tegra124, tegra132, or tegra210.
->>> +	      For Tegra186, must contain "nvidia,tegra186-pwm".
->>
->> Rob, I recall discussing this with you a couple of weeks ago, but fail
->> to remember the outcome and can't find a link to the discussion either.
->> Wasn't there a new standard way of documenting this kind of compatible
->> string list?
+On 24 June 2016 at 08:37, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >
-> We did? This is fine for me. However, "plus one of the above" is not
-> clear. That means either is valid? If all are "the same" I would expect
-> that only nvidia,tegra20-pwm is the fallback. I'm guessing this is
-> docuemnting what happened in practice though. Probably should update the
-> doc and dts files to reflect desired practice rather than what may be in
-> the wild.
+> On recent SoCs, tegra_pcie_phy_enable() isn't called; but instead
+> tegra_pcie_enable_controller() calls tegra_xusb_phy_enable(). However,
+> part of tegra_pcie_phy_enable() needs to happen in all cases. Move that
+> code to tegra_pcie_port_enable() instead.
+>
+> For reference, NVIDIA's downstream Linux kernel performs this operation
+> in tegra_pcie_enable_rp_features(), which is called immediately after
+> tegra_pcie_port_enable(). Since that function doesn't exist in the mainline
+> driver, we'll just add it to the tail of tegra_pcie_port_enable() instead.
+>
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/pci/host/pci-tegra.c | 17 +++++++++--------
+>  1 file changed, 9 insertions(+), 8 deletions(-)
 
-FWIW, I've started listing the legal values as explicit separate bullet 
-items rather than prose. See the example below - all those entries are 
-just one string simply due to the HW design it represents, but each 
-entry could be a list (i.e. is a complete compatible value):
-
-- compatible
-     Array of strings.
-     One of:
-     - "nvidia,tegra186-gpio".
-     - "nvidia,tegra186-gpio-aon".
-
-could be expanded as e.g.
-
-     - "nvidia,tegra999-gpio", "nvidia,tegra186-gpio"
-     ...
+Reviewed-by: Simon Glass <sjg-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
