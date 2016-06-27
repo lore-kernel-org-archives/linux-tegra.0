@@ -1,7 +1,7 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH 03/10] Documentation: dt-bindings: firmware: tegra: add bindings of the BPMP
-Date: Mon, 27 Jun 2016 17:02:41 +0800
-Message-ID: <20160627090248.23621-4-josephl@nvidia.com>
+Subject: [PATCH 01/10] Documentation: dt-bindings: mailbox: tegra: Add binding for HSP mailbox
+Date: Mon, 27 Jun 2016 17:02:39 +0800
+Message-ID: <20160627090248.23621-2-josephl@nvidia.com>
 References: <20160627090248.23621-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,84 +12,94 @@ To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail
 Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Matthew Longnecker <MLongnecker@nvidia.com>, devicetree@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Joseph Lo <josephl@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The BPMP is a specific processor in Tegra chip, which is designed for
-booting process handling and offloading the power management tasks
-from the CPU. The binding document defines the resources that would be
-used by the BPMP firmware driver, which can create the interprocessor
-communication (IPC) between the CPU and BPMP.
+Add DT binding for the Hardware Synchronization Primitives (HSP). The
+HSP is designed for the processors to share resources and communicate
+together. It provides a set of hardware synchronization primitives for
+interprocessor communication. So the interprocessor communication (IPC)
+protocols can use hardware synchronization primitive, when operating
+between two processors not in an SMP relationship.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 ---
- .../bindings/firmware/nvidia,tegra186-bpmp.txt     | 61 ++++++++++++++++++++++
- 1 file changed, 61 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
+ .../bindings/mailbox/nvidia,tegra186-hsp.txt       | 42 ++++++++++++++++++++++
+ include/dt-bindings/mailbox/tegra-hsp.h            | 20 +++++++++++
+ 2 files changed, 62 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt
+ create mode 100644 include/dt-bindings/mailbox/tegra-hsp.h
 
-diff --git a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
+diff --git a/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt b/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt
 new file mode 100644
-index 000000000000..34a252d87e17
+index 000000000000..ca07af2d951e
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
-@@ -0,0 +1,61 @@
-+NVIDIA Tegra Boot and Power Management Processor (BPMP)
++++ b/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt
+@@ -0,0 +1,42 @@
++NVIDIA Tegra Hardware Synchronization Primitives (HSP)
 +
-+The BPMP is a specific processor in Tegra chip, which is designed for
-+booting process handling and offloading the power management tasks from
-+the CPU. The binding document defines the resources that would be used by
-+the BPMP firmware driver, which can create the interprocessor
-+communication (IPC) between the CPU and BPMP.
++The HSP modules are used for the processors to share resources and communicate
++together. It provides a set of hardware synchronization primitives for
++interprocessor communication. So the interprocessor communication (IPC)
++protocols can use hardware synchronization primitives, when operating between
++two processors not in an SMP relationship.
++
++The features that HSP supported are shared mailboxes, shared semaphores,
++arbitrated semaphores and doorbells.
 +
 +Required properties:
-+- name : Should be bpmp
-+- compatible : Should be "nvidia,tegra<chip>-bpmp"
-+- mboxes : The phandle of mailbox controller and the channel ID
-+           See "Documentation/devicetree/bindings/mailbox/
-+	   nvidia,tegra186-hsp.txt" and "Documentation/devicetree/
-+	   bindings/mailbox/mailbox.txt" for more details about the generic
-+	   mailbox controller and mailbox client driver bindings.
-+- shmem : List of the phandle of the TX and RX shared memory area that
-+	  the IPC between CPU and BPMP is based on.
-+- #clock-cells : Should be 1.
-+- #reset-cells : Should be 1.
-+
-+The shared memory bindings for BPMP
-+-----------------------------------
-+
-+The shared memory area for the IPC TX and RX between CPU and BPMP are
-+predefined and work on top of sysram, which is a sram inside the chip.
-+
-+See "Documentation/devicetree/bindings/sram/sram.txt" for the bindings.
++- name : Should be hsp
++- compatible : Should be "nvidia,tegra<chip>-hsp"
++- reg : Offset and length of the register set for the device
++- interrupts : Should contain the HSP interrupts
++- interrupt-names: Should contain the names of the HSP interrupts that the
++		   client are using.
++		   "doorbell"
++- nvidia,hsp-function : Specifies one of the HSP functions that the HSP unit
++			will be supported. The function ID can be found in the
++			header file <dt-bindings/mailbox/tegra-hsp.h>.
++- #mbox-cells : Should be 1. Specifies the HSP master that will be enabled of
++		the HSP client. The master ID constants can be found in the
++		header file <dt-bindings/mailbox/tegra-hsp.h>.
 +
 +Example:
 +
-+hsp_top: hsp@03c00000 {
-+	...
++hsp_top: hsp@3c00000 {
++	compatible = "nvidia,tegra186-hsp";
++	reg = <0x0 0x03c00000 0x0 0xa0000>;
++	interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
++	interrupt-names = "doorbell";
++	nvidia,hsp-function = <HSP_DOORBELL>;
 +	#mbox-cells = <1>;
 +};
 +
 +bpmp@d0000000 {
-+	compatible = "nvidia,tegra186-bpmp";
-+	mboxes = <&hsp_mbox HSP_DB_MASTER_BPMP>;
-+	shmem = <&cpu_bpmp_tx &cpu_bpmp_rx>;
-+	#clock-cells = <1>;
-+	#reset-cells = <1>;
++	...
++	mboxes = <&hsp_top HSP_DB_MASTER_BPMP>;
++	...
 +};
+diff --git a/include/dt-bindings/mailbox/tegra-hsp.h b/include/dt-bindings/mailbox/tegra-hsp.h
+new file mode 100644
+index 000000000000..720c66784b72
+--- /dev/null
++++ b/include/dt-bindings/mailbox/tegra-hsp.h
+@@ -0,0 +1,20 @@
++/*
++ * This header provides constants for binding nvidia,tegra<chip>-hsp.
++ *
++ * The number with HSP_DB_MASTER prefix indicates the bit that is
++ * associated with a master ID in the doorbell registers.
++ */
 +
-+sysram@30000000 {
-+	compatible = "nvidia,tegra186-sysram", "mmio-ram";
-+	reg = <0x0 0x30000000 0x0 0x50000>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+	ranges = <0 0x0 0x0 0x30000000 0x0 0x50000>;
 +
-+	cpu_bpmp_tx: bpmp_shmem@4e000 {
-+		compatible = "nvidia,tegra186-bpmp-shmem";
-+		reg = <0x0 0x4e000 0x0 0x1000>;
-+	};
++#ifndef _DT_BINDINGS_MAILBOX_TEGRA186_HSP_H
++#define _DT_BINDINGS_MAILBOX_TEGRA186_HSP_H
 +
-+	cpu_bpmp_rx: bpmp_shmem@4f000 {
-+		compatible = "nvidia,tegra186-bpmp-shmem";
-+		reg = <0x0 0x4f000 0x0 0x1000>;
-+	};
-+};
++#define HSP_SHARED_MAILBOX		0
++#define HSP_SHARED_SEMAPHORE		1
++#define HSP_ARBITRATED_SEMAPHORE	2
++#define HSP_DOORBELL			3
++
++#define HSP_DB_MASTER_CCPLEX 17
++#define HSP_DB_MASTER_BPMP 19
++
++#endif	/* _DT_BINDINGS_MAILBOX_TEGRA186_HSP_H */
 -- 
 2.9.0
