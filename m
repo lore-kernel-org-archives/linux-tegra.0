@@ -1,108 +1,61 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 08/10] arm64: dts: tegra: Add Tegra186 support
-Date: Mon, 27 Jun 2016 17:02:46 +0800
-Message-ID: <20160627090248.23621-9-josephl@nvidia.com>
+From: Joseph Lo <josephl@nvidia.com>
+Subject: [PATCH 06/10] soc/tegra: Add Tegra186 support
+Date: Mon, 27 Jun 2016 17:02:44 +0800
+Message-ID: <20160627090248.23621-7-josephl@nvidia.com>
 References: <20160627090248.23621-1-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160627090248.23621-1-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20160627090248.23621-1-josephl@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jassi Brar <jassisinghbrar@gmail.com>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, Matthew Longnecker <MLongnecker@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-This adds the initial support of Tegra186 SoC, which can help to bring
-up the debug console and initrd for further developing.
+The Tegra186 has a combination of Denver and Cortex-A57 CPU cores and
+GPUs with Pascal architecture on it. It features with ADSP with
+Cortex-A9 CPU for audio processing, hardware video encoder/decoder with
+multi-format support, ISP for image capture processing and BPMP for the
+power managements.
 
-Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Joseph Lo <josephl@nvidia.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 77 ++++++++++++++++++++++++++++++++
- 1 file changed, 77 insertions(+)
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra186.dtsi
+ drivers/soc/tegra/Kconfig | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-new file mode 100644
-index 000000000000..bed30f30bb0b
---- /dev/null
-+++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -0,0 +1,77 @@
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/mailbox/tegra-hsp.h>
+diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
+index 03089ad2fc65..88a71dfd466c 100644
+--- a/drivers/soc/tegra/Kconfig
++++ b/drivers/soc/tegra/Kconfig
+@@ -61,6 +61,20 @@ config ARCH_TEGRA_132_SOC
+ 	  but contains an NVIDIA Denver CPU complex in place of
+ 	  Tegra124's "4+1" Cortex-A15 CPU complex.
+ 
++config ARCH_TEGRA_186_SOC
++	bool "NVIDIA Tegra186 SoC"
++	select MAILBOX
++	select TEGRA_BPMP
++	select TEGRA_HSP_MBOX
++	select TEGRA_IVC
++	help
++	  Enable support for the NVIDIA Tegar186 SoC. The Tegra186 has a
++	  combination of Denver and Cortex-A57 CPU cores and GPUs with Pascal
++	  architecture on it. It features with ADSP with Cortex-A9 CPU for
++	  audio processing, hardware video encoder/decoder with multi-format
++	  support, ISP for image capture processing and BPMP for the power
++	  managements.
 +
-+/ {
-+	compatible = "nvidia,tegra186";
-+	interrupt-parent = <&gic>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	uarta: serial@03100000 {
-+		compatible = "nvidia,tegra186-uart", "nvidia,tegra20-uart";
-+		reg = <0x0 0x03100000 0x0 0x40>;
-+		reg-shift = <2>;
-+		interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
-+		status = "disabled";
-+	};
-+
-+	gic: interrupt-controller@03881000 {
-+		compatible = "arm,gic-400";
-+		#interrupt-cells = <3>;
-+		interrupt-controller;
-+		reg = <0x0 0x03881000 0x0 0x1000>,
-+		      <0x0 0x03882000 0x0 0x2000>;
-+		interrupts = <GIC_PPI 9
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+		interrupt-parent = <&gic>;
-+	};
-+
-+	hsp_top: hsp@03c00000 {
-+		compatible = "nvidia,tegra186-hsp";
-+		reg = <0x0 0x03c00000 0x0 0xa0000>;
-+		interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "doorbell";
-+		nvidia,hsp-function = <HSP_DOORBELL>;
-+		#mbox-cells = <1>;
-+	};
-+
-+	bpmp@d0000000 {
-+		compatible = "nvidia,tegra186-bpmp";
-+		mboxes = <&hsp_top HSP_DB_MASTER_BPMP>;
-+		shmem = <&cpu_bpmp_tx &cpu_bpmp_rx>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+		status = "disabled";
-+	};
-+
-+	sysram@30000000 {
-+		compatible = "nvidia,tegra186-sysram", "mmio-ram";
-+		reg = <0x0 0x30000000 0x0 0x4ffff>;
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges = <0 0x0 0x0 0x30000000 0x0 0x4ffff>;
-+
-+		cpu_bpmp_tx: bpmp_shmem@4e000 {
-+			compatible = "nvidia,tegra186-bpmp-shmem";
-+			reg = <0x0 0x4e000 0x0 0x1000>;
-+		};
-+
-+		cpu_bpmp_rx: bpmp_shmem@4f000 {
-+			compatible = "nvidia,tegra186-bpmp-shmem";
-+			reg = <0x0 0x4f000 0x0 0x1000>;
-+		};
-+	};
-+
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+		interrupt-parent = <&gic>;
-+	};
-+};
+ config ARCH_TEGRA_210_SOC
+ 	bool "NVIDIA Tegra210 SoC"
+ 	select PINCTRL_TEGRA210
 -- 
 2.9.0
