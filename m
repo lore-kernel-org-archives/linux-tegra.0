@@ -1,99 +1,196 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 03/10] Documentation: dt-bindings: firmware: tegra: add
- bindings of the BPMP
-Date: Mon, 27 Jun 2016 10:08:29 -0600
-Message-ID: <57714F7D.1040301@wwwdotorg.org>
-References: <20160627090248.23621-1-josephl@nvidia.com>
- <20160627090248.23621-4-josephl@nvidia.com>
+From: Rhyland Klein <rklein@nvidia.com>
+Subject: RE: [PATCH v5] clk: tegra: Initialize UTMIPLL when enabling PLLU
+Date: Mon, 27 Jun 2016 18:11:35 +0000
+Message-ID: <dc524c6236144234a341fedaa22dbacb@HQMAIL112.nvidia.com>
+References: <1464280891-23036-1-git-send-email-rklein@nvidia.com>
+ <5763FFF5.5000303@nvidia.com> <20160617152336.GA27475@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160627090248.23621-4-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <20160617152336.GA27475@ulmo.ba.sec>
+Content-Language: en-US
+Sender: linux-clk-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andrew Bresticker <abrestic@chromium.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/27/2016 03:02 AM, Joseph Lo wrote:
-> The BPMP is a specific processor in Tegra chip, which is designed for
-> booting process handling and offloading the power management tasks
-> from the CPU. The binding document defines the resources that would be
-> used by the BPMP firmware driver, which can create the interprocessor
-> communication (IPC) between the CPU and BPMP.
+Jonathan, can you confirm replacing usleep_range(100, 200) with udelay(2) works for you?
 
-> diff --git a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
+-rhyland
 
-> +The BPMP is a specific processor in Tegra chip, which is designed for
-> +booting process handling and offloading the power management tasks from
-> +the CPU. The binding document defines the resources that would be used by
-> +the BPMP firmware driver, which can create the interprocessor
-> +communication (IPC) between the CPU and BPMP.
+-----Original Message-----
+From: Thierry Reding [mailto:thierry.reding@gmail.com] 
+Sent: Friday, June 17, 2016 11:24 AM
+To: Jonathan Hunter
+Cc: Rhyland Klein; Peter De Schrijver; Mike Turquette; Stephen Warren; Stephen Boyd; Alexandre Courbot; linux-clk@vger.kernel.org; linux-tegra@vger.kernel.org; linux-kernel@vger.kernel.org; Andrew Bresticker
+Subject: Re: [PATCH v5] clk: tegra: Initialize UTMIPLL when enabling PLLU
 
-s/power management/power management, clock management, and reset control/?
+* PGP Signed by an unknown key
 
-> +Required properties:
-> +- name : Should be bpmp
-> +- compatible : Should be "nvidia,tegra<chip>-bpmp"
+On Fri, Jun 17, 2016 at 02:49:41PM +0100, Jon Hunter wrote:
+> Hi Thierry,
+> 
+> On 26/05/16 17:41, Rhyland Klein wrote:
+> > From: Andrew Bresticker <abrestic@chromium.org>
+> > 
+> > Move the UTMIPLL initialization code form clk-tegra<chip>.c files 
+> > into clk-pll.c. UTMIPLL was being configured and set in HW control 
+> > right after registration. However, when the clock init_table is 
+> > processed and child clks of PLLU are enabled, it will call in and 
+> > enable PLLU as well, and initiate SW enabling sequence even though 
+> > PLLU is already in HW control. This leads to getting UTMIPLL stuck with a SEQ_BUSY status.
+> > 
+> > Doing the initialization once during pllu_enable means we configure 
+> > it properly into HW control.
+> > 
+> > A side effect of the commonization/localization of the UTMIPLL init 
+> > code, is that it corrects some errors that were present for earlier 
+> > generations. For instance, in clk-tegra124.c, it used to have:
+> > 
+> > define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 6)
+> > 
+> > when the correct shift to use is present in the new version:
+> > 
+> > define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 27)
+> > 
+> > which matches the Tegra124 TRM register definition.
+> > 
+> > Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
+> > 
+> > [rklein: Merged in some later fixes for potential deadlocks]
+> > 
+> > Signed-off-by: Rhyland Klein <rklein@nvidia.com>
+> > ---
+> > v5:
+> >  - Initialized flags to 0 to avoid harmless spinlock warnings
+> > 
+> > v4:
+> >  - Re-added examples in patch description
+> > 
+> > v3:
+> >  - Flushed out description to describe this patch.
+> > 
+> >  drivers/clk/tegra/clk-pll.c      | 484 +++++++++++++++++++++++++++++++++++++++
+> >  drivers/clk/tegra/clk-tegra114.c | 155 +------------  
+> > drivers/clk/tegra/clk-tegra124.c | 156 +------------  
+> > drivers/clk/tegra/clk-tegra210.c | 182 +--------------  
+> > drivers/clk/tegra/clk-tegra30.c  | 113 +--------
+> >  drivers/clk/tegra/clk.h          |  17 ++
+> >  6 files changed, 510 insertions(+), 597 deletions(-)
+> > 
+> > diff --git a/drivers/clk/tegra/clk-pll.c 
+> > b/drivers/clk/tegra/clk-pll.c index 4e194ecc8d5e..31e20110fae4 
+> > 100644
+> > --- a/drivers/clk/tegra/clk-pll.c
+> > +++ b/drivers/clk/tegra/clk-pll.c
+> 
+> ...
+> 
+> > +static int clk_pllu_tegra210_enable(struct clk_hw *hw) {
+> > +	struct tegra_clk_pll *pll = to_clk_pll(hw);
+> > +	struct clk_hw *pll_ref = clk_hw_get_parent(hw);
+> > +	struct clk_hw *osc = clk_hw_get_parent(pll_ref);
+> > +	unsigned long flags = 0, input_rate;
+> > +	unsigned int i;
+> > +	int ret = 0;
+> > +	u32 val;
+> > +
+> > +	if (!osc) {
+> > +		pr_err("%s: failed to get OSC clock\n", __func__);
+> > +		return -EINVAL;
+> > +	}
+> > +	input_rate = clk_hw_get_rate(osc);
+> > +
+> > +	if (pll->lock)
+> > +		spin_lock_irqsave(pll->lock, flags);
+> > +
+> > +	_clk_pll_enable(hw);
+> > +	ret = clk_pll_wait_for_lock(pll);
+> > +	if (ret < 0)
+> > +		goto out;
+> > +
+> > +	for (i = 0; i < ARRAY_SIZE(utmi_parameters); i++) {
+> > +		if (input_rate == utmi_parameters[i].osc_frequency)
+> > +			break;
+> > +	}
+> > +
+> > +	if (i == ARRAY_SIZE(utmi_parameters)) {
+> > +		pr_err("%s: Unexpected input rate %lu\n", __func__, input_rate);
+> > +		ret = -EINVAL;
+> > +		goto out;
+> > +	}
+> > +
+> > +	val = pll_readl_base(pll);
+> > +	val &= ~PLLU_BASE_OVERRIDE;
+> > +	pll_writel_base(val, pll);
+> > +
+> > +	/* Put PLLU under HW control */
+> > +	val = readl_relaxed(pll->clk_base + PLLU_HW_PWRDN_CFG0);
+> > +	val |= PLLU_HW_PWRDN_CFG0_IDDQ_PD_INCLUDE |
+> > +	       PLLU_HW_PWRDN_CFG0_USE_SWITCH_DETECT |
+> > +	       PLLU_HW_PWRDN_CFG0_USE_LOCKDET;
+> > +	val &= ~(PLLU_HW_PWRDN_CFG0_CLK_ENABLE_SWCTL |
+> > +		  PLLU_HW_PWRDN_CFG0_CLK_SWITCH_SWCTL);
+> > +	writel_relaxed(val, pll->clk_base + PLLU_HW_PWRDN_CFG0);
+> > +
+> > +	val = readl_relaxed(pll->clk_base + XUSB_PLL_CFG0);
+> > +	val &= ~XUSB_PLL_CFG0_PLLU_LOCK_DLY;
+> > +	writel_relaxed(val, pll->clk_base + XUSB_PLL_CFG0);
+> > +	udelay(1);
+> > +
+> > +	val = readl_relaxed(pll->clk_base + PLLU_HW_PWRDN_CFG0);
+> > +	val |= PLLU_HW_PWRDN_CFG0_SEQ_ENABLE;
+> > +	writel_relaxed(val, pll->clk_base + PLLU_HW_PWRDN_CFG0);
+> > +	udelay(1);
+> > +
+> > +	/* Disable PLLU clock branch to UTMIPLL since it uses OSC */
+> > +	val = pll_readl_base(pll);
+> > +	val &= ~PLLU_BASE_CLKENABLE_USB;
+> > +	pll_writel_base(val, pll);
+> > +
+> > +	val = readl_relaxed(pll->clk_base + UTMIPLL_HW_PWRDN_CFG0);
+> > +	if (val & UTMIPLL_HW_PWRDN_CFG0_SEQ_ENABLE) {
+> > +		pr_debug("UTMIPLL already enabled\n");
+> > +		goto out;
+> > +	}
+> > +	val &= ~UTMIPLL_HW_PWRDN_CFG0_IDDQ_OVERRIDE;
+> > +	writel_relaxed(val, pll->clk_base + UTMIPLL_HW_PWRDN_CFG0);
+> > +
+> > +	/* Program UTMIP PLL stable and active counts */
+> > +	val = readl_relaxed(pll->clk_base + UTMIP_PLL_CFG2);
+> > +	val &= ~UTMIP_PLL_CFG2_STABLE_COUNT(~0);
+> > +	val |= UTMIP_PLL_CFG2_STABLE_COUNT(utmi_parameters[i].stable_count);
+> > +	val &= ~UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(~0);
+> > +	val |= UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(
+> > +			utmi_parameters[i].active_delay_count);
+> > +	val |= UTMIP_PLL_CFG2_PHY_XTAL_CLOCKEN;
+> > +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG2);
+> > +
+> > +	/* Program UTMIP PLL delay and oscillator frequency counts */
+> > +	val = readl_relaxed(pll->clk_base + UTMIP_PLL_CFG1);
+> > +	val &= ~UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(~0);
+> > +	val |= UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(
+> > +		utmi_parameters[i].enable_delay_count);
+> > +	val &= ~UTMIP_PLL_CFG1_XTAL_FREQ_COUNT(~0);
+> > +	val |= UTMIP_PLL_CFG1_XTAL_FREQ_COUNT(
+> > +		utmi_parameters[i].xtal_freq_count);
+> > +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG1);
+> > +
+> > +	/* Remove power downs from UTMIP PLL control bits */
+> > +	val = readl_relaxed(pll->clk_base + UTMIP_PLL_CFG1);
+> > +	val &= ~UTMIP_PLL_CFG1_FORCE_PLL_ENABLE_POWERDOWN;
+> > +	val |= UTMIP_PLL_CFG1_FORCE_PLL_ENABLE_POWERUP;
+> > +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG1);
+> > +	udelay(100);
+> 
+> In next-20160617 I see that this udelay is now a usleep_range(100, 
+> 200) and this is causing the following splat when the clock is 
+> enabled. I don't think that we can use usleep here ...
 
-Again, I'd suggest wording this as:
+Okay, I'll back out the patch. I'd really prefer to avoid busy-looping for 100 microseconds here, so can we please find another way to do this?
 
-- compatible
-     Array of strings.
-     One of:
-   - "nvidia,tegra186-bpmp"
+Thierry
 
-> +- mboxes : The phandle of mailbox controller and the channel ID
-
-s/channel ID/mailbox specifier/.
-
-> +           See "Documentation/devicetree/bindings/mailbox/
-> +	   nvidia,tegra186-hsp.txt" and "Documentation/devicetree/
-> +	   bindings/mailbox/mailbox.txt" for more details about the generic
-> +	   mailbox controller and mailbox client driver bindings.
-
-I'd rather not split the filenames across lines, since that makes grep 
-fail to match. Perhaps add the following text to the introductory 
-section at the start of the file to avoid having to mention some of the 
-filenames in an indented block of text:
-
-==========
-This node is a mailbox consumer. See the following file for details of 
-the mailbox subsystem, and the specifiers implemented by the relevant 
-provider(s):
-
-- Documentation/devicetree/bindings/mailbox/mailbox.txt
-- Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt
-
-This node is a clock and reset provider. See the following files for 
-general documentation of those features, and the specifiers implemented 
-by this node:
-
-- Documentation/devicetree/bindings/clock/clock-bindings.txt
-- include/dt-bindings/clock/tegra186-clock.h
-- Documentation/devicetree/bindings/reset/reset.txt
-- include/dt-bindings/reset/tegra186-reset.h
-==========
-
-Related, I would expect those two header files (tegra186-clock.h and 
-tegra186-reset.h) to be part of this patch, since they form part of the 
-definition of this binding.
-
-> +The shared memory bindings for BPMP
-> +-----------------------------------
-> +
-> +The shared memory area for the IPC TX and RX between CPU and BPMP are
-> +predefined and work on top of sysram, which is a sram inside the chip.
-
-s/a sram/an SRAM/.
-
-> +Example:
-...
-> +bpmp@d0000000 {
-
-There should be no unit address ("@d0000000") in the node name, since 
-there's no reg property.
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+* Unknown Key
+* 0x7F3EB3A1
