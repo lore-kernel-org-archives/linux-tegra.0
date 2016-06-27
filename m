@@ -1,61 +1,53 @@
-From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH 06/10] soc/tegra: Add Tegra186 support
-Date: Mon, 27 Jun 2016 17:02:44 +0800
-Message-ID: <20160627090248.23621-7-josephl@nvidia.com>
-References: <20160627090248.23621-1-josephl@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] i2c: tegra: Correct error path in probe
+Date: Mon, 27 Jun 2016 10:28:52 +0100
+Message-ID: <5770F1D4.8000406@nvidia.com>
+References: <1465936007-18599-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20160627090248.23621-1-josephl@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jassi Brar <jassisinghbrar@gmail.com>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, Matthew Longnecker <MLongnecker@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1465936007-18599-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The Tegra186 has a combination of Denver and Cortex-A57 CPU cores and
-GPUs with Pascal architecture on it. It features with ADSP with
-Cortex-A9 CPU for audio processing, hardware video encoder/decoder with
-multi-format support, ISP for image capture processing and BPMP for the
-power managements.
+Hi all,
 
-Signed-off-by: Joseph Lo <josephl@nvidia.com>
----
- drivers/soc/tegra/Kconfig | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+On 14/06/16 21:26, Jon Hunter wrote:
+> Commit 497fbe24987b ("i2c: tegra: enable multi master mode for tegra210")
+> enables the Tegra I2C 'div_clk' for adapters using the multi-master mode
+> during the device probe. Although the probe error path was updated to
+> disable the clock on probe failure, there is one place after calling
+> tegra_i2c_init() where the clock will not be disabled on failure. Correct
+> the error path so that the 'div_clk' is disabled if calling
+> tegra_i2c_init() fails.
+> 
+> Fixes: 497fbe24987b ("i2c: tegra: enable multi master mode for tegra210")
+> 
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/i2c/busses/i2c-tegra.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index 445398c314a3..b126dbaa47e3 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -912,7 +912,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+>  	ret = tegra_i2c_init(i2c_dev);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "Failed to initialize i2c controller");
+> -		goto unprepare_div_clk;
+> +		goto disable_div_clk;
+>  	}
+>  
+>  	ret = devm_request_irq(&pdev->dev, i2c_dev->irq,
 
-diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
-index 03089ad2fc65..88a71dfd466c 100644
---- a/drivers/soc/tegra/Kconfig
-+++ b/drivers/soc/tegra/Kconfig
-@@ -61,6 +61,20 @@ config ARCH_TEGRA_132_SOC
- 	  but contains an NVIDIA Denver CPU complex in place of
- 	  Tegra124's "4+1" Cortex-A15 CPU complex.
- 
-+config ARCH_TEGRA_186_SOC
-+	bool "NVIDIA Tegra186 SoC"
-+	select MAILBOX
-+	select TEGRA_BPMP
-+	select TEGRA_HSP_MBOX
-+	select TEGRA_IVC
-+	help
-+	  Enable support for the NVIDIA Tegar186 SoC. The Tegra186 has a
-+	  combination of Denver and Cortex-A57 CPU cores and GPUs with Pascal
-+	  architecture on it. It features with ADSP with Cortex-A9 CPU for
-+	  audio processing, hardware video encoder/decoder with multi-format
-+	  support, ISP for image capture processing and BPMP for the power
-+	  managements.
-+
- config ARCH_TEGRA_210_SOC
- 	bool "NVIDIA Tegra210 SoC"
- 	select PINCTRL_TEGRA210
+Any feedback on this?
+
+Jon
+
 -- 
-2.9.0
+nvpublic
