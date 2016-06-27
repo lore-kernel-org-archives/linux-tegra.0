@@ -1,69 +1,150 @@
-From: Peter Rosin <peda@axentia.se>
-Subject: Re: [PATCH 07/12] dt-bindings: i2c: Add support for 'i2c-bus' subnode
-Date: Mon, 27 Jun 2016 14:04:09 +0200
-Message-ID: <0e9ab029-ed95-c3cb-61f5-6acd9da12a24@axentia.se>
-References: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
- <1466697545-11868-8-git-send-email-jonathanh@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 01/10] Documentation: dt-bindings: mailbox: tegra: Add
+ binding for HSP mailbox
+Date: Mon, 27 Jun 2016 09:55:49 -0600
+Message-ID: <57714C85.50802@wwwdotorg.org>
+References: <20160627090248.23621-1-josephl@nvidia.com>
+ <20160627090248.23621-2-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <1466697545-11868-8-git-send-email-jonathanh@nvidia.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160627090248.23621-2-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 2016-06-23 17:59, Jon Hunter wrote:
-> The I2C driver core for boards using device-tree assumes any subnode of
-> an I2C adapter in the device-tree blob as being a I2C slave device.
-> Although this makes complete sense, some I2C adapters may have subnodes
-> which are not I2C slaves but subnodes presenting other features. For
-> example some Tegra devices have an I2C interface which may share its
-> pins with other devices and to share these pins subnodes for
-> representing these pins so they have be shared via the pinctrl framework
-> are needed.
-> 
-> To allow I2C adapters to have non-I2C specific subnodes in device-tree
-> that are not parsed by the I2C driver core by adding support for a
-> 'i2c-bus' subnode where I2C slaves can be placed. If the 'i2c-bus'
-> subnode is present then all I2C slaves must be placed under this subnode.
-> 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> ---
->  Documentation/devicetree/bindings/i2c/i2c.txt | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/i2c/i2c.txt b/Documentation/devicetree/bindings/i2c/i2c.txt
-> index f31b2ad1552b..71bea55d4c1b 100644
-> --- a/Documentation/devicetree/bindings/i2c/i2c.txt
-> +++ b/Documentation/devicetree/bindings/i2c/i2c.txt
-> @@ -32,6 +32,14 @@ wants to support one of the below features, it should adapt the bindings below.
->  - clock-frequency
->  	frequency of bus clock in Hz.
->  
-> +- i2c-bus
-> +	For I2C adapters that have child nodes that are a mixture of both I2C
-> +	devices and non-I2C devices (such as a pin controller), the 'i2c-bus'
-> +	subnode can be used for populating I2C devices. If the 'i2c-bus'
-> +	subnode is present, only subnodes of this will be considered as I2C
-> +	slaves. The properties, '#address-cells' and '#size-cells' must be
-> +	defined under this subnode if present.
+On 06/27/2016 03:02 AM, Joseph Lo wrote:
+> Add DT binding for the Hardware Synchronization Primitives (HSP). The
+> HSP is designed for the processors to share resources and communicate
+> together. It provides a set of hardware synchronization primitives for
+> interprocessor communication. So the interprocessor communication (IPC)
+> protocols can use hardware synchronization primitive, when operating
+> between two processors not in an SMP relationship.
 
-Hmmm, those #-properties are listed above, under "Required properties", which
-is no longer 100% true. Maybe rephrase to
+This binding is quite different to the binding you sent to internal IP 
+review. I wonder why it changed? Specific comments below:
 
-	slaves. The required properties '#address-cells' and '#size-cells'
-	must be	defined under this subnode instead, if this subnode is present.
+> diff --git a/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt b/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt
 
-to make the rules (even) clearer?
-
-Cheers,
-Peter
-
+> +NVIDIA Tegra Hardware Synchronization Primitives (HSP)
 > +
->  - i2c-scl-falling-time-ns
->  	Number of nanoseconds the SCL signal takes to fall; t(f) in the I2C
->  	specification.
-> 
+> +The HSP modules are used for the processors to share resources and communicate
+> +together. It provides a set of hardware synchronization primitives for
+> +interprocessor communication. So the interprocessor communication (IPC)
+> +protocols can use hardware synchronization primitives, when operating between
+> +two processors not in an SMP relationship.
+> +
+> +The features that HSP supported are shared mailboxes, shared semaphores,
+> +arbitrated semaphores and doorbells.
+> +
+> +Required properties:
+> +- name : Should be hsp
+> +- compatible : Should be "nvidia,tegra<chip>-hsp"
+
+I think this should explicitly list the value values of the compatible 
+property, rather than being a generic/wildcard description:
+
+- compatible
+     Array of strings.
+     One of:
+   - "nvidia,tegra186-hsp"
+
+If/when this binding supports other SoCs in the future, we'll add more 
+entries into that list.
+
+> +- reg : Offset and length of the register set for the device
+> +- interrupts : Should contain the HSP interrupts
+> +- interrupt-names: Should contain the names of the HSP interrupts that the
+> +		   client are using.
+> +		   "doorbell"
+
+The binding should describe the HW, and not be affected by anything 
+"that the client(s) are using". If there are multiple interrupts, we 
+should list them all here, from the start.
+
+When revising this, I would consider the following wording canonical:
+
+- interrupt-names
+     Array of strings.
+     Contains a list of names for the interrupts described by the
+     interrupts property. May contain the following entries, in any
+     order:
+     - "doorbell"
+     - "..." (no doubt many more items will be listed here, e.g.
+       for semaphores, etc.).
+     Users of this binding MUST look up entries in the interrupts
+     property by name, using this interrupts-names property to do so.
+- interrupts
+     Array of interrupt specifiers.
+     Must contain one entry per entry in the interrupt-names property,
+     in a matching order.
+
+> +- nvidia,hsp-function : Specifies one of the HSP functions that the HSP unit
+> +			will be supported. The function ID can be found in the
+> +			header file <dt-bindings/mailbox/tegra-hsp.h>.
+
+This property wasn't in the internal patch.
+
+This doesn't make sense. The HW feature-set is fixed. This sounds like 
+some kind of software configuration option, or a way to allow different 
+drivers to handle different aspects of the HW? In general, the binding 
+shouldn't be influenced by software structure. Please delete this property.
+
+Now, if you're attempting to set up a binding where each function 
+(semaphores, shared mailboxes, doorbells, etc.) has a different DT node, 
+then (a) splitting up HW modules into sub-blocks has usually turned out 
+to be a mistake in the past, and (b) the differences should likely be 
+represented by using a different compatible property for each 
+sub-component, rather than via a custom property.
+
+
+The following properties were included in the internal patch:
+
+                 nvidia,num-SM = <0x8>;
+                 nvidia,num-AS = <0x2>;
+                 nvidia,num-SS = <0x2>;
+                 nvidia,num-DB = <0x7>;
+                 nvidia,num-SI = <0x8>;
+
+... yet aren't here. True the compatible value implies those values; was 
+that why the properties were removed?
+
+> +Example:
+> +
+> +hsp_top: hsp@3c00000 {
+...
+> +bpmp@d0000000 {
+> +	...
+> +	mboxes = <&hsp_top HSP_DB_MASTER_BPMP>;
+> +	...
+> +};
+
+I'd suggest not including the bpmp node in the example, since it's not 
+part of the HSP node. If you do, recall that bpmp has no reg property 
+and hence the node name shouldn't include a unit address.
+
+> diff --git a/include/dt-bindings/mailbox/tegra-hsp.h b/include/dt-bindings/mailbox/tegra-hsp.h
+
+This file should probably be named tegra186-hsp, since I doubt the 
+master ID values will be stable between chips.
+
+> +/*
+> + * This header provides constants for binding nvidia,tegra<chip>-hsp.
+
+That should say "186" not "<chip>"
+
+> +#ifndef _DT_BINDINGS_MAILBOX_TEGRA186_HSP_H
+> +#define _DT_BINDINGS_MAILBOX_TEGRA186_HSP_H
+
+The two changes mentioned above would be consistent with that include 
+guard's name including the text "186".
+
+> +#define HSP_SHARED_MAILBOX		0
+> +#define HSP_SHARED_SEMAPHORE		1
+> +#define HSP_ARBITRATED_SEMAPHORE	2
+> +#define HSP_DOORBELL			3
+
+I think those should be removed, along with the nvidia,hsp-function 
+property.
