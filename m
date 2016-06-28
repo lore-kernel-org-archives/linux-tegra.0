@@ -1,34 +1,48 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v5] clk: tegra: Initialize UTMIPLL when enabling PLLU
-Date: Tue, 28 Jun 2016 17:30:16 +0100
-Message-ID: <5772A618.4020207@nvidia.com>
-References: <1464280891-23036-1-git-send-email-rklein@nvidia.com>
- <5763FFF5.5000303@nvidia.com> <20160617152336.GA27475@ulmo.ba.sec>
- <dc524c6236144234a341fedaa22dbacb@HQMAIL112.nvidia.com>
+From: Bhaktipriya Shridhar <bhaktipriya96-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2] gpu: host1x: hw: intr_hw: Remove create_workqueue
+Date: Tue, 28 Jun 2016 22:14:29 +0530
+Message-ID: <CAFNHFT8AWParnHXjTrGmCXNy2UaY_+XQjknzM8ZUj+pSL4OJMQ@mail.gmail.com>
+References: <20160618090632.GA11246@Karyakshetra> <20160620151123.GY3262@mtj.duckdns.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <dc524c6236144234a341fedaa22dbacb@HQMAIL112.nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Rhyland Klein <rklein@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andrew Bresticker <abrestic@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160620151123.GY3262-qYNAdHglDFBN0TnZuCh8vA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Srinivas Kandagatla <srinivas.kandagatla-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Maling list - DRI developers <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Rhyland,
+Ping!
+Thanks,
+Bhaktipriya
 
-On 27/06/16 19:11, Rhyland Klein wrote:
-> Jonathan, can you confirm replacing usleep_range(100, 200) with udelay(2) works for you?
 
-Yes for me, using a udelay(2) does seem to work. I have made sure that a
-usb device is still detected on the Jetson TX1. However, I am not sure
-the best way to test this thoroughly.
-
-If we do make this change it would be good to propagate downstream as
-well to get wider testing.
-
-Cheers
-Jon
-
--- 
-nvpublic
+On Mon, Jun 20, 2016 at 8:41 PM, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
+> On Sat, Jun 18, 2016 at 02:36:32PM +0530, Bhaktipriya Shridhar wrote:
+>> System workqueues have been able to handle high level of concurrency
+>> for a long time now and there's no reason to use dedicated workqueues
+>> just to gain concurrency. Since the workqueue host->intr_wq is involved
+>> in sync point interrupts, and sync point wait and is not being used on
+>> a memory reclaim path, dedicated host->intr_wq has been replaced with the
+>> use of system_wq.
+>>
+>> Unlike a dedicated per-cpu workqueue created with create_workqueue(),
+>> system_wq allows multiple work items to overlap executions even on
+>> the same CPU; however, a per-cpu workqueue doesn't have any CPU
+>> locality or global ordering guarantees unless the target CPU is
+>> explicitly specified and thus the increase of local concurrency
+>> shouldn't make any difference.
+>>
+>> cancel_work_sync() has been used  in _host1x_free_syncpt_irq() to ensure
+>> that no work is pending by the time exit path runs.
+>
+> Alternatively, this could have used alloc_workqueue() w/o
+> WQ_MEM_RECLAIM and used it just as a flush domain.  Either way is
+> fine.
+>
+> Acked-by: Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+>
+> Thanks.
+>
+> --
+> tejun
