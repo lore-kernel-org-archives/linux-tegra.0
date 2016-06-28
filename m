@@ -1,128 +1,66 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 01/10] Documentation: dt-bindings: mailbox: tegra: Add
- binding for HSP mailbox
-Date: Tue, 28 Jun 2016 13:08:02 -0600
-Message-ID: <5772CB12.5080408@wwwdotorg.org>
-References: <20160627090248.23621-1-josephl@nvidia.com>
- <20160627090248.23621-2-josephl@nvidia.com> <57714C85.50802@wwwdotorg.org>
- <57724039.7080007@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 08/12] i2c: core: Add support for 'i2c-bus' subnode
+Date: Tue, 28 Jun 2016 23:10:08 +0200
+Message-ID: <20160628210952.GA1760@mithrandir.ba.sec>
+References: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
+ <1466697545-11868-9-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <57724039.7080007-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="7AUc2qLy4jB3hD7Z"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1466697545-11868-9-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/28/2016 03:15 AM, Joseph Lo wrote:
-> On 06/27/2016 11:55 PM, Stephen Warren wrote:
->> On 06/27/2016 03:02 AM, Joseph Lo wrote:
->>> Add DT binding for the Hardware Synchronization Primitives (HSP). The
->>> HSP is designed for the processors to share resources and communicate
->>> together. It provides a set of hardware synchronization primitives for
->>> interprocessor communication. So the interprocessor communication (IPC)
->>> protocols can use hardware synchronization primitive, when operating
->>> between two processors not in an SMP relationship.
->>
->> This binding is quite different to the binding you sent to internal IP
->> review. I wonder why it changed? Specific comments below:
->
-> Due to some enhancements for supporting multiple functions of HSP
-> sub-modules in the same driver, I re-wrote some parts of the bindings
-> and driver.
->
->>> diff --git
->>> a/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt
->>> b/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt
 
->>> +- reg : Offset and length of the register set for the device
->>> +- interrupts : Should contain the HSP interrupts
->>> +- interrupt-names: Should contain the names of the HSP interrupts
->>> that the
->>> +           client are using.
->>> +           "doorbell"
->>
->> The binding should describe the HW, and not be affected by anything
->> "that the client(s) are using". If there are multiple interrupts, we
->> should list them all here, from the start.
->>
->> When revising this, I would consider the following wording canonical:
->>
->> - interrupt-names
->>      Array of strings.
->>      Contains a list of names for the interrupts described by the
->>      interrupts property. May contain the following entries, in any
->>      order:
->>      - "doorbell"
->>      - "..." (no doubt many more items will be listed here, e.g.
->>        for semaphores, etc.).
- >
-> I think I will just list "doorbell" for now. And adding more later once
-> we add other HSP sub-module support.
+--7AUc2qLy4jB3hD7Z
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That should be OK; adding more entries in interrupt-names is backwards 
-compatible. Still, since the HW is fixed, it would be nice to just get 
-the complete list documented up front if possible.
+On Thu, Jun 23, 2016 at 04:59:01PM +0100, Jon Hunter wrote:
+> If the 'i2c-bus' device-tree node is present for an I2C adapter then
+> parse this subnode for I2C slaves.
+>=20
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/i2c/i2c-core.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
 
->>> +- nvidia,hsp-function : Specifies one of the HSP functions that the HSP unit
->>> +            will be supported. The function ID can be found in the
->>> +            header file <dt-bindings/mailbox/tegra-hsp.h>.
->>
->> This property wasn't in the internal patch.
->>
->> This doesn't make sense. The HW feature-set is fixed. This sounds like
->> some kind of software configuration option, or a way to allow different
->> drivers to handle different aspects of the HW? In general, the binding
->> shouldn't be influenced by software structure. Please delete this
->> property.
->>
->> Now, if you're attempting to set up a binding where each function
->> (semaphores, shared mailboxes, doorbells, etc.) has a different DT node,
->> then (a) splitting up HW modules into sub-blocks has usually turned out
->> to be a mistake in the past, and (b) the differences should likely be
->> represented by using a different compatible property for each
->> sub-component, rather than via a custom property.
->
-> Currently the usage of HSP HW in the downstream kernel is something like
-> the model below.
->
-> remote_processor_A-\
-> remote_processor_B--->hsp@1000 (doorbell func) <-> host CPU
-> remote_processor_C-/
->
-> remote_processor_D -> hsp@2000 (shared mailbox) <-> CPU
->
-> remote_processor_E -> hsp@3000 (shared mailbox) <-> CPU
->
-> I am thinking if we can just add the appropriate compatible strings for
-> it to replace "nvidia,tegra186-hsp". e.g. "nvidia,tegra186-hsp-doorbell"
-> and "nvidia,tegra186-hsp-sharedmailbox". So the driver can probe and
-> initialize correctly depend on the compatible property. How do you think
-> about it? Is this the same as the (b) you mentioned above?
+Hi Wolfram,
 
-Yes, that would be (b) above.
+are you okay with this change? I'd like to take this through the Tegra
+tree, with your Acked-by, to resolve the dependency of subsequent
+patches.
 
-However, please do note (a): I expect that splitting things up will turn 
-out to be a mistake, as it has for other HW modules in the past. I would 
-far rather see a single hsp node in DT, since there is a single HSP 
-block in HW. Sure that block has multiple sub-functions. However, there 
-is common logic that affects all of those sub-functions and binds 
-everything into a single HW module. If you represent the HW module using 
-multiple different DT nodes, it will be hard to correctly represent that 
-common logic. Conversely, I see no real advantage to splitting up the DT 
-node. I strongly believe we should have a single "hsp" node in DT.
+Would you be okay if I take this patch along with the device tree
+binding change into a stable branch and provide a tag for you to pull
+into the I2C tree?
 
-Internally, the SW driver for that node can be structured however you 
-want; it could register with multiple subsystems (mailbox, ...) with 
-just one struct device, or the HSP driver could be an MFD device with 
-sub-drivers for each separate piece of functionality the HW implements. 
-All this can easily be done even while using a single DT node. And 
-furthermore, we can add this SW structure later if/when we actually need 
-it; in other words, there's no need to change your current patches right 
-now, except to remove the nvidia,hsp-function DT property.
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Thierry
+
+--7AUc2qLy4jB3hD7Z
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXcuedAAoJEN0jrNd/PrOhMuEP/3gZGfGsCmpsnuUcDw7r8x0T
+zEAmoX7hLkNAtr1Tesr7lY/k3ByPJpCArOWvcwVCXwTwtuqWbrazIMm8n4iN01EP
+WnXu+aQPY7v83O1rBRpL+X/6k2yp0MF8QWAXIzbJ9HOsnPEDjBQzN6sqh5kWf2iH
+scWzygXeUT9eaFGFEMOXERPZVPUDCA0Smu32dc8+bwOJuH8DmrBNQlxyTKbWpMdN
+SzpWCfhBuq7KZA36Z3tN+yYUtzCQbifrZVi5LOwK3d7hpiWXbFT0dNh1LKKnAYYy
+NkwsT1a75RKnhQeMLNVmBuvFKCnt410OEuy5PvY1aLrWnvxstZmNgoh5aAaNK+6q
+PiOjJRfqtV01jgWIo/c88p4z3JRFK0A6bbqo1QipKiP+tJin8hlHEEf2SiafbemW
+PQY2uCy6GuziDjcBqi5GXs34jylMRXzYk+FwxCMeHM7B4ALzAO3ZT/MLnNRmZGEO
+qTLe/f9prVsnr7uNkttGbllsm/jbVo0HTLKMSQY7o8hqUAdiUPQlrc/zXxdJjo36
+Q4u5x3laBjREo12X2D+IaQRCoawOI0SJobZvozCxsQSAhnDEOD0ufCbfZTVZAjtz
+DCOUjybeLSZcz4HM5xs6DZfGcQTnpxT/rEv3xTphENH4XF1HTkvmvjIN1E1O/CWZ
+Wi8tVY0BFFPQ5J/hcww3
+=52Fk
+-----END PGP SIGNATURE-----
+
+--7AUc2qLy4jB3hD7Z--
