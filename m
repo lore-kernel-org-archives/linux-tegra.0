@@ -1,121 +1,38 @@
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-Subject: [PATCH 43/92] clocksource/drivers/tegra20: Convert init function to return error
-Date: Tue, 28 Jun 2016 12:31:02 +0200
-Message-ID: <1467109911-11060-43-git-send-email-daniel.lezcano@linaro.org>
-References: <577251A4.7030508@linaro.org>
- <1467109911-11060-1-git-send-email-daniel.lezcano@linaro.org>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1467109911-11060-1-git-send-email-daniel.lezcano@linaro.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: daniel.lezcano@linaro.org, tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [RFC PATCH 0/3] soc/tegra: Turn on XUSB partitions
+Date: Tue, 28 Jun 2016 12:20:41 +0100
+Message-ID: <1467112844-26927-1-git-send-email-jonathanh@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The init functions do not return any error. They behave as the following:
+The Tegra XHCI driver currently assumes the XUSB power partitions have
+been enabled by the bootloader. This is not for the Tegra210 Smaug board
+and so cause the kernel to hang when enabling XHCI support. Although the
+XHCI driver itself needs to manage these partitions, for now enable the
+partitions if the XHCI driver is enabled.
 
-  - panic, thus leading to a kernel crash while another timer may work and
-    make the system boot up correctly
+In order to do this I have made a fundamental change to the PMC driver
+to initialise the power partitions during early init. A benefit of this
+is that if CONFIG_PM_GENERIC_DOMAINS is not enabled, then we can simply
+turn on the partitions early before any devices are probed.
 
-  or
+This is based upon the PMC fixes series [0].
 
-  - print an error and let the caller unaware if the state of the system
+[0] http://marc.info/?l=linux-tegra&m=146711078013182&w=2
 
-Change that by converting the init functions to return an error conforming
-to the CLOCKSOURCE_OF_RET prototype.
+Jon Hunter (3):
+  soc/tegra: pmc: Initialise power partitions early
+  soc/tegra: pmc: Enable XUSB partitions on boot
+  arm64: tegra210: Add XUSB powergates
 
-Proper error handling (rollback, errno value) will be changed later case
-by case, thus this change just return back an error or success in the init
-function.
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 24 +++++++++++++++++
+ drivers/soc/tegra/pmc.c                  | 45 ++++++++++++++++++++++++--------
+ 2 files changed, 58 insertions(+), 11 deletions(-)
 
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/clocksource/tegra20_timer.c | 28 ++++++++++++++++------------
- 1 file changed, 16 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
-index 7b94ad2..543c37e 100644
---- a/drivers/clocksource/tegra20_timer.c
-+++ b/drivers/clocksource/tegra20_timer.c
-@@ -165,7 +165,7 @@ static struct irqaction tegra_timer_irq = {
- 	.dev_id		= &tegra_clockevent,
- };
- 
--static void __init tegra20_init_timer(struct device_node *np)
-+static int __init tegra20_init_timer(struct device_node *np)
- {
- 	struct clk *clk;
- 	unsigned long rate;
-@@ -174,13 +174,13 @@ static void __init tegra20_init_timer(struct device_node *np)
- 	timer_reg_base = of_iomap(np, 0);
- 	if (!timer_reg_base) {
- 		pr_err("Can't map timer registers\n");
--		BUG();
-+		return -ENXIO;
- 	}
- 
- 	tegra_timer_irq.irq = irq_of_parse_and_map(np, 2);
- 	if (tegra_timer_irq.irq <= 0) {
- 		pr_err("Failed to map timer IRQ\n");
--		BUG();
-+		return -EINVAL;
- 	}
- 
- 	clk = of_clk_get(np, 0);
-@@ -211,10 +211,12 @@ static void __init tegra20_init_timer(struct device_node *np)
- 
- 	sched_clock_register(tegra_read_sched_clock, 32, 1000000);
- 
--	if (clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
--		"timer_us", 1000000, 300, 32, clocksource_mmio_readl_up)) {
-+	ret = clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
-+				    "timer_us", 1000000, 300, 32,
-+				    clocksource_mmio_readl_up);
-+	if (ret) {
- 		pr_err("Failed to register clocksource\n");
--		BUG();
-+		return ret;
- 	}
- 
- 	tegra_delay_timer.read_current_timer =
-@@ -225,24 +227,26 @@ static void __init tegra20_init_timer(struct device_node *np)
- 	ret = setup_irq(tegra_timer_irq.irq, &tegra_timer_irq);
- 	if (ret) {
- 		pr_err("Failed to register timer IRQ: %d\n", ret);
--		BUG();
-+		return ret;
- 	}
- 
- 	tegra_clockevent.cpumask = cpu_all_mask;
- 	tegra_clockevent.irq = tegra_timer_irq.irq;
- 	clockevents_config_and_register(&tegra_clockevent, 1000000,
- 					0x1, 0x1fffffff);
-+
-+	return 0;
- }
--CLOCKSOURCE_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
-+CLOCKSOURCE_OF_DECLARE_RET(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
- 
--static void __init tegra20_init_rtc(struct device_node *np)
-+static int __init tegra20_init_rtc(struct device_node *np)
- {
- 	struct clk *clk;
- 
- 	rtc_base = of_iomap(np, 0);
- 	if (!rtc_base) {
- 		pr_err("Can't map RTC registers");
--		BUG();
-+		return -ENXIO;
- 	}
- 
- 	/*
-@@ -255,6 +259,6 @@ static void __init tegra20_init_rtc(struct device_node *np)
- 	else
- 		clk_prepare_enable(clk);
- 
--	register_persistent_clock(NULL, tegra_read_persistent_clock64);
-+	return register_persistent_clock(NULL, tegra_read_persistent_clock64);
- }
--CLOCKSOURCE_OF_DECLARE(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
-+CLOCKSOURCE_OF_DECLARE_RET(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
 -- 
-1.9.1
+2.1.4
