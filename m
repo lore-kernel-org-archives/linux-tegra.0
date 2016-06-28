@@ -1,72 +1,194 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 07/12] dt-bindings: i2c: Add support for 'i2c-bus' subnode
-Date: Tue, 28 Jun 2016 09:21:05 +0100
-Message-ID: <57723371.4060806@nvidia.com>
-References: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
- <1466697545-11868-8-git-send-email-jonathanh@nvidia.com>
- <0e9ab029-ed95-c3cb-61f5-6acd9da12a24@axentia.se>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 01/10] Documentation: dt-bindings: mailbox: tegra: Add
+ binding for HSP mailbox
+Date: Tue, 28 Jun 2016 17:15:37 +0800
+Message-ID: <57724039.7080007@nvidia.com>
+References: <20160627090248.23621-1-josephl@nvidia.com>
+ <20160627090248.23621-2-josephl@nvidia.com> <57714C85.50802@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <0e9ab029-ed95-c3cb-61f5-6acd9da12a24@axentia.se>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Peter Rosin <peda@axentia.se>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <57714C85.50802-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDI3LzA2LzE2IDEzOjA0LCBQZXRlciBSb3NpbiB3cm90ZToKPiBPbiAyMDE2LTA2LTIzIDE3
-OjU5LCBKb24gSHVudGVyIHdyb3RlOgo+PiBUaGUgSTJDIGRyaXZlciBjb3JlIGZvciBib2FyZHMg
-dXNpbmcgZGV2aWNlLXRyZWUgYXNzdW1lcyBhbnkgc3Vibm9kZSBvZgo+PiBhbiBJMkMgYWRhcHRl
-ciBpbiB0aGUgZGV2aWNlLXRyZWUgYmxvYiBhcyBiZWluZyBhIEkyQyBzbGF2ZSBkZXZpY2UuCj4+
-IEFsdGhvdWdoIHRoaXMgbWFrZXMgY29tcGxldGUgc2Vuc2UsIHNvbWUgSTJDIGFkYXB0ZXJzIG1h
-eSBoYXZlIHN1Ym5vZGVzCj4+IHdoaWNoIGFyZSBub3QgSTJDIHNsYXZlcyBidXQgc3Vibm9kZXMg
-cHJlc2VudGluZyBvdGhlciBmZWF0dXJlcy4gRm9yCj4+IGV4YW1wbGUgc29tZSBUZWdyYSBkZXZp
-Y2VzIGhhdmUgYW4gSTJDIGludGVyZmFjZSB3aGljaCBtYXkgc2hhcmUgaXRzCj4+IHBpbnMgd2l0
-aCBvdGhlciBkZXZpY2VzIGFuZCB0byBzaGFyZSB0aGVzZSBwaW5zIHN1Ym5vZGVzIGZvcgo+PiBy
-ZXByZXNlbnRpbmcgdGhlc2UgcGlucyBzbyB0aGV5IGhhdmUgYmUgc2hhcmVkIHZpYSB0aGUgcGlu
-Y3RybCBmcmFtZXdvcmsKPj4gYXJlIG5lZWRlZC4KPj4KPj4gVG8gYWxsb3cgSTJDIGFkYXB0ZXJz
-IHRvIGhhdmUgbm9uLUkyQyBzcGVjaWZpYyBzdWJub2RlcyBpbiBkZXZpY2UtdHJlZQo+PiB0aGF0
-IGFyZSBub3QgcGFyc2VkIGJ5IHRoZSBJMkMgZHJpdmVyIGNvcmUgYnkgYWRkaW5nIHN1cHBvcnQg
-Zm9yIGEKPj4gJ2kyYy1idXMnIHN1Ym5vZGUgd2hlcmUgSTJDIHNsYXZlcyBjYW4gYmUgcGxhY2Vk
-LiBJZiB0aGUgJ2kyYy1idXMnCj4+IHN1Ym5vZGUgaXMgcHJlc2VudCB0aGVuIGFsbCBJMkMgc2xh
-dmVzIG11c3QgYmUgcGxhY2VkIHVuZGVyIHRoaXMgc3Vibm9kZS4KPj4KPj4gU2lnbmVkLW9mZi1i
-eTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+Cj4+IEFja2VkLWJ5OiBUaGllcnJ5
-IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+PiAtLS0KPj4gIERvY3VtZW50YXRpb24vZGV2
-aWNldHJlZS9iaW5kaW5ncy9pMmMvaTJjLnR4dCB8IDggKysrKysrKysKPj4gIDEgZmlsZSBjaGFu
-Z2VkLCA4IGluc2VydGlvbnMoKykKPj4KPj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2
-aWNldHJlZS9iaW5kaW5ncy9pMmMvaTJjLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
-aW5kaW5ncy9pMmMvaTJjLnR4dAo+PiBpbmRleCBmMzFiMmFkMTU1MmIuLjcxYmVhNTVkNGMxYiAx
-MDA2NDQKPj4gLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2kyYy9pMmMu
-dHh0Cj4+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9pMmMvaTJjLnR4
-dAo+PiBAQCAtMzIsNiArMzIsMTQgQEAgd2FudHMgdG8gc3VwcG9ydCBvbmUgb2YgdGhlIGJlbG93
-IGZlYXR1cmVzLCBpdCBzaG91bGQgYWRhcHQgdGhlIGJpbmRpbmdzIGJlbG93Lgo+PiAgLSBjbG9j
-ay1mcmVxdWVuY3kKPj4gIAlmcmVxdWVuY3kgb2YgYnVzIGNsb2NrIGluIEh6Lgo+PiAgCj4+ICst
-IGkyYy1idXMKPj4gKwlGb3IgSTJDIGFkYXB0ZXJzIHRoYXQgaGF2ZSBjaGlsZCBub2RlcyB0aGF0
-IGFyZSBhIG1peHR1cmUgb2YgYm90aCBJMkMKPj4gKwlkZXZpY2VzIGFuZCBub24tSTJDIGRldmlj
-ZXMgKHN1Y2ggYXMgYSBwaW4gY29udHJvbGxlciksIHRoZSAnaTJjLWJ1cycKPj4gKwlzdWJub2Rl
-IGNhbiBiZSB1c2VkIGZvciBwb3B1bGF0aW5nIEkyQyBkZXZpY2VzLiBJZiB0aGUgJ2kyYy1idXMn
-Cj4+ICsJc3Vibm9kZSBpcyBwcmVzZW50LCBvbmx5IHN1Ym5vZGVzIG9mIHRoaXMgd2lsbCBiZSBj
-b25zaWRlcmVkIGFzIEkyQwo+PiArCXNsYXZlcy4gVGhlIHByb3BlcnRpZXMsICcjYWRkcmVzcy1j
-ZWxscycgYW5kICcjc2l6ZS1jZWxscycgbXVzdCBiZQo+PiArCWRlZmluZWQgdW5kZXIgdGhpcyBz
-dWJub2RlIGlmIHByZXNlbnQuCj4gCj4gSG1tbSwgdGhvc2UgIy1wcm9wZXJ0aWVzIGFyZSBsaXN0
-ZWQgYWJvdmUsIHVuZGVyICJSZXF1aXJlZCBwcm9wZXJ0aWVzIiwgd2hpY2gKPiBpcyBubyBsb25n
-ZXIgMTAwJSB0cnVlLiBNYXliZSByZXBocmFzZSB0bwo+IAo+IAlzbGF2ZXMuIFRoZSByZXF1aXJl
-ZCBwcm9wZXJ0aWVzICcjYWRkcmVzcy1jZWxscycgYW5kICcjc2l6ZS1jZWxscycKPiAJbXVzdCBi
-ZQlkZWZpbmVkIHVuZGVyIHRoaXMgc3Vibm9kZSBpbnN0ZWFkLCBpZiB0aGlzIHN1Ym5vZGUgaXMg
-cHJlc2VudC4KPiAKPiB0byBtYWtlIHRoZSBydWxlcyAoZXZlbikgY2xlYXJlcj8KCkkgc2VlIHdo
-YXQgeW91IGFyZSBzYXlpbmcgYnV0IEkgd29uZGVyIGlmIHRoZSBmb2xsb3dpbmcgaXMgYmV0dGVy
-IC4uLgoKIHNsYXZlcy4gVGhlIHJlcXVpcmVkIHByb3BlcnRpZXMgJyNhZGRyZXNzLWNlbGxzJyBh
-bmQgJyNzaXplLWNlbGxzJwogbXVzdCBiZSBkZWZpbmVkIHVuZGVyIHRoaXMgc3Vibm9kZSBpZiBw
-cmVzZW50IGFuZCBub3QgdGhlIHBhcmVudCBub2RlLgoKQ2hlZXJzCkpvbgoKLS0gCm52cHVibGlj
-Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
-bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
-c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+On 06/27/2016 11:55 PM, Stephen Warren wrote:
+> On 06/27/2016 03:02 AM, Joseph Lo wrote:
+>> Add DT binding for the Hardware Synchronization Primitives (HSP). The
+>> HSP is designed for the processors to share resources and communicate
+>> together. It provides a set of hardware synchronization primitives for
+>> interprocessor communication. So the interprocessor communication (IPC)
+>> protocols can use hardware synchronization primitive, when operating
+>> between two processors not in an SMP relationship.
+>
+> This binding is quite different to the binding you sent to internal IP
+> review. I wonder why it changed? Specific comments below:
+>
+Due to some enhancements for supporting multiple functions of HSP 
+sub-modules in the same driver, I re-wrote some parts of the bindings 
+and driver.
+
+>> diff --git
+>> a/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt
+>> b/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt
+>
+>> +NVIDIA Tegra Hardware Synchronization Primitives (HSP)
+>> +
+>> +The HSP modules are used for the processors to share resources and
+>> communicate
+>> +together. It provides a set of hardware synchronization primitives for
+>> +interprocessor communication. So the interprocessor communication (IPC)
+>> +protocols can use hardware synchronization primitives, when operating
+>> between
+>> +two processors not in an SMP relationship.
+>> +
+>> +The features that HSP supported are shared mailboxes, shared semaphores,
+>> +arbitrated semaphores and doorbells.
+>> +
+>> +Required properties:
+>> +- name : Should be hsp
+>> +- compatible : Should be "nvidia,tegra<chip>-hsp"
+>
+> I think this should explicitly list the value values of the compatible
+> property, rather than being a generic/wildcard description:
+>
+> - compatible
+>      Array of strings.
+>      One of:
+>    - "nvidia,tegra186-hsp"
+>
+> If/when this binding supports other SoCs in the future, we'll add more
+> entries into that list.
+>
+>> +- reg : Offset and length of the register set for the device
+>> +- interrupts : Should contain the HSP interrupts
+>> +- interrupt-names: Should contain the names of the HSP interrupts
+>> that the
+>> +           client are using.
+>> +           "doorbell"
+>
+> The binding should describe the HW, and not be affected by anything
+> "that the client(s) are using". If there are multiple interrupts, we
+> should list them all here, from the start.
+>
+> When revising this, I would consider the following wording canonical:
+Okay.
+>
+> - interrupt-names
+>      Array of strings.
+>      Contains a list of names for the interrupts described by the
+>      interrupts property. May contain the following entries, in any
+>      order:
+>      - "doorbell"
+>      - "..." (no doubt many more items will be listed here, e.g.
+>        for semaphores, etc.).
+I think I will just list "doorbell" for now. And adding more later once 
+we add other HSP sub-module support.
+
+>      Users of this binding MUST look up entries in the interrupts
+>      property by name, using this interrupts-names property to do so.
+> - interrupts
+>      Array of interrupt specifiers.
+>      Must contain one entry per entry in the interrupt-names property,
+>      in a matching order.
+>
+>> +- nvidia,hsp-function : Specifies one of the HSP functions that the
+>> HSP unit
+>> +            will be supported. The function ID can be found in the
+>> +            header file <dt-bindings/mailbox/tegra-hsp.h>.
+>
+> This property wasn't in the internal patch.
+>
+> This doesn't make sense. The HW feature-set is fixed. This sounds like
+> some kind of software configuration option, or a way to allow different
+> drivers to handle different aspects of the HW? In general, the binding
+> shouldn't be influenced by software structure. Please delete this property.
+>
+> Now, if you're attempting to set up a binding where each function
+> (semaphores, shared mailboxes, doorbells, etc.) has a different DT node,
+> then (a) splitting up HW modules into sub-blocks has usually turned out
+> to be a mistake in the past, and (b) the differences should likely be
+> represented by using a different compatible property for each
+> sub-component, rather than via a custom property.
+
+Currently the usage of HSP HW in the downstream kernel is something like 
+the model below.
+
+remote_processor_A-\
+remote_processor_B--->hsp@1000 (doorbell func) <-> host CPU
+remote_processor_C-/
+
+remote_processor_D -> hsp@2000 (shared mailbox) <-> CPU
+
+remote_processor_E -> hsp@3000 (shared mailbox) <-> CPU
+
+I am thinking if we can just add the appropriate compatible strings for 
+it to replace "nvidia,tegra186-hsp". e.g. "nvidia,tegra186-hsp-doorbell" 
+and "nvidia,tegra186-hsp-sharedmailbox". So the driver can probe and 
+initialize correctly depend on the compatible property. How do you think 
+about it? Is this the same as the (b) you mentioned above?
+
+>
+>
+> The following properties were included in the internal patch:
+>
+>                  nvidia,num-SM = <0x8>;
+>                  nvidia,num-AS = <0x2>;
+>                  nvidia,num-SS = <0x2>;
+>                  nvidia,num-DB = <0x7>;
+>                  nvidia,num-SI = <0x8>;
+>
+> ... yet aren't here. True the compatible value implies those values; was
+> that why the properties were removed?
+Because these values are available in the HSP_INT_DIMENSIONING register, 
+so remove them.
+
+>
+>> +Example:
+>> +
+>> +hsp_top: hsp@3c00000 {
+> ...
+>> +bpmp@d0000000 {
+>> +    ...
+>> +    mboxes = <&hsp_top HSP_DB_MASTER_BPMP>;
+>> +    ...
+>> +};
+>
+> I'd suggest not including the bpmp node in the example, since it's not
+> part of the HSP node. If you do, recall that bpmp has no reg property
+> and hence the node name shouldn't include a unit address.
+Okay.
+>
+>> diff --git a/include/dt-bindings/mailbox/tegra-hsp.h
+>> b/include/dt-bindings/mailbox/tegra-hsp.h
+>
+> This file should probably be named tegra186-hsp, since I doubt the
+> master ID values will be stable between chips.
+Yes, true. Will fix.
+>
+>> +/*
+>> + * This header provides constants for binding nvidia,tegra<chip>-hsp.
+>
+> That should say "186" not "<chip>"
+>
+>> +#ifndef _DT_BINDINGS_MAILBOX_TEGRA186_HSP_H
+>> +#define _DT_BINDINGS_MAILBOX_TEGRA186_HSP_H
+>
+> The two changes mentioned above would be consistent with that include
+> guard's name including the text "186".
+>
+>> +#define HSP_SHARED_MAILBOX        0
+>> +#define HSP_SHARED_SEMAPHORE        1
+>> +#define HSP_ARBITRATED_SEMAPHORE    2
+>> +#define HSP_DOORBELL            3
+>
+> I think those should be removed, along with the nvidia,hsp-function
+> property.
+>
+Okay.
+
+Thanks,
+-Joseph
