@@ -1,88 +1,72 @@
-From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 7/8] dmaengine: tegra20-apb-dma: Only calculate residue
- if txstate exists.
-Date: Tue, 28 Jun 2016 09:34:02 +0530
-Message-ID: <20160628040402.GP22564@localhost>
-References: <1465321121-22238-1-git-send-email-peter.griffin@linaro.org>
- <1465321121-22238-8-git-send-email-peter.griffin@linaro.org>
- <5757DCAD.1090106@nvidia.com>
- <20160621160139.GC16910@localhost>
- <57697736.4050008@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 07/12] dt-bindings: i2c: Add support for 'i2c-bus' subnode
+Date: Tue, 28 Jun 2016 09:21:05 +0100
+Message-ID: <57723371.4060806@nvidia.com>
+References: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
+ <1466697545-11868-8-git-send-email-jonathanh@nvidia.com>
+ <0e9ab029-ed95-c3cb-61f5-6acd9da12a24@axentia.se>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <57697736.4050008-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Peter Griffin <peter.griffin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, leoli-KZfg59tc24xl57MIdRCFDg@public.gmane.org, zw-aYo+Mbtxn2uXDw4h08c5KA@public.gmane.org, baohua-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <0e9ab029-ed95-c3cb-61f5-6acd9da12a24@axentia.se>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Peter Rosin <peda@axentia.se>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: linux-tegra@vger.kernel.org, linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jun 21, 2016 at 06:19:50PM +0100, Jon Hunter wrote:
-> 
-> On 21/06/16 17:01, Vinod Koul wrote:
-> > On Wed, Jun 08, 2016 at 09:51:57AM +0100, Jon Hunter wrote:
-> >> Hi Peter,
-> >>
-> >> On 07/06/16 18:38, Peter Griffin wrote:
-> >>> There is no point calculating the residue if there is
-> >>> no txstate to store the value.
-> >>>
-> >>> Signed-off-by: Peter Griffin <peter.griffin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-> >>> ---
-> >>>  drivers/dma/tegra20-apb-dma.c | 2 +-
-> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
-> >>> index 01e316f..7f4af8c 100644
-> >>> --- a/drivers/dma/tegra20-apb-dma.c
-> >>> +++ b/drivers/dma/tegra20-apb-dma.c
-> >>> @@ -814,7 +814,7 @@ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
-> >>>  	unsigned int residual;
-> >>>  
-> >>>  	ret = dma_cookie_status(dc, cookie, txstate);
-> >>> -	if (ret == DMA_COMPLETE)
-> >>> +	if (ret == DMA_COMPLETE || !txstate)
-> >>>  		return ret;
-> >>
-> >> Thanks for reporting this. I agree that we should not do this, however, 
-> >> looking at the code for Tegra, I am wondering if this could change the
-> >> actual state that is returned. Looking at dma_cookie_status() it will
-> >> call dma_async_is_complete() which will return either DMA_COMPLETE or
-> >> DMA_IN_PROGRESS. It could be possible that the actual state for the
-> >> DMA transfer in the tegra driver is DMA_ERROR, so I am wondering if we
-> >> should do something like the following  ...
-> > 
-> > This one is stopping code execution when residue is not valid. Do notice
-> > that it check for DMA_COMPLETE OR txstate. In other cases, wit will return
-> > 'that' state when txstate is NULL.
-> 
-> Sorry what do you mean by "this one"?
-
-the patch
-
-> 
-> My point is that if the status is not DMA_COMPLETE, then it is possible
-> that it could be DMA_ERROR (for tegra that is). 
-
-right it can be any state... and we check for only DMA_COMPLETE as residue
-has no meaning.
-
-> However,
-> dma_cookie_status will only return DMA_IN_PROGRESS or DMA_COMPLETE and
-> so if 'txstate' is NULL we will not see the DMA_ERROR status anymore and
-> just think it is in progress when it is actually an error.
-
-Yes that is an existing issue, if you are reporting DMA_ERROR then you
-should add a check for DMA_ERROR as well and not do residue calculation for
-that case.
-
-> 
-> I do agree that the driver is broken as we are not checking for
-> !txstate, but this also changes the behaviour a bit.
-
-It changes for better and not worse. Btw pls feel free to send a patch
-handling DMA_ERROR :)
-
--- 
-~Vinod
+Ck9uIDI3LzA2LzE2IDEzOjA0LCBQZXRlciBSb3NpbiB3cm90ZToKPiBPbiAyMDE2LTA2LTIzIDE3
+OjU5LCBKb24gSHVudGVyIHdyb3RlOgo+PiBUaGUgSTJDIGRyaXZlciBjb3JlIGZvciBib2FyZHMg
+dXNpbmcgZGV2aWNlLXRyZWUgYXNzdW1lcyBhbnkgc3Vibm9kZSBvZgo+PiBhbiBJMkMgYWRhcHRl
+ciBpbiB0aGUgZGV2aWNlLXRyZWUgYmxvYiBhcyBiZWluZyBhIEkyQyBzbGF2ZSBkZXZpY2UuCj4+
+IEFsdGhvdWdoIHRoaXMgbWFrZXMgY29tcGxldGUgc2Vuc2UsIHNvbWUgSTJDIGFkYXB0ZXJzIG1h
+eSBoYXZlIHN1Ym5vZGVzCj4+IHdoaWNoIGFyZSBub3QgSTJDIHNsYXZlcyBidXQgc3Vibm9kZXMg
+cHJlc2VudGluZyBvdGhlciBmZWF0dXJlcy4gRm9yCj4+IGV4YW1wbGUgc29tZSBUZWdyYSBkZXZp
+Y2VzIGhhdmUgYW4gSTJDIGludGVyZmFjZSB3aGljaCBtYXkgc2hhcmUgaXRzCj4+IHBpbnMgd2l0
+aCBvdGhlciBkZXZpY2VzIGFuZCB0byBzaGFyZSB0aGVzZSBwaW5zIHN1Ym5vZGVzIGZvcgo+PiBy
+ZXByZXNlbnRpbmcgdGhlc2UgcGlucyBzbyB0aGV5IGhhdmUgYmUgc2hhcmVkIHZpYSB0aGUgcGlu
+Y3RybCBmcmFtZXdvcmsKPj4gYXJlIG5lZWRlZC4KPj4KPj4gVG8gYWxsb3cgSTJDIGFkYXB0ZXJz
+IHRvIGhhdmUgbm9uLUkyQyBzcGVjaWZpYyBzdWJub2RlcyBpbiBkZXZpY2UtdHJlZQo+PiB0aGF0
+IGFyZSBub3QgcGFyc2VkIGJ5IHRoZSBJMkMgZHJpdmVyIGNvcmUgYnkgYWRkaW5nIHN1cHBvcnQg
+Zm9yIGEKPj4gJ2kyYy1idXMnIHN1Ym5vZGUgd2hlcmUgSTJDIHNsYXZlcyBjYW4gYmUgcGxhY2Vk
+LiBJZiB0aGUgJ2kyYy1idXMnCj4+IHN1Ym5vZGUgaXMgcHJlc2VudCB0aGVuIGFsbCBJMkMgc2xh
+dmVzIG11c3QgYmUgcGxhY2VkIHVuZGVyIHRoaXMgc3Vibm9kZS4KPj4KPj4gU2lnbmVkLW9mZi1i
+eTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+Cj4+IEFja2VkLWJ5OiBUaGllcnJ5
+IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+PiAtLS0KPj4gIERvY3VtZW50YXRpb24vZGV2
+aWNldHJlZS9iaW5kaW5ncy9pMmMvaTJjLnR4dCB8IDggKysrKysrKysKPj4gIDEgZmlsZSBjaGFu
+Z2VkLCA4IGluc2VydGlvbnMoKykKPj4KPj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24vZGV2
+aWNldHJlZS9iaW5kaW5ncy9pMmMvaTJjLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
+aW5kaW5ncy9pMmMvaTJjLnR4dAo+PiBpbmRleCBmMzFiMmFkMTU1MmIuLjcxYmVhNTVkNGMxYiAx
+MDA2NDQKPj4gLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2kyYy9pMmMu
+dHh0Cj4+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9pMmMvaTJjLnR4
+dAo+PiBAQCAtMzIsNiArMzIsMTQgQEAgd2FudHMgdG8gc3VwcG9ydCBvbmUgb2YgdGhlIGJlbG93
+IGZlYXR1cmVzLCBpdCBzaG91bGQgYWRhcHQgdGhlIGJpbmRpbmdzIGJlbG93Lgo+PiAgLSBjbG9j
+ay1mcmVxdWVuY3kKPj4gIAlmcmVxdWVuY3kgb2YgYnVzIGNsb2NrIGluIEh6Lgo+PiAgCj4+ICst
+IGkyYy1idXMKPj4gKwlGb3IgSTJDIGFkYXB0ZXJzIHRoYXQgaGF2ZSBjaGlsZCBub2RlcyB0aGF0
+IGFyZSBhIG1peHR1cmUgb2YgYm90aCBJMkMKPj4gKwlkZXZpY2VzIGFuZCBub24tSTJDIGRldmlj
+ZXMgKHN1Y2ggYXMgYSBwaW4gY29udHJvbGxlciksIHRoZSAnaTJjLWJ1cycKPj4gKwlzdWJub2Rl
+IGNhbiBiZSB1c2VkIGZvciBwb3B1bGF0aW5nIEkyQyBkZXZpY2VzLiBJZiB0aGUgJ2kyYy1idXMn
+Cj4+ICsJc3Vibm9kZSBpcyBwcmVzZW50LCBvbmx5IHN1Ym5vZGVzIG9mIHRoaXMgd2lsbCBiZSBj
+b25zaWRlcmVkIGFzIEkyQwo+PiArCXNsYXZlcy4gVGhlIHByb3BlcnRpZXMsICcjYWRkcmVzcy1j
+ZWxscycgYW5kICcjc2l6ZS1jZWxscycgbXVzdCBiZQo+PiArCWRlZmluZWQgdW5kZXIgdGhpcyBz
+dWJub2RlIGlmIHByZXNlbnQuCj4gCj4gSG1tbSwgdGhvc2UgIy1wcm9wZXJ0aWVzIGFyZSBsaXN0
+ZWQgYWJvdmUsIHVuZGVyICJSZXF1aXJlZCBwcm9wZXJ0aWVzIiwgd2hpY2gKPiBpcyBubyBsb25n
+ZXIgMTAwJSB0cnVlLiBNYXliZSByZXBocmFzZSB0bwo+IAo+IAlzbGF2ZXMuIFRoZSByZXF1aXJl
+ZCBwcm9wZXJ0aWVzICcjYWRkcmVzcy1jZWxscycgYW5kICcjc2l6ZS1jZWxscycKPiAJbXVzdCBi
+ZQlkZWZpbmVkIHVuZGVyIHRoaXMgc3Vibm9kZSBpbnN0ZWFkLCBpZiB0aGlzIHN1Ym5vZGUgaXMg
+cHJlc2VudC4KPiAKPiB0byBtYWtlIHRoZSBydWxlcyAoZXZlbikgY2xlYXJlcj8KCkkgc2VlIHdo
+YXQgeW91IGFyZSBzYXlpbmcgYnV0IEkgd29uZGVyIGlmIHRoZSBmb2xsb3dpbmcgaXMgYmV0dGVy
+IC4uLgoKIHNsYXZlcy4gVGhlIHJlcXVpcmVkIHByb3BlcnRpZXMgJyNhZGRyZXNzLWNlbGxzJyBh
+bmQgJyNzaXplLWNlbGxzJwogbXVzdCBiZSBkZWZpbmVkIHVuZGVyIHRoaXMgc3Vibm9kZSBpZiBw
+cmVzZW50IGFuZCBub3QgdGhlIHBhcmVudCBub2RlLgoKQ2hlZXJzCkpvbgoKLS0gCm52cHVibGlj
+Cl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZl
+bCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xp
+c3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
