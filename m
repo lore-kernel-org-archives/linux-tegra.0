@@ -1,48 +1,49 @@
-From: Bhaktipriya Shridhar <bhaktipriya96-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2] gpu: host1x: hw: intr_hw: Remove create_workqueue
-Date: Tue, 28 Jun 2016 22:14:29 +0530
-Message-ID: <CAFNHFT8AWParnHXjTrGmCXNy2UaY_+XQjknzM8ZUj+pSL4OJMQ@mail.gmail.com>
-References: <20160618090632.GA11246@Karyakshetra> <20160620151123.GY3262@mtj.duckdns.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH v2 10/11] clk: Show CRITICAL clks in clk_summary output
+Date: Tue, 28 Jun 2016 10:40:29 -0700
+Message-ID: <20160628174028.GC1521@codeaurora.org>
+References: <1464381494-27096-1-git-send-email-rklein@nvidia.com>
+ <1464381494-27096-11-git-send-email-rklein@nvidia.com>
+ <20160622122419.GC26943@ulmo.ba.sec>
+ <0db7c9c8-d934-acba-2dbf-c704372ee541@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160620151123.GY3262-qYNAdHglDFBN0TnZuCh8vA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Srinivas Kandagatla <srinivas.kandagatla-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Maling list - DRI developers <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "Linux-Kernel@Vger. Kernel. Org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <0db7c9c8-d934-acba-2dbf-c704372ee541@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rhyland Klein <rklein@nvidia.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Ping!
-Thanks,
-Bhaktipriya
+On 06/22, Rhyland Klein wrote:
+> On 6/22/2016 8:24 AM, Thierry Reding wrote:
+> > 
+> > Maybe output " " instead of "" for CLK_IS_CRITICAL, that way you can
+> > omit the second conditional.
+> > 
+> > I wonder if it might be easier to read if this flag was at the end of
+> > the line. There's also the fact that someone may have written a script
+> > that expects the clock name as the first word on the line and may get
+> > confused by this change. If you put it at the very end of the line the
+> > likelihood of upsetting scripts will be reduced.
+> 
+> Yah we can put the mark at the end of the line. I wasn't sure if there
+> was a strong motivation to avoid extending the the width of each line,
+> as sometimes people prefer to try to keep it close to 80 char as
+> possible. I think right now, it was close to that, but might be a little
+> over already. I can switch to that though, as it is less likely to break
+> any automatic parsing scripts.
+> 
 
+Nak. clk_summary is about taking a snapshot of the system state
+for things that may be changing rapidly, like consumers (which
+sounds fun to add!), rates, enable/prepare state. Flags are not
+changing. If you want to add flag info into some summary then a
+script should be able to augment clk_summary info (really should
+use the clk_dump in this case though) with whatever flags can be
+read through debugfs already.
 
-On Mon, Jun 20, 2016 at 8:41 PM, Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org> wrote:
-> On Sat, Jun 18, 2016 at 02:36:32PM +0530, Bhaktipriya Shridhar wrote:
->> System workqueues have been able to handle high level of concurrency
->> for a long time now and there's no reason to use dedicated workqueues
->> just to gain concurrency. Since the workqueue host->intr_wq is involved
->> in sync point interrupts, and sync point wait and is not being used on
->> a memory reclaim path, dedicated host->intr_wq has been replaced with the
->> use of system_wq.
->>
->> Unlike a dedicated per-cpu workqueue created with create_workqueue(),
->> system_wq allows multiple work items to overlap executions even on
->> the same CPU; however, a per-cpu workqueue doesn't have any CPU
->> locality or global ordering guarantees unless the target CPU is
->> explicitly specified and thus the increase of local concurrency
->> shouldn't make any difference.
->>
->> cancel_work_sync() has been used  in _host1x_free_syncpt_irq() to ensure
->> that no work is pending by the time exit path runs.
->
-> Alternatively, this could have used alloc_workqueue() w/o
-> WQ_MEM_RECLAIM and used it just as a flush domain.  Either way is
-> fine.
->
-> Acked-by: Tejun Heo <tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
->
-> Thanks.
->
-> --
-> tejun
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
