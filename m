@@ -1,40 +1,36 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 0/6] soc/tegra: Various PMC fixes
-Date: Tue, 28 Jun 2016 11:40:22 +0100
-Message-ID: <57725416.60106@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 5/6] soc/tegra: pmc: Add missing of_node_put
+Date: Tue, 28 Jun 2016 11:38:27 +0100
+Message-ID: <1467110308-22126-6-git-send-email-jonathanh@nvidia.com>
 References: <1467110308-22126-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1467110308-22126-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1467110308-22126-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+Add missing of_node_put() in PMC early initialisation function.
 
-On 28/06/16 11:38, Jon Hunter wrote:
-> A few fixes for the Tegra PMC driver.
-> 
-> Jon Hunter (6):
->   soc/tegra: pmc: Ensure powergate is available when powering on
->   soc/tegra: pmc: Fix early initialisation of PMC
->   soc/tegra: pmc: Don't populate soc data until register space is mapped
->   soc/tegra: pmc: Ensure mutex is always initialised
->   soc/tegra: pmc: Add missing of_node_put
->   soc/tegra: pmc: Don't probe pmc if early initialisation fails
-> 
->  drivers/soc/tegra/pmc.c | 51 ++++++++++++++++++++++++++++++++-----------------
->  1 file changed, 33 insertions(+), 18 deletions(-)
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/soc/tegra/pmc.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Forgot to mentioned this is based upon the DPAUX series [0] as that also
-has a change for the pmc driver.
-
-Cheers
-Jon
-
-[0] http://marc.info/?l=linux-tegra&m=146669756307955&w=2
-
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 483d54623ec5..e62acaef140a 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -1572,6 +1572,8 @@ static int __init tegra_pmc_early_init(void)
+ 			value &= ~PMC_CNTRL_INTR_POLARITY;
+ 
+ 		tegra_pmc_writel(value, PMC_CNTRL);
++
++		of_node_put(np);
+ 	}
+ 
+ 	return 0;
 -- 
-nvpublic
+2.1.4
