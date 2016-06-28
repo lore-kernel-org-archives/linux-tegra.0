@@ -1,66 +1,372 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 08/12] i2c: core: Add support for 'i2c-bus' subnode
-Date: Tue, 28 Jun 2016 23:10:08 +0200
-Message-ID: <20160628210952.GA1760@mithrandir.ba.sec>
-References: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
- <1466697545-11868-9-git-send-email-jonathanh@nvidia.com>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v3] ARM64: boot: dts: Add regulators for Tegra210 Smaug
+Date: Tue, 28 Jun 2016 17:28:24 -0400
+Message-ID: <1467149304-29274-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="7AUc2qLy4jB3hD7Z"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1466697545-11868-9-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Add regulators to the Tegra210 Smaug DTS file including
+support for the max77620 PMIC.
 
---7AUc2qLy4jB3hD7Z
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+v3:
+ - Fixed up ramp delays
+ - s/maxim,enable-sleep/maxim,device-state-on-disabled-event/
+ - remove GPIO 3 from pp3300
 
-On Thu, Jun 23, 2016 at 04:59:01PM +0100, Jon Hunter wrote:
-> If the 'i2c-bus' device-tree node is present for an I2C adapter then
-> parse this subnode for I2C slaves.
->=20
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/i2c/i2c-core.c | 10 ++++++++--
->  1 file changed, 8 insertions(+), 2 deletions(-)
+v2:
+ - Updated reg properties to match current binding
 
-Hi Wolfram,
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 314 ++++++++++++++++++++++++++
+ 1 file changed, 314 insertions(+)
 
-are you okay with this change? I'd like to take this through the Tegra
-tree, with your Acked-by, to resolve the dependency of subsequent
-patches.
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+index 4d89f4e02d98..431266a48e9c 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+@@ -1,6 +1,7 @@
+ /dts-v1/;
+ 
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/mfd/max77620.h>
+ #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+ 
+ #include "tegra210.dtsi"
+@@ -1327,6 +1328,234 @@
+ 		};
+ 	};
+ 
++	i2c@7000d000 {
++		status = "okay";
++		clock-frequency = <1000000>;
++
++		max77620: max77620@3c {
++			compatible = "maxim,max77620";
++			reg = <0x3c>;
++			interrupts = <0 86 IRQ_TYPE_NONE>;
++
++			#interrupt-cells = <2>;
++			interrupt-controller;
++
++			gpio-controller;
++			#gpio-cells = <2>;
++
++			pinctrl-names = "default";
++			pinctrl-0 = <&max77620_default>;
++
++			max77620_default: pinmux@0 {
++				pin_gpio {
++					pins = "gpio0", "gpio1", "gpio2", "gpio7";
++					function = "gpio";
++				};
++
++				/*
++				 * GPIO3 is used to en_pp3300, and it is part of power
++				 * sequence, So it must be sequenced up (automatically
++				 * set by OTP) and down properly.
++				 */
++				pin_gpio3 {
++					pins = "gpio3";
++					function = "fps-out";
++					drive-open-drain = <1>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
++					maxim,active-fps-power-up-slot = <4>;
++					maxim,active-fps-power-down-slot = <2>;
++				};
++
++				pin_gpio5_6 {
++					pins = "gpio5", "gpio6";
++					function = "gpio";
++					drive-push-pull = <1>;
++				};
++
++				pin_32k {
++					pins = "gpio4";
++					function = "32k-out1";
++				};
++			};
++
++			fps {
++				fps0 {
++					maxim,shutdown-fps-time-period-us = <5120>;
++					maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN0>;
++				};
++
++				fps1 {
++					maxim,shutdown-fps-time-period-us = <5120>;
++					maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN1>;
++					maxim,device-state-on-disabled-event = <MAX77620_FPS_INACTIVE_STATE_SLEEP>;
++				};
++
++				fps2 {
++					maxim,fps-event-source = <MAX77620_FPS_EVENT_SRC_EN0>;
++				};
++			};
++
++			regulators {
++				in-ldo0-1-supply = <&pp1350>;
++				in-ldo2-supply = <&pp3300>;
++				in-ldo3-5-supply = <&pp3300>;
++				in-ldo7-8-supply = <&pp1350>;
++
++				ppvar_soc: sd0 {
++					regulator-name = "PPVAR_SOC";
++					regulator-min-microvolt = <825000>;
++					regulator-max-microvolt = <1125000>;
++					regulator-always-on;
++					regulator-boot-on;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
++					maxim,active-fps-power-up-slot = <1>;
++					maxim,active-fps-power-down-slot = <7>;
++				};
++
++				pp1100_sd1: sd1 {
++					regulator-name = "PP1100";
++					regulator-min-microvolt = <1125000>;
++					regulator-max-microvolt = <1125000>;
++					regulator-always-on;
++					regulator-boot-on;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
++					maxim,active-fps-power-up-slot = <5>;
++					maxim,active-fps-power-down-slot = <1>;
++				};
++
++				pp1350: sd2 {
++					regulator-name = "PP1350";
++					regulator-min-microvolt = <1350000>;
++					regulator-max-microvolt = <1350000>;
++					regulator-always-on;
++					regulator-boot-on;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
++					maxim,active-fps-power-up-slot = <2>;
++					maxim,active-fps-power-down-slot = <5>;
++				};
++
++				pp1800: sd3 {
++					regulator-name = "PP1800";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-always-on;
++					regulator-boot-on;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
++					maxim,active-fps-power-up-slot = <3>;
++					maxim,active-fps-power-down-slot = <3>;
++				};
++
++				pp1200_avdd: ldo0 {
++					regulator-name = "PP1200_AVDD";
++					regulator-min-microvolt = <1200000>;
++					regulator-max-microvolt = <1200000>;
++					regulator-enable-ramp-delay = <26>;
++					regulator-ramp-delay = <100000>;
++					regulator-boot-on;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
++					maxim,active-fps-power-up-slot = <0>;
++					maxim,active-fps-power-down-slot = <7>;
++				};
++
++				pp1200_rcam: ldo1 {
++					regulator-name = "PP1200_RCAM";
++					regulator-min-microvolt = <1200000>;
++					regulator-max-microvolt = <1200000>;
++					regulator-enable-ramp-delay = <22>;
++					regulator-ramp-delay = <100000>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
++					maxim,active-fps-power-up-slot = <0>;
++					maxim,active-fps-power-down-slot = <7>;
++				};
++
++				pp_ldo2: ldo2 {
++					regulator-name = "PP_LDO2";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-enable-ramp-delay = <62>;
++					regulator-ramp-delay = <11000>;
++					regulator-always-on;
++					regulator-boot-on;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
++					maxim,active-fps-power-up-slot = <0>;
++					maxim,active-fps-power-down-slot = <7>;
++				};
++
++				pp2800l_rcam: ldo3 {
++					regulator-name = "PP2800L_RCAM";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-enable-ramp-delay = <50>;
++					regulator-ramp-delay = <100000>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
++					maxim,active-fps-power-up-slot = <0>;
++					maxim,active-fps-power-down-slot = <7>;
++				};
++
++				pp100_soc_rtc: ldo4 {
++					regulator-name = "PP1100_SOC_RTC";
++					regulator-min-microvolt = <850000>;
++					regulator-max-microvolt = <850000>;
++					regulator-enable-ramp-delay = <22>;
++					regulator-ramp-delay = <100000>;
++					regulator-always-on; /* Check this */
++					regulator-boot-on;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_0>;
++					maxim,active-fps-power-up-slot = <1>;
++					maxim,active-fps-power-down-slot = <7>;
++				};
++
++				pp2800l_fcam: ldo5 {
++					regulator-name = "PP2800L_FCAM";
++					regulator-min-microvolt = <2800000>;
++					regulator-max-microvolt = <2800000>;
++					regulator-enable-ramp-delay = <62>;
++					regulator-ramp-delay = <100000>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
++					maxim,active-fps-power-up-slot = <0>;
++					maxim,active-fps-power-down-slot = <7>;
++				};
++
++				ldo6 {
++					/* Unused. */
++					regulator-name = "PP_LDO6";
++					regulator-min-microvolt = <1800000>;
++					regulator-max-microvolt = <1800000>;
++					regulator-enable-ramp-delay = <36>;
++					regulator-ramp-delay = <100000>;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
++					maxim,active-fps-power-up-slot = <0>;
++					maxim,active-fps-power-down-slot = <7>;
++				};
++
++				pp1050_avdd: ldo7 {
++					regulator-name = "PP1050_AVDD";
++					regulator-min-microvolt = <1050000>;
++					regulator-max-microvolt = <1050000>;
++					regulator-enable-ramp-delay = <24>;
++					regulator-ramp-delay = <100000>;
++					regulator-always-on;
++					regulator-boot-on;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_1>;
++					maxim,active-fps-power-up-slot = <3>;
++					maxim,active-fps-power-down-slot = <4>;
++				};
++
++				avddio_1v05: ldo8 {
++					regulator-name = "AVDDIO_1V05";
++					regulator-min-microvolt = <1050000>;
++					regulator-max-microvolt = <1050000>;
++					regulator-enable-ramp-delay = <22>;
++					regulator-ramp-delay = <100000>;
++					regulator-boot-on;
++					maxim,active-fps-source = <MAX77620_FPS_SRC_NONE>;
++					maxim,active-fps-power-up-slot = <0>;
++					maxim,active-fps-power-down-slot = <7>;
++				};
++			};
++		};
++	};
++
+ 	pmc@7000e400 {
+ 		nvidia,invert-interrupt;
+ 		nvidia,suspend-mode = <0>;
+@@ -1421,4 +1650,89 @@
+ 		compatible = "arm,psci-1.0";
+ 		method = "smc";
+ 	};
++
++	regulators {
++		compatible = "simple-bus";
++		device_type = "fixed-regulators";
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ppvar_sys: regulator@0 {
++			compatible = "regulator-fixed";
++			reg = <0>;
++			regulator-name = "PPVAR_SYS";
++			regulator-min-microvolt = <4400000>;
++			regulator-max-microvolt = <4400000>;
++			regulator-always-on;
++		};
++
++		pplcd_vdd: regulator@1 {
++			compatible = "regulator-fixed";
++			reg = <1>;
++			regulator-name = "PPLCD_VDD";
++			regulator-min-microvolt = <4400000>;
++			regulator-max-microvolt = <4400000>;
++			gpio = <&gpio TEGRA_GPIO(V, 4) 0>;
++			enable-active-high;
++			regulator-boot-on;
++		};
++
++		pp3000_always: regulator@2 {
++			compatible = "regulator-fixed";
++			reg = <2>;
++			regulator-name = "PP3000_ALWAYS";
++			regulator-min-microvolt = <3000000>;
++			regulator-max-microvolt = <3000000>;
++			regulator-always-on;
++		};
++
++		pp3300: regulator@3 {
++			compatible = "regulator-fixed";
++			reg = <3>;
++			regulator-name = "PP3300";
++			regulator-min-microvolt = <3300000>;
++			regulator-max-microvolt = <3300000>;
++			regulator-boot-on;
++			regulator-always-on;
++			enable-active-high;
++		};
++
++		pp5000: regulator@4 {
++			compatible = "regulator-fixed";
++			reg = <4>;
++			regulator-name = "PP5000";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++			regulator-always-on;
++		};
++
++		pp1800_lcdio: regulator@5 {
++			compatible = "regulator-fixed";
++			reg = <5>;
++			regulator-name = "PP1800_LCDIO";
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1800000>;
++			gpio = <&gpio TEGRA_GPIO(V, 3) 0>;
++			enable-active-high;
++			regulator-boot-on;
++		};
++
++		pp1800_cam: regulator@6 {
++			compatible = "regulator-fixed";
++			reg= <6>;
++			regulator-name = "PP1800_CAM";
++			regulator-min-microvolt = <1800000>;
++			regulator-max-microvolt = <1800000>;
++			gpio = <&gpio TEGRA_GPIO(K, 3) 0>;
++			enable-active-high;
++		};
++
++		usbc_vbus: regulator@7 {
++			compatible = "regulator-fixed";
++			reg = <7>;
++			regulator-name = "USBC_VBUS";
++			regulator-min-microvolt = <5000000>;
++			regulator-max-microvolt = <5000000>;
++		};
++	};
+ };
+-- 
+1.9.1
 
-Would you be okay if I take this patch along with the device tree
-binding change into a stable branch and provide a tag for you to pull
-into the I2C tree?
-
-Thierry
-
---7AUc2qLy4jB3hD7Z
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXcuedAAoJEN0jrNd/PrOhMuEP/3gZGfGsCmpsnuUcDw7r8x0T
-zEAmoX7hLkNAtr1Tesr7lY/k3ByPJpCArOWvcwVCXwTwtuqWbrazIMm8n4iN01EP
-WnXu+aQPY7v83O1rBRpL+X/6k2yp0MF8QWAXIzbJ9HOsnPEDjBQzN6sqh5kWf2iH
-scWzygXeUT9eaFGFEMOXERPZVPUDCA0Smu32dc8+bwOJuH8DmrBNQlxyTKbWpMdN
-SzpWCfhBuq7KZA36Z3tN+yYUtzCQbifrZVi5LOwK3d7hpiWXbFT0dNh1LKKnAYYy
-NkwsT1a75RKnhQeMLNVmBuvFKCnt410OEuy5PvY1aLrWnvxstZmNgoh5aAaNK+6q
-PiOjJRfqtV01jgWIo/c88p4z3JRFK0A6bbqo1QipKiP+tJin8hlHEEf2SiafbemW
-PQY2uCy6GuziDjcBqi5GXs34jylMRXzYk+FwxCMeHM7B4ALzAO3ZT/MLnNRmZGEO
-qTLe/f9prVsnr7uNkttGbllsm/jbVo0HTLKMSQY7o8hqUAdiUPQlrc/zXxdJjo36
-Q4u5x3laBjREo12X2D+IaQRCoawOI0SJobZvozCxsQSAhnDEOD0ufCbfZTVZAjtz
-DCOUjybeLSZcz4HM5xs6DZfGcQTnpxT/rEv3xTphENH4XF1HTkvmvjIN1E1O/CWZ
-Wi8tVY0BFFPQ5J/hcww3
-=52Fk
------END PGP SIGNATURE-----
-
---7AUc2qLy4jB3hD7Z--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
