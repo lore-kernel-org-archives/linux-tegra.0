@@ -1,196 +1,88 @@
-From: Rhyland Klein <rklein@nvidia.com>
-Subject: RE: [PATCH v5] clk: tegra: Initialize UTMIPLL when enabling PLLU
-Date: Mon, 27 Jun 2016 18:11:35 +0000
-Message-ID: <dc524c6236144234a341fedaa22dbacb@HQMAIL112.nvidia.com>
-References: <1464280891-23036-1-git-send-email-rklein@nvidia.com>
- <5763FFF5.5000303@nvidia.com> <20160617152336.GA27475@ulmo.ba.sec>
+From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 7/8] dmaengine: tegra20-apb-dma: Only calculate residue
+ if txstate exists.
+Date: Tue, 28 Jun 2016 09:34:02 +0530
+Message-ID: <20160628040402.GP22564@localhost>
+References: <1465321121-22238-1-git-send-email-peter.griffin@linaro.org>
+ <1465321121-22238-8-git-send-email-peter.griffin@linaro.org>
+ <5757DCAD.1090106@nvidia.com>
+ <20160621160139.GC16910@localhost>
+ <57697736.4050008@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <20160617152336.GA27475@ulmo.ba.sec>
-Content-Language: en-US
-Sender: linux-clk-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Andrew Bresticker <abrestic@chromium.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <57697736.4050008-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Peter Griffin <peter.griffin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, leoli-KZfg59tc24xl57MIdRCFDg@public.gmane.org, zw-aYo+Mbtxn2uXDw4h08c5KA@public.gmane.org, baohua-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, maxime.ripard-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org, wens-jdAy2FN1RRM@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, lee.jones-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Jonathan, can you confirm replacing usleep_range(100, 200) with udelay(2) works for you?
-
--rhyland
-
------Original Message-----
-From: Thierry Reding [mailto:thierry.reding@gmail.com] 
-Sent: Friday, June 17, 2016 11:24 AM
-To: Jonathan Hunter
-Cc: Rhyland Klein; Peter De Schrijver; Mike Turquette; Stephen Warren; Stephen Boyd; Alexandre Courbot; linux-clk@vger.kernel.org; linux-tegra@vger.kernel.org; linux-kernel@vger.kernel.org; Andrew Bresticker
-Subject: Re: [PATCH v5] clk: tegra: Initialize UTMIPLL when enabling PLLU
-
-* PGP Signed by an unknown key
-
-On Fri, Jun 17, 2016 at 02:49:41PM +0100, Jon Hunter wrote:
-> Hi Thierry,
+On Tue, Jun 21, 2016 at 06:19:50PM +0100, Jon Hunter wrote:
 > 
-> On 26/05/16 17:41, Rhyland Klein wrote:
-> > From: Andrew Bresticker <abrestic@chromium.org>
+> On 21/06/16 17:01, Vinod Koul wrote:
+> > On Wed, Jun 08, 2016 at 09:51:57AM +0100, Jon Hunter wrote:
+> >> Hi Peter,
+> >>
+> >> On 07/06/16 18:38, Peter Griffin wrote:
+> >>> There is no point calculating the residue if there is
+> >>> no txstate to store the value.
+> >>>
+> >>> Signed-off-by: Peter Griffin <peter.griffin-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> >>> ---
+> >>>  drivers/dma/tegra20-apb-dma.c | 2 +-
+> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/drivers/dma/tegra20-apb-dma.c b/drivers/dma/tegra20-apb-dma.c
+> >>> index 01e316f..7f4af8c 100644
+> >>> --- a/drivers/dma/tegra20-apb-dma.c
+> >>> +++ b/drivers/dma/tegra20-apb-dma.c
+> >>> @@ -814,7 +814,7 @@ static enum dma_status tegra_dma_tx_status(struct dma_chan *dc,
+> >>>  	unsigned int residual;
+> >>>  
+> >>>  	ret = dma_cookie_status(dc, cookie, txstate);
+> >>> -	if (ret == DMA_COMPLETE)
+> >>> +	if (ret == DMA_COMPLETE || !txstate)
+> >>>  		return ret;
+> >>
+> >> Thanks for reporting this. I agree that we should not do this, however, 
+> >> looking at the code for Tegra, I am wondering if this could change the
+> >> actual state that is returned. Looking at dma_cookie_status() it will
+> >> call dma_async_is_complete() which will return either DMA_COMPLETE or
+> >> DMA_IN_PROGRESS. It could be possible that the actual state for the
+> >> DMA transfer in the tegra driver is DMA_ERROR, so I am wondering if we
+> >> should do something like the following  ...
 > > 
-> > Move the UTMIPLL initialization code form clk-tegra<chip>.c files 
-> > into clk-pll.c. UTMIPLL was being configured and set in HW control 
-> > right after registration. However, when the clock init_table is 
-> > processed and child clks of PLLU are enabled, it will call in and 
-> > enable PLLU as well, and initiate SW enabling sequence even though 
-> > PLLU is already in HW control. This leads to getting UTMIPLL stuck with a SEQ_BUSY status.
-> > 
-> > Doing the initialization once during pllu_enable means we configure 
-> > it properly into HW control.
-> > 
-> > A side effect of the commonization/localization of the UTMIPLL init 
-> > code, is that it corrects some errors that were present for earlier 
-> > generations. For instance, in clk-tegra124.c, it used to have:
-> > 
-> > define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 6)
-> > 
-> > when the correct shift to use is present in the new version:
-> > 
-> > define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 27)
-> > 
-> > which matches the Tegra124 TRM register definition.
-> > 
-> > Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> > 
-> > [rklein: Merged in some later fixes for potential deadlocks]
-> > 
-> > Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-> > ---
-> > v5:
-> >  - Initialized flags to 0 to avoid harmless spinlock warnings
-> > 
-> > v4:
-> >  - Re-added examples in patch description
-> > 
-> > v3:
-> >  - Flushed out description to describe this patch.
-> > 
-> >  drivers/clk/tegra/clk-pll.c      | 484 +++++++++++++++++++++++++++++++++++++++
-> >  drivers/clk/tegra/clk-tegra114.c | 155 +------------  
-> > drivers/clk/tegra/clk-tegra124.c | 156 +------------  
-> > drivers/clk/tegra/clk-tegra210.c | 182 +--------------  
-> > drivers/clk/tegra/clk-tegra30.c  | 113 +--------
-> >  drivers/clk/tegra/clk.h          |  17 ++
-> >  6 files changed, 510 insertions(+), 597 deletions(-)
-> > 
-> > diff --git a/drivers/clk/tegra/clk-pll.c 
-> > b/drivers/clk/tegra/clk-pll.c index 4e194ecc8d5e..31e20110fae4 
-> > 100644
-> > --- a/drivers/clk/tegra/clk-pll.c
-> > +++ b/drivers/clk/tegra/clk-pll.c
+> > This one is stopping code execution when residue is not valid. Do notice
+> > that it check for DMA_COMPLETE OR txstate. In other cases, wit will return
+> > 'that' state when txstate is NULL.
 > 
-> ...
+> Sorry what do you mean by "this one"?
+
+the patch
+
 > 
-> > +static int clk_pllu_tegra210_enable(struct clk_hw *hw) {
-> > +	struct tegra_clk_pll *pll = to_clk_pll(hw);
-> > +	struct clk_hw *pll_ref = clk_hw_get_parent(hw);
-> > +	struct clk_hw *osc = clk_hw_get_parent(pll_ref);
-> > +	unsigned long flags = 0, input_rate;
-> > +	unsigned int i;
-> > +	int ret = 0;
-> > +	u32 val;
-> > +
-> > +	if (!osc) {
-> > +		pr_err("%s: failed to get OSC clock\n", __func__);
-> > +		return -EINVAL;
-> > +	}
-> > +	input_rate = clk_hw_get_rate(osc);
-> > +
-> > +	if (pll->lock)
-> > +		spin_lock_irqsave(pll->lock, flags);
-> > +
-> > +	_clk_pll_enable(hw);
-> > +	ret = clk_pll_wait_for_lock(pll);
-> > +	if (ret < 0)
-> > +		goto out;
-> > +
-> > +	for (i = 0; i < ARRAY_SIZE(utmi_parameters); i++) {
-> > +		if (input_rate == utmi_parameters[i].osc_frequency)
-> > +			break;
-> > +	}
-> > +
-> > +	if (i == ARRAY_SIZE(utmi_parameters)) {
-> > +		pr_err("%s: Unexpected input rate %lu\n", __func__, input_rate);
-> > +		ret = -EINVAL;
-> > +		goto out;
-> > +	}
-> > +
-> > +	val = pll_readl_base(pll);
-> > +	val &= ~PLLU_BASE_OVERRIDE;
-> > +	pll_writel_base(val, pll);
-> > +
-> > +	/* Put PLLU under HW control */
-> > +	val = readl_relaxed(pll->clk_base + PLLU_HW_PWRDN_CFG0);
-> > +	val |= PLLU_HW_PWRDN_CFG0_IDDQ_PD_INCLUDE |
-> > +	       PLLU_HW_PWRDN_CFG0_USE_SWITCH_DETECT |
-> > +	       PLLU_HW_PWRDN_CFG0_USE_LOCKDET;
-> > +	val &= ~(PLLU_HW_PWRDN_CFG0_CLK_ENABLE_SWCTL |
-> > +		  PLLU_HW_PWRDN_CFG0_CLK_SWITCH_SWCTL);
-> > +	writel_relaxed(val, pll->clk_base + PLLU_HW_PWRDN_CFG0);
-> > +
-> > +	val = readl_relaxed(pll->clk_base + XUSB_PLL_CFG0);
-> > +	val &= ~XUSB_PLL_CFG0_PLLU_LOCK_DLY;
-> > +	writel_relaxed(val, pll->clk_base + XUSB_PLL_CFG0);
-> > +	udelay(1);
-> > +
-> > +	val = readl_relaxed(pll->clk_base + PLLU_HW_PWRDN_CFG0);
-> > +	val |= PLLU_HW_PWRDN_CFG0_SEQ_ENABLE;
-> > +	writel_relaxed(val, pll->clk_base + PLLU_HW_PWRDN_CFG0);
-> > +	udelay(1);
-> > +
-> > +	/* Disable PLLU clock branch to UTMIPLL since it uses OSC */
-> > +	val = pll_readl_base(pll);
-> > +	val &= ~PLLU_BASE_CLKENABLE_USB;
-> > +	pll_writel_base(val, pll);
-> > +
-> > +	val = readl_relaxed(pll->clk_base + UTMIPLL_HW_PWRDN_CFG0);
-> > +	if (val & UTMIPLL_HW_PWRDN_CFG0_SEQ_ENABLE) {
-> > +		pr_debug("UTMIPLL already enabled\n");
-> > +		goto out;
-> > +	}
-> > +	val &= ~UTMIPLL_HW_PWRDN_CFG0_IDDQ_OVERRIDE;
-> > +	writel_relaxed(val, pll->clk_base + UTMIPLL_HW_PWRDN_CFG0);
-> > +
-> > +	/* Program UTMIP PLL stable and active counts */
-> > +	val = readl_relaxed(pll->clk_base + UTMIP_PLL_CFG2);
-> > +	val &= ~UTMIP_PLL_CFG2_STABLE_COUNT(~0);
-> > +	val |= UTMIP_PLL_CFG2_STABLE_COUNT(utmi_parameters[i].stable_count);
-> > +	val &= ~UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(~0);
-> > +	val |= UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(
-> > +			utmi_parameters[i].active_delay_count);
-> > +	val |= UTMIP_PLL_CFG2_PHY_XTAL_CLOCKEN;
-> > +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG2);
-> > +
-> > +	/* Program UTMIP PLL delay and oscillator frequency counts */
-> > +	val = readl_relaxed(pll->clk_base + UTMIP_PLL_CFG1);
-> > +	val &= ~UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(~0);
-> > +	val |= UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(
-> > +		utmi_parameters[i].enable_delay_count);
-> > +	val &= ~UTMIP_PLL_CFG1_XTAL_FREQ_COUNT(~0);
-> > +	val |= UTMIP_PLL_CFG1_XTAL_FREQ_COUNT(
-> > +		utmi_parameters[i].xtal_freq_count);
-> > +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG1);
-> > +
-> > +	/* Remove power downs from UTMIP PLL control bits */
-> > +	val = readl_relaxed(pll->clk_base + UTMIP_PLL_CFG1);
-> > +	val &= ~UTMIP_PLL_CFG1_FORCE_PLL_ENABLE_POWERDOWN;
-> > +	val |= UTMIP_PLL_CFG1_FORCE_PLL_ENABLE_POWERUP;
-> > +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG1);
-> > +	udelay(100);
+> My point is that if the status is not DMA_COMPLETE, then it is possible
+> that it could be DMA_ERROR (for tegra that is). 
+
+right it can be any state... and we check for only DMA_COMPLETE as residue
+has no meaning.
+
+> However,
+> dma_cookie_status will only return DMA_IN_PROGRESS or DMA_COMPLETE and
+> so if 'txstate' is NULL we will not see the DMA_ERROR status anymore and
+> just think it is in progress when it is actually an error.
+
+Yes that is an existing issue, if you are reporting DMA_ERROR then you
+should add a check for DMA_ERROR as well and not do residue calculation for
+that case.
+
 > 
-> In next-20160617 I see that this udelay is now a usleep_range(100, 
-> 200) and this is causing the following splat when the clock is 
-> enabled. I don't think that we can use usleep here ...
+> I do agree that the driver is broken as we are not checking for
+> !txstate, but this also changes the behaviour a bit.
 
-Okay, I'll back out the patch. I'd really prefer to avoid busy-looping for 100 microseconds here, so can we please find another way to do this?
+It changes for better and not worse. Btw pls feel free to send a patch
+handling DMA_ERROR :)
 
-Thierry
-
-* Unknown Key
-* 0x7F3EB3A1
+-- 
+~Vinod
