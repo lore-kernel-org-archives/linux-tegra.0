@@ -1,111 +1,79 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 03/10] Documentation: dt-bindings: firmware: tegra: add
- bindings of the BPMP
-Date: Tue, 28 Jun 2016 17:16:03 +0800
-Message-ID: <57724053.6030902@nvidia.com>
-References: <20160627090248.23621-1-josephl@nvidia.com>
- <20160627090248.23621-4-josephl@nvidia.com> <57714F7D.1040301@wwwdotorg.org>
+From: Peter Rosin <peda@axentia.se>
+Subject: Re: [PATCH 07/12] dt-bindings: i2c: Add support for 'i2c-bus' subnode
+Date: Tue, 28 Jun 2016 12:20:15 +0200
+Message-ID: <9ce42fd3-972f-8487-f3b3-a2cfe28dc394@axentia.se>
+References: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
+ <1466697545-11868-8-git-send-email-jonathanh@nvidia.com>
+ <0e9ab029-ed95-c3cb-61f5-6acd9da12a24@axentia.se>
+ <57723371.4060806@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <57714F7D.1040301-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <57723371.4060806@nvidia.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/28/2016 12:08 AM, Stephen Warren wrote:
-> On 06/27/2016 03:02 AM, Joseph Lo wrote:
->> The BPMP is a specific processor in Tegra chip, which is designed for
->> booting process handling and offloading the power management tasks
->> from the CPU. The binding document defines the resources that would be
->> used by the BPMP firmware driver, which can create the interprocessor
->> communication (IPC) between the CPU and BPMP.
->
->> diff --git
->> a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
->> b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
->
->> +The BPMP is a specific processor in Tegra chip, which is designed for
->> +booting process handling and offloading the power management tasks from
->> +the CPU. The binding document defines the resources that would be
->> used by
->> +the BPMP firmware driver, which can create the interprocessor
->> +communication (IPC) between the CPU and BPMP.
->
-> s/power management/power management, clock management, and reset control/?
-Yes.
+On 2016-06-28 10:21, Jon Hunter wrote:
+> 
+> On 27/06/16 13:04, Peter Rosin wrote:
+>> On 2016-06-23 17:59, Jon Hunter wrote:
+>>> The I2C driver core for boards using device-tree assumes any subnode of
+>>> an I2C adapter in the device-tree blob as being a I2C slave device.
+>>> Although this makes complete sense, some I2C adapters may have subnodes
+>>> which are not I2C slaves but subnodes presenting other features. For
+>>> example some Tegra devices have an I2C interface which may share its
+>>> pins with other devices and to share these pins subnodes for
+>>> representing these pins so they have be shared via the pinctrl framework
+>>> are needed.
+>>>
+>>> To allow I2C adapters to have non-I2C specific subnodes in device-tree
+>>> that are not parsed by the I2C driver core by adding support for a
+>>> 'i2c-bus' subnode where I2C slaves can be placed. If the 'i2c-bus'
+>>> subnode is present then all I2C slaves must be placed under this subnode.
+>>>
+>>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+>>> Acked-by: Thierry Reding <treding@nvidia.com>
+>>> ---
+>>>  Documentation/devicetree/bindings/i2c/i2c.txt | 8 ++++++++
+>>>  1 file changed, 8 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/i2c/i2c.txt b/Documentation/devicetree/bindings/i2c/i2c.txt
+>>> index f31b2ad1552b..71bea55d4c1b 100644
+>>> --- a/Documentation/devicetree/bindings/i2c/i2c.txt
+>>> +++ b/Documentation/devicetree/bindings/i2c/i2c.txt
+>>> @@ -32,6 +32,14 @@ wants to support one of the below features, it should adapt the bindings below.
+>>>  - clock-frequency
+>>>  	frequency of bus clock in Hz.
+>>>  
+>>> +- i2c-bus
+>>> +	For I2C adapters that have child nodes that are a mixture of both I2C
+>>> +	devices and non-I2C devices (such as a pin controller), the 'i2c-bus'
+>>> +	subnode can be used for populating I2C devices. If the 'i2c-bus'
+>>> +	subnode is present, only subnodes of this will be considered as I2C
+>>> +	slaves. The properties, '#address-cells' and '#size-cells' must be
+>>> +	defined under this subnode if present.
+>>
+>> Hmmm, those #-properties are listed above, under "Required properties", which
+>> is no longer 100% true. Maybe rephrase to
+>>
+>> 	slaves. The required properties '#address-cells' and '#size-cells'
+>> 	must be	defined under this subnode instead, if this subnode is present.
+>>
+>> to make the rules (even) clearer?
+> 
+> I see what you are saying but I wonder if the following is better ...
+> 
+>  slaves. The required properties '#address-cells' and '#size-cells'
+>  must be defined under this subnode if present and not the parent node.
 
->
->> +Required properties:
->> +- name : Should be bpmp
->> +- compatible : Should be "nvidia,tegra<chip>-bpmp"
->
-> Again, I'd suggest wording this as:
->
-> - compatible
->      Array of strings.
->      One of:
->    - "nvidia,tegra186-bpmp"
-Okay.
->
->> +- mboxes : The phandle of mailbox controller and the channel ID
->
-> s/channel ID/mailbox specifier/.
->
->> +           See "Documentation/devicetree/bindings/mailbox/
->> +       nvidia,tegra186-hsp.txt" and "Documentation/devicetree/
->> +       bindings/mailbox/mailbox.txt" for more details about the generic
->> +       mailbox controller and mailbox client driver bindings.
->
-> I'd rather not split the filenames across lines, since that makes grep
-> fail to match. Perhaps add the following text to the introductory
-> section at the start of the file to avoid having to mention some of the
-> filenames in an indented block of text:
-Thanks.
->
-> ==========
-> This node is a mailbox consumer. See the following file for details of
-> the mailbox subsystem, and the specifiers implemented by the relevant
-> provider(s):
->
-> - Documentation/devicetree/bindings/mailbox/mailbox.txt
-> - Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt
->
-> This node is a clock and reset provider. See the following files for
-> general documentation of those features, and the specifiers implemented
-> by this node:
->
-> - Documentation/devicetree/bindings/clock/clock-bindings.txt
-> - include/dt-bindings/clock/tegra186-clock.h
-> - Documentation/devicetree/bindings/reset/reset.txt
-> - include/dt-bindings/reset/tegra186-reset.h
-> ==========
->
-> Related, I would expect those two header files (tegra186-clock.h and
-> tegra186-reset.h) to be part of this patch, since they form part of the
-> definition of this binding.
-Okay. Will add them.
->
->> +The shared memory bindings for BPMP
->> +-----------------------------------
->> +
->> +The shared memory area for the IPC TX and RX between CPU and BPMP are
->> +predefined and work on top of sysram, which is a sram inside the chip.
->
-> s/a sram/an SRAM/.
->
->> +Example:
-> ...
->> +bpmp@d0000000 {
->
-> There should be no unit address ("@d0000000") in the node name, since
-> there's no reg property.
+Naaw, I don't like that either, I associate the last "and not" with the
+"if present" part and not the intended "under this subnode". Then I go
+WTF when I fail to parse. Maybe just add an example instead...
 
-Thanks,
--Joseph
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Or just forget me ever saying anything. Sorry for making a fuss over this.
+
+Cheers,
+Peter
