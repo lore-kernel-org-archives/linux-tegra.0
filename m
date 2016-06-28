@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 3/6] soc/tegra: pmc: Don't populate soc data until register space is mapped
-Date: Tue, 28 Jun 2016 11:38:25 +0100
-Message-ID: <1467110308-22126-4-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH 4/6] soc/tegra: pmc: Ensure mutex is always initialised
+Date: Tue, 28 Jun 2016 11:38:26 +0100
+Message-ID: <1467110308-22126-5-git-send-email-jonathanh@nvidia.com>
 References: <1467110308-22126-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,17 +12,11 @@ To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The public functions exported by the PMC driver use the presence of the
-soc data pointer to determine if the PMC device is configured and the
-registers can be accessed. However, the soc data is populated before the
-PMC register space is mapped and this opens a window where the soc data
-pointer is valid but the register space has not yet been mapped which
-could lead to a crash. Furthermore, if the mapping of the PMC register
-space fails, then the soc data pointer is not cleared and so would
-expose a larger window where a crash could occur.
-
-Fix this by initialising the soc data pointer after the PMC register
-space has been mapped.
+The mutex used by the PMC driver may not be initialised if early
+initialisation of the driver fails. If this does happen, then it could
+be possible for callers of the public PMC functions to still attempt to
+acquire the mutex. Fix this by initialising the mutex as soon as
+possible to ensure it will always be initialised.
 
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
@@ -30,26 +24,26 @@ Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 2e031c4ad547..ed2b2c83e4eb 100644
+index ed2b2c83e4eb..483d54623ec5 100644
 --- a/drivers/soc/tegra/pmc.c
 +++ b/drivers/soc/tegra/pmc.c
-@@ -1540,8 +1540,6 @@ static int __init tegra_pmc_early_init(void)
- 			pr_err("failed to get PMC registers\n");
- 			return -ENXIO;
- 		}
--
--		pmc->soc = match->data;
+@@ -1504,6 +1504,8 @@ static int __init tegra_pmc_early_init(void)
+ 	bool invert;
+ 	u32 value;
+ 
++	mutex_init(&pmc->powergates_lock);
++
+ 	np = of_find_matching_node_and_match(NULL, tegra_pmc_match, &match);
+ 	if (!np) {
+ 		/*
+@@ -1548,8 +1550,6 @@ static int __init tegra_pmc_early_init(void)
+ 		return -ENXIO;
  	}
  
- 	pmc->base = ioremap_nocache(regs.start, resource_size(&regs));
-@@ -1553,6 +1551,8 @@ static int __init tegra_pmc_early_init(void)
- 	mutex_init(&pmc->powergates_lock);
- 
+-	mutex_init(&pmc->powergates_lock);
+-
  	if (np) {
-+		pmc->soc = match->data;
-+
- 		/* Create a bit-map of the available and valid partitions */
- 		for (i = 0; i < pmc->soc->num_powergates; i++)
- 			if (pmc->soc->powergates[i])
+ 		pmc->soc = match->data;
+ 
 -- 
 2.1.4
