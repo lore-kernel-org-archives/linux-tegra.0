@@ -1,73 +1,121 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 5/6] soc/tegra: pmc: Add missing of_node_put
-Date: Tue, 28 Jun 2016 11:46:10 +0100
-Message-ID: <57725572.7090802@nvidia.com>
-References: <1467110308-22126-1-git-send-email-jonathanh@nvidia.com>
- <1467110308-22126-6-git-send-email-jonathanh@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+Subject: [PATCH 43/92] clocksource/drivers/tegra20: Convert init function to return error
+Date: Tue, 28 Jun 2016 12:31:02 +0200
+Message-ID: <1467109911-11060-43-git-send-email-daniel.lezcano@linaro.org>
+References: <577251A4.7030508@linaro.org>
+ <1467109911-11060-1-git-send-email-daniel.lezcano@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1467110308-22126-6-git-send-email-jonathanh@nvidia.com>
+In-Reply-To: <1467109911-11060-1-git-send-email-daniel.lezcano@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: daniel.lezcano@linaro.org, tglx@linutronix.de
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+The init functions do not return any error. They behave as the following:
 
-On 28/06/16 11:38, Jon Hunter wrote:
-> Add missing of_node_put() in PMC early initialisation function.
-> 
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  drivers/soc/tegra/pmc.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 483d54623ec5..e62acaef140a 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -1572,6 +1572,8 @@ static int __init tegra_pmc_early_init(void)
->  			value &= ~PMC_CNTRL_INTR_POLARITY;
->  
->  		tegra_pmc_writel(value, PMC_CNTRL);
-> +
-> +		of_node_put(np);
->  	}
->  
->  	return 0;
+  - panic, thus leading to a kernel crash while another timer may work and
+    make the system boot up correctly
 
-Actually there are a couple other places we should put the node ...
+  or
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 483d54623ec5..48e1de2f7aeb 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -1540,6 +1540,7 @@ static int __init tegra_pmc_early_init(void)
-                 */
-                if (of_address_to_resource(np, 0, &regs) < 0) {
-                        pr_err("failed to get PMC registers\n");
-+                       of_node_put(np);
-                        return -ENXIO;
-                }
-        }
-@@ -1547,6 +1548,7 @@ static int __init tegra_pmc_early_init(void)
-        pmc->base = ioremap_nocache(regs.start, resource_size(&regs));
-        if (!pmc->base) {
-                pr_err("failed to map PMC registers\n");
-+               of_node_put(np);
-                return -ENXIO;
-        }
+  - print an error and let the caller unaware if the state of the system
 
-@@ -1572,6 +1574,8 @@ static int __init tegra_pmc_early_init(void)
-                        value &= ~PMC_CNTRL_INTR_POLARITY;
+Change that by converting the init functions to return an error conforming
+to the CLOCKSOURCE_OF_RET prototype.
 
-                tegra_pmc_writel(value, PMC_CNTRL);
+Proper error handling (rollback, errno value) will be changed later case
+by case, thus this change just return back an error or success in the init
+function.
+
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ drivers/clocksource/tegra20_timer.c | 28 ++++++++++++++++------------
+ 1 file changed, 16 insertions(+), 12 deletions(-)
+
+diff --git a/drivers/clocksource/tegra20_timer.c b/drivers/clocksource/tegra20_timer.c
+index 7b94ad2..543c37e 100644
+--- a/drivers/clocksource/tegra20_timer.c
++++ b/drivers/clocksource/tegra20_timer.c
+@@ -165,7 +165,7 @@ static struct irqaction tegra_timer_irq = {
+ 	.dev_id		= &tegra_clockevent,
+ };
+ 
+-static void __init tegra20_init_timer(struct device_node *np)
++static int __init tegra20_init_timer(struct device_node *np)
+ {
+ 	struct clk *clk;
+ 	unsigned long rate;
+@@ -174,13 +174,13 @@ static void __init tegra20_init_timer(struct device_node *np)
+ 	timer_reg_base = of_iomap(np, 0);
+ 	if (!timer_reg_base) {
+ 		pr_err("Can't map timer registers\n");
+-		BUG();
++		return -ENXIO;
+ 	}
+ 
+ 	tegra_timer_irq.irq = irq_of_parse_and_map(np, 2);
+ 	if (tegra_timer_irq.irq <= 0) {
+ 		pr_err("Failed to map timer IRQ\n");
+-		BUG();
++		return -EINVAL;
+ 	}
+ 
+ 	clk = of_clk_get(np, 0);
+@@ -211,10 +211,12 @@ static void __init tegra20_init_timer(struct device_node *np)
+ 
+ 	sched_clock_register(tegra_read_sched_clock, 32, 1000000);
+ 
+-	if (clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
+-		"timer_us", 1000000, 300, 32, clocksource_mmio_readl_up)) {
++	ret = clocksource_mmio_init(timer_reg_base + TIMERUS_CNTR_1US,
++				    "timer_us", 1000000, 300, 32,
++				    clocksource_mmio_readl_up);
++	if (ret) {
+ 		pr_err("Failed to register clocksource\n");
+-		BUG();
++		return ret;
+ 	}
+ 
+ 	tegra_delay_timer.read_current_timer =
+@@ -225,24 +227,26 @@ static void __init tegra20_init_timer(struct device_node *np)
+ 	ret = setup_irq(tegra_timer_irq.irq, &tegra_timer_irq);
+ 	if (ret) {
+ 		pr_err("Failed to register timer IRQ: %d\n", ret);
+-		BUG();
++		return ret;
+ 	}
+ 
+ 	tegra_clockevent.cpumask = cpu_all_mask;
+ 	tegra_clockevent.irq = tegra_timer_irq.irq;
+ 	clockevents_config_and_register(&tegra_clockevent, 1000000,
+ 					0x1, 0x1fffffff);
 +
-+               of_node_put(np);
-        }
-
-        return 0;
-
++	return 0;
+ }
+-CLOCKSOURCE_OF_DECLARE(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
++CLOCKSOURCE_OF_DECLARE_RET(tegra20_timer, "nvidia,tegra20-timer", tegra20_init_timer);
+ 
+-static void __init tegra20_init_rtc(struct device_node *np)
++static int __init tegra20_init_rtc(struct device_node *np)
+ {
+ 	struct clk *clk;
+ 
+ 	rtc_base = of_iomap(np, 0);
+ 	if (!rtc_base) {
+ 		pr_err("Can't map RTC registers");
+-		BUG();
++		return -ENXIO;
+ 	}
+ 
+ 	/*
+@@ -255,6 +259,6 @@ static void __init tegra20_init_rtc(struct device_node *np)
+ 	else
+ 		clk_prepare_enable(clk);
+ 
+-	register_persistent_clock(NULL, tegra_read_persistent_clock64);
++	return register_persistent_clock(NULL, tegra_read_persistent_clock64);
+ }
+-CLOCKSOURCE_OF_DECLARE(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
++CLOCKSOURCE_OF_DECLARE_RET(tegra20_rtc, "nvidia,tegra20-rtc", tegra20_init_rtc);
 -- 
-nvpublic
+1.9.1
