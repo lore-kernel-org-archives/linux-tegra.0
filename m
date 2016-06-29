@@ -1,53 +1,97 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] arm64: tegra: Add missing Smaug revision
-Date: Wed, 29 Jun 2016 10:02:59 +0100
-Message-ID: <57738EC3.3070200@nvidia.com>
-References: <20160629085229.31350-1-acourbot@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH V2 02/11] drm/tegra: Clean-up if probing DPAUX fails
+Date: Wed, 29 Jun 2016 10:17:48 +0100
+Message-ID: <1467191877-26017-3-git-send-email-jonathanh@nvidia.com>
+References: <1467191877-26017-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160629085229.31350-1-acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <1467191877-26017-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+If the probing of the DPAUX fails, then clocks are left enabled and the
+DPAUX reset de-asserted. Add code to perform the necessary clean-up on
+probe failure by disabling clocks and asserting the reset.
 
-On 29/06/16 09:52, Alexandre Courbot wrote:
-> The "google,smaug-rev2" string is missing from the compatible list of
-> Smaug's DT. The differences of rev2 are not relevant at our current
-> level of support and it boots just fine, so add it.
-> 
-> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> index 431266a48e9c..82a96bd27bc8 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> +++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
-> @@ -11,7 +11,8 @@
->  	compatible = "google,smaug-rev8", "google,smaug-rev7",
->  		     "google,smaug-rev6", "google,smaug-rev5",
->  		     "google,smaug-rev4", "google,smaug-rev3",
-> -		     "google,smaug-rev1", "google,smaug", "nvidia,tegra210";
-> +		     "google,smaug-rev2", "google,smaug-rev1",
-> +		     "google,smaug", "nvidia,tegra210";
->  
->  	aliases {
->  		serial0 = &uarta;
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/gpu/drm/tegra/dpaux.c | 22 ++++++++++++++++------
+ 1 file changed, 16 insertions(+), 6 deletions(-)
 
-Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Olof, let us know if you have any comments on this? Looks like I missed
-this initially because the rev2 support had been broken out in the
-chrome-os kernel tree to support some specific features for this board.
-However, I think for now it is ok to include rev2 here as well for mainline.
-
-Cheers
-Jon
-
+diff --git a/drivers/gpu/drm/tegra/dpaux.c b/drivers/gpu/drm/tegra/dpaux.c
+index b24a0f14821a..0874a7e5b37b 100644
+--- a/drivers/gpu/drm/tegra/dpaux.c
++++ b/drivers/gpu/drm/tegra/dpaux.c
+@@ -321,28 +321,30 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
+ 	if (IS_ERR(dpaux->clk_parent)) {
+ 		dev_err(&pdev->dev, "failed to get parent clock: %ld\n",
+ 			PTR_ERR(dpaux->clk_parent));
+-		return PTR_ERR(dpaux->clk_parent);
++		err = PTR_ERR(dpaux->clk_parent);
++		goto assert_reset;
+ 	}
+ 
+ 	err = clk_prepare_enable(dpaux->clk_parent);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to enable parent clock: %d\n",
+ 			err);
+-		return err;
++		goto assert_reset;
+ 	}
+ 
+ 	err = clk_set_rate(dpaux->clk_parent, 270000000);
+ 	if (err < 0) {
+ 		dev_err(&pdev->dev, "failed to set clock to 270 MHz: %d\n",
+ 			err);
+-		return err;
++		goto disable_parent_clk;
+ 	}
+ 
+ 	dpaux->vdd = devm_regulator_get(&pdev->dev, "vdd");
+ 	if (IS_ERR(dpaux->vdd)) {
+ 		dev_err(&pdev->dev, "failed to get VDD supply: %ld\n",
+ 			PTR_ERR(dpaux->vdd));
+-		return PTR_ERR(dpaux->vdd);
++		err = PTR_ERR(dpaux->vdd);
++		goto disable_parent_clk;
+ 	}
+ 
+ 	err = devm_request_irq(dpaux->dev, dpaux->irq, tegra_dpaux_irq, 0,
+@@ -350,7 +352,7 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
+ 	if (err < 0) {
+ 		dev_err(dpaux->dev, "failed to request IRQ#%u: %d\n",
+ 			dpaux->irq, err);
+-		return err;
++		goto disable_parent_clk;
+ 	}
+ 
+ 	disable_irq(dpaux->irq);
+@@ -360,7 +362,7 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
+ 
+ 	err = drm_dp_aux_register(&dpaux->aux);
+ 	if (err < 0)
+-		return err;
++		goto disable_parent_clk;
+ 
+ 	/*
+ 	 * Assume that by default the DPAUX/I2C pads will be used for HDMI,
+@@ -393,6 +395,14 @@ static int tegra_dpaux_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, dpaux);
+ 
+ 	return 0;
++
++disable_parent_clk:
++	clk_disable_unprepare(dpaux->clk_parent);
++assert_reset:
++	reset_control_assert(dpaux->rst);
++	clk_disable_unprepare(dpaux->clk);
++
++	return err;
+ }
+ 
+ static int tegra_dpaux_remove(struct platform_device *pdev)
 -- 
-nvpublic
+2.1.4
