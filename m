@@ -1,20 +1,22 @@
-From: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH v4 2/3] arm: tegra: add colibri t30 device tree binding documentation
-Date: Thu, 30 Jun 2016 00:23:18 +0200
-Message-ID: <1467238999-10252-2-git-send-email-marcel.ziswiler@toradex.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: [PATCH v4 3/3] arm: tegra: add apalis tk1 device tree binding documentation
+Date: Thu, 30 Jun 2016 00:23:19 +0200
+Message-ID: <1467238999-10252-3-git-send-email-marcel.ziswiler@toradex.com>
 References: <1467238999-10252-1-git-send-email-marcel.ziswiler@toradex.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1467238999-10252-1-git-send-email-marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1467238999-10252-1-git-send-email-marcel.ziswiler@toradex.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: devicetree@vger.kernel.org
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add the device tree binding documentation for Colibri T30 which was
-missing so far.
+Add the device tree binding documentation for Apalis TK1.
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Note that this is using dashes aka '-' in compatible strings as
+previously suggested by Rob.
+
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
 
 Changes in v4: None
@@ -25,17 +27,17 @@ Changes in v2: None
  1 file changed, 2 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/arm/tegra.txt b/Documentation/devicetree/bindings/arm/tegra.txt
-index 73278c6..428e098 100644
+index 428e098..b5a4342 100644
 --- a/Documentation/devicetree/bindings/arm/tegra.txt
 +++ b/Documentation/devicetree/bindings/arm/tegra.txt
-@@ -33,6 +33,8 @@ board-specific compatible values:
+@@ -32,6 +32,8 @@ board-specific compatible values:
+   nvidia,whistler
    toradex,apalis_t30
    toradex,apalis_t30-eval
++  toradex,apalis-tk1
++  toradex,apalis-tk1-eval
    toradex,colibri_t20-512
-+  toradex,colibri_t30
-+  toradex,colibri_t30-eval-v3
-   toradex,iris
- 
- Trusted Foundations
+   toradex,colibri_t30
+   toradex,colibri_t30-eval-v3
 -- 
 2.5.5
