@@ -1,108 +1,164 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC PATCH 3/3] arm64: tegra210: Add XUSB powergates
-Date: Wed, 29 Jun 2016 17:56:59 +0200
-Message-ID: <20160629155659.GA20065@ulmo.ba.sec>
-References: <1467112844-26927-1-git-send-email-jonathanh@nvidia.com>
- <1467112844-26927-4-git-send-email-jonathanh@nvidia.com>
- <5773E980.7050907@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/6] soc/tegra: pmc: Fix early initialisation of PMC
+Date: Wed, 29 Jun 2016 17:17:09 +0100
+Message-ID: <5773F485.8090504@nvidia.com>
+References: <1467110308-22126-1-git-send-email-jonathanh@nvidia.com>
+ <1467110308-22126-3-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="nFreZHaLTZJo0R7j"
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <5773E980.7050907-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1467110308-22126-3-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---nFreZHaLTZJo0R7j
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 28/06/16 11:38, Jon Hunter wrote:
+> During early initialisation, the available power partitions for a given
+> device is configured as well as the polarity of the PMC interrupt. Both
+> of which should only be configured if there is a valid device node for
+> the PMC device. This is because the soc data used for configuring the
+> power partitions is only available if a device node for the PMC is found
+> and the code to configure the interrupt polarity uses the device node
+> pointer directly.
+> 
+> Some early device-tree images may not have this device node and so fix
+> this by ensuring the device node pointer is valid when configuring these
+> items.
+> 
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/soc/tegra/pmc.c | 34 ++++++++++++++++++----------------
+>  1 file changed, 18 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index 52a9e9703668..2e031c4ad547 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -1550,27 +1550,29 @@ static int __init tegra_pmc_early_init(void)
+>  		return -ENXIO;
+>  	}
+>  
+> -	/* Create a bit-map of the available and valid partitions */
+> -	for (i = 0; i < pmc->soc->num_powergates; i++)
+> -		if (pmc->soc->powergates[i])
+> -			set_bit(i, pmc->powergates_available);
+> -
+>  	mutex_init(&pmc->powergates_lock);
+>  
+> -	/*
+> -	 * Invert the interrupt polarity if a PMC device tree node exists and
+> -	 * contains the nvidia,invert-interrupt property.
+> -	 */
+> -	invert = of_property_read_bool(np, "nvidia,invert-interrupt");
+> +	if (np) {
+> +		/* Create a bit-map of the available and valid partitions */
+> +		for (i = 0; i < pmc->soc->num_powergates; i++)
+> +			if (pmc->soc->powergates[i])
+> +				set_bit(i, pmc->powergates_available);
+>  
+> -	value = tegra_pmc_readl(PMC_CNTRL);
+> +		/*
+> +		 * Invert the interrupt polarity if a PMC device tree node
+> +		 * exists and contains the nvidia,invert-interrupt property.
+> +		 */
+> +		invert = of_property_read_bool(np, "nvidia,invert-interrupt");
+>  
+> -	if (invert)
+> -		value |= PMC_CNTRL_INTR_POLARITY;
+> -	else
+> -		value &= ~PMC_CNTRL_INTR_POLARITY;
+> +		value = tegra_pmc_readl(PMC_CNTRL);
+>  
+> -	tegra_pmc_writel(value, PMC_CNTRL);
+> +		if (invert)
+> +			value |= PMC_CNTRL_INTR_POLARITY;
+> +		else
+> +			value &= ~PMC_CNTRL_INTR_POLARITY;
+> +
+> +		tegra_pmc_writel(value, PMC_CNTRL);
+> +	}
+>  
+>  	return 0;
+>  }
 
-On Wed, Jun 29, 2016 at 04:30:08PM +0100, Jon Hunter wrote:
->=20
-> On 28/06/16 12:20, Jon Hunter wrote:
-> > The Tegra210 XUSB subsystem has 3 power partitions which are XUSBA
-> > (super-speed logic), XUSBB (USB device logic) and XUSBC (USB host
-> > logic). Populate the device-tree nodes for these XUSB partitions.
-> >=20
-> > Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 24 ++++++++++++++++++++++++
-> >  1 file changed, 24 insertions(+)
-> >=20
-> > diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot=
-/dts/nvidia/tegra210.dtsi
-> > index 65b829b762bb..efb0fd98b789 100644
-> > --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> > +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-> > @@ -670,6 +670,30 @@
-> >  					 <&tegra_car TEGRA210_CLK_MIPI_CAL>;
-> >  				#power-domain-cells =3D <0>;
-> >  			};
-> > +
-> > +			pd_xusbss: xusba {
-> > +				clocks =3D <&tegra_car TEGRA210_CLK_XUSB_SS>;
-> > +				clock-names =3D "xusb_ss";
-> > +				resets =3D <&tegra_car TEGRA210_CLK_XUSB_SS>;
-> > +				reset-names =3D "xusb_ss";
-> > +				#power-domain-cells =3D <0>;
-> > +			};
-> > +
-> > +			pd_xusbdev: xusbb {
-> > +				clocks =3D <&tegra_car TEGRA210_CLK_XUSB_DEV>;
-> > +				clock-names =3D "xusb_dev";
-> > +				resets =3D <&tegra_car 95>;
-> > +				reset-names =3D "xusb_dev";
-> > +				#power-domain-cells =3D <0>;
-> > +			};
-> > +
-> > +			pd_xusbhost: xusbc {
-> > +				clocks =3D <&tegra_car TEGRA210_CLK_XUSB_HOST>;
-> > +				clock-names =3D "xusb_host";
-> > +				resets =3D <&tegra_car TEGRA210_CLK_XUSB_HOST>;
-> > +				reset-names =3D "xusb_host";
-> > +				#power-domain-cells =3D <0>;
-> > +			};
-> >  		};
-> >  	};
->=20
-> The 'clock-names' and 'reset-names' nodes are not used/required and so I
-> will remove these.
+By the way, the more I think about this, if there is no valid 'pmc'
+node in the device-tree blob, then I wonder if we should even bother
+mapping the pmc address space at all? The reason being, if there is
+no 'pmc' node then we cannot look-up the SoC data and so all the
+public PMC APIs are pretty useless AFAICT. I wonder if we should do
+something like ...
 
-Please keep them and make use of the names. We used to not do this in
-the past, and then things became tricky to describe in the DT bindings
-in order to keep backwards-compatibility.
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index e09c7ed385f6..34d1385d7ef0 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -1510,7 +1510,6 @@ static int __init tegra_pmc_early_init(void)
+ {
+        const struct of_device_id *match;
+        struct device_node *np;
+-       struct resource regs;
+        unsigned int i;
+        bool invert;
+        u32 value;
+@@ -1520,73 +1519,47 @@ static int __init tegra_pmc_early_init(void)
+        np = of_find_matching_node_and_match(NULL, tegra_pmc_match, &match);
+        if (!np) {
+                /*
+-                * Fall back to legacy initialization for 32-bit ARM only. All
+-                * 64-bit ARM device tree files for Tegra are required to have
+-                * a PMC node.
+-                *
+-                * This is for backwards-compatibility with old device trees
+-                * that didn't contain a PMC node. Note that in this case the
+-                * SoC data can't be matched and therefore powergating is
+-                * disabled.
++                * All 64-bit ARM device tree files for Tegra are required to
++                * have a PMC node. For old 32-bit Tegra device trees that
++                * don't contain a PMC node, the SoC data can't be matched
++                * and therefore powergating is disabled.
+                 */
+-               if (IS_ENABLED(CONFIG_ARM) && soc_is_tegra()) {
++               if (IS_ENABLED(CONFIG_ARM) && soc_is_tegra())
+                        pr_warn("DT node not found, powergating disabled\n");
+ 
+-                       regs.start = 0x7000e400;
+-                       regs.end = 0x7000e7ff;
+-                       regs.flags = IORESOURCE_MEM;
+-
+-                       pr_warn("Using memory region %pR\n", &regs);
+-               } else {
+-                       /*
+-                        * At this point we're not running on Tegra, so play
+-                        * nice with multi-platform kernels.
+-                        */
+-                       return 0;
+-               }
+-       } else {
+-               /*
+-                * Extract information from the device tree if we've found a
+-                * matching node.
+-                */
+-               if (of_address_to_resource(np, 0, &regs) < 0) {
+-                       pr_err("failed to get PMC registers\n");
+-                       return -ENXIO;
+-               }
++               return 0;
+        }
+ 
+-       pmc->base = ioremap_nocache(regs.start, resource_size(&regs));
++       pmc->base = of_iomap(np, 0);
+        if (!pmc->base) {
+                pr_err("failed to map PMC registers\n");
+                of_node_put(np);
+                return -ENXIO;
+        }
 
-Though perhaps you're not using them because they are found by index? In
-that case I think it might still be useful to have them for consistency.
+Cheers
+Jon
+ 
 
-If you keep them, you might want to turn the _ into -.
-
-Thierry
-
---nFreZHaLTZJo0R7j
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXc+/IAAoJEN0jrNd/PrOhM1oP/jyU0/Kke+r3VBC7R1qAQoGz
-y0krji7lAAoSxiGILGTU7bsbpUcegesQdaWa8jrj8sYKOw6pdCCzvIV6TqCEsYtw
-uJZaPTKe0BtbZ29jqxn23+lo97XleylMqi/VbwE9ZcysXzAzTtMsJTTAVzyukRq9
-Tm1+7UUlDVSYNDYWi3C+99htPQUqSzELkI3fkDohujJ7YeNkm52/euCFv2kpVmgM
-zYYGTZTdK5DO5MQmWDq155pc05KSRCsJneBRTF5bNsSxJolvs8e1Gs3kWyLzPjFZ
-VAAR+T6V86K3S6Xg2qW4JXAIYVwHq+gzm0mx0K1xT56Ya559KkKGZ60jxlwg3i4J
-dW+DZnUYtvdlO422qBXPCddRwpJIUpvqzHtTJqFGWhfcdh5s6JSwRwOw/okzPH1W
-k3bD7zrXI5oxp9FOfoo/Jgu0pF6joXAhDDw3HzUQooWrIW5Zg/ZfRZqLF6gTMkrP
-4EMrhVWbJRducvUNvDe9dzty8THJyNqFsobU45/4EluQMNJa7BSlfhMnv8J2Ki8Q
-Yvk2GF2uE3VKDGsySw/NxExk/rkLIrkIBYBc/666SOwwIMoKGmyLf86Cple+EHfe
-Y3UVUKSnDKxUPhZ1d+921+gkUnLnCjCQJhTww7+fyLj5wcEPTpvQIu6N/DQLefkK
-wSKaW8tSHup32EcoaWTR
-=4R0v
------END PGP SIGNATURE-----
-
---nFreZHaLTZJo0R7j--
+-- 
+nvpublic
