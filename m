@@ -1,140 +1,134 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 11/11] arm64: tegra: Add DPAUX pinctrl bindings
-Date: Wed, 29 Jun 2016 10:17:57 +0100
-Message-ID: <1467191877-26017-12-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH V2 08/11] dt-bindings: Add bindings for Tegra DPAUX pinctrl driver
+Date: Wed, 29 Jun 2016 10:17:54 +0100
+Message-ID: <1467191877-26017-9-git-send-email-jonathanh@nvidia.com>
 References: <1467191877-26017-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <1467191877-26017-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
 Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Add the DPAUX pinctrl states for the DPAUX nodes defining all three
-possible states of "aux", "i2c" and "off". Also add the 'i2c-bus'
-node for the DPAUX nodes so that the I2C driver core does not attempt
-to parse the pinctrl state nodes.
+On Tegra124, Tegra132 and Tegra210 devices the pads used by the Display
+Port Auxiliary (DPAUX) channel are multiplexed such that they can also
+be used by one of the internal I2C controllers. Note that this is
+different from I2C-over-AUX supported by the DPAUX controller. The
+register that configures these pads is part of the DPAUX controllers
+register set and so a pinctrl driver is being added for the DPAUX device
+to share these pads. Add the device-tree binding documentation for the
+DPAUX pad controller.
 
-Populate the nodes for the pinctrl clients of the DPAUX pin controller.
-There are two clients for each DPAUX instance, namely the SOR and one of
-the I2C adapters. The SOR clients may used the DPAUX pins in either AUX
-or I2C modes and so for these devices we don't define any of the generic
-pinctrl states (default, idle, etc) because the SOR driver will directly
-set the state needed. For I2C clients only the I2C mode is used and so
-we can simplify matters by using the generic pinctrl states for default
-and idle.
+Although there is only one group of pads associated with the DPAUX that
+can be multiplexed, the group still needs to be described by the binding.
+If the 'groups' property is not present in the binding, then the pads
+will not be allocated by the pinctrl core for a client and this would
+allow another client to re-configure the same pads that may already be
+in-use.
+
+Please note that although the "off" function for the DPAUX pads is not
+technically a pin-mux setting but more of a pin-conf setting it is
+simpler to expose these as a function so that the user can simply select
+either "aux", "i2c" or "off" as the current function/mode.
+
+Update the main DPAUX binding documentation to reference the DPAUX pad
+controller binding document and add the 'i2c-bus' subnode. The 'i2c-bus'
+subnode is used for populating I2C slaves for the DPAUX device so that
+the I2C driver core does not attempt to add the DPAUX pad controller
+nodes as I2C slaves.
 
 Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 54 ++++++++++++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
+ .../display/tegra/nvidia,tegra20-host1x.txt        |  6 +++
+ .../pinctrl/nvidia,tegra124-dpaux-padctl.txt       | 60 ++++++++++++++++++++++
+ 2 files changed, 66 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-dpaux-padctl.txt
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index ef317f0d773f..65b829b762bb 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -36,6 +36,26 @@
- 			reset-names = "dpaux";
- 			power-domains = <&pd_sor>;
- 			status = "disabled";
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+index 275f45680892..d0f1dc62550a 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+@@ -241,6 +241,12 @@ of the following host1x client modules:
+   - reset-names: Must include the following entries:
+     - dpaux
+   - vdd-supply: phandle of a supply that powers the DisplayPort link
++  - i2c-bus: Subnode where I2C slave devices are listed. This subnode
++    must be always present. If there are no I2C slave devices, an empty
++    node should be added. See ../../i2c/i2c.txt for more information.
 +
-+			state_dpaux1_aux: pinmux-aux {
-+				groups = "dpaux-io";
-+				function = "aux";
-+			};
-+
-+			state_dpaux1_i2c: pinmux-i2c {
-+				groups = "dpaux-io";
-+				function = "i2c";
-+			};
-+
-+			state_dpaux1_off: pinmux-off {
-+				groups = "dpaux-io";
-+				function = "off";
-+			};
-+
-+			i2c-bus {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
- 		};
++  See ../pinctrl/nvidia,tegra124-dpaux-padctl.txt for information
++  regarding the DPAUX pad controller bindings.
  
- 		vi@54080000 {
-@@ -155,6 +175,10 @@
- 			clock-names = "sor", "parent", "dp", "safe";
- 			resets = <&tegra_car 182>;
- 			reset-names = "sor";
-+			pinctrl-0 = <&state_dpaux_aux>;
-+			pinctrl-1 = <&state_dpaux_i2c>;
-+			pinctrl-2 = <&state_dpaux_off>;
-+			pinctrl-names = "aux", "i2c", "off";
- 			power-domains = <&pd_sor>;
- 			status = "disabled";
- 		};
-@@ -170,6 +194,10 @@
- 			clock-names = "sor", "parent", "dp", "safe";
- 			resets = <&tegra_car 183>;
- 			reset-names = "sor";
-+			pinctrl-0 = <&state_dpaux1_aux>;
-+			pinctrl-1 = <&state_dpaux1_i2c>;
-+			pinctrl-2 = <&state_dpaux1_off>;
-+			pinctrl-names = "aux", "i2c", "off";
- 			power-domains = <&pd_sor>;
- 			status = "disabled";
- 		};
-@@ -185,6 +213,26 @@
- 			reset-names = "dpaux";
- 			power-domains = <&pd_sor>;
- 			status = "disabled";
-+
-+			state_dpaux_aux: pinmux-aux {
-+				groups = "dpaux-io";
-+				function = "aux";
-+			};
-+
-+			state_dpaux_i2c: pinmux-i2c {
-+				groups = "dpaux-io";
-+				function = "i2c";
-+			};
-+
-+			state_dpaux_off: pinmux-off {
-+				groups = "dpaux-io";
-+				function = "off";
-+			};
-+
-+			i2c-bus {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+			};
- 		};
+ Example:
  
- 		isp@54600000 {
-@@ -482,6 +530,9 @@
- 		reset-names = "i2c";
- 		dmas = <&apbdma 26>, <&apbdma 26>;
- 		dma-names = "rx", "tx";
-+		pinctrl-0 = <&state_dpaux1_i2c>;
-+		pinctrl-1 = <&state_dpaux1_off>;
-+		pinctrl-names = "default", "idle";
- 		status = "disabled";
- 	};
- 
-@@ -512,6 +563,9 @@
- 		reset-names = "i2c";
- 		dmas = <&apbdma 30>, <&apbdma 30>;
- 		dma-names = "rx", "tx";
+diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-dpaux-padctl.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-dpaux-padctl.txt
+new file mode 100644
+index 000000000000..f2abdaee9022
+--- /dev/null
++++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-dpaux-padctl.txt
+@@ -0,0 +1,60 @@
++Device tree binding for NVIDIA Tegra DPAUX pad controller
++========================================================
++
++The Tegra Display Port Auxiliary (DPAUX) pad controller manages two pins
++which can be assigned to either the DPAUX channel or to an I2C
++controller.
++
++This document defines the device-specific binding for the DPAUX pad
++controller. Refer to pinctrl-bindings.txt in this directory for generic
++information about pin controller device tree bindings. Please refer to
++the binding document ../display/tegra/nvidia,tegra20-host1x.txt for more
++details on the DPAUX binding.
++
++Pin muxing:
++-----------
++
++Child nodes contain the pinmux configurations following the conventions
++from the pinctrl-bindings.txt document.
++
++Since only three configurations are possible, only three child nodes are
++needed to describe the pin mux'ing options for the DPAUX pads.
++Furthermore, given that the pad functions are only applicable to a
++single set of pads, the child nodes only need to describe the pad group
++the functions are being applied to rather than the individual pads.
++
++Required properties:
++- groups: Must be "dpaux-io"
++- function: Must be either "aux", "i2c" or "off".
++
++Example:
++--------
++
++	dpaux@545c0000 {
++		...
++
++		state_dpaux_aux: pinmux-aux {
++			groups = "dpaux-io";
++			function = "aux";
++		};
++
++		state_dpaux_i2c: pinmux-i2c {
++			groups = "dpaux-io";
++			function = "i2c";
++		};
++
++		state_dpaux_off: pinmux-off {
++			groups = "dpaux-io";
++			function = "off";
++		};
++	};
++
++	...
++
++	i2c@7000d100 {
++		...
 +		pinctrl-0 = <&state_dpaux_i2c>;
 +		pinctrl-1 = <&state_dpaux_off>;
 +		pinctrl-names = "default", "idle";
- 		status = "disabled";
- 	};
- 
++		status = "disabled";
++	};
 -- 
 2.1.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
