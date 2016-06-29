@@ -1,164 +1,56 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/6] soc/tegra: pmc: Fix early initialisation of PMC
-Date: Wed, 29 Jun 2016 17:17:09 +0100
-Message-ID: <5773F485.8090504@nvidia.com>
-References: <1467110308-22126-1-git-send-email-jonathanh@nvidia.com>
- <1467110308-22126-3-git-send-email-jonathanh@nvidia.com>
+From: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [RESEND PATCH] arm64: defconfig: Enable cros-ec and battery driver
+Date: Wed, 29 Jun 2016 13:21:53 -0400
+Message-ID: <1467220913-15006-1-git-send-email-rklein@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1467110308-22126-3-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Enable the ChromeOS Embedded Controller, its I2C tunnel driver, and
+the BA27XXX battery driver. These are all used on the Tegra210 Smaug
+platform.
 
-On 28/06/16 11:38, Jon Hunter wrote:
-> During early initialisation, the available power partitions for a given
-> device is configured as well as the polarity of the PMC interrupt. Both
-> of which should only be configured if there is a valid device node for
-> the PMC device. This is because the soc data used for configuring the
-> power partitions is only available if a device node for the PMC is found
-> and the code to configure the interrupt polarity uses the device node
-> pointer directly.
-> 
-> Some early device-tree images may not have this device node and so fix
-> this by ensuring the device node pointer is valid when configuring these
-> items.
-> 
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/soc/tegra/pmc.c | 34 ++++++++++++++++++----------------
->  1 file changed, 18 insertions(+), 16 deletions(-)
-> 
-> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-> index 52a9e9703668..2e031c4ad547 100644
-> --- a/drivers/soc/tegra/pmc.c
-> +++ b/drivers/soc/tegra/pmc.c
-> @@ -1550,27 +1550,29 @@ static int __init tegra_pmc_early_init(void)
->  		return -ENXIO;
->  	}
->  
-> -	/* Create a bit-map of the available and valid partitions */
-> -	for (i = 0; i < pmc->soc->num_powergates; i++)
-> -		if (pmc->soc->powergates[i])
-> -			set_bit(i, pmc->powergates_available);
-> -
->  	mutex_init(&pmc->powergates_lock);
->  
-> -	/*
-> -	 * Invert the interrupt polarity if a PMC device tree node exists and
-> -	 * contains the nvidia,invert-interrupt property.
-> -	 */
-> -	invert = of_property_read_bool(np, "nvidia,invert-interrupt");
-> +	if (np) {
-> +		/* Create a bit-map of the available and valid partitions */
-> +		for (i = 0; i < pmc->soc->num_powergates; i++)
-> +			if (pmc->soc->powergates[i])
-> +				set_bit(i, pmc->powergates_available);
->  
-> -	value = tegra_pmc_readl(PMC_CNTRL);
-> +		/*
-> +		 * Invert the interrupt polarity if a PMC device tree node
-> +		 * exists and contains the nvidia,invert-interrupt property.
-> +		 */
-> +		invert = of_property_read_bool(np, "nvidia,invert-interrupt");
->  
-> -	if (invert)
-> -		value |= PMC_CNTRL_INTR_POLARITY;
-> -	else
-> -		value &= ~PMC_CNTRL_INTR_POLARITY;
-> +		value = tegra_pmc_readl(PMC_CNTRL);
->  
-> -	tegra_pmc_writel(value, PMC_CNTRL);
-> +		if (invert)
-> +			value |= PMC_CNTRL_INTR_POLARITY;
-> +		else
-> +			value &= ~PMC_CNTRL_INTR_POLARITY;
-> +
-> +		tegra_pmc_writel(value, PMC_CNTRL);
-> +	}
->  
->  	return 0;
->  }
+Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
 
-By the way, the more I think about this, if there is no valid 'pmc'
-node in the device-tree blob, then I wonder if we should even bother
-mapping the pmc address space at all? The reason being, if there is
-no 'pmc' node then we cannot look-up the SoC data and so all the
-public PMC APIs are pretty useless AFAICT. I wonder if we should do
-something like ...
+Resending as the issue with power_supply_core/bq27xxx_battery has been
+resolved.
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index e09c7ed385f6..34d1385d7ef0 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -1510,7 +1510,6 @@ static int __init tegra_pmc_early_init(void)
- {
-        const struct of_device_id *match;
-        struct device_node *np;
--       struct resource regs;
-        unsigned int i;
-        bool invert;
-        u32 value;
-@@ -1520,73 +1519,47 @@ static int __init tegra_pmc_early_init(void)
-        np = of_find_matching_node_and_match(NULL, tegra_pmc_match, &match);
-        if (!np) {
-                /*
--                * Fall back to legacy initialization for 32-bit ARM only. All
--                * 64-bit ARM device tree files for Tegra are required to have
--                * a PMC node.
--                *
--                * This is for backwards-compatibility with old device trees
--                * that didn't contain a PMC node. Note that in this case the
--                * SoC data can't be matched and therefore powergating is
--                * disabled.
-+                * All 64-bit ARM device tree files for Tegra are required to
-+                * have a PMC node. For old 32-bit Tegra device trees that
-+                * don't contain a PMC node, the SoC data can't be matched
-+                * and therefore powergating is disabled.
-                 */
--               if (IS_ENABLED(CONFIG_ARM) && soc_is_tegra()) {
-+               if (IS_ENABLED(CONFIG_ARM) && soc_is_tegra())
-                        pr_warn("DT node not found, powergating disabled\n");
- 
--                       regs.start = 0x7000e400;
--                       regs.end = 0x7000e7ff;
--                       regs.flags = IORESOURCE_MEM;
--
--                       pr_warn("Using memory region %pR\n", &regs);
--               } else {
--                       /*
--                        * At this point we're not running on Tegra, so play
--                        * nice with multi-platform kernels.
--                        */
--                       return 0;
--               }
--       } else {
--               /*
--                * Extract information from the device tree if we've found a
--                * matching node.
--                */
--               if (of_address_to_resource(np, 0, &regs) < 0) {
--                       pr_err("failed to get PMC registers\n");
--                       return -ENXIO;
--               }
-+               return 0;
-        }
- 
--       pmc->base = ioremap_nocache(regs.start, resource_size(&regs));
-+       pmc->base = of_iomap(np, 0);
-        if (!pmc->base) {
-                pr_err("failed to map PMC registers\n");
-                of_node_put(np);
-                return -ENXIO;
-        }
+ arch/arm64/configs/defconfig | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Cheers
-Jon
- 
-
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 58bc31e0e9b7..4b6d39c927e7 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -186,6 +186,7 @@ CONFIG_I2C_QUP=y
+ CONFIG_I2C_TEGRA=y
+ CONFIG_I2C_UNIPHIER_F=y
+ CONFIG_I2C_RCAR=y
++CONFIG_I2C_CROS_EC_TUNNEL=y
+ CONFIG_SPI=y
+ CONFIG_SPI_ORION=y
+ CONFIG_SPI_PL022=y
+@@ -206,6 +207,7 @@ CONFIG_GPIO_PCA953X=y
+ CONFIG_GPIO_PCA953X_IRQ=y
+ CONFIG_GPIO_MAX77620=y
+ CONFIG_POWER_RESET_MSM=y
++CONFIG_BATTERY_BQ27XXX=y
+ CONFIG_POWER_RESET_XGENE=y
+ CONFIG_POWER_RESET_SYSCON=y
+ CONFIG_SENSORS_LM90=m
+@@ -220,6 +222,8 @@ CONFIG_MFD_SPMI_PMIC=y
+ CONFIG_MFD_SEC_CORE=y
+ CONFIG_MFD_HI655X_PMIC=y
+ CONFIG_REGULATOR=y
++CONFIG_MFD_CROS_EC=y
++CONFIG_MFD_CROS_EC_I2C=y
+ CONFIG_REGULATOR_FIXED_VOLTAGE=y
+ CONFIG_REGULATOR_HI655X=y
+ CONFIG_REGULATOR_MAX77620=y
 -- 
-nvpublic
+1.9.1
