@@ -1,134 +1,58 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 08/11] dt-bindings: Add bindings for Tegra DPAUX pinctrl driver
-Date: Wed, 29 Jun 2016 10:17:54 +0100
-Message-ID: <1467191877-26017-9-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH V2 06/11] dt-bindings: i2c: Add support for 'i2c-bus' subnode
+Date: Wed, 29 Jun 2016 10:17:52 +0100
+Message-ID: <1467191877-26017-7-git-send-email-jonathanh@nvidia.com>
 References: <1467191877-26017-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1467191877-26017-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1467191877-26017-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tegra124, Tegra132 and Tegra210 devices the pads used by the Display
-Port Auxiliary (DPAUX) channel are multiplexed such that they can also
-be used by one of the internal I2C controllers. Note that this is
-different from I2C-over-AUX supported by the DPAUX controller. The
-register that configures these pads is part of the DPAUX controllers
-register set and so a pinctrl driver is being added for the DPAUX device
-to share these pads. Add the device-tree binding documentation for the
-DPAUX pad controller.
+The I2C driver core for boards using device-tree assumes any subnode of
+an I2C adapter in the device-tree blob is an I2C slave device. Although
+this makes complete sense, some I2C adapters may have subnodes which
+are not I2C slaves but subnodes presenting other features. For example
+some Tegra devices have an I2C interface which may share its pins with
+other devices. In order to share these pins using the pinctrl framework,
+it is necessary to add subnodes to the I2C device node that represent
+these pins.
 
-Although there is only one group of pads associated with the DPAUX that
-can be multiplexed, the group still needs to be described by the binding.
-If the 'groups' property is not present in the binding, then the pads
-will not be allocated by the pinctrl core for a client and this would
-allow another client to re-configure the same pads that may already be
-in-use.
+To allow I2C adapters to have non-I2C specific subnodes in device-tree
+that are not parsed by the I2C driver core, add support for an optional
+'i2c-bus' subnode where I2C slaves can be placed. If the 'i2c-bus'
+subnode is present then all I2C slaves must be placed under this
+subnode.
 
-Please note that although the "off" function for the DPAUX pads is not
-technically a pin-mux setting but more of a pin-conf setting it is
-simpler to expose these as a function so that the user can simply select
-either "aux", "i2c" or "off" as the current function/mode.
-
-Update the main DPAUX binding documentation to reference the DPAUX pad
-controller binding document and add the 'i2c-bus' subnode. The 'i2c-bus'
-subnode is used for populating I2C slaves for the DPAUX device so that
-the I2C driver core does not attempt to add the DPAUX pad controller
-nodes as I2C slaves.
-
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Rob Herring <robh@kernel.org>
 ---
- .../display/tegra/nvidia,tegra20-host1x.txt        |  6 +++
- .../pinctrl/nvidia,tegra124-dpaux-padctl.txt       | 60 ++++++++++++++++++++++
- 2 files changed, 66 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-dpaux-padctl.txt
+ Documentation/devicetree/bindings/i2c/i2c.txt | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-index 275f45680892..d0f1dc62550a 100644
---- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-+++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-@@ -241,6 +241,12 @@ of the following host1x client modules:
-   - reset-names: Must include the following entries:
-     - dpaux
-   - vdd-supply: phandle of a supply that powers the DisplayPort link
-+  - i2c-bus: Subnode where I2C slave devices are listed. This subnode
-+    must be always present. If there are no I2C slave devices, an empty
-+    node should be added. See ../../i2c/i2c.txt for more information.
-+
-+  See ../pinctrl/nvidia,tegra124-dpaux-padctl.txt for information
-+  regarding the DPAUX pad controller bindings.
+diff --git a/Documentation/devicetree/bindings/i2c/i2c.txt b/Documentation/devicetree/bindings/i2c/i2c.txt
+index f31b2ad1552b..5fa691e6f638 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c.txt
++++ b/Documentation/devicetree/bindings/i2c/i2c.txt
+@@ -32,6 +32,14 @@ wants to support one of the below features, it should adapt the bindings below.
+ - clock-frequency
+ 	frequency of bus clock in Hz.
  
- Example:
- 
-diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-dpaux-padctl.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-dpaux-padctl.txt
-new file mode 100644
-index 000000000000..f2abdaee9022
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra124-dpaux-padctl.txt
-@@ -0,0 +1,60 @@
-+Device tree binding for NVIDIA Tegra DPAUX pad controller
-+========================================================
++- i2c-bus
++	For I2C adapters that have child nodes that are a mixture of both I2C
++	devices and non-I2C devices, the 'i2c-bus' subnode can be used for
++	populating I2C devices. If the 'i2c-bus' subnode is present, only
++	subnodes of this will be considered as I2C slaves. The properties,
++	'#address-cells' and '#size-cells' must be defined under this subnode
++	if present.
 +
-+The Tegra Display Port Auxiliary (DPAUX) pad controller manages two pins
-+which can be assigned to either the DPAUX channel or to an I2C
-+controller.
-+
-+This document defines the device-specific binding for the DPAUX pad
-+controller. Refer to pinctrl-bindings.txt in this directory for generic
-+information about pin controller device tree bindings. Please refer to
-+the binding document ../display/tegra/nvidia,tegra20-host1x.txt for more
-+details on the DPAUX binding.
-+
-+Pin muxing:
-+-----------
-+
-+Child nodes contain the pinmux configurations following the conventions
-+from the pinctrl-bindings.txt document.
-+
-+Since only three configurations are possible, only three child nodes are
-+needed to describe the pin mux'ing options for the DPAUX pads.
-+Furthermore, given that the pad functions are only applicable to a
-+single set of pads, the child nodes only need to describe the pad group
-+the functions are being applied to rather than the individual pads.
-+
-+Required properties:
-+- groups: Must be "dpaux-io"
-+- function: Must be either "aux", "i2c" or "off".
-+
-+Example:
-+--------
-+
-+	dpaux@545c0000 {
-+		...
-+
-+		state_dpaux_aux: pinmux-aux {
-+			groups = "dpaux-io";
-+			function = "aux";
-+		};
-+
-+		state_dpaux_i2c: pinmux-i2c {
-+			groups = "dpaux-io";
-+			function = "i2c";
-+		};
-+
-+		state_dpaux_off: pinmux-off {
-+			groups = "dpaux-io";
-+			function = "off";
-+		};
-+	};
-+
-+	...
-+
-+	i2c@7000d100 {
-+		...
-+		pinctrl-0 = <&state_dpaux_i2c>;
-+		pinctrl-1 = <&state_dpaux_off>;
-+		pinctrl-names = "default", "idle";
-+		status = "disabled";
-+	};
+ - i2c-scl-falling-time-ns
+ 	Number of nanoseconds the SCL signal takes to fall; t(f) in the I2C
+ 	specification.
 -- 
 2.1.4
+
