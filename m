@@ -1,42 +1,140 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH V2 04/11] dt-bindings: display: Update Tegra DPAUX documentation
-Date: Wed, 29 Jun 2016 10:17:50 +0100
-Message-ID: <1467191877-26017-5-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2 11/11] arm64: tegra: Add DPAUX pinctrl bindings
+Date: Wed, 29 Jun 2016 10:17:57 +0100
+Message-ID: <1467191877-26017-12-git-send-email-jonathanh@nvidia.com>
 References: <1467191877-26017-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <1467191877-26017-1-git-send-email-jonathanh@nvidia.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, linux-i2c@vger.kernel.org, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1467191877-26017-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Update the DPAUX compatibility string information for Tegra124, Tegra132
-and Tegra210.
+Add the DPAUX pinctrl states for the DPAUX nodes defining all three
+possible states of "aux", "i2c" and "off". Also add the 'i2c-bus'
+node for the DPAUX nodes so that the I2C driver core does not attempt
+to parse the pinctrl state nodes.
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-Acked-by: Rob Herring <robh@kernel.org>
+Populate the nodes for the pinctrl clients of the DPAUX pin controller.
+There are two clients for each DPAUX instance, namely the SOR and one of
+the I2C adapters. The SOR clients may used the DPAUX pins in either AUX
+or I2C modes and so for these devices we don't define any of the generic
+pinctrl states (default, idle, etc) because the SOR driver will directly
+set the state needed. For I2C clients only the I2C mode is used and so
+we can simplify matters by using the generic pinctrl states for default
+and idle.
+
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- .../devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt     | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 54 ++++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-index a3bd8c050c4e..275f45680892 100644
---- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-+++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
-@@ -226,9 +226,9 @@ of the following host1x client modules:
-   - nvidia,dpaux: phandle to a DispayPort AUX interface
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index ef317f0d773f..65b829b762bb 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -36,6 +36,26 @@
+ 			reset-names = "dpaux";
+ 			power-domains = <&pd_sor>;
+ 			status = "disabled";
++
++			state_dpaux1_aux: pinmux-aux {
++				groups = "dpaux-io";
++				function = "aux";
++			};
++
++			state_dpaux1_i2c: pinmux-i2c {
++				groups = "dpaux-io";
++				function = "i2c";
++			};
++
++			state_dpaux1_off: pinmux-off {
++				groups = "dpaux-io";
++				function = "off";
++			};
++
++			i2c-bus {
++				#address-cells = <1>;
++				#size-cells = <0>;
++			};
+ 		};
  
- - dpaux: DisplayPort AUX interface
--  - compatible: For Tegra124, must contain "nvidia,tegra124-dpaux".  Otherwise,
--    must contain '"nvidia,<chip>-dpaux", "nvidia,tegra124-dpaux"', where
--    <chip> is tegra132.
-+  - compatible : Should contain one of the following:
-+    - "nvidia,tegra124-dpaux": for Tegra124 and Tegra132
-+    - "nvidia,tegra210-dpaux": for Tegra210
-   - reg: Physical base address and length of the controller's registers.
-   - interrupts: The interrupt outputs from the controller.
-   - clocks: Must contain an entry for each entry in clock-names.
+ 		vi@54080000 {
+@@ -155,6 +175,10 @@
+ 			clock-names = "sor", "parent", "dp", "safe";
+ 			resets = <&tegra_car 182>;
+ 			reset-names = "sor";
++			pinctrl-0 = <&state_dpaux_aux>;
++			pinctrl-1 = <&state_dpaux_i2c>;
++			pinctrl-2 = <&state_dpaux_off>;
++			pinctrl-names = "aux", "i2c", "off";
+ 			power-domains = <&pd_sor>;
+ 			status = "disabled";
+ 		};
+@@ -170,6 +194,10 @@
+ 			clock-names = "sor", "parent", "dp", "safe";
+ 			resets = <&tegra_car 183>;
+ 			reset-names = "sor";
++			pinctrl-0 = <&state_dpaux1_aux>;
++			pinctrl-1 = <&state_dpaux1_i2c>;
++			pinctrl-2 = <&state_dpaux1_off>;
++			pinctrl-names = "aux", "i2c", "off";
+ 			power-domains = <&pd_sor>;
+ 			status = "disabled";
+ 		};
+@@ -185,6 +213,26 @@
+ 			reset-names = "dpaux";
+ 			power-domains = <&pd_sor>;
+ 			status = "disabled";
++
++			state_dpaux_aux: pinmux-aux {
++				groups = "dpaux-io";
++				function = "aux";
++			};
++
++			state_dpaux_i2c: pinmux-i2c {
++				groups = "dpaux-io";
++				function = "i2c";
++			};
++
++			state_dpaux_off: pinmux-off {
++				groups = "dpaux-io";
++				function = "off";
++			};
++
++			i2c-bus {
++				#address-cells = <1>;
++				#size-cells = <0>;
++			};
+ 		};
+ 
+ 		isp@54600000 {
+@@ -482,6 +530,9 @@
+ 		reset-names = "i2c";
+ 		dmas = <&apbdma 26>, <&apbdma 26>;
+ 		dma-names = "rx", "tx";
++		pinctrl-0 = <&state_dpaux1_i2c>;
++		pinctrl-1 = <&state_dpaux1_off>;
++		pinctrl-names = "default", "idle";
+ 		status = "disabled";
+ 	};
+ 
+@@ -512,6 +563,9 @@
+ 		reset-names = "i2c";
+ 		dmas = <&apbdma 30>, <&apbdma 30>;
+ 		dma-names = "rx", "tx";
++		pinctrl-0 = <&state_dpaux_i2c>;
++		pinctrl-1 = <&state_dpaux_off>;
++		pinctrl-names = "default", "idle";
+ 		status = "disabled";
+ 	};
+ 
 -- 
 2.1.4
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
