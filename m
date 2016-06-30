@@ -1,112 +1,37 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/4] soc/tegra: pmc: Initialise power partitions early
-Date: Thu, 30 Jun 2016 11:56:25 +0100
-Message-ID: <1467284187-13320-3-git-send-email-jonathanh@nvidia.com>
-References: <1467284187-13320-1-git-send-email-jonathanh@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 2/3] PCI: tegra: Use pci_remap_iospace()
+Date: Thu, 30 Jun 2016 15:14:29 +0200
+Message-ID: <20160630131430.32096-2-thierry.reding@gmail.com>
+References: <20160630131430.32096-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1467284187-13320-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20160630131430.32096-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-If CONFIG_PM_GENERIC_DOMAINS is not enabled, then power partitions
-associated with a device will not be enabled automatically by the PM
-core when the device is in use. To avoid situations where a device in
-a power partition is to be used but the partition is not enabled,
-initialise the power partitions for Tegra early in the boot process and
-if CONFIG_PM_GENERIC_DOMAINS is not enabled, then power on all
-partitions defined in the device-tree blob.
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Note that if CONFIG_PM_GENERIC_DOMAINS is not enabled, after the
-partitions are turned on, the clocks and resets used as part of the
-sequence for turning on the partition are released again as they are no
-longer needed by the PMC driver. Another benefit of this is that this
-avoids any issues of sharing resets between the PMC driver and other
-device drivers that may wish to independently control a particular
-reset.
+Use the pci_remap_iospace() function provided by the PCI core, rather
+than the 32-bit ARM-specific pci_ioremap_io().
 
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/soc/tegra/pmc.c | 26 +++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
+ drivers/pci/host/pci-tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index df61c85e75c7..dd36ad974c67 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -825,6 +825,9 @@ static void tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
- 		goto remove_clks;
- 	}
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index 9595518f541d..f04b062e8c67 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -645,7 +645,7 @@ static int tegra_pcie_setup(int nr, struct pci_sys_data *sys)
+ 				sys->mem_offset);
+ 	pci_add_resource(&sys->resources, &pcie->busn);
  
-+	if (!IS_ENABLED(CONFIG_PM_GENERIC_DOMAINS))
-+		goto power_on_cleanup;
-+
- 	pm_genpd_init(&pg->genpd, NULL, off);
+-	pci_ioremap_io(pcie->pio.start, pcie->io.start);
++	pci_remap_iospace(&pcie->pio, pcie->io.start);
  
- 	if (of_genpd_add_provider_simple(np, &pg->genpd)) {
-@@ -837,6 +840,10 @@ static void tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
- 
- 	return;
- 
-+power_on_cleanup:
-+	if (off)
-+		WARN_ON(tegra_powergate_power_up(pg, true));
-+
- remove_resets:
- 	while (pg->num_resets--)
- 		reset_control_put(pg->resets[pg->num_resets]);
-@@ -854,11 +861,18 @@ free_mem:
- 	kfree(pg);
+ 	return 1;
  }
- 
--static void tegra_powergate_init(struct tegra_pmc *pmc)
-+static void tegra_powergate_init(struct tegra_pmc *pmc,
-+				 struct device_node *parent)
- {
- 	struct device_node *np, *child;
-+	unsigned int i;
- 
--	np = of_get_child_by_name(pmc->dev->of_node, "powergates");
-+	/* Create a bit-map of the available and valid partitions */
-+	for (i = 0; i < pmc->soc->num_powergates; i++)
-+		if (pmc->soc->powergates[i])
-+			set_bit(i, pmc->powergates_available);
-+
-+	np = of_get_child_by_name(parent, "powergates");
- 	if (!np)
- 		return;
- 
-@@ -1279,8 +1293,6 @@ static int tegra_pmc_probe(struct platform_device *pdev)
- 		return err;
- 	}
- 
--	tegra_powergate_init(pmc);
--
- 	mutex_lock(&pmc->powergates_lock);
- 	iounmap(pmc->base);
- 	pmc->base = base;
-@@ -1514,7 +1526,6 @@ static int __init tegra_pmc_early_init(void)
- 	const struct of_device_id *match;
- 	struct device_node *np;
- 	struct resource regs;
--	unsigned int i;
- 	bool invert;
- 	u32 value;
- 
-@@ -1569,10 +1580,7 @@ static int __init tegra_pmc_early_init(void)
- 	if (np) {
- 		pmc->soc = match->data;
- 
--		/* Create a bit-map of the available and valid partitions */
--		for (i = 0; i < pmc->soc->num_powergates; i++)
--			if (pmc->soc->powergates[i])
--				set_bit(i, pmc->powergates_available);
-+		tegra_powergate_init(pmc, np);
- 
- 		/*
- 		 * Invert the interrupt polarity if a PMC device tree node
 -- 
-2.1.4
+2.8.3
