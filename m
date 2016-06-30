@@ -1,63 +1,80 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RESEND PATCH] arm64: defconfig: Enable cros-ec and battery
- driver
-Date: Thu, 30 Jun 2016 15:23:47 +0200
-Message-ID: <20160630132347.GB26758@ulmo.ba.sec>
-References: <1467220913-15006-1-git-send-email-rklein@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 0/4] soc/tegra: Turn on XUSB partitions
+Date: Thu, 30 Jun 2016 15:24:18 +0200
+Message-ID: <20160630132418.GC26758@ulmo.ba.sec>
+References: <1467284187-13320-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="oC1+HKm2/end4ao3"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="ghzN8eJ9Qlbqn3iT"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1467220913-15006-1-git-send-email-rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1467284187-13320-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---oC1+HKm2/end4ao3
+--ghzN8eJ9Qlbqn3iT
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 29, 2016 at 01:21:53PM -0400, Rhyland Klein wrote:
-> Enable the ChromeOS Embedded Controller, its I2C tunnel driver, and
-> the BA27XXX battery driver. These are all used on the Tegra210 Smaug
-> platform.
+On Thu, Jun 30, 2016 at 11:56:23AM +0100, Jon Hunter wrote:
+> The Tegra XHCI driver currently assumes the XUSB power partitions have
+> been enabled by the bootloader. This is not for the Tegra210 Smaug board
+> and so cause the kernel to hang when enabling XHCI support. Although the
+> XHCI driver itself needs to manage these partitions, for now enable the
+> partitions if the XHCI driver is enabled.
 >=20
-> Signed-off-by: Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
+> In order to do this I have made a fundamental change to the PMC driver
+> to initialise the power partitions during early init. A benefit of this
+> is that if CONFIG_PM_GENERIC_DOMAINS is not enabled, then we can simply
+> turn on the partitions early before any devices are probed.
 >=20
-> Resending as the issue with power_supply_core/bq27xxx_battery has been
-> resolved.
+> This is based upon the PMC fixes series [0].
 >=20
->  arch/arm64/configs/defconfig | 4 ++++
->  1 file changed, 4 insertions(+)
+> Changes from initial RFC:
+> - Added patch to add more detailed error messages when initialising
+>   powergates.
+>=20
+> [0] http://marc.info/?l=3Dlinux-tegra&m=3D146711078013182&w=3D2
+>=20
+> Jon Hunter (4):
+>   soc/tegra: pmc: Add specific error messages for initialising a
+>     powergate
+>   soc/tegra: pmc: Initialise power partitions early
+>   soc/tegra: pmc: Enable XUSB partitions on boot
+>   arm64: tegra210: Add XUSB powergates
+>=20
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 24 +++++++++++++
+>  drivers/soc/tegra/pmc.c                  | 60 +++++++++++++++++++++++---=
+------
+>  2 files changed, 67 insertions(+), 17 deletions(-)
 
 Applied, thanks.
 
 Thierry
 
---oC1+HKm2/end4ao3
+--ghzN8eJ9Qlbqn3iT
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXdR1jAAoJEN0jrNd/PrOhZAcP/21J2Jexbgr22P9BGd7dv08c
-x7+6OrhPcNQYMDoMaBaJKrpXaJrgazPyFZEMY5qFcDlW2/2BM51Njt1oA53VTbo3
-xcRoVDj5fGN/aqhIE9BRdQvYRNDzhT5u9VjjxJwEownv0uSvVsl1GUyK2NQJNqH7
-Pi5ERB+5fBViTNs6STj5lNWDvlWjpUBvnHVPNABqLsQR3L/UdEVJN63Vjfl13IUz
-/Y60FBVCq/ODPlorxcXQeFOttlguFMa1DFHff9A2Sz+caBZ5Jkdpsxjdg5mFYaWE
-5/nrA5GQ9W5qyuuK0U99s6ycsEtaW0W4fWzEkCA+pq+nDuInlxHmOlr2wsDuRtwK
-/xgJuS91wwV2kmyrhpe/six13wA9/fWT4ixGRqNtzoR6Bg+/qFC91pPS1RbWZrsk
-mpScdOnk/hTA7oC3VHsLsZPGsAIV8MCOi8ZgVEkWFff5H2YDEDlF3W0Wn1Y0hsHv
-QpIzh2KVsMuTHVw+TBb7hmdNcUJoG0U3mZFDVp8wwM/BGUHw2bWAgL4b7V6yEMwH
-zhwPNszqXvUJja7gD+5oL6knPEX1AaNk4Kh4F6fLk76o1vTC0jrgzErXxItUXcI1
-1I427+CIoBR4BsT/Hs2azW5tSYL7W2cASb0vUpcQTlhygfOBVzrndX6nrlo1ArOL
-5AXFdLZTmvZRE6qPbBne
-=Dgx+
+iQIcBAABCAAGBQJXdR2CAAoJEN0jrNd/PrOhbMIP/RmuA9nDtk/vKZD8jdQWE0X9
+w8XGAXq8t2IhSpGXJlXibu2FF0LTIUnvW7m7u9AbcMUwusT0W4zqqcfBxsWM0JDX
+SYxC9drd0GGkU2QeLVtOfv8RbeYzMTRxmyOff47ngayXIrYsCVWqNhYbZqNXEVg7
+7mwjE0OG49UQVhO3MGDYIchYtk7JLzcQTVH8eONklMgPbuDhbUR9QlbdrFXkiUSH
+Du9Ta7F+oUmvZKcqLkjFjrjwiokPf9QUYTPwac3dAwpQU1SewL8RYC5i0SVqyP6U
+A3oMa/8LXYZ3i09yHXZVHDwbalawnm8FslM+Po+7fctFOhvqetAubtAxoCQ+GW5j
+nD9dHRIVbSWLKQoo082XfDT2ghXpOiIG5Ao7bXhw8Yp0Qmrs0p8H7SSn/+ILMg4B
+rvdAxXTAgOn4BNaA1sQKAuc5cpo7LLEvMHdP4UluLNWYAupjXAgFkhbOX0VCvgob
+GcyT7KRn0wS2XK+QherSoN6c/jT2KG6Vz3Qu1sxWOPhzoz1wZXVG6ggjaUBhv99p
+R3EEQ6mmC4KhORuqZAqyz7Au7pG9KXYFusOq02O2tsELupNu2r2JWLM3DcE4UAsN
+mmT9lREjDH6G3z3w61QpHq6rBvPEr5+XzhkuDbTqu7oseJmNaXTv2BDze514B3FK
+Fdvnh8666maWoM7cttEO
+=kY3C
 -----END PGP SIGNATURE-----
 
---oC1+HKm2/end4ao3--
+--ghzN8eJ9Qlbqn3iT--
