@@ -1,54 +1,32 @@
 From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] arm64: tegra: Add missing Smaug revision
-Date: Thu, 30 Jun 2016 15:04:22 +0900
-Message-ID: <CAAVeFu++3FcPF=j-DAsoA5O5kt6BDPYYT-EeSpEF2u=8E7U9ig@mail.gmail.com>
-References: <20160629085229.31350-1-acourbot@nvidia.com> <57738EC3.3070200@nvidia.com>
+Subject: Re: [PATCH v3] arm: tegra124: remove commas from unit addresses
+Date: Thu, 30 Jun 2016 15:34:05 +0900
+Message-ID: <03546b91-7c7d-427a-a583-827f00eda64c@gmail.com>
+References: <1467238897-10028-1-git-send-email-marcel.ziswiler@toradex.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <57738EC3.3070200-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Rhyland Klein <rklein-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8BIT
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1467238897-10028-1-git-send-email-marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Jun 29, 2016 at 6:02 PM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+On Thursday, June 30, 2016 7:21:37 AM JST, Marcel Ziswiler wrote:
+> Remove commas from unit addresses as suggested by Rob Herring upon me
+> posting initial Apalis TK1 support:
 >
-> On 29/06/16 09:52, Alexandre Courbot wrote:
->> The "google,smaug-rev2" string is missing from the compatible list of
->> Smaug's DT. The differences of rev2 are not relevant at our current
->> level of support and it boots just fine, so add it.
->>
->> Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
->> index 431266a48e9c..82a96bd27bc8 100644
->> --- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
->> +++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
->> @@ -11,7 +11,8 @@
->>       compatible = "google,smaug-rev8", "google,smaug-rev7",
->>                    "google,smaug-rev6", "google,smaug-rev5",
->>                    "google,smaug-rev4", "google,smaug-rev3",
->> -                  "google,smaug-rev1", "google,smaug", "nvidia,tegra210";
->> +                  "google,smaug-rev2", "google,smaug-rev1",
->> +                  "google,smaug", "nvidia,tegra210";
->>
->>       aliases {
->>               serial0 = &uarta;
+> http://article.gmane.org/gmane.linux.ports.tegra/26608
 >
-> Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> Olof, let us know if you have any comments on this? Looks like I missed
-> this initially because the rev2 support had been broken out in the
-> chrome-os kernel tree to support some specific features for this board.
-> However, I think for now it is ok to include rev2 here as well for mainline.
+> Please keep the remaining 0, notation on the GPU node in place as a
+> former mainline U-Boot version was looking for that particular notation
+> in order to perform required fix-ups on it.
 
-This should be perfectly safe. If I run a diff between
-tegra210-smaug-p1.dts and tegra210-smaug-p2.dts in the ChromeOS tree,
-the only node that differs is sysedp-batmon-calc. The other node in
-these files (spiflash) is identical.
+Tested-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Besides I don't think there are that many rev2s out there. :)
+Confirmed that GPU still probes and is usable after this.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
