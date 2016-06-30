@@ -1,145 +1,132 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] pci: tegra: correctly program PADS_REFCLK registers
-Date: Thu, 30 Jun 2016 17:46:19 +0200
-Message-ID: <20160630154619.GC4279@ulmo.ba.sec>
-References: <20160621184640.19885-1-swarren@wwwdotorg.org>
- <20160622125749.GJ26943@ulmo.ba.sec>
- <576AAFFD.4050404@wwwdotorg.org>
- <20160623084448.GA8608@ulmo.ba.sec>
- <20160630132001.GA26758@ulmo.ba.sec>
- <20160630093523.24cd5767@t450s.home>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH 01/10] Documentation: dt-bindings: mailbox: tegra: Add
+ binding for HSP mailbox
+Date: Thu, 30 Jun 2016 10:02:03 -0600
+Message-ID: <5775427B.9040907@wwwdotorg.org>
+References: <20160627090248.23621-1-josephl@nvidia.com>
+ <20160627090248.23621-2-josephl@nvidia.com> <57714C85.50802@wwwdotorg.org>
+ <57724039.7080007@nvidia.com> <5772CB12.5080408@wwwdotorg.org>
+ <57736311.6020304@nvidia.com> <5773E900.8060903@wwwdotorg.org>
+ <5774E599.4000204@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="lMM8JwqTlfDpEaS6"
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20160630093523.24cd5767-1yVPhWWZRC1BDLzU/O5InQ@public.gmane.org>
+In-Reply-To: <5774E599.4000204-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 06/30/2016 03:25 AM, Joseph Lo wrote:
+> On 06/29/2016 11:28 PM, Stephen Warren wrote:
+>> On 06/28/2016 11:56 PM, Joseph Lo wrote:
+>>> On 06/29/2016 03:08 AM, Stephen Warren wrote:
+>>>> On 06/28/2016 03:15 AM, Joseph Lo wrote:
+>>>>> On 06/27/2016 11:55 PM, Stephen Warren wrote:
+>>>>>> On 06/27/2016 03:02 AM, Joseph Lo wrote:
+>>> snip.
+>>>>>
+>>>>> Currently the usage of HSP HW in the downstream kernel is something
+>>>>> like
+>>>>> the model below.
+>>>>>
+>>>>> remote_processor_A-\
+>>>>> remote_processor_B--->hsp@1000 (doorbell func) <-> host CPU
+>>>>> remote_processor_C-/
+>>>>>
+>>>>> remote_processor_D -> hsp@2000 (shared mailbox) <-> CPU
+>>>>>
+>>>>> remote_processor_E -> hsp@3000 (shared mailbox) <-> CPU
+>>>>>
+>>>>> I am thinking if we can just add the appropriate compatible strings
+>>>>> for
+>>>>> it to replace "nvidia,tegra186-hsp". e.g.
+>>>>> "nvidia,tegra186-hsp-doorbell"
+>>>>> and "nvidia,tegra186-hsp-sharedmailbox". So the driver can probe and
+>>>>> initialize correctly depend on the compatible property. How do you
+>>>>> think
+>>>>> about it? Is this the same as the (b) you mentioned above?
+>>>>
+>>>> Yes, that would be (b) above.
+>>>>
+>>>> However, please do note (a): I expect that splitting things up will
+>>>> turn
+>>>> out to be a mistake, as it has for other HW modules in the past. I
+>>>> would
+>>>> far rather see a single hsp node in DT, since there is a single HSP
+>>>> block in HW. Sure that block has multiple sub-functions. However, there
+>>>> is common logic that affects all of those sub-functions and binds
+>>>> everything into a single HW module. If you represent the HW module
+>>>> using
+>>>> multiple different DT nodes, it will be hard to correctly represent
+>>>> that
+>>>> common logic. Conversely, I see no real advantage to splitting up
+>>>> the DT
+>>>> node. I strongly believe we should have a single "hsp" node in DT.
+>>>
+>>> We have 6 HSP block in HW. FYI.
+>>
+>> Yes, we have 6 /instances/ of the overall HSP block. Those should each
+>> have their own node, since they're entirely separate modules, all
+>> instances of the same configurable IP block.
+>>
+>> Above, I was talking about the sub-blocks within each HSP instance,
+>> which should all be represented into a single node per instance, for a
+>> total of 6 DT nodes overall.
+> Yes.
+>
+> So, one thing still concerns me is that the binding and driver still
+> can't work with multiple HSP sub-modules per HSP block. It only supports
+> one HSP module per HSP block right how.
 
---lMM8JwqTlfDpEaS6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The driver can be enhanced without affecting the DT binding, providing 
+the binding is reasonably designed, as I believe it is.
 
-On Thu, Jun 30, 2016 at 09:35:23AM -0600, Alex Williamson wrote:
-> On Thu, 30 Jun 2016 15:20:01 +0200
-> Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
->=20
-> > On Thu, Jun 23, 2016 at 10:44:48AM +0200, Thierry Reding wrote:
-> > > On Wed, Jun 22, 2016 at 09:34:21AM -0600, Stephen Warren wrote: =20
-> > > > On 06/22/2016 06:57 AM, Thierry Reding wrote: =20
-> > > > > On Tue, Jun 21, 2016 at 12:46:40PM -0600, Stephen Warren wrote: =
-=20
-> > > > > > From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > > > >=20
-> > > > > > The value that should be programmed into the PADS_REFCLK regist=
-er varies
-> > > > > > per SoC. Fix the Tegra PCIe driver to program the correct value=
-s. Future
-> > > > > > SoCs will require different values in cfg0/1, so the two values=
- are stored
-> > > > > > separately in the per-SoC data structures.
-> > > > > >=20
-> > > > > > For reference, the values are all documented in NV bug 1771116 =
-comment 20.
-> > > > > > Rhe ASIC team has validated all these values, except for the Te=
-gra20 value
-> > > > > > which is simply left unchanged in this patch. =20
-> > > >  =20
-> > > > > > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pc=
-i-tegra.c =20
-> > > >  =20
-> > > > > > @@ -2078,6 +2070,7 @@ static const struct tegra_pcie_soc_data t=
-egra20_pcie_data =3D {
-> > > > > >   	.msi_base_shift =3D 0,
-> > > > > >   	.pads_pll_ctl =3D PADS_PLL_CTL_TEGRA20,
-> > > > > >   	.tx_ref_sel =3D PADS_PLL_CTL_TXCLKREF_DIV10,
-> > > > > > +	.pads_refclk_cfg0 =3D 0xfa5cfa5c,
-> > > > > >   	.has_pex_clkreq_en =3D false,
-> > > > > >   	.has_pex_bias_ctrl =3D false,
-> > > > > >   	.has_intr_prsnt_sense =3D false,
-> > > > > > @@ -2090,6 +2083,8 @@ static const struct tegra_pcie_soc_data t=
-egra30_pcie_data =3D {
-> > > > > >   	.msi_base_shift =3D 8,
-> > > > > >   	.pads_pll_ctl =3D PADS_PLL_CTL_TEGRA30,
-> > > > > >   	.tx_ref_sel =3D PADS_PLL_CTL_TXCLKREF_BUF_EN,
-> > > > > > +	.pads_refclk_cfg0 =3D 0xfa5cfa5c,
-> > > > > > +	.pads_refclk_cfg1 =3D 0xfa5cfa5c,
-> > > > > >   	.has_pex_clkreq_en =3D true,
-> > > > > >   	.has_pex_bias_ctrl =3D true,
-> > > > > >   	.has_intr_prsnt_sense =3D true,
-> > > > > > @@ -2102,6 +2097,7 @@ static const struct tegra_pcie_soc_data t=
-egra124_pcie_data =3D {
-> > > > > >   	.msi_base_shift =3D 8,
-> > > > > >   	.pads_pll_ctl =3D PADS_PLL_CTL_TEGRA30,
-> > > > > >   	.tx_ref_sel =3D PADS_PLL_CTL_TXCLKREF_BUF_EN,
-> > > > > > +	.pads_refclk_cfg0 =3D 0x44ac44ac,
-> > > > > >   	.has_pex_clkreq_en =3D true,
-> > > > > >   	.has_pex_bias_ctrl =3D true,
-> > > > > >   	.has_intr_prsnt_sense =3D true, =20
-> > > > >=20
-> > > > > I think it'd be nice to have these decoded into their individual =
-fields,
-> > > > > to reduce the magic. We already define the register fields, so it=
- seems
-> > > > > sensible to use them. =20
-> > > >=20
-> > > > I did consider that. However, the specification from the ASIC team =
-is always
-> > > > the raw values. Decoding them into bitfields is only going to make =
-it harder
-> > > > to verify whether the correct values are present (since the reader =
-has to
-> > > > manually expand the math), and introduce the possibility of errors =
-during
-> > > > the expansion process. I think using raw numbers is better in this =
-case. =20
-> > >=20
-> > > Alright, fine with me:
-> > >=20
-> > > Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> =20
-> >=20
-> > Hi Bjorn,
-> >=20
-> > I do have a couple of other patches, mostly minor cleanup and prep-work
-> > for 64-bit ARM support, that I'd like to get into v4.8. Would you mind
-> > if I took Stephen's patches into a branch and send it all out via pull
-> > request after it passed testing?
->=20
-> Hi Theirry,
->=20
-> Bjorn is on holiday and will be back at the beginning of the v4.8 merge
-> window, assuming everything sticks to a regular schedule.  I expect
-> that anything that consolidates and prioritizes potential v4.8 content
-> for easy evaluation on his return would be appreciated.  Thanks,
+I believe the existing binding can work fine for multiple HSP 
+sub-modules, or at least be extended in a backwards-compatible way. 
+Aside from the mailbox cells issue you mention below, is there any other 
+reason you believe the binding can't be extended in a 
+backwards-compatible way? Interrupts are already accessed solely by 
+name, so we can add more later without issue. The node can become a 
+provider for any other resource type besides mailboxes in a 
+backwards-compatible way without issue.
 
-Okay, thanks for letting me know.
+> Although, I said it matches the
+> model that we are using in the downstream kernel. But I still concern if
+> we need to enable and work with multiple HSP modules per HSP block at
+> sometime in future, then the binding and driver need lots of change to
+> achieve that. And the binding is not back-ward compatible obviously.
+>
+> So I want to revise it again.
+>
+> #mbox-cells: should be 2.
+>
+> The mobxes property in the client node should contain the phandle of the
+> HSP block, HSP sub-module ID and the specifier of the module.
+>
+> Ex.
+> hsp_top0: hsp@1000 {
+>      ...
+>      #mbox-cells = <2>;
+> };
+>
+> clientA {
+>      ....
+>      mboxes = <&hsp_top0 HSP_DOORBELL DB_MASTER_XXX>;
+> };
+>
+> clientB {
+>      ...
+>      mboxes = <&hsp_top0 HSP_SHARED_MAILBOX SM_MASTER_XXX>;
+> };
+>
+> Stephen, How do you think of this change?
 
-Thierry
-
---lMM8JwqTlfDpEaS6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXdT7KAAoJEN0jrNd/PrOhgDUP/1fchQnuXw3FHcOlRKrPBcko
-2Y5peKVaqhRZ5DHrSF1P0Widwr8fmQOVZp870unqLSJ715jN4qKOJzbQmUdWkBhi
-CluzOTvNmOdIhiKv7YWzU+QuufiuB1DEFfTYFO4GuBYrI67mORNhhR1Sfxl6Bwue
-Ckr5ycQhT4O+hhfpcIhnypwWOL0jUrwajvgk8L+b/iYJhkrfolIyEb7D8vuxNtm7
-L+hFYKOR1UBQdbdIZuFjtHd8OvptZ/jyiOeynnsVA0UzoWxSCUI2cmX9nea5bVXw
-+o7R9t1dEAYc63ld/7QjvWduG4jc/kfwitzJSmu7LoHJf26zaFC3V32ND18XkQ3W
-phC4XIZrd91N/eVvaLQDsoO5VZ8DkcKY7kDrEKayfKpihCyumDsXIQsr2eLXggIz
-L6BAHvbY73GxZzK/JHG9HJrR6zI4V00TMiutDzApk7k1RR1nanrw3OEwY/BiDRni
-ABRMt60GpsBTJ505uIbPyQhCb9FqgJgHW3U2yxOQw/YRYU0ZLeMHQlg6ESYceAIx
-FEw9O3KVyAGrtbAYF0FCR3PZxFKbDSO+qR3vSM9XklIdVXl7ECnpPRIIY2VED/67
-zIvLLN6BTvKcvoAOGmCldE4PVNO3f7k/rfjl7Jv3Lu97jnPmzGwmhRwTV1QygLF2
-y9Jsmc37EipDtQmNnRZr
-=xNjI
------END PGP SIGNATURE-----
-
---lMM8JwqTlfDpEaS6--
+Well, we could do that. Or, since we won't have 2^32 instances of 
+doorbells, we could also have #mbox-cells=<1> as we do now, and encode 
+mailbox IDs as "(type << 16) | id" where TEGRA186_HSP_MAILBOX_TYPE_DB is 
+0. That would be backwards-compatible with no change to the binding. I 
+think either way is fine. I have a slight preference for keeping 
+#mbox-cells=<1> to avoid revising the U-Boot driver code I wrote, but I 
+can deal with changing it if I have to.
