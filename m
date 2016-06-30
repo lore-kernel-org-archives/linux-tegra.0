@@ -1,194 +1,254 @@
-From: Rhyland Klein <rklein@nvidia.com>
-Subject: Re: [PATCH v5] clk: tegra: Initialize UTMIPLL when enabling PLLU
-Date: Thu, 30 Jun 2016 11:32:14 -0400
-Message-ID: <943f14f1-1c7c-055d-8dc6-f30f1196430f@nvidia.com>
-References: <1464280891-23036-1-git-send-email-rklein@nvidia.com>
- <5763FFF5.5000303@nvidia.com> <20160617152336.GA27475@ulmo.ba.sec>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <20160617152336.GA27475@ulmo.ba.sec>
-Sender: linux-clk-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Jon Hunter <jonathanh@nvidia.com>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v2 2/2] PCI: tegra: Use new pci_register_host() interface
+Date: Thu, 30 Jun 2016 17:19:31 +0200
+Message-ID: <20160630151931.29216-2-thierry.reding@gmail.com>
+References: <20160630151931.29216-1-thierry.reding@gmail.com>
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20160630151931.29216-1-thierry.reding@gmail.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Tomasz Nowicki <tn@semihalf.com>, Liviu Dudau <liviu.dudau@arm.com>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 6/17/2016 11:23 AM, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Fri, Jun 17, 2016 at 02:49:41PM +0100, Jon Hunter wrote:
->> Hi Thierry,
->>
->> On 26/05/16 17:41, Rhyland Klein wrote:
->>> From: Andrew Bresticker <abrestic@chromium.org>
->>>
->>> Move the UTMIPLL initialization code form clk-tegra<chip>.c files into
->>> clk-pll.c. UTMIPLL was being configured and set in HW control right
->>> after registration. However, when the clock init_table is processed and
->>> child clks of PLLU are enabled, it will call in and enable PLLU as
->>> well, and initiate SW enabling sequence even though PLLU is already in
->>> HW control. This leads to getting UTMIPLL stuck with a SEQ_BUSY status.
->>>
->>> Doing the initialization once during pllu_enable means we configure it
->>> properly into HW control.
->>>
->>> A side effect of the commonization/localization of the UTMIPLL init
->>> code, is that it corrects some errors that were present for earlier
->>> generations. For instance, in clk-tegra124.c, it used to have:
->>>
->>> define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 6)
->>>
->>> when the correct shift to use is present in the new version:
->>>
->>> define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 27)
->>>
->>> which matches the Tegra124 TRM register definition.
->>>
->>> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
->>>
->>> [rklein: Merged in some later fixes for potential deadlocks]
->>>
->>> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
->>> ---
->>> v5:
->>>  - Initialized flags to 0 to avoid harmless spinlock warnings
->>>
->>> v4:
->>>  - Re-added examples in patch description
->>>
->>> v3:
->>>  - Flushed out description to describe this patch.
->>>
->>>  drivers/clk/tegra/clk-pll.c      | 484 +++++++++++++++++++++++++++++++++++++++
->>>  drivers/clk/tegra/clk-tegra114.c | 155 +------------
->>>  drivers/clk/tegra/clk-tegra124.c | 156 +------------
->>>  drivers/clk/tegra/clk-tegra210.c | 182 +--------------
->>>  drivers/clk/tegra/clk-tegra30.c  | 113 +--------
->>>  drivers/clk/tegra/clk.h          |  17 ++
->>>  6 files changed, 510 insertions(+), 597 deletions(-)
->>>
->>> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
->>> index 4e194ecc8d5e..31e20110fae4 100644
->>> --- a/drivers/clk/tegra/clk-pll.c
->>> +++ b/drivers/clk/tegra/clk-pll.c
->>
->> ...
->>
->>> +static int clk_pllu_tegra210_enable(struct clk_hw *hw)
->>> +{
->>> +	struct tegra_clk_pll *pll = to_clk_pll(hw);
->>> +	struct clk_hw *pll_ref = clk_hw_get_parent(hw);
->>> +	struct clk_hw *osc = clk_hw_get_parent(pll_ref);
->>> +	unsigned long flags = 0, input_rate;
->>> +	unsigned int i;
->>> +	int ret = 0;
->>> +	u32 val;
->>> +
->>> +	if (!osc) {
->>> +		pr_err("%s: failed to get OSC clock\n", __func__);
->>> +		return -EINVAL;
->>> +	}
->>> +	input_rate = clk_hw_get_rate(osc);
->>> +
->>> +	if (pll->lock)
->>> +		spin_lock_irqsave(pll->lock, flags);
->>> +
->>> +	_clk_pll_enable(hw);
->>> +	ret = clk_pll_wait_for_lock(pll);
->>> +	if (ret < 0)
->>> +		goto out;
->>> +
->>> +	for (i = 0; i < ARRAY_SIZE(utmi_parameters); i++) {
->>> +		if (input_rate == utmi_parameters[i].osc_frequency)
->>> +			break;
->>> +	}
->>> +
->>> +	if (i == ARRAY_SIZE(utmi_parameters)) {
->>> +		pr_err("%s: Unexpected input rate %lu\n", __func__, input_rate);
->>> +		ret = -EINVAL;
->>> +		goto out;
->>> +	}
->>> +
->>> +	val = pll_readl_base(pll);
->>> +	val &= ~PLLU_BASE_OVERRIDE;
->>> +	pll_writel_base(val, pll);
->>> +
->>> +	/* Put PLLU under HW control */
->>> +	val = readl_relaxed(pll->clk_base + PLLU_HW_PWRDN_CFG0);
->>> +	val |= PLLU_HW_PWRDN_CFG0_IDDQ_PD_INCLUDE |
->>> +	       PLLU_HW_PWRDN_CFG0_USE_SWITCH_DETECT |
->>> +	       PLLU_HW_PWRDN_CFG0_USE_LOCKDET;
->>> +	val &= ~(PLLU_HW_PWRDN_CFG0_CLK_ENABLE_SWCTL |
->>> +		  PLLU_HW_PWRDN_CFG0_CLK_SWITCH_SWCTL);
->>> +	writel_relaxed(val, pll->clk_base + PLLU_HW_PWRDN_CFG0);
->>> +
->>> +	val = readl_relaxed(pll->clk_base + XUSB_PLL_CFG0);
->>> +	val &= ~XUSB_PLL_CFG0_PLLU_LOCK_DLY;
->>> +	writel_relaxed(val, pll->clk_base + XUSB_PLL_CFG0);
->>> +	udelay(1);
->>> +
->>> +	val = readl_relaxed(pll->clk_base + PLLU_HW_PWRDN_CFG0);
->>> +	val |= PLLU_HW_PWRDN_CFG0_SEQ_ENABLE;
->>> +	writel_relaxed(val, pll->clk_base + PLLU_HW_PWRDN_CFG0);
->>> +	udelay(1);
->>> +
->>> +	/* Disable PLLU clock branch to UTMIPLL since it uses OSC */
->>> +	val = pll_readl_base(pll);
->>> +	val &= ~PLLU_BASE_CLKENABLE_USB;
->>> +	pll_writel_base(val, pll);
->>> +
->>> +	val = readl_relaxed(pll->clk_base + UTMIPLL_HW_PWRDN_CFG0);
->>> +	if (val & UTMIPLL_HW_PWRDN_CFG0_SEQ_ENABLE) {
->>> +		pr_debug("UTMIPLL already enabled\n");
->>> +		goto out;
->>> +	}
->>> +	val &= ~UTMIPLL_HW_PWRDN_CFG0_IDDQ_OVERRIDE;
->>> +	writel_relaxed(val, pll->clk_base + UTMIPLL_HW_PWRDN_CFG0);
->>> +
->>> +	/* Program UTMIP PLL stable and active counts */
->>> +	val = readl_relaxed(pll->clk_base + UTMIP_PLL_CFG2);
->>> +	val &= ~UTMIP_PLL_CFG2_STABLE_COUNT(~0);
->>> +	val |= UTMIP_PLL_CFG2_STABLE_COUNT(utmi_parameters[i].stable_count);
->>> +	val &= ~UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(~0);
->>> +	val |= UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(
->>> +			utmi_parameters[i].active_delay_count);
->>> +	val |= UTMIP_PLL_CFG2_PHY_XTAL_CLOCKEN;
->>> +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG2);
->>> +
->>> +	/* Program UTMIP PLL delay and oscillator frequency counts */
->>> +	val = readl_relaxed(pll->clk_base + UTMIP_PLL_CFG1);
->>> +	val &= ~UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(~0);
->>> +	val |= UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(
->>> +		utmi_parameters[i].enable_delay_count);
->>> +	val &= ~UTMIP_PLL_CFG1_XTAL_FREQ_COUNT(~0);
->>> +	val |= UTMIP_PLL_CFG1_XTAL_FREQ_COUNT(
->>> +		utmi_parameters[i].xtal_freq_count);
->>> +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG1);
->>> +
->>> +	/* Remove power downs from UTMIP PLL control bits */
->>> +	val = readl_relaxed(pll->clk_base + UTMIP_PLL_CFG1);
->>> +	val &= ~UTMIP_PLL_CFG1_FORCE_PLL_ENABLE_POWERDOWN;
->>> +	val |= UTMIP_PLL_CFG1_FORCE_PLL_ENABLE_POWERUP;
->>> +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG1);
->>> +	udelay(100);
->>
->> In next-20160617 I see that this udelay is now a usleep_range(100, 200)
->> and this is causing the following splat when the clock is enabled. I
->> don't think that we can use usleep here ...
-> 
-> Okay, I'll back out the patch. I'd really prefer to avoid busy-looping
-> for 100 microseconds here, so can we please find another way to do this?
-> 
+From: Arnd Bergmann <arnd@arndb.de>
 
-It looks like we should be able to use a short udelay of 1-2us. I
-believe the original code had udelay(1) and I know Jon and I tested
-udelay(2) and it was ok.
+Tegra is one of the remaining platforms that still use the traditional
+pci_common_init_dev() interface for probing PCI host bridges.
 
-Do you want me to send another patch rev with just the udelay change or
-are you going to just modify it locally yourself?
+This demonstrates how to convert it to the pci_register_host interface
+I just added in a previous patch. This leads to a more linear probe
+sequence that can handle errors better because we avoid callbacks into
+the driver, and it makes the driver architecture independent.
 
--rhyland
+As a side note, I should mention that I noticed this driver does not
+register any IORESOURCE_IO resource with the bus, but instead registers
+the I/O port window as a memory resource, which is surely a bug.
 
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/pci/host/pci-tegra.c | 94 +++++++++++++++++++++++++-------------------
+ 1 file changed, 53 insertions(+), 41 deletions(-)
+
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index c1c7653264f8..121e04f21282 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -258,6 +258,7 @@ static inline struct tegra_msi *to_tegra_msi(struct msi_controller *chip)
+ }
+ 
+ struct tegra_pcie {
++	struct pci_host_bridge bridge;
+ 	struct device *dev;
+ 
+ 	void __iomem *pads;
+@@ -302,6 +303,11 @@ struct tegra_pcie {
+ 	struct dentry *debugfs;
+ };
+ 
++static inline struct tegra_pcie *to_tegra_pcie(struct pci_host_bridge *host)
++{
++	return container_of(host, struct tegra_pcie, bridge);
++}
++
+ struct tegra_pcie_port {
+ 	struct tegra_pcie *pcie;
+ 	struct device_node *np;
+@@ -320,11 +326,6 @@ struct tegra_pcie_bus {
+ 	unsigned int nr;
+ };
+ 
+-static inline struct tegra_pcie *sys_to_pcie(struct pci_sys_data *sys)
+-{
+-	return sys->private_data;
+-}
+-
+ static inline void afi_writel(struct tegra_pcie *pcie, u32 value,
+ 			      unsigned long offset)
+ {
+@@ -428,7 +429,8 @@ free:
+ 
+ static int tegra_pcie_add_bus(struct pci_bus *bus)
+ {
+-	struct tegra_pcie *pcie = sys_to_pcie(bus->sysdata);
++	struct pci_host_bridge *host = pci_find_host_bridge(bus);
++	struct tegra_pcie *pcie = to_tegra_pcie(host);
+ 	struct tegra_pcie_bus *b;
+ 
+ 	b = tegra_pcie_bus_alloc(pcie, bus->number);
+@@ -442,7 +444,8 @@ static int tegra_pcie_add_bus(struct pci_bus *bus)
+ 
+ static void tegra_pcie_remove_bus(struct pci_bus *child)
+ {
+-	struct tegra_pcie *pcie = sys_to_pcie(child->sysdata);
++	struct pci_host_bridge *host = pci_find_host_bridge(child);
++	struct tegra_pcie *pcie = to_tegra_pcie(host);
+ 	struct tegra_pcie_bus *bus, *tmp;
+ 
+ 	list_for_each_entry_safe(bus, tmp, &pcie->buses, list) {
+@@ -459,7 +462,8 @@ static void __iomem *tegra_pcie_map_bus(struct pci_bus *bus,
+ 					unsigned int devfn,
+ 					int where)
+ {
+-	struct tegra_pcie *pcie = sys_to_pcie(bus->sysdata);
++	struct pci_host_bridge *host = pci_find_host_bridge(bus);
++	struct tegra_pcie *pcie = to_tegra_pcie(host);
+ 	void __iomem *addr = NULL;
+ 
+ 	if (bus->number == 0) {
+@@ -607,36 +611,33 @@ static void tegra_pcie_relax_enable(struct pci_dev *dev)
+ }
+ DECLARE_PCI_FIXUP_FINAL(PCI_ANY_ID, PCI_ANY_ID, tegra_pcie_relax_enable);
+ 
+-static int tegra_pcie_setup(int nr, struct pci_sys_data *sys)
++static int tegra_pcie_request_resources(struct tegra_pcie *pcie)
+ {
+-	struct tegra_pcie *pcie = sys_to_pcie(sys);
++	struct list_head *windows = &pcie->bridge.windows;
+ 	int err;
+ 
+-	sys->mem_offset = pcie->offset.mem;
+-	sys->io_offset = pcie->offset.io;
+-
+ 	err = devm_request_resource(pcie->dev, &iomem_resource, &pcie->io);
+ 	if (err < 0)
+ 		return err;
+ 
+ 	pci_ioremap_io(pcie->pio.start, pcie->io.start);
+ 
+-	pci_add_resource_offset(&sys->resources, &pcie->pio, sys->io_offset);
+-	pci_add_resource_offset(&sys->resources, &pcie->mem, sys->mem_offset);
+-	pci_add_resource_offset(&sys->resources, &pcie->prefetch,
+-				sys->mem_offset);
+-	pci_add_resource(&sys->resources, &pcie->busn);
++	pci_add_resource_offset(windows, &pcie->pio, pcie->offset.io);
++	pci_add_resource_offset(windows, &pcie->mem, pcie->offset.mem);
++	pci_add_resource_offset(windows, &pcie->prefetch, pcie->offset.mem);
++	pci_add_resource(windows, &pcie->busn);
+ 
+-	err = devm_request_pci_bus_resources(pcie->dev, &sys->resources);
++	err = devm_request_pci_bus_resources(pcie->dev, windows);
+ 	if (err < 0)
+ 		return err;
+ 
+-	return 1;
++	return 0;
+ }
+ 
+ static int tegra_pcie_map_irq(const struct pci_dev *pdev, u8 slot, u8 pin)
+ {
+-	struct tegra_pcie *pcie = sys_to_pcie(pdev->bus->sysdata);
++	struct pci_host_bridge *host = pci_find_host_bridge(pdev->bus);
++	struct tegra_pcie *pcie = to_tegra_pcie(host);
+ 	int irq;
+ 
+ 	tegra_cpuidle_pcie_irqs_in_use();
+@@ -1521,6 +1522,7 @@ static int tegra_pcie_enable_msi(struct tegra_pcie *pcie)
+ 	}
+ 
+ 	/* setup AFI/FPCI range */
++	pcie->bridge.msi = &msi->chip;
+ 	msi->pages = __get_free_pages(GFP_KERNEL, 0);
+ 	base = virt_to_phys((void *)msi->pages);
+ 
+@@ -2006,10 +2008,9 @@ retry:
+ 	return false;
+ }
+ 
+-static int tegra_pcie_enable(struct tegra_pcie *pcie)
++static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
+ {
+ 	struct tegra_pcie_port *port, *tmp;
+-	struct hw_pci hw;
+ 
+ 	list_for_each_entry_safe(port, tmp, &pcie->ports, list) {
+ 		dev_info(pcie->dev, "probing port %u, using %u lanes\n",
+@@ -2025,22 +2026,6 @@ static int tegra_pcie_enable(struct tegra_pcie *pcie)
+ 		tegra_pcie_port_disable(port);
+ 		tegra_pcie_port_free(port);
+ 	}
+-
+-	memset(&hw, 0, sizeof(hw));
+-
+-#ifdef CONFIG_PCI_MSI
+-	hw.msi_ctrl = &pcie->msi.chip;
+-#endif
+-
+-	hw.nr_controllers = 1;
+-	hw.private_data = (void **)&pcie;
+-	hw.setup = tegra_pcie_setup;
+-	hw.map_irq = tegra_pcie_map_irq;
+-	hw.ops = &tegra_pcie_ops;
+-
+-	pci_common_init_dev(pcie->dev, &hw);
+-
+-	return 0;
+ }
+ 
+ static const struct tegra_pcie_soc_data tegra20_pcie_data = {
+@@ -2203,7 +2188,9 @@ remove:
+ static int tegra_pcie_probe(struct platform_device *pdev)
+ {
+ 	const struct of_device_id *match;
++	struct pci_host_bridge *bridge;
+ 	struct tegra_pcie *pcie;
++	struct pci_bus *child;
+ 	int err;
+ 
+ 	match = of_match_device(tegra_pcie_of_match, &pdev->dev);
+@@ -2219,6 +2206,9 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+ 	pcie->soc_data = match->data;
+ 	pcie->dev = &pdev->dev;
+ 
++	pci_host_bridge_init(&pcie->bridge);
++	bridge = &pcie->bridge;
++
+ 	err = tegra_pcie_parse_dt(pcie);
+ 	if (err < 0)
+ 		return err;
+@@ -2235,6 +2225,10 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+ 	if (err)
+ 		goto put_resources;
+ 
++	err = tegra_pcie_request_resources(pcie);
++	if (err)
++		goto put_resources;
++
+ 	/* setup the AFI address translations */
+ 	tegra_pcie_setup_translations(pcie);
+ 
+@@ -2248,12 +2242,30 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+ 		}
+ 	}
+ 
+-	err = tegra_pcie_enable(pcie);
++	tegra_pcie_enable_ports(pcie);
++
++	pci_add_flags(PCI_REASSIGN_ALL_RSRC | PCI_REASSIGN_ALL_BUS);
++	bridge->busnr = pcie->busn.start;
++	bridge->dev.parent = &pdev->dev;
++	bridge->ops = &tegra_pcie_ops;
++
++	err = pci_host_bridge_register(bridge);
+ 	if (err < 0) {
+-		dev_err(&pdev->dev, "failed to enable PCIe ports: %d\n", err);
++		dev_err(&pdev->dev, "failed to register host: %d\n", err);
+ 		goto disable_msi;
+ 	}
+ 
++	pci_scan_child_bus(bridge->bus);
++
++	pci_fixup_irqs(pci_common_swizzle, tegra_pcie_map_irq);
++	pci_bus_size_bridges(bridge->bus);
++	pci_bus_assign_resources(bridge->bus);
++
++	list_for_each_entry(child, &bridge->bus->children, node)
++		pcie_bus_configure_settings(child);
++
++	pci_bus_add_devices(bridge->bus);
++
+ 	if (IS_ENABLED(CONFIG_DEBUG_FS)) {
+ 		err = tegra_pcie_debugfs_init(pcie);
+ 		if (err < 0)
 -- 
-nvpublic
+2.8.3
