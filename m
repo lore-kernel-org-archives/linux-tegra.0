@@ -1,99 +1,136 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH 1/3] soc/tegra: pmc: Initialise power partitions early
-Date: Thu, 30 Jun 2016 11:20:29 +0100
-Message-ID: <5774F26D.5050008@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [RFC PATCH 3/3] arm64: tegra210: Add XUSB powergates
+Date: Thu, 30 Jun 2016 12:20:52 +0200
+Message-ID: <20160630102052.GH1776@ulmo.ba.sec>
 References: <1467112844-26927-1-git-send-email-jonathanh@nvidia.com>
- <1467112844-26927-2-git-send-email-jonathanh@nvidia.com>
- <20160630101732.GG1776@ulmo.ba.sec>
+ <1467112844-26927-4-git-send-email-jonathanh@nvidia.com>
+ <5773E980.7050907@nvidia.com>
+ <20160629155659.GA20065@ulmo.ba.sec>
+ <5773F233.7010202@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160630101732.GG1776-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="17/8oYur5Y32USnW"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <5773F233.7010202@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 30/06/16 11:17, Thierry Reding wrote:
-> * PGP Signed by an unknown key
-> 
-> On Tue, Jun 28, 2016 at 12:20:42PM +0100, Jon Hunter wrote:
->> If CONFIG_PM_GENERIC_DOMAINS is not enabled, then power partitions
->> associated with a device will not be enabled automatically by the PM
->> core when the device is in use. To avoid situations where a device in
->> a power partition is to be used but the partition is not enabled,
->> initialise the power partitions for Tegra early in the boot process and
->> if CONFIG_PM_GENERIC_DOMAINS is not enabled, then power on all
->> partitions defined in the device-tree blob.
->>
->> Note that if CONFIG_PM_GENERIC_DOMAINS is not enabled, after the
->> partitions are turned on, the clocks and resets used as part of the
->> sequence for turning on the partition are released again as they are no
->> longer needed by the PMC driver. Another benefit of this is that this
->> avoids any issues of sharing resets between the PMC driver and other
->> device drivers that may wish to independently control a particular
->> reset.
->>
->> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  drivers/soc/tegra/pmc.c | 33 ++++++++++++++++++++++-----------
->>  1 file changed, 22 insertions(+), 11 deletions(-)
->>
->> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->> index 1f702538f8ec..64678ff2173e 100644
->> --- a/drivers/soc/tegra/pmc.c
->> +++ b/drivers/soc/tegra/pmc.c
->> @@ -788,7 +788,7 @@ error:
->>  static void tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
->>  {
->>  	struct tegra_powergate *pg;
->> -	bool off;
->> +	bool off, err = true;
->>  	int id;
->>  
->>  	pg = kzalloc(sizeof(*pg), GFP_KERNEL);
->> @@ -819,6 +819,9 @@ static void tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
->>  	if (tegra_powergate_of_get_resets(pg, np, off))
->>  		goto remove_clks;
->>  
->> +	if (!IS_ENABLED(CONFIG_PM_GENERIC_DOMAINS))
->> +		goto power_on_cleanup;
->> +
->>  	pm_genpd_init(&pg->genpd, NULL, off);
->>  
->>  	if (of_genpd_add_provider_simple(np, &pg->genpd))
->> @@ -828,6 +831,11 @@ static void tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
->>  
->>  	return;
->>  
->> +power_on_cleanup:
->> +	if (off)
->> +		WARN_ON(tegra_powergate_power_up(pg, true));
->> +	err = false;
->> +
->>  remove_resets:
->>  	while (pg->num_resets--)
->>  		reset_control_put(pg->resets[pg->num_resets]);
->> @@ -845,14 +853,23 @@ free_mem:
->>  	kfree(pg);
->>  
->>  error:
->> -	dev_err(pmc->dev, "failed to create power domain for %s\n", np->name);
->> +	if (err)
->> +		dev_err(pmc->dev, "failed to configure partition %s\n",
->> +			np->name);
-> 
-> This is beginning to look very spaghetti-like. Do we really need the
-> error message here? Could we instead add more explicit error messages
-> before the gotos above?
+--17/8oYur5Y32USnW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes I can't say I loved it either. Ok, yes will add more specific error
-messages above gotos instead.
+On Wed, Jun 29, 2016 at 05:07:15PM +0100, Jon Hunter wrote:
+>=20
+> On 29/06/16 16:56, Thierry Reding wrote:
+> > * PGP Signed by an unknown key
+> >=20
+> > On Wed, Jun 29, 2016 at 04:30:08PM +0100, Jon Hunter wrote:
+> >>
+> >> On 28/06/16 12:20, Jon Hunter wrote:
+> >>> The Tegra210 XUSB subsystem has 3 power partitions which are XUSBA
+> >>> (super-speed logic), XUSBB (USB device logic) and XUSBC (USB host
+> >>> logic). Populate the device-tree nodes for these XUSB partitions.
+> >>>
+> >>> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> >>> ---
+> >>>  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 24 ++++++++++++++++++++++=
+++
+> >>>  1 file changed, 24 insertions(+)
+> >>>
+> >>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/bo=
+ot/dts/nvidia/tegra210.dtsi
+> >>> index 65b829b762bb..efb0fd98b789 100644
+> >>> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> >>> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> >>> @@ -670,6 +670,30 @@
+> >>>  					 <&tegra_car TEGRA210_CLK_MIPI_CAL>;
+> >>>  				#power-domain-cells =3D <0>;
+> >>>  			};
+> >>> +
+> >>> +			pd_xusbss: xusba {
+> >>> +				clocks =3D <&tegra_car TEGRA210_CLK_XUSB_SS>;
+> >>> +				clock-names =3D "xusb_ss";
+> >>> +				resets =3D <&tegra_car TEGRA210_CLK_XUSB_SS>;
+> >>> +				reset-names =3D "xusb_ss";
+> >>> +				#power-domain-cells =3D <0>;
+> >>> +			};
+> >>> +
+> >>> +			pd_xusbdev: xusbb {
+> >>> +				clocks =3D <&tegra_car TEGRA210_CLK_XUSB_DEV>;
+> >>> +				clock-names =3D "xusb_dev";
+> >>> +				resets =3D <&tegra_car 95>;
+> >>> +				reset-names =3D "xusb_dev";
+> >>> +				#power-domain-cells =3D <0>;
+> >>> +			};
+> >>> +
+> >>> +			pd_xusbhost: xusbc {
+> >>> +				clocks =3D <&tegra_car TEGRA210_CLK_XUSB_HOST>;
+> >>> +				clock-names =3D "xusb_host";
+> >>> +				resets =3D <&tegra_car TEGRA210_CLK_XUSB_HOST>;
+> >>> +				reset-names =3D "xusb_host";
+> >>> +				#power-domain-cells =3D <0>;
+> >>> +			};
+> >>>  		};
+> >>>  	};
+> >>
+> >> The 'clock-names' and 'reset-names' nodes are not used/required and so=
+ I
+> >> will remove these.
+> >=20
+> > Please keep them and make use of the names. We used to not do this in
+> > the past, and then things became tricky to describe in the DT bindings
+> > in order to keep backwards-compatibility.
+>=20
+> Unfortunately, in order to use them, we would need to keep a list of all
+> the clock and reset names in the PMC driver which would be huge.
 
-Cheers
-Jon
+That's a Linux driver implementation detail, so it shouldn't influence
+the binding.
 
--- 
-nvpublic
+> > Though perhaps you're not using them because they are found by index? In
+> > that case I think it might still be useful to have them for consistency.
+>=20
+> Right, we just iterate over the number of the clocks and resets found
+> when we initialise the powergate.
+
+Again, that's a driver implementation detail.
+
+> > If you keep them, you might want to turn the _ into -.
+>=20
+> I can keep them, however, in other patches I have sent out, for example
+> the SOR powergate (part of the DPAUX series) and Audio powergate, they
+> do not have them. So I thought I would remove them here to be
+> consistent. However, we could add them for these other powergates as well.
+
+Yes, I'd prefer them to be listed in all nodes for documentation, if for
+nothing else.
+
+Thierry
+
+--17/8oYur5Y32USnW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXdPKEAAoJEN0jrNd/PrOh7rEP+gPeV8zEFIRG5FUuULD0WgnR
+xQXog/aF7WsCe29BlysMEXVind5DyVvcBkNjh9Rx3H+cHTPEDcnSdBnmOwlE54ae
+KfCLjxil0ClMgVYfu8R1FOSrabsk8eDlIRs2P5MmNTy5DIWixX29C76yeRAvKJKM
+bNFvrgVsdQhFohZ4mOVrmoNbEZNbk5gG2TvlSGHmksbTUgshVhorgDG3Y+EZNcxE
+sjbalv/7lpxmqWBmpQZrkeEIL6oO6LlG7Btgob5yNgk1h3T+aDpPHNEfmVDIyzks
+r7iRzJqCw16r8Hf1XBybYJQhUYj46Dm9INDApIzS8fgRh7Iv6I90ABeFNqNmF/Tx
+RZBEBCtvqL+FRaa5Bp1OKFyUpUGAvnUFDMkhyF9xYNYMC0YJJh4Er5lAxoIDjP8v
+XOkcTpsFyhJkMT6fkF2jzwBjFHsAAKMHtqYQ2N0oAx5DLbTMFHVvYLRX4dCxoYHr
+FQYcBWjZ7GlHeDIr2gDzLcYMkUzg3Rq5oaRm2EwYtLM54l7Gx7IIr+nzJXgAeEXy
+gqfC7dVHw4hKkUiuitJRz1dz5CLEM0u3ctfjeHD/8hv+zlc18CGQjJ+5KGq0kkG9
+ldVs1c7uh3PeseNIPuCX50BnKp/v8J6JP9ALa4y0XeMXoJjeBgh8Dejk+O3PRJEP
+++4DtvZ8L+mJ9JhGb5IH
+=bbOc
+-----END PGP SIGNATURE-----
+
+--17/8oYur5Y32USnW--
