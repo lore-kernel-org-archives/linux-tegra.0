@@ -1,44 +1,53 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 0/4] soc/tegra: Turn on XUSB partitions
-Date: Thu, 30 Jun 2016 11:56:23 +0100
-Message-ID: <1467284187-13320-1-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 3/4] soc/tegra: pmc: Enable XUSB partitions on boot
+Date: Thu, 30 Jun 2016 11:56:26 +0100
+Message-ID: <1467284187-13320-4-git-send-email-jonathanh@nvidia.com>
+References: <1467284187-13320-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1467284187-13320-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The Tegra XHCI driver currently assumes the XUSB power partitions have
-been enabled by the bootloader. This is not for the Tegra210 Smaug board
-and so cause the kernel to hang when enabling XHCI support. Although the
-XHCI driver itself needs to manage these partitions, for now enable the
-partitions if the XHCI driver is enabled.
+The Tegra XHCI driver does not currently manage the Tegra XUSB power
+partitions and so it these partitions have not been enabled by the
+bootloader then the system will crash when probing the XHCI device.
 
-In order to do this I have made a fundamental change to the PMC driver
-to initialise the power partitions during early init. A benefit of this
-is that if CONFIG_PM_GENERIC_DOMAINS is not enabled, then we can simply
-turn on the partitions early before any devices are probed.
+While proper support for managing the power partitions is being
+developed to the XHCI driver for Tegra, for now power on all the XUSB
+partitions for USB host and super-speed on boot if the XHCI driver is
+enabled.
 
-This is based upon the PMC fixes series [0].
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/soc/tegra/pmc.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-Changes from initial RFC:
-- Added patch to add more detailed error messages when initialising
-  powergates.
-
-[0] http://marc.info/?l=linux-tegra&m=146711078013182&w=2
-
-Jon Hunter (4):
-  soc/tegra: pmc: Add specific error messages for initialising a
-    powergate
-  soc/tegra: pmc: Initialise power partitions early
-  soc/tegra: pmc: Enable XUSB partitions on boot
-  arm64: tegra210: Add XUSB powergates
-
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 24 +++++++++++++
- drivers/soc/tegra/pmc.c                  | 60 +++++++++++++++++++++++---------
- 2 files changed, 67 insertions(+), 17 deletions(-)
-
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index dd36ad974c67..7d72eef92b9b 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -828,6 +828,18 @@ static void tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
+ 	if (!IS_ENABLED(CONFIG_PM_GENERIC_DOMAINS))
+ 		goto power_on_cleanup;
+ 
++	/*
++	 * FIXME: If XHCI is enabled for Tegra, then power-up the XUSB
++	 * host and super-speed partitions. Once the XHCI driver
++	 * manages the partitions itself this code can be removed. Note
++	 * that we don't register these partitions with the genpd core
++	 * to avoid it from powering down the partitions as they appear
++	 * to be unused.
++	 */
++	if (IS_ENABLED(CONFIG_USB_XHCI_TEGRA) &&
++	    (id == TEGRA_POWERGATE_XUSBA || id == TEGRA_POWERGATE_XUSBC))
++		goto power_on_cleanup;
++
+ 	pm_genpd_init(&pg->genpd, NULL, off);
+ 
+ 	if (of_genpd_add_provider_simple(np, &pg->genpd)) {
 -- 
 2.1.4
