@@ -1,91 +1,145 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH] pci: tegra: actually program REFCLK_CFG* on recent SoCs
-Date: Thu, 30 Jun 2016 09:49:40 -0600
-Message-ID: <57753F94.3000301@wwwdotorg.org>
-References: <20160624143703.13231-1-swarren@wwwdotorg.org>
- <20160630134728.GE26758@ulmo.ba.sec>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] pci: tegra: correctly program PADS_REFCLK registers
+Date: Thu, 30 Jun 2016 17:46:19 +0200
+Message-ID: <20160630154619.GC4279@ulmo.ba.sec>
+References: <20160621184640.19885-1-swarren@wwwdotorg.org>
+ <20160622125749.GJ26943@ulmo.ba.sec>
+ <576AAFFD.4050404@wwwdotorg.org>
+ <20160623084448.GA8608@ulmo.ba.sec>
+ <20160630132001.GA26758@ulmo.ba.sec>
+ <20160630093523.24cd5767@t450s.home>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20160630134728.GE26758@ulmo.ba.sec>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@nvidia.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="lMM8JwqTlfDpEaS6"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20160630093523.24cd5767-1yVPhWWZRC1BDLzU/O5InQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alex Williamson <alex.williamson-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>
+Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 06/30/2016 07:47 AM, Thierry Reding wrote:
-> On Fri, Jun 24, 2016 at 08:37:03AM -0600, Stephen Warren wrote:
->> From: Stephen Warren <swarren@nvidia.com>
->>
->> On recent SoCs, tegra_pcie_phy_enable() isn't called; but instead
->> tegra_pcie_enable_controller() calls tegra_xusb_phy_enable(). However,
->> part of tegra_pcie_phy_enable() needs to happen in all cases. Move that
->> code to tegra_pcie_port_enable() instead.
->>
->> For reference, NVIDIA's downstream Linux kernel performs this operation
->> in tegra_pcie_enable_rp_features(), which is called immediately after
->> tegra_pcie_port_enable(). Since that function doesn't exist in the mainline
->> driver, we'll just add it to the tail of tegra_pcie_port_enable() instead.
->>
->> Signed-off-by: Stephen Warren <swarren@nvidia.com>
->> ---
->>   drivers/pci/host/pci-tegra.c | 17 +++++++++--------
->>   1 file changed, 9 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
->> index 74887fedc3d4..2ec64a9e7943 100644
->> --- a/drivers/pci/host/pci-tegra.c
->> +++ b/drivers/pci/host/pci-tegra.c
->> @@ -541,12 +541,13 @@ static void tegra_pcie_port_reset(struct tegra_pcie_port *port)
->>
->>   static void tegra_pcie_port_enable(struct tegra_pcie_port *port)
->>   {
->> -	const struct tegra_pcie_soc_data *soc = port->pcie->soc_data;
->> +	struct tegra_pcie *pcie = port->pcie;
->> +	const struct tegra_pcie_soc_data *soc = pcie->soc_data;
->>   	unsigned long ctrl = tegra_pcie_port_get_pex_ctrl(port);
->>   	unsigned long value;
->>
->>   	/* enable reference clock */
->> -	value = afi_readl(port->pcie, ctrl);
->> +	value = afi_readl(pcie, ctrl);
->>   	value |= AFI_PEX_CTRL_REFCLK_EN;
->>
->>   	if (soc->has_pex_clkreq_en)
->> @@ -554,9 +555,14 @@ static void tegra_pcie_port_enable(struct tegra_pcie_port *port)
->>
->>   	value |= AFI_PEX_CTRL_OVERRIDE_EN;
->>
->> -	afi_writel(port->pcie, value, ctrl);
->> +	afi_writel(pcie, value, ctrl);
->>
->>   	tegra_pcie_port_reset(port);
->> +
->> +	/* Configure the reference clock driver */
->> +	pads_writel(pcie, soc->pads_refclk_cfg0, PADS_REFCLK_CFG0);
->> +	if (soc->num_ports > 2)
->> +		pads_writel(pcie, soc->pads_refclk_cfg1, PADS_REFCLK_CFG1);
->>   }
->
-> This will actually write these two registers for each enabled port,
-> which, while it shouldn't make a difference, is unnecessary. I've
-> applied a slightly modified version of this patch. Specifically I moved
-> this code to the tail of the tegra_pcie_phy_power_on() function, which
-> is closest to where it was before.
->
-> I've also applied the patch that changes the values that are written
-> into this register, though I reversed the order because that made more
-> sense to me. I've pushed both patches to the for-4.8/pci branch in the
-> Tegra tree, can you please take a look if that still looks okay to you?
 
-I think that will work. It's a pity the code location in the mainline 
-kernel is going to diverge from the downstream kernel and U-Boot though.
+--lMM8JwqTlfDpEaS6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Jun 30, 2016 at 09:35:23AM -0600, Alex Williamson wrote:
+> On Thu, 30 Jun 2016 15:20:01 +0200
+> Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+>=20
+> > On Thu, Jun 23, 2016 at 10:44:48AM +0200, Thierry Reding wrote:
+> > > On Wed, Jun 22, 2016 at 09:34:21AM -0600, Stephen Warren wrote: =20
+> > > > On 06/22/2016 06:57 AM, Thierry Reding wrote: =20
+> > > > > On Tue, Jun 21, 2016 at 12:46:40PM -0600, Stephen Warren wrote: =
+=20
+> > > > > > From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > > > > >=20
+> > > > > > The value that should be programmed into the PADS_REFCLK regist=
+er varies
+> > > > > > per SoC. Fix the Tegra PCIe driver to program the correct value=
+s. Future
+> > > > > > SoCs will require different values in cfg0/1, so the two values=
+ are stored
+> > > > > > separately in the per-SoC data structures.
+> > > > > >=20
+> > > > > > For reference, the values are all documented in NV bug 1771116 =
+comment 20.
+> > > > > > Rhe ASIC team has validated all these values, except for the Te=
+gra20 value
+> > > > > > which is simply left unchanged in this patch. =20
+> > > >  =20
+> > > > > > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pc=
+i-tegra.c =20
+> > > >  =20
+> > > > > > @@ -2078,6 +2070,7 @@ static const struct tegra_pcie_soc_data t=
+egra20_pcie_data =3D {
+> > > > > >   	.msi_base_shift =3D 0,
+> > > > > >   	.pads_pll_ctl =3D PADS_PLL_CTL_TEGRA20,
+> > > > > >   	.tx_ref_sel =3D PADS_PLL_CTL_TXCLKREF_DIV10,
+> > > > > > +	.pads_refclk_cfg0 =3D 0xfa5cfa5c,
+> > > > > >   	.has_pex_clkreq_en =3D false,
+> > > > > >   	.has_pex_bias_ctrl =3D false,
+> > > > > >   	.has_intr_prsnt_sense =3D false,
+> > > > > > @@ -2090,6 +2083,8 @@ static const struct tegra_pcie_soc_data t=
+egra30_pcie_data =3D {
+> > > > > >   	.msi_base_shift =3D 8,
+> > > > > >   	.pads_pll_ctl =3D PADS_PLL_CTL_TEGRA30,
+> > > > > >   	.tx_ref_sel =3D PADS_PLL_CTL_TXCLKREF_BUF_EN,
+> > > > > > +	.pads_refclk_cfg0 =3D 0xfa5cfa5c,
+> > > > > > +	.pads_refclk_cfg1 =3D 0xfa5cfa5c,
+> > > > > >   	.has_pex_clkreq_en =3D true,
+> > > > > >   	.has_pex_bias_ctrl =3D true,
+> > > > > >   	.has_intr_prsnt_sense =3D true,
+> > > > > > @@ -2102,6 +2097,7 @@ static const struct tegra_pcie_soc_data t=
+egra124_pcie_data =3D {
+> > > > > >   	.msi_base_shift =3D 8,
+> > > > > >   	.pads_pll_ctl =3D PADS_PLL_CTL_TEGRA30,
+> > > > > >   	.tx_ref_sel =3D PADS_PLL_CTL_TXCLKREF_BUF_EN,
+> > > > > > +	.pads_refclk_cfg0 =3D 0x44ac44ac,
+> > > > > >   	.has_pex_clkreq_en =3D true,
+> > > > > >   	.has_pex_bias_ctrl =3D true,
+> > > > > >   	.has_intr_prsnt_sense =3D true, =20
+> > > > >=20
+> > > > > I think it'd be nice to have these decoded into their individual =
+fields,
+> > > > > to reduce the magic. We already define the register fields, so it=
+ seems
+> > > > > sensible to use them. =20
+> > > >=20
+> > > > I did consider that. However, the specification from the ASIC team =
+is always
+> > > > the raw values. Decoding them into bitfields is only going to make =
+it harder
+> > > > to verify whether the correct values are present (since the reader =
+has to
+> > > > manually expand the math), and introduce the possibility of errors =
+during
+> > > > the expansion process. I think using raw numbers is better in this =
+case. =20
+> > >=20
+> > > Alright, fine with me:
+> > >=20
+> > > Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> =20
+> >=20
+> > Hi Bjorn,
+> >=20
+> > I do have a couple of other patches, mostly minor cleanup and prep-work
+> > for 64-bit ARM support, that I'd like to get into v4.8. Would you mind
+> > if I took Stephen's patches into a branch and send it all out via pull
+> > request after it passed testing?
+>=20
+> Hi Theirry,
+>=20
+> Bjorn is on holiday and will be back at the beginning of the v4.8 merge
+> window, assuming everything sticks to a regular schedule.  I expect
+> that anything that consolidates and prioritizes potential v4.8 content
+> for easy evaluation on his return would be appreciated.  Thanks,
+
+Okay, thanks for letting me know.
+
+Thierry
+
+--lMM8JwqTlfDpEaS6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXdT7KAAoJEN0jrNd/PrOhgDUP/1fchQnuXw3FHcOlRKrPBcko
+2Y5peKVaqhRZ5DHrSF1P0Widwr8fmQOVZp870unqLSJ715jN4qKOJzbQmUdWkBhi
+CluzOTvNmOdIhiKv7YWzU+QuufiuB1DEFfTYFO4GuBYrI67mORNhhR1Sfxl6Bwue
+Ckr5ycQhT4O+hhfpcIhnypwWOL0jUrwajvgk8L+b/iYJhkrfolIyEb7D8vuxNtm7
+L+hFYKOR1UBQdbdIZuFjtHd8OvptZ/jyiOeynnsVA0UzoWxSCUI2cmX9nea5bVXw
++o7R9t1dEAYc63ld/7QjvWduG4jc/kfwitzJSmu7LoHJf26zaFC3V32ND18XkQ3W
+phC4XIZrd91N/eVvaLQDsoO5VZ8DkcKY7kDrEKayfKpihCyumDsXIQsr2eLXggIz
+L6BAHvbY73GxZzK/JHG9HJrR6zI4V00TMiutDzApk7k1RR1nanrw3OEwY/BiDRni
+ABRMt60GpsBTJ505uIbPyQhCb9FqgJgHW3U2yxOQw/YRYU0ZLeMHQlg6ESYceAIx
+FEw9O3KVyAGrtbAYF0FCR3PZxFKbDSO+qR3vSM9XklIdVXl7ECnpPRIIY2VED/67
+zIvLLN6BTvKcvoAOGmCldE4PVNO3f7k/rfjl7Jv3Lu97jnPmzGwmhRwTV1QygLF2
+y9Jsmc37EipDtQmNnRZr
+=xNjI
+-----END PGP SIGNATURE-----
+
+--lMM8JwqTlfDpEaS6--
