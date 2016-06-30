@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 3/4] soc/tegra: pmc: Enable XUSB partitions on boot
-Date: Thu, 30 Jun 2016 11:56:26 +0100
-Message-ID: <1467284187-13320-4-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH 4/4] arm64: tegra210: Add XUSB powergates
+Date: Thu, 30 Jun 2016 11:56:27 +0100
+Message-ID: <1467284187-13320-5-git-send-email-jonathanh@nvidia.com>
 References: <1467284187-13320-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,42 +12,49 @@ To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail
 Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-The Tegra XHCI driver does not currently manage the Tegra XUSB power
-partitions and so it these partitions have not been enabled by the
-bootloader then the system will crash when probing the XHCI device.
-
-While proper support for managing the power partitions is being
-developed to the XHCI driver for Tegra, for now power on all the XUSB
-partitions for USB host and super-speed on boot if the XHCI driver is
-enabled.
+The Tegra210 XUSB subsystem has 3 power partitions which are XUSBA
+(super-speed logic), XUSBB (USB device logic) and XUSBC (USB host
+logic). Populate the device-tree nodes for these XUSB partitions.
 
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index dd36ad974c67..7d72eef92b9b 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -828,6 +828,18 @@ static void tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
- 	if (!IS_ENABLED(CONFIG_PM_GENERIC_DOMAINS))
- 		goto power_on_cleanup;
- 
-+	/*
-+	 * FIXME: If XHCI is enabled for Tegra, then power-up the XUSB
-+	 * host and super-speed partitions. Once the XHCI driver
-+	 * manages the partitions itself this code can be removed. Note
-+	 * that we don't register these partitions with the genpd core
-+	 * to avoid it from powering down the partitions as they appear
-+	 * to be unused.
-+	 */
-+	if (IS_ENABLED(CONFIG_USB_XHCI_TEGRA) &&
-+	    (id == TEGRA_POWERGATE_XUSBA || id == TEGRA_POWERGATE_XUSBC))
-+		goto power_on_cleanup;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index 65b829b762bb..efb0fd98b789 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -670,6 +670,30 @@
+ 					 <&tegra_car TEGRA210_CLK_MIPI_CAL>;
+ 				#power-domain-cells = <0>;
+ 			};
 +
- 	pm_genpd_init(&pg->genpd, NULL, off);
++			pd_xusbss: xusba {
++				clocks = <&tegra_car TEGRA210_CLK_XUSB_SS>;
++				clock-names = "xusb_ss";
++				resets = <&tegra_car TEGRA210_CLK_XUSB_SS>;
++				reset-names = "xusb_ss";
++				#power-domain-cells = <0>;
++			};
++
++			pd_xusbdev: xusbb {
++				clocks = <&tegra_car TEGRA210_CLK_XUSB_DEV>;
++				clock-names = "xusb_dev";
++				resets = <&tegra_car 95>;
++				reset-names = "xusb_dev";
++				#power-domain-cells = <0>;
++			};
++
++			pd_xusbhost: xusbc {
++				clocks = <&tegra_car TEGRA210_CLK_XUSB_HOST>;
++				clock-names = "xusb_host";
++				resets = <&tegra_car TEGRA210_CLK_XUSB_HOST>;
++				reset-names = "xusb_host";
++				#power-domain-cells = <0>;
++			};
+ 		};
+ 	};
  
- 	if (of_genpd_add_provider_simple(np, &pg->genpd)) {
 -- 
 2.1.4
