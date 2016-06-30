@@ -1,235 +1,298 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v5] clk: tegra: Initialize UTMIPLL when enabling PLLU
-Date: Thu, 30 Jun 2016 17:37:04 +0200
-Message-ID: <20160630153704.GA4279@ulmo.ba.sec>
-References: <1464280891-23036-1-git-send-email-rklein@nvidia.com>
- <5763FFF5.5000303@nvidia.com>
- <20160617152336.GA27475@ulmo.ba.sec>
- <943f14f1-1c7c-055d-8dc6-f30f1196430f@nvidia.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <943f14f1-1c7c-055d-8dc6-f30f1196430f@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Rhyland Klein <rklein@nvidia.com>
-Cc: Jon Hunter <jonathanh@nvidia.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Mike Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Stephen Boyd <sboyd@codeaurora.org>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Andrew Bresticker <abrestic@chromium.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2 1/2] PCI: Add new method for registering PCI hosts
+Date: Thu, 30 Jun 2016 17:19:30 +0200
+Message-ID: <20160630151931.29216-1-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Tomasz Nowicki <tn-nYOzD4b6Jr9Wk0Htik3J/w@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 
---XsQoSWH+UP9D9v3l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch makes the existing pci_host_bridge structure a proper device
+that is usable by PCI host drivers in a more standard way. In addition
+to the existing pci_scan_bus, pci_scan_root_bus, pci_scan_root_bus_msi,
+and pci_create_root_bus interfaces, this unfortunately means having to
+add yet another interface doing basically the same thing, and add some
+extra code in the initial step.
 
-On Thu, Jun 30, 2016 at 11:32:14AM -0400, Rhyland Klein wrote:
-> On 6/17/2016 11:23 AM, Thierry Reding wrote:
-> > * PGP Signed by an unknown key
-> >=20
-> > On Fri, Jun 17, 2016 at 02:49:41PM +0100, Jon Hunter wrote:
-> >> Hi Thierry,
-> >>
-> >> On 26/05/16 17:41, Rhyland Klein wrote:
-> >>> From: Andrew Bresticker <abrestic@chromium.org>
-> >>>
-> >>> Move the UTMIPLL initialization code form clk-tegra<chip>.c files into
-> >>> clk-pll.c. UTMIPLL was being configured and set in HW control right
-> >>> after registration. However, when the clock init_table is processed a=
-nd
-> >>> child clks of PLLU are enabled, it will call in and enable PLLU as
-> >>> well, and initiate SW enabling sequence even though PLLU is already in
-> >>> HW control. This leads to getting UTMIPLL stuck with a SEQ_BUSY statu=
-s.
-> >>>
-> >>> Doing the initialization once during pllu_enable means we configure it
-> >>> properly into HW control.
-> >>>
-> >>> A side effect of the commonization/localization of the UTMIPLL init
-> >>> code, is that it corrects some errors that were present for earlier
-> >>> generations. For instance, in clk-tegra124.c, it used to have:
-> >>>
-> >>> define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 6)
-> >>>
-> >>> when the correct shift to use is present in the new version:
-> >>>
-> >>> define UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(x) (((x) & 0x1f) << 27)
-> >>>
-> >>> which matches the Tegra124 TRM register definition.
-> >>>
-> >>> Signed-off-by: Andrew Bresticker <abrestic@chromium.org>
-> >>>
-> >>> [rklein: Merged in some later fixes for potential deadlocks]
-> >>>
-> >>> Signed-off-by: Rhyland Klein <rklein@nvidia.com>
-> >>> ---
-> >>> v5:
-> >>>  - Initialized flags to 0 to avoid harmless spinlock warnings
-> >>>
-> >>> v4:
-> >>>  - Re-added examples in patch description
-> >>>
-> >>> v3:
-> >>>  - Flushed out description to describe this patch.
-> >>>
-> >>>  drivers/clk/tegra/clk-pll.c      | 484 +++++++++++++++++++++++++++++=
-++++++++++
-> >>>  drivers/clk/tegra/clk-tegra114.c | 155 +------------
-> >>>  drivers/clk/tegra/clk-tegra124.c | 156 +------------
-> >>>  drivers/clk/tegra/clk-tegra210.c | 182 +--------------
-> >>>  drivers/clk/tegra/clk-tegra30.c  | 113 +--------
-> >>>  drivers/clk/tegra/clk.h          |  17 ++
-> >>>  6 files changed, 510 insertions(+), 597 deletions(-)
-> >>>
-> >>> diff --git a/drivers/clk/tegra/clk-pll.c b/drivers/clk/tegra/clk-pll.c
-> >>> index 4e194ecc8d5e..31e20110fae4 100644
-> >>> --- a/drivers/clk/tegra/clk-pll.c
-> >>> +++ b/drivers/clk/tegra/clk-pll.c
-> >>
-> >> ...
-> >>
-> >>> +static int clk_pllu_tegra210_enable(struct clk_hw *hw)
-> >>> +{
-> >>> +	struct tegra_clk_pll *pll =3D to_clk_pll(hw);
-> >>> +	struct clk_hw *pll_ref =3D clk_hw_get_parent(hw);
-> >>> +	struct clk_hw *osc =3D clk_hw_get_parent(pll_ref);
-> >>> +	unsigned long flags =3D 0, input_rate;
-> >>> +	unsigned int i;
-> >>> +	int ret =3D 0;
-> >>> +	u32 val;
-> >>> +
-> >>> +	if (!osc) {
-> >>> +		pr_err("%s: failed to get OSC clock\n", __func__);
-> >>> +		return -EINVAL;
-> >>> +	}
-> >>> +	input_rate =3D clk_hw_get_rate(osc);
-> >>> +
-> >>> +	if (pll->lock)
-> >>> +		spin_lock_irqsave(pll->lock, flags);
-> >>> +
-> >>> +	_clk_pll_enable(hw);
-> >>> +	ret =3D clk_pll_wait_for_lock(pll);
-> >>> +	if (ret < 0)
-> >>> +		goto out;
-> >>> +
-> >>> +	for (i =3D 0; i < ARRAY_SIZE(utmi_parameters); i++) {
-> >>> +		if (input_rate =3D=3D utmi_parameters[i].osc_frequency)
-> >>> +			break;
-> >>> +	}
-> >>> +
-> >>> +	if (i =3D=3D ARRAY_SIZE(utmi_parameters)) {
-> >>> +		pr_err("%s: Unexpected input rate %lu\n", __func__, input_rate);
-> >>> +		ret =3D -EINVAL;
-> >>> +		goto out;
-> >>> +	}
-> >>> +
-> >>> +	val =3D pll_readl_base(pll);
-> >>> +	val &=3D ~PLLU_BASE_OVERRIDE;
-> >>> +	pll_writel_base(val, pll);
-> >>> +
-> >>> +	/* Put PLLU under HW control */
-> >>> +	val =3D readl_relaxed(pll->clk_base + PLLU_HW_PWRDN_CFG0);
-> >>> +	val |=3D PLLU_HW_PWRDN_CFG0_IDDQ_PD_INCLUDE |
-> >>> +	       PLLU_HW_PWRDN_CFG0_USE_SWITCH_DETECT |
-> >>> +	       PLLU_HW_PWRDN_CFG0_USE_LOCKDET;
-> >>> +	val &=3D ~(PLLU_HW_PWRDN_CFG0_CLK_ENABLE_SWCTL |
-> >>> +		  PLLU_HW_PWRDN_CFG0_CLK_SWITCH_SWCTL);
-> >>> +	writel_relaxed(val, pll->clk_base + PLLU_HW_PWRDN_CFG0);
-> >>> +
-> >>> +	val =3D readl_relaxed(pll->clk_base + XUSB_PLL_CFG0);
-> >>> +	val &=3D ~XUSB_PLL_CFG0_PLLU_LOCK_DLY;
-> >>> +	writel_relaxed(val, pll->clk_base + XUSB_PLL_CFG0);
-> >>> +	udelay(1);
-> >>> +
-> >>> +	val =3D readl_relaxed(pll->clk_base + PLLU_HW_PWRDN_CFG0);
-> >>> +	val |=3D PLLU_HW_PWRDN_CFG0_SEQ_ENABLE;
-> >>> +	writel_relaxed(val, pll->clk_base + PLLU_HW_PWRDN_CFG0);
-> >>> +	udelay(1);
-> >>> +
-> >>> +	/* Disable PLLU clock branch to UTMIPLL since it uses OSC */
-> >>> +	val =3D pll_readl_base(pll);
-> >>> +	val &=3D ~PLLU_BASE_CLKENABLE_USB;
-> >>> +	pll_writel_base(val, pll);
-> >>> +
-> >>> +	val =3D readl_relaxed(pll->clk_base + UTMIPLL_HW_PWRDN_CFG0);
-> >>> +	if (val & UTMIPLL_HW_PWRDN_CFG0_SEQ_ENABLE) {
-> >>> +		pr_debug("UTMIPLL already enabled\n");
-> >>> +		goto out;
-> >>> +	}
-> >>> +	val &=3D ~UTMIPLL_HW_PWRDN_CFG0_IDDQ_OVERRIDE;
-> >>> +	writel_relaxed(val, pll->clk_base + UTMIPLL_HW_PWRDN_CFG0);
-> >>> +
-> >>> +	/* Program UTMIP PLL stable and active counts */
-> >>> +	val =3D readl_relaxed(pll->clk_base + UTMIP_PLL_CFG2);
-> >>> +	val &=3D ~UTMIP_PLL_CFG2_STABLE_COUNT(~0);
-> >>> +	val |=3D UTMIP_PLL_CFG2_STABLE_COUNT(utmi_parameters[i].stable_coun=
-t);
-> >>> +	val &=3D ~UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(~0);
-> >>> +	val |=3D UTMIP_PLL_CFG2_ACTIVE_DLY_COUNT(
-> >>> +			utmi_parameters[i].active_delay_count);
-> >>> +	val |=3D UTMIP_PLL_CFG2_PHY_XTAL_CLOCKEN;
-> >>> +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG2);
-> >>> +
-> >>> +	/* Program UTMIP PLL delay and oscillator frequency counts */
-> >>> +	val =3D readl_relaxed(pll->clk_base + UTMIP_PLL_CFG1);
-> >>> +	val &=3D ~UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(~0);
-> >>> +	val |=3D UTMIP_PLL_CFG1_ENABLE_DLY_COUNT(
-> >>> +		utmi_parameters[i].enable_delay_count);
-> >>> +	val &=3D ~UTMIP_PLL_CFG1_XTAL_FREQ_COUNT(~0);
-> >>> +	val |=3D UTMIP_PLL_CFG1_XTAL_FREQ_COUNT(
-> >>> +		utmi_parameters[i].xtal_freq_count);
-> >>> +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG1);
-> >>> +
-> >>> +	/* Remove power downs from UTMIP PLL control bits */
-> >>> +	val =3D readl_relaxed(pll->clk_base + UTMIP_PLL_CFG1);
-> >>> +	val &=3D ~UTMIP_PLL_CFG1_FORCE_PLL_ENABLE_POWERDOWN;
-> >>> +	val |=3D UTMIP_PLL_CFG1_FORCE_PLL_ENABLE_POWERUP;
-> >>> +	writel_relaxed(val, pll->clk_base + UTMIP_PLL_CFG1);
-> >>> +	udelay(100);
-> >>
-> >> In next-20160617 I see that this udelay is now a usleep_range(100, 200)
-> >> and this is causing the following splat when the clock is enabled. I
-> >> don't think that we can use usleep here ...
-> >=20
-> > Okay, I'll back out the patch. I'd really prefer to avoid busy-looping
-> > for 100 microseconds here, so can we please find another way to do this?
-> >=20
->=20
-> It looks like we should be able to use a short udelay of 1-2us. I
-> believe the original code had udelay(1) and I know Jon and I tested
-> udelay(2) and it was ok.
+However, this time it's more likely to be extensible enough that we
+won't have to do another one again in the future, and we should be
+able to reduce code much more as a result.
 
-What original code? The downstream driver? If so I'd be leaning towards
-simply adopting that. Everything else in this functions seems to want to
-wait for 1 us, seems natural for this to do as well.
+The main idea is to pull the allocation of 'struct pci_host_bridge' out
+of the registration, and let individual host drivers and architecture
+code fill the members before calling the registration function.
 
-> Do you want me to send another patch rev with just the udelay change or
-> are you going to just modify it locally yourself?
+There are a number of things we can do based on this:
 
-No need to resend, I'll cherry-pick the patch from next-20160617 and
-make this into udelay(1).
+* Use a single memory allocation for the driver-specific structure
+  and the generic PCI host bridge
+* consolidate the contents of driver specific structures by moving
+  them into pci_host_bridge
+* Add a consistent interface for removing a PCI host bridge again
+  when unloading a host driver module
+* Replace the architecture specific __weak pcibios_* functions with
+  callbacks in a pci_host_bridge device
+* Move common boilerplate code from host drivers into the generic
+  function, based on contents of the structure
+* Extend pci_host_bridge with additional members when needed without
+  having to add arguments to pci_scan_*.
+* Move members of struct pci_bus into pci_host_bridge to avoid
+  having lots of identical copies.
 
-Thierry
+As mentioned in a previous email, one open question is whether we want
+to export a function for allocating a pci_host_bridge device in
+combination with the per-device structure or let the driver itself
+call kzalloc.
 
---XsQoSWH+UP9D9v3l
-Content-Type: application/pgp-signature; name="signature.asc"
+Changes in v2 (Thierry Reding):
+- add a pci_host_bridge_init() helper that drivers can use to perform
+  all the necessary steps to initialize the bridge
+- rename pci_register_host() to pci_host_bridge_register() to reflect
+  the naming used by other functions
+- plug memory leak on registration failure
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
+Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/pci/probe.c | 111 ++++++++++++++++++++++++++++++++--------------------
+ include/linux/pci.h |   8 +++-
+ 2 files changed, 75 insertions(+), 44 deletions(-)
 
-iQIcBAABCAAGBQJXdTycAAoJEN0jrNd/PrOhPIEP/RbMpyy0xP2FO9Mt3QZHiSBA
-45j4pPtsbTTEj4dk3iAYralGRvgKqQklOobZVazJ8nMKkSmPA/GnIYRgiDIu0qme
-ts4FOJQ5JBKeyhKa/HE9qbnF99YyGRy36noktuNP68Ysj1zwUnrdsR1JJt3PEQ5a
-4A7PDWhNPS8pR/2ziltTNZMgBVRZ+R+QwJnhZNifEvE7z5ttxmJkjbOCw3mOqwgv
-sDOdZidgzMIPwtB1MLPUujgrckZzLc7hmRN4gJFCgAdOL67wG3KdPcNJBxkVfRkt
-WlImTNjDoymlflxFEjC4MOjM+frOD+c0Fpgkvh25WIeZYzEHlA/3cVJRKnG/4CVY
-OCviNo8+SLf7zpvz+fFuArh937DsV3wyoWhHeEFc6eIIv9Um54nuVHV2nFU3tR/5
-CWeSvVMUAcAMRDiO3sl5QPE+7ctHn9VBQ2oo2ToZcnyf41j7ZdT3J3wbRG5UojZz
-t5+ntoJc/4W6dYk66PEVfPGjVxTcocUU89vslZArNsA7d8RYE4kw+lq3/E8XJtCM
-NOWdqnz6yyC7MtJHMcySGf0VvoQugjYhTPpzZAhOcoEeTT5QR1HAqwLJ9ibn2rLs
-v8ktiqh0bkwe76rFsEesktJkFRrh2NZdp/8YkEC1oyRul+kbnEqPkUScVjx6cfJj
-X2zDQ1YBAoWmYSLayxjO
-=6CZF
------END PGP SIGNATURE-----
-
---XsQoSWH+UP9D9v3l--
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 77f0bbb05c3f..ba40514acd32 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -521,19 +521,6 @@ static void pci_release_host_bridge_dev(struct device *dev)
+ 	kfree(bridge);
+ }
+ 
+-static struct pci_host_bridge *pci_alloc_host_bridge(struct pci_bus *b)
+-{
+-	struct pci_host_bridge *bridge;
+-
+-	bridge = kzalloc(sizeof(*bridge), GFP_KERNEL);
+-	if (!bridge)
+-		return NULL;
+-
+-	INIT_LIST_HEAD(&bridge->windows);
+-	bridge->bus = b;
+-	return bridge;
+-}
+-
+ static const unsigned char pcix_bus_speed[] = {
+ 	PCI_SPEED_UNKNOWN,		/* 0 */
+ 	PCI_SPEED_66MHz_PCIX,		/* 1 */
+@@ -2117,53 +2104,56 @@ void __weak pcibios_remove_bus(struct pci_bus *bus)
+ {
+ }
+ 
+-struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
+-		struct pci_ops *ops, void *sysdata, struct list_head *resources)
++void pci_host_bridge_init(struct pci_host_bridge *bridge)
++{
++	INIT_LIST_HEAD(&bridge->windows);
++}
++EXPORT_SYMBOL_GPL(pci_host_bridge_init);
++
++int pci_host_bridge_register(struct pci_host_bridge *bridge)
+ {
+ 	int error;
+-	struct pci_host_bridge *bridge;
+ 	struct pci_bus *b, *b2;
+ 	struct resource_entry *window, *n;
++	LIST_HEAD(resources);
+ 	struct resource *res;
+ 	resource_size_t offset;
+ 	char bus_addr[64];
+ 	char *fmt;
++	struct device *parent = bridge->dev.parent;
+ 
+ 	b = pci_alloc_bus(NULL);
+ 	if (!b)
+-		return NULL;
++		return -ENOMEM;
++	bridge->bus = b;
+ 
+-	b->sysdata = sysdata;
+-	b->ops = ops;
+-	b->number = b->busn_res.start = bus;
++	/* temporarily move resources off the list */
++	list_splice_init(&bridge->windows, &resources);
++	b->sysdata = bridge->sysdata;
++	b->msi = bridge->msi;
++	b->ops = bridge->ops;
++	b->number = b->busn_res.start = bridge->busnr;
+ #ifdef CONFIG_PCI_DOMAINS_GENERIC
+ 	b->domain_nr = pci_bus_find_domain_nr(b, parent);
+ #endif
+-	b2 = pci_find_bus(pci_domain_nr(b), bus);
++	b2 = pci_find_bus(pci_domain_nr(b), bridge->busnr);
+ 	if (b2) {
+ 		/* If we already got to this bus through a different bridge, ignore it */
+ 		dev_dbg(&b2->dev, "bus already known\n");
++		error = -EEXIST;
+ 		goto err_out;
+ 	}
+ 
+-	bridge = pci_alloc_host_bridge(b);
+-	if (!bridge)
+-		goto err_out;
+-
+-	bridge->dev.parent = parent;
+-	bridge->dev.release = pci_release_host_bridge_dev;
+-	dev_set_name(&bridge->dev, "pci%04x:%02x", pci_domain_nr(b), bus);
++	dev_set_name(&bridge->dev, "pci%04x:%02x", pci_domain_nr(b),
++		     bridge->busnr);
+ 	error = pcibios_root_bridge_prepare(bridge);
+-	if (error) {
+-		kfree(bridge);
++	if (error)
+ 		goto err_out;
+-	}
+ 
+ 	error = device_register(&bridge->dev);
+-	if (error) {
++	if (error)
+ 		put_device(&bridge->dev);
+-		goto err_out;
+-	}
++
+ 	b->bridge = get_device(&bridge->dev);
+ 	device_enable_async_suspend(b->bridge);
+ 	pci_set_bus_of_node(b);
+@@ -2174,7 +2164,7 @@ struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
+ 
+ 	b->dev.class = &pcibus_class;
+ 	b->dev.parent = b->bridge;
+-	dev_set_name(&b->dev, "%04x:%02x", pci_domain_nr(b), bus);
++	dev_set_name(&b->dev, "%04x:%02x", pci_domain_nr(b), bridge->busnr);
+ 	error = device_register(&b->dev);
+ 	if (error)
+ 		goto class_dev_reg_err;
+@@ -2190,12 +2180,12 @@ struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
+ 		printk(KERN_INFO "PCI host bridge to bus %s\n", dev_name(&b->dev));
+ 
+ 	/* Add initial resources to the bus */
+-	resource_list_for_each_entry_safe(window, n, resources) {
++	resource_list_for_each_entry_safe(window, n, &resources) {
+ 		list_move_tail(&window->node, &bridge->windows);
+ 		res = window->res;
+ 		offset = window->offset;
+ 		if (res->flags & IORESOURCE_BUS)
+-			pci_bus_insert_busn_res(b, bus, res->end);
++			pci_bus_insert_busn_res(b, bridge->busnr, res->end);
+ 		else
+ 			pci_bus_add_resource(b, res, 0);
+ 		if (offset) {
+@@ -2215,16 +2205,16 @@ struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
+ 	list_add_tail(&b->node, &pci_root_buses);
+ 	up_write(&pci_bus_sem);
+ 
+-	return b;
++	return 0;
+ 
+ class_dev_reg_err:
+ 	put_device(&bridge->dev);
+ 	device_unregister(&bridge->dev);
+ err_out:
+ 	kfree(b);
+-	return NULL;
++	return error;
+ }
+-EXPORT_SYMBOL_GPL(pci_create_root_bus);
++EXPORT_SYMBOL_GPL(pci_host_bridge_register);
+ 
+ int pci_bus_insert_busn_res(struct pci_bus *b, int bus, int bus_max)
+ {
+@@ -2289,6 +2279,43 @@ void pci_bus_release_busn_res(struct pci_bus *b)
+ 			res, ret ? "can not be" : "is");
+ }
+ 
++static struct pci_bus *pci_create_root_bus_msi(struct device *parent,
++		int bus, struct pci_ops *ops, void *sysdata,
++		struct list_head *resources, struct msi_controller *msi)
++{
++	struct pci_host_bridge *bridge;
++	int ret;
++
++	bridge = kzalloc(sizeof(*bridge), GFP_KERNEL);
++	if (!bridge)
++		return NULL;
++
++	pci_host_bridge_init(bridge);
++	bridge->dev.parent = parent;
++	bridge->dev.release = pci_release_host_bridge_dev;
++	bridge->busnr = bus;
++	bridge->ops = ops;
++	bridge->sysdata = sysdata;
++	bridge->msi = msi;
++	list_splice_init(resources, &bridge->windows);
++
++	ret = pci_host_bridge_register(bridge);
++	if (ret) {
++		kfree(bridge);
++		return NULL;
++	}
++
++	return bridge->bus;
++}
++
++struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
++		struct pci_ops *ops, void *sysdata, struct list_head *resources)
++{
++	return pci_create_root_bus_msi(parent, bus, ops, sysdata, resources,
++				       NULL);
++}
++EXPORT_SYMBOL_GPL(pci_create_root_bus);
++
+ struct pci_bus *pci_scan_root_bus_msi(struct device *parent, int bus,
+ 		struct pci_ops *ops, void *sysdata,
+ 		struct list_head *resources, struct msi_controller *msi)
+@@ -2304,12 +2331,10 @@ struct pci_bus *pci_scan_root_bus_msi(struct device *parent, int bus,
+ 			break;
+ 		}
+ 
+-	b = pci_create_root_bus(parent, bus, ops, sysdata, resources);
++	b = pci_create_root_bus_msi(parent, bus, ops, sysdata, resources, msi);
+ 	if (!b)
+ 		return NULL;
+ 
+-	b->msi = msi;
+-
+ 	if (!found) {
+ 		dev_info(&b->dev,
+ 		 "No busn resource found for root bus, will use [bus %02x-ff]\n",
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 8badb664be00..5bf04e20c1cd 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -405,10 +405,14 @@ static inline int pci_channel_offline(struct pci_dev *pdev)
+ 
+ struct pci_host_bridge {
+ 	struct device dev;
+-	struct pci_bus *bus;		/* root bus */
++	struct pci_ops *ops;
++	void *sysdata;
++	int busnr;
++	struct pci_bus *bus;		/* points to root */
+ 	struct list_head windows;	/* resource_entry */
+ 	void (*release_fn)(struct pci_host_bridge *);
+ 	void *release_data;
++	struct msi_controller *msi;
+ 	unsigned int ignore_reset_delay:1;	/* for entire hierarchy */
+ 	/* Resource alignment requirements */
+ 	resource_size_t (*align_resource)(struct pci_dev *dev,
+@@ -817,6 +821,8 @@ struct pci_bus *pci_scan_bus(int bus, struct pci_ops *ops, void *sysdata);
+ struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
+ 				    struct pci_ops *ops, void *sysdata,
+ 				    struct list_head *resources);
++void pci_host_bridge_init(struct pci_host_bridge *bridge);
++int pci_host_bridge_register(struct pci_host_bridge *bridge);
+ int pci_bus_insert_busn_res(struct pci_bus *b, int bus, int busmax);
+ int pci_bus_update_busn_res_end(struct pci_bus *b, int busmax);
+ void pci_bus_release_busn_res(struct pci_bus *b);
+-- 
+2.8.3
