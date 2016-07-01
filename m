@@ -1,85 +1,85 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 6/6] arm64: tegra: Changes for v4.8-rc1
-Date: Fri,  1 Jul 2016 16:50:26 +0200
-Message-ID: <20160701145026.25760-6-thierry.reding@gmail.com>
-References: <20160701145026.25760-1-thierry.reding@gmail.com>
+From: Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] PCI: Add new method for registering PCI hosts
+Date: Fri, 1 Jul 2016 15:52:44 +0100
+Message-ID: <20160701145244.GD8609@e106497-lin.cambridge.arm.com>
+References: <20160630151931.29216-1-thierry.reding@gmail.com>
+ <5307392.exoejlJp9x@wuerfel>
+ <20160701141447.GB8609@e106497-lin.cambridge.arm.com>
+ <6212651.41bebQZ9BM@wuerfel>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160701145026.25760-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <6212651.41bebQZ9BM@wuerfel>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Tomasz Nowicki <tn-nYOzD4b6Jr9Wk0Htik3J/w@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
+On Fri, Jul 01, 2016 at 04:24:50PM +0200, Arnd Bergmann wrote:
+> On Friday, July 1, 2016 3:14:47 PM CEST Liviu Dudau wrote:
+> >=20
+> > I'm confused. Why are we butchering the old pci_alloc_host_bridge()=
+ function
+> > to then go back and add re-add it in a different form?
+>=20
+> Good point, we could just keep the existing implementation and make i=
+t
+> an exported function without the bus argument.
+>=20
+> > The old pci_alloc_host_bridge() was doing mostly what the above
+> > function does minus the bridge->private line. And the &bridge[1] co=
+nstruct
+> > could very well be pointing to the next struct pci_host_bridge alig=
+ned address,
+> > which means parts of priv area are ignored.
+>=20
+> I don't know what you mean with that. Would you rather write this as?
+>=20
+> 	bridge->private =3D bridge + 1;
+>=20
+> or leave it out and add a helper function
+>=20
+> void *pci_host_bridge_private(struct pci_host_bridge *bridge)
+> {
+> 	return &bridge[1];
+> }
 
-The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
+none of the above
 
-  Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
+>=20
+> or do you mean we should have extra alignment in there so the
+> private pointer has a minimum alignment higher than the
+> alignment of struct pci_host_bridge?
 
-are available in the git repository at:
+but this ^. bridge pointer arithmetic means +1 is not necessarily +size=
+of(struct pci_host_bridge)
+bytes. AFAIK that can be rounded to the nearest natural alignment for p=
+ointers on that
+architecture.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.8-arm64
+>=20
+> I'm absolutely fine with any of those suggestions, whichever
+> makes the nicest API.
 
-for you to fetch changes up to a3ceccd756edc3fc7829f6fb66afa1cef413767b:
+Does anyone need to subclass the pci_host_bridge structure? And is appe=
+nding data right
+after the structure useful?
 
-  arm64: Update default configuration (2016-07-01 16:22:24 +0200)
+Best regards,
+Liviu
 
-Thanks,
-Thierry
+>=20
+> 	Arnd
+>=20
 
-----------------------------------------------------------------
-arm64: tegra: Changes for v4.8-rc1
-
-A slew of updates for Tegra210 support: PMIC and regulator additions,
-which in turn allow a bunch of features to be enabled. Some assemblies
-of the Jetson TX1 come with a DSI panel that is now supported. For all
-other assemblies, this set of changes enables the HDMI output. Jetson
-TX1 can now also make use of the XUSB controller, and provided that it
-is supported by the bootloader, the GPU can also be enabled.
-
-PMIC and regulator support is also added for Smaug, which will allow a
-number of interesting feature additions in future releases.
-
-Finally, a bunch of configuration options are enabled to support the
-features mentioned above.
-
-----------------------------------------------------------------
-Alexandre Courbot (2):
-      regulator: pwm: Support for enable GPIO
-      arm64: tegra: Add VDD_GPU regulator to Jetson TX1
-
-Boris Brezillon (1):
-      regulator: pwm: Drop unneeded pwm_enable() call
-
-Jon Hunter (5):
-      arm64: tegra: Correct Tegra210 XUSB mailbox interrupt
-      arm64: tegra: Add audio powergate node for Tegra210
-      arm64: tegra: Add ACONNECT bus node for Tegra210
-      arm64: tegra: Add DPAUX pinctrl bindings
-      arm64: tegra: Add XUSB powergates on Tegra210
-
-Rhyland Klein (1):
-      arm64: tegra: Add regulators for Tegra210 Smaug
-
-Thierry Reding (11):
-      Merge tag 'regulator-pwm-enable' of git://git.kernel.org/.../broonie/regulator into HEAD
-      arm64: tegra: Add PMIC support on Jetson TX1
-      arm64: tegra: p2597: Add SDMMC power supplies
-      arm64: tegra: Add DSI panel on Jetson TX1
-      arm64: tegra: Add Tegra210 XUSB pad controller
-      arm64: tegra: Add Tegra210 XUSB controller
-      arm64: tegra: Enable debug serial on Jetson TX1
-      arm64: tegra: Enable XUSB controller on Jetson TX1
-      arm64: tegra: Add sor1_src clock
-      arm64: tegra: Enable HDMI on Jetson TX1
-      arm64: Update default configuration
-
- .../bindings/regulator/pwm-regulator.txt           |   7 +-
- arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     | 267 +++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts |  45 +++
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     | 319 +++++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      | 314 ++++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra210.dtsi           | 292 ++++++++++++++++++-
- arch/arm64/configs/defconfig                       |  25 ++
- drivers/regulator/pwm-regulator.c                  |  31 +-
- 8 files changed, 1293 insertions(+), 7 deletions(-)
+--=20
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+| I would like to |
+| fix the world,  |
+| but they're not |
+| giving me the   |
+ \ source code!  /
+  ---------------
+    =C2=AF\_(=E3=83=84)_/=C2=AF
