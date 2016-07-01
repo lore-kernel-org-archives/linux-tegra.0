@@ -1,8 +1,10 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 1/6] bus: NVIDIA Tegra ACONNECT support
-Date: Fri,  1 Jul 2016 16:50:21 +0200
-Message-ID: <20160701145026.25760-1-thierry.reding@gmail.com>
+Subject: [GIT PULL 4/6] soc/tegra: Changes for v4.8-rc1
+Date: Fri,  1 Jul 2016 16:50:24 +0200
+Message-ID: <20160701145026.25760-4-thierry.reding@gmail.com>
+References: <20160701145026.25760-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160701145026.25760-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
 Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
@@ -16,30 +18,40 @@ The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.8-bus
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.8-soc
 
-for you to fetch changes up to 46a88534afb596eb4d9de07ddde778d0e9aa0e3a:
+for you to fetch changes up to 8582f6d158c8824042432f581d49ef478d5cb238:
 
-  bus: Add support for Tegra ACONNECT (2016-07-01 16:35:43 +0200)
+  soc/tegra: Stub out PCIe IRQ workaround on 64-bit ARM (2016-06-30 13:54:17 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-bus: NVIDIA Tegra ACONNECT support
+soc/tegra: Changes for v4.8-rc1
 
-Adds support for the Tegra ACONNECT bus that's used to access the APE
-(audio processing engine) on Tegra X1.
+Contains fixes and cleanups to the PMC driver, as well as some fixes for
+the generic PM domain support and some prep work to support PCIe on 64-
+bit ARM.
 
 ----------------------------------------------------------------
-Jon Hunter (2):
-      dt-bindings: bus: Add documentation for Tegra210 ACONNECT
-      bus: Add support for Tegra ACONNECT
+Jon Hunter (10):
+      soc/tegra: pmc: Initialise resets associated with a power partition
+      soc/tegra: pmc: Ensure powergate is available when powering on
+      soc/tegra: pmc: Fix early initialisation of PMC
+      soc/tegra: pmc: Don't populate SoC data until register space is mapped
+      soc/tegra: pmc: Ensure mutex is always initialised
+      soc/tegra: pmc: Add missing of_node_put()
+      soc/tegra: pmc: Don't probe PMC if early initialisation fails
+      soc/tegra: pmc: Add specific error messages
+      soc/tegra: pmc: Initialise power partitions early
+      soc/tegra: pmc: Enable XUSB partitions on boot
 
- .../bindings/bus/nvidia,tegra210-aconnect.txt      |  45 +++++++++
- drivers/bus/Kconfig                                |  13 +++
- drivers/bus/Makefile                               |   1 +
- drivers/bus/tegra-aconnect.c                       | 112 +++++++++++++++++++++
- 4 files changed, 171 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra210-aconnect.txt
- create mode 100644 drivers/bus/tegra-aconnect.c
+Thierry Reding (3):
+      soc/tegra: pmc: Use register definitions instead of magic values
+      soc/tegra: pmc: Use whitespace more consistently
+      soc/tegra: Stub out PCIe IRQ workaround on 64-bit ARM
+
+ drivers/soc/tegra/pmc.c     | 149 +++++++++++++++++++++++++++++++++-----------
+ include/soc/tegra/cpuidle.h |   2 +-
+ 2 files changed, 113 insertions(+), 38 deletions(-)
