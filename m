@@ -1,12 +1,11 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] drm/tegra: add missing include
-Date: Fri, 1 Jul 2016 15:17:44 +0200
-Message-ID: <20160701131744.GA21768@ulmo.ba.sec>
-References: <20160701101630.3063718-1-arnd@arndb.de>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 1/3] drm/tegra: Prepare DSI for supporting generic PM domains
+Date: Fri, 1 Jul 2016 14:21:37 +0100
+Message-ID: <1467379299-11961-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1130354697=="
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20160701101630.3063718-1-arnd@arndb.de>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -16,83 +15,55 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-
---===============1130354697==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
-Content-Disposition: inline
-
-
---wRRV7LY7NUeQGEoC
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Jul 01, 2016 at 12:16:20PM +0200, Arnd Bergmann wrote:
-> A newly merged patch to configure the XBAR caused a build failure
-> in some configurations:
->=20
-> drivers/gpu/drm/tegra/sor.c: In function 'tegra_sor_set_pinmux':
-> drivers/gpu/drm/tegra/sor.c:252:10: error: implicit declaration of functi=
-on 'pinctrl_lookup_state' [-Werror=3Dimplicit-function-declaration]
->   state =3D pinctrl_lookup_state(sor->pinctrl, name);
->           ^~~~~~~~~~~~~~~~~~~~
-> drivers/gpu/drm/tegra/sor.c:252:8: error: assignment makes pointer from i=
-nteger without a cast [-Werror=3Dint-conversion]
->   state =3D pinctrl_lookup_state(sor->pinctrl, name);
->=20
-> The functions are declared in linux/pinctrl/consumer.h, so we need
-> to include that file instead of relying on the inclusion to happen
-> through another header.
->=20
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Fixes: 9e9d1315f4f4 ("drm/tegra: sor: Make XBAR configurable per SoC")
-> ---
->  drivers/gpu/drm/tegra/sor.c | 1 +
->  1 file changed, 1 insertion(+)
-
-This was actually introduced in 035f79bcd5e5 ("drm/tegra: sor: Support
-DPAUX pin control"), which is causing other problems at runtime, so I've
-backed it out again.
-
-Thanks,
-Thierry
-
---wRRV7LY7NUeQGEoC
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXdm11AAoJEN0jrNd/PrOhJ0UQAJecCUrUq/L4Mw6KyEw5JWfG
-HZyIPUG6esMe4Ip2kCm0ChihT4RE2xtem1e6rqgiBj2U3Iao7DPTi3oSoLSWV4tj
-1XjCxZoZIFnbLj/y2MGtaNBsN/1eq7hgLxhMkCZ+8hzihmRbvFkkUg4H8qWudcN3
-XO1MT1F5HpAyJfQ+7ysTWMSMYAX8Ng7WgTiPxJtuCdCEmWCWCqM3u61G6TzDnZat
-OjSF2LM90nJMm5/QQnFfKBo3F99X4tFFZOQd6Ix3gbxXJF+HJ0xD/8+2Fe6vIbym
-RDRPnzSJLK8t/lto+iSrfLa8lNYNMwKWo8h/OMeKOGev6A+Bcm+FXLz/QSRj5AnZ
-2jAWTRoEREZhmqAqhqoW1OvW6tS3dMb5JRZdyO/T0p72F2pQok/Ts8M9GxVWuuhW
-R7XG9zqvasDcmn5R2OX2G76ltdXVa0TfxgYDNchuPQGjGiIhTMwSQUPpjwcrXM6R
-mP7c2bJWfq5r5uD2DTdfrsT5bGTbXjMC3xyjVhJWaiK31V3HcQU+gnUdTsDf85lF
-bvE9IM9VnfTiaSnEjpKpHT4HtPrMlPPVACiajRnGoiOyyMDycVaeIwYF9NujvD6q
-UgqF3laT7rvJG48n3Q464cqwsbuy+JNbb5Gw7/yosDNpGeTLAfiSyYIN8hL47ZDv
-WAgebLPJEBdvg+KFvDT6
-=Akzc
------END PGP SIGNATURE-----
-
---wRRV7LY7NUeQGEoC--
-
---===============1130354697==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============1130354697==--
+VGhlIERTSSBkcml2ZXIgZm9yIFRlZ3JhIHJlcXVpcmVzIHRoZSBTT1IgcG93ZXIgcGFydGl0aW9u
+IHRvIGJlIGVuYWJsZWQuCk5vdyB0aGF0IFRlZ3JhIHN1cHBvcnRzIHRoZSBnZW5lcmljIFBNIGRv
+bWFpbiBmcmFtZXdvcmsgd2UgbWFuYWdlIHRoZQpTT1IgcG93ZXIgcGFydGl0aW9uIHZpYSB0aGlz
+IGZyYW1ld29yay4gSG93ZXZlciwgdGhlIHNlcXVlbmNlIGZvcgpnYXRpbmcvdW5nYXRpbmcgdGhl
+IFNPUiBwb3dlciBwYXJ0aXRpb24gcmVxdWlyZXMgdGhhdCB0aGUgRFNJIHJlc2V0IGlzCmFzc2Vy
+dGVkL2RlLWFzc2VydGVkIGF0IHRoZSB0aW1lIHRoZSBTT1IgcG93ZXIgcGFydGl0aW9uIGlzCmdh
+dGVkL3VuZ2F0ZWQsIHJlc3BlY3RpdmVseS4gTm93IHRoYXQgdGhlIHJlc2V0IGNvbnRyb2wgY29y
+ZSBhc3N1bWVzCnRoYXQgcmVzZXRzIGFyZSBleGNsdXNpdmUsIHRoZSBUZWdyYSBnZW5lcmljIFBN
+IGRvbWFpbiBjb2RlIGFuZCB0aGUgRFNJCmRyaXZlciBjYW5ub3QgcmVxdWVzdCB0aGUgc2FtZSBy
+ZXNldCB1bmxlc3Mgd2UgbWFyayB0aGUgcmVzZXQgYXMgc2hhcmVkLgpTaGFyaW5nIHJlc2V0cyB3
+aWxsIG5vdCB3b3JrIGluIHRoaXMgY2FzZSBiZWNhdXNlIHdlIGNhbm5vdCBndWFyYW50ZWUKdGhh
+dCB0aGUgcmVzZXQgd2lsbCBiZSBhc3NlcnRlZC9kZS1hc3NlcnRlZCBhdCB0aGUgYXBwcm9wcmlh
+dGUgdGltZS4KVGhlcmVmb3JlLCBnaXZlbiB0aGF0IHRoZSBUZWdyYSBnZW5lcmljIFBNIGRvbWFp
+biBjb2RlIHdpbGwgaGFuZGxlIHRoZQpyZXNldHMsIGRvIG5vdCByZXF1ZXN0IHRoZSByZXNldCBp
+biB0aGUgRFNJIGRyaXZlciBpZiB0aGUgRFNJIGRldmljZSBoYXMKYSBQTSBkb21haW4gYXNzb2Np
+YXRlZC4KClNpZ25lZC1vZmYtYnk6IEpvbiBIdW50ZXIgPGpvbmF0aGFuaEBudmlkaWEuY29tPgot
+LS0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kc2kuYyB8IDI4ICsrKysrKysrKysrKysrKysrLS0t
+LS0tLS0tLS0KIDEgZmlsZSBjaGFuZ2VkLCAxNyBpbnNlcnRpb25zKCspLCAxMSBkZWxldGlvbnMo
+LSkKCmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHNpLmMgYi9kcml2ZXJzL2dw
+dS9kcm0vdGVncmEvZHNpLmMKaW5kZXggNzMwZTZkMjE4MDFhLi4zZDIyOGFkOTBlMGYgMTAwNjQ0
+Ci0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kc2kuYworKysgYi9kcml2ZXJzL2dwdS9kcm0v
+dGVncmEvZHNpLmMKQEAgLTE0ODgsOSArMTQ4OCwxMSBAQCBzdGF0aWMgaW50IHRlZ3JhX2RzaV9w
+cm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQogCWRzaS0+Zm9ybWF0ID0gTUlQSV9E
+U0lfRk1UX1JHQjg4ODsKIAlkc2ktPmxhbmVzID0gNDsKIAotCWRzaS0+cnN0ID0gZGV2bV9yZXNl
+dF9jb250cm9sX2dldCgmcGRldi0+ZGV2LCAiZHNpIik7Ci0JaWYgKElTX0VSUihkc2ktPnJzdCkp
+Ci0JCXJldHVybiBQVFJfRVJSKGRzaS0+cnN0KTsKKwlpZiAoIXBkZXYtPmRldi5wbV9kb21haW4p
+IHsKKwkJZHNpLT5yc3QgPSBkZXZtX3Jlc2V0X2NvbnRyb2xfZ2V0KCZwZGV2LT5kZXYsICJkc2ki
+KTsKKwkJaWYgKElTX0VSUihkc2ktPnJzdCkpCisJCQlyZXR1cm4gUFRSX0VSUihkc2ktPnJzdCk7
+CisJfQogCiAJZHNpLT5jbGsgPSBkZXZtX2Nsa19nZXQoJnBkZXYtPmRldiwgTlVMTCk7CiAJaWYg
+KElTX0VSUihkc2ktPmNsaykpIHsKQEAgLTE1OTEsMTAgKzE1OTMsMTIgQEAgc3RhdGljIGludCB0
+ZWdyYV9kc2lfc3VzcGVuZChzdHJ1Y3QgZGV2aWNlICpkZXYpCiAJc3RydWN0IHRlZ3JhX2RzaSAq
+ZHNpID0gZGV2X2dldF9kcnZkYXRhKGRldik7CiAJaW50IGVycjsKIAotCWVyciA9IHJlc2V0X2Nv
+bnRyb2xfYXNzZXJ0KGRzaS0+cnN0KTsKLQlpZiAoZXJyIDwgMCkgewotCQlkZXZfZXJyKGRldiwg
+ImZhaWxlZCB0byBhc3NlcnQgcmVzZXQ6ICVkXG4iLCBlcnIpOwotCQlyZXR1cm4gZXJyOworCWlm
+IChkc2ktPnJzdCkgeworCQllcnIgPSByZXNldF9jb250cm9sX2Fzc2VydChkc2ktPnJzdCk7CisJ
+CWlmIChlcnIgPCAwKSB7CisJCQlkZXZfZXJyKGRldiwgImZhaWxlZCB0byBhc3NlcnQgcmVzZXQ6
+ICVkXG4iLCBlcnIpOworCQkJcmV0dXJuIGVycjsKKwkJfQogCX0KIAogCXVzbGVlcF9yYW5nZSgx
+MDAwLCAyMDAwKTsKQEAgLTE2MzIsMTAgKzE2MzYsMTIgQEAgc3RhdGljIGludCB0ZWdyYV9kc2lf
+cmVzdW1lKHN0cnVjdCBkZXZpY2UgKmRldikKIAogCXVzbGVlcF9yYW5nZSgxMDAwLCAyMDAwKTsK
+IAotCWVyciA9IHJlc2V0X2NvbnRyb2xfZGVhc3NlcnQoZHNpLT5yc3QpOwotCWlmIChlcnIgPCAw
+KSB7Ci0JCWRldl9lcnIoZGV2LCAiY2Fubm90IGFzc2VydCByZXNldDogJWRcbiIsIGVycik7Ci0J
+CWdvdG8gZGlzYWJsZV9jbGtfbHA7CisJaWYgKGRzaS0+cnN0KSB7CisJCWVyciA9IHJlc2V0X2Nv
+bnRyb2xfZGVhc3NlcnQoZHNpLT5yc3QpOworCQlpZiAoZXJyIDwgMCkgeworCQkJZGV2X2Vycihk
+ZXYsICJjYW5ub3QgYXNzZXJ0IHJlc2V0OiAlZFxuIiwgZXJyKTsKKwkJCWdvdG8gZGlzYWJsZV9j
+bGtfbHA7CisJCX0KIAl9CiAKIAlyZXR1cm4gMDsKLS0gCjIuMS40CgpfX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRy
+aS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5v
+cmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
