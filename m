@@ -1,69 +1,54 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2 1/2] PCI: Add new method for registering PCI hosts
-Date: Fri, 01 Jul 2016 18:30:24 +0200
-Message-ID: <3872522.jdXcQClxV5@wuerfel>
-References: <20160630151931.29216-1-thierry.reding@gmail.com> <4061641.rLdO1g8OBR@wuerfel> <20160701160923.GF8609@e106497-lin.cambridge.arm.com>
+From: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Subject: re: drm/tegra: sor: Implement sor1_brick clock
+Date: Fri, 1 Jul 2016 23:58:13 +0300
+Message-ID: <20160701205813.GA12447@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20160701160923.GF8609@e106497-lin.cambridge.arm.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Liviu Dudau <liviu.dudau@arm.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, Tomasz Nowicki <tn@semihalf.com>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday, July 1, 2016 5:09:23 PM CEST Liviu Dudau wrote:
-> > > > 
-> > > > The main idea is to pull the allocation of 'struct pci_host_bridge' out
-> > > > of the registration, and let individual host drivers and architecture
-> > > > code fill the members before calling the registration function.
-> > > 
-> > > That's how we got into the arch/arm mess that we currently have. The host driver
-> > > should not drive the instantiation of the pci_host_bridge structure because it
-> > > will prevent you from having two drivers running at the same time.
-> > 
-> > Can you clarify that? I don't see what prevents two drivers from each
-> > creating a pci_host_bridge structure and passing it into
-> > pci_host_bridge_register().
-> 
-> Maybe I'm exagerating a bit, but I always disliked the pci_common_init() function and
-> the way it is creating a pci_host_bridge while relying on hw_pci hooks to get
-> things ready. I'm pretty sure there are still issues around the fact that a lot of
-> platform drivers have a subsys_initcall() function that calls pci_common_init(). I
-> don't want us to go down that path again.
+Hello Thierry Reding,
 
-I see what you mean now, and I agree we don't want to do this like
-pci_common_init(), but the patch here does a number of things very
-differently:
+The patch a7ba8310c7f5: "drm/tegra: sor: Implement sor1_brick clock"
+from Oct 1, 2015, leads to the following static checker warning:
 
-- it's not architecture specific
-- it is not tied into architecture specific pcibios_* functions
-- it does not create multiple bridges at once
-- it does not have three levels of callbacks going back and forth,
-  the idea is to eventually end up with one structure for the
-  callback pointers including those that today are done as __weak
-  functions.
+	drivers/gpu/drm/tegra/sor.c:318 tegra_clk_sor_brick_get_parent()
+	warn: assigning (-22) to unsigned variable 'parent'
 
-Today we only have four callers of pci_common_init_dev that probe the
-PCI host from DT: cns3xxx, versatile, mvebu and rcar-gen2. I hope
-we can replace all of them with the new method here directly and
-not take any intermediate steps.
+drivers/gpu/drm/tegra/sor.c
+   314  static u8 tegra_clk_sor_brick_get_parent(struct clk_hw *hw)
+               ^^
+returns u8.
 
-The users of pci_common_init() (not _dev) are limited to board files
-on really old platforms that are either not getting updated (ixp, iop,
-footbridge, ks8695, mv78xx0, sa1100) or that have DT based replacement
-code coming (dove, orion5x, cns3xxx, integrator).
+   315  {
+   316          struct tegra_clk_sor_brick *brick = to_brick(hw);
+   317          struct tegra_sor *sor = brick->sor;
+   318          u8 parent = -EINVAL;
+                ^^^^^^^^^^^^^^^^^^^
+can't be -EINVAL.
 
-> Don't get me wrong, clearly someone needs to create an instance of pci_host_bridge.
-> What I want people to accept is that in the PCI(e) architecture there is nothing that
-> stops a piece of HW that used to be the bridge between host and underlying bus into
-> becoming the bridge between a higher PCI(e) bus and the bus underneath. If the writes
-> to the configuration registers happens somehow, the Host Bridge doesn't even know if
-> it is talking to the actual host. Can the driver in that case make sure it did not made
-> assumptions that were tied to a specific SoC implementation?
+   319          u32 value;
+   320  
+   321          value = tegra_sor_readl(sor, SOR_CLK_CNTRL);
+   322  
+   323          switch (value & SOR_CLK_CNTRL_DP_CLK_SEL_MASK) {
+   324          case SOR_CLK_CNTRL_DP_CLK_SEL_SINGLE_PCLK:
+   325          case SOR_CLK_CNTRL_DP_CLK_SEL_DIFF_PCLK:
+   326                  parent = 0;
+   327                  break;
+   328  
+   329          case SOR_CLK_CNTRL_DP_CLK_SEL_SINGLE_DPCLK:
+   330          case SOR_CLK_CNTRL_DP_CLK_SEL_DIFF_DPCLK:
+   331                  parent = 1;
+   332                  break;
+   333          }
+   334  
+   335          return parent;
+   336  }
 
-Sorry, I'm not really following what you mean with that, or what the
-consequence is for the Linux implementation. Can you try to rephrase this?
-
-	Arnd
+regards,
+dan carpenter
