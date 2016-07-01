@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 5/6] ARM: tegra: Changes for v4.8-rc1
-Date: Fri,  1 Jul 2016 16:50:25 +0200
-Message-ID: <20160701145026.25760-5-thierry.reding@gmail.com>
+Subject: [GIT PULL 2/6] dt-bindings: tegra: Updates for v4.8-rc1
+Date: Fri,  1 Jul 2016 16:50:22 +0200
+Message-ID: <20160701145026.25760-2-thierry.reding@gmail.com>
 References: <20160701145026.25760-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20160701145026.25760-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -18,78 +18,32 @@ The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.8-arm
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.8-dt-bindings
 
-for you to fetch changes up to 1cedbdf624145076992c794ae07b85fe20063c1b:
+for you to fetch changes up to 7eb28ee074bcbf0d6507e896be11280a558dbf17:
 
-  ARM: tegra: Initial support for Apalis TK1 (2016-07-01 16:34:16 +0200)
+  dt-bindings: tegra: Add Apalis TK1 device tree binding documentation (2016-07-01 16:36:58 +0200)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-ARM: tegra: Changes for v4.8-rc1
+dt-bindings: tegra: Updates for v4.8-rc1
 
-Mostly cleanups, but also initial support for the Toradex Apalis TK1.
+A couple of fixes for the Tegra XUSB controller and Tegra XUSB pad
+controller bindings, as well as the addition of some compatible strings
+for Tegra-based boards.
 
 ----------------------------------------------------------------
-Arnd Bergmann (1):
-      ARM: tegra: Remove board_init_funcs array
+Jon Hunter (2):
+      dt-bindings: phy: Fix description of Tegra210 PHY nodes
+      dt-bindings: usb: Fix Tegra XUSB example
 
 Marcel Ziswiler (2):
-      ARM: tegra: Remove commas from unit addresses on Tegra124
-      ARM: tegra: Initial support for Apalis TK1
+      dt-bindings: tegra: Add Colibri T30 device tree binding documentation
+      dt-bindings: tegra: Add Apalis TK1 device tree binding documentation
 
-Stephen Warren (1):
-      ARM: tegra: Import latest Jetson TK1 spreadsheet
-
-Thierry Reding (6):
-      ARM: tegra: hotplug: Include missing common.h
-      ARM: tegra: cpuidle: Add missing cpuidle.h include
-      ARM: tegra: irq: Add missing irq.h include
-      ARM: tegra: pm: Add tegra_cpu_do_idle() prototype
-      ARM: tegra: Fix a couple of DTC warnings
-      ARM: tegra: Add spaces around = in properties
-
- arch/arm/boot/dts/Makefile                     |    1 +
- arch/arm/boot/dts/tegra114-dalmore.dts         |    2 +-
- arch/arm/boot/dts/tegra114-roth.dts            |    4 +-
- arch/arm/boot/dts/tegra114-tn7.dts             |    2 +-
- arch/arm/boot/dts/tegra124-apalis-emc.dtsi     | 1502 +++++++++++++++++
- arch/arm/boot/dts/tegra124-apalis-eval.dts     |  284 ++++
- arch/arm/boot/dts/tegra124-apalis.dtsi         | 2100 ++++++++++++++++++++++++
- arch/arm/boot/dts/tegra124-jetson-tk1-emc.dtsi |    6 +-
- arch/arm/boot/dts/tegra124-jetson-tk1.dts      |   88 +-
- arch/arm/boot/dts/tegra124-nyan-big-emc.dtsi   |    6 +-
- arch/arm/boot/dts/tegra124-nyan-big.dts        |    4 +-
- arch/arm/boot/dts/tegra124-nyan-blaze-emc.dtsi |    6 +-
- arch/arm/boot/dts/tegra124-nyan-blaze.dts      |    2 +-
- arch/arm/boot/dts/tegra124-nyan.dtsi           |   60 +-
- arch/arm/boot/dts/tegra124-venice2.dts         |   70 +-
- arch/arm/boot/dts/tegra124.dtsi                |  125 +-
- arch/arm/boot/dts/tegra20-colibri-512.dtsi     |    2 +-
- arch/arm/boot/dts/tegra20-harmony.dts          |    2 +-
- arch/arm/boot/dts/tegra20-paz00.dts            |    2 +-
- arch/arm/boot/dts/tegra20-seaboard.dts         |    2 +-
- arch/arm/boot/dts/tegra20-tamonten.dtsi        |    2 +-
- arch/arm/boot/dts/tegra20-trimslice.dts        |    2 +-
- arch/arm/boot/dts/tegra20-ventana.dts          |    2 +-
- arch/arm/boot/dts/tegra20-whistler.dts         |    2 +-
- arch/arm/boot/dts/tegra30-apalis.dtsi          |    7 +-
- arch/arm/boot/dts/tegra30-beaver.dts           |    2 +-
- arch/arm/boot/dts/tegra30-cardhu.dtsi          |    2 +-
- arch/arm/boot/dts/tegra30-colibri-eval-v3.dts  |    2 +-
- arch/arm/boot/dts/tegra30-colibri.dtsi         |    2 +-
- arch/arm/mach-tegra/common.h                   |   22 +
- arch/arm/mach-tegra/cpuidle-tegra114.c         |    1 +
- arch/arm/mach-tegra/cpuidle-tegra20.c          |    1 +
- arch/arm/mach-tegra/cpuidle-tegra30.c          |    1 +
- arch/arm/mach-tegra/cpuidle.h                  |    2 +
- arch/arm/mach-tegra/hotplug.c                  |    1 +
- arch/arm/mach-tegra/irq.c                      |    1 +
- arch/arm/mach-tegra/pm.h                       |    2 +-
- arch/arm/mach-tegra/tegra.c                    |   24 +-
- 38 files changed, 4124 insertions(+), 224 deletions(-)
- create mode 100644 arch/arm/boot/dts/tegra124-apalis-emc.dtsi
- create mode 100644 arch/arm/boot/dts/tegra124-apalis-eval.dts
- create mode 100644 arch/arm/boot/dts/tegra124-apalis.dtsi
+ Documentation/devicetree/bindings/arm/tegra.txt                   | 4 ++++
+ .../devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt       | 2 +-
+ Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt    | 8 ++++----
+ 3 files changed, 9 insertions(+), 5 deletions(-)
