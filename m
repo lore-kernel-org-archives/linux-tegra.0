@@ -1,11 +1,12 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] drm/tegra: add missing include
-Date: Fri,  1 Jul 2016 12:16:20 +0200
-Message-ID: <20160701101630.3063718-1-arnd@arndb.de>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] drm/tegra: add missing include
+Date: Fri, 1 Jul 2016 15:17:44 +0200
+Message-ID: <20160701131744.GA21768@ulmo.ba.sec>
+References: <20160701101630.3063718-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+Content-Type: multipart/mixed; boundary="===============1130354697=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20160701101630.3063718-1-arnd@arndb.de>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -15,34 +16,83 @@ List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
 Errors-To: dri-devel-bounces@lists.freedesktop.org
 Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>, David Airlie <airlied@linux.ie>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-QSBuZXdseSBtZXJnZWQgcGF0Y2ggdG8gY29uZmlndXJlIHRoZSBYQkFSIGNhdXNlZCBhIGJ1aWxk
-IGZhaWx1cmUKaW4gc29tZSBjb25maWd1cmF0aW9uczoKCmRyaXZlcnMvZ3B1L2RybS90ZWdyYS9z
-b3IuYzogSW4gZnVuY3Rpb24gJ3RlZ3JhX3Nvcl9zZXRfcGlubXV4JzoKZHJpdmVycy9ncHUvZHJt
-L3RlZ3JhL3Nvci5jOjI1MjoxMDogZXJyb3I6IGltcGxpY2l0IGRlY2xhcmF0aW9uIG9mIGZ1bmN0
-aW9uICdwaW5jdHJsX2xvb2t1cF9zdGF0ZScgWy1XZXJyb3I9aW1wbGljaXQtZnVuY3Rpb24tZGVj
-bGFyYXRpb25dCiAgc3RhdGUgPSBwaW5jdHJsX2xvb2t1cF9zdGF0ZShzb3ItPnBpbmN0cmwsIG5h
-bWUpOwogICAgICAgICAgXn5+fn5+fn5+fn5+fn5+fn5+fn4KZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
-L3Nvci5jOjI1Mjo4OiBlcnJvcjogYXNzaWdubWVudCBtYWtlcyBwb2ludGVyIGZyb20gaW50ZWdl
-ciB3aXRob3V0IGEgY2FzdCBbLVdlcnJvcj1pbnQtY29udmVyc2lvbl0KICBzdGF0ZSA9IHBpbmN0
-cmxfbG9va3VwX3N0YXRlKHNvci0+cGluY3RybCwgbmFtZSk7CgpUaGUgZnVuY3Rpb25zIGFyZSBk
-ZWNsYXJlZCBpbiBsaW51eC9waW5jdHJsL2NvbnN1bWVyLmgsIHNvIHdlIG5lZWQKdG8gaW5jbHVk
-ZSB0aGF0IGZpbGUgaW5zdGVhZCBvZiByZWx5aW5nIG9uIHRoZSBpbmNsdXNpb24gdG8gaGFwcGVu
-CnRocm91Z2ggYW5vdGhlciBoZWFkZXIuCgpTaWduZWQtb2ZmLWJ5OiBBcm5kIEJlcmdtYW5uIDxh
-cm5kQGFybmRiLmRlPgpGaXhlczogOWU5ZDEzMTVmNGY0ICgiZHJtL3RlZ3JhOiBzb3I6IE1ha2Ug
-WEJBUiBjb25maWd1cmFibGUgcGVyIFNvQyIpCi0tLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3Nv
-ci5jIHwgMSArCiAxIGZpbGUgY2hhbmdlZCwgMSBpbnNlcnRpb24oKykKCmRpZmYgLS1naXQgYS9k
-cml2ZXJzL2dwdS9kcm0vdGVncmEvc29yLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvc29yLmMK
-aW5kZXggODQyNWVkYWE0ZThhLi45ZmY2YWE3NTg1Y2YgMTAwNjQ0Ci0tLSBhL2RyaXZlcnMvZ3B1
-L2RybS90ZWdyYS9zb3IuYworKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvc29yLmMKQEAgLTEz
-LDYgKzEzLDcgQEAKICNpbmNsdWRlIDxsaW51eC9pby5oPgogI2luY2x1ZGUgPGxpbnV4L29mX2Rl
-dmljZS5oPgogI2luY2x1ZGUgPGxpbnV4L3BsYXRmb3JtX2RldmljZS5oPgorI2luY2x1ZGUgPGxp
-bnV4L3BpbmN0cmwvY29uc3VtZXIuaD4KICNpbmNsdWRlIDxsaW51eC9wbV9ydW50aW1lLmg+CiAj
-aW5jbHVkZSA8bGludXgvcmVndWxhdG9yL2NvbnN1bWVyLmg+CiAjaW5jbHVkZSA8bGludXgvcmVz
-ZXQuaD4KLS0gCjIuOS4wCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWwK
+
+--===============1130354697==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="wRRV7LY7NUeQGEoC"
+Content-Disposition: inline
+
+
+--wRRV7LY7NUeQGEoC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Jul 01, 2016 at 12:16:20PM +0200, Arnd Bergmann wrote:
+> A newly merged patch to configure the XBAR caused a build failure
+> in some configurations:
+>=20
+> drivers/gpu/drm/tegra/sor.c: In function 'tegra_sor_set_pinmux':
+> drivers/gpu/drm/tegra/sor.c:252:10: error: implicit declaration of functi=
+on 'pinctrl_lookup_state' [-Werror=3Dimplicit-function-declaration]
+>   state =3D pinctrl_lookup_state(sor->pinctrl, name);
+>           ^~~~~~~~~~~~~~~~~~~~
+> drivers/gpu/drm/tegra/sor.c:252:8: error: assignment makes pointer from i=
+nteger without a cast [-Werror=3Dint-conversion]
+>   state =3D pinctrl_lookup_state(sor->pinctrl, name);
+>=20
+> The functions are declared in linux/pinctrl/consumer.h, so we need
+> to include that file instead of relying on the inclusion to happen
+> through another header.
+>=20
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Fixes: 9e9d1315f4f4 ("drm/tegra: sor: Make XBAR configurable per SoC")
+> ---
+>  drivers/gpu/drm/tegra/sor.c | 1 +
+>  1 file changed, 1 insertion(+)
+
+This was actually introduced in 035f79bcd5e5 ("drm/tegra: sor: Support
+DPAUX pin control"), which is causing other problems at runtime, so I've
+backed it out again.
+
+Thanks,
+Thierry
+
+--wRRV7LY7NUeQGEoC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXdm11AAoJEN0jrNd/PrOhJ0UQAJecCUrUq/L4Mw6KyEw5JWfG
+HZyIPUG6esMe4Ip2kCm0ChihT4RE2xtem1e6rqgiBj2U3Iao7DPTi3oSoLSWV4tj
+1XjCxZoZIFnbLj/y2MGtaNBsN/1eq7hgLxhMkCZ+8hzihmRbvFkkUg4H8qWudcN3
+XO1MT1F5HpAyJfQ+7ysTWMSMYAX8Ng7WgTiPxJtuCdCEmWCWCqM3u61G6TzDnZat
+OjSF2LM90nJMm5/QQnFfKBo3F99X4tFFZOQd6Ix3gbxXJF+HJ0xD/8+2Fe6vIbym
+RDRPnzSJLK8t/lto+iSrfLa8lNYNMwKWo8h/OMeKOGev6A+Bcm+FXLz/QSRj5AnZ
+2jAWTRoEREZhmqAqhqoW1OvW6tS3dMb5JRZdyO/T0p72F2pQok/Ts8M9GxVWuuhW
+R7XG9zqvasDcmn5R2OX2G76ltdXVa0TfxgYDNchuPQGjGiIhTMwSQUPpjwcrXM6R
+mP7c2bJWfq5r5uD2DTdfrsT5bGTbXjMC3xyjVhJWaiK31V3HcQU+gnUdTsDf85lF
+bvE9IM9VnfTiaSnEjpKpHT4HtPrMlPPVACiajRnGoiOyyMDycVaeIwYF9NujvD6q
+UgqF3laT7rvJG48n3Q464cqwsbuy+JNbb5Gw7/yosDNpGeTLAfiSyYIN8hL47ZDv
+WAgebLPJEBdvg+KFvDT6
+=Akzc
+-----END PGP SIGNATURE-----
+
+--wRRV7LY7NUeQGEoC--
+
+--===============1130354697==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============1130354697==--
