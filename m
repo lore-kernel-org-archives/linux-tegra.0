@@ -1,14 +1,14 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL] PCI: tegra: Changes for v4.8-rc1
-Date: Fri,  1 Jul 2016 17:00:56 +0200
-Message-ID: <20160701150056.26537-3-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [GIT PULL] clk: tegra: Changes for v4.8-rc1
+Date: Fri,  1 Jul 2016 17:00:54 +0200
+Message-ID: <20160701150056.26537-1-thierry.reding@gmail.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Bjorn,
+Hi Michael, Stephen,
 
 The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
 
@@ -16,32 +16,42 @@ The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.8-pci
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.8-clk
 
-for you to fetch changes up to 0f32700faed919946e21e9d1dc4d74ae8f1b1226:
+for you to fetch changes up to 15d68e8c2e95e8b62465c7cb3bc642784365ee1b:
 
-  PCI: tegra: Correctly program PADS_REFCLK_CFG* registers (2016-06-30 15:30:16 +0200)
+  clk: tegra: Initialize UTMI PLL when enabling PLLU (2016-06-30 17:43:17 +0200)
 
-There's a minor conflict between this and your pci/host-request-windows
-branch, let me know if you'd like me to rebase on top of that.
-
+Thanks,
 Thierry
 
 ----------------------------------------------------------------
-PCI: tegra: Changes for v4.8-rc1
+clk: tegra: Changes for v4.8-rc1
 
-A couple of cleanups and preparation work for 64-bit ARM support, as
-well as fixes for writing the PADS_REFCLK_CFG* registers.
+Fixes and enhancements mostly for Tegra210 clocks that allow DSI and
+HDMI to work on Tegra X1. There's also a refactoring, including fixes,
+the USB PLL.
 
 ----------------------------------------------------------------
-Stephen Warren (2):
-      PCI: tegra: Actually program PADS_REFCLK_CFG* on recent SoCs
-      PCI: tegra: Correctly program PADS_REFCLK_CFG* registers
+Andrew Bresticker (1):
+      clk: tegra: Initialize UTMI PLL when enabling PLLU
 
-Thierry Reding (3):
-      PCI: tegra: Make register definitions consistent
-      PCI: tegra: Use pci_remap_iospace()
-      PCI: tegra: Stop setting pcibios_min_mem
+Thierry Reding (7):
+      clk: tegra: Fixup post dividers on Tegra210
+      clk: tegra: Disable spread spectrum on pll_d2
+      clk: tegra: Squash sor1 safe/brick/src into a single mux
+      clk: tegra: Enable sor1 and sor1_src on Tegra210
+      clk: tegra: Mark timer clock as critical
+      clk: tegra: Make sor_safe the parent of dpaux and dpaux1
+      clk: tegra: Micro-optimize Tegra210 clock setup
 
- drivers/pci/host/pci-tegra.c | 54 ++++++++++++++++++++------------------------
- 1 file changed, 25 insertions(+), 29 deletions(-)
+ drivers/clk/tegra/clk-id.h               |   1 -
+ drivers/clk/tegra/clk-pll.c              | 505 +++++++++++++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra-periph.c     |  25 +-
+ drivers/clk/tegra/clk-tegra114.c         | 156 +---------
+ drivers/clk/tegra/clk-tegra124.c         | 156 +---------
+ drivers/clk/tegra/clk-tegra210.c         | 295 ++++--------------
+ drivers/clk/tegra/clk-tegra30.c          | 113 +------
+ drivers/clk/tegra/clk.h                  |  17 ++
+ include/dt-bindings/clock/tegra210-car.h |   2 +-
+ 9 files changed, 603 insertions(+), 667 deletions(-)
