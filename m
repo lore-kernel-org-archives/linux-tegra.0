@@ -1,69 +1,188 @@
-From: Liviu Dudau <liviu.dudau@arm.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 Subject: Re: [PATCH v2 1/2] PCI: Add new method for registering PCI hosts
-Date: Fri, 1 Jul 2016 16:40:46 +0100
-Message-ID: <20160701154046.GE8609@e106497-lin.cambridge.arm.com>
-References: <20160630151931.29216-1-thierry.reding@gmail.com>
- <6212651.41bebQZ9BM@wuerfel>
- <20160701145244.GD8609@e106497-lin.cambridge.arm.com>
- <14945085.QO6LcyFgTY@wuerfel>
+Date: Fri, 01 Jul 2016 17:44:09 +0200
+Message-ID: <4061641.rLdO1g8OBR@wuerfel>
+References: <20160630151931.29216-1-thierry.reding@gmail.com> <20160701144648.GC8609@e106497-lin.cambridge.arm.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <14945085.QO6LcyFgTY@wuerfel>
-Sender: linux-pci-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, Tomasz Nowicki <tn@semihalf.com>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160701144648.GC8609-2JSQmVVBSi7ZROr8t4l/smS4ubULX0JqMm0uRHvK7Nw@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Tomasz Nowicki <tn-nYOzD4b6Jr9Wk0Htik3J/w@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jul 01, 2016 at 05:17:11PM +0200, Arnd Bergmann wrote:
-> On Friday, July 1, 2016 3:52:44 PM CEST Liviu Dudau wrote:
-> >=20
-> > >=20
-> > > or do you mean we should have extra alignment in there so the
-> > > private pointer has a minimum alignment higher than the
-> > > alignment of struct pci_host_bridge?
-> >=20
-> > but this ^. bridge pointer arithmetic means +1 is not necessarily +=
-sizeof(struct pci_host_bridge)
-> > bytes. AFAIK that can be rounded to the nearest natural alignment f=
-or pointers on that
-> > architecture.
->=20
-> No, that's not how it works.
+On Friday, July 1, 2016 3:46:48 PM CEST Liviu Dudau wrote:
+> On Thu, Jun 30, 2016 at 05:19:30PM +0200, Thierry Reding wrote:
+> > From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+> > 
+> > This patch makes the existing pci_host_bridge structure a proper device
+> > that is usable by PCI host drivers in a more standard way. In addition
+> > to the existing pci_scan_bus, pci_scan_root_bus, pci_scan_root_bus_msi,
+> > and pci_create_root_bus interfaces, this unfortunately means having to
+> > add yet another interface doing basically the same thing, and add some
+> > extra code in the initial step.
+> > 
+> > However, this time it's more likely to be extensible enough that we
+> > won't have to do another one again in the future, and we should be
+> > able to reduce code much more as a result.
+> 
+> I am really disapointed by the direction in which the whole pci_host_bridge
+> structure and associated functions is going. When I started to get involved
+> in this mess that is the creation of a root PCI bus I was hoping that we
+> are moving towards one or few functions that create the root bus by using
+> the details provided in the host bridge without having so many variants for
+> the functionality.
 
-Really? If struct foo takes 31 bytes, and struct foo *p =3D (struct foo=
-*)64, what's p's
-value after p++ ? 95? I thought the compiler is allowed to consider the=
- structure padded so that
-p++ is 96.
+That is the plan, we just never made a lot of progress here.
 
->=20
-> > > I'm absolutely fine with any of those suggestions, whichever
-> > > makes the nicest API.
-> >=20
-> > Does anyone need to subclass the pci_host_bridge structure? And is =
-appending data right
-> > after the structure useful?
->=20
-> I was basically following the way alloc_etherdev() and a lot of other
-> subsystems handle it.
+> One reason for this holy mess is the duplication of information. Both root
+> bus and the pci_host_bridge hold pointers to useful information (msi_controller,
+> pci_ops) and coherency should be guaranteed when one or the other gets created.
+> Hence the ridiculous dance being done to find if root bus hasn't already been
+> created and if not reusing the scrap bus we have created at the top of
+> pci_create_root_bus() to actually set the data, then create the pci_host_bridge,
+> oops we need more information, and so on. (apologies for the incoherent style,
+> I'm trying to duplicate the spirit of the probe.c code :) )
 
-Probably valid if casted to char* ?
+Agreed.
 
-Liviu
+> I think this patchset has the right intention but it is not doing it in
+> the right way. To me, the right way is to separate the whole allocation
+> of the pci_host_bridge structure from the scanning or the root bus (keeping the
+> INIT_LIST_HEAD(&bridge->windows) call inside), not add the sysdata pointer
+> *at all* to pci_host_bridge, move the information from pci_bus into pci_host_bridge
+> and make pci_scan_root_bus take a pci_host_bridge pointer once that has been
+> done.
 
->=20
-> 	Arnd
->=20
+Again, this is what I'm doing here, unfortunately we cannot remove the
+sysdata pointer altogether as we still have over a hundred existing PCI
+host bridge implementations that all use sysdata.
 
---=20
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    =C2=AF\_(=E3=83=84)_/=C2=AF
+> Think of the code structure as a reflection of how the system is structured: the
+> PCI-to-host bridge is a structure that holds the information required to connect
+> the functionality of the host code (msi_controller, host-to-bus resource windows)
+> to the PCI(e) bus. The root pci_bus should only have PCI(e) bus information if
+> possible.
+
+Exactly.
+
+> > 
+> > The main idea is to pull the allocation of 'struct pci_host_bridge' out
+> > of the registration, and let individual host drivers and architecture
+> > code fill the members before calling the registration function.
+> 
+> That's how we got into the arch/arm mess that we currently have. The host driver
+> should not drive the instantiation of the pci_host_bridge structure because it
+> will prevent you from having two drivers running at the same time.
+
+Can you clarify that? I don't see what prevents two drivers from each
+creating a pci_host_bridge structure and passing it into
+pci_host_bridge_register().
+
+> > -static struct pci_host_bridge *pci_alloc_host_bridge(struct pci_bus *b)
+> > -{
+> > -	struct pci_host_bridge *bridge;
+> > -
+> > -	bridge = kzalloc(sizeof(*bridge), GFP_KERNEL);
+> > -	if (!bridge)
+> > -		return NULL;
+> > -
+> > -	INIT_LIST_HEAD(&bridge->windows);
+> > -	bridge->bus = b;
+> > -	return bridge;
+> > -}
+> > -
+> 
+> You might have strong arguments for removing this function but they are not properly
+> explained here and I feel that they should. Specially as ....
+
+In my initial version, it simply became unnecessary because all callers
+of pci_host_bridge_register() would have to allocate it anyway, and with
+the pci_bus assignment gone, it didn't do much at all.
+
+> >  static const unsigned char pcix_bus_speed[] = {
+> >  	PCI_SPEED_UNKNOWN,		/* 0 */
+> >  	PCI_SPEED_66MHz_PCIX,		/* 1 */
+> > @@ -2117,53 +2104,56 @@ void __weak pcibios_remove_bus(struct pci_bus *bus)
+> >  {
+> >  }
+> >  
+> > -struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
+> > -		struct pci_ops *ops, void *sysdata, struct list_head *resources)
+> > +void pci_host_bridge_init(struct pci_host_bridge *bridge)
+> > +{
+> > +	INIT_LIST_HEAD(&bridge->windows);
+> > +}
+> > +EXPORT_SYMBOL_GPL(pci_host_bridge_init);
+> 
+> I have no idea why it is useful to re-initialise the bridge->windows list at any
+> time other than allocation time.
+
+That's why I suggested doing this in the allocation function now.
+
+> > +int pci_host_bridge_register(struct pci_host_bridge *bridge)
+> >  {
+> >  	int error;
+> > -	struct pci_host_bridge *bridge;
+> >  	struct pci_bus *b, *b2;
+> >  	struct resource_entry *window, *n;
+> > +	LIST_HEAD(resources);
+> >  	struct resource *res;
+> >  	resource_size_t offset;
+> >  	char bus_addr[64];
+> >  	char *fmt;
+> > +	struct device *parent = bridge->dev.parent;
+> >  
+> >  	b = pci_alloc_bus(NULL);
+> >  	if (!b)
+> > -		return NULL;
+> > +		return -ENOMEM;
+> > +	bridge->bus = b;
+> >  
+> > -	b->sysdata = sysdata;
+> > -	b->ops = ops;
+> > -	b->number = b->busn_res.start = bus;
+> > +	/* temporarily move resources off the list */
+> > +	list_splice_init(&bridge->windows, &resources);
+> 
+> What are you trying to accomplish here with the moving around of the bridge->windows list
+> elements? This also leaves the bridge->windows list empty afterwards, is that intended?
+
+I was trying to preserve the existing behavior, this can probably
+be simplified, but as my initial version was completely untested
+I decided not to touch it.
+
+Later in the function, the list is filled one entry at a time from
+the local 'resources' list that we traditionally passed as a function
+argument before.
+
+Ideally we'd just walk the list instead of doing the
+split/list_del/list_add dance, and this would be a logical
+cleanup on top of this patch.
+
+> > @@ -817,6 +821,8 @@ struct pci_bus *pci_scan_bus(int bus, struct pci_ops *ops, void *sysdata);
+> >  struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
+> >  				    struct pci_ops *ops, void *sysdata,
+> >  				    struct list_head *resources);
+> > +void pci_host_bridge_init(struct pci_host_bridge *bridge);
+> > +int pci_host_bridge_register(struct pci_host_bridge *bridge);
+> >  int pci_bus_insert_busn_res(struct pci_bus *b, int bus, int busmax);
+> >  int pci_bus_update_busn_res_end(struct pci_bus *b, int busmax);
+> >  void pci_bus_release_busn_res(struct pci_bus *b);
+> 
+> There is too much stuff moving around. I know it is needed and the temptation is to get it
+> done as quickly as possible, but it makes the reviewing and the commenting on this series hard.
+
+This is why I left the list handling you mentioned above unchanged
+in my original patch instead of rewriting it.
+
+> Can you split the patch into one that adds the new members
+> into pci_host_bridge, then do the renaming/re-organisation in
+> another patch?
+
+That should be possible, I guess Thierry can deal with that when respinning
+the series.
+
+	Arnd
