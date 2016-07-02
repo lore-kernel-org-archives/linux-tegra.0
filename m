@@ -1,44 +1,86 @@
-From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: [GIT PULL] clk: tegra: Changes for v4.8-rc1
-Date: Fri, 1 Jul 2016 17:30:20 -0700
-Message-ID: <20160702003020.GH27880@codeaurora.org>
-References: <20160701150056.26537-1-thierry.reding@gmail.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH 11/14] PCI: tegra: make it explicitly non-modular
+Date: Sat, 2 Jul 2016 19:13:31 -0400
+Message-ID: <20160702231334.26684-12-paul.gortmaker@windriver.com>
+References: <20160702231334.26684-1-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20160701150056.26537-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160702231334.26684-1-paul.gortmaker@windriver.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Thierry Reding <thierry.reding@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/01, Thierry Reding wrote:
-> Hi Michael, Stephen,
-> 
-> The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
-> 
->   Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.8-clk
-> 
-> for you to fetch changes up to 15d68e8c2e95e8b62465c7cb3bc642784365ee1b:
-> 
->   clk: tegra: Initialize UTMI PLL when enabling PLLU (2016-06-30 17:43:17 +0200)
-> 
+The Kconfig currently controlling compilation of this code is:
 
-Pulled but please fix these types of errors next time.
+drivers/pci/host/Kconfig:config PCI_TEGRA
+drivers/pci/host/Kconfig:       bool "NVIDIA Tegra PCIe controller"
 
-ERROR: code indent should use tabs where possible
-#470: FILE: drivers/clk/tegra/clk-pll.c:2568:
-+^I         PLLU_HW_PWRDN_CFG0_USE_SWITCH_DETECT |$
+...meaning that it currently is not being built as a module by anyone.
 
-ERROR: code indent should use tabs where possible
-#471: FILE: drivers/clk/tegra/clk-pll.c:2569:
-+^I         PLLU_HW_PWRDN_CFG0_USE_LOCKDET;$
+Lets remove the few trace uses of modular code and macros, so that
+when reading the driver there is no doubt it is builtin-only.
 
+Since module_platform_driver() uses the same init level priority as
+builtin_platform_driver() the init ordering remains unchanged with
+this commit.
+
+Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+
+We also delete the MODULE_LICENSE tag etc. since all that information
+was (or is now) contained at the top of the file in the comments.
+
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-tegra@vger.kernel.org
+Cc: linux-pci@vger.kernel.org
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+---
+ drivers/pci/host/pci-tegra.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index 013d5488f9f8..c9a8eb252f50 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -9,6 +9,8 @@
+  *
+  * Bits taken from arch/arm/mach-dove/pcie.c
+  *
++ * Author: Thierry Reding <treding@nvidia.com>
++ *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License as published by
+  * the Free Software Foundation; either version 2 of the License, or
+@@ -32,7 +34,7 @@
+ #include <linux/irq.h>
+ #include <linux/irqdomain.h>
+ #include <linux/kernel.h>
+-#include <linux/module.h>
++#include <linux/init.h>
+ #include <linux/msi.h>
+ #include <linux/of_address.h>
+ #include <linux/of_pci.h>
+@@ -2088,7 +2090,6 @@ static const struct of_device_id tegra_pcie_of_match[] = {
+ 	{ .compatible = "nvidia,tegra20-pcie", .data = &tegra20_pcie_data },
+ 	{ },
+ };
+-MODULE_DEVICE_TABLE(of, tegra_pcie_of_match);
+ 
+ static void *tegra_pcie_ports_seq_start(struct seq_file *s, loff_t *pos)
+ {
+@@ -2277,8 +2278,4 @@ static struct platform_driver tegra_pcie_driver = {
+ 	},
+ 	.probe = tegra_pcie_probe,
+ };
+-module_platform_driver(tegra_pcie_driver);
+-
+-MODULE_AUTHOR("Thierry Reding <treding@nvidia.com>");
+-MODULE_DESCRIPTION("NVIDIA Tegra PCIe driver");
+-MODULE_LICENSE("GPL v2");
++builtin_platform_driver(tegra_pcie_driver);
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.8.4
