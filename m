@@ -1,121 +1,86 @@
-From: Liviu Dudau <liviu.dudau@arm.com>
-Subject: Re: [PATCH v2 1/2] PCI: Add new method for registering PCI hosts
-Date: Mon, 4 Jul 2016 10:56:27 +0100
-Message-ID: <20160704095627.GG8609@e106497-lin.cambridge.arm.com>
-References: <20160630151931.29216-1-thierry.reding@gmail.com>
- <4061641.rLdO1g8OBR@wuerfel>
- <20160701160923.GF8609@e106497-lin.cambridge.arm.com>
- <3872522.jdXcQClxV5@wuerfel>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Tegra baseline test results for v4.7-rc3
+Date: Mon, 4 Jul 2016 14:44:48 +0100
+Message-ID: <577A6850.7080507@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <3872522.jdXcQClxV5@wuerfel>
-Sender: linux-pci-owner@vger.kernel.org
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, Tomasz Nowicki <tn@semihalf.com>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, kernel-build-reports@lists.linaro.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jul 01, 2016 at 06:30:24PM +0200, Arnd Bergmann wrote:
-> On Friday, July 1, 2016 5:09:23 PM CEST Liviu Dudau wrote:
-> > > > >=20
-> > > > > The main idea is to pull the allocation of 'struct pci_host_b=
-ridge' out
-> > > > > of the registration, and let individual host drivers and arch=
-itecture
-> > > > > code fill the members before calling the registration functio=
-n.
-> > > >=20
-> > > > That's how we got into the arch/arm mess that we currently have=
-=2E The host driver
-> > > > should not drive the instantiation of the pci_host_bridge struc=
-ture because it
-> > > > will prevent you from having two drivers running at the same ti=
-me.
-> > >=20
-> > > Can you clarify that? I don't see what prevents two drivers from =
-each
-> > > creating a pci_host_bridge structure and passing it into
-> > > pci_host_bridge_register().
-> >=20
-> > Maybe I'm exagerating a bit, but I always disliked the pci_common_i=
-nit() function and
-> > the way it is creating a pci_host_bridge while relying on hw_pci ho=
-oks to get
-> > things ready. I'm pretty sure there are still issues around the fac=
-t that a lot of
-> > platform drivers have a subsys_initcall() function that calls pci_c=
-ommon_init(). I
-> > don't want us to go down that path again.
->=20
-> I see what you mean now, and I agree we don't want to do this like
-> pci_common_init(), but the patch here does a number of things very
-> differently:
->=20
-> - it's not architecture specific
-> - it is not tied into architecture specific pcibios_* functions
-> - it does not create multiple bridges at once
-> - it does not have three levels of callbacks going back and forth,
->   the idea is to eventually end up with one structure for the
->   callback pointers including those that today are done as __weak
->   functions.
->=20
-> Today we only have four callers of pci_common_init_dev that probe the
-> PCI host from DT: cns3xxx, versatile, mvebu and rcar-gen2. I hope
-> we can replace all of them with the new method here directly and
-> not take any intermediate steps.
->=20
-> The users of pci_common_init() (not _dev) are limited to board files
-> on really old platforms that are either not getting updated (ixp, iop=
-,
-> footbridge, ks8695, mv78xx0, sa1100) or that have DT based replacemen=
-t
-> code coming (dove, orion5x, cns3xxx, integrator).
->=20
-> > Don't get me wrong, clearly someone needs to create an instance of =
-pci_host_bridge.
-> > What I want people to accept is that in the PCI(e) architecture the=
-re is nothing that
-> > stops a piece of HW that used to be the bridge between host and und=
-erlying bus into
-> > becoming the bridge between a higher PCI(e) bus and the bus underne=
-ath. If the writes
-> > to the configuration registers happens somehow, the Host Bridge doe=
-sn't even know if
-> > it is talking to the actual host. Can the driver in that case make =
-sure it did not made
-> > assumptions that were tied to a specific SoC implementation?
->=20
-> Sorry, I'm not really following what you mean with that, or what the
-> consequence is for the Linux implementation. Can you try to rephrase =
-this?
+Here are some basic Tegra test results for Linux v4.7-rc3.
+Logs and other details at:
 
-I'm thinking drivers expecting to drive the bridge between the host and=
- the PCI bus.
-When that HW is used to bridge between another bus (PCI or PCIe) becaus=
-e the
-functionality was there all the time in terms of signals, the driver's =
-assumptions
-break down. But maybe I'm being too theoretical and such beasts don't e=
-xist? (I remember
-seeing a network card that had native PCI chip plus an added PCIe-to-PC=
-I bridge and
-the driver was tripping badly, but I can't remember the exact details.
+    https://nvtb.github.io//linux/test_v4.7-rc3/20160612073103/
 
-Best regards,
-Liviu
 
->=20
-> 	Arnd
->=20
+Test summary
+------------
 
---=20
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-| I would like to |
-| fix the world,  |
-| but they're not |
-| giving me the   |
- \ source code!  /
-  ---------------
-    =C2=AF\_(=E3=83=84)_/=C2=AF
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Build: Image:
+    Pass: ( 1/ 1): defconfig
+
+Boot to userspace: defconfig:
+    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
+		   tegra210-p2371-0000, tegra210-smaug
+
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: multi_v7_defconfig:
+    FAIL: ( 1/ 5): tegra30-beaver
+    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice
+
+PM: System suspend: tegra_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v4.7-rc2 (af8c34ce6ae32addda3788d54a7e340cad22516b)):
+   text     data      bss    total  kernel
+   +205      +40        0     +245  defconfig
+   +732      +32        0     +764  multi_v7_defconfig
+   +492     +192        0     +684  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.7-rc2 (af8c34ce6ae32addda3788d54a7e340cad22516b))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+        .        .        .        .      qemu-vexpress64            defconfig           __internal
+        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+        .        .        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
+        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
+        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
+        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
+        .        .        .        .       tegra210-smaug            defconfig       tegra210-smaug
+        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+
+--
+nvpublic
