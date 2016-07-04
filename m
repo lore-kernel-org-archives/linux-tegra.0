@@ -1,28 +1,20 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Tegra baseline test results for v4.7-rc3
-Date: Mon, 4 Jul 2016 14:44:48 +0100
-Message-ID: <577A6850.7080507@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v4.7-rc5
+Date: Mon, 4 Jul 2016 14:45:02 +0100
+Message-ID: <577A685E.2000508@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, kernel-build-reports@lists.linaro.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.7-rc3.
+Here are some basic Tegra test results for Linux v4.7-rc5.
 Logs and other details at:
 
-    https://nvtb.github.io//linux/test_v4.7-rc3/20160612073103/
+    https://nvtb.github.io//linux/test_v4.7-rc5/20160626183105/
 
 
 Test summary
@@ -47,9 +39,8 @@ Boot to userspace: tegra_defconfig:
 		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
 
 PM: System suspend: multi_v7_defconfig:
-    FAIL: ( 1/ 5): tegra30-beaver
-    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
 
 PM: System suspend: tegra_defconfig:
     Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
@@ -57,15 +48,15 @@ PM: System suspend: tegra_defconfig:
 
 
 vmlinux object size
-(delta in bytes from test_v4.7-rc2 (af8c34ce6ae32addda3788d54a7e340cad22516b)):
+(delta in bytes from test_v4.7-rc4 (33688abb2802ff3a230bd2441f765477b94cc89e)):
    text     data      bss    total  kernel
-   +205      +40        0     +245  defconfig
-   +732      +32        0     +764  multi_v7_defconfig
-   +492     +192        0     +684  tegra_defconfig
+     +4        0        0       +4  defconfig
+   +806      -64        0     +742  multi_v7_defconfig
+   +754      -64        0     +690  tegra_defconfig
 
 
 Boot-time memory difference
-(delta in bytes from test_v4.7-rc2 (af8c34ce6ae32addda3788d54a7e340cad22516b))
+(delta in bytes from test_v4.7-rc4 (33688abb2802ff3a230bd2441f765477b94cc89e))
     avail    rsrvd     high    freed                board              kconfig                  dtb
         .        .        .        .      qemu-vexpress64            defconfig           __internal
         .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
