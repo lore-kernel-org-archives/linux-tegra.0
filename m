@@ -1,45 +1,80 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v2 1/2] PCI: Add new method for registering PCI hosts
-Date: Mon, 04 Jul 2016 15:46:44 +0200
-Message-ID: <38942848.fvm5hraBhy@wuerfel>
-References: <20160630151931.29216-1-thierry.reding@gmail.com> <3872522.jdXcQClxV5@wuerfel> <20160704095627.GG8609@e106497-lin.cambridge.arm.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v4.7-rc2
+Date: Mon, 4 Jul 2016 14:38:09 +0100
+Message-ID: <577A66C1.1010307@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20160704095627.GG8609@e106497-lin.cambridge.arm.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Liviu Dudau <liviu.dudau@arm.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, Tomasz Nowicki <tn@semihalf.com>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday, July 4, 2016 10:56:27 AM CEST Liviu Dudau wrote:
-> On Fri, Jul 01, 2016 at 06:30:24PM +0200, Arnd Bergmann wrote:
-> > On Friday, July 1, 2016 5:09:23 PM CEST Liviu Dudau wrote:
+Here are some basic Tegra test results for Linux v4.7-rc2.
+Logs and other details at:
 
-> > > Don't get me wrong, clearly someone needs to create an instance of pci_host_bridge.
-> > > What I want people to accept is that in the PCI(e) architecture there is nothing that
-> > > stops a piece of HW that used to be the bridge between host and underlying bus into
-> > > becoming the bridge between a higher PCI(e) bus and the bus underneath. If the writes
-> > > to the configuration registers happens somehow, the Host Bridge doesn't even know if
-> > > it is talking to the actual host. Can the driver in that case make sure it did not made
-> > > assumptions that were tied to a specific SoC implementation?
-> > 
-> > Sorry, I'm not really following what you mean with that, or what the
-> > consequence is for the Linux implementation. Can you try to rephrase this?
-> 
-> I'm thinking drivers expecting to drive the bridge between the host and the PCI bus.
-> When that HW is used to bridge between another bus (PCI or PCIe) because the
-> functionality was there all the time in terms of signals, the driver's assumptions
-> break down. But maybe I'm being too theoretical and such beasts don't exist? (I remember
-> seeing a network card that had native PCI chip plus an added PCIe-to-PCI bridge and
-> the driver was tripping badly, but I can't remember the exact details.
+    https://nvtb.github.io//linux/test_v4.7-rc2/20160605150104/
 
-I think we should expect all non-host PCI bridges to behave according to the
-normal PCI spec and get handled by the PCI core.
 
-There are some handlers for broken bridges in drivers/pci/quirks.c, which
-is not nice but there is little alternative, and I don't think that
-hooking into the PCI host bridge driver code would help here.
+Test summary
+------------
 
-	Arnd
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Build: Image:
+    Pass: ( 1/ 1): defconfig
+
+Boot to userspace: defconfig:
+    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
+		   tegra210-p2371-0000, tegra210-smaug
+
+Boot to userspace: multi_v7_defconfig:
+    FAIL: ( 1/ 5): tegra20-trimslice
+    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: multi_v7_defconfig:
+    FAIL: ( 1/ 5): tegra30-beaver
+    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice
+
+PM: System suspend: tegra_defconfig:
+    FAIL: ( 1/ 5): tegra30-beaver
+    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice
+
+vmlinux object size
+(delta in bytes from test_v4.7-rc1 (1a695a905c18548062509178b98bc91e67510864)):
+   text     data      bss    total  kernel
+  +4072        0        0    +4072  defconfig
+  +1128        0        0    +1128  multi_v7_defconfig
+  +1452        0        0    +1452  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.7-rc1 (1a695a905c18548062509178b98bc91e67510864))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+        .        .        .        .      qemu-vexpress64            defconfig           __internal
+        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+        .        .        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
+        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
+        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
+        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
+        .        .        .        .       tegra210-smaug            defconfig       tegra210-smaug
+        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+
+
+--
+nvpublic
