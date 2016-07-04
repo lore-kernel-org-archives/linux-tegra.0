@@ -1,44 +1,67 @@
-From: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Subject: [patch] drm/tegra: sor: Double free on error
-Date: Mon, 4 Jul 2016 10:45:01 +0300
-Message-ID: <20160704074501.GA4849@mwanda>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH 3/4] bus: tegra-aconnect: make it explicitly non-modular
+Date: Mon, 4 Jul 2016 10:17:09 +0100
+Message-ID: <577A2995.6020504@nvidia.com>
+References: <20160703173040.23612-1-paul.gortmaker@windriver.com>
+ <20160703173040.23612-4-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20160703173040.23612-4-paul.gortmaker@windriver.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Paul Gortmaker <paul.gortmaker@windriver.com>, linux-kernel@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, linux-arm-kernel@lists.infradead.org, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
-"brick" is allocated with devm_kzalloc() so freeing it with kfree()
-leads to a double free.  We can just delete it.
+Hi Paul,
 
-Fixes: a7ba8310c7f5 ('drm/tegra: sor: Implement sor1_brick clock')
-Signed-off-by: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+On 03/07/16 18:30, Paul Gortmaker wrote:
+> The Kconfig currently controlling compilation of this code is:
+> 
+> drivers/bus/Kconfig:config TEGRA_ACONNECT
+> drivers/bus/Kconfig:    bool "Tegra ACONNECT Bus Driver"
+> 
+> ...meaning that it currently is not being built as a module by anyone.
+> 
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the driver there is no doubt it is builtin-only.
+> 
+> We explicitly disallow a driver unbind, since that doesn't have a
+> sensible use case anyway, and it allows us to drop the ".remove"
+> code for non-modular drivers.
+> 
+> Since module_platform_driver() uses the same init level priority as
+> builtin_platform_driver() the init ordering remains unchanged with
+> this commit.
+> 
+> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+> 
+> We also delete the MODULE_LICENSE tag etc. since all that information
+> was (or is now) contained at the top of the file in the comments.
 
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index 8425eda..e750ced 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -345,7 +345,6 @@ static struct clk *tegra_clk_sor_brick_register(struct tegra_sor *sor,
- {
- 	struct tegra_clk_sor_brick *brick;
- 	struct clk_init_data init;
--	struct clk *clk;
- 
- 	brick = devm_kzalloc(sor->dev, sizeof(*brick), GFP_KERNEL);
- 	if (!brick)
-@@ -361,11 +360,7 @@ static struct clk *tegra_clk_sor_brick_register(struct tegra_sor *sor,
- 
- 	brick->hw.init = &init;
- 
--	clk = devm_clk_register(sor->dev, &brick->hw);
--	if (IS_ERR(clk))
--		kfree(brick);
--
--	return clk;
-+	return devm_clk_register(sor->dev, &brick->hw);
- }
- 
- static int tegra_sor_dp_train_fast(struct tegra_sor *sor,
+In version 3 of the aconnect series [0] I had made this a tristate
+because we allowed it to be removed and you had submitted a patch to
+export the PM_CLK APIs. However, when discussing with Thierry he said
+that we were unable to merge with tristate because of the dependency on
+your patch. So he suggested we merge with bool for now and then change
+it back to tristate for v4.9.
+
+I understand that we should not do this, but we do plan to make this
+modular in the future.
+
+Cheers
+Jon
+
+[0] http://marc.info/?l=linux-tegra&m=146616753627760&w=2
+
+-- 
+nvpublic
