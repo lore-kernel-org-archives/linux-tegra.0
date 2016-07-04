@@ -1,133 +1,89 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 3/4] bus: tegra-aconnect: make it explicitly non-modular
-Date: Mon, 4 Jul 2016 14:47:26 +0100
-Message-ID: <577A68EE.3040402@nvidia.com>
-References: <20160703173040.23612-1-paul.gortmaker@windriver.com>
- <20160703173040.23612-4-paul.gortmaker@windriver.com>
- <577A2995.6020504@nvidia.com> <20160704134123.GV26134@windriver.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
+Subject: [PATCH 09/10] clk: tegra: make clk-tegra124-dfll-fcpu explicitly non-modular
+Date: Mon, 4 Jul 2016 17:12:19 -0400
+Message-ID: <20160704211220.5685-10-paul.gortmaker@windriver.com>
+References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160704134123.GV26134-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <20160704211220.5685-1-paul.gortmaker@windriver.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: linux-kernel@vger.kernel.org
+Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Aleksandr Frid <afrid@nvidia.com>, Paul Walmsley <pwalmsley@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+The Kconfig currently controlling compilation of this code is:
 
-On 04/07/16 14:41, Paul Gortmaker wrote:
-> [Re: [PATCH 3/4] bus: tegra-aconnect: make it explicitly non-modular] On 04/07/2016 (Mon 10:17) Jon Hunter wrote:
-> 
->> Hi Paul,
->>
->> On 03/07/16 18:30, Paul Gortmaker wrote:
->>> The Kconfig currently controlling compilation of this code is:
->>>
->>> drivers/bus/Kconfig:config TEGRA_ACONNECT
->>> drivers/bus/Kconfig:    bool "Tegra ACONNECT Bus Driver"
->>>
->>> ...meaning that it currently is not being built as a module by anyone.
->>>
->>> Lets remove the modular code that is essentially orphaned, so that
->>> when reading the driver there is no doubt it is builtin-only.
->>>
->>> We explicitly disallow a driver unbind, since that doesn't have a
->>> sensible use case anyway, and it allows us to drop the ".remove"
->>> code for non-modular drivers.
->>>
->>> Since module_platform_driver() uses the same init level priority as
->>> builtin_platform_driver() the init ordering remains unchanged with
->>> this commit.
->>>
->>> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
->>>
->>> We also delete the MODULE_LICENSE tag etc. since all that information
->>> was (or is now) contained at the top of the file in the comments.
->>
->> In version 3 of the aconnect series [0] I had made this a tristate
->> because we allowed it to be removed and you had submitted a patch to
->> export the PM_CLK APIs. However, when discussing with Thierry he said
->> that we were unable to merge with tristate because of the dependency on
->> your patch. So he suggested we merge with bool for now and then change
->> it back to tristate for v4.9.
-> 
-> Oh I see.  The exported clock syms were for the 210 DMA driver and it
-> never crossed my mind that this driver needed the same syms in order for
-> it to be tristate.  Guess the exports proved useful afterall.  :)
+arch/arm/mach-tegra/Kconfig:config ARCH_TEGRA_124_SOC
+arch/arm/mach-tegra/Kconfig:    bool "Enable support for Tegra124 family"
 
-Yes indeed and I did learn my lesson after your previous catch for the
-ADMA ;-)
+...meaning that it currently is not being built as a module by anyone.
 
->>
->> I understand that we should not do this, but we do plan to make this
->> modular in the future.
-> 
-> No problem ; I will drop this patch in favor of a one line Kconfig patch
-> in my test queue so it doesn't trip the regular audit, just like I have
-> for the 210 below -- not yet submitted for the same dependency reason.
-> 
-> P.
-> ---
-> 
-> 
->  From fe5bdc6348828c157deb14e8d75c732abcc2ad2b Mon Sep 17 00:00:00 2001
-> From: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
-> Date: Fri, 20 May 2016 14:30:43 -0400
-> Subject: [PATCH] dma: tegra210-adma: convert TEGRA210_ADMA from bool to
->  tristate
-> 
-> This driver currently uses modular infrastructure but is controlled
-> by a bool Kconfig.
-> 
-> There is a general consensus from the DMA reviewers and maintainers
-> that "if it can be modular, it should be modular" in order to keep
-> the bzImage size under control for multi platform kernels.
-> 
-> Build tested only.  Also needs some new pm_clk symbols exported
-> before this commit is applied to tree in order to avoid modpost
-> errors like:
-> 
->   ERROR: "pm_clk_add_clk" [drivers/dma/tegra210-adma.ko] undefined!
->   ERROR: "pm_clk_create" [drivers/dma/tegra210-adma.ko] undefined!
->   ERROR: "pm_clk_destroy" [drivers/dma/tegra210-adma.ko] undefined!
->   ERROR: "pm_clk_suspend" [drivers/dma/tegra210-adma.ko] undefined!
->   ERROR: "pm_clk_resume" [drivers/dma/tegra210-adma.ko] undefined!
-> 
-> Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-> Cc: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-> Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
-> ---
->  drivers/dma/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
-> index 8c98779a12b1..866068d84ca2 100644
-> --- a/drivers/dma/Kconfig
-> +++ b/drivers/dma/Kconfig
-> @@ -468,7 +468,7 @@ config TEGRA20_APB_DMA
->  	  or vice versa. It does not support memory to memory data transfer.
->  
->  config TEGRA210_ADMA
-> -	bool "NVIDIA Tegra210 ADMA support"
-> +	tristate "NVIDIA Tegra210 ADMA support"
->  	depends on ARCH_TEGRA_210_SOC
->  	select DMA_ENGINE
->  	select DMA_VIRTUAL_CHANNELS
+Lets remove the modular code that is essentially orphaned, so that
+when reading the driver there is no doubt it is builtin-only.
 
-Thanks! FWIW ...
+Since module_init translates to device_initcall in the non-modular
+case, the init ordering remains unchanged with this commit.
 
-Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
 
-Cheers
-Jon
+We also delete the MODULE_LICENSE tags etc. since all that information
+is already contained at the top of the file in the comments.
 
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc: Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>
+Cc: Aleksandr Frid <afrid@nvidia.com>
+Cc: Paul Walmsley <pwalmsley@nvidia.com>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-tegra@vger.kernel.org
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+---
+ drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+index c205809ba580..4301569d072a 100644
+--- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
++++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
+@@ -20,7 +20,7 @@
+ #include <linux/cpu.h>
+ #include <linux/err.h>
+ #include <linux/kernel.h>
+-#include <linux/module.h>
++#include <linux/init.h>
+ #include <linux/platform_device.h>
+ #include <soc/tegra/fuse.h>
+ 
+@@ -148,7 +148,6 @@ static const struct of_device_id tegra124_dfll_fcpu_of_match[] = {
+ 	{ .compatible = "nvidia,tegra124-dfll", },
+ 	{ },
+ };
+-MODULE_DEVICE_TABLE(of, tegra124_dfll_fcpu_of_match);
+ 
+ static const struct dev_pm_ops tegra124_dfll_pm_ops = {
+ 	SET_RUNTIME_PM_OPS(tegra_dfll_runtime_suspend,
+@@ -169,15 +168,4 @@ static int __init tegra124_dfll_fcpu_init(void)
+ {
+ 	return platform_driver_register(&tegra124_dfll_fcpu_driver);
+ }
+-module_init(tegra124_dfll_fcpu_init);
+-
+-static void __exit tegra124_dfll_fcpu_exit(void)
+-{
+-	platform_driver_unregister(&tegra124_dfll_fcpu_driver);
+-}
+-module_exit(tegra124_dfll_fcpu_exit);
+-
+-MODULE_DESCRIPTION("Tegra124 DFLL clock source driver");
+-MODULE_LICENSE("GPL v2");
+-MODULE_AUTHOR("Aleksandr Frid <afrid@nvidia.com>");
+-MODULE_AUTHOR("Paul Walmsley <pwalmsley@nvidia.com>");
++device_initcall(tegra124_dfll_fcpu_init);
 -- 
-nvpublic
+2.8.4
+
