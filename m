@@ -1,60 +1,36 @@
-From: Wolfram Sang <wsa@the-dreams.de>
-Subject: Re: [PATCH] i2c: tegra: Correct error path in probe
-Date: Wed, 6 Jul 2016 00:22:09 +0900
-Message-ID: <20160705152208.GC3641@tetsubishi>
-References: <1465936007-18599-1-git-send-email-jonathanh@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] gpio: of: Allow overriding the device node
+Date: Tue, 5 Jul 2016 17:25:15 +0200
+Message-ID: <CACRpkdbAKHy8PjUr-fWToMKu3jZqfhkQHahQRfw6EFxqNYfY0w@mail.gmail.com>
+References: <20160705121114.10650-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="rQ2U398070+RC21q"
-Return-path: <linux-i2c-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1465936007-18599-1-git-send-email-jonathanh@nvidia.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Shardar Shariff Md <smohammed@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160705121114.10650-1-thierry.reding@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, Jul 5, 2016 at 2:11 PM, Thierry Reding <thierry.reding@gmail.com> wrote:
 
---rQ2U398070+RC21q
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> From: Thierry Reding <treding@nvidia.com>
+>
+> When registering a GPIO chip, drivers can override the device tree node
+> associated with the chip by setting the chip's ->of_node field. If set,
+> this field is supposed to take precedence over the ->parent->of_node
+> field, but the code doesn't actually do that.
+>
+> Commit 762c2e46c059 ("gpio: of: remove of_gpiochip_and_xlate() and
+> struct gg_data") exposes this because it now no longer matches on the
+> GPIO chip's ->of_node field, but the GPIO device's ->of_node field that
+> is set using the procedure described above.
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
-On Tue, Jun 14, 2016 at 09:26:46PM +0100, Jon Hunter wrote:
-> Commit 497fbe24987b ("i2c: tegra: enable multi master mode for tegra210")
-> enables the Tegra I2C 'div_clk' for adapters using the multi-master mode
-> during the device probe. Although the probe error path was updated to
-> disable the clock on probe failure, there is one place after calling
-> tegra_i2c_init() where the clock will not be disabled on failure. Correct
-> the error path so that the 'div_clk' is disabled if calling
-> tegra_i2c_init() fails.
->=20
-> Fixes: 497fbe24987b ("i2c: tegra: enable multi master mode for tegra210")
->=20
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Thanks for catching this, patch applied with Alexandre's ACK.
 
-Applied to for-current, thanks!
+Masahiro: does this look all right to you?
 
-
---rQ2U398070+RC21q
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXe9CgAAoJEBQN5MwUoCm2+2wQAK9j2Bvh9dqorxuWTk8kpJ9D
-HT2XZaCn5mb68Gr62O9v1MCcHtEoYv0/f+bzPjxlkaQRxClZrJNHiSEne63t0ht1
-ITx+x+cNjrDyZH9+X7atXy/EUauaB426/CfqJBIXWyeZJguZRWCckzbBq2OY0wWq
-Qo/kTH0r4Xno0BG/t0bmlnuj+Qwafx//qTzxD6Udo3hD4qvEaPv8mn1kCNBHm4vK
-bACqg0XGtS6UHKUVqUWXrrq4bhvpVZs8s1bt6AHsHHIeQpCWdbnp5aArfWlHhZun
-+S1wA0VVYVnOGvioG7HEJNw0F1BGX/LjzjxVfMNRHRl9uuRk9srLph+rLxkBQa6a
-1oXB4fFS1l5+igHkwND7XECMHpHszxa4wzf5g8LC/eAFcD7AoitJyAUIUcTZK+wJ
-8L5zOWMFV+Il5JE4N5tTmTBThDkZBwcfBgmRr83xVctF3TI3tHkcBJGLrR8Cbqd7
-HT3KXXHeSyMZHCYlQXjktJ3dS8jD7AYOmUk8t3GG6zVmJXyAd0mOWbWkxJeZdsB+
-rD5sqlL8+aed/sQ3dQR9NL5L3joiDAzmxsRcQqskRF8u+Rf/L1wzajZiAg64uwRZ
-yf8kbcrKFB6xJ/jSx+f/AnbQxMgru6vlWIFbwzfclxHqoSVDSUhAY1cAbJlUXlHR
-WUcoYgY17GRbmYdb/0FN
-=ttie
------END PGP SIGNATURE-----
-
---rQ2U398070+RC21q--
+Yours,
+Linus Walleij
