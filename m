@@ -1,131 +1,60 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] mmc: tegra: Only advertise UHS modes if IO regulator is present
-Date: Tue, 5 Jul 2016 15:07:45 +0100
-Message-ID: <1467727665-2709-1-git-send-email-jonathanh@nvidia.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH] i2c: tegra: Correct error path in probe
+Date: Wed, 6 Jul 2016 00:22:09 +0900
+Message-ID: <20160705152208.GC3641@tetsubishi>
+References: <1465936007-18599-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-mmc-owner@vger.kernel.org>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Adrian Hunter <adrian.hunter@intel.com>, Ulf Hansson <ulf.hansson@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="rQ2U398070+RC21q"
+Return-path: <linux-i2c-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1465936007-18599-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Shardar Shariff Md <smohammed@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-To support UHS modes for Tegra an external regulator must be present
-to adjust the IO voltage accordingly. If the regulator is not present
-but the host supports the UHS modes and the SD/MMC device supports the
-UHS modes, then we will attempt to switch to a high-speed mode.
 
-Without an external regulator, Tegra will fail to switch to the
-high-speed mode. Although this is expected, it has been found that with
-some SD cards, once it has been switched to operate at a high-speed
-mode and hence a lower IO voltage, if the IO voltage is not changed then
-all subsequent commands issues to the card will fail. Furthermore, it
-will not be possible to switch back to a non high-speed mode and so
-eventually the SD card initialisation will fail.
+--rQ2U398070+RC21q
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The SDHCI core does not require that the host have an external regulator
-when switching to UHS modes and therefore, the Tegra SDHCI host
-controller should only advertise the UHS modes as being supported if the
-regulator for the IO voltage is present. Fortunately, Tegra has a vendor
-specific register which can be used to control which modes are
-advertised via the SDHCI_CAPABILITIES register and if the controller is
-compatible with v3.0 of the SDHCI specification. Hence, if there is no
-IO voltage regulator present in device-tree for the Tegra SDHCI host, then
-don't advertise the UHS modes or that the controller is SDHCI v3.0
-compatible.
+On Tue, Jun 14, 2016 at 09:26:46PM +0100, Jon Hunter wrote:
+> Commit 497fbe24987b ("i2c: tegra: enable multi master mode for tegra210")
+> enables the Tegra I2C 'div_clk' for adapters using the multi-master mode
+> during the device probe. Although the probe error path was updated to
+> disable the clock on probe failure, there is one place after calling
+> tegra_i2c_init() where the clock will not be disabled on failure. Correct
+> the error path so that the 'div_clk' is disabled if calling
+> tegra_i2c_init() fails.
+>=20
+> Fixes: 497fbe24987b ("i2c: tegra: enable multi master mode for tegra210")
+>=20
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 
-Note that if the SDHCI is compatible with v3.0 of the SDHCI specification
-then this will cause the SDHCI core to read the SDHCI_CAPABILITIES_1
-register which will enable other UHS modes.
+Applied to for-current, thanks!
 
-This fixes commit 7ad2ed1dfcbe ("mmc: tegra: enable UHS-I modes") which
-enables UHS mode without checking if the board can support them.
 
-Fixes: 7ad2ed1dfcbe ("mmc: tegra: enable UHS-I modes")
+--rQ2U398070+RC21q
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
 
-Please note that I have been reviewing the series from Adrian [0] to
-make it easier for drivers to set the capabilities. However, given that
-we can control the capabilities that are advertised by the CAPS registers
-it seems easier to use this feature.
+iQIcBAEBAgAGBQJXe9CgAAoJEBQN5MwUoCm2+2wQAK9j2Bvh9dqorxuWTk8kpJ9D
+HT2XZaCn5mb68Gr62O9v1MCcHtEoYv0/f+bzPjxlkaQRxClZrJNHiSEne63t0ht1
+ITx+x+cNjrDyZH9+X7atXy/EUauaB426/CfqJBIXWyeZJguZRWCckzbBq2OY0wWq
+Qo/kTH0r4Xno0BG/t0bmlnuj+Qwafx//qTzxD6Udo3hD4qvEaPv8mn1kCNBHm4vK
+bACqg0XGtS6UHKUVqUWXrrq4bhvpVZs8s1bt6AHsHHIeQpCWdbnp5aArfWlHhZun
++S1wA0VVYVnOGvioG7HEJNw0F1BGX/LjzjxVfMNRHRl9uuRk9srLph+rLxkBQa6a
+1oXB4fFS1l5+igHkwND7XECMHpHszxa4wzf5g8LC/eAFcD7AoitJyAUIUcTZK+wJ
+8L5zOWMFV+Il5JE4N5tTmTBThDkZBwcfBgmRr83xVctF3TI3tHkcBJGLrR8Cbqd7
+HT3KXXHeSyMZHCYlQXjktJ3dS8jD7AYOmUk8t3GG6zVmJXyAd0mOWbWkxJeZdsB+
+rD5sqlL8+aed/sQ3dQR9NL5L3joiDAzmxsRcQqskRF8u+Rf/L1wzajZiAg64uwRZ
+yf8kbcrKFB6xJ/jSx+f/AnbQxMgru6vlWIFbwzfclxHqoSVDSUhAY1cAbJlUXlHR
+WUcoYgY17GRbmYdb/0FN
+=ttie
+-----END PGP SIGNATURE-----
 
-[0] http://marc.info/?l=linux-mmc&m=146712062816835&w=2
-
- drivers/mmc/host/sdhci-tegra.c | 50 +++++++++++++++++++++++++-----------------
- 1 file changed, 30 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-index bcc0de47fe7e..c8b51cd71c56 100644
---- a/drivers/mmc/host/sdhci-tegra.c
-+++ b/drivers/mmc/host/sdhci-tegra.c
-@@ -140,6 +140,7 @@ static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
- 	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
- 	struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
- 	const struct sdhci_tegra_soc_data *soc_data = tegra_host->soc_data;
-+	struct device *dev = mmc_dev(host->mmc);
- 	u32 misc_ctrl, clk_ctrl;
- 
- 	sdhci_reset(host, mask);
-@@ -148,28 +149,37 @@ static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
- 		return;
- 
- 	misc_ctrl = sdhci_readl(host, SDHCI_TEGRA_VENDOR_MISC_CTRL);
--	/* Erratum: Enable SDHCI spec v3.00 support */
--	if (soc_data->nvquirks & NVQUIRK_ENABLE_SDHCI_SPEC_300)
--		misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDHCI_SPEC_300;
--	/* Advertise UHS modes as supported by host */
--	if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR50)
--		misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDR50;
--	else
--		misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_SDR50;
--	if (soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
--		misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_DDR50;
--	else
--		misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_DDR50;
--	if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR104)
--		misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDR104;
--	else
--		misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_SDR104;
--	sdhci_writel(host, misc_ctrl, SDHCI_TEGRA_VENDOR_MISC_CTRL);
--
- 	clk_ctrl = sdhci_readl(host, SDHCI_TEGRA_VENDOR_CLOCK_CTRL);
-+
-+	misc_ctrl &= ~(SDHCI_MISC_CTRL_ENABLE_SDHCI_SPEC_300 |
-+		       SDHCI_MISC_CTRL_ENABLE_SDR50 |
-+		       SDHCI_MISC_CTRL_ENABLE_DDR50 |
-+		       SDHCI_MISC_CTRL_ENABLE_SDR104);
-+
- 	clk_ctrl &= ~SDHCI_CLOCK_CTRL_SPI_MODE_CLKEN_OVERRIDE;
--	if (soc_data->nvquirks & SDHCI_MISC_CTRL_ENABLE_SDR50)
--		clk_ctrl |= SDHCI_CLOCK_CTRL_SDR50_TUNING_OVERRIDE;
-+
-+	/*
-+	 * If the board does not define a regulator for the SDHCI
-+	 * IO voltage, then don't advertise support for UHS modes
-+	 * even if the device supports it because the IO voltage
-+	 * cannot be configured.
-+	 */
-+	if (of_property_read_bool(dev->of_node, "vqmmc-supply")) {
-+		/* Erratum: Enable SDHCI spec v3.00 support */
-+		if (soc_data->nvquirks & NVQUIRK_ENABLE_SDHCI_SPEC_300)
-+			misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDHCI_SPEC_300;
-+		/* Advertise UHS modes as supported by host */
-+		if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR50)
-+			misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDR50;
-+		if (soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
-+			misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_DDR50;
-+		if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR104)
-+			misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDR104;
-+		if (soc_data->nvquirks & SDHCI_MISC_CTRL_ENABLE_SDR50)
-+			clk_ctrl |= SDHCI_CLOCK_CTRL_SDR50_TUNING_OVERRIDE;
-+	}
-+
-+	sdhci_writel(host, misc_ctrl, SDHCI_TEGRA_VENDOR_MISC_CTRL);
- 	sdhci_writel(host, clk_ctrl, SDHCI_TEGRA_VENDOR_CLOCK_CTRL);
- 
- 	if (soc_data->nvquirks & NVQUIRK_HAS_PADCALIB)
--- 
-2.1.4
-
+--rQ2U398070+RC21q--
