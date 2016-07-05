@@ -1,1086 +1,850 @@
-From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V2 03/10] Documentation: dt-bindings: firmware: tegra: add
- bindings of the BPMP
-Date: Tue, 5 Jul 2016 17:04:24 +0800
-Message-ID: <20160705090431.5852-4-josephl@nvidia.com>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2 05/10] firmware: tegra: add BPMP support
+Date: Tue, 5 Jul 2016 17:04:26 +0800
+Message-ID: <20160705090431.5852-6-josephl@nvidia.com>
 References: <20160705090431.5852-1-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20160705090431.5852-1-josephl@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jassi Brar <jassisinghbrar@gmail.com>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, Matthew Longnecker <MLongnecker@nvidia.com>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160705090431.5852-1-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The BPMP is a specific processor in Tegra chip, which is designed for
-booting process handling and offloading the power management, clock
-management, and reset control tasks from the CPU. The binding document
-defines the resources that would be used by the BPMP firmware driver,
-which can create the interprocessor communication (IPC) between the CPU
-and BPMP.
+The Tegra BPMP (Boot and Power Management Processor) is designed for the
+booting process handling, offloading the power management tasks and
+some system control services from the CPU. It can be clock, DVFS,
+thermal/EDP, power gating operation and system suspend/resume handling.
+So the CPU and the drivers of these modules can base on the service that
+the BPMP firmware driver provided to signal the event for the specific PM
+action to BPMP and receive the status update from BPMP.
 
-Signed-off-by: Joseph Lo <josephl@nvidia.com>
+Comparing to the ARM SCPI, the service provided by BPMP is message-based
+communication but not method-based. The BPMP firmware driver provides the
+send/receive service for the users, when the user concerns the response
+time. If the user needs to get the event or update from the firmware, it
+can request the MRQ service as well. The user needs to take care of the
+message format, which we call BPMP ABI.
+
+The BPMP ABI defines the message format for different modules or usages.
+For example, the clock operation needs an MRQ service code called
+MRQ_CLK with specific message format which includes different sub
+commands for various clock operations. This is the message format that
+BPMP can recognize.
+
+So the user needs two things to initiate IPC between BPMP. Get the
+service from the bpmp_ops structure and maintain the message format as
+the BPMP ABI defined.
+
+Based-on-the-work-by:
+Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 Changes in V2:
-- update the message that the BPMP is clock and reset control provider
-- add tegra186-clock.h and tegra186-reset.h header files
-- revise the description of the required properties
+- None
 ---
- .../bindings/firmware/nvidia,tegra186-bpmp.txt     |  77 ++
- include/dt-bindings/clock/tegra186-clock.h         | 940 +++++++++++++++++++++
- include/dt-bindings/reset/tegra186-reset.h         | 217 +++++
- 3 files changed, 1234 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
- create mode 100644 include/dt-bindings/clock/tegra186-clock.h
- create mode 100644 include/dt-bindings/reset/tegra186-reset.h
+ drivers/firmware/tegra/Kconfig  |   12 +
+ drivers/firmware/tegra/Makefile |    1 +
+ drivers/firmware/tegra/bpmp.c   |  713 +++++++++++++++++
+ include/soc/tegra/bpmp.h        |   29 +
+ include/soc/tegra/bpmp_abi.h    | 1601 +++++++++++++++++++++++++++++++++++++++
+ 5 files changed, 2356 insertions(+)
+ create mode 100644 drivers/firmware/tegra/bpmp.c
+ create mode 100644 include/soc/tegra/bpmp.h
+ create mode 100644 include/soc/tegra/bpmp_abi.h
 
-diff --git a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
+diff --git a/drivers/firmware/tegra/Kconfig b/drivers/firmware/tegra/Kconfig
+index 1fa3e4e136a5..ff2730d5c468 100644
+--- a/drivers/firmware/tegra/Kconfig
++++ b/drivers/firmware/tegra/Kconfig
+@@ -10,4 +10,16 @@ config TEGRA_IVC
+ 	  keeps the content is synchronization between host CPU and remote
+ 	  processors.
+ 
++config TEGRA_BPMP
++	bool "Tegra BPMP driver"
++	depends on ARCH_TEGRA && TEGRA_HSP_MBOX && TEGRA_IVC
++	help
++	  BPMP (Boot and Power Management Processor) is designed to off-loading
++	  the PM functions which include clock/DVFS/thermal/power from the CPU.
++	  It needs HSP as the HW synchronization and notification module and
++	  IVC module as the message communication protocol.
++
++	  This driver manages the IPC interface between host CPU and the
++	  firmware running on BPMP.
++
+ endmenu
+diff --git a/drivers/firmware/tegra/Makefile b/drivers/firmware/tegra/Makefile
+index 92e2153e8173..e34a2f79e1ad 100644
+--- a/drivers/firmware/tegra/Makefile
++++ b/drivers/firmware/tegra/Makefile
+@@ -1 +1,2 @@
++obj-$(CONFIG_TEGRA_BPMP)	+= bpmp.o
+ obj-$(CONFIG_TEGRA_IVC)		+= ivc.o
+diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
 new file mode 100644
-index 000000000000..4d0b6eba56c5
+index 000000000000..24fda626610e
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
-@@ -0,0 +1,77 @@
-+NVIDIA Tegra Boot and Power Management Processor (BPMP)
-+
-+The BPMP is a specific processor in Tegra chip, which is designed for
-+booting process handling and offloading the power management, clock
-+management, and reset control tasks from the CPU. The binding document
-+defines the resources that would be used by the BPMP firmware driver,
-+which can create the interprocessor communication (IPC) between the CPU
-+and BPMP.
-+
-+Required properties:
-+- name : Should be bpmp
-+- compatible
-+    Array of strings
-+    One of:
-+    - "nvidia,tegra186-bpmp"
-+- mboxes : The phandle of mailbox controller and the mailbox specifier.
-+- shmem : List of the phandle of the TX and RX shared memory area that
-+	  the IPC between CPU and BPMP is based on.
-+- #clock-cells : Should be 1.
-+- #reset-cells : Should be 1.
-+
-+This node is a mailbox consumer. See the following files for details of
-+the mailbox subsystem, and the specifiers implemented by the relevant
-+provider(s):
-+
-+- Documentation/devicetree/bindings/mailbox/mailbox.txt
-+- Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt
-+
-+This node is a clock and reset provider. See the following files for
-+general documentation of those features, and the specifiers implemented
-+by this node:
-+
-+- Documentation/devicetree/bindings/clock/clock-bindings.txt
-+- include/dt-bindings/clock/tegra186-clock.h
-+- Documentation/devicetree/bindings/reset/reset.txt
-+- include/dt-bindings/reset/tegra186-reset.h
-+
-+The shared memory bindings for BPMP
-+-----------------------------------
-+
-+The shared memory area for the IPC TX and RX between CPU and BPMP are
-+predefined and work on top of sysram, which is an SRAM inside the chip.
-+
-+See "Documentation/devicetree/bindings/sram/sram.txt" for the bindings.
-+
-+Example:
-+
-+hsp_top0: hsp@03c00000 {
-+	...
-+	#mbox-cells = <1>;
-+};
-+
-+sysram@30000000 {
-+	compatible = "nvidia,tegra186-sysram", "mmio-ram";
-+	reg = <0x0 0x30000000 0x0 0x50000>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+	ranges = <0 0x0 0x0 0x30000000 0x0 0x50000>;
-+
-+	cpu_bpmp_tx: bpmp_shmem@4e000 {
-+		compatible = "nvidia,tegra186-bpmp-shmem";
-+		reg = <0x0 0x4e000 0x0 0x1000>;
-+	};
-+
-+	cpu_bpmp_rx: bpmp_shmem@4f000 {
-+		compatible = "nvidia,tegra186-bpmp-shmem";
-+		reg = <0x0 0x4f000 0x0 0x1000>;
-+	};
-+};
-+
-+bpmp {
-+	compatible = "nvidia,tegra186-bpmp";
-+	mboxes = <&hsp_top0 HSP_MBOX_ID(DB, HSP_DB_MASTER_BPMP)>;
-+	shmem = <&cpu_bpmp_tx &cpu_bpmp_rx>;
-+	#clock-cells = <1>;
-+	#reset-cells = <1>;
-+};
-diff --git a/include/dt-bindings/clock/tegra186-clock.h b/include/dt-bindings/clock/tegra186-clock.h
-new file mode 100644
-index 000000000000..f73d32098f99
---- /dev/null
-+++ b/include/dt-bindings/clock/tegra186-clock.h
-@@ -0,0 +1,940 @@
-+/** @file */
-+
-+#ifndef _MACH_T186_CLK_T186_H
-+#define _MACH_T186_CLK_T186_H
-+
-+/**
-+ * @defgroup clock_ids Clock Identifiers
-+ * @{
-+ *   @defgroup extern_input external input clocks
-+ *   @{
-+ *     @def TEGRA186_CLK_OSC
-+ *     @def TEGRA186_CLK_CLK_32K
-+ *     @def TEGRA186_CLK_DTV_INPUT
-+ *     @def TEGRA186_CLK_SOR0_PAD_CLKOUT
-+ *     @def TEGRA186_CLK_SOR1_PAD_CLKOUT
-+ *     @def TEGRA186_CLK_I2S1_SYNC_INPUT
-+ *     @def TEGRA186_CLK_I2S2_SYNC_INPUT
-+ *     @def TEGRA186_CLK_I2S3_SYNC_INPUT
-+ *     @def TEGRA186_CLK_I2S4_SYNC_INPUT
-+ *     @def TEGRA186_CLK_I2S5_SYNC_INPUT
-+ *     @def TEGRA186_CLK_I2S6_SYNC_INPUT
-+ *     @def TEGRA186_CLK_SPDIFIN_SYNC_INPUT
-+ *   @}
-+ *
-+ *   @defgroup extern_output external output clocks
-+ *   @{
-+ *     @def TEGRA186_CLK_EXTPERIPH1
-+ *     @def TEGRA186_CLK_EXTPERIPH2
-+ *     @def TEGRA186_CLK_EXTPERIPH3
-+ *     @def TEGRA186_CLK_EXTPERIPH4
-+ *   @}
-+ *
-+ *   @defgroup display_clks display related clocks
-+ *   @{
-+ *     @def TEGRA186_CLK_CEC
-+ *     @def TEGRA186_CLK_DSIC
-+ *     @def TEGRA186_CLK_DSIC_LP
-+ *     @def TEGRA186_CLK_DSID
-+ *     @def TEGRA186_CLK_DSID_LP
-+ *     @def TEGRA186_CLK_DPAUX1
-+ *     @def TEGRA186_CLK_DPAUX
-+ *     @def TEGRA186_CLK_HDA2HDMICODEC
-+ *     @def TEGRA186_CLK_NVDISPLAY_DISP
-+ *     @def TEGRA186_CLK_NVDISPLAY_DSC
-+ *     @def TEGRA186_CLK_NVDISPLAY_P0
-+ *     @def TEGRA186_CLK_NVDISPLAY_P1
-+ *     @def TEGRA186_CLK_NVDISPLAY_P2
-+ *     @def TEGRA186_CLK_NVDISPLAYHUB
-+ *     @def TEGRA186_CLK_SOR_SAFE
-+ *     @def TEGRA186_CLK_SOR0
-+ *     @def TEGRA186_CLK_SOR0_OUT
-+ *     @def TEGRA186_CLK_SOR1
-+ *     @def TEGRA186_CLK_SOR1_OUT
-+ *     @def TEGRA186_CLK_DSI
-+ *     @def TEGRA186_CLK_MIPI_CAL
-+ *     @def TEGRA186_CLK_DSIA_LP
-+ *     @def TEGRA186_CLK_DSIB
-+ *     @def TEGRA186_CLK_DSIB_LP
-+ *   @}
-+ *
-+ *   @defgroup camera_clks camera related clocks
-+ *   @{
-+ *     @def TEGRA186_CLK_NVCSI
-+ *     @def TEGRA186_CLK_NVCSILP
-+ *     @def TEGRA186_CLK_VI
-+ *   @}
-+ *
-+ *   @defgroup audio_clks audio related clocks
-+ *   @{
-+ *     @def TEGRA186_CLK_ACLK
-+ *     @def TEGRA186_CLK_ADSP
-+ *     @def TEGRA186_CLK_ADSPNEON
-+ *     @def TEGRA186_CLK_AHUB
-+ *     @def TEGRA186_CLK_APE
-+ *     @def TEGRA186_CLK_APB2APE
-+ *     @def TEGRA186_CLK_AUD_MCLK
-+ *     @def TEGRA186_CLK_DMIC1
-+ *     @def TEGRA186_CLK_DMIC2
-+ *     @def TEGRA186_CLK_DMIC3
-+ *     @def TEGRA186_CLK_DMIC4
-+ *     @def TEGRA186_CLK_DSPK1
-+ *     @def TEGRA186_CLK_DSPK2
-+ *     @def TEGRA186_CLK_HDA
-+ *     @def TEGRA186_CLK_HDA2CODEC_2X
-+ *     @def TEGRA186_CLK_I2S1
-+ *     @def TEGRA186_CLK_I2S2
-+ *     @def TEGRA186_CLK_I2S3
-+ *     @def TEGRA186_CLK_I2S4
-+ *     @def TEGRA186_CLK_I2S5
-+ *     @def TEGRA186_CLK_I2S6
-+ *     @def TEGRA186_CLK_MAUD
-+ *     @def TEGRA186_CLK_PLL_A_OUT0
-+ *     @def TEGRA186_CLK_SPDIF_DOUBLER
-+ *     @def TEGRA186_CLK_SPDIF_IN
-+ *     @def TEGRA186_CLK_SPDIF_OUT
-+ *     @def TEGRA186_CLK_SYNC_DMIC1
-+ *     @def TEGRA186_CLK_SYNC_DMIC2
-+ *     @def TEGRA186_CLK_SYNC_DMIC3
-+ *     @def TEGRA186_CLK_SYNC_DMIC4
-+ *     @def TEGRA186_CLK_SYNC_DMIC5
-+ *     @def TEGRA186_CLK_SYNC_DSPK1
-+ *     @def TEGRA186_CLK_SYNC_DSPK2
-+ *     @def TEGRA186_CLK_SYNC_I2S1
-+ *     @def TEGRA186_CLK_SYNC_I2S2
-+ *     @def TEGRA186_CLK_SYNC_I2S3
-+ *     @def TEGRA186_CLK_SYNC_I2S4
-+ *     @def TEGRA186_CLK_SYNC_I2S5
-+ *     @def TEGRA186_CLK_SYNC_I2S6
-+ *     @def TEGRA186_CLK_SYNC_SPDIF
-+ *   @}
-+ *
-+ *   @defgroup uart_clks UART clocks
-+ *   @{
-+ *     @def TEGRA186_CLK_AON_UART_FST_MIPI_CAL
-+ *     @def TEGRA186_CLK_UARTA
-+ *     @def TEGRA186_CLK_UARTB
-+ *     @def TEGRA186_CLK_UARTC
-+ *     @def TEGRA186_CLK_UARTD
-+ *     @def TEGRA186_CLK_UARTE
-+ *     @def TEGRA186_CLK_UARTF
-+ *     @def TEGRA186_CLK_UARTG
-+ *     @def TEGRA186_CLK_UART_FST_MIPI_CAL
-+ *   @}
-+ *
-+ *   @defgroup i2c_clks I2C clocks
-+ *   @{
-+ *     @def TEGRA186_CLK_AON_I2C_SLOW
-+ *     @def TEGRA186_CLK_I2C1
-+ *     @def TEGRA186_CLK_I2C2
-+ *     @def TEGRA186_CLK_I2C3
-+ *     @def TEGRA186_CLK_I2C4
-+ *     @def TEGRA186_CLK_I2C5
-+ *     @def TEGRA186_CLK_I2C6
-+ *     @def TEGRA186_CLK_I2C8
-+ *     @def TEGRA186_CLK_I2C9
-+ *     @def TEGRA186_CLK_I2C1
-+ *     @def TEGRA186_CLK_I2C12
-+ *     @def TEGRA186_CLK_I2C13
-+ *     @def TEGRA186_CLK_I2C14
-+ *     @def TEGRA186_CLK_I2C_SLOW
-+ *     @def TEGRA186_CLK_VI_I2C
-+ *   @}
-+ *
-+ *   @defgroup spi_clks SPI clocks
-+ *   @{
-+ *     @def TEGRA186_CLK_SPI1
-+ *     @def TEGRA186_CLK_SPI2
-+ *     @def TEGRA186_CLK_SPI3
-+ *     @def TEGRA186_CLK_SPI4
-+ *   @}
-+ *
-+ *   @defgroup storage storage related clocks
-+ *   @{
-+ *     @def TEGRA186_CLK_SATA
-+ *     @def TEGRA186_CLK_SATA_OOB
-+ *     @def TEGRA186_CLK_SATA_IOBIST
-+ *     @def TEGRA186_CLK_SDMMC_LEGACY_TM
-+ *     @def TEGRA186_CLK_SDMMC1
-+ *     @def TEGRA186_CLK_SDMMC2
-+ *     @def TEGRA186_CLK_SDMMC3
-+ *     @def TEGRA186_CLK_SDMMC4
-+ *     @def TEGRA186_CLK_QSPI
-+ *     @def TEGRA186_CLK_QSPI_OUT
-+ *     @def TEGRA186_CLK_UFSDEV_REF
-+ *     @def TEGRA186_CLK_UFSHC
-+ *   @}
-+ *
-+ *   @defgroup pwm_clks PWM clocks
-+ *   @{
-+ *     @def TEGRA186_CLK_PWM1
-+ *     @def TEGRA186_CLK_PWM2
-+ *     @def TEGRA186_CLK_PWM3
-+ *     @def TEGRA186_CLK_PWM4
-+ *     @def TEGRA186_CLK_PWM5
-+ *     @def TEGRA186_CLK_PWM6
-+ *     @def TEGRA186_CLK_PWM7
-+ *     @def TEGRA186_CLK_PWM8
-+ *   @}
-+ *
-+ *   @defgroup plls PLLs and related clocks
-+ *   @{
-+ *     @def TEGRA186_CLK_PLLREFE_OUT_GATED
-+ *     @def TEGRA186_CLK_PLLREFE_OUT1
-+ *     @def TEGRA186_CLK_PLLD_OUT1
-+ *     @def TEGRA186_CLK_PLLP_OUT0
-+ *     @def TEGRA186_CLK_PLLP_OUT5
-+ *     @def TEGRA186_CLK_PLLA
-+ *     @def TEGRA186_CLK_PLLE_PWRSEQ
-+ *     @def TEGRA186_CLK_PLLA_OUT1
-+ *     @def TEGRA186_CLK_PLLREFE_REF
-+ *     @def TEGRA186_CLK_UPHY_PLL0_PWRSEQ
-+ *     @def TEGRA186_CLK_UPHY_PLL1_PWRSEQ
-+ *     @def TEGRA186_CLK_PLLREFE_PLLE_PASSTHROUGH
-+ *     @def TEGRA186_CLK_PLLREFE_PEX
-+ *     @def TEGRA186_CLK_PLLREFE_IDDQ
-+ *     @def TEGRA186_CLK_PLLC_OUT_AON
-+ *     @def TEGRA186_CLK_PLLC_OUT_ISP
-+ *     @def TEGRA186_CLK_PLLC_OUT_VE
-+ *     @def TEGRA186_CLK_PLLC4_OUT
-+ *     @def TEGRA186_CLK_PLLREFE_OUT
-+ *     @def TEGRA186_CLK_PLLREFE_PLL_REF
-+ *     @def TEGRA186_CLK_PLLE
-+ *     @def TEGRA186_CLK_PLLC
-+ *     @def TEGRA186_CLK_PLLP
-+ *     @def TEGRA186_CLK_PLLD
-+ *     @def TEGRA186_CLK_PLLD2
-+ *     @def TEGRA186_CLK_PLLREFE_VCO
-+ *     @def TEGRA186_CLK_PLLC2
-+ *     @def TEGRA186_CLK_PLLC3
-+ *     @def TEGRA186_CLK_PLLDP
-+ *     @def TEGRA186_CLK_PLLC4_VCO
-+ *     @def TEGRA186_CLK_PLLA1
-+ *     @def TEGRA186_CLK_PLLNVCSI
-+ *     @def TEGRA186_CLK_PLLDISPHUB
-+ *     @def TEGRA186_CLK_PLLD3
-+ *     @def TEGRA186_CLK_PLLBPMPCAM
-+ *     @def TEGRA186_CLK_PLLAON
-+ *     @def TEGRA186_CLK_PLLU
-+ *     @def TEGRA186_CLK_PLLC4_VCO_DIV2
-+ *     @def TEGRA186_CLK_PLL_REF
-+ *     @def TEGRA186_CLK_PLLREFE_OUT1_DIV5
-+ *     @def TEGRA186_CLK_UTMIP_PLL_PWRSEQ
-+ *     @def TEGRA186_CLK_PLL_U_48M
-+ *     @def TEGRA186_CLK_PLL_U_480M
-+ *     @def TEGRA186_CLK_PLLC4_OUT0
-+ *     @def TEGRA186_CLK_PLLC4_OUT1
-+ *     @def TEGRA186_CLK_PLLC4_OUT2
-+ *     @def TEGRA186_CLK_PLLC4_OUT_MUX
-+ *     @def TEGRA186_CLK_DFLLDISP_DIV
-+ *     @def TEGRA186_CLK_PLLDISPHUB_DIV
-+ *     @def TEGRA186_CLK_PLLP_DIV8
-+ *   @}
-+ *
-+ *   @defgroup nafll_clks NAFLL clock sources
-+ *   @{
-+ *     @def TEGRA186_CLK_NAFLL_AXI_CBB
-+ *     @def TEGRA186_CLK_NAFLL_BCPU
-+ *     @def TEGRA186_CLK_NAFLL_BPMP
-+ *     @def TEGRA186_CLK_NAFLL_DISP
-+ *     @def TEGRA186_CLK_NAFLL_GPU
-+ *     @def TEGRA186_CLK_NAFLL_ISP
-+ *     @def TEGRA186_CLK_NAFLL_MCPU
-+ *     @def TEGRA186_CLK_NAFLL_NVDEC
-+ *     @def TEGRA186_CLK_NAFLL_NVENC
-+ *     @def TEGRA186_CLK_NAFLL_NVJPG
-+ *     @def TEGRA186_CLK_NAFLL_SCE
-+ *     @def TEGRA186_CLK_NAFLL_SE
-+ *     @def TEGRA186_CLK_NAFLL_TSEC
-+ *     @def TEGRA186_CLK_NAFLL_TSECB
-+ *     @def TEGRA186_CLK_NAFLL_VI
-+ *     @def TEGRA186_CLK_NAFLL_VIC
-+ *   @}
-+ *
-+ *   @defgroup mphy MPHY related clocks
-+ *   @{
-+ *     @def TEGRA186_CLK_MPHY_L0_RX_SYMB
-+ *     @def TEGRA186_CLK_MPHY_L0_RX_LS_BIT
-+ *     @def TEGRA186_CLK_MPHY_L0_TX_SYMB
-+ *     @def TEGRA186_CLK_MPHY_L0_TX_LS_3XBIT
-+ *     @def TEGRA186_CLK_MPHY_L0_RX_ANA
-+ *     @def TEGRA186_CLK_MPHY_L1_RX_ANA
-+ *     @def TEGRA186_CLK_MPHY_IOBIST
-+ *     @def TEGRA186_CLK_MPHY_TX_1MHZ_REF
-+ *     @def TEGRA186_CLK_MPHY_CORE_PLL_FIXED
-+ *   @}
-+ *
-+ *   @defgroup eavb EAVB related clocks
-+ *   @{
-+ *     @def TEGRA186_CLK_EQOS_AXI
-+ *     @def TEGRA186_CLK_EQOS_PTP_REF
-+ *     @def TEGRA186_CLK_EQOS_RX
-+ *     @def TEGRA186_CLK_EQOS_RX_INPUT
-+ *     @def TEGRA186_CLK_EQOS_TX
-+ *   @}
-+ *
-+ *   @defgroup usb USB related clocks
-+ *   @{
-+ *     @def TEGRA186_CLK_PEX_USB_PAD0_MGMT
-+ *     @def TEGRA186_CLK_PEX_USB_PAD1_MGMT
-+ *     @def TEGRA186_CLK_HSIC_TRK
-+ *     @def TEGRA186_CLK_USB2_TRK
-+ *     @def TEGRA186_CLK_USB2_HSIC_TRK
-+ *     @def TEGRA186_CLK_XUSB_CORE_SS
-+ *     @def TEGRA186_CLK_XUSB_CORE_DEV
-+ *     @def TEGRA186_CLK_XUSB_FALCON
-+ *     @def TEGRA186_CLK_XUSB_FS
-+ *     @def TEGRA186_CLK_XUSB
-+ *     @def TEGRA186_CLK_XUSB_DEV
-+ *     @def TEGRA186_CLK_XUSB_HOST
-+ *     @def TEGRA186_CLK_XUSB_SS
-+ *   @}
-+ *
-+ *   @defgroup bigblock compute block related clocks
-+ *   @{
-+ *     @def TEGRA186_CLK_GPCCLK
-+ *     @def TEGRA186_CLK_GPC2CLK
-+ *     @def TEGRA186_CLK_GPU
-+ *     @def TEGRA186_CLK_HOST1X
-+ *     @def TEGRA186_CLK_ISP
-+ *     @def TEGRA186_CLK_NVDEC
-+ *     @def TEGRA186_CLK_NVENC
-+ *     @def TEGRA186_CLK_NVJPG
-+ *     @def TEGRA186_CLK_SE
-+ *     @def TEGRA186_CLK_TSEC
-+ *     @def TEGRA186_CLK_TSECB
-+ *     @def TEGRA186_CLK_VIC
-+ *   @}
-+ *
-+ *   @defgroup can CAN bus related clocks
-+ *   @{
-+ *     @def TEGRA186_CLK_CAN1
-+ *     @def TEGRA186_CLK_CAN1_HOST
-+ *     @def TEGRA186_CLK_CAN2
-+ *     @def TEGRA186_CLK_CAN2_HOST
-+ *   @}
-+ *
-+ *   @defgroup system basic system clocks
-+ *   @{
-+ *     @def TEGRA186_CLK_ACTMON
-+ *     @def TEGRA186_CLK_AON_APB
-+ *     @def TEGRA186_CLK_AON_CPU_NIC
-+ *     @def TEGRA186_CLK_AON_NIC
-+ *     @def TEGRA186_CLK_AXI_CBB
-+ *     @def TEGRA186_CLK_BPMP_APB
-+ *     @def TEGRA186_CLK_BPMP_CPU_NIC
-+ *     @def TEGRA186_CLK_BPMP_NIC_RATE
-+ *     @def TEGRA186_CLK_CLK_M
-+ *     @def TEGRA186_CLK_EMC
-+ *     @def TEGRA186_CLK_MSS_ENCRYPT
-+ *     @def TEGRA186_CLK_SCE_APB
-+ *     @def TEGRA186_CLK_SCE_CPU_NIC
-+ *     @def TEGRA186_CLK_SCE_NIC
-+ *     @def TEGRA186_CLK_TSC
-+ *   @}
-+ *
-+ *   @defgroup pcie_clks PCIe related clocks
-+ *   @{
-+ *     @def TEGRA186_CLK_AFI
-+ *     @def TEGRA186_CLK_PCIE
-+ *     @def TEGRA186_CLK_PCIE2_IOBIST
-+ *     @def TEGRA186_CLK_PCIERX0
-+ *     @def TEGRA186_CLK_PCIERX1
-+ *     @def TEGRA186_CLK_PCIERX2
-+ *     @def TEGRA186_CLK_PCIERX3
-+ *     @def TEGRA186_CLK_PCIERX4
-+ *   @}
-+ */
-+
-+/** @brief output of gate CLK_ENB_FUSE */
-+#define TEGRA186_CLK_FUSE 0
-+/**
-+ * @brief It's not what you think
-+ * @details output of gate CLK_ENB_GPU. This output connects to the GPU
-+ * pwrclk. @warning: This is almost certainly not the clock you think
-+ * it is. If you're looking for the clock of the graphics engine, see
-+ * TEGRA186_GPCCLK
-+ */
-+#define TEGRA186_CLK_GPU 1
-+/** @brief output of gate CLK_ENB_PCIE */
-+#define TEGRA186_CLK_PCIE 3
-+/** @brief output of the divider IPFS_CLK_DIVISOR */
-+#define TEGRA186_CLK_AFI 4
-+/** @brief output of gate CLK_ENB_PCIE2_IOBIST */
-+#define TEGRA186_CLK_PCIE2_IOBIST 5
-+/** @brief output of gate CLK_ENB_PCIERX0*/
-+#define TEGRA186_CLK_PCIERX0 6
-+/** @brief output of gate CLK_ENB_PCIERX1*/
-+#define TEGRA186_CLK_PCIERX1 7
-+/** @brief output of gate CLK_ENB_PCIERX2*/
-+#define TEGRA186_CLK_PCIERX2 8
-+/** @brief output of gate CLK_ENB_PCIERX3*/
-+#define TEGRA186_CLK_PCIERX3 9
-+/** @brief output of gate CLK_ENB_PCIERX4*/
-+#define TEGRA186_CLK_PCIERX4 10
-+/** @brief output branch of PLL_C for ISP, controlled by gate CLK_ENB_PLLC_OUT_ISP */
-+#define TEGRA186_CLK_PLLC_OUT_ISP 11
-+/** @brief output branch of PLL_C for VI, controlled by gate CLK_ENB_PLLC_OUT_VE */
-+#define TEGRA186_CLK_PLLC_OUT_VE 12
-+/** @brief output branch of PLL_C for AON domain, controlled by gate CLK_ENB_PLLC_OUT_AON */
-+#define TEGRA186_CLK_PLLC_OUT_AON 13
-+/** @brief output of gate CLK_ENB_SOR_SAFE */
-+#define TEGRA186_CLK_SOR_SAFE 39
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2S2 */
-+#define TEGRA186_CLK_I2S2 42
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2S3 */
-+#define TEGRA186_CLK_I2S3 43
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_SPDF_IN */
-+#define TEGRA186_CLK_SPDIF_IN 44
-+/** @brief output of gate CLK_ENB_SPDIF_DOUBLER */
-+#define TEGRA186_CLK_SPDIF_DOUBLER 45
-+/**  @clkdesc{spi_clks, out, mux, CLK_RST_CONTROLLER_CLK_SOURCE_SPI3} */
-+#define TEGRA186_CLK_SPI3 46
-+/** @clkdesc{i2c_clks, out, mux, CLK_RST_CONTROLLER_CLK_SOURCE_I2C1} */
-+#define TEGRA186_CLK_I2C1 47
-+/** @clkdesc{i2c_clks, out, mux, CLK_RST_CONTROLLER_CLK_SOURCE_I2C5} */
-+#define TEGRA186_CLK_I2C5 48
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_SPI1 */
-+#define TEGRA186_CLK_SPI1 49
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_ISP */
-+#define TEGRA186_CLK_ISP 50
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_VI */
-+#define TEGRA186_CLK_VI 51
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_SDMMC1 */
-+#define TEGRA186_CLK_SDMMC1 52
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_SDMMC2 */
-+#define TEGRA186_CLK_SDMMC2 53
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_SDMMC4 */
-+#define TEGRA186_CLK_SDMMC4 54
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_UARTA */
-+#define TEGRA186_CLK_UARTA 55
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_UARTB */
-+#define TEGRA186_CLK_UARTB 56
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_HOST1X */
-+#define TEGRA186_CLK_HOST1X 57
-+/**
-+ * @brief controls the EMC clock frequency.
-+ * @details Doing a clk_set_rate on this clock will select the
-+ * appropriate clock source, program the source rate and execute a
-+ * specific sequence to switch to the new clock source for both memory
-+ * controllers. This can be used to control the balance between memory
-+ * throughput and memory controller power.
-+ */
-+#define TEGRA186_CLK_EMC 58
-+/* @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_EXTPERIPH4 */
-+#define TEGRA186_CLK_EXTPERIPH4 73
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_SPI4 */
-+#define TEGRA186_CLK_SPI4 74
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C3 */
-+#define TEGRA186_CLK_I2C3 75
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_SDMMC3 */
-+#define TEGRA186_CLK_SDMMC3 76
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_UARTD */
-+#define TEGRA186_CLK_UARTD 77
-+/** output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2S1 */
-+#define TEGRA186_CLK_I2S1 79
-+/** output of gate CLK_ENB_DTV */
-+#define TEGRA186_CLK_DTV 80
-+/** output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_TSEC */
-+#define TEGRA186_CLK_TSEC 81
-+/** @brief output of gate CLK_ENB_DP2 */
-+#define TEGRA186_CLK_DP2 82
-+/** output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2S4 */
-+#define TEGRA186_CLK_I2S4 84
-+/** output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2S5 */
-+#define TEGRA186_CLK_I2S5 85
-+/** output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C4 */
-+#define TEGRA186_CLK_I2C4 86
-+/** output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_AHUB */
-+#define TEGRA186_CLK_AHUB 87
-+/** output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_HDA2CODEC_2X */
-+#define TEGRA186_CLK_HDA2CODEC_2X 88
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_EXTPERIPH1 */
-+#define TEGRA186_CLK_EXTPERIPH1 89
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_EXTPERIPH2 */
-+#define TEGRA186_CLK_EXTPERIPH2 90
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_EXTPERIPH3 */
-+#define TEGRA186_CLK_EXTPERIPH3 91
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C_SLOW */
-+#define TEGRA186_CLK_I2C_SLOW 92
-+/** @brief output of the SOR1_CLK_SRC mux in CLK_RST_CONTROLLER_CLK_SOURCE_SOR1 */
-+#define TEGRA186_CLK_SOR1 93
-+/** @brief output of gate CLK_ENB_CEC */
-+#define TEGRA186_CLK_CEC 94
-+/** @brief output of gate CLK_ENB_DPAUX1 */
-+#define TEGRA186_CLK_DPAUX1 95
-+/** @brief output of gate CLK_ENB_DPAUX */
-+#define TEGRA186_CLK_DPAUX 96
-+/** @brief output of the SOR0_CLK_SRC mux in CLK_RST_CONTROLLER_CLK_SOURCE_SOR0 */
-+#define TEGRA186_CLK_SOR0 97
-+/** @brief output of gate CLK_ENB_HDA2HDMICODEC */
-+#define TEGRA186_CLK_HDA2HDMICODEC 98
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_SATA */
-+#define TEGRA186_CLK_SATA 99
-+/** @brief output of gate CLK_ENB_SATA_OOB */
-+#define TEGRA186_CLK_SATA_OOB 100
-+/** @brief output of gate CLK_ENB_SATA_IOBIST */
-+#define TEGRA186_CLK_SATA_IOBIST 101
-+/** output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_HDA */
-+#define TEGRA186_CLK_HDA 102
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_SE */
-+#define TEGRA186_CLK_SE 103
-+/** @brief output of gate CLK_ENB_APB2APE */
-+#define TEGRA186_CLK_APB2APE 104
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_APE */
-+#define TEGRA186_CLK_APE 105
-+/** @brief output of gate CLK_ENB_IQC1 */
-+#define TEGRA186_CLK_IQC1 106
-+/** @brief output of gate CLK_ENB_IQC2 */
-+#define TEGRA186_CLK_IQC2 107
-+/** divide by 2 version of TEGRA186_CLK_PLLREFE_VCO */
-+#define TEGRA186_CLK_PLLREFE_OUT 108
-+/** @brief output of gate CLK_ENB_PLLREFE_PLL_REF */
-+#define TEGRA186_CLK_PLLREFE_PLL_REF 109
-+/** @brief output of gate CLK_ENB_PLLC4_OUT */
-+#define TEGRA186_CLK_PLLC4_OUT 110
-+/** @brief output of mux xusb_core_clk_switch on page 67 of T186_Clocks_IAS.doc */
-+#define TEGRA186_CLK_XUSB 111
-+/** controls xusb_dev_ce signal on page 66 and 67 of T186_Clocks_IAS.doc */
-+#define TEGRA186_CLK_XUSB_DEV 112
-+/** controls xusb_host_ce signal on page 67 of T186_Clocks_IAS.doc */
-+#define TEGRA186_CLK_XUSB_HOST 113
-+/** controls xusb_ss_ce signal on page 67 of T186_Clocks_IAS.doc */
-+#define TEGRA186_CLK_XUSB_SS 114
-+/** @brief output of gate CLK_ENB_DSI */
-+#define TEGRA186_CLK_DSI 115
-+/** @brief output of gate CLK_ENB_MIPI_CAL */
-+#define TEGRA186_CLK_MIPI_CAL 116
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_DSIA_LP */
-+#define TEGRA186_CLK_DSIA_LP 117
-+/** @brief output of gate CLK_ENB_DSIB */
-+#define TEGRA186_CLK_DSIB 118
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_DSIB_LP */
-+#define TEGRA186_CLK_DSIB_LP 119
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_DMIC1 */
-+#define TEGRA186_CLK_DMIC1 122
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_DMIC2 */
-+#define TEGRA186_CLK_DMIC2 123
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_AUD_MCLK */
-+#define TEGRA186_CLK_AUD_MCLK 124
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C6 */
-+#define TEGRA186_CLK_I2C6 125
-+/**output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_UART_FST_MIPI_CAL */
-+#define TEGRA186_CLK_UART_FST_MIPI_CAL 126
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_VIC */
-+#define TEGRA186_CLK_VIC 127
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_SDMMC_LEGACY_TM */
-+#define TEGRA186_CLK_SDMMC_LEGACY_TM 128
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_NVDEC */
-+#define TEGRA186_CLK_NVDEC 129
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_NVJPG */
-+#define TEGRA186_CLK_NVJPG 130
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_NVENC */
-+#define TEGRA186_CLK_NVENC 131
-+/** @brief output of the QSPI_CLK_SRC mux in CLK_RST_CONTROLLER_CLK_SOURCE_QSPI */
-+#define TEGRA186_CLK_QSPI 132
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_VI_I2C */
-+#define TEGRA186_CLK_VI_I2C 133
-+/** @brief output of gate CLK_ENB_HSIC_TRK */
-+#define TEGRA186_CLK_HSIC_TRK 134
-+/** @brief output of gate CLK_ENB_USB2_TRK */
-+#define TEGRA186_CLK_USB2_TRK 135
-+/** output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_MAUD */
-+#define TEGRA186_CLK_MAUD 136
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_TSECB */
-+#define TEGRA186_CLK_TSECB 137
-+/** @brief output of gate CLK_ENB_ADSP */
-+#define TEGRA186_CLK_ADSP 138
-+/** @brief output of gate CLK_ENB_ADSPNEON */
-+#define TEGRA186_CLK_ADSPNEON 139
-+/** @brief output of the divider CLK_RST_CONTROLLER_CLK_SOURCE_MPHY_L0_RX_LS_SYMB */
-+#define TEGRA186_CLK_MPHY_L0_RX_SYMB 140
-+/** @brief output of gate CLK_ENB_MPHY_L0_RX_LS_BIT */
-+#define TEGRA186_CLK_MPHY_L0_RX_LS_BIT 141
-+/** @brief output of the divider CLK_RST_CONTROLLER_CLK_SOURCE_MPHY_L0_TX_LS_SYMB */
-+#define TEGRA186_CLK_MPHY_L0_TX_SYMB 142
-+/** @brief output of gate CLK_ENB_MPHY_L0_TX_LS_3XBIT */
-+#define TEGRA186_CLK_MPHY_L0_TX_LS_3XBIT 143
-+/** @brief output of gate CLK_ENB_MPHY_L0_RX_ANA */
-+#define TEGRA186_CLK_MPHY_L0_RX_ANA 144
-+/** @brief output of gate CLK_ENB_MPHY_L1_RX_ANA */
-+#define TEGRA186_CLK_MPHY_L1_RX_ANA 145
-+/** @brief output of the divider CLK_RST_CONTROLLER_CLK_SOURCE_MPHY_IOBIST */
-+#define TEGRA186_CLK_MPHY_IOBIST 146
-+/** @brief output of the divider CLK_RST_CONTROLLER_CLK_SOURCE_MPHY_TX_1MHZ_REF */
-+#define TEGRA186_CLK_MPHY_TX_1MHZ_REF 147
-+/** @brief output of the divider CLK_RST_CONTROLLER_CLK_SOURCE_MPHY_CORE_PLL_FIXED */
-+#define TEGRA186_CLK_MPHY_CORE_PLL_FIXED 148
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_AXI_CBB */
-+#define TEGRA186_CLK_AXI_CBB 149
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_DMIC3 */
-+#define TEGRA186_CLK_DMIC3 150
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_DMIC4 */
-+#define TEGRA186_CLK_DMIC4 151
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_DSPK1 */
-+#define TEGRA186_CLK_DSPK1 152
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_DSPK2 */
-+#define TEGRA186_CLK_DSPK2 153
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C6 */
-+#define TEGRA186_CLK_I2S6 154
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_NVDISPLAY_P0 */
-+#define TEGRA186_CLK_NVDISPLAY_P0 155
-+/** @brief output of the NVDISPLAY_DISP_CLK_SRC mux in CLK_RST_CONTROLLER_CLK_SOURCE_NVDISPLAY_DISP */
-+#define TEGRA186_CLK_NVDISPLAY_DISP 156
-+/** @brief output of gate CLK_ENB_NVDISPLAY_DSC */
-+#define TEGRA186_CLK_NVDISPLAY_DSC 157
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_NVDISPLAYHUB */
-+#define TEGRA186_CLK_NVDISPLAYHUB 158
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_NVDISPLAY_P1 */
-+#define TEGRA186_CLK_NVDISPLAY_P1 159
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_NVDISPLAY_P2 */
-+#define TEGRA186_CLK_NVDISPLAY_P2 160
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_TACH */
-+#define TEGRA186_CLK_TACH 166
-+/** @brief output of gate CLK_ENB_EQOS */
-+#define TEGRA186_CLK_EQOS_AXI 167
-+/** @brief output of gate CLK_ENB_EQOS_RX */
-+#define TEGRA186_CLK_EQOS_RX 168
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_UFSHC_CG_SYS */
-+#define TEGRA186_CLK_UFSHC 178
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_UFSDEV_REF */
-+#define TEGRA186_CLK_UFSDEV_REF 179
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_NVCSI */
-+#define TEGRA186_CLK_NVCSI 180
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_NVCSILP */
-+#define TEGRA186_CLK_NVCSILP 181
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C7 */
-+#define TEGRA186_CLK_I2C7 182
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C9 */
-+#define TEGRA186_CLK_I2C9 183
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C12 */
-+#define TEGRA186_CLK_I2C12 184
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C13 */
-+#define TEGRA186_CLK_I2C13 185
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C14 */
-+#define TEGRA186_CLK_I2C14 186
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_PWM1 */
-+#define TEGRA186_CLK_PWM1 187
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_PWM2 */
-+#define TEGRA186_CLK_PWM2 188
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_PWM3 */
-+#define TEGRA186_CLK_PWM3 189
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_PWM5 */
-+#define TEGRA186_CLK_PWM5 190
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_PWM6 */
-+#define TEGRA186_CLK_PWM6 191
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_PWM7 */
-+#define TEGRA186_CLK_PWM7 192
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_PWM8 */
-+#define TEGRA186_CLK_PWM8 193
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_UARTE */
-+#define TEGRA186_CLK_UARTE 194
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_UARTF */
-+#define TEGRA186_CLK_UARTF 195
-+/** @deprecated */
-+#define TEGRA186_CLK_DBGAPB 196
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_BPMP_CPU_NIC */
-+#define TEGRA186_CLK_BPMP_CPU_NIC 197
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_BPMP_APB */
-+#define TEGRA186_CLK_BPMP_APB 199
-+/** @brief output of mux controlled by TEGRA186_CLK_SOC_ACTMON */
-+#define TEGRA186_CLK_ACTMON 201
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_AON_CPU_NIC */
-+#define TEGRA186_CLK_AON_CPU_NIC 208
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_CAN1 */
-+#define TEGRA186_CLK_CAN1 210
-+/** @brief output of gate CLK_ENB_CAN1_HOST */
-+#define TEGRA186_CLK_CAN1_HOST 211
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_CAN2 */
-+#define TEGRA186_CLK_CAN2 212
-+/** @brief output of gate CLK_ENB_CAN2_HOST */
-+#define TEGRA186_CLK_CAN2_HOST 213
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_AON_APB */
-+#define TEGRA186_CLK_AON_APB 214
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_UARTC */
-+#define TEGRA186_CLK_UARTC 215
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_UARTG */
-+#define TEGRA186_CLK_UARTG 216
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_AON_UART_FST_MIPI_CAL */
-+#define TEGRA186_CLK_AON_UART_FST_MIPI_CAL 217
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C2 */
-+#define TEGRA186_CLK_I2C2 218
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C8 */
-+#define TEGRA186_CLK_I2C8 219
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_I2C10 */
-+#define TEGRA186_CLK_I2C10 220
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_AON_I2C_SLOW */
-+#define TEGRA186_CLK_AON_I2C_SLOW 221
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_SPI2 */
-+#define TEGRA186_CLK_SPI2 222
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_DMIC5 */
-+#define TEGRA186_CLK_DMIC5 223
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_AON_TOUCH */
-+#define TEGRA186_CLK_AON_TOUCH 224
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_PWM4 */
-+#define TEGRA186_CLK_PWM4 225
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_TSC. This clock object is read only and is used for all timers in the system. */
-+#define TEGRA186_CLK_TSC 226
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_MSS_ENCRYPT */
-+#define TEGRA186_CLK_MSS_ENCRYPT 227
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_SCE_CPU_NIC */
-+#define TEGRA186_CLK_SCE_CPU_NIC 228
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_SCE_APB */
-+#define TEGRA186_CLK_SCE_APB 230
-+/** @brief output of gate CLK_ENB_DSIC */
-+#define TEGRA186_CLK_DSIC 231
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_DSIC_LP */
-+#define TEGRA186_CLK_DSIC_LP 232
-+/** @brief output of gate CLK_ENB_DSID */
-+#define TEGRA186_CLK_DSID 233
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_DSID_LP */
-+#define TEGRA186_CLK_DSID_LP 234
-+/** @brief output of the divider CLK_RST_CONTROLLER_CLK_SOURCE_PEX_SATA_USB_RX_BYP */
-+#define TEGRA186_CLK_PEX_SATA_USB_RX_BYP 236
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_CLK_SOURCE_SPDIF_OUT */
-+#define TEGRA186_CLK_SPDIF_OUT 238
-+/** @brief output of the divider CLK_RST_CONTROLLER_CLK_SOURCE_EQOS_PTP_REF_CLK_0 */
-+#define TEGRA186_CLK_EQOS_PTP_REF 239
-+/** @brief output of the divider CLK_RST_CONTROLLER_CLK_SOURCE_EQOS_TX_CLK */
-+#define TEGRA186_CLK_EQOS_TX 240
-+/** @brief output of the divider CLK_RST_CONTROLLER_CLK_SOURCE_USB2_HSIC_TRK */
-+#define TEGRA186_CLK_USB2_HSIC_TRK 241
-+/** @brief output of mux xusb_ss_clk_switch on page 66 of T186_Clocks_IAS.doc */
-+#define TEGRA186_CLK_XUSB_CORE_SS 242
-+/** @brief output of mux xusb_core_dev_clk_switch on page 67 of T186_Clocks_IAS.doc */
-+#define TEGRA186_CLK_XUSB_CORE_DEV 243
-+/** @brief output of mux xusb_core_falcon_clk_switch on page 67 of T186_Clocks_IAS.doc */
-+#define TEGRA186_CLK_XUSB_FALCON 244
-+/** @brief output of mux xusb_fs_clk_switch on page 66 of T186_Clocks_IAS.doc */
-+#define TEGRA186_CLK_XUSB_FS 245
-+/** @brief output of the divider CLK_RST_CONTROLLER_PLLA_OUT */
-+#define TEGRA186_CLK_PLL_A_OUT0 246
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_AUDIO_SYNC_CLK_I2S1 */
-+#define TEGRA186_CLK_SYNC_I2S1 247
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_AUDIO_SYNC_CLK_I2S2 */
-+#define TEGRA186_CLK_SYNC_I2S2 248
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_AUDIO_SYNC_CLK_I2S3 */
-+#define TEGRA186_CLK_SYNC_I2S3 249
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_AUDIO_SYNC_CLK_I2S4 */
-+#define TEGRA186_CLK_SYNC_I2S4 250
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_AUDIO_SYNC_CLK_I2S5 */
-+#define TEGRA186_CLK_SYNC_I2S5 251
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_AUDIO_SYNC_CLK_I2S6 */
-+#define TEGRA186_CLK_SYNC_I2S6 252
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_AUDIO_SYNC_CLK_DSPK1 */
-+#define TEGRA186_CLK_SYNC_DSPK1 253
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_AUDIO_SYNC_CLK_DSPK2 */
-+#define TEGRA186_CLK_SYNC_DSPK2 254
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_AUDIO_SYNC_CLK_DMIC1 */
-+#define TEGRA186_CLK_SYNC_DMIC1 255
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_AUDIO_SYNC_CLK_DMIC2 */
-+#define TEGRA186_CLK_SYNC_DMIC2 256
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_AUDIO_SYNC_CLK_DMIC3 */
-+#define TEGRA186_CLK_SYNC_DMIC3 257
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_AUDIO_SYNC_CLK_DMIC4 */
-+#define TEGRA186_CLK_SYNC_DMIC4 259
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_AUDIO_SYNC_CLK_SPDIF */
-+#define TEGRA186_CLK_SYNC_SPDIF 260
-+/** @brief output of gate CLK_ENB_PLLREFE_OUT */
-+#define TEGRA186_CLK_PLLREFE_OUT_GATED 261
-+/** @brief output of the divider PLLREFE_DIVP in CLK_RST_CONTROLLER_PLLREFE_BASE. PLLREFE has 2 outputs:
-+  *      * VCO/pdiv defined by this clock object
-+  *      * VCO/2 defined by TEGRA186_CLK_PLLREFE_OUT
-+  */
-+#define TEGRA186_CLK_PLLREFE_OUT1 262
-+#define TEGRA186_CLK_PLLD_OUT1 267
-+/** @brief output of the divider PLLP_DIVP in CLK_RST_CONTROLLER_PLLP_BASE */
-+#define TEGRA186_CLK_PLLP_OUT0 269
-+/** @brief output of the divider CLK_RST_CONTROLLER_PLLP_OUTC */
-+#define TEGRA186_CLK_PLLP_OUT5 270
-+/** PLL controlled by CLK_RST_CONTROLLER_PLLA_BASE for use by audio clocks */
-+#define TEGRA186_CLK_PLLA 271
-+/** @brief output of mux controlled by CLK_RST_CONTROLLER_ACLK_BURST_POLICY divided by the divider controlled by ACLK_CLK_DIVISOR in CLK_RST_CONTROLLER_SUPER_ACLK_DIVIDER */
-+#define TEGRA186_CLK_ACLK 273
-+/** fixed 48MHz clock divided down from TEGRA186_CLK_PLL_U */
-+#define TEGRA186_CLK_PLL_U_48M 274
-+/** fixed 480MHz clock divided down from TEGRA186_CLK_PLL_U */
-+#define TEGRA186_CLK_PLL_U_480M 275
-+/** @brief output of the divider PLLC4_DIVP in CLK_RST_CONTROLLER_PLLC4_BASE. Output frequency is TEGRA186_CLK_PLLC4_VCO/PLLC4_DIVP */
-+#define TEGRA186_CLK_PLLC4_OUT0 276
-+/** fixed /3 divider. Output frequency of this clock is TEGRA186_CLK_PLLC4_VCO/3 */
-+#define TEGRA186_CLK_PLLC4_OUT1 277
-+/** fixed /5 divider. Output frequency of this clock is TEGRA186_CLK_PLLC4_VCO/5 */
-+#define TEGRA186_CLK_PLLC4_OUT2 278
-+/** @brief output of mux controlled by PLLC4_CLK_SEL in CLK_RST_CONTROLLER_PLLC4_MISC1 */
-+#define TEGRA186_CLK_PLLC4_OUT_MUX 279
-+/** @brief output of divider NVDISPLAY_DISP_CLK_DIVISOR in CLK_RST_CONTROLLER_CLK_SOURCE_NVDISPLAY_DISP when DFLLDISP_DIV is selected in NVDISPLAY_DISP_CLK_SRC */
-+#define TEGRA186_CLK_DFLLDISP_DIV 284
-+/** @brief output of divider NVDISPLAY_DISP_CLK_DIVISOR in CLK_RST_CONTROLLER_CLK_SOURCE_NVDISPLAY_DISP when PLLDISPHUB_DIV is selected in NVDISPLAY_DISP_CLK_SRC */
-+#define TEGRA186_CLK_PLLDISPHUB_DIV 285
-+/** fixed /8 divider which is used as the input for TEGRA186_CLK_SOR_SAFE */
-+#define TEGRA186_CLK_PLLP_DIV8 286
-+/** @brief output of divider CLK_RST_CONTROLLER_BPMP_NIC_RATE */
-+#define TEGRA186_CLK_BPMP_NIC 287
-+/** @brief output of the divider CLK_RST_CONTROLLER_PLLA1_OUT1 */
-+#define TEGRA186_CLK_PLL_A_OUT1 288
-+/** @deprecated */
-+#define TEGRA186_CLK_GPC2CLK 289
-+/** A fake clock which must be enabled during KFUSE read operations to ensure adequate VDD_CORE voltage. */
-+#define TEGRA186_CLK_KFUSE 293
-+/**
-+ * @brief controls the PLLE hardware sequencer.
-+ * @details This clock only has enable and disable methods. When the
-+ * PLLE hw sequencer is enabled, PLLE, will be enabled or disabled by
-+ * hw based on the control signals from the PCIe, SATA and XUSB
-+ * clocks. When the PLLE hw sequencer is disabled, the state of PLLE
-+ * is controlled by sw using clk_enable/clk_disable on
-+ * TEGRA186_CLK_PLLE.
-+ */
-+#define TEGRA186_CLK_PLLE_PWRSEQ 294
-+/** fixed 60MHz clock divided down from, TEGRA186_CLK_PLL_U */
-+#define TEGRA186_CLK_PLLREFE_REF 295
-+/** @brief output of mux controlled by SOR0_CLK_SEL0 and SOR0_CLK_SEL1 in CLK_RST_CONTROLLER_CLK_SOURCE_SOR0 */
-+#define TEGRA186_CLK_SOR0_OUT 296
-+/** @brief output of mux controlled by SOR1_CLK_SEL0 and SOR1_CLK_SEL1 in CLK_RST_CONTROLLER_CLK_SOURCE_SOR1 */
-+#define TEGRA186_CLK_SOR1_OUT 297
-+/** @brief fixed /5 divider.  Output frequency of this clock is TEGRA186_CLK_PLLREFE_OUT1/5. Used as input for TEGRA186_CLK_EQOS_AXI */
-+#define TEGRA186_CLK_PLLREFE_OUT1_DIV5 298
-+/** @brief controls the UTMIP_PLL (aka PLLU) hardware sqeuencer */
-+#define TEGRA186_CLK_UTMIP_PLL_PWRSEQ 301
-+/** @brief output of the divider CLK_RST_CONTROLLER_CLK_SOURCE_PEX_USB_PAD_PLL0_MGMT */
-+#define TEGRA186_CLK_PEX_USB_PAD0_MGMT 302
-+/** @brief output of the divider CLK_RST_CONTROLLER_CLK_SOURCE_PEX_USB_PAD_PLL1_MGMT */
-+#define TEGRA186_CLK_PEX_USB_PAD1_MGMT 303
-+/** @brief controls the UPHY_PLL0 hardware sqeuencer */
-+#define TEGRA186_CLK_UPHY_PLL0_PWRSEQ 304
-+/** @brief controls the UPHY_PLL1 hardware sqeuencer */
-+#define TEGRA186_CLK_UPHY_PLL1_PWRSEQ 305
-+/** @brief control for PLLREFE_IDDQ in CLK_RST_CONTROLLER_PLLREFE_MISC so the bypass output even be used when the PLL is disabled */
-+#define TEGRA186_CLK_PLLREFE_PLLE_PASSTHROUGH 306
-+/** @brief output of the mux controlled by PLLREFE_SEL_CLKIN_PEX in CLK_RST_CONTROLLER_PLLREFE_MISC */
-+#define TEGRA186_CLK_PLLREFE_PEX 307
-+/** @brief control for PLLREFE_IDDQ in CLK_RST_CONTROLLER_PLLREFE_MISC to turn on the PLL when enabled */
-+#define TEGRA186_CLK_PLLREFE_IDDQ 308
-+/** @brief output of the divider QSPI_CLK_DIV2_SEL in CLK_RST_CONTROLLER_CLK_SOURCE_QSPI */
-+#define TEGRA186_CLK_QSPI_OUT 309
-+/**
-+ * @brief GPC2CLK-div-2
-+ * @details fixed /2 divider. Output frequency is
-+ * TEGRA186_CLK_GPC2CLK/2. The frequency of this clock is the
-+ * frequency at which the GPU graphics engine runs. */
-+#define TEGRA186_CLK_GPCCLK 310
-+/** @brief output of divider CLK_RST_CONTROLLER_AON_NIC_RATE */
-+#define TEGRA186_CLK_AON_NIC 450
-+/** @brief output of divider CLK_RST_CONTROLLER_SCE_NIC_RATE */
-+#define TEGRA186_CLK_SCE_NIC 451
-+/** Fixed 100MHz PLL for PCIe, SATA and superspeed USB */
-+#define TEGRA186_CLK_PLLE 512
-+/** @brief PLL controlled by CLK_RST_CONTROLLER_PLLC_BASE */
-+#define TEGRA186_CLK_PLLC 513
-+/** Fixed 408MHz PLL for use by peripheral clocks */
-+#define TEGRA186_CLK_PLLP 516
-+/** @deprecated */
-+#define TEGRA186_CLK_PLL_P TEGRA186_CLK_PLLP
-+/** @brief PLL controlled by CLK_RST_CONTROLLER_PLLD_BASE for use by DSI */
-+#define TEGRA186_CLK_PLLD 518
-+/** @brief PLL controlled by CLK_RST_CONTROLLER_PLLD2_BASE for use by HDMI or DP */
-+#define TEGRA186_CLK_PLLD2 519
-+/**
-+ * @brief PLL controlled by CLK_RST_CONTROLLER_PLLREFE_BASE.
-+ * @details Note that this clock only controls the VCO output, before
-+ * the post-divider. See TEGRA186_CLK_PLLREFE_OUT1 for more
-+ * information.
-+ */
-+#define TEGRA186_CLK_PLLREFE_VCO 520
-+/** @brief PLL controlled by CLK_RST_CONTROLLER_PLLC2_BASE */
-+#define TEGRA186_CLK_PLLC2 521
-+/** @brief PLL controlled by CLK_RST_CONTROLLER_PLLC3_BASE */
-+#define TEGRA186_CLK_PLLC3 522
-+/** @brief PLL controlled by CLK_RST_CONTROLLER_PLLDP_BASE for use as the DP link clock */
-+#define TEGRA186_CLK_PLLDP 523
-+/** @brief PLL controlled by CLK_RST_CONTROLLER_PLLC4_BASE */
-+#define TEGRA186_CLK_PLLC4_VCO 524
-+/** @brief PLL controlled by CLK_RST_CONTROLLER_PLLA1_BASE for use by audio clocks */
-+#define TEGRA186_CLK_PLLA1 525
-+/** @brief PLL controlled by CLK_RST_CONTROLLER_PLLNVCSI_BASE */
-+#define TEGRA186_CLK_PLLNVCSI 526
-+/** @brief PLL controlled by CLK_RST_CONTROLLER_PLLDISPHUB_BASE */
-+#define TEGRA186_CLK_PLLDISPHUB 527
-+/** @brief PLL controlled by CLK_RST_CONTROLLER_PLLD3_BASE for use by HDMI or DP */
-+#define TEGRA186_CLK_PLLD3 528
-+/** @brief PLL controlled by CLK_RST_CONTROLLER_PLLBPMPCAM_BASE */
-+#define TEGRA186_CLK_PLLBPMPCAM 531
-+/** @brief PLL controlled by CLK_RST_CONTROLLER_PLLAON_BASE for use by IP blocks in the AON domain */
-+#define TEGRA186_CLK_PLLAON 532
-+/** Fixed frequency 960MHz PLL for USB and EAVB */
-+#define TEGRA186_CLK_PLLU 533
-+/** fixed /2 divider. Output frequency is TEGRA186_CLK_PLLC4_VCO/2 */
-+#define TEGRA186_CLK_PLLC4_VCO_DIV2 535
-+/** @brief NAFLL clock source for AXI_CBB */
-+#define TEGRA186_CLK_NAFLL_AXI_CBB 564
-+/** @brief NAFLL clock source for BPMP */
-+#define TEGRA186_CLK_NAFLL_BPMP 565
-+/** @brief NAFLL clock source for ISP */
-+#define TEGRA186_CLK_NAFLL_ISP 566
-+/** @brief NAFLL clock source for NVDEC */
-+#define TEGRA186_CLK_NAFLL_NVDEC 567
-+/** @brief NAFLL clock source for NVENC */
-+#define TEGRA186_CLK_NAFLL_NVENC 568
-+/** @brief NAFLL clock source for NVJPG */
-+#define TEGRA186_CLK_NAFLL_NVJPG 569
-+/** @brief NAFLL clock source for SCE */
-+#define TEGRA186_CLK_NAFLL_SCE 570
-+/** @brief NAFLL clock source for SE */
-+#define TEGRA186_CLK_NAFLL_SE 571
-+/** @brief NAFLL clock source for TSEC */
-+#define TEGRA186_CLK_NAFLL_TSEC 572
-+/** @brief NAFLL clock source for TSECB */
-+#define TEGRA186_CLK_NAFLL_TSECB 573
-+/** @brief NAFLL clock source for VI */
-+#define TEGRA186_CLK_NAFLL_VI 574
-+/** @brief NAFLL clock source for VIC */
-+#define TEGRA186_CLK_NAFLL_VIC 575
-+/** @brief NAFLL clock source for DISP */
-+#define TEGRA186_CLK_NAFLL_DISP 576
-+/** @brief NAFLL clock source for GPU */
-+#define TEGRA186_CLK_NAFLL_GPU 577
-+/** @brief NAFLL clock source for M-CPU cluster */
-+#define TEGRA186_CLK_NAFLL_MCPU 578
-+/** @brief NAFLL clock source for B-CPU cluster */
-+#define TEGRA186_CLK_NAFLL_BCPU 579
-+/** @brief input from Tegra's CLK_32K_IN pad */
-+#define TEGRA186_CLK_CLK_32K 608
-+/** @brief output of divider CLK_RST_CONTROLLER_CLK_M_DIVIDE */
-+#define TEGRA186_CLK_CLK_M 609
-+/** @brief output of divider PLL_REF_DIV in CLK_RST_CONTROLLER_OSC_CTRL */
-+#define TEGRA186_CLK_PLL_REF 610
-+/** @brief input from Tegra's XTAL_IN */
-+#define TEGRA186_CLK_OSC 612
-+/** @brief clock recovered from EAVB input */
-+#define TEGRA186_CLK_EQOS_RX_INPUT 613
-+/** @brief clock recovered from DTV input */
-+#define TEGRA186_CLK_DTV_INPUT 614
-+/** @brief SOR0 brick output which feeds into SOR0_CLK_SEL mux in CLK_RST_CONTROLLER_CLK_SOURCE_SOR0*/
-+#define TEGRA186_CLK_SOR0_PAD_CLKOUT 615
-+/** @brief SOR1 brick output which feeds into SOR1_CLK_SEL mux in CLK_RST_CONTROLLER_CLK_SOURCE_SOR1*/
-+#define TEGRA186_CLK_SOR1_PAD_CLKOUT 616
-+/** @brief clock recovered from I2S1 input */
-+#define TEGRA186_CLK_I2S1_SYNC_INPUT 617
-+/** @brief clock recovered from I2S2 input */
-+#define TEGRA186_CLK_I2S2_SYNC_INPUT 618
-+/** @brief clock recovered from I2S3 input */
-+#define TEGRA186_CLK_I2S3_SYNC_INPUT 619
-+/** @brief clock recovered from I2S4 input */
-+#define TEGRA186_CLK_I2S4_SYNC_INPUT 620
-+/** @brief clock recovered from I2S5 input */
-+#define TEGRA186_CLK_I2S5_SYNC_INPUT 621
-+/** @brief clock recovered from I2S6 input */
-+#define TEGRA186_CLK_I2S6_SYNC_INPUT 622
-+/** @brief clock recovered from SPDIFIN input */
-+#define TEGRA186_CLK_SPDIFIN_SYNC_INPUT 623
-+
-+/**
-+ * @brief subject to change
-+ * @details maximum clock identifier value plus one.
-+ */
-+#define TEGRA186_CLK_CLK_MAX 624
-+
-+/** @} */
-+
-+#endif
-diff --git a/include/dt-bindings/reset/tegra186-reset.h b/include/dt-bindings/reset/tegra186-reset.h
-new file mode 100644
-index 000000000000..8a184e357955
---- /dev/null
-+++ b/include/dt-bindings/reset/tegra186-reset.h
-@@ -0,0 +1,217 @@
++++ b/drivers/firmware/tegra/bpmp.c
+@@ -0,0 +1,713 @@
 +/*
-+ * Copyright (c) 2015, NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (c) 2016, NVIDIA CORPORATION.  All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ */
++
++#include <linux/mailbox_client.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/semaphore.h>
++
++#include <soc/tegra/bpmp.h>
++#include <soc/tegra/bpmp_abi.h>
++#include <soc/tegra/ivc.h>
++
++#define BPMP_MSG_SZ		128
++#define BPMP_MSG_DATA_SZ	120
++
++#define __MRQ_ATTRS		0xff000000
++#define __MRQ_INDEX(id)		((id) & ~__MRQ_ATTRS)
++
++#define DO_ACK			BIT(0)
++#define RING_DOORBELL		BIT(1)
++
++struct tegra_bpmp_soc_data {
++	u32 ch_index;		/* channel index */
++	u32 thread_ch_index;	/* thread channel index */
++	u32 cpu_rx_ch_index;	/* CPU Rx channel index */
++	u32 nr_ch;		/* number of total channels */
++	u32 nr_thread_ch;	/* number of thread channels */
++	u32 ch_timeout;		/* channel timeout */
++	u32 thread_ch_timeout;	/* thread channel timeout */
++};
++
++struct channel_info {
++	u32 tch_free;
++	u32 tch_to_complete;
++	struct semaphore tch_sem;
++};
++
++struct mb_data {
++	s32 code;
++	s32 flags;
++	u8 data[BPMP_MSG_DATA_SZ];
++} __packed;
++
++struct channel_data {
++	struct mb_data *ib;
++	struct mb_data *ob;
++};
++
++struct mrq {
++	struct list_head list;
++	u32 mrq_code;
++	bpmp_mrq_handler handler;
++	void *data;
++};
++
++struct tegra_bpmp {
++	struct device *dev;
++	const struct tegra_bpmp_soc_data *soc_data;
++	void __iomem *tx_base;
++	void __iomem *rx_base;
++	struct mbox_client cl;
++	struct mbox_chan *chan;
++	struct ivc *ivc_channels;
++	struct channel_data *ch_area;
++	struct channel_info ch_info;
++	struct completion *ch_completion;
++	struct list_head mrq_list;
++	struct tegra_bpmp_ops *ops;
++	spinlock_t lock;
++	bool init_done;
++};
++
++static struct tegra_bpmp *bpmp;
++
++static int bpmp_get_thread_ch(int idx)
++{
++	return bpmp->soc_data->thread_ch_index + idx;
++}
++
++static int bpmp_get_thread_ch_index(int ch)
++{
++	if (ch < bpmp->soc_data->thread_ch_index ||
++	    ch >= bpmp->soc_data->cpu_rx_ch_index)
++		return -1;
++	return ch - bpmp->soc_data->thread_ch_index;
++}
++
++static int bpmp_get_ob_channel(void)
++{
++	return smp_processor_id() + bpmp->soc_data->ch_index;
++}
++
++static struct completion *bpmp_get_completion_obj(int ch)
++{
++	int i = bpmp_get_thread_ch_index(ch);
++
++	return i < 0 ? NULL : bpmp->ch_completion + i;
++}
++
++static int bpmp_valid_txfer(void *ob_data, int ob_sz, void *ib_data, int ib_sz)
++{
++	return ob_sz >= 0 && ob_sz <= BPMP_MSG_DATA_SZ &&
++	       ib_sz >= 0 && ib_sz <= BPMP_MSG_DATA_SZ &&
++	       (!ob_sz || ob_data) && (!ib_sz || ib_data);
++}
++
++static bool bpmp_master_acked(int ch)
++{
++	struct ivc *ivc_chan;
++	void *frame;
++	bool ready;
++
++	ivc_chan = bpmp->ivc_channels + ch;
++	frame = tegra_ivc_read_get_next_frame(ivc_chan);
++	ready = !IS_ERR_OR_NULL(frame);
++	bpmp->ch_area[ch].ib = ready ? frame : NULL;
++
++	return ready;
++}
++
++static int bpmp_wait_ack(int ch)
++{
++	ktime_t t;
++
++	t = ns_to_ktime(local_clock());
++
++	do {
++		if (bpmp_master_acked(ch))
++			return 0;
++	} while (ktime_us_delta(ns_to_ktime(local_clock()), t) <
++		 bpmp->soc_data->ch_timeout);
++
++	return -ETIMEDOUT;
++}
++
++static bool bpmp_master_free(int ch)
++{
++	struct ivc *ivc_chan;
++	void *frame;
++	bool ready;
++
++	ivc_chan = bpmp->ivc_channels + ch;
++	frame = tegra_ivc_write_get_next_frame(ivc_chan);
++	ready = !IS_ERR_OR_NULL(frame);
++	bpmp->ch_area[ch].ob = ready ? frame : NULL;
++
++	return ready;
++}
++
++static int bpmp_wait_master_free(int ch)
++{
++	ktime_t t;
++
++	t = ns_to_ktime(local_clock());
++
++	do {
++		if (bpmp_master_free(ch))
++			return 0;
++	} while (ktime_us_delta(ns_to_ktime(local_clock()), t)
++		 < bpmp->soc_data->ch_timeout);
++
++	return -ETIMEDOUT;
++}
++
++static int __read_ch(int ch, void *data, int sz)
++{
++	struct ivc *ivc_chan;
++	struct mb_data *p;
++
++	ivc_chan = bpmp->ivc_channels + ch;
++	p = bpmp->ch_area[ch].ib;
++	if (data)
++		memcpy_fromio(data, p->data, sz);
++
++	return tegra_ivc_read_advance(ivc_chan);
++}
++
++static int bpmp_read_ch(int ch, void *data, int sz)
++{
++	unsigned long flags;
++	int i, ret;
++
++	i = bpmp_get_thread_ch_index(ch);
++
++	spin_lock_irqsave(&bpmp->lock, flags);
++	ret = __read_ch(ch, data, sz);
++	bpmp->ch_info.tch_free |= (1 << i);
++	spin_unlock_irqrestore(&bpmp->lock, flags);
++
++	up(&bpmp->ch_info.tch_sem);
++
++	return ret;
++}
++
++static int __write_ch(int ch, int mrq_code, int flags, void *data, int sz)
++{
++	struct ivc *ivc_chan;
++	struct mb_data *p;
++
++	ivc_chan = bpmp->ivc_channels + ch;
++	p = bpmp->ch_area[ch].ob;
++
++	p->code = mrq_code;
++	p->flags = flags;
++	if (data)
++		memcpy_toio(p->data, data, sz);
++
++	return tegra_ivc_write_advance(ivc_chan);
++}
++
++static int bpmp_write_threaded_ch(int *ch, int mrq_code, void *data, int sz)
++{
++	unsigned long flags;
++	int ret, i;
++
++	ret = down_timeout(&bpmp->ch_info.tch_sem,
++			   usecs_to_jiffies(bpmp->soc_data->thread_ch_timeout));
++	if (ret)
++		return ret;
++
++	spin_lock_irqsave(&bpmp->lock, flags);
++
++	i = __ffs(bpmp->ch_info.tch_free);
++	*ch = bpmp_get_thread_ch(i);
++	ret = bpmp_master_free(*ch) ? 0 : -EFAULT;
++	if (!ret) {
++		bpmp->ch_info.tch_free &= ~(1 << i);
++		__write_ch(*ch, mrq_code, DO_ACK | RING_DOORBELL, data, sz);
++		bpmp->ch_info.tch_to_complete |= (1 << *ch);
++	}
++
++	spin_unlock_irqrestore(&bpmp->lock, flags);
++
++	return ret;
++}
++
++static int bpmp_write_ch(int ch, int mrq_code, int flags, void *data, int sz)
++{
++	int ret;
++
++	ret = bpmp_wait_master_free(ch);
++	if (ret)
++		return ret;
++
++	return __write_ch(ch, mrq_code, flags, data, sz);
++}
++
++static int bpmp_send_receive_atomic(int mrq_code, void *ob_data, int ob_sz,
++				    void *ib_data, int ib_sz)
++{
++	int ch, ret;
++
++	if (WARN_ON(!irqs_disabled()))
++		return -EPERM;
++
++	if (!bpmp_valid_txfer(ob_data, ob_sz, ib_data, ib_sz))
++		return -EINVAL;
++
++	if (!bpmp->init_done)
++		return -ENODEV;
++
++	ch = bpmp_get_ob_channel();
++	ret = bpmp_write_ch(ch, mrq_code, DO_ACK, ob_data, ob_sz);
++	if (ret)
++		return ret;
++
++	ret = mbox_send_message(bpmp->chan, NULL);
++	if (ret < 0)
++		return ret;
++	mbox_client_txdone(bpmp->chan, 0);
++
++	ret = bpmp_wait_ack(ch);
++	if (ret)
++		return ret;
++
++	return __read_ch(ch, ib_data, ib_sz);
++}
++
++static int bpmp_send_receive(int mrq_code, void *ob_data, int ob_sz,
++			     void *ib_data, int ib_sz)
++{
++	struct completion *comp_obj;
++	unsigned long timeout;
++	int ch, ret;
++
++	if (WARN_ON(irqs_disabled()))
++		return -EPERM;
++
++	if (!bpmp_valid_txfer(ob_data, ob_sz, ib_data, ib_sz))
++		return -EINVAL;
++
++	if (!bpmp->init_done)
++		return -ENODEV;
++
++	ret = bpmp_write_threaded_ch(&ch, mrq_code, ob_data, ob_sz);
++	if (ret)
++		return ret;
++
++	ret = mbox_send_message(bpmp->chan, NULL);
++	if (ret < 0)
++		return ret;
++	mbox_client_txdone(bpmp->chan, 0);
++
++	comp_obj = bpmp_get_completion_obj(ch);
++	timeout = usecs_to_jiffies(bpmp->soc_data->thread_ch_timeout);
++	if (!wait_for_completion_timeout(comp_obj, timeout))
++		return -ETIMEDOUT;
++
++	return bpmp_read_ch(ch, ib_data, ib_sz);
++}
++
++static struct mrq *bpmp_find_mrq(u32 mrq_code)
++{
++	struct mrq *mrq;
++
++	list_for_each_entry(mrq, &bpmp->mrq_list, list) {
++		if (mrq_code == mrq->mrq_code)
++			return mrq;
++	}
++
++	return NULL;
++}
++
++static void bpmp_mrq_return_data(int ch, int code, void *data, int sz)
++{
++	int flags = bpmp->ch_area[ch].ib->flags;
++	struct ivc *ivc_chan;
++	struct mb_data *frame;
++	int ret;
++
++	if (WARN_ON(sz > BPMP_MSG_DATA_SZ))
++		return;
++
++	ivc_chan = bpmp->ivc_channels + ch;
++	ret = tegra_ivc_read_advance(ivc_chan);
++	WARN_ON(ret);
++
++	if (!(flags & DO_ACK))
++		return;
++
++	frame = tegra_ivc_write_get_next_frame(ivc_chan);
++	if (IS_ERR_OR_NULL(frame)) {
++		WARN_ON(1);
++		return;
++	}
++
++	frame->code = code;
++	if (data != NULL)
++		memcpy_toio(frame->data, data, sz);
++	ret = tegra_ivc_write_advance(ivc_chan);
++	WARN_ON(ret);
++
++	if (flags & RING_DOORBELL) {
++		ret = mbox_send_message(bpmp->chan, NULL);
++		if (ret < 0) {
++			WARN_ON(1);
++			return;
++		}
++		mbox_client_txdone(bpmp->chan, 0);
++	}
++}
++
++static void bpmp_mail_return(int ch, int ret_code, int val)
++{
++	bpmp_mrq_return_data(ch, ret_code, &val, sizeof(val));
++}
++
++static void bpmp_handle_mrq(int mrq_code, int ch)
++{
++	struct mrq *mrq;
++
++	spin_lock(&bpmp->lock);
++
++	mrq = bpmp_find_mrq(mrq_code);
++	if (!mrq) {
++		spin_unlock(&bpmp->lock);
++		bpmp_mail_return(ch, -EINVAL, 0);
++		return;
++	}
++
++	mrq->handler(mrq_code, mrq->data, ch);
++
++	spin_unlock(&bpmp->lock);
++}
++
++static int bpmp_request_mrq(int mrq_code, bpmp_mrq_handler handler, void *data)
++{
++	struct mrq *mrq;
++	unsigned long flags;
++
++	if (!handler)
++		return -EINVAL;
++
++	mrq = devm_kzalloc(bpmp->dev, sizeof(*mrq), GFP_KERNEL);
++	if (!mrq)
++		return -ENOMEM;
++
++	spin_lock_irqsave(&bpmp->lock, flags);
++
++	mrq->mrq_code = __MRQ_INDEX(mrq_code);
++	mrq->handler = handler;
++	mrq->data = data;
++	list_add(&mrq->list, &bpmp->mrq_list);
++
++	spin_unlock_irqrestore(&bpmp->lock, flags);
++
++	return 0;
++}
++
++static void bpmp_mrq_handle_ping(int mrq_code, void *data, int ch)
++{
++	int challenge;
++	int reply;
++
++	challenge = *(int *)bpmp->ch_area[ch].ib->data;
++	reply = challenge << (smp_processor_id() + 1);
++	bpmp_mail_return(ch, 0, reply);
++}
++
++static int bpmp_mailman_init(void)
++{
++	return bpmp_request_mrq(MRQ_PING, bpmp_mrq_handle_ping, NULL);
++}
++
++static int bpmp_ping(void)
++{
++	unsigned long flags;
++	ktime_t t;
++	int challenge = 1;
++	int reply = 0;
++	int ret;
++
++	t = ktime_get();
++	local_irq_save(flags);
++	ret = bpmp_send_receive_atomic(MRQ_PING, &challenge, sizeof(challenge),
++				       &reply, sizeof(reply));
++	local_irq_restore(flags);
++	t = ktime_sub(ktime_get(), t);
++
++	if (!ret)
++		dev_info(bpmp->dev,
++			 "ping ok: challenge: %d, reply: %d, time: %lld\n",
++			 challenge, reply, ktime_to_us(t));
++
++	return ret;
++}
++
++static int bpmp_get_fwtag(void)
++{
++	unsigned long flags;
++	void *vaddr;
++	dma_addr_t paddr;
++	u32 addr;
++	int ret;
++
++	vaddr = dma_alloc_coherent(bpmp->dev, BPMP_MSG_DATA_SZ, &paddr,
++				   GFP_KERNEL);
++	if (!vaddr)
++		return -ENOMEM;
++	addr = paddr;
++
++	local_irq_save(flags);
++	ret = bpmp_send_receive_atomic(MRQ_QUERY_TAG, &addr, sizeof(addr),
++				       NULL, 0);
++	local_irq_restore(flags);
++
++	if (!ret)
++		dev_info(bpmp->dev, "fwtag: %s\n", (char *)vaddr);
++
++	dma_free_coherent(bpmp->dev, BPMP_MSG_DATA_SZ, vaddr, paddr);
++
++	return ret;
++}
++
++static void bpmp_signal_thread(int ch)
++{
++	int flags = bpmp->ch_area[ch].ob->flags;
++	struct completion *comp_obj;
++
++	if (!(flags & RING_DOORBELL))
++		return;
++
++	comp_obj = bpmp_get_completion_obj(ch);
++	if (!comp_obj) {
++		WARN_ON(1);
++		return;
++	}
++
++	complete(comp_obj);
++}
++
++static void bpmp_handle_rx(struct mbox_client *cl, void *data)
++{
++	int i, rx_ch;
++
++	rx_ch = bpmp->soc_data->cpu_rx_ch_index;
++
++	if (bpmp_master_acked(rx_ch))
++		bpmp_handle_mrq(bpmp->ch_area[rx_ch].ib->code, rx_ch);
++
++	spin_lock(&bpmp->lock);
++
++	for (i = 0; i < bpmp->soc_data->nr_thread_ch &&
++			bpmp->ch_info.tch_to_complete; i++) {
++		int ch = bpmp_get_thread_ch(i);
++
++		if ((bpmp->ch_info.tch_to_complete & (1 << ch)) &&
++		    bpmp_master_acked(ch)) {
++			bpmp->ch_info.tch_to_complete &= ~(1 << ch);
++			bpmp_signal_thread(ch);
++		}
++	}
++
++	spin_unlock(&bpmp->lock);
++}
++
++static void bpmp_ivc_notify(struct ivc *ivc)
++{
++	int ret;
++
++	ret = mbox_send_message(bpmp->chan, NULL);
++	if (ret < 0)
++		return;
++
++	mbox_send_message(bpmp->chan, NULL);
++}
++
++static int bpmp_msg_chan_init(int ch)
++{
++	struct ivc *ivc_chan;
++	u32 hdr_sz, msg_sz, que_sz;
++	uintptr_t rx_base, tx_base;
++	int ret;
++
++	msg_sz = tegra_ivc_align(BPMP_MSG_SZ);
++	hdr_sz = tegra_ivc_total_queue_size(0);
++	que_sz = tegra_ivc_total_queue_size(msg_sz);
++
++	rx_base =  (uintptr_t)(bpmp->rx_base + que_sz * ch);
++	tx_base =  (uintptr_t)(bpmp->tx_base + que_sz * ch);
++
++	ivc_chan = bpmp->ivc_channels + ch;
++	ret = tegra_ivc_init(ivc_chan, rx_base, DMA_ERROR_CODE, tx_base,
++			     DMA_ERROR_CODE, 1, msg_sz, bpmp->dev,
++			     bpmp_ivc_notify);
++	if (ret) {
++		dev_err(bpmp->dev, "%s fail: ch %d returned %d\n",
++			__func__, ch, ret);
++		return ret;
++	}
++
++	/* reset the channel state */
++	tegra_ivc_channel_reset(ivc_chan);
++
++	/* sync the channel state with BPMP */
++	while (tegra_ivc_channel_notified(ivc_chan))
++		;
++
++	return 0;
++}
++
++struct tegra_bpmp_ops *tegra_bpmp_get_ops(void)
++{
++	if (bpmp->init_done && bpmp->ops)
++		return bpmp->ops;
++	return NULL;
++}
++EXPORT_SYMBOL(tegra_bpmp_get_ops);
++
++static struct tegra_bpmp_ops bpmp_ops = {
++	.send_receive = bpmp_send_receive,
++	.send_receive_atomic = bpmp_send_receive_atomic,
++	.request_mrq = bpmp_request_mrq,
++	.mrq_return = bpmp_mail_return,
++};
++
++static const struct tegra_bpmp_soc_data soc_data_tegra186 = {
++	.ch_index = 0,
++	.thread_ch_index = 6,
++	.cpu_rx_ch_index = 13,
++	.nr_ch = 14,
++	.nr_thread_ch = 7,
++	.ch_timeout = 60 * USEC_PER_SEC,
++	.thread_ch_timeout = 600 * USEC_PER_SEC,
++};
++
++static const struct of_device_id tegra_bpmp_match[] = {
++	{ .compatible = "nvidia,tegra186-bpmp", .data = &soc_data_tegra186 },
++	{ }
++};
++
++static int tegra_bpmp_probe(struct platform_device *pdev)
++{
++	const struct of_device_id *match;
++	struct resource shmem_res;
++	struct device_node *shmem_np;
++	int i, ret;
++
++	bpmp = devm_kzalloc(&pdev->dev, sizeof(*bpmp), GFP_KERNEL);
++	if (!bpmp)
++		return -ENOMEM;
++	bpmp->dev = &pdev->dev;
++
++	match = of_match_device(tegra_bpmp_match, &pdev->dev);
++	if (!match)
++		return -EINVAL;
++	bpmp->soc_data = match->data;
++
++	shmem_np = of_parse_phandle(pdev->dev.of_node, "shmem", 0);
++	of_address_to_resource(shmem_np, 0, &shmem_res);
++	bpmp->tx_base = devm_ioremap_resource(&pdev->dev, &shmem_res);
++	if (IS_ERR(bpmp->tx_base))
++		return PTR_ERR(bpmp->tx_base);
++
++	shmem_np = of_parse_phandle(pdev->dev.of_node, "shmem", 1);
++	of_address_to_resource(shmem_np, 0, &shmem_res);
++	bpmp->rx_base = devm_ioremap_resource(&pdev->dev, &shmem_res);
++	if (IS_ERR(bpmp->rx_base))
++		return PTR_ERR(bpmp->rx_base);
++
++	bpmp->ivc_channels = devm_kcalloc(&pdev->dev, bpmp->soc_data->nr_ch,
++					  sizeof(*bpmp->ivc_channels),
++					  GFP_KERNEL);
++	if (!bpmp->ivc_channels)
++		return -ENOMEM;
++
++	bpmp->ch_area = devm_kcalloc(&pdev->dev, bpmp->soc_data->nr_ch,
++				     sizeof(*bpmp->ch_area), GFP_KERNEL);
++	if (!bpmp->ch_area)
++		return -ENOMEM;
++
++	bpmp->ch_completion = devm_kcalloc(&pdev->dev,
++					   bpmp->soc_data->nr_thread_ch,
++					   sizeof(*bpmp->ch_completion),
++					   GFP_KERNEL);
++	if (!bpmp->ch_completion)
++		return -ENOMEM;
++
++	/* mbox registration */
++	bpmp->cl.dev = &pdev->dev;
++	bpmp->cl.rx_callback = bpmp_handle_rx;
++	bpmp->cl.tx_block = false;
++	bpmp->cl.knows_txdone = false;
++	bpmp->chan = mbox_request_channel(&bpmp->cl, 0);
++	if (IS_ERR(bpmp->chan)) {
++		if (PTR_ERR(bpmp->chan) != -EPROBE_DEFER)
++			dev_err(&pdev->dev,
++				"fail to get HSP mailbox, bpmp init fail.\n");
++		return PTR_ERR(bpmp->chan);
++	}
++
++	/* message channel initialization */
++	for (i = 0; i < bpmp->soc_data->nr_ch; i++) {
++		struct completion *comp_obj;
++
++		ret = bpmp_msg_chan_init(i);
++		if (ret)
++			return ret;
++
++		comp_obj = bpmp_get_completion_obj(i);
++		if (comp_obj)
++			init_completion(comp_obj);
++	}
++
++	bpmp->ch_info.tch_free = (1 << bpmp->soc_data->nr_thread_ch) - 1;
++	sema_init(&bpmp->ch_info.tch_sem, bpmp->soc_data->nr_thread_ch);
++
++	spin_lock_init(&bpmp->lock);
++	INIT_LIST_HEAD(&bpmp->mrq_list);
++	if (bpmp_mailman_init())
++		return -ENODEV;
++
++	bpmp->init_done = true;
++
++	ret = bpmp_ping();
++	if (ret)
++		dev_err(&pdev->dev, "ping failed: %d\n", ret);
++
++	ret = bpmp_get_fwtag();
++	if (ret)
++		dev_err(&pdev->dev, "get fwtag failed: %d\n", ret);
++
++	/* BPMP is ready now. */
++	bpmp->ops = &bpmp_ops;
++
++	return 0;
++}
++
++static struct platform_driver tegra_bpmp_driver = {
++	.driver = {
++		.name = "tegra-bpmp",
++		.of_match_table = tegra_bpmp_match,
++	},
++	.probe = tegra_bpmp_probe,
++};
++
++static int __init tegra_bpmp_init(void)
++{
++	return platform_driver_register(&tegra_bpmp_driver);
++}
++core_initcall(tegra_bpmp_init);
+diff --git a/include/soc/tegra/bpmp.h b/include/soc/tegra/bpmp.h
+new file mode 100644
+index 000000000000..aaa0ef34ad7b
+--- /dev/null
++++ b/include/soc/tegra/bpmp.h
+@@ -0,0 +1,29 @@
++/*
++ * Copyright (c) 2016, NVIDIA CORPORATION.  All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ */
++
++#ifndef __TEGRA_BPMP_H
++
++typedef void (*bpmp_mrq_handler)(int mrq_code, void *data, int ch);
++
++struct tegra_bpmp_ops {
++	int (*send_receive)(int mrq_code, void *ob_data, int ob_sz,
++			    void *ib_data, int ib_sz);
++	int (*send_receive_atomic)(int mrq_code, void *ob_data, int ob_sz,
++			    void *ib_data, int ib_sz);
++	int (*request_mrq)(int mrq_code, bpmp_mrq_handler handler, void *data);
++	void (*mrq_return)(int ch, int ret_code, int val);
++};
++
++struct tegra_bpmp_ops *tegra_bpmp_get_ops(void);
++
++#endif /* __TEGRA_BPMP_H */
+diff --git a/include/soc/tegra/bpmp_abi.h b/include/soc/tegra/bpmp_abi.h
+new file mode 100644
+index 000000000000..0aaef5960e29
+--- /dev/null
++++ b/include/soc/tegra/bpmp_abi.h
+@@ -0,0 +1,1601 @@
++/*
++ * Copyright (c) 2014-2016, NVIDIA CORPORATION.  All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or modify it
 + * under the terms and conditions of the GNU General Public License,
@@ -1095,206 +859,1590 @@ index 000000000000..8a184e357955
 + * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 + */
 +
-+#ifndef _ABI_MACH_T186_RESET_T186_H_
-+#define _ABI_MACH_T186_RESET_T186_H_
++#ifndef _ABI_BPMP_ABI_H_
++#define _ABI_BPMP_ABI_H_
++
++#ifdef LK
++#include <stdint.h>
++#endif
++
++#ifndef __ABI_PACKED
++#define __ABI_PACKED __attribute__((packed))
++#endif
++
++#ifdef NO_GCC_EXTENSIONS
++#define EMPTY char empty;
++#define EMPTY_ARRAY 1
++#else
++#define EMPTY
++#define EMPTY_ARRAY 0
++#endif
++
++#ifndef __UNION_ANON
++#define __UNION_ANON
++#endif
++/**
++ * @file
++ */
 +
 +
-+#define TEGRA186_RESET_ACTMON			0
-+#define TEGRA186_RESET_AFI			1
-+#define TEGRA186_RESET_CEC			2
-+#define TEGRA186_RESET_CSITE			3
-+#define TEGRA186_RESET_DP2			4
-+#define TEGRA186_RESET_DPAUX			5
-+#define TEGRA186_RESET_DSI			6
-+#define TEGRA186_RESET_DSIB			7
-+#define TEGRA186_RESET_DTV			8
-+#define TEGRA186_RESET_DVFS			9
-+#define TEGRA186_RESET_ENTROPY			10
-+#define TEGRA186_RESET_EXTPERIPH1		11
-+#define TEGRA186_RESET_EXTPERIPH2		12
-+#define TEGRA186_RESET_EXTPERIPH3		13
-+#define TEGRA186_RESET_GPU			14
-+#define TEGRA186_RESET_HDA			15
-+#define TEGRA186_RESET_HDA2CODEC_2X		16
-+#define TEGRA186_RESET_HDA2HDMICODEC		17
-+#define TEGRA186_RESET_HOST1X			18
-+#define TEGRA186_RESET_I2C1			19
-+#define TEGRA186_RESET_I2C2			20
-+#define TEGRA186_RESET_I2C3			21
-+#define TEGRA186_RESET_I2C4			22
-+#define TEGRA186_RESET_I2C5			23
-+#define TEGRA186_RESET_I2C6			24
-+#define TEGRA186_RESET_ISP			25
-+#define TEGRA186_RESET_KFUSE			26
-+#define TEGRA186_RESET_LA			27
-+#define TEGRA186_RESET_MIPI_CAL			28
-+#define TEGRA186_RESET_PCIE			29
-+#define TEGRA186_RESET_PCIEXCLK			30
-+#define TEGRA186_RESET_SATA			31
-+#define TEGRA186_RESET_SATACOLD			32
-+#define TEGRA186_RESET_SDMMC1			33
-+#define TEGRA186_RESET_SDMMC2			34
-+#define TEGRA186_RESET_SDMMC3			35
-+#define TEGRA186_RESET_SDMMC4			36
-+#define TEGRA186_RESET_SE			37
-+#define TEGRA186_RESET_SOC_THERM		38
-+#define TEGRA186_RESET_SOR0			39
-+#define TEGRA186_RESET_SPI1			40
-+#define TEGRA186_RESET_SPI2			41
-+#define TEGRA186_RESET_SPI3			42
-+#define TEGRA186_RESET_SPI4			43
-+#define TEGRA186_RESET_TMR			44
-+#define TEGRA186_RESET_TRIG_SYS			45
-+#define TEGRA186_RESET_TSEC			46
-+#define TEGRA186_RESET_UARTA			47
-+#define TEGRA186_RESET_UARTB			48
-+#define TEGRA186_RESET_UARTC			49
-+#define TEGRA186_RESET_UARTD			50
-+#define TEGRA186_RESET_VI			51
-+#define TEGRA186_RESET_VIC			52
-+#define TEGRA186_RESET_XUSB_DEV			53
-+#define TEGRA186_RESET_XUSB_HOST		54
-+#define TEGRA186_RESET_XUSB_PADCTL		55
-+#define TEGRA186_RESET_XUSB_SS			56
-+#define TEGRA186_RESET_AON_APB			57
-+#define TEGRA186_RESET_AXI_CBB			58
-+#define TEGRA186_RESET_BPMP_APB			59
-+#define TEGRA186_RESET_CAN1			60
-+#define TEGRA186_RESET_CAN2			61
-+#define TEGRA186_RESET_DMIC5			62
-+#define TEGRA186_RESET_DSIC			63
-+#define TEGRA186_RESET_DSID			64
-+#define TEGRA186_RESET_EMC_EMC			65
-+#define TEGRA186_RESET_EMC_MEM			66
-+#define TEGRA186_RESET_EMCSB_EMC		67
-+#define TEGRA186_RESET_EMCSB_MEM		68
-+#define TEGRA186_RESET_EQOS			69
-+#define TEGRA186_RESET_GPCDMA			70
-+#define TEGRA186_RESET_GPIO_CTL0		71
-+#define TEGRA186_RESET_GPIO_CTL1		72
-+#define TEGRA186_RESET_GPIO_CTL2		73
-+#define TEGRA186_RESET_GPIO_CTL3		74
-+#define TEGRA186_RESET_GPIO_CTL4		75
-+#define TEGRA186_RESET_GPIO_CTL5		76
-+#define TEGRA186_RESET_I2C10			77
-+#define TEGRA186_RESET_I2C12			78
-+#define TEGRA186_RESET_I2C13			79
-+#define TEGRA186_RESET_I2C14			80
-+#define TEGRA186_RESET_I2C7			81
-+#define TEGRA186_RESET_I2C8			82
-+#define TEGRA186_RESET_I2C9			83
-+#define TEGRA186_RESET_JTAG2AXI			84
-+#define TEGRA186_RESET_MPHY_IOBIST		85
-+#define TEGRA186_RESET_MPHY_L0_RX		86
-+#define TEGRA186_RESET_MPHY_L0_TX		87
-+#define TEGRA186_RESET_NVCSI			88
-+#define TEGRA186_RESET_NVDISPLAY0_HEAD0		89
-+#define TEGRA186_RESET_NVDISPLAY0_HEAD1		90
-+#define TEGRA186_RESET_NVDISPLAY0_HEAD2		91
-+#define TEGRA186_RESET_NVDISPLAY0_MISC		92
-+#define TEGRA186_RESET_NVDISPLAY0_WGRP0		93
-+#define TEGRA186_RESET_NVDISPLAY0_WGRP1		94
-+#define TEGRA186_RESET_NVDISPLAY0_WGRP2		95
-+#define TEGRA186_RESET_NVDISPLAY0_WGRP3		96
-+#define TEGRA186_RESET_NVDISPLAY0_WGRP4		97
-+#define TEGRA186_RESET_NVDISPLAY0_WGRP5		98
-+#define TEGRA186_RESET_PWM1			99
-+#define TEGRA186_RESET_PWM2			100
-+#define TEGRA186_RESET_PWM3			101
-+#define TEGRA186_RESET_PWM4			102
-+#define TEGRA186_RESET_PWM5			103
-+#define TEGRA186_RESET_PWM6			104
-+#define TEGRA186_RESET_PWM7			105
-+#define TEGRA186_RESET_PWM8			106
-+#define TEGRA186_RESET_SCE_APB			107
-+#define TEGRA186_RESET_SOR1			108
-+#define TEGRA186_RESET_TACH			109
-+#define TEGRA186_RESET_TSC			110
-+#define TEGRA186_RESET_UARTF			111
-+#define TEGRA186_RESET_UARTG			112
-+#define TEGRA186_RESET_UFSHC			113
-+#define TEGRA186_RESET_UFSHC_AXI_M		114
-+#define TEGRA186_RESET_UPHY			115
-+#define TEGRA186_RESET_ADSP			116
-+#define TEGRA186_RESET_ADSPDBG			117
-+#define TEGRA186_RESET_ADSPINTF			118
-+#define TEGRA186_RESET_ADSPNEON			119
-+#define TEGRA186_RESET_ADSPPERIPH		120
-+#define TEGRA186_RESET_ADSPSCU			121
-+#define TEGRA186_RESET_ADSPWDT			122
-+#define TEGRA186_RESET_APE			123
-+#define TEGRA186_RESET_DPAUX1			124
-+#define TEGRA186_RESET_NVDEC			125
-+#define TEGRA186_RESET_NVENC			126
-+#define TEGRA186_RESET_NVJPG			127
-+#define TEGRA186_RESET_PEX_USB_UPHY		128
-+#define TEGRA186_RESET_QSPI			129
-+#define TEGRA186_RESET_TSECB			130
-+#define TEGRA186_RESET_VI_I2C			131
-+#define TEGRA186_RESET_UARTE			132
-+#define TEGRA186_RESET_TOP_GTE			133
-+#define TEGRA186_RESET_SHSP			134
-+#define TEGRA186_RESET_PEX_USB_UPHY_L5		135
-+#define TEGRA186_RESET_PEX_USB_UPHY_L4		136
-+#define TEGRA186_RESET_PEX_USB_UPHY_L3		137
-+#define TEGRA186_RESET_PEX_USB_UPHY_L2		138
-+#define TEGRA186_RESET_PEX_USB_UPHY_L1		139
-+#define TEGRA186_RESET_PEX_USB_UPHY_L0		140
-+#define TEGRA186_RESET_PEX_USB_UPHY_PLL1	141
-+#define TEGRA186_RESET_PEX_USB_UPHY_PLL0	142
-+#define TEGRA186_RESET_TSCTNVI			143
-+#define TEGRA186_RESET_EXTPERIPH4		144
-+#define TEGRA186_RESET_DSIPADCTL		145
-+#define TEGRA186_RESET_AUD_MCLK			146
-+#define TEGRA186_RESET_MPHY_CLK_CTL		147
-+#define TEGRA186_RESET_MPHY_L1_RX		148
-+#define TEGRA186_RESET_MPHY_L1_TX		149
-+#define TEGRA186_RESET_UFSHC_LP			150
-+#define TEGRA186_RESET_BPMP_NIC			151
-+#define TEGRA186_RESET_BPMP_NSYSPORESET		152
-+#define TEGRA186_RESET_BPMP_NRESET		153
-+#define TEGRA186_RESET_BPMP_DBGRESETN		154
-+#define TEGRA186_RESET_BPMP_PRESETDBGN		155
-+#define TEGRA186_RESET_BPMP_PM			156
-+#define TEGRA186_RESET_BPMP_CVC			157
-+#define TEGRA186_RESET_BPMP_DMA			158
-+#define TEGRA186_RESET_BPMP_HSP			159
-+#define TEGRA186_RESET_TSCTNBPMP		160
-+#define TEGRA186_RESET_BPMP_TKE			161
-+#define TEGRA186_RESET_BPMP_GTE			162
-+#define TEGRA186_RESET_BPMP_PM_ACTMON		163
-+#define TEGRA186_RESET_AON_NIC			164
-+#define TEGRA186_RESET_AON_NSYSPORESET		165
-+#define TEGRA186_RESET_AON_NRESET		166
-+#define TEGRA186_RESET_AON_DBGRESETN		167
-+#define TEGRA186_RESET_AON_PRESETDBGN		168
-+#define TEGRA186_RESET_AON_ACTMON		169
-+#define TEGRA186_RESET_AOPM			170
-+#define TEGRA186_RESET_AOVC			171
-+#define TEGRA186_RESET_AON_DMA			172
-+#define TEGRA186_RESET_AON_GPIO			173
-+#define TEGRA186_RESET_AON_HSP			174
-+#define TEGRA186_RESET_TSCTNAON			175
-+#define TEGRA186_RESET_AON_TKE			176
-+#define TEGRA186_RESET_AON_GTE			177
-+#define TEGRA186_RESET_SCE_NIC			178
-+#define TEGRA186_RESET_SCE_NSYSPORESET		179
-+#define TEGRA186_RESET_SCE_NRESET		180
-+#define TEGRA186_RESET_SCE_DBGRESETN		181
-+#define TEGRA186_RESET_SCE_PRESETDBGN		182
-+#define TEGRA186_RESET_SCE_ACTMON		183
-+#define TEGRA186_RESET_SCE_PM			184
-+#define TEGRA186_RESET_SCE_DMA			185
-+#define TEGRA186_RESET_SCE_HSP			186
-+#define TEGRA186_RESET_TSCTNSCE			187
-+#define TEGRA186_RESET_SCE_TKE			188
-+#define TEGRA186_RESET_SCE_GTE			189
-+#define TEGRA186_RESET_SCE_CFG			190
-+#define TEGRA186_RESET_ADSP_ALL			191
-+/** @brief controls the power up/down sequence of UFSHC PSW partition. Controls LP_PWR_READY, LP_ISOL_EN, and LP_RESET_N signals */
-+#define TEGRA186_RESET_UFSHC_LP_SEQ		192
-+#define TEGRA186_RESET_SIZE			193
++/**
++ * @defgroup MRQ MRQ Messages
++ * @brief Messages sent to/from BPMP via IPC
++ * @{
++ *   @defgroup MRQ_Format Message Format
++ *   @defgroup MRQ_Codes Message Request (MRQ) Codes
++ *   @defgroup MRQ_Payloads Message Payloads
++ *   @defgroup Error_Codes Error Codes
++ * @}
++ */
 +
++/**
++ * @addtogroup MRQ_Format Message Format
++ * @{
++ * The CPU requests the BPMP to perform a particular service by
++ * sending it an IVC frame containing a single MRQ message. An MRQ
++ * message consists of a @ref mrq_request followed by a payload whose
++ * format depends on mrq_request::mrq.
++ *
++ * The BPMP processes the data and replies with an IVC frame (on the
++ * same IVC channel) containing and MRQ response. An MRQ response
++ * consists of a @ref mrq_response followed by a payload whose format
++ * depends on the associated mrq_request::mrq.
++ *
++ * A well-defined subset of the MRQ messages that the CPU sends to the
++ * BPMP can lead to BPMP eventually sending an MRQ message to the
++ * CPU. For example, when the CPU uses an #MRQ_THERMAL message to set
++ * a thermal trip point, the BPMP may eventually send a single
++ * #MRQ_THERMAL message of its own to the CPU indicating that the trip
++ * point has been crossed.
++ * @}
++ */
++
++/**
++ * @ingroup MRQ_Format
++ * @brief header for an MRQ message
++ *
++ * Provides the MRQ number for the MRQ message: #mrq. The remainder of
++ * the MRQ message is a payload (immediately following the
++ * mrq_request) whose format depends on mrq.
++ *
++ * @todo document the flags
++ */
++struct mrq_request {
++	/** @brief MRQ number of the request */
++	uint32_t mrq;
++	/** @brief flags for the request */
++	uint32_t flags;
++} __ABI_PACKED;
++
++/**
++ * @ingroup MRQ_Format
++ * @brief header for an MRQ response
++ *
++ *  Provides an error code for the associated MRQ message. The
++ *  remainder of the MRQ response is a payload (immediately following
++ *  the mrq_response) whose format depends on the associated
++ *  mrq_request::mrq
++ *
++ * @todo document the flags
++ */
++struct mrq_response {
++	/** @brief error code for the MRQ request itself */
++	int32_t err;
++	/** @brief flags for the response */
++	uint32_t flags;
++} __ABI_PACKED;
++
++/**
++ * @ingroup MRQ_Format
++ * Minimum needed size for an IPC message buffer
++ */
++#define MSG_MIN_SZ	128
++/**
++ * @ingroup MRQ_Format
++ *  Minimum size guaranteed for data in an IPC message buffer
++ */
++#define MSG_DATA_MIN_SZ	120
++
++/**
++ * @ingroup MRQ_Codes
++ * @name Legal MRQ codes
++ * These are the legal values for mrq_request::mrq
++ * @{
++ */
++
++#define MRQ_PING		0
++#define MRQ_QUERY_TAG		1
++#define MRQ_MODULE_LOAD		4
++#define MRQ_MODULE_UNLOAD	5
++#define MRQ_TRACE_MODIFY	7
++#define MRQ_WRITE_TRACE		8
++#define MRQ_THREADED_PING	9
++#define MRQ_MODULE_MAIL		11
++#define MRQ_DEBUGFS		19
++#define MRQ_RESET		20
++#define MRQ_I2C			21
++#define MRQ_CLK			22
++#define MRQ_QUERY_ABI		23
++#define MRQ_PG_READ_STATE	25
++#define MRQ_PG_UPDATE_STATE	26
++#define MRQ_THERMAL		27
++#define MRQ_CPU_VHINT		28
++#define MRQ_ABI_RATCHET		29
++#define MRQ_EMC_DVFS_LATENCY	31
++#define MRQ_TRACE_ITER		64
++
++/** @} */
++
++/**
++ * @ingroup MRQ_Codes
++ * @brief Maximum MRQ code to be sent by CPU software to
++ * BPMP. Subject to change in future
++ */
++#define MAX_CPU_MRQ_ID		64
++
++/**
++ * @addtogroup MRQ_Payloads Message Payloads
++ * @{
++ *   @defgroup Ping
++ *   @defgroup Query_Tag Query Tag
++ *   @defgroup Module Loadable Modules
++ *   @defgroup Trace
++ *   @defgroup Debugfs
++ *   @defgroup Reset
++ *   @defgroup I2C
++ *   @defgroup Clocks
++ *   @defgroup ABI_info ABI Info
++ *   @defgroup MC_Flush MC Flush
++ *   @defgroup Powergating
++ *   @defgroup Thermal
++ *   @defgroup Vhint CPU Voltage hint
++ *   @defgroup MRQ_Deprecated Deprecated MRQ messages
++ *   @defgroup EMC
++ * @}
++ */
++
++
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_PING
++ * @brief A simple ping
++ *
++ * * Platforms: All
++ * * Initiators: Any
++ * * Targets: Any
++ * * Request Payload: @ref mrq_ping_request
++ * * Response Payload: @ref mrq_ping_response
++ *
++ * @ingroup MRQ_Codes
++ * @def MRQ_THREADED_PING
++ * @brief A deeper ping
++ *
++ * * Platforms: All
++ * * Initiators: Any
++ * * Targets: BPMP
++ * * Request Payload: @ref mrq_ping_request
++ * * Response Payload: @ref mrq_ping_response
++ *
++ * Behavior is equivalent to a simple #MRQ_PING except that BPMP
++ * responds from a thread context (providing a slightly more robust
++ * sign of life).
++ *
++ */
++
++/**
++ * @ingroup Ping
++ * @brief request with #MRQ_PING
++ *
++ * Used by the sender of an #MRQ_PING message to request a pong from
++ * recipient. The response from the recipient is computed based on
++ * #challenge.
++ */
++struct mrq_ping_request {
++/** @brief arbitrarily chosen value */
++	uint32_t challenge;
++} __ABI_PACKED;
++
++/**
++ * @ingroup Ping
++ * @brief response to #MRQ_PING
++ *
++ * Sent in response to an #MRQ_PING message. #reply should be the
++ * mrq_ping_request challenge left shifted by 1 with the carry-bit
++ * dropped.
++ *
++ */
++struct mrq_ping_response {
++	/** @brief response to the MRQ_PING challege */
++	uint32_t reply;
++} __ABI_PACKED;
++
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_QUERY_TAG
++ * @brief Query BPMP firmware's tag (i.e. version information)
++ *
++ * * Platforms: All
++ * * Initiators: CCPLEX
++ * * Targets: BPMP
++ * * Request Payload: @ref mrq_query_tag_request
++ * * Response Payload: N/A
++ *
++ */
++
++/**
++ * @ingroup Query_Tag
++ * @brief request with #MRQ_QUERY_TAG
++ *
++ * Used by #MRQ_QUERY_TAG call to ask BPMP to fill in the memory
++ * pointed by #addr with BPMP firmware header.
++ *
++ * The sender is reponsible for ensuring that #addr is mapped in to
++ * the recipient's address map.
++ */
++struct mrq_query_tag_request {
++  /** @brief base address to store the firmware header */
++	uint32_t addr;
++} __ABI_PACKED;
++
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_MODULE_LOAD
++ * @brief dynamically load a BPMP code module
++ *
++ * * Platforms: All
++ * * Initiators: CCPLEX
++ * * Targets: BPMP
++ * * Request Payload: @ref mrq_module_load_request
++ * * Response Payload: @ref mrq_module_load_response
++ *
++ * @note This MRQ is disabled on production systems
++ *
++ */
++
++/**
++ * @ingroup Module
++ * @brief request with #MRQ_MODULE_LOAD
++ *
++ * Used by #MRQ_MODULE_LOAD calls to ask the recipient to dynamically
++ * load the code located at #phys_addr and having size #size
++ * bytes. #phys_addr is treated as a void pointer.
++ *
++ * The recipient copies the code from #phys_addr to locally allocated
++ * memory prior to responding to this message.
++ *
++ * @todo document the module header format
++ *
++ * The sender is responsible for ensuring that the code is mapped in
++ * the recipient's address map.
++ *
++ */
++struct mrq_module_load_request {
++	/** @brief base address of the code to load. Treated as (void *) */
++	uint32_t phys_addr; /* (void *) */
++	/** @brief size in bytes of code to load */
++	uint32_t size;
++} __ABI_PACKED;
++
++/**
++ * @ingroup Module
++ * @brief response to #MRQ_MODULE_LOAD
++ *
++ * @todo document mrq_response::err
++ */
++struct mrq_module_load_response {
++	/** @brief handle to the loaded module */
++	uint32_t base;
++} __ABI_PACKED;
++
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_MODULE_UNLOAD
++ * @brief unload a previously loaded code module
++ *
++ * * Platforms: All
++ * * Initiators: CCPLEX
++ * * Targets: BPMP
++ * * Request Payload: @ref mrq_module_unload_request
++ * * Response Payload: N/A
++ *
++ * @note This MRQ is disabled on production systems
++ */
++
++/**
++ * @ingroup Module
++ * @brief request with #MRQ_MODULE_UNLOAD
++ *
++ * Used by #MRQ_MODULE_UNLOAD calls to request that a previously loaded
++ * module be unloaded.
++ */
++struct mrq_module_unload_request {
++	/** @brief handle of the module to unload */
++	uint32_t base;
++} __ABI_PACKED;
++
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_TRACE_MODIFY
++ * @brief modify the set of enabled trace events
++ *
++ * * Platforms: All
++ * * Initiators: CCPLEX
++ * * Targets: BPMP
++ * * Request Payload: @ref mrq_trace_modify_request
++ * * Response Payload: @ref mrq_trace_modify_response
++ *
++ * @note This MRQ is disabled on production systems
++ */
++
++/**
++ * @ingroup Trace
++ * @brief request with #MRQ_TRACE_MODIFY
++ *
++ * Used by %MRQ_TRACE_MODIFY calls to enable or disable specify trace
++ * events.  #set takes precedence for any bit set in both #set and
++ * #clr.
++ */
++struct mrq_trace_modify_request {
++	/** @brief bit mask of trace events to disable */
++	uint32_t clr;
++	/** @brief bit mask of trace events to enable */
++	uint32_t set;
++} __ABI_PACKED;
++
++/**
++ * @ingroup Trace
++ * @brief response to #MRQ_TRACE_MODIFY
++ *
++ * Sent in repsonse to an #MRQ_TRACE_MODIFY message. #mask reflects the
++ * state of which events are enabled after the recipient acted on the
++ * message.
++ *
++ */
++struct mrq_trace_modify_response {
++	/** @brief bit mask of trace event enable states */
++	uint32_t mask;
++} __ABI_PACKED;
++
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_WRITE_TRACE
++ * @brief Write trace data to a buffer
++ *
++ * * Platforms: All
++ * * Initiators: CCPLEX
++ * * Targets: BPMP
++ * * Request Payload: @ref mrq_write_trace_request
++ * * Response Payload: @ref mrq_write_trace_response
++ *
++ * mrq_response::err depends on the @ref mrq_write_trace_request field
++ * values. err is -#BPMP_EINVAL if size is zero or area is NULL or
++ * area is in an illegal range. A positive value for err indicates the
++ * number of bytes written to area.
++ *
++ * @note This MRQ is disabled on production systems
++ */
++
++/**
++ * @ingroup Trace
++ * @brief request with #MRQ_WRITE_TRACE
++ *
++ * Used by MRQ_WRITE_TRACE calls to ask the recipient to copy trace
++ * data from the recipient's local buffer to the output buffer. #area
++ * is treated as a byte-aligned pointer in the recipient's address
++ * space.
++ *
++ * The sender is responsible for ensuring that the output
++ * buffer is mapped in the recipient's address map. The recipient is
++ * responsible for protecting its own code and data from accidental
++ * overwrites.
++ */
++struct mrq_write_trace_request {
++	/** @brief base address of output buffer */
++	uint32_t area;
++	/** @brief size in bytes of the output buffer */
++	uint32_t size;
++} __ABI_PACKED;
++
++/**
++ * @ingroup Trace
++ * @brief response to #MRQ_WRITE_TRACE
++ *
++ * Once this response is sent, the respondent will not access the
++ * output buffer further.
++ */
++struct mrq_write_trace_response {
++	/**
++	 * @brief flag whether more data remains in local buffer
++	 *
++	 * Value is 1 if the entire local trace buffer has been
++	 * drained to the outputbuffer. Value is 0 otherwise.
++	 */
++	uint32_t eof;
++} __ABI_PACKED;
++
++/** @private */
++struct mrq_threaded_ping_request {
++	uint32_t challenge;
++} __ABI_PACKED;
++
++/** @private */
++struct mrq_threaded_ping_response {
++	uint32_t reply;
++} __ABI_PACKED;
++
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_MODULE_MAIL
++ * @brief send a message to a loadable module
++ *
++ * * Platforms: All
++ * * Initiators: Any
++ * * Targets: BPMP
++ * * Request Payload: @ref mrq_module_mail_request
++ * * Response Payload: @ref mrq_module_mail_response
++ *
++ * @note This MRQ is disabled on production systems
++ */
++
++/**
++ * @ingroup Module
++ * @brief request with #MRQ_MODULE_MAIL
++ */
++struct mrq_module_mail_request {
++	/** @brief handle to the previously loaded module */
++	uint32_t base;
++	/** @brief module-specific mail payload
++	 *
++	 * The length of data[ ] is unknown to the BPMP core firmware
++	 * but it is limited to the size of an IPC message.
++	 */
++	uint8_t data[EMPTY_ARRAY];
++} __ABI_PACKED;
++
++/**
++ * @ingroup Module
++ * @brief response to #MRQ_MODULE_MAIL
++ */
++struct mrq_module_mail_response {
++	/** @brief module-specific mail payload
++	 *
++	 * The length of data[ ] is unknown to the BPMP core firmware
++	 * but it is limited to the size of an IPC message.
++	 */
++	uint8_t data[EMPTY_ARRAY];
++} __ABI_PACKED;
++
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_DEBUGFS
++ * @brief Interact with BPMP's debugfs file nodes
++ *
++ * * Platforms: T186
++ * * Initiators: Any
++ * * Targets: BPMP
++ * * Request Payload: @ref mrq_debugfs_request
++ * * Response Payload: @ref mrq_debugfs_response
++ */
++
++/**
++ * @addtogroup Debugfs
++ * @{
++ *
++ * The BPMP firmware implements a pseudo-filesystem called
++ * debugfs. Any driver within the firmware may register with debugfs
++ * to expose an arbitrary set of "files" in the filesystem. When
++ * software on the CPU writes to a debugfs file, debugfs passes the
++ * written data to a callback provided by the driver. When software on
++ * the CPU reads a debugfs file, debugfs queries the driver for the
++ * data to return to the CPU. The intention of the debugfs filesystem
++ * is to provide information useful for debugging the system at
++ * runtime.
++ *
++ * @note The files exposed via debugfs are not part of the
++ * BPMP firmware's ABI. debugfs files may be added or removed in any
++ * given version of the firmware. Typically the semantics of a debugfs
++ * file are consistent from version to version but even that is not
++ * guaranteed.
++ *
++ * @}
++ */
++/** @ingroup Debugfs */
++enum mrq_debugfs_commands {
++	CMD_DEBUGFS_READ = 1,
++	CMD_DEBUGFS_WRITE = 2,
++	CMD_DEBUGFS_DUMPDIR = 3,
++	CMD_DEBUGFS_MAX
++};
++
++/**
++ * @ingroup Debugfs
++ * @brief parameters for CMD_DEBUGFS_READ/WRITE command
++ */
++struct cmd_debugfs_fileop_request {
++	/** @brief physical address pointing at filename */
++	uint32_t fnameaddr;
++	/** @brief length in bytes of filename buffer */
++	uint32_t fnamelen;
++	/** @brief physical address pointing to data buffer */
++	uint32_t dataaddr;
++	/** @brief length in bytes of data buffer */
++	uint32_t datalen;
++} __ABI_PACKED;
++
++/**
++ * @ingroup Debugfs
++ * @brief parameters for CMD_DEBUGFS_READ/WRITE command
++ */
++struct cmd_debugfs_dumpdir_request {
++	/** @brief physical address pointing to data buffer */
++	uint32_t dataaddr;
++	/** @brief length in bytes of data buffer */
++	uint32_t datalen;
++} __ABI_PACKED;
++
++/**
++ * @ingroup Debugfs
++ * @brief response data for CMD_DEBUGFS_READ/WRITE command
++ */
++struct cmd_debugfs_fileop_response {
++	/** @brief always 0 */
++	uint32_t reserved;
++	/** @brief number of bytes read from or written to data buffer */
++	uint32_t nbytes;
++} __ABI_PACKED;
++
++/**
++ * @ingroup Debugfs
++ * @brief response data for CMD_DEBUGFS_DUMPDIR command
++ */
++struct cmd_debugfs_dumpdir_response {
++	/** @brief always 0 */
++	uint32_t reserved;
++	/** @brief number of bytes read from or written to data buffer */
++	uint32_t nbytes;
++} __ABI_PACKED;
++
++/**
++ * @ingroup Debugfs
++ * @brief request with #MRQ_DEBUGFS.
++ *
++ * The sender of an MRQ_DEBUGFS message uses #cmd to specify a debugfs
++ * command to execute. Legal commands are the values of @ref
++ * mrq_debugfs_commands. Each command requires a specific additional
++ * payload of data.
++ *
++ * |command            |payload|
++ * |-------------------|-------|
++ * |CMD_DEBUGFS_READ   |fop    |
++ * |CMD_DEBUGFS_WRITE  |fop    |
++ * |CMD_DEBUGFS_DUMPDIR|dumpdir|
++ */
++struct mrq_debugfs_request {
++	uint32_t cmd;
++	union {
++		struct cmd_debugfs_fileop_request fop;
++		struct cmd_debugfs_dumpdir_request dumpdir;
++	} __UNION_ANON;
++} __ABI_PACKED;
++
++/**
++ * @ingroup Debugfs
++ */
++struct mrq_debugfs_response {
++	/** @brief always 0 */
++	int32_t reserved;
++	union {
++		/** @brief response data for CMD_DEBUGFS_READ OR
++		 * CMD_DEBUGFS_WRITE command
++		 */
++		struct cmd_debugfs_fileop_response fop;
++		/** @brief response data for CMD_DEBUGFS_DUMPDIR command */
++		struct cmd_debugfs_dumpdir_response dumpdir;
++	} __UNION_ANON;
++} __ABI_PACKED;
++
++/**
++ * @addtogroup Debugfs
++ * @{
++ */
++#define DEBUGFS_S_ISDIR	(1 << 9)
++#define DEBUGFS_S_IRUSR	(1 << 8)
++#define DEBUGFS_S_IWUSR	(1 << 7)
++/** @} */
++
++
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_RESET
++ * @brief reset an IP block
++ *
++ * * Platforms: T186
++ * * Initiators: Any
++ * * Targets: BPMP
++ * * Request Payload: @ref mrq_reset_request
++ * * Response Payload: N/A
++ */
++
++/**
++ * @ingroup Reset
++ */
++enum mrq_reset_commands {
++	CMD_RESET_ASSERT = 1,
++	CMD_RESET_DEASSERT = 2,
++	CMD_RESET_MODULE = 3,
++	CMD_RESET_MAX, /* not part of ABI and subject to change */
++};
++
++/**
++ * @ingroup Reset
++ * @brief request with MRQ_RESET
++ *
++ * Used by the sender of an #MRQ_RESET message to request BPMP to
++ * assert or or deassert a given reset line.
++ */
++struct mrq_reset_request {
++	/** @brief reset action to perform (@enum mrq_reset_commands) */
++	uint32_t cmd;
++	/** @brief id of the reset to affected */
++	uint32_t reset_id;
++} __ABI_PACKED;
++
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_I2C
++ * @brief issue an i2c transaction
++ *
++ * * Platforms: T186
++ * * Initiators: Any
++ * * Targets: BPMP
++ * * Request Payload: @ref mrq_i2c_request
++ * * Response Payload: @ref mrq_i2c_response
++ */
++
++/**
++ * @addtogroup I2C
++ * @{
++ */
++#define TEGRA_I2C_IPC_MAX_IN_BUF_SIZE	(MSG_DATA_MIN_SZ - 12)
++#define TEGRA_I2C_IPC_MAX_OUT_BUF_SIZE	(MSG_DATA_MIN_SZ - 4)
++/** @} */
++
++/**
++ * @ingroup I2C
++ * @name Serial I2C flags
++ * Use these flags with serial_i2c_request::flags
++ * @{
++ */
++#define SERIALI2C_TEN           0x0010
++#define SERIALI2C_RD            0x0001
++#define SERIALI2C_STOP          0x8000
++#define SERIALI2C_NOSTART       0x4000
++#define SERIALI2C_REV_DIR_ADDR  0x2000
++#define SERIALI2C_IGNORE_NAK    0x1000
++#define SERIALI2C_NO_RD_ACK     0x0800
++#define SERIALI2C_RECV_LEN      0x0400
++/** @} */
++/** @ingroup I2C */
++enum {
++	CMD_I2C_XFER = 1
++};
++
++/**
++ * @ingroup I2C
++ * @brief serializable i2c request
++ *
++ * Instances of this structure are packed (little-endian) into
++ * cmd_i2c_xfer_request::data_buf. Each instance represents a single
++ * transaction (or a portion of a transaction with repeated starts) on
++ * an i2c bus.
++ *
++ * Because these structures are packed, some instances are likely to
++ * be misaligned. Additionally because #data is variable length, it is
++ * not possible to iterate through a serialized list of these
++ * structures without inspecting #len in each instance.  It may be
++ * easier to serialize or deserialize cmd_i2c_xfer_request::data_buf
++ * manually rather than using this structure definition.
++*/
++struct serial_i2c_request {
++	/** @brief I2C slave address */
++	uint16_t addr;
++	/** @brief bitmask of SERIALI2C_ flags */
++	uint16_t flags;
++	/** @brief length of I2C transaction in bytes */
++	uint16_t len;
++	/** @brief for write transactions only, #len bytes of data */
++	uint8_t data[];
++} __ABI_PACKED;
++
++/**
++ * @ingroup I2C
++ * @brief trigger one or more i2c transactions
++ */
++struct cmd_i2c_xfer_request {
++	/** @brief valid bus number from mach-t186/i2c-t186.h*/
++	uint32_t bus_id;
++
++	/** @brief count of valid bytes in #data_buf*/
++	uint32_t data_size;
++
++	/** @brief serialized packed instances of @ref serial_i2c_request*/
++	uint8_t data_buf[TEGRA_I2C_IPC_MAX_IN_BUF_SIZE];
++} __ABI_PACKED;
++
++/**
++ * @ingroup I2C
++ * @brief container for data read from the i2c bus
++ *
++ * Processing an cmd_i2c_xfer_request::data_buf causes BPMP to execute
++ * zero or more I2C reads. The data read from the bus is serialized
++ * into #data_buf.
++ */
++struct cmd_i2c_xfer_response {
++	/** @brief count of valid bytes in #data_buf*/
++	uint32_t data_size;
++	/** @brief i2c read data */
++	uint8_t data_buf[TEGRA_I2C_IPC_MAX_OUT_BUF_SIZE];
++} __ABI_PACKED;
++
++/**
++ * @ingroup I2C
++ * @brief request with #MRQ_I2C
++ */
++struct mrq_i2c_request {
++	/** @brief always CMD_I2C_XFER (i.e. 1) */
++	uint32_t cmd;
++	/** @brief parameters of the transfer request */
++	struct cmd_i2c_xfer_request xfer;
++} __ABI_PACKED;
++
++/**
++ * @ingroup I2C
++ * @brief response to #MRQ_I2C
++ */
++struct mrq_i2c_response {
++	struct cmd_i2c_xfer_response xfer;
++} __ABI_PACKED;
++
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_CLK
++ *
++ * * Platforms: T186
++ * * Initiators: Any
++ * * Targets: BPMP
++ * * Request Payload: @ref mrq_clk_request
++ * * Response Payload: @ref mrq_clk_response
++ * @addtogroup Clocks
++ * @{
++ */
++
++/**
++ * @name MRQ_CLK sub-commands
++ * @{
++ */
++enum {
++	CMD_CLK_GET_RATE = 1,
++	CMD_CLK_SET_RATE = 2,
++	CMD_CLK_ROUND_RATE = 3,
++	CMD_CLK_GET_PARENT = 4,
++	CMD_CLK_SET_PARENT = 5,
++	CMD_CLK_IS_ENABLED = 6,
++	CMD_CLK_ENABLE = 7,
++	CMD_CLK_DISABLE = 8,
++	CMD_CLK_GET_ALL_INFO = 14,
++	CMD_CLK_GET_MAX_CLK_ID = 15,
++	CMD_CLK_MAX,
++};
++/** @} */
++
++#define MRQ_CLK_NAME_MAXLEN	40
++#define MRQ_CLK_MAX_PARENTS	16
++
++/** @private */
++struct cmd_clk_get_rate_request {
++	EMPTY
++} __ABI_PACKED;
++
++struct cmd_clk_get_rate_response {
++	int64_t rate;
++} __ABI_PACKED;
++
++struct cmd_clk_set_rate_request {
++	int32_t unused;
++	int64_t rate;
++} __ABI_PACKED;
++
++struct cmd_clk_set_rate_response {
++	int64_t rate;
++} __ABI_PACKED;
++
++struct cmd_clk_round_rate_request {
++	int32_t unused;
++	int64_t rate;
++} __ABI_PACKED;
++
++struct cmd_clk_round_rate_response {
++	int64_t rate;
++} __ABI_PACKED;
++
++/** @private */
++struct cmd_clk_get_parent_request {
++	EMPTY
++} __ABI_PACKED;
++
++struct cmd_clk_get_parent_response {
++	uint32_t parent_id;
++} __ABI_PACKED;
++
++struct cmd_clk_set_parent_request {
++	uint32_t parent_id;
++} __ABI_PACKED;
++
++struct cmd_clk_set_parent_response {
++	uint32_t parent_id;
++} __ABI_PACKED;
++
++/** @private */
++struct cmd_clk_is_enabled_request {
++	EMPTY
++} __ABI_PACKED;
++
++struct cmd_clk_is_enabled_response {
++	int32_t state;
++} __ABI_PACKED;
++
++/** @private */
++struct cmd_clk_enable_request {
++	EMPTY
++} __ABI_PACKED;
++
++/** @private */
++struct cmd_clk_enable_response {
++	EMPTY
++} __ABI_PACKED;
++
++/** @private */
++struct cmd_clk_disable_request {
++	EMPTY
++} __ABI_PACKED;
++
++/** @private */
++struct cmd_clk_disable_response {
++	EMPTY
++} __ABI_PACKED;
++
++/** @private */
++struct cmd_clk_get_all_info_request {
++	EMPTY
++} __ABI_PACKED;
++
++struct cmd_clk_get_all_info_response {
++	uint32_t flags;
++	uint32_t parent;
++	uint32_t parents[MRQ_CLK_MAX_PARENTS];
++	uint8_t num_parents;
++	uint8_t name[MRQ_CLK_NAME_MAXLEN];
++} __ABI_PACKED;
++
++/** @private */
++struct cmd_clk_get_max_clk_id_request {
++	EMPTY
++} __ABI_PACKED;
++
++struct cmd_clk_get_max_clk_id_response {
++	uint32_t max_id;
++} __ABI_PACKED;
++/** @} */
++
++/**
++ * @ingroup Clocks
++ * @brief request with #MRQ_CLK
++ *
++ * Used by the sender of an #MRQ_CLK message to control clocks. The
++ * clk_request is split into several sub-commands. Some sub-commands
++ * require no additional data. Others have a sub-command specific
++ * payload
++ *
++ * |sub-command                 |payload                |
++ * |----------------------------|-----------------------|
++ * |CMD_CLK_GET_RATE            |-                      |
++ * |CMD_CLK_SET_RATE            |clk_set_rate           |
++ * |CMD_CLK_ROUND_RATE          |clk_round_rate         |
++ * |CMD_CLK_GET_PARENT          |-                      |
++ * |CMD_CLK_SET_PARENT          |clk_set_parent         |
++ * |CMD_CLK_IS_ENABLED          |-                      |
++ * |CMD_CLK_ENABLE              |-                      |
++ * |CMD_CLK_DISABLE             |-                      |
++ * |CMD_CLK_GET_ALL_INFO        |-                      |
++ * |CMD_CLK_GET_MAX_CLK_ID      |-                      |
++ *
++ */
++
++struct mrq_clk_request {
++	/** @brief sub-command and clock id concatenated to 32-bit word.
++	 * - bits[31..24] is the sub-cmd.
++	 * - bits[23..0] is the clock id
++	 */
++	uint32_t cmd_and_id;
++
++	union {
++		/** @private */
++		struct cmd_clk_get_rate_request clk_get_rate;
++		struct cmd_clk_set_rate_request clk_set_rate;
++		struct cmd_clk_round_rate_request clk_round_rate;
++		/** @private */
++		struct cmd_clk_get_parent_request clk_get_parent;
++		struct cmd_clk_set_parent_request clk_set_parent;
++		/** @private */
++		struct cmd_clk_enable_request clk_enable;
++		/** @private */
++		struct cmd_clk_disable_request clk_disable;
++		/** @private */
++		struct cmd_clk_is_enabled_request clk_is_enabled;
++		/** @private */
++		struct cmd_clk_get_all_info_request clk_get_all_info;
++		/** @private */
++		struct cmd_clk_get_max_clk_id_request clk_get_max_clk_id;
++	} __UNION_ANON;
++} __ABI_PACKED;
++
++/**
++ * @ingroup Clocks
++ * @brief response to MRQ_CLK
++ *
++ * Each sub-command supported by @ref mrq_clk_request may return
++ * sub-command-specific data. Some do and some do not as indicated in
++ * the following table
++ *
++ * |sub-command                 |payload                 |
++ * |----------------------------|------------------------|
++ * |CMD_CLK_GET_RATE            |clk_get_rate            |
++ * |CMD_CLK_SET_RATE            |clk_set_rate            |
++ * |CMD_CLK_ROUND_RATE          |clk_round_rate          |
++ * |CMD_CLK_GET_PARENT          |clk_get_parent          |
++ * |CMD_CLK_SET_PARENT          |clk_set_parent          |
++ * |CMD_CLK_IS_ENABLED          |clk_is_enabled          |
++ * |CMD_CLK_ENABLE              |-                       |
++ * |CMD_CLK_DISABLE             |-                       |
++ * |CMD_CLK_GET_ALL_INFO        |clk_get_all_info        |
++ * |CMD_CLK_GET_MAX_CLK_ID      |clk_get_max_id          |
++ *
++ */
++
++struct mrq_clk_response {
++	union {
++		struct cmd_clk_get_rate_response clk_get_rate;
++		struct cmd_clk_set_rate_response clk_set_rate;
++		struct cmd_clk_round_rate_response clk_round_rate;
++		struct cmd_clk_get_parent_response clk_get_parent;
++		struct cmd_clk_set_parent_response clk_set_parent;
++		/** @private */
++		struct cmd_clk_enable_response clk_enable;
++		/** @private */
++		struct cmd_clk_disable_response clk_disable;
++		struct cmd_clk_is_enabled_response clk_is_enabled;
++		struct cmd_clk_get_all_info_response clk_get_all_info;
++		struct cmd_clk_get_max_clk_id_response clk_get_max_clk_id;
++	} __UNION_ANON;
++} __ABI_PACKED;
++
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_QUERY_ABI
++ * @brief check if an MRQ is implemented
++ *
++ * * Platforms: All
++ * * Initiators: Any
++ * * Targets: Any
++ * * Request Payload: @ref mrq_query_abi_request
++ * * Response Payload: @ref mrq_query_abi_response
++ */
++
++/**
++ * @ingroup ABI_info
++ * @brief request with MRQ_QUERY_ABI
++ *
++ * Used by #MRQ_QUERY_ABI call to check if MRQ code #mrq is supported
++ * by the recipient.
++ */
++struct mrq_query_abi_request {
++	/** @brief MRQ code to query */
++	uint32_t mrq;
++} __ABI_PACKED;
++
++/**
++ * @ingroup ABI_info
++ * @brief response to MRQ_QUERY_ABI
++ */
++struct mrq_query_abi_response {
++	/** @brief 0 if queried MRQ is supported. Else, -#BPMP_ENODEV */
++	int32_t status;
++} __ABI_PACKED;
++
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_PG_READ_STATE
++ * @brief read the power-gating state of a partition
++ *
++ * * Platforms: T186
++ * * Initiators: Any
++ * * Targets: BPMP
++ * * Request Payload: @ref mrq_pg_read_state_request
++ * * Response Payload: @ref mrq_pg_read_state_response
++ * @addtogroup Powergating
++ * @{
++ */
++
++/**
++ * @brief request with #MRQ_PG_READ_STATE
++ *
++ * Used by MRQ_PG_READ_STATE call to read the current state of a
++ * partition.
++ */
++struct mrq_pg_read_state_request {
++	/** @brief ID of partition */
++	uint32_t partition_id;
++} __ABI_PACKED;
++
++/**
++ * @brief response to MRQ_PG_READ_STATE
++ * @todo define possible errors.
++ */
++struct mrq_pg_read_state_response {
++	/** @brief read as don't care */
++	uint32_t sram_state;
++	/** @brief state of power partition
++	 * * 0 : off
++	 * * 1 : on
++	 */
++	uint32_t logic_state;
++} __ABI_PACKED;
++
++/** @} */
++
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_PG_UPDATE_STATE
++ * @brief modify the power-gating state of a partition
++ *
++ * * Platforms: T186
++ * * Initiators: Any
++ * * Targets: BPMP
++ * * Request Payload: @ref mrq_pg_update_state_request
++ * * Response Payload: N/A
++ * @addtogroup Powergating
++ * @{
++ */
++
++/**
++ * @brief request with mrq_pg_update_state_request
++ *
++ * Used by #MRQ_PG_UPDATE_STATE call to request BPMP to change the
++ * state of a power partition #partition_id.
++ */
++struct mrq_pg_update_state_request {
++	/** @brief ID of partition */
++	uint32_t partition_id;
++	/** @brief secondary control of power partition
++	 *  @details Ignored by many versions of the BPMP
++	 *  firmware. For maximum compatibility, set the value
++	 *  according to @logic_state
++	 * *  0x1: power ON partition (@ref logic_state == 0x3)
++	 * *  0x3: power OFF partition (@ref logic_state == 0x1)
++	 */
++	uint32_t sram_state;
++	/** @brief controls state of power partition, legal values are
++	 * *  0x1 : power OFF partition
++	 * *  0x3 : power ON partition
++	 */
++	uint32_t logic_state;
++	/** @brief change state of clocks of the power partition, legal values
++	 * *  0x0 : do not change clock state
++	 * *  0x1 : disable partition clocks (only applicable when
++	 *          @ref logic_state == 0x1)
++	 * *  0x3 : enable partition clocks (only applicable when
++	 *          @ref logic_state == 0x3)
++	 */
++	uint32_t clock_state;
++} __ABI_PACKED;
++/** @} */
++
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_THERMAL
++ * @brief interact with BPMP thermal framework
++ *
++ * * Platforms: T186
++ * * Initiators: Any
++ * * Targets: Any
++ * * Request Payload: TODO
++ * * Response Payload: TODO
++ *
++ * @addtogroup Thermal
++ *
++ * The BPMP firmware includes a thermal framework. Drivers within the
++ * bpmp firmware register with the framework to provide thermal
++ * zones. Each thermal zone corresponds to an entity whose temperature
++ * can be measured. The framework also has a notion of trip points. A
++ * trip point consists of a thermal zone id, a temperature, and a
++ * callback routine. The framework invokes the callback when the zone
++ * hits the indicated temperature. The BPMP firmware uses this thermal
++ * framework interally to implement various temperature-dependent
++ * functions.
++ *
++ * Software on the CPU can use #MRQ_THERMAL (with payload @ref
++ * mrq_thermal_host_to_bpmp_request) to interact with the BPMP thermal
++ * framework. The CPU must It can query the number of supported zones,
++ * query zone temperatures, and set trip points.
++ *
++ * When a trip point set by the CPU gets crossed, BPMP firmware issues
++ * an IPC to the CPU having mrq_request::mrq = #MRQ_THERMAL and a
++ * payload of @ref mrq_thermal_bpmp_to_host_request.
++ * @{
++ */
++enum mrq_thermal_host_to_bpmp_cmd {
++	/**
++	 * @brief Check whether the BPMP driver supports the specified
++	 * request type.
++	 *
++	 * Host needs to supply request parameters.
++	 *
++	 * mrq_response::err is 0 if the specified request is
++	 * supported and -#BPMP_ENODEV otherwise.
++	 */
++	CMD_THERMAL_QUERY_ABI = 0,
++
++	/**
++	 * @brief Get the current temperature of the specified zone.
++	 *
++	 * Host needs to supply request parameters.
++	 *
++	 * mrq_response::err is
++	 * *  0: Temperature query succeeded.
++	 * *  -#BPMP_EINVAL: Invalid request parameters.
++	 * *  -#BPMP_ENOENT: No driver registered for thermal zone..
++	 * *  -#BPMP_EFAULT: Problem reading temperature measurement.
++	 */
++	CMD_THERMAL_GET_TEMP = 1,
++
++	/**
++	 * @brief Enable or disable and set the lower and upper
++	 *   thermal limits for a thermal trip point. Each zone has
++	 *   one trip point.
++	 *
++	 * Host needs to supply request parameters. Once the
++	 * temperature hits a trip point, the BPMP will send a message
++	 * to the CPU having MRQ=MRQ_THERMAL and
++	 * type=CMD_THERMAL_HOST_TRIP_REACHED
++	 *
++	 * mrq_response::err is
++	 * *  0: Trip successfully set.
++	 * *  -#BPMP_EINVAL: Invalid request parameters.
++	 * *  -#BPMP_ENOENT: No driver registered for thermal zone.
++	 * *  -#BPMP_EFAULT: Problem setting trip point.
++	 */
++	CMD_THERMAL_SET_TRIP = 2,
++
++	/**
++	 * @brief Get the number of supported thermal zones.
++	 *
++	 * No request parameters required.
++	 *
++	 * mrq_response::err is always 0, indicating success.
++	 */
++	CMD_THERMAL_GET_NUM_ZONES = 3,
++
++	/** @brief: number of supported host-to-bpmp commands. May
++	 * increase in future
++	 */
++	CMD_THERMAL_HOST_TO_BPMP_NUM
++};
++
++enum mrq_thermal_bpmp_to_host_cmd {
++	/**
++	 * @brief Indication that the temperature for a zone has
++	 *   exceeded the range indicated in the thermal trip point
++	 *   for the zone.
++	 *
++	 * BPMP needs to supply request parameters. Host only needs to
++	 * acknowledge.
++	 */
++	CMD_THERMAL_HOST_TRIP_REACHED = 100,
++
++	/** @brief: number of supported bpmp-to-host commands. May
++	 * increase in future
++	 */
++	CMD_THERMAL_BPMP_TO_HOST_NUM
++};
++
++/*
++ * Host->BPMP request data for request type CMD_THERMAL_QUERY_ABI
++ *
++ * zone: Request type for which to check existence.
++ */
++struct cmd_thermal_query_abi_request {
++	uint32_t type;
++} __ABI_PACKED;
++
++/*
++ * Host->BPMP request data for request type CMD_THERMAL_GET_TEMP
++ *
++ * zone: Number of thermal zone.
++ */
++struct cmd_thermal_get_temp_request {
++	uint32_t zone;
++} __ABI_PACKED;
++
++/*
++ * BPMP->Host reply data for request CMD_THERMAL_GET_TEMP
++ *
++ * error: 0 if request succeeded.
++ *	-BPMP_EINVAL if request parameters were invalid.
++ *      -BPMP_ENOENT if no driver was registered for the specified thermal zone.
++ *      -BPMP_EFAULT for other thermal zone driver errors.
++ * temp: Current temperature in millicelsius.
++ */
++struct cmd_thermal_get_temp_response {
++	int32_t temp;
++} __ABI_PACKED;
++
++/*
++ * Host->BPMP request data for request type CMD_THERMAL_SET_TRIP
++ *
++ * zone: Number of thermal zone.
++ * low: Temperature of lower trip point in millicelsius
++ * high: Temperature of upper trip point in millicelsius
++ * enabled: 1 to enable trip point, 0 to disable trip point
++ */
++struct cmd_thermal_set_trip_request {
++	uint32_t zone;
++	int32_t low;
++	int32_t high;
++	uint32_t enabled;
++} __ABI_PACKED;
++
++/*
++ * BPMP->Host request data for request type CMD_THERMAL_HOST_TRIP_REACHED
++ *
++ * zone: Number of thermal zone where trip point was reached.
++ */
++struct cmd_thermal_host_trip_reached_request {
++	uint32_t zone;
++} __ABI_PACKED;
++
++/*
++ * BPMP->Host reply data for request type CMD_THERMAL_GET_NUM_ZONES
++ *
++ * num: Number of supported thermal zones. The thermal zones are indexed
++ *      starting from zero.
++ */
++struct cmd_thermal_get_num_zones_response {
++	uint32_t num;
++} __ABI_PACKED;
++
++/*
++ * Host->BPMP request data.
++ *
++ * Reply type is union mrq_thermal_bpmp_to_host_response.
++ *
++ * type: Type of request. Values listed in enum mrq_thermal_type.
++ * data: Request type specific parameters.
++ */
++struct mrq_thermal_host_to_bpmp_request {
++	uint32_t type;
++	union {
++		struct cmd_thermal_query_abi_request query_abi;
++		struct cmd_thermal_get_temp_request get_temp;
++		struct cmd_thermal_set_trip_request set_trip;
++	} __UNION_ANON;
++} __ABI_PACKED;
++
++/*
++ * BPMP->Host request data.
++ *
++ * type: Type of request. Values listed in enum mrq_thermal_type.
++ * data: Request type specific parameters.
++ */
++struct mrq_thermal_bpmp_to_host_request {
++	uint32_t type;
++	union {
++		struct cmd_thermal_host_trip_reached_request host_trip_reached;
++	} __UNION_ANON;
++} __ABI_PACKED;
++
++/*
++ * Data in reply to a Host->BPMP request.
++ */
++union mrq_thermal_bpmp_to_host_response {
++	struct cmd_thermal_get_temp_response get_temp;
++	struct cmd_thermal_get_num_zones_response get_num_zones;
++} __ABI_PACKED;
++/** @} */
++
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_CPU_VHINT
++ * @brief Query CPU voltage hint data
++ *
++ * * Platforms: T186
++ * * Initiators: CCPLEX
++ * * Targets: BPMP
++ * * Request Payload: @ref mrq_cpu_vhint_request
++ * * Response Payload: N/A
++ *
++ * @addtogroup Vhint CPU Voltage hint
++ * @{
++ */
++
++/**
++ * @brief request with #MRQ_CPU_VHINT
++ *
++ * Used by #MRQ_CPU_VHINT call by CCPLEX to retrieve voltage hint data
++ * from BPMP to memory space pointed by #addr. CCPLEX is responsible
++ * to allocate sizeof(cpu_vhint_data) sized block of memory and
++ * appropriately map it for BPMP before sending the request.
++ */
++struct mrq_cpu_vhint_request {
++	/** @brief IOVA address for the #cpu_vhint_data */
++	uint32_t addr; /* struct cpu_vhint_data * */
++	/** @brief ID of the cluster whose data is requested */
++	uint32_t cluster_id; /* enum cluster_id */
++} __ABI_PACKED;
++
++/**
++ * @brief description of the CPU v/f relation
++ *
++ * Used by #MRQ_CPU_VHINT call to carry data pointed by #addr of
++ * struct mrq_cpu_vhint_request
++ */
++struct cpu_vhint_data {
++	uint32_t ref_clk_hz; /**< reference frequency in Hz */
++	uint16_t pdiv; /**< post divider value */
++	uint16_t mdiv; /**< input divider value */
++	uint16_t ndiv_max; /**< fMAX expressed with max NDIV value */
++	/** table of ndiv values as a function of vINDEX (voltage index) */
++	uint16_t ndiv[80];
++	/** minimum allowed NDIV value */
++	uint16_t ndiv_min;
++	/** minimum allowed voltage hint value (as in vINDEX) */
++	uint16_t vfloor;
++	/** maximum allowed voltage hint value (as in vINDEX) */
++	uint16_t vceil;
++	/** post-multiplier for vindex value */
++	uint16_t vindex_mult;
++	/** post-divider for vindex value */
++	uint16_t vindex_div;
++	/** reserved for future use */
++	uint16_t reserved[328];
++} __ABI_PACKED;
++
++/** @} */
++
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_ABI_RATCHET
++ * @brief ABI ratchet value query
++ *
++ * * Platforms: T186
++ * * Initiators: Any
++ * * Targets: BPMP
++ * * Request Payload: @ref mrq_abi_ratchet_request
++ * * Response Payload: @ref mrq_abi_ratchet_response
++ * @addtogroup ABI_info
++ * @{
++ */
++
++/**
++ * @brief an ABI compatibility mechanism
++ *
++ * BPMP_ABI_RATCHET_VALUE may increase for various reasons in a future
++ * revision of this header file.
++ * 1. That future revision deprecates some MRQ
++ * 2. That future revision introduces a breaking change to an existing
++ *    MRQ or
++ * 3. A bug is discovered in an existing implementation of the BPMP-FW
++ *    (or possibly one of its clients) which warrants deprecating that
++ *    implementation.
++ */
++#define BPMP_ABI_RATCHET_VALUE 3
++
++/**
++ * @brief request with #MRQ_ABI_RATCHET.
++ *
++ * #ratchet should be #BPMP_ABI_RATCHET_VALUE from the ABI header
++ * against which the requester was compiled.
++ *
++ * If ratchet is less than BPMP's #BPMP_ABI_RATCHET_VALUE, BPMP may
++ * reply with mrq_response::err = -#BPMP_ERANGE to indicate that
++ * BPMP-FW cannot interoperate correctly with the requester. Requester
++ * should cease further communication with BPMP.
++ *
++ * Otherwise, err shall be 0.
++ */
++struct mrq_abi_ratchet_request {
++	/** @brief requester's ratchet value */
++	uint16_t ratchet;
++};
++
++/**
++ * @brief response to #MRQ_ABI_RATCHET
++ *
++ * #ratchet shall be #BPMP_ABI_RATCHET_VALUE from the ABI header
++ * against which BPMP firwmare was compiled.
++ *
++ * If #ratchet is less than the requester's #BPMP_ABI_RATCHET_VALUE,
++ * the requster must either interoperate with BPMP according to an ABI
++ * header version with BPMP_ABI_RATCHET_VALUE = ratchet or cease
++ * communication with BPMP.
++ *
++ * If mrq_response::err is 0 and ratchet is greater than or equal to the
++ * requester's BPMP_ABI_RATCHET_VALUE, the requester should continue
++ * normal operation.
++ */
++struct mrq_abi_ratchet_response {
++	/** @brief BPMP's ratchet value */
++	uint16_t ratchet;
++};
++/** @} */
++
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_EMC_DVFS_LATENCY
++ * @brief query frequency dependent EMC DVFS latency
++ *
++ * * Platforms: T186
++ * * Initiators: CCPLEX
++ * * Targets: BPMP
++ * * Request Payload: N/A
++ * * Response Payload: @ref mrq_emc_dvfs_latency_response
++ * @addtogroup EMC
++ * @{
++ */
++
++/**
++ * @brief used by @ref mrq_emc_dvfs_latency_response
++ */
++struct emc_dvfs_latency {
++	/** @brief EMC frequency in kHz */
++	uint32_t freq;
++	/** @brief EMC DVFS latency in nanoseconds */
++	uint32_t latency;
++} __ABI_PACKED;
++
++#define EMC_DVFS_LATENCY_MAX_SIZE	14
++/**
++ * @brief response to #MRQ_EMC_DVFS_LATENCY
++ */
++struct mrq_emc_dvfs_latency_response {
++	/** @brief the number valid entries in #pairs */
++	uint32_t num_pairs;
++	/** @brief EMC <frequency, latency> information */
++	struct emc_dvfs_latency pairs[EMC_DVFS_LATENCY_MAX_SIZE];
++} __ABI_PACKED;
++
++/** @} */
++
++/**
++ * @ingroup MRQ_Codes
++ * @def MRQ_TRACE_ITER
++ * @brief manage the trace iterator
++ *
++ * * Platforms: All
++ * * Initiators: CCPLEX
++ * * Targets: BPMP
++ * * Request Payload: N/A
++ * * Response Payload: @ref mrq_trace_iter_request
++ * @addtogroup Trace
++ * @{
++ */
++enum {
++	/** @brief (re)start the tracing now. Ignore older events */
++	TRACE_ITER_INIT = 0,
++	/** @brief clobber all events in the trace buffer */
++	TRACE_ITER_CLEAN = 1
++};
++
++/**
++ * @brief request with #MRQ_TRACE_ITER
++ */
++struct mrq_trace_iter_request {
++	/** @brief TRACE_ITER_INIT or TRACE_ITER_CLEAN */
++	uint32_t cmd;
++} __ABI_PACKED;
++
++/** @} */
++
++/*
++ *  4. Enumerations
++ */
++
++/*
++ *   4.1 CPU enumerations
++ *
++ * See <mach-t186/system-t186.h>
++ *
++ *   4.2 CPU Cluster enumerations
++ *
++ * See <mach-t186/system-t186.h>
++ *
++ *   4.3 System low power state enumerations
++ *
++ * See <mach-t186/system-t186.h>
++ */
++
++/*
++ *   4.4 Clock enumerations
++ *
++ * For clock enumerations, see <mach-t186/clk-t186.h>
++ */
++
++/*
++ *   4.5 Reset enumerations
++ *
++ * For reset enumerations, see <mach-t186/reset-t186.h>
++ */
++
++/*
++ *   4.6 Thermal sensor enumerations
++ *
++ * For thermal sensor enumerations, see <mach-t186/thermal-t186.h>
++ */
++
++/**
++ * @defgroup Error_Codes
++ * Negative values for mrq_response::err generally indicate some
++ * error. The ABI defines the following error codes. Negating these
++ * defines is an exercise left to the user.
++ * @{
++ */
++/** @brief No such file or directory */
++#define BPMP_ENOENT	2
++/** @brief No MRQ handler */
++#define BPMP_ENOHANDLER	3
++/** @brief I/O error */
++#define BPMP_EIO	5
++/** @brief Bad sub-MRQ command */
++#define BPMP_EBADCMD	6
++/** @brief Not enough memory */
++#define BPMP_ENOMEM	12
++/** @brief Permission denied */
++#define BPMP_EACCES	13
++/** @brief Bad address */
++#define BPMP_EFAULT	14
++/** @brief No such device */
++#define BPMP_ENODEV	19
++/** @brief Argument is a directory */
++#define BPMP_EISDIR	21
++/** @brief Invalid argument */
++#define BPMP_EINVAL	22
++/** @brief Timeout during operation */
++#define BPMP_ETIMEDOUT  23
++/** @brief Out of range */
++#define BPMP_ERANGE	34
++/** @} */
++/** @} */
 +#endif
 -- 
 2.9.0
