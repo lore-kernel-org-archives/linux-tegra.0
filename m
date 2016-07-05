@@ -1,45 +1,85 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] i2c: tegra: Correct error path in probe
-Date: Tue, 5 Jul 2016 14:21:23 +0100
-Message-ID: <577BB453.7020903@nvidia.com>
-References: <1465936007-18599-1-git-send-email-jonathanh@nvidia.com>
- <5770F1D4.8000406@nvidia.com> <5770F2CB.2090109@nvidia.com>
+Subject: Tegra baseline test results for v4.7-rc6
+Date: Tue, 5 Jul 2016 14:23:31 +0100
+Message-ID: <577BB4D3.7040507@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5770F2CB.2090109@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Shardar Shariff Md <smohammed@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, kernel-build-reports@lists.linaro.org
 List-Id: linux-tegra@vger.kernel.org
 
-Wolfram,
+Here are some basic Tegra test results for Linux v4.7-rc6.
+Logs and other details at:
 
-On 27/06/16 10:32, Laxman Dewangan wrote:
-> 
-> On Monday 27 June 2016 02:58 PM, Jon Hunter wrote:
->> Hi all,
->>
->> On 14/06/16 21:26, Jon Hunter wrote:
->>> @@ -912,7 +912,7 @@ static int tegra_i2c_probe(struct platform_device
->>> *pdev)
->>>       ret = tegra_i2c_init(i2c_dev);
->>>       if (ret) {
->>>           dev_err(&pdev->dev, "Failed to initialize i2c controller");
->>> -        goto unprepare_div_clk;
->>> +        goto disable_div_clk;
->>>       }
->>>
-> 
-> Yes, this looks correct.
-> 
-> Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
+    https://nvtb.github.io//linux/test_v4.7-rc6/20160703233102/
 
-Can you pick this one up?
 
-Cheers
-Jon
+Test summary
+------------
 
--- 
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+
+Build: Image:
+    Pass: ( 1/ 1): defconfig
+
+Boot to userspace: defconfig:
+    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
+		   tegra210-p2371-0000, tegra210-smaug
+
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+Boot to userspace: tegra_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: multi_v7_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: tegra_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v4.7-rc5 (4c2e07c6a29e0129e975727b9f57eede813eea85)):
+   text     data      bss    total  kernel
+  +4100      +32        0    +4132  defconfig
+  +1196        0      +64    +1260  multi_v7_defconfig
+   +144        0        0     +144  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.7-rc5 (4c2e07c6a29e0129e975727b9f57eede813eea85))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+        .        .        .        .      qemu-vexpress64            defconfig           __internal
+        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+        .        .        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
+        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
+        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
+        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
+        .        .        .        .       tegra210-smaug            defconfig       tegra210-smaug
+        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+
+--
 nvpublic
