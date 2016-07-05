@@ -1,38 +1,64 @@
 From: Joseph Lo <josephl@nvidia.com>
-Subject: [PATCH V2 07/10] arm64: defconfig: Enable Tegra186 SoC
-Date: Tue, 5 Jul 2016 17:04:28 +0800
-Message-ID: <20160705090431.5852-8-josephl@nvidia.com>
+Subject: [PATCH V2 06/10] soc/tegra: Add Tegra186 support
+Date: Tue, 5 Jul 2016 17:04:27 +0800
+Message-ID: <20160705090431.5852-7-josephl@nvidia.com>
 References: <20160705090431.5852-1-josephl@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <20160705090431.5852-1-josephl@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Matthew Longnecker <MLongnecker@nvidia.com>, devicetree@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Joseph Lo <josephl@nvidia.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jassi Brar <jassisinghbrar@gmail.com>, Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, Matthew Longnecker <MLongnecker@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Enable Tegra186 SoC.
+The Tegra186 has a combination of Denver and Cortex-A57 CPU cores and
+GPUs with Pascal architecture on it. It features with ADSP with
+Cortex-A9 CPU for audio processing, hardware video encoder/decoder with
+multi-format support, ISP for image capture processing and BPMP for the
+power managements.
 
 Signed-off-by: Joseph Lo <josephl@nvidia.com>
 ---
 Changes in V2:
 - None
 ---
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/soc/tegra/Kconfig | 14 ++++++++++++++
+ 1 file changed, 14 insertions(+)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index e69051098435..64d767ec142c 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -326,6 +326,7 @@ CONFIG_QCOM_SMEM=y
- CONFIG_QCOM_SMD=y
- CONFIG_QCOM_SMD_RPM=y
- CONFIG_ARCH_TEGRA_132_SOC=y
-+CONFIG_ARCH_TEGRA_186_SOC=y
- CONFIG_ARCH_TEGRA_210_SOC=y
- CONFIG_EXTCON_USB_GPIO=y
- CONFIG_PWM=y
+diff --git a/drivers/soc/tegra/Kconfig b/drivers/soc/tegra/Kconfig
+index 03089ad2fc65..88a71dfd466c 100644
+--- a/drivers/soc/tegra/Kconfig
++++ b/drivers/soc/tegra/Kconfig
+@@ -61,6 +61,20 @@ config ARCH_TEGRA_132_SOC
+ 	  but contains an NVIDIA Denver CPU complex in place of
+ 	  Tegra124's "4+1" Cortex-A15 CPU complex.
+ 
++config ARCH_TEGRA_186_SOC
++	bool "NVIDIA Tegra186 SoC"
++	select MAILBOX
++	select TEGRA_BPMP
++	select TEGRA_HSP_MBOX
++	select TEGRA_IVC
++	help
++	  Enable support for the NVIDIA Tegar186 SoC. The Tegra186 has a
++	  combination of Denver and Cortex-A57 CPU cores and GPUs with Pascal
++	  architecture on it. It features with ADSP with Cortex-A9 CPU for
++	  audio processing, hardware video encoder/decoder with multi-format
++	  support, ISP for image capture processing and BPMP for the power
++	  managements.
++
+ config ARCH_TEGRA_210_SOC
+ 	bool "NVIDIA Tegra210 SoC"
+ 	select PINCTRL_TEGRA210
 -- 
 2.9.0
