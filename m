@@ -1,73 +1,87 @@
-From: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
-Subject: [PATCH] amba: tegra-ahb: make it explicitly non-modular
-Date: Mon, 4 Jul 2016 17:36:50 -0400
-Message-ID: <20160704213650.6930-1-paul.gortmaker@windriver.com>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2 00/10] arm64: tegra: add BPMP support
+Date: Tue, 5 Jul 2016 17:04:21 +0800
+Message-ID: <20160705090431.5852-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The Kconfig currently controlling compilation of this code is:
+Hi,
 
-drivers/amba/Kconfig:config TEGRA_AHB
-drivers/amba/Kconfig:   bool "Enable AHB driver for NVIDIA Tegra SoCs"
+This series introduce the first announced Boot and Power Management Processor
+(BPMP) for the new generation Tegra SoCs, which is designed for boot
+process handling and offloading the power management tasks from the CPU.
 
-...meaning that it currently is not being built as a module by anyone.
+We also add some very initial and basic support for Tegra186 SoC, which
+supports debug console and initrd for initial bring up currently. More drivers
+and functions can be supported based on this later.
 
-Lets remove the couple traces of modularity so that when reading the
-driver there is no doubt it is builtin-only.
+Thanks,
+Joseph
 
-Since module_platform_driver() uses the same init level priority as
-builtin_platform_driver() the init ordering remains unchanged with
-this commit.
+Changes in V2
+- revise the HSP mailbox and bpmp DT binding documents
+- fix the HSP mailbox driver according to the binding update
+- update the dts files to represent the binding update
 
-We also delete the MODULE_LICENSE tag etc. since all that information
-was (or is now) contained at the top of the file in the comments.
+Joseph Lo (10):
+  Documentation: dt-bindings: mailbox: tegra: Add binding for HSP
+    mailbox
+  mailbox: tegra-hsp: Add HSP(Hardware Synchronization Primitives)
+    driver
+  Documentation: dt-bindings: firmware: tegra: add bindings of the BPMP
+  firmware: tegra: add IVC library
+  firmware: tegra: add BPMP support
+  soc/tegra: Add Tegra186 support
+  arm64: defconfig: Enable Tegra186 SoC
+  arm64: dts: tegra: Add Tegra186 support
+  arm64: dts: tegra: Add NVIDIA Tegra186 P3310 main board support
+  arm64: dts: tegra: Add NVIDIA P2771 board support
 
-Cc: Russell King <linux-lFZ/pmaqli7XmaaqVzeoHQ@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Signed-off-by: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
----
- drivers/amba/tegra-ahb.c | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ .../bindings/firmware/nvidia,tegra186-bpmp.txt     |   77 +
+ .../bindings/mailbox/nvidia,tegra186-hsp.txt       |   51 +
+ arch/arm64/boot/dts/nvidia/Makefile                |    1 +
+ arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts |    8 +
+ arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi     |   34 +
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           |   77 +
+ arch/arm64/configs/defconfig                       |    1 +
+ drivers/firmware/Kconfig                           |    1 +
+ drivers/firmware/Makefile                          |    1 +
+ drivers/firmware/tegra/Kconfig                     |   25 +
+ drivers/firmware/tegra/Makefile                    |    2 +
+ drivers/firmware/tegra/bpmp.c                      |  713 +++++++++
+ drivers/firmware/tegra/ivc.c                       |  659 ++++++++
+ drivers/mailbox/Kconfig                            |    9 +
+ drivers/mailbox/Makefile                           |    2 +
+ drivers/mailbox/tegra-hsp.c                        |  418 +++++
+ drivers/soc/tegra/Kconfig                          |   14 +
+ include/dt-bindings/clock/tegra186-clock.h         |  940 ++++++++++++
+ include/dt-bindings/mailbox/tegra186-hsp.h         |   23 +
+ include/dt-bindings/reset/tegra186-reset.h         |  217 +++
+ include/soc/tegra/bpmp.h                           |   29 +
+ include/soc/tegra/bpmp_abi.h                       | 1601 ++++++++++++++++++++
+ include/soc/tegra/ivc.h                            |  102 ++
+ 23 files changed, 5005 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
+ create mode 100644 Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra186.dtsi
+ create mode 100644 drivers/firmware/tegra/Kconfig
+ create mode 100644 drivers/firmware/tegra/Makefile
+ create mode 100644 drivers/firmware/tegra/bpmp.c
+ create mode 100644 drivers/firmware/tegra/ivc.c
+ create mode 100644 drivers/mailbox/tegra-hsp.c
+ create mode 100644 include/dt-bindings/clock/tegra186-clock.h
+ create mode 100644 include/dt-bindings/mailbox/tegra186-hsp.h
+ create mode 100644 include/dt-bindings/reset/tegra186-reset.h
+ create mode 100644 include/soc/tegra/bpmp.h
+ create mode 100644 include/soc/tegra/bpmp_abi.h
+ create mode 100644 include/soc/tegra/ivc.h
 
-diff --git a/drivers/amba/tegra-ahb.c b/drivers/amba/tegra-ahb.c
-index b0b688c481e8..38cba9c7fb73 100644
---- a/drivers/amba/tegra-ahb.c
-+++ b/drivers/amba/tegra-ahb.c
-@@ -1,4 +1,6 @@
- /*
-+ * Tegra AHB driver
-+ *
-  * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
-  * Copyright (C) 2011 Google, Inc.
-  *
-@@ -22,7 +24,7 @@
- 
- #include <linux/err.h>
- #include <linux/kernel.h>
--#include <linux/module.h>
-+#include <linux/init.h>
- #include <linux/platform_device.h>
- #include <linux/io.h>
- #include <linux/of.h>
-@@ -301,9 +303,4 @@ static struct platform_driver tegra_ahb_driver = {
- 		.pm = &tegra_ahb_pm,
- 	},
- };
--module_platform_driver(tegra_ahb_driver);
--
--MODULE_AUTHOR("Hiroshi DOYU <hdoyu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
--MODULE_DESCRIPTION("Tegra AHB driver");
--MODULE_LICENSE("GPL v2");
--MODULE_ALIAS("platform:" DRV_NAME);
-+builtin_platform_driver(tegra_ahb_driver);
 -- 
-2.8.4
+2.9.0
