@@ -1,102 +1,37 @@
-From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH V2 03/10] Documentation: dt-bindings: firmware: tegra: add
- bindings of the BPMP
-Date: Wed, 6 Jul 2016 20:42:41 +0900
-Message-ID: <CAAVeFuJwhQ=L803W7K+e5_VUKrfB2NyCz+WMR91QuvKgmv1ofw@mail.gmail.com>
-References: <20160705090431.5852-1-josephl@nvidia.com> <20160705090431.5852-4-josephl@nvidia.com>
+From: weiyj_lk-9Onoh4P/yGk@public.gmane.org
+Subject: [PATCH -next] drm/nouveau/device: fix return value check in nvkm_device_tegra_probe_iommu()
+Date: Wed,  6 Jul 2016 12:23:05 +0000
+Message-ID: <1467807785-32126-1-git-send-email-weiyj_lk@163.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160705090431.5852-4-josephl@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Joseph Lo <josephl@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Matthew Longnecker <MLongnecker@nvidia.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 5, 2016 at 6:04 PM, Joseph Lo <josephl@nvidia.com> wrote:
-> The BPMP is a specific processor in Tegra chip, which is designed for
-> booting process handling and offloading the power management, clock
-> management, and reset control tasks from the CPU. The binding document
-> defines the resources that would be used by the BPMP firmware driver,
-> which can create the interprocessor communication (IPC) between the CPU
-> and BPMP.
->
-> Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> ---
-> Changes in V2:
-> - update the message that the BPMP is clock and reset control provider
-> - add tegra186-clock.h and tegra186-reset.h header files
-> - revise the description of the required properties
-> ---
->  .../bindings/firmware/nvidia,tegra186-bpmp.txt     |  77 ++
->  include/dt-bindings/clock/tegra186-clock.h         | 940 +++++++++++++++++++++
->  include/dt-bindings/reset/tegra186-reset.h         | 217 +++++
->  3 files changed, 1234 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
->  create mode 100644 include/dt-bindings/clock/tegra186-clock.h
->  create mode 100644 include/dt-bindings/reset/tegra186-reset.h
->
-> diff --git a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
-> new file mode 100644
-> index 000000000000..4d0b6eba56c5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
-> @@ -0,0 +1,77 @@
-> +NVIDIA Tegra Boot and Power Management Processor (BPMP)
-> +
-> +The BPMP is a specific processor in Tegra chip, which is designed for
-> +booting process handling and offloading the power management, clock
-> +management, and reset control tasks from the CPU. The binding document
-> +defines the resources that would be used by the BPMP firmware driver,
-> +which can create the interprocessor communication (IPC) between the CPU
-> +and BPMP.
-> +
-> +Required properties:
-> +- name : Should be bpmp
-> +- compatible
-> +    Array of strings
-> +    One of:
-> +    - "nvidia,tegra186-bpmp"
-> +- mboxes : The phandle of mailbox controller and the mailbox specifier.
-> +- shmem : List of the phandle of the TX and RX shared memory area that
-> +         the IPC between CPU and BPMP is based on.
-> +- #clock-cells : Should be 1.
-> +- #reset-cells : Should be 1.
-> +
-> +This node is a mailbox consumer. See the following files for details of
-> +the mailbox subsystem, and the specifiers implemented by the relevant
-> +provider(s):
-> +
-> +- Documentation/devicetree/bindings/mailbox/mailbox.txt
-> +- Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt
-> +
-> +This node is a clock and reset provider. See the following files for
-> +general documentation of those features, and the specifiers implemented
-> +by this node:
-> +
-> +- Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +- include/dt-bindings/clock/tegra186-clock.h
-> +- Documentation/devicetree/bindings/reset/reset.txt
-> +- include/dt-bindings/reset/tegra186-reset.h
-> +
-> +The shared memory bindings for BPMP
-> +-----------------------------------
-> +
-> +The shared memory area for the IPC TX and RX between CPU and BPMP are
-> +predefined and work on top of sysram, which is an SRAM inside the chip.
-> +
-> +See "Documentation/devicetree/bindings/sram/sram.txt" for the bindings.
-> +
-> +Example:
-> +
-> +hsp_top0: hsp@03c00000 {
-> +       ...
-> +       #mbox-cells = <1>;
-> +};
-> +
-> +sysram@30000000 {
-> +       compatible = "nvidia,tegra186-sysram", "mmio-ram";
+From: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
 
-Shouldn't the second compatible be "mmio-sram"?
+In case of error, the function iommu_domain_alloc() returns NULL
+pointer not ERR_PTR(). The IS_ERR() test in the return value check
+should be replaced with NULL test.
 
-If so, then you have the same typo in tegra186.dtsi as well.
+Signed-off-by: Wei Yongjun <yongjun_wei-zrsr2BFq86L20UzCJQGyNP8+0UxHXcjY@public.gmane.org>
+---
+ drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+index ec12efb..2ed025d 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+@@ -102,7 +102,7 @@ nvkm_device_tegra_probe_iommu(struct nvkm_device_tegra *tdev)
+ 
+ 	if (iommu_present(&platform_bus_type)) {
+ 		tdev->iommu.domain = iommu_domain_alloc(&platform_bus_type);
+-		if (IS_ERR(tdev->iommu.domain))
++		if (!tdev->iommu.domain)
+ 			goto error;
+ 
+ 		/*
