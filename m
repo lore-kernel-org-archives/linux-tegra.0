@@ -1,117 +1,552 @@
 From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] mmc: tegra: Only advertise UHS modes if IO regulator is present
-Date: Wed, 6 Jul 2016 11:14:36 +0900
-Message-ID: <CAAVeFu+VM+-sL8BAkq12bEa6NaZ8D0pKF54qAgmked=CxQsO9A@mail.gmail.com>
-References: <1467727665-2709-1-git-send-email-jonathanh@nvidia.com>
+Subject: Re: [PATCH V2 02/10] mailbox: tegra-hsp: Add HSP(Hardware
+ Synchronization Primitives) driver
+Date: Wed, 6 Jul 2016 16:05:07 +0900
+Message-ID: <CAAVeFuK1nY2M3vU9j-D5TJwZCEj+sXRDy=W4XMTqSdsveTTQww@mail.gmail.com>
+References: <20160705090431.5852-1-josephl@nvidia.com> <20160705090431.5852-3-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1467727665-2709-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20160705090431.5852-3-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 5, 2016 at 11:07 PM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> To support UHS modes for Tegra an external regulator must be present
-> to adjust the IO voltage accordingly. If the regulator is not present
-> but the host supports the UHS modes and the SD/MMC device supports the
-> UHS modes, then we will attempt to switch to a high-speed mode.
+On Tue, Jul 5, 2016 at 6:04 PM, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> The Tegra HSP mailbox driver implements the signaling doorbell-based
+> interprocessor communication (IPC) for remote processors currently. The
+> HSP HW modules support some different features for that, which are
+> shared mailboxes, shared semaphores, arbitrated semaphores, and
+> doorbells. And there are multiple HSP HW instances on the chip. So the
+> driver is extendable to support more features for different IPC
+> requirement.
 >
-> Without an external regulator, Tegra will fail to switch to the
-> high-speed mode. Although this is expected, it has been found that with
-> some SD cards, once it has been switched to operate at a high-speed
-> mode and hence a lower IO voltage, if the IO voltage is not changed then
-> all subsequent commands issues to the card will fail. Furthermore, it
-> will not be possible to switch back to a non high-speed mode and so
-> eventually the SD card initialisation will fail.
+> The driver of remote processor can use it as a mailbox client and deal
+> with the IPC protocol to synchronize the data communications.
 >
-> The SDHCI core does not require that the host have an external regulator
-> when switching to UHS modes and therefore, the Tegra SDHCI host
-> controller should only advertise the UHS modes as being supported if the
-> regulator for the IO voltage is present. Fortunately, Tegra has a vendor
-> specific register which can be used to control which modes are
-> advertised via the SDHCI_CAPABILITIES register and if the controller is
-> compatible with v3.0 of the SDHCI specification. Hence, if there is no
-> IO voltage regulator present in device-tree for the Tegra SDHCI host, then
-> don't advertise the UHS modes or that the controller is SDHCI v3.0
-> compatible.
->
-> Note that if the SDHCI is compatible with v3.0 of the SDHCI specification
-> then this will cause the SDHCI core to read the SDHCI_CAPABILITIES_1
-> register which will enable other UHS modes.
->
-> This fixes commit 7ad2ed1dfcbe ("mmc: tegra: enable UHS-I modes") which
-> enables UHS mode without checking if the board can support them.
->
-> Fixes: 7ad2ed1dfcbe ("mmc: tegra: enable UHS-I modes")
->
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
+> Changes in V2:
+> - Update the driver to support the binding changes in V2
+> - it's extendable to support multiple HSP sub-modules on the same HSP HW block
+>   now.
+> ---
+>  drivers/mailbox/Kconfig     |   9 +
+>  drivers/mailbox/Makefile    |   2 +
+>  drivers/mailbox/tegra-hsp.c | 418 ++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 429 insertions(+)
+>  create mode 100644 drivers/mailbox/tegra-hsp.c
 >
-> Please note that I have been reviewing the series from Adrian [0] to
-> make it easier for drivers to set the capabilities. However, given that
-> we can control the capabilities that are advertised by the CAPS registers
-> it seems easier to use this feature.
+> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
+> index 5305923752d2..fe584cb54720 100644
+> --- a/drivers/mailbox/Kconfig
+> +++ b/drivers/mailbox/Kconfig
+> @@ -114,6 +114,15 @@ config MAILBOX_TEST
+>           Test client to help with testing new Controller driver
+>           implementations.
 >
-> [0] http://marc.info/?l=linux-mmc&m=146712062816835&w=2
->
->  drivers/mmc/host/sdhci-tegra.c | 50 +++++++++++++++++++++++++-----------------
->  1 file changed, 30 insertions(+), 20 deletions(-)
->
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index bcc0de47fe7e..c8b51cd71c56 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -140,6 +140,7 @@ static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
->         struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
->         struct sdhci_tegra *tegra_host = sdhci_pltfm_priv(pltfm_host);
->         const struct sdhci_tegra_soc_data *soc_data = tegra_host->soc_data;
-> +       struct device *dev = mmc_dev(host->mmc);
->         u32 misc_ctrl, clk_ctrl;
->
->         sdhci_reset(host, mask);
-> @@ -148,28 +149,37 @@ static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
->                 return;
->
->         misc_ctrl = sdhci_readl(host, SDHCI_TEGRA_VENDOR_MISC_CTRL);
-> -       /* Erratum: Enable SDHCI spec v3.00 support */
-> -       if (soc_data->nvquirks & NVQUIRK_ENABLE_SDHCI_SPEC_300)
-> -               misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDHCI_SPEC_300;
-> -       /* Advertise UHS modes as supported by host */
-> -       if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR50)
-> -               misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDR50;
-> -       else
-> -               misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_SDR50;
-> -       if (soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
-> -               misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_DDR50;
-> -       else
-> -               misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_DDR50;
-> -       if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR104)
-> -               misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDR104;
-> -       else
-> -               misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_SDR104;
-> -       sdhci_writel(host, misc_ctrl, SDHCI_TEGRA_VENDOR_MISC_CTRL);
-> -
->         clk_ctrl = sdhci_readl(host, SDHCI_TEGRA_VENDOR_CLOCK_CTRL);
-> +
-> +       misc_ctrl &= ~(SDHCI_MISC_CTRL_ENABLE_SDHCI_SPEC_300 |
-> +                      SDHCI_MISC_CTRL_ENABLE_SDR50 |
-> +                      SDHCI_MISC_CTRL_ENABLE_DDR50 |
-> +                      SDHCI_MISC_CTRL_ENABLE_SDR104);
-> +
->         clk_ctrl &= ~SDHCI_CLOCK_CTRL_SPI_MODE_CLKEN_OVERRIDE;
-> -       if (soc_data->nvquirks & SDHCI_MISC_CTRL_ENABLE_SDR50)
-> -               clk_ctrl |= SDHCI_CLOCK_CTRL_SDR50_TUNING_OVERRIDE;
-> +
-> +       /*
-> +        * If the board does not define a regulator for the SDHCI
-> +        * IO voltage, then don't advertise support for UHS modes
-> +        * even if the device supports it because the IO voltage
-> +        * cannot be configured.
-> +        */
-> +       if (of_property_read_bool(dev->of_node, "vqmmc-supply")) {
+> +config TEGRA_HSP_MBOX
+> +       bool "Tegra HSP(Hardware Synchronization Primitives) Driver"
 
-Can't you check whether (!IS_SERR(host->mmc->supply.vqmmc)) instead?
-The property being present doesn't necessarily guarantee that the
-regulator has been obtained successfully.
+Space missing before the opening parenthesis (same in the patch title btw).
+
+> +       depends on ARCH_TEGRA_186_SOC
+> +       help
+> +         The Tegra HSP driver is used for the interprocessor communication
+> +         between different remote processors and host processors on Tegra186
+> +         and later SoCs. Say Y here if you want to have this support.
+> +         If unsure say N.
+
+Since this option is selected automatically by ARCH_TEGRA_186_SOC, you
+should probably drop the last 2 sentences.
+
+> +
+>  config XGENE_SLIMPRO_MBOX
+>         tristate "APM SoC X-Gene SLIMpro Mailbox Controller"
+>         depends on ARCH_XGENE
+> diff --git a/drivers/mailbox/Makefile b/drivers/mailbox/Makefile
+> index 0be3e742bb7d..26d8f91c7fea 100644
+> --- a/drivers/mailbox/Makefile
+> +++ b/drivers/mailbox/Makefile
+> @@ -25,3 +25,5 @@ obj-$(CONFIG_TI_MESSAGE_MANAGER) += ti-msgmgr.o
+>  obj-$(CONFIG_XGENE_SLIMPRO_MBOX) += mailbox-xgene-slimpro.o
+>
+>  obj-$(CONFIG_HI6220_MBOX)      += hi6220-mailbox.o
+> +
+> +obj-${CONFIG_TEGRA_HSP_MBOX}   += tegra-hsp.o
+> diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+> new file mode 100644
+> index 000000000000..93c3ef58f29f
+> --- /dev/null
+> +++ b/drivers/mailbox/tegra-hsp.c
+> @@ -0,0 +1,418 @@
+> +/*
+> + * Copyright (c) 2016, NVIDIA CORPORATION.  All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + */
+> +
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/mailbox_controller.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <dt-bindings/mailbox/tegra186-hsp.h>
+> +
+> +#define HSP_INT_DIMENSIONING   0x380
+> +#define HSP_nSM_OFFSET         0
+> +#define HSP_nSS_OFFSET         4
+> +#define HSP_nAS_OFFSET         8
+> +#define HSP_nDB_OFFSET         12
+> +#define HSP_nSI_OFFSET         16
+
+Would be nice to have comments to understand what SM, SS, AS, etc.
+stand for (Shared Mailboxes, Shared Semaphores, Arbitrated Semaphores
+but you need to look at the patch description to understand that). A
+top-of-file comment explaning the necessary concepts to read this code
+would do the trick.
+
+> +#define HSP_nINT_MASK          0xf
+> +
+> +#define HSP_DB_REG_TRIGGER     0x0
+> +#define HSP_DB_REG_ENABLE      0x4
+> +#define HSP_DB_REG_RAW         0x8
+> +#define HSP_DB_REG_PENDING     0xc
+> +
+> +#define HSP_DB_CCPLEX          1
+> +#define HSP_DB_BPMP            3
+
+Maybe turn this into enum and use that type for
+tegra_hsp_db_chan::db_id? Also have MAX_NUM_HSP_DB here, since it is
+related to these values?
+
+> +
+> +#define MAX_NUM_HSP_CHAN 32
+> +#define MAX_NUM_HSP_DB 7
+> +
+> +#define hsp_db_offset(i, d) \
+> +       (d->base + ((1 + (d->nr_sm >> 1) + d->nr_ss + d->nr_as) << 16) + \
+> +       (i) * 0x100)
+> +
+> +struct tegra_hsp_db_chan {
+> +       int master_id;
+> +       int db_id;
+> +};
+> +
+> +struct tegra_hsp_mbox_chan {
+> +       int type;
+> +       union {
+> +               struct tegra_hsp_db_chan db_chan;
+> +       };
+> +};
+> +
+> +struct tegra_hsp_mbox {
+> +       struct mbox_controller *mbox;
+> +       void __iomem *base;
+> +       void __iomem *db_base[MAX_NUM_HSP_DB];
+> +       int db_irq;
+> +       int nr_sm;
+> +       int nr_as;
+> +       int nr_ss;
+> +       int nr_db;
+> +       int nr_si;
+> +       spinlock_t lock;
+> +};
+> +
+> +static inline u32 hsp_readl(void __iomem *base, int reg)
+> +{
+> +       return readl(base + reg);
+> +}
+> +
+> +static inline void hsp_writel(void __iomem *base, int reg, u32 val)
+> +{
+> +       writel(val, base + reg);
+> +       readl(base + reg);
+> +}
+> +
+> +static int hsp_db_can_ring(void __iomem *db_base)
+> +{
+> +       u32 reg;
+> +
+> +       reg = hsp_readl(db_base, HSP_DB_REG_ENABLE);
+> +
+> +       return !!(reg & BIT(HSP_DB_MASTER_CCPLEX));
+> +}
+> +
+> +static irqreturn_t hsp_db_irq(int irq, void *p)
+> +{
+> +       struct tegra_hsp_mbox *hsp_mbox = p;
+> +       ulong val;
+> +       int master_id;
+> +
+> +       val = (ulong)hsp_readl(hsp_mbox->db_base[HSP_DB_CCPLEX],
+> +                              HSP_DB_REG_PENDING);
+> +       hsp_writel(hsp_mbox->db_base[HSP_DB_CCPLEX], HSP_DB_REG_PENDING, val);
+> +
+> +       spin_lock(&hsp_mbox->lock);
+> +       for_each_set_bit(master_id, &val, MAX_NUM_HSP_CHAN) {
+> +               struct mbox_chan *chan;
+> +               struct tegra_hsp_mbox_chan *mchan;
+> +               int i;
+> +
+> +               for (i = 0; i < MAX_NUM_HSP_CHAN; i++) {
+
+I wonder if this could not be optimized. You are doing a double loop
+on MAX_NUM_HSP_CHAN to look for an identical master_id. Since it seems
+like the same master_id cannot be used twice (considering that the
+inner loop only processes the first match), couldn't you just select
+the free channel in of_hsp_mbox_xlate() by doing
+&mbox->chans[master_id] (and returning an error if it is already
+used), then simply getting chan as &hsp_mbox->mbox->chans[master_id]
+instead of having the inner loop below? That would remove the need for
+the second loop.
+
+If having two channels use the same master_id is a valid scenario,
+then all matches on master_id should probably be processed, not just
+the first one.
+
+> +                       chan = &hsp_mbox->mbox->chans[i];
+> +
+> +                       if (!chan->con_priv)
+> +                               continue;
+> +
+> +                       mchan = chan->con_priv;
+> +                       if (mchan->type == HSP_MBOX_TYPE_DB &&
+> +                           mchan->db_chan.master_id == master_id)
+> +                               break;
+> +                       chan = NULL;
+> +               }
+> +
+> +               if (chan)
+> +                       mbox_chan_received_data(chan, NULL);
+> +       }
+> +       spin_unlock(&hsp_mbox->lock);
+> +
+> +       return IRQ_HANDLED;
+> +}
+> +
+> +static int hsp_db_send_data(struct mbox_chan *chan, void *data)
+> +{
+> +       struct tegra_hsp_mbox_chan *mchan = chan->con_priv;
+> +       struct tegra_hsp_db_chan *db_chan = &mchan->db_chan;
+> +       struct tegra_hsp_mbox *hsp_mbox = dev_get_drvdata(chan->mbox->dev);
+> +
+> +       hsp_writel(hsp_mbox->db_base[db_chan->db_id], HSP_DB_REG_TRIGGER, 1);
+> +
+> +       return 0;
+> +}
+> +
+> +static int hsp_db_startup(struct mbox_chan *chan)
+> +{
+> +       struct tegra_hsp_mbox_chan *mchan = chan->con_priv;
+> +       struct tegra_hsp_db_chan *db_chan = &mchan->db_chan;
+> +       struct tegra_hsp_mbox *hsp_mbox = dev_get_drvdata(chan->mbox->dev);
+> +       u32 val;
+> +       unsigned long flag;
+> +
+> +       if (db_chan->master_id >= MAX_NUM_HSP_CHAN) {
+> +               dev_err(chan->mbox->dev, "invalid HSP chan: master ID: %d\n",
+> +                       db_chan->master_id);
+> +               return -EINVAL;
+> +       }
+> +
+> +       spin_lock_irqsave(&hsp_mbox->lock, flag);
+> +       val = hsp_readl(hsp_mbox->db_base[HSP_DB_CCPLEX], HSP_DB_REG_ENABLE);
+> +       val |= BIT(db_chan->master_id);
+> +       hsp_writel(hsp_mbox->db_base[HSP_DB_CCPLEX], HSP_DB_REG_ENABLE, val);
+> +       spin_unlock_irqrestore(&hsp_mbox->lock, flag);
+> +
+> +       if (!hsp_db_can_ring(hsp_mbox->db_base[db_chan->db_id]))
+> +               return -ENODEV;
+> +
+> +       return 0;
+> +}
+> +
+> +static void hsp_db_shutdown(struct mbox_chan *chan)
+> +{
+> +       struct tegra_hsp_mbox_chan *mchan = chan->con_priv;
+> +       struct tegra_hsp_db_chan *db_chan = &mchan->db_chan;
+> +       struct tegra_hsp_mbox *hsp_mbox = dev_get_drvdata(chan->mbox->dev);
+> +       u32 val;
+> +       unsigned long flag;
+> +
+> +       spin_lock_irqsave(&hsp_mbox->lock, flag);
+> +       val = hsp_readl(hsp_mbox->db_base[HSP_DB_CCPLEX], HSP_DB_REG_ENABLE);
+> +       val &= ~BIT(db_chan->master_id);
+> +       hsp_writel(hsp_mbox->db_base[HSP_DB_CCPLEX], HSP_DB_REG_ENABLE, val);
+> +       spin_unlock_irqrestore(&hsp_mbox->lock, flag);
+> +}
+> +
+> +static bool hsp_db_last_tx_done(struct mbox_chan *chan)
+> +{
+> +       return true;
+> +}
+> +
+> +static int tegra_hsp_db_init(struct tegra_hsp_mbox *hsp_mbox,
+> +                            struct mbox_chan *mchan, int master_id)
+> +{
+> +       struct platform_device *pdev = to_platform_device(hsp_mbox->mbox->dev);
+> +       struct tegra_hsp_mbox_chan *hsp_mbox_chan;
+> +       int ret;
+> +
+> +       if (!hsp_mbox->db_irq) {
+> +               int i;
+> +
+> +               hsp_mbox->db_irq = platform_get_irq_byname(pdev, "doorbell");
+
+Getting the IRQ sounds more like a job for probe() - I don't see the
+benefit of lazy-doing it?
+
+> +               ret = devm_request_irq(&pdev->dev, hsp_mbox->db_irq,
+> +                                      hsp_db_irq, IRQF_NO_SUSPEND,
+> +                                      dev_name(&pdev->dev), hsp_mbox);
+> +               if (ret)
+> +                       return ret;
+> +
+> +               for (i = 0; i < MAX_NUM_HSP_DB; i++)
+> +                       hsp_mbox->db_base[i] = hsp_db_offset(i, hsp_mbox);
+
+Same here, cannot this be moved into probe()?
+
+> +       }
+> +
+> +       hsp_mbox_chan = devm_kzalloc(&pdev->dev, sizeof(*hsp_mbox_chan),
+> +                                    GFP_KERNEL);
+> +       if (!hsp_mbox_chan)
+> +               return -ENOMEM;
+> +
+> +       hsp_mbox_chan->type = HSP_MBOX_TYPE_DB;
+> +       hsp_mbox_chan->db_chan.master_id = master_id;
+> +       switch (master_id) {
+> +       case HSP_DB_MASTER_BPMP:
+> +               hsp_mbox_chan->db_chan.db_id = HSP_DB_BPMP;
+> +               break;
+> +       default:
+> +               hsp_mbox_chan->db_chan.db_id = MAX_NUM_HSP_DB;
+> +               break;
+> +       }
+> +
+> +       mchan->con_priv = hsp_mbox_chan;
+> +
+> +       return 0;
+> +}
+> +
+> +static int hsp_send_data(struct mbox_chan *chan, void *data)
+> +{
+> +       struct tegra_hsp_mbox_chan *hsp_mbox_chan = chan->con_priv;
+> +       int ret = 0;
+> +
+> +       switch (hsp_mbox_chan->type) {
+> +       case HSP_MBOX_TYPE_DB:
+> +               ret = hsp_db_send_data(chan, data);
+> +               break;
+> +       default:
+> +               break;
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +static int hsp_startup(struct mbox_chan *chan)
+> +{
+> +       struct tegra_hsp_mbox_chan *hsp_mbox_chan = chan->con_priv;
+> +       int ret = 0;
+> +
+> +       switch (hsp_mbox_chan->type) {
+> +       case HSP_MBOX_TYPE_DB:
+> +               ret = hsp_db_startup(chan);
+> +               break;
+> +       default:
+> +               break;
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +static void hsp_shutdown(struct mbox_chan *chan)
+> +{
+> +       struct tegra_hsp_mbox_chan *hsp_mbox_chan = chan->con_priv;
+> +
+> +       switch (hsp_mbox_chan->type) {
+> +       case HSP_MBOX_TYPE_DB:
+> +               hsp_db_shutdown(chan);
+> +               break;
+> +       default:
+> +               break;
+> +       }
+> +
+> +       chan->con_priv = NULL;
+> +}
+> +
+> +static bool hsp_last_tx_done(struct mbox_chan *chan)
+> +{
+> +       struct tegra_hsp_mbox_chan *hsp_mbox_chan = chan->con_priv;
+> +       bool ret = true;
+> +
+> +       switch (hsp_mbox_chan->type) {
+> +       case HSP_MBOX_TYPE_DB:
+> +               ret = hsp_db_last_tx_done(chan);
+> +               break;
+> +       default:
+> +               break;
+> +       }
+> +
+> +       return ret;
+> +}
+> +
+> +static const struct mbox_chan_ops tegra_hsp_ops = {
+> +       .send_data = hsp_send_data,
+> +       .startup = hsp_startup,
+> +       .shutdown = hsp_shutdown,
+> +       .last_tx_done = hsp_last_tx_done,
+> +};
+> +
+> +static const struct of_device_id tegra_hsp_match[] = {
+> +       { .compatible = "nvidia,tegra186-hsp" },
+> +       { }
+> +};
+> +
+> +static struct mbox_chan *
+> +of_hsp_mbox_xlate(struct mbox_controller *mbox,
+> +                 const struct of_phandle_args *sp)
+> +{
+> +       int mbox_id = sp->args[0];
+> +       int hsp_type = (mbox_id >> 16) & 0xf;
+> +       int master_id = mbox_id & 0xff;
+> +       struct tegra_hsp_mbox *hsp_mbox = dev_get_drvdata(mbox->dev);
+> +       struct mbox_chan *free_chan;
+> +       int i, ret = 0;
+> +
+> +       spin_lock(&hsp_mbox->lock);
+> +
+> +       for (i = 0; i < mbox->num_chans; i++) {
+> +               free_chan = &mbox->chans[i];
+> +               if (!free_chan->con_priv)
+> +                       break;
+> +               free_chan = NULL;
+> +       }
+> +
+> +       if (!free_chan) {
+> +               spin_unlock(&hsp_mbox->lock);
+> +               return ERR_PTR(-EFAULT);
+> +       }
+> +
+> +       switch (hsp_type) {
+> +       case HSP_MBOX_TYPE_DB:
+> +               ret = tegra_hsp_db_init(hsp_mbox, free_chan, master_id);
+
+Maybe move tegra_hsp_db_init's definition closer to this function,
+since it is only used here? Having related functions close to one
+another makes it easier to understand the code.
+
+> +               break;
+> +       default:
+
+This looks like an error condition - it should probably be reported,
+and maybe even an error returned. If you do it here you probably don't
+need to do the same check in hsp_send_data() and following functions.
+
+> +               break;
+> +       }
+> +
+> +       spin_unlock(&hsp_mbox->lock);
+> +
+> +       if (ret)
+> +               free_chan = ERR_PTR(-EFAULT);
+> +
+> +       return free_chan;
+> +}
+> +
+> +static int tegra_hsp_probe(struct platform_device *pdev)
+> +{
+> +       struct tegra_hsp_mbox *hsp_mbox;
+> +       struct resource *res;
+> +       int ret = 0;
+> +       u32 reg;
+> +
+> +       hsp_mbox = devm_kzalloc(&pdev->dev, sizeof(*hsp_mbox), GFP_KERNEL);
+> +       if (!hsp_mbox)
+> +               return -ENOMEM;
+> +
+> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       hsp_mbox->base = devm_ioremap_resource(&pdev->dev, res);
+> +       if (IS_ERR(hsp_mbox->base))
+> +               return PTR_ERR(hsp_mbox->base);
+> +
+> +       reg = hsp_readl(hsp_mbox->base, HSP_INT_DIMENSIONING);
+> +       hsp_mbox->nr_sm = (reg >> HSP_nSM_OFFSET) & HSP_nINT_MASK;
+> +       hsp_mbox->nr_ss = (reg >> HSP_nSS_OFFSET) & HSP_nINT_MASK;
+> +       hsp_mbox->nr_as = (reg >> HSP_nAS_OFFSET) & HSP_nINT_MASK;
+> +       hsp_mbox->nr_db = (reg >> HSP_nDB_OFFSET) & HSP_nINT_MASK;
+> +       hsp_mbox->nr_si = (reg >> HSP_nSI_OFFSET) & HSP_nINT_MASK;
+
+Maybe have a HSP_NR(type, reg) that expands to (reg >> HSP_n ## TYPE
+## _OFFSET) & HSP_nINT_MASK) to simplify this?
+
+> +
+> +       hsp_mbox->mbox = devm_kzalloc(&pdev->dev,
+> +                                     sizeof(*hsp_mbox->mbox), GFP_KERNEL);
+> +       if (!hsp_mbox->mbox)
+> +               return -ENOMEM;
+> +
+> +       hsp_mbox->mbox->chans =
+> +               devm_kcalloc(&pdev->dev, MAX_NUM_HSP_CHAN,
+> +                            sizeof(*hsp_mbox->mbox->chans), GFP_KERNEL);
+> +       if (!hsp_mbox->mbox->chans)
+> +               return -ENOMEM;
+> +
+> +       hsp_mbox->mbox->of_xlate = of_hsp_mbox_xlate;
+> +       hsp_mbox->mbox->num_chans = MAX_NUM_HSP_CHAN;
+> +       hsp_mbox->mbox->dev = &pdev->dev;
+> +       hsp_mbox->mbox->txdone_irq = false;
+> +       hsp_mbox->mbox->txdone_poll = false;
+> +       hsp_mbox->mbox->ops = &tegra_hsp_ops;
+> +       platform_set_drvdata(pdev, hsp_mbox);
+> +
+> +       ret = mbox_controller_register(hsp_mbox->mbox);
+> +       if (ret) {
+> +               pr_err("tegra-hsp mbox: fail to register mailbox %d.\n", ret);
+> +               return ret;
+> +       }
+> +
+> +       spin_lock_init(&hsp_mbox->lock);
+> +
+> +       return 0;
+> +}
+> +
+> +static int tegra_hsp_remove(struct platform_device *pdev)
+> +{
+> +       struct tegra_hsp_mbox *hsp_mbox = platform_get_drvdata(pdev);
+> +
+> +       if (hsp_mbox->mbox)
+> +               mbox_controller_unregister(hsp_mbox->mbox);
+> +
+> +       return 0;
+> +}
+> +
+> +static struct platform_driver tegra_hsp_driver = {
+> +       .driver = {
+> +               .name = "tegra-hsp",
+> +               .of_match_table = tegra_hsp_match,
+> +       },
+> +       .probe = tegra_hsp_probe,
+> +       .remove = tegra_hsp_remove,
+> +};
+> +
+> +static int __init tegra_hsp_init(void)
+> +{
+> +       return platform_driver_register(&tegra_hsp_driver);
+> +}
+> +core_initcall(tegra_hsp_init);
+> --
+> 2.9.0
+>
