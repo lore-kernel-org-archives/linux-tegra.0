@@ -1,885 +1,939 @@
 From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V2 05/10] firmware: tegra: add BPMP support
-Date: Thu, 7 Jul 2016 19:18:34 +0900
-Message-ID: <CAAVeFu+6UO3_Zi3VTec0Qf6KBT2xY-usFNnd26raUQZ9ieEJbg@mail.gmail.com>
-References: <20160705090431.5852-1-josephl@nvidia.com> <20160705090431.5852-6-josephl@nvidia.com>
- <CAAVeFuKvp4d=RoPZGGLmhqXs1oHZPrEOxTJd_b6b7-rHq_mqqg@mail.gmail.com> <577E102E.8070602@nvidia.com>
+Subject: Re: [PATCH V2 04/10] firmware: tegra: add IVC library
+Date: Thu, 7 Jul 2016 20:16:13 +0900
+Message-ID: <CAAVeFuLZrG-3YgnVeoADAm4x5ksmQ_uNkCmSTJh05_=5xFd-9g@mail.gmail.com>
+References: <20160705090431.5852-1-josephl@nvidia.com> <20160705090431.5852-5-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <577E102E.8070602-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20160705090431.5852-5-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jul 7, 2016 at 5:17 PM, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> On 07/06/2016 07:39 PM, Alexandre Courbot wrote:
->>
->> Sorry, I will probably need to do several passes on this one to
->> understand everything, but here is what I can say after a first look:
->>
->> On Tue, Jul 5, 2016 at 6:04 PM, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>>
->>> The Tegra BPMP (Boot and Power Management Processor) is designed for the
->>> booting process handling, offloading the power management tasks and
->>> some system control services from the CPU. It can be clock, DVFS,
->>> thermal/EDP, power gating operation and system suspend/resume handling.
->>> So the CPU and the drivers of these modules can base on the service that
->>> the BPMP firmware driver provided to signal the event for the specific PM
->>> action to BPMP and receive the status update from BPMP.
->>>
->>> Comparing to the ARM SCPI, the service provided by BPMP is message-based
->>> communication but not method-based. The BPMP firmware driver provides the
->>> send/receive service for the users, when the user concerns the response
->>> time. If the user needs to get the event or update from the firmware, it
->>> can request the MRQ service as well. The user needs to take care of the
->>> message format, which we call BPMP ABI.
->>>
->>> The BPMP ABI defines the message format for different modules or usages.
->>> For example, the clock operation needs an MRQ service code called
->>> MRQ_CLK with specific message format which includes different sub
->>> commands for various clock operations. This is the message format that
->>> BPMP can recognize.
->>>
->>> So the user needs two things to initiate IPC between BPMP. Get the
->>> service from the bpmp_ops structure and maintain the message format as
->>> the BPMP ABI defined.
->>>
->>> Based-on-the-work-by:
->>> Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>
->>> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>> ---
->>> Changes in V2:
->>> - None
->>> ---
->>>   drivers/firmware/tegra/Kconfig  |   12 +
->>>   drivers/firmware/tegra/Makefile |    1 +
->>>   drivers/firmware/tegra/bpmp.c   |  713 +++++++++++++++++
->>>   include/soc/tegra/bpmp.h        |   29 +
->>>   include/soc/tegra/bpmp_abi.h    | 1601
->>> +++++++++++++++++++++++++++++++++++++++
->>>   5 files changed, 2356 insertions(+)
->>>   create mode 100644 drivers/firmware/tegra/bpmp.c
->>>   create mode 100644 include/soc/tegra/bpmp.h
->>>   create mode 100644 include/soc/tegra/bpmp_abi.h
->>>
->>> diff --git a/drivers/firmware/tegra/Kconfig
->>> b/drivers/firmware/tegra/Kconfig
->>> index 1fa3e4e136a5..ff2730d5c468 100644
->>> --- a/drivers/firmware/tegra/Kconfig
->>> +++ b/drivers/firmware/tegra/Kconfig
->>> @@ -10,4 +10,16 @@ config TEGRA_IVC
->>>            keeps the content is synchronization between host CPU and
->>> remote
->>>            processors.
->>>
->>> +config TEGRA_BPMP
->>> +       bool "Tegra BPMP driver"
->>> +       depends on ARCH_TEGRA && TEGRA_HSP_MBOX && TEGRA_IVC
->>> +       help
->>> +         BPMP (Boot and Power Management Processor) is designed to
->>> off-loading
->>
->>
->> s/off-loading/off-load
->>
->>> +         the PM functions which include clock/DVFS/thermal/power from
->>> the CPU.
->>> +         It needs HSP as the HW synchronization and notification module
->>> and
->>> +         IVC module as the message communication protocol.
->>> +
->>> +         This driver manages the IPC interface between host CPU and the
->>> +         firmware running on BPMP.
->>> +
->>>   endmenu
->>> diff --git a/drivers/firmware/tegra/Makefile
->>> b/drivers/firmware/tegra/Makefile
->>> index 92e2153e8173..e34a2f79e1ad 100644
->>> --- a/drivers/firmware/tegra/Makefile
->>> +++ b/drivers/firmware/tegra/Makefile
->>> @@ -1 +1,2 @@
->>> +obj-$(CONFIG_TEGRA_BPMP)       += bpmp.o
->>>   obj-$(CONFIG_TEGRA_IVC)                += ivc.o
->>> diff --git a/drivers/firmware/tegra/bpmp.c
->>> b/drivers/firmware/tegra/bpmp.c
->>> new file mode 100644
->>> index 000000000000..24fda626610e
->>> --- /dev/null
->>> +++ b/drivers/firmware/tegra/bpmp.c
->>> @@ -0,0 +1,713 @@
->>> +/*
->>> + * Copyright (c) 2016, NVIDIA CORPORATION.  All rights reserved.
->>> + *
->>> + * This program is free software; you can redistribute it and/or modify
->>> it
->>> + * under the terms and conditions of the GNU General Public License,
->>> + * version 2, as published by the Free Software Foundation.
->>> + *
->>> + * This program is distributed in the hope it will be useful, but
->>> WITHOUT
->>> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
->>> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
->>> for
->>> + * more details.
->>> + */
->>> +
->>> +#include <linux/mailbox_client.h>
->>> +#include <linux/of.h>
->>> +#include <linux/of_address.h>
->>> +#include <linux/of_device.h>
->>> +#include <linux/platform_device.h>
->>> +#include <linux/semaphore.h>
->>> +
->>> +#include <soc/tegra/bpmp.h>
->>> +#include <soc/tegra/bpmp_abi.h>
->>> +#include <soc/tegra/ivc.h>
->>> +
->>> +#define BPMP_MSG_SZ            128
->>> +#define BPMP_MSG_DATA_SZ       120
->>> +
->>> +#define __MRQ_ATTRS            0xff000000
->>> +#define __MRQ_INDEX(id)                ((id) & ~__MRQ_ATTRS)
->>> +
->>> +#define DO_ACK                 BIT(0)
->>> +#define RING_DOORBELL          BIT(1)
->>> +
->>> +struct tegra_bpmp_soc_data {
->>> +       u32 ch_index;           /* channel index */
->>> +       u32 thread_ch_index;    /* thread channel index */
->>> +       u32 cpu_rx_ch_index;    /* CPU Rx channel index */
->>> +       u32 nr_ch;              /* number of total channels */
->>> +       u32 nr_thread_ch;       /* number of thread channels */
->>> +       u32 ch_timeout;         /* channel timeout */
->>> +       u32 thread_ch_timeout;  /* thread channel timeout */
->>> +};
->>
->>
->> With just these comments it is not clear what everything in this
->> structure does. Maybe a file-level comment explaining how BPMP
->> basically works and what the different channels are allocated to would
->> help understanding the code.
+On Tue, Jul 5, 2016 at 6:04 PM, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+> The Inter-VM communication (IVC) is a communication protocol, which is
+> designed for interprocessor communication (IPC) or the communication
+> between the hypervisor and the virtual machine with a guest OS on it. So
+> it can be translated as inter-virtual memory or inter-virtual machine
+> communication. The message channels are maintained on the DRAM or SRAM
+> and the data coherency should be considered. Or the data could be
+> corrupted or out of date when the remote client checking it.
 >
+> Inside the IVC, it maintains memory-based descriptors for the TX/RX
+> channels and the coherency issue of the counter and payloads. So the
+> clients can use it to send/receive messages to/from remote ones.
 >
-> We have two kinds of TX channels (channel & thread channel above) for the
-> BPMP clients (clock, thermal, reset, power mgmt control, etc.) to use.
+> We introduce it as a library for the firmware drivers, which can use it
+> for IPC.
 >
-> The channel means an atomic channel that could be used when the client needs
-> the response immediately. e.g. setting clock rate, re-parent the clock
-> source. Each CPUs have it's own atomic for the usage. The client can acquire
-> one of them, and the ch_index means the first channel they are able to use
-> in the channel array.
+> Based-on-the-work-by:
+> Peter Newman <pnewman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >
-> The response of thread channel can be postponed later. And the client allows
-> getting the response after BPMP finished the service and response to them by
-> IRQ. The thread_ch_index means the same the first  channel that the clients
-> are available to use.
+> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Changes in V2:
+> - None
+> ---
+>  drivers/firmware/Kconfig        |   1 +
+>  drivers/firmware/Makefile       |   1 +
+>  drivers/firmware/tegra/Kconfig  |  13 +
+>  drivers/firmware/tegra/Makefile |   1 +
+>  drivers/firmware/tegra/ivc.c    | 659 ++++++++++++++++++++++++++++++++++++++++
+>  include/soc/tegra/ivc.h         | 102 +++++++
+>  6 files changed, 777 insertions(+)
+>  create mode 100644 drivers/firmware/tegra/Kconfig
+>  create mode 100644 drivers/firmware/tegra/Makefile
+>  create mode 100644 drivers/firmware/tegra/ivc.c
+>  create mode 100644 include/soc/tegra/ivc.h
 >
-> And the CPU RX channel is designed for the client to register some specific
-> services (We call MRQ in the bpmp_abi.) listen to some update from the BPMP
-> firmware.
+> diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
+> index 5e618058defe..bbd64ae8c4c6 100644
+> --- a/drivers/firmware/Kconfig
+> +++ b/drivers/firmware/Kconfig
+> @@ -200,5 +200,6 @@ config HAVE_ARM_SMCCC
+>  source "drivers/firmware/broadcom/Kconfig"
+>  source "drivers/firmware/google/Kconfig"
+>  source "drivers/firmware/efi/Kconfig"
+> +source "drivers/firmware/tegra/Kconfig"
 >
-> Because we might have different numbers of these channels, using this
-> structure as the bpmp_soc_data to get different configuration according to
-> different SoC.
-
-Thanks, that clarifies things. This explanation deserves to in the C
-file as well IMHO.
-
-So IIUC the first 13 channels (6 bound to a specific CPU core and 7
-threaded, allocated dynamically) are all used to initiate a
-communication to the BPMP, while the cpu_rx channel is used as a sort
-of IRQ (hence the name MRQ). Is this correct? This would be valuable
-to state too. Maybe cpu_rx_ch_index can even be renamed to something
-like mrq_ch_index to stress that fact.
-
-A few additional comments follow below as I did a second pass on the code.
-
->
->
->>
->>> +
->>> +struct channel_info {
->>> +       u32 tch_free;
->>> +       u32 tch_to_complete;
->>> +       struct semaphore tch_sem;
->>> +};
->>> +
->>> +struct mb_data {
->>> +       s32 code;
->>> +       s32 flags;
->>> +       u8 data[BPMP_MSG_DATA_SZ];
->>> +} __packed;
->>> +
->>> +struct channel_data {
->>> +       struct mb_data *ib;
->>> +       struct mb_data *ob;
->>> +};
->>> +
->>> +struct mrq {
->>> +       struct list_head list;
->>> +       u32 mrq_code;
->>> +       bpmp_mrq_handler handler;
->>> +       void *data;
->>> +};
->>> +
->>> +struct tegra_bpmp {
->>> +       struct device *dev;
->>> +       const struct tegra_bpmp_soc_data *soc_data;
->>> +       void __iomem *tx_base;
->>> +       void __iomem *rx_base;
->>> +       struct mbox_client cl;
->>> +       struct mbox_chan *chan;
->>> +       struct ivc *ivc_channels;
->>> +       struct channel_data *ch_area;
->>> +       struct channel_info ch_info;
->>> +       struct completion *ch_completion;
->>> +       struct list_head mrq_list;
->>> +       struct tegra_bpmp_ops *ops;
->>> +       spinlock_t lock;
->>> +       bool init_done;
->>> +};
->>> +
->>> +static struct tegra_bpmp *bpmp;
->>
->>
->> static? Ok, we only need one... for now. How about a private member in
->> your ivc structure that allows you to retrieve the bpmp and going
->> dynamic? This will require an extra argument in many functions, but is
->> cleaner design IMHO.
->
->
-> IVC is designed as a generic IPC protocol among different modules (We have
-> not introduced some other usages of the IVC right now.). Maybe don't churn
-> some other stuff into IVC is better.
-
-Anything is fine if you can get rid of that static.
-
->
->>
->>> +
->>> +static int bpmp_get_thread_ch(int idx)
->>> +{
->>> +       return bpmp->soc_data->thread_ch_index + idx;
->>> +}
->>> +
->>> +static int bpmp_get_thread_ch_index(int ch)
->>> +{
->>> +       if (ch < bpmp->soc_data->thread_ch_index ||
->>> +           ch >= bpmp->soc_data->cpu_rx_ch_index)
->>
->>
->> Shouldn't that be ch >= bpmp->soc_data->cpu_rx_ch_index +
->> bpmp->soc_data->nr_thread_ch?
->>
->> Either rx_ch_index indicates the upper bound of the threaded channels,
->> and in that case you don't need tegra_bpmp_soc_data::nr_thread_ch, or
->> it can be anywhere else and you should use the correct member.
->
->
-> According the to the table below, we have 14 channels.
-> atomic ch: 0 ~ 5, 6 chanls
-> thread ch: 6 ~ 17, 7 chanls
-> CPU RX ch: 13 ~ 14, 2 chanls
->
-> +static const struct tegra_bpmp_soc_data soc_data_tegra186 = {
-> +       .ch_index = 0,
-> +       .thread_ch_index = 6,
-> +       .cpu_rx_ch_index = 13,
-> +       .nr_ch = 14,
-> +       .nr_thread_ch = 7,
-> +       .ch_timeout = 60 * USEC_PER_SEC,
-> +       .thread_ch_timeout = 600 * USEC_PER_SEC,
+>  endmenu
+> diff --git a/drivers/firmware/Makefile b/drivers/firmware/Makefile
+> index 474bada56fcd..9a4df8171cc4 100644
+> --- a/drivers/firmware/Makefile
+> +++ b/drivers/firmware/Makefile
+> @@ -24,3 +24,4 @@ obj-y                         += broadcom/
+>  obj-$(CONFIG_GOOGLE_FIRMWARE)  += google/
+>  obj-$(CONFIG_EFI)              += efi/
+>  obj-$(CONFIG_UEFI_CPER)                += efi/
+> +obj-y                          += tegra/
+> diff --git a/drivers/firmware/tegra/Kconfig b/drivers/firmware/tegra/Kconfig
+> new file mode 100644
+> index 000000000000..1fa3e4e136a5
+> --- /dev/null
+> +++ b/drivers/firmware/tegra/Kconfig
+> @@ -0,0 +1,13 @@
+> +menu "Tegra firmware driver"
+> +
+> +config TEGRA_IVC
+> +       bool "Tegra IVC protocol"
+> +       depends on ARCH_TEGRA
+> +       help
+> +         IVC (Inter-VM Communication) protocol is part of the IPC
+> +         (Inter Processor Communication) framework on Tegra. It maintains the
+> +         data and the different commuication channels in SysRAM or RAM and
+> +         keeps the content is synchronization between host CPU and remote
+> +         processors.
+> +
+> +endmenu
+> diff --git a/drivers/firmware/tegra/Makefile b/drivers/firmware/tegra/Makefile
+> new file mode 100644
+> index 000000000000..92e2153e8173
+> --- /dev/null
+> +++ b/drivers/firmware/tegra/Makefile
+> @@ -0,0 +1 @@
+> +obj-$(CONFIG_TEGRA_IVC)                += ivc.o
+> diff --git a/drivers/firmware/tegra/ivc.c b/drivers/firmware/tegra/ivc.c
+> new file mode 100644
+> index 000000000000..3e736bb9915a
+> --- /dev/null
+> +++ b/drivers/firmware/tegra/ivc.c
+> @@ -0,0 +1,659 @@
+> +/*
+> + * Copyright (c) 2014-2016, NVIDIA CORPORATION.  All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + */
+> +
+> +#include <linux/module.h>
+> +
+> +#include <soc/tegra/ivc.h>
+> +
+> +#define IVC_ALIGN 64
+> +
+> +#ifdef CONFIG_SMP
+> +
+> +static inline void ivc_rmb(void)
+> +{
+> +       smp_rmb();
+> +}
+> +
+> +static inline void ivc_wmb(void)
+> +{
+> +       smp_wmb();
+> +}
+> +
+> +static inline void ivc_mb(void)
+> +{
+> +       smp_mb();
+> +}
+> +
+> +#else
+> +
+> +static inline void ivc_rmb(void)
+> +{
+> +       rmb();
+> +}
+> +
+> +static inline void ivc_wmb(void)
+> +{
+> +       wmb();
+> +}
+> +
+> +static inline void ivc_mb(void)
+> +{
+> +       mb();
+> +}
+> +
+> +#endif
+> +
+> +/*
+> + * IVC channel reset protocol.
+> + *
+> + * Each end uses its tx_channel.state to indicate its synchronization state.
+> + */
+> +enum ivc_state {
+> +       /*
+> +        * This value is zero for backwards compatibility with services that
+> +        * assume channels to be initially zeroed. Such channels are in an
+> +        * initially valid state, but cannot be asynchronously reset, and must
+> +        * maintain a valid state at all times.
+> +        *
+> +        * The transmitting end can enter the established state from the sync or
+> +        * ack state when it observes the receiving endpoint in the ack or
+> +        * established state, indicating that has cleared the counters in our
+> +        * rx_channel.
+> +        */
+> +       ivc_state_established = 0,
+> +
+> +       /*
+> +        * If an endpoint is observed in the sync state, the remote endpoint is
+> +        * allowed to clear the counters it owns asynchronously with respect to
+> +        * the current endpoint. Therefore, the current endpoint is no longer
+> +        * allowed to communicate.
+> +        */
+> +       ivc_state_sync,
+> +
+> +       /*
+> +        * When the transmitting end observes the receiving end in the sync
+> +        * state, it can clear the w_count and r_count and transition to the ack
+> +        * state. If the remote endpoint observes us in the ack state, it can
+> +        * return to the established state once it has cleared its counters.
+> +        */
+> +       ivc_state_ack
 > +};
+> +
+> +/*
+> + * This structure is divided into two-cache aligned parts, the first is only
+
+Should read "two cache-aligned" maybe?
+
+> + * written through the tx_channel pointer, while the second is only written
+> + * through the rx_channel pointer. This delineates ownership of the cache lines,
+> + * which is critical to performance and necessary in non-cache coherent
+> + * implementations.
+> + */
+> +struct ivc_channel_header {
+> +       union {
+> +               struct {
+> +                       /* fields owned by the transmitting end */
+
+Fields? According to the context I would say "frames?"
+
+> +                       uint32_t w_count;
+> +                       uint32_t state;
+> +               };
+> +               uint8_t w_align[IVC_ALIGN];
+> +       };
+> +       union {
+> +               /* fields owned by the receiving end */
+
+Same here.
+
+> +               uint32_t r_count;
+> +               uint8_t r_align[IVC_ALIGN];
+> +       };
+> +};
+> +
+> +static inline void ivc_invalidate_counter(struct ivc *ivc,
+> +               dma_addr_t handle)
+> +{
+> +       if (!ivc->peer_device)
+> +               return;
+> +       dma_sync_single_for_cpu(ivc->peer_device, handle, IVC_ALIGN,
+> +                       DMA_FROM_DEVICE);
+> +}
+> +
+> +static inline void ivc_flush_counter(struct ivc *ivc, dma_addr_t handle)
+> +{
+> +       if (!ivc->peer_device)
+> +               return;
+> +       dma_sync_single_for_device(ivc->peer_device, handle, IVC_ALIGN,
+> +                       DMA_TO_DEVICE);
+> +}
+> +
+> +static inline int ivc_channel_empty(struct ivc *ivc,
+> +               struct ivc_channel_header *ch)
+
+This function should probably return bool.
+
+> +{
+> +       /*
+> +        * This function performs multiple checks on the same values with
+> +        * security implications, so create snapshots with ACCESS_ONCE() to
+> +        * ensure that these checks use the same values.
+> +        */
+> +       uint32_t w_count = ACCESS_ONCE(ch->w_count);
+> +       uint32_t r_count = ACCESS_ONCE(ch->r_count);
+> +
+> +       /*
+> +        * Perform an over-full check to prevent denial of service attacks where
+> +        * a server could be easily fooled into believing that there's an
+> +        * extremely large number of frames ready, since receivers are not
+> +        * expected to check for full or over-full conditions.
+> +        *
+> +        * Although the channel isn't empty, this is an invalid case caused by
+> +        * a potentially malicious peer, so returning empty is safer, because it
+> +        * gives the impression that the channel has gone silent.
+> +        */
+> +       if (w_count - r_count > ivc->nframes)
+> +               return 1;
+> +
+> +       return w_count == r_count;
+> +}
+> +
+> +static inline int ivc_channel_full(struct ivc *ivc,
+> +               struct ivc_channel_header *ch)
+
+And this one too.
+
+> +{
+> +       /*
+> +        * Invalid cases where the counters indicate that the queue is over
+> +        * capacity also appear full.
+> +        */
+> +       return ACCESS_ONCE(ch->w_count) - ACCESS_ONCE(ch->r_count)
+> +               >= ivc->nframes;
+> +}
+> +
+> +static inline uint32_t ivc_channel_avail_count(struct ivc *ivc,
+> +               struct ivc_channel_header *ch)
+> +{
+> +       /*
+> +        * This function isn't expected to be used in scenarios where an
+> +        * over-full situation can lead to denial of service attacks. See the
+> +        * comment in ivc_channel_empty() for an explanation about special
+> +        * over-full considerations.
+> +        */
+> +       return ACCESS_ONCE(ch->w_count) - ACCESS_ONCE(ch->r_count);
+> +}
+> +
+> +static inline void ivc_advance_tx(struct ivc *ivc)
+> +{
+> +       ACCESS_ONCE(ivc->tx_channel->w_count) =
+> +               ACCESS_ONCE(ivc->tx_channel->w_count) + 1;
+> +
+> +       if (ivc->w_pos == ivc->nframes - 1)
+> +               ivc->w_pos = 0;
+> +       else
+> +               ivc->w_pos++;
+> +}
+> +
+> +static inline void ivc_advance_rx(struct ivc *ivc)
+> +{
+> +       ACCESS_ONCE(ivc->rx_channel->r_count) =
+> +               ACCESS_ONCE(ivc->rx_channel->r_count) + 1;
+> +
+> +       if (ivc->r_pos == ivc->nframes - 1)
+> +               ivc->r_pos = 0;
+> +       else
+> +               ivc->r_pos++;
+> +}
+> +
+> +static inline int ivc_check_read(struct ivc *ivc)
+> +{
+> +       /*
+> +        * tx_channel->state is set locally, so it is not synchronized with
+> +        * state from the remote peer. The remote peer cannot reset its
+> +        * transmit counters until we've acknowledged its synchronization
+> +        * request, so no additional synchronization is required because an
+> +        * asynchronous transition of rx_channel->state to ivc_state_ack is not
+> +        * allowed.
+> +        */
+> +       if (ivc->tx_channel->state != ivc_state_established)
+> +               return -ECONNRESET;
+> +
+> +       /*
+> +        * Avoid unnecessary invalidations when performing repeated accesses to
+> +        * an IVC channel by checking the old queue pointers first.
+> +        * Synchronization is only necessary when these pointers indicate empty
+> +        * or full.
+> +        */
+> +       if (!ivc_channel_empty(ivc, ivc->rx_channel))
+> +               return 0;
+> +
+> +       ivc_invalidate_counter(ivc, ivc->rx_handle +
+> +                       offsetof(struct ivc_channel_header, w_count));
+> +       return ivc_channel_empty(ivc, ivc->rx_channel) ? -ENOMEM : 0;
+> +}
+> +
+> +static inline int ivc_check_write(struct ivc *ivc)
+> +{
+> +       if (ivc->tx_channel->state != ivc_state_established)
+> +               return -ECONNRESET;
+> +
+> +       if (!ivc_channel_full(ivc, ivc->tx_channel))
+> +               return 0;
+> +
+> +       ivc_invalidate_counter(ivc, ivc->tx_handle +
+> +                       offsetof(struct ivc_channel_header, r_count));
+> +       return ivc_channel_full(ivc, ivc->tx_channel) ? -ENOMEM : 0;
+> +}
+> +
+> +static void *ivc_frame_pointer(struct ivc *ivc, struct ivc_channel_header *ch,
+> +               uint32_t frame)
+> +{
+> +       BUG_ON(frame >= ivc->nframes);
+> +       return (void *)((uintptr_t)(ch + 1) + ivc->frame_size * frame);
+> +}
+> +
+> +static inline dma_addr_t ivc_frame_handle(struct ivc *ivc,
+> +               dma_addr_t channel_handle, uint32_t frame)
+> +{
+> +       BUG_ON(!ivc->peer_device);
+> +       BUG_ON(frame >= ivc->nframes);
+> +       return channel_handle + sizeof(struct ivc_channel_header) +
+> +               ivc->frame_size * frame;
+> +}
+> +
+> +static inline void ivc_invalidate_frame(struct ivc *ivc,
+> +               dma_addr_t channel_handle, unsigned frame, int offset, int len)
+> +{
+> +       if (!ivc->peer_device)
+> +               return;
+> +       dma_sync_single_for_cpu(ivc->peer_device,
+> +                       ivc_frame_handle(ivc, channel_handle, frame) + offset,
+> +                       len, DMA_FROM_DEVICE);
+> +}
+> +
+> +static inline void ivc_flush_frame(struct ivc *ivc, dma_addr_t channel_handle,
+> +               unsigned frame, int offset, int len)
+> +{
+> +       if (!ivc->peer_device)
+> +               return;
+> +       dma_sync_single_for_device(ivc->peer_device,
+> +                       ivc_frame_handle(ivc, channel_handle, frame) + offset,
+> +                       len, DMA_TO_DEVICE);
+> +}
+> +
+> +/* directly peek at the next frame rx'ed */
+> +void *tegra_ivc_read_get_next_frame(struct ivc *ivc)
+> +{
+> +       int result = ivc_check_read(ivc);
+> +       if (result)
+> +               return ERR_PTR(result);
+> +
+> +       /*
+> +        * Order observation of w_pos potentially indicating new data before
+> +        * data read.
+> +        */
+> +       ivc_rmb();
+> +
+> +       ivc_invalidate_frame(ivc, ivc->rx_handle, ivc->r_pos, 0,
+> +                       ivc->frame_size);
+> +       return ivc_frame_pointer(ivc, ivc->rx_channel, ivc->r_pos);
+> +}
+> +EXPORT_SYMBOL(tegra_ivc_read_get_next_frame);
+> +
+> +int tegra_ivc_read_advance(struct ivc *ivc)
+> +{
+> +       /*
+> +        * No read barriers or synchronization here: the caller is expected to
+> +        * have already observed the channel non-empty. This check is just to
+> +        * catch programming errors.
+> +        */
+> +       int result = ivc_check_read(ivc);
+> +       if (result)
+> +               return result;
+> +
+> +       ivc_advance_rx(ivc);
+> +       ivc_flush_counter(ivc, ivc->rx_handle +
+> +                       offsetof(struct ivc_channel_header, r_count));
+
+This function is called quite a few times, and every time you have
+this cumbersome offsetof. In practice you can only flush one of two
+things: the write counter (first 64 bits of the header) or the read
+counter (second part). Maybe you can specify which one you want to
+flush through an extra argument to ivc_flush_counter (say, enum {
+COUNTER_RD, COUNTER_WR }), and perform the offsetof there according to
+the value of the argument? Same for ivc_invalidate_counter.
+
+> +
+> +       /*
+> +        * Ensure our write to r_pos occurs before our read from w_pos.
+> +        */
+> +       ivc_mb();
+> +
+> +       /*
+> +        * Notify only upon transition from full to non-full.
+> +        * The available count can only asynchronously increase, so the
+> +        * worst possible side-effect will be a spurious notification.
+> +        */
+> +       ivc_invalidate_counter(ivc, ivc->rx_handle +
+> +               offsetof(struct ivc_channel_header, w_count));
+> +
+> +       if (ivc_channel_avail_count(ivc, ivc->rx_channel) == ivc->nframes - 1)
+> +               ivc->notify(ivc);
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL(tegra_ivc_read_advance);
+> +
+> +/* directly poke at the next frame to be tx'ed */
+> +void *tegra_ivc_write_get_next_frame(struct ivc *ivc)
+> +{
+> +       int result = ivc_check_write(ivc);
+> +       if (result)
+> +               return ERR_PTR(result);
+> +
+> +       return ivc_frame_pointer(ivc, ivc->tx_channel, ivc->w_pos);
+> +}
+> +EXPORT_SYMBOL(tegra_ivc_write_get_next_frame);
+> +
+> +/* advance the tx buffer */
+> +int tegra_ivc_write_advance(struct ivc *ivc)
+> +{
+> +       int result = ivc_check_write(ivc);
+> +       if (result)
+> +               return result;
+> +
+> +       ivc_flush_frame(ivc, ivc->tx_handle, ivc->w_pos, 0, ivc->frame_size);
+> +
+> +       /*
+> +        * Order any possible stores to the frame before update of w_pos.
+> +        */
+> +       ivc_wmb();
+> +
+> +       ivc_advance_tx(ivc);
+> +       ivc_flush_counter(ivc, ivc->tx_handle +
+> +                       offsetof(struct ivc_channel_header, w_count));
+> +
+> +       /*
+> +        * Ensure our write to w_pos occurs before our read from r_pos.
+> +        */
+> +       ivc_mb();
+> +
+> +       /*
+> +        * Notify only upon transition from empty to non-empty.
+> +        * The available count can only asynchronously decrease, so the
+> +        * worst possible side-effect will be a spurious notification.
+> +        */
+> +       ivc_invalidate_counter(ivc, ivc->tx_handle +
+> +               offsetof(struct ivc_channel_header, r_count));
+> +
+> +       if (ivc_channel_avail_count(ivc, ivc->tx_channel) == 1)
+> +               ivc->notify(ivc);
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL(tegra_ivc_write_advance);
+> +
+> +void tegra_ivc_channel_reset(struct ivc *ivc)
+> +{
+> +       ivc->tx_channel->state = ivc_state_sync;
+> +       ivc_flush_counter(ivc, ivc->tx_handle +
+> +                       offsetof(struct ivc_channel_header, w_count));
+> +       ivc->notify(ivc);
+> +}
+> +EXPORT_SYMBOL(tegra_ivc_channel_reset);
+> +
+> +/*
+> + * ===============================================================
+> + *  IVC State Transition Table - see tegra_ivc_channel_notified()
+> + * ===============================================================
+> + *
+> + *     local   remote  action
+> + *     -----   ------  -----------------------------------
+> + *     SYNC    EST     <none>
+> + *     SYNC    ACK     reset counters; move to EST; notify
+> + *     SYNC    SYNC    reset counters; move to ACK; notify
+> + *     ACK     EST     move to EST; notify
+> + *     ACK     ACK     move to EST; notify
+> + *     ACK     SYNC    reset counters; move to ACK; notify
+> + *     EST     EST     <none>
+> + *     EST     ACK     <none>
+> + *     EST     SYNC    reset counters; move to ACK; notify
+> + *
+> + * ===============================================================
+> + */
+> +
+> +int tegra_ivc_channel_notified(struct ivc *ivc)
+> +{
+> +       enum ivc_state peer_state;
+> +
+> +       /* Copy the receiver's state out of shared memory. */
+> +       ivc_invalidate_counter(ivc, ivc->rx_handle +
+> +                       offsetof(struct ivc_channel_header, w_count));
+> +       peer_state = ACCESS_ONCE(ivc->rx_channel->state);
+> +
+> +       if (peer_state == ivc_state_sync) {
+> +               /*
+> +                * Order observation of ivc_state_sync before stores clearing
+> +                * tx_channel.
+> +                */
+> +               ivc_rmb();
+> +
+> +               /*
+> +                * Reset tx_channel counters. The remote end is in the SYNC
+> +                * state and won't make progress until we change our state,
+> +                * so the counters are not in use at this time.
+> +                */
+> +               ivc->tx_channel->w_count = 0;
+> +               ivc->rx_channel->r_count = 0;
+> +
+> +               ivc->w_pos = 0;
+> +               ivc->r_pos = 0;
+> +
+> +               /*
+> +                * Ensure that counters appear cleared before new state can be
+> +                * observed.
+> +                */
+> +               ivc_wmb();
+> +
+> +               /*
+> +                * Move to ACK state. We have just cleared our counters, so it
+> +                * is now safe for the remote end to start using these values.
+> +                */
+> +               ivc->tx_channel->state = ivc_state_ack;
+> +               ivc_flush_counter(ivc, ivc->tx_handle +
+> +                               offsetof(struct ivc_channel_header, w_count));
+> +
+> +               /*
+> +                * Notify remote end to observe state transition.
+> +                */
+> +               ivc->notify(ivc);
+> +
+> +       } else if (ivc->tx_channel->state == ivc_state_sync &&
+> +                       peer_state == ivc_state_ack) {
+> +               /*
+> +                * Order observation of ivc_state_sync before stores clearing
+> +                * tx_channel.
+> +                */
+> +               ivc_rmb();
+> +
+> +               /*
+> +                * Reset tx_channel counters. The remote end is in the ACK
+> +                * state and won't make progress until we change our state,
+> +                * so the counters are not in use at this time.
+> +                */
+> +               ivc->tx_channel->w_count = 0;
+> +               ivc->rx_channel->r_count = 0;
+> +
+> +               ivc->w_pos = 0;
+> +               ivc->r_pos = 0;
+> +
+> +               /*
+> +                * Ensure that counters appear cleared before new state can be
+> +                * observed.
+> +                */
+> +               ivc_wmb();
+> +
+> +               /*
+> +                * Move to ESTABLISHED state. We know that the remote end has
+> +                * already cleared its counters, so it is safe to start
+> +                * writing/reading on this channel.
+> +                */
+> +               ivc->tx_channel->state = ivc_state_established;
+> +               ivc_flush_counter(ivc, ivc->tx_handle +
+> +                               offsetof(struct ivc_channel_header, w_count));
+> +
+> +               /*
+> +                * Notify remote end to observe state transition.
+> +                */
+> +               ivc->notify(ivc);
+> +
+> +       } else if (ivc->tx_channel->state == ivc_state_ack) {
+> +               /*
+> +                * At this point, we have observed the peer to be in either
+> +                * the ACK or ESTABLISHED state. Next, order observation of
+> +                * peer state before storing to tx_channel.
+> +                */
+> +               ivc_rmb();
+> +
+> +               /*
+> +                * Move to ESTABLISHED state. We know that we have previously
+> +                * cleared our counters, and we know that the remote end has
+> +                * cleared its counters, so it is safe to start writing/reading
+> +                * on this channel.
+> +                */
+> +               ivc->tx_channel->state = ivc_state_established;
+> +               ivc_flush_counter(ivc, ivc->tx_handle +
+> +                               offsetof(struct ivc_channel_header, w_count));
+> +
+> +               /*
+> +                * Notify remote end to observe state transition.
+> +                */
+> +               ivc->notify(ivc);
+> +
+> +       } else {
+> +               /*
+> +                * There is no need to handle any further action. Either the
+> +                * channel is already fully established, or we are waiting for
+> +                * the remote end to catch up with our current state. Refer
+> +                * to the diagram in "IVC State Transition Table" above.
+> +                */
+> +       }
+> +
+> +       return ivc->tx_channel->state == ivc_state_established ? 0 : -EAGAIN;
+> +}
+> +EXPORT_SYMBOL(tegra_ivc_channel_notified);
+> +
+> +size_t tegra_ivc_align(size_t size)
+> +{
+> +       return (size + (IVC_ALIGN - 1)) & ~(IVC_ALIGN - 1);
+
+return ALIGN(size, IVC_ALIGN)?
+
+> +}
+> +EXPORT_SYMBOL(tegra_ivc_align);
+> +
+> +unsigned tegra_ivc_total_queue_size(unsigned queue_size)
+> +{
+> +       if (queue_size & (IVC_ALIGN - 1)) {
+> +               pr_err("%s: queue_size (%u) must be %u-byte aligned\n",
+> +                               __func__, queue_size, IVC_ALIGN);
+> +               return 0;
+> +       }
+> +       return queue_size + sizeof(struct ivc_channel_header);
+> +}
+> +EXPORT_SYMBOL(tegra_ivc_total_queue_size);
+> +
+> +static int check_ivc_params(uintptr_t queue_base1, uintptr_t queue_base2,
+> +               unsigned nframes, unsigned frame_size)
+> +{
+> +       BUG_ON(offsetof(struct ivc_channel_header, w_count) & (IVC_ALIGN - 1));
+> +       BUG_ON(offsetof(struct ivc_channel_header, r_count) & (IVC_ALIGN - 1));
+> +       BUG_ON(sizeof(struct ivc_channel_header) & (IVC_ALIGN - 1));
+
+These checks are done on purely static data, we don't need to do it
+here, for each channel... If there a way to have them performed at
+compilation time instead? Since these constraints must be enforced,
+they should also be specified as a comment to struct
+ivc_channel_header to avoid unwanted modifications.
+
+Mmm, or thinking twice, since the condition can be evaluated at
+compilation time, maybe the compiler will optimize these out entirely?
+In that case, a better place to do this would be tegra_ivc_init() - we
+want the failure to be reported as early as possible.
+
+> +
+> +       if ((uint64_t)nframes * (uint64_t)frame_size >= 0x100000000) {
+> +               pr_err("nframes * frame_size overflows\n");
+> +               return -EINVAL;
+> +       }
+> +
+> +       /*
+> +        * The headers must at least be aligned enough for counters
+> +        * to be accessed atomically.
+> +        */
+> +       if (queue_base1 & (IVC_ALIGN - 1)) {
+> +               pr_err("ivc channel start not aligned: %lx\n", queue_base1);
+> +               return -EINVAL;
+> +       }
+> +       if (queue_base2 & (IVC_ALIGN - 1)) {
+> +               pr_err("ivc channel start not aligned: %lx\n", queue_base2);
+> +               return -EINVAL;
+> +       }
+> +
+> +       if (frame_size & (IVC_ALIGN - 1)) {
+> +               pr_err("frame size not adequately aligned: %u\n", frame_size);
+> +               return -EINVAL;
+> +       }
+> +
+> +       if (queue_base1 < queue_base2) {
+> +               if (queue_base1 + frame_size * nframes > queue_base2) {
+> +                       pr_err("queue regions overlap: %lx + %x, %x\n",
+> +                                       queue_base1, frame_size,
+> +                                       frame_size * nframes);
+> +                       return -EINVAL;
+> +               }
+> +       } else {
+> +               if (queue_base2 + frame_size * nframes > queue_base1) {
+> +                       pr_err("queue regions overlap: %lx + %x, %x\n",
+> +                                       queue_base2, frame_size,
+> +                                       frame_size * nframes);
+> +                       return -EINVAL;
+> +               }
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +int tegra_ivc_init(struct ivc *ivc, uintptr_t rx_base, dma_addr_t rx_handle,
+> +                  uintptr_t tx_base, dma_addr_t tx_handle, unsigned nframes,
+> +                  unsigned frame_size, struct device *peer_device,
+> +                  void (*notify)(struct ivc *))
+> +{
+> +       size_t queue_size;
+> +
+> +       int result = check_ivc_params(rx_base, tx_base, nframes, frame_size);
+> +       if (result)
+> +               return result;
+> +
+> +       BUG_ON(!ivc);
+> +       BUG_ON(!notify);
+
+Why BUG_ON and not return -EINVAL? Is this really unrecoverable?
+Doesn't seem so, and later in this function you return error
+conditions for other errors...
+
+> +
+> +       queue_size = tegra_ivc_total_queue_size(nframes * frame_size);
+> +
+> +       /*
+> +        * All sizes that can be returned by communication functions should
+> +        * fit in an int.
+> +        */
+> +       if (frame_size > INT_MAX)
+> +               return -E2BIG;
+> +
+> +       ivc->rx_channel = (struct ivc_channel_header *)rx_base;
+> +       ivc->tx_channel = (struct ivc_channel_header *)tx_base;
+> +
+> +       if (peer_device) {
+> +               if (rx_handle != DMA_ERROR_CODE) {
+
+This looks more complicated than it needs to be - in practice,
+tx_handle and rx_handle are always DMA_ERROR_CODE when you call this
+function from the BPMP code, and this block will never get used.
+
+Furthermore, ivc_flush_*() and ivc_invalidate_*() only rely on
+peer_device to decide whether they need to call dma_sync. Calling
+these functions on an unmapped page is an invalid use of the DMA API,
+so the case where rx_handle != DMA_ERROR_CODE is invalid anyway.
+
+Isn't it possible to remove these rx_handle/tx_handle arguments
+altogether and thus simplify this function?
+
+> +                       ivc->rx_handle = rx_handle;
+> +                       ivc->tx_handle = tx_handle;
+> +               } else {
+> +                       ivc->rx_handle = dma_map_single(peer_device,
+> +                               ivc->rx_channel, queue_size, DMA_BIDIRECTIONAL);
+> +                       if (ivc->rx_handle == DMA_ERROR_CODE)
+> +                               return -ENOMEM;
+> +
+> +                       ivc->tx_handle = dma_map_single(peer_device,
+> +                               ivc->tx_channel, queue_size, DMA_BIDIRECTIONAL);
+> +                       if (ivc->tx_handle == DMA_ERROR_CODE) {
+> +                               dma_unmap_single(peer_device, ivc->rx_handle,
+> +                                       queue_size, DMA_BIDIRECTIONAL);
+> +                               return -ENOMEM;
+> +                       }
+
+When do we unmap these pages btw? I know the BPMP driver is probably
+never going to be unloaded, but we should probably have
+tegra_ivc_cleanup somewhere since other potential users may make use
+of it.
+
+> +               }
+> +       }
+> +
+> +       ivc->notify = notify;
+> +       ivc->frame_size = frame_size;
+> +       ivc->nframes = nframes;
+> +       ivc->peer_device = peer_device;
+> +
+> +       /*
+> +        * These values aren't necessarily correct until the channel has been
+> +        * reset.
+> +        */
+> +       ivc->w_pos = 0;
+> +       ivc->r_pos = 0;
+> +
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL(tegra_ivc_init);
+> diff --git a/include/soc/tegra/ivc.h b/include/soc/tegra/ivc.h
+> new file mode 100644
+> index 000000000000..1762fbee3fa2
+> --- /dev/null
+> +++ b/include/soc/tegra/ivc.h
+> @@ -0,0 +1,102 @@
+> +/*
+> + * Copyright (c) 2016, NVIDIA CORPORATION.  All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + */
+> +
+> +#ifndef __TEGRA_IVC_H
+> +
+> +#include <linux/device.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/types.h>
+> +
+> +struct ivc_channel_header;
+> +
+> +struct ivc {
+
+I'd rename this to tegra_ivc to avoid potential name collisions (and
+since all using functions are prefixed with tegra_ivc).
+
+> +       struct ivc_channel_header *rx_channel, *tx_channel;
+> +       uint32_t w_pos, r_pos;
+> +
+> +       void (*notify)(struct ivc *);
+> +       uint32_t nframes, frame_size;
+> +
+> +       struct device *peer_device;
+> +       dma_addr_t rx_handle, tx_handle;
+> +};
+> +
+> +/**
+> + * tegra_ivc_read_get_next_frame - Peek at the next frame to receive
+> + * @ivc                pointer of the IVC channel
+> + *
+> + * Peek at the next frame to be received, without removing it from
+> + * the queue.
+> + *
+> + * Returns a pointer to the frame, or an error encoded pointer.
+> + */
+> +void *tegra_ivc_read_get_next_frame(struct ivc *ivc);
+> +
+> +/**
+> + * tegra_ivc_read_advance - Advance the read queue
+> + * @ivc                pointer of the IVC channel
+> + *
+> + * Advance the read queue
+> + *
+> + * Returns 0, or a negative error value if failed.
+> + */
+> +int tegra_ivc_read_advance(struct ivc *ivc);
+> +
+> +/**
+> + * tegra_ivc_write_get_next_frame - Poke at the next frame to transmit
+> + * @ivc                pointer of the IVC channel
+> + *
+> + * Get access to the next frame.
+> + *
+> + * Returns a pointer to the frame, or an error encoded pointer.
+> + */
+> +void *tegra_ivc_write_get_next_frame(struct ivc *ivc);
+> +
+> +/**
+> + * tegra_ivc_write_advance - Advance the write queue
+> + * @ivc                pointer of the IVC channel
+> + *
+> + * Advance the write queue
+> + *
+> + * Returns 0, or a negative error value if failed.
+> + */
+> +int tegra_ivc_write_advance(struct ivc *ivc);
+> +
+> +/**
+> + * tegra_ivc_channel_notified - handle internal messages
+> + * @ivc                pointer of the IVC channel
+> + *
+> + * This function must be called following every notification.
+> + *
+> + * Returns 0 if the channel is ready for communication, or -EAGAIN if a channel
+> + * reset is in progress.
+> + */
+> +int tegra_ivc_channel_notified(struct ivc *ivc);
+> +
+> +/**
+> + * tegra_ivc_channel_reset - initiates a reset of the shared memory state
+> + * @ivc                pointer of the IVC channel
+> + *
+> + * This function must be called after a channel is reserved before it is used
+> + * for communication. The channel will be ready for use when a subsequent call
+> + * to notify the remote of the channel reset.
+> + */
+> +void tegra_ivc_channel_reset(struct ivc *ivc);
+> +
+> +size_t tegra_ivc_align(size_t size);
+> +unsigned tegra_ivc_total_queue_size(unsigned queue_size);
+> +int tegra_ivc_init(struct ivc *ivc, uintptr_t rx_base, dma_addr_t rx_handle,
+> +                  uintptr_t tx_base, dma_addr_t tx_handle, unsigned nframes,
+> +                  unsigned frame_size, struct device *peer_device,
+> +                  void (*notify)(struct ivc *));
+> +
+> +#endif /* __TEGRA_IVC_H */
+> --
+> 2.9.0
 >
-> We use the index to check channel violation and nr_thread_ch for other usage
-> to avoid redundant channel number calculation elsewhere.
-
-Sorry, my comment had a mistake. I meant that
-
-          ch >= bpmp->soc_data->cpu_rx_ch_index
-
-Should maybe be
-
-          ch >= bpmp->soc_data->cpu_rx_ch_index + bpmp->soc_data->nr_thread_ch
-
-According to the description you gave of these fields, there is no
-guarantee that cpu_rx_ch_index will always be the first channel after
-the threaded channels.
-
->
->
->>
->>> +               return -1;
->>> +       return ch - bpmp->soc_data->thread_ch_index;
->>> +}
->>> +
->>> +static int bpmp_get_ob_channel(void)
->>> +{
->>> +       return smp_processor_id() + bpmp->soc_data->ch_index;
->>> +}
->>> +
->>> +static struct completion *bpmp_get_completion_obj(int ch)
->>> +{
->>> +       int i = bpmp_get_thread_ch_index(ch);
->>> +
->>> +       return i < 0 ? NULL : bpmp->ch_completion + i;
->>> +}
->>> +
->>> +static int bpmp_valid_txfer(void *ob_data, int ob_sz, void *ib_data, int
->>> ib_sz)
->>> +{
->>> +       return ob_sz >= 0 && ob_sz <= BPMP_MSG_DATA_SZ &&
->>> +              ib_sz >= 0 && ib_sz <= BPMP_MSG_DATA_SZ &&
->>> +              (!ob_sz || ob_data) && (!ib_sz || ib_data);
->>> +}
->>> +
->>> +static bool bpmp_master_acked(int ch)
->>> +{
->>> +       struct ivc *ivc_chan;
->>> +       void *frame;
->>> +       bool ready;
->>> +
->>> +       ivc_chan = bpmp->ivc_channels + ch;
->>> +       frame = tegra_ivc_read_get_next_frame(ivc_chan);
->>> +       ready = !IS_ERR_OR_NULL(frame);
->>> +       bpmp->ch_area[ch].ib = ready ? frame : NULL;
->>> +
->>> +       return ready;
->>> +}
->>> +
->>> +static int bpmp_wait_ack(int ch)
-
-Shouldn't this be bpmp_wait_master_ack ? Looking at the two next
-functions makes me think it should (or bpmp_wait_master_free should be
-renamed to bpmp_wait_free).
-
->>> +{
->>> +       ktime_t t;
->>> +
->>> +       t = ns_to_ktime(local_clock());
->>> +
->>> +       do {
->>> +               if (bpmp_master_acked(ch))
->>> +                       return 0;
->>> +       } while (ktime_us_delta(ns_to_ktime(local_clock()), t) <
->>> +                bpmp->soc_data->ch_timeout);
->>> +
->>> +       return -ETIMEDOUT;
->>> +}
->>> +
->>> +static bool bpmp_master_free(int ch)
->>> +{
->>> +       struct ivc *ivc_chan;
->>> +       void *frame;
->>> +       bool ready;
->>> +
->>> +       ivc_chan = bpmp->ivc_channels + ch;
->>> +       frame = tegra_ivc_write_get_next_frame(ivc_chan);
->>> +       ready = !IS_ERR_OR_NULL(frame);
->>> +       bpmp->ch_area[ch].ob = ready ? frame : NULL;
->>> +
->>> +       return ready;
->>> +}
->>> +
->>> +static int bpmp_wait_master_free(int ch)
->>> +{
->>> +       ktime_t t;
->>> +
->>> +       t = ns_to_ktime(local_clock());
->>> +
->>> +       do {
->>> +               if (bpmp_master_free(ch))
->>> +                       return 0;
->>> +       } while (ktime_us_delta(ns_to_ktime(local_clock()), t)
->>> +                < bpmp->soc_data->ch_timeout);
->>> +
->>> +       return -ETIMEDOUT;
->>> +}
->>> +
->>> +static int __read_ch(int ch, void *data, int sz)
->>> +{
->>> +       struct ivc *ivc_chan;
->>> +       struct mb_data *p;
->>> +
->>> +       ivc_chan = bpmp->ivc_channels + ch;
->>> +       p = bpmp->ch_area[ch].ib;
->>> +       if (data)
->>> +               memcpy_fromio(data, p->data, sz);
->>> +
->>> +       return tegra_ivc_read_advance(ivc_chan);
->>> +}
->>> +
->>> +static int bpmp_read_ch(int ch, void *data, int sz)
-
-bpmp_read_threaded_ch maybe? we have bpmp_write_threaded_ch below, as
-this function is clearly dealing with threaded channels only.
-
->>> +{
->>> +       unsigned long flags;
->>> +       int i, ret;
->>> +
->>> +       i = bpmp_get_thread_ch_index(ch);
->>
->>
->> i is not a very good name for this variable.
->> Also note that bpmp_get_thread_ch_index() can return -1, this case is
->> not handled.
->
-> Okay, will fix this.
->
->
->>
->>> +
->>> +       spin_lock_irqsave(&bpmp->lock, flags);
->>> +       ret = __read_ch(ch, data, sz);
->>> +       bpmp->ch_info.tch_free |= (1 << i);
->>> +       spin_unlock_irqrestore(&bpmp->lock, flags);
->>> +
->>> +       up(&bpmp->ch_info.tch_sem);
->>> +
->>> +       return ret;
->>> +}
->>> +
->>> +static int __write_ch(int ch, int mrq_code, int flags, void *data, int
->>> sz)
->>> +{
->>> +       struct ivc *ivc_chan;
->>> +       struct mb_data *p;
->>> +
->>> +       ivc_chan = bpmp->ivc_channels + ch;
->>> +       p = bpmp->ch_area[ch].ob;
->>> +
->>> +       p->code = mrq_code;
->>> +       p->flags = flags;
->>> +       if (data)
->>> +               memcpy_toio(p->data, data, sz);
->>> +
->>> +       return tegra_ivc_write_advance(ivc_chan);
->>> +}
->>> +
->>> +static int bpmp_write_threaded_ch(int *ch, int mrq_code, void *data, int
->>> sz)
->>> +{
->>> +       unsigned long flags;
->>> +       int ret, i;
->>> +
->>> +       ret = down_timeout(&bpmp->ch_info.tch_sem,
->>> +
->>> usecs_to_jiffies(bpmp->soc_data->thread_ch_timeout));
->>> +       if (ret)
->>> +               return ret;
->>> +
->>> +       spin_lock_irqsave(&bpmp->lock, flags);
->>> +
->>> +       i = __ffs(bpmp->ch_info.tch_free);
->>> +       *ch = bpmp_get_thread_ch(i);
->>> +       ret = bpmp_master_free(*ch) ? 0 : -EFAULT;
->>> +       if (!ret) {
-
-Style nit: I prefer to make the error case the exception, and normal
-runtime the norm. This is where a goto statement can actually make
-your code easier to follow. Have an err: label before the spin_unlock,
-and jump to it if ret != 0. Then you can have the next three lines at
-the lower indentation level, and not looking like as if they were an
-error themselves.
-
-Or if you really don't like the goto, check for ret != 0 and do the
-spin_unlock and return in that block.
-
->>> +               bpmp->ch_info.tch_free &= ~(1 << i);
->>> +               __write_ch(*ch, mrq_code, DO_ACK | RING_DOORBELL, data,
->>> sz);
->>> +               bpmp->ch_info.tch_to_complete |= (1 << *ch);
->>> +       }
->>> +
->>> +       spin_unlock_irqrestore(&bpmp->lock, flags);
->>> +
->>> +       return ret;
->>> +}
->>> +
->>> +static int bpmp_write_ch(int ch, int mrq_code, int flags, void *data,
->>> int sz)
->>> +{
->>> +       int ret;
->>> +
->>> +       ret = bpmp_wait_master_free(ch);
->>> +       if (ret)
->>> +               return ret;
->>> +
->>> +       return __write_ch(ch, mrq_code, flags, data, sz);
->>> +}
->>> +
->>> +static int bpmp_send_receive_atomic(int mrq_code, void *ob_data, int
->>> ob_sz,
->>> +                                   void *ib_data, int ib_sz)
->>> +{
->>> +       int ch, ret;
->>> +
->>> +       if (WARN_ON(!irqs_disabled()))
->>> +               return -EPERM;
->>> +
->>> +       if (!bpmp_valid_txfer(ob_data, ob_sz, ib_data, ib_sz))
->>> +               return -EINVAL;
->>> +
->>> +       if (!bpmp->init_done)
->>> +               return -ENODEV;
->>> +
->>> +       ch = bpmp_get_ob_channel();
->>> +       ret = bpmp_write_ch(ch, mrq_code, DO_ACK, ob_data, ob_sz);
->>> +       if (ret)
->>> +               return ret;
->>> +
->>> +       ret = mbox_send_message(bpmp->chan, NULL);
->>> +       if (ret < 0)
->>> +               return ret;
->>> +       mbox_client_txdone(bpmp->chan, 0);
->>> +
->>> +       ret = bpmp_wait_ack(ch);
->>> +       if (ret)
->>> +               return ret;
->>> +
->>> +       return __read_ch(ch, ib_data, ib_sz);
->>> +}
->>> +
->>> +static int bpmp_send_receive(int mrq_code, void *ob_data, int ob_sz,
->>> +                            void *ib_data, int ib_sz)
->>> +{
->>> +       struct completion *comp_obj;
->>> +       unsigned long timeout;
->>> +       int ch, ret;
->>> +
->>> +       if (WARN_ON(irqs_disabled()))
->>> +               return -EPERM;
->>> +
->>> +       if (!bpmp_valid_txfer(ob_data, ob_sz, ib_data, ib_sz))
->>> +               return -EINVAL;
->>> +
->>> +       if (!bpmp->init_done)
->>> +               return -ENODEV;
->>> +
->>> +       ret = bpmp_write_threaded_ch(&ch, mrq_code, ob_data, ob_sz);
->>> +       if (ret)
->>> +               return ret;
->>> +
->>> +       ret = mbox_send_message(bpmp->chan, NULL);
->>> +       if (ret < 0)
->>> +               return ret;
->>> +       mbox_client_txdone(bpmp->chan, 0);
->>> +
->>> +       comp_obj = bpmp_get_completion_obj(ch);
->>> +       timeout = usecs_to_jiffies(bpmp->soc_data->thread_ch_timeout);
->>> +       if (!wait_for_completion_timeout(comp_obj, timeout))
->>> +               return -ETIMEDOUT;
->>> +
->>> +       return bpmp_read_ch(ch, ib_data, ib_sz);
->>> +}
->>> +
->>> +static struct mrq *bpmp_find_mrq(u32 mrq_code)
->>> +{
->>> +       struct mrq *mrq;
->>> +
->>> +       list_for_each_entry(mrq, &bpmp->mrq_list, list) {
->>> +               if (mrq_code == mrq->mrq_code)
->>> +                       return mrq;
->>> +       }
->>> +
->>> +       return NULL;
->>> +}
->>> +
->>> +static void bpmp_mrq_return_data(int ch, int code, void *data, int sz)
->>> +{
->>> +       int flags = bpmp->ch_area[ch].ib->flags;
->>> +       struct ivc *ivc_chan;
->>> +       struct mb_data *frame;
->>> +       int ret;
->>> +
->>> +       if (WARN_ON(sz > BPMP_MSG_DATA_SZ))
->>> +               return;
->>> +
->>> +       ivc_chan = bpmp->ivc_channels + ch;
->>> +       ret = tegra_ivc_read_advance(ivc_chan);
->>> +       WARN_ON(ret);
->>> +
->>> +       if (!(flags & DO_ACK))
->>> +               return;
->>> +
->>> +       frame = tegra_ivc_write_get_next_frame(ivc_chan);
->>> +       if (IS_ERR_OR_NULL(frame)) {
->>> +               WARN_ON(1);
->>> +               return;
->>> +       }
->>> +
->>> +       frame->code = code;
->>> +       if (data != NULL)
->>> +               memcpy_toio(frame->data, data, sz);
->>> +       ret = tegra_ivc_write_advance(ivc_chan);
->>> +       WARN_ON(ret);
->>> +
->>> +       if (flags & RING_DOORBELL) {
->>> +               ret = mbox_send_message(bpmp->chan, NULL);
->>> +               if (ret < 0) {
->>> +                       WARN_ON(1);
->>> +                       return;
->>> +               }
->>> +               mbox_client_txdone(bpmp->chan, 0);
->>> +       }
->>> +}
->>> +
->>> +static void bpmp_mail_return(int ch, int ret_code, int val)
->>> +{
->>> +       bpmp_mrq_return_data(ch, ret_code, &val, sizeof(val));
->>> +}
->>> +
->>> +static void bpmp_handle_mrq(int mrq_code, int ch)
->>> +{
->>> +       struct mrq *mrq;
->>> +
->>> +       spin_lock(&bpmp->lock);
->>> +
->>> +       mrq = bpmp_find_mrq(mrq_code);
->>> +       if (!mrq) {
->>> +               spin_unlock(&bpmp->lock);
->>> +               bpmp_mail_return(ch, -EINVAL, 0);
->>> +               return;
->>> +       }
->>> +
->>> +       mrq->handler(mrq_code, mrq->data, ch);
->>> +
->>> +       spin_unlock(&bpmp->lock);
->>> +}
->>> +
->>> +static int bpmp_request_mrq(int mrq_code, bpmp_mrq_handler handler, void
->>> *data)
->>> +{
->>> +       struct mrq *mrq;
->>> +       unsigned long flags;
->>> +
->>> +       if (!handler)
->>> +               return -EINVAL;
->>> +
->>> +       mrq = devm_kzalloc(bpmp->dev, sizeof(*mrq), GFP_KERNEL);
->>> +       if (!mrq)
->>> +               return -ENOMEM;
->>> +
->>> +       spin_lock_irqsave(&bpmp->lock, flags);
->>> +
->>> +       mrq->mrq_code = __MRQ_INDEX(mrq_code);
->>> +       mrq->handler = handler;
->>> +       mrq->data = data;
->>> +       list_add(&mrq->list, &bpmp->mrq_list);
->>> +
->>> +       spin_unlock_irqrestore(&bpmp->lock, flags);
->>> +
->>> +       return 0;
->>> +}
->>> +
->>> +static void bpmp_mrq_handle_ping(int mrq_code, void *data, int ch)
->>> +{
->>> +       int challenge;
->>> +       int reply;
->>> +
->>> +       challenge = *(int *)bpmp->ch_area[ch].ib->data;
->>> +       reply = challenge << (smp_processor_id() + 1);
->>> +       bpmp_mail_return(ch, 0, reply);
->>> +}
->>> +
->>> +static int bpmp_mailman_init(void)
->>> +{
->>> +       return bpmp_request_mrq(MRQ_PING, bpmp_mrq_handle_ping, NULL);
->>> +}
->>> +
->>> +static int bpmp_ping(void)
->>> +{
->>> +       unsigned long flags;
->>> +       ktime_t t;
->>> +       int challenge = 1;
->>
->>
->> Mmmm, shouldn't use a mrq_ping_request instead of an parameter which
->> size may vary depending on the architecture? On a 64-bit big endian
->> architecture, your messages would be corrupted.
->
->
-> Clarify one thig first. The mrq_ping_request and mrq_handle_ping above are
-> used for the ping form BPMP to CPU. Like I said above, it's among CPU RX
-> channel to get some information from BPMP firmware.
-
-Ok, so mrq_handle_ping *should* use these data structures at the very least.
-
->
-> Here is the ping request from CPU to BPMP to make sure we can IPC with BPMP
-> during the probe stage.
->
-> About the endian issue, I think we don't consider that in the message format
-> right now. So I think we only support little endian for the IPC messages
-> right now.
-
-Any code in the kernel should function correctly regardless of
-endianness. And the problem is not so much with endianness as it is
-with the operand size - is the BPMP expecting a 64-bit challenge here?
-Considering that the equivalent MRQ uses a 32-bit integer, I'd bet
-not. So please use u32/u64 as needed as well as cpu_to_leXX (and
-leXX_to_cpu for the opposite) to make your code solid.
-
-I understand that you don't want to use the MRQ structures because we
-are not handling a MRQ here, but if they are relevant I think this
-would still be safer that constructing messages from scalar data. That
-or we should introduce a proper structure for these messages, but here
-using the MRQ structure looks acceptable to me. Maybe they should not
-be named MRQ at all, but that's not for us to decide.
-
->
->>
->>> +       int reply = 0;
->>
->>
->> And this should probably be a mrq_ping_response. These remarks may
->> also apply to bpmp_mrq_handle_ping().
->
-> That is for receiving the ping request from BPMP.
->
->>
->>> +       int ret;
->>> +
->>> +       t = ktime_get();
->>> +       local_irq_save(flags);
->>> +       ret = bpmp_send_receive_atomic(MRQ_PING, &challenge,
->>> sizeof(challenge),
->>> +                                      &reply, sizeof(reply));
->>> +       local_irq_restore(flags);
->>> +       t = ktime_sub(ktime_get(), t);
->>> +
->>> +       if (!ret)
->>> +               dev_info(bpmp->dev,
->>> +                        "ping ok: challenge: %d, reply: %d, time:
->>> %lld\n",
->>> +                        challenge, reply, ktime_to_us(t));
->>> +
->>> +       return ret;
->>> +}
->>> +
->>> +static int bpmp_get_fwtag(void)
->>> +{
->>> +       unsigned long flags;
->>> +       void *vaddr;
->>> +       dma_addr_t paddr;
->>> +       u32 addr;
->>
->>
->> Here also we should use a mrq_query_tag_request.
->
-> The is one-way request from CPU to BPMP. So we don't request an MRQ for
-> that.
->
->>
->>> +       int ret;
->>> +
->>> +       vaddr = dma_alloc_coherent(bpmp->dev, BPMP_MSG_DATA_SZ, &paddr,
->>> +                                  GFP_KERNEL);
->>
->>
->> dma_addr_t may be 64 bit here, and you may get an address higher than
->> the 32 bits allowed by mrq_query_tag_request! I guess you want to add
->> GFP_DMA32 as flag to your call to dma_alloc_coherent.
->
-> BPMP should able to handle the address above 32 bits, but I am not sure does
-> it configure to support that?
-
-If the message you pass only contains a 32-bit address, then I'm
-afraid the protocol is the limiting factor here until it is updated.
-
-Can't wait for the day when we will have to manage several versions of
-this protocol! >_<
-
->
-> Will fix this.
->
->
->>
->>> +       if (!vaddr)
->>> +               return -ENOMEM;
->>> +       addr = paddr;
->>> +
->>> +       local_irq_save(flags);
->>> +       ret = bpmp_send_receive_atomic(MRQ_QUERY_TAG, &addr,
->>> sizeof(addr),
->>> +                                      NULL, 0);
->>> +       local_irq_restore(flags);
->>> +
->>> +       if (!ret)
->>> +               dev_info(bpmp->dev, "fwtag: %s\n", (char *)vaddr);
->>> +
->>> +       dma_free_coherent(bpmp->dev, BPMP_MSG_DATA_SZ, vaddr, paddr);
->>> +
->>> +       return ret;
->>> +}
->>> +
->>> +static void bpmp_signal_thread(int ch)
->>> +{
->>> +       int flags = bpmp->ch_area[ch].ob->flags;
->>> +       struct completion *comp_obj;
->>> +
->>> +       if (!(flags & RING_DOORBELL))
->>> +               return;
->>> +
->>> +       comp_obj = bpmp_get_completion_obj(ch);
->>> +       if (!comp_obj) {
->>> +               WARN_ON(1);
->>> +               return;
->>> +       }
->>> +
->>> +       complete(comp_obj);
->>> +}
->>> +
->>> +static void bpmp_handle_rx(struct mbox_client *cl, void *data)
->>> +{
->>> +       int i, rx_ch;
->>> +
->>> +       rx_ch = bpmp->soc_data->cpu_rx_ch_index;
->>> +
->>> +       if (bpmp_master_acked(rx_ch))
->>> +               bpmp_handle_mrq(bpmp->ch_area[rx_ch].ib->code, rx_ch);
->>> +
->>> +       spin_lock(&bpmp->lock);
->>> +
->>> +       for (i = 0; i < bpmp->soc_data->nr_thread_ch &&
->>> +                       bpmp->ch_info.tch_to_complete; i++) {
-
-for_each_set_bit(bpmp->ch_info.tch_to_complete, &i,
-bpmp->soc_data->nr_thread_ch) ?
-
-This will reduce the number of iterations and you won't have to do the
-bpmp->ch_info.tch_to_complete & (1 << ch) check below.
-
->>> +               int ch = bpmp_get_thread_ch(i);
->>> +
->>> +               if ((bpmp->ch_info.tch_to_complete & (1 << ch)) &&
->>> +                   bpmp_master_acked(ch)) {
->>> +                       bpmp->ch_info.tch_to_complete &= ~(1 << ch);
->>> +                       bpmp_signal_thread(ch);
->>> +               }
->>> +       }
->>> +
->>> +       spin_unlock(&bpmp->lock);
->>> +}
->>> +
->>> +static void bpmp_ivc_notify(struct ivc *ivc)
->>> +{
->>> +       int ret;
->>> +
->>> +       ret = mbox_send_message(bpmp->chan, NULL);
->>> +       if (ret < 0)
->>> +               return;
->>> +
->>> +       mbox_send_message(bpmp->chan, NULL);
->>
->>
->> Why the second call to mbox_send_message? May to useful to add a
->> comment explaining it.
->
-> Ah!! It should be mbox_client_txdone(). Good catch.
-
-That makes more sense. :) But did this code work even with that typo?
