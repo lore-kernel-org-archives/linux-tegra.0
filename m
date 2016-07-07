@@ -1,67 +1,90 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH] ARM: tegra: add DT binding for Tegra186 BPMP I2C
-Date: Thu,  7 Jul 2016 13:37:11 -0600
-Message-ID: <20160707193711.5891-1-swarren@wwwdotorg.org>
+Subject: Re: [PATCH V2 05/10] firmware: tegra: add BPMP support
+Date: Thu, 7 Jul 2016 13:55:08 -0600
+Message-ID: <577EB39C.6030605@wwwdotorg.org>
+References: <20160705090431.5852-1-josephl@nvidia.com>
+ <20160705090431.5852-6-josephl@nvidia.com>
+ <CAAVeFuKvp4d=RoPZGGLmhqXs1oHZPrEOxTJd_b6b7-rHq_mqqg@mail.gmail.com>
+ <577E102E.8070602@nvidia.com>
+ <CAAVeFu+6UO3_Zi3VTec0Qf6KBT2xY-usFNnd26raUQZ9ieEJbg@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAAVeFu+6UO3_Zi3VTec0Qf6KBT2xY-usFNnd26raUQZ9ieEJbg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 07/07/2016 04:18 AM, Alexandre Courbot wrote:
+> On Thu, Jul 7, 2016 at 5:17 PM, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> On 07/06/2016 07:39 PM, Alexandre Courbot wrote:
+>>>
+>>> Sorry, I will probably need to do several passes on this one to
+>>> understand everything, but here is what I can say after a first look:
+>>>
+>>> On Tue, Jul 5, 2016 at 6:04 PM, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>>>
+>>>> The Tegra BPMP (Boot and Power Management Processor) is designed for the
+>>>> booting process handling, offloading the power management tasks and
+>>>> some system control services from the CPU. It can be clock, DVFS,
+>>>> thermal/EDP, power gating operation and system suspend/resume handling.
+>>>> So the CPU and the drivers of these modules can base on the service that
+>>>> the BPMP firmware driver provided to signal the event for the specific PM
+>>>> action to BPMP and receive the status update from BPMP.
+>>>>
+>>>> Comparing to the ARM SCPI, the service provided by BPMP is message-based
+>>>> communication but not method-based. The BPMP firmware driver provides the
+>>>> send/receive service for the users, when the user concerns the response
+>>>> time. If the user needs to get the event or update from the firmware, it
+>>>> can request the MRQ service as well. The user needs to take care of the
+>>>> message format, which we call BPMP ABI.
+>>>>
+>>>> The BPMP ABI defines the message format for different modules or usages.
+>>>> For example, the clock operation needs an MRQ service code called
+>>>> MRQ_CLK with specific message format which includes different sub
+>>>> commands for various clock operations. This is the message format that
+>>>> BPMP can recognize.
+>>>>
+>>>> So the user needs two things to initiate IPC between BPMP. Get the
+>>>> service from the bpmp_ops structure and maintain the message format as
+>>>> the BPMP ABI defined.
 
-In Tegra186, the BPMP (Boot and Power Management Processor) owns certain
-HW devices, such as the I2C controller for the power management I2C bus.
-Software running on other CPUs must perform IPC to the BPMP in order to
-execute transactions on that I2C bus. This binding describes an I2C bus
-that is accessed in such a fashion.
+>>>> +static struct tegra_bpmp *bpmp;
+>>>
+>>> static? Ok, we only need one... for now. How about a private member in
+>>> your ivc structure that allows you to retrieve the bpmp and going
+>>> dynamic? This will require an extra argument in many functions, but is
+>>> cleaner design IMHO.
+>>
+>> IVC is designed as a generic IPC protocol among different modules (We have
+>> not introduced some other usages of the IVC right now.). Maybe don't churn
+>> some other stuff into IVC is better.
+>
+> Anything is fine if you can get rid of that static.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- .../bindings/i2c/nvidia,tegra186-bpmp-i2c.txt      | 35 ++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/i2c/nvidia,tegra186-bpmp-i2c.txt
+Typically the way this is handled is to store the "struct ivc" inside 
+some other struct, and use the container_of macro to "move" from a 
+"struct ivc *" to a "struct XXX *" where "struct XXX" contains a "struct 
+ivc" field within it. That way, the IVC code's "struct ivc" knows 
+nothing about any IVC client's code/structures/..., doesn't have to 
+store any "client data", and yet the IVC client (the BPMP driver) can 
+acquire a "struct bpmp" pointer from any "struct ivc" pointer that it 
+"owns".
 
-diff --git a/Documentation/devicetree/bindings/i2c/nvidia,tegra186-bpmp-i2c.txt b/Documentation/devicetree/bindings/i2c/nvidia,tegra186-bpmp-i2c.txt
-new file mode 100644
-index 000000000000..eb9f70723ab7
---- /dev/null
-+++ b/Documentation/devicetree/bindings/i2c/nvidia,tegra186-bpmp-i2c.txt
-@@ -0,0 +1,35 @@
-+NVIDIA Tegra186 BPMP I2C controller
-+
-+In Tegra186, the BPMP (Boot and Power Management Processor) owns certain HW
-+devices, such as the I2C controller for the power management I2C bus. Software
-+running on other CPUs must perform IPC to the BPMP in order to execute
-+transactions on that I2C bus. This binding describes an I2C bus that is
-+accessed in such a fashion.
-+
-+Required properties:
-+- compatible:
-+    Array of strings.
-+    One of:
-+    - "nvidia,tegra186-bpmp-i2c".
-+- address-cells: Address cells for I2C device address.
-+    Single-cell integer.
-+    Must be <1>.
-+- size-cells:
-+    Single-cell integer.
-+    Must be <0>.
-+- nvidia,bpmp:
-+    The phandle to the BPMP device.
-+- nvidia,bpmp-bus-id:
-+    Single-cell integer.
-+    Indicates the I2C bus number this DT node represent, as defined by the
-+    BPMP firmware.
-+
-+Example:
-+
-+	bpmp-i2c {
-+		compatible = "nvidia,tegra186-bpmp-i2c";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		nvidia,bpmp = <&bpmp>;
-+		nvidia,bpmp-bus-id = <5>;
-+	};
--- 
-2.9.0
+struct bpmp_mbox {
+     struct bpmp *bpmp;
+     struct ivc ivc;
+};
+
+void bpmp_call_ivc(struct bpmp_mbox *mb) {
+     ivc_something(&mb->ivc);
+}
+
+void bpmp_callback_from_ivc(struct ivc *ivc) {
+     struct bpmp_mbox *mb = container_of(struct bpmp_mbox, ivc, ivc);
+     struct bpmp *bpmp = mb->bpmp;
+}
+
+(I didn't check if I got the parameters to container_of correct above)
