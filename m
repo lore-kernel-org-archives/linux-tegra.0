@@ -1,82 +1,47 @@
 From: Alexandre Courbot <gnurou@gmail.com>
-Subject: Re: [PATCH V2 05/10] firmware: tegra: add BPMP support
-Date: Thu, 7 Jul 2016 11:24:39 +0900
-Message-ID: <CAAVeFuKd_w6jJbAXPNOX+M7aAgS9doR6c5h1QxHbRySRgzviHQ@mail.gmail.com>
-References: <20160705090431.5852-1-josephl@nvidia.com>
- <20160705090431.5852-6-josephl@nvidia.com>
- <CAAVeFuKvp4d=RoPZGGLmhqXs1oHZPrEOxTJd_b6b7-rHq_mqqg@mail.gmail.com>
- <577D363A.4010003@nvidia.com>
+Subject: Re: [PATCH -next] drm/tegra: sor: Fix invalid kfree of devm_kzalloc
+ allocated data
+Date: Thu, 7 Jul 2016 13:24:04 +0900
+Message-ID: <CAAVeFuKwWy3F-4oizsATCRtT+XMqWAgzy-CTagAXUX7b69n9ww@mail.gmail.com>
+References: <1467616759-14502-1-git-send-email-weiyj_lk@163.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <577D363A.4010003@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Matt Longnecker <mlongnecker@nvidia.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Catalin Marinas <catalin.marinas@arm.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Jassi Brar <jassisinghbrar@gmail.com>, Will Deacon <will.deacon@arm.com>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Joseph Lo <josephl@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1467616759-14502-1-git-send-email-weiyj_lk@163.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: weiyj_lk@163.com
+Cc: Stephen Warren <swarren@wwwdotorg.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, Wei Yongjun <yongjun_wei@trendmicro.com.cn>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jul 7, 2016 at 1:47 AM, Matt Longnecker <mlongnecker@nvidia.com> wrote:
-> Alex,
->
->
-> On 07/06/2016 04:39 AM, Alexandre Courbot wrote:
->>>
->>> diff --git a/include/soc/tegra/bpmp_abi.h b/include/soc/tegra/bpmp_abi.h
->>> >new file mode 100644
->>> >index 000000000000..0aaef5960e29
->>> >--- /dev/null
->>> >+++ b/include/soc/tegra/bpmp_abi.h
->>> >@@ -0,0 +1,1601 @@
->>> >+/*
->>> >+ * Copyright (c) 2014-2016, NVIDIA CORPORATION.  All rights reserved.
->>> >+ *
->>> >+ * This program is free software; you can redistribute it and/or modify
->>> > it
->>> >+ * under the terms and conditions of the GNU General Public License,
->>> >+ * version 2, as published by the Free Software Foundation.
->>> >+ *
->>> >+ * This program is distributed in the hope it will be useful, but
->>> > WITHOUT
->>> >+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
->>> > or
->>> >+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
->>> > License for
->>> >+ * more details.
->>> >+ *
->>> >+ * You should have received a copy of the GNU General Public License
->>> >+ * along with this program.  If not, see<http://www.gnu.org/licenses/>.
->>> >+ */
->>> >+
->>> >+#ifndef_ABI_BPMP_ABI_H_
->>> >+#define_ABI_BPMP_ABI_H_
->>> >+
->>>
->> ...
->>
->> There is a lot of stuff in this file, most of which we are not using
->> now - this is ok, but unless this is a file synced from an outside
->> resource maybe we should trim the structures we don't need and add
->> them as we make use of them? It helps dividing the work in bite-size
->> chunks.
->>
->> Regarding the documentation format of this file, is this valid kernel
->> documentation since the adoption of Sphynx? Or is it whatever the
->> origin is using?
->
-> bpmp_abi.h is meant to be delivered as is from an NVIDIA internal repo to a
-> variety of OS'es. Each of them has a different documentation standard and
-> coding standard.
->
-> I'd like to avoid trimming parts from the file (or even worse modifying
-> parts of the file) so that future deliveries are trivial.
-
-Makes sense, thanks to you and Stephen for the clarification.
+T24gTW9uLCBKdWwgNCwgMjAxNiBhdCA0OjE5IFBNLCAgPHdlaXlqX2xrQDE2My5jb20+IHdyb3Rl
+Ogo+IEZyb206IFdlaSBZb25nanVuIDx5b25nanVuX3dlaUB0cmVuZG1pY3JvLmNvbS5jbj4KPgo+
+IGRhdGEgYWxsb2NhdGVkIHdpdGggZGV2bV9remFsbG9jIHNob3VsZCBub3QgYmUgZnJlZWQgdXNp
+bmcga2ZyZWUsCj4gYmVjYXVzZSBkb2luZyBzbyBjYXVzZXMgYSBkYW5nbGluZyBwb2ludGVyLCBh
+bmQgYSBzdWJzZXF1ZW50Cj4gZG91YmxlIGZyZWUsIHVzZSBkZXZtX2tmcmVlIGluc3RlYWQuCj4K
+PiBTaWduZWQtb2ZmLWJ5OiBXZWkgWW9uZ2p1biA8eW9uZ2p1bl93ZWlAdHJlbmRtaWNyby5jb20u
+Y24+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9zb3IuYyB8IDIgKy0KPiAgMSBmaWxl
+IGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCj4KPiBkaWZmIC0tZ2l0IGEv
+ZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3Nvci5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL3Nvci5j
+Cj4gaW5kZXggODQyNWVkYS4uYWY5ODU4NyAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0v
+dGVncmEvc29yLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvc29yLmMKPiBAQCAtMzYz
+LDcgKzM2Myw3IEBAIHN0YXRpYyBzdHJ1Y3QgY2xrICp0ZWdyYV9jbGtfc29yX2JyaWNrX3JlZ2lz
+dGVyKHN0cnVjdCB0ZWdyYV9zb3IgKnNvciwKPgo+ICAgICAgICAgY2xrID0gZGV2bV9jbGtfcmVn
+aXN0ZXIoc29yLT5kZXYsICZicmljay0+aHcpOwo+ICAgICAgICAgaWYgKElTX0VSUihjbGspKQo+
+IC0gICAgICAgICAgICAgICBrZnJlZShicmljayk7Cj4gKyAgICAgICAgICAgICAgIGRldm1fa2Zy
+ZWUoc29yLT5kZXYsIGJyaWNrKTsKPgo+ICAgICAgICAgcmV0dXJuIGNsazsKPiAgfQoKRGFuIHNl
+bnQgYW5vdGhlciBmaXggZm9yIHRoaXM6CgpodHRwczovL2xrbWwub3JnL2xrbWwvMjAxNi83LzQv
+ODMKCkkgdGVuZCB0byBwcmVmZXIgaGlzIHNvbHV0aW9uIHNpbmNlIGl0IGhhcyBhIG5lZ2F0aXZl
+IGxpbmUgY291bnQgYW5kCmFsc28gZG9lc24ndCBkbyB0aGUgKHVubmVlZGVkKSBleHBsaWNpdCBk
+ZXZtX2tmcmVlKCkuCgpUaGFua3MgdGhvdWdoIQpBbGV4LgpfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
+bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
