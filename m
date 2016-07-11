@@ -1,134 +1,70 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: Re: [PATCH V2 04/10] firmware: tegra: add IVC library
-Date: Sat, 9 Jul 2016 19:45:07 -0400
-Message-ID: <CAP=VYLoX5CkXGFrXtMFYYuJUs_+_9zzzus1o+_7twvf4rkU_Og@mail.gmail.com>
-References: <20160705090431.5852-1-josephl@nvidia.com> <20160705090431.5852-5-josephl@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 0/5] pwm: Fixes and support for Tegra186
+Date: Mon, 11 Jul 2016 11:31:40 +0200
+Message-ID: <20160711093140.GD5823@ulmo.ba.sec>
+References: <1466596043-27262-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160705090431.5852-5-josephl@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Joseph Lo <josephl@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Matthew Longnecker <MLongnecker@nvidia.com>, devicetree@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>, LKML <linux-kernel@vger.kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="llIrKcgUOe3dCx0c"
+Return-path: <linux-pwm-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1466596043-27262-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-pwm-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: robh+dt@kernel.org, swarren@wwwdotorg.org, gnurou@gmail.com, linux-pwm@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 5, 2016 at 5:04 AM, Joseph Lo <josephl@nvidia.com> wrote:
-> The Inter-VM communication (IVC) is a communication protocol, which is
-> designed for interprocessor communication (IPC) or the communication
-> between the hypervisor and the virtual machine with a guest OS on it. So
-> it can be translated as inter-virtual memory or inter-virtual machine
-> communication. The message channels are maintained on the DRAM or SRAM
-> and the data coherency should be considered. Or the data could be
-> corrupted or out of date when the remote client checking it.
->
-> Inside the IVC, it maintains memory-based descriptors for the TX/RX
-> channels and the coherency issue of the counter and payloads. So the
-> clients can use it to send/receive messages to/from remote ones.
->
-> We introduce it as a library for the firmware drivers, which can use it
-> for IPC.
->
-> Based-on-the-work-by:
-> Peter Newman <pnewman@nvidia.com>
->
-> Signed-off-by: Joseph Lo <josephl@nvidia.com>
-> ---
-> Changes in V2:
-> - None
-> ---
->  drivers/firmware/Kconfig        |   1 +
->  drivers/firmware/Makefile       |   1 +
->  drivers/firmware/tegra/Kconfig  |  13 +
->  drivers/firmware/tegra/Makefile |   1 +
->  drivers/firmware/tegra/ivc.c    | 659 ++++++++++++++++++++++++++++++++++++++++
->  include/soc/tegra/ivc.h         | 102 +++++++
->  6 files changed, 777 insertions(+)
->  create mode 100644 drivers/firmware/tegra/Kconfig
->  create mode 100644 drivers/firmware/tegra/Makefile
->  create mode 100644 drivers/firmware/tegra/ivc.c
->  create mode 100644 include/soc/tegra/ivc.h
->
-> diff --git a/drivers/firmware/Kconfig b/drivers/firmware/Kconfig
-> index 5e618058defe..bbd64ae8c4c6 100644
-> --- a/drivers/firmware/Kconfig
-> +++ b/drivers/firmware/Kconfig
-> @@ -200,5 +200,6 @@ config HAVE_ARM_SMCCC
->  source "drivers/firmware/broadcom/Kconfig"
->  source "drivers/firmware/google/Kconfig"
->  source "drivers/firmware/efi/Kconfig"
-> +source "drivers/firmware/tegra/Kconfig"
->
->  endmenu
-> diff --git a/drivers/firmware/Makefile b/drivers/firmware/Makefile
-> index 474bada56fcd..9a4df8171cc4 100644
-> --- a/drivers/firmware/Makefile
-> +++ b/drivers/firmware/Makefile
-> @@ -24,3 +24,4 @@ obj-y                         += broadcom/
->  obj-$(CONFIG_GOOGLE_FIRMWARE)  += google/
->  obj-$(CONFIG_EFI)              += efi/
->  obj-$(CONFIG_UEFI_CPER)                += efi/
-> +obj-y                          += tegra/
-> diff --git a/drivers/firmware/tegra/Kconfig b/drivers/firmware/tegra/Kconfig
-> new file mode 100644
-> index 000000000000..1fa3e4e136a5
-> --- /dev/null
-> +++ b/drivers/firmware/tegra/Kconfig
-> @@ -0,0 +1,13 @@
-> +menu "Tegra firmware driver"
-> +
-> +config TEGRA_IVC
-> +       bool "Tegra IVC protocol"
 
-If this driver is not tristate, then why does the driver include the
-module.h header below?
+--llIrKcgUOe3dCx0c
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> +       depends on ARCH_TEGRA
-> +       help
-> +         IVC (Inter-VM Communication) protocol is part of the IPC
-> +         (Inter Processor Communication) framework on Tegra. It maintains the
-> +         data and the different commuication channels in SysRAM or RAM and
-> +         keeps the content is synchronization between host CPU and remote
-> +         processors.
-> +
-> +endmenu
-> diff --git a/drivers/firmware/tegra/Makefile b/drivers/firmware/tegra/Makefile
-> new file mode 100644
-> index 000000000000..92e2153e8173
-> --- /dev/null
-> +++ b/drivers/firmware/tegra/Makefile
-> @@ -0,0 +1 @@
-> +obj-$(CONFIG_TEGRA_IVC)                += ivc.o
-> diff --git a/drivers/firmware/tegra/ivc.c b/drivers/firmware/tegra/ivc.c
-> new file mode 100644
-> index 000000000000..3e736bb9915a
-> --- /dev/null
-> +++ b/drivers/firmware/tegra/ivc.c
-> @@ -0,0 +1,659 @@
-> +/*
-> + * Copyright (c) 2014-2016, NVIDIA CORPORATION.  All rights reserved.
-> + *
-> + * This program is free software; you can redistribute it and/or modify it
-> + * under the terms and conditions of the GNU General Public License,
-> + * version 2, as published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> + * more details.
-> + */
-> +
-> +#include <linux/module.h>
- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+On Wed, Jun 22, 2016 at 05:17:18PM +0530, Laxman Dewangan wrote:
+> Have fixes for 100% duty cycle, avoid computation loss for duty
+> period calculation and add support the Tegra186.
+>=20
+> Hyong Bin Kim (1):
+>   pwm: tegra: fix overflow when calculating duty cycle
+>=20
+> Laxman Dewangan (2):
+>   pwm: tegra: Add DT node compatible for Tegra186
+>   pwm: tegra: Add support for Tegra186
+>=20
+> Rohith Seelaboyina (1):
+>   pwm: tegra: Add support for reset control
+>=20
+> Victor(Weiguo) Pan (1):
+>   pwm: tegra: Allow 100% duty cycle
+>=20
+>  .../devicetree/bindings/pwm/nvidia,tegra20-pwm.txt | 10 +++--
+>  drivers/pwm/pwm-tegra.c                            | 46 ++++++++++++++++=
+++----
+>  2 files changed, 45 insertions(+), 11 deletions(-)
 
-I'm sure it "works" since module.h includes nearly everything else,
-but that is less than ideal for exactly the same reason.
+All of these applied, with some minor changes.
 
-Thanks,
-Paul.
---
+Thierry
 
-> +
-> +#include <soc/tegra/ivc.h>
-> +
-> +#define IVC_ALIGN 64
-> +
+--llIrKcgUOe3dCx0c
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXg2d6AAoJEN0jrNd/PrOhHW4P/ii6bT1N4cxSOaqNueCGQzbr
+sWd+oNdXJ9EQGBgvCF81aOKtuWW5vY+cjXqLceIpvmaHEEt2HxrE24NxdXHoOxsI
+ebCJ3Mm2Js//w0bomIOIfXWHEryqNuf6MyFRWp6yqCO/oXuXvgFrNyLEG8ChJ6cb
+2oinzYODPdZGFUPlsMz6gA06/e2QUQQk8wKR8kvzdGm0aw9NrPF00QWXbxEYZZlN
+UeTmqmPZBC/3g0pAz7tU0OfRV7HQqKFJVShC7Hd71EGayxLzWUU02RRSYq3aZ9SX
+xK2V4DhfHxu7Q1xaE/v4hYhMWzTOIH0V/TX5u3Ujo1HjyOSKRzpBts01HY1BIxuH
+xzJiKhnmgz9U2ap4bckkOg01Lx1YDLMAxzAybBiyShUStk85iYbY7a2nsJtuVvXb
+UFrYP1Q0qMhJEoMlG03gRTbAYJRZv1bcXTWNpdLQnbfFMbKbqgFMXKDBWI6IWmot
+pXR7pyzq7KSXdrhx0MFm3Kw5PDMQ6rEhwuubJFz3N9IJEnC0kESb7+LAXr3cM325
+qtWuhc7x4o+tqzDPaltATfwRgTapMoIZcfS1dVANjMm6GLnsC/Zg48ZCJ2OqswlB
++Q8quKPnaK4bM/V80n6OaroHdWJulswoHFi1eHkk6HdPLPfswGIJJTjqqOrIm5he
+j4mi326cxQjBdGr62x1b
+=U9lr
+-----END PGP SIGNATURE-----
+
+--llIrKcgUOe3dCx0c--
