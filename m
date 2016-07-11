@@ -1,114 +1,58 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH 6/8] PM / Domains: Remove a provider by referencing
- the data pointer
-Date: Mon, 11 Jul 2016 14:14:39 +0100
-Message-ID: <57839BBF.30102@nvidia.com>
-References: <1457090634-14785-1-git-send-email-jonathanh@nvidia.com>
- <1457090634-14785-7-git-send-email-jonathanh@nvidia.com>
- <CAPDyKFpLcnLvQmpQgzhOExq67XrbaW9Nf1Gk2Y+CND8dn_cmyA@mail.gmail.com>
- <5769455C.9010809@nvidia.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH V2 01/10] Documentation: dt-bindings: mailbox: tegra: Add
+ binding for HSP mailbox
+Date: Mon, 11 Jul 2016 09:14:07 -0500
+Message-ID: <20160711141407.GA25042@rob-hp-laptop>
+References: <20160705090431.5852-1-josephl@nvidia.com>
+ <20160705090431.5852-2-josephl@nvidia.com>
+ <20160707181356.GA6864@kickseed.nvidia.com>
+ <577EA0D6.9020308@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5769455C.9010809-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <577EA0D6.9020308-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Alexander Aring <alex.aring-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Ulf,
-
-On 21/06/16 14:47, Jon Hunter wrote:
+On Thu, Jul 07, 2016 at 12:35:02PM -0600, Stephen Warren wrote:
+> On 07/07/2016 12:13 PM, Sivaram Nair wrote:
+> >On Tue, Jul 05, 2016 at 05:04:22PM +0800, Joseph Lo wrote:
+> >>Add DT binding for the Hardware Synchronization Primitives (HSP). The
+> >>HSP is designed for the processors to share resources and communicate
+> >>together. It provides a set of hardware synchronization primitives for
+> >>interprocessor communication. So the interprocessor communication (IPC)
+> >>protocols can use hardware synchronization primitive, when operating
+> >>between two processors not in an SMP relationship.
 > 
-> On 15/06/16 15:38, Ulf Hansson wrote:
->> On 4 March 2016 at 12:23, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>> To remove a PM domain from the system, it is necessary to ensure
->>> that any PM domain providers associated with the PM domain have
->>> been removed. Otherwise it could be possible to obtain a pointer
->>> to a PM domain structure that has been removed.
->>>
->>> PM domains now have a reference to the pointer for the PM domain
->>> provider's data variable. Add a function so that a PM domain can
->>> remove a PM domain provider by referencing the data pointer.
->>>
->>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>> ---
->>>  drivers/base/power/domain.c | 24 ++++++++++++++++++++++++
->>>  include/linux/pm_domain.h   |  2 ++
->>>  2 files changed, 26 insertions(+)
->>>
->>> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
->>> index 72055fef6256..438885f2455f 100644
->>> --- a/drivers/base/power/domain.c
->>> +++ b/drivers/base/power/domain.c
->>> @@ -1738,6 +1738,30 @@ void of_genpd_del_provider(struct device_node *np)
->>>  EXPORT_SYMBOL_GPL(of_genpd_del_provider);
->>>
->>>  /**
->>> + * of_genpd_del_provider_by_data() - Remove a registered PM domain provider
->>> + * @data: Pointer to the data associated with the PM domain provider
->>> + *
->>> + * Look up a PM domain provider based upon a pointer to it's data and
->>> + * remove the PM domain provider from the list of providers.
->>> + */
->>> +void of_genpd_del_provider_by_data(void *data)
->>> +{
->>> +       struct of_genpd_provider *c, *cp;
->>> +
->>> +       mutex_lock(&of_genpd_mutex);
->>> +       list_for_each_entry_safe(cp, c, &of_genpd_providers, link) {
->>> +               if (cp->data == data) {
->>> +                       list_del(&cp->link);
->>> +                       of_node_put(cp->node);
->>> +                       kfree(cp);
->>> +                       break;
->>> +               }
->>> +       }
->>> +       mutex_unlock(&of_genpd_mutex);
->>> +}
->>> +EXPORT_SYMBOL_GPL(of_genpd_del_provider_by_data);
->>> +
->>> +/**
->>>   * of_genpd_get_from_provider() - Look-up PM domain
->>>   * @genpdspec: OF phandle args to use for look-up
->>>   *
->>> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
->>> index bed84413546f..7b7921a65cb0 100644
->>> --- a/include/linux/pm_domain.h
->>> +++ b/include/linux/pm_domain.h
->>> @@ -199,6 +199,7 @@ int of_genpd_add_provider_simple(struct device_node *np,
->>>  int of_genpd_add_provider_onecell(struct device_node *np,
->>>                                   struct genpd_onecell_data *data);
->>>  void of_genpd_del_provider(struct device_node *np);
->>
->> There's currently only one user of of_genpd_del_provider().
->>
->> Could this patch just convert that user to the new API, so we don't
->> need to keep both the legacy and new one?
->>
->> I guess we could then just stick to the name "of_genpd_del_provider()".
+> >>diff --git a/include/dt-bindings/mailbox/tegra186-hsp.h b/include/dt-bindings/mailbox/tegra186-hsp.h
 > 
-> I had a look at this and to do that we would end up with
-> of_genpd_del_provider(struct device_node *np, void *data) where the user
-> should only pass one of the arguments. It seems a bit odd. However,
-> unless I have forgotten something, I wonder if we should just make
-> of_genpd_del_provider_by_name() a local function and not export this at
-> all? It seems more natural for users to delete a provider by the
-> device_node than by name rather than the data argument.
+> >>+#define HSP_MBOX_TYPE_DB 0x0
+> >>+#define HSP_MBOX_TYPE_SM 0x1
+> >>+#define HSP_MBOX_TYPE_SS 0x2
+> >>+#define HSP_MBOX_TYPE_AS 0x3
+> >>+
+> >>+#define HSP_DB_MASTER_CCPLEX 17
+> >>+#define HSP_DB_MASTER_BPMP 19
+> >>+
+> >>+#define HSP_MBOX_ID(type, ID) \
+> >>+		(HSP_MBOX_TYPE_##type << 16 | ID)
+> >
+> >It will be nicer if you avoid the macro glue magic '##' for 'type'. I
+> >would also suggest to use braces around 'type' and 'ID'.
 > 
-> The only problem I see with making of_genpd_del_provider_by_name() local
-> is that I need to add a prototype for the function at the top of the
-> domain.c source file so that it builds because __pm_genpd_remove() is
-> defined above it. Yes I could move __pm_genpd_remove() to the bottom of
-> the file but then it is not located next to pm_genpd_init() which seems odd.
-> 
-> Let me know what you think.
+> This technique been used without issue in quite a few other places without
+> issue, and has the benefit of simplifying the text wherever the macro is
+> used. What issue do you foresee?
 
-Any response on this? This is the last item that we need to sort out?
+I'm not a fan of using the macros to begin with and less so anything 
+more complex than a single constant value. I'd rather see 2 cells here 
+with the first being the id and the 2nd being the type. 
 
-Cheers
-Jon
+An issue with token pasting is grepping for DB, SM, etc. in kernel tree 
+is probably noisy. Not such a big deal here, but a major PIA when you 
+have more complex sets of includes.
 
--- 
-nvpublic
+Rob
