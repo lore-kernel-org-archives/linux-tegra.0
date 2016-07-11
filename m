@@ -1,78 +1,76 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.7-rc7
-Date: Mon, 11 Jul 2016 16:43:47 +0100
-Message-ID: <5783BEB3.7010204@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V2 03/10] Documentation: dt-bindings: firmware: tegra: add
+ bindings of the BPMP
+Date: Mon, 11 Jul 2016 10:05:50 -0600
+Message-ID: <5783C3DE.3080708@wwwdotorg.org>
+References: <20160705090431.5852-1-josephl@nvidia.com>
+ <20160705090431.5852-4-josephl@nvidia.com>
+ <20160711142238.GA30600@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160711142238.GA30600@rob-hp-laptop>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.7-rc7.
-Logs and other details at:
+On 07/11/2016 08:22 AM, Rob Herring wrote:
+> On Tue, Jul 05, 2016 at 05:04:24PM +0800, Joseph Lo wrote:
+>> The BPMP is a specific processor in Tegra chip, which is designed for
+>> booting process handling and offloading the power management, clock
+>> management, and reset control tasks from the CPU. The binding document
+>> defines the resources that would be used by the BPMP firmware driver,
+>> which can create the interprocessor communication (IPC) between the CPU
+>> and BPMP.
 
-    https://nvtb.github.io//linux/test_v4.7-rc7/20160710210103/
+>> diff --git a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
 
+>> +NVIDIA Tegra Boot and Power Management Processor (BPMP)
+>> +
+>> +The BPMP is a specific processor in Tegra chip, which is designed for
+>> +booting process handling and offloading the power management, clock
+>> +management, and reset control tasks from the CPU. The binding document
+>> +defines the resources that would be used by the BPMP firmware driver,
+>> +which can create the interprocessor communication (IPC) between the CPU
+>> +and BPMP.
+>> +
+>> +Required properties:
+>> +- name : Should be bpmp
+>> +- compatible
+>> +    Array of strings
+>> +    One of:
+>> +    - "nvidia,tegra186-bpmp"
+>> +- mboxes : The phandle of mailbox controller and the mailbox specifier.
+>> +- shmem : List of the phandle of the TX and RX shared memory area that
+>> +	  the IPC between CPU and BPMP is based on.
+>
+> I think you can use memory-region here.
 
-Test summary
-------------
+Isn't memory-region intended for references into the /reserved-memory 
+node. If so, that isn't appropriate in this case since this property 
+typically points at on-chip SRAM that isn't included in the OS's view of 
+"system RAM".
 
-Build: zImage:
-    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+Or, should /reserved-memory be used even for (e.g. non-DRAM) memory 
+regions that aren't represented by the /memory/reg property?
 
-Build: Image:
-    Pass: ( 1/ 1): defconfig
+>> diff --git a/include/dt-bindings/clock/tegra186-clock.h b/include/dt-bindings/clock/tegra186-clock.h
 
-Boot to userspace: defconfig:
-    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
-		   tegra210-p2371-0000, tegra210-smaug
+>> +/** @file */
+>> +
+>> +#ifndef _MACH_T186_CLK_T186_H
+>> +#define _MACH_T186_CLK_T186_H
+>> +
+>> +/**
+>> + * @defgroup clock_ids Clock Identifiers
+>
+> Aren't these doxygen markup? Does that work with docbook? If not,
+> remove.
 
-Boot to userspace: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: multi_v7_defconfig:
-    FAIL: ( 1/ 5): tegra30-beaver
-    Pass: ( 4/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice
-
-PM: System suspend: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v4.7-rc6 (a99cde438de0c4c0cecc1d1af1a55a75b10bfdef)):
-   text     data      bss    total  kernel
-   +261     +128        0     +389  defconfig
-  +1353      +64        0    +1417  multi_v7_defconfig
-  +1289        0        0    +1289  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v4.7-rc6 (a99cde438de0c4c0cecc1d1af1a55a75b10bfdef))
-    avail    rsrvd     high    freed                board              kconfig                  dtb
-        .        .        .        .      qemu-vexpress64            defconfig           __internal
-        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-        .        .        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
-        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
-        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
-        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
-        .        .        .        .       tegra210-smaug            defconfig       tegra210-smaug
-        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
-
---
-nvpublic
+These headers are part of the BPMP FW release. It's preferable not to 
+edit them when incorporating them into the Linux kernel (or any other SW 
+stack) to simplify integration of any updated versions of the header, by 
+removing the need to edit the file when doing so. Given that, do you 
+still object?
