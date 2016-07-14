@@ -1,67 +1,55 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 1/2] arm64: tegra: Device tree changes for v4.8-rc1
-Date: Thu, 14 Jul 2016 16:45:45 +0200
-Message-ID: <20160714144546.29427-1-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+From: Ralf Ramsauer <ralf@ramses-pyramidenbau.de>
+Subject: [PATCH] ARM: tegra: fix erroneous address in dts
+Date: Thu, 14 Jul 2016 18:48:57 +0200
+Message-ID: <1468514937-23250-1-git-send-email-ralf@ramses-pyramidenbau.de>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-tegra@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Ralf Ramsauer <ralf@ramses-pyramidenbau.de>, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi ARM SoC maintainers,
+c90bb7b enabled the high speed UARTs of the Jetson TK1. The address
+specification inside the dts is wrong. Fix it and use the correct
+address.
 
-The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
+Fixes: c90bb7b9b9 ("ARM: tegra: Add high speed UARTs to Jetson TK1 device tree")
+Signed-off-by: Ralf Ramsauer <ralf@ramses-pyramidenbau.de>
+---
+ arch/arm/boot/dts/tegra124-jetson-tk1.dts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-  Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
-
-are available in the git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.8-arm64-dt
-
-for you to fetch changes up to 34993594181dc1b34eaf8e3b878dde5ed810e61f:
-
-  arm64: tegra: Enable HDMI on Jetson TX1 (2016-07-14 16:20:27 +0200)
-
-Thanks,
-Thierry
-
-----------------------------------------------------------------
-arm64: tegra: Device tree changes for v4.8-rc1
-
-A slew of updates for Tegra210 support: PMIC and regulator additions,
-which in turn allow a bunch of features to be enabled. Some assemblies
-of the Jetson TX1 come with a DSI panel that is now supported. For all
-other assemblies, this set of changes enables the HDMI output. Jetson
-TX1 can now also make use of the XUSB controller.
-
-PMIC and regulator support is also added for Smaug, which will allow a
-number of interesting feature additions in future releases.
-
-----------------------------------------------------------------
-Jon Hunter (5):
-      arm64: tegra: Correct Tegra210 XUSB mailbox interrupt
-      arm64: tegra: Add audio powergate node for Tegra210
-      arm64: tegra: Add ACONNECT bus node for Tegra210
-      arm64: tegra: Add DPAUX pinctrl bindings
-      arm64: tegra: Add XUSB powergates on Tegra210
-
-Rhyland Klein (1):
-      arm64: tegra: Add regulators for Tegra210 Smaug
-
-Thierry Reding (9):
-      arm64: tegra: Add PMIC support on Jetson TX1
-      arm64: tegra: p2597: Add SDMMC power supplies
-      arm64: tegra: Add DSI panel on Jetson TX1
-      arm64: tegra: Add Tegra210 XUSB pad controller
-      arm64: tegra: Add Tegra210 XUSB controller
-      arm64: tegra: Enable debug serial on Jetson TX1
-      arm64: tegra: Enable XUSB controller on Jetson TX1
-      arm64: tegra: Add sor1_src clock
-      arm64: tegra: Enable HDMI on Jetson TX1
-
- arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi     | 249 ++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts |  45 +++
- arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     | 319 +++++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      | 314 ++++++++++++++++++++
- arch/arm64/boot/dts/nvidia/tegra210.dtsi           | 292 ++++++++++++++++++-
- 5 files changed, 1218 insertions(+), 1 deletion(-)
+diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+index 941f362..f4d8125 100644
+--- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
++++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
+@@ -1386,7 +1386,7 @@
+ 	 *   Pin 41: BR_UART1_TXD
+ 	 *   Pin 44: BR_UART1_RXD
+ 	 */
+-	serial@70006000 {
++	serial@0,70006000 {
+ 		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
+ 		status = "okay";
+ 	};
+@@ -1398,7 +1398,7 @@
+ 	 *   Pin 71: UART2_CTS_L
+ 	 *   Pin 74: UART2_RTS_L
+ 	 */
+-	serial@70006040 {
++	serial@0,70006040 {
+ 		compatible = "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
+ 		status = "okay";
+ 	};
+-- 
+2.7.3
