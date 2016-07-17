@@ -1,52 +1,40 @@
-From: =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
-Subject: PCIe bridges on Jetson TK1
-Date: Sun, 17 Jul 2016 02:27:25 +0200
-Message-ID: <3a41e071-f7a2-f995-8c3d-ef211df6aa3a@suse.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: U-Boot <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Alexander Graf <agraf-l3A5Bk7waGM@public.gmane.org>
+From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] serial: tegra20-hsuart: fix typo in dmas DT binding description
+Date: Sun, 17 Jul 2016 22:31:21 +0200
+Message-ID: <1468787481-27753-1-git-send-email-mirza.krak@gmail.com>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-When I boot my Jetson TK1, by default I get this from lspci:
+The description for dmas references a second property, which should be
+"dma-names" instead of "clock-names".
 
-00:02.0 PCI bridge: NVIDIA Corporation TegraK1 PCIe x1 Bridge (rev a1)
-01:00.0 Ethernet controller: Realtek Semiconductor Co., Ltd.
-RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller (rev 0c)
+Signed-off-by: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-If however I plug some mini PCIe card, I get this instead:
+diff --git a/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.txt b/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.txt
+index 845850c..c93a2d1 100644
+--- a/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.txt
++++ b/Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.txt
+@@ -10,7 +10,7 @@ Required properties:
+   See ../reset/reset.txt for details.
+ - reset-names : Must include the following entries:
+   - serial
+-- dmas : Must contain an entry for each entry in clock-names.
++- dmas : Must contain an entry for each entry in dma-names.
+   See ../dma/dma.txt for details.
+ - dma-names : Must include the following entries:
+   - rx
+-- 
+2.1.4
 
-00:01.0 PCI bridge: NVIDIA Corporation TegraK1 PCIe x4 Bridge (rev a1)
-00:02.0 PCI bridge: NVIDIA Corporation TegraK1 PCIe x1 Bridge (rev a1)
-01:00.0 Network controller: MEDIATEK Corp. Device 7612
-02:00.0 Ethernet controller: Realtek Semiconductor Co., Ltd.
-RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller (rev 0c)
-
-I.e., there is a new Tegra PCIe x4 bridge and the number of the previou=
-s
-x1 bridge changed.
-
-That is ugly because it changes the ID of the on-board PCI NIC from
-01:00.0 to 02:00.0, which on openSUSE renames the network interface fro=
-m
-enp1s0 to enp2s0, so that my /etc/sysconfig/network/ifcfg-enp1s0 does
-not take effect and the network interface doesn't come up.
-
-Tested with U-Boot v2016.05 and v2016.07 and kernel 4.6.2 and 4.7-rc6.
-
-Shouldn't U-Boot or the kernel driver always configure the PCIe ports
-the same way (both bridges available) since the slot is always there on
-this board?
-
-Thanks,
-Andreas
-
---=20
-SUSE Linux GmbH, Maxfeldstr. 5, 90409 N=C3=BCrnberg, Germany
-GF: Felix Imend=C3=B6rffer, Jane Smithard, Graham Norton
-HRB 21284 (AG N=C3=BCrnberg)
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
