@@ -1,315 +1,194 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 02/10] mailbox: tegra-hsp: Add HSP(Hardware
- Synchronization Primitives) driver
-Date: Mon, 18 Jul 2016 16:58:12 +0800
-Message-ID: <578C9A24.7090205@nvidia.com>
-References: <20160705090431.5852-1-josephl@nvidia.com>
- <20160705090431.5852-3-josephl@nvidia.com>
- <CAAVeFuK1nY2M3vU9j-D5TJwZCEj+sXRDy=W4XMTqSdsveTTQww@mail.gmail.com>
- <577CCA0A.4000203@nvidia.com>
- <CAAVeFuLHmYVt870UKPwhdqxi+dJWCskbswwKdVVntDJYkA5YTw@mail.gmail.com>
- <577DF8A7.4070209@nvidia.com> <20160707213313.GB9897@kickseed.nvidia.com>
+From: Ralf Ramsauer <ralf-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: fix erroneous address in dts
+Date: Mon, 18 Jul 2016 11:25:33 +0200
+Message-ID: <64837117-32d6-1f1d-a370-3f20d4368b7b@ramses-pyramidenbau.de>
+References: <1468514937-23250-1-git-send-email-ralf@ramses-pyramidenbau.de>
+ <20160714220218.GB4205@mithrandir.ba.sec>
+ <8a8ccb29-ba73-f29f-2b57-5c1d91e13bf7@ramses-pyramidenbau.de>
+ <578908CB.7040802@wwwdotorg.org>
+ <4a4d7fd4-7514-c5cb-435b-af34159fc1c4@ramses-pyramidenbau.de>
+ <20160718060129.GA10785@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="J7Og2EsxjV137cSjLswJBIr6MOK8IaCcO"
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160707213313.GB9897-5el8CFYymRZDw2glCA4ptUEOCMrvLtNR@public.gmane.org>
+In-Reply-To: <20160718060129.GA10785-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/08/2016 05:33 AM, Sivaram Nair wrote:
-> On Thu, Jul 07, 2016 at 02:37:27PM +0800, Joseph Lo wrote:
->> On 07/06/2016 08:23 PM, Alexandre Courbot wrote:
->>> On Wed, Jul 6, 2016 at 6:06 PM, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>>> On 07/06/2016 03:05 PM, Alexandre Courbot wrote:
->>>>>
->>>>> On Tue, Jul 5, 2016 at 6:04 PM, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>>>>>
->>>>>> The Tegra HSP mailbox driver implements the signaling doorbell-based
->>>>>> interprocessor communication (IPC) for remote processors currently. The
->>>>>> HSP HW modules support some different features for that, which are
->>>>>> shared mailboxes, shared semaphores, arbitrated semaphores, and
->>>>>> doorbells. And there are multiple HSP HW instances on the chip. So the
->>>>>> driver is extendable to support more features for different IPC
->>>>>> requirement.
->>>>>>
->>>>>> The driver of remote processor can use it as a mailbox client and deal
->>>>>> with the IPC protocol to synchronize the data communications.
->>>>>>
->>>>>> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>>>> ---
->>>>>> Changes in V2:
->>>>>> - Update the driver to support the binding changes in V2
->>>>>> - it's extendable to support multiple HSP sub-modules on the same HSP HW
->>>>>> block
->>>>>>     now.
->>>>>> ---
->>>>>>    drivers/mailbox/Kconfig     |   9 +
->>>>>>    drivers/mailbox/Makefile    |   2 +
->>>>>>    drivers/mailbox/tegra-hsp.c | 418
->>>>>> ++++++++++++++++++++++++++++++++++++++++++++
->>>>>>    3 files changed, 429 insertions(+)
->>>>>>    create mode 100644 drivers/mailbox/tegra-hsp.c
->>>>>>
->>>>>> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
->>>>>> index 5305923752d2..fe584cb54720 100644
->>>>>> --- a/drivers/mailbox/Kconfig
->>>>>> +++ b/drivers/mailbox/Kconfig
->>>>>> @@ -114,6 +114,15 @@ config MAILBOX_TEST
->>>>>>             Test client to help with testing new Controller driver
->>>>>>             implementations.
->>>>>>
->>>>>> +config TEGRA_HSP_MBOX
->>>>>> +       bool "Tegra HSP(Hardware Synchronization Primitives) Driver"
->>>>>
->>>>>
->>>>> Space missing before the opening parenthesis (same in the patch title
->>>>> btw).
->>>>
->>>> Okay.
->>>>>
->>>>>
->>>>>> +       depends on ARCH_TEGRA_186_SOC
->>>>>> +       help
->>>>>> +         The Tegra HSP driver is used for the interprocessor
->>>>>> communication
->>>>>> +         between different remote processors and host processors on
->>>>>> Tegra186
->>>>>> +         and later SoCs. Say Y here if you want to have this support.
->>>>>> +         If unsure say N.
->>>>>
->>>>>
->>>>> Since this option is selected automatically by ARCH_TEGRA_186_SOC, you
->>>>> should probably drop the last 2 sentences.
->>>>
->>>> Okay.
->>>>
->>>>>
->>>>>> +
->>>>>>    config XGENE_SLIMPRO_MBOX
->>>>>>           tristate "APM SoC X-Gene SLIMpro Mailbox Controller"
->>>>>>           depends on ARCH_XGENE
->>>>>> diff --git a/drivers/mailbox/Makefile b/drivers/mailbox/Makefile
->>>>>> index 0be3e742bb7d..26d8f91c7fea 100644
->>>>>> --- a/drivers/mailbox/Makefile
->>>>>> +++ b/drivers/mailbox/Makefile
->>>>>> @@ -25,3 +25,5 @@ obj-$(CONFIG_TI_MESSAGE_MANAGER) += ti-msgmgr.o
->>>>>>    obj-$(CONFIG_XGENE_SLIMPRO_MBOX) += mailbox-xgene-slimpro.o
->>>>>>
->>>>>>    obj-$(CONFIG_HI6220_MBOX)      += hi6220-mailbox.o
->>>>>> +
->>>>>> +obj-${CONFIG_TEGRA_HSP_MBOX}   += tegra-hsp.o
->>>>>> diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
->>>>>> new file mode 100644
->>>>>> index 000000000000..93c3ef58f29f
->>>>>> --- /dev/null
->>>>>> +++ b/drivers/mailbox/tegra-hsp.c
->>>>>> @@ -0,0 +1,418 @@
->>>>>> +/*
->>>>>> + * Copyright (c) 2016, NVIDIA CORPORATION.  All rights reserved.
->>>>>> + *
->>>>>> + * This program is free software; you can redistribute it and/or modify
->>>>>> it
->>>>>> + * under the terms and conditions of the GNU General Public License,
->>>>>> + * version 2, as published by the Free Software Foundation.
->>>>>> + *
->>>>>> + * This program is distributed in the hope it will be useful, but
->>>>>> WITHOUT
->>>>>> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
->>>>>> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
->>>>>> for
->>>>>> + * more details.
->>>>>> + */
->>>>>> +
->>>>>> +#include <linux/interrupt.h>
->>>>>> +#include <linux/io.h>
->>>>>> +#include <linux/mailbox_controller.h>
->>>>>> +#include <linux/of.h>
->>>>>> +#include <linux/of_device.h>
->>>>>> +#include <linux/platform_device.h>
->>>>>> +#include <dt-bindings/mailbox/tegra186-hsp.h>
->>>>>> +
->>>>>> +#define HSP_INT_DIMENSIONING   0x380
->>>>>> +#define HSP_nSM_OFFSET         0
->>>>>> +#define HSP_nSS_OFFSET         4
->>>>>> +#define HSP_nAS_OFFSET         8
->>>>>> +#define HSP_nDB_OFFSET         12
->>>>>> +#define HSP_nSI_OFFSET         16
->>>>>
->>>>>
->>>>> Would be nice to have comments to understand what SM, SS, AS, etc.
->>>>> stand for (Shared Mailboxes, Shared Semaphores, Arbitrated Semaphores
->>>>> but you need to look at the patch description to understand that). A
->>>>> top-of-file comment explaning the necessary concepts to read this code
->>>>> would do the trick.
->>>>
->>>> Yes, will fix that.
->>>>>
->>>>>
->>>>>> +#define HSP_nINT_MASK          0xf
->>>>>> +
->>>>>> +#define HSP_DB_REG_TRIGGER     0x0
->>>>>> +#define HSP_DB_REG_ENABLE      0x4
->>>>>> +#define HSP_DB_REG_RAW         0x8
->>>>>> +#define HSP_DB_REG_PENDING     0xc
->>>>>> +
->>>>>> +#define HSP_DB_CCPLEX          1
->>>>>> +#define HSP_DB_BPMP            3
->>>>>
->>>>>
->>>>> Maybe turn this into enum and use that type for
->>>>> tegra_hsp_db_chan::db_id? Also have MAX_NUM_HSP_DB here, since it is
->>>>> related to these values?
->>>>
->>>> Okay.
->>>>
->>>>>
->>>>>> +
->>>>>> +#define MAX_NUM_HSP_CHAN 32
->>>>>> +#define MAX_NUM_HSP_DB 7
->>>>>> +
->>>>>> +#define hsp_db_offset(i, d) \
->>>>>> +       (d->base + ((1 + (d->nr_sm >> 1) + d->nr_ss + d->nr_as) << 16) +
->>>>>> \
->>>>>> +       (i) * 0x100)
->>>>>> +
->>>>>> +struct tegra_hsp_db_chan {
->>>>>> +       int master_id;
->>>>>> +       int db_id;
->>>>>> +};
->>>>>> +
->>>>>> +struct tegra_hsp_mbox_chan {
->>>>>> +       int type;
->>>>>> +       union {
->>>>>> +               struct tegra_hsp_db_chan db_chan;
->>>>>> +       };
->>>>>> +};
->>>>>> +
->>>>>> +struct tegra_hsp_mbox {
->>>>>> +       struct mbox_controller *mbox;
->>>>>> +       void __iomem *base;
->>>>>> +       void __iomem *db_base[MAX_NUM_HSP_DB];
->>>>>> +       int db_irq;
->>>>>> +       int nr_sm;
->>>>>> +       int nr_as;
->>>>>> +       int nr_ss;
->>>>>> +       int nr_db;
->>>>>> +       int nr_si;
->>>>>> +       spinlock_t lock;
->>>>>> +};
->>>>>> +
->>>>>> +static inline u32 hsp_readl(void __iomem *base, int reg)
->>>>>> +{
->>>>>> +       return readl(base + reg);
->>>>>> +}
->>>>>> +
->>>>>> +static inline void hsp_writel(void __iomem *base, int reg, u32 val)
->>>>>> +{
->>>>>> +       writel(val, base + reg);
->>>>>> +       readl(base + reg);
->>>>>> +}
->>>>>> +
->>>>>> +static int hsp_db_can_ring(void __iomem *db_base)
->>>>>> +{
->>>>>> +       u32 reg;
->>>>>> +
->>>>>> +       reg = hsp_readl(db_base, HSP_DB_REG_ENABLE);
->>>>>> +
->>>>>> +       return !!(reg & BIT(HSP_DB_MASTER_CCPLEX));
->>>>>> +}
->>>>>> +
->>>>>> +static irqreturn_t hsp_db_irq(int irq, void *p)
->>>>>> +{
->>>>>> +       struct tegra_hsp_mbox *hsp_mbox = p;
->>>>>> +       ulong val;
->>>>>> +       int master_id;
->>>>>> +
->>>>>> +       val = (ulong)hsp_readl(hsp_mbox->db_base[HSP_DB_CCPLEX],
->>>>>> +                              HSP_DB_REG_PENDING);
->>>>>> +       hsp_writel(hsp_mbox->db_base[HSP_DB_CCPLEX], HSP_DB_REG_PENDING,
->>>>>> val);
->>>>>> +
->>>>>> +       spin_lock(&hsp_mbox->lock);
->>>>>> +       for_each_set_bit(master_id, &val, MAX_NUM_HSP_CHAN) {
->>>>>> +               struct mbox_chan *chan;
->>>>>> +               struct tegra_hsp_mbox_chan *mchan;
->>>>>> +               int i;
->>>>>> +
->>>>>> +               for (i = 0; i < MAX_NUM_HSP_CHAN; i++) {
->>>>>
->>>>>
->>>>> I wonder if this could not be optimized. You are doing a double loop
->>>>> on MAX_NUM_HSP_CHAN to look for an identical master_id. Since it seems
->>>>> like the same master_id cannot be used twice (considering that the
->>>>> inner loop only processes the first match), couldn't you just select
->>>>> the free channel in of_hsp_mbox_xlate() by doing
->>>>> &mbox->chans[master_id] (and returning an error if it is already
->>>>> used), then simply getting chan as &hsp_mbox->mbox->chans[master_id]
->>>>> instead of having the inner loop below? That would remove the need for
->>>>> the second loop.
->>>>
->>>>
->>>> That was exactly what I did in the V1, which only supported one HSP
->>>> sub-module per HSP HW block. So we can just use the master_id as the mbox
->>>> channel ID.
->>>>
->>>> Meanwhile, the V2 is purposed to support multiple HSP sub-modules to be
->>>> running on the same HSP HW block. The "ID" between different modules could
->>>> be conflict. So I dropped the mechanism that used the master_id as the mbox
->>>> channel ID.
->>>>
->>>> Instead, the channel is allocated at the time, when the client is bound to
->>>> one of the HSP sub-modules. And we store the "ID" information into the
->>>> private mbox channel data, which can help us to figure out which mbox
->>>> channel should response to the interrupt.
->>>>
->>>> In the doorbell case, because all the DB clients are shared the same DB IRQ
->>>> at the CPU side. So in the ISR, we need to figure out the IRQ source, which
->>>> is the master_id that the IRQ came from. This is the outer loop. The inner
->>>> loop, we figure out which channel should response to by checking the type
->>>> and ID.
->>>>
->>>> And I think it should be pretty quick, because we only check the set bit
->>> >from the pending register. And finding the matching channel.
->>>
->>> Yeah, I am not worried about the CPU time (although in interrupt
->>> context, we always should), but rather about whether the code could be
->>> simplified.
->>>
->>> Ah, I think I get it. You want to be able to receive interrupts from
->>> the same master, but not necessarily for the doorbell function.
->>> Because of this you cannot use master_id as the index for the channel.
->>> Am I understanding correctly?
->>
->> Yes, the DB clients trigger the IRQ through the same master
->> (HSP_DB_CCPLEX) with it's master_id. We (CPU) can check the ID to
->> know who is requesting the HSP mbox service. Each ID is unique under
->> the DB module.
->>
->> But the ID could be conflict when the HSP mbox driver are working
->> with multiple HSP sub-function under the same HSP HW block. So we
->> can't just match the ID to the HSP mbox channel ID.
->
-> Joseph, can you think about any other sub-function that uses the same
-> master ids (& those that does not have their own irqs)? I wonder if we
-> are over-engineering this. I think the hsp_db_startup() and
-> hsp_db_shutdown() does not support sharing masters - _startup() by one
-> followed by _shutdown() from another will mask the interrupt. If there
-> is infact other potential sub-functions, I would imagine this will
-> translate to other values of the tegra_hsp_mbox_chan.type than
-> HSP_MBOX_TYPE_DB? If yes, then you should be able to remove need of this
-> inner loop by having per-sub-function mboxes or by combining 'type' and
-> 'master_id' to make single index value?
->
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--J7Og2EsxjV137cSjLswJBIr6MOK8IaCcO
+Content-Type: multipart/mixed; boundary="ittD9STcT7OgjKaOKl0Ts5IrPJwmEG1tj"
+From: Ralf Ramsauer <ralf-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>,
+ Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org,
+ linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org,
+ linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Message-ID: <64837117-32d6-1f1d-a370-3f20d4368b7b-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: fix erroneous address in dts
+References: <1468514937-23250-1-git-send-email-ralf-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
+ <20160714220218.GB4205-+E7KM1FDEuO2P7RxrfNFTMXXUOn6P5/W@public.gmane.org>
+ <8a8ccb29-ba73-f29f-2b57-5c1d91e13bf7-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
+ <578908CB.7040802-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+ <4a4d7fd4-7514-c5cb-435b-af34159fc1c4-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
+ <20160718060129.GA10785-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
+In-Reply-To: <20160718060129.GA10785-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
 
-I will try to refactor the driver to fix the inner loop issue by 
-separating the mbox channel with different HSP modules. And hook 
-different sub channels for different masters.
+--ittD9STcT7OgjKaOKl0Ts5IrPJwmEG1tj
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
--Joseph
+
+
+On 07/18/2016 08:01 AM, Thierry Reding wrote:
+> On Fri, Jul 15, 2016 at 06:18:03PM +0200, Ralf Ramsauer wrote:
+>> On 07/15/2016 06:01 PM, Stephen Warren wrote:
+>>> On 07/15/2016 03:37 AM, Ralf Ramsauer wrote:
+>>>> On 07/15/2016 12:02 AM, Thierry Reding wrote:
+>>>>> On Thu, Jul 14, 2016 at 06:48:57PM +0200, Ralf Ramsauer wrote:
+>>>>>> c90bb7b enabled the high speed UARTs of the Jetson TK1. The addres=
+s
+>>>>>> specification inside the dts is wrong. Fix it and use the correct
+>>>>>> address.
+>>>>>>
+>>>>>> Fixes: c90bb7b9b9 ("ARM: tegra: Add high speed UARTs to Jetson TK1=
+
+>>>>>> device tree")
+>>>>>> Signed-off-by: Ralf Ramsauer <ralf-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
+>>>>>> ---
+>>>>>>   arch/arm/boot/dts/tegra124-jetson-tk1.dts | 4 ++--
+>>>>>>   1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>>
+>>>>> These addresses are correct. The 0, prefix was dropped from the uni=
+t
+>>>>> address in commit b5896f67ab3c ("ARM: tegra: Remove commas from uni=
+t
+>>>>> addresses on Tegra124").
+>>>>>
+>>>>> What's the problem that you're seeing? What's not working for you?
+>>>>
+>>>> I cannot find b5896f67ab3c neither in swarren's tree nor in linux
+>>>> upstream. But there's d0bc5aaf890 in swarren's linux-tegra tree that=
+
+>>>> matches your described changes and was committed on 1st of July. But=
+
+>>>> this patch is not upstream yet, while the other patch is.
+>>>
+>>> The fix is in linux-next, and will be in mainline soon I expect.
+>> Ah okay, but I still wonder how my original patch got changed on its
+>> way... The original version on the mailinglist was not buggy.
+>=20
+> It's most likely my fault. My recollection is that we used to have an
+> earlier patch that removed all 0, prefixes from unit addresses and what=
+
+> happens is probably that I applied your patch on top, adjusted it to
+> omit the 0, prefix and then we noticed that removing the 0, prefix does=
+
+> not work for the GPU (because U-Boot looks it up by node name to enable=
+
+> it), so the patch that removes the 0, prefix was dropped and I forgot
+> to adjust your patch to compensate.
+Ok, i see.
+>=20
+>>> My github linux-tegra.git isn't relevant since it's just my own perso=
+nal
+>>> dev branch, but for reference, the commit is there since it's based o=
+n
+>>> linux-next.
+>>>
+>>>> Have a look at mainline tegra124-jetson-tk1.dts, there the addresses=
+ are
+>>>> erroneous as they still use the 0, annotation. And I just realised, =
+that
+>>>> somehow, upstream patch c90bb7b slightly differs from my initial pat=
+ch
+>>>> [1] on the mailing list.
+>>>
+>>> Your patch should probably be CC: stable so that existing kernel
+>>> versions get fixed. That said, I'd argue that since the original patc=
+h
+>>> never actually had any effect since it applied to the wrong node, the=
+
+>>> best fix for stable kernels is simply to revert it rather than fixing=
+
+>>> it, to avoid the potential for behaviour changes and regressions.
+>>> Starting with kernel 4.8 (I think), that patch will begin to have act=
+ual
+>>> effect.
+>> There is no current existing stable kernel that is affected, as it wen=
+t
+>> in during the last merge window in 4.6-rc1. So no need for fixing
+>> stable. Maybe it's still possible to fix it as the stabilisation windo=
+w
+>> is still open and 4.7 is not released yet?
+>=20
+> Unfortunately a patch to remove the 0, prefix from all nodes except the=
+
+> GPU was now merged into the arm-soc tree, which means that if we try to=
+
+> get this into v4.7, then we'll have to make sure to patch up the unit
+> address again for v4.8.
+>=20
+> I have no objections to doing that, so feel free to add my Acked-by and=
+
+> resend this to arm-DgEjT+Ai2yi4UlQgPVntAg@public.gmane.org When you do, please keep linux-tegra in
+> Cc so that we can track it, and maybe mention that you want this to go
+> into v4.7 and how this came about to be, so that the arm-soc maintainer=
+s
+> won't be surprised when the patch to revert this shows up in a couple o=
+f
+> days for v4.8.
+Alright, I'll prepare it and add a RESEND as well as your Acked-by.
+Thank you.
+>=20
+> Can you take care of sending out the second patch as well? Probably bes=
+t
+> to send it the same way as this, with a mention that it's targetted at
+> v4.8 and a revert of this one.
+Yep, I'll take care of it. I'm tracking this patch since January in any
+case :-)
+
+  Ralf
+>=20
+> Thanks,
+> Thierry
+>=20
+
+--=20
+Ralf Ramsauer
+PGP: 0x8F10049B
+
+
+--ittD9STcT7OgjKaOKl0Ts5IrPJwmEG1tj--
+
+--J7Og2EsxjV137cSjLswJBIr6MOK8IaCcO
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAEBCAAGBQJXjKCQAAoJEPovtFKPEASbY5cP/RK7OSpMiCQmp8iw72e3bEjR
+TsQpBDHQxgn6fuj/oLD6+kuqC2gRykaHuPh6dKeRjOJRZtQLMQO7AxDQn34Zmjrg
+YVPOsrFrIW/qI1k6uXzIvEeh1aZjQpWC47CX+zcRVO9FwsfFhiY0ibjULttbjJw+
+JetrPFYRnEb4kXH6Po117RbKRDwIAXJMqrDOBUbqFmHYfJuMQZ0FcsRpSiFS8ouw
+hefmhKG0mKmUB4Z4js/ujADhf2cVe3YUhA3dUy2zMMyohoQYm2LWe8SI3O1sAdwh
+78KGJ6AGrNq+EctC70Nn+WKXeZA9ct0NDdeytCxUC5JIE396aTH56alMguKgYHDU
+y9xfWe3Ax/8B60Tc0Prf7yxbZPV1rZz3vE27aArhumypGBpRFPEtyhSzzbFis8qa
+cP+sibDHao6CVPR2CDNMiv4OLlgZc6EjFzI7J4/p4sMuRJzrGeXONZ+AKuhnJh/E
+SreL0aBTgm2v2zDBM4dtUIHA21f1zZSoeRmOJ9kMOboHqnV3iTP1f5maS1jleu3n
+21a+V2o4GPtgt1xRPBQxTF3ZuZA92DIXcHfJK+XMRbFtaKP1j2tbdRoS+fTYABS9
+gKTto1T6+XTR3zXuV6/guUpDXNlTbHbsmMeliK3s75s/vfBY4xy4A/J9WxdILa6Q
+pjJHVs4QgF+V8Q9NGnHx
+=u2pH
+-----END PGP SIGNATURE-----
+
+--J7Og2EsxjV137cSjLswJBIr6MOK8IaCcO--
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
