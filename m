@@ -1,102 +1,130 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RESEND PATCH] ARM: tegra: fix erroneous address in dts
-Date: Mon, 18 Jul 2016 11:58:02 +0200
-Message-ID: <20160718095802.GA422@ulmo.ba.sec>
-References: <1468835208-13426-1-git-send-email-ralf@ramses-pyramidenbau.de>
+Subject: Re: [U-Boot] PCIe bridges on Jetson TK1
+Date: Mon, 18 Jul 2016 12:19:32 +0200
+Message-ID: <20160718101932.GC422@ulmo.ba.sec>
+References: <3a41e071-f7a2-f995-8c3d-ef211df6aa3a@suse.de>
+ <20160718062718.GC10785@ulmo.ba.sec>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="LQksG6bCIzRHxTLp"
+	protocol="application/pgp-signature"; boundary="ZwgA9U+XZDXt4+m+"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1468835208-13426-1-git-send-email-ralf-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
+In-Reply-To: <20160718062718.GC10785-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: Ralf Ramsauer <ralf-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, U-Boot <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---LQksG6bCIzRHxTLp
-Content-Type: text/plain; charset=us-ascii
+--ZwgA9U+XZDXt4+m+
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 18, 2016 at 11:46:48AM +0200, Ralf Ramsauer wrote:
-> c90bb7b enabled the high speed UARTs of the Jetson TK1. Due to a merge
-> quirk, wrong addresses were introduced. Fix it and use the correct
-> addresses.
+On Mon, Jul 18, 2016 at 08:27:18AM +0200, Thierry Reding wrote:
+> On Sun, Jul 17, 2016 at 02:27:25AM +0200, Andreas F=C3=A4rber wrote:
+> > Hi,
+> >=20
+> > When I boot my Jetson TK1, by default I get this from lspci:
+> >=20
+> > 00:02.0 PCI bridge: NVIDIA Corporation TegraK1 PCIe x1 Bridge (rev a1)
+> > 01:00.0 Ethernet controller: Realtek Semiconductor Co., Ltd.
+> > RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller (rev 0c)
+> >=20
+> > If however I plug some mini PCIe card, I get this instead:
+> >=20
+> > 00:01.0 PCI bridge: NVIDIA Corporation TegraK1 PCIe x4 Bridge (rev a1)
+> > 00:02.0 PCI bridge: NVIDIA Corporation TegraK1 PCIe x1 Bridge (rev a1)
+> > 01:00.0 Network controller: MEDIATEK Corp. Device 7612
+> > 02:00.0 Ethernet controller: Realtek Semiconductor Co., Ltd.
+> > RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller (rev 0c)
+> >=20
+> > I.e., there is a new Tegra PCIe x4 bridge and the number of the previous
+> > x1 bridge changed.
+> >=20
+> > That is ugly because it changes the ID of the on-board PCI NIC from
+> > 01:00.0 to 02:00.0, which on openSUSE renames the network interface from
+> > enp1s0 to enp2s0, so that my /etc/sysconfig/network/ifcfg-enp1s0 does
+> > not take effect and the network interface doesn't come up.
+> >=20
+> > Tested with U-Boot v2016.05 and v2016.07 and kernel 4.6.2 and 4.7-rc6.
+> >=20
+> > Shouldn't U-Boot or the kernel driver always configure the PCIe ports
+> > the same way (both bridges available) since the slot is always there on
+> > this board?
 >=20
-> Thierry let me know, that there is another patch (b5896f67ab3c in
-> linux-next) in preparation which removes all the '0,' prefixes of unit
-> addresses on Tegra124 and is planned to go upstream in 4.8, so
-> this patch will get reverted then.
+> I don't think that's going to ensure stable naming of devices. Linux
+> uses depth-first sorting when enumerating devices, so if you attach any
+> kind of bridge device to the first port, anything downstream of the
+> second port still won't get a stable B/D/F.
 >=20
-> But for the moment, this patch is necessary to fix current misbehaviour.
->=20
-> Fixes: c90bb7b9b9 ("ARM: tegra: Add high speed UARTs to Jetson TK1 device=
- tree")
-> Signed-off-by: Ralf Ramsauer <ralf-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
-> Acked-by: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> ---
->  arch/arm/boot/dts/tegra124-jetson-tk1.dts | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> That said, I see how what you're proposing could help at least minimize
+> the potential for instability in numbering. Could you try to uncomment
+> the tegra_pcie_port_free() line in tegra_pcie_enable() of the Tegra PCI
+> host controller driver (drivers/pci/host/pci-tegra.c) and see if that
+> improves things in your use-case? It's slightly hackish because it does
+> allow access to the root port even if it's disabled, so I'm not sure it
+> will work (might give you an external abort or something like that) but
+> it might be worth a quick try.
 
-ARM-SoC maintainers,
-
-Just to clarify, this is targetted at v4.7 because the offending patch
-was merged in v4.7-rc1. If at all possible it'd be great to get this in,
-even if this is terribly last minute.
+The below seems to work fine for me. Can you verify that this works for
+you, too?
 
 Thanks,
 Thierry
 
->=20
-> diff --git a/arch/arm/boot/dts/tegra124-jetson-tk1.dts b/arch/arm/boot/dt=
-s/tegra124-jetson-tk1.dts
-> index 941f362..f4d8125 100644
-> --- a/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-> +++ b/arch/arm/boot/dts/tegra124-jetson-tk1.dts
-> @@ -1386,7 +1386,7 @@
->  	 *   Pin 41: BR_UART1_TXD
->  	 *   Pin 44: BR_UART1_RXD
->  	 */
-> -	serial@70006000 {
-> +	serial@0,70006000 {
->  		compatible =3D "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
->  		status =3D "okay";
->  	};
-> @@ -1398,7 +1398,7 @@
->  	 *   Pin 71: UART2_CTS_L
->  	 *   Pin 74: UART2_RTS_L
->  	 */
-> -	serial@70006040 {
-> +	serial@0,70006040 {
->  		compatible =3D "nvidia,tegra124-hsuart", "nvidia,tegra30-hsuart";
->  		status =3D "okay";
->  	};
-> --=20
-> 2.7.3
->=20
+--- >8 ---
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index c388468c202a..0b8616e25d7b 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -587,17 +587,6 @@ static void tegra_pcie_port_disable(struct tegra_pcie_=
+port *port)
+ 	afi_writel(port->pcie, value, ctrl);
+ }
+=20
+-static void tegra_pcie_port_free(struct tegra_pcie_port *port)
+-{
+-	struct tegra_pcie *pcie =3D port->pcie;
+-
+-	devm_iounmap(pcie->dev, port->base);
+-	devm_release_mem_region(pcie->dev, port->regs.start,
+-				resource_size(&port->regs));
+-	list_del(&port->list);
+-	devm_kfree(pcie->dev, port);
+-}
+-
+ /* Tegra PCIE root complex wrongly reports device class */
+ static void tegra_pcie_fixup_class(struct pci_dev *dev)
+ {
+@@ -2053,7 +2042,6 @@ static int tegra_pcie_enable(struct tegra_pcie *pcie)
+ 		dev_info(pcie->dev, "link %u down, ignoring\n", port->index);
+=20
+ 		tegra_pcie_port_disable(port);
+-		tegra_pcie_port_free(port);
+ 	}
+=20
+ 	memset(&hw, 0, sizeof(hw));
 
---LQksG6bCIzRHxTLp
+--ZwgA9U+XZDXt4+m+
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXjKgmAAoJEN0jrNd/PrOhVU8QAL3PnxvtITx9Zq6fyFfvnyAh
-1hsmuOgbY68UQBeRGRaBnSH7ZvInSSXpn8KPc7WKU67mJ5/jRYD21f8oktNFJKD+
-m7+qa5v9TLVZCiKW/1fBgRAKOKz3DaOwhBAucVZL8mIbQUl9RPJkqen3WQ80oPtW
-+YB8XHdzzeK2NnmpbYnTOi5g0upWFa7gEIFhNKS2rMyR0rACIcUhqmBeBejP/n1E
-jsmCEWZxtnIvyXnbSqcw6N9hKxenLJIQAeYAqXnzdSb8l4fbYLBYptQi/wIOLnIZ
-XL8U/IYMd6zZp2xh2XZL3voNsE/qqS16AaTbg0x/4e83gKb1RISuyYUfOZDcXhd1
-hUQIZXfhRDrkDIgKRf6BvunRddh8BXkYPhyJRIOzdz4ywMWctSznIt1tziRLSXWJ
-rRBWwF59lEL5FQh19lhfiPpyPr3yicVr4sUUhiPYOzC1yvO7tf7sZVguq+NyHYjc
-dg9vHU3K6KrEzttSTr9OR+dOAB0KCDgORnVJbwU0H9579au4gifkvcZqrwnY7Jmr
-/WfZ0AytfWGayq+ngRmgx+JutlHeY7vVCiWuModS+qkINzuyAIEykvTNtp5A9Lcz
-kvBm/3b+XMlSYLl7zSsss7UNkqtXfSSga1l6ECs/lCnMxVDx3kXMtmMPa7TrlBQM
-My1CzA1jOf7eXwWsVFAN
-=p0jC
+iQIcBAABCAAGBQJXjK00AAoJEN0jrNd/PrOhu+EP/3ur+RuRvU2Ka2ICWcFyMeGv
+jbw9STVUEw3Q2qmWliEu2Kr7NDU5vbGqq4bsIBE3F7g0dsdhFUG3hPUYFZk/Fb8W
+i33DEDCJD5Xy6pCZ4254iPxfe/lysFaApVTZkoDxCbuMyh+XmP/590xsbt5Ny5zg
+qrvmhmJuCxxiPnLzZOBDRWPo21ZXrkt9ATSR49qD4P7oqiJENgysPeVFxd3id+Eh
+EEQ+iJmvONH7TSReAdljxgUZj8Xs+FICHJlpgwIh0aeUJ9ghQ9nC2pyOug4JX1a5
+vJZTO27UKJ6pPbI24iEdS0m0aGafpXw2gnu8atumjpAfCwh7PPV1gN8uJblbUAWC
+1n6rxX7CJBfItTratcXOnybzIw7edtCfVM8Sd389XwnqwH8ti1FpVSFqw1LYmZ5K
+HE/47lZ0MB/UyjPd52wxq8MT4OQUUGL3iWHeN4UuaqFYAJ0uzAahWib9SXyGmsfq
+RAytNOzWgxxbgEx3H2jRlucRzTtyEV0Br8WuylogPE7GJITmzrk4PVpj2BjxzGkK
+Mvt0I2NdvVYsay8WuD15qVZtub8aFMmbxsiKj6nwSQX6kNx4HQ3dOJpUBv0FNzie
+GkF5f9kcVU6VLoH0NcH5ifMtqWY9qrato8r73c/+RWtyiCoI9/VOTjH6qzG/FH0B
+FuSP5SxkBNkHhe1iTt/a
+=dseM
 -----END PGP SIGNATURE-----
 
---LQksG6bCIzRHxTLp--
+--ZwgA9U+XZDXt4+m+--
