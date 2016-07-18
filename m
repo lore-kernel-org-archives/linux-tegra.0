@@ -1,129 +1,91 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: fix erroneous address in dts
-Date: Mon, 18 Jul 2016 08:01:29 +0200
-Message-ID: <20160718060129.GA10785@ulmo.ba.sec>
-References: <1468514937-23250-1-git-send-email-ralf@ramses-pyramidenbau.de>
- <20160714220218.GB4205@mithrandir.ba.sec>
- <8a8ccb29-ba73-f29f-2b57-5c1d91e13bf7@ramses-pyramidenbau.de>
- <578908CB.7040802@wwwdotorg.org>
- <4a4d7fd4-7514-c5cb-435b-af34159fc1c4@ramses-pyramidenbau.de>
+Subject: Re: [U-Boot] PCIe bridges on Jetson TK1
+Date: Mon, 18 Jul 2016 08:27:18 +0200
+Message-ID: <20160718062718.GC10785@ulmo.ba.sec>
+References: <3a41e071-f7a2-f995-8c3d-ef211df6aa3a@suse.de>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="3V7upXqbjpZ4EhLz"
+	protocol="application/pgp-signature"; boundary="E13BgyNx05feLLmH"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <4a4d7fd4-7514-c5cb-435b-af34159fc1c4-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
+In-Reply-To: <3a41e071-f7a2-f995-8c3d-ef211df6aa3a-l3A5Bk7waGM@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ralf Ramsauer <ralf-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Andreas =?utf-8?Q?F=C3=A4rber?= <afaerber-l3A5Bk7waGM@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, U-Boot <u-boot-0aAXYlwwYIKGBzrmiIFOJg@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---3V7upXqbjpZ4EhLz
-Content-Type: text/plain; charset=us-ascii
+--E13BgyNx05feLLmH
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jul 15, 2016 at 06:18:03PM +0200, Ralf Ramsauer wrote:
-> On 07/15/2016 06:01 PM, Stephen Warren wrote:
-> > On 07/15/2016 03:37 AM, Ralf Ramsauer wrote:
-> >> On 07/15/2016 12:02 AM, Thierry Reding wrote:
-> >>> On Thu, Jul 14, 2016 at 06:48:57PM +0200, Ralf Ramsauer wrote:
-> >>>> c90bb7b enabled the high speed UARTs of the Jetson TK1. The address
-> >>>> specification inside the dts is wrong. Fix it and use the correct
-> >>>> address.
-> >>>>
-> >>>> Fixes: c90bb7b9b9 ("ARM: tegra: Add high speed UARTs to Jetson TK1
-> >>>> device tree")
-> >>>> Signed-off-by: Ralf Ramsauer <ralf-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
-> >>>> ---
-> >>>>   arch/arm/boot/dts/tegra124-jetson-tk1.dts | 4 ++--
-> >>>>   1 file changed, 2 insertions(+), 2 deletions(-)
-> >>>
-> >>> These addresses are correct. The 0, prefix was dropped from the unit
-> >>> address in commit b5896f67ab3c ("ARM: tegra: Remove commas from unit
-> >>> addresses on Tegra124").
-> >>>
-> >>> What's the problem that you're seeing? What's not working for you?
-> >>
-> >> I cannot find b5896f67ab3c neither in swarren's tree nor in linux
-> >> upstream. But there's d0bc5aaf890 in swarren's linux-tegra tree that
-> >> matches your described changes and was committed on 1st of July. But
-> >> this patch is not upstream yet, while the other patch is.
-> >=20
-> > The fix is in linux-next, and will be in mainline soon I expect.
-> Ah okay, but I still wonder how my original patch got changed on its
-> way... The original version on the mailinglist was not buggy.
+On Sun, Jul 17, 2016 at 02:27:25AM +0200, Andreas F=C3=A4rber wrote:
+> Hi,
+>=20
+> When I boot my Jetson TK1, by default I get this from lspci:
+>=20
+> 00:02.0 PCI bridge: NVIDIA Corporation TegraK1 PCIe x1 Bridge (rev a1)
+> 01:00.0 Ethernet controller: Realtek Semiconductor Co., Ltd.
+> RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller (rev 0c)
+>=20
+> If however I plug some mini PCIe card, I get this instead:
+>=20
+> 00:01.0 PCI bridge: NVIDIA Corporation TegraK1 PCIe x4 Bridge (rev a1)
+> 00:02.0 PCI bridge: NVIDIA Corporation TegraK1 PCIe x1 Bridge (rev a1)
+> 01:00.0 Network controller: MEDIATEK Corp. Device 7612
+> 02:00.0 Ethernet controller: Realtek Semiconductor Co., Ltd.
+> RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller (rev 0c)
+>=20
+> I.e., there is a new Tegra PCIe x4 bridge and the number of the previous
+> x1 bridge changed.
+>=20
+> That is ugly because it changes the ID of the on-board PCI NIC from
+> 01:00.0 to 02:00.0, which on openSUSE renames the network interface from
+> enp1s0 to enp2s0, so that my /etc/sysconfig/network/ifcfg-enp1s0 does
+> not take effect and the network interface doesn't come up.
+>=20
+> Tested with U-Boot v2016.05 and v2016.07 and kernel 4.6.2 and 4.7-rc6.
+>=20
+> Shouldn't U-Boot or the kernel driver always configure the PCIe ports
+> the same way (both bridges available) since the slot is always there on
+> this board?
 
-It's most likely my fault. My recollection is that we used to have an
-earlier patch that removed all 0, prefixes from unit addresses and what
-happens is probably that I applied your patch on top, adjusted it to
-omit the 0, prefix and then we noticed that removing the 0, prefix does
-not work for the GPU (because U-Boot looks it up by node name to enable
-it), so the patch that removes the 0, prefix was dropped and I forgot
-to adjust your patch to compensate.
+I don't think that's going to ensure stable naming of devices. Linux
+uses depth-first sorting when enumerating devices, so if you attach any
+kind of bridge device to the first port, anything downstream of the
+second port still won't get a stable B/D/F.
 
-> > My github linux-tegra.git isn't relevant since it's just my own personal
-> > dev branch, but for reference, the commit is there since it's based on
-> > linux-next.
-> >=20
-> >> Have a look at mainline tegra124-jetson-tk1.dts, there the addresses a=
-re
-> >> erroneous as they still use the 0, annotation. And I just realised, th=
-at
-> >> somehow, upstream patch c90bb7b slightly differs from my initial patch
-> >> [1] on the mailing list.
-> >=20
-> > Your patch should probably be CC: stable so that existing kernel
-> > versions get fixed. That said, I'd argue that since the original patch
-> > never actually had any effect since it applied to the wrong node, the
-> > best fix for stable kernels is simply to revert it rather than fixing
-> > it, to avoid the potential for behaviour changes and regressions.
-> > Starting with kernel 4.8 (I think), that patch will begin to have actual
-> > effect.
-> There is no current existing stable kernel that is affected, as it went
-> in during the last merge window in 4.6-rc1. So no need for fixing
-> stable. Maybe it's still possible to fix it as the stabilisation window
-> is still open and 4.7 is not released yet?
+That said, I see how what you're proposing could help at least minimize
+the potential for instability in numbering. Could you try to uncomment
+the tegra_pcie_port_free() line in tegra_pcie_enable() of the Tegra PCI
+host controller driver (drivers/pci/host/pci-tegra.c) and see if that
+improves things in your use-case? It's slightly hackish because it does
+allow access to the root port even if it's disabled, so I'm not sure it
+will work (might give you an external abort or something like that) but
+it might be worth a quick try.
 
-Unfortunately a patch to remove the 0, prefix from all nodes except the
-GPU was now merged into the arm-soc tree, which means that if we try to
-get this into v4.7, then we'll have to make sure to patch up the unit
-address again for v4.8.
-
-I have no objections to doing that, so feel free to add my Acked-by and
-resend this to arm-DgEjT+Ai2yi4UlQgPVntAg@public.gmane.org When you do, please keep linux-tegra in
-Cc so that we can track it, and maybe mention that you want this to go
-into v4.7 and how this came about to be, so that the arm-soc maintainers
-won't be surprised when the patch to revert this shows up in a couple of
-days for v4.8.
-
-Can you take care of sending out the second patch as well? Probably best
-to send it the same way as this, with a mention that it's targetted at
-v4.8 and a revert of this one.
-
-Thanks,
 Thierry
 
---3V7upXqbjpZ4EhLz
+--E13BgyNx05feLLmH
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXjHC2AAoJEN0jrNd/PrOhnT4P/2L9Zp5KimlScYTks6uxHpqd
-kaduOYznKpmacZ0dRcX8+b2xBa6RfSYraTiKEwgTJu25w+JS1jN70paCZ6oLTEZo
-PLnuLaeQEkpufzW1YpG8OxCUGa3wF7XoJlyFnOI25OCNvgH29uyLyAeLVLgIl+Fa
-qlEIbzysOFj7tCKZRygbvdteCQFG/AksMI0BWFo9TSlfZqSgUyd37LQ7RS+zIpsO
-cu9FmiuRGyMGiWqWNWUcpoXEnfE6Iil9Gi2enoVmGYea7lTwnghwUw4CW0jOVj0t
-86iVJ+s6bmKlJthdHpEoCzU5zQioPQXWhBlL8P6q8+MFlHi8eXr4MCawk8zgS2qF
-ravdGyefgBoPRpAZFmX0Q+ZmpSBSOGzNvoQP0u2XFP7J9WXBuPYWqII7/fBgFSTm
-3U9VeILxxUma8LQuscCO8QOUl3+/7MMLj2H4pO/8J2ALOPewwnaJwTe3l6HF47kM
-+WNw8q43MbE0ZWQFzjVK/Xo3j3EKnCkN0Y6cLt460YY4jGa8MgRZ4xNWDxXfkCju
-YODOb8mgYQ+/5d0XQmpYaDKEMFzRlTya1Y1dp2BQR2UouuDpSCdIvDbEKEbETnaM
-mLgSLsJg6N0E/tmGdS6nUpKad9YyuAuzVIo4YazBUGiZRNp3RzazbtnQY+P9BchP
-WSpjBu5aCryew2jxupIk
-=91e/
+iQIcBAABCAAGBQJXjHbDAAoJEN0jrNd/PrOh/p4QAJ2D5ZZm1tcVO02/EB/b83M3
+llR/rrL0oEo33Qr/MWiLNyDDTYnv7g1eSj7bjZnkhySNM4hKJB8iAs6SK79xp/rv
+xfmkY1/7eo5nNS05qHKRe9Ix+JCLTiGjw8AMh3Epyx5yk16n1DSP4/Ebv5b0Y40i
+Lo/dkozrRtFz84nIU55+FtloQSRxAc8WxMZ9SesSWBnwnmhvSfCImJefiAWhlg7w
+yxIxwP+aMcuBmfgr4wVJ3cWU8mxAwc/6qYOm2hpMF6GQGRNEuJ+3sApnyx1Vq8Xj
+uVcDTN0kvnGerdVSgrOKZrngZ+p7mYEAnP5M556fDHHtD4KqKxtQRQQxlMhxqjVm
+P3Lbfh/Fh9n4dJayQaiz1bmJCzxAFQ9FAvaWX19BcBO915V8iCGpMJSdMaj9DIpJ
+MJQEErrUFyB3mv0lnRRMCkeHijt16DyXvaSAnM6qwUBKaieVGAQ00Pkx8BP/QX43
+ekPWTBMYG5pI5zwDNEDo+s6RhsbHxDu3Gmoef/2zl/R5DCZ1I/c0lvW85r9kUB2Y
+ZPxCrvLIcxADiexs/e9x7bq0qL4BCcp7RypTgTHiH79kH+F4V3KEYDsXJdaIJa2h
+2+XyqpJxWcFP168WAMu6LzmYz2NoavRkHFj+rNZgh0QGK3UMtxZ1LB7s1orZBWFK
+EFiih8HF7ovnWv9HjQhq
+=OOkI
 -----END PGP SIGNATURE-----
 
---3V7upXqbjpZ4EhLz--
+--E13BgyNx05feLLmH--
