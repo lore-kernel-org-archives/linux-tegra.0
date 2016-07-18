@@ -1,58 +1,55 @@
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 03/10] Documentation: dt-bindings: firmware: tegra: add
- bindings of the BPMP
-Date: Mon, 18 Jul 2016 14:42:43 +0800
-Message-ID: <578C7A63.1000004@nvidia.com>
-References: <20160705090431.5852-1-josephl@nvidia.com>
- <20160705090431.5852-4-josephl@nvidia.com> <5786995A.1090706@wwwdotorg.org>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 1/3] dmaengine: tegra-apb: Correct grammar in TX status
+ debug message
+Date: Mon, 18 Jul 2016 09:17:12 +0200
+Message-ID: <20160718071712.GD10785@ulmo.ba.sec>
+References: <1467216519-7200-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <5786995A.1090706-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="k4f25fnPtRuIRUb3"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1467216519-7200-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/14/2016 03:41 AM, Stephen Warren wrote:
-> On 07/05/2016 03:04 AM, Joseph Lo wrote:
->> The BPMP is a specific processor in Tegra chip, which is designed for
->> booting process handling and offloading the power management, clock
->> management, and reset control tasks from the CPU. The binding document
->> defines the resources that would be used by the BPMP firmware driver,
->> which can create the interprocessor communication (IPC) between the CPU
->> and BPMP.
->
->> diff --git
->> a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
->> b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
->
->> +- Documentation/devicetree/bindings/mailbox/mailbox.txt
->> +- Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt
->
->> +- Documentation/devicetree/bindings/clock/clock-bindings.txt
->> +- include/dt-bindings/clock/tegra186-clock.h
->> +- Documentation/devicetree/bindings/reset/reset.txt
->> +- include/dt-bindings/reset/tegra186-reset.h
->
-> If you end up needing to repost this, it would be nice to make all those
-> file references more generic. In particular, some SW projects store
-> binding docs somewhere other than Documentation/devicetree/bindings/
-> (e.g. U-Boot uses doc/device-tree-bindings/), and it's possible that the
-> header files aren't stored in include/ but somewhere else. To make these
-> file references valid everywhere, I'd suggest using relative paths for
-> the binding docs, and #include style paths for the headers, e.g.:
->
-> ../clock/clock-bindings.txt
->
-> <dt-bindings/clock/tegra186-clock.h>
->
-OK. Will fix this.
 
-Thanks,
--Joseph
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--k4f25fnPtRuIRUb3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Jun 29, 2016 at 05:08:37PM +0100, Jon Hunter wrote:
+> Correct the grammar in the debug message when no descriptor is found.
+>=20
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/dma/tegra20-apb-dma.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+--k4f25fnPtRuIRUb3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXjIJ2AAoJEN0jrNd/PrOhF3kP/3/v7mZUISwJTP/sbNmvbFe+
+aXtyWBD+li4bAqGC302ihJh0iETqcZPsKHeNi8Q5Aq4GPuneMHC+7Hvf6iwIowNl
+U8NbQ3v4gZomHUKHlaJ3+SbprPXc+WAFD4e1D3452MwCP0htMcYGZGhA6BN97SEw
+kRYsiWtjrNlEGsT+xPColdtFiaIS8x4TDYTpgEuAZ7c4aByAWtPv3PnNtylqCjIt
+iVx5OJ6MVoq4Xrhz+gRXHf7Kax0fxfSOcGZl/F5xSuiql84u9hxgvWoqaQeCyrhQ
+rZZkRS6V8pteTuPKxF+MnWZetgLBtlB8Xj7EHaOvwIEACFGUJ+EdWcrBHg+1A6lV
+lYXDoIgZ18F6jMj5WVeNOQfF9UqDcfOFEUtQQ4woHv99x/wg3yumz311C2rE/9up
+JdC2+DYzd0lYTU9XUbQg3LF4pC9hts8UscU2eUj2X5vVuuFiqd8YN/8sHtt2jzW0
+hywSKka62iGnEsWJMPVxjQQgeGNpuXptMss3F4xzCoAvUpbGG92vbCbnIWabcE0b
+DARchKYPZ0TUEweR6VhZtEg5SoBAdpIPw981hylatLRQdn8GKsFWUYDCqt2oUqNT
+oBXVXRvWZxfja2TbmONWQWyh74avc991pnSpUNxZekuFloaZZ5zyuXsjZL9cRxB/
+BHi8ttKyWQaJ2tBWY6iR
+=cl1b
+-----END PGP SIGNATURE-----
+
+--k4f25fnPtRuIRUb3--
