@@ -1,8 +1,10 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH 1/3] dt-bindings: add power domains to Tegra BPMP firmware
-Date: Tue, 19 Jul 2016 13:14:40 -0600
-Message-ID: <20160719191442.15439-1-swarren@wwwdotorg.org>
+Subject: [PATCH 3/3] dt-bindings: add Tegra186 BPMP I2C binding
+Date: Tue, 19 Jul 2016 13:14:42 -0600
+Message-ID: <20160719191442.15439-3-swarren@wwwdotorg.org>
+References: <20160719191442.15439-1-swarren@wwwdotorg.org>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160719191442.15439-1-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -10,103 +12,65 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The Tegra186 BPMP is also a provider of power domains. Enhance the device
-tree binding to describe this.
+In Tegra186, the BPMP (Boot and Power Management Processor) owns certain
+HW devices, such as the I2C controller for the power management I2C bus.
+Software running on other CPUs must perform IPC to the BPMP in order to
+execute transactions on that I2C bus. This binding describes an I2C bus
+that is accessed in such a fashion.
 
 Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
-These patches all build on top of Joseph Lo's baseline BPMP binding patches[1]
-and enhance them to represent a few more features of the firmware.
+ .../bindings/i2c/nvidia,tegra186-bpmp-i2c.txt      | 42 ++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/i2c/nvidia,tegra186-bpmp-i2c.txt
 
-[1] https://lkml.org/lkml/2016/7/19/280
-"[PATCH V3 01/10] Documentation: dt-bindings: mailbox: tegra: Add binding for HSP mailbox"
-
- .../bindings/firmware/nvidia,tegra186-bpmp.txt     | 10 ++++--
- include/dt-bindings/power/tegra186-powergate.h     | 39 ++++++++++++++++++++++
- 2 files changed, 46 insertions(+), 3 deletions(-)
- create mode 100644 include/dt-bindings/power/tegra186-powergate.h
-
-diff --git a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
-index 23782c84d093..9a3864f56955 100644
---- a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
-+++ b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
-@@ -17,6 +17,7 @@ Required properties:
- - shmem : List of the phandle of the TX and RX shared memory area that
- 	  the IPC between CPU and BPMP is based on.
- - #clock-cells : Should be 1.
-+- #power-domain-cells : Should be 1.
- - #reset-cells : Should be 1.
- 
- This node is a mailbox consumer. See the following files for details of
-@@ -26,12 +27,14 @@ provider(s):
- - .../mailbox/mailbox.txt
- - .../mailbox/nvidia,tegra186-hsp.txt
- 
--This node is a clock and reset provider. See the following files for
--general documentation of those features, and the specifiers implemented
--by this node:
-+This node is a clock, power domain, and reset provider. See the following
-+files for general documentation of those features, and the specifiers
-+implemented by this node:
- 
- - .../clock/clock-bindings.txt
- - <dt-bindings/clock/tegra186-clock.h>
-+- ../power/power_domain.txt
-+- <dt-bindings/power/tegra186-powergate.h>
- - .../reset/reset.txt
- - <dt-bindings/reset/tegra186-reset.h>
- 
-@@ -73,5 +76,6 @@ bpmp {
- 	mboxes = <&hsp_top0 HSP_MBOX_TYPE_DB HSP_DB_MASTER_BPMP>;
- 	shmem = <&cpu_bpmp_tx &cpu_bpmp_rx>;
- 	#clock-cells = <1>;
-+	#power-domain-cells = <1>;
- 	#reset-cells = <1>;
- };
-diff --git a/include/dt-bindings/power/tegra186-powergate.h b/include/dt-bindings/power/tegra186-powergate.h
+diff --git a/Documentation/devicetree/bindings/i2c/nvidia,tegra186-bpmp-i2c.txt b/Documentation/devicetree/bindings/i2c/nvidia,tegra186-bpmp-i2c.txt
 new file mode 100644
-index 000000000000..388d6e228dc8
+index 000000000000..fecb549bc250
 --- /dev/null
-+++ b/include/dt-bindings/power/tegra186-powergate.h
-@@ -0,0 +1,39 @@
-+/*
-+ * Copyright (c) 2015-2016, NVIDIA CORPORATION.  All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
++++ b/Documentation/devicetree/bindings/i2c/nvidia,tegra186-bpmp-i2c.txt
+@@ -0,0 +1,42 @@
++NVIDIA Tegra186 BPMP I2C controller
 +
-+#ifndef _DT_BINDINGS_POWER_TEGRA186_POWERGATE_H
-+#define _DT_BINDINGS_POWER_TEGRA186_POWERGATE_H
++In Tegra186, the BPMP (Boot and Power Management Processor) owns certain HW
++devices, such as the I2C controller for the power management I2C bus. Software
++running on other CPUs must perform IPC to the BPMP in order to execute
++transactions on that I2C bus. This binding describes an I2C bus that is
++accessed in such a fashion.
 +
-+#define TEGRA186_POWER_DOMAIN_AUD	0
-+#define TEGRA186_POWER_DOMAIN_DFD	1
-+#define TEGRA186_POWER_DOMAIN_DISP	2
-+#define TEGRA186_POWER_DOMAIN_DISPB	3
-+#define TEGRA186_POWER_DOMAIN_DISPC	4
-+#define TEGRA186_POWER_DOMAIN_ISPA	5
-+#define TEGRA186_POWER_DOMAIN_NVDEC	6
-+#define TEGRA186_POWER_DOMAIN_NVJPG	7
-+#define TEGRA186_POWER_DOMAIN_MPE	8
-+#define TEGRA186_POWER_DOMAIN_PCX	9
-+#define TEGRA186_POWER_DOMAIN_SAX	10
-+#define TEGRA186_POWER_DOMAIN_VE	11
-+#define TEGRA186_POWER_DOMAIN_VIC	12
-+#define TEGRA186_POWER_DOMAIN_XUSBA	13
-+#define TEGRA186_POWER_DOMAIN_XUSBB	14
-+#define TEGRA186_POWER_DOMAIN_XUSBC	15
-+#define TEGRA186_POWER_DOMAIN_GPU	43
-+#define TEGRA186_POWER_DOMAIN_MAX	44
++The BPMP I2C node must be located directly inside the main BPMP node. See
++../firmware/nvidia,tegra186-bpmp.txt for details of the BPMP binding.
 +
-+#endif
++This node represents an I2C controller. See ../i2c/i2c.txt for details of the
++core I2C binding.
++
++Required properties:
++- compatible:
++    Array of strings.
++    One of:
++    - "nvidia,tegra186-bpmp-i2c".
++- #address-cells: Address cells for I2C device address.
++    Single-cell integer.
++    Must be <1>.
++- #size-cells:
++    Single-cell integer.
++    Must be <0>.
++- nvidia,bpmp-bus-id:
++    Single-cell integer.
++    Indicates the I2C bus number this DT node represent, as defined by the
++    BPMP firmware.
++
++Example:
++
++/ bpmp {
++	...
++
++	bpmp-i2c {
++		compatible = "nvidia,tegra186-bpmp-i2c";
++		#address-cells = <1>;
++		#size-cells = <0>;
++		nvidia,bpmp-bus-id = <5>;
++	};
++};
 -- 
 2.9.2
