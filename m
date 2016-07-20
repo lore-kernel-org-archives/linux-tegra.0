@@ -1,83 +1,97 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/3] dt-bindings: allow child nodes inside the Tegra BPMP
-Date: Wed, 20 Jul 2016 09:57:43 -0600
-Message-ID: <578F9F77.9010203@wwwdotorg.org>
-References: <20160719191442.15439-1-swarren@wwwdotorg.org>
- <20160719191442.15439-2-swarren@wwwdotorg.org>
- <20160720131622.GA20276@rob-hp-laptop>
+From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
+Date: Wed, 20 Jul 2016 21:28:05 +0200
+Message-ID: <CALw8SCXFexogJn3BwrZm63yEL0rtTpYsYYb0O9D_ibhginVLqw@mail.gmail.com>
+References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+ <1468935397-11926-4-git-send-email-mirza.krak@gmail.com> <20160720124408.GA19113@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160720131622.GA20276@rob-hp-laptop>
+In-Reply-To: <20160720124408.GA19113@rob-hp-laptop>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/20/2016 07:16 AM, Rob Herring wrote:
-> On Tue, Jul 19, 2016 at 01:14:41PM -0600, Stephen Warren wrote:
->> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+2016-07-20 14:44 GMT+02:00 Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>:
+> On Tue, Jul 19, 2016 at 03:36:34PM +0200, Mirza Krak wrote:
+>> From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 >>
->> The BPMP implements some services which must be represented by separate
->> nodes. For example, it can provide access to certain I2C controllers, and
->> the I2C bindings represent each I2C controller as a device tree node.
->> Update the binding to describe how the BPMP supports this.
+>> Document the devicetree bindings for NOR bus driver found on Tegra20=
+ and
+>> Tegra30 SOCs
 >>
->> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> Signed-off-by: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 >> ---
->>   .../bindings/firmware/nvidia,tegra186-bpmp.txt     | 23 ++++++++++++++++++++++
->>   1 file changed, 23 insertions(+)
+>>  .../devicetree/bindings/bus/nvidia,tegra20-nor.txt | 73 +++++++++++=
++++++++++++
+>>  1 file changed, 73 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,teg=
+ra20-nor.txt
 >>
->> diff --git a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
->> index 9a3864f56955..142d363406f6 100644
->> --- a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
->> +++ b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
->> @@ -38,6 +38,24 @@ implemented by this node:
->>   - .../reset/reset.txt
->>   - <dt-bindings/reset/tegra186-reset.h>
->>
->> +The BPMP implements some services which must be represented by separate nodes.
->> +For example, it can provide access to certain I2C controllers, and the I2C
->> +bindings represent each I2C controller as a device tree node. Such nodes should
->> +be nested directly inside the main BPMP node.
+>> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-no=
+r.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
+>> new file mode 100644
+>> index 0000000..9ee4a66
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
+>> @@ -0,0 +1,73 @@
+>> +Device tree bindings for NVIDIA Tegra20/30 NOR Bus
 >> +
->> +Software can determine whether a child node of the BPMP node represents a device
->> +by checking for a compatible property. Any node with a compatible property
->> +represents a device that can be instantiated. Nodes without a compatible
->> +property may be used to provide configuration information regarding the BPMP
->> +itself, although no such configuration nodes are currently defined by this
->> +binding.
+>> +The NOR controller supports a number of memory types, including syn=
+chronous NOR,
+>> +asynchronous NOR, and other flash memories with similar interfaces,=
+ such as
+>> +MuxOneNAND. One could also connect high speed devices like FPGAs, D=
+SPs,
+>> +CAN chips, Wi-Fi chips etc.
 >> +
->> +The BPMP firmware defines no single global name-/numbering-space for such
->> +services. Put another way, the numbering scheme for I2C buses is distinct from
->> +the numbering scheme for any other service the BPMP may provide (e.g. a future
->> +hypothetical SPI bus service). As such, child device nodes will have no reg
->> +property, and the BPMP node will have no #address-cells or #size-cells property.
+>> +The actual devices are instantiated from the child nodes of a NOR n=
+ode.
 >> +
->>   The shared memory bindings for BPMP
->>   -----------------------------------
->>
->> @@ -78,4 +96,9 @@ bpmp {
->>   	#clock-cells = <1>;
->>   	#power-domain-cells = <1>;
->>   	#reset-cells = <1>;
+>> +Required properties:
 >> +
->> +	bpmp-i2c {
+>> + - compatible: should be "nvidia,tegra20-nor", "nvidia,tegra30-nor"
+>> + - reg: Should contain NOR controller registers location and length=
+=2E
+>> + - clocks: Must contain one entry, for the module clock.
+>> +   See ../clocks/clock-bindings.txt for details.
+>> + - resets : Must contain an entry for each entry in reset-names.
+>> +   See ../reset/reset.txt for details.
+>> + - reset-names : Must include the following entries:
+>> +  - nor
+>> + - #address-cells: Must be set to 2 to allow memory address transla=
+tion
+>> + - #size-cells:      Must be set to 1 to allow CS address passing
+>> + - ranges: Must be set up to reflect the memory layout with four in=
+teger
+>> +             values for each chip-select line in use.
+>> + - nvidia,config: This property represents the SNOR_CONFIG_0 regist=
+er.
+>> +
+>> +Note that the NOR controller does not have any internal chip-select=
+ address
+>> +decoding and if you want to access multiple devices external chip-s=
+elect
+>> +decoding must be provided.
 >
-> Just 'i2c' here. With that:
+> Then what are the 2 chip selects in ranges?
 >
-> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+> Rob
 
-What if we have multiple BPMP I2C buses? The node names need to be 
-unique, and there's no concept of register number so we can't use a unit 
-address to do that.
+Those two chip selects are actually a representation of a external
+decoding logic based on what we use on our board. Even though it the
+NOR controller only supports one single chip select I wanted to give
+an example on how one could create more chip-selects with an external
+logic and what it would look like in the device tree representation.
 
-I guess we could go for plain "i2c" for now and defer the more general 
-naming discussion until some later point if/when we actually instantiate 
-multiple buses, but I would like to confirm we can solve the problem 
-if/when that time comes.
+I realize that the bindings should include above explanation or
+something similar.
 
-(As an aside, "pwr-i2c" might be a better name for the current bus, when 
-the time comes, since any/all I2C nodes inside the BPMP would be BPMP 
-I2C buses).
+--=20
+Med V=C3=A4nliga H=C3=A4lsningar / Best Regards
+
+Mirza Krak
+mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Mobile: +46730280622
