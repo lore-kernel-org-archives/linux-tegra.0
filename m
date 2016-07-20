@@ -1,108 +1,76 @@
-From: Adrian Hunter <adrian.hunter@intel.com>
-Subject: Re: [PATCH V2 1/2] mmc: sdhci: Request regulators before reading
- capabilities
-Date: Wed, 20 Jul 2016 16:04:31 +0300
-Message-ID: <578F76DF.1000500@intel.com>
-References: <1468331617-22265-1-git-send-email-jonathanh@nvidia.com>
- <578F764B.2070403@intel.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH 2/3] dt-bindings: allow child nodes inside the Tegra BPMP
+Date: Wed, 20 Jul 2016 08:16:22 -0500
+Message-ID: <20160720131622.GA20276@rob-hp-laptop>
+References: <20160719191442.15439-1-swarren@wwwdotorg.org>
+ <20160719191442.15439-2-swarren@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-mmc-owner@vger.kernel.org>
-In-Reply-To: <578F764B.2070403@intel.com>
-Sender: linux-mmc-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Ulf Hansson <ulf.hansson@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20160719191442.15439-2-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 20/07/16 16:02, Adrian Hunter wrote:
-> On 12/07/16 16:53, Jon Hunter wrote:
->> The capabilities of the SDHCI host controller are read early during the
->> SDHCI host initialisation in sdhci_setup_host() and before any
->> regulators for the host have been requested. This means that if the host
->> supports some high-speed modes (according to its capabilities register),
->> but the board cannot because the appropriate voltage regulator is not
->> available, then the host cannot easily override the capabilities that
->> are supported.
->>
->> To allow a SDHCI host controller to determine if it can support high
->> speed modes via the presense of the MMC regulators, request the
+On Tue, Jul 19, 2016 at 01:14:41PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Try not to confuse High Speed mode with UHS modes.
+> The BPMP implements some services which must be represented by separate
+> nodes. For example, it can provide access to certain I2C controllers, and
+> the I2C bindings represent each I2C controller as a device tree node.
+> Update the binding to describe how the BPMP supports this.
 > 
-> presense -> presence
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  .../bindings/firmware/nvidia,tegra186-bpmp.txt     | 23 ++++++++++++++++++++++
+>  1 file changed, 23 insertions(+)
 > 
->> regulators before reading the capabilites of the host controller. This
-> 
-> capabilites -> capabilities
-> 
->> will allow the SDHCI host to use the 'reset' callback to take the
->> appropriate action (set flags, configure registers, etc) before the
->> capabilities register(s) are read.
->>
->> Please note that some SDHCI hosts, such as the Tegra SDHCI host, has
->> the ability to mask bits in the capabilities register to prevent
->> certain capabilities from being advertised.
->>
->> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->> ---
->>
->> Although this is described as a "V2" this patch has been added since
->> the original patch was posted.
->>
->> If the below is deemed not appropriate, then another solution I was
->> thinking of is to allow the SDHCI host to call 'mmc_regulator_get_supply'
->> before calling sdhci_setup_host() and then in sdhci_setup_host() check
->> if any regulators are already present before calling
->> mmc_regulator_get_supply().
-> 
-> And we can still do that later if we need to.
-> 
->>
->>  drivers/mmc/host/sdhci.c | 16 +++++++++++-----
->>  1 file changed, 11 insertions(+), 5 deletions(-)
->>
->> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
->> index 2ee8bfa77116..628c4b3558c0 100644
->> --- a/drivers/mmc/host/sdhci.c
->> +++ b/drivers/mmc/host/sdhci.c
->> @@ -3021,6 +3021,17 @@ int sdhci_setup_host(struct sdhci_host *host)
->>  
->>  	mmc = host->mmc;
->>  
->> +	/*
->> +	 * If there are external regulators, get them. Note
->> +	 * this must be done early before resetting the host
->> +	 * and reading the capabilities so that the host can
->> +	 * take the appropriate action if regulators are not
->> +	 * available.
+> diff --git a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
+> index 9a3864f56955..142d363406f6 100644
+> --- a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
+> +++ b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
+> @@ -38,6 +38,24 @@ implemented by this node:
+>  - .../reset/reset.txt
+>  - <dt-bindings/reset/tegra186-reset.h>
+>  
+> +The BPMP implements some services which must be represented by separate nodes.
+> +For example, it can provide access to certain I2C controllers, and the I2C
+> +bindings represent each I2C controller as a device tree node. Such nodes should
+> +be nested directly inside the main BPMP node.
+> +
+> +Software can determine whether a child node of the BPMP node represents a device
+> +by checking for a compatible property. Any node with a compatible property
+> +represents a device that can be instantiated. Nodes without a compatible
+> +property may be used to provide configuration information regarding the BPMP
+> +itself, although no such configuration nodes are currently defined by this
+> +binding.
+> +
+> +The BPMP firmware defines no single global name-/numbering-space for such
+> +services. Put another way, the numbering scheme for I2C buses is distinct from
+> +the numbering scheme for any other service the BPMP may provide (e.g. a future
+> +hypothetical SPI bus service). As such, child device nodes will have no reg
+> +property, and the BPMP node will have no #address-cells or #size-cells property.
+> +
+>  The shared memory bindings for BPMP
+>  -----------------------------------
+>  
+> @@ -78,4 +96,9 @@ bpmp {
+>  	#clock-cells = <1>;
+>  	#power-domain-cells = <1>;
+>  	#reset-cells = <1>;
+> +
+> +	bpmp-i2c {
 
-Also you could spread this comment out to 80 columns.
+Just 'i2c' here. With that:
 
->> +	 */
->> +	ret = mmc_regulator_get_supply(mmc);
->> +	if (ret == -EPROBE_DEFER)
->> +		return ret;
->> +
->>  	sdhci_read_caps(host);
->>  
->>  	override_timeout_clk = host->timeout_clk;
->> @@ -3253,11 +3264,6 @@ int sdhci_setup_host(struct sdhci_host *host)
->>  	    mmc_gpio_get_cd(host->mmc) < 0)
->>  		mmc->caps |= MMC_CAP_NEEDS_POLL;
->>  
->> -	/* If there are external regulators, get them */
->> -	ret = mmc_regulator_get_supply(mmc);
->> -	if (ret == -EPROBE_DEFER)
->> -		goto undma;
-> 
-> All goto's before this now need to goto unreg.
-> 
->> -
->>  	/* If vqmmc regulator and no 1.8V signalling, then there's no UHS */
->>  	if (!IS_ERR(mmc->supply.vqmmc)) {
->>  		ret = regulator_enable(mmc->supply.vqmmc);
->>
-> 
-> 
+Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 
+> +		compatible = "...";
+> +		...
+> +	};
+>  };
+> -- 
+> 2.9.2
+> 
