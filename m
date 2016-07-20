@@ -1,35 +1,100 @@
-From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 1/3] dt-bindings: add power domains to Tegra BPMP firmware
-Date: Wed, 20 Jul 2016 07:46:56 -0500
-Message-ID: <20160720124656.GA18773@rob-hp-laptop>
-References: <20160719191442.15439-1-swarren@wwwdotorg.org>
+From: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V2 1/2] mmc: sdhci: Request regulators before reading
+ capabilities
+Date: Wed, 20 Jul 2016 16:02:03 +0300
+Message-ID: <578F764B.2070403@intel.com>
+References: <1468331617-22265-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20160719191442.15439-1-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <1468331617-22265-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 19, 2016 at 01:14:40PM -0600, Stephen Warren wrote:
-> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 12/07/16 16:53, Jon Hunter wrote:
+> The capabilities of the SDHCI host controller are read early during the
+> SDHCI host initialisation in sdhci_setup_host() and before any
+> regulators for the host have been requested. This means that if the host
+> supports some high-speed modes (according to its capabilities register),
+> but the board cannot because the appropriate voltage regulator is not
+> available, then the host cannot easily override the capabilities that
+> are supported.
 > 
-> The Tegra186 BPMP is also a provider of power domains. Enhance the device
-> tree binding to describe this.
-> 
-> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> These patches all build on top of Joseph Lo's baseline BPMP binding patches[1]
-> and enhance them to represent a few more features of the firmware.
-> 
-> [1] https://lkml.org/lkml/2016/7/19/280
-> "[PATCH V3 01/10] Documentation: dt-bindings: mailbox: tegra: Add binding for HSP mailbox"
-> 
->  .../bindings/firmware/nvidia,tegra186-bpmp.txt     | 10 ++++--
->  include/dt-bindings/power/tegra186-powergate.h     | 39 ++++++++++++++++++++++
->  2 files changed, 46 insertions(+), 3 deletions(-)
->  create mode 100644 include/dt-bindings/power/tegra186-powergate.h
+> To allow a SDHCI host controller to determine if it can support high
+> speed modes via the presense of the MMC regulators, request the
 
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Try not to confuse High Speed mode with UHS modes.
+
+presense -> presence
+
+> regulators before reading the capabilites of the host controller. This
+
+capabilites -> capabilities
+
+> will allow the SDHCI host to use the 'reset' callback to take the
+> appropriate action (set flags, configure registers, etc) before the
+> capabilities register(s) are read.
+> 
+> Please note that some SDHCI hosts, such as the Tegra SDHCI host, has
+> the ability to mask bits in the capabilities register to prevent
+> certain capabilities from being advertised.
+> 
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> 
+> Although this is described as a "V2" this patch has been added since
+> the original patch was posted.
+> 
+> If the below is deemed not appropriate, then another solution I was
+> thinking of is to allow the SDHCI host to call 'mmc_regulator_get_supply'
+> before calling sdhci_setup_host() and then in sdhci_setup_host() check
+> if any regulators are already present before calling
+> mmc_regulator_get_supply().
+
+And we can still do that later if we need to.
+
+> 
+>  drivers/mmc/host/sdhci.c | 16 +++++++++++-----
+>  1 file changed, 11 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 2ee8bfa77116..628c4b3558c0 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -3021,6 +3021,17 @@ int sdhci_setup_host(struct sdhci_host *host)
+>  
+>  	mmc = host->mmc;
+>  
+> +	/*
+> +	 * If there are external regulators, get them. Note
+> +	 * this must be done early before resetting the host
+> +	 * and reading the capabilities so that the host can
+> +	 * take the appropriate action if regulators are not
+> +	 * available.
+> +	 */
+> +	ret = mmc_regulator_get_supply(mmc);
+> +	if (ret == -EPROBE_DEFER)
+> +		return ret;
+> +
+>  	sdhci_read_caps(host);
+>  
+>  	override_timeout_clk = host->timeout_clk;
+> @@ -3253,11 +3264,6 @@ int sdhci_setup_host(struct sdhci_host *host)
+>  	    mmc_gpio_get_cd(host->mmc) < 0)
+>  		mmc->caps |= MMC_CAP_NEEDS_POLL;
+>  
+> -	/* If there are external regulators, get them */
+> -	ret = mmc_regulator_get_supply(mmc);
+> -	if (ret == -EPROBE_DEFER)
+> -		goto undma;
+
+All goto's before this now need to goto unreg.
+
+> -
+>  	/* If vqmmc regulator and no 1.8V signalling, then there's no UHS */
+>  	if (!IS_ERR(mmc->supply.vqmmc)) {
+>  		ret = regulator_enable(mmc->supply.vqmmc);
+> 
