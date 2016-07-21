@@ -1,122 +1,142 @@
-From: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V2 2/2] mmc: tegra: Only advertise UHS modes if IO
- regulator is present
-Date: Thu, 21 Jul 2016 09:47:37 +0300
-Message-ID: <57907009.4030909@intel.com>
-References: <1468331617-22265-1-git-send-email-jonathanh@nvidia.com>
- <1468331617-22265-2-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
+Date: Thu, 21 Jul 2016 10:56:44 +0100
+Message-ID: <434561ec-510e-a3bf-c7b6-c961db299bd6@nvidia.com>
+References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+ <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1468331617-22265-2-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <1468935397-11926-4-git-send-email-mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 12/07/16 16:53, Jon Hunter wrote:
-> To support UHS modes for Tegra an external regulator must be present
-> to adjust the IO voltage accordingly. Even if the regulator is not
-> present but the host supports the UHS modes and the device supports the
-> UHS modes, then we will attempt to switch to a high-speed mode. Without
-> an external regulator, Tegra will fail to switch to the high-speed
-> mode.
-> 
-> It has been found that with some SD cards, that once it has been switch
-> to operate at a high-speed mode, all subsequent commands issues to the
-> card will fail and so it will not be possible to switch back to a non
-> high-speed mode and so the SD card initialisation will fail.
-> 
-> The SDHCI core does not require that the host have an external regulator
-> when switching to UHS modes and therefore, the Tegra SDHCI host
-> controller should only advertise the UHS modes as being supported if the
-> regulator for the IO voltage is present. Fortunately, Tegra has a vendor
-> specific register which can be used to control which modes are
-> advertised via the SDHCI_CAPABILITIES register. Hence, if there is no IO
-> voltage regulator available for the Tegra SDHCI host, then don't
-> advertise the UHS modes.
-> 
-> Note that if the regulator is not available, we also don't advertise that
-> the SDHCI is compatible with v3.0 of the SDHCI specification because
-> this will read the SDHCI_CAPABILITIES_1 register which will enable other
-> UHS modes.
-> 
-> This fixes commit 7ad2ed1dfcbe ("mmc: tegra: enable UHS-I modes") which
-> enables UHS mode without checking if the board can support them.
-> 
-> Fixes: 7ad2ed1dfcbe ("mmc: tegra: enable UHS-I modes")
-> 
-> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-
-Acked-by: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-
-
+On 19/07/16 14:36, Mirza Krak wrote:
+> From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> 
+> Document the devicetree bindings for NOR bus driver found on Tegra20 and
+> Tegra30 SOCs
+> 
+> Signed-off-by: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 > ---
->  drivers/mmc/host/sdhci-tegra.c | 49 +++++++++++++++++++++++++-----------------
->  1 file changed, 29 insertions(+), 20 deletions(-)
+>  .../devicetree/bindings/bus/nvidia,tegra20-nor.txt | 73 ++++++++++++++++++++++
+>  1 file changed, 73 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
 > 
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index bcc0de47fe7e..bd1199825f9f 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -148,28 +148,37 @@ static void tegra_sdhci_reset(struct sdhci_host *host, u8 mask)
->  		return;
->  
->  	misc_ctrl = sdhci_readl(host, SDHCI_TEGRA_VENDOR_MISC_CTRL);
-> -	/* Erratum: Enable SDHCI spec v3.00 support */
-> -	if (soc_data->nvquirks & NVQUIRK_ENABLE_SDHCI_SPEC_300)
-> -		misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDHCI_SPEC_300;
-> -	/* Advertise UHS modes as supported by host */
-> -	if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR50)
-> -		misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDR50;
-> -	else
-> -		misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_SDR50;
-> -	if (soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
-> -		misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_DDR50;
-> -	else
-> -		misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_DDR50;
-> -	if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR104)
-> -		misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDR104;
-> -	else
-> -		misc_ctrl &= ~SDHCI_MISC_CTRL_ENABLE_SDR104;
-> -	sdhci_writel(host, misc_ctrl, SDHCI_TEGRA_VENDOR_MISC_CTRL);
-> -
->  	clk_ctrl = sdhci_readl(host, SDHCI_TEGRA_VENDOR_CLOCK_CTRL);
+> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
+> new file mode 100644
+> index 0000000..9ee4a66
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
+> @@ -0,0 +1,73 @@
+> +Device tree bindings for NVIDIA Tegra20/30 NOR Bus
 > +
-> +	misc_ctrl &= ~(SDHCI_MISC_CTRL_ENABLE_SDHCI_SPEC_300 |
-> +		       SDHCI_MISC_CTRL_ENABLE_SDR50 |
-> +		       SDHCI_MISC_CTRL_ENABLE_DDR50 |
-> +		       SDHCI_MISC_CTRL_ENABLE_SDR104);
+> +The NOR controller supports a number of memory types, including synchronous NOR,
+> +asynchronous NOR, and other flash memories with similar interfaces, such as
+> +MuxOneNAND. One could also connect high speed devices like FPGAs, DSPs,
+> +CAN chips, Wi-Fi chips etc.
+
+Nit-pick ... the Tegra documentation refers to this controller as the
+GMI (general memory interface) or SNOR (sync-NOR) controller because it
+is not just limited to NOR as you mentioned. I see references to GMI in
+the Tegra pinctrl driver and so may be we should use this name.
+
 > +
->  	clk_ctrl &= ~SDHCI_CLOCK_CTRL_SPI_MODE_CLKEN_OVERRIDE;
-> -	if (soc_data->nvquirks & SDHCI_MISC_CTRL_ENABLE_SDR50)
-> -		clk_ctrl |= SDHCI_CLOCK_CTRL_SDR50_TUNING_OVERRIDE;
+> +The actual devices are instantiated from the child nodes of a NOR node.
 > +
-> +	/*
-> +	 * If the board does not define a regulator for the SDHCI
-> +	 * IO voltage, then don't advertise support for UHS modes
-> +	 * even if the device supports it because the IO voltage
-> +	 * cannot be configured.
-> +	 */
-> +	if (!IS_ERR(host->mmc->supply.vqmmc)) {
-> +		/* Erratum: Enable SDHCI spec v3.00 support */
-> +		if (soc_data->nvquirks & NVQUIRK_ENABLE_SDHCI_SPEC_300)
-> +			misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDHCI_SPEC_300;
-> +		/* Advertise UHS modes as supported by host */
-> +		if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR50)
-> +			misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDR50;
-> +		if (soc_data->nvquirks & NVQUIRK_ENABLE_DDR50)
-> +			misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_DDR50;
-> +		if (soc_data->nvquirks & NVQUIRK_ENABLE_SDR104)
-> +			misc_ctrl |= SDHCI_MISC_CTRL_ENABLE_SDR104;
-> +		if (soc_data->nvquirks & SDHCI_MISC_CTRL_ENABLE_SDR50)
-> +			clk_ctrl |= SDHCI_CLOCK_CTRL_SDR50_TUNING_OVERRIDE;
-> +	}
+> +Required properties:
 > +
-> +	sdhci_writel(host, misc_ctrl, SDHCI_TEGRA_VENDOR_MISC_CTRL);
->  	sdhci_writel(host, clk_ctrl, SDHCI_TEGRA_VENDOR_CLOCK_CTRL);
->  
->  	if (soc_data->nvquirks & NVQUIRK_HAS_PADCALIB)
-> 
+> + - compatible: should be "nvidia,tegra20-nor", "nvidia,tegra30-nor"
+
+I see at least one difference at the register level between Tegra20 and
+Tegra30 and so I think this should be something like ...
+
+ - compatible : Should contain one of the following:
+	For Tegra20 must contain "nvidia,tegra20-gmi".
+ 	For Tegra30 must contain "nvidia,tegra30-gmi".
+
+> + - reg: Should contain NOR controller registers location and length.
+> + - clocks: Must contain one entry, for the module clock.
+> +   See ../clocks/clock-bindings.txt for details.
+> + - resets : Must contain an entry for each entry in reset-names.
+> +   See ../reset/reset.txt for details.
+> + - reset-names : Must include the following entries:
+> +  - nor
+> + - #address-cells: Must be set to 2 to allow memory address translation
+> + - #size-cells:	Must be set to 1 to allow CS address passing
+> + - ranges: Must be set up to reflect the memory layout with four integer
+> + 		values for each chip-select line in use.
+> + - nvidia,config: This property represents the SNOR_CONFIG_0 register.
+
+There is also a SNOR_MIO_CONFIG for the MIO address space and so I think
+that this should be nvidia,snor-config to be explicit. It might be nice
+to also add a "nvidia,mio-config" while you are at it as well, however,
+that could always be done later. If you do, then the
+"nvidia,snor-config" becomes optional depending on whether you are using
+the SNOR or MIO address space.
+
+Thierry, Stephen, do prefer all the fields on the config registers are
+broken out? There are quite a few but I am not sure what we typically
+recommend here?
+
+> +
+> +Note that the NOR controller does not have any internal chip-select address
+> +decoding and if you want to access multiple devices external chip-select
+> +decoding must be provided.
+
+Although it is true, you do have the MIO address space and so you could
+support two devices via the SNOR address space and MIO address space
+(assuming that the MIO can be used for the 2nd device).
+
+Furthermore, if you do have external logic to support multiple devices
+this would assume that the devices use the same timing and so are
+probably the same type. It also assumes both can fit in the 256MB
+address range. May be worth mentioning.
+
+The GMI does have 8 chip selects and I believe the purpose of these is
+to allow you to address more than the 256MB range. However, I believe to
+do this it require software intervention to change the current CS that
+is in use.
+
+I wonder if it is worth mentioning that the chip-select specified in the
+"nvidia,config" prop should match that in the "ranges" prop unless you
+have some external decoding logic to provide an external chip-select.
+Which raises a question, what does the chip-select in the ranges
+actually represent? I am not sure if there is a common practice here for
+device tree when boards have external logic to provide additional
+chip-selects. I am sure this is quite common.
+
+> +Optional properties:
+> +
+> + - nvidia,cs-timing: The timing array represents the SNOR_TIMING0_0 and
+> +   SNOR_TIMING1_0 registers for the NOR controller. If unset reset-values will
+> +   be used. See reference documentation for detailed description of the timing
+> +   registers.
+> +
+> +Example with two SJA1000 CAN controllers connected to the NOR bus:
+> +
+> +	nor@70009000 {
+> +		status = "okay";
+> +		compatible = "nvidia,tegra20-nor", "nvidia,tegra30-nor";
+> +		reg = <0x70009000 0x1000>;
+> +		#address-cells = <2>;
+> +		#size-cells = <1>;
+> +		clocks = <&tegra_car TEGRA30_CLK_NOR>;
+> +		resets = < &tegra_car 42>;
+> +		reset-names = "nor";
+> +		ranges = <
+> +			0 0 0x48000000 0x00000100
+> +			1 0 0x48040000 0x00000100
+> +		>;
+
+The "nvidia,config" appears to be missing here.
+
+Cheers
+Jon
+
+-- 
+nvpublic
