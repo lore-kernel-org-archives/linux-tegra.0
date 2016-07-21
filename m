@@ -1,97 +1,117 @@
-From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
-Date: Wed, 20 Jul 2016 21:28:05 +0200
-Message-ID: <CALw8SCXFexogJn3BwrZm63yEL0rtTpYsYYb0O9D_ibhginVLqw@mail.gmail.com>
-References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-4-git-send-email-mirza.krak@gmail.com> <20160720124408.GA19113@rob-hp-laptop>
+From: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V2 1/2] mmc: sdhci: Request regulators before reading
+ capabilities
+Date: Thu, 21 Jul 2016 09:39:40 +0300
+Message-ID: <57906E2C.9000200@intel.com>
+References: <1468331617-22265-1-git-send-email-jonathanh@nvidia.com>
+ <578F764B.2070403@intel.com> <578F76DF.1000500@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-Type: text/plain; charset=windows-1252
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160720124408.GA19113@rob-hp-laptop>
+In-Reply-To: <578F76DF.1000500-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org
+To: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-2016-07-20 14:44 GMT+02:00 Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>:
-> On Tue, Jul 19, 2016 at 03:36:34PM +0200, Mirza Krak wrote:
->> From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+On 20/07/16 16:04, Adrian Hunter wrote:
+> On 20/07/16 16:02, Adrian Hunter wrote:
+>> On 12/07/16 16:53, Jon Hunter wrote:
+>>> The capabilities of the SDHCI host controller are read early during the
+>>> SDHCI host initialisation in sdhci_setup_host() and before any
+>>> regulators for the host have been requested. This means that if the host
+>>> supports some high-speed modes (according to its capabilities register),
+>>> but the board cannot because the appropriate voltage regulator is not
+>>> available, then the host cannot easily override the capabilities that
+>>> are supported.
+>>>
+>>> To allow a SDHCI host controller to determine if it can support high
+>>> speed modes via the presense of the MMC regulators, request the
 >>
->> Document the devicetree bindings for NOR bus driver found on Tegra20=
- and
->> Tegra30 SOCs
+>> Try not to confuse High Speed mode with UHS modes.
 >>
->> Signed-off-by: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> ---
->>  .../devicetree/bindings/bus/nvidia,tegra20-nor.txt | 73 +++++++++++=
-+++++++++++
->>  1 file changed, 73 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,teg=
-ra20-nor.txt
+>> presense -> presence
 >>
->> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-no=
-r.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
->> new file mode 100644
->> index 0000000..9ee4a66
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
->> @@ -0,0 +1,73 @@
->> +Device tree bindings for NVIDIA Tegra20/30 NOR Bus
->> +
->> +The NOR controller supports a number of memory types, including syn=
-chronous NOR,
->> +asynchronous NOR, and other flash memories with similar interfaces,=
- such as
->> +MuxOneNAND. One could also connect high speed devices like FPGAs, D=
-SPs,
->> +CAN chips, Wi-Fi chips etc.
->> +
->> +The actual devices are instantiated from the child nodes of a NOR n=
-ode.
->> +
->> +Required properties:
->> +
->> + - compatible: should be "nvidia,tegra20-nor", "nvidia,tegra30-nor"
->> + - reg: Should contain NOR controller registers location and length=
-=2E
->> + - clocks: Must contain one entry, for the module clock.
->> +   See ../clocks/clock-bindings.txt for details.
->> + - resets : Must contain an entry for each entry in reset-names.
->> +   See ../reset/reset.txt for details.
->> + - reset-names : Must include the following entries:
->> +  - nor
->> + - #address-cells: Must be set to 2 to allow memory address transla=
-tion
->> + - #size-cells:      Must be set to 1 to allow CS address passing
->> + - ranges: Must be set up to reflect the memory layout with four in=
-teger
->> +             values for each chip-select line in use.
->> + - nvidia,config: This property represents the SNOR_CONFIG_0 regist=
-er.
->> +
->> +Note that the NOR controller does not have any internal chip-select=
- address
->> +decoding and if you want to access multiple devices external chip-s=
-elect
->> +decoding must be provided.
->
-> Then what are the 2 chip selects in ranges?
->
-> Rob
+>>> regulators before reading the capabilites of the host controller. This
+>>
+>> capabilites -> capabilities
+>>
+>>> will allow the SDHCI host to use the 'reset' callback to take the
+>>> appropriate action (set flags, configure registers, etc) before the
+>>> capabilities register(s) are read.
+>>>
+>>> Please note that some SDHCI hosts, such as the Tegra SDHCI host, has
+>>> the ability to mask bits in the capabilities register to prevent
+>>> certain capabilities from being advertised.
+>>>
+>>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> ---
+>>>
+>>> Although this is described as a "V2" this patch has been added since
+>>> the original patch was posted.
+>>>
+>>> If the below is deemed not appropriate, then another solution I was
+>>> thinking of is to allow the SDHCI host to call 'mmc_regulator_get_supply'
+>>> before calling sdhci_setup_host() and then in sdhci_setup_host() check
+>>> if any regulators are already present before calling
+>>> mmc_regulator_get_supply().
+>>
+>> And we can still do that later if we need to.
+>>
+>>>
+>>>  drivers/mmc/host/sdhci.c | 16 +++++++++++-----
+>>>  1 file changed, 11 insertions(+), 5 deletions(-)
+>>>
+>>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+>>> index 2ee8bfa77116..628c4b3558c0 100644
+>>> --- a/drivers/mmc/host/sdhci.c
+>>> +++ b/drivers/mmc/host/sdhci.c
+>>> @@ -3021,6 +3021,17 @@ int sdhci_setup_host(struct sdhci_host *host)
+>>>  
+>>>  	mmc = host->mmc;
+>>>  
+>>> +	/*
+>>> +	 * If there are external regulators, get them. Note
+>>> +	 * this must be done early before resetting the host
+>>> +	 * and reading the capabilities so that the host can
+>>> +	 * take the appropriate action if regulators are not
+>>> +	 * available.
+> 
+> Also you could spread this comment out to 80 columns.
+> 
+>>> +	 */
+>>> +	ret = mmc_regulator_get_supply(mmc);
+>>> +	if (ret == -EPROBE_DEFER)
+>>> +		return ret;
+>>> +
+>>>  	sdhci_read_caps(host);
+>>>  
+>>>  	override_timeout_clk = host->timeout_clk;
+>>> @@ -3253,11 +3264,6 @@ int sdhci_setup_host(struct sdhci_host *host)
+>>>  	    mmc_gpio_get_cd(host->mmc) < 0)
+>>>  		mmc->caps |= MMC_CAP_NEEDS_POLL;
+>>>  
+>>> -	/* If there are external regulators, get them */
+>>> -	ret = mmc_regulator_get_supply(mmc);
+>>> -	if (ret == -EPROBE_DEFER)
+>>> -		goto undma;
+>>
+>> All goto's before this now need to goto unreg.
 
-Those two chip selects are actually a representation of a external
-decoding logic based on what we use on our board. Even though it the
-NOR controller only supports one single chip select I wanted to give
-an example on how one could create more chip-selects with an external
-logic and what it would look like in the device tree representation.
+Er, actually they don't!
 
-I realize that the bindings should include above explanation or
-something similar.
+So apart from the cosmetics above:
 
---=20
-Med V=C3=A4nliga H=C3=A4lsningar / Best Regards
+Acked-by: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
 
-Mirza Krak
-mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Mobile: +46730280622
+>>
+>>> -
+>>>  	/* If vqmmc regulator and no 1.8V signalling, then there's no UHS */
+>>>  	if (!IS_ERR(mmc->supply.vqmmc)) {
+>>>  		ret = regulator_enable(mmc->supply.vqmmc);
+>>>
+>>
+>>
+> 
+> 
