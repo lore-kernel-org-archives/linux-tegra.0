@@ -1,135 +1,139 @@
-From: Mirza Krak <mirza.krak@gmail.com>
-Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
-Date: Thu, 21 Jul 2016 22:10:49 +0200
-Message-ID: <CALw8SCU0cz6mbO=oudCZ4-=2PHVORNt3gwmg2bzNjyhJFnWS3g@mail.gmail.com>
+From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC 6/6] bus: Add support for Tegra NOR controller
+Date: Thu, 21 Jul 2016 22:42:51 +0200
+Message-ID: <CALw8SCVy4ud5_+gS3C8WeyTCV0m_4R2xjdEY4vCKEq_3-aFanw@mail.gmail.com>
 References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-4-git-send-email-mirza.krak@gmail.com> <434561ec-510e-a3bf-c7b6-c961db299bd6@nvidia.com>
+ <1468935397-11926-7-git-send-email-mirza.krak@gmail.com> <f6df33eb-53ae-699b-9e1f-69eb7fed7da0@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <434561ec-510e-a3bf-c7b6-c961db299bd6@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, linux@armlinux.org.uk
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <f6df33eb-53ae-699b-9e1f-69eb7fed7da0-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-2016-07-21 11:56 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
->> +
->> +The NOR controller supports a number of memory types, including synchronous NOR,
->> +asynchronous NOR, and other flash memories with similar interfaces, such as
->> +MuxOneNAND. One could also connect high speed devices like FPGAs, DSPs,
->> +CAN chips, Wi-Fi chips etc.
+2016-07-21 12:15 GMT+02:00 Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>:
 >
-> Nit-pick ... the Tegra documentation refers to this controller as the
-> GMI (general memory interface) or SNOR (sync-NOR) controller because it
-> is not just limited to NOR as you mentioned. I see references to GMI in
-> the Tegra pinctrl driver and so may be we should use this name.
+> On 19/07/16 14:36, Mirza Krak wrote:
+>> From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> +config TEGRA_NOR
+>> +     tristate "Nvidia Tegra NOR flash bus driver a.k.a GMI/SNOR"
+>> +             depends on ARCH_TEGRA_2x_SOC || ARCH_TEGRA_3x_SOC
+>> +             depends on OF
+>> +             help
+>> +                     Driver for NOR flash bus found on Tegra30/20 SOC`s.
+>
+> It is actually present on all Tegra's and so I would drop the 30/20.
 
 ACK.
 
-
->> +Required properties:
+>> +++ b/drivers/bus/tegra-nor.c
+>> @@ -0,0 +1,118 @@
+>> +/*
+>> + * Driver for Nvidia NOR Flash bus a.k.a SNOR/GMI.
+>> + *
+>> + * Copyright (C) 2016 Host Mobility AB. All rights reserved.
+>> + *
+>> + * This file is licensed under the terms of the GNU General Public
+>> + * License version 2. This program is licensed "as is" without any
+>> + * warranty of any kind, whether express or implied.
+>> + */
 >> +
->> + - compatible: should be "nvidia,tegra20-nor", "nvidia,tegra30-nor"
+>> +#include <linux/clk.h>
+>> +#include <linux/io.h>
+>> +#include <linux/mfd/syscon.h>
 >
-> I see at least one difference at the register level between Tegra20 and
-> Tegra30 and so I think this should be something like ...
+> Is this needed?
+
+It is not. ACK.
+
 >
->  - compatible : Should contain one of the following:
->         For Tegra20 must contain "nvidia,tegra20-gmi".
->         For Tegra30 must contain "nvidia,tegra30-gmi".
-
-ACK. Just curious, which register was it? I only checked that they
-have the same count of registers.
-
->> + - nvidia,config: This property represents the SNOR_CONFIG_0 register.
+>> +#include <linux/module.h>
+>> +#include <linux/of_device.h>
+>> +#include <linux/regmap.h>
 >
-> There is also a SNOR_MIO_CONFIG for the MIO address space and so I think
-> that this should be nvidia,snor-config to be explicit. It might be nice
-> to also add a "nvidia,mio-config" while you are at it as well, however,
-> that could always be done later. If you do, then the
-> "nvidia,snor-config" becomes optional depending on whether you are using
-> the SNOR or MIO address space.
+> Or this?
 
-ACK the nvidia,snor-config part, will though wait for further comments
-regarding what to do with the config registers, break-out or keep it
-is a one property / register.
-
-Regarding mio-config, not sure about if I would like to include that
-part in this stage. If you feel strongly about this we can do it. If
-it only comes to down to replicate the same configurations that we do
-for SNOR to MIO then I do not see much of a problem, but would like
-SNOR to be accepted and would not like the MIO part to halt this. But
-then again this up to you guys.
+It is not. ACK.
 
 >
 >> +
->> +Note that the NOR controller does not have any internal chip-select address
->> +decoding and if you want to access multiple devices external chip-select
->> +decoding must be provided.
+>> +#define TEGRA_NOR_TIMING_REG_COUNT   2
+>> +
+>> +#define TEGRA_NOR_CONFIG                     0x00
+>> +#define TEGRA_NOR_STATUS                     0x04
+>> +#define TEGRA_NOR_ADDR_PTR                   0x08
+>> +#define TEGRA_NOR_AHB_ADDR_PTR               0x0c
+>> +#define TEGRA_NOR_TIMING0                    0x10
+>> +#define TEGRA_NOR_TIMING1                    0x14
+>> +#define TEGRA_NOR_MIO_CONFIG         0x18
+>> +#define TEGRA_NOR_MIO_TIMING         0x1c
+>> +#define TEGRA_NOR_DMA_CONFIG         0x20
+>> +#define TEGRA_NOR_CS_MUX_CONFIG              0x24
 >
-> Although it is true, you do have the MIO address space and so you could
-> support two devices via the SNOR address space and MIO address space
-> (assuming that the MIO can be used for the 2nd device).
+> Not all of these are used. It is good to define them and I wonder if we
+> should add support for MIO while are at it :-)
 
-This is true. If we include MIO support above could be added to the bindings.
+We can come back to this once I have all SNOR stuff in order.
 
 >
-> Furthermore, if you do have external logic to support multiple devices
-> this would assume that the devices use the same timing and so are
-> probably the same type. It also assumes both can fit in the 256MB
-> address range. May be worth mentioning.
+>> +
+>> +#define TEGRA_NOR_CONFIG_GO                          BIT(31)
+>> +
+>> +static const struct of_device_id nor_id_table[] = {
+>> +     /* Tegra30 */
+>
+> I don't think this comment is needed.
 
 ACK.
 
 >
-> The GMI does have 8 chip selects and I believe the purpose of these is
-> to allow you to address more than the 256MB range. However, I believe to
-> do this it require software intervention to change the current CS that
-> is in use.
+>> +     { .compatible = "nvidia,tegra30-nor", .data = NULL, },
+>
+> You don't need to set data to NULL.
 
-Yes that is true. One has to modify the SNOR_CONFIG register to choose
-a different CS pin.
+ACK.
 
 >
-> I wonder if it is worth mentioning that the chip-select specified in the
-> "nvidia,config" prop should match that in the "ranges" prop unless you
-> have some external decoding logic to provide an external chip-select.
-> Which raises a question, what does the chip-select in the ranges
-> actually represent? I am not sure if there is a common practice here for
-> device tree when boards have external logic to provide additional
-> chip-selects. I am sure this is quite common.
-
-I do not understand why CS pin setting in nvidia,config need to match
-the "ranges" prop? Other then maybe cosmetics.
-
-If we do not have any external decoding logic to create more
-chip-selects we only have ONE chip-select, and that one should always
-be indexed as 0? Regardless of which CS pin is used. Because
-ultimately what we configure in SNOR_CONFIG is which PIN(function) to
-use as chip-select. The address space remains the same.
-
->> +Example with two SJA1000 CAN controllers connected to the NOR bus:
->> +
->> +     nor@70009000 {
->> +             status = "okay";
->> +             compatible = "nvidia,tegra20-nor", "nvidia,tegra30-nor";
->> +             reg = <0x70009000 0x1000>;
->> +             #address-cells = <2>;
->> +             #size-cells = <1>;
->> +             clocks = <&tegra_car TEGRA30_CLK_NOR>;
->> +             resets = < &tegra_car 42>;
->> +             reset-names = "nor";
->> +             ranges = <
->> +                     0 0 0x48000000 0x00000100
->> +                     1 0 0x48040000 0x00000100
->> +             >;
+>> +     /* Tegra20 */
+>> +     { .compatible = "nvidia,tegra20-nor", .data = NULL, },
 >
-> The "nvidia,config" appears to be missing here.
+> Same here.
 
-Indeed it is. ACK.
+ACK
 
-Thank you Jonanthan for your feedback.
+>> +static int __init nor_probe(struct platform_device *pdev)
+>> +{
+>
+> I would drop the __init.
+
+ACK.
+
+>> +static struct platform_driver nor_driver = {
+>> +     .driver = {
+>> +             .name           = "tegra-nor",
+>> +             .of_match_table = nor_id_table,
+>> +     },
+>> +};
+>
+> The driver should have a remove function given that we can build as a
+> module.
+
+At the moment I do not know what we would do in a remove function and
+hence me not adding one.
+
+>
+>> +module_platform_driver_probe(nor_driver, nor_probe);
+>
+> I would use "tegra_nor" namespace for all the structs, functions, etc.
+> However, we may prefer to go with GMI and in which case tegra_gmi_probe,
+> etc.
+
+ACK. Who gets the last call on what we should call the driver? It
+seems that we both think GMI is a better name, do we need a third? :).
+
+Thank you Jonathan for your feedback.
 
 Best Regards,
 Mirza
