@@ -1,139 +1,21 @@
-From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Mirza Krak <mirza.krak@gmail.com>
 Subject: Re: [RFC 6/6] bus: Add support for Tegra NOR controller
-Date: Thu, 21 Jul 2016 22:42:51 +0200
-Message-ID: <CALw8SCVy4ud5_+gS3C8WeyTCV0m_4R2xjdEY4vCKEq_3-aFanw@mail.gmail.com>
+Date: Thu, 21 Jul 2016 23:41:56 +0200
+Message-ID: <CALw8SCV9ZV+OpuVz3r2dXGb55mC26es-Oe7HfZRCJgyxONRqTQ@mail.gmail.com>
 References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-7-git-send-email-mirza.krak@gmail.com> <f6df33eb-53ae-699b-9e1f-69eb7fed7da0@nvidia.com>
+ <1468935397-11926-7-git-send-email-mirza.krak@gmail.com> <222d4179-a72f-56d1-246b-ab66af3057d9@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <f6df33eb-53ae-699b-9e1f-69eb7fed7da0-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <222d4179-a72f-56d1-246b-ab66af3057d9@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, linux@armlinux.org.uk
 List-Id: linux-tegra@vger.kernel.org
 
-2016-07-21 12:15 GMT+02:00 Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>:
+2016-07-21 17:12 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
 >
-> On 19/07/16 14:36, Mirza Krak wrote:
->> From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->> +config TEGRA_NOR
->> +     tristate "Nvidia Tegra NOR flash bus driver a.k.a GMI/SNOR"
->> +             depends on ARCH_TEGRA_2x_SOC || ARCH_TEGRA_3x_SOC
->> +             depends on OF
->> +             help
->> +                     Driver for NOR flash bus found on Tegra30/20 SOC`s.
->
-> It is actually present on all Tegra's and so I would drop the 30/20.
+> The reset is defined in the binding, but never used. Should we make sure
+> the reset is de-asserted in the probe?
 
-ACK.
-
->> +++ b/drivers/bus/tegra-nor.c
->> @@ -0,0 +1,118 @@
->> +/*
->> + * Driver for Nvidia NOR Flash bus a.k.a SNOR/GMI.
->> + *
->> + * Copyright (C) 2016 Host Mobility AB. All rights reserved.
->> + *
->> + * This file is licensed under the terms of the GNU General Public
->> + * License version 2. This program is licensed "as is" without any
->> + * warranty of any kind, whether express or implied.
->> + */
->> +
->> +#include <linux/clk.h>
->> +#include <linux/io.h>
->> +#include <linux/mfd/syscon.h>
->
-> Is this needed?
-
-It is not. ACK.
-
->
->> +#include <linux/module.h>
->> +#include <linux/of_device.h>
->> +#include <linux/regmap.h>
->
-> Or this?
-
-It is not. ACK.
-
->
->> +
->> +#define TEGRA_NOR_TIMING_REG_COUNT   2
->> +
->> +#define TEGRA_NOR_CONFIG                     0x00
->> +#define TEGRA_NOR_STATUS                     0x04
->> +#define TEGRA_NOR_ADDR_PTR                   0x08
->> +#define TEGRA_NOR_AHB_ADDR_PTR               0x0c
->> +#define TEGRA_NOR_TIMING0                    0x10
->> +#define TEGRA_NOR_TIMING1                    0x14
->> +#define TEGRA_NOR_MIO_CONFIG         0x18
->> +#define TEGRA_NOR_MIO_TIMING         0x1c
->> +#define TEGRA_NOR_DMA_CONFIG         0x20
->> +#define TEGRA_NOR_CS_MUX_CONFIG              0x24
->
-> Not all of these are used. It is good to define them and I wonder if we
-> should add support for MIO while are at it :-)
-
-We can come back to this once I have all SNOR stuff in order.
-
->
->> +
->> +#define TEGRA_NOR_CONFIG_GO                          BIT(31)
->> +
->> +static const struct of_device_id nor_id_table[] = {
->> +     /* Tegra30 */
->
-> I don't think this comment is needed.
-
-ACK.
-
->
->> +     { .compatible = "nvidia,tegra30-nor", .data = NULL, },
->
-> You don't need to set data to NULL.
-
-ACK.
-
->
->> +     /* Tegra20 */
->> +     { .compatible = "nvidia,tegra20-nor", .data = NULL, },
->
-> Same here.
-
-ACK
-
->> +static int __init nor_probe(struct platform_device *pdev)
->> +{
->
-> I would drop the __init.
-
-ACK.
-
->> +static struct platform_driver nor_driver = {
->> +     .driver = {
->> +             .name           = "tegra-nor",
->> +             .of_match_table = nor_id_table,
->> +     },
->> +};
->
-> The driver should have a remove function given that we can build as a
-> module.
-
-At the moment I do not know what we would do in a remove function and
-hence me not adding one.
-
->
->> +module_platform_driver_probe(nor_driver, nor_probe);
->
-> I would use "tegra_nor" namespace for all the structs, functions, etc.
-> However, we may prefer to go with GMI and in which case tegra_gmi_probe,
-> etc.
-
-ACK. Who gets the last call on what we should call the driver? It
-seems that we both think GMI is a better name, do we need a third? :).
-
-Thank you Jonathan for your feedback.
-
-Best Regards,
-Mirza
+Yes, will do that.
