@@ -1,91 +1,51 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
-Date: Thu, 21 Jul 2016 11:26:09 +0100
-Message-ID: <1f280c99-156f-59d3-308f-b4c8ff0f8f7c@nvidia.com>
-References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
- <20160720124408.GA19113@rob-hp-laptop>
- <CALw8SCXFexogJn3BwrZm63yEL0rtTpYsYYb0O9D_ibhginVLqw@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [RESEND PATCH] ARM: tegra: fix erroneous address in dts
+Date: Thu, 21 Jul 2016 14:28:55 +0200
+Message-ID: <6423681.52qkIkgFBQ@wuerfel>
+References: <1468835208-13426-1-git-send-email-ralf@ramses-pyramidenbau.de> <20160718095802.GA422@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <CALw8SCXFexogJn3BwrZm63yEL0rtTpYsYYb0O9D_ibhginVLqw@mail.gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Mirza Krak <mirza.krak@gmail.com>, Rob Herring <robh@kernel.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, linux@armlinux.org.uk
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160718095802.GA422@ulmo.ba.sec>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: arm@kernel.org, Ralf Ramsauer <ralf@ramses-pyramidenbau.de>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 20/07/16 20:28, Mirza Krak wrote:
-> 2016-07-20 14:44 GMT+02:00 Rob Herring <robh@kernel.org>:
->> On Tue, Jul 19, 2016 at 03:36:34PM +0200, Mirza Krak wrote:
->>> From: Mirza Krak <mirza.krak@gmail.com>
->>>
->>> Document the devicetree bindings for NOR bus driver found on Tegra20 and
->>> Tegra30 SOCs
->>>
->>> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
->>> ---
->>>  .../devicetree/bindings/bus/nvidia,tegra20-nor.txt | 73 ++++++++++++++++++++++
->>>  1 file changed, 73 insertions(+)
->>>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
->>>
->>> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
->>> new file mode 100644
->>> index 0000000..9ee4a66
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
->>> @@ -0,0 +1,73 @@
->>> +Device tree bindings for NVIDIA Tegra20/30 NOR Bus
->>> +
->>> +The NOR controller supports a number of memory types, including synchronous NOR,
->>> +asynchronous NOR, and other flash memories with similar interfaces, such as
->>> +MuxOneNAND. One could also connect high speed devices like FPGAs, DSPs,
->>> +CAN chips, Wi-Fi chips etc.
->>> +
->>> +The actual devices are instantiated from the child nodes of a NOR node.
->>> +
->>> +Required properties:
->>> +
->>> + - compatible: should be "nvidia,tegra20-nor", "nvidia,tegra30-nor"
->>> + - reg: Should contain NOR controller registers location and length.
->>> + - clocks: Must contain one entry, for the module clock.
->>> +   See ../clocks/clock-bindings.txt for details.
->>> + - resets : Must contain an entry for each entry in reset-names.
->>> +   See ../reset/reset.txt for details.
->>> + - reset-names : Must include the following entries:
->>> +  - nor
->>> + - #address-cells: Must be set to 2 to allow memory address translation
->>> + - #size-cells:      Must be set to 1 to allow CS address passing
->>> + - ranges: Must be set up to reflect the memory layout with four integer
->>> +             values for each chip-select line in use.
->>> + - nvidia,config: This property represents the SNOR_CONFIG_0 register.
->>> +
->>> +Note that the NOR controller does not have any internal chip-select address
->>> +decoding and if you want to access multiple devices external chip-select
->>> +decoding must be provided.
->>
->> Then what are the 2 chip selects in ranges?
->>
->> Rob
+On Monday, July 18, 2016 11:58:02 AM CEST Thierry Reding wrote:
+> On Mon, Jul 18, 2016 at 11:46:48AM +0200, Ralf Ramsauer wrote:
+> > c90bb7b enabled the high speed UARTs of the Jetson TK1. Due to a merge
+> > quirk, wrong addresses were introduced. Fix it and use the correct
+> > addresses.
+> > 
+> > Thierry let me know, that there is another patch (b5896f67ab3c in
+> > linux-next) in preparation which removes all the '0,' prefixes of unit
+> > addresses on Tegra124 and is planned to go upstream in 4.8, so
+> > this patch will get reverted then.
+> > 
+> > But for the moment, this patch is necessary to fix current misbehaviour.
+> > 
+> > Fixes: c90bb7b9b9 ("ARM: tegra: Add high speed UARTs to Jetson TK1 device tree")
+> > Signed-off-by: Ralf Ramsauer <ralf@ramses-pyramidenbau.de>
+> > Acked-by: Thierry Reding <thierry.reding@gmail.com>
+> > Cc: linux-tegra@vger.kernel.org
+> > ---
+> >  arch/arm/boot/dts/tegra124-jetson-tk1.dts | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> Those two chip selects are actually a representation of a external
-> decoding logic based on what we use on our board. Even though it the
-> NOR controller only supports one single chip select I wanted to give
-> an example on how one could create more chip-selects with an external
-> logic and what it would look like in the device tree representation.
+> ARM-SoC maintainers,
+> 
+> Just to clarify, this is targetted at v4.7 because the offending patch
+> was merged in v4.7-rc1. If at all possible it'd be great to get this in,
+> even if this is terribly last minute.
+> 
 
-Technically, the GMI/SNOR controller supports 8 chip-selects, however,
-unlike some devices, it appears that software has to select the active
-chip-select. Although this sounds odd, I believe that the idea is that
-in order to support devices greater than 256MB (external address space
-for available NOR/async devices) you can use the chip-selects to page
-through memory greater than this 256MB range. At least that it my
-(limited) understanding!
+I've applied it to the fixes branch, but as Linus is currently offline
+and hasn't pulled the previous set of fixes, I suspect it's not
+going to make it.
 
-Cheers
-Jon
+Olof, do you think we should send an amended pull request, or are
+we at the point where nothing gets pulled anyway?
 
--- 
-nvpublic
+	Arnd
