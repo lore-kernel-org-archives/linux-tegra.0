@@ -1,51 +1,63 @@
-From: rcochran-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org
-Subject: Re: [patch 61/66] timers: Convert to hotplug state machine
-Date: Mon, 25 Jul 2016 17:35:43 +0200
-Message-ID: <20160725153543.GB10939@linutronix.de>
-References: <20160711122450.923603742@linutronix.de>
- <20160711122535.775201614@linutronix.de>
- <7d37714e-b072-ee90-f14f-364f4fd01f0d@nvidia.com>
+From: Mirza Krak <mirza.krak@gmail.com>
+Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
+Date: Mon, 25 Jul 2016 21:59:34 +0200
+Message-ID: <CALw8SCVmVL82kZapEJA97XqQv6XZnR_S6ddsW1Gwk61v4Px9AA@mail.gmail.com>
+References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+ <1468935397-11926-4-git-send-email-mirza.krak@gmail.com> <20160725113034.GD21170@ulmo.ba.sec>
+ <CALw8SCWEFVu__8Gyr5q995h+=oMQEz1VUNB=Ne7MRb0O-tZXqg@mail.gmail.com> <20160725141544.GN21170@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <7d37714e-b072-ee90-f14f-364f4fd01f0d-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Anna-Maria Gleixner <anna-maria-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Peter Zijlstra <peterz-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Ingo Molnar <mingo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sebastian Andrzej Siewior <bigeasy-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-clk-owner@vger.kernel.org>
+In-Reply-To: <20160725141544.GN21170@ulmo.ba.sec>
+Sender: linux-clk-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, linux@armlinux.org.uk
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Jul 25, 2016 at 03:56:48PM +0100, Jon Hunter wrote:
-> > There is a hidden dependency between:
-> >
-> > - timers
-> > - Block multiqueue
-> > - rcutree
-> >
-> > If timers_dead_cpu() comes later than blk_mq_queue_reinit_notify()
-> > that latter function causes a RCU stall.
-> 
-> After this change is applied I am seeing RCU stalls during suspend
-> on Tegra. I guess I am hitting the case mentioned above? How should
-> this be avoided?
+2016-07-25 16:15 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
+> On Mon, Jul 25, 2016 at 03:16:28PM +0200, Mirza Krak wrote:
+>> 2016-07-25 13:30 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
+>> >
+>> > I would've expected this to require some sort of infrastructure to allow
+>> > devices connected to the GMI controller to acquire the bus via some API
+>> > to select their chip.
+>>
+>> Yes, ultimately you would need some sort of infrastructure to allow
+>> devices to acquire the GMI bus if you want to solve this in software.
+>> But at the moment I do not see such an infrastructure in place, and is
+>> it feasible to add one specifically for the GMI controller? If one
+>> such infrastructure was in place we would need to modify all the
+>> drivers that want to use to include Tegra specific infrastructure to
+>> access the GMI bus?
+>>
+>> Since my knowledge is limited it hard for me to comment on this, maybe
+>> there is a simple way of doing this?
+>
+> I don't think there's a simple way to do this. In order to properly
+> implement it we'd need to implement a generic infrastructure for chip
+> selects so that drivers such as the one for your CAN controller can be
+> written without tying them specifically to the Tegra GMI controller.
+>
+> From what you and Jon were saying it sounds like the drivers are
+> completely agnostic of any chip-select, so conversion won't be easy.
+> But technically if these chips take a chip-select as input then it's
+> always possible to hook them up to a controller that doesn't do this
+> automatic translation of address to chip-select, so eventually some
+> setup is bound to come along where they'd need explicit chip-select
+> handling as well.
+>
+> I don't think it's fair to require you to implement this infrastructure
+> if you don't actually need it. At the same time I want to be cautious
+> and make sure we keep the driver and binding flexible enough to allow
+> us to implement explicit chip-selects should we later need them.
+>
+> Thierry
 
-The problem that I had found was a hidden dependency.  When I
-initially placed the timers callback into the new HP state list, that
-caused a stall because the dependency was broken.  The old code worked
-by luck, based on the order of the notifier registrations.  The new
-code makes the old implicit ordering explicit, so it should work just
-as well as before (famous last words).
+One thing that should be noted, and that is the GMI controller also
+supports a DMA master mode (feature for the future?).
 
-> Interestingly I am only seeing the above when using the ARM
-> multi_v7_defconfig kernel configuration and not with the tegra_defconfig.
-> One key difference between these is that the multi_v7_defconfig does not
-> have CONFIG_PREEMPT enabled. Initial testing shows enabling CONFIG_PREEMPT
-> for multi_v7_defconfig makes the problem go away.
+I do not really know how this effects the binding we are discussing
+but wanted to put it out there.
 
-Just to be sure, this problem didn't exist before the HP rework, that
-is, suspend worked fine with and without CONFIG_PREEMPT, right?
-
-I see if I can find a tegra system to test with...
-
-Thanks,
-Richard
+Best Regards,
+Mirza
