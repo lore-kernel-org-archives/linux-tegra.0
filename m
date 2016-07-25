@@ -1,74 +1,50 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
-Date: Mon, 25 Jul 2016 09:14:27 +0100
-Message-ID: <88fb7138-f2b4-b51c-307b-5ef69b953498@nvidia.com>
+Subject: Re: [RFC 6/6] bus: Add support for Tegra NOR controller
+Date: Mon, 25 Jul 2016 09:19:12 +0100
+Message-ID: <7f558131-60c7-22e2-2b2e-93d4b405a2db@nvidia.com>
 References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
- <434561ec-510e-a3bf-c7b6-c961db299bd6@nvidia.com>
- <CALw8SCU0cz6mbO=oudCZ4-=2PHVORNt3gwmg2bzNjyhJFnWS3g@mail.gmail.com>
- <8e9cdefd-68d1-b788-92fb-b74aae1713c8@nvidia.com>
- <CALw8SCXb29NM=BRnUBsnFFObe25fSFi2mzvhrb5CvvJVCcWRfA@mail.gmail.com>
+ <1468935397-11926-7-git-send-email-mirza.krak@gmail.com>
+ <f6df33eb-53ae-699b-9e1f-69eb7fed7da0@nvidia.com>
+ <CALw8SCVy4ud5_+gS3C8WeyTCV0m_4R2xjdEY4vCKEq_3-aFanw@mail.gmail.com>
+ <dbbb5c9f-8c67-9d9f-171b-64cd18353411@nvidia.com>
+ <CALw8SCXCdVMKgemEyQ-MZbxdthkPCDVzi+3boqtXk1_XNjcz4g@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CALw8SCXb29NM=BRnUBsnFFObe25fSFi2mzvhrb5CvvJVCcWRfA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CALw8SCXCdVMKgemEyQ-MZbxdthkPCDVzi+3boqtXk1_XNjcz4g-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 22/07/16 20:07, Mirza Krak wrote:
-> 2016-07-22 11:32 GMT+02:00 Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>:
->>
->> On 21/07/16 21:10, Mirza Krak wrote:
->>> 2016-07-21 11:56 GMT+02:00 Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>:
->>>>
->>>> I wonder if it is worth mentioning that the chip-select specified in the
->>>> "nvidia,config" prop should match that in the "ranges" prop unless you
->>>> have some external decoding logic to provide an external chip-select.
->>>> Which raises a question, what does the chip-select in the ranges
->>>> actually represent? I am not sure if there is a common practice here for
->>>> device tree when boards have external logic to provide additional
->>>> chip-selects. I am sure this is quite common.
+
+On 22/07/16 20:18, Mirza Krak wrote:
+> 2016-07-22 11:38 GMT+02:00 Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>:
+>>>> The driver should have a remove function given that we can build as a
+>>>> module.
 >>>
->>> I do not understand why CS pin setting in nvidia,config need to match
->>> the "ranges" prop? Other then maybe cosmetics.
+>>> At the moment I do not know what we would do in a remove function and
+>>> hence me not adding one.
 >>
->> Yes it would be cosmetic. That said, I even wonder if CS needs to be
->> exposed at all given that they all map to the same CPU address space.
->> Couldn't your binding for the CAN devices be as follows?
->>
->> nor@70009000 {
->>         ...
->>
->>         can@48000000 {
->>                 ...
->>         };
->>
->>         can@48040000 {
->>                 ...
->>         };
->> };
+>> Should just be the inverse of the probe (although there is no inverse
+>> for the parsing DT bit). If you don't wish to add a remove, that is
+>> fine, but make the driver a 'bool' and not 'tristate' in the Kconfig so
+>> it cannot be configured as a module.
 > 
-> This has also crossed my mind, maybe just get rid of the "ranges" prop
-> and do like you have above. But then again I do not know what is
-> preferred so I went with "ranges" prop initially.
-> 
-> 
->>
->> Problem is if you did have devices on different chip-selects then how
->> would these be handled? They could not point to the same physical
->> address. I am not sure if there is a way to do that in DT?
-> 
-> Having trouble following your though here. We do not have "different"
-> chip-selects?
+> I understand the concept of a remove function, but I use devm_ calls
+> for all resources. These should be handled by the device core on a
+> driver detach?
 
-I meant that the device has multiple chip-selects and so I was not sure
-the best way to handle this for the GMI.
+There is one clock that needs to be disabled in the remove.
 
+Cheers
 Jon
 
 -- 
 nvpublic
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
