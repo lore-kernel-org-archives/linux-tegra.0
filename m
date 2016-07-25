@@ -1,205 +1,58 @@
-From: Mirza Krak <mirza.krak@gmail.com>
-Subject: Re: [RFC 6/6] bus: Add support for Tegra NOR controller
-Date: Mon, 25 Jul 2016 14:17:11 +0200
-Message-ID: <CALw8SCU5s8BAg6B8dT=QokY-D-CcokmMEkYqz1GJWHkX-XWpRQ@mail.gmail.com>
+From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC 1/6] clk: tegra: add TEGRA20_CLK_NOR to init table
+Date: Mon, 25 Jul 2016 14:28:48 +0200
+Message-ID: <CALw8SCUPn2xzToHbPC2FPr7rVutcFOq7dwhqREmxoG=L4gT5ew@mail.gmail.com>
 References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-7-git-send-email-mirza.krak@gmail.com> <20160725111443.GB21170@ulmo.ba.sec>
+ <1468935397-11926-2-git-send-email-mirza.krak@gmail.com> <20160725111735.GC21170@ulmo.ba.sec>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <20160725111443.GB21170@ulmo.ba.sec>
-Sender: linux-clk-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, linux@armlinux.org.uk
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160725111735.GC21170-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-2016-07-25 13:14 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
-> On Tue, Jul 19, 2016 at 03:36:37PM +0200, Mirza Krak wrote:
->> +config TEGRA_NOR
->> +     tristate "Nvidia Tegra NOR flash bus driver a.k.a GMI/SNOR"
->> +             depends on ARCH_TEGRA_2x_SOC || ARCH_TEGRA_3x_SOC
+2016-07-25 13:17 GMT+02:00 Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
+> On Tue, Jul 19, 2016 at 03:36:32PM +0200, Mirza Krak wrote:
+>> From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>>
+>> Add TEGRA20_CLK_NOR to init tabel and set a "sane" default rate.
+>>
+>> Signed-off-by: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>> ---
+>>  drivers/clk/tegra/clk-tegra20.c | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+>> index 837e5cb..aefc044 100644
+>> --- a/drivers/clk/tegra/clk-tegra20.c
+>> +++ b/drivers/clk/tegra/clk-tegra20.c
+>> @@ -1047,6 +1047,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+>>       { TEGRA20_CLK_SDMMC3, TEGRA20_CLK_PLL_P, 48000000, 0 },
+>>       { TEGRA20_CLK_SDMMC4, TEGRA20_CLK_PLL_P, 48000000, 0 },
+>>       { TEGRA20_CLK_SPI, TEGRA20_CLK_PLL_P, 20000000, 0 },
+>> +     { TEGRA20_CLK_NOR, TEGRA20_CLK_PLL_P, 86500000, 0 },
 >
-> I think an ARCH_TEGRA dependency is enough here.
+> Yay for inconsistent naming in the hardware. It would've been nice if
+> this clock was called GMI. Oh well...
 
-ACK.
-
->
->> +             depends on OF
->
-> You can drop this because Tegra has been OF-only for a long time now.
-
-ACK.
-
->
->> +             help
->> +                     Driver for NOR flash bus found on Tegra30/20 SOC`s.
->
-> Maybe make this "Driver for GMI controller found on NVIDIA Tegra SoCs."
-> or similar in light of the name change.
-
-ACK.
-
->> --- /dev/null
->> +++ b/drivers/bus/tegra-nor.c
->> @@ -0,0 +1,118 @@
->> +/*
->> + * Driver for Nvidia NOR Flash bus a.k.a SNOR/GMI.
->
-> Nit: I encourage the use of "NVIDIA" as spelling for consistency.
-
-ACK.
-
-
->> +static int __init nor_parse_dt(struct platform_device *pdev,
->> +                             void __iomem *base)
->> +{
->> +     struct device_node *of_node = pdev->dev.of_node;
->> +     u32 config, timing[TEGRA_NOR_TIMING_REG_COUNT];
->> +     int ret;
->> +
->> +     ret = of_property_read_u32_array(of_node, "nvidia,cs-timing",
->> +                                      timing, TEGRA_NOR_TIMING_REG_COUNT);
->> +     if (!ret) {
->> +             writel(timing[0], base + TEGRA_NOR_TIMING0);
->> +             writel(timing[1], base + TEGRA_NOR_TIMING1);
->> +     }
->> +
->> +     ret = of_property_read_u32(of_node, "nvidia,config", &config);
->> +     if (ret)
->> +             return ret;
->> +
->> +     config |= TEGRA_NOR_CONFIG_GO;
->> +     writel(config, base + TEGRA_NOR_CONFIG);
->
-> My preference would be for the tegra_gmi_parse_dt() function not to do
-> any register programming. Instead I think it would be better to store
-> any of the parameters inside a struct tegra_gmi and do the programming
-> from within tegra_gmi_probe() (or via an other function such as
-> tegra_gmi_initialize(), called from tegra_gmi_probe()).
->
-> The reason is that you'll most likely want to do this programming when
-> you resume from suspend, and you could reuse tegra_gmi_initialize() to
-> do that.
-
-ACK.
+I am allowed to change clk name? Can do that when I re-spin this series.
 
 >
->> +
->> +     if (of_get_child_count(of_node))
->> +             ret = of_platform_populate(of_node,
->> +                                of_default_bus_match_table,
->> +                                NULL, &pdev->dev);
->
-> Why the extra check? of_platform_populate() is almost a no-op if there
-> aren't any children anyway. What it will do is set the OF_POPULATED_BUS
-> flag, but I think we want that irrespective of whether or not there are
-> any children.
->
-> Was there any problem with calling it unconditionally that made you opt
-> for the extra check?
+> Could you perhaps explain in the commit message why 86.5 MHz is a sane
+> default? I'm totally unfamiliar with this controller, so maybe it's
+> self-explanatory, but it seems a rather odd value for a clock frequency.
 
-I have not tested calling it unconditionally. Used another driver as
-reference and they had that condition (drivers/bus/imx-weim.c), that
-driver does not mention why the condition is there. But will test
-removing the condition and see what happens.
+I used a value that I have in a downstream kernel based on the L4T.
+This frequency is well tested and has worked for me, and wanted to
+avoid setting it to maximum rate. My guess is that they used 86.5 MHz
+because 92 MHz is max rate on Tegra2 and they put it slightly below
+that.
 
->
-> Also, I think you can call of_platform_default_populate(), which is a
-> little shorter than the above because you can omit the match table.
+What is otherwise recommended when initializing clocks? The rate could
+depend on the chip that is attached but otherwise I would like to set
+it close to max (or max) rate for performance.
 
-Will look in to this.
-
->
->> +
->> +     return ret;
->> +}
->> +
->> +static int __init nor_probe(struct platform_device *pdev)
->> +{
->> +     struct resource *res;
->> +     struct clk *clk;
->> +     void __iomem *base;
->> +     int ret;
->> +
->> +     /* get the resource */
->> +     res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +     base = devm_ioremap_resource(&pdev->dev, res);
->> +     if (IS_ERR(base))
->> +             return PTR_ERR(base);
->> +
->> +     /* get the clock */
->> +     clk = devm_clk_get(&pdev->dev, NULL);
->
-> Let's use a consumer name here. The problem with a NULL consumer name is
-> that it effectively restricts the DT binding. It means that whatever the
-> clock is its name needs to be the first in a clock-names property. We'll
-> likely get away with this because there's only one clock, but should we
-> ever need to add another we'd need to add wording to the device tree
-> bindings that the "gmi" entry needs to be first.
->
-> I'm not sure if that's clear, so I'll try to explain in other words: If
-> you pass a NULL consumer name to clk_get() it will simply use the first
-> clock in the clocks property. If you want to later extend the DT binding
-> by adding a clock in a backwards-compatible way, you'll need to add the
-> restriction that the "gmi" clock (the one that was previously unnamed)
-> must be the first in the clock-names and clocks properties.
->
-> That's all a little confusing, so let's avoid this by giving it a proper
-> consumer name to begin with.
-
-Got it. Will add a proper consumer name.
-
->
->> +     if (IS_ERR(clk))
->> +             return PTR_ERR(clk);
->> +
->> +     ret = clk_prepare_enable(clk);
->> +     if (ret)
->> +             return ret;
->> +
->> +     /* parse the device node */
->> +     ret = nor_parse_dt(pdev, base);
->> +     if (ret) {
->> +             dev_err(&pdev->dev, "%s fail to create devices.\n",
->> +                     pdev->dev.of_node->full_name);
->> +             clk_disable_unprepare(clk);
->> +             return ret;
->> +     }
->
-> The good thing if you don't do any programming in tegra_gmi_parse_dt(),
-> is that you can easily move the clk_prepare_enable() call to here where
-> things can't fail anymore, so you don't have to add cleanup code.
-
-ACK.
-
->
->> +
->> +     dev_info(&pdev->dev, "Driver registered.\n");
->
-> Please avoid this kind of output. Users expect that everything will work
-> so you want to let them know when something goes wrong, and be quiet
-> when all goes as expected.
-
-Will remove that.
-
->> +static struct platform_driver nor_driver = {
->> +     .driver = {
->> +             .name           = "tegra-nor",
->> +             .of_match_table = nor_id_table,
->> +     },
->> +};
->> +module_platform_driver_probe(nor_driver, nor_probe);
->> +
->> +MODULE_AUTHOR("Mirza Krak <mirza.krak@gmail.com");
->> +MODULE_DESCRIPTION("NVIDIA Tegra NOR Bus Driver");
->> +MODULE_LICENSE("GPL");
->
-> You're header comment says GPL version 2, which means that the
-> MODULE_LICENSE needs to be "GPL v2". "GPL" means "version 2 or later".
-
-Ok, I do not really mind it being GPL version 2 or later so will
-change the header comment instead if that is ok.
-
-
-Best regards,
+Best Regards,
 Mirza
