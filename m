@@ -1,96 +1,215 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC 6/6] bus: Add support for Tegra NOR controller
-Date: Mon, 25 Jul 2016 15:41:38 +0200
-Message-ID: <20160725134138.GL21170@ulmo.ba.sec>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
+Date: Mon, 25 Jul 2016 15:49:26 +0200
+Message-ID: <20160725134926.GM21170@ulmo.ba.sec>
 References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-7-git-send-email-mirza.krak@gmail.com>
- <20160725111443.GB21170@ulmo.ba.sec>
- <CALw8SCU5s8BAg6B8dT=QokY-D-CcokmMEkYqz1GJWHkX-XWpRQ@mail.gmail.com>
+ <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
+ <434561ec-510e-a3bf-c7b6-c961db299bd6@nvidia.com>
+ <20160725115923.GF21170@ulmo.ba.sec>
+ <2b8c0fb7-b3c7-35bb-a237-2397fefbb725@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="UUBKWyapWpFAak7q"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="DheUW4aQn8WJk6WR"
+Return-path: <linux-clk-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CALw8SCU5s8BAg6B8dT=QokY-D-CcokmMEkYqz1GJWHkX-XWpRQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org
+In-Reply-To: <2b8c0fb7-b3c7-35bb-a237-2397fefbb725@nvidia.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Mirza Krak <mirza.krak@gmail.com>, swarren@wwwdotorg.org, gnurou@gmail.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, sboyd@codeaurora.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, galak@codeaurora.org, linux@armlinux.org.uk
 List-Id: linux-tegra@vger.kernel.org
 
 
---UUBKWyapWpFAak7q
+--DheUW4aQn8WJk6WR
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 25, 2016 at 02:17:11PM +0200, Mirza Krak wrote:
-> 2016-07-25 13:14 GMT+02:00 Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
-> > On Tue, Jul 19, 2016 at 03:36:37PM +0200, Mirza Krak wrote:
-[...]
-> >> +
-> >> +     if (of_get_child_count(of_node))
-> >> +             ret =3D of_platform_populate(of_node,
-> >> +                                of_default_bus_match_table,
-> >> +                                NULL, &pdev->dev);
-> >
-> > Why the extra check? of_platform_populate() is almost a no-op if there
-> > aren't any children anyway. What it will do is set the OF_POPULATED_BUS
-> > flag, but I think we want that irrespective of whether or not there are
-> > any children.
-> >
-> > Was there any problem with calling it unconditionally that made you opt
-> > for the extra check?
+On Mon, Jul 25, 2016 at 02:36:35PM +0100, Jon Hunter wrote:
 >=20
-> I have not tested calling it unconditionally. Used another driver as
-> reference and they had that condition (drivers/bus/imx-weim.c), that
-> driver does not mention why the condition is there. But will test
-> removing the condition and see what happens.
-
-If that works fine for Tegra, it might be a good idea to get rid of the
-call in the imx-weim.c driver, too.
-
-> >> +static struct platform_driver nor_driver =3D {
-> >> +     .driver =3D {
-> >> +             .name           =3D "tegra-nor",
-> >> +             .of_match_table =3D nor_id_table,
-> >> +     },
-> >> +};
-> >> +module_platform_driver_probe(nor_driver, nor_probe);
-> >> +
-> >> +MODULE_AUTHOR("Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org");
-> >> +MODULE_DESCRIPTION("NVIDIA Tegra NOR Bus Driver");
-> >> +MODULE_LICENSE("GPL");
-> >
-> > You're header comment says GPL version 2, which means that the
-> > MODULE_LICENSE needs to be "GPL v2". "GPL" means "version 2 or later".
+> On 25/07/16 12:59, Thierry Reding wrote:
+> > * PGP Signed by an unknown key
+> >=20
+> > On Thu, Jul 21, 2016 at 10:56:44AM +0100, Jon Hunter wrote:
+> >>
+> >> On 19/07/16 14:36, Mirza Krak wrote:
+> >>> From: Mirza Krak <mirza.krak@gmail.com>
+> >>>
+> >>> Document the devicetree bindings for NOR bus driver found on Tegra20 =
+and
+> >>> Tegra30 SOCs
+> >>>
+> >>> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+> >>> ---
+> >>>  .../devicetree/bindings/bus/nvidia,tegra20-nor.txt | 73 ++++++++++++=
+++++++++++
+> >>>  1 file changed, 73 insertions(+)
+> >>>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegr=
+a20-nor.txt
+> >>>
+> >>> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor=
+=2Etxt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
+> >>> new file mode 100644
+> >>> index 0000000..9ee4a66
+> >>> --- /dev/null
+> >>> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
+> >>> @@ -0,0 +1,73 @@
+> >>> +Device tree bindings for NVIDIA Tegra20/30 NOR Bus
+> >>> +
+> >>> +The NOR controller supports a number of memory types, including sync=
+hronous NOR,
+> >>> +asynchronous NOR, and other flash memories with similar interfaces, =
+such as
+> >>> +MuxOneNAND. One could also connect high speed devices like FPGAs, DS=
+Ps,
+> >>> +CAN chips, Wi-Fi chips etc.
+> >>
+> >> Nit-pick ... the Tegra documentation refers to this controller as the
+> >> GMI (general memory interface) or SNOR (sync-NOR) controller because it
+> >> is not just limited to NOR as you mentioned. I see references to GMI in
+> >> the Tegra pinctrl driver and so may be we should use this name.
+> >>
+> >>> +
+> >>> +The actual devices are instantiated from the child nodes of a NOR no=
+de.
+> >>> +
+> >>> +Required properties:
+> >>> +
+> >>> + - compatible: should be "nvidia,tegra20-nor", "nvidia,tegra30-nor"
+> >>
+> >> I see at least one difference at the register level between Tegra20 and
+> >> Tegra30 and so I think this should be something like ...
+> >>
+> >>  - compatible : Should contain one of the following:
+> >> 	For Tegra20 must contain "nvidia,tegra20-gmi".
+> >>  	For Tegra30 must contain "nvidia,tegra30-gmi".
+> >>
+> >>> + - reg: Should contain NOR controller registers location and length.
+> >>> + - clocks: Must contain one entry, for the module clock.
+> >>> +   See ../clocks/clock-bindings.txt for details.
+> >>> + - resets : Must contain an entry for each entry in reset-names.
+> >>> +   See ../reset/reset.txt for details.
+> >>> + - reset-names : Must include the following entries:
+> >>> +  - nor
+> >>> + - #address-cells: Must be set to 2 to allow memory address translat=
+ion
+> >>> + - #size-cells:	Must be set to 1 to allow CS address passing
+> >>> + - ranges: Must be set up to reflect the memory layout with four int=
+eger
+> >>> + 		values for each chip-select line in use.
+> >>> + - nvidia,config: This property represents the SNOR_CONFIG_0 registe=
+r.
+> >>
+> >> There is also a SNOR_MIO_CONFIG for the MIO address space and so I thi=
+nk
+> >> that this should be nvidia,snor-config to be explicit. It might be nice
+> >> to also add a "nvidia,mio-config" while you are at it as well, however,
+> >> that could always be done later. If you do, then the
+> >> "nvidia,snor-config" becomes optional depending on whether you are usi=
+ng
+> >> the SNOR or MIO address space.
+> >>
+> >> Thierry, Stephen, do prefer all the fields on the config registers are
+> >> broken out? There are quite a few but I am not sure what we typically
+> >> recommend here?
+> >=20
+> > As I said elsewhere, I prefer breaking the fields out into separate
+> > properties because that makes it a lot easier to write the DT. Rather
+> > than having to go and manually assemble 32-bit values for this register
+> > and the timing registers, it must be a lot easier to look at datasheets
+> > and copy the values into the corresponding DT properties.
 >=20
-> Ok, I do not really mind it being GPL version 2 or later so will
-> change the header comment instead if that is ok.
+> That's what I thought :-)
+>=20
+> >>> +Note that the NOR controller does not have any internal chip-select =
+address
+> >>> +decoding and if you want to access multiple devices external chip-se=
+lect
+> >>> +decoding must be provided.
+> >>
+> >> Although it is true, you do have the MIO address space and so you could
+> >> support two devices via the SNOR address space and MIO address space
+> >> (assuming that the MIO can be used for the 2nd device).
+> >=20
+> > Now I'm even more confused. If the GMI controller itself can't select a
+> > chip, what is the SNOR_SEL field in the SNOR_CONFIG_0 register for? Does
+> > that not select a specific chip?
+>=20
+> So the GMI has 8 chip-selects and these can be used by either the SNOR
+> interface for MIO interface. As you mentioned the chip-select used for
+> the SNOR interface is configured by the field SNOR_SEL in the
+> SNOR_CONFIG and similarly the chip-select for the MIO interface is
+> configured by the MIO_SEL field in the MIO_CONFIG register.
+>=20
+> Looking at the Tegra20 TRM, the SNOR interface is mapped to the address
+> range 0xd0000000-0xdfffffff and the MIO interface is mapped to the
+> address range 0xe0000000-0xefffffff. If chip-select 0 is used for SNOR
+> and chip-select 1 is used for MIO, you can support two devices at the
+> same time and they will be accessible via different address ranges.
+> Whether you can use the MIO interface for the 2nd device is another
+> question.
+>=20
+> If you want to support two 256MB NOR devices on the SNOR interface, then
+> you would need to reconfigure the SNOR_CONFIG each time you swap between
+> the two devices.
+>=20
+> >> Furthermore, if you do have external logic to support multiple devices
+> >> this would assume that the devices use the same timing and so are
+> >> probably the same type. It also assumes both can fit in the 256MB
+> >> address range. May be worth mentioning.
+> >=20
+> > Similarly if you switch between different devices, wouldn't you have to
+> > reprogram the timing registers if they are different?
+>=20
+> Yes.
 
-I think "GPL v2" is traditionally more common in kernel code, but as the
-author the decision is obviously yours.
+Okay, good. I'm relieved that I wasn't completely mistaken about how
+this kind of hardware works. =3D)
+
+> > The way I remember this kind of interface to work (it's been a long time
+> > since I used one) is that in order to operate on a chip you need to
+> > acquire the bus first. Typically that would be an API exposed by the bus
+> > driver or some framework that the bus driver registers with. That API
+> > arbitrates between multiple devices on the bus and makes sure that the
+> > proper chip select is asserted and timing is programmed when you're
+> > granted access. A driver that has acquired the bus can then perform what
+> > operations they need and release the bus when done.
+> >=20
+> > SPI uses a mechanism like this, for example.
+>=20
+> That would make sense. However, I am not sure how that would work with
+> the client drivers, such as the CAN driver Mirza is using, that wishes
+> to read/write directly to the SNOR address space. I am guessing that SPI
+> works like I2C and buffers up the requests and performs them in sequence.
+
+Yes, you would of course have to guard accesses by the drivers with
+calls to an API that acquire and release the bus. Not that it's very
+nice, but in the absence of automatic address to CS translation that
+really is the only way to solve it (explicit chip-select).
+
+It doesn't seem like we currently have infrastructure for it, but we
+would need something like that to solve this in the general case.
 
 Thierry
 
---UUBKWyapWpFAak7q
+--DheUW4aQn8WJk6WR
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXlhcSAAoJEN0jrNd/PrOhxrkQAKIfNnJW/ScRBGHbRXFNx76t
-jew18H44Px4L2AEbbWXwHFvflQ3TQ3n5M0wL7hu30lvbVh3oKMg80476HMnveUP2
-rV9rWmMRIAWL7yBGdDGWE/b8g9NvT7oteLxPcHq0+uWhq0W7nnfdNNeoeJ/MHClA
-XK0cN9/aBXn7ozo1nYXCcq7cxxPzYUmAvLMbwgawcX7YaY131QGNP+7w13sti3P+
-H7Tro+MJLzwReJNG9q047oBCTrITXvx8Kt91ujQKjI+u0ZmxKjmIaVaNIch0olHu
-9VgtorPZwOjPhAfS6K1zTlHHTUok0QPCd7rNhkXp/qi2aPB9Kksdk0LAVRS0lXln
-vsLe25Fdn+y8jxTLrwzFNcKD3gWzUwxFOVVffoRWN+OywoPpY2zqCBQflGDqfC7u
-2YUgyw7XVzCuVfJRqIT7jMdM3Cr0nrWW1OnSj29DPgAZRxKeMmiDN1GA2b6CZfPS
-SngKBNgEUPoXo8sc8lTp/ytwXIys7smgf3yyO/D0hXyUCiRa0h6mLhqzNF5lbZvo
-Gqo6MHqayGaZt0x67FlssSEWic+nGup55QPEyEFTZ9C3N7tOdV+w+yTPiRehWr/Z
-MsbvT94eMiBnc+Qxc3gtqGPOC8/Wdbsgu+ZE79GW7UXWjls8bYMuOfD69WuvuoFk
-0podG/7XHyb2nBwLheW1
-=yf9T
+iQIcBAABCAAGBQJXlhjmAAoJEN0jrNd/PrOh6uwQAKnDvVJjSg50qtf1bANwJxxI
+TnGum+coVOSIYSQliG/AjHl87mWyShJD8bYfz+Z2DhD/bg43V+UxoE5FTx92f5Ju
+z45YN8FIpp5+KsrjgxarBHfz2ZVStmFYxvEvzkTi5w+V2Zsx2y15gBEge18porGa
+dH+vZqKBjffTtSw3jMOScVsIY7o2D60hAD9Xv3elPPPsxcequSZ3kSTQMMsDetQb
+RXAuUhJ7MkZpUh/0HgXmCSnQplVSn9VBBfVHWK483SH3C6CiCXarMwe0djKG7TAI
+13rCTjBSEi1gClKnkP/aKXAXuUgrUfILgBErJSI9bce71dMq6MDP3TchsVGRo+X4
+qtwz37TFWrTaBT6wQ/YJZEcrCutK/GpAf0F8seLSVI6ABSksoHO9DT1lX3k4b0TS
+OHF4rTCoZvb1E5kcXH9px19XmhIwe22pz+9R/dLx8CiNFHGZto3PSmHengr73Xg3
+F4Yjx6yfTDpC7MH/Za4Gagg3Ry+jfch39mVMN8bq6vTUdAt8wrGgX3tnXtYE8mhB
+oI6HYXLSuy/nkGTWOEFTRo4nDr2HQAa4Y7653xOduhYKNDXz8BwjNvw698KKkE6n
+NDbD3ipyRraArByeDMbHUz9BfC+9rg2foyDpv5yob9qRHBlI24TTBeS3S56bXO1C
+miOsmLxRLukW5G83huIa
+=tGLd
 -----END PGP SIGNATURE-----
 
---UUBKWyapWpFAak7q--
+--DheUW4aQn8WJk6WR--
