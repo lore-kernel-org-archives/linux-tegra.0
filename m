@@ -1,94 +1,74 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RESEND PATCH] ARM: tegra: fix erroneous address in dts
-Date: Mon, 25 Jul 2016 16:18:18 +0200
-Message-ID: <20160725141818.GO21170@ulmo.ba.sec>
-References: <1468835208-13426-1-git-send-email-ralf@ramses-pyramidenbau.de>
- <20160718095802.GA422@ulmo.ba.sec>
- <6423681.52qkIkgFBQ@wuerfel>
- <c44f8315-d9dd-cf0b-775b-231af99ba7d3@ramses-pyramidenbau.de>
+Subject: Re: Flicker with fb on Jetson TK1
+Date: Mon, 25 Jul 2016 16:21:51 +0200
+Message-ID: <20160725142151.GP21170@ulmo.ba.sec>
+References: <20160725020234.GA25839@jirafa.cyrius.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="jx/LfW4V5TfZLeq7"
+	protocol="application/pgp-signature"; boundary="Bd2KlmcTHfsQFEJ+"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <c44f8315-d9dd-cf0b-775b-231af99ba7d3-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
+In-Reply-To: <20160725020234.GA25839-IRMp5PtgtdoigzW5ZibpNwC/G2K4zDHf@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ralf Ramsauer <ralf-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---jx/LfW4V5TfZLeq7
+--Bd2KlmcTHfsQFEJ+
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jul 24, 2016 at 10:38:38PM +0200, Ralf Ramsauer wrote:
-> On 07/21/2016 02:28 PM, Arnd Bergmann wrote:
-> > On Monday, July 18, 2016 11:58:02 AM CEST Thierry Reding wrote:
-> >> On Mon, Jul 18, 2016 at 11:46:48AM +0200, Ralf Ramsauer wrote:
-> >>> c90bb7b enabled the high speed UARTs of the Jetson TK1. Due to a merge
-> >>> quirk, wrong addresses were introduced. Fix it and use the correct
-> >>> addresses.
-> >>>
-> >>> Thierry let me know, that there is another patch (b5896f67ab3c in
-> >>> linux-next) in preparation which removes all the '0,' prefixes of unit
-> >>> addresses on Tegra124 and is planned to go upstream in 4.8, so
-> >>> this patch will get reverted then.
-> >>>
-> >>> But for the moment, this patch is necessary to fix current misbehavio=
-ur.
-> >>>
-> >>> Fixes: c90bb7b9b9 ("ARM: tegra: Add high speed UARTs to Jetson TK1 de=
-vice tree")
-> >>> Signed-off-by: Ralf Ramsauer <ralf-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
-> >>> Acked-by: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> >>> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> >>> ---
-> >>>  arch/arm/boot/dts/tegra124-jetson-tk1.dts | 4 ++--
-> >>>  1 file changed, 2 insertions(+), 2 deletions(-)
-> >>
-> >> ARM-SoC maintainers,
-> >>
-> >> Just to clarify, this is targetted at v4.7 because the offending patch
-> >> was merged in v4.7-rc1. If at all possible it'd be great to get this i=
-n,
-> >> even if this is terribly last minute.
-> >>
-> >=20
-> > I've applied it to the fixes branch, but as Linus is currently offline
-> > and hasn't pulled the previous set of fixes, I suspect it's not
-> > going to make it.
-> Yep, didn't make it. I'll resend the fix with stable in Cc tomorrow.
-> Keep you also in Cc.
+On Sun, Jul 24, 2016 at 07:02:34PM -0700, Martin Michlmayr wrote:
+> Running X with fb on the Jetson TK1, I get a flicker on the monitor
+> from time to time.  I don't think I need to do anything to trigger it
+> (such as moving the mouse).  It just happens from time to time.
 >=20
-> Thierry, this fix is only required for 4.7.x and gets superfluous when
-> b5896f67ab3c is applied. So I guess there is no need to fix mainline, rig=
-ht?
+> I don't have the right X patches for nouveau, so X is using fbdev
+> which I guess means the tegra-drm driver.
+>=20
+> This is with mainline u-boot (2016.07-rc1) and mainline kernel (4.6).
+>=20
+> I uploaded a video in which you can see the flicker several times
+> (e.g. at 0:03, 0:16 and 0:28):
+> http://www.cyrius.com/tmp/tk1/
 
-Agreed.
+What version of X do you use? Recent versions, I think starting with
+1.18, the modesetting driver is built-in and is what you should use with
+Tegra (and on top of an DRM/KMS driver, really).
 
+The problem with fbdev is that it doesn't do double-buffering and hence
+you can often see the kind of tearing as in the video. The modesetting
+driver (which is also available as xf86-video-modesetting pre-1.18) can
+do double-buffering (and I think will do by default), hence removing
+the cause of such tearing.
+
+Can you try running the test with the modesetting driver and report if
+you're still experiencing the issue?
+
+Thanks,
 Thierry
 
---jx/LfW4V5TfZLeq7
+--Bd2KlmcTHfsQFEJ+
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXlh+qAAoJEN0jrNd/PrOhifsQAKxhR4sRMciJXPc+Prwdq1B0
-wm+7kRhJpestlB9N8OUkiNa+LFwdukSzRqptF0dj/1x7awyO5zc8mpNAy3Xqjp2W
-eX7DjJSYMb9cHJDxVorjmdNZS/+f+GGI78l4IvmBoAn0tMAzhlq0ebHpann5qbdG
-5zdvZ7z+tW3/FWKU/xY6M2rTt0DVamcYIlgK8VnQfPKC1c7fG4HmDhir9RYqU6EZ
-b/xU/CReOJofiV75iyTE2DfWHqMKSunyqGhMX0C1ioN+xObdD6xldnMFrrUEw/4R
-RvX4QAv/203ofns/AsbGAa+bdHl4OPgLP0epd8SNkDjP4pWsSZlIm3rQt/MalKnl
-dkHGtShzby7ZVpHTREcBfzMCHsmYzZzvCjNo96IkktUOA4euLtJguAePo16VZ+UO
-JbRFhOF/W9MIcQDQxWM1UGcagQbhebIWLJ5RVfsHGFVaPhOiEj46X3uMa0VYVb9a
-wmU/G/3wbne0DWE7swQxHFc3Ju+Wpi4IO2649Ly7/vc1jt1RQAumvQuS5GZaoigZ
-Mmuis6xxjRlG53JvptZUcQF+VO0tehYj3ZN9+PsQm2YW2/G4n0nb9fH8iHdgMOMX
-j/fQcJmygPaoosExnIYoA8N9qaZ2nJ986eYUjKdIjZNveiJjmKJAqaUiMkKtOBP3
-N88RNfAEXP4Xk9RwhS7V
-=85Zt
+iQIcBAABCAAGBQJXliB/AAoJEN0jrNd/PrOhCYEP/1wR7c4bHF+evuR1+OAxfmXC
+uCJkrnue+y3SRTr15ZvcIJAoVlRjqLNfhDssGIBOxXRIWmrzUlMXob03ryZpNwT/
+9QlMk2qpSEdjnM/qawSfF4WwhZVANNUm/CWAO/7DDLhnlEyArr3wzXHhWx9FTnkq
+9wk6ev1YOb9W/M9agXfz6RkmXFG7cxrXS6xOyyRKxzD3vR0MQAn8NEHn/kNXjxsC
+g8a73Vn7wT4UgyiEtUuZQjFwWdEfiBYl4PhgSCOFa7XQ2kO3Whl7mvJ1CWHDA5FP
+tm6I1E8khpnDuP1fnIDmxytTD351Fue1xQ754QQwYT78tNhCATq/r/uPVBxJ3rcf
+6+mWuA2KBiMpADwlOwTIq5i8662q5ooaWojsBpgTw/nj36C8wuFi5EPBzdndkrQR
+0UjnFuUGN8NW+iAkozqrk79r5vqzuHf6awKCYfwZQy4W9WtSCTBnipURlEeqEZSr
+qg0PJQnNnJ9b3w4w4IaLGUIVY58pqLGOkiy+COZ7Cop9Xo9sDcYxj06505uCJOhw
+6bT7pzWJdaTLyUHfGs3PCkua2FegtcBtvmHwlhrdU3NAGa/Z5zki5DIz+etWtvpp
+ZRNuBGOh8bFxTSnyjMEYkvITYk6APHXcGjGeWGMN+K27YHcH2BWLYXpcPypP8DZ4
+BqwXkH9esksgJBvolA3y
+=Nj2H
 -----END PGP SIGNATURE-----
 
---jx/LfW4V5TfZLeq7--
+--Bd2KlmcTHfsQFEJ+--
