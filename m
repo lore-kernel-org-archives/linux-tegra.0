@@ -1,103 +1,172 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [RFC 1/6] clk: tegra: add TEGRA20_CLK_NOR to init table
-Date: Mon, 25 Jul 2016 15:23:06 +0200
-Message-ID: <20160725132306.GH21170@ulmo.ba.sec>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
+Date: Mon, 25 Jul 2016 15:27:11 +0200
+Message-ID: <20160725132711.GI21170@ulmo.ba.sec>
 References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-2-git-send-email-mirza.krak@gmail.com>
- <20160725111735.GC21170@ulmo.ba.sec>
- <CALw8SCUPn2xzToHbPC2FPr7rVutcFOq7dwhqREmxoG=L4gT5ew@mail.gmail.com>
+ <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
+ <20160720124408.GA19113@rob-hp-laptop>
+ <CALw8SCXFexogJn3BwrZm63yEL0rtTpYsYYb0O9D_ibhginVLqw@mail.gmail.com>
+ <1f280c99-156f-59d3-308f-b4c8ff0f8f7c@nvidia.com>
+ <20160725113638.GE21170@ulmo.ba.sec>
+ <CALw8SCUxbpWGz0Mrp-Wf=jxa84Frk6mubeL9+KAYFAbq+-9CZQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="TKYYegg/GYAC5JIZ"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="dCSxeJc5W8HZXZrD"
+Return-path: <linux-clk-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <CALw8SCUPn2xzToHbPC2FPr7rVutcFOq7dwhqREmxoG=L4gT5ew-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org
+In-Reply-To: <CALw8SCUxbpWGz0Mrp-Wf=jxa84Frk6mubeL9+KAYFAbq+-9CZQ@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Mirza Krak <mirza.krak@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Rob Herring <robh@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, linux@armlinux.org.uk
 List-Id: linux-tegra@vger.kernel.org
 
 
---TKYYegg/GYAC5JIZ
+--dCSxeJc5W8HZXZrD
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 25, 2016 at 02:28:48PM +0200, Mirza Krak wrote:
-> 2016-07-25 13:17 GMT+02:00 Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
-> > On Tue, Jul 19, 2016 at 03:36:32PM +0200, Mirza Krak wrote:
-> >> From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+On Mon, Jul 25, 2016 at 03:20:44PM +0200, Mirza Krak wrote:
+> 2016-07-25 13:36 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
+> > On Thu, Jul 21, 2016 at 11:26:09AM +0100, Jon Hunter wrote:
 > >>
-> >> Add TEGRA20_CLK_NOR to init tabel and set a "sane" default rate.
+> >> On 20/07/16 20:28, Mirza Krak wrote:
+> >> > 2016-07-20 14:44 GMT+02:00 Rob Herring <robh@kernel.org>:
+> >> >> On Tue, Jul 19, 2016 at 03:36:34PM +0200, Mirza Krak wrote:
+> >> >>> From: Mirza Krak <mirza.krak@gmail.com>
+> >> >>>
+> >> >>> Document the devicetree bindings for NOR bus driver found on Tegra=
+20 and
+> >> >>> Tegra30 SOCs
+> >> >>>
+> >> >>> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+> >> >>> ---
+> >> >>>  .../devicetree/bindings/bus/nvidia,tegra20-nor.txt | 73 +++++++++=
++++++++++++++
+> >> >>>  1 file changed, 73 insertions(+)
+> >> >>>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,t=
+egra20-nor.txt
+> >> >>>
+> >> >>> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-=
+nor.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
+> >> >>> new file mode 100644
+> >> >>> index 0000000..9ee4a66
+> >> >>> --- /dev/null
+> >> >>> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-nor.txt
+> >> >>> @@ -0,0 +1,73 @@
+> >> >>> +Device tree bindings for NVIDIA Tegra20/30 NOR Bus
+> >> >>> +
+> >> >>> +The NOR controller supports a number of memory types, including s=
+ynchronous NOR,
+> >> >>> +asynchronous NOR, and other flash memories with similar interface=
+s, such as
+> >> >>> +MuxOneNAND. One could also connect high speed devices like FPGAs,=
+ DSPs,
+> >> >>> +CAN chips, Wi-Fi chips etc.
+> >> >>> +
+> >> >>> +The actual devices are instantiated from the child nodes of a NOR=
+ node.
+> >> >>> +
+> >> >>> +Required properties:
+> >> >>> +
+> >> >>> + - compatible: should be "nvidia,tegra20-nor", "nvidia,tegra30-no=
+r"
+> >> >>> + - reg: Should contain NOR controller registers location and leng=
+th.
+> >> >>> + - clocks: Must contain one entry, for the module clock.
+> >> >>> +   See ../clocks/clock-bindings.txt for details.
+> >> >>> + - resets : Must contain an entry for each entry in reset-names.
+> >> >>> +   See ../reset/reset.txt for details.
+> >> >>> + - reset-names : Must include the following entries:
+> >> >>> +  - nor
+> >> >>> + - #address-cells: Must be set to 2 to allow memory address trans=
+lation
+> >> >>> + - #size-cells:      Must be set to 1 to allow CS address passing
+> >> >>> + - ranges: Must be set up to reflect the memory layout with four =
+integer
+> >> >>> +             values for each chip-select line in use.
+> >> >>> + - nvidia,config: This property represents the SNOR_CONFIG_0 regi=
+ster.
+> >> >>> +
+> >> >>> +Note that the NOR controller does not have any internal chip-sele=
+ct address
+> >> >>> +decoding and if you want to access multiple devices external chip=
+-select
+> >> >>> +decoding must be provided.
+> >> >>
+> >> >> Then what are the 2 chip selects in ranges?
+> >> >>
+> >> >> Rob
+> >> >
+> >> > Those two chip selects are actually a representation of a external
+> >> > decoding logic based on what we use on our board. Even though it the
+> >> > NOR controller only supports one single chip select I wanted to give
+> >> > an example on how one could create more chip-selects with an external
+> >> > logic and what it would look like in the device tree representation.
 > >>
-> >> Signed-off-by: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> >> ---
-> >>  drivers/clk/tegra/clk-tegra20.c | 1 +
-> >>  1 file changed, 1 insertion(+)
-> >>
-> >> diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-t=
-egra20.c
-> >> index 837e5cb..aefc044 100644
-> >> --- a/drivers/clk/tegra/clk-tegra20.c
-> >> +++ b/drivers/clk/tegra/clk-tegra20.c
-> >> @@ -1047,6 +1047,7 @@ static struct tegra_clk_init_table init_table[] =
-__initdata =3D {
-> >>       { TEGRA20_CLK_SDMMC3, TEGRA20_CLK_PLL_P, 48000000, 0 },
-> >>       { TEGRA20_CLK_SDMMC4, TEGRA20_CLK_PLL_P, 48000000, 0 },
-> >>       { TEGRA20_CLK_SPI, TEGRA20_CLK_PLL_P, 20000000, 0 },
-> >> +     { TEGRA20_CLK_NOR, TEGRA20_CLK_PLL_P, 86500000, 0 },
+> >> Technically, the GMI/SNOR controller supports 8 chip-selects, however,
+> >> unlike some devices, it appears that software has to select the active
+> >> chip-select. Although this sounds odd, I believe that the idea is that
+> >> in order to support devices greater than 256MB (external address space
+> >> for available NOR/async devices) you can use the chip-selects to page
+> >> through memory greater than this 256MB range. At least that it my
+> >> (limited) understanding!
 > >
-> > Yay for inconsistent naming in the hardware. It would've been nice if
-> > this clock was called GMI. Oh well...
+> > Actually I had assumed that software would at some point need to select
+> > the active chip to switch between multiple connected chips. I suppose it
+> > could be possible to have multiple chips share the same chip-select and
+> > decode the address lines to determine whether they're being accessed or
+> > not.
+> >
+> > What I don't understand, and it's further complicated by the fact that
+> > external chip-selects are being used, is how does the controller get
+> > told what chip to select? It seems to me like it would always access the
+> > same chips because the SNOR_CONFIG_0 register is only ever written on
+> > ->probe().
+> >
+> > For external chip selects, how do they tie in with all this? Who gets to
+> > implement this logic? Wouldn't we need to abstract this away somehow so
+> > that we can support whatever board designers will come up with?
+> >
+> > Thierry
 >=20
-> I am allowed to change clk name? Can do that when I re-spin this series.
-
-No, leave it as-is. The clock is referred to as NOR in the clock and
-reset controller. I was just saying that it would've been nice if it had
-been named GMI consistently.
-
-> > Could you perhaps explain in the commit message why 86.5 MHz is a sane
-> > default? I'm totally unfamiliar with this controller, so maybe it's
-> > self-explanatory, but it seems a rather odd value for a clock frequency.
+> You answered it your self :).
 >=20
-> I used a value that I have in a downstream kernel based on the L4T.
-> This frequency is well tested and has worked for me, and wanted to
-> avoid setting it to maximum rate. My guess is that they used 86.5 MHz
-> because 92 MHz is max rate on Tegra2 and they put it slightly below
-> that.
+> >I suppose it
+> > could be possible to have multiple chips share the same chip-select and
+> > decode the address lines to determine whether they're being accessed or
+> > not.
 >=20
-> What is otherwise recommended when initializing clocks? The rate could
-> depend on the chip that is attached but otherwise I would like to set
-> it close to max (or max) rate for performance.
+> That is what we do and is what I refer to as external chip-selects.
 
-I think we usually set the default rate to the maximum and let drivers
-clock them down as they see fit. This is so that things run fast by
-default and we often don't have much in the way of power management, at
-least not when drivers are first merged. Maximum clock rate ensure that
-we get good performance by default, rather than having to rely on
-drivers to kick it up a notch.
+Okay, so there aren't actually chips or pins that serve as external chip
+selects, but rather the GMI address lines are used to select the chip? I
+guess that's more like traditional address decoding rather than chip
+select. Anyway, understanding how your board design works helps devising
+a device tree binding that is flexible enough to support production
+devices.
 
 Thierry
 
---TKYYegg/GYAC5JIZ
+--dCSxeJc5W8HZXZrD
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXlhK3AAoJEN0jrNd/PrOhEsMP/i4bUMyxfX6xpWXIiPqehu4k
-vc6sH7rpKjSmR95gYLNoXdgfh8w6FmBBvjZt7+qvbDJMbBt6/2LMRXwwSAL+knXJ
-QwX0tnfV2z5YF5hm+V48MwHxrdCa3EFOvV6xjn9bZcD9RRPxjVY0pj5O1IsMVEWm
-mgzhgysUazl7QQT7JHdheSs6/MV7T7mz3wkzU3/XU2d/UKqyjG6XJIF2WCUSVkoy
-2ZiArc3xfUZCrpzo4Ook8qsEfqHelK0hfkDBcFq2pts9maLU8K9v393zhmAuUZxC
-Jab8h2lnjzXOP02+sOoUpuwIglLnI9y4DDgZc/NtnxVqk2z11Ea5SJaWQmBZkDlF
-4RSfgC3Wme1MkV+DPbQVBtUezw2I0QCrhZTNECVw8Y/o/CWuAQ7QikDfo9PW4qhI
-o83ww66q8U8CqrH1euzsyxByTSlUThojA9OpEYwItWTISEd0hoZ6O51HjPbImTt8
-bsLxROuljxOqA14J4m/BKa1NfNs7Q/laCkpyV3AUyNJZhAk/EXWHKsNlOJkcZrkv
-CTLgSxgRbabcnbNjjhQmQ4+f/LkTyxHz4grXmediXJEA6zOrC8T9Bb/y1hJ/ZmIf
-GvxbR66Wynfkq2XvHMkju+ssH+/2CfznaKhlAWs64v5S01BTOJ3k1gC+QIfbM5Jp
-b8ZlY1xDsz3e6pqYSgCa
-=fDkY
+iQIcBAABCAAGBQJXlhOuAAoJEN0jrNd/PrOhF0UQAIv7wwjOw2msnSbq62UimU9b
+eVr+jpKuf2S/9Fm0s58QZKEvy5kzMX35ohBXIr9S3pdROFUIMAYVAGy0fvp0+/Lw
+GfJ8Rm1V+HshErje4akevSrdAYkEvQbgZ41xWhtzk/70uXIfazKiL85Md8lDOePM
+aTqdVU0CSn4CMUDKgoU0/1gADrkfZIepBn3sn1yXHB111Gwr+GqfrrfeqAlhfh/K
+2kYElPlPRSGPiODoq6H30BkF3S8i2Qxt6h7aqJvHgcoMVhLAcDRQhvlJkD/XIF/2
+CuwwExHxjODNebREscu6CQ2Ivut/TSLyn1tuqe+0hwHKQ95bHe22hvP9qdC+qBUf
+t3xY7ZgYqjg6QDNFLQnI4tXrZJfAyTTOyl5ExhvQriIyhtz865sNqjIeMCkFyHqL
+UpC2r+MAqb0zYfF/HjEmwYlU7CJBfN8yxNidOt7Iyto8DQvgeEZnjEDd1WRI1lvi
+aItywBiYEZ6hvSrFfdbDILSt4DINdaLu8zmsfBVu7mC4tREJEsQEiJsPExcTJxj7
+lVBiOn4zSZn6NgonnnOe4ztUv7KiyuDII0ICD4xCNScwihr+h9zDjvfVQDjMExEd
+MV0BvG0kl23G7Ojtqnyuz5fQbmY9/g4y8yfu32MX/LtBSzdjCkQs8umomALCR/sc
+3SoMzRPSGj5cy+Pcybmk
+=fEYP
 -----END PGP SIGNATURE-----
 
---TKYYegg/GYAC5JIZ--
+--dCSxeJc5W8HZXZrD--
