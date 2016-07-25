@@ -1,73 +1,222 @@
-From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Thierry Reding <thierry.reding@gmail.com>
 Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
-Date: Mon, 25 Jul 2016 15:50:55 +0200
-Message-ID: <CALw8SCVkAXN0GBFXKthB=bHCAiOioVE-MTg3AGsZHK3kdcEMJw@mail.gmail.com>
+Date: Mon, 25 Jul 2016 16:15:44 +0200
+Message-ID: <20160725141544.GN21170@ulmo.ba.sec>
 References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
- <1468935397-11926-4-git-send-email-mirza.krak@gmail.com> <434561ec-510e-a3bf-c7b6-c961db299bd6@nvidia.com>
- <20160725115923.GF21170@ulmo.ba.sec> <CALw8SCU6vWeDyoy+t53k2+tmnrZd+ieBV88Vc6FSL9x3FzSm5g@mail.gmail.com>
- <20160725133922.GK21170@ulmo.ba.sec>
+ <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
+ <20160725113034.GD21170@ulmo.ba.sec>
+ <CALw8SCWEFVu__8Gyr5q995h+=oMQEz1VUNB=Ne7MRb0O-tZXqg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160725133922.GK21170-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="7fwXp2o0gOrkU5lS"
+Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CALw8SCWEFVu__8Gyr5q995h+=oMQEz1VUNB=Ne7MRb0O-tZXqg@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Mirza Krak <mirza.krak@gmail.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, linux@armlinux.org.uk
 List-Id: linux-tegra@vger.kernel.org
 
-2016-07-25 15:39 GMT+02:00 Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
-> On Mon, Jul 25, 2016 at 03:30:34PM +0200, Mirza Krak wrote:
->> 2016-07-25 13:59 GMT+02:00 Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
->> > On Thu, Jul 21, 2016 at 10:56:44AM +0100, Jon Hunter wrote:
->> >>
->> >
->> >> > +Note that the NOR controller does not have any internal chip-select address
->> >> > +decoding and if you want to access multiple devices external chip-select
->> >> > +decoding must be provided.
->> >>
->> >> Although it is true, you do have the MIO address space and so you could
->> >> support two devices via the SNOR address space and MIO address space
->> >> (assuming that the MIO can be used for the 2nd device).
->> >
->> > Now I'm even more confused. If the GMI controller itself can't select a
->> > chip, what is the SNOR_SEL field in the SNOR_CONFIG_0 register for? Does
->> > that not select a specific chip?
->> >
->> >> Furthermore, if you do have external logic to support multiple devices
->> >> this would assume that the devices use the same timing and so are
->> >> probably the same type. It also assumes both can fit in the 256MB
->> >> address range. May be worth mentioning.
->> >
->> > Similarly if you switch between different devices, wouldn't you have to
->> > reprogram the timing registers if they are different?
->> >
->> > The way I remember this kind of interface to work (it's been a long time
->> > since I used one) is that in order to operate on a chip you need to
->> > acquire the bus first. Typically that would be an API exposed by the bus
->> > driver or some framework that the bus driver registers with. That API
->> > arbitrates between multiple devices on the bus and makes sure that the
->> > proper chip select is asserted and timing is programmed when you're
->> > granted access. A driver that has acquired the bus can then perform what
->> > operations they need and release the bus when done.
->> >
->> > SPI uses a mechanism like this, for example.
->> >
->> > Thierry
->>
->> From my experience (maybe not as long as yours :)) but these kind of
->> things would be handled by the controller. At least with previous SOCs
->> that I have used, PXA270, PXA300 and i.MX SOCs.
->>
->> That it has an address range per chip-select PIN and timing registers
->> per chip-select. And thus eliminating a need for a infrastructure or
->> framework.
->
-> Okay, so the controllers have a translation table that needs to be
-> programmed and which maps address ranges to chip-selects. That's a nifty
-> feature, but I think it's also fairly specialized. In such a setup there
-> doesn't need to be a concept of chip-selects in software because it's
-> all transparently handled by the controller. Effectively the only time a
-> chip-select is needed is during the initial programming of the
-> controller when the translation table is set up.
 
-Yes, and in some cases you can not "program" the map as it is fixed in hardware.
+--7fwXp2o0gOrkU5lS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Jul 25, 2016 at 03:16:28PM +0200, Mirza Krak wrote:
+> 2016-07-25 13:30 GMT+02:00 Thierry Reding <thierry.reding@gmail.com>:
+[...]
+> > The above suggests that one of the CAN controllers gets mapped to an
+> > address 0x48000000 and the other gets mapped to 0x48040000. But why do
+> > we even need a chip-select at all in that case? If both chips don't use
+> > any overlapping memory region, what good does the chip-select do?
+>=20
+> If we take a look on similar controllers found on others SOCs they
+> usually define an address range / chip-select.
+>=20
+> Example (weim):
+> ranges =3D <
+> 0 0 0x10000000 0x02000000
+> 1 0 0x12000000 0x01000000
+> 2 0 0x13000000 0x01000000
+> 3 0 0x14000000 0x01000000
+> 4 0 0x15000000 0x01000000
+> 5 0 0x16000000 0x01000000
+> >;
+>=20
+> Which means that you all ready have an address mapped to PIN function.
+>=20
+> But Tegra GMI controller is a first for me, where you do not have this
+> kind of setup in hardware. Usually you also have a timing register /
+> chip-select so that you can connect different chip types.
+>=20
+> The lack of hardware support do decode an address to a chip-select PIN
+> function, we have implemented this our self externally.
+>=20
+> We actually have 6 different chips connected to the GMI bus and the
+> "ranges" would be:
+>   ranges =3D <
+>    0 0 0x48000000 0x00000100
+>    1 0 0x48040000 0x00000100
+>    2 0 0x48080000 0x00000100
+>    3 0 0x480A0000 0x00000100
+>    4 0 0x480C0000 0x00000100
+>    5 0 0x480E0000 0x00000100
+>   >;
+>=20
+> And this not nothing complicated, small number of AND gates and that is i=
+t.
+>=20
+> The chip-select signal is necessary for the access characteristics, so
+> we need to translate an address to an chip-select so that the chip
+> knows the host CPU wants to talk to it.
+>=20
+> Do not know if I made anything more clear here :).
+
+Yes, that clarifies many things. The presence of an external, address-
+based chip-select is essential information in order to describe this
+setup properly.
+
+Given that the external chip select is entirely invisible to software, I
+think a more accurate description of your setup would be:
+
+	gmi@70090000 {
+		...
+
+		/* for the chip select */
+		#address-cells =3D <1>;
+		#size-cells =3D <0>;
+
+		/*
+		 * Technically this could be used to translate the range from
+		 * 0x48000000 to 0x4fffffff into a different range, but that
+		 * no longer works because of the #address-cells. Does this
+		 * matter?
+		 */
+		ranges;
+
+		bus@0 {
+			compatible =3D "simple-bus";
+			reg =3D <0>;
+
+			#address-cells =3D <1>;
+			#size-cells =3D <1>;
+
+			can@48000000 {
+				reg =3D <0x48000000 0x100>;
+				...
+			};
+
+			can@48040000 {
+				reg =3D <0x48040000 0x100>;
+				...
+			};
+		};
+	};
+
+That omits any reference to the external chip select, which I think
+makes sense because it's something that software is completely unaware
+of.
+
+Perhaps one important question: does your setup use the GMI's CS lines
+in any way? Or does it simply get ignored?
+
+If it gets ignored, I suppose one could encode this as a special case:
+
+	gmi@70090000 {
+		...
+
+		/* simple address translation */
+		#address-cells =3D <1>;
+		#size-cells =3D <1>;
+
+		ranges =3D <0x48000000 0x48000000 0x08000000>;
+
+		can@48000000 {
+			...
+			reg =3D <0x48000000 0x100>;
+			...
+		};
+
+		can@48040000 {
+			...
+			reg =3D <0x48000000 0x100>;
+			...
+		};
+	};
+
+We could use that special case in order to make the driver behave in a
+special way that suits your setup, namely without explicit chip-select.
+The case where #size-cells =3D <0> could be treated as the explicit chip-
+select case, that somebody could implement in the future if they need
+it. All other cases could be treated as meaning that the chip-select is
+automatically handled externally (like in your setup) and we simply
+statically configure the controller with chip select 0 (kind of in the
+way your current patch series does).
+
+Rob, what do you think about the above?
+
+> > Also, it seems to me that you'd have to program the SNOR_CONFIG_0
+> > register in order to select a specific chip, but I don't see anything in
+> > the driver access that register after the initial write of the register.
+>=20
+> This is only setup at probe.
+>=20
+> >
+> > I would've expected this to require some sort of infrastructure to allow
+> > devices connected to the GMI controller to acquire the bus via some API
+> > to select their chip.
+>=20
+> Yes, ultimately you would need some sort of infrastructure to allow
+> devices to acquire the GMI bus if you want to solve this in software.
+> But at the moment I do not see such an infrastructure in place, and is
+> it feasible to add one specifically for the GMI controller? If one
+> such infrastructure was in place we would need to modify all the
+> drivers that want to use to include Tegra specific infrastructure to
+> access the GMI bus?
+>=20
+> Since my knowledge is limited it hard for me to comment on this, maybe
+> there is a simple way of doing this?
+
+I don't think there's a simple way to do this. In order to properly
+implement it we'd need to implement a generic infrastructure for chip
+selects so that drivers such as the one for your CAN controller can be
+written without tying them specifically to the Tegra GMI controller.
+
+=46rom what you and Jon were saying it sounds like the drivers are
+completely agnostic of any chip-select, so conversion won't be easy.
+But technically if these chips take a chip-select as input then it's
+always possible to hook them up to a controller that doesn't do this
+automatic translation of address to chip-select, so eventually some
+setup is bound to come along where they'd need explicit chip-select
+handling as well.
+
+I don't think it's fair to require you to implement this infrastructure
+if you don't actually need it. At the same time I want to be cautious
+and make sure we keep the driver and binding flexible enough to allow
+us to implement explicit chip-selects should we later need them.
+
+Thierry
+
+--7fwXp2o0gOrkU5lS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXlh8NAAoJEN0jrNd/PrOh5uYQAKDhLbzQcu8OQXBEUkt8HjY+
+jE3O9un4ft/1Bs/8t6oxC4T89/v0+xZKYyRFN9RnYlcmnF9Vnm+lpIOIuvESrnkp
+GytHKBFSFcCOQaP8GphmCjs7vgtKiKKF2b2TZ28CDqR3RDliyyNBVRYJooEzhzFU
+GQ4a/ytautrLWj61t27I9YHG9TFtsFlCb3ixrEXErUovlhaAPWtk2JyKAOpQiXxA
+IvZxdQewkDN7pOde5m5Un0U6whkegCb/Oxp95/YVUhxPNkpm07Qo49qS1TsXFl2s
+tCA67/9yL5lucNFV1CAUgpYGdJsgGfSncOSFAbW+bVPY5fng+qOm607HI+zbLEs9
+FdH20NqBOXWAWQXf+5vRo+Jdt0nOWvKQot0yJc6u7W3gYf4JhfIItC8LuSh0fDMv
+MfwHyOqj8cPeMyzRfobLURq1irNcDIoTkKd5vbRF0hxaHwTVc+VX/G+nXtbWGLeT
+cpNQhsV1rTg5cuYtojEZ4viIlXNc3cSfewVmvyD15/7+SgovZSLG4+kuKEzs0BWP
+iLUcCmWt9aDT+9ZsN4rN2IvQ6PTBHUIOb5Ahb+S9QrRFMcOl+/Lsx2O02tX5lJ1g
+F0O+67HzCnvzSi1gz56YNcxsuY+RONmOhYNfBlMwsrOa0OUdK4RzPBv+PDyPRCXZ
+v7WIQirvchn32JUu14Ra
+=ZHPH
+-----END PGP SIGNATURE-----
+
+--7fwXp2o0gOrkU5lS--
