@@ -1,77 +1,94 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.7
-Date: Mon, 25 Jul 2016 10:00:24 +0100
-Message-ID: <34b07bcc-d1c4-85cc-bef9-4d8ce4a48480@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [RFC 6/6] bus: Add support for Tegra NOR controller
+Date: Mon, 25 Jul 2016 12:57:13 +0200
+Message-ID: <20160725105713.GA21170@ulmo.ba.sec>
+References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+ <1468935397-11926-7-git-send-email-mirza.krak@gmail.com>
+ <f6df33eb-53ae-699b-9e1f-69eb7fed7da0@nvidia.com>
+ <CALw8SCVy4ud5_+gS3C8WeyTCV0m_4R2xjdEY4vCKEq_3-aFanw@mail.gmail.com>
+ <dbbb5c9f-8c67-9d9f-171b-64cd18353411@nvidia.com>
+ <CALw8SCXCdVMKgemEyQ-MZbxdthkPCDVzi+3boqtXk1_XNjcz4g@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ReaqsoxgOBHFXBhH"
+Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <CALw8SCXCdVMKgemEyQ-MZbxdthkPCDVzi+3boqtXk1_XNjcz4g@mail.gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Mirza Krak <mirza.krak@gmail.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, robh+dt@kernel.org, pawel.moll@arm.com, mark.rutland@arm.com, ijc+devicetree@hellion.org.uk, Kumar Gala <galak@codeaurora.org>, linux@armlinux.org.uk
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.7.
-Logs and other details at:
 
-    https://nvtb.github.io//linux/test_v4.7/20160724130103/
+--ReaqsoxgOBHFXBhH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Jul 22, 2016 at 09:18:37PM +0200, Mirza Krak wrote:
+> 2016-07-22 11:38 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
+> >>> The driver should have a remove function given that we can build as a
+> >>> module.
+> >>
+> >> At the moment I do not know what we would do in a remove function and
+> >> hence me not adding one.
+> >
+> > Should just be the inverse of the probe (although there is no inverse
+> > for the parsing DT bit). If you don't wish to add a remove, that is
+> > fine, but make the driver a 'bool' and not 'tristate' in the Kconfig so
+> > it cannot be configured as a module.
+>=20
+> I understand the concept of a remove function, but I use devm_ calls
+> for all resources. These should be handled by the device core on a
+> driver detach?
+>=20
+> One thing came to mind now that could be done in a remove method and
+> that is clearing the CONFIG_GO bit, or I could just do that first on
+> probe instead to make sure the controller is stopped.
+>=20
+> Ok, one more thing came to mind, and that is depopulating the child
+> devices. Got it remove function it is then.
+>=20
+> >>>> +module_platform_driver_probe(nor_driver, nor_probe);
+> >>>
+> >>> I would use "tegra_nor" namespace for all the structs, functions, etc.
+> >>> However, we may prefer to go with GMI and in which case tegra_gmi_pro=
+be,
+> >>> etc.
+> >>
+> >> ACK. Who gets the last call on what we should call the driver? It
+> >> seems that we both think GMI is a better name, do we need a third? :).
+> >
+> > The patches would have to go via Thierry and so ultimately, Thierry.
+> > However, I can't imagine he would object to GMI ;-)
+>=20
+> Eagerly awaiting Thierry`s comments :).
 
-Test summary
-------------
+Let's go with GMI. The TRM has a mix of GMI vs. SNOR, but as Jon points
+out the pinmux doesn't mention SNOR, so in order to hopefully reduce the
+confusion, let's stick with GMI.
 
-Build: zImage:
-    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
+Thierry
 
-Build: Image:
-    Pass: ( 1/ 1): defconfig
+--ReaqsoxgOBHFXBhH
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Boot to userspace: defconfig:
-    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
-		   tegra210-p2371-0000, tegra210-smaug
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
 
-Boot to userspace: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+iQIcBAABCAAGBQJXlfCGAAoJEN0jrNd/PrOh93MP/jsPdVE0PwR+Z94UQsYutowG
+t4bK/9ErFyvkKWiNDRTnKudga+1sOhg3NCsxs6FeJ2Xh0Cr3DVPJuJCH0ZknOkGu
+bqErhIUUaG7fHcdBt2H7VGBYDzQDN5eWVvJWKW7Bik4V8AGhV4EGnfkrhnWU7VVm
+B+qzmiGd2B9ec+F5xVJL4uB+M/Ma50N8aldk3kwqlD7pRfuux8nC7iuKMdF/hotg
+m0Nv/+zBN+RaOKCsIFoSKOITRocFF0oM6R6YX4ZsYLNELQyDoXkO51rtnx3LlrGN
+ce2mcddtSyBorAVVyfPyJFgUG2EJG0EF5Z4yQiBb946DU8x4T4W5M87AgngxsIbb
+aHnkHcSIG+PA73Sg/gDw4bzCKiwaMUD8zW7ZRsx2m9whdLZgfi8I9gI86+KPJUFm
+kSujU8bh6ymOKiKC8r0hsgbmBaIQ6AurxxAfxfKcpK5GHr+Yz6qDYUWCiGnCYHXs
+4Kwb2RlFfmmlw3CpVV4ikZzyCEIsu0UxIskgExaMk5+2rF+sj+x3I5iRZt2uJcv0
+xZR6js7H4aphEO1aIpalaLIxliUhoNZP/7+urJKMZdC4rGfzpGxkZpPHNc3Of1Ua
+fmaB6hXoDQwfZVncIWWrfBHlsr8M9OM3rMZSnJEQG0pDtTB+aBbkgvzp0tsR/BSc
+mKs9izCN/aTemZtwCZAw
+=MF8X
+-----END PGP SIGNATURE-----
 
-Boot to userspace: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v4.7-rc7 (92d21ac74a9e3c09b0b01c764e530657e4c85c49)):
-   text     data      bss    total  kernel
-   -225        0     +128      -97  defconfig
-   +759        0        0     +759  multi_v7_defconfig
-   +603     +128        0     +731  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v4.7-rc7 (92d21ac74a9e3c09b0b01c764e530657e4c85c49))
-    avail    rsrvd     high    freed                board              kconfig                  dtb
-        .        .        .        .      qemu-vexpress64            defconfig           __internal
-        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-        .        .        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
-        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
-        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
-        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
-        .        .        .        .       tegra210-smaug            defconfig       tegra210-smaug
-        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
-
---
-nvpublic
+--ReaqsoxgOBHFXBhH--
