@@ -1,29 +1,74 @@
-From: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
-Subject: Flicker with fb on Jetson TK1
-Date: Sun, 24 Jul 2016 19:02:34 -0700
-Message-ID: <20160725020234.GA25839@jirafa.cyrius.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
+Date: Mon, 25 Jul 2016 09:14:27 +0100
+Message-ID: <88fb7138-f2b4-b51c-307b-5ef69b953498@nvidia.com>
+References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+ <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
+ <434561ec-510e-a3bf-c7b6-c961db299bd6@nvidia.com>
+ <CALw8SCU0cz6mbO=oudCZ4-=2PHVORNt3gwmg2bzNjyhJFnWS3g@mail.gmail.com>
+ <8e9cdefd-68d1-b788-92fb-b74aae1713c8@nvidia.com>
+ <CALw8SCXb29NM=BRnUBsnFFObe25fSFi2mzvhrb5CvvJVCcWRfA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
+In-Reply-To: <CALw8SCXb29NM=BRnUBsnFFObe25fSFi2mzvhrb5CvvJVCcWRfA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Running X with fb on the Jetson TK1, I get a flicker on the monitor
-from time to time.  I don't think I need to do anything to trigger it
-(such as moving the mouse).  It just happens from time to time.
 
-I don't have the right X patches for nouveau, so X is using fbdev
-which I guess means the tegra-drm driver.
+On 22/07/16 20:07, Mirza Krak wrote:
+> 2016-07-22 11:32 GMT+02:00 Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>:
+>>
+>> On 21/07/16 21:10, Mirza Krak wrote:
+>>> 2016-07-21 11:56 GMT+02:00 Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>:
+>>>>
+>>>> I wonder if it is worth mentioning that the chip-select specified in the
+>>>> "nvidia,config" prop should match that in the "ranges" prop unless you
+>>>> have some external decoding logic to provide an external chip-select.
+>>>> Which raises a question, what does the chip-select in the ranges
+>>>> actually represent? I am not sure if there is a common practice here for
+>>>> device tree when boards have external logic to provide additional
+>>>> chip-selects. I am sure this is quite common.
+>>>
+>>> I do not understand why CS pin setting in nvidia,config need to match
+>>> the "ranges" prop? Other then maybe cosmetics.
+>>
+>> Yes it would be cosmetic. That said, I even wonder if CS needs to be
+>> exposed at all given that they all map to the same CPU address space.
+>> Couldn't your binding for the CAN devices be as follows?
+>>
+>> nor@70009000 {
+>>         ...
+>>
+>>         can@48000000 {
+>>                 ...
+>>         };
+>>
+>>         can@48040000 {
+>>                 ...
+>>         };
+>> };
+> 
+> This has also crossed my mind, maybe just get rid of the "ranges" prop
+> and do like you have above. But then again I do not know what is
+> preferred so I went with "ranges" prop initially.
+> 
+> 
+>>
+>> Problem is if you did have devices on different chip-selects then how
+>> would these be handled? They could not point to the same physical
+>> address. I am not sure if there is a way to do that in DT?
+> 
+> Having trouble following your though here. We do not have "different"
+> chip-selects?
 
-This is with mainline u-boot (2016.07-rc1) and mainline kernel (4.6).
+I meant that the device has multiple chip-selects and so I was not sure
+the best way to handle this for the GMI.
 
-I uploaded a video in which you can see the flicker several times
-(e.g. at 0:03, 0:16 and 0:28):
-http://www.cyrius.com/tmp/tk1/
+Jon
 
 -- 
-Martin Michlmayr
-http://www.cyrius.com/
+nvpublic
