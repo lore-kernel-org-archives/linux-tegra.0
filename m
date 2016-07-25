@@ -1,81 +1,138 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [patch 61/66] timers: Convert to hotplug state machine
-Date: Mon, 25 Jul 2016 15:56:48 +0100
-Message-ID: <7d37714e-b072-ee90-f14f-364f4fd01f0d@nvidia.com>
-References: <20160711122450.923603742@linutronix.de>
- <20160711122535.775201614@linutronix.de>
+Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
+Date: Mon, 25 Jul 2016 16:01:49 +0100
+Message-ID: <44b2703e-a417-eb3e-b154-6919dc6618d7@nvidia.com>
+References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+ <1468935397-11926-4-git-send-email-mirza.krak@gmail.com>
+ <20160725113034.GD21170@ulmo.ba.sec>
+ <CALw8SCWEFVu__8Gyr5q995h+=oMQEz1VUNB=Ne7MRb0O-tZXqg@mail.gmail.com>
+ <20160725141544.GN21170@ulmo.ba.sec>
+ <CALw8SCWouYF+CY7n67mFxyL2CFbY4k1oB7oySTU9WkSMqosFUA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-15"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160711122535.775201614-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+In-Reply-To: <CALw8SCWouYF+CY7n67mFxyL2CFbY4k1oB7oySTU9WkSMqosFUA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Anna-Maria Gleixner <anna-maria-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Richard Cochran <rcochran-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
-Cc: Peter Zijlstra <peterz-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Ingo Molnar <mingo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sebastian Andrzej Siewior <bigeasy-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Richard,
 
-On 11/07/16 13:29, Anna-Maria Gleixner wrote:
-> From: Richard Cochran <rcochran-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
+On 25/07/16 15:38, Mirza Krak wrote:
+> 2016-07-25 16:15 GMT+02:00 Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
+>> On Mon, Jul 25, 2016 at 03:16:28PM +0200, Mirza Krak wrote:
+>>> 2016-07-25 13:30 GMT+02:00 Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
+>> [...]
+>>>> The above suggests that one of the CAN controllers gets mapped to an
+>>>> address 0x48000000 and the other gets mapped to 0x48040000. But why do
+>>>> we even need a chip-select at all in that case? If both chips don't use
+>>>> any overlapping memory region, what good does the chip-select do?
+>>>
+>>> If we take a look on similar controllers found on others SOCs they
+>>> usually define an address range / chip-select.
+>>>
+>>> Example (weim):
+>>> ranges = <
+>>> 0 0 0x10000000 0x02000000
+>>> 1 0 0x12000000 0x01000000
+>>> 2 0 0x13000000 0x01000000
+>>> 3 0 0x14000000 0x01000000
+>>> 4 0 0x15000000 0x01000000
+>>> 5 0 0x16000000 0x01000000
+>>>> ;
+>>>
+>>> Which means that you all ready have an address mapped to PIN function.
+>>>
+>>> But Tegra GMI controller is a first for me, where you do not have this
+>>> kind of setup in hardware. Usually you also have a timing register /
+>>> chip-select so that you can connect different chip types.
+>>>
+>>> The lack of hardware support do decode an address to a chip-select PIN
+>>> function, we have implemented this our self externally.
+>>>
+>>> We actually have 6 different chips connected to the GMI bus and the
+>>> "ranges" would be:
+>>>   ranges = <
+>>>    0 0 0x48000000 0x00000100
+>>>    1 0 0x48040000 0x00000100
+>>>    2 0 0x48080000 0x00000100
+>>>    3 0 0x480A0000 0x00000100
+>>>    4 0 0x480C0000 0x00000100
+>>>    5 0 0x480E0000 0x00000100
+>>>   >;
+>>>
+>>> And this not nothing complicated, small number of AND gates and that is it.
+>>>
+>>> The chip-select signal is necessary for the access characteristics, so
+>>> we need to translate an address to an chip-select so that the chip
+>>> knows the host CPU wants to talk to it.
+>>>
+>>> Do not know if I made anything more clear here :).
+>>
+>> Yes, that clarifies many things. The presence of an external, address-
+>> based chip-select is essential information in order to describe this
+>> setup properly.
+>>
+>> Given that the external chip select is entirely invisible to software, I
+>> think a more accurate description of your setup would be:
+>>
+>>         gmi@70090000 {
+>>                 ...
+>>
+>>                 /* for the chip select */
+>>                 #address-cells = <1>;
+>>                 #size-cells = <0>;
+>>
+>>                 /*
+>>                  * Technically this could be used to translate the range from
+>>                  * 0x48000000 to 0x4fffffff into a different range, but that
+>>                  * no longer works because of the #address-cells. Does this
+>>                  * matter?
+>>                  */
+>>                 ranges;
+>>
+>>                 bus@0 {
+>>                         compatible = "simple-bus";
+>>                         reg = <0>;
+>>
+>>                         #address-cells = <1>;
+>>                         #size-cells = <1>;
+>>
+>>                         can@48000000 {
+>>                                 reg = <0x48000000 0x100>;
+>>                                 ...
+>>                         };
+>>
+>>                         can@48040000 {
+>>                                 reg = <0x48040000 0x100>;
+>>                                 ...
+>>                         };
+>>                 };
+>>         };
+>>
+>> That omits any reference to the external chip select, which I think
+>> makes sense because it's something that software is completely unaware
+>> of.
+>>
+>> Perhaps one important question: does your setup use the GMI's CS lines
+>> in any way? Or does it simply get ignored?
 > 
-> When tearing down, call timers_dead_cpu before notify_dead.
-> There is a hidden dependency between:
->
-> - timers
-> - Block multiqueue
-> - rcutree
->
-> If timers_dead_cpu() comes later than blk_mq_queue_reinit_notify()
-> that latter function causes a RCU stall.
+> Yes, we use the GMI`s CS line. It is important that is present because
+> it is ANDED with address lines and NOT ALE line. Especially since we
+> run the GMI controller in AD_MUX mode, which means that we use same
+> pins for address and data and the access happens in two phases, one
+> address latch phase where CS is not asserted but ALE is, second
+> read/write phase where CS must be asserted. In this case we need the
+> GMI`s CS line to determine which phase we are in.
 
-After this change is applied I am seeing RCU stalls during suspend
-on Tegra. I guess I am hitting the case mentioned above? How should
-this be avoided?
+Even though the CS is used, we could still implement the driver such
+that if only 1 CS is defined in the binding, we then statically program
+the configuration at probe. For now, if there is more than one, we can
+return an error from probe as it is not supported or default to the
+first CS defined and warn?
 
-[    5.321824] PM: Syncing filesystems ... done.
-[    5.349746] Freezing user space processes ... (elapsed 0.001 seconds) done.
-[    5.358122] Double checking all user space processes after OOM killer disable... (elapsed 0.000 seconds) 
-[    5.367817] Freezing remaining freezable tasks ... (elapsed 0.001 seconds) done.
-[    5.376746] Suspending console(s) (use no_console_suspend to debug)
-[    5.427213] PM: suspend of devices complete after 42.812 msecs
-[    5.429909] PM: late suspend of devices complete after 2.680 msecs
-[    5.431968] PM: noirq suspend of devices complete after 2.049 msecs
-[    5.431973] Disabling non-boot CPUs ...
-[    5.432861] CPU1: shutdown
-[    5.467806] CPU2: shutdown
-[    5.506925] IRQ17 no longer affine to CPU3
-[    5.507294] CPU3: shutdown
-[   26.509992] INFO: rcu_sched detected stalls on CPUs/tasks:
-[   26.510005]  3-O.N: (0 ticks this GP) idle=e13/140000000000000/0 softirq=86/86 fqs=0 
-[   26.510016]  (detected by 0, t=4202 jiffies, g=-225, c=-226, q=23)
-[   26.510020] Task dump for CPU 3:
-[   26.510033] swapper/3       R running      0     0      1 0x00000000
-[   26.510063] [<c0b79fac>] (__schedule) from [<c033b808>] (tegra_cpu_die+0x30/0x48)
-[   26.510080] [<c033b808>] (tegra_cpu_die) from [<c030dd4c>] (arch_cpu_idle_dead+0x44/0x88)
-[   26.510094] [<c030dd4c>] (arch_cpu_idle_dead) from [<c03794bc>] (cpu_startup_entry+0x1c0/0x220)
-[   26.510106] [<c03794bc>] (cpu_startup_entry) from [<80301c2c>] (0x80301c2c)
-[   26.510116] rcu_sched kthread starved for 4202 jiffies! g4294967071 c4294967070 f0x0 RCU_GP_WAIT_FQS(3) ->state=0x1
-[   26.510128] rcu_sched       S c0b79fac     0     7      2 0x00000000
-[   26.510139] [<c0b79fac>] (__schedule) from [<c0b7a434>] (schedule+0x38/0x9c)
-[   26.510152] [<c0b7a434>] (schedule) from [<c0b7cf3c>] (schedule_timeout+0x158/0x21c)
-[   26.510166] [<c0b7cf3c>] (schedule_timeout) from [<c03922e0>] (rcu_gp_kthread+0x414/0x99c)
-[   26.510179] [<c03922e0>] (rcu_gp_kthread) from [<c035cdb8>] (kthread+0xd8/0xf4)
-[   26.510191] [<c035cdb8>] (kthread) from [<c0307fb8>] (ret_from_fork+0x14/0x3c)
-[   26.531238] Enabling non-boot CPUs ...
-[   26.546568] CPU1 is up
-[   26.566858] CPU2 is up
-[   26.587169] CPU3 is up
-[   26.588470] PM: noirq resume of devices complete after 1.290 msecs
-[   26.591329] PM: early resume of devices complete after 2.574 msecs
-[   26.696785] PM: resume of devices complete after 105.439 msecs
-[   26.876814] Restarting tasks ... done.
-
-Interestingly I am only seeing the above when using the ARM
-multi_v7_defconfig kernel configuration and not with the tegra_defconfig.
-One key difference between these is that the multi_v7_defconfig does not
-have CONFIG_PREEMPT enabled. Initial testing shows enabling CONFIG_PREEMPT
-for multi_v7_defconfig makes the problem go away.
-
-Cheers
 Jon
+
+-- 
+nvpublic
