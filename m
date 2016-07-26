@@ -1,79 +1,117 @@
-From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 3/3] PCI: tegra: Stop setting pcibios_min_mem
-Date: Tue, 26 Jul 2016 14:59:54 -0500
-Message-ID: <20160726195954.GA15037@localhost>
-References: <20160630131430.32096-1-thierry.reding@gmail.com>
- <20160630131430.32096-3-thierry.reding@gmail.com>
- <20160725212850.GA24485@localhost>
- <20160726095415.GD2433@ulmo.ba.sec>
+From: Bjorn Helgaas <helgaas@kernel.org>
+Subject: Re: [GIT PULL] PCI: tegra: Changes for v4.8-rc1
+Date: Tue, 26 Jul 2016 15:06:41 -0500
+Message-ID: <20160726200641.GB15037@localhost>
+References: <20160701150056.26537-3-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-pci-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20160726095415.GD2433-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <20160701150056.26537-3-thierry.reding@gmail.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 26, 2016 at 11:54:15AM +0200, Thierry Reding wrote:
-> On Mon, Jul 25, 2016 at 04:28:50PM -0500, Bjorn Helgaas wrote:
-> > On Thu, Jun 30, 2016 at 03:14:30PM +0200, Thierry Reding wrote:
-> > > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > 
-> > > In practice this value will never be used and it hinders portability of
-> > > the driver, so remove it.
-> > > 
-> > > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > ---
-> > >  drivers/pci/host/pci-tegra.c | 2 --
-> > >  1 file changed, 2 deletions(-)
-> > > 
-> > > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> > > index f04b062e8c67..bbf77a49517d 100644
-> > > --- a/drivers/pci/host/pci-tegra.c
-> > > +++ b/drivers/pci/host/pci-tegra.c
-> > > @@ -2249,8 +2249,6 @@ static int tegra_pcie_probe(struct platform_device *pdev)
-> > >  	if (err < 0)
-> > >  		return err;
-> > >  
-> > > -	pcibios_min_mem = 0;
-> > 
-> > unsigned long pcibios_min_mem = 0x01000000;   # arch/arm/mm/iomap.c
-> > #define PCIBIOS_MIN_MEM pcibios_min_mem       # arch/arm/include/asm/pci.h
-> > 
-> > PCIBIOS_MIN_MEM is used in __pci_assign_resource().
-> > 
-> > It looks to me like we still use pcibios_min_mem; am I missing something?
+On Fri, Jul 01, 2016 at 05:00:56PM +0200, Thierry Reding wrote:
+> Hi Bjorn,
 > 
-> The problem is that pcibios_min_mem is only defined on 32-bit ARM, so
-> we'd need to conditionalize (with a preprocessor macro) the usage.
-> However it turns out that it's not necessary because PCIBIOS_MIN_MEM
-> only serves as a lower bound during resource assignment.
+> The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
 > 
-> pci_bus_alloc_resource() will eventually end up assigning from one of
-> the regions defined in device tree and the lowest we'll ever start any
-> of the memory regions is 0x12000000 (Tegra124).
+>   Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
 > 
-> So instead of conditionalizing I've simply dropped the assignment
-> because the default works fine for Tegra.
+> are available in the git repository at:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.8-pci
+> 
+> for you to fetch changes up to 0f32700faed919946e21e9d1dc4d74ae8f1b1226:
+> 
+>   PCI: tegra: Correctly program PADS_REFCLK_CFG* registers (2016-06-30 15:30:16 +0200)
+> 
+> There's a minor conflict between this and your pci/host-request-windows
+> branch, let me know if you'd like me to rebase on top of that.
+> 
+> Thierry
+> 
+> ----------------------------------------------------------------
+> PCI: tegra: Changes for v4.8-rc1
+> 
+> A couple of cleanups and preparation work for 64-bit ARM support, as
+> well as fixes for writing the PADS_REFCLK_CFG* registers.
+> 
+> ----------------------------------------------------------------
+> Stephen Warren (2):
+>       PCI: tegra: Actually program PADS_REFCLK_CFG* on recent SoCs
 
-Oh, I see, yep, that makes sense now.  I merged this with the
-following changelog:
+I don't see this patch on the list.  I'll attach it below for
+completeness.
 
-    PCI: tegra: Stop setting pcibios_min_mem
-    
-    pcibios_min_mem only exists on 32-bit ARM, so using it in pci-tegra.c
-    prevents the driver from being used on other arches.
-    
-    In __pci_assign_resource(), we clip the available area based on
-    PCIBIOS_MIN_MEM.  On 32-bit ARM, this is pcibios_min_mem, with a default
-    value of 0x01000000.  For Tegra, we discover the space available for PCI
-    resource allocation from the device tree, and the lowest address that will
-    ever be available is 0x12000000 (on Tegra124).
-    
-    The Tegra windows are always higher than the default pcibios_min_mem, so
-    the __pci_assign_resource() has no effect, so there's no need to adjust
-    pcibios_min_mem here.
+I don't think the original changelog is quite right; I don't see
+tegra_xusb_phy_enable() being involved at all.  I replaced it with the
+following:
 
-Bjorn
+    PCI: tegra: Program PADS_REFCLK_CFG* always, not just on legacy SoCs
+    
+    tegra_pcie_phy_power_on() calls tegra_pcie_phy_enable() only for legacy
+    SoCs.  However, part of tegra_pcie_phy_enable() needs to happen in all
+    cases.  Move that code up one level into tegra_pcie_phy_power_on().
+
+
+Here's the original commit from your git tree:
+
+commit 0ad9be61b5af
+Author: Stephen Warren <swarren@nvidia.com>
+Date:   Fri Jun 24 08:37:03 2016 -0600
+
+    PCI: tegra: Actually program PADS_REFCLK_CFG* on recent SoCs
+    
+    On recent SoCs, tegra_pcie_phy_enable() isn't called; but instead
+    tegra_pcie_enable_controller() calls tegra_xusb_phy_enable(). However,
+    part of tegra_pcie_phy_enable() needs to happen in all cases. Move that
+    code up one level into tegra_pcie_phy_power_on().
+    
+    Signed-off-by: Stephen Warren <swarren@nvidia.com>
+    Reviewed-by: Simon Glass <sjg@chromium.org>
+    Signed-off-by: Thierry Reding <treding@nvidia.com>
+
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index bbf77a4..8cac1a0 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -838,12 +838,6 @@ static int tegra_pcie_phy_enable(struct tegra_pcie *pcie)
+ 	value |= PADS_PLL_CTL_RST_B4SM;
+ 	pads_writel(pcie, value, soc->pads_pll_ctl);
+ 
+-	/* Configure the reference clock driver */
+-	value = PADS_REFCLK_CFG_VALUE | (PADS_REFCLK_CFG_VALUE << 16);
+-	pads_writel(pcie, value, PADS_REFCLK_CFG0);
+-	if (soc->num_ports > 2)
+-		pads_writel(pcie, PADS_REFCLK_CFG_VALUE, PADS_REFCLK_CFG1);
+-
+ 	/* wait for the PLL to lock */
+ 	err = tegra_pcie_pll_wait(pcie, 500);
+ 	if (err < 0) {
+@@ -927,7 +921,9 @@ static int tegra_pcie_port_phy_power_off(struct tegra_pcie_port *port)
+ 
+ static int tegra_pcie_phy_power_on(struct tegra_pcie *pcie)
+ {
++	const struct tegra_pcie_soc_data *soc = pcie->soc_data;
+ 	struct tegra_pcie_port *port;
++	u32 value;
+ 	int err;
+ 
+ 	if (pcie->legacy_phy) {
+@@ -952,6 +948,13 @@ static int tegra_pcie_phy_power_on(struct tegra_pcie *pcie)
+ 		}
+ 	}
+ 
++	/* Configure the reference clock driver */
++	value = PADS_REFCLK_CFG_VALUE | (PADS_REFCLK_CFG_VALUE << 16);
++	pads_writel(pcie, value, PADS_REFCLK_CFG0);
++
++	if (soc->num_ports > 2)
++		pads_writel(pcie, PADS_REFCLK_CFG_VALUE, PADS_REFCLK_CFG1);
++
+ 	return 0;
+ }
+ 
