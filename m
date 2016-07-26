@@ -1,42 +1,142 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [patch 61/66] timers: Convert to hotplug state machine
-Date: Tue, 26 Jul 2016 10:23:02 +0100
-Message-ID: <6f2fe6d4-38bf-4feb-1d5e-e2705c333670@nvidia.com>
-References: <20160711122450.923603742@linutronix.de>
- <20160711122535.775201614@linutronix.de>
- <7d37714e-b072-ee90-f14f-364f4fd01f0d@nvidia.com>
- <20160725153543.GB10939@linutronix.de> <20160725204648.GA22830@linutronix.de>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH V3 01/10] Documentation: dt-bindings: mailbox: tegra: Add
+ binding for HSP mailbox
+Date: Tue, 26 Jul 2016 10:41:48 +0100
+Message-ID: <c04f3281-ce63-7d53-898a-bbdb7bc8eb5d@nvidia.com>
+References: <20160719091723.30919-1-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160725204648.GA22830-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: rcochran-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org
-Cc: Anna-Maria Gleixner <anna-maria-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, LKML <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Peter Zijlstra <peterz-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Ingo Molnar <mingo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Sebastian Andrzej Siewior <bigeasy-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160719091723.30919-1-josephl@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Joseph Lo <josephl@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Matthew Longnecker <MLongnecker@nvidia.com>, devicetree@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Sivaram Nair <sivaramn@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 25/07/16 21:46, rcochran-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org wrote:
-> On Mon, Jul 25, 2016 at 05:35:43PM +0200, rcochran-hfZtesqFncYOwBW4kG4KsQ@public.gmane.org wrote:
->> I see if I can find a tegra system to test with...
+On 19/07/16 10:17, Joseph Lo wrote:
+> Add DT binding for the Hardware Synchronization Primitives (HSP). The
+> HSP is designed for the processors to share resources and communicate
+> together. It provides a set of hardware synchronization primitives for
+> interprocessor communication. So the interprocessor communication (IPC)
+> protocols can use hardware synchronization primitive, when operating
+> between two processors not in an SMP relationship.
 > 
-> I tried the tip:smp/hotplug branch under kvm x86_64, and I didn't see
-> any problems with suspend or hibernate, even with CONFIG_PREEMPT_NONE.
-> I'll see if I can get my hands on a tegra system tomorrow.  Until
-> then, two questions:
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> ---
+> Sorry. Please allow me just update the binding patches of this series.
+> Want to make sure the binding is acceptable first.
+> Thanks.
 > 
-> 1. The issue appears with suspend (echo mem > /sys/power/state), as
->    opposed to hibernate, right?
+> Changes in V3:
+> - use two cells for mboxes property
+> Changes in V2:
+> - revise the compatible string, interrupt-names, interrupts, and #mbox-cells
+>   properties
+> - remove "nvidia,hsp-function" property
+> - fix the header file name
+> - the binding supports the concept of multiple HSP sub-modules on one HSP HW
+>   block now.
+> ---
+>  .../bindings/mailbox/nvidia,tegra186-hsp.txt       | 52 ++++++++++++++++++++++
+>  include/dt-bindings/mailbox/tegra186-hsp.h         | 20 +++++++++
+>  2 files changed, 72 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt
+>  create mode 100644 include/dt-bindings/mailbox/tegra186-hsp.h
+> 
+> diff --git a/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt b/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt
+> new file mode 100644
+> index 000000000000..a9152380642d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt
+> @@ -0,0 +1,52 @@
+> +NVIDIA Tegra Hardware Synchronization Primitives (HSP)
+> +
+> +The HSP modules are used for the processors to share resources and communicate
+> +together. It provides a set of hardware synchronization primitives for
+> +interprocessor communication. So the interprocessor communication (IPC)
+> +protocols can use hardware synchronization primitives, when operating between
+> +two processors not in an SMP relationship.
+> +
+> +The features that HSP supported are shared mailboxes, shared semaphores,
+> +arbitrated semaphores and doorbells.
+> +
+> +Required properties:
+> +- name : Should be hsp
+> +- compatible
+> +    Array of strings.
+> +    one of:
+> +    - "nvidia,tegra186-hsp"
+> +- reg : Offset and length of the register set for the device.
+> +- interrupt-names
+> +    Array of strings.
+> +    Contains a list of names for the interrupts described by the interrupt
+> +    property. May contain the following entries, in any order:
+> +    - "doorbell"
+> +    Users of this binding MUST look up entries in the interrupt property
+> +    by name, using this interrupt-names property to do so.
+> +- interrupts
+> +    Array of interrupt specifiers.
+> +    Must contain one entry per entry in the interrupt-names property,
+> +    in a matching order.
+> +- #mbox-cells : Should be 2.
+> +
+> +The mbox specifier of the "mboxes" property in the client node should
+> +contain two data. The first one should be the HSP type and the second
+> +one should be the ID that the client is going to use. Those information
+> +can be found in the following file.
+> +
+> +- <dt-bindings/mailbox/tegra186-hsp.h>.
+> +
+> +Example:
+> +
+> +hsp_top0: hsp@3c00000 {
+> +	compatible = "nvidia,tegra186-hsp";
+> +	reg = <0x0 0x03c00000 0x0 0xa0000>;
+> +	interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
+> +	interrupt-names = "doorbell";
+> +	#mbox-cells = <2>;
+> +};
+> +
+> +client {
+> +	...
+> +	mboxes = <&hsp_top0 HSP_MBOX_TYPE_DB HSP_DB_MASTER_XXX>;
+> +};
+> diff --git a/include/dt-bindings/mailbox/tegra186-hsp.h b/include/dt-bindings/mailbox/tegra186-hsp.h
+> new file mode 100644
+> index 000000000000..d1c1432707cd
+> --- /dev/null
+> +++ b/include/dt-bindings/mailbox/tegra186-hsp.h
+> @@ -0,0 +1,20 @@
+> +/*
+> + * This header provides constants for binding nvidia,tegra186-hsp.
+> + *
+> + * The number with HSP_DB_MASTER prefix indicates the bit that is
+> + * associated with a master ID in the doorbell registers.
+> + */
+> +
+> +
+> +#ifndef _DT_BINDINGS_MAILBOX_TEGRA186_HSP_H
+> +#define _DT_BINDINGS_MAILBOX_TEGRA186_HSP_H
+> +
+> +#define HSP_MBOX_TYPE_DB 0x0
+> +#define HSP_MBOX_TYPE_SM 0x1
+> +#define HSP_MBOX_TYPE_SS 0x2
+> +#define HSP_MBOX_TYPE_AS 0x3
 
-Yes. I have been using rtcwake to test suspend with the following
-arguments ...
+Nit ... may be we should add a comment that describes what the above are?
 
-# rtcwake -d rtc1 -m mem -s 3
+> +
+> +#define HSP_DB_MASTER_CCPLEX 17
+> +#define HSP_DB_MASTER_BPMP 19
 
-> 2. CONFIG_PREEMPT_NONE is good, but CONFIG_PREEMPT is bad, right?
+Nit ... I would be tempted to move the comment in the header to above
+these defines, as I missed it on my first pass of this.
 
-The other way around.
+Otherwise ...
+
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
 
 Cheers
 Jon
