@@ -1,52 +1,90 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V3 3/10] Documentation: dt-bindings: firmware: tegra: add
- bindings of the BPMP
-Date: Tue, 26 Jul 2016 10:50:11 +0100
-Message-ID: <03fb588e-344c-fba9-cfc8-f005162d713e@nvidia.com>
-References: <20160719091723.30919-1-josephl@nvidia.com>
- <20160719091723.30919-2-josephl@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 3/3] PCI: tegra: Stop setting pcibios_min_mem
+Date: Tue, 26 Jul 2016 11:54:15 +0200
+Message-ID: <20160726095415.GD2433@ulmo.ba.sec>
+References: <20160630131430.32096-1-thierry.reding@gmail.com>
+ <20160630131430.32096-3-thierry.reding@gmail.com>
+ <20160725212850.GA24485@localhost>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="MAH+hnPXVZWQ5cD/"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160719091723.30919-2-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20160725212850.GA24485@localhost>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 19/07/16 10:17, Joseph Lo wrote:
-> The BPMP is a specific processor in Tegra chip, which is designed for
-> booting process handling and offloading the power management, clock
-> management, and reset control tasks from the CPU. The binding document
-> defines the resources that would be used by the BPMP firmware driver,
-> which can create the interprocessor communication (IPC) between the CPU
-> and BPMP.
-> 
-> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Changes in V3:
-> - s/mmio-ram/mmio-sram/
-> - revise the file path of the reference binding documents and header files
->   for more generic viem in different SW projects
-> Changes in V2:
-> - update the message that the BPMP is clock and reset control provider
-> - add tegra186-clock.h and tegra186-reset.h header files
-> - revise the description of the required properties
-> ---
->  .../bindings/firmware/nvidia,tegra186-bpmp.txt     |  77 ++
->  include/dt-bindings/clock/tegra186-clock.h         | 940 +++++++++++++++++++++
->  include/dt-bindings/reset/tegra186-reset.h         | 217 +++++
->  3 files changed, 1234 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
->  create mode 100644 include/dt-bindings/clock/tegra186-clock.h
->  create mode 100644 include/dt-bindings/reset/tegra186-reset.h
+--MAH+hnPXVZWQ5cD/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Mon, Jul 25, 2016 at 04:28:50PM -0500, Bjorn Helgaas wrote:
+> On Thu, Jun 30, 2016 at 03:14:30PM +0200, Thierry Reding wrote:
+> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >=20
+> > In practice this value will never be used and it hinders portability of
+> > the driver, so remove it.
+> >=20
+> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> > ---
+> >  drivers/pci/host/pci-tegra.c | 2 --
+> >  1 file changed, 2 deletions(-)
+> >=20
+> > diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> > index f04b062e8c67..bbf77a49517d 100644
+> > --- a/drivers/pci/host/pci-tegra.c
+> > +++ b/drivers/pci/host/pci-tegra.c
+> > @@ -2249,8 +2249,6 @@ static int tegra_pcie_probe(struct platform_devic=
+e *pdev)
+> >  	if (err < 0)
+> >  		return err;
+> > =20
+> > -	pcibios_min_mem =3D 0;
+>=20
+> unsigned long pcibios_min_mem =3D 0x01000000;   # arch/arm/mm/iomap.c
+> #define PCIBIOS_MIN_MEM pcibios_min_mem       # arch/arm/include/asm/pci.h
+>=20
+> PCIBIOS_MIN_MEM is used in __pci_assign_resource().
+>=20
+> It looks to me like we still use pcibios_min_mem; am I missing something?
 
-Cheers
-Jon
+The problem is that pcibios_min_mem is only defined on 32-bit ARM, so
+we'd need to conditionalize (with a preprocessor macro) the usage.
+However it turns out that it's not necessary because PCIBIOS_MIN_MEM
+only serves as a lower bound during resource assignment.
 
--- 
-nvpublic
+pci_bus_alloc_resource() will eventually end up assigning from one of
+the regions defined in device tree and the lowest we'll ever start any
+of the memory regions is 0x12000000 (Tegra124).
+
+So instead of conditionalizing I've simply dropped the assignment
+because the default works fine for Tegra.
+
+Thierry
+
+--MAH+hnPXVZWQ5cD/
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v2
+
+iQIcBAABCAAGBQJXlzNFAAoJEN0jrNd/PrOhOmsP/22j+5nUhtMaSDqSMt5uxsCv
+8IS09F9bNj6MZ93Ox+3TE46fZP+7uBY4miTvlG8gKVcM5R0slvgEm2Z+0cdHNz4P
+6BBDXSlqX8qllbEzSl+yOcRyix2fuVDu9EIMmIAL5L5rsoSBzXDhbrS9CUS1KARF
+tN+EqcO2pCIb4l+SEnSTPMTwK/ccPqGQpZvwjCGsbLgARBhI4xBivv5pwCtVo3zJ
+kmqFejYPv1zw8NqMyN8MZOcP7YYN23+KhlLyenCOznROClGK4sSt7Zzv/IXJhi9K
+4wgl3kT11Om9b3gY72Q1n4qzRLqlE1/HfvkmlPTZHyM4Juzly0t//Y9fY24ZAc6c
+tLR6Q7csP4o2iBEuxhN/a/3eZORaz6509DTjn7r2uwT8qYbxGbptMmtuAfB5Oo00
+iG7wO8CEiV+/TAgLwTSlN5emQeXJsmo7ZiZyCMLdKQbQx/dYQAFJsf8lP58RY0NY
+gASUY+zDgYrqZZmJTz8U1cyisD/DsoSQ20mQ0nXkS76+peTXufZo8dLLuwRo0lSU
+JRlmqr/o+4dJp9TpDPLUIM43BoYXY5SdjYGkevM1QFqa8SSJE27MutX5GxDC+h35
+6FXIQTTeNKvcB6du1MAL3359cUOML+bn5uW+vudkO0yRJqUwfcbfIORn8Zwg5h4L
+hbRGhtPXTPlynz4NCiPX
+=c8pk
+-----END PGP SIGNATURE-----
+
+--MAH+hnPXVZWQ5cD/--
