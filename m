@@ -1,142 +1,49 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH V3 01/10] Documentation: dt-bindings: mailbox: tegra: Add
- binding for HSP mailbox
-Date: Tue, 26 Jul 2016 10:41:48 +0100
-Message-ID: <c04f3281-ce63-7d53-898a-bbdb7bc8eb5d@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V3 3/10] Documentation: dt-bindings: firmware: tegra: add
+ bindings of the BPMP
+Date: Tue, 26 Jul 2016 10:50:11 +0100
+Message-ID: <03fb588e-344c-fba9-cfc8-f005162d713e@nvidia.com>
 References: <20160719091723.30919-1-josephl@nvidia.com>
+ <20160719091723.30919-2-josephl@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160719091723.30919-1-josephl@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Joseph Lo <josephl@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Peter De Schrijver <pdeschrijver@nvidia.com>, Matthew Longnecker <MLongnecker@nvidia.com>, devicetree@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>, linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will.deacon@arm.com>, Sivaram Nair <sivaramn@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160719091723.30919-2-josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, Will Deacon <will.deacon-5wv7dgnIgG8@public.gmane.org>, Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
 On 19/07/16 10:17, Joseph Lo wrote:
-> Add DT binding for the Hardware Synchronization Primitives (HSP). The
-> HSP is designed for the processors to share resources and communicate
-> together. It provides a set of hardware synchronization primitives for
-> interprocessor communication. So the interprocessor communication (IPC)
-> protocols can use hardware synchronization primitive, when operating
-> between two processors not in an SMP relationship.
+> The BPMP is a specific processor in Tegra chip, which is designed for
+> booting process handling and offloading the power management, clock
+> management, and reset control tasks from the CPU. The binding document
+> defines the resources that would be used by the BPMP firmware driver,
+> which can create the interprocessor communication (IPC) between the CPU
+> and BPMP.
 > 
-> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
-> Sorry. Please allow me just update the binding patches of this series.
-> Want to make sure the binding is acceptable first.
-> Thanks.
-> 
 > Changes in V3:
-> - use two cells for mboxes property
+> - s/mmio-ram/mmio-sram/
+> - revise the file path of the reference binding documents and header files
+>   for more generic viem in different SW projects
 > Changes in V2:
-> - revise the compatible string, interrupt-names, interrupts, and #mbox-cells
->   properties
-> - remove "nvidia,hsp-function" property
-> - fix the header file name
-> - the binding supports the concept of multiple HSP sub-modules on one HSP HW
->   block now.
+> - update the message that the BPMP is clock and reset control provider
+> - add tegra186-clock.h and tegra186-reset.h header files
+> - revise the description of the required properties
 > ---
->  .../bindings/mailbox/nvidia,tegra186-hsp.txt       | 52 ++++++++++++++++++++++
->  include/dt-bindings/mailbox/tegra186-hsp.h         | 20 +++++++++
->  2 files changed, 72 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt
->  create mode 100644 include/dt-bindings/mailbox/tegra186-hsp.h
-> 
-> diff --git a/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt b/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt
-> new file mode 100644
-> index 000000000000..a9152380642d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mailbox/nvidia,tegra186-hsp.txt
-> @@ -0,0 +1,52 @@
-> +NVIDIA Tegra Hardware Synchronization Primitives (HSP)
-> +
-> +The HSP modules are used for the processors to share resources and communicate
-> +together. It provides a set of hardware synchronization primitives for
-> +interprocessor communication. So the interprocessor communication (IPC)
-> +protocols can use hardware synchronization primitives, when operating between
-> +two processors not in an SMP relationship.
-> +
-> +The features that HSP supported are shared mailboxes, shared semaphores,
-> +arbitrated semaphores and doorbells.
-> +
-> +Required properties:
-> +- name : Should be hsp
-> +- compatible
-> +    Array of strings.
-> +    one of:
-> +    - "nvidia,tegra186-hsp"
-> +- reg : Offset and length of the register set for the device.
-> +- interrupt-names
-> +    Array of strings.
-> +    Contains a list of names for the interrupts described by the interrupt
-> +    property. May contain the following entries, in any order:
-> +    - "doorbell"
-> +    Users of this binding MUST look up entries in the interrupt property
-> +    by name, using this interrupt-names property to do so.
-> +- interrupts
-> +    Array of interrupt specifiers.
-> +    Must contain one entry per entry in the interrupt-names property,
-> +    in a matching order.
-> +- #mbox-cells : Should be 2.
-> +
-> +The mbox specifier of the "mboxes" property in the client node should
-> +contain two data. The first one should be the HSP type and the second
-> +one should be the ID that the client is going to use. Those information
-> +can be found in the following file.
-> +
-> +- <dt-bindings/mailbox/tegra186-hsp.h>.
-> +
-> +Example:
-> +
-> +hsp_top0: hsp@3c00000 {
-> +	compatible = "nvidia,tegra186-hsp";
-> +	reg = <0x0 0x03c00000 0x0 0xa0000>;
-> +	interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
-> +	interrupt-names = "doorbell";
-> +	#mbox-cells = <2>;
-> +};
-> +
-> +client {
-> +	...
-> +	mboxes = <&hsp_top0 HSP_MBOX_TYPE_DB HSP_DB_MASTER_XXX>;
-> +};
-> diff --git a/include/dt-bindings/mailbox/tegra186-hsp.h b/include/dt-bindings/mailbox/tegra186-hsp.h
-> new file mode 100644
-> index 000000000000..d1c1432707cd
-> --- /dev/null
-> +++ b/include/dt-bindings/mailbox/tegra186-hsp.h
-> @@ -0,0 +1,20 @@
-> +/*
-> + * This header provides constants for binding nvidia,tegra186-hsp.
-> + *
-> + * The number with HSP_DB_MASTER prefix indicates the bit that is
-> + * associated with a master ID in the doorbell registers.
-> + */
-> +
-> +
-> +#ifndef _DT_BINDINGS_MAILBOX_TEGRA186_HSP_H
-> +#define _DT_BINDINGS_MAILBOX_TEGRA186_HSP_H
-> +
-> +#define HSP_MBOX_TYPE_DB 0x0
-> +#define HSP_MBOX_TYPE_SM 0x1
-> +#define HSP_MBOX_TYPE_SS 0x2
-> +#define HSP_MBOX_TYPE_AS 0x3
+>  .../bindings/firmware/nvidia,tegra186-bpmp.txt     |  77 ++
+>  include/dt-bindings/clock/tegra186-clock.h         | 940 +++++++++++++++++++++
+>  include/dt-bindings/reset/tegra186-reset.h         | 217 +++++
+>  3 files changed, 1234 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
+>  create mode 100644 include/dt-bindings/clock/tegra186-clock.h
+>  create mode 100644 include/dt-bindings/reset/tegra186-reset.h
 
-Nit ... may be we should add a comment that describes what the above are?
-
-> +
-> +#define HSP_DB_MASTER_CCPLEX 17
-> +#define HSP_DB_MASTER_BPMP 19
-
-Nit ... I would be tempted to move the comment in the header to above
-these defines, as I missed it on my first pass of this.
-
-Otherwise ...
-
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
 Cheers
 Jon
