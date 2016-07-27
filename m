@@ -1,55 +1,41 @@
-From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [GIT PULL] PCI: tegra: Changes for v4.8-rc1
-Date: Tue, 26 Jul 2016 15:08:07 -0500
-Message-ID: <20160726200807.GC15037@localhost>
-References: <20160701150056.26537-3-thierry.reding@gmail.com>
+From: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
+Subject: Re: Flicker with fb on Jetson TK1
+Date: Tue, 26 Jul 2016 18:03:07 -0700
+Message-ID: <20160727010307.GA20706@jirafa.cyrius.com>
+References: <20160725020234.GA25839@jirafa.cyrius.com>
+ <20160725142151.GP21170@ulmo.ba.sec>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20160701150056.26537-3-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20160725142151.GP21170-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Jul 01, 2016 at 05:00:56PM +0200, Thierry Reding wrote:
-> Hi Bjorn,
+* Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> [2016-07-25 16:21]:
+> What version of X do you use? Recent versions, I think starting with
+> 1.18, the modesetting driver is built-in and is what you should use with
+> Tegra (and on top of an DRM/KMS driver, really).
 > 
-> The following changes since commit 1a695a905c18548062509178b98bc91e67510864:
+> The problem with fbdev is that it doesn't do double-buffering and hence
+> you can often see the kind of tearing as in the video. The modesetting
+> driver (which is also available as xf86-video-modesetting pre-1.18) can
+> do double-buffering (and I think will do by default), hence removing
+> the cause of such tearing.
 > 
->   Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
-> 
-> are available in the git repository at:
-> 
->   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.8-pci
-> 
-> for you to fetch changes up to 0f32700faed919946e21e9d1dc4d74ae8f1b1226:
-> 
->   PCI: tegra: Correctly program PADS_REFCLK_CFG* registers (2016-06-30 15:30:16 +0200)
-> 
-> There's a minor conflict between this and your pci/host-request-windows
-> branch, let me know if you'd like me to rebase on top of that.
-> 
-> Thierry
-> 
-> ----------------------------------------------------------------
-> PCI: tegra: Changes for v4.8-rc1
-> 
-> A couple of cleanups and preparation work for 64-bit ARM support, as
-> well as fixes for writing the PADS_REFCLK_CFG* registers.
-> 
-> ----------------------------------------------------------------
-> Stephen Warren (2):
->       PCI: tegra: Actually program PADS_REFCLK_CFG* on recent SoCs
->       PCI: tegra: Correctly program PADS_REFCLK_CFG* registers
-> 
-> Thierry Reding (3):
->       PCI: tegra: Make register definitions consistent
->       PCI: tegra: Use pci_remap_iospace()
->       PCI: tegra: Stop setting pcibios_min_mem
+> Can you try running the test with the modesetting driver and report if
+> you're still experiencing the issue?
 
-I applied these with the changelog updates I mentioned to
-pci/host-tegra for v4.8, thanks!
+This is with 1.18.4.  The Xorg.log suggests that glx, modesetting,
+fbdev, fbdevhw and glamoregl were loaded (although glamor
+initialization failed).  Modesetting is used according to the log.
 
-Bjorn
+I'm not very familiar with the graphics subsystem, so I'd appreciate
+it if someone could take a look at the log:
+http://www.cyrius.com/tmp/tk1/Xorg.0.log
+
+-- 
+Martin Michlmayr
+http://www.cyrius.com/
