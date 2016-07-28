@@ -1,144 +1,121 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/3] dt-bindings: allow child nodes inside the Tegra BPMP
-Date: Thu, 28 Jul 2016 16:08:47 +0200
-Message-ID: <20160728140847.GA28342@ulmo.ba.sec>
-References: <20160719191442.15439-1-swarren@wwwdotorg.org>
- <20160719191442.15439-2-swarren@wwwdotorg.org>
- <20160726100302.GE2433@ulmo.ba.sec>
- <f1ca284a-5332-3323-80b9-7cf61e7c97ac@wwwdotorg.org>
- <36967d69-cb2a-654e-9a4c-2021fd476464@wwwdotorg.org>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [GIT PULL] PCI: tegra: Changes for v4.8-rc1
+Date: Thu, 28 Jul 2016 16:18:04 +0200
+Message-ID: <20160728141804.GD28342@ulmo.ba.sec>
+References: <20160701150056.26537-3-thierry.reding@gmail.com>
+ <20160726200641.GB15037@localhost>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="YiEDa0DAkWCtVeE4"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+	protocol="application/pgp-signature"; boundary="FFoLq8A0u+X9iRU8"
+Return-path: <linux-pci-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <36967d69-cb2a-654e-9a4c-2021fd476464-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20160726200641.GB15037@localhost>
+Sender: linux-pci-owner@vger.kernel.org
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---YiEDa0DAkWCtVeE4
+--FFoLq8A0u+X9iRU8
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 27, 2016 at 03:50:52PM -0600, Stephen Warren wrote:
-> On 07/26/2016 10:21 AM, Stephen Warren wrote:
-> > On 07/26/2016 04:03 AM, Thierry Reding wrote:
-> > > On Tue, Jul 19, 2016 at 01:14:41PM -0600, Stephen Warren wrote:
-> > > > From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > >=20
-> > > > The BPMP implements some services which must be represented by sepa=
-rate
-> > > > nodes. For example, it can provide access to certain I2C controller=
-s,
-> > > > and
-> > > > the I2C bindings represent each I2C controller as a device tree nod=
-e.
-> > > > Update the binding to describe how the BPMP supports this.
-> > > >=20
-> > > > Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > > > ---
-> > > >  .../bindings/firmware/nvidia,tegra186-bpmp.txt     | 23
-> > > > ++++++++++++++++++++++
-> > > >  1 file changed, 23 insertions(+)
-> > > >=20
-> > > > diff --git
-> > > > a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.t=
-xt
-> > > > b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.t=
-xt
-> > > > index 9a3864f56955..142d363406f6 100644
-> > > > ---
-> > > > a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.t=
-xt
-> > > > +++
-> > > > b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.t=
-xt
-> > > > @@ -38,6 +38,24 @@ implemented by this node:
-> > > >  - .../reset/reset.txt
-> > > >  - <dt-bindings/reset/tegra186-reset.h>
-> > > >=20
-> > > > +The BPMP implements some services which must be represented by
-> > > > separate nodes.
-> > > > +For example, it can provide access to certain I2C controllers, and
-> > > > the I2C
-> > > > +bindings represent each I2C controller as a device tree node. Such
-> > > > nodes should
-> > > > +be nested directly inside the main BPMP node.
-> > > > +
-> > > > +Software can determine whether a child node of the BPMP node
-> > > > represents a device
-> > > > +by checking for a compatible property. Any node with a compatible
-> > > > property
-> > > > +represents a device that can be instantiated. Nodes without a
-> > > > compatible
-> > > > +property may be used to provide configuration information regarding
-> > > > the BPMP
-> > > > +itself, although no such configuration nodes are currently defined
-> > > > by this
-> > > > +binding.
-> > > > +
-> > > > +The BPMP firmware defines no single global name-/numbering-space f=
-or
-> > > > such
-> > > > +services. Put another way, the numbering scheme for I2C buses is
-> > > > distinct from
-> > > > +the numbering scheme for any other service the BPMP may provide
-> > > > (e.g. a future
-> > > > +hypothetical SPI bus service). As such, child device nodes will ha=
-ve
-> > > > no reg
-> > > > +property, and the BPMP node will have no #address-cells or
-> > > > #size-cells property.
-> > >=20
-> > > My understanding is that the I2C bus number is passed as part of the
-> > > request to the BPMP firmware. Does that not count as addressing? Could
-> > > we not represent that generically using a device tree hierarchy? I'm
-> > > thinking something along these lines:
-> > >=20
-> > >     bpmp {
-> > >         ...
-> > >=20
-> > >         services {
-> > >             i2c {
-> > >                 i2c@0 {
-> > >                     reg =3D <0>;
+On Tue, Jul 26, 2016 at 03:06:41PM -0500, Bjorn Helgaas wrote:
+> On Fri, Jul 01, 2016 at 05:00:56PM +0200, Thierry Reding wrote:
+> > Hi Bjorn,
 > >=20
-> > Technically, that is possible. However, Rob Herring rejected the idea of
-> > multiple levels of sub-nodes.
+> > The following changes since commit 1a695a905c18548062509178b98bc91e6751=
+0864:
 > >=20
-> > Can we please just go with what we have? DT bindings are frankly an
-> > obstacle to getting anything done:-(
+> >   Linux 4.7-rc1 (2016-05-29 09:29:24 -0700)
+> >=20
+> > are available in the git repository at:
+> >=20
+> >   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/te=
+gra-for-4.8-pci
+> >=20
+> > for you to fetch changes up to 0f32700faed919946e21e9d1dc4d74ae8f1b1226:
+> >=20
+> >   PCI: tegra: Correctly program PADS_REFCLK_CFG* registers (2016-06-30 =
+15:30:16 +0200)
+> >=20
+> > There's a minor conflict between this and your pci/host-request-windows
+> > branch, let me know if you'd like me to rebase on top of that.
+> >=20
+> > Thierry
+> >=20
+> > ----------------------------------------------------------------
+> > PCI: tegra: Changes for v4.8-rc1
+> >=20
+> > A couple of cleanups and preparation work for 64-bit ARM support, as
+> > well as fixes for writing the PADS_REFCLK_CFG* registers.
+> >=20
+> > ----------------------------------------------------------------
+> > Stephen Warren (2):
+> >       PCI: tegra: Actually program PADS_REFCLK_CFG* on recent SoCs
 >=20
-> Thierry, any further thoughts here? I really need to get these DT bindings
-> finalized so that I can use them in U-Boot, which is very urgent. Thanks.
+> I don't see this patch on the list.  I'll attach it below for
+> completeness.
+>=20
+> I don't think the original changelog is quite right; I don't see
+> tegra_xusb_phy_enable() being involved at all.  I replaced it with the
+> following:
+>=20
+>     PCI: tegra: Program PADS_REFCLK_CFG* always, not just on legacy SoCs
+>    =20
+>     tegra_pcie_phy_power_on() calls tegra_pcie_phy_enable() only for lega=
+cy
+>     SoCs.  However, part of tegra_pcie_phy_enable() needs to happen in all
+>     cases.  Move that code up one level into tegra_pcie_phy_power_on().
+>=20
+>=20
+> Here's the original commit from your git tree:
+>=20
+> commit 0ad9be61b5af
+> Author: Stephen Warren <swarren@nvidia.com>
+> Date:   Fri Jun 24 08:37:03 2016 -0600
+>=20
+>     PCI: tegra: Actually program PADS_REFCLK_CFG* on recent SoCs
+>    =20
+>     On recent SoCs, tegra_pcie_phy_enable() isn't called; but instead
+>     tegra_pcie_enable_controller() calls tegra_xusb_phy_enable(). However,
+>     part of tegra_pcie_phy_enable() needs to happen in all cases. Move th=
+at
+>     code up one level into tegra_pcie_phy_power_on().
+>    =20
+>     Signed-off-by: Stephen Warren <swarren@nvidia.com>
+>     Reviewed-by: Simon Glass <sjg@chromium.org>
+>     Signed-off-by: Thierry Reding <treding@nvidia.com>
 
-If everyone else is fine with these bindings, let's go ahead with them.
+Yeah, that's fine. Thanks. FWIW, the reason why you don't see this on
+the list is probably because it is the same patch that was merged into
+U-Boot a few days earlier, which is also the reason why the commit
+message isn't quite right. I thought I had sanitized it, but evidently
+had missed the function name change.
 
+Thanks for picking this up anyway,
 Thierry
 
---YiEDa0DAkWCtVeE4
+--FFoLq8A0u+X9iRU8
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXmhHtAAoJEN0jrNd/PrOhhrwP/315BduqkjDP08CjJbucTRC+
-R4xcUW59CcsdukplWKggtDA6NuZa3/ZrLa59oyl8CxxdX6u+BOka2tcV9Qem7jvw
-43jQEiPouxszrtxnOb3rJHLoWGwNerMmXZNXZZlr+GIWxj1vDCsuUbosf8Ayz9B3
-E6mimbcG+wUy528cR9Blp3ebr9shP851WIJgsdaJ9vbXUpBJ26SMleBUlEf5G2TB
-oHONTFqPrYd+5deFY/7c7Nq84P20UewEkhWVCGMq1uAmS/mTcBMGH2XouZCLxK9a
-m5ifKh4hYCz76c6BAc1DeN6KW6jQ1xb3YbNYHnHTjTG+SHAkNPJ17KSynCqzFSp3
-Zdj2zRlCz48JaTQ9lvVyDa/4XNtvgdge5hAM5Q9BP2S/e3irc8/PN6RC6PHk0eBa
-3JNzjU2DRP80I1lP4yIeZb9Rklu2NzEMMcaUu2sOyiZuC/rzM/qL/7Cp+TO+1W3m
-qUz1W7iL3BaIWd1+m/9Z2wV+JjjrerOtXp4TE6yhJhZ85scCbym5tfGddmMpk+Ve
-UHdN7lVyo1UOqc0eDg/oVm8brlwSUNvNvkbl1EpwxLJpf81Hd/UjB3nl9fR75erT
-6jNbT7Gtq//zc+NQ+dm1DEDbnNfWnFit+xVHRPqpKEPb/FUIW4rAE+sbzIG6rVmd
-gC1CQrZ20b1SFUKYn3Eh
-=Qi2O
+iQIcBAABCAAGBQJXmhQcAAoJEN0jrNd/PrOh1JsQAIUdGEg9jMmk3N+mq4tbPxA5
+C2zJjpz8j8rcpakqY4yDKU7opwcin/gjS2Q8XnE1oBmr6o9mCCmXfFrYYgzRG1r6
+tSLDU4YVYiCYXdIfAfxlu3yoc3WVk847YNzik+xkuPeTNHEKfFLT5Wc8GlnS69si
+6qpGyJU0+SC2pHjnOk201Cfza8zfOJ63rs3ntASq+AhbUv5xuZSBnW89MBtMsMg9
+u/78wOmOUeJU3aL+OzMfhnWbH7iv1ij2UULu9sO6oGJEGWNBFi/UzzqwdQy/CQv2
+v0LcIi+pWFtThwjLF/7xmfYPu/3CO+sLSkxcoCD6R9DTRBFcTF4NCikXNgFCBPoS
+63mk6uF5wUdx2YOWMraWTHt33wzeqT0DLPxw51XGfvOIvPYlRpA2bIuRZpha/PNF
+Mt34FQBJZPGs8gVeQ6Hq40ID7Rv3G/v57WY6NLYdBB5J7ZZ2vceAxGrKKeXKdFdl
+QVLQXQU7UH2qP1c0raGTBxUJJ66fKqrjGsdttWSyDsREiw+YPLkmBOlnHzVMp+HL
+QdKrvn7gBEHEhe3NYyG1nQQsjS5GgbFQ6Ha2opQFDUcZgH02TVCNq8VlVPrRnOzb
+GoJnx48ed28mMEOCxo53pDVXrIiN3tyQ4VTuNkDt0+KA0DNgmvZtGRF9A8waQKSD
+mknRqH1KPeTMTrVX0nHi
+=X1Mo
 -----END PGP SIGNATURE-----
 
---YiEDa0DAkWCtVeE4--
+--FFoLq8A0u+X9iRU8--
