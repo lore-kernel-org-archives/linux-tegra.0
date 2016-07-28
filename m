@@ -1,100 +1,124 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH 2/3] dt-bindings: allow child nodes inside the Tegra BPMP
-Date: Wed, 27 Jul 2016 15:50:52 -0600
-Message-ID: <36967d69-cb2a-654e-9a4c-2021fd476464@wwwdotorg.org>
-References: <20160719191442.15439-1-swarren@wwwdotorg.org>
- <20160719191442.15439-2-swarren@wwwdotorg.org>
- <20160726100302.GE2433@ulmo.ba.sec>
- <f1ca284a-5332-3323-80b9-7cf61e7c97ac@wwwdotorg.org>
+From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [RFC 3/6] dt/bindings: Add bindings for Tegra20/30 NOR bus driver
+Date: Thu, 28 Jul 2016 11:29:03 +0200
+Message-ID: <CALw8SCX+Sktdij7AKFtkAh3To6qA16xtZNFi4GpkzHE8256N_w@mail.gmail.com>
+References: <1468935397-11926-1-git-send-email-mirza.krak@gmail.com>
+ <1468935397-11926-4-git-send-email-mirza.krak@gmail.com> <20160725113034.GD21170@ulmo.ba.sec>
+ <CALw8SCWEFVu__8Gyr5q995h+=oMQEz1VUNB=Ne7MRb0O-tZXqg@mail.gmail.com> <20160725141544.GN21170@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <f1ca284a-5332-3323-80b9-7cf61e7c97ac-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+In-Reply-To: <20160725141544.GN21170-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/26/2016 10:21 AM, Stephen Warren wrote:
-> On 07/26/2016 04:03 AM, Thierry Reding wrote:
->> On Tue, Jul 19, 2016 at 01:14:41PM -0600, Stephen Warren wrote:
->>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>
->>> The BPMP implements some services which must be represented by separate
->>> nodes. For example, it can provide access to certain I2C controllers,
->>> and
->>> the I2C bindings represent each I2C controller as a device tree node.
->>> Update the binding to describe how the BPMP supports this.
->>>
->>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>> ---
->>>  .../bindings/firmware/nvidia,tegra186-bpmp.txt     | 23
->>> ++++++++++++++++++++++
->>>  1 file changed, 23 insertions(+)
->>>
->>> diff --git
->>> a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
->>> b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
->>> index 9a3864f56955..142d363406f6 100644
->>> ---
->>> a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
->>> +++
->>> b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
->>> @@ -38,6 +38,24 @@ implemented by this node:
->>>  - .../reset/reset.txt
->>>  - <dt-bindings/reset/tegra186-reset.h>
->>>
->>> +The BPMP implements some services which must be represented by
->>> separate nodes.
->>> +For example, it can provide access to certain I2C controllers, and
->>> the I2C
->>> +bindings represent each I2C controller as a device tree node. Such
->>> nodes should
->>> +be nested directly inside the main BPMP node.
->>> +
->>> +Software can determine whether a child node of the BPMP node
->>> represents a device
->>> +by checking for a compatible property. Any node with a compatible
->>> property
->>> +represents a device that can be instantiated. Nodes without a
->>> compatible
->>> +property may be used to provide configuration information regarding
->>> the BPMP
->>> +itself, although no such configuration nodes are currently defined
->>> by this
->>> +binding.
->>> +
->>> +The BPMP firmware defines no single global name-/numbering-space for
->>> such
->>> +services. Put another way, the numbering scheme for I2C buses is
->>> distinct from
->>> +the numbering scheme for any other service the BPMP may provide
->>> (e.g. a future
->>> +hypothetical SPI bus service). As such, child device nodes will have
->>> no reg
->>> +property, and the BPMP node will have no #address-cells or
->>> #size-cells property.
->>
->> My understanding is that the I2C bus number is passed as part of the
->> request to the BPMP firmware. Does that not count as addressing? Could
->> we not represent that generically using a device tree hierarchy? I'm
->> thinking something along these lines:
->>
->>     bpmp {
->>         ...
->>
->>         services {
->>             i2c {
->>                 i2c@0 {
->>                     reg = <0>;
+2016-07-25 16:15 GMT+02:00 Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
+> On Mon, Jul 25, 2016 at 03:16:28PM +0200, Mirza Krak wrote:
+>> 2016-07-25 13:30 GMT+02:00 Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>:
+> Yes, that clarifies many things. The presence of an external, address-
+> based chip-select is essential information in order to describe this
+> setup properly.
 >
-> Technically, that is possible. However, Rob Herring rejected the idea of
-> multiple levels of sub-nodes.
+> Given that the external chip select is entirely invisible to software, I
+> think a more accurate description of your setup would be:
 >
-> Can we please just go with what we have? DT bindings are frankly an
-> obstacle to getting anything done:-(
+>         gmi@70090000 {
+>                 ...
+>
+>                 /* for the chip select */
+>                 #address-cells = <1>;
+>                 #size-cells = <0>;
+>
+>                 /*
+>                  * Technically this could be used to translate the range from
+>                  * 0x48000000 to 0x4fffffff into a different range, but that
+>                  * no longer works because of the #address-cells. Does this
+>                  * matter?
+>                  */
+>                 ranges;
+>
+>                 bus@0 {
+>                         compatible = "simple-bus";
+>                         reg = <0>;
+>
+>                         #address-cells = <1>;
+>                         #size-cells = <1>;
+>
+>                         can@48000000 {
+>                                 reg = <0x48000000 0x100>;
+>                                 ...
+>                         };
+>
+>                         can@48040000 {
+>                                 reg = <0x48040000 0x100>;
+>                                 ...
+>                         };
+>                 };
+>         };
+>
 
-Thierry, any further thoughts here? I really need to get these DT 
-bindings finalized so that I can use them in U-Boot, which is very 
-urgent. Thanks.
+Finally got around to test this. Above example had some issues, or I
+am doing something wrong.
+
+First of, the address parser does not seem to like that #size-cells =
+<0> when ranges are empty. Got following warning from device tree
+compiler:
+Warning (ranges_format): /nor@70009000 has empty "ranges" property but
+its #size-cells (0) differs from / (1)
+
+and on boot:
+[    0.399357] prom_parse: Bad cell count for /nor@70009000/bus@0
+
+Got it to work if I changed to (also had to add an empty ranges prop
+in bus node):
+
+gmi@70009000 {
+    #address-cells = <1>;
+    #size-cells = <1>;
+    ranges;
+
+    bus@0,0 {
+                compatible = "simple-bus";
+                reg = <0 0>;
+                ranges;
+
+                #address-cells = <1>;
+                #size-cells = <1>;
+
+                can@48000000 {
+                    reg = <0x48000000 0x100>;
+                    ...
+                };
+
+
+                can@48040000 {
+                    reg = <0x48040000 0x100>;
+                    ...
+                };
+}
+
+But I wonder is there something wrong with below example (which does
+work), that is omitting the bus node:
+
+gmi@70009000 {
+    #address-cells = <1>;
+    #size-cells = <1>;
+    ranges;
+
+    can@48000000 {
+        reg = <0x48000000 0x100>;
+        ...
+    };
+
+    can@48040000 {
+        reg = <0x48040000 0x100>;
+        ...
+    };
+}
+
+Just feel that I need to duplicate information if add an bus node.
+
+Best Regards,
+Mirza
