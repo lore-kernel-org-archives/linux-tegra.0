@@ -1,102 +1,69 @@
-From: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH 2/3] dt-bindings: allow child nodes inside the Tegra BPMP
-Date: Thu, 28 Jul 2016 14:07:24 -0500
-Message-ID: <CAL_JsqLfs5jnO9DkP5io5qbuCfhojfspkHQbHBttgWfTeokYkQ@mail.gmail.com>
-References: <20160719191442.15439-1-swarren@wwwdotorg.org> <20160719191442.15439-2-swarren@wwwdotorg.org>
- <20160726100302.GE2433@ulmo.ba.sec> <f1ca284a-5332-3323-80b9-7cf61e7c97ac@wwwdotorg.org>
+From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH v2 1/2] PCI: Add new method for registering PCI hosts
+Date: Thu, 28 Jul 2016 15:43:28 -0500
+Message-ID: <20160728204328.GA20218@localhost>
+References: <20160630151931.29216-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <f1ca284a-5332-3323-80b9-7cf61e7c97ac-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20160630151931.29216-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Matthew Longnecker <MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Tomasz Nowicki <tn-nYOzD4b6Jr9Wk0Htik3J/w@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Jul 26, 2016 at 11:21 AM, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org> wrote:
-> On 07/26/2016 04:03 AM, Thierry Reding wrote:
->>
->> On Tue, Jul 19, 2016 at 01:14:41PM -0600, Stephen Warren wrote:
->>>
->>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>>
->>> The BPMP implements some services which must be represented by separate
->>> nodes. For example, it can provide access to certain I2C controllers, and
->>> the I2C bindings represent each I2C controller as a device tree node.
->>> Update the binding to describe how the BPMP supports this.
->>>
->>> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>> ---
->>>  .../bindings/firmware/nvidia,tegra186-bpmp.txt     | 23
->>> ++++++++++++++++++++++
->>>  1 file changed, 23 insertions(+)
->>>
->>> diff --git
->>> a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
->>> b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
->>> index 9a3864f56955..142d363406f6 100644
->>> --- a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
->>> +++ b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
->>> @@ -38,6 +38,24 @@ implemented by this node:
->>>  - .../reset/reset.txt
->>>  - <dt-bindings/reset/tegra186-reset.h>
->>>
->>> +The BPMP implements some services which must be represented by separate
->>> nodes.
->>> +For example, it can provide access to certain I2C controllers, and the
->>> I2C
->>> +bindings represent each I2C controller as a device tree node. Such nodes
->>> should
->>> +be nested directly inside the main BPMP node.
->>> +
->>> +Software can determine whether a child node of the BPMP node represents
->>> a device
->>> +by checking for a compatible property. Any node with a compatible
->>> property
->>> +represents a device that can be instantiated. Nodes without a compatible
->>> +property may be used to provide configuration information regarding the
->>> BPMP
->>> +itself, although no such configuration nodes are currently defined by
->>> this
->>> +binding.
->>> +
->>> +The BPMP firmware defines no single global name-/numbering-space for
->>> such
->>> +services. Put another way, the numbering scheme for I2C buses is
->>> distinct from
->>> +the numbering scheme for any other service the BPMP may provide (e.g. a
->>> future
->>> +hypothetical SPI bus service). As such, child device nodes will have no
->>> reg
->>> +property, and the BPMP node will have no #address-cells or #size-cells
->>> property.
->>
->>
->> My understanding is that the I2C bus number is passed as part of the
->> request to the BPMP firmware. Does that not count as addressing? Could
->> we not represent that generically using a device tree hierarchy? I'm
->> thinking something along these lines:
->>
->>         bpmp {
->>                 ...
->>
->>                 services {
->>                         i2c {
->>                                 i2c@0 {
->>                                         reg = <0>;
->
->
-> Technically, that is possible. However, Rob Herring rejected the idea of
-> multiple levels of sub-nodes.
+Hi Thierry and Arnd,
 
-I think I questioned the need, not rejected. What about the above, but
-remove serivces level:
+Thanks a lot for pushing this forward.  I would like to have gotten
+this into the v4.8 merge window, but I didn't get to it soon enough.
 
-         bpmp {
-                 ...
+On Thu, Jun 30, 2016 at 05:19:30PM +0200, Thierry Reding wrote:
+> From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+> 
+> This patch makes the existing pci_host_bridge structure a proper device
+> that is usable by PCI host drivers in a more standard way. In addition
+> to the existing pci_scan_bus, pci_scan_root_bus, pci_scan_root_bus_msi,
+> and pci_create_root_bus interfaces, this unfortunately means having to
+> add yet another interface doing basically the same thing, and add some
+> extra code in the initial step.
+> 
+> However, this time it's more likely to be extensible enough that we
+> won't have to do another one again in the future, and we should be
+> able to reduce code much more as a result.
+> 
+> The main idea is to pull the allocation of 'struct pci_host_bridge' out
+> of the registration, and let individual host drivers and architecture
+> code fill the members before calling the registration function.
+> 
+> There are a number of things we can do based on this:
+> 
+> * Use a single memory allocation for the driver-specific structure
+>   and the generic PCI host bridge
+> * consolidate the contents of driver specific structures by moving
+>   them into pci_host_bridge
+> * Add a consistent interface for removing a PCI host bridge again
+>   when unloading a host driver module
+> * Replace the architecture specific __weak pcibios_* functions with
+>   callbacks in a pci_host_bridge device
+> * Move common boilerplate code from host drivers into the generic
+>   function, based on contents of the structure
+> * Extend pci_host_bridge with additional members when needed without
+>   having to add arguments to pci_scan_*.
+> * Move members of struct pci_bus into pci_host_bridge to avoid
+>   having lots of identical copies.
+> 
+> As mentioned in a previous email, one open question is whether we want
+> to export a function for allocating a pci_host_bridge device in
+> combination with the per-device structure or let the driver itself
+> call kzalloc.
 
-                 i2c {
-                         i2c@0 {
-                                 reg = <0>;
+I agree with Arnd that a pci_host_bridge_alloc() would be nice.  The
+pointer to alloc_etherdev() was very useful and probably worth
+including in the changelog.  It helps a lot if we can copy the style
+of some other subsystem, but my head is buried so deep in PCI that I
+don't know what they do.
 
-Rob
+Looking forward to the next iteration.
+
+Bjorn
