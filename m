@@ -1,88 +1,51 @@
-From: Peter Rosin <peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>
-Subject: Re: [RFC] i2c: device-tree: Handling child nodes which are not i2c
- devices
-Date: Mon, 1 Aug 2016 11:41:59 +0200
-Message-ID: <dd04aac8-5c8a-b10d-b726-b16e6d69c599@axentia.se>
-References: <57110A35.2070509@nvidia.com>
- <CAAObsKC-DGH4GedCcZdv2zvesaTSo6ugsHSQU=J0=P1cZeyCDA@mail.gmail.com>
+From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] PCI: tegra: Remove stray call to pci_ioremap_io()
+Date: Mon, 1 Aug 2016 12:47:02 -0500
+Message-ID: <20160801174702.GA6592@localhost>
+References: <20160801070539.24779-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAAObsKC-DGH4GedCcZdv2zvesaTSo6ugsHSQU=J0=P1cZeyCDA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Tomeu Vizoso <tomeu.vizoso-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20160801070539.24779-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 2016-08-01 11:19, Tomeu Vizoso wrote:
-> On 15 April 2016 at 17:35, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> Hi all,
->>
->> For Tegra we have an i2c device for display port, namely the display
->> port auxiliary channel (or dpaux) as specified by the display port
->> standard. If an design using Tegra does not utilise the display port
->> interface, then the pads assigned to the dpaux can be re-assigned to
->> another generic i2c controller (i2c6 for Tegra124/210). In other words,
->> the pads can be re-used for a generic i2c interface.
->>
->> The registers that control whether the pads are mapped to the dpaux or
->> i2c6 are located in the dpaux register space. Therefore, I am looking at
->> adding pin controller support for dpaux so that i2c6 can request these
->> pads if it is enabled and I was hoping to add a pinmux node the to dpaux
->> device in device-tree to do this. For example, something like ...
->>
->>         dpaux@0,545c0000 {
->>                 ...
->>
->>                 /* pinctrl node */
->>                 pinmux {
->>                         ...
->>                 };
->>         };
->>
->> Although the above works, when doing this I noticed that when the device
->> booted, I would seeing the following error messages on boot ...
->>
->>  i2c i2c-5: of_i2c: modalias failure on ...
->>
->> These error messages being caused by the new pinmux node because it is
->> not recognised as an i2c device. To avoid this error messages we have
->> come up with a couple solutions but wanted to get some feedback on the
->> best approach.
+On Mon, Aug 01, 2016 at 09:05:39AM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> Hi,
+> This was introduced by an unfortunate interaction between commits
+> 45c64b6ac4ef ("PCI: tegra: Request host bridge window resources with
+> core function") and e6e9f471f5fe ("PCI: tegra: Use generic
+> pci_remap_iospace() rather than ARM32-specific one").
 > 
-> I'm finding this issue as well on Rockchip SoCs, this is the specific
-> node that is raising this warning when an adapter is registered with
-> it:
-> 
-> edp: dp@ff970000 {
->     compatible = "rockchip,rk3288-dp";
->     ...
->     ports {
->         ...
->     };
-> };
-> 
-> Has there been any agreement since this thread waned?
-> 
-> Thanks,
-> 
-> Tomeu
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-This is currently soaking in linux-next:
+Thanks, I re-did the merge and fixed my mistake.
 
-dt-bindings: i2c: Add support for 'i2c-bus' subnode
-https://git.kernel.org/cgit/linux/kernel/git/wsa/linux.git/commit/?h=i2c/for-next&id=98b00488459e
-
-i2c: core: Add support for 'i2c-bus' subnode
-https://git.kernel.org/cgit/linux/kernel/git/wsa/linux.git/commit/?h=i2c/for-next&id=7e4c224abfe8
-
-Cheers,
-Peter
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> ---
+>  drivers/pci/host/pci-tegra.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+> index 2544937620a5..6de0757b11e4 100644
+> --- a/drivers/pci/host/pci-tegra.c
+> +++ b/drivers/pci/host/pci-tegra.c
+> @@ -621,8 +621,6 @@ static int tegra_pcie_setup(int nr, struct pci_sys_data *sys)
+>  	if (err < 0)
+>  		return err;
+>  
+> -	pci_ioremap_io(pcie->pio.start, pcie->io.start);
+> -
+>  	pci_add_resource_offset(&sys->resources, &pcie->pio, sys->io_offset);
+>  	pci_add_resource_offset(&sys->resources, &pcie->mem, sys->mem_offset);
+>  	pci_add_resource_offset(&sys->resources, &pcie->prefetch,
+> -- 
+> 2.9.0
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-pci" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
