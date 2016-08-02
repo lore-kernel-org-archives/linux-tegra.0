@@ -1,37 +1,72 @@
-From: Baole Ni <baolex.ni-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 1232/1285] Replace numeric parameter like 0444 with macro
-Date: Tue,  2 Aug 2016 20:29:18 +0800
-Message-ID: <20160802122918.32423-1-baolex.ni@intel.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: perex-/Fr2/VpizcU@public.gmane.org, tiwai-IBi9RG/b67k@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, kadlec-K40Dz/62t/MgiyqX0sVFJYdd74u8MsAO@public.gmane.org, davem-fT/PcQaiUtIeIZ0/mPfg9Q@public.gmane.org, m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, kyungmin.park-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org, k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org
-Cc: alsa-devel-K7yf7f+aM1XWsZ/bQMPhNw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, chuansheng.liu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, baolex.ni-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, xiong.y.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, libin.yang-VuQAYsv1563Yd54FQh9/CA@public.gmane.org, aryabinin-5HdwGun5lf+gSpxsJD1C4w@public.gmane.org
+From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH 4/4] arm64: tegra: Add clock and reset names for audio
+ powergate
+Date: Tue, 2 Aug 2016 15:18:33 +0100
+Message-ID: <20160802141833.GB20134@leverpostej>
+References: <1470134069-12178-1-git-send-email-jonathanh@nvidia.com>
+ <1470134069-12178-5-git-send-email-jonathanh@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1470134069-12178-5-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-I find that the developers often just specified the numeric value
-when calling a macro which is defined with a parameter for access permission.
-As we know, these numeric value for access permission have had the corresponding macro,
-and that using macro can improve the robustness and readability of the code,
-thus, I suggest replacing the numeric parameter with the macro.
+On Tue, Aug 02, 2016 at 11:34:29AM +0100, Jon Hunter wrote:
+> Add the clock and reset names for the Tegra210 Audio powergate. Please
+> note that these are not currently used, but added from completeness and
+> to be consistent with the other powergate nodes.
+> 
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> 
+> We added the clock and resets names for the XUSB partitions and so I
+> thought we should do the same for the Audio. Should I update the binding
+> documentation to say these should be provided? Currently it does not
+> state these are required. If we do update the binding doc, I was not
+> entirely sure what to put in the description for these properties.
+> Typically the clock and reset names would be fixed for a device, but here
+> we are not using them and so there are no fixed names.
 
-Signed-off-by: Chuansheng Liu <chuansheng.liu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Signed-off-by: Baole Ni <baolex.ni-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
----
- sound/pci/hda/hda_tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The names are there for the consumer's benefit, so if the consumer
+binding doesn't require specific names, they shouldn't be in the DT.
+It doesn't make sense to have names which are not fixed from the
+consumer's PoV, so if anything the above is an argument for *removing*
+the unnecessary and varied names from other nodes.
 
-diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
-index 17fd817..4c00aa8 100644
---- a/sound/pci/hda/hda_tegra.c
-+++ b/sound/pci/hda/hda_tegra.c
-@@ -78,7 +78,7 @@ struct hda_tegra {
- 
- #ifdef CONFIG_PM
- static int power_save = CONFIG_SND_HDA_POWER_SAVE_DEFAULT;
--module_param(power_save, bint, 0644);
-+module_param(power_save, bint, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
- MODULE_PARM_DESC(power_save,
- 		 "Automatic power-saving timeout (in seconds, 0 = disable).");
- #else
--- 
-2.9.2
+Thanks,
+Mark.
+
+> 
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> index c4cfdcf60d26..92e987acc551 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+> @@ -644,7 +644,9 @@
+>  			pd_audio: aud {
+>  				clocks = <&tegra_car TEGRA210_CLK_APE>,
+>  					 <&tegra_car TEGRA210_CLK_APB2APE>;
+> +				clock-names = "ape", "apb2ape";
+>  				resets = <&tegra_car 198>;
+> +				reset-names = "ape";
+>  				#power-domain-cells = <0>;
+>  			};
+>  
+> -- 
+> 2.1.4
+> 
+> --
+> To unsubscribe from this list: send the line "unsubscribe devicetree" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> 
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
