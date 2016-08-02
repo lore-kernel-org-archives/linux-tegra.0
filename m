@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 3/4] clk: tegra: Correct bit width for PMC output clock mux
-Date: Tue, 2 Aug 2016 11:34:28 +0100
-Message-ID: <1470134069-12178-4-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH 4/4] arm64: tegra: Add clock and reset names for audio powergate
+Date: Tue, 2 Aug 2016 11:34:29 +0100
+Message-ID: <1470134069-12178-5-git-send-email-jonathanh@nvidia.com>
 References: <1470134069-12178-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,37 +12,37 @@ To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Re
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-The bit field for setting the clock mux for the PMC output clocks is a
-2-bit field and has always been a 2-bit field for all Tegra devices that
-have these clocks (starting with Tegra30). However, the PMC clock driver
-incorrectly specifies that this bit field is 3 bits wide and this causes
-other bits in the register to be over-written when setting up the mux.
-Therefore, correct the width for PMC clock mux to prevent over-writing
-other fields.
+Add the clock and reset names for the Tegra210 Audio powergate. Please
+note that these are not currently used, but added from completeness and
+to be consistent with the other powergate nodes.
 
 Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
 
-I did not bother marking this for stable because it has been around for
-such a long time I don't think that this has caused any problems. I only
-stumbled across this when dumping the register contents during some
-testing. Nonetheless we should correct this.
+We added the clock and resets names for the XUSB partitions and so I
+thought we should do the same for the Audio. Should I update the binding
+documentation to say these should be provided? Currently it does not
+state these are required. If we do update the binding doc, I was not
+entirely sure what to put in the description for these properties.
+Typically the clock and reset names would be fixed for a device, but here
+we are not using them and so there are no fixed names.
 
- drivers/clk/tegra/clk-tegra-pmc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-tegra-pmc.c b/drivers/clk/tegra/clk-tegra-pmc.c
-index 91377abfefa1..36469a2ca385 100644
---- a/drivers/clk/tegra/clk-tegra-pmc.c
-+++ b/drivers/clk/tegra/clk-tegra-pmc.c
-@@ -97,7 +97,7 @@ void __init tegra_pmc_clk_init(void __iomem *pmc_base,
- 		clk = clk_register_mux(NULL, data->mux_name, data->parents,
- 				data->num_parents, CLK_SET_RATE_NO_REPARENT,
- 				pmc_base + PMC_CLK_OUT_CNTRL, data->mux_shift,
--				3, 0, &clk_out_lock);
-+				2, 0, &clk_out_lock);
- 		*dt_clk = clk;
- 
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+index c4cfdcf60d26..92e987acc551 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+@@ -644,7 +644,9 @@
+ 			pd_audio: aud {
+ 				clocks = <&tegra_car TEGRA210_CLK_APE>,
+ 					 <&tegra_car TEGRA210_CLK_APB2APE>;
++				clock-names = "ape", "apb2ape";
+ 				resets = <&tegra_car 198>;
++				reset-names = "ape";
+ 				#power-domain-cells = <0>;
+ 			};
  
 -- 
 2.1.4
