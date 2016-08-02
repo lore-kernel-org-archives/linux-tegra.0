@@ -1,64 +1,78 @@
-From: Tomeu Vizoso <tomeu.vizoso@gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Subject: Re: [PATCH 08/12] i2c: core: Add support for 'i2c-bus' subnode
-Date: Tue, 2 Aug 2016 08:26:49 +0200
-Message-ID: <CAAObsKDGVz0XCxeqt+W31RZ-KEvqPnQaH0dkTUj2zL9oFZrPBw@mail.gmail.com>
+Date: Tue, 2 Aug 2016 07:49:08 +0100
+Message-ID: <d0647634-7fc9-05e1-21b0-f96bccd5fc6a@nvidia.com>
 References: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
  <1466697545-11868-9-git-send-email-jonathanh@nvidia.com>
+ <CAAObsKDGVz0XCxeqt+W31RZ-KEvqPnQaH0dkTUj2zL9oFZrPBw@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1466697545-11868-9-git-send-email-jonathanh@nvidia.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linux-i2c@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAAObsKDGVz0XCxeqt+W31RZ-KEvqPnQaH0dkTUj2zL9oFZrPBw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Tomeu Vizoso <tomeu.vizoso-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMjMgSnVuZSAyMDE2IGF0IDE3OjU5LCBKb24gSHVudGVyIDxqb25hdGhhbmhAbnZpZGlhLmNv
-bT4gd3JvdGU6Cj4gSWYgdGhlICdpMmMtYnVzJyBkZXZpY2UtdHJlZSBub2RlIGlzIHByZXNlbnQg
-Zm9yIGFuIEkyQyBhZGFwdGVyIHRoZW4KPiBwYXJzZSB0aGlzIHN1Ym5vZGUgZm9yIEkyQyBzbGF2
-ZXMuCj4KPiBTaWduZWQtb2ZmLWJ5OiBKb24gSHVudGVyIDxqb25hdGhhbmhAbnZpZGlhLmNvbT4K
-PiAtLS0KPiAgZHJpdmVycy9pMmMvaTJjLWNvcmUuYyB8IDEwICsrKysrKysrLS0KPiAgMSBmaWxl
-IGNoYW5nZWQsIDggaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKPgo+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL2kyYy9pMmMtY29yZS5jIGIvZHJpdmVycy9pMmMvaTJjLWNvcmUuYwo+IGluZGV4
-IDk1MmQyZjBjMDJjNS4uNzFhZDUzMmJlMWQ4IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvaTJjL2ky
-Yy1jb3JlLmMKPiArKysgYi9kcml2ZXJzL2kyYy9pMmMtY29yZS5jCj4gQEAgLTE0NTIsNyArMTQ1
-Miw3IEBAIHN0YXRpYyBzdHJ1Y3QgaTJjX2NsaWVudCAqb2ZfaTJjX3JlZ2lzdGVyX2RldmljZShz
-dHJ1Y3QgaTJjX2FkYXB0ZXIgKmFkYXAsCj4KPiAgc3RhdGljIHZvaWQgb2ZfaTJjX3JlZ2lzdGVy
-X2RldmljZXMoc3RydWN0IGkyY19hZGFwdGVyICphZGFwKQo+ICB7Cj4gLSAgICAgICBzdHJ1Y3Qg
-ZGV2aWNlX25vZGUgKm5vZGU7Cj4gKyAgICAgICBzdHJ1Y3QgZGV2aWNlX25vZGUgKmJ1cywgKm5v
-ZGU7Cj4KPiAgICAgICAgIC8qIE9ubHkgcmVnaXN0ZXIgY2hpbGQgZGV2aWNlcyBpZiB0aGUgYWRh
-cHRlciBoYXMgYSBub2RlIHBvaW50ZXIgc2V0ICovCj4gICAgICAgICBpZiAoIWFkYXAtPmRldi5v
-Zl9ub2RlKQo+IEBAIC0xNDYwLDExICsxNDYwLDE3IEBAIHN0YXRpYyB2b2lkIG9mX2kyY19yZWdp
-c3Rlcl9kZXZpY2VzKHN0cnVjdCBpMmNfYWRhcHRlciAqYWRhcCkKPgo+ICAgICAgICAgZGV2X2Ri
-ZygmYWRhcC0+ZGV2LCAib2ZfaTJjOiB3YWxraW5nIGNoaWxkIG5vZGVzXG4iKTsKPgo+IC0gICAg
-ICAgZm9yX2VhY2hfYXZhaWxhYmxlX2NoaWxkX29mX25vZGUoYWRhcC0+ZGV2Lm9mX25vZGUsIG5v
-ZGUpIHsKPiArICAgICAgIGJ1cyA9IG9mX2dldF9jaGlsZF9ieV9uYW1lKGFkYXAtPmRldi5vZl9u
-b2RlLCAiaTJjLWJ1cyIpOwo+ICsgICAgICAgaWYgKCFidXMpCj4gKyAgICAgICAgICAgICAgIGJ1
-cyA9IG9mX25vZGVfZ2V0KGFkYXAtPmRldi5vZl9ub2RlKTsKPiArCj4gKyAgICAgICBmb3JfZWFj
-aF9hdmFpbGFibGVfY2hpbGRfb2Zfbm9kZShidXMsIG5vZGUpIHsKPiAgICAgICAgICAgICAgICAg
-aWYgKG9mX25vZGVfdGVzdF9hbmRfc2V0X2ZsYWcobm9kZSwgT0ZfUE9QVUxBVEVEKSkKPiAgICAg
-ICAgICAgICAgICAgICAgICAgICBjb250aW51ZTsKPiAgICAgICAgICAgICAgICAgb2ZfaTJjX3Jl
-Z2lzdGVyX2RldmljZShhZGFwLCBub2RlKTsKPiAgICAgICAgIH0KPiArCj4gKyAgICAgICBvZl9u
-b2RlX3B1dChidXMpOwo+ICB9CgpTb3JyeSBmb3Igbm90IGNvbW1lbnRpbmcgZWFybGllciwgYnV0
-IEkgb25seSBmb3VuZCB0aGUgaXNzdWUgeWVzdGVyZGF5LgoKSSdtIGJvdGhlcmVkIGFzIHdlbGwg
-YnkgdGhlICJtb2RhbGlhcyBmYWlsdXJlIiBlcnJvciBtZXNzYWdlIGJ1dCBpbiBteQpjYXNlIHRo
-ZSBub2RlIGRvZXNuJ3QgaGF2ZSBhbnkgaTJjIGRldmljZXMsIHNvIHRoaXMgcGF0Y2ggaXNuJ3Qg
-YQpjb21wbGV0ZSBzb2x1dGlvbiB0byB0aGF0IHByb2JsZW0uCgpIYXMgdGhpcyBiZWVuIGNvbnNp
-ZGVyZWQgYWxyZWFkeT8KClRoYW5rcywKClRvbWV1Cgo+ICBzdGF0aWMgaW50IG9mX2Rldl9ub2Rl
-X21hdGNoKHN0cnVjdCBkZXZpY2UgKmRldiwgdm9pZCAqZGF0YSkKPiAtLQo+IDIuMS40Cj4KPiAt
-LQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNj
-cmliZSBsaW51eC10ZWdyYSIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21v
-QHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtl
-cm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbApfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0
-cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
-aXN0aW5mby9kcmktZGV2ZWwK
+
+On 02/08/16 07:26, Tomeu Vizoso wrote:
+> On 23 June 2016 at 17:59, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> If the 'i2c-bus' device-tree node is present for an I2C adapter then
+>> parse this subnode for I2C slaves.
+>>
+>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  drivers/i2c/i2c-core.c | 10 ++++++++--
+>>  1 file changed, 8 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/i2c/i2c-core.c b/drivers/i2c/i2c-core.c
+>> index 952d2f0c02c5..71ad532be1d8 100644
+>> --- a/drivers/i2c/i2c-core.c
+>> +++ b/drivers/i2c/i2c-core.c
+>> @@ -1452,7 +1452,7 @@ static struct i2c_client *of_i2c_register_device(struct i2c_adapter *adap,
+>>
+>>  static void of_i2c_register_devices(struct i2c_adapter *adap)
+>>  {
+>> -       struct device_node *node;
+>> +       struct device_node *bus, *node;
+>>
+>>         /* Only register child devices if the adapter has a node pointer set */
+>>         if (!adap->dev.of_node)
+>> @@ -1460,11 +1460,17 @@ static void of_i2c_register_devices(struct i2c_adapter *adap)
+>>
+>>         dev_dbg(&adap->dev, "of_i2c: walking child nodes\n");
+>>
+>> -       for_each_available_child_of_node(adap->dev.of_node, node) {
+>> +       bus = of_get_child_by_name(adap->dev.of_node, "i2c-bus");
+>> +       if (!bus)
+>> +               bus = of_node_get(adap->dev.of_node);
+>> +
+>> +       for_each_available_child_of_node(bus, node) {
+>>                 if (of_node_test_and_set_flag(node, OF_POPULATED))
+>>                         continue;
+>>                 of_i2c_register_device(adap, node);
+>>         }
+>> +
+>> +       of_node_put(bus);
+>>  }
+> 
+> Sorry for not commenting earlier, but I only found the issue yesterday.
+> 
+> I'm bothered as well by the "modalias failure" error message but in my
+> case the node doesn't have any i2c devices, so this patch isn't a
+> complete solution to that problem.
+
+But it is a i2c adapter correct? I guess I don't completely understand
+the problem?
+
+> Has this been considered already?
+
+Why can't you add a place-holder 'i2c-bus' node for i2c devices so when
+they are adding in the future they are placed under this node? This is
+what I did for dpaux. See patch 12/12 of this series.
+
+Jon
+
+-- 
+nvpublic
