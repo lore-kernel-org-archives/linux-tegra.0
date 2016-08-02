@@ -1,48 +1,29 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 4/4] arm64: tegra: Add clock and reset names for audio powergate
-Date: Tue, 2 Aug 2016 11:34:29 +0100
-Message-ID: <1470134069-12178-5-git-send-email-jonathanh@nvidia.com>
-References: <1470134069-12178-1-git-send-email-jonathanh@nvidia.com>
+From: Jack Mitchell <ml-psbXN780rFT10XsdtD+oqA@public.gmane.org>
+Subject: TX1 mainline GPU/wifi support
+Date: Tue, 2 Aug 2016 13:32:31 +0100
+Message-ID: <5654a683-b801-86d5-6699-d41b444c3688@embed.me.uk>
 Mime-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1470134069-12178-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add the clock and reset names for the Tegra210 Audio powergate. Please
-note that these are not currently used, but added from completeness and
-to be consistent with the other powergate nodes.
+Hi,
 
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
+I am currently investigating the opportunity to move our TX1 boards over 
+to mainline linux as we require some recent kernel features. I have 
+successfully booted linux-next and have USB/ethernet working along with 
+Docker and a recent systemd. I see that GPU support is somewhat 
+implemented but I'm not sure how to integrate the current nvidia 
+userspace with the driver. We use CUDA on our boards, and as such I 
+assume we need the nvidia kernel blob to be driving the GPU, right?
 
-We added the clock and resets names for the XUSB partitions and so I
-thought we should do the same for the Audio. Should I update the binding
-documentation to say these should be provided? Currently it does not
-state these are required. If we do update the binding doc, I was not
-entirely sure what to put in the description for these properties.
-Typically the clock and reset names would be fixed for a device, but here
-we are not using them and so there are no fixed names.
+As a second question, is there any roadmap for the wifi support on the 
+TX1 devkit?
 
- arch/arm64/boot/dts/nvidia/tegra210.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+Please CC direct as I'm still waiting on subscription to the list.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-index c4cfdcf60d26..92e987acc551 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
-@@ -644,7 +644,9 @@
- 			pd_audio: aud {
- 				clocks = <&tegra_car TEGRA210_CLK_APE>,
- 					 <&tegra_car TEGRA210_CLK_APB2APE>;
-+				clock-names = "ape", "apb2ape";
- 				resets = <&tegra_car 198>;
-+				reset-names = "ape";
- 				#power-domain-cells = <0>;
- 			};
- 
--- 
-2.1.4
+Kind Regards,
+Jack.
