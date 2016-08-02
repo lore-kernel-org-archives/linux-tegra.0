@@ -1,51 +1,64 @@
-From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] PCI: tegra: Remove stray call to pci_ioremap_io()
-Date: Mon, 1 Aug 2016 12:47:02 -0500
-Message-ID: <20160801174702.GA6592@localhost>
-References: <20160801070539.24779-1-thierry.reding@gmail.com>
+From: Tomeu Vizoso <tomeu.vizoso@gmail.com>
+Subject: Re: [PATCH 08/12] i2c: core: Add support for 'i2c-bus' subnode
+Date: Tue, 2 Aug 2016 08:26:49 +0200
+Message-ID: <CAAObsKDGVz0XCxeqt+W31RZ-KEvqPnQaH0dkTUj2zL9oFZrPBw@mail.gmail.com>
+References: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
+ <1466697545-11868-9-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20160801070539.24779-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <1466697545-11868-9-git-send-email-jonathanh@nvidia.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linux-i2c@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Aug 01, 2016 at 09:05:39AM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> This was introduced by an unfortunate interaction between commits
-> 45c64b6ac4ef ("PCI: tegra: Request host bridge window resources with
-> core function") and e6e9f471f5fe ("PCI: tegra: Use generic
-> pci_remap_iospace() rather than ARM32-specific one").
-> 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Thanks, I re-did the merge and fixed my mistake.
-
-> ---
->  drivers/pci/host/pci-tegra.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-> index 2544937620a5..6de0757b11e4 100644
-> --- a/drivers/pci/host/pci-tegra.c
-> +++ b/drivers/pci/host/pci-tegra.c
-> @@ -621,8 +621,6 @@ static int tegra_pcie_setup(int nr, struct pci_sys_data *sys)
->  	if (err < 0)
->  		return err;
->  
-> -	pci_ioremap_io(pcie->pio.start, pcie->io.start);
-> -
->  	pci_add_resource_offset(&sys->resources, &pcie->pio, sys->io_offset);
->  	pci_add_resource_offset(&sys->resources, &pcie->mem, sys->mem_offset);
->  	pci_add_resource_offset(&sys->resources, &pcie->prefetch,
-> -- 
-> 2.9.0
-> 
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-pci" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+T24gMjMgSnVuZSAyMDE2IGF0IDE3OjU5LCBKb24gSHVudGVyIDxqb25hdGhhbmhAbnZpZGlhLmNv
+bT4gd3JvdGU6Cj4gSWYgdGhlICdpMmMtYnVzJyBkZXZpY2UtdHJlZSBub2RlIGlzIHByZXNlbnQg
+Zm9yIGFuIEkyQyBhZGFwdGVyIHRoZW4KPiBwYXJzZSB0aGlzIHN1Ym5vZGUgZm9yIEkyQyBzbGF2
+ZXMuCj4KPiBTaWduZWQtb2ZmLWJ5OiBKb24gSHVudGVyIDxqb25hdGhhbmhAbnZpZGlhLmNvbT4K
+PiAtLS0KPiAgZHJpdmVycy9pMmMvaTJjLWNvcmUuYyB8IDEwICsrKysrKysrLS0KPiAgMSBmaWxl
+IGNoYW5nZWQsIDggaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKPgo+IGRpZmYgLS1naXQg
+YS9kcml2ZXJzL2kyYy9pMmMtY29yZS5jIGIvZHJpdmVycy9pMmMvaTJjLWNvcmUuYwo+IGluZGV4
+IDk1MmQyZjBjMDJjNS4uNzFhZDUzMmJlMWQ4IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvaTJjL2ky
+Yy1jb3JlLmMKPiArKysgYi9kcml2ZXJzL2kyYy9pMmMtY29yZS5jCj4gQEAgLTE0NTIsNyArMTQ1
+Miw3IEBAIHN0YXRpYyBzdHJ1Y3QgaTJjX2NsaWVudCAqb2ZfaTJjX3JlZ2lzdGVyX2RldmljZShz
+dHJ1Y3QgaTJjX2FkYXB0ZXIgKmFkYXAsCj4KPiAgc3RhdGljIHZvaWQgb2ZfaTJjX3JlZ2lzdGVy
+X2RldmljZXMoc3RydWN0IGkyY19hZGFwdGVyICphZGFwKQo+ICB7Cj4gLSAgICAgICBzdHJ1Y3Qg
+ZGV2aWNlX25vZGUgKm5vZGU7Cj4gKyAgICAgICBzdHJ1Y3QgZGV2aWNlX25vZGUgKmJ1cywgKm5v
+ZGU7Cj4KPiAgICAgICAgIC8qIE9ubHkgcmVnaXN0ZXIgY2hpbGQgZGV2aWNlcyBpZiB0aGUgYWRh
+cHRlciBoYXMgYSBub2RlIHBvaW50ZXIgc2V0ICovCj4gICAgICAgICBpZiAoIWFkYXAtPmRldi5v
+Zl9ub2RlKQo+IEBAIC0xNDYwLDExICsxNDYwLDE3IEBAIHN0YXRpYyB2b2lkIG9mX2kyY19yZWdp
+c3Rlcl9kZXZpY2VzKHN0cnVjdCBpMmNfYWRhcHRlciAqYWRhcCkKPgo+ICAgICAgICAgZGV2X2Ri
+ZygmYWRhcC0+ZGV2LCAib2ZfaTJjOiB3YWxraW5nIGNoaWxkIG5vZGVzXG4iKTsKPgo+IC0gICAg
+ICAgZm9yX2VhY2hfYXZhaWxhYmxlX2NoaWxkX29mX25vZGUoYWRhcC0+ZGV2Lm9mX25vZGUsIG5v
+ZGUpIHsKPiArICAgICAgIGJ1cyA9IG9mX2dldF9jaGlsZF9ieV9uYW1lKGFkYXAtPmRldi5vZl9u
+b2RlLCAiaTJjLWJ1cyIpOwo+ICsgICAgICAgaWYgKCFidXMpCj4gKyAgICAgICAgICAgICAgIGJ1
+cyA9IG9mX25vZGVfZ2V0KGFkYXAtPmRldi5vZl9ub2RlKTsKPiArCj4gKyAgICAgICBmb3JfZWFj
+aF9hdmFpbGFibGVfY2hpbGRfb2Zfbm9kZShidXMsIG5vZGUpIHsKPiAgICAgICAgICAgICAgICAg
+aWYgKG9mX25vZGVfdGVzdF9hbmRfc2V0X2ZsYWcobm9kZSwgT0ZfUE9QVUxBVEVEKSkKPiAgICAg
+ICAgICAgICAgICAgICAgICAgICBjb250aW51ZTsKPiAgICAgICAgICAgICAgICAgb2ZfaTJjX3Jl
+Z2lzdGVyX2RldmljZShhZGFwLCBub2RlKTsKPiAgICAgICAgIH0KPiArCj4gKyAgICAgICBvZl9u
+b2RlX3B1dChidXMpOwo+ICB9CgpTb3JyeSBmb3Igbm90IGNvbW1lbnRpbmcgZWFybGllciwgYnV0
+IEkgb25seSBmb3VuZCB0aGUgaXNzdWUgeWVzdGVyZGF5LgoKSSdtIGJvdGhlcmVkIGFzIHdlbGwg
+YnkgdGhlICJtb2RhbGlhcyBmYWlsdXJlIiBlcnJvciBtZXNzYWdlIGJ1dCBpbiBteQpjYXNlIHRo
+ZSBub2RlIGRvZXNuJ3QgaGF2ZSBhbnkgaTJjIGRldmljZXMsIHNvIHRoaXMgcGF0Y2ggaXNuJ3Qg
+YQpjb21wbGV0ZSBzb2x1dGlvbiB0byB0aGF0IHByb2JsZW0uCgpIYXMgdGhpcyBiZWVuIGNvbnNp
+ZGVyZWQgYWxyZWFkeT8KClRoYW5rcywKClRvbWV1Cgo+ICBzdGF0aWMgaW50IG9mX2Rldl9ub2Rl
+X21hdGNoKHN0cnVjdCBkZXZpY2UgKmRldiwgdm9pZCAqZGF0YSkKPiAtLQo+IDIuMS40Cj4KPiAt
+LQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNj
+cmliZSBsaW51eC10ZWdyYSIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21v
+QHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtl
+cm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbApfX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0
+cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9s
+aXN0aW5mby9kcmktZGV2ZWwK
