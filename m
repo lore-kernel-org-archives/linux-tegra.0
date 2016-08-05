@@ -1,71 +1,119 @@
-From: Tomeu Vizoso <tomeu.vizoso@gmail.com>
-Subject: Re: [PATCH 08/12] i2c: core: Add support for 'i2c-bus' subnode
-Date: Thu, 4 Aug 2016 08:25:39 +0200
-Message-ID: <CAAObsKDyEJTqDpv7YcwF-fJ9c_Quz2mHMxm+HrScYJkB44jaBQ@mail.gmail.com>
-References: <1466697545-11868-1-git-send-email-jonathanh@nvidia.com>
- <1466697545-11868-9-git-send-email-jonathanh@nvidia.com>
- <CAAObsKDGVz0XCxeqt+W31RZ-KEvqPnQaH0dkTUj2zL9oFZrPBw@mail.gmail.com>
- <d0647634-7fc9-05e1-21b0-f96bccd5fc6a@nvidia.com>
+From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [RFC PATCH 6/8] PM / Domains: Remove a provider by referencing
+ the data pointer
+Date: Fri, 5 Aug 2016 13:55:31 +0200
+Message-ID: <CAPDyKFovC07Z9y-4RQ4MKGtjJx5w1D8er3Fv-8HF2qyTKgVViQ@mail.gmail.com>
+References: <1457090634-14785-1-git-send-email-jonathanh@nvidia.com>
+ <1457090634-14785-7-git-send-email-jonathanh@nvidia.com> <CAPDyKFpLcnLvQmpQgzhOExq67XrbaW9Nf1Gk2Y+CND8dn_cmyA@mail.gmail.com>
+ <5769455C.9010809@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <d0647634-7fc9-05e1-21b0-f96bccd5fc6a@nvidia.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Wolfram Sang <wsa@the-dreams.de>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, linux-gpio@vger.kernel.org, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, linux-i2c@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <5769455C.9010809-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alexander Aring <alex.aring-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gMiBBdWd1c3QgMjAxNiBhdCAwODo0OSwgSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5j
-b20+IHdyb3RlOgo+Cj4gT24gMDIvMDgvMTYgMDc6MjYsIFRvbWV1IFZpem9zbyB3cm90ZToKPj4g
-T24gMjMgSnVuZSAyMDE2IGF0IDE3OjU5LCBKb24gSHVudGVyIDxqb25hdGhhbmhAbnZpZGlhLmNv
-bT4gd3JvdGU6Cj4+PiBJZiB0aGUgJ2kyYy1idXMnIGRldmljZS10cmVlIG5vZGUgaXMgcHJlc2Vu
-dCBmb3IgYW4gSTJDIGFkYXB0ZXIgdGhlbgo+Pj4gcGFyc2UgdGhpcyBzdWJub2RlIGZvciBJMkMg
-c2xhdmVzLgo+Pj4KPj4+IFNpZ25lZC1vZmYtYnk6IEpvbiBIdW50ZXIgPGpvbmF0aGFuaEBudmlk
-aWEuY29tPgo+Pj4gLS0tCj4+PiAgZHJpdmVycy9pMmMvaTJjLWNvcmUuYyB8IDEwICsrKysrKysr
-LS0KPj4+ICAxIGZpbGUgY2hhbmdlZCwgOCBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQo+
-Pj4KPj4+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2kyYy9pMmMtY29yZS5jIGIvZHJpdmVycy9pMmMv
-aTJjLWNvcmUuYwo+Pj4gaW5kZXggOTUyZDJmMGMwMmM1Li43MWFkNTMyYmUxZDggMTAwNjQ0Cj4+
-PiAtLS0gYS9kcml2ZXJzL2kyYy9pMmMtY29yZS5jCj4+PiArKysgYi9kcml2ZXJzL2kyYy9pMmMt
-Y29yZS5jCj4+PiBAQCAtMTQ1Miw3ICsxNDUyLDcgQEAgc3RhdGljIHN0cnVjdCBpMmNfY2xpZW50
-ICpvZl9pMmNfcmVnaXN0ZXJfZGV2aWNlKHN0cnVjdCBpMmNfYWRhcHRlciAqYWRhcCwKPj4+Cj4+
-PiAgc3RhdGljIHZvaWQgb2ZfaTJjX3JlZ2lzdGVyX2RldmljZXMoc3RydWN0IGkyY19hZGFwdGVy
-ICphZGFwKQo+Pj4gIHsKPj4+IC0gICAgICAgc3RydWN0IGRldmljZV9ub2RlICpub2RlOwo+Pj4g
-KyAgICAgICBzdHJ1Y3QgZGV2aWNlX25vZGUgKmJ1cywgKm5vZGU7Cj4+Pgo+Pj4gICAgICAgICAv
-KiBPbmx5IHJlZ2lzdGVyIGNoaWxkIGRldmljZXMgaWYgdGhlIGFkYXB0ZXIgaGFzIGEgbm9kZSBw
-b2ludGVyIHNldCAqLwo+Pj4gICAgICAgICBpZiAoIWFkYXAtPmRldi5vZl9ub2RlKQo+Pj4gQEAg
-LTE0NjAsMTEgKzE0NjAsMTcgQEAgc3RhdGljIHZvaWQgb2ZfaTJjX3JlZ2lzdGVyX2RldmljZXMo
-c3RydWN0IGkyY19hZGFwdGVyICphZGFwKQo+Pj4KPj4+ICAgICAgICAgZGV2X2RiZygmYWRhcC0+
-ZGV2LCAib2ZfaTJjOiB3YWxraW5nIGNoaWxkIG5vZGVzXG4iKTsKPj4+Cj4+PiAtICAgICAgIGZv
-cl9lYWNoX2F2YWlsYWJsZV9jaGlsZF9vZl9ub2RlKGFkYXAtPmRldi5vZl9ub2RlLCBub2RlKSB7
-Cj4+PiArICAgICAgIGJ1cyA9IG9mX2dldF9jaGlsZF9ieV9uYW1lKGFkYXAtPmRldi5vZl9ub2Rl
-LCAiaTJjLWJ1cyIpOwo+Pj4gKyAgICAgICBpZiAoIWJ1cykKPj4+ICsgICAgICAgICAgICAgICBi
-dXMgPSBvZl9ub2RlX2dldChhZGFwLT5kZXYub2Zfbm9kZSk7Cj4+PiArCj4+PiArICAgICAgIGZv
-cl9lYWNoX2F2YWlsYWJsZV9jaGlsZF9vZl9ub2RlKGJ1cywgbm9kZSkgewo+Pj4gICAgICAgICAg
-ICAgICAgIGlmIChvZl9ub2RlX3Rlc3RfYW5kX3NldF9mbGFnKG5vZGUsIE9GX1BPUFVMQVRFRCkp
-Cj4+PiAgICAgICAgICAgICAgICAgICAgICAgICBjb250aW51ZTsKPj4+ICAgICAgICAgICAgICAg
-ICBvZl9pMmNfcmVnaXN0ZXJfZGV2aWNlKGFkYXAsIG5vZGUpOwo+Pj4gICAgICAgICB9Cj4+PiAr
-Cj4+PiArICAgICAgIG9mX25vZGVfcHV0KGJ1cyk7Cj4+PiAgfQo+Pgo+PiBTb3JyeSBmb3Igbm90
-IGNvbW1lbnRpbmcgZWFybGllciwgYnV0IEkgb25seSBmb3VuZCB0aGUgaXNzdWUgeWVzdGVyZGF5
-Lgo+Pgo+PiBJJ20gYm90aGVyZWQgYXMgd2VsbCBieSB0aGUgIm1vZGFsaWFzIGZhaWx1cmUiIGVy
-cm9yIG1lc3NhZ2UgYnV0IGluIG15Cj4+IGNhc2UgdGhlIG5vZGUgZG9lc24ndCBoYXZlIGFueSBp
-MmMgZGV2aWNlcywgc28gdGhpcyBwYXRjaCBpc24ndCBhCj4+IGNvbXBsZXRlIHNvbHV0aW9uIHRv
-IHRoYXQgcHJvYmxlbS4KPgo+IEJ1dCBpdCBpcyBhIGkyYyBhZGFwdGVyIGNvcnJlY3Q/IEkgZ3Vl
-c3MgSSBkb24ndCBjb21wbGV0ZWx5IHVuZGVyc3RhbmQKPiB0aGUgcHJvYmxlbT8KPgo+PiBIYXMg
-dGhpcyBiZWVuIGNvbnNpZGVyZWQgYWxyZWFkeT8KPgo+IFdoeSBjYW4ndCB5b3UgYWRkIGEgcGxh
-Y2UtaG9sZGVyICdpMmMtYnVzJyBub2RlIGZvciBpMmMgZGV2aWNlcyBzbyB3aGVuCj4gdGhleSBh
-cmUgYWRkaW5nIGluIHRoZSBmdXR1cmUgdGhleSBhcmUgcGxhY2VkIHVuZGVyIHRoaXMgbm9kZT8g
-VGhpcyBpcwo+IHdoYXQgSSBkaWQgZm9yIGRwYXV4LiBTZWUgcGF0Y2ggMTIvMTIgb2YgdGhpcyBz
-ZXJpZXMuCgpIYWRuJ3QgcmVhbGl6ZWQsIGFuZCBpdCBzb3VuZHMgZ29vZCBlbm91Z2ggdG8gbWUu
-CgpUaGFua3MsCgpUb21ldQpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3Rv
-cC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmkt
-ZGV2ZWwK
+On 21 June 2016 at 15:47, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>
+> On 15/06/16 15:38, Ulf Hansson wrote:
+>> On 4 March 2016 at 12:23, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>> To remove a PM domain from the system, it is necessary to ensure
+>>> that any PM domain providers associated with the PM domain have
+>>> been removed. Otherwise it could be possible to obtain a pointer
+>>> to a PM domain structure that has been removed.
+>>>
+>>> PM domains now have a reference to the pointer for the PM domain
+>>> provider's data variable. Add a function so that a PM domain can
+>>> remove a PM domain provider by referencing the data pointer.
+
+
+>>>
+>>> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>> ---
+>>>  drivers/base/power/domain.c | 24 ++++++++++++++++++++++++
+>>>  include/linux/pm_domain.h   |  2 ++
+>>>  2 files changed, 26 insertions(+)
+>>>
+>>> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+>>> index 72055fef6256..438885f2455f 100644
+>>> --- a/drivers/base/power/domain.c
+>>> +++ b/drivers/base/power/domain.c
+>>> @@ -1738,6 +1738,30 @@ void of_genpd_del_provider(struct device_node *np)
+>>>  EXPORT_SYMBOL_GPL(of_genpd_del_provider);
+>>>
+>>>  /**
+>>> + * of_genpd_del_provider_by_data() - Remove a registered PM domain provider
+>>> + * @data: Pointer to the data associated with the PM domain provider
+>>> + *
+>>> + * Look up a PM domain provider based upon a pointer to it's data and
+>>> + * remove the PM domain provider from the list of providers.
+>>> + */
+>>> +void of_genpd_del_provider_by_data(void *data)
+>>> +{
+>>> +       struct of_genpd_provider *c, *cp;
+>>> +
+>>> +       mutex_lock(&of_genpd_mutex);
+>>> +       list_for_each_entry_safe(cp, c, &of_genpd_providers, link) {
+>>> +               if (cp->data == data) {
+>>> +                       list_del(&cp->link);
+>>> +                       of_node_put(cp->node);
+>>> +                       kfree(cp);
+>>> +                       break;
+>>> +               }
+>>> +       }
+>>> +       mutex_unlock(&of_genpd_mutex);
+>>> +}
+>>> +EXPORT_SYMBOL_GPL(of_genpd_del_provider_by_data);
+>>> +
+>>> +/**
+>>>   * of_genpd_get_from_provider() - Look-up PM domain
+>>>   * @genpdspec: OF phandle args to use for look-up
+>>>   *
+>>> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
+>>> index bed84413546f..7b7921a65cb0 100644
+>>> --- a/include/linux/pm_domain.h
+>>> +++ b/include/linux/pm_domain.h
+>>> @@ -199,6 +199,7 @@ int of_genpd_add_provider_simple(struct device_node *np,
+>>>  int of_genpd_add_provider_onecell(struct device_node *np,
+>>>                                   struct genpd_onecell_data *data);
+>>>  void of_genpd_del_provider(struct device_node *np);
+>>
+>> There's currently only one user of of_genpd_del_provider().
+>>
+>> Could this patch just convert that user to the new API, so we don't
+>> need to keep both the legacy and new one?
+>>
+>> I guess we could then just stick to the name "of_genpd_del_provider()".
+>
+> I had a look at this and to do that we would end up with
+> of_genpd_del_provider(struct device_node *np, void *data) where the user
+> should only pass one of the arguments. It seems a bit odd. However,
+> unless I have forgotten something, I wonder if we should just make
+> of_genpd_del_provider_by_name() a local function and not export this at
+> all? It seems more natural for users to delete a provider by the
+> device_node than by name rather than the data argument.
+>
+> The only problem I see with making of_genpd_del_provider_by_name() local
+> is that I need to add a prototype for the function at the top of the
+> domain.c source file so that it builds because __pm_genpd_remove() is
+> defined above it. Yes I could move __pm_genpd_remove() to the bottom of
+> the file but then it is not located next to pm_genpd_init() which seems odd.
+>
+> Let me know what you think.
+
+Sorry for delay! I have now looked into this in more detail.
+
+When an genpd provider is added today, it's supposed to get a
+corresponding *unique* OF device node associated with it, right!?
+
+If we store this OF device node from the provider in the struct
+generic_pm_domain, instead of the "provider_data pointer", we wouldn't
+need to the add of_genpd_del_provider_by_data() at all. Because we can
+use the currently available of_genpd_del_provider(), right!?
+
+Or what am I missing? :-)
+
+Kind regards
+Uffe
