@@ -1,77 +1,75 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.8-rc1
-Date: Tue, 9 Aug 2016 15:14:27 +0100
-Message-ID: <6f1baf82-11c8-9c60-a52e-83cec7df03a5@nvidia.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH] i2c: don't print error when adding adapter fails
+Date: Tue, 9 Aug 2016 16:39:15 +0200
+Message-ID: <20160809143915.GB1666@katana>
+References: <1470742581-12971-1-git-send-email-wsa-dev@sang-engineering.com>
+ <1470742581-12971-2-git-send-email-wsa-dev@sang-engineering.com>
+ <32d25618-83f6-b876-07b0-adb988516173@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="ftEhullJWpWg/VHq"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <32d25618-83f6-b876-07b0-adb988516173@roeck-us.net>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Wolfram Sang <wsa-dev@sang-engineering.com>, linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, linux-arm-kernel@lists.infradead.org, adi-buildroot-devel@lists.sourceforge.net, linuxppc-dev@lists.ozlabs.org, linux-samsung-soc@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-omap@vger.kernel.org, linux-rockchip@lists.infradead.org, kernel@stlinux.com, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.8-rc1.
-Logs and other details at:
 
-    https://nvtb.github.io//linux/test_v4.8-rc1/20160807183103/
-
-
-Test summary
-------------
-
-Build: zImage:
-    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Build: Image:
-    Pass: ( 1/ 1): defconfig
-
-Boot to userspace: defconfig:
-    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
-		   tegra210-p2371-0000, tegra210-smaug
-
-Boot to userspace: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+--ftEhullJWpWg/VHq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
 
-vmlinux object size
-(delta in bytes from test_v4.7 (523d939ef98fd712632d93a5a2b588e477a7565e)):
-   text     data      bss    total  kernel
-+698018  +144600    +9592  +852210  defconfig
-+133651  -519960      -88  -386397  multi_v7_defconfig
- +81268  -406304       +8  -325028  tegra_defconfig
+> >@@ -550,15 +550,10 @@ static int uniphier_fi2c_probe(struct platform_dev=
+ice *pdev)
+> > 	}
+> >
+> > 	ret =3D i2c_add_adapter(&priv->adap);
+> >-	if (ret) {
+> >-		dev_err(dev, "failed to add I2C adapter\n");
+> >-		goto err;
+> >-	}
+> >-
+> >-err:
+> > 	if (ret)
+> > 		clk_disable_unprepare(priv->clk);
+> >
+> >+ err:
+>=20
+> You sure about that one ? It leaves the clock enabled in some of the erro=
+r paths.
+
+Uh, ehrm, where is the brown paper bag? Thanks, Guenter!
+
+> Note: I dropped all individuals from Cc:; my mailer refused to accept the=
+ reply because there
+> were too many.
+
+Yes, the disadvantage of not breaking out.
 
 
-Boot-time memory difference
-(delta in bytes from test_v4.7 (523d939ef98fd712632d93a5a2b588e477a7565e))
-    avail    rsrvd     high    freed                board              kconfig                  dtb
-        .        .        .        .      qemu-vexpress64            defconfig           __internal
-     -20k      20k        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-     -16k      16k        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-     -20k      20k        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-     -16k      16k        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-     -20k      20k        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
-        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
-        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
-     -12k      12k        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-      -8k       8k        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
-        .        .        .        .       tegra210-smaug            defconfig       tegra210-smaug
-     -20k      20k        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-     -16k      16k        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+--ftEhullJWpWg/VHq
+Content-Type: application/pgp-signature; name="signature.asc"
 
---
-nvpublic
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXqesTAAoJEBQN5MwUoCm2fdIQAKsMhNBydvOJrt8SvVKc4fd8
+39601dtUJkADzbUDKqrQm08buBble9GQe38/YIQXiPO1pRY1RQBmPLbdNTlEWMFW
+Rc2RFmg1L469UhoDgrarWvT/VFMPBGOXEVEMe/0HFX+xKXfzWwYtFHvoUBtWVv0a
+rmuq47nYitymT9AS2Pul4Jn93hT2iMiIXoqhsEoNC8NiW/JR2okn64C8dUhx+tYv
+cjwClAbJwCpd+hBwSYR6CCunZTUUMcpHxjVtgfckNHc6TPBGxwHRVGpye0dd176M
+z69gqUsx5ny+iNFeCZzgynfX0U0yzFYjNeyNFm9MuXDGD4cr6qB1PonvkStV4vKu
+cxomrG2RjT/36NHlJIbXklT2PSB0QOPjGkS+apvPlQ9eM4u24j+WlXyCtszOr/qP
+19wm6SZ+0rvlM56aPgpA935XkdCQJ8KffRTbqHxrXEthtKwhmRR1IFC1zSX7/1a9
+dA6AOB2i1fQ+FgZ/0vhmWQr72DvmTnM+T3HLWq/IK9u16j1tHRD2HA8IKDb4yY8W
+cVD511wu8qkLta47lkOVbLwxyWDBeLOT0Ekn67y6PvXoPItoFO7ormtLUkvaL7AW
+VYPILEWfsj/CAdATGEU2j//OIYakDl66HUp3yM9VxH+39gTboiHV1aFJ8/dfVZuF
+OGDTbDBP2wxqJac3m7M3
+=0rq4
+-----END PGP SIGNATURE-----
+
+--ftEhullJWpWg/VHq--
