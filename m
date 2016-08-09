@@ -1,234 +1,280 @@
-From: Mirza Krak <mirza.krak@gmail.com>
-Subject: Re: [PATCH 6/6] bus: Add support for Tegra Generic Memory Interface
-Date: Tue, 9 Aug 2016 09:21:54 +0200
-Message-ID: <CALw8SCWjs2TnwFcTY=iXv_eskpKaKpvUmoXnTgtpoL8w9neD=w@mail.gmail.com>
+From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 3/6] dt/bindings: Add bindings for Tegra GMI controller
+Date: Tue, 9 Aug 2016 10:40:22 +0200
+Message-ID: <CALw8SCV61w6BgtBb8pY4czeB4yFmbtLmB2MuyrvGcvepmRpeBQ@mail.gmail.com>
 References: <1470512452-8322-1-git-send-email-mirza.krak@gmail.com>
- <1470512452-8322-7-git-send-email-mirza.krak@gmail.com> <fae8dbaf-53e9-dcfe-f755-32f7b28f4c9f@nvidia.com>
+ <1470512452-8322-4-git-send-email-mirza.krak@gmail.com> <901be576-a810-c630-9b83-de922e945df0@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-clk-owner@vger.kernel.org>
-In-Reply-To: <fae8dbaf-53e9-dcfe-f755-32f7b28f4c9f@nvidia.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, pdeschrijver@nvidia.com, Prashant Gaikwad <pgaikwad@nvidia.com>, mark.rutland@arm.com, devicetree@vger.kernel.org, pawel.moll@arm.com, ijc+devicetree@hellion.org.uk, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org, linux@armlinux.org.uk, robh+dt@kernel.org, Kumar Gala <galak@codeaurora.org>, linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <901be576-a810-c630-9b83-de922e945df0-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-2016-08-08 15:47 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
+2016-08-08 16:44 GMT+02:00 Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>:
 >
 > On 06/08/16 20:40, Mirza Krak wrote:
->> From: Mirza Krak <mirza.krak@gmail.com>
+>> From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 >>
->> The Generic Memory Interface bus can be used to connect high-speed
->> devices such as NOR flash, FPGAs, DSPs...
+>> Document the devicetree bindings for the Generic Memory Interface (GMI)
+>> bus driver found on Tegra SOCs.
 >>
->> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+>> Signed-off-by: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 >> ---
->>  drivers/bus/Kconfig     |   7 ++
->>  drivers/bus/Makefile    |   1 +
->>  drivers/bus/tegra-gmi.c | 224 ++++++++++++++++++++++++++++++++++++++++++++++++
->>  3 files changed, 232 insertions(+)
->>  create mode 100644 drivers/bus/tegra-gmi.c
+>>  .../devicetree/bindings/bus/nvidia,tegra20-gmi.txt | 99 ++++++++++++++++++++++
+>>  1 file changed, 99 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
 >>
-
-<--snip-->
-
+>> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
+>> new file mode 100644
+>> index 0000000..046846e
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
+>> @@ -0,0 +1,99 @@
+>> +Device tree bindings for NVIDIA Tegra Generic Memory Interface bus
 >> +
->> +static int tegra_gmi_parse_dt(struct device *dev, struct tegra_gmi_priv *priv)
->> +{
->> +     struct device_node *of_node = dev->of_node;
->> +     u32 property;
+>> +The Generic Memory Interface bus enables memory transfers between internal and
+>> +external memory. Can be used to attach various high speed devices such as
+>> +synchronous/asynchronous NOR, FPGA, UARTS and more.
 >> +
->> +     /* configuration */
+>> +The actual devices are instantiated from the child nodes of a GMI node.
 >> +
->> +     if (of_property_read_bool(of_node, "nvidia,snor-data-width-32bit"))
->> +             priv->snor_config |= TEGRA_GMI_BUS_WIDTH_32BIT;
+>> +Required properties:
+>> +  - compatible : Should contain one of the following:
+>> +        For Tegra20 must contain "nvidia,tegra20-gmi".
+>> +        For Tegra30 must contain "nvidia,tegra30-gmi".
+>> + - reg: Should contain GMI controller registers location and length.
+>> + - clocks: Must contain an entry for each entry in clock-names.
+>> + - clock-names: Must include the following entries: "gmi"
+>> + - resets : Must contain an entry for each entry in reset-names.
+>> + - reset-names : Must include the following entries: "gmi"
+>> + - #address-cells: The number of cells used to represent physical base
+>> +   addresses in the GMI address space.
+>> + - #size-cells: The number of cells used to represent the size of an address
+>> +   range in the GMI address space.
+>> + - ranges: Mapping of the GMI address space to the CPU address space.
 >> +
->> +     if (of_property_read_bool(of_node, "nvidia,snor-mux-mode"))
->> +             priv->snor_config |= TEGRA_GMI_MUX_MODE;
->> +
->> +     if (of_property_read_bool(of_node, "nvidia,snor-rdy-active-before-data"))
+>> +Note that the GMI controller does not have any internal chip-select address
+>> +decoding and if you want to access multiple devices external chip-select
+>> +decoding must be provided. Furthermore, if you do have external logic to
 >
-> Line is over 80 characters.
+> The above is not 100% accurate. I would say that because there is no
+> chip-select address decoding, chip-selects either need to be managed via
+> software or by employing external chip-select decoding logic.
 
-Yes, indeed it is.
-
-I ran checkpatch on everything and did get warnings about it being over
-80 characters. But scratched my head a bit of why it complained because
-it was not over 80 characters in my editor.
-
-But now I know why. My tab size was set to 4, and then it is not over 80 :).
+ACK, will update with the possibility of managing CS in software.
 >
->> +             priv->snor_config |= TEGRA_GMI_RDY_BEFORE_DATA;
->> +
->> +     if (of_property_read_bool(of_node, "nvidia,snor-rdy-inv"))
->> +             priv->snor_config |= TEGRA_GMI_RDY_ACTIVE_HIGH;
->> +
->> +     if (of_property_read_bool(of_node, "nvidia,snor-adv-inv"))
->> +             priv->snor_config |= TEGRA_GMI_ADV_ACTIVE_HIGH;
->> +
->> +     if (of_property_read_bool(of_node, "nvidia,snor-oe-inv"))
->> +             priv->snor_config |= TEGRA_GMI_OE_ACTIVE_HIGH;
->> +
->> +     if (of_property_read_bool(of_node, "nvidia,snor-cs-inv"))
->> +             priv->snor_config |= TEGRA_GMI_CS_ACTIVE_HIGH;
->> +
->> +     if (!of_property_read_u32(of_node, "nvidia,snor-cs-select", &property))
->> +             priv->snor_config |= TEGRA_GMI_CS_SELECT(property);
->> +
->> +     /* Timing, the default values that are provided are reset values */
->> +
->> +     if (!of_property_read_u32(of_node, "nvidia,snor-muxed-width", &property))
+>> +support multiple devices this would assume that the devices use the same
+>> +timing and so are probably the same type. It also assumes that they can fit in
+>> +the 256MB address range.
 >
-> Line is over 80 characters.
+> Again this is only true for the case where you have external chip-select
+> decoding logic, but would not be the case if software were to manage the
+> chip-selects.
+
+ACK
+
+>
+>> +
+>> +Optional properties:
+>> +
+>> + - nvidia,snor-data-width-32bit: Use 32bit data-bus, default is 16bit.
+>> + - nvidia,snor-mux-mode: Enable address/data MUX mode.
+>> + - nvidia,snor-rdy-active-before-data: Assert RDY signal one cycle before data.
+>> +   If omitted it will be asserted with data.
+>> + - nvidia,snor-rdy-inv: RDY signal is active high
+>> + - nvidia,snor-adv-inv: ADV signal is active high
+>> + - nvidia,snor-oe-inv: WE/OE signal is active high
+>> + - nvidia,snor-cs-inv: CS signal is active high
+>> + - nvidia,snor-cs-select: CS output pin configuration. Default is CS0
+>
+> Nit ... I think "nvidia,snor-cs" is sufficient for the name. But I am
+> not sure if we even need this. See below.
+>
+>> +     <0> : CS0
+>> +     <1> : CS1
+>> +     <2> : CS2
+>> +     <3> : CS3
+>> +     <4> : CS4
+>> +     <5> : CS5
+>> +     <6> : CS6
+>> +     <7> : CS7
+>> +
+>> +  Note that there is some special handling for the timing values.
+>> +  From Tegra TRM:
+>> +  Programming 0 means 1 clock cycle: actual cycle = programmed cycle + 1
+>> +
+>> + - nvidia,snor-muxed-width: Number of cycles MUX address/data asserted on the
+>> +   bus. Valid values are 0-15, default is 1
+>> + - nvidia,snor-hold-width: Number of cycles CE stays asserted after the
+>> +   de-assertion of WR_N (in case of SLAVE/MASTER Request) or OE_N
+>> +   (in case of MASTER Request). Valid values are 0-15, default is 1
+>> + - nvidia,snor-adv-width: Number of cycles during which ADV stays asserted.
+>> +   Valid values are 0-15, default is 1.
+>> + - nvidia,snor-ce-width: Number of cycles before CE is asserted.
+>> +   Valid values are 0-255, default is 4
+>
+> ce-width only occupies a 4-bit field and so the max is 15.
 
 ACK.
 
 >
->> +             priv->snor_timing0 |= TEGRA_GMI_MUXED_WIDTH(property);
->> +     else
->> +             priv->snor_timing0 |= TEGRA_GMI_MUXED_WIDTH(1);
+>> + - nvidia,snor-we-width: Number of cycles during which WE stays asserted.
+>> +   Valid values are 0-15, default is 1
+>> + - nvidia,snor-oe-width: Number of cycles during which OE stays asserted.
+>> +   Valid values are 0-255, default is 1
+>> + - nvidia,snor-wait-width: Number of cycles before READY is asserted.
+>> +   Valid values are 0-255, default is 3
 >> +
->> +     if (!of_property_read_u32(of_node, "nvidia,snor-hold-width", &property))
->> +             priv->snor_timing0 |= TEGRA_GMI_HOLD_WIDTH(property);
->> +     else
->> +             priv->snor_timing0 |= TEGRA_GMI_HOLD_WIDTH(1);
+>> +Example with two SJA1000 CAN controllers connected to the GMI bus:
 >> +
->> +     if (!of_property_read_u32(of_node, "nvidia,snor-adv-width", &property))
->> +             priv->snor_timing0 |= TEGRA_GMI_ADV_WIDTH(property);
->> +     else
->> +             priv->snor_timing0 |= TEGRA_GMI_ADV_WIDTH(1);
->> +
->> +     if (!of_property_read_u32(of_node, "nvidia,snor-ce-width", &property))
->> +             priv->snor_timing0 |= TEGRA_GMI_CE_WIDTH(property);
->> +     else
->> +             priv->snor_timing0 |= TEGRA_GMI_CE_WIDTH(4);
->> +
->> +     if (!of_property_read_u32(of_node, "nvidia,snor-we-width", &property))
->> +             priv->snor_timing1 |= TEGRA_GMI_WE_WIDTH(property);
->> +     else
->> +             priv->snor_timing1 |= TEGRA_GMI_WE_WIDTH(1);
->> +
->> +     if (!of_property_read_u32(of_node, "nvidia,snor-oe-width", &property))
->> +             priv->snor_timing1 |= TEGRA_GMI_OE_WIDTH(property);
->> +     else
->> +             priv->snor_timing1 |= TEGRA_GMI_OE_WIDTH(1);
->> +
->> +     if (!of_property_read_u32(of_node, "nvidia,snor-wait-width", &property))
->> +             priv->snor_timing1 |= TEGRA_GMI_WAIT_WIDTH(property);
->> +     else
->> +             priv->snor_timing1 |= TEGRA_GMI_WAIT_WIDTH(3);
->> +
->> +     return of_platform_default_populate(of_node, NULL, dev);
+>> +  gmi@70090000 {
+>> +    #address-cells = <1>;
+>> +    #size-cells = <1>;
 >
-> Seems odd to do this here. Why not as the last thing in probe once the
-> GMI has been setup correctly?
+> I think 0 for size makes sense. I know that caused you problems before,
+> but I am wondering if ...
+>
+>> +    ranges;
+>
+> ... ranges is needed here? If we do have it, I am wondering if it should
+> be a single entry for the chip-select that is being used. For now we
+> could only support a ranges with one entry.
+>
+>         #address-cells = <1>;
+>         #size-cells = <1>;
+>         ranges = <4 0x48000000 0x00040000>;
 
-It is done here mostly to avoid clean up in probe. I could move it out
-of tegra_gmi_parse_dt and put it right after that call but still
-before clk enable? Is that less odd?
+I prefer if we have "ranges" with one single entry, and warn if user enters
+multiple for now, like we discussed earlier. Should have really done it in
+this series.
 
 >
->> +}
->> +
->> +static int tegra_gmi_probe(struct platform_device *pdev)
->> +{
->> +     struct resource *res;
->> +     struct clk *clk;
->> +     struct device *dev = &pdev->dev;
->> +     struct reset_control *rst;
->> +     struct tegra_gmi_priv *priv;
->> +     void __iomem *base;
->> +     int ret;
->> +
->> +     res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +     base = devm_ioremap_resource(dev, res);
->> +     if (IS_ERR(base))
->> +             return PTR_ERR(base);
->> +
->> +     priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
->> +     if (!priv)
->> +             return -ENOMEM;
->> +
->> +     priv->base = base;
+>> +    nvidia,snor-mux-mode;
+>> +    nvidia,snor-adv-inv;
+>> +    nvidia,snor-cs-select = <4>;
 >
-> If you allocate the memory first, you can get rid of this extra base
-> variable.
+> I would have expected these under bus@X node as they are specific to the
+> GMI CS.
+
+Yes, that is true.
+
+>
+> I would also expect that the actual chip-select number is encoded in the
+> reg property.
+>
+>> +
+>> +    bus@0,0 {
+>
+> bus@4
 
 ACK.
 
 >
->> +     clk = devm_clk_get(dev, "gmi");
->> +     if (IS_ERR(clk)) {
->> +             dev_err(dev, "can not get clock\n");
->> +             return PTR_ERR(clk);
->> +     }
->> +
->> +     priv->clk = clk;
+> No mention of this bus node in the above documentation.
+
+I was hesitant documenting it since I am not sure if we really need it
+in a generic case? It does make sense in my
+specific case. But what would it look like if we could maintain CS in software.
+
+Do you then have a bus node per CS? I am guessing not. Is it enough to
+document it in my "example brief"?
+
+I should probably extend the example with some more configurations,
+e.g. only one child node.
+
+What I am thinking is something like
+
+Example with two SJA1000 CAN controllers connected to the GMI bus.
+We wrap the controllers with a  simple-bus node since they are
+all connected to the same chip-select (CS4) but external address decoding is
+provided in hardware:
+
+  gmi@70090000 {
+    #address-cells = <1>;
+    #size-cells = <1>;
+    ranges = <4 0x48000000 0x00040000>;
+
+    bus@4 {
+      compatible = "simple-bus";
+      reg = <4>;
+
+      #address-cells = <1>;
+      #size-cells = <1>;
+
+      nvidia,snor-mux-mode;
+      nvidia,snor-adv-inv;
+
+      can@0 {
+        reg = <0 0x100>;
+        ...
+      };
+
+      can@40000 {
+        reg = <0x40000 0x100>;
+        ...
+      };
+    };
+  };
+
+Example with one SJA1000 CAN controller connected to the GMI bus
+on CS4:
+
+  gmi@70090000 {
+    #address-cells = <1>;
+    #size-cells = <1>;
+    ranges = <4 0x48000000 0x00040000>;
+
+   can@4 {
+      nvidia,snor-mux-mode;
+      nvidia,snor-adv-inv;
+      reg = <4 0x100>;
+      ...
+   };
+};
+
 >
-> Why not set priv->clk directly from calling devm_clk_get? Then you don't
-> this extra clk variable.
+>> +      compatible = "simple-bus";
+>> +      reg = <0 0>;
+>
+> reg = <4>;
+>
+> We should look up the chip-select from the reg property.
 
 ACK.
 >
+>> +      ranges;
 >> +
->> +     rst = devm_reset_control_get(dev, "gmi");
->> +     if (IS_ERR(rst)) {
->> +             dev_err(dev, "can not get reset\n");
->> +             return PTR_ERR(rst);
->> +     }
+>> +      #address-cells = <1>;
+>> +      #size-cells = <1>;
 >> +
->> +     ret = tegra_gmi_parse_dt(dev, priv);
->> +     if (ret) {
->> +             dev_err(dev, "fail to create devices.\n");
->> +             return ret;
->> +     }
+>> +      can@48000000 {
+>> +        reg = <0x48000000 0x100>;
+>> +        ...
+>> +      };
 >> +
->> +     ret = clk_prepare_enable(clk);
->> +     if (ret) {
->> +             dev_err(dev, "fail to enable clock.\n");
->> +             return ret;
->> +     }
->> +
->> +     reset_control_assert(rst);
->> +     udelay(2);
->> +     reset_control_deassert(rst);
->> +
->> +     tegra_gmi_init(dev, priv);
->> +
->> +     dev_set_drvdata(dev, priv);
->> +
->> +     return 0;
->> +}
->> +
->> +static int tegra_gmi_remove(struct platform_device *pdev)
->> +{
->> +     struct device *dev = &pdev->dev;
+>> +      can@48040000 {
+>> +        reg = <0x48040000 0x100>;
+>> +        ...
+>> +      };
 >
-> Do you really need this dev variable?
+> If we use ranges we could have ...
+>
+>         can@0 {
+>                 reg = <0x0 0x100>;
+>                 ...
+>         };
+>
+>         can@40000 {
+>                 reg = <0x40000 0x100>;
+>                 ...
+>         };
+>
+> Nit ... please use tabs for spacing as we do in the dtsi/dts files.
 
-Not really.
-
->
->> +     struct tegra_gmi_priv *priv = dev_get_drvdata(dev);
->> +     void __iomem *base = priv->base;
->
-> Do you really need this base variable?
-
-Not really,
->
->> +     u32 config;
->> +
->> +     of_platform_depopulate(dev);
->> +
->> +     config = readl(base + TEGRA_GMI_CONFIG);
->> +     config &= ~TEGRA_GMI_CONFIG_GO;
->> +     writel(config, base + TEGRA_GMI_CONFIG);
->> +
->> +     clk_disable_unprepare(priv->clk);
->
-> What about asserting the reset?
-
-ACK, will add that.
+ACK.
 
 Best Regards
-Mirza
+Mirza Krak
