@@ -1,44 +1,41 @@
-From: Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>
-Subject: Re: [STLinux Kernel] [PATCH] i2c: don't print error when adding
- adapter fails
-Date: Wed, 10 Aug 2016 08:50:31 +0200
-Message-ID: <dda2b522-0257-17c7-1332-cbc026b74603@st.com>
+From: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+Subject: Re: [PATCH] i2c: don't print error when adding adapter fails
+Date: Wed, 10 Aug 2016 10:32:00 +0200
+Message-ID: <35fd8f31-2fa1-7220-8ed9-13bad638fe6f@samsung.com>
 References: <1470742581-12971-1-git-send-email-wsa-dev@sang-engineering.com>
+ <1470742581-12971-2-git-send-email-wsa-dev@sang-engineering.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1470742581-12971-1-git-send-email-wsa-dev-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Wolfram Sang <wsa-dev-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-samsung-soc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, adi-buildroot-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-amlogic-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-omap-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+In-reply-to: <1470742581-12971-2-git-send-email-wsa-dev@sang-engineering.com>
+List-Unsubscribe: <https://lists.ozlabs.org/options/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=unsubscribe>
+List-Archive: <http://lists.ozlabs.org/pipermail/linuxppc-dev/>
+List-Post: <mailto:linuxppc-dev@lists.ozlabs.org>
+List-Help: <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=help>
+List-Subscribe: <https://lists.ozlabs.org/listinfo/linuxppc-dev>,
+ <mailto:linuxppc-dev-request@lists.ozlabs.org?subject=subscribe>
+Errors-To: linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org
+Sender: "Linuxppc-dev"
+ <linuxppc-dev-bounces+glppe-linuxppc-embedded-2=m.gmane.org@lists.ozlabs.org>
+To: Wolfram Sang <wsa-dev@sang-engineering.com>, linux-kernel@vger.kernel.org
+Cc: Heiko Stuebner <heiko@sntech.de>, Wolfram Sang <wsa@the-dreams.de>, Tony Lindgren <tony@atomide.com>, Linus Walleij <linus.walleij@linaro.org>, Sekhar Nori <nsekhar@ti.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-i2c@vger.kernel.org, Guan Xuetao <gxt@mprc.pku.edu.cn>, Peter Korsgaard <jacmet@sunsite.dk>, Sonic Zhang <sonic.zhang@analog.com>, kernel@stlinux.com, Alexandre Courbot <gnurou@gmail.com>, Florian Fainelli <f.fainelli@gmail.com>, Kevin Hilman <khilman@kernel.org>, Michal Simek <michal.simek@xilinx.com>, linux-rockchip@lists.infradead.org, Kukjin Kim <kgene@kernel.org>, bcm-kernel-feedback-list@broadcom.com, linux-arm-kernel@lists.infradead.org, Sylvain Lemieux <slemieux.tyco@gmail.com>, Guenter Roeck <linux@roeck-us.net>, Alessandro Rubini <rubini@unipv.it>, Jean Delvare <jdelvare@suse.com>
 List-Id: linux-tegra@vger.kernel.org
 
 On 08/09/2016 01:36 PM, Wolfram Sang wrote:
-> Since v4.8-rc1, the I2C core will print detailed information when adding an I2C
-> adapter fails. So, drivers can skip this now.
->
-> I am still undecided if I apply this as a single patch or break it out. But for
-> reviewing, avoiding the patch bomb is probably a good thing.
->
-> Should go via subsystem tree, I'd think.
->
-> Wolfram Sang (1):
->   i2c: don't print error when adding adapter fails
->
->  drivers/i2c/busses/i2c-st.c             | 4 +---
->
+> The core will do this for us now.
+> 
+> Signed-off-by: Wolfram Sang <wsa-dev@sang-engineering.com>
+> ---
 
-For i2c-st.c
+(...)
 
-Acked-by: Patrice Chotard <patrice.chotard-qxv4g6HH51o@public.gmane.org>
+>  drivers/i2c/busses/i2c-exynos5.c        | 4 +---
+>  drivers/i2c/busses/i2c-s3c2410.c        | 1 -
 
-Thanks
+For Exynos and S3C2410:
+Acked-by: Krzysztof Kozlowski <k.kozlowski@samsung.com>
+
+Best regards,
+Krzysztof
