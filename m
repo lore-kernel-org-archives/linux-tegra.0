@@ -1,47 +1,95 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [RESEND PATCH] ARM: tegra: fix erroneous address in dts
-Date: Wed, 10 Aug 2016 22:46:04 +0200
-Message-ID: <3087941.oHflrW9cm7@wuerfel>
-References: <1468835208-13426-1-git-send-email-ralf@ramses-pyramidenbau.de> <20160718095802.GA422@ulmo.ba.sec>
+From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2] soc/tegra: pmc: Fix incorrect DPD request
+Date: Thu, 11 Aug 2016 09:13:36 +0800
+Message-ID: <1470878016-6098-1-git-send-email-vinceh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <20160718095802.GA422@ulmo.ba.sec>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: arm@kernel.org, Ralf Ramsauer <ralf@ramses-pyramidenbau.de>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday, July 18, 2016 11:58:02 AM CEST Thierry Reding wrote:
-> On Mon, Jul 18, 2016 at 11:46:48AM +0200, Ralf Ramsauer wrote:
-> > c90bb7b enabled the high speed UARTs of the Jetson TK1. Due to a merge
-> > quirk, wrong addresses were introduced. Fix it and use the correct
-> > addresses.
-> > 
-> > Thierry let me know, that there is another patch (b5896f67ab3c in
-> > linux-next) in preparation which removes all the '0,' prefixes of unit
-> > addresses on Tegra124 and is planned to go upstream in 4.8, so
-> > this patch will get reverted then.
-> > 
-> > But for the moment, this patch is necessary to fix current misbehaviour.
-> > 
-> > Fixes: c90bb7b9b9 ("ARM: tegra: Add high speed UARTs to Jetson TK1 device tree")
-> > Signed-off-by: Ralf Ramsauer <ralf@ramses-pyramidenbau.de>
-> > Acked-by: Thierry Reding <thierry.reding@gmail.com>
-> > Cc: linux-tegra@vger.kernel.org
-> > ---
-> >  arch/arm/boot/dts/tegra124-jetson-tk1.dts | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> ARM-SoC maintainers,
-> 
-> Just to clarify, this is targetted at v4.7 because the offending patch
-> was merged in v4.7-rc1. If at all possible it'd be great to get this in,
-> even if this is terribly last minute.
-> 
+Reading the DPD_REQ & DPD2_REQ registers returns the previous requests.
+If we sets the current request bit with the returned value, then other
+pads will be turned on or off unexpectedly.
 
-I just notice this was still missing in v4.8-rc1, so I added it to
-the fixes branch now, with a stable tag for v4.7
+Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Hi,
 
-	Arnd
+I did not notice Laxman had a series[1] which also touched pmc code,
+and it seems the series isn't merged yet. Should I rebase this patch
+on it?
+
+Thanks,
+Vince
+
+
+ drivers/soc/tegra/pmc.c | 28 ++++++++--------------------
+ 1 file changed, 8 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 71c834f3847e..7792ed88d80b 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -967,8 +967,8 @@ static void tegra_io_rail_unprepare(void)
+ 
+ int tegra_io_rail_power_on(unsigned int id)
+ {
+-	unsigned long request, status, value;
+-	unsigned int bit, mask;
++	unsigned long request, status;
++	unsigned int bit;
+ 	int err;
+ 
+ 	mutex_lock(&pmc->powergates_lock);
+@@ -977,15 +977,9 @@ int tegra_io_rail_power_on(unsigned int id)
+ 	if (err)
+ 		goto error;
+ 
+-	mask = 1 << bit;
++	tegra_pmc_writel(IO_DPD_REQ_CODE_OFF | BIT(bit), request);
+ 
+-	value = tegra_pmc_readl(request);
+-	value |= mask;
+-	value &= ~IO_DPD_REQ_CODE_MASK;
+-	value |= IO_DPD_REQ_CODE_OFF;
+-	tegra_pmc_writel(value, request);
+-
+-	err = tegra_io_rail_poll(status, mask, 0, 250);
++	err = tegra_io_rail_poll(status, BIT(bit), 0, 250);
+ 	if (err) {
+ 		pr_info("tegra_io_rail_poll() failed: %d\n", err);
+ 		goto error;
+@@ -1002,8 +996,8 @@ EXPORT_SYMBOL(tegra_io_rail_power_on);
+ 
+ int tegra_io_rail_power_off(unsigned int id)
+ {
+-	unsigned long request, status, value;
+-	unsigned int bit, mask;
++	unsigned long request, status;
++	unsigned int bit;
+ 	int err;
+ 
+ 	mutex_lock(&pmc->powergates_lock);
+@@ -1014,15 +1008,9 @@ int tegra_io_rail_power_off(unsigned int id)
+ 		goto error;
+ 	}
+ 
+-	mask = 1 << bit;
+-
+-	value = tegra_pmc_readl(request);
+-	value |= mask;
+-	value &= ~IO_DPD_REQ_CODE_MASK;
+-	value |= IO_DPD_REQ_CODE_ON;
+-	tegra_pmc_writel(value, request);
++	tegra_pmc_writel(IO_DPD_REQ_CODE_ON | BIT(bit), request);
+ 
+-	err = tegra_io_rail_poll(status, mask, mask, 250);
++	err = tegra_io_rail_poll(status, BIT(bit), BIT(bit), 250);
+ 	if (err)
+ 		goto error;
+ 
+-- 
+2.7.4
