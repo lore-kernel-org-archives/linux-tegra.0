@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH 1/6] i2c: tegra: Add missing new line characters
-Date: Thu, 11 Aug 2016 11:16:55 +0100
-Message-ID: <1470910620-9898-2-git-send-email-jonathanh@nvidia.com>
+Subject: [PATCH 2/6] i2c: tegra: Remove non device-tree support
+Date: Thu, 11 Aug 2016 11:16:56 +0100
+Message-ID: <1470910620-9898-3-git-send-email-jonathanh@nvidia.com>
 References: <1470910620-9898-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
@@ -12,52 +12,35 @@ To: Laxman Dewangan <ldewangan@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, St
 Cc: linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add missing new line characters for the various error messages.
+Tegra has only supported device-tree for platform/board configuration
+for quite some time now and so simplify the Tegra I2C driver by dropping
+code for non device-tree platforms/boards.
 
 Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 ---
- drivers/i2c/busses/i2c-tegra.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index b126dbaa47e3..93b09396a10f 100644
+index 93b09396a10f..412b914fa84b 100644
 --- a/drivers/i2c/busses/i2c-tegra.c
 +++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -825,7 +825,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+@@ -851,13 +851,9 @@ static int tegra_i2c_probe(struct platform_device *pdev)
  
- 	div_clk = devm_clk_get(&pdev->dev, "div-clk");
- 	if (IS_ERR(div_clk)) {
--		dev_err(&pdev->dev, "missing controller clock");
-+		dev_err(&pdev->dev, "missing controller clock\n");
- 		return PTR_ERR(div_clk);
- 	}
+ 	i2c_dev->hw = &tegra20_i2c_hw;
  
-@@ -843,7 +843,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+-	if (pdev->dev.of_node) {
+-		i2c_dev->hw = of_device_get_match_data(&pdev->dev);
+-		i2c_dev->is_dvc = of_device_is_compatible(pdev->dev.of_node,
+-						"nvidia,tegra20-i2c-dvc");
+-	} else if (pdev->id == 3) {
+-		i2c_dev->is_dvc = 1;
+-	}
++	i2c_dev->hw = of_device_get_match_data(&pdev->dev);
++	i2c_dev->is_dvc = of_device_is_compatible(pdev->dev.of_node,
++						  "nvidia,tegra20-i2c-dvc");
+ 	init_completion(&i2c_dev->msg_complete);
  
- 	i2c_dev->rst = devm_reset_control_get(&pdev->dev, "i2c");
- 	if (IS_ERR(i2c_dev->rst)) {
--		dev_err(&pdev->dev, "missing controller reset");
-+		dev_err(&pdev->dev, "missing controller reset\n");
- 		return PTR_ERR(i2c_dev->rst);
- 	}
- 
-@@ -863,7 +863,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
  	if (!i2c_dev->hw->has_single_clk_source) {
- 		fast_clk = devm_clk_get(&pdev->dev, "fast-clk");
- 		if (IS_ERR(fast_clk)) {
--			dev_err(&pdev->dev, "missing fast clock");
-+			dev_err(&pdev->dev, "missing fast clock\n");
- 			return PTR_ERR(fast_clk);
- 		}
- 		i2c_dev->fast_clk = fast_clk;
-@@ -911,7 +911,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 
- 	ret = tegra_i2c_init(i2c_dev);
- 	if (ret) {
--		dev_err(&pdev->dev, "Failed to initialize i2c controller");
-+		dev_err(&pdev->dev, "Failed to initialize i2c controller\n");
- 		goto disable_div_clk;
- 	}
- 
 -- 
 2.1.4
