@@ -1,8 +1,10 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 1/2] PCI: tegra: Remove redundant _data suffix
-Date: Mon, 15 Aug 2016 17:31:31 +0200
-Message-ID: <20160815153132.520-1-thierry.reding@gmail.com>
+Subject: [PATCH 2/2] PCI: tegra: Use of_device_get_match_data()
+Date: Mon, 15 Aug 2016 17:31:32 +0200
+Message-ID: <20160815153132.520-2-thierry.reding@gmail.com>
+References: <20160815153132.520-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160815153132.520-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 Cc: linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
@@ -10,199 +12,38 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The struct tegra_pcie_soc_data represents SoC-specific data. The shorter
-name tegra_pcie_soc already describes that accurately enough, so the
-extra five characters are redundant. Also remove the suffix from various
-variable names to shorten the code a little.
-
-This also makes this driver more consistent with the naming used in
-other drivers that use a similar mechanism to differentiate between
-various SoC generations.
+This function was introduced a couple of releases ago to help reduce the
+the boilerplate required to get at the SoC specific data.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/pci/host/pci-tegra.c | 42 +++++++++++++++++++++---------------------
- 1 file changed, 21 insertions(+), 21 deletions(-)
+ drivers/pci/host/pci-tegra.c | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
 
 diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 6de0757b11e4..7756a792600c 100644
+index 7756a792600c..2d520755b1d7 100644
 --- a/drivers/pci/host/pci-tegra.c
 +++ b/drivers/pci/host/pci-tegra.c
-@@ -240,7 +240,7 @@ struct tegra_msi {
- };
+@@ -2201,21 +2201,16 @@ remove:
  
- /* used to differentiate between Tegra SoC generations */
--struct tegra_pcie_soc_data {
-+struct tegra_pcie_soc {
- 	unsigned int num_ports;
- 	unsigned int msi_base_shift;
- 	u32 pads_pll_ctl;
-@@ -300,7 +300,7 @@ struct tegra_pcie {
- 	struct regulator_bulk_data *supplies;
- 	unsigned int num_supplies;
- 
--	const struct tegra_pcie_soc_data *soc_data;
-+	const struct tegra_pcie_soc *soc;
- 	struct dentry *debugfs;
- };
- 
-@@ -542,8 +542,8 @@ static void tegra_pcie_port_reset(struct tegra_pcie_port *port)
- 
- static void tegra_pcie_port_enable(struct tegra_pcie_port *port)
+ static int tegra_pcie_probe(struct platform_device *pdev)
  {
--	const struct tegra_pcie_soc_data *soc = port->pcie->soc_data;
- 	unsigned long ctrl = tegra_pcie_port_get_pex_ctrl(port);
-+	const struct tegra_pcie_soc *soc = port->pcie->soc;
- 	unsigned long value;
- 
- 	/* enable reference clock */
-@@ -562,8 +562,8 @@ static void tegra_pcie_port_enable(struct tegra_pcie_port *port)
- 
- static void tegra_pcie_port_disable(struct tegra_pcie_port *port)
- {
--	const struct tegra_pcie_soc_data *soc = port->pcie->soc_data;
- 	unsigned long ctrl = tegra_pcie_port_get_pex_ctrl(port);
-+	const struct tegra_pcie_soc *soc = port->pcie->soc;
- 	unsigned long value;
- 
- 	/* assert port reset */
-@@ -774,7 +774,7 @@ static void tegra_pcie_setup_translations(struct tegra_pcie *pcie)
- 
- static int tegra_pcie_pll_wait(struct tegra_pcie *pcie, unsigned long timeout)
- {
--	const struct tegra_pcie_soc_data *soc = pcie->soc_data;
-+	const struct tegra_pcie_soc *soc = pcie->soc;
- 	u32 value;
- 
- 	timeout = jiffies + msecs_to_jiffies(timeout);
-@@ -790,7 +790,7 @@ static int tegra_pcie_pll_wait(struct tegra_pcie *pcie, unsigned long timeout)
- 
- static int tegra_pcie_phy_enable(struct tegra_pcie *pcie)
- {
--	const struct tegra_pcie_soc_data *soc = pcie->soc_data;
-+	const struct tegra_pcie_soc *soc = pcie->soc;
- 	u32 value;
+-	const struct of_device_id *match;
+ 	struct tegra_pcie *pcie;
  	int err;
  
-@@ -845,7 +845,7 @@ static int tegra_pcie_phy_enable(struct tegra_pcie *pcie)
+-	match = of_match_device(tegra_pcie_of_match, &pdev->dev);
+-	if (!match)
+-		return -ENODEV;
+-
+ 	pcie = devm_kzalloc(&pdev->dev, sizeof(*pcie), GFP_KERNEL);
+ 	if (!pcie)
+ 		return -ENOMEM;
  
- static int tegra_pcie_phy_disable(struct tegra_pcie *pcie)
- {
--	const struct tegra_pcie_soc_data *soc = pcie->soc_data;
-+	const struct tegra_pcie_soc *soc = pcie->soc;
- 	u32 value;
- 
- 	/* disable TX/RX data */
-@@ -906,7 +906,7 @@ static int tegra_pcie_port_phy_power_off(struct tegra_pcie_port *port)
- 
- static int tegra_pcie_phy_power_on(struct tegra_pcie *pcie)
- {
--	const struct tegra_pcie_soc_data *soc = pcie->soc_data;
-+	const struct tegra_pcie_soc *soc = pcie->soc;
- 	struct tegra_pcie_port *port;
- 	int err;
- 
-@@ -974,7 +974,7 @@ static int tegra_pcie_phy_power_off(struct tegra_pcie *pcie)
- 
- static int tegra_pcie_enable_controller(struct tegra_pcie *pcie)
- {
--	const struct tegra_pcie_soc_data *soc = pcie->soc_data;
-+	const struct tegra_pcie_soc *soc = pcie->soc;
- 	struct tegra_pcie_port *port;
- 	unsigned long value;
- 	int err;
-@@ -1067,7 +1067,7 @@ static void tegra_pcie_power_off(struct tegra_pcie *pcie)
- 
- static int tegra_pcie_power_on(struct tegra_pcie *pcie)
- {
--	const struct tegra_pcie_soc_data *soc = pcie->soc_data;
-+	const struct tegra_pcie_soc *soc = pcie->soc;
- 	int err;
- 
- 	reset_control_assert(pcie->pcie_xrst);
-@@ -1117,7 +1117,7 @@ static int tegra_pcie_power_on(struct tegra_pcie *pcie)
- 
- static int tegra_pcie_clocks_get(struct tegra_pcie *pcie)
- {
--	const struct tegra_pcie_soc_data *soc = pcie->soc_data;
-+	const struct tegra_pcie_soc *soc = pcie->soc;
- 
- 	pcie->pex_clk = devm_clk_get(pcie->dev, "pex");
- 	if (IS_ERR(pcie->pex_clk))
-@@ -1234,7 +1234,7 @@ static int tegra_pcie_port_get_phys(struct tegra_pcie_port *port)
- 
- static int tegra_pcie_phys_get(struct tegra_pcie *pcie)
- {
--	const struct tegra_pcie_soc_data *soc = pcie->soc_data;
-+	const struct tegra_pcie_soc *soc = pcie->soc;
- 	struct device_node *np = pcie->dev->of_node;
- 	struct tegra_pcie_port *port;
- 	int err;
-@@ -1486,7 +1486,7 @@ static const struct irq_domain_ops msi_domain_ops = {
- static int tegra_pcie_enable_msi(struct tegra_pcie *pcie)
- {
- 	struct platform_device *pdev = to_platform_device(pcie->dev);
--	const struct tegra_pcie_soc_data *soc = pcie->soc_data;
-+	const struct tegra_pcie_soc *soc = pcie->soc;
- 	struct tegra_msi *msi = &pcie->msi;
- 	unsigned long base;
- 	int err;
-@@ -1799,8 +1799,8 @@ static int tegra_pcie_get_regulators(struct tegra_pcie *pcie, u32 lane_mask)
- 
- static int tegra_pcie_parse_dt(struct tegra_pcie *pcie)
- {
--	const struct tegra_pcie_soc_data *soc = pcie->soc_data;
- 	struct device_node *np = pcie->dev->of_node, *port;
-+	const struct tegra_pcie_soc *soc = pcie->soc;
- 	struct of_pci_range_parser parser;
- 	struct of_pci_range range;
- 	u32 lanes = 0, mask = 0;
-@@ -2043,7 +2043,7 @@ static int tegra_pcie_enable(struct tegra_pcie *pcie)
- 	return 0;
- }
- 
--static const struct tegra_pcie_soc_data tegra20_pcie_data = {
-+static const struct tegra_pcie_soc tegra20_pcie = {
- 	.num_ports = 2,
- 	.msi_base_shift = 0,
- 	.pads_pll_ctl = PADS_PLL_CTL_TEGRA20,
-@@ -2056,7 +2056,7 @@ static const struct tegra_pcie_soc_data tegra20_pcie_data = {
- 	.has_gen2 = false,
- };
- 
--static const struct tegra_pcie_soc_data tegra30_pcie_data = {
-+static const struct tegra_pcie_soc tegra30_pcie = {
- 	.num_ports = 3,
- 	.msi_base_shift = 8,
- 	.pads_pll_ctl = PADS_PLL_CTL_TEGRA30,
-@@ -2070,7 +2070,7 @@ static const struct tegra_pcie_soc_data tegra30_pcie_data = {
- 	.has_gen2 = false,
- };
- 
--static const struct tegra_pcie_soc_data tegra124_pcie_data = {
-+static const struct tegra_pcie_soc tegra124_pcie = {
- 	.num_ports = 2,
- 	.msi_base_shift = 8,
- 	.pads_pll_ctl = PADS_PLL_CTL_TEGRA30,
-@@ -2084,9 +2084,9 @@ static const struct tegra_pcie_soc_data tegra124_pcie_data = {
- };
- 
- static const struct of_device_id tegra_pcie_of_match[] = {
--	{ .compatible = "nvidia,tegra124-pcie", .data = &tegra124_pcie_data },
--	{ .compatible = "nvidia,tegra30-pcie", .data = &tegra30_pcie_data },
--	{ .compatible = "nvidia,tegra20-pcie", .data = &tegra20_pcie_data },
-+	{ .compatible = "nvidia,tegra124-pcie", .data = &tegra124_pcie },
-+	{ .compatible = "nvidia,tegra30-pcie", .data = &tegra30_pcie },
-+	{ .compatible = "nvidia,tegra20-pcie", .data = &tegra20_pcie },
- 	{ },
- };
- 
-@@ -2215,7 +2215,7 @@ static int tegra_pcie_probe(struct platform_device *pdev)
- 
++	pcie->soc = of_device_get_match_data(&pdev->dev);
  	INIT_LIST_HEAD(&pcie->buses);
  	INIT_LIST_HEAD(&pcie->ports);
--	pcie->soc_data = match->data;
-+	pcie->soc = match->data;
+-	pcie->soc = match->data;
  	pcie->dev = &pdev->dev;
  
  	err = tegra_pcie_parse_dt(pcie);
