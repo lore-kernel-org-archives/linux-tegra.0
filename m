@@ -1,77 +1,54 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.8-rc2
-Date: Tue, 16 Aug 2016 10:52:32 +0100
-Message-ID: <75da0883-7223-9d13-e038-f1474434199f@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH 03/10] staging: board: Remove calls to of_genpd_get_from_provider()
+Date: Tue, 16 Aug 2016 10:49:29 +0100
+Message-ID: <1471340976-5379-4-git-send-email-jonathanh@nvidia.com>
+References: <1471340976-5379-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: text/plain
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1471340976-5379-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alexander Aring <alex.aring@gmail.com>, Eric Anholt <eric@anholt.net>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.8-rc2.
-Logs and other details at:
+Update the staging/board PM domain code to use the
+of_genpd_add_subdomain() and remove any calls to
+of_genpd_get_from_provider().
 
-    https://nvtb.github.io//linux/test_v4.8-rc2/20160816023102/
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/staging/board/board.c | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
+diff --git a/drivers/staging/board/board.c b/drivers/staging/board/board.c
+index 45807d8287d1..86dc41101610 100644
+--- a/drivers/staging/board/board.c
++++ b/drivers/staging/board/board.c
+@@ -140,7 +140,6 @@ static int board_staging_add_dev_domain(struct platform_device *pdev,
+ 					const char *domain)
+ {
+ 	struct of_phandle_args pd_args;
+-	struct generic_pm_domain *pd;
+ 	struct device_node *np;
+ 
+ 	np = of_find_node_by_path(domain);
+@@ -151,14 +150,8 @@ static int board_staging_add_dev_domain(struct platform_device *pdev,
+ 
+ 	pd_args.np = np;
+ 	pd_args.args_count = 0;
+-	pd = of_genpd_get_from_provider(&pd_args);
+-	if (IS_ERR(pd)) {
+-		pr_err("Cannot find genpd %s (%ld)\n", domain, PTR_ERR(pd));
+-		return PTR_ERR(pd);
+-	}
+-	pr_debug("Found genpd %s for device %s\n", pd->name, pdev->name);
+ 
+-	return pm_genpd_add_device(pd, &pdev->dev);
++	return of_genpd_add_device(&pd_args, &pdev->dev);
+ }
+ #else
+ static inline int board_staging_add_dev_domain(struct platform_device *pdev,
+-- 
+2.1.4
 
-Test summary
-------------
-
-Build: zImage:
-    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Build: Image:
-    Pass: ( 1/ 1): defconfig
-
-Boot to userspace: defconfig:
-    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
-		   tegra210-p2371-0000, tegra210-smaug
-
-Boot to userspace: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-
-vmlinux object size
-(delta in bytes from test_v4.8-rc1 (29b4817d4018df78086157ea3a55c1d9424a7cfc)):
-   text     data      bss    total  kernel
- +87468   +17744    +4224  +109436  defconfig
-   +656    +8192        0    +8848  multi_v7_defconfig
-   +349    +4032        0    +4381  tegra_defconfig
-
-
-Boot-time memory difference
-(delta in bytes from test_v4.8-rc1 (29b4817d4018df78086157ea3a55c1d9424a7cfc))
-    avail    rsrvd     high    freed                board              kconfig                  dtb
-        .        .        .        .      qemu-vexpress64            defconfig           __internal
-        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-        .        .        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
-        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
-        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
-        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
-        .        .        .        .       tegra210-smaug            defconfig       tegra210-smaug
-        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
-
---
-nvpublic
