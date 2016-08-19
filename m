@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v3 12/12] reset: Add Tegra BPMP reset driver
-Date: Fri, 19 Aug 2016 19:32:33 +0200
-Message-ID: <20160819173233.13260-13-thierry.reding@gmail.com>
+Subject: [PATCH v3 10/12] arm64: dts: tegra: Add NVIDIA P2771 board support
+Date: Fri, 19 Aug 2016 19:32:31 +0200
+Message-ID: <20160819173233.13260-11-thierry.reding@gmail.com>
 References: <20160819173233.13260-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20160819173233.13260-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -10,107 +10,44 @@ To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-This driver uses the services provided by the BPMP firmware driver to
-implement a reset driver based on the MRQ_RESET request.
+Add NVIDIA P2771 is composed of a P3310 processor module that connects
+to the P2597 I/O board. It comes with a 1200x1920 MIPI DSI panel
+connected via the P2597's display connector and has several connectors
+such as HDMI, USB 3.0, PCIe and ethernet.
 
+Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/reset/Makefile           |  1 +
- drivers/reset/tegra/Makefile     |  1 +
- drivers/reset/tegra/reset-bpmp.c | 63 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 65 insertions(+)
- create mode 100644 drivers/reset/tegra/Makefile
- create mode 100644 drivers/reset/tegra/reset-bpmp.c
+ arch/arm64/boot/dts/nvidia/Makefile                | 1 +
+ arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 8 ++++++++
+ 2 files changed, 9 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
 
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 5d65a93d3c43..523f2d705d24 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -6,6 +6,7 @@ obj-$(CONFIG_MACH_PISTACHIO) += reset-pistachio.o
- obj-$(CONFIG_ARCH_MESON) += reset-meson.o
- obj-$(CONFIG_ARCH_SUNXI) += reset-sunxi.o
- obj-$(CONFIG_ARCH_STI) += sti/
-+obj-$(CONFIG_ARCH_TEGRA) += tegra/
- obj-$(CONFIG_ARCH_HISI) += hisilicon/
- obj-$(CONFIG_ARCH_ZYNQ) += reset-zynq.o
- obj-$(CONFIG_ATH79) += reset-ath79.o
-diff --git a/drivers/reset/tegra/Makefile b/drivers/reset/tegra/Makefile
+diff --git a/arch/arm64/boot/dts/nvidia/Makefile b/arch/arm64/boot/dts/nvidia/Makefile
+index 0f7cdf3e05c1..67234f3dc795 100644
+--- a/arch/arm64/boot/dts/nvidia/Makefile
++++ b/arch/arm64/boot/dts/nvidia/Makefile
+@@ -1,4 +1,5 @@
+ dtb-$(CONFIG_ARCH_TEGRA_132_SOC) += tegra132-norrin.dtb
++dtb-$(CONFIG_ARCH_TEGRA_186_SOC) += tegra186-p2771-0000.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2371-0000.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2371-2180.dtb
+ dtb-$(CONFIG_ARCH_TEGRA_210_SOC) += tegra210-p2571.dtb
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
 new file mode 100644
-index 000000000000..fd943b1ae029
+index 000000000000..66b936389fa7
 --- /dev/null
-+++ b/drivers/reset/tegra/Makefile
-@@ -0,0 +1 @@
-+obj-$(CONFIG_ARCH_TEGRA_186_SOC)	+= reset-bpmp.o
-diff --git a/drivers/reset/tegra/reset-bpmp.c b/drivers/reset/tegra/reset-bpmp.c
-new file mode 100644
-index 000000000000..a06e45dc3f30
---- /dev/null
-+++ b/drivers/reset/tegra/reset-bpmp.c
-@@ -0,0 +1,63 @@
-+#include <linux/reset-controller.h>
++++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+@@ -0,0 +1,8 @@
++/dts-v1/;
 +
-+#include <soc/tegra/bpmp.h>
-+#include <soc/tegra/bpmp-abi.h>
++#include "tegra186-p3310.dtsi"
 +
-+static struct tegra_bpmp *to_tegra_bpmp(struct reset_controller_dev *rstc)
-+{
-+	return container_of(rstc, struct tegra_bpmp, rstc);
-+}
-+
-+static int tegra_bpmp_reset_common(struct reset_controller_dev *rstc,
-+				   enum mrq_reset_commands command,
-+				   unsigned int id)
-+{
-+	struct tegra_bpmp *bpmp = to_tegra_bpmp(rstc);
-+	struct mrq_reset_request request;
-+	struct tegra_bpmp_message msg;
-+
-+	memset(&request, 0, sizeof(request));
-+	request.cmd = command;
-+	request.reset_id = id;
-+
-+	memset(&msg, 0, sizeof(msg));
-+	msg.mrq = MRQ_RESET;
-+	msg.tx.data = &request;
-+	msg.tx.size = sizeof(request);
-+
-+	return tegra_bpmp_transfer(bpmp, &msg);
-+}
-+
-+static int tegra_bpmp_reset_module(struct reset_controller_dev *rstc,
-+				   unsigned long id)
-+{
-+	return tegra_bpmp_reset_common(rstc, CMD_RESET_MODULE, id);
-+}
-+
-+static int tegra_bpmp_reset_assert(struct reset_controller_dev *rstc,
-+				   unsigned long id)
-+{
-+	return tegra_bpmp_reset_common(rstc, CMD_RESET_ASSERT, id);
-+}
-+
-+static int tegra_bpmp_reset_deassert(struct reset_controller_dev *rstc,
-+				     unsigned long id)
-+{
-+	return tegra_bpmp_reset_common(rstc, CMD_RESET_DEASSERT, id);
-+}
-+
-+static const struct reset_control_ops tegra_bpmp_reset_ops = {
-+	.reset = tegra_bpmp_reset_module,
-+	.assert = tegra_bpmp_reset_assert,
-+	.deassert = tegra_bpmp_reset_deassert,
++/ {
++	model = "NVIDIA Tegra186 P2771-0000 Board";
++	compatible = "nvidia,p2771-0000", "nvidia,tegra186";
 +};
-+
-+int tegra_bpmp_init_resets(struct tegra_bpmp *bpmp)
-+{
-+	bpmp->rstc.ops = &tegra_bpmp_reset_ops;
-+	bpmp->rstc.owner = THIS_MODULE;
-+	bpmp->rstc.of_node = bpmp->dev->of_node;
-+	bpmp->rstc.nr_resets = bpmp->soc->num_resets;
-+
-+	return devm_reset_controller_register(bpmp->dev, &bpmp->rstc);
-+}
 -- 
 2.9.0
