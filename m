@@ -1,346 +1,186 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v3 11/12] clk: tegra: Add BPMP clock driver
-Date: Mon, 22 Aug 2016 15:28:33 +0200
-Message-ID: <20160822132833.GD17367@ulmo.ba.sec>
-References: <20160819173233.13260-1-thierry.reding@gmail.com>
- <20160819173233.13260-12-thierry.reding@gmail.com>
- <0d7080bc-9e82-75dd-7169-0a5b7429801e@nvidia.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH v3 05/12] firmware: tegra: Add BPMP support
+Date: Mon, 22 Aug 2016 15:34:15 +0200
+Message-ID: <2059006.oN1pE0IkCo@wuerfel>
+References: <20160819173233.13260-1-thierry.reding@gmail.com> <20160819173233.13260-6-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="TybLhxa8M7aNoW+V"
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <0d7080bc-9e82-75dd-7169-0a5b7429801e-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20160819173233.13260-6-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+On Friday, August 19, 2016 7:32:26 PM CEST Thierry Reding wrote:
+> +static bool tegra_bpmp_master_acked(struct tegra_bpmp_channel *channel)
+> +{
+> +	void *frame;
+> +
+> +	frame = tegra_ivc_read_get_next_frame(channel->ivc);
+> +	if (IS_ERR_OR_NULL(frame)) {
+> +		channel->ib = NULL;
+> +		return false;
+> +	}
+> +
+> +	channel->ib = frame;
+> +
+> +	return true;
+> +}
 
---TybLhxa8M7aNoW+V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Something is wrong with your API if you need IS_ERR_OR_NULL(). If you
+can return NULL, use that for all error. Alternatively make sure
+that you never return NULL 
 
-On Mon, Aug 22, 2016 at 11:11:57AM +0100, Jon Hunter wrote:
->=20
-> On 19/08/16 18:32, Thierry Reding wrote:
-> > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >=20
-> > This driver uses the services provided by the BPMP firmware driver to
-> > implement a clock driver based on the MRQ_CLK request. This part of the
-> > BPMP ABI provides a means to enumerate and control clocks and should
-> > allow the driver to work on any chip that supports this ABI.
-> >=20
-> > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > ---
-> >  drivers/clk/tegra/Makefile   |   1 +
-> >  drivers/clk/tegra/clk-bpmp.c | 565 +++++++++++++++++++++++++++++++++++=
-++++++++
-> >  2 files changed, 566 insertions(+)
-> >  create mode 100644 drivers/clk/tegra/clk-bpmp.c
-> >=20
-> > diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-> > index 33fd0938d79e..130df5685d21 100644
-> > --- a/drivers/clk/tegra/Makefile
-> > +++ b/drivers/clk/tegra/Makefile
-> > @@ -22,3 +22,4 @@ obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+=3D clk-tegra124-df=
-ll-fcpu.o
-> >  obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+=3D clk-tegra124.o
-> >  obj-y					+=3D cvb.o
-> >  obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+=3D clk-tegra210.o
-> > +obj-$(CONFIG_ARCH_TEGRA_186_SOC)	+=3D clk-bpmp.o
-> > diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
-> > new file mode 100644
-> > index 000000000000..96cd6becf73e
-> > --- /dev/null
-> > +++ b/drivers/clk/tegra/clk-bpmp.c
-> > @@ -0,0 +1,565 @@
-> > +#define DEBUG
->=20
-> Do we want DEBUG by default?
+> +
+> +static int tegra_bpmp_wait_ack(struct tegra_bpmp_channel *channel)
+> +{
+> +	unsigned long timeout = channel->bpmp->soc->channels.cpu_tx.timeout;
+> +	ktime_t start, now;
+> +
+> +	start = ns_to_ktime(local_clock());
+> +
+> +	do {
+> +		if (tegra_bpmp_master_acked(channel))
+> +			return 0;
+> +
+> +		now = ns_to_ktime(local_clock());
+> +	} while (ktime_us_delta(now, start) < timeout);
+> +
+> +	return -ETIMEDOUT;
+> +}
 
-That was left-over from debugging. I've removed it.
+local_clock() is not guaranteed to be in nanoseconds, why not use
+ktime_get() instead?
 
-> > +static u8 tegra_bpmp_clk_get_parent(struct clk_hw *hw)
-> > +{
-> > +	struct tegra_bpmp_clk *clk =3D to_tegra_bpmp_clk(hw);
-> > +	struct cmd_clk_get_parent_response response;
-> > +	struct tegra_bpmp_clk_message msg;
-> > +	unsigned int i;
-> > +	int err;
-> > +
-> > +	memset(&msg, 0, sizeof(msg));
-> > +	msg.cmd =3D CMD_CLK_GET_PARENT;
-> > +	msg.clk =3D clk->id;
-> > +	msg.rx.data =3D &response;
-> > +	msg.rx.size =3D sizeof(&response);
-> > +
-> > +	err =3D tegra_bpmp_clk_transfer(clk->bpmp, &msg);
-> > +	if (err < 0)
-> > +		return err;
->=20
-> tegra_bpmp_clk_transfer returns an int, but this function returns a u8.
+ktime_us_delta() is a bit slow because of the 64-bit division,
+you could multiply timeout by NSEC_PER_USEC instead and do a
+straight comparison.
 
-I've added an error message containing the error code and made this
-return U8_MAX.
 
-> > +
-> > +	for (i =3D 0; i < clk->num_parents; i++)
-> > +		if (clk->parents[i] =3D=3D response.parent_id)
-> > +			return i;
-> > +
-> > +	return U8_MAX;
->=20
-> Is there any chance the U8_MAX =3D=3D num_parents? Should we warn here
-> somewhere?
+	ktime_t end = ktime_add_us(ktime_get(), timeout);
+	do {
+		...
+	} while (ktime_before(ktime_get(), end);
 
-I've added a check to the function registration code that will refuse to
-add clocks with num_parents >=3D U8_MAX. This should never happen because
-the MRQ_CLK_MAX_PARENTS is the upper bound for this, and it's currently
-very small.
+> diff --git a/include/soc/tegra/bpmp-abi.h b/include/soc/tegra/bpmp-abi.h
+> new file mode 100644
+> index 000000000000..0aaef5960e29
+> --- /dev/null
+> +++ b/include/soc/tegra/bpmp-abi.h
+> +#ifndef _ABI_BPMP_ABI_H_
+> +#define _ABI_BPMP_ABI_H_
+> +
+> +#ifdef LK
+> +#include <stdint.h>
+> +#endif
+> +
+> +#ifndef __ABI_PACKED
+> +#define __ABI_PACKED __attribute__((packed))
+> +#endif
+> +
+> +#ifdef NO_GCC_EXTENSIONS
+> +#define EMPTY char empty;
+> +#define EMPTY_ARRAY 1
+> +#else
+> +#define EMPTY
+> +#define EMPTY_ARRAY 0
+> +#endif
+> +
+> +#ifndef __UNION_ANON
+> +#define __UNION_ANON
+> +#endif
 
-> > +static int tegra_bpmp_clk_get_max_id(struct tegra_bpmp *bpmp)
-> > +{
-> > +	struct cmd_clk_get_max_clk_id_response response;
-> > +	struct tegra_bpmp_clk_message msg;
-> > +	int err;
-> > +
-> > +	memset(&msg, 0, sizeof(msg));
-> > +	msg.cmd =3D CMD_CLK_GET_MAX_CLK_ID;
-> > +	msg.rx.data =3D &response;
-> > +	msg.rx.size =3D sizeof(response);
-> > +
-> > +	err =3D tegra_bpmp_clk_transfer(bpmp, &msg);
-> > +	if (err < 0)
-> > +		return err;
-> > +
-> > +	return response.max_id;
->=20
-> response.max_id is a uint32
+Maybe keep these all out of the kernel?
 
-I've added a check to make sure this doesn't overflow.
+> +
+> +/**
+> + * @ingroup MRQ_Format
+> + * @brief header for an MRQ message
+> + *
+> + * Provides the MRQ number for the MRQ message: #mrq. The remainder of
+> + * the MRQ message is a payload (immediately following the
+> + * mrq_request) whose format depends on mrq.
+> + *
+> + * @todo document the flags
+> + */
 
-> > +}
-> > +
-> > +static int tegra_bpmp_clk_get_info(struct tegra_bpmp *bpmp, unsigned i=
-nt id,
-> > +				   struct tegra_bpmp_clk_info *info)
-> > +{
-> > +	struct cmd_clk_get_all_info_response response;
-> > +	struct tegra_bpmp_clk_message msg;
-> > +	unsigned int i;
-> > +	int err;
-> > +
-> > +	memset(&msg, 0, sizeof(msg));
-> > +	msg.cmd =3D CMD_CLK_GET_ALL_INFO;
-> > +	msg.clk =3D id;
-> > +	msg.rx.data =3D &response;
-> > +	msg.rx.size =3D sizeof(response);
-> > +
-> > +	err =3D tegra_bpmp_clk_transfer(bpmp, &msg);
-> > +	if (err < 0)
-> > +		return err;
-> > +
-> > +	strlcpy(info->name, response.name, MRQ_CLK_NAME_MAXLEN);
-> > +	info->num_parents =3D response.num_parents;
-> > +
-> > +	for (i =3D 0; i < info->num_parents; i++)
-> > +		info->parents[i] =3D response.parents[i];
-> > +
-> > +	info->flags =3D response.flags;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int tegra_bpmp_probe_clocks(struct tegra_bpmp *bpmp,
-> > +				   struct tegra_bpmp_clk_info **clocksp)
-> > +{
-> > +	struct tegra_bpmp_clk_info *clocks;
-> > +	unsigned int max_id, id, count =3D 0;
-> > +	int err;
-> > +
-> > +	err =3D tegra_bpmp_clk_get_max_id(bpmp);
-> > +	if (err < 0)
-> > +		return err;
-> > +
-> > +	max_id =3D err;
-> > +
-> > +	dev_dbg(bpmp->dev, "maximum clock ID: %u\n", max_id);
-> > +
-> > +	clocks =3D kcalloc(max_id + 1, sizeof(*clocks), GFP_KERNEL);
-> > +	if (!clocks)
-> > +		return -ENOMEM;
-> > +
-> > +	for (id =3D 0; id <=3D max_id; id++) {
-> > +		struct tegra_bpmp_clk_info *info =3D &clocks[count];
-> > +#if 0
-> > +		const char *prefix =3D "";
-> > +		struct seq_buf buf;
-> > +		unsigned int i;
-> > +		char flags[64];
-> > +#endif
-> > +
-> > +		err =3D tegra_bpmp_clk_get_info(bpmp, id, info);
-> > +		if (err < 0) {
-> > +			dev_err(bpmp->dev, "failed to query clock %u: %d\n",
-> > +				id, err);
-> > +			continue;
-> > +		}
-> > +
-> > +#if 0
-> > +		seq_buf_init(&buf, flags, sizeof(flags));
-> > +
-> > +		if (info->flags)
-> > +			seq_buf_printf(&buf, "(");
-> > +
-> > +		if (info->flags & TEGRA_BPMP_CLK_HAS_MUX) {
-> > +			seq_buf_printf(&buf, "%smux", prefix);
-> > +			prefix =3D ", ";
-> > +		}
-> > +
-> > +		if ((info->flags & TEGRA_BPMP_CLK_HAS_SET_RATE) =3D=3D 0) {
-> > +			seq_buf_printf(&buf, "%sfixed", prefix);
-> > +			prefix =3D ", ";
-> > +		}
-> > +
-> > +		if (info->flags & TEGRA_BPMP_CLK_IS_ROOT) {
-> > +			seq_buf_printf(&buf, "%sroot", prefix);
-> > +			prefix =3D ", ";
-> > +		}
-> > +
-> > +		if (info->flags)
-> > +			seq_buf_printf(&buf, ")");
-> > +
-> > +		dev_dbg(bpmp->dev, "  %03u: %s\n", id, info->name);
-> > +		dev_dbg(bpmp->dev, "    flags: %lx %s\n", info->flags, flags);
-> > +		dev_dbg(bpmp->dev, "    parents: %u\n", info->num_parents);
-> > +
-> > +		for (i =3D 0; i < info->num_parents; i++)
-> > +			dev_dbg(bpmp->dev, "      %03u\n", info->parents[i]);
-> > +#endif
-> > +
-> > +		/* clock not exposed by BPMP */
-> > +		if (info->name[0] =3D=3D '\0')
-> > +			continue;
-> > +
-> > +		info->id =3D id;
-> > +		count++;
-> > +	}
-> > +
-> > +	*clocksp =3D clocks;
->=20
-> Nit we could just return the pointer.
->=20
-> > +
-> > +	return count;
->=20
-> We return unsigned int here and not int. Why do we bother returning
-> count and just store it directly in the bpmp->num_clocks here (see
-> tegra_bpmp_register_clocks)?
+What's the deal with the odd documentation format?
 
-Hm... I'm not sure but I think I had initially imagined this to be used
-in two steps: call tegra_bpmp_probe_clocks() without passing in a clocks
-buffer to get a count for how many clocks to allocate, allocate a buffer
-with the proper size in the caller and call again, this time passing in
-the new buffer. It looks like halfway through the code I changed my mind
-and it's no longer consistent with what I had intended originally.
+> +struct mrq_request {
+> +	/** @brief MRQ number of the request */
+> +	uint32_t mrq;
+> +	/** @brief flags for the request */
+> +	uint32_t flags;
+> +} __ABI_PACKED;
 
-I'll rewrite this so that it (hopefully) makes more sense.
+Marking the structure as packed may result in byte-wise access, depending
+on compiler flags. Is that what you intended? The structure is fully
+packed already, so you won't avoid any padding here.
 
-> > +	for (i =3D 0; i < info->num_parents; i++) {
-> > +		/* keep a private copy of the ID to parent index map */
-> > +		priv->parents[i] =3D info->parents[i];
-> > +
-> > +		for (j =3D 0; j < num_clocks; j++) {
-> > +			const struct tegra_bpmp_clk_info *parent =3D &clocks[j];
-> > +
-> > +			if (parent->id =3D=3D info->parents[i]) {
-> > +				parents[i] =3D parent->name;
-> > +				break;
-> > +			}
-> > +		}
->=20
-> Is it necessary to loop through all the clocks again here? This function
-> is called from tegra_bpmp_register_clocks() which is already looping
-> through all the clocks. So for each clock we loop through all the clocks
-> again.
+> +/**
+> + * @addtogroup Debugfs
+> + * @{
+> + *
+> + * The BPMP firmware implements a pseudo-filesystem called
+> + * debugfs. Any driver within the firmware may register with debugfs
+> + * to expose an arbitrary set of "files" in the filesystem. When
+> + * software on the CPU writes to a debugfs file, debugfs passes the
+> + * written data to a callback provided by the driver. When software on
+> + * the CPU reads a debugfs file, debugfs queries the driver for the
+> + * data to return to the CPU. The intention of the debugfs filesystem
+> + * is to provide information useful for debugging the system at
+> + * runtime.
+> + *
+> + * @note The files exposed via debugfs are not part of the
+> + * BPMP firmware's ABI. debugfs files may be added or removed in any
+> + * given version of the firmware. Typically the semantics of a debugfs
+> + * file are consistent from version to version but even that is not
+> + * guaranteed.
+> + *
+> + * @}
+> + */
+> +/** @ingroup Debugfs */
+> +enum mrq_debugfs_commands {
+> +	CMD_DEBUGFS_READ = 1,
+> +	CMD_DEBUGFS_WRITE = 2,
+> +	CMD_DEBUGFS_DUMPDIR = 3,
+> +	CMD_DEBUGFS_MAX
+> +};
+> +
+> +/**
+> + * @ingroup Debugfs
+> + * @brief parameters for CMD_DEBUGFS_READ/WRITE command
+> + */
+> +struct cmd_debugfs_fileop_request {
+> +	/** @brief physical address pointing at filename */
+> +	uint32_t fnameaddr;
+> +	/** @brief length in bytes of filename buffer */
+> +	uint32_t fnamelen;
+> +	/** @brief physical address pointing to data buffer */
+> +	uint32_t dataaddr;
+> +	/** @brief length in bytes of data buffer */
+> +	uint32_t datalen;
+> +} __ABI_PACKED;
+>
 
-Yes, it's unfortunately necessary because clocks aren't topologically
-sorted. That is, in the earlier loop we may encounter clocks for which a
-parent hasn't been probed yet. That's not a problem for the common clock
-framework because it supports orphan clocks and reparenting when their
-parent becomes available. However, given that the driver queries all the
-clock names from BPMP, we first need to get all names before we can save
-the parent names for the CCFs consumption.
+If the ABI is version specific, maybe add the firmware version name
+to the structure definition?
 
->=20
-> > +		if (!parents[i])
-> > +			dev_err(bpmp->dev, "no parent %u found for %u\n",
-> > +				info->parents[i], info->id);
-> > +	}
-> > +
-> > +	init.parent_names =3D parents;
-> > +
-> > +	clk =3D clk_register(bpmp->dev, &priv->hw);
->=20
-> IS_ERR?
+> +struct cmd_clk_set_rate_request {
+> +	int32_t unused;
+> +	int64_t rate;
+> +} __ABI_PACKED;
 
-Yes, I've added a check.
+This structure actually has a non-aligned struct member, but you
+can write that as
 
-> > +int tegra_bpmp_init_clocks(struct tegra_bpmp *bpmp)
-> > +{
-> > +	struct tegra_bpmp_clk_info *clocks;
-> > +	unsigned int count;
-> > +	int err;
-> > +
-> > +	dev_dbg(bpmp->dev, "> %s(bpmp=3D%p)\n", __func__, bpmp);
-> > +
-> > +	err =3D tegra_bpmp_probe_clocks(bpmp, &clocks);
-> > +	if (err < 0)
-> > +		return err;
-> > +
-> > +	count =3D err;
-> > +
-> > +	dev_dbg(bpmp->dev, "%u clocks probed\n", count);
-> > +
-> > +	err =3D tegra_bpmp_register_clocks(bpmp, clocks, count);
-> > +	if (err < 0) {
-> > +		kfree(clocks);
-> > +		return err;
-> > +	}
-> > +
-> > +	kfree(clocks);
-> > +
-> > +	of_clk_add_hw_provider(bpmp->dev->of_node, tegra_bpmp_clk_of_xlate,
-> > +			       bpmp);
->=20
-> We should check the return code.
+struct cmd_clk_set_rate_request {
+	int32_t unused;
+	int64_t rate;
+} __attribute__((packed, aligned(4)));
 
-Yes, I suppose we should also make sure to remove all clocks if this
-ever fails. I'll see how difficult it is to implement that.
+to still use a default four-byte alignment.
 
-Thierry
-
---TybLhxa8M7aNoW+V
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v2
-
-iQIcBAABCAAGBQJXuv3+AAoJEN0jrNd/PrOhy6MP/iL0vrEn2gVGBh2H8ux0ahjH
-UtHomEBXF+uiM2BtuNyDCjkUoRh3Fa2oKhdisIQjoQPhCjT0y3HVzqhLV8N1iYD+
-G4spW/rGng3hiMWEbkIGcHrKYwmOuKEeaqQPYj9aVVH/cwX00atHrXVUDQITnVwH
-h5r3rRzK5sKGu0W6g48TxzLxaakURqfZ50EIF3WrKuovjOhn7XkiPY4lyYVIctj3
-KruZoKy2ObLc2EjQYVwrBclmbWJ4Yr1kvzJ5LM2pVLFweUlLNV5HVwVtu6rHIsVw
-G6BrJg2Q2MjxS1l4eXm4Q6IXVE24OlhUfnMSh9gB5fSiBfvm1yKtU9BUIFqDgwvd
-ZI0GyOjAEJ8UXKTVZ7d1L9TDCrJf6wRfBlzafYe+4ZDCApOfEaLnBjYcy2dA0g/3
-rm+UoKp95tqY45yEeR2Ft2paIFAXjPqbvp6BwZYQfwjRLuj0+qABPOopsQ7dQy/W
-uJnmbiwHpPI/iCotTgtHLAFmqDVYsAo8HDfOI2aO2C0ofnCcKGKYyYi2oJwqPGKm
-GO0U7yQECD3OVz47ISNb/8Wvw3NXn6WjsEXYQAj6QxZitZmgaVkyKZ+Hdx1ZUofC
-0xsraAJoUXSb2qbrNSKZN/MIPfMWkjRRsRF8IeTgJGb+hqAyZ8IZMLISoPFjVdVz
-hwzKeHkg7gp9Mahn2/aZ
-=EBJy
------END PGP SIGNATURE-----
-
---TybLhxa8M7aNoW+V--
+	Arnd
