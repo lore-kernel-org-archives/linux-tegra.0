@@ -1,51 +1,49 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v3 12/12] reset: Add Tegra BPMP reset driver
-Date: Mon, 22 Aug 2016 13:56:05 -0600
-Message-ID: <a4fff648-fc4a-af2e-1a17-6aac757b4435@wwwdotorg.org>
-References: <20160819173233.13260-1-thierry.reding@gmail.com>
- <20160819173233.13260-13-thierry.reding@gmail.com>
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: Re: [PATCH] Input: tegra-kbc: fix inverted reset logic
+Date: Mon, 22 Aug 2016 14:20:06 -0700
+Message-ID: <20160822212006.GF12277@dtor-ws>
+References: <1471316363-19378-1-git-send-email-yamada.masahiro@socionext.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160819173233.13260-13-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1471316363-19378-1-git-send-email-yamada.masahiro@socionext.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: linux-input@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Rakesh Iyer <riyer@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/19/2016 11:32 AM, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> This driver uses the services provided by the BPMP firmware driver to
-> implement a reset driver based on the MRQ_RESET request.
+On Tue, Aug 16, 2016 at 11:59:23AM +0900, Masahiro Yamada wrote:
+> Commit fe6b0dfaba68 ("Input: tegra-kbc - use reset framework")
+> accidentally converted _deassert to _assert, so there is no code
+> to wake up this hardware.
+> 
+> Fixes: fe6b0dfaba68 ("Input: tegra-kbc - use reset framework")
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 
-> diff --git a/drivers/reset/tegra/reset-bpmp.c b/drivers/reset/tegra/reset-bpmp.c
+Applied, thank you.
 
-> +static struct tegra_bpmp *to_tegra_bpmp(struct reset_controller_dev *rstc)
-> +{
-> +	return container_of(rstc, struct tegra_bpmp, rstc);
-> +}
+> ---
+> 
+>  drivers/input/keyboard/tegra-kbc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/input/keyboard/tegra-kbc.c b/drivers/input/keyboard/tegra-kbc.c
+> index 7d61439..0c07e10 100644
+> --- a/drivers/input/keyboard/tegra-kbc.c
+> +++ b/drivers/input/keyboard/tegra-kbc.c
+> @@ -376,7 +376,7 @@ static int tegra_kbc_start(struct tegra_kbc *kbc)
+>  	/* Reset the KBC controller to clear all previous status.*/
+>  	reset_control_assert(kbc->rst);
+>  	udelay(100);
+> -	reset_control_assert(kbc->rst);
+> +	reset_control_deassert(kbc->rst);
+>  	udelay(100);
+>  
+>  	tegra_kbc_config_pins(kbc);
+> -- 
+> 1.9.1
+> 
 
-It seems rather odd for the BPMP to include a struct 
-reset_controller_dev inside it. Rather, I'd expect a separate reset 
-controller struct to be defined here, which contains a pointer to the 
-BPMP. Otherwise, the BPMP structure is going to get all kinds of stuff 
-added to it.
-
-Put another way, I'd expect the BPMP driver to be nothing more than an 
-IPC provider, with all the clock/reset/power-domain/I2C/... logic 
-contained in drivers that simply use that IPC service and nothing more, 
-rather than clock/reset/power-domain/I2C/... being entirely in-bed with 
-the core BPMP driver.
-
-(I haven't reviewed patch 5/12, the BPMP driver yet BTW).
-
-> +int tegra_bpmp_init_resets(struct tegra_bpmp *bpmp)
-...
-> +	bpmp->rstc.nr_resets = bpmp->soc->num_resets;
-
-Presumably the BPMP already validates reset IDs. Can we leave all the 
-validation to the BPMP? That way, we wouldn't need the SoC data to 
-include a num_resets field, and hence wouldn't need to update the Linux 
-driver in order to support a FW that supported more resets.
+-- 
+Dmitry
