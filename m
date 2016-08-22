@@ -1,44 +1,64 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Subject: Re: [PATCH v3 05/12] firmware: tegra: Add BPMP support
-Date: Mon, 22 Aug 2016 12:51:41 -0600
-Message-ID: <889ad898-873f-ecba-ef22-3492d731c75a@wwwdotorg.org>
+Date: Mon, 22 Aug 2016 12:56:52 -0600
+Message-ID: <866add72-703b-86e1-6e3e-04dbfb872970@wwwdotorg.org>
 References: <20160819173233.13260-1-thierry.reding@gmail.com>
- <20160819173233.13260-6-thierry.reding@gmail.com>
- <94227d94-1d60-fda7-731b-26656633d585@nvidia.com>
- <20160822125458.GC17367@ulmo.ba.sec>
+ <2059006.oN1pE0IkCo@wuerfel> <20160822140211.GE17367@ulmo.ba.sec>
+ <5669893.Rd6yQObxH6@wuerfel>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160822125458.GC17367-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
+In-Reply-To: <5669893.Rd6yQObxH6@wuerfel>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/22/2016 06:54 AM, Thierry Reding wrote:
-> On Mon, Aug 22, 2016 at 10:26:50AM +0100, Jon Hunter wrote:
->>
->> On 19/08/16 18:32, Thierry Reding wrote:
->>> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 08/22/2016 08:42 AM, Arnd Bergmann wrote:
+> On Monday, August 22, 2016 4:02:11 PM CEST Thierry Reding wrote:
+>> On Mon, Aug 22, 2016 at 03:34:15PM +0200, Arnd Bergmann wrote:
+>>> On Friday, August 19, 2016 7:32:26 PM CEST Thierry Reding wrote:
+>>>> diff --git a/include/soc/tegra/bpmp-abi.h b/include/soc/tegra/bpmp-abi.h
+>>>> new file mode 100644
+>>>> index 000000000000..0aaef5960e29
+>>>> --- /dev/null
+>>>> +++ b/include/soc/tegra/bpmp-abi.h
+>>>> +#ifndef _ABI_BPMP_ABI_H_
+>>>> +#define _ABI_BPMP_ABI_H_
+>>>> +
+>>>> +#ifdef LK
+>>>> +#include <stdint.h>
+>>>> +#endif
+>>>> +
+>>>> +#ifndef __ABI_PACKED
+>>>> +#define __ABI_PACKED __attribute__((packed))
+>>>> +#endif
+>>>> +
+>>>> +#ifdef NO_GCC_EXTENSIONS
+>>>> +#define EMPTY char empty;
+>>>> +#define EMPTY_ARRAY 1
+>>>> +#else
+>>>> +#define EMPTY
+>>>> +#define EMPTY_ARRAY 0
+>>>> +#endif
+>>>> +
+>>>> +#ifndef __UNION_ANON
+>>>> +#define __UNION_ANON
+>>>> +#endif
 >>>
->>> The Boot and Power Management Processor (BPMP) is a co-processor found
->>> on Tegra SoCs. It is designed to handle the early stages of the boot
->>> process and offload power management tasks (such as clocks, resets,
->>> powergates, ...) as well as system control services.
->>>
->>> Compared to the ARM SCPI, the services provided by BPMP are message-
->>> based rather than method-based. The BPMP firmware driver provides the
->>> services to transmit data to and receive data from the BPMP. Users can
->>> also register an MRQ, for which a service routine will be run when a
->>> corresponding event is received from the firmware.
+>>> Maybe keep these all out of the kernel?
 >>
->> MRQ?
+>> This was discussed a little in an earlier posting. This header file is
+>> maintained by the BPMP firmware team and using it verbatim means little
+>> to no effort required to update it.
 >
-> I think that means "Message ReQuest", which is sort of like an IRQ but
-> the user will receive a message (with potentially payload) instead. Do
-> you want me to spell that out in the commit message, or what would you
-> suggest?
+> The usual recommendation is to just use Linux coding style in shared
+> files, and possibly add another header that provides the required
+> definitions. Otherwise you end up with people randomly cleaning up
+> the file later ;-)
 
-I believe MRQ refers to the ID/type/semantics of the message structure 
-itself, not so much the notification aspect of having received a message.
+That's just going to push the problem into all other operating systems; 
+what happens when BSD, Windows, QNX, FreeRTOS, ... import this file and 
+attempt to apply the same argument, but want the FW team to use their 
+coding style?
