@@ -1,49 +1,141 @@
 From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: Re: [PATCH v3 10/12] arm64: dts: tegra: Add NVIDIA P2771 board
- support
-Date: Mon, 22 Aug 2016 13:11:27 -0600
-Message-ID: <67ca2714-8f12-d289-2b67-b31d6fb37fa8@wwwdotorg.org>
+Subject: Re: [PATCH v3 11/12] clk: tegra: Add BPMP clock driver
+Date: Mon, 22 Aug 2016 13:47:13 -0600
+Message-ID: <30386cdd-ea1d-25bc-cbe2-831c94209a99@wwwdotorg.org>
 References: <20160819173233.13260-1-thierry.reding@gmail.com>
- <20160819173233.13260-11-thierry.reding@gmail.com>
+ <20160819173233.13260-12-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160819173233.13260-11-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20160819173233.13260-12-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 On 08/19/2016 11:32 AM, Thierry Reding wrote:
-> From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >
-> Add NVIDIA P2771 is composed of a P3310 processor module that connects
-> to the P2597 I/O board. It comes with a 1200x1920 MIPI DSI panel
-> connected via the P2597's display connector and has several connectors
-> such as HDMI, USB 3.0, PCIe and ethernet.
+> This driver uses the services provided by the BPMP firmware driver to
+> implement a clock driver based on the MRQ_CLK request. This part of the
+> BPMP ABI provides a means to enumerate and control clocks and should
+> allow the driver to work on any chip that supports this ABI.
 
->  arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts | 8 ++++++++
+> diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
 
-The DT will be different for the different HW versions. So far, there 
-are at least 3 different versions with 3 combinations of 2 different HW 
-changes (PCIe lane layout, and SD card GPIO assignments). I suspect 
-we'll want this file to be tegra186-p2771-0000-NNN.dts where NNN is the 
-version number from the EEPROM (which is 000 for the first version, 300 
-for the version that introduces the first change, and 500 for the 
-version that introduces the second change).
+> +#define TEGRA_BPMP_CLK_HAS_MUX		BIT(0)
+> +#define TEGRA_BPMP_CLK_HAS_SET_RATE	BIT(1)
+> +#define TEGRA_BPMP_CLK_IS_ROOT		BIT(2)
 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
+Shouldn't those be defined in the BPMP ABI header?
 
-> +#include "tegra186-p3310.dtsi"
+> +static int
+> +tegra_bpmp_clk_transfer_atomic(struct tegra_bpmp *bpmp,
+> +			       const struct tegra_bpmp_clk_message *clk)
+> +{
+> +	struct mrq_clk_request request;
+> +	struct tegra_bpmp_message msg;
+> +	void *req = (void *)&request;
 > +
-> +/ {
-> +	model = "NVIDIA Tegra186 P2771-0000 Board";
-> +	compatible = "nvidia,p2771-0000", "nvidia,tegra186";
+> +	memset(&request, 0, sizeof(request));
+> +	request.cmd_and_id = (clk->cmd << 24) | clk->clk;
+> +	memcpy(req + 4, clk->tx.data, clk->tx.size);
 
-Do we need to propagate the "nvidia,p3310" entry from the included CVM 
-DT? It'd be nice if we could write:
+So the TX payload gets memcpy()d once here to combine it with the 
+request header, and again inside the BPMP driver to copy it to the IVC 
+shared memory. Does it make sense to eliminate the copy here, and 
+require callers to allocate and fill in the entire TX structure? The 
+"(clk->cmd << 24) | clk->clk" could be wrapped in a static inline 
+function to avoid any duplication of logic.
 
-/prepend/ compatible = "nvidia,p2771-0000";
+> +static int tegra_bpmp_clk_transfer(struct tegra_bpmp *bpmp,
+> +				   const struct tegra_bpmp_clk_message *clk)
+...
+> +	err = tegra_bpmp_transfer(bpmp, &msg);
+> +	if (err != -EAGAIN)
+> +		return err;
+> +
+> +	return __tegra_bpmp_clk_transfer_atomic(bpmp, &msg);
+> +}
 
-... and have that happen automatically.
+This seems odd; can you add some comments indicating why there's a need 
+for a retry, and why it falls back to the _atomic() function rather than 
+just retrying?
+
+Nit: Perhaps s/tegra_bpmp_clk/tegra_clk_bpmp/ for all symbols 
+implemented in this driver; it can be a little hard to tell which 
+function calls are to the Tegra BPMP driver (tegra_bpmp_*), and which 
+are to the Tegra clock driver that's implemented using BPMP 
+(tegra_bpmp_clk_*).
+
+> +static int tegra_bpmp_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+> +				   unsigned long parent_rate)
+> +{
+> +	return 0;
+> +}
+> +
+> +static long tegra_bpmp_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+> +				      unsigned long *parent_rate)
+> +{
+> +	return 0;
+> +}
+> +
+> +static unsigned long tegra_bpmp_clk_recalc_rate(struct clk_hw *hw,
+> +						unsigned long parent_rate)
+> +{
+> +	return 0;
+> +}
+
+Aren't those all missing an implementation?
+
+> +static int tegra_bpmp_probe_clocks(struct tegra_bpmp *bpmp,
+> +				   struct tegra_bpmp_clk_info **clocksp)
+
+> +	for (id = 0; id <= max_id; id++) {
+> +		struct tegra_bpmp_clk_info *info = &clocks[count];
+> +#if 0
+> +		const char *prefix = "";
+> +		struct seq_buf buf;
+> +		unsigned int i;
+> +		char flags[64];
+> +#endif
+
+Should the #if 0 be removed? checkpatch would warn about this; was it 
+run and if not would it find other things to complain about?
+
+> +static struct clk_hw *
+> +tegra_bpmp_clk_register(struct tegra_bpmp *bpmp,
+> +			const struct tegra_bpmp_clk_info *info,
+> +			const struct tegra_bpmp_clk_info *clocks,
+> +			unsigned int num_clocks)
+> +{
+> +	struct tegra_bpmp_clk *priv;
+> +	struct clk_init_data init;
+...
+> +	/* hardware clock initialization */
+> +	priv->hw.init = &init;
+> +	init.name = info->name;
+...
+> +	clk = clk_register(bpmp->dev, &priv->hw);
+
+Is priv->hw.init guaranteed to only be used inside the call to 
+clk_register()? If not, it's storing a pointer to the stack for longer 
+than it's valid.
+
+> +	parents = kcalloc(info->num_parents, sizeof(*parents), GFP_KERNEL);
+> +	if (!parents)
+> +		return ERR_PTR(-ENOMEM);
+
+That needs to free priv->parents which was allocated earlier this function.
+
+> +static struct clk_hw *tegra_bpmp_clk_of_xlate(struct of_phandle_args *clkspec,
+> +					      void *data)
+> +{
+> +	unsigned int id = clkspec->args[0], i;
+
+Should this function validate the cell count first? Too small means 
+args[0] doesn't contain valid data, and too large means the DT is bogus, 
+and we should at least warn the user they've included extra cruft, since 
+it could in theory gain additional meaning later on if the binding gets 
+extended.
