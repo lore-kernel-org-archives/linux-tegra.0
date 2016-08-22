@@ -1,14 +1,14 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 11/12] clk: tegra: Add BPMP clock driver
-Date: Mon, 22 Aug 2016 11:11:57 +0100
-Message-ID: <0d7080bc-9e82-75dd-7169-0a5b7429801e@nvidia.com>
+Subject: Re: [PATCH v3 04/12] firmware: tegra: Add IVC library
+Date: Mon, 22 Aug 2016 11:46:49 +0100
+Message-ID: <90222c3a-7c69-6fa3-d161-4ed0c5759f34@nvidia.com>
 References: <20160819173233.13260-1-thierry.reding@gmail.com>
- <20160819173233.13260-12-thierry.reding@gmail.com>
+ <20160819173233.13260-5-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160819173233.13260-12-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20160819173233.13260-5-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
@@ -18,628 +18,271 @@ List-Id: linux-tegra@vger.kernel.org
 On 19/08/16 18:32, Thierry Reding wrote:
 > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > 
-> This driver uses the services provided by the BPMP firmware driver to
-> implement a clock driver based on the MRQ_CLK request. This part of the
-> BPMP ABI provides a means to enumerate and control clocks and should
-> allow the driver to work on any chip that supports this ABI.
+> The Inter-VM communication (IVC) is a communication protocol which is
+> designed for interprocessor communication (IPC) or the communication
+> between the hypervisor and the virtual machine with a guest OS.
+> 
+> Message channels are used to communicate between processors. They are
+> backed by DRAM or SRAM, so care must be taken to maintain coherence of
+> data.
+> 
+> The IVC library maintains memory-based descriptors for the transmission
+> and reception channels as well as the data coherence of the counter and
+> payload. Clients, such as the driver for the BPMP firmware, can use the
+> library to exchange messages with remote processors.
+> 
+> Based on work by Peter Newman <pnewman-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> and Joseph Lo
+> <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>.
 > 
 > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  drivers/clk/tegra/Makefile   |   1 +
->  drivers/clk/tegra/clk-bpmp.c | 565 +++++++++++++++++++++++++++++++++++++++++++
->  2 files changed, 566 insertions(+)
->  create mode 100644 drivers/clk/tegra/clk-bpmp.c
+> Changes in v3:
+> - use a more object oriented design
 > 
-> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-> index 33fd0938d79e..130df5685d21 100644
-> --- a/drivers/clk/tegra/Makefile
-> +++ b/drivers/clk/tegra/Makefile
-> @@ -22,3 +22,4 @@ obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124-dfll-fcpu.o
->  obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
->  obj-y					+= cvb.o
->  obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
-> +obj-$(CONFIG_ARCH_TEGRA_186_SOC)	+= clk-bpmp.o
-> diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
-> new file mode 100644
-> index 000000000000..96cd6becf73e
-> --- /dev/null
-> +++ b/drivers/clk/tegra/clk-bpmp.c
-> @@ -0,0 +1,565 @@
-> +#define DEBUG
+>  drivers/firmware/Kconfig        |   1 +
+>  drivers/firmware/Makefile       |   1 +
+>  drivers/firmware/tegra/Kconfig  |  13 +
+>  drivers/firmware/tegra/Makefile |   1 +
+>  drivers/firmware/tegra/ivc.c    | 683 ++++++++++++++++++++++++++++++++++++++++
+>  include/soc/tegra/ivc.h         | 109 +++++++
+>  6 files changed, 808 insertions(+)
+>  create mode 100644 drivers/firmware/tegra/Kconfig
+>  create mode 100644 drivers/firmware/tegra/Makefile
+>  create mode 100644 drivers/firmware/tegra/ivc.c
+>  create mode 100644 include/soc/tegra/ivc.h
 
-Do we want DEBUG by default?
+[snip]
 
-> +#include <linux/clk-provider.h>
-> +#include <linux/device.h>
-> +#include <linux/seq_buf.h>
-> +#include <linux/slab.h>
-> +
-> +#include <soc/tegra/bpmp.h>
-> +#include <soc/tegra/bpmp-abi.h>
-> +
-> +#define TEGRA_BPMP_CLK_HAS_MUX		BIT(0)
-> +#define TEGRA_BPMP_CLK_HAS_SET_RATE	BIT(1)
-> +#define TEGRA_BPMP_CLK_IS_ROOT		BIT(2)
-> +
-> +struct tegra_bpmp_clk_info {
-> +	unsigned int id;
-> +	char name[MRQ_CLK_NAME_MAXLEN];
-> +	unsigned int parents[MRQ_CLK_MAX_PARENTS];
-> +	unsigned int num_parents;
-> +	unsigned long flags;
-> +};
-> +
-> +struct tegra_bpmp_clk {
-> +	struct clk_hw hw;
-> +
-> +	struct tegra_bpmp *bpmp;
-> +	unsigned int id;
-> +
-> +	unsigned int num_parents;
-> +	unsigned int *parents;
-> +};
-> +
-> +static inline struct tegra_bpmp_clk *to_tegra_bpmp_clk(struct clk_hw *hw)
+> +static void *tegra_ivc_frame_virt(struct tegra_ivc *ivc,
+> +				  struct tegra_ivc_header *header,
+> +				  unsigned int frame)
 > +{
-> +	return container_of(hw, struct tegra_bpmp_clk, hw);
-> +}
-> +
-> +struct tegra_bpmp_clk_message {
-> +	unsigned int cmd;
-> +	unsigned int clk;
-> +
-> +	struct {
-> +		const void *data;
-> +		size_t size;
-> +	} tx;
-> +
-> +	struct {
-> +		void *data;
-> +		size_t size;
-> +	} rx;
-> +};
-> +
-> +static int
-> +__tegra_bpmp_clk_transfer_atomic(struct tegra_bpmp *bpmp,
-> +				 struct tegra_bpmp_message *msg)
-> +{
-> +	unsigned long flags;
-> +	int err;
-> +
-> +	local_irq_save(flags);
-> +	err = tegra_bpmp_transfer_atomic(bpmp, msg);
-> +	local_irq_restore(flags);
-> +
-> +	return err;
-> +}
-> +
-> +static int
-> +tegra_bpmp_clk_transfer_atomic(struct tegra_bpmp *bpmp,
-> +			       const struct tegra_bpmp_clk_message *clk)
-> +{
-> +	struct mrq_clk_request request;
-> +	struct tegra_bpmp_message msg;
-> +	void *req = (void *)&request;
-> +
-> +	memset(&request, 0, sizeof(request));
-> +	request.cmd_and_id = (clk->cmd << 24) | clk->clk;
-> +	memcpy(req + 4, clk->tx.data, clk->tx.size);
-> +
-> +	memset(&msg, 0, sizeof(msg));
-> +	msg.mrq = MRQ_CLK;
-> +	msg.tx.data = &request;
-> +	msg.tx.size = sizeof(request);
-> +	msg.rx.data = clk->rx.data;
-> +	msg.rx.size = clk->rx.size;
-> +
-> +	return __tegra_bpmp_clk_transfer_atomic(bpmp, &msg);;
-> +}
-> +
-> +static int tegra_bpmp_clk_transfer(struct tegra_bpmp *bpmp,
-> +				   const struct tegra_bpmp_clk_message *clk)
-> +{
-> +	struct mrq_clk_request request;
-> +	struct tegra_bpmp_message msg;
-> +	void *req = (void *)&request;
-> +	int err;
-> +
-> +	memset(&request, 0, sizeof(request));
-> +	request.cmd_and_id = (clk->cmd << 24) | clk->clk;
-> +	memcpy(req + 4, clk->tx.data, clk->tx.size);
-> +
-> +	memset(&msg, 0, sizeof(msg));
-> +	msg.mrq = MRQ_CLK;
-> +	msg.tx.data = &request;
-> +	msg.tx.size = sizeof(request);
-> +	msg.rx.data = clk->rx.data;
-> +	msg.rx.size = clk->rx.size;
-> +
-> +	err = tegra_bpmp_transfer(bpmp, &msg);
-> +	if (err != -EAGAIN)
-> +		return err;
-> +
-> +	return __tegra_bpmp_clk_transfer_atomic(bpmp, &msg);
-> +}
-> +
-> +static int tegra_bpmp_clk_enable(struct clk_hw *hw)
-> +{
-> +	struct tegra_bpmp_clk *clk = to_tegra_bpmp_clk(hw);
-> +	struct tegra_bpmp_clk_message msg;
-> +	int err;
-> +
-> +	dev_dbg(clk->bpmp->dev, "> %s(hw=%p)\n", __func__, hw);
-> +
-> +	memset(&msg, 0, sizeof(msg));
-> +	msg.cmd = CMD_CLK_ENABLE;
-> +	msg.clk = clk->id;
-> +
-> +	err = tegra_bpmp_clk_transfer(clk->bpmp, &msg);
-> +
-> +	dev_dbg(clk->bpmp->dev, "< %s() = %d\n", __func__, err);
-> +	return err;
-> +}
-> +
-> +static void tegra_bpmp_clk_disable(struct clk_hw *hw)
-> +{
-> +	struct tegra_bpmp_clk *clk = to_tegra_bpmp_clk(hw);
-> +	struct tegra_bpmp_clk_message msg;
-> +	int err;
-> +
-> +	memset(&msg, 0, sizeof(msg));
-> +	msg.cmd = CMD_CLK_DISABLE;
-> +	msg.clk = clk->id;
-> +
-> +	err = tegra_bpmp_clk_transfer(clk->bpmp, &msg);
-> +	if (err < 0)
-> +		dev_err(clk->bpmp->dev, "failed to disable clock %s: %d\n",
-> +			clk_hw_get_name(hw), err);
-> +}
-> +
-> +static int tegra_bpmp_clk_is_enabled(struct clk_hw *hw)
-> +{
-> +	struct tegra_bpmp_clk *clk = to_tegra_bpmp_clk(hw);
-> +	struct cmd_clk_is_enabled_response response;
-> +	struct tegra_bpmp_clk_message msg;
-> +	int err;
-> +
-> +	memset(&msg, 0, sizeof(msg));
-> +	msg.cmd = CMD_CLK_IS_ENABLED;
-> +	msg.clk = clk->id;
-> +	msg.rx.data = &response;
-> +	msg.rx.size = sizeof(response);
-> +
-> +	err = tegra_bpmp_clk_transfer_atomic(clk->bpmp, &msg);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	return response.state;
-> +}
-> +
-> +static u8 tegra_bpmp_clk_get_parent(struct clk_hw *hw)
-> +{
-> +	struct tegra_bpmp_clk *clk = to_tegra_bpmp_clk(hw);
-> +	struct cmd_clk_get_parent_response response;
-> +	struct tegra_bpmp_clk_message msg;
-> +	unsigned int i;
-> +	int err;
-> +
-> +	memset(&msg, 0, sizeof(msg));
-> +	msg.cmd = CMD_CLK_GET_PARENT;
-> +	msg.clk = clk->id;
-> +	msg.rx.data = &response;
-> +	msg.rx.size = sizeof(&response);
-> +
-> +	err = tegra_bpmp_clk_transfer(clk->bpmp, &msg);
-> +	if (err < 0)
-> +		return err;
+> +	BUG_ON(frame >= ivc->num_frames);
 
-tegra_bpmp_clk_transfer returns an int, but this function returns a u8.
+WARN_ON and return an error pointer?
 
 > +
-> +	for (i = 0; i < clk->num_parents; i++)
-> +		if (clk->parents[i] == response.parent_id)
-> +			return i;
-> +
-> +	return U8_MAX;
-
-Is there any chance the U8_MAX == num_parents? Should we warn here
-somewhere?
-
+> +	return (void *)(header + 1) + ivc->frame_size * frame;
 > +}
 > +
-> +static int tegra_bpmp_clk_set_parent(struct clk_hw *hw, u8 index)
+> +static inline dma_addr_t tegra_ivc_frame_phys(struct tegra_ivc *ivc,
+> +					      dma_addr_t phys,
+> +					      unsigned int frame)
 > +{
-> +	struct tegra_bpmp_clk *clk = to_tegra_bpmp_clk(hw);
-> +	struct cmd_clk_set_parent_response response;
-> +	struct cmd_clk_set_parent_request request;
-> +	struct tegra_bpmp_clk_message msg;
-> +	int err;
+> +	unsigned long offset;
 > +
-> +	if (index >= clk->num_parents)
+> +	BUG_ON(!ivc->peer);
+> +	BUG_ON(frame >= ivc->num_frames);
+
+WARN_ON?
+
+> +
+> +	offset = sizeof(struct tegra_ivc_header) + ivc->frame_size * frame;
+> +
+> +	return phys + offset;
+> +}
+
+[snip]
+
+> +static int check_ivc_params(unsigned long base1, unsigned long base2,
+> +			    unsigned int num_frames, size_t frame_size)
+> +{
+> +	BUG_ON(offsetof(struct tegra_ivc_header, tx.count) & (TEGRA_IVC_ALIGN - 1));
+> +	BUG_ON(offsetof(struct tegra_ivc_header, rx.count) & (TEGRA_IVC_ALIGN - 1));
+> +	BUG_ON(sizeof(struct tegra_ivc_header) & (TEGRA_IVC_ALIGN - 1));
+
+WARN_ON?
+
+> +	if ((uint64_t)num_frames * (uint64_t)frame_size >= 0x100000000) {
+> +		pr_err("num_frames * frame_size overflows\n");
 > +		return -EINVAL;
-> +
-> +	memset(&request, 0, sizeof(request));
-> +	request.parent_id = clk->parents[index];
-> +
-> +	memset(&msg, 0, sizeof(msg));
-> +	msg.cmd = CMD_CLK_SET_PARENT;
-> +	msg.clk = clk->id;
-> +	msg.tx.data = &request;
-> +	msg.tx.size = sizeof(request);
-> +	msg.rx.data = &response;
-> +	msg.rx.size = sizeof(response);
-> +
-> +	err = tegra_bpmp_clk_transfer(clk->bpmp, &msg);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	/* XXX check parent ID in response */
-> +
-> +	return 0;
-> +}
-> +
-> +static int tegra_bpmp_clk_set_rate(struct clk_hw *hw, unsigned long rate,
-> +				   unsigned long parent_rate)
-> +{
-> +	return 0;
-> +}
-> +
-> +static long tegra_bpmp_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-> +				      unsigned long *parent_rate)
-> +{
-> +	return 0;
-> +}
-> +
-> +static unsigned long tegra_bpmp_clk_recalc_rate(struct clk_hw *hw,
-> +						unsigned long parent_rate)
-> +{
-> +	return 0;
-> +}
-> +
-> +static const struct clk_ops tegra_bpmp_clk_gate_ops = {
-> +	.is_enabled = tegra_bpmp_clk_is_enabled,
-> +	.prepare = tegra_bpmp_clk_enable,
-> +	.unprepare = tegra_bpmp_clk_disable,
-> +};
-> +
-> +static const struct clk_ops tegra_bpmp_clk_mux_ops = {
-> +	.get_parent = tegra_bpmp_clk_get_parent,
-> +	.set_parent = tegra_bpmp_clk_set_parent,
-> +	.is_enabled = tegra_bpmp_clk_is_enabled,
-> +	.prepare = tegra_bpmp_clk_enable,
-> +	.unprepare = tegra_bpmp_clk_disable,
-> +};
-> +
-> +static const struct clk_ops tegra_bpmp_clk_rate_ops = {
-> +	.is_enabled = tegra_bpmp_clk_is_enabled,
-> +	.prepare = tegra_bpmp_clk_enable,
-> +	.unprepare = tegra_bpmp_clk_disable,
-> +	.set_rate = tegra_bpmp_clk_set_rate,
-> +	.round_rate = tegra_bpmp_clk_round_rate,
-> +	.recalc_rate = tegra_bpmp_clk_recalc_rate,
-> +};
-> +
-> +static const struct clk_ops tegra_bpmp_clk_mux_rate_ops = {
-> +	.get_parent = tegra_bpmp_clk_get_parent,
-> +	.set_parent = tegra_bpmp_clk_set_parent,
-> +	.is_enabled = tegra_bpmp_clk_is_enabled,
-> +	.prepare = tegra_bpmp_clk_enable,
-> +	.unprepare = tegra_bpmp_clk_disable,
-> +	.set_rate = tegra_bpmp_clk_set_rate,
-> +	.round_rate = tegra_bpmp_clk_round_rate,
-> +	.recalc_rate = tegra_bpmp_clk_recalc_rate,
-> +};
-> +
-> +static int tegra_bpmp_clk_get_max_id(struct tegra_bpmp *bpmp)
-> +{
-> +	struct cmd_clk_get_max_clk_id_response response;
-> +	struct tegra_bpmp_clk_message msg;
-> +	int err;
-> +
-> +	memset(&msg, 0, sizeof(msg));
-> +	msg.cmd = CMD_CLK_GET_MAX_CLK_ID;
-> +	msg.rx.data = &response;
-> +	msg.rx.size = sizeof(response);
-> +
-> +	err = tegra_bpmp_clk_transfer(bpmp, &msg);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	return response.max_id;
-
-response.max_id is a uint32
-> +}
-> +
-> +static int tegra_bpmp_clk_get_info(struct tegra_bpmp *bpmp, unsigned int id,
-> +				   struct tegra_bpmp_clk_info *info)
-> +{
-> +	struct cmd_clk_get_all_info_response response;
-> +	struct tegra_bpmp_clk_message msg;
-> +	unsigned int i;
-> +	int err;
-> +
-> +	memset(&msg, 0, sizeof(msg));
-> +	msg.cmd = CMD_CLK_GET_ALL_INFO;
-> +	msg.clk = id;
-> +	msg.rx.data = &response;
-> +	msg.rx.size = sizeof(response);
-> +
-> +	err = tegra_bpmp_clk_transfer(bpmp, &msg);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	strlcpy(info->name, response.name, MRQ_CLK_NAME_MAXLEN);
-> +	info->num_parents = response.num_parents;
-> +
-> +	for (i = 0; i < info->num_parents; i++)
-> +		info->parents[i] = response.parents[i];
-> +
-> +	info->flags = response.flags;
-> +
-> +	return 0;
-> +}
-> +
-> +static int tegra_bpmp_probe_clocks(struct tegra_bpmp *bpmp,
-> +				   struct tegra_bpmp_clk_info **clocksp)
-> +{
-> +	struct tegra_bpmp_clk_info *clocks;
-> +	unsigned int max_id, id, count = 0;
-> +	int err;
-> +
-> +	err = tegra_bpmp_clk_get_max_id(bpmp);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	max_id = err;
-> +
-> +	dev_dbg(bpmp->dev, "maximum clock ID: %u\n", max_id);
-> +
-> +	clocks = kcalloc(max_id + 1, sizeof(*clocks), GFP_KERNEL);
-> +	if (!clocks)
-> +		return -ENOMEM;
-> +
-> +	for (id = 0; id <= max_id; id++) {
-> +		struct tegra_bpmp_clk_info *info = &clocks[count];
-> +#if 0
-> +		const char *prefix = "";
-> +		struct seq_buf buf;
-> +		unsigned int i;
-> +		char flags[64];
-> +#endif
-> +
-> +		err = tegra_bpmp_clk_get_info(bpmp, id, info);
-> +		if (err < 0) {
-> +			dev_err(bpmp->dev, "failed to query clock %u: %d\n",
-> +				id, err);
-> +			continue;
-> +		}
-> +
-> +#if 0
-> +		seq_buf_init(&buf, flags, sizeof(flags));
-> +
-> +		if (info->flags)
-> +			seq_buf_printf(&buf, "(");
-> +
-> +		if (info->flags & TEGRA_BPMP_CLK_HAS_MUX) {
-> +			seq_buf_printf(&buf, "%smux", prefix);
-> +			prefix = ", ";
-> +		}
-> +
-> +		if ((info->flags & TEGRA_BPMP_CLK_HAS_SET_RATE) == 0) {
-> +			seq_buf_printf(&buf, "%sfixed", prefix);
-> +			prefix = ", ";
-> +		}
-> +
-> +		if (info->flags & TEGRA_BPMP_CLK_IS_ROOT) {
-> +			seq_buf_printf(&buf, "%sroot", prefix);
-> +			prefix = ", ";
-> +		}
-> +
-> +		if (info->flags)
-> +			seq_buf_printf(&buf, ")");
-> +
-> +		dev_dbg(bpmp->dev, "  %03u: %s\n", id, info->name);
-> +		dev_dbg(bpmp->dev, "    flags: %lx %s\n", info->flags, flags);
-> +		dev_dbg(bpmp->dev, "    parents: %u\n", info->num_parents);
-> +
-> +		for (i = 0; i < info->num_parents; i++)
-> +			dev_dbg(bpmp->dev, "      %03u\n", info->parents[i]);
-> +#endif
-> +
-> +		/* clock not exposed by BPMP */
-> +		if (info->name[0] == '\0')
-> +			continue;
-> +
-> +		info->id = id;
-> +		count++;
 > +	}
 > +
-> +	*clocksp = clocks;
-
-Nit we could just return the pointer.
-
+> +	/*
+> +	 * The headers must at least be aligned enough for counters
+> +	 * to be accessed atomically.
+> +	 */
+> +	if (base1 & (TEGRA_IVC_ALIGN - 1)) {
+> +		pr_err("IVC channel start not aligned: %lx\n", base1);
+> +		return -EINVAL;
+> +	}
 > +
-> +	return count;
-
-We return unsigned int here and not int. Why do we bother returning
-count and just store it directly in the bpmp->num_clocks here (see
-tegra_bpmp_register_clocks)?
-
-> +}
+> +	if (base2 & (TEGRA_IVC_ALIGN - 1)) {
+> +		pr_err("IVC channel start not aligned: %lx\n", base2);
+> +		return -EINVAL;
+> +	}
 > +
-> +static struct clk_hw *
-> +tegra_bpmp_clk_register(struct tegra_bpmp *bpmp,
-> +			const struct tegra_bpmp_clk_info *info,
-> +			const struct tegra_bpmp_clk_info *clocks,
-> +			unsigned int num_clocks)
-> +{
-> +	struct tegra_bpmp_clk *priv;
-> +	struct clk_init_data init;
-> +	const char **parents;
-> +	unsigned int i, j;
-> +	struct clk *clk;
+> +	if (frame_size & (TEGRA_IVC_ALIGN - 1)) {
+> +		pr_err("frame size not adequately aligned: %zu\n", frame_size);
+> +		return -EINVAL;
+> +	}
 > +
-> +	dev_dbg(bpmp->dev, "registering clock %u (%s)\n", info->id, info->name);
-> +
-> +	priv = devm_kzalloc(bpmp->dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	priv->bpmp = bpmp;
-> +	priv->id = info->id;
-> +
-> +	priv->parents = devm_kcalloc(bpmp->dev, info->num_parents,
-> +				     sizeof(*priv->parents), GFP_KERNEL);
-> +	if (!priv->parents)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	priv->num_parents = info->num_parents;
-> +
-> +	/* hardware clock initialization */
-> +	priv->hw.init = &init;
-> +	init.name = info->name;
-> +
-> +	if (info->flags & TEGRA_BPMP_CLK_HAS_MUX) {
-> +		if (info->flags & TEGRA_BPMP_CLK_HAS_SET_RATE)
-> +			init.ops = &tegra_bpmp_clk_mux_rate_ops;
-> +		else
-> +			init.ops = &tegra_bpmp_clk_mux_ops;
+> +	if (base1 < base2) {
+> +		if (base1 + frame_size * num_frames > base2) {
+> +			pr_err("queue regions overlap: %lx + %zx, %zx\n",
+> +			       base1, frame_size, frame_size * num_frames);
+> +			return -EINVAL;
+> +		}
 > +	} else {
-> +		if (info->flags & TEGRA_BPMP_CLK_HAS_SET_RATE)
-> +			init.ops = &tegra_bpmp_clk_rate_ops;
-> +		else
-> +			init.ops = &tegra_bpmp_clk_gate_ops;
+> +		if (base2 + frame_size * num_frames > base1) {
+> +			pr_err("queue regions overlap: %lx + %zx, %zx\n",
+> +			       base2, frame_size, frame_size * num_frames);
+> +			return -EINVAL;
+> +		}
 > +	}
 > +
-> +	init.num_parents = info->num_parents;
+> +	return 0;
+> +}
 > +
-> +	parents = kcalloc(info->num_parents, sizeof(*parents), GFP_KERNEL);
-> +	if (!parents)
-> +		return ERR_PTR(-ENOMEM);
+> +int tegra_ivc_init(struct tegra_ivc *ivc, struct device *peer,
+> +		   void __iomem *rx_virt, dma_addr_t rx_phys,
+> +		   void __iomem *tx_virt, dma_addr_t tx_phys,
+> +		   unsigned int num_frames, size_t frame_size,
+> +		   void (*notify)(struct tegra_ivc *ivc, void *data),
+> +		   void *data)
+> +{
+> +	size_t queue_size;
+> +	int err;
 > +
-> +	for (i = 0; i < info->num_parents; i++) {
-> +		/* keep a private copy of the ID to parent index map */
-> +		priv->parents[i] = info->parents[i];
+> +	err = check_ivc_params((unsigned long)rx_virt, (unsigned long)tx_virt,
+> +			       num_frames, frame_size);
+> +	if (err < 0)
+> +		return err;
 > +
-> +		for (j = 0; j < num_clocks; j++) {
-> +			const struct tegra_bpmp_clk_info *parent = &clocks[j];
+> +	BUG_ON(!ivc);
+> +	BUG_ON(!notify);
+
+We should check this first and just return -EINVAL.
+
+> +	queue_size = tegra_ivc_total_queue_size(num_frames * frame_size);
 > +
-> +			if (parent->id == info->parents[i]) {
-> +				parents[i] = parent->name;
-> +				break;
+> +	/*
+> +	 * All sizes that can be returned by communication functions should
+> +	 * fit in an int.
+> +	 */
+> +	if (frame_size > INT_MAX)
+> +		return -E2BIG;
+> +
+> +	ivc->rx.channel = (struct tegra_ivc_header *)rx_virt;
+> +	ivc->tx.channel = (struct tegra_ivc_header *)tx_virt;
+> +
+> +	if (peer) {
+> +		if (rx_phys != DMA_ERROR_CODE) {
+> +			ivc->rx.phys = rx_phys;
+> +			ivc->tx.phys = tx_phys;
+> +		} else {
+> +			ivc->rx.phys = dma_map_single(peer, ivc->rx.channel,
+> +						      queue_size,
+> +						      DMA_BIDIRECTIONAL);
+> +			if (ivc->rx.phys == DMA_ERROR_CODE)
+> +				return -ENOMEM;
+> +
+> +			ivc->tx.phys = dma_map_single(peer, ivc->tx.channel,
+> +						      queue_size,
+> +						      DMA_BIDIRECTIONAL);
+> +			if (ivc->tx.phys == DMA_ERROR_CODE) {
+> +				dma_unmap_single(peer, ivc->rx.phys,
+> +						 queue_size,
+> +						 DMA_BIDIRECTIONAL);
+> +				return -ENOMEM;
 > +			}
 > +		}
-
-Is it necessary to loop through all the clocks again here? This function
-is called from tegra_bpmp_register_clocks() which is already looping
-through all the clocks. So for each clock we loop through all the clocks
-again.
-
-> +		if (!parents[i])
-> +			dev_err(bpmp->dev, "no parent %u found for %u\n",
-> +				info->parents[i], info->id);
 > +	}
 > +
-> +	init.parent_names = parents;
+> +	ivc->peer = peer;
+> +	ivc->notify = notify;
+> +	ivc->notify_data = data;
+> +	ivc->frame_size = frame_size;
+> +	ivc->num_frames = num_frames;
 > +
-> +	clk = clk_register(bpmp->dev, &priv->hw);
-
-IS_ERR?
-
-> +
-> +	kfree(parents);
-> +
-> +	return &priv->hw;
-> +}
-> +
-> +static int tegra_bpmp_register_clocks(struct tegra_bpmp *bpmp,
-> +				      struct tegra_bpmp_clk_info *clocks,
-> +				      unsigned int count)
-> +{
-> +	struct clk_hw *hw;
-> +	unsigned int i;
-> +
-> +	bpmp->num_clocks = count;
-> +
-> +	bpmp->clocks = devm_kcalloc(bpmp->dev, count, sizeof(hw), GFP_KERNEL);
-> +	if (!bpmp->clocks)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < count; i++) {
-> +		struct tegra_bpmp_clk_info *info = &clocks[i];
-> +
-> +		hw = tegra_bpmp_clk_register(bpmp, info, clocks, count);
-> +		if (IS_ERR(hw)) {
-> +			dev_err(bpmp->dev,
-> +				"failed to register clock %u (%s): %ld\n",
-> +				info->id, info->name, PTR_ERR(hw));
-> +			continue;
-> +		}
-> +
-> +		bpmp->clocks[i] = hw;
-> +	}
+> +	/*
+> +	 * These values aren't necessarily correct until the channel has been
+> +	 * reset.
+> +	 */
+> +	ivc->tx.position = 0;
+> +	ivc->rx.position = 0;
 > +
 > +	return 0;
 > +}
+> +EXPORT_SYMBOL(tegra_ivc_init);
+> diff --git a/include/soc/tegra/ivc.h b/include/soc/tegra/ivc.h
+> new file mode 100644
+> index 000000000000..af9a54a54e45
+> --- /dev/null
+> +++ b/include/soc/tegra/ivc.h
+> @@ -0,0 +1,109 @@
+> +/*
+> + * Copyright (c) 2016, NVIDIA CORPORATION.  All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + */
 > +
-> +static struct clk_hw *tegra_bpmp_clk_of_xlate(struct of_phandle_args *clkspec,
-> +					      void *data)
-> +{
-> +	unsigned int id = clkspec->args[0], i;
-> +	struct tegra_bpmp *bpmp = data;
-> +	struct clk_hw *hw = NULL;
+> +#ifndef __TEGRA_IVC_H
 > +
-> +	dev_dbg(bpmp->dev, "> %s(clkspec=%p, data=%p)\n", __func__, clkspec,
-> +		data);
+> +#include <linux/device.h>
+> +#include <linux/dma-mapping.h>
+> +#include <linux/types.h>
 > +
-> +	for (i = 0; i < bpmp->num_clocks; i++) {
-> +		struct tegra_bpmp_clk *clk = to_tegra_bpmp_clk(bpmp->clocks[i]);
+> +struct tegra_ivc_header;
 > +
-> +		if (clk->id == id) {
-> +			hw = bpmp->clocks[i];
-> +			dev_dbg(bpmp->dev, "  found %u: %s\n", clk->id, clk_hw_get_name(hw));
-> +			break;
-> +		}
-> +	}
+> +struct tegra_ivc {
+> +	struct device *peer;
 > +
-> +	dev_dbg(bpmp->dev, "< %s() = %p\n", __func__, hw);
+> +	struct {
+> +		struct tegra_ivc_header *channel;
+> +		dma_addr_t phys;
+> +		u32 position;
+> +	} rx, tx;
 > +
-> +	return hw;
-> +}
+> +	void (*notify)(struct tegra_ivc *ivc, void *data);
+> +	void *notify_data;
 > +
-> +int tegra_bpmp_init_clocks(struct tegra_bpmp *bpmp)
-> +{
-> +	struct tegra_bpmp_clk_info *clocks;
-> +	unsigned int count;
-> +	int err;
+> +	unsigned int num_frames;
+> +	size_t frame_size;
+> +};
 > +
-> +	dev_dbg(bpmp->dev, "> %s(bpmp=%p)\n", __func__, bpmp);
-> +
-> +	err = tegra_bpmp_probe_clocks(bpmp, &clocks);
-> +	if (err < 0)
-> +		return err;
-> +
-> +	count = err;
-> +
-> +	dev_dbg(bpmp->dev, "%u clocks probed\n", count);
-> +
-> +	err = tegra_bpmp_register_clocks(bpmp, clocks, count);
-> +	if (err < 0) {
-> +		kfree(clocks);
-> +		return err;
-> +	}
-> +
-> +	kfree(clocks);
-> +
-> +	of_clk_add_hw_provider(bpmp->dev->of_node, tegra_bpmp_clk_of_xlate,
-> +			       bpmp);
+> +/**
+> + * tegra_ivc_read_get_next_frame - Peek at the next frame to receive
+> + * @ivc		pointer of the IVC channel
+> + *
+> + * Peek at the next frame to be received, without removing it from
+> + * the queue.
+> + *
+> + * Returns a pointer to the frame, or an error encoded pointer.
+> + */
+> +void *tegra_ivc_read_get_next_frame(struct tegra_ivc *ivc);
 
-We should check the return code.
+Is it odd to return a void * pointer here and not a pointer to a
+specific structure type?
 
-> +	dev_dbg(bpmp->dev, "< %s()\n", __func__);
-> +	return 0;
-> +}
-> 
+> +/**
+> + * tegra_ivc_read_advance - Advance the read queue
+> + * @ivc		pointer of the IVC channel
+> + *
+> + * Advance the read queue
+> + *
+> + * Returns 0, or a negative error value if failed.
+> + */
+> +int tegra_ivc_read_advance(struct tegra_ivc *ivc);
+> +
+> +/**
+> + * tegra_ivc_write_get_next_frame - Poke at the next frame to transmit
+> + * @ivc		pointer of the IVC channel
+> + *
+> + * Get access to the next frame.
+> + *
+> + * Returns a pointer to the frame, or an error encoded pointer.
+> + */
+> +void *tegra_ivc_write_get_next_frame(struct tegra_ivc *ivc);
+
+Same here.
 
 Cheers
 Jon
