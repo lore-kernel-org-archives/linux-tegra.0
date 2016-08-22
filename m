@@ -1,71 +1,54 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [PATCH v3 05/12] firmware: tegra: Add BPMP support
-Date: Mon, 22 Aug 2016 17:43:38 +0200
-Message-ID: <9945785.T0mojj3S7F@wuerfel>
-References: <20160819173233.13260-1-thierry.reding@gmail.com> <5669893.Rd6yQObxH6@wuerfel> <20160822153258.GB21012@ulmo.ba.sec>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH v3 02/12] mailbox: Add Tegra HSP driver
+Date: Mon, 22 Aug 2016 10:42:33 -0600
+Message-ID: <0a70a07d-9cc6-cd35-98a8-d55c2ffdb49d@wwwdotorg.org>
+References: <20160819173233.13260-1-thierry.reding@gmail.com>
+ <20160819173233.13260-3-thierry.reding@gmail.com>
+ <13954058.6YHDe1jCOJ@wuerfel> <20160822141728.GF17367@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160822153258.GB21012-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
+In-Reply-To: <20160822141728.GF17367-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Cc: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday, August 22, 2016 5:32:58 PM CEST Thierry Reding wrote:
-> On Mon, Aug 22, 2016 at 04:42:32PM +0200, Arnd Bergmann wrote:
-> > On Monday, August 22, 2016 4:02:11 PM CEST Thierry Reding wrote:
-> > > > > +struct mrq_request {
-> > > > > +	/** @brief MRQ number of the request */
-> > > > > +	uint32_t mrq;
-> > > > > +	/** @brief flags for the request */
-> > > > > +	uint32_t flags;
-> > > > > +} __ABI_PACKED;
-> > > > 
-> > > > Marking the structure as packed may result in byte-wise access, depending
-> > > > on compiler flags. Is that what you intended? The structure is fully
-> > > > packed already, so you won't avoid any padding here.
-> > > 
-> > > Agreed, the packing seems unnecessary in many places. However this is
-> > > defining an ABI that's used across multiple operating systems, so the
-> > > packing may still be required on some systems or toolchains to ensure
-> > > the exact same format in the transport.
-> > 
-> > However, if __ABI_PACKED is defined to an empty string, it is different
-> > in some cases.
-> > 
-> > Also, setting 'NO_GCC_EXTENSIONS' changes the structure layout of
-> > some of the structures, by adding an extra member. If the firmware
-> > has a compiler that is less than 10 years old, I'd suggest using C99
-> > syntax instead, which should avoid those differences and eliminate
-> > all gcc extensions.
-> 
-> I think this isn't only about the firmware (which, as far as I can tell,
-> is always built with a non-ancient version of GCC). The same header file
-> is used in other operating systems and I have no idea about the
-> toolchain situation there.
-> 
-> As for the NO_GCC_EXTENSIONS I think that's only used to avoid empty
-> structures and zero-sized arrays, which I assume not all supported
-> toolchains can deal with.
+On 08/22/2016 08:17 AM, Thierry Reding wrote:
+> On Mon, Aug 22, 2016 at 03:43:23PM +0200, Arnd Bergmann wrote:
+>> On Friday, August 19, 2016 7:32:23 PM CEST Thierry Reding wrote:
+>>> +static int tegra_hsp_doorbell_send_data(struct tegra_hsp_channel *channel,
+>>> +                                       void *data)
+>>> +{
+>>> +       tegra_hsp_channel_writel(channel, 1, HSP_DB_TRIGGER);
+>>> +
+>>> +       return 0;
+>>> +}
+>>>
+>>
+>> It seems very odd that you don't write the data at all but just trigger
+>> the communication here. My interpretation is that you bypass
+>> the mailbox infrastructure for the actual message, and instead reimplement
+>> it on top of the mailbox infrastructure as part of the bpmp driver.
+>>
+>> Why not expose the bpmp itself as the mailbox here?
 >
-> Sivaram, Timo: can you shed any light on the scope of operating systems
-> and toolchains that we need to support? Any ideas, short of manual
-> editing, that we can try to eliminate some of Arnd's concerns?
+> My understanding is that doorbell doesn't provide any means to transfer
+> data. It merely signals the availability of data. It is up to a use-case
+> specific implementation to arrange for the transport of data.
 
-Ok. To clarify, C99 supports this syntax:
+Yes, the doorbell doesn't transfer any data.
 
-struct variable_length_struct {
-	int length;
-	char data[];
-};
+> BPMP implements a shmem-based protocol and uses the doorbell merely as a
+> mechanism for the BPMP and CPU to signal each other when data is ready.
+>
+> Exposing the BPMP as the mailbox could possibly be done, but it would
+> implement a fairly large software layer in the mailbox system which is
+> targetted primarily at simple mailbox hardware that exchanges small
+> amounts of data (usually fitting into 32 bits). mailbox-sti is another
+> driver that uses the framework only to signal, so this doesn't seem to
+> be a mechanism exclusive to Tegra.
 
-struct empty_struct {
-	char nothing[];
-};
-
-which could be used in place of the gcc specific syntax in
-portable code.
-
-	Arnd
+I also don't think that in-memory IPC mechanisms are what the mailbox 
+subsystem is all about; it's about pure HW mechanisms that transfer data.
