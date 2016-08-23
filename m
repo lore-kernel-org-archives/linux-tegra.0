@@ -1,32 +1,194 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2] soc/tegra: pmc: Fix incorrect DPD request
-Date: Tue, 23 Aug 2016 09:18:59 +0100
-Message-ID: <2d7c66b8-1555-f66e-eb41-316092772579@nvidia.com>
-References: <1470878016-6098-1-git-send-email-vinceh@nvidia.com>
- <90071a29-8d79-7ec0-77b2-1669c248b845@nvidia.com>
- <6d643c00-1d68-b9d2-45a5-38151b8525fc@nvidia.com>
+From: Mirza Krak <mirza.krak@gmail.com>
+Subject: Re: [PATCH 3/6] dt/bindings: Add bindings for Tegra GMI controller
+Date: Tue, 23 Aug 2016 12:33:09 +0200
+Message-ID: <CALw8SCV9AyaAPKpRwRp72-dUz=cW2QZyywqjzS1noonTyGDYag@mail.gmail.com>
+References: <1470512452-8322-1-git-send-email-mirza.krak@gmail.com>
+ <1470512452-8322-4-git-send-email-mirza.krak@gmail.com>
+ <901be576-a810-c630-9b83-de922e945df0@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <6d643c00-1d68-b9d2-45a5-38151b8525fc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <901be576-a810-c630-9b83-de922e945df0@nvidia.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: mark.rutland@arm.com, Alexandre Courbot <gnurou@gmail.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, pawel.moll@arm.com, Stephen Warren <swarren@wwwdotorg.org>, pdeschrijver@nvidia.com, ijc+devicetree@hellion.org.uk, sboyd@codeaurora.org, linux@armlinux.org.uk, robh+dt@kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, Kumar Gala <galak@codeaurora.org>, linux-tegra@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Vince,
+2016-08-08 16:44 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
+>> +
+>> +  gmi@70090000 {
+>> +    #address-cells = <1>;
+>> +    #size-cells = <1>;
+>
+> I think 0 for size makes sense. I know that caused you problems before,
+> but I am wondering if ...
+>
+>> +    ranges;
+>
+> ... ranges is needed here? If we do have it, I am wondering if it should
+> be a single entry for the chip-select that is being used. For now we
+> could only support a ranges with one entry.
+>
+>         #address-cells = <1>;
+>         #size-cells = <1>;
+>         ranges = <4 0x48000000 0x00040000>;
+>
+>> +    nvidia,snor-mux-mode;
+>> +    nvidia,snor-adv-inv;
+>> +    nvidia,snor-cs-select = <4>;
+>
+> I would have expected these under bus@X node as they are specific to the
+> GMI CS.
+>
+> I would also expect that the actual chip-select number is encoded in the
+> reg property.
+>
+>> +
+>> +    bus@0,0 {
+>
+> bus@4
+>
+> No mention of this bus node in the above documentation.
+>
+>> +      compatible = "simple-bus";
+>> +      reg = <0 0>;
+>
+> reg = <4>;
+>
+> We should look up the chip-select from the reg property.
+>
+>> +      ranges;
+>> +
+>> +      #address-cells = <1>;
+>> +      #size-cells = <1>;
+>> +
+>> +      can@48000000 {
+>> +        reg = <0x48000000 0x100>;
+>> +        ...
+>> +      };
+>> +
+>> +      can@48040000 {
+>> +        reg = <0x48040000 0x100>;
+>> +        ...
+>> +      };
+>
+> If we use ranges we could have ...
+>
+>         can@0 {
+>                 reg = <0x0 0x100>;
+>                 ...
+>         };
+>
+>         can@40000 {
+>                 reg = <0x40000 0x100>;
+>                 ...
+>         };
+>
 
-On 23/08/16 06:42, Vince Hsu wrote:
-> Hi Thierry,
-> 
-> Do you have objection to this patch?
+Hi.
 
-Thierry has queued it here:
+Like we discussed I am now trying to implement this but without
+success and I am starting to think that it is not that simple unless I
+am missing something.
 
-http://git.kernel.org/cgit/linux/kernel/git/tegra/linux.git/log/?h=for-4.9/soc
+Below tree
 
-Jon
+gmi@70009000 {
+     status = "okay";
+     #address-cells = <1>;
+     #size-cells = <1>;
+     ranges = <4 0x48000000 0x7ffffff>;
 
--- 
-nvpublic
+     bus@4 {
+          compatible = "simple-bus";
+          reg = <4 0>;
+          #address-cells = <1>;
+          #size-cells = <1>;
+         nvidia,snor-mux-mode;
+         nvidia,snor-adv-inv;
+
+        can@0 {
+              compatible = "nxp,sja1000";
+              reg = <0 0x100>;
+              ....
+     };
+
+     can@40000 {
+           compatible = "nxp,sja1000";
+           reg = <0x40000 0x100>;
+           ....
+    };
+};
+};
+
+results in:
+
+[    8.472509]    create child: /gmi@70009000/bus@4/can@0
+[    8.472561] OF: ** translation for device /gmi@70009000/bus@4/can@0 **
+[    8.472577] OF: bus is default (na=1, ns=1) on /gmi@70009000/bus@4
+[    8.472589] OF: translating address: 00000000
+[    8.472624] OF: parent bus is default (na=1, ns=1) on /gmi@70009000
+[    8.472641] OF: no ranges; cannot translate
+[    8.472668] of_irq_parse_one: dev=/gmi@70009000/bus@4/can@0, index=0
+[    8.472687]  intspec=13 intlen=2
+[    8.472726]  intsize=2 intlen=2
+[    8.472740] of_irq_parse_raw:  /gpio@6000d000:0000000d,00000001
+[    8.493718] of_irq_parse_raw: ipar=/gpio@6000d000, size=2
+[    8.493737]  -> addrsize=1
+[    8.493743]  -> got it !
+[    8.493755] of_irq_parse_one: dev=/gmi@70009000/bus@4/can@0, index=1
+[    8.493771]  intspec=13 intlen=2
+[    8.493790]  intsize=2 intlen=2
+[    8.493800] of_irq_parse_one: dev=/gmi@70009000/bus@4/can@0, index=0
+[    8.493805]  intspec=13 intlen=2
+[    8.493812]  intsize=2 intlen=2
+[    8.493824] of_irq_parse_raw:  /gpio@6000d000:0000000d,00000001
+[    8.493829] of_irq_parse_raw: ipar=/gpio@6000d000, size=2
+[    8.493834]  -> addrsize=1
+[    8.493837]  -> got it !
+[    8.493869] OF: ** translation for device /gmi@70009000/bus@4/can@0 **
+[    8.493885] OF: bus is default (na=1, ns=1) on /gmi@70009000/bus@4
+[    8.493892] OF: translating address: 00000000
+[    8.493902] OF: parent bus is default (na=1, ns=1) on /gmi@70009000
+[    8.493906] OF: no ranges; cannot translate
+[    8.493918] OF: ** translation for device /gmi@70009000/bus@4 **
+[    8.493924] OF: bus is default (na=1, ns=1) on /gmi@70009000
+[    8.493930] OF: translating address: 00000004
+[    8.493938] OF: parent bus is default (na=1, ns=1) on /
+[    8.493944] OF: walking ranges...
+[    8.493952] OF: default map, cp=4, s=7ffffff, da=4
+[    8.493973] OF: parent translation for: 48000000
+[    8.493978] OF: with offset: 0
+[    8.493986] OF: one level translation: 48000000
+[    8.493989] OF: reached root node
+[    8.494011] of_dma_get_range: no dma-ranges found for
+node(/gmi@70009000/bus@4/can@0)
+[    8.494037] platform 48000000.bus:can@0: device is not dma coherent
+[    8.494048] platform 48000000.bus:can@0: device is not behind an iommu
+[    8.495209] sja1000 probe entered
+[    8.495212] sja1000 probe entered1
+
+sja1000 probe fails because resource address is NULL.
+
+The result is the same for the second child device.
+
+I also attempted to add "ranges;" property to the bus child node,
+which results in the same error on can@0, and can@4000 is actually
+translated but it is not what I expect it to be (0x4803fff8).
+
+And I am not quite sure how to get around this in a simple way. I can
+not wrap my head around how the ranges property actually works really.
+
+Any suggestions would be really helpful.
+
+Best Regards
+Mirza
