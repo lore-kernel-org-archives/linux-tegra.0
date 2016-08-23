@@ -1,64 +1,114 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 09/12] arm64: dts: tegra: Add NVIDIA P3310 main board
- support
-Date: Tue, 23 Aug 2016 18:35:30 +0100
-Message-ID: <9c123f91-d7ae-7cf1-f669-412aa350a0ca@nvidia.com>
-References: <20160819173233.13260-1-thierry.reding@gmail.com>
- <20160819173233.13260-10-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160819173233.13260-10-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: [PATCH] dt: net: enhance DWC EQoS binding to support Tegra186
+Date: Tue, 23 Aug 2016 14:47:57 -0600
+Message-ID: <20160823204757.17998-1-swarren@wwwdotorg.org>
+Return-path: <netdev-owner@vger.kernel.org>
+Sender: netdev-owner@vger.kernel.org
+To: Lars Persson <lars.persson@axis.com>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, netdev@vger.kernel.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
+From: Stephen Warren <swarren@nvidia.com>
 
-On 19/08/16 18:32, Thierry Reding wrote:
-> From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> The NVIDIA P3310 is a processor module used in several reference designs
-> that features a Tegra186 SoC, 8 GiB of LPDDR4 RAM, 32 GiB eMMC and other
-> essentials such as ethernet, WiFi and a PMIC. It is typically connected
-> to an I/O board (such as the P2597) that provides the connecters needed
-> to hook it up to the outside world.
-> 
-> Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
-> Changes in v3:
-> - fix compatible string
-> 
->  arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi | 34 ++++++++++++++++++++++++++
->  1 file changed, 34 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-> new file mode 100644
-> index 000000000000..dc07ea618378
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-> @@ -0,0 +1,34 @@
-> +#include "tegra186.dtsi"
-> +
-> +/ {
-> +	model = "NVIDIA Tegra186 P3310 main Board";
-> +	compatible = "nvidia,p3310", "nvidia,tegra186";
-> +
-> +	aliases {
-> +		serial0 = &uarta;
-> +	};
-> +
-> +	chosen {
-> +		bootargs = "earlycon console=ttyS0,115200n8";
+The Synopsys DWC EQoS is a configurable IP block which supports multiple
+options for bus type, clocking and reset structure, and feature list.
+Extend the DT binding to define a "compatible value" for the configuration
+contained in NVIDIA's Tegra186 SoC, and define some new properties and
+list property entries required by that configuration.
 
-I don't think we need 'console' in the bootargs anymore because
-stdout-path is enough (even for early console).
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
+---
+ .../bindings/net/snps,dwc-qos-ethernet.txt         | 60 ++++++++++++++++++++--
+ 1 file changed, 56 insertions(+), 4 deletions(-)
 
-Cheers
-Jon
-
+diff --git a/Documentation/devicetree/bindings/net/snps,dwc-qos-ethernet.txt b/Documentation/devicetree/bindings/net/snps,dwc-qos-ethernet.txt
+index 51f8d2eba8d8..6cd4129364a9 100644
+--- a/Documentation/devicetree/bindings/net/snps,dwc-qos-ethernet.txt
++++ b/Documentation/devicetree/bindings/net/snps,dwc-qos-ethernet.txt
+@@ -1,21 +1,72 @@
+ * Synopsys DWC Ethernet QoS IP version 4.10 driver (GMAC)
+ 
++This binding supports the Synopsys Designware Ethernet QoS (Quality Of Service)
++IP block. The IP supports multiple options for bus type, clocking and reset
++structure, and feature list. Consequently, a number of properties and list
++entries in properties are marked as optional, or only required in specific HW
++configurations.
+ 
+ Required properties:
+-- compatible: Should be "snps,dwc-qos-ethernet-4.10"
++- compatible: One of:
++  - "snps,dwc-qos-ethernet-4.10"
++  - "nvidia,tegra186-eqos", "snps,dwc-qos-ethernet-4.10"
+ - reg: Address and length of the register set for the device
+-- clocks: Phandles to the reference clock and the bus clock
+-- clock-names: Should be "phy_ref_clk" for the reference clock and "apb_pclk"
+-  for the bus clock.
++- clocks: Phandle and clock specifiers for each entry in clock-names, in the
++  same order. See ../clock/clock-bindings.txt.
++- clock-names: May contain any/all of the following depending on the IP
++  configuration, in any order:
++  - "phy_ref_clk". The reference clock provided directly to the PHY.
++    Only required if under SW control, i.e. not provided by some fixed source
++    such as a crystal.
++  - "apb_pclk" (alternate name "slave_bus"; only one alternate must appear).
++    The CPU/slave-bus (CSR) interface clock. Despite the name, this applies to
++    any bus type; APB, AHB, AXI, etc. The HW signal name is hclk_i (AHB) or
++    clk_csr_i (other buses).
++  - "master_bus". The master bus interface clock. Only required in
++    configurations that use a separate clock for the master and slave bus
++    interfaces. The HW signal name is hclk_i (AHB) or aclk_i (AXI).
++  - "rx". The receive path clock. The HW signal name is clk_rx_i.
++  - "tx". The transmit path clock. The HW signal name is clk_tx_i.
++  - "ptp_ref". The PTP reference clock. The HW signal name is clk_ptp_ref_i.
++
++  Note: Support for additional HW configurations may require adding the
++  following clocks to this list in the future: clk_rx_125_i, clk_tx_125_i,
++  clk_pmarx_0_i, clk_pmarx1_i, clk_rmii_i.
++
++  The following compatible values require the following set of clocks:
++  - "nvidia,tegra186-eqos", "snps,dwc-qos-ethernet-4.10":
++    - "slave_bus"
++    - "master_bus"
++    - "rx"
++    - "tx"
++    - "ptp_ref"
++  - "snps,dwc-qos-ethernet-4.10":
++    - "phy_ref_clk"
++    - "apb_clk"
+ - interrupt-parent: Should be the phandle for the interrupt controller
+   that services interrupts for this device
+ - interrupts: Should contain the core's combined interrupt signal
+ - phy-mode: See ethernet.txt file in the same directory
++- resets: Phandle and reset specifiers for each entry in reset-names, in the
++  same order. See ../reset/reset.txt.
++- reset-names: May contain any/all of the following depending on the IP
++  configuration, in any order:
++  - "eqos". The reset to the entire module. The HW signal name is hreset_n
++    (AHB) or aresetn_i (AXI).
++
++  The following compatible values require the following set of clocks:
++  (the reset properties may be omitted if empty)
++  - "nvidia,tegra186-eqos", "snps,dwc-qos-ethernet-4.10":
++    - "eqos".
++  - "snps,dwc-qos-ethernet-4.10":
++    - None.
+ 
+ Optional properties:
+ - dma-coherent: Present if dma operations are coherent
+ - mac-address: See ethernet.txt in the same directory
+ - local-mac-address: See ethernet.txt in the same directory
++- phy-reset-gpios: Phandle and specifier for any GPIO used to reset the PHY.
++  See ../gpio/gpio.txt.
+ - snps,en-lpi: If present it enables use of the AXI low-power interface
+ - snps,write-requests: Number of write requests that the AXI port can issue.
+   It depends on the SoC configuration.
+@@ -52,6 +103,7 @@ ethernet2@40010000 {
+ 	reg = <0x40010000 0x4000>;
+ 	phy-handle = <&phy2>;
+ 	phy-mode = "gmii";
++	phy-reset-gpios = <&gpioctlr 43 GPIO_ACTIVE_LOW>;
+ 
+ 	snps,en-tx-lpi-clockgating;
+ 	snps,en-lpi;
 -- 
-nvpublic
+2.9.3
