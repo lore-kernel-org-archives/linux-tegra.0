@@ -1,81 +1,34 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: Re: [PATCH v3 05/12] firmware: tegra: Add BPMP support
-Date: Tue, 23 Aug 2016 16:58:58 +0200
-Message-ID: <1969548.JuvmAu2Kz7@wuerfel>
-References: <20160819173233.13260-1-thierry.reding@gmail.com>
- <5669893.Rd6yQObxH6@wuerfel>
- <866add72-703b-86e1-6e3e-04dbfb872970@wwwdotorg.org>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] drm/nouveau/tegra: Modify error handling
+Date: Tue, 23 Aug 2016 19:13:02 +0200
+Message-ID: <CAAVeFuK=bFGCX8mw5aEZ88cRNQia9etyO98gh81dR3pKV4J_Rw@mail.gmail.com>
+References: <20160815045409.GA12886@amitoj-Inspiron-3542>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <866add72-703b-86e1-6e3e-04dbfb872970@wwwdotorg.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Stephen Warren <swarren@wwwdotorg.org>
-Cc: devicetree@vger.kernel.org, Peter De Schrijver <pdeschrijver@nvidia.com>, Sivaram Nair <sivaramn@nvidia.com>, Timo Alho <talho@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <20160815045409.GA12886@amitoj-Inspiron-3542>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/nouveau>
+List-Post: <mailto:nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/nouveau>,
+ <mailto:nouveau-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Nouveau" <nouveau-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Amitoj Kaur Chawla <amitoj1606-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, David Airlie <airlied-cv59FeDIM0c@public.gmane.org>, "nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>, Ben Skeggs <bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday, August 22, 2016 12:56:52 PM CEST Stephen Warren wrote:
-> On 08/22/2016 08:42 AM, Arnd Bergmann wrote:
-> > On Monday, August 22, 2016 4:02:11 PM CEST Thierry Reding wrote:
-> >> On Mon, Aug 22, 2016 at 03:34:15PM +0200, Arnd Bergmann wrote:
-> >>> On Friday, August 19, 2016 7:32:26 PM CEST Thierry Reding wrote:
-> >>>> diff --git a/include/soc/tegra/bpmp-abi.h b/include/soc/tegra/bpmp-abi.h
-> >>>> new file mode 100644
-> >>>> index 000000000000..0aaef5960e29
-> >>>> --- /dev/null
-> >>>> +++ b/include/soc/tegra/bpmp-abi.h
-> >>>> +#ifndef _ABI_BPMP_ABI_H_
-> >>>> +#define _ABI_BPMP_ABI_H_
-> >>>> +
-> >>>> +#ifdef LK
-> >>>> +#include <stdint.h>
-> >>>> +#endif
-> >>>> +
-> >>>> +#ifndef __ABI_PACKED
-> >>>> +#define __ABI_PACKED __attribute__((packed))
-> >>>> +#endif
-> >>>> +
-> >>>> +#ifdef NO_GCC_EXTENSIONS
-> >>>> +#define EMPTY char empty;
-> >>>> +#define EMPTY_ARRAY 1
-> >>>> +#else
-> >>>> +#define EMPTY
-> >>>> +#define EMPTY_ARRAY 0
-> >>>> +#endif
-> >>>> +
-> >>>> +#ifndef __UNION_ANON
-> >>>> +#define __UNION_ANON
-> >>>> +#endif
-> >>>
-> >>> Maybe keep these all out of the kernel?
-> >>
-> >> This was discussed a little in an earlier posting. This header file is
-> >> maintained by the BPMP firmware team and using it verbatim means little
-> >> to no effort required to update it.
-> >
-> > The usual recommendation is to just use Linux coding style in shared
-> > files, and possibly add another header that provides the required
-> > definitions. Otherwise you end up with people randomly cleaning up
-> > the file later 
-> 
-> That's just going to push the problem into all other operating systems; 
-> what happens when BSD, Windows, QNX, FreeRTOS, ... import this file and 
-> attempt to apply the same argument, but want the FW team to use their 
-> coding style?
-
-That's not how the world works, fortunately. In practice, Linux is going
-to be the only OS that cares enough about the coding style of an interface
-header for a random device driver. The others either don't include
-vendor drivers, or they don't have specific coding style requirements,
-or they use a sane style already.
-
-	Arnd
+T24gTW9uLCBBdWcgMTUsIDIwMTYgYXQgNjo1NCBBTSwgQW1pdG9qIEthdXIgQ2hhd2xhCjxhbWl0
+b2oxNjA2QGdtYWlsLmNvbT4gd3JvdGU6Cj4gaW9tbXVfZG9tYWluX2FsbG9jIHJldHVybnMgTlVM
+TCBvbiBlcnJvciBzbyByZXBsYWNlIGFuIGluY29ycmVjdAo+IElTX0VSUiBjaGVjayB3aXRoIGEg
+TlVMTCBjaGVjay4KPgo+IFRoZSBDb2NjaW5lbGxlIHNlbWFudGljIHBhdGNoIHVzZWQgdG8gZmlu
+ZCB0aGlzIGlzc3VlIGlzIGFzIGZvbGxvd3M6Cj4gQEAKPiBleHByZXNzaW9uIGU7Cj4gc3RhdGVt
+ZW50IFM7Cj4gQEAKPgo+ICplID0gaW9tbXVfZG9tYWluX2FsbG9jKC4uLik7Cj4gaWYgKElTX0VS
+UihlKSkgUwo+Cj4gU2lnbmVkLW9mZi1ieTogQW1pdG9qIEthdXIgQ2hhd2xhIDxhbWl0b2oxNjA2
+QGdtYWlsLmNvbT4KClJldmlld2VkLWJ5OiBBbGV4YW5kcmUgQ291cmJvdCA8YWNvdXJib3RAbnZp
+ZGlhLmNvbT4KX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18K
+Tm91dmVhdSBtYWlsaW5nIGxpc3QKTm91dmVhdUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6
+Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9ub3V2ZWF1Cg==
