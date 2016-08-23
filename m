@@ -1,87 +1,72 @@
-From: Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH v3 2/4] PCI: Allow driver-specific data in host bridge
-Date: Tue, 23 Aug 2016 14:59:07 +0100
-Message-ID: <20160823135907.GB9953@red-moon>
-References: <20160815153647.1075-1-thierry.reding@gmail.com>
- <20160815153647.1075-2-thierry.reding@gmail.com>
- <20160819165506.GA11823@red-moon>
- <26481704.zoJheIBO1p@wuerfel>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 3/6] dt/bindings: Add bindings for Tegra GMI controller
+Date: Tue, 23 Aug 2016 15:48:25 +0100
+Message-ID: <07157e79-a22c-2b49-24c8-3a2c266f899f@nvidia.com>
+References: <1470512452-8322-1-git-send-email-mirza.krak@gmail.com>
+ <1470512452-8322-4-git-send-email-mirza.krak@gmail.com>
+ <901be576-a810-c630-9b83-de922e945df0@nvidia.com>
+ <CALw8SCV9AyaAPKpRwRp72-dUz=cW2QZyywqjzS1noonTyGDYag@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <26481704.zoJheIBO1p@wuerfel>
+In-Reply-To: <CALw8SCV9AyaAPKpRwRp72-dUz=cW2QZyywqjzS1noonTyGDYag-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Tomasz Nowicki <tn-nYOzD4b6Jr9Wk0Htik3J/w@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Aug 22, 2016 at 04:00:42PM +0200, Arnd Bergmann wrote:
-> On Friday, August 19, 2016 5:55:06 PM CEST Lorenzo Pieralisi wrote:
-> > > 
-> > > diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> > > index 93583b389058..ecf543014da3 100644
-> > > --- a/drivers/pci/probe.c
-> > > +++ b/drivers/pci/probe.c
-> > > @@ -521,16 +521,19 @@ static void pci_release_host_bridge_dev(struct device *dev)
-> > >       kfree(bridge);
-> > >  }
-> > >  
-> > > -static struct pci_host_bridge *pci_alloc_host_bridge(void)
-> > > +static struct pci_host_bridge *pci_alloc_host_bridge(size_t priv)
-> > >  {
-> > >       struct pci_host_bridge *bridge;
-> > >  
-> > > -     bridge = kzalloc(sizeof(*bridge), GFP_KERNEL);
-> > > +     bridge = kzalloc(sizeof(*bridge) + priv, GFP_KERNEL);
-> > >       if (!bridge)
-> > >               return NULL;
-> > >  
-> > >       INIT_LIST_HEAD(&bridge->windows);
-> > >  
-> > > +     if (priv)
-> > > +             bridge->private = &bridge[1];
-> > 
-> > How about making private a zero length array ?
+
+On 23/08/16 11:33, Mirza Krak wrote:
+
+...
+
+> Like we discussed I am now trying to implement this but without
+> success and I am starting to think that it is not that simple unless I
+> am missing something.
 > 
-> Right, the member can actually be removed here if we want to, this
-> was just meant as a shorthand so we can avoid the cast or function
-> call in device drivers. I think either way makes sense.
+> Below tree
 > 
-> Also, someone commented on a related issue in the previous version, and I
-> recommended to align it to ARCH_SLAB_MINALIGN. This might be done more
-> easily with the zero-length array using
+> gmi@70009000 {
+>      status = "okay";
+>      #address-cells = <1>;
+>      #size-cells = <1>;
+>      ranges = <4 0x48000000 0x7ffffff>;
 > 
-> struct pci_host_bridge {
-> 	...
+>      bus@4 {
+>           compatible = "simple-bus";
+>           reg = <4 0>;
+
+I don't think you want reg here.
+
+>           #address-cells = <1>;
+>           #size-cells = <1>;
+
+May be ranges here?
+
+>          nvidia,snor-mux-mode;
+>          nvidia,snor-adv-inv;
 > 
-> 	unsigned long private[0] __attribute__((aligned(ARCH_SLAB_MINALIGN)));
+>         can@0 {
+>               compatible = "nxp,sja1000";
+>               reg = <0 0x100>;
+>               ....
+>      };
+> 
+>      can@40000 {
+>            compatible = "nxp,sja1000";
+>            reg = <0x40000 0x100>;
+>            ....
+>     };
+> };
 > };
 
-Yes, it looks simpler and I personally prefer it but it is more style
-than anything else, I thought it was worth mentioning it though.
+Have a look at some other drivers for example:
 
-Thanks,
-Lorenzo
+Documentation/devicetree/bindings/memory-controllers/arm,pl172.txt
 
-> Without this, we need a bit more computation, like
-> 	
-> 	bridge = kzalloc(ALIGN(sizeof(*bridge), ARCH_SLAB_MINALIGN) + priv, GFP_KERNEL);
-> 	bridge->private = (void *)bridge + ALIGN(sizeof(*bridge);
-> 
-> or
-> 
-> static inline void *pci_bridge_private(struct pci_host_bridge *bridge)
-> {
-> 	return (void *)bridge + ALIGN(sizeof(*bridge);
-> }
-> static inline struct pci_host_bridge *pci_bridge_from_private(void *priv)
-> {
-> 	return priv - ALIGN(sizeof(*bridge);
-> }
-> 
-> The alignment is needed if the private structure contains any data that
-> we may want to transfer using DMA.
-> 
-> 	Arnd
-> 
+Cheers
+Jon
+
+-- 
+nvpublic
