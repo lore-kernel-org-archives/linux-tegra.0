@@ -1,72 +1,81 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 3/6] dt/bindings: Add bindings for Tegra GMI controller
-Date: Tue, 23 Aug 2016 15:48:25 +0100
-Message-ID: <07157e79-a22c-2b49-24c8-3a2c266f899f@nvidia.com>
-References: <1470512452-8322-1-git-send-email-mirza.krak@gmail.com>
- <1470512452-8322-4-git-send-email-mirza.krak@gmail.com>
- <901be576-a810-c630-9b83-de922e945df0@nvidia.com>
- <CALw8SCV9AyaAPKpRwRp72-dUz=cW2QZyywqjzS1noonTyGDYag@mail.gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v3 05/12] firmware: tegra: Add BPMP support
+Date: Tue, 23 Aug 2016 16:58:58 +0200
+Message-ID: <1969548.JuvmAu2Kz7@wuerfel>
+References: <20160819173233.13260-1-thierry.reding@gmail.com>
+ <5669893.Rd6yQObxH6@wuerfel>
+ <866add72-703b-86e1-6e3e-04dbfb872970@wwwdotorg.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CALw8SCV9AyaAPKpRwRp72-dUz=cW2QZyywqjzS1noonTyGDYag-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, pawel.moll-5wv7dgnIgG8@public.gmane.org, ijc+devicetree-KcIKpvwj1kUDXYZnReoRVg@public.gmane.org, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Kumar Gala <galak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <866add72-703b-86e1-6e3e-04dbfb872970@wwwdotorg.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: devicetree@vger.kernel.org, Peter De Schrijver <pdeschrijver@nvidia.com>, Sivaram Nair <sivaramn@nvidia.com>, Timo Alho <talho@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 23/08/16 11:33, Mirza Krak wrote:
-
-...
-
-> Like we discussed I am now trying to implement this but without
-> success and I am starting to think that it is not that simple unless I
-> am missing something.
+On Monday, August 22, 2016 12:56:52 PM CEST Stephen Warren wrote:
+> On 08/22/2016 08:42 AM, Arnd Bergmann wrote:
+> > On Monday, August 22, 2016 4:02:11 PM CEST Thierry Reding wrote:
+> >> On Mon, Aug 22, 2016 at 03:34:15PM +0200, Arnd Bergmann wrote:
+> >>> On Friday, August 19, 2016 7:32:26 PM CEST Thierry Reding wrote:
+> >>>> diff --git a/include/soc/tegra/bpmp-abi.h b/include/soc/tegra/bpmp-abi.h
+> >>>> new file mode 100644
+> >>>> index 000000000000..0aaef5960e29
+> >>>> --- /dev/null
+> >>>> +++ b/include/soc/tegra/bpmp-abi.h
+> >>>> +#ifndef _ABI_BPMP_ABI_H_
+> >>>> +#define _ABI_BPMP_ABI_H_
+> >>>> +
+> >>>> +#ifdef LK
+> >>>> +#include <stdint.h>
+> >>>> +#endif
+> >>>> +
+> >>>> +#ifndef __ABI_PACKED
+> >>>> +#define __ABI_PACKED __attribute__((packed))
+> >>>> +#endif
+> >>>> +
+> >>>> +#ifdef NO_GCC_EXTENSIONS
+> >>>> +#define EMPTY char empty;
+> >>>> +#define EMPTY_ARRAY 1
+> >>>> +#else
+> >>>> +#define EMPTY
+> >>>> +#define EMPTY_ARRAY 0
+> >>>> +#endif
+> >>>> +
+> >>>> +#ifndef __UNION_ANON
+> >>>> +#define __UNION_ANON
+> >>>> +#endif
+> >>>
+> >>> Maybe keep these all out of the kernel?
+> >>
+> >> This was discussed a little in an earlier posting. This header file is
+> >> maintained by the BPMP firmware team and using it verbatim means little
+> >> to no effort required to update it.
+> >
+> > The usual recommendation is to just use Linux coding style in shared
+> > files, and possibly add another header that provides the required
+> > definitions. Otherwise you end up with people randomly cleaning up
+> > the file later 
 > 
-> Below tree
-> 
-> gmi@70009000 {
->      status = "okay";
->      #address-cells = <1>;
->      #size-cells = <1>;
->      ranges = <4 0x48000000 0x7ffffff>;
-> 
->      bus@4 {
->           compatible = "simple-bus";
->           reg = <4 0>;
+> That's just going to push the problem into all other operating systems; 
+> what happens when BSD, Windows, QNX, FreeRTOS, ... import this file and 
+> attempt to apply the same argument, but want the FW team to use their 
+> coding style?
 
-I don't think you want reg here.
+That's not how the world works, fortunately. In practice, Linux is going
+to be the only OS that cares enough about the coding style of an interface
+header for a random device driver. The others either don't include
+vendor drivers, or they don't have specific coding style requirements,
+or they use a sane style already.
 
->           #address-cells = <1>;
->           #size-cells = <1>;
-
-May be ranges here?
-
->          nvidia,snor-mux-mode;
->          nvidia,snor-adv-inv;
-> 
->         can@0 {
->               compatible = "nxp,sja1000";
->               reg = <0 0x100>;
->               ....
->      };
-> 
->      can@40000 {
->            compatible = "nxp,sja1000";
->            reg = <0x40000 0x100>;
->            ....
->     };
-> };
-> };
-
-Have a look at some other drivers for example:
-
-Documentation/devicetree/bindings/memory-controllers/arm,pl172.txt
-
-Cheers
-Jon
-
--- 
-nvpublic
+	Arnd
