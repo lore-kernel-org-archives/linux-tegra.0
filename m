@@ -1,30 +1,112 @@
-From: Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v3 02/12] mailbox: Add Tegra HSP driver
-Date: Mon, 22 Aug 2016 17:12:20 -0700
-Message-ID: <20160823001220.GB4932@kickseed.nvidia.com>
-References: <20160819173233.13260-1-thierry.reding@gmail.com>
- <20160819173233.13260-3-thierry.reding@gmail.com>
+From: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2] soc/tegra: pmc: Fix incorrect DPD request
+Date: Tue, 23 Aug 2016 13:42:25 +0800
+Message-ID: <6d643c00-1d68-b9d2-45a5-38151b8525fc@nvidia.com>
+References: <1470878016-6098-1-git-send-email-vinceh@nvidia.com>
+ <90071a29-8d79-7ec0-77b2-1669c248b845@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160819173233.13260-3-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Content-Disposition: inline
+In-Reply-To: <90071a29-8d79-7ec0-77b2-1669c248b845-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Aug 19, 2016 at 07:32:23PM +0200, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> + * This program is distributed in the hope it will be useful, but WITHOUT
-> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-> + * more details.
-> + */
-> +
-> +#define DEBUG
+Hi Thierry,
 
-Is this a leftover from your debugging (elsewhere in this series too)?
+Do you have objection to this patch?
 
-> +
-> +#include <linux/interrupt.h>
+Thanks,
+Vince
+
+On 08/11/2016 04:27 PM, Jon Hunter wrote:
+> On 11/08/16 02:13, Vince Hsu wrote:
+>> Reading the DPD_REQ & DPD2_REQ registers returns the previous requests.
+>> If we sets the current request bit with the returned value, then other
+>> pads will be turned on or off unexpectedly.
+>>
+>> Signed-off-by: Vince Hsu <vinceh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>> Hi,
+>>
+>> I did not notice Laxman had a series[1] which also touched pmc code,
+>> and it seems the series isn't merged yet. Should I rebase this patch
+>> on it?
+>>
+>> Thanks,
+>> Vince
+>>
+>>
+>>   drivers/soc/tegra/pmc.c | 28 ++++++++--------------------
+>>   1 file changed, 8 insertions(+), 20 deletions(-)
+>>
+>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>> index 71c834f3847e..7792ed88d80b 100644
+>> --- a/drivers/soc/tegra/pmc.c
+>> +++ b/drivers/soc/tegra/pmc.c
+>> @@ -967,8 +967,8 @@ static void tegra_io_rail_unprepare(void)
+>>   
+>>   int tegra_io_rail_power_on(unsigned int id)
+>>   {
+>> -	unsigned long request, status, value;
+>> -	unsigned int bit, mask;
+>> +	unsigned long request, status;
+>> +	unsigned int bit;
+>>   	int err;
+>>   
+>>   	mutex_lock(&pmc->powergates_lock);
+>> @@ -977,15 +977,9 @@ int tegra_io_rail_power_on(unsigned int id)
+>>   	if (err)
+>>   		goto error;
+>>   
+>> -	mask = 1 << bit;
+>> +	tegra_pmc_writel(IO_DPD_REQ_CODE_OFF | BIT(bit), request);
+>>   
+>> -	value = tegra_pmc_readl(request);
+>> -	value |= mask;
+>> -	value &= ~IO_DPD_REQ_CODE_MASK;
+>> -	value |= IO_DPD_REQ_CODE_OFF;
+>> -	tegra_pmc_writel(value, request);
+>> -
+>> -	err = tegra_io_rail_poll(status, mask, 0, 250);
+>> +	err = tegra_io_rail_poll(status, BIT(bit), 0, 250);
+>>   	if (err) {
+>>   		pr_info("tegra_io_rail_poll() failed: %d\n", err);
+>>   		goto error;
+>> @@ -1002,8 +996,8 @@ EXPORT_SYMBOL(tegra_io_rail_power_on);
+>>   
+>>   int tegra_io_rail_power_off(unsigned int id)
+>>   {
+>> -	unsigned long request, status, value;
+>> -	unsigned int bit, mask;
+>> +	unsigned long request, status;
+>> +	unsigned int bit;
+>>   	int err;
+>>   
+>>   	mutex_lock(&pmc->powergates_lock);
+>> @@ -1014,15 +1008,9 @@ int tegra_io_rail_power_off(unsigned int id)
+>>   		goto error;
+>>   	}
+>>   
+>> -	mask = 1 << bit;
+>> -
+>> -	value = tegra_pmc_readl(request);
+>> -	value |= mask;
+>> -	value &= ~IO_DPD_REQ_CODE_MASK;
+>> -	value |= IO_DPD_REQ_CODE_ON;
+>> -	tegra_pmc_writel(value, request);
+>> +	tegra_pmc_writel(IO_DPD_REQ_CODE_ON | BIT(bit), request);
+>>   
+>> -	err = tegra_io_rail_poll(status, mask, mask, 250);
+>> +	err = tegra_io_rail_poll(status, BIT(bit), BIT(bit), 250);
+>>   	if (err)
+>>   		goto error;
+> Thanks for updating.
+>
+> Reviewed-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> Cheers
+> Jon
+>
