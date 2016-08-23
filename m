@@ -1,257 +1,652 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH v3 05/12] firmware: tegra: Add BPMP support
-Date: Mon, 22 Aug 2016 16:23:29 -0600
-Message-ID: <4d43ba58-9571-8038-b0e2-2a9f6ebccdb2@wwwdotorg.org>
+From: Sivaram Nair <sivaramn-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH v3 02/12] mailbox: Add Tegra HSP driver
+Date: Mon, 22 Aug 2016 17:06:11 -0700
+Message-ID: <20160823000611.GA4932@kickseed.nvidia.com>
 References: <20160819173233.13260-1-thierry.reding@gmail.com>
- <20160819173233.13260-6-thierry.reding@gmail.com>
+ <20160819173233.13260-3-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"; Format="flowed"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20160819173233.13260-6-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Sivaram Nair <sivaramn@nvidia.com>, devicetree@vger.kernel.org, Peter De Schrijver <pdeschrijver@nvidia.com>, Timo Alho <talho@nvidia.com>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="us-ascii"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160819173233.13260-3-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Timo Alho <talho-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/19/2016 11:32 AM, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
->
-> The Boot and Power Management Processor (BPMP) is a co-processor found
-> on Tegra SoCs. It is designed to handle the early stages of the boot
-> process and offload power management tasks (such as clocks, resets,
-> powergates, ...) as well as system control services.
->
-> Compared to the ARM SCPI, the services provided by BPMP are message-
-> based rather than method-based. The BPMP firmware driver provides the
-> services to transmit data to and receive data from the BPMP. Users can
-> also register an MRQ, for which a service routine will be run when a
-> corresponding event is received from the firmware.
->
-> A set of messages, called the BPMP ABI, are specified for a number of
-> different services provided by the BPMP (such as clocks or resets).
->
-> Based on work by Sivaram Nair <sivaramn@nvidia.com> and Joseph Lo
-> <josephl@nvidia.com>.
-
-Overall, this driver could use comments describing how it works. Even a 
-few or a few tens of lines describing the general structure of how 
-messages pass from the initial client's function call into the IPC 
-memory and back up to the return to the original caller would be useful. 
-There seem to be many varied paths for this, and it's a bit difficult to 
-reverse engineer which are used when and why.
-
-> diff --git a/include/soc/tegra/bpmp.h b/include/soc/tegra/bpmp.h
-
-> +struct tegra_bpmp_soc {
-> +	struct {
-> +		struct {
-> +			unsigned int offset;
-> +			unsigned int count;
-> +			unsigned int timeout;
-> +		} cpu_tx, thread, cpu_rx;
-> +	} channels;
-> +	unsigned int num_resets;
+On Fri, Aug 19, 2016 at 07:32:23PM +0200, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> This driver exposes a mailbox interface for interprocessor communication
+> using the Hardware Synchronization Primitives (HSP) module's doorbell
+> mechanism. There are multiple HSP instances and they provide additional
+> features such as shared mailboxes, shared and arbitrated semaphores.
+> 
+> A driver for a remote processor can use the mailbox client provided by
+> the HSP driver and build an IPC protocol on top of this synchronization
+> mechanism.
+> 
+> Based on work by Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>.
+> 
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Changes in v3:
+> - use a more object oriented design
+> - fix some locking issues
+> 
+>  drivers/mailbox/Kconfig     |   9 +
+>  drivers/mailbox/Makefile    |   2 +
+>  drivers/mailbox/tegra-hsp.c | 561 ++++++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 572 insertions(+)
+>  create mode 100644 drivers/mailbox/tegra-hsp.c
+> 
+> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
+> index 97c372908e78..90e7b94a1199 100644
+> --- a/drivers/mailbox/Kconfig
+> +++ b/drivers/mailbox/Kconfig
+> @@ -114,6 +114,15 @@ config MAILBOX_TEST
+>  	  Test client to help with testing new Controller driver
+>  	  implementations.
+>  
+> +config TEGRA_HSP_MBOX
+> +	bool "Tegra HSP(Hardware Synchronization Primitives) Driver"
+> +	depends on ARCH_TEGRA_186_SOC
+> +	help
+> +	  The Tegra HSP driver is used for the interprocessor communication
+> +	  between different remote processors and host processors on Tegra186
+> +	  and later SoCs. Say Y here if you want to have this support.
+> +	  If unsure say N.
+> +
+>  config XGENE_SLIMPRO_MBOX
+>  	tristate "APM SoC X-Gene SLIMpro Mailbox Controller"
+>  	depends on ARCH_XGENE
+> diff --git a/drivers/mailbox/Makefile b/drivers/mailbox/Makefile
+> index 66c38e300dfc..3fa01673f288 100644
+> --- a/drivers/mailbox/Makefile
+> +++ b/drivers/mailbox/Makefile
+> @@ -27,3 +27,5 @@ obj-$(CONFIG_XGENE_SLIMPRO_MBOX) += mailbox-xgene-slimpro.o
+>  obj-$(CONFIG_HI6220_MBOX)	+= hi6220-mailbox.o
+>  
+>  obj-$(CONFIG_BCM_PDC_MBOX)	+= bcm-pdc-mailbox.o
+> +
+> +obj-$(CONFIG_TEGRA_HSP_MBOX)	+= tegra-hsp.o
+> diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+> new file mode 100644
+> index 000000000000..8770ba9b58fe
+> --- /dev/null
+> +++ b/drivers/mailbox/tegra-hsp.c
+> @@ -0,0 +1,561 @@
+> +/*
+> + * Copyright (c) 2016, NVIDIA CORPORATION.  All rights reserved.
+> + *
+> + * This program is free software; you can redistribute it and/or modify it
+> + * under the terms and conditions of the GNU General Public License,
+> + * version 2, as published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope it will be useful, but WITHOUT
+> + * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+> + * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+> + * more details.
+> + */
+> +
+> +#define DEBUG
+> +
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/mailbox_controller.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/slab.h>
+> +
+> +#include <dt-bindings/mailbox/tegra186-hsp.h>
+> +
+> +#define HSP_INT_DIMENSIONING	0x380
+> +#define HSP_nSM_SHIFT		0
+> +#define HSP_nSS_SHIFT		4
+> +#define HSP_nAS_SHIFT		8
+> +#define HSP_nDB_SHIFT		12
+> +#define HSP_nSI_SHIFT		16
+> +#define HSP_nINT_MASK		0xf
+> +
+> +#define HSP_DB_TRIGGER	0x0
+> +#define HSP_DB_ENABLE	0x4
+> +#define HSP_DB_RAW	0x8
+> +#define HSP_DB_PENDING	0xc
+> +
+> +#define HSP_DB_CCPLEX		1
+> +#define HSP_DB_BPMP		3
+> +#define HSP_DB_MAX		7
+> +
+> +struct tegra_hsp_channel;
+> +struct tegra_hsp;
+> +
+> +struct tegra_hsp_channel_ops {
+> +	int (*send_data)(struct tegra_hsp_channel *channel, void *data);
+> +	int (*startup)(struct tegra_hsp_channel *channel);
+> +	void (*shutdown)(struct tegra_hsp_channel *channel);
+> +	bool (*last_tx_done)(struct tegra_hsp_channel *channel);
 > +};
-
-This deserves a comment to describe what the offset/count/timeout 
-represent. It took me a while to realize that each CPU had its own 
-channel in IVC memory, and there was a pool of channels for threads to 
-use. At least, that's what I reversed engineered is going on... (Having 
-only used BPMP from U-Boot, where there's only a single CPU/thread 
-active ever and no IRQs, hence we always use channel 0).
-
-> +struct tegra_bpmp_mb_data {
-> +	u32 code;
-> +	u32 flags;
-> +	u8 data[TEGRA_BPMP_MSG_DATA_SIZE];
-> +} __packed;
-
-Shouldn't struct mrq_request from bpmp_abi.h be used instead of 
-redefining this?
-
-> +struct tegra_bpmp {
-...
-> +	unsigned int num_clocks;
-> +	struct clk_hw **clocks;
 > +
-> +	struct reset_controller_dev rstc;
+> +struct tegra_hsp_channel {
+> +	struct tegra_hsp *hsp;
+> +	const struct tegra_hsp_channel_ops *ops;
+> +	struct mbox_chan *chan;
+> +	void __iomem *regs;
 > +};
-
-As I mentioned elsewhere, I'm not totally convinced that the BPMP driver 
-should be anything more than a fairly transparent IPC channel; all the 
-clock/reset/... stuff could be shuffled entirely into child devices.
-
-(out-of-order quote)
-> +int tegra_bpmp_init_clocks(struct tegra_bpmp *bpmp);
-> +int tegra_bpmp_init_resets(struct tegra_bpmp *bpmp);
-
-Oh I see; the clock/reset code isn't actually separate drivers (like 
-MFD), but just a set of functions that run "in the context of" the main 
-BPMP driver. Maybe that's OK, but I was expected more MFD style, hence 
-various other comments related to this topic, like just above.
-
-(FWIW, I've been mostly in U-Boot-land recently, and the driver model 
-there requires each device to be of a separate class like clock, reset, 
-... so the only option is separate MFD style sub-devices. However, the 
-Linux subsystems allow a single device to implement various subsystems 
-at once. No doubt U-Boot's model has warped my thinking a bit.)
-
-> +struct tegra_bpmp *tegra_bpmp_get(struct device *dev);
-> +void tegra_bpmp_put(struct tegra_bpmp *bpmp);
-
-Those don't seem to be used; can they be dropped?
-
-> +int tegra_bpmp_request_mrq(struct tegra_bpmp *bpmp, unsigned int mrq,
-> +			   tegra_bpmp_mrq_handler_t handler, void *data);
-> +void tegra_bpmp_free_mrq(struct tegra_bpmp *bpmp, unsigned int mrq,
-> +			 void *data);
-
-Those are only used inside the BPMP driver itself right now at least 
-(i.e. not in the clock/reset drivers in this series). Can they be static 
-rather than public?
-
-> diff --git a/drivers/firmware/tegra/bpmp.c b/drivers/firmware/tegra/bpmp.c
-
-> +#define MSG_ACK		BIT(0)
-> +#define MSG_RING	BIT(1)
-
-It'd be nice if bpmp_abi.h defined those, but I know it doesn't:-(
-
-> +struct tegra_bpmp *tegra_bpmp_get(struct device *dev)
-> +{
-> +	struct platform_device *pdev;
-> +	struct tegra_bpmp *bpmp;
-> +	struct device_node *np;
 > +
-> +	np = of_parse_phandle(dev->of_node, "nvidia,bpmp", 0);
-> +	if (!np)
-> +		return ERR_PTR(-ENOENT);
-
-That property name isn't defined by any DT binding. I think it's 
-left-over from an old I2C sub-node binding.
-
-> +static bool tegra_bpmp_master_free(struct tegra_bpmp_channel *channel)
+> +static struct tegra_hsp_channel *to_tegra_hsp_channel(struct mbox_chan *chan)
 > +{
-> +	void *frame;
+> +	return chan->con_priv;
+> +}
 > +
-> +	frame = tegra_ivc_write_get_next_frame(channel->ivc);
-> +	if (IS_ERR_OR_NULL(frame)) {
-> +		channel->ob = NULL;
-> +		return false;
+> +struct tegra_hsp_doorbell {
+> +	struct tegra_hsp_channel channel;
+> +	struct list_head list;
+> +	const char *name;
+> +	unsigned int master;
+> +	unsigned int index;
+> +};
+> +
+> +static struct tegra_hsp_doorbell *
+> +to_tegra_hsp_doorbell(struct tegra_hsp_channel *channel)
+> +{
+> +	if (!channel)
+> +		return NULL;
+> +
+> +	return container_of(channel, struct tegra_hsp_doorbell, channel);
+> +}
+> +
+> +struct tegra_hsp_db_map {
+> +	const char *name;
+> +	unsigned int master;
+> +	unsigned int index;
+> +};
+> +
+> +struct tegra_hsp_soc {
+> +	const struct tegra_hsp_db_map *map;
+> +};
+> +
+> +struct tegra_hsp {
+> +	const struct tegra_hsp_soc *soc;
+> +	struct mbox_controller mbox;
+> +	void __iomem *regs;
+> +	unsigned int irq;
+> +	unsigned int num_sm;
+> +	unsigned int num_as;
+> +	unsigned int num_ss;
+> +	unsigned int num_db;
+> +	unsigned int num_si;
+> +	spinlock_t lock;
+> +
+> +	struct list_head doorbells;
+> +};
+> +
+> +static inline struct tegra_hsp *
+> +to_tegra_hsp(struct mbox_controller *mbox)
+> +{
+> +	return container_of(mbox, struct tegra_hsp, mbox);
+> +}
+> +
+> +static inline u32 tegra_hsp_readl(struct tegra_hsp *hsp, unsigned int offset)
+> +{
+> +	return readl(hsp->regs + offset);
+> +}
+> +
+> +static inline void tegra_hsp_writel(struct tegra_hsp *hsp, u32 value,
+> +				    unsigned int offset)
+> +{
+> +	writel(value, hsp->regs + offset);
+> +	(void)readl(hsp->regs + offset);
+
+I am not aware of a need for such barriers (even if the downstream code
+has them).
+
+> +}
+> +
+> +static inline u32 tegra_hsp_channel_readl(struct tegra_hsp_channel *channel,
+> +					  unsigned int offset)
+> +{
+> +	return readl(channel->regs + offset);
+> +}
+> +
+> +static inline void tegra_hsp_channel_writel(struct tegra_hsp_channel *channel,
+> +					    u32 value, unsigned int offset)
+> +{
+> +	writel(value, channel->regs + offset);
+> +	(void)readl(channel->regs + offset);
+
+same here.
+
+> +}
+> +
+> +static int tegra_hsp_doorbell_can_ring(struct tegra_hsp_doorbell *db)
+> +{
+> +	u32 value;
+> +
+> +	value = tegra_hsp_channel_readl(&db->channel, HSP_DB_ENABLE);
+> +
+> +	return !!(value & BIT(TEGRA_HSP_DB_MASTER_CCPLEX));
+> +}
+> +
+> +static struct tegra_hsp_doorbell *
+> +__tegra_hsp_doorbell_get(struct tegra_hsp *hsp, unsigned int master)
+> +{
+> +	struct tegra_hsp_doorbell *db = NULL, *entry;
+> +
+> +	list_for_each_entry(entry, &hsp->doorbells, list)
+> +		if (entry->master == master) {
+
+you might as well say: 'return entry;' and remove 'db' ?
+
+> +			db = entry;
+> +			break;
+> +		}
+> +
+> +	return db;
+> +}
+> +
+> +static struct tegra_hsp_doorbell *
+> +tegra_hsp_doorbell_get(struct tegra_hsp *hsp, unsigned int master)
+> +{
+> +	struct tegra_hsp_doorbell *db;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&hsp->lock, flags);
+> +	db = __tegra_hsp_doorbell_get(hsp, master);
+> +	spin_unlock_irqrestore(&hsp->lock, flags);
+> +
+> +	return db;
+> +}
+> +
+> +static irqreturn_t tegra_hsp_doorbell_irq(int irq, void *data)
+> +{
+> +	struct tegra_hsp *hsp = data;
+> +	struct tegra_hsp_doorbell *db;
+> +	unsigned long master, value;
+> +
+> +	db = tegra_hsp_doorbell_get(hsp, TEGRA_HSP_DB_MASTER_CCPLEX);
+> +	if (!db)
+> +		return IRQ_NONE;
+> +
+> +	value = tegra_hsp_channel_readl(&db->channel, HSP_DB_PENDING);
+> +	tegra_hsp_channel_writel(&db->channel, value, HSP_DB_PENDING);
+> +
+> +	spin_lock(&hsp->lock);
+> +
+> +	for_each_set_bit(master, &value, hsp->mbox.num_chans) {
+> +		struct tegra_hsp_doorbell *db;
+> +
+> +		db = __tegra_hsp_doorbell_get(hsp, master);
+> +		if (db)
+> +			mbox_chan_received_data(db->channel.chan, NULL);
 > +	}
 > +
-> +	channel->ob = frame;
+> +	spin_unlock(&hsp->lock);
 > +
-> +	return true;
+> +	return IRQ_HANDLED;
 > +}
-
-I'm confused by the function name; this doesn't seem to be freeing 
-anything. Is it really tegra_bpmp_get_next_free_tx_frame() or something 
-like that? Same for tegra_bpmp_wait_master_free() below.
-
-> +static struct tegra_bpmp_mrq *tegra_bpmp_find_mrq(struct tegra_bpmp *bpmp,
-> +						  unsigned int mrq)
+> +
+> +static int tegra_hsp_doorbell_send_data(struct tegra_hsp_channel *channel,
+> +					void *data)
 > +{
-> +	struct tegra_bpmp_mrq *entry;
+> +	tegra_hsp_channel_writel(channel, 1, HSP_DB_TRIGGER);
 > +
-> +	list_for_each_entry(entry, &bpmp->mrqs, list)
-> +		if (entry->mrq == mrq)
-> +			return entry;
-> +
-> +	return NULL;
+> +	return 0;
 > +}
-
-I believe an MRQ is a type of message, not the identity of an individual 
-message. As such, there can be multiple instances (message) of a 
-particular type/MRQ. Is there code somewhere to ensure that only a 
-single request of any given type is outstanding at a time? I'm not sure 
-why anything would ever be looked up by MRQ...
-
-> +static int tegra_bpmp_get_firmware_tag(struct tegra_bpmp *bpmp, char *tag,
-> +				       size_t size)
-...
-> +	virt = dma_alloc_coherent(bpmp->dev, TEGRA_BPMP_MSG_DATA_SIZE, &phys,
-> +				  GFP_KERNEL | GFP_DMA32);
-> +	if (!virt)
-> +		return -ENOMEM;
 > +
-> +	memset(&request, 0, sizeof(request));
-> +	request.addr = phys;
-> +
-> +	memset(&msg, 0, sizeof(msg));
-> +	msg.mrq = MRQ_QUERY_TAG;
-> +	msg.tx.data = &request;
-> +	msg.tx.size = sizeof(request);
-> +
-> +	local_irq_save(flags);
-> +	err = tegra_bpmp_transfer_atomic(bpmp, &msg);
-> +	local_irq_restore(flags);
-> +
-> +	if (err == 0)
-> +		strlcpy(tag, virt, size);
-
-virt seems to be allocated and copied from, but never used in the IPC 
-transaction.
-
-> +static void tegra_bpmp_channel_signal(struct tegra_bpmp_channel *channel)
+> +static int tegra_hsp_doorbell_startup(struct tegra_hsp_channel *channel)
 > +{
-> +	unsigned long flags = channel->ob->flags;
+> +	struct tegra_hsp_doorbell *db = to_tegra_hsp_doorbell(channel);
+> +	struct tegra_hsp *hsp = channel->hsp;
+> +	struct tegra_hsp_doorbell *ccplex;
+> +	unsigned long flags;
+> +	u32 value;
 > +
-> +	if ((flags & MSG_RING) == 0)
+> +	dev_dbg(hsp->mbox.dev, "> %s(channel=%p)\n", __func__, channel);
+> +	dev_dbg(hsp->mbox.dev, "  regs: %p\n", channel->regs);
+> +
+> +	if (db->master >= hsp->mbox.num_chans) {
+> +		dev_err(hsp->mbox.dev,
+> +			"invalid master ID %u for HSP channel\n",
+> +			db->master);
+> +		return -EINVAL;
+> +	}
+> +
+> +	ccplex = tegra_hsp_doorbell_get(hsp, TEGRA_HSP_DB_MASTER_CCPLEX);
+> +	if (!ccplex)
+> +		return -ENODEV;
+> +
+> +	spin_lock_irqsave(&hsp->lock, flags);
+> +
+> +	value = tegra_hsp_channel_readl(&ccplex->channel, HSP_DB_ENABLE);
+> +	value |= BIT(db->master);
+> +	tegra_hsp_channel_writel(&ccplex->channel, value, HSP_DB_ENABLE);
+> +
+> +	spin_unlock_irqrestore(&hsp->lock, flags);
+> +
+> +	if (!tegra_hsp_doorbell_can_ring(db))
+> +		return -ENODEV;
+> +
+> +	dev_dbg(hsp->mbox.dev, "< %s()\n", __func__);
+> +	return 0;
+> +}
+> +
+> +static void tegra_hsp_doorbell_shutdown(struct tegra_hsp_channel *channel)
+> +{
+> +	struct tegra_hsp_doorbell *db = to_tegra_hsp_doorbell(channel);
+> +	struct tegra_hsp *hsp = channel->hsp;
+> +	struct tegra_hsp_doorbell *ccplex;
+> +	unsigned long flags;
+> +	u32 value;
+> +
+> +	ccplex = tegra_hsp_doorbell_get(hsp, TEGRA_HSP_DB_MASTER_CCPLEX);
+> +	if (!ccplex)
 > +		return;
 > +
-> +	complete(&channel->completion);
-> +}
-
-Shouldn't that always call complete()? tegra_bpmp_transfer() always call 
-wait_for_completion_timeout(), irrespective of the flags value.
-
-> +static int tegra_bpmp_channel_init(struct tegra_bpmp_channel *channel,
-> +				   struct tegra_bpmp *bpmp,
-> +				   unsigned int index)
-> +{
-> +	size_t message, queue;
-...
-> +	message = tegra_ivc_align(TEGRA_BPMP_MSG_SIZE);
-> +	queue = tegra_ivc_total_queue_size(message);
-
-I suspect those should be message_size and message_queue, otherwise the 
-variable names sound like they should be pointers to objects, not 
-properties of the objects.
-
-...
-> +	/* reset the channel state */
-> +	tegra_ivc_reset(channel->ivc);
+> +	spin_lock_irqsave(&hsp->lock, flags);
 > +
-> +	/* sync the channel state with BPMP */
-> +	while (tegra_ivc_notified(channel->ivc))
-> +		;
-
-I think this synchronously waits for the single channel in question to 
-reset, one-by-one. Won't that take rather a long time; wouldn't it be 
-better to initialize an start-the-reset-of all channels, then wait for 
-the reset to complete across all channels in parallel?
-
-> +static int tegra_bpmp_init_powergates(struct tegra_bpmp *bpmp)
-
-Is this function necessary? It doesn't seem to do anything with the 
-response data except pass it to dev_dbg() which probably doesn't do 
-anything.
-
-> +static int __init tegra_bpmp_init(void)
-> +{
-> +	return platform_driver_register(&tegra_bpmp_driver);
+> +	value = tegra_hsp_channel_readl(&ccplex->channel, HSP_DB_ENABLE);
+> +	value &= ~BIT(db->master);
+> +	tegra_hsp_channel_writel(&ccplex->channel, value, HSP_DB_ENABLE);
+> +
+> +	spin_unlock_irqrestore(&hsp->lock, flags);
 > +}
-> +core_initcall(tegra_bpmp_init);
-
-Can that boiler-plat be replaced with module_init_driver(); IIRC that's 
-appropriate and often used even for non-modular drivers?
+> +
+> +static bool tegra_hsp_doorbell_last_tx_done(struct tegra_hsp_channel *channel)
+> +{
+> +	return true;
+> +}
+> +
+> +static const struct tegra_hsp_channel_ops tegra_hsp_doorbell_ops = {
+> +	.send_data = tegra_hsp_doorbell_send_data,
+> +	.startup = tegra_hsp_doorbell_startup,
+> +	.shutdown = tegra_hsp_doorbell_shutdown,
+> +	.last_tx_done = tegra_hsp_doorbell_last_tx_done,
+> +};
+> +
+> +static struct tegra_hsp_channel *
+> +tegra_hsp_doorbell_create(struct tegra_hsp *hsp, const char *name,
+> +			  unsigned int master, unsigned int index)
+> +{
+> +	struct tegra_hsp_doorbell *db;
+> +	unsigned int offset;
+> +	unsigned long flags;
+> +
+> +	db = kzalloc(sizeof(*db), GFP_KERNEL);
+> +	if (!db)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	offset = (1 + (hsp->num_sm / 2) + hsp->num_ss + hsp->num_as) << 16;
+> +	offset += index * 0x100;
+> +
+> +	db->channel.ops = &tegra_hsp_doorbell_ops;
+> +	db->channel.regs = hsp->regs + offset;
+> +	db->channel.hsp = hsp;
+> +
+> +	db->name = kstrdup_const(name, GFP_KERNEL);
+> +	db->master = master;
+> +	db->index = index;
+> +
+> +	spin_lock_irqsave(&hsp->lock, flags);
+> +	list_add_tail(&db->list, &hsp->doorbells);
+> +	spin_unlock_irqrestore(&hsp->lock, flags);
+> +
+> +	return &db->channel;
+> +}
+> +
+> +static void __tegra_hsp_doorbell_destroy(struct tegra_hsp_doorbell *db)
+> +{
+> +	list_del(&db->list);
+> +	kfree_const(db->name);
+> +	kfree(db);
+> +}
+> +
+> +static int tegra_hsp_send_data(struct mbox_chan *chan, void *data)
+> +{
+> +	struct tegra_hsp_channel *channel = to_tegra_hsp_channel(chan);
+> +
+> +	return channel->ops->send_data(channel, data);
+> +}
+> +
+> +static int tegra_hsp_startup(struct mbox_chan *chan)
+> +{
+> +	struct tegra_hsp_channel *channel = to_tegra_hsp_channel(chan);
+> +
+> +	return channel->ops->startup(channel);
+> +}
+> +
+> +static void tegra_hsp_shutdown(struct mbox_chan *chan)
+> +{
+> +	struct tegra_hsp_channel *channel = to_tegra_hsp_channel(chan);
+> +
+> +	return channel->ops->shutdown(channel);
+> +}
+> +
+> +static bool tegra_hsp_last_tx_done(struct mbox_chan *chan)
+> +{
+> +	struct tegra_hsp_channel *channel = to_tegra_hsp_channel(chan);
+> +
+> +	return channel->ops->last_tx_done(channel);
+> +}
+> +
+> +static const struct mbox_chan_ops tegra_hsp_ops = {
+> +	.send_data = tegra_hsp_send_data,
+> +	.startup = tegra_hsp_startup,
+> +	.shutdown = tegra_hsp_shutdown,
+> +	.last_tx_done = tegra_hsp_last_tx_done,
+> +};
+> +
+> +static struct mbox_chan *of_tegra_hsp_xlate(struct mbox_controller *mbox,
+> +					    const struct of_phandle_args *args)
+> +{
+> +	struct tegra_hsp *hsp = to_tegra_hsp(mbox);
+> +	struct tegra_hsp_channel *channel = ERR_PTR(-ENODEV);
+> +	unsigned int type = args->args[0];
+> +	unsigned int master = args->args[1];
+> +	struct tegra_hsp_doorbell *db;
+> +	struct mbox_chan *chan;
+> +	unsigned long flags;
+> +	unsigned int i;
+> +
+> +	dev_dbg(mbox->dev, "> %s(mbox=%p, args=%p)\n", __func__, mbox, args);
+> +	dev_dbg(mbox->dev, "  type: %x, master: %x\n", type, master);
+> +
+> +	switch (type) {
+> +	case TEGRA_HSP_MBOX_TYPE_DB:
+> +		db = tegra_hsp_doorbell_get(hsp, master);
+> +		dev_dbg(mbox->dev, "  doorbell: %p\n", db);
+> +		if (db)
+> +			channel = &db->channel;
+> +
+> +		break;
+> +
+> +	default:
+> +		break;
+> +	}
+> +
+> +	if (IS_ERR(channel))
+> +		return ERR_CAST(channel);
+> +
+> +	spin_lock_irqsave(&hsp->lock, flags);
+> +
+> +	for (i = 0; i < hsp->mbox.num_chans; i++) {
+> +		chan = &hsp->mbox.chans[i];
+> +		if (!chan->con_priv) {
+> +			chan->con_priv = channel;
+> +			channel->chan = chan;
+> +			break;
+> +		}
+> +
+> +		chan = NULL;
+> +	}
+> +
+> +	spin_unlock_irqrestore(&hsp->lock, flags);
+> +
+> +	dev_dbg(mbox->dev, "< %s() = %p\n", __func__, chan);
+> +	return chan ?: ERR_PTR(-EBUSY);
+> +}
+> +
+> +static void tegra_hsp_remove_doorbells(struct tegra_hsp *hsp)
+> +{
+> +	struct tegra_hsp_doorbell *db;
+> +	unsigned long flags;
+> +
+> +	spin_lock_irqsave(&hsp->lock, flags);
+> +
+> +	list_for_each_entry(db, &hsp->doorbells, list)
+> +		__tegra_hsp_doorbell_destroy(db);
+> +
+> +	spin_unlock_irqrestore(&hsp->lock, flags);
+> +}
+> +
+> +static int tegra_hsp_add_doorbells(struct tegra_hsp *hsp)
+> +{
+> +	const struct tegra_hsp_db_map *map = hsp->soc->map;
+> +	struct tegra_hsp_channel *channel;
+> +
+> +	dev_dbg(hsp->mbox.dev, "> %s(hsp=%p)\n", __func__, hsp);
+> +
+> +	while (map->name) {
+> +		dev_dbg(hsp->mbox.dev, "  adding doorbell for master %u (%s), index %u\n", map->master, map->name, map->index);
+> +
+> +		channel = tegra_hsp_doorbell_create(hsp, map->name,
+> +						    map->master, map->index);
+> +		if (IS_ERR(channel)) {
+> +			tegra_hsp_remove_doorbells(hsp);
+> +			return PTR_ERR(channel);
+> +		}
+> +
+> +		map++;
+> +	}
+> +
+> +	dev_dbg(hsp->mbox.dev, "< %s()\n", __func__);
+> +	return 0;
+> +}
+> +
+> +static int tegra_hsp_probe(struct platform_device *pdev)
+> +{
+> +	struct tegra_hsp *hsp;
+> +	struct resource *res;
+> +	u32 value;
+> +	int err;
+> +
+> +	dev_dbg(&pdev->dev, "> %s(pdev=%p)\n", __func__, pdev);
+> +
+> +	hsp = devm_kzalloc(&pdev->dev, sizeof(*hsp), GFP_KERNEL);
+> +	if (!hsp)
+> +		return -ENOMEM;
+> +
+> +	dev_dbg(&pdev->dev, "  hsp: %p\n", hsp);
+> +
+> +	hsp->soc = of_device_get_match_data(&pdev->dev);
+> +	INIT_LIST_HEAD(&hsp->doorbells);
+> +	spin_lock_init(&hsp->lock);
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	hsp->regs = devm_ioremap_resource(&pdev->dev, res);
+> +	if (IS_ERR(hsp->regs))
+> +		return PTR_ERR(hsp->regs);
+> +
+> +	value = tegra_hsp_readl(hsp, HSP_INT_DIMENSIONING);
+> +	hsp->num_sm = (value >> HSP_nSM_SHIFT) & HSP_nINT_MASK;
+> +	hsp->num_ss = (value >> HSP_nSS_SHIFT) & HSP_nINT_MASK;
+> +	hsp->num_as = (value >> HSP_nAS_SHIFT) & HSP_nINT_MASK;
+> +	hsp->num_db = (value >> HSP_nDB_SHIFT) & HSP_nINT_MASK;
+> +	hsp->num_si = (value >> HSP_nSI_SHIFT) & HSP_nINT_MASK;
+> +
+> +	dev_dbg(&pdev->dev, "regs: %pR (%p-%p)\n", res, hsp->regs, hsp->regs + resource_size(res) - 1);
+> +	dev_dbg(&pdev->dev, "sm: %u ss:%u as: %u db: %u, si: %u\n",
+> +		hsp->num_sm, hsp->num_ss, hsp->num_as, hsp->num_db,
+> +		hsp->num_si);
+> +
+> +	err = platform_get_irq_byname(pdev, "doorbell");
+> +	if (err < 0) {
+> +		dev_err(&pdev->dev, "failed to get doorbell IRQ: %d\n", err);
+> +		return err;
+> +	}
+> +
+> +	hsp->irq = err;
+> +
+> +	err = devm_request_irq(&pdev->dev, hsp->irq, tegra_hsp_doorbell_irq,
+> +			       IRQF_NO_SUSPEND, dev_name(&pdev->dev), hsp);
+> +	if (err < 0) {
+> +		dev_err(&pdev->dev, "failed to request IRQ#%u: %d\n",
+> +			hsp->irq, err);
+> +		return err;
+> +	}
+> +
+> +	hsp->mbox.of_xlate = of_tegra_hsp_xlate;
+> +	hsp->mbox.num_chans = 32;
+> +	hsp->mbox.dev = &pdev->dev;
+> +	hsp->mbox.txdone_irq = false;
+> +	hsp->mbox.txdone_poll = false;
+> +	hsp->mbox.ops = &tegra_hsp_ops;
+> +
+> +	hsp->mbox.chans = devm_kcalloc(&pdev->dev, hsp->mbox.num_chans,
+> +					sizeof(*hsp->mbox.chans),
+> +					GFP_KERNEL);
+> +	if (!hsp->mbox.chans)
+> +		return -ENOMEM;
+> +
+> +	err = tegra_hsp_add_doorbells(hsp);
+> +	if (err < 0) {
+> +		dev_err(&pdev->dev, "failed to add doorbells: %d\n", err);
+> +		return err;
+> +	}
+> +
+> +	platform_set_drvdata(pdev, hsp);
+> +
+> +	err = mbox_controller_register(&hsp->mbox);
+> +	if (err) {
+> +		dev_err(&pdev->dev, "failed to register mailbox: %d\n", err);
+> +		tegra_hsp_remove_doorbells(hsp);
+> +		return err;
+> +	}
+> +
+> +	dev_dbg(&pdev->dev, "< %s()\n", __func__);
+> +	return 0;
+> +}
+> +
+> +static int tegra_hsp_remove(struct platform_device *pdev)
+> +{
+> +	struct tegra_hsp *hsp = platform_get_drvdata(pdev);
+> +
+> +	mbox_controller_unregister(&hsp->mbox);
+> +	tegra_hsp_remove_doorbells(hsp);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct tegra_hsp_db_map tegra186_hsp_db_map[] = {
+> +	{ "ccplex", TEGRA_HSP_DB_MASTER_CCPLEX, HSP_DB_CCPLEX },
+> +	{ "bpmp",   TEGRA_HSP_DB_MASTER_BPMP,   HSP_DB_BPMP   },
+> +	{ /* sentinel */ }
+> +};
+> +
+> +static const struct tegra_hsp_soc tegra186_hsp_soc = {
+> +	.map = tegra186_hsp_db_map,
+> +};
+> +
+> +static const struct of_device_id tegra_hsp_match[] = {
+> +	{ .compatible = "nvidia,tegra186-hsp", .data = &tegra186_hsp_soc },
+> +	{ }
+> +};
+> +
+> +static struct platform_driver tegra_hsp_driver = {
+> +	.driver = {
+> +		.name = "tegra-hsp",
+> +		.of_match_table = tegra_hsp_match,
+> +	},
+> +	.probe = tegra_hsp_probe,
+> +	.remove = tegra_hsp_remove,
+> +};
+> +
+> +static int __init tegra_hsp_init(void)
+> +{
+> +	return platform_driver_register(&tegra_hsp_driver);
+> +}
+> +core_initcall(tegra_hsp_init);
+> -- 
+> 2.9.0
+> 
