@@ -1,60 +1,65 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 5/7] arm64: tegra: Enable DPAUX for Tegra210 Smaug
-Date: Wed, 24 Aug 2016 16:53:51 +0200
-Message-ID: <20160824145351.GF6887@ulmo.ba.sec>
+Subject: Re: [PATCH 7/7] arm64: tegra: Enable XUSB controller on Tegra210
+ Smaug
+Date: Wed, 24 Aug 2016 16:57:23 +0200
+Message-ID: <20160824145723.GH6887@ulmo.ba.sec>
 References: <1470756082-19099-1-git-send-email-jonathanh@nvidia.com>
- <1470756082-19099-6-git-send-email-jonathanh@nvidia.com>
+ <1470756082-19099-8-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="vA66WO2vHvL/CRSR"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="xHbokkKX1kTiQeDC"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1470756082-19099-6-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <1470756082-19099-8-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---vA66WO2vHvL/CRSR
+--xHbokkKX1kTiQeDC
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 09, 2016 at 04:21:20PM +0100, Jon Hunter wrote:
-> The Tegra210 Smaug uses I2C6 for interfacing to various audio chips.
-> I2C6 shares pads with the DPAUX interface and to allow I2C6 to request
-> the pads owned by DPAUX, the DPAUX device needs to be enabled. Enable
-> DPAUX for Tegra210 Smaug.
+On Tue, Aug 09, 2016 at 04:21:22PM +0100, Jon Hunter wrote:
+> Enable the XUSB controller on Tegra210 Smaug. The Smaug has a USB Type-C
+> connector with one of the USB2.0 lanes and one of the USB3.0 lanes
+> populated.
 >=20
 > Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 6 ++++++
->  1 file changed, 6 insertions(+)
+>  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 57 +++++++++++++++++++++=
+++++++
+>  1 file changed, 57 insertions(+)
 
 Applied, thanks.
 
 Thierry
 
---vA66WO2vHvL/CRSR
+--xHbokkKX1kTiQeDC
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXvbT/AAoJEN0jrNd/PrOhzIcQAIH749CYt+QCH65clzihmf5L
-umREDAOclti+IBgBAgZmjCjQDKRBWtP8mWA45lJUCgCK+5quK153fFqOdwE4W40m
-InJg9NjtikLK+fKSq13jKk6ifAk3rXjYKbZPVUg7gNvbIyzQc+hb+y9YFVUKut0S
-Fsl0Bqyk0oc4QmPZwcDSn1zsLKrCWHwuhyGGzihaPQN4rJ923Wkd/g3UnVcDXVE2
-GKwwVxUAk8JBtebDef46C63qiz+AHc8KVwUVVr2as8/9Md+YqiO8wLsKKBZbqgbO
-lvDwfOlNqVT9qKqAkmdkyMiqjNw+KkarPKzKG916T5Bhon9NbXkcYc1kRiaGkbFH
-wBPnb19Z90tjVXJXIfiwbIboE1KQlwtyxrLgRtLinXL29uzRDS96gPqrSP+MNWYg
-evH23FEX/xmZbssjBcbE6fR7ZCAUSAvb02wWtzO2njMaQ9DFypp9UQp3/O2I2+vd
-QiJbtUiZ3dEvJoFvriHzzR3CaaXq3YMsfkPqL5p3LLntSGL8HGHJbwc3GNvjNWYS
-gABhk0++kwaAhsVwYxPwCKCmIvbzKBDWXcT6dyPnTzqCy7NtmNPhWBMguYtEHtU+
-Ei4RjIGR6eBE6x7lKEWK+1dNhh1DbuoFdPqrQOq8Ly6xhTSgRhK3c6r4jkwxJw4V
-+ew3mkPVcDzCX5GJPmxu
-=GfjU
+iQIcBAABCAAGBQJXvbXTAAoJEN0jrNd/PrOhhtAP/0C9pO/BNu9ueGkzsKi5J/9L
+ruOf980DcAnL5IhBCtDkYYjzH9VV5gW6efWTzkAitwEDJlrtN9IMH4yoCoP3iHl/
+EXHEGbmPJJExk9uq1NuoxjYfCtPvUc0e3Ii4T3j9B41S9rARrhRMGg3R74REp070
+58qPHkM0BRoyzi4v0p37XIfWURmBL8HNJAxldTvTs2IiIhrxiIgQ6YJHlZsDPa3Y
+hcI3DFL63GYzjvxTpfbiJbjOQrFtNBJ9CJ8WkK9nqso9y1WcRfQOQWuufulmVYBt
+2qCu0B6Ynrsqy7odqUhXMWmf4pWF4PYzTblc0agIULA0pLr9hVJGDxSk8jzPbWO1
+izn2RV1YLRd4x1X6kMYKbsgJ0ZbJpjoTmznJuEUljN/LVafq3vXvw5p+xS9kTF/s
+InFax5PnV8uiBlJ6YMw7pwMlbqJWJRNMy1Ha/fJioxxkM1VA2UVuHgTFwP0j6ERo
+qc3toj4iklgVgApcCOowcaRThQm5Sd4BGoNpnF9XX8FPoGAeN7+HNNKPcw/e3hXJ
+uxpOum/yC/6l6fH+erW+m9sf4LFYXmGRsG6PpTI800eOWk19BkVO0sj2UZ7mO4h+
+dbs8Vohnuqbs/8tjGwXvr/TAyEBqN7swh0J2+DFGOlRj5f2b0dG5tw6uTrWWYs8p
+rv+ByzGz+JYNanBAhmz4
+=Sb3T
 -----END PGP SIGNATURE-----
 
---vA66WO2vHvL/CRSR--
+--xHbokkKX1kTiQeDC--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
