@@ -1,85 +1,59 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] drm/tegra: Fix window[0] base address corruption
-Date: Wed, 24 Aug 2016 16:16:43 +0200
-Message-ID: <20160824141643.GE3714@ulmo.ba.sec>
-References: <20160821085915.9424-1-digetx@gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] arm64: tegra: Drop clock and reset names for XUSB
+ powergates
+Date: Wed, 24 Aug 2016 16:33:01 +0200
+Message-ID: <20160824143301.GA6887@ulmo.ba.sec>
+References: <1471354857-1408-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0217132208=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20160821085915.9424-1-digetx@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dmitry Osipenko <digetx@gmail.com>
-Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Q68bSM7Ycu6FN28Q"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1471354857-1408-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0217132208==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="FEz7ebHBGB6b2e8X"
-Content-Disposition: inline
-
-
---FEz7ebHBGB6b2e8X
+--Q68bSM7Ycu6FN28Q
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Aug 21, 2016 at 11:57:58AM +0300, Dmitry Osipenko wrote:
-> Window uses shared stride for UV planes and tegra_dc_window struct
-> defines array of 2 strides per window. That's not taken in account
-> during setting up of the window addresses and strides, resulting in
-> out-of-bounds write of the 3-rd (non-existent) V plane stride that
-> overwrites Y plane base address.
+On Tue, Aug 16, 2016 at 02:40:57PM +0100, Jon Hunter wrote:
+> Drop the clock and reset names for the Tegra210 XUSB powergates because
+> these are not currently used and not required by the Tegra PMC binding
+> documentation.
 >=20
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  drivers/gpu/drm/tegra/dc.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi | 6 ------
+>  1 file changed, 6 deletions(-)
 
-Applied and added a comment to the code why it is safe to do this.
+Applied, thanks.
 
-Thanks,
 Thierry
 
---FEz7ebHBGB6b2e8X
+--Q68bSM7Ycu6FN28Q
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v2
 
-iQIcBAABCAAGBQJXvaxJAAoJEN0jrNd/PrOhQiYP/1mreALmPlalNic0galHs7Jp
-VOu0hygkPk5Z+EWrnHytaerdDj/tl5gbzUE8qm4dmCvSi1NowBhcBjt2Ut+Fx+w2
-dn3bfXIRyKIz0RUUtjIet4ys/vKY2Eb9r/mwt8SK8btnXQqhzK8fNfEIm8+sEMu9
-xTzZHflw6a/YFl5D0bQzV6wdJhrqeQ2gps67VL2as3LwA3MwFCc15D5+xSdkXv6r
-Q5cNyx3tE5ZUjNSV0UvwNWubLtqkY9/dJO4hPZt9bHF+DDzXYhqTCF4iuyhWQJiQ
-Vz71dD/HHAu8HwBez5xteWyglUuUoHypxnx2TjVo2oxm1B4ehukbwwMDkjRKLWn/
-0XGo3RhftSCeESCoUoju1NJ5XULhrg3BC4MfjjdvWJNvnMq79ORFtEiuBCfdHRMi
-WOqauIAkxgdbTFjRKmdZHSQcK5sb1T1kJxsRtNprfeCp2hCIeoEIr4oXacfV1bZJ
-WUyrSMD9BawonkEXY986Uw2eWMeGw1shVEZzlX1GpsfIB2+sd80xkbDpd3NbKYlx
-Azl07isCwWS/jp99A7dH2GJTZQM/Jwy0W05zJrJCz4231i5R8q2yraQKM6gnBY9m
-G2xzog61eAEFbwfaRbSM8+N/djKtwIFRGmmAQT6BbW50WLPl1ZbY49GiUbBlnQT4
-5XeJHb8diA8gMRyN9Q7J
-=5pUq
+iQIcBAABCAAGBQJXvbAdAAoJEN0jrNd/PrOhOQkQAIn6BjqR2HLM1zwRx8VGlBM1
+VP/JOAGcMwFHGkdebT9JxNaKPFnli9zcRYmim33Ejdq8p6/6bfVi2OEUx3EE8qbj
+3ILQNNjcFxoFL5zfl4AgkX1wpjk7EsODGtfr/Y/ombeY68qA2kC11rRmNr7E6E9U
+AV+0oHxs+z17sHf/ap/NQub/NOqthUvitOXDXcSlBAu188Iv+3dCqgeffA7givEp
+ZhoSzlww0pboboVRGS4fGUY+I7GY9iyubQ19sWY3HuVFPMdfCBifiVjch0cTc8y7
+dt0QMjqH3uRzfN9Y7f7QDyrVbl4z/Hd45pkMpEtoXFrvuNCjs0hCqUNMDH4tKMEe
+s352XWb8+mYIjLZNiU4X0dfa47U1+ZsqcAv5PI0NGrpxb1XpscGTmM9IJE6Dzu6E
+HE+npyWFIDlVakqSp0uTp40teSg17vzMYhs/8qFLT+NngRvt+caussSJgjv/1f4k
+u3/sW3s+DSvvFfmli116lrm5B74gEBPcPCt0FnA1hejBWb587IWOhZWKHKfbg6tI
+VpLLLQHfheHFaB3Sya5LrnVkgUb9Bj1vzlpYYBViuWnhvFjXDGnmvodMHWEdJGDC
+sTKK20lqq11poBy7iypN8Q1oFceM+9GcOp+ppeyy0wJDncl3wkSwT8WRbkbKpG4h
+G+lgTQteHKmkgfZQukgQ
+=GP/d
 -----END PGP SIGNATURE-----
 
---FEz7ebHBGB6b2e8X--
-
---===============0217132208==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============0217132208==--
+--Q68bSM7Ycu6FN28Q--
