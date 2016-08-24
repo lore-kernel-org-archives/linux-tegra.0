@@ -1,57 +1,61 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] drm/tegra: dsi: Enhance runtime power management
-Date: Wed, 24 Aug 2016 14:34:04 +0100
-Message-ID: <c9658942-c994-5d14-e891-12f990335ed8@nvidia.com>
-References: <20160817160141.20676-1-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20160817160141.20676-1-thierry.reding@gmail.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+From: Mirza Krak <mirza.krak@gmail.com>
+Subject: [PATCH v2 0/6] Add support for Tegra GMI bus controller
+Date: Wed, 24 Aug 2016 15:37:12 +0200
+Message-ID: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: swarren@wwwdotorg.org, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: gnurou@gmail.com, linux@armlinux.org.uk, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, Mirza Krak <mirza.krak@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDE3LzA4LzE2IDE3OjAxLCBUaGllcnJ5IFJlZGluZyB3cm90ZToKPiBGcm9tOiBUaGllcnJ5
-IFJlZGluZyA8dHJlZGluZ0BudmlkaWEuY29tPgo+IAo+IFRoZSBNSVBJIERTSSBvdXRwdXQgb24g
-VGVncmEgU29DcyByZXF1aXJlcyBzb21lIGV4dGVybmFsIGxvZ2ljIHRvCj4gY2FsaWJyYXRlIHRo
-ZSBNSVBJIHBhZHMgYmVmb3JlIGEgdmlkZW8gc2lnbmFsIGNhbiBiZSB0cmFuc21pdHRlZC4gVGhp
-cwo+IE1JUEkgY2FsaWJyYXRpb24gbG9naWMgcmVxdWlyZXMgdG8gYmUgcG93ZXJlZCBvbiB3aGls
-ZSB0aGUgTUlQSSBwYWRzIGFyZQo+IGJlaW5nIHVzZWQsIHdoaWNoIGlzIGN1cnJlbnRseSBkb25l
-IGFzIHBhcnQgb2YgdGhlIERTSSBkcml2ZXIncyBwcm9iZQo+IGltcGxlbWVudGF0aW9uLgo+IAo+
-IFRoaXMgaXMgc3Vib3B0aW1hbCBiZWNhdXNlIGl0IHdpbGwgbGVhdmUgdGhlIE1JUEkgY2FsaWJy
-YXRpb24gbG9naWMKPiBwb3dlcmVkIHVwIGV2ZW4gaWYgdGhlIERTSSBvdXRwdXQgaXMgbmV2ZXIg
-dXNlZC4KPiAKPiBPbiBUZWdyYTExNCBhbmQgZWFybGllciB0aGlzIGJlaGF2aW91ciBhbHNvIGNh
-dXNlcyB0aGUgZHJpdmVyIHRvIGhhbmcKPiB3aGlsZSB0cnlpbmcgdG8gcG93ZXIgdXAgdGhlIE1J
-UEkgY2FsaWJyYXRpb24gbG9naWMgYmVjYXVzZSB0aGUgcG93ZXIKPiBwYXJ0aXRpb24gdGhhdCBj
-b250YWlucyB0aGUgTUlQSSBjYWxpYnJhdGlvbiBsb2dpYyB3aWxsIGJlIHBvd2VyZWQgb24KPiBi
-eSB0aGUgZGlzcGxheSBjb250cm9sbGVyIGF0IG91dHB1dCBwaXBlbGluZSBjb25maWd1cmF0aW9u
-IHRpbWUuIFRodXMKPiB0aGUgcG93ZXIgdXAgc2VxdWVuY2UgZm9yIHRoZSBNSVBJIGNhbGlicmF0
-aW9uIGxvZ2ljIGhhcHBlbnMgYmVmb3JlCj4gaXQncyBwb3dlciBwYXJ0aXRpb24gaXMgZ3VhcmFu
-dGVlZCB0byBiZSBlbmFibGVkLgo+IAo+IEZpeCB0aGlzIGJ5IHNwbGl0dGluZyB1cCB0aGUgQVBJ
-IGludG8gYSByZXF1ZXN0L2ZyZWUgcGFpciBvZiBmdW5jdGlvbnMKPiB0aGF0IG1hbmFnZSB0aGUg
-cnVudGltZSBkZXBlbmRlbmN5IGJldHdlZW4gdGhlIERTSSBhbmQgdGhlIGNhbGlicmF0aW9uCj4g
-bW9kdWxlcyAobm8gcmVnaXN0ZXJzIGFyZSBhY2Nlc3NlZCkgYW5kIGEgc2V0IG9mIGVuYWJsZSwg
-Y2FsaWJyYXRlIGFuZAo+IGRpc2FibGUgZnVuY3Rpb25zIHRoYXQgcHJvZ3JhbSB0aGUgTUlQSSBj
-YWxpYnJhdGlvbiBsb2dpYyBhdCBwb2ludHMgaW4KPiB0aW1lIHdoZXJlIHRoZSBwb3dlciBwYXJ0
-aXRpb24gaXMgcmVhbGx5IGVuYWJsZWQuCj4gCj4gV2hpbGUgYXQgaXQsIG1ha2Ugc3VyZSB0aGF0
-IHRoZSBydW50aW1lIHBvd2VyIG1hbmFnZW1lbnQgYWxzbyB3b3JrcyBpbgo+IGdhbmdlZCBtb2Rl
-LCB3aGljaCBpcyBjdXJyZW50bHkgYWxzbyBicm9rZW4uCj4gCj4gUmVwb3J0ZWQtYnk6IEpvbmF0
-aGFuIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+Cj4gU2lnbmVkLW9mZi1ieTogVGhpZXJy
-eSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4KClRoaXMgcGF0Y2ggYWxvbmcgd2l0aCB0aGUg
-Zml4IGZyb20gVmluY2UgWzBdIGZpeGVzIHRoZSBoYW5nIGR1cmluZyBib290Cm9uIFRlZ3JhMTE0
-LiBTbyAuLi4KClRlc3RlZC1ieTogSm9uIEh1bnRlciA8am9uYXRoYW5oQG52aWRpYS5jb20+CgpD
-aGVlcnMKSm9uCgpbMF0gaHR0cDovL21hcmMuaW5mby8/bD1saW51eC1rZXJuZWwmbT0xNDQwMTcx
-MjI0MzAwMTYmdz0yCgotLSAKbnZwdWJsaWMKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMu
-ZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlz
-dGluZm8vZHJpLWRldmVsCg==
+From: Mirza Krak <mirza.krak@gmail.com>
+
+Hi.
+
+This is a follow up to my previous RFC to add support for Tegra GMI bus
+controller.
+
+I have tested this series on a Tegra30 using a Colibri T30 SOM on a custom
+carrier board which has multiple CAN controllers (SJA1000) connected to the
+GMI bus.
+
+I have rebased on top of latest tegra/for-next in V2. Also see individual
+patches for changes in V2.
+
+See below links for previous discussions.
+
+Comments on RFC:
+https://marc.info/?l=linux-clk&m=146893557629903&w=2
+https://marc.info/?l=linux-tegra&m=146893541829801&w=2
+https://marc.info/?l=linux-tegra&m=146893542429814&w=2
+
+Comments on V1:
+https://marc.info/?l=linux-arm-kernel&m=147051551821122&w=2
+https://marc.info/?l=linux-arm-kernel&m=147051553121150&w=2
+https://marc.info/?l=linux-arm-kernel&m=147194856600627&w=2
+https://marc.info/?l=linux-arm-kernel&m=147072742432211&w=2
+
+
+Mirza Krak (6):
+  clk: tegra: add TEGRA20_CLK_NOR to init table
+  clk: tegra: add TEGRA30_CLK_NOR to init table
+  dt/bindings: Add bindings for Tegra GMI controller
+  ARM: tegra: Add Tegra30 GMI support
+  ARM: tegra: Add Tegra20 GMI support
+  bus: Add support for Tegra Generic Memory Interface
+
+ .../devicetree/bindings/bus/nvidia,tegra20-gmi.txt | 132 ++++++++++++
+ arch/arm/boot/dts/tegra20.dtsi                     |  13 ++
+ arch/arm/boot/dts/tegra30.dtsi                     |  12 ++
+ drivers/bus/Kconfig                                |   8 +
+ drivers/bus/Makefile                               |   1 +
+ drivers/bus/tegra-gmi.c                            | 231 +++++++++++++++++++++
+ drivers/clk/tegra/clk-tegra20.c                    |   1 +
+ drivers/clk/tegra/clk-tegra30.c                    |   1 +
+ 8 files changed, 399 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
+ create mode 100644 drivers/bus/tegra-gmi.c
+
+--
+2.1.4
+
