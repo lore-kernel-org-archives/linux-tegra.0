@@ -1,65 +1,90 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: CPU clock frequency issues with T124/Jetson TK1 at boot time
-Date: Wed, 24 Aug 2016 15:47:38 +0300
-Message-ID: <e524de76-c894-2167-9fe7-216c46b8f761@kapsi.fi>
-References: <2041954940.418947.1472040961045.JavaMail.open-xchange@app10.ox.hosteurope.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH] ARM: tegra: Correct polarity for Tegra114 PMIC interrupt
+Date: Wed, 24 Aug 2016 15:14:38 +0200
+Message-ID: <20160824131438.4437-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <2041954940.418947.1472040961045.JavaMail.open-xchange-IsKSIZZT16tJ47kCBHk0XPazQN66w0Jx@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Josef <josef-TrqCv2wlXX9AfugRpC6u6w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 24.08.2016 15:16, Josef wrote:
-> Hi,
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Hi!
+The ARM GIC only supports interrupts with either level-high or
+rising-edge types for SPIs. The interrupt type for the Palmas PMIC used
+for Tegra114 boards is specified as level-low which is invalid for the
+GIC. This has gone undetected because until recently, failures to set
+the interrupt type when the interrupts are mapped via firmware (such as
+device-tree) have not been reported. Since commits 4b357daed698
+("genirq: Look-up trigger type if not specified by caller") and
+1e2a7d78499e ("irqdomain: Don't set type when mapping an IRQ"), failure
+to set the interrupt type will cause the requesting of the interrupt to
+fail and exposing incorrectly configured interrupts.
 
-Your log indicates you're running on kernel v3.18. Cpufreq for Tegra124 
-is only implemented starting from v4.3, so you'd need to upgrade.
+Please note that although the interrupt type was never being set for the
+Palmas PMIC, it was still working fine, because the default type setting
+for the interrupt, 'level-high', happen to match the correct type for
+the interrupt.
 
->
-> the CPU clock setup for the T124 on the Jetson K1 board seems to have some
-> problems while booting:
->
-> The clock-frequency parameter in the default device-tree config is missing:
-> [ 0.080472] /cpus/cpu@0 missing clock-frequency property
-> [ 0.085605] /cpus/cpu@1 missing clock-frequency property
-> [ 0.090963] /cpus/cpu@2 missing clock-frequency property
-> [ 0.096350] /cpus/cpu@3 missing clock-frequency property
->
-> But when you add it, the warning disappears, but the clock still seems not to be
-> set up correctly:
->
->   cpus {
->    cpu@0 {
->     clock-frequency = <1938000000>;
->    };
->    cpu@1 {
->     clock-frequency = <1938000000>;
->    }
->   ...
->
-> [ 7.035525] cpufreq: cpufreq_online: CPU0: Running at unlisted freq: 696000 KHz
-> [ 7.042895] cpufreq: cpufreq_online: CPU0: Unlisted initial frequency changed
-> to: 714000 KHz
->
-> For me this looks like it is using the frequency set up by the u-boot boot
-> loader. This might also explain why the kernel currently needs about 8 seconds
-> to boot which seems to be way too much for a Cortex-A15 device.
+Finally, it should be noted that the Palmas interrupt from the PMIC is
+actually 'level-low', however, this interrupt signal is inverted by the
+Tegra PMC and so the GIC actually sees a 'level-high' interrupt which is
+what should be specified in the device-tree interrupt specifier.
 
-Yes, this is normal. The device boots up with the CPUs on the PLLX clock 
-that runs at 696MHz. Later the cpufreq driver will switch to another 
-clock (which, btw, does not have 696 MHz as an operating point so you 
-will continue to see this message even on newer kernels.)
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Hi ARM-SoC maintainers,
 
->
-> https://storage.kernelci.org/lsk/lsk-v3.18-16.07-133-ge8aab86f8308/arm-tegra_defconfig/lab-baylibre-seattle/boot-tegra124-jetson-tk1.html
->
-> Thanks,
-> Josef
+this is a fix required for v4.8, or else the PMIC won't work on various
+Tegra114 boards.
 
-Cheers,
-Mikko.
+Thanks,
+Thierry
+
+ arch/arm/boot/dts/tegra114-dalmore.dts | 2 +-
+ arch/arm/boot/dts/tegra114-roth.dts    | 2 +-
+ arch/arm/boot/dts/tegra114-tn7.dts     | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/boot/dts/tegra114-dalmore.dts b/arch/arm/boot/dts/tegra114-dalmore.dts
+index 1dfc492cc004..1444fbd543e7 100644
+--- a/arch/arm/boot/dts/tegra114-dalmore.dts
++++ b/arch/arm/boot/dts/tegra114-dalmore.dts
+@@ -897,7 +897,7 @@
+ 		palmas: tps65913@58 {
+ 			compatible = "ti,palmas";
+ 			reg = <0x58>;
+-			interrupts = <0 86 IRQ_TYPE_LEVEL_LOW>;
++			interrupts = <0 86 IRQ_TYPE_LEVEL_HIGH>;
+ 
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+diff --git a/arch/arm/boot/dts/tegra114-roth.dts b/arch/arm/boot/dts/tegra114-roth.dts
+index 70cf40996c3f..966a7fc044af 100644
+--- a/arch/arm/boot/dts/tegra114-roth.dts
++++ b/arch/arm/boot/dts/tegra114-roth.dts
+@@ -802,7 +802,7 @@
+ 		palmas: pmic@58 {
+ 			compatible = "ti,palmas";
+ 			reg = <0x58>;
+-			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_LOW>;
++			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+ 
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+diff --git a/arch/arm/boot/dts/tegra114-tn7.dts b/arch/arm/boot/dts/tegra114-tn7.dts
+index 17dd14545862..a161fa1dfb61 100644
+--- a/arch/arm/boot/dts/tegra114-tn7.dts
++++ b/arch/arm/boot/dts/tegra114-tn7.dts
+@@ -63,7 +63,7 @@
+ 		palmas: pmic@58 {
+ 			compatible = "ti,palmas";
+ 			reg = <0x58>;
+-			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_LOW>;
++			interrupts = <GIC_SPI 86 IRQ_TYPE_LEVEL_HIGH>;
+ 
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+-- 
+2.9.0
