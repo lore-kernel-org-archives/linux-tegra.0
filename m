@@ -1,59 +1,73 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH v8 1/3] i2c: tegra: use readx_poll_timeout after
- config_load reg programmed
-Date: Thu, 25 Aug 2016 21:39:53 +0200
-Message-ID: <20160825193952.GC1614@katana>
-References: <1464356224-10339-1-git-send-email-smohammed@nvidia.com>
- <20160619172136.GE2933@tetsubishi>
- <6d21b4bd199844e3a359cc52823045db@bgmail102.nvidia.com>
+From: Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH 5/6] i2c: tegra: Add runtime power-management support
+Date: Thu, 25 Aug 2016 21:26:31 +0200
+Message-ID: <20160825192631.GA1614@katana>
+References: <1470910620-9898-1-git-send-email-jonathanh@nvidia.com>
+ <1470910620-9898-6-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="qjNfmADvan18RZcF"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="dDRMvlgZJXvWKvBx"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <6d21b4bd199844e3a359cc52823045db-7W72rfoJkVlxWE4FnwvcdlaTQe2KTcn/@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Shardar Mohammed <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1470910620-9898-6-git-send-email-jonathanh@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---qjNfmADvan18RZcF
+--dDRMvlgZJXvWKvBx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
 
-> > > +		err =3D readx_poll_timeout(readl, i2c_dev->base + reg_offset,
-> > > +					 val, val =3D=3D 0, 1000,
-> > > +					 I2C_CONFIG_LOAD_TIMEOUT);
-> >=20
-> > Any reason we can't use readl_poll_timeout() here?
-> [Shardar] Can be used, will change and push the new patchset.
+> @@ -407,32 +410,39 @@ static inline int tegra_i2c_clock_enable(struct tegra_i2c_dev *i2c_dev)
+>  			return ret;
+>  		}
+>  	}
+> +
+>  	ret = clk_enable(i2c_dev->div_clk);
+>  	if (ret < 0) {
+>  		dev_err(i2c_dev->dev,
+>  			"Enabling div clk failed, err %d\n", ret);
+>  		clk_disable(i2c_dev->fast_clk);
+> +		return ret;
+>  	}
+> -	return ret;
+> +
+> +	return 0;
 
-Still interested? Should be an easy change, but I am reluctant to fix it
-here with no testing.
+You could have left the original 'return' instead of the 2 new ones, but
+you decide.
+
+> -	if (tegra_i2c_flush_fifos(i2c_dev))
+> -		err = -ETIMEDOUT;
+> +	err = tegra_i2c_flush_fifos(i2c_dev);
+
+'err' is assigned but where is it checked?
+
+I'll apply patches 1-4 meanwhile.
 
 
---qjNfmADvan18RZcF
+--dDRMvlgZJXvWKvBx
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1
 
-iQIcBAEBAgAGBQJXv0mIAAoJEBQN5MwUoCm2HUAP/j0tNGDpEUD6yWcVIKR520Xd
-9+73JrDInfS1eoBHEydw7vxyu3lMnRrK7rLmC2YaG7z2r9h0ojtYCeNqrBkvUVgs
-LjPZ64Erl2YMoXmrZgzdWJE7O/mLmK7cmeC68NdUNsopjLOz/Jd/x482zc0lYXn7
-Fl16p/eEV3fDpXRmmytMJolLDcTuZPNco6iT6RFFrc4w+6gRkzf8j8jF/xzPTkCR
-ALtixNJtVmDIGpDfc57gcgyJxHuQLN1X1Ok5ElQOuO+xE5UDdbznfB4lTANRralJ
-nxOApS/p5Vz9EDRnTjlVGrUbrSOM7aB7u0qfjG5KEFocf/udIJqXDOVtA5RksiGN
-5G8GkgrnO51P5ah0AA2KQfr6yadBVH7t6czWwWBrkalRZFjGiQAgEBdeIL6s2I1e
-TlR6vqEL7Uk/QK+w3L2Hw4GUOB5wivsobYorUJy7dOfTNy2KNAO2L1hbOZuGYKK/
-WeLpzAPxmt60ljSlbxhXz07eC9MFmedhyOyQvlyNDy2pafWqr92L5punhGAeuXKe
-UXvd+8JFKZ3Ciib13AxDLGkMSoJ0EDUxf0lvjsZI+Fknvh8kN/RIPfmjPFIwYAiH
-Y+PaTnDLFCiRBwkLEJKTm2RXILsK5fajbQF79czRl3gZ2G5SNHIapdUgVSD/DsIx
-WDAUvmtdCHXzc3jeiszm
-=WCfr
+iQIcBAEBAgAGBQJXv0ZnAAoJEBQN5MwUoCm2xpgQAKKeLxboWQXkRbBfKQ5LGrnB
+Xki6vDfQTqe+POe34YmxPfj5wZ+e8kyqrfPvBK6Bq35feyc6jHt6NjF4QUVkIqBm
+NPEJTI32/Y8xg/P6Ft6/FWNQtZ/wD2v2EFTUxTE+t8ody8CzHFuQETFfkXLXpb3D
+eIzdyhRV8mxXBEUCl+sBqvb9aZcz5N9pmKCTmBWP4IFZqcV0ElJ2BE0vZg8KATIU
+cSex8/9sU+nor7Ela+OSHfHrX/OCP8UlhXM6VQFVr+qFBke8HHiR6ylNp9y3b1Ga
+bC6Cufz1SA3NRdacWuuaRY0b1aDGH4ILgXPhrMHuE1aTRmHAKHZlqjTaV+YMTLH8
+7Dq4FrtTQluN4iLRfl5e0/dgxxv5oVu0sam0jphC5CDxwggLgxrTxCIsBlGcipJw
+LMkSUhRGdrBMs/nwJfPnuAa0Y5BjkeGcTAHwaA68XT0JuQ1r4c6ek1rRdnB+r7AX
+prXdv/A95XArUsZq/G2tIfMsHu0zsAkNv/7i+m4c2QysrZqT2sXJmxkvLAlc8m/K
+L6JvVg/MoQmi4c7v3I7KZxjTFQlArq2FWzFFBhEWN6jc/0BG/94cU+Bn8WgrTyoQ
+pROk9VPFchxmOh/aV7BV+006C/YTK2TYPOPSERSiVUP5kCPwC6r6+mdosz9IuR09
+c1mGDHEtvqGMajH3J6W3
+=fkit
 -----END PGP SIGNATURE-----
 
---qjNfmADvan18RZcF--
+--dDRMvlgZJXvWKvBx--
