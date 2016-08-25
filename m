@@ -1,149 +1,118 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V2] dt: net: enhance DWC EQoS binding to support Tegra186
-Date: Wed, 24 Aug 2016 15:20:46 -0600
-Message-ID: <20160824212046.2416-1-swarren@wwwdotorg.org>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lars Persson <lars.persson-VrBV9hrLPhE@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Wolfram Sang <wsa-dev-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>
+Subject: [PATCH 00/44] usb: don't print on ENOMEM
+Date: Thu, 25 Aug 2016 19:38:52 +0200
+Message-ID: <20160825173947.26624-1-wsa-dev@sang-engineering.com>
+Return-path: <linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-usb-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-usb-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Wolfram Sang <wsa-dev-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>, accessrunner-general-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, legousb-devel-5NWGOfrQmneRv+LV9MX5uipxlwaOVQ5f@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linuxppc-dev-uLR06cmDAlY/bJ5BZ2RsiQ@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, usb-storage-ijkIwGHArpdIPJnuZ7Njw4oP9KaGy4wf@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Here is my next series to save memory by removing unneeded strings. It removes
+in the usb subsystem all unspecific error messages after calling malloc-based
+functions, i.e. (devm_)k[zcm]alloc. kmalloc prints enough information in that
+case. If the message was specific (e.g. "can't save CLEAR_TT_BUFFER state"), I
+left it. This series saves ~4.5KB of "out of memory" permutations in .text and
+.rodata. For modified lines, (x == NULL) was replaced with (!NULL) as well.
+This seems to be the dominant style in this subsystem and checkpatch recommends
+it as well (and I prefer it, too).
 
-The Synopsys DWC EQoS is a configurable IP block which supports multiple
-options for bus type, clocking and reset structure, and feature list.
-Extend the DT binding to define a "compatible value" for the configuration
-contained in NVIDIA's Tegra186 SoC, and define some new properties and
-list property entries required by that configuration.
+Wolfram Sang (44):
+  usb: atm: cxacru: don't print on ENOMEM
+  usb: atm: speedtch: don't print on ENOMEM
+  usb: atm: ueagle-atm: don't print on ENOMEM
+  usb: atm: usbatm: don't print on ENOMEM
+  usb: class: usbtmc: don't print on ENOMEM
+  usb: core: hcd: don't print on ENOMEM
+  usb: core: hub: don't print on ENOMEM
+  usb: core: message: don't print on ENOMEM
+  usb: core: urb: don't print on ENOMEM
+  usb: dwc2: gadget: don't print on ENOMEM
+  usb: gadget: udc: fsl_qe_udc: don't print on ENOMEM
+  usb: gadget: udc: goku_udc: don't print on ENOMEM
+  usb: gadget: udc: udc-xilinx: don't print on ENOMEM
+  usb: host: fhci-hcd: don't print on ENOMEM
+  usb: host: max3421-hcd: don't print on ENOMEM
+  usb: host: uhci-hcd: don't print on ENOMEM
+  usb: host: xhci-tegra: don't print on ENOMEM
+  usb: host: xhci: don't print on ENOMEM
+  usb: misc: adutux: don't print on ENOMEM
+  usb: misc: appledisplay: don't print on ENOMEM
+  usb: misc: cypress_cy7c63: don't print on ENOMEM
+  usb: misc: cytherm: don't print on ENOMEM
+  usb: misc: ftdi-elan: don't print on ENOMEM
+  usb: misc: idmouse: don't print on ENOMEM
+  usb: misc: iowarrior: don't print on ENOMEM
+  usb: misc: ldusb: don't print on ENOMEM
+  usb: misc: legousbtower: don't print on ENOMEM
+  usb: misc: lvstest: don't print on ENOMEM
+  usb: misc: trancevibrator: don't print on ENOMEM
+  usb: misc: usblcd: don't print on ENOMEM
+  usb: misc: usbsevseg: don't print on ENOMEM
+  usb: misc: uss720: don't print on ENOMEM
+  usb: misc: yurex: don't print on ENOMEM
+  usb: musb: am35x: don't print on ENOMEM
+  usb: musb: da8xx: don't print on ENOMEM
+  usb: renesas_usbhs: mod_gadget: don't print on ENOMEM
+  usb: renesas_usbhs: mod_host: don't print on ENOMEM
+  usb: renesas_usbhs: pipe: don't print on ENOMEM
+  usb: storage: alauda: don't print on ENOMEM
+  usb: storage: sddr09: don't print on ENOMEM
+  usb: usb-skeleton: don't print on ENOMEM
+  usb: wusbcore: crypto: don't print on ENOMEM
+  usb: wusbcore: security: don't print on ENOMEM
+  usb: wusbcore: wa-nep: don't print on ENOMEM
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
-v2:
-* Add an explicit compatible value for the Axis SoC's version of the EQOS
-  IP; this allows the driver to handle any SoC-specific integration quirks
-  that are required, rather than only knowing about the IP block in
-  isolation. This is good general DT practice. The existing value is still
-  documented to support existing DTs.
-* Reworked the list of clocks the binding requires:
-  - Combined "tx" and "phy_ref_clk"; for GMII/RGMII configurations, these
-    are the same thing.
-  - Added extra description to the "rx" and "tx" clocks, to make it clear
-    exactly which HW clock they represent.
-  - Made the new "tx" and "slave_bus" names more prominent than the
-    original "phy_ref_clk" and "apb_pclk". The new names are more generic
-    and should work for any enhanced version of the binding (e.g. to
-    support additional PHY types). New compatible values will hopefully
-    choose to require the new names.
-* Added a couple extra clocks to the list that may need to be supported in
-  future binding revisions.
-* Fixed a typo; "clocks" -> "resets".
----
- .../bindings/net/snps,dwc-qos-ethernet.txt         | 75 ++++++++++++++++++++--
- 1 file changed, 71 insertions(+), 4 deletions(-)
+ drivers/usb/atm/cxacru.c               |  4 +---
+ drivers/usb/atm/speedtch.c             |  1 -
+ drivers/usb/atm/ueagle-atm.c           |  9 ++-------
+ drivers/usb/atm/usbatm.c               |  7 +------
+ drivers/usb/class/usbtmc.c             |  4 +---
+ drivers/usb/core/hcd.c                 |  4 +---
+ drivers/usb/core/hub.c                 |  9 +++------
+ drivers/usb/core/message.c             |  5 +----
+ drivers/usb/core/urb.c                 |  4 +---
+ drivers/usb/dwc2/gadget.c              |  8 ++------
+ drivers/usb/gadget/udc/fsl_qe_udc.c    | 16 ++++------------
+ drivers/usb/gadget/udc/goku_udc.c      |  3 +--
+ drivers/usb/gadget/udc/udc-xilinx.c    |  4 +---
+ drivers/usb/host/fhci-hcd.c            |  4 +---
+ drivers/usb/host/max3421-hcd.c         |  8 ++------
+ drivers/usb/host/uhci-hcd.c            |  5 +----
+ drivers/usb/host/xhci-tegra.c          |  1 -
+ drivers/usb/host/xhci.c                |  4 +---
+ drivers/usb/misc/adutux.c              | 13 +++----------
+ drivers/usb/misc/appledisplay.c        |  3 ---
+ drivers/usb/misc/cypress_cy7c63.c      |  5 +----
+ drivers/usb/misc/cytherm.c             | 32 ++++++++------------------------
+ drivers/usb/misc/ftdi-elan.c           |  1 -
+ drivers/usb/misc/idmouse.c             |  1 -
+ drivers/usb/misc/iowarrior.c           | 20 ++++++--------------
+ drivers/usb/misc/ldusb.c               | 20 +++++---------------
+ drivers/usb/misc/legousbtower.c        | 16 ++++------------
+ drivers/usb/misc/lvstest.c             |  4 +---
+ drivers/usb/misc/trancevibrator.c      |  3 +--
+ drivers/usb/misc/usblcd.c              |  9 ++-------
+ drivers/usb/misc/usbsevseg.c           |  8 ++------
+ drivers/usb/misc/uss720.c              |  4 +---
+ drivers/usb/misc/yurex.c               |  8 ++------
+ drivers/usb/musb/am35x.c               |  4 +---
+ drivers/usb/musb/da8xx.c               |  4 +---
+ drivers/usb/renesas_usbhs/mod_gadget.c |  6 +-----
+ drivers/usb/renesas_usbhs/mod_host.c   | 10 ++--------
+ drivers/usb/renesas_usbhs/pipe.c       |  4 +---
+ drivers/usb/storage/alauda.c           | 11 +++--------
+ drivers/usb/storage/sddr09.c           | 14 ++++----------
+ drivers/usb/usb-skeleton.c             |  9 ++-------
+ drivers/usb/wusbcore/crypto.c          |  4 +---
+ drivers/usb/wusbcore/security.c        |  4 +---
+ drivers/usb/wusbcore/wa-nep.c          |  5 +----
+ 44 files changed, 78 insertions(+), 244 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/snps,dwc-qos-ethernet.txt b/Documentation/devicetree/bindings/net/snps,dwc-qos-ethernet.txt
-index 51f8d2eba8d8..1d028259824a 100644
---- a/Documentation/devicetree/bindings/net/snps,dwc-qos-ethernet.txt
-+++ b/Documentation/devicetree/bindings/net/snps,dwc-qos-ethernet.txt
-@@ -1,21 +1,87 @@
- * Synopsys DWC Ethernet QoS IP version 4.10 driver (GMAC)
- 
-+This binding supports the Synopsys Designware Ethernet QoS (Quality Of Service)
-+IP block. The IP supports multiple options for bus type, clocking and reset
-+structure, and feature list. Consequently, a number of properties and list
-+entries in properties are marked as optional, or only required in specific HW
-+configurations.
- 
- Required properties:
--- compatible: Should be "snps,dwc-qos-ethernet-4.10"
-+- compatible: One of:
-+  - "axis,artpec6-eqos", "snps,dwc-qos-ethernet-4.10"
-+    Represents the IP core when integrated into the Axis ARTPEC-6 SoC.
-+  - "nvidia,tegra186-eqos", "snps,dwc-qos-ethernet-4.10"
-+    Represents the IP core when integrated into the NVIDIA Tegra186 SoC.
-+  - "snps,dwc-qos-ethernet-4.10"
-+    This combination is deprecated. It should be treated as equivalent to
-+    "axis,artpec6-eqos", "snps,dwc-qos-ethernet-4.10". It is supported to be
-+    compatible with earlier revisions of this binding.
- - reg: Address and length of the register set for the device
--- clocks: Phandles to the reference clock and the bus clock
--- clock-names: Should be "phy_ref_clk" for the reference clock and "apb_pclk"
--  for the bus clock.
-+- clocks: Phandle and clock specifiers for each entry in clock-names, in the
-+  same order. See ../clock/clock-bindings.txt.
-+- clock-names: May contain any/all of the following depending on the IP
-+  configuration, in any order:
-+  - "tx"
-+    (Alternate name "phy_ref_clk"; only one alternate must appear.)
-+    The EQOS transmit path clock. The HW signal name is clk_tx_i.
-+    In some configurations (e.g. GMII/RGMII), this clock also drives the PHY TX
-+    path. In other configurations, other clocks (such as tx_125, rmii) may
-+    drive the PHY TX path.
-+  - "rx"
-+    The EQOS receive path clock. The HW signal name is clk_rx_i.
-+    In some configurations (e.g. GMII/RGMII), this clock also drives the PHY RX
-+    path. In other configurations, other clocks (such as rx_125, pmarx_0,
-+    pmarx_1, rmii) may drive the PHY RX path.
-+  - "slave_bus"
-+    (Alternate name "apb_pclk"; only one alternate must appear.)
-+    The CPU/slave-bus (CSR) interface clock. Despite the name, this applies to
-+    any bus type; APB, AHB, AXI, etc. The HW signal name is hclk_i (AHB) or
-+    clk_csr_i (other buses).
-+  - "master_bus"
-+    The master bus interface clock. Only required in configurations that use a
-+    separate clock for the master and slave bus interfaces. The HW signal name
-+    is hclk_i (AHB) or aclk_i (AXI).
-+  - "ptp_ref"
-+    The PTP reference clock. The HW signal name is clk_ptp_ref_i.
-+
-+  Note: Support for additional IP configurations may require adding the
-+  following clocks to this list in the future: clk_rx_125_i, clk_tx_125_i,
-+  clk_pmarx_0_i, clk_pmarx1_i, clk_rmii_i, clk_revmii_rx_i, clk_revmii_tx_i.
-+
-+  The following compatible values require the following set of clocks:
-+  - "nvidia,tegra186-eqos", "snps,dwc-qos-ethernet-4.10":
-+    - "slave_bus"
-+    - "master_bus"
-+    - "rx"
-+    - "tx"
-+    - "ptp_ref"
-+  - "axis,artpec6-eqos", "snps,dwc-qos-ethernet-4.10":
-+    - "phy_ref_clk"
-+    - "apb_clk"
- - interrupt-parent: Should be the phandle for the interrupt controller
-   that services interrupts for this device
- - interrupts: Should contain the core's combined interrupt signal
- - phy-mode: See ethernet.txt file in the same directory
-+- resets: Phandle and reset specifiers for each entry in reset-names, in the
-+  same order. See ../reset/reset.txt.
-+- reset-names: May contain any/all of the following depending on the IP
-+  configuration, in any order:
-+  - "eqos". The reset to the entire module. The HW signal name is hreset_n
-+    (AHB) or aresetn_i (AXI).
-+
-+  The following compatible values require the following set of resets:
-+  (the reset properties may be omitted if empty)
-+  - "nvidia,tegra186-eqos", "snps,dwc-qos-ethernet-4.10":
-+    - "eqos".
-+  - "axis,artpec6-eqos", "snps,dwc-qos-ethernet-4.10":
-+    - None.
- 
- Optional properties:
- - dma-coherent: Present if dma operations are coherent
- - mac-address: See ethernet.txt in the same directory
- - local-mac-address: See ethernet.txt in the same directory
-+- phy-reset-gpios: Phandle and specifier for any GPIO used to reset the PHY.
-+  See ../gpio/gpio.txt.
- - snps,en-lpi: If present it enables use of the AXI low-power interface
- - snps,write-requests: Number of write requests that the AXI port can issue.
-   It depends on the SoC configuration.
-@@ -52,6 +118,7 @@ ethernet2@40010000 {
- 	reg = <0x40010000 0x4000>;
- 	phy-handle = <&phy2>;
- 	phy-mode = "gmii";
-+	phy-reset-gpios = <&gpioctlr 43 GPIO_ACTIVE_LOW>;
- 
- 	snps,en-tx-lpi-clockgating;
- 	snps,en-lpi;
 -- 
 2.9.3
+
+--
+To unsubscribe from this list: send the line "unsubscribe linux-usb" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
