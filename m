@@ -1,36 +1,55 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 0/9] Some Tegra I2C Updates
-Date: Fri, 26 Aug 2016 14:08:56 +0100
-Message-ID: <1472216945-11818-1-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH V2 1/9] i2c: tegra: Fix lines over 80 characters
+Date: Fri, 26 Aug 2016 14:08:57 +0100
+Message-ID: <1472216945-11818-2-git-send-email-jonathanh@nvidia.com>
+References: <1472216945-11818-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1472216945-11818-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Add runtime-pm and pinctrl support for Tegra I2C driver.
+Checkpatch warns about some lines over 80 characters in the Tegra I2C
+driver and so fix these.
 
-The first 6 patches are trivial clean-up/simplification changes.
+While we are at it, prefix the second instance of "STOP condition" in
+the comment with a "the".
 
-Changes since V1:
-- Fixed cppcheck warning reported by Wolfram
-- Added 3 more clean-up patches to fix some checkpatch issues
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+---
+ drivers/i2c/busses/i2c-tegra.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Jon Hunter (9):
-  i2c: tegra: Fix lines over 80 characters
-  i2c: tegra: Use BIT macro
-  i2c: tegra: Fix missing blank lines after declarations
-  i2c: tegra: Add missing new line characters
-  i2c: tegra: Remove non device-tree support
-  i2c: tegra: Use device name for adapter name
-  i2c: tegra: Simplify I2C resume
-  i2c: tegra: Add runtime power-management support
-  i2c: tegra: Add pinctrl support
-
- drivers/i2c/busses/i2c-tegra.c | 193 ++++++++++++++++++++++++-----------------
- 1 file changed, 114 insertions(+), 79 deletions(-)
-
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index d9979da11485..b90bc326907d 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -193,7 +193,8 @@ struct tegra_i2c_dev {
+ 	bool is_multimaster_mode;
+ };
+ 
+-static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val, unsigned long reg)
++static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
++		       unsigned long reg)
+ {
+ 	writel(val, i2c_dev->base + reg);
+ }
+@@ -643,9 +644,10 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+ 		return 0;
+ 
+ 	/*
+-	 * NACK interrupt is generated before the I2C controller generates the
+-	 * STOP condition on the bus. So wait for 2 clock periods before resetting
+-	 * the controller so that STOP condition has been delivered properly.
++	 * NACK interrupt is generated before the I2C controller generates
++	 * the STOP condition on the bus. So wait for 2 clock periods
++	 * before resetting the controller so that the STOP condition has
++	 * been delivered properly.
+ 	 */
+ 	if (i2c_dev->msg_err == I2C_ERR_NO_ACK)
+ 		udelay(DIV_ROUND_UP(2 * 1000000, i2c_dev->bus_clk_rate));
 -- 
 2.1.4
