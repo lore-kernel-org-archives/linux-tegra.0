@@ -1,61 +1,39 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH v8 1/3] i2c: tegra: use readx_poll_timeout after
- config_load reg programmed
-Date: Fri, 26 Aug 2016 17:53:54 +0200
-Message-ID: <20160826155354.GC1608@katana>
-References: <1464356224-10339-1-git-send-email-smohammed@nvidia.com>
- <20160619172136.GE2933@tetsubishi>
- <6d21b4bd199844e3a359cc52823045db@bgmail102.nvidia.com>
- <20160825193952.GC1614@katana>
- <362fc8af7f8d411c8af36b34c6165c1b@bgmail102.nvidia.com>
+From: Stephen Warren <swarren@wwwdotorg.org>
+Subject: Re: [PATCH V2 9/9] i2c: tegra: Add pinctrl support
+Date: Fri, 26 Aug 2016 09:55:32 -0600
+Message-ID: <75609713-af41-b4a4-226e-a5cb48ceab4e@wwwdotorg.org>
+References: <1472216945-11818-1-git-send-email-jonathanh@nvidia.com>
+ <1472216945-11818-10-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="9Ek0hoCL9XbhcSqy"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <362fc8af7f8d411c8af36b34c6165c1b-7W72rfoJkVlxWE4FnwvcdlaTQe2KTcn/@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Shardar Mohammed <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1472216945-11818-10-git-send-email-jonathanh@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 08/26/2016 07:09 AM, Jon Hunter wrote:
+> On Tegra124/132 the pins for I2C6 are shared with the Display Port AUX
+> (DPAUX) channel and on Tegra210 the pins for I2C4 and I2C6 are shared
+> with DPAUX1 and DPAUX0, respectively. The multiplexing of the pins is
+> handled by a register in the DPAUX and so the Tegra DPAUX driver has
+> been updated to register a pinctrl device for managing these pins.
+>
+> The pins for these particular I2C devices are bound to the I2C device
+> prior to probing. However, these I2C devices are in a different power
+> partition to the DPAUX devices that own the pins. Hence, it is desirable
+> to place the pins in the 'idle' state and allow the DPAUX power
+> partition to switch off, when these I2C devices is not in use.
+> Therefore, add calls to place the I2C pins in the 'default' and 'idle'
+> states when the I2C device is runtime resumed and suspended,
+> respectively.
+>
+> Please note that the pinctrl functions that set the state of the pins
+> check to see if the devices has pins associated and will return zero
+> if they do not. Therefore, it is safe to call these pinctrl functions
+> even for I2C devices that do not have any pins associated.
 
---9Ek0hoCL9XbhcSqy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-> > Still interested? Should be an easy change, but I am reluctant to fix it here
-> > with no testing.
-> [Shardar] Will push the change by tomorrow.
-
-Thanks. If possibe, could you rebase it on top of this series?
-
-[PATCH V2 0/9] Some Tegra I2C Updates
-
-Or is it easier to rebase Jon's series on top of yours?
-
-CCing Jon, too...
-
-
---9Ek0hoCL9XbhcSqy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iQIcBAEBAgAGBQJXwGYSAAoJEBQN5MwUoCm20tsP/1v8bZIva3GhZxDGYnCKv4zZ
-RP8eQBF1PLhfRnUYbP1bokmy1aDG974hK8qzm9HHqbxpWf57NY2l0mHE6+tb2mIX
-N430WZqkd3rIKNlJ51cr6k9GcPsH2cfX1GI6rTR6b8K2UDXVZGXX9lyHqaYeS/xr
-Wen4Pbb6k02kf1DDIQO7LIgm0JTGHMgVrXYgkbVm8o3FXjLRVOJFCgvPs8KOFBOd
-0tP1ZS2f7TUhvDfTQrYK1YqlmlV58+7LYad4RsckSX4Y5EhycUR+dNIRHC/YiD3v
-TJ1zaDHhojVdwj3CQAeQqUuvGAmALVSQUefIuz8/gTfmqZbxtO0mQY+3d92yv3pz
-orWGW9NjtlbuMynzpiAu3xuVR88oc8zkTAyFfb2HU8F7dakkGGJXHh1uREfgc92e
-1ZfcdGfXvNVy9DUgxEC5vir2hV0+eEMqiQb9LrNMmO+6nSlRHAFAFLeE+vzeRtFm
-05Yle+ZtCruy6W2VW11i8aSZ3qehZvV4yqftS6uLJqKu3ighm+3cN0Rp1eHkba2x
-9K9mZ2WZJyI+hQACuYUHyC1SY57wPVmzTlT7m39gJcAFH2HJQqiY9fsAGqp/krnn
-Ue5sRpO9G7Ue92jaNHwYjctlKiaPcLpLKMkABNAbVoyVy5yW8q7CeEGj2ke+JrfH
-Fe8f0WZcLDg+ud0cdpyN
-=z7JP
------END PGP SIGNATURE-----
-
---9Ek0hoCL9XbhcSqy--
+I think this should be handled by drivers/i2c/muxes/i2c-mux-pinctrl.c 
+instead?
