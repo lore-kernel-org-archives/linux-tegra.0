@@ -1,41 +1,56 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH V2 0/9] Some Tegra I2C Updates
-Date: Fri, 26 Aug 2016 17:41:45 +0100
-Message-ID: <98812229-1539-1189-e4f2-8c558990c7ac@nvidia.com>
+Subject: Re: [PATCH V2 9/9] i2c: tegra: Add pinctrl support
+Date: Fri, 26 Aug 2016 17:38:48 +0100
+Message-ID: <4a650548-22f7-1841-d9a6-b6cd637ed4bd@nvidia.com>
 References: <1472216945-11818-1-git-send-email-jonathanh@nvidia.com>
- <20160826155628.GD1608@katana>
+ <1472216945-11818-10-git-send-email-jonathanh@nvidia.com>
+ <75609713-af41-b4a4-226e-a5cb48ceab4e@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <20160826155628.GD1608@katana>
+In-Reply-To: <75609713-af41-b4a4-226e-a5cb48ceab4e@wwwdotorg.org>
 Sender: linux-i2c-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Stephen Warren <swarren@wwwdotorg.org>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 26/08/16 16:56, Wolfram Sang wrote:
-> * PGP Signed by an unknown key
-> 
-> On Fri, Aug 26, 2016 at 02:08:56PM +0100, Jon Hunter wrote:
->> Add runtime-pm and pinctrl support for Tegra I2C driver.
+On 26/08/16 16:55, Stephen Warren wrote:
+> On 08/26/2016 07:09 AM, Jon Hunter wrote:
+>> On Tegra124/132 the pins for I2C6 are shared with the Display Port AUX
+>> (DPAUX) channel and on Tegra210 the pins for I2C4 and I2C6 are shared
+>> with DPAUX1 and DPAUX0, respectively. The multiplexing of the pins is
+>> handled by a register in the DPAUX and so the Tegra DPAUX driver has
+>> been updated to register a pinctrl device for managing these pins.
 >>
->> The first 6 patches are trivial clean-up/simplification changes.
+>> The pins for these particular I2C devices are bound to the I2C device
+>> prior to probing. However, these I2C devices are in a different power
+>> partition to the DPAUX devices that own the pins. Hence, it is desirable
+>> to place the pins in the 'idle' state and allow the DPAUX power
+>> partition to switch off, when these I2C devices is not in use.
+>> Therefore, add calls to place the I2C pins in the 'default' and 'idle'
+>> states when the I2C device is runtime resumed and suspended,
+>> respectively.
 >>
->> Changes since V1:
->> - Fixed cppcheck warning reported by Wolfram
->> - Added 3 more clean-up patches to fix some checkpatch issues
+>> Please note that the pinctrl functions that set the state of the pins
+>> check to see if the devices has pins associated and will return zero
+>> if they do not. Therefore, it is safe to call these pinctrl functions
+>> even for I2C devices that do not have any pins associated.
 > 
-> Thanks looks good. Now we only need to find out which one to apply
-> first, this one or "[v8,1/3] i2c: tegra: use readx_poll_timeout after
-> config_load reg programmed" and following. I cced you on the other mail.
+> I think this should be handled by drivers/i2c/muxes/i2c-mux-pinctrl.c
+> instead?
 
-Yes I had not bothered basing mine on top as it seem to be stagnant.
-However, if Shardar updates his series I am happy to rebase. I will be
-out for a week and so I will pick this up when I get back.
+I remember having a look at i2c-mux some time back, but we did not have
+requirement to share the pins dynamically at runtime between the DPAUX
+and I2C devices.
 
-Cheers!
+The pins are just configured at probe time for either the DPAUX or I2C
+device and then with this change when we are not active we can power
+down the pins. However, the pins are always bound to either the DPAUX or
+I2C.
+
+Cheers
 Jon
 
 -- 
