@@ -1,42 +1,64 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 00/10] PM / Domains: Add support for removing PM domains
-Date: Fri, 26 Aug 2016 14:12:43 +0100
-Message-ID: <fd3ea080-2ec5-e22d-b0cc-8cdc4155af3c@nvidia.com>
-References: <1471340976-5379-1-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [PATCH V2 4/9] i2c: tegra: Add missing new line characters
+Date: Fri, 26 Aug 2016 14:09:00 +0100
+Message-ID: <1472216945-11818-5-git-send-email-jonathanh@nvidia.com>
+References: <1472216945-11818-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1471340976-5379-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alexander Aring <alex.aring-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1472216945-11818-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Ulf,
+Add missing new line characters for the various error messages.
 
-On 16/08/16 10:49, Jon Hunter wrote:
-> In order to safely remove PM domains there are a few changes that need to be
-> made to ensure that no one is holding an external reference to a PM domain
-> after it has been removed. One solution, implemented here, solves this by
-> eliminating external references to PM domain.
-> 
-> This is a follow-up to the initial RFC I sent out [0].
-> 
-> Changes from initial RFC:
-> - Renamed functions made static per Ulf's feedback.
-> - Added patch to clean-up provider/xlate APIs per Ulf's feedback
-> - Re-worked and simplified the association between PM domains and PM
->   domain providers. Dropped the 'provider_data' variable from the
->   generic_pm_domain structure in favour of using the fwnode_handle.
-> - Split patch for removing PM domains into multiple patches per Ulf's
->   feedback.
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
+---
+ drivers/i2c/busses/i2c-tegra.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Let me know if you have any feedback on this. Please note I will be out
-next week.
-
-Cheers
-Jon
-
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index 7a7f899936a3..7f31a103c04a 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -833,7 +833,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 
+ 	div_clk = devm_clk_get(&pdev->dev, "div-clk");
+ 	if (IS_ERR(div_clk)) {
+-		dev_err(&pdev->dev, "missing controller clock");
++		dev_err(&pdev->dev, "missing controller clock\n");
+ 		return PTR_ERR(div_clk);
+ 	}
+ 
+@@ -851,7 +851,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 
+ 	i2c_dev->rst = devm_reset_control_get(&pdev->dev, "i2c");
+ 	if (IS_ERR(i2c_dev->rst)) {
+-		dev_err(&pdev->dev, "missing controller reset");
++		dev_err(&pdev->dev, "missing controller reset\n");
+ 		return PTR_ERR(i2c_dev->rst);
+ 	}
+ 
+@@ -871,7 +871,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 	if (!i2c_dev->hw->has_single_clk_source) {
+ 		fast_clk = devm_clk_get(&pdev->dev, "fast-clk");
+ 		if (IS_ERR(fast_clk)) {
+-			dev_err(&pdev->dev, "missing fast clock");
++			dev_err(&pdev->dev, "missing fast clock\n");
+ 			return PTR_ERR(fast_clk);
+ 		}
+ 		i2c_dev->fast_clk = fast_clk;
+@@ -919,7 +919,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+ 
+ 	ret = tegra_i2c_init(i2c_dev);
+ 	if (ret) {
+-		dev_err(&pdev->dev, "Failed to initialize i2c controller");
++		dev_err(&pdev->dev, "Failed to initialize i2c controller\n");
+ 		goto disable_div_clk;
+ 	}
+ 
 -- 
-nvpublic
+2.1.4
