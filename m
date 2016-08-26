@@ -1,209 +1,61 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH V2 8/9] i2c: tegra: Add runtime power-management support
-Date: Fri, 26 Aug 2016 14:09:04 +0100
-Message-ID: <1472216945-11818-9-git-send-email-jonathanh@nvidia.com>
-References: <1472216945-11818-1-git-send-email-jonathanh@nvidia.com>
+From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Subject: Re: [PATCH v8 1/3] i2c: tegra: use readx_poll_timeout after
+ config_load reg programmed
+Date: Fri, 26 Aug 2016 17:53:54 +0200
+Message-ID: <20160826155354.GC1608@katana>
+References: <1464356224-10339-1-git-send-email-smohammed@nvidia.com>
+ <20160619172136.GE2933@tetsubishi>
+ <6d21b4bd199844e3a359cc52823045db@bgmail102.nvidia.com>
+ <20160825193952.GC1614@katana>
+ <362fc8af7f8d411c8af36b34c6165c1b@bgmail102.nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1472216945-11818-1-git-send-email-jonathanh@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="9Ek0hoCL9XbhcSqy"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <362fc8af7f8d411c8af36b34c6165c1b-7W72rfoJkVlxWE4FnwvcdlaTQe2KTcn/@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Shardar Mohammed <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Update the Tegra I2C driver to use runtime PM and move the code in the
-tegra_i2c_clock_enable/disable() functions to the PM runtime resume and
-suspend callbacks, respectively.
 
-Note that given that CONFIG_PM is not mandatory for Tegra, if CONFIG_PM
-is not enabled and so runtime PM is not enabled, ensure that the I2C
-clocks are turned on during probe and kept on by calling the resume
-callback directly.
+--9Ek0hoCL9XbhcSqy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-In the function tegra_i2c_init(), the variable 'err' does not need to be
-initialised to zero in tegra_i2c_init() because it is initialised when
-pm_runtime_get_sync() is called. Furthermore, to ensure we only return 0
-from tegra_i2c_init(), it is necessary to re-initialise 'err' to 0 after
-a successful call to pm_runtime_get_sync() because it can return a
-positive value on success. However, alternatively re-initialise 'err' by
-using the return value of the function tegra_i2c_flush_fifos() because
-it can only be 0 or -ETIMEDOUT.
+> > Still interested? Should be an easy change, but I am reluctant to fix it here
+> > with no testing.
+> [Shardar] Will push the change by tomorrow.
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
----
- drivers/i2c/busses/i2c-tegra.c | 60 ++++++++++++++++++++++++++++++++----------
- 1 file changed, 46 insertions(+), 14 deletions(-)
+Thanks. If possibe, could you rebase it on top of this series?
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 3c27012fa96c..05e34dc29d5a 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -28,6 +28,7 @@
- #include <linux/of_device.h>
- #include <linux/module.h>
- #include <linux/reset.h>
-+#include <linux/pm_runtime.h>
- 
- #include <asm/unaligned.h>
- 
-@@ -401,8 +402,9 @@ static void tegra_dvc_init(struct tegra_i2c_dev *i2c_dev)
- 	dvc_writel(i2c_dev, val, DVC_CTRL_REG1);
- }
- 
--static inline int tegra_i2c_clock_enable(struct tegra_i2c_dev *i2c_dev)
-+static int tegra_i2c_runtime_resume(struct device *dev)
- {
-+	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
- 	int ret;
- 
- 	if (!i2c_dev->hw->has_single_clk_source) {
-@@ -413,32 +415,39 @@ static inline int tegra_i2c_clock_enable(struct tegra_i2c_dev *i2c_dev)
- 			return ret;
- 		}
- 	}
-+
- 	ret = clk_enable(i2c_dev->div_clk);
- 	if (ret < 0) {
- 		dev_err(i2c_dev->dev,
- 			"Enabling div clk failed, err %d\n", ret);
- 		clk_disable(i2c_dev->fast_clk);
-+		return ret;
- 	}
--	return ret;
-+
-+	return 0;
- }
- 
--static inline void tegra_i2c_clock_disable(struct tegra_i2c_dev *i2c_dev)
-+static int tegra_i2c_runtime_suspend(struct device *dev)
- {
-+	struct tegra_i2c_dev *i2c_dev = dev_get_drvdata(dev);
-+
- 	clk_disable(i2c_dev->div_clk);
- 	if (!i2c_dev->hw->has_single_clk_source)
- 		clk_disable(i2c_dev->fast_clk);
-+
-+	return 0;
- }
- 
- static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- {
- 	u32 val;
--	int err = 0;
-+	int err;
- 	u32 clk_divisor;
- 	unsigned long timeout = jiffies + HZ;
- 
--	err = tegra_i2c_clock_enable(i2c_dev);
-+	err = pm_runtime_get_sync(i2c_dev->dev);
- 	if (err < 0) {
--		dev_err(i2c_dev->dev, "Clock enable failed %d\n", err);
-+		dev_err(i2c_dev->dev, "runtime resume failed %d\n", err);
- 		return err;
- 	}
- 
-@@ -477,8 +486,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 		0 << I2C_FIFO_CONTROL_RX_TRIG_SHIFT;
- 	i2c_writel(i2c_dev, val, I2C_FIFO_CONTROL);
- 
--	if (tegra_i2c_flush_fifos(i2c_dev))
--		err = -ETIMEDOUT;
-+	err = tegra_i2c_flush_fifos(i2c_dev);
- 
- 	if (i2c_dev->is_multimaster_mode && i2c_dev->hw->has_slcg_override_reg)
- 		i2c_writel(i2c_dev, I2C_MST_CORE_CLKEN_OVR, I2C_CLKEN_OVERRIDE);
-@@ -502,7 +510,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 	}
- 
- err:
--	tegra_i2c_clock_disable(i2c_dev);
-+	pm_runtime_put(i2c_dev->dev);
- 	return err;
- }
- 
-@@ -677,9 +685,9 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
- 	if (i2c_dev->is_suspended)
- 		return -EBUSY;
- 
--	ret = tegra_i2c_clock_enable(i2c_dev);
-+	ret = pm_runtime_get_sync(i2c_dev->dev);
- 	if (ret < 0) {
--		dev_err(i2c_dev->dev, "Clock enable failed %d\n", ret);
-+		dev_err(i2c_dev->dev, "runtime resume failed %d\n", ret);
- 		return ret;
- 	}
- 
-@@ -696,7 +704,9 @@ static int tegra_i2c_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[],
- 		if (ret)
- 			break;
- 	}
--	tegra_i2c_clock_disable(i2c_dev);
-+
-+	pm_runtime_put(i2c_dev->dev);
-+
- 	return ret ?: i;
- }
- 
-@@ -902,12 +912,21 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 		goto unprepare_fast_clk;
- 	}
- 
-+	pm_runtime_enable(&pdev->dev);
-+	if (!pm_runtime_enabled(&pdev->dev)) {
-+		ret = tegra_i2c_runtime_resume(&pdev->dev);
-+		if (ret < 0) {
-+			dev_err(&pdev->dev, "runtime resume failed\n");
-+			goto unprepare_div_clk;
-+		}
-+	}
-+
- 	if (i2c_dev->is_multimaster_mode) {
- 		ret = clk_enable(i2c_dev->div_clk);
- 		if (ret < 0) {
- 			dev_err(i2c_dev->dev, "div_clk enable failed %d\n",
- 				ret);
--			goto unprepare_div_clk;
-+			goto disable_rpm;
- 		}
- 	}
- 
-@@ -943,6 +962,11 @@ disable_div_clk:
- 	if (i2c_dev->is_multimaster_mode)
- 		clk_disable(i2c_dev->div_clk);
- 
-+disable_rpm:
-+	pm_runtime_disable(&pdev->dev);
-+	if (!pm_runtime_status_suspended(&pdev->dev))
-+		tegra_i2c_runtime_suspend(&pdev->dev);
-+
- unprepare_div_clk:
- 	clk_unprepare(i2c_dev->div_clk);
- 
-@@ -962,6 +986,10 @@ static int tegra_i2c_remove(struct platform_device *pdev)
- 	if (i2c_dev->is_multimaster_mode)
- 		clk_disable(i2c_dev->div_clk);
- 
-+	pm_runtime_disable(&pdev->dev);
-+	if (!pm_runtime_status_suspended(&pdev->dev))
-+		tegra_i2c_runtime_suspend(&pdev->dev);
-+
- 	clk_unprepare(i2c_dev->div_clk);
- 	if (!i2c_dev->hw->has_single_clk_source)
- 		clk_unprepare(i2c_dev->fast_clk);
-@@ -997,7 +1025,11 @@ static int tegra_i2c_resume(struct device *dev)
- 	return ret;
- }
- 
--static SIMPLE_DEV_PM_OPS(tegra_i2c_pm, tegra_i2c_suspend, tegra_i2c_resume);
-+static const struct dev_pm_ops tegra_i2c_pm = {
-+	SET_RUNTIME_PM_OPS(tegra_i2c_runtime_suspend, tegra_i2c_runtime_resume,
-+			   NULL)
-+	SET_SYSTEM_SLEEP_PM_OPS(tegra_i2c_suspend, tegra_i2c_resume)
-+};
- #define TEGRA_I2C_PM	(&tegra_i2c_pm)
- #else
- #define TEGRA_I2C_PM	NULL
--- 
-2.1.4
+[PATCH V2 0/9] Some Tegra I2C Updates
+
+Or is it easier to rebase Jon's series on top of yours?
+
+CCing Jon, too...
+
+
+--9Ek0hoCL9XbhcSqy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iQIcBAEBAgAGBQJXwGYSAAoJEBQN5MwUoCm20tsP/1v8bZIva3GhZxDGYnCKv4zZ
+RP8eQBF1PLhfRnUYbP1bokmy1aDG974hK8qzm9HHqbxpWf57NY2l0mHE6+tb2mIX
+N430WZqkd3rIKNlJ51cr6k9GcPsH2cfX1GI6rTR6b8K2UDXVZGXX9lyHqaYeS/xr
+Wen4Pbb6k02kf1DDIQO7LIgm0JTGHMgVrXYgkbVm8o3FXjLRVOJFCgvPs8KOFBOd
+0tP1ZS2f7TUhvDfTQrYK1YqlmlV58+7LYad4RsckSX4Y5EhycUR+dNIRHC/YiD3v
+TJ1zaDHhojVdwj3CQAeQqUuvGAmALVSQUefIuz8/gTfmqZbxtO0mQY+3d92yv3pz
+orWGW9NjtlbuMynzpiAu3xuVR88oc8zkTAyFfb2HU8F7dakkGGJXHh1uREfgc92e
+1ZfcdGfXvNVy9DUgxEC5vir2hV0+eEMqiQb9LrNMmO+6nSlRHAFAFLeE+vzeRtFm
+05Yle+ZtCruy6W2VW11i8aSZ3qehZvV4yqftS6uLJqKu3ighm+3cN0Rp1eHkba2x
+9K9mZ2WZJyI+hQACuYUHyC1SY57wPVmzTlT7m39gJcAFH2HJQqiY9fsAGqp/krnn
+Ue5sRpO9G7Ue92jaNHwYjctlKiaPcLpLKMkABNAbVoyVy5yW8q7CeEGj2ke+JrfH
+Fe8f0WZcLDg+ud0cdpyN
+=z7JP
+-----END PGP SIGNATURE-----
+
+--9Ek0hoCL9XbhcSqy--
