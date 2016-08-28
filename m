@@ -1,54 +1,47 @@
-From: Paul Kocialkowski <contact@paulk.fr>
-Subject: [PATCH 4/4] ARM: tegra: nyan-blaze: Include compatible revisions for
- proper detection
-Date: Sun, 28 Aug 2016 19:32:46 +0200
-Message-ID: <20160828173246.32621-4-contact@paulk.fr>
-References: <20160828173246.32621-1-contact@paulk.fr>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20160828173246.32621-1-contact@paulk.fr>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Paul Kocialkowski <contact@paulk.fr>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
+From: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+Subject: [PATCH 2/2] power: bq24735-charger: Assume not charging when charger is missing
+Date: Sun, 28 Aug 2016 19:34:46 +0200
+Message-ID: <20160828173446.32728-2-contact@paulk.fr>
+References: <20160828173446.32728-1-contact@paulk.fr>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160828173446.32728-1-contact-W9ppeneeCTY@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Depthcharge (the payload used with cros devices) will attempt to detect
-boards using their revision. This includes all the known revisions for
-the nyan-blaze board so that the dtb can be selected preferably.
+When the charger is missing (disconnected), it is safe to assume that
+the charger chip is no charging.
 
-Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
+This is especially relevant when a status GPIO is present and the
+charger is getting disconnected. bq24735_charger_is_charging will be
+triggered due to the interrupt then, it will attempt to read whether it
+is charging through i2c, which will fail as the charger is disconnected.
+
+This also fixes that specific issue.
+
+Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
 ---
- arch/arm/boot/dts/tegra124-nyan-blaze.dts | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/power/bq24735-charger.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/tegra124-nyan-blaze.dts b/arch/arm/boot/dts/tegra124-nyan-blaze.dts
-index c9582361..aca0828 100644
---- a/arch/arm/boot/dts/tegra124-nyan-blaze.dts
-+++ b/arch/arm/boot/dts/tegra124-nyan-blaze.dts
-@@ -6,7 +6,13 @@
+diff --git a/drivers/power/bq24735-charger.c b/drivers/power/bq24735-charger.c
+index 361a047..0b5b247 100644
+--- a/drivers/power/bq24735-charger.c
++++ b/drivers/power/bq24735-charger.c
+@@ -201,8 +201,12 @@ static bool bq24735_charger_is_present(struct bq24735 *charger)
  
- / {
- 	model = "HP Chromebook 14";
--	compatible = "google,nyan-blaze", "google,nyan", "nvidia,tegra124";
-+	compatible = "google,nyan-blaze-rev10", "google,nyan-blaze-rev9",
-+			"google,nyan-blaze-rev8", "google,nyan-blaze-rev7",
-+			"google,nyan-blaze-rev6", "google,nyan-blaze-rev5",
-+			"google,nyan-blaze-rev4", "google,nyan-blaze-rev3",
-+			"google,nyan-blaze-rev2", "google,nyan-blaze-rev1",
-+			"google,nyan-blaze-rev0", "google,nyan-blaze",
-+			"google,nyan", "nvidia,tegra124";
+ static int bq24735_charger_is_charging(struct bq24735 *charger)
+ {
+-	int ret = bq24735_read_word(charger->client, BQ24735_CHG_OPT);
++	int ret;
++
++	if (!bq24735_charger_is_present(charger))
++		return 0;
  
- 	panel: panel {
- 		compatible = "samsung,ltn140at29-301";
++	ret  = bq24735_read_word(charger->client, BQ24735_CHG_OPT);
+ 	if (ret < 0)
+ 		return ret;
+ 
 -- 
 2.9.3
