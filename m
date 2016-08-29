@@ -1,79 +1,96 @@
-From: Ralf Ramsauer <ralf-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
-Subject: Re: [RESEND PATCH] ARM: tegra: fix erroneous address in dts
-Date: Mon, 29 Aug 2016 15:53:36 +0200
-Message-ID: <072ef588-f657-e183-9ca8-52264eea1a8a@ramses-pyramidenbau.de>
-References: <1468835208-13426-1-git-send-email-ralf@ramses-pyramidenbau.de>
- <20160718095802.GA422@ulmo.ba.sec> <3087941.oHflrW9cm7@wuerfel>
- <d2469177-0eae-cd11-aa43-74baa374cc6c@ramses-pyramidenbau.de>
+From: Shardar Shariff Md <smohammed@nvidia.com>
+Subject: [PATCH v9 1/4] i2c: tegra: use readl_poll_timeout after config_load reg programmed
+Date: Mon, 29 Aug 2016 22:06:36 +0530
+Message-ID: <1472488599-13562-1-git-send-email-smohammed@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <d2469177-0eae-cd11-aa43-74baa374cc6c-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-i2c-owner@vger.kernel.org>
+Sender: linux-i2c-owner@vger.kernel.org
+To: smohammed@nvidia.com, ldewangan@nvidia.com, wsa@the-dreams.de, swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi,
+After CONFIG_LOAD register is programmed instead of explicitly waiting
+for timeout, use readx_poll_timeout() to check for register value to get
+updated or wait till timeout.
 
-may I poke you again?
+Signed-off-by: Shardar Shariff Md <smohammed@nvidia.com>
 
-Could you please revert this one (b5c86b7 upstream)? It was only
-required for 4.7.x where it got already applied.
+---
+Changes in v4:
+- Split timeout calculation to separate patch
 
-Thanks
-  Ralf
+Changes in v5:
+- Move disabling of clock to separate patch
 
-On 08/12/2016 07:26 PM, Ralf Ramsauer wrote:
-> On 08/10/2016 10:46 PM, Arnd Bergmann wrote:
->> On Monday, July 18, 2016 11:58:02 AM CEST Thierry Reding wrote:
->>> On Mon, Jul 18, 2016 at 11:46:48AM +0200, Ralf Ramsauer wrote:
->>>> c90bb7b enabled the high speed UARTs of the Jetson TK1. Due to a merge
->>>> quirk, wrong addresses were introduced. Fix it and use the correct
->>>> addresses.
->>>>
->>>> Thierry let me know, that there is another patch (b5896f67ab3c in
->>>> linux-next) in preparation which removes all the '0,' prefixes of unit
->>>> addresses on Tegra124 and is planned to go upstream in 4.8, so
->>>> this patch will get reverted then.
->>>>
->>>> But for the moment, this patch is necessary to fix current misbehaviour.
->>>>
->>>> Fixes: c90bb7b9b9 ("ARM: tegra: Add high speed UARTs to Jetson TK1 device tree")
->>>> Signed-off-by: Ralf Ramsauer <ralf-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
->>>> Acked-by: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>>> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->>>> ---
->>>>  arch/arm/boot/dts/tegra124-jetson-tk1.dts | 4 ++--
->>>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> ARM-SoC maintainers,
->>>
->>> Just to clarify, this is targetted at v4.7 because the offending patch
->>> was merged in v4.7-rc1. If at all possible it'd be great to get this in,
->>> even if this is terribly last minute.
->>>
->>
->> I just notice this was still missing in v4.8-rc1, so I added it to
->> the fixes branch now, with a stable tag for v4.7
-> Hi Arnd,
-> 
-> Ahm - this patch should have only be applied if it would have been
-> possible to commit it before the release of v4.7.
-> 
-> Mainline Patch b5896f6 ("ARM: tegra: Remove commas from unit addresses
-> on Tegra124") which was introduced during the merge window of v4.8 makes
-> this patch superfluous and introduces the same error again that we
-> initially wanted to fix :-)
-> 
-> This patch is only required for stable v4.7.x.
-> 
-> I think the best is to revert it on mainline, as long as stabilization
-> window is still open.
-> 
->   Ralf
->>
->> 	Arnd
->>
-> 
+Changes in v8:
+- 1st change of [PATCH v7] series is merged, v8 is rebased on top of
+  merged change, here patch series is changed accordingly.
+- Updated the commit message as per review to properly reflect change.
+- calculate the register offset seperately to make code more readable.
+
+Changes in v9:
+- Use readl_poll_timeout() instead of readx_poll_timeout()
+---
+---
+ drivers/i2c/busses/i2c-tegra.c | 24 +++++++++++++++---------
+ 1 file changed, 15 insertions(+), 9 deletions(-)
+
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index d9979da..41ffc8a 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -28,6 +28,7 @@
+ #include <linux/of_device.h>
+ #include <linux/module.h>
+ #include <linux/reset.h>
++#include <linux/iopoll.h>
+ 
+ #include <asm/unaligned.h>
+ 
+@@ -110,6 +111,8 @@
+ #define I2C_CLKEN_OVERRIDE			0x090
+ #define I2C_MST_CORE_CLKEN_OVR			(1 << 0)
+ 
++#define I2C_CONFIG_LOAD_TIMEOUT			1000000
++
+ /*
+  * msg_end_type: The bus control which need to be send at end of transfer.
+  * @MSG_END_STOP: Send stop pulse at end of transfer.
+@@ -428,7 +431,6 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+ 	u32 val;
+ 	int err = 0;
+ 	u32 clk_divisor;
+-	unsigned long timeout = jiffies + HZ;
+ 
+ 	err = tegra_i2c_clock_enable(i2c_dev);
+ 	if (err < 0) {
+@@ -478,15 +480,19 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+ 		i2c_writel(i2c_dev, I2C_MST_CORE_CLKEN_OVR, I2C_CLKEN_OVERRIDE);
+ 
+ 	if (i2c_dev->hw->has_config_load_reg) {
++		unsigned long reg_offset;
++		void __iomem *addr;
++		u32 val;
++
++		reg_offset = tegra_i2c_reg_addr(i2c_dev, I2C_CONFIG_LOAD);
++		addr = i2c_dev->base + reg_offset;
+ 		i2c_writel(i2c_dev, I2C_MSTR_CONFIG_LOAD, I2C_CONFIG_LOAD);
+-		while (i2c_readl(i2c_dev, I2C_CONFIG_LOAD) != 0) {
+-			if (time_after(jiffies, timeout)) {
+-				dev_warn(i2c_dev->dev,
+-					"timeout waiting for config load\n");
+-				err = -ETIMEDOUT;
+-				goto err;
+-			}
+-			msleep(1);
++		err = readl_poll_timeout(addr, val, val == 0, 1000,
++					 I2C_CONFIG_LOAD_TIMEOUT);
++		if (err) {
++			dev_warn(i2c_dev->dev,
++				 "timeout waiting for config load\n");
++			goto err;
+ 		}
+ 	}
+ 
+-- 
+1.8.1.5
