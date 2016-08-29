@@ -1,97 +1,73 @@
-From: Shardar Shariff Md <smohammed@nvidia.com>
-Subject: [PATCH v9 2/4] i2c: tegra: add separate function for config_load programing
-Date: Mon, 29 Aug 2016 22:06:37 +0530
-Message-ID: <1472488599-13562-2-git-send-email-smohammed@nvidia.com>
-References: <1472488599-13562-1-git-send-email-smohammed@nvidia.com>
+From: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+Subject: Re: [PATCH 1/2] power: bq24735-charger: Request status GPIO with
+ initial input setup
+Date: Mon, 29 Aug 2016 20:13:22 +0200
+Message-ID: <1472494402.9437.0.camel@paulk.fr>
+References: <20160828173446.32728-1-contact@paulk.fr>
+         <20160829003652.hs4tk7qmvu25mqhb@earth>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1472488599-13562-1-git-send-email-smohammed@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: smohammed@nvidia.com, ldewangan@nvidia.com, wsa@the-dreams.de, swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-ZFxaxzL7tjV8A9m8C1r7"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160829003652.hs4tk7qmvu25mqhb@earth>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Define separate function for configuration load register handling
-to make it use by different functions later.
 
-Signed-off-by: Shardar Shariff Md <smohammed@nvidia.com>
+--=-ZFxaxzL7tjV8A9m8C1r7
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
----
-Changes in v2:
-- Remove unnecessary paranthesis and align to 80 characters per line
+Le lundi 29 ao=C3=BBt 2016 =C3=A0 02:36 +0200, Sebastian Reichel a =C3=A9cr=
+it=C2=A0:
+> Hi,
+>=20
+> On Sun, Aug 28, 2016 at 07:34:45PM +0200, Paul Kocialkowski wrote:
+> >=20
+> > This requests the status GPIO with initial input setup. it is required
+> > to read the GPIO status at probe time and thus correctly avoid sending
+> > i2c messages when AC is not plugged.
+> >=20
+> > When requesting the GPIO without initial input setup, it always reads 0
+> > which causes probe to fail as it assumes the charger is connected, send=
+s
+> > i2c messages and fails.
+>=20
+> Please convert the driver to devm_gpiod_get instead.
 
-Changes in v3:
-- Add separate function for config load handling
+Sure thing, see v2.
 
-Changes in v4:
-- Move timeout calculation to separate patch
+Thanks!
 
-Changes in v9:
-- Rebase with the changes to earlier patch1
----
----
- drivers/i2c/busses/i2c-tegra.c | 42 ++++++++++++++++++++++++++----------------
- 1 file changed, 26 insertions(+), 16 deletions(-)
+--=20
+Paul Kocialkowski, developer of low-level free software for embedded device=
+s
 
-diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 41ffc8a..da79c5e 100644
---- a/drivers/i2c/busses/i2c-tegra.c
-+++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -426,6 +426,29 @@ static inline void tegra_i2c_clock_disable(struct tegra_i2c_dev *i2c_dev)
- 		clk_disable(i2c_dev->fast_clk);
- }
- 
-+static int tegra_i2c_wait_for_config_load(struct tegra_i2c_dev *i2c_dev)
-+{
-+	unsigned long reg_offset;
-+	void __iomem *addr;
-+	u32 val;
-+	int err;
-+
-+	if (i2c_dev->hw->has_config_load_reg) {
-+		reg_offset = tegra_i2c_reg_addr(i2c_dev, I2C_CONFIG_LOAD);
-+		addr = i2c_dev->base + reg_offset;
-+		i2c_writel(i2c_dev, I2C_MSTR_CONFIG_LOAD, I2C_CONFIG_LOAD);
-+		err = readl_poll_timeout(addr, val, val == 0, 1000,
-+					 I2C_CONFIG_LOAD_TIMEOUT);
-+		if (err) {
-+			dev_warn(i2c_dev->dev,
-+				 "timeout waiting for config load\n");
-+			return err;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
- static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- {
- 	u32 val;
-@@ -479,22 +502,9 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
- 	if (i2c_dev->is_multimaster_mode && i2c_dev->hw->has_slcg_override_reg)
- 		i2c_writel(i2c_dev, I2C_MST_CORE_CLKEN_OVR, I2C_CLKEN_OVERRIDE);
- 
--	if (i2c_dev->hw->has_config_load_reg) {
--		unsigned long reg_offset;
--		void __iomem *addr;
--		u32 val;
--
--		reg_offset = tegra_i2c_reg_addr(i2c_dev, I2C_CONFIG_LOAD);
--		addr = i2c_dev->base + reg_offset;
--		i2c_writel(i2c_dev, I2C_MSTR_CONFIG_LOAD, I2C_CONFIG_LOAD);
--		err = readl_poll_timeout(addr, val, val == 0, 1000,
--					 I2C_CONFIG_LOAD_TIMEOUT);
--		if (err) {
--			dev_warn(i2c_dev->dev,
--				 "timeout waiting for config load\n");
--			goto err;
--		}
--	}
-+	err = tegra_i2c_wait_for_config_load(i2c_dev);
-+	if (err)
-+		goto err;
- 
- 	if (i2c_dev->irq_disabled) {
- 		i2c_dev->irq_disabled = 0;
--- 
-1.8.1.5
+Website: https://www.paulk.fr/
+Coding blog: https://code.paulk.fr/
+Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
+--=-ZFxaxzL7tjV8A9m8C1r7
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCAAGBQJXxHtEAAoJEIT9weqP7pUMPZAP/1USiUwkbd9qF7KuGJcbjvxZ
+pwLtZ7SRnHNPIuO9IL4h5CcsFqh1dXtJFL+lrZn/fMS7LNKn4KHYK9qLuq3zEQ15
+QiQv4bAtJwTZjZ/TFd+gWigZLkKo170bzz2Pi/HZyziiin7ZWIOZppM3SkhdBNIP
+hSORWchUvw3+DQdL0Ix+MvzWKZTVG37VQRmZnAXRc/Pyr/v0WFLESJH+oksdl+j5
+s/PplLITI9EGqo975MKp9Yz2VyNlI+7800avQ5WwzsKZGu45wD8JSJWSyWGi0eTY
+e8UwZ95+mcqhUk08oQg1VYZIWddg0JE+AZoB4RBcJJPbThWjtcgM6IS/FFo/iXpS
+GE2TYeKnerpYRFPITQRIltrtQQwG+6mj+0hU3pY2Uil3rn+9e5m1onnkkkZi4AWf
+J+uiS+QSFDpFsZy6Pu58KbxCKsEmni7LqLhYFa2SBL/6p182ZFtWQiFzuSKCSB7K
+J48Wuw3umKQUlLFoteoNumNaFcXFw4v6JwMCNI6QJKjkThszszF6US+rmULRrqCT
+iOsO867N5z5YWV4Ft5XXrubG8O2A8p6YqFV6NCYWzG8B/i0Yi6T8UDRDO6ys7Q4f
+F/oJecn7DUk+WEt2I1jrILpbCTcCZ4brfjmu3tTFM6KBYzB2cS+9/gqp1B/Dyhtg
+NqXEtMZNC4XXruPIKwkA
+=H82t
+-----END PGP SIGNATURE-----
+
+--=-ZFxaxzL7tjV8A9m8C1r7--
