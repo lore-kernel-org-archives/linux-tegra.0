@@ -1,48 +1,80 @@
-From: Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH ] drivers/base: cacheinfo: remove warning in resume
-Date: Mon, 29 Aug 2016 12:50:54 +0530
-Message-ID: <1472455254-27692-1-git-send-email-sumitg@nvidia.com>
+From: Mirza Krak <mirza.krak@gmail.com>
+Subject: Re: [PATCH v2 3/6] dt/bindings: Add bindings for Tegra GMI controller
+Date: Mon, 29 Aug 2016 09:38:39 +0200
+Message-ID: <CALw8SCV4a98B0ct483wxf9ZMuCv8qV1BPM_9g6vV3huyp6YdOg@mail.gmail.com>
+References: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
+ <1472045838-22628-4-git-send-email-mirza.krak@gmail.com> <de2fb909-829e-6c04-4f6a-442cbb9171c9@nvidia.com>
+ <CALw8SCVcPymDZ8NyUbeanRF0TCT1TZzL6iRDticYA42FWrEWqw@mail.gmail.com>
+ <CALw8SCWtTvWGmKru2MX7T7sFpoUpD-V400+w2nPkxaFB5WUKSA@mail.gmail.com> <a7851104-1aa1-fd8d-a594-545a01046cdf@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, sudeep.holla-5wv7dgnIgG8@public.gmane.org, Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <a7851104-1aa1-fd8d-a594-545a01046cdf@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux@armlinux.org.uk, pdeschrijver@nvidia.com, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-CPU notifier is present for creating device
-entries for child node "cache" under parent
-node "cpu" as per DT. During resume from
-suspend, while booting all non-boot CPU's,
-this notifier for adding cache device gets
-called before cpu device is added by
-device_resume. Because of this warning message
-of "parent should not be sleeping" comes during
-resume.
+2016-08-26 9:25 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
+>
+> On 26/08/16 05:53, Mirza Krak wrote:
+>
+> ...
+>
+>>> I have an idea which is following:
+>>>
+>>> gmi@70090000 {
+>>>          status = "okay";
+>>>          #address-cells = <2>;
+>>>          #size-cells = <1>;
+>>>          ranges = <4 0 0x48000000 0x00040000>;
+>>>
+>>>          cs4 {
+>>>                  compatible = "simple-bus";
+>>>                  #address-cells = <2>;
+>>>                  #size-cells = <1>;
+>>>                  ranges;
+>>>
+>>>                  nvidia,snor-cs = <4>;
+>>>                  nvidia,snor-mux-mode;
+>>>                  nvidia,snor-adv-inv;
+>>>
+>>>                  can@0 {
+>>>                          compatible = "nxp,sja1000";
+>>>                          reg = <4 0 0x100>;
+>>>                          ...
+>>>                  };
+>>>
+>>>
+>>>                  can@40000 {
+>>>                          compatible = "nxp,sja1000";
+>>>                          reg = <4 0x40000 0x100>;
+>>>                          ...
+>>>                  };
+>>>          };
+>>> };
+>>>
+>>> Do not know if above will work at all (not able to test at current
+>>> location), anyway I will play around with it some more and get back to
+>>> you.
+>>
+>> Gave above a test run and it works like a charm. Are we happy with that?
+>
+> Does it not work with #address-cells = <1>? Seems odd to have the cs in
+> the reg for the device.
+>
 
-Removing the notifier to explicitly add/remove
-cache device as CPU and cache device get
-added/removed anyway as part of normal suspend
-resume sequence.
-dpm_resume_end - > dpm_resume -> device_resume
+No it does not work with #address-cells = <1> with the current
+structure that we have.
 
-Signed-off-by: Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/base/cacheinfo.c | 2 --
- 1 file changed, 2 deletions(-)
+With #address-cells = <2>, we can state that this device is on
+chip-select 4 and on this specific offset of chip-select 4 (that is
+the second address cell). I do not see how we can specify this with
+only one address cell.
 
-diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
-index e9fd32e91668..17d9c051a16f 100644
---- a/drivers/base/cacheinfo.c
-+++ b/drivers/base/cacheinfo.c
-@@ -544,8 +544,6 @@ static int __init cacheinfo_sysfs_init(void)
- 			goto out;
- 		}
- 	}
--	__hotcpu_notifier(cacheinfo_cpu_callback, 0);
--
- out:
- 	cpu_notifier_register_done();
- 	return rc;
--- 
-2.1.4
+And is it really that odd? Looking at other drivers they all use the
+same metod, even the arm,pl172 that you where referring to as a base
+for our implementation.
+
+Best Regards
+Mirza
