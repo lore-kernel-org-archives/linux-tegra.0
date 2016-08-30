@@ -1,74 +1,119 @@
-From: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
-Subject: Re: [PATCH V2 0/9] Some Tegra I2C Updates
-Date: Tue, 30 Aug 2016 22:38:44 +0200
-Message-ID: <20160830203844.GD3645@katana>
-References: <1472216945-11818-1-git-send-email-jonathanh@nvidia.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: [PATCH V2] dt: net: enhance DWC EQoS binding to support Tegra186
+Date: Tue, 30 Aug 2016 14:50:58 -0600
+Message-ID: <54b380c4-179f-2260-55dd-4220e65f8f46@wwwdotorg.org>
+References: <20160824212046.2416-1-swarren@wwwdotorg.org>
+ <20160830190152.GA25083@rob-hp-laptop>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="d9ADC0YsG2v16Js0"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1472216945-11818-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20160830190152.GA25083@rob-hp-laptop>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Lars Persson <lars.persson-VrBV9hrLPhE@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 08/30/2016 01:01 PM, Rob Herring wrote:
+> On Wed, Aug 24, 2016 at 03:20:46PM -0600, Stephen Warren wrote:
+>> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> The Synopsys DWC EQoS is a configurable IP block which supports multiple
+>> options for bus type, clocking and reset structure, and feature list.
+>> Extend the DT binding to define a "compatible value" for the configuration
+>> contained in NVIDIA's Tegra186 SoC, and define some new properties and
+>> list property entries required by that configuration.
 
---d9ADC0YsG2v16Js0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>> diff --git a/Documentation/devicetree/bindings/net/snps,dwc-qos-ethernet.txt b/Documentation/devicetree/bindings/net/snps,dwc-qos-ethernet.txt
 
-On Fri, Aug 26, 2016 at 02:08:56PM +0100, Jon Hunter wrote:
-> Add runtime-pm and pinctrl support for Tegra I2C driver.
->=20
-> The first 6 patches are trivial clean-up/simplification changes.
->=20
-> Changes since V1:
-> - Fixed cppcheck warning reported by Wolfram
-> - Added 3 more clean-up patches to fix some checkpatch issues
->=20
-> Jon Hunter (9):
->   i2c: tegra: Fix lines over 80 characters
->   i2c: tegra: Use BIT macro
->   i2c: tegra: Fix missing blank lines after declarations
->   i2c: tegra: Add missing new line characters
->   i2c: tegra: Remove non device-tree support
->   i2c: tegra: Use device name for adapter name
->   i2c: tegra: Simplify I2C resume
->   i2c: tegra: Add runtime power-management support
->   i2c: tegra: Add pinctrl support
->=20
+>>  Required properties:
 
-Applied to for-next, thanks!
+>> -- clocks: Phandles to the reference clock and the bus clock
+>> -- clock-names: Should be "phy_ref_clk" for the reference clock and "apb_pclk"
+>> -  for the bus clock.
+>> +- clocks: Phandle and clock specifiers for each entry in clock-names, in the
+>> +  same order. See ../clock/clock-bindings.txt.
+>> +- clock-names: May contain any/all of the following depending on the IP
+>> +  configuration, in any order:
+>
+> No, they should be in a defined order.
 
-If you are in for some more cleanups ;)
+If the binding only defines "clocks", then yes the order must be specified.
 
-    SPATCH
-drivers/i2c/busses/i2c-tegra.c:529:2-23: WARNING: Assignment of bool to 0/1
-drivers/i2c/busses/i2c-tegra.c:555:3-24: WARNING: Assignment of bool to 0/1
+If the binding defines clock-names too, then the order is arbitrary 
+since all clocks must be looked up via clock-names. That's the entire 
+point of having a clock-names property.
 
+...
+>> +    The EQOS transmit path clock. The HW signal name is clk_tx_i.
+>> +    In some configurations (e.g. GMII/RGMII), this clock also drives the PHY TX
+>> +    path. In other configurations, other clocks (such as tx_125, rmii) may
+>> +    drive the PHY TX path.
+>> +  - "rx"
+>> +    The EQOS receive path clock. The HW signal name is clk_rx_i.
+>> +    In some configurations (e.g. GMII/RGMII), this clock also drives the PHY RX
+>> +    path. In other configurations, other clocks (such as rx_125, pmarx_0,
+>> +    pmarx_1, rmii) may drive the PHY RX path.
+>> +  - "slave_bus"
+>> +    (Alternate name "apb_pclk"; only one alternate must appear.)
+>> +    The CPU/slave-bus (CSR) interface clock. Despite the name, this applies to
+>> +    any bus type; APB, AHB, AXI, etc. The HW signal name is hclk_i (AHB) or
+>> +    clk_csr_i (other buses).
+>
+> Sounds like 2 clocks here.
+>
+>> +  - "master_bus"
+>> +    The master bus interface clock. Only required in configurations that use a
+>> +    separate clock for the master and slave bus interfaces. The HW signal name
+>> +    is hclk_i (AHB) or aclk_i (AXI).
+>
+> Sounds like 2 clocks. I'm guessing these are mutually exclusive based on
+> whether you configure the IP for AHB or AXI?
 
---d9ADC0YsG2v16Js0
-Content-Type: application/pgp-signature; name="signature.asc"
+Yes, my understanding is that the two clocks are mutually exclusive in 
+both cases.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+It seems simpler to have an entry in clocks/clock-names for each logical 
+purpose, so that the driver can always retrieve a "slave bus clock" and 
+a "master bus clock". That way, there's never any conditional code in 
+the driver; it just gets two fixed clock names and enables them, no 
+matter what the HW configuration.
 
-iQIcBAEBAgAGBQJXxe7TAAoJEBQN5MwUoCm2GxYP+wSX8nsxb+i6y1s/FhFaiPMC
-aiMmQDGyz6AUZ/mAWSzFTIJnxUD1wrb3vxU2RIbXYLGUm7Q+dDrxhHEQ110cCTxP
-m2uO4ahJ5ILiw0D9ytYaLHpJse1ozhTPHityYzj7A468FPUqYa00RgUxRz54XRbM
-m3Nk+wjGR0yiY3IoNWpeVRWxGTV7jREbl0gDrh01ASNybsHuOSFHFOjrROm/vS2O
-03FqWCbgDdFafbkSa4UvXw7Zhy1qBV8avl3ZZ9Xi6VI9srDBjjnJIgZYA10/c154
-qSgm+VN0MrfTx4LZH2iEwKUFPK9DLj8sbLhDohwrpuoXVa3jYjaEcvmN9UEPlOCh
-Z5GjeDTRDk+QA/Y+TG/+2/IBe9rhlAn5h937jdj7gXt44O5e33WEQRCcWSdKw25f
-6br5MW6iWnXHKCvMXq6drUS8XXQvJb/nQoo1idzuBqofbdEkAvjrkO7Ilo2VALmI
-mB/oO2v4vCiu/pyCCq39PtpSQtkmV/Omnz45AebpzREXXZxOnky6ZsXYZGOxYfHm
-cqqOIxQRf9xuxYqV15JvCG61DslSwst7oASfMW7eBN30zmaQd3xALVNr5Ch8uvij
-ko5scJFvWNr2MvJjeZq8JMDkMS1O26lP9h4Mqpb0Odk4sZ+sTf6dhNfcG16IqsmM
-80f5wl05HdfuBHmSPPt1
-=j6tg
------END PGP SIGNATURE-----
+If the binding specifies 3 clocks, hclk_i, clk_csr_i, and aclk_i, then 
+the driver needs to know which subset of clocks to retrieve based on 
+compatible value or HW configuration. That seems like unnecessary 
+complexity. I suppose the driver could just attempt to retrieve all 3 
+clocks, and ignore any missing clocks, but that would allow malformed 
+DTs not to be noticed since the driver wouldn't validate the set of 
+clocks present, and could lead to the driver touching the HW without all 
+required clocks active, which at least in Tegra can lead to a HW hang.
 
---d9ADC0YsG2v16Js0--
+>> +  Note: Support for additional IP configurations may require adding the
+>> +  following clocks to this list in the future: clk_rx_125_i, clk_tx_125_i,
+>> +  clk_pmarx_0_i, clk_pmarx1_i, clk_rmii_i, clk_revmii_rx_i, clk_revmii_tx_i.
+>> +
+>> +  The following compatible values require the following set of clocks:
+>> +  - "nvidia,tegra186-eqos", "snps,dwc-qos-ethernet-4.10":
+>> +    - "slave_bus"
+>> +    - "master_bus"
+>> +    - "rx"
+>> +    - "tx"
+>> +    - "ptp_ref"
+>> +  - "axis,artpec6-eqos", "snps,dwc-qos-ethernet-4.10":
+>> +    - "phy_ref_clk"
+>> +    - "apb_clk"
+>
+> It would be good if this was marked deprecated and the full set of
+> clocks could be described and supported. Not sure if you can figure that
+> out. Is it really only 2 clocks, or these have multiple connections to
+> the same source.
+
+Lars, can you answer here?
+
+I deliberately didn't attempt to change the binding definition for the 
+existing use-case, since I'm not familiar with that SoC, and don't 
+relish changing DTs for a platform I can't test.
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
