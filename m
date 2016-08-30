@@ -1,58 +1,83 @@
-From: Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH ] arm64: cpuinfo: Add "model name" in /proc/cpuinfo for
- 64bit tasks also
-Date: Tue, 30 Aug 2016 11:52:18 +0100
-Message-ID: <20160830105218.GD1223@leverpostej>
-References: <1472461345-28219-1-git-send-email-sumitg@nvidia.com>
- <20160830091935.GD5163@e104818-lin.cambridge.arm.com>
- <6a6e87361e7c4a1fab9639cb83276765@BGMAIL104.nvidia.com>
+From: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH v2 0/6] Add support for Tegra GMI bus controller
+Date: Tue, 30 Aug 2016 15:01:37 +0000
+Message-ID: <1472569295.5703.20.camel@toradex.com>
+References: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <6a6e87361e7c4a1fab9639cb83276765-gjLx+0+SZqK6sJks/06JalaTQe2KTcn/@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: Catalin Marinas <catalin.marinas-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "yang.shi-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <yang.shi-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "steve.capper-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org" <steve.capper-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "suzuki.poulose-5wv7dgnIgG8@public.gmane.org" <suzuki.poulose-5wv7dgnIgG8@public.gmane.org>, "will.deacon-5wv7dgnIgG8@public.gmane.org" <will.deacon-5wv7dgnIgG8@public.gmane.org>, "julien.grall-5wv7dgnIgG8@public.gmane.org" <julien.grall-5wv7dgnIgG8@public.gmane.org>, Bibek Basu <bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "james.morse-5wv7dgnIgG8@public.gmane.org" <james.morse-5wv7dgnIgG8@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1472045838-22628-1-git-send-email-mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
+Content-ID: <E7120792E593EE4A82A9CAC0FE01C8BF-wNKe6lTLrGecE4WynfumptQqCkab/8FMAL8bYrjMMd8@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org" <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, "pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org" <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org" <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Aug 30, 2016 at 10:35:56AM +0000, Sumit Gupta wrote:
->  
-> > On Mon, Aug 29, 2016 at 02:32:25PM +0530, Sumit Gupta wrote:
-> > > Removed restriction of displaying model name for 32 bit tasks only.
-> > > Because of this Processor details were not displayed in "System
-> > > setting -> Details" in Ubuntu model name display is generic and can be
-> > > printed for 64 bit also.
-> > >
-> > > model name : ARMv8 Processor rev X (v8l)
-> > >
-> > > Signed-off-by: Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> > 
-> > You didn't give a reason why this is needed. For 32-bit tasks, we did it for
-> > backwards compatibility with code checking for it.
-> 
-> Within Ubuntu Home Screen "System setting -> details", processor details were coming as null.
-> It seems those details are retrieved from "model name" in /proc/cpuinfo and
-> because of check for 32 bit tasks only, "model name" was not getting displayed.
-
-It's worth noting that for arm64, we have never exposed a "model name"
-field for AArch64 tasks. i.e. the code was looking for something which
-did not exist to begin with.
-
-> On removing this check for model name, processor details are getting
-> displayed in Ubuntu Home Screen.
-> I think model name field is general and can be displayed irrespective
-> of compatibility.
-
-The "model name" field is somewhat useless, given we cannot query a
-usable string from the HW. We'd deliberately chosen to not expose it, to
-not give the impression that we would support trying to generate a
-string. We do expose the decoded MIDR_EL1 fields, which we can query
-from the HW.
-
-As above, this has never existed for arm64, and so 64-bit code relying
-on this non-existent field has never worked. It would be better to fix
-the code in question.
-
-Thanks,
-Mark.
+SGkgTWlyemENCg0KU29ycnksIEkgbG9uZyBzaW5jZSB3YW50ZWQgdG8gZ2l2ZSB5b3Ugc29tZSBm
+ZWVkYmFjayBvbiB0aGlzIGFzIHdlbGwuDQoNCkJUVzogVGhhbmsgeW91IHZlcnkgbXVjaCBmb3Ig
+dGFraW5nIHRoaXMgb24hDQoNCk9uIFdlZCwgMjAxNi0wOC0yNCBhdCAxNTozNyArMDIwMCwgTWly
+emEgS3JhayB3cm90ZToNCj4gRnJvbTogTWlyemEgS3JhayA8bWlyemEua3Jha0BnbWFpbC5jb20+
+DQo+IA0KPiBIaS4NCj4gDQo+IFRoaXMgaXMgYSBmb2xsb3cgdXAgdG8gbXkgcHJldmlvdXMgUkZD
+IHRvIGFkZCBzdXBwb3J0IGZvciBUZWdyYSBHTUkNCj4gYnVzDQo+IGNvbnRyb2xsZXIuDQo+IA0K
+PiBJIGhhdmUgdGVzdGVkIHRoaXMgc2VyaWVzIG9uIGEgVGVncmEzMCB1c2luZyBhIENvbGlicmkg
+VDMwIFNPTSBvbiBhDQo+IGN1c3RvbQ0KPiBjYXJyaWVyIGJvYXJkIHdoaWNoIGhhcyBtdWx0aXBs
+ZSBDQU4gY29udHJvbGxlcnMgKFNKQTEwMDApIGNvbm5lY3RlZA0KPiB0byB0aGUNCj4gR01JIGJ1
+cy4NCg0KV2Ugb25jZSBkaWQgYSBuaWNlIEdNSS1NZW1vcnkgQm9hcmQgd2hpY2ggbWF0ZXMgd2l0
+aCB0aGUgZXh0ZW5zaW9uDQpjb25uZWN0b3IgWDMgb2Ygb3VyIFYzLnggQ29saWJyaSBFdmFsdWF0
+aW9uIGJvYXJkcyBhbmQgYWxsb3dzIHRlc3RpbmcNClNSQU0gYWNjZXNzIG5vdCBvbmx5IGluIG11
+eGVkIGJ1dCBhbHNvIGluIG5vbi1tdXhlZCBtb2RlIGFsYmVpdCAxNi1iaXQNCm9ubHkuIEkgdG9v
+ayB5b3VyIGRyaXZlciBmb3IgYSBzcGluIGJvdGggb24gQ29saWJyaSBUMjAgYXMgd2VsbCBhcw0K
+Q29saWJyaSBUMzAgYm90aCBpbiBtdXhlZCBhcyB3ZWxsIGFzIG5vbi1tdXhlZCBtb2RlIGFuZCBp
+dCBwYXNzZWQgYWxsDQp0ZXN0cyBiZWluZyBib3RoIG1hbnVhbCBkZXZtZW0yIHR5cGUgcmVhZHMv
+d3JpdGVzIGFzIHdlbGwgYXMgbWVtdGVzdGVyDQpydW5zIG9uIHRoZSBmdWxsIDEyOEsgU1JBTSBn
+aXZpbmcgaXQgdGhlIHBoeXNpY2FsIGFkZHJlc3MgdXNpbmcgdGhlIC1wDQphcmd1bWVudC4NCg0K
+U28geW91IG1heSBhZGQgdGhlIGZvbGxvd2luZyB0byB0aGUgd2hvbGUgc2VyaWVzOg0KDQpUZXN0
+ZWQtYnk6IE1hcmNlbCBaaXN3aWxlciA8bWFyY2VsLnppc3dpbGVyQHRvcmFkZXguY29tPg0KVGVz
+dGVkLW9uOiBDb2xpYnJpIFQyMC9UMzAgb24gRXZhbEJvYXJkIFYzLnggYW5kIEdNSS1NZW1vcnkg
+Qm9hcmQNCg0KSSB3aWxsIGxlYXZlIGZ1cnRoZXIgY29tbWVudHMgb24gdGhlIGluZGl2aWR1YWwg
+cGF0Y2hlcy4NCg0KQlRXOiBPZiBjb3Vyc2UgZm9yIG5vbi1tdXhlZCBtb2RlIEkgYWxzbyBoYWQg
+dG8gYWRqdXN0IHRoZSBwaW4gbXV4aW5nDQphcyB0aGV5IGRlZmF1bHQgdG8gbXV4ZWQuDQoNCj4g
+SSBoYXZlIHJlYmFzZWQgb24gdG9wIG9mIGxhdGVzdCB0ZWdyYS9mb3ItbmV4dCBpbiBWMi4gQWxz
+byBzZWUNCj4gaW5kaXZpZHVhbA0KPiBwYXRjaGVzIGZvciBjaGFuZ2VzIGluIFYyLg0KPiANCj4g
+U2VlIGJlbG93IGxpbmtzIGZvciBwcmV2aW91cyBkaXNjdXNzaW9ucy4NCj4gDQo+IENvbW1lbnRz
+IG9uIFJGQzoNCj4gaHR0cHM6Ly9tYXJjLmluZm8vP2w9bGludXgtY2xrJm09MTQ2ODkzNTU3NjI5
+OTAzJnc9Mg0KPiBodHRwczovL21hcmMuaW5mby8/bD1saW51eC10ZWdyYSZtPTE0Njg5MzU0MTgy
+OTgwMSZ3PTINCj4gaHR0cHM6Ly9tYXJjLmluZm8vP2w9bGludXgtdGVncmEmbT0xNDY4OTM1NDI0
+Mjk4MTQmdz0yDQo+IA0KPiBDb21tZW50cyBvbiBWMToNCj4gaHR0cHM6Ly9tYXJjLmluZm8vP2w9
+bGludXgtYXJtLWtlcm5lbCZtPTE0NzA1MTU1MTgyMTEyMiZ3PTINCj4gaHR0cHM6Ly9tYXJjLmlu
+Zm8vP2w9bGludXgtYXJtLWtlcm5lbCZtPTE0NzA1MTU1MzEyMTE1MCZ3PTINCj4gaHR0cHM6Ly9t
+YXJjLmluZm8vP2w9bGludXgtYXJtLWtlcm5lbCZtPTE0NzE5NDg1NjYwMDYyNyZ3PTINCj4gaHR0
+cHM6Ly9tYXJjLmluZm8vP2w9bGludXgtYXJtLWtlcm5lbCZtPTE0NzA3Mjc0MjQzMjIxMSZ3PTIN
+Cj4gDQo+IA0KPiBNaXJ6YSBLcmFrICg2KToNCj4gwqAgY2xrOiB0ZWdyYTogYWRkIFRFR1JBMjBf
+Q0xLX05PUiB0byBpbml0IHRhYmxlDQo+IMKgIGNsazogdGVncmE6IGFkZCBURUdSQTMwX0NMS19O
+T1IgdG8gaW5pdCB0YWJsZQ0KPiDCoCBkdC9iaW5kaW5nczogQWRkIGJpbmRpbmdzIGZvciBUZWdy
+YSBHTUkgY29udHJvbGxlcg0KPiDCoCBBUk06IHRlZ3JhOiBBZGQgVGVncmEzMCBHTUkgc3VwcG9y
+dA0KPiDCoCBBUk06IHRlZ3JhOiBBZGQgVGVncmEyMCBHTUkgc3VwcG9ydA0KPiDCoCBidXM6IEFk
+ZCBzdXBwb3J0IGZvciBUZWdyYSBHZW5lcmljIE1lbW9yeSBJbnRlcmZhY2UNCj4gDQo+IMKgLi4u
+L2RldmljZXRyZWUvYmluZGluZ3MvYnVzL252aWRpYSx0ZWdyYTIwLWdtaS50eHQgfCAxMzINCj4g
+KysrKysrKysrKysrDQo+IMKgYXJjaC9hcm0vYm9vdC9kdHMvdGVncmEyMC5kdHNpwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfMKgwqAxMyArKw0KPiDCoGFyY2gvYXJt
+L2Jvb3QvZHRzL3RlZ3JhMzAuZHRzacKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoHzCoMKgMTIgKysNCj4gwqBkcml2ZXJzL2J1cy9LY29uZmlnwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHzCoMKgwqA4
+ICsNCj4gwqBkcml2ZXJzL2J1cy9NYWtlZmlsZcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgfMKgwqDCoDEgKw0KPiDCoGRyaXZlcnMv
+YnVzL3RlZ3JhLWdtaS5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqB8IDIzMQ0KPiArKysrKysrKysrKysrKysrKysrKysNCj4gwqBkcml2ZXJz
+L2Nsay90ZWdyYS9jbGstdGVncmEyMC5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoHzCoMKgwqAxICsNCj4gwqBkcml2ZXJzL2Nsay90ZWdyYS9jbGstdGVncmEzMC5jwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoHzCoMKgwqAxICsNCj4gwqA4IGZp
+bGVzIGNoYW5nZWQsIDM5OSBpbnNlcnRpb25zKCspDQo+IMKgY3JlYXRlIG1vZGUgMTAwNjQ0DQo+
+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9idXMvbnZpZGlhLHRlZ3JhMjAtZ21p
+LnR4dA0KPiDCoGNyZWF0ZSBtb2RlIDEwMDY0NCBkcml2ZXJzL2J1cy90ZWdyYS1nbWkuYw0KPiAN
+Cj4gLS0NCj4gMi4xLjQNCj4gDQo+IC0tDQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0
+OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC1jbGsiDQo+IGluDQo+IHRoZSBib2R5
+IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3JnDQo+IE1vcmUgbWFqb3Jk
+b21vIGluZm8gYXTCoMKgaHR0cDovL3ZnZXIua2VybmVsLm9yZy9tYWpvcmRvbW8taW5mby5odG1s
+DQoNCkNoZWVycw0KDQpNYXJjZWwNCg==
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
