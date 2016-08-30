@@ -1,143 +1,170 @@
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 Subject: Re: [PATCH v2 3/6] dt/bindings: Add bindings for Tegra GMI controller
-Date: Tue, 30 Aug 2016 15:02:14 +0000
-Message-ID: <1472569333.5703.24.camel@toradex.com>
+Date: Tue, 30 Aug 2016 12:06:36 -0500
+Message-ID: <20160830170636.GA8741@rob-hp-laptop>
 References: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
  <1472045838-22628-4-git-send-email-mirza.krak@gmail.com>
+ <de2fb909-829e-6c04-4f6a-442cbb9171c9@nvidia.com>
+ <CALw8SCVcPymDZ8NyUbeanRF0TCT1TZzL6iRDticYA42FWrEWqw@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1472045838-22628-4-git-send-email-mirza.krak@gmail.com>
-Content-Language: en-US
-Content-ID: <B787D12BBB0CFC4F9D4A88ACC2186889@eurprd05.prod.outlook.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mirza.krak@gmail.com" <mirza.krak@gmail.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>
-Cc: "mark.rutland@arm.com" <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "gnurou@gmail.com" <gnurou@gmail.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "pdeschrijver@nvidia.com" <pdeschrijver@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CALw8SCVcPymDZ8NyUbeanRF0TCT1TZzL6iRDticYA42FWrEWqw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gV2VkLCAyMDE2LTA4LTI0IGF0IDE1OjM3ICswMjAwLCBNaXJ6YSBLcmFrIHdyb3RlOg0KPiBG
-cm9tOiBNaXJ6YSBLcmFrIDxtaXJ6YS5rcmFrQGdtYWlsLmNvbT4NCj4gDQo+IERvY3VtZW50IHRo
-ZSBkZXZpY2V0cmVlIGJpbmRpbmdzIGZvciB0aGUgR2VuZXJpYyBNZW1vcnkgSW50ZXJmYWNlDQo+
-IChHTUkpDQo+IGJ1cyBkcml2ZXIgZm91bmQgb24gVGVncmEgU09Dcy4NCj4gDQo+IFNpZ25lZC1v
-ZmYtYnk6IE1pcnphIEtyYWsgPG1pcnphLmtyYWtAZ21haWwuY29tPg0KPiAtLS0NCj4gQ2hhbmdl
-cyBpbiB2MjoNCj4gLSBVcGRhdGVkIGV4YW1wbGVzIGFuZCBzb21lIGluZm9ybWF0aW9uIGJhc2Vk
-IG9uIGNvbW1lbnRzIGZyb20gSm9uDQo+IEh1bnRlci4NCj4gDQo+IMKgLi4uL2RldmljZXRyZWUv
-YmluZGluZ3MvYnVzL252aWRpYSx0ZWdyYTIwLWdtaS50eHQgfCAxMzINCj4gKysrKysrKysrKysr
-KysrKysrKysrDQo+IMKgMSBmaWxlIGNoYW5nZWQsIDEzMiBpbnNlcnRpb25zKCspDQo+IMKgY3Jl
-YXRlIG1vZGUgMTAwNjQ0DQo+IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9idXMv
-bnZpZGlhLHRlZ3JhMjAtZ21pLnR4dA0KPiANCj4gZGlmZiAtLWdpdCBhL0RvY3VtZW50YXRpb24v
-ZGV2aWNldHJlZS9iaW5kaW5ncy9idXMvbnZpZGlhLHRlZ3JhMjAtDQo+IGdtaS50eHQgYi9Eb2N1
-bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvYnVzL252aWRpYSx0ZWdyYTIwLQ0KPiBnbWku
-dHh0DQo+IG5ldyBmaWxlIG1vZGUgMTAwNjQ0DQo+IGluZGV4IDAwMDAwMDAuLjhjMWUxNWYNCj4g
-LS0tIC9kZXYvbnVsbA0KPiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3Mv
-YnVzL252aWRpYSx0ZWdyYTIwLWdtaS50eHQNCj4gQEAgLTAsMCArMSwxMzIgQEANCj4gK0Rldmlj
-ZSB0cmVlIGJpbmRpbmdzIGZvciBOVklESUEgVGVncmEgR2VuZXJpYyBNZW1vcnkgSW50ZXJmYWNl
-IGJ1cw0KPiArDQo+ICtUaGUgR2VuZXJpYyBNZW1vcnkgSW50ZXJmYWNlIGJ1cyBlbmFibGVzIG1l
-bW9yeSB0cmFuc2ZlcnMgYmV0d2Vlbg0KPiBpbnRlcm5hbCBhbmQNCj4gK2V4dGVybmFsIG1lbW9y
-eS4gQ2FuIGJlIHVzZWQgdG8gYXR0YWNoIHZhcmlvdXMgaGlnaCBzcGVlZCBkZXZpY2VzDQo+IHN1
-Y2ggYXMNCj4gK3N5bmNocm9ub3VzL2FzeW5jaHJvbm91cyBOT1IsIEZQR0EsIFVBUlRTIGFuZCBt
-b3JlLg0KPiArDQo+ICtUaGUgYWN0dWFsIGRldmljZXMgYXJlIGluc3RhbnRpYXRlZCBmcm9tIHRo
-ZSBjaGlsZCBub2RlcyBvZiBhIEdNSQ0KPiBub2RlLg0KPiArDQo+ICtSZXF1aXJlZCBwcm9wZXJ0
-aWVzOg0KPiArIC0gY29tcGF0aWJsZSA6IFNob3VsZCBjb250YWluIG9uZSBvZiB0aGUgZm9sbG93
-aW5nOg0KPiArwqDCoMKgwqDCoMKgwqDCoEZvciBUZWdyYTIwIG11c3QgY29udGFpbiAibnZpZGlh
-LHRlZ3JhMjAtZ21pIi4NCj4gK8KgwqDCoMKgwqDCoMKgwqBGb3IgVGVncmEzMCBtdXN0IGNvbnRh
-aW4gIm52aWRpYSx0ZWdyYTMwLWdtaSIuDQo+ICsgLSByZWc6IFNob3VsZCBjb250YWluIEdNSSBj
-b250cm9sbGVyIHJlZ2lzdGVycyBsb2NhdGlvbiBhbmQgbGVuZ3RoLg0KPiArIC0gY2xvY2tzOiBN
-dXN0IGNvbnRhaW4gYW4gZW50cnkgZm9yIGVhY2ggZW50cnkgaW4gY2xvY2stbmFtZXMuDQo+ICsg
-LSBjbG9jay1uYW1lczogTXVzdCBpbmNsdWRlIHRoZSBmb2xsb3dpbmcgZW50cmllczogImdtaSIN
-Cj4gKyAtIHJlc2V0cyA6IE11c3QgY29udGFpbiBhbiBlbnRyeSBmb3IgZWFjaCBlbnRyeSBpbiBy
-ZXNldC1uYW1lcy4NCj4gKyAtIHJlc2V0LW5hbWVzIDogTXVzdCBpbmNsdWRlIHRoZSBmb2xsb3dp
-bmcgZW50cmllczogImdtaSINCj4gKyAtICNhZGRyZXNzLWNlbGxzOiBUaGUgbnVtYmVyIG9mIGNl
-bGxzIHVzZWQgdG8gcmVwcmVzZW50IHBoeXNpY2FsDQo+IGJhc2UNCj4gK8KgwqDCoGFkZHJlc3Nl
-cyBpbiB0aGUgR01JIGFkZHJlc3Mgc3BhY2UuIFNob3VsZCBiZSAxLg0KPiArIC0gI3NpemUtY2Vs
-bHM6IFRoZSBudW1iZXIgb2YgY2VsbHMgdXNlZCB0byByZXByZXNlbnQgdGhlIHNpemUgb2YgYW4N
-Cj4gYWRkcmVzcw0KPiArwqDCoMKgcmFuZ2UgaW4gdGhlIEdNSSBhZGRyZXNzIHNwYWNlLiBTaG91
-bGQgYmUgMS4NCj4gKyAtIHJhbmdlczogTXVzdCBiZSBzZXQgdXAgdG8gcmVmbGVjdCB0aGUgbWVt
-b3J5IGxheW91dCB3aXRoIHRocmVlDQo+IGludGVnZXIgdmFsdWVzDQo+ICvCoMKgwqBmb3IgZWFj
-aCBjaGlwLXNlbGVjdCBsaW5lIGluIHVzZSAob25seSBvbmUgZW50cnkgaXMgc3VwcG9ydGVkLA0K
-PiBzZWUgYmVsb3cNCj4gK8KgwqDCoGNvbW1lbnRzKToNCj4gK8KgwqDCoDxjcy1udW1iZXI+IDxw
-aHlzaWNhbCBhZGRyZXNzIG9mIG1hcHBpbmc+IDxzaXplPg0KPiArDQo+ICtOb3RlIHRoYXQgdGhl
-IEdNSSBjb250cm9sbGVyIGRvZXMgbm90IGhhdmUgYW55IGludGVybmFsIGNoaXAtc2VsZWN0DQo+
-IGFkZHJlc3MNCj4gK2RlY29kaW5nLCBiZWNhdXNlIG9mIHRoYXQgY2hpcC1zZWxlY3RzIGVpdGhl
-ciBuZWVkIHRvIGJlIG1hbmFnZWQgdmlhDQo+IHNvZnR3YXJlDQo+ICtvciBieSBlbXBsb3lpbmcg
-ZXh0ZXJuYWwgY2hpcC1zZWxlY3QgZGVjb2RpbmcgbG9naWMuDQo+ICsNCj4gK0lmIGV4dGVybmFs
-IGNoaXAtc2VsZWN0IGxvZ2ljIGlzIHVzZWQgdG8gc3VwcG9ydCBtdWx0aXBsZSBkZXZpY2VzIGl0
-DQo+IGlzIGFzc3VtZWQNCj4gK3RoYXQgdGhlIGRldmljZXMgdXNlIHRoZSBzYW1lIHRpbWluZyBh
-bmQgc28gYXJlIHByb2JhYmx5IHRoZSBzYW1lDQo+IHR5cGUuIEl0IGFsc28NCj4gK2Fzc3VtZXMg
-dGhhdCB0aGV5IGNhbiBmaXQgaW4gdGhlIDI1Nk1CIGFkZHJlc3MgcmFuZ2UuIEluIHRoaXMgY2Fz
-ZQ0KPiBvbmx5IG9uZQ0KPiArY2hpbGQgZGV2aWNlIGlzIHN1cHBvcnRlZCB3aGljaCByZXByZXNl
-bnRzIHRoZSBhY3RpdmUgY2hpcC1zZWxlY3QNCj4gbGluZSwgc2VlDQo+ICtleGFtcGxlcyBmb3Ig
-bW9yZSBpbnNpZ2h0Lg0KPiArDQo+ICtSZXF1aXJlZCBjaGlsZCBjcyBub2RlIHByb3BlcnRpZXM6
-DQo+ICsgLSByZWc6IEZpcnN0IGVudHJ5IHNob3VsZCBjb250YWluIHRoZSBhY3RpdmUgY2hpcC1z
-ZWxlY3QgbnVtYmVyDQo+ICsNCj4gK09wdGlvbmFsIGNoaWxkIGNzIG5vZGUgcHJvcGVydGllczoN
-Cj4gKw0KPiArIC0gbnZpZGlhLHNub3ItZGF0YS13aWR0aC0zMmJpdDogVXNlIDMyYml0IGRhdGEt
-YnVzLCBkZWZhdWx0IGlzDQo+IDE2Yml0Lg0KPiArIC0gbnZpZGlhLHNub3ItbXV4LW1vZGU6IEVu
-YWJsZSBhZGRyZXNzL2RhdGEgTVVYIG1vZGUuDQo+ICsgLSBudmlkaWEsc25vci1yZHktYWN0aXZl
-LWJlZm9yZS1kYXRhOiBBc3NlcnQgUkRZIHNpZ25hbCBvbmUgY3ljbGUNCj4gYmVmb3JlIGRhdGEu
-DQo+ICvCoMKgwqBJZiBvbWl0dGVkIGl0IHdpbGwgYmUgYXNzZXJ0ZWQgd2l0aCBkYXRhLg0KPiAr
-IC0gbnZpZGlhLHNub3ItcmR5LWludjogUkRZIHNpZ25hbCBpcyBhY3RpdmUgaGlnaA0KPiArIC0g
-bnZpZGlhLHNub3ItYWR2LWludjogQURWIHNpZ25hbCBpcyBhY3RpdmUgaGlnaA0KPiArIC0gbnZp
-ZGlhLHNub3Itb2UtaW52OiBXRS9PRSBzaWduYWwgaXMgYWN0aXZlIGhpZ2gNCj4gKyAtIG52aWRp
-YSxzbm9yLWNzLWludjogQ1Mgc2lnbmFsIGlzIGFjdGl2ZSBoaWdoDQo+ICsNCj4gK8KgwqBOb3Rl
-IHRoYXQgdGhlcmUgaXMgc29tZSBzcGVjaWFsIGhhbmRsaW5nIGZvciB0aGUgdGltaW5nIHZhbHVl
-cy4NCj4gK8KgwqBGcm9tIFRlZ3JhIFRSTToNCj4gK8KgwqBQcm9ncmFtbWluZyAwIG1lYW5zIDEg
-Y2xvY2sgY3ljbGU6IGFjdHVhbCBjeWNsZSA9IHByb2dyYW1tZWQgY3ljbGUNCj4gKyAxDQo+ICsN
-Cj4gKyAtIG52aWRpYSxzbm9yLW11eGVkLXdpZHRoOiBOdW1iZXIgb2YgY3ljbGVzIE1VWCBhZGRy
-ZXNzL2RhdGENCj4gYXNzZXJ0ZWQgb24gdGhlDQo+ICvCoMKgwqBidXMuIFZhbGlkIHZhbHVlcyBh
-cmUgMC0xNSwgZGVmYXVsdCBpcyAxDQo+ICsgLSBudmlkaWEsc25vci1ob2xkLXdpZHRoOiBOdW1i
-ZXIgb2YgY3ljbGVzIENFIHN0YXlzIGFzc2VydGVkIGFmdGVyDQo+IHRoZQ0KPiArwqDCoMKgZGUt
-YXNzZXJ0aW9uIG9mIFdSX04gKGluIGNhc2Ugb2YgU0xBVkUvTUFTVEVSIFJlcXVlc3QpIG9yIE9F
-X04NCj4gK8KgwqDCoChpbiBjYXNlIG9mIE1BU1RFUiBSZXF1ZXN0KS4gVmFsaWQgdmFsdWVzIGFy
-ZSAwLTE1LCBkZWZhdWx0IGlzIDENCj4gKyAtIG52aWRpYSxzbm9yLWFkdi13aWR0aDogTnVtYmVy
-IG9mIGN5Y2xlcyBkdXJpbmcgd2hpY2ggQURWIHN0YXlzDQo+IGFzc2VydGVkLg0KPiArwqDCoMKg
-VmFsaWQgdmFsdWVzIGFyZSAwLTE1LCBkZWZhdWx0IGlzIDEuDQo+ICsgLSBudmlkaWEsc25vci1j
-ZS13aWR0aDogTnVtYmVyIG9mIGN5Y2xlcyBiZWZvcmUgQ0UgaXMgYXNzZXJ0ZWQuDQo+ICvCoMKg
-wqBWYWxpZCB2YWx1ZXMgYXJlIDAtMTUsIGRlZmF1bHQgaXMgNA0KPiArIC0gbnZpZGlhLHNub3It
-d2Utd2lkdGg6IE51bWJlciBvZiBjeWNsZXMgZHVyaW5nIHdoaWNoIFdFIHN0YXlzDQo+IGFzc2Vy
-dGVkLg0KPiArwqDCoMKgVmFsaWQgdmFsdWVzIGFyZSAwLTE1LCBkZWZhdWx0IGlzIDENCj4gKyAt
-IG52aWRpYSxzbm9yLW9lLXdpZHRoOiBOdW1iZXIgb2YgY3ljbGVzIGR1cmluZyB3aGljaCBPRSBz
-dGF5cw0KPiBhc3NlcnRlZC4NCj4gK8KgwqDCoFZhbGlkIHZhbHVlcyBhcmUgMC0yNTUsIGRlZmF1
-bHQgaXMgMQ0KPiArIC0gbnZpZGlhLHNub3Itd2FpdC13aWR0aDogTnVtYmVyIG9mIGN5Y2xlcyBi
-ZWZvcmUgUkVBRFkgaXMNCj4gYXNzZXJ0ZWQuDQo+ICvCoMKgwqBWYWxpZCB2YWx1ZXMgYXJlIDAt
-MjU1LCBkZWZhdWx0IGlzIDMNCj4gKw0KPiArRXhhbXBsZSB3aXRoIHR3byBTSkExMDAwIENBTiBj
-b250cm9sbGVycyBjb25uZWN0ZWQgdG8gdGhlIEdNSSBidXMuDQo+IFdlIHdyYXAgdGhlDQo+ICtj
-b250cm9sbGVycyB3aXRoIGEgc2ltcGxlLWJ1cyBub2RlIHNpbmNlIHRoZXkgYXJlIGFsbCBjb25u
-ZWN0ZWQgdG8NCj4gdGhlIHNhbWUNCj4gK2NoaXAtc2VsZWN0IChDUzQpLCBpbiB0aGlzIGV4YW1w
-bGUgZXh0ZXJuYWwgYWRkcmVzcyBkZWNvZGluZyBpcw0KPiBwcm92aWRlZDoNCj4gKw0KPiArZ21p
-QDcwMDkwMDAwIHsNCg0KSXQncyBhY3R1YWxseSA3MDAwOTAwMC4NCg0KPiArCWNvbXBhdGlibGUg
-PSAibnZpZGlhLHRlZ3JhMjAtZ21pIjsNCj4gKwlyZWcgPSA8MHg3MDAwOTAwMCAweDEwMDA+Ow0K
-PiArCSNhZGRyZXNzLWNlbGxzID0gPDE+Ow0KPiArCSNzaXplLWNlbGxzID0gPDE+Ow0KPiArCWNs
-b2NrcyA9IDwmdGVncmFfY2FyIFRFR1JBMjBfQ0xLX05PUj47DQo+ICsJY2xvY2stbmFtZXMgPSAi
-Z21pIjsNCj4gKwlyZXNldHMgPSA8JnRlZ3JhX2NhciA0Mj47DQo+ICsJcmVzZXQtbmFtZXMgPSAi
-Z21pIjsNCj4gKwlyYW5nZXMgPSA8NCAweDQ4MDAwMDAwIDB4N2ZmZmZmZj47DQo+ICsNCj4gKwlz
-dGF0dXMgPSAiZGlzYWJsZWQiOw0KDQpJIGd1ZXNzIGluIGFuIGV4YW1wbGUgb25lIGNvdWxkIGV2
-ZW4gc2V0IHRoaXMgdG8gb2theS4NCg0KPiArDQo+ICsJYnVzQDQgew0KPiArCQljb21wYXRpYmxl
-ID0gInNpbXBsZS1idXMiOw0KPiArCQlyZWcgPSA8ND47DQo+ICsJCSNhZGRyZXNzLWNlbGxzID0g
-PDE+Ow0KPiArCQkjc2l6ZS1jZWxscyA9IDwxPjsNCj4gKwkJcmFuZ2VzID0gPDAgNCAweDQwMTAw
-PjsNCj4gKw0KPiArCQludmlkaWEsc25vci1tdXgtbW9kZTsNCj4gKwkJbnZpZGlhLHNub3ItYWR2
-LWludjsNCj4gKw0KPiArCQljYW5AMCB7DQo+ICsJCQlyZWcgPSA8MCAweDEwMD47DQo+ICsJCQku
-Li4NCj4gKwkJfTsNCj4gKw0KPiArCQljYW5ANDAwMDAgew0KPiArCQkJcmVnID0gPDB4NDAwMDAg
-MHgxMDA+Ow0KPiArCQkJLi4uDQo+ICsJCX07DQo+ICsJfTsNCj4gK307DQo+ICsNCj4gK0V4YW1w
-bGUgd2l0aCBvbmUgU0pBMTAwMCBDQU4gY29udHJvbGxlciBjb25uZWN0ZWQgdG8gdGhlIEdNSSBi
-dXMNCj4gK29uIENTNDoNCj4gKw0KPiArZ21pQDcwMDkwMDAwIHsNCg0KU2FtZSBoZXJlLg0KDQo+
-ICsJY29tcGF0aWJsZSA9ICJudmlkaWEsdGVncmEyMC1nbWkiOw0KPiArCXJlZyA9IDwweDcwMDA5
-MDAwIDB4MTAwMD47DQo+ICsJI2FkZHJlc3MtY2VsbHMgPSA8MT47DQo+ICsJI3NpemUtY2VsbHMg
-PSA8MT47DQo+ICsJY2xvY2tzID0gPCZ0ZWdyYV9jYXIgVEVHUkEyMF9DTEtfTk9SPjsNCj4gKwlj
-bG9jay1uYW1lcyA9ICJnbWkiOw0KPiArCXJlc2V0cyA9IDwmdGVncmFfY2FyIDQyPjsNCj4gKwly
-ZXNldC1uYW1lcyA9ICJnbWkiOw0KPiArCXJhbmdlcyA9IDw0IDB4NDgwMDAwMDAgMHg3ZmZmZmZm
-PjsNCj4gKw0KPiArCXN0YXR1cyA9ICJkaXNhYmxlZCI7DQoNClNhbWUgaGVyZS4NCg0KPiArDQo+
-ICsJY2FuQDQgew0KPiArCQlyZWcgPSA8NCAweDEwMD47DQo+ICsJCS4uLg0KPiArCQludmlkaWEs
-c25vci1tdXgtbW9kZTsNCj4gKwkJbnZpZGlhLHNub3ItYWR2LWludjsNCj4gKwl9Ow0KPiArfTsN
-Cj4gLS0NCj4gMi4xLjQKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KbGludXgtYXJtLWtlcm5lbCBtYWlsaW5nIGxpc3QKbGludXgtYXJtLWtlcm5lbEBsaXN0
-cy5pbmZyYWRlYWQub3JnCmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGlu
-Zm8vbGludXgtYXJtLWtlcm5lbAo=
+On Wed, Aug 24, 2016 at 09:54:47PM +0200, Mirza Krak wrote:
+> 2016-08-24 17:56 GMT+02:00 Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>:
+> +
+> >> +Example with two SJA1000 CAN controllers connected to the GMI bus. We wrap the
+> >> +controllers with a simple-bus node since they are all connected to the same
+> >> +chip-select (CS4), in this example external address decoding is provided:
+> >> +
+> >> +gmi@70090000 {
+> >> +     compatible = "nvidia,tegra20-gmi";
+> >> +     reg = <0x70009000 0x1000>;
+> >> +     #address-cells = <1>;
+> >> +     #size-cells = <1>;
+> >> +     clocks = <&tegra_car TEGRA20_CLK_NOR>;
+> >> +     clock-names = "gmi";
+> >> +     resets = <&tegra_car 42>;
+> >> +     reset-names = "gmi";
+> >> +     ranges = <4 0x48000000 0x7ffffff>;
+> >> +
+> >> +     status = "disabled";
+> >> +
+> >> +     bus@4 {
+> >> +             compatible = "simple-bus";
+> >> +             reg = <4>;
+> >> +             #address-cells = <1>;
+> >> +             #size-cells = <1>;
+> >> +             ranges = <0 4 0x40100>;
+> >
+> > Does this work? I tried to add an example like this and I got ...
+> >
+> > Warning (reg_format): "reg" property in /gmi@70009000/bus@4 has invalid
+> > length (4 bytes) (#address-cells == 1, #size-cells == 1)
+> 
+> Shoot, to get rid of the warning it should be
+> 
+> reg = <4 0 >;
+> 
+> But it works either way.
+
+The CS node should have #address-cells=2 with the first being CS# and 
+the second being the offset (often 0).
+
+> 
+> >
+> > I am wondering if we should just following the arm,pl172 example and
+> > have ...
+> >
+> >         cs4 {
+> >                 compatible = "simple-bus";
+> >                 #address-cells = <1>;
+> >                 #size-cells = <1>;
+> >                 ranges;
+
+Empty ranges is typically wrong and due to laziness...
+
+This should have the CS# in it.
+
+> >
+> >                 nvidia,snor-cs = <4>;
+> >                 nvidia,snor-mux-mode;
+> >                 nvidia,snor-adv-inv;
+> >
+> >                 can@0 {
+> >                         reg = <0 0x100>;
+
+This can be 1 cell with just the offset.
+
+> >                         ...
+> >                 };
+> >
+> >                 ...
+> >         };
+> >
+> 
+> That means to go back to V1 really (almost :)). Which I do not mind.
+> Will give it a test run.
+> 
+> But I am a little hesitant if will be any better/cleaner. In your example above:
+> 
+> can@0 {
+>          reg = <0 0x100>;
+>          ...
+> };
+> 
+> Would this really translate correctly? In the pl172 example they have
+> multiple ranges and address with "flash@0,0" which a range defined in
+> parent node. "can@0" does not have valid match in parent node in our
+> example. So I probably need add some more logic for it to properly
+> translate.
+
+pl172 has several things I don't like, so don't follow it. Mainly those 
+are custom CS property and 3 levels of nodes. I'm fine with 3 levels if 
+there is more than one device, but otherwise 2 levels with timing 
+properties in the child device node.
+
+
+> 
+> I have an idea which is following:
+> 
+> gmi@70090000 {
+>          status = "okay";
+>          #address-cells = <2>;
+>          #size-cells = <1>;
+>          ranges = <4 0 0x48000000 0x00040000>;
+> 
+>          cs4 {
+
+cs@4,0
+
+>                  compatible = "simple-bus";
+>                  #address-cells = <2>;
+
+1 cell here.
+
+>                  #size-cells = <1>;
+>                  ranges;
+
+Fill this in to drop the 2nd cell on child addresses and just have the 
+offset.
+
+> 
+>                  nvidia,snor-cs = <4>;
+
+NAK, no custom CS properties.
+
+>                  nvidia,snor-mux-mode;
+>                  nvidia,snor-adv-inv;
+> 
+>                  can@0 {
+>                          compatible = "nxp,sja1000";
+>                          reg = <4 0 0x100>;
+>                          ...
+>                  };
+> 
+> 
+>                  can@40000 {
+>                          compatible = "nxp,sja1000";
+>                          reg = <4 0x40000 0x100>;
+>                          ...
+>                  };
+>          };
+> };
+> 
+> Do not know if above will work at all (not able to test at current
+> location), anyway I will play around with it some more and get back to
+> you.
+> 
+> Best Regards
+> Mirza
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
