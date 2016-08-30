@@ -1,31 +1,82 @@
-From: Catalin Marinas <catalin.marinas@arm.com>
-Subject: Re: [PATCH ] arm64: cpuinfo: Add "model name" in /proc/cpuinfo for
- 64bit tasks also
-Date: Tue, 30 Aug 2016 10:19:35 +0100
-Message-ID: <20160830091935.GD5163@e104818-lin.cambridge.arm.com>
-References: <1472461345-28219-1-git-send-email-sumitg@nvidia.com>
+From: Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH ] drivers/base: cacheinfo: remove warning in resume
+Date: Tue, 30 Aug 2016 11:20:18 +0100
+Message-ID: <32ada52a-4d47-282a-ef10-33d3e32fbd52@arm.com>
+References: <1472455254-27692-1-git-send-email-sumitg@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1472461345-28219-1-git-send-email-sumitg@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Sumit Gupta <sumitg@nvidia.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, mark.rutland@arm.com, yang.shi@linaro.org, steve.capper@linaro.org, suzuki.poulose@arm.com, will.deacon@arm.com, julien.grall@arm.com, bbasu@nvidia.com, james.morse@arm.com, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1472455254-27692-1-git-send-email-sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org, Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>, bbasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Aug 29, 2016 at 02:32:25PM +0530, Sumit Gupta wrote:
-> Removed restriction of displaying model name for 32 bit tasks only.
-> Because of this Processor details were not displayed in
-> "System setting -> Details" in Ubuntu model name display is generic
-> and can be printed for 64 bit also.
-> 
-> model name : ARMv8 Processor rev X (v8l)
-> 
-> Signed-off-by: Sumit Gupta <sumitg@nvidia.com>
+Hi Sumit,
 
-You didn't give a reason why this is needed. For 32-bit tasks, we did it
-for backwards compatibility with code checking for it.
+I understand the warning we get but the patch is completely wrong.
+One it removes the feature of adding/removing the cache devices
+on cpu hotplug events. Have you tested your patch with simple cpu
+hotplug and seen no change before and after this change ?
+
+On 29/08/16 08:20, Sumit Gupta wrote:
+> CPU notifier is present for creating device
+> entries for child node "cache" under parent
+> node "cpu" as per DT.
+
+Again DT is only on few architectures not on all(e.g. x86)
+
+> During resume from
+> suspend, while booting all non-boot CPU's,
+> this notifier for adding cache device gets
+> called before cpu device is added by
+> device_resume. Because of this warning message
+> of "parent should not be sleeping" comes during
+> resume.
+>
+
+Yes that's correct and needs to be fixed. I have seen this but haven't
+spent much time to check in detail. It's harmless warning IMO.
+See the comment in the code too:"This is a fib. But we'll allow new
+children to be added below a resumed device, even if the device hasn't
+been completed yet"
+
+CPU devices are special and they have separate hotplug paths. So we need
+to consider that for cpu devices and set is_prepared quite early.
+
+> Removing the notifier to explicitly add/remove
+> cache device as CPU and cache device get
+> added/removed anyway as part of normal suspend
+> resume sequence.
+> dpm_resume_end - > dpm_resume -> device_resume
+>
+
+Yes, but:
+1. the caches objects are visible even when the cpu is offline
+2. how is this handled for normal cpu-hotplug events ? This patch
+    breaks the existing feature.
+
+> Signed-off-by: Sumit Gupta <sumitg-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/base/cacheinfo.c | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/drivers/base/cacheinfo.c b/drivers/base/cacheinfo.c
+> index e9fd32e91668..17d9c051a16f 100644
+> --- a/drivers/base/cacheinfo.c
+> +++ b/drivers/base/cacheinfo.c
+> @@ -544,8 +544,6 @@ static int __init cacheinfo_sysfs_init(void)
+>  			goto out;
+>  		}
+>  	}
+> -	__hotcpu_notifier(cacheinfo_cpu_callback, 0);
+> -
+>  out:
+>  	cpu_notifier_register_done();
+>  	return rc;
+>
 
 -- 
-Catalin
+Regards,
+Sudeep
