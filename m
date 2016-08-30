@@ -1,169 +1,181 @@
 From: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v2 3/6] dt/bindings: Add bindings for Tegra GMI controller
-Date: Tue, 30 Aug 2016 12:06:36 -0500
-Message-ID: <20160830170636.GA8741@rob-hp-laptop>
-References: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
- <1472045838-22628-4-git-send-email-mirza.krak@gmail.com>
- <de2fb909-829e-6c04-4f6a-442cbb9171c9@nvidia.com>
- <CALw8SCVcPymDZ8NyUbeanRF0TCT1TZzL6iRDticYA42FWrEWqw@mail.gmail.com>
+Subject: Re: [PATCH V2] dt: net: enhance DWC EQoS binding to support Tegra186
+Date: Tue, 30 Aug 2016 14:01:52 -0500
+Message-ID: <20160830190152.GA25083@rob-hp-laptop>
+References: <20160824212046.2416-1-swarren@wwwdotorg.org>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <CALw8SCVcPymDZ8NyUbeanRF0TCT1TZzL6iRDticYA42FWrEWqw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <20160824212046.2416-1-swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Lars Persson <lars.persson-VrBV9hrLPhE@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Aug 24, 2016 at 09:54:47PM +0200, Mirza Krak wrote:
-> 2016-08-24 17:56 GMT+02:00 Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>:
+On Wed, Aug 24, 2016 at 03:20:46PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> The Synopsys DWC EQoS is a configurable IP block which supports multiple
+> options for bus type, clocking and reset structure, and feature list.
+> Extend the DT binding to define a "compatible value" for the configuration
+> contained in NVIDIA's Tegra186 SoC, and define some new properties and
+> list property entries required by that configuration.
+> 
+> Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> v2:
+> * Add an explicit compatible value for the Axis SoC's version of the EQOS
+>   IP; this allows the driver to handle any SoC-specific integration quirks
+>   that are required, rather than only knowing about the IP block in
+>   isolation. This is good general DT practice. The existing value is still
+>   documented to support existing DTs.
+> * Reworked the list of clocks the binding requires:
+>   - Combined "tx" and "phy_ref_clk"; for GMII/RGMII configurations, these
+>     are the same thing.
+>   - Added extra description to the "rx" and "tx" clocks, to make it clear
+>     exactly which HW clock they represent.
+>   - Made the new "tx" and "slave_bus" names more prominent than the
+>     original "phy_ref_clk" and "apb_pclk". The new names are more generic
+>     and should work for any enhanced version of the binding (e.g. to
+>     support additional PHY types). New compatible values will hopefully
+>     choose to require the new names.
+> * Added a couple extra clocks to the list that may need to be supported in
+>   future binding revisions.
+> * Fixed a typo; "clocks" -> "resets".
+> ---
+>  .../bindings/net/snps,dwc-qos-ethernet.txt         | 75 ++++++++++++++++++++--
+>  1 file changed, 71 insertions(+), 4 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/snps,dwc-qos-ethernet.txt b/Documentation/devicetree/bindings/net/snps,dwc-qos-ethernet.txt
+> index 51f8d2eba8d8..1d028259824a 100644
+> --- a/Documentation/devicetree/bindings/net/snps,dwc-qos-ethernet.txt
+> +++ b/Documentation/devicetree/bindings/net/snps,dwc-qos-ethernet.txt
+> @@ -1,21 +1,87 @@
+>  * Synopsys DWC Ethernet QoS IP version 4.10 driver (GMAC)
+>  
+> +This binding supports the Synopsys Designware Ethernet QoS (Quality Of Service)
+> +IP block. The IP supports multiple options for bus type, clocking and reset
+> +structure, and feature list. Consequently, a number of properties and list
+> +entries in properties are marked as optional, or only required in specific HW
+> +configurations.
+>  
+>  Required properties:
+> -- compatible: Should be "snps,dwc-qos-ethernet-4.10"
+> +- compatible: One of:
+> +  - "axis,artpec6-eqos", "snps,dwc-qos-ethernet-4.10"
+> +    Represents the IP core when integrated into the Axis ARTPEC-6 SoC.
+> +  - "nvidia,tegra186-eqos", "snps,dwc-qos-ethernet-4.10"
+> +    Represents the IP core when integrated into the NVIDIA Tegra186 SoC.
+> +  - "snps,dwc-qos-ethernet-4.10"
+> +    This combination is deprecated. It should be treated as equivalent to
+> +    "axis,artpec6-eqos", "snps,dwc-qos-ethernet-4.10". It is supported to be
+> +    compatible with earlier revisions of this binding.
+>  - reg: Address and length of the register set for the device
+> -- clocks: Phandles to the reference clock and the bus clock
+> -- clock-names: Should be "phy_ref_clk" for the reference clock and "apb_pclk"
+> -  for the bus clock.
+> +- clocks: Phandle and clock specifiers for each entry in clock-names, in the
+> +  same order. See ../clock/clock-bindings.txt.
+> +- clock-names: May contain any/all of the following depending on the IP
+> +  configuration, in any order:
+
+No, they should be in a defined order.
+
+> +  - "tx"
+> +    (Alternate name "phy_ref_clk"; only one alternate must appear.)
+
+Obviously, the prior clocks were just made up for what someone needed at 
+the time and did not read the spec. I think it would be better to just 
+separate the old names and state they are deprecated and which 
+compatibles they are for.
+
+> +    The EQOS transmit path clock. The HW signal name is clk_tx_i.
+> +    In some configurations (e.g. GMII/RGMII), this clock also drives the PHY TX
+> +    path. In other configurations, other clocks (such as tx_125, rmii) may
+> +    drive the PHY TX path.
+> +  - "rx"
+> +    The EQOS receive path clock. The HW signal name is clk_rx_i.
+> +    In some configurations (e.g. GMII/RGMII), this clock also drives the PHY RX
+> +    path. In other configurations, other clocks (such as rx_125, pmarx_0,
+> +    pmarx_1, rmii) may drive the PHY RX path.
+> +  - "slave_bus"
+> +    (Alternate name "apb_pclk"; only one alternate must appear.)
+> +    The CPU/slave-bus (CSR) interface clock. Despite the name, this applies to
+> +    any bus type; APB, AHB, AXI, etc. The HW signal name is hclk_i (AHB) or
+> +    clk_csr_i (other buses).
+
+Sounds like 2 clocks here.
+
+> +  - "master_bus"
+> +    The master bus interface clock. Only required in configurations that use a
+> +    separate clock for the master and slave bus interfaces. The HW signal name
+> +    is hclk_i (AHB) or aclk_i (AXI).
+
+Sounds like 2 clocks. I'm guessing these are mutually exclusive based on 
+whether you configure the IP for AHB or AXI?
+
+> +  - "ptp_ref"
+> +    The PTP reference clock. The HW signal name is clk_ptp_ref_i.
 > +
-> >> +Example with two SJA1000 CAN controllers connected to the GMI bus. We wrap the
-> >> +controllers with a simple-bus node since they are all connected to the same
-> >> +chip-select (CS4), in this example external address decoding is provided:
-> >> +
-> >> +gmi@70090000 {
-> >> +     compatible = "nvidia,tegra20-gmi";
-> >> +     reg = <0x70009000 0x1000>;
-> >> +     #address-cells = <1>;
-> >> +     #size-cells = <1>;
-> >> +     clocks = <&tegra_car TEGRA20_CLK_NOR>;
-> >> +     clock-names = "gmi";
-> >> +     resets = <&tegra_car 42>;
-> >> +     reset-names = "gmi";
-> >> +     ranges = <4 0x48000000 0x7ffffff>;
-> >> +
-> >> +     status = "disabled";
-> >> +
-> >> +     bus@4 {
-> >> +             compatible = "simple-bus";
-> >> +             reg = <4>;
-> >> +             #address-cells = <1>;
-> >> +             #size-cells = <1>;
-> >> +             ranges = <0 4 0x40100>;
-> >
-> > Does this work? I tried to add an example like this and I got ...
-> >
-> > Warning (reg_format): "reg" property in /gmi@70009000/bus@4 has invalid
-> > length (4 bytes) (#address-cells == 1, #size-cells == 1)
+> +  Note: Support for additional IP configurations may require adding the
+> +  following clocks to this list in the future: clk_rx_125_i, clk_tx_125_i,
+> +  clk_pmarx_0_i, clk_pmarx1_i, clk_rmii_i, clk_revmii_rx_i, clk_revmii_tx_i.
+> +
+> +  The following compatible values require the following set of clocks:
+> +  - "nvidia,tegra186-eqos", "snps,dwc-qos-ethernet-4.10":
+> +    - "slave_bus"
+> +    - "master_bus"
+> +    - "rx"
+> +    - "tx"
+> +    - "ptp_ref"
+> +  - "axis,artpec6-eqos", "snps,dwc-qos-ethernet-4.10":
+> +    - "phy_ref_clk"
+> +    - "apb_clk"
+
+It would be good if this was marked deprecated and the full set of 
+clocks could be described and supported. Not sure if you can figure that 
+out. Is it really only 2 clocks, or these have multiple connections to 
+the same source.
+
+>  - interrupt-parent: Should be the phandle for the interrupt controller
+>    that services interrupts for this device
+>  - interrupts: Should contain the core's combined interrupt signal
+>  - phy-mode: See ethernet.txt file in the same directory
+> +- resets: Phandle and reset specifiers for each entry in reset-names, in the
+> +  same order. See ../reset/reset.txt.
+> +- reset-names: May contain any/all of the following depending on the IP
+> +  configuration, in any order:
+> +  - "eqos". The reset to the entire module. The HW signal name is hreset_n
+> +    (AHB) or aresetn_i (AXI).
+> +
+> +  The following compatible values require the following set of resets:
+> +  (the reset properties may be omitted if empty)
+> +  - "nvidia,tegra186-eqos", "snps,dwc-qos-ethernet-4.10":
+> +    - "eqos".
+> +  - "axis,artpec6-eqos", "snps,dwc-qos-ethernet-4.10":
+> +    - None.
+>  
+>  Optional properties:
+>  - dma-coherent: Present if dma operations are coherent
+>  - mac-address: See ethernet.txt in the same directory
+>  - local-mac-address: See ethernet.txt in the same directory
+> +- phy-reset-gpios: Phandle and specifier for any GPIO used to reset the PHY.
+> +  See ../gpio/gpio.txt.
+>  - snps,en-lpi: If present it enables use of the AXI low-power interface
+>  - snps,write-requests: Number of write requests that the AXI port can issue.
+>    It depends on the SoC configuration.
+> @@ -52,6 +118,7 @@ ethernet2@40010000 {
+>  	reg = <0x40010000 0x4000>;
+>  	phy-handle = <&phy2>;
+>  	phy-mode = "gmii";
+> +	phy-reset-gpios = <&gpioctlr 43 GPIO_ACTIVE_LOW>;
+>  
+>  	snps,en-tx-lpi-clockgating;
+>  	snps,en-lpi;
+> -- 
+> 2.9.3
 > 
-> Shoot, to get rid of the warning it should be
-> 
-> reg = <4 0 >;
-> 
-> But it works either way.
-
-The CS node should have #address-cells=2 with the first being CS# and 
-the second being the offset (often 0).
-
-> 
-> >
-> > I am wondering if we should just following the arm,pl172 example and
-> > have ...
-> >
-> >         cs4 {
-> >                 compatible = "simple-bus";
-> >                 #address-cells = <1>;
-> >                 #size-cells = <1>;
-> >                 ranges;
-
-Empty ranges is typically wrong and due to laziness...
-
-This should have the CS# in it.
-
-> >
-> >                 nvidia,snor-cs = <4>;
-> >                 nvidia,snor-mux-mode;
-> >                 nvidia,snor-adv-inv;
-> >
-> >                 can@0 {
-> >                         reg = <0 0x100>;
-
-This can be 1 cell with just the offset.
-
-> >                         ...
-> >                 };
-> >
-> >                 ...
-> >         };
-> >
-> 
-> That means to go back to V1 really (almost :)). Which I do not mind.
-> Will give it a test run.
-> 
-> But I am a little hesitant if will be any better/cleaner. In your example above:
-> 
-> can@0 {
->          reg = <0 0x100>;
->          ...
-> };
-> 
-> Would this really translate correctly? In the pl172 example they have
-> multiple ranges and address with "flash@0,0" which a range defined in
-> parent node. "can@0" does not have valid match in parent node in our
-> example. So I probably need add some more logic for it to properly
-> translate.
-
-pl172 has several things I don't like, so don't follow it. Mainly those 
-are custom CS property and 3 levels of nodes. I'm fine with 3 levels if 
-there is more than one device, but otherwise 2 levels with timing 
-properties in the child device node.
-
-
-> 
-> I have an idea which is following:
-> 
-> gmi@70090000 {
->          status = "okay";
->          #address-cells = <2>;
->          #size-cells = <1>;
->          ranges = <4 0 0x48000000 0x00040000>;
-> 
->          cs4 {
-
-cs@4,0
-
->                  compatible = "simple-bus";
->                  #address-cells = <2>;
-
-1 cell here.
-
->                  #size-cells = <1>;
->                  ranges;
-
-Fill this in to drop the 2nd cell on child addresses and just have the 
-offset.
-
-> 
->                  nvidia,snor-cs = <4>;
-
-NAK, no custom CS properties.
-
->                  nvidia,snor-mux-mode;
->                  nvidia,snor-adv-inv;
-> 
->                  can@0 {
->                          compatible = "nxp,sja1000";
->                          reg = <4 0 0x100>;
->                          ...
->                  };
-> 
-> 
->                  can@40000 {
->                          compatible = "nxp,sja1000";
->                          reg = <4 0x40000 0x100>;
->                          ...
->                  };
->          };
-> };
-> 
-> Do not know if above will work at all (not able to test at current
-> location), anyway I will play around with it some more and get back to
-> you.
-> 
-> Best Regards
-> Mirza
 --
 To unsubscribe from this list: send the line "unsubscribe devicetree" in
 the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
