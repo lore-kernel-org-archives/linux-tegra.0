@@ -1,110 +1,52 @@
-From: Wei Ni <wni-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v5 00/11] Add HW throttle for Tegra soctherm
-Date: Wed, 31 Aug 2016 11:07:14 +0800
-Message-ID: <57C649E2.30608@nvidia.com>
-References: <1462962026-19653-1-git-send-email-wni@nvidia.com>   <5746C4FD.9070909@nvidia.com> <1471590924.2691.34.camel@intel.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: [Fwd: Re: [PATCH v2 1/6] clk: tegra: add TEGRA20_CLK_NOR to init
+ table]
+Date: Wed, 31 Aug 2016 07:15:45 +0000
+Message-ID: <1472627744.31008.2.camel@toradex.com>
+References: <1472569308.5703.22.camel@toradex.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1471590924.2691.34.camel-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Zhang Rui <rui.zhang-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, edubezval-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org
-Cc: MLongnecker-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, mikko.perttunen-/1wQRMveznE@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Transfer-Encoding: base64
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+Content-Language: en-US
+Content-ID: <4351CFD673638B43885E377849671178@eurprd05.prod.outlook.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "jonathanh@nvidia.com" <jonathanh@nvidia.com>, "mirza.krak@gmail.com" <mirza.krak@gmail.com>, "swarren@wwwdotorg.org" <swarren@wwwdotorg.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>
+Cc: "mark.rutland@arm.com" <mark.rutland@arm.com>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "pgaikwad@nvidia.com" <pgaikwad@nvidia.com>, "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, "gnurou@gmail.com" <gnurou@gmail.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@codeaurora.org" <sboyd@codeaurora.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "pdeschrijver@nvidia.com" <pdeschrijver@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
-
-On 08/19/2016 03:15 PM, Zhang Rui wrote:
-> On 四, 2016-05-26 at 17:42 +0800, Wei Ni wrote:
->> Hi,
->> Does there have any comments on this series?
->> Let me know if someone has suggestions.
->>
-> I have no objections to this patch set.
-> As 10 patches out of 11, in this patch series, contain changes out of
-> thermal scope, if you prefer this patch set go through thermal tree, I
-> still need ACKs for the changes out of thermal scope.
-
-Rui, thanks for your comments.
-
-Thierry & Matt could you ACK this series ?
-
-Thanks.
-Wei.
-
-> 
-> thanks,
-> rui
-> 
->> Thanks.
->> Wei.
->>
->> On 05/11/2016 06:20 PM, Wei Ni wrote:
->>>
->>> This series add following functions for Tegra soctherm:
->>> 1. add HW throttle function.
->>> 2. enable soctherm node for Tegra124, Tegra132, Tegra210, and
->>> set "critical", "hot" trips for them.
->>>
->>> Main changes from v4:
->>> 1. drop the "nvidia" prefix from the node name, per Rob's comments.
->>>
->>> Main changes from v3:
->>> 1. change some properties'name and descriptions, per Rob's
->>> comments.
->>> 2. change the corresponding driver codes.
->>>
->>> Main changes from v2:
->>> 1. improve the of-binding, per Eduardo's comments, and
->>> change the corresponding driver codes.
->>> 2. move two setting critical trip patches in this series,
->>> 3. fix some bugs in dts changes.
->>>
->>> Main changes from v1:
->>> 1. use readl/writel instead of __raw_readl/__raw_writel.
->>> 2. rebase on the linux-next.
->>>
->>> The v1 series is in:
->>> https://lkml.org/lkml/2016/3/31/230
->>>
->>> The v2 series is in:
->>> https://lkml.org/lkml/2016/4/26/1577
->>>
->>> The v3 series is in:
->>> https://lkml.org/lkml/2016/5/3/274
->>>
->>> The v4 series is in:
->>> https://lkml.org/lkml/2016/5/9/45
->>>
->>> Wei Ni (11):
->>>   of: Add bindings of hw throttle for Tegra soctherm
->>>   thermal: tegra: add hw-throttle function
->>>   thermal: tegra: add hw-throttle for Tegra132
->>>   arm: tegra: set critical trips for Tegra124
->>>   arm: tegra: set hot trips for Tegra124
->>>   arm64: tegra: use tegra132-soctherm for Tegra132
->>>   arm64: tegra: set critical trips for Tegra132
->>>   arm64: tegra: set hot trips for Tegra132
->>>   arm64: tegra: add soctherm node for Tegra210
->>>   arm64: tegra: set critical trips for Tegra210
->>>   arm64: tegra: set hot trips for Tegra210
->>>
->>>  .../bindings/thermal/nvidia,tegra124-soctherm.txt  | 121 ++-
->>>  arch/arm/boot/dts/tegra124-jetson-tk1.dts          |  18 +-
->>>  arch/arm/boot/dts/tegra124.dtsi                    |  83 +-
->>>  arch/arm64/boot/dts/nvidia/tegra132.dtsi           | 119 ++-
->>>  arch/arm64/boot/dts/nvidia/tegra210.dtsi           | 127 ++++
->>>  drivers/thermal/tegra/soctherm.c                   | 842
->>> ++++++++++++++++++++-
->>>  drivers/thermal/tegra/soctherm.h                   |  10 +
->>>  drivers/thermal/tegra/tegra124-soctherm.c          |  18 +
->>>  drivers/thermal/tegra/tegra132-soctherm.c          |  18 +
->>>  drivers/thermal/tegra/tegra210-soctherm.c          |  18 +
->>>  include/dt-bindings/thermal/tegra124-soctherm.h    |   5 +
->>>  11 files changed, 1344 insertions(+), 35 deletions(-)
->>>
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+T24gV2VkLCAyMDE2LTA4LTI0IGF0IDE1OjM3ICswMjAwLCBNaXJ6YSBLcmFrIHdyb3RlOg0KPiAN
+Cj4gRnJvbTogTWlyemEgS3JhayA8bWlyemEua3Jhay1SZTVKUUVlUXFlOEF2eHRpdU13eDN3QHB1
+YmxpYy5nbWFuZS5vcmc+DQo+IA0KPiBBZGQgVEVHUkEyMF9DTEtfTk9SIHRvIGluaXQgdGFiZWwg
+YW5kIHNldCBkZWZhdWx0IHJhdGUgdG8gOTIgTUh6DQo+IHdoaWNoDQo+IGlzIG1heCByYXRlLg0K
+DQp0YWJsZQ0KDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBNaXJ6YSBLcmFrIDxtaXJ6YS5rcmFrLVJl
+NUpRRWVRcWU4QXZ4dGl1TXd4M3dAcHVibGljLmcNCj4gbWFuZS5vcmc+DQo+IC0tLQ0KPiBDaGFu
+Z2VzIGluIHYyOg0KPiAtIG5vIGNoYW5nZXMNCj4gDQo+IMKgZHJpdmVycy9jbGsvdGVncmEvY2xr
+LXRlZ3JhMjAuYyB8IDEgKw0KPiDCoDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKQ0KPiAN
+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL3RlZ3JhL2Nsay10ZWdyYTIwLmMgYi9kcml2ZXJz
+L2Nsay90ZWdyYS9jbGstDQo+IHRlZ3JhMjAuYw0KPiBpbmRleCA4MzdlNWNiLi4xM2QzYjVhIDEw
+MDY0NA0KPiAtLS0gYS9kcml2ZXJzL2Nsay90ZWdyYS9jbGstdGVncmEyMC5jDQo+ICsrKyBiL2Ry
+aXZlcnMvY2xrL3RlZ3JhL2Nsay10ZWdyYTIwLmMNCj4gQEAgLTEwNDcsNiArMTA0Nyw3IEBAIHN0
+YXRpYyBzdHJ1Y3QgdGVncmFfY2xrX2luaXRfdGFibGUgaW5pdF90YWJsZVtdDQo+IF9faW5pdGRh
+dGEgPSB7DQo+IMKgCXsgVEVHUkEyMF9DTEtfU0RNTUMzLCBURUdSQTIwX0NMS19QTExfUCwgNDgw
+MDAwMDAsIDAgfSwNCj4gwqAJeyBURUdSQTIwX0NMS19TRE1NQzQsIFRFR1JBMjBfQ0xLX1BMTF9Q
+LCA0ODAwMDAwMCwgMCB9LA0KPiDCoAl7IFRFR1JBMjBfQ0xLX1NQSSwgVEVHUkEyMF9DTEtfUExM
+X1AsIDIwMDAwMDAwLCAwIH0sDQo+ICsJeyBURUdSQTIwX0NMS19OT1IsIFRFR1JBMjBfQ0xLX1BM
+TF9QLCA5MjAwMDAwMCwgMCB9LA0KDQpJJ20ganVzdCBjdXJpb3VzIHdoZXJlIHRoYXQgOTIgTUh6
+IGNhbWUgZnJvbS4gQWNjb3JkaW5nIHRvIHRoZSBUZWdyYSAyDQpJbnRlcmZhY2UgRGVzaWduIEd1
+aWRlIHVwIHRvIDEzMyBNSHogc2hvdWxkIGFjdHVhbGx5IGJlIHBvc3NpYmxlLg0KDQo+IA0KPiDC
+oAl7IFRFR1JBMjBfQ0xLX1NCQzEsIFRFR1JBMjBfQ0xLX1BMTF9QLCAxMDAwMDAwMDAsIDAgfSwN
+Cj4gwqAJeyBURUdSQTIwX0NMS19TQkMyLCBURUdSQTIwX0NMS19QTExfUCwgMTAwMDAwMDAwLCAw
+IH0sDQo+IMKgCXsgVEVHUkEyMF9DTEtfU0JDMywgVEVHUkEyMF9DTEtfUExMX1AsIDEwMDAwMDAw
+MCwgMCB9LA0KPiAtLQ0KPiAyLjEuNApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fXwpsaW51eC1hcm0ta2VybmVsIG1haWxpbmcgbGlzdApsaW51eC1hcm0ta2Vy
+bmVsQGxpc3RzLmluZnJhZGVhZC5vcmcKaHR0cDovL2xpc3RzLmluZnJhZGVhZC5vcmcvbWFpbG1h
+bi9saXN0aW5mby9saW51eC1hcm0ta2VybmVsCg==
