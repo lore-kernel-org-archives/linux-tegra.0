@@ -1,171 +1,117 @@
-From: Shardar Shariff Md <smohammed@nvidia.com>
-Subject: [PATCH v11 5/5] i2c: tegra: proper handling of error cases
-Date: Wed, 31 Aug 2016 18:58:44 +0530
-Message-ID: <1472650124-5702-5-git-send-email-smohammed@nvidia.com>
-References: <1472650124-5702-1-git-send-email-smohammed@nvidia.com>
+From: Shardar Mohammed <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/5] i2c: tegra: use readl_poll_timeout after config_load
+ reg programmed
+Date: Wed, 31 Aug 2016 13:30:53 +0000
+Message-ID: <1472650254799.24331@nvidia.com>
+References: <1472649758-5608-1-git-send-email-smohammed@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1472650124-5702-1-git-send-email-smohammed@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: smohammed@nvidia.com, wsa@the-dreams.de, swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, jonathanh@nvidia.com, ldewangan@nvidia.com
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1472649758-5608-1-git-send-email-smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Language: en-US
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org" <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Jonathan Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-To summarize the issue observed in error cases:
+Sorry ignore this series, forgot to mention patch series version.
+Pushed v11 series, please review v11 series.
 
-SW Flow: For i2c message transfer, packet header and data payload is
-posted and then required error/packet completion interrupts are enabled
-later.
+Thanks,
+Shardar
+________________________________________
+From: Shardar Mohammed
+Sent: Wednesday, August 31, 2016 6:52 PM
+To: Shardar Mohammed; wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org; swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org; thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org; gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org; linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org; Jonathan Hunter
+Subject: [PATCH 1/5] i2c: tegra: use readl_poll_timeout after config_load reg programmed
 
-HW flow: HW process the packet just after packet header is posted, if
-ARB lost/NACK error occurs (SW will not handle immediately when error
-happens as error interrupts are not enabled at this point). HW assumes
-error is acknowledged and clears current data in FIFO, But SW here posts
-the remaining data payload which still stays in FIFO as stale data
-(data without packet header).
+After CONFIG_LOAD register is programmed instead of explicitly waiting
+for timeout, use readl_poll_timeout() to check for register value to get
+updated or wait till timeout.
 
-Now once the interrupts are enabled, SW handles ARB lost/NACK error by
-clearing the ARB lost/NACK interrupt. Now HW assumes that SW attended
-the error and will parse/process stale data (data without packet header)
-present in FIFO which causes invalid NACK errors.
-
-Fix: Enable the error interrupts before posting the packet into FIFO
-which make sure HW to not clear the fifo. Also disable the packet mode
-before acknowledging errors (ARB lost/NACK error) to not process any
-stale data. As error interrupts are enabled before posting the packet
-header use spinlock to avoid preempting.
-
-Signed-off-by: Shardar Shariff Md <smohammed@nvidia.com>
+Signed-off-by: Shardar Shariff Md <smohammed-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
 ---
-Changes in v2:
-- Align the commit message to 72 characters per line.
-- Removing unnecessary paranthesis.
-- Handle error in isr
+Changes in v4:
+- Split timeout calculation to separate patch
 
-Changes in v3:
-- Printing error if tegra_i2c_disable_packet_mode() fails
-  is already present and handling error is not taken cared
-  in ISR which was done in v2 but keeping return error in
-  *wait_for_config_load() as its used in tegra_i2c_init()
+Changes in v5:
+- Move disabling of clock to separate patch
+
+Changes in v8:
+- 1st change of [PATCH v7] series is merged, v8 is rebased on top of
+  merged change, here patch series is changed accordingly.
+- Updated the commit message as per review to properly reflect change.
+- calculate the register offset seperately to make code more readable.
+
+Changes in v9:
+- Use readl_poll_timeout() instead of readx_poll_timeout()
 
 Changes in V10:
 - Rebase on top of [PATCH V2 0/9] Some Tegra I2C Updates
+
+Changes in V11:
+- Fix sparse error
 ---
 ---
- drivers/i2c/busses/i2c-tegra.c | 29 +++++++++++++++++++++++++++--
- 1 file changed, 27 insertions(+), 2 deletions(-)
+ drivers/i2c/busses/i2c-tegra.c | 23 ++++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-index 2437535..c15d575 100644
+index d86a993..e93c72a 100644
 --- a/drivers/i2c/busses/i2c-tegra.c
 +++ b/drivers/i2c/busses/i2c-tegra.c
-@@ -196,6 +196,7 @@ struct tegra_i2c_dev {
- 	u16 clk_divisor_non_hs_mode;
- 	bool is_suspended;
- 	bool is_multimaster_mode;
-+	spinlock_t xfer_lock;
- };
- 
- static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
-@@ -542,14 +543,27 @@ err:
- 	return err;
- }
- 
-+static int tegra_i2c_disable_packet_mode(struct tegra_i2c_dev *i2c_dev)
-+{
-+	u32 cnfg;
+@@ -30,6 +30,7 @@
+ #include <linux/reset.h>
+ #include <linux/pinctrl/consumer.h>
+ #include <linux/pm_runtime.h>
++#include <linux/iopoll.h>
+
+ #include <asm/unaligned.h>
+
+@@ -112,6 +113,8 @@
+ #define I2C_CLKEN_OVERRIDE                     0x090
+ #define I2C_MST_CORE_CLKEN_OVR                 BIT(0)
+
++#define I2C_CONFIG_LOAD_TIMEOUT                        1000000
 +
-+	cnfg = i2c_readl(i2c_dev, I2C_CNFG);
-+	if (cnfg & I2C_CNFG_PACKET_MODE_EN)
-+		i2c_writel(i2c_dev, cnfg & ~I2C_CNFG_PACKET_MODE_EN, I2C_CNFG);
+ /*
+  * msg_end_type: The bus control which need to be send at end of transfer.
+  * @MSG_END_STOP: Send stop pulse at end of transfer.
+@@ -448,7 +451,6 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+        u32 val;
+        int err;
+        u32 clk_divisor;
+-       unsigned long timeout = jiffies + HZ;
+
+        err = pm_runtime_get_sync(i2c_dev->dev);
+        if (err < 0) {
+@@ -497,15 +499,18 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+                i2c_writel(i2c_dev, I2C_MST_CORE_CLKEN_OVR, I2C_CLKEN_OVERRIDE);
+
+        if (i2c_dev->hw->has_config_load_reg) {
++               unsigned long reg_offset;
++               void __iomem *addr;
 +
-+	return tegra_i2c_wait_for_config_load(i2c_dev);
-+}
-+
- static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- {
- 	u32 status;
- 	const u32 status_err = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
- 	struct tegra_i2c_dev *i2c_dev = dev_id;
-+	unsigned long flags;
- 
- 	status = i2c_readl(i2c_dev, I2C_INT_STATUS);
- 
-+	spin_lock_irqsave(&i2c_dev->xfer_lock, flags);
- 	if (status == 0) {
- 		dev_warn(i2c_dev->dev, "irq status 0 %08x %08x %08x\n",
- 			 i2c_readl(i2c_dev, I2C_PACKET_TRANSFER_STATUS),
-@@ -565,6 +579,7 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 	}
- 
- 	if (unlikely(status & status_err)) {
-+		tegra_i2c_disable_packet_mode(i2c_dev);
- 		if (status & I2C_INT_NO_ACK)
- 			i2c_dev->msg_err |= I2C_ERR_NO_ACK;
- 		if (status & I2C_INT_ARBITRATION_LOST)
-@@ -594,7 +609,7 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
- 		BUG_ON(i2c_dev->msg_buf_remaining);
- 		complete(&i2c_dev->msg_complete);
- 	}
--	return IRQ_HANDLED;
-+	goto done;
- err:
- 	/* An error occurred, mask all interrupts */
- 	tegra_i2c_mask_irq(i2c_dev, I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST |
-@@ -605,6 +620,8 @@ err:
- 		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
- 
- 	complete(&i2c_dev->msg_complete);
-+done:
-+	spin_unlock_irqrestore(&i2c_dev->xfer_lock, flags);
- 	return IRQ_HANDLED;
- }
- 
-@@ -614,6 +631,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	u32 packet_header;
- 	u32 int_mask;
- 	unsigned long time_left;
-+	unsigned long flags;
- 
- 	tegra_i2c_flush_fifos(i2c_dev);
- 
-@@ -626,6 +644,11 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	i2c_dev->msg_read = (msg->flags & I2C_M_RD);
- 	reinit_completion(&i2c_dev->msg_complete);
- 
-+	spin_lock_irqsave(&i2c_dev->xfer_lock, flags);
-+
-+	int_mask = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
-+	tegra_i2c_unmask_irq(i2c_dev, int_mask);
-+
- 	packet_header = (0 << PACKET_HEADER0_HEADER_SIZE_SHIFT) |
- 			PACKET_HEADER0_PROTOCOL_I2C |
- 			(i2c_dev->cont_id << PACKET_HEADER0_CONT_ID_SHIFT) |
-@@ -655,14 +678,15 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
- 	if (!(msg->flags & I2C_M_RD))
- 		tegra_i2c_fill_tx_fifo(i2c_dev);
- 
--	int_mask = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
- 	if (i2c_dev->hw->has_per_pkt_xfer_complete_irq)
- 		int_mask |= I2C_INT_PACKET_XFER_COMPLETE;
- 	if (msg->flags & I2C_M_RD)
- 		int_mask |= I2C_INT_RX_FIFO_DATA_REQ;
- 	else if (i2c_dev->msg_buf_remaining)
- 		int_mask |= I2C_INT_TX_FIFO_DATA_REQ;
-+
- 	tegra_i2c_unmask_irq(i2c_dev, int_mask);
-+	spin_unlock_irqrestore(&i2c_dev->xfer_lock, flags);
- 	dev_dbg(i2c_dev->dev, "unmasked irq: %02x\n",
- 		i2c_readl(i2c_dev, I2C_INT_MASK));
- 
-@@ -899,6 +923,7 @@ static int tegra_i2c_probe(struct platform_device *pdev)
- 	i2c_dev->is_dvc = of_device_is_compatible(pdev->dev.of_node,
- 						  "nvidia,tegra20-i2c-dvc");
- 	init_completion(&i2c_dev->msg_complete);
-+	spin_lock_init(&i2c_dev->xfer_lock);
- 
- 	if (!i2c_dev->hw->has_single_clk_source) {
- 		fast_clk = devm_clk_get(&pdev->dev, "fast-clk");
--- 
++               reg_offset = tegra_i2c_reg_addr(i2c_dev, I2C_CONFIG_LOAD);
++               addr = i2c_dev->base + reg_offset;
+                i2c_writel(i2c_dev, I2C_MSTR_CONFIG_LOAD, I2C_CONFIG_LOAD);
+-               while (i2c_readl(i2c_dev, I2C_CONFIG_LOAD) != 0) {
+-                       if (time_after(jiffies, timeout)) {
+-                               dev_warn(i2c_dev->dev,
+-                                       "timeout waiting for config load\n");
+-                               err = -ETIMEDOUT;
+-                               goto err;
+-                       }
+-                       msleep(1);
++               err = readl_poll_timeout(addr, val, val == 0, 1000,
++                                        I2C_CONFIG_LOAD_TIMEOUT);
++               if (err) {
++                       dev_warn(i2c_dev->dev,
++                                "timeout waiting for config load\n");
++                       goto err;
+                }
+        }
+
+--
 1.8.1.5
