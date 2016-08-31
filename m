@@ -1,53 +1,32 @@
-From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 5/6] ARM: tegra: Add Tegra20 GMI support
-Date: Wed, 31 Aug 2016 11:48:07 +0200
-Message-ID: <CALw8SCW49jOZ7gBTwhNLSMeeDUCYUpRs-GNgXo84pOkUfLTcUA@mail.gmail.com>
-References: <1472569349.5703.25.camel@toradex.com> <1472627926.31008.7.camel@toradex.com>
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Subject: Re: [PATCH] phy: mark tegra_xusb_lane_lookup_function() static
+Date: Wed, 31 Aug 2016 12:01:11 +0200
+Message-ID: <7060924.RuInUXIHDe@wuerfel>
+References: <1472634319-11886-1-git-send-email-baoyou.xie@linaro.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7Bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1472627926.31008.7.camel-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+In-Reply-To: <1472634319-11886-1-git-send-email-baoyou.xie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
-Cc: "jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org" <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org" <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, "pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org" <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org" <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org" <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra@vger>
+To: Baoyou Xie <baoyou.xie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: kishon-l0cyMroinI0@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, xie.baoyou-Th6q7B73Y6EnDS1+zs4M5A@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-2016-08-31 9:18 GMT+02:00 Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>:
-> On Wed, 2016-08-24 at 15:37 +0200, Mirza Krak wrote:
->>
->> From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w-XMD5yJDbdMReXY1tMh2IBg@public.gmane.org>
->>
->> Add a device node for the GMI controller found on Tegra20.
->>
->> Signed-off-by: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.g
->> mane.org>
->> ---
->> Changes in v2:
->> - added address-cells, size-cells and ranges properties
->>
->>  arch/arm/boot/dts/tegra20.dtsi | 14 ++++++++++++++
->>  1 file changed, 14 insertions(+)
->>
->> diff --git a/arch/arm/boot/dts/tegra20.dtsi
->> b/arch/arm/boot/dts/tegra20.dtsi
->> index 2207c08..03eb029 100644
->> --- a/arch/arm/boot/dts/tegra20.dtsi
->> +++ b/arch/arm/boot/dts/tegra20.dtsi
->> @@ -376,6 +376,20 @@
->>               status = "disabled";
->>       };
->>
->> +
->> +     gmi@70009000 {
->> +             compatible = "nvidia,tegra20-gmi";
->> +             reg = <70009000 0x1000>;
->> +             #address-cells = <1>;
->> +             #size-cells = <1>;
->> +             ranges = <0 0x48000000 0x7ffffff>;
->
-> On T20 it is actually rather 0xd0000000.
+On Wednesday, August 31, 2016 5:05:19 PM CEST Baoyou Xie wrote:
+> We get 1 warning when building kernel with W=1:
+> drivers/phy/tegra/xusb.c:104:5: warning: no previous prototype for 'tegra_xusb_lane_lookup_function' [-Wmissing-prototypes]
+> 
+> In fact, this function is only used in the file in which it is
+> declared and don't need a declaration, but can be made static.
+> So this patch marks it 'static'.
+> 
+> Signed-off-by: Baoyou Xie <baoyou.xie-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+> 
 
-It indeed is, thank you catching this.
+Acked-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 
-Best Regards
-Mirza
+Same comment as for the other patch, it's better to use "phy: tegra: ..."
+in the subject for clarity.
+
+	Arnd
