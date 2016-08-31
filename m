@@ -1,39 +1,38 @@
 From: Baoyou Xie <baoyou.xie@linaro.org>
-Subject: [PATCH] phy: add missing header dependencies
-Date: Wed, 31 Aug 2016 16:56:49 +0800
-Message-ID: <1472633809-19904-1-git-send-email-baoyou.xie@linaro.org>
+Subject: [PATCH] phy: mark tegra_xusb_lane_lookup_function() static
+Date: Wed, 31 Aug 2016 17:05:19 +0800
+Message-ID: <1472634319-11886-1-git-send-email-baoyou.xie@linaro.org>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 To: kishon@ti.com, swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com
 Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, arnd@arndb.de, baoyou.xie@linaro.org, xie.baoyou@zte.com.cn
 List-Id: linux-tegra@vger.kernel.org
 
-We get 5 warnings when building kernel with W=1:
-drivers/phy/tegra/xusb.c:948:27: warning: no previous prototype for 'tegra_xusb_padctl_get' [-Wmissing-prototypes]
-drivers/phy/tegra/xusb.c:981:6: warning: no previous prototype for 'tegra_xusb_padctl_put' [-Wmissing-prototypes]
-drivers/phy/tegra/xusb.c:988:5: warning: no previous prototype for 'tegra_xusb_padctl_usb3_save_context' [-Wmissing-prototypes]
-drivers/phy/tegra/xusb.c:998:5: warning: no previous prototype for 'tegra_xusb_padctl_hsic_set_idle' [-Wmissing-prototypes]
-drivers/phy/tegra/xusb.c:1008:5: warning: no previous prototype for 'tegra_xusb_padctl_usb3_set_lfps_detect' [-Wmissing-prototypes]
+We get 1 warning when building kernel with W=1:
+drivers/phy/tegra/xusb.c:104:5: warning: no previous prototype for 'tegra_xusb_lane_lookup_function' [-Wmissing-prototypes]
 
-In fact, these functions are declared in linux/phy/tegra/xusb.h,
-so this patch adds missing header dependencies.
+In fact, this function is only used in the file in which it is
+declared and don't need a declaration, but can be made static.
+So this patch marks it 'static'.
 
 Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
 ---
- drivers/phy/tegra/xusb.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/phy/tegra/xusb.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index 0a372d9..873424a 100644
+index ec83dfd..0a372d9 100644
 --- a/drivers/phy/tegra/xusb.c
 +++ b/drivers/phy/tegra/xusb.c
-@@ -18,6 +18,7 @@
- #include <linux/of.h>
- #include <linux/of_device.h>
- #include <linux/phy/phy.h>
-+#include <linux/phy/tegra/xusb.h>
- #include <linux/platform_device.h>
- #include <linux/regulator/consumer.h>
- #include <linux/reset.h>
+@@ -101,7 +101,8 @@ tegra_xusb_pad_find_phy_node(struct tegra_xusb_pad *pad, unsigned int index)
+ 	return of_find_node_by_name(np, pad->soc->lanes[index].name);
+ }
+ 
+-int tegra_xusb_lane_lookup_function(struct tegra_xusb_lane *lane,
++static int
++tegra_xusb_lane_lookup_function(struct tegra_xusb_lane *lane,
+ 				    const char *function)
+ {
+ 	unsigned int i;
 -- 
 2.7.4
