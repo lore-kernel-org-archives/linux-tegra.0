@@ -1,186 +1,133 @@
-From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Subject: [PATCH V3] dt: net: enhance DWC EQoS binding to support Tegra186
-Date: Thu,  1 Sep 2016 13:02:16 -0600
-Message-ID: <20160901190216.5643-1-swarren@wwwdotorg.org>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lars Persson <lars.persson-VrBV9hrLPhE@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, netdev-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+Subject: [PATCH v3] power: bq24735-charger: Request status GPIO with initial input setup
+Date: Thu,  1 Sep 2016 23:27:00 +0200
+Message-ID: <20160901212700.29747-1-contact@paulk.fr>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+This requests the status GPIO with initial input setup. it is required
+to read the GPIO status at probe time and thus correctly avoid sending
+i2c messages when AC is not plugged.
 
-The Synopsys DWC EQoS is a configurable IP block which supports multiple
-options for bus type, clocking and reset structure, and feature list.
-Extend the DT binding to define a "compatible value" for the configuration
-contained in NVIDIA's Tegra186 SoC, and define some new properties and
-list property entries required by that configuration.
+When requesting the GPIO without initial input setup, it always reads 0
+which causes probe to fail as it assumes the charger is connected, sends
+i2c messages and fails.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+While at it, this switches the driver over to gpio consumer.
+
+Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
 ---
-v3:
-* Document legacy clock-names entries separately, and make it obvious
-  they're deprecated.
-* Reword the description of the "rx" clock to better describe the HW.
-* Add some extra guidance for future extensions of the binding to cover
-  configurations where additional RX clocks are required.
-* Explicitly document the list of clocks and resets for every compatible
-  value; don't miss any out.
-v2:
-* Add an explicit compatible value for the Axis SoC's version of the EQOS
-  IP; this allows the driver to handle any SoC-specific integration quirks
-  that are required, rather than only knowing about the IP block in
-  isolation. This is good general DT practice. The existing value is still
-  documented to support existing DTs.
-* Reworked the list of clocks the binding requires:
-  - Combined "tx" and "phy_ref_clk"; for GMII/RGMII configurations, these
-    are the same thing.
-  - Added extra description to the "rx" and "tx" clocks, to make it clear
-    exactly which HW clock they represent.
-  - Made the new "tx" and "slave_bus" names more prominent than the
-    original "phy_ref_clk" and "apb_pclk". The new names are more generic
-    and should work for any enhanced version of the binding (e.g. to
-    support additional PHY types). New compatible values will hopefully
-    choose to require the new names.
-* Added a couple extra clocks to the list that may need to be supported in
-  future binding revisions.
-* Fixed a typo; "clocks" -> "resets".
----
- .../bindings/net/snps,dwc-qos-ethernet.txt         | 99 +++++++++++++++++++++-
- 1 file changed, 95 insertions(+), 4 deletions(-)
+ drivers/power/bq24735-charger.c       | 42 +++++++++++++----------------------
+ include/linux/power/bq24735-charger.h |  4 +---
+ 2 files changed, 17 insertions(+), 29 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/snps,dwc-qos-ethernet.txt b/Documentation/devicetree/bindings/net/snps,dwc-qos-ethernet.txt
-index 51f8d2eba8d8..d93f71ce8346 100644
---- a/Documentation/devicetree/bindings/net/snps,dwc-qos-ethernet.txt
-+++ b/Documentation/devicetree/bindings/net/snps,dwc-qos-ethernet.txt
-@@ -1,21 +1,111 @@
- * Synopsys DWC Ethernet QoS IP version 4.10 driver (GMAC)
+diff --git a/drivers/power/bq24735-charger.c b/drivers/power/bq24735-charger.c
+index dc460bb..7f9b305 100644
+--- a/drivers/power/bq24735-charger.c
++++ b/drivers/power/bq24735-charger.c
+@@ -25,7 +25,8 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+-#include <linux/of_gpio.h>
++#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/power_supply.h>
+ #include <linux/slab.h>
  
-+This binding supports the Synopsys Designware Ethernet QoS (Quality Of Service)
-+IP block. The IP supports multiple options for bus type, clocking and reset
-+structure, and feature list. Consequently, a number of properties and list
-+entries in properties are marked as optional, or only required in specific HW
-+configurations.
+@@ -178,11 +179,9 @@ static int bq24735_config_charger(struct bq24735 *charger)
+ static bool bq24735_charger_is_present(struct bq24735 *charger)
+ {
+ 	struct bq24735_platform *pdata = charger->pdata;
+-	int ret;
  
- Required properties:
--- compatible: Should be "snps,dwc-qos-ethernet-4.10"
-+- compatible: One of:
-+  - "axis,artpec6-eqos", "snps,dwc-qos-ethernet-4.10"
-+    Represents the IP core when integrated into the Axis ARTPEC-6 SoC.
-+  - "nvidia,tegra186-eqos", "snps,dwc-qos-ethernet-4.10"
-+    Represents the IP core when integrated into the NVIDIA Tegra186 SoC.
-+  - "snps,dwc-qos-ethernet-4.10"
-+    This combination is deprecated. It should be treated as equivalent to
-+    "axis,artpec6-eqos", "snps,dwc-qos-ethernet-4.10". It is supported to be
-+    compatible with earlier revisions of this binding.
- - reg: Address and length of the register set for the device
--- clocks: Phandles to the reference clock and the bus clock
--- clock-names: Should be "phy_ref_clk" for the reference clock and "apb_pclk"
--  for the bus clock.
-+- clocks: Phandle and clock specifiers for each entry in clock-names, in the
-+  same order. See ../clock/clock-bindings.txt.
-+- clock-names: May contain any/all of the following depending on the IP
-+  configuration, in any order:
-+  - "tx"
-+    The EQOS transmit path clock. The HW signal name is clk_tx_i.
-+    In some configurations (e.g. GMII/RGMII), this clock also drives the PHY TX
-+    path. In other configurations, other clocks (such as tx_125, rmii) may
-+    drive the PHY TX path.
-+  - "rx"
-+    The EQOS receive path clock. The HW signal name is clk_rx_i.
-+    In some configurations (e.g. GMII/RGMII), this clock is derived from the
-+    PHY's RX clock output. In other configurations, other clocks (such as
-+    rx_125, rmii) may drive the EQOS RX path.
-+    In cases where the PHY clock is directly fed into the EQOS receive path
-+    without intervening logic, the DT need not represent this clock, since it
-+    is assumed to be fully under the control of the PHY device/driver. In
-+    cases where SoC integration adds additional logic to this path, such as a
-+    SW-controlled clock gate, this clock should be represented in DT.
-+  - "slave_bus"
-+    The CPU/slave-bus (CSR) interface clock. This applies to any bus type;
-+    APB, AHB, AXI, etc. The HW signal name is hclk_i (AHB) or clk_csr_i (other
-+    buses).
-+  - "master_bus"
-+    The master bus interface clock. Only required in configurations that use a
-+    separate clock for the master and slave bus interfaces. The HW signal name
-+    is hclk_i (AHB) or aclk_i (AXI).
-+  - "ptp_ref"
-+    The PTP reference clock. The HW signal name is clk_ptp_ref_i.
-+  - "phy_ref_clk"
-+    This clock is deprecated and should not be used by new compatible values.
-+    It is equivalent to "tx".
-+  - "apb_pclk"
-+    This clock is deprecated and should not be used by new compatible values.
-+    It is equivalent to "slave_bus".
-+
-+  Note: Support for additional IP configurations may require adding the
-+  following clocks to this list in the future: clk_rx_125_i, clk_tx_125_i,
-+  clk_pmarx_0_i, clk_pmarx1_i, clk_rmii_i, clk_revmii_rx_i, clk_revmii_tx_i.
-+  Configurations exist where multiple similar clocks are used at once, e.g. all
-+  of clk_rx_125_i, clk_pmarx_0_i, clk_pmarx1_i. For this reason it is best to
-+  extend the binding with a separate clock-names entry for each of those RX
-+  clocks, rather than repurposing the existing "rx" clock-names entry as a
-+  generic/logical clock in a similar fashion to "master_bus" and "slave_bus".
-+  This will allow easy support for configurations that support multiple PHY
-+  interfaces using a mux, and hence need to have explicit control over
-+  specific RX clocks.
-+
-+  The following compatible values require the following set of clocks:
-+  - "nvidia,tegra186-eqos", "snps,dwc-qos-ethernet-4.10":
-+    - "slave_bus"
-+    - "master_bus"
-+    - "rx"
-+    - "tx"
-+    - "ptp_ref"
-+  - "axis,artpec6-eqos", "snps,dwc-qos-ethernet-4.10":
-+    - "slave_bus"
-+    - "master_bus"
-+    - "tx"
-+    - "ptp_ref"
-+  - "snps,dwc-qos-ethernet-4.10" (deprecated):
-+    - "phy_ref_clk"
-+    - "apb_clk"
- - interrupt-parent: Should be the phandle for the interrupt controller
-   that services interrupts for this device
- - interrupts: Should contain the core's combined interrupt signal
- - phy-mode: See ethernet.txt file in the same directory
-+- resets: Phandle and reset specifiers for each entry in reset-names, in the
-+  same order. See ../reset/reset.txt.
-+- reset-names: May contain any/all of the following depending on the IP
-+  configuration, in any order:
-+  - "eqos". The reset to the entire module. The HW signal name is hreset_n
-+    (AHB) or aresetn_i (AXI).
-+
-+  The following compatible values require the following set of resets:
-+  (the reset properties may be omitted if empty)
-+  - "nvidia,tegra186-eqos", "snps,dwc-qos-ethernet-4.10":
-+    - "eqos".
-+  - "axis,artpec6-eqos", "snps,dwc-qos-ethernet-4.10":
-+    - None.
-+  - "snps,dwc-qos-ethernet-4.10" (deprecated):
-+    - None.
+-	if (pdata->status_gpio_valid) {
+-		ret = gpio_get_value_cansleep(pdata->status_gpio);
+-		return ret ^= pdata->status_gpio_active_low == 0;
++	if (pdata->status_gpio) {
++		return !gpiod_get_value_cansleep(pdata->status_gpio);
+ 	} else {
+ 		int ac = 0;
  
- Optional properties:
- - dma-coherent: Present if dma operations are coherent
- - mac-address: See ethernet.txt in the same directory
- - local-mac-address: See ethernet.txt in the same directory
-+- phy-reset-gpios: Phandle and specifier for any GPIO used to reset the PHY.
-+  See ../gpio/gpio.txt.
- - snps,en-lpi: If present it enables use of the AXI low-power interface
- - snps,write-requests: Number of write requests that the AXI port can issue.
-   It depends on the SoC configuration.
-@@ -52,6 +142,7 @@ ethernet2@40010000 {
- 	reg = <0x40010000 0x4000>;
- 	phy-handle = <&phy2>;
- 	phy-mode = "gmii";
-+	phy-reset-gpios = <&gpioctlr 43 GPIO_ACTIVE_LOW>;
+@@ -308,7 +307,6 @@ static struct bq24735_platform *bq24735_parse_dt_data(struct i2c_client *client)
+ 	struct device_node *np = client->dev.of_node;
+ 	u32 val;
+ 	int ret;
+-	enum of_gpio_flags flags;
  
- 	snps,en-tx-lpi-clockgating;
- 	snps,en-lpi;
+ 	pdata = devm_kzalloc(&client->dev, sizeof(*pdata), GFP_KERNEL);
+ 	if (!pdata) {
+@@ -317,11 +315,13 @@ static struct bq24735_platform *bq24735_parse_dt_data(struct i2c_client *client)
+ 		return NULL;
+ 	}
+ 
+-	pdata->status_gpio = of_get_named_gpio_flags(np, "ti,ac-detect-gpios",
+-						     0, &flags);
+-
+-	if (flags & OF_GPIO_ACTIVE_LOW)
+-		pdata->status_gpio_active_low = 1;
++	pdata->status_gpio = devm_gpiod_get_optional(&client->dev,
++				"ti,ac-detect", GPIOD_IN);
++	if (IS_ERR(pdata->status_gpio)) {
++		ret = PTR_ERR(pdata->status_gpio);
++		dev_err(&client->dev, "Getting gpio failed: %d\n", ret);
++		return (struct bq24735_platform *) pdata->status_gpio;
++	}
+ 
+ 	ret = of_property_read_u32(np, "ti,charge-current", &val);
+ 	if (!ret)
+@@ -357,8 +357,11 @@ static int bq24735_charger_probe(struct i2c_client *client,
+ 	charger->charging = true;
+ 	charger->pdata = client->dev.platform_data;
+ 
+-	if (IS_ENABLED(CONFIG_OF) && !charger->pdata && client->dev.of_node)
++	if (IS_ENABLED(CONFIG_OF) && !charger->pdata && client->dev.of_node) {
+ 		charger->pdata = bq24735_parse_dt_data(client);
++		if (IS_ERR(charger->pdata))
++			return PTR_ERR(charger->pdata);
++	}
+ 
+ 	if (!charger->pdata) {
+ 		dev_err(&client->dev, "no platform data provided\n");
+@@ -396,20 +399,7 @@ static int bq24735_charger_probe(struct i2c_client *client,
+ 
+ 	i2c_set_clientdata(client, charger);
+ 
+-	if (gpio_is_valid(charger->pdata->status_gpio)) {
+-		ret = devm_gpio_request(&client->dev,
+-					charger->pdata->status_gpio,
+-					name);
+-		if (ret) {
+-			dev_err(&client->dev,
+-				"Failed GPIO request for GPIO %d: %d\n",
+-				charger->pdata->status_gpio, ret);
+-		}
+-
+-		charger->pdata->status_gpio_valid = !ret;
+-	}
+-
+-	if (!charger->pdata->status_gpio_valid
++	if (!charger->pdata->status_gpio
+ 	    || bq24735_charger_is_present(charger)) {
+ 		ret = bq24735_read_word(client, BQ24735_MANUFACTURER_ID);
+ 		if (ret < 0) {
+diff --git a/include/linux/power/bq24735-charger.h b/include/linux/power/bq24735-charger.h
+index 6b750c1a..afdb3704 100644
+--- a/include/linux/power/bq24735-charger.h
++++ b/include/linux/power/bq24735-charger.h
+@@ -28,9 +28,7 @@ struct bq24735_platform {
+ 
+ 	const char *name;
+ 
+-	int status_gpio;
+-	int status_gpio_active_low;
+-	bool status_gpio_valid;
++	struct gpio_desc *status_gpio;
+ 
+ 	bool ext_control;
+ 
 -- 
 2.9.3
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
