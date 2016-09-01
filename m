@@ -1,80 +1,40 @@
-From: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH] mmc: tegra: Mark 64-bit DMA broken on Tegra124
-Date: Thu, 1 Sep 2016 09:51:06 +0200
-Message-ID: <CAPDyKFo18+h9UTUTD4q6_-5rWYO6rLXzDVbd29imDLhecF-=_g@mail.gmail.com>
-References: <20160831162324.15480-1-thierry.reding@gmail.com>
+From: "'Hans Ulli Kroll' via rtc-linux" <rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Subject: Re: [PATCH] rtc: constify rtc_class_ops structures
+Date: Thu, 1 Sep 2016 12:21:26 +0200 (CEST)
+Message-ID: <alpine.LNX.2.00.1609011219330.31401@T520>
+References: <1472630725-25465-1-git-send-email-Julia.Lawall@lip6.fr>
+Reply-To: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160831162324.15480-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>, linux-mmc <linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <rtc-linux+bncBCH4V2OOTYHBBLUCUC7AKGQEVHAFZFQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+In-Reply-To: <1472630725-25465-1-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+List-Post: <https://groups.google.com/group/rtc-linux/post>, <mailto:rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:rtc-linux+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/rtc-linux
+List-Subscribe: <https://groups.google.com/group/rtc-linux/subscribe>, <mailto:rtc-linux+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+712029733259+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/rtc-linux/subscribe>
+To: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+Cc: Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Hans Ulli Kroll <ulli.kroll-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wan ZongShun <mcuos.com-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Eddie Huang <eddie.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 31 August 2016 at 18:23, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> According to the TRM, the SD/MMC controller on Tegra124 supports 34-bit
-> addressing, but testing shows that this doesn't work. On a device which
-> has more than 2 GiB of RAM and LPAE enabled, buffer allocations can use
-> addresses above the 32-bit boundary.
->
-> One way to work around this would be to enable IOMMU physical to virtual
-> address translations for the SD/MMC controllers, but that's not easy to
-> implement without breaking existing use-cases. It's also not obvious why
-> 34-bit addressing doesn't work as advertised. In order to fix this for
-> existing users, add the SDHCI_QUIRK2_BROKEN_64_BIT_DMA quirk for now.
->
-> Reported-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Hi Julia 
 
-Looks good to me, although could you please address Lucas' comment and
-send a re-based version.
+On Wed, 31 Aug 2016, Julia Lawall wrote:
 
-Kind regards
-Uffe
+> Check for rtc_class_ops structures that are only passed to
+> devm_rtc_device_register, rtc_device_register,
+> platform_device_register_data, all of which declare the corresponding
+> parameter as const.  Declare rtc_class_ops structures that have these
+> properties as const.
+> 
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+> 
 
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 18 +++++++++++++++++-
->  1 file changed, 17 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index d89200ee017e..a3d045630d0c 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -394,6 +394,22 @@ static const struct sdhci_tegra_soc_data soc_data_tegra114 = {
->         .pdata = &sdhci_tegra114_pdata,
->  };
->
-> +static const struct sdhci_pltfm_data sdhci_tegra124_pdata = {
-> +       .quirks = SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
-> +                 SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
-> +                 SDHCI_QUIRK_SINGLE_POWER_WRITE |
-> +                 SDHCI_QUIRK_NO_HISPD_BIT |
-> +                 SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
-> +                 SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
-> +       .quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
-> +                  SDHCI_QUIRK2_BROKEN_64_BIT_DMA,
-> +       .ops  = &tegra114_sdhci_ops,
-> +};
-> +
-> +static const struct sdhci_tegra_soc_data soc_data_tegra124 = {
-> +       .pdata = &sdhci_tegra124_pdata,
-> +};
-> +
->  static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
->         .quirks = SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
->                   SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
-> @@ -427,7 +443,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra186 = {
->  static const struct of_device_id sdhci_tegra_dt_match[] = {
->         { .compatible = "nvidia,tegra186-sdhci", .data = &soc_data_tegra186 },
->         { .compatible = "nvidia,tegra210-sdhci", .data = &soc_data_tegra210 },
-> -       { .compatible = "nvidia,tegra124-sdhci", .data = &soc_data_tegra114 },
-> +       { .compatible = "nvidia,tegra124-sdhci", .data = &soc_data_tegra124 },
->         { .compatible = "nvidia,tegra114-sdhci", .data = &soc_data_tegra114 },
->         { .compatible = "nvidia,tegra30-sdhci", .data = &soc_data_tegra30 },
->         { .compatible = "nvidia,tegra20-sdhci", .data = &soc_data_tegra20 },
-> --
-> 2.9.3
->
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+
+for drivers/rtc/rtc-gemini.c
+
+Acked-by: Hans Ulli Kroll <ulli.kroll-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>
