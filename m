@@ -1,127 +1,78 @@
-From: Stephen Warren <swarren@wwwdotorg.org>
-Subject: Re: [PATCH V2] dt: net: enhance DWC EQoS binding to support Tegra186
-Date: Wed, 31 Aug 2016 15:48:08 -0600
-Message-ID: <f4f85b48-4df6-4a3c-2831-e5707d35ebb6@wwwdotorg.org>
-References: <20160824212046.2416-1-swarren@wwwdotorg.org>
- <20160830190152.GA25083@rob-hp-laptop>
- <54b380c4-179f-2260-55dd-4220e65f8f46@wwwdotorg.org>
- <190a6bc1-ef66-2927-e542-13c543bab3b9@axis.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
+Subject: Re: [PATCH] mmc: tegra: Mark 64-bit DMA broken on Tegra124
+Date: Thu, 1 Sep 2016 09:44:56 +0300
+Message-ID: <c120f682-4a2d-7ca0-9095-3705c0d0c12f@intel.com>
+References: <20160831162324.15480-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
-Return-path: <netdev-owner@vger.kernel.org>
-In-Reply-To: <190a6bc1-ef66-2927-e542-13c543bab3b9@axis.com>
-Sender: netdev-owner@vger.kernel.org
-To: Lars Persson <lars.persson@axis.com>, Rob Herring <robh@kernel.org>
-Cc: Lars Persson <larper@axis.com>, Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org, netdev@vger.kernel.org, linux-tegra@vger.kernel.org, Stephen Warren <swarren@nvidia.com>
+Return-path: <linux-mmc-owner@vger.kernel.org>
+In-Reply-To: <20160831162324.15480-1-thierry.reding@gmail.com>
+Sender: linux-mmc-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Paul Kocialkowski <contact@paulk.fr>, linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 08/31/2016 03:15 AM, Lars Persson wrote:
-> On 08/30/2016 10:50 PM, Stephen Warren wrote:
->> On 08/30/2016 01:01 PM, Rob Herring wrote:
->>> On Wed, Aug 24, 2016 at 03:20:46PM -0600, Stephen Warren wrote:
->>>> The Synopsys DWC EQoS is a configurable IP block which supports multiple
->>>> options for bus type, clocking and reset structure, and feature list.
->>>> Extend the DT binding to define a "compatible value" for the configuration
->>>> contained in NVIDIA's Tegra186 SoC, and define some new properties and
->>>> list property entries required by that configuration.
+On 31/08/16 19:23, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+> 
+> According to the TRM, the SD/MMC controller on Tegra124 supports 34-bit
+> addressing, but testing shows that this doesn't work. On a device which
+> has more than 2 GiB of RAM and LPAE enabled, buffer allocations can use
+> addresses above the 32-bit boundary.
+> 
+> One way to work around this would be to enable IOMMU physical to virtual
+> address translations for the SD/MMC controllers, but that's not easy to
+> implement without breaking existing use-cases. It's also not obvious why
+> 34-bit addressing doesn't work as advertised. In order to fix this for
+> existing users, add the SDHCI_QUIRK2_BROKEN_64_BIT_DMA quirk for now.
+> 
+> Reported-by: Paul Kocialkowski <contact@paulk.fr>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
 
->>>> diff --git
->>>> a/Documentation/devicetree/bindings/net/snps,dwc-qos-ethernet.txt
->>>> b/Documentation/devicetree/bindings/net/snps,dwc-qos-ethernet.txt
+Doesn't apply cleanly, but otherwise:
 
->>>> +- clock-names: May contain any/all of the following depending on the IP
->>>> +  configuration, in any order:
->>>> +    The EQOS transmit path clock. The HW signal name is clk_tx_i.
->>>> +    In some configurations (e.g. GMII/RGMII), this clock also drives
->>>> the PHY TX
->>>> +    path. In other configurations, other clocks (such as tx_125,
->>>> rmii) may
->>>> +    drive the PHY TX path.
->>>> +  - "rx"
->>>> +    The EQOS receive path clock. The HW signal name is clk_rx_i.
->>>> +    In some configurations (e.g. GMII/RGMII), this clock also drives
->>>> the PHY RX
->>>> +    path. In other configurations, other clocks (such as rx_125,
->>>> pmarx_0,
->>>> +    pmarx_1, rmii) may drive the PHY RX path.
->
-> It is not correct that clk_rx_i drives the PHY rx path for GMII/RGMII.
-> The PHY is the source of the rx clock for these modes.
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-I think both of our statements are true.
+> ---
+>  drivers/mmc/host/sdhci-tegra.c | 18 +++++++++++++++++-
+>  1 file changed, 17 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+> index d89200ee017e..a3d045630d0c 100644
+> --- a/drivers/mmc/host/sdhci-tegra.c
+> +++ b/drivers/mmc/host/sdhci-tegra.c
+> @@ -394,6 +394,22 @@ static const struct sdhci_tegra_soc_data soc_data_tegra114 = {
+>  	.pdata = &sdhci_tegra114_pdata,
+>  };
+>  
+> +static const struct sdhci_pltfm_data sdhci_tegra124_pdata = {
+> +	.quirks = SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
+> +		  SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
+> +		  SDHCI_QUIRK_SINGLE_POWER_WRITE |
+> +		  SDHCI_QUIRK_NO_HISPD_BIT |
+> +		  SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC |
+> +		  SDHCI_QUIRK_CAP_CLOCK_BASE_BROKEN,
+> +	.quirks2 = SDHCI_QUIRK2_PRESET_VALUE_BROKEN |
+> +		   SDHCI_QUIRK2_BROKEN_64_BIT_DMA,
+> +	.ops  = &tegra114_sdhci_ops,
+> +};
+> +
+> +static const struct sdhci_tegra_soc_data soc_data_tegra124 = {
+> +	.pdata = &sdhci_tegra124_pdata,
+> +};
+> +
+>  static const struct sdhci_pltfm_data sdhci_tegra210_pdata = {
+>  	.quirks = SDHCI_QUIRK_BROKEN_TIMEOUT_VAL |
+>  		  SDHCI_QUIRK_DATA_TIMEOUT_USES_SDCLK |
+> @@ -427,7 +443,7 @@ static const struct sdhci_tegra_soc_data soc_data_tegra186 = {
+>  static const struct of_device_id sdhci_tegra_dt_match[] = {
+>  	{ .compatible = "nvidia,tegra186-sdhci", .data = &soc_data_tegra186 },
+>  	{ .compatible = "nvidia,tegra210-sdhci", .data = &soc_data_tegra210 },
+> -	{ .compatible = "nvidia,tegra124-sdhci", .data = &soc_data_tegra114 },
+> +	{ .compatible = "nvidia,tegra124-sdhci", .data = &soc_data_tegra124 },
+>  	{ .compatible = "nvidia,tegra114-sdhci", .data = &soc_data_tegra114 },
+>  	{ .compatible = "nvidia,tegra30-sdhci", .data = &soc_data_tegra30 },
+>  	{ .compatible = "nvidia,tegra20-sdhci", .data = &soc_data_tegra20 },
+> 
 
-There's a clock input to the EQOS module (clk_rx_i) that does drive the 
-RX path in the EQOS module.
-
-That clock also drives the PHY's RX path.
-
-Those statements make no comment regarding the /source/ of that clock; 
-either of the following might be true:
-
-1) The PHY could generate the clock internally somehow, feed its own 
-internal logic with that clock, and send the clock out to feed the EQOS 
-RX path too.
-
-or,
-
-2)  SoC integration could drive the same clock into both the EQOS and 
-PHY modules, so that both sets of logic are fed from the same external 
-clock.
-
-Perhaps the phrase "PHY RX path" is confusing; I was talking about the 
-EQOS modules' RX path from the PHY more than the PHY itself, although 
-given what I said above I believe either interpretation is valid and 
-correct.
-
-> Will the driver need to make any clock ops on the "rx" clock ?
-
-Yes. The EQOS driver needs to ensure that the clock is running before 
-attempting to receive data from the PHY, otherwise the EQOS's own RX 
-logic won't be clocked.
-
-Whether the phandle for this clock points at a SoC-level provider (it 
-will in Tegra) or a clock provider in the PHY (it might in other SoCs), 
-shouldn't matter as far as the DT binding goes, although it might affect 
-device probe ordering in some implementations.
-
->>>> +  Note: Support for additional IP configurations may require adding the
->>>> +  following clocks to this list in the future: clk_rx_125_i, clk_tx_125_i,
->>>> +  clk_pmarx_0_i, clk_pmarx1_i, clk_rmii_i, clk_revmii_rx_i, clk_revmii_tx_i.
->>>> +
->>>> +  The following compatible values require the following set of clocks:
->>>> +  - "nvidia,tegra186-eqos", "snps,dwc-qos-ethernet-4.10":
->>>> +    - "slave_bus"
->>>> +    - "master_bus"
->>>> +    - "rx"
->>>> +    - "tx"
->>>> +    - "ptp_ref"
->>>> +  - "axis,artpec6-eqos", "snps,dwc-qos-ethernet-4.10":
->>>> +    - "phy_ref_clk"
->>>> +    - "apb_clk"
->>>
->>> It would be good if this was marked deprecated and the full set of
->>> clocks could be described and supported. Not sure if you can figure that
->>> out. Is it really only 2 clocks, or these have multiple connections to
->>> the same source.
->>
->> Lars, can you answer here?
->>
->> I deliberately didn't attempt to change the binding definition for the
->> existing use-case, since I'm not familiar with that SoC, and don't
->> relish changing DTs for a platform I can't test.
->
-> For the artpec-6 the clocks are like this:
-> apb_clk: It is both the master and slave bus clock.
-> phy_ref_clk: It corresponds to tx clock in the proposed new binding.
->
-> There is a also a ptp reference clock that will map to the new ptp_ref
-> clock binding.
->
-> So the full set of clocks in a new artpec-6 binding is:
-> slave_bus
-> master_bus
-> tx
-> ptp_ref
-
-Given the discussion above, I think we should represent the rx clock too.
