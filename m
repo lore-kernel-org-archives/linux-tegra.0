@@ -1,106 +1,143 @@
-From: Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Subject: Re: [PATCH] rtc: constify rtc_class_ops structures
-Date: Fri, 2 Sep 2016 22:32:18 +0200
-Message-ID: <20160902203218.swu3fcxb266jeq2s@piout.net>
-References: <1472630725-25465-1-git-send-email-Julia.Lawall@lip6.fr>
-Reply-To: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <rtc-linux+bncBCKYNX7Y3IMBBU6DU67AKGQE5XYI3XA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Content-Disposition: inline
-In-Reply-To: <1472630725-25465-1-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-List-Post: <https://groups.google.com/group/rtc-linux/post>, <mailto:rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:rtc-linux+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/rtc-linux
-List-Subscribe: <https://groups.google.com/group/rtc-linux/subscribe>, <mailto:rtc-linux+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+712029733259+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/rtc-linux/subscribe>
-To: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-Cc: Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Hans Ulli Kroll <ulli.kroll-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wan ZongShun <mcuos.com-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Eddie Huang <eddie.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
+From: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+Subject: [PATCH v4] power: bq24735-charger: Request status GPIO with initial input setup
+Date: Sat,  3 Sep 2016 00:09:53 +0200
+Message-ID: <20160902220953.28995-1-contact@paulk.fr>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 31/08/2016 at 10:05:25 +0200, Julia Lawall wrote :
-> Check for rtc_class_ops structures that are only passed to
-> devm_rtc_device_register, rtc_device_register,
-> platform_device_register_data, all of which declare the corresponding
-> parameter as const.  Declare rtc_class_ops structures that have these
-> properties as const.
-> 
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
-> 
-> // <smpl>
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct rtc_class_ops i@p = { ... };
-> 
-> @ok@
-> identifier r.i;
-> expression e1,e2,e3,e4;
-> position p;
-> @@
-> (
-> devm_rtc_device_register(e1,e2,&i@p,e3)
-> |
-> rtc_device_register(e1,e2,&i@p,e3)
-> |
-> platform_device_register_data(e1,e2,e3,&i@p,e4)
-> )
-> 
-> @bad@
-> position p != {r.p,ok.p};
-> identifier r.i;
-> @@
-> i@p
-> 
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->  struct rtc_class_ops i = { ... };
-> // </smpl>
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
-> 
-> ---
->  drivers/rtc/rtc-at32ap700x.c |    2 +-
->  drivers/rtc/rtc-coh901331.c  |    2 +-
->  drivers/rtc/rtc-davinci.c    |    2 +-
->  drivers/rtc/rtc-digicolor.c  |    2 +-
->  drivers/rtc/rtc-ds1302.c     |    2 +-
->  drivers/rtc/rtc-gemini.c     |    2 +-
->  drivers/rtc/rtc-jz4740.c     |    2 +-
->  drivers/rtc/rtc-mcp795.c     |    2 +-
->  drivers/rtc/rtc-mt6397.c     |    2 +-
->  drivers/rtc/rtc-nuc900.c     |    2 +-
->  drivers/rtc/rtc-omap.c       |    2 +-
->  drivers/rtc/rtc-palmas.c     |    2 +-
->  drivers/rtc/rtc-pcf50633.c   |    2 +-
->  drivers/rtc/rtc-rx6110.c     |    2 +-
->  drivers/rtc/rtc-rx8025.c     |    2 +-
->  drivers/rtc/rtc-spear.c      |    2 +-
->  drivers/rtc/rtc-stmp3xxx.c   |    2 +-
->  drivers/rtc/rtc-tegra.c      |    2 +-
->  drivers/rtc/rtc-twl.c        |    2 +-
->  19 files changed, 19 insertions(+), 19 deletions(-)
-> 
-Applied, thanks.
+This requests the status GPIO with initial input setup. it is required
+to read the GPIO status at probe time and thus correctly avoid sending
+i2c messages when AC is not plugged.
 
--- 
-Alexandre Belloni, Free Electrons
-Embedded Linux and Kernel engineering
-http://free-electrons.com
+When requesting the GPIO without initial input setup, it always reads 0
+which causes probe to fail as it assumes the charger is connected, sends
+i2c messages and fails.
 
+While at it, this switches the driver over to gpio consumer.
+
+Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+---
+ drivers/power/supply/bq24735-charger.c | 44 +++++++++++++---------------------
+ include/linux/power/bq24735-charger.h  |  4 ----
+ 2 files changed, 16 insertions(+), 32 deletions(-)
+
+diff --git a/drivers/power/supply/bq24735-charger.c b/drivers/power/supply/bq24735-charger.c
+index dc460bb..44e3659 100644
+--- a/drivers/power/supply/bq24735-charger.c
++++ b/drivers/power/supply/bq24735-charger.c
+@@ -25,7 +25,7 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+-#include <linux/of_gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/power_supply.h>
+ #include <linux/slab.h>
+ 
+@@ -49,6 +49,7 @@ struct bq24735 {
+ 	struct i2c_client		*client;
+ 	struct bq24735_platform		*pdata;
+ 	struct mutex			lock;
++	struct gpio_desc		*status_gpio;
+ 	bool				charging;
+ };
+ 
+@@ -177,12 +178,8 @@ static int bq24735_config_charger(struct bq24735 *charger)
+ 
+ static bool bq24735_charger_is_present(struct bq24735 *charger)
+ {
+-	struct bq24735_platform *pdata = charger->pdata;
+-	int ret;
+-
+-	if (pdata->status_gpio_valid) {
+-		ret = gpio_get_value_cansleep(pdata->status_gpio);
+-		return ret ^= pdata->status_gpio_active_low == 0;
++	if (charger->status_gpio) {
++		return !gpiod_get_value_cansleep(charger->status_gpio);
+ 	} else {
+ 		int ac = 0;
+ 
+@@ -308,7 +305,6 @@ static struct bq24735_platform *bq24735_parse_dt_data(struct i2c_client *client)
+ 	struct device_node *np = client->dev.of_node;
+ 	u32 val;
+ 	int ret;
+-	enum of_gpio_flags flags;
+ 
+ 	pdata = devm_kzalloc(&client->dev, sizeof(*pdata), GFP_KERNEL);
+ 	if (!pdata) {
+@@ -317,12 +313,6 @@ static struct bq24735_platform *bq24735_parse_dt_data(struct i2c_client *client)
+ 		return NULL;
+ 	}
+ 
+-	pdata->status_gpio = of_get_named_gpio_flags(np, "ti,ac-detect-gpios",
+-						     0, &flags);
+-
+-	if (flags & OF_GPIO_ACTIVE_LOW)
+-		pdata->status_gpio_active_low = 1;
+-
+ 	ret = of_property_read_u32(np, "ti,charge-current", &val);
+ 	if (!ret)
+ 		pdata->charge_current = val;
+@@ -357,8 +347,11 @@ static int bq24735_charger_probe(struct i2c_client *client,
+ 	charger->charging = true;
+ 	charger->pdata = client->dev.platform_data;
+ 
+-	if (IS_ENABLED(CONFIG_OF) && !charger->pdata && client->dev.of_node)
++	if (IS_ENABLED(CONFIG_OF) && !charger->pdata && client->dev.of_node) {
+ 		charger->pdata = bq24735_parse_dt_data(client);
++		if (IS_ERR(charger->pdata))
++			return PTR_ERR(charger->pdata);
++	}
+ 
+ 	if (!charger->pdata) {
+ 		dev_err(&client->dev, "no platform data provided\n");
+@@ -396,21 +389,16 @@ static int bq24735_charger_probe(struct i2c_client *client,
+ 
+ 	i2c_set_clientdata(client, charger);
+ 
+-	if (gpio_is_valid(charger->pdata->status_gpio)) {
+-		ret = devm_gpio_request(&client->dev,
+-					charger->pdata->status_gpio,
+-					name);
+-		if (ret) {
+-			dev_err(&client->dev,
+-				"Failed GPIO request for GPIO %d: %d\n",
+-				charger->pdata->status_gpio, ret);
+-		}
+-
+-		charger->pdata->status_gpio_valid = !ret;
++	charger->status_gpio = devm_gpiod_get_optional(&client->dev,
++						       "ti,ac-detect",
++						       GPIOD_IN);
++	if (IS_ERR(charger->status_gpio)) {
++		ret = PTR_ERR(charger->status_gpio);
++		dev_err(&client->dev, "Getting gpio failed: %d\n", ret);
++		return ret;
+ 	}
+ 
+-	if (!charger->pdata->status_gpio_valid
+-	    || bq24735_charger_is_present(charger)) {
++	if (!charger->status_gpio || bq24735_charger_is_present(charger)) {
+ 		ret = bq24735_read_word(client, BQ24735_MANUFACTURER_ID);
+ 		if (ret < 0) {
+ 			dev_err(&client->dev, "Failed to read manufacturer id : %d\n",
+diff --git a/include/linux/power/bq24735-charger.h b/include/linux/power/bq24735-charger.h
+index 6b750c1a..b04be59 100644
+--- a/include/linux/power/bq24735-charger.h
++++ b/include/linux/power/bq24735-charger.h
+@@ -28,10 +28,6 @@ struct bq24735_platform {
+ 
+ 	const char *name;
+ 
+-	int status_gpio;
+-	int status_gpio_active_low;
+-	bool status_gpio_valid;
+-
+ 	bool ext_control;
+ 
+ 	char **supplied_to;
 -- 
-You received this message because you are subscribed to "rtc-linux".
-Membership options at http://groups.google.com/group/rtc-linux .
-Please read http://groups.google.com/group/rtc-linux/web/checklist
-before submitting a driver.
---- 
-You received this message because you are subscribed to the Google Groups "rtc-linux" group.
-To unsubscribe from this group and stop receiving emails from it, send an email to rtc-linux+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+2.9.3
