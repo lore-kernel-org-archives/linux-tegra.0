@@ -1,92 +1,106 @@
-From: Nicolin Chen <nicoleotsuka@gmail.com>
-Subject: Re: [PATCH] dmaengine: tegra210-adma: Add memcpy support
-Date: Fri, 2 Sep 2016 11:34:20 -0700
-Message-ID: <20160902183419.GB3180@Asurada-Nvidia>
-References: <1472769797-31650-1-git-send-email-nicoleotsuka@gmail.com>
- <20160902112532.GG9355@localhost>
+From: Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Subject: Re: [PATCH] rtc: constify rtc_class_ops structures
+Date: Fri, 2 Sep 2016 22:32:18 +0200
+Message-ID: <20160902203218.swu3fcxb266jeq2s@piout.net>
+References: <1472630725-25465-1-git-send-email-Julia.Lawall@lip6.fr>
+Reply-To: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Return-path: <rtc-linux+bncBCKYNX7Y3IMBBU6DU67AKGQE5XYI3XA-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+Sender: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
 Content-Disposition: inline
-In-Reply-To: <20160902112532.GG9355@localhost>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Vinod Koul <vinod.koul@intel.com>
-Cc: jonathanh@nvidia.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, dmaengine@vger.kernel.org, gnurou@gmail.com, thierry.reding@gmail.com, swarren@wwwdotorg.org, ldewangan@nvidia.com
+In-Reply-To: <1472630725-25465-1-git-send-email-Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+List-Post: <https://groups.google.com/group/rtc-linux/post>, <mailto:rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Help: <https://groups.google.com/support/>, <mailto:rtc-linux+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Archive: <https://groups.google.com/group/rtc-linux
+List-Subscribe: <https://groups.google.com/group/rtc-linux/subscribe>, <mailto:rtc-linux+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
+List-Unsubscribe: <mailto:googlegroups-manage+712029733259+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
+ <https://groups.google.com/group/rtc-linux/subscribe>
+To: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+Cc: Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Hans Ulli Kroll <ulli.kroll-gM/Ye1E23mwN+BqQ9rBEUg@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Wan ZongShun <mcuos.com-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Eddie Huang <eddie.huang-NuS5LvNUpcJWk0Htik3J/w@public.gmane.org>, linux-mediatek-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Baruch Siach <baruch-NswTu9S1W3P6gbPvEgmw2w@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Vinod,
-
-On Fri, Sep 02, 2016 at 04:55:32PM +0530, Vinod Koul wrote:
-> On Thu, Sep 01, 2016 at 03:43:16PM -0700, Nicolin Chen wrote:
+On 31/08/2016 at 10:05:25 +0200, Julia Lawall wrote :
+> Check for rtc_class_ops structures that are only passed to
+> devm_rtc_device_register, rtc_device_register,
+> platform_device_register_data, all of which declare the corresponding
+> parameter as const.  Declare rtc_class_ops structures that have these
+> properties as const.
 > 
-> > +#define ADMA_CH_CTRL_MODE_ONCE				(1 << 8)
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
 > 
-> BIT(8)? You should change the existing ones too :)
-
-Ah..right...Will change them all in the v2.
-
-> >  #define ADMA_CH_CTRL_MODE_CONTINUOUS			(2 << 8)
-> > +#define ADMA_CH_CTRL_MODE_LINKED_LIST			(4 << 8)
-> >  #define ADMA_CH_CTRL_FLOWCTRL_EN			BIT(1)
-> >  
-> >  #define ADMA_CH_CONFIG					0x28
-> > @@ -111,6 +115,7 @@ struct tegra_adma_desc {
-> >  	size_t				buf_len;
-> >  	size_t				period_len;
-> >  	size_t				num_periods;
-> > +	bool				cyclic;
+> // <smpl>
+> @r disable optional_qualifier@
+> identifier i;
+> position p;
+> @@
+> static struct rtc_class_ops i@p = { ... };
 > 
-> Okay, i think this should be a separate preparatory patch
-
-Hmm..I could do that, but the driver only had a cyclic support
-so the boolean property here would look useless without having
-the prep_dma_memcpy().
-
-> >  	case DMA_DEV_TO_MEM:
-> >  		adma_dir = ADMA_CH_CTRL_DIR_AHUB2MEM;
-> >  		burst_size = fls(tdc->sconfig.src_maxburst);
-> > -		ch_regs->config = ADMA_CH_CONFIG_TRG_BUF(desc->num_periods - 1);
-> > -		ch_regs->ctrl = ADMA_CH_CTRL_RX_REQ(tdc->sreq_index);
-> > +		ch_regs->config = ADMA_CH_CONFIG_TRG_BUF(num_periods - 1);
-> > +		ch_regs->ctrl = ADMA_CH_CTRL_RX_REQ(tdc->sreq_index) |
-> > +				ADMA_CH_CTRL_MODE_CONTINUOUS |
-> > +				ADMA_CH_CTRL_FLOWCTRL_EN;
+> @ok@
+> identifier r.i;
+> expression e1,e2,e3,e4;
+> position p;
+> @@
+> (
+> devm_rtc_device_register(e1,e2,&i@p,e3)
+> |
+> rtc_device_register(e1,e2,&i@p,e3)
+> |
+> platform_device_register_data(e1,e2,e3,&i@p,e4)
+> )
 > 
-> why is this changing?
-
-The reference manual says M2M is non-flow controlled, and it
-would not use the MODE_CONTINUOUS but MODE_ONCE, I should have
-mentioned this in the commit log though.
-
-> > +static struct dma_async_tx_descriptor *tegra_adma_prep_dma_memcpy(
-> > +	struct dma_chan *dc, dma_addr_t dest, dma_addr_t src,
-> > +	size_t buf_len, unsigned long flags)
-> > +{
-> > +	struct tegra_adma_chan *tdc = to_tegra_adma_chan(dc);
-> > +	struct device *dev = dc->device->dev;
-> > +	struct tegra_adma_desc *desc = NULL;
-> > +
-> > +	dev_dbg(dev, "%s channel: %d src=0x%llx dst=0x%llx len=%zu\n",
-> > +		__func__, dc->chan_id, (unsigned long long)src,
-> > +		(unsigned long long)dest, buf_len);
-> > +
-> > +	if (unlikely(!tdc || !buf_len))
-> > +		return NULL;
-> > +
-> > +	desc = kzalloc(sizeof(*desc), GFP_NOWAIT);
-> > +	if (!desc)
-> > +		return NULL;
-> > +
-> > +	desc->num_periods = 1;
-> > +	desc->buf_len = buf_len;
-> > +	desc->period_len = buf_len;
+> @bad@
+> position p != {r.p,ok.p};
+> identifier r.i;
+> @@
+> i@p
 > 
-> should we perhaps rename this to length rather than period?
+> @depends on !bad disable optional_qualifier@
+> identifier r.i;
+> @@
+> static
+> +const
+>  struct rtc_class_ops i = { ... };
+> // </smpl>
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>
+> 
+> ---
+>  drivers/rtc/rtc-at32ap700x.c |    2 +-
+>  drivers/rtc/rtc-coh901331.c  |    2 +-
+>  drivers/rtc/rtc-davinci.c    |    2 +-
+>  drivers/rtc/rtc-digicolor.c  |    2 +-
+>  drivers/rtc/rtc-ds1302.c     |    2 +-
+>  drivers/rtc/rtc-gemini.c     |    2 +-
+>  drivers/rtc/rtc-jz4740.c     |    2 +-
+>  drivers/rtc/rtc-mcp795.c     |    2 +-
+>  drivers/rtc/rtc-mt6397.c     |    2 +-
+>  drivers/rtc/rtc-nuc900.c     |    2 +-
+>  drivers/rtc/rtc-omap.c       |    2 +-
+>  drivers/rtc/rtc-palmas.c     |    2 +-
+>  drivers/rtc/rtc-pcf50633.c   |    2 +-
+>  drivers/rtc/rtc-rx6110.c     |    2 +-
+>  drivers/rtc/rtc-rx8025.c     |    2 +-
+>  drivers/rtc/rtc-spear.c      |    2 +-
+>  drivers/rtc/rtc-stmp3xxx.c   |    2 +-
+>  drivers/rtc/rtc-tegra.c      |    2 +-
+>  drivers/rtc/rtc-twl.c        |    2 +-
+>  19 files changed, 19 insertions(+), 19 deletions(-)
+> 
+Applied, thanks.
 
-The MODE_ONCE should support multiple buffers/chunks/periods
-as well according to the reference manual but I just couldn't
-make that work and the manual doesn't provide much detail.
+-- 
+Alexandre Belloni, Free Electrons
+Embedded Linux and Kernel engineering
+http://free-electrons.com
 
-I think it could be better to have a TODO comment here.
-
-Thank you
+-- 
+You received this message because you are subscribed to "rtc-linux".
+Membership options at http://groups.google.com/group/rtc-linux .
+Please read http://groups.google.com/group/rtc-linux/web/checklist
+before submitting a driver.
+--- 
+You received this message because you are subscribed to the Google Groups "rtc-linux" group.
+To unsubscribe from this group and stop receiving emails from it, send an email to rtc-linux+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
+For more options, visit https://groups.google.com/d/optout.
