@@ -1,73 +1,39 @@
-From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] dmaengine: tegra210-adma: Add memcpy support
-Date: Fri, 2 Sep 2016 16:55:32 +0530
-Message-ID: <20160902112532.GG9355@localhost>
-References: <1472769797-31650-1-git-send-email-nicoleotsuka@gmail.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
+Subject: Re: [PATCH] phy: mark tegra_xusb_lane_lookup_function() static
+Date: Fri, 2 Sep 2016 17:45:32 +0530
+Message-ID: <57C96D64.9050600@ti.com>
+References: <1472634319-11886-1-git-send-email-baoyou.xie@linaro.org>
+ <7060924.RuInUXIHDe@wuerfel>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1472769797-31650-1-git-send-email-nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Nicolin Chen <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <7060924.RuInUXIHDe@wuerfel>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Arnd Bergmann <arnd@arndb.de>, Baoyou Xie <baoyou.xie@linaro.org>
+Cc: swarren@wwwdotorg.org, thierry.reding@gmail.com, gnurou@gmail.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, xie.baoyou@zte.com.cn
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Sep 01, 2016 at 03:43:16PM -0700, Nicolin Chen wrote:
+Hi,
 
-> +#define ADMA_CH_CTRL_MODE_ONCE				(1 << 8)
+On Wednesday 31 August 2016 03:31 PM, Arnd Bergmann wrote:
+> On Wednesday, August 31, 2016 5:05:19 PM CEST Baoyou Xie wrote:
+>> We get 1 warning when building kernel with W=1:
+>> drivers/phy/tegra/xusb.c:104:5: warning: no previous prototype for 'tegra_xusb_lane_lookup_function' [-Wmissing-prototypes]
+>>
+>> In fact, this function is only used in the file in which it is
+>> declared and don't need a declaration, but can be made static.
+>> So this patch marks it 'static'.
+>>
+>> Signed-off-by: Baoyou Xie <baoyou.xie@linaro.org>
+>>
+> 
+> Acked-by: Arnd Bergmann <arnd@arndb.de>
+> 
+> Same comment as for the other patch, it's better to use "phy: tegra: ..."
+> in the subject for clarity.
 
-BIT(8)? You should change the existing ones too :)
+Fixed it myself and merged this and the other patch.
 
->  #define ADMA_CH_CTRL_MODE_CONTINUOUS			(2 << 8)
-> +#define ADMA_CH_CTRL_MODE_LINKED_LIST			(4 << 8)
->  #define ADMA_CH_CTRL_FLOWCTRL_EN			BIT(1)
->  
->  #define ADMA_CH_CONFIG					0x28
-> @@ -111,6 +115,7 @@ struct tegra_adma_desc {
->  	size_t				buf_len;
->  	size_t				period_len;
->  	size_t				num_periods;
-> +	bool				cyclic;
-
-Okay, i think this should be a separate preparatory patch
-
->  	case DMA_DEV_TO_MEM:
->  		adma_dir = ADMA_CH_CTRL_DIR_AHUB2MEM;
->  		burst_size = fls(tdc->sconfig.src_maxburst);
-> -		ch_regs->config = ADMA_CH_CONFIG_TRG_BUF(desc->num_periods - 1);
-> -		ch_regs->ctrl = ADMA_CH_CTRL_RX_REQ(tdc->sreq_index);
-> +		ch_regs->config = ADMA_CH_CONFIG_TRG_BUF(num_periods - 1);
-> +		ch_regs->ctrl = ADMA_CH_CTRL_RX_REQ(tdc->sreq_index) |
-> +				ADMA_CH_CTRL_MODE_CONTINUOUS |
-> +				ADMA_CH_CTRL_FLOWCTRL_EN;
-
-why is this changing?
-
-> +static struct dma_async_tx_descriptor *tegra_adma_prep_dma_memcpy(
-> +	struct dma_chan *dc, dma_addr_t dest, dma_addr_t src,
-> +	size_t buf_len, unsigned long flags)
-> +{
-> +	struct tegra_adma_chan *tdc = to_tegra_adma_chan(dc);
-> +	struct device *dev = dc->device->dev;
-> +	struct tegra_adma_desc *desc = NULL;
-> +
-> +	dev_dbg(dev, "%s channel: %d src=0x%llx dst=0x%llx len=%zu\n",
-> +		__func__, dc->chan_id, (unsigned long long)src,
-> +		(unsigned long long)dest, buf_len);
-> +
-> +	if (unlikely(!tdc || !buf_len))
-> +		return NULL;
-> +
-> +	desc = kzalloc(sizeof(*desc), GFP_NOWAIT);
-> +	if (!desc)
-> +		return NULL;
-> +
-> +	desc->num_periods = 1;
-> +	desc->buf_len = buf_len;
-> +	desc->period_len = buf_len;
-
-should we perhaps rename this to length rather than period?
-
--- 
-~Vinod
+Thanks
+Kishon
