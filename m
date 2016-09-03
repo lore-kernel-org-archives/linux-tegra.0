@@ -1,225 +1,225 @@
-From: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
-Subject: Re: [PATCH v3] power: bq24735-charger: Request status GPIO with
- initial input setup
-Date: Sat, 03 Sep 2016 00:11:13 +0200
-Message-ID: <1472854273.32173.3.camel@paulk.fr>
-References: <20160901212700.29747-1-contact@paulk.fr>
-         <20160902152755.7jk2dr2rtbkog6w2@earth>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-Xrc7w1qK+Z2EUW6GRC0Q"
+From: Nicolin Chen <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v2 2/2] dmaengine: tegra210-adma: Add memcpy support
+Date: Fri,  2 Sep 2016 17:32:49 -0700
+Message-ID: <738e0f1560436d613d9a7dab2fd540abea9503d3.1472857934.git.nicoleotsuka@gmail.com>
+References: <cover.1472857934.git.nicoleotsuka@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160902152755.7jk2dr2rtbkog6w2@earth>
+In-Reply-To: <cover.1472857934.git.nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <cover.1472857934.git.nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+References: <cover.1472857934.git.nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Dmitry Eremin-Solenikov <dbaryshkov-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, David Woodhouse <dwmw2-wEGCiKHe2LqWVfeAwA7xHQ@public.gmane.org>
+To: vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+ADMA supports non-flow controlled Memory-to-Memory direction
+transactions. So this patch just adds an initial support for
+that. It passed a simple dmatest:
+        echo dma1chan0 > /sys/module/dmatest/parameters/channel
+	echo 1024 > /sys/module/dmatest/parameters/iterations
+	echo 0 > /sys/module/dmatest/parameters/dmatest
+	echo 1 > /sys/module/dmatest/parameters/run
+	dmesg | grep dmatest
+Started 1 threads using dma1chan0
+dma1chan0-copy0: summary 1024 tests, 0 failures 2054 iops 16520 KB/s (0)
 
---=-Xrc7w1qK+Z2EUW6GRC0Q
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Nicolin Chen <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/dma/tegra210-adma.c | 95 +++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 83 insertions(+), 12 deletions(-)
 
-Hi,
-
-Le vendredi 02 septembre 2016 =C3=A0 17:27 +0200, Sebastian Reichel a =C3=
-=A9crit=C2=A0:
-> Hi Paul,
->=20
-> This looks mostly fine now. I have a few more comments, that I
-> missed last time:
-
-Thanks for the review and for the useful suggestions. I have applied them t=
-o v4.
-
-> On Thu, Sep 01, 2016 at 11:27:00PM +0200, Paul Kocialkowski wrote:
-> >=20
-> > This requests the status GPIO with initial input setup. it is required
-> > to read the GPIO status at probe time and thus correctly avoid sending
-> > i2c messages when AC is not plugged.
-> >=20
-> > When requesting the GPIO without initial input setup, it always reads 0
-> > which causes probe to fail as it assumes the charger is connected, send=
-s
-> > i2c messages and fails.
-> >=20
-> > While at it, this switches the driver over to gpio consumer.
-> >=20
-> > Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
-> > ---
-> > =C2=A0drivers/power/bq24735-charger.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0| 42 +++++++++++++-------------------
-> > ---
-> > =C2=A0include/linux/power/bq24735-charger.h |=C2=A0=C2=A04 +---
-> > =C2=A02 files changed, 17 insertions(+), 29 deletions(-)
->=20
-> Please rebase next version to power-supply's for-next branch:
->=20
-> https://git.kernel.org/cgit/linux/kernel/git/sre/linux-power-supply.git/l=
-og/?h
-> =3Dfor-next
->=20
-> >=20
-> > diff --git a/drivers/power/bq24735-charger.c b/drivers/power/bq24735-
-> > charger.c
-> > index dc460bb..7f9b305 100644
-> > --- a/drivers/power/bq24735-charger.c
-> > +++ b/drivers/power/bq24735-charger.c
-> > @@ -25,7 +25,8 @@
-> > =C2=A0#include <linux/kernel.h>
-> > =C2=A0#include <linux/module.h>
-> > =C2=A0#include <linux/of.h>
-> > -#include <linux/of_gpio.h>
-> > +#include <linux/gpio.h>
->=20
-> No need for <linux/gpio.h>, all gpiod bits used by you are in
-> <linux/gpio/consumer.h>
->=20
-> >=20
-> > +#include <linux/gpio/consumer.h>
-> > =C2=A0#include <linux/power_supply.h>
-> > =C2=A0#include <linux/slab.h>
-> > =C2=A0
-> > @@ -178,11 +179,9 @@ static int bq24735_config_charger(struct bq24735
-> > *charger)
-> > =C2=A0static bool bq24735_charger_is_present(struct bq24735 *charger)
-> > =C2=A0{
-> > =C2=A0	struct bq24735_platform *pdata =3D charger->pdata;
-> > -	int ret;
-> > =C2=A0
-> > -	if (pdata->status_gpio_valid) {
-> > -		ret =3D gpio_get_value_cansleep(pdata->status_gpio);
-> > -		return ret ^=3D pdata->status_gpio_active_low =3D=3D 0;
-> > +	if (pdata->status_gpio) {
-> > +		return !gpiod_get_value_cansleep(pdata->status_gpio);
-> > =C2=A0	} else {
-> > =C2=A0		int ac =3D 0;
-> > =C2=A0
-> > @@ -308,7 +307,6 @@ static struct bq24735_platform
-> > *bq24735_parse_dt_data(struct i2c_client *client)
-> > =C2=A0	struct device_node *np =3D client->dev.of_node;
-> > =C2=A0	u32 val;
-> > =C2=A0	int ret;
-> > -	enum of_gpio_flags flags;
-> > =C2=A0
-> > =C2=A0	pdata =3D devm_kzalloc(&client->dev, sizeof(*pdata), GFP_KERNEL)=
-;
-> > =C2=A0	if (!pdata) {
-> > @@ -317,11 +315,13 @@ static struct bq24735_platform
-> > *bq24735_parse_dt_data(struct i2c_client *client)
-> > =C2=A0		return NULL;
-> > =C2=A0	}
-> > =C2=A0
-> > -	pdata->status_gpio =3D of_get_named_gpio_flags(np, "ti,ac-detect-
-> > gpios",
-> > -						=C2=A0=C2=A0=C2=A0=C2=A0=C2=A00, &flags);
-> > -
-> > -	if (flags & OF_GPIO_ACTIVE_LOW)
-> > -		pdata->status_gpio_active_low =3D 1;
-> > +	pdata->status_gpio =3D devm_gpiod_get_optional(&client->dev,
-> > +				"ti,ac-detect", GPIOD_IN);
-> > +	if (IS_ERR(pdata->status_gpio)) {
-> > +		ret =3D PTR_ERR(pdata->status_gpio);
-> > +		dev_err(&client->dev, "Getting gpio failed: %d\n", ret);
-> > +		return (struct bq24735_platform *) pdata->status_gpio;
-> > +	}
-> > =C2=A0
-> > =C2=A0	ret =3D of_property_read_u32(np, "ti,charge-current", &val);
-> > =C2=A0	if (!ret)
-> > @@ -357,8 +357,11 @@ static int bq24735_charger_probe(struct i2c_client
-> > *client,
-> > =C2=A0	charger->charging =3D true;
-> > =C2=A0	charger->pdata =3D client->dev.platform_data;
-> > =C2=A0
-> > -	if (IS_ENABLED(CONFIG_OF) && !charger->pdata && client-
-> > >dev.of_node)
-> > +	if (IS_ENABLED(CONFIG_OF) && !charger->pdata && client-
-> > >dev.of_node) {
-> > =C2=A0		charger->pdata =3D bq24735_parse_dt_data(client);
-> > +		if (IS_ERR(charger->pdata))
-> > +			return PTR_ERR(charger->pdata);
-> > +	}
-> > =C2=A0
-> > =C2=A0	if (!charger->pdata) {
-> > =C2=A0		dev_err(&client->dev, "no platform data provided\n");
-> > @@ -396,20 +399,7 @@ static int bq24735_charger_probe(struct i2c_client
-> > *client,
-> > =C2=A0
-> > =C2=A0	i2c_set_clientdata(client, charger);
-> > =C2=A0
-> > -	if (gpio_is_valid(charger->pdata->status_gpio)) {
-> > -		ret =3D devm_gpio_request(&client->dev,
-> > -					charger->pdata->status_gpio,
-> > -					name);
-> > -		if (ret) {
-> > -			dev_err(&client->dev,
-> > -				"Failed GPIO request for GPIO %d: %d\n",
-> > -				charger->pdata->status_gpio, ret);
-> > -		}
-> > -
-> > -		charger->pdata->status_gpio_valid =3D !ret;
-> > -	}
->=20
-> Do the devm_gpiod_get_optional() call here and store the result in
-> "struct bq24735" instead of in pdata. It's not DT specific. The
-> gpiod interface can also get it's data from boardcode (or acpi, if
-> that becomes important at some point).
->=20
-> (Check Documentation/gpio/board.txt for details)
->=20
-> >=20
-> > -
-> > -	if (!charger->pdata->status_gpio_valid
-> > +	if (!charger->pdata->status_gpio
-> > =C2=A0	=C2=A0=C2=A0=C2=A0=C2=A0|| bq24735_charger_is_present(charger)) =
-{
-> > =C2=A0		ret =3D bq24735_read_word(client, BQ24735_MANUFACTURER_ID);
-> > =C2=A0		if (ret < 0) {
-> > diff --git a/include/linux/power/bq24735-charger.h
-> > b/include/linux/power/bq24735-charger.h
-> > index 6b750c1a..afdb3704 100644
-> > --- a/include/linux/power/bq24735-charger.h
-> > +++ b/include/linux/power/bq24735-charger.h
-> > @@ -28,9 +28,7 @@ struct bq24735_platform {
-> > =C2=A0
-> > =C2=A0	const char *name;
-> > =C2=A0
-> > -	int status_gpio;
-> > -	int status_gpio_active_low;
-> > -	bool status_gpio_valid;
-> > +	struct gpio_desc *status_gpio;
->=20
-> Move the gpio_desc into the private "struct bq24735" (but keep
-> dropping all gpio bits from the bq24735_platform).
->=20
-> -- Sebastian
---=20
-Paul Kocialkowski, developer of low-level free software for embedded device=
-s
-
-Website: https://www.paulk.fr/
-Coding blog: https://code.paulk.fr/
-Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
---=-Xrc7w1qK+Z2EUW6GRC0Q
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJXyfkBAAoJEIT9weqP7pUMTXYP/3FVZuk7Wx9OCfv7NEg5ILhh
-+5gBLC4F53ARrPVEUn9jz3Wcod0r3hzO0kJS9+zBEcgm+T4O+FUdSLel3H7ZjYrR
-OcMC6o/C5lMYs4C1zzmw+DbjeYTdHwkgcs48FdncckW5JyhbJbVRLXjAPS4ZY9OQ
-+zsZ5uNkgywTfw8A2mwir5WGEmlo2GT0M5a6y0dlMa+b03hCjHBW4NjR1VXKT/iJ
-VPYds+S/MTt8m9C6EcHYfuFVPyrkbWSeZ9p0/RI8BZdAepuYkY0fmUaY3nT9bBsb
-udF7I13MWbmtWjI+j2eAAsCoDxAKosUk07XAD6Qp00yUL1YW6YjEIjXRrrcC1hHT
-r2s2cXieHxqAuxOeJsrkLeiVt+1OCu7FpdseGehmkTN5FmHz8nvQVwDsQ1R3X/01
-oUTOyYnVkWlxOVyf+MIXdPh7SjMTwYKiTZ5V+UPR969Y9vxjvxCw23LfNBfeI6s0
-nRDr01778cxveoCxYWZ0Nee26LE7jNWMsiAaBpT+Z+FuNrPzCoS7jYTw2ZPvwX/9
-oF051KxgSiw3ZAmft/SwFhW6yXE5Tty9KtJLmDDjgYYJv7HqlUAH+2AQugu2lbE5
-eOyVkcJpEsKfhkw0UP3VS8R0pQvcEFGKAnY9Bieu+sxItCYcO7WLGLO4z2EmQ7s1
-MP2iGROS0tQztyuFqjJy
-=BeDn
------END PGP SIGNATURE-----
-
---=-Xrc7w1qK+Z2EUW6GRC0Q--
+diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+index 5b5d298..d62b373 100644
+--- a/drivers/dma/tegra210-adma.c
++++ b/drivers/dma/tegra210-adma.c
+@@ -42,9 +42,14 @@
+ #define ADMA_CH_CTRL_RX_REQ(val)			(((val) & 0xf) << 24)
+ #define ADMA_CH_CTRL_RX_REQ_MAX				10
+ #define ADMA_CH_CTRL_DIR(val)				(((val) & 0xf) << 12)
++#define ADMA_CH_CTRL_DIR_MEM2MEM			1
+ #define ADMA_CH_CTRL_DIR_AHUB2MEM			2
+ #define ADMA_CH_CTRL_DIR_MEM2AHUB			4
+-#define ADMA_CH_CTRL_MODE_CONTINUOUS			(2 << 8)
++#define ADMA_CH_CTRL_DIR_AHUB2AHUB			8
++#define ADMA_CH_CTRL_MODE(val)				(((val) & 0x7) << 8)
++#define ADMA_CH_CTRL_MODE_ONCE				1
++#define ADMA_CH_CTRL_MODE_CONTINUOUS			2
++#define ADMA_CH_CTRL_MODE_LINKED_LIST			4
+ #define ADMA_CH_CTRL_FLOWCTRL_EN			BIT(1)
+ 
+ #define ADMA_CH_CONFIG					0x28
+@@ -264,6 +269,9 @@ static int tegra_adma_request_alloc(struct tegra_adma_chan *tdc,
+ 		}
+ 		break;
+ 
++	case DMA_MEM_TO_MEM:
++		break;
++
+ 	default:
+ 		dev_WARN(tdma->dev, "channel %s has invalid transfer type\n",
+ 			 dma_chan_name(&tdc->vc.chan));
+@@ -292,6 +300,9 @@ static void tegra_adma_request_free(struct tegra_adma_chan *tdc)
+ 		clear_bit(tdc->sreq_index, &tdma->rx_requests_reserved);
+ 		break;
+ 
++	case DMA_MEM_TO_MEM:
++		break;
++
+ 	default:
+ 		dev_WARN(tdma->dev, "channel %s has invalid transfer type\n",
+ 			 dma_chan_name(&tdc->vc.chan));
+@@ -409,8 +420,14 @@ static irqreturn_t tegra_adma_isr(int irq, void *dev_id)
+ 		return IRQ_NONE;
+ 	}
+ 
+-	if (tdc->desc->cyclic)
++	if (tdc->desc->cyclic) {
+ 		vchan_cyclic_callback(&tdc->desc->vd);
++	} else {
++		/* Disable the channel */
++		tdma_ch_write(tdc, ADMA_CH_CMD, 0);
++		vchan_cookie_complete(&tdc->desc->vd);
++		tdc->desc = NULL;
++	}
+ 
+ 	spin_unlock_irqrestore(&tdc->vc.lock, flags);
+ 
+@@ -488,42 +505,59 @@ static enum dma_status tegra_adma_tx_status(struct dma_chan *dc,
+ static int tegra_adma_set_xfer_params(struct tegra_adma_chan *tdc,
+ 				      struct tegra_adma_desc *desc,
+ 				      dma_addr_t buf_addr,
++				      dma_addr_t buf_addr2,
+ 				      enum dma_transfer_direction direction)
+ {
+ 	struct tegra_adma_chan_regs *ch_regs = &desc->ch_regs;
+-	unsigned int burst_size, adma_dir;
++	unsigned int num_periods = desc->num_periods;
++	unsigned int burst_size, adma_dir, adma_mode;
+ 
+-	if (desc->num_periods > ADMA_CH_CONFIG_MAX_BUFS)
++	if (num_periods > ADMA_CH_CONFIG_MAX_BUFS)
+ 		return -EINVAL;
+ 
+ 	switch (direction) {
+ 	case DMA_MEM_TO_DEV:
+ 		adma_dir = ADMA_CH_CTRL_DIR_MEM2AHUB;
+ 		burst_size = fls(tdc->sconfig.dst_maxburst);
+-		ch_regs->config = ADMA_CH_CONFIG_SRC_BUF(desc->num_periods - 1);
+-		ch_regs->ctrl = ADMA_CH_CTRL_TX_REQ(tdc->sreq_index);
++		ch_regs->config = ADMA_CH_CONFIG_SRC_BUF(num_periods - 1);
++		ch_regs->ctrl = ADMA_CH_CTRL_TX_REQ(tdc->sreq_index) |
++				ADMA_CH_CTRL_FLOWCTRL_EN;
+ 		ch_regs->src_addr = buf_addr;
+ 		break;
+ 
+ 	case DMA_DEV_TO_MEM:
+ 		adma_dir = ADMA_CH_CTRL_DIR_AHUB2MEM;
+ 		burst_size = fls(tdc->sconfig.src_maxburst);
+-		ch_regs->config = ADMA_CH_CONFIG_TRG_BUF(desc->num_periods - 1);
+-		ch_regs->ctrl = ADMA_CH_CTRL_RX_REQ(tdc->sreq_index);
++		ch_regs->config = ADMA_CH_CONFIG_TRG_BUF(num_periods - 1);
++		ch_regs->ctrl = ADMA_CH_CTRL_RX_REQ(tdc->sreq_index) |
++				ADMA_CH_CTRL_FLOWCTRL_EN;
+ 		ch_regs->trg_addr = buf_addr;
+ 		break;
+ 
++	case DMA_MEM_TO_MEM:
++		adma_dir = ADMA_CH_CTRL_DIR_MEM2MEM;
++		burst_size = ADMA_CH_CONFIG_BURST_16;
++		ch_regs->config = ADMA_CH_CONFIG_SRC_BUF(num_periods - 1) |
++				  ADMA_CH_CONFIG_TRG_BUF(num_periods - 1);
++		ch_regs->src_addr = buf_addr;
++		ch_regs->trg_addr = buf_addr2;
++		break;
++
+ 	default:
+ 		dev_err(tdc2dev(tdc), "DMA direction is not supported\n");
+ 		return -EINVAL;
+ 	}
+ 
++	if (desc->cyclic)
++		adma_mode = ADMA_CH_CTRL_MODE_CONTINUOUS;
++	else
++		adma_mode = ADMA_CH_CTRL_MODE_ONCE;
++
+ 	if (!burst_size || burst_size > ADMA_CH_CONFIG_BURST_16)
+ 		burst_size = ADMA_CH_CONFIG_BURST_16;
+ 
+ 	ch_regs->ctrl |= ADMA_CH_CTRL_DIR(adma_dir) |
+-			 ADMA_CH_CTRL_MODE_CONTINUOUS |
+-			 ADMA_CH_CTRL_FLOWCTRL_EN;
++			 ADMA_CH_CTRL_MODE(adma_mode);
+ 	ch_regs->config |= ADMA_CH_CONFIG_BURST_SIZE(burst_size);
+ 	ch_regs->config |= ADMA_CH_CONFIG_WEIGHT_FOR_WRR(1);
+ 	ch_regs->fifo_ctrl = ADMA_CH_FIFO_CTRL_DEFAULT;
+@@ -564,7 +598,39 @@ static struct dma_async_tx_descriptor *tegra_adma_prep_dma_cyclic(
+ 	desc->period_len = period_len;
+ 	desc->num_periods = buf_len / period_len;
+ 
+-	if (tegra_adma_set_xfer_params(tdc, desc, buf_addr, direction)) {
++	if (tegra_adma_set_xfer_params(tdc, desc, buf_addr, 0, direction)) {
++		kfree(desc);
++		return NULL;
++	}
++
++	return vchan_tx_prep(&tdc->vc, &desc->vd, flags);
++}
++
++static struct dma_async_tx_descriptor *tegra_adma_prep_dma_memcpy(
++	struct dma_chan *dc, dma_addr_t dest, dma_addr_t src,
++	size_t buf_len, unsigned long flags)
++{
++	struct tegra_adma_chan *tdc = to_tegra_adma_chan(dc);
++	struct device *dev = dc->device->dev;
++	struct tegra_adma_desc *desc = NULL;
++
++	dev_dbg(dev, "%s channel: %d src=0x%llx dst=0x%llx len=%zu\n",
++		__func__, dc->chan_id, (unsigned long long)src,
++		(unsigned long long)dest, buf_len);
++
++	if (unlikely(!tdc || !buf_len))
++		return NULL;
++
++	desc = kzalloc(sizeof(*desc), GFP_NOWAIT);
++	if (!desc)
++		return NULL;
++
++	/* TODO: ADMA should support up to 8 chunks or periods */
++	desc->num_periods = 1;
++	desc->buf_len = buf_len;
++	desc->period_len = buf_len;
++
++	if (tegra_adma_set_xfer_params(tdc, desc, src, dest, DMA_MEM_TO_MEM)) {
+ 		kfree(desc);
+ 		return NULL;
+ 	}
+@@ -741,6 +807,7 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 	dma_cap_set(DMA_SLAVE, tdma->dma_dev.cap_mask);
+ 	dma_cap_set(DMA_PRIVATE, tdma->dma_dev.cap_mask);
+ 	dma_cap_set(DMA_CYCLIC, tdma->dma_dev.cap_mask);
++	dma_cap_set(DMA_MEMCPY, tdma->dma_dev.cap_mask);
+ 
+ 	tdma->dma_dev.dev = &pdev->dev;
+ 	tdma->dma_dev.device_alloc_chan_resources =
+@@ -749,14 +816,18 @@ static int tegra_adma_probe(struct platform_device *pdev)
+ 					tegra_adma_free_chan_resources;
+ 	tdma->dma_dev.device_issue_pending = tegra_adma_issue_pending;
+ 	tdma->dma_dev.device_prep_dma_cyclic = tegra_adma_prep_dma_cyclic;
++	tdma->dma_dev.device_prep_dma_memcpy = tegra_adma_prep_dma_memcpy;
+ 	tdma->dma_dev.device_config = tegra_adma_slave_config;
+ 	tdma->dma_dev.device_tx_status = tegra_adma_tx_status;
+ 	tdma->dma_dev.device_terminate_all = tegra_adma_terminate_all;
+ 	tdma->dma_dev.src_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
+ 	tdma->dma_dev.dst_addr_widths = BIT(DMA_SLAVE_BUSWIDTH_4_BYTES);
+-	tdma->dma_dev.directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV);
++	tdma->dma_dev.directions = BIT(DMA_DEV_TO_MEM) | BIT(DMA_MEM_TO_DEV) |
++				   BIT(DMA_MEM_TO_MEM);
+ 	tdma->dma_dev.residue_granularity = DMA_RESIDUE_GRANULARITY_SEGMENT;
+ 
++	tdma->dma_dev.copy_align = DMAENGINE_ALIGN_4_BYTES;
++
+ 	ret = dma_async_device_register(&tdma->dma_dev);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "ADMA registration failed: %d\n", ret);
+-- 
+2.1.4
