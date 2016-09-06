@@ -1,31 +1,55 @@
-From: Nicolin Chen <nicoleotsuka@gmail.com>
-Subject: [PATCH v3 0/2] Add memcpy support for tegra210-adma
-Date: Tue,  6 Sep 2016 11:42:00 -0700
-Message-ID: <cover.1473186743.git.nicoleotsuka@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: vinod.koul@intel.com, jonathanh@nvidia.com
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, dmaengine@vger.kernel.org, gnurou@gmail.com, thierry.reding@gmail.com, swarren@wwwdotorg.org, ldewangan@nvidia.com
+From: Nicolin Chen <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH v3 1/2] dmaengine: tegra210-adma: Add pre-check for cyclic callback
+Date: Tue,  6 Sep 2016 11:42:01 -0700
+Message-ID: <75bbbd9f20e0ead30760f47f0fd2ee9b05d49254.1473186743.git.nicoleotsuka@gmail.com>
+References: <cover.1473186743.git.nicoleotsuka@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <cover.1473186743.git.nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <cover.1473186743.git.nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+References: <cover.1473186743.git.nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This series of patches add memcpy support for tegra210 ADMA engine.
+ADMA driver will support more than cyclic type of transaction.
+So this patch limit the cyclic callback for the cyclic type
+only in order to support other types.
 
-Changlog
-v2->v3 (Suggested by Jon)
- * PATCH-2: Remove "TODO" mark and limit the buffer size up to 1GB
-v1->v2 (Suggested by Vinod)
- * PATCH-1: Split the cyclic pre-check to a separate patch
- * PATCH-2: Add ADMA_CH_CTRL_MODE to unify the marcos
- * PATCH-2: Set operation mode depending on cyclic
- * PATCH-2: Add TODO comment at period_len
- * PATCH-2: Revise the commit log
+Signed-off-by: Nicolin Chen <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+---
+ drivers/dma/tegra210-adma.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-Nicolin Chen (2):
-  dmaengine: tegra210-adma: Add pre-check for cyclic callback
-  dmaengine: tegra210-adma: Add memcpy support
-
- drivers/dma/tegra210-adma.c | 108 +++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 96 insertions(+), 12 deletions(-)
-
+diff --git a/drivers/dma/tegra210-adma.c b/drivers/dma/tegra210-adma.c
+index 09b46f7..5b5d298 100644
+--- a/drivers/dma/tegra210-adma.c
++++ b/drivers/dma/tegra210-adma.c
+@@ -111,6 +111,7 @@ struct tegra_adma_desc {
+ 	size_t				buf_len;
+ 	size_t				period_len;
+ 	size_t				num_periods;
++	bool				cyclic;
+ };
+ 
+ /*
+@@ -408,7 +409,8 @@ static irqreturn_t tegra_adma_isr(int irq, void *dev_id)
+ 		return IRQ_NONE;
+ 	}
+ 
+-	vchan_cyclic_callback(&tdc->desc->vd);
++	if (tdc->desc->cyclic)
++		vchan_cyclic_callback(&tdc->desc->vd);
+ 
+ 	spin_unlock_irqrestore(&tdc->vc.lock, flags);
+ 
+@@ -557,6 +559,7 @@ static struct dma_async_tx_descriptor *tegra_adma_prep_dma_cyclic(
+ 	if (!desc)
+ 		return NULL;
+ 
++	desc->cyclic = true;
+ 	desc->buf_len = buf_len;
+ 	desc->period_len = period_len;
+ 	desc->num_periods = buf_len / period_len;
 -- 
 2.1.4
