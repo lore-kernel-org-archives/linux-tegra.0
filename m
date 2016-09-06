@@ -1,90 +1,48 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 1/2] watchdog: tegra: constify watchdog_ops structures
-Date: Tue, 6 Sep 2016 11:13:11 +0200
-Message-ID: <20160906091311.GD15644@ulmo.ba.sec>
-References: <1472751326-22897-1-git-send-email-Julia.Lawall@lip6.fr>
- <1472751326-22897-2-git-send-email-Julia.Lawall@lip6.fr>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH] i2c: tegra: Fix assignment of boolean variables
+Date: Tue, 6 Sep 2016 10:50:45 +0100
+Message-ID: <1473155445-3046-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="UoPmpPX/dBe4BELn"
-Return-path: <kernel-janitors-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1472751326-22897-2-git-send-email-Julia.Lawall@lip6.fr>
-Sender: kernel-janitors-owner@vger.kernel.org
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Wim Van Sebroeck <wim@iguana.be>, kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-watchdog@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Fix the following warnings reported by coccinelle for the Tegra I2C
+driver.
 
---UoPmpPX/dBe4BELn
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+drivers/i2c/busses/i2c-tegra.c:513:2-23: WARNING: Assignment of bool to 0/1
+drivers/i2c/busses/i2c-tegra.c:539:3-24: WARNING: Assignment of bool to 0/1
 
-On Thu, Sep 01, 2016 at 07:35:25PM +0200, Julia Lawall wrote:
-> Check for watchdog_ops structures that are only stored in the ops field of
-> a watchdog_device structure.  This field is declared const, so watchdog_o=
-ps
-> structures that have this property can be declared as const also.
->=20
-> The semantic patch that makes this change is as follows:
-> (http://coccinelle.lip6.fr/)
->=20
-> // <smpl>
-> @r disable optional_qualifier@
-> identifier i;
-> position p;
-> @@
-> static struct watchdog_ops i@p =3D { ... };
->=20
-> @ok@
-> identifier r.i;
-> struct watchdog_device e;
-> position p;
-> @@
-> e.ops =3D &i@p;
->=20
-> @bad@
-> position p !=3D {r.p,ok.p};
-> identifier r.i;
-> struct watchdog_ops e;
-> @@
-> e@i@p
->=20
-> @depends on !bad disable optional_qualifier@
-> identifier r.i;
-> @@
-> static
-> +const
->  struct watchdog_ops i =3D { ... };
-> // </smpl>
->=20
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
->=20
-> ---
->  drivers/watchdog/tegra_wdt.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Reported-by: Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/i2c/busses/i2c-tegra.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---UoPmpPX/dBe4BELn
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJXzoinAAoJEN0jrNd/PrOhrMQQAIVqHIuEAicJcJ4m90FFH2Qa
-q9cx/e8JFfl0RCFEdvYsKO3TOfJuYDfnkvBUx8ieIJCELGTuy5i/w/oDpq+eXcm2
-T1zxYqAFZhMViDjDJE83vNh9AvXMa29LfpLBHW2gYvl103cHxz2UPivWGsVqLzP4
-ImMG1QfiC8fSRdPqcGEftjH+RJUuMEWYkCNJayMFNSzukOAFVhezV6Jqq8RyTgHA
-ZfRV2eGO15OMQRWzEAiQuyL21T+wbw1Pvz6dzkDkTG8aK96Ytex+TjdYoprewFYF
-7kjiOHGaqyUjDPTaZ8le6RBQwUeygdRF2k4vb4MUgIPjJhgnFofXwd3u+gkxDHqs
-G5E+DFh21b+iNGFTXUOle0SL/aPuL2f3kbYJlrNX7uPlGx2ZqwlzhvrP4dJzuakZ
-bQkdlz3grTl0ip+7ktyIkxJXEorNASUzoaaBz3x2ChSqzKl76gEoJ0axmLgp2rkh
-azpwPvHW3lhKyfQfQvHX5CnLC2Ky6focMNx2nJ5HQKzDMz8oSpfLCw25lAKVzbzD
-StzItthk8sHneQ/PCtZW7WAhbXjTiMv7Ji8CgUoyY2I/V9UHLstHRztxI4KW7AIR
-VH7YaoQqJCyS8sdIrucH738+hNXy/+rjAbRmbCxkD33y0aPgiYPGyGw+7htV58vk
-q83juYV9gXwHuxvtFr7c
-=n4Zm
------END PGP SIGNATURE-----
-
---UoPmpPX/dBe4BELn--
+diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+index d86a993b75d6..7398930172f3 100644
+--- a/drivers/i2c/busses/i2c-tegra.c
++++ b/drivers/i2c/busses/i2c-tegra.c
+@@ -510,7 +510,7 @@ static int tegra_i2c_init(struct tegra_i2c_dev *i2c_dev)
+ 	}
+ 
+ 	if (i2c_dev->irq_disabled) {
+-		i2c_dev->irq_disabled = 0;
++		i2c_dev->irq_disabled = false;
+ 		enable_irq(i2c_dev->irq);
+ 	}
+ 
+@@ -536,7 +536,7 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+ 
+ 		if (!i2c_dev->irq_disabled) {
+ 			disable_irq_nosync(i2c_dev->irq);
+-			i2c_dev->irq_disabled = 1;
++			i2c_dev->irq_disabled = true;
+ 		}
+ 		goto err;
+ 	}
+-- 
+2.1.4
