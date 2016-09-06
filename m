@@ -1,38 +1,90 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Tegra baseline test results for v4.8-rc4
-Date: Mon, 5 Sep 2016 20:38:50 +0100
-Message-ID: <490eafaf-04f6-79e1-6b8d-ffe8e523e083@nvidia.com>
-References: <1f415bf9-3f21-8516-e70c-e3bf65d7ea96@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 1/2] watchdog: tegra: constify watchdog_ops structures
+Date: Tue, 6 Sep 2016 11:13:11 +0200
+Message-ID: <20160906091311.GD15644@ulmo.ba.sec>
+References: <1472751326-22897-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1472751326-22897-2-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1f415bf9-3f21-8516-e70c-e3bf65d7ea96-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="UoPmpPX/dBe4BELn"
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1472751326-22897-2-git-send-email-Julia.Lawall@lip6.fr>
+Sender: kernel-janitors-owner@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Wim Van Sebroeck <wim@iguana.be>, kernel-janitors@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, linux-watchdog@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 05/09/16 20:37, Jon Hunter wrote:
-> Here are some basic Tegra test results for Linux v4.8-rc4.
-> Logs and other details at:
-> 
->     https://nvtb.github.io//linux/test_v4.8-rc4/20160828153103/
-> 
-> 
-> Test summary
-> ------------
-> 
-> Build: zImage:
->     FAIL: ( 1/ 2): multi_v7_defconfig
+--UoPmpPX/dBe4BELn
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This build break has been fixed by the following commit:
+On Thu, Sep 01, 2016 at 07:35:25PM +0200, Julia Lawall wrote:
+> Check for watchdog_ops structures that are only stored in the ops field of
+> a watchdog_device structure.  This field is declared const, so watchdog_o=
+ps
+> structures that have this property can be declared as const also.
+>=20
+> The semantic patch that makes this change is as follows:
+> (http://coccinelle.lip6.fr/)
+>=20
+> // <smpl>
+> @r disable optional_qualifier@
+> identifier i;
+> position p;
+> @@
+> static struct watchdog_ops i@p =3D { ... };
+>=20
+> @ok@
+> identifier r.i;
+> struct watchdog_device e;
+> position p;
+> @@
+> e.ops =3D &i@p;
+>=20
+> @bad@
+> position p !=3D {r.p,ok.p};
+> identifier r.i;
+> struct watchdog_ops e;
+> @@
+> e@i@p
+>=20
+> @depends on !bad disable optional_qualifier@
+> identifier r.i;
+> @@
+> static
+> +const
+>  struct watchdog_ops i =3D { ... };
+> // </smpl>
+>=20
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+>=20
+> ---
+>  drivers/watchdog/tegra_wdt.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-https://git.kernel.org/cgit/linux/kernel/git/tip/tip.git/commit/?h=timers/urgent&id=98744b408c757901df57fa50cbd5826245dc3a1f
+Acked-by: Thierry Reding <treding@nvidia.com>
 
-Cheers
-Jon
+--UoPmpPX/dBe4BELn
+Content-Type: application/pgp-signature; name="signature.asc"
 
--- 
-nvpublic
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCAAGBQJXzoinAAoJEN0jrNd/PrOhrMQQAIVqHIuEAicJcJ4m90FFH2Qa
+q9cx/e8JFfl0RCFEdvYsKO3TOfJuYDfnkvBUx8ieIJCELGTuy5i/w/oDpq+eXcm2
+T1zxYqAFZhMViDjDJE83vNh9AvXMa29LfpLBHW2gYvl103cHxz2UPivWGsVqLzP4
+ImMG1QfiC8fSRdPqcGEftjH+RJUuMEWYkCNJayMFNSzukOAFVhezV6Jqq8RyTgHA
+ZfRV2eGO15OMQRWzEAiQuyL21T+wbw1Pvz6dzkDkTG8aK96Ytex+TjdYoprewFYF
+7kjiOHGaqyUjDPTaZ8le6RBQwUeygdRF2k4vb4MUgIPjJhgnFofXwd3u+gkxDHqs
+G5E+DFh21b+iNGFTXUOle0SL/aPuL2f3kbYJlrNX7uPlGx2ZqwlzhvrP4dJzuakZ
+bQkdlz3grTl0ip+7ktyIkxJXEorNASUzoaaBz3x2ChSqzKl76gEoJ0axmLgp2rkh
+azpwPvHW3lhKyfQfQvHX5CnLC2Ky6focMNx2nJ5HQKzDMz8oSpfLCw25lAKVzbzD
+StzItthk8sHneQ/PCtZW7WAhbXjTiMv7Ji8CgUoyY2I/V9UHLstHRztxI4KW7AIR
+VH7YaoQqJCyS8sdIrucH738+hNXy/+rjAbRmbCxkD33y0aPgiYPGyGw+7htV58vk
+q83juYV9gXwHuxvtFr7c
+=n4Zm
+-----END PGP SIGNATURE-----
+
+--UoPmpPX/dBe4BELn--
