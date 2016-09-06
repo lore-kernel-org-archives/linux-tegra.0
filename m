@@ -1,65 +1,33 @@
-From: Dmitry Osipenko <digetx@gmail.com>
-Subject: Re: [PATCH v2 0/2] Add memcpy support for tegra210-adma
-Date: Tue, 6 Sep 2016 17:27:05 +0300
-Message-ID: <3a06dec1-882a-03f1-d826-212918dfa893@gmail.com>
+From: Nicolin Chen <nicoleotsuka-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 2/2] dmaengine: tegra210-adma: Add memcpy support
+Date: Tue, 6 Sep 2016 10:21:28 -0700
+Message-ID: <20160906172127.GA966@Asurada-Nvidia>
 References: <cover.1472857934.git.nicoleotsuka@gmail.com>
- <319ca097-4b10-83b9-841c-52adccbb48ad@nvidia.com>
- <5db4d7db-b1f4-c6af-de56-e8bb13ebc465@gmail.com>
- <6f45ff6e-5fa7-7aca-154c-85cf235aa62f@nvidia.com>
- <cad2c99c-3eee-3fa1-4559-e60f7f4a22c7@nvidia.com>
+ <738e0f1560436d613d9a7dab2fd540abea9503d3.1472857934.git.nicoleotsuka@gmail.com>
+ <f9850c0c-a4a9-4d5f-eaa9-c1fd39b72870@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <cad2c99c-3eee-3fa1-4559-e60f7f4a22c7@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, Nicolin Chen <nicoleotsuka@gmail.com>, vinod.koul@intel.com
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, dmaengine@vger.kernel.org, gnurou@gmail.com, thierry.reding@gmail.com, swarren@wwwdotorg.org, ldewangan@nvidia.com
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <f9850c0c-a4a9-4d5f-eaa9-c1fd39b72870-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 06.09.2016 16:46, Jon Hunter wrote:
-> 
-> On 06/09/16 14:04, Jon Hunter wrote:
->>
->> On 06/09/16 13:03, Dmitry Osipenko wrote:
->>> On 06.09.2016 14:33, Jon Hunter wrote:
->>>>
->>>> On 03/09/16 01:32, Nicolin Chen wrote:
->>>>> This series of patches add memcpy support for tegra210 ADMA engine.
->>>>
->>>> Thanks. Any reason you choose this DMA and not the APB DMA? The APB DMA
->>>> is more of a generic DMA and so for memcpy it would seem to be a good
->>>> choice and it is available on all Tegras not just Tegra210.
->>>>
->>>
->>> Just a small clarification:
->>>
->>> If I'm not mistaken, APB DMA is mem-to-device, while AHB DMA is mem-to-mem. So,
->>> you probably meant AHB and not the APB.
->>
->> Description from the Tegra TRM:
->>
->> "The APB DMA Controller is placed between the AHB Bus and the APB Bus
->> and is a master on both buses.
->>
->> The APB DMA Controller is used for block data transfers from a source
->> location to the destination location. The source may be
->> DRAM or IRAM, and the destination location could be devices placed on
->> APB Bus; or vice versa."
-> 
-> Sorry this appears to be a completely worthless response :-(
-> 
-> I had made the assumption that if the DMA can transfer from APB-to-AHB
-> and AHB-to-APB, it could also do AHB to AHB. However, now I look closely
-> at the registers I see that it cannot and therefore, cannot support
-> memcpy at all! Ok, so ignore my comment here, as it appears only the
-> ADMA can support memcpy. Weird.
-> 
+On Tue, Sep 06, 2016 at 12:52:03PM +0100, Jon Hunter wrote:
+> > +	/* TODO: ADMA should support up to 8 chunks or periods */
+> > +	desc->num_periods = 1;
+> > +	desc->buf_len = buf_len;
+> > +	desc->period_len = buf_len;
 
-On older Tegra's there is AHB DMA controller for mem-to-mem transfers. The K1
-manual states that it's been deprecated, however there is an interrupt dedicated
-to it (probably wrong TRM?). X1 TRM also states the deprecation, doesn't have
-the interrupt mention that K1 has and has ADMA.
+> What would be the benefit of using 8 periods here? My understanding is
+> that you will get an interrupt per period and do you really want this
+> for memcpy?
 
--- 
-Dmitry
+You are right about the interrupt. And it doesn't seem to be
+beneficial unless the period size is over the limitation of
+Transfer Count, which is rare but might theoretically exist?
+
+I admit the "TODO" word here is a bit misleading for memcpy.
+I can remove the word and write a more appropriate comments.
