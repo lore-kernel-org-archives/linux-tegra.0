@@ -1,45 +1,88 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH V2 9/9] i2c: tegra: Add pinctrl support
-Date: Wed, 7 Sep 2016 16:17:43 +0200
-Message-ID: <CACRpkdZb-dE0qNtBWQnPzsA0FUTg8ghWzu56Ezjm4p2xA35ukw@mail.gmail.com>
-References: <1472216945-11818-1-git-send-email-jonathanh@nvidia.com> <1472216945-11818-10-git-send-email-jonathanh@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <1472216945-11818-10-git-send-email-jonathanh@nvidia.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Laxman Dewangan <ldewangan@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+From: Dmitry Osipenko <digetx@gmail.com>
+Subject: [PATCH] mfd: tps6586x: Fix "failed to read interrupt" storm on resume from suspend
+Date: Wed,  7 Sep 2016 17:56:12 +0300
+Message-ID: <20160907145612.12512-1-digetx@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Lee Jones <lee.jones@linaro.org>
+Cc: linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Aug 26, 2016 at 3:09 PM, Jon Hunter <jonathanh@nvidia.com> wrote:
+tps6586x MFD spews hundreds of "failed to read interrupt status" KMSG's on
+resume from suspend with eventual disablement of the IRQ when tps6586x's
+RTC wakes the system. This happens because IRQ gets handled before I2C been
+resumed.
 
-> On Tegra124/132 the pins for I2C6 are shared with the Display Port AUX
-> (DPAUX) channel and on Tegra210 the pins for I2C4 and I2C6 are shared
-> with DPAUX1 and DPAUX0, respectively. The multiplexing of the pins is
-> handled by a register in the DPAUX and so the Tegra DPAUX driver has
-> been updated to register a pinctrl device for managing these pins.
->
-> The pins for these particular I2C devices are bound to the I2C device
-> prior to probing. However, these I2C devices are in a different power
-> partition to the DPAUX devices that own the pins. Hence, it is desirable
-> to place the pins in the 'idle' state and allow the DPAUX power
-> partition to switch off, when these I2C devices is not in use.
-> Therefore, add calls to place the I2C pins in the 'default' and 'idle'
-> states when the I2C device is runtime resumed and suspended,
-> respectively.
->
-> Please note that the pinctrl functions that set the state of the pins
-> check to see if the devices has pins associated and will return zero
-> if they do not. Therefore, it is safe to call these pinctrl functions
-> even for I2C devices that do not have any pins associated.
->
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/mfd/tps6586x.c | 37 +++++++++++++++++++++++++++++++++++++
+ 1 file changed, 37 insertions(+)
 
-This is exactly how I imagined these states being used,
-so obviously:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-
-Yours,
-Linus Walleij
+diff --git a/drivers/mfd/tps6586x.c b/drivers/mfd/tps6586x.c
+index 5628a6b..48c7045 100644
+--- a/drivers/mfd/tps6586x.c
++++ b/drivers/mfd/tps6586x.c
+@@ -133,6 +133,9 @@ struct tps6586x {
+ 	u32			irq_en;
+ 	u8			mask_reg[5];
+ 	struct irq_domain	*irq_domain;
++
++	bool			suspended;
++	bool			irq_disabled;
+ };
+ 
+ static inline struct tps6586x *dev_to_tps6586x(struct device *dev)
+@@ -315,6 +318,12 @@ static irqreturn_t tps6586x_irq(int irq, void *data)
+ 	u32 acks;
+ 	int ret = 0;
+ 
++	if (tps6586x->suspended) {
++		disable_irq_nosync(tps6586x->irq);
++		tps6586x->irq_disabled = true;
++		return IRQ_HANDLED;
++	}
++
+ 	ret = tps6586x_reads(tps6586x->dev, TPS6586X_INT_ACK1,
+ 			     sizeof(acks), (uint8_t *)&acks);
+ 
+@@ -600,10 +609,38 @@ static const struct i2c_device_id tps6586x_id_table[] = {
+ };
+ MODULE_DEVICE_TABLE(i2c, tps6586x_id_table);
+ 
++static int tps6586x_suspend(struct device *dev)
++{
++	struct i2c_client *client = to_i2c_client(dev);
++	struct tps6586x *tps6586x = i2c_get_clientdata(client);
++
++	tps6586x->suspended = true;
++
++	return 0;
++}
++
++static int tps6586x_resume(struct device *dev)
++{
++	struct i2c_client *client = to_i2c_client(dev);
++	struct tps6586x *tps6586x = i2c_get_clientdata(client);
++
++	tps6586x->suspended = false;
++
++	if (tps6586x->irq_disabled) {
++		enable_irq(client->irq);
++		tps6586x->irq_disabled = false;
++	}
++
++	return 0;
++}
++
++static SIMPLE_DEV_PM_OPS(tps6586x_pm_ops, tps6586x_suspend, tps6586x_resume);
++
+ static struct i2c_driver tps6586x_driver = {
+ 	.driver	= {
+ 		.name	= "tps6586x",
+ 		.of_match_table = of_match_ptr(tps6586x_of_match),
++		.pm	= &tps6586x_pm_ops,
+ 	},
+ 	.probe		= tps6586x_i2c_probe,
+ 	.remove		= tps6586x_i2c_remove,
+-- 
+2.9.3
