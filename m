@@ -1,67 +1,45 @@
-From: Ralf Ramsauer <ralf-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
-Subject: Re: [RESEND PATCH] ARM: tegra: fix erroneous address in dts
-Date: Wed, 7 Sep 2016 15:50:57 +0200
-Message-ID: <78670ccc-83ad-c7be-0377-dea1d794c078@ramses-pyramidenbau.de>
-References: <1468835208-13426-1-git-send-email-ralf@ramses-pyramidenbau.de>
- <20160718095802.GA422@ulmo.ba.sec> <3087941.oHflrW9cm7@wuerfel>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH V2 9/9] i2c: tegra: Add pinctrl support
+Date: Wed, 7 Sep 2016 16:17:43 +0200
+Message-ID: <CACRpkdZb-dE0qNtBWQnPzsA0FUTg8ghWzu56Ezjm4p2xA35ukw@mail.gmail.com>
+References: <1472216945-11818-1-git-send-email-jonathanh@nvidia.com> <1472216945-11818-10-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <3087941.oHflrW9cm7@wuerfel>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-i2c-owner@vger.kernel.org>
+In-Reply-To: <1472216945-11818-10-git-send-email-jonathanh@nvidia.com>
+Sender: linux-i2c-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Laxman Dewangan <ldewangan@nvidia.com>, Wolfram Sang <wsa@the-dreams.de>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi all,
+On Fri, Aug 26, 2016 at 3:09 PM, Jon Hunter <jonathanh@nvidia.com> wrote:
 
-may I *poke* you again?
+> On Tegra124/132 the pins for I2C6 are shared with the Display Port AUX
+> (DPAUX) channel and on Tegra210 the pins for I2C4 and I2C6 are shared
+> with DPAUX1 and DPAUX0, respectively. The multiplexing of the pins is
+> handled by a register in the DPAUX and so the Tegra DPAUX driver has
+> been updated to register a pinctrl device for managing these pins.
+>
+> The pins for these particular I2C devices are bound to the I2C device
+> prior to probing. However, these I2C devices are in a different power
+> partition to the DPAUX devices that own the pins. Hence, it is desirable
+> to place the pins in the 'idle' state and allow the DPAUX power
+> partition to switch off, when these I2C devices is not in use.
+> Therefore, add calls to place the I2C pins in the 'default' and 'idle'
+> states when the I2C device is runtime resumed and suspended,
+> respectively.
+>
+> Please note that the pinctrl functions that set the state of the pins
+> check to see if the devices has pins associated and will return zero
+> if they do not. Therefore, it is safe to call these pinctrl functions
+> even for I2C devices that do not have any pins associated.
+>
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> Acked-by: Laxman Dewangan <ldewangan@nvidia.com>
 
-We're close to the release of 4.8, and this patch (b5c86b749 upstream)
-should still be reverted on mainline....
+This is exactly how I imagined these states being used,
+so obviously:
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-  Ralf
-
-On 08/10/2016 10:46 PM, Arnd Bergmann wrote:
-> On Monday, July 18, 2016 11:58:02 AM CEST Thierry Reding wrote:
->> On Mon, Jul 18, 2016 at 11:46:48AM +0200, Ralf Ramsauer wrote:
->>> c90bb7b enabled the high speed UARTs of the Jetson TK1. Due to a merge
->>> quirk, wrong addresses were introduced. Fix it and use the correct
->>> addresses.
->>>
->>> Thierry let me know, that there is another patch (b5896f67ab3c in
->>> linux-next) in preparation which removes all the '0,' prefixes of unit
->>> addresses on Tegra124 and is planned to go upstream in 4.8, so
->>> this patch will get reverted then.
->>>
->>> But for the moment, this patch is necessary to fix current misbehaviour.
->>>
->>> Fixes: c90bb7b9b9 ("ARM: tegra: Add high speed UARTs to Jetson TK1 device tree")
->>> Signed-off-by: Ralf Ramsauer <ralf-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
->>> Acked-by: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
->>> ---
->>>  arch/arm/boot/dts/tegra124-jetson-tk1.dts | 4 ++--
->>>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> ARM-SoC maintainers,
->>
->> Just to clarify, this is targetted at v4.7 because the offending patch
->> was merged in v4.7-rc1. If at all possible it'd be great to get this in,
->> even if this is terribly last minute.
->>
-> 
-> I just notice this was still missing in v4.8-rc1, so I added it to
-> the fixes branch now, with a stable tag for v4.7
-> 
-> 	Arnd
-> 
-
--- 
-Ralf Ramsauer
-PGP: 0x8F10049B
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+Yours,
+Linus Walleij
