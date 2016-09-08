@@ -1,239 +1,57 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH 10/10] PM / Domains: Add support for removing nested PM
- domains by provider
-Date: Thu, 8 Sep 2016 14:30:15 +0200
-Message-ID: <CAPDyKFq3h1-64FtZwXa7XWO1UJj8Od-cfjwa8i4bDwN1VVdL7w@mail.gmail.com>
-References: <1471340976-5379-1-git-send-email-jonathanh@nvidia.com> <1471340976-5379-11-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v3 2/2] dmaengine: tegra210-adma: Add memcpy support
+Date: Thu, 8 Sep 2016 15:08:26 +0100
+Message-ID: <bafb9b89-2b45-c419-62d4-b25a50f8d6be@nvidia.com>
+References: <cover.1473186743.git.nicoleotsuka@gmail.com>
+ <c730136b708404e1257eb28bb1dc2cbf13bf6023.1473186743.git.nicoleotsuka@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1471340976-5379-11-git-send-email-jonathanh@nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alexander Aring <alex.aring@gmail.com>, Eric Anholt <eric@anholt.net>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <c730136b708404e1257eb28bb1dc2cbf13bf6023.1473186743.git.nicoleotsuka@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Nicolin Chen <nicoleotsuka@gmail.com>, vinod.koul@intel.com
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, dmaengine@vger.kernel.org, gnurou@gmail.com, thierry.reding@gmail.com, swarren@wwwdotorg.org, ldewangan@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-On 16 August 2016 at 11:49, Jon Hunter <jonathanh@nvidia.com> wrote:
-> If a device supports PM domains that are subdomains of another PM
-> domain, then the PM domains should be removed in reverse order to
-> ensure that the subdomains are removed first. Furthermore, if there is
-> more than one provider, then there needs to be a way to remove the
-> domains in reverse order for a specific provider.
->
-> Add the function of_genpd_remove_tail() to remove the last PM domain
-> added by a given PM domain provider and return the generic_pm_domain
-> structure for the PM domain that was removed.
->
-> A PM domain should only be removed once the associated PM domain
-> provider has been removed from the list of providers. Otherwise, it
-> could be possible for a client to be associated with a PM domain that
-> could have been removed. Add a helper function to verify if the PM
-> domain provider is present and only allow a PM domain to be removed if
-> the provider has been removed.
->
-> The function of_genpd_remove_tail() must hold the gpd_list_lock while
-> finding and removing a PM domain. It is natural for
-> of_genpd_remove_tail() to call pm_genpd_remove() once the appropriate
-> PM domain is found to remove it. However, pm_genpd_remove(), also
-> acquires the gpd_list_lock. Therefore, move the core of the function
-> pm_genpd_remove() to a new function genpd_remove() which does not
-> acquire the gpd_list_lock so this can be used by both pm_genpd_remove()
-> and of_genpd_remove_tail().
->
-> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-> ---
->  drivers/base/power/domain.c | 87 +++++++++++++++++++++++++++++++++++++++++----
->  include/linux/pm_domain.h   |  7 ++++
->  2 files changed, 88 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
-> index 0bc145e8e902..b6d1d0441a2d 100644
-> --- a/drivers/base/power/domain.c
-> +++ b/drivers/base/power/domain.c
-> @@ -1357,7 +1357,7 @@ int pm_genpd_init(struct generic_pm_domain *genpd,
->  EXPORT_SYMBOL_GPL(pm_genpd_init);
->
->  /**
-> - * pm_genpd_remove - Remove a generic I/O PM domain
-> + * genpd_remove - Remove a generic I/O PM domain
->   * @genpd: Pointer to PM domain that is to be removed.
->   *
->   * To remove the PM domain, this function:
-> @@ -1366,9 +1366,10 @@ EXPORT_SYMBOL_GPL(pm_genpd_init);
->   *  - Removes the PM domain from the list of registered PM domains.
->   *
->   * The PM domain will only be removed, if it is not a parent to any
-> - * other PM domain and has no devices associated with it.
-> + * other PM domain and has no devices associated with it. Must be called
-> + * with the gpd_list_lock held.
->   */
-> -int pm_genpd_remove(struct generic_pm_domain *genpd)
-> +static int genpd_remove(struct generic_pm_domain *genpd)
->  {
->         struct gpd_link *l, *link;
->         int ret = 0;
-> @@ -1376,12 +1377,10 @@ int pm_genpd_remove(struct generic_pm_domain *genpd)
->         if (IS_ERR_OR_NULL(genpd))
->                 return -EINVAL;
->
-> -       mutex_lock(&gpd_list_lock);
->         mutex_lock(&genpd->lock);
->
->         if (!list_empty(&genpd->master_links) || genpd->device_count) {
->                 mutex_unlock(&genpd->lock);
-> -               mutex_unlock(&gpd_list_lock);
->                 pr_err("%s: unable to remove %s\n", __func__, genpd->name);
->                 return -EBUSY;
->         }
-> @@ -1395,11 +1394,25 @@ int pm_genpd_remove(struct generic_pm_domain *genpd)
->         list_del(&genpd->gpd_list_node);
->         mutex_unlock(&genpd->lock);
->         cancel_work_sync(&genpd->power_off_work);
-> -       mutex_unlock(&gpd_list_lock);
->         pr_debug("%s: removed %s\n", __func__, genpd->name);
->
->         return ret;
->  }
-> +
-> +/**
-> + * pm_genpd_remove - Remove a generic I/O PM domain
-> + * @genpd: Pointer to PM domain that is to be removed.
-> + */
-> +int pm_genpd_remove(struct generic_pm_domain *genpd)
-> +{
-> +       int ret;
-> +
-> +       mutex_lock(&gpd_list_lock);
-> +       ret = genpd_remove(genpd);
-> +       mutex_unlock(&gpd_list_lock);
-> +
-> +       return ret;
-> +}
->  EXPORT_SYMBOL_GPL(pm_genpd_remove);
 
-All above changes could have been made already in the patch when
-adding the pm_genpd_remove() API. Could you please fold these changes
-into that patch instead?
+On 06/09/16 19:42, Nicolin Chen wrote:
+> ADMA supports non-flow controlled Memory-to-Memory direction
+> transactions. So this patch just adds an initial support for
+> that. It passed a simple dmatest:
+>         echo dma1chan0 > /sys/module/dmatest/parameters/channel
+> 	echo 1024 > /sys/module/dmatest/parameters/iterations
+> 	echo 0 > /sys/module/dmatest/parameters/dmatest
+> 	echo 1 > /sys/module/dmatest/parameters/run
+> 	dmesg | grep dmatest
+> Started 1 threads using dma1chan0
+> dma1chan0-copy0: summary 1024 tests, 0 failures 2054 iops 16520 KB/s (0)
 
->
->  #ifdef CONFIG_PM_GENERIC_DOMAINS_OF
-> @@ -1610,6 +1623,26 @@ void of_genpd_del_provider(struct device_node *np)
->  EXPORT_SYMBOL_GPL(of_genpd_del_provider);
->
->  /**
-> + * genpd_provider_present() - Verify if a PM domain provider is present
-> + * @np: Device node pointer associated with the PM domain provider
-> + */
-> +static bool genpd_provider_present(struct device_node *np)
-> +{
-> +       struct of_genpd_provider *cp;
-> +
-> +       mutex_lock(&of_genpd_mutex);
-> +       list_for_each_entry(cp, &of_genpd_providers, link) {
-> +               if (cp->node == np) {
-> +                       mutex_unlock(&of_genpd_mutex);
-> +                       return true;
-> +               }
-> +       }
-> +       mutex_unlock(&of_genpd_mutex);
-> +
-> +       return false;
-> +}
-> +
-> +/**
->   * genpd_get_from_provider() - Look-up PM domain
->   * @genpdspec: OF phandle args to use for look-up
->   *
-> @@ -1713,6 +1746,48 @@ out:
->  EXPORT_SYMBOL_GPL(of_genpd_add_subdomain);
->
->  /**
-> + * of_genpd_remove_tail - Remove the last PM domain registered for a provider
-> + * @provider: Pointer to device structure associated with provider
+What board and kernel did you try this on?
 
-The naming of this function would be okay, if we only have added
-genpds in the gpd_list by using list_add_tail(), although we don't.
-Instead we use list_add() and put them first in the list.
+I have tried this on a tegra210-jetson-tx1 and I get :
 
-So, unless we change to use list_add_tail() when adding genpds (I
-assume we can do that!), I would rather change the name of this
-function to of_genpd_remove_first().
+[  202.569204] dmatest: Started 1 threads using dma1chan0
+[  205.620318] dmatest: dma1chan0-copy0: result #1: 'test timed out' with src_off=0x86c dst_off=0xc80 len=0x307c (0)
+[  208.692315] dmatest: dma1chan0-copy0: result #2: 'test timed out' with src_off=0x3288 dst_off=0x2720 len=0xa1c (0)
+[  211.764323] dmatest: dma1chan0-copy0: result #3: 'test timed out' with src_off=0x2f44 dst_off=0x3164 len=0x3a4 (0)
+[  214.836309] dmatest: dma1chan0-copy0: result #4: 'test timed out' with src_off=0x17d0 dst_off=0x2b10 len=0xe2c (0)
+[  217.908305] dmatest: dma1chan0-copy0: result #5: 'test timed out' with src_off=0x23d8 dst_off=0xe90 len=0xb7c (0)
+...
 
-What option do you prefer?
+I also tried a tegra210-smaug and I get:
 
-> + *
-> + * Find the last PM domain that was added by a particular provider and
-> + * remove this PM domain from the list of PM domains. The provider is
-> + * identified by the 'provider' device structure that is passed. The PM
-> + * domain will only be removed, if the provider associated with domain
-> + * has been removed.
-> + *
-> + * Returns a valid pointer to struct generic_pm_domain on success or
-> + * ERR_PTR() on failure.
-> + */
-> +struct generic_pm_domain *of_genpd_remove_tail(struct device_node *np)
-> +{
-> +       struct generic_pm_domain *gpd, *genpd = ERR_PTR(-ENOENT);
-> +       int ret;
-> +
-> +       if (IS_ERR_OR_NULL(np))
-> +               return ERR_PTR(-EINVAL);
-> +
-> +       mutex_lock(&gpd_list_lock);
-> +       list_for_each_entry(gpd, &gpd_list, gpd_list_node) {
-> +               if (gpd->provider == &np->fwnode) {
-> +                       if (!genpd_provider_present(np)) {
-> +                               ret = genpd_remove(gpd);
-> +                               genpd = ret ? ERR_PTR(ret) : gpd;
-> +                               break;
-> +                       }
+[  167.508828] dmatest: Started 1 threads using dma1chan0
+[  167.508870] dmatest: dma1chan0-copy0: dstbuf[0x0] not copied! Expected db, got 09
+[  167.508873] dmatest: dma1chan0-copy0: dstbuf[0x1] not copied! Expected da, got 05
+[  167.508875] dmatest: dma1chan0-copy0: dstbuf[0x2] not copied! Expected d9, got 26
+[  167.508876] dmatest: dma1chan0-copy0: dstbuf[0x3] not copied! Expected d8, got 16
+...
 
-Maybe use an "else" here instead to avoid the double "break;".
+I am testing with your patches on next-20160905.
 
-> +                       pr_warn("Provider maybe present, unable to remove %s\n",
-> +                               genpd->name);
-> +                       genpd = ERR_PTR(-EBUSY);
-> +                       break;
-> +               }
-> +       }
-> +       mutex_unlock(&gpd_list_lock);
-> +
-> +       return genpd;
-> +}
-> +EXPORT_SYMBOL_GPL(of_genpd_remove_tail);
-> +
-> +/**
->   * genpd_dev_pm_detach - Detach a device from its PM domain.
->   * @dev: Device to detach.
->   * @power_off: Currently not used
-> diff --git a/include/linux/pm_domain.h b/include/linux/pm_domain.h
-> index 4aa285e44eb0..253f348b0ee9 100644
-> --- a/include/linux/pm_domain.h
-> +++ b/include/linux/pm_domain.h
-> @@ -203,6 +203,7 @@ extern int of_genpd_add_device(struct of_phandle_args *args,
->                                struct device *dev);
->  extern int of_genpd_add_subdomain(struct of_phandle_args *parent,
->                                   struct of_phandle_args *new_subdomain);
-> +extern struct generic_pm_domain *of_genpd_remove_tail(struct device_node *np);
->
->  int genpd_dev_pm_attach(struct device *dev);
->  #else /* !CONFIG_PM_GENERIC_DOMAINS_OF */
-> @@ -236,6 +237,12 @@ static inline int genpd_dev_pm_attach(struct device *dev)
->  {
->         return -ENODEV;
->  }
-> +
-> +static inline
-> +struct generic_pm_domain *of_genpd_remove_tail(struct device_node *np)
-> +{
-> +       return ERR_PTR(-ENOTSUPP);
-> +}
->  #endif /* CONFIG_PM_GENERIC_DOMAINS_OF */
->
->  #ifdef CONFIG_PM
-> --
-> 2.1.4
->
+Cheers
+Jon
 
-Kind regards
-Uffe
+-- 
+nvpublic
