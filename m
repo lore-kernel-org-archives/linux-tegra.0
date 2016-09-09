@@ -1,91 +1,53 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 06/10] PM / Domains: Verify the PM domain is present when
- adding a provider
-Date: Fri, 9 Sep 2016 10:41:08 +0100
-Message-ID: <d52f7901-b65b-3ea9-4c3b-863f7c105320@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 08/10] PM / Domains: Add support for removing PM domains
+Date: Fri, 9 Sep 2016 14:54:07 +0100
+Message-ID: <c8498eca-6934-1cab-31d9-3d8ce4c74897@nvidia.com>
 References: <1471340976-5379-1-git-send-email-jonathanh@nvidia.com>
- <1471340976-5379-7-git-send-email-jonathanh@nvidia.com>
- <CAPDyKFoLh6f3at-grfWmeRuvLwW+o=4sLG0kExuF+eZxDF_hHA@mail.gmail.com>
+ <1471340976-5379-9-git-send-email-jonathanh@nvidia.com>
+ <CAPDyKFrVO9wb3ffmxA7HUUDt1_aYxe=aqa1v+xNpdrYiLt_m0A@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CAPDyKFoLh6f3at-grfWmeRuvLwW+o=4sLG0kExuF+eZxDF_hHA@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alexander Aring <alex.aring@gmail.com>, Eric Anholt <eric@anholt.net>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAPDyKFrVO9wb3ffmxA7HUUDt1_aYxe=aqa1v+xNpdrYiLt_m0A-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alexander Aring <alex.aring-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 08/09/16 12:39, Ulf Hansson wrote:
-> On 16 August 2016 at 11:49, Jon Hunter <jonathanh@nvidia.com> wrote:
->> When a PM domain provider is added, there is currently no way to tell if
->> any PM domains associated with the provider are present. Naturally, the
->> PM domain provider should not be registered if the PM domains have not
->> been added. Nonetheless, verify that the PM domain(s) associated with a
->> provider are present when registering the PM domain provider.
->>
->> This change adds a dependency on the function pm_genpd_present() when
->> CONFIG_PM_GENERIC_DOMAINS_OF is enabled and so ensure this function is
->> available when CONFIG_PM_GENERIC_DOMAINS_OF selected.
->>
->> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
->> ---
->>  drivers/base/power/domain.c | 45 ++++++++++++++++++++++++++++++++++++++++++---
->>  1 file changed, 42 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
->> index d09e45145a3d..50223ae0c9a7 100644
->> --- a/drivers/base/power/domain.c
->> +++ b/drivers/base/power/domain.c
->> @@ -586,7 +586,7 @@ static int __init genpd_poweroff_unused(void)
->>  }
->>  late_initcall(genpd_poweroff_unused);
->>
->> -#ifdef CONFIG_PM_SLEEP
->> +#if defined(CONFIG_PM_SLEEP) || defined(CONFIG_PM_GENERIC_DOMAINS_OF)
->>
->>  /**
->>   * pm_genpd_present - Check if the given PM domain has been initialized.
->> @@ -606,6 +606,10 @@ static bool pm_genpd_present(const struct generic_pm_domain *genpd)
->>         return false;
->>  }
->>
->> +#endif
->> +
->> +#ifdef CONFIG_PM_SLEEP
->> +
->>  static bool genpd_dev_active_wakeup(struct generic_pm_domain *genpd,
->>                                     struct device *dev)
->>  {
->> @@ -1453,7 +1457,23 @@ static int genpd_add_provider(struct device_node *np, genpd_xlate_t xlate,
->>  int of_genpd_add_provider_simple(struct device_node *np,
->>                                  struct generic_pm_domain *genpd)
->>  {
->> -       return genpd_add_provider(np, genpd_xlate_simple, genpd);
->> +       int ret;
->> +
->> +       if (!np || !genpd)
->> +               return -EINVAL;
->> +
->> +       mutex_lock(&gpd_list_lock);
->> +
->> +       if (!pm_genpd_present(genpd)) {
->> +               mutex_unlock(&gpd_list_lock);
->> +               return -EINVAL;
->> +       }
->> +
->> +       ret = genpd_add_provider(np, genpd_xlate_simple, genpd);
-> 
-> You could simplify this, by assigning ret and initial value of
-> -EINVAL, then do like this:
-> 
-> if (pm_genpd_present(genpd))
->     ret = genpd_add_provider(np, genpd_xlate_simple, genpd);
 
-Yes good idea. Will do.
+On 08/09/16 12:49, Ulf Hansson wrote:
+> On 16 August 2016 at 11:49, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> The genpd framework allows users to add PM domains via the pm_genpd_init()
+>> function, however, there is no corresponding function to remove a PM
+>> domain. For most devices this may be fine as the PM domains are never
+>> removed, however, for devices that wish to populate the PM domains from
+>> within a driver, having the ability to remove a PM domain if the probing
+>> of the device fails or the driver is unloaded is necessary.
+>>
+>> Add the function pm_genpd_remove() to remove a PM domain by referencing
+>> it's generic_pm_domain structure.
+>>
+>> PM domains can only be removed if they are not a parent domain to
+>> another PM domain and have no devices associated with them.
+> 
+> I think we should also check if the there's is a provider registered
+> for the genpd, as it should also prevent the genpd from being removed.
+> Right?
 
-Thanks
+Yes I would agree. I had thought that after patch #4 of this series that
+only the provider itself would be able to call this. However, we should
+probably still verify that the provider has correctly remove itself.
+
+> I noticed that you are adding the ->provider pointer to the genpd
+> struct in patch 9/10. Perhaps re-structure $subject patch and 9/10 a
+> bit to deal with this, so we can add the pm_genpd_remove() API in a
+> more safe manner.
+
+Yes I can add the >provider member before this patch.
+
+Cheers
 Jon
 
 -- 
