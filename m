@@ -1,71 +1,53 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH 08/10] PM / Domains: Add support for removing PM domains
-Date: Mon, 12 Sep 2016 08:26:37 +0100
-Message-ID: <c6e6f1ca-55e9-6157-08ff-bb082cae2840@nvidia.com>
-References: <1471340976-5379-1-git-send-email-jonathanh@nvidia.com>
- <1471340976-5379-9-git-send-email-jonathanh@nvidia.com>
- <CAPDyKFrVO9wb3ffmxA7HUUDt1_aYxe=aqa1v+xNpdrYiLt_m0A@mail.gmail.com>
- <c8498eca-6934-1cab-31d9-3d8ce4c74897@nvidia.com>
- <63871fe6-cda6-2a95-9c09-e4b3ebfa3419@nvidia.com>
- <CAPDyKFp+eDBLge40uv6aDuYOkaKAksgqZekqomLZijPrhDzj6A@mail.gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V2 00/10] PM / Domains: Add support for removing PM domains
+Date: Mon, 12 Sep 2016 12:01:04 +0100
+Message-ID: <1473678074-15126-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CAPDyKFp+eDBLge40uv6aDuYOkaKAksgqZekqomLZijPrhDzj6A@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alexander Aring <alex.aring@gmail.com>, Eric Anholt <eric@anholt.net>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alexander Aring <alex.aring-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+In order to safely remove PM domains there are a few changes that need to be
+made to ensure that no one is holding an external reference to a PM domain
+after it has been removed. One solution, implemented here, solves this by
+eliminating external references to PM domain.
 
-On 12/09/16 08:21, Ulf Hansson wrote:
-> On 9 September 2016 at 17:17, Jon Hunter <jonathanh@nvidia.com> wrote:
->>
->> On 09/09/16 14:54, Jon Hunter wrote:
->>> On 08/09/16 12:49, Ulf Hansson wrote:
->>>> On 16 August 2016 at 11:49, Jon Hunter <jonathanh@nvidia.com> wrote:
->>>>> The genpd framework allows users to add PM domains via the pm_genpd_init()
->>>>> function, however, there is no corresponding function to remove a PM
->>>>> domain. For most devices this may be fine as the PM domains are never
->>>>> removed, however, for devices that wish to populate the PM domains from
->>>>> within a driver, having the ability to remove a PM domain if the probing
->>>>> of the device fails or the driver is unloaded is necessary.
->>>>>
->>>>> Add the function pm_genpd_remove() to remove a PM domain by referencing
->>>>> it's generic_pm_domain structure.
->>>>>
->>>>> PM domains can only be removed if they are not a parent domain to
->>>>> another PM domain and have no devices associated with them.
->>>>
->>>> I think we should also check if the there's is a provider registered
->>>> for the genpd, as it should also prevent the genpd from being removed.
->>>> Right?
->>>
->>> Yes I would agree. I had thought that after patch #4 of this series that
->>> only the provider itself would be able to call this. However, we should
->>> probably still verify that the provider has correctly remove itself.
->>
->> So now I have the following. I am still not 100% happy. I cannot clear
->> the ->provider when calling of_genpd_del_provider() and so I cannot use
->> this to verify if the provider is present and so I need to check the
->> list of providers and it gets a bit messy. I have been wracking my
->> brains to find a better alternative (including a single function to
->> remove the provider and domains at once but there are issues with that
->> as well).
-> 
-> Instead of using the ->provider pointer to know whether the genpd has
-> a valid provider, why not just add an additional ->has_provider bool
-> flag in the genpd struct?
-> 
-> Simply set the flag when adding the provider and reset it when
-> removing it. Wouldn't that work?
+Changes from V1:
+- Added test when removing a PM domain to ensure the PM domain provider
+  has been removed.
+- Re-organised patches 8-10 so that patch #8 adds the code to verify if
+  the provider is present, patch #9 adds basic support for removing PM
+  domains and patch #10 adds support for removing PM domains by provider.
 
-Yes. I was trying not to add to much clutter to the struct. However, may
-be this is the best option.
+Changes from initial RFC:
+- Renamed functions made static per Ulf's feedback.
+- Added patch to clean-up provider/xlate APIs per Ulf's feedback
+- Re-worked and simplified the association between PM domains and PM
+  domain providers. Dropped the 'provider_data' variable from the
+  generic_pm_domain structure in favour of using the fwnode_handle.
+- Split patch for removing PM domains into multiple patches per Ulf's
+  feedback.
 
-Cheers
-Jon
+Jon Hunter (10):
+  PM / Domains: Add new helper functions for device-tree
+  ARM: EXYNOS: Remove calls to of_genpd_get_from_provider()
+  staging: board: Remove calls to of_genpd_get_from_provider()
+  PM / Domains: Don't expose generic_pm_domain structure to clients
+  PM / Domains: Don't expose xlate and provider helper functions
+  PM / Domains: Verify the PM domain is present when adding a provider
+  PM / Domains: Prepare for adding support to remove PM domains
+  PM / Domains: Store the provider in the PM domain structure
+  PM / Domains: Add support for removing PM domains
+  PM / Domains: Add support for removing nested PM domains by provider
+
+ drivers/base/power/domain.c      | 353 +++++++++++++++++++++++++++++++++++----
+ drivers/soc/samsung/pm_domains.c |  23 +--
+ drivers/staging/board/board.c    |   9 +-
+ include/linux/pm_domain.h        |  74 ++++----
+ 4 files changed, 364 insertions(+), 95 deletions(-)
 
 -- 
-nvpublic
+2.1.4
