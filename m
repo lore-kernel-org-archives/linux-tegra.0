@@ -1,72 +1,52 @@
-From: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>
-Subject: Re: [PATCH V2 00/10] PM / Domains: Add support for removing PM domains
-Date: Mon, 12 Sep 2016 15:45:19 +0200
-Message-ID: <10938361.Bn60o0JyS1@vostro.rjw.lan>
-References: <1473678074-15126-1-git-send-email-jonathanh@nvidia.com> <CAPDyKFqd6vH=eCKBSQg0Q5w9x8sd0SiZ42E7yJn6ZDWP1OMuZg@mail.gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v3 2/2] dmaengine: tegra210-adma: Add memcpy support
+Date: Mon, 12 Sep 2016 15:34:08 +0100
+Message-ID: <c6da41de-ca1d-c9ce-23df-f820994a49bb@nvidia.com>
+References: <cover.1473186743.git.nicoleotsuka@gmail.com>
+ <c730136b708404e1257eb28bb1dc2cbf13bf6023.1473186743.git.nicoleotsuka@gmail.com>
+ <bafb9b89-2b45-c419-62d4-b25a50f8d6be@nvidia.com>
+ <37d4645c-6318-78bd-79bb-844fb6764a1b@nvidia.com>
+ <20160908173141.GA28381@Asurada-Nvidia>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7Bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CAPDyKFqd6vH=eCKBSQg0Q5w9x8sd0SiZ42E7yJn6ZDWP1OMuZg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Alexander Aring <alex.aring-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Eric Anholt <eric-WhKQ6XTQaPysTnJN9+BGXg@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20160908173141.GA28381@Asurada-Nvidia>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Nicolin Chen <nicoleotsuka@gmail.com>
+Cc: vinod.koul@intel.com, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, dmaengine@vger.kernel.org, gnurou@gmail.com, thierry.reding@gmail.com, swarren@wwwdotorg.org, ldewangan@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-On Monday, September 12, 2016 03:02:13 PM Ulf Hansson wrote:
-> On 12 September 2016 at 13:01, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
-> > In order to safely remove PM domains there are a few changes that need to be
-> > made to ensure that no one is holding an external reference to a PM domain
-> > after it has been removed. One solution, implemented here, solves this by
-> > eliminating external references to PM domain.
-> >
-> > Changes from V1:
-> > - Added test when removing a PM domain to ensure the PM domain provider
-> >   has been removed.
-> > - Re-organised patches 8-10 so that patch #8 adds the code to verify if
-> >   the provider is present, patch #9 adds basic support for removing PM
-> >   domains and patch #10 adds support for removing PM domains by provider.
-> >
-> > Changes from initial RFC:
-> > - Renamed functions made static per Ulf's feedback.
-> > - Added patch to clean-up provider/xlate APIs per Ulf's feedback
-> > - Re-worked and simplified the association between PM domains and PM
-> >   domain providers. Dropped the 'provider_data' variable from the
-> >   generic_pm_domain structure in favour of using the fwnode_handle.
-> > - Split patch for removing PM domains into multiple patches per Ulf's
-> >   feedback.
-> >
-> > Jon Hunter (10):
-> >   PM / Domains: Add new helper functions for device-tree
-> >   ARM: EXYNOS: Remove calls to of_genpd_get_from_provider()
-> >   staging: board: Remove calls to of_genpd_get_from_provider()
-> >   PM / Domains: Don't expose generic_pm_domain structure to clients
-> >   PM / Domains: Don't expose xlate and provider helper functions
-> >   PM / Domains: Verify the PM domain is present when adding a provider
-> >   PM / Domains: Prepare for adding support to remove PM domains
-> >   PM / Domains: Store the provider in the PM domain structure
-> >   PM / Domains: Add support for removing PM domains
-> >   PM / Domains: Add support for removing nested PM domains by provider
-> >
-> >  drivers/base/power/domain.c      | 353 +++++++++++++++++++++++++++++++++++----
-> >  drivers/soc/samsung/pm_domains.c |  23 +--
-> >  drivers/staging/board/board.c    |   9 +-
-> >  include/linux/pm_domain.h        |  74 ++++----
-> >  4 files changed, 364 insertions(+), 95 deletions(-)
-> >
-> > --
-> > 2.1.4
-> >
+
+On 08/09/16 18:31, Nicolin Chen wrote:
+> On Thu, Sep 08, 2016 at 03:19:57PM +0100, Jon Hunter wrote:
 > 
-> Jon, thanks for being patient and keep working on this series! I have
-> now completed the review and I am happy with this version.
+>> I tried this again on my audio testing branch for tegra210 and it worked ...
+>>
+>> [   36.427210] dmatest: Started 1 threads using dma1chan0
+>> [   37.036948] dmatest: dma1chan0-copy0: summary 1024 tests, 0 failures 2410 iops 19419 KB/s (0)
+>>
+>> Do you have other patches in your branch? If so it would be good to
+>> understand the dependency. May be we are missing a clock somewhere?
 > 
-> Also, I remember Krzysztof requested an immutable branch for this
-> series, I guess Rafael can arrange that if still needed!?
+> Sorry. I forgot to mention that the TEGRA210_CLK_APE_SLCG_OVR
+> clock is required for the tests. So I cherry-picked 2 patches
+> from your audio branch to the linux-next:
+> 	clk: tegra210: Add SLCG override gate clocks
+> 	ARM64: tegra: DT: Add SLCG clock for AUD
+> 
+> Besides these two, there'e merely some straightforward changes
+> to enable the ADMA in the defconfig and DT.
+> 
+> And it seems that you've submitted that patch once but it got
+> hold because it wasn't so useful at that time?
 
-Yes, I can do that.
+Yes it was not being used at the time. It is on my list of things to do
+and we need to revisit it. There was some discussion on the best way to
+handle these clocks from a client perspective. I am not sure we came to
+a conclusion on this. I need to find some time to look at this.
 
-I think I'll get to these patches later today and if not, then tomorrow.
+Jon
 
-Thanks,
-Rafael
+-- 
+nvpublic
