@@ -1,25 +1,57 @@
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Subject: Re: [GIT PULL 3/4] ARM: tegra: Device tree changes for v4.9-rc1
-Date: Tue, 13 Sep 2016 17:40:44 +0200
-Message-ID: <2742279.cdthgi8BDE@wuerfel>
-References: <20160909152032.9550-1-thierry.reding@gmail.com> <20160909152032.9550-3-thierry.reding@gmail.com>
+From: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Subject: Re: [PATCH V2 00/10] PM / Domains: Add support for removing PM domains
+Date: Wed, 14 Sep 2016 02:58:34 +0200
+Message-ID: <14914984.irHbtjz3da@vostro.rjw.lan>
+References: <1473678074-15126-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7Bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20160909152032.9550-3-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1473678074-15126-1-git-send-email-jonathanh@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Thierry Reding <thierry.reding@gmail.com>, Kukjin Kim <kgene@kernel.org>, Krzysztof Kozlowski <k.kozlowski@samsung.com>, Alexander Aring <alex.aring@gmail.com>, Eric Anholt <eric@anholt.net>, linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Friday, September 9, 2016 5:20:31 PM CEST Thierry Reding wrote:
-> ARM: tegra: Device tree changes for v4.9-rc1
+On Monday, September 12, 2016 12:01:04 PM Jon Hunter wrote:
+> In order to safely remove PM domains there are a few changes that need to be
+> made to ensure that no one is holding an external reference to a PM domain
+> after it has been removed. One solution, implemented here, solves this by
+> eliminating external references to PM domain.
 > 
-> Contains a couple of cleanups for Tegra114 device trees.
+> Changes from V1:
+> - Added test when removing a PM domain to ensure the PM domain provider
+>   has been removed.
+> - Re-organised patches 8-10 so that patch #8 adds the code to verify if
+>   the provider is present, patch #9 adds basic support for removing PM
+>   domains and patch #10 adds support for removing PM domains by provider.
 > 
+> Changes from initial RFC:
+> - Renamed functions made static per Ulf's feedback.
+> - Added patch to clean-up provider/xlate APIs per Ulf's feedback
+> - Re-worked and simplified the association between PM domains and PM
+>   domain providers. Dropped the 'provider_data' variable from the
+>   generic_pm_domain structure in favour of using the fwnode_handle.
+> - Split patch for removing PM domains into multiple patches per Ulf's
+>   feedback.
 > 
+> Jon Hunter (10):
+>   PM / Domains: Add new helper functions for device-tree
+>   ARM: EXYNOS: Remove calls to of_genpd_get_from_provider()
+>   staging: board: Remove calls to of_genpd_get_from_provider()
+>   PM / Domains: Don't expose generic_pm_domain structure to clients
+>   PM / Domains: Don't expose xlate and provider helper functions
+>   PM / Domains: Verify the PM domain is present when adding a provider
+>   PM / Domains: Prepare for adding support to remove PM domains
+>   PM / Domains: Store the provider in the PM domain structure
+>   PM / Domains: Add support for removing PM domains
+>   PM / Domains: Add support for removing nested PM domains by provider
 
-Pulled into next/dt, thanks!
+All applied.
 
-	Arnd
+I'll expose a branch containing them after they've spent a couple of days in
+linux-next.
+
+Thanks,
+Rafael
+
