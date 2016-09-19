@@ -1,51 +1,116 @@
-From: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
-Subject: [PATCH] ARM: tegra: nyan: Enable GPU node and related supply
-Date: Sun, 18 Sep 2016 16:13:11 +0200
-Message-ID: <20160918141311.17140-1-contact@paulk.fr>
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 3/6] dt/bindings: Add bindings for Tegra GMI controller
+Date: Mon, 19 Sep 2016 09:21:21 +0200
+Message-ID: <CALw8SCUK0_kvNR_juAc7N_DMQbV=voizqXE6PApc_B_CQHzzOA@mail.gmail.com>
+References: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
+ <1472045838-22628-4-git-send-email-mirza.krak@gmail.com> <de2fb909-829e-6c04-4f6a-442cbb9171c9@nvidia.com>
+ <CALw8SCVcPymDZ8NyUbeanRF0TCT1TZzL6iRDticYA42FWrEWqw@mail.gmail.com>
+ <20160830170636.GA8741@rob-hp-laptop> <CALw8SCUYQGWXn7=Jpn=uvFvvPRVFQGrtSNot+-tVgP73yAEEOQ@mail.gmail.com>
+ <a3a2371b-5d98-db2d-b7e4-be6d08cb7271@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <a3a2371b-5d98-db2d-b7e4-be6d08cb7271-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This enables the GPU node for tegra124 nyan boards, which is required to
-get graphics acceleration with nouveau on these devices.
+2016-09-06 12:32 GMT+02:00 Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>:
+>
+> On 31/08/16 12:22, Mirza Krak wrote:
+>> 2016-08-30 19:06 GMT+02:00 Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>:
+>
+> ...
+>
+>>>>                  nvidia,snor-cs = <4>;
+>>>
+>>> NAK, no custom CS properties.
+>
+> Ok, so ...
+>
+>> gmi@70090000 {
+>>         compatible = "nvidia,tegra20-gmi";
+>>         reg = <0x70009000 0x1000>;
+>>         #address-cells = <2>;
+>>         #size-cells = <1>;
+>>         clocks = <&tegra_car TEGRA20_CLK_NOR>;
+>>         clock-names = "gmi";
+>>         resets = <&tegra_car 42>;
+>>         reset-names = "gmi";
+>>         ranges = <4 0 0xd0000000 0xfffffff>;
+>>
+>>         status = "okay";
+>>
+>>         bus@4,0 {
+>>                 compatible = "simple-bus";
+>>                 #address-cells = <1>;
+>>                 #size-cells = <1>;
+>>                 ranges = <0 4 0 0x40000>;
+>>
+>>                 nvidia,snor-mux-mode;
+>>                 nvidia,snor-adv-inv;
+>>
+>>                 can@0 {
+>>                         reg = <0 0x100>;
+>>                         ...
+>>                 };
+>>
+>>                 can@40000 {
+>>                         reg = <0x40000 0x100>;
+>>                         ...
+>>                 };
+>>         };
+>> };
+>>
+>> Have I understood you correct?
+>>
+>> Also wanted to verify the example case where you only have on device
+>> connected to one CS#, from what I see in other implementations it
+>> seems OK to put the CS# in the reg property in that case. Is this
+>> correct?
+>>
+>> Example with one SJA1000 CAN controller connected to the GMI bus
+>> on CS4:
+>>
+>> gmi@70090000 {
+>>         compatible = "nvidia,tegra20-gmi";
+>>         reg = <0x70009000 0x1000>;
+>>         #address-cells = <2>;
+>>         #size-cells = <1>;
+>>         clocks = <&tegra_car TEGRA20_CLK_NOR>;
+>>         clock-names = "gmi";
+>>         resets = <&tegra_car 42>;
+>>         reset-names = "gmi";
+>>         ranges = <4 0 0xd0000000 0xfffffff>;
+>>
+>>         status = "okay";
+>>
+>>         can@4,0 {
+>>                 reg = <4 0 0x100>;
+>>                 nvidia,snor-mux-mode;
+>>                 nvidia,snor-adv-inv;
+>>                 ...
+>>         };
+>> };
+>>
+>> Jon, to be able to handle both cases in the driver we would first
+>> attempt to decode the CS# from the ranges property, and fallback to
+>> reg property if no ranges are defined. Does that sound reasonable?
+>
+> Given the above examples that may be supported, is there a
+> better/simpler way to extract the CS# than what Mirza is proposing? For
+> example, from the node-name unit-address?
+>
 
-Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
----
- arch/arm/boot/dts/tegra124-nyan.dtsi | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+Hi.
 
-diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi b/arch/arm/boot/dts/tegra124-nyan.dtsi
-index dab9509..225ca77 100644
---- a/arch/arm/boot/dts/tegra124-nyan.dtsi
-+++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
-@@ -42,6 +42,12 @@
- 		};
- 	};
- 
-+	gpu@0,57000000 {
-+		status = "okay";
-+
-+		vdd-supply = <&vdd_gpu>;
-+	};
-+
- 	serial@70006000 {
- 		/* Debug connector on the bottom of the board near SD card. */
- 		status = "okay";
-@@ -214,7 +220,7 @@
- 					regulator-always-on;
- 				};
- 
--				sd6 {
-+				vdd_gpu: sd6 {
- 					regulator-name = "+VDD_GPU_AP";
- 					regulator-min-microvolt = <650000>;
- 					regulator-max-microvolt = <1200000>;
--- 
-2.9.3
+I have been on vacation and now I am back and wanted to finalize these
+patch series.
 
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+So pinging this thread to see I we can agree on a solution.
+
+Rob any comments to my proposal and Jon`s comment?
+
+Best Regards
+Mirza Krak
