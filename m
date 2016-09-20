@@ -1,73 +1,104 @@
-From: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
-Subject: Re: [PATCH 3/4] ARM: tegra: nyan-big: Include compatible revisions
- for proper detection
-Date: Tue, 20 Sep 2016 19:53:24 +0200
-Message-ID: <1474394004.1215.2.camel@paulk.fr>
-References: <20160828173246.32621-1-contact@paulk.fr>
-         <20160828173246.32621-3-contact@paulk.fr>
-         <a9485a88-55a5-9dd1-1a1b-a6c0a78ff476@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [RFC PATCH 2/3] PM / Domains: Add support for devices with
+ multiple domains
+Date: Tue, 20 Sep 2016 18:54:25 +0100
+Message-ID: <37940866-a740-f959-9cba-1f18824151b0@nvidia.com>
+References: <1474367287-10402-1-git-send-email-jonathanh@nvidia.com>
+ <1474367287-10402-3-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-zbscI9PGNQnPZLbGSG+y"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <a9485a88-55a5-9dd1-1a1b-a6c0a78ff476-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <1474367287-10402-3-git-send-email-jonathanh@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---=-zbscI9PGNQnPZLbGSG+y
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On 20/09/16 11:28, Jon Hunter wrote:
+> Some devices may require more than one PM domain to operate and this is
+> not currently by the PM domain framework. Furthermore, the current Linux
+> 'device' structure only allows devices to be associated with a single PM
+> domain and so cannot easily be associated with more than one. To allow
+> devices to be associated with more than one PM domain, if multiple
+> domains are defined for a given device (eg. via device-tree), then:
+> 1. Create a new PM domain for this device. The name of the new PM domain
+>    created matches the device name for which it was created for.
+> 2. Register the new PM domain as a sub-domain for all PM domains
+>    required by the device.
+> 3. Attach the device to the new PM domain.
+> 
+> By default the newly created PM domain is assumed to be in the 'off'
+> state to ensure that any parent PM domains will be turned on if not
+> already on when the new PM domain is turned on.
+> 
+> When a device associated with more than one PM domain is detached,
+> wait for any power-off work to complete, then remove the PM domain that
+> was created for the device by calling pm_genpd_remove() (this also
+> removes it as a child to any other PM domains) and free the memory
+> for the PM domain.
+> 
+> For devices using device-tree, devices that require multiple PM domains
+> are detected by seeing if the 'power-domains' property has more than one
+> entry defined.
+> 
+> Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+> 
+> Here is an example output from pm_genpd_summary following this change
+> for the Tegra210 XHCI device:
+> 
+> domain                          status          slaves
+>     /device                                             runtime status
+> ----------------------------------------------------------------------
+> 70090000.usb                    on
+>     /devices/platform/70090000.usb                      unsupported
+> xusbc                           on              70090000.usb
+> xusbb                           off-0
+> xusba                           on              70090000.usb
+> 
+> I am not sure if this is confusing to have a device and domain with the
+> same name. So let me know if you have any thoughts!
+> 
+> 
+>  drivers/base/power/domain.c | 102 ++++++++++++++++++++++++++++++++++++++------
+>  1 file changed, 88 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/base/power/domain.c b/drivers/base/power/domain.c
+> index 382735949591..ee39824c03b3 100644
+> --- a/drivers/base/power/domain.c
+> +++ b/drivers/base/power/domain.c
+> @@ -1826,7 +1826,7 @@ static void genpd_dev_pm_detach(struct device *dev, bool power_off)
+>  {
+>  	struct generic_pm_domain *pd;
+>  	unsigned int i;
+> -	int ret = 0;
+> +	int count, ret = 0;
+>  
+>  	pd = genpd_lookup_dev(dev);
+>  	if (!pd)
+> @@ -1851,6 +1851,19 @@ static void genpd_dev_pm_detach(struct device *dev, bool power_off)
+>  
+>  	/* Check if PM domain can be powered off after removing this device. */
+>  	genpd_queue_power_off_work(pd);
+> +
+> +	count = of_count_phandle_with_args(dev->of_node, "power-domains",
+> +					   "#power-domain-cells");
+> +	if (count > 1) {
+> +		cancel_work_sync(&pd->power_off_work);
+> +
+> +		ret = pm_genpd_remove(pd);
+> +		if (ret < 0)
+> +			dev_err(dev, "failed to remove PM domain %s: %d\n",
+> +				pd->name, ret);
+> +
+> +		kfree(pd);
 
-Le mardi 20 septembre 2016 =C3=A0 18:41 +0100, Jon Hunter a =C3=A9crit=C2=
-=A0:
-> On 28/08/16 18:32, Paul Kocialkowski wrote:
-> >=20
-> > Depthcharge (the payload used with cros devices) will attempt to detect
-> > boards using their revision. This includes all the known revisions for
-> > the nyan-big board so that the dtb can be selected preferably.
->=20
-> May be I am missing something here, but for the mainline there is only
-> one dtb available and so why is this needed for the mainline?
+I realise I am missing a return if pm_genpd_remove() returns a failure!
+Will correct this.
 
-There is indeed a single dts in mainline, but depthcharge will use the revi=
-sion
-to match the compatible string (e.g. it will look for google,nyan-big-rev5,=
- not
-google,nyan-big), so we need to list them all in that single dts. Otherwise=
-,
-depthcharge will fall back to the default config, which may or may not be
-suitable for nyan.
+Jon
 
---=20
-Paul Kocialkowski, developer of low-level free software for embedded device=
-s
-
-Website: https://www.paulk.fr/
-Coding blog: https://code.paulk.fr/
-Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
---=-zbscI9PGNQnPZLbGSG+y
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJX4XeVAAoJEIT9weqP7pUM+XsP/RJJKEbsBJE4Dvgs4uIloUmj
-dYLtUGOxle/h5IHGDxxaA4WTafKsZgkCkt4NdCJ5GtRLly63iO5+dL3JnApabBSE
-NYfzE37j2ETLJRo2oHyZ8zjujhYuyhBp/EX8kKFBU3O3TG3pJpn3s80n72qMlK0u
-goRXZrO6KjYEyu5lQpKuewf+U6duQu7ILjLKOXt7KG7Ds+BLLWFpRQwLVUHiA9qE
-zFj73wp40hjN62B1+1MWmjLbEs33UsycD6e741QmLOGH0yuaHV18rfEwZ+9ioa8F
-avxbMZWFoIub43l9ebUv3Gd0KYMHKu4J80bggi+MtxaB7Dtfw0qWSn9GONyQtEgv
-m/24TPpSojeqJzOfcc70nVQEjIqekDgihs9vDZpjs7VdrUJ22osnBRcuLnDhlMCJ
-RubaxYAUoAOX8JZngYT3dV4asra1BasGu7fU0yvfVGfBqTH1Bnvf+ILpTPnuEqaY
-qtI/Nw/Nkcu6cuZoFmtit0Sxxlraazc5Uw/ECQzxruzVWKqwHRIRObbmM06Q0ypr
-kWH+QZp6wMxq1MJrJnkC0cpMXR6dYb+La9iaAqgE97swMl6jR2/rUSGmZulS1gif
-mq1o0DFk6j6rfZc6axNtYcmg51Q2OPRXzHWvr0GSb9wwJN57c5T8vz8UIz/kpKMh
-mxQanFlMLuxslPK6YwcJ
-=8V7d
------END PGP SIGNATURE-----
-
---=-zbscI9PGNQnPZLbGSG+y--
+-- 
+nvpublic
