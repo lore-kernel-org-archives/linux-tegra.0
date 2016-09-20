@@ -1,108 +1,117 @@
-From: Paul Kocialkowski <contact@paulk.fr>
-Subject: Re: [PATCH 2/4] ARM: tegra: nyan: Use external control for bq24735
- charger
-Date: Tue, 20 Sep 2016 20:02:47 +0200
-Message-ID: <1474394567.1215.14.camel@paulk.fr>
+From: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+Subject: Re: [PATCH 1/4] ARM: tegra: nyan: Use proper IRQ type definitions
+Date: Tue, 20 Sep 2016 20:14:49 +0200
+Message-ID: <1474395289.1215.20.camel@paulk.fr>
 References: <20160828173246.32621-1-contact@paulk.fr>
-         <20160828173246.32621-2-contact@paulk.fr>
-         <00697eef-0b36-1ff5-9c7a-43c1b53b52bc@nvidia.com>
+         <ef69b6d2-ce6b-ff76-5c04-ab2176eb6ecc@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-6cH71l0qMPGEyletmZBe"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <00697eef-0b36-1ff5-9c7a-43c1b53b52bc@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
+        protocol="application/pgp-signature"; boundary="=-8otpdRp68sDOyBOorK7e"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <ef69b6d2-ce6b-ff76-5c04-ab2176eb6ecc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---=-6cH71l0qMPGEyletmZBe
+--=-8otpdRp68sDOyBOorK7e
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Le mardi 20 septembre 2016 =C3=A0 18:40 +0100, Jon Hunter a =C3=A9crit :
+Le mardi 20 septembre 2016 =C3=A0 18:15 +0100, Jon Hunter a =C3=A9crit=C2=
+=A0:
 > On 28/08/16 18:32, Paul Kocialkowski wrote:
-> >=C2=A0
-> > Nyan boards come with an embedded controller that controls when to
-> > enable and disable the charge. Thus, it should not be left up to the
-> > kernel to handle that.
-> >=C2=A0
-> > Using the ti,external-control property allows specifying this use-case.
->=C2=A0
-> So the bq24735 is populated under the EC's 'i2c-tunnel' property which
-> is there to specifically interface it's child devices to the host. So I
-> am a bit confused why this is expose to the host if it should not be used=
-?
+> >=20
+> > This switches a few interrupt definitions that were using
+> > GPIO_ACTIVE_HIGH as IRQ type, which is invalid.
+>=20
+> May be you are right, but this does not describe why this is invalid.
+> Can you elaborate?
 
-Well, it needs to access the information in the read-only registers provide=
-d by
-the chip, which is allowed by the setup in place that you described.
+GPIO_ACTIVE_HIGH is simply not the right kind of define to use in the
+"interrupts" devicetree property. Values provided there are understood as
+IRQ_TYPE_ defines.
 
-However, the EC has its internal state machine that decides when to start
-charging, etc and so should be the only one to write registers, to avoid
-conflicts.
-
-> Again you may right and I did find the original series [0] for this
-> which specifically references the Acer Chromebook that needs this.
-> However, I am not sure why this was never populated? Is there any other
-> history here?
-
-I am also confused about why it wasn't applied earlier. However, the cros k=
-ernel
-is using the very same scheme.
-
-> What is the actual problem you see without making this change?
-
-There is a risk of conflict (even though it's probably not that significant=
-),
-given the low variety of possible cases here. The idea is simply to say tha=
-t the
-EC is in charge and to let it do its job without interfering.
-
-> The original series states ...
->=C2=A0
-> "On Acer Chromebook 13 (CB5-311) this module fails to load if the
-> charger is not inserted, and will error when it is removed."
-
-I'm confused about that comment. At this point (and with this patch), it wo=
-rks
-normally.
-
-> Cheers
-> Jon
->=C2=A0
-> [0] http://marc.info/?l=3Dlinux-pm&m=3D145447948705686&w=3D2
+Also, a similar commit[0] was pushed to the cros kernel tree.
 
 Cheers,
 
---=C2=A0
+[0]:=C2=A0https://chromium.googlesource.com/chromiumos/third_party/kernel/+=
+/f77288938d571b48c9736ac3703cea370c002434
+
+> > Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+> > ---
+> > =C2=A0arch/arm/boot/dts/tegra124-nyan.dtsi | 4 ++--
+> > =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi
+> > b/arch/arm/boot/dts/tegra124-nyan.dtsi
+> > index 271505e..30a77ec 100644
+> > --- a/arch/arm/boot/dts/tegra124-nyan.dtsi
+> > +++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
+> > @@ -59,7 +59,7 @@
+> > =C2=A0			compatible =3D "maxim,max98090";
+> > =C2=A0			reg =3D <0x10>;
+> > =C2=A0			interrupt-parent =3D <&gpio>;
+> > -			interrupts =3D <TEGRA_GPIO(H, 4) GPIO_ACTIVE_HIGH>;
+> > +			interrupts =3D <TEGRA_GPIO(H, 4)
+> > IRQ_TYPE_EDGE_FALLING>;
+>=20
+> If this in invalid then the DT binding doc for the max98090 should be
+> updated as well.
+>=20
+> >=20
+> > =C2=A0		};
+> > =C2=A0
+> > =C2=A0		temperature-sensor@4c {
+> > @@ -325,7 +325,7 @@
+> > =C2=A0					reg =3D <0x9>;
+> > =C2=A0					interrupt-parent =3D <&gpio>;
+> > =C2=A0					interrupts =3D <TEGRA_GPIO(J, 0)
+> > -							GPIO_ACTIVE_HIGH>;
+> > +							IRQ_TYPE_EDGE_BOTH>
+> > ;
+> > =C2=A0					ti,ac-detect-gpios =3D <&gpio
+> > =C2=A0							TEGRA_GPIO(J, 0)
+> > =C2=A0							GPIO_ACTIVE_HIGH>;
+> >=20
+>=20
+> Cheers
+> Jon
+>=20
+--=20
 Paul Kocialkowski, developer of low-level free software for embedded device=
 s
 
 Website: https://www.paulk.fr/
 Coding blog: https://code.paulk.fr/
 Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
---=-6cH71l0qMPGEyletmZBe
+--=-8otpdRp68sDOyBOorK7e
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAABCAAGBQJX4XnHAAoJEIT9weqP7pUMr2MP/2g674+sQU25p5MVGeU+5Sa1
-eMDSHmqUDhTajZjJYt3MrGQB9wm9Ib8eRNQ9IbjtGw2/pVYEpeRMonONMOypql3U
-GOkopl46Ea2wKrmwakqxIGQ12gf5qra0+04xgt0qY27bRiTM2xg1/87Thsp5FA9B
-uAgqdhEWzG6WCodbreYPINeTMN8LjduUPLg24PIJO7w6HCcsaUK2ejb5cBrNVTIa
-F0ObJJV8YxjLh6WeinNN5KgtGBGzILgvA3VJa6aYvfsW8ISd0Vw3MmQFv9EisorS
-if9v1Rd7Tv7+5xSK3u/51HU8yz8G0fXRlun8ULUdea1ucYonvhezEdmTlJxTx+2u
-fmZA+vtkiOc2sDi8uocVJ/230R+clx+B3E+CVKGOT6/9Sv/DWmp45pcMqBeveNLd
-an3DzTVKdNspv+XZlSVWeKeIyd19fVq+/u7jZ42mKBuxdfS9xAHZZJjFr7Mi28gf
-E13Dv5acylrs7kC11YQjLK7sRNWBQrGDCpbRXu5qUtWMCCK6Obf1sy+iWuS4LqI/
-+NA3uK523LUUJMSu5SmEvf+hwllNNa4hbX0mPYhVVi9jzTpzAWGh4+CbIkWnRoLZ
-AUmHB+FPwYKQKWPluS446/IBAa7Q1eEXFM2BeKyi51tzS1pUa2/szhE6TdSzRYFM
-ratAgq6tP1jJoSU9sAfw
-=V+Xx
+iQIcBAABCAAGBQJX4XyZAAoJEIT9weqP7pUMm54P/Ay1A8mbFDgrLhrHe0fRjOic
+o6zwwbYpvhB3nNad41GLzRQIvZsb8ZJoO72I7lcmckPTrYWOlyGGsBzhnxhZEv2b
+80fUCcttpBmWmIZbND8jgkyMoONA32CFeedSkGoR8y6Xdl5dklMrlBJQiB6tWi55
+xa6cYOxV75uTVrBcW4mz7J+TuoyiDx+53Y26kBPIV4X1OFGY77vsFNhZIbqDNQpH
+hwE2nb5u3UagKgGrqkCNOxOaXvl/ml3h0y0BYjk4vD6ROhGGKpEfbhfDR2qbTSMM
+7hYrr8FlTXL7fuwRzyRcVLXLRKHhS1sUVy9SfIUnaXvgHklHjR94ZH7eZPC5qdEH
+RjAn+XUFiwTEff49VZSj5yEcwz2EIX6NXgukD3qm02V+M5IFpTRLCVFHkSW/ZN2W
+oEltK7gKMYggYeWhk8t4FYEZ4WZd0BavY+gXK5LXCfrM5U29qMMZSK1rNgXZptRx
+qroGvyg6B8/zxUVc+lYWqiXVJg93Xl6toUCQjnCgPDwNM54jhsFOWTxyj7jqUBe9
++rjYYAUATHKBsk1EWdaPjkVrunxn/HVwq7IA8/vV0unysef8alLnn3B9NVCwZbWy
+z9nS4LDn65N2odRNH46Wf6Uelq76pGMvGF31SUNh6b+daF94DJPCzTxJdcG/Lzwk
+3QJ7NNxiFS9LVjsxW6Kr
+=+SCZ
 -----END PGP SIGNATURE-----
 
---=-6cH71l0qMPGEyletmZBe--
+--=-8otpdRp68sDOyBOorK7e--
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
