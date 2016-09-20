@@ -1,117 +1,100 @@
-From: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
-Subject: Re: [PATCH 1/4] ARM: tegra: nyan: Use proper IRQ type definitions
-Date: Tue, 20 Sep 2016 20:14:49 +0200
-Message-ID: <1474395289.1215.20.camel@paulk.fr>
-References: <20160828173246.32621-1-contact@paulk.fr>
-         <ef69b6d2-ce6b-ff76-5c04-ab2176eb6ecc@nvidia.com>
+From: Paul Kocialkowski <contact@paulk.fr>
+Subject: Re: [PATCH] ARM: tegra: nyan: Enable GPU node and related supply
+Date: Tue, 20 Sep 2016 20:17:13 +0200
+Message-ID: <1474395433.1215.23.camel@paulk.fr>
+References: <20160918141311.17140-1-contact@paulk.fr>
+         <f2489bf5-bb08-11f5-1b53-7a1568f20b6b@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-8otpdRp68sDOyBOorK7e"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <ef69b6d2-ce6b-ff76-5c04-ab2176eb6ecc-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+        protocol="application/pgp-signature"; boundary="=-H+xqHwwguZ04KfKiXEfr"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <f2489bf5-bb08-11f5-1b53-7a1568f20b6b@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---=-8otpdRp68sDOyBOorK7e
+--=-H+xqHwwguZ04KfKiXEfr
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: base64
 
-Le mardi 20 septembre 2016 =C3=A0 18:15 +0100, Jon Hunter a =C3=A9crit=C2=
-=A0:
-> On 28/08/16 18:32, Paul Kocialkowski wrote:
-> >=20
-> > This switches a few interrupt definitions that were using
-> > GPIO_ACTIVE_HIGH as IRQ type, which is invalid.
->=20
-> May be you are right, but this does not describe why this is invalid.
-> Can you elaborate?
+TGUgbWFyZGkgMjAgc2VwdGVtYnJlIDIwMTYgw6AgMTM6MjQgKzAxMDAsIEpvbiBIdW50ZXIgYSDD
+qWNyaXTCoDoKPiBPbiAxOC8wOS8xNiAxNToxMywgUGF1bCBLb2NpYWxrb3dza2kgd3JvdGU6Cj4g
+PiAKPiA+IFRoaXMgZW5hYmxlcyB0aGUgR1BVIG5vZGUgZm9yIHRlZ3JhMTI0IG55YW4gYm9hcmRz
+LCB3aGljaCBpcyByZXF1aXJlZCB0bwo+ID4gZ2V0IGdyYXBoaWNzIGFjY2VsZXJhdGlvbiB3aXRo
+IG5vdXZlYXUgb24gdGhlc2UgZGV2aWNlcy4KPiA+IAo+ID4gU2lnbmVkLW9mZi1ieTogUGF1bCBL
+b2NpYWxrb3dza2kgPGNvbnRhY3RAcGF1bGsuZnI+Cj4gPiAtLS0KPiA+IMKgYXJjaC9hcm0vYm9v
+dC9kdHMvdGVncmExMjQtbnlhbi5kdHNpIHwgOCArKysrKysrLQo+ID4gwqAxIGZpbGUgY2hhbmdl
+ZCwgNyBpbnNlcnRpb25zKCspLCAxIGRlbGV0aW9uKC0pCj4gPiAKPiA+IGRpZmYgLS1naXQgYS9h
+cmNoL2FybS9ib290L2R0cy90ZWdyYTEyNC1ueWFuLmR0c2kKPiA+IGIvYXJjaC9hcm0vYm9vdC9k
+dHMvdGVncmExMjQtbnlhbi5kdHNpCj4gPiBpbmRleCBkYWI5NTA5Li4yMjVjYTc3IDEwMDY0NAo+
+ID4gLS0tIGEvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQtbnlhbi5kdHNpCj4gPiArKysgYi9h
+cmNoL2FybS9ib290L2R0cy90ZWdyYTEyNC1ueWFuLmR0c2kKPiA+IEBAIC00Miw2ICs0MiwxMiBA
+QAo+ID4gwqAJCX07Cj4gPiDCoAl9Owo+ID4gwqAKPiA+ICsJZ3B1QDAsNTcwMDAwMDAgewo+ID4g
+KwkJc3RhdHVzID0gIm9rYXkiOwo+ID4gKwo+ID4gKwkJdmRkLXN1cHBseSA9IDwmdmRkX2dwdT47
+Cj4gPiArCX07Cj4gPiArCj4gPiDCoAlzZXJpYWxANzAwMDYwMDAgewo+ID4gwqAJCS8qIERlYnVn
+IGNvbm5lY3RvciBvbiB0aGUgYm90dG9tIG9mIHRoZSBib2FyZCBuZWFyIFNEIGNhcmQuCj4gPiAq
+Lwo+ID4gwqAJCXN0YXR1cyA9ICJva2F5IjsKPiA+IEBAIC0yMTQsNyArMjIwLDcgQEAKPiA+IMKg
+CQkJCQlyZWd1bGF0b3ItYWx3YXlzLW9uOwo+ID4gwqAJCQkJfTsKPiA+IMKgCj4gPiAtCQkJCXNk
+NiB7Cj4gPiArCQkJCXZkZF9ncHU6IHNkNiB7Cj4gPiDCoAkJCQkJcmVndWxhdG9yLW5hbWUgPSAi
+K1ZERF9HUFVfQVAiOwo+ID4gwqAJCQkJCXJlZ3VsYXRvci1taW4tbWljcm92b2x0ID0gPDY1MDAw
+MD47Cj4gPiDCoAkJCQkJcmVndWxhdG9yLW1heC1taWNyb3ZvbHQgPQo+ID4gPDEyMDAwMDA+Owo+
+ID4gCj4gCj4gTG9va3MgZ29vZCB0byBtZS4gSSBzZWUgdGhlIGZvbGxvd2luZyBlcnJvciB3aGVu
+IGJvb3RpbmcgYnV0IGxvb2tpbmcgYXQgdGhlCj4gY29kZSBhcHBlYXJzIHRvIGJlIGJlbmlnbi4g
+VGhpZXJyeSwgQWxleCwgaXMgdGhpcyBub3JtYWwvb2theT8KCkkgaGF2ZSB0aGUgc2FtZSBtZXNz
+YWdlcyBhbmQgYXNrZWTCoEFsZXhhbmRyZSBhYm91dCB0aGVtIHRoZSBvdGhlciBkYXkuIEhlIHRv
+bGQKbWUgdGhhdCBpdCBsb29rcyBub3JtYWwuCgo+IFvCoMKgwqDCoDUuNzE1MTgxXSBub3V2ZWF1
+IDU3MDAwMDAwLmdwdTogTlZJRElBIEdLMjBBCj4gKDBlYTAwMGExKcKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqAKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAK
+PiBbwqDCoMKgwqA1LjcyMDYyNV0gbm91dmVhdSA1NzAwMDAwMC5ncHU6IGltZW06IHVzaW5nCj4g
+SU9NTVXCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoAo+IMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgCj4gW8KgwqDCoMKgNS44MDM2OTRdIG5v
+dXZlYXUgNTcwMDAwMDAuZ3B1OiBEUk06IFZSQU06IDAKPiBNaULCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqAKPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqAKPiBbwqDCoMKgwqA1LjgwODUwMV0gbm91dmVhdSA1NzAwMDAwMC5ncHU6IERS
+TTogR0FSVDogMTA0ODU3Ngo+IE1pQsKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oAo+IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoAo+IFvCoMKgwqDCoDUuODE2
+MDAwXSBub3V2ZWF1IDU3MDAwMDAwLmdwdTogRFJNOiBmYWlsZWQgdG8gY3JlYXRlIGNlIGNoYW5u
+ZWwsCj4gLTIywqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
+oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgCj4gwqDCoMKgCj4g
+W8KgwqDCoMKgNS45MjQxNDBdIG5vdXZlYXUgNTcwMDAwMDAuZ3B1OiBEUk06IE1NOiB1c2luZyBH
+UkNFIGZvciBidWZmZXIgY29waWVzwqDCoAo+IAo+IENoZWVycwo+IEpvbgo+IAotLSAKUGF1bCBL
+b2NpYWxrb3dza2ksIGRldmVsb3BlciBvZiBsb3ctbGV2ZWwgZnJlZSBzb2Z0d2FyZSBmb3IgZW1i
+ZWRkZWQgZGV2aWNlcwoKV2Vic2l0ZTogaHR0cHM6Ly93d3cucGF1bGsuZnIvCkNvZGluZyBibG9n
+OiBodHRwczovL2NvZGUucGF1bGsuZnIvCkdpdCByZXBvc2l0b3JpZXM6IGh0dHBzOi8vZ2l0LnBh
+dWxrLmZyLyBodHRwczovL2dpdC5jb2RlLnBhdWxrLmZyLw==
 
-GPIO_ACTIVE_HIGH is simply not the right kind of define to use in the
-"interrupts" devicetree property. Values provided there are understood as
-IRQ_TYPE_ defines.
 
-Also, a similar commit[0] was pushed to the cros kernel tree.
-
-Cheers,
-
-[0]:=C2=A0https://chromium.googlesource.com/chromiumos/third_party/kernel/+=
-/f77288938d571b48c9736ac3703cea370c002434
-
-> > Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
-> > ---
-> > =C2=A0arch/arm/boot/dts/tegra124-nyan.dtsi | 4 ++--
-> > =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi
-> > b/arch/arm/boot/dts/tegra124-nyan.dtsi
-> > index 271505e..30a77ec 100644
-> > --- a/arch/arm/boot/dts/tegra124-nyan.dtsi
-> > +++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
-> > @@ -59,7 +59,7 @@
-> > =C2=A0			compatible =3D "maxim,max98090";
-> > =C2=A0			reg =3D <0x10>;
-> > =C2=A0			interrupt-parent =3D <&gpio>;
-> > -			interrupts =3D <TEGRA_GPIO(H, 4) GPIO_ACTIVE_HIGH>;
-> > +			interrupts =3D <TEGRA_GPIO(H, 4)
-> > IRQ_TYPE_EDGE_FALLING>;
->=20
-> If this in invalid then the DT binding doc for the max98090 should be
-> updated as well.
->=20
-> >=20
-> > =C2=A0		};
-> > =C2=A0
-> > =C2=A0		temperature-sensor@4c {
-> > @@ -325,7 +325,7 @@
-> > =C2=A0					reg =3D <0x9>;
-> > =C2=A0					interrupt-parent =3D <&gpio>;
-> > =C2=A0					interrupts =3D <TEGRA_GPIO(J, 0)
-> > -							GPIO_ACTIVE_HIGH>;
-> > +							IRQ_TYPE_EDGE_BOTH>
-> > ;
-> > =C2=A0					ti,ac-detect-gpios =3D <&gpio
-> > =C2=A0							TEGRA_GPIO(J, 0)
-> > =C2=A0							GPIO_ACTIVE_HIGH>;
-> >=20
->=20
-> Cheers
-> Jon
->=20
---=20
-Paul Kocialkowski, developer of low-level free software for embedded device=
-s
-
-Website: https://www.paulk.fr/
-Coding blog: https://code.paulk.fr/
-Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
---=-8otpdRp68sDOyBOorK7e
+--=-H+xqHwwguZ04KfKiXEfr
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAABCAAGBQJX4XyZAAoJEIT9weqP7pUMm54P/Ay1A8mbFDgrLhrHe0fRjOic
-o6zwwbYpvhB3nNad41GLzRQIvZsb8ZJoO72I7lcmckPTrYWOlyGGsBzhnxhZEv2b
-80fUCcttpBmWmIZbND8jgkyMoONA32CFeedSkGoR8y6Xdl5dklMrlBJQiB6tWi55
-xa6cYOxV75uTVrBcW4mz7J+TuoyiDx+53Y26kBPIV4X1OFGY77vsFNhZIbqDNQpH
-hwE2nb5u3UagKgGrqkCNOxOaXvl/ml3h0y0BYjk4vD6ROhGGKpEfbhfDR2qbTSMM
-7hYrr8FlTXL7fuwRzyRcVLXLRKHhS1sUVy9SfIUnaXvgHklHjR94ZH7eZPC5qdEH
-RjAn+XUFiwTEff49VZSj5yEcwz2EIX6NXgukD3qm02V+M5IFpTRLCVFHkSW/ZN2W
-oEltK7gKMYggYeWhk8t4FYEZ4WZd0BavY+gXK5LXCfrM5U29qMMZSK1rNgXZptRx
-qroGvyg6B8/zxUVc+lYWqiXVJg93Xl6toUCQjnCgPDwNM54jhsFOWTxyj7jqUBe9
-+rjYYAUATHKBsk1EWdaPjkVrunxn/HVwq7IA8/vV0unysef8alLnn3B9NVCwZbWy
-z9nS4LDn65N2odRNH46Wf6Uelq76pGMvGF31SUNh6b+daF94DJPCzTxJdcG/Lzwk
-3QJ7NNxiFS9LVjsxW6Kr
-=+SCZ
+iQIcBAABCAAGBQJX4X0pAAoJEIT9weqP7pUMA6kP/jqdnTE34voBLnZskadhmY2z
+1WWjKzpuWH8pFXCtkI2vfa6plBSRG5/LYn/v/XZKxaVwM7q+dIeogS1+yoWyiZ6K
+bjsA+0f82VRDlx9e+zQ4UZGO8XJhSSt8ToYn6ALck+HNzD+R/Md90Vd2qY9tuQ/V
+EQiDHvHBTOLqHJjoNNR9wtjgmpXElwBW1OjIhDmaSZpCfMU1AySFLZWlOX7PYr1o
+/L+MSpXb8cS8LoKbem4OJdR4566ktWetLL3AGjSms9sNZ4jl/8Ez3XU8WUeWChwr
+Wholuq8HBQ1OoImsnufp4efJowHQvL1bKRVNkLj8dSDznAojT3awplmgB4VHKtJX
+RLXnfGyGWTI2bLUxLxzutIqiTw9gm07bCOK7u5PVb+amlOa7iDPSq6E5jj8eoWKg
+hj6pfpYKZxEwD6HsHbG7tbvuXzS0aziYjKINNDmzdtgSUObT9ahnZgPVvfrFdqll
+/LahIf5EpCw7SrP3zhVt7rpX/jY23uhoLAWOyh8PE49Xt1pWu8z8MdfBUcJWL/lc
+P6BGr0rjIX4W5bK9VWFebWA8ozi64C8L2Rl8Cdsl9xU6L9FVS+HH9rTYN8kLVUwa
+m5RGeuRyUNSxnWfBXUHvFvZXLWB4uhA/I0k/KPX3vCBGUcMrF8IkZ0LyEvdQkfLs
+MI153XqCCmD0nQWGrSLt
+=mbhV
 -----END PGP SIGNATURE-----
 
---=-8otpdRp68sDOyBOorK7e--
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--=-H+xqHwwguZ04KfKiXEfr--
