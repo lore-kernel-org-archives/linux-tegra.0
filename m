@@ -1,21 +1,56 @@
-From: niulirui <albertawo-rQzrUNsfudg2/lM7Z8s3Ss8zsRVbwHyT0E9HWUfgJXw@public.gmane.org>
-Subject: =?UTF-8?Q?Zobacz_stron=C4=99_http:__forum.gazeta.pl_forum_w,98260,13329?=
- =?UTF-8?Q?2706,133292706,Polec=5Fznajomy?=
- =?UTF-8?Q?m=5FAxa=5FDirect=5Fkod=5F2970286.html?=
-Date: Mon, 19 Sep 2016 17:10:32 +0200 (CEST)
-Message-ID: <298946442.1487951474297832053.JavaMail.webadm@iw56>
-Reply-To: albertawo-rQzrUNsfudg2/lM7Z8s3Ss8zsRVbwHyT0E9HWUfgJXw@public.gmane.org
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: [RFC PATCH 0/3] PM / Domains: Add support for devices that require multiple domains
+Date: Tue, 20 Sep 2016 11:28:04 +0100
+Message-ID: <1474367287-10402-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain
+Return-path: <linux-pm-owner@vger.kernel.org>
+Sender: linux-pm-owner@vger.kernel.org
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Twój znajomy niulirui  poleca Ci stronę <a href="http://forum.gazeta.pl/forum/w,98260,133292706,133292706,Polec_znajomym_Axa_Direct_kod_2970286.html">http:  forum.gazeta.pl forum w,98260,133292706,133292706,Polec_znajomym_Axa_Direct_kod_2970286.html</a><br/><br/>【澳门金沙集团】电子游戏不计输赢，天天1.2 返水无上限！
-拥有MG电子、BB电子等最火平台，1元即可游戏（支持支付宝、微信、财付通、游戏点卡充值）
-最新捕鱼游戏上线，独具一格，玩法精彩，惊喜连不停，运气高到爆！
-丰富的各类电子游戏，邀您体验，赶快加入吧！：http:  www.834516.com ?linux-tegra vger.kernel.org
-------------------------------------------
-                    爱不是一句话，只是一个动作。<br/><br/>--<br/>Ten e-mail został wysłany z serwisu Gazeta.pl przez osobę, która uznała, że zainteresuje Cię jej wiadomość.<br/>Serwis Gazeta.pl nie odpowiada za treść powiadomienia ani za intencje nadawcy.<br/>Jeśli uznasz tą wiadomość za spam, zgłoś to do nas.
+The Tegra124/210 XUSB subsystem (that consists of both host and device
+controllers) is partitioned across 3 PM domains which are:
+- XUSBA: Superspeed logic (for USB 3.0)
+- XUSBB: Device controller
+- XUSBC: Host controller
+
+These power domains are not nested and can be powered-up and down
+independently of one another. In practice different scenarios require
+different combinations of the power domains, for example:
+- Superspeed host: XUSBA and XUSBC
+- Superspeed device: XUSBA and XUSBB
+
+Although it could be possible to logically nest both the XUSBB and XUSBC
+domains under the XUSBA, superspeed may not always be used/required and
+so this would keep it on unnecessarily.
+
+Given that Tegra uses device-tree for describing the hardware, it would
+be ideal that the device-tree 'power-domains' property for generic PM
+domains could be extended to allow more than one PM domain to be
+specified. For example, define the following the Tegra210 xHCI device ...
+
+	usb@70090000 {
+		compatible = "nvidia,tegra210-xusb";
+		...
+		power-domains = <&pd_xusbhost>, <&pd_xusbss>;
+	};
+
+This RFC extends the generic PM domain framework to allow a device to
+define more than one PM domain in the device-tree 'power-domains'
+property.
+
+Jon Hunter (3):
+  PM / Domains: Add helper functions for finding and attaching PM
+    domains
+  PM / Domains: Add support for devices with multiple domains
+  dt-bindings: Add support for devices with multiple PM domains
+
+ .../devicetree/bindings/power/power_domain.txt     |   5 +-
+ drivers/base/power/domain.c                        | 205 +++++++++++++++------
+ 2 files changed, 155 insertions(+), 55 deletions(-)
+
+-- 
+2.1.4
+
