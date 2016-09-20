@@ -1,111 +1,108 @@
-From: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
-Subject: Re: [PATCH 3/4] ARM: tegra: nyan-big: Include compatible revisions
- for proper detection
-Date: Tue, 20 Sep 2016 20:02:24 +0200
-Message-ID: <1474394544.1215.13.camel@paulk.fr>
+From: Paul Kocialkowski <contact@paulk.fr>
+Subject: Re: [PATCH 2/4] ARM: tegra: nyan: Use external control for bq24735
+ charger
+Date: Tue, 20 Sep 2016 20:02:47 +0200
+Message-ID: <1474394567.1215.14.camel@paulk.fr>
 References: <20160828173246.32621-1-contact@paulk.fr>
-         <20160828173246.32621-3-contact@paulk.fr>
-         <a9485a88-55a5-9dd1-1a1b-a6c0a78ff476@nvidia.com>
-         <1474394004.1215.2.camel@paulk.fr>
-         <d05b8e5a-adf7-9057-b42a-0da1fde84953@nvidia.com>
+         <20160828173246.32621-2-contact@paulk.fr>
+         <00697eef-0b36-1ff5-9c7a-43c1b53b52bc@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-QE7gJqU4NGX+Qi1HsySD"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <d05b8e5a-adf7-9057-b42a-0da1fde84953-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+        protocol="application/pgp-signature"; boundary="=-6cH71l0qMPGEyletmZBe"
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <00697eef-0b36-1ff5-9c7a-43c1b53b52bc@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org
+Cc: devicetree@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---=-QE7gJqU4NGX+Qi1HsySD
+--=-6cH71l0qMPGEyletmZBe
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Le mardi 20 septembre 2016 =C3=A0 18:56 +0100, Jon Hunter a =C3=A9crit=C2=
-=A0:
-> On 20/09/16 18:53, Paul Kocialkowski wrote:
-> >=20
-> > * PGP Signed by an unknown key
-> >=20
-> > Le mardi 20 septembre 2016 =C3=A0 18:41 +0100, Jon Hunter a =C3=A9crit =
-:
-> > >=20
-> > > On 28/08/16 18:32, Paul Kocialkowski wrote:
-> > > >=20
-> > > >=20
-> > > > Depthcharge (the payload used with cros devices) will attempt to de=
-tect
-> > > > boards using their revision. This includes all the known revisions =
-for
-> > > > the nyan-big board so that the dtb can be selected preferably.
-> > >=20
-> > > May be I am missing something here, but for the mainline there is onl=
-y
-> > > one dtb available and so why is this needed for the mainline?
-> >=20
-> > There is indeed a single dts in mainline, but depthcharge will use the
-> > revision
-> > to match the compatible string (e.g. it will look for google,nyan-big-r=
-ev5,
-> > not
-> > google,nyan-big), so we need to list them all in that single dts. Other=
-wise,
-> > depthcharge will fall back to the default config, which may or may not =
-be
-> > suitable for nyan.
->=20
-> Is tegra124-nyan-big.dtb not the default?
+Le mardi 20 septembre 2016 =C3=A0 18:40 +0100, Jon Hunter a =C3=A9crit :
+> On 28/08/16 18:32, Paul Kocialkowski wrote:
+> >=C2=A0
+> > Nyan boards come with an embedded controller that controls when to
+> > enable and disable the charge. Thus, it should not be left up to the
+> > kernel to handle that.
+> >=C2=A0
+> > Using the ti,external-control property allows specifying this use-case.
+>=C2=A0
+> So the bq24735 is populated under the EC's 'i2c-tunnel' property which
+> is there to specifically interface it's child devices to the host. So I
+> am a bit confused why this is expose to the host if it should not be used=
+?
 
-You can't expect that to always be the case. The image format allows many
-different dts to be provided, so I could easily build with multi_v7_defconf=
-ig
-and have various dts for various devices in the same image, and just select=
- a
-random one as default.
-
-Here, default is really a fallback, the right one is expected to be detecte=
+Well, it needs to access the information in the read-only registers provide=
 d by
-this mechanism. And it really doesn't hurt to provide that information for
-proper detection.
+the chip, which is allowed by the setup in place that you described.
 
-Note that this is done with many other cros devices in mainline (such as rk=
-3288
-veyrons).
+However, the EC has its internal state machine that decides when to start
+charging, etc and so should be the only one to write registers, to avoid
+conflicts.
 
---=20
+> Again you may right and I did find the original series [0] for this
+> which specifically references the Acer Chromebook that needs this.
+> However, I am not sure why this was never populated? Is there any other
+> history here?
+
+I am also confused about why it wasn't applied earlier. However, the cros k=
+ernel
+is using the very same scheme.
+
+> What is the actual problem you see without making this change?
+
+There is a risk of conflict (even though it's probably not that significant=
+),
+given the low variety of possible cases here. The idea is simply to say tha=
+t the
+EC is in charge and to let it do its job without interfering.
+
+> The original series states ...
+>=C2=A0
+> "On Acer Chromebook 13 (CB5-311) this module fails to load if the
+> charger is not inserted, and will error when it is removed."
+
+I'm confused about that comment. At this point (and with this patch), it wo=
+rks
+normally.
+
+> Cheers
+> Jon
+>=C2=A0
+> [0] http://marc.info/?l=3Dlinux-pm&m=3D145447948705686&w=3D2
+
+Cheers,
+
+--=C2=A0
 Paul Kocialkowski, developer of low-level free software for embedded device=
 s
 
 Website: https://www.paulk.fr/
 Coding blog: https://code.paulk.fr/
 Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
---=-QE7gJqU4NGX+Qi1HsySD
+--=-6cH71l0qMPGEyletmZBe
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAABCAAGBQJX4XmwAAoJEIT9weqP7pUMS40P/0Nh1fdFfQlRrisVXppl47HM
-4FfULOURm0bgsj0VWK2w0W1ElvbSGHbU7h9q4a688l/veu/uH5up4m5Rqf8XVzZq
-+7t/oUjwoLOOvVIhTYdIyAFvXH8bRxHZ5f+qFpTetaj/ogUnBkkX2cvoD7nebv04
-J/namaK+7Eezfs7GZ3xqhUkHQa53meMJayPUybNohY2qK1jEZzg7vvoGPst4sjAr
-YUHcmJJqKu3oR5CXDICW84BIc+lzAQ/RtZpL2XZdfd2rwGN4/6UZj7zI6RZ8uIFp
-5jsLkhfV/zlUpAiiazgGh8VZURf7PVElv6P0Nc96FewpNQTRjxaaU0TCADw51Dez
-IAVBJ0Kn2CPn9VsnEKGMYebvmkPrSivGuV2eIq8HrpJ103bzahkxvY8qz/FdPGYq
-nHmGGEV20U55tCD7neg3DI3fS4ZAGgWKUPjleqhNzwqNgJYeZ17YfYdyBQ6wqX+V
-0OcGxclpx+iiVUin1wjShxA5TJddudvF9FrPfh+bAj+n+QWiIkm36gVhi64DU0YB
-kDaU5E2AwFUnuaxCcT1QsH5sbhbdo0r0KrclfrhTF0GZfDNf3qzodSS3qtMCtySu
-6EB0fKPI+6nSt9CXTlyn10rKFURTyxtoBw3lSU9GppPRpRrT2MqKWux3VghVHxmT
-/w/f5POKYqZpRYmy8G4c
-=dxo3
+iQIcBAABCAAGBQJX4XnHAAoJEIT9weqP7pUMr2MP/2g674+sQU25p5MVGeU+5Sa1
+eMDSHmqUDhTajZjJYt3MrGQB9wm9Ib8eRNQ9IbjtGw2/pVYEpeRMonONMOypql3U
+GOkopl46Ea2wKrmwakqxIGQ12gf5qra0+04xgt0qY27bRiTM2xg1/87Thsp5FA9B
+uAgqdhEWzG6WCodbreYPINeTMN8LjduUPLg24PIJO7w6HCcsaUK2ejb5cBrNVTIa
+F0ObJJV8YxjLh6WeinNN5KgtGBGzILgvA3VJa6aYvfsW8ISd0Vw3MmQFv9EisorS
+if9v1Rd7Tv7+5xSK3u/51HU8yz8G0fXRlun8ULUdea1ucYonvhezEdmTlJxTx+2u
+fmZA+vtkiOc2sDi8uocVJ/230R+clx+B3E+CVKGOT6/9Sv/DWmp45pcMqBeveNLd
+an3DzTVKdNspv+XZlSVWeKeIyd19fVq+/u7jZ42mKBuxdfS9xAHZZJjFr7Mi28gf
+E13Dv5acylrs7kC11YQjLK7sRNWBQrGDCpbRXu5qUtWMCCK6Obf1sy+iWuS4LqI/
++NA3uK523LUUJMSu5SmEvf+hwllNNa4hbX0mPYhVVi9jzTpzAWGh4+CbIkWnRoLZ
+AUmHB+FPwYKQKWPluS446/IBAa7Q1eEXFM2BeKyi51tzS1pUa2/szhE6TdSzRYFM
+ratAgq6tP1jJoSU9sAfw
+=V+Xx
 -----END PGP SIGNATURE-----
 
---=-QE7gJqU4NGX+Qi1HsySD--
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+--=-6cH71l0qMPGEyletmZBe--
