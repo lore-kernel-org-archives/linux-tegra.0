@@ -1,138 +1,60 @@
-From: Paul Kocialkowski <contact@paulk.fr>
-Subject: Re: [PATCH 2/4] ARM: tegra: nyan: Use external control for bq24735
- charger
-Date: Wed, 21 Sep 2016 09:56:59 +0200
-Message-ID: <1474444619.1239.13.camel@paulk.fr>
+From: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+Subject: Re: [PATCH 1/4] ARM: tegra: nyan: Use proper IRQ type definitions
+Date: Wed, 21 Sep 2016 10:26:06 +0200
+Message-ID: <1474446366.1239.17.camel@paulk.fr>
 References: <20160828173246.32621-1-contact@paulk.fr>
- <20160828173246.32621-2-contact@paulk.fr>
- <00697eef-0b36-1ff5-9c7a-43c1b53b52bc@nvidia.com>
- <1474394567.1215.14.camel@paulk.fr>
- <90828c8d-e46d-0956-d6b3-e88fc90f3049@nvidia.com>
+         <ef69b6d2-ce6b-ff76-5c04-ab2176eb6ecc@nvidia.com>
+         <1474395289.1215.20.camel@paulk.fr>
+         <0ca614bf-4d27-9948-03e3-472d059f2153@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============3026202353772032508=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <90828c8d-e46d-0956-d6b3-e88fc90f3049@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jon Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-NH6xfKpqKgS2U3dwsddV"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <0ca614bf-4d27-9948-03e3-472d059f2153-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============3026202353772032508==
-Content-Type: multipart/signed; micalg="pgp-sha256";
-	protocol="application/pgp-signature"; boundary="=-5S6UJB3TYnDbUsluiEEb"
-
-
---=-5S6UJB3TYnDbUsluiEEb
+--=-NH6xfKpqKgS2U3dwsddV
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Le mercredi 21 septembre 2016 =C3=A0 08:30 +0100, Jon Hunter a =C3=A9crit=
+Le mercredi 21 septembre 2016 =C3=A0 08:52 +0100, Jon Hunter a =C3=A9crit=
 =C2=A0:
-> On 20/09/16 19:02, Paul Kocialkowski wrote:
+> On 20/09/16 19:14, Paul Kocialkowski wrote:
 > >=20
 > > * PGP Signed by an unknown key
 > >=20
-> > Le mardi 20 septembre 2016 =C3=A0 18:40 +0100, Jon Hunter a =C3=A9crit =
+> > Le mardi 20 septembre 2016 =C3=A0 18:15 +0100, Jon Hunter a =C3=A9crit =
 :
 > > >=20
 > > > On 28/08/16 18:32, Paul Kocialkowski wrote:
 > > > >=20
-> > > > =C2=A0
-> > > > Nyan boards come with an embedded controller that controls when to
-> > > > enable and disable the charge. Thus, it should not be left up to th=
-e
-> > > > kernel to handle that.
-> > > > =C2=A0
-> > > > Using the ti,external-control property allows specifying this use-c=
-ase.
-> > > =C2=A0
-> > > So the bq24735 is populated under the EC's 'i2c-tunnel' property whic=
-h
-> > > is there to specifically interface it's child devices to the host. So=
- I
-> > > am a bit confused why this is expose to the host if it should not be =
-used?
-> >=20
-> > Well, it needs to access the information in the read-only registers pro=
-vided
-> > by
-> > the chip, which is allowed by the setup in place that you described.
->=20
-> Is this to expose the current state to the kernel so we can monitor the
-> battery state?
-
-Yes, that is correct.
-
-> > However, the EC has its internal state machine that decides when to sta=
-rt
-> > charging, etc and so should be the only one to write registers, to avoi=
-d
-> > conflicts.
-> >=20
+> > > >=20
+> > > > This switches a few interrupt definitions that were using
+> > > > GPIO_ACTIVE_HIGH as IRQ type, which is invalid.
 > > >=20
-> > > Again you may right and I did find the original series [0] for this
-> > > which specifically references the Acer Chromebook that needs this.
-> > > However, I am not sure why this was never populated? Is there any oth=
-er
-> > > history here?
+> > > May be you are right, but this does not describe why this is invalid.
+> > > Can you elaborate?
 > >=20
-> > I am also confused about why it wasn't applied earlier. However, the cr=
-os
-> > kernel
-> > is using the very same scheme.
+> > GPIO_ACTIVE_HIGH is simply not the right kind of define to use in the
+> > "interrupts" devicetree property. Values provided there are understood =
+as
+> > IRQ_TYPE_ defines.
 >=20
-> Do you have a reference?
+> Right, but you are changing the type as GPIO_ACTIVE_HIGH =3D 0 and
+> IRQ_TYPE_EDGE_FALLING =3D 2 and there is no comment about why this has
+> been changed. It might be correct, but you need to explain it.
 
-Sure thing, there's a similar commit for the dts[0] and one for the driver[=
-1]
-(which was already merged in mainline).
-
-> > > What is the actual problem you see without making this change?
-> >=20
-> > There is a risk of conflict (even though it's probably not that
-> > significant),
-> > given the low variety of possible cases here. The idea is simply to say=
- that
-> > the
-> > EC is in charge and to let it do its job without interfering.
-> >=20
-> > >=20
-> > > The original series states ...
-> > > =C2=A0
-> > > "On Acer Chromebook 13 (CB5-311) this module fails to load if the
-> > > charger is not inserted, and will error when it is removed."
-> >=20
-> > I'm confused about that comment. At this point (and with this patch), i=
+This actually makes the IRQ trigger values consistent with the drivers, tha=
 t
-> > works
-> > normally.
->=20
-> Ok, I think Thierry prefers to only apply fixes for problems that can be
-> reproduced. Is there a simple way to check the battery status and
-> charging status via say the sysfs? If I can test that this has no
-> negative impact may be it is ok.
+define them regardless of devicetree anyway. The max98090 driver
+has=C2=A0IRQF_TRIGGER_FALLING and bq24735 has IRQF_TRIGGER_RISING |
+IRQF_TRIGGER_FALLING.
 
-Sure, this is exported at: /sys/class/power_supply/bq24735@5-0009
-Also, note that the power-supply next branch[2] has some more fixes for the
-bq24735 driver.
-
-Cheers,
-
-[0]:=C2=A0https://chromium.googlesource.com/chromiumos/third_party/kernel/+=
-/e25a91f87af41e29012a4e2dd7a9ab725efd308e
-[1]: https://chromium.googlesource.com/chromiumos/third_party/kernel/+/6b34=
-e53d506b44f911d0fd246ccdc8b4e942e4ae
-[2]: https://git.kernel.org/cgit/linux/kernel/git/sre/linux-power-supply.gi=
-t/log/?h=3Dfor-next
+This is really more of a cosmetic change, it doesn't impact actual use.
 
 --=20
 Paul Kocialkowski, developer of low-level free software for embedded device=
@@ -141,41 +63,26 @@ s
 Website: https://www.paulk.fr/
 Coding blog: https://code.paulk.fr/
 Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
---=-5S6UJB3TYnDbUsluiEEb
+--=-NH6xfKpqKgS2U3dwsddV
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAABCAAGBQJX4j1LAAoJEIT9weqP7pUMn2IP/R0h8Bb4/bEzEcA6+uIjyO3y
-ORHsWZtPsPcOIr93UH/5JPoZInCpt2KUMMV2y4fBxXzxNYiO0C34AqVA+X7IPkTO
-i3M6N7cCRqrHVjH4ptTXxS62hm1Y4F7l8PkeRN+QNrDrsW9sv6FkLp7W6rB2lbSE
-c0Mr187Yd49uK+WGw2+j3UZQ4h81d9BstGNkwahAKw9RZo2dNWybh2zjZ2ki99dN
-BCH9K8v+LvZ9jMYj3EHZNEf3W8vgFNdwo04+cpi7ZBMgTGHxIg8abVxFKcsYr4tF
-6JtShB5YEmtwQ1fzD+uWDmdzsvzmk/cvNE8NwNYpqh87kLAdjaSVwKDylTobrgv9
-KE5G7eTHe97BX3nPAY2uIn857FZRWJC29A/52l20qMMRuDR+F0K17yMc3EZsF4VP
-9aMsRB7Ti5DoXJC0fbXRqlikqiyR4tNJVFq1u1pZc8EhmB2l5RfjWo06DbIWmdf2
-vwlPSDUFMwSHU1/K4/eupkfvc2CyoyIo9tevLf/rtT83f/IINrjd4dFkM25EjL4W
-Q7uFQ1YZnrlREZyEgJXzxxCsQFYcUZeu1GdtV2vZqokxswJRR+YlN7Vs5zP/IDx4
-6CDhM1wgtuY6APlsKgl/snORuEteHERiYfWtwjwNakKbz2ZRss2eXn/Et/ni86OD
-JAeY9b+jX/jZUAsG/kgi
-=bY9k
+iQIcBAABCAAGBQJX4kQeAAoJEIT9weqP7pUMEoEP/jzk7mIPfaUalIRNc44GxK9N
+LCy5ft98G+x9vl8GpVHchmGVS9J1mr+sy3aeYtx3Edz3IF878nV4ew6MPporAIDg
+BnQdnhxRX/8+eFtQ70h0PaTtRyFhxQF4+wwdExrEr+eh+/aIcB1xpSH/YiC1hPXF
+EpnfYgJ9Rkl3BLu68ByooAA8/DRVe/Bk/993IVdH8g1v1PlXZK7pEQQV4l5JKKFc
+uUnr5VMHh8I/J2JJkRdT5aWzWyxLsCgbsVND4J6hf9IdmN+ez6Rmol0tNGQLAeDH
+7z4Md8WsdHsFnLtfIYbwsd2hkw2I1+tYojmAtmscqfeYTV5HXi6zxZHQz7IOVj4J
+BRJxRrZAnWniO+dlCRrswtogU9hlGbSKIRWKU3jJsMDoPqx2ruq7Cy2i1sRAbWHj
+pXn37mbfLwi/twwCy6uk2CVGWVNn2LVSY2fOQMKlzphkaCxsnw6hU8qMFotuw988
+sG1qc59OfFUmf5P4jJ5einY8ki7LDVXcrhB22QP2FYgvT/EJiuH1MS7JNkUN/Ea0
+6uNyp6KNT13LlvVTPLNfb2epaaIZpKyXaRWEvg3wlMejBkB4V9OzyXgkw7/VkhKa
+6exGtsIlvvXuM7nLW2HG91IWzI/Bpj/co54t0mgYI+r0KC1Vdt4nJO6xDvOBEsFe
+KxzNe09LEsUjh6POr09y
+=rDC3
 -----END PGP SIGNATURE-----
 
---=-5S6UJB3TYnDbUsluiEEb--
-
-
-
---===============3026202353772032508==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============3026202353772032508==--
+--=-NH6xfKpqKgS2U3dwsddV--
