@@ -1,137 +1,70 @@
-From: Paul Kocialkowski <contact@paulk.fr>
-Subject: Re: [PATCH 3/4] ARM: tegra: nyan-big: Include compatible revisions
- for proper detection
-Date: Wed, 21 Sep 2016 11:31:47 +0200
-Message-ID: <1474450307.1239.23.camel@paulk.fr>
-References: <20160828173246.32621-1-contact@paulk.fr>
-         <20160828173246.32621-3-contact@paulk.fr>
-         <a9485a88-55a5-9dd1-1a1b-a6c0a78ff476@nvidia.com>
-         <1474394004.1215.2.camel@paulk.fr>
-         <d05b8e5a-adf7-9057-b42a-0da1fde84953@nvidia.com>
-         <1474394544.1215.13.camel@paulk.fr>
-         <6501341f-e14c-4876-dcb7-60a33b7621c4@nvidia.com>
-         <1474443809.1239.4.camel@paulk.fr>
-         <5461eb20-9372-7fa1-0e48-3d0143393b8c@nvidia.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [RFC PATCH 2/3] PM / Domains: Add support for devices with
+ multiple domains
+Date: Wed, 21 Sep 2016 11:01:19 +0100
+Message-ID: <6723a9e3-eef7-489f-0eda-53ca76e89f6e@nvidia.com>
+References: <1474367287-10402-1-git-send-email-jonathanh@nvidia.com>
+ <1474367287-10402-3-git-send-email-jonathanh@nvidia.com>
+ <CAMuHMdVc+EjkbcpPKyzbCfDjp65gF3xP3bhkjh6SKLt6KDTtXg@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-sD5karDeo4Z8mefpD3Lb"
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5461eb20-9372-7fa1-0e48-3d0143393b8c@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org
-Cc: devicetree@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdVc+EjkbcpPKyzbCfDjp65gF3xP3bhkjh6SKLt6KDTtXg@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Geert,
 
---=-sD5karDeo4Z8mefpD3Lb
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On 21/09/16 09:53, Geert Uytterhoeven wrote:
+> Hi Jon,
+> 
+> On Tue, Sep 20, 2016 at 12:28 PM, Jon Hunter <jonathanh@nvidia.com> wrote:
+>> Some devices may require more than one PM domain to operate and this is
+>> not currently by the PM domain framework. Furthermore, the current Linux
+>> 'device' structure only allows devices to be associated with a single PM
+>> domain and so cannot easily be associated with more than one. To allow
+>> devices to be associated with more than one PM domain, if multiple
+>> domains are defined for a given device (eg. via device-tree), then:
+>> 1. Create a new PM domain for this device. The name of the new PM domain
+>>    created matches the device name for which it was created for.
+>> 2. Register the new PM domain as a sub-domain for all PM domains
+>>    required by the device.
+>> 3. Attach the device to the new PM domain.
+> 
+> This looks a suboptimal to me: if you have n devices sharing the same PM
+> domains, you would add n new subdomains?
 
-Resending with the right CC chain.
+Yes you would and so in that case it would appear to be suboptimal, I
+agree. One option would be to name the new PM domain after its parents
+and then see if any PM domains exist that matches the name and verify it
+has the required parents. We could even add a prefix to the name to
+indicate that this is a PM domain added by the core. Only problem is we
+could get some long names!
 
-Le mercredi 21 septembre 2016 =C3=A0 10:15 +0100, Jon Hunter a =C3=A9crit=
-=C2=A0:
->=20
-> On 21/09/16 08:43, Paul Kocialkowski wrote:
->=20
-> ...
->=20
-> > > > > > > > Depthcharge (the payload used with cros devices) will attem=
-pt to
-> > > > > > > > detect
-> > > > > > > > boards using their revision. This includes all the known
-> > > > > > > > revisions
-> > > > > > > > for
-> > > > > > > > the nyan-big board so that the dtb can be selected preferab=
-ly.
-> > > > > > >=20
-> > > > > > > May be I am missing something here, but for the mainline ther=
-e is
-> > > > > > > only
-> > > > > > > one dtb available and so why is this needed for the mainline?
-> > > > > >=20
-> > > > > > There is indeed a single dts in mainline, but depthcharge will =
-use
-> > > > > > the
-> > > > > > revision
-> > > > > > to match the compatible string (e.g. it will look for google,ny=
-an-
-> > > > > > big-
-> > > > > > rev5,
-> > > > > > not
-> > > > > > google,nyan-big), so we need to list them all in that single dt=
-s.
-> > > > > > Otherwise,
-> > > > > > depthcharge will fall back to the default config, which may or =
-may
-> > > > > > not
-> > > > > > be
-> > > > > > suitable for nyan.
-> > > > >=20
-> > > > > Is tegra124-nyan-big.dtb not the default?
-> > > >=20
-> > > > You can't expect that to always be the case. The image format allow=
-s
-> > > > many
-> > > > different dts to be provided, so I could easily build with
-> > > > multi_v7_defconfig
-> > > > and have various dts for various devices in the same image, and jus=
-t
-> > > > select
-> > > > a
-> > > > random one as default.
-> > >=20
-> > > Really? Sounds odd. I was hoping that tegra124-nyan-big.dtb would be =
-a
-> > > catch all.
->=20
-> I meant I was hoping that compatible =3D "google,nyan-big" would be the
-> catchall not the dtb file name ;-)
+> Having a clean way to specify multiple PM domains is very useful, though.
+> 
+> E.g. on Renesas ARM SoCs, devices are usually part of two PM domains:
+>   1. A power area (can be "always-on",
+>   2. The clock domain.
+> 
+> As power areas and clock domains are fairly orthogonal (the former use the
+> .power_{off,on}() callbacks, the latter set GENPD_FLAG_PM_CLK and use the
+> {at,de}tach_dev() callbacks), we currently setup both in the same driver
+> (SYSC, for controlling power areas), which forwards the clock domain operations
+> to the clock driver (CPG/MSTP or CPG/MSSR).
+> Hence we have only single references in the power-domains properties, but
+> having two would allow to drop the hardcoded links between the two drivers.
 
-Yeah, I figured :)
+Glad to see others could benefit from this ...
 
->=20
-> >=20
-> > Yes, the image format (FIT) allows specifying multiple dtb and zImage
-> > combinations in the same image[0].
->=20
-> Yes I am aware of that. Typically, I have been testing using a FIT image
-> with single zImage and dtb. Hence no problems.
->=20
-> So are you wanting to create a FIT image to support multiple boards and
-> use the single FIT image for all? If so then I can see why you want
-> this. Again please describe the motivation for the changes in the
-> changelog so it is clear why we are adding this.
+> (Oh no, more DT backwards compatibility issues if this is accepted ;-)
 
-Fair enough, will do in v2.
+... despite DT compat issues :-(
 
---=20
-Paul Kocialkowski, developer of low-level free software for embedded device=
-s
+Jon
 
-Website: https://www.paulk.fr/
-Coding blog: https://code.paulk.fr/
-Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
---=-sD5karDeo4Z8mefpD3Lb
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJX4lODAAoJEIT9weqP7pUMp30QAIKGqWWbIYQGJEnOKzXnUmuU
-gD97/oAiFlc8k9oLNOemnrLN3b6GsUQS3QVhLu+LQcbL5gx1IbdDPgryh8iRn/y6
-YK7nfspp5PTMAbnZwXbkQWUYuwa25kgFfy7CJFNrSxWAH+iRUxrlPDQSYYPbnG1D
-W/Gg9dQBXsXycsx0UMNGzLtPxYxFz2j+ywf6ZI3bi1fOugdN2OG4Z5jBEi8qxFAV
-d0TQNfnVyyfJIPBML9n3gkyK98mk0b/URRdhvwAPJuygyaykH80GWTbmk4J+DYhM
-YOZ+/uxN50gRSmoVrl2j0p/5mNvrSmu5hnv41jKIBRJzTtLZ7v3uV7EXeT+b7one
-JVKnJ06JjzJWWjVdQezXOxL3MzqrbbLdUOUnRO+ta+0cvwJE4s6pmjQgpjl4Rej5
-3m2VwvQTTAl4uEbfBjzudhQN4INVT1Pty5r5dTYMSpEWYsZf7le40YEEnyGXosJz
-+qbsQIoa3sgwCYegWvx7XN+dwW7ZSGSg9kXV2+kr8lt8gPrFP502voexH0NguIQ1
-iEt4N45NV1tszgzySDFjqCoRLr8muZFl9S9cqJgSVFV+zwqBT6ARaDN0TKwUrndn
-uSesr7mEhJoGqitLbB78zoqMNzt46osGUgd81Rc9/4AdG4Ob4b/7XrUv7fgez+yV
-2Nak1a2Rr9gFC1liKTXk
-=PqxB
------END PGP SIGNATURE-----
-
---=-sD5karDeo4Z8mefpD3Lb--
+-- 
+nvpublic
