@@ -1,59 +1,67 @@
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: Re: [RFC PATCH 2/3] PM / Domains: Add support for devices with
- multiple domains
-Date: Wed, 21 Sep 2016 10:53:01 +0200
-Message-ID: <CAMuHMdVc+EjkbcpPKyzbCfDjp65gF3xP3bhkjh6SKLt6KDTtXg@mail.gmail.com>
-References: <1474367287-10402-1-git-send-email-jonathanh@nvidia.com> <1474367287-10402-3-git-send-email-jonathanh@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 1/4] ARM: tegra: nyan: Use proper IRQ type definitions
+Date: Wed, 21 Sep 2016 10:06:19 +0100
+Message-ID: <eb7540c0-4abd-86c0-7777-78fe1f12bc59@nvidia.com>
+References: <20160828173246.32621-1-contact@paulk.fr>
+ <ef69b6d2-ce6b-ff76-5c04-ab2176eb6ecc@nvidia.com>
+ <1474395289.1215.20.camel@paulk.fr>
+ <0ca614bf-4d27-9948-03e3-472d059f2153@nvidia.com>
+ <1474446366.1239.17.camel@paulk.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-renesas-soc-owner@vger.kernel.org>
-In-Reply-To: <1474367287-10402-3-git-send-email-jonathanh@nvidia.com>
-Sender: linux-renesas-soc-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1474446366.1239.17.camel-W9ppeneeCTY@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Jon,
 
-On Tue, Sep 20, 2016 at 12:28 PM, Jon Hunter <jonathanh@nvidia.com> wrote:
-> Some devices may require more than one PM domain to operate and this is
-> not currently by the PM domain framework. Furthermore, the current Linux
-> 'device' structure only allows devices to be associated with a single PM
-> domain and so cannot easily be associated with more than one. To allow
-> devices to be associated with more than one PM domain, if multiple
-> domains are defined for a given device (eg. via device-tree), then:
-> 1. Create a new PM domain for this device. The name of the new PM domain
->    created matches the device name for which it was created for.
-> 2. Register the new PM domain as a sub-domain for all PM domains
->    required by the device.
-> 3. Attach the device to the new PM domain.
+On 21/09/16 09:26, Paul Kocialkowski wrote:
+> * PGP Signed by an unknown key
+> 
+> Le mercredi 21 septembre 2016 à 08:52 +0100, Jon Hunter a écrit :
+>> On 20/09/16 19:14, Paul Kocialkowski wrote:
+>>>
+>>>> Old Signed by an unknown key
+>>>
+>>> Le mardi 20 septembre 2016 à 18:15 +0100, Jon Hunter a écrit :
+>>>>
+>>>> On 28/08/16 18:32, Paul Kocialkowski wrote:
+>>>>>
+>>>>>
+>>>>> This switches a few interrupt definitions that were using
+>>>>> GPIO_ACTIVE_HIGH as IRQ type, which is invalid.
+>>>>
+>>>> May be you are right, but this does not describe why this is invalid.
+>>>> Can you elaborate?
+>>>
+>>> GPIO_ACTIVE_HIGH is simply not the right kind of define to use in the
+>>> "interrupts" devicetree property. Values provided there are understood as
+>>> IRQ_TYPE_ defines.
+>>
+>> Right, but you are changing the type as GPIO_ACTIVE_HIGH = 0 and
+>> IRQ_TYPE_EDGE_FALLING = 2 and there is no comment about why this has
+>> been changed. It might be correct, but you need to explain it.
+> 
+> This actually makes the IRQ trigger values consistent with the drivers, that
+> define them regardless of devicetree anyway. The max98090 driver
+> has IRQF_TRIGGER_FALLING and bq24735 has IRQF_TRIGGER_RISING |
+> IRQF_TRIGGER_FALLING.
+> 
+> This is really more of a cosmetic change, it doesn't impact actual use.
 
-This looks a suboptimal to me: if you have n devices sharing the same PM
-domains, you would add n new subdomains?
+So you are saying that the drivers don't actually use the DT types? May
+be that is ok, and yes this is cosmetic, but this should be stated in
+the changelog as it is not clear what is going on here.
 
-Having a clean way to specify multiple PM domains is very useful, though.
+Cheers
+Jon
 
-E.g. on Renesas ARM SoCs, devices are usually part of two PM domains:
-  1. A power area (can be "always-on",
-  2. The clock domain.
-
-As power areas and clock domains are fairly orthogonal (the former use the
-.power_{off,on}() callbacks, the latter set GENPD_FLAG_PM_CLK and use the
-{at,de}tach_dev() callbacks), we currently setup both in the same driver
-(SYSC, for controlling power areas), which forwards the clock domain operations
-to the clock driver (CPG/MSTP or CPG/MSSR).
-Hence we have only single references in the power-domains properties, but
-having two would allow to drop the hardcoded links between the two drivers.
-
-(Oh no, more DT backwards compatibility issues if this is accepted ;-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+-- 
+nvpublic
 --
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
