@@ -1,88 +1,59 @@
-From: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
-Subject: Re: [PATCH 1/4] ARM: tegra: nyan: Use proper IRQ type definitions
-Date: Wed, 21 Sep 2016 10:26:06 +0200
-Message-ID: <1474446366.1239.17.camel@paulk.fr>
-References: <20160828173246.32621-1-contact@paulk.fr>
-         <ef69b6d2-ce6b-ff76-5c04-ab2176eb6ecc@nvidia.com>
-         <1474395289.1215.20.camel@paulk.fr>
-         <0ca614bf-4d27-9948-03e3-472d059f2153@nvidia.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Subject: Re: [RFC PATCH 2/3] PM / Domains: Add support for devices with
+ multiple domains
+Date: Wed, 21 Sep 2016 10:53:01 +0200
+Message-ID: <CAMuHMdVc+EjkbcpPKyzbCfDjp65gF3xP3bhkjh6SKLt6KDTtXg@mail.gmail.com>
+References: <1474367287-10402-1-git-send-email-jonathanh@nvidia.com> <1474367287-10402-3-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-NH6xfKpqKgS2U3dwsddV"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <0ca614bf-4d27-9948-03e3-472d059f2153-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-renesas-soc-owner@vger.kernel.org>
+In-Reply-To: <1474367287-10402-3-git-send-email-jonathanh@nvidia.com>
+Sender: linux-renesas-soc-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, Linux PM list <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Hi Jon,
 
---=-NH6xfKpqKgS2U3dwsddV
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+On Tue, Sep 20, 2016 at 12:28 PM, Jon Hunter <jonathanh@nvidia.com> wrote:
+> Some devices may require more than one PM domain to operate and this is
+> not currently by the PM domain framework. Furthermore, the current Linux
+> 'device' structure only allows devices to be associated with a single PM
+> domain and so cannot easily be associated with more than one. To allow
+> devices to be associated with more than one PM domain, if multiple
+> domains are defined for a given device (eg. via device-tree), then:
+> 1. Create a new PM domain for this device. The name of the new PM domain
+>    created matches the device name for which it was created for.
+> 2. Register the new PM domain as a sub-domain for all PM domains
+>    required by the device.
+> 3. Attach the device to the new PM domain.
 
-Le mercredi 21 septembre 2016 =C3=A0 08:52 +0100, Jon Hunter a =C3=A9crit=
-=C2=A0:
-> On 20/09/16 19:14, Paul Kocialkowski wrote:
-> >=20
-> > * PGP Signed by an unknown key
-> >=20
-> > Le mardi 20 septembre 2016 =C3=A0 18:15 +0100, Jon Hunter a =C3=A9crit =
-:
-> > >=20
-> > > On 28/08/16 18:32, Paul Kocialkowski wrote:
-> > > >=20
-> > > >=20
-> > > > This switches a few interrupt definitions that were using
-> > > > GPIO_ACTIVE_HIGH as IRQ type, which is invalid.
-> > >=20
-> > > May be you are right, but this does not describe why this is invalid.
-> > > Can you elaborate?
-> >=20
-> > GPIO_ACTIVE_HIGH is simply not the right kind of define to use in the
-> > "interrupts" devicetree property. Values provided there are understood =
-as
-> > IRQ_TYPE_ defines.
->=20
-> Right, but you are changing the type as GPIO_ACTIVE_HIGH =3D 0 and
-> IRQ_TYPE_EDGE_FALLING =3D 2 and there is no comment about why this has
-> been changed. It might be correct, but you need to explain it.
+This looks a suboptimal to me: if you have n devices sharing the same PM
+domains, you would add n new subdomains?
 
-This actually makes the IRQ trigger values consistent with the drivers, tha=
-t
-define them regardless of devicetree anyway. The max98090 driver
-has=C2=A0IRQF_TRIGGER_FALLING and bq24735 has IRQF_TRIGGER_RISING |
-IRQF_TRIGGER_FALLING.
+Having a clean way to specify multiple PM domains is very useful, though.
 
-This is really more of a cosmetic change, it doesn't impact actual use.
+E.g. on Renesas ARM SoCs, devices are usually part of two PM domains:
+  1. A power area (can be "always-on",
+  2. The clock domain.
 
---=20
-Paul Kocialkowski, developer of low-level free software for embedded device=
-s
+As power areas and clock domains are fairly orthogonal (the former use the
+.power_{off,on}() callbacks, the latter set GENPD_FLAG_PM_CLK and use the
+{at,de}tach_dev() callbacks), we currently setup both in the same driver
+(SYSC, for controlling power areas), which forwards the clock domain operations
+to the clock driver (CPG/MSTP or CPG/MSSR).
+Hence we have only single references in the power-domains properties, but
+having two would allow to drop the hardcoded links between the two drivers.
 
-Website: https://www.paulk.fr/
-Coding blog: https://code.paulk.fr/
-Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
---=-NH6xfKpqKgS2U3dwsddV
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
+(Oh no, more DT backwards compatibility issues if this is accepted ;-)
 
------BEGIN PGP SIGNATURE-----
+Gr{oetje,eeting}s,
 
-iQIcBAABCAAGBQJX4kQeAAoJEIT9weqP7pUMEoEP/jzk7mIPfaUalIRNc44GxK9N
-LCy5ft98G+x9vl8GpVHchmGVS9J1mr+sy3aeYtx3Edz3IF878nV4ew6MPporAIDg
-BnQdnhxRX/8+eFtQ70h0PaTtRyFhxQF4+wwdExrEr+eh+/aIcB1xpSH/YiC1hPXF
-EpnfYgJ9Rkl3BLu68ByooAA8/DRVe/Bk/993IVdH8g1v1PlXZK7pEQQV4l5JKKFc
-uUnr5VMHh8I/J2JJkRdT5aWzWyxLsCgbsVND4J6hf9IdmN+ez6Rmol0tNGQLAeDH
-7z4Md8WsdHsFnLtfIYbwsd2hkw2I1+tYojmAtmscqfeYTV5HXi6zxZHQz7IOVj4J
-BRJxRrZAnWniO+dlCRrswtogU9hlGbSKIRWKU3jJsMDoPqx2ruq7Cy2i1sRAbWHj
-pXn37mbfLwi/twwCy6uk2CVGWVNn2LVSY2fOQMKlzphkaCxsnw6hU8qMFotuw988
-sG1qc59OfFUmf5P4jJ5einY8ki7LDVXcrhB22QP2FYgvT/EJiuH1MS7JNkUN/Ea0
-6uNyp6KNT13LlvVTPLNfb2epaaIZpKyXaRWEvg3wlMejBkB4V9OzyXgkw7/VkhKa
-6exGtsIlvvXuM7nLW2HG91IWzI/Bpj/co54t0mgYI+r0KC1Vdt4nJO6xDvOBEsFe
-KxzNe09LEsUjh6POr09y
-=rDC3
------END PGP SIGNATURE-----
+                        Geert
 
---=-NH6xfKpqKgS2U3dwsddV--
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
