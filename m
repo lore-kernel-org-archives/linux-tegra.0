@@ -1,94 +1,107 @@
 From: Paul Kocialkowski <contact@paulk.fr>
-Subject: Re: [PATCH 1/4] ARM: tegra: nyan: Use proper IRQ type definitions
-Date: Wed, 21 Sep 2016 11:31:22 +0200
-Message-ID: <1474450282.1239.21.camel@paulk.fr>
+Subject: Re: [PATCH 3/4] ARM: tegra: nyan-big: Include compatible revisions
+ for proper detection
+Date: Wed, 21 Sep 2016 11:31:47 +0200
+Message-ID: <1474450307.1239.23.camel@paulk.fr>
 References: <20160828173246.32621-1-contact@paulk.fr>
-         <ef69b6d2-ce6b-ff76-5c04-ab2176eb6ecc@nvidia.com>
-         <1474395289.1215.20.camel@paulk.fr>
-         <0ca614bf-4d27-9948-03e3-472d059f2153@nvidia.com>
-         <1474446366.1239.17.camel@paulk.fr>
-         <eb7540c0-4abd-86c0-7777-78fe1f12bc59@nvidia.com>
+         <20160828173246.32621-3-contact@paulk.fr>
+         <a9485a88-55a5-9dd1-1a1b-a6c0a78ff476@nvidia.com>
+         <1474394004.1215.2.camel@paulk.fr>
+         <d05b8e5a-adf7-9057-b42a-0da1fde84953@nvidia.com>
+         <1474394544.1215.13.camel@paulk.fr>
+         <6501341f-e14c-4876-dcb7-60a33b7621c4@nvidia.com>
+         <1474443809.1239.4.camel@paulk.fr>
+         <5461eb20-9372-7fa1-0e48-3d0143393b8c@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-i6G+j71m1l5yNPoDaK6G"
+        protocol="application/pgp-signature"; boundary="=-sD5karDeo4Z8mefpD3Lb"
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <eb7540c0-4abd-86c0-7777-78fe1f12bc59@nvidia.com>
+In-Reply-To: <5461eb20-9372-7fa1-0e48-3d0143393b8c@nvidia.com>
 Sender: linux-kernel-owner@vger.kernel.org
 To: Jon Hunter <jonathanh@nvidia.com>, linux-kernel@vger.kernel.org
 Cc: devicetree@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---=-i6G+j71m1l5yNPoDaK6G
+--=-sD5karDeo4Z8mefpD3Lb
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
 Resending with the right CC chain.
 
-Le mercredi 21 septembre 2016 =C3=A0 10:06 +0100, Jon Hunter a =C3=A9crit=
+Le mercredi 21 septembre 2016 =C3=A0 10:15 +0100, Jon Hunter a =C3=A9crit=
 =C2=A0:
-> On 21/09/16 09:26, Paul Kocialkowski wrote:
-> >=20
-> >=20
-> > * PGP Signed by an unknown key
-> >=20
-> > Le mercredi 21 septembre 2016 =C3=A0 08:52 +0100, Jon Hunter a =C3=A9cr=
-it :
-> > >=20
-> > >=20
-> > > On 20/09/16 19:14, Paul Kocialkowski wrote:
-> > > >=20
-> > > >=20
-> > > >=20
-> > > > >=20
-> > > > >=20
-> > > > > Old Signed by an unknown key
-> > > >=20
-> > > > Le mardi 20 septembre 2016 =C3=A0 18:15 +0100, Jon Hunter a =C3=A9c=
-rit :
-> > > > >=20
-> > > > >=20
-> > > > >=20
-> > > > > On 28/08/16 18:32, Paul Kocialkowski wrote:
+>=20
+> On 21/09/16 08:43, Paul Kocialkowski wrote:
+>=20
+> ...
+>=20
+> > > > > > > > Depthcharge (the payload used with cros devices) will attem=
+pt to
+> > > > > > > > detect
+> > > > > > > > boards using their revision. This includes all the known
+> > > > > > > > revisions
+> > > > > > > > for
+> > > > > > > > the nyan-big board so that the dtb can be selected preferab=
+ly.
+> > > > > > >=20
+> > > > > > > May be I am missing something here, but for the mainline ther=
+e is
+> > > > > > > only
+> > > > > > > one dtb available and so why is this needed for the mainline?
 > > > > > >=20
-> > > > > >=20
-> > > > > >=20
-> > > > > >=20
-> > > > > > This switches a few interrupt definitions that were using
-> > > > > > GPIO_ACTIVE_HIGH as IRQ type, which is invalid.
+> > > > > > There is indeed a single dts in mainline, but depthcharge will =
+use
+> > > > > > the
+> > > > > > revision
+> > > > > > to match the compatible string (e.g. it will look for google,ny=
+an-
+> > > > > > big-
+> > > > > > rev5,
+> > > > > > not
+> > > > > > google,nyan-big), so we need to list them all in that single dt=
+s.
+> > > > > > Otherwise,
+> > > > > > depthcharge will fall back to the default config, which may or =
+may
+> > > > > > not
+> > > > > > be
+> > > > > > suitable for nyan.
 > > > > >=20
-> > > > > May be you are right, but this does not describe why this is inva=
-lid.
-> > > > > Can you elaborate?
+> > > > > Is tegra124-nyan-big.dtb not the default?
 > > > >=20
-> > > > GPIO_ACTIVE_HIGH is simply not the right kind of define to use in t=
-he
-> > > > "interrupts" devicetree property. Values provided there are underst=
-ood
-> > > > as
-> > > > IRQ_TYPE_ defines.
-> > >=20
-> > > Right, but you are changing the type as GPIO_ACTIVE_HIGH =3D 0 and
-> > > IRQ_TYPE_EDGE_FALLING =3D 2 and there is no comment about why this ha=
+> > > > You can't expect that to always be the case. The image format allow=
 s
-> > > been changed. It might be correct, but you need to explain it.
-> >=20
-> > This actually makes the IRQ trigger values consistent with the drivers,=
- that
-> > define them regardless of devicetree anyway. The max98090 driver
-> > has IRQF_TRIGGER_FALLING and bq24735 has IRQF_TRIGGER_RISING |
-> > IRQF_TRIGGER_FALLING.
-> >=20
-> > This is really more of a cosmetic change, it doesn't impact actual use.
+> > > > many
+> > > > different dts to be provided, so I could easily build with
+> > > > multi_v7_defconfig
+> > > > and have various dts for various devices in the same image, and jus=
+t
+> > > > select
+> > > > a
+> > > > random one as default.
+> > >=20
+> > > Really? Sounds odd. I was hoping that tegra124-nyan-big.dtb would be =
+a
+> > > catch all.
 >=20
-> So you are saying that the drivers don't actually use the DT types?
+> I meant I was hoping that compatible =3D "google,nyan-big" would be the
+> catchall not the dtb file name ;-)
 
-It appears so. At least they are hardcoded in the kernel driver.
+Yeah, I figured :)
 
 >=20
-> =C2=A0May be that is ok, and yes this is cosmetic, but this should be sta=
-ted in
-> the changelog as it is not clear what is going on here.
+> >=20
+> > Yes, the image format (FIT) allows specifying multiple dtb and zImage
+> > combinations in the same image[0].
+>=20
+> Yes I am aware of that. Typically, I have been testing using a FIT image
+> with single zImage and dtb. Hence no problems.
+>=20
+> So are you wanting to create a FIT image to support multiple boards and
+> use the single FIT image for all? If so then I can see why you want
+> this. Again please describe the motivation for the changes in the
+> changelog so it is clear why we are adding this.
 
 Fair enough, will do in v2.
 
@@ -99,26 +112,26 @@ s
 Website: https://www.paulk.fr/
 Coding blog: https://code.paulk.fr/
 Git repositories: https://git.paulk.fr/ https://git.code.paulk.fr/
---=-i6G+j71m1l5yNPoDaK6G
+--=-sD5karDeo4Z8mefpD3Lb
 Content-Type: application/pgp-signature; name="signature.asc"
 Content-Description: This is a digitally signed message part
 Content-Transfer-Encoding: 7bit
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAABCAAGBQJX4lNqAAoJEIT9weqP7pUMvV8P/RXy74MdU2gqNItD/oSEXb7b
-i52U81fv4cQUImlDAmIJa09ZhzoVf08CnpL/0wFkuVgbGWbIThKaafJwyagyodZ1
-mu8V+ZgSVI6tzr824abL/csm8s1NCjFY6cJr+HEfhBtMmowEiQYdHkAOLiBSOqvQ
-1l6OkUQxdAzQkvtcz/7/72TDVPNZ7wB0fFz876UtKzq7Sq38eMGI8xMu9DEfSLqr
-CzayiogfSmll6o6XjYNpL4LL0VPF9yZKC+UYRq+aC0Yx0P16+X4PQURYGxbiYD9t
-gABrcUgI7yp4iE2n5MPezcycqUQWQbr8MnK/FcRt0E5Qaoe8mRcRzPXgU2qvQ5lW
-5XpAyt/ptE9JR0OYgPsUJ+1NMBkHOhoiypPMAY5cyW6+4zOKabUstBRkAhhAzQ+v
-2u1F0ifdB6gyQXOPMgzJ6/IlVCYKKy03yOCpJ+3To5WlHW74nWpY7RfkbU7cHoY0
-FPyAQ/GEkduGoQCLS0vRjPiXlQ5GyQMnHHMHA2qwP4weLZrYhiX+k8jLHi3C5+SZ
-/5dYxPZEgp2RGlLas55FryXqKuITcThmmOSuGHpLpxf6KLloFnwkwYyinaEQlAqU
-oWT2BtVwJpoEbQqO83a32YYMX7XuOu7z7HMy0WRAEgWRUtgDkGhCJ5wlFvkGK3ZG
-YZFW8mMX7S3WGpMny/JQ
-=8dJ+
+iQIcBAABCAAGBQJX4lODAAoJEIT9weqP7pUMp30QAIKGqWWbIYQGJEnOKzXnUmuU
+gD97/oAiFlc8k9oLNOemnrLN3b6GsUQS3QVhLu+LQcbL5gx1IbdDPgryh8iRn/y6
+YK7nfspp5PTMAbnZwXbkQWUYuwa25kgFfy7CJFNrSxWAH+iRUxrlPDQSYYPbnG1D
+W/Gg9dQBXsXycsx0UMNGzLtPxYxFz2j+ywf6ZI3bi1fOugdN2OG4Z5jBEi8qxFAV
+d0TQNfnVyyfJIPBML9n3gkyK98mk0b/URRdhvwAPJuygyaykH80GWTbmk4J+DYhM
+YOZ+/uxN50gRSmoVrl2j0p/5mNvrSmu5hnv41jKIBRJzTtLZ7v3uV7EXeT+b7one
+JVKnJ06JjzJWWjVdQezXOxL3MzqrbbLdUOUnRO+ta+0cvwJE4s6pmjQgpjl4Rej5
+3m2VwvQTTAl4uEbfBjzudhQN4INVT1Pty5r5dTYMSpEWYsZf7le40YEEnyGXosJz
++qbsQIoa3sgwCYegWvx7XN+dwW7ZSGSg9kXV2+kr8lt8gPrFP502voexH0NguIQ1
+iEt4N45NV1tszgzySDFjqCoRLr8muZFl9S9cqJgSVFV+zwqBT6ARaDN0TKwUrndn
+uSesr7mEhJoGqitLbB78zoqMNzt46osGUgd81Rc9/4AdG4Ob4b/7XrUv7fgez+yV
+2Nak1a2Rr9gFC1liKTXk
+=PqxB
 -----END PGP SIGNATURE-----
 
---=-i6G+j71m1l5yNPoDaK6G--
+--=-sD5karDeo4Z8mefpD3Lb--
