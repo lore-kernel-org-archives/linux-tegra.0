@@ -1,36 +1,40 @@
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: [PATCH] drm/tegra: sor: No need to free devm_ allocated memory
-Date: Sat, 24 Sep 2016 22:07:30 +0200
-Message-ID: <1474747650-10306-1-git-send-email-christophe.jaillet@wanadoo.fr>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: thierry.reding@gmail.com, airlied@linux.ie, swarren@wwwdotorg.org, gnurou@gmail.com, linux-tegra@vger.kernel.org
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [GIT PULL] drm/tegra: Changes for v4.9-rc1
+Date: Thu, 29 Sep 2016 18:19:33 +0200
+Message-ID: <20160929161933.31340-1-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Dave Airlie <airlied@gmail.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-'brick' has been allocated by 'devm_kzalloc', so there is no need here to
-free it explicitly.
-There is only one caller of 'tegra_clk_sor_brick_register()'. This function
-is a probe function which correctly checks and handles the return value of
-'tegra_clk_sor_brick_register()'.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
- drivers/gpu/drm/tegra/sor.c | 2 --
- 1 file changed, 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/tegra/sor.c b/drivers/gpu/drm/tegra/sor.c
-index 74d0540b8d4c..a8f528925009 100644
---- a/drivers/gpu/drm/tegra/sor.c
-+++ b/drivers/gpu/drm/tegra/sor.c
-@@ -349,8 +349,6 @@ static struct clk *tegra_clk_sor_brick_register(struct tegra_sor *sor,
- 	brick->hw.init = &init;
- 
- 	clk = devm_clk_register(sor->dev, &brick->hw);
--	if (IS_ERR(clk))
--		kfree(brick);
- 
- 	return clk;
- }
--- 
-2.7.4
+SGkgRGF2ZSwKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgODc5MDRjM2U4MjMx
+OWNmMmJhZDhkNjU2ZDc5YzUwMzBkYWI5NDkwZToKCiAgZHJtL3RlZ3JhOiBkc2k6IEVuaGFuY2Ug
+cnVudGltZSBwb3dlciBtYW5hZ2VtZW50ICgyMDE2LTA4LTI0IDE1OjU4OjU3ICswMjAwKQoKYXJl
+IGF2YWlsYWJsZSBpbiB0aGUgZ2l0IHJlcG9zaXRvcnkgYXQ6CgogIGdpdDovL2Fub25naXQuZnJl
+ZWRlc2t0b3Aub3JnL3RlZ3JhL2xpbnV4IHRhZ3MvZHJtL3RlZ3JhL2Zvci00LjktcmMxCgpmb3Ig
+eW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gMDhlZTAxNzg5ZWViZjQzM2MyN2U4YjNlZWNjM2Rk
+YmI1ZjdjNGQ1MToKCiAgZHJtL3RlZ3JhOiBGaXggd2luZG93WzBdIGJhc2UgYWRkcmVzcyBjb3Jy
+dXB0aW9uICgyMDE2LTA4LTI0IDE2OjE1OjA5ICswMjAwKQoKVGhhbmtzLApUaGllcnJ5CgotLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
+LS0tCmRybS90ZWdyYTogQ2hhbmdlcyBmb3IgdjQuOS1yYzEKCk9uZSBidWdmaXggdGhhdCBhdm9p
+ZHMgb3ZlcndyaXRpbmcgdGhlIFkgcGxhbmUgYmFzZSBhZGRyZXNzIHdoZW4KZGlzcGxheWluZyBi
+dWZmZXJzIHdpdGggb25lIG9mIHRoZSBZVVYvWVZVIGZvcm1hdHMuCgotLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkRtaXRyeSBP
+c2lwZW5rbyAoMSk6CiAgICAgIGRybS90ZWdyYTogRml4IHdpbmRvd1swXSBiYXNlIGFkZHJlc3Mg
+Y29ycnVwdGlvbgoKIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kYy5jIHwgOSArKysrKysrKy0KIDEg
+ZmlsZSBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
+dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
+b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
