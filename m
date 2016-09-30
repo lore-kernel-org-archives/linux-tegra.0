@@ -1,40 +1,128 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [GIT PULL] drm/tegra: Changes for v4.9-rc1
-Date: Thu, 29 Sep 2016 18:19:33 +0200
-Message-ID: <20160929161933.31340-1-thierry.reding@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH v2 3/6] dt/bindings: Add bindings for Tegra GMI controller
+Date: Fri, 30 Sep 2016 09:02:00 +0100
+Message-ID: <fca81faa-f7de-08df-00dd-dcc36d94aaf2@nvidia.com>
+References: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
+ <1472045838-22628-4-git-send-email-mirza.krak@gmail.com>
+ <de2fb909-829e-6c04-4f6a-442cbb9171c9@nvidia.com>
+ <CALw8SCVcPymDZ8NyUbeanRF0TCT1TZzL6iRDticYA42FWrEWqw@mail.gmail.com>
+ <20160830170636.GA8741@rob-hp-laptop>
+ <CALw8SCUYQGWXn7=Jpn=uvFvvPRVFQGrtSNot+-tVgP73yAEEOQ@mail.gmail.com>
+ <a3a2371b-5d98-db2d-b7e4-be6d08cb7271@nvidia.com>
+ <CALw8SCUK0_kvNR_juAc7N_DMQbV=voizqXE6PApc_B_CQHzzOA@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Dave Airlie <airlied@gmail.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CALw8SCUK0_kvNR_juAc7N_DMQbV=voizqXE6PApc_B_CQHzzOA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Mirza Krak <mirza.krak@gmail.com>, Rob Herring <robh@kernel.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux@armlinux.org.uk, pdeschrijver@nvidia.com, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-SGkgRGF2ZSwKClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgODc5MDRjM2U4MjMx
-OWNmMmJhZDhkNjU2ZDc5YzUwMzBkYWI5NDkwZToKCiAgZHJtL3RlZ3JhOiBkc2k6IEVuaGFuY2Ug
-cnVudGltZSBwb3dlciBtYW5hZ2VtZW50ICgyMDE2LTA4LTI0IDE1OjU4OjU3ICswMjAwKQoKYXJl
-IGF2YWlsYWJsZSBpbiB0aGUgZ2l0IHJlcG9zaXRvcnkgYXQ6CgogIGdpdDovL2Fub25naXQuZnJl
-ZWRlc2t0b3Aub3JnL3RlZ3JhL2xpbnV4IHRhZ3MvZHJtL3RlZ3JhL2Zvci00LjktcmMxCgpmb3Ig
-eW91IHRvIGZldGNoIGNoYW5nZXMgdXAgdG8gMDhlZTAxNzg5ZWViZjQzM2MyN2U4YjNlZWNjM2Rk
-YmI1ZjdjNGQ1MToKCiAgZHJtL3RlZ3JhOiBGaXggd2luZG93WzBdIGJhc2UgYWRkcmVzcyBjb3Jy
-dXB0aW9uICgyMDE2LTA4LTI0IDE2OjE1OjA5ICswMjAwKQoKVGhhbmtzLApUaGllcnJ5CgotLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0t
-LS0tCmRybS90ZWdyYTogQ2hhbmdlcyBmb3IgdjQuOS1yYzEKCk9uZSBidWdmaXggdGhhdCBhdm9p
-ZHMgb3ZlcndyaXRpbmcgdGhlIFkgcGxhbmUgYmFzZSBhZGRyZXNzIHdoZW4KZGlzcGxheWluZyBi
-dWZmZXJzIHdpdGggb25lIG9mIHRoZSBZVVYvWVZVIGZvcm1hdHMuCgotLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tCkRtaXRyeSBP
-c2lwZW5rbyAoMSk6CiAgICAgIGRybS90ZWdyYTogRml4IHdpbmRvd1swXSBiYXNlIGFkZHJlc3Mg
-Y29ycnVwdGlvbgoKIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kYy5jIHwgOSArKysrKysrKy0KIDEg
-ZmlsZSBjaGFuZ2VkLCA4IGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkKX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlz
-dApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+Rob,
+
+On 19/09/16 08:21, Mirza Krak wrote:
+> 2016-09-06 12:32 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
+>>
+>> On 31/08/16 12:22, Mirza Krak wrote:
+>>> 2016-08-30 19:06 GMT+02:00 Rob Herring <robh@kernel.org>:
+>>
+>> ...
+>>
+>>>>>                  nvidia,snor-cs = <4>;
+>>>>
+>>>> NAK, no custom CS properties.
+>>
+>> Ok, so ...
+>>
+>>> gmi@70090000 {
+>>>         compatible = "nvidia,tegra20-gmi";
+>>>         reg = <0x70009000 0x1000>;
+>>>         #address-cells = <2>;
+>>>         #size-cells = <1>;
+>>>         clocks = <&tegra_car TEGRA20_CLK_NOR>;
+>>>         clock-names = "gmi";
+>>>         resets = <&tegra_car 42>;
+>>>         reset-names = "gmi";
+>>>         ranges = <4 0 0xd0000000 0xfffffff>;
+>>>
+>>>         status = "okay";
+>>>
+>>>         bus@4,0 {
+>>>                 compatible = "simple-bus";
+>>>                 #address-cells = <1>;
+>>>                 #size-cells = <1>;
+>>>                 ranges = <0 4 0 0x40000>;
+>>>
+>>>                 nvidia,snor-mux-mode;
+>>>                 nvidia,snor-adv-inv;
+>>>
+>>>                 can@0 {
+>>>                         reg = <0 0x100>;
+>>>                         ...
+>>>                 };
+>>>
+>>>                 can@40000 {
+>>>                         reg = <0x40000 0x100>;
+>>>                         ...
+>>>                 };
+>>>         };
+>>> };
+>>>
+>>> Have I understood you correct?
+>>>
+>>> Also wanted to verify the example case where you only have on device
+>>> connected to one CS#, from what I see in other implementations it
+>>> seems OK to put the CS# in the reg property in that case. Is this
+>>> correct?
+>>>
+>>> Example with one SJA1000 CAN controller connected to the GMI bus
+>>> on CS4:
+>>>
+>>> gmi@70090000 {
+>>>         compatible = "nvidia,tegra20-gmi";
+>>>         reg = <0x70009000 0x1000>;
+>>>         #address-cells = <2>;
+>>>         #size-cells = <1>;
+>>>         clocks = <&tegra_car TEGRA20_CLK_NOR>;
+>>>         clock-names = "gmi";
+>>>         resets = <&tegra_car 42>;
+>>>         reset-names = "gmi";
+>>>         ranges = <4 0 0xd0000000 0xfffffff>;
+>>>
+>>>         status = "okay";
+>>>
+>>>         can@4,0 {
+>>>                 reg = <4 0 0x100>;
+>>>                 nvidia,snor-mux-mode;
+>>>                 nvidia,snor-adv-inv;
+>>>                 ...
+>>>         };
+>>> };
+>>>
+>>> Jon, to be able to handle both cases in the driver we would first
+>>> attempt to decode the CS# from the ranges property, and fallback to
+>>> reg property if no ranges are defined. Does that sound reasonable?
+>>
+>> Given the above examples that may be supported, is there a
+>> better/simpler way to extract the CS# than what Mirza is proposing? For
+>> example, from the node-name unit-address?
+>>
+> 
+> Hi.
+> 
+> I have been on vacation and now I am back and wanted to finalize these
+> patch series.
+> 
+> So pinging this thread to see I we can agree on a solution.
+> 
+> Rob any comments to my proposal and Jon`s comment?
+
+Can you comment on the above?
+
+Cheers
+Jon
+
+-- 
+nvpublic
