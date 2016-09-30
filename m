@@ -1,125 +1,91 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH v2 3/6] dt/bindings: Add bindings for Tegra GMI controller
-Date: Fri, 30 Sep 2016 09:02:00 +0100
-Message-ID: <fca81faa-f7de-08df-00dd-dcc36d94aaf2@nvidia.com>
-References: <1472045838-22628-1-git-send-email-mirza.krak@gmail.com>
- <1472045838-22628-4-git-send-email-mirza.krak@gmail.com>
- <de2fb909-829e-6c04-4f6a-442cbb9171c9@nvidia.com>
- <CALw8SCVcPymDZ8NyUbeanRF0TCT1TZzL6iRDticYA42FWrEWqw@mail.gmail.com>
- <20160830170636.GA8741@rob-hp-laptop>
- <CALw8SCUYQGWXn7=Jpn=uvFvvPRVFQGrtSNot+-tVgP73yAEEOQ@mail.gmail.com>
- <a3a2371b-5d98-db2d-b7e4-be6d08cb7271@nvidia.com>
- <CALw8SCUK0_kvNR_juAc7N_DMQbV=voizqXE6PApc_B_CQHzzOA@mail.gmail.com>
+Subject: Re: [RFC PATCH 2/3] PM / Domains: Add support for devices with
+ multiple domains
+Date: Fri, 30 Sep 2016 09:05:21 +0100
+Message-ID: <f62f7b1c-0df5-1850-ecf7-b6e963520248@nvidia.com>
+References: <1474367287-10402-1-git-send-email-jonathanh@nvidia.com>
+ <1474367287-10402-3-git-send-email-jonathanh@nvidia.com>
+ <CAMuHMdVc+EjkbcpPKyzbCfDjp65gF3xP3bhkjh6SKLt6KDTtXg@mail.gmail.com>
+ <658004af-e4f4-8b0c-cdc1-43661d331d70@nvidia.com>
+ <CAMuHMdV9TENEt7y5Opehh1CC5+0=s4nRMvnh=0nTYOUuOOC2uw@mail.gmail.com>
+ <1c217cf4-8682-8e6d-6958-419923e995cd@nvidia.com>
+ <CAMuHMdWUAQd-sbj51XRPJ5b9By8Aiak6h-F=BcMCR=i8MiZvbQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CALw8SCUK0_kvNR_juAc7N_DMQbV=voizqXE6PApc_B_CQHzzOA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Mirza Krak <mirza.krak@gmail.com>, Rob Herring <robh@kernel.org>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux@armlinux.org.uk, pdeschrijver@nvidia.com, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, sboyd@codeaurora.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel <linux-kernel@vger.kernel.org>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAMuHMdWUAQd-sbj51XRPJ5b9By8Aiak6h-F=BcMCR=i8MiZvbQ@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Geert Uytterhoeven <geert@linux-m68k.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Linux PM list <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, linux-tegra@vger.kernel.org, Linux-Renesas <linux-renesas-soc@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Rob,
+Hi PM posse!
 
-On 19/09/16 08:21, Mirza Krak wrote:
-> 2016-09-06 12:32 GMT+02:00 Jon Hunter <jonathanh@nvidia.com>:
->>
->> On 31/08/16 12:22, Mirza Krak wrote:
->>> 2016-08-30 19:06 GMT+02:00 Rob Herring <robh@kernel.org>:
->>
->> ...
->>
->>>>>                  nvidia,snor-cs = <4>;
+On 23/09/16 15:27, Geert Uytterhoeven wrote:
+> Hi Jon,
+> 
+> On Fri, Sep 23, 2016 at 2:57 PM, Jon Hunter <jonathanh@nvidia.com> wrote:
+>> On 21/09/16 15:57, Geert Uytterhoeven wrote:
+>>> On Wed, Sep 21, 2016 at 4:37 PM, Jon Hunter <jonathanh@nvidia.com> wrote:
+>>>> On 21/09/16 09:53, Geert Uytterhoeven wrote:
+>>>>> On Tue, Sep 20, 2016 at 12:28 PM, Jon Hunter <jonathanh@nvidia.com> wrote:
+>>>>>> Some devices may require more than one PM domain to operate and this is
+>>>>>> not currently by the PM domain framework. Furthermore, the current Linux
+>>>>>> 'device' structure only allows devices to be associated with a single PM
+>>>>>> domain and so cannot easily be associated with more than one. To allow
+>>>>>> devices to be associated with more than one PM domain, if multiple
+>>>>>> domains are defined for a given device (eg. via device-tree), then:
+>>>>>> 1. Create a new PM domain for this device. The name of the new PM domain
+>>>>>>    created matches the device name for which it was created for.
+>>>>>> 2. Register the new PM domain as a sub-domain for all PM domains
+>>>>>>    required by the device.
+>>>>>> 3. Attach the device to the new PM domain.
+>>>>>
+>>>>> This looks a suboptimal to me: if you have n devices sharing the same PM
+>>>>> domains, you would add n new subdomains?
 >>>>
->>>> NAK, no custom CS properties.
+>>>> BTW, would this be the case today for some renesas devices or are you
+>>>> just pointing this out as something that could be optimised/improved?
+>>>
+>>> This is the case for all Renesas SoCs that have power areas: devices belong
+>>> to both the PM domain for the power area, and to the PM domain for the clock
+>>> domain.
 >>
->> Ok, so ...
->>
->>> gmi@70090000 {
->>>         compatible = "nvidia,tegra20-gmi";
->>>         reg = <0x70009000 0x1000>;
->>>         #address-cells = <2>;
->>>         #size-cells = <1>;
->>>         clocks = <&tegra_car TEGRA20_CLK_NOR>;
->>>         clock-names = "gmi";
->>>         resets = <&tegra_car 42>;
->>>         reset-names = "gmi";
->>>         ranges = <4 0 0xd0000000 0xfffffff>;
->>>
->>>         status = "okay";
->>>
->>>         bus@4,0 {
->>>                 compatible = "simple-bus";
->>>                 #address-cells = <1>;
->>>                 #size-cells = <1>;
->>>                 ranges = <0 4 0 0x40000>;
->>>
->>>                 nvidia,snor-mux-mode;
->>>                 nvidia,snor-adv-inv;
->>>
->>>                 can@0 {
->>>                         reg = <0 0x100>;
->>>                         ...
->>>                 };
->>>
->>>                 can@40000 {
->>>                         reg = <0x40000 0x100>;
->>>                         ...
->>>                 };
->>>         };
->>> };
->>>
->>> Have I understood you correct?
->>>
->>> Also wanted to verify the example case where you only have on device
->>> connected to one CS#, from what I see in other implementations it
->>> seems OK to put the CS# in the reg property in that case. Is this
->>> correct?
->>>
->>> Example with one SJA1000 CAN controller connected to the GMI bus
->>> on CS4:
->>>
->>> gmi@70090000 {
->>>         compatible = "nvidia,tegra20-gmi";
->>>         reg = <0x70009000 0x1000>;
->>>         #address-cells = <2>;
->>>         #size-cells = <1>;
->>>         clocks = <&tegra_car TEGRA20_CLK_NOR>;
->>>         clock-names = "gmi";
->>>         resets = <&tegra_car 42>;
->>>         reset-names = "gmi";
->>>         ranges = <4 0 0xd0000000 0xfffffff>;
->>>
->>>         status = "okay";
->>>
->>>         can@4,0 {
->>>                 reg = <4 0 0x100>;
->>>                 nvidia,snor-mux-mode;
->>>                 nvidia,snor-adv-inv;
->>>                 ...
->>>         };
->>> };
->>>
->>> Jon, to be able to handle both cases in the driver we would first
->>> attempt to decode the CS# from the ranges property, and fallback to
->>> reg property if no ranges are defined. Does that sound reasonable?
->>
->> Given the above examples that may be supported, is there a
->> better/simpler way to extract the CS# than what Mirza is proposing? For
->> example, from the node-name unit-address?
->>
+>> To quantify this a bit, for the Renesas case, how many of these
+>> duplicated domains would there be if you were to use this approach as-is?
 > 
-> Hi.
+> for i in $(git grep -l renesas, -- "*dts*") ; do echo --- $i ---; git
+> grep -w power-domains $i | sort | uniq -c | sort -n;done
 > 
-> I have been on vacation and now I am back and wanted to finalize these
-> patch series.
+> tells you how many (supported) devices are (currently) present in each
+> PM domain.
+> Most of these (all but devices in CPU/SCU power areas) are also part of a
+> clock domain.
+> The synthetic R8A779*_PD_ALWAYS_ON domains could be dropped again,
+> as we could just refer to the CPG/MSSR node for the clock domain instead.
 > 
-> So pinging this thread to see I we can agree on a solution.
+> For older SH/R-Mobile SoCs with lots of hierarchical domains, that gives us,
+> after removing the above:
 > 
-> Rob any comments to my proposal and Jon`s comment?
+>       1 arch/arm/boot/dts/r8a7740.dtsi:         power-domains = <&pd_a4mp>;
+>       1 arch/arm/boot/dts/r8a7740.dtsi:         power-domains = <&pd_d4>;
+>       2 arch/arm/boot/dts/r8a7740.dtsi:         power-domains = <&pd_c5>;
+>       3 arch/arm/boot/dts/r8a7740.dtsi:         power-domains = <&pd_a4r>;
+>       6 arch/arm/boot/dts/r8a7740.dtsi:         power-domains = <&pd_a4s>;
+>      15 arch/arm/boot/dts/r8a7740.dtsi:         power-domains = <&pd_a3sp>;
+> 
+> R-Car Gen1/Gen2 have all devices in the "always on" PM domain, so they're
+> not affected.
+> 
+> R-Car Gen3 again has devices in power areas, mostly for graphics related
+> purposes:
+> 
+>      16 arch/arm64/boot/dts/renesas/r8a7795.dtsi:
+>  power-domains = <&sysc R8A7795_PD_A3VP>;
 
-Can you comment on the above?
+Does anyone have any more inputs comments on this? Does it look complete
+bonkers or should I forge ahead with this?
 
 Cheers
 Jon
