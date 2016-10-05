@@ -1,185 +1,290 @@
-From: Jani Nikula <jani.nikula@linux.intel.com>
-Subject: kernel-doc-rst-lint (was: Re: [PATCH 00/15] improve function-level documentation)
-Date: Wed, 05 Oct 2016 17:04:43 +0300
-Message-ID: <87h98quc1w.fsf@intel.com>
+From: Julia Lawall <julia.lawall-L2FTfq7BK8M@public.gmane.org>
+Subject: Re: [PATCH 00/15] improve function-level documentation
+Date: Wed, 5 Oct 2016 16:47:00 +0200 (CEST)
+Message-ID: <alpine.DEB.2.10.1610051645310.3568@hadrien>
 References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr> <CAKMK7uHT3FutHQuQQ3iwXmYbidB3AOs7AxnpaJD4MTqy0-QehQ@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-doc-owner@vger.kernel.org>
-In-Reply-To: <CAKMK7uHT3FutHQuQQ3iwXmYbidB3AOs7AxnpaJD4MTqy0-QehQ@mail.gmail.com>
-Sender: linux-doc-owner@vger.kernel.org
-To: Daniel Vetter <daniel@ffwll.ch>, Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Linux PM list <linux-pm@vger.kernel.org>, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-clk@vger.kernel.org, "linaro-mm-sig@lists.linaro.org" <linaro-mm-sig@lists.linaro.org>, linux-mtd@lists.infradead.org, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, drbd-dev@lists.linbit.com, linux-metag@vger.kernel.org, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>, linux-doc@vger.kernel.org
+Content-Type: TEXT/PLAIN; charset=US-ASCII
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAKMK7uHT3FutHQuQQ3iwXmYbidB3AOs7AxnpaJD4MTqy0-QehQ-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Cc: Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org>, linux-metag-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux PM list <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org" <linaro-mm-sig-cunTk1MwBs8s++Sfvej+rw@public.gmane.org>, linux-mtd-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-media-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, drbd-dev-cunTk1MwBs8qoQakbn7OcQ@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, 05 Oct 2016, Daniel Vetter <daniel@ffwll.ch> wrote:
+
+
+On Wed, 5 Oct 2016, Daniel Vetter wrote:
+
 > Jani Nikula has a patch with a scrip to make the one kernel-doc parser
 > into a lint/checker pass over the entire kernel. I think that'd would
 > be more robust instead of trying to approximate the real kerneldoc
 > parser. Otoh that parser is a horror show of a perl/regex driven state
 > machine ;-)
+
+Sure.  To my recollection, I found around 2000 issues.  Many I ignored, eg
+functions that simply have no documentation abuot the parameters,
+functions that document their local variables, when these were more
+interesting than the parameters etc.  But the set of patches is not
+exhaustive with respect to the remaining interesting ones either.
+
+julia
+
 >
 > Jani, can you pls digg out these patches? Can't find them right now ...
-
-Expanding the massive Cc: with linux-doc list...
-
-Here goes. It's a quick hack from months ago, but still seems to
-somewhat work. At least for the kernel-doc parts. The reStructuredText
-lint part isn't all that great, and doesn't have mapping to line numbers
-like the Sphinx kernel-doc extension does. Anyway I'm happy how this
-integrates with kernel build CHECK and C=1/C=2.
-
-I guess Julia's goal is to automate the *fixing* of some of the error
-classes from kernel-doc. Not sure how well this could be made to
-integrate with any of that.
-
-BR,
-Jani.
-
-
-From 1244efa0f63a7b13795e8c37f81733a3c8bfc56a Mon Sep 17 00:00:00 2001
-From: Jani Nikula <jani.nikula@intel.com>
-Date: Tue, 31 May 2016 18:11:33 +0300
-Subject: [PATCH] kernel-doc-rst-lint: add tool to check kernel-doc and rst
- correctness
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-Cc: Jani Nikula <jani.nikula@intel.com>
-
-Simple kernel-doc and reStructuredText lint tool that can be used
-independently and as a kernel build CHECK tool to validate kernel-doc
-comments.
-
-Independent usage:
-$ kernel-doc-rst-lint FILE
-
-Kernel CHECK usage:
-$ make CHECK=scripts/kernel-doc-rst-lint C=1		# (or C=2)
-
-Depends on docutils and the rst-lint package
-https://pypi.python.org/pypi/restructuredtext_lint
-
-Signed-off-by: Jani Nikula <jani.nikula@intel.com>
----
- scripts/kernel-doc-rst-lint | 106 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 106 insertions(+)
- create mode 100755 scripts/kernel-doc-rst-lint
-
-diff --git a/scripts/kernel-doc-rst-lint b/scripts/kernel-doc-rst-lint
-new file mode 100755
-index 000000000000..7e0157679f83
---- /dev/null
-+++ b/scripts/kernel-doc-rst-lint
-@@ -0,0 +1,106 @@
-+#!/usr/bin/env python
-+# coding=utf-8
-+#
-+# Copyright © 2016 Intel Corporation
-+#
-+# Permission is hereby granted, free of charge, to any person obtaining a
-+# copy of this software and associated documentation files (the "Software"),
-+# to deal in the Software without restriction, including without limitation
-+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
-+# and/or sell copies of the Software, and to permit persons to whom the
-+# Software is furnished to do so, subject to the following conditions:
-+#
-+# The above copyright notice and this permission notice (including the next
-+# paragraph) shall be included in all copies or substantial portions of the
-+# Software.
-+#
-+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-+# IN THE SOFTWARE.
-+#
-+# Authors:
-+#    Jani Nikula <jani.nikula@intel.com>
-+#
-+# Simple kernel-doc and reStructuredText lint tool that can be used
-+# independently and as a kernel build CHECK tool to validate kernel-doc
-+# comments.
-+#
-+# Independent usage:
-+# $ kernel-doc-rst-lint FILE
-+#
-+# Kernel CHECK usage:
-+# $ make CHECK=scripts/kernel-doc-rst-lint C=1		# (or C=2)
-+#
-+# Depends on docutils and the rst-lint package
-+# https://pypi.python.org/pypi/restructuredtext_lint
-+#
-+
-+import os
-+import subprocess
-+import sys
-+
-+from docutils.parsers.rst import directives
-+from docutils.parsers.rst import Directive
-+from docutils.parsers.rst import roles
-+from docutils import nodes, statemachine
-+import restructuredtext_lint
-+
-+class DummyDirective(Directive):
-+    required_argument = 1
-+    optional_arguments = 0
-+    option_spec = { }
-+    has_content = True
-+
-+    def run(self):
-+        return []
-+
-+# Fake the Sphinx C Domain directives and roles
-+directives.register_directive('c:function', DummyDirective)
-+directives.register_directive('c:type', DummyDirective)
-+roles.register_generic_role('c:func', nodes.emphasis)
-+roles.register_generic_role('c:type', nodes.emphasis)
-+
-+# We accept but ignore parameters to be compatible with how the kernel build
-+# invokes CHECK.
-+if len(sys.argv) < 2:
-+    sys.stderr.write('usage: kernel-doc-rst-lint [IGNORED OPTIONS] FILE\n');
-+    sys.exit(1)
-+
-+infile = sys.argv[len(sys.argv) - 1]
-+cmd = ['scripts/kernel-doc', '-rst', infile]
-+
-+try:
-+    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
-+    out, err = p.communicate()
-+
-+    # python2 needs conversion to unicode.
-+    # python3 with universal_newlines=True returns strings.
-+    if sys.version_info.major < 3:
-+        out, err = unicode(out, 'utf-8'), unicode(err, 'utf-8')
-+
-+    # kernel-doc errors
-+    sys.stderr.write(err)
-+    if p.returncode != 0:
-+        sys.exit(p.returncode)
-+
-+    # restructured text errors
-+    lines = statemachine.string2lines(out, 8, convert_whitespace=True)
-+    lint_errors = restructuredtext_lint.lint(out, infile)
-+    for error in lint_errors:
-+        # Ignore INFO
-+        if error.level <= 1:
-+            continue
-+
-+        print(error.source + ': ' + error.type + ': ' + error.full_message)
-+        if error.line is not None:
-+            print('Context:')
-+            print('\t' + lines[error.line - 1])
-+            print('\t' + lines[error.line])
-+
-+except Exception as e:
-+    sys.stderr.write(str(e) + '\n')
-+    sys.exit(1)
--- 
-2.1.4
-
-
--- 
-Jani Nikula, Intel Open Source Technology Center
+> -Daniel
+>
+>
+> On Sat, Oct 1, 2016 at 9:46 PM, Julia Lawall <Julia.Lawall-L2FTfq7BK8M@public.gmane.org> wrote:
+> > These patches fix cases where the documentation above a function definition
+> > is not consistent with the function header.  Issues are detected using the
+> > semantic patch below (http://coccinelle.lip6.fr/).  Basically, the semantic
+> > patch parses a file to find comments, then matches each function header,
+> > and checks that the name and parameter list in the function header are
+> > compatible with the comment that preceeds it most closely.
+> >
+> > // <smpl>
+> > @initialize:ocaml@
+> > @@
+> >
+> > let tbl = ref []
+> > let fnstart = ref []
+> > let success = Hashtbl.create 101
+> > let thefile = ref ""
+> > let parsed = ref []
+> > let nea = ref []
+> >
+> > let parse file =
+> >   thefile := List.nth (Str.split (Str.regexp "linux-next/") file) 1;
+> >   let i = open_in file in
+> >   let startline = ref 0 in
+> >   let fn = ref "" in
+> >   let ids = ref [] in
+> >   let rec inside n =
+> >     let l = input_line i in
+> >     let n = n + 1 in
+> >     match Str.split_delim (Str.regexp_string "*/") l with
+> >       before::after::_ ->
+> >         (if not (!fn = "")
+> >         then tbl := (!startline,n,!fn,List.rev !ids)::!tbl);
+> >         startline := 0;
+> >         fn := "";
+> >         ids := [];
+> >         outside n
+> >     | _ ->
+> >         (match Str.split (Str.regexp "[ \t]+") l with
+> >           "*"::name::rest ->
+> >             let len = String.length name in
+> >             (if !fn = "" && len > 2 && String.sub name (len-2) 2 = "()"
+> >             then fn := String.sub name 0 (len-2)
+> >             else if !fn = "" && (not (rest = [])) && List.hd rest = "-"
+> >             then
+> >               if String.get name (len-1) = ':'
+> >               then fn := String.sub name 0 (len-1)
+> >               else fn := name
+> >             else if not(!fn = "") && len > 2 &&
+> >               String.get name 0 = '@' && String.get name (len-1) = ':'
+> >             then ids := (String.sub name 1 (len-2)) :: !ids);
+> >         | _ -> ());
+> >         inside n
+> >   and outside n =
+> >     let l = input_line i in
+> >     let n = n + 1 in
+> >     if String.length l > 2 && String.sub l 0 3 = "/**"
+> >     then
+> >       begin
+> >         startline := n;
+> >         inside n
+> >       end
+> >     else outside n in
+> >   try outside 0 with End_of_file -> ()
+> >
+> > let hashadd tbl k v =
+> >   let cell =
+> >     try Hashtbl.find tbl k
+> >     with Not_found ->
+> >       let cell = ref [] in
+> >       Hashtbl.add tbl k cell;
+> >       cell in
+> >   cell := v :: !cell
+> >
+> > @script:ocaml@
+> > @@
+> >
+> > tbl := [];
+> > fnstart := [];
+> > Hashtbl.clear success;
+> > parsed := [];
+> > nea := [];
+> > parse (List.hd (Coccilib.files()))
+> >
+> > @r@
+> > identifier f;
+> > position p;
+> > @@
+> >
+> > f@p(...) { ... }
+> >
+> > @script:ocaml@
+> > p << r.p;
+> > f << r.f;
+> > @@
+> >
+> > parsed := f :: !parsed;
+> > fnstart := (List.hd p).line :: !fnstart
+> >
+> > @param@
+> > identifier f;
+> > type T;
+> > identifier i;
+> > parameter list[n] ps;
+> > parameter list[n1] ps1;
+> > position p;
+> > @@
+> >
+> > f@p(ps,T i,ps1) { ... }
+> >
+> > @script:ocaml@
+> > @@
+> >
+> > tbl := List.rev (List.sort compare !tbl)
+> >
+> > @script:ocaml@
+> > p << param.p;
+> > f << param.f;
+> > @@
+> >
+> > let myline = (List.hd p).line in
+> > let prevline =
+> >   List.fold_left
+> >     (fun prev x ->
+> >       if x < myline
+> >       then max x prev
+> >       else prev)
+> >     0 !fnstart in
+> > let _ =
+> >   List.exists
+> >     (function (st,fn,nm,ids) ->
+> >       if prevline < st && myline > st && prevline < fn && myline > fn
+> >       then
+> >         begin
+> >           (if not (String.lowercase f = String.lowercase nm)
+> >           then
+> >             Printf.printf "%s:%d %s doesn't match preceding comment: %s\n"
+> >               !thefile myline f nm);
+> >           true
+> >         end
+> >       else false)
+> >     !tbl in
+> > ()
+> >
+> > @script:ocaml@
+> > p << param.p;
+> > n << param.n;
+> > n1 << param.n1;
+> > i << param.i;
+> > f << param.f;
+> > @@
+> >
+> > let myline = (List.hd p).line in
+> > let prevline =
+> >   List.fold_left
+> >     (fun prev x ->
+> >       if x < myline
+> >       then max x prev
+> >       else prev)
+> >     0 !fnstart in
+> > let _ =
+> >   List.exists
+> >     (function (st,fn,nm,ids) ->
+> >       if prevline < st && myline > st && prevline < fn && myline > fn
+> >       then
+> >         begin
+> >           (if List.mem i ids then hashadd success (st,fn,nm) i);
+> >           (if ids = [] (* arg list seems not obligatory *)
+> >           then ()
+> >           else if not (List.mem i ids)
+> >           then
+> >             Printf.printf "%s:%d %s doesn't appear in ids: %s\n"
+> >               !thefile myline i (String.concat " " ids)
+> >           else if List.length ids <= n || List.length ids <= n1
+> >           then
+> >             (if not (List.mem f !nea)
+> >             then
+> >               begin
+> >                 nea := f :: !nea;
+> >                 Printf.printf "%s:%d %s not enough args\n" !thefile myline f;
+> >               end)
+> >           else
+> >             let foundid = List.nth ids n in
+> >             let efoundid = List.nth (List.rev ids) n1 in
+> >             if not(foundid = i || efoundid = i)
+> >             then
+> >               Printf.printf "%s:%d %s wrong arg in position %d: %s\n"
+> >                 !thefile myline i n foundid);
+> >           true
+> >         end
+> >       else false)
+> >     !tbl in
+> > ()
+> >
+> > @script:ocaml@
+> > @@
+> > List.iter
+> >   (function (st,fn,nm,ids) ->
+> >     if List.mem nm !parsed
+> >     then
+> >       let entry =
+> >         try !(Hashtbl.find success (st,fn,nm))
+> >         with Not_found -> [] in
+> >       List.iter
+> >         (fun id ->
+> >           if not (List.mem id entry) && not (id = "...")
+> >           then Printf.printf "%s:%d %s not used\n" !thefile st id)
+> >         ids)
+> >   !tbl
+> > // </smpl>
+> >
+> >
+> > ---
+> >
+> >  drivers/clk/keystone/pll.c               |    4 ++--
+> >  drivers/clk/sunxi/clk-mod0.c             |    2 +-
+> >  drivers/clk/tegra/cvb.c                  |   10 +++++-----
+> >  drivers/dma-buf/sw_sync.c                |    6 +++---
+> >  drivers/gpu/drm/gma500/intel_i2c.c       |    3 +--
+> >  drivers/gpu/drm/omapdrm/omap_drv.c       |    4 ++--
+> >  drivers/irqchip/irq-metag-ext.c          |    1 -
+> >  drivers/irqchip/irq-vic.c                |    1 -
+> >  drivers/mfd/tc3589x.c                    |    4 ++--
+> >  drivers/power/supply/ab8500_fg.c         |    8 ++++----
+> >  drivers/power/supply/abx500_chargalg.c   |    1 +
+> >  drivers/power/supply/intel_mid_battery.c |    2 +-
+> >  drivers/power/supply/power_supply_core.c |    4 ++--
+> >  fs/crypto/crypto.c                       |    4 ++--
+> >  fs/crypto/fname.c                        |    4 ++--
+> >  fs/ubifs/file.c                          |    2 +-
+> >  fs/ubifs/gc.c                            |    2 +-
+> >  fs/ubifs/lprops.c                        |    2 +-
+> >  fs/ubifs/lpt_commit.c                    |    4 +---
+> >  fs/ubifs/replay.c                        |    2 +-
+> >  lib/kobject_uevent.c                     |    6 +++---
+> >  lib/lru_cache.c                          |    4 ++--
+> >  lib/nlattr.c                             |    2 +-
+> >  23 files changed, 39 insertions(+), 43 deletions(-)
+> > _______________________________________________
+> > dri-devel mailing list
+> > dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+> > https://lists.freedesktop.org/mailman/listinfo/dri-devel
+>
+>
+>
+> --
+> Daniel Vetter
+> Software Engineer, Intel Corporation
+> +41 (0) 79 365 57 48 - http://blog.ffwll.ch
+> --
+> To unsubscribe from this list: send the line "unsubscribe kernel-janitors" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
+>
