@@ -1,97 +1,150 @@
-From: Jean Delvare <jdelvare-l3A5Bk7waGM@public.gmane.org>
-Subject: Re: [PATCH] i2c: don't print error when adding adapter fails
-Date: Wed, 5 Oct 2016 17:17:04 +0200
-Message-ID: <20161005171704.18fe1b9f@endymion>
-References: <1470742581-12971-1-git-send-email-wsa-dev@sang-engineering.com>
- <1470742581-12971-2-git-send-email-wsa-dev@sang-engineering.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-In-Reply-To: <1470742581-12971-2-git-send-email-wsa-dev-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-rockchip/>
-List-Post: <mailto:linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-List-Help: <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-rockchip>,
- <mailto:linux-rockchip-request-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org?subject=subscribe>
-Sender: "Linux-rockchip" <linux-rockchip-bounces-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
-Errors-To: linux-rockchip-bounces+glpar-linux-rockchip=m.gmane.org-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
-To: Wolfram Sang <wsa-dev-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>
-Cc: Krzysztof Kozlowski <k.kozlowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Heiko Stuebner <heiko-4mtYJXux2i+zQB+pC5nmwQ@public.gmane.org>, Wolfram Sang <wsa-z923LK4zBo2bacvFa/9K2g@public.gmane.org>, Tony Lindgren <tony-4v6yS6AI5VpBDgjK7y7TUQ@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Sekhar Nori <nsekhar-l0cyMroinI0@public.gmane.org>, Jochen Friedrich <jochen-NIgtFMG+Po8@public.gmane.org>, Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-i2c-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Guan Xuetao <gxt-TG0Ac1+ktVePQbnJrJN+5g@public.gmane.org>, Peter Korsgaard <jacmet-OfajU3CKLf1/SzgSGea1oA@public.gmane.org>, Sonic Zhang <sonic.zhang-OyLXuOCK7orQT0dZR+AlfA@public.gmane.org>, kernel-F5mvAk5X5gdBDgjK7y7TUQ@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Florian Fainelli <f.fainelli-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Michal Simek <michal.simek-gjFFaj9aHVfQT0dZR+AlfA@public.gmane.org>, linux-rockchip-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Kukjin Kim <kgene-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, bcm-kernel-feedback-list-dY08KVG/lbpWk0Htik3J/w@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Sylvain Lemieux <slemieux.tyco-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>Ale
+From: Markus Heiser <markus.heiser@darmarit.de>
+Subject: Re: kernel-doc-rst-lint (was: Re: [PATCH 00/15] improve
+ function-level documentation)
+Date: Wed, 5 Oct 2016 19:27:12 +0200
+Message-ID: <0311F11C-D5CB-4A90-86BD-4DDAD1103685@darmarit.de>
+References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
+ <CAKMK7uHT3FutHQuQQ3iwXmYbidB3AOs7AxnpaJD4MTqy0-QehQ@mail.gmail.com>
+ <87h98quc1w.fsf@intel.com>
+Mime-Version: 1.0 (Mac OS X Mail 6.6 \(1510\))
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <87h98quc1w.fsf@intel.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Linux PM list <linux-pm@vger.kernel.org>, linux-doc@vger.kernel.org, kernel-janitors@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, dri-devel <dri-devel@lists.freedesktop.org>, linux-metag@vger.kernel.org, linaro-mm-sig@lists.linaro.org, linux-mtd@lists.infradead.org, linux-tegra@vger.kernel.org, "linux-media@vger.kernel.org Mailing List" <linux-media@vger.kernel.org>, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, drbd-dev@lists.linbit.com
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue,  9 Aug 2016 13:36:17 +0200, Wolfram Sang wrote:
-> The core will do this for us now.
-> 
-> Signed-off-by: Wolfram Sang <wsa-dev-jBu1N2QxHDJrcw3mvpCnnVaTQe2KTcn/@public.gmane.org>
-> ---
->  drivers/i2c/busses/i2c-amd756.c         | 5 +----
->  drivers/i2c/busses/i2c-at91.c           | 2 --
->  drivers/i2c/busses/i2c-axxia.c          | 8 +-------
->  drivers/i2c/busses/i2c-bcm-iproc.c      | 8 +-------
->  drivers/i2c/busses/i2c-bcm-kona.c       | 4 +---
->  drivers/i2c/busses/i2c-bfin-twi.c       | 4 +---
->  drivers/i2c/busses/i2c-brcmstb.c        | 4 +---
->  drivers/i2c/busses/i2c-cadence.c        | 4 +---
->  drivers/i2c/busses/i2c-cpm.c            | 4 +---
->  drivers/i2c/busses/i2c-cros-ec-tunnel.c | 4 +---
->  drivers/i2c/busses/i2c-davinci.c        | 4 +---
->  drivers/i2c/busses/i2c-diolan-u2c.c     | 4 +---
->  drivers/i2c/busses/i2c-dln2.c           | 4 +---
->  drivers/i2c/busses/i2c-efm32.c          | 1 -
->  drivers/i2c/busses/i2c-exynos5.c        | 4 +---
->  drivers/i2c/busses/i2c-hix5hd2.c        | 4 +---
->  drivers/i2c/busses/i2c-i801.c           | 1 -
->  drivers/i2c/busses/i2c-ibm_iic.c        | 4 +---
->  drivers/i2c/busses/i2c-img-scb.c        | 4 +---
->  drivers/i2c/busses/i2c-imx.c            | 4 +---
->  drivers/i2c/busses/i2c-isch.c           | 4 +---
->  drivers/i2c/busses/i2c-ismt.c           | 4 +---
->  drivers/i2c/busses/i2c-jz4780.c         | 4 +---
->  drivers/i2c/busses/i2c-lpc2k.c          | 4 +---
->  drivers/i2c/busses/i2c-meson.c          | 1 -
->  drivers/i2c/busses/i2c-mpc.c            | 4 +---
->  drivers/i2c/busses/i2c-mt65xx.c         | 4 +---
->  drivers/i2c/busses/i2c-mxs.c            | 1 -
->  drivers/i2c/busses/i2c-nforce2.c        | 1 -
->  drivers/i2c/busses/i2c-nomadik.c        | 4 +---
->  drivers/i2c/busses/i2c-ocores.c         | 4 +---
->  drivers/i2c/busses/i2c-octeon.c         | 4 +---
->  drivers/i2c/busses/i2c-omap.c           | 4 +---
->  drivers/i2c/busses/i2c-piix4.c          | 1 -
->  drivers/i2c/busses/i2c-pmcmsp.c         | 4 +---
->  drivers/i2c/busses/i2c-pnx.c            | 4 +---
->  drivers/i2c/busses/i2c-puv3.c           | 5 +----
->  drivers/i2c/busses/i2c-pxa.c            | 4 +---
->  drivers/i2c/busses/i2c-rcar.c           | 4 +---
->  drivers/i2c/busses/i2c-riic.c           | 4 +---
->  drivers/i2c/busses/i2c-rk3x.c           | 4 +---
->  drivers/i2c/busses/i2c-s3c2410.c        | 1 -
->  drivers/i2c/busses/i2c-sh7760.c         | 4 +---
->  drivers/i2c/busses/i2c-sh_mobile.c      | 1 -
->  drivers/i2c/busses/i2c-sirf.c           | 4 +---
->  drivers/i2c/busses/i2c-st.c             | 4 +---
->  drivers/i2c/busses/i2c-stu300.c         | 5 +----
->  drivers/i2c/busses/i2c-tegra.c          | 4 +---
->  drivers/i2c/busses/i2c-uniphier-f.c     | 7 +------
->  drivers/i2c/busses/i2c-uniphier.c       | 7 +------
->  drivers/i2c/busses/i2c-wmt.c            | 4 +---
->  drivers/i2c/busses/i2c-xgene-slimpro.c  | 1 -
->  drivers/i2c/busses/i2c-xiic.c           | 1 -
->  drivers/i2c/busses/i2c-xlp9xx.c         | 4 +---
->  drivers/i2c/busses/i2c-xlr.c            | 4 +---
->  55 files changed, 44 insertions(+), 161 deletions(-)
-> (...)
-
-I like the idea.
-
-For i2c-amd756, i2c-diolan-u2c, i2c-i801, i2c-isch, i2c-ismt,
-i2c-nforce and i2c-piix4:
-
-Reviewed-by: Jean Delvare <jdelvare-l3A5Bk7waGM@public.gmane.org>
-
--- 
-Jean Delvare
-SUSE L3 Support
+CkFtIDA1LjEwLjIwMTYgdW0gMTY6MDQgc2NocmllYiBKYW5pIE5pa3VsYSA8amFuaS5uaWt1bGFA
+bGludXguaW50ZWwuY29tPjoKCj4gT24gV2VkLCAwNSBPY3QgMjAxNiwgRGFuaWVsIFZldHRlciA8
+ZGFuaWVsQGZmd2xsLmNoPiB3cm90ZToKPj4gSmFuaSBOaWt1bGEgaGFzIGEgcGF0Y2ggd2l0aCBh
+IHNjcmlwIHRvIG1ha2UgdGhlIG9uZSBrZXJuZWwtZG9jIHBhcnNlcgo+PiBpbnRvIGEgbGludC9j
+aGVja2VyIHBhc3Mgb3ZlciB0aGUgZW50aXJlIGtlcm5lbC4gSSB0aGluayB0aGF0J2Qgd291bGQK
+Pj4gYmUgbW9yZSByb2J1c3QgaW5zdGVhZCBvZiB0cnlpbmcgdG8gYXBwcm94aW1hdGUgdGhlIHJl
+YWwga2VybmVsZG9jCj4+IHBhcnNlci4gT3RvaCB0aGF0IHBhcnNlciBpcyBhIGhvcnJvciBzaG93
+IG9mIGEgcGVybC9yZWdleCBkcml2ZW4gc3RhdGUKPj4gbWFjaGluZSA7LSkKPj4gCj4+IEphbmks
+IGNhbiB5b3UgcGxzIGRpZ2cgb3V0IHRoZXNlIHBhdGNoZXM/IENhbid0IGZpbmQgdGhlbSByaWdo
+dCBub3cgLi4uCj4gCj4gRXhwYW5kaW5nIHRoZSBtYXNzaXZlIENjOiB3aXRoIGxpbnV4LWRvYyBs
+aXN0Li4uCj4gCj4gSGVyZSBnb2VzLiBJdCdzIGEgcXVpY2sgaGFjayBmcm9tIG1vbnRocyBhZ28s
+IGJ1dCBzdGlsbCBzZWVtcyB0bwo+IHNvbWV3aGF0IHdvcmsuIEF0IGxlYXN0IGZvciB0aGUga2Vy
+bmVsLWRvYyBwYXJ0cy4gVGhlIHJlU3RydWN0dXJlZFRleHQKPiBsaW50IHBhcnQgaXNuJ3QgYWxs
+IHRoYXQgZ3JlYXQsIGFuZCBkb2Vzbid0IGhhdmUgbWFwcGluZyB0byBsaW5lIG51bWJlcnMKPiBs
+aWtlIHRoZSBTcGhpbngga2VybmVsLWRvYyBleHRlbnNpb24gZG9lcy4gQW55d2F5IEknbSBoYXBw
+eSBob3cgdGhpcwo+IGludGVncmF0ZXMgd2l0aCBrZXJuZWwgYnVpbGQgQ0hFQ0sgYW5kIEM9MS9D
+PTIuCj4gCj4gSSBndWVzcyBKdWxpYSdzIGdvYWwgaXMgdG8gYXV0b21hdGUgdGhlICpmaXhpbmcq
+IG9mIHNvbWUgb2YgdGhlIGVycm9yCj4gY2xhc3NlcyBmcm9tIGtlcm5lbC1kb2MuIE5vdCBzdXJl
+IGhvdyB3ZWxsIHRoaXMgY291bGQgYmUgbWFkZSB0bwo+IGludGVncmF0ZSB3aXRoIGFueSBvZiB0
+aGF0Lgo+IAo+IEJSLAo+IEphbmkuCgpBbm90aGVyIGxpbnQgYWx0ZXJuYXRpdmU6IAoKIHVzZSB0
+aGUgbGludCBmcm9tIHRoZSBsaW51eGRvYyBwcm9qZWN0IAoKaW5zdGFsbCB0aGUgbGludXhkb2Mg
+cGFja2FnZToKCiogIGh0dHBzOi8vcmV0dXJuNDIuZ2l0aHViLmlvL2xpbnV4ZG9jL2luc3RhbGwu
+aHRtbAoKZS5nLjo6CgogcGlwIGluc3RhbGwgLS11c2VyIGdpdCtodHRwOi8vZ2l0aHViLmNvbS9y
+ZXR1cm40Mi9saW51eGRvYy5naXQKCmFuZCBydW4ga2VybmVsLWxpbnRkb2Mgd2l0aCB0aGUgZmls
+ZS9mb2xkZXIgdG8gbGludCBhcyBhcmd1bWVudCAvIGUuZy46OgoKIGtlcm5lbC1saW50ZG9jIGlu
+Y2x1ZGUvbWVkaWEvCgotLSBNYXJrdXMgLS0KCgo+IAo+IAo+IEZyb20gMTI0NGVmYTBmNjNhN2Ix
+Mzc5NWU4YzM3ZjgxNzMzYTNjOGJmYzU2YSBNb24gU2VwIDE3IDAwOjAwOjAwIDIwMDEKPiBGcm9t
+OiBKYW5pIE5pa3VsYSA8amFuaS5uaWt1bGFAaW50ZWwuY29tPgo+IERhdGU6IFR1ZSwgMzEgTWF5
+IDIwMTYgMTg6MTE6MzMgKzAzMDAKPiBTdWJqZWN0OiBbUEFUQ0hdIGtlcm5lbC1kb2MtcnN0LWxp
+bnQ6IGFkZCB0b29sIHRvIGNoZWNrIGtlcm5lbC1kb2MgYW5kIHJzdAo+IGNvcnJlY3RuZXNzCj4g
+T3JnYW5pemF0aW9uOiBJbnRlbCBGaW5sYW5kIE95IC0gQklDIDAzNTc2MDYtNCAtIFdlc3RlbmRp
+bmthdHUgNywgMDIxNjAgRXNwb28KPiBDYzogSmFuaSBOaWt1bGEgPGphbmkubmlrdWxhQGludGVs
+LmNvbT4KPiAKPiBTaW1wbGUga2VybmVsLWRvYyBhbmQgcmVTdHJ1Y3R1cmVkVGV4dCBsaW50IHRv
+b2wgdGhhdCBjYW4gYmUgdXNlZAo+IGluZGVwZW5kZW50bHkgYW5kIGFzIGEga2VybmVsIGJ1aWxk
+IENIRUNLIHRvb2wgdG8gdmFsaWRhdGUga2VybmVsLWRvYwo+IGNvbW1lbnRzLgo+IAo+IEluZGVw
+ZW5kZW50IHVzYWdlOgo+ICQga2VybmVsLWRvYy1yc3QtbGludCBGSUxFCj4gCj4gS2VybmVsIENI
+RUNLIHVzYWdlOgo+ICQgbWFrZSBDSEVDSz1zY3JpcHRzL2tlcm5lbC1kb2MtcnN0LWxpbnQgQz0x
+CQkjIChvciBDPTIpCj4gCj4gRGVwZW5kcyBvbiBkb2N1dGlscyBhbmQgdGhlIHJzdC1saW50IHBh
+Y2thZ2UKPiBodHRwczovL3B5cGkucHl0aG9uLm9yZy9weXBpL3Jlc3RydWN0dXJlZHRleHRfbGlu
+dAo+IAo+IFNpZ25lZC1vZmYtYnk6IEphbmkgTmlrdWxhIDxqYW5pLm5pa3VsYUBpbnRlbC5jb20+
+Cj4gLS0tCj4gc2NyaXB0cy9rZXJuZWwtZG9jLXJzdC1saW50IHwgMTA2ICsrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrCj4gMSBmaWxlIGNoYW5nZWQsIDEwNiBpbnNl
+cnRpb25zKCspCj4gY3JlYXRlIG1vZGUgMTAwNzU1IHNjcmlwdHMva2VybmVsLWRvYy1yc3QtbGlu
+dAo+IAo+IGRpZmYgLS1naXQgYS9zY3JpcHRzL2tlcm5lbC1kb2MtcnN0LWxpbnQgYi9zY3JpcHRz
+L2tlcm5lbC1kb2MtcnN0LWxpbnQKPiBuZXcgZmlsZSBtb2RlIDEwMDc1NQo+IGluZGV4IDAwMDAw
+MDAwMDAwMC4uN2UwMTU3Njc5ZjgzCj4gLS0tIC9kZXYvbnVsbAo+ICsrKyBiL3NjcmlwdHMva2Vy
+bmVsLWRvYy1yc3QtbGludAo+IEBAIC0wLDAgKzEsMTA2IEBACj4gKyMhL3Vzci9iaW4vZW52IHB5
+dGhvbgo+ICsjIGNvZGluZz11dGYtOAo+ICsjCj4gKyMgQ29weXJpZ2h0IMKpIDIwMTYgSW50ZWwg
+Q29ycG9yYXRpb24KPiArIwo+ICsjIFBlcm1pc3Npb24gaXMgaGVyZWJ5IGdyYW50ZWQsIGZyZWUg
+b2YgY2hhcmdlLCB0byBhbnkgcGVyc29uIG9idGFpbmluZyBhCj4gKyMgY29weSBvZiB0aGlzIHNv
+ZnR3YXJlIGFuZCBhc3NvY2lhdGVkIGRvY3VtZW50YXRpb24gZmlsZXMgKHRoZSAiU29mdHdhcmUi
+KSwKPiArIyB0byBkZWFsIGluIHRoZSBTb2Z0d2FyZSB3aXRob3V0IHJlc3RyaWN0aW9uLCBpbmNs
+dWRpbmcgd2l0aG91dCBsaW1pdGF0aW9uCj4gKyMgdGhlIHJpZ2h0cyB0byB1c2UsIGNvcHksIG1v
+ZGlmeSwgbWVyZ2UsIHB1Ymxpc2gsIGRpc3RyaWJ1dGUsIHN1YmxpY2Vuc2UsCj4gKyMgYW5kL29y
+IHNlbGwgY29waWVzIG9mIHRoZSBTb2Z0d2FyZSwgYW5kIHRvIHBlcm1pdCBwZXJzb25zIHRvIHdo
+b20gdGhlCj4gKyMgU29mdHdhcmUgaXMgZnVybmlzaGVkIHRvIGRvIHNvLCBzdWJqZWN0IHRvIHRo
+ZSBmb2xsb3dpbmcgY29uZGl0aW9uczoKPiArIwo+ICsjIFRoZSBhYm92ZSBjb3B5cmlnaHQgbm90
+aWNlIGFuZCB0aGlzIHBlcm1pc3Npb24gbm90aWNlIChpbmNsdWRpbmcgdGhlIG5leHQKPiArIyBw
+YXJhZ3JhcGgpIHNoYWxsIGJlIGluY2x1ZGVkIGluIGFsbCBjb3BpZXMgb3Igc3Vic3RhbnRpYWwg
+cG9ydGlvbnMgb2YgdGhlCj4gKyMgU29mdHdhcmUuCj4gKyMKPiArIyBUSEUgU09GVFdBUkUgSVMg
+UFJPVklERUQgIkFTIElTIiwgV0lUSE9VVCBXQVJSQU5UWSBPRiBBTlkgS0lORCwgRVhQUkVTUyBP
+Ugo+ICsjIElNUExJRUQsIElOQ0xVRElORyBCVVQgTk9UIExJTUlURUQgVE8gVEhFIFdBUlJBTlRJ
+RVMgT0YgTUVSQ0hBTlRBQklMSVRZLAo+ICsjIEZJVE5FU1MgRk9SIEEgUEFSVElDVUxBUiBQVVJQ
+T1NFIEFORCBOT05JTkZSSU5HRU1FTlQuICBJTiBOTyBFVkVOVCBTSEFMTAo+ICsjIFRIRSBBVVRI
+T1JTIE9SIENPUFlSSUdIVCBIT0xERVJTIEJFIExJQUJMRSBGT1IgQU5ZIENMQUlNLCBEQU1BR0VT
+IE9SIE9USEVSCj4gKyMgTElBQklMSVRZLCBXSEVUSEVSIElOIEFOIEFDVElPTiBPRiBDT05UUkFD
+VCwgVE9SVCBPUiBPVEhFUldJU0UsIEFSSVNJTkcKPiArIyBGUk9NLCBPVVQgT0YgT1IgSU4gQ09O
+TkVDVElPTiBXSVRIIFRIRSBTT0ZUV0FSRSBPUiBUSEUgVVNFIE9SIE9USEVSIERFQUxJTkdTCj4g
+KyMgSU4gVEhFIFNPRlRXQVJFLgo+ICsjCj4gKyMgQXV0aG9yczoKPiArIyAgICBKYW5pIE5pa3Vs
+YSA8amFuaS5uaWt1bGFAaW50ZWwuY29tPgo+ICsjCj4gKyMgU2ltcGxlIGtlcm5lbC1kb2MgYW5k
+IHJlU3RydWN0dXJlZFRleHQgbGludCB0b29sIHRoYXQgY2FuIGJlIHVzZWQKPiArIyBpbmRlcGVu
+ZGVudGx5IGFuZCBhcyBhIGtlcm5lbCBidWlsZCBDSEVDSyB0b29sIHRvIHZhbGlkYXRlIGtlcm5l
+bC1kb2MKPiArIyBjb21tZW50cy4KPiArIwo+ICsjIEluZGVwZW5kZW50IHVzYWdlOgo+ICsjICQg
+a2VybmVsLWRvYy1yc3QtbGludCBGSUxFCj4gKyMKPiArIyBLZXJuZWwgQ0hFQ0sgdXNhZ2U6Cj4g
+KyMgJCBtYWtlIENIRUNLPXNjcmlwdHMva2VybmVsLWRvYy1yc3QtbGludCBDPTEJCSMgKG9yIEM9
+MikKPiArIwo+ICsjIERlcGVuZHMgb24gZG9jdXRpbHMgYW5kIHRoZSByc3QtbGludCBwYWNrYWdl
+Cj4gKyMgaHR0cHM6Ly9weXBpLnB5dGhvbi5vcmcvcHlwaS9yZXN0cnVjdHVyZWR0ZXh0X2xpbnQK
+PiArIwo+ICsKPiAraW1wb3J0IG9zCj4gK2ltcG9ydCBzdWJwcm9jZXNzCj4gK2ltcG9ydCBzeXMK
+PiArCj4gK2Zyb20gZG9jdXRpbHMucGFyc2Vycy5yc3QgaW1wb3J0IGRpcmVjdGl2ZXMKPiArZnJv
+bSBkb2N1dGlscy5wYXJzZXJzLnJzdCBpbXBvcnQgRGlyZWN0aXZlCj4gK2Zyb20gZG9jdXRpbHMu
+cGFyc2Vycy5yc3QgaW1wb3J0IHJvbGVzCj4gK2Zyb20gZG9jdXRpbHMgaW1wb3J0IG5vZGVzLCBz
+dGF0ZW1hY2hpbmUKPiAraW1wb3J0IHJlc3RydWN0dXJlZHRleHRfbGludAo+ICsKPiArY2xhc3Mg
+RHVtbXlEaXJlY3RpdmUoRGlyZWN0aXZlKToKPiArICAgIHJlcXVpcmVkX2FyZ3VtZW50ID0gMQo+
+ICsgICAgb3B0aW9uYWxfYXJndW1lbnRzID0gMAo+ICsgICAgb3B0aW9uX3NwZWMgPSB7IH0KPiAr
+ICAgIGhhc19jb250ZW50ID0gVHJ1ZQo+ICsKPiArICAgIGRlZiBydW4oc2VsZik6Cj4gKyAgICAg
+ICAgcmV0dXJuIFtdCj4gKwo+ICsjIEZha2UgdGhlIFNwaGlueCBDIERvbWFpbiBkaXJlY3RpdmVz
+IGFuZCByb2xlcwo+ICtkaXJlY3RpdmVzLnJlZ2lzdGVyX2RpcmVjdGl2ZSgnYzpmdW5jdGlvbics
+IER1bW15RGlyZWN0aXZlKQo+ICtkaXJlY3RpdmVzLnJlZ2lzdGVyX2RpcmVjdGl2ZSgnYzp0eXBl
+JywgRHVtbXlEaXJlY3RpdmUpCj4gK3JvbGVzLnJlZ2lzdGVyX2dlbmVyaWNfcm9sZSgnYzpmdW5j
+Jywgbm9kZXMuZW1waGFzaXMpCj4gK3JvbGVzLnJlZ2lzdGVyX2dlbmVyaWNfcm9sZSgnYzp0eXBl
+Jywgbm9kZXMuZW1waGFzaXMpCj4gKwo+ICsjIFdlIGFjY2VwdCBidXQgaWdub3JlIHBhcmFtZXRl
+cnMgdG8gYmUgY29tcGF0aWJsZSB3aXRoIGhvdyB0aGUga2VybmVsIGJ1aWxkCj4gKyMgaW52b2tl
+cyBDSEVDSy4KPiAraWYgbGVuKHN5cy5hcmd2KSA8IDI6Cj4gKyAgICBzeXMuc3RkZXJyLndyaXRl
+KCd1c2FnZToga2VybmVsLWRvYy1yc3QtbGludCBbSUdOT1JFRCBPUFRJT05TXSBGSUxFXG4nKTsK
+PiArICAgIHN5cy5leGl0KDEpCj4gKwo+ICtpbmZpbGUgPSBzeXMuYXJndltsZW4oc3lzLmFyZ3Yp
+IC0gMV0KPiArY21kID0gWydzY3JpcHRzL2tlcm5lbC1kb2MnLCAnLXJzdCcsIGluZmlsZV0KPiAr
+Cj4gK3RyeToKPiArICAgIHAgPSBzdWJwcm9jZXNzLlBvcGVuKGNtZCwgc3Rkb3V0PXN1YnByb2Nl
+c3MuUElQRSwgc3RkZXJyPXN1YnByb2Nlc3MuUElQRSwgdW5pdmVyc2FsX25ld2xpbmVzPVRydWUp
+Cj4gKyAgICBvdXQsIGVyciA9IHAuY29tbXVuaWNhdGUoKQo+ICsKPiArICAgICMgcHl0aG9uMiBu
+ZWVkcyBjb252ZXJzaW9uIHRvIHVuaWNvZGUuCj4gKyAgICAjIHB5dGhvbjMgd2l0aCB1bml2ZXJz
+YWxfbmV3bGluZXM9VHJ1ZSByZXR1cm5zIHN0cmluZ3MuCj4gKyAgICBpZiBzeXMudmVyc2lvbl9p
+bmZvLm1ham9yIDwgMzoKPiArICAgICAgICBvdXQsIGVyciA9IHVuaWNvZGUob3V0LCAndXRmLTgn
+KSwgdW5pY29kZShlcnIsICd1dGYtOCcpCj4gKwo+ICsgICAgIyBrZXJuZWwtZG9jIGVycm9ycwo+
+ICsgICAgc3lzLnN0ZGVyci53cml0ZShlcnIpCj4gKyAgICBpZiBwLnJldHVybmNvZGUgIT0gMDoK
+PiArICAgICAgICBzeXMuZXhpdChwLnJldHVybmNvZGUpCj4gKwo+ICsgICAgIyByZXN0cnVjdHVy
+ZWQgdGV4dCBlcnJvcnMKPiArICAgIGxpbmVzID0gc3RhdGVtYWNoaW5lLnN0cmluZzJsaW5lcyhv
+dXQsIDgsIGNvbnZlcnRfd2hpdGVzcGFjZT1UcnVlKQo+ICsgICAgbGludF9lcnJvcnMgPSByZXN0
+cnVjdHVyZWR0ZXh0X2xpbnQubGludChvdXQsIGluZmlsZSkKPiArICAgIGZvciBlcnJvciBpbiBs
+aW50X2Vycm9yczoKPiArICAgICAgICAjIElnbm9yZSBJTkZPCj4gKyAgICAgICAgaWYgZXJyb3Iu
+bGV2ZWwgPD0gMToKPiArICAgICAgICAgICAgY29udGludWUKPiArCj4gKyAgICAgICAgcHJpbnQo
+ZXJyb3Iuc291cmNlICsgJzogJyArIGVycm9yLnR5cGUgKyAnOiAnICsgZXJyb3IuZnVsbF9tZXNz
+YWdlKQo+ICsgICAgICAgIGlmIGVycm9yLmxpbmUgaXMgbm90IE5vbmU6Cj4gKyAgICAgICAgICAg
+IHByaW50KCdDb250ZXh0OicpCj4gKyAgICAgICAgICAgIHByaW50KCdcdCcgKyBsaW5lc1tlcnJv
+ci5saW5lIC0gMV0pCj4gKyAgICAgICAgICAgIHByaW50KCdcdCcgKyBsaW5lc1tlcnJvci5saW5l
+XSkKPiArCj4gK2V4Y2VwdCBFeGNlcHRpb24gYXMgZToKPiArICAgIHN5cy5zdGRlcnIud3JpdGUo
+c3RyKGUpICsgJ1xuJykKPiArICAgIHN5cy5leGl0KDEpCj4gLS0gCj4gMi4xLjQKPiAKPiAKPiAt
+LSAKPiBKYW5pIE5pa3VsYSwgSW50ZWwgT3BlbiBTb3VyY2UgVGVjaG5vbG9neSBDZW50ZXIKPiAt
+LQo+IFRvIHVuc3Vic2NyaWJlIGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNj
+cmliZSBsaW51eC1tZWRpYSIgaW4KPiB0aGUgYm9keSBvZiBhIG1lc3NhZ2UgdG8gbWFqb3Jkb21v
+QHZnZXIua2VybmVsLm9yZwo+IE1vcmUgbWFqb3Jkb21vIGluZm8gYXQgIGh0dHA6Ly92Z2VyLmtl
+cm5lbC5vcmcvbWFqb3Jkb21vLWluZm8uaHRtbAoKX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4v
+bGlzdGluZm8vZHJpLWRldmVsCg==
