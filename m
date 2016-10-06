@@ -1,63 +1,37 @@
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [RFC PATCH 0/3] PM / Domains: Add support for devices that
- require multiple domains
-Date: Thu, 6 Oct 2016 14:22:12 +0200
-Message-ID: <CAPDyKFoFPNNnoc-7G34A7a4Yo8f=WUyurNP1evabw3MOEubEoA@mail.gmail.com>
-References: <1474367287-10402-1-git-send-email-jonathanh@nvidia.com>
+From: Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH] PCI: tegra: Fix argument order in tegra_pcie_phy_disable()
+Date: Thu, 06 Oct 2016 08:43:03 -0500
+Message-ID: <20161006134303.5595.9298.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1474367287-10402-1-git-send-email-jonathanh@nvidia.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pci-owner@vger.kernel.org>
+Sender: linux-pci-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 20 September 2016 at 12:28, Jon Hunter <jonathanh@nvidia.com> wrote:
-> The Tegra124/210 XUSB subsystem (that consists of both host and device
-> controllers) is partitioned across 3 PM domains which are:
-> - XUSBA: Superspeed logic (for USB 3.0)
-> - XUSBB: Device controller
-> - XUSBC: Host controller
->
-> These power domains are not nested and can be powered-up and down
-> independently of one another. In practice different scenarios require
-> different combinations of the power domains, for example:
-> - Superspeed host: XUSBA and XUSBC
-> - Superspeed device: XUSBA and XUSBB
->
-> Although it could be possible to logically nest both the XUSBB and XUSBC
-> domains under the XUSBA, superspeed may not always be used/required and
-> so this would keep it on unnecessarily.
->
-> Given that Tegra uses device-tree for describing the hardware, it would
-> be ideal that the device-tree 'power-domains' property for generic PM
-> domains could be extended to allow more than one PM domain to be
-> specified. For example, define the following the Tegra210 xHCI device ...
->
->         usb@70090000 {
->                 compatible = "nvidia,tegra210-xusb";
->                 ...
->                 power-domains = <&pd_xusbhost>, <&pd_xusbss>;
->         };
->
-> This RFC extends the generic PM domain framework to allow a device to
-> define more than one PM domain in the device-tree 'power-domains'
-> property.
+The tegra_pcie_phy_disable() path called pads_writel() with arguments in
+the wrong order.  Swap them to be the "value, offset" order expected by
+pads_writel().
 
-First, I don't really like extending the internal logic of genpd to
-deal with multiple PM domains per device. *If* this really is needed,
-I think we should try to extend the struct device to cover this, then
-make genpd to use it somehow.
+Fixes: 6fe7c187e026 ("PCI: tegra: Support per-lane PHYs")
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+CC: stable@vger.kernel.org	# v4.7+
+---
+ drivers/pci/host/pci-tegra.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Second, another way of seeing this is: Depending on the current
-runtime selected configuration you need to re-configure the PM domain
-topology - but the device would still remain in the same PM domain.
-
-In other words, you would need to remove/add subdomain(s) depending on
-the selected configuration. Would that better reflect the HW?
-
-[...]
-
-Kind regards
-Uffe
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index e2a8e4c..6df5ed0 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -859,7 +859,7 @@ static int tegra_pcie_phy_disable(struct tegra_pcie *pcie)
+ 	/* override IDDQ */
+ 	value = pads_readl(pcie, PADS_CTL);
+ 	value |= PADS_CTL_IDDQ_1L;
+-	pads_writel(pcie, PADS_CTL, value);
++	pads_writel(pcie, value, PADS_CTL);
+ 
+ 	/* reset PLL */
+ 	value = pads_readl(pcie, soc->pads_pll_ctl);
