@@ -1,60 +1,48 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] PCI: tegra: Fix argument order in
- tegra_pcie_phy_disable()
-Date: Thu, 6 Oct 2016 16:49:34 +0200
-Message-ID: <20161006144934.GA800@ulmo.ba.sec>
-References: <20161006134303.5595.9298.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="45Z9DzgjV8m4Oswq"
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20161006134303.5595.9298.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-pci@vger.kernel.org
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: [PATCH tegra-uboot-scripts] Use full U-Boot command names in all cases
+Date: Thu,  6 Oct 2016 11:18:44 -0600
+Message-ID: <20161006171844.23031-1-swarren@wwwdotorg.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, aplattner-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
---45Z9DzgjV8m4Oswq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+The generated U-Boot script currently invokes "set" as a U-Boot command.
+This is intended to be an abbreviation for "setenv". This works fine when
+there are no other commands named "set*", but fails when there are. Use
+the full command name to avoid issues.
 
-On Thu, Oct 06, 2016 at 08:43:03AM -0500, Bjorn Helgaas wrote:
-> The tegra_pcie_phy_disable() path called pads_writel() with arguments in
-> the wrong order.  Swap them to be the "value, offset" order expected by
-> pads_writel().
->=20
-> Fixes: 6fe7c187e026 ("PCI: tegra: Support per-lane PHYs")
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> CC: stable@vger.kernel.org	# v4.7+
-> ---
->  drivers/pci/host/pci-tegra.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Reported-by: Aaron Plattner <aplattner-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+Note that I haven't tested this; if you could that'd be great.
 
-Good catch!
+ gen-uboot-script.py | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---45Z9DzgjV8m4Oswq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJX9mR6AAoJEN0jrNd/PrOhnasP/2atYh+va2Q5gdE76k6iAFoI
-HelsB+ocJ3TE9pHfJTeWfqH5rXWb8R2yvQERMVpKxpnWD7GFXrE1Apq7r8WNANDB
-pOtn7kGnNo1eVrH++8Utppe6+o3xkN2kWTIOFlJFjNeBqzt8SkoedaBHVD6aTagb
-dbgb/5yQPyp+bTWQ6H4tfP9FpvV+Jx4JPglyEoz8exvlWpcE0XIjhNRM2/bqJ9E4
-WnL35xrcL/dyRq5hRmyXk9b0M6BQH4MHTRTsIS61J8RGInCGMIG/1hSjeKGq1PEQ
-AefEUlUpiou3g+tttr/B/+2GX4lhI299RzkxoypTflEMToaJPPL2DPpGeyqaiKu9
-n104rKbeHMaCVRkreMmvdVllbYKr8udh+Crz/VUUq1wVAcvo6s1W9ofwTVzPSxoX
-5WVqZfcjsdpITDq8hopxmyaWD0+ePfMLEwVWdJJSoK4/CJDq4QDtriHyAr0mVbAB
-OjHRrHBGi+ntMsPrYc8b4Sf+6zSKMOe3xzj8tioLu5svaWUg18gIjA0Q6vDcuWiv
-1Q+cV10bapErKl9oQaDS/KReE1357meotN3Q+8EXOkoCszzZyBX5Jn3AY6JHm0Di
-vAheKUYYm0oJOD33jdSALrQCfiHEFjDUaQlRDS6r3o1CYlw0ZSo4tl26+UchnO2m
-LqUUabFCL5J+MYz3IQuJ
-=MglN
------END PGP SIGNATURE-----
-
---45Z9DzgjV8m4Oswq--
+diff --git a/gen-uboot-script.py b/gen-uboot-script.py
+index e11dbf15553c..6db377d96c07 100755
+--- a/gen-uboot-script.py
++++ b/gen-uboot-script.py
+@@ -132,13 +132,13 @@ else:
+ 
+ f.write('''\
+ if test -n "${fdtfile}"; then
+-    set _fdt ${fdtfile};
++    setenv _fdt ${fdtfile};
+ else
+-    set _fdt ${soc}-${board}${boardver}.dtb;
++    setenv _fdt ${soc}-${board}${boardver}.dtb;
+ fi
+ ''')
+ f.write(load + ' ${fdt_addr_r} ' + args.dtbdir + '${_fdt}\n')
+-f.write('set _fdt\n')
++f.write('setenv _fdt\n')
+ 
+ bootargs = ''
+ if not args.no_con_ttyS0:
+-- 
+2.10.1
