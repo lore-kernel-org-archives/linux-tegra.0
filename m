@@ -1,35 +1,62 @@
-From: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 5/5] PCI: tegra: Remove unused platform data
-Date: Fri, 07 Oct 2016 11:26:50 -0500
-Message-ID: <20161007162650.23718.2297.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 2/5] PCI: tegra: Swap order of afi_writel() reg/val
+ arguments
+Date: Fri, 7 Oct 2016 19:21:58 +0200
+Message-ID: <20161007172158.GA10399@ulmo.ba.sec>
 References: <20161007162615.23718.84354.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+ <20161007162624.23718.46538.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20161007162615.23718.84354.stgit-1RhO1Y9PlrlHTL0Zs8A6p/gx64E7kk8eUsxypvmhUTTZJqsBc5GL+g@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="huq684BweRXVnRxX"
+Return-path: <linux-pci-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <20161007162624.23718.46538.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-The tegra driver never uses the platform drvdata pointer, so don't
-bother setting it.  No functional change intended.
 
-Signed-off-by: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
----
- drivers/pci/host/pci-tegra.c |    1 -
- 1 file changed, 1 deletion(-)
+--huq684BweRXVnRxX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index f5b112c..8f5cda7 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -2262,7 +2262,6 @@ static int tegra_pcie_probe(struct platform_device *pdev)
- 			dev_err(dev, "failed to setup debugfs: %d\n", err);
- 	}
- 
--	platform_set_drvdata(pdev, pcie);
- 	return 0;
- 
- disable_msi:
+On Fri, Oct 07, 2016 at 11:26:24AM -0500, Bjorn Helgaas wrote:
+> Swap order of afi_writel() arguments to match the "dev, pos, val"
+> order used by pci_write_config_word() and other drivers.  No functional
+> change intended.
+>=20
+> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+> ---
+>  drivers/pci/host/pci-tegra.c |  133 +++++++++++++++++++++---------------=
+------
+>  1 file changed, 66 insertions(+), 67 deletions(-)
+
+Most Tegra drivers that I'm aware of follow the (value, offset) style of
+the writel() function. But this is your turf, so if you prefer this for
+consistency:
+
+Acked-by: Thierry Reding <treding@nvidia.com>
+
+--huq684BweRXVnRxX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCAAGBQJX99m0AAoJEN0jrNd/PrOhtbsQALdJ7UeoMLvHx0mbR6uGCBnu
+rnw+6pCdz20Z9aPdr7tc0Ia283JQMLETyxIwjDe2yp8FBvkbfDo5Tfc0wlGcj82u
+zCWNiQ6FoK0lEp3Ubvwqk7a4TyKkEcwqbH3dgUJTcQIzxPRrjPevQt4626WWXVIZ
+55urtK6vQYeQt8OTGtG5tkoi/SC0jLpjoN0P2QTeN2OPBOBIWWyOXu9RyjJYPWa8
+eQoN/R4ZMb0UT45xclZ7TzDvuaBxQM3goISDDe3hCWtpSW/HKmWoBJ9p7lXf8vAG
+rcLQ4R+InrHroJ2ckU+y6vqEX9DMY2gkZkggZIjoCoEXIroJwgfp133MuzMwWpiT
+Mr8KiUwKfVRaSXe1iwLLtqJ5op9doVmF9EpJgHw5c80YiIqAfhD1XYviT5CK13La
+j1DRfPE/T49QgzYM8sHM/T9d08zJFzWTZ0owlzwh6dTCfT4dfEXsVhu/m5j8DWk8
+0Xw9GaeIja8hZ8Lm+sy06qqz2EGHtADZZPAL/WReXrYTbwsIMi5FJtguvsPhoUrp
+Zb3ymP0r2MPkHnpnEdblMtNR19oDwEy6ulFNh9DiKZeolF6QqforENJTliHiVrMv
++qZv8jZUb9j3YBQudI2jkwJiJwLWaInj/h9CvA6BAxGLdjY87R4RkrS7/4gq+zuR
+ZONkEFKa1d0wuKeinRz9
+=n3ej
+-----END PGP SIGNATURE-----
+
+--huq684BweRXVnRxX--
