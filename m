@@ -1,50 +1,38 @@
-From: Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [RFC PATCH 2/3] PM / Domains: Add support for devices with multiple domains
-Date: Fri, 07 Oct 2016 02:14:56 -0700
-Message-ID: <7hlgy0frlb.fsf@baylibre.com>
-References: <1474367287-10402-1-git-send-email-jonathanh@nvidia.com>
-        <1474367287-10402-3-git-send-email-jonathanh@nvidia.com>
+From: Ralf Ramsauer <ralf-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
+Subject: Jetson TK1: Additional SPI chip selects
+Date: Fri, 7 Oct 2016 15:25:55 +0200
+Message-ID: <c35c4309-9432-a9a9-0677-3c2b18202e4f@ramses-pyramidenbau.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <1474367287-10402-3-git-send-email-jonathanh@nvidia.com> (Jon
-        Hunter's message of "Tue, 20 Sep 2016 11:28:06 +0100")
-Sender: linux-pm-owner@vger.kernel.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Ulf Hansson <ulf.hansson@linaro.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Tobias Kottwitz <tobias.kottwitz-3hJwHgKweOl99bV2EpccEXqWYbMAw+HU@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Jon Hunter <jonathanh@nvidia.com> writes:
+Hi,
 
-> Some devices may require more than one PM domain to operate and this is
-> not currently by the PM domain framework. Furthermore, the current Linux
-> 'device' structure only allows devices to be associated with a single PM
-> domain and so cannot easily be associated with more than one. To allow
-> devices to be associated with more than one PM domain, if multiple
-> domains are defined for a given device (eg. via device-tree), then:
-> 1. Create a new PM domain for this device. The name of the new PM domain
->    created matches the device name for which it was created for.
-> 2. Register the new PM domain as a sub-domain for all PM domains
->    required by the device.
-> 3. Attach the device to the new PM domain.
+I'm running a Jetson TK1 on mainline Linux. To enable userspace SPI, I
+modified the device-tree by:
 
-Did you look at what might be involved to extend struct device to hace a
-list of pm_domains?  Like Ulf, I'm a bit unsettled by this
-implementation that has to work around the basic limitation in the
-driver model.
+ /* Expansion TS_SPI_* */
+ spi@7000d400 {
+ 	status = "okay";
++ 	spidev@0 {
++		compatible = "spidev";
++		reg = <0>;
++		spi-max-frequency = <25000000>;
++	};
+ };
 
-Having devices in multitple domains is needed for SoCs I'm familiar with
-also, so is a needed feature.
+This works fine. Is it possible to use arbitrary GPIOs as additional
+chip-selects?
 
-I think removing the struct device limitation and corresponding
-assumptions in the driver and PM core is a prerequisite for this
-feature.
+What would I have to do If I'd like to add PU0 or PU1 (sysfs
+gpio160/161) as chip-selects?
 
-Doing that will lead to several questions about how to handle runtime PM
-operations (e.g. which of the multiple PM domains should the one to call
-the drivers runtime PM hooks when a device changes runtime PM state?)
+Anything helps!
 
-Anyways, even with the potential complexities, I think attempting this
-is the right way forward.
-
-Kevin
+Cheers
+  Ralf
