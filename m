@@ -1,58 +1,44 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 5/5] PCI: tegra: Remove unused platform data
-Date: Fri, 7 Oct 2016 19:24:29 +0200
-Message-ID: <20161007172429.GD10399@ulmo.ba.sec>
-References: <20161007162615.23718.84354.stgit@bhelgaas-glaptop2.roam.corp.google.com>
- <20161007162650.23718.2297.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+From: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Subject: Re: Jetson TK1: Additional SPI chip selects
+Date: Fri, 7 Oct 2016 12:33:38 -0600
+Message-ID: <9625cc1a-c723-516d-9eb6-b7ec383e323c@wwwdotorg.org>
+References: <c35c4309-9432-a9a9-0677-3c2b18202e4f@ramses-pyramidenbau.de>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="uxuisgdDHaNETlh8"
-Return-path: <linux-pci-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <20161007162650.23718.2297.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <c35c4309-9432-a9a9-0677-3c2b18202e4f-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Ralf Ramsauer <ralf-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tobias Kottwitz <tobias.kottwitz-3hJwHgKweOl99bV2EpccEXqWYbMAw+HU@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On 10/07/2016 07:25 AM, Ralf Ramsauer wrote:
+> Hi,
+>
+> I'm running a Jetson TK1 on mainline Linux. To enable userspace SPI, I
+> modified the device-tree by:
+>
+>  /* Expansion TS_SPI_* */
+>  spi@7000d400 {
+>  	status = "okay";
+> + 	spidev@0 {
+> +		compatible = "spidev";
+> +		reg = <0>;
+> +		spi-max-frequency = <25000000>;
+> +	};
+>  };
+>
+> This works fine. Is it possible to use arbitrary GPIOs as additional
+> chip-selects?
+>
+> What would I have to do If I'd like to add PU0 or PU1 (sysfs
+> gpio160/161) as chip-selects?
 
---uxuisgdDHaNETlh8
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Oct 07, 2016 at 11:26:50AM -0500, Bjorn Helgaas wrote:
-> The tegra driver never uses the platform drvdata pointer, so don't
-> bother setting it.  No functional change intended.
->=20
-> Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-> ---
->  drivers/pci/host/pci-tegra.c |    1 -
->  1 file changed, 1 deletion(-)
-
-This would get used again when this driver can become a module (or at
-least unloadable). But anyway, it is unused *now*, so:
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---uxuisgdDHaNETlh8
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJX99pNAAoJEN0jrNd/PrOhrvwP/RHYG/TcLzpoRRkiRqRv7PMl
-boYlRO0XOoef3PQsHEmirJr2JEPPWCA24OKQELUTpE7hHw6SUwQbqFPZxlxUZqjM
-TUCuQBPfLGgiK2W7tvAQNyTwWOWCyRVwW1Oj2CsF8PwmGnouPeROqkWWUBiDb1jY
-X5js7jfgjCxZgBO71V2zaVWddZgYfASIoh6CH9sHxkbxJBygYBXEeMa9XhHDNUAB
-F2BwJudPHnXD+8C/mdrXfH09Z2FHSSu/IDqwrdQJ/pvUlnjTzUnf8roQ/I9AN5h0
-8A2Pj+4cG3wIQ8kwkEoSq5ZbEkra4zA1h95EZgoaooC+G1mjxMgCQy7WALGfYXyg
-rqL5+St7d3r9LaEzUKsVE3yOR26h5FRlFelvkxQRzGPCXleXhcUBrr9ssj4VBzVV
-vOcHkgn6rp9LdwU3OhpdAkBy4m1ROm5mcQgmyVH4sfFDmmCsbHIFnJAqGhl3tBKl
-j0Ti/Aea4UV2OADi16Yd3yx3wMr0UL3ngQaXaeYhuVcMdTTwI/ZnZe4ZQBwT3B41
-6uAsuc5qghxuTFptm3IkC6ZBAyXo+nbMv7EZ9EWgEZCXWcAAffaNwrLOiLIzZZUw
-mLrRULezhyrCkcHf/d+QQyPzf7CK/tN7/ss5HTkXHAZm7+S50EGqdsVhBm5AWK2J
-XjuAumZeGSIoKd9JQJl/
-=jKSN
------END PGP SIGNATURE-----
-
---uxuisgdDHaNETlh8--
+According to Documentation/devicetree/bindings/spi/spi-bus.txt, there 
+are standard properties you can use for GPIO chip-select signals, and it 
+looks like the SPI core code handles this itself. However, judging by a 
+quick look at the Tegra SPI driver, it doesn't fully support that since 
+it always attempts to program the HW chip-selects. If you make the HW CS 
+logic in the driver conditional, and add the DT properties mentioned in 
+spi-bus.txt, it should work.
