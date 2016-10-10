@@ -1,81 +1,69 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [RFC PATCH 0/3] PM / Domains: Add support for devices that
- require multiple domains
-Date: Mon, 10 Oct 2016 12:18:10 +0100
-Message-ID: <90faea7d-65b6-590a-83f1-24fcdffa0569@nvidia.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC PATCH 2/3] PM / Domains: Add support for devices with
+ multiple domains
+Date: Mon, 10 Oct 2016 12:24:15 +0100
+Message-ID: <6fce02ca-281a-08bd-304a-77829d35c7e1@nvidia.com>
 References: <1474367287-10402-1-git-send-email-jonathanh@nvidia.com>
- <CAPDyKFoFPNNnoc-7G34A7a4Yo8f=WUyurNP1evabw3MOEubEoA@mail.gmail.com>
+ <1474367287-10402-3-git-send-email-jonathanh@nvidia.com>
+ <7hlgy0frlb.fsf@baylibre.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pm-owner@vger.kernel.org>
-In-Reply-To: <CAPDyKFoFPNNnoc-7G34A7a4Yo8f=WUyurNP1evabw3MOEubEoA@mail.gmail.com>
-Sender: linux-pm-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <7hlgy0frlb.fsf-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Cc: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 06/10/16 13:22, Ulf Hansson wrote:
-> On 20 September 2016 at 12:28, Jon Hunter <jonathanh@nvidia.com> wrote:
->> The Tegra124/210 XUSB subsystem (that consists of both host and device
->> controllers) is partitioned across 3 PM domains which are:
->> - XUSBA: Superspeed logic (for USB 3.0)
->> - XUSBB: Device controller
->> - XUSBC: Host controller
->>
->> These power domains are not nested and can be powered-up and down
->> independently of one another. In practice different scenarios require
->> different combinations of the power domains, for example:
->> - Superspeed host: XUSBA and XUSBC
->> - Superspeed device: XUSBA and XUSBB
->>
->> Although it could be possible to logically nest both the XUSBB and XUSBC
->> domains under the XUSBA, superspeed may not always be used/required and
->> so this would keep it on unnecessarily.
->>
->> Given that Tegra uses device-tree for describing the hardware, it would
->> be ideal that the device-tree 'power-domains' property for generic PM
->> domains could be extended to allow more than one PM domain to be
->> specified. For example, define the following the Tegra210 xHCI device ...
->>
->>         usb@70090000 {
->>                 compatible = "nvidia,tegra210-xusb";
->>                 ...
->>                 power-domains = <&pd_xusbhost>, <&pd_xusbss>;
->>         };
->>
->> This RFC extends the generic PM domain framework to allow a device to
->> define more than one PM domain in the device-tree 'power-domains'
->> property.
+On 07/10/16 10:14, Kevin Hilman wrote:
+> Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> writes:
 > 
-> First, I don't really like extending the internal logic of genpd to
-> deal with multiple PM domains per device. *If* this really is needed,
-> I think we should try to extend the struct device to cover this, then
-> make genpd to use it somehow.
-
-I had looked at that initially but it was looking quite complex because
-of the various structures (dev_pm_domain in the device structure,
-pm_domain_data in pm_subsys_data, etc). This implementation is quite
-simple and less intrusive. However, if there is a lot of interest in
-this and it does appear to be, I would agree that having the device
-structure handle this would be best.
-
-> Second, another way of seeing this is: Depending on the current
-> runtime selected configuration you need to re-configure the PM domain
-> topology - but the device would still remain in the same PM domain.
+>> Some devices may require more than one PM domain to operate and this is
+>> not currently by the PM domain framework. Furthermore, the current Linux
+>> 'device' structure only allows devices to be associated with a single PM
+>> domain and so cannot easily be associated with more than one. To allow
+>> devices to be associated with more than one PM domain, if multiple
+>> domains are defined for a given device (eg. via device-tree), then:
+>> 1. Create a new PM domain for this device. The name of the new PM domain
+>>    created matches the device name for which it was created for.
+>> 2. Register the new PM domain as a sub-domain for all PM domains
+>>    required by the device.
+>> 3. Attach the device to the new PM domain.
 > 
-> In other words, you would need to remove/add subdomain(s) depending on
-> the selected configuration. Would that better reflect the HW?
+> Did you look at what might be involved to extend struct device to hace a
+> list of pm_domains?  Like Ulf, I'm a bit unsettled by this
+> implementation that has to work around the basic limitation in the
+> driver model.
 
-I am not 100% sure I follow what you are saying, but ultimately, I would
-like to get to ...
+I had but it was going to be a much bigger and intrusive change. So I
+went with this as a initial idea to see if others also had a need for
+it. I am happy to start looking at extended the device struct if this is
+the preferred path and I would agree that would make most sense.
 
-	usb@70090000 {
-		compatible = "nvidia,tegra210-xusb";
-		...
-		power-domains = <&pd_xusbhost>, <&pd_xusbss>;
-	};
+> Having devices in multitple domains is needed for SoCs I'm familiar with
+> also, so is a needed feature.
+
+Ok great.
+
+> I think removing the struct device limitation and corresponding
+> assumptions in the driver and PM core is a prerequisite for this
+> feature.
+> 
+> Doing that will lead to several questions about how to handle runtime PM
+> operations (e.g. which of the multiple PM domains should the one to call
+> the drivers runtime PM hooks when a device changes runtime PM state?)
+
+Right. My initial thought would be that at least for device-tree based
+configuration, that the order in which the pm-domains are defined in DT
+would determine the order in which the pm-domains are power-on/off.
+
+> Anyways, even with the potential complexities, I think attempting this
+> is the right way forward.
+
+Ok. I will start having a think about this but will probably not get
+back to this for a few weeks.
 
 Cheers
 Jon
