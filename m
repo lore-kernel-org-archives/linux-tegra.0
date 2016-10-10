@@ -1,62 +1,84 @@
-From: Ralf Ramsauer <ralf-ex4EvEgDZR1o7HI0AxOeTKwczVv4G7md@public.gmane.org>
-Subject: Re: Jetson TK1: Additional SPI chip selects
-Date: Sat, 8 Oct 2016 01:33:15 +0200
-Message-ID: <ee70aa88-05c2-dbdf-37bc-5f033427239b@ramses-pyramidenbau.de>
-References: <c35c4309-9432-a9a9-0677-3c2b18202e4f@ramses-pyramidenbau.de>
- <9625cc1a-c723-516d-9eb6-b7ec383e323c@wwwdotorg.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [RFC PATCH 0/3] PM / Domains: Add support for devices that
+ require multiple domains
+Date: Mon, 10 Oct 2016 12:18:10 +0100
+Message-ID: <90faea7d-65b6-590a-83f1-24fcdffa0569@nvidia.com>
+References: <1474367287-10402-1-git-send-email-jonathanh@nvidia.com>
+ <CAPDyKFoFPNNnoc-7G34A7a4Yo8f=WUyurNP1evabw3MOEubEoA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <9625cc1a-c723-516d-9eb6-b7ec383e323c-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Tobias Kottwitz <tobias.kottwitz-3hJwHgKweOl99bV2EpccEXqWYbMAw+HU@public.gmane.org>
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <CAPDyKFoFPNNnoc-7G34A7a4Yo8f=WUyurNP1evabw3MOEubEoA@mail.gmail.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Stephen,
 
-On 10/07/2016 08:33 PM, Stephen Warren wrote:
-> On 10/07/2016 07:25 AM, Ralf Ramsauer wrote:
->> Hi,
+On 06/10/16 13:22, Ulf Hansson wrote:
+> On 20 September 2016 at 12:28, Jon Hunter <jonathanh@nvidia.com> wrote:
+>> The Tegra124/210 XUSB subsystem (that consists of both host and device
+>> controllers) is partitioned across 3 PM domains which are:
+>> - XUSBA: Superspeed logic (for USB 3.0)
+>> - XUSBB: Device controller
+>> - XUSBC: Host controller
 >>
->> I'm running a Jetson TK1 on mainline Linux. To enable userspace SPI, I
->> modified the device-tree by:
+>> These power domains are not nested and can be powered-up and down
+>> independently of one another. In practice different scenarios require
+>> different combinations of the power domains, for example:
+>> - Superspeed host: XUSBA and XUSBC
+>> - Superspeed device: XUSBA and XUSBB
 >>
->>  /* Expansion TS_SPI_* */
->>  spi@7000d400 {
->>      status = "okay";
->> +     spidev@0 {
->> +        compatible = "spidev";
->> +        reg = <0>;
->> +        spi-max-frequency = <25000000>;
->> +    };
->>  };
+>> Although it could be possible to logically nest both the XUSBB and XUSBC
+>> domains under the XUSBA, superspeed may not always be used/required and
+>> so this would keep it on unnecessarily.
 >>
->> This works fine. Is it possible to use arbitrary GPIOs as additional
->> chip-selects?
+>> Given that Tegra uses device-tree for describing the hardware, it would
+>> be ideal that the device-tree 'power-domains' property for generic PM
+>> domains could be extended to allow more than one PM domain to be
+>> specified. For example, define the following the Tegra210 xHCI device ...
 >>
->> What would I have to do If I'd like to add PU0 or PU1 (sysfs
->> gpio160/161) as chip-selects?
+>>         usb@70090000 {
+>>                 compatible = "nvidia,tegra210-xusb";
+>>                 ...
+>>                 power-domains = <&pd_xusbhost>, <&pd_xusbss>;
+>>         };
+>>
+>> This RFC extends the generic PM domain framework to allow a device to
+>> define more than one PM domain in the device-tree 'power-domains'
+>> property.
 > 
-> According to Documentation/devicetree/bindings/spi/spi-bus.txt, there
-> are standard properties you can use for GPIO chip-select signals, and it
-> looks like the SPI core code handles this itself. However, judging by a
-Yes, I already followed those instructions and it didn't work. Other CSs
-seem to be ignored, without any warnings while the native CS line still
-keeps working. That's why I came up with this post. Adding a line to the
-DT like
+> First, I don't really like extending the internal logic of genpd to
+> deal with multiple PM domains per device. *If* this really is needed,
+> I think we should try to extend the struct device to cover this, then
+> make genpd to use it somehow.
 
-cs-gpios = <0>, <&gpio TEGRA_GPIO(X, Y) GPIO_ACTIVE_LOW>;
+I had looked at that initially but it was looking quite complex because
+of the various structures (dev_pm_domain in the device structure,
+pm_domain_data in pm_subsys_data, etc). This implementation is quite
+simple and less intrusive. However, if there is a lot of interest in
+this and it does appear to be, I would agree that having the device
+structure handle this would be best.
 
-should actually (at least syntactically and semantically) be fine for an
-additional CS, right?
-> quick look at the Tegra SPI driver, it doesn't fully support that since
-> it always attempts to program the HW chip-selects. If you make the HW CS
-> logic in the driver conditional, and add the DT properties mentioned in
-> spi-bus.txt, it should work.
-Oh no, doesn't sound good. Actually I didn't want to touch driver
-code... Well, I'll have a look into other drivers that already support
-it and compare it to the tegra driver.
+> Second, another way of seeing this is: Depending on the current
+> runtime selected configuration you need to re-configure the PM domain
+> topology - but the device would still remain in the same PM domain.
+> 
+> In other words, you would need to remove/add subdomain(s) depending on
+> the selected configuration. Would that better reflect the HW?
 
-  Ralf
+I am not 100% sure I follow what you are saying, but ultimately, I would
+like to get to ...
+
+	usb@70090000 {
+		compatible = "nvidia,tegra210-xusb";
+		...
+		power-domains = <&pd_xusbhost>, <&pd_xusbss>;
+	};
+
+Cheers
+Jon
+
+-- 
+nvpublic
