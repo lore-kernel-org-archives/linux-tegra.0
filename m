@@ -1,39 +1,41 @@
 From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH v2 0/3] PCI: tegra: Cleanups
-Date: Wed, 12 Oct 2016 08:02:12 -0500
-Message-ID: <20161012125946.24960.54201.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+Subject: [PATCH v2 1/3] PCI: tegra: Fix argument order in
+ tegra_pcie_phy_disable()
+Date: Wed, 12 Oct 2016 08:02:20 -0500
+Message-ID: <20161012130220.24960.56012.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+References: <20161012125946.24960.54201.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20161012125946.24960.54201.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 Sender: linux-pci-owner@vger.kernel.org
 To: Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>
 Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-  - Fix argument order bug for pads_writel() call.
+The tegra_pcie_phy_disable() path called pads_writel() with arguments in
+the wrong order.  Swap them to be the "value, offset" order expected by
+pads_writel().
 
-  - Add local "dev" pointers to reduce repetition of things like
-    "&pdev->dev".
-
-  - Remove platform drvdata because it appears unused (we called
-    platform_set_drvdata() but not platform_get_drvdata()).
-
-The first patch fixes a bug.  The others shouldn't change the behavior.
-
-Changes from v1:
-  I dropped the following patches because they were a lot of churn for
-  questionable benefit:
-    PCI: tegra: Swap order of afi_writel() reg/val arguments
-    PCI: tegra: Swap order of pads_writel() reg/val arguments
-
+Fixes: 6fe7c187e026 ("PCI: tegra: Support per-lane PHYs")
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+CC: stable@vger.kernel.org	# v4.7+
 ---
+ drivers/pci/host/pci-tegra.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Bjorn Helgaas (3):
-      PCI: tegra: Fix argument order in tegra_pcie_phy_disable()
-      PCI: tegra: Add local struct device pointers
-      PCI: tegra: Remove unused platform data
-
-
- drivers/pci/host/pci-tegra.c |  237 ++++++++++++++++++++++--------------------
- 1 file changed, 123 insertions(+), 114 deletions(-)
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index e2a8e4c..6df5ed0 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -859,7 +859,7 @@ static int tegra_pcie_phy_disable(struct tegra_pcie *pcie)
+ 	/* override IDDQ */
+ 	value = pads_readl(pcie, PADS_CTL);
+ 	value |= PADS_CTL_IDDQ_1L;
+-	pads_writel(pcie, PADS_CTL, value);
++	pads_writel(pcie, value, PADS_CTL);
+ 
+ 	/* reset PLL */
+ 	value = pads_readl(pcie, soc->pads_pll_ctl);
