@@ -1,41 +1,35 @@
-From: Bjorn Helgaas <bhelgaas@google.com>
-Subject: [PATCH v2 1/3] PCI: tegra: Fix argument order in
- tegra_pcie_phy_disable()
-Date: Wed, 12 Oct 2016 08:02:20 -0500
-Message-ID: <20161012130220.24960.56012.stgit@bhelgaas-glaptop2.roam.corp.google.com>
+From: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 3/3] PCI: tegra: Remove unused platform data
+Date: Wed, 12 Oct 2016 08:02:46 -0500
+Message-ID: <20161012130246.24960.49997.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 References: <20161012125946.24960.54201.stgit@bhelgaas-glaptop2.roam.corp.google.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-pci-owner@vger.kernel.org>
-In-Reply-To: <20161012125946.24960.54201.stgit@bhelgaas-glaptop2.roam.corp.google.com>
-Sender: linux-pci-owner@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>
-Cc: linux-tegra@vger.kernel.org, linux-pci@vger.kernel.org
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20161012125946.24960.54201.stgit-1RhO1Y9PlrlHTL0Zs8A6p/gx64E7kk8eUsxypvmhUTTZJqsBc5GL+g@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-The tegra_pcie_phy_disable() path called pads_writel() with arguments in
-the wrong order.  Swap them to be the "value, offset" order expected by
-pads_writel().
+The tegra driver never uses the platform drvdata pointer, so don't
+bother setting it.  No functional change intended.
 
-Fixes: 6fe7c187e026 ("PCI: tegra: Support per-lane PHYs")
-Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-CC: stable@vger.kernel.org	# v4.7+
+Signed-off-by: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/pci/host/pci-tegra.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/pci/host/pci-tegra.c |    1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index e2a8e4c..6df5ed0 100644
+index e2ec0f6..8dfccf7 100644
 --- a/drivers/pci/host/pci-tegra.c
 +++ b/drivers/pci/host/pci-tegra.c
-@@ -859,7 +859,7 @@ static int tegra_pcie_phy_disable(struct tegra_pcie *pcie)
- 	/* override IDDQ */
- 	value = pads_readl(pcie, PADS_CTL);
- 	value |= PADS_CTL_IDDQ_1L;
--	pads_writel(pcie, PADS_CTL, value);
-+	pads_writel(pcie, value, PADS_CTL);
+@@ -2266,7 +2266,6 @@ static int tegra_pcie_probe(struct platform_device *pdev)
+ 			dev_err(dev, "failed to setup debugfs: %d\n", err);
+ 	}
  
- 	/* reset PLL */
- 	value = pads_readl(pcie, soc->pads_pll_ctl);
+-	platform_set_drvdata(pdev, pcie);
+ 	return 0;
+ 
+ disable_msi:
