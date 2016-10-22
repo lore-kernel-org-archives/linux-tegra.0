@@ -1,83 +1,61 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 5/5] soc/tegra: pmc: Remove genpd when adding provider fails
-Date: Sat, 22 Oct 2016 20:23:56 +0100
-Message-ID: <1477164236-29351-6-git-send-email-jonathanh@nvidia.com>
-References: <1477164236-29351-1-git-send-email-jonathanh@nvidia.com>
+From: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+Subject: [PATCH] dma: tegra210-adma: convert TEGRA210_ADMA from bool to tristate
+Date: Sat, 22 Oct 2016 18:25:10 -0400
+Message-ID: <20161022222510.11373-1-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
 Content-Type: text/plain
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1477164236-29351-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Commit 3fe577107ccf ("PM / Domains: Add support for removing PM
-domains") add support for removing PM domains. Update the Tegra PMC
-driver to remove PM domains if we fail to add a provider for the PM
-domain.
+This driver currently uses modular infrastructure but is controlled
+by a bool Kconfig.
 
-Please note that the code under 'power_on_cleanup' label does not
-really belong in the clean-up error path for tegra_powergate_add().
-To keep the error path simple, remove this label and move the
-associated code to where it needs to be invoked.
+There is a general consensus from the DMA reviewers and maintainers
+that "if it can be modular, it should be modular" in order to keep
+the bzImage size under control for multi platform kernels.
 
-Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Build tested only.  Also needed some new pm_clk symbols exported
+before this commit is applied to tree in order to avoid modpost
+errors like:
+
+  ERROR: "pm_clk_add_clk" [drivers/dma/tegra210-adma.ko] undefined!
+  ERROR: "pm_clk_create" [drivers/dma/tegra210-adma.ko] undefined!
+  ERROR: "pm_clk_destroy" [drivers/dma/tegra210-adma.ko] undefined!
+  ERROR: "pm_clk_suspend" [drivers/dma/tegra210-adma.ko] undefined!
+  ERROR: "pm_clk_resume" [drivers/dma/tegra210-adma.ko] undefined!
+
+These were added as exports in the v4.8-rc1 merge window.
+
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Signed-off-by: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
 ---
- drivers/soc/tegra/pmc.c | 21 +++++++++++++--------
- 1 file changed, 13 insertions(+), 8 deletions(-)
+ drivers/dma/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index b6efb62ad1dd..ec4a33f49ff8 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -834,8 +834,11 @@ static void tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
- 		goto remove_clks;
- 	}
+diff --git a/drivers/dma/Kconfig b/drivers/dma/Kconfig
+index af63a6bcf564..4595f5009244 100644
+--- a/drivers/dma/Kconfig
++++ b/drivers/dma/Kconfig
+@@ -479,7 +479,7 @@ config TEGRA20_APB_DMA
+ 	  or vice versa. It does not support memory to memory data transfer.
  
--	if (!IS_ENABLED(CONFIG_PM_GENERIC_DOMAINS))
--		goto power_on_cleanup;
-+	if (!IS_ENABLED(CONFIG_PM_GENERIC_DOMAINS)) {
-+		if (off)
-+			WARN_ON(tegra_powergate_power_up(pg, true));
-+		goto remove_resets;
-+	}
- 
- 	/*
- 	 * FIXME: If XHCI is enabled for Tegra, then power-up the XUSB
-@@ -846,8 +849,11 @@ static void tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
- 	 * to be unused.
- 	 */
- 	if (IS_ENABLED(CONFIG_USB_XHCI_TEGRA) &&
--	    (id == TEGRA_POWERGATE_XUSBA || id == TEGRA_POWERGATE_XUSBC))
--		goto power_on_cleanup;
-+	    (id == TEGRA_POWERGATE_XUSBA || id == TEGRA_POWERGATE_XUSBC)) {
-+		if (off)
-+			WARN_ON(tegra_powergate_power_up(pg, true));
-+		goto remove_resets;
-+	}
- 
- 	err = pm_genpd_init(&pg->genpd, NULL, off);
- 	if (err < 0) {
-@@ -860,16 +866,15 @@ static void tegra_powergate_add(struct tegra_pmc *pmc, struct device_node *np)
- 	if (err < 0) {
- 		dev_err(pmc->dev, "failed to add genpd provider for %s: %d\n",
- 			np->name, err);
--		goto remove_resets;
-+		goto remove_genpd;
- 	}
- 
- 	dev_dbg(pmc->dev, "added power domain %s\n", pg->genpd.name);
- 
- 	return;
- 
--power_on_cleanup:
--	if (off)
--		WARN_ON(tegra_powergate_power_up(pg, true));
-+remove_genpd:
-+	pm_genpd_remove(&pg->genpd);
- 
- remove_resets:
- 	while (pg->num_resets--)
+ config TEGRA210_ADMA
+-	bool "NVIDIA Tegra210 ADMA support"
++	tristate "NVIDIA Tegra210 ADMA support"
+ 	depends on (ARCH_TEGRA_210_SOC || COMPILE_TEST) && PM_CLK
+ 	select DMA_ENGINE
+ 	select DMA_VIRTUAL_CHANNELS
 -- 
-1.9.1
+2.10.0
