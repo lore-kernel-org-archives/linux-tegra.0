@@ -1,11 +1,13 @@
 From: Mirza Krak <mirza.krak@gmail.com>
-Subject: [PATCH V3 0/6] Add support for Tegra GMI bus controller
-Date: Thu, 27 Oct 2016 16:01:06 +0200
-Message-ID: <1477576872-2665-1-git-send-email-mirza.krak@gmail.com>
+Subject: [PATCH V3 5/6] ARM: tegra: Add Tegra20 GMI support
+Date: Thu, 27 Oct 2016 16:01:11 +0200
+Message-ID: <1477576872-2665-6-git-send-email-mirza.krak@gmail.com>
+References: <1477576872-2665-1-git-send-email-mirza.krak@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <1477576872-2665-1-git-send-email-mirza.krak@gmail.com>
 List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
  <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
 List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
@@ -16,64 +18,57 @@ List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
 Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
 Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: swarren@wwwdotorg.org, thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: mark.rutland@arm.com, gnurou@gmail.com, Mirza Krak <mirza.krak@gmail.com.com>, pgaikwad@nvidia.com, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, pdeschrijver@nvidia.com, sboyd@codeaurora.org, linux@armlinux.org.uk, linux-kernel@vger.kernel.org, robh+dt@kernel.org, linux-tegra@vger.kernel.org, mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org
+Cc: mark.rutland@arm.com, gnurou@gmail.com, pgaikwad@nvidia.com, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, pdeschrijver@nvidia.com, Mirza Krak <mirza.krak@gmail.com>, sboyd@codeaurora.org, linux@armlinux.org.uk, linux-kernel@vger.kernel.org, robh+dt@kernel.org, linux-tegra@vger.kernel.org, mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Mirza Krak <mirza.krak@gmail.com.com>
+From: Mirza Krak <mirza.krak@gmail.com>
 
-Hi.
+Add a device node for the GMI controller found on Tegra20.
 
-This patch series adds support for the Tegra GMI bus controller.
+Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
+---
 
-I have tested this series on a Tegra30 using a Colibri T30 SOM on a custom
-carrier board which has multiple CAN controllers (SJA1000) connected to the
-GMI bus.
+Changes in v2:
+- added address-cells, size-cells and ranges properties
 
-I have re-based on top of latest tegra/for-next in V3. Also see individual
-patches for changes in V3.
+Changes in v3:
+- fixed range address which is not the same as Tegra30.
 
-I have picked up all the comments and suggestions from V2, but I still do not
-have an ACK from Rob on the bindings and discussions have halted for some time
-now and I hope that this re-send could be the basis for new discussions.
+ arch/arm/boot/dts/tegra20.dtsi | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
 
-See below links for previous discussions.
+diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
+index 2207c08..b22cddb 100644
+--- a/arch/arm/boot/dts/tegra20.dtsi
++++ b/arch/arm/boot/dts/tegra20.dtsi
+@@ -1,4 +1,4 @@
+-#include <dt-bindings/clock/tegra20-car.h>
++include <dt-bindings/clock/tegra20-car.h>
+ #include <dt-bindings/gpio/tegra-gpio.h>
+ #include <dt-bindings/pinctrl/pinctrl-tegra.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+@@ -376,6 +376,20 @@
+ 		status = "disabled";
+ 	};
 
-Comments on RFC:
-https://marc.info/?l=linux-clk&m=146893557629903&w=2
-https://marc.info/?l=linux-tegra&m=146893541829801&w=2
-https://marc.info/?l=linux-tegra&m=146893542429814&w=2
-
-Comments on V1:
-https://marc.info/?l=linux-arm-kernel&m=147051551821122&w=2
-https://marc.info/?l=linux-arm-kernel&m=147051553121150&w=2
-https://marc.info/?l=linux-arm-kernel&m=147194856600627&w=2
-https://marc.info/?l=linux-arm-kernel&m=147072742432211&w=2
-
-Comments on V2:
-https://marc.info/?l=devicetree&m=147522253920226&w=2
-https://marc.info/?l=linux-tegra&m=147204588027687&w=2
-https://marc.info/?l=linux-tegra&m=147204588027687&w=2
-https://marc.info/?l=devicetree&m=147256931318922&w=2
-
-Mirza Krak (6):
-  clk: tegra: add TEGRA20_CLK_NOR to init table
-  clk: tegra: add TEGRA30_CLK_NOR to init table
-  dt/bindings: Add bindings for Tegra GMI controller
-  ARM: tegra: Add Tegra30 GMI support
-  ARM: tegra: Add Tegra20 GMI support
-  bus: Add support for Tegra Generic Memory Interface
-
- .../devicetree/bindings/bus/nvidia,tegra20-gmi.txt | 132 ++++++++++
- arch/arm/boot/dts/tegra20.dtsi                     |  16 +-
- arch/arm/boot/dts/tegra30.dtsi                     |  13 +
- drivers/bus/Kconfig                                |   8 +
- drivers/bus/Makefile                               |   1 +
- drivers/bus/tegra-gmi.c                            | 267 +++++++++++++++++++++
- drivers/clk/tegra/clk-tegra20.c                    |   1 +
- drivers/clk/tegra/clk-tegra30.c                    |   1 +
- 8 files changed, 438 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
- create mode 100644 drivers/bus/tegra-gmi.c
-
++
++	gmi@70009000 {
++		compatible = "nvidia,tegra20-gmi";
++		reg = <0x70009000 0x1000>;
++		#address-cells = <2>;
++		#size-cells = <1>;
++		ranges = <0 0 0xd0000000 0xfffffff>;
++		clocks = <&tegra_car TEGRA20_CLK_NOR>;
++		clock-names = "gmi";
++		resets = < &tegra_car 42>;
++		reset-names = "gmi";
++		status = "disabled";
++	};
++
+ 	pwm: pwm@7000a000 {
+ 		compatible = "nvidia,tegra20-pwm";
+ 		reg = <0x7000a000 0x100>;
 --
 2.1.4
