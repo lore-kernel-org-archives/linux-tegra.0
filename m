@@ -1,8 +1,8 @@
 From: Paul Fertser <fercerpav@gmail.com>
-Subject: [PATCH v2 1/2] drivers: staging: nvec: remove bogus reset command for
- PS/2 interface
-Date: Thu, 27 Oct 2016 17:22:08 +0300
-Message-ID: <1477578154-21199-2-git-send-email-fercerpav@gmail.com>
+Subject: [PATCH v2 2/2] Revert "staging: nvec: ps2: change serio type to
+ passthrough"
+Date: Thu, 27 Oct 2016 17:22:09 +0300
+Message-ID: <1477578154-21199-3-git-send-email-fercerpav@gmail.com>
 References: <1477578154-21199-1-git-send-email-fercerpav@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
@@ -22,39 +22,42 @@ To: devel@driverdev.osuosl.org
 Cc: Paul Fertser <fercerpav@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-tegra@vger.kernel.org, ac100@lists.launchpad.net
 List-Id: linux-tegra@vger.kernel.org
 
-This command was sent behind serio's back and the answer to it was
-confusing atkbd probe function which lead to the elantech touchpad
-getting detected as a keyboard.
+This reverts commit 36b30d6138f4677514aca35ab76c20c1604baaad.
 
-To prevent this from happening just let every party do its part of the
-job.
+This is necessary to detect paz00 (ac100) touchpad properly as one
+speaking ETPS/2 protocol. Without it X.org's synaptics driver doesn't
+work as the touchpad is detected as an ImPS/2 mouse instead.
+
+Commit ec6184b1c717b8768122e25fe6d312f609cc1bb4 changed the way
+auto-detection is performed on ports marked as pass through and made the
+issue apparent.
+
+A pass through port is an additional PS/2 port used to connect a slave
+device to a master device that is using PS/2 to communicate with the
+host (so slave's PS/2 communication is tunneled over master's PS/2
+link). "Synaptics PS/2 TouchPad Interfacing Guide" describes such a
+setup (PS/2 PASS-THROUGH OPTION section).
+
+Since paz00's embedded controller is not connected to a PS/2 port
+itself, the PS/2 interface it exposes is not a pass-through one.
 
 Signed-off-by: Paul Fertser <fercerpav@gmail.com>
 ---
- drivers/staging/nvec/nvec_ps2.c | 4 ----
- 1 file changed, 4 deletions(-)
+ drivers/staging/nvec/nvec_ps2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/staging/nvec/nvec_ps2.c b/drivers/staging/nvec/nvec_ps2.c
-index a324322..d63c4ef 100644
+index d63c4ef..910e87b 100644
 --- a/drivers/staging/nvec/nvec_ps2.c
 +++ b/drivers/staging/nvec/nvec_ps2.c
-@@ -106,7 +106,6 @@ static int nvec_mouse_probe(struct platform_device *pdev)
- {
- 	struct nvec_chip *nvec = dev_get_drvdata(pdev->dev.parent);
- 	struct serio *ser_dev;
--	char mouse_reset[] = { NVEC_PS2, SEND_COMMAND, PSMOUSE_RST, 3 };
- 
- 	ser_dev = devm_kzalloc(&pdev->dev, sizeof(struct serio), GFP_KERNEL);
+@@ -111,7 +111,7 @@ static int nvec_mouse_probe(struct platform_device *pdev)
  	if (!ser_dev)
-@@ -127,9 +126,6 @@ static int nvec_mouse_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
  
- 	serio_register_port(ser_dev);
- 
--	/* mouse reset */
--	nvec_write_async(nvec, mouse_reset, sizeof(mouse_reset));
--
- 	return 0;
- }
- 
+-	ser_dev->id.type = SERIO_PS_PSTHRU;
++	ser_dev->id.type = SERIO_8042;
+ 	ser_dev->write = ps2_sendcommand;
+ 	ser_dev->start = ps2_startstreaming;
+ 	ser_dev->stop = ps2_stopstreaming;
 -- 
 2.7.0
