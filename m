@@ -1,111 +1,48 @@
-From: Marc Dietrich <marvin24@gmx.de>
-Subject: Re: [PATCH] drivers: staging: nvec: remove bogus reset command for
- PS/2 interface
-Date: Thu, 27 Oct 2016 15:59:51 +0200
-Message-ID: <5597933.jS9uVMUSFX@fb07-iapwap2>
-References: <18470230.WG6Q7IXVVu@fb07-iapwap2>
- <1477576595-20285-1-git-send-email-fercerpav@gmail.com>
-Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2361309289862772732=="
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <1477576595-20285-1-git-send-email-fercerpav@gmail.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: Paul Fertser <fercerpav@gmail.com>
-Cc: devel@driverdev.osuosl.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-tegra@vger.kernel.org, ac100@lists.launchpad.net
+From: Mirza Krak <mirza.krak@gmail.com>
+Subject: [PATCH V3 2/6] clk: tegra: add TEGRA30_CLK_NOR to init table
+Date: Thu, 27 Oct 2016 16:01:08 +0200
+Message-ID: <1477576872-2665-3-git-send-email-mirza.krak@gmail.com>
+References: <1477576872-2665-1-git-send-email-mirza.krak@gmail.com>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1477576872-2665-1-git-send-email-mirza.krak@gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: swarren@wwwdotorg.org, thierry.reding@gmail.com, jonathanh@nvidia.com
+Cc: gnurou@gmail.com, linux@armlinux.org.uk, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, Mirza Krak <mirza.krak@gmail.com>
 List-Id: linux-tegra@vger.kernel.org
 
---===============2361309289862772732==
-Content-Type: multipart/signed; boundary="nextPart4037326.RVdMIuuh7H"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+From: Mirza Krak <mirza.krak@gmail.com>
 
---nextPart4037326.RVdMIuuh7H
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="ISO-8859-1"
+Add TEGRA30_CLK_NOR to init table and set default rate to 127 MHz which
+is max rate.
 
-Hi Paul,
+The maximum rate value of 127 MHz is pulled from the downstream L4T
+kernel.
 
-thanks for finding the issue!
+Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
+Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
+---
 
-Am Donnerstag, 27. Oktober 2016, 16:55:14 CEST schrieb Paul Fertser:
-> This command was sent behind serio's back and the answer to it was
-> confusing atkbd probe function which lead to the elantech touchpad
-> getting detected as a keyboard.
-> 
-> To prevent this from happening just let every party do its part of the
-> job.
-> 
-> Signed-off-by: Paul Fertser <fercerpav@gmail.com>
+Changes in v2:
+- no changes
 
-Please send a complete patch in a new thread (or titled with V2) with the 
-serio type change included.
+Changes in v3:
+- Added comment in commit message where I got the maximum rates from.
 
-Thanks,
+ drivers/clk/tegra/clk-tegra30.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Marc
-
-> ---
->  drivers/staging/nvec/nvec_ps2.c | 4 ----
->  1 file changed, 4 deletions(-)
-> 
-> diff --git a/drivers/staging/nvec/nvec_ps2.c
-> b/drivers/staging/nvec/nvec_ps2.c index c83eeb4..910e87b 100644
-> --- a/drivers/staging/nvec/nvec_ps2.c
-> +++ b/drivers/staging/nvec/nvec_ps2.c
-> @@ -106,7 +106,6 @@ static int nvec_mouse_probe(struct platform_device
-> *pdev) {
->  	struct nvec_chip *nvec = dev_get_drvdata(pdev->dev.parent);
->  	struct serio *ser_dev;
-> -	char mouse_reset[] = { NVEC_PS2, SEND_COMMAND, PSMOUSE_RST, 3 };
-> 
->  	ser_dev = devm_kzalloc(&pdev->dev, sizeof(struct serio), GFP_KERNEL);
->  	if (!ser_dev)
-> @@ -127,9 +126,6 @@ static int nvec_mouse_probe(struct platform_device
-> *pdev)
-> 
->  	serio_register_port(ser_dev);
-> 
-> -	/* mouse reset */
-> -	nvec_write_async(nvec, mouse_reset, sizeof(mouse_reset));
-> -
->  	return 0;
->  }
-
-
---nextPart4037326.RVdMIuuh7H
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEcBAABCAAGBQJYEghXAAoJEKyeR39HFBto23IH/iwqoDllvzf3m7JfuPY07xM8
-J7zsBgHyOEGY5bRdcOmK2oQSkUt51kR2B4GUQevscYKhksQySctuViDjOPfCAYom
-JI4XC1rwlr45hN+4TVeIZvzZoi5Ruoc8f2PVs9wfYaGRBBdxyHMgXPLyvT6iX3YF
-rvMHcm8urKTaUqO3FkBWuoWEOLivNQzBPL5rw1HBpCLmGZ8gxDrRbH7Vz4ilJKxR
-zSPvpFHKjGLwYiktz3YdNJzLjVCaPDnkEmM9K2nyio/zz2z02ccC34EEQa+/7Kvn
-7LpJsEnqckPzZosxwS3KjzLIyuZmIaiIhs74qsZ8X88ppAHZC9tJUTlqpYoX3ec=
-=tXDy
------END PGP SIGNATURE-----
-
---nextPart4037326.RVdMIuuh7H--
-
-
---===============2361309289862772732==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-devel mailing list
-devel@linuxdriverproject.org
-http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel
-
---===============2361309289862772732==--
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 8e2db5e..67f1677 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1252,6 +1252,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA30_CLK_SDMMC1, TEGRA30_CLK_PLL_P, 48000000, 0 },
+ 	{ TEGRA30_CLK_SDMMC2, TEGRA30_CLK_PLL_P, 48000000, 0 },
+ 	{ TEGRA30_CLK_SDMMC3, TEGRA30_CLK_PLL_P, 48000000, 0 },
++	{ TEGRA30_CLK_NOR, TEGRA30_CLK_PLL_P, 127000000, 0 },
+ 	{ TEGRA30_CLK_PLL_M, TEGRA30_CLK_CLK_MAX, 0, 1 },
+ 	{ TEGRA30_CLK_PCLK, TEGRA30_CLK_CLK_MAX, 0, 1 },
+ 	{ TEGRA30_CLK_CSITE, TEGRA30_CLK_CLK_MAX, 0, 1 },
+--
+2.1.4
