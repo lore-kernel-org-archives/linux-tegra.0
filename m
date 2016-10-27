@@ -1,63 +1,58 @@
-From: Paul Fertser <fercerpav@gmail.com>
-Subject: [PATCH v2 2/2] Revert "staging: nvec: ps2: change serio type to
- passthrough"
-Date: Thu, 27 Oct 2016 17:22:09 +0300
-Message-ID: <1477578154-21199-3-git-send-email-fercerpav@gmail.com>
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: Re: [PATCH v2 0/2] staging: nvec: ps2: fix touchpad operation
+Date: Thu, 27 Oct 2016 17:46:22 +0200
+Message-ID: <1703154.hSBNnSU4vG@fb07-iapwap2>
 References: <1477578154-21199-1-git-send-email-fercerpav@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <driverdev-devel-bounces@linuxdriverproject.org>
-In-Reply-To: <1477578154-21199-1-git-send-email-fercerpav@gmail.com>
-List-Unsubscribe: <http://driverdev.linuxdriverproject.org/mailman/options/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=unsubscribe>
-List-Archive: <http://driverdev.linuxdriverproject.org/pipermail/driverdev-devel/>
-List-Post: <mailto:driverdev-devel@linuxdriverproject.org>
-List-Help: <mailto:driverdev-devel-request@linuxdriverproject.org?subject=help>
-List-Subscribe: <http://driverdev.linuxdriverproject.org/mailman/listinfo/driverdev-devel>,
- <mailto:driverdev-devel-request@linuxdriverproject.org?subject=subscribe>
-Errors-To: driverdev-devel-bounces@linuxdriverproject.org
-Sender: "devel" <driverdev-devel-bounces@linuxdriverproject.org>
-To: devel@driverdev.osuosl.org
-Cc: Paul Fertser <fercerpav@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-tegra@vger.kernel.org, ac100@lists.launchpad.net
+Content-Type: multipart/signed; boundary="nextPart2103275.XHjjXjXxdJ"; micalg="pgp-sha256"; protocol="application/pgp-signature"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1477578154-21199-1-git-send-email-fercerpav-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Fertser <fercerpav-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: devel-gWbeCf7V1WCQmaza687I9mD2FQJk+8+b@public.gmane.org, Greg Kroah-Hartman <gregkh-hQyY1W1yCW8ekmWlsbkhG0B+6BGkLq7r@public.gmane.org>, ac100-oU9gvf+ajcQ97yFScArB1dHuzzzSOjJt@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This reverts commit 36b30d6138f4677514aca35ab76c20c1604baaad.
+--nextPart2103275.XHjjXjXxdJ
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="ISO-8859-1"
 
-This is necessary to detect paz00 (ac100) touchpad properly as one
-speaking ETPS/2 protocol. Without it X.org's synaptics driver doesn't
-work as the touchpad is detected as an ImPS/2 mouse instead.
+Am Donnerstag, 27. Oktober 2016, 17:22:07 CEST schrieb Paul Fertser:
+> Status quo on Toshiba ac100 (paz00) is that the integrated elantech touchpad
+> is detected as an ImPS/2 mouse and so it's kind of functional but advanced
+> synaptics configuration isn't available.
+> 
+> When only serio type is changed it leads to atkbd misdetecting the touchpad
+> as a keyboard. So first goes the commit that fixes this bug, then the serio
+> type change.
+> 
+> Paul Fertser (2):
+>   drivers: staging: nvec: remove bogus reset command for PS/2 interface
+>   Revert "staging: nvec: ps2: change serio type to passthrough"
+> 
+>  drivers/staging/nvec/nvec_ps2.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
 
-Commit ec6184b1c717b8768122e25fe6d312f609cc1bb4 changed the way
-auto-detection is performed on ports marked as pass through and made the
-issue apparent.
+Works fine now. Thanks!
 
-A pass through port is an additional PS/2 port used to connect a slave
-device to a master device that is using PS/2 to communicate with the
-host (so slave's PS/2 communication is tunneled over master's PS/2
-link). "Synaptics PS/2 TouchPad Interfacing Guide" describes such a
-setup (PS/2 PASS-THROUGH OPTION section).
+The series is 
 
-Since paz00's embedded controller is not connected to a PS/2 port
-itself, the PS/2 interface it exposes is not a pass-through one.
+Acked-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 
-Signed-off-by: Paul Fertser <fercerpav@gmail.com>
----
- drivers/staging/nvec/nvec_ps2.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/nvec/nvec_ps2.c b/drivers/staging/nvec/nvec_ps2.c
-index d63c4ef..910e87b 100644
---- a/drivers/staging/nvec/nvec_ps2.c
-+++ b/drivers/staging/nvec/nvec_ps2.c
-@@ -111,7 +111,7 @@ static int nvec_mouse_probe(struct platform_device *pdev)
- 	if (!ser_dev)
- 		return -ENOMEM;
- 
--	ser_dev->id.type = SERIO_PS_PSTHRU;
-+	ser_dev->id.type = SERIO_8042;
- 	ser_dev->write = ps2_sendcommand;
- 	ser_dev->start = ps2_startstreaming;
- 	ser_dev->stop = ps2_stopstreaming;
--- 
-2.7.0
+--nextPart2103275.XHjjXjXxdJ
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEcBAABCAAGBQJYEiFOAAoJEKyeR39HFBtoov4H/0v7Z12B68gCMnL6SKFlVC2o
+0WpmCUUgz1fo+2c0EhIvFkGcVknEz8fptRZ1RtQ8fzHO2vlQmG+xxKm6Tow1l3Xd
+N3eDbkyeTXS4Qv5FE0XwZKWXNuUxfFJadH1qaelVrsGERv2+ynDCAhebFAzaDiVC
+/NzGvmAxggcIOMVp/tCfteDhG/NIZ337PGVhecLdL6bdRkaJPDYH1bk38NiaX0ZI
+6qO/HI0/xcozNusMyS8e6ma7TqNlMqHRf9+TIwzmTNrngNF/lLR8dBWXyU85KVG4
++FZOxj2fZKuwsTfN/vNmf5mebMS5oRBqzO6WoQVGFAxj/z4SyXUYqhCkK0Iia2g=
+=gxSk
+-----END PGP SIGNATURE-----
+
+--nextPart2103275.XHjjXjXxdJ--
