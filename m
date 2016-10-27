@@ -1,22 +1,30 @@
 From: Mirza Krak <mirza.krak@gmail.com>
-Subject: [PATCH V3 2/6] clk: tegra: add TEGRA30_CLK_NOR to init table
-Date: Thu, 27 Oct 2016 16:01:08 +0200
-Message-ID: <1477576872-2665-3-git-send-email-mirza.krak@gmail.com>
+Subject: [PATCH V3 3/6] dt/bindings: Add bindings for Tegra GMI controller
+Date: Thu, 27 Oct 2016 16:01:09 +0200
+Message-ID: <1477576872-2665-4-git-send-email-mirza.krak@gmail.com>
 References: <1477576872-2665-1-git-send-email-mirza.krak@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1477576872-2665-1-git-send-email-mirza.krak@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: swarren@wwwdotorg.org, thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: gnurou@gmail.com, linux@armlinux.org.uk, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, Mirza Krak <mirza.krak@gmail.com>
+Cc: mark.rutland@arm.com, gnurou@gmail.com, pgaikwad@nvidia.com, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, pdeschrijver@nvidia.com, Mirza Krak <mirza.krak@gmail.com>, sboyd@codeaurora.org, linux@armlinux.org.uk, linux-kernel@vger.kernel.org, robh+dt@kernel.org, linux-tegra@vger.kernel.org, mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Mirza Krak <mirza.krak@gmail.com>
 
-Add TEGRA30_CLK_NOR to init table and set default rate to 127 MHz which
-is max rate.
-
-The maximum rate value of 127 MHz is pulled from the downstream L4T
-kernel.
+Document the devicetree bindings for the Generic Memory Interface (GMI)
+bus driver found on Tegra SOCs.
 
 Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
 Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
@@ -24,25 +32,152 @@ Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
 ---
 
 Changes in v2:
-- no changes
+- Updated examples and some information based on comments from Jon Hunter.
 
 Changes in v3:
-- Added comment in commit message where I got the maximum rates from.
+- Updates ranges description based on comments from Rob Herring
 
- drivers/clk/tegra/clk-tegra30.c | 1 +
- 1 file changed, 1 insertion(+)
+ .../devicetree/bindings/bus/nvidia,tegra20-gmi.txt | 132 +++++++++++++++++++++
+ 1 file changed, 132 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
 
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index 8e2db5e..67f1677 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1252,6 +1252,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA30_CLK_SDMMC1, TEGRA30_CLK_PLL_P, 48000000, 0 },
- 	{ TEGRA30_CLK_SDMMC2, TEGRA30_CLK_PLL_P, 48000000, 0 },
- 	{ TEGRA30_CLK_SDMMC3, TEGRA30_CLK_PLL_P, 48000000, 0 },
-+	{ TEGRA30_CLK_NOR, TEGRA30_CLK_PLL_P, 127000000, 0 },
- 	{ TEGRA30_CLK_PLL_M, TEGRA30_CLK_CLK_MAX, 0, 1 },
- 	{ TEGRA30_CLK_PCLK, TEGRA30_CLK_CLK_MAX, 0, 1 },
- 	{ TEGRA30_CLK_CSITE, TEGRA30_CLK_CLK_MAX, 0, 1 },
+diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
+new file mode 100644
+index 0000000..49bda2f
+--- /dev/null
++++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
+@@ -0,0 +1,132 @@
++Device tree bindings for NVIDIA Tegra Generic Memory Interface bus
++
++The Generic Memory Interface bus enables memory transfers between internal and
++external memory. Can be used to attach various high speed devices such as
++synchronous/asynchronous NOR, FPGA, UARTS and more.
++
++The actual devices are instantiated from the child nodes of a GMI node.
++
++Required properties:
++ - compatible : Should contain one of the following:
++        For Tegra20 must contain "nvidia,tegra20-gmi".
++        For Tegra30 must contain "nvidia,tegra30-gmi".
++ - reg: Should contain GMI controller registers location and length.
++ - clocks: Must contain an entry for each entry in clock-names.
++ - clock-names: Must include the following entries: "gmi"
++ - resets : Must contain an entry for each entry in reset-names.
++ - reset-names : Must include the following entries: "gmi"
++ - #address-cells: The number of cells used to represent physical base
++   addresses in the GMI address space. Should be 2.
++ - #size-cells: The number of cells used to represent the size of an address
++   range in the GMI address space. Should be 1.
++ - ranges: Must be set up to reflect the memory layout with three integer values
++   for each chip-select line in use (only one entry is supported, see below
++   comments):
++   <cs-number> <offset> <physical address of mapping> <size>
++
++Note that the GMI controller does not have any internal chip-select address
++decoding, because of that chip-selects either need to be managed via software
++or by employing external chip-select decoding logic.
++
++If external chip-select logic is used to support multiple devices it is assumed
++that the devices use the same timing and so are probably the same type. It also
++assumes that they can fit in the 256MB address range. In this case only one
++child device is supported which represents the active chip-select line, see
++examples for more insight.
++
++The chip-select number is decoded from the child nodes second address cell of
++'ranges' property, if 'ranges' property is not present or empty chip-select will
++then be decoded from the first cell of the 'reg' property.
++
++Optional child cs node properties:
++
++ - nvidia,snor-data-width-32bit: Use 32bit data-bus, default is 16bit.
++ - nvidia,snor-mux-mode: Enable address/data MUX mode.
++ - nvidia,snor-rdy-active-before-data: Assert RDY signal one cycle before data.
++   If omitted it will be asserted with data.
++ - nvidia,snor-rdy-inv: RDY signal is active high
++ - nvidia,snor-adv-inv: ADV signal is active high
++ - nvidia,snor-oe-inv: WE/OE signal is active high
++ - nvidia,snor-cs-inv: CS signal is active high
++
++  Note that there is some special handling for the timing values.
++  From Tegra TRM:
++  Programming 0 means 1 clock cycle: actual cycle = programmed cycle + 1
++
++ - nvidia,snor-muxed-width: Number of cycles MUX address/data asserted on the
++   bus. Valid values are 0-15, default is 1
++ - nvidia,snor-hold-width: Number of cycles CE stays asserted after the
++   de-assertion of WR_N (in case of SLAVE/MASTER Request) or OE_N
++   (in case of MASTER Request). Valid values are 0-15, default is 1
++ - nvidia,snor-adv-width: Number of cycles during which ADV stays asserted.
++   Valid values are 0-15, default is 1.
++ - nvidia,snor-ce-width: Number of cycles before CE is asserted.
++   Valid values are 0-15, default is 4
++ - nvidia,snor-we-width: Number of cycles during which WE stays asserted.
++   Valid values are 0-15, default is 1
++ - nvidia,snor-oe-width: Number of cycles during which OE stays asserted.
++   Valid values are 0-255, default is 1
++ - nvidia,snor-wait-width: Number of cycles before READY is asserted.
++   Valid values are 0-255, default is 3
++
++Example with two SJA1000 CAN controllers connected to the GMI bus. We wrap the
++controllers with a simple-bus node since they are all connected to the same
++chip-select (CS4), in this example external address decoding is provided:
++
++gmi@70090000 {
++	compatible = "nvidia,tegra20-gmi";
++	reg = <0x70009000 0x1000>;
++	#address-cells = <2>;
++	#size-cells = <1>;
++	clocks = <&tegra_car TEGRA20_CLK_NOR>;
++	clock-names = "gmi";
++	resets = <&tegra_car 42>;
++	reset-names = "gmi";
++	ranges = <4 0 0xd0000000 0xfffffff>;
++
++	status = "okay";
++
++	bus@4,0 {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 4 0 0x40100>;
++
++		nvidia,snor-mux-mode;
++		nvidia,snor-adv-inv;
++
++		can@0 {
++			reg = <0 0x100>;
++			...
++		};
++
++		can@40000 {
++			reg = <0x40000 0x100>;
++			...
++		};
++	};
++};
++
++Example with one SJA1000 CAN controller connected to the GMI bus
++on CS4:
++
++gmi@70090000 {
++	compatible = "nvidia,tegra20-gmi";
++	reg = <0x70009000 0x1000>;
++	#address-cells = <2>;
++	#size-cells = <1>;
++	clocks = <&tegra_car TEGRA20_CLK_NOR>;
++	clock-names = "gmi";
++	resets = <&tegra_car 42>;
++	reset-names = "gmi";
++	ranges = <4 0 0xd0000000 0xfffffff>;
++
++	status = "okay";
++
++	can@4,0 {
++		reg = <4 0 0x100>;
++		nvidia,snor-mux-mode;
++		nvidia,snor-adv-inv;
++		...
++	};
++};
 --
 2.1.4
