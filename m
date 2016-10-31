@@ -1,33 +1,49 @@
-From: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
-Subject: [PATCH] drm/nouveau/tegra: Fix error handling
-Date: Mon, 31 Oct 2016 07:35:50 +0100
-Message-ID: <20161031063550.2567-1-christophe.jaillet@wanadoo.fr>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] drm/tegra: dpaux: Fix error handling
+Date: Mon, 31 Oct 2016 10:14:39 +0000
+Message-ID: <a9b8df12-6643-fe22-e650-23654a2fab77@nvidia.com>
+References: <20161028090945.11573-1-christophe.jaillet@wanadoo.fr>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; Format="flowed"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20161028090945.11573-1-christophe.jaillet@wanadoo.fr>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, thierry.reding@gmail.com, airlied@linux.ie, swarren@wwwdotorg.org, gnurou@gmail.com, treding@nvidia.com
+Cc: linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-'iommu_domain_alloc()' returns NULL in case of error, not an error pointer.
-So test it accordingly.
-
-Signed-off-by: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
----
- drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-index 9b638bd905ff..f2bc0b7d9b93 100644
---- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
-@@ -102,7 +102,7 @@ nvkm_device_tegra_probe_iommu(struct nvkm_device_tegra *tdev)
- 
- 	if (iommu_present(&platform_bus_type)) {
- 		tdev->iommu.domain = iommu_domain_alloc(&platform_bus_type);
--		if (IS_ERR(tdev->iommu.domain))
-+		if (!tdev->iommu.domain)
- 			goto error;
- 
- 		/*
--- 
-2.9.3
+Ck9uIDI4LzEwLzE2IDEwOjA5LCBDaHJpc3RvcGhlIEpBSUxMRVQgd3JvdGU6Cj4gJ2Rldm1fcGlu
+Y3RybF9yZWdpc3RlcigpJyByZXR1cm5zIGFuIGVycm9yIHBvaW50ZXIgb3IgYSB2YWxpZCBoYW5k
+bGUuIFNvCj4gY2hlY2tpbmcgZm9yIE5VTEwgaGVyZSBpcyBwb2ludGxlc3MgYW5kIGNhbiBuZXZl
+ciB0cmlnZ2VyLgo+Cj4gQ2hlY2sgdGhlIHJldHVybmVkIHZhbHVlIHdpdGggSVNfRVJSIGluc3Rl
+YWQgYW5kIHByb3BhZ2F0ZSB0aGlzIHZhbHVlIGFzCj4gZG9uZSBpbiB0aGUgb3RoZXIgZnVuY3Rp
+b25zIHdoaWNoIGNhbGwgJ2Rldm1fcGluY3RybF9yZWdpc3RlcigpJwo+Cj4gRml4ZXM6IDA3NTFi
+YjVjNDRmZSAoImRybS90ZWdyYTogZHBhdXg6IEFkZCBwaW5jdHJsIHN1cHBvcnQiKQo+Cj4gU2ln
+bmVkLW9mZi1ieTogQ2hyaXN0b3BoZSBKQUlMTEVUIDxjaHJpc3RvcGhlLmphaWxsZXRAd2FuYWRv
+by5mcj4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RwYXV4LmMgfCA0ICsrLS0KPiAg
+MSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKPgo+IGRpZmYg
+LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHBhdXguYyBiL2RyaXZlcnMvZ3B1L2RybS90
+ZWdyYS9kcGF1eC5jCj4gaW5kZXggMDU5ZjQwOTU1NmQ1Li4yZmRlNDRjM2ExYjMgMTAwNjQ0Cj4g
+LS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RwYXV4LmMKPiArKysgYi9kcml2ZXJzL2dwdS9k
+cm0vdGVncmEvZHBhdXguYwo+IEBAIC01MzksOSArNTM5LDkgQEAgc3RhdGljIGludCB0ZWdyYV9k
+cGF1eF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICAJZHBhdXgtPmRlc2Mu
+b3duZXIgPSBUSElTX01PRFVMRTsKPgo+ICAJZHBhdXgtPnBpbmN0cmwgPSBkZXZtX3BpbmN0cmxf
+cmVnaXN0ZXIoJnBkZXYtPmRldiwgJmRwYXV4LT5kZXNjLCBkcGF1eCk7Cj4gLQlpZiAoIWRwYXV4
+LT5waW5jdHJsKSB7Cj4gKwlpZiAoSVNfRVJSKGRwYXV4LT5waW5jdHJsKSkgewo+ICAJCWRldl9l
+cnIoJnBkZXYtPmRldiwgImZhaWxlZCB0byByZWdpc3RlciBwaW5jb250cm9sXG4iKTsKPiAtCQly
+ZXR1cm4gLUVOT0RFVjsKPiArCQlyZXR1cm4gUFRSX0VSUihkcGF1eC0+cGluY3RybCk7Cj4gIAl9
+Cj4gICNlbmRpZgo+ICAJLyogZW5hYmxlIGFuZCBjbGVhciBhbGwgaW50ZXJydXB0cyAqLwoKVGhh
+bmtzIGZvciB0aGUgZml4IQoKQWNrZWQtYnk6IEpvbiBIdW50ZXIgPGpvbmF0aGFuaEBudmlkaWEu
+Y29tPgoKQ2hlZXJzCkpvbgoKLS0gCm52cHVibGljCl9fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
+c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
+L2xpc3RpbmZvL2RyaS1kZXZlbAo=
