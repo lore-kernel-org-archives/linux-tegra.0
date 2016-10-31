@@ -1,100 +1,33 @@
-From: Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH V3 3/6] dt/bindings: Add bindings for Tegra GMI controller
-Date: Mon, 31 Oct 2016 00:29:55 -0500
-Message-ID: <20161031052955.m44pwdbaynbli5b5@rob-hp-laptop>
-References: <1477576872-2665-1-git-send-email-mirza.krak@gmail.com>
- <1477576872-2665-4-git-send-email-mirza.krak@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-clk-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1477576872-2665-4-git-send-email-mirza.krak@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Mirza Krak <mirza.krak@gmail.com>
-Cc: swarren@wwwdotorg.org, thierry.reding@gmail.com, jonathanh@nvidia.com, gnurou@gmail.com, linux@armlinux.org.uk, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, sboyd@codeaurora.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+From: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+Subject: [PATCH] drm/nouveau/tegra: Fix error handling
+Date: Mon, 31 Oct 2016 07:35:50 +0100
+Message-ID: <20161031063550.2567-1-christophe.jaillet@wanadoo.fr>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: bskeggs-H+wXaHxf7aLQT0dZR+AlfA@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, nouveau-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Oct 27, 2016 at 04:01:09PM +0200, Mirza Krak wrote:
-> From: Mirza Krak <mirza.krak@gmail.com>
-> 
-> Document the devicetree bindings for the Generic Memory Interface (GMI)
-> bus driver found on Tegra SOCs.
-> 
-> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
-> Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-> Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
-> ---
-> 
-> Changes in v2:
-> - Updated examples and some information based on comments from Jon Hunter.
-> 
-> Changes in v3:
-> - Updates ranges description based on comments from Rob Herring
-> 
->  .../devicetree/bindings/bus/nvidia,tegra20-gmi.txt | 132 +++++++++++++++++++++
->  1 file changed, 132 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
-> new file mode 100644
-> index 0000000..49bda2f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/bus/nvidia,tegra20-gmi.txt
-> @@ -0,0 +1,132 @@
-> +Device tree bindings for NVIDIA Tegra Generic Memory Interface bus
-> +
-> +The Generic Memory Interface bus enables memory transfers between internal and
-> +external memory. Can be used to attach various high speed devices such as
-> +synchronous/asynchronous NOR, FPGA, UARTS and more.
-> +
-> +The actual devices are instantiated from the child nodes of a GMI node.
-> +
-> +Required properties:
-> + - compatible : Should contain one of the following:
-> +        For Tegra20 must contain "nvidia,tegra20-gmi".
-> +        For Tegra30 must contain "nvidia,tegra30-gmi".
-> + - reg: Should contain GMI controller registers location and length.
-> + - clocks: Must contain an entry for each entry in clock-names.
-> + - clock-names: Must include the following entries: "gmi"
-> + - resets : Must contain an entry for each entry in reset-names.
-> + - reset-names : Must include the following entries: "gmi"
-> + - #address-cells: The number of cells used to represent physical base
-> +   addresses in the GMI address space. Should be 2.
-> + - #size-cells: The number of cells used to represent the size of an address
-> +   range in the GMI address space. Should be 1.
-> + - ranges: Must be set up to reflect the memory layout with three integer values
-> +   for each chip-select line in use (only one entry is supported, see below
-> +   comments):
-> +   <cs-number> <offset> <physical address of mapping> <size>
-> +
-> +Note that the GMI controller does not have any internal chip-select address
-> +decoding, because of that chip-selects either need to be managed via software
-> +or by employing external chip-select decoding logic.
-> +
-> +If external chip-select logic is used to support multiple devices it is assumed
-> +that the devices use the same timing and so are probably the same type. It also
-> +assumes that they can fit in the 256MB address range. In this case only one
-> +child device is supported which represents the active chip-select line, see
-> +examples for more insight.
-> +
-> +The chip-select number is decoded from the child nodes second address cell of
-> +'ranges' property, if 'ranges' property is not present or empty chip-select will
-> +then be decoded from the first cell of the 'reg' property.
-> +
-> +Optional child cs node properties:
-> +
-> + - nvidia,snor-data-width-32bit: Use 32bit data-bus, default is 16bit.
-> + - nvidia,snor-mux-mode: Enable address/data MUX mode.
-> + - nvidia,snor-rdy-active-before-data: Assert RDY signal one cycle before data.
-> +   If omitted it will be asserted with data.
-> + - nvidia,snor-rdy-inv: RDY signal is active high
-> + - nvidia,snor-adv-inv: ADV signal is active high
-> + - nvidia,snor-oe-inv: WE/OE signal is active high
-> + - nvidia,snor-cs-inv: CS signal is active high
+'iommu_domain_alloc()' returns NULL in case of error, not an error pointer.
+So test it accordingly.
 
-Inverted is meaningless unless I know what not inverted state is. Name 
-the properties using "active high".
+Signed-off-by: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+---
+ drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-With that,
-
-Acked-by: Rob Herring <robh@kernel.org>
+diff --git a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+index 9b638bd905ff..f2bc0b7d9b93 100644
+--- a/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
++++ b/drivers/gpu/drm/nouveau/nvkm/engine/device/tegra.c
+@@ -102,7 +102,7 @@ nvkm_device_tegra_probe_iommu(struct nvkm_device_tegra *tdev)
+ 
+ 	if (iommu_present(&platform_bus_type)) {
+ 		tdev->iommu.domain = iommu_domain_alloc(&platform_bus_type);
+-		if (IS_ERR(tdev->iommu.domain))
++		if (!tdev->iommu.domain)
+ 			goto error;
+ 
+ 		/*
+-- 
+2.9.3
