@@ -1,49 +1,78 @@
 From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] drm/tegra: dpaux: Fix error handling
-Date: Mon, 31 Oct 2016 10:14:39 +0000
-Message-ID: <a9b8df12-6643-fe22-e650-23654a2fab77@nvidia.com>
-References: <20161028090945.11573-1-christophe.jaillet@wanadoo.fr>
+Subject: Re: [RFC PATCH 0/3] PM / Domains: Add support for devices that
+ require multiple domains
+Date: Mon, 31 Oct 2016 10:44:41 +0000
+Message-ID: <91b96909-64bc-db72-6da5-556272565091@nvidia.com>
+References: <1474367287-10402-1-git-send-email-jonathanh@nvidia.com>
+ <57F5E986.40704@codeaurora.org>
+ <8ba7aa10-0c2f-98ca-c7bd-00e1724e5972@nvidia.com>
+ <57F60EBE.8010509@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; Format="flowed"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20161028090945.11573-1-christophe.jaillet@wanadoo.fr>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>, thierry.reding@gmail.com, airlied@linux.ie, swarren@wwwdotorg.org, gnurou@gmail.com, treding@nvidia.com
-Cc: linux-tegra@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <57F60EBE.8010509@codeaurora.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Rajendra Nayak <rnayak@codeaurora.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Ck9uIDI4LzEwLzE2IDEwOjA5LCBDaHJpc3RvcGhlIEpBSUxMRVQgd3JvdGU6Cj4gJ2Rldm1fcGlu
-Y3RybF9yZWdpc3RlcigpJyByZXR1cm5zIGFuIGVycm9yIHBvaW50ZXIgb3IgYSB2YWxpZCBoYW5k
-bGUuIFNvCj4gY2hlY2tpbmcgZm9yIE5VTEwgaGVyZSBpcyBwb2ludGxlc3MgYW5kIGNhbiBuZXZl
-ciB0cmlnZ2VyLgo+Cj4gQ2hlY2sgdGhlIHJldHVybmVkIHZhbHVlIHdpdGggSVNfRVJSIGluc3Rl
-YWQgYW5kIHByb3BhZ2F0ZSB0aGlzIHZhbHVlIGFzCj4gZG9uZSBpbiB0aGUgb3RoZXIgZnVuY3Rp
-b25zIHdoaWNoIGNhbGwgJ2Rldm1fcGluY3RybF9yZWdpc3RlcigpJwo+Cj4gRml4ZXM6IDA3NTFi
-YjVjNDRmZSAoImRybS90ZWdyYTogZHBhdXg6IEFkZCBwaW5jdHJsIHN1cHBvcnQiKQo+Cj4gU2ln
-bmVkLW9mZi1ieTogQ2hyaXN0b3BoZSBKQUlMTEVUIDxjaHJpc3RvcGhlLmphaWxsZXRAd2FuYWRv
-by5mcj4KPiAtLS0KPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RwYXV4LmMgfCA0ICsrLS0KPiAg
-MSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkKPgo+IGRpZmYg
-LS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHBhdXguYyBiL2RyaXZlcnMvZ3B1L2RybS90
-ZWdyYS9kcGF1eC5jCj4gaW5kZXggMDU5ZjQwOTU1NmQ1Li4yZmRlNDRjM2ExYjMgMTAwNjQ0Cj4g
-LS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RwYXV4LmMKPiArKysgYi9kcml2ZXJzL2dwdS9k
-cm0vdGVncmEvZHBhdXguYwo+IEBAIC01MzksOSArNTM5LDkgQEAgc3RhdGljIGludCB0ZWdyYV9k
-cGF1eF9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlICpwZGV2KQo+ICAJZHBhdXgtPmRlc2Mu
-b3duZXIgPSBUSElTX01PRFVMRTsKPgo+ICAJZHBhdXgtPnBpbmN0cmwgPSBkZXZtX3BpbmN0cmxf
-cmVnaXN0ZXIoJnBkZXYtPmRldiwgJmRwYXV4LT5kZXNjLCBkcGF1eCk7Cj4gLQlpZiAoIWRwYXV4
-LT5waW5jdHJsKSB7Cj4gKwlpZiAoSVNfRVJSKGRwYXV4LT5waW5jdHJsKSkgewo+ICAJCWRldl9l
-cnIoJnBkZXYtPmRldiwgImZhaWxlZCB0byByZWdpc3RlciBwaW5jb250cm9sXG4iKTsKPiAtCQly
-ZXR1cm4gLUVOT0RFVjsKPiArCQlyZXR1cm4gUFRSX0VSUihkcGF1eC0+cGluY3RybCk7Cj4gIAl9
-Cj4gICNlbmRpZgo+ICAJLyogZW5hYmxlIGFuZCBjbGVhciBhbGwgaW50ZXJydXB0cyAqLwoKVGhh
-bmtzIGZvciB0aGUgZml4IQoKQWNrZWQtYnk6IEpvbiBIdW50ZXIgPGpvbmF0aGFuaEBudmlkaWEu
-Y29tPgoKQ2hlZXJzCkpvbgoKLS0gCm52cHVibGljCl9fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxp
-c3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFu
-L2xpc3RpbmZvL2RyaS1kZXZlbAo=
+Hi Rajendra,
+
+On 06/10/16 09:43, Rajendra Nayak wrote:
+>
+> On 10/06/2016 01:55 PM, Jon Hunter wrote:
+>> Hi Rajendra,
+>>
+>> On 06/10/16 07:04, Rajendra Nayak wrote:
+>>>
+>>> On 09/20/2016 03:58 PM, Jon Hunter wrote:
+>>>> The Tegra124/210 XUSB subsystem (that consists of both host and device
+>>>> controllers) is partitioned across 3 PM domains which are:
+>>>> - XUSBA: Superspeed logic (for USB 3.0)
+>>>> - XUSBB: Device controller
+>>>> - XUSBC: Host controller
+>>>>
+>>>> These power domains are not nested and can be powered-up and down
+>>>> independently of one another. In practice different scenarios require
+>>>> different combinations of the power domains, for example:
+>>>> - Superspeed host: XUSBA and XUSBC
+>>>> - Superspeed device: XUSBA and XUSBB
+>>>>
+>>>> Although it could be possible to logically nest both the XUSBB and XUSBC
+>>>> domains under the XUSBA, superspeed may not always be used/required and
+>>>> so this would keep it on unnecessarily.
+>>>
+>>> Hey Jon, so does this RFC provide a way to just specify multiple Powerdomains
+>>> for a device (which then will *all* be powered on/off together) or does
+>>> it also provide for more granular control of these powerdomains?
+>>
+>> Only to specify multiple power-domains for a device and not the later.
+>>
+>>> The above statement seems to suggest you would need more granular control
+>>> of these powerdomains (like keeping XUSBA off in case superspeed it not
+>>> needed) but I can't seem to figure out how you achieve it with this series.
+>>
+>> It is an interesting point but today we have always kept the superspeed
+>> partition on if the device is configured for superspeed regardless of
+>> what is actually connected. I will check to see if the h/w would allow
+>> us to turn it off if a non-superspeed device is in use but I did not
+>> think so.
+>>
+>> Do you have any interesting use-cases that would make use of this or
+>> require other such enhancements?
+>
+> We do have atleast a few devices which need to control multiple power domains,
+> I will need to look more to see if any of them can be controlled individually.
+> The downstream code we have models these (powerdomains) as regulators and
+> the drivers hence have individual control on each (specifying multiple -supply's
+> in DT)
+
+Were you able to check to see if you need to have individual control for 
+the power-domains?
+
+Cheers
+Jon
+
+-- 
+nvpublic
