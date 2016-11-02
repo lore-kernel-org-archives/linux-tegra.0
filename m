@@ -1,33 +1,24 @@
-From: Stephen Boyd <sboyd@codeaurora.org>
-Subject: Re: [PATCH 12/15] clk: tegra: dfll: improve function-level
- documentation
-Date: Tue, 1 Nov 2016 17:38:52 -0700
-Message-ID: <20161102003852.GN16026@codeaurora.org>
-References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
- <1475351192-27079-13-git-send-email-Julia.Lawall@lip6.fr>
+From: Alexandre Courbot <gnurou@gmail.com>
+Subject: Re: [PATCH] drm/nouveau/tegra: Fix error handling
+Date: Wed, 2 Nov 2016 13:59:41 +0900
+Message-ID: <CAAVeFuLp5YcsMAGYGpyGQ88LVE=UUt2obUVKPj2qFfQL_6nVKQ@mail.gmail.com>
+References: <20161031063550.2567-1-christophe.jaillet@wanadoo.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <1475351192-27079-13-git-send-email-Julia.Lawall@lip6.fr>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Julia Lawall <Julia.Lawall@lip6.fr>
-Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, kernel-janitors@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <kernel-janitors-owner@vger.kernel.org>
+In-Reply-To: <20161031063550.2567-1-christophe.jaillet@wanadoo.fr>
+Sender: kernel-janitors-owner@vger.kernel.org
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "nouveau@lists.freedesktop.org" <nouveau@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 10/01, Julia Lawall wrote:
-> Adjust variables to correspond to the names used in the parameter list of
-> the function.  Move the struct device * variable up to the place where it
-> appears in the parameter list.
-> 
-> Issue detected using Coccinelle (http://coccinelle.lip6.fr/)
-> 
-> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
-> 
-> ---
+On Mon, Oct 31, 2016 at 3:35 PM, Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+> 'iommu_domain_alloc()' returns NULL in case of error, not an error pointer.
+> So test it accordingly.
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Applied to clk-next
+Reviewed-by: Alexandre Courbot <acourbot@nvidia.com>
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Indeed. Thanks for the fix!
