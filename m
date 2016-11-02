@@ -1,39 +1,51 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 0/3] soc/tegra: pmc: Add support for IO pad configuration and sub-driver
-Date: Wed, 2 Nov 2016 14:29:46 +0530
-Message-ID: <1478077189-24426-1-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH 0/2] pinctrl: tegra: Add support for IO pad control
+Date: Wed, 2 Nov 2016 14:39:00 +0530
+Message-ID: <1478077742-25437-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Sender: linux-kernel-owner@vger.kernel.org
+To: thierry.reding@gmail.com, swarren@wwwdotorg.org, linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc: jonathanh@nvidia.com, yamada.masahiro@socionext.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Tegra SoC support the configutaion of IO pads to multi-level voltage
-and low power state. The conifguration is done via pictrl framework
-and the io pad driver in pinctrl frameowrk uses the APIs from pmc to
-access PMC registers.
+NVIDIA Tegra124 and later SoCs support the multi-voltage level and
+low power state of some of its IO pads. The IO pads can work in
+the voltage of the 1.8V and 3.3V of IO power rail sources. When IO
+interface are not used then IO pads can be configure in low power
+state to reduce the power from that IO pads.
 
-This series add the API to get the IO pad power status and register
-the pmc child devices like IO pad drvier.
+This series add the support of configuration of IO pad via pinctrl
+framework. The io pad driver uses the tegra PMC interface.
 
-The patches were send earlier part of different series but applied
-partially in the Thierry's t186 branch
-	https://github.com/thierryreding/linux/tree/tegra186.
+---
+This driver was sent earlier for review along with soc/tegra pmc
+changes. During review, decided to first conclude in soc/tegra pmc
+patches and then review this.
+    
+Thierry applied the pmc patches in the private tree
+        https://github.com/thierryreding/linux/tree/tegra186
+and he wanted to have the patches for user of the new APIs so that
+it can be pushed to mainline.
+    
+Sending the pinctrl driver. This needs Ack/reviewed from pinctrl subsystem
+i.e. Linus Welleij to apply in the Thierry's T186 branch along with
+PMC patches.
 
-Resending the patches as the new start to avoid any confusion.
-This need to be applied in
-	https://github.com/thierryreding/linux/tree/tegra186
+Laxman Dewangan (2):
+  pinctrl: tegra: Add DT binding for io pads control
+  pinctrl: tegra: Add driver to configure voltage and power of io pads
 
-Laxman Dewangan (3):
-  soc/tegra: pmc: Remove legacy Tegra I/O rail API
-  soc/tegra: pmc: Add interface to get IO pad power status
-  soc/tegra: pmc: Register PMC child devices as platform device
-
- drivers/soc/tegra/pmc.c | 81 +++++++++++++++++++++++++++++++++++++++++++++++++
- include/soc/tegra/pmc.h | 14 +++------
- 2 files changed, 86 insertions(+), 9 deletions(-)
+ .../bindings/pinctrl/nvidia,tegra-io-pad.txt       | 112 +++++++
+ drivers/pinctrl/tegra/Kconfig                      |  12 +
+ drivers/pinctrl/tegra/Makefile                     |   1 +
+ drivers/pinctrl/tegra/pinctrl-tegra-io-pad.c       | 369 +++++++++++++++++++++
+ include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h |  21 ++
+ 5 files changed, 515 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra-io-pad.txt
+ create mode 100644 drivers/pinctrl/tegra/pinctrl-tegra-io-pad.c
+ create mode 100644 include/dt-bindings/pinctrl/pinctrl-tegra-io-pad.h
 
 -- 
 2.1.4
