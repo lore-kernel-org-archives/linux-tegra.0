@@ -1,454 +1,710 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 2/2] pinctrl: tegra: Add driver to configure voltage and power of io pads
-Date: Wed, 2 Nov 2016 14:39:02 +0530
-Message-ID: <1478077742-25437-3-git-send-email-ldewangan@nvidia.com>
-References: <1478077742-25437-1-git-send-email-ldewangan@nvidia.com>
+From: Suresh Mangipudi <smangipudi@nvidia.com>
+Subject: [PATCH] gpio: tegra186: Add support for T186 GPIO
+Date: Wed, 2 Nov 2016 16:18:39 +0530
+Message-ID: <1478083719-14836-1-git-send-email-smangipudi@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1478077742-25437-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org
-Cc: jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+Sender: linux-gpio-owner@vger.kernel.org
+To: ldewangan@nvidia.com, linus.walleij@linaro.org, gnurou@gmail.com, swarren@wwwdotorg.org, thierry.reding@gmail.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
+Cc: Suresh Mangipudi <smangipudi@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-NVIDIA Tegra124 and later SoCs support the multi-voltage level and
-low power state of some of its IO pads. The IO pads can work in
-the voltage of the 1.8V and 3.3V of IO power rail sources. When IO
-interface are not used then IO pads can be configure in low power
-state to reduce the power from that IO pads.
+Add GPIO driver for T186 based platforms.
+Adds support for MAIN and AON GPIO's from T186.
 
-On Tegra124, the IO power rail source is auto detected by SoC and hence
-it is only require to configure in low power mode if IO pads are not
-used.
-
-On T210 onwards, the auto-detection is removed from SoC and hence SW
-must configure the PMC register explicitly to set proper voltage in
-IO pads based on IO rail power source voltage.
-
-This driver adds the IO pad driver to configure the power state and
-IO pad voltage based on the usage and power tree via pincontrol
-framework. The configuration can be static and dynamic.
-
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
+Signed-off-by: Suresh Mangipudi <smangipudi@nvidia.com>
 ---
-On top of the branch from Thierry's T186 work
-	https://github.com/thierryreding/linux/tree/tegra186
+ drivers/gpio/Kconfig         |   8 +
+ drivers/gpio/Makefile        |   1 +
+ drivers/gpio/gpio-tegra186.c | 647 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 656 insertions(+)
+ create mode 100644 drivers/gpio/gpio-tegra186.c
 
- drivers/pinctrl/tegra/Kconfig                |  12 +
- drivers/pinctrl/tegra/Makefile               |   1 +
- drivers/pinctrl/tegra/pinctrl-tegra-io-pad.c | 369 +++++++++++++++++++++++++++
- 3 files changed, 382 insertions(+)
- create mode 100644 drivers/pinctrl/tegra/pinctrl-tegra-io-pad.c
-
-diff --git a/drivers/pinctrl/tegra/Kconfig b/drivers/pinctrl/tegra/Kconfig
-index 24e20cc..eef1d6b 100644
---- a/drivers/pinctrl/tegra/Kconfig
-+++ b/drivers/pinctrl/tegra/Kconfig
-@@ -23,6 +23,18 @@ config PINCTRL_TEGRA210
- 	bool
- 	select PINCTRL_TEGRA
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index a9a1c8a..99aeded 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -409,6 +409,14 @@ config GPIO_TB10X
+ 	select GENERIC_IRQ_CHIP
+ 	select OF_GPIO
  
-+config PINCTRL_TEGRA_IO_PAD
-+	bool "Tegra IO pad Control Driver"
-+	depends on ARCH_TEGRA
-+	select PINCONF
-+	select PINMUX
++config GPIO_TEGRA186
++	bool "NVIDIA Tegra186 GPIO support"
++	default ARCH_TEGRA
++	depends on ARCH_TEGRA || COMPILE_TEST
++	depends on OF_GPIO
 +	help
-+	  NVIDIA Tegra124/210 SoC has IO pads which supports multi-voltage
-+	  level of interfacing and deep power down mode of IO pads. The
-+	  voltage of IO pads are SW configurable based on IO rail of that
-+	  pads on T210. This driver provides the interface to change IO pad
-+	  voltage and power state via pincontrol interface.
++	 Support for the NVIDIA Tegra186 GPIO controller driver.
 +
- config PINCTRL_TEGRA_XUSB
- 	def_bool y if ARCH_TEGRA
- 	select GENERIC_PHY
-diff --git a/drivers/pinctrl/tegra/Makefile b/drivers/pinctrl/tegra/Makefile
-index d9ea2be..3ebaaa2 100644
---- a/drivers/pinctrl/tegra/Makefile
-+++ b/drivers/pinctrl/tegra/Makefile
-@@ -4,4 +4,5 @@ obj-$(CONFIG_PINCTRL_TEGRA30)		+= pinctrl-tegra30.o
- obj-$(CONFIG_PINCTRL_TEGRA114)		+= pinctrl-tegra114.o
- obj-$(CONFIG_PINCTRL_TEGRA124)		+= pinctrl-tegra124.o
- obj-$(CONFIG_PINCTRL_TEGRA210)		+= pinctrl-tegra210.o
-+obj-$(CONFIG_PINCTRL_TEGRA_IO_PAD)	+= pinctrl-tegra-io-pad.o
- obj-$(CONFIG_PINCTRL_TEGRA_XUSB)	+= pinctrl-tegra-xusb.o
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra-io-pad.c b/drivers/pinctrl/tegra/pinctrl-tegra-io-pad.c
+ config GPIO_TEGRA
+ 	bool "NVIDIA Tegra GPIO support"
+ 	default ARCH_TEGRA
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index 8043a95..35ccc47 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -108,6 +108,7 @@ obj-$(CONFIG_GPIO_SYSCON)	+= gpio-syscon.o
+ obj-$(CONFIG_GPIO_TB10X)	+= gpio-tb10x.o
+ obj-$(CONFIG_GPIO_TC3589X)	+= gpio-tc3589x.o
+ obj-$(CONFIG_GPIO_TEGRA)	+= gpio-tegra.o
++obj-$(CONFIG_GPIO_TEGRA186)	+= gpio-tegra186.o
+ obj-$(CONFIG_GPIO_TIMBERDALE)	+= gpio-timberdale.o
+ obj-$(CONFIG_GPIO_PALMAS)	+= gpio-palmas.o
+ obj-$(CONFIG_GPIO_TPIC2810)	+= gpio-tpic2810.o
+diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
 new file mode 100644
-index 0000000..7af9552
+index 0000000..c66600d
 --- /dev/null
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra-io-pad.c
-@@ -0,0 +1,369 @@
++++ b/drivers/gpio/gpio-tegra186.c
+@@ -0,0 +1,647 @@
 +/*
-+ * pinctrl-tegra-io-pad: IO PAD driver for configuration of IO rail and deep
-+ *			 Power Down mode via pinctrl framework.
++ * GPIO driver for NVIDIA Tegra186
 + *
-+ * Copyright (C) 2016 NVIDIA CORPORATION. All rights reserved.
++ * Copyright (c) 2016, NVIDIA CORPORATION. All rights reserved.
 + *
-+ * Author: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
++ * Author: Suresh Mangipudi <smangipudi@nvidia.com>
++ * Author: Laxman Dewangan <ldewangan@nvidia.com>
 + *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
++ * This software is licensed under the terms of the GNU General Public
++ * License version 2, as published by the Free Software Foundation, and
++ * may be copied, distributed, and modified under those terms.
 + */
 +
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/pinctrl/pinconf-generic.h>
-+#include <linux/pinctrl/pinconf.h>
-+#include <linux/pinctrl/pinmux.h>
++#include <linux/err.h>
++#include <linux/init.h>
++#include <linux/irq.h>
++#include <linux/interrupt.h>
++#include <linux/io.h>
++#include <linux/gpio.h>
++#include <linux/of_device.h>
++#include <linux/of_gpio.h>
 +#include <linux/platform_device.h>
-+#include <linux/delay.h>
-+#include <soc/tegra/pmc.h>
++#include <linux/module.h>
++#include <linux/irqdomain.h>
++#include <linux/irqchip/chained_irq.h>
++#include <dt-bindings/gpio/tegra186-gpio.h>
 +
-+#include "../core.h"
-+#include "../pinconf.h"
-+#include "../pinctrl-utils.h"
++/* GPIO control registers */
++#define GPIO_ENB_CONFIG_REG			0x00
++#define GPIO_DBC_THRES_REG			0x04
++#define GPIO_INPUT_REG				0x08
++#define GPIO_OUT_CTRL_REG			0x0c
++#define GPIO_OUT_VAL_REG			0x10
++#define GPIO_INT_CLEAR_REG			0x14
++#define GPIO_REG_DIFF				0x20
++#define GPIO_INT_STATUS_OFFSET			0x100
 +
-+enum tegra_io_rail_pads_params {
-+	TEGRA_IO_PAD_POWER_SOURCE_VOLTAGE = PIN_CONFIG_END + 1,
++/* GPIO SCR registers */
++#define GPIO_SCR_REG				0x04
++#define GPIO_SCR_DIFF				0x08
++
++#define GPIO_INOUT_BIT				BIT(1)
++#define GPIO_TRG_TYPE_BIT(x)			((x) & 0x3)
++#define GPIO_TRG_TYPE_BIT_OFFSET		0x2
++#define GPIO_TRG_LVL_BIT			BIT(4)
++#define GPIO_DEB_FUNC_BIT			BIT(5)
++#define GPIO_INT_FUNC_BIT			BIT(6)
++
++#define GPIO_SCR_SEC_WEN			BIT(28)
++#define GPIO_SCR_SEC_REN			BIT(27)
++#define GPIO_SCR_SEC_G1W			BIT(9)
++#define GPIO_SCR_SEC_G1R			BIT(1)
++#define GPIO_FULL_ACCESS			(GPIO_SCR_SEC_WEN | \
++						 GPIO_SCR_SEC_REN | \
++						 GPIO_SCR_SEC_G1R | \
++						 GPIO_SCR_SEC_G1W)
++
++#define GPIO_INT_LVL_LEVEL_TRIGGER		0x1
++#define GPIO_INT_LVL_SINGLE_EDGE_TRIGGER	0x2
++#define GPIO_INT_LVL_BOTH_EDGE_TRIGGER		0x3
++
++#define TRIGGER_LEVEL_LOW			0x0
++#define TRIGGER_LEVEL_HIGH			0x1
++
++#define GPIO_STATUS_G1				0x04
++
++#define MAX_GPIO_CONTROLLERS			7
++#define MAX_GPIO_PORTS				8
++
++#define GPIO_PORT(g)				((g) >> 3)
++#define GPIO_PIN(g)				((g) & 0x7)
++
++struct tegra_gpio_port_soc_info {
++	const char *port_name;
++	int cont_id;
++	int port_index;
++	int valid_pins;
++	int scr_offset;
++	u32 reg_offset;
 +};
 +
-+static const struct pinconf_generic_params tegra_io_pads_cfg_params[] = {
-+	{
-+		.property = "nvidia,power-source-voltage",
-+		.param = TEGRA_IO_PAD_POWER_SOURCE_VOLTAGE,
-+	},
++#define TEGRA_MAIN_GPIO_PORT_INFO(port, cid, cind, npins)	\
++[TEGRA_MAIN_GPIO_PORT_##port] = {				\
++		.port_name = #port,				\
++		.cont_id = cid,					\
++		.port_index = cind,				\
++		.valid_pins = npins,				\
++		.scr_offset = cid * 0x1000 + cind * 0x40,	\
++		.reg_offset = cid * 0x1000 + cind * 0x200,	\
++}
++
++#define TEGRA_AON_GPIO_PORT_INFO(port, cid, cind, npins)	\
++[TEGRA_AON_GPIO_PORT_##port] = {				\
++		.port_name = #port,				\
++		.cont_id = cid,					\
++		.port_index = cind,				\
++		.valid_pins = npins,				\
++		.scr_offset = cind * 0x40,			\
++		.reg_offset = cind * 0x200,			\
++}
++
++static struct tegra_gpio_port_soc_info tegra_main_gpio_cinfo[] = {
++	TEGRA_MAIN_GPIO_PORT_INFO(A, 2, 0, 7),
++	TEGRA_MAIN_GPIO_PORT_INFO(B, 3, 0, 7),
++	TEGRA_MAIN_GPIO_PORT_INFO(C, 3, 1, 7),
++	TEGRA_MAIN_GPIO_PORT_INFO(D, 3, 2, 6),
++	TEGRA_MAIN_GPIO_PORT_INFO(E, 2, 1, 8),
++	TEGRA_MAIN_GPIO_PORT_INFO(F, 2, 2, 6),
++	TEGRA_MAIN_GPIO_PORT_INFO(G, 4, 1, 6),
++	TEGRA_MAIN_GPIO_PORT_INFO(H, 1, 0, 7),
++	TEGRA_MAIN_GPIO_PORT_INFO(I, 0, 4, 8),
++	TEGRA_MAIN_GPIO_PORT_INFO(J, 5, 0, 8),
++	TEGRA_MAIN_GPIO_PORT_INFO(K, 5, 1, 1),
++	TEGRA_MAIN_GPIO_PORT_INFO(L, 1, 1, 8),
++	TEGRA_MAIN_GPIO_PORT_INFO(M, 5, 3, 6),
++	TEGRA_MAIN_GPIO_PORT_INFO(N, 0, 0, 7),
++	TEGRA_MAIN_GPIO_PORT_INFO(O, 0, 1, 4),
++	TEGRA_MAIN_GPIO_PORT_INFO(P, 4, 0, 7),
++	TEGRA_MAIN_GPIO_PORT_INFO(Q, 0, 2, 6),
++	TEGRA_MAIN_GPIO_PORT_INFO(R, 0, 5, 6),
++	TEGRA_MAIN_GPIO_PORT_INFO(T, 0, 3, 4),
++	TEGRA_MAIN_GPIO_PORT_INFO(X, 1, 2, 8),
++	TEGRA_MAIN_GPIO_PORT_INFO(Y, 1, 3, 7),
++	TEGRA_MAIN_GPIO_PORT_INFO(BB, 2, 3, 2),
++	TEGRA_MAIN_GPIO_PORT_INFO(CC, 5, 2, 4),
 +};
 +
-+struct tegra_io_pads_cfg_info {
++static struct tegra_gpio_port_soc_info tegra_aon_gpio_cinfo[] = {
++	TEGRA_AON_GPIO_PORT_INFO(S, 0, 1, 5),
++	TEGRA_AON_GPIO_PORT_INFO(U, 0, 2, 6),
++	TEGRA_AON_GPIO_PORT_INFO(V, 0, 4, 8),
++	TEGRA_AON_GPIO_PORT_INFO(W, 0, 5, 8),
++	TEGRA_AON_GPIO_PORT_INFO(Z, 0, 7, 4),
++	TEGRA_AON_GPIO_PORT_INFO(AA, 0, 6, 8),
++	TEGRA_AON_GPIO_PORT_INFO(EE, 0, 3, 3),
++	TEGRA_AON_GPIO_PORT_INFO(FF, 0, 0, 5),
++};
++
++struct tegra_gpio_info;
++
++struct tegra_gpio_soc_info {
 +	const char *name;
-+	const unsigned int pins[1];
-+	enum tegra_io_pad pad_id;
-+	bool voltage_can_change;
-+	bool support_low_power_state;
++	const struct tegra_gpio_port_soc_info *port;
++	int nports;
 +};
 +
-+struct tegra_io_pad_soc_data {
-+	const struct tegra_io_pads_cfg_info *pads_cfg;
-+	int num_pads_cfg;
-+	const struct pinctrl_pin_desc *pins_desc;
-+	int num_pins_desc;
++struct tegra_gpio_controller {
++	int controller;
++	int irq;
++	struct tegra_gpio_info *tgi;
 +};
 +
-+struct tegra_io_pads_info {
++struct tegra_gpio_info {
 +	struct device *dev;
-+	struct pinctrl_dev *pctl;
-+	const struct tegra_io_pad_soc_data *soc_data;
++	int nbanks;
++	void __iomem *gpio_regs;
++	void __iomem *scr_regs;
++	struct irq_domain *irq_domain;
++	const struct tegra_gpio_soc_info *soc;
++	struct tegra_gpio_controller tg_contrlr[MAX_GPIO_CONTROLLERS];
++	struct gpio_chip gc;
++	struct irq_chip ic;
 +};
 +
-+static int tegra_iop_pinctrl_get_groups_count(struct pinctrl_dev *pctldev)
-+{
-+	struct tegra_io_pads_info *tiopi = pinctrl_dev_get_drvdata(pctldev);
++#define GPIO_CNTRL_REG(tgi, gpio, roffset)				    \
++	((tgi)->gpio_regs + (tgi)->soc->port[GPIO_PORT(gpio)].reg_offset + \
++	(GPIO_REG_DIFF * GPIO_PIN(gpio)) + (roffset))
 +
-+	return tiopi->soc_data->num_pads_cfg;
++static u32 tegra_gpio_readl(struct tegra_gpio_info *tgi, u32 gpio,
++				   u32 reg_offset)
++{
++	return __raw_readl(GPIO_CNTRL_REG(tgi, gpio, reg_offset));
 +}
 +
-+static const char *tegra_iop_pinctrl_get_group_name(struct pinctrl_dev *pctldev,
-+						    unsigned int group)
++static void tegra_gpio_writel(struct tegra_gpio_info *tgi, u32 val,
++				     u32 gpio, u32 reg_offset)
 +{
-+	struct tegra_io_pads_info *tiopi = pinctrl_dev_get_drvdata(pctldev);
-+
-+	return tiopi->soc_data->pads_cfg[group].name;
++	__raw_writel(val, GPIO_CNTRL_REG(tgi, gpio, reg_offset));
 +}
 +
-+static int tegra_iop_pinctrl_get_group_pins(struct pinctrl_dev *pctldev,
-+					    unsigned int group,
-+					    const unsigned int **pins,
-+					    unsigned int *num_pins)
++static void tegra_gpio_update(struct tegra_gpio_info *tgi, u32 gpio,
++				     u32 reg_offset,	u32 mask, u32 val)
 +{
-+	struct tegra_io_pads_info *tiopi = pinctrl_dev_get_drvdata(pctldev);
++	u32 rval;
 +
-+	*pins = tiopi->soc_data->pads_cfg[group].pins;
-+	*num_pins = 1;
++	rval = __raw_readl(GPIO_CNTRL_REG(tgi, gpio, reg_offset));
++	rval = (rval & ~mask) | (val & mask);
++	__raw_writel(rval, GPIO_CNTRL_REG(tgi, gpio, reg_offset));
++}
++
++/* This function will return if the GPIO is accessible by CPU */
++static bool gpio_is_accessible(struct tegra_gpio_info *tgi, u32 offset)
++{
++	int port = GPIO_PORT(offset);
++	int pin = GPIO_PIN(offset);
++	u32 val;
++	int cont_id;
++	u32 scr_offset = tgi->soc->port[port].scr_offset;
++
++	if (pin >= tgi->soc->port[port].valid_pins)
++		return false;
++
++	cont_id = tgi->soc->port[port].cont_id;
++	if (cont_id  < 0)
++		return false;
++
++	val = __raw_readl(tgi->scr_regs + scr_offset +
++			(pin * GPIO_SCR_DIFF) + GPIO_SCR_REG);
++
++	if ((val & GPIO_FULL_ACCESS) == GPIO_FULL_ACCESS)
++		return true;
++
++	return false;
++}
++
++static void tegra_gpio_enable(struct tegra_gpio_info *tgi, int gpio)
++{
++	tegra_gpio_update(tgi, gpio, GPIO_ENB_CONFIG_REG, 0x1, 0x1);
++}
++
++static void tegra_gpio_disable(struct tegra_gpio_info *tgi, int gpio)
++{
++	tegra_gpio_update(tgi, gpio, GPIO_ENB_CONFIG_REG, 0x1, 0x0);
++}
++
++static void tegra_gpio_free(struct gpio_chip *chip, unsigned int offset)
++{
++	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
++
++	tegra_gpio_disable(tgi, offset);
++}
++
++static void tegra_gpio_set(struct gpio_chip *chip, unsigned int offset,
++			   int value)
++{
++	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
++	u32 val = (value) ? 0x1 : 0x0;
++
++	tegra_gpio_writel(tgi, val, offset, GPIO_OUT_VAL_REG);
++	tegra_gpio_writel(tgi, 0, offset, GPIO_OUT_CTRL_REG);
++}
++
++static int tegra_gpio_get(struct gpio_chip *chip, unsigned int offset)
++{
++	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
++	u32 val;
++
++	val = tegra_gpio_readl(tgi, offset, GPIO_ENB_CONFIG_REG);
++	if (val & GPIO_INOUT_BIT)
++		return tegra_gpio_readl(tgi, offset, GPIO_OUT_VAL_REG) & 0x1;
++
++	return tegra_gpio_readl(tgi, offset, GPIO_INPUT_REG) & 0x1;
++}
++
++static void set_gpio_direction_mode(struct gpio_chip *chip, u32 offset,
++				    bool mode)
++{
++	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
++	u32 val;
++
++	val = tegra_gpio_readl(tgi, offset, GPIO_ENB_CONFIG_REG);
++	if (mode)
++		val |= GPIO_INOUT_BIT;
++	else
++		val &= ~GPIO_INOUT_BIT;
++	tegra_gpio_writel(tgi, val, offset, GPIO_ENB_CONFIG_REG);
++}
++
++static int tegra_gpio_direction_input(struct gpio_chip *chip,
++				      unsigned int offset)
++{
++	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
++
++	set_gpio_direction_mode(chip, offset, 0);
++	tegra_gpio_enable(tgi, offset);
 +
 +	return 0;
 +}
 +
-+static const struct pinctrl_ops tegra_iop_pinctrl_ops = {
-+	.get_groups_count	= tegra_iop_pinctrl_get_groups_count,
-+	.get_group_name		= tegra_iop_pinctrl_get_group_name,
-+	.get_group_pins		= tegra_iop_pinctrl_get_group_pins,
-+	.dt_node_to_map		= pinconf_generic_dt_node_to_map_pin,
-+	.dt_free_map		= pinctrl_utils_free_map,
-+};
-+
-+static int tegra_io_pad_pinconf_get(struct pinctrl_dev *pctldev,
-+				    unsigned int pin, unsigned long *config)
++static int tegra_gpio_direction_output(struct gpio_chip *chip,
++				       unsigned int offset, int value)
 +{
-+	struct tegra_io_pads_info *tiopi = pinctrl_dev_get_drvdata(pctldev);
-+	int param = pinconf_to_config_param(*config);
-+	const struct tegra_io_pads_cfg_info *pad_cfg =
-+					&tiopi->soc_data->pads_cfg[pin];
-+	enum tegra_io_pad pad_id = pad_cfg->pad_id;
-+	int arg = 0;
-+	int ret;
++	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
 +
-+	switch (param) {
-+	case TEGRA_IO_PAD_POWER_SOURCE_VOLTAGE:
-+		ret = tegra_io_pad_get_voltage(pad_id);
-+		if (ret < 0)
-+			return ret;
-+		arg = ret;
++	tegra_gpio_set(chip, offset, value);
++	set_gpio_direction_mode(chip, offset, 1);
++	tegra_gpio_enable(tgi, offset);
++
++	return 0;
++}
++
++static int tegra_gpio_set_debounce(struct gpio_chip *chip, unsigned int offset,
++				   unsigned int debounce)
++{
++	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
++	unsigned int dbc_ms = DIV_ROUND_UP(debounce, 1000);
++
++	tegra_gpio_update(tgi, offset, GPIO_ENB_CONFIG_REG, 0x1, 0x1);
++	tegra_gpio_update(tgi, offset, GPIO_DEB_FUNC_BIT, 0x5, 0x1);
++
++	/* Update debounce threshold */
++	tegra_gpio_writel(tgi, dbc_ms, offset, GPIO_DBC_THRES_REG);
++
++	return 0;
++}
++
++static int tegra_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
++{
++	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
++	u32 val;
++
++	if (!gpio_is_accessible(tgi, offset))
++		return 0;
++
++	val = tegra_gpio_readl(tgi, offset, GPIO_OUT_CTRL_REG);
++
++	return (val & 0x1);
++}
++
++static int tegra_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
++{
++	struct tegra_gpio_info *tgi = gpiochip_get_data(chip);
++
++	return irq_find_mapping(tgi->irq_domain, offset);
++}
++
++static void tegra_gpio_irq_ack(struct irq_data *d)
++{
++	struct tegra_gpio_controller *ctrlr = irq_data_get_irq_chip_data(d);
++
++	tegra_gpio_writel(ctrlr->tgi, 1, d->hwirq, GPIO_INT_CLEAR_REG);
++}
++
++static void tegra_gpio_irq_mask(struct irq_data *d)
++{
++	struct tegra_gpio_controller *c = irq_data_get_irq_chip_data(d);
++
++	tegra_gpio_update(c->tgi, d->hwirq, GPIO_ENB_CONFIG_REG,
++			  GPIO_INT_FUNC_BIT, 0);
++}
++
++static void tegra_gpio_irq_unmask(struct irq_data *d)
++{
++	struct tegra_gpio_controller *c = irq_data_get_irq_chip_data(d);
++
++	tegra_gpio_update(c->tgi, d->hwirq, GPIO_ENB_CONFIG_REG,
++			  GPIO_INT_FUNC_BIT, GPIO_INT_FUNC_BIT);
++}
++
++static int tegra_gpio_irq_set_type(struct irq_data *d, unsigned int type)
++{
++	struct tegra_gpio_controller *ctrlr = irq_data_get_irq_chip_data(d);
++	int gpio = d->hwirq;
++	u32 lvl_type;
++	u32 trg_type;
++	u32 val;
++
++	switch (type & IRQ_TYPE_SENSE_MASK) {
++	case IRQ_TYPE_EDGE_RISING:
++		trg_type = TRIGGER_LEVEL_HIGH;
++		lvl_type = GPIO_INT_LVL_SINGLE_EDGE_TRIGGER;
 +		break;
 +
-+	case PIN_CONFIG_LOW_POWER_MODE:
-+		ret = tegra_io_pad_power_get_status(pad_id);
-+		if (ret < 0)
-+			return ret;
-+		arg = !ret;
++	case IRQ_TYPE_EDGE_FALLING:
++		trg_type = TRIGGER_LEVEL_LOW;
++		lvl_type = GPIO_INT_LVL_SINGLE_EDGE_TRIGGER;
++		break;
++
++	case IRQ_TYPE_EDGE_BOTH:
++		lvl_type = GPIO_INT_LVL_BOTH_EDGE_TRIGGER;
++		trg_type = 0;
++		break;
++
++	case IRQ_TYPE_LEVEL_HIGH:
++		trg_type = TRIGGER_LEVEL_HIGH;
++		lvl_type = GPIO_INT_LVL_LEVEL_TRIGGER;
++		break;
++
++	case IRQ_TYPE_LEVEL_LOW:
++		trg_type = TRIGGER_LEVEL_LOW;
++		lvl_type = GPIO_INT_LVL_LEVEL_TRIGGER;
 +		break;
 +
 +	default:
-+		dev_err(tiopi->dev, "The parameter %d not supported\n", param);
 +		return -EINVAL;
 +	}
 +
-+	*config = pinconf_to_config_packed(param, (u16)arg);
++	trg_type = trg_type << 0x4;
++	lvl_type = lvl_type << 0x2;
++
++	/* Clear and Program the values */
++	val = tegra_gpio_readl(ctrlr->tgi, gpio, GPIO_ENB_CONFIG_REG);
++	val &= ~((0x3 << GPIO_TRG_TYPE_BIT_OFFSET) | (GPIO_TRG_LVL_BIT));
++	val |= trg_type | lvl_type;
++	tegra_gpio_writel(ctrlr->tgi, val, gpio, GPIO_ENB_CONFIG_REG);
++
++	tegra_gpio_enable(ctrlr->tgi, gpio);
++
++	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_LEVEL_HIGH))
++		irq_set_handler_locked(d, handle_level_irq);
++	else if (type & (IRQ_TYPE_EDGE_FALLING | IRQ_TYPE_EDGE_RISING))
++		irq_set_handler_locked(d, handle_edge_irq);
++
 +	return 0;
 +}
 +
-+static int tegra_io_pad_pinconf_set(struct pinctrl_dev *pctldev,
-+				    unsigned int pin, unsigned long *configs,
-+				    unsigned int num_configs)
++static void tegra_gpio_irq_handler(struct irq_desc *desc)
 +{
-+	struct tegra_io_pads_info *tiopi = pinctrl_dev_get_drvdata(pctldev);
-+	const struct tegra_io_pads_cfg_info *pad_cfg =
-+					&tiopi->soc_data->pads_cfg[pin];
-+	int pad_id = pad_cfg->pad_id;
-+	u16 param_val;
-+	int param;
-+	int ret;
++	struct irq_chip *chip = irq_desc_get_chip(desc);
++	struct tegra_gpio_controller *tg_cont = irq_desc_get_handler_data(desc);
++	struct tegra_gpio_info *tgi = tg_cont->tgi;
++	int pin;
++	int port;
++	u32 i;
++	unsigned long val;
++	u32 gpio;
++	u32 addr;
++	int port_map[MAX_GPIO_PORTS];
++
++	for (i = 0; i < MAX_GPIO_PORTS; ++i)
++		port_map[i] = -1;
++
++	for (i = 0; i < tgi->soc->nports; ++i) {
++		if (tgi->soc->port[i].cont_id == tg_cont->controller)
++			port_map[tgi->soc->port[i].port_index] = i;
++	}
++
++	chained_irq_enter(chip, desc);
++	for (i = 0; i < MAX_GPIO_PORTS; i++) {
++		port = port_map[i];
++		if (port == -1)
++			continue;
++
++		addr = tgi->soc->port[port].reg_offset;
++		val = __raw_readl(tg_cont->tgi->gpio_regs + addr +
++				GPIO_INT_STATUS_OFFSET + GPIO_STATUS_G1);
++		gpio = tgi->gc.base + (port * 8);
++		for_each_set_bit(pin, &val, 8)
++			generic_handle_irq(gpio_to_irq(gpio + pin));
++	}
++
++	chained_irq_exit(chip, desc);
++}
++
++#ifdef CONFIG_DEBUG_FS
++
++#include <linux/debugfs.h>
++#include <linux/seq_file.h>
++
++static int dbg_gpio_show(struct seq_file *s, void *unused)
++{
++	struct tegra_gpio_info *tgi = s->private;
 +	int i;
 +
-+	for (i = 0; i < num_configs; i++) {
-+		param = pinconf_to_config_param(configs[i]);
-+		param_val = pinconf_to_config_argument(configs[i]);
-+
-+		switch (param) {
-+		case TEGRA_IO_PAD_POWER_SOURCE_VOLTAGE:
-+			ret = tegra_io_pad_set_voltage(pad_id, param_val);
-+			if (ret < 0) {
-+				dev_err(tiopi->dev,
-+					"Failed to set voltage %d of pin %u: %d\n",
-+					param_val, pin, ret);
-+				return ret;
-+			}
-+			break;
-+
-+		case PIN_CONFIG_LOW_POWER_MODE:
-+			if (param_val)
-+				ret = tegra_io_pad_power_disable(pad_id);
-+			else
-+				ret = tegra_io_pad_power_enable(pad_id);
-+			if (ret < 0) {
-+				dev_err(tiopi->dev,
-+					"Failed to set DPD %d of pin %u: %d\n",
-+					param_val, pin, ret);
-+				return ret;
-+			}
-+			break;
-+
-+		default:
-+			dev_err(tiopi->dev, "The parameter %d not supported\n",
-+				param);
-+			return -EINVAL;
-+		}
++	seq_puts(s, "Port:Pin:ENB DBC IN OUT_CTRL OUT_VAL INT_CLR\n");
++	for (i = 0; i < tgi->gc.ngpio; i++) {
++		if (!gpio_is_accessible(tgi, i))
++			continue;
++		seq_printf(s, "%s:%d 0x%x 0x%x 0x%x 0x%x 0x%x 0x%x\n",
++			   tgi->soc->port[GPIO_PORT(i)].port_name, i % 8,
++			   tegra_gpio_readl(tgi, i, GPIO_ENB_CONFIG_REG),
++			   tegra_gpio_readl(tgi, i, GPIO_DBC_THRES_REG),
++			   tegra_gpio_readl(tgi, i, GPIO_INPUT_REG),
++			   tegra_gpio_readl(tgi, i, GPIO_OUT_CTRL_REG),
++			   tegra_gpio_readl(tgi, i, GPIO_OUT_VAL_REG),
++			   tegra_gpio_readl(tgi, i, GPIO_INT_CLEAR_REG));
 +	}
 +
 +	return 0;
 +}
 +
-+static const struct pinconf_ops tegra_io_pad_pinconf_ops = {
-+	.pin_config_get = tegra_io_pad_pinconf_get,
-+	.pin_config_set = tegra_io_pad_pinconf_set,
-+};
-+
-+static struct pinctrl_desc tegra_iop_pinctrl_desc = {
-+	.name = "pinctrl-tegra-io-pads",
-+	.pctlops = &tegra_iop_pinctrl_ops,
-+	.confops = &tegra_io_pad_pinconf_ops,
-+	.custom_params = tegra_io_pads_cfg_params,
-+	.num_custom_params = ARRAY_SIZE(tegra_io_pads_cfg_params),
-+};
-+
-+static int tegra_iop_pinctrl_probe(struct platform_device *pdev)
++static int dbg_gpio_open(struct inode *inode, struct file *file)
 +{
-+	struct device *dev = &pdev->dev;
-+	const struct platform_device_id *id = platform_get_device_id(pdev);
-+	struct device_node *np_parent = pdev->dev.parent->of_node;
-+	struct tegra_io_pads_info *tiopi;
++	return single_open(file, dbg_gpio_show, inode->i_private);
++}
 +
-+	if (!np_parent) {
-+		dev_err(&pdev->dev, "PMC should be register from DT\n");
++static const struct file_operations debug_fops = {
++	.open		= dbg_gpio_open,
++	.read		= seq_read,
++	.llseek		= seq_lseek,
++	.release	= single_release,
++};
++
++static int __init tegra_gpio_debuginit(struct tegra_gpio_info *tgi)
++{
++	(void)debugfs_create_file(tgi->soc->name, 0444, NULL, tgi, &debug_fops);
++
++	return 0;
++}
++#else
++static int tegra_gpio_debuginit(struct tegra_gpio_info *tgi)
++{
++	return 0;
++}
++#endif
++
++static int tegra_gpio_probe(struct platform_device *pdev)
++{
++	struct tegra_gpio_info *tgi;
++	struct resource *res;
++	int bank;
++	int gpio;
++	int ret;
++
++	for (bank = 0;; bank++) {
++		res = platform_get_resource(pdev, IORESOURCE_IRQ, bank);
++		if (!res)
++			break;
++	}
++	if (!bank) {
++		dev_err(&pdev->dev, "No GPIO Controller found\n");
 +		return -ENODEV;
 +	}
 +
-+	tiopi = devm_kzalloc(&pdev->dev, sizeof(*tiopi), GFP_KERNEL);
-+	if (!tiopi)
++	tgi = devm_kzalloc(&pdev->dev, sizeof(*tgi), GFP_KERNEL);
++	if (!tgi)
 +		return -ENOMEM;
++	tgi->dev = &pdev->dev;
++	tgi->nbanks = bank;
++	tgi->soc = of_device_get_match_data(&pdev->dev);
 +
-+	tiopi->dev = &pdev->dev;
-+	pdev->dev.of_node = np_parent;
-+	tiopi->soc_data = (const struct tegra_io_pad_soc_data *)id->driver_data;
-+	tegra_iop_pinctrl_desc.pins = tiopi->soc_data->pins_desc;
-+	tegra_iop_pinctrl_desc.npins = tiopi->soc_data->num_pins_desc;
-+	platform_set_drvdata(pdev, tiopi);
++	tgi->gc.label			= tgi->soc->name;
++	tgi->gc.free			= tegra_gpio_free;
++	tgi->gc.direction_input		= tegra_gpio_direction_input;
++	tgi->gc.get			= tegra_gpio_get;
++	tgi->gc.direction_output	= tegra_gpio_direction_output;
++	tgi->gc.set			= tegra_gpio_set;
++	tgi->gc.get_direction		= tegra_gpio_get_direction;
++	tgi->gc.to_irq			= tegra_gpio_to_irq;
++	tgi->gc.set_debounce		= tegra_gpio_set_debounce;
++	tgi->gc.base			= -1;
++	tgi->gc.ngpio			= tgi->soc->nports * 8;
++	tgi->gc.parent			= &pdev->dev;
++	tgi->gc.of_node			= pdev->dev.of_node;
 +
-+	tiopi->pctl = devm_pinctrl_register(dev, &tegra_iop_pinctrl_desc,
-+					    tiopi);
-+	if (IS_ERR(tiopi->pctl)) {
-+		int ret = PTR_ERR(tiopi->pctl);
++	tgi->ic.name			= tgi->soc->name;
++	tgi->ic.irq_ack			= tegra_gpio_irq_ack;
++	tgi->ic.irq_mask		= tegra_gpio_irq_mask;
++	tgi->ic.irq_unmask		= tegra_gpio_irq_unmask;
++	tgi->ic.irq_set_type		= tegra_gpio_irq_set_type;
++	tgi->ic.irq_shutdown		= tegra_gpio_irq_mask;
++	tgi->ic.irq_disable		= tegra_gpio_irq_mask;
 +
-+		dev_err(dev, "Failed to register io-pad pinctrl driver: %d\n",
-+			ret);
++	platform_set_drvdata(pdev, tgi);
++
++	for (bank = 0; bank < tgi->nbanks; bank++) {
++		res = platform_get_resource(pdev, IORESOURCE_IRQ, bank);
++		tgi->tg_contrlr[bank].controller = bank;
++		tgi->tg_contrlr[bank].irq = res->start;
++		tgi->tg_contrlr[bank].tgi = tgi;
++	}
++
++	tgi->irq_domain = irq_domain_add_linear(pdev->dev.of_node,
++						tgi->gc.ngpio,
++						&irq_domain_simple_ops, NULL);
++	if (!tgi->irq_domain)
++		return -ENODEV;
++
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "security");
++	if (!res) {
++		dev_err(&pdev->dev, "Missing security MEM resource\n");
++		return -ENODEV;
++	}
++	tgi->scr_regs = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(tgi->scr_regs)) {
++		ret = PTR_ERR(tgi->scr_regs);
++		dev_err(&pdev->dev, "Failed to iomap for security: %d\n", ret);
 +		return ret;
 +	}
++
++	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "gpio");
++	if (!res) {
++		dev_err(&pdev->dev, "Missing gpio MEM resource\n");
++		return -ENODEV;
++	}
++	tgi->gpio_regs = devm_ioremap_resource(&pdev->dev, res);
++	if (IS_ERR(tgi->gpio_regs)) {
++		ret = PTR_ERR(tgi->gpio_regs);
++		dev_err(&pdev->dev, "Failed to iomap for gpio: %d\n", ret);
++		return ret;
++	}
++
++	ret = devm_gpiochip_add_data(&pdev->dev, &tgi->gc, tgi);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "Could not register gpiochip, %d\n", ret);
++		return ret;
++	}
++
++	for (gpio = 0; gpio < tgi->gc.ngpio; gpio++) {
++		int irq = irq_create_mapping(tgi->irq_domain, gpio);
++		int cont_id = tgi->soc->port[GPIO_PORT(gpio)].cont_id;
++
++		if (gpio_is_accessible(tgi, gpio))
++			/* mask interrupts for this GPIO */
++			tegra_gpio_update(tgi, gpio, GPIO_ENB_CONFIG_REG,
++					  GPIO_INT_FUNC_BIT, 0);
++
++		irq_set_chip_data(irq, &tgi->tg_contrlr[cont_id]);
++		irq_set_chip_and_handler(irq, &tgi->ic, handle_simple_irq);
++	}
++
++	for (bank = 0; bank < tgi->nbanks; bank++)
++		irq_set_chained_handler_and_data(tgi->tg_contrlr[bank].irq,
++						 tegra_gpio_irq_handler,
++						 &tgi->tg_contrlr[bank]);
++
++	tegra_gpio_debuginit(tgi);
 +
 +	return 0;
 +}
 +
-+#define TEGRA124_PAD_INFO_TABLE(_entry_)			\
-+	_entry_(0, "audio", AUDIO, true, false),		\
-+	_entry_(1, "bb", BB, true, false),			\
-+	_entry_(2, "cam", CAM, true, false),			\
-+	_entry_(3, "comp", COMP, true, false),			\
-+	_entry_(4, "csia", CSIA, true, false),			\
-+	_entry_(5, "csib", CSIB, true, false),			\
-+	_entry_(6, "csie", CSIE, true, false),			\
-+	_entry_(7, "dsi", DSI, true, false),			\
-+	_entry_(8, "dsib", DSIB, true, false),			\
-+	_entry_(9, "dsic", DSIC, true, false),			\
-+	_entry_(10, "dsid", DSID, true, false),			\
-+	_entry_(11, "hdmi", HDMI, true, false),			\
-+	_entry_(12, "hsic", HSIC, true, false),			\
-+	_entry_(13, "hv", HV, true, false),			\
-+	_entry_(14, "lvds", LVDS, true, false),			\
-+	_entry_(15, "mipi-bias", MIPI_BIAS, true, false),	\
-+	_entry_(16, "nand", NAND, true, false),			\
-+	_entry_(17, "pex-bias", PEX_BIAS, true, false),		\
-+	_entry_(18, "pex-clk1", PEX_CLK1, true, false),		\
-+	_entry_(19, "pex-clk2", PEX_CLK2, true, false),		\
-+	_entry_(20, "pex-ctrl", PEX_CNTRL, true, false),	\
-+	_entry_(21, "sdmmc1", SDMMC1, true, false),		\
-+	_entry_(22, "sdmmc3", SDMMC3, true, false),		\
-+	_entry_(23, "sdmmc4", SDMMC4, true, false),		\
-+	_entry_(24, "sys-ddc", SYS_DDC, true, false),		\
-+	_entry_(25, "uart", UART, true, false),			\
-+	_entry_(26, "usb0", USB0, true, false),			\
-+	_entry_(27, "usb1", USB1, true, false),			\
-+	_entry_(28, "usb2", USB2, true, false),			\
-+	_entry_(29, "usb-bias", USB_BIAS, true, false)
-+
-+#define TEGRA210_PAD_INFO_TABLE(_entry_)			\
-+	_entry_(0, "audio", AUDIO, true, true),			\
-+	_entry_(1, "audio-hv", AUDIO_HV, true, true),		\
-+	_entry_(2, "cam", CAM, true, true),			\
-+	_entry_(3, "csia", CSIA, true, false),			\
-+	_entry_(4, "csib", CSIB, true, false),			\
-+	_entry_(5, "csic", CSIC, true, false),			\
-+	_entry_(6, "csid", CSID, true, false),			\
-+	_entry_(7, "csie", CSIE, true, false),			\
-+	_entry_(8, "csif", CSIF, true, false),			\
-+	_entry_(9, "dbg", DBG, true, true),			\
-+	_entry_(10, "debug-nonao", DEBUG_NONAO, true, false),	\
-+	_entry_(11, "dmic", DMIC, true, true),			\
-+	_entry_(12, "dp", DP, true, false),			\
-+	_entry_(13, "dsi", DSI, true, false),			\
-+	_entry_(14, "dsib", DSIB, true, false),			\
-+	_entry_(15, "dsic", DSIC, true, false),			\
-+	_entry_(16, "dsid", DSID, true, false),			\
-+	_entry_(17, "emmc", SDMMC4, true, false),		\
-+	_entry_(18, "emmc2", EMMC2, true, false),		\
-+	_entry_(19, "gpio", GPIO, true, true),			\
-+	_entry_(20, "hdmi", HDMI, true, false),			\
-+	_entry_(21, "hsic", HSIC, true, false),			\
-+	_entry_(22, "lvds", LVDS, true, false),			\
-+	_entry_(23, "mipi-bias", MIPI_BIAS, true, false),	\
-+	_entry_(24, "pex-bias", PEX_BIAS, true, false),		\
-+	_entry_(25, "pex-clk1", PEX_CLK1, true, false),		\
-+	_entry_(26, "pex-clk2", PEX_CLK2, true, false),		\
-+	_entry_(27, "pex-ctrl", PEX_CNTRL, false, true),	\
-+	_entry_(28, "sdmmc1", SDMMC1, true, true),		\
-+	_entry_(29, "sdmmc3", SDMMC3, true, true),		\
-+	_entry_(30, "spi", SPI, true, true),			\
-+	_entry_(31, "spi-hv", SPI_HV, true, true),		\
-+	_entry_(32, "uart", UART, true, true),			\
-+	_entry_(33, "usb0", USB0, true, false),			\
-+	_entry_(34, "usb1", USB1, true, false),			\
-+	_entry_(35, "usb2", USB2, true, false),			\
-+	_entry_(36, "usb3", USB3, true, false),			\
-+	_entry_(37, "usb-bias", USB_BIAS, true, false)
-+
-+#define TEGRA_IO_PAD_INFO(_id, _name, _pad_id, _lpstate, _vchange)	\
-+	{								\
-+		.name = _name,						\
-+		.pins = {(_id)},					\
-+		.pad_id = TEGRA_IO_PAD_##_pad_id,			\
-+		.voltage_can_change = (_vchange),			\
-+		.support_low_power_state = (_lpstate),			\
-+	}
-+
-+static const struct tegra_io_pads_cfg_info tegra124_io_pads_cfg_info[] = {
-+	TEGRA124_PAD_INFO_TABLE(TEGRA_IO_PAD_INFO),
++static const struct tegra_gpio_soc_info t186_main_gpio_soc = {
++	.name = "tegra-main-gpio",
++	.port = tegra_main_gpio_cinfo,
++	.nports = ARRAY_SIZE(tegra_main_gpio_cinfo),
 +};
 +
-+static const struct tegra_io_pads_cfg_info tegra210_io_pads_cfg_info[] = {
-+	TEGRA210_PAD_INFO_TABLE(TEGRA_IO_PAD_INFO),
++static const struct tegra_gpio_soc_info t186_aon_gpio_soc = {
++	.name = "tegra-aon-gpio",
++	.port = tegra_aon_gpio_cinfo,
++	.nports = ARRAY_SIZE(tegra_aon_gpio_cinfo),
 +};
 +
-+#define TEGRA_IO_PAD_DESC(_id, _name, _pad_id,  _vchange, _lpstate)	\
-+	PINCTRL_PIN(_id, _name)
-+
-+static const struct pinctrl_pin_desc tegra124_io_pads_pinctrl_desc[] = {
-+	TEGRA124_PAD_INFO_TABLE(TEGRA_IO_PAD_DESC),
++static const struct of_device_id tegra_gpio_of_match[] = {
++	{ .compatible = "nvidia,tegra186-gpio", .data = &t186_main_gpio_soc},
++	{ .compatible = "nvidia,tegra186-gpio-aon", .data = &t186_aon_gpio_soc},
++	{ },
 +};
 +
-+static const struct pinctrl_pin_desc tegra210_io_pads_pinctrl_desc[] = {
-+	TEGRA210_PAD_INFO_TABLE(TEGRA_IO_PAD_DESC),
-+};
-+
-+static const struct tegra_io_pad_soc_data tegra124_io_pad_soc_data = {
-+	.pins_desc	= tegra124_io_pads_pinctrl_desc,
-+	.num_pins_desc	= ARRAY_SIZE(tegra124_io_pads_pinctrl_desc),
-+	.pads_cfg	= tegra124_io_pads_cfg_info,
-+	.num_pins_desc	= ARRAY_SIZE(tegra124_io_pads_cfg_info),
-+};
-+
-+static const struct tegra_io_pad_soc_data tegra210_io_pad_soc_data = {
-+	.pins_desc	= tegra210_io_pads_pinctrl_desc,
-+	.num_pins_desc	= ARRAY_SIZE(tegra210_io_pads_pinctrl_desc),
-+	.pads_cfg	= tegra210_io_pads_cfg_info,
-+	.num_pins_desc	= ARRAY_SIZE(tegra210_io_pads_cfg_info),
-+};
-+
-+static const struct platform_device_id tegra_io_pads_dev_id[] = {
-+	{
-+		.name = "pinctrl-t124-io-pad",
-+		.driver_data = (kernel_ulong_t)&tegra124_io_pad_soc_data,
-+	}, {
-+		.name = "pinctrl-t210-io-pad",
-+		.driver_data = (kernel_ulong_t)&tegra210_io_pad_soc_data,
-+	}, {
-+	},
-+};
-+MODULE_DEVICE_TABLE(platform, tegra_io_pads_dev_id);
-+
-+static struct platform_driver tegra_iop_pinctrl_driver = {
++static struct platform_driver tegra_gpio_driver = {
 +	.driver		= {
-+		.name	= "pinctrl-tegra-io-pad",
++		.name	= "tegra186-gpio",
++		.of_match_table = tegra_gpio_of_match,
 +	},
-+	.probe		= tegra_iop_pinctrl_probe,
-+	.id_table	= tegra_io_pads_dev_id,
++	.probe		= tegra_gpio_probe,
 +};
 +
-+module_platform_driver(tegra_iop_pinctrl_driver);
++static int __init tegra_gpio_init(void)
++{
++	return platform_driver_register(&tegra_gpio_driver);
++}
++postcore_initcall(tegra_gpio_init);
 +
-+MODULE_DESCRIPTION("NVIDIA TEGRA IO pad Control Driver");
-+MODULE_AUTHOR("Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
++MODULE_AUTHOR("Suresh Mangipudi <smangipudi@nvidia.com>");
++MODULE_AUTHOR("Laxman Dewangan <ldewangan@nvidia.com>");
++MODULE_DESCRIPTION("NVIDIA Tegra186 GPIO driver");
 +MODULE_LICENSE("GPL v2");
 -- 
 2.1.4
+
