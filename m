@@ -1,78 +1,33 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [RFC PATCH 0/3] PM / Domains: Add support for devices that
- require multiple domains
-Date: Mon, 31 Oct 2016 10:44:41 +0000
-Message-ID: <91b96909-64bc-db72-6da5-556272565091@nvidia.com>
-References: <1474367287-10402-1-git-send-email-jonathanh@nvidia.com>
- <57F5E986.40704@codeaurora.org>
- <8ba7aa10-0c2f-98ca-c7bd-00e1724e5972@nvidia.com>
- <57F60EBE.8010509@codeaurora.org>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH 12/15] clk: tegra: dfll: improve function-level
+ documentation
+Date: Tue, 1 Nov 2016 17:38:52 -0700
+Message-ID: <20161102003852.GN16026@codeaurora.org>
+References: <1475351192-27079-1-git-send-email-Julia.Lawall@lip6.fr>
+ <1475351192-27079-13-git-send-email-Julia.Lawall@lip6.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <57F60EBE.8010509@codeaurora.org>
+Content-Disposition: inline
+In-Reply-To: <1475351192-27079-13-git-send-email-Julia.Lawall@lip6.fr>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Rajendra Nayak <rnayak@codeaurora.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Julia Lawall <Julia.Lawall@lip6.fr>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, kernel-janitors@vger.kernel.org, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Rajendra,
+On 10/01, Julia Lawall wrote:
+> Adjust variables to correspond to the names used in the parameter list of
+> the function.  Move the struct device * variable up to the place where it
+> appears in the parameter list.
+> 
+> Issue detected using Coccinelle (http://coccinelle.lip6.fr/)
+> 
+> Signed-off-by: Julia Lawall <Julia.Lawall@lip6.fr>
+> 
+> ---
 
-On 06/10/16 09:43, Rajendra Nayak wrote:
->
-> On 10/06/2016 01:55 PM, Jon Hunter wrote:
->> Hi Rajendra,
->>
->> On 06/10/16 07:04, Rajendra Nayak wrote:
->>>
->>> On 09/20/2016 03:58 PM, Jon Hunter wrote:
->>>> The Tegra124/210 XUSB subsystem (that consists of both host and device
->>>> controllers) is partitioned across 3 PM domains which are:
->>>> - XUSBA: Superspeed logic (for USB 3.0)
->>>> - XUSBB: Device controller
->>>> - XUSBC: Host controller
->>>>
->>>> These power domains are not nested and can be powered-up and down
->>>> independently of one another. In practice different scenarios require
->>>> different combinations of the power domains, for example:
->>>> - Superspeed host: XUSBA and XUSBC
->>>> - Superspeed device: XUSBA and XUSBB
->>>>
->>>> Although it could be possible to logically nest both the XUSBB and XUSBC
->>>> domains under the XUSBA, superspeed may not always be used/required and
->>>> so this would keep it on unnecessarily.
->>>
->>> Hey Jon, so does this RFC provide a way to just specify multiple Powerdomains
->>> for a device (which then will *all* be powered on/off together) or does
->>> it also provide for more granular control of these powerdomains?
->>
->> Only to specify multiple power-domains for a device and not the later.
->>
->>> The above statement seems to suggest you would need more granular control
->>> of these powerdomains (like keeping XUSBA off in case superspeed it not
->>> needed) but I can't seem to figure out how you achieve it with this series.
->>
->> It is an interesting point but today we have always kept the superspeed
->> partition on if the device is configured for superspeed regardless of
->> what is actually connected. I will check to see if the h/w would allow
->> us to turn it off if a non-superspeed device is in use but I did not
->> think so.
->>
->> Do you have any interesting use-cases that would make use of this or
->> require other such enhancements?
->
-> We do have atleast a few devices which need to control multiple power domains,
-> I will need to look more to see if any of them can be controlled individually.
-> The downstream code we have models these (powerdomains) as regulators and
-> the drivers hence have individual control on each (specifying multiple -supply's
-> in DT)
-
-Were you able to check to see if you need to have individual control for 
-the power-domains?
-
-Cheers
-Jon
+Applied to clk-next
 
 -- 
-nvpublic
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
