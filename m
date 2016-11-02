@@ -1,7 +1,7 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.9-rc2
-Date: Wed, 2 Nov 2016 13:55:24 +0000
-Message-ID: <f1828549-da9f-e62b-9b5a-64afb64d6c23@nvidia.com>
+Subject: Tegra baseline test results for v4.9-rc3
+Date: Wed, 2 Nov 2016 14:03:06 +0000
+Message-ID: <f7750673-e13a-9e17-49b4-a2afc4a198cf@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
@@ -11,10 +11,10 @@ To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29
 Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.9-rc2.
+Here are some basic Tegra test results for Linux v4.9-rc3.
 Logs and other details at:
 
-    https://nvtb.github.io//linux/test_v4.9-rc2/20161102051347/
+    https://nvtb.github.io//linux/test_v4.9-rc3/20161102060102/
 
 
 Test summary
@@ -39,38 +39,38 @@ Boot to userspace: tegra_defconfig:
 		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
 
 PM: System suspend: multi_v7_defconfig:
-    FAIL: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
 		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
 
 PM: System suspend: tegra_defconfig:
-    FAIL: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
 		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
 
-
 vmlinux object size
-(delta in bytes from test_v4.9-rc1 (1001354ca34179f3db924eb66672442a173147dc)):
+(delta in bytes from test_v4.9-rc2 (07d9a380680d1c0eb51ef87ff2eab5c994949e69)):
    text     data      bss    total  kernel
-     +1      +24        0      +25  defconfig
-    -55      +64        0       +9  tegra_defconfig
+   -429    +6528        0    +6099  defconfig
++121935   +25312      +64  +147311  multi_v7_defconfig
+   -185    +3200        0    +3015  tegra_defconfig
 
 
 Boot-time memory difference
-(delta in bytes from test_v4.9-rc1 (1001354ca34179f3db924eb66672442a173147dc))
+(delta in bytes from test_v4.9-rc2 (07d9a380680d1c0eb51ef87ff2eab5c994949e69))
     avail    rsrvd     high    freed                board              kconfig                  dtb
-        .        .        .        .      qemu-vexpress64            defconfig           __internal
-        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-        .        .        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
-        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
+      20k     -20k        .        .      qemu-vexpress64            defconfig           __internal
+      32k     -32k        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+      36k     -36k        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+      32k     -32k        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+      36k     -36k        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+      32k     -32k        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
+      36k     -36k        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
         .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
-        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
-        .        .        .        .       tegra210-smaug            defconfig       tegra210-smaug
-        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+      12k     -12k        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+      16k     -16k        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+      68k     -68k        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
+      64k     -64k        .        .       tegra210-smaug            defconfig       tegra210-smaug
+      32k     -32k        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+      36k     -36k        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
 
 --
 nvpublic
