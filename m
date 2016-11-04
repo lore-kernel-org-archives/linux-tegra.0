@@ -1,85 +1,55 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [RFC PATCH 0/3] PM / Domains: Add support for devices that
- require multiple domains
-Date: Thu, 3 Nov 2016 14:20:27 +0000
-Message-ID: <63670abf-1d58-a7e3-6927-0c815d44d8a1@nvidia.com>
-References: <1474367287-10402-1-git-send-email-jonathanh@nvidia.com>
- <CAPDyKFoFPNNnoc-7G34A7a4Yo8f=WUyurNP1evabw3MOEubEoA@mail.gmail.com>
- <90faea7d-65b6-590a-83f1-24fcdffa0569@nvidia.com>
- <CAPDyKFr4S3tM7KL2hfwJ3R4e5z1-Zd99aMhMSgVq4XzkrUUdow@mail.gmail.com>
- <fd7c8f40-2a9f-b71c-bd11-43ee657441ae@nvidia.com>
+From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Subject: Re: [PATCH 09/10] clk: tegra: make clk-tegra124-dfll-fcpu explicitly
+ non-modular
+Date: Fri, 4 Nov 2016 13:33:13 -0700
+Message-ID: <20161104203313.GI16026@codeaurora.org>
+References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
+ <20160704211220.5685-10-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <fd7c8f40-2a9f-b71c-bd11-43ee657441ae-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20160704211220.5685-10-paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, Kevin Hilman <khilman-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rajendra Nayak <rnayak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+To: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Aleksandr Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 11/10/16 10:15, Jon Hunter wrote:
-
-...
-
->>>> Second, another way of seeing this is: Depending on the current
->>>> runtime selected configuration you need to re-configure the PM domain
->>>> topology - but the device would still remain in the same PM domain.
->>>>
->>>> In other words, you would need to remove/add subdomain(s) depending on
->>>> the selected configuration. Would that better reflect the HW?
->>>
->>> I am not 100% sure I follow what you are saying, but ultimately, I would
->>> like to get to ...
->>>
->>>         usb@70090000 {
->>>                 compatible = "nvidia,tegra210-xusb";
->>>                 ...
->>>                 power-domains = <&pd_xusbhost>, <&pd_xusbss>;
->>>         };
->>
->> So, is this really is a proper description of the HW? Isn't it so,
->> that the usb device always resides in one and the same PM domain?
+On 07/04, Paul Gortmaker wrote:
+> The Kconfig currently controlling compilation of this code is:
 > 
-> I guess technically, the usbhost controller resides in one partition and
-> the super-speed logic in another. So could the usbhost domain be the
-> primary? Possibly, but the device cannot be probed without both enabled.
+> arch/arm/mach-tegra/Kconfig:config ARCH_TEGRA_124_SOC
+> arch/arm/mach-tegra/Kconfig:    bool "Enable support for Tegra124 family"
 > 
->> Now, depending on the selected speed mode (superspeed) additional
->> logic may needs to be powered on and configured for the usb device to
->> work?
->> Perhaps, one could consider those additional logics as a master/parent
->> PM domain for the usb device's PM domain?
->>
->> Or this is not how the HW works? :-)
+> ...meaning that it currently is not being built as a module by anyone.
 > 
-> It might be possible for this case, but to be honest, the more I think
-> about this, I do wonder if we need to be able to make the framework a
-> lot more flexible for devices that need multiple power-domains. In other
-> words, for devices that use multiple domains allow them to control them
-> similarly to what we do for regulators or clocks. So if there is more
-> than one defined, then the genpd core will not bind the device to the
-> pm-domain and let the driver handle it. This way if you do need more
-> granular control of the pm-domains in the driver you can do whatever you
-> need to.
+> Lets remove the modular code that is essentially orphaned, so that
+> when reading the driver there is no doubt it is builtin-only.
 > 
-> I know that Rajendra (CC'ed) was looking into whether he had a need to
-> control multiple power-domains individually from within the context of a
-> single device driver.
+> Since module_init translates to device_initcall in the non-modular
+> case, the init ordering remains unchanged with this commit.
+> 
+> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
+> 
+> We also delete the MODULE_LICENSE tags etc. since all that information
+> is already contained at the top of the file in the comments.
+> 
+> Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Cc: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+> Cc: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+> Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: Aleksandr Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Cc: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Cc: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> Signed-off-by: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+> ---
 
-So Rajendra commented to say that he does not see a need for individual
-control of power-domains for now, but a need for specifying multiple.
-
-One simple option would be to allow users to specify multiple and have
-the genpd core effectively ignore such devices and leave it to the
-driver to configure manually. I have been able to do this for XUSB by
-dynamically adding power-domains to the device.
-
-Let me know if you have any more thoughts on how we can do this.
-
-Cheers
-Jon
+Applied to clk-next
 
 -- 
-nvpublic
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
