@@ -1,14 +1,13 @@
 From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: tegra: Add driver to configure voltage and
- power of io pads
-Date: Fri, 4 Nov 2016 23:24:46 +0100
-Message-ID: <CACRpkdb4DQLzQWHxuZi=TDaeigNzVJV8TN1jsQfOHKF7yPLrUg@mail.gmail.com>
-References: <1478077742-25437-1-git-send-email-ldewangan@nvidia.com> <1478077742-25437-3-git-send-email-ldewangan@nvidia.com>
+Subject: Re: [PATCH 1/2] pinctrl: tegra: Add DT binding for io pads control
+Date: Fri, 4 Nov 2016 23:29:32 +0100
+Message-ID: <CACRpkdZb4dQu431n4gUM=5TDmADpu7P9gE2v0AxokS_2bRSa1Q@mail.gmail.com>
+References: <1478077742-25437-1-git-send-email-ldewangan@nvidia.com> <1478077742-25437-2-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <1478077742-25437-3-git-send-email-ldewangan@nvidia.com>
-Sender: linux-gpio-owner@vger.kernel.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1478077742-25437-2-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
 To: Laxman Dewangan <ldewangan@nvidia.com>
 Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jon Hunter <jonathanh@nvidia.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
@@ -29,32 +28,26 @@ On Wed, Nov 2, 2016 at 10:09 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 > must configure the PMC register explicitly to set proper voltage in
 > IO pads based on IO rail power source voltage.
 >
-> This driver adds the IO pad driver to configure the power state and
-> IO pad voltage based on the usage and power tree via pincontrol
-> framework. The configuration can be static and dynamic.
+> Add DT binding document for detailing the DT properties for
+> configuring IO pads voltage levels and its power state.
 >
 > Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+(...)
 
-Looking for an ACK from Stephen &| Thierry.
+> +-nvidia,power-source-voltage:  Integer. The voltage level of IO pads. The
+> +                               valid values are 1.8V and 3.3V. Macros are
+> +                               defined for these voltage levels in
+> +                               <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
+> +                               Use TEGRA_IO_PAD_POWER_SOURCE_1800000UV for 1.8V
+> +                               Use TEGRA_IO_PAD_POWER_SOURCE_3300000UV for 3.3V
+> +
+> +                               All IO pads do not support the 1.8V/3.3V
+> +                               configurations. Valid values for "pins" are
+> +                               audio-hv, dmic, gpio, sdmmc1, sdmmc3, spi-hv.
 
-> ---
-> On top of the branch from Thierry's T186 work
->         https://github.com/thierryreding/linux/tree/tegra186
 
-But it's an orthogonal patch right?
-
-The build robot seems to have problems with it so pls fix these.
-
-> +static const struct pinconf_generic_params tegra_io_pads_cfg_params[] = {
-> +       {
-> +               .property = "nvidia,power-source-voltage",
-> +               .param = TEGRA_IO_PAD_POWER_SOURCE_VOLTAGE,
-> +       },
-> +};
-
-Why can you not use the standard power-source binding
-from Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
-instead of inventing this nvidia,* variant?
+As mentioned in another patch, what is wrong with the standard
+power-source binding?
 
 Yours,
 Linus Walleij
