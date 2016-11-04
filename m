@@ -1,55 +1,60 @@
-From: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-Subject: Re: [PATCH 09/10] clk: tegra: make clk-tegra124-dfll-fcpu explicitly
- non-modular
-Date: Fri, 4 Nov 2016 13:33:13 -0700
-Message-ID: <20161104203313.GI16026@codeaurora.org>
-References: <20160704211220.5685-1-paul.gortmaker@windriver.com>
- <20160704211220.5685-10-paul.gortmaker@windriver.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/2] pinctrl: tegra: Add driver to configure voltage and
+ power of io pads
+Date: Fri, 4 Nov 2016 23:24:46 +0100
+Message-ID: <CACRpkdb4DQLzQWHxuZi=TDaeigNzVJV8TN1jsQfOHKF7yPLrUg@mail.gmail.com>
+References: <1478077742-25437-1-git-send-email-ldewangan@nvidia.com> <1478077742-25437-3-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20160704211220.5685-10-paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
-Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Aleksandr Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <1478077742-25437-3-git-send-email-ldewangan@nvidia.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jon Hunter <jonathanh@nvidia.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On 07/04, Paul Gortmaker wrote:
-> The Kconfig currently controlling compilation of this code is:
-> 
-> arch/arm/mach-tegra/Kconfig:config ARCH_TEGRA_124_SOC
-> arch/arm/mach-tegra/Kconfig:    bool "Enable support for Tegra124 family"
-> 
-> ...meaning that it currently is not being built as a module by anyone.
-> 
-> Lets remove the modular code that is essentially orphaned, so that
-> when reading the driver there is no doubt it is builtin-only.
-> 
-> Since module_init translates to device_initcall in the non-modular
-> case, the init ordering remains unchanged with this commit.
-> 
-> Also note that MODULE_DEVICE_TABLE is a no-op for non-modular code.
-> 
-> We also delete the MODULE_LICENSE tags etc. since all that information
-> is already contained at the top of the file in the comments.
-> 
-> Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
-> Cc: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
-> Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
-> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Cc: Aleksandr Frid <afrid-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: Paul Walmsley <pwalmsley-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Cc: linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Signed-off-by: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+On Wed, Nov 2, 2016 at 10:09 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
+
+> NVIDIA Tegra124 and later SoCs support the multi-voltage level and
+> low power state of some of its IO pads. The IO pads can work in
+> the voltage of the 1.8V and 3.3V of IO power rail sources. When IO
+> interface are not used then IO pads can be configure in low power
+> state to reduce the power from that IO pads.
+>
+> On Tegra124, the IO power rail source is auto detected by SoC and hence
+> it is only require to configure in low power mode if IO pads are not
+> used.
+>
+> On T210 onwards, the auto-detection is removed from SoC and hence SW
+> must configure the PMC register explicitly to set proper voltage in
+> IO pads based on IO rail power source voltage.
+>
+> This driver adds the IO pad driver to configure the power state and
+> IO pad voltage based on the usage and power tree via pincontrol
+> framework. The configuration can be static and dynamic.
+>
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
+
+Looking for an ACK from Stephen &| Thierry.
+
 > ---
+> On top of the branch from Thierry's T186 work
+>         https://github.com/thierryreding/linux/tree/tegra186
 
-Applied to clk-next
+But it's an orthogonal patch right?
 
--- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+The build robot seems to have problems with it so pls fix these.
+
+> +static const struct pinconf_generic_params tegra_io_pads_cfg_params[] = {
+> +       {
+> +               .property = "nvidia,power-source-voltage",
+> +               .param = TEGRA_IO_PAD_POWER_SOURCE_VOLTAGE,
+> +       },
+> +};
+
+Why can you not use the standard power-source binding
+from Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+instead of inventing this nvidia,* variant?
+
+Yours,
+Linus Walleij
