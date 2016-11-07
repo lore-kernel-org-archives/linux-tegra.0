@@ -1,18 +1,33 @@
 From: Mirza Krak <mirza.krak@gmail.com>
-Subject: [PATCH V4 5/6] ARM: tegra: Add Tegra20 GMI support
-Date: Mon,  7 Nov 2016 09:30:04 +0100
-Message-ID: <1478507405-13204-6-git-send-email-mirza.krak@gmail.com>
+Subject: [PATCH V4 2/6] clk: tegra: add TEGRA30_CLK_NOR to init table
+Date: Mon,  7 Nov 2016 09:30:01 +0100
+Message-ID: <1478507405-13204-3-git-send-email-mirza.krak@gmail.com>
 References: <1478507405-13204-1-git-send-email-mirza.krak@gmail.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1478507405-13204-1-git-send-email-mirza.krak@gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: swarren@wwwdotorg.org, thierry.reding@gmail.com, jonathanh@nvidia.com
-Cc: gnurou@gmail.com, linux@armlinux.org.uk, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, Mirza Krak <mirza.krak@gmail.com>
+Cc: mark.rutland@arm.com, gnurou@gmail.com, pgaikwad@nvidia.com, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, pdeschrijver@nvidia.com, Mirza Krak <mirza.krak@gmail.com>, sboyd@codeaurora.org, linux@armlinux.org.uk, linux-kernel@vger.kernel.org, robh+dt@kernel.org, linux-tegra@vger.kernel.org, mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Mirza Krak <mirza.krak@gmail.com>
 
-Add a device node for the GMI controller found on Tegra20.
+Add TEGRA30_CLK_NOR to init table and set default rate to 127 MHz which
+is max rate.
+
+The maximum rate value of 127 MHz is pulled from the downstream L4T
+kernel.
 
 Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
 Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
@@ -21,40 +36,28 @@ Acked-by: Jon Hunter <jonathanh@nvidia.com>
 ---
 
 Changes in v2:
-- added address-cells, size-cells and ranges properties
+- no changes
 
 Changes in v3:
-- fixed range address which is not the same as Tegra30.
+- Added comment in commit message where I got the maximum rates from.
 
-Changes in v4:
-- removed extra newline and a initial space in resets property.
+Changes in V4:
+- no changes
 
- arch/arm/boot/dts/tegra20.dtsi | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ drivers/clk/tegra/clk-tegra30.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/tegra20.dtsi b/arch/arm/boot/dts/tegra20.dtsi
-index 2207c08..e880750 100644
---- a/arch/arm/boot/dts/tegra20.dtsi
-+++ b/arch/arm/boot/dts/tegra20.dtsi
-@@ -376,6 +376,19 @@
- 		status = "disabled";
- 	};
-
-+	gmi@70009000 {
-+		compatible = "nvidia,tegra20-gmi";
-+		reg = <0x70009000 0x1000>;
-+		#address-cells = <2>;
-+		#size-cells = <1>;
-+		ranges = <0 0 0xd0000000 0xfffffff>;
-+		clocks = <&tegra_car TEGRA20_CLK_NOR>;
-+		clock-names = "gmi";
-+		resets = <&tegra_car 42>;
-+		reset-names = "gmi";
-+		status = "disabled";
-+	};
-+
- 	pwm: pwm@7000a000 {
- 		compatible = "nvidia,tegra20-pwm";
- 		reg = <0x7000a000 0x100>;
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 8e2db5e..67f1677 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1252,6 +1252,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA30_CLK_SDMMC1, TEGRA30_CLK_PLL_P, 48000000, 0 },
+ 	{ TEGRA30_CLK_SDMMC2, TEGRA30_CLK_PLL_P, 48000000, 0 },
+ 	{ TEGRA30_CLK_SDMMC3, TEGRA30_CLK_PLL_P, 48000000, 0 },
++	{ TEGRA30_CLK_NOR, TEGRA30_CLK_PLL_P, 127000000, 0 },
+ 	{ TEGRA30_CLK_PLL_M, TEGRA30_CLK_CLK_MAX, 0, 1 },
+ 	{ TEGRA30_CLK_PCLK, TEGRA30_CLK_CLK_MAX, 0, 1 },
+ 	{ TEGRA30_CLK_CSITE, TEGRA30_CLK_CLK_MAX, 0, 1 },
 --
 2.1.4
