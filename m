@@ -1,109 +1,62 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH v4 0/3] ASoC/ARM: tegra: apalis t30/tk1/colibri t30:
- sgtl5000 audio
-Date: Mon, 7 Nov 2016 14:42:20 +0100
-Message-ID: <20161107134220.GA29676@ulmo.ba.sec>
-References: <1466298002-12576-1-git-send-email-marcel.ziswiler@toradex.com>
- <1471355726.4197.6.camel@toradex.com>
+Subject: Re: [PATCH] ARM: tegra: nyan: Mark all USB ports as host
+Date: Mon, 7 Nov 2016 14:28:54 +0100
+Message-ID: <20161107132854.GF12559@ulmo.ba.sec>
+References: <20160918102852.6593-1-contact@paulk.fr>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jRHKVT23PllUwdXP"
+        protocol="application/pgp-signature"; boundary="oPmsXEqKQNHCSXW7"
 Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1471355726.4197.6.camel@toradex.com>
+In-Reply-To: <20160918102852.6593-1-contact@paulk.fr>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Cc: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "robh+dt@kernel.org" <robh+dt@kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux@armlinux.org.uk" <linux@armlinux.org.uk>, "gnurou@gmail.com" <gnurou@gmail.com>, "broonie@kernel.org" <broonie@kernel.org>, "mark.rutland@arm.com" <mark.rutland@arm.com>, "prarit@redhat.com" <prarit@redhat.com>, "akpm@linux-foundation.org" <akpm@linux-foundation.org>, "tiwai@suse.com" <tiwai@suse.com>, "lgirdwood@gmail.com" <lgirdwood@gmail.com>, "ttynkkynen@nvidia.com" <ttynkkynen@nvidia.com>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "perex@perex.cz" <perex@perex.cz>, alsa-devel@alsa-proje
+To: Paul Kocialkowski <contact@paulk.fr>
+Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---jRHKVT23PllUwdXP
-Content-Type: text/plain; charset=utf-8
+--oPmsXEqKQNHCSXW7
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 16, 2016 at 01:55:28PM +0000, Marcel Ziswiler wrote:
-> On Sun, 2016-06-19 at 02:59 +0200, Marcel Ziswiler wrote:
-> > This series adds/integrates Freescale SGTL5000 analogue audio codec
-> > support.
-> >=20
-> > Changes in v4:
-> > - simple-audio-card does still not allow for more advanced use cases
-> > =C2=A0 like Tegra SoCs
-> > - further platform drivers have been accepted since my last attempt
-> > =C2=A0 (e.g. rt5677 one)
-> > - relevance for one further board the new Toradex Apalis TK1
-> > - drop unused sound/jack.h include
-> > - in tegra_sgtl5000_driver_remove() pass return value of
-> > =C2=A0 snd_soc_unregister_card() on to caller
-> > - no longer set owner property in platform_driver to THIS_MODULE
-> > - re-based/resend
-> >=20
-> > Changes in v3:
-> > - revert to not using simple-audio-card being incompatible with tegra
-> > - rebased to for-next
-> >=20
-> > Changes in v2:
-> > - using simple-audio-card as suggested by Fabio
-> >=20
-> > Marcel Ziswiler (3):
-> > =C2=A0 ASoC: tegra: add tegra sgtl5000 machine driver
-> > =C2=A0 ARM: tegra: apalis/colibri t30: integrate audio
-> > =C2=A0 ARM: tegra: enable sgtl5000 audio
-> >=20
-> > =C2=A0.../bindings/sound/nvidia,tegra-audio-sgtl5000.txt |=C2=A0=C2=A04=
-2 ++++
-> > =C2=A0arch/arm/boot/dts/tegra30-apalis.dtsi=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0|=C2=A0=C2=A049 ++=
-+++
-> > =C2=A0arch/arm/boot/dts/tegra30-colibri.dtsi=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0|=C2=A0=C2=A049 +++++
-> > =C2=A0arch/arm/configs/tegra_defconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0|=C2=A0=C2=A0=C2=A01 +
-> > =C2=A0sound/soc/tegra/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0|=C2=A0=C2=A011 ++
-> > =C2=A0sound/soc/tegra/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0|=C2=A0=C2=A0=C2=A02 +
-> > =C2=A0sound/soc/tegra/tegra_sgtl5000.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0| 212
-> > +++++++++++++++++++++
-> > =C2=A07 files changed, 366 insertions(+)
-> > =C2=A0create mode 100644
-> > Documentation/devicetree/bindings/sound/nvidia,tegra-audio-
-> > sgtl5000.txt
-> > =C2=A0create mode 100644 sound/soc/tegra/tegra_sgtl5000.c
+On Sun, Sep 18, 2016 at 12:28:52PM +0200, Paul Kocialkowski wrote:
+> Nyan boards only have host USB ports (2 external, 1 internal), there is
+> no OTG-enabled connector.
 >=20
-> With Mark finally having pulled the first patch of this series (https:/
-> /lkml.org/lkml/2016/8/15/297) I'm wondering whether the second and
-> third patch are now being pulled via tegra tree? Or should I rather re-
-> submit those as a new v5 patch set?
+> Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
+> ---
+>  arch/arm/boot/dts/tegra124-nyan.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Both patches applied now, thanks.
+Where is this information coming from? I don't have one of the Nyans
+myself, but one of the Tegra132 devices I have, which I think was
+derived from one of the Nyans uses one of the external host ports as
+forced recovery port, for which it would need OTG.
+
+I suspect that the way to get U-Boot onto the Nyans is via tegrarcm?
+In that case I think one of the ports must be OTG.
 
 Thierry
 
---jRHKVT23PllUwdXP
+--oPmsXEqKQNHCSXW7
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAABCAAGBQJYIIS6AAoJEN0jrNd/PrOh4ycP/0cn4nX9ijcjyR1rB2FgbI2B
-f9dzwENDUpNnw91FNHZgX9CnBnZXR2ZUwOibCdVlxI0Vfw7DZHJc628Fxv3PAvxj
-8fdalvCf3HullJHrq2Rxbqd74tJyU5Yp2VlusX0hyKayj+7W0iHQfecmuCioHyHb
-IrWU/1OWmKioTli1lJBzsY/a2FlNf19d0EpfJyyWsSq3WMHw3jLlLgthYSoQjV9Y
-5Fct7pi6xm2N5qj1eXO15tkR06bZpTNBtVh746wg/Ly+ET9aZFC67t4iJ/dMZEKL
-VipJpg39q9SpwDUqeVEWDuu5saCXlmrReIflp0rBeP7eZTL++QYcCPmT7B+00H3d
-SAO02DeFsfrVtj9TNM3Ey1oMMi8197ed0T6RU9FdiIRnpINLyx0n0tEDDx5qwZj7
-NZjrYLDW65GQmogZO9J0mqJsLuBUZP61dR1bcw8opUSJwDKYM2dkkO6O7ciWAYfg
-JrY9OJa2Wh/CAHTdwbWcTunRT+58iwaqkHw+r0Z9YGh/ij+os8/QcUeae6M3q4qt
-qs4D4HBZvDAavIEhXX1WFGCqduWvHPszRKnp3gMsBmFpTx738sF0Tx6oaXmdkMpW
-K3IewHuyboSWI9mJUPzhV4J2otO4yZkV1PQIQTlZDfBKPM0KvfBYOOsITGyPwCDy
-+q2+oUh+Xfr8ETyqs5mf
-=oWYs
+iQIcBAABCAAGBQJYIIGWAAoJEN0jrNd/PrOhP2sQAI3VoZBocPUHZfvOs60T1MbP
+aVilqurAEvEU80VHkSkjMXdEoANnNkH6ZUd6L4aTGbIGO3z+o9Y12UYrfkjlgult
+DiXvWiY4XbiLNpnqAUDyl763zIZkDrq1LXSgioJrUbIBLW0PhtWUp64B0FgmgGrU
+bxRTrjuayyCSLI5JEzE7YBCfTenFiM/wMuHbRgbHoOAIS99lqW3w8OSD/o7SVlA8
+Xg/wZAIxkSYSnAl8JshCbLc2wnraqMhlBa3H+TYtTePog2FV05UBZKbP+xasDFB0
+dLiRG+GIUiYLphPzQu8QDxe6O5vCRPDsElpq0w6T9sL/OGep2cjxAvPvOHLFaLO9
+RHH58QOwzDUW+FQtyB0v/8fBOaL+6HOGk98YPsm628MK71UhrykRhks8Qj3JB5aH
+lg347UU0zcC+KhIrdnAQkfl+jdAKcZEXRQTyvm7vEzfgHmf3TbZYxcYSmXv+fLjR
+LRVCtWz3xW/mWsd/eGx0WV9kghUfaKjK+96mXaXx6dWx3LNsud5Xe9T64mI0dT3H
+RpCbOWREN/itlVtQ8fWotJIDyeEhjI4twlE9V+9bJ7qfCL5CnrQhS6kaoxghavMT
+LsFi7Rw6EGVbUDRy675RQ8jxwL5yVhzLkotpU7w9p65MeZ9X6JNAtKKX4BTt9Maq
+0NbTTs6bUasTbA9kzEBE
+=UwW1
 -----END PGP SIGNATURE-----
 
---jRHKVT23PllUwdXP--
+--oPmsXEqKQNHCSXW7--
