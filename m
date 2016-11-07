@@ -1,85 +1,86 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] drm/tegra: sor: No need to free devm_ allocated memory
-Date: Mon, 7 Nov 2016 13:05:56 +0100
-Message-ID: <20161107120556.GG28616@ulmo.ba.sec>
-References: <1474747650-10306-1-git-send-email-christophe.jaillet@wanadoo.fr>
+From: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: nyan: Enable GPU node and related supply
+Date: Mon, 7 Nov 2016 21:51:06 +0900
+Message-ID: <CAAVeFuLb5gU70B0jP0YNPB58NcuR_D0e--6zn3dG7VOmZafLRA@mail.gmail.com>
+References: <20160918141311.17140-1-contact@paulk.fr> <f2489bf5-bb08-11f5-1b53-7a1568f20b6b@nvidia.com>
+ <1474395433.1215.23.camel@paulk.fr> <e95335ae-ad19-b8cd-634b-63c6a0b88e01@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2021062636=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1474747650-10306-1-git-send-email-christophe.jaillet@wanadoo.fr>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: gnurou@gmail.com, swarren@wwwdotorg.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <e95335ae-ad19-b8cd-634b-63c6a0b88e01-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, Sep 21, 2016 at 4:57 PM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>
+> On 20/09/16 19:17, Paul Kocialkowski wrote:
+>> * PGP Signed by an unknown key
+>>
+>> Le mardi 20 septembre 2016 =C3=A0 13:24 +0100, Jon Hunter a =C3=A9crit :
+>>> On 18/09/16 15:13, Paul Kocialkowski wrote:
+>>>>
+>>>> This enables the GPU node for tegra124 nyan boards, which is required =
+to
+>>>> get graphics acceleration with nouveau on these devices.
+>>>>
+>>>> Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+>>>> ---
+>>>>  arch/arm/boot/dts/tegra124-nyan.dtsi | 8 +++++++-
+>>>>  1 file changed, 7 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi
+>>>> b/arch/arm/boot/dts/tegra124-nyan.dtsi
+>>>> index dab9509..225ca77 100644
+>>>> --- a/arch/arm/boot/dts/tegra124-nyan.dtsi
+>>>> +++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
+>>>> @@ -42,6 +42,12 @@
+>>>>             };
+>>>>     };
+>>>>
+>>>> +   gpu@0,57000000 {
+>>>> +           status =3D "okay";
+>>>> +
+>>>> +           vdd-supply =3D <&vdd_gpu>;
+>>>> +   };
+>>>> +
+>>>>     serial@70006000 {
+>>>>             /* Debug connector on the bottom of the board near SD card=
+.
+>>>> */
+>>>>             status =3D "okay";
+>>>> @@ -214,7 +220,7 @@
+>>>>                                     regulator-always-on;
+>>>>                             };
+>>>>
+>>>> -                           sd6 {
+>>>> +                           vdd_gpu: sd6 {
+>>>>                                     regulator-name =3D "+VDD_GPU_AP";
+>>>>                                     regulator-min-microvolt =3D <65000=
+0>;
+>>>>                                     regulator-max-microvolt =3D
+>>>> <1200000>;
+>>>>
+>>>
+>>> Looks good to me. I see the following error when booting but looking at=
+ the
+>>> code appears to be benign. Thierry, Alex, is this normal/okay?
+>>
+>> I have the same messages and asked Alexandre about them the other day. H=
+e told
+>> me that it looks normal.
+>
+> Ok great. Hopefully, Alex can ACK then.
 
---===============2021062636==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="vJguvTgX93MxBIIe"
-Content-Disposition: inline
+Apologies for the (very) delayed reply.
 
+Yes, the messages you are seeing are part of the normal probe sequence
+on Tegra. So this looks good to me.
 
---vJguvTgX93MxBIIe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, Sep 24, 2016 at 10:07:30PM +0200, Christophe JAILLET wrote:
-> 'brick' has been allocated by 'devm_kzalloc', so there is no need here to
-> free it explicitly.
-> There is only one caller of 'tegra_clk_sor_brick_register()'. This functi=
-on
-> is a probe function which correctly checks and handles the return value of
-> 'tegra_clk_sor_brick_register()'.
->=20
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
->  drivers/gpu/drm/tegra/sor.c | 2 --
->  1 file changed, 2 deletions(-)
-
-Applied, with a slightly reworded commit message.
-
-Thanks,
-Thierry
-
---vJguvTgX93MxBIIe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJYIG4kAAoJEN0jrNd/PrOh2ZYQAL89mTzE1GhR9KB8BmZa9B6u
-FppUfMAV7+PYZkkM7vuQ9qzikuwlABIQgdJRo+GiClWx0dgZWa9/UxPbsPTHHw9s
-I3COk/3pN6lhzIcP8i7TaIYjALxd5r2cdDXRbH9JGr6SV50kCWE196yCqGRMP0e1
-GABoOt9SBOJ6Iy1FQ7y3jBe4cMZlKMOzZ+E2bInAN+O01JgP8vUGsUE0xC9VcBEy
-uIHTBn1wGXB8f0LXxYf9H1PiVFlxWNiCWcqPNOdLVl93W4tLO6tWDcalFFg0hAnA
-8ReuXQuH2u/hbJ93cGT3vmqsBEhySU2v7caauRWrZaDQiKkS2gaJof6BQw9Y1GCt
-amxh5iK7XxWHu8Q1DciIZik/1vg0+f4GAQkL/xZcW3ikcYfk0pPWzDiJFJ898oDF
-3FSiSrKOQcTPbH7MqKuoI/B57yJ6qnSPHfuiIktYTkncq473eRHkCFlRkYdQNfZy
-i5vcH+q3ycj1i7Yc0NL0bTmnrAqdcf2TvHVOyqdR6fgmR/Jv3IZKDTAvRahTKRi/
-nygt1IHdJimBHDGLtunQ9E3bjUC/UeDFcfdcYTfKMIYNEZEcbq5VoQPwfNXr964I
-BOzkZS2nwy8oGN6MVCB1ZMNJxPy/wTnjuOZwEQdZbGum95c5wpZTXnrRxkK/Fskj
-FLBGR6rw4WjLPYiafk9G
-=V4xY
------END PGP SIGNATURE-----
-
---vJguvTgX93MxBIIe--
-
---===============2021062636==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============2021062636==--
+Acked-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
