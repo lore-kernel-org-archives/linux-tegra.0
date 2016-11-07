@@ -1,77 +1,85 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Tegra baseline test results for v4.9-rc4
-Date: Mon, 7 Nov 2016 11:51:57 +0000
-Message-ID: <df62ac1f-d7f1-82e5-e0ef-2f46ab89f86b@nvidia.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] drm/tegra: dpaux: Fix error handling
+Date: Mon, 7 Nov 2016 13:00:27 +0100
+Message-ID: <20161107120027.GE28616@ulmo.ba.sec>
+References: <20161028090945.11573-1-christophe.jaillet@wanadoo.fr>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============1735054371=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20161028090945.11573-1-christophe.jaillet@wanadoo.fr>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: gnurou@gmail.com, swarren@wwwdotorg.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, treding@nvidia.com
 List-Id: linux-tegra@vger.kernel.org
 
-Here are some basic Tegra test results for Linux v4.9-rc4.
-Logs and other details at:
 
-    https://nvtb.github.io//linux/test_v4.9-rc4/20161107030103/
-
-
-Test summary
-------------
-
-Build: zImage:
-    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
-
-Build: Image:
-    Pass: ( 1/ 1): defconfig
-
-Boot to userspace: defconfig:
-    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
-		   tegra210-p2371-0000, tegra210-smaug
-
-Boot to userspace: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-Boot to userspace: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: multi_v7_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
-
-PM: System suspend: tegra_defconfig:
-    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
-		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+--===============1735054371==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="so9zsI5B81VjUb/o"
+Content-Disposition: inline
 
 
-vmlinux object size
-(delta in bytes from test_v4.9-rc3 (a909d3e636995ba7c349e2ca5dbb528154d4ac30)):
-   text     data      bss    total  kernel
-  +4122      -32        0    +4090  defconfig
-  +1138        0        0    +1138  multi_v7_defconfig
-  +1573        0        0    +1573  tegra_defconfig
+--so9zsI5B81VjUb/o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, Oct 28, 2016 at 11:09:45AM +0200, Christophe JAILLET wrote:
+> 'devm_pinctrl_register()' returns an error pointer or a valid handle. So
+> checking for NULL here is pointless and can never trigger.
+>=20
+> Check the returned value with IS_ERR instead and propagate this value as
+> done in the other functions which call 'devm_pinctrl_register()'
+>=20
+> Fixes: 0751bb5c44fe ("drm/tegra: dpaux: Add pinctrl support")
+>=20
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/gpu/drm/tegra/dpaux.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Boot-time memory difference
-(delta in bytes from test_v4.9-rc3 (a909d3e636995ba7c349e2ca5dbb528154d4ac30))
-    avail    rsrvd     high    freed                board              kconfig                  dtb
-        .        .        .        .      qemu-vexpress64            defconfig           __internal
-        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
-        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
-        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
-        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
-        .        .        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
-        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
-        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
-        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
-        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
-        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
-        .        .        .        .       tegra210-smaug            defconfig       tegra210-smaug
-        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
-        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
+Applied, thanks.
 
---
-nvpublic
+Thierry
+
+--so9zsI5B81VjUb/o
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCAAGBQJYIGzYAAoJEN0jrNd/PrOhI2UP/j4EmLh7ZP9DT1pWEL3CSTXI
+rAuy26S6W2+qoMMDfjcOspcVdbjZfN2jL+keiWY36cPuuEfsAWd8oeVVGYYypxzl
+syl0hgSnm3GgY8KpEnoZHTrylmJK4eiHrD+HrZfs7TOnl8OooF2/9jNDJQH/WVzQ
+twGe32xMxxTVowdgdDwFw5eevcziN+OUS1PanoVs35D0ndkPbc4ayiUveiDCoBZg
+NxRx/skn6hS4V2xkbAikM3BDxTY67KH2TrNly9tg9li0UHkx4J2pZag2Tik6yO5v
+5sWPHIYpqq/X5mdE2NuBRqanl1GXpXN9Qii0/aYfszdbYDHwKHSUm4Fjutk8+2si
+kwG5XhOxRSwmthwnbZ5k5C/iIt5J4fh7sS7n6myjKkBrqQuVAOwKrUTUyWKXUIvs
+hni2slNUJ1S+6Hr1mg4BmUJOffucf4m0nDJjm6VMG6PsuzRY2Ftjyrfby088rda3
+9Pm/QJPMKR5nNjZew9OlEyj/KsPgu9jf10c+2HYcYRQ+ytzrj0mTU+rAiN13uoEm
+HkzoHgoKCnb0+/YqEN1y80eAvddlFjgScwZ9WgTQn4/Nvea+CSLKJ9ltSRFfSMXI
+pwWLw2FBQQbcQfd+wSKFQciGbtygAuhraL4wKu+aOvm1Irx1Pjj46DW+GWpP6sik
+shCSNJVLzhw8Kb4g9rh/
+=sMnB
+-----END PGP SIGNATURE-----
+
+--so9zsI5B81VjUb/o--
+
+--===============1735054371==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============1735054371==--
