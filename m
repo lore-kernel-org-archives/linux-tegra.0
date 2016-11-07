@@ -1,12 +1,12 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] drm/tegra: fix error handling
-Date: Mon, 7 Nov 2016 13:02:06 +0100
-Message-ID: <20161107120206.GF28616@ulmo.ba.sec>
-References: <1467526737-13591-1-git-send-email-christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH] drm/tegra: sor: No need to free devm_ allocated memory
+Date: Mon, 7 Nov 2016 13:05:56 +0100
+Message-ID: <20161107120556.GG28616@ulmo.ba.sec>
+References: <1474747650-10306-1-git-send-email-christophe.jaillet@wanadoo.fr>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2116954924=="
+Content-Type: multipart/mixed; boundary="===============2021062636=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <1467526737-13591-1-git-send-email-christophe.jaillet@wanadoo.fr>
+In-Reply-To: <1474747650-10306-1-git-send-email-christophe.jaillet@wanadoo.fr>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -21,54 +21,58 @@ Cc: gnurou@gmail.com, swarren@wwwdotorg.org, kernel-janitors@vger.kernel.org, li
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============2116954924==
+--===============2021062636==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="vA66WO2vHvL/CRSR"
+	protocol="application/pgp-signature"; boundary="vJguvTgX93MxBIIe"
 Content-Disposition: inline
 
 
---vA66WO2vHvL/CRSR
+--vJguvTgX93MxBIIe
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jul 03, 2016 at 08:18:57AM +0200, Christophe JAILLET wrote:
-> This is likely that checking 'gr3d->clk_secondary' instead of 'gr3d->clk'
-> is expected here.
->=20
+On Sat, Sep 24, 2016 at 10:07:30PM +0200, Christophe JAILLET wrote:
+> 'brick' has been allocated by 'devm_kzalloc', so there is no need here to
+> free it explicitly.
+> There is only one caller of 'tegra_clk_sor_brick_register()'. This functi=
+on
+> is a probe function which correctly checks and handles the return value of
+> 'tegra_clk_sor_brick_register()'.
 >=20
 > Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 > ---
->  drivers/gpu/drm/tegra/gr3d.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/gpu/drm/tegra/sor.c | 2 --
+>  1 file changed, 2 deletions(-)
 
-Applied, thanks. Sorry for not noticing this one earlier.
+Applied, with a slightly reworded commit message.
 
+Thanks,
 Thierry
 
---vA66WO2vHvL/CRSR
+--vJguvTgX93MxBIIe
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAABCAAGBQJYIG0+AAoJEN0jrNd/PrOh1MwQAICV9rT3gdsMkI1DfQ63npKR
-UQyihlstcgVEghGon+KKdBCNXORvWtAQic8/F4Qr/hjoZCttWATGlWq2XL3vxaNz
-psNgE9PTFVFozDDthUrJoqKAaBvkK+osNn0+sqvnhNA6GYXT4KdYyBjT2MzO0BN2
-/aVJcsU0a+GKBgv1+2nwFI26fdqwYit2xCED0WSaj+z6a/XeamZZrg71FojVFIZ/
-cvHycEW67LbEDoOzw5c3dqE/IEECJ8zvtR3n7hTk4y8XctGUx6BDnFhP5pL/yM7K
-tdSJXCsmS+o2nvdYCtDwWH0ppJ/HEHiTvl0B8T5QdhU01btR5YRfxv0NVgLCKIAz
-AaTUYd7gmWVE4QFR7jmWFKxFCDUiOlmAV7k1YMrh1l5Oe17bdDWe0nTCoGTP6VEA
-N8Nlf9QG6drhksIDK0Dkc/I8YbL21GLP4fTBFSl6dfBCuZfFgFO2rkevHExavg3b
-HEXJVuZEdJ1CsIFlYO9vBXJHY56FDeubq2iSAOHIstW0ICkbLMeKvbRZKBKqIRtl
-0hmtb5qUm8vcsfLF7AztPetrnicKmMki4jNsXn8fXukGKLhB82G2JyZRe09sBZQr
-urLliYQpdb/HHZ7kcxpLSN2XE8all1Tebg1T7M35iSLa/64NJPJ5+g67DZLo2Ct1
-MDJYQDVXQToQ87kZ9u5m
-=4ctp
+iQIcBAABCAAGBQJYIG4kAAoJEN0jrNd/PrOh2ZYQAL89mTzE1GhR9KB8BmZa9B6u
+FppUfMAV7+PYZkkM7vuQ9qzikuwlABIQgdJRo+GiClWx0dgZWa9/UxPbsPTHHw9s
+I3COk/3pN6lhzIcP8i7TaIYjALxd5r2cdDXRbH9JGr6SV50kCWE196yCqGRMP0e1
+GABoOt9SBOJ6Iy1FQ7y3jBe4cMZlKMOzZ+E2bInAN+O01JgP8vUGsUE0xC9VcBEy
+uIHTBn1wGXB8f0LXxYf9H1PiVFlxWNiCWcqPNOdLVl93W4tLO6tWDcalFFg0hAnA
+8ReuXQuH2u/hbJ93cGT3vmqsBEhySU2v7caauRWrZaDQiKkS2gaJof6BQw9Y1GCt
+amxh5iK7XxWHu8Q1DciIZik/1vg0+f4GAQkL/xZcW3ikcYfk0pPWzDiJFJ898oDF
+3FSiSrKOQcTPbH7MqKuoI/B57yJ6qnSPHfuiIktYTkncq473eRHkCFlRkYdQNfZy
+i5vcH+q3ycj1i7Yc0NL0bTmnrAqdcf2TvHVOyqdR6fgmR/Jv3IZKDTAvRahTKRi/
+nygt1IHdJimBHDGLtunQ9E3bjUC/UeDFcfdcYTfKMIYNEZEcbq5VoQPwfNXr964I
+BOzkZS2nwy8oGN6MVCB1ZMNJxPy/wTnjuOZwEQdZbGum95c5wpZTXnrRxkK/Fskj
+FLBGR6rw4WjLPYiafk9G
+=V4xY
 -----END PGP SIGNATURE-----
 
---vA66WO2vHvL/CRSR--
+--vJguvTgX93MxBIIe--
 
---===============2116954924==
+--===============2021062636==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: base64
@@ -78,4 +82,4 @@ X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
 IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
 dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
 
---===============2116954924==--
+--===============2021062636==--
