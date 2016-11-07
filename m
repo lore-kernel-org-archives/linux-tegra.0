@@ -1,98 +1,90 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V4 1/6] clk: tegra: add TEGRA20_CLK_NOR to init table
-Date: Mon, 7 Nov 2016 12:27:53 +0100
-Message-ID: <20161107112753.GA28616@ulmo.ba.sec>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V4 6/6] bus: Add support for Tegra Generic Memory
+ Interface
+Date: Mon, 7 Nov 2016 12:49:37 +0100
+Message-ID: <20161107114937.GD28616@ulmo.ba.sec>
 References: <1478507405-13204-1-git-send-email-mirza.krak@gmail.com>
- <1478507405-13204-2-git-send-email-mirza.krak@gmail.com>
+ <1478507405-13204-7-git-send-email-mirza.krak@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============6423845510374872831=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1478507405-13204-2-git-send-email-mirza.krak@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Mirza Krak <mirza.krak@gmail.com>
-Cc: mark.rutland@arm.com, gnurou@gmail.com, pgaikwad@nvidia.com, linux-clk@vger.kernel.org, swarren@wwwdotorg.org, linux-kernel@vger.kernel.org, pdeschrijver@nvidia.com, sboyd@codeaurora.org, linux@armlinux.org.uk, jonathanh@nvidia.com, devicetree@vger.kernel.org, robh+dt@kernel.org, linux-tegra@vger.kernel.org, mturquette@baylibre.com, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="9dgjiU4MmWPVapMU"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1478507405-13204-7-git-send-email-mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============6423845510374872831==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Q68bSM7Ycu6FN28Q"
-Content-Disposition: inline
-
-
---Q68bSM7Ycu6FN28Q
+--9dgjiU4MmWPVapMU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 07, 2016 at 09:30:00AM +0100, Mirza Krak wrote:
-> From: Mirza Krak <mirza.krak@gmail.com>
+On Mon, Nov 07, 2016 at 09:30:05AM +0100, Mirza Krak wrote:
+> From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 >=20
-> Add TEGRA20_CLK_NOR to init table and set default rate to 92 MHz which
-> is max rate.
+> The Generic Memory Interface bus can be used to connect high-speed
+> devices such as NOR flash, FPGAs, DSPs...
 >=20
-> The maximum rate value of 92 MHz is pulled from the downstream L4T
-> kernel.
->=20
-> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
-> Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> Signed-off-by: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Tested-by: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
 > Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
-> Acked-by: Jon Hunter <jonathanh@nvidia.com>
 > ---
 >=20
 > Changes in v2:
-> - no changes
+>  - Fixed some checkpatch errors
+>  - Re-ordered probe to get rid of local variables
+>  - Moved of_platform_default_populate call to the end of probe
+>  - Use the timing and configuration properties from the child device
+>  - Added warning if more then 1 child device exist
 >=20
 > Changes in v3:
-> - Added comment in commit message where I got the maximum rates from.
+>  - added helper function to disable the controller which is used in remov=
+e and
+>  on error.
+>  - Added logic to parse CS# from "ranges" property with fallback to "reg"
+>  property
 >=20
-> Changes in V4:
-> - no changes
+> Changes in v4:
+> - added sanity check of chip-select property (fail if invalid)
+> - adjusted for device tree binding property name changes
+> - fail probe if there are no child nodes
+> - removed superfluous error message
+> - removed superfluous newline in Kconfig
+>=20
+>  drivers/bus/Kconfig     |   7 ++
+>  drivers/bus/Makefile    |   1 +
+>  drivers/bus/tegra-gmi.c | 275 ++++++++++++++++++++++++++++++++++++++++++=
+++++++
+>  3 files changed, 283 insertions(+)
+>  create mode 100644 drivers/bus/tegra-gmi.c
 
-Applied, thanks.
+Applied with a bit of code reshuffling to make things more symmetric as
+well as a couple of pedantic cleanups because I couldn't resist.
 
+Thanks,
 Thierry
 
---Q68bSM7Ycu6FN28Q
+--9dgjiU4MmWPVapMU
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAABCAAGBQJYIGU2AAoJEN0jrNd/PrOht9AP/0roeEvmAvdXBNDHsabHt6md
-rTyHNMy4pyI/nrV6UJCqDZdsyd90r02hclwT8wSzRUqlb8Nb6MkoV399An5TjDp7
-iuIj/ENZ2U2Zy/wsiDuOvs+j9Yx5AII9fabPc635rkjgarTkTmgVXOh4i7KWfqEC
-dAogdbbcsVNnmigmU/MY0nHwMyRqTQg/0oifcSnnncdtHq/U8UFkqx78GAmAI6gp
-7hecLkzALHq133LzFD+d4w9iAH+yuNac0L5/IgzMFlSul7Bna1Wq3sIxtanMhYCu
-2ff6l7GXfF2m2hNG5W3MrN6dh3LjoXkqCQLWoeYCbI63js3c49UvPdg2si2VIP9I
-Weqx8/RKafOCwkcCSdCYCjatoA7ru6lrnv0ZQeuNg+bNEUEWYuBQbnhnQtx4PNXc
-O5xlw0Fw3nJ6ga8A46AUdqRvOk+Qv1wNaAU6Grx8Mw69dVmsuxXqsE9v5TCFwotZ
-M2zliYjMsKO3/pk8U4R2Z3CbagG91FNs9nJyaM1av3tp/lU6OzWWmbKQfEQ8lepZ
-Q3BlnsehHJ65CvIbx3GLp789q0QfllyL9D3tYMkm8wFn3vQ/yDDH19R2ONsGiN87
-PLLI13BmK96omNhq8sTaPxb1vNnIJjtewoyavHJTjbyL1ygCrpAVCeAyieM7+Rh1
-CzaYifKKB3m4BEDWInb9
-=CBbR
+iQIcBAABCAAGBQJYIGpOAAoJEN0jrNd/PrOhXXQP/Rqjl3rQapa2nVOHkGCCi+bM
+kWf/lHmMIeW6wY9n26Nv6ZWoOKIO22hxZmH0zztBwx8HZ8ysJkUEdTVw3lbYaLHr
+fRTVkqFa4ikG2yqZgOgGZkgRdTp7zaYWKGL32HLJI/61V/oqMLzqZV5X5fjBOsqT
+zqAVtRIy+KZc6ZLZ34f+tElcDhgmbdRrxlOngw5HgV1GBL9P5kU/xH5njqk0beaq
+tjHGHWYYqv4v0tvcx/X+ScEcr7ISKIJrvUvllIHGgZCx2T56kAliMvZbA/cVVJjC
+7tHBJZ6VRKP5hnPsHMHpw7u3i1v/pRnZffrY7AL93hgOv6Y7iVnmNH9gk11/lpcV
+W3AQUCph62tQqSAwtrDkrIlkBJwU3TA2TPHBmdr5QXGYOcMYUY6ONYj0UG5orVLZ
+nJhw8keVjp4Tp04WTg9wnJ7+KdzOI4xONHf8rs76Gt9JI/ufpTIk2SnrRLXQr0L0
+wUPJjP3l1XyzKgbfGzQRH2TXYw5LXp2qoPWbHNQ8SGGKzSHSkr3Pc+XtL5VucCS4
+E5HOu5uHDsRRxs1k/C9bLKWqfxpX7rEfkHg3z2CRh/zLg5Ngl5iVd1ymL1xtQpBw
+m0mNRFJLel/ogrPP60TrVauStg7jQujWEy4e82PNrNV7Q5viOaEaKK6dtRk9Hl1E
+b/a79oEOJDy1QJ3eR1vP
+=JhXv
 -----END PGP SIGNATURE-----
 
---Q68bSM7Ycu6FN28Q--
-
-
---===============6423845510374872831==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============6423845510374872831==--
+--9dgjiU4MmWPVapMU--
