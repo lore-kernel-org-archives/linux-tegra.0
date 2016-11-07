@@ -1,91 +1,59 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: Re: [PATCH] ARM: tegra: nyan: Enable GPU node and related supply
-Date: Mon, 7 Nov 2016 13:00:10 +0000
-Message-ID: <ba759743-2ec1-c818-0b82-a3b27348aab6@nvidia.com>
-References: <20160918141311.17140-1-contact@paulk.fr>
- <f2489bf5-bb08-11f5-1b53-7a1568f20b6b@nvidia.com>
- <1474395433.1215.23.camel@paulk.fr>
- <e95335ae-ad19-b8cd-634b-63c6a0b88e01@nvidia.com>
- <CAAVeFuLb5gU70B0jP0YNPB58NcuR_D0e--6zn3dG7VOmZafLRA@mail.gmail.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] serial: tegra20-hsuart: fix typo in dmas DT binding
+ description
+Date: Mon, 7 Nov 2016 14:01:03 +0100
+Message-ID: <20161107130103.GC12559@ulmo.ba.sec>
+References: <1468787481-27753-1-git-send-email-mirza.krak@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAAVeFuLb5gU70B0jP0YNPB58NcuR_D0e--6zn3dG7VOmZafLRA@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
-Cc: Paul Kocialkowski <contact@paulk.fr>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="2JFBq9zoW8cOFH7v"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1468787481-27753-1-git-send-email-mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Thierry,
 
-On 07/11/16 12:51, Alexandre Courbot wrote:
-> On Wed, Sep 21, 2016 at 4:57 PM, Jon Hunter <jonathanh@nvidia.com> wrote:
->>
->> On 20/09/16 19:17, Paul Kocialkowski wrote:
->>> * PGP Signed by an unknown key
->>>
->>> Le mardi 20 septembre 2016 à 13:24 +0100, Jon Hunter a écrit :
->>>> On 18/09/16 15:13, Paul Kocialkowski wrote:
->>>>>
->>>>> This enables the GPU node for tegra124 nyan boards, which is required to
->>>>> get graphics acceleration with nouveau on these devices.
->>>>>
->>>>> Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
->>>>> ---
->>>>>  arch/arm/boot/dts/tegra124-nyan.dtsi | 8 +++++++-
->>>>>  1 file changed, 7 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi
->>>>> b/arch/arm/boot/dts/tegra124-nyan.dtsi
->>>>> index dab9509..225ca77 100644
->>>>> --- a/arch/arm/boot/dts/tegra124-nyan.dtsi
->>>>> +++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
->>>>> @@ -42,6 +42,12 @@
->>>>>             };
->>>>>     };
->>>>>
->>>>> +   gpu@0,57000000 {
->>>>> +           status = "okay";
->>>>> +
->>>>> +           vdd-supply = <&vdd_gpu>;
->>>>> +   };
->>>>> +
->>>>>     serial@70006000 {
->>>>>             /* Debug connector on the bottom of the board near SD card.
->>>>> */
->>>>>             status = "okay";
->>>>> @@ -214,7 +220,7 @@
->>>>>                                     regulator-always-on;
->>>>>                             };
->>>>>
->>>>> -                           sd6 {
->>>>> +                           vdd_gpu: sd6 {
->>>>>                                     regulator-name = "+VDD_GPU_AP";
->>>>>                                     regulator-min-microvolt = <650000>;
->>>>>                                     regulator-max-microvolt =
->>>>> <1200000>;
->>>>>
->>>>
->>>> Looks good to me. I see the following error when booting but looking at the
->>>> code appears to be benign. Thierry, Alex, is this normal/okay?
->>>
->>> I have the same messages and asked Alexandre about them the other day. He told
->>> me that it looks normal.
->>
->> Ok great. Hopefully, Alex can ACK then.
-> 
-> Apologies for the (very) delayed reply.
-> 
-> Yes, the messages you are seeing are part of the normal probe sequence
-> on Tegra. So this looks good to me.
-> 
-> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
+--2JFBq9zoW8cOFH7v
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Can you pick this one up for v4.10 as well?
+On Sun, Jul 17, 2016 at 10:31:21PM +0200, Mirza Krak wrote:
+> From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+>=20
+> The description for dmas references a second property, which should be
+> "dma-names" instead of "clock-names".
+>=20
+> Signed-off-by: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> ---
+>  Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.txt | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Cheers
-Jon
+Applied, thanks.
 
--- 
-nvpublic
+Thierry
+
+--2JFBq9zoW8cOFH7v
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCAAGBQJYIHsPAAoJEN0jrNd/PrOhji4P/3fLEqsdDaIQSjRLrRcpqGIU
+A9Y+nIIDuK27FbxpH5dJgD8sS+LPT+F2eKSQ98e3Bm+eU35P8YVllfPbVdFUBTrG
+VLhebsAKNihI3fKHidvpCT+1vb2I7TGNZJbPKSU799GLkXs4+KhxIKEkIO/5jYqM
+OF8Gn6rFHs5AaPlVDuNwHfdSEooipBAJGvx7oG+r4Q2zqNewAWf524KCCAhB35kH
+5oYWrFPqLzRcqAIATbJ4VRZ+39qGZ1t0uyiZGy4neYcJpQzaezEnx9ZGi5oukUzA
+NrQ9c8ztvED2+ewEnQ10Vtyax15UXSp9Zp+oM8c8CRT7S2o45ZEqwgoUsURTyggD
+4iTD7h9USyuJf9luS9vhMpVVgdFBxHUn68eCec00FXJJNAd3N3ZEI8rY1I1a1b+y
+5TlfFyNgmsBhq7JpJvSrWbpryYbTiknP59MV67kELSLp5wbR+FL2EncBdgrVhQzi
+76bMu/30eH0NTAHd9W/iU2OTFRC+NqRh+FH4GyHLR+xtEsY2PZCav5bn1ICEYNbH
+nTgWCIYycflc6ADuFCvBEa15LyZ4H+8dE7ho3gLcv/9MSIgBI+PtzJepH4Pr2+ov
+mh17ojNQi1rkk7Mu/NDQthD+rA73Raz3PKkj6StptaeceucTX/LqzWEjplgfHeBa
+XbrNOQFF9ksmLv8mzXlz
+=BGjm
+-----END PGP SIGNATURE-----
+
+--2JFBq9zoW8cOFH7v--
