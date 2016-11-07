@@ -1,35 +1,53 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] ARM: tegra: apalis-tk1: Drop leading 0 from unit-address
-Date: Mon,  7 Nov 2016 14:49:23 +0100
-Message-ID: <20161107134923.5615-1-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: nyan: Mark all USB ports as host
+Date: Mon, 7 Nov 2016 14:09:31 +0000
+Message-ID: <13e7ff98-8bc2-ccf7-94bb-4e1d3c61b20d@nvidia.com>
+References: <20160918102852.6593-1-contact@paulk.fr>
+ <20161107132854.GF12559@ulmo.ba.sec>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20161107132854.GF12559-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-According to the latest best practices, unit-addresses should be
-represented without any leading zeroes.
+On 07/11/16 13:28, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+> 
+> On Sun, Sep 18, 2016 at 12:28:52PM +0200, Paul Kocialkowski wrote:
+>> Nyan boards only have host USB ports (2 external, 1 internal), there is
+>> no OTG-enabled connector.
+>>
+>> Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+>> ---
+>>  arch/arm/boot/dts/tegra124-nyan.dtsi | 2 +-
+>>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> Where is this information coming from? I don't have one of the Nyans
+> myself, but one of the Tegra132 devices I have, which I think was
+> derived from one of the Nyans uses one of the external host ports as
+> forced recovery port, for which it would need OTG.
+> 
+> I suspect that the way to get U-Boot onto the Nyans is via tegrarcm?
+> In that case I think one of the ports must be OTG.
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- arch/arm/boot/dts/tegra124-apalis.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It is true that the port on the back on the nyan-big can be used with
+recovery mode. I was thinking that this is not a true OTG port as it is
+just a 4-pin type A socket and does not have an ID pin. Thinking some
+more about this the USB spec does include a "Host Negotiation Protocol
+(HNP)" that allows a host and device to swap roles and so keeping it as
+OTG seems valid afterall.
 
-diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index e7a73db17613..0819721dda59 100644
---- a/arch/arm/boot/dts/tegra124-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -1595,7 +1595,7 @@
- 		clock-frequency = <400000>;
- 
- 		/* SGTL5000 audio codec */
--		sgtl5000: codec@0a {
-+		sgtl5000: codec@a {
- 			compatible = "fsl,sgtl5000";
- 			reg = <0x0a>;
- 			VDDA-supply = <&reg_3v3>;
+Cheers
+Jon
+
 -- 
-2.10.2
+nvpublic
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
