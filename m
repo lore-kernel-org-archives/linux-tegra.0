@@ -1,59 +1,65 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] serial: tegra20-hsuart: fix typo in dmas DT binding
- description
-Date: Mon, 7 Nov 2016 14:01:03 +0100
-Message-ID: <20161107130103.GC12559@ulmo.ba.sec>
-References: <1468787481-27753-1-git-send-email-mirza.krak@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH] gpio: tegra186: Add support for T186 GPIO
+Date: Mon, 7 Nov 2016 14:21:27 +0100
+Message-ID: <20161107132127.GE12559@ulmo.ba.sec>
+References: <1478083719-14836-1-git-send-email-smangipudi@nvidia.com>
+ <CACRpkdZpPHLDGeBb8kb=LYmuT0PKPf_quK+OF2peaV+8dxr5vQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="2JFBq9zoW8cOFH7v"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="EXKGNeO8l0xGFBjy"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <1468787481-27753-1-git-send-email-mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <CACRpkdZpPHLDGeBb8kb=LYmuT0PKPf_quK+OF2peaV+8dxr5vQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Suresh Mangipudi <smangipudi@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---2JFBq9zoW8cOFH7v
+--EXKGNeO8l0xGFBjy
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jul 17, 2016 at 10:31:21PM +0200, Mirza Krak wrote:
-> From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+On Mon, Nov 07, 2016 at 08:53:37AM +0100, Linus Walleij wrote:
+> On Wed, Nov 2, 2016 at 11:48 AM, Suresh Mangipudi <smangipudi@nvidia.com>=
+ wrote:
 >=20
-> The description for dmas references a second property, which should be
-> "dma-names" instead of "clock-names".
+> > Add GPIO driver for T186 based platforms.
+> > Adds support for MAIN and AON GPIO's from T186.
+> >
+> > Signed-off-by: Suresh Mangipudi <smangipudi@nvidia.com>
 >=20
-> Signed-off-by: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> ---
->  Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.txt | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Stephen/Thierry/Alexandre:
+> Can I get your review on this Tegra thing?
 
-Applied, thanks.
+Can we hold off on this for a bit? I've got my own implementation of
+this in my Tegra186 tree because I thought nobody else was working on
+it. From a brief look they seem mostly similar but there are a couple
+of differences that I need to take a closer look at (and do some more
+intensive testing on).
 
+Thanks,
 Thierry
 
---2JFBq9zoW8cOFH7v
+--EXKGNeO8l0xGFBjy
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAABCAAGBQJYIHsPAAoJEN0jrNd/PrOhji4P/3fLEqsdDaIQSjRLrRcpqGIU
-A9Y+nIIDuK27FbxpH5dJgD8sS+LPT+F2eKSQ98e3Bm+eU35P8YVllfPbVdFUBTrG
-VLhebsAKNihI3fKHidvpCT+1vb2I7TGNZJbPKSU799GLkXs4+KhxIKEkIO/5jYqM
-OF8Gn6rFHs5AaPlVDuNwHfdSEooipBAJGvx7oG+r4Q2zqNewAWf524KCCAhB35kH
-5oYWrFPqLzRcqAIATbJ4VRZ+39qGZ1t0uyiZGy4neYcJpQzaezEnx9ZGi5oukUzA
-NrQ9c8ztvED2+ewEnQ10Vtyax15UXSp9Zp+oM8c8CRT7S2o45ZEqwgoUsURTyggD
-4iTD7h9USyuJf9luS9vhMpVVgdFBxHUn68eCec00FXJJNAd3N3ZEI8rY1I1a1b+y
-5TlfFyNgmsBhq7JpJvSrWbpryYbTiknP59MV67kELSLp5wbR+FL2EncBdgrVhQzi
-76bMu/30eH0NTAHd9W/iU2OTFRC+NqRh+FH4GyHLR+xtEsY2PZCav5bn1ICEYNbH
-nTgWCIYycflc6ADuFCvBEa15LyZ4H+8dE7ho3gLcv/9MSIgBI+PtzJepH4Pr2+ov
-mh17ojNQi1rkk7Mu/NDQthD+rA73Raz3PKkj6StptaeceucTX/LqzWEjplgfHeBa
-XbrNOQFF9ksmLv8mzXlz
-=BGjm
+iQIcBAABCAAGBQJYIH/WAAoJEN0jrNd/PrOhqcUQALBo6ytdY0stw/OikD0ZWY/U
+wi6eB0ujjQ80m9eh/Li7zCbe5VMcK68VWPlWaFE4q9IRM1ZQTk/mk/WV94066puU
+57eTbLFQiih5jpW7JlgSg9ZuK7ZRZ/UiMSM6PMDea9VdQgR6a+0F44b6rfDwp8iH
+J9NfZyK2+UzQN4QM+yVevzJhgs58X6MQYcnWnxs4mq21rU5qx54+aG6rCyI+rX2X
+TKGdyDkMqH7EFeI1pRtn2JuophEoGFmr4LnbOtxGQRPI/zfaAGaWn0TXTHuyPpFE
+zk6mrRV3ILpUrodMTOFmNdPqpUESCi+kQfIv2acFuMZ89EuoZNTyaOKyTgZuSmyU
+WFSf0BhBXPSfCwvq9pIDtRR09VkzltbabouJggHbW6Mg5vcEW3J+4vTIKmJkjbAU
+Md3E+S4Mcrd/N5fHm7OIG+zvvZU8kZ9MIFeVdifMWk83En9sAFtjpnJmss/3s3Ff
+FhGnbdFrj5gyDdkMHhpZnmIaCh1xuVdeDCrqZF+W5eCkrvthG5pLFvja4Kst6osP
+GwOIMNY2qOwKjtHCI0YfrYVhUdDPU83KS3DWsJVj8zizLC104Mqy+2gQH472b6kz
+uqa4Axj0ajQ0kKfkuXOAqjRXTfSIIOT12pMAMR24wPYBRU4DPlF6z46kDULbI/UC
+ixT1RVMohAHTg2uiEWLe
+=8dB9
 -----END PGP SIGNATURE-----
 
---2JFBq9zoW8cOFH7v--
+--EXKGNeO8l0xGFBjy--
