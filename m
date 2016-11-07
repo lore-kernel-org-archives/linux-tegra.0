@@ -1,41 +1,35 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [PATCH] gpio: tegra186: Add support for T186 GPIO
-Date: Mon, 7 Nov 2016 17:42:33 -0800
-Message-ID: <CAOesGMgJUepmq2JTT7imKh74BsnGobcpBWFuNp94WnX1WtzEjA@mail.gmail.com>
-References: <1478083719-14836-1-git-send-email-smangipudi@nvidia.com>
- <CACRpkdZpPHLDGeBb8kb=LYmuT0PKPf_quK+OF2peaV+8dxr5vQ@mail.gmail.com> <20161107132127.GE12559@ulmo.ba.sec>
+From: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: apalis-tk1: Drop leading 0 from unit-address
+Date: Mon, 7 Nov 2016 14:32:33 +0000
+Message-ID: <1478529152.4734.24.camel@toradex.com>
+References: <20161107134923.5615-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20161107132127.GE12559-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
+In-Reply-To: <20161107134923.5615-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Language: en-US
+Content-ID: <F26754D84410E7408745DCC608A00384-wNKe6lTLrGecE4WynfumptQqCkab/8FMAL8bYrjMMd8@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Suresh Mangipudi <smangipudi-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "mark.rutland-5wv7dgnIgG8@public.gmane.org" <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>, "robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org" <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Nov 7, 2016 at 5:21 AM, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
-> On Mon, Nov 07, 2016 at 08:53:37AM +0100, Linus Walleij wrote:
->> On Wed, Nov 2, 2016 at 11:48 AM, Suresh Mangipudi <smangipudi-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>
->> > Add GPIO driver for T186 based platforms.
->> > Adds support for MAIN and AON GPIO's from T186.
->> >
->> > Signed-off-by: Suresh Mangipudi <smangipudi-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->>
->> Stephen/Thierry/Alexandre:
->> Can I get your review on this Tegra thing?
->
-> Can we hold off on this for a bit? I've got my own implementation of
-> this in my Tegra186 tree because I thought nobody else was working on
-> it. From a brief look they seem mostly similar but there are a couple
-> of differences that I need to take a closer look at (and do some more
-> intensive testing on).
-
-Be careful about discouraging other developers internally from
-participating upstream, Thierry.
-
-Please don't become a bottleneck for your company's contributions.
-Rewriting stuff on your own isn't a scalable model.
-
-
--Olof
+T24gTW9uLCAyMDE2LTExLTA3IGF0IDE0OjQ5ICswMTAwLCBUaGllcnJ5IFJlZGluZyB3cm90ZToN
+Cj4gRnJvbTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmctRERtTE0xK2FkY3JRVDBkWlIrQWxmQUBw
+dWJsaWMuZ21hbmUub3JnDQo+ID4NCj4gDQo+IEFjY29yZGluZyB0byB0aGUgbGF0ZXN0IGJlc3Qg
+cHJhY3RpY2VzLCB1bml0LWFkZHJlc3NlcyBzaG91bGQgYmUNCj4gcmVwcmVzZW50ZWQgd2l0aG91
+dCBhbnkgbGVhZGluZyB6ZXJvZXMuDQoNClVuZGVyc3Rvb2QsIHNvcnJ5IGFib3V0IHRoYXQuDQoN
+Cj4gU2lnbmVkLW9mZi1ieTogVGhpZXJyeSBSZWRpbmcgPHRyZWRpbmdAbnZpZGlhLmNvbT4NCg0K
+QWNrZWQtYnk6IE1hcmNlbCBaaXN3aWxlciA8bWFyY2VsLnppc3dpbGVyQHRvcmFkZXguY29tPg0K
+DQo+IC0tLQ0KPiDCoGFyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0LWFwYWxpcy5kdHNpIHwgMiAr
+LQ0KPiDCoDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPiAN
+Cj4gZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0LWFwYWxpcy5kdHNpDQo+
+IGIvYXJjaC9hcm0vYm9vdC9kdHMvdGVncmExMjQtYXBhbGlzLmR0c2kNCj4gaW5kZXggZTdhNzNk
+YjE3NjEzLi4wODE5NzIxZGRhNTkgMTAwNjQ0DQo+IC0tLSBhL2FyY2gvYXJtL2Jvb3QvZHRzL3Rl
+Z3JhMTI0LWFwYWxpcy5kdHNpDQo+ICsrKyBiL2FyY2gvYXJtL2Jvb3QvZHRzL3RlZ3JhMTI0LWFw
+YWxpcy5kdHNpDQo+IEBAIC0xNTk1LDcgKzE1OTUsNyBAQA0KPiDCoAkJY2xvY2stZnJlcXVlbmN5
+ID0gPDQwMDAwMD47DQo+IMKgDQo+IMKgCQkvKiBTR1RMNTAwMCBhdWRpbyBjb2RlYyAqLw0KPiAt
+CQlzZ3RsNTAwMDogY29kZWNAMGEgew0KPiArCQlzZ3RsNTAwMDogY29kZWNAYSB7DQo+IMKgCQkJ
+Y29tcGF0aWJsZSA9ICJmc2wsc2d0bDUwMDAiOw0KPiDCoAkJCXJlZyA9IDwweDBhPjsNCj4gwqAJ
+CQlWRERBLXN1cHBseSA9IDwmcmVnXzN2Mz47
