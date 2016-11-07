@@ -1,75 +1,91 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V4 4/6] ARM: tegra: Add Tegra30 GMI support
-Date: Mon, 7 Nov 2016 13:56:15 +0100
-Message-ID: <20161107125615.GA12559@ulmo.ba.sec>
-References: <1478507405-13204-1-git-send-email-mirza.krak@gmail.com>
- <1478507405-13204-5-git-send-email-mirza.krak@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [PATCH] ARM: tegra: nyan: Enable GPU node and related supply
+Date: Mon, 7 Nov 2016 13:00:10 +0000
+Message-ID: <ba759743-2ec1-c818-0b82-a3b27348aab6@nvidia.com>
+References: <20160918141311.17140-1-contact@paulk.fr>
+ <f2489bf5-bb08-11f5-1b53-7a1568f20b6b@nvidia.com>
+ <1474395433.1215.23.camel@paulk.fr>
+ <e95335ae-ad19-b8cd-634b-63c6a0b88e01@nvidia.com>
+ <CAAVeFuLb5gU70B0jP0YNPB58NcuR_D0e--6zn3dG7VOmZafLRA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="opJtzjQTFsWo+cga"
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1478507405-13204-5-git-send-email-mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8BIT
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <CAAVeFuLb5gU70B0jP0YNPB58NcuR_D0e--6zn3dG7VOmZafLRA@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Alexandre Courbot <gnurou@gmail.com>, Thierry Reding <thierry.reding@gmail.com>
+Cc: Paul Kocialkowski <contact@paulk.fr>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Stephen Warren <swarren@wwwdotorg.org>
 List-Id: linux-tegra@vger.kernel.org
 
+Thierry,
 
---opJtzjQTFsWo+cga
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 07/11/16 12:51, Alexandre Courbot wrote:
+> On Wed, Sep 21, 2016 at 4:57 PM, Jon Hunter <jonathanh@nvidia.com> wrote:
+>>
+>> On 20/09/16 19:17, Paul Kocialkowski wrote:
+>>> * PGP Signed by an unknown key
+>>>
+>>> Le mardi 20 septembre 2016 à 13:24 +0100, Jon Hunter a écrit :
+>>>> On 18/09/16 15:13, Paul Kocialkowski wrote:
+>>>>>
+>>>>> This enables the GPU node for tegra124 nyan boards, which is required to
+>>>>> get graphics acceleration with nouveau on these devices.
+>>>>>
+>>>>> Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
+>>>>> ---
+>>>>>  arch/arm/boot/dts/tegra124-nyan.dtsi | 8 +++++++-
+>>>>>  1 file changed, 7 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/arch/arm/boot/dts/tegra124-nyan.dtsi
+>>>>> b/arch/arm/boot/dts/tegra124-nyan.dtsi
+>>>>> index dab9509..225ca77 100644
+>>>>> --- a/arch/arm/boot/dts/tegra124-nyan.dtsi
+>>>>> +++ b/arch/arm/boot/dts/tegra124-nyan.dtsi
+>>>>> @@ -42,6 +42,12 @@
+>>>>>             };
+>>>>>     };
+>>>>>
+>>>>> +   gpu@0,57000000 {
+>>>>> +           status = "okay";
+>>>>> +
+>>>>> +           vdd-supply = <&vdd_gpu>;
+>>>>> +   };
+>>>>> +
+>>>>>     serial@70006000 {
+>>>>>             /* Debug connector on the bottom of the board near SD card.
+>>>>> */
+>>>>>             status = "okay";
+>>>>> @@ -214,7 +220,7 @@
+>>>>>                                     regulator-always-on;
+>>>>>                             };
+>>>>>
+>>>>> -                           sd6 {
+>>>>> +                           vdd_gpu: sd6 {
+>>>>>                                     regulator-name = "+VDD_GPU_AP";
+>>>>>                                     regulator-min-microvolt = <650000>;
+>>>>>                                     regulator-max-microvolt =
+>>>>> <1200000>;
+>>>>>
+>>>>
+>>>> Looks good to me. I see the following error when booting but looking at the
+>>>> code appears to be benign. Thierry, Alex, is this normal/okay?
+>>>
+>>> I have the same messages and asked Alexandre about them the other day. He told
+>>> me that it looks normal.
+>>
+>> Ok great. Hopefully, Alex can ACK then.
+> 
+> Apologies for the (very) delayed reply.
+> 
+> Yes, the messages you are seeing are part of the normal probe sequence
+> on Tegra. So this looks good to me.
+> 
+> Acked-by: Alexandre Courbot <acourbot@nvidia.com>
 
-On Mon, Nov 07, 2016 at 09:30:03AM +0100, Mirza Krak wrote:
-> From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->=20
-> Add a device node for the GMI controller found on Tegra30.
->=20
-> Signed-off-by: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> Tested-by: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
-> Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
-> Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->=20
-> Changes in v2:
-> - added address-cells, size-cells and ranges properties
->=20
-> Changes in v3:
-> - no changes
->=20
-> Changes in v4:
-> - no changes
->=20
->  arch/arm/boot/dts/tegra30.dtsi | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
+Can you pick this one up for v4.10 as well?
 
-Applied, thanks.
+Cheers
+Jon
 
-Thierry
-
---opJtzjQTFsWo+cga
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJYIHnsAAoJEN0jrNd/PrOhv5EP/3NPO8ULS9ehGfrRyytJedWV
-Bd9vUxHk7lWdv5HfAZiXDZEIRj0Kq14M3YvyLf3oiNa0R5hpjz0pMUv29y9gNDfP
-lxpTa42mUljn/qWuD+kyVU1ylP92uGfdwnSUYmQFwyhr7nkTER0OpQI+Fy6MmEY3
-Fxu/TnIcRJTGO3geA95mWnbLRbDwv7NXvde++lNxMp18C9TtsrVmGI57B/ZYU1g0
-XP5dr0DQQWbV/Jqyi3rAP3cRoeWV+ijmqfUV3EEKgjcTwTjIeg/PAw9lBaDNU/mX
-0AKDZo/1jcJb3dVyOwD6m5RgywS0meoaqmqSe7CiR3PvCWXsPzeC4dKCOQaIccEG
-4I5tsr4Ojm9gn1bqzlv27jViCtECGuo+ZegvwW/dKRoHJbsqcOu2KkHzm1db3HhR
-9nyYUcKNkbTAYzA9Sk/wJSatAoi9Zb4yrp+axeyjPtFmjejKSRH5xr0QpxLTPZfM
-EEj/3G5d0EAoQX8uj4X8welI1TrNsxSPKnvLldrwAqk8lJEO3aEp1k+c+29BA+ib
-ggz39YDGwFW8jzmve+PJD7TohzSOaokZOyAodSZaGXtvhJh7v8S6+HCpV7Npx7Xk
-BVez0bRwxrOZfjyOlXu+Ekv57XsHxaepVZooZ2IVxE63DV5fjI1NzdRQefXYZe1J
-yRgYisUpEILE20vo/3Fd
-=TqL1
------END PGP SIGNATURE-----
-
---opJtzjQTFsWo+cga--
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+-- 
+nvpublic
