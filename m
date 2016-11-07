@@ -1,75 +1,79 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH V4 2/6] clk: tegra: add TEGRA30_CLK_NOR to init table
-Date: Mon, 7 Nov 2016 12:28:09 +0100
-Message-ID: <20161107112809.GB28616@ulmo.ba.sec>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH V4 3/6] dt/bindings: Add bindings for Tegra GMI controller
+Date: Mon, 7 Nov 2016 12:35:50 +0100
+Message-ID: <20161107113550.GC28616@ulmo.ba.sec>
 References: <1478507405-13204-1-git-send-email-mirza.krak@gmail.com>
- <1478507405-13204-3-git-send-email-mirza.krak@gmail.com>
+ <1478507405-13204-4-git-send-email-mirza.krak@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="l76fUT7nc3MelDdI"
-Return-path: <linux-clk-owner@vger.kernel.org>
+        protocol="application/pgp-signature"; boundary="da4uJneut+ArUgXk"
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <1478507405-13204-3-git-send-email-mirza.krak@gmail.com>
-Sender: linux-clk-owner@vger.kernel.org
-To: Mirza Krak <mirza.krak@gmail.com>
-Cc: swarren@wwwdotorg.org, jonathanh@nvidia.com, gnurou@gmail.com, linux@armlinux.org.uk, pdeschrijver@nvidia.com, pgaikwad@nvidia.com, mturquette@baylibre.com, sboyd@codeaurora.org, robh+dt@kernel.org, mark.rutland@arm.com, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+In-Reply-To: <1478507405-13204-4-git-send-email-mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org, pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org, sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---l76fUT7nc3MelDdI
+--da4uJneut+ArUgXk
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 07, 2016 at 09:30:01AM +0100, Mirza Krak wrote:
-> From: Mirza Krak <mirza.krak@gmail.com>
+On Mon, Nov 07, 2016 at 09:30:02AM +0100, Mirza Krak wrote:
+> From: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 >=20
-> Add TEGRA30_CLK_NOR to init table and set default rate to 127 MHz which
-> is max rate.
+> Document the devicetree bindings for the Generic Memory Interface (GMI)
+> bus driver found on Tegra SOCs.
 >=20
-> The maximum rate value of 127 MHz is pulled from the downstream L4T
-> kernel.
->=20
-> Signed-off-by: Mirza Krak <mirza.krak@gmail.com>
-> Tested-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+> Signed-off-by: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Tested-by: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
 > Tested-on: Colibri T20/T30 on EvalBoard V3.x and GMI-Memory Board
-> Acked-by: Jon Hunter <jonathanh@nvidia.com>
+> Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 > ---
 >=20
 > Changes in v2:
-> - no changes
+> - Updated examples and some information based on comments from Jon Hunter.
 >=20
 > Changes in v3:
-> - Added comment in commit message where I got the maximum rates from.
+> - Updates ranges description based on comments from Rob Herring
 >=20
-> Changes in V4:
-> - no changes
+> Changes in v4:
+> - renamed snor-*-inv to snor-*-active-high
 >=20
->  drivers/clk/tegra/clk-tegra30.c | 1 +
->  1 file changed, 1 insertion(+)
+>  .../devicetree/bindings/bus/nvidia,tegra20-gmi.txt | 132 +++++++++++++++=
+++++++
+>  1 file changed, 132 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/bus/nvidia,tegra20-=
+gmi.txt
 
 Applied, thanks.
 
 Thierry
 
---l76fUT7nc3MelDdI
+--da4uJneut+ArUgXk
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAABCAAGBQJYIGVJAAoJEN0jrNd/PrOh/doP/2JWIvBlg+DoY2mutjYlqTws
-unnwrXkRQAHqoV7wgivdqyTNJxTjkBO7yXOamG1ASGzgZOYUmtoXTe7JRU5GAgzG
-61kVpmHjAj8QwfuptuLA/+uDq06ztI7we+5csDOk8HbsD3hjQqTekEGA1U2cYu7s
-K2ddJX3WyjpNbzRe2pqU99P1DqoZGYI6qAU88hZ9PSkIMltpseoDKQmr8UnwCclj
-CyvsXmQfS3hnC/TVSKw5Sba6Bihhh6DxqxMWQiolRRlu5ZnvmX9uFhQr3bggo/+Z
-K2i6mksPnmyOUbByeuNCj+/MUNo356aNc4Gzxr9WYH1/ep8ofLlNInaWVe8/qxJS
-cbY8aNDtzQb9g5suwZAboA5C/hTg+xzjrjAtrdHlrYruZz3IylnMTyaXTcta9Rj4
-ZitT/W25MaCs2hANh2pqlceP/1BBECmFsY8k8mtqMBg/whG6c9aV/IM/hRGqH1as
-CZQjUVgQXCXZLzMlTml3BV1qn5qOHSIUZ6pDsTmotOjKTOo5nysLTjZbVkzdoQqG
-1sSkLEoBfXNibwZR/uP0utv1GbN6RLneBxGEVWVGFlw8mA8GqL8S29Zx8yyiCTCd
-Q96AHYAXUxJDr+TBgraDpKghO8ybHYgqoo3IyahItmoTyK2XNeV6l0I7Q4pV8ww+
-x4bm7Qm0WVUWGs4HELAi
-=27av
+iQIcBAABCAAGBQJYIGcVAAoJEN0jrNd/PrOhBG4QAL0sJdwZ5hzHm6MWNgdZ+ag3
+IDTa+cLb7jlrZVfScaIZwXPjUUN2WZjvGfG/tZtjUdD2Mx9gww3Y9FCl+Y+/yCsr
+TrGBxq3PJuE+9U/s7H0523gTPfv2g73F/FpU+sS4qj3NhEApKCKchVaOOvSP8plM
+4SY23s+APHxIS9z8w97dtSvxW75nltpS0U1o2dQ9E4DzMLzi7KMlbmVBua8l+vgW
+RC1q7cxD2HkwXTf/1lAI2R+6jmw/S2etSj0vfdvwut0vRLiPtiXeQuZM1zneG8/X
+vaXUh5PEyENoRLRrxmphm2KPMAUN1lNfH91kdct9tyWTBz/EZNWLlSyuQrUSLAIf
+Uh7dcy4P1StTUrEKCPfgUptxt7az7U+m4ULqadTUvEeKSkO6qaJldNA2hoDCqfHF
+QwkVDrOBYvGxXIc55hxYkHJeL6xArkVYZaSArHc4OWQm/kUExropgnO4EDBAP5JZ
+ZlqtKOhiAqyuyEY4szoXbuRnG/TiX0ShUqkNmaBLp2V0HeD8WIYHr2xlKIFFBd1M
+OV8UJ2Ei0/z7Z3bQm5z9O67YTu9Fm72Ce5VEoquaHs1gpHMyMCJVKmjNKjGXp++m
+wNgpEMiGtwtI2/k37Idrfa4uv7CHtNpnlI+rNlj7jfOZwpYjuf1gzSlMBPYYhoeT
+KoU51P1wCUiJI2EwPH+9
+=A1pV
 -----END PGP SIGNATURE-----
 
---l76fUT7nc3MelDdI--
+--da4uJneut+ArUgXk--
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
