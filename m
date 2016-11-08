@@ -1,68 +1,54 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] bus: tegra-gmi: fix build error
-Date: Tue, 8 Nov 2016 16:45:04 +0100
-Message-ID: <20161108154504.GB2244@ulmo.ba.sec>
-References: <20161108135058.1991567-1-arnd@arndb.de>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH 2/2] pinctrl: tegra: Add driver to configure voltage and
+ power of io pads
+Date: Tue, 8 Nov 2016 16:46:11 +0100
+Message-ID: <CACRpkdZWc1jC2QzYq4ffT6YbhfbsEBbKtajMXuexA8MvJEPPEw@mail.gmail.com>
+References: <1478077742-25437-1-git-send-email-ldewangan@nvidia.com>
+ <1478077742-25437-3-git-send-email-ldewangan@nvidia.com> <CACRpkdb4DQLzQWHxuZi=TDaeigNzVJV8TN1jsQfOHKF7yPLrUg@mail.gmail.com>
+ <58201401.8050805@nvidia.com> <CACRpkdZo+527t4O9gX0U2VOaAYj7fnt7X0wynByBdYN5=2mDsA@mail.gmail.com>
+ <5821A6D3.7010000@nvidia.com> <CACRpkdYO9ZCTGVdnyhVZ4DNLsHq+d-1_xuws2be8yab+MsyyVw@mail.gmail.com>
+ <5821D49E.2070308@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="U+BazGySraz5kW0T"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20161108135058.1991567-1-arnd-r2nGTMty4D4@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <5821D49E.2070308@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jon Hunter <jonathanh@nvidia.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, Nov 8, 2016 at 2:35 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 
---U+BazGySraz5kW0T
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> There is two types of configuration in given platform, the IO voltage does
+> not get change (fixed in given platform) and in some of cases, get change
+> dynamically like SDIO3.0 where the voltage switches to 3.3V and 1.8V.
+>
+> Yes, it can be integrated with the regulator handle and then it can call the
+> required configurations through notifier and regulator_get_voltage().
+> But I think it is too much complex for the static configurations. This
+> mandate also to populate the regulator handle and all power tree.
+>
+> The simple way for static configuration (case where voltage does not get
+> change), just take the power tree IO voltage from DT and configure the IO
+> pad control register.
+>
+> For dynamic case, there is some sequence need to be followed based on
+> voltage direction change (towards lower or towards higher) for the voltage
+> change and the IO pad voltage configuration and it is simple to do it from
+> client driver.
 
-On Tue, Nov 08, 2016 at 02:50:29PM +0100, Arnd Bergmann wrote:
-> The newly added driver fails to build right away:
->=20
-> drivers/bus/tegra-gmi.c: In function 'tegra_gmi_parse_dt':
-> drivers/bus/tegra-gmi.c:97:11: error: 'dev' undeclared (first use in this=
- function)
->=20
-> I guess a last-minute change removed a local variable, this
-> adds the obvious definiton.
->=20
-> Fixes: 4f95e6a5c9e4 ("bus: Add support for Tegra Generic Memory Interface=
-")
-> Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-> ---
->  drivers/bus/tegra-gmi.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+The devicetree should describe the platform.
 
-This got reported by the 0-day builder earlier. Turns out this slipped
-through because my build setup failed to pick up the new configuration
-option. I pushed a fix for this to the Tegra tree, so it should all be
-good by tomorrow.
+Adding this custom attribute does not describe the platform very
+well since the dependency to the corresponding regulator is hidden.
 
-Thanks,
-Thierry
+The point of device tree is not as much to make things simple as
+to describe the world properly.
 
---U+BazGySraz5kW0T
-Content-Type: application/pgp-signature; name="signature.asc"
+So to me it is simple: use regulators and phandles.
 
------BEGIN PGP SIGNATURE-----
+It might require a bit of upfront coding but the result will look
+much nicer.
 
-iQIcBAABCAAGBQJYIfL9AAoJEN0jrNd/PrOhtNUQAJdBZjUm5SEbTIf29QWBRo9r
-keX7rXbTFWf2jibYyTgkb3mhd7QIVjfwVy02Jh99b5Fj8rxOekXV8cyZX3pdEfad
-TNqjVmuJpFdb+2MF4+4Y8rKEHOAyO96h3wPCTJUmbhr4i/HiG48pd5AObu/8JcZz
-sTBpNWHmqs+NCiXS2pDbCkDdGE2sLu1B9CEdw4DrvSuraxTxwvdnNcQXUhnhNlWY
-lGlWD8wCvr3BWQdB9inDWiMaVJSABH6Vx08MaTdQ4fJq1eEP5tbqUISZxofqCf/Q
-amt+fcf18v15eWLD+/HcLL36BBn5RF4Ke9kYrWQq2XbyFuQj6h+zZCzD00o+nD1i
-ucDLxSUwe1R70BTnojF7XCqLoUFfLX+na2hIxTNFRmnXuMssTVCqn/GTNs79FF5I
-qu/NnrTjN9zzIi3/Z40q1PL2JF8tx/dyp1ZsgBVuuPxEL3jonMoSWvGBY2Cjy+Ve
-VxqQraazSENZ2rZQh8taQuyzcfdINABqiPn22wKHBT6vvhQHdCMF/aGm5meqXh8j
-sE1kU0P+cpJAhsXKH27HXHjJyPDKo9Vz8JIu5b0INjySha9fPI5B5dMVTKfenEch
-ASnl30BzjWTRvZwQrgbDR9NpgKALbte9kurq6nrhs70G1+TioJxHDE+n2ac93Nnd
-y6p0ueR49fBcjUTZV511
-=ffON
------END PGP SIGNATURE-----
-
---U+BazGySraz5kW0T--
+Yours,
+Linus Walleij
