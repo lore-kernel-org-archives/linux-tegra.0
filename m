@@ -1,83 +1,139 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] gpio: tegra186: Add support for T186 GPIO
-Date: Tue, 8 Nov 2016 16:55:48 +0100
-Message-ID: <20161108155548.GC2244@ulmo.ba.sec>
-References: <1478083719-14836-1-git-send-email-smangipudi@nvidia.com>
- <CACRpkdZpPHLDGeBb8kb=LYmuT0PKPf_quK+OF2peaV+8dxr5vQ@mail.gmail.com>
- <20161107132127.GE12559@ulmo.ba.sec>
- <CAOesGMgJUepmq2JTT7imKh74BsnGobcpBWFuNp94WnX1WtzEjA@mail.gmail.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH 2/2] pinctrl: tegra: Add driver to configure voltage and
+ power of io pads
+Date: Tue, 8 Nov 2016 21:15:15 +0530
+Message-ID: <5821F30B.8010306@nvidia.com>
+References: <1478077742-25437-1-git-send-email-ldewangan@nvidia.com> <1478077742-25437-3-git-send-email-ldewangan@nvidia.com> <CACRpkdb4DQLzQWHxuZi=TDaeigNzVJV8TN1jsQfOHKF7yPLrUg@mail.gmail.com> <58201401.8050805@nvidia.com> <CACRpkdZo+527t4O9gX0U2VOaAYj7fnt7X0wynByBdYN5=2mDsA@mail.gmail.com> <5821A6D3.7010000@nvidia.com> <CACRpkdYO9ZCTGVdnyhVZ4DNLsHq+d-1_xuws2be8yab+MsyyVw@mail.gmail.com> <5821D49E.2070308@nvidia.com> <20161108144211.GA2244@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Md/poaVZ8hnGTzuv"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <CAOesGMgJUepmq2JTT7imKh74BsnGobcpBWFuNp94WnX1WtzEjA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Suresh Mangipudi <smangipudi-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <20161108144211.GA2244@ulmo.ba.sec>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jon Hunter <jonathanh@nvidia.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---Md/poaVZ8hnGTzuv
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tuesday 08 November 2016 08:12 PM, Thierry Reding wrote:
+> * PGP Signed by an unknown key
+>
+> On Tue, Nov 08, 2016 at 07:05:26PM +0530, Laxman Dewangan wrote:
+>>
+>> Yes, it can be integrated with the regulator handle and then it can call the
+>> required configurations through notifier and regulator_get_voltage().
+>> But I think it is too much complex for the static configurations. This
+>> mandate also to populate the regulator handle and all power tree.
+> It looks as if regulator notifiers should be able to support whatever
+> use-cases we may have (I suspect that we really only need pre- and post-
+> voltage-change notifications.
+>
 
-On Mon, Nov 07, 2016 at 05:42:33PM -0800, Olof Johansson wrote:
-> On Mon, Nov 7, 2016 at 5:21 AM, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>=
- wrote:
-> > On Mon, Nov 07, 2016 at 08:53:37AM +0100, Linus Walleij wrote:
-> >> On Wed, Nov 2, 2016 at 11:48 AM, Suresh Mangipudi <smangipudi@nvidia.c=
-om> wrote:
-> >>
-> >> > Add GPIO driver for T186 based platforms.
-> >> > Adds support for MAIN and AON GPIO's from T186.
-> >> >
-> >> > Signed-off-by: Suresh Mangipudi <smangipudi-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> >>
-> >> Stephen/Thierry/Alexandre:
-> >> Can I get your review on this Tegra thing?
-> >
-> > Can we hold off on this for a bit? I've got my own implementation of
-> > this in my Tegra186 tree because I thought nobody else was working on
-> > it. From a brief look they seem mostly similar but there are a couple
-> > of differences that I need to take a closer look at (and do some more
-> > intensive testing on).
->=20
-> Be careful about discouraging other developers internally from
-> participating upstream, Thierry.
+Yes, we have pre/post and abort notification from regulator.
+REGULATOR_EVENT_PRE_VOLTAGE_CHANGE,
+REGULATOR_EVENT_ABORT_VOLTAGE_CHANGE,
+REGULATOR_EVENT_VOLTAGE_CHANGE,
 
-That was certainly not my intention. I do welcome any contributions,
-internal or external.
+So it can be done dynamically.
+As the notification is atomic context, we need to support atomic context 
+of pmc register configurations.
 
-> Please don't become a bottleneck for your company's contributions.
-> Rewriting stuff on your own isn't a scalable model.
 
-Like I said, I didn't rewrite this, I merely wrote the GPIO driver
-because there wasn't one at the time and I wasn't aware of anyone else
-working on one. Waiting for a GPIO driver to emerge would've prevented
-me from making progress on other fronts.
+>> The simple way for static configuration (case where voltage does not get
+>> change), just take the power tree IO voltage from DT and configure the IO
+>> pad control register.
+> For static configurations where we have a regulator along with a pinmux
+> setting for the I/O voltage we could potentially run into issues where
+> both settings don't match. How would we handle that?
 
-Thierry
+As a process, we are generating the IO pad control DT configuration from 
+the customer pinmux spreadsheet. So there is data population by hardware 
+(system eng) team and SW just use the auto-generated dtsi file in SW. 
+This avoided the error/mistake created by the SW engineer.
 
---Md/poaVZ8hnGTzuv
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
 
-iQIcBAABCAAGBQJYIfWBAAoJEN0jrNd/PrOhP1AP/15NrKhH1HucpyBK5sC7o9bi
-rq5T3qG0Kkh9J7Gnd6SjDVIv8Jv5JQxl/9L9b5DP+AQiK7+5FJeBOGvf4nFPSbVK
-f02a8yUFkgZ9YiANucSS1Jqeedu5yRWiuDDsN8bvkwv1usP9U9FphCceZ3ISZlG+
-iMe7AJH9AV2N35HXBn+Ryu1coODb1XYPzkUyZuV6y2WSrEJx0504/JgdMi6LOrtI
-t6tol7e82S6twvScvBKZm1cBnpva2QsVkxSC5pDEWh7yqtBgw/g3hVQtUxfoOa57
-qhrthJVi/PsRBu3QV1wOqCB+3zYbXyeuWCVj/JvTlV01NeKN83cDiRCBYvvXNDgB
-u1v1BcZ792fpiJG+J02ccVm/5VOivOAwdCyPMMXMahHhEO+yuUKiA7BElzy+IVz6
-aj9oHPmkyIO+iu1Bj8BjyfJpljC2MzMvnMi4c52O20ew/550597aLcVDnWplZD+n
-l/P54mefQ2HgbDMCn3pyWK3zqU1Xjjlxby5ovpJxXi++qnK1fvHObgyxV2pJmh4K
-kuSyRBJWTe7UGZaEDrpkVeJBjrg4GtKwVHdcRBv0YDNluP8g0mrE1jT2GgLTK3Jr
-GeEui3Bgu9XKiSA0JIbLuplvMCRZ2xJbhEsRK6zED7yLRHeiSosLqrpcw0A61oup
-B/F2TSyuNx3F2FN0b2Co
-=Ua5U
------END PGP SIGNATURE-----
+>
+>> For dynamic case, there is some sequence need to be followed based on
+>> voltage direction change (towards lower or towards higher) for the voltage
+>> change and the IO pad voltage configuration and it is simple to do it from
+>> client driver.
+> Are patches available for this? It'd be useful to know how this will end
+> up being used in order to come up with the best solution.
+>
+> In general I think it's good to send a complete series of patches, even
+> if it's long and spans multiple subsystems. As it is it's difficult for
+> anyone else (myself included) to understand where this is headed, which
+> makes it more complicated than necessary to get at the final solution.
 
---Md/poaVZ8hnGTzuv--
+
+The dynamic setting is used by mmc driver and it is handled by mmc team. 
+They are waiting for framework/infrastructure to be available for their 
+patches.
+
+However, in downstream, we have all these implemented. In downstram we 
+have pad control driver but instead of new framework, we decided to do 
+it through pinctrl framework.
+
+So if you look for mmc driver in downstream, you can get the  actual 
+code about usage.
+However, for clarity, here is sequence:
+
+1. Voltage from 3.3V to 1.8V
+
+     ret = regulator_set_voltage(regulator, 1800000, 1800000);
+     if (!ret)
+             ret = padctrl_set_voltage(padctrl, 1800000);
+
+2. Voltage from 1.8V to 3.3V
+     ret = padctrl_set_voltage(padctrl, 3300000);
+     if (!ret)
+         ret = regulator_set_voltage(regulator, 3300000, 3300000);
+
+
+
+With pinctrl framework, the APIs will be
+pinctrl_lookup_state(pinctrl, "io-pad-3v3");
+
+or
+pinctrl_lookup_state(pinctrl, "io-pad-1v8");
+
+
+The static setting is doen during initialization of the driver.
+
+
+>>
+>> I like to have both approach, through pinmux DT and also from regulator. So
+>> based on the platform, if regulator supported then populate required
+>> properties in DT for regulator else go on standard pinmux DT way (for
+>> non-regulator cases).
+> Again, it would be best to see this in actual use. Right now it's not
+> clear that we'll even have both cases. Implementing both approaches will
+> mean potentially unused code.
+
+We can have the only one say regulator approach then it will be 
+mandatory to have regulator nodes for all vdd-io so that io-pads are 
+configured properly.
+
+In the probe, it will get regulator and if found the get_voltage and 
+configure pmc.
+
+I am thinking about supporting IO pad configuration(static) in case we 
+do not have regulator enabled/up in platform and want to set IO pads 
+manually from DT.
+
+
+
+
+> On another note: in my experience you seldom need both cases, since the
+> dynamic configuration is the hard one, and the static configuration will
+> usually be a special case of the dynamic configuration.
+>
+>
+Cases will be with regulator support available or not.
+
+So if we donot want to support the cases, where actual regualator 
+support is not available then we will not need to set IO pads voltage 
+via DT framework.
+
+However, we will still needs low-power support from pinctrl framework.
