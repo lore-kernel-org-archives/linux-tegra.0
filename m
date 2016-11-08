@@ -1,91 +1,88 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/2] pinctrl: tegra: Add driver to configure voltage and
- power of io pads
-Date: Tue, 8 Nov 2016 15:50:03 +0530
-Message-ID: <5821A6D3.7010000@nvidia.com>
-References: <1478077742-25437-1-git-send-email-ldewangan@nvidia.com> <1478077742-25437-3-git-send-email-ldewangan@nvidia.com> <CACRpkdb4DQLzQWHxuZi=TDaeigNzVJV8TN1jsQfOHKF7yPLrUg@mail.gmail.com> <58201401.8050805@nvidia.com> <CACRpkdZo+527t4O9gX0U2VOaAYj7fnt7X0wynByBdYN5=2mDsA@mail.gmail.com>
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [tegra:for-4.10/bus 4/4] drivers/bus/tegra-gmi.c:97:11: error:
+ 'dev' undeclared
+Date: Tue, 8 Nov 2016 11:47:47 +0100
+Message-ID: <20161108104745.GA3154@ulmo.ba.sec>
+References: <201611080158.Q53HGK2q%fengguang.wu@intel.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="G4iJoqBmSsgzjUCe"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <CACRpkdZo+527t4O9gX0U2VOaAYj7fnt7X0wynByBdYN5=2mDsA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+In-Reply-To: <201611080158.Q53HGK2q%fengguang.wu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: kbuild test robot <fengguang.wu-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Mirza Krak <mirza.krak-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, kbuild-all-JC7UmRfGjtg@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+--G4iJoqBmSsgzjUCe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tuesday 08 November 2016 03:45 PM, Linus Walleij wrote:
-> On Mon, Nov 7, 2016 at 6:41 AM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->> On Saturday 05 November 2016 03:54 AM, Linus Walleij wrote:
->>> On Wed, Nov 2, 2016 at 10:09 AM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> (....)
->>>> On Tegra124, the IO power rail source is auto detected by SoC and hence
->>>> it is only require to configure in low power mode if IO pads are not
->>>> used.
->>>>
->>>> On T210 onwards, the auto-detection is removed from SoC and hence SW
->>>> must configure the PMC register explicitly to set proper voltage in
->>>> IO pads based on IO rail power source voltage.
-> (...)
->>>> +static const struct pinconf_generic_params tegra_io_pads_cfg_params[] =
->>>> {
->>>> +       {
->>>> +               .property = "nvidia,power-source-voltage",
->>>> +               .param = TEGRA_IO_PAD_POWER_SOURCE_VOLTAGE,
->>>> +       },
->>>> +};
->>> Why can you not use the standard power-source binding
->>> from Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
->>> instead of inventing this nvidia,* variant?
->>
->> Per binding doc,
->> power-source            - select between different power supplies
->>
->> So actually it selects the different source of power supply.
->> In my case, I will have same supply but voltage of that supply get changed.
->> So here property is for the power-supply-voltage.
-> I doubt that seriously. Are you sure? Then the commit message is
-> misleading because it is talking about different power rails.
-The set of pins belongs to the IO pad group and this pad group has power 
-supply from external PMIC. The IO pads support multi-level voltage and 
-the level need to be configured in the PMIC rail via regulator calls and 
-the IO pads configuration register for that level.
+On Tue, Nov 08, 2016 at 01:44:03AM +0800, kbuild test robot wrote:
+> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git f=
+or-4.10/bus
+> head:   4f95e6a5c9e433197244c91dd25102a85dbb7877
+> commit: 4f95e6a5c9e433197244c91dd25102a85dbb7877 [4/4] bus: Add support f=
+or Tegra Generic Memory Interface
+> config: arm-allmodconfig (attached as .config)
+> compiler: arm-linux-gnueabi-gcc (Debian 6.1.1-9) 6.1.1 20160705
+> reproduce:
+>         wget https://git.kernel.org/cgit/linux/kernel/git/wfg/lkp-tests.g=
+it/plain/sbin/make.cross -O ~/bin/make.cross
+>         chmod +x ~/bin/make.cross
+>         git checkout 4f95e6a5c9e433197244c91dd25102a85dbb7877
+>         # save the attached .config to linux build tree
+>         make.cross ARCH=3Darm=20
+>=20
+> All errors (new ones prefixed by >>):
+>=20
+>    drivers/bus/tegra-gmi.c: In function 'tegra_gmi_parse_dt':
+> >> drivers/bus/tegra-gmi.c:97:11: error: 'dev' undeclared (first use in t=
+his function)
+>       dev_err(dev, "no child nodes found\n");
+>               ^~~
+>    drivers/bus/tegra-gmi.c:97:11: note: each undeclared identifier is rep=
+orted only once for each function it appears in
+>=20
+> vim +/dev +97 drivers/bus/tegra-gmi.c
+>=20
+>     91		struct device_node *child;
+>     92		u32 property, ranges[4];
+>     93		int err;
+>     94=09
+>     95		child =3D of_get_next_available_child(gmi->dev->of_node, NULL);
+>     96		if (!child) {
+>   > 97			dev_err(dev, "no child nodes found\n");
+>     98			return -ENODEV;
+>     99		}
+>    100=09
 
+Sorry, this is my bad. I forgot to enable TEGRA_GMI in the default
+configuration and that caused my build tests not to pick up the new
+driver. Fixing it now.
 
-> The usual design of such IP is that there is a switch that select
-> a voltage from several available rails and this is what the commit
-> message seems to be saying, and that is what the binding is for.
+Thierry
 
-There is no switch to select the power source inside IP. We have only 
-one source for supply these pins (IO pads) and the source voltage can be 
-change here.
+--G4iJoqBmSsgzjUCe
+Content-Type: application/pgp-signature; name="signature.asc"
 
->
-> If you could actually change the voltage it would change for all
-> other pins using the same voltage source as well, would it not?
-There is grouping of pins based on interface and yes, voltage level gets 
-changed for those group of pins. Like form SDMMC interface all data nd 
-clock lines, for i2c SCL and SDA lines etc.
-The HW IP design is like that from single IO voltage source, all pins 
-are affected.
+-----BEGIN PGP SIGNATURE-----
 
+iQIcBAABCAAGBQJYIa1OAAoJEN0jrNd/PrOhm2YQALW+hx5R3bYDfMoxigLbVctC
+OKNXEgqIsP63cJ7dsI5pRAvTMeOEhHKS93IEChRxsMQda2SpaLpsyKktvihwel1E
+Mlb7T2TIv5KJz4imuWJqRe2D/AcYw+gY2oAuk4rOSwDyRV1AKpuhEnDimbAnAXEW
+LajgsvSpqQOVLbGJDN9tzZX8rrKCtaeK9ygTSdfWeoeSX4cqMqHYyb19Rm5yW2KA
+U/DC3ETmdbEs7zG6L4rYz60Tpj/2UcpTYmy/q06U5v8oFzOvB9A8R5Rh+enEbfBh
+m+vuR8AmR/+32U5UomFcnrvvyiGe27NWjhMMrIAxM/sc5CNFTeLFcGy5yz08Z2sZ
+I1T7Gvl/nsXLT7wIc8W21WQbqhdVQmkA/QXwX3uSykooATEDs2zD2mnwxKFzR1L5
+QgnRKVgOjPHUoTPewZ9eQDcNVAR9q0hXOR8ARxmvEe1IhqwXJstVK0TUm+AV9ZgX
+hxP7qC1gqGOSKtkPftZTKd9+Drfl833X1LwXzOcfs565O6sSKT8UP1cqXkg7tDmr
+y6kgD7QdUkT00K8HMK/UZX+A+OzdAscImkOpGbx1PabQCHS5OtCHbwaIiqv8DFKE
+H0GJXL/j7ZzJNKkRP4m/Le42eQRieDVCDUBnl+PnFPeBJoBwc6kcz+v/De9eqqkq
+IdEX3/ApGGwofV3JK/xv
+=VaeE
+-----END PGP SIGNATURE-----
 
->
-> Unless there is one voltage regulator per pin, which seems like
-> a very expensive and chip surface consuming solution. (Albeit
-> theoretically possible.)
->
-> If you can *actually* change the volatage, it needs to be modeled
-> as a (fixed voltage?) regulator, not as a custom property for the pin
-> control attributes. I guess you definiately need the regulator framework
-> to accumulate and infer the different consumer requirements anyway
-> in that case.
-
-The PMIC voltage output is changed via regulator calls.
-Here, we need to have two configruations for given voltage level of 
-interface:
-* One at IO voltage from PMIC via regulator call to change votlage of IO 
-rail.
-* Second, configure the IO pad register to tell the IO voltage level so 
-that it can configured internally for that level.
+--G4iJoqBmSsgzjUCe--
