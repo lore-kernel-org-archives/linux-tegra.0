@@ -1,60 +1,71 @@
-From: Peter De Schrijver <pdeschrijver@nvidia.com>
-Subject: Re: [PATCH] ARM: tegra: nyan: Mark all USB ports as host
-Date: Tue, 8 Nov 2016 10:54:20 +0200
-Message-ID: <20161108085420.GG2478@tbergstrom-lnx.Nvidia.com>
-References: <20160918102852.6593-1-contact@paulk.fr>
- <20161107132854.GF12559@ulmo.ba.sec>
- <13e7ff98-8bc2-ccf7-94bb-4e1d3c61b20d@nvidia.com>
+From: Erik Faye-Lund <kusmabite@gmail.com>
+Subject: Re: [PATCH] drm/tegra: add tiling FB modifiers
+Date: Tue, 8 Nov 2016 10:07:08 +0100
+Message-ID: <CABPQNSYdZiaWrwbkzjc-bGzkbdiOu6FQNMXRtDmxHHGdvzDh6w@mail.gmail.com>
+References: <20161108075042.13357-1-acourbot@nvidia.com>
+Reply-To: kusmabite@gmail.com
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-Content-Disposition: inline
-In-Reply-To: <13e7ff98-8bc2-ccf7-94bb-4e1d3c61b20d@nvidia.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: devicetree@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Paul Kocialkowski <contact@paulk.fr>, linux-kernel@vger.kernel.org, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20161108075042.13357-1-acourbot@nvidia.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Nov 07, 2016 at 02:09:31PM +0000, Jon Hunter wrote:
-> 
-> On 07/11/16 13:28, Thierry Reding wrote:
-> > * PGP Signed by an unknown key
-> > 
-> > On Sun, Sep 18, 2016 at 12:28:52PM +0200, Paul Kocialkowski wrote:
-> >> Nyan boards only have host USB ports (2 external, 1 internal), there is
-> >> no OTG-enabled connector.
-> >>
-> >> Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
-> >> ---
-> >>  arch/arm/boot/dts/tegra124-nyan.dtsi | 2 +-
-> >>  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > Where is this information coming from? I don't have one of the Nyans
-> > myself, but one of the Tegra132 devices I have, which I think was
-> > derived from one of the Nyans uses one of the external host ports as
-> > forced recovery port, for which it would need OTG.
-> > 
-> > I suspect that the way to get U-Boot onto the Nyans is via tegrarcm?
-> > In that case I think one of the ports must be OTG.
-> 
-> It is true that the port on the back on the nyan-big can be used with
-> recovery mode. I was thinking that this is not a true OTG port as it is
-> just a 4-pin type A socket and does not have an ID pin. Thinking some
-> more about this the USB spec does include a "Host Negotiation Protocol
-> (HNP)" that allows a host and device to swap roles and so keeping it as
-> OTG seems valid afterall.
-
-I don't think the bootrom implements that though. I expect recovery mode
-to just program the controller in device mode, without performing any
-negotiation.
-
-Peter.
+T24gVHVlLCBOb3YgOCwgMjAxNiBhdCA4OjUwIEFNLCBBbGV4YW5kcmUgQ291cmJvdCA8YWNvdXJi
+b3RAbnZpZGlhLmNvbT4gd3JvdGU6Cj4gQWRkIEZCIG1vZGlmaWVycyB0byBhbGxvdyB1c2VyLXNw
+YWNlIHRvIHNwZWNpZnkgdGhhdCBhIHN1cmZhY2UgaXMgaW4gb25lCj4gb2YgdGhlIHR3byB0aWxp
+bmcgZm9ybWF0cyBzdXBwb3J0ZWQgYnkgVGVncmEgY2hpcHMsIGFuZCBhZGQgc3VwcG9ydCBpbgo+
+IHRoZSB0ZWdyYWRybSBkcml2ZXIgdG8gaGFuZGxlIHRoZW0gcHJvcGVybHkuIFRoaXMgaXMgbmVj
+ZXNzYXJ5IGZvciB0aGUKPiBkaXNwbGF5IGNvbnRyb2xsZXIgdG8gZGlyZWN0bHkgZGlzcGxheSBi
+dWZmZXJzIGdlbmVyYXRlZCBieSB0aGUgR1BVLgo+Cj4gVGhpcyBmZWF0dXJlIGlzIGludGVuZGVk
+IHRvIHJlcGxhY2UgdGhlIGRlZGljYXRlZCBJT0NUTCBlbmFibGVkCj4gYnkgVEVHUkFfU1RBR0lO
+RyBhbmQgdG8gcHJvdmlkZSBhIG5vbi1zdGFnaW5nIGFsdGVybmF0aXZlIHRvIHRoYXQKPiBzb2x1
+dGlvbi4KPgo+IFNpZ25lZC1vZmYtYnk6IEFsZXhhbmRyZSBDb3VyYm90IDxhY291cmJvdEBudmlk
+aWEuY29tPgo+IC0tLQo+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgICB8ICAyICsrCj4g
+IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9mYi5jICAgIHwgMjMgKysrKysrKysrKysrKysrKysrKy0t
+LQo+ICBpbmNsdWRlL3VhcGkvZHJtL2RybV9mb3VyY2MuaCB8IDQ1ICsrKysrKysrKysrKysrKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysKPiAgMyBmaWxlcyBjaGFuZ2VkLCA2NyBpbnNlcnRp
+b25zKCspLCAzIGRlbGV0aW9ucygtKQo+Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90
+ZWdyYS9kcm0uYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYwo+IGluZGV4IGE5NjMwYzJk
+NmNiMy4uMzZiNGIzMGE1MTY0IDEwMDY0NAo+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9k
+cm0uYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYwo+IEBAIC0xNjEsNiArMTYx
+LDggQEAgc3RhdGljIGludCB0ZWdyYV9kcm1fbG9hZChzdHJ1Y3QgZHJtX2RldmljZSAqZHJtLCB1
+bnNpZ25lZCBsb25nIGZsYWdzKQo+ICAgICAgICAgZHJtLT5tb2RlX2NvbmZpZy5tYXhfd2lkdGgg
+PSA0MDk2Owo+ICAgICAgICAgZHJtLT5tb2RlX2NvbmZpZy5tYXhfaGVpZ2h0ID0gNDA5NjsKPgo+
+ICsgICAgICAgZHJtLT5tb2RlX2NvbmZpZy5hbGxvd19mYl9tb2RpZmllcnMgPSB0cnVlOwo+ICsK
+PiAgICAgICAgIGRybS0+bW9kZV9jb25maWcuZnVuY3MgPSAmdGVncmFfZHJtX21vZGVfZnVuY3M7
+Cj4KPiAgICAgICAgIGVyciA9IHRlZ3JhX2RybV9mYl9wcmVwYXJlKGRybSk7Cj4gZGlmZiAtLWdp
+dCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9mYi5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2Zi
+LmMKPiBpbmRleCBlNmQ3MWZhNDAyOGUuLjJmZGVkNThiMmNhNSAxMDA2NDQKPiAtLS0gYS9kcml2
+ZXJzL2dwdS9kcm0vdGVncmEvZmIuYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9mYi5j
+Cj4gQEAgLTUyLDkgKzUyLDI2IEBAIGludCB0ZWdyYV9mYl9nZXRfdGlsaW5nKHN0cnVjdCBkcm1f
+ZnJhbWVidWZmZXIgKmZyYW1lYnVmZmVyLAo+ICAgICAgICAgICAgICAgICAgICAgICAgIHN0cnVj
+dCB0ZWdyYV9ib190aWxpbmcgKnRpbGluZykKPiAgewo+ICAgICAgICAgc3RydWN0IHRlZ3JhX2Zi
+ICpmYiA9IHRvX3RlZ3JhX2ZiKGZyYW1lYnVmZmVyKTsKPiAtCj4gLSAgICAgICAvKiBUT0RPOiBo
+YW5kbGUgWVVWIGZvcm1hdHM/ICovCj4gLSAgICAgICAqdGlsaW5nID0gZmItPnBsYW5lc1swXS0+
+dGlsaW5nOwo+ICsgICAgICAgdWludDY0X3QgbW9kaWZpZXIgPSBmYi0+YmFzZS5tb2RpZmllclsw
+XTsKPiArCj4gKyAgICAgICBzd2l0Y2ggKGZvdXJjY19tb2RfdGVncmFfbW9kKG1vZGlmaWVyKSkg
+ewo+ICsgICAgICAgY2FzZSBOVl9GT1JNQVRfTU9EX1RFR1JBX1RJTEVEOgo+ICsgICAgICAgICAg
+ICAgICB0aWxpbmctPm1vZGUgPSBURUdSQV9CT19USUxJTkdfTU9ERV9USUxFRDsKPiArICAgICAg
+ICAgICAgICAgdGlsaW5nLT52YWx1ZSA9IDA7Cj4gKyAgICAgICAgICAgICAgIGJyZWFrOwo+ICsK
+PiArICAgICAgIGNhc2UgTlZfRk9STUFUX01PRF9URUdSQV8xNkJYMl9CTE9DSygwKToKPiArICAg
+ICAgICAgICAgICAgdGlsaW5nLT5tb2RlID0gVEVHUkFfQk9fVElMSU5HX01PREVfQkxPQ0s7Cj4g
+KyAgICAgICAgICAgICAgIHRpbGluZy0+dmFsdWUgPSBmb3VyY2NfbW9kX3RlZ3JhX3BhcmFtKG1v
+ZGlmaWVyKTsKPiArICAgICAgICAgICAgICAgaWYgKHRpbGluZy0+dmFsdWUgPiA1KQo+ICsgICAg
+ICAgICAgICAgICAgICAgICAgIHJldHVybiAtRUlOVkFMOwoKU2hvdWxkbid0IHRoaXMgY29udGFp
+biBzb21lIGhhcmR3YXJlLWNoZWNrIGZvciB0aGUgc3VwcG9ydD8gQUZBSUssIG5vdAphbGwgVGVn
+cmFzIHN1cHBvcnQgYWxsIGJsb2NrLWhlaWdodHMgKGlmIGV2ZW4gdGhpcyBtb2RlIGF0IGFsbD8p
+Li4uCl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1k
+ZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRldmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczov
+L2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
