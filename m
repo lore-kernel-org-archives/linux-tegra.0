@@ -1,54 +1,83 @@
-From: Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH 2/2] pinctrl: tegra: Add driver to configure voltage and
- power of io pads
-Date: Tue, 8 Nov 2016 16:46:11 +0100
-Message-ID: <CACRpkdZWc1jC2QzYq4ffT6YbhfbsEBbKtajMXuexA8MvJEPPEw@mail.gmail.com>
-References: <1478077742-25437-1-git-send-email-ldewangan@nvidia.com>
- <1478077742-25437-3-git-send-email-ldewangan@nvidia.com> <CACRpkdb4DQLzQWHxuZi=TDaeigNzVJV8TN1jsQfOHKF7yPLrUg@mail.gmail.com>
- <58201401.8050805@nvidia.com> <CACRpkdZo+527t4O9gX0U2VOaAYj7fnt7X0wynByBdYN5=2mDsA@mail.gmail.com>
- <5821A6D3.7010000@nvidia.com> <CACRpkdYO9ZCTGVdnyhVZ4DNLsHq+d-1_xuws2be8yab+MsyyVw@mail.gmail.com>
- <5821D49E.2070308@nvidia.com>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] gpio: tegra186: Add support for T186 GPIO
+Date: Tue, 8 Nov 2016 16:55:48 +0100
+Message-ID: <20161108155548.GC2244@ulmo.ba.sec>
+References: <1478083719-14836-1-git-send-email-smangipudi@nvidia.com>
+ <CACRpkdZpPHLDGeBb8kb=LYmuT0PKPf_quK+OF2peaV+8dxr5vQ@mail.gmail.com>
+ <20161107132127.GE12559@ulmo.ba.sec>
+ <CAOesGMgJUepmq2JTT7imKh74BsnGobcpBWFuNp94WnX1WtzEjA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <5821D49E.2070308@nvidia.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Jon Hunter <jonathanh@nvidia.com>, Masahiro Yamada <yamada.masahiro@socionext.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="Md/poaVZ8hnGTzuv"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <CAOesGMgJUepmq2JTT7imKh74BsnGobcpBWFuNp94WnX1WtzEjA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Suresh Mangipudi <smangipudi-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Nov 8, 2016 at 2:35 PM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 
-> There is two types of configuration in given platform, the IO voltage does
-> not get change (fixed in given platform) and in some of cases, get change
-> dynamically like SDIO3.0 where the voltage switches to 3.3V and 1.8V.
->
-> Yes, it can be integrated with the regulator handle and then it can call the
-> required configurations through notifier and regulator_get_voltage().
-> But I think it is too much complex for the static configurations. This
-> mandate also to populate the regulator handle and all power tree.
->
-> The simple way for static configuration (case where voltage does not get
-> change), just take the power tree IO voltage from DT and configure the IO
-> pad control register.
->
-> For dynamic case, there is some sequence need to be followed based on
-> voltage direction change (towards lower or towards higher) for the voltage
-> change and the IO pad voltage configuration and it is simple to do it from
-> client driver.
+--Md/poaVZ8hnGTzuv
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The devicetree should describe the platform.
+On Mon, Nov 07, 2016 at 05:42:33PM -0800, Olof Johansson wrote:
+> On Mon, Nov 7, 2016 at 5:21 AM, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>=
+ wrote:
+> > On Mon, Nov 07, 2016 at 08:53:37AM +0100, Linus Walleij wrote:
+> >> On Wed, Nov 2, 2016 at 11:48 AM, Suresh Mangipudi <smangipudi@nvidia.c=
+om> wrote:
+> >>
+> >> > Add GPIO driver for T186 based platforms.
+> >> > Adds support for MAIN and AON GPIO's from T186.
+> >> >
+> >> > Signed-off-by: Suresh Mangipudi <smangipudi-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> >>
+> >> Stephen/Thierry/Alexandre:
+> >> Can I get your review on this Tegra thing?
+> >
+> > Can we hold off on this for a bit? I've got my own implementation of
+> > this in my Tegra186 tree because I thought nobody else was working on
+> > it. From a brief look they seem mostly similar but there are a couple
+> > of differences that I need to take a closer look at (and do some more
+> > intensive testing on).
+>=20
+> Be careful about discouraging other developers internally from
+> participating upstream, Thierry.
 
-Adding this custom attribute does not describe the platform very
-well since the dependency to the corresponding regulator is hidden.
+That was certainly not my intention. I do welcome any contributions,
+internal or external.
 
-The point of device tree is not as much to make things simple as
-to describe the world properly.
+> Please don't become a bottleneck for your company's contributions.
+> Rewriting stuff on your own isn't a scalable model.
 
-So to me it is simple: use regulators and phandles.
+Like I said, I didn't rewrite this, I merely wrote the GPIO driver
+because there wasn't one at the time and I wasn't aware of anyone else
+working on one. Waiting for a GPIO driver to emerge would've prevented
+me from making progress on other fronts.
 
-It might require a bit of upfront coding but the result will look
-much nicer.
+Thierry
 
-Yours,
-Linus Walleij
+--Md/poaVZ8hnGTzuv
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAABCAAGBQJYIfWBAAoJEN0jrNd/PrOhP1AP/15NrKhH1HucpyBK5sC7o9bi
+rq5T3qG0Kkh9J7Gnd6SjDVIv8Jv5JQxl/9L9b5DP+AQiK7+5FJeBOGvf4nFPSbVK
+f02a8yUFkgZ9YiANucSS1Jqeedu5yRWiuDDsN8bvkwv1usP9U9FphCceZ3ISZlG+
+iMe7AJH9AV2N35HXBn+Ryu1coODb1XYPzkUyZuV6y2WSrEJx0504/JgdMi6LOrtI
+t6tol7e82S6twvScvBKZm1cBnpva2QsVkxSC5pDEWh7yqtBgw/g3hVQtUxfoOa57
+qhrthJVi/PsRBu3QV1wOqCB+3zYbXyeuWCVj/JvTlV01NeKN83cDiRCBYvvXNDgB
+u1v1BcZ792fpiJG+J02ccVm/5VOivOAwdCyPMMXMahHhEO+yuUKiA7BElzy+IVz6
+aj9oHPmkyIO+iu1Bj8BjyfJpljC2MzMvnMi4c52O20ew/550597aLcVDnWplZD+n
+l/P54mefQ2HgbDMCn3pyWK3zqU1Xjjlxby5ovpJxXi++qnK1fvHObgyxV2pJmh4K
+kuSyRBJWTe7UGZaEDrpkVeJBjrg4GtKwVHdcRBv0YDNluP8g0mrE1jT2GgLTK3Jr
+GeEui3Bgu9XKiSA0JIbLuplvMCRZ2xJbhEsRK6zED7yLRHeiSosLqrpcw0A61oup
+B/F2TSyuNx3F2FN0b2Co
+=Ua5U
+-----END PGP SIGNATURE-----
+
+--Md/poaVZ8hnGTzuv--
