@@ -1,57 +1,58 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH] ARM: tegra: apalis-tk1: Drop leading 0 from unit-address
-Date: Tue, 8 Nov 2016 12:11:24 +0100
-Message-ID: <20161108111124.GA2085@ulmo.ba.sec>
-References: <20161107134923.5615-1-thierry.reding@gmail.com>
+Subject: Re: [PATCH] soc/tegra: pmc: Use consistent naming for PM domains
+Date: Tue, 8 Nov 2016 12:11:43 +0100
+Message-ID: <20161108111143.GB2085@ulmo.ba.sec>
+References: <20161108100807.5114-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="J2SCkAp4GZ/dPZZf"
+        protocol="application/pgp-signature"; boundary="/WwmFnJnmDyWGHa4"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20161107134923.5615-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <20161108100807.5114-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---J2SCkAp4GZ/dPZZf
+--/WwmFnJnmDyWGHa4
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Nov 07, 2016 at 02:49:23PM +0100, Thierry Reding wrote:
+On Tue, Nov 08, 2016 at 11:08:07AM +0100, Thierry Reding wrote:
 > From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 >=20
-> According to the latest best practices, unit-addresses should be
-> represented without any leading zeroes.
+> The various error messages refer to the PM domains as "power domain",
+> "genpd" and "PM domain". That's confusing, so convert all error messages
+> to use the most prominent: "PM domain".
 >=20
 > Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 > ---
->  arch/arm/boot/dts/tegra124-apalis.dtsi | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/soc/tegra/pmc.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 
 Applied.
 
 Thierry
 
---J2SCkAp4GZ/dPZZf
+--/WwmFnJnmDyWGHa4
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAABCAAGBQJYIbLcAAoJEN0jrNd/PrOhk1wP/369OSX6WIjOmmEsBYwa0VrI
-7QCSHwBurn0hBTpODOnAvzAAIcChjkjQ3iunIhRE7lKdKeuAeZiUPPeHDsafDvqJ
-+b5FRsdmLA53WkZipqXh3BGAAP3n7qFhoK7OQ8GmL9sbqSWeX5sVGBvaY96z6Kc7
-8RD8RqqSCETpRzlMrKKdtCPibef2xVn5WaEaw4UsoQkm8XHNlx2PhkCcCcHK+ayi
-TegECHYbkxX961pJwsxlqnIEi5CcfY+NfGQTk5MAfI6FJpIhlPWp7WzlbkXVeOLU
-z9PUumLKZYAbEps6wrQYT2lb3ZDvZkgbV8u2VJlPszKYUsfMMugquiwPqGO/1Qg0
-+pLzWiLNpzqdKUORwtPTCylnMLntlWdNRPoy/vr7Ol8hf4RRg5W5hFa1LfR2duMG
-o9pq3mMVi40IvWsy/iv+ZW+9L8tfTrdsETG9mZkSvwzSUnad7VDLrPAhEJG/A/zL
-8kFr/DWW9KOAel3NB0aGTVirugwiPvjnc9MQbryTqf0+aUOac3sgg5PNa49gFNLc
-bgw6/nXr04CGBq4QJAfuijUQiSj4BvKWJLPnMpmH5ZTgAEumzv4qAYKexHfV6Kpa
-zcjDE5T+Gm9krVkfuzg8bVceoSgvDj6GeKPTOcJlgca5zH7L3kyvhPV4A0RC30C9
-wXqBV40LQ/TOz6OO/OM2
-=weRG
+iQIcBAABCAAGBQJYIbLuAAoJEN0jrNd/PrOhqCEQAIckJDmec+BYlPo5CWmj60h/
+0JtEmj51emy7+BHjpqzLKe6bv1ReawVhGT2f8sWMeuz6gGS/ZTwB6DecBf+jhLd1
+umZ3v9m6KwxvWta9PKkwFXiO1NUTMA27p0Kb8zcusMcrfFlCsEmZMDcF5uT+K2cP
+PG1ITNJxCSFRHSxCtB1AEqSoUMSsPQ27IpD2dE1snaMDge4rh+q7ygwH1gnMqxrM
+50ujPMR0i4yEzb+X8BVFHsdDT2xaIcyIY0qVQ1S7B49KAhR2JQPjA3qQTd1gczxb
+yozh+l4tqXEEPVj5sDuNZCMlx4jG07uEGz8FkEeWUsHQZviCazR5NgABpkg6xwej
+W29Wvlj5PrziLCbWDFgzzDmZxwjDPeuEnZorqHqvjNwT9MZ/KkNrWnY6xApnPHP4
+X+iNzzGhL+EOm8/ZhyFSXJPITGBWer2gwwk0kQTLGTS/PNnNQkn3EkcnSoruWo5Y
+a7HdE65y9qrWZa1WkHvcLyFDFJj4Ph3kQu0oRdrW/gv7Pa+mGAaUk8Bpujga4DtE
+CgAtiXh/LbQ62oZ2oZgxQt7kozpvyZu7kinGoieQFyLnjoQlNc4wefr3byWEjL5v
+Nz6IyVSDP+/WoLS4F4m/yi3fsdcZBjrD1SJBiipZPcSYllHRiYuiauXaY8I3XsUK
+ZrEaFrTlAZccc6bxb2cp
+=Xk/o
 -----END PGP SIGNATURE-----
 
---J2SCkAp4GZ/dPZZf--
+--/WwmFnJnmDyWGHa4--
