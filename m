@@ -1,108 +1,91 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH] drm/tegra: add tiling FB modifiers
-Date: Tue, 8 Nov 2016 11:34:34 +0100
-Message-ID: <20161108103433.2p7coxozp23gcqeb@phenom.ffwll.local>
-References: <20161108075042.13357-1-acourbot@nvidia.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH 2/2] pinctrl: tegra: Add driver to configure voltage and
+ power of io pads
+Date: Tue, 8 Nov 2016 15:50:03 +0530
+Message-ID: <5821A6D3.7010000@nvidia.com>
+References: <1478077742-25437-1-git-send-email-ldewangan@nvidia.com> <1478077742-25437-3-git-send-email-ldewangan@nvidia.com> <CACRpkdb4DQLzQWHxuZi=TDaeigNzVJV8TN1jsQfOHKF7yPLrUg@mail.gmail.com> <58201401.8050805@nvidia.com> <CACRpkdZo+527t4O9gX0U2VOaAYj7fnt7X0wynByBdYN5=2mDsA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <20161108075042.13357-1-acourbot@nvidia.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: gnurou@gmail.com, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CACRpkdZo+527t4O9gX0U2VOaAYj7fnt7X0wynByBdYN5=2mDsA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: "thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org" <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Masahiro Yamada <yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCBOb3YgMDgsIDIwMTYgYXQgMDQ6NTA6NDJQTSArMDkwMCwgQWxleGFuZHJlIENvdXJi
-b3Qgd3JvdGU6Cj4gQWRkIEZCIG1vZGlmaWVycyB0byBhbGxvdyB1c2VyLXNwYWNlIHRvIHNwZWNp
-ZnkgdGhhdCBhIHN1cmZhY2UgaXMgaW4gb25lCj4gb2YgdGhlIHR3byB0aWxpbmcgZm9ybWF0cyBz
-dXBwb3J0ZWQgYnkgVGVncmEgY2hpcHMsIGFuZCBhZGQgc3VwcG9ydCBpbgo+IHRoZSB0ZWdyYWRy
-bSBkcml2ZXIgdG8gaGFuZGxlIHRoZW0gcHJvcGVybHkuIFRoaXMgaXMgbmVjZXNzYXJ5IGZvciB0
-aGUKPiBkaXNwbGF5IGNvbnRyb2xsZXIgdG8gZGlyZWN0bHkgZGlzcGxheSBidWZmZXJzIGdlbmVy
-YXRlZCBieSB0aGUgR1BVLgo+IAo+IFRoaXMgZmVhdHVyZSBpcyBpbnRlbmRlZCB0byByZXBsYWNl
-IHRoZSBkZWRpY2F0ZWQgSU9DVEwgZW5hYmxlZAo+IGJ5IFRFR1JBX1NUQUdJTkcgYW5kIHRvIHBy
-b3ZpZGUgYSBub24tc3RhZ2luZyBhbHRlcm5hdGl2ZSB0byB0aGF0Cj4gc29sdXRpb24uCj4gCj4g
-U2lnbmVkLW9mZi1ieTogQWxleGFuZHJlIENvdXJib3QgPGFjb3VyYm90QG52aWRpYS5jb20+CgpB
-Y2sgb24gdGhlIGRybV9mb3VyY2MuaCBwYXJ0LCBJIHRoaW5rIHRoYXQncyB0aGUgYW1vdW50IG9m
-IGRldGFpbCBpbgpjb21tZW50cyB0aGF0J3MgcmVhc29uYWJsZS4gRmVlbCBmcmVlIHRvIG1lcmdl
-IHRocm91Z2ggdGVncmEgdHJlZXMuCi1EYW5pZWwKCj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS90
-ZWdyYS9kcm0uYyAgIHwgIDIgKysKPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2ZiLmMgICAgfCAy
-MyArKysrKysrKysrKysrKysrKysrLS0tCj4gIGluY2x1ZGUvdWFwaS9kcm0vZHJtX2ZvdXJjYy5o
-IHwgNDUgKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKwo+ICAzIGZp
-bGVzIGNoYW5nZWQsIDY3IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pCj4gCj4gZGlmZiAt
-LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdy
-YS9kcm0uYwo+IGluZGV4IGE5NjMwYzJkNmNiMy4uMzZiNGIzMGE1MTY0IDEwMDY0NAo+IC0tLSBh
-L2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYwo+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdy
-YS9kcm0uYwo+IEBAIC0xNjEsNiArMTYxLDggQEAgc3RhdGljIGludCB0ZWdyYV9kcm1fbG9hZChz
-dHJ1Y3QgZHJtX2RldmljZSAqZHJtLCB1bnNpZ25lZCBsb25nIGZsYWdzKQo+ICAJZHJtLT5tb2Rl
-X2NvbmZpZy5tYXhfd2lkdGggPSA0MDk2Owo+ICAJZHJtLT5tb2RlX2NvbmZpZy5tYXhfaGVpZ2h0
-ID0gNDA5NjsKPiAgCj4gKwlkcm0tPm1vZGVfY29uZmlnLmFsbG93X2ZiX21vZGlmaWVycyA9IHRy
-dWU7Cj4gKwo+ICAJZHJtLT5tb2RlX2NvbmZpZy5mdW5jcyA9ICZ0ZWdyYV9kcm1fbW9kZV9mdW5j
-czsKPiAgCj4gIAllcnIgPSB0ZWdyYV9kcm1fZmJfcHJlcGFyZShkcm0pOwo+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZmIuYyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9mYi5j
-Cj4gaW5kZXggZTZkNzFmYTQwMjhlLi4yZmRlZDU4YjJjYTUgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVy
-cy9ncHUvZHJtL3RlZ3JhL2ZiLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZmIuYwo+
-IEBAIC01Miw5ICs1MiwyNiBAQCBpbnQgdGVncmFfZmJfZ2V0X3RpbGluZyhzdHJ1Y3QgZHJtX2Zy
-YW1lYnVmZmVyICpmcmFtZWJ1ZmZlciwKPiAgCQkJc3RydWN0IHRlZ3JhX2JvX3RpbGluZyAqdGls
-aW5nKQo+ICB7Cj4gIAlzdHJ1Y3QgdGVncmFfZmIgKmZiID0gdG9fdGVncmFfZmIoZnJhbWVidWZm
-ZXIpOwo+IC0KPiAtCS8qIFRPRE86IGhhbmRsZSBZVVYgZm9ybWF0cz8gKi8KPiAtCSp0aWxpbmcg
-PSBmYi0+cGxhbmVzWzBdLT50aWxpbmc7Cj4gKwl1aW50NjRfdCBtb2RpZmllciA9IGZiLT5iYXNl
-Lm1vZGlmaWVyWzBdOwo+ICsKPiArCXN3aXRjaCAoZm91cmNjX21vZF90ZWdyYV9tb2QobW9kaWZp
-ZXIpKSB7Cj4gKwljYXNlIE5WX0ZPUk1BVF9NT0RfVEVHUkFfVElMRUQ6Cj4gKwkJdGlsaW5nLT5t
-b2RlID0gVEVHUkFfQk9fVElMSU5HX01PREVfVElMRUQ7Cj4gKwkJdGlsaW5nLT52YWx1ZSA9IDA7
-Cj4gKwkJYnJlYWs7Cj4gKwo+ICsJY2FzZSBOVl9GT1JNQVRfTU9EX1RFR1JBXzE2QlgyX0JMT0NL
-KDApOgo+ICsJCXRpbGluZy0+bW9kZSA9IFRFR1JBX0JPX1RJTElOR19NT0RFX0JMT0NLOwo+ICsJ
-CXRpbGluZy0+dmFsdWUgPSBmb3VyY2NfbW9kX3RlZ3JhX3BhcmFtKG1vZGlmaWVyKTsKPiArCQlp
-ZiAodGlsaW5nLT52YWx1ZSA+IDUpCj4gKwkJCXJldHVybiAtRUlOVkFMOwo+ICsJCWJyZWFrOwo+
-ICsKPiArCWRlZmF1bHQ6Cj4gKwkJLyogVE9ETzogaGFuZGxlIFlVViBmb3JtYXRzPyAqLwo+ICsJ
-CSp0aWxpbmcgPSBmYi0+cGxhbmVzWzBdLT50aWxpbmc7Cj4gKwkJYnJlYWs7Cj4gKwl9Cj4gIAo+
-ICAJcmV0dXJuIDA7Cj4gIH0KPiBkaWZmIC0tZ2l0IGEvaW5jbHVkZS91YXBpL2RybS9kcm1fZm91
-cmNjLmggYi9pbmNsdWRlL3VhcGkvZHJtL2RybV9mb3VyY2MuaAo+IGluZGV4IGE1ODkwYmY0NGMw
-YS4uOTY3ZGZhYjE2ODgxIDEwMDY0NAo+IC0tLSBhL2luY2x1ZGUvdWFwaS9kcm0vZHJtX2ZvdXJj
-Yy5oCj4gKysrIGIvaW5jbHVkZS91YXBpL2RybS9kcm1fZm91cmNjLmgKPiBAQCAtMjMzLDYgKzIz
-Myw1MSBAQCBleHRlcm4gIkMiIHsKPiAgICovCj4gICNkZWZpbmUgRFJNX0ZPUk1BVF9NT0RfU0FN
-U1VOR182NF8zMl9USUxFCWZvdXJjY19tb2RfY29kZShTQU1TVU5HLCAxKQo+ICAKPiArCj4gKy8q
-IE5WSURJQSBUZWdyYSBmcmFtZSBidWZmZXIgbW9kaWZpZXJzICovCj4gKwo+ICsvKgo+ICsgKiBT
-b21lIG1vZGlmaWVycyB0YWtlIHBhcmFtZXRlcnMsIGZvciBleGFtcGxlIHRoZSBudW1iZXIgb2Yg
-dmVydGljYWwgR09CcyBpbgo+ICsgKiBhIGJsb2NrLiBSZXNlcnZlIHRoZSBsb3dlciAzMiBiaXRz
-IGZvciBwYXJhbWV0ZXJzCj4gKyAqLwo+ICsjZGVmaW5lIF9fZm91cmNjX21vZF90ZWdyYV9tb2Rl
-X3NoaWZ0IDMyCj4gKyNkZWZpbmUgZm91cmNjX21vZF90ZWdyYV9jb2RlKHZhbCwgcGFyYW1zKSBc
-Cj4gKwlmb3VyY2NfbW9kX2NvZGUoTlYsICgoKChfX3U2NCl2YWwpIDw8IF9fZm91cmNjX21vZF90
-ZWdyYV9tb2RlX3NoaWZ0KSB8IHBhcmFtcykpCj4gKyNkZWZpbmUgZm91cmNjX21vZF90ZWdyYV9t
-b2QobSkgXAo+ICsJKG0gJiB+KCgxVUxMIDw8IF9fZm91cmNjX21vZF90ZWdyYV9tb2RlX3NoaWZ0
-KSAtIDEpKQo+ICsjZGVmaW5lIGZvdXJjY19tb2RfdGVncmFfcGFyYW0obSkgXAo+ICsJKG0gJiAo
-KDFVTEwgPDwgX19mb3VyY2NfbW9kX3RlZ3JhX21vZGVfc2hpZnQpIC0gMSkpCj4gKwo+ICsvKgo+
-ICsgKiBUZWdyYSBUaWxlZCBMYXlvdXQsIHVzZWQgYnkgVGVncmEgMiwgMyBhbmQgNC4KPiArICoK
-PiArICogUGl4ZWxzIGFyZSBhcnJhbmdlZCBpbiBzaW1wbGUgdGlsZXMgb2YgMTYgeCAxNiBieXRl
-cy4KPiArICovCj4gKyNkZWZpbmUgTlZfRk9STUFUX01PRF9URUdSQV9USUxFRCBmb3VyY2NfbW9k
-X3RlZ3JhX2NvZGUoMSwgMCkKPiArCj4gKy8qCj4gKyAqIFRlZ3JhIDE2QngyIEJsb2NrIExpbmVh
-ciBsYXlvdXQsIHVzZWQgYnkgVEsxL1RYMQo+ICsgKgo+ICsgKiBQaXhlbHMgYXJlIGFycmFuZ2Vk
-IGluIDY0eDggR3JvdXBzIE9mIEJ5dGVzIChHT0JzKS4gR09CcyBhcmUgdGhlbiBzdGFja2VkCj4g
-KyAqIHZlcnRpY2FsbHkgYnkgYSBwb3dlciBvZiAyICgxIHRvIDMyIEdPQnMpIHRvIGZvcm0gYSBi
-bG9jay4KPiArICoKPiArICogV2l0aGluIGEgR09CLCBkYXRhIGlzIG9yZGVyZWQgYXMgMTZCIHgg
-MiBsaW5lcyBzZWN0b3JzIGxhaWQgaW4gWi1zaGFwZS4KPiArICoKPiArICogUGFyYW1ldGVyICd2
-JyBpcyB0aGUgbG9nMiBlbmNvZGluZyBvZiB0aGUgbnVtYmVyIG9mIEdPQnMgc3RhY2tlZCB2ZXJ0
-aWNhbGx5Lgo+ICsgKiBWYWxpZCB2YWx1ZXMgYXJlOgo+ICsgKgo+ICsgKiAwID09IE9ORV9HT0IK
-PiArICogMSA9PSBUV09fR09CUwo+ICsgKiAyID09IEZPVVJfR09CUwo+ICsgKiAzID09IEVJR0hU
-X0dPQlMKPiArICogNCA9PSBTSVhURUVOX0dPQlMKPiArICogNSA9PSBUSElSVFlUV09fR09CUwo+
-ICsgKgo+ICsgKiBDaGFwdGVyIDIwICJQaXhlbCBNZW1vcnkgRm9ybWF0cyIgb2YgdGhlIFRlZ3Jh
-IFgxIFRSTSBkZXNjcmliZXMgdGhpcyBmb3JtYXQKPiArICogaW4gZnVsbCBkZXRhaWwuCj4gKyAq
-Lwo+ICsjZGVmaW5lIE5WX0ZPUk1BVF9NT0RfVEVHUkFfMTZCWDJfQkxPQ0sodikgZm91cmNjX21v
-ZF90ZWdyYV9jb2RlKDIsIHYpCj4gKwo+ICAjaWYgZGVmaW5lZChfX2NwbHVzcGx1cykKPiAgfQo+
-ICAjZW5kaWYKPiAtLSAKPiAyLjEwLjIKPiAKPiBfX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fXwo+IGRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKPiBkcmktZGV2ZWxA
-bGlzdHMuZnJlZWRlc2t0b3Aub3JnCj4gaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9kcmktZGV2ZWwKCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2lu
-ZWVyLCBJbnRlbCBDb3Jwb3JhdGlvbgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0
-CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3Rv
-cC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+
+On Tuesday 08 November 2016 03:45 PM, Linus Walleij wrote:
+> On Mon, Nov 7, 2016 at 6:41 AM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>> On Saturday 05 November 2016 03:54 AM, Linus Walleij wrote:
+>>> On Wed, Nov 2, 2016 at 10:09 AM, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> (....)
+>>>> On Tegra124, the IO power rail source is auto detected by SoC and hence
+>>>> it is only require to configure in low power mode if IO pads are not
+>>>> used.
+>>>>
+>>>> On T210 onwards, the auto-detection is removed from SoC and hence SW
+>>>> must configure the PMC register explicitly to set proper voltage in
+>>>> IO pads based on IO rail power source voltage.
+> (...)
+>>>> +static const struct pinconf_generic_params tegra_io_pads_cfg_params[] =
+>>>> {
+>>>> +       {
+>>>> +               .property = "nvidia,power-source-voltage",
+>>>> +               .param = TEGRA_IO_PAD_POWER_SOURCE_VOLTAGE,
+>>>> +       },
+>>>> +};
+>>> Why can you not use the standard power-source binding
+>>> from Documentation/devicetree/bindings/pinctrl/pinctrl-bindings.txt
+>>> instead of inventing this nvidia,* variant?
+>>
+>> Per binding doc,
+>> power-source            - select between different power supplies
+>>
+>> So actually it selects the different source of power supply.
+>> In my case, I will have same supply but voltage of that supply get changed.
+>> So here property is for the power-supply-voltage.
+> I doubt that seriously. Are you sure? Then the commit message is
+> misleading because it is talking about different power rails.
+The set of pins belongs to the IO pad group and this pad group has power 
+supply from external PMIC. The IO pads support multi-level voltage and 
+the level need to be configured in the PMIC rail via regulator calls and 
+the IO pads configuration register for that level.
+
+
+> The usual design of such IP is that there is a switch that select
+> a voltage from several available rails and this is what the commit
+> message seems to be saying, and that is what the binding is for.
+
+There is no switch to select the power source inside IP. We have only 
+one source for supply these pins (IO pads) and the source voltage can be 
+change here.
+
+>
+> If you could actually change the voltage it would change for all
+> other pins using the same voltage source as well, would it not?
+There is grouping of pins based on interface and yes, voltage level gets 
+changed for those group of pins. Like form SDMMC interface all data nd 
+clock lines, for i2c SCL and SDA lines etc.
+The HW IP design is like that from single IO voltage source, all pins 
+are affected.
+
+
+>
+> Unless there is one voltage regulator per pin, which seems like
+> a very expensive and chip surface consuming solution. (Albeit
+> theoretically possible.)
+>
+> If you can *actually* change the volatage, it needs to be modeled
+> as a (fixed voltage?) regulator, not as a custom property for the pin
+> control attributes. I guess you definiately need the regulator framework
+> to accumulate and infer the different consumer requirements anyway
+> in that case.
+
+The PMIC voltage output is changed via regulator calls.
+Here, we need to have two configruations for given voltage level of 
+interface:
+* One at IO voltage from PMIC via regulator call to change votlage of IO 
+rail.
+* Second, configure the IO pad register to tell the IO voltage level so 
+that it can configured internally for that level.
