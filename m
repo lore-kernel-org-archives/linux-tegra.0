@@ -1,584 +1,165 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH V2 2/2] pinctrl: tegra: Add driver to configure voltage and power of io pads
-Date: Wed, 9 Nov 2016 18:36:22 +0530
-Message-ID: <1478696782-11657-3-git-send-email-ldewangan@nvidia.com>
-References: <1478696782-11657-1-git-send-email-ldewangan@nvidia.com>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: [PATCH V2 3/4] soc/tegra: pmc: Register PMC child devices as platform device
+Date: Wed, 9 Nov 2016 18:39:21 +0530
+Message-ID: <1478696962-11831-4-git-send-email-ldewangan@nvidia.com>
+References: <1478696962-11831-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
 Content-Type: text/plain
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1478696782-11657-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1478696962-11831-1-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: thierry.reding@gmail.com, swarren@wwwdotorg.org
+Cc: gnurou@gmail.com, jonathanh@nvidia.com, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-NVIDIA Tegra124 and later SoCs support the multi-voltage level and
-low power state of some of its IO pads. The IO pads can work in
-the voltage of the 1.8V and 3.3V of IO voltage from IO power rail
-sources. When IO interfaces are not used then IO pads can be
-configure in low power state to reduce the power consumption from
-that IO pads.
+Power Management Controller(PMC) of Tegra does the multiple chip
+power management related functionality for internal and IO interfacing.
+Some of the functionalities are power gating of IP blocks, IO pads
+voltage and power state configuration, system power state configurations,
+wakeup controls etc.
 
-On Tegra124, the voltage level of IO power rail source is auto
-detected by hardware(SoC) and hence it is only require to configure
-in low power mode if IO pads are not used.
+Different functionalities of the PMC are provided through different
+framework like IO pads control can be provided through pinctrl framework,
+IO power control is via misc driver etc. All sub functionalities are
+represented as PMC child devices.
 
-On T210 onwards, the auto-detection of voltage level from IO power
-rail is removed from SoC and hence SW need to configure the PMC
-register explicitly to set proper voltage in IO pads based on
-IO rail power source voltage.
+Register the PMC child devices as platform device and fill the child
+devices table for Tegra124 and Tegra210.
 
-This driver adds the IO pad driver to configure the power state and
-IO pad voltage based on the usage and power tree via pincontrol
-framework. The configuration can be static and dynamic.
-
-Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 
 ---
 Changes from V1:
-- Dropped the custom properties to set pad voltage and use regulator.
-- Added support for regulator to get vottage in boot and configure IO
-  pad voltage.
-- Add support for callback to handle regulator notification and configure
-  IO pad voltage based on voltage change.
+ None
 ---
- drivers/pinctrl/tegra/Kconfig                |  12 +
- drivers/pinctrl/tegra/Makefile               |   1 +
- drivers/pinctrl/tegra/pinctrl-tegra-io-pad.c | 488 +++++++++++++++++++++++++++
- 3 files changed, 501 insertions(+)
- create mode 100644 drivers/pinctrl/tegra/pinctrl-tegra-io-pad.c
+ drivers/soc/tegra/pmc.c | 59 +++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 59 insertions(+)
 
-diff --git a/drivers/pinctrl/tegra/Kconfig b/drivers/pinctrl/tegra/Kconfig
-index 24e20cc..6004e5c 100644
---- a/drivers/pinctrl/tegra/Kconfig
-+++ b/drivers/pinctrl/tegra/Kconfig
-@@ -23,6 +23,18 @@ config PINCTRL_TEGRA210
- 	bool
- 	select PINCTRL_TEGRA
+diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+index 44546bd..916a94b 100644
+--- a/drivers/soc/tegra/pmc.c
++++ b/drivers/soc/tegra/pmc.c
+@@ -145,6 +145,9 @@ struct tegra_pmc_soc {
  
-+config PINCTRL_TEGRA_IO_PAD
-+	bool "Tegra IO pad Control Driver"
-+	depends on ARCH_TEGRA && REGULATOR
-+	select PINCONF
-+	select PINMUX
-+	help
-+	  NVIDIA Tegra124/210 SoC has IO pads which supports multi-voltage
-+	  level of interfacing and deep power down mode of IO pads. The
-+	  voltage of IO pads are SW configurable based on IO rail of that
-+	  pads on T210. This driver provides the interface to change IO pad
-+	  voltage and power state via pincontrol interface.
+ 	const struct tegra_io_pad_soc *io_pads;
+ 	unsigned int num_io_pads;
 +
- config PINCTRL_TEGRA_XUSB
- 	def_bool y if ARCH_TEGRA
- 	select GENERIC_PHY
-diff --git a/drivers/pinctrl/tegra/Makefile b/drivers/pinctrl/tegra/Makefile
-index d9ea2be..3ebaaa2 100644
---- a/drivers/pinctrl/tegra/Makefile
-+++ b/drivers/pinctrl/tegra/Makefile
-@@ -4,4 +4,5 @@ obj-$(CONFIG_PINCTRL_TEGRA30)		+= pinctrl-tegra30.o
- obj-$(CONFIG_PINCTRL_TEGRA114)		+= pinctrl-tegra114.o
- obj-$(CONFIG_PINCTRL_TEGRA124)		+= pinctrl-tegra124.o
- obj-$(CONFIG_PINCTRL_TEGRA210)		+= pinctrl-tegra210.o
-+obj-$(CONFIG_PINCTRL_TEGRA_IO_PAD)	+= pinctrl-tegra-io-pad.o
- obj-$(CONFIG_PINCTRL_TEGRA_XUSB)	+= pinctrl-tegra-xusb.o
-diff --git a/drivers/pinctrl/tegra/pinctrl-tegra-io-pad.c b/drivers/pinctrl/tegra/pinctrl-tegra-io-pad.c
-new file mode 100644
-index 0000000..f5cf0d0
---- /dev/null
-+++ b/drivers/pinctrl/tegra/pinctrl-tegra-io-pad.c
-@@ -0,0 +1,488 @@
-+/*
-+ * pinctrl-tegra-io-pad: IO PAD driver for configuration of IO rail and deep
-+ *			 Power Down mode via pinctrl framework.
-+ *
-+ * Copyright (C) 2016 NVIDIA CORPORATION. All rights reserved.
-+ *
-+ * Author: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/delay.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/pinctrl/pinctrl.h>
-+#include <linux/pinctrl/pinconf-generic.h>
-+#include <linux/pinctrl/pinconf.h>
-+#include <linux/pinctrl/pinmux.h>
-+#include <linux/platform_device.h>
-+#include <linux/regulator/consumer.h>
-+#include <soc/tegra/pmc.h>
-+
-+#include "../core.h"
-+#include "../pinconf.h"
-+#include "../pinctrl-utils.h"
-+
-+/**
-+ * Macro for 1.8V, keep 200mV as tolerance for deciding that
-+ * IO pads should be set for 3.3V (high voltage) or 1.8V.
-+ */
-+#define TEGRA_IO_PAD_1800000UV_UPPER_LIMIT 2000000
-+
-+struct tegra_io_pads_cfg_info {
-+	const char *name;
-+	const unsigned int pins[1];
-+	const char *vsupply;
-+	enum tegra_io_pad pad_id;
-+	bool support_low_power_state;
-+};
-+
-+struct tegra_io_pad_soc_data {
-+	const struct tegra_io_pads_cfg_info *pads_cfg;
-+	int num_pads_cfg;
-+	const struct pinctrl_pin_desc *pins_desc;
-+	int num_pins_desc;
-+};
-+
-+struct tegra_io_pads_regulator_info {
-+	struct device *dev;
-+	const struct tegra_io_pads_cfg_info *pads_cfg;
-+	struct regulator *regulator;
-+	struct notifier_block regulator_nb;
-+};
-+
-+struct tegra_io_pads_info {
-+	struct device *dev;
-+	struct pinctrl_dev *pctl;
-+	struct tegra_io_pads_regulator_info *rinfo;
-+	const struct tegra_io_pad_soc_data *soc_data;
-+};
-+
-+static int tegra_iop_pinctrl_get_groups_count(struct pinctrl_dev *pctldev)
++	const char **sub_devs_name;
++	unsigned int num_sub_devs;
+ };
+ 
+ /**
+@@ -169,6 +172,7 @@ struct tegra_pmc_soc {
+  * @lp0_vec_size: size of the LP0 warm boot code
+  * @powergates_available: Bitmap of available power gates
+  * @powergates_lock: mutex for power gate register access
++ * @plat_subdevs: Platform device for PMC child devices.
+  */
+ struct tegra_pmc {
+ 	struct device *dev;
+@@ -195,6 +199,7 @@ struct tegra_pmc {
+ 	DECLARE_BITMAP(powergates_available, TEGRA_POWERGATE_MAX);
+ 
+ 	struct mutex powergates_lock;
++	struct platform_device **plat_subdevs;
+ };
+ 
+ static struct tegra_pmc *pmc = &(struct tegra_pmc) {
+@@ -1375,6 +1380,43 @@ static void tegra_pmc_init_tsense_reset(struct tegra_pmc *pmc)
+ 	of_node_put(np);
+ }
+ 
++static int tegra_pmc_init_sub_devs(struct tegra_pmc *pmc)
 +{
-+	struct tegra_io_pads_info *tiopi = pinctrl_dev_get_drvdata(pctldev);
-+
-+	return tiopi->soc_data->num_pads_cfg;
-+}
-+
-+static const char *tegra_iop_pinctrl_get_group_name(struct pinctrl_dev *pctldev,
-+						    unsigned int group)
-+{
-+	struct tegra_io_pads_info *tiopi = pinctrl_dev_get_drvdata(pctldev);
-+
-+	return tiopi->soc_data->pads_cfg[group].name;
-+}
-+
-+static int tegra_iop_pinctrl_get_group_pins(struct pinctrl_dev *pctldev,
-+					    unsigned int group,
-+					    const unsigned int **pins,
-+					    unsigned int *num_pins)
-+{
-+	struct tegra_io_pads_info *tiopi = pinctrl_dev_get_drvdata(pctldev);
-+
-+	*pins = tiopi->soc_data->pads_cfg[group].pins;
-+	*num_pins = 1;
-+
-+	return 0;
-+}
-+
-+static const struct pinctrl_ops tegra_iop_pinctrl_ops = {
-+	.get_groups_count	= tegra_iop_pinctrl_get_groups_count,
-+	.get_group_name		= tegra_iop_pinctrl_get_group_name,
-+	.get_group_pins		= tegra_iop_pinctrl_get_group_pins,
-+	.dt_node_to_map		= pinconf_generic_dt_node_to_map_pin,
-+	.dt_free_map		= pinctrl_utils_free_map,
-+};
-+
-+static int tegra_io_pad_pinconf_get(struct pinctrl_dev *pctldev,
-+				    unsigned int pin, unsigned long *config)
-+{
-+	struct tegra_io_pads_info *tiopi = pinctrl_dev_get_drvdata(pctldev);
-+	int param = pinconf_to_config_param(*config);
-+	const struct tegra_io_pads_cfg_info *pads_cfg =
-+					&tiopi->soc_data->pads_cfg[pin];
-+	enum tegra_io_pad pad_id = pads_cfg->pad_id;
-+	int arg = 0;
-+	int ret;
-+
-+	switch (param) {
-+	case PIN_CONFIG_LOW_POWER_MODE:
-+		ret = tegra_io_pad_power_get_status(pad_id);
-+		if (ret < 0)
-+			return ret;
-+		arg = !ret;
-+		break;
-+
-+	default:
-+		dev_err(tiopi->dev, "The parameter %d not supported\n", param);
-+		return -EINVAL;
-+	}
-+
-+	*config = pinconf_to_config_packed(param, (u16)arg);
-+	return 0;
-+}
-+
-+static int tegra_io_pad_pinconf_set(struct pinctrl_dev *pctldev,
-+				    unsigned int pin, unsigned long *configs,
-+				    unsigned int num_configs)
-+{
-+	struct tegra_io_pads_info *tiopi = pinctrl_dev_get_drvdata(pctldev);
-+	const struct tegra_io_pads_cfg_info *pads_cfg =
-+					&tiopi->soc_data->pads_cfg[pin];
-+	int pad_id = pads_cfg->pad_id;
-+	u16 param_val;
-+	int param;
-+	int ret;
-+	int i;
-+
-+	for (i = 0; i < num_configs; i++) {
-+		param = pinconf_to_config_param(configs[i]);
-+		param_val = pinconf_to_config_argument(configs[i]);
-+
-+		switch (param) {
-+		case PIN_CONFIG_LOW_POWER_MODE:
-+			if (param_val)
-+				ret = tegra_io_pad_power_disable(pad_id);
-+			else
-+				ret = tegra_io_pad_power_enable(pad_id);
-+			if (ret < 0) {
-+				dev_err(tiopi->dev,
-+					"Failed to set DPD %d of pin %u: %d\n",
-+					param_val, pin, ret);
-+				return ret;
-+			}
-+			break;
-+
-+		default:
-+			dev_err(tiopi->dev, "The parameter %d not supported\n",
-+				param);
-+			return -EINVAL;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct pinconf_ops tegra_io_pad_pinconf_ops = {
-+	.pin_config_get = tegra_io_pad_pinconf_get,
-+	.pin_config_set = tegra_io_pad_pinconf_set,
-+};
-+
-+static struct pinctrl_desc tegra_iop_pinctrl_desc = {
-+	.name = "pinctrl-tegra-io-pads",
-+	.pctlops = &tegra_iop_pinctrl_ops,
-+	.confops = &tegra_io_pad_pinconf_ops,
-+};
-+
-+static int tegra_io_pads_rail_change_notify_cb(struct notifier_block *nb,
-+					       unsigned long event, void *data)
-+{
-+	struct tegra_io_pads_regulator_info *rinfo;
-+	struct pre_voltage_change_data *vdata;
-+	unsigned long int io_volt_uv, old_uv;
-+	enum tegra_io_pad_voltage io_volt;
-+	int ret;
-+
-+	rinfo = container_of(nb, struct tegra_io_pads_regulator_info,
-+			     regulator_nb);
-+
-+	switch (event) {
-+	case REGULATOR_EVENT_PRE_VOLTAGE_CHANGE:
-+		vdata = data;
-+		if ((vdata->old_uV > TEGRA_IO_PAD_1800000UV_UPPER_LIMIT) &&
-+		    (vdata->min_uV <= TEGRA_IO_PAD_1800000UV_UPPER_LIMIT))
-+			break;
-+
-+		ret = tegra_io_pad_set_voltage(rinfo->pads_cfg->pad_id,
-+					       TEGRA_IO_PAD_3300000UV);
-+		if (ret < 0) {
-+			dev_err(rinfo->dev,
-+				"Failed to set voltage %lu of pad %s: %d\n",
-+				vdata->min_uV, rinfo->pads_cfg->name, ret);
-+			return ret;
-+		}
-+		break;
-+
-+	case REGULATOR_EVENT_VOLTAGE_CHANGE:
-+		io_volt_uv = (unsigned long)data;
-+		ret = tegra_io_pad_get_voltage(rinfo->pads_cfg->pad_id);
-+		if (ret < 0) {
-+			dev_err(rinfo->dev, "Failed to get IO pad voltage: %d\n",
-+				ret);
-+			return ret;
-+		}
-+		old_uv = (ret == TEGRA_IO_PAD_1800000UV) ? 1800000 : 3300000;
-+		if (((io_volt_uv <= TEGRA_IO_PAD_1800000UV_UPPER_LIMIT) &&
-+		      (old_uv <= TEGRA_IO_PAD_1800000UV_UPPER_LIMIT)) ||
-+		       ((io_volt_uv > TEGRA_IO_PAD_1800000UV_UPPER_LIMIT) &&
-+			 (old_uv > TEGRA_IO_PAD_1800000UV_UPPER_LIMIT)))
-+			break;
-+
-+		ret = tegra_io_pad_set_voltage(rinfo->pads_cfg->pad_id,
-+					       TEGRA_IO_PAD_1800000UV);
-+		if (ret < 0) {
-+			dev_err(rinfo->dev,
-+				"Failed to set voltage %lu of pad %s: %d\n",
-+				vdata->min_uV, rinfo->pads_cfg->name, ret);
-+			return ret;
-+		}
-+		break;
-+
-+	case REGULATOR_EVENT_ABORT_VOLTAGE_CHANGE:
-+		io_volt_uv = (unsigned long)data;
-+		io_volt = (io_volt_uv <= TEGRA_IO_PAD_1800000UV_UPPER_LIMIT) ?
-+			   TEGRA_IO_PAD_1800000UV : TEGRA_IO_PAD_3300000UV;
-+		ret = tegra_io_pad_set_voltage(rinfo->pads_cfg->pad_id,
-+					       io_volt);
-+		if (ret < 0) {
-+			dev_err(rinfo->dev,
-+				"Failed to set voltage %lu of pad %s: %d\n",
-+				io_volt_uv, rinfo->pads_cfg->name, ret);
-+			return ret;
-+		}
-+		break;
-+
-+	default:
-+		break;
-+	}
-+
-+	return NOTIFY_OK;
-+}
-+
-+static int tegra_iop_pinctrl_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	const struct platform_device_id *id = platform_get_device_id(pdev);
-+	const struct tegra_io_pad_soc_data *soc_data;
-+	struct device_node *np_parent = pdev->dev.parent->of_node;
-+	struct tegra_io_pads_info *tiopi;
 +	int ret, i;
 +
-+	if (!np_parent) {
-+		dev_err(dev, "PMC should be register from DT\n");
-+		return -ENODEV;
-+	}
++	if (!pmc->soc->num_sub_devs)
++		return 0;
 +
-+	soc_data = (const struct tegra_io_pad_soc_data *)id->driver_data;
-+
-+	tiopi = devm_kzalloc(dev, sizeof(*tiopi), GFP_KERNEL);
-+	if (!tiopi)
++	pmc->plat_subdevs = devm_kzalloc(pmc->dev, pmc->soc->num_sub_devs *
++					 sizeof(**pmc->plat_subdevs),
++					 GFP_KERNEL);
++	if (!pmc->plat_subdevs)
 +		return -ENOMEM;
 +
-+	tiopi->rinfo = devm_kzalloc(dev, sizeof(*tiopi->rinfo) *
-+				    soc_data->num_pads_cfg, GFP_KERNEL);
-+	if (!tiopi->rinfo)
-+		return -ENOMEM;
-+
-+	tiopi->dev = &pdev->dev;
-+	pdev->dev.of_node = np_parent;
-+	tiopi->soc_data = soc_data;
-+
-+	for (i = 0; i < soc_data->num_pads_cfg; ++i) {
-+		struct tegra_io_pads_regulator_info *rinfo = tiopi->rinfo + i;
-+		const struct tegra_io_pads_cfg_info *pads_cfg =
-+							&soc_data->pads_cfg[i];
-+		struct regulator *regulator;
-+		int io_volt_uv;
-+		enum tegra_io_pad_voltage io_volt;
-+
-+		if (!pads_cfg->vsupply)
-+			continue;
-+
-+		regulator = devm_regulator_get_optional(dev, pads_cfg->vsupply);
-+		if (IS_ERR(regulator)) {
-+			ret = PTR_ERR(regulator);
-+			if (ret == -EPROBE_DEFER)
-+				return ret;
-+			continue;
++	for (i = 0; i < pmc->soc->num_sub_devs; ++i) {
++		pmc->plat_subdevs[i] = platform_device_register_data(pmc->dev,
++						pmc->soc->sub_devs_name[i],
++						0, NULL, 0);
++		if (IS_ERR(pmc->plat_subdevs[i])) {
++			ret = PTR_ERR(pmc->plat_subdevs[i]);
++			dev_err(pmc->dev,
++				"Failed to register platform device for %s: %d\n",
++				pmc->soc->sub_devs_name[i], ret);
++			goto pdev_cleanups;
 +		}
-+
-+		io_volt_uv = regulator_get_voltage(regulator);
-+		if (io_volt_uv < 0) {
-+			dev_err(dev, "Failed to get voltage for rail %s: %d\n",
-+				pads_cfg->vsupply, io_volt_uv);
-+			return ret;
-+		}
-+
-+		io_volt = (io_volt_uv <= TEGRA_IO_PAD_1800000UV_UPPER_LIMIT) ?
-+			   TEGRA_IO_PAD_1800000UV : TEGRA_IO_PAD_3300000UV;
-+
-+		ret = tegra_io_pad_set_voltage(pads_cfg->pad_id, io_volt);
-+		if (ret < 0) {
-+			dev_err(dev, "Failed to set voltage %d of pad %s: %d\n",
-+				io_volt_uv, pads_cfg->name, ret);
-+			return ret;
-+		}
-+		rinfo->dev = tiopi->dev;
-+		rinfo->regulator = regulator;
-+		rinfo->pads_cfg = pads_cfg;
-+
-+		rinfo->regulator_nb.notifier_call =
-+					tegra_io_pads_rail_change_notify_cb;
-+		ret = devm_regulator_register_notifier(regulator,
-+						       &rinfo->regulator_nb);
-+		if (ret < 0) {
-+			dev_err(dev, "Failed to register regulator %s notifier: %d\n",
-+				pads_cfg->name, ret);
-+			return ret;
-+		}
-+	}
-+
-+	tegra_iop_pinctrl_desc.pins = tiopi->soc_data->pins_desc;
-+	tegra_iop_pinctrl_desc.npins = tiopi->soc_data->num_pins_desc;
-+	platform_set_drvdata(pdev, tiopi);
-+
-+	tiopi->pctl = devm_pinctrl_register(dev, &tegra_iop_pinctrl_desc,
-+					    tiopi);
-+	if (IS_ERR(tiopi->pctl)) {
-+		ret = PTR_ERR(tiopi->pctl);
-+		dev_err(dev, "Failed to register io-pad pinctrl driver: %d\n",
-+			ret);
-+		return ret;
 +	}
 +
 +	return 0;
-+}
 +
-+#define TEGRA124_PAD_INFO_TABLE(_entry_)			\
-+	_entry_(0, "audio", AUDIO, true, NULL),			\
-+	_entry_(1, "bb", BB, true, NULL),			\
-+	_entry_(2, "cam", CAM, true, NULL),			\
-+	_entry_(3, "comp", COMP, true, NULL),			\
-+	_entry_(4, "csia", CSIA, true, NULL),			\
-+	_entry_(5, "csib", CSIB, true, NULL),			\
-+	_entry_(6, "csie", CSIE, true, NULL),			\
-+	_entry_(7, "dsi", DSI, true, NULL),			\
-+	_entry_(8, "dsib", DSIB, true, NULL),			\
-+	_entry_(9, "dsic", DSIC, true, NULL),			\
-+	_entry_(10, "dsid", DSID, true, NULL),			\
-+	_entry_(11, "hdmi", HDMI, true, NULL),			\
-+	_entry_(12, "hsic", HSIC, true, NULL),			\
-+	_entry_(13, "hv", HV, true, NULL),			\
-+	_entry_(14, "lvds", LVDS, true, NULL),			\
-+	_entry_(15, "mipi-bias", MIPI_BIAS, true, NULL),	\
-+	_entry_(16, "nand", NAND, true, NULL),			\
-+	_entry_(17, "pex-bias", PEX_BIAS, true, NULL),		\
-+	_entry_(18, "pex-clk1", PEX_CLK1, true, NULL),		\
-+	_entry_(19, "pex-clk2", PEX_CLK2, true, NULL),		\
-+	_entry_(20, "pex-ctrl", PEX_CNTRL, true, NULL),		\
-+	_entry_(21, "sdmmc1", SDMMC1, true, NULL),		\
-+	_entry_(22, "sdmmc3", SDMMC3, true, NULL),		\
-+	_entry_(23, "sdmmc4", SDMMC4, true, NULL),		\
-+	_entry_(24, "sys-ddc", SYS_DDC, true, NULL),		\
-+	_entry_(25, "uart", UART, true, NULL),			\
-+	_entry_(26, "usb0", USB0, true, NULL),			\
-+	_entry_(27, "usb1", USB1, true, NULL),			\
-+	_entry_(28, "usb2", USB2, true, NULL),			\
-+	_entry_(29, "usb-bias", USB_BIAS, true, NULL)
-+
-+#define TEGRA210_PAD_INFO_TABLE(_entry_)			\
-+	_entry_(0, "audio", AUDIO, true, "vddio-audio"),	\
-+	_entry_(1, "audio-hv", AUDIO_HV, true, "vddio-audio-hv"), \
-+	_entry_(2, "cam", CAM, true, "vddio-cam"),		\
-+	_entry_(3, "csia", CSIA, true, NULL),			\
-+	_entry_(4, "csib", CSIB, true, NULL),			\
-+	_entry_(5, "csic", CSIC, true, NULL),			\
-+	_entry_(6, "csid", CSID, true, NULL),			\
-+	_entry_(7, "csie", CSIE, true, NULL),			\
-+	_entry_(8, "csif", CSIF, true, NULL),			\
-+	_entry_(9, "dbg", DBG, true, "vddio-dbg"),		\
-+	_entry_(10, "debug-nonao", DEBUG_NONAO, true, NULL),	\
-+	_entry_(11, "dmic", DMIC, true, "vddio-dmic"),		\
-+	_entry_(12, "dp", DP, true, NULL),			\
-+	_entry_(13, "dsi", DSI, true, NULL),			\
-+	_entry_(14, "dsib", DSIB, true, NULL),			\
-+	_entry_(15, "dsic", DSIC, true, NULL),			\
-+	_entry_(16, "dsid", DSID, true, NULL),			\
-+	_entry_(17, "emmc", SDMMC4, true, NULL),		\
-+	_entry_(18, "emmc2", EMMC2, true, NULL),		\
-+	_entry_(19, "gpio", GPIO, true, "vddio-gpio"),		\
-+	_entry_(20, "hdmi", HDMI, true, NULL),			\
-+	_entry_(21, "hsic", HSIC, true, NULL),			\
-+	_entry_(22, "lvds", LVDS, true, NULL),			\
-+	_entry_(23, "mipi-bias", MIPI_BIAS, true, NULL),	\
-+	_entry_(24, "pex-bias", PEX_BIAS, true, NULL),		\
-+	_entry_(25, "pex-clk1", PEX_CLK1, true, NULL),		\
-+	_entry_(26, "pex-clk2", PEX_CLK2, true, NULL),		\
-+	_entry_(27, "pex-ctrl", PEX_CNTRL, false, "vddio-pex-ctrl"), \
-+	_entry_(28, "sdmmc1", SDMMC1, true, "vddio-sdmmc1"),	\
-+	_entry_(29, "sdmmc3", SDMMC3, true, "vddio-sdmmc3"),	\
-+	_entry_(30, "spi", SPI, true, "vddio-spi"),		\
-+	_entry_(31, "spi-hv", SPI_HV, true, "vddio-spi-hv"),	\
-+	_entry_(32, "uart", UART, true, "vddio-uart"),		\
-+	_entry_(33, "usb0", USB0, true, NULL),			\
-+	_entry_(34, "usb1", USB1, true, NULL),			\
-+	_entry_(35, "usb2", USB2, true, NULL),			\
-+	_entry_(36, "usb3", USB3, true, NULL),			\
-+	_entry_(37, "usb-bias", USB_BIAS, true, NULL)
-+
-+#define TEGRA_IO_PAD_INFO(_id, _name, _pad_id, _lpstate, _vsupply)	\
-+	{								\
-+		.name = _name,						\
-+		.pins = {(_id)},					\
-+		.pad_id = TEGRA_IO_PAD_##_pad_id,			\
-+		.vsupply = (_vsupply),				\
-+		.support_low_power_state = (_lpstate),			\
++pdev_cleanups:
++	while (--i >= 0) {
++		platform_device_unregister(pmc->plat_subdevs[i]);
++		pmc->plat_subdevs[i] = NULL;
 +	}
 +
-+static const struct tegra_io_pads_cfg_info tegra124_io_pads_cfg_info[] = {
-+	TEGRA124_PAD_INFO_TABLE(TEGRA_IO_PAD_INFO),
++	return ret;
++}
++
+ static int tegra_pmc_probe(struct platform_device *pdev)
+ {
+ 	void __iomem *base;
+@@ -1426,6 +1468,11 @@ static int tegra_pmc_probe(struct platform_device *pdev)
+ 		return err;
+ 	}
+ 
++	err = tegra_pmc_init_sub_devs(pmc);
++	if (err < 0)
++		dev_warn(pmc->dev, "Failed to register PMC sub devices: %d\n",
++			 err);
++
+ 	mutex_lock(&pmc->powergates_lock);
+ 	iounmap(pmc->base);
+ 	pmc->base = base;
+@@ -1608,6 +1655,10 @@ static const struct tegra_io_pad_soc tegra124_io_pads[] = {
+ 	{ .id = TEGRA_IO_PAD_USB_BIAS, .dpd = 12, .voltage = UINT_MAX },
+ };
+ 
++static const char *tegra124_sub_devs_name[] = {
++	"pinctrl-t124-io-pad",
 +};
 +
-+static const struct tegra_io_pads_cfg_info tegra210_io_pads_cfg_info[] = {
-+	TEGRA210_PAD_INFO_TABLE(TEGRA_IO_PAD_INFO),
+ static const struct tegra_pmc_soc tegra124_pmc_soc = {
+ 	.num_powergates = ARRAY_SIZE(tegra124_powergates),
+ 	.powergates = tegra124_powergates,
+@@ -1617,6 +1668,8 @@ static const struct tegra_pmc_soc tegra124_pmc_soc = {
+ 	.has_gpu_clamps = true,
+ 	.num_io_pads = ARRAY_SIZE(tegra124_io_pads),
+ 	.io_pads = tegra124_io_pads,
++	.sub_devs_name = tegra124_sub_devs_name,
++	.num_sub_devs = ARRAY_SIZE(tegra124_sub_devs_name),
+ };
+ 
+ static const char * const tegra210_powergates[] = {
+@@ -1694,6 +1747,10 @@ static const struct tegra_io_pad_soc tegra210_io_pads[] = {
+ 	{ .id = TEGRA_IO_PAD_USB_BIAS, .dpd = 12, .voltage = UINT_MAX },
+ };
+ 
++static const char *tegra210_sub_devs_name[] = {
++	"pinctrl-t210-io-pad",
 +};
 +
-+#define TEGRA_IO_PAD_DESC(_id, _name, _pad_id, _lpstate, _vsupply)	\
-+	PINCTRL_PIN(_id, _name)
-+
-+static const struct pinctrl_pin_desc tegra124_io_pads_pinctrl_desc[] = {
-+	TEGRA124_PAD_INFO_TABLE(TEGRA_IO_PAD_DESC),
-+};
-+
-+static const struct pinctrl_pin_desc tegra210_io_pads_pinctrl_desc[] = {
-+	TEGRA210_PAD_INFO_TABLE(TEGRA_IO_PAD_DESC),
-+};
-+
-+static const struct tegra_io_pad_soc_data tegra124_io_pad_soc_data = {
-+	.pins_desc	= tegra124_io_pads_pinctrl_desc,
-+	.num_pins_desc	= ARRAY_SIZE(tegra124_io_pads_pinctrl_desc),
-+	.pads_cfg	= tegra124_io_pads_cfg_info,
-+	.num_pads_cfg	= ARRAY_SIZE(tegra124_io_pads_cfg_info),
-+};
-+
-+static const struct tegra_io_pad_soc_data tegra210_io_pad_soc_data = {
-+	.pins_desc	= tegra210_io_pads_pinctrl_desc,
-+	.num_pins_desc	= ARRAY_SIZE(tegra210_io_pads_pinctrl_desc),
-+	.pads_cfg	= tegra210_io_pads_cfg_info,
-+	.num_pads_cfg	= ARRAY_SIZE(tegra210_io_pads_cfg_info),
-+};
-+
-+static const struct platform_device_id tegra_io_pads_dev_id[] = {
-+	{
-+		.name = "pinctrl-t124-io-pad",
-+		.driver_data = (kernel_ulong_t)&tegra124_io_pad_soc_data,
-+	}, {
-+		.name = "pinctrl-t210-io-pad",
-+		.driver_data = (kernel_ulong_t)&tegra210_io_pad_soc_data,
-+	}, {
-+	},
-+};
-+MODULE_DEVICE_TABLE(platform, tegra_io_pads_dev_id);
-+
-+static struct platform_driver tegra_iop_pinctrl_driver = {
-+	.driver		= {
-+		.name	= "pinctrl-tegra-io-pad",
-+	},
-+	.probe		= tegra_iop_pinctrl_probe,
-+	.id_table	= tegra_io_pads_dev_id,
-+};
-+
-+module_platform_driver(tegra_iop_pinctrl_driver);
-+
-+MODULE_DESCRIPTION("NVIDIA TEGRA IO pad Control Driver");
-+MODULE_AUTHOR("Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>");
-+MODULE_LICENSE("GPL v2");
+ static const struct tegra_pmc_soc tegra210_pmc_soc = {
+ 	.num_powergates = ARRAY_SIZE(tegra210_powergates),
+ 	.powergates = tegra210_powergates,
+@@ -1703,6 +1760,8 @@ static const struct tegra_pmc_soc tegra210_pmc_soc = {
+ 	.has_gpu_clamps = true,
+ 	.num_io_pads = ARRAY_SIZE(tegra210_io_pads),
+ 	.io_pads = tegra210_io_pads,
++	.sub_devs_name = tegra210_sub_devs_name,
++	.num_sub_devs = ARRAY_SIZE(tegra210_sub_devs_name),
+ };
+ 
+ static const struct of_device_id tegra_pmc_match[] = {
 -- 
 2.1.4
-
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
