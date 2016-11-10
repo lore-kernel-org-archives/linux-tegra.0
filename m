@@ -1,77 +1,538 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH 0/8] Host1x IOMMU support + VIC support
-Date: Thu, 10 Nov 2016 20:23:37 +0200
-Message-ID: <20161110182345.31777-1-mperttunen@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: thierry.reding@gmail.com
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH 4/8] drm/tegra: Add VIC support
+Date: Thu, 10 Nov 2016 20:23:41 +0200
+Message-ID: <20161110182345.31777-5-mperttunen@nvidia.com>
+References: <20161110182345.31777-1-mperttunen@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20161110182345.31777-1-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-VGhpcyBzZXJpZXMgYWRkcyBJT01NVSBzdXBwb3J0IHRvIEhvc3QxeCBhbmQgVGVncmFEUk0KYW5k
-IGFkZHMgc3VwcG9ydCBmb3IgdGhlIFZJQyBob3N0MXggY2xpZW50IHNvIHRoYXQKaG9zdDF4IGNh
-biBiZSB0ZXN0ZWQgb24gbW9kZXJuIFRlZ3JhIHBsYXRmb3Jtcy4KSXQgZGVwZW5kcyBvbiB0aGUg
-cHJldmlvdXMgZml4IHNlcmllcy4gVGhlIHdob2xlIHRoaW5nCihtb2R1bG8gcGF0Y2ggb3JkZXIp
-IGlzIGF2YWlsYWJsZSBhcyBhIGdpdCByZXBvc2l0b3J5IGF0CmdpdDovL2dpdGh1Yi5jb20vY3lu
-ZGlzL2xpbnV4LmdpdDsgYnJhbmNoIHZpYy12MS4KCklPIG1lbW9yeSBtYW5hZ2VtZW50IGlzIG9y
-Z2FuaXplZCBzdWNoIHRoYXQgdGhlcmUgYXJlCnR3byBkb21haW5zOiB0aGUgaG9zdDF4IGRvbWFp
-biBhbmQgdGhlIHRlZ3JhZHJtIGRvbWFpbi4KVGhlIGhvc3QxeCBkb21haW4gaXMgdXNlZCBieSB0
-aGUgaG9zdDF4IGVuZ2luZSBhbmQKY29udGFpbnMgdGhlIGhvc3QxeCBDRE1BIGFuZCBwdXNoYnVm
-ZmVycyBmb3Igc3VibWl0dGVkCmpvYnMuCgpUaGUgdGVncmFkcm0gZG9tYWluIGlzIHNoYXJlZCBi
-eSBhbGwgaG9zdDF4IHVuaXRzIGFuZApjb250YWlucyBHRU0gb2JqZWN0cyBhbmQgbWVtb3J5IGFs
-bG9jYXRlZCBieSB0aGUKc2VwYXJhdGUgdGVncmFfZHJtX2FsbG9jIGZ1bmN0aW9uLiBUaGlzIGZ1
-bmN0aW9uIGlzCmN1cnJlbnRseSB1c2VkIHRvIGFsbG9jYXRlIHNwYWNlIGZvciBmaXJtd2FyZSBi
-bG9icwppbiB0aGUgdGVncmFkcm0gZG9tYWluLgoKQSB1c2Vyc3BhY2UgdGVzdCBjYXNlIGZvciBW
-SUMgY2FuIGJlIGZvdW5kIGF0Cmh0dHBzOi8vZ2l0aHViLmNvbS9jeW5kaXMvZHJtL3RyZWUvd29y
-ay90ZWdyYS4KVGhlIHRlc3RjYXNlIGlzIGluIHRlc3RzL3RlZ3JhIGFuZCBpcyBjYWxsZWQgc3Vi
-bWl0X3ZpYy4KVGhlIGluLWtlcm5lbCBmaXJld2FsbCBpcyBub3QgaW1wbGVtZW50ZWQgZm9yIFZJ
-QzsKdGhlcmVmb3JlLCBJT01NVSBtdXN0IGJlIGVuYWJsZWQgZm9yIHRoZSB0ZXN0IHRvIHBhc3Mu
-CgpUZXN0ZWQgd2l0aCBKZXRzb24gVFgxIChUMjEwKS4gUHJvYmFibHkgd29ya3MgYWxzbwp3aXRo
-IEpldHNvbiBUSzEgKFQxMjQpLiBOb3RlIHRoYXQgZHVlIHRvIGhhcmR3YXJlIGNoYW5nZXMKdGhl
-IHRlc3RjYXNlIGFsc28gbmVlZHMgdG8gYmUgY2hhbmdlZCB0byBydW4gcHJvcGVybHkKb24gVDEy
-NC4KClRoYW5rcywKICBNaWtrby4KCkFydG8gTWVyaWxhaW5lbiAoMik6CiAgZHJtL3RlZ3JhOiBB
-ZGQgZmFsY29uIGhlbHBlciBsaWJyYXJ5CiAgZHJtL3RlZ3JhOiBBZGQgVklDIHN1cHBvcnQKCk1p
-a2tvIFBlcnR0dW5lbiAoNik6CiAgZHJtL3RlZ3JhOiBBZGQgVGVncmEgRFJNIGFsbG9jYXRpb24g
-QVBJCiAgZHJtL3RlZ3JhOiBBbGxvY2F0ZSBCT3MgZnJvbSBsb3dlciA0RyB3aGVuIHdpdGhvdXQg
-SU9NTVUKICBncHU6IGhvc3QxeDogQWRkIElPTU1VIHN1cHBvcnQKICBkdC1iaW5kaW5nczogQWRk
-IGJpbmRpbmdzIGZvciB0aGUgVGVncmEgVklDCiAgYXJtNjQ6IHRlZ3JhOiBFbmFibGUgVklDIG9u
-IFQyMTAKICBhcm02NDogdGVncmE6IEVuYWJsZSBJT01NVSBmb3IgSG9zdDF4IG9uIFRlZ3JhMjEw
-CgogLi4uL2Rpc3BsYXkvdGVncmEvbnZpZGlhLHRlZ3JhMjAtaG9zdDF4LnR4dCAgICAgICAgfCAg
-MTMgKwogYXJjaC9hcm02NC9ib290L2R0cy9udmlkaWEvdGVncmEyMTAuZHRzaSAgICAgICAgICAg
-fCAgMTkgKy0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9NYWtlZmlsZSAgICAgICAgICAgICAgICAg
-ICAgIHwgICA0ICstCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgICAgICAgICAgICAgICAg
-ICAgICAgICB8IDEwMSArKysrKy0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uaCAgICAgICAg
-ICAgICAgICAgICAgICAgIHwgICA4ICsKIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9mYWxjb24uYyAg
-ICAgICAgICAgICAgICAgICAgIHwgMjU2ICsrKysrKysrKysrKysKIGRyaXZlcnMvZ3B1L2RybS90
-ZWdyYS9mYWxjb24uaCAgICAgICAgICAgICAgICAgICAgIHwgMTMwICsrKysrKysKIGRyaXZlcnMv
-Z3B1L2RybS90ZWdyYS9nZW0uYyAgICAgICAgICAgICAgICAgICAgICAgIHwgICAyICstCiBkcml2
-ZXJzL2dwdS9kcm0vdGVncmEvdmljLmMgICAgICAgICAgICAgICAgICAgICAgICB8IDQwMCArKysr
-KysrKysrKysrKysrKysrKysKIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS92aWMuaCAgICAgICAgICAg
-ICAgICAgICAgICAgIHwgIDMxICsrCiBkcml2ZXJzL2dwdS9ob3N0MXgvY2RtYS5jICAgICAgICAg
-ICAgICAgICAgICAgICAgICB8ICA2NSArKystCiBkcml2ZXJzL2dwdS9ob3N0MXgvY2RtYS5oICAg
-ICAgICAgICAgICAgICAgICAgICAgICB8ICAgNCArLQogZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5j
-ICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgMzkgKy0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9k
-ZXYuaCAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICA1ICsKIGRyaXZlcnMvZ3B1L2hvc3Qx
-eC9ody9jZG1hX2h3LmMgICAgICAgICAgICAgICAgICAgIHwgIDEwICstCiBkcml2ZXJzL2dwdS9o
-b3N0MXgvam9iLmMgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICA3NiArKystCiBkcml2ZXJz
-L2dwdS9ob3N0MXgvam9iLmggICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgMSArCiBpbmNs
-dWRlL2xpbnV4L2hvc3QxeC5oICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgMSArCiAx
-OCBmaWxlcyBjaGFuZ2VkLCAxMTI4IGluc2VydGlvbnMoKyksIDM3IGRlbGV0aW9ucygtKQogY3Jl
-YXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9mYWxjb24uYwogY3JlYXRlIG1v
-ZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9mYWxjb24uaAogY3JlYXRlIG1vZGUgMTAw
-NjQ0IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS92aWMuYwogY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZl
-cnMvZ3B1L2RybS90ZWdyYS92aWMuaAoKLS0gCjIuMTAuMgoKX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
-ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
-aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+From: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+This patch adds support for Video Image Compositor engine which
+can be used for 2d operations.
+
+Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/gpu/drm/tegra/Makefile |   3 +-
+ drivers/gpu/drm/tegra/drm.c    |   3 +
+ drivers/gpu/drm/tegra/drm.h    |   1 +
+ drivers/gpu/drm/tegra/vic.c    | 400 +++++++++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/tegra/vic.h    |  31 ++++
+ include/linux/host1x.h         |   1 +
+ 6 files changed, 438 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpu/drm/tegra/vic.c
+ create mode 100644 drivers/gpu/drm/tegra/vic.h
+
+diff --git a/drivers/gpu/drm/tegra/Makefile b/drivers/gpu/drm/tegra/Makefile
+index 93e9a4a..6af3a9a 100644
+--- a/drivers/gpu/drm/tegra/Makefile
++++ b/drivers/gpu/drm/tegra/Makefile
+@@ -14,6 +14,7 @@ tegra-drm-y := \
+ 	dpaux.o \
+ 	gr2d.o \
+ 	gr3d.o \
+-	falcon.o
++	falcon.o \
++	vic.o
+ 
+ obj-$(CONFIG_DRM_TEGRA) += tegra-drm.o
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index ecfe7ba..707404d 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -1151,11 +1151,13 @@ static const struct of_device_id host1x_drm_subdevs[] = {
+ 	{ .compatible = "nvidia,tegra124-sor", },
+ 	{ .compatible = "nvidia,tegra124-hdmi", },
+ 	{ .compatible = "nvidia,tegra124-dsi", },
++	{ .compatible = "nvidia,tegra124-vic", },
+ 	{ .compatible = "nvidia,tegra132-dsi", },
+ 	{ .compatible = "nvidia,tegra210-dc", },
+ 	{ .compatible = "nvidia,tegra210-dsi", },
+ 	{ .compatible = "nvidia,tegra210-sor", },
+ 	{ .compatible = "nvidia,tegra210-sor1", },
++	{ .compatible = "nvidia,tegra210-vic", },
+ 	{ /* sentinel */ }
+ };
+ 
+@@ -1177,6 +1179,7 @@ static struct platform_driver * const drivers[] = {
+ 	&tegra_sor_driver,
+ 	&tegra_gr2d_driver,
+ 	&tegra_gr3d_driver,
++	&tegra_vic_driver,
+ };
+ 
+ static int __init host1x_drm_init(void)
+diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+index f75b505..8efaaa4 100644
+--- a/drivers/gpu/drm/tegra/drm.h
++++ b/drivers/gpu/drm/tegra/drm.h
+@@ -292,5 +292,6 @@ extern struct platform_driver tegra_dpaux_driver;
+ extern struct platform_driver tegra_sor_driver;
+ extern struct platform_driver tegra_gr2d_driver;
+ extern struct platform_driver tegra_gr3d_driver;
++extern struct platform_driver tegra_vic_driver;
+ 
+ #endif /* HOST1X_DRM_H */
+diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
+new file mode 100644
+index 0000000..9eda5e5
+--- /dev/null
++++ b/drivers/gpu/drm/tegra/vic.c
+@@ -0,0 +1,400 @@
++/*
++ * Copyright (c) 2015, NVIDIA Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <linux/clk.h>
++#include <linux/host1x.h>
++#include <linux/iommu.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_device.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/pm_runtime.h>
++#include <linux/reset.h>
++
++#include <soc/tegra/pmc.h>
++
++#include "drm.h"
++#include "falcon.h"
++#include "vic.h"
++
++struct vic_config {
++	/* Firmware name */
++	const char *ucode_name;
++};
++
++struct vic {
++	struct falcon falcon;
++	bool booted;
++
++	void __iomem *regs;
++	struct tegra_drm_client client;
++	struct host1x_channel *channel;
++	struct iommu_domain *domain;
++	struct device *dev;
++	struct clk *clk;
++
++	/* Platform configuration */
++	const struct vic_config *config;
++};
++
++static inline struct vic *to_vic(struct tegra_drm_client *client)
++{
++	return container_of(client, struct vic, client);
++}
++
++static void vic_writel(struct vic *vic, u32 value, unsigned int offset)
++{
++	writel(value, vic->regs + offset);
++}
++
++static int vic_runtime_resume(struct device *dev)
++{
++	struct vic *vic = dev_get_drvdata(dev);
++
++	return clk_prepare_enable(vic->clk);
++}
++
++static int vic_runtime_suspend(struct device *dev)
++{
++	struct vic *vic = dev_get_drvdata(dev);
++
++	clk_disable_unprepare(vic->clk);
++
++	vic->booted = false;
++
++	return 0;
++}
++
++static int vic_boot(struct vic *vic)
++{
++	u32 fce_ucode_size, fce_bin_data_offset;
++	void *hdr;
++	int err = 0;
++
++	if (vic->booted)
++		return 0;
++
++	if (!vic->falcon.firmware.valid) {
++		err = falcon_read_firmware(&vic->falcon,
++					   vic->config->ucode_name);
++		if (err < 0)
++			return err;
++	}
++
++	/* setup clockgating registers */
++	vic_writel(vic, CG_IDLE_CG_DLY_CNT(4) |
++			CG_IDLE_CG_EN |
++			CG_WAKEUP_DLY_CNT(4),
++		   NV_PVIC_MISC_PRI_VIC_CG);
++
++	err = falcon_boot(&vic->falcon);
++	if (err < 0)
++		return err;
++
++	hdr = vic->falcon.firmware.vaddr;
++	fce_bin_data_offset = *(u32 *)(hdr + VIC_UCODE_FCE_DATA_OFFSET);
++	hdr = vic->falcon.firmware.vaddr +
++		*(u32 *)(hdr + VIC_UCODE_FCE_HEADER_OFFSET);
++	fce_ucode_size = *(u32 *)(hdr + FCE_UCODE_SIZE_OFFSET);
++
++	falcon_execute_method(&vic->falcon, VIC_SET_APPLICATION_ID, 1);
++	falcon_execute_method(&vic->falcon, VIC_SET_FCE_UCODE_SIZE,
++			      fce_ucode_size);
++	falcon_execute_method(&vic->falcon, VIC_SET_FCE_UCODE_OFFSET,
++			      (vic->falcon.firmware.paddr + fce_bin_data_offset)
++				>> 8);
++
++	err = falcon_wait_idle(&vic->falcon);
++	if (err < 0) {
++		dev_err(vic->dev,
++			"failed to set application ID and FCE base\n");
++		return err;
++	}
++
++	vic->booted = true;
++
++	return 0;
++}
++
++static void *vic_falcon_alloc(struct falcon *falcon, size_t size,
++			       dma_addr_t *iova)
++{
++	struct tegra_drm *tegra = falcon->data;
++
++	return tegra_drm_alloc(tegra, size, iova);
++}
++
++static void vic_falcon_free(struct falcon *falcon, size_t size,
++			    dma_addr_t iova, void *va)
++{
++	struct tegra_drm *tegra = falcon->data;
++
++	return tegra_drm_free(tegra, size, va, iova);
++}
++
++static const struct falcon_ops vic_falcon_ops = {
++	.alloc = vic_falcon_alloc,
++	.free = vic_falcon_free
++};
++
++static int vic_init(struct host1x_client *client)
++{
++	struct tegra_drm_client *drm = host1x_to_drm_client(client);
++	struct drm_device *dev = dev_get_drvdata(client->parent);
++	struct tegra_drm *tegra = dev->dev_private;
++	struct vic *vic = to_vic(drm);
++	int err;
++
++	if (tegra->domain) {
++		err = iommu_attach_device(tegra->domain, vic->dev);
++		if (err < 0) {
++			dev_err(vic->dev, "failed to attach to domain: %d\n",
++				err);
++			return err;
++		}
++
++		vic->domain = tegra->domain;
++	}
++
++	vic->falcon.dev = vic->dev;
++	vic->falcon.regs = vic->regs;
++	vic->falcon.data = tegra;
++	vic->falcon.ops = &vic_falcon_ops;
++	err = falcon_init(&vic->falcon);
++	if (err < 0)
++		goto detach_device;
++
++	vic->channel = host1x_channel_request(client->dev);
++	if (!vic->channel) {
++		err = -ENOMEM;
++		goto exit_falcon;
++	}
++
++	client->syncpts[0] = host1x_syncpt_request(client->dev, 0);
++	if (!client->syncpts[0]) {
++		err = -ENOMEM;
++		goto free_channel;
++	}
++
++	err = tegra_drm_register_client(tegra, drm);
++	if (err < 0)
++		goto free_syncpt;
++
++	return 0;
++
++free_syncpt:
++	host1x_syncpt_free(client->syncpts[0]);
++free_channel:
++	host1x_channel_free(vic->channel);
++exit_falcon:
++	falcon_exit(&vic->falcon);
++detach_device:
++	if (tegra->domain)
++		iommu_detach_device(tegra->domain, vic->dev);
++
++	return err;
++}
++
++static int vic_exit(struct host1x_client *client)
++{
++	struct tegra_drm_client *drm = host1x_to_drm_client(client);
++	struct drm_device *dev = dev_get_drvdata(client->parent);
++	struct tegra_drm *tegra = dev->dev_private;
++	struct vic *vic = to_vic(drm);
++	int err;
++
++	err = tegra_drm_unregister_client(tegra, drm);
++	if (err < 0)
++		return err;
++
++	host1x_syncpt_free(client->syncpts[0]);
++	host1x_channel_free(vic->channel);
++
++	falcon_exit(&vic->falcon);
++
++	if (vic->domain) {
++		iommu_detach_device(vic->domain, vic->dev);
++		vic->domain = NULL;
++	}
++
++	return 0;
++}
++
++static const struct host1x_client_ops vic_client_ops = {
++	.init = vic_init,
++	.exit = vic_exit,
++};
++
++static int vic_open_channel(struct tegra_drm_client *client,
++			    struct tegra_drm_context *context)
++{
++	struct vic *vic = to_vic(client);
++	int err;
++
++	err = pm_runtime_get_sync(vic->dev);
++	if (err < 0)
++		return err;
++
++	/*
++	 * Try to boot the Falcon microcontroller. Booting is deferred until
++	 * here because the firmware might not yet be available during system
++	 * boot, for example if it's on remote storage.
++	 */
++	err = vic_boot(vic);
++	if (err < 0) {
++		pm_runtime_put(vic->dev);
++		return err;
++	}
++
++	context->channel = host1x_channel_get(vic->channel);
++	if (!context->channel) {
++		pm_runtime_put(vic->dev);
++		return -ENOMEM;
++	}
++
++	return 0;
++}
++
++static void vic_close_channel(struct tegra_drm_context *context)
++{
++	struct vic *vic = to_vic(context->client);
++
++	host1x_channel_put(context->channel);
++
++	pm_runtime_put(vic->dev);
++}
++
++static const struct tegra_drm_client_ops vic_ops = {
++	.open_channel = vic_open_channel,
++	.close_channel = vic_close_channel,
++	.submit = tegra_drm_submit,
++};
++
++static const struct vic_config vic_t124_config = {
++	.ucode_name = "nvidia/tegra124/vic03_ucode.bin",
++};
++
++static const struct vic_config vic_t210_config = {
++	.ucode_name = "nvidia/tegra210/vic04_ucode.bin",
++};
++
++static const struct of_device_id vic_match[] = {
++	{ .compatible = "nvidia,tegra124-vic", .data = &vic_t124_config },
++	{ .compatible = "nvidia,tegra210-vic", .data = &vic_t210_config },
++	{ },
++};
++
++static int vic_probe(struct platform_device *pdev)
++{
++	struct vic_config *vic_config = NULL;
++	struct device *dev = &pdev->dev;
++	struct host1x_syncpt **syncpts;
++	struct resource *regs;
++	const struct of_device_id *match;
++	struct vic *vic;
++	int err;
++
++	match = of_match_device(vic_match, dev);
++	vic_config = (struct vic_config *)match->data;
++
++	vic = devm_kzalloc(dev, sizeof(*vic), GFP_KERNEL);
++	if (!vic)
++		return -ENOMEM;
++
++	syncpts = devm_kzalloc(dev, sizeof(*syncpts), GFP_KERNEL);
++	if (!syncpts)
++		return -ENOMEM;
++
++	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!regs) {
++		dev_err(&pdev->dev, "failed to get registers\n");
++		return -ENXIO;
++	}
++
++	vic->regs = devm_ioremap_resource(dev, regs);
++	if (IS_ERR(vic->regs))
++		return PTR_ERR(vic->regs);
++
++	vic->clk = devm_clk_get(dev, NULL);
++	if (IS_ERR(vic->clk)) {
++		dev_err(&pdev->dev, "failed to get clock\n");
++		return PTR_ERR(vic->clk);
++	}
++
++	platform_set_drvdata(pdev, vic);
++
++	INIT_LIST_HEAD(&vic->client.base.list);
++	vic->client.base.ops = &vic_client_ops;
++	vic->client.base.dev = dev;
++	vic->client.base.class = HOST1X_CLASS_VIC;
++	vic->client.base.syncpts = syncpts;
++	vic->client.base.num_syncpts = 1;
++	vic->dev = dev;
++	vic->config = vic_config;
++
++	INIT_LIST_HEAD(&vic->client.list);
++	vic->client.ops = &vic_ops;
++
++	err = host1x_client_register(&vic->client.base);
++	if (err < 0) {
++		dev_err(dev, "failed to register host1x client: %d\n", err);
++		platform_set_drvdata(pdev, NULL);
++		return err;
++	}
++
++	pm_runtime_enable(&pdev->dev);
++	if (!pm_runtime_enabled(&pdev->dev)) {
++		err = vic_runtime_resume(&pdev->dev);
++		if (err < 0)
++			goto unregister_client;
++	}
++
++	dev_info(&pdev->dev, "initialized");
++
++	return 0;
++
++unregister_client:
++	host1x_client_unregister(&vic->client.base);
++
++	return err;
++}
++
++static int vic_remove(struct platform_device *pdev)
++{
++	struct vic *vic = platform_get_drvdata(pdev);
++	int err;
++
++	err = host1x_client_unregister(&vic->client.base);
++	if (err < 0) {
++		dev_err(&pdev->dev, "failed to unregister host1x client: %d\n",
++			err);
++		return err;
++	}
++
++	if (pm_runtime_enabled(&pdev->dev))
++		pm_runtime_disable(&pdev->dev);
++	else
++		vic_runtime_suspend(&pdev->dev);
++
++	return 0;
++}
++
++static const struct dev_pm_ops vic_pm_ops = {
++	SET_RUNTIME_PM_OPS(vic_runtime_suspend, vic_runtime_resume, NULL)
++};
++
++struct platform_driver tegra_vic_driver = {
++	.driver = {
++		.name = "tegra-vic",
++		.of_match_table = vic_match,
++		.pm = &vic_pm_ops
++	},
++	.probe = vic_probe,
++	.remove = vic_remove,
++};
+diff --git a/drivers/gpu/drm/tegra/vic.h b/drivers/gpu/drm/tegra/vic.h
+new file mode 100644
+index 0000000..2184481
+--- /dev/null
++++ b/drivers/gpu/drm/tegra/vic.h
+@@ -0,0 +1,31 @@
++/*
++ * Copyright (c) 2015, NVIDIA Corporation.
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#ifndef TEGRA_VIC_H
++#define TEGRA_VIC_H
++
++/* VIC methods */
++
++#define VIC_SET_APPLICATION_ID			0x00000200
++#define VIC_SET_FCE_UCODE_SIZE			0x0000071C
++#define VIC_SET_FCE_UCODE_OFFSET		0x0000072C
++
++/* VIC registers */
++
++#define NV_PVIC_MISC_PRI_VIC_CG			0x000016d0
++#define CG_IDLE_CG_DLY_CNT(val)			((val & 0x3f) << 0)
++#define CG_IDLE_CG_EN				(1 << 6)
++#define CG_WAKEUP_DLY_CNT(val)			((val & 0xf) << 16)
++
++/* Firmware offsets */
++
++#define VIC_UCODE_FCE_HEADER_OFFSET		(6*4)
++#define VIC_UCODE_FCE_DATA_OFFSET		(7*4)
++#define FCE_UCODE_SIZE_OFFSET			(2*4)
++
++#endif /* TEGRA_VIC_H */
+diff --git a/include/linux/host1x.h b/include/linux/host1x.h
+index 1ffbf2a..3d04aa1 100644
+--- a/include/linux/host1x.h
++++ b/include/linux/host1x.h
+@@ -26,6 +26,7 @@ enum host1x_class {
+ 	HOST1X_CLASS_HOST1X = 0x1,
+ 	HOST1X_CLASS_GR2D = 0x51,
+ 	HOST1X_CLASS_GR2D_SB = 0x52,
++	HOST1X_CLASS_VIC = 0x5D,
+ 	HOST1X_CLASS_GR3D = 0x60,
+ };
+ 
+-- 
+2.10.2
