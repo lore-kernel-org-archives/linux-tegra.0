@@ -1,52 +1,29 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH 6/8] dt-bindings: Add bindings for the Tegra VIC
-Date: Thu, 10 Nov 2016 20:23:43 +0200
-Message-ID: <20161110182345.31777-7-mperttunen@nvidia.com>
-References: <20161110182345.31777-1-mperttunen@nvidia.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [PATCH -next] clk: tegra: dfll: Use builtin_platform_driver to
+ simplify the code
+Date: Thu, 10 Nov 2016 14:08:49 -0800
+Message-ID: <20161110220849.GH16026@codeaurora.org>
+References: <1478791224-21510-1-git-send-email-weiyj.lk@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20161110182345.31777-1-mperttunen@nvidia.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: thierry.reding@gmail.com
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-clk-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <1478791224-21510-1-git-send-email-weiyj.lk@gmail.com>
+Sender: linux-clk-owner@vger.kernel.org
+To: Wei Yongjun <weiyj.lk@gmail.com>
+Cc: Peter De Schrijver <pdeschrijver@nvidia.com>, Prashant Gaikwad <pgaikwad@nvidia.com>, Michael Turquette <mturquette@baylibre.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Wei Yongjun <weiyongjun1@huawei.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-VGhlIFZJQyAoVmlkZW8gSW1hZ2UgQ29tcG9zaXRvcikgaXMgYSBIb3N0MXggY2xpZW50IHVuaXQK
-dGhhdCBjYW4gZG8gdmFyaW91cyAyRCBjb21wb3NpdGlvbiBhbmQgdHJhbnNmb3JtIG9wZXJhdGlv
-bnMuCgpTaWduZWQtb2ZmLWJ5OiBNaWtrbyBQZXJ0dHVuZW4gPG1wZXJ0dHVuZW5AbnZpZGlhLmNv
-bT4KLS0tCiAuLi4vYmluZGluZ3MvZGlzcGxheS90ZWdyYS9udmlkaWEsdGVncmEyMC1ob3N0MXgu
-dHh0ICAgICAgICB8IDEzICsrKysrKysrKysrKysKIDEgZmlsZSBjaGFuZ2VkLCAxMyBpbnNlcnRp
-b25zKCspCgpkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Rp
-c3BsYXkvdGVncmEvbnZpZGlhLHRlZ3JhMjAtaG9zdDF4LnR4dCBiL0RvY3VtZW50YXRpb24vZGV2
-aWNldHJlZS9iaW5kaW5ncy9kaXNwbGF5L3RlZ3JhL252aWRpYSx0ZWdyYTIwLWhvc3QxeC50eHQK
-aW5kZXggMGZhZDdlZC4uNzRlMWU4YSAxMDA2NDQKLS0tIGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0
-cmVlL2JpbmRpbmdzL2Rpc3BsYXkvdGVncmEvbnZpZGlhLHRlZ3JhMjAtaG9zdDF4LnR4dAorKysg
-Yi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvZGlzcGxheS90ZWdyYS9udmlkaWEs
-dGVncmEyMC1ob3N0MXgudHh0CkBAIC0yNDksNiArMjQ5LDE5IEBAIG9mIHRoZSBmb2xsb3dpbmcg
-aG9zdDF4IGNsaWVudCBtb2R1bGVzOgogICBTZWUgLi4vcGluY3RybC9udmlkaWEsdGVncmExMjQt
-ZHBhdXgtcGFkY3RsLnR4dCBmb3IgaW5mb3JtYXRpb24KICAgcmVnYXJkaW5nIHRoZSBEUEFVWCBw
-YWQgY29udHJvbGxlciBiaW5kaW5ncy4KIAorLSB2aWM6IFZpZGVvIEltYWdlIENvbXBvc2l0b3IK
-KyAgLSBjb21wYXRpYmxlIDogIm52aWRpYSx0ZWdyYTxjaGlwPi12aWMiCisgIC0gcmVnOiBQaHlz
-aWNhbCBiYXNlIGFkZHJlc3MgYW5kIGxlbmd0aCBvZiB0aGUgY29udHJvbGxlcidzIHJlZ2lzdGVy
-cy4KKyAgLSBpbnRlcnJ1cHRzOiBUaGUgaW50ZXJydXB0IG91dHB1dHMgZnJvbSB0aGUgY29udHJv
-bGxlci4KKyAgLSBjbG9ja3M6IE11c3QgY29udGFpbiBhbiBlbnRyeSBmb3IgZWFjaCBlbnRyeSBp
-biBjbG9jay1uYW1lcy4KKyAgICBTZWUgLi4vY2xvY2tzL2Nsb2NrLWJpbmRpbmdzLnR4dCBmb3Ig
-ZGV0YWlscy4KKyAgLSBjbG9jay1uYW1lczogTXVzdCBpbmNsdWRlIHRoZSBmb2xsb3dpbmcgZW50
-cmllczoKKyAgICAtIHZpYzogY2xvY2sgaW5wdXQgZm9yIHRoZSBWSUMgaGFyZHdhcmUKKyAgLSBy
-ZXNldHM6IE11c3QgY29udGFpbiBhbiBlbnRyeSBmb3IgZWFjaCBlbnRyeSBpbiByZXNldC1uYW1l
-cy4KKyAgICBTZWUgLi4vcmVzZXQvcmVzZXQudHh0IGZvciBkZXRhaWxzLgorICAtIHJlc2V0LW5h
-bWVzOiBNdXN0IGluY2x1ZGUgdGhlIGZvbGxvd2luZyBlbnRyaWVzOgorICAgIC0gdmljCisKIEV4
-YW1wbGU6CiAKIC8gewotLSAKMi4xMC4yCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5m
-cmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0
-aW5mby9kcmktZGV2ZWwK
+On 11/10, Wei Yongjun wrote:
+> From: Wei Yongjun <weiyongjun1@huawei.com>
+> 
+> Use the builtin_platform_driver() macro to make the code simpler.
+> 
+> Signed-off-by: Wei Yongjun <weiyongjun1@huawei.com>
+> ---
+
+Applied to clk-next
+
+-- 
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
