@@ -1,7 +1,7 @@
 From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH 4/8] drm/tegra: Add VIC support
-Date: Thu, 10 Nov 2016 20:23:41 +0200
-Message-ID: <20161110182345.31777-5-mperttunen@nvidia.com>
+Subject: [PATCH 3/8] drm/tegra: Add falcon helper library
+Date: Thu, 10 Nov 2016 20:23:40 +0200
+Message-ID: <20161110182345.31777-4-mperttunen@nvidia.com>
 References: <20161110182345.31777-1-mperttunen@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20161110182345.31777-1-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
@@ -12,79 +12,45 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-This patch adds support for Video Image Compositor engine which
-can be used for 2d operations.
+Add a set of falcon helper routines for use by the tegradrm client drivers
+of the various falcon-based engines.
+
+The falcon is a microcontroller that acts as a frontend for the rest of a
+particular Tegra engine.  In order to properly utilize these engines, the
+frontend must be booted before pushing any commands.
+
+Based on work by Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
 Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
  drivers/gpu/drm/tegra/Makefile |   3 +-
- drivers/gpu/drm/tegra/drm.c    |   3 +
- drivers/gpu/drm/tegra/drm.h    |   1 +
- drivers/gpu/drm/tegra/vic.c    | 400 +++++++++++++++++++++++++++++++++++++++++
- drivers/gpu/drm/tegra/vic.h    |  31 ++++
- include/linux/host1x.h         |   1 +
- 6 files changed, 438 insertions(+), 1 deletion(-)
- create mode 100644 drivers/gpu/drm/tegra/vic.c
- create mode 100644 drivers/gpu/drm/tegra/vic.h
+ drivers/gpu/drm/tegra/falcon.c | 256 +++++++++++++++++++++++++++++++++++++++++
+ drivers/gpu/drm/tegra/falcon.h | 130 +++++++++++++++++++++
+ 3 files changed, 388 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpu/drm/tegra/falcon.c
+ create mode 100644 drivers/gpu/drm/tegra/falcon.h
 
 diff --git a/drivers/gpu/drm/tegra/Makefile b/drivers/gpu/drm/tegra/Makefile
-index 93e9a4a..6af3a9a 100644
+index 2c66a8d..93e9a4a 100644
 --- a/drivers/gpu/drm/tegra/Makefile
 +++ b/drivers/gpu/drm/tegra/Makefile
-@@ -14,6 +14,7 @@ tegra-drm-y := \
+@@ -13,6 +13,7 @@ tegra-drm-y := \
+ 	sor.o \
  	dpaux.o \
  	gr2d.o \
- 	gr3d.o \
--	falcon.o
-+	falcon.o \
-+	vic.o
+-	gr3d.o
++	gr3d.o \
++	falcon.o
  
  obj-$(CONFIG_DRM_TEGRA) += tegra-drm.o
-diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index ecfe7ba..707404d 100644
---- a/drivers/gpu/drm/tegra/drm.c
-+++ b/drivers/gpu/drm/tegra/drm.c
-@@ -1151,11 +1151,13 @@ static const struct of_device_id host1x_drm_subdevs[] = {
- 	{ .compatible = "nvidia,tegra124-sor", },
- 	{ .compatible = "nvidia,tegra124-hdmi", },
- 	{ .compatible = "nvidia,tegra124-dsi", },
-+	{ .compatible = "nvidia,tegra124-vic", },
- 	{ .compatible = "nvidia,tegra132-dsi", },
- 	{ .compatible = "nvidia,tegra210-dc", },
- 	{ .compatible = "nvidia,tegra210-dsi", },
- 	{ .compatible = "nvidia,tegra210-sor", },
- 	{ .compatible = "nvidia,tegra210-sor1", },
-+	{ .compatible = "nvidia,tegra210-vic", },
- 	{ /* sentinel */ }
- };
- 
-@@ -1177,6 +1179,7 @@ static struct platform_driver * const drivers[] = {
- 	&tegra_sor_driver,
- 	&tegra_gr2d_driver,
- 	&tegra_gr3d_driver,
-+	&tegra_vic_driver,
- };
- 
- static int __init host1x_drm_init(void)
-diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-index f75b505..8efaaa4 100644
---- a/drivers/gpu/drm/tegra/drm.h
-+++ b/drivers/gpu/drm/tegra/drm.h
-@@ -292,5 +292,6 @@ extern struct platform_driver tegra_dpaux_driver;
- extern struct platform_driver tegra_sor_driver;
- extern struct platform_driver tegra_gr2d_driver;
- extern struct platform_driver tegra_gr3d_driver;
-+extern struct platform_driver tegra_vic_driver;
- 
- #endif /* HOST1X_DRM_H */
-diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
+diff --git a/drivers/gpu/drm/tegra/falcon.c b/drivers/gpu/drm/tegra/falcon.c
 new file mode 100644
-index 0000000..9eda5e5
+index 0000000..180b2fd
 --- /dev/null
-+++ b/drivers/gpu/drm/tegra/vic.c
-@@ -0,0 +1,400 @@
++++ b/drivers/gpu/drm/tegra/falcon.c
+@@ -0,0 +1,256 @@
 +/*
 + * Copyright (c) 2015, NVIDIA Corporation.
 + *
@@ -93,404 +59,260 @@ index 0000000..9eda5e5
 + * published by the Free Software Foundation.
 + */
 +
-+#include <linux/clk.h>
-+#include <linux/host1x.h>
-+#include <linux/iommu.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/of_platform.h>
 +#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/reset.h>
++#include <linux/dma-mapping.h>
++#include <linux/firmware.h>
++#include <linux/pci_ids.h>
++#include <linux/iopoll.h>
 +
-+#include <soc/tegra/pmc.h>
-+
-+#include "drm.h"
 +#include "falcon.h"
-+#include "vic.h"
++#include "drm.h"
 +
-+struct vic_config {
-+	/* Firmware name */
-+	const char *ucode_name;
++#define FALCON_IDLE_TIMEOUT_US		100000
++#define FALCON_IDLE_CHECK_PERIOD_US	10
++
++enum falcon_memory {
++	FALCON_MEMORY_IMEM,
++	FALCON_MEMORY_DATA,
 +};
 +
-+struct vic {
-+	struct falcon falcon;
-+	bool booted;
-+
-+	void __iomem *regs;
-+	struct tegra_drm_client client;
-+	struct host1x_channel *channel;
-+	struct iommu_domain *domain;
-+	struct device *dev;
-+	struct clk *clk;
-+
-+	/* Platform configuration */
-+	const struct vic_config *config;
-+};
-+
-+static inline struct vic *to_vic(struct tegra_drm_client *client)
++static void falcon_writel(struct falcon *falcon, u32 value, u32 offset)
 +{
-+	return container_of(client, struct vic, client);
++	writel(value, falcon->regs + offset);
 +}
 +
-+static void vic_writel(struct vic *vic, u32 value, unsigned int offset)
++int falcon_wait_idle(struct falcon *falcon)
 +{
-+	writel(value, vic->regs + offset);
++	u32 idlestate;
++
++	return readl_poll_timeout(falcon->regs + FALCON_IDLESTATE, idlestate,
++				  (!idlestate),
++				  FALCON_IDLE_CHECK_PERIOD_US,
++				  FALCON_IDLE_TIMEOUT_US);
 +}
 +
-+static int vic_runtime_resume(struct device *dev)
++static int falcon_dma_wait_idle(struct falcon *falcon)
 +{
-+	struct vic *vic = dev_get_drvdata(dev);
++	u32 dmatrfcmd;
 +
-+	return clk_prepare_enable(vic->clk);
++	return readl_poll_timeout(falcon->regs + FALCON_DMATRFCMD, dmatrfcmd,
++				  (dmatrfcmd & FALCON_DMATRFCMD_IDLE),
++				  FALCON_IDLE_CHECK_PERIOD_US,
++				  FALCON_IDLE_TIMEOUT_US);
 +}
 +
-+static int vic_runtime_suspend(struct device *dev)
++static int falcon_copy_chunk(struct falcon *falcon,
++			     phys_addr_t base,
++			     unsigned long offset,
++			     enum falcon_memory target)
 +{
-+	struct vic *vic = dev_get_drvdata(dev);
++	u32 cmd = FALCON_DMATRFCMD_SIZE_256B;
 +
-+	clk_disable_unprepare(vic->clk);
++	if (target == FALCON_MEMORY_IMEM)
++		cmd |= FALCON_DMATRFCMD_IMEM;
 +
-+	vic->booted = false;
++	falcon_writel(falcon, offset, FALCON_DMATRFMOFFS);
++	falcon_writel(falcon, base, FALCON_DMATRFFBOFFS);
++	falcon_writel(falcon, cmd, FALCON_DMATRFCMD);
++
++	return falcon_dma_wait_idle(falcon);
++}
++
++static void falcon_copy_firmware_image(struct falcon *falcon,
++				       const struct firmware *firmware)
++{
++	u32 *firmware_vaddr = falcon->firmware.vaddr;
++	size_t i;
++
++	/* copy the whole thing taking into account endianness */
++	for (i = 0; i < firmware->size / sizeof(u32); i++)
++		firmware_vaddr[i] = le32_to_cpu(((u32 *)firmware->data)[i]);
++
++	/* ensure that caches are flushed and falcon can see the firmware */
++	dma_sync_single_for_device(falcon->dev, virt_to_phys(firmware_vaddr),
++				   falcon->firmware.size, DMA_TO_DEVICE);
++}
++
++static int falcon_parse_firmware_image(struct falcon *falcon)
++{
++	struct falcon_firmware_bin_header_v1 *bin_header =
++		(void *)falcon->firmware.vaddr;
++	struct falcon_firmware_os_header_v1 *os_header;
++
++	/* endian problems would show up right here */
++	if (bin_header->bin_magic != PCI_VENDOR_ID_NVIDIA) {
++		dev_err(falcon->dev, "failed to get firmware magic");
++		return -EINVAL;
++	}
++
++	/* currently only version 1 is supported */
++	if (bin_header->bin_ver != 1) {
++		dev_err(falcon->dev, "unsupported firmware version");
++		return -EINVAL;
++	}
++
++	/* check that the firmware size is consistent */
++	if (bin_header->bin_size > falcon->firmware.size) {
++		dev_err(falcon->dev, "firmware image size inconsistency");
++		return -EINVAL;
++	}
++
++	os_header = (falcon->firmware.vaddr +
++		 bin_header->os_bin_header_offset);
++
++	falcon->firmware.bin_data.size = bin_header->os_bin_size;
++	falcon->firmware.bin_data.offset = bin_header->os_bin_data_offset;
++	falcon->firmware.code.offset = os_header->os_code_offset;
++	falcon->firmware.code.size   = os_header->os_code_size;
++	falcon->firmware.data.offset = os_header->os_data_offset;
++	falcon->firmware.data.size   = os_header->os_data_size;
 +
 +	return 0;
 +}
 +
-+static int vic_boot(struct vic *vic)
++int falcon_read_firmware(struct falcon *falcon, const char *firmware_name)
 +{
-+	u32 fce_ucode_size, fce_bin_data_offset;
-+	void *hdr;
-+	int err = 0;
++	const struct firmware *firmware;
++	int err;
 +
-+	if (vic->booted)
++	if (falcon->firmware.valid)
 +		return 0;
 +
-+	if (!vic->falcon.firmware.valid) {
-+		err = falcon_read_firmware(&vic->falcon,
-+					   vic->config->ucode_name);
-+		if (err < 0)
-+			return err;
-+	}
-+
-+	/* setup clockgating registers */
-+	vic_writel(vic, CG_IDLE_CG_DLY_CNT(4) |
-+			CG_IDLE_CG_EN |
-+			CG_WAKEUP_DLY_CNT(4),
-+		   NV_PVIC_MISC_PRI_VIC_CG);
-+
-+	err = falcon_boot(&vic->falcon);
-+	if (err < 0)
-+		return err;
-+
-+	hdr = vic->falcon.firmware.vaddr;
-+	fce_bin_data_offset = *(u32 *)(hdr + VIC_UCODE_FCE_DATA_OFFSET);
-+	hdr = vic->falcon.firmware.vaddr +
-+		*(u32 *)(hdr + VIC_UCODE_FCE_HEADER_OFFSET);
-+	fce_ucode_size = *(u32 *)(hdr + FCE_UCODE_SIZE_OFFSET);
-+
-+	falcon_execute_method(&vic->falcon, VIC_SET_APPLICATION_ID, 1);
-+	falcon_execute_method(&vic->falcon, VIC_SET_FCE_UCODE_SIZE,
-+			      fce_ucode_size);
-+	falcon_execute_method(&vic->falcon, VIC_SET_FCE_UCODE_OFFSET,
-+			      (vic->falcon.firmware.paddr + fce_bin_data_offset)
-+				>> 8);
-+
-+	err = falcon_wait_idle(&vic->falcon);
++	err = request_firmware(&firmware, firmware_name, falcon->dev);
 +	if (err < 0) {
-+		dev_err(vic->dev,
-+			"failed to set application ID and FCE base\n");
++		dev_err(falcon->dev, "failed to get firmware\n");
 +		return err;
 +	}
 +
-+	vic->booted = true;
++	falcon->firmware.size = firmware->size;
 +
-+	return 0;
-+}
-+
-+static void *vic_falcon_alloc(struct falcon *falcon, size_t size,
-+			       dma_addr_t *iova)
-+{
-+	struct tegra_drm *tegra = falcon->data;
-+
-+	return tegra_drm_alloc(tegra, size, iova);
-+}
-+
-+static void vic_falcon_free(struct falcon *falcon, size_t size,
-+			    dma_addr_t iova, void *va)
-+{
-+	struct tegra_drm *tegra = falcon->data;
-+
-+	return tegra_drm_free(tegra, size, va, iova);
-+}
-+
-+static const struct falcon_ops vic_falcon_ops = {
-+	.alloc = vic_falcon_alloc,
-+	.free = vic_falcon_free
-+};
-+
-+static int vic_init(struct host1x_client *client)
-+{
-+	struct tegra_drm_client *drm = host1x_to_drm_client(client);
-+	struct drm_device *dev = dev_get_drvdata(client->parent);
-+	struct tegra_drm *tegra = dev->dev_private;
-+	struct vic *vic = to_vic(drm);
-+	int err;
-+
-+	if (tegra->domain) {
-+		err = iommu_attach_device(tegra->domain, vic->dev);
-+		if (err < 0) {
-+			dev_err(vic->dev, "failed to attach to domain: %d\n",
-+				err);
-+			return err;
-+		}
-+
-+		vic->domain = tegra->domain;
-+	}
-+
-+	vic->falcon.dev = vic->dev;
-+	vic->falcon.regs = vic->regs;
-+	vic->falcon.data = tegra;
-+	vic->falcon.ops = &vic_falcon_ops;
-+	err = falcon_init(&vic->falcon);
-+	if (err < 0)
-+		goto detach_device;
-+
-+	vic->channel = host1x_channel_request(client->dev);
-+	if (!vic->channel) {
++	/* allocate iova space for the firmware */
++	falcon->firmware.vaddr = falcon->ops->alloc(falcon, firmware->size,
++						 &falcon->firmware.paddr);
++	if (!falcon->firmware.vaddr) {
++		dev_err(falcon->dev, "dma memory mapping failed");
 +		err = -ENOMEM;
-+		goto exit_falcon;
++		goto err_alloc_firmware;
 +	}
 +
-+	client->syncpts[0] = host1x_syncpt_request(client->dev, 0);
-+	if (!client->syncpts[0]) {
-+		err = -ENOMEM;
-+		goto free_channel;
++	/* copy firmware image into local area. this also ensures endianness */
++	falcon_copy_firmware_image(falcon, firmware);
++
++	/* parse the image data */
++	err = falcon_parse_firmware_image(falcon);
++	if (err < 0) {
++		dev_err(falcon->dev, "failed to parse firmware image\n");
++		goto err_setup_firmware_image;
 +	}
 +
-+	err = tegra_drm_register_client(tegra, drm);
-+	if (err < 0)
-+		goto free_syncpt;
++	falcon->firmware.valid = true;
++
++	release_firmware(firmware);
 +
 +	return 0;
 +
-+free_syncpt:
-+	host1x_syncpt_free(client->syncpts[0]);
-+free_channel:
-+	host1x_channel_free(vic->channel);
-+exit_falcon:
-+	falcon_exit(&vic->falcon);
-+detach_device:
-+	if (tegra->domain)
-+		iommu_detach_device(tegra->domain, vic->dev);
++err_setup_firmware_image:
++	falcon->ops->free(falcon, falcon->firmware.size,
++			  falcon->firmware.paddr, falcon->firmware.vaddr);
++err_alloc_firmware:
++	release_firmware(firmware);
 +
 +	return err;
 +}
 +
-+static int vic_exit(struct host1x_client *client)
++int falcon_init(struct falcon *falcon)
 +{
-+	struct tegra_drm_client *drm = host1x_to_drm_client(client);
-+	struct drm_device *dev = dev_get_drvdata(client->parent);
-+	struct tegra_drm *tegra = dev->dev_private;
-+	struct vic *vic = to_vic(drm);
-+	int err;
++	/* check mandatory ops */
++	if (!falcon->ops || !falcon->ops->alloc || !falcon->ops->free)
++		return -EINVAL;
 +
-+	err = tegra_drm_unregister_client(tegra, drm);
-+	if (err < 0)
-+		return err;
-+
-+	host1x_syncpt_free(client->syncpts[0]);
-+	host1x_channel_free(vic->channel);
-+
-+	falcon_exit(&vic->falcon);
-+
-+	if (vic->domain) {
-+		iommu_detach_device(vic->domain, vic->dev);
-+		vic->domain = NULL;
-+	}
++	falcon->firmware.valid = false;
 +
 +	return 0;
 +}
 +
-+static const struct host1x_client_ops vic_client_ops = {
-+	.init = vic_init,
-+	.exit = vic_exit,
-+};
-+
-+static int vic_open_channel(struct tegra_drm_client *client,
-+			    struct tegra_drm_context *context)
++void falcon_exit(struct falcon *falcon)
 +{
-+	struct vic *vic = to_vic(client);
-+	int err;
++	if (!falcon->firmware.valid)
++		return;
 +
-+	err = pm_runtime_get_sync(vic->dev);
-+	if (err < 0)
-+		return err;
++	falcon->ops->free(falcon, falcon->firmware.size,
++			  falcon->firmware.paddr,
++			  falcon->firmware.vaddr);
++	falcon->firmware.valid = false;
++}
 +
-+	/*
-+	 * Try to boot the Falcon microcontroller. Booting is deferred until
-+	 * here because the firmware might not yet be available during system
-+	 * boot, for example if it's on remote storage.
-+	 */
-+	err = vic_boot(vic);
++int falcon_boot(struct falcon *falcon)
++{
++	unsigned long offset;
++	int err = 0;
++
++	if (!falcon->firmware.valid)
++		return -EINVAL;
++
++	falcon_writel(falcon, 0, FALCON_DMACTL);
++
++	/* setup the address of the binary data. Falcon can access it later */
++	falcon_writel(falcon, (falcon->firmware.paddr +
++			       falcon->firmware.bin_data.offset) >> 8,
++		      FALCON_DMATRFBASE);
++
++	/* copy the data segment into Falcon internal memory */
++	for (offset = 0; offset < falcon->firmware.data.size; offset += 256)
++		falcon_copy_chunk(falcon,
++				  falcon->firmware.data.offset + offset,
++				  offset, FALCON_MEMORY_DATA);
++
++	/* copy the first code segment into Falcon internal memory */
++	falcon_copy_chunk(falcon, falcon->firmware.code.offset,
++			  0, FALCON_MEMORY_IMEM);
++
++	/* setup falcon interrupts */
++	falcon_writel(falcon, FALCON_IRQMSET_EXT(0xff) |
++			      FALCON_IRQMSET_SWGEN1 |
++			      FALCON_IRQMSET_SWGEN0 |
++			      FALCON_IRQMSET_EXTERR |
++			      FALCON_IRQMSET_HALT |
++			      FALCON_IRQMSET_WDTMR,
++		      FALCON_IRQMSET);
++	falcon_writel(falcon, FALCON_IRQDEST_EXT(0xff) |
++			      FALCON_IRQDEST_SWGEN1 |
++			      FALCON_IRQDEST_SWGEN0 |
++			      FALCON_IRQDEST_EXTERR |
++			      FALCON_IRQDEST_HALT,
++		      FALCON_IRQDEST);
++
++	/* enable interface */
++	falcon_writel(falcon, FALCON_ITFEN_MTHDEN |
++			      FALCON_ITFEN_CTXEN,
++		      FALCON_ITFEN);
++
++	/* boot falcon */
++	falcon_writel(falcon, 0x00000000, FALCON_BOOTVEC);
++	falcon_writel(falcon, FALCON_CPUCTL_STARTCPU, FALCON_CPUCTL);
++
++	err = falcon_wait_idle(falcon);
 +	if (err < 0) {
-+		pm_runtime_put(vic->dev);
++		dev_err(falcon->dev, "falcon boot failed due to timeout");
 +		return err;
 +	}
 +
-+	context->channel = host1x_channel_get(vic->channel);
-+	if (!context->channel) {
-+		pm_runtime_put(vic->dev);
-+		return -ENOMEM;
-+	}
++	dev_info(falcon->dev, "falcon booted");
 +
 +	return 0;
 +}
 +
-+static void vic_close_channel(struct tegra_drm_context *context)
++void falcon_execute_method(struct falcon *falcon, u32 method, u32 data)
 +{
-+	struct vic *vic = to_vic(context->client);
-+
-+	host1x_channel_put(context->channel);
-+
-+	pm_runtime_put(vic->dev);
++	falcon_writel(falcon, method >> 2, FALCON_UCLASS_METHOD_OFFSET);
++	falcon_writel(falcon, data, FALCON_UCLASS_METHOD_DATA);
 +}
-+
-+static const struct tegra_drm_client_ops vic_ops = {
-+	.open_channel = vic_open_channel,
-+	.close_channel = vic_close_channel,
-+	.submit = tegra_drm_submit,
-+};
-+
-+static const struct vic_config vic_t124_config = {
-+	.ucode_name = "nvidia/tegra124/vic03_ucode.bin",
-+};
-+
-+static const struct vic_config vic_t210_config = {
-+	.ucode_name = "nvidia/tegra210/vic04_ucode.bin",
-+};
-+
-+static const struct of_device_id vic_match[] = {
-+	{ .compatible = "nvidia,tegra124-vic", .data = &vic_t124_config },
-+	{ .compatible = "nvidia,tegra210-vic", .data = &vic_t210_config },
-+	{ },
-+};
-+
-+static int vic_probe(struct platform_device *pdev)
-+{
-+	struct vic_config *vic_config = NULL;
-+	struct device *dev = &pdev->dev;
-+	struct host1x_syncpt **syncpts;
-+	struct resource *regs;
-+	const struct of_device_id *match;
-+	struct vic *vic;
-+	int err;
-+
-+	match = of_match_device(vic_match, dev);
-+	vic_config = (struct vic_config *)match->data;
-+
-+	vic = devm_kzalloc(dev, sizeof(*vic), GFP_KERNEL);
-+	if (!vic)
-+		return -ENOMEM;
-+
-+	syncpts = devm_kzalloc(dev, sizeof(*syncpts), GFP_KERNEL);
-+	if (!syncpts)
-+		return -ENOMEM;
-+
-+	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!regs) {
-+		dev_err(&pdev->dev, "failed to get registers\n");
-+		return -ENXIO;
-+	}
-+
-+	vic->regs = devm_ioremap_resource(dev, regs);
-+	if (IS_ERR(vic->regs))
-+		return PTR_ERR(vic->regs);
-+
-+	vic->clk = devm_clk_get(dev, NULL);
-+	if (IS_ERR(vic->clk)) {
-+		dev_err(&pdev->dev, "failed to get clock\n");
-+		return PTR_ERR(vic->clk);
-+	}
-+
-+	platform_set_drvdata(pdev, vic);
-+
-+	INIT_LIST_HEAD(&vic->client.base.list);
-+	vic->client.base.ops = &vic_client_ops;
-+	vic->client.base.dev = dev;
-+	vic->client.base.class = HOST1X_CLASS_VIC;
-+	vic->client.base.syncpts = syncpts;
-+	vic->client.base.num_syncpts = 1;
-+	vic->dev = dev;
-+	vic->config = vic_config;
-+
-+	INIT_LIST_HEAD(&vic->client.list);
-+	vic->client.ops = &vic_ops;
-+
-+	err = host1x_client_register(&vic->client.base);
-+	if (err < 0) {
-+		dev_err(dev, "failed to register host1x client: %d\n", err);
-+		platform_set_drvdata(pdev, NULL);
-+		return err;
-+	}
-+
-+	pm_runtime_enable(&pdev->dev);
-+	if (!pm_runtime_enabled(&pdev->dev)) {
-+		err = vic_runtime_resume(&pdev->dev);
-+		if (err < 0)
-+			goto unregister_client;
-+	}
-+
-+	dev_info(&pdev->dev, "initialized");
-+
-+	return 0;
-+
-+unregister_client:
-+	host1x_client_unregister(&vic->client.base);
-+
-+	return err;
-+}
-+
-+static int vic_remove(struct platform_device *pdev)
-+{
-+	struct vic *vic = platform_get_drvdata(pdev);
-+	int err;
-+
-+	err = host1x_client_unregister(&vic->client.base);
-+	if (err < 0) {
-+		dev_err(&pdev->dev, "failed to unregister host1x client: %d\n",
-+			err);
-+		return err;
-+	}
-+
-+	if (pm_runtime_enabled(&pdev->dev))
-+		pm_runtime_disable(&pdev->dev);
-+	else
-+		vic_runtime_suspend(&pdev->dev);
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops vic_pm_ops = {
-+	SET_RUNTIME_PM_OPS(vic_runtime_suspend, vic_runtime_resume, NULL)
-+};
-+
-+struct platform_driver tegra_vic_driver = {
-+	.driver = {
-+		.name = "tegra-vic",
-+		.of_match_table = vic_match,
-+		.pm = &vic_pm_ops
-+	},
-+	.probe = vic_probe,
-+	.remove = vic_remove,
-+};
-diff --git a/drivers/gpu/drm/tegra/vic.h b/drivers/gpu/drm/tegra/vic.h
+diff --git a/drivers/gpu/drm/tegra/falcon.h b/drivers/gpu/drm/tegra/falcon.h
 new file mode 100644
-index 0000000..2184481
+index 0000000..56284b9
 --- /dev/null
-+++ b/drivers/gpu/drm/tegra/vic.h
-@@ -0,0 +1,31 @@
++++ b/drivers/gpu/drm/tegra/falcon.h
+@@ -0,0 +1,130 @@
 +/*
 + * Copyright (c) 2015, NVIDIA Corporation.
 + *
@@ -499,40 +321,127 @@ index 0000000..2184481
 + * published by the Free Software Foundation.
 + */
 +
-+#ifndef TEGRA_VIC_H
-+#define TEGRA_VIC_H
++#ifndef _FALCON_H_
++#define _FALCON_H_
 +
-+/* VIC methods */
++#include <linux/types.h>
 +
-+#define VIC_SET_APPLICATION_ID			0x00000200
-+#define VIC_SET_FCE_UCODE_SIZE			0x0000071C
-+#define VIC_SET_FCE_UCODE_OFFSET		0x0000072C
++#define FALCON_UCLASS_METHOD_OFFSET		0x00000040
 +
-+/* VIC registers */
++#define FALCON_UCLASS_METHOD_DATA		0x00000044
 +
-+#define NV_PVIC_MISC_PRI_VIC_CG			0x000016d0
-+#define CG_IDLE_CG_DLY_CNT(val)			((val & 0x3f) << 0)
-+#define CG_IDLE_CG_EN				(1 << 6)
-+#define CG_WAKEUP_DLY_CNT(val)			((val & 0xf) << 16)
++#define FALCON_IRQMSET				0x00001010
++#define FALCON_IRQMSET_WDTMR			(1 << 1)
++#define FALCON_IRQMSET_HALT			(1 << 4)
++#define FALCON_IRQMSET_EXTERR			(1 << 5)
++#define FALCON_IRQMSET_SWGEN0			(1 << 6)
++#define FALCON_IRQMSET_SWGEN1			(1 << 7)
++#define FALCON_IRQMSET_EXT(v)			(((v) & 0xff) << 8)
 +
-+/* Firmware offsets */
++#define FALCON_IRQDEST				0x0000101c
++#define FALCON_IRQDEST_HALT			(1 << 4)
++#define FALCON_IRQDEST_EXTERR			(1 << 5)
++#define FALCON_IRQDEST_SWGEN0			(1 << 6)
++#define FALCON_IRQDEST_SWGEN1			(1 << 7)
++#define FALCON_IRQDEST_EXT(v)			(((v) & 0xff) << 8)
 +
-+#define VIC_UCODE_FCE_HEADER_OFFSET		(6*4)
-+#define VIC_UCODE_FCE_DATA_OFFSET		(7*4)
-+#define FCE_UCODE_SIZE_OFFSET			(2*4)
++#define FALCON_ITFEN				0x00001048
++#define FALCON_ITFEN_CTXEN			(1 << 0)
++#define FALCON_ITFEN_MTHDEN			(1 << 1)
 +
-+#endif /* TEGRA_VIC_H */
-diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index 1ffbf2a..3d04aa1 100644
---- a/include/linux/host1x.h
-+++ b/include/linux/host1x.h
-@@ -26,6 +26,7 @@ enum host1x_class {
- 	HOST1X_CLASS_HOST1X = 0x1,
- 	HOST1X_CLASS_GR2D = 0x51,
- 	HOST1X_CLASS_GR2D_SB = 0x52,
-+	HOST1X_CLASS_VIC = 0x5D,
- 	HOST1X_CLASS_GR3D = 0x60,
- };
- 
++#define FALCON_IDLESTATE			0x0000104c
++
++#define FALCON_CPUCTL				0x00001100
++#define FALCON_CPUCTL_STARTCPU			(1 << 1)
++
++#define FALCON_BOOTVEC				0x00001104
++
++#define FALCON_DMACTL				0x0000110c
++#define FALCON_DMACTL_DMEM_SCRUBBING		(1 << 1)
++#define FALCON_DMACTL_IMEM_SCRUBBING		(1 << 2)
++
++#define FALCON_DMATRFBASE			0x00001110
++
++#define FALCON_DMATRFMOFFS			0x00001114
++
++#define FALCON_DMATRFCMD			0x00001118
++#define FALCON_DMATRFCMD_IDLE			(1 << 1)
++#define FALCON_DMATRFCMD_IMEM			(1 << 4)
++#define FALCON_DMATRFCMD_SIZE_256B		(6 << 8)
++
++#define FALCON_DMATRFFBOFFS			0x0000111c
++
++struct falcon_firmware_bin_header_v1 {
++	u32 bin_magic;		/* 0x10de */
++	u32 bin_ver;		/* cya, versioning of bin format (1) */
++	u32 bin_size;		/* entire image size including this header */
++	u32 os_bin_header_offset;
++	u32 os_bin_data_offset;
++	u32 os_bin_size;
++};
++
++struct falcon_firmware_os_app_v1 {
++	u32 offset;
++	u32 size;
++};
++
++struct falcon_firmware_os_header_v1 {
++	u32 os_code_offset;
++	u32 os_code_size;
++	u32 os_data_offset;
++	u32 os_data_size;
++	u32 num_apps;
++	struct falcon_firmware_os_app_v1 *app_code;
++	struct falcon_firmware_os_app_v1 *app_data;
++	u32 *os_ovl_offset;
++	u32 *os_ovl_size;
++};
++
++struct falcon;
++
++struct falcon_ops {
++	void *(*alloc)(struct falcon *falcon, size_t size,
++		       dma_addr_t *paddr);
++	void (*free)(struct falcon *falcon, size_t size,
++		     dma_addr_t paddr, void *vaddr);
++};
++
++struct falcon_firmware_section {
++	unsigned long offset;
++	size_t size;
++};
++
++struct falcon_firmware {
++	/* Raw firmware data */
++	dma_addr_t paddr;
++	void *vaddr;
++	size_t size;
++
++	/* Parsed firmware information */
++	struct falcon_firmware_section bin_data;
++	struct falcon_firmware_section data;
++	struct falcon_firmware_section code;
++
++	bool valid;
++};
++
++struct falcon {
++	/* Set by falcon client */
++	struct device *dev;
++	void __iomem *regs;
++	const struct falcon_ops *ops;
++	void *data;
++
++	struct falcon_firmware firmware;
++};
++
++int falcon_init(struct falcon *falcon);
++void falcon_exit(struct falcon *falcon);
++int falcon_read_firmware(struct falcon *falcon, const char *firmware_name);
++int falcon_boot(struct falcon *falcon);
++void falcon_execute_method(struct falcon *falcon, u32 method, u32 data);
++int falcon_wait_idle(struct falcon *falcon);
++
++#endif /* _FALCON_H_ */
 -- 
 2.10.2
