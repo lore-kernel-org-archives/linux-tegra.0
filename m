@@ -1,37 +1,77 @@
-From: Wei Yongjun <weiyj.lk-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH -next] clk: tegra: dfll: Use builtin_platform_driver to simplify the code
-Date: Thu, 10 Nov 2016 15:20:24 +0000
-Message-ID: <1478791224-21510-1-git-send-email-weiyj.lk@gmail.com>
+From: Mikko Perttunen <mperttunen@nvidia.com>
+Subject: [PATCH 0/8] Host1x IOMMU support + VIC support
+Date: Thu, 10 Nov 2016 20:23:37 +0200
+Message-ID: <20161110182345.31777-1-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Prashant Gaikwad <pgaikwad-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Michael Turquette <mturquette-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Wei Yongjun <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>, linux-clk-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: thierry.reding@gmail.com
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Wei Yongjun <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
-
-Use the builtin_platform_driver() macro to make the code simpler.
-
-Signed-off-by: Wei Yongjun <weiyongjun1-hv44wF8Li93QT0dZR+AlfA@public.gmane.org>
----
- drivers/clk/tegra/clk-tegra124-dfll-fcpu.c | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-index 4301569..ad1c1cc 100644
---- a/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-+++ b/drivers/clk/tegra/clk-tegra124-dfll-fcpu.c
-@@ -163,9 +163,4 @@ static struct platform_driver tegra124_dfll_fcpu_driver = {
- 		.pm = &tegra124_dfll_pm_ops,
- 	},
- };
--
--static int __init tegra124_dfll_fcpu_init(void)
--{
--	return platform_driver_register(&tegra124_dfll_fcpu_driver);
--}
--device_initcall(tegra124_dfll_fcpu_init);
-+builtin_platform_driver(tegra124_dfll_fcpu_driver);
+VGhpcyBzZXJpZXMgYWRkcyBJT01NVSBzdXBwb3J0IHRvIEhvc3QxeCBhbmQgVGVncmFEUk0KYW5k
+IGFkZHMgc3VwcG9ydCBmb3IgdGhlIFZJQyBob3N0MXggY2xpZW50IHNvIHRoYXQKaG9zdDF4IGNh
+biBiZSB0ZXN0ZWQgb24gbW9kZXJuIFRlZ3JhIHBsYXRmb3Jtcy4KSXQgZGVwZW5kcyBvbiB0aGUg
+cHJldmlvdXMgZml4IHNlcmllcy4gVGhlIHdob2xlIHRoaW5nCihtb2R1bG8gcGF0Y2ggb3JkZXIp
+IGlzIGF2YWlsYWJsZSBhcyBhIGdpdCByZXBvc2l0b3J5IGF0CmdpdDovL2dpdGh1Yi5jb20vY3lu
+ZGlzL2xpbnV4LmdpdDsgYnJhbmNoIHZpYy12MS4KCklPIG1lbW9yeSBtYW5hZ2VtZW50IGlzIG9y
+Z2FuaXplZCBzdWNoIHRoYXQgdGhlcmUgYXJlCnR3byBkb21haW5zOiB0aGUgaG9zdDF4IGRvbWFp
+biBhbmQgdGhlIHRlZ3JhZHJtIGRvbWFpbi4KVGhlIGhvc3QxeCBkb21haW4gaXMgdXNlZCBieSB0
+aGUgaG9zdDF4IGVuZ2luZSBhbmQKY29udGFpbnMgdGhlIGhvc3QxeCBDRE1BIGFuZCBwdXNoYnVm
+ZmVycyBmb3Igc3VibWl0dGVkCmpvYnMuCgpUaGUgdGVncmFkcm0gZG9tYWluIGlzIHNoYXJlZCBi
+eSBhbGwgaG9zdDF4IHVuaXRzIGFuZApjb250YWlucyBHRU0gb2JqZWN0cyBhbmQgbWVtb3J5IGFs
+bG9jYXRlZCBieSB0aGUKc2VwYXJhdGUgdGVncmFfZHJtX2FsbG9jIGZ1bmN0aW9uLiBUaGlzIGZ1
+bmN0aW9uIGlzCmN1cnJlbnRseSB1c2VkIHRvIGFsbG9jYXRlIHNwYWNlIGZvciBmaXJtd2FyZSBi
+bG9icwppbiB0aGUgdGVncmFkcm0gZG9tYWluLgoKQSB1c2Vyc3BhY2UgdGVzdCBjYXNlIGZvciBW
+SUMgY2FuIGJlIGZvdW5kIGF0Cmh0dHBzOi8vZ2l0aHViLmNvbS9jeW5kaXMvZHJtL3RyZWUvd29y
+ay90ZWdyYS4KVGhlIHRlc3RjYXNlIGlzIGluIHRlc3RzL3RlZ3JhIGFuZCBpcyBjYWxsZWQgc3Vi
+bWl0X3ZpYy4KVGhlIGluLWtlcm5lbCBmaXJld2FsbCBpcyBub3QgaW1wbGVtZW50ZWQgZm9yIFZJ
+QzsKdGhlcmVmb3JlLCBJT01NVSBtdXN0IGJlIGVuYWJsZWQgZm9yIHRoZSB0ZXN0IHRvIHBhc3Mu
+CgpUZXN0ZWQgd2l0aCBKZXRzb24gVFgxIChUMjEwKS4gUHJvYmFibHkgd29ya3MgYWxzbwp3aXRo
+IEpldHNvbiBUSzEgKFQxMjQpLiBOb3RlIHRoYXQgZHVlIHRvIGhhcmR3YXJlIGNoYW5nZXMKdGhl
+IHRlc3RjYXNlIGFsc28gbmVlZHMgdG8gYmUgY2hhbmdlZCB0byBydW4gcHJvcGVybHkKb24gVDEy
+NC4KClRoYW5rcywKICBNaWtrby4KCkFydG8gTWVyaWxhaW5lbiAoMik6CiAgZHJtL3RlZ3JhOiBB
+ZGQgZmFsY29uIGhlbHBlciBsaWJyYXJ5CiAgZHJtL3RlZ3JhOiBBZGQgVklDIHN1cHBvcnQKCk1p
+a2tvIFBlcnR0dW5lbiAoNik6CiAgZHJtL3RlZ3JhOiBBZGQgVGVncmEgRFJNIGFsbG9jYXRpb24g
+QVBJCiAgZHJtL3RlZ3JhOiBBbGxvY2F0ZSBCT3MgZnJvbSBsb3dlciA0RyB3aGVuIHdpdGhvdXQg
+SU9NTVUKICBncHU6IGhvc3QxeDogQWRkIElPTU1VIHN1cHBvcnQKICBkdC1iaW5kaW5nczogQWRk
+IGJpbmRpbmdzIGZvciB0aGUgVGVncmEgVklDCiAgYXJtNjQ6IHRlZ3JhOiBFbmFibGUgVklDIG9u
+IFQyMTAKICBhcm02NDogdGVncmE6IEVuYWJsZSBJT01NVSBmb3IgSG9zdDF4IG9uIFRlZ3JhMjEw
+CgogLi4uL2Rpc3BsYXkvdGVncmEvbnZpZGlhLHRlZ3JhMjAtaG9zdDF4LnR4dCAgICAgICAgfCAg
+MTMgKwogYXJjaC9hcm02NC9ib290L2R0cy9udmlkaWEvdGVncmEyMTAuZHRzaSAgICAgICAgICAg
+fCAgMTkgKy0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9NYWtlZmlsZSAgICAgICAgICAgICAgICAg
+ICAgIHwgICA0ICstCiBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgICAgICAgICAgICAgICAg
+ICAgICAgICB8IDEwMSArKysrKy0KIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uaCAgICAgICAg
+ICAgICAgICAgICAgICAgIHwgICA4ICsKIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9mYWxjb24uYyAg
+ICAgICAgICAgICAgICAgICAgIHwgMjU2ICsrKysrKysrKysrKysKIGRyaXZlcnMvZ3B1L2RybS90
+ZWdyYS9mYWxjb24uaCAgICAgICAgICAgICAgICAgICAgIHwgMTMwICsrKysrKysKIGRyaXZlcnMv
+Z3B1L2RybS90ZWdyYS9nZW0uYyAgICAgICAgICAgICAgICAgICAgICAgIHwgICAyICstCiBkcml2
+ZXJzL2dwdS9kcm0vdGVncmEvdmljLmMgICAgICAgICAgICAgICAgICAgICAgICB8IDQwMCArKysr
+KysrKysrKysrKysrKysrKysKIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS92aWMuaCAgICAgICAgICAg
+ICAgICAgICAgICAgIHwgIDMxICsrCiBkcml2ZXJzL2dwdS9ob3N0MXgvY2RtYS5jICAgICAgICAg
+ICAgICAgICAgICAgICAgICB8ICA2NSArKystCiBkcml2ZXJzL2dwdS9ob3N0MXgvY2RtYS5oICAg
+ICAgICAgICAgICAgICAgICAgICAgICB8ICAgNCArLQogZHJpdmVycy9ncHUvaG9zdDF4L2Rldi5j
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgfCAgMzkgKy0KIGRyaXZlcnMvZ3B1L2hvc3QxeC9k
+ZXYuaCAgICAgICAgICAgICAgICAgICAgICAgICAgIHwgICA1ICsKIGRyaXZlcnMvZ3B1L2hvc3Qx
+eC9ody9jZG1hX2h3LmMgICAgICAgICAgICAgICAgICAgIHwgIDEwICstCiBkcml2ZXJzL2dwdS9o
+b3N0MXgvam9iLmMgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICA3NiArKystCiBkcml2ZXJz
+L2dwdS9ob3N0MXgvam9iLmggICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgMSArCiBpbmNs
+dWRlL2xpbnV4L2hvc3QxeC5oICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8ICAgMSArCiAx
+OCBmaWxlcyBjaGFuZ2VkLCAxMTI4IGluc2VydGlvbnMoKyksIDM3IGRlbGV0aW9ucygtKQogY3Jl
+YXRlIG1vZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9mYWxjb24uYwogY3JlYXRlIG1v
+ZGUgMTAwNjQ0IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9mYWxjb24uaAogY3JlYXRlIG1vZGUgMTAw
+NjQ0IGRyaXZlcnMvZ3B1L2RybS90ZWdyYS92aWMuYwogY3JlYXRlIG1vZGUgMTAwNjQ0IGRyaXZl
+cnMvZ3B1L2RybS90ZWdyYS92aWMuaAoKLS0gCjIuMTAuMgoKX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2
+ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21h
+aWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
