@@ -1,65 +1,84 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 3/4] drm/tegra: Support kernel mappings with IOMMU
-Date: Fri, 11 Nov 2016 15:36:41 +0100
-Message-ID: <20161111143641.GC4967@ulmo.ba.sec>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH 4/4] drm/tegra: Set sgt pointer in BO pin
+Date: Fri, 11 Nov 2016 15:38:59 +0100
+Message-ID: <20161111143859.GD4967@ulmo.ba.sec>
 References: <20161108175135.32004-1-mperttunen@nvidia.com>
- <20161108175135.32004-3-mperttunen@nvidia.com>
+ <20161108175135.32004-4-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="pAwQNkOnpTn9IO2O"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20161108175135.32004-3-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Content-Type: multipart/mixed; boundary="===============0478187774=="
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20161108175135.32004-4-mperttunen@nvidia.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---pAwQNkOnpTn9IO2O
+--===============0478187774==
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="oj4kGyHlBMXGt3Le"
+Content-Disposition: inline
+
+
+--oj4kGyHlBMXGt3Le
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 08, 2016 at 07:51:34PM +0200, Mikko Perttunen wrote:
-> From: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On Tue, Nov 08, 2016 at 07:51:35PM +0200, Mikko Perttunen wrote:
+> Fix tegra_bo_pin to set the parameter sgt pointer.
+> Host1x job pinning requires the sgt to determine
+> physical memory addresses of gathers.
 >=20
-> Host1x command buffer patching requires that the buffer object can be
-> mapped into kernel address space, however, the recent addition of
-> IOMMU did not account to this requirement. Therefore Host1x engines
-> cannot be used if IOMMU is enabled.
->=20
-> This patch implements kmap, kunmap, mmap and munmap functions to
-> host1x bo objects.
->=20
-> Signed-off-by: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 > ---
->  drivers/gpu/drm/tegra/gem.c | 34 +++++++++++++++++++++++++++++++---
->  1 file changed, 31 insertions(+), 3 deletions(-)
+>  drivers/gpu/drm/tegra/gem.c | 2 ++
+>  1 file changed, 2 insertions(+)
 
-Applied with a tiny fixup of the commit message, thanks.
+Applied with a slightly reformatted commit message. Please use all of
+the 72 columns to avoid "squeezed" commit messages.
 
+Thanks,
 Thierry
 
---pAwQNkOnpTn9IO2O
+--oj4kGyHlBMXGt3Le
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAABCAAGBQJYJdd5AAoJEN0jrNd/PrOhuO4QAIlp1i1yGh0FxB+fOBwKT1CH
-+eoNCiNTx2mazY6sMjra4/UjStEr1zMsWaprMZsSQnCNAcWCwtUpoN5mgL9T670T
-hMJd8XHGW14c8J+txO8WZzKsqdvJH5UKvOxT87hcMispIIY3DAq/jcWZkc7ufjmr
-kI1vxv6ny9C3z/s1gFdax7+xqjko6BEG1juyft/UgKj6wFL1pyMjwAPXzwSbZSiy
-LG370Mcdalw6cCjvouLQ+RRQMqjqayGbc76LueBSHJcZQRcTTU9xSrJVZo0uwvY+
-BhV/2kKmyEZAzLj3aU6kqG7xH7DrGomOGuuQb9h8oQiVaSZt2cZo3+NDzcmcQzFU
-qtxiqpaNvHAQIT+VU9mo0Qr/TAJJ1spww486lDZTMf6cegrynlDqDdFrXtFvibAr
-mRK1L0f84fEqqF32f7by30sIZhWHgIWtxvilqaPQtRxv8F8r/70j+j8WiftMrrWf
-k1Quu1YvUTbu90UFuWgGEFcrboVXLmMV7OJPqR9tqNFXfgS3uzOt2s6jUZ0XW1Cz
-7g0hGBqjTd5lsTGUup3P8p5XAf9ypAwkDFOnOGmmEtbtlyDRiS+GQNB5ur+hCAEL
-hRz3Gxygrr0yzOUIQgfbaPMvKGQjVEiNFhGUmwj4/zfeyDcYInUt1Mp+47nTyCdr
-KRKzMnZ2MDFLnUAdxkoj
-=tI9m
+iQIcBAABCAAGBQJYJdgDAAoJEN0jrNd/PrOhmF8QAKk5IdknR2knHIqAxiGxjx08
+GHzH5lcYJsD4ozfVABkovSh5QGlUZeioD2qvFaHvbIgY5hc//mglMTsvUeL5rHv8
+FiNKSnNoMQDHdDqqgvuUbDblT8M+kq8ULOm+x+9LV4zOMjZBx2sujII0bbIHEcLe
+hd5bsVQil3PsaEdBitCGWfKBFu8xoSEaZkzsZNpSBHAmmfouYWRTqqQ972jedoz5
+HgEEQUBvl3OH0AnUUlHTeZ4yLiK3vPcRuxEwcnxU1gdfbsRhlDTkYU56DRHFuDg5
+kTgtmONAehlc13NpDomV4avUgbDxxz2nFHhCa4ewttoCOayxS/Uqkw1xwZ2i1sKM
+f3oMLoCFTRcLdeH6It73s/xuF5pYiMsI0EZ5fTaEv/lxP0RUTuEIjsn/Q9mfLkVU
+8R+HZpXhTu7bfJIel7GKCMbJ7LYEFzR2Vkiu5EhgbmNKf/Nvd6ArMO+s7DWq/Xgs
+Mz3is7ZCwcfja9JBS48iUczBZt2A1ATQWu1cob7aBUY01BIkmzawCNhXVYrMIqnJ
+gfUeX8SOicYDfkISxn+qOC2nuPp51Cm1mctT+DvpXuBgc0LkJhPEyx+CXik0dZXR
+i1mpansQcq4cx8b8SoHI+aa9eR5mdy4aew3+6YFhKRJXxwuYJODVMOewAsttNCfs
+QJzjTzifB27zULFYESjh
+=qwF5
 -----END PGP SIGNATURE-----
 
---pAwQNkOnpTn9IO2O--
+--oj4kGyHlBMXGt3Le--
+
+--===============0478187774==
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: base64
+Content-Disposition: inline
+
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
+IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
+dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
+
+--===============0478187774==--
