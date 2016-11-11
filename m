@@ -1,72 +1,65 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 2/4] gpu: host1x: Add locking to syncpt
-Date: Fri, 11 Nov 2016 15:33:03 +0100
-Message-ID: <20161111143303.GB4967@ulmo.ba.sec>
+Subject: Re: [PATCH 3/4] drm/tegra: Support kernel mappings with IOMMU
+Date: Fri, 11 Nov 2016 15:36:41 +0100
+Message-ID: <20161111143641.GC4967@ulmo.ba.sec>
 References: <20161108175135.32004-1-mperttunen@nvidia.com>
- <20161108175135.32004-2-mperttunen@nvidia.com>
+ <20161108175135.32004-3-mperttunen@nvidia.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="RASg3xLB4tUQ4RcS"
+        protocol="application/pgp-signature"; boundary="pAwQNkOnpTn9IO2O"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20161108175135.32004-2-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20161108175135.32004-3-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---RASg3xLB4tUQ4RcS
+--pAwQNkOnpTn9IO2O
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 08, 2016 at 07:51:33PM +0200, Mikko Perttunen wrote:
-[...]
-> @@ -86,7 +88,17 @@ static struct host1x_syncpt *host1x_syncpt_alloc(struc=
-t host1x *host,
->  	else
->  		sp->client_managed =3D false;
-> =20
-> +	mutex_unlock(&host->syncpt_mutex);
->  	return sp;
-> +
-> +err_alloc_name:
+On Tue, Nov 08, 2016 at 07:51:34PM +0200, Mikko Perttunen wrote:
+> From: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>=20
+> Host1x command buffer patching requires that the buffer object can be
+> mapped into kernel address space, however, the recent addition of
+> IOMMU did not account to this requirement. Therefore Host1x engines
+> cannot be used if IOMMU is enabled.
+>=20
+> This patch implements kmap, kunmap, mmap and munmap functions to
+> host1x bo objects.
+>=20
+> Signed-off-by: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  drivers/gpu/drm/tegra/gem.c | 34 +++++++++++++++++++++++++++++++---
+>  1 file changed, 31 insertions(+), 3 deletions(-)
 
-It's better to use labels that describe what they do, rather than when
-they get called.
+Applied with a tiny fixup of the commit message, thanks.
 
-> +	host1x_syncpt_base_free(sp->base);
-> +	sp->base =3D NULL;
-> +err_alloc_base:
-> +	sp =3D NULL;
-
-This is useless because the variable is no longer used after this and
-goes out of scope.
-
-I fixed up these two issues and applied.
-
-Thanks,
 Thierry
 
---RASg3xLB4tUQ4RcS
+--pAwQNkOnpTn9IO2O
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAABCAAGBQJYJdafAAoJEN0jrNd/PrOhEp8QAJE8R++IsgZhe1tfmVUCOmHk
-6L5cIGWt/8gexJ+iOFKFYkjV1FPj2XgIwoNwDXsgq+tP5SvmwJ5rUbuH/SY48fZk
-ymsLIDpDcLPwWfLqsUMRjfWE0/N6q6K0Ax036epSXbw788EFKsi28+hOqMA3gAtf
-z6v/KevF1wo4v9D3iKl4X+MegN5j8vznT09nt3PEJCtkulgocJJw9xRDrNRqUN5H
-sKCy/CIJrsq+MjKN2VToHaOf0Bxb1i2Z1DnM8fGUJa8D7whC+bUvINGmHWc18+c6
-5ax7y/dESjmOy+/ebra4zId5VY0YAFaKd6k0o5pRjMP3aB38uC6abZFyWf/XiGEY
-G/P0Gojst0mdJLU95pjzKcWT5XtBON+OIesBJ4w2Co4I1hSTG7gibe9IZbcOjJwV
-vUIydawkQ8zHYWcKWUwGdRspNUzxcKal+6C8DLU6YEC3ddnWitjClgei0nRRkr4v
-O6kyfF7eSlB+mXR69DkrvalfeLiVyoil/vCrz9CW3Nj3cBiZWwJdVTUmuiXAEsc6
-jNpjOwrQ8ni+5voNd3w1CITHnmhsaub24Npig7x6OIlEP7Z14+3RhntxLH1mm7IN
-nW6azItb571BC2jnIrCiinavOV5QogLg25oOBbdGNIhmag3Gf/wRAHBepJYdFV1I
-u+srexx1loejRXMZq2G2
-=qWCW
+iQIcBAABCAAGBQJYJdd5AAoJEN0jrNd/PrOhuO4QAIlp1i1yGh0FxB+fOBwKT1CH
++eoNCiNTx2mazY6sMjra4/UjStEr1zMsWaprMZsSQnCNAcWCwtUpoN5mgL9T670T
+hMJd8XHGW14c8J+txO8WZzKsqdvJH5UKvOxT87hcMispIIY3DAq/jcWZkc7ufjmr
+kI1vxv6ny9C3z/s1gFdax7+xqjko6BEG1juyft/UgKj6wFL1pyMjwAPXzwSbZSiy
+LG370Mcdalw6cCjvouLQ+RRQMqjqayGbc76LueBSHJcZQRcTTU9xSrJVZo0uwvY+
+BhV/2kKmyEZAzLj3aU6kqG7xH7DrGomOGuuQb9h8oQiVaSZt2cZo3+NDzcmcQzFU
+qtxiqpaNvHAQIT+VU9mo0Qr/TAJJ1spww486lDZTMf6cegrynlDqDdFrXtFvibAr
+mRK1L0f84fEqqF32f7by30sIZhWHgIWtxvilqaPQtRxv8F8r/70j+j8WiftMrrWf
+k1Quu1YvUTbu90UFuWgGEFcrboVXLmMV7OJPqR9tqNFXfgS3uzOt2s6jUZ0XW1Cz
+7g0hGBqjTd5lsTGUup3P8p5XAf9ypAwkDFOnOGmmEtbtlyDRiS+GQNB5ur+hCAEL
+hRz3Gxygrr0yzOUIQgfbaPMvKGQjVEiNFhGUmwj4/zfeyDcYInUt1Mp+47nTyCdr
+KRKzMnZ2MDFLnUAdxkoj
+=tI9m
 -----END PGP SIGNATURE-----
 
---RASg3xLB4tUQ4RcS--
+--pAwQNkOnpTn9IO2O--
