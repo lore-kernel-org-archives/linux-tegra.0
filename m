@@ -1,92 +1,72 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 1/4] gpu: host1x: Store device address to all bufs
-Date: Fri, 11 Nov 2016 15:31:11 +0100
-Message-ID: <20161111143111.GA4967@ulmo.ba.sec>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 2/4] gpu: host1x: Add locking to syncpt
+Date: Fri, 11 Nov 2016 15:33:03 +0100
+Message-ID: <20161111143303.GB4967@ulmo.ba.sec>
 References: <20161108175135.32004-1-mperttunen@nvidia.com>
+ <20161108175135.32004-2-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============2025701901=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20161108175135.32004-1-mperttunen@nvidia.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, Andrew Chew <achew@nvidia.com>, Arto Merilainen <amerilainen@nvidia.com>, dri-devel@lists.freedesktop.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="RASg3xLB4tUQ4RcS"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20161108175135.32004-2-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============2025701901==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="bg08WKrSYDhXBjb5"
-Content-Disposition: inline
-
-
---bg08WKrSYDhXBjb5
+--RASg3xLB4tUQ4RcS
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 08, 2016 at 07:51:32PM +0200, Mikko Perttunen wrote:
-> From: Arto Merilainen <amerilainen@nvidia.com>
->=20
-> Currently job pinning is optimized to handle only the first buffer
-> using a certain host1x_bo object and all subsequent buffers using
-> the same host1x_bo are considered done.
->=20
-> In most cases this is correct, however, in case the same host1x_bo
-> is used in multiple gathers inside the same job, we skip also
-> storing the device address (physical or iova) to this buffer.
->=20
-> This patch reworks the host1x_job_pin() to store the device address
-> to all gathers.
->=20
-> Signed-off-by: Andrew Chew <achew@nvidia.com>
-> Signed-off-by: Arto Merilainen <amerilainen@nvidia.com>
-> Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
-> ---
->  drivers/gpu/host1x/job.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
+On Tue, Nov 08, 2016 at 07:51:33PM +0200, Mikko Perttunen wrote:
+[...]
+> @@ -86,7 +88,17 @@ static struct host1x_syncpt *host1x_syncpt_alloc(struc=
+t host1x *host,
+>  	else
+>  		sp->client_managed =3D false;
+> =20
+> +	mutex_unlock(&host->syncpt_mutex);
+>  	return sp;
+> +
+> +err_alloc_name:
 
-Applied, thanks.
+It's better to use labels that describe what they do, rather than when
+they get called.
 
+> +	host1x_syncpt_base_free(sp->base);
+> +	sp->base =3D NULL;
+> +err_alloc_base:
+> +	sp =3D NULL;
+
+This is useless because the variable is no longer used after this and
+goes out of scope.
+
+I fixed up these two issues and applied.
+
+Thanks,
 Thierry
 
---bg08WKrSYDhXBjb5
+--RASg3xLB4tUQ4RcS
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAABCAAGBQJYJdYrAAoJEN0jrNd/PrOhMfoQAKq8uPC/oUOkKqliUVS+aEFM
-zIHZMeNGfmtiS2U6Zsy9DBZX4lHb/fesehCENiIdDzeK3wXZWMEsYXDYGVp1J2wP
-SJQnYdu9WBiwai73ig06NwK01d+AC9arWPE/s2vUxBlvDxM6Bh1DZjEto3yPXp8X
-Dsj9S4sY+BHGiKQOsQLmzlbc+DWjB6BWWSXZ1zD7AOvtpPRPa6buILJaeed3BXqW
-JNIQk9QjmY9lbAnrc8FsvFtbyeFfOSIWvbBHNSrPBesIiSK0bgRS2BhI6lKqdTgL
-6/kjUZrrqs8cI+XAEyw8n/1ngQx0yJTFvvkTvN4IdD0sN+GulvwHdk/ZLX69rgkU
-8mYUcBkvnsaGfymtORZ6fPYQVSLv6KVwT96BvCuPGE2OUGlgjtX0av/w+pVPxvKS
-JcRqba2wseCiygbc/+3FTgGoaqOvBK9dWiH3O7xl1WhfAWrivgxXS7q8pkhGYfbS
-4sar7zf2ieWHt2jr2gMqiCNrv3OyCqLsjuXrxwtK99hylX4HTYCtv0n8wK25YOn+
-y398EAmobHr+w3HEvcPw6dKptYm8jj8Oy8LvWq50hk7/cCgfxtO64EbZyWLk+nAw
-cQSK/1/urxjU+z0IyHDAYzjyjPHg7t+mMiGN29trfPWr/3lQy1yuaOpbRmBTdm3a
-X96KM8suPpxHcILmkXrp
-=J1PR
+iQIcBAABCAAGBQJYJdafAAoJEN0jrNd/PrOhEp8QAJE8R++IsgZhe1tfmVUCOmHk
+6L5cIGWt/8gexJ+iOFKFYkjV1FPj2XgIwoNwDXsgq+tP5SvmwJ5rUbuH/SY48fZk
+ymsLIDpDcLPwWfLqsUMRjfWE0/N6q6K0Ax036epSXbw788EFKsi28+hOqMA3gAtf
+z6v/KevF1wo4v9D3iKl4X+MegN5j8vznT09nt3PEJCtkulgocJJw9xRDrNRqUN5H
+sKCy/CIJrsq+MjKN2VToHaOf0Bxb1i2Z1DnM8fGUJa8D7whC+bUvINGmHWc18+c6
+5ax7y/dESjmOy+/ebra4zId5VY0YAFaKd6k0o5pRjMP3aB38uC6abZFyWf/XiGEY
+G/P0Gojst0mdJLU95pjzKcWT5XtBON+OIesBJ4w2Co4I1hSTG7gibe9IZbcOjJwV
+vUIydawkQ8zHYWcKWUwGdRspNUzxcKal+6C8DLU6YEC3ddnWitjClgei0nRRkr4v
+O6kyfF7eSlB+mXR69DkrvalfeLiVyoil/vCrz9CW3Nj3cBiZWwJdVTUmuiXAEsc6
+jNpjOwrQ8ni+5voNd3w1CITHnmhsaub24Npig7x6OIlEP7Z14+3RhntxLH1mm7IN
+nW6azItb571BC2jnIrCiinavOV5QogLg25oOBbdGNIhmag3Gf/wRAHBepJYdFV1I
+u+srexx1loejRXMZq2G2
+=qWCW
 -----END PGP SIGNATURE-----
 
---bg08WKrSYDhXBjb5--
-
---===============2025701901==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============2025701901==--
+--RASg3xLB4tUQ4RcS--
