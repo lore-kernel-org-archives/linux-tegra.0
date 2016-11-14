@@ -1,62 +1,40 @@
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
-Subject: [PATCH 0/3] soc: avoid module usage in non-modular code
-Date: Sun, 13 Nov 2016 14:02:59 -0500
-Message-ID: <20161113190302.18099-1-paul.gortmaker@windriver.com>
+From: Vinod Koul <vinod.koul-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] dma: tegra210-adma: convert TEGRA210_ADMA from bool to
+ tristate
+Date: Mon, 14 Nov 2016 09:11:44 +0530
+Message-ID: <20161114034144.GN3000@localhost>
+References: <20161022222510.11373-1-paul.gortmaker@windriver.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: linux-kernel@vger.kernel.org
-Cc: Paul Gortmaker <paul.gortmaker@windriver.com>, Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Maxime Ripard <maxime.ripard@free-electrons.com>, Scott Wood <oss@buserror.net>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Ulf Hansson <ulf.hansson@linaro.org>, Yangbo Lu <yangbo.lu@nxp.com>, linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20161022222510.11373-1-paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Paul Gortmaker <paul.gortmaker-CWA4WttNNZF54TAoqtyWWQ@public.gmane.org>
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Dan Williams <dan.j.williams-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, dmaengine-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-This series of commits is a part of a larger project to ensure
-people don't reference modular support functions in non-modular
-code.  Overall there was roughly 5k lines of dead code in the
-kernel due to this.  So far we've fixed several areas, like tty,
-x86, net, gpio ... and we continue to work on other areas.
+On Sat, Oct 22, 2016 at 06:25:10PM -0400, Paul Gortmaker wrote:
+> This driver currently uses modular infrastructure but is controlled
+> by a bool Kconfig.
+> 
+> There is a general consensus from the DMA reviewers and maintainers
+> that "if it can be modular, it should be modular" in order to keep
+> the bzImage size under control for multi platform kernels.
+> 
+> Build tested only.  Also needed some new pm_clk symbols exported
+> before this commit is applied to tree in order to avoid modpost
+> errors like:
+> 
+>   ERROR: "pm_clk_add_clk" [drivers/dma/tegra210-adma.ko] undefined!
+>   ERROR: "pm_clk_create" [drivers/dma/tegra210-adma.ko] undefined!
+>   ERROR: "pm_clk_destroy" [drivers/dma/tegra210-adma.ko] undefined!
+>   ERROR: "pm_clk_suspend" [drivers/dma/tegra210-adma.ko] undefined!
+>   ERROR: "pm_clk_resume" [drivers/dma/tegra210-adma.ko] undefined!
+> 
+> These were added as exports in the v4.8-rc1 merge window.
 
-There are several reasons to not use module support for code that
-can never be built as a module, but the big ones are:
-
- (1) it is easy to accidentally code up unused module_exit and remove code
- (2) it can be misleading when reading the source, thinking it can be
-      modular when the Makefile and/or Kconfig prohibit it
- (3) it requires the include of the module.h header file which in turn
-     includes nearly everything else.
-
-Two of the changes are essentially source only -- the resuting module
-will be binary equivalent.  Only the FSL driver has unused code in
-addition to the use of modular macros that get converted.
-
-Note the FSL SOC driver just appeared in linux-next and so this series
-won't apply on Linus' master branch.  These commits were applied to
-linux-next and build tested there.
-
-Paul.
----
-
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Maxime Ripard <maxime.ripard@free-electrons.com>
-Cc: Scott Wood <oss@buserror.net>
-Cc: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Yangbo Lu <yangbo.lu@nxp.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: linux-tegra@vger.kernel.org
-
-Paul Gortmaker (3):
-  soc: sunxi: make sunxi_sram explicitly non-modular
-  soc: tegra: make fuse-tegra explicitly non-modular
-  soc: fsl: make guts driver explicitly non-modular
-
- drivers/soc/fsl/guts.c              | 17 ++---------------
- drivers/soc/sunxi/sunxi_sram.c      |  9 ++-------
- drivers/soc/tegra/fuse/fuse-tegra.c |  4 ++--
- 3 files changed, 6 insertions(+), 24 deletions(-)
+Applied, thanks
 
 -- 
-2.10.1
+~Vinod
