@@ -1,438 +1,182 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v2 2/2] i2c: Add Tegra BPMP I2C proxy driver
-Date: Tue, 15 Nov 2016 17:23:50 +0100
-Message-ID: <20161115162350.32405-3-thierry.reding@gmail.com>
-References: <20161115162350.32405-1-thierry.reding@gmail.com>
-Return-path: <linux-i2c-owner@vger.kernel.org>
-In-Reply-To: <20161115162350.32405-1-thierry.reding@gmail.com>
-Sender: linux-i2c-owner@vger.kernel.org
-To: Wolfram Sang <wsa@the-dreams.de>
-Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, linux-i2c@vger.kernel.org, linux-tegra@vger.kernel.org
+From: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Subject: Re: [PATCH] reset: Add Tegra BPMP reset driver
+Date: Tue, 15 Nov 2016 18:11:16 +0100
+Message-ID: <1479229876.2456.41.camel@pengutronix.de>
+References: <20161115161749.31221-1-thierry.reding@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20161115161749.31221-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Shardar Shariff Md <smohammed@nvidia.com>
+Hi Thierry,
 
-Add Tegra BPMP I2C driver. The BPMP is the boot and power management
-processor embedded in Tegra SoCs. In newer SoC versions, access to one
-of the I2C busses goes via the BPMP, requiring a different "proxy" I2C
-driver that accesses the bus via the real I2C driver embedded in the
-BPMP firmware.
+Am Dienstag, den 15.11.2016, 17:17 +0100 schrieb Thierry Reding:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> 
+> This driver uses the services provided by the BPMP firmware driver to
+> implement a reset driver based on the MRQ_RESET request.
+> 
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+> Hi Philipp,
+> 
+> I'm looking for an Acked-by on this because there are complicated
+> dependencies between this and other branches in the Tegra tree, so I
+> think it would be easiest to merge through that.
+> 
+> Thanks,
+> Thierry
+> 
+>  drivers/reset/Kconfig            |  1 +
+>  drivers/reset/Makefile           |  1 +
+>  drivers/reset/tegra/Kconfig      |  3 ++
+>  drivers/reset/tegra/Makefile     |  1 +
+>  drivers/reset/tegra/reset-bpmp.c | 71 ++++++++++++++++++++++++++++++++++++++++
+>  5 files changed, 77 insertions(+)
+>  create mode 100644 drivers/reset/tegra/Kconfig
+>  create mode 100644 drivers/reset/tegra/Makefile
+>  create mode 100644 drivers/reset/tegra/reset-bpmp.c
+> 
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 06d9fa2f3bc0..172dc966a01f 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -94,5 +94,6 @@ config RESET_ZYNQ
+>  
+>  source "drivers/reset/sti/Kconfig"
+>  source "drivers/reset/hisilicon/Kconfig"
+> +source "drivers/reset/tegra/Kconfig"
+>  
+>  endif
+> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> index bbe7026617fc..13b346e03d84 100644
+> --- a/drivers/reset/Makefile
+> +++ b/drivers/reset/Makefile
+> @@ -1,6 +1,7 @@
+>  obj-y += core.o
+>  obj-y += hisilicon/
+>  obj-$(CONFIG_ARCH_STI) += sti/
+> +obj-$(CONFIG_ARCH_TEGRA) += tegra/
 
-Signed-off-by: Shardar Shariff Md <smohammed@nvidia.com>
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- drivers/i2c/busses/Kconfig          |  13 ++
- drivers/i2c/busses/Makefile         |   1 +
- drivers/i2c/busses/i2c-tegra-bpmp.c | 365 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 379 insertions(+)
- create mode 100644 drivers/i2c/busses/i2c-tegra-bpmp.c
+Could drivers therein be compiled without ARCH_TEGRA enabled? If so,
+please use obj-y here.
 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index 6d94e2ec5b4f..db4aac696486 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -909,6 +909,19 @@ config I2C_TEGRA
- 	  If you say yes to this option, support will be included for the
- 	  I2C controller embedded in NVIDIA Tegra SOCs
- 
-+config I2C_TEGRA_BPMP
-+	tristate "NVIDIA Tegra BPMP I2C controller"
-+	depends on TEGRA_BPMP
-+	select I2C_ALGO_BUSCLEAR
-+	select I2C_ALGOBIT
-+	help
-+	  If you say yes to this option, support will be included for the I2C
-+	  controller embedded in NVIDIA Tegra SoCs accessed via the BPMP.
-+
-+	  This I2C driver is a 'virtual' I2C driver. The real driver is part
-+	  of the BPMP firmware, and this driver merely communicates with that
-+	  real driver.
-+
- config I2C_UNIPHIER
- 	tristate "UniPhier FIFO-less I2C controller"
- 	depends on ARCH_UNIPHIER || COMPILE_TEST
-diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
-index 29764cc20a44..9dacd88669ae 100644
---- a/drivers/i2c/busses/Makefile
-+++ b/drivers/i2c/busses/Makefile
-@@ -87,6 +87,7 @@ obj-$(CONFIG_I2C_ST)		+= i2c-st.o
- obj-$(CONFIG_I2C_STU300)	+= i2c-stu300.o
- obj-$(CONFIG_I2C_SUN6I_P2WI)	+= i2c-sun6i-p2wi.o
- obj-$(CONFIG_I2C_TEGRA)		+= i2c-tegra.o
-+obj-$(CONFIG_I2C_TEGRA_BPMP)	+= i2c-tegra-bpmp.o
- obj-$(CONFIG_I2C_UNIPHIER)	+= i2c-uniphier.o
- obj-$(CONFIG_I2C_UNIPHIER_F)	+= i2c-uniphier-f.o
- obj-$(CONFIG_I2C_VERSATILE)	+= i2c-versatile.o
-diff --git a/drivers/i2c/busses/i2c-tegra-bpmp.c b/drivers/i2c/busses/i2c-tegra-bpmp.c
-new file mode 100644
-index 000000000000..480251cce238
---- /dev/null
-+++ b/drivers/i2c/busses/i2c-tegra-bpmp.c
-@@ -0,0 +1,365 @@
-+/*
-+ * drivers/i2c/busses/i2c-tegra-bpmp.c
-+ *
-+ * Copyright (c) 2016 NVIDIA Corporation.  All rights reserved.
-+ *
-+ * Author: Shardar Shariff Md <smohammed@nvidia.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-+ */
-+
-+#include <linux/err.h>
-+#include <linux/i2c.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+
-+#include <soc/tegra/bpmp-abi.h>
-+#include <soc/tegra/bpmp.h>
-+
-+/*
-+ * Serialized I2C message header size is 6 bytes and includes address, flags
-+ * and length
-+ */
-+#define SERIALI2C_HDR_SIZE 6
-+
-+struct tegra_bpmp_i2c {
-+	struct i2c_adapter adapter;
-+	struct device *dev;
-+
-+	struct tegra_bpmp *bpmp;
-+	unsigned int bus;
-+};
-+
-+/*
-+ * Linux flags are translated to BPMP defined I2C flags that are used in BPMP
-+ * firmware I2C driver to avoid any issues in future if Linux I2C flags are
-+ * changed.
-+ */
-+static int tegra_bpmp_xlate_flags(u16 flags, u16 *out)
-+{
-+	if (flags & I2C_M_TEN) {
-+		*out |= SERIALI2C_TEN;
-+		flags &= ~I2C_M_TEN;
-+	}
-+
-+	if (flags & I2C_M_RD) {
-+		*out |= SERIALI2C_RD;
-+		flags &= ~I2C_M_RD;
-+	}
-+
-+	if (flags & I2C_M_STOP) {
-+		*out |= SERIALI2C_STOP;
-+		flags &= ~I2C_M_STOP;
-+	}
-+
-+	if (flags & I2C_M_NOSTART) {
-+		*out |= SERIALI2C_NOSTART;
-+		flags &= ~I2C_M_NOSTART;
-+	}
-+
-+	if (flags & I2C_M_REV_DIR_ADDR) {
-+		*out |= SERIALI2C_REV_DIR_ADDR;
-+		flags &= ~I2C_M_REV_DIR_ADDR;
-+	}
-+
-+	if (flags & I2C_M_IGNORE_NAK) {
-+		*out |= SERIALI2C_IGNORE_NAK;
-+		flags &= ~I2C_M_IGNORE_NAK;
-+	}
-+
-+	if (flags & I2C_M_NO_RD_ACK) {
-+		*out |= SERIALI2C_NO_RD_ACK;
-+		flags &= ~I2C_M_NO_RD_ACK;
-+	}
-+
-+	if (flags & I2C_M_RECV_LEN) {
-+		*out |= SERIALI2C_RECV_LEN;
-+		flags &= ~I2C_M_RECV_LEN;
-+	}
-+
-+	return (flags != 0) ? -EINVAL : 0;
-+}
-+
-+/**
-+ * The serialized I2C format is simply the following:
-+ * [addr little-endian][flags little-endian][len little-endian][data if write]
-+ * [addr little-endian][flags little-endian][len little-endian][data if write]
-+ *  ...
-+ *
-+ * The flags are translated from Linux kernel representation to seriali2c
-+ * representation. Any undefined flag being set causes an error.
-+ *
-+ * The data is there only for writes. Reads have the data transferred in the
-+ * other direction, and thus data is not present.
-+ *
-+ * See deserialize_i2c documentation for the data format in the other direction.
-+ */
-+static int tegra_bpmp_serialize_i2c_msg(struct tegra_bpmp_i2c *i2c,
-+					struct mrq_i2c_request *request,
-+					struct i2c_msg *msgs,
-+					unsigned int num)
-+{
-+	char *buf = request->xfer.data_buf;
-+	unsigned int i, j, pos = 0;
-+	int err;
-+
-+	for (i = 0; i < num; i++) {
-+		struct i2c_msg *msg = &msgs[i];
-+		u16 flags = 0;
-+
-+		err = tegra_bpmp_xlate_flags(msg->flags, &flags);
-+		if (err < 0)
-+			return err;
-+
-+		buf[pos++] = msg->addr & 0xff;
-+		buf[pos++] = (msg->addr & 0xff00) >> 8;
-+		buf[pos++] = flags & 0xff;
-+		buf[pos++] = (flags & 0xff00) >> 8;
-+		buf[pos++] = msg->len & 0xff;
-+		buf[pos++] = (msg->len & 0xff00) >> 8;
-+
-+		if ((flags & SERIALI2C_RD) == 0) {
-+			for (j = 0; j < msg->len; j++)
-+				buf[pos++] = msg->buf[j];
-+		}
-+	}
-+
-+	request->xfer.data_size = pos;
-+
-+	return 0;
-+}
-+
-+/**
-+ * The data in the BPMP -> CPU direction is composed of sequential blocks for
-+ * those messages that have I2C_M_RD. So, for example, if you have:
-+ *
-+ * - !I2C_M_RD, len == 5, data == a0 01 02 03 04
-+ * - !I2C_M_RD, len == 1, data == a0
-+ * - I2C_M_RD, len == 2, data == [uninitialized buffer 1]
-+ * - !I2C_M_RD, len == 1, data == a2
-+ * - I2C_M_RD, len == 2, data == [uninitialized buffer 2]
-+ *
-+ * ...then the data in the BPMP -> CPU direction would be 4 bytes total, and
-+ * would contain 2 bytes that will go to uninitialized buffer 1, and 2 bytes
-+ * that will go to uninitialized buffer 2.
-+ */
-+static int tegra_bpmp_i2c_deserialize(struct tegra_bpmp_i2c *i2c, char *buf,
-+				      size_t size, struct i2c_msg *msgs,
-+				      unsigned int num)
-+{
-+	size_t len = 0, pos = 0;
-+	unsigned int i;
-+
-+	for (i = 0; i < num; i++)
-+		if (msgs[i].flags & I2C_M_RD)
-+			len += msgs[i].len;
-+
-+	if (len != size)
-+		return -EINVAL;
-+
-+	for (i = 0; i < num; i++) {
-+		if (msgs[i].flags & I2C_M_RD) {
-+			memcpy(msgs[i].buf, buf + pos, msgs[i].len);
-+			pos += msgs[i].len;
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int tegra_bpmp_i2c_msg_len_check(struct i2c_msg *msgs, unsigned int num)
-+{
-+	size_t tx_len = 0, rx_len = 0;
-+	unsigned int i;
-+
-+	for (i = 0; i < num; i++)
-+		if (!(msgs[i].flags & I2C_M_RD))
-+			tx_len += SERIALI2C_HDR_SIZE + msgs[i].len;
-+
-+	if (tx_len > TEGRA_I2C_IPC_MAX_IN_BUF_SIZE)
-+		return -EINVAL;
-+
-+	for (i = 0; i < num; i++)
-+		if ((msgs[i].flags & I2C_M_RD))
-+			rx_len += msgs[i].len;
-+
-+	if (rx_len > TEGRA_I2C_IPC_MAX_OUT_BUF_SIZE)
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
-+static int tegra_bpmp_i2c_msg_xfer(struct tegra_bpmp_i2c *i2c,
-+				   struct mrq_i2c_request *request,
-+				   struct mrq_i2c_response *response)
-+{
-+	struct tegra_bpmp_message msg;
-+	int err;
-+
-+	request->cmd = CMD_I2C_XFER;
-+	request->xfer.bus_id = i2c->bus;
-+
-+	memset(&msg, 0, sizeof(msg));
-+	msg.mrq = MRQ_I2C;
-+	msg.tx.data = request;
-+	msg.tx.size = sizeof(*request);
-+	msg.rx.data = response;
-+	msg.rx.size = sizeof(*response);
-+
-+	if (irqs_disabled())
-+		err = tegra_bpmp_transfer_atomic(i2c->bpmp, &msg);
-+	else
-+		err = tegra_bpmp_transfer(i2c->bpmp, &msg);
-+
-+	return err;
-+}
-+
-+static int tegra_bpmp_i2c_xfer(struct i2c_adapter *adapter,
-+			       struct i2c_msg *msgs, int num)
-+{
-+	struct tegra_bpmp_i2c *i2c = i2c_get_adapdata(adapter);
-+	struct mrq_i2c_response response;
-+	struct mrq_i2c_request request;
-+	int err;
-+
-+	err = tegra_bpmp_i2c_msg_len_check(msgs, num);
-+	if (err < 0) {
-+		dev_err(i2c->dev, "unsupported message length\n");
-+		return err;
-+	}
-+
-+	/* TODO: move this somewhere else */
-+	memset(&request, 0, sizeof(request));
-+	memset(&response, 0, sizeof(response));
-+
-+	err = tegra_bpmp_serialize_i2c_msg(i2c, &request, msgs, num);
-+	if (err < 0) {
-+		dev_err(i2c->dev, "failed to serialize message: %d\n", err);
-+		return err;
-+	}
-+
-+	err = tegra_bpmp_i2c_msg_xfer(i2c, &request, &response);
-+	if (err < 0) {
-+		dev_err(i2c->dev, "failed to transfer message: %d\n", err);
-+		return err;
-+	}
-+
-+	err = tegra_bpmp_i2c_deserialize(i2c, response.xfer.data_buf,
-+					 response.xfer.data_size,
-+					 msgs, num);
-+	if (err < 0) {
-+		dev_err(i2c->dev, "failed to deserialize message: %d\n", err);
-+		return err;
-+	}
-+
-+	return num;
-+}
-+
-+static u32 tegra_bpmp_i2c_func(struct i2c_adapter *adapter)
-+{
-+	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL | I2C_FUNC_10BIT_ADDR |
-+	       I2C_FUNC_PROTOCOL_MANGLING | I2C_FUNC_NOSTART;
-+}
-+
-+static const struct i2c_algorithm tegra_bpmp_i2c_algo = {
-+	.master_xfer = tegra_bpmp_i2c_xfer,
-+	.functionality = tegra_bpmp_i2c_func,
-+};
-+
-+static int tegra_bpmp_i2c_probe(struct platform_device *pdev)
-+{
-+	struct tegra_bpmp_i2c *i2c;
-+	u32 value;
-+	int err;
-+
-+	i2c = devm_kzalloc(&pdev->dev, sizeof(*i2c), GFP_KERNEL);
-+	if (!i2c)
-+		return -ENOMEM;
-+
-+	i2c->dev = &pdev->dev;
-+
-+	i2c->bpmp = dev_get_drvdata(pdev->dev.parent);
-+	if (!i2c->bpmp)
-+		return -ENODEV;
-+
-+	err = of_property_read_u32(pdev->dev.of_node, "nvidia,bpmp-bus-id",
-+				   &value);
-+	if (err < 0)
-+		return err;
-+
-+	i2c->bus = value;
-+
-+	i2c_set_adapdata(&i2c->adapter, i2c);
-+	i2c->adapter.owner = THIS_MODULE;
-+	i2c->adapter.class = I2C_CLASS_HWMON;
-+	strlcpy(i2c->adapter.name, "Tegra BPMP I2C adapter",
-+		sizeof(i2c->adapter.name));
-+	i2c->adapter.algo = &tegra_bpmp_i2c_algo;
-+	i2c->adapter.dev.parent = &pdev->dev;
-+	i2c->adapter.dev.of_node = pdev->dev.of_node;
-+
-+	platform_set_drvdata(pdev, i2c);
-+
-+	err = i2c_add_adapter(&i2c->adapter);
-+	if (err < 0) {
-+		dev_err(&pdev->dev, "failed to add I2C adapter: %d\n", err);
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+
-+static int tegra_bpmp_i2c_remove(struct platform_device *pdev)
-+{
-+	struct tegra_bpmp_i2c *i2c = platform_get_drvdata(pdev);
-+
-+	i2c_del_adapter(&i2c->adapter);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id tegra_bpmp_i2c_of_match[] = {
-+	{ .compatible = "nvidia,tegra186-bpmp-i2c", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, tegra_bpmp_i2c_of_match);
-+
-+static struct platform_driver tegra_bpmp_i2c_driver = {
-+	.driver = {
-+		.name = "tegra-bpmp-i2c",
-+		.of_match_table = tegra_bpmp_i2c_of_match,
-+	},
-+	.probe = tegra_bpmp_i2c_probe,
-+	.remove = tegra_bpmp_i2c_remove,
-+};
-+
-+static int __init tegra_bpmp_i2c_init_driver(void)
-+{
-+	return platform_driver_register(&tegra_bpmp_i2c_driver);
-+}
-+subsys_initcall(tegra_bpmp_i2c_init_driver);
-+
-+static void __exit tegra_bpmp_i2c_exit_driver(void)
-+{
-+	platform_driver_unregister(&tegra_bpmp_i2c_driver);
-+}
-+module_exit(tegra_bpmp_i2c_exit_driver);
-+
-+MODULE_DESCRIPTION("NVIDIA Tegra BPMP I2C bus contoller driver");
-+MODULE_AUTHOR("Shardar Shariff Md <smohammed@nvidia.com>");
-+MODULE_AUTHOR("Juha-Matti Tilli");
-+MODULE_LICENSE("GPL v2");
--- 
-2.10.2
+>  obj-$(CONFIG_RESET_ATH79) += reset-ath79.o
+>  obj-$(CONFIG_RESET_BERLIN) += reset-berlin.o
+>  obj-$(CONFIG_RESET_LPC18XX) += reset-lpc18xx.o
+> diff --git a/drivers/reset/tegra/Kconfig b/drivers/reset/tegra/Kconfig
+> new file mode 100644
+> index 000000000000..0ec57a7016e6
+> --- /dev/null
+> +++ b/drivers/reset/tegra/Kconfig
+> @@ -0,0 +1,3 @@
+> +config RESET_TEGRA_BPMP
+> +	def_bool y
+> +	depends on TEGRA_BPMP
+
+Or probably not, it looks like TEGRA_BPMP depends on ARCH_TEGRA and
+doesn't provide any stubs. I think this could be just
+	def_bool TEGRA_BPMP
+though. But see below, RESET_TEGRA_BPMP doesn't seem to be used at all.
+
+> diff --git a/drivers/reset/tegra/Makefile b/drivers/reset/tegra/Makefile
+> new file mode 100644
+> index 000000000000..fd943b1ae029
+> --- /dev/null
+> +++ b/drivers/reset/tegra/Makefile
+> @@ -0,0 +1 @@
+> +obj-$(CONFIG_ARCH_TEGRA_186_SOC)	+= reset-bpmp.o
+
+This should probably be obj-$(CONFIG_RESET_TEGRA_BPMP).
+
+> diff --git a/drivers/reset/tegra/reset-bpmp.c b/drivers/reset/tegra/reset-bpmp.c
+> new file mode 100644
+> index 000000000000..5daf2ee1a396
+> --- /dev/null
+> +++ b/drivers/reset/tegra/reset-bpmp.c
+> @@ -0,0 +1,71 @@
+> +/*
+> + * Copyright (C) 2016 NVIDIA Corporation
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + */
+> +
+> +#include <linux/reset-controller.h>
+> +
+> +#include <soc/tegra/bpmp.h>
+> +#include <soc/tegra/bpmp-abi.h>
+> +
+> +static struct tegra_bpmp *to_tegra_bpmp(struct reset_controller_dev *rstc)
+> +{
+> +	return container_of(rstc, struct tegra_bpmp, rstc);
+> +}
+> +
+> +static int tegra_bpmp_reset_common(struct reset_controller_dev *rstc,
+> +				   enum mrq_reset_commands command,
+> +				   unsigned int id)
+> +{
+> +	struct tegra_bpmp *bpmp = to_tegra_bpmp(rstc);
+> +	struct mrq_reset_request request;
+> +	struct tegra_bpmp_message msg;
+> +
+> +	memset(&request, 0, sizeof(request));
+> +	request.cmd = command;
+> +	request.reset_id = id;
+> +
+> +	memset(&msg, 0, sizeof(msg));
+> +	msg.mrq = MRQ_RESET;
+> +	msg.tx.data = &request;
+> +	msg.tx.size = sizeof(request);
+> +
+> +	return tegra_bpmp_transfer(bpmp, &msg);
+> +}
+> +
+> +static int tegra_bpmp_reset_module(struct reset_controller_dev *rstc,
+> +				   unsigned long id)
+> +{
+> +	return tegra_bpmp_reset_common(rstc, CMD_RESET_MODULE, id);
+> +}
+> +
+> +static int tegra_bpmp_reset_assert(struct reset_controller_dev *rstc,
+> +				   unsigned long id)
+> +{
+> +	return tegra_bpmp_reset_common(rstc, CMD_RESET_ASSERT, id);
+> +}
+> +
+> +static int tegra_bpmp_reset_deassert(struct reset_controller_dev *rstc,
+> +				     unsigned long id)
+> +{
+> +	return tegra_bpmp_reset_common(rstc, CMD_RESET_DEASSERT, id);
+> +}
+> +
+> +static const struct reset_control_ops tegra_bpmp_reset_ops = {
+> +	.reset = tegra_bpmp_reset_module,
+> +	.assert = tegra_bpmp_reset_assert,
+> +	.deassert = tegra_bpmp_reset_deassert,
+> +};
+> +
+> +int tegra_bpmp_init_resets(struct tegra_bpmp *bpmp)
+> +{
+> +	bpmp->rstc.ops = &tegra_bpmp_reset_ops;
+> +	bpmp->rstc.owner = THIS_MODULE;
+> +	bpmp->rstc.of_node = bpmp->dev->of_node;
+> +	bpmp->rstc.nr_resets = bpmp->soc->num_resets;
+> +
+> +	return devm_reset_controller_register(bpmp->dev, &bpmp->rstc);
+> +}
+
+With the Kconfig symbol confusion resolved,
+
+Acked-by: Philipp Zabel <p.zabel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+
+to merge this via the Tegra trees.
+
+regards
+Philipp
