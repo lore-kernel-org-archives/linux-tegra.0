@@ -1,69 +1,122 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v4 5/5] dt-bindings: firmware: Allow child nodes inside the Tegra BPMP
-Date: Tue, 15 Nov 2016 17:04:52 +0100
-Message-ID: <20161115160452.27183-6-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v4 4/5] dt-bindings: Add power domains to Tegra BPMP firmware
+Date: Tue, 15 Nov 2016 17:04:51 +0100
+Message-ID: <20161115160452.27183-5-thierry.reding@gmail.com>
 References: <20161115160452.27183-1-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20161115160452.27183-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+In-Reply-To: <20161115160452.27183-1-thierry.reding@gmail.com>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Jon Hunter <jonathanh@nvidia.com>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Stephen Warren <swarren@nvidia.com>
 
-The BPMP implements some services which must be represented by separate
-nodes. For example, it can provide access to certain I2C controllers,
-and the I2C bindings represent each I2C controller as a device tree
-node. Update the binding to describe how the BPMP supports this.
+The Tegra186 BPMP is also a provider of power domains. Enhance the
+device tree binding to describe this.
 
-Signed-off-by: Stephen Warren <swarren-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Acked-by: Rob Herring <robh-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-[treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org: renamed bpmp-i2c to i2c as per Rob]
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- .../bindings/firmware/nvidia,tegra186-bpmp.txt     | 23 ++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+ .../bindings/firmware/nvidia,tegra186-bpmp.txt     | 10 ++++--
+ include/dt-bindings/power/tegra186-powergate.h     | 39 ++++++++++++++++++++++
+ 2 files changed, 46 insertions(+), 3 deletions(-)
+ create mode 100644 include/dt-bindings/power/tegra186-powergate.h
 
 diff --git a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
-index 0d3fef423c48..e821e16ad65b 100644
+index 7c7edaf1cd62..0d3fef423c48 100644
 --- a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
 +++ b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
-@@ -38,6 +38,24 @@ implemented by this node:
+@@ -17,6 +17,7 @@ Required properties:
+ - shmem : List of the phandle of the TX and RX shared memory area that
+ 	  the IPC between CPU and BPMP is based on.
+ - #clock-cells : Should be 1.
++- #power-domain-cells : Should be 1.
+ - #reset-cells : Should be 1.
+ 
+ This node is a mailbox consumer. See the following files for details of
+@@ -26,12 +27,14 @@ provider(s):
+ - .../mailbox/mailbox.txt
+ - .../mailbox/nvidia,tegra186-hsp.txt
+ 
+-This node is a clock and reset provider. See the following files for
+-general documentation of those features, and the specifiers implemented
+-by this node:
++This node is a clock, power domain, and reset provider. See the following
++files for general documentation of those features, and the specifiers
++implemented by this node:
+ 
+ - .../clock/clock-bindings.txt
+ - <dt-bindings/clock/tegra186-clock.h>
++- ../power/power_domain.txt
++- <dt-bindings/power/tegra186-powergate.h>
  - .../reset/reset.txt
  - <dt-bindings/reset/tegra186-reset.h>
  
-+The BPMP implements some services which must be represented by separate nodes.
-+For example, it can provide access to certain I2C controllers, and the I2C
-+bindings represent each I2C controller as a device tree node. Such nodes should
-+be nested directly inside the main BPMP node.
-+
-+Software can determine whether a child node of the BPMP node represents a device
-+by checking for a compatible property. Any node with a compatible property
-+represents a device that can be instantiated. Nodes without a compatible
-+property may be used to provide configuration information regarding the BPMP
-+itself, although no such configuration nodes are currently defined by this
-+binding.
-+
-+The BPMP firmware defines no single global name-/numbering-space for such
-+services. Put another way, the numbering scheme for I2C buses is distinct from
-+the numbering scheme for any other service the BPMP may provide (e.g. a future
-+hypothetical SPI bus service). As such, child device nodes will have no reg
-+property, and the BPMP node will have no #address-cells or #size-cells property.
-+
- The shared memory bindings for BPMP
- -----------------------------------
- 
-@@ -82,4 +100,9 @@ bpmp {
+@@ -77,5 +80,6 @@ bpmp {
+ 	mboxes = <&hsp_top0 TEGRA_HSP_MBOX_TYPE_DB TEGRA_HSP_DB_MASTER_BPMP>;
+ 	shmem = <&cpu_bpmp_tx &cpu_bpmp_rx>;
  	#clock-cells = <1>;
- 	#power-domain-cells = <1>;
++	#power-domain-cells = <1>;
  	#reset-cells = <1>;
-+
-+	i2c {
-+		compatible = "...";
-+		...
-+	};
  };
+diff --git a/include/dt-bindings/power/tegra186-powergate.h b/include/dt-bindings/power/tegra186-powergate.h
+new file mode 100644
+index 000000000000..388d6e228dc8
+--- /dev/null
++++ b/include/dt-bindings/power/tegra186-powergate.h
+@@ -0,0 +1,39 @@
++/*
++ * Copyright (c) 2015-2016, NVIDIA CORPORATION.  All rights reserved.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ */
++
++#ifndef _DT_BINDINGS_POWER_TEGRA186_POWERGATE_H
++#define _DT_BINDINGS_POWER_TEGRA186_POWERGATE_H
++
++#define TEGRA186_POWER_DOMAIN_AUD	0
++#define TEGRA186_POWER_DOMAIN_DFD	1
++#define TEGRA186_POWER_DOMAIN_DISP	2
++#define TEGRA186_POWER_DOMAIN_DISPB	3
++#define TEGRA186_POWER_DOMAIN_DISPC	4
++#define TEGRA186_POWER_DOMAIN_ISPA	5
++#define TEGRA186_POWER_DOMAIN_NVDEC	6
++#define TEGRA186_POWER_DOMAIN_NVJPG	7
++#define TEGRA186_POWER_DOMAIN_MPE	8
++#define TEGRA186_POWER_DOMAIN_PCX	9
++#define TEGRA186_POWER_DOMAIN_SAX	10
++#define TEGRA186_POWER_DOMAIN_VE	11
++#define TEGRA186_POWER_DOMAIN_VIC	12
++#define TEGRA186_POWER_DOMAIN_XUSBA	13
++#define TEGRA186_POWER_DOMAIN_XUSBB	14
++#define TEGRA186_POWER_DOMAIN_XUSBC	15
++#define TEGRA186_POWER_DOMAIN_GPU	43
++#define TEGRA186_POWER_DOMAIN_MAX	44
++
++#endif
 -- 
 2.10.2
