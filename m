@@ -1,122 +1,734 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: [PATCH v4 4/5] dt-bindings: Add power domains to Tegra BPMP firmware
-Date: Tue, 15 Nov 2016 17:04:51 +0100
-Message-ID: <20161115160452.27183-5-thierry.reding@gmail.com>
-References: <20161115160452.27183-1-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20161115160452.27183-1-thierry.reding@gmail.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Jon Hunter <jonathanh@nvidia.com>, Joseph Lo <josephl@nvidia.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v4] clk: tegra: Add BPMP clock driver
+Date: Tue, 15 Nov 2016 17:11:29 +0100
+Message-ID: <20161115161129.29722-1-thierry.reding@gmail.com>
+Return-path: <linux-clk-owner@vger.kernel.org>
+Sender: linux-clk-owner@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@codeaurora.org>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Alexandre Courbot <gnurou@gmail.com>, Jon Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Stephen Warren <swarren@nvidia.com>
+From: Thierry Reding <treding@nvidia.com>
 
-The Tegra186 BPMP is also a provider of power domains. Enhance the
-device tree binding to describe this.
+This driver uses the services provided by the BPMP firmware driver to
+implement a clock driver based on the MRQ_CLK request. This part of the
+BPMP ABI provides a means to enumerate and control clocks and should
+allow the driver to work on any chip that supports this ABI.
 
-Signed-off-by: Stephen Warren <swarren@nvidia.com>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- .../bindings/firmware/nvidia,tegra186-bpmp.txt     | 10 ++++--
- include/dt-bindings/power/tegra186-powergate.h     | 39 ++++++++++++++++++++++
- 2 files changed, 46 insertions(+), 3 deletions(-)
- create mode 100644 include/dt-bindings/power/tegra186-powergate.h
+Hi Mike, Stephen,
 
-diff --git a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
-index 7c7edaf1cd62..0d3fef423c48 100644
---- a/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
-+++ b/Documentation/devicetree/bindings/firmware/nvidia,tegra186-bpmp.txt
-@@ -17,6 +17,7 @@ Required properties:
- - shmem : List of the phandle of the TX and RX shared memory area that
- 	  the IPC between CPU and BPMP is based on.
- - #clock-cells : Should be 1.
-+- #power-domain-cells : Should be 1.
- - #reset-cells : Should be 1.
- 
- This node is a mailbox consumer. See the following files for details of
-@@ -26,12 +27,14 @@ provider(s):
- - .../mailbox/mailbox.txt
- - .../mailbox/nvidia,tegra186-hsp.txt
- 
--This node is a clock and reset provider. See the following files for
--general documentation of those features, and the specifiers implemented
--by this node:
-+This node is a clock, power domain, and reset provider. See the following
-+files for general documentation of those features, and the specifiers
-+implemented by this node:
- 
- - .../clock/clock-bindings.txt
- - <dt-bindings/clock/tegra186-clock.h>
-+- ../power/power_domain.txt
-+- <dt-bindings/power/tegra186-powergate.h>
- - .../reset/reset.txt
- - <dt-bindings/reset/tegra186-reset.h>
- 
-@@ -77,5 +80,6 @@ bpmp {
- 	mboxes = <&hsp_top0 TEGRA_HSP_MBOX_TYPE_DB TEGRA_HSP_DB_MASTER_BPMP>;
- 	shmem = <&cpu_bpmp_tx &cpu_bpmp_rx>;
- 	#clock-cells = <1>;
-+	#power-domain-cells = <1>;
- 	#reset-cells = <1>;
- };
-diff --git a/include/dt-bindings/power/tegra186-powergate.h b/include/dt-bindings/power/tegra186-powergate.h
+I'm looking for an Acked-by on this so that I can take it through the
+Tegra tree because the dependencies are fairly complex.
+
+Thanks,
+Thierry
+
+Changes in v4:
+- implement ->set_rate(), ->round_rate() and ->recalc_rate() callbacks
+- more sanity checks and error handling
+- implement proper cleanup on failure
+- remove debugging leftovers
+
+ drivers/clk/tegra/Kconfig    |   4 +
+ drivers/clk/tegra/Makefile   |   1 +
+ drivers/clk/tegra/clk-bpmp.c | 665 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 670 insertions(+)
+ create mode 100644 drivers/clk/tegra/clk-bpmp.c
+
+diff --git a/drivers/clk/tegra/Kconfig b/drivers/clk/tegra/Kconfig
+index 1ba30d1e14f2..7ddacae5d0b1 100644
+--- a/drivers/clk/tegra/Kconfig
++++ b/drivers/clk/tegra/Kconfig
+@@ -1,3 +1,7 @@
+ config TEGRA_CLK_EMC
+ 	def_bool y
+ 	depends on TEGRA124_EMC
++
++config CLK_TEGRA_BPMP
++	def_bool y
++	depends on TEGRA_BPMP
+diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
+index 33fd0938d79e..4be8af28ee61 100644
+--- a/drivers/clk/tegra/Makefile
++++ b/drivers/clk/tegra/Makefile
+@@ -22,3 +22,4 @@ obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124-dfll-fcpu.o
+ obj-$(CONFIG_ARCH_TEGRA_132_SOC)	+= clk-tegra124.o
+ obj-y					+= cvb.o
+ obj-$(CONFIG_ARCH_TEGRA_210_SOC)	+= clk-tegra210.o
++obj-$(CONFIG_CLK_TEGRA_BPMP)		+= clk-bpmp.o
+diff --git a/drivers/clk/tegra/clk-bpmp.c b/drivers/clk/tegra/clk-bpmp.c
 new file mode 100644
-index 000000000000..388d6e228dc8
+index 000000000000..9b89cedfcb98
 --- /dev/null
-+++ b/include/dt-bindings/power/tegra186-powergate.h
-@@ -0,0 +1,39 @@
++++ b/drivers/clk/tegra/clk-bpmp.c
+@@ -0,0 +1,665 @@
 +/*
-+ * Copyright (c) 2015-2016, NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (C) 2016 NVIDIA Corporation
 + *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ *
-+ * You should have received a copy of the GNU General Public License
-+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
 + */
 +
-+#ifndef _DT_BINDINGS_POWER_TEGRA186_POWERGATE_H
-+#define _DT_BINDINGS_POWER_TEGRA186_POWERGATE_H
++#include <linux/clk-provider.h>
++#include <linux/device.h>
++#include <linux/seq_buf.h>
++#include <linux/slab.h>
 +
-+#define TEGRA186_POWER_DOMAIN_AUD	0
-+#define TEGRA186_POWER_DOMAIN_DFD	1
-+#define TEGRA186_POWER_DOMAIN_DISP	2
-+#define TEGRA186_POWER_DOMAIN_DISPB	3
-+#define TEGRA186_POWER_DOMAIN_DISPC	4
-+#define TEGRA186_POWER_DOMAIN_ISPA	5
-+#define TEGRA186_POWER_DOMAIN_NVDEC	6
-+#define TEGRA186_POWER_DOMAIN_NVJPG	7
-+#define TEGRA186_POWER_DOMAIN_MPE	8
-+#define TEGRA186_POWER_DOMAIN_PCX	9
-+#define TEGRA186_POWER_DOMAIN_SAX	10
-+#define TEGRA186_POWER_DOMAIN_VE	11
-+#define TEGRA186_POWER_DOMAIN_VIC	12
-+#define TEGRA186_POWER_DOMAIN_XUSBA	13
-+#define TEGRA186_POWER_DOMAIN_XUSBB	14
-+#define TEGRA186_POWER_DOMAIN_XUSBC	15
-+#define TEGRA186_POWER_DOMAIN_GPU	43
-+#define TEGRA186_POWER_DOMAIN_MAX	44
++#include <soc/tegra/bpmp.h>
++#include <soc/tegra/bpmp-abi.h>
 +
-+#endif
++#define TEGRA_BPMP_DUMP_CLOCK_INFO	0
++
++#define TEGRA_BPMP_CLK_HAS_MUX		BIT(0)
++#define TEGRA_BPMP_CLK_HAS_SET_RATE	BIT(1)
++#define TEGRA_BPMP_CLK_IS_ROOT		BIT(2)
++
++struct tegra_bpmp_clk_info {
++	unsigned int id;
++	char name[MRQ_CLK_NAME_MAXLEN];
++	unsigned int parents[MRQ_CLK_MAX_PARENTS];
++	unsigned int num_parents;
++	unsigned long flags;
++};
++
++struct tegra_bpmp_clk {
++	struct clk_hw hw;
++
++	struct tegra_bpmp *bpmp;
++	unsigned int id;
++
++	unsigned int num_parents;
++	unsigned int *parents;
++};
++
++static inline struct tegra_bpmp_clk *to_tegra_bpmp_clk(struct clk_hw *hw)
++{
++	return container_of(hw, struct tegra_bpmp_clk, hw);
++}
++
++struct tegra_bpmp_clk_message {
++	unsigned int cmd;
++	unsigned int clk;
++
++	struct {
++		const void *data;
++		size_t size;
++	} tx;
++
++	struct {
++		void *data;
++		size_t size;
++	} rx;
++};
++
++static int
++__tegra_bpmp_clk_transfer_atomic(struct tegra_bpmp *bpmp,
++				 struct tegra_bpmp_message *msg)
++{
++	unsigned long flags;
++	int err;
++
++	local_irq_save(flags);
++	err = tegra_bpmp_transfer_atomic(bpmp, msg);
++	local_irq_restore(flags);
++
++	return err;
++}
++
++static int
++tegra_bpmp_clk_transfer_atomic(struct tegra_bpmp *bpmp,
++			       const struct tegra_bpmp_clk_message *clk)
++{
++	struct mrq_clk_request request;
++	struct tegra_bpmp_message msg;
++	void *req = (void *)&request;
++
++	memset(&request, 0, sizeof(request));
++	request.cmd_and_id = (clk->cmd << 24) | clk->clk;
++	memcpy(req + 4, clk->tx.data, clk->tx.size);
++
++	memset(&msg, 0, sizeof(msg));
++	msg.mrq = MRQ_CLK;
++	msg.tx.data = &request;
++	msg.tx.size = sizeof(request);
++	msg.rx.data = clk->rx.data;
++	msg.rx.size = clk->rx.size;
++
++	return __tegra_bpmp_clk_transfer_atomic(bpmp, &msg);;
++}
++
++static int tegra_bpmp_clk_transfer(struct tegra_bpmp *bpmp,
++				   const struct tegra_bpmp_clk_message *clk)
++{
++	struct mrq_clk_request request;
++	struct tegra_bpmp_message msg;
++	void *req = (void *)&request;
++	int err;
++
++	memset(&request, 0, sizeof(request));
++	request.cmd_and_id = (clk->cmd << 24) | clk->clk;
++	memcpy(req + 4, clk->tx.data, clk->tx.size);
++
++	memset(&msg, 0, sizeof(msg));
++	msg.mrq = MRQ_CLK;
++	msg.tx.data = &request;
++	msg.tx.size = sizeof(request);
++	msg.rx.data = clk->rx.data;
++	msg.rx.size = clk->rx.size;
++
++	err = tegra_bpmp_transfer(bpmp, &msg);
++	if (err != -EAGAIN)
++		return err;
++
++	return __tegra_bpmp_clk_transfer_atomic(bpmp, &msg);
++}
++
++static int tegra_bpmp_clk_enable(struct clk_hw *hw)
++{
++	struct tegra_bpmp_clk *clk = to_tegra_bpmp_clk(hw);
++	struct tegra_bpmp_clk_message msg;
++
++	memset(&msg, 0, sizeof(msg));
++	msg.cmd = CMD_CLK_ENABLE;
++	msg.clk = clk->id;
++
++	return tegra_bpmp_clk_transfer(clk->bpmp, &msg);
++}
++
++static void tegra_bpmp_clk_disable(struct clk_hw *hw)
++{
++	struct tegra_bpmp_clk *clk = to_tegra_bpmp_clk(hw);
++	struct tegra_bpmp_clk_message msg;
++	int err;
++
++	memset(&msg, 0, sizeof(msg));
++	msg.cmd = CMD_CLK_DISABLE;
++	msg.clk = clk->id;
++
++	err = tegra_bpmp_clk_transfer(clk->bpmp, &msg);
++	if (err < 0)
++		dev_err(clk->bpmp->dev, "failed to disable clock %s: %d\n",
++			clk_hw_get_name(hw), err);
++}
++
++static int tegra_bpmp_clk_is_enabled(struct clk_hw *hw)
++{
++	struct tegra_bpmp_clk *clk = to_tegra_bpmp_clk(hw);
++	struct cmd_clk_is_enabled_response response;
++	struct tegra_bpmp_clk_message msg;
++	int err;
++
++	memset(&msg, 0, sizeof(msg));
++	msg.cmd = CMD_CLK_IS_ENABLED;
++	msg.clk = clk->id;
++	msg.rx.data = &response;
++	msg.rx.size = sizeof(response);
++
++	err = tegra_bpmp_clk_transfer_atomic(clk->bpmp, &msg);
++	if (err < 0)
++		return err;
++
++	return response.state;
++}
++
++static u8 tegra_bpmp_clk_get_parent(struct clk_hw *hw)
++{
++	struct tegra_bpmp_clk *clk = to_tegra_bpmp_clk(hw);
++	struct cmd_clk_get_parent_response response;
++	struct tegra_bpmp_clk_message msg;
++	unsigned int i;
++	int err;
++
++	memset(&msg, 0, sizeof(msg));
++	msg.cmd = CMD_CLK_GET_PARENT;
++	msg.clk = clk->id;
++	msg.rx.data = &response;
++	msg.rx.size = sizeof(&response);
++
++	err = tegra_bpmp_clk_transfer(clk->bpmp, &msg);
++	if (err < 0) {
++		dev_err(clk->bpmp->dev, "failed to get parent for %s: %d\n",
++			clk_hw_get_name(hw), err);
++		return U8_MAX;
++	}
++
++	for (i = 0; i < clk->num_parents; i++)
++		if (clk->parents[i] == response.parent_id)
++			return i;
++
++	return U8_MAX;
++}
++
++static int tegra_bpmp_clk_set_parent(struct clk_hw *hw, u8 index)
++{
++	struct tegra_bpmp_clk *clk = to_tegra_bpmp_clk(hw);
++	struct cmd_clk_set_parent_response response;
++	struct cmd_clk_set_parent_request request;
++	struct tegra_bpmp_clk_message msg;
++	int err;
++
++	if (index >= clk->num_parents)
++		return -EINVAL;
++
++	memset(&request, 0, sizeof(request));
++	request.parent_id = clk->parents[index];
++
++	memset(&msg, 0, sizeof(msg));
++	msg.cmd = CMD_CLK_SET_PARENT;
++	msg.clk = clk->id;
++	msg.tx.data = &request;
++	msg.tx.size = sizeof(request);
++	msg.rx.data = &response;
++	msg.rx.size = sizeof(response);
++
++	err = tegra_bpmp_clk_transfer(clk->bpmp, &msg);
++	if (err < 0)
++		return err;
++
++	/* XXX check parent ID in response */
++
++	return 0;
++}
++
++static int tegra_bpmp_clk_set_rate(struct clk_hw *hw, unsigned long rate,
++				   unsigned long parent_rate)
++{
++	struct tegra_bpmp_clk *clk = to_tegra_bpmp_clk(hw);
++	struct cmd_clk_set_rate_response response;
++	struct cmd_clk_set_rate_request request;
++	struct tegra_bpmp_clk_message msg;
++
++	memset(&request, 0, sizeof(request));
++	request.rate = rate;
++
++	memset(&msg, 0, sizeof(msg));
++	msg.cmd = CMD_CLK_SET_RATE;
++	msg.clk = clk->id;
++	msg.tx.data = &request;
++	msg.tx.size = sizeof(request);
++	msg.rx.data = &response;
++	msg.rx.size = sizeof(response);
++
++	return tegra_bpmp_clk_transfer(clk->bpmp, &msg);
++}
++
++static long tegra_bpmp_clk_round_rate(struct clk_hw *hw, unsigned long rate,
++				      unsigned long *parent_rate)
++{
++	struct tegra_bpmp_clk *clk = to_tegra_bpmp_clk(hw);
++	struct cmd_clk_round_rate_response response;
++	struct cmd_clk_round_rate_request request;
++	struct tegra_bpmp_clk_message msg;
++	int err;
++
++	memset(&request, 0, sizeof(request));
++	request.rate = rate;
++
++	memset(&msg, 0, sizeof(msg));
++	msg.cmd = CMD_CLK_ROUND_RATE;
++	msg.clk = clk->id;
++	msg.tx.data = &request;
++	msg.tx.size = sizeof(request);
++	msg.rx.data = &response;
++	msg.rx.size = sizeof(response);
++
++	err = tegra_bpmp_clk_transfer(clk->bpmp, &msg);
++	if (err < 0)
++		return err;
++
++	return response.rate;
++}
++
++static unsigned long tegra_bpmp_clk_get_rate(struct tegra_bpmp *bpmp,
++					     unsigned int id)
++{
++	struct cmd_clk_get_rate_response response;
++	struct cmd_clk_get_rate_request request;
++	struct tegra_bpmp_clk_message msg;
++	int err;
++
++	memset(&msg, 0, sizeof(msg));
++	msg.cmd = CMD_CLK_GET_RATE;
++	msg.clk = id;
++	msg.tx.data = &request;
++	msg.tx.size = sizeof(request);
++	msg.rx.data = &response;
++	msg.rx.size = sizeof(response);
++
++	err = tegra_bpmp_clk_transfer(bpmp, &msg);
++	if (err < 0)
++		return err;
++
++	return response.rate;
++}
++
++static unsigned long tegra_bpmp_clk_recalc_rate(struct clk_hw *hw,
++						unsigned long parent_rate)
++{
++	struct tegra_bpmp_clk *clk = to_tegra_bpmp_clk(hw);
++
++	return tegra_bpmp_clk_get_rate(clk->bpmp, clk->id);
++}
++
++static const struct clk_ops tegra_bpmp_clk_gate_ops = {
++	.is_enabled = tegra_bpmp_clk_is_enabled,
++	.prepare = tegra_bpmp_clk_enable,
++	.unprepare = tegra_bpmp_clk_disable,
++	.recalc_rate = tegra_bpmp_clk_recalc_rate,
++};
++
++static const struct clk_ops tegra_bpmp_clk_mux_ops = {
++	.get_parent = tegra_bpmp_clk_get_parent,
++	.set_parent = tegra_bpmp_clk_set_parent,
++	.is_enabled = tegra_bpmp_clk_is_enabled,
++	.prepare = tegra_bpmp_clk_enable,
++	.unprepare = tegra_bpmp_clk_disable,
++	.recalc_rate = tegra_bpmp_clk_recalc_rate,
++};
++
++static const struct clk_ops tegra_bpmp_clk_rate_ops = {
++	.is_enabled = tegra_bpmp_clk_is_enabled,
++	.prepare = tegra_bpmp_clk_enable,
++	.unprepare = tegra_bpmp_clk_disable,
++	.set_rate = tegra_bpmp_clk_set_rate,
++	.round_rate = tegra_bpmp_clk_round_rate,
++	.recalc_rate = tegra_bpmp_clk_recalc_rate,
++};
++
++static const struct clk_ops tegra_bpmp_clk_mux_rate_ops = {
++	.get_parent = tegra_bpmp_clk_get_parent,
++	.set_parent = tegra_bpmp_clk_set_parent,
++	.is_enabled = tegra_bpmp_clk_is_enabled,
++	.prepare = tegra_bpmp_clk_enable,
++	.unprepare = tegra_bpmp_clk_disable,
++	.set_rate = tegra_bpmp_clk_set_rate,
++	.round_rate = tegra_bpmp_clk_round_rate,
++	.recalc_rate = tegra_bpmp_clk_recalc_rate,
++};
++
++static int tegra_bpmp_clk_get_max_id(struct tegra_bpmp *bpmp)
++{
++	struct cmd_clk_get_max_clk_id_response response;
++	struct tegra_bpmp_clk_message msg;
++	int err;
++
++	memset(&msg, 0, sizeof(msg));
++	msg.cmd = CMD_CLK_GET_MAX_CLK_ID;
++	msg.rx.data = &response;
++	msg.rx.size = sizeof(response);
++
++	err = tegra_bpmp_clk_transfer(bpmp, &msg);
++	if (err < 0)
++		return err;
++
++	if (response.max_id > INT_MAX)
++		return -E2BIG;
++
++	return response.max_id;
++}
++
++static int tegra_bpmp_clk_get_info(struct tegra_bpmp *bpmp, unsigned int id,
++				   struct tegra_bpmp_clk_info *info)
++{
++	struct cmd_clk_get_all_info_response response;
++	struct tegra_bpmp_clk_message msg;
++	unsigned int i;
++	int err;
++
++	memset(&msg, 0, sizeof(msg));
++	msg.cmd = CMD_CLK_GET_ALL_INFO;
++	msg.clk = id;
++	msg.rx.data = &response;
++	msg.rx.size = sizeof(response);
++
++	err = tegra_bpmp_clk_transfer(bpmp, &msg);
++	if (err < 0)
++		return err;
++
++	strlcpy(info->name, response.name, MRQ_CLK_NAME_MAXLEN);
++	info->num_parents = response.num_parents;
++
++	for (i = 0; i < info->num_parents; i++)
++		info->parents[i] = response.parents[i];
++
++	info->flags = response.flags;
++
++	return 0;
++}
++
++static void tegra_bpmp_clk_info_dump(struct tegra_bpmp *bpmp,
++				     const char *level,
++				     const struct tegra_bpmp_clk_info *info)
++{
++	const char *prefix = "";
++	struct seq_buf buf;
++	unsigned int i;
++	char flags[64];
++
++	seq_buf_init(&buf, flags, sizeof(flags));
++
++	if (info->flags)
++		seq_buf_printf(&buf, "(");
++
++	if (info->flags & TEGRA_BPMP_CLK_HAS_MUX) {
++		seq_buf_printf(&buf, "%smux", prefix);
++		prefix = ", ";
++	}
++
++	if ((info->flags & TEGRA_BPMP_CLK_HAS_SET_RATE) == 0) {
++		seq_buf_printf(&buf, "%sfixed", prefix);
++		prefix = ", ";
++	}
++
++	if (info->flags & TEGRA_BPMP_CLK_IS_ROOT) {
++		seq_buf_printf(&buf, "%sroot", prefix);
++		prefix = ", ";
++	}
++
++	if (info->flags)
++		seq_buf_printf(&buf, ")");
++
++	dev_printk(level, bpmp->dev, "%03u: %s\n", info->id, info->name);
++	dev_printk(level, bpmp->dev, "  flags: %lx %s\n", info->flags, flags);
++	dev_printk(level, bpmp->dev, "  parents: %u\n", info->num_parents);
++
++	for (i = 0; i < info->num_parents; i++)
++		dev_printk(level, bpmp->dev, "    %03u\n", info->parents[i]);
++}
++
++static int tegra_bpmp_probe_clocks(struct tegra_bpmp *bpmp,
++				   struct tegra_bpmp_clk_info **clocksp)
++{
++	struct tegra_bpmp_clk_info *clocks;
++	unsigned int max_id, id, count = 0;
++	unsigned int holes = 0;
++	int err;
++
++	err = tegra_bpmp_clk_get_max_id(bpmp);
++	if (err < 0)
++		return err;
++
++	max_id = err;
++
++	dev_dbg(bpmp->dev, "maximum clock ID: %u\n", max_id);
++
++	clocks = kcalloc(max_id + 1, sizeof(*clocks), GFP_KERNEL);
++	if (!clocks)
++		return -ENOMEM;
++
++	for (id = 0; id <= max_id; id++) {
++		struct tegra_bpmp_clk_info *info = &clocks[count];
++
++		err = tegra_bpmp_clk_get_info(bpmp, id, info);
++		if (err < 0) {
++			dev_err(bpmp->dev, "failed to query clock %u: %d\n",
++				id, err);
++			continue;
++		}
++
++		if (info->num_parents >= U8_MAX) {
++			dev_err(bpmp->dev,
++				"clock %u has too many parents (%u, max: %u)\n",
++				id, info->num_parents, U8_MAX);
++			continue;
++		}
++
++		/* clock not exposed by BPMP */
++		if (info->name[0] == '\0') {
++			holes++;
++			continue;
++		}
++
++		info->id = id;
++		count++;
++
++		if (TEGRA_BPMP_DUMP_CLOCK_INFO)
++			tegra_bpmp_clk_info_dump(bpmp, KERN_DEBUG, info);
++	}
++
++	dev_dbg(bpmp->dev, "holes: %u\n", holes);
++	*clocksp = clocks;
++
++	return count;
++}
++
++static const struct tegra_bpmp_clk_info *
++tegra_bpmp_clk_find(const struct tegra_bpmp_clk_info *clocks,
++		    unsigned int num_clocks, unsigned int id)
++{
++	unsigned int i;
++
++	for (i = 0; i < num_clocks; i++)
++		if (clocks[i].id == id)
++			return &clocks[i];
++
++	return NULL;
++}
++
++static struct clk_hw *
++tegra_bpmp_clk_register(struct tegra_bpmp *bpmp,
++			const struct tegra_bpmp_clk_info *info,
++			const struct tegra_bpmp_clk_info *clocks,
++			unsigned int num_clocks)
++{
++	struct tegra_bpmp_clk *priv;
++	struct clk_init_data init;
++	const char **parents;
++	struct clk *clk;
++	unsigned int i;
++
++	priv = devm_kzalloc(bpmp->dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return ERR_PTR(-ENOMEM);
++
++	priv->bpmp = bpmp;
++	priv->id = info->id;
++
++	priv->parents = devm_kcalloc(bpmp->dev, info->num_parents,
++				     sizeof(*priv->parents), GFP_KERNEL);
++	if (!priv->parents)
++		return ERR_PTR(-ENOMEM);
++
++	priv->num_parents = info->num_parents;
++
++	/* hardware clock initialization */
++	priv->hw.init = &init;
++	init.name = info->name;
++
++	if (info->flags & TEGRA_BPMP_CLK_HAS_MUX) {
++		if (info->flags & TEGRA_BPMP_CLK_HAS_SET_RATE)
++			init.ops = &tegra_bpmp_clk_mux_rate_ops;
++		else
++			init.ops = &tegra_bpmp_clk_mux_ops;
++	} else {
++		if (info->flags & TEGRA_BPMP_CLK_HAS_SET_RATE)
++			init.ops = &tegra_bpmp_clk_rate_ops;
++		else
++			init.ops = &tegra_bpmp_clk_gate_ops;
++	}
++
++	init.num_parents = info->num_parents;
++
++	parents = kcalloc(info->num_parents, sizeof(*parents), GFP_KERNEL);
++	if (!parents)
++		return ERR_PTR(-ENOMEM);
++
++	for (i = 0; i < info->num_parents; i++) {
++		const struct tegra_bpmp_clk_info *parent;
++
++		/* keep a private copy of the ID to parent index map */
++		priv->parents[i] = info->parents[i];
++
++		parent = tegra_bpmp_clk_find(clocks, num_clocks,
++					     info->parents[i]);
++		if (!parent) {
++			dev_err(bpmp->dev, "no parent %u found for %u\n",
++				info->parents[i], info->id);
++			continue;
++		}
++
++		parents[i] = parent->name;
++	}
++
++	init.parent_names = parents;
++
++	clk = clk_register(bpmp->dev, &priv->hw);
++
++	kfree(parents);
++
++	if (IS_ERR(clk))
++		return ERR_CAST(clk);
++
++	return &priv->hw;
++}
++
++static int tegra_bpmp_register_clocks(struct tegra_bpmp *bpmp,
++				      struct tegra_bpmp_clk_info *clocks,
++				      unsigned int count)
++{
++	struct clk_hw *hw;
++	unsigned int i;
++
++	bpmp->num_clocks = count;
++
++	bpmp->clocks = devm_kcalloc(bpmp->dev, count, sizeof(hw), GFP_KERNEL);
++	if (!bpmp->clocks)
++		return -ENOMEM;
++
++	for (i = 0; i < count; i++) {
++		struct tegra_bpmp_clk_info *info = &clocks[i];
++
++		hw = tegra_bpmp_clk_register(bpmp, info, clocks, count);
++		if (IS_ERR(hw)) {
++			dev_err(bpmp->dev,
++				"failed to register clock %u (%s): %ld\n",
++				info->id, info->name, PTR_ERR(hw));
++			continue;
++		}
++
++		bpmp->clocks[i] = hw;
++	}
++
++	return 0;
++}
++
++static void tegra_bpmp_unregister_clocks(struct tegra_bpmp *bpmp)
++{
++	unsigned int i;
++
++	for (i = 0; i < bpmp->num_clocks; i++)
++		clk_hw_unregister(bpmp->clocks[i]);
++}
++
++static struct clk_hw *tegra_bpmp_clk_of_xlate(struct of_phandle_args *clkspec,
++					      void *data)
++{
++	unsigned int id = clkspec->args[0], i;
++	struct tegra_bpmp *bpmp = data;
++	struct tegra_bpmp_clk *clk;
++
++	for (i = 0; i < bpmp->num_clocks; i++) {
++		clk = to_tegra_bpmp_clk(bpmp->clocks[i]);
++		if (clk->id == id)
++			return bpmp->clocks[i];
++	}
++
++	return NULL;
++}
++
++int tegra_bpmp_init_clocks(struct tegra_bpmp *bpmp)
++{
++	struct tegra_bpmp_clk_info *clocks;
++	unsigned int count;
++	int err;
++
++	err = tegra_bpmp_probe_clocks(bpmp, &clocks);
++	if (err < 0)
++		return err;
++
++	count = err;
++
++	dev_dbg(bpmp->dev, "%u clocks probed\n", count);
++
++	err = tegra_bpmp_register_clocks(bpmp, clocks, count);
++	if (err < 0)
++		goto free;
++
++	err = of_clk_add_hw_provider(bpmp->dev->of_node,
++				     tegra_bpmp_clk_of_xlate,
++				     bpmp);
++	if (err < 0) {
++		tegra_bpmp_unregister_clocks(bpmp);
++		goto free;
++	}
++
++free:
++	kfree(clocks);
++	return err;
++}
 -- 
 2.10.2
+
