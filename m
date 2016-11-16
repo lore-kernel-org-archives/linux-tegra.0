@@ -1,76 +1,274 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 1/2] pinctrl: tegra: Add DT binding for io pads control
-Date: Tue, 15 Nov 2016 18:48:44 +0000
-Message-ID: <4be6f5f3-6884-7e4e-049c-29a1f8ca1fcb@nvidia.com>
-References: <1478696782-11657-1-git-send-email-ldewangan@nvidia.com>
- <1478696782-11657-2-git-send-email-ldewangan@nvidia.com>
+From: Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v4 2/2] mailbox: Add Tegra HSP driver
+Date: Wed, 16 Nov 2016 10:58:07 +0530
+Message-ID: <CABb+yY2NNn2nfSVbYN0Tt4iKTw8TCUJc07kC0=-==W642uGSqQ@mail.gmail.com>
+References: <20161115154845.24803-1-thierry.reding@gmail.com> <20161115154845.24803-3-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1478696782-11657-2-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20161115154845.24803-3-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+On Tue, Nov 15, 2016 at 9:18 PM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 
-On 09/11/16 13:06, Laxman Dewangan wrote:
-> NVIDIA Tegra124 and later SoCs support the multi-voltage level and
-> low power state of some of its IO pads. The IO pads can work in
-> the voltage of the 1.8V and 3.3V of IO voltage from IO power rail
-> sources. When IO interfaces are not used then IO pads can be
-> configure in low power state to reduce the power consumption from
-> that IO pads.
-> 
-> On Tegra124, the voltage level of IO power rail source is auto
-> detected by hardware(SoC) and hence it is only require to configure
-> in low power mode if IO pads are not used.
-> 
-> On T210 onwards, the auto-detection of voltage level from IO power
-> rail is removed from SoC and hence SW need to configure the PMC
-> register explicitly to set proper voltage in IO pads based on
-> IO rail power source voltage.
-> 
-> Add DT binding document for detailing the DT properties for
-> configuring IO pads voltage levels and its power state.
-> 
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> ---
-> Changes from V1:
->  The DT binding document is modified to explain the regulator handle
->  for different IOs and how can it be passed from the DT.
-> ---
->  .../bindings/pinctrl/nvidia,tegra-io-pad.txt       | 126 +++++++++++++++++++++
->  1 file changed, 126 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra-io-pad.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra-io-pad.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra-io-pad.txt
-> new file mode 100644
-> index 0000000..6ca961f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra-io-pad.txt
-> @@ -0,0 +1,126 @@
-> +NVIDIA Tegra PMC IO pad controller
+....
 > +
-> +NVIDIA Tegra124 and later SoCs support the multi-voltage level and
-> +low power state of some of its IO pads. When IO interface are not
-> +used then IO pads can be configure in low power state to reduce
-> +the power from that IO pads. The IO pads can work in the voltage
-> +of the 1.8V and 3.3V of IO voltage from power rail sources.
+> +struct tegra_hsp_channel;
+> +struct tegra_hsp;
+> +
+> +struct tegra_hsp_channel_ops {
+> +       int (*send_data)(struct tegra_hsp_channel *channel, void *data);
+> +       int (*startup)(struct tegra_hsp_channel *channel);
+> +       void (*shutdown)(struct tegra_hsp_channel *channel);
+> +       bool (*last_tx_done)(struct tegra_hsp_channel *channel);
+> +};
+> +
+> +struct tegra_hsp_channel {
+> +       struct tegra_hsp *hsp;
+> +       const struct tegra_hsp_channel_ops *ops;
+> +       struct mbox_chan *chan;
+> +       void __iomem *regs;
+> +};
+> +
+> +static struct tegra_hsp_channel *to_tegra_hsp_channel(struct mbox_chan *chan)
+> +{
+> +       return chan->con_priv;
+> +}
+> +
+It seems
+       channel = to_tegra_hsp_channel(chan);
+is no simpler ritual than
+       channel = chan->con_priv;   ?
 
-The last sentence is a bit unclear and does not sound correct. I am not
-sure if you are missing the word 'range' somewhere or if you are trying
-to say it must be either 1.8V or 3.3V. Looks like you have the same
-sentence on the changelog too.
+> +struct tegra_hsp_doorbell {
+> +       struct tegra_hsp_channel channel;
+> +       struct list_head list;
+> +       const char *name;
+> +       unsigned int master;
+> +       unsigned int index;
+> +};
+> +
+> +static struct tegra_hsp_doorbell *
+> +to_tegra_hsp_doorbell(struct tegra_hsp_channel *channel)
+> +{
+> +       if (!channel)
+> +               return NULL;
+> +
+> +       return container_of(channel, struct tegra_hsp_doorbell, channel);
+> +}
+> +
+But you don't check for NULL returned, before dereferencing the pointer 'db'
 
-Cheers
-Jon
+> +struct tegra_hsp_db_map {
+> +       const char *name;
+> +       unsigned int master;
+> +       unsigned int index;
+> +};
+> +
+> +struct tegra_hsp_soc {
+> +       const struct tegra_hsp_db_map *map;
+> +};
+> +
+> +struct tegra_hsp {
+> +       const struct tegra_hsp_soc *soc;
+> +       struct mbox_controller mbox;
+> +       void __iomem *regs;
+> +       unsigned int irq;
+> +       unsigned int num_sm;
+> +       unsigned int num_as;
+> +       unsigned int num_ss;
+> +       unsigned int num_db;
+> +       unsigned int num_si;
+> +       spinlock_t lock;
+> +
+> +       struct list_head doorbells;
+> +};
+> +
+> +static inline struct tegra_hsp *
+> +to_tegra_hsp(struct mbox_controller *mbox)
+> +{
+> +       return container_of(mbox, struct tegra_hsp, mbox);
+> +}
+> +
+> +static inline u32 tegra_hsp_readl(struct tegra_hsp *hsp, unsigned int offset)
+> +{
+> +       return readl(hsp->regs + offset);
+> +}
+> +
+> +static inline void tegra_hsp_writel(struct tegra_hsp *hsp, u32 value,
+> +                                   unsigned int offset)
+> +{
+> +       writel(value, hsp->regs + offset);
+> +}
+> +
+> +static inline u32 tegra_hsp_channel_readl(struct tegra_hsp_channel *channel,
+> +                                         unsigned int offset)
+> +{
+> +       return readl(channel->regs + offset);
+> +}
+> +
+> +static inline void tegra_hsp_channel_writel(struct tegra_hsp_channel *channel,
+> +                                           u32 value, unsigned int offset)
+> +{
+> +       writel(value, channel->regs + offset);
+> +}
+> +
+> +static bool tegra_hsp_doorbell_can_ring(struct tegra_hsp_doorbell *db)
+> +{
+> +       u32 value;
+> +
+> +       value = tegra_hsp_channel_readl(&db->channel, HSP_DB_ENABLE);
+> +
+> +       return (value & BIT(TEGRA_HSP_DB_MASTER_CCPLEX)) != 0;
+> +}
+> +
+> +static struct tegra_hsp_doorbell *
+> +__tegra_hsp_doorbell_get(struct tegra_hsp *hsp, unsigned int master)
+> +{
+> +       struct tegra_hsp_doorbell *entry;
+> +
+> +       list_for_each_entry(entry, &hsp->doorbells, list)
+> +               if (entry->master == master)
+> +                       return entry;
+> +
+> +       return NULL;
+> +}
+> +
+> +static struct tegra_hsp_doorbell *
+> +tegra_hsp_doorbell_get(struct tegra_hsp *hsp, unsigned int master)
+> +{
+> +       struct tegra_hsp_doorbell *db;
+> +       unsigned long flags;
+> +
+> +       spin_lock_irqsave(&hsp->lock, flags);
+> +       db = __tegra_hsp_doorbell_get(hsp, master);
+> +       spin_unlock_irqrestore(&hsp->lock, flags);
+> +
+> +       return db;
+> +}
+> +
+.....
 
--- 
-nvpublic
---
-To unsubscribe from this list: send the line "unsubscribe devicetree" in
-the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-More majordomo info at  http://vger.kernel.org/majordomo-info.html
+> +
+> +static int tegra_hsp_doorbell_send_data(struct tegra_hsp_channel *channel,
+> +                                       void *data)
+> +{
+> +       tegra_hsp_channel_writel(channel, 1, HSP_DB_TRIGGER);
+> +
+> +       return 0;
+> +}
+> +
+> +static int tegra_hsp_doorbell_startup(struct tegra_hsp_channel *channel)
+> +{
+> +       struct tegra_hsp_doorbell *db = to_tegra_hsp_doorbell(channel);
+> +       struct tegra_hsp *hsp = channel->hsp;
+> +       struct tegra_hsp_doorbell *ccplex;
+> +       unsigned long flags;
+> +       u32 value;
+> +
+> +       if (db->master >= hsp->mbox.num_chans) {
+> +               dev_err(hsp->mbox.dev,
+> +                       "invalid master ID %u for HSP channel\n",
+> +                       db->master);
+> +               return -EINVAL;
+> +       }
+> +
+> +       ccplex = tegra_hsp_doorbell_get(hsp, TEGRA_HSP_DB_MASTER_CCPLEX);
+> +       if (!ccplex)
+> +               return -ENODEV;
+> +
+> +       if (!tegra_hsp_doorbell_can_ring(db))
+> +               return -ENODEV;
+> +
+> +       spin_lock_irqsave(&hsp->lock, flags);
+> +
+> +       value = tegra_hsp_channel_readl(&ccplex->channel, HSP_DB_ENABLE);
+> +       value |= BIT(db->master);
+> +       tegra_hsp_channel_writel(&ccplex->channel, value, HSP_DB_ENABLE);
+> +
+> +       spin_unlock_irqrestore(&hsp->lock, flags);
+> +
+> +       return 0;
+> +}
+> +
+> +static void tegra_hsp_doorbell_shutdown(struct tegra_hsp_channel *channel)
+> +{
+> +       struct tegra_hsp_doorbell *db = to_tegra_hsp_doorbell(channel);
+> +       struct tegra_hsp *hsp = channel->hsp;
+> +       struct tegra_hsp_doorbell *ccplex;
+> +       unsigned long flags;
+> +       u32 value;
+> +
+> +       ccplex = tegra_hsp_doorbell_get(hsp, TEGRA_HSP_DB_MASTER_CCPLEX);
+> +       if (!ccplex)
+> +               return;
+> +
+> +       spin_lock_irqsave(&hsp->lock, flags);
+> +
+> +       value = tegra_hsp_channel_readl(&ccplex->channel, HSP_DB_ENABLE);
+> +       value &= ~BIT(db->master);
+> +       tegra_hsp_channel_writel(&ccplex->channel, value, HSP_DB_ENABLE);
+> +
+> +       spin_unlock_irqrestore(&hsp->lock, flags);
+> +}
+> +
+> +static bool tegra_hsp_doorbell_last_tx_done(struct tegra_hsp_channel *channel)
+> +{
+> +       return true;
+> +}
+Just curious, is the IPC done instantly after writing HSP_DB_TRIGGER
+bit? Usually there is at least some bit that stays (un)set as a 'busy
+flag'.
+
+> +
+> +static const struct tegra_hsp_channel_ops tegra_hsp_doorbell_ops = {
+> +       .send_data = tegra_hsp_doorbell_send_data,
+> +       .startup = tegra_hsp_doorbell_startup,
+> +       .shutdown = tegra_hsp_doorbell_shutdown,
+> +       .last_tx_done = tegra_hsp_doorbell_last_tx_done,
+> +};
+> +
+....
+
+> +static int tegra_hsp_send_data(struct mbox_chan *chan, void *data)
+> +{
+> +       struct tegra_hsp_channel *channel = to_tegra_hsp_channel(chan);
+> +
+> +       return channel->ops->send_data(channel, data);
+> +}
+> +
+> +static int tegra_hsp_startup(struct mbox_chan *chan)
+> +{
+> +       struct tegra_hsp_channel *channel = to_tegra_hsp_channel(chan);
+> +
+> +       return channel->ops->startup(channel);
+> +}
+> +
+> +static void tegra_hsp_shutdown(struct mbox_chan *chan)
+> +{
+> +       struct tegra_hsp_channel *channel = to_tegra_hsp_channel(chan);
+> +
+> +       return channel->ops->shutdown(channel);
+> +}
+> +
+> +static bool tegra_hsp_last_tx_done(struct mbox_chan *chan)
+> +{
+> +       struct tegra_hsp_channel *channel = to_tegra_hsp_channel(chan);
+> +
+> +       return channel->ops->last_tx_done(channel);
+> +}
+> +
+> +static const struct mbox_chan_ops tegra_hsp_ops = {
+> +       .send_data = tegra_hsp_send_data,
+> +       .startup = tegra_hsp_startup,
+> +       .shutdown = tegra_hsp_shutdown,
+> +       .last_tx_done = tegra_hsp_last_tx_done,
+> +};
+> +
+These 4 above seem overkill. Why not directly use tegra_hsp_doorbell_xxx() ?
+
+Cheers!
