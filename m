@@ -1,274 +1,92 @@
-From: Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v4 2/2] mailbox: Add Tegra HSP driver
-Date: Wed, 16 Nov 2016 10:58:07 +0530
-Message-ID: <CABb+yY2NNn2nfSVbYN0Tt4iKTw8TCUJc07kC0=-==W642uGSqQ@mail.gmail.com>
-References: <20161115154845.24803-1-thierry.reding@gmail.com> <20161115154845.24803-3-thierry.reding@gmail.com>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Re: [RFC PATCH 0/3] PM / Domains: Add support for devices that
+ require multiple domains
+Date: Wed, 16 Nov 2016 10:48:29 +0000
+Message-ID: <d961715d-820a-dd63-e3a9-c908ce465582@nvidia.com>
+References: <1474367287-10402-1-git-send-email-jonathanh@nvidia.com>
+ <CAPDyKFoFPNNnoc-7G34A7a4Yo8f=WUyurNP1evabw3MOEubEoA@mail.gmail.com>
+ <90faea7d-65b6-590a-83f1-24fcdffa0569@nvidia.com>
+ <CAPDyKFr4S3tM7KL2hfwJ3R4e5z1-Zd99aMhMSgVq4XzkrUUdow@mail.gmail.com>
+ <fd7c8f40-2a9f-b71c-bd11-43ee657441ae@nvidia.com>
+ <63670abf-1d58-a7e3-6927-0c815d44d8a1@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20161115154845.24803-3-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Linux Kernel Mailing List <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-pm-owner@vger.kernel.org>
+In-Reply-To: <63670abf-1d58-a7e3-6927-0c815d44d8a1@nvidia.com>
+Sender: linux-pm-owner@vger.kernel.org
+To: Ulf Hansson <ulf.hansson@linaro.org>, Kevin Hilman <khilman@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Rajendra Nayak <rnayak@codeaurora.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Tue, Nov 15, 2016 at 9:18 PM, Thierry Reding
-<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
+Hi Kevin, Ulf,
 
-....
-> +
-> +struct tegra_hsp_channel;
-> +struct tegra_hsp;
-> +
-> +struct tegra_hsp_channel_ops {
-> +       int (*send_data)(struct tegra_hsp_channel *channel, void *data);
-> +       int (*startup)(struct tegra_hsp_channel *channel);
-> +       void (*shutdown)(struct tegra_hsp_channel *channel);
-> +       bool (*last_tx_done)(struct tegra_hsp_channel *channel);
-> +};
-> +
-> +struct tegra_hsp_channel {
-> +       struct tegra_hsp *hsp;
-> +       const struct tegra_hsp_channel_ops *ops;
-> +       struct mbox_chan *chan;
-> +       void __iomem *regs;
-> +};
-> +
-> +static struct tegra_hsp_channel *to_tegra_hsp_channel(struct mbox_chan *chan)
-> +{
-> +       return chan->con_priv;
-> +}
-> +
-It seems
-       channel = to_tegra_hsp_channel(chan);
-is no simpler ritual than
-       channel = chan->con_priv;   ?
+On 03/11/16 14:20, Jon Hunter wrote:
+> 
+> On 11/10/16 10:15, Jon Hunter wrote:
+> 
+> ...
+> 
+>>>>> Second, another way of seeing this is: Depending on the current
+>>>>> runtime selected configuration you need to re-configure the PM domain
+>>>>> topology - but the device would still remain in the same PM domain.
+>>>>>
+>>>>> In other words, you would need to remove/add subdomain(s) depending on
+>>>>> the selected configuration. Would that better reflect the HW?
+>>>>
+>>>> I am not 100% sure I follow what you are saying, but ultimately, I would
+>>>> like to get to ...
+>>>>
+>>>>         usb@70090000 {
+>>>>                 compatible = "nvidia,tegra210-xusb";
+>>>>                 ...
+>>>>                 power-domains = <&pd_xusbhost>, <&pd_xusbss>;
+>>>>         };
+>>>
+>>> So, is this really is a proper description of the HW? Isn't it so,
+>>> that the usb device always resides in one and the same PM domain?
+>>
+>> I guess technically, the usbhost controller resides in one partition and
+>> the super-speed logic in another. So could the usbhost domain be the
+>> primary? Possibly, but the device cannot be probed without both enabled.
+>>
+>>> Now, depending on the selected speed mode (superspeed) additional
+>>> logic may needs to be powered on and configured for the usb device to
+>>> work?
+>>> Perhaps, one could consider those additional logics as a master/parent
+>>> PM domain for the usb device's PM domain?
+>>>
+>>> Or this is not how the HW works? :-)
+>>
+>> It might be possible for this case, but to be honest, the more I think
+>> about this, I do wonder if we need to be able to make the framework a
+>> lot more flexible for devices that need multiple power-domains. In other
+>> words, for devices that use multiple domains allow them to control them
+>> similarly to what we do for regulators or clocks. So if there is more
+>> than one defined, then the genpd core will not bind the device to the
+>> pm-domain and let the driver handle it. This way if you do need more
+>> granular control of the pm-domains in the driver you can do whatever you
+>> need to.
+>>
+>> I know that Rajendra (CC'ed) was looking into whether he had a need to
+>> control multiple power-domains individually from within the context of a
+>> single device driver.
+> 
+> So Rajendra commented to say that he does not see a need for individual
+> control of power-domains for now, but a need for specifying multiple.
+> 
+> One simple option would be to allow users to specify multiple and have
+> the genpd core effectively ignore such devices and leave it to the
+> driver to configure manually. I have been able to do this for XUSB by
+> dynamically adding power-domains to the device.
+> 
+> Let me know if you have any more thoughts on how we can do this.
 
-> +struct tegra_hsp_doorbell {
-> +       struct tegra_hsp_channel channel;
-> +       struct list_head list;
-> +       const char *name;
-> +       unsigned int master;
-> +       unsigned int index;
-> +};
-> +
-> +static struct tegra_hsp_doorbell *
-> +to_tegra_hsp_doorbell(struct tegra_hsp_channel *channel)
-> +{
-> +       if (!channel)
-> +               return NULL;
-> +
-> +       return container_of(channel, struct tegra_hsp_doorbell, channel);
-> +}
-> +
-But you don't check for NULL returned, before dereferencing the pointer 'db'
+Any more thoughts on this? Seems that there are a few others that would
+be interested in supporting multiple domains for a device.
 
-> +struct tegra_hsp_db_map {
-> +       const char *name;
-> +       unsigned int master;
-> +       unsigned int index;
-> +};
-> +
-> +struct tegra_hsp_soc {
-> +       const struct tegra_hsp_db_map *map;
-> +};
-> +
-> +struct tegra_hsp {
-> +       const struct tegra_hsp_soc *soc;
-> +       struct mbox_controller mbox;
-> +       void __iomem *regs;
-> +       unsigned int irq;
-> +       unsigned int num_sm;
-> +       unsigned int num_as;
-> +       unsigned int num_ss;
-> +       unsigned int num_db;
-> +       unsigned int num_si;
-> +       spinlock_t lock;
-> +
-> +       struct list_head doorbells;
-> +};
-> +
-> +static inline struct tegra_hsp *
-> +to_tegra_hsp(struct mbox_controller *mbox)
-> +{
-> +       return container_of(mbox, struct tegra_hsp, mbox);
-> +}
-> +
-> +static inline u32 tegra_hsp_readl(struct tegra_hsp *hsp, unsigned int offset)
-> +{
-> +       return readl(hsp->regs + offset);
-> +}
-> +
-> +static inline void tegra_hsp_writel(struct tegra_hsp *hsp, u32 value,
-> +                                   unsigned int offset)
-> +{
-> +       writel(value, hsp->regs + offset);
-> +}
-> +
-> +static inline u32 tegra_hsp_channel_readl(struct tegra_hsp_channel *channel,
-> +                                         unsigned int offset)
-> +{
-> +       return readl(channel->regs + offset);
-> +}
-> +
-> +static inline void tegra_hsp_channel_writel(struct tegra_hsp_channel *channel,
-> +                                           u32 value, unsigned int offset)
-> +{
-> +       writel(value, channel->regs + offset);
-> +}
-> +
-> +static bool tegra_hsp_doorbell_can_ring(struct tegra_hsp_doorbell *db)
-> +{
-> +       u32 value;
-> +
-> +       value = tegra_hsp_channel_readl(&db->channel, HSP_DB_ENABLE);
-> +
-> +       return (value & BIT(TEGRA_HSP_DB_MASTER_CCPLEX)) != 0;
-> +}
-> +
-> +static struct tegra_hsp_doorbell *
-> +__tegra_hsp_doorbell_get(struct tegra_hsp *hsp, unsigned int master)
-> +{
-> +       struct tegra_hsp_doorbell *entry;
-> +
-> +       list_for_each_entry(entry, &hsp->doorbells, list)
-> +               if (entry->master == master)
-> +                       return entry;
-> +
-> +       return NULL;
-> +}
-> +
-> +static struct tegra_hsp_doorbell *
-> +tegra_hsp_doorbell_get(struct tegra_hsp *hsp, unsigned int master)
-> +{
-> +       struct tegra_hsp_doorbell *db;
-> +       unsigned long flags;
-> +
-> +       spin_lock_irqsave(&hsp->lock, flags);
-> +       db = __tegra_hsp_doorbell_get(hsp, master);
-> +       spin_unlock_irqrestore(&hsp->lock, flags);
-> +
-> +       return db;
-> +}
-> +
-.....
+Cheers
+Jon
 
-> +
-> +static int tegra_hsp_doorbell_send_data(struct tegra_hsp_channel *channel,
-> +                                       void *data)
-> +{
-> +       tegra_hsp_channel_writel(channel, 1, HSP_DB_TRIGGER);
-> +
-> +       return 0;
-> +}
-> +
-> +static int tegra_hsp_doorbell_startup(struct tegra_hsp_channel *channel)
-> +{
-> +       struct tegra_hsp_doorbell *db = to_tegra_hsp_doorbell(channel);
-> +       struct tegra_hsp *hsp = channel->hsp;
-> +       struct tegra_hsp_doorbell *ccplex;
-> +       unsigned long flags;
-> +       u32 value;
-> +
-> +       if (db->master >= hsp->mbox.num_chans) {
-> +               dev_err(hsp->mbox.dev,
-> +                       "invalid master ID %u for HSP channel\n",
-> +                       db->master);
-> +               return -EINVAL;
-> +       }
-> +
-> +       ccplex = tegra_hsp_doorbell_get(hsp, TEGRA_HSP_DB_MASTER_CCPLEX);
-> +       if (!ccplex)
-> +               return -ENODEV;
-> +
-> +       if (!tegra_hsp_doorbell_can_ring(db))
-> +               return -ENODEV;
-> +
-> +       spin_lock_irqsave(&hsp->lock, flags);
-> +
-> +       value = tegra_hsp_channel_readl(&ccplex->channel, HSP_DB_ENABLE);
-> +       value |= BIT(db->master);
-> +       tegra_hsp_channel_writel(&ccplex->channel, value, HSP_DB_ENABLE);
-> +
-> +       spin_unlock_irqrestore(&hsp->lock, flags);
-> +
-> +       return 0;
-> +}
-> +
-> +static void tegra_hsp_doorbell_shutdown(struct tegra_hsp_channel *channel)
-> +{
-> +       struct tegra_hsp_doorbell *db = to_tegra_hsp_doorbell(channel);
-> +       struct tegra_hsp *hsp = channel->hsp;
-> +       struct tegra_hsp_doorbell *ccplex;
-> +       unsigned long flags;
-> +       u32 value;
-> +
-> +       ccplex = tegra_hsp_doorbell_get(hsp, TEGRA_HSP_DB_MASTER_CCPLEX);
-> +       if (!ccplex)
-> +               return;
-> +
-> +       spin_lock_irqsave(&hsp->lock, flags);
-> +
-> +       value = tegra_hsp_channel_readl(&ccplex->channel, HSP_DB_ENABLE);
-> +       value &= ~BIT(db->master);
-> +       tegra_hsp_channel_writel(&ccplex->channel, value, HSP_DB_ENABLE);
-> +
-> +       spin_unlock_irqrestore(&hsp->lock, flags);
-> +}
-> +
-> +static bool tegra_hsp_doorbell_last_tx_done(struct tegra_hsp_channel *channel)
-> +{
-> +       return true;
-> +}
-Just curious, is the IPC done instantly after writing HSP_DB_TRIGGER
-bit? Usually there is at least some bit that stays (un)set as a 'busy
-flag'.
-
-> +
-> +static const struct tegra_hsp_channel_ops tegra_hsp_doorbell_ops = {
-> +       .send_data = tegra_hsp_doorbell_send_data,
-> +       .startup = tegra_hsp_doorbell_startup,
-> +       .shutdown = tegra_hsp_doorbell_shutdown,
-> +       .last_tx_done = tegra_hsp_doorbell_last_tx_done,
-> +};
-> +
-....
-
-> +static int tegra_hsp_send_data(struct mbox_chan *chan, void *data)
-> +{
-> +       struct tegra_hsp_channel *channel = to_tegra_hsp_channel(chan);
-> +
-> +       return channel->ops->send_data(channel, data);
-> +}
-> +
-> +static int tegra_hsp_startup(struct mbox_chan *chan)
-> +{
-> +       struct tegra_hsp_channel *channel = to_tegra_hsp_channel(chan);
-> +
-> +       return channel->ops->startup(channel);
-> +}
-> +
-> +static void tegra_hsp_shutdown(struct mbox_chan *chan)
-> +{
-> +       struct tegra_hsp_channel *channel = to_tegra_hsp_channel(chan);
-> +
-> +       return channel->ops->shutdown(channel);
-> +}
-> +
-> +static bool tegra_hsp_last_tx_done(struct mbox_chan *chan)
-> +{
-> +       struct tegra_hsp_channel *channel = to_tegra_hsp_channel(chan);
-> +
-> +       return channel->ops->last_tx_done(channel);
-> +}
-> +
-> +static const struct mbox_chan_ops tegra_hsp_ops = {
-> +       .send_data = tegra_hsp_send_data,
-> +       .startup = tegra_hsp_startup,
-> +       .shutdown = tegra_hsp_shutdown,
-> +       .last_tx_done = tegra_hsp_last_tx_done,
-> +};
-> +
-These 4 above seem overkill. Why not directly use tegra_hsp_doorbell_xxx() ?
-
-Cheers!
+-- 
+nvpublic
