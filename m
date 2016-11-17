@@ -1,84 +1,63 @@
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [bug report] clk: tegra: Add BPMP clock driver
-Date: Thu, 17 Nov 2016 18:25:28 +0100
-Message-ID: <20161117172526.GA20185@ulmo.ba.sec>
-References: <20161117125645.GA32763@mwanda>
+From: Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>
+Subject: Re: [PATCH] soc/tegra: Implement Tegra186 PMC support
+Date: Thu, 17 Nov 2016 17:28:53 +0000
+Message-ID: <0068ebe4-09f3-4434-fc38-071cf2d553bc@arm.com>
+References: <20161117171636.20580-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="n8g4imXOkfNTN/H1"
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20161117125645.GA32763@mwanda>
-Content-Disposition: inline
+In-Reply-To: <20161117171636.20580-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
---n8g4imXOkfNTN/H1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-Hi Dan,
 
-On Thu, Nov 17, 2016 at 03:59:54PM +0300, Dan Carpenter wrote:
-> Hello Thierry Reding,
->=20
-> The patch 569d53d81e37: "clk: tegra: Add BPMP clock driver" from Aug
-> 18, 2016, leads to the following static checker warning:
->=20
-> 	drivers/clk/tegra/clk-bpmp.c:183 tegra_bpmp_clk_get_parent()
-> 	warn: sizeof(&pointer)?
->=20
-> drivers/clk/tegra/clk-bpmp.c
->    171  static u8 tegra_bpmp_clk_get_parent(struct clk_hw *hw)
->    172  {
->    173          struct tegra_bpmp_clk *clk =3D to_tegra_bpmp_clk(hw);
->    174          struct cmd_clk_get_parent_response response;
->    175          struct tegra_bpmp_clk_message msg;
->    176          unsigned int i;
->    177          int err;
->    178 =20
->    179          memset(&msg, 0, sizeof(msg));
->    180          msg.cmd =3D CMD_CLK_GET_PARENT;
->    181          msg.clk =3D clk->id;
->    182          msg.rx.data =3D &response;
->    183          msg.rx.size =3D sizeof(&response);
->=20
-> This should almost certainly sizeof(response). int vs pointer.
->=20
->    184 =20
->    185          err =3D tegra_bpmp_clk_transfer(clk->bpmp, &msg);
->    186          if (err < 0) {
->    187                  dev_err(clk->bpmp->dev, "failed to get parent for=
- %s: %d\n",
+On 17/11/16 17:16, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> The power management controller on Tegra186 has changed in backwards-
+> incompatible ways with respect to earlier generations. This implements a
+> new driver that supports inversion of the PMU interrupt as well as the
+> "recovery", "bootloader" and "forced-recovery" reboot commands.
+>
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  34 +++++
+>  drivers/soc/tegra/Makefile                         |   2 +-
+>  drivers/soc/tegra/pmc-tegra186.c                   | 169 +++++++++++++++++++++
+>  3 files changed, 204 insertions(+), 1 deletion(-)
+>  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
+>  create mode 100644 drivers/soc/tegra/pmc-tegra186.c
+>
 
-Mike pointed that out during review and I've fixed it since then. I
-assume that this worked fine because we were accidentally ovewriting
-something on the stack that we no longer used (perhaps the following
-msg variable?).
+[...]
 
-Thanks for reporting,
-Thierry
+> diff --git a/drivers/soc/tegra/pmc-tegra186.c b/drivers/soc/tegra/pmc-tegra186.c
+> new file mode 100644
+> index 000000000000..ee28eddd8e3c
+> --- /dev/null
+> +++ b/drivers/soc/tegra/pmc-tegra186.c
 
---n8g4imXOkfNTN/H1
-Content-Type: application/pgp-signature; name="signature.asc"
+[...]
 
------BEGIN PGP SIGNATURE-----
+> +
+> +	/*
+> +	 * If available, call the system restart implementation that was
+> +	 * registered earlier (typically PSCI).
+> +	 */
+> +	if (pmc->system_restart) {
+> +		pmc->system_restart(reboot_mode, cmd);
+> +		return NOTIFY_DONE;
+> +	}
+> +
 
-iQIcBAABCAAGBQJYLegDAAoJEN0jrNd/PrOhuVcQALYXkmdoQXvAUSrsN5fDmfJ2
-8bidxNqvuj2A+xwALnOzkoxj3Vkhcd6e728r+oI6PtGhSbJ2+m/in9IMgKZ1AQPx
-3yjnHPsxzORyUXPmd6dqwo/tuhdFfRawe41qd2Orj1WD2CqRSJ+2e+MokkMbynXu
-p++bE1jU2cPVwntU+GLsfZRJ8uQbrbFDNjUiw9tvQkGhH+qsGqNOy04MMzGTHk90
-Y6c1ECLDqQ1qBOI+XLf7Zye3UpfcGAemTXeBGnFk4pUdDt9ZfJREixRei9xJQT/Z
-J97TeN3kImPekibLV1I9kM/048A3hjx2GQ8/Rp9rhFNdgFWNFYS72PoSCgDwlw9F
-Ycrh/3Tb4QkqaDZ85MJdt8+SMrwZszMHNKvPArXXqtU0ky8itg1plMQtiJ9S9WEk
-iT+ExiD+63qLSIRVuAYpt/eDpG+6Tq0Yu1toj6SPTYGvEzQpZgzCAWQvBseK9pAq
-vXEDFf7JrWsbppHcTOdyozeeNn27UkFsDeOs8y+mTmYYnFMZKwckt0RAsK1E1mNh
-KtxqS3XL+s6ZmEfwa+88YHXBQKQCfKhWWDEnaTNlU57FUwbEn2VPPuXlBb9KSGpr
-b24dwm9zLeH1CVwuCwJ+hyJwDWWXYLewHLa0a5L59ZQjJ9JnsuhNzcQCxcpkEYjQ
-SflwFhwk2tQ8OUfqrjjx
-=/l+h
------END PGP SIGNATURE-----
+IIUC, Tegra186 implements PSCI v1.0 and it always takes above path.
+So what other platforms does this driver support ? The name is
+pmc-tegra186.c, hence the confusion.
 
---n8g4imXOkfNTN/H1--
+-- 
+Regards,
+Sudeep
