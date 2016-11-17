@@ -1,253 +1,111 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH] soc/tegra: Implement Tegra186 PMC support
-Date: Thu, 17 Nov 2016 18:16:36 +0100
-Message-ID: <20161117171636.20580-1-thierry.reding@gmail.com>
+Subject: [PATCH 1/2] mmc: tegra: Support module reset
+Date: Thu, 17 Nov 2016 18:18:54 +0100
+Message-ID: <20161117171855.20843-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-The power management controller on Tegra186 has changed in backwards-
-incompatible ways with respect to earlier generations. This implements a
-new driver that supports inversion of the PMU interrupt as well as the
-"recovery", "bootloader" and "forced-recovery" reboot commands.
+The device tree binding for the SDHCI controller found on Tegra SoCs
+specifies that a reset control can be provided by the device tree. No
+code was ever added to support the module reset, which can cause the
+driver to try and access registers from a module that's in reset. On
+most Tegra SoC generations doing so would cause a hang.
+
+Note that it's unlikely to see this happen because on most platforms
+these resets will have been deasserted by the bootloader. However the
+portability can be improved by making sure the driver deasserts the
+reset before accessing any registers.
+
+Since resets are synchronous on Tegra SoCs, the platform driver needs
+to implement a custom ->remove() callback now to make sure the clock
+is disabled after the reset is asserted.
 
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  34 +++++
- drivers/soc/tegra/Makefile                         |   2 +-
- drivers/soc/tegra/pmc-tegra186.c                   | 169 +++++++++++++++++++++
- 3 files changed, 204 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
- create mode 100644 drivers/soc/tegra/pmc-tegra186.c
+ drivers/mmc/host/sdhci-tegra.c | 38 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 37 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
-new file mode 100644
-index 000000000000..078a58b0302f
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
-@@ -0,0 +1,34 @@
-+NVIDIA Tegra Power Management Controller (PMC)
+diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
+index 20b6ff5b4af1..eac57bb161d3 100644
+--- a/drivers/mmc/host/sdhci-tegra.c
++++ b/drivers/mmc/host/sdhci-tegra.c
+@@ -21,6 +21,7 @@
+ #include <linux/io.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
++#include <linux/reset.h>
+ #include <linux/mmc/card.h>
+ #include <linux/mmc/host.h>
+ #include <linux/mmc/mmc.h>
+@@ -65,6 +66,8 @@ struct sdhci_tegra {
+ 	struct gpio_desc *power_gpio;
+ 	bool ddr_signaling;
+ 	bool pad_calib_required;
 +
-+Required properties:
-+- compatible: Should contain one of the following:
-+  - "nvidia,tegra186-pmc": for Tegra186
-+- reg: Must contain an (offset, length) pair of the register set for each
-+  entry in reg-names.
-+- reg-names: Must include the following entries:
-+  - "pmc"
-+  - "wake"
-+  - "aotag"
-+  - "scratch"
-+
-+Optional properties:
-+- nvidia,invert-interrupt: If present, inverts the PMU interrupt signal.
-+
-+Example:
-+
-+SoC DTSI:
-+
-+	pmc@c3600000 {
-+		compatible = "nvidia,tegra186-pmc";
-+		reg = <0 0x0c360000 0 0x10000>,
-+		      <0 0x0c370000 0 0x10000>,
-+		      <0 0x0c380000 0 0x10000>,
-+		      <0 0x0c390000 0 0x10000>;
-+		reg-names = "pmc", "wake", "aotag", "scratch";
-+	};
-+
-+Board DTS:
-+
-+	pmc@c360000 {
-+		nvidia,invert-interrupt;
-+	};
-diff --git a/drivers/soc/tegra/Makefile b/drivers/soc/tegra/Makefile
-index ae857ff7d53d..9976a0de1927 100644
---- a/drivers/soc/tegra/Makefile
-+++ b/drivers/soc/tegra/Makefile
-@@ -1,4 +1,4 @@
- obj-y += fuse/
++	struct reset_control *rst;
+ };
  
- obj-y += common.o
--obj-y += pmc.o
-+obj-y += pmc.o pmc-tegra186.o
-diff --git a/drivers/soc/tegra/pmc-tegra186.c b/drivers/soc/tegra/pmc-tegra186.c
-new file mode 100644
-index 000000000000..ee28eddd8e3c
---- /dev/null
-+++ b/drivers/soc/tegra/pmc-tegra186.c
-@@ -0,0 +1,169 @@
-+/*
-+ * Copyright (c) 2016, NVIDIA CORPORATION. All rights reserved.
-+ *
-+ * This program is free software; you can redistribute it and/or modify it
-+ * under the terms and conditions of the GNU General Public License,
-+ * version 2, as published by the Free Software Foundation.
-+ *
-+ * This program is distributed in the hope it will be useful, but WITHOUT
-+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
-+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
-+ * more details.
-+ */
-+
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/reboot.h>
-+
-+#include <asm/system_misc.h>
-+
-+#define PMC_CNTRL 0x000
-+#define  PMC_CNTRL_MAIN_RST BIT(4)
-+
-+#define PMC_RST_STATUS 0x070
-+
-+#define WAKE_AOWAKE_CTRL 0x4f4
-+#define  WAKE_AOWAKE_CTRL_INTR_POLARITY BIT(0)
-+
-+#define SCRATCH_SCRATCH0 0x2000
-+#define  SCRATCH_SCRATCH0_MODE_RECOVERY BIT(31)
-+#define  SCRATCH_SCRATCH0_MODE_BOOTLOADER BIT(30)
-+#define  SCRATCH_SCRATCH0_MODE_RCM BIT(1)
-+#define  SCRATCH_SCRATCH0_MODE_MASK (SCRATCH_SCRATCH0_MODE_RECOVERY | \
-+				     SCRATCH_SCRATCH0_MODE_BOOTLOADER | \
-+				     SCRATCH_SCRATCH0_MODE_RCM)
-+
-+struct tegra_pmc {
-+	struct device *dev;
-+	void __iomem *regs;
-+	void __iomem *wake;
-+	void __iomem *aotag;
-+	void __iomem *scratch;
-+
-+	void (*system_restart)(enum reboot_mode mode, const char *cmd);
-+	struct notifier_block restart;
-+};
-+
-+static int tegra186_pmc_restart_notify(struct notifier_block *nb,
-+				       unsigned long action,
-+				       void *data)
-+{
-+	struct tegra_pmc *pmc = container_of(nb, struct tegra_pmc, restart);
-+	const char *cmd = data;
-+	u32 value;
-+
-+	value = readl(pmc->scratch + SCRATCH_SCRATCH0);
-+	value &= ~SCRATCH_SCRATCH0_MODE_MASK;
-+
-+	if (cmd) {
-+		if (strcmp(cmd, "recovery") == 0)
-+			value |= SCRATCH_SCRATCH0_MODE_RECOVERY;
-+
-+		if (strcmp(cmd, "bootloader") == 0)
-+			value |= SCRATCH_SCRATCH0_MODE_BOOTLOADER;
-+
-+		if (strcmp(cmd, "forced-recovery") == 0)
-+			value |= SCRATCH_SCRATCH0_MODE_RCM;
+ static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
+@@ -489,6 +492,16 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ 	clk_prepare_enable(clk);
+ 	pltfm_host->clk = clk;
+ 
++	tegra_host->rst = devm_reset_control_get(&pdev->dev, "sdhci");
++	if (IS_ERR(tegra_host->rst)) {
++		rc = PTR_ERR(tegra_host->rst);
++		dev_err(&pdev->dev, "failed to get reset control: %d\n", rc);
++		goto err_clk_get;
 +	}
 +
-+	writel(value, pmc->scratch + SCRATCH_SCRATCH0);
++	reset_control_deassert(tegra_host->rst);
++	usleep_range(2000, 4000);
 +
-+	/*
-+	 * If available, call the system restart implementation that was
-+	 * registered earlier (typically PSCI).
-+	 */
-+	if (pmc->system_restart) {
-+		pmc->system_restart(reboot_mode, cmd);
-+		return NOTIFY_DONE;
-+	}
-+
-+	/* reset everything but SCRATCH0_SCRATCH0 and PMC_RST_STATUS */
-+	value = readl(pmc->regs + PMC_CNTRL);
-+	value |= PMC_CNTRL_MAIN_RST;
-+	writel(value, pmc->regs + PMC_CNTRL);
-+
-+	return NOTIFY_DONE;
-+}
-+
-+static int tegra186_pmc_setup(struct tegra_pmc *pmc)
+ 	rc = sdhci_add_host(host);
+ 	if (rc)
+ 		goto err_add_host;
+@@ -504,6 +517,29 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
+ 	return rc;
+ }
+ 
++static int sdhci_tegra_remove(struct platform_device *pdev)
 +{
-+	struct device_node *np = pmc->dev->of_node;
-+	bool invert;
++	struct sdhci_host *host = platform_get_drvdata(pdev);
++	struct sdhci_pltfm_host *platform = sdhci_priv(host);
++	struct sdhci_tegra *tegra = sdhci_pltfm_priv(platform);
++	int dead = 0;
 +	u32 value;
 +
-+	invert = of_property_read_bool(np, "nvidia,invert-interrupt");
++	value = readl(host->ioaddr + SDHCI_INT_STATUS);
++	if (value == 0xffffffff)
++		dead = 1;
 +
-+	value = readl(pmc->wake + WAKE_AOWAKE_CTRL);
++	sdhci_remove_host(host, dead);
 +
-+	if (invert)
-+		value |= WAKE_AOWAKE_CTRL_INTR_POLARITY;
-+	else
-+		value &= ~WAKE_AOWAKE_CTRL_INTR_POLARITY;
++	reset_control_assert(tegra->rst);
++	usleep_range(2000, 4000);
++	clk_disable_unprepare(platform->clk);
 +
-+	writel(value, pmc->wake + WAKE_AOWAKE_CTRL);
-+
-+	/*
-+	 * We need to hook any system restart implementation registered
-+	 * previously so we can write SCRATCH_SCRATCH0 before reset.
-+	 */
-+	pmc->system_restart = arm_pm_restart;
-+	arm_pm_restart = NULL;
-+
-+	pmc->restart.notifier_call = tegra186_pmc_restart_notify;
-+	pmc->restart.priority = 128;
-+
-+	return register_restart_handler(&pmc->restart);
-+}
-+
-+static int tegra186_pmc_probe(struct platform_device *pdev)
-+{
-+	struct tegra_pmc *pmc;
-+	struct resource *res;
-+
-+	pmc = devm_kzalloc(&pdev->dev, sizeof(*pmc), GFP_KERNEL);
-+	if (!pmc)
-+		return -ENOMEM;
-+
-+	pmc->dev = &pdev->dev;
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "pmc");
-+	pmc->regs = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(pmc->regs))
-+		return PTR_ERR(pmc->regs);
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "wake");
-+	pmc->wake = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(pmc->wake))
-+		return PTR_ERR(pmc->wake);
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "aotag");
-+	pmc->aotag = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(pmc->aotag))
-+		return PTR_ERR(pmc->aotag);
-+
-+	res = platform_get_resource_byname(pdev, IORESOURCE_MEM, "scratch");
-+	pmc->scratch = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(pmc->scratch))
-+		return PTR_ERR(pmc->scratch);
-+
-+	tegra186_pmc_setup(pmc);
++	sdhci_pltfm_free(pdev);
 +
 +	return 0;
 +}
 +
-+static const struct of_device_id tegra186_pmc_of_match[] = {
-+	{ .compatible = "nvidia,tegra186-pmc" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, tegra186_pmc_of_match);
-+
-+static struct platform_driver tegra186_pmc_driver = {
-+	.driver = {
-+		.name = "tegra186-pmc",
-+		.of_match_table = tegra186_pmc_of_match,
-+	},
-+	.probe = tegra186_pmc_probe,
-+};
-+builtin_platform_driver(tegra186_pmc_driver);
+ static struct platform_driver sdhci_tegra_driver = {
+ 	.driver		= {
+ 		.name	= "sdhci-tegra",
+@@ -511,7 +547,7 @@ static struct platform_driver sdhci_tegra_driver = {
+ 		.pm	= &sdhci_pltfm_pmops,
+ 	},
+ 	.probe		= sdhci_tegra_probe,
+-	.remove		= sdhci_pltfm_unregister,
++	.remove		= sdhci_tegra_remove,
+ };
+ 
+ module_platform_driver(sdhci_tegra_driver);
 -- 
 2.10.2
