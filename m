@@ -1,85 +1,45 @@
-From: Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>
-Subject: Re: [PATCH 8/9] arm64: tegra: Enable PSCI on P3310
-Date: Thu, 17 Nov 2016 17:21:34 +0000
-Message-ID: <786f354d-a1f2-f2c6-fde7-7b1af3df756c@arm.com>
-References: <20161117171131.20062-1-thierry.reding@gmail.com>
- <20161117171131.20062-8-thierry.reding@gmail.com>
+From: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Subject: [bug report] clk: tegra: Add BPMP clock driver
+Date: Thu, 17 Nov 2016 15:59:54 +0300
+Message-ID: <20161117125645.GA32763@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20161117171131.20062-8-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Sudeep Holla <sudeep.holla-5wv7dgnIgG8@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Hello Thierry Reding,
 
+The patch 569d53d81e37: "clk: tegra: Add BPMP clock driver" from Aug
+18, 2016, leads to the following static checker warning:
 
-On 17/11/16 17:11, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->
-> The P3310 processor module comes ships with a firmware that implements
-> PSCI 1.0. Enable and use it to bring up all CPUs.
->
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi | 36 ++++++++++++++++++++++++++
->  1 file changed, 36 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-> index 807af7b68761..2c158c6809a5 100644
-> --- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-> +++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-> @@ -26,7 +26,43 @@
->  		status = "okay";
->  	};
->
-> +	cpus {
-> +		cpu@0 {
-> +			enable-method = "psci";
-> +		};
-> +
-> +		cpu@1 {
-> +			enable-method = "psci";
-> +		};
-> +
-> +		cpu@2 {
-> +			enable-method = "psci";
-> +		};
-> +
-> +		cpu@3 {
-> +			enable-method = "psci";
-> +		};
-> +
-> +		cpu@4 {
-> +			enable-method = "psci";
-> +		};
-> +
-> +		cpu@5 {
-> +			enable-method = "psci";
-> +		};
-> +	};
-> +
->  	bpmp {
->  		status = "okay";
->  	};
-> +
-> +	psci {
-> +		compatible = "arm,psci-1.0";
-> +		status = "okay";
-> +		method = "smc";
+	drivers/clk/tegra/clk-bpmp.c:183 tegra_bpmp_clk_get_parent()
+	warn: sizeof(&pointer)?
 
-[...]
+drivers/clk/tegra/clk-bpmp.c
+   171  static u8 tegra_bpmp_clk_get_parent(struct clk_hw *hw)
+   172  {
+   173          struct tegra_bpmp_clk *clk = to_tegra_bpmp_clk(hw);
+   174          struct cmd_clk_get_parent_response response;
+   175          struct tegra_bpmp_clk_message msg;
+   176          unsigned int i;
+   177          int err;
+   178  
+   179          memset(&msg, 0, sizeof(msg));
+   180          msg.cmd = CMD_CLK_GET_PARENT;
+   181          msg.clk = clk->id;
+   182          msg.rx.data = &response;
+   183          msg.rx.size = sizeof(&response);
 
-> +
-> +		cpu_off = <0x84000002>;
-> +		cpu_on = <0xc4000003>;
-> +		cpu_suspend = <0xc4000001>;
+This should almost certainly sizeof(response). int vs pointer.
 
-These are applicable only for "arm,psci"(i.e. PSCI v0.1), so you need to
-drop them.
+   184  
+   185          err = tegra_bpmp_clk_transfer(clk->bpmp, &msg);
+   186          if (err < 0) {
+   187                  dev_err(clk->bpmp->dev, "failed to get parent for %s: %d\n",
 
--- 
-Regards,
-Sudeep
+regards,
+dan carpenter
