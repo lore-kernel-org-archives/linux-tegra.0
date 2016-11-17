@@ -1,121 +1,163 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 1/9] arm64: tegra: Add Tegra186 support
-Date: Thu, 17 Nov 2016 18:11:23 +0100
-Message-ID: <20161117171131.20062-1-thierry.reding@gmail.com>
+Subject: [PATCH 4/9] arm64: tegra: Add I2C controllers on Tegra186
+Date: Thu, 17 Nov 2016 18:11:26 +0100
+Message-ID: <20161117171131.20062-4-thierry.reding@gmail.com>
+References: <20161117171131.20062-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20161117171131.20062-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Cc: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-This adds the initial support of Tegra186 SoC. It provides enough to
-enable the serial console and boot from an initial ramdisk.
+Tegra186 has a total of nine I2C controllers that are compatible with
+the I2C controllers introduced in Tegra114. Two of these controllers
+share pads with two DPAUX controllers (for AUX transactions).
 
-Signed-off-by: Joseph Lo <josephl-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-[treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org: remove leading 0 from unit-addresses]
-[treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org: remove unused nvidia,bpmp property]
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra186.dtsi | 89 ++++++++++++++++++++++++++++++++
- 1 file changed, 89 insertions(+)
- create mode 100644 arch/arm64/boot/dts/nvidia/tegra186.dtsi
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 120 +++++++++++++++++++++++++++++++
+ 1 file changed, 120 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-new file mode 100644
-index 000000000000..6cb8ac918530
---- /dev/null
+index 911f288966ba..b1a77d78d202 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
 +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
-@@ -0,0 +1,89 @@
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/mailbox/tegra186-hsp.h>
-+
-+/ {
-+	compatible = "nvidia,tegra186";
-+	interrupt-parent = <&gic>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	uarta: serial@3100000 {
-+		compatible = "nvidia,tegra186-uart", "nvidia,tegra20-uart";
-+		reg = <0x0 0x03100000 0x0 0x40>;
-+		reg-shift = <2>;
-+		interrupts = <GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>;
+@@ -69,6 +69,100 @@
+ 		status = "disabled";
+ 	};
+ 
++	gen1_i2c: i2c@3160000 {
++		compatible = "nvidia,tegra186-i2c", "nvidia,tegra114-i2c";
++		reg = <0x0 0x03160000 0x0 0x10000>;
++		interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clocks = <&bpmp TEGRA186_CLK_I2C1>;
++		clock-names = "div-clk";
++		resets = <&bpmp TEGRA186_RESET_I2C1>;
++		reset-names = "i2c";
 +		status = "disabled";
 +	};
 +
-+	gic: interrupt-controller@3881000 {
-+		compatible = "arm,gic-400";
-+		#interrupt-cells = <3>;
-+		interrupt-controller;
-+		reg = <0x0 0x03881000 0x0 0x1000>,
-+		      <0x0 0x03882000 0x0 0x2000>;
-+		interrupts = <GIC_PPI 9
-+			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
-+		interrupt-parent = <&gic>;
-+	};
-+
-+	hsp_top0: hsp@3c00000 {
-+		compatible = "nvidia,tegra186-hsp";
-+		reg = <0x0 0x03c00000 0x0 0xa0000>;
-+		interrupts = <GIC_SPI 176 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-names = "doorbell";
-+		#mbox-cells = <2>;
++	cam_i2c: i2c@3180000 {
++		compatible = "nvidia,tegra186-i2c", "nvidia,tegra114-i2c";
++		reg = <0x0 0x03180000 0x0 0x10000>;
++		interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clocks = <&bpmp TEGRA186_CLK_I2C3>;
++		clock-names = "div-clk";
++		resets = <&bpmp TEGRA186_RESET_I2C3>;
++		reset-names = "i2c";
 +		status = "disabled";
 +	};
 +
-+	sysram@30000000 {
-+		compatible = "nvidia,tegra186-sysram", "mmio-sram";
-+		reg = <0x0 0x30000000 0x0 0x50000>;
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges = <0 0x0 0x0 0x30000000 0x0 0x50000>;
-+
-+		cpu_bpmp_tx: shmem@4e000 {
-+			compatible = "nvidia,tegra186-bpmp-shmem";
-+			reg = <0x0 0x4e000 0x0 0x1000>;
-+			label = "cpu-bpmp-tx";
-+			pool;
-+		};
-+
-+		cpu_bpmp_rx: shmem@4f000 {
-+			compatible = "nvidia,tegra186-bpmp-shmem";
-+			reg = <0x0 0x4f000 0x0 0x1000>;
-+			label = "cpu-bpmp-rx";
-+			pool;
-+		};
++	/* shares pads with dpaux1 */
++	dp_aux_ch1_i2c: i2c@3190000 {
++		compatible = "nvidia,tegra186-i2c", "nvidia,tegra114-i2c";
++		reg = <0x0 0x03190000 0x0 0x10000>;
++		interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clocks = <&bpmp TEGRA186_CLK_I2C4>;
++		clock-names = "div-clk";
++		resets = <&bpmp TEGRA186_RESET_I2C4>;
++		reset-names = "i2c";
++		status = "disabled";
 +	};
 +
-+	bpmp: bpmp {
-+		compatible = "nvidia,tegra186-bpmp";
-+		mboxes = <&hsp_top0 TEGRA_HSP_MBOX_TYPE_DB
-+				    TEGRA_HSP_DB_MASTER_BPMP>;
-+		shmem = <&cpu_bpmp_tx &cpu_bpmp_rx>;
-+		#clock-cells = <1>;
-+		#reset-cells = <1>;
-+
-+		bpmp_i2c: i2c {
-+			compatible = "nvidia,tegra186-bpmp-i2c";
-+			nvidia,bpmp-bus-id = <5>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
++	/* controlled by BPMP, should not be enabled */
++	pwr_i2c: i2c@31a0000 {
++		compatible = "nvidia,tegra186-i2c", "nvidia,tegra114-i2c";
++		reg = <0x0 0x031a0000 0x0 0x10000>;
++		interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clocks = <&bpmp TEGRA186_CLK_I2C5>;
++		clock-names = "div-clk";
++		resets = <&bpmp TEGRA186_RESET_I2C5>;
++		reset-names = "i2c";
++		status = "disabled";
 +	};
 +
-+	timer {
-+		compatible = "arm,armv8-timer";
-+		interrupts = <GIC_PPI 13
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 14
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 11
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>,
-+			     <GIC_PPI 10
-+				(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_LOW)>;
-+		interrupt-parent = <&gic>;
++	/* shares pads with dpaux0 */
++	dp_aux_ch0_i2c: i2c@31b0000 {
++		compatible = "nvidia,tegra186-i2c", "nvidia,tegra114-i2c";
++		reg = <0x0 0x031b0000 0x0 0x10000>;
++		interrupts = <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clocks = <&bpmp TEGRA186_CLK_I2C6>;
++		clock-names = "div-clk";
++		resets = <&bpmp TEGRA186_RESET_I2C6>;
++		reset-names = "i2c";
++		status = "disabled";
 +	};
-+};
++
++	gen7_i2c: i2c@31c0000 {
++		compatible = "nvidia,tegra186-i2c", "nvidia,tegra114-i2c";
++		reg = <0x0 0x031c0000 0x0 0x10000>;
++		interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clocks = <&bpmp TEGRA186_CLK_I2C7>;
++		clock-names = "div-clk";
++		resets = <&bpmp TEGRA186_RESET_I2C7>;
++		reset-names = "i2c";
++		status = "disabled";
++	};
++
++	gen9_i2c: i2c@31e0000 {
++		compatible = "nvidia,tegra186-i2c", "nvidia,tegra114-i2c";
++		reg = <0x0 0x031e0000 0x0 0x10000>;
++		interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clocks = <&bpmp TEGRA186_CLK_I2C9>;
++		clock-names = "div-clk";
++		resets = <&bpmp TEGRA186_RESET_I2C9>;
++		reset-names = "i2c";
++		status = "disabled";
++	};
++
+ 	gic: interrupt-controller@3881000 {
+ 		compatible = "arm,gic-400";
+ 		#interrupt-cells = <3>;
+@@ -89,6 +183,32 @@
+ 		status = "disabled";
+ 	};
+ 
++	gen2_i2c: i2c@c240000 {
++		compatible = "nvidia,tegra186-i2c", "nvidia,tegra114-i2c";
++		reg = <0x0 0x0c240000 0x0 0x10000>;
++		interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clocks = <&bpmp TEGRA186_CLK_I2C2>;
++		clock-names = "div-clk";
++		resets = <&bpmp TEGRA186_RESET_I2C2>;
++		reset-names = "i2c";
++		status = "disabled";
++	};
++
++	gen8_i2c: i2c@c250000 {
++		compatible = "nvidia,tegra186-i2c", "nvidia,tegra114-i2c";
++		reg = <0x0 0x0c250000 0x0 0x10000>;
++		interrupts = <GIC_SPI 32 IRQ_TYPE_LEVEL_HIGH>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clocks = <&bpmp TEGRA186_CLK_I2C8>;
++		clock-names = "div-clk";
++		resets = <&bpmp TEGRA186_RESET_I2C8>;
++		reset-names = "i2c";
++		status = "disabled";
++	};
++
+ 	uartc: serial@c280000 {
+ 		compatible = "nvidia,tegra186-uart", "nvidia,tegra20-uart";
+ 		reg = <0x0 0x0c280000 0x0 0x40>;
 -- 
 2.10.2
