@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL 6/10] dt-bindings: Cleanups and additions for v4.10-rc1
-Date: Fri, 18 Nov 2016 17:17:15 +0100
-Message-ID: <20161118161719.24153-6-thierry.reding@gmail.com>
+Subject: [GIT PULL 7/10] ARM: tegra: Device tree changes for v4.10-rc1
+Date: Fri, 18 Nov 2016 17:17:16 +0100
+Message-ID: <20161118161719.24153-7-thierry.reding@gmail.com>
 References: <20161118161719.24153-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20161118161719.24153-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -18,28 +18,39 @@ The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
 
 are available in the git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.10-dt-bindings
+  git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.10-arm-dt
 
-for you to fetch changes up to 2e002bdedcdcbd6a708f5698a09eb32df568efb8:
+for you to fetch changes up to 5e8a724d143308f3195375951b0c8f01b2ca59fe:
 
-  dt-bindings: Add documentation for Tegra186 Denver (2016-11-17 18:09:05 +0100)
+  ARM: tegra: apalis-tk1: Drop leading 0 from unit-address (2016-11-08 11:14:02 +0100)
 
 Thanks,
 Thierry
 
 ----------------------------------------------------------------
-dt-bindings: Cleanups and additions for v4.10-rc1
+ARM: tegra: Device tree changes for v4.10-rc1
 
-Contains two small patches, one fixing a typo and the other adding the
-compatible string for the Denver CPUs found on the new Tegra186 SoCs.
+Adds support for GMI on Tegra20 and Tegra30 and enables the GPU on Nyan
+Chromebooks. It also enables sound support on various Toradex devices.
 
 ----------------------------------------------------------------
-Mirza Krak (1):
-      serial: tegra20-hsuart: Fix typo in dmas DT binding description
+Marcel Ziswiler (1):
+      ARM: tegra: apalis/colibri t30: Integrate audio
+
+Mirza Krak (2):
+      ARM: tegra: Add Tegra20 GMI support
+      ARM: tegra: Add Tegra30 GMI support
+
+Paul Kocialkowski (1):
+      ARM: tegra: nyan: Enable GPU node and related supply
 
 Thierry Reding (1):
-      dt-bindings: Add documentation for Tegra186 Denver
+      ARM: tegra: apalis-tk1: Drop leading 0 from unit-address
 
- Documentation/devicetree/bindings/arm/cpus.txt                     | 1 +
- Documentation/devicetree/bindings/serial/nvidia,tegra20-hsuart.txt | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra124-apalis.dtsi |  2 +-
+ arch/arm/boot/dts/tegra124-nyan.dtsi   |  8 +++++-
+ arch/arm/boot/dts/tegra20.dtsi         | 13 +++++++++
+ arch/arm/boot/dts/tegra30-apalis.dtsi  | 49 ++++++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/tegra30-colibri.dtsi | 49 ++++++++++++++++++++++++++++++++++
+ arch/arm/boot/dts/tegra30.dtsi         | 13 +++++++++
+ 6 files changed, 132 insertions(+), 2 deletions(-)
