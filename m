@@ -1,59 +1,69 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [patch] mailbox/tegra-hsp: Use after free in
- tegra_hsp_remove_doorbells()
-Date: Fri, 18 Nov 2016 14:31:53 +0100
-Message-ID: <20161118133153.GB14358@ulmo.ba.sec>
-References: <20161118113410.GC3150@mwanda>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: Re: [PATCH v5] mailbox: Add Tegra HSP driver
+Date: Fri, 18 Nov 2016 14:27:13 +0100
+Message-ID: <20161118132713.GA14358@ulmo.ba.sec>
+References: <20161115154845.24803-3-thierry.reding@gmail.com>
+ <20161116174133.7062-1-thierry.reding@gmail.com>
+ <CABb+yY0Fg=oDSmw_jdRvP3FbTPNkc62k9-GknPWCBE_8duzkSQ@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="V0207lvV8h4k8FAm"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+        protocol="application/pgp-signature"; boundary="fUYQa+Pmc3FrFX/N"
+Return-path: <linux-kernel-owner@vger.kernel.org>
 Content-Disposition: inline
-In-Reply-To: <20161118113410.GC3150@mwanda>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
-Cc: Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+In-Reply-To: <CABb+yY0Fg=oDSmw_jdRvP3FbTPNkc62k9-GknPWCBE_8duzkSQ@mail.gmail.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jassi Brar <jassisinghbrar@gmail.com>
+Cc: Joseph Lo <josephl@nvidia.com>, Jon Hunter <jonathanh@nvidia.com>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
---V0207lvV8h4k8FAm
+--fUYQa+Pmc3FrFX/N
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 18, 2016 at 02:34:10PM +0300, Dan Carpenter wrote:
-> We have to use the _safe version of list_for_each() because we're
-> freeing the pointer as we go along.  (This might not show up testing
-> depending on what config options you have enabled).
+On Fri, Nov 18, 2016 at 02:28:07PM +0530, Jassi Brar wrote:
+> On Wed, Nov 16, 2016 at 11:11 PM, Thierry Reding
+> <thierry.reding@gmail.com> wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >
+> > This driver exposes a mailbox interface for interprocessor communication
+> > using the Hardware Synchronization Primitives (HSP) module's doorbell
+> > mechanism. There are multiple HSP instances and they provide additional
+> > features such as shared mailboxes, shared and arbitrated semaphores.
+> >
+> > A driver for a remote processor can use the mailbox client provided by
+> > the HSP driver and build an IPC protocol on top of this synchronization
+> > mechanism.
+> >
+> > Based on work by Joseph Lo <josephl@nvidia.com>.
+> >
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
 >=20
-> Fixes: ed65ee43e397 ("mailbox: Add Tegra HSP driver")
-> Signed-off-by: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+> Acked-by: Jassi Brar <jaswinder.singh@linaro.org>
 
-Good catch! I've applied this on top of the original driver patch that
-Jassi acked earlier and I updated the Fixes: line with the new commit
-SHA1.
+Thanks!
 
-Thanks,
 Thierry
 
---V0207lvV8h4k8FAm
+--fUYQa+Pmc3FrFX/N
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAABCAAGBQJYLwLIAAoJEN0jrNd/PrOhDrcP/2YXCneHiWVd6gR6Tl6P6wR4
-KbliTcq2r2wzXOP9sci1dA3N+QlbQ01qMa7EIUCeKnWE+RuUH1xGEZLbpZcwu/xT
-R/kQOqQFFtchZsgu2sVLsI+5Mks4gmWpcQWpxAKUVxpJuMxLoeBu7bIWoQf1AbOK
-9efRjdAbIDZAq+Q9HaQeiEAMnE9hYGnGXgt5Jdyn9fPv9rheDNgUuNdZ1x0demEq
-eN6HaYHmcHsVv+sUKSVdzwJeC7tSnB93Plvh3p2AM7APPhQzmwmCegwaSvTk3PRe
-Fhaz0iy1eOsXRGhgtSdnkQxu/4css8RDKlAD8Wk0U6eAd7XLk8lhdvG8Y+FfrF5N
-wrgXG4DdVgQfjzarAMpbKwJZbhNAFlawLXJPBHC+x/fapIjulA0yt6UIE2FBN7Sc
-9zZKspdWGKmmxhYY3rKm51rnU7+xjnI0jbXHFCpgQNfxT5dCO2g9W6k6MqrKgzUJ
-WGtaDYmG5BhPmAt8cGsd1NTamsJc9uFkBFHYwBYkLnScOo5GcvjxxJgWE0Inbsms
-vbiy1ZDlICMQzZF6SzMNnpj99snKs6bQ2D0lRQhQJZABcA01CgoOpbb9/9nqpuY3
-LAWpM7AreZYsEGYmRubaPbvrMhZ4Ryp74kU1V1F0XovJHZjzyIIL/ZzMhEZ9pTeZ
-qO/fjnkrJqOkz5ZaVvhp
-=8n2v
+iQIcBAABCAAGBQJYLwGvAAoJEN0jrNd/PrOhVyoP/AzyJKtADcATJn9Sli5uuDgL
+LTzlXF0R5NDXM40WDWxk9x65BcK9KI3JeZeMHD7M0xfzBXya0NSliJ6skI7V6JIq
+WejcrtKnA1IrzextZbIX/owh2JQWBy9OspIwN881SESPjeobV2E2QuMkEcLQUR9o
+5pje50YtuydHD1Ggayeu4flkBF5mBJNehdjLVUlwr6q/I+AdyUTQmf672dRZdE28
+yj7IKonK7bYTfHlW6q3v8h2geSts2sJ+Pi81VE/67sNad9U1oPkJ2Cyjr/gO0x5y
+3XighTgKB5sEZpEZly4eLy/6Z6BbETVy7Ig7gAI0Xw5RZe04neZ9PPaYFg/IuZh6
+Ed8VQ87UCeZjxYW4rrPUW5T3EsHJsr45eDRH338EOj9+PBlx7P/ASPQU1Hqc8CTo
+KyJbgIW8eFuru5XfixlgT4LBeP8gq7Oco7/sBlFeMXTq37oTPwzcpdkPv1+64A0r
+TN/vWDbbkJXzuBdab1dIefW73SBzSFD/u3N6VRYrhRGESYusuDLP+tv0VZnoswpF
+ENVT+zhO/oh+W97Bx5j2AzPOTWTFY8dndvkVUCYvqT1gjeuV5wNiCwxpNUPYBQQ1
+VOSsOhYVXqZeQevWxzGQn5isaIDLoGsD2x7B1ecCmc+PWBRG3nVUG7lUk3I3qWar
++7jw4ZEmKGZ9flfgXff4
+=1sKR
 -----END PGP SIGNATURE-----
 
---V0207lvV8h4k8FAm--
+--fUYQa+Pmc3FrFX/N--
