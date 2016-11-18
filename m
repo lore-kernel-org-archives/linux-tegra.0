@@ -1,54 +1,40 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] soc/tegra: Implement Tegra186 PMC support
-Date: Fri, 18 Nov 2016 09:36:04 +0000
-Message-ID: <e9a081f5-8e93-d3e8-a702-79903e5a6a78@nvidia.com>
-References: <20161117171636.20580-1-thierry.reding@gmail.com>
+From: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
+Subject: [patch] mailbox/tegra-hsp: Use after free in
+ tegra_hsp_remove_doorbells()
+Date: Fri, 18 Nov 2016 14:34:10 +0300
+Message-ID: <20161118113410.GC3150@mwanda>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20161117171636.20580-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jassi Brar <jassisinghbrar-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+We have to use the _safe version of list_for_each() because we're
+freeing the pointer as we go along.  (This might not show up testing
+depending on what config options you have enabled).
 
-On 17/11/16 17:16, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> The power management controller on Tegra186 has changed in backwards-
-> incompatible ways with respect to earlier generations. This implements a
-> new driver that supports inversion of the PMU interrupt as well as the
-> "recovery", "bootloader" and "forced-recovery" reboot commands.
-> 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  34 +++++
->  drivers/soc/tegra/Makefile                         |   2 +-
->  drivers/soc/tegra/pmc-tegra186.c                   | 169 +++++++++++++++++++++
->  3 files changed, 204 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
->  create mode 100644 drivers/soc/tegra/pmc-tegra186.c
+Fixes: ed65ee43e397 ("mailbox: Add Tegra HSP driver")
+Signed-off-by: Dan Carpenter <dan.carpenter-QHcLZuEGTsvQT0dZR+AlfA@public.gmane.org>
 
-...
-
-> diff --git a/drivers/soc/tegra/Makefile b/drivers/soc/tegra/Makefile
-> index ae857ff7d53d..9976a0de1927 100644
-> --- a/drivers/soc/tegra/Makefile
-> +++ b/drivers/soc/tegra/Makefile
-> @@ -1,4 +1,4 @@
->  obj-y += fuse/
->  
->  obj-y += common.o
-> -obj-y += pmc.o
-> +obj-y += pmc.o pmc-tegra186.o
-
-Do we want to enable this driver for all Tegra devices? Was not sure if
-this should be dependent on ARM64.
-
-Cheers
-Jon
-
--- 
-nvpublic
+diff --git a/drivers/mailbox/tegra-hsp.c b/drivers/mailbox/tegra-hsp.c
+index 17b256a..87be8d3 100644
+--- a/drivers/mailbox/tegra-hsp.c
++++ b/drivers/mailbox/tegra-hsp.c
+@@ -397,12 +397,12 @@ static struct mbox_chan *of_tegra_hsp_xlate(struct mbox_controller *mbox,
+ 
+ static void tegra_hsp_remove_doorbells(struct tegra_hsp *hsp)
+ {
+-	struct tegra_hsp_doorbell *db;
++	struct tegra_hsp_doorbell *db, *tmp;
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&hsp->lock, flags);
+ 
+-	list_for_each_entry(db, &hsp->doorbells, list)
++	list_for_each_entry_safe(db, tmp, &hsp->doorbells, list)
+ 		__tegra_hsp_doorbell_destroy(db);
+ 
+ 	spin_unlock_irqrestore(&hsp->lock, flags);
