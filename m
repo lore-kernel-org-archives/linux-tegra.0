@@ -1,42 +1,29 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [GIT PULL 1/10] mailbox: Add Tegra HSP driver
-Date: Mon, 21 Nov 2016 09:17:52 +0100
-Message-ID: <20161121081752.GC25171@ulmo.ba.sec>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [GIT PULL 9/10] arm64: tegra: Device tree changes for v4.10-rc1
+Date: Mon, 21 Nov 2016 09:22:10 +0100
+Message-ID: <20161121082210.GD25171@ulmo.ba.sec>
 References: <20161118161719.24153-1-thierry.reding@gmail.com>
- <20161119022742.GK2543@localhost>
+ <20161118161719.24153-9-thierry.reding@gmail.com>
+ <20161119024021.GT2543@localhost>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1717167254662658692=="
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20161119022742.GK2543@localhost>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: Olof Johansson <olof@lixom.net>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Jon Hunter <jonathanh@nvidia.com>, arm@kernel.org, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pZs/OQEoSSbxGlYw"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20161119024021.GT2543@localhost>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
+Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============1717167254662658692==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="JWEK1jqKZ6MHAcjA"
-Content-Disposition: inline
-
-
---JWEK1jqKZ6MHAcjA
+--pZs/OQEoSSbxGlYw
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 18, 2016 at 06:27:42PM -0800, Olof Johansson wrote:
-> Hi,
->=20
-> On Fri, Nov 18, 2016 at 05:17:10PM +0100, Thierry Reding wrote:
+On Fri, Nov 18, 2016 at 06:40:21PM -0800, Olof Johansson wrote:
+> On Fri, Nov 18, 2016 at 05:17:18PM +0100, Thierry Reding wrote:
 > > Hi ARM SoC maintainers,
 > >=20
 > > The following changes since commit 1001354ca34179f3db924eb66672442a1731=
@@ -47,92 +34,95 @@ On Fri, Nov 18, 2016 at 06:27:42PM -0800, Olof Johansson wrote:
 > > are available in the git repository at:
 > >=20
 > >   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/te=
-gra-for-4.10-mailbox
+gra-for-4.10-arm64-dt
 > >=20
-> > for you to fetch changes up to 68050eb6c611527232fe5574c7306e97e47499ef:
+> > for you to fetch changes up to cc13b4fa4ac780cec6c21b64a39ab2950e95e8f6:
 > >=20
-> >   mailbox: tegra-hsp: Use after free in tegra_hsp_remove_doorbells() (2=
-016-11-18 14:32:13 +0100)
+> >   arm64: tegra: Add NVIDIA P2771 board support (2016-11-18 14:35:53 +01=
+00)
 > >=20
 > > Thanks,
 > > Thierry
 > >=20
 > > ----------------------------------------------------------------
-> > mailbox: Add Tegra HSP driver
+> > arm64: tegra: Device tree changes for v4.10-rc1
 > >=20
-> > This contains the device tree bindings and a driver for the Tegra HSP, a
-> > hardware block that provides hardware synchronization primitives and is
-> > the foundation for inter-processor communication between CPU and BPMP.
+> > This adds initial support for Tegra186, the P3310 processor module as
+> > well as the P2771 development board. Not much is functional, but there
+> > is enough to boot to an initial ramdisk with debug serial output.
 > >=20
 > > ----------------------------------------------------------------
 > > Dan Carpenter (1):
 > >       mailbox: tegra-hsp: Use after free in tegra_hsp_remove_doorbells()
 > >=20
-> > Joseph Lo (2):
+> > Joseph Lo (6):
 > >       soc/tegra: Add Tegra186 support
+> >       dt-bindings: mailbox: Add Tegra HSP binding
+> >       dt-bindings: firmware: Add bindings for Tegra BPMP
+> >       arm64: tegra: Add Tegra186 support
+> >       arm64: tegra: Add NVIDIA P3310 processor module support
+> >       arm64: tegra: Add NVIDIA P2771 board support
+> >=20
+> > Stephen Warren (2):
+> >       dt-bindings: Add power domains to Tegra BPMP firmware
+> >       dt-bindings: firmware: Allow child nodes inside the Tegra BPMP
+> >=20
+> > Thierry Reding (12):
+> >       Merge branch 'for-4.10/soc' into for-4.10/mailbox
+> >       mailbox: Add Tegra HSP driver
+> >       Merge branch 'for-4.10/mailbox' into for-4.10/firmware
+> >       firmware: tegra: Add IVC library
+> >       firmware: tegra: Add BPMP support
+> >       Merge branch 'for-4.10/firmware' into for-4.10/arm64/dt
+> >       arm64: tegra: Add CPU nodes for Tegra186
+> >       arm64: tegra: Add serial ports on Tegra186
+> >       arm64: tegra: Add I2C controllers on Tegra186
+> >       arm64: tegra: Add SDHCI controllers on Tegra186
+> >       arm64: tegra: Add GPIO controllers on Tegra186
+> >       arm64: tegra: Enable PSCI on P3310
 >=20
-> I don't think you really needed to merge this in here, since all you need=
- it
-> for is to fulfill the kconfig dependency and enable the driver, right? Th=
-at'd
-> happen when the driver and soc branch is merged at the toplevel anyway.
+> The drivers->dt dependency here is annoying. Any chance you can respin wi=
+thout
+> it?
+>=20
+> We've been encouraging people to consider using numerical clock/gpio/reset
+> numbers on initial submission to avoid these dependencies on dt-bindings
+> includes, and then follow up with a move to the symbolic names between -r=
+c1 and
+> -rc2. Mind doing the same here?
 
-The reason I did this is that I wanted each branch to be buildable as a
-way to confirm that the dependencies are correct. In order to do that I
-need the Kconfig symbol to enable the driver.
+Yes, I can do that. Would it be acceptable to have a dt-bindings->dt
+dependency? Stephen's already done a good job of avoiding this kind of
+dependency by getting the bindings, and hence dt-bindings headers,
+merged ahead of Linux kernel support because he had already gotten the
+bindings reviewed and finalized during his work on U-Boot.
 
-I suppose there are other ways I could've done that, though. Maybe in
-the future new SoC Kconfig symbols should just be introduced way ahead
-of time, so that they're already in a release or two before actual code
-starts to emerge.
+I've been told in the past that it's not necessary to strictly split DT
+bindings patches from driver patches, but I suppose if a dt-bindings->dt
+is acceptable, then splitting things up more strictly would actually be
+the preferable solution here because it also avoids the slight churn of
+converting to symbolic values later on.
 
-> Anyhow, no damage done, I've merged this in. I would say that it'd be a l=
-ittle
-> more logical to send the SoC branch before the driver branch given this
-> dependency though.
-
-The reason that the SoC branch was sent after is because only the first
-commit in that branch was pulled into the mailbox branch.
-
-In retrospect, I think perhaps a better approach would've been to have a
-separate branch with only the Kconfig symbol addition and pull that in
-where needed.
-
-Thanks,
 Thierry
 
---JWEK1jqKZ6MHAcjA
+--pZs/OQEoSSbxGlYw
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAABCAAGBQJYMq2vAAoJEN0jrNd/PrOhSLQP/j+BUxdRDt391u6vsDr6YCuv
-FI/l20iPQmSTmBg67wH6r/s5MnkdI7itF0T52DlIISIVoEMo+pQwJKnClMN7AX9/
-1hLbIfEDQfNHmodqz7BHdEhRHjqUf5d+a/0phKfPaPp/PJn2CSmzmhpAbNiSYdAi
-j5C6UdhhL0PH/vtTLbn0DUiUVC2WjCbUWcgDyiMwF6IXfxDtG8gaiQ7mHbt0VKsP
-ETyxRSY0E7nm95PnPJgHxfQS7Xy3tTusBlNG9ZnhYXr61clQNDKOfCa1CS3PP0t2
-mG3z3GTx3EdhB4ea5m3IW1ZJC7+tJT37lKcF+JB7y4Mt7zZbriwvAk8F5fVjSvqr
-K9SELl9YoPsbMFeiUG1eHCQuWAW88AQLSS1Z+11drZhHQ5Bqo25pHX5M4C5HIB3L
-qPhbk846gy06If9nlNMJbGypFI+hVc1K8DRDVlz3GhFK+6rdrwbX8mwEiXXE4lCR
-tcBJD57e/nKEYbQzSXRqKV3otXTyJPYwKjVs/TdTd7dkxAteMMGB528gMOxoSIG4
-OL1wsX7Rf5Y2UCIPnnFvplv/A2Q/CDs3zwg0oMki13Ra0kJMZQNC1oyUWUJ5reAI
-BShl01IGmiuJK7Soy8dow6jYzzMPZL18f+NPEJ3QCmWrSDY6vAb0ZvusJ0kHBH11
-Euzwl1lSMjYzla7TJG4D
-=vQ1I
+iQIcBAABCAAGBQJYMq6yAAoJEN0jrNd/PrOhNuQQAI/aBg0vl/oDN69XNXQxzetH
+nHHLdSBBzkMp6uKIDLZWGQS7vmjKwGRRRJjcXGxDgZDsn1c1Hyh438dqSu9Z6+Vj
+GKP916GgwWt7ew+g/1TmpyfpgRsIsBuxZa+cwOrXzWnOINsZMxzphP7Gex7SHxAr
+uZ+mdF6Dbq6qfPwPeeV5vLf9xpVwzyoiCWR+uCYaWo+U8rspPDmcaZpFZODgMQaN
+QcTOtPmJKIsTPCtT9UK+kYcQfXYByW+Zn05ARExIcw6lV6vpbe1k0yHqNBr3p+Wo
+S99AKd7U/qVBY+1A5Ik0Nq15iMkpYzU2a6wnBF2jzd09u3MQo4RvHURYz6h6se0E
+GNMKo5Ei3Pqb63feEHL6eUdAg1JjniQc78hzidao5lVfwJYC+cBn2IhbNu9Km5Jq
+HukQXu93TCDzV0DldgZM7TTBKG/RRuyeW4VT9eKN3N1LDdkI6AVM5cTyosXUGHpo
+6UbqzReeAal3YPBm5jz2U4eC5GvxExeZXCcIi71WnoyDACT/0jIYs8jKwphDnWNI
+mz/zHfjUY9F+RdgnKQ5Vusa7HgnB5vpGKwmDzRdRa7uRoVvN1h+NJkjqFmLp5Fn8
+AaQB7Bs1Jf9DslmqPFEZ5u3g0SI54N0w4eLnwyIPcNx4yOY51vgACmgF1ADf8FzP
+HQBN2kSFJ00dmEMlYKFY
+=ZjAt
 -----END PGP SIGNATURE-----
 
---JWEK1jqKZ6MHAcjA--
-
-
---===============1717167254662658692==
-Content-Type: text/plain; charset="us-ascii"
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Content-Disposition: inline
-
-_______________________________________________
-linux-arm-kernel mailing list
-linux-arm-kernel@lists.infradead.org
-http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-
---===============1717167254662658692==--
+--pZs/OQEoSSbxGlYw--
