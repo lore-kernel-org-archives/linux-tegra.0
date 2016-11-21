@@ -1,124 +1,98 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: Terga 30 CPI Issue
-Date: Mon, 21 Nov 2016 20:50:51 +0200
-Message-ID: <633aee5d-54d9-3bc5-a57b-7f735937a141@kapsi.fi>
-References: <F9D95AC275991E48901933FBF3337AB0C2D6DF02@ex-02>
- <2b6907f4-ca67-7183-11f3-f1ccc6de2120@kapsi.fi>
- <7019aa33-7684-6b45-bcb6-a21d703e1d12@kapsi.fi>
- <F9D95AC275991E48901933FBF3337AB0C2D6E1CA@ex-02>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2 2/2] pinctrl: tegra: Add driver to configure voltage
+ and power of io pads
+Date: Mon, 21 Nov 2016 20:37:13 +0000
+Message-ID: <2d442ccc-c438-cf3a-24c4-032d6c906f26@nvidia.com>
+References: <1478696782-11657-1-git-send-email-ldewangan@nvidia.com>
+ <1478696782-11657-3-git-send-email-ldewangan@nvidia.com>
+ <b65cf9ea-208a-0704-7cc9-843bc18da508@nvidia.com>
+ <5832C005.3070104@nvidia.com>
+ <89eaabf1-c830-3ae9-5f34-a7f6d79e0816@nvidia.com>
+ <5832ED69.3090903@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <F9D95AC275991E48901933FBF3337AB0C2D6E1CA@ex-02>
+In-Reply-To: <5832ED69.3090903-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lamar Hansford <Lamar.Hansford-2/lGf/aFiT5Wk0Htik3J/w@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 11/21/2016 07:54 PM, Lamar Hansford wrote:
-> What does bit 2 do?
 
-Downstream rel-16 has a patch that applies this bit on T30; claiming to 
-fix a hang. Not sure if your issue is related, though.
-
-http://nv-tegra.nvidia.com/gitweb/?p=linux-2.6.git;a=commit;h=812e6d344d35d7ef6df9ccbeed5f6a65c53e7977
-
->
-> In the mainline linux code AFI_CONFIGURATION maps to 0xAC which maps to:
-> * T_PCIE2_RP_LINK_CONTROL_STATUS_2 - Target Link speed
-
-My TRM shows LINK_CONTROL_STATUS_2 at 0xB0 - but this is a different 
-aperture compared to AFI_CONFIGURATION anyway. AFI_CONFIGURATION is 
-documented at 32.3.1.8 - though incompletely. T124 TRM has the full info.
-
->
-> However,  the PCIe Config register (no address given) the bit would map as:
-> * Disable TOC0 - Disable
->
-> However, the mainline code shows:
->         /* finally enable PCIe */
->         value = afi_readl(pcie, AFI_CONFIGURATION);
->         value |= AFI_CONFIGURATION_EN_FPCI;
->         afi_writel(pcie, value, AFI_CONFIGURATION);
-
-You would add value |= (1<<2) here. Similarly FPCI_TIMEOUT, being an AFI 
-register, would be accessed using afi_readl/afi_writel.
-
->
-> Which wouldn't seem to map to either case.  In the T_PCIE2_RP_LINK_CONTROL_STATUS_2   case writing a 1 would disable Gen2 functionality, which we have successfully used.
->
-> Do you have any clarification on this?  (I am trying to pull the TK1 TRM but NVida is blocking me)
-
-See above. Not sure what you need to do nowadays to get download access, 
-but it shouldn't be very complicated.
-
->
-> FYI, I assume the FPCI timeout will provide a timeout to the AXI bus when the FPCI does not respond.  Otherwise the bus locks up (this is an assumption).
->
-> Thanks in advance!
-> -Lamar
->
->
-
-Cheers,
-Mikko.
-
->
-> -----Original Message-----
-> From: Mikko Perttunen [mailto:cyndis-/1wQRMveznE@public.gmane.org]
-> Sent: Monday, November 21, 2016 11:23 AM
-> To: Lamar Hansford; linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> Subject: Re: Terga 30 CPI Issue
->
-> Also, try setting bit 2 (i.e. third bit) of AFI_CONFIGURATION
->
-> On 11/21/2016 06:59 PM, Mikko Perttunen wrote:
->> On 11/21/2016 06:10 PM, Lamar Hansford wrote:
->>> Hello,
->>> I am using a Terga 30 with multiple PCIe cards.  I am experiencing a
->>> hard (non-recoverable) lock-up which occurs whenever the following
->>> wr/rd sequence is followed:
->>> * wr(a) -> rd(a)
+On 21/11/16 12:49, Laxman Dewangan wrote:
+> 
+> On Monday 21 November 2016 04:38 PM, Jon Hunter wrote:
 >>>
->>> Where you write then immediately read the same address.  Validated by
->>> GPIO write before and after (2nd GPIO change never happens).
+>>> I had a discussion with the ASIC on this and as per them
+>>>      1.8 V nominal is (1.62V, 1.98V)
+>>>      3.3 V nominal is (2.97V,3.63V)
 >>>
->>> I have removed this sequence from my driver (ath9k) and the device is
->>> stable for days with a single card.  However, when (multiple cards
->>> are added (same type) the lock-up still occurs.
->>>
->>> It appears that the AXI bus is hung, preventing execution by any of
->>> the cores.
->>> I see that there is a register FPCI_TIMEOUT defined in the spec.  I
->>> hope that by enabling the bus timeout I can get the system to
->>> gracefully recover.  But I cannot determine which register location
->>> it is mapped to.
->>
->> The Tegra124 manual puts it at 0xd8, and other addresses around it
->> seem to match ones in the driver, so you might try that. The Tegra124
->> manual also has the descriptions for the bits (31 and 19..0) swapped
->> which does make more sense. No idea what it's supposed to do, really
->> :)
->>
->>>
->>> * Is this an internally mapped setting?
->>> * If not what register?  Is there a way to set this
->>>
->>> I do see where the interrupt can be enabled but not the FPCI Timeout
->>> register itself (section 32.4.1.1).
->>>
->>> Any help would be appreciated,
->>> -Lamar
->>
->> Cheers,
->> Mikko.
->> --
->> To unsubscribe from this list: send the line "unsubscribe linux-tegra"
->> in the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org More majordomo
->> info at  http://vger.kernel.org/majordomo-info.html
-> This email and any attachments may contain private, confidential and privileged material for the sole use of the intended recipient. If you are not the intended recipient, please immediately delete this email and any attachments.
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+>>> I am working with them to update the TRM document but we can assume that
+>>> this information will be there in TRM.
+>> My feeling is that if all use-cases today are using either 1.8V or 3.3V,
+>> then may be we should not worry about this and only support either 1.8V
+>> or 3.3V. I would be more in favour of supporting other voltages if there
+>> is a real need.
+> 
+> Sometimes, the regulator will not return exact 1.8V or 3.3V due to the
+> PMIC rail resolution. On such cases, it returns nearest voltage to 1.8V
+> or 3.3V.
+> That's why the PMIC resolution is considered through IO pad voltage
+> tolerances.
+
+Ok, gotcha. I can see that would be the case for when you call
+regulator_get_voltage() (ie. in the probe), but what about the notifier?
+I imagine that in the notifier, at least for the pre-change case, that
+the voltage is the target and not the actual. So I am wondering if we
+need to check for a range in the notifier?
+
+>>>>> +    const struct pinctrl_pin_desc *pins_desc;
+>>>>> +    int num_pins_desc;
+>>>>> +};
+>>>>> +
+>>>>> +struct tegra_io_pads_regulator_info {
+>>>>> +    struct device *dev;
+>>>>> +    const struct tegra_io_pads_cfg_info *pads_cfg;
+>>>>> +    struct regulator *regulator;
+>>>>> +    struct notifier_block regulator_nb;
+>>>>> +};
+>>>> Is this struct necessary? Seems to be a lot of duplicated information
+>>>> from the other structs. Why not add the regulator and regulator_nb to
+>>>> the main struct? OK, not all io_pads have a regulator but you are only
+>>>> saving one pointer.
+>>> Yes, some of IO pads support multi-voltage.
+>> Yes, but I am saying why not put this information in the main struct and
+>> not bother having yet another struct where half of the information is
+>> duplicated.
+> 
+> For regulator notifier callback, we will need the driver data. If I keep
+> this in the main structure then I will not able to get proper structure
+> until I make that as global.
+> 
+> The notifier registration is
+>                 ret = devm_regulator_register_notifier(regulator,
+> &rinfo->regulator_nb);
+> 
+> 
+> and from the pointer of rinfo->regulator_nb, I will get the rinfo as
+> 
+>         rinfo = container_of(nb, struct tegra_io_pads_regulator_info,
+>                                      regulator_nb);
+> 
+> if I use this in main structure then I will not be able to get the
+> driver data.
+
+Ah yes, you have an array of regulators. Make sense. However, shame to
+duplicate some of this data and also would be good to avoid allocating
+so much memory in probe for these structs if only a few rails actually
+have regulators ...
+
+  tiopi->rinfo = devm_kzalloc(dev, sizeof(*tiopi->rinfo) *
+				soc_data->num_pads_cfg, GFP_KERNEL);
+
+Cheers
+Jon
+
+-- 
+nvpublic
