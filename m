@@ -1,43 +1,120 @@
-From: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
-Subject: [PATCH 5/6] apalis-tk1: working sd card detect on v1.1 hw
-Date: Tue, 22 Nov 2016 01:14:06 +0100
-Message-ID: <1479773647-14726-6-git-send-email-marcel.ziswiler@toradex.com>
+From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Subject: [PATCH 4/6] apalis-tk1: adjust pin muxing for v1.1 hw
+Date: Tue, 22 Nov 2016 01:14:05 +0100
+Message-ID: <1479773647-14726-5-git-send-email-marcel.ziswiler@toradex.com>
 References: <1479773647-14726-1-git-send-email-marcel.ziswiler@toradex.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1479773647-14726-1-git-send-email-marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1479773647-14726-1-git-send-email-marcel.ziswiler@toradex.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: devicetree@vger.kernel.org
+Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Add sd card detect SD1_CD# applicable for V1.1 modules using GPIO_PV2.
+Configure Apalis MMC1 D6 GPIO on SDMMC3_CLK_LB_IN as reserved function
+without any pull-up/down.
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+Configure GPIO_PV2 as SD1_CD# according to latest V1.1 HW.
+
+Leave SDMMC3_CLK_LB_OUT muxed as SDMMC3 with output driver enabled aka
+not tristated and input driver enabled as well as it features some
+magic properties even though the external loopback is disabled and the
+internal loopback used as per SDMMC_VENDOR_MISC_CNTRL_0 register's
+SDMMC_SPARE1 bits being set to 0xfffd according to the TRM! This pin is
+now a not-connect on V1.1 HW in order to avoid any interference.
+
+Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 ---
 
- arch/arm/boot/dts/tegra124-apalis-eval.dts | 10 ++--------
- 1 file changed, 2 insertions(+), 8 deletions(-)
+ arch/arm/boot/dts/tegra124-apalis.dtsi | 53 +++++++++++++++-------------------
+ 1 file changed, 23 insertions(+), 30 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-index 2b5a0f3..2715692 100644
---- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
-+++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-@@ -187,14 +187,8 @@
- 	/* Apalis SD1 */
- 	sdhci@700b0400 {
- 		status = "okay";
--		/*
--		 * Don't use SD1_CD# aka SDMMC3_CLK_LB_OUT for now as it
--		 * features some magic properties even though the external
--		 * loopback is disabled and the internal loopback used as per
--		 * SDMMC_VENDOR_MISC_CNTRL_0 register's SDMMC_SPARE1 bits being
--		 * set to 0xfffd according to the TRM!
--		 * cd-gpios = <&gpio TEGRA_GPIO(EE, 4) GPIO_ACTIVE_LOW>;
--		 */
-+		/* SD1_CD# */
-+		cd-gpios = <&gpio TEGRA_GPIO(V, 2) GPIO_ACTIVE_LOW>;
- 		bus-width = <4>;
- 		vqmmc-supply = <&vddio_sdmmc3>;
+diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
+index 747ce81..2bfc579 100644
+--- a/arch/arm/boot/dts/tegra124-apalis.dtsi
++++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
+@@ -414,18 +414,10 @@
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+ 			};
+-			/*
+-			 * Don't use MMC1_D6 aka SDMMC3_CLK_LB_IN for now as it
+-			 * features some magic properties even though the
+-			 * external loopback is disabled and the internal
+-			 * loopback used as per SDMMC_VENDOR_MISC_CNTRL_0
+-			 * register's SDMMC_SPARE1 bits being set to 0xfffd
+-			 * according to the TRM!
+-			 */
+ 			sdmmc3_clk_lb_in_pee5 { /* D6 GPIO */
+ 				nvidia,pins = "sdmmc3_clk_lb_in_pee5";
+-				nvidia,function = "sdmmc3";
+-				nvidia,pull = <TEGRA_PIN_PULL_UP>;
++				nvidia,function = "rsvd2";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+ 			};
+@@ -520,20 +512,12 @@
+ 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+ 			};
+-			/*
+-			 * Don't use SD1_CD# aka SDMMC3_CLK_LB_OUT for now as it
+-			 * features some magic properties even though the
+-			 * external loopback is disabled and the internal
+-			 * loopback used as per SDMMC_VENDOR_MISC_CNTRL_0
+-			 * register's SDMMC_SPARE1 bits being set to 0xfffd
+-			 * according to the TRM!
+-			 */
+-			sdmmc3_clk_lb_out_pee4 { /* CD# GPIO */
+-				nvidia,pins = "sdmmc3_clk_lb_out_pee4";
+-				nvidia,function = "rsvd2";
+-				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++			sdmmc3_cd_n_pv2 { /* CD# GPIO */
++				nvidia,pins = "sdmmc3_cd_n_pv2";
++				nvidia,function = "rsvd3";
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
+ 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+-				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+ 			};
+ 
+ 			/* Apalis SPDIF */
+@@ -1512,13 +1496,6 @@
+ 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+ 			};
+-			sdmmc3_cd_n_pv2 { /* NC */
+-				nvidia,pins = "sdmmc3_cd_n_pv2";
+-				nvidia,function = "rsvd3";
+-				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
+-				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+-				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+-			};
+ 			gpio_x1_aud_px1 { /* NC */
+ 				nvidia,pins = "gpio_x1_aud_px1";
+ 				nvidia,function = "rsvd2";
+@@ -1568,6 +1545,22 @@
+ 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+ 			};
++			/*
++			 * Leave SDMMC3_CLK_LB_OUT muxed as SDMMC3 with output
++			 * driver enabled aka not tristated and input driver
++			 * enabled as well as it features some magic properties
++			 * even though the external loopback is disabled and the
++			 * internal loopback used as per
++			 * SDMMC_VENDOR_MISC_CNTRL_0 register's SDMMC_SPARE1
++			 * bits being set to 0xfffd according to the TRM!
++			 */
++			sdmmc3_clk_lb_out_pee4 { /* NC */
++				nvidia,pins = "sdmmc3_clk_lb_out_pee4";
++				nvidia,function = "sdmmc3";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++			};
+ 		};
  	};
+ 
 -- 
 2.5.5
