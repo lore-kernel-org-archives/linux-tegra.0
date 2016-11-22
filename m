@@ -1,130 +1,48 @@
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Subject: [PATCH 1/6] apalis-tk1: remove spurious new lines
-Date: Tue, 22 Nov 2016 01:14:02 +0100
-Message-ID: <1479773647-14726-2-git-send-email-marcel.ziswiler@toradex.com>
-References: <1479773647-14726-1-git-send-email-marcel.ziswiler@toradex.com>
+From: Linus Torvalds <torvalds-de/tnXTf+JLsfHDXvbKv3WD2FQJk+8+b@public.gmane.org>
+Subject: Re: [PATCH 1/6] apalis-tk1: remove spurious new lines
+Date: Mon, 21 Nov 2016 18:53:27 -0800
+Message-ID: <CAADWXX-hfEP+OcztBsWQcPeGXNAXvFA+QGk_qLXaL1APkc1WOQ@mail.gmail.com>
+References: <1479773647-14726-1-git-send-email-marcel.ziswiler@toradex.com> <1479773647-14726-2-git-send-email-marcel.ziswiler@toradex.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <1479773647-14726-1-git-send-email-marcel.ziswiler@toradex.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: devicetree@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <1479773647-14726-2-git-send-email-marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+Cc: devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, lkml <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Rob Herring <robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Mark Rutland <mark.rutland-5wv7dgnIgG8@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Russell King <linux-I+IVW8TIWO2tmTQ+vhA3Yw@public.gmane.org>, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Remove some spurious new lines.
+.Marcel,
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
----
+your git-sendemail emails get marked as spam, because:
 
- arch/arm/boot/dts/tegra124-apalis-eval.dts |  1 -
- arch/arm/boot/dts/tegra124-apalis.dtsi     | 12 ------------
- 2 files changed, 13 deletions(-)
+       dmarc=fail (p=QUARANTINE dis=NONE) header.from=toradex.com
 
-diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-index 653044a..2b5a0f3 100644
---- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
-+++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
-@@ -232,7 +232,6 @@
- 
- 	backlight: backlight {
- 		compatible = "pwm-backlight";
--
- 		/* BKL1_PWM */
- 		pwms = <&pwm 3 5000000>;
- 		brightness-levels = <255 231 223 207 191 159 127 0>;
-diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index 0819721..6aa4952 100644
---- a/arch/arm/boot/dts/tegra124-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -56,7 +56,6 @@
- 
- 	pcie-controller@01003000 {
- 		status = "okay";
--
- 		avddio-pex-supply = <&vdd_1v05>;
- 		avdd-pex-pll-supply = <&vdd_1v05>;
- 		avdd-pll-erefe-supply = <&avdd_1v05>;
-@@ -85,7 +84,6 @@
- 		hdmi@54280000 {
- 			pll-supply = <&reg_1v05_avdd_hdmi_pll>;
- 			vdd-supply = <&reg_3v3_avdd_hdmi>;
--
- 			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
- 			nvidia,hpd-gpio =
- 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
-@@ -1607,15 +1605,11 @@
- 			compatible = "ams,as3722";
- 			reg = <0x40>;
- 			interrupts = <0 86 IRQ_TYPE_LEVEL_HIGH>;
--
- 			ams,system-power-controller;
--
- 			#interrupt-cells = <2>;
- 			interrupt-controller;
--
- 			gpio-controller;
- 			#gpio-cells = <2>;
--
- 			pinctrl-names = "default";
- 			pinctrl-0 = <&as3722_default>;
- 
-@@ -1790,7 +1784,6 @@
- 			reg = <0x4c>;
- 			interrupt-parent = <&gpio>;
- 			interrupts = <TEGRA_GPIO(I, 6) IRQ_TYPE_LEVEL_LOW>;
--
- 			#thermal-sensor-cells = <1>;
- 		};
- 	};
-@@ -1823,7 +1816,6 @@
- 	sata@70020000 {
- 		phys = <&{/padctl@7009f000/pads/sata/lanes/sata-0}>;
- 		phy-names = "sata-0";
--
- 		avdd-supply = <&vdd_1v05>;
- 		hvdd-supply = <&reg_3v3>;
- 		vddio-supply = <&vdd_1v05>;
-@@ -1837,7 +1829,6 @@
- 		       <&{/padctl@7009f000/pads/usb2/lanes/usb2-2}>,
- 		       <&{/padctl@7009f000/pads/pcie/lanes/pcie-0}>;
- 		phy-names = "usb2-0", "usb3-1", "usb2-1", "usb2-2", "usb3-0";
--
- 		avddio-pex-supply = <&vdd_1v05>;
- 		avdd-pll-erefe-supply = <&avdd_1v05>;
- 		avdd-pll-utmip-supply = <&vddio_1v8>;
-@@ -1919,7 +1910,6 @@
- 			usb2-0 {
- 				status = "okay";
- 				mode = "otg";
--
- 				vbus-supply = <&reg_usbo1_vbus>;
- 			};
- 
-@@ -1927,7 +1917,6 @@
- 			usb2-1 {
- 				status = "okay";
- 				mode = "host";
--
- 				vbus-supply = <&reg_usbh_vbus>;
- 			};
- 
-@@ -1935,7 +1924,6 @@
- 			usb2-2 {
- 				status = "okay";
- 				mode = "host";
--
- 				vbus-supply = <&reg_usbh_vbus>;
- 			};
- 
--- 
-2.5.5
+which is probably because the toradex.com dmarc rule requires DKIM,
+but you lack a DKIM signature.
+
+The most common case is that you've misconfigured your git-send-email
+thing to go through a smtp server that is *not* the proper toradex.com
+smtp server, and so you don't have a dkim signature.
+
+Looking at your non-git-send-email emails, that do have DKIM
+signatures, they've gone through
+HE1PR05MB1881.eurprd05.prod.outlook.com (I'm sorry for your pain),
+while your git-send-email ones seem to go through
+"mrelay.perfora.net".
+
+And obviouslty perfora.net is not adding the DKIM signatures for toradex.com
+
+               Linus
+
+On Mon, Nov 21, 2016 at 4:14 PM, Marcel Ziswiler
+<marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org> wrote:
+> Remove some spurious new lines.
+>
+> Signed-off-by: Marcel Ziswiler <marcel.ziswiler-2KBjVHiyJgBBDgjK7y7TUQ@public.gmane.org>
+> ---
+>
+>  arch/arm/boot/dts/tegra124-apalis-eval.dts |  1 -
+>  arch/arm/boot/dts/tegra124-apalis.dtsi     | 12 ------------
+>  2 files changed, 13 deletions(-)
+[...]
