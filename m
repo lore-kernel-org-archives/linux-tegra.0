@@ -1,40 +1,130 @@
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Subject: [PATCH 2/6] apalis-tk1: temp alert pull-up
-Date: Tue, 22 Nov 2016 01:14:03 +0100
-Message-ID: <1479773647-14726-3-git-send-email-marcel.ziswiler@toradex.com>
+Subject: [PATCH 1/6] apalis-tk1: remove spurious new lines
+Date: Tue, 22 Nov 2016 01:14:02 +0100
+Message-ID: <1479773647-14726-2-git-send-email-marcel.ziswiler@toradex.com>
 References: <1479773647-14726-1-git-send-email-marcel.ziswiler@toradex.com>
-Return-path: <linux-kernel-owner@vger.kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
 In-Reply-To: <1479773647-14726-1-git-send-email-marcel.ziswiler@toradex.com>
-Sender: linux-kernel-owner@vger.kernel.org
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
 To: devicetree@vger.kernel.org
-Cc: Marcel Ziswiler <marcel.ziswiler@toradex.com>, Thierry Reding <thierry.reding@gmail.com>, linux-kernel@vger.kernel.org, Stephen Warren <swarren@wwwdotorg.org>, Rob Herring <robh+dt@kernel.org>, linux-tegra@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Russell King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org
+Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 List-Id: linux-tegra@vger.kernel.org
 
-Pull-up GPIO_PI6 connected to TMP451's ALERT#/THERM2#.
+Remove some spurious new lines.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 ---
 
- arch/arm/boot/dts/tegra124-apalis.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/boot/dts/tegra124-apalis-eval.dts |  1 -
+ arch/arm/boot/dts/tegra124-apalis.dtsi     | 12 ------------
+ 2 files changed, 13 deletions(-)
 
+diff --git a/arch/arm/boot/dts/tegra124-apalis-eval.dts b/arch/arm/boot/dts/tegra124-apalis-eval.dts
+index 653044a..2b5a0f3 100644
+--- a/arch/arm/boot/dts/tegra124-apalis-eval.dts
++++ b/arch/arm/boot/dts/tegra124-apalis-eval.dts
+@@ -232,7 +232,6 @@
+ 
+ 	backlight: backlight {
+ 		compatible = "pwm-backlight";
+-
+ 		/* BKL1_PWM */
+ 		pwms = <&pwm 3 5000000>;
+ 		brightness-levels = <255 231 223 207 191 159 127 0>;
 diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index 6aa4952..0534601 100644
+index 0819721..6aa4952 100644
 --- a/arch/arm/boot/dts/tegra124-apalis.dtsi
 +++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -1151,11 +1151,11 @@
- 				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+@@ -56,7 +56,6 @@
+ 
+ 	pcie-controller@01003000 {
+ 		status = "okay";
+-
+ 		avddio-pex-supply = <&vdd_1v05>;
+ 		avdd-pex-pll-supply = <&vdd_1v05>;
+ 		avdd-pll-erefe-supply = <&avdd_1v05>;
+@@ -85,7 +84,6 @@
+ 		hdmi@54280000 {
+ 			pll-supply = <&reg_1v05_avdd_hdmi_pll>;
+ 			vdd-supply = <&reg_3v3_avdd_hdmi>;
+-
+ 			nvidia,ddc-i2c-bus = <&hdmi_ddc>;
+ 			nvidia,hpd-gpio =
+ 				<&gpio TEGRA_GPIO(N, 7) GPIO_ACTIVE_HIGH>;
+@@ -1607,15 +1605,11 @@
+ 			compatible = "ams,as3722";
+ 			reg = <0x40>;
+ 			interrupts = <0 86 IRQ_TYPE_LEVEL_HIGH>;
+-
+ 			ams,system-power-controller;
+-
+ 			#interrupt-cells = <2>;
+ 			interrupt-controller;
+-
+ 			gpio-controller;
+ 			#gpio-cells = <2>;
+-
+ 			pinctrl-names = "default";
+ 			pinctrl-0 = <&as3722_default>;
+ 
+@@ -1790,7 +1784,6 @@
+ 			reg = <0x4c>;
+ 			interrupt-parent = <&gpio>;
+ 			interrupts = <TEGRA_GPIO(I, 6) IRQ_TYPE_LEVEL_LOW>;
+-
+ 			#thermal-sensor-cells = <1>;
+ 		};
+ 	};
+@@ -1823,7 +1816,6 @@
+ 	sata@70020000 {
+ 		phys = <&{/padctl@7009f000/pads/sata/lanes/sata-0}>;
+ 		phy-names = "sata-0";
+-
+ 		avdd-supply = <&vdd_1v05>;
+ 		hvdd-supply = <&reg_3v3>;
+ 		vddio-supply = <&vdd_1v05>;
+@@ -1837,7 +1829,6 @@
+ 		       <&{/padctl@7009f000/pads/usb2/lanes/usb2-2}>,
+ 		       <&{/padctl@7009f000/pads/pcie/lanes/pcie-0}>;
+ 		phy-names = "usb2-0", "usb3-1", "usb2-1", "usb2-2", "usb3-0";
+-
+ 		avddio-pex-supply = <&vdd_1v05>;
+ 		avdd-pll-erefe-supply = <&avdd_1v05>;
+ 		avdd-pll-utmip-supply = <&vddio_1v8>;
+@@ -1919,7 +1910,6 @@
+ 			usb2-0 {
+ 				status = "okay";
+ 				mode = "otg";
+-
+ 				vbus-supply = <&reg_usbo1_vbus>;
  			};
  
--			/* GPIO_PI6 aka TEMP_ALERT_L */
-+			/* GPIO_PI6 aka TMP451 ALERT#/THERM2# */
- 			pi6 {
- 				nvidia,pins = "pi6";
- 				nvidia,function = "rsvd1";
--				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
- 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+@@ -1927,7 +1917,6 @@
+ 			usb2-1 {
+ 				status = "okay";
+ 				mode = "host";
+-
+ 				vbus-supply = <&reg_usbh_vbus>;
  			};
+ 
+@@ -1935,7 +1924,6 @@
+ 			usb2-2 {
+ 				status = "okay";
+ 				mode = "host";
+-
+ 				vbus-supply = <&reg_usbh_vbus>;
+ 			};
+ 
 -- 
 2.5.5
