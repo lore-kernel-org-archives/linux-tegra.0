@@ -1,40 +1,57 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V2 0/4] soc/tegra: pmc: Add support for IO pad configuration
- and sub-driver
-Date: Tue, 22 Nov 2016 17:02:09 +0530
-Message-ID: <58342CB9.6040203@nvidia.com>
-References: <1478696962-11831-1-git-send-email-ldewangan@nvidia.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH V3 2/2] pinctrl: tegra: Add driver to configure voltage
+ and power of io pads
+Date: Tue, 22 Nov 2016 13:58:32 +0100
+Message-ID: <CACRpkdZK34QfbSBJvshfZekk5TJBU5sZog-9uszLSmFPOGJgiw@mail.gmail.com>
+References: <1479810013-29894-1-git-send-email-ldewangan@nvidia.com> <1479810013-29894-3-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1478696962-11831-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
-Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset=UTF-8
+Return-path: <linux-kernel-owner@vger.kernel.org>
+In-Reply-To: <1479810013-29894-3-git-send-email-ldewangan@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Laxman Dewangan <ldewangan@nvidia.com>
+Cc: Rob Herring <robh+dt@kernel.org>, Stephen Warren <swarren@wwwdotorg.org>, "thierry.reding@gmail.com" <thierry.reding@gmail.com>, Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Joe Perches <joe@perches.com>, Jon Hunter <jonathanh@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-Thierry,
+On Tue, Nov 22, 2016 at 11:20 AM, Laxman Dewangan <ldewangan@nvidia.com> wrote:
 
-On Wednesday 09 November 2016 06:39 PM, Laxman Dewangan wrote:
-> Tegra SoC support the configutaion of IO pads to multi-level voltage
-> and low power state. The conifguration is done via pictrl framework
-> and the io pad driver in pinctrl frameowrk uses the APIs from pmc to
-> access PMC registers.
+> NVIDIA Tegra124 and later SoCs support the multi-voltage level and
+> low power state of some of its IO pads. The IO pads can work in
+> the voltage of the 1.8V and 3.3V of IO voltage from IO power rail
+> sources. When IO interfaces are not used then IO pads can be
+> configure in low power state to reduce the power consumption from
+> that IO pads.
 >
-> his series add the API to get the IO pad power status and register
-> the pmc child devices like IO pad drvier.
+> On Tegra124, the voltage level of IO power rail source is auto
+> detected by hardware(SoC) and hence it is only require to configure
+> in low power mode if IO pads are not used.
 >
-> The patches were send earlier part of different series but applied
-> partially in the Thierry's t186 branch
-> 	https://github.com/thierryreding/linux/tree/tegra186.
+> On T210 onwards, the auto-detection of voltage level from IO power
+> rail is removed from SoC and hence SW need to configure the PMC
+> register explicitly to set proper voltage in IO pads based on
+> IO rail power source voltage.
 >
-> Resending the patches as the new start to avoid any confusion.
-> This need to be applied in
-> 	https://github.com/thierryreding/linux/tree/tegra186
+> This driver adds the IO pad driver to configure the power state and
+> IO pad voltage based on the usage and power tree via pincontrol
+> framework. The configuration can be static and dynamic.
 >
+> Signed-off-by: Laxman Dewangan <ldewangan@nvidia.com>
 
-Any comment on this?
-I saw that your patches are available from t186 branch to linux-next.
+Overall very nice!
 
-Do I need to re-send the patches on top of linux-next?
+> +               rinfo->regulator = devm_regulator_get_optional(dev,
+> +                                               soc_data->cfg[i].vsupply);
+
+Please just use devm_regulator_get().
+
+As has been discussed at lenth elsewhere "optional" in regulator_get_optional
+does *not* mean "software optional", it means "hardware optional".
+
+Such as a terminal that may have a voltage connected or not be
+connected to anything at all.
+
+If the system does not define a regulator you will anyway get a
+dummy regulator.
+
+Yours,
+Linus Walleij
