@@ -1,123 +1,40 @@
-From: Adrian Hunter <adrian.hunter-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH 1/2] mmc: tegra: Support module reset
-Date: Tue, 22 Nov 2016 13:30:13 +0200
-Message-ID: <49527691-17f6-4547-a1af-a8f6234b6243@intel.com>
-References: <20161117171855.20843-1-thierry.reding@gmail.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH V2 0/4] soc/tegra: pmc: Add support for IO pad configuration
+ and sub-driver
+Date: Tue, 22 Nov 2016 17:02:09 +0530
+Message-ID: <58342CB9.6040203@nvidia.com>
+References: <1478696962-11831-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252
+Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20161117171855.20843-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1478696962-11831-1-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-mmc-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org
+Cc: gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 17/11/16 19:18, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> The device tree binding for the SDHCI controller found on Tegra SoCs
-> specifies that a reset control can be provided by the device tree. No
-> code was ever added to support the module reset, which can cause the
-> driver to try and access registers from a module that's in reset. On
-> most Tegra SoC generations doing so would cause a hang.
-> 
-> Note that it's unlikely to see this happen because on most platforms
-> these resets will have been deasserted by the bootloader. However the
-> portability can be improved by making sure the driver deasserts the
-> reset before accessing any registers.
-> 
-> Since resets are synchronous on Tegra SoCs, the platform driver needs
-> to implement a custom ->remove() callback now to make sure the clock
-> is disabled after the reset is asserted.
-> 
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 38 +++++++++++++++++++++++++++++++++++++-
->  1 file changed, 37 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-tegra.c b/drivers/mmc/host/sdhci-tegra.c
-> index 20b6ff5b4af1..eac57bb161d3 100644
-> --- a/drivers/mmc/host/sdhci-tegra.c
-> +++ b/drivers/mmc/host/sdhci-tegra.c
-> @@ -21,6 +21,7 @@
->  #include <linux/io.h>
->  #include <linux/of.h>
->  #include <linux/of_device.h>
-> +#include <linux/reset.h>
->  #include <linux/mmc/card.h>
->  #include <linux/mmc/host.h>
->  #include <linux/mmc/mmc.h>
-> @@ -65,6 +66,8 @@ struct sdhci_tegra {
->  	struct gpio_desc *power_gpio;
->  	bool ddr_signaling;
->  	bool pad_calib_required;
-> +
-> +	struct reset_control *rst;
->  };
->  
->  static u16 tegra_sdhci_readw(struct sdhci_host *host, int reg)
-> @@ -489,6 +492,16 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
->  	clk_prepare_enable(clk);
->  	pltfm_host->clk = clk;
->  
-> +	tegra_host->rst = devm_reset_control_get(&pdev->dev, "sdhci");
-> +	if (IS_ERR(tegra_host->rst)) {
-> +		rc = PTR_ERR(tegra_host->rst);
-> +		dev_err(&pdev->dev, "failed to get reset control: %d\n", rc);
-> +		goto err_clk_get;
-> +	}
-> +
-> +	reset_control_deassert(tegra_host->rst);
-> +	usleep_range(2000, 4000);
-> +
->  	rc = sdhci_add_host(host);
->  	if (rc)
->  		goto err_add_host;
+Thierry,
 
-Should you reset_control_assert() in the err_add_host path?
+On Wednesday 09 November 2016 06:39 PM, Laxman Dewangan wrote:
+> Tegra SoC support the configutaion of IO pads to multi-level voltage
+> and low power state. The conifguration is done via pictrl framework
+> and the io pad driver in pinctrl frameowrk uses the APIs from pmc to
+> access PMC registers.
+>
+> his series add the API to get the IO pad power status and register
+> the pmc child devices like IO pad drvier.
+>
+> The patches were send earlier part of different series but applied
+> partially in the Thierry's t186 branch
+> 	https://github.com/thierryreding/linux/tree/tegra186.
+>
+> Resending the patches as the new start to avoid any confusion.
+> This need to be applied in
+> 	https://github.com/thierryreding/linux/tree/tegra186
+>
 
-> @@ -504,6 +517,29 @@ static int sdhci_tegra_probe(struct platform_device *pdev)
->  	return rc;
->  }
->  
-> +static int sdhci_tegra_remove(struct platform_device *pdev)
-> +{
-> +	struct sdhci_host *host = platform_get_drvdata(pdev);
-> +	struct sdhci_pltfm_host *platform = sdhci_priv(host);
-> +	struct sdhci_tegra *tegra = sdhci_pltfm_priv(platform);
-> +	int dead = 0;
-> +	u32 value;
-> +
-> +	value = readl(host->ioaddr + SDHCI_INT_STATUS);
-> +	if (value == 0xffffffff)
+Any comment on this?
+I saw that your patches are available from t186 branch to linux-next.
 
-I think this check of 0xffffffff is a PCI thing.  Unless you know it is
-meaningful for your platforms, you could leave it out.
-
-> +		dead = 1;
-> +
-> +	sdhci_remove_host(host, dead);
-> +
-> +	reset_control_assert(tegra->rst);
-> +	usleep_range(2000, 4000);
-> +	clk_disable_unprepare(platform->clk);
-> +
-> +	sdhci_pltfm_free(pdev);
-> +
-> +	return 0;
-> +}
-> +
->  static struct platform_driver sdhci_tegra_driver = {
->  	.driver		= {
->  		.name	= "sdhci-tegra",
-> @@ -511,7 +547,7 @@ static struct platform_driver sdhci_tegra_driver = {
->  		.pm	= &sdhci_pltfm_pmops,
->  	},
->  	.probe		= sdhci_tegra_probe,
-> -	.remove		= sdhci_pltfm_unregister,
-> +	.remove		= sdhci_tegra_remove,
->  };
->  
->  module_platform_driver(sdhci_tegra_driver);
-> 
+Do I need to re-send the patches on top of linux-next?
