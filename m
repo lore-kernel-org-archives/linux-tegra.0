@@ -1,131 +1,134 @@
-From: "Rafael J. Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [RFC PATCH 0/3] PM / Domains: Add support for devices that
- require multiple domains
-Date: Wed, 23 Nov 2016 14:15:40 +0100
-Message-ID: <CAJZ5v0jguTUH0Jbv7jKwQx33edRs3o2AC_DCbear-0fAc=WPzA@mail.gmail.com>
-References: <1474367287-10402-1-git-send-email-jonathanh@nvidia.com>
- <CAPDyKFoFPNNnoc-7G34A7a4Yo8f=WUyurNP1evabw3MOEubEoA@mail.gmail.com>
- <90faea7d-65b6-590a-83f1-24fcdffa0569@nvidia.com> <CAPDyKFr4S3tM7KL2hfwJ3R4e5z1-Zd99aMhMSgVq4XzkrUUdow@mail.gmail.com>
- <fd7c8f40-2a9f-b71c-bd11-43ee657441ae@nvidia.com> <63670abf-1d58-a7e3-6927-0c815d44d8a1@nvidia.com>
- <d961715d-820a-dd63-e3a9-c908ce465582@nvidia.com> <CAJZ5v0hqdjGJ8v+k-Nkp_bx-fj_yTD5WoMeVfkmqBuTwCjRoyA@mail.gmail.com>
- <d9a4c1cd-6682-663d-e30d-cc85f665cf64@nvidia.com> <m2lgwbxtea.fsf@baylibre.com>
- <CAJZ5v0gUO8TqxbyLh37mfvoTLY1y1Uj91i9T6zcx5A9SmmcReA@mail.gmail.com> <82802459-8292-efb7-ac23-733de8687d51@nvidia.com>
+From: Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] gpio: tegra186: Add support for T186 GPIO
+Date: Wed, 23 Nov 2016 14:25:51 +0100
+Message-ID: <CACRpkdbfkv7Yt3cOah_BGcgnqVtxvzWOqm2+HH_rkrpnJt0nFA@mail.gmail.com>
+References: <1478083719-14836-1-git-send-email-smangipudi@nvidia.com>
+ <0e3e89a8-a2f1-68c2-0586-58902fb91587@wwwdotorg.org> <20161122173042.GA3239@ulmo.ba.sec>
 Mime-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <82802459-8292-efb7-ac23-733de8687d51-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20161122173042.GA3239-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: "Rafael J. Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rajendra Nayak <rnayak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Suresh Mangipudi <smangipudi-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Wed, Nov 23, 2016 at 10:29 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->
-> On 22/11/16 21:55, Rafael J. Wysocki wrote:
->> On Tue, Nov 22, 2016 at 7:26 PM, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org> wrote:
->>> Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> writes:
->>>
->>>> On 16/11/16 12:53, Rafael J. Wysocki wrote:
->>>>> On Wed, Nov 16, 2016 at 11:48 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
->>>>>> Hi Kevin, Ulf,
->>>>>>
->>>>>> On 03/11/16 14:20, Jon Hunter wrote:
->>>>>>>
->>>>>>> On 11/10/16 10:15, Jon Hunter wrote:
->>>>>>>
->>>>>>> ...
->>>>>>>
->>>>>>>>>>> Second, another way of seeing this is: Depending on the current
->>>>>>>>>>> runtime selected configuration you need to re-configure the PM domain
->>>>>>>>>>> topology - but the device would still remain in the same PM domain.
->>>>>>>>>>>
->>>>>>>>>>> In other words, you would need to remove/add subdomain(s) depending on
->>>>>>>>>>> the selected configuration. Would that better reflect the HW?
->>>>>>>>>>
->>>>>>>>>> I am not 100% sure I follow what you are saying, but ultimately, I would
->>>>>>>>>> like to get to ...
->>>>>>>>>>
->>>>>>>>>>         usb@70090000 {
->>>>>>>>>>                 compatible = "nvidia,tegra210-xusb";
->>>>>>>>>>                 ...
->>>>>>>>>>                 power-domains = <&pd_xusbhost>, <&pd_xusbss>;
->>>>>>>>>>         };
->>>>>>>>>
->>>>>>>>> So, is this really is a proper description of the HW? Isn't it so,
->>>>>>>>> that the usb device always resides in one and the same PM domain?
->>>>>>>>
->>>>>>>> I guess technically, the usbhost controller resides in one partition and
->>>>>>>> the super-speed logic in another. So could the usbhost domain be the
->>>>>>>> primary? Possibly, but the device cannot be probed without both enabled.
->>>>>>>>
->>>>>>>>> Now, depending on the selected speed mode (superspeed) additional
->>>>>>>>> logic may needs to be powered on and configured for the usb device to
->>>>>>>>> work?
->>>>>>>>> Perhaps, one could consider those additional logics as a master/parent
->>>>>>>>> PM domain for the usb device's PM domain?
->>>>>>>>>
->>>>>>>>> Or this is not how the HW works? :-)
->>>>>>>>
->>>>>>>> It might be possible for this case, but to be honest, the more I think
->>>>>>>> about this, I do wonder if we need to be able to make the framework a
->>>>>>>> lot more flexible for devices that need multiple power-domains. In other
->>>>>>>> words, for devices that use multiple domains allow them to control them
->>>>>>>> similarly to what we do for regulators or clocks. So if there is more
->>>>>>>> than one defined, then the genpd core will not bind the device to the
->>>>>>>> pm-domain and let the driver handle it. This way if you do need more
->>>>>>>> granular control of the pm-domains in the driver you can do whatever you
->>>>>>>> need to.
->>>>>>>>
->>>>>>>> I know that Rajendra (CC'ed) was looking into whether he had a need to
->>>>>>>> control multiple power-domains individually from within the context of a
->>>>>>>> single device driver.
->>>>>>>
->>>>>>> So Rajendra commented to say that he does not see a need for individual
->>>>>>> control of power-domains for now, but a need for specifying multiple.
->>>>>>>
->>>>>>> One simple option would be to allow users to specify multiple and have
->>>>>>> the genpd core effectively ignore such devices and leave it to the
->>>>>>> driver to configure manually. I have been able to do this for XUSB by
->>>>>>> dynamically adding power-domains to the device.
->>>>>>>
->>>>>>> Let me know if you have any more thoughts on how we can do this.
->>>>>>
->>>>>> Any more thoughts on this? Seems that there are a few others that would
->>>>>> be interested in supporting multiple domains for a device.
->>>>>
->>>>> There is a design limitation to that, however.
->>>>>
->>>>> The PM domain concept really is about intercepting the flow of PM
->>>>> callbacks for a device in order to carry out additional operations,
->>>>> not covered by the bus type or driver.  That's why there is only one
->>>>> set of PM domain callbacks per device and I don't quite see how and
->>>>> why it would be useful to add more of them in there.
->>>
->>> @Rafael: Re: why it would be useful...
->>>
->>> Many ARM SoCs have devices that have independent power rails for the
->>> memory and the logic of an IP block.  For example, while powering off
->>> the logic you could keep the memory at a retention voltage, so you'd
->>> want to treat those power domains separately.
->>>
->>> Today, in order to model this, you'd have to create another (dummy)
->>> device, just for the memory and put it in its own domain so the two
->>> could be controlled separately.
->>
->> Perhaps if you want to use genpd for that. :-)
->>
->> Let me rephrase, though.  I don't see why and how it would be useful
->> to intercept the flow of PM callbacks for a given device more than
->> once.
->
-> In this RFC, all I was proposing is that we create a dummy pm-domain
-> that is a child of the actual pm-domains it uses and this new dummy
-> pm-domain is associated with the device. Hence, you are still only
-> intercepting the flow of PM callback once even with this approach. I am
-> just using the parent-child relationship to ensure that all require
-> pm-domains are turned on thats all. Sorry if I am still missing your point!
+On Tue, Nov 22, 2016 at 6:30 PM, Thierry Reding
+<thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> wrote:
 
-No, you aren't, thanks for explaining that!
+> So I don't really know how to go about merging both. I'll reply to this
+> email later with a copy of the patch that I wrote, maybe we can take it
+> from there.
 
-Thanks,
-Rafael
+I trust you nVidia people to sort this out.
+
+I guess in worst case you can have a company strategy meeting about it.
+
+Let me just say: when one of you have a patch that bears the ACK of the
+other, I will merge it.
+
+> However there's another problem with this patch. If you try and export
+> a non-existing GPIO via sysfs and try to read the value file you can
+> easily make the driver hang a CPU. This only seems to happen for the
+> AON GPIO controller.
+
+That sounds like a bug. But I strongly suggest you first and foremost
+to test your code with the character device and not through sysfs.
+
+sysfs is second priority, and while I don't want it to screw things up, it
+is an optional legacy bolt-on not a compiled-in recommended thing.
+
+The character device, on the other hand, is a recommended
+practice for userspace GPIO.
+
+> One way to solve this is to make a massive change to the GPIO subsystem
+> to check for the validity of a GPIO before any access. I'm not sure if
+> that's desirable, maybe Linus has some thoughts about that.
+
+This is already possible and several drivers are doing this.
+
+Everything, all kernel users and all character device users, end up
+calling gpiod_request().
+
+We agree violently that if this GPIO is not valid, inaccessible (etc)
+it should not return a valid GPIO descriptor.
+
+Consider drivers/gpio/gpio-stmpe.c which has a device tree property
+"st,norequest-mask" that mark some GPIO lines as "nonusable".
+This is because they are statically muxed for something else.
+
+(It is a subject of debate whether that is a good way to mark the
+lines as unusable, probably not, but it is legacy code.)
+
+We know a number of lines are not elegible for request
+or to be used for triggering interrupts.
+
+The code does this in .request():
+
+if (stmpe_gpio->norequest_mask & BIT(offset))
+                return -EINVAL;
+
+Thus any gpiod_get() will fail. And we are fine.
+
+Further, since it can also be used as an interrupt parent, it
+does this in .probe():
+
+of_property_read_u32(np, "st,norequest-mask",
+                 &stmpe_gpio->norequest_mask);
+
+if (stmpe_gpio->norequest_mask)
+         stmpe_gpio->chip.irq_need_valid_mask = true;
+for (i = 0; i < sizeof(u32); i++)
+         if (stmpe_gpio->norequest_mask & BIT(i))
+                   clear_bit(i, stmpe_gpio->chip.irq_valid_mask);
+
+How this blocks the IRQs from being requested can be seen
+in the irqchip helpers in gpiolib.c. The common GPIOLIB_IRQCHIP
+gracefully handles this too.
+
+If the sysfs ABI does not block the use of the same lines
+as efficiently, it is a bug in the sysfs code. This works fine
+to block access for all in-kernel and chardev users.
+
+But as far as I can tell, sysfs ALSO uses gpiod_get() so it should
+work fine.
+
+> If we stick with a compacted number space, there are two solutions that
+> I can think of to remedy the sysfs problem. One would be to register a
+> separate struct gpio_chip for each controller. That's kind of a sledge-
+> hammer solution because it will create multiple number spaces and hence
+> completely avoid the sparse number space for the whole controller. I
+> think Stephen had originally proposed this as a solution.
+
+Note ambigous use of "controller" above. I'm confused.
+
+"One would be to register a separate struct gpio_chip for each controller."
+/ "and hence completely avoid the sparse number space for the whole
+controller."
+
+Eheheh
+
+It seems that "controller" refer to two different things in the two
+sentences. Do you mean your hardware has ONE controller with
+several BANKS? (as described in Documentation/gpio/driver.txt?)
+
+> The other possibility would be for the GPIO subsystem to gain per-chip
+> GPIO export via sysfs. That is, instead of the global export file that
+> you write a global GPIO number to, each per-chip directory would get
+> an export file.
+
+No. The sysfs ABI is in
+Documentation/ABI/obsolete/sysfs-gpio
+for a reason: I hate it and it should not be extended whatsoever.
+
+Use the new character device, and for a new SoC like the tegra186
+you can CERTAINLY convince any downstream consumers to
+switch to that.
+
+Please just disable CONFIG_GPIO_SYSFS from your defconfig
+and in any company-internal builds and point everyone and their
+dog to the character device: tools/gpio/*,
+and the UAPI <linux/gpio.h>
+
+Yours,
+Linus Walleij
