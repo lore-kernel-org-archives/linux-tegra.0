@@ -1,165 +1,136 @@
-From: Rajendra Nayak <rnayak@codeaurora.org>
-Subject: Re: [RFC PATCH 0/3] PM / Domains: Add support for devices that require
- multiple domains
-Date: Wed, 23 Nov 2016 09:18:06 +0530
-Message-ID: <58351176.20800@codeaurora.org>
-References: <1474367287-10402-1-git-send-email-jonathanh@nvidia.com> <57F5E986.40704@codeaurora.org> <8ba7aa10-0c2f-98ca-c7bd-00e1724e5972@nvidia.com> <57F60EBE.8010509@codeaurora.org> <91b96909-64bc-db72-6da5-556272565091@nvidia.com> <5819AA42.5060603@codeaurora.org> <CAPDyKFpdRzDotofr+0F6gfuWg4hHikEfmxS2aM2D+hmq_JpHRA@mail.gmail.com> <582D1696.7000601@codeaurora.org> <4bafcd71-edc9-9ddd-d8c4-093e4d9c58db@linaro.org> <CAPDyKFo4okrLLM+HVKTOn8pDvwO5aRKCYnyznt+Vrokp64yjqQ@mail.gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [RFC PATCH 0/3] PM / Domains: Add support for devices that
+ require multiple domains
+Date: Wed, 23 Nov 2016 09:29:31 +0000
+Message-ID: <82802459-8292-efb7-ac23-733de8687d51@nvidia.com>
+References: <1474367287-10402-1-git-send-email-jonathanh@nvidia.com>
+ <CAPDyKFoFPNNnoc-7G34A7a4Yo8f=WUyurNP1evabw3MOEubEoA@mail.gmail.com>
+ <90faea7d-65b6-590a-83f1-24fcdffa0569@nvidia.com>
+ <CAPDyKFr4S3tM7KL2hfwJ3R4e5z1-Zd99aMhMSgVq4XzkrUUdow@mail.gmail.com>
+ <fd7c8f40-2a9f-b71c-bd11-43ee657441ae@nvidia.com>
+ <63670abf-1d58-a7e3-6927-0c815d44d8a1@nvidia.com>
+ <d961715d-820a-dd63-e3a9-c908ce465582@nvidia.com>
+ <CAJZ5v0hqdjGJ8v+k-Nkp_bx-fj_yTD5WoMeVfkmqBuTwCjRoyA@mail.gmail.com>
+ <d9a4c1cd-6682-663d-e30d-cc85f665cf64@nvidia.com>
+ <m2lgwbxtea.fsf@baylibre.com>
+ <CAJZ5v0gUO8TqxbyLh37mfvoTLY1y1Uj91i9T6zcx5A9SmmcReA@mail.gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <CAPDyKFo4okrLLM+HVKTOn8pDvwO5aRKCYnyznt+Vrokp64yjqQ@mail.gmail.com>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Ulf Hansson <ulf.hansson@linaro.org>, Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc: Jon Hunter <jonathanh@nvidia.com>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, Kevin Hilman <khilman@kernel.org>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Sricharan <sricharan@codeaurora.org>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <CAJZ5v0gUO8TqxbyLh37mfvoTLY1y1Uj91i9T6zcx5A9SmmcReA-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "Rafael J. Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>
+Cc: Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rajendra Nayak <rnayak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 11/22/2016 06:35 PM, Ulf Hansson wrote:
-> On 17 November 2016 at 16:39, Stanimir Varbanov
-> <stanimir.varbanov@linaro.org> wrote:
->> Hi,
+On 22/11/16 21:55, Rafael J. Wysocki wrote:
+> On Tue, Nov 22, 2016 at 7:26 PM, Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org> wrote:
+>> Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> writes:
 >>
->> On 11/17/2016 04:31 AM, Rajendra Nayak wrote:
->>>
->>>
->>> On 11/16/2016 06:41 PM, Ulf Hansson wrote:
->>>> On 2 November 2016 at 09:56, Rajendra Nayak <rnayak@codeaurora.org> wrote:
->>>>> Hi Jon,
+>>> On 16/11/16 12:53, Rafael J. Wysocki wrote:
+>>>> On Wed, Nov 16, 2016 at 11:48 AM, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> wrote:
+>>>>> Hi Kevin, Ulf,
 >>>>>
->>>>> On 10/31/2016 04:14 PM, Jon Hunter wrote:
->>>>>> Hi Rajendra,
+>>>>> On 03/11/16 14:20, Jon Hunter wrote:
 >>>>>>
->>>>>> On 06/10/16 09:43, Rajendra Nayak wrote:
->>>>>>>
->>>>>>> On 10/06/2016 01:55 PM, Jon Hunter wrote:
->>>>>>>> Hi Rajendra,
->>>>>>>>
->>>>>>>> On 06/10/16 07:04, Rajendra Nayak wrote:
->>>>>>>>>
->>>>>>>>> On 09/20/2016 03:58 PM, Jon Hunter wrote:
->>>>>>>>>> The Tegra124/210 XUSB subsystem (that consists of both host and device
->>>>>>>>>> controllers) is partitioned across 3 PM domains which are:
->>>>>>>>>> - XUSBA: Superspeed logic (for USB 3.0)
->>>>>>>>>> - XUSBB: Device controller
->>>>>>>>>> - XUSBC: Host controller
->>>>>>>>>>
->>>>>>>>>> These power domains are not nested and can be powered-up and down
->>>>>>>>>> independently of one another. In practice different scenarios require
->>>>>>>>>> different combinations of the power domains, for example:
->>>>>>>>>> - Superspeed host: XUSBA and XUSBC
->>>>>>>>>> - Superspeed device: XUSBA and XUSBB
->>>>>>>>>>
->>>>>>>>>> Although it could be possible to logically nest both the XUSBB and XUSBC
->>>>>>>>>> domains under the XUSBA, superspeed may not always be used/required and
->>>>>>>>>> so this would keep it on unnecessarily.
->>>>>>>>>
->>>>>>>>> Hey Jon, so does this RFC provide a way to just specify multiple Powerdomains
->>>>>>>>> for a device (which then will *all* be powered on/off together) or does
->>>>>>>>> it also provide for more granular control of these powerdomains?
->>>>>>>>
->>>>>>>> Only to specify multiple power-domains for a device and not the later.
->>>>>>>>
->>>>>>>>> The above statement seems to suggest you would need more granular control
->>>>>>>>> of these powerdomains (like keeping XUSBA off in case superspeed it not
->>>>>>>>> needed) but I can't seem to figure out how you achieve it with this series.
->>>>>>>>
->>>>>>>> It is an interesting point but today we have always kept the superspeed
->>>>>>>> partition on if the device is configured for superspeed regardless of
->>>>>>>> what is actually connected. I will check to see if the h/w would allow
->>>>>>>> us to turn it off if a non-superspeed device is in use but I did not
->>>>>>>> think so.
->>>>>>>>
->>>>>>>> Do you have any interesting use-cases that would make use of this or
->>>>>>>> require other such enhancements?
->>>>>>>
->>>>>>> We do have atleast a few devices which need to control multiple power domains,
->>>>>>> I will need to look more to see if any of them can be controlled individually.
->>>>>>> The downstream code we have models these (powerdomains) as regulators and
->>>>>>> the drivers hence have individual control on each (specifying multiple -supply's
->>>>>>> in DT)
+>>>>>> On 11/10/16 10:15, Jon Hunter wrote:
 >>>>>>
->>>>>> Were you able to check to see if you need to have individual control for the power-domains?
+>>>>>> ...
+>>>>>>
+>>>>>>>>>> Second, another way of seeing this is: Depending on the current
+>>>>>>>>>> runtime selected configuration you need to re-configure the PM domain
+>>>>>>>>>> topology - but the device would still remain in the same PM domain.
+>>>>>>>>>>
+>>>>>>>>>> In other words, you would need to remove/add subdomain(s) depending on
+>>>>>>>>>> the selected configuration. Would that better reflect the HW?
+>>>>>>>>>
+>>>>>>>>> I am not 100% sure I follow what you are saying, but ultimately, I would
+>>>>>>>>> like to get to ...
+>>>>>>>>>
+>>>>>>>>>         usb@70090000 {
+>>>>>>>>>                 compatible = "nvidia,tegra210-xusb";
+>>>>>>>>>                 ...
+>>>>>>>>>                 power-domains = <&pd_xusbhost>, <&pd_xusbss>;
+>>>>>>>>>         };
+>>>>>>>>
+>>>>>>>> So, is this really is a proper description of the HW? Isn't it so,
+>>>>>>>> that the usb device always resides in one and the same PM domain?
+>>>>>>>
+>>>>>>> I guess technically, the usbhost controller resides in one partition and
+>>>>>>> the super-speed logic in another. So could the usbhost domain be the
+>>>>>>> primary? Possibly, but the device cannot be probed without both enabled.
+>>>>>>>
+>>>>>>>> Now, depending on the selected speed mode (superspeed) additional
+>>>>>>>> logic may needs to be powered on and configured for the usb device to
+>>>>>>>> work?
+>>>>>>>> Perhaps, one could consider those additional logics as a master/parent
+>>>>>>>> PM domain for the usb device's PM domain?
+>>>>>>>>
+>>>>>>>> Or this is not how the HW works? :-)
+>>>>>>>
+>>>>>>> It might be possible for this case, but to be honest, the more I think
+>>>>>>> about this, I do wonder if we need to be able to make the framework a
+>>>>>>> lot more flexible for devices that need multiple power-domains. In other
+>>>>>>> words, for devices that use multiple domains allow them to control them
+>>>>>>> similarly to what we do for regulators or clocks. So if there is more
+>>>>>>> than one defined, then the genpd core will not bind the device to the
+>>>>>>> pm-domain and let the driver handle it. This way if you do need more
+>>>>>>> granular control of the pm-domains in the driver you can do whatever you
+>>>>>>> need to.
+>>>>>>>
+>>>>>>> I know that Rajendra (CC'ed) was looking into whether he had a need to
+>>>>>>> control multiple power-domains individually from within the context of a
+>>>>>>> single device driver.
+>>>>>>
+>>>>>> So Rajendra commented to say that he does not see a need for individual
+>>>>>> control of power-domains for now, but a need for specifying multiple.
+>>>>>>
+>>>>>> One simple option would be to allow users to specify multiple and have
+>>>>>> the genpd core effectively ignore such devices and leave it to the
+>>>>>> driver to configure manually. I have been able to do this for XUSB by
+>>>>>> dynamically adding power-domains to the device.
+>>>>>>
+>>>>>> Let me know if you have any more thoughts on how we can do this.
 >>>>>
->>>>> I had a look at the Video decode block (for msm8996), which seems to be powered using 3 different
->>>>> powerdomains, mainly venus, venus_core0 and venus_core1. The venus PD powers the ARM core
->>>>> which runs the firmware, while the venus_core0 and venus_core1 power the encode/decode logic,
->>>>> so for things like firmware image loading you ideally need only venus PD to be ON, but during
->>>>> an encode/decode operation you would need all 3 to be ON.
+>>>>> Any more thoughts on this? Seems that there are a few others that would
+>>>>> be interested in supporting multiple domains for a device.
 >>>>
->>>> Isn't there a scenario when encoding *or* decoding happens, not always both?
+>>>> There is a design limitation to that, however.
 >>>>
->>>> If so, doesn't that mean you may have venus + venus_core0 powered and
->>>> in some other case venus + venus_core1 powered?
->>>>
->>>>> The downstream driver turns *all* of them together, and does not control them individually.
->>>>> For upstream, the way we have it working (the driver is not merged) is by having venus be the parent
->>>>> of venus_core0 and venus_core0 as the parent of venus_core1, and having venus_core1 mentioned as
->>>>> the powerdomain for the video decode block in DT.
->>>>>
->>>>> So in summary, there is still no need to control them individually, but given there is no way to
->>>>> specify more than one powerdomain for a given device, we are ending up hooking up some
->>>>> parent/child relations in the powerdomain code.
->>>>>
->>>>
->>>> I think a better solution would be to model the video decode block as
->>>> three struct devices.
->>>>
->>>> 1) The main ARM device, attached to the venus PM domain.
->>>> 2) The encoder device, having the main device assigned as its parent
->>>> and being attached to the venus_core0 PM domain.
->>>> 3) The decoder device, having the main device assigned as its parent
->>>> and being attached to the venus_core1 PM domain.
->>>>
->>>> Then there is no need to specific a  PM domain hierarchy (which seems
->>>> to be the issue here), but instead only the parent/child relationships
->>>> between the struct devices.
->>>>
->>>> Moreover, as you deploy runtime PM for these devices, you can more
->>>> easily distinguish which device you need to operate on
->>>> (pm_runtime_get|put*()) depending on what particular operations you
->>>> want to do (encode, decode etc).
->>>
->>> Stan, is this something you think is possible to do, given the way the
->>> vidc driver is designed? This is mainly for 8996 which has 3 different
->>> powerdomains associated with the video decode block.
+>>>> The PM domain concept really is about intercepting the flow of PM
+>>>> callbacks for a device in order to carry out additional operations,
+>>>> not covered by the bus type or driver.  That's why there is only one
+>>>> set of PM domain callbacks per device and I don't quite see how and
+>>>> why it would be useful to add more of them in there.
 >>
->> Even if it is possible it will be difficult for many reasons.
+>> @Rafael: Re: why it would be useful...
 >>
->> On the other side, current design (firmware) doesn't expect kernel
->> driver to have control over venus_core0 and venus_core1 pm domains. The
->> firmware manages those two pm domains internally and the only thing
->> which we need to do is to prepare those domains (and follow the power up
->> sequence) to be in hardware control mode. So I think the best we could
->> do is to model those two power domains as genpd subdomains of the parent
->> venus pm domain.
+>> Many ARM SoCs have devices that have independent power rails for the
+>> memory and the logic of an IP block.  For example, while powering off
+>> the logic you could keep the memory at a retention voltage, so you'd
+>> want to treat those power domains separately.
+>>
+>> Today, in order to model this, you'd have to create another (dummy)
+>> device, just for the memory and put it in its own domain so the two
+>> could be controlled separately.
 > 
-> Okay, so that was easy then. Why all the fuzz? :-)
+> Perhaps if you want to use genpd for that. :-)
+> 
+> Let me rephrase, though.  I don't see why and how it would be useful
+> to intercept the flow of PM callbacks for a given device more than
+> once.
 
-Not as easy as it sounds :-), so Venus has 3 powerdomains, core, subcore0 and subcore1.
-So the ideal way of representing the parent/child relation in this case would be
+In this RFC, all I was proposing is that we create a dummy pm-domain
+that is a child of the actual pm-domains it uses and this new dummy
+pm-domain is associated with the device. Hence, you are still only
+intercepting the flow of PM callback once even with this approach. I am
+just using the parent-child relationship to ensure that all require
+pm-domains are turned on thats all. Sorry if I am still missing your point!
 
-         Core
-         /  \
-        /    \
-       /      \
- subcore0    subcore1
-
-So what powerdomain would you associate with the venus device in such case so a runtime
-call from the venus driver would turn all 3 of them?
-
-So, instead we end up with something like..
-
-         Core
-          |
-          |
-       subcore0
-          |
-          |
-       subcore1
-
-..and associate subcore1 as the powerdomain for Venus.
+Cheers
+Jon
 
 -- 
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-hosted by The Linux Foundation
+nvpublic
