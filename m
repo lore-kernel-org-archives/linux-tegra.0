@@ -1,133 +1,87 @@
-From: marcel@ziswiler.com
-Subject: [RESEND PATCH 4/6] apalis-tk1: adjust pin muxing for v1.1 hw
-Date: Thu, 24 Nov 2016 02:04:54 +0100
-Message-ID: <20161124010456.24604-5-marcel@ziswiler.com>
-References: <20161124010456.24604-1-marcel@ziswiler.com>
+From: Stephen Boyd <sboyd@codeaurora.org>
+Subject: Re: [RFC PATCH 0/3] PM / Domains: Add support for devices that
+ require multiple domains
+Date: Wed, 23 Nov 2016 18:30:14 -0800
+Message-ID: <20161124023014.GK6095@codeaurora.org>
+References: <CAPDyKFoFPNNnoc-7G34A7a4Yo8f=WUyurNP1evabw3MOEubEoA@mail.gmail.com>
+ <90faea7d-65b6-590a-83f1-24fcdffa0569@nvidia.com>
+ <CAPDyKFr4S3tM7KL2hfwJ3R4e5z1-Zd99aMhMSgVq4XzkrUUdow@mail.gmail.com>
+ <fd7c8f40-2a9f-b71c-bd11-43ee657441ae@nvidia.com>
+ <63670abf-1d58-a7e3-6927-0c815d44d8a1@nvidia.com>
+ <d961715d-820a-dd63-e3a9-c908ce465582@nvidia.com>
+ <CAJZ5v0hqdjGJ8v+k-Nkp_bx-fj_yTD5WoMeVfkmqBuTwCjRoyA@mail.gmail.com>
+ <d9a4c1cd-6682-663d-e30d-cc85f665cf64@nvidia.com>
+ <m2lgwbxtea.fsf@baylibre.com>
+ <f54b4912-bfdd-aa2c-6f04-e09ed4207af6@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-In-Reply-To: <20161124010456.24604-1-marcel@ziswiler.com>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: devicetree@vger.kernel.org
-Cc: Mark Rutland <mark.rutland@arm.com>, Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Marcel Ziswiler <marcel.ziswiler@toradex.com>, linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, Russell King <linux@armlinux.org.uk>, Thierry Reding <thierry.reding@gmail.com>, linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-kernel-owner@vger.kernel.org>
+Content-Disposition: inline
+In-Reply-To: <f54b4912-bfdd-aa2c-6f04-e09ed4207af6@nvidia.com>
+Sender: linux-kernel-owner@vger.kernel.org
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Kevin Hilman <khilman@baylibre.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Rajendra Nayak <rnayak@codeaurora.org>, Marek Szyprowski <m.szyprowski@samsung.com>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
+On 11/22, Jon Hunter wrote:
+> 
+> On 22/11/16 18:26, Kevin Hilman wrote:
+> > Jon Hunter <jonathanh@nvidia.com> writes:
+> > 
+> >> However, I would rather the client of
+> >> the power-domains specify which power-domains they require and
+> >> dynamically nested the power-domains at runtime. This is slightly
+> >> different to what I proposed in this RFC, but it is not really beyond
+> >> the bounds of what we support today IMO. What is missing is a means to
+> >> do this dynamically and not statically.
+> >>
+> >> By the way, I am not sure if you are suggesting that for devices that
+> >> may need multiple power-domains we should architect the driver
+> >> differently and split it up in some way such that we have a power-domain
+> >> per device. But for the case of the Tegra XHCI it is quite complex
+> >> because the driver loads firmware which runs on a micro-controller and
+> >> we need to manage the various power-domains that are used.
+> > 
+> > IMO, constructing a network of new struct devices just to workaround
+> > limitations in the framework doesn't sound quite right either.
+> 
+> I agree.
+> 
 
-Configure Apalis MMC1 D6 GPIO on SDMMC3_CLK_LB_IN as reserved function
-without any pull-up/down.
+Marek is attempting to do this for the samsung clock
+controller[1] (patch #5 is informative). From what I can tell
+they have one DT node for their clock controller because it's one
+register address space to control clocks. But, certain clocks
+exposed by that driver only work when certain power domains are
+enabled. For example, they have a clock controller that exposes
+clock signals for multimedia hardware blocks like video
+accelerators, gpus, and cameras. The clocks seem to have been
+placed inside different power domains for the multimedia hardware
+they're associated with, so there may be 10 or so power domains
+that need to be enabled at different times for different clocks
+to work. If the GPU power domain isn't enabled when the GPU
+clocks are touched by the driver, things break, etc.
 
-Configure GPIO_PV2 as SD1_CD# according to latest V1.1 HW.
+In the proposed patchset, we have the top-level clock controller
+node with subnodes for each power domain that needs to be
+associated with clocks inside these different multimedia blocks.
+So we end up with one parent device and attached driver for the
+clock driver, and then that driver populates child nodes as
+devices and matches up clocks with child nodes while registering
+clks with clk_register(). Because we pass a dev pointer to
+clk_register, we associate different devices with different
+clocks all from the same top-level clock controller device
+driver. Then clk framework calls runtime_pm APIs with devices
+used during clk registration. Some of those devices don't have
+any driver bound to them, which feels odd.
 
-Leave SDMMC3_CLK_LB_OUT muxed as SDMMC3 with output driver enabled aka
-not tristated and input driver enabled as well as it features some
-magic properties even though the external loopback is disabled and the
-internal loopback used as per SDMMC_VENDOR_MISC_CNTRL_0 register's
-SDMMC_SPARE1 bits being set to 0xfffd according to the TRM! This pin is
-now a not-connect on V1.1 HW in order to avoid any interference.
+This seems like a case where we really want a better way to
+explicitly control power domains without making up subnodes and
+registering struct devices just to work around the one device to
+one genpd construct we have today. Maybe power domains just don't
+map to genpd though and that's the disconnect.
 
-Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
----
-
- arch/arm/boot/dts/tegra124-apalis.dtsi | 53 +++++++++++++++-------------------
- 1 file changed, 23 insertions(+), 30 deletions(-)
-
-diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index 747ce81..2bfc579 100644
---- a/arch/arm/boot/dts/tegra124-apalis.dtsi
-+++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -414,18 +414,10 @@
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
- 			};
--			/*
--			 * Don't use MMC1_D6 aka SDMMC3_CLK_LB_IN for now as it
--			 * features some magic properties even though the
--			 * external loopback is disabled and the internal
--			 * loopback used as per SDMMC_VENDOR_MISC_CNTRL_0
--			 * register's SDMMC_SPARE1 bits being set to 0xfffd
--			 * according to the TRM!
--			 */
- 			sdmmc3_clk_lb_in_pee5 { /* D6 GPIO */
- 				nvidia,pins = "sdmmc3_clk_lb_in_pee5";
--				nvidia,function = "sdmmc3";
--				nvidia,pull = <TEGRA_PIN_PULL_UP>;
-+				nvidia,function = "rsvd2";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
- 			};
-@@ -520,20 +512,12 @@
- 				nvidia,tristate = <TEGRA_PIN_DISABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
- 			};
--			/*
--			 * Don't use SD1_CD# aka SDMMC3_CLK_LB_OUT for now as it
--			 * features some magic properties even though the
--			 * external loopback is disabled and the internal
--			 * loopback used as per SDMMC_VENDOR_MISC_CNTRL_0
--			 * register's SDMMC_SPARE1 bits being set to 0xfffd
--			 * according to the TRM!
--			 */
--			sdmmc3_clk_lb_out_pee4 { /* CD# GPIO */
--				nvidia,pins = "sdmmc3_clk_lb_out_pee4";
--				nvidia,function = "rsvd2";
--				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+			sdmmc3_cd_n_pv2 { /* CD# GPIO */
-+				nvidia,pins = "sdmmc3_cd_n_pv2";
-+				nvidia,function = "rsvd3";
-+				nvidia,pull = <TEGRA_PIN_PULL_UP>;
- 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
--				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
- 			};
- 
- 			/* Apalis SPDIF */
-@@ -1512,13 +1496,6 @@
- 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
- 			};
--			sdmmc3_cd_n_pv2 { /* NC */
--				nvidia,pins = "sdmmc3_cd_n_pv2";
--				nvidia,function = "rsvd3";
--				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
--				nvidia,tristate = <TEGRA_PIN_ENABLE>;
--				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
--			};
- 			gpio_x1_aud_px1 { /* NC */
- 				nvidia,pins = "gpio_x1_aud_px1";
- 				nvidia,function = "rsvd2";
-@@ -1568,6 +1545,22 @@
- 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
- 				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
- 			};
-+			/*
-+			 * Leave SDMMC3_CLK_LB_OUT muxed as SDMMC3 with output
-+			 * driver enabled aka not tristated and input driver
-+			 * enabled as well as it features some magic properties
-+			 * even though the external loopback is disabled and the
-+			 * internal loopback used as per
-+			 * SDMMC_VENDOR_MISC_CNTRL_0 register's SDMMC_SPARE1
-+			 * bits being set to 0xfffd according to the TRM!
-+			 */
-+			sdmmc3_clk_lb_out_pee4 { /* NC */
-+				nvidia,pins = "sdmmc3_clk_lb_out_pee4";
-+				nvidia,function = "sdmmc3";
-+				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
-+				nvidia,tristate = <TEGRA_PIN_DISABLE>;
-+				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
-+			};
- 		};
- 	};
- 
+[1] http://lkml.kernel.org/r/1477311130-6534-1-git-send-email-m.szyprowski@samsung.com
 -- 
-2.9.3
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
