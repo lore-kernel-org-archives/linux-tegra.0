@@ -1,120 +1,74 @@
-From: Thierry Reding <thierry.reding@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
 Subject: Re: [PATCH] gpio: Add Tegra186 support
-Date: Thu, 24 Nov 2016 16:08:41 +0100
-Message-ID: <20161124150841.GC26657@ulmo.ba.sec>
-References: <20161122173042.GA3239@ulmo.ba.sec>
- <20161122175539.3897-1-thierry.reding@gmail.com>
- <58368E84.6040104@nvidia.com>
- <20161124144411.GA26657@ulmo.ba.sec>
- <5836FCCF.1030109@nvidia.com>
+Date: Thu, 24 Nov 2016 16:40:45 +0100
+Message-ID: <CACRpkdbfaCSqcg0mRghC=V5C6v+zAUhWQkQ0RZmJFD+p2D3aLA@mail.gmail.com>
+References: <20161122173042.GA3239@ulmo.ba.sec> <20161122175539.3897-1-thierry.reding@gmail.com>
+ <CACRpkdYs3WoBPCiuuuka_DQz5KP0Sxc_wT57Zd3c4MF+9xH1+Q@mail.gmail.com> <20161123194423.GA26733@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xo44VMWPx7vlQ2+2"
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-kernel-owner@vger.kernel.org>
-Content-Disposition: inline
-In-Reply-To: <5836FCCF.1030109@nvidia.com>
+In-Reply-To: <20161123194423.GA26733@ulmo.ba.sec>
 Sender: linux-kernel-owner@vger.kernel.org
-To: Laxman Dewangan <ldewangan@nvidia.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Suresh Mangipudi <smangipudi@nvidia.com>, Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Marc Zyngier <marc.zyngier@arm.com>
+Cc: Stephen Warren <swarren@wwwdotorg.org>, Suresh Mangipudi <smangipudi@nvidia.com>, Laxman Dewangan <ldewangan@nvidia.com>, Alexandre Courbot <gnurou@gmail.com>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>
 List-Id: linux-tegra@vger.kernel.org
 
+On Wed, Nov 23, 2016 at 8:44 PM, Thierry Reding
+<thierry.reding@gmail.com> wrote:
+> On Wed, Nov 23, 2016 at 02:30:45PM +0100, Linus Walleij wrote:
+>> On Tue, Nov 22, 2016 at 6:55 PM, Thierry Reding
+>> <thierry.reding@gmail.com> wrote:
+>>
+>> > From: Thierry Reding <treding@nvidia.com>
+>> >
+>> > Tegra186 has two GPIO controllers that are largely register compatible
+>> > between one another but are completely different from the controller
+>> > found on earlier generations.
+>> >
+>> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+>>
+>> I would prefer if you could try to convert this driver to use
+>> CONFIG_GPIOLIB_IRQCHIP and install a chained interrupt
+>> handler with gpiochip_irqchio_add() + gpiolib_set_chained_irqchip().
+>> It would save us so much trouble and so much complicated
+>> code to maintain for this custom irqdomain.
+>>
+>> I suggest you to look into the mechanisms mentioned in my
+>> previous mail for how to poke holes in the single linear
+>> irqdomain used by this mechanism.
+>>
+>> As it seems, you only have one parent interrupt with all
+>> these IRQs cascading off it as far as I can tell.
+>
+> Like I said in other email, I don't think this will work because the
+> GPIOLIB_IRQCHIP support seems to be limited to cases where a single
+> parent interrupt is used. We could possibly live with a single IRQ
+> handler and data, but we definitely need to request multiple IRQs if
+> we want to be able to use all GPIOs as interrupts.
 
---xo44VMWPx7vlQ2+2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Sorry if I missed that.
 
-On Thu, Nov 24, 2016 at 08:14:31PM +0530, Laxman Dewangan wrote:
->=20
-> On Thursday 24 November 2016 08:14 PM, Thierry Reding wrote:
-> > * PGP Signed by an unknown key
-> >=20
-> > On Thu, Nov 24, 2016 at 12:23:56PM +0530, Laxman Dewangan wrote:
-> > > On Tuesday 22 November 2016 11:25 PM, Thierry Reding wrote:
-> > > > +static inline struct tegra_gpio *to_tegra_gpio(struct gpio_chip *c=
-hip)
-> > > > +{
-> > > > +	return container_of(chip, struct tegra_gpio, gpio);
-> > > > +}
-> > > You dont need this as gpiochip_get_data(chip); can provide the requir=
-ed
-> > > driver specific data.
-> > It's common practice to embed the struct gpio_chip within a driver-
-> > specific structure, and it's equally common to use a container_of() to
-> > get at the embedding structure.
->=20
-> I am saying that you dont need this new APIs, GPIO framework already supp=
-ort
-> this via the call gpiochip_get_data(chip); which you provided when adding
-> gpiochip().
+Actually it works.
 
-Okay, it looks like this is the standard way to do this within the GPIO
-subsystem. I can switch to that.
+If you look at gpiochip_set_chained_irqchip() it just calls
+irq_set_chained_handler_and_data() for the parent interrupt.
 
-> > > > +	gpio->gpio.parent =3D &pdev->dev;
-> > > > +
-> > > > +	gpio->gpio.get_direction =3D tegra186_gpio_get_direction;
-> > > > +	gpio->gpio.direction_input =3D tegra186_gpio_direction_input;
-> > > > +	gpio->gpio.direction_output =3D tegra186_gpio_direction_output;
-> > > > +	gpio->gpio.get =3D tegra186_gpio_get,
-> > > > +	gpio->gpio.set =3D tegra186_gpio_set;
-> > > > +	gpio->gpio.to_irq =3D tegra186_gpio_to_irq;
-> > > > +
-> > > > +	gpio->gpio.base =3D -1;
-> > > > +
-> > > > +	for (i =3D 0; i < gpio->soc->num_ports; i++)
-> > > > +		gpio->gpio.ngpio +=3D gpio->soc->ports[i].pins;
-> > > > +
-> > > Our DT binding does not say this. We assume that we have 8 gpios per =
-port.
-> > > so this will not work at all.
-> > This has nothing to do with the device tree binding. What the device
-> > tree binding defines is the indices to use to obtain a given GPIO within
-> > a given port. What numbering the driver uses internally is completely up
-> > to the driver implementation.
-> >=20
-> > Oh, and the above works just fine.
->=20
->=20
-> Nop, it will not work. The reason is:
-> include/dt-binding/gpio/tegra186-gpio.h
->=20
->=20
-> #define TEGRA_MAIN_GPIO(port, offset) \
->         ((TEGRA_MAIN_GPIO_PORT_##port * 8) + offset)
->=20
->=20
-> so in your DTS file, if you use this macro for the gpio number then you w=
-ill
-> have pin per port as 8.
-> And so your total GPIO is 23 *8 (Port CC) but in source code ngpio is very
-> less.
+There is a loop afterwards that call irq_set_parent()
+on all child IRQs but to the kernel this is just a noop I
+never fully grasped that thing. Maybe it should even be deleted.
+It just sets the parent in the irq descriptor, and the IRQ core only
+ever use this on threaded interrupts, so maybe it should
+really just be set on those (nested) interrupts.
 
-Yes, within the source code, ngpio will be the exact number of pins that
-the GPIO controller physically exposes. But that still works fine, feel
-free to test the driver if you don't believe me. The translation from
-one numberspace to the other is done in tegra186_gpio_of_xlate().
+Maybe Marc/tglx could shed some light on the intended
+use of irq_set_parent() given that only two MFD drivers
+and the gpiolib uses it. I think I need to dig into some
+commitlogs.
 
-Thierry
+If it is semantically required to call irq_set_parent() with the
+right child/parent, we could add an
+gpiochip_set_chained_irqchip_interval(first, last) to set the
+parent for just an interval of the offsets.
 
---xo44VMWPx7vlQ2+2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJYNwJ5AAoJEN0jrNd/PrOhxOoP/jyZw5khvTMUKpiUwwp68X6I
-2nEXSq9DbMMZ4yfAK1lhgcGvyxsOidlNFeH0nNMw3ozCi++gaLNTaB2q3fgLvpm2
-hd7Wt/Juc693E3Gzj13dNyOCL1kxxW0G6spwcOSV1Vtc/CitslHA0/IITyp04ohY
-VFaC4fqpxVi0tSpYuiqnsL4TSBVHoObJUfrpG35+Wnd8FEdjAahcGvaib5hdhNIH
-K1g9UY7+v31Z5lxueU0ciS1CxLBT38SnrMetrK1fPJefubi1fhCc1XLsyFYmXUmr
-aoVC/OmqiIZsGRFQWnO+W74Ig/TvrSv17Bf5lQyq6EhkxxztPkhNH5ZfekM8bgaE
-7QtG4xHulWUBOpcfYvvqM55dI0g/PQQKqmkF2QzoZUo609nsmaEvpRcbNBsgeT27
-RW6VniVzE+pAc+ZC14tQIIil2WBK/I29n98aTkUReEQUVt4zugpCWEg6BE7735Yo
-pttUpgXoOXQC7D7nhIp7mUC1BwwpkeZqJl8luhHo/82HKU/XLwosdyopewyYcybi
-rBasJtPJEr770xQyFRmfOzmLGJkzrWyfyXFChWkl8YgKOW2aY3QYxhaJa4Djlym/
-vS4S8k8OKG60uo4TlIbsPvalFXAOBUYKAbEeLTjIfNPmiJxtMxMjlzSqbSFIhsMw
-QdBBaWrUCwomm9FZ2ypU
-=+cyD
------END PGP SIGNATURE-----
-
---xo44VMWPx7vlQ2+2--
+Yours,
+Linus Walleij
