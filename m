@@ -1,7 +1,7 @@
 From: marcel@ziswiler.com
-Subject: [RESEND PATCH 6/6] apalis-tk1: update compatibility comment
-Date: Thu, 24 Nov 2016 02:04:56 +0100
-Message-ID: <20161124010456.24604-7-marcel@ziswiler.com>
+Subject: [RESEND PATCH 2/6] apalis-tk1: temp alert pull-up
+Date: Thu, 24 Nov 2016 02:04:52 +0100
+Message-ID: <20161124010456.24604-3-marcel@ziswiler.com>
 References: <20161124010456.24604-1-marcel@ziswiler.com>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20161124010456.24604-1-marcel@ziswiler.com>
@@ -12,27 +12,31 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 
-Now with the new V1.1A HW card detect being implemented update resp.
-compatibility information.
+Pull-up GPIO_PI6 connected to TMP451's ALERT#/THERM2#.
 
 Signed-off-by: Marcel Ziswiler <marcel.ziswiler@toradex.com>
 ---
 
- arch/arm/boot/dts/tegra124-apalis.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra124-apalis.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/arch/arm/boot/dts/tegra124-apalis.dtsi b/arch/arm/boot/dts/tegra124-apalis.dtsi
-index 2bfc579..2276073 100644
+index 6aa4952..0534601 100644
 --- a/arch/arm/boot/dts/tegra124-apalis.dtsi
 +++ b/arch/arm/boot/dts/tegra124-apalis.dtsi
-@@ -44,7 +44,7 @@
+@@ -1151,11 +1151,11 @@
+ 				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+ 			};
  
- /*
-  * Toradex Apalis TK1 Module Device Tree
-- * Compatible for Revisions 2GB: V1.0A
-+ * Compatible for Revisions 2GB: V1.0A, V1.0B, V1.1A
-  */
- / {
- 	model = "Toradex Apalis TK1";
+-			/* GPIO_PI6 aka TEMP_ALERT_L */
++			/* GPIO_PI6 aka TMP451 ALERT#/THERM2# */
+ 			pi6 {
+ 				nvidia,pins = "pi6";
+ 				nvidia,function = "rsvd1";
+-				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,pull = <TEGRA_PIN_PULL_UP>;
+ 				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+ 				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
+ 			};
 -- 
 2.9.3
