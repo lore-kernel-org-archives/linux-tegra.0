@@ -1,100 +1,66 @@
-From: Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: [PATCH] gpio: Add Tegra186 support
-Date: Thu, 24 Nov 2016 12:23:56 +0530
-Message-ID: <58368E84.6040104@nvidia.com>
-References: <20161122173042.GA3239@ulmo.ba.sec> <20161122175539.3897-1-thierry.reding@gmail.com>
+From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH V4 0/2] pinctrl: tegra: Add support for IO pad control
+Date: Thu, 24 Nov 2016 14:08:52 +0530
+Message-ID: <1479976734-30498-1-git-send-email-ldewangan@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-gpio-owner@vger.kernel.org>
-In-Reply-To: <20161122175539.3897-1-thierry.reding@gmail.com>
-Sender: linux-gpio-owner@vger.kernel.org
-To: Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Suresh Mangipudi <smangipudi@nvidia.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
+Content-Type: text/plain
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org
+Cc: yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
+NVIDIA Tegra124 and later SoCs support the multi-voltage level and 
+low power state of some of its IO pads. The IO pads can work in
+the voltage of the 1.8V and 3.3V of IO power rail sources. When IO
+interface are not used then IO pads can be configure in low power
+state to reduce the power from that IO pads.
 
-On Tuesday 22 November 2016 11:25 PM, Thierry Reding wrote:
-> +static inline struct tegra_gpio *to_tegra_gpio(struct gpio_chip *chip)
-> +{
-> +	return container_of(chip, struct tegra_gpio, gpio);
-> +}
+This series add the support of configuration of IO pad via pinctrl
+framework. The io pad driver uses the tegra PMC interface.
 
-You dont need this as gpiochip_get_data(chip); can provide the required 
-driver specific data.
+---
+This driver was sent earlier for review along with soc/tegra pmc 
+changes. During review, decided to first conclude in soc/tegra pmc 
+patches and then review this.
+    
+Thierry applied the pmc patches in the private tree
+        https://github.com/thierryreding/linux/tree/tegra186
+and he wanted to have the patches for user of the new APIs so that
+it can be pushed to mainline.
+    
+Sending the pinctrl driver. This needs Ack/reviewed from pinctrl subsystem
+i.e. Linus Welleij to apply in the Thierry's T186 branch along with
+PMC patches.
 
-> +
-> +static const struct tegra_gpio_port *
-> +tegra186_gpio_get_port(struct tegra_gpio *gpio, unsigned int *pin)
-> +{
-> +	unsigned int start = 0, i;
-> +
-> +	for (i = 0; i < gpio->soc->num_ports; i++) {
-> +		const struct tegra_gpio_port *port = &gpio->soc->ports[i];
-> +
-> +		if (*pin >= start && *pin < start + port->pins) {
-> +			*pin -= start;
-> +			return port;
-> +		}
-> +
-> +		start += port->pins;
-> +	}
-> +
-Why not get the port from pins and then calculate with fixed offset.
-We will not need the loop if we know the port number.
+---
+Changes from V1: 
+- use the regulator framework to get the IO voltage instead of table from
+  DT. The regulator handle is provided from DT. 
 
->
-> +
-> +static int tegra186_gpio_direction_output(struct gpio_chip *chip,
-> +					  unsigned int offset, int level)
-> +{
-> +	struct tegra_gpio *gpio = to_tegra_gpio(chip);
-> +	void __iomem *base;
-> +	u32 value;
-> +
-> +	/* configure output level first */
-> +	chip->set(chip, offset, level);
-We can directly call the apis instead of function pointer at this point.
->
-> +
-> +static struct lock_class_key tegra186_gpio_lock_class;
-We will have two instance of the driver (normal and AON) and so this 
-will be shared between them.
-Do we really support multiple instance with same variable?
+Changes from V2: 
+- Nit fixes and variable/allocation optimisation as per review comment from
+  V2.
 
+Changes from V3:
+ Use devm_regulator_get() instead of devm_regulator_get_optional().
 
-> +
-> +	gpio->gpio.label = "tegra186-gpio";
-Two instance will have same name. Better to say tegra186-gpio and 
-tegra186-gpio-aon.
+Laxman Dewangan (2):
+  pinctrl: tegra: Add DT binding for io pads control
+  pinctrl: tegra: Add driver to configure voltage and power of io pads
 
+ .../bindings/pinctrl/nvidia,tegra-io-pad.txt       | 126 +++++
+ drivers/pinctrl/tegra/Kconfig                      |  12 +
+ drivers/pinctrl/tegra/Makefile                     |   1 +
+ drivers/pinctrl/tegra/pinctrl-tegra-io-pad.c       | 530 +++++++++++++++++++++
+ 4 files changed, 669 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegra-io-pad.txt
+ create mode 100644 drivers/pinctrl/tegra/pinctrl-tegra-io-pad.c
 
-> +	gpio->gpio.parent = &pdev->dev;
-> +
-> +	gpio->gpio.get_direction = tegra186_gpio_get_direction;
-> +	gpio->gpio.direction_input = tegra186_gpio_direction_input;
-> +	gpio->gpio.direction_output = tegra186_gpio_direction_output;
-> +	gpio->gpio.get = tegra186_gpio_get,
-> +	gpio->gpio.set = tegra186_gpio_set;
-> +	gpio->gpio.to_irq = tegra186_gpio_to_irq;
-> +
-> +	gpio->gpio.base = -1;
-> +
-> +	for (i = 0; i < gpio->soc->num_ports; i++)
-> +		gpio->gpio.ngpio += gpio->soc->ports[i].pins;
-> +
+-- 
+2.1.4
 
-Our DT binding does not say this. We assume that we have 8 gpios per 
-port. so this will not work at all.
-
-
-
->
-> +
-> +static const struct tegra_gpio_port tegra186_main_ports[] = {
-> +	[TEGRA_MAIN_GPIO_PORT_A]  = { 0x2000, 7 },
-Use C99 style initialization which is like
-    .offset =
-    .pins =
->
-
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
