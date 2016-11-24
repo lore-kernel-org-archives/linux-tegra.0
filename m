@@ -1,46 +1,100 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] gpio: tegra186: Add support for T186 GPIO
-Date: Thu, 24 Nov 2016 12:06:16 +0530
-Message-ID: <58368A60.2010702@nvidia.com>
-References: <1478083719-14836-1-git-send-email-smangipudi@nvidia.com> <0e3e89a8-a2f1-68c2-0586-58902fb91587@wwwdotorg.org> <20161122173042.GA3239@ulmo.ba.sec> <CACRpkdbfkv7Yt3cOah_BGcgnqVtxvzWOqm2+HH_rkrpnJt0nFA@mail.gmail.com> <20161123194036.GA25876@ulmo.ba.sec>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH] gpio: Add Tegra186 support
+Date: Thu, 24 Nov 2016 12:23:56 +0530
+Message-ID: <58368E84.6040104@nvidia.com>
+References: <20161122173042.GA3239@ulmo.ba.sec> <20161122175539.3897-1-thierry.reding@gmail.com>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20161123194036.GA25876-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Linus Walleij <linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>
-Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Suresh Mangipudi <smangipudi-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <20161122175539.3897-1-thierry.reding@gmail.com>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Stephen Warren <swarren@wwwdotorg.org>, Suresh Mangipudi <smangipudi@nvidia.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
 
-On Thursday 24 November 2016 01:10 AM, Thierry Reding wrote:
-> * PGP Signed by an unknown key
+On Tuesday 22 November 2016 11:25 PM, Thierry Reding wrote:
+> +static inline struct tegra_gpio *to_tegra_gpio(struct gpio_chip *chip)
+> +{
+> +	return container_of(chip, struct tegra_gpio, gpio);
+> +}
+
+You dont need this as gpiochip_get_data(chip); can provide the required 
+driver specific data.
+
+> +
+> +static const struct tegra_gpio_port *
+> +tegra186_gpio_get_port(struct tegra_gpio *gpio, unsigned int *pin)
+> +{
+> +	unsigned int start = 0, i;
+> +
+> +	for (i = 0; i < gpio->soc->num_ports; i++) {
+> +		const struct tegra_gpio_port *port = &gpio->soc->ports[i];
+> +
+> +		if (*pin >= start && *pin < start + port->pins) {
+> +			*pin -= start;
+> +			return port;
+> +		}
+> +
+> +		start += port->pins;
+> +	}
+> +
+Why not get the port from pins and then calculate with fixed offset.
+We will not need the loop if we know the port number.
+
 >
-> On Wed, Nov 23, 2016 at 02:25:51PM +0100, Linus Walleij wrote:
->>
->> This is already possible and several drivers are doing this.
->>
->> Everything, all kernel users and all character device users, end up
->> calling gpiod_request().
-> It looks like I stumbled across the only case where this isn't true.
-> What I was seeing, and which ultimately led me to implement the compact
-> numberspace is that gpiochip_add_data() calls ->get_direction() directly
-> without first going through ->request(). We'd have to guard that one
-> case as well in order for this to work.
+> +
+> +static int tegra186_gpio_direction_output(struct gpio_chip *chip,
+> +					  unsigned int offset, int level)
+> +{
+> +	struct tegra_gpio *gpio = to_tegra_gpio(chip);
+> +	void __iomem *base;
+> +	u32 value;
+> +
+> +	/* configure output level first */
+> +	chip->set(chip, offset, level);
+We can directly call the apis instead of function pointer at this point.
 >
-In T186, we have 8 pins per PORT and for some of ports, all pins are not 
-available. Like Port A has 7 pins valid (0 to 6) and port E have 8 pins 
-(0 to 7). The great part is that each port has valid pins start from 0.
+> +
+> +static struct lock_class_key tegra186_gpio_lock_class;
+We will have two instance of the driver (normal and AON) and so this 
+will be shared between them.
+Do we really support multiple instance with same variable?
 
-So just having the number of valid pins for each port as part of SOC 
-data will help to find out whether GPIO exist or not.
 
-        int port = GPIO_PORT(offset);
-         int pin = GPIO_PIN(offset);
+> +
+> +	gpio->gpio.label = "tegra186-gpio";
+Two instance will have same name. Better to say tegra186-gpio and 
+tegra186-gpio-aon.
 
-       if (pin >= tgi->soc->port[port].valid_pins)
-                 return false;
 
-Similar logic can be used for APIs which can get called without 
-gpio_request().
+> +	gpio->gpio.parent = &pdev->dev;
+> +
+> +	gpio->gpio.get_direction = tegra186_gpio_get_direction;
+> +	gpio->gpio.direction_input = tegra186_gpio_direction_input;
+> +	gpio->gpio.direction_output = tegra186_gpio_direction_output;
+> +	gpio->gpio.get = tegra186_gpio_get,
+> +	gpio->gpio.set = tegra186_gpio_set;
+> +	gpio->gpio.to_irq = tegra186_gpio_to_irq;
+> +
+> +	gpio->gpio.base = -1;
+> +
+> +	for (i = 0; i < gpio->soc->num_ports; i++)
+> +		gpio->gpio.ngpio += gpio->soc->ports[i].pins;
+> +
+
+Our DT binding does not say this. We assume that we have 8 gpios per 
+port. so this will not work at all.
+
+
+
+>
+> +
+> +static const struct tegra_gpio_port tegra186_main_ports[] = {
+> +	[TEGRA_MAIN_GPIO_PORT_A]  = { 0x2000, 7 },
+Use C99 style initialization which is like
+    .offset =
+    .pins =
+>
+
