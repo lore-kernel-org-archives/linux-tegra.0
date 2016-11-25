@@ -1,100 +1,151 @@
-From: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH V4 1/2] pinctrl: tegra: Add DT binding for io pads control
-Date: Fri, 25 Nov 2016 17:10:26 +0530
-Message-ID: <5838232A.7040702@nvidia.com>
-References: <1479976734-30498-1-git-send-email-ldewangan@nvidia.com> <1479976734-30498-2-git-send-email-ldewangan@nvidia.com> <20161125091354.GA11512@ulmo.ba.sec>
+From: Laxman Dewangan <ldewangan@nvidia.com>
+Subject: Re: [PATCH V4 2/2] pinctrl: tegra: Add driver to configure voltage
+ and power of io pads
+Date: Fri, 25 Nov 2016 17:34:37 +0530
+Message-ID: <583828D5.5060507@nvidia.com>
+References: <1479976734-30498-1-git-send-email-ldewangan@nvidia.com> <1479976734-30498-3-git-send-email-ldewangan@nvidia.com> <20161125095744.GB11512@ulmo.ba.sec>
 Mime-Version: 1.0
 Content-Type: text/plain; charset="ISO-8859-1"; format=flowed
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20161125091354.GA11512-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org, yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-gpio-owner@vger.kernel.org>
+In-Reply-To: <20161125095744.GB11512@ulmo.ba.sec>
+Sender: linux-gpio-owner@vger.kernel.org
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: linus.walleij@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com, swarren@wwwdotorg.org, gnurou@gmail.com, jonathanh@nvidia.com, joe@perches.com, yamada.masahiro@socionext.com, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
+Thanks Thierry for review.
 
-On Friday 25 November 2016 02:43 PM, Thierry Reding wrote:
+On Friday 25 November 2016 03:27 PM, Thierry Reding wrote:
 > * PGP Signed by an unknown key
 >
-> On Thu, Nov 24, 2016 at 02:08:53PM +0530, Laxman Dewangan wrote:
+> On Thu, Nov 24, 2016 at 02:08:54PM +0530, Laxman Dewangan wrote:
+>> +	  NVIDIA Tegra124/210 SoC has IO pads which supports multi-voltage
+>> +	  level of interfacing and deep power down mode of IO pads. The
+>> +	  voltage of IO pads are SW configurable based on IO rail of that
+>> +	  pads on T210. This driver provides the interface to change IO pad
+>> +	  voltage and power state via pincontrol interface.
+> This has a lot of chip-specific text. Will all of that have to be
+> updated if support for new chips is added?
+
+Then saying that Tegra124 and later..
+Hoping, people know our chip releasing sequence as numbering are not in 
+sequence.
+
+>
+>> +#include <linux/regulator/consumer.h>
+>> +#include <soc/tegra/pmc.h>
+> Have you considered moving this code into the PMC driver? It seems a
+> little over the top to go through all of the platform device creation
+> and driver registration dance only to call into a public API later on.
+
+Yes, we had discussion on this and suggestion came to use the pinctrl 
+framework.
+If we do in the pmc driver then we will need lots of DT processing for 
+getting information from DT which we can directly get from the pinctrl 
+core framework.
+Also client driver may need to have the control dynamically and get the 
+IO pads from DT. So implementing all in pmc will be huge duplication 
+over already existing framework.
+
+
+
+>
+>> +#include "../core.h"
+>> +#include "../pinconf.h"
+>> +#include "../pinctrl-utils.h"
 >> +
->> +The DT property of the IO pads must be under the node of pmc i.e.
->> +pmc@7000e400 for Tegra124 onwards.
-> The PMC is at a different address on Tegra186, so I think we should just
-> drop this to avoid having to update it whenever a new chip relocates it
-> to a different address.
+>> +#define TEGRA_IO_RAIL_1800000UV 1800000
+>> +#define TEGRA_IO_RAIL_3300000UV 3300000
+> Is there really a point in having these defines? They are really long
+> and effectively don't carry more information than just the plain
+> numbers.
 
-I wanted to provide the example. So let me say that "i.e. pmc@7000e400 
-for Tegra124". In this way we will not need to update for every chips 
-and also give idea bout the node.
+
+using macros is always good instead of magic number in code and hence it 
+is there.
 
 >
-> Come to think of it, if these I/O pads are represented as subnodes in
-> the PMC device tree node, perhaps this should be merged into the PMC
-> documentation?
+>
+>> +#define tegra_io_uv_to_io_pads_uv(io_uv)				\
+>> +		(((io_uv) == TEGRA_IO_RAIL_1800000UV) ?			\
+>> +		  TEGRA_IO_PAD_1800000UV : TEGRA_IO_PAD_3300000UV)
+>> +
+>> +#define tegra_io_voltage_is_valid(io_uv)			\
+>> +	({ typeof(io_uv) io_uv_ = (io_uv);			\
+>> +	    ((io_uv_ == TEGRA_IO_RAIL_1800000UV) ||		\
+>> +	     (io_uv_ == TEGRA_IO_RAIL_3300000UV)); })
+>>
+> Maybe make both of these static inline functions to improve readability?
+> I find the above very hard to read.
 
-Based on my MFD and sub devices experience, maintainers prefer to have  
-different DT binding document for subsystem child devices.
-So if we say the io-pad is sub device of pmc then it will be in 
-respective subsystem dt binding.
+OK, will convert to the inline but dont think it will be less complex.
+>> +	enum tegra_io_pad_voltage pad_volt;
+>>
+>> +
+>>
+>> +
+>> +#define TEGRA_IO_PAD_INFO(_pin, _name, _id, _lpstate, _vsupply)	\
+>> +	{							\
+>> +		.name = _name,					\
+>> +		.pins = {(_pin)},				\
+>> +		.id = TEGRA_IO_PAD_##_id,			\
+>> +		.vsupply = (_vsupply),				\
+>> +		.supports_low_power = (_lpstate),		\
+>> +	}
+>> +
+>> +static const struct tegra_io_pads_cfg tegra124_io_pads_cfg_info[] = {
+>> +	TEGRA124_PAD_INFO_TABLE(TEGRA_IO_PAD_INFO),
+>> +};
+>> +
+>> +static const struct tegra_io_pads_cfg tegra210_io_pads_cfg_info[] = {
+>> +	TEGRA210_PAD_INFO_TABLE(TEGRA_IO_PAD_INFO),
+>> +};
+> That's a weird way of writing these tables. Why not do something simpler
+> and much more common such as:
+>
+> 	#define TEGRA_IO_PAD_INFO(...) ...
+>
+> 	static const struct tegra_io_pads_cfg tegra124_io_pads_cfgs[] = {
+> 		TEGRA_IO_PAD_INFO(...),
+> 		...
+> 	};
+>
+> 	static const struct tegra_io_pads_cfg tegra210_io_pad_cfgs[] = {
+> 		TEGRA_IO_PAD_INFO(...),
+> 		...
+> 	};
+
+This is done to use the same table for initialing two different 
+structure. If we go as above  then we will endup with the two tables.
+
+or define and then redefine the TEGRA_IO_PAD_INFO.
+
+
 >
 >> +
->> +See the TRM to determine which properties and values apply to each IO pads.
-> Perhaps give a reference to where in the TRM this can be found?
-Do we have fixed link for the TRM? and do we really need to provide the 
-link here? If link get changed then we will need to change all places.
-
-
->
->> +low-power-enable:		enable low power mode.
->> +low-power-disable:		disable low power mode.
-> Why the extra padding with tabs? I find that difficult to read. Also, no
-> need for a fullstop since it's not a proper sentence.
-
-Just to make proper alignment. Regular typing is not preferred in general.
-
->> +IO voltage pin names are as follows:
->> +	audio -> vddio-audio
->> +	audio-hv -> vddio-audio-hv
->> +	cam ->vddio-cam
->> +	dbg -> vddio-dbg
->> +	dmic -> vddio-dmic
->> +	gpio -> vddio-gpio
->> +	pex-ctrl -> vddio-pex-ctrl
->> +	sdmmc1 -> vddio-sdmmc1
->> +	sdmmc3 -> vddio-sdmmc3
->> +	spi -> vddio-spi
->> +	spi-hv -> vddio-spi-hv
->> +	uart -> vddio-uart
-> It's slightly confusing to only have this list for Tegra210. I assume
-> that is because on Tegra124 there is no way to control the voltage of
-> the pins, but I think that could be made clearer.
-
-I think I made it in first few paragraph of this document but will add 
-here also.
-
->   Also, it might be
-> worth explicitly mentioning that this is a subset of the list of pins
-> given above and that the other pins (those not in this list) don't
-> support 1.8/3.3 V control, but only the low power state.
-ok.
-
->
-> +			audio-hv {
-> +				pins = "audio-hv";
-> +				low-power-disable;
-> +			};
-> I wonder if this is at all useful. Shouldn't we rather put all pads into
-> a low-power state by default and only take them out of the low-power
-> state when the driver decides to do so?
+>>
+>> +
+>> +module_platform_driver(tegra_io_pads_pinctrl_driver);
+>> +
+>> +MODULE_DESCRIPTION("NVIDIA TEGRA IO pad Control Driver");
+>> +MODULE_AUTHOR("Laxman Dewangan <ldewangan@nvidia.com>");
+>> +MODULE_LICENSE("GPL v2");
+> Like I said above, I think there's a lot of boilerplate in here that's
+> simply there to create a virtual device and bind a driver to it. All of
+> that comes with very little to no benefit. I think this could all just
+> be moved into the PMC driver and be simplified quite a bit.
 >
 
-We can not do this all disable by default and enable by driver. it may 
-be possible that some of io-pads need to be enable during boot.
+What did you not like here?
+Let me specific to my query to get idea about your view:
+1. Do you agree for the interface as pinctrl here?
+2. Do you want to call the probe() function implemented here as simple 
+function call from pmc's probe?
+3. If (2) is yes then how do you want to differentiate T124 or T210? Via 
+argument?
 
-We need to only depends on platform specific data provided from DT here 
-for configurations.
+It will be really help if you can provide the pseudo code from PMC and 
+this driver so that I can implement the same in the next patch.
 
-However, for dynamic control, driver can use pinctrl framework for 
-optimizing the power.
+
