@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v4 04/10] PCI: tegra: Use new pci_register_host_bridge() interface
-Date: Fri, 25 Nov 2016 11:57:12 +0100
-Message-ID: <20161125105718.3866-4-thierry.reding@gmail.com>
+Subject: [PATCH v4 05/10] dt-bindings: pci: tegra: Add Tegra210 support
+Date: Fri, 25 Nov 2016 11:57:13 +0100
+Message-ID: <20161125105718.3866-5-thierry.reding@gmail.com>
 References: <20161125105718.3866-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20161125105718.3866-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -10,244 +10,141 @@ To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
 Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Tomasz Nowicki <tn-nYOzD4b6Jr9Wk0Htik3J/w@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Tegra is one of the remaining platforms that still use the traditional
-pci_common_init_dev() interface for probing PCI host bridges.
+Add support for the PCI host controller found on Tegra210 SoCs. It is
+very similar to the variant found on Tegra124, with a couple of small
+differences regarding the power supplies.
 
-This demonstrates how to convert it to the pci_register_host interface
-I just added in a previous patch. This leads to a more linear probe
-sequence that can handle errors better because we avoid callbacks into
-the driver, and it makes the driver architecture independent.
-
-Changes in v4 (Thierry Reding):
-- update for changes in core to deal with driver-private data
-
-Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/pci/host/pci-tegra.c | 105 ++++++++++++++++++++++---------------------
- 1 file changed, 54 insertions(+), 51 deletions(-)
+ .../bindings/pci/nvidia,tegra20-pcie.txt           | 110 +++++++++++++++++++++
+ 1 file changed, 110 insertions(+)
 
-diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
-index 8dfccf733241..d5206fa53353 100644
---- a/drivers/pci/host/pci-tegra.c
-+++ b/drivers/pci/host/pci-tegra.c
-@@ -322,11 +322,6 @@ struct tegra_pcie_bus {
- 	unsigned int nr;
- };
+diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+index b8cc395fffea..982a74ea6df9 100644
+--- a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
++++ b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
+@@ -110,6 +110,20 @@ Power supplies for Tegra124:
+   - avdd-pll-erefe-supply: Power supply for PLLE (shared with USB3). Must
+     supply 1.05 V.
  
--static inline struct tegra_pcie *sys_to_pcie(struct pci_sys_data *sys)
--{
--	return sys->private_data;
--}
--
- static inline void afi_writel(struct tegra_pcie *pcie, u32 value,
- 			      unsigned long offset)
- {
-@@ -430,7 +425,8 @@ static struct tegra_pcie_bus *tegra_pcie_bus_alloc(struct tegra_pcie *pcie,
- 
- static int tegra_pcie_add_bus(struct pci_bus *bus)
- {
--	struct tegra_pcie *pcie = sys_to_pcie(bus->sysdata);
-+	struct pci_host_bridge *host = pci_find_host_bridge(bus);
-+	struct tegra_pcie *pcie = pci_host_bridge_priv(host);
- 	struct tegra_pcie_bus *b;
- 
- 	b = tegra_pcie_bus_alloc(pcie, bus->number);
-@@ -444,7 +440,8 @@ static int tegra_pcie_add_bus(struct pci_bus *bus)
- 
- static void tegra_pcie_remove_bus(struct pci_bus *child)
- {
--	struct tegra_pcie *pcie = sys_to_pcie(child->sysdata);
-+	struct pci_host_bridge *host = pci_find_host_bridge(child);
-+	struct tegra_pcie *pcie = pci_host_bridge_priv(host);
- 	struct tegra_pcie_bus *bus, *tmp;
- 
- 	list_for_each_entry_safe(bus, tmp, &pcie->buses, list) {
-@@ -461,7 +458,8 @@ static void __iomem *tegra_pcie_map_bus(struct pci_bus *bus,
- 					unsigned int devfn,
- 					int where)
- {
--	struct tegra_pcie *pcie = sys_to_pcie(bus->sysdata);
-+	struct pci_host_bridge *host = pci_find_host_bridge(bus);
-+	struct tegra_pcie *pcie = pci_host_bridge_priv(host);
- 	struct device *dev = pcie->dev;
- 	void __iomem *addr = NULL;
- 
-@@ -610,39 +608,31 @@ static void tegra_pcie_relax_enable(struct pci_dev *dev)
- }
- DECLARE_PCI_FIXUP_FINAL(PCI_ANY_ID, PCI_ANY_ID, tegra_pcie_relax_enable);
- 
--static int tegra_pcie_setup(int nr, struct pci_sys_data *sys)
-+static int tegra_pcie_request_resources(struct tegra_pcie *pcie)
- {
--	struct tegra_pcie *pcie = sys_to_pcie(sys);
-+	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
-+	struct list_head *windows = &host->windows;
- 	struct device *dev = pcie->dev;
- 	int err;
- 
--	sys->mem_offset = pcie->offset.mem;
--	sys->io_offset = pcie->offset.io;
-+	pci_add_resource_offset(windows, &pcie->pio, pcie->offset.io);
-+	pci_add_resource_offset(windows, &pcie->mem, pcie->offset.mem);
-+	pci_add_resource_offset(windows, &pcie->prefetch, pcie->offset.mem);
-+	pci_add_resource(windows, &pcie->busn);
- 
--	err = devm_request_resource(dev, &iomem_resource, &pcie->io);
-+	err = devm_request_pci_bus_resources(dev, windows);
- 	if (err < 0)
- 		return err;
- 
--	err = pci_remap_iospace(&pcie->pio, pcie->io.start);
--	if (!err)
--		pci_add_resource_offset(&sys->resources, &pcie->pio,
--					sys->io_offset);
--
--	pci_add_resource_offset(&sys->resources, &pcie->mem, sys->mem_offset);
--	pci_add_resource_offset(&sys->resources, &pcie->prefetch,
--				sys->mem_offset);
--	pci_add_resource(&sys->resources, &pcie->busn);
--
--	err = devm_request_pci_bus_resources(dev, &sys->resources);
--	if (err < 0)
--		return err;
-+	pci_remap_iospace(&pcie->pio, pcie->io.start);
- 
--	return 1;
-+	return 0;
- }
- 
- static int tegra_pcie_map_irq(const struct pci_dev *pdev, u8 slot, u8 pin)
- {
--	struct tegra_pcie *pcie = sys_to_pcie(pdev->bus->sysdata);
-+	struct pci_host_bridge *host = pci_find_host_bridge(pdev->bus);
-+	struct tegra_pcie *pcie = pci_host_bridge_priv(host);
- 	int irq;
- 
- 	tegra_cpuidle_pcie_irqs_in_use();
-@@ -1499,10 +1489,11 @@ static const struct irq_domain_ops msi_domain_ops = {
- 
- static int tegra_pcie_enable_msi(struct tegra_pcie *pcie)
- {
--	struct device *dev = pcie->dev;
--	struct platform_device *pdev = to_platform_device(dev);
-+	struct pci_host_bridge *host = pci_host_bridge_from_priv(pcie);
-+	struct platform_device *pdev = to_platform_device(pcie->dev);
- 	const struct tegra_pcie_soc *soc = pcie->soc;
- 	struct tegra_msi *msi = &pcie->msi;
-+	struct device *dev = pcie->dev;
- 	unsigned long base;
- 	int err;
- 	u32 reg;
-@@ -1559,6 +1550,8 @@ static int tegra_pcie_enable_msi(struct tegra_pcie *pcie)
- 	reg |= AFI_INTR_MASK_MSI_MASK;
- 	afi_writel(pcie, reg, AFI_INTR_MASK);
- 
-+	host->msi = &msi->chip;
++Power supplies for Tegra210:
++- Required:
++  - avdd-pll-uerefe-supply: Power supply for PLLE (shared with USB3). Must
++    supply 1.05 V.
++  - hvddio-pex-supply: High-voltage supply for PCIe I/O and PCIe output
++    clocks. Must supply 1.8 V.
++  - dvddio-pex-supply: Power supply for digital PCIe I/O. Must supply 1.05 V.
++  - dvdd-pex-pll-supply: Power supply for dedicated (internal) PCIe PLL. Must
++    supply 1.05 V.
++  - hvdd-pex-pll-e-supply: High-voltage supply for PLLE (shared with USB3).
++    Must supply 3.3 V.
++  - vddio-pex-ctl-supply: Power supply for PCIe control I/O partition. Must
++    supply 1.8 V.
 +
- 	return 0;
+ Root ports are defined as subnodes of the PCIe controller node.
  
- err:
-@@ -2021,11 +2014,10 @@ static bool tegra_pcie_port_check_link(struct tegra_pcie_port *port)
- 	return false;
- }
- 
--static int tegra_pcie_enable(struct tegra_pcie *pcie)
-+static void tegra_pcie_enable_ports(struct tegra_pcie *pcie)
- {
- 	struct device *dev = pcie->dev;
- 	struct tegra_pcie_port *port, *tmp;
--	struct hw_pci hw;
- 
- 	list_for_each_entry_safe(port, tmp, &pcie->ports, list) {
- 		dev_info(dev, "probing port %u, using %u lanes\n",
-@@ -2041,21 +2033,6 @@ static int tegra_pcie_enable(struct tegra_pcie *pcie)
- 		tegra_pcie_port_disable(port);
- 		tegra_pcie_port_free(port);
- 	}
--
--	memset(&hw, 0, sizeof(hw));
--
--#ifdef CONFIG_PCI_MSI
--	hw.msi_ctrl = &pcie->msi.chip;
--#endif
--
--	hw.nr_controllers = 1;
--	hw.private_data = (void **)&pcie;
--	hw.setup = tegra_pcie_setup;
--	hw.map_irq = tegra_pcie_map_irq;
--	hw.ops = &tegra_pcie_ops;
--
--	pci_common_init_dev(dev, &hw);
--	return 0;
- }
- 
- static const struct tegra_pcie_soc tegra20_pcie = {
-@@ -2217,13 +2194,17 @@ static int tegra_pcie_debugfs_init(struct tegra_pcie *pcie)
- static int tegra_pcie_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-+	struct pci_host_bridge *host;
- 	struct tegra_pcie *pcie;
-+	struct pci_bus *child;
- 	int err;
- 
--	pcie = devm_kzalloc(dev, sizeof(*pcie), GFP_KERNEL);
--	if (!pcie)
-+	host = pci_alloc_host_bridge(sizeof(*pcie));
-+	if (!host)
- 		return -ENOMEM;
- 
-+	pcie = pci_host_bridge_priv(host);
+ Required properties:
+@@ -436,3 +450,99 @@ Board DTS:
+ 			status = "okay";
+ 		};
+ 	};
 +
- 	pcie->soc = of_device_get_match_data(dev);
- 	INIT_LIST_HEAD(&pcie->buses);
- 	INIT_LIST_HEAD(&pcie->ports);
-@@ -2243,6 +2224,10 @@ static int tegra_pcie_probe(struct platform_device *pdev)
- 	if (err)
- 		goto put_resources;
- 
-+	err = tegra_pcie_request_resources(pcie);
-+	if (err)
-+		goto put_resources;
++Tegra210:
++---------
 +
- 	/* setup the AFI address translations */
- 	tegra_pcie_setup_translations(pcie);
- 
-@@ -2254,12 +2239,30 @@ static int tegra_pcie_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	err = tegra_pcie_enable(pcie);
-+	tegra_pcie_enable_ports(pcie);
++SoC DTSI:
 +
-+	pci_add_flags(PCI_REASSIGN_ALL_RSRC | PCI_REASSIGN_ALL_BUS);
-+	host->busnr = pcie->busn.start;
-+	host->dev.parent = &pdev->dev;
-+	host->ops = &tegra_pcie_ops;
++	pcie-controller@01003000 {
++		compatible = "nvidia,tegra210-pcie";
++		device_type = "pci";
++		reg = <0x0 0x01003000 0x0 0x00000800   /* PADS registers */
++		       0x0 0x01003800 0x0 0x00000800   /* AFI registers */
++		       0x0 0x02000000 0x0 0x10000000>; /* configuration space */
++		reg-names = "pads", "afi", "cs";
++		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>, /* controller interrupt */
++			     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>; /* MSI interrupt */
++		interrupt-names = "intr", "msi";
 +
-+	err = pci_register_host_bridge(host);
- 	if (err < 0) {
--		dev_err(dev, "failed to enable PCIe ports: %d\n", err);
-+		dev_err(dev, "failed to register host: %d\n", err);
- 		goto disable_msi;
- 	}
- 
-+	pci_scan_child_bus(host->bus);
++		#interrupt-cells = <1>;
++		interrupt-map-mask = <0 0 0 0>;
++		interrupt-map = <0 0 0 0 &gic GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
 +
-+	pci_fixup_irqs(pci_common_swizzle, tegra_pcie_map_irq);
-+	pci_bus_size_bridges(host->bus);
-+	pci_bus_assign_resources(host->bus);
++		bus-range = <0x00 0xff>;
++		#address-cells = <3>;
++		#size-cells = <2>;
 +
-+	list_for_each_entry(child, &host->bus->children, node)
-+		pcie_bus_configure_settings(child);
++		ranges = <0x82000000 0 0x01000000 0x0 0x01000000 0 0x00001000   /* port 0 configuration space */
++			  0x82000000 0 0x01001000 0x0 0x01001000 0 0x00001000   /* port 1 configuration space */
++			  0x81000000 0 0x0        0x0 0x12000000 0 0x00010000   /* downstream I/O (64 KiB) */
++			  0x82000000 0 0x13000000 0x0 0x13000000 0 0x0d000000   /* non-prefetchable memory (208 MiB) */
++			  0xc2000000 0 0x20000000 0x0 0x20000000 0 0x20000000>; /* prefetchable memory (512 MiB) */
 +
-+	pci_bus_add_devices(host->bus);
++		clocks = <&tegra_car TEGRA210_CLK_PCIE>,
++			 <&tegra_car TEGRA210_CLK_AFI>,
++			 <&tegra_car TEGRA210_CLK_PLL_E>,
++			 <&tegra_car TEGRA210_CLK_CML0>;
++		clock-names = "pex", "afi", "pll_e", "cml";
++		resets = <&tegra_car 70>,
++			 <&tegra_car 72>,
++			 <&tegra_car 74>;
++		reset-names = "pex", "afi", "pcie_x";
++		status = "disabled";
 +
- 	if (IS_ENABLED(CONFIG_DEBUG_FS)) {
- 		err = tegra_pcie_debugfs_init(pcie);
- 		if (err < 0)
++		pci@1,0 {
++			device_type = "pci";
++			assigned-addresses = <0x82000800 0 0x01000000 0 0x1000>;
++			reg = <0x000800 0 0 0 0>;
++			status = "disabled";
++
++			#address-cells = <3>;
++			#size-cells = <2>;
++			ranges;
++
++			nvidia,num-lanes = <4>;
++		};
++
++		pci@2,0 {
++			device_type = "pci";
++			assigned-addresses = <0x82001000 0 0x01001000 0 0x1000>;
++			reg = <0x001000 0 0 0 0>;
++			status = "disabled";
++
++			#address-cells = <3>;
++			#size-cells = <2>;
++			ranges;
++
++			nvidia,num-lanes = <1>;
++		};
++	};
++
++Board DTS:
++
++	pcie-controller@01003000 {
++		status = "okay";
++
++		avdd-pll-uerefe-supply = <&avdd_1v05_pll>;
++		hvddio-pex-supply = <&vdd_1v8>;
++		dvddio-pex-supply = <&vdd_pex_1v05>;
++		dvdd-pex-pll-supply = <&vdd_pex_1v05>;
++		hvdd-pex-pll-e-supply = <&vdd_1v8>;
++		vddio-pex-ctl-supply = <&vdd_1v8>;
++
++		pci@1,0 {
++			phys = <&{/padctl@7009f000/pads/pcie/lanes/pcie-0}>,
++			       <&{/padctl@7009f000/pads/pcie/lanes/pcie-1}>,
++			       <&{/padctl@7009f000/pads/pcie/lanes/pcie-2}>,
++			       <&{/padctl@7009f000/pads/pcie/lanes/pcie-3}>;
++			phy-names = "pcie-0", "pcie-1", "pcie-2", "pcie-3";
++			status = "okay";
++		};
++
++		pci@2,0 {
++			phys = <&{/padctl@7009f000/pads/pcie/lanes/pcie-4}>;
++			phy-names = "pcie-0";
++			status = "okay";
++		};
++	};
 -- 
 2.10.2
