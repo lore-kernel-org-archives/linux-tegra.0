@@ -1,150 +1,88 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH v4 05/10] dt-bindings: pci: tegra: Add Tegra210 support
-Date: Fri, 25 Nov 2016 11:57:13 +0100
-Message-ID: <20161125105718.3866-5-thierry.reding@gmail.com>
+From: Thierry Reding <thierry.reding@gmail.com>
+Subject: [PATCH v4 06/10] PCI: tegra: Implement PCA enable workaround
+Date: Fri, 25 Nov 2016 11:57:14 +0100
+Message-ID: <20161125105718.3866-6-thierry.reding@gmail.com>
 References: <20161125105718.3866-1-thierry.reding@gmail.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20161125105718.3866-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Tomasz Nowicki <tn-nYOzD4b6Jr9Wk0Htik3J/w@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Return-path: <linux-pci-owner@vger.kernel.org>
+In-Reply-To: <20161125105718.3866-1-thierry.reding@gmail.com>
+Sender: linux-pci-owner@vger.kernel.org
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Tomasz Nowicki <tn@semihalf.com>, Liviu Dudau <liviu.dudau@arm.com>, Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>, Vidya Sagar <vidyas@nvidia.com>, linux-pci@vger.kernel.org, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Thierry Reding <treding@nvidia.com>
 
-Add support for the PCI host controller found on Tegra210 SoCs. It is
-very similar to the variant found on Tegra124, with a couple of small
-differences regarding the power supplies.
+Tegra210's PCIe controller has a bug that requires the PCA (performance
+counter) feature to be enabled. If this isn't done, accesses to device
+configuration space will hang the chip for tens of seconds. Implement
+the workaround.
 
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Based on commit 514e19138af2 ("pci: tegra: implement PCA enable
+workaround") from U-Boot by Stephen Warren <swarren@nvidia.com>.
+
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- .../bindings/pci/nvidia,tegra20-pcie.txt           | 110 +++++++++++++++++++++
- 1 file changed, 110 insertions(+)
+ drivers/pci/host/pci-tegra.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
-index b8cc395fffea..982a74ea6df9 100644
---- a/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
-+++ b/Documentation/devicetree/bindings/pci/nvidia,tegra20-pcie.txt
-@@ -110,6 +110,20 @@ Power supplies for Tegra124:
-   - avdd-pll-erefe-supply: Power supply for PLLE (shared with USB3). Must
-     supply 1.05 V.
+diff --git a/drivers/pci/host/pci-tegra.c b/drivers/pci/host/pci-tegra.c
+index d5206fa53353..4bfaac6d3582 100644
+--- a/drivers/pci/host/pci-tegra.c
++++ b/drivers/pci/host/pci-tegra.c
+@@ -188,6 +188,9 @@
+ #define RP_VEND_XP	0x00000f00
+ #define  RP_VEND_XP_DL_UP	(1 << 30)
  
-+Power supplies for Tegra210:
-+- Required:
-+  - avdd-pll-uerefe-supply: Power supply for PLLE (shared with USB3). Must
-+    supply 1.05 V.
-+  - hvddio-pex-supply: High-voltage supply for PCIe I/O and PCIe output
-+    clocks. Must supply 1.8 V.
-+  - dvddio-pex-supply: Power supply for digital PCIe I/O. Must supply 1.05 V.
-+  - dvdd-pex-pll-supply: Power supply for dedicated (internal) PCIe PLL. Must
-+    supply 1.05 V.
-+  - hvdd-pex-pll-e-supply: High-voltage supply for PLLE (shared with USB3).
-+    Must supply 3.3 V.
-+  - vddio-pex-ctl-supply: Power supply for PCIe control I/O partition. Must
-+    supply 1.8 V.
++#define RP_VEND_CTL2 0x00000fa8
++#define  RP_VEND_CTL2_PCA_ENABLE (1 << 7)
 +
- Root ports are defined as subnodes of the PCIe controller node.
+ #define RP_PRIV_MISC	0x00000fe0
+ #define  RP_PRIV_MISC_PRSNT_MAP_EP_PRSNT (0xe << 0)
+ #define  RP_PRIV_MISC_PRSNT_MAP_EP_ABSNT (0xf << 0)
+@@ -252,6 +255,7 @@ struct tegra_pcie_soc {
+ 	bool has_intr_prsnt_sense;
+ 	bool has_cml_clk;
+ 	bool has_gen2;
++	bool force_pca_enable;
+ };
  
- Required properties:
-@@ -436,3 +450,99 @@ Board DTS:
- 			status = "okay";
- 		};
- 	};
+ static inline struct tegra_msi *to_tegra_msi(struct msi_controller *chip)
+@@ -556,6 +560,12 @@ static void tegra_pcie_port_enable(struct tegra_pcie_port *port)
+ 	afi_writel(port->pcie, value, ctrl);
+ 
+ 	tegra_pcie_port_reset(port);
 +
-+Tegra210:
-+---------
-+
-+SoC DTSI:
-+
-+	pcie-controller@01003000 {
-+		compatible = "nvidia,tegra210-pcie";
-+		device_type = "pci";
-+		reg = <0x0 0x01003000 0x0 0x00000800   /* PADS registers */
-+		       0x0 0x01003800 0x0 0x00000800   /* AFI registers */
-+		       0x0 0x02000000 0x0 0x10000000>; /* configuration space */
-+		reg-names = "pads", "afi", "cs";
-+		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>, /* controller interrupt */
-+			     <GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>; /* MSI interrupt */
-+		interrupt-names = "intr", "msi";
-+
-+		#interrupt-cells = <1>;
-+		interrupt-map-mask = <0 0 0 0>;
-+		interrupt-map = <0 0 0 0 &gic GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		bus-range = <0x00 0xff>;
-+		#address-cells = <3>;
-+		#size-cells = <2>;
-+
-+		ranges = <0x82000000 0 0x01000000 0x0 0x01000000 0 0x00001000   /* port 0 configuration space */
-+			  0x82000000 0 0x01001000 0x0 0x01001000 0 0x00001000   /* port 1 configuration space */
-+			  0x81000000 0 0x0        0x0 0x12000000 0 0x00010000   /* downstream I/O (64 KiB) */
-+			  0x82000000 0 0x13000000 0x0 0x13000000 0 0x0d000000   /* non-prefetchable memory (208 MiB) */
-+			  0xc2000000 0 0x20000000 0x0 0x20000000 0 0x20000000>; /* prefetchable memory (512 MiB) */
-+
-+		clocks = <&tegra_car TEGRA210_CLK_PCIE>,
-+			 <&tegra_car TEGRA210_CLK_AFI>,
-+			 <&tegra_car TEGRA210_CLK_PLL_E>,
-+			 <&tegra_car TEGRA210_CLK_CML0>;
-+		clock-names = "pex", "afi", "pll_e", "cml";
-+		resets = <&tegra_car 70>,
-+			 <&tegra_car 72>,
-+			 <&tegra_car 74>;
-+		reset-names = "pex", "afi", "pcie_x";
-+		status = "disabled";
-+
-+		pci@1,0 {
-+			device_type = "pci";
-+			assigned-addresses = <0x82000800 0 0x01000000 0 0x1000>;
-+			reg = <0x000800 0 0 0 0>;
-+			status = "disabled";
-+
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			ranges;
-+
-+			nvidia,num-lanes = <4>;
-+		};
-+
-+		pci@2,0 {
-+			device_type = "pci";
-+			assigned-addresses = <0x82001000 0 0x01001000 0 0x1000>;
-+			reg = <0x001000 0 0 0 0>;
-+			status = "disabled";
-+
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+			ranges;
-+
-+			nvidia,num-lanes = <1>;
-+		};
-+	};
-+
-+Board DTS:
-+
-+	pcie-controller@01003000 {
-+		status = "okay";
-+
-+		avdd-pll-uerefe-supply = <&avdd_1v05_pll>;
-+		hvddio-pex-supply = <&vdd_1v8>;
-+		dvddio-pex-supply = <&vdd_pex_1v05>;
-+		dvdd-pex-pll-supply = <&vdd_pex_1v05>;
-+		hvdd-pex-pll-e-supply = <&vdd_1v8>;
-+		vddio-pex-ctl-supply = <&vdd_1v8>;
-+
-+		pci@1,0 {
-+			phys = <&{/padctl@7009f000/pads/pcie/lanes/pcie-0}>,
-+			       <&{/padctl@7009f000/pads/pcie/lanes/pcie-1}>,
-+			       <&{/padctl@7009f000/pads/pcie/lanes/pcie-2}>,
-+			       <&{/padctl@7009f000/pads/pcie/lanes/pcie-3}>;
-+			phy-names = "pcie-0", "pcie-1", "pcie-2", "pcie-3";
-+			status = "okay";
-+		};
-+
-+		pci@2,0 {
-+			phys = <&{/padctl@7009f000/pads/pcie/lanes/pcie-4}>;
-+			phy-names = "pcie-0";
-+			status = "okay";
-+		};
-+	};
++	if (soc->force_pca_enable) {
++		value = readl(port->base + RP_VEND_CTL2);
++		value |= RP_VEND_CTL2_PCA_ENABLE;
++		writel(value, port->base + RP_VEND_CTL2);
++	}
+ }
+ 
+ static void tegra_pcie_port_disable(struct tegra_pcie_port *port)
+@@ -2046,6 +2056,7 @@ static const struct tegra_pcie_soc tegra20_pcie = {
+ 	.has_intr_prsnt_sense = false,
+ 	.has_cml_clk = false,
+ 	.has_gen2 = false,
++	.force_pca_enable = false,
+ };
+ 
+ static const struct tegra_pcie_soc tegra30_pcie = {
+@@ -2060,6 +2071,7 @@ static const struct tegra_pcie_soc tegra30_pcie = {
+ 	.has_intr_prsnt_sense = true,
+ 	.has_cml_clk = true,
+ 	.has_gen2 = false,
++	.force_pca_enable = false,
+ };
+ 
+ static const struct tegra_pcie_soc tegra124_pcie = {
+@@ -2073,6 +2085,7 @@ static const struct tegra_pcie_soc tegra124_pcie = {
+ 	.has_intr_prsnt_sense = true,
+ 	.has_cml_clk = true,
+ 	.has_gen2 = true,
++	.force_pca_enable = false,
+ };
+ 
+ static const struct of_device_id tegra_pcie_of_match[] = {
 -- 
 2.10.2
