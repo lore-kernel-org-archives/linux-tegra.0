@@ -1,289 +1,385 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH V4 1/2] pinctrl: tegra: Add DT binding for io pads control
-Date: Fri, 25 Nov 2016 10:13:54 +0100
-Message-ID: <20161125091354.GA11512@ulmo.ba.sec>
-References: <1479976734-30498-1-git-send-email-ldewangan@nvidia.com>
- <1479976734-30498-2-git-send-email-ldewangan@nvidia.com>
-Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
+Subject: [PATCH v4 01/10] PCI: Add new method for registering PCI hosts
+Date: Fri, 25 Nov 2016 11:57:09 +0100
+Message-ID: <20161125105718.3866-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1479976734-30498-2-git-send-email-ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linus.walleij-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org, robh+dt-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, mark.rutland-5wv7dgnIgG8@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, joe-6d6DIl74uiNBDgjK7y7TUQ@public.gmane.org, yamada.masahiro-uWyLwvC0a2jby3iVrkZq2A@public.gmane.org, linux-gpio-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Tomasz Nowicki <tn-nYOzD4b6Jr9Wk0Htik3J/w@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
 
---XsQoSWH+UP9D9v3l
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch makes the existing pci_host_bridge structure a proper device
+that is usable by PCI host drivers in a more standard way. In addition
+to the existing pci_scan_bus, pci_scan_root_bus, pci_scan_root_bus_msi,
+and pci_create_root_bus interfaces, this unfortunately means having to
+add yet another interface doing basically the same thing, and add some
+extra code in the initial step.
 
-On Thu, Nov 24, 2016 at 02:08:53PM +0530, Laxman Dewangan wrote:
-> NVIDIA Tegra124 and later SoCs support the multi-voltage level and
-> low power state of some of its IO pads. The IO pads can work in
-> the voltage of the 1.8V and 3.3V of IO voltage from IO power rail
-> sources. When IO interfaces are not used then IO pads can be
-> configure in low power state to reduce the power consumption from
-> that IO pads.
->=20
-> On Tegra124, the voltage level of IO power rail source is auto
-> detected by hardware(SoC) and hence it is only require to configure
-> in low power mode if IO pads are not used.
->=20
-> On T210 onwards, the auto-detection of voltage level from IO power
+However, this time it's more likely to be extensible enough that we
+won't have to do another one again in the future, and we should be
+able to reduce code much more as a result.
 
-You say Tegra124 above but T210 here. Please use consistent spelling to
-make it more obvious that we're talking about chip generations here.
-Tegra<gen> is preferred over T<gen>.
+The main idea is to pull the allocation of 'struct pci_host_bridge' out
+of the registration, and let individual host drivers and architecture
+code fill the members before calling the registration function.
 
-> rail is removed from SoC and hence SW need to configure the PMC
-> register explicitly to set proper voltage in IO pads based on
-> IO rail power source voltage.
->=20
-> Add DT binding document for detailing the DT properties for
-> configuring IO pads voltage levels and its power state.
->=20
-> Signed-off-by: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->=20
-> ---
-> Changes from V1:
->  New in series based on pinctrl driver requirement.
->=20
-> Changes from V2:
->  Updated the statement to say 1.8V and 3.3V as nominal voltage.
->  Corrected DT example by adding -supply and taken care of V1 review
->  from Rob.
->=20
->  .../bindings/pinctrl/nvidia,tegra-io-pad.txt       | 126 +++++++++++++++=
-++++++
->  1 file changed, 126 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/nvidia,tegr=
-a-io-pad.txt
->=20
-> diff --git a/Documentation/devicetree/bindings/pinctrl/nvidia,tegra-io-pa=
-d.txt b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra-io-pad.txt
-> new file mode 100644
-> index 0000000..a88c484
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/nvidia,tegra-io-pad.txt
-> @@ -0,0 +1,126 @@
-> +NVIDIA Tegra PMC IO pad controller
-> +
-> +NVIDIA Tegra124 and later SoCs support the multi-voltage level and low p=
-ower
-> +state of some of its IO pads. When IO interface are not used then IO pad=
-s can
-> +be configure in low power state to reduce the power from that IO pads. T=
-he IO
-> +pads can work in the nominal IO voltage of 1.8V and 3.3V from power rail
-> +sources.
-> +
-> +On Tegra124, the voltage of IO power rail source is auto detected by SoC=
- and
-> +hence it is only require to configure in low power mode if IO pads are n=
-ot
-> +used.
-> +
-> +On T210 onwards, the HW based auto-detection for IO voltage is removed a=
-nd
-> +hence SW need to configure the PMC register explicitly, to set proper vo=
-ltage
-> +in IO pads, based on IO rail power source voltage.
-> +
-> +The voltage configurations and low power state of IO pads should be done=
- in
-> +boot if it is not going to change otherwise dynamically based on IO rail
-> +voltage on that IO pads and usage of IO pads
+There are a number of things we can do based on this:
 
-Missing fullstop at the end.
+* Use a single memory allocation for the driver-specific structure
+  and the generic PCI host bridge
+* consolidate the contents of driver specific structures by moving
+  them into pci_host_bridge
+* Add a consistent interface for removing a PCI host bridge again
+  when unloading a host driver module
+* Replace the architecture specific __weak pcibios_* functions with
+  callbacks in a pci_host_bridge device
+* Move common boilerplate code from host drivers into the generic
+  function, based on contents of the structure
+* Extend pci_host_bridge with additional members when needed without
+  having to add arguments to pci_scan_*.
+* Move members of struct pci_bus into pci_host_bridge to avoid
+  having lots of identical copies.
 
-> +
-> +The DT property of the IO pads must be under the node of pmc i.e.
-> +pmc@7000e400 for Tegra124 onwards.
+As mentioned in a previous email, one open question is whether we want
+to export a function for allocating a pci_host_bridge device in
+combination with the per-device structure or let the driver itself
+call kzalloc.
 
-The PMC is at a different address on Tegra186, so I think we should just
-drop this to avoid having to update it whenever a new chip relocates it
-to a different address.
+Changes in v3 (Thierry Reding):
+- swap out pci_host_bridge_init() for pci_alloc_host_bridge() with an
+  extra parameter specifying the size of the driver's private data
+- rename pci_host_bridge_register() to pci_register_host_bridge() for
+  more consistency with existing functions
+- split patches into smaller chunks to make diff more readable
 
-Come to think of it, if these I/O pads are represented as subnodes in
-the PMC device tree node, perhaps this should be merged into the PMC
-documentation?
+Changes in v2 (Thierry Reding):
+- add a pci_host_bridge_init() helper that drivers can use to perform
+  all the necessary steps to initialize the bridge
+- rename pci_register_host() to pci_host_bridge_register() to reflect
+  the naming used by other functions
+- plug memory leak on registration failure
 
-> +Please refer to <pinctrl-bindings.txt> in this directory for details of =
-the
-> +common pinctrl bindings used by client devices, including the meaning of=
- the
-> +phrase "pin configuration node".
-> +
-> +Tegra's pin configuration nodes act as a container for an arbitrary numb=
-er of
-> +subnodes. Each of these subnodes represents some desired configuration f=
-or an
-> +IO pads, or a list of IO pads. This configuration can include the voltag=
-e and
-> +power enable/disable control
+Signed-off-by: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/pci/probe.c | 238 +++++++++++++++++++++++++++++++---------------------
+ include/linux/pci.h |   4 +
+ 2 files changed, 145 insertions(+), 97 deletions(-)
 
-Missing fullstop.
-
-> +
-> +The name of each subnode is not important; all subnodes should be enumer=
-ated
-> +and processed purely based on their content. Each subnode only affects t=
-hose
-> +parameters that are explicitly listed. Unspecified is represented as an =
-absent
-> +property,
-
-Should be fullstop instead of comma at the end of the sentence. Also I'm
-not sure the last sentence is even necessary. The previous one already
-says that only explicitly listed parameters take effect.
-
-> +
-> +See the TRM to determine which properties and values apply to each IO pa=
-ds.
-
-Perhaps give a reference to where in the TRM this can be found?
-
-> +
-> +Required subnode-properties:
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
-> +- pins : An array of strings. Each string contains the name of an IO pad=
-s. Valid
-> +	 values for these names are listed below.
-> +
-> +Optional subnode-properties:
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
-> +Following properties are supported from generic pin configuration explai=
-ned
-> +in <dt-bindings/pinctrl/pinctrl-binding.txt>.
-
-I don't think such a directory exists. Maybe make these relative
-references, though that might become slightly more difficult if this
-whole document is merged with the PMC documentation.
-
-> +low-power-enable:		enable low power mode.
-> +low-power-disable:		disable low power mode.
-
-Why the extra padding with tabs? I find that difficult to read. Also, no
-need for a fullstop since it's not a proper sentence.
-
-> +Valid values for pin for T124 are:
-
-Tegra124
-
-> +	audio, bb, cam, comp, csia, csib, csie, dsi, dsib, dsic, dsid, hdmi,
-> +	hsic, hv, lvds, mipi-bias, nand, pex-bias, pex-clk1, pex-clk2,
-> +	pex-ctrl, sdmmc1, sdmmc3, sdmmc4, sys-ddc, uart, usb0, usb1, usb2,
-> +	usb-bias
-> +
-> +Valid values for pin for T210 are:
-
-Tegra210
-
-> +	audio, audio-hv, cam, csia, csib, csic, csid, csie, csif,
-> +	dbg, debug-nonao, dmic, dp, dsi, dsib, dsic, dsid, emmc, emmc2,
-> +	gpio, hdmi, hsic, lvds, mipi-bias, pex-bias, pex-clk1, pex-clk2,
-> +	pex-ctrl, sdmmc1, sdmmc3, spi, spi-hv, uart, usb-bias, usb0,
-> +	usb1, usb2, usb3.
-> +
-> +To find out the IO rail voltage for setting the voltage of IO pad by SW,
-> +the regulator supply handle must provided from the DT and it is explained
-> +in the regulator DT binding document
-> +	<devicetree/bindings/regulator/regulator.txt>.
-
-Again, maybe make this relative because as it is it isn't obvious as to
-what the base of the above path is.
-
-> +For example, for GPIO rail the supply name is vddio-gpio and regulator
-> +handle is supplied from DT as
-> +	vddio-gpio-supply =3D <&regulator_xyz>;
-> +
-> +For T210, following IO pads support the 1.8V/3.3V and the corresponding
-
-Tegra210
-
-> +IO voltage pin names are as follows:
-> +	audio -> vddio-audio
-> +	audio-hv -> vddio-audio-hv
-> +	cam ->vddio-cam
-> +	dbg -> vddio-dbg
-> +	dmic -> vddio-dmic
-> +	gpio -> vddio-gpio
-> +	pex-ctrl -> vddio-pex-ctrl
-> +	sdmmc1 -> vddio-sdmmc1
-> +	sdmmc3 -> vddio-sdmmc3
-> +	spi -> vddio-spi
-> +	spi-hv -> vddio-spi-hv
-> +	uart -> vddio-uart
-
-It's slightly confusing to only have this list for Tegra210. I assume
-that is because on Tegra124 there is no way to control the voltage of
-the pins, but I think that could be made clearer. Also, it might be
-worth explicitly mentioning that this is a subset of the list of pins
-given above and that the other pins (those not in this list) don't
-support 1.8/3.3 V control, but only the low power state.
-
-> +
-> +Example:
-> +	i2c@7000d000 {
-> +		pmic@3c {
-> +			regulators {
-> +				vddio_sdmmc1: ldo2 {
-> +					/* Regulator entries for LDO2 */
-> +				};
-> +
-> +				vdd_cam: ldo3 {
-> +					/* Regulator entries for LDO3 */
-
-These comments are somewhat stating the obvious. Perhaps simply use a
-=2E.. as a placeholder?
-
-> +				};
-> +			};
-> +		};
-> +	};
-> +
-> +	pmc@7000e400 {
-> +		vddio-cam-supply =3D <&vdd_cam>;
-> +		vddio-sdmmc1-supply =3D <&vddio_sdmmc1>;
-> +
-> +		pinctrl-names =3D "default";
-> +		pinctrl-0 =3D <&tegra_io_pad_volt_default>;
-> +		tegra_io_pad_volt_default: common {
-> +			audio-hv {
-> +				pins =3D "audio-hv";
-> +				low-power-disable;
-> +			};
-
-I wonder if this is at all useful. Shouldn't we rather put all pads into
-a low-power state by default and only take them out of the low-power
-state when the driver decides to do so?
-
-Thierry
-
---XsQoSWH+UP9D9v3l
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIcBAABCAAGBQJYOADPAAoJEN0jrNd/PrOho1kP/1kY/kunCY5MY76RZ3AEA0KM
-jM9izgb90i9uuILWRLZxj36qTb5zhWF05pb/hpPaPFoAnHs4uCwY70rmqEZggTbh
-s+BgyU+wZwFK8fCaQtL3w9Gng6YM01CgzYG+PKUV5SiY6sREvgaKZzm7H/KinIJI
-RDCkH2vaAbyAUCMNi1dDnXnD805in9XvBx5H8/tpe+WAutdfP9KqAKaUXDbM4bwv
-bLUzeYiRztm2zo9ou7YZDF791+hGdi13XeSj1JWm6+fbvU/DQkhCiuwVIB2ZlT9N
-Zk2dn4tbaCDa95wCdvpy6O2PUYpDDQHWaMCDOE+IhVxd3LZiGNwdY8RrUMlooA4u
-3YJzA6IqzUGnjVntE9G3K+KkMaoYHUHoOeQNB58S1lvnyn72CA1JY1j16t6PYq3P
-7z7r3Snm4F0pD173XRh/FKBwzixvoRRTStSriVLE0Lr2DUaEUsiUpWUz7Gck0shE
-+1S3GmPglnve3vgo1HPjEYOGwrwU/BOLfSNb08XES2hSIa8F37QvHqHcj8fjPjOk
-RH9K7kpR8Wmegs2EA3x8zdspY3objecHvzmvto4Kv+Kz2WIZTOAlZksdesjFkRgX
-7553cWNe5MBaj44xAOCsL+cBNTZo30/qPHGsflPrm2i/KpiF0kM403m1pk5jvVg1
-X/Ng/6srhPTTGSG8BBSl
-=/tsh
------END PGP SIGNATURE-----
-
---XsQoSWH+UP9D9v3l--
+diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
+index 104c46d53121..99f503c3ab81 100644
+--- a/drivers/pci/probe.c
++++ b/drivers/pci/probe.c
+@@ -521,7 +521,7 @@ static void pci_release_host_bridge_dev(struct device *dev)
+ 	kfree(bridge);
+ }
+ 
+-static struct pci_host_bridge *pci_alloc_host_bridge(struct pci_bus *b)
++static struct pci_host_bridge *pci_alloc_host_bridge(void)
+ {
+ 	struct pci_host_bridge *bridge;
+ 
+@@ -530,7 +530,7 @@ static struct pci_host_bridge *pci_alloc_host_bridge(struct pci_bus *b)
+ 		return NULL;
+ 
+ 	INIT_LIST_HEAD(&bridge->windows);
+-	bridge->bus = b;
++
+ 	return bridge;
+ }
+ 
+@@ -717,6 +717,122 @@ static void pci_set_bus_msi_domain(struct pci_bus *bus)
+ 	dev_set_msi_domain(&bus->dev, d);
+ }
+ 
++static int pci_register_host_bridge(struct pci_host_bridge *bridge)
++{
++	struct device *parent = bridge->dev.parent;
++	struct resource_entry *window, *n;
++	struct pci_bus *bus, *b;
++	resource_size_t offset;
++	LIST_HEAD(resources);
++	struct resource *res;
++	char addr[64], *fmt;
++	const char *name;
++	int err;
++
++	bus = pci_alloc_bus(NULL);
++	if (!bus)
++		return -ENOMEM;
++
++	bridge->bus = bus;
++
++	/* temporarily move resources off the list */
++	list_splice_init(&bridge->windows, &resources);
++	bus->sysdata = bridge->sysdata;
++	bus->msi = bridge->msi;
++	bus->ops = bridge->ops;
++	bus->number = bus->busn_res.start = bridge->busnr;
++#ifdef CONFIG_PCI_DOMAINS_GENERIC
++	bus->domain_nr = pci_bus_find_domain_nr(bus, parent);
++#endif
++
++	b = pci_find_bus(pci_domain_nr(bus), bridge->busnr);
++	if (b) {
++		/* If we already got to this bus through a different bridge, ignore it */
++		dev_dbg(&b->dev, "bus already known\n");
++		err = -EEXIST;
++		goto free;
++	}
++
++	dev_set_name(&bridge->dev, "pci%04x:%02x", pci_domain_nr(bus),
++		     bridge->busnr);
++
++	err = pcibios_root_bridge_prepare(bridge);
++	if (err)
++		goto free;
++
++	err = device_register(&bridge->dev);
++	if (err)
++		put_device(&bridge->dev);
++
++	bus->bridge = get_device(&bridge->dev);
++	device_enable_async_suspend(bus->bridge);
++	pci_set_bus_of_node(bus);
++	pci_set_bus_msi_domain(bus);
++
++	if (!parent)
++		set_dev_node(bus->bridge, pcibus_to_node(bus));
++
++	bus->dev.class = &pcibus_class;
++	bus->dev.parent = bus->bridge;
++
++	dev_set_name(&bus->dev, "%04x:%02x", pci_domain_nr(bus), bus->number);
++	name = dev_name(&bus->dev);
++
++	err = device_register(&bus->dev);
++	if (err)
++		goto unregister;
++
++	pcibios_add_bus(bus);
++
++	/* Create legacy_io and legacy_mem files for this bus */
++	pci_create_legacy_files(bus);
++
++	if (parent)
++		dev_info(parent, "PCI host bridge to bus %s\n", name);
++	else
++		pr_info("PCI host bridge to bus %s\n", name);
++
++	/* Add initial resources to the bus */
++	resource_list_for_each_entry_safe(window, n, &resources) {
++		list_move_tail(&window->node, &bridge->windows);
++		offset = window->offset;
++		res = window->res;
++
++		if (res->flags & IORESOURCE_BUS)
++			pci_bus_insert_busn_res(bus, bus->number, res->end);
++		else
++			pci_bus_add_resource(bus, res, 0);
++
++		if (offset) {
++			if (resource_type(res) == IORESOURCE_IO)
++				fmt = " (bus address [%#06llx-%#06llx])";
++			else
++				fmt = " (bus address [%#010llx-%#010llx])";
++
++			snprintf(addr, sizeof(addr), fmt,
++				 (unsigned long long)(res->start - offset),
++				 (unsigned long long)(res->end - offset));
++		} else
++			addr[0] = '\0';
++
++		dev_info(&bus->dev, "root bus resource %pR%s\n", res, addr);
++	}
++
++	down_write(&pci_bus_sem);
++	list_add_tail(&bus->node, &pci_root_buses);
++	up_write(&pci_bus_sem);
++
++	return 0;
++
++unregister:
++	put_device(&bridge->dev);
++	device_unregister(&bridge->dev);
++
++free:
++	kfree(bus);
++	return err;
++}
++
+ static struct pci_bus *pci_alloc_child_bus(struct pci_bus *parent,
+ 					   struct pci_dev *bridge, int busnr)
+ {
+@@ -2156,113 +2272,43 @@ void __weak pcibios_remove_bus(struct pci_bus *bus)
+ {
+ }
+ 
+-struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
+-		struct pci_ops *ops, void *sysdata, struct list_head *resources)
++static struct pci_bus *pci_create_root_bus_msi(struct device *parent,
++		int bus, struct pci_ops *ops, void *sysdata,
++		struct list_head *resources, struct msi_controller *msi)
+ {
+ 	int error;
+ 	struct pci_host_bridge *bridge;
+-	struct pci_bus *b, *b2;
+-	struct resource_entry *window, *n;
+-	struct resource *res;
+-	resource_size_t offset;
+-	char bus_addr[64];
+-	char *fmt;
+-
+-	b = pci_alloc_bus(NULL);
+-	if (!b)
+-		return NULL;
+ 
+-	b->sysdata = sysdata;
+-	b->ops = ops;
+-	b->number = b->busn_res.start = bus;
+-#ifdef CONFIG_PCI_DOMAINS_GENERIC
+-	b->domain_nr = pci_bus_find_domain_nr(b, parent);
+-#endif
+-	b2 = pci_find_bus(pci_domain_nr(b), bus);
+-	if (b2) {
+-		/* If we already got to this bus through a different bridge, ignore it */
+-		dev_dbg(&b2->dev, "bus already known\n");
+-		goto err_out;
+-	}
+-
+-	bridge = pci_alloc_host_bridge(b);
++	bridge = pci_alloc_host_bridge();
+ 	if (!bridge)
+-		goto err_out;
++		return NULL;
+ 
+ 	bridge->dev.parent = parent;
+ 	bridge->dev.release = pci_release_host_bridge_dev;
+-	dev_set_name(&bridge->dev, "pci%04x:%02x", pci_domain_nr(b), bus);
+-	error = pcibios_root_bridge_prepare(bridge);
+-	if (error) {
+-		kfree(bridge);
+-		goto err_out;
+-	}
+-
+-	error = device_register(&bridge->dev);
+-	if (error) {
+-		put_device(&bridge->dev);
+-		goto err_out;
+-	}
+-	b->bridge = get_device(&bridge->dev);
+-	device_enable_async_suspend(b->bridge);
+-	pci_set_bus_of_node(b);
+-	pci_set_bus_msi_domain(b);
+ 
+-	if (!parent)
+-		set_dev_node(b->bridge, pcibus_to_node(b));
+-
+-	b->dev.class = &pcibus_class;
+-	b->dev.parent = b->bridge;
+-	dev_set_name(&b->dev, "%04x:%02x", pci_domain_nr(b), bus);
+-	error = device_register(&b->dev);
+-	if (error)
+-		goto class_dev_reg_err;
++	list_splice_init(resources, &bridge->windows);
++	bridge->sysdata = sysdata;
++	bridge->busnr = bus;
++	bridge->ops = ops;
++	bridge->msi = msi;
+ 
+-	pcibios_add_bus(b);
+-
+-	/* Create legacy_io and legacy_mem files for this bus */
+-	pci_create_legacy_files(b);
+-
+-	if (parent)
+-		dev_info(parent, "PCI host bridge to bus %s\n", dev_name(&b->dev));
+-	else
+-		printk(KERN_INFO "PCI host bridge to bus %s\n", dev_name(&b->dev));
+-
+-	/* Add initial resources to the bus */
+-	resource_list_for_each_entry_safe(window, n, resources) {
+-		list_move_tail(&window->node, &bridge->windows);
+-		res = window->res;
+-		offset = window->offset;
+-		if (res->flags & IORESOURCE_BUS)
+-			pci_bus_insert_busn_res(b, bus, res->end);
+-		else
+-			pci_bus_add_resource(b, res, 0);
+-		if (offset) {
+-			if (resource_type(res) == IORESOURCE_IO)
+-				fmt = " (bus address [%#06llx-%#06llx])";
+-			else
+-				fmt = " (bus address [%#010llx-%#010llx])";
+-			snprintf(bus_addr, sizeof(bus_addr), fmt,
+-				 (unsigned long long) (res->start - offset),
+-				 (unsigned long long) (res->end - offset));
+-		} else
+-			bus_addr[0] = '\0';
+-		dev_info(&b->dev, "root bus resource %pR%s\n", res, bus_addr);
+-	}
++	error = pci_register_host_bridge(bridge);
++	if (error < 0)
++		goto err_out;
+ 
+-	down_write(&pci_bus_sem);
+-	list_add_tail(&b->node, &pci_root_buses);
+-	up_write(&pci_bus_sem);
++	return bridge->bus;
+ 
+-	return b;
+-
+-class_dev_reg_err:
+-	put_device(&bridge->dev);
+-	device_unregister(&bridge->dev);
+ err_out:
+-	kfree(b);
++	kfree(bridge);
+ 	return NULL;
+ }
++
++struct pci_bus *pci_create_root_bus(struct device *parent, int bus,
++		struct pci_ops *ops, void *sysdata, struct list_head *resources)
++{
++	return pci_create_root_bus_msi(parent, bus, ops, sysdata, resources,
++				       NULL);
++}
+ EXPORT_SYMBOL_GPL(pci_create_root_bus);
+ 
+ int pci_bus_insert_busn_res(struct pci_bus *b, int bus, int bus_max)
+@@ -2343,12 +2389,10 @@ struct pci_bus *pci_scan_root_bus_msi(struct device *parent, int bus,
+ 			break;
+ 		}
+ 
+-	b = pci_create_root_bus(parent, bus, ops, sysdata, resources);
++	b = pci_create_root_bus_msi(parent, bus, ops, sysdata, resources, msi);
+ 	if (!b)
+ 		return NULL;
+ 
+-	b->msi = msi;
+-
+ 	if (!found) {
+ 		dev_info(&b->dev,
+ 		 "No busn resource found for root bus, will use [bus %02x-ff]\n",
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 30d6c162e053..ff16e44d8f84 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -420,9 +420,13 @@ static inline int pci_channel_offline(struct pci_dev *pdev)
+ struct pci_host_bridge {
+ 	struct device dev;
+ 	struct pci_bus *bus;		/* root bus */
++	struct pci_ops *ops;
++	void *sysdata;
++	int busnr;
+ 	struct list_head windows;	/* resource_entry */
+ 	void (*release_fn)(struct pci_host_bridge *);
+ 	void *release_data;
++	struct msi_controller *msi;
+ 	unsigned int ignore_reset_delay:1;	/* for entire hierarchy */
+ 	/* Resource alignment requirements */
+ 	resource_size_t (*align_resource)(struct pci_dev *dev,
+-- 
+2.10.2
