@@ -1,107 +1,132 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [v2,3/3] dt-bindings: ata: ahci_tegra: Add tegra210 AHCI
-Date: Mon, 28 Nov 2016 13:52:06 +0000
-Message-ID: <bc12a764-ddc3-84cf-aa43-3900d1e78021@nvidia.com>
-References: <1479973418-21351-4-git-send-email-pchandru@nvidia.com>
- <bdc5d888-0d9f-fed2-8a74-c42ae7e6b810@nvidia.com>
+From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Subject: Re: [PATCH v4 10/10] arm64: tegra: Enable PCIe on Jetson TX1
+Date: Mon, 28 Nov 2016 18:54:44 +0200
+Message-ID: <613fbc8c-07d9-d63d-bfb0-7e713dcac4f1@kapsi.fi>
+References: <20161125105718.3866-1-thierry.reding@gmail.com>
+ <20161125105718.3866-10-thierry.reding@gmail.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=windows-1252; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <bdc5d888-0d9f-fed2-8a74-c42ae7e6b810-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+In-Reply-To: <20161125105718.3866-10-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, PREETHAM RAMACHANDRA <pchandru-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, tj-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, preetham260-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-ide-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, vbyravarasu-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, pkunapuli-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
+Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Tomasz Nowicki <tn-nYOzD4b6Jr9Wk0Htik3J/w@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
+Testing this series with a Jetson TX1 + r8168e PCI-E card, it /almost/ 
+works.. Relevant parts of bootlog:
 
-On 28/11/16 13:05, Mikko Perttunen wrote:
-> On 24.11.2016 09:43, PREETHAM RAMACHANDRA wrote:
->> From: Preetham Chandru R <pchandru-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+[    1.876191] tegra-pcie 1003000.pcie-controller: 4x1, 1x1 configuration
+[    1.884200] tegra-pcie 1003000.pcie-controller: probing port 0, using 
+4 lanes
+[    1.893368] tegra-pcie 1003000.pcie-controller: Slot present pin 
+change, signature: 00000008
+[    1.948049] tegra-pcie 1003000.pcie-controller: probing port 1, using 
+1 lanes
+[    1.957209] tegra-pcie 1003000.pcie-controller: Slot present pin 
+change, signature: 00000000
+[    2.367748] tegra-pcie 1003000.pcie-controller: link 1 down, retrying
+[    2.778307] tegra-pcie 1003000.pcie-controller: link 1 down, retrying
+[    3.188888] tegra-pcie 1003000.pcie-controller: link 1 down, retrying
+[    3.197344] tegra-pcie 1003000.pcie-controller: link 1 down, ignoring
+[    3.203931] tegra-pcie 1003000.pcie-controller: PCI host bridge to 
+bus 0000:00
+[    3.211160] pci_bus 0000:00: root bus resource [io  0x0000-0xffff]
+[    3.217343] pci_bus 0000:00: root bus resource [mem 
+0x13000000-0x1fffffff]
+[    3.224218] pci_bus 0000:00: root bus resource [mem 
+0x20000000-0x3fffffff pref]
+[    3.231525] pci_bus 0000:00: root bus resource [bus 00-ff]
+[    3.237380] pci 0000:00:01.0: bridge configuration invalid ([bus 
+00-00]), reconfiguring
+[    3.254499] pci 0000:00:01.0: BAR 14: assigned [mem 
+0x13000000-0x130fffff]
+[    3.261389] pci 0000:00:01.0: BAR 15: assigned [mem 
+0x20000000-0x200fffff 64bit pref]
+[    3.269220] pci 0000:00:01.0: BAR 13: assigned [io  0x1000-0x1fff]
+[    3.275412] pci 0000:01:00.0: BAR 4: assigned [mem 
+0x20000000-0x20003fff 64bit pref]
+[    3.283172] pci 0000:01:00.0: BAR 2: assigned [mem 
+0x13000000-0x13000fff 64bit]
+[    3.290498] pci 0000:01:00.0: BAR 0: assigned [io  0x1000-0x10ff]
+[    3.296596] pci 0000:00:01.0: PCI bridge to [bus 01]
+[    3.301568] pci 0000:00:01.0:   bridge window [io  0x1000-0x1fff]
+[    3.307666] pci 0000:00:01.0:   bridge window [mem 0x13000000-0x130fffff]
+[    3.314454] pci 0000:00:01.0:   bridge window [mem 
+0x20000000-0x200fffff 64bit pref]
+[    3.322213] pci 0000:00:01.0: nv_msi_ht_cap_quirk didn't locate host 
+bridge
+[    3.329257] pcieport 0000:00:01.0: enabling device (0000 -> 0003)
+[    3.335572] pcieport 0000:00:01.0: Signaling PME through PCIe PME 
+interrupt
+[    3.342537] pci 0000:01:00.0: Signaling PME through PCIe PME interrupt
+[    3.349256] r8169 Gigabit Ethernet driver 2.3LK-NAPI loaded
+[    3.354858] r8169 0000:01:00.0: enabling device (0000 -> 0003)
+[    3.361460] r8169 0000:01:00.0 eth0: RTL8168e/8111e at 
+0xffff000008eae000, 98:de:d0:04:25:14, XID 0c200000 IRQ 348
+[    3.371812] r8169 0000:01:00.0 eth0: jumbo features [frames: 9200 
+bytes, tx checksumming: ko]
 
-I did not receive the original (please CC linux-tegra as well if you did
-not originally), but there should be some description here.
+then
 
->> Signed-off-by: Preetham Chandru R <pchandru-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  .../bindings/ata/nvidia,tegra124-ahci.txt          | 48
->> ++++++++++++++++------
->>  1 file changed, 36 insertions(+), 12 deletions(-)
->>
->> diff --git
->> a/Documentation/devicetree/bindings/ata/nvidia,tegra124-ahci.txt
->> b/Documentation/devicetree/bindings/ata/nvidia,tegra124-ahci.txt
->> index 66c83c3..446214f 100644
->> --- a/Documentation/devicetree/bindings/ata/nvidia,tegra124-ahci.txt
->> +++ b/Documentation/devicetree/bindings/ata/nvidia,tegra124-ahci.txt
->> @@ -1,9 +1,9 @@
->> -Tegra124 SoC SATA AHCI controller
->> +Tegra SoC SATA AHCI controller
->>
->>  Required properties :
->> -- compatible : For Tegra124, must contain "nvidia,tegra124-ahci". 
->> Otherwise,
->> -  must contain '"nvidia,<chip>-ahci", "nvidia,tegra124-ahci"', where
->> <chip>
->> -  is tegra132.
->> +- compatible : Must be one of:
->> +  - Tegra124 : "nvidia,tegra124-ahci"
->> +  - Tegra210 : "nvidia,tegra210-ahci"
->>  - reg : Should contain 2 entries:
->>    - AHCI register set (SATA BAR5)
->>    - SATA register set
-> 
-> I think you added a new set in the first patch, AUX; you should add it
-> here as well.
-> 
->> @@ -13,8 +13,6 @@ Required properties :
->>  - clock-names : Must include the following entries:
->>    - sata
->>    - sata-oob
->> -  - cml1
->> -  - pll_e
->>  - resets : Must contain an entry for each entry in reset-names.
->>    See ../reset/reset.txt for details.
->>  - reset-names : Must include the following entries:
->> @@ -24,9 +22,35 @@ Required properties :
->>  - phys : Must contain an entry for each entry in phy-names.
->>    See ../phy/phy-bindings.txt for details.
->>  - phy-names : Must include the following entries:
->> -  - sata-phy : XUSB PADCTL SATA PHY
->> -- hvdd-supply : Defines the SATA HVDD regulator
->> -- vddio-supply : Defines the SATA VDDIO regulator
->> -- avdd-supply : Defines the SATA AVDD regulator
->> -- target-5v-supply : Defines the SATA 5V power regulator
->> -- target-12v-supply : Defines the SATA 12V power regulator
->> +  - For T124:
->> +    - sata-phy : XUSB PADCTL SATA PHY
->> +  - For T210:
->> +    - sata-0
->> +- For T124:
->> +  - hvdd-supply : Defines the SATA HVDD regulator
->> +  - vddio-supply : Defines the SATA VDDIO regulator
->> +  - avdd-supply : Defines the SATA AVDD regulator
->> +  - target-5v-supply : Defines the SATA 5V power regulator
->> +- For T210:
->> +  - l0-hvddio-sata-supply : Defines the SATA HVDDIO regulator
->> +  - l0-dvddio-sata-supply : Defines the SATA DVDDIO regulator
->> +  - hvdd-pex-pll-e-supply : Defines the PEX PLL_E regulator
->> +  - dvdd-sata-pll-supply  : Defines the SATA PLL regulator
->> +  - hvdd-sata-supply      : Defines the SATA HVDD regulator
->> +- nvidia,disable-features : Must include the following entries:
->> +  - devslp
->> +  - dipm
+[    3.706240] tegra-mc 70019000.memory-controller: afiw: write 
+@0x000000007a484000: EMEM address decode error (EMEM decode error)
+[    3.717747] r8169 0000:01:00.0 eth0: link down
 
-My understanding is that the AHCI controller requires the SATA powergate
-to be enabled. Now we have support for powergates via the genpd
-framework we should add the 'power-domains' property for this device.
+The card is alive though, the transfer LED is blinking according to 
+incoming traffic, I assume; we can also see that the driver is able to 
+access the hw to some extent. The kernel version is 4.9rc7 with just 
+this series on top. The same board/card also works in U-boot.
 
-Do you know if there is any sequencing requirement with regard to
-powering on the above rails and the powergate? If not we should check as
-we should ensure that we have the proper sequencing.
+- Mikko
 
-Cheers
-Jon
-
--- 
-nvpublic
+On 11/25/2016 12:57 PM, Thierry Reding wrote:
+> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>
+> Enable the x4 PCIe and M.2 Key E slots on Jetson TX1. The Key E slot is
+> currently untested due to lack of hardware.
+>
+> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+> ---
+>  arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts | 26 ++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
+> index 983775e637a4..4c1ea7a08d43 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
+> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
+> @@ -7,6 +7,32 @@
+>  	model = "NVIDIA Jetson TX1 Developer Kit";
+>  	compatible = "nvidia,p2371-2180", "nvidia,tegra210";
+>
+> +	pcie-controller@01003000 {
+> +		status = "okay";
+> +
+> +		avdd-pll-uerefe-supply = <&avdd_1v05_pll>;
+> +		hvddio-pex-supply = <&vdd_1v8>;
+> +		dvddio-pex-supply = <&vdd_pex_1v05>;
+> +		dvdd-pex-pll-supply = <&vdd_pex_1v05>;
+> +		hvdd-pex-pll-e-supply = <&vdd_1v8>;
+> +		vddio-pex-ctl-supply = <&vdd_1v8>;
+> +
+> +		pci@1,0 {
+> +			phys = <&{/padctl@7009f000/pads/pcie/lanes/pcie-0}>,
+> +			       <&{/padctl@7009f000/pads/pcie/lanes/pcie-1}>,
+> +			       <&{/padctl@7009f000/pads/pcie/lanes/pcie-2}>,
+> +			       <&{/padctl@7009f000/pads/pcie/lanes/pcie-3}>;
+> +			phy-names = "pcie-0", "pcie-1", "pcie-2", "pcie-3";
+> +			status = "okay";
+> +		};
+> +
+> +		pci@2,0 {
+> +			phys = <&{/padctl@7009f000/pads/pcie/lanes/pcie-4}>;
+> +			phy-names = "pcie-0";
+> +			status = "okay";
+> +		};
+> +	};
+> +
+>  	host1x@50000000 {
+>  		dsi@54300000 {
+>  			status = "okay";
+>
