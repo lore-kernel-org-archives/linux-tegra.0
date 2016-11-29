@@ -1,240 +1,120 @@
-From: Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH v4 10/10] arm64: tegra: Enable PCIe on Jetson TX1
-Date: Tue, 29 Nov 2016 11:55:19 +0530
-Message-ID: <b1d4404a-375a-0787-0ef8-f4e81710663c@nvidia.com>
-References: <20161125105718.3866-1-thierry.reding@gmail.com>
- <20161125105718.3866-10-thierry.reding@gmail.com>
- <613fbc8c-07d9-d63d-bfb0-7e713dcac4f1@kapsi.fi>
+From: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
+Subject: Re: [RFC PATCH 0/3] PM / Domains: Add support for devices that require
+ multiple domains
+Date: Tue, 29 Nov 2016 12:33:02 +0100
+Message-ID: <52af1977-8ca3-40d1-43bb-920c5b933f94@samsung.com>
+References: <CAPDyKFoFPNNnoc-7G34A7a4Yo8f=WUyurNP1evabw3MOEubEoA@mail.gmail.com>
+ <90faea7d-65b6-590a-83f1-24fcdffa0569@nvidia.com>
+ <CAPDyKFr4S3tM7KL2hfwJ3R4e5z1-Zd99aMhMSgVq4XzkrUUdow@mail.gmail.com>
+ <fd7c8f40-2a9f-b71c-bd11-43ee657441ae@nvidia.com>
+ <63670abf-1d58-a7e3-6927-0c815d44d8a1@nvidia.com>
+ <d961715d-820a-dd63-e3a9-c908ce465582@nvidia.com>
+ <CAJZ5v0hqdjGJ8v+k-Nkp_bx-fj_yTD5WoMeVfkmqBuTwCjRoyA@mail.gmail.com>
+ <d9a4c1cd-6682-663d-e30d-cc85f665cf64@nvidia.com>
+ <m2lgwbxtea.fsf@baylibre.com>
+ <f54b4912-bfdd-aa2c-6f04-e09ed4207af6@nvidia.com>
+ <CGME20161124023037epcas4p2891cf07f4bc49115f210c1298b0f9b82@epcas4p2.samsung.com>
+ <20161124023014.GK6095@codeaurora.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <613fbc8c-07d9-d63d-bfb0-7e713dcac4f1-/1wQRMveznE@public.gmane.org>
+In-reply-to: <20161124023014.GK6095-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>
-Cc: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Tomasz Nowicki <tn-nYOzD4b6Jr9Wk0Htik3J/w@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, "Rafael J. Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rajendra Nayak <rnayak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-I've also tried with OCZ SSD and things are working fine.
+Hi Stephen,
 
-Boot log...
+Thanks for pointing to my patches, but I would like to clarify a few things.
 
-[    1.770836] tegra-pcie 1003000.pcie-controller: 4x1, 1x1 configuration
-[    1.796262] tegra-pcie 1003000.pcie-controller: probing port 0, using 
-4 lanes
-[    1.809456] tegra-pcie 1003000.pcie-controller: Slot present pin 
-change, signature: 00000008
-[    1.828019] tegra-pcie 1003000.pcie-controller: probing port 1, using 
-1 lanes
-[    1.835179] tegra-pcie 1003000.pcie-controller: Slot present pin 
-change, signature: 00000000
-[    2.254574] tegra-pcie 1003000.pcie-controller: link 1 down, retrying
-[    2.665182] tegra-pcie 1003000.pcie-controller: link 1 down, retrying
-[    3.075772] tegra-pcie 1003000.pcie-controller: link 1 down, retrying
-[    3.084231] tegra-pcie 1003000.pcie-controller: link 1 down, ignoring
-[    3.090863] tegra-pcie 1003000.pcie-controller: PCI host bridge to 
-bus 0000:00
-[    3.098138] pci_bus 0000:00: root bus resource [io 0x0000-0xffff]
-[    3.104340] pci_bus 0000:00: root bus resource [mem 
-0x13000000-0x1fffffff]
-[    3.111232] pci_bus 0000:00: root bus resource [mem 
-0x20000000-0x3fffffff pref]
-[    3.118566] pci_bus 0000:00: root bus resource [bus 00-ff]
-[    3.124490] pci 0000:00:01.0: bridge configuration invalid ([bus 
-00-00]), reconfiguring
-[    3.144765] pci 0000:00:01.0: BAR 14: assigned [mem 
-0x13000000-0x130fffff]
-[    3.151670] pci 0000:01:00.0: BAR 2: assigned [mem 
-0x13000000-0x1303ffff 64bit]
-[    3.159013] pci 0000:01:00.0: BAR 0: assigned [mem 
-0x13040000-0x1305ffff 64bit]
-[    3.166338] pci 0000:01:00.0: BAR 6: assigned [mem 
-0x13060000-0x1306ffff pref]
-[    3.173559] pci 0000:00:01.0: PCI bridge to [bus 01]
-[    3.178530] pci 0000:00:01.0:   bridge window [mem 0x13000000-0x130fffff]
-[    3.185338] pci 0000:00:01.0: nv_msi_ht_cap_quirk didn't locate host 
-bridge
-[    3.192384] pcieport 0000:00:01.0: enabling device (0000 -> 0002)
-[    3.198747] pcieport 0000:00:01.0: Signaling PME through PCIe PME 
-interrupt
-[    3.205763] pci 0000:01:00.0: Signaling PME through PCIe PME interrupt
-[    3.212491] mvsas 0000:01:00.0: mvsas: driver version 0.8.16
-[    3.218182] mvsas 0000:01:00.0: enabling device (0000 -> 0002)
-[    3.229007] mvsas 0000:01:00.0: mvsas: PCI-E x4, Bandwidth Usage: 2.5 
-Gbps
-[   10.184674] scsi host0: mvsas
-[   10.368296] ata1.00: ATA-8: OCZ-REVODRIVE3 X2, 2.25, max UDMA/133
-[   10.374400] ata1.00: 117231408 sectors, multi 16: LBA48 NCQ (depth 31/32)
-[   10.388296] ata1.00: configured for UDMA/133
-[   10.411571] scsi 0:0:0:0: Direct-Access     ATA OCZ-REVODRIVE3 X 2.25 
-PQ: 0 ANSI: 5
-[   10.441215] sd 0:0:0:0: [sda] 117231408 512-byte logical blocks: 
-(60.0 GB/55.9 GiB)
-[   10.620169] ata2.00: ATA-8: OCZ-REVODRIVE3 X2, 2.25, max UDMA/133
-[   10.626283] ata2.00: 117231408 sectors, multi 16: LBA48 NCQ (depth 31/32)
-[   10.640171] ata2.00: configured for UDMA/133
-[   10.644714] sd 0:0:0:0: [sda] Write Protect is off
-[   10.649597] sd 0:0:0:0: [sda] Write cache: enabled, read cache: 
-enabled, doesn't support DPO or FUA
-[   10.661798] sd 0:0:0:0: [sda] Attached SCSI disk
-[   10.670963] scsi 0:0:1:0: Direct-Access     ATA OCZ-REVODRIVE3 X 2.25 
-PQ: 0 ANSI: 5
-[   10.701173] sd 0:0:1:0: [sdb] 117231408 512-byte logical blocks: 
-(60.0 GB/55.9 GiB)
-[   10.879961] ata3.00: ATA-8: OCZ-REVODRIVE3 X2, 2.25, max UDMA/133
-[   10.886076] ata3.00: 117231408 sectors, multi 16: LBA48 NCQ (depth 31/32)
-[   10.899961] ata3.00: configured for UDMA/133
-[   10.904486] sd 0:0:1:0: [sdb] Write Protect is off
-[   10.909367] sd 0:0:1:0: [sdb] Write cache: enabled, read cache: 
-enabled, doesn't support DPO or FUA
-[   10.920861]  sdb: sdb1
-[   10.924375] sd 0:0:1:0: [sdb] Attached SCSI disk
-[   10.933242] scsi 0:0:2:0: Direct-Access     ATA OCZ-REVODRIVE3 X 2.25 
-PQ: 0 ANSI: 5
-[   10.965166] sd 0:0:2:0: [sdc] 117231408 512-byte logical blocks: 
-(60.0 GB/55.9 GiB)
-[   11.143890] ata4.00: ATA-8: OCZ-REVODRIVE3 X2, 2.25, max UDMA/133
-[   11.150002] ata4.00: 117231408 sectors, multi 16: LBA48 NCQ (depth 31/32)
-[   11.163892] ata4.00: configured for UDMA/133
-[   11.168424] sd 0:0:2:0: [sdc] Write Protect is off
-[   11.173306] sd 0:0:2:0: [sdc] Write cache: enabled, read cache: 
-enabled, doesn't support DPO or FUA
-[   11.184751]  sdc: sdc1
-[   11.188243] sd 0:0:2:0: [sdc] Attached SCSI disk
-[   11.197107] scsi 0:0:3:0: Direct-Access     ATA OCZ-REVODRIVE3 X 2.25 
-PQ: 0 ANSI: 5
-[   11.229166] sd 0:0:3:0: [sdd] 117231408 512-byte logical blocks: 
-(60.0 GB/55.9 GiB)
-[   11.238220] 70090000.usb supply dvdd-pex-pll not found, using dummy 
-regulator
-[   11.245777] sd 0:0:3:0: [sdd] Write Protect is off
-[   11.245848] sd 0:0:3:0: [sdd] Write cache: enabled, read cache: 
-enabled, doesn't support DPO or FUA
-[   11.251511]  sdd: sdd1
-[   11.252354] sd 0:0:3:0: [sdd] Attached SCSI disk
-
-Thanks,
-
-Vidya Sagar
-
-
-On Monday 28 November 2016 10:24 PM, Mikko Perttunen wrote:
-> Testing this series with a Jetson TX1 + r8168e PCI-E card, it /almost/ 
-> works.. Relevant parts of bootlog:
->
-> [    1.876191] tegra-pcie 1003000.pcie-controller: 4x1, 1x1 configuration
-> [    1.884200] tegra-pcie 1003000.pcie-controller: probing port 0, 
-> using 4 lanes
-> [    1.893368] tegra-pcie 1003000.pcie-controller: Slot present pin 
-> change, signature: 00000008
-> [    1.948049] tegra-pcie 1003000.pcie-controller: probing port 1, 
-> using 1 lanes
-> [    1.957209] tegra-pcie 1003000.pcie-controller: Slot present pin 
-> change, signature: 00000000
-> [    2.367748] tegra-pcie 1003000.pcie-controller: link 1 down, retrying
-> [    2.778307] tegra-pcie 1003000.pcie-controller: link 1 down, retrying
-> [    3.188888] tegra-pcie 1003000.pcie-controller: link 1 down, retrying
-> [    3.197344] tegra-pcie 1003000.pcie-controller: link 1 down, ignoring
-> [    3.203931] tegra-pcie 1003000.pcie-controller: PCI host bridge to 
-> bus 0000:00
-> [    3.211160] pci_bus 0000:00: root bus resource [io 0x0000-0xffff]
-> [    3.217343] pci_bus 0000:00: root bus resource [mem 
-> 0x13000000-0x1fffffff]
-> [    3.224218] pci_bus 0000:00: root bus resource [mem 
-> 0x20000000-0x3fffffff pref]
-> [    3.231525] pci_bus 0000:00: root bus resource [bus 00-ff]
-> [    3.237380] pci 0000:00:01.0: bridge configuration invalid ([bus 
-> 00-00]), reconfiguring
-> [    3.254499] pci 0000:00:01.0: BAR 14: assigned [mem 
-> 0x13000000-0x130fffff]
-> [    3.261389] pci 0000:00:01.0: BAR 15: assigned [mem 
-> 0x20000000-0x200fffff 64bit pref]
-> [    3.269220] pci 0000:00:01.0: BAR 13: assigned [io 0x1000-0x1fff]
-> [    3.275412] pci 0000:01:00.0: BAR 4: assigned [mem 
-> 0x20000000-0x20003fff 64bit pref]
-> [    3.283172] pci 0000:01:00.0: BAR 2: assigned [mem 
-> 0x13000000-0x13000fff 64bit]
-> [    3.290498] pci 0000:01:00.0: BAR 0: assigned [io 0x1000-0x10ff]
-> [    3.296596] pci 0000:00:01.0: PCI bridge to [bus 01]
-> [    3.301568] pci 0000:00:01.0:   bridge window [io 0x1000-0x1fff]
-> [    3.307666] pci 0000:00:01.0:   bridge window [mem 
-> 0x13000000-0x130fffff]
-> [    3.314454] pci 0000:00:01.0:   bridge window [mem 
-> 0x20000000-0x200fffff 64bit pref]
-> [    3.322213] pci 0000:00:01.0: nv_msi_ht_cap_quirk didn't locate 
-> host bridge
-> [    3.329257] pcieport 0000:00:01.0: enabling device (0000 -> 0003)
-> [    3.335572] pcieport 0000:00:01.0: Signaling PME through PCIe PME 
-> interrupt
-> [    3.342537] pci 0000:01:00.0: Signaling PME through PCIe PME interrupt
-> [    3.349256] r8169 Gigabit Ethernet driver 2.3LK-NAPI loaded
-> [    3.354858] r8169 0000:01:00.0: enabling device (0000 -> 0003)
-> [    3.361460] r8169 0000:01:00.0 eth0: RTL8168e/8111e at 
-> 0xffff000008eae000, 98:de:d0:04:25:14, XID 0c200000 IRQ 348
-> [    3.371812] r8169 0000:01:00.0 eth0: jumbo features [frames: 9200 
-> bytes, tx checksumming: ko]
->
-> then
->
-> [    3.706240] tegra-mc 70019000.memory-controller: afiw: write 
-> @0x000000007a484000: EMEM address decode error (EMEM decode error)
-> [    3.717747] r8169 0000:01:00.0 eth0: link down
->
-> The card is alive though, the transfer LED is blinking according to 
-> incoming traffic, I assume; we can also see that the driver is able to 
-> access the hw to some extent. The kernel version is 4.9rc7 with just 
-> this series on top. The same board/card also works in U-boot.
->
-> - Mikko
->
-> On 11/25/2016 12:57 PM, Thierry Reding wrote:
->> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+On 2016-11-24 03:30, Stephen Boyd wrote:
+> On 11/22, Jon Hunter wrote:
+>> On 22/11/16 18:26, Kevin Hilman wrote:
+>>> Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> writes:
+>>>> However, I would rather the client of
+>>>> the power-domains specify which power-domains they require and
+>>>> dynamically nested the power-domains at runtime. This is slightly
+>>>> different to what I proposed in this RFC, but it is not really beyond
+>>>> the bounds of what we support today IMO. What is missing is a means to
+>>>> do this dynamically and not statically.
+>>>>
+>>>> By the way, I am not sure if you are suggesting that for devices that
+>>>> may need multiple power-domains we should architect the driver
+>>>> differently and split it up in some way such that we have a power-domain
+>>>> per device. But for the case of the Tegra XHCI it is quite complex
+>>>> because the driver loads firmware which runs on a micro-controller and
+>>>> we need to manage the various power-domains that are used.
+>>> IMO, constructing a network of new struct devices just to workaround
+>>> limitations in the framework doesn't sound quite right either.
+>> I agree.
 >>
->> Enable the x4 PCIe and M.2 Key E slots on Jetson TX1. The Key E slot is
->> currently untested due to lack of hardware.
->>
->> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts | 26 
->> ++++++++++++++++++++++
->>  1 file changed, 26 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts 
->> b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
->> index 983775e637a4..4c1ea7a08d43 100644
->> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
->> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2371-2180.dts
->> @@ -7,6 +7,32 @@
->>      model = "NVIDIA Jetson TX1 Developer Kit";
->>      compatible = "nvidia,p2371-2180", "nvidia,tegra210";
->>
->> +    pcie-controller@01003000 {
->> +        status = "okay";
->> +
->> +        avdd-pll-uerefe-supply = <&avdd_1v05_pll>;
->> +        hvddio-pex-supply = <&vdd_1v8>;
->> +        dvddio-pex-supply = <&vdd_pex_1v05>;
->> +        dvdd-pex-pll-supply = <&vdd_pex_1v05>;
->> +        hvdd-pex-pll-e-supply = <&vdd_1v8>;
->> +        vddio-pex-ctl-supply = <&vdd_1v8>;
->> +
->> +        pci@1,0 {
->> +            phys = <&{/padctl@7009f000/pads/pcie/lanes/pcie-0}>,
->> + <&{/padctl@7009f000/pads/pcie/lanes/pcie-1}>,
->> + <&{/padctl@7009f000/pads/pcie/lanes/pcie-2}>,
->> + <&{/padctl@7009f000/pads/pcie/lanes/pcie-3}>;
->> +            phy-names = "pcie-0", "pcie-1", "pcie-2", "pcie-3";
->> +            status = "okay";
->> +        };
->> +
->> +        pci@2,0 {
->> +            phys = <&{/padctl@7009f000/pads/pcie/lanes/pcie-4}>;
->> +            phy-names = "pcie-0";
->> +            status = "okay";
->> +        };
->> +    };
->> +
->>      host1x@50000000 {
->>          dsi@54300000 {
->>              status = "okay";
->>
+> Marek is attempting to do this for the samsung clock
+> controller[1] (patch #5 is informative).
+
+You probably meant patch #3 / #4, which is a patch for Exynos 4412
+( https://marc.info/?l=linux-arm-kernel&m=147731142926053&w=2 ).
+
+Patch #5 is for Exynos 5433, which already has separate nodes for
+each clock sub-controller, so there is no problem to add generic
+power domains there (see multiple CMU nodes):
+
+https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/arch/arm64/boot/dts/exynos/exynos5433.dtsi#n261
+
+>  From what I can tell
+> they have one DT node for their clock controller because it's one
+> register address space to control clocks. But, certain clocks
+> exposed by that driver only work when certain power domains are
+> enabled. For example, they have a clock controller that exposes
+> clock signals for multimedia hardware blocks like video
+> accelerators, gpus, and cameras. The clocks seem to have been
+> placed inside different power domains for the multimedia hardware
+> they're associated with, so there may be 10 or so power domains
+> that need to be enabled at different times for different clocks
+> to work. If the GPU power domain isn't enabled when the GPU
+> clocks are touched by the driver, things break, etc.
+>
+> In the proposed patchset, we have the top-level clock controller
+> node with subnodes for each power domain that needs to be
+> associated with clocks inside these different multimedia blocks.
+
+This is valid only for the Exynos4412 case (and not-yet-posted
+Exynos5422), which has a single clock controller node and patch #4
+added a sub-node for ISP clocks part (the only one which in fact
+is in the other power domain).
+
+> So we end up with one parent device and attached driver for the
+> clock driver, and then that driver populates child nodes as
+> devices and matches up clocks with child nodes while registering
+> clks with clk_register(). Because we pass a dev pointer to
+> clk_register, we associate different devices with different
+> clocks all from the same top-level clock controller device
+> driver. Then clk framework calls runtime_pm APIs with devices
+> used during clk registration.
+
+Right, this is how I did it for Exynos4412 case.
+
+> Some of those devices don't have
+> any driver bound to them, which feels odd.
+
+Well, I don't get this. In the proposed patches each sub-node has
+a separate driver, none is left without a driver.
+
+> This seems like a case where we really want a better way to
+> explicitly control power domains without making up subnodes and
+> registering struct devices just to work around the one device to
+> one genpd construct we have today. Maybe power domains just don't
+> map to genpd though and that's the disconnect.
+
+Having an API for full control over multiple power domain assigned to
+a single device node might indeed solve somehow this problem, but as
+long as runtime pm is tied to struct device, this will again end in
+creating virtual sub-devices per each power domain to fit runtime pm
+principles. However we might be able to avoid creating sub-nodes in
+the device tree.
+
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
