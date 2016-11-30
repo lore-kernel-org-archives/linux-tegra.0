@@ -1,65 +1,135 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [GIT PULL 10/10] arm64: tegra: Default configuration updates for
- v4.10-rc1
-Date: Wed, 30 Nov 2016 17:39:29 +0100
-Message-ID: <20161130163929.GA20246@ulmo.ba.sec>
-References: <20161118161719.24153-1-thierry.reding@gmail.com>
- <20161118161719.24153-10-thierry.reding@gmail.com>
- <6706502.us21ohNYZA@wuerfel>
+Subject: Re: [PATCH v4 10/10] arm64: tegra: Enable PCIe on Jetson TX1
+Date: Wed, 30 Nov 2016 18:48:40 +0100
+Message-ID: <20161130174840.GB20246@ulmo.ba.sec>
+References: <20161125105718.3866-1-thierry.reding@gmail.com>
+ <20161125105718.3866-10-thierry.reding@gmail.com>
+ <613fbc8c-07d9-d63d-bfb0-7e713dcac4f1@kapsi.fi>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="1yeeQ81UyVL57Vl7"
+        protocol="application/pgp-signature"; boundary="rS8CxjVDS/+yyDmU"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <6706502.us21ohNYZA@wuerfel>
+In-Reply-To: <613fbc8c-07d9-d63d-bfb0-7e713dcac4f1-/1wQRMveznE@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-Cc: linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Tomasz Nowicki <tn-nYOzD4b6Jr9Wk0Htik3J/w@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---1yeeQ81UyVL57Vl7
+--rS8CxjVDS/+yyDmU
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 30, 2016 at 05:10:43PM +0100, Arnd Bergmann wrote:
-> On Friday, November 18, 2016 5:17:19 PM CET Thierry Reding wrote:
-> > arm64: tegra: Default configuration updates for v4.10-rc1
-> >=20
-> > Enable Tegra186 support.
-> >=20
+On Mon, Nov 28, 2016 at 06:54:44PM +0200, Mikko Perttunen wrote:
+> Testing this series with a Jetson TX1 + r8168e PCI-E card, it /almost/
+> works.. Relevant parts of bootlog:
 >=20
-> This was already in next/arm64 (but I didn't see a notification),
-> and with the arm64-dt branch now merged as well, we should have
-> everything you sent.
+> [    1.876191] tegra-pcie 1003000.pcie-controller: 4x1, 1x1 configuration
+> [    1.884200] tegra-pcie 1003000.pcie-controller: probing port 0, using 4
+> lanes
+> [    1.893368] tegra-pcie 1003000.pcie-controller: Slot present pin chang=
+e,
+> signature: 00000008
+> [    1.948049] tegra-pcie 1003000.pcie-controller: probing port 1, using 1
+> lanes
+> [    1.957209] tegra-pcie 1003000.pcie-controller: Slot present pin chang=
+e,
+> signature: 00000000
+> [    2.367748] tegra-pcie 1003000.pcie-controller: link 1 down, retrying
+> [    2.778307] tegra-pcie 1003000.pcie-controller: link 1 down, retrying
+> [    3.188888] tegra-pcie 1003000.pcie-controller: link 1 down, retrying
+> [    3.197344] tegra-pcie 1003000.pcie-controller: link 1 down, ignoring
+> [    3.203931] tegra-pcie 1003000.pcie-controller: PCI host bridge to bus
+> 0000:00
+> [    3.211160] pci_bus 0000:00: root bus resource [io  0x0000-0xffff]
+> [    3.217343] pci_bus 0000:00: root bus resource [mem
+> 0x13000000-0x1fffffff]
+> [    3.224218] pci_bus 0000:00: root bus resource [mem 0x20000000-0x3ffff=
+fff
+> pref]
+> [    3.231525] pci_bus 0000:00: root bus resource [bus 00-ff]
+> [    3.237380] pci 0000:00:01.0: bridge configuration invalid ([bus 00-00=
+]),
+> reconfiguring
+> [    3.254499] pci 0000:00:01.0: BAR 14: assigned [mem
+> 0x13000000-0x130fffff]
+> [    3.261389] pci 0000:00:01.0: BAR 15: assigned [mem 0x20000000-0x200ff=
+fff
+> 64bit pref]
+> [    3.269220] pci 0000:00:01.0: BAR 13: assigned [io  0x1000-0x1fff]
+> [    3.275412] pci 0000:01:00.0: BAR 4: assigned [mem 0x20000000-0x20003f=
+ff
+> 64bit pref]
+> [    3.283172] pci 0000:01:00.0: BAR 2: assigned [mem 0x13000000-0x13000f=
+ff
+> 64bit]
+> [    3.290498] pci 0000:01:00.0: BAR 0: assigned [io  0x1000-0x10ff]
+> [    3.296596] pci 0000:00:01.0: PCI bridge to [bus 01]
+> [    3.301568] pci 0000:00:01.0:   bridge window [io  0x1000-0x1fff]
+> [    3.307666] pci 0000:00:01.0:   bridge window [mem 0x13000000-0x130fff=
+ff]
+> [    3.314454] pci 0000:00:01.0:   bridge window [mem 0x20000000-0x200fff=
+ff
+> 64bit pref]
+> [    3.322213] pci 0000:00:01.0: nv_msi_ht_cap_quirk didn't locate host
+> bridge
+> [    3.329257] pcieport 0000:00:01.0: enabling device (0000 -> 0003)
+> [    3.335572] pcieport 0000:00:01.0: Signaling PME through PCIe PME
+> interrupt
+> [    3.342537] pci 0000:01:00.0: Signaling PME through PCIe PME interrupt
+> [    3.349256] r8169 Gigabit Ethernet driver 2.3LK-NAPI loaded
+> [    3.354858] r8169 0000:01:00.0: enabling device (0000 -> 0003)
+> [    3.361460] r8169 0000:01:00.0 eth0: RTL8168e/8111e at
+> 0xffff000008eae000, 98:de:d0:04:25:14, XID 0c200000 IRQ 348
+> [    3.371812] r8169 0000:01:00.0 eth0: jumbo features [frames: 9200 byte=
+s,
+> tx checksumming: ko]
+>=20
+> then
+>=20
+> [    3.706240] tegra-mc 70019000.memory-controller: afiw: write
+> @0x000000007a484000: EMEM address decode error (EMEM decode error)
+> [    3.717747] r8169 0000:01:00.0 eth0: link down
 
-I had also sent a couple of individual patches that seemed to not have
-it made into v4.9 and v4.8 for some reason (they were part of the pull
-requests, as far as I can tell). Do you think you could pull those in
-as well?
+Hmm... that's very odd. It seems like for some reason the PCIe
+controller wants to access memory that's below the DRAM. Do you happen
+to have the SMMU enabled for PCIe? Can you try adding some debug prints
+to the networking driver to find out where this address is coming from?
+
+> The card is alive though, the transfer LED is blinking according to incom=
+ing
+> traffic, I assume; we can also see that the driver is able to access the =
+hw
+> to some extent. The kernel version is 4.9rc7 with just this series on top.
+> The same board/card also works in U-boot.
+
+I've tested this on a recent linux-next, so perhaps that's something
+else to try out. I wouldn't expect v4.9-rc7 to have any issues with a
+PCI network driver, but who knows.
 
 Thanks,
 Thierry
 
---1yeeQ81UyVL57Vl7
+--rS8CxjVDS/+yyDmU
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAABCAAGBQJYPwC9AAoJEN0jrNd/PrOhmCgP/iuvpU2Dt0+0XOwGoMRUnGR7
-nZvUiCRCN85zsFsMh+NeVdW0kF4OK4diApONBM65FLaim/XQMs72YWHLpy3aadLq
-hiPa6o3grcfJdO9jXldMudffDE22DLeWijr8dC0bq8fCIZna0ttTZksUM0FyXf5d
-c3OR5ydE9I/nyPE6l8DeKg5SZOG3jtxGQoB3mvxNZCz9af11na+RR1WLrHs5YJu+
-PndAylj0icN1Hpd/coTMVDxYbLS6M/tQPIWZAvo/W+iajhw/O33CNg3pYkO5XzpN
-+v3sf84l47ZengjtKdWdXu3okMA2qrYeNC1lQDuCAyxcnnEvWvYFZNNqzR7wuhqy
-L0fRq6mX5+4KO8yNaV9KUpgGBG7mWyJosWX73pXjKOa2X620jJOaNJY8AoYm35Rf
-fTcmEItN8bUcGVahXUWwrZGgaBeJY1WJj+VRm9Ml/dfiGR1Vl3l/WTqi5/bDz6Dp
-pyWY/o56pQ4+rxAnD2ljBq8vjMgYrwBlS3L6uKqmAmK+BJO+iEAYD/f5m5vGnGZL
-RDoLxHEjFSm29lMPE/OdYSomHOLt78T8F5a5+y6DyZPXJnCOEhwThdCQr+1GFCPA
-joieddcc1XX5T9FWUq9Nl2ybev5P05EzMDpg1YA8/JmhI4ZhD4bbJyFyjaf7X+5L
-um1fhqZ9kyWUdMvOih6G
-=jgED
+iQIbBAABCAAGBQJYPxD0AAoJEN0jrNd/PrOh4jAP+MmKg86vQZbvHHbpjLRdg4c6
+I9YC808YWWl0nDFuBSeoYdb66utg3ZhXZJBhvJmnofP9mUwWAL15Dxl/W8rlxqFC
+PcViwqZKXo9pAOLFpUKOD8uzLTe4fA+jiEm8ShwglP+IRWvreLDmAiwm+Do2/sAR
+mWd6kiyJa/iFKPX4Mykv2+8Tv1KdUTd7nlVxq0WhgaZUaobcJdOzkq8zyoIFNDxR
+1DRe4v3VZOwOxcsSDfM1j9F+g4mlEuR9E8Rq9jFVCBvX/SCd53mU+2LurQhBaOds
+gv8ZDCm8u62cOtHmfKG/lG85M+WGwPehiNcbn0tnhWMk1VcuKoh7ajUGyr2rrwL9
+weZjnx7XbZ2I0OJQlduZoCkaeqGp/PpEREu4Q8GJ8FZJdHc/bbgYF2Z15Kko6RRL
+jbtmil4fbOJH8389vrAH/lb34r8j6HDVuzI8vIKgH58giqjVXdBoCzZf9wxp+c3C
+WOcTKVQBg/Uz9Bf46rruGdkzqvjTsN/WEkjBcxNKgrTUIeWWKLuCQasUWukadKmg
+YnCz6Z+LPEzbBESwE3tJcnTaQREEtDM7zfF1YmOVrCrqYLIrKVCHPgtjuQhsUlSf
+V6i9xmZ6w/kLWQ/6drXWe42qiaWy1a768ubgvO4pdZgtkNupZ/xhIs7zOwznax8A
+sxc4zqUEHeuodQQ27xY=
+=jrkW
 -----END PGP SIGNATURE-----
 
---1yeeQ81UyVL57Vl7--
+--rS8CxjVDS/+yyDmU--
