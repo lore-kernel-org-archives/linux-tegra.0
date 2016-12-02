@@ -1,7 +1,7 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 1/2] arm64: tegra: Add VDD_GPU regulator to Jetson TX1
-Date: Fri,  2 Dec 2016 20:57:55 +0100
-Message-ID: <20161202195756.16562-2-thierry.reding@gmail.com>
+Subject: [PATCH 2/2] arm64: tegra: Add missing Smaug revision
+Date: Fri,  2 Dec 2016 20:57:56 +0100
+Message-ID: <20161202195756.16562-3-thierry.reding@gmail.com>
 References: <20161202195756.16562-1-thierry.reding@gmail.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20161202195756.16562-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
@@ -12,49 +12,31 @@ List-Id: linux-tegra@vger.kernel.org
 
 From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-Add the VDD_GPU regulator (a GPIO-enabled PWM regulator) to the Jetson
-TX1 board. This addition allows the GPU to be used provided the
-bootloader properly enabled the GPU node.
+The "google,smaug-rev2" string is missing from the compatible list of
+Smaug's DT. The differences of rev2 are not relevant at our current
+level of support and it boots just fine, so add it.
 
 Signed-off-by: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Acked-by: Andrew Bresticker <abrestic-F7+t8E8rja9g9hUCZPvPmw@public.gmane.org>
 Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-index 5fda583351d7..906fb836d241 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-@@ -21,6 +21,10 @@
- 		reg = <0x0 0x80000000 0x1 0x0>;
- 	};
+diff --git a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+index c2becb603e11..7703227f5d1a 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
++++ b/arch/arm64/boot/dts/nvidia/tegra210-smaug.dts
+@@ -11,7 +11,8 @@
+ 	compatible = "google,smaug-rev8", "google,smaug-rev7",
+ 		     "google,smaug-rev6", "google,smaug-rev5",
+ 		     "google,smaug-rev4", "google,smaug-rev3",
+-		     "google,smaug-rev1", "google,smaug", "nvidia,tegra210";
++		     "google,smaug-rev2", "google,smaug-rev1",
++		     "google,smaug", "nvidia,tegra210";
  
-+	gpu@57000000 {
-+		vdd-supply = <&vdd_gpu>;
-+	};
-+
- 	/* debug port */
- 	serial@70006000 {
- 		status = "okay";
-@@ -291,4 +295,18 @@
- 			clock-frequency = <32768>;
- 		};
- 	};
-+
-+	regulators {
-+		vdd_gpu: regulator@100 {
-+			compatible = "pwm-regulator";
-+			reg = <100>;
-+			pwms = <&pwm 1 4880>;
-+			regulator-name = "VDD_GPU";
-+			regulator-min-microvolt = <710000>;
-+			regulator-max-microvolt = <1320000>;
-+			enable-gpios = <&pmic 6 GPIO_ACTIVE_HIGH>;
-+			regulator-ramp-delay = <80>;
-+			regulator-enable-ramp-delay = <1000>;
-+		};
-+	};
- };
+ 	aliases {
+ 		serial0 = &uarta;
 -- 
 2.10.2
