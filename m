@@ -1,87 +1,87 @@
-From: Olof Johansson <olof-nZhT3qVonbNeoWH0uzbU5w@public.gmane.org>
-Subject: Re: [GIT PULL 1/10] mailbox: Add Tegra HSP driver
-Date: Sat, 3 Dec 2016 21:25:08 -0800
-Message-ID: <20161204052508.GC4995@localhost>
-References: <20161118161719.24153-1-thierry.reding@gmail.com>
- <20161119022742.GK2543@localhost>
- <20161121081752.GC25171@ulmo.ba.sec>
+From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Subject: Re: [PATCH 0/8] Host1x IOMMU support + VIC support
+Date: Mon, 5 Dec 2016 15:25:05 +0200
+Message-ID: <b4186213-7ce1-901c-0bb5-3b1a02abfbda@kapsi.fi>
+References: <20161110182345.31777-1-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20161121081752.GC25171-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
+In-Reply-To: <20161110182345.31777-1-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: arm-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org
+To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Mon, Nov 21, 2016 at 09:17:52AM +0100, Thierry Reding wrote:
-> On Fri, Nov 18, 2016 at 06:27:42PM -0800, Olof Johansson wrote:
-> > Hi,
-> > 
-> > On Fri, Nov 18, 2016 at 05:17:10PM +0100, Thierry Reding wrote:
-> > > Hi ARM SoC maintainers,
-> > > 
-> > > The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
-> > > 
-> > >   Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
-> > > 
-> > > are available in the git repository at:
-> > > 
-> > >   git://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.git tags/tegra-for-4.10-mailbox
-> > > 
-> > > for you to fetch changes up to 68050eb6c611527232fe5574c7306e97e47499ef:
-> > > 
-> > >   mailbox: tegra-hsp: Use after free in tegra_hsp_remove_doorbells() (2016-11-18 14:32:13 +0100)
-> > > 
-> > > Thanks,
-> > > Thierry
-> > > 
-> > > ----------------------------------------------------------------
-> > > mailbox: Add Tegra HSP driver
-> > > 
-> > > This contains the device tree bindings and a driver for the Tegra HSP, a
-> > > hardware block that provides hardware synchronization primitives and is
-> > > the foundation for inter-processor communication between CPU and BPMP.
-> > > 
-> > > ----------------------------------------------------------------
-> > > Dan Carpenter (1):
-> > >       mailbox: tegra-hsp: Use after free in tegra_hsp_remove_doorbells()
-> > > 
-> > > Joseph Lo (2):
-> > >       soc/tegra: Add Tegra186 support
-> > 
-> > I don't think you really needed to merge this in here, since all you need it
-> > for is to fulfill the kconfig dependency and enable the driver, right? That'd
-> > happen when the driver and soc branch is merged at the toplevel anyway.
-> 
-> The reason I did this is that I wanted each branch to be buildable as a
-> way to confirm that the dependencies are correct. In order to do that I
-> need the Kconfig symbol to enable the driver.
+Bump
 
-Good point, but that's more of a local setup thing for you, and not something
-that necessarily needs to go upstream.
-
-> I suppose there are other ways I could've done that, though. Maybe in
-> the future new SoC Kconfig symbols should just be introduced way ahead
-> of time, so that they're already in a release or two before actual code
-> starts to emerge.
-
-That'd work too!
-
-> > Anyhow, no damage done, I've merged this in. I would say that it'd be a little
-> > more logical to send the SoC branch before the driver branch given this
-> > dependency though.
-> 
-> The reason that the SoC branch was sent after is because only the first
-> commit in that branch was pulled into the mailbox branch.
-> 
-> In retrospect, I think perhaps a better approach would've been to have a
-> separate branch with only the Kconfig symbol addition and pull that in
-> where needed.
-
-That could work, but the whole branch-merge-features-then-enable it workflow is
-quite acceptable as well.
-
-
--Olof
+On 10.11.2016 20:23, Mikko Perttunen wrote:
+> This series adds IOMMU support to Host1x and TegraDRM
+> and adds support for the VIC host1x client so that
+> host1x can be tested on modern Tegra platforms.
+> It depends on the previous fix series. The whole thing
+> (modulo patch order) is available as a git repository at
+> git://github.com/cyndis/linux.git; branch vic-v1.
+>
+> IO memory management is organized such that there are
+> two domains: the host1x domain and the tegradrm domain.
+> The host1x domain is used by the host1x engine and
+> contains the host1x CDMA and pushbuffers for submitted
+> jobs.
+>
+> The tegradrm domain is shared by all host1x units and
+> contains GEM objects and memory allocated by the
+> separate tegra_drm_alloc function. This function is
+> currently used to allocate space for firmware blobs
+> in the tegradrm domain.
+>
+> A userspace test case for VIC can be found at
+> https://github.com/cyndis/drm/tree/work/tegra.
+> The testcase is in tests/tegra and is called submit_vic.
+> The in-kernel firewall is not implemented for VIC;
+> therefore, IOMMU must be enabled for the test to pass.
+>
+> Tested with Jetson TX1 (T210). Probably works also
+> with Jetson TK1 (T124). Note that due to hardware changes
+> the testcase also needs to be changed to run properly
+> on T124.
+>
+> Thanks,
+>   Mikko.
+>
+> Arto Merilainen (2):
+>   drm/tegra: Add falcon helper library
+>   drm/tegra: Add VIC support
+>
+> Mikko Perttunen (6):
+>   drm/tegra: Add Tegra DRM allocation API
+>   drm/tegra: Allocate BOs from lower 4G when without IOMMU
+>   gpu: host1x: Add IOMMU support
+>   dt-bindings: Add bindings for the Tegra VIC
+>   arm64: tegra: Enable VIC on T210
+>   arm64: tegra: Enable IOMMU for Host1x on Tegra210
+>
+>  .../display/tegra/nvidia,tegra20-host1x.txt        |  13 +
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  19 +-
+>  drivers/gpu/drm/tegra/Makefile                     |   4 +-
+>  drivers/gpu/drm/tegra/drm.c                        | 101 +++++-
+>  drivers/gpu/drm/tegra/drm.h                        |   8 +
+>  drivers/gpu/drm/tegra/falcon.c                     | 256 +++++++++++++
+>  drivers/gpu/drm/tegra/falcon.h                     | 130 +++++++
+>  drivers/gpu/drm/tegra/gem.c                        |   2 +-
+>  drivers/gpu/drm/tegra/vic.c                        | 400 +++++++++++++++++++++
+>  drivers/gpu/drm/tegra/vic.h                        |  31 ++
+>  drivers/gpu/host1x/cdma.c                          |  65 +++-
+>  drivers/gpu/host1x/cdma.h                          |   4 +-
+>  drivers/gpu/host1x/dev.c                           |  39 +-
+>  drivers/gpu/host1x/dev.h                           |   5 +
+>  drivers/gpu/host1x/hw/cdma_hw.c                    |  10 +-
+>  drivers/gpu/host1x/job.c                           |  76 +++-
+>  drivers/gpu/host1x/job.h                           |   1 +
+>  include/linux/host1x.h                             |   1 +
+>  18 files changed, 1128 insertions(+), 37 deletions(-)
+>  create mode 100644 drivers/gpu/drm/tegra/falcon.c
+>  create mode 100644 drivers/gpu/drm/tegra/falcon.h
+>  create mode 100644 drivers/gpu/drm/tegra/vic.c
+>  create mode 100644 drivers/gpu/drm/tegra/vic.h
+>
