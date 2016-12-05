@@ -1,13 +1,13 @@
 From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH 3/8] drm/tegra: Add falcon helper library
-Date: Mon, 5 Dec 2016 20:13:46 +0100
-Message-ID: <20161205191346.GC22918@ulmo.ba.sec>
+Subject: Re: [PATCH 4/8] drm/tegra: Add VIC support
+Date: Mon, 5 Dec 2016 20:35:59 +0100
+Message-ID: <20161205193559.GD22918@ulmo.ba.sec>
 References: <20161110182345.31777-1-mperttunen@nvidia.com>
- <20161110182345.31777-4-mperttunen@nvidia.com>
+ <20161110182345.31777-5-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============0484059790=="
+Content-Type: multipart/mixed; boundary="===============2020279805=="
 Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20161110182345.31777-4-mperttunen@nvidia.com>
+In-Reply-To: <20161110182345.31777-5-mperttunen@nvidia.com>
 List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
  <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
 List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
@@ -22,62 +22,97 @@ Cc: linux-tegra@vger.kernel.org, Andrew Chew <achew@nvidia.com>, Arto Merilainen
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============0484059790==
+--===============2020279805==
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="mvpLiMfbWzRoNl4x"
+	protocol="application/pgp-signature"; boundary="GyRA7555PLgSTuth"
 Content-Disposition: inline
 
 
---mvpLiMfbWzRoNl4x
+--GyRA7555PLgSTuth
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Nov 10, 2016 at 08:23:40PM +0200, Mikko Perttunen wrote:
+On Thu, Nov 10, 2016 at 08:23:41PM +0200, Mikko Perttunen wrote:
 > From: Arto Merilainen <amerilainen@nvidia.com>
 >=20
-> Add a set of falcon helper routines for use by the tegradrm client drivers
-> of the various falcon-based engines.
->=20
-> The falcon is a microcontroller that acts as a frontend for the rest of a
-> particular Tegra engine.  In order to properly utilize these engines, the
-> frontend must be booted before pushing any commands.
->=20
-> Based on work by Andrew Chew <achew@nvidia.com>
+> This patch adds support for Video Image Compositor engine which
+> can be used for 2d operations.
 >=20
 > Signed-off-by: Andrew Chew <achew@nvidia.com>
 > Signed-off-by: Arto Merilainen <amerilainen@nvidia.com>
 > Signed-off-by: Mikko Perttunen <mperttunen@nvidia.com>
 > ---
 >  drivers/gpu/drm/tegra/Makefile |   3 +-
->  drivers/gpu/drm/tegra/falcon.c | 256 +++++++++++++++++++++++++++++++++++=
+>  drivers/gpu/drm/tegra/drm.c    |   3 +
+>  drivers/gpu/drm/tegra/drm.h    |   1 +
+>  drivers/gpu/drm/tegra/vic.c    | 400 +++++++++++++++++++++++++++++++++++=
 ++++++
->  drivers/gpu/drm/tegra/falcon.h | 130 +++++++++++++++++++++
->  3 files changed, 388 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/gpu/drm/tegra/falcon.c
->  create mode 100644 drivers/gpu/drm/tegra/falcon.h
+>  drivers/gpu/drm/tegra/vic.h    |  31 ++++
+>  include/linux/host1x.h         |   1 +
+>  6 files changed, 438 insertions(+), 1 deletion(-)
+>  create mode 100644 drivers/gpu/drm/tegra/vic.c
+>  create mode 100644 drivers/gpu/drm/tegra/vic.h
 >=20
 > diff --git a/drivers/gpu/drm/tegra/Makefile b/drivers/gpu/drm/tegra/Makef=
 ile
-> index 2c66a8d..93e9a4a 100644
+> index 93e9a4a..6af3a9a 100644
 > --- a/drivers/gpu/drm/tegra/Makefile
 > +++ b/drivers/gpu/drm/tegra/Makefile
-> @@ -13,6 +13,7 @@ tegra-drm-y :=3D \
->  	sor.o \
+> @@ -14,6 +14,7 @@ tegra-drm-y :=3D \
 >  	dpaux.o \
 >  	gr2d.o \
-> -	gr3d.o
-> +	gr3d.o \
-> +	falcon.o
+>  	gr3d.o \
+> -	falcon.o
+> +	falcon.o \
+> +	vic.o
 > =20
 >  obj-$(CONFIG_DRM_TEGRA) +=3D tegra-drm.o
-> diff --git a/drivers/gpu/drm/tegra/falcon.c b/drivers/gpu/drm/tegra/falco=
-n.c
+> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+> index ecfe7ba..707404d 100644
+> --- a/drivers/gpu/drm/tegra/drm.c
+> +++ b/drivers/gpu/drm/tegra/drm.c
+> @@ -1151,11 +1151,13 @@ static const struct of_device_id host1x_drm_subde=
+vs[] =3D {
+>  	{ .compatible =3D "nvidia,tegra124-sor", },
+>  	{ .compatible =3D "nvidia,tegra124-hdmi", },
+>  	{ .compatible =3D "nvidia,tegra124-dsi", },
+> +	{ .compatible =3D "nvidia,tegra124-vic", },
+>  	{ .compatible =3D "nvidia,tegra132-dsi", },
+>  	{ .compatible =3D "nvidia,tegra210-dc", },
+>  	{ .compatible =3D "nvidia,tegra210-dsi", },
+>  	{ .compatible =3D "nvidia,tegra210-sor", },
+>  	{ .compatible =3D "nvidia,tegra210-sor1", },
+> +	{ .compatible =3D "nvidia,tegra210-vic", },
+>  	{ /* sentinel */ }
+>  };
+> =20
+> @@ -1177,6 +1179,7 @@ static struct platform_driver * const drivers[] =3D=
+ {
+>  	&tegra_sor_driver,
+>  	&tegra_gr2d_driver,
+>  	&tegra_gr3d_driver,
+> +	&tegra_vic_driver,
+>  };
+> =20
+>  static int __init host1x_drm_init(void)
+> diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+> index f75b505..8efaaa4 100644
+> --- a/drivers/gpu/drm/tegra/drm.h
+> +++ b/drivers/gpu/drm/tegra/drm.h
+> @@ -292,5 +292,6 @@ extern struct platform_driver tegra_dpaux_driver;
+>  extern struct platform_driver tegra_sor_driver;
+>  extern struct platform_driver tegra_gr2d_driver;
+>  extern struct platform_driver tegra_gr3d_driver;
+> +extern struct platform_driver tegra_vic_driver;
+> =20
+>  #endif /* HOST1X_DRM_H */
+> diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
 > new file mode 100644
-> index 0000000..180b2fd
+> index 0000000..9eda5e5
 > --- /dev/null
-> +++ b/drivers/gpu/drm/tegra/falcon.c
-> @@ -0,0 +1,256 @@
+> +++ b/drivers/gpu/drm/tegra/vic.c
+> @@ -0,0 +1,400 @@
 > +/*
 > + * Copyright (c) 2015, NVIDIA Corporation.
 > + *
@@ -86,447 +121,421 @@ n.c
 > + * published by the Free Software Foundation.
 > + */
 > +
+> +#include <linux/clk.h>
+> +#include <linux/host1x.h>
+> +#include <linux/iommu.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/of_platform.h>
 > +#include <linux/platform_device.h>
-> +#include <linux/dma-mapping.h>
-> +#include <linux/firmware.h>
-> +#include <linux/pci_ids.h>
-> +#include <linux/iopoll.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/reset.h>
 > +
-> +#include "falcon.h"
+> +#include <soc/tegra/pmc.h>
+> +
 > +#include "drm.h"
+> +#include "falcon.h"
+> +#include "vic.h"
 > +
-> +#define FALCON_IDLE_TIMEOUT_US		100000
-> +#define FALCON_IDLE_CHECK_PERIOD_US	10
+> +struct vic_config {
+> +	/* Firmware name */
+> +	const char *ucode_name;
 
-Seems a little overkill to have these here, given that their only used
-twice. They're also used in two cases where we may end up using
-different periods and timeouts eventually, so I'd just stick them into
-falcon_wait_idle() and falcon_dma_wait_idle() directly and omit these
-definitions. That's kind of a nitpick, so feel free to keep it as-is.
+Maybe just "firmware"? That way you could remove the comment.
 
-> +
-> +enum falcon_memory {
-> +	FALCON_MEMORY_IMEM,
-> +	FALCON_MEMORY_DATA,
 > +};
 > +
-> +static void falcon_writel(struct falcon *falcon, u32 value, u32 offset)
+> +struct vic {
+> +	struct falcon falcon;
+> +	bool booted;
+> +
+> +	void __iomem *regs;
+> +	struct tegra_drm_client client;
+> +	struct host1x_channel *channel;
+> +	struct iommu_domain *domain;
+> +	struct device *dev;
+> +	struct clk *clk;
+> +
+> +	/* Platform configuration */
+> +	const struct vic_config *config;
+> +};
+> +
+> +static inline struct vic *to_vic(struct tegra_drm_client *client)
 > +{
-> +	writel(value, falcon->regs + offset);
+> +	return container_of(client, struct vic, client);
 > +}
 > +
-> +int falcon_wait_idle(struct falcon *falcon)
+> +static void vic_writel(struct vic *vic, u32 value, unsigned int offset)
 > +{
-> +	u32 idlestate;
-> +
-> +	return readl_poll_timeout(falcon->regs + FALCON_IDLESTATE, idlestate,
-> +				  (!idlestate),
-
-That's an odd way to write this. Why not just "idlestate =3D=3D 0"? That's
-much easier to read and more explicit.
-
-> +				  FALCON_IDLE_CHECK_PERIOD_US,
-> +				  FALCON_IDLE_TIMEOUT_US);
+> +	writel(value, vic->regs + offset);
 > +}
 > +
-> +static int falcon_dma_wait_idle(struct falcon *falcon)
+> +static int vic_runtime_resume(struct device *dev)
 > +{
-> +	u32 dmatrfcmd;
-
-u32 value? Naming it after a register suggests that it may be an offset
-rather than the register value.
-
+> +	struct vic *vic =3D dev_get_drvdata(dev);
 > +
-> +	return readl_poll_timeout(falcon->regs + FALCON_DMATRFCMD, dmatrfcmd,
-> +				  (dmatrfcmd & FALCON_DMATRFCMD_IDLE),
-> +				  FALCON_IDLE_CHECK_PERIOD_US,
-> +				  FALCON_IDLE_TIMEOUT_US);
+> +	return clk_prepare_enable(vic->clk);
 > +}
 > +
-> +static int falcon_copy_chunk(struct falcon *falcon,
-> +			     phys_addr_t base,
-> +			     unsigned long offset,
-> +			     enum falcon_memory target)
+> +static int vic_runtime_suspend(struct device *dev)
 > +{
-> +	u32 cmd =3D FALCON_DMATRFCMD_SIZE_256B;
+> +	struct vic *vic =3D dev_get_drvdata(dev);
 > +
-> +	if (target =3D=3D FALCON_MEMORY_IMEM)
-> +		cmd |=3D FALCON_DMATRFCMD_IMEM;
+> +	clk_disable_unprepare(vic->clk);
 > +
-> +	falcon_writel(falcon, offset, FALCON_DMATRFMOFFS);
-> +	falcon_writel(falcon, base, FALCON_DMATRFFBOFFS);
-> +	falcon_writel(falcon, cmd, FALCON_DMATRFCMD);
-> +
-> +	return falcon_dma_wait_idle(falcon);
-> +}
-> +
-> +static void falcon_copy_firmware_image(struct falcon *falcon,
-> +				       const struct firmware *firmware)
-> +{
-> +	u32 *firmware_vaddr =3D falcon->firmware.vaddr;
-> +	size_t i;
-> +
-> +	/* copy the whole thing taking into account endianness */
-> +	for (i =3D 0; i < firmware->size / sizeof(u32); i++)
-> +		firmware_vaddr[i] =3D le32_to_cpu(((u32 *)firmware->data)[i]);
-> +
-> +	/* ensure that caches are flushed and falcon can see the firmware */
-> +	dma_sync_single_for_device(falcon->dev, virt_to_phys(firmware_vaddr),
-> +				   falcon->firmware.size, DMA_TO_DEVICE);
-
-My understanding is that this is an error and the DMA API will complain
-about it if debugging is enabled. I think you need to call one of the
-dma_map_*() functions on the memory before you can do a dma_sync_*().
-
-> +}
-> +
-> +static int falcon_parse_firmware_image(struct falcon *falcon)
-> +{
-> +	struct falcon_firmware_bin_header_v1 *bin_header =3D
-> +		(void *)falcon->firmware.vaddr;
-> +	struct falcon_firmware_os_header_v1 *os_header;
-
-Can we make these shorter? Perhaps by leaving out the _header suffix?
-It'd be nice if we could avoid splitting these across multiple lines.
-
-> +
-> +	/* endian problems would show up right here */
-> +	if (bin_header->bin_magic !=3D PCI_VENDOR_ID_NVIDIA) {
-> +		dev_err(falcon->dev, "failed to get firmware magic");
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* currently only version 1 is supported */
-> +	if (bin_header->bin_ver !=3D 1) {
-> +		dev_err(falcon->dev, "unsupported firmware version");
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* check that the firmware size is consistent */
-> +	if (bin_header->bin_size > falcon->firmware.size) {
-> +		dev_err(falcon->dev, "firmware image size inconsistency");
-> +		return -EINVAL;
-> +	}
-
-These messages are missing newlines at the end.
-
-> +
-> +	os_header =3D (falcon->firmware.vaddr +
-> +		 bin_header->os_bin_header_offset);
-
-I think if we shorten the variable names a little this will also fit on
-a single line. There's also no need for the parentheses.
-
-> +
-> +	falcon->firmware.bin_data.size =3D bin_header->os_bin_size;
-> +	falcon->firmware.bin_data.offset =3D bin_header->os_bin_data_offset;
-> +	falcon->firmware.code.offset =3D os_header->os_code_offset;
-> +	falcon->firmware.code.size   =3D os_header->os_code_size;
-> +	falcon->firmware.data.offset =3D os_header->os_data_offset;
-> +	falcon->firmware.data.size   =3D os_header->os_data_size;
-
-Can you remove the extra padding before =3D, please? It's inconsistent
-with the other assignments.
-
+> +	vic->booted =3D false;
 > +
 > +	return 0;
 > +}
 > +
-> +int falcon_read_firmware(struct falcon *falcon, const char *firmware_nam=
-e)
-
-The firmware_ prefix in firmware_name is redundant and can be dropped,
-in my opinion.
-
+> +static int vic_boot(struct vic *vic)
 > +{
-> +	const struct firmware *firmware;
-> +	int err;
+> +	u32 fce_ucode_size, fce_bin_data_offset;
+> +	void *hdr;
+> +	int err =3D 0;
 > +
-> +	if (falcon->firmware.valid)
-
-Do we really need the .valid field? It seems like we should be able to
-derive it from the value of one of the other fields.
-
+> +	if (vic->booted)
 > +		return 0;
 > +
-> +	err =3D request_firmware(&firmware, firmware_name, falcon->dev);
-> +	if (err < 0) {
-> +		dev_err(falcon->dev, "failed to get firmware\n");
+> +	if (!vic->falcon.firmware.valid) {
+> +		err =3D falcon_read_firmware(&vic->falcon,
+> +					   vic->config->ucode_name);
+> +		if (err < 0)
+> +			return err;
+> +	}
+> +
+> +	/* setup clockgating registers */
+> +	vic_writel(vic, CG_IDLE_CG_DLY_CNT(4) |
+> +			CG_IDLE_CG_EN |
+> +			CG_WAKEUP_DLY_CNT(4),
+> +		   NV_PVIC_MISC_PRI_VIC_CG);
+> +
+> +	err =3D falcon_boot(&vic->falcon);
+> +	if (err < 0)
 > +		return err;
-
-It'd be nice to show the user what error occurred. Maybe also show the
-name of the firmware that couldn't be loaded.
-
-> +	}
 > +
-> +	falcon->firmware.size =3D firmware->size;
+> +	hdr =3D vic->falcon.firmware.vaddr;
+> +	fce_bin_data_offset =3D *(u32 *)(hdr + VIC_UCODE_FCE_DATA_OFFSET);
+> +	hdr =3D vic->falcon.firmware.vaddr +
+> +		*(u32 *)(hdr + VIC_UCODE_FCE_HEADER_OFFSET);
+> +	fce_ucode_size =3D *(u32 *)(hdr + FCE_UCODE_SIZE_OFFSET);
 > +
-> +	/* allocate iova space for the firmware */
-> +	falcon->firmware.vaddr =3D falcon->ops->alloc(falcon, firmware->size,
-> +						 &falcon->firmware.paddr);
-
-The arguments aren't properly aligned.
-
-> +	if (!falcon->firmware.vaddr) {
-> +		dev_err(falcon->dev, "dma memory mapping failed");
-> +		err =3D -ENOMEM;
-> +		goto err_alloc_firmware;
-> +	}
+> +	falcon_execute_method(&vic->falcon, VIC_SET_APPLICATION_ID, 1);
+> +	falcon_execute_method(&vic->falcon, VIC_SET_FCE_UCODE_SIZE,
+> +			      fce_ucode_size);
+> +	falcon_execute_method(&vic->falcon, VIC_SET_FCE_UCODE_OFFSET,
+> +			      (vic->falcon.firmware.paddr + fce_bin_data_offset)
+> +				>> 8);
 > +
-> +	/* copy firmware image into local area. this also ensures endianness */
-> +	falcon_copy_firmware_image(falcon, firmware);
-> +
-> +	/* parse the image data */
-> +	err =3D falcon_parse_firmware_image(falcon);
+> +	err =3D falcon_wait_idle(&vic->falcon);
 > +	if (err < 0) {
-> +		dev_err(falcon->dev, "failed to parse firmware image\n");
-> +		goto err_setup_firmware_image;
+> +		dev_err(vic->dev,
+> +			"failed to set application ID and FCE base\n");
+> +		return err;
 > +	}
 > +
-> +	falcon->firmware.valid =3D true;
+> +	vic->booted =3D true;
 > +
-> +	release_firmware(firmware);
+> +	return 0;
+> +}
+> +
+> +static void *vic_falcon_alloc(struct falcon *falcon, size_t size,
+> +			       dma_addr_t *iova)
+> +{
+> +	struct tegra_drm *tegra =3D falcon->data;
+> +
+> +	return tegra_drm_alloc(tegra, size, iova);
+> +}
+> +
+> +static void vic_falcon_free(struct falcon *falcon, size_t size,
+> +			    dma_addr_t iova, void *va)
+> +{
+> +	struct tegra_drm *tegra =3D falcon->data;
+> +
+> +	return tegra_drm_free(tegra, size, va, iova);
+> +}
+> +
+> +static const struct falcon_ops vic_falcon_ops =3D {
+> +	.alloc =3D vic_falcon_alloc,
+> +	.free =3D vic_falcon_free
+> +};
+> +
+> +static int vic_init(struct host1x_client *client)
+> +{
+> +	struct tegra_drm_client *drm =3D host1x_to_drm_client(client);
+> +	struct drm_device *dev =3D dev_get_drvdata(client->parent);
+> +	struct tegra_drm *tegra =3D dev->dev_private;
+> +	struct vic *vic =3D to_vic(drm);
+> +	int err;
+> +
+> +	if (tegra->domain) {
+> +		err =3D iommu_attach_device(tegra->domain, vic->dev);
+> +		if (err < 0) {
+> +			dev_err(vic->dev, "failed to attach to domain: %d\n",
+> +				err);
+> +			return err;
+> +		}
+> +
+> +		vic->domain =3D tegra->domain;
+> +	}
+> +
+> +	vic->falcon.dev =3D vic->dev;
+> +	vic->falcon.regs =3D vic->regs;
+> +	vic->falcon.data =3D tegra;
+
+Why do we need this? We can get at struct vic * from struct falcon * via
+an upcast, and once we have struct vic, we have struct tegra_drm_client.
+
+But now I realize that apparently there's no way to get from that to the
+struct drm_device. I guess we could go via vic->client.base.parent and a
+call to dev_get_drvdata(), but that's rather far. It's still a little
+less confusing than stashing the struct tegra_drm * in it, since it is
+not at all driver-specific data.
+
+> +	vic->falcon.ops =3D &vic_falcon_ops;
+> +	err =3D falcon_init(&vic->falcon);
+
+Could use a blank line between the above.
+
+> +	if (err < 0)
+> +		goto detach_device;
+> +
+> +	vic->channel =3D host1x_channel_request(client->dev);
+> +	if (!vic->channel) {
+> +		err =3D -ENOMEM;
+> +		goto exit_falcon;
+> +	}
+> +
+> +	client->syncpts[0] =3D host1x_syncpt_request(client->dev, 0);
+> +	if (!client->syncpts[0]) {
+> +		err =3D -ENOMEM;
+> +		goto free_channel;
+> +	}
+> +
+> +	err =3D tegra_drm_register_client(tegra, drm);
+> +	if (err < 0)
+> +		goto free_syncpt;
 > +
 > +	return 0;
 > +
-> +err_setup_firmware_image:
-> +	falcon->ops->free(falcon, falcon->firmware.size,
-> +			  falcon->firmware.paddr, falcon->firmware.vaddr);
-> +err_alloc_firmware:
-> +	release_firmware(firmware);
+> +free_syncpt:
+> +	host1x_syncpt_free(client->syncpts[0]);
+> +free_channel:
+> +	host1x_channel_free(vic->channel);
+> +exit_falcon:
+> +	falcon_exit(&vic->falcon);
+> +detach_device:
+> +	if (tegra->domain)
+> +		iommu_detach_device(tegra->domain, vic->dev);
 > +
 > +	return err;
 > +}
 > +
-> +int falcon_init(struct falcon *falcon)
+> +static int vic_exit(struct host1x_client *client)
 > +{
-> +	/* check mandatory ops */
-> +	if (!falcon->ops || !falcon->ops->alloc || !falcon->ops->free)
-> +		return -EINVAL;
+> +	struct tegra_drm_client *drm =3D host1x_to_drm_client(client);
+> +	struct drm_device *dev =3D dev_get_drvdata(client->parent);
+> +	struct tegra_drm *tegra =3D dev->dev_private;
+> +	struct vic *vic =3D to_vic(drm);
+> +	int err;
 > +
-> +	falcon->firmware.valid =3D false;
+> +	err =3D tegra_drm_unregister_client(tegra, drm);
+> +	if (err < 0)
+> +		return err;
+> +
+> +	host1x_syncpt_free(client->syncpts[0]);
+> +	host1x_channel_free(vic->channel);
+> +
+> +	falcon_exit(&vic->falcon);
+> +
+> +	if (vic->domain) {
+> +		iommu_detach_device(vic->domain, vic->dev);
+> +		vic->domain =3D NULL;
+> +	}
 > +
 > +	return 0;
 > +}
 > +
-> +void falcon_exit(struct falcon *falcon)
+> +static const struct host1x_client_ops vic_client_ops =3D {
+> +	.init =3D vic_init,
+> +	.exit =3D vic_exit,
+> +};
+> +
+> +static int vic_open_channel(struct tegra_drm_client *client,
+> +			    struct tegra_drm_context *context)
 > +{
-> +	if (!falcon->firmware.valid)
-> +		return;
+> +	struct vic *vic =3D to_vic(client);
+> +	int err;
 > +
-> +	falcon->ops->free(falcon, falcon->firmware.size,
-> +			  falcon->firmware.paddr,
-> +			  falcon->firmware.vaddr);
-> +	falcon->firmware.valid =3D false;
-> +}
+> +	err =3D pm_runtime_get_sync(vic->dev);
+> +	if (err < 0)
+> +		return err;
 > +
-> +int falcon_boot(struct falcon *falcon)
-> +{
-> +	unsigned long offset;
-> +	int err =3D 0;
+> +	/*
+> +	 * Try to boot the Falcon microcontroller. Booting is deferred until
+> +	 * here because the firmware might not yet be available during system
+> +	 * boot, for example if it's on remote storage.
+> +	 */
 
-I don'n think it's necessary to initialize err here.
+That sounds like a hack. Typically you're supposed to have the firmware
+on the same medium as the module that requests it. That is, if the
+driver is built-in, then you need to make the firmware available as
+built-in as well or stash it into an initrd. If the driver is built as a
+loadable module and is on the root filesystem, that's where the firmware
+should be as well. There's also the possibility to put the loadable
+module into an initrd, in which case that's where the firmware should go
+as well.
 
-> +
-> +	if (!falcon->firmware.valid)
-> +		return -EINVAL;
-> +
-> +	falcon_writel(falcon, 0, FALCON_DMACTL);
-> +
-> +	/* setup the address of the binary data. Falcon can access it later */
+That said, I think it makes sense to defer the actual booting until this
+point. Loading the firmware seems unappropriate to me. It really should
+be done in ->probe().
 
-If you write sentences with a full stop, please use a capital first
-letter. In this case I think you can just drop the full stop:
-
-	/* setup the address of the binary data so Falcon can access it later */
-
-> +	falcon_writel(falcon, (falcon->firmware.paddr +
-> +			       falcon->firmware.bin_data.offset) >> 8,
-> +		      FALCON_DMATRFBASE);
-> +
-> +	/* copy the data segment into Falcon internal memory */
-> +	for (offset =3D 0; offset < falcon->firmware.data.size; offset +=3D 256)
-> +		falcon_copy_chunk(falcon,
-> +				  falcon->firmware.data.offset + offset,
-> +				  offset, FALCON_MEMORY_DATA);
-> +
-> +	/* copy the first code segment into Falcon internal memory */
-> +	falcon_copy_chunk(falcon, falcon->firmware.code.offset,
-> +			  0, FALCON_MEMORY_IMEM);
-> +
-> +	/* setup falcon interrupts */
-> +	falcon_writel(falcon, FALCON_IRQMSET_EXT(0xff) |
-> +			      FALCON_IRQMSET_SWGEN1 |
-> +			      FALCON_IRQMSET_SWGEN0 |
-> +			      FALCON_IRQMSET_EXTERR |
-> +			      FALCON_IRQMSET_HALT |
-> +			      FALCON_IRQMSET_WDTMR,
-> +		      FALCON_IRQMSET);
-> +	falcon_writel(falcon, FALCON_IRQDEST_EXT(0xff) |
-> +			      FALCON_IRQDEST_SWGEN1 |
-> +			      FALCON_IRQDEST_SWGEN0 |
-> +			      FALCON_IRQDEST_EXTERR |
-> +			      FALCON_IRQDEST_HALT,
-> +		      FALCON_IRQDEST);
-> +
-> +	/* enable interface */
-> +	falcon_writel(falcon, FALCON_ITFEN_MTHDEN |
-> +			      FALCON_ITFEN_CTXEN,
-> +		      FALCON_ITFEN);
-> +
-> +	/* boot falcon */
-> +	falcon_writel(falcon, 0x00000000, FALCON_BOOTVEC);
-> +	falcon_writel(falcon, FALCON_CPUCTL_STARTCPU, FALCON_CPUCTL);
-> +
-> +	err =3D falcon_wait_idle(falcon);
+> +	err =3D vic_boot(vic);
 > +	if (err < 0) {
-> +		dev_err(falcon->dev, "falcon boot failed due to timeout");
+> +		pm_runtime_put(vic->dev);
 > +		return err;
 > +	}
 > +
-> +	dev_info(falcon->dev, "falcon booted");
-
-No need to brag here, it's supposed to be successful. Let the user know
-if it isn't. If you really want this, make sure it's output at debug
-level, not info. Also I think we need to agree on whether these are
-named Falcon or falcon and then use it consistently. I'm leaning towards
-the former. Also, there are a few messages with missing newlines.
-
+> +	context->channel =3D host1x_channel_get(vic->channel);
+> +	if (!context->channel) {
+> +		pm_runtime_put(vic->dev);
+> +		return -ENOMEM;
+> +	}
 > +
 > +	return 0;
 > +}
 > +
-> +void falcon_execute_method(struct falcon *falcon, u32 method, u32 data)
+> +static void vic_close_channel(struct tegra_drm_context *context)
 > +{
-> +	falcon_writel(falcon, method >> 2, FALCON_UCLASS_METHOD_OFFSET);
-> +	falcon_writel(falcon, data, FALCON_UCLASS_METHOD_DATA);
+> +	struct vic *vic =3D to_vic(context->client);
+> +
+> +	host1x_channel_put(context->channel);
+> +
+> +	pm_runtime_put(vic->dev);
 > +}
-> diff --git a/drivers/gpu/drm/tegra/falcon.h b/drivers/gpu/drm/tegra/falco=
-n.h
-> new file mode 100644
-> index 0000000..56284b9
-> --- /dev/null
-> +++ b/drivers/gpu/drm/tegra/falcon.h
-> @@ -0,0 +1,130 @@
-> +/*
-> + * Copyright (c) 2015, NVIDIA Corporation.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + */
 > +
-> +#ifndef _FALCON_H_
-> +#define _FALCON_H_
-> +
-> +#include <linux/types.h>
-> +
-> +#define FALCON_UCLASS_METHOD_OFFSET		0x00000040
-> +
-> +#define FALCON_UCLASS_METHOD_DATA		0x00000044
-> +
-> +#define FALCON_IRQMSET				0x00001010
-> +#define FALCON_IRQMSET_WDTMR			(1 << 1)
-> +#define FALCON_IRQMSET_HALT			(1 << 4)
-> +#define FALCON_IRQMSET_EXTERR			(1 << 5)
-> +#define FALCON_IRQMSET_SWGEN0			(1 << 6)
-> +#define FALCON_IRQMSET_SWGEN1			(1 << 7)
-> +#define FALCON_IRQMSET_EXT(v)			(((v) & 0xff) << 8)
-> +
-> +#define FALCON_IRQDEST				0x0000101c
-> +#define FALCON_IRQDEST_HALT			(1 << 4)
-> +#define FALCON_IRQDEST_EXTERR			(1 << 5)
-> +#define FALCON_IRQDEST_SWGEN0			(1 << 6)
-> +#define FALCON_IRQDEST_SWGEN1			(1 << 7)
-> +#define FALCON_IRQDEST_EXT(v)			(((v) & 0xff) << 8)
-> +
-> +#define FALCON_ITFEN				0x00001048
-> +#define FALCON_ITFEN_CTXEN			(1 << 0)
-> +#define FALCON_ITFEN_MTHDEN			(1 << 1)
-> +
-> +#define FALCON_IDLESTATE			0x0000104c
-> +
-> +#define FALCON_CPUCTL				0x00001100
-> +#define FALCON_CPUCTL_STARTCPU			(1 << 1)
-> +
-> +#define FALCON_BOOTVEC				0x00001104
-> +
-> +#define FALCON_DMACTL				0x0000110c
-> +#define FALCON_DMACTL_DMEM_SCRUBBING		(1 << 1)
-> +#define FALCON_DMACTL_IMEM_SCRUBBING		(1 << 2)
-> +
-> +#define FALCON_DMATRFBASE			0x00001110
-> +
-> +#define FALCON_DMATRFMOFFS			0x00001114
-> +
-> +#define FALCON_DMATRFCMD			0x00001118
-> +#define FALCON_DMATRFCMD_IDLE			(1 << 1)
-> +#define FALCON_DMATRFCMD_IMEM			(1 << 4)
-> +#define FALCON_DMATRFCMD_SIZE_256B		(6 << 8)
-> +
-> +#define FALCON_DMATRFFBOFFS			0x0000111c
-> +
-> +struct falcon_firmware_bin_header_v1 {
-> +	u32 bin_magic;		/* 0x10de */
-> +	u32 bin_ver;		/* cya, versioning of bin format (1) */
-
-Not sure everyone understands what cya means, here. Perhaps just drop
-it?
-
-> +	u32 bin_size;		/* entire image size including this header */
-> +	u32 os_bin_header_offset;
-> +	u32 os_bin_data_offset;
-> +	u32 os_bin_size;
+> +static const struct tegra_drm_client_ops vic_ops =3D {
+> +	.open_channel =3D vic_open_channel,
+> +	.close_channel =3D vic_close_channel,
+> +	.submit =3D tegra_drm_submit,
 > +};
 > +
-> +struct falcon_firmware_os_app_v1 {
-> +	u32 offset;
-> +	u32 size;
+> +static const struct vic_config vic_t124_config =3D {
+> +	.ucode_name =3D "nvidia/tegra124/vic03_ucode.bin",
 > +};
 > +
-> +struct falcon_firmware_os_header_v1 {
-> +	u32 os_code_offset;
-> +	u32 os_code_size;
-> +	u32 os_data_offset;
-> +	u32 os_data_size;
-> +	u32 num_apps;
-> +	struct falcon_firmware_os_app_v1 *app_code;
-> +	struct falcon_firmware_os_app_v1 *app_data;
-
-The above two seem to be completel unused. Should we drop them?
-
-> +	u32 *os_ovl_offset;
-> +	u32 *os_ovl_size;
+> +static const struct vic_config vic_t210_config =3D {
+> +	.ucode_name =3D "nvidia/tegra210/vic04_ucode.bin",
 > +};
+> +
+> +static const struct of_device_id vic_match[] =3D {
+> +	{ .compatible =3D "nvidia,tegra124-vic", .data =3D &vic_t124_config },
+> +	{ .compatible =3D "nvidia,tegra210-vic", .data =3D &vic_t210_config },
+> +	{ },
+> +};
+> +
+> +static int vic_probe(struct platform_device *pdev)
+> +{
+> +	struct vic_config *vic_config =3D NULL;
+> +	struct device *dev =3D &pdev->dev;
+> +	struct host1x_syncpt **syncpts;
+> +	struct resource *regs;
+> +	const struct of_device_id *match;
+> +	struct vic *vic;
+> +	int err;
+> +
+> +	match =3D of_match_device(vic_match, dev);
+> +	vic_config =3D (struct vic_config *)match->data;
+> +
+> +	vic =3D devm_kzalloc(dev, sizeof(*vic), GFP_KERNEL);
+> +	if (!vic)
+> +		return -ENOMEM;
+> +
+> +	syncpts =3D devm_kzalloc(dev, sizeof(*syncpts), GFP_KERNEL);
+> +	if (!syncpts)
+> +		return -ENOMEM;
+> +
+> +	regs =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	if (!regs) {
+> +		dev_err(&pdev->dev, "failed to get registers\n");
+> +		return -ENXIO;
+> +	}
+> +
+> +	vic->regs =3D devm_ioremap_resource(dev, regs);
+> +	if (IS_ERR(vic->regs))
+> +		return PTR_ERR(vic->regs);
+> +
+> +	vic->clk =3D devm_clk_get(dev, NULL);
+> +	if (IS_ERR(vic->clk)) {
+> +		dev_err(&pdev->dev, "failed to get clock\n");
+> +		return PTR_ERR(vic->clk);
+> +	}
+> +
+> +	platform_set_drvdata(pdev, vic);
+> +
+> +	INIT_LIST_HEAD(&vic->client.base.list);
+> +	vic->client.base.ops =3D &vic_client_ops;
+> +	vic->client.base.dev =3D dev;
+> +	vic->client.base.class =3D HOST1X_CLASS_VIC;
+> +	vic->client.base.syncpts =3D syncpts;
+> +	vic->client.base.num_syncpts =3D 1;
+> +	vic->dev =3D dev;
+> +	vic->config =3D vic_config;
+> +
+> +	INIT_LIST_HEAD(&vic->client.list);
+> +	vic->client.ops =3D &vic_ops;
+> +
+> +	err =3D host1x_client_register(&vic->client.base);
+> +	if (err < 0) {
+> +		dev_err(dev, "failed to register host1x client: %d\n", err);
+> +		platform_set_drvdata(pdev, NULL);
+> +		return err;
+> +	}
+> +
+> +	pm_runtime_enable(&pdev->dev);
+> +	if (!pm_runtime_enabled(&pdev->dev)) {
+> +		err =3D vic_runtime_resume(&pdev->dev);
+> +		if (err < 0)
+> +			goto unregister_client;
+> +	}
 
-Can we in general sanitize the names of these a little? It's redundent
-to add a os_ prefix in a structure that contains an _os_ infix.
+That's a slightly ugly construct, but I can't think of an easy way to
+get rid of it (other than to depend on PM, which actually might be the
+right thing to do here, it's already selected by ARCH_TEGRA on 64-bit
+ARM). I can't think of a scenario where we'd want to run without runtime
+PM.
+
+> +
+> +	dev_info(&pdev->dev, "initialized");
+
+Again, no need for this.
 
 Thierry
 
---mvpLiMfbWzRoNl4x
+--GyRA7555PLgSTuth
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIcBAABCAAGBQJYRbxnAAoJEN0jrNd/PrOhhBIP/34XsOejE7BqoKX2Q9ajRn9G
-Ol7r9Hql3XndzPDOETaVU4dRKN3gadN71L6yJ2407AJfxCqQidcZncePE5gVxpi4
-SIlX7nYKfLufYdyWN0L0rOLjkI4YgI67n6SzrJWM5UFcmWLWje12if+sjbtc2xB1
-6pYc9ElxlZKODME4nSpnU0kdMUvTrLcYz0Te3+bCpACG3erG7CO2HadEFegFFcKQ
-tTDMuOzA1hZfNTQlNmrcC5Vp8GvH3tlV9urhadYNL0cexC8TE3HKrdAZEYhkXoB5
-EMsJqkTIWvxuk6fxqbn7uegYwsB1Jm6LA8JU18WBbgCPAGzi3i92SQpappHKkhQn
-/h3BFFYxLEEY9yi58ZTG5ZvXQyxTZgG9cct9If46+Ux8k0gvCbhFHQbLGQr5yvyj
-8F8rnzBH3+mZsuhKB+lKWxLHKQMwHfLkr12EkGq/ojAWoDNciScM5F5K205JrZme
-1n03osMmV2GoO7bvcG2w5z2f5giD4UxLIr5BYWISalNb1T+ncuA8M056FDYHf0s8
-40BYGwynuDOY4R9pCGcH76893DArN36r9XzHCN4RrQGd+UDb+vG6MPa+eIiBqEJA
-bKqSUpNkDRV1AqvYuVOf7ha/mvsrAE0bamdxpJjQXWe13oVX5pbvVRO5Tg5cebcI
-dSMCuFsxVs2c3WwMBzGU
-=oBHA
+iQIcBAABCAAGBQJYRcGcAAoJEN0jrNd/PrOhGyEP/21A0VdoFaN3BpRPuo/LAQHE
+SIOD44xG0WqVBuetVN0oZTu2HPHp8b6wwh9u9kNms8JBu+nWsZSpG3dr7c8DXZgX
+9D1NegiGj88IHOzvsks+yguPlljv+vCJwdqSLBRbVpwswOcMD5qqLKrsv9n7vW5g
+zVjlcZ4WH5YuuIQ/1ajfTQTKAk9HqTtr6+EyKr8Bv0zHq/T/syXwxfilFBXOVlMX
+PgvaVOPs39MDb348mxDfZTx3GRvVsUjQbw0l31AoLg/7dgoPXLfaOfCEL6DRFpKY
+4hCSd9mNMMcGTaJaXMUoXU6opEkKELA1iql9CBlEfN7yWP9u+bukmF49Agpn5IK6
+ZWnyocavIh489LBlXXSeNDQgozTTYJ3peUqXSBdV70bgm1hAWtIvnk9Xmn9Y62Mt
+1niH74P4d7TLOJy195ahU9d4KD+PQ9XHzp9BHbZ34Bo2IAgJ2eJ4lmsu/IepScj7
+DbrTWuu3/oyce+s1koIyW44sxLAXs080vEPQWqBXZ9XBXQBKNPHxjOP+jT38l+zR
+xHp5YjHXsaib/dAgOZ+x9A8ZJnsIX5bIsvavOFIGf0R0UIrrkdbQb+AhpJNFL2Bb
+BJ647PrEfNL26SkU7PAucouADO9Z4ddaLd5Oy0ARgYheHRm9Am78P7FCANF111OF
+pbwwe15apZQ5b0TVv4MB
+=g8uO
 -----END PGP SIGNATURE-----
 
---mvpLiMfbWzRoNl4x--
+--GyRA7555PLgSTuth--
 
---===============0484059790==
+--===============2020279805==
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: base64
@@ -536,4 +545,4 @@ X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
 IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
 dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
 
---===============0484059790==--
+--===============2020279805==--
