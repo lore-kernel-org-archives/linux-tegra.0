@@ -1,42 +1,110 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH 2/8] drm/tegra: Allocate BOs from lower 4G when without
- IOMMU
-Date: Wed, 7 Dec 2016 11:32:56 +0200
-Message-ID: <7587bfa4-b007-a2a0-4169-561551530191@kapsi.fi>
+From: Daniel Vetter <daniel@ffwll.ch>
+Subject: Re: [PATCH 0/8] Host1x IOMMU support + VIC support
+Date: Wed, 7 Dec 2016 11:36:09 +0100
+Message-ID: <20161207103609.uk5uxy2y25j4yoe3@phenom.ffwll.local>
 References: <20161110182345.31777-1-mperttunen@nvidia.com>
- <20161110182345.31777-3-mperttunen@nvidia.com>
- <20161205183955.GB22918@ulmo.ba.sec>
+ <20161205195131.GF22918@ulmo.ba.sec>
+ <20161206071450.uedxvvtcxbkwsoza@phenom.ffwll.local>
+ <8869d583-0cfd-d037-c299-fd1ea34c4238@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20161205183955.GB22918-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+Content-Disposition: inline
+In-Reply-To: <8869d583-0cfd-d037-c299-fd1ea34c4238@kapsi.fi>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Mikko Perttunen <cyndis@kapsi.fi>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 05.12.2016 20:39, Thierry Reding wrote:
-> On Thu, Nov 10, 2016 at 08:23:39PM +0200, Mikko Perttunen wrote:
->> On 64-bit Tegras, buffer object memory allocation may
->> return memory above 4G that units behind Host1x cannot
->> access. Add the GFP_DMA flag to these allocation when
->> IOMMU is not enabled to ensure units can always access
->> BO memory.
->
-> I don't think that's entirely true. The display controller can address
-> more than 32 bits. It's perhaps slightly different from other units that
-> are behind host1x, but maybe we need a special case here to allow frame-
-> buffers to reside in higher memory?
-
-I checked and looks like all (or at least most) units can actually 
-address 34 bits /almost always/. The thing that tripped me up was that 
-apparently the firmware for VIC still needs be in the lower 32 bits. So 
-we should be able to drop this patch.
-
->
-> Thierry
->
-
-Thanks,
-Mikko.
+T24gVHVlLCBEZWMgMDYsIDIwMTYgYXQgMTE6MzM6MTFBTSArMDIwMCwgTWlra28gUGVydHR1bmVu
+IHdyb3RlOgo+IAo+IAo+IE9uIDEyLzA2LzIwMTYgMDk6MTQgQU0sIERhbmllbCBWZXR0ZXIgd3Jv
+dGU6Cj4gPiBPbiBNb24sIERlYyAwNSwgMjAxNiBhdCAwODo1MTozMVBNICswMTAwLCBUaGllcnJ5
+IFJlZGluZyB3cm90ZToKPiA+ID4gT24gVGh1LCBOb3YgMTAsIDIwMTYgYXQgMDg6MjM6MzdQTSAr
+MDIwMCwgTWlra28gUGVydHR1bmVuIHdyb3RlOgo+ID4gPiA+IFRoaXMgc2VyaWVzIGFkZHMgSU9N
+TVUgc3VwcG9ydCB0byBIb3N0MXggYW5kIFRlZ3JhRFJNCj4gPiA+ID4gYW5kIGFkZHMgc3VwcG9y
+dCBmb3IgdGhlIFZJQyBob3N0MXggY2xpZW50IHNvIHRoYXQKPiA+ID4gPiBob3N0MXggY2FuIGJl
+IHRlc3RlZCBvbiBtb2Rlcm4gVGVncmEgcGxhdGZvcm1zLgo+ID4gPiA+IEl0IGRlcGVuZHMgb24g
+dGhlIHByZXZpb3VzIGZpeCBzZXJpZXMuIFRoZSB3aG9sZSB0aGluZwo+ID4gPiA+IChtb2R1bG8g
+cGF0Y2ggb3JkZXIpIGlzIGF2YWlsYWJsZSBhcyBhIGdpdCByZXBvc2l0b3J5IGF0Cj4gPiA+ID4g
+Z2l0Oi8vZ2l0aHViLmNvbS9jeW5kaXMvbGludXguZ2l0OyBicmFuY2ggdmljLXYxLgo+ID4gPiA+
+IAo+ID4gPiA+IElPIG1lbW9yeSBtYW5hZ2VtZW50IGlzIG9yZ2FuaXplZCBzdWNoIHRoYXQgdGhl
+cmUgYXJlCj4gPiA+ID4gdHdvIGRvbWFpbnM6IHRoZSBob3N0MXggZG9tYWluIGFuZCB0aGUgdGVn
+cmFkcm0gZG9tYWluLgo+ID4gPiA+IFRoZSBob3N0MXggZG9tYWluIGlzIHVzZWQgYnkgdGhlIGhv
+c3QxeCBlbmdpbmUgYW5kCj4gPiA+ID4gY29udGFpbnMgdGhlIGhvc3QxeCBDRE1BIGFuZCBwdXNo
+YnVmZmVycyBmb3Igc3VibWl0dGVkCj4gPiA+ID4gam9icy4KPiA+ID4gPiAKPiA+ID4gPiBUaGUg
+dGVncmFkcm0gZG9tYWluIGlzIHNoYXJlZCBieSBhbGwgaG9zdDF4IHVuaXRzIGFuZAo+ID4gPiA+
+IGNvbnRhaW5zIEdFTSBvYmplY3RzIGFuZCBtZW1vcnkgYWxsb2NhdGVkIGJ5IHRoZQo+ID4gPiA+
+IHNlcGFyYXRlIHRlZ3JhX2RybV9hbGxvYyBmdW5jdGlvbi4gVGhpcyBmdW5jdGlvbiBpcwo+ID4g
+PiA+IGN1cnJlbnRseSB1c2VkIHRvIGFsbG9jYXRlIHNwYWNlIGZvciBmaXJtd2FyZSBibG9icwo+
+ID4gPiA+IGluIHRoZSB0ZWdyYWRybSBkb21haW4uCj4gPiA+ID4gCj4gPiA+ID4gQSB1c2Vyc3Bh
+Y2UgdGVzdCBjYXNlIGZvciBWSUMgY2FuIGJlIGZvdW5kIGF0Cj4gPiA+ID4gaHR0cHM6Ly9naXRo
+dWIuY29tL2N5bmRpcy9kcm0vdHJlZS93b3JrL3RlZ3JhLgo+ID4gPiA+IFRoZSB0ZXN0Y2FzZSBp
+cyBpbiB0ZXN0cy90ZWdyYSBhbmQgaXMgY2FsbGVkIHN1Ym1pdF92aWMuCj4gPiA+ID4gVGhlIGlu
+LWtlcm5lbCBmaXJld2FsbCBpcyBub3QgaW1wbGVtZW50ZWQgZm9yIFZJQzsKPiA+ID4gPiB0aGVy
+ZWZvcmUsIElPTU1VIG11c3QgYmUgZW5hYmxlZCBmb3IgdGhlIHRlc3QgdG8gcGFzcy4KPiA+ID4g
+PiAKPiA+ID4gPiBUZXN0ZWQgd2l0aCBKZXRzb24gVFgxIChUMjEwKS4gUHJvYmFibHkgd29ya3Mg
+YWxzbwo+ID4gPiA+IHdpdGggSmV0c29uIFRLMSAoVDEyNCkuIE5vdGUgdGhhdCBkdWUgdG8gaGFy
+ZHdhcmUgY2hhbmdlcwo+ID4gPiA+IHRoZSB0ZXN0Y2FzZSBhbHNvIG5lZWRzIHRvIGJlIGNoYW5n
+ZWQgdG8gcnVuIHByb3Blcmx5Cj4gPiA+ID4gb24gVDEyNC4KPiA+ID4gCj4gPiA+IFdoYXQncyB0
+aGUgc2NvcGUgb2YgdGhlIGNoYW5nZXMgcmVxdWlyZWQgZm9yIFRlZ3JhMTI0PyBJZiB3ZSBhZGQg
+dGhlCj4gPiA+IGtlcm5lbCBiaXRzIGZvciBUZWdyYTEyNCB3ZSBzaG91bGQgYWxzbyBoYXZlIGEg
+dXNlcnNwYWNlIHRlc3QgcHJvZ3JhbSB0bwo+ID4gPiBleGVyY2lzZSBpdC4KPiA+IAo+ID4gUGxl
+YXNlIG5vdGUgdGhhdCBqdXN0IGEgdGVzdCBwcm9ncmFtIGlzIG5vdCByZWFsbHkgZW5vdWdoIHRv
+IGFkZCBtb3JlIHVhYmkKPiA+IChhbmQgVklDIHN1cHBvcnQgaGVyZSBtYXliZSBjbGFzc2lmaWVz
+IGF0IHRoYXQsIG5vIGlkZWEgaG93IHRoaXMgYWxsCj4gPiB3b3JrcykuIEFrYSBkb2VzIG1lc2Eg
+cnVuLCBhbmQgZm9yIHRoZSB2aWMgc3R1ZmYsIGRvZXMgc29tZSBsaWJ2YS9saWJ2ZHBhdQo+ID4g
+b3BlbiBzb3VyY2UgaW1wbGVtZW50YXRpb24gcnVuIG9uIHRoaXM/Cj4gPiAtRGFuaWVsCj4gPiAK
+PiAKPiBWSUMgaXMganVzdCBhbiBpbWFnZSBjb21wb3NpdG9yIHNvIGlmIHdlIHdhbnRlZCB0byB1
+c2UgaXQgYWxvbmUgd2Ugd291bGQKPiBwcm9iYWJseSBuZWVkIHRvIGltcGxlbWVudCBYMTEgMkQg
+YWNjZWxlcmF0aW9uIChhdCBsZWFzdCBub3RoaW5nIGVsc2UgY29tZXMKPiB0byBtaW5kKSwgd2hp
+Y2ggaXNuJ3QgdGhhdCB1c2VmdWwgbm93YWRheXMsIHNpbmNlIG5vdXZlYXUgd29ya3MgdG9vLiBJ
+J20KPiBpbnRlcm5hbGx5IHdvcmtpbmcgb24gTlZERUMgKHRoZSB2aWRlbyBkZWNvZGVyKSBhdCB0
+aGUgbW9tZW50IC0gaWYvd2hlbiBJJ20KPiBhbGxvd2VkIHRvIHVwc3RyZWFtIHRoYXQsIEknbGwg
+cHJvdmlkZSBtb3JlIGV4dGVuc2l2ZSB1c2Vyc3BhY2UgZm9yIGRlY29kaW5nCj4gdmlkZW8uIFRo
+aXMgd291bGQgbW9zdCBsaWtlbHkgYmUgYSBsaWJ2YSBvciBsaWJ2ZHBhdSBiYWNrZW5kOyBJIGhh
+dmUgYWxyZWFkeQo+IHByb3RvdHlwZWQgdGhlc2UuIFRoaXMgd2lsbCBhbHNvIG1vc3QgbGlrZWx5
+IHVzZSBWSUMgZm9yIGltYWdlIGZvcm1hdAo+IGNvbnZlcnNpb25zLgo+IAo+IEFzIGZvciB0aGUg
+Im1vcmUgVUFCSSIgcXVlc3Rpb247IHRoZSBVQUJJIHVzZWQgaGVyZSBhbHJlYWR5IGV4aXN0cyBp
+biB0aGUKPiBrZXJuZWwgYW5kIGxpYmRybS4gVGhlIHNhbWUgVUFCSSBjYW4gYmUgdXNlZCBmb3Ig
+YW55IEhvc3QxeCB1bml0IHdpdGhvdXQKPiBtb2RpZmljYXRpb25zOyB3ZSBoYXZlIHByZXZpb3Vz
+bHkgZXhlcmNpc2VkIGl0IG9uIG9sZGVyIFRlZ3JhIHJldmlzaW9ucyB3aXRoCj4gZGlmZmVyZW50
+IHVuaXRzLiBUaGUgb25seSB0aGluZyB0aGF0IGNoYW5nZXMgaXMgYSBuZXcgZW51bWVyYXRpb24g
+dmFsdWUgaXMKPiBhZGRlZCBmb3IgdGhlIG5ldyB1bml0LgoKTW9yZSB1YWJpIGFsc28gaW5jbHVk
+ZXMgc3R1ZmYgbGlrZSBhZGRpbmcgbW9yZSBzdXBwb3J0IGZvciBuZXdlciBlbmdpbmVzLAptb3Jl
+IHBsYXRmb3JtcywgbmV3ZXIgY2hpcHMgYW5kIGFsbCB0aGF0LiBBbnl0aGluZyByZWFsbHkgdGhh
+dCBpcyBhCmNvbnRyYWN0IGJldHdlZW4gdGhlIGtlcm5lbCBhbmQgdXNlcnNwYWNlIGFib3V0IGhv
+dyB0aGUgaHcgaXMgc2V0IHVwIChzbwplLmcuIGZhbmN5IGZlYXR1cmVzIHRoYXQgbmVlZCBhIGZl
+dyBiaXRzIHRvIGJlIHNldCBjb3JyZWN0bHksIG9yIHRoZSByaWdodAptaWNyb2NvZGUgdG8gYmUg
+bG9hZGVkIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQgYXJlIGFsc28gaW5jbHVkZWQuCgpPdGhlcndp
+c2UgaXQnZCBiZSB0cml2aWFsIHRvIGdhbWUgYnkgZG9pbmcgYSBiYXNpYyBkcml2ZXIgZm9yIHRo
+ZSB2ZXJ5CmZpcnN0IGNoaXAgdGhhdCBubyBvbmUgY2FyZXMgYWJvdXQgYW55IG1vcmUsIG9wZW4g
+c291cmNlIGl0LCBhbmQgdGhlbiBkbwphbGwgZnV0dXJlIGVuYWJsaW5nIHdpdGggdGhlIGJsb2Ig
+ZHJpdmVycyBvbmx5IGluIHVzZXJzcGFjZS4KClRoaXMgb3BlbiBzb3VyY2UgdXNlcnNwYWNlIHJl
+cXVpcmVtZW50IGlzbid0IGp1c3QgdG8gdmFsaWRhdGUgdGhlIGJhcmUKaW9jdGwgc3RydWN0cyBh
+bmQgc3R1ZmYuIFdlIGhhdmUgaXQgX2V4YWN0bHlfIGJlY2F1c2UgZ3B1IGludGVyZmFjZXMgYXJl
+CnJpZGljdWxvdXNseSB3aWRlIChmb3Igc3BlZWQgYW5kIGZsZXhpYmlsaXR5IHJlYXNvbnMpLCBh
+bmQgaGVuY2UgaXQgZG9lcwphcHBseSBmb3IgZXZlcnkgZXh0ZW5zaW9uLiBFdmVuIGlmIHlvdSBk
+b24ndCBjaGFuZ2UgYW55IG9mIHRoZSB1YXBpCmhlYWRlcnMgKHNpbmNlIHRob3NlIGRlc2NyaWJl
+IGp1c3QgYSBtaW5pc2N1bGUgcGFydCBvZiB0aGUgb3ZlcmFsbCBkcm0KaW50ZXJmYWNlIGV4cG9y
+dGVkIHRvIHVzZXJzcGFjZSkuIEFub3RoZXIgZXhhbXBsZSBpcyBhZGRpbmcgbW9yZSBhdG9taWMK
+cHJvcGVydGllcywgd2hpY2ggYWxzbyBkb2Vzbid0IGNoYW5nZSBhbnl0aGluZyB3aXRoIHRoZSBp
+b2N0bCBvciBzdHJ1Y3RzCml0c2VsZi4KCj4gSXMgdGhhdCByZWFzb25hYmxlPwoKSWYgeW91IGhh
+dmUgdGhlIHVzZXJzcGFjZSAoYW5kIGl0IG5lZWRzIHRvIGJlIHJlYWwsIG5vdCBqdXN0IHByb21p
+c2VkKQp0aGVuIHllcy4gT3RoZXJ3aXNlIGltbyBuby4gRS5nLiBSb2IgQ2xhcmsgYWx3YXlzIG1h
+a2VzIHN1cmUgb24gbXNtIHRoYXQKaGlzIHIvZSdlZCBtZXNhIGJyYW5jaCBfZG9lc18gd29yayBw
+cm9wZXJseSwgYmVmb3JlIG1lcmdpbmcgc3VwcG9ydCBmb3IKbmV3IGh3IG9yIGVuZ2luZXMgb3Ig
+YW55dGhpbmcgbGlrZSB0aGF0LiBJbnRlbC9BTUQgZG8gdGhlIHNhbWUsIGFuZCBzbwpzaG91bGQg
+bnZpZGlhLgotRGFuaWVsCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRl
+bCBDb3Jwb3JhdGlvbgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
+bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
