@@ -1,110 +1,542 @@
-From: Daniel Vetter <daniel@ffwll.ch>
-Subject: Re: [PATCH 0/8] Host1x IOMMU support + VIC support
-Date: Wed, 7 Dec 2016 11:36:09 +0100
-Message-ID: <20161207103609.uk5uxy2y25j4yoe3@phenom.ffwll.local>
+From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Subject: Re: [PATCH 3/8] drm/tegra: Add falcon helper library
+Date: Wed, 7 Dec 2016 13:54:21 +0200
+Message-ID: <7b0f809e-0cd4-dd8e-42ad-a74ef4fa36cc@kapsi.fi>
 References: <20161110182345.31777-1-mperttunen@nvidia.com>
- <20161205195131.GF22918@ulmo.ba.sec>
- <20161206071450.uedxvvtcxbkwsoza@phenom.ffwll.local>
- <8869d583-0cfd-d037-c299-fd1ea34c4238@kapsi.fi>
+ <20161110182345.31777-4-mperttunen@nvidia.com>
+ <20161205191346.GC22918@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <8869d583-0cfd-d037-c299-fd1ea34c4238@kapsi.fi>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Mikko Perttunen <cyndis@kapsi.fi>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20161205191346.GC22918-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-T24gVHVlLCBEZWMgMDYsIDIwMTYgYXQgMTE6MzM6MTFBTSArMDIwMCwgTWlra28gUGVydHR1bmVu
-IHdyb3RlOgo+IAo+IAo+IE9uIDEyLzA2LzIwMTYgMDk6MTQgQU0sIERhbmllbCBWZXR0ZXIgd3Jv
-dGU6Cj4gPiBPbiBNb24sIERlYyAwNSwgMjAxNiBhdCAwODo1MTozMVBNICswMTAwLCBUaGllcnJ5
-IFJlZGluZyB3cm90ZToKPiA+ID4gT24gVGh1LCBOb3YgMTAsIDIwMTYgYXQgMDg6MjM6MzdQTSAr
-MDIwMCwgTWlra28gUGVydHR1bmVuIHdyb3RlOgo+ID4gPiA+IFRoaXMgc2VyaWVzIGFkZHMgSU9N
-TVUgc3VwcG9ydCB0byBIb3N0MXggYW5kIFRlZ3JhRFJNCj4gPiA+ID4gYW5kIGFkZHMgc3VwcG9y
-dCBmb3IgdGhlIFZJQyBob3N0MXggY2xpZW50IHNvIHRoYXQKPiA+ID4gPiBob3N0MXggY2FuIGJl
-IHRlc3RlZCBvbiBtb2Rlcm4gVGVncmEgcGxhdGZvcm1zLgo+ID4gPiA+IEl0IGRlcGVuZHMgb24g
-dGhlIHByZXZpb3VzIGZpeCBzZXJpZXMuIFRoZSB3aG9sZSB0aGluZwo+ID4gPiA+IChtb2R1bG8g
-cGF0Y2ggb3JkZXIpIGlzIGF2YWlsYWJsZSBhcyBhIGdpdCByZXBvc2l0b3J5IGF0Cj4gPiA+ID4g
-Z2l0Oi8vZ2l0aHViLmNvbS9jeW5kaXMvbGludXguZ2l0OyBicmFuY2ggdmljLXYxLgo+ID4gPiA+
-IAo+ID4gPiA+IElPIG1lbW9yeSBtYW5hZ2VtZW50IGlzIG9yZ2FuaXplZCBzdWNoIHRoYXQgdGhl
-cmUgYXJlCj4gPiA+ID4gdHdvIGRvbWFpbnM6IHRoZSBob3N0MXggZG9tYWluIGFuZCB0aGUgdGVn
-cmFkcm0gZG9tYWluLgo+ID4gPiA+IFRoZSBob3N0MXggZG9tYWluIGlzIHVzZWQgYnkgdGhlIGhv
-c3QxeCBlbmdpbmUgYW5kCj4gPiA+ID4gY29udGFpbnMgdGhlIGhvc3QxeCBDRE1BIGFuZCBwdXNo
-YnVmZmVycyBmb3Igc3VibWl0dGVkCj4gPiA+ID4gam9icy4KPiA+ID4gPiAKPiA+ID4gPiBUaGUg
-dGVncmFkcm0gZG9tYWluIGlzIHNoYXJlZCBieSBhbGwgaG9zdDF4IHVuaXRzIGFuZAo+ID4gPiA+
-IGNvbnRhaW5zIEdFTSBvYmplY3RzIGFuZCBtZW1vcnkgYWxsb2NhdGVkIGJ5IHRoZQo+ID4gPiA+
-IHNlcGFyYXRlIHRlZ3JhX2RybV9hbGxvYyBmdW5jdGlvbi4gVGhpcyBmdW5jdGlvbiBpcwo+ID4g
-PiA+IGN1cnJlbnRseSB1c2VkIHRvIGFsbG9jYXRlIHNwYWNlIGZvciBmaXJtd2FyZSBibG9icwo+
-ID4gPiA+IGluIHRoZSB0ZWdyYWRybSBkb21haW4uCj4gPiA+ID4gCj4gPiA+ID4gQSB1c2Vyc3Bh
-Y2UgdGVzdCBjYXNlIGZvciBWSUMgY2FuIGJlIGZvdW5kIGF0Cj4gPiA+ID4gaHR0cHM6Ly9naXRo
-dWIuY29tL2N5bmRpcy9kcm0vdHJlZS93b3JrL3RlZ3JhLgo+ID4gPiA+IFRoZSB0ZXN0Y2FzZSBp
-cyBpbiB0ZXN0cy90ZWdyYSBhbmQgaXMgY2FsbGVkIHN1Ym1pdF92aWMuCj4gPiA+ID4gVGhlIGlu
-LWtlcm5lbCBmaXJld2FsbCBpcyBub3QgaW1wbGVtZW50ZWQgZm9yIFZJQzsKPiA+ID4gPiB0aGVy
-ZWZvcmUsIElPTU1VIG11c3QgYmUgZW5hYmxlZCBmb3IgdGhlIHRlc3QgdG8gcGFzcy4KPiA+ID4g
-PiAKPiA+ID4gPiBUZXN0ZWQgd2l0aCBKZXRzb24gVFgxIChUMjEwKS4gUHJvYmFibHkgd29ya3Mg
-YWxzbwo+ID4gPiA+IHdpdGggSmV0c29uIFRLMSAoVDEyNCkuIE5vdGUgdGhhdCBkdWUgdG8gaGFy
-ZHdhcmUgY2hhbmdlcwo+ID4gPiA+IHRoZSB0ZXN0Y2FzZSBhbHNvIG5lZWRzIHRvIGJlIGNoYW5n
-ZWQgdG8gcnVuIHByb3Blcmx5Cj4gPiA+ID4gb24gVDEyNC4KPiA+ID4gCj4gPiA+IFdoYXQncyB0
-aGUgc2NvcGUgb2YgdGhlIGNoYW5nZXMgcmVxdWlyZWQgZm9yIFRlZ3JhMTI0PyBJZiB3ZSBhZGQg
-dGhlCj4gPiA+IGtlcm5lbCBiaXRzIGZvciBUZWdyYTEyNCB3ZSBzaG91bGQgYWxzbyBoYXZlIGEg
-dXNlcnNwYWNlIHRlc3QgcHJvZ3JhbSB0bwo+ID4gPiBleGVyY2lzZSBpdC4KPiA+IAo+ID4gUGxl
-YXNlIG5vdGUgdGhhdCBqdXN0IGEgdGVzdCBwcm9ncmFtIGlzIG5vdCByZWFsbHkgZW5vdWdoIHRv
-IGFkZCBtb3JlIHVhYmkKPiA+IChhbmQgVklDIHN1cHBvcnQgaGVyZSBtYXliZSBjbGFzc2lmaWVz
-IGF0IHRoYXQsIG5vIGlkZWEgaG93IHRoaXMgYWxsCj4gPiB3b3JrcykuIEFrYSBkb2VzIG1lc2Eg
-cnVuLCBhbmQgZm9yIHRoZSB2aWMgc3R1ZmYsIGRvZXMgc29tZSBsaWJ2YS9saWJ2ZHBhdQo+ID4g
-b3BlbiBzb3VyY2UgaW1wbGVtZW50YXRpb24gcnVuIG9uIHRoaXM/Cj4gPiAtRGFuaWVsCj4gPiAK
-PiAKPiBWSUMgaXMganVzdCBhbiBpbWFnZSBjb21wb3NpdG9yIHNvIGlmIHdlIHdhbnRlZCB0byB1
-c2UgaXQgYWxvbmUgd2Ugd291bGQKPiBwcm9iYWJseSBuZWVkIHRvIGltcGxlbWVudCBYMTEgMkQg
-YWNjZWxlcmF0aW9uIChhdCBsZWFzdCBub3RoaW5nIGVsc2UgY29tZXMKPiB0byBtaW5kKSwgd2hp
-Y2ggaXNuJ3QgdGhhdCB1c2VmdWwgbm93YWRheXMsIHNpbmNlIG5vdXZlYXUgd29ya3MgdG9vLiBJ
-J20KPiBpbnRlcm5hbGx5IHdvcmtpbmcgb24gTlZERUMgKHRoZSB2aWRlbyBkZWNvZGVyKSBhdCB0
-aGUgbW9tZW50IC0gaWYvd2hlbiBJJ20KPiBhbGxvd2VkIHRvIHVwc3RyZWFtIHRoYXQsIEknbGwg
-cHJvdmlkZSBtb3JlIGV4dGVuc2l2ZSB1c2Vyc3BhY2UgZm9yIGRlY29kaW5nCj4gdmlkZW8uIFRo
-aXMgd291bGQgbW9zdCBsaWtlbHkgYmUgYSBsaWJ2YSBvciBsaWJ2ZHBhdSBiYWNrZW5kOyBJIGhh
-dmUgYWxyZWFkeQo+IHByb3RvdHlwZWQgdGhlc2UuIFRoaXMgd2lsbCBhbHNvIG1vc3QgbGlrZWx5
-IHVzZSBWSUMgZm9yIGltYWdlIGZvcm1hdAo+IGNvbnZlcnNpb25zLgo+IAo+IEFzIGZvciB0aGUg
-Im1vcmUgVUFCSSIgcXVlc3Rpb247IHRoZSBVQUJJIHVzZWQgaGVyZSBhbHJlYWR5IGV4aXN0cyBp
-biB0aGUKPiBrZXJuZWwgYW5kIGxpYmRybS4gVGhlIHNhbWUgVUFCSSBjYW4gYmUgdXNlZCBmb3Ig
-YW55IEhvc3QxeCB1bml0IHdpdGhvdXQKPiBtb2RpZmljYXRpb25zOyB3ZSBoYXZlIHByZXZpb3Vz
-bHkgZXhlcmNpc2VkIGl0IG9uIG9sZGVyIFRlZ3JhIHJldmlzaW9ucyB3aXRoCj4gZGlmZmVyZW50
-IHVuaXRzLiBUaGUgb25seSB0aGluZyB0aGF0IGNoYW5nZXMgaXMgYSBuZXcgZW51bWVyYXRpb24g
-dmFsdWUgaXMKPiBhZGRlZCBmb3IgdGhlIG5ldyB1bml0LgoKTW9yZSB1YWJpIGFsc28gaW5jbHVk
-ZXMgc3R1ZmYgbGlrZSBhZGRpbmcgbW9yZSBzdXBwb3J0IGZvciBuZXdlciBlbmdpbmVzLAptb3Jl
-IHBsYXRmb3JtcywgbmV3ZXIgY2hpcHMgYW5kIGFsbCB0aGF0LiBBbnl0aGluZyByZWFsbHkgdGhh
-dCBpcyBhCmNvbnRyYWN0IGJldHdlZW4gdGhlIGtlcm5lbCBhbmQgdXNlcnNwYWNlIGFib3V0IGhv
-dyB0aGUgaHcgaXMgc2V0IHVwIChzbwplLmcuIGZhbmN5IGZlYXR1cmVzIHRoYXQgbmVlZCBhIGZl
-dyBiaXRzIHRvIGJlIHNldCBjb3JyZWN0bHksIG9yIHRoZSByaWdodAptaWNyb2NvZGUgdG8gYmUg
-bG9hZGVkIG9yIHNvbWV0aGluZyBsaWtlIHRoYXQgYXJlIGFsc28gaW5jbHVkZWQuCgpPdGhlcndp
-c2UgaXQnZCBiZSB0cml2aWFsIHRvIGdhbWUgYnkgZG9pbmcgYSBiYXNpYyBkcml2ZXIgZm9yIHRo
-ZSB2ZXJ5CmZpcnN0IGNoaXAgdGhhdCBubyBvbmUgY2FyZXMgYWJvdXQgYW55IG1vcmUsIG9wZW4g
-c291cmNlIGl0LCBhbmQgdGhlbiBkbwphbGwgZnV0dXJlIGVuYWJsaW5nIHdpdGggdGhlIGJsb2Ig
-ZHJpdmVycyBvbmx5IGluIHVzZXJzcGFjZS4KClRoaXMgb3BlbiBzb3VyY2UgdXNlcnNwYWNlIHJl
-cXVpcmVtZW50IGlzbid0IGp1c3QgdG8gdmFsaWRhdGUgdGhlIGJhcmUKaW9jdGwgc3RydWN0cyBh
-bmQgc3R1ZmYuIFdlIGhhdmUgaXQgX2V4YWN0bHlfIGJlY2F1c2UgZ3B1IGludGVyZmFjZXMgYXJl
-CnJpZGljdWxvdXNseSB3aWRlIChmb3Igc3BlZWQgYW5kIGZsZXhpYmlsaXR5IHJlYXNvbnMpLCBh
-bmQgaGVuY2UgaXQgZG9lcwphcHBseSBmb3IgZXZlcnkgZXh0ZW5zaW9uLiBFdmVuIGlmIHlvdSBk
-b24ndCBjaGFuZ2UgYW55IG9mIHRoZSB1YXBpCmhlYWRlcnMgKHNpbmNlIHRob3NlIGRlc2NyaWJl
-IGp1c3QgYSBtaW5pc2N1bGUgcGFydCBvZiB0aGUgb3ZlcmFsbCBkcm0KaW50ZXJmYWNlIGV4cG9y
-dGVkIHRvIHVzZXJzcGFjZSkuIEFub3RoZXIgZXhhbXBsZSBpcyBhZGRpbmcgbW9yZSBhdG9taWMK
-cHJvcGVydGllcywgd2hpY2ggYWxzbyBkb2Vzbid0IGNoYW5nZSBhbnl0aGluZyB3aXRoIHRoZSBp
-b2N0bCBvciBzdHJ1Y3RzCml0c2VsZi4KCj4gSXMgdGhhdCByZWFzb25hYmxlPwoKSWYgeW91IGhh
-dmUgdGhlIHVzZXJzcGFjZSAoYW5kIGl0IG5lZWRzIHRvIGJlIHJlYWwsIG5vdCBqdXN0IHByb21p
-c2VkKQp0aGVuIHllcy4gT3RoZXJ3aXNlIGltbyBuby4gRS5nLiBSb2IgQ2xhcmsgYWx3YXlzIG1h
-a2VzIHN1cmUgb24gbXNtIHRoYXQKaGlzIHIvZSdlZCBtZXNhIGJyYW5jaCBfZG9lc18gd29yayBw
-cm9wZXJseSwgYmVmb3JlIG1lcmdpbmcgc3VwcG9ydCBmb3IKbmV3IGh3IG9yIGVuZ2luZXMgb3Ig
-YW55dGhpbmcgbGlrZSB0aGF0LiBJbnRlbC9BTUQgZG8gdGhlIHNhbWUsIGFuZCBzbwpzaG91bGQg
-bnZpZGlhLgotRGFuaWVsCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRl
-bCBDb3Jwb3JhdGlvbgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZl
-bEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
-bG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+
+
+On 05.12.2016 21:13, Thierry Reding wrote:
+> On Thu, Nov 10, 2016 at 08:23:40PM +0200, Mikko Perttunen wrote:
+>> From: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> Add a set of falcon helper routines for use by the tegradrm client drivers
+>> of the various falcon-based engines.
+>>
+>> The falcon is a microcontroller that acts as a frontend for the rest of a
+>> particular Tegra engine.  In order to properly utilize these engines, the
+>> frontend must be booted before pushing any commands.
+>>
+>> Based on work by Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>>
+>> Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> Signed-off-by: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+>> ---
+>>  drivers/gpu/drm/tegra/Makefile |   3 +-
+>>  drivers/gpu/drm/tegra/falcon.c | 256 +++++++++++++++++++++++++++++++++++++++++
+>>  drivers/gpu/drm/tegra/falcon.h | 130 +++++++++++++++++++++
+>>  3 files changed, 388 insertions(+), 1 deletion(-)
+>>  create mode 100644 drivers/gpu/drm/tegra/falcon.c
+>>  create mode 100644 drivers/gpu/drm/tegra/falcon.h
+>>
+>> diff --git a/drivers/gpu/drm/tegra/Makefile b/drivers/gpu/drm/tegra/Makefile
+>> index 2c66a8d..93e9a4a 100644
+>> --- a/drivers/gpu/drm/tegra/Makefile
+>> +++ b/drivers/gpu/drm/tegra/Makefile
+>> @@ -13,6 +13,7 @@ tegra-drm-y := \
+>>  	sor.o \
+>>  	dpaux.o \
+>>  	gr2d.o \
+>> -	gr3d.o
+>> +	gr3d.o \
+>> +	falcon.o
+>>
+>>  obj-$(CONFIG_DRM_TEGRA) += tegra-drm.o
+>> diff --git a/drivers/gpu/drm/tegra/falcon.c b/drivers/gpu/drm/tegra/falcon.c
+>> new file mode 100644
+>> index 0000000..180b2fd
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/tegra/falcon.c
+>> @@ -0,0 +1,256 @@
+>> +/*
+>> + * Copyright (c) 2015, NVIDIA Corporation.
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + */
+>> +
+>> +#include <linux/platform_device.h>
+>> +#include <linux/dma-mapping.h>
+>> +#include <linux/firmware.h>
+>> +#include <linux/pci_ids.h>
+>> +#include <linux/iopoll.h>
+>> +
+>> +#include "falcon.h"
+>> +#include "drm.h"
+>> +
+>> +#define FALCON_IDLE_TIMEOUT_US		100000
+>> +#define FALCON_IDLE_CHECK_PERIOD_US	10
+>
+> Seems a little overkill to have these here, given that their only used
+> twice. They're also used in two cases where we may end up using
+> different periods and timeouts eventually, so I'd just stick them into
+> falcon_wait_idle() and falcon_dma_wait_idle() directly and omit these
+> definitions. That's kind of a nitpick, so feel free to keep it as-is.
+
+Fixed.
+
+>
+>> +
+>> +enum falcon_memory {
+>> +	FALCON_MEMORY_IMEM,
+>> +	FALCON_MEMORY_DATA,
+>> +};
+>> +
+>> +static void falcon_writel(struct falcon *falcon, u32 value, u32 offset)
+>> +{
+>> +	writel(value, falcon->regs + offset);
+>> +}
+>> +
+>> +int falcon_wait_idle(struct falcon *falcon)
+>> +{
+>> +	u32 idlestate;
+>> +
+>> +	return readl_poll_timeout(falcon->regs + FALCON_IDLESTATE, idlestate,
+>> +				  (!idlestate),
+>
+> That's an odd way to write this. Why not just "idlestate == 0"? That's
+> much easier to read and more explicit.
+
+Fixed.
+
+>
+>> +				  FALCON_IDLE_CHECK_PERIOD_US,
+>> +				  FALCON_IDLE_TIMEOUT_US);
+>> +}
+>> +
+>> +static int falcon_dma_wait_idle(struct falcon *falcon)
+>> +{
+>> +	u32 dmatrfcmd;
+>
+> u32 value? Naming it after a register suggests that it may be an offset
+> rather than the register value.
+
+Fixed.
+
+>
+>> +
+>> +	return readl_poll_timeout(falcon->regs + FALCON_DMATRFCMD, dmatrfcmd,
+>> +				  (dmatrfcmd & FALCON_DMATRFCMD_IDLE),
+>> +				  FALCON_IDLE_CHECK_PERIOD_US,
+>> +				  FALCON_IDLE_TIMEOUT_US);
+>> +}
+>> +
+>> +static int falcon_copy_chunk(struct falcon *falcon,
+>> +			     phys_addr_t base,
+>> +			     unsigned long offset,
+>> +			     enum falcon_memory target)
+>> +{
+>> +	u32 cmd = FALCON_DMATRFCMD_SIZE_256B;
+>> +
+>> +	if (target == FALCON_MEMORY_IMEM)
+>> +		cmd |= FALCON_DMATRFCMD_IMEM;
+>> +
+>> +	falcon_writel(falcon, offset, FALCON_DMATRFMOFFS);
+>> +	falcon_writel(falcon, base, FALCON_DMATRFFBOFFS);
+>> +	falcon_writel(falcon, cmd, FALCON_DMATRFCMD);
+>> +
+>> +	return falcon_dma_wait_idle(falcon);
+>> +}
+>> +
+>> +static void falcon_copy_firmware_image(struct falcon *falcon,
+>> +				       const struct firmware *firmware)
+>> +{
+>> +	u32 *firmware_vaddr = falcon->firmware.vaddr;
+>> +	size_t i;
+>> +
+>> +	/* copy the whole thing taking into account endianness */
+>> +	for (i = 0; i < firmware->size / sizeof(u32); i++)
+>> +		firmware_vaddr[i] = le32_to_cpu(((u32 *)firmware->data)[i]);
+>> +
+>> +	/* ensure that caches are flushed and falcon can see the firmware */
+>> +	dma_sync_single_for_device(falcon->dev, virt_to_phys(firmware_vaddr),
+>> +				   falcon->firmware.size, DMA_TO_DEVICE);
+>
+> My understanding is that this is an error and the DMA API will complain
+> about it if debugging is enabled. I think you need to call one of the
+> dma_map_*() functions on the memory before you can do a dma_sync_*().
+
+Yeah, seems so. I added dma_map_single and dma_unmap_single around this 
+call.
+
+>
+>> +}
+>> +
+>> +static int falcon_parse_firmware_image(struct falcon *falcon)
+>> +{
+>> +	struct falcon_firmware_bin_header_v1 *bin_header =
+>> +		(void *)falcon->firmware.vaddr;
+>> +	struct falcon_firmware_os_header_v1 *os_header;
+>
+> Can we make these shorter? Perhaps by leaving out the _header suffix?
+> It'd be nice if we could avoid splitting these across multiple lines.
+>
+>> +
+>> +	/* endian problems would show up right here */
+>> +	if (bin_header->bin_magic != PCI_VENDOR_ID_NVIDIA) {
+>> +		dev_err(falcon->dev, "failed to get firmware magic");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	/* currently only version 1 is supported */
+>> +	if (bin_header->bin_ver != 1) {
+>> +		dev_err(falcon->dev, "unsupported firmware version");
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	/* check that the firmware size is consistent */
+>> +	if (bin_header->bin_size > falcon->firmware.size) {
+>> +		dev_err(falcon->dev, "firmware image size inconsistency");
+>> +		return -EINVAL;
+>> +	}
+>
+> These messages are missing newlines at the end.
+
+Fixed.
+
+>
+>> +
+>> +	os_header = (falcon->firmware.vaddr +
+>> +		 bin_header->os_bin_header_offset);
+>
+> I think if we shorten the variable names a little this will also fit on
+> a single line. There's also no need for the parentheses.
+
+Dropped the _header from variable names, did s/firmware/fw/ in struct 
+names and also trimmed the field names a bit.
+
+>
+>> +
+>> +	falcon->firmware.bin_data.size = bin_header->os_bin_size;
+>> +	falcon->firmware.bin_data.offset = bin_header->os_bin_data_offset;
+>> +	falcon->firmware.code.offset = os_header->os_code_offset;
+>> +	falcon->firmware.code.size   = os_header->os_code_size;
+>> +	falcon->firmware.data.offset = os_header->os_data_offset;
+>> +	falcon->firmware.data.size   = os_header->os_data_size;
+>
+> Can you remove the extra padding before =, please? It's inconsistent
+> with the other assignments.
+
+Fixed.
+
+>
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +int falcon_read_firmware(struct falcon *falcon, const char *firmware_name)
+>
+> The firmware_ prefix in firmware_name is redundant and can be dropped,
+> in my opinion.
+
+Fixed.
+
+>
+>> +{
+>> +	const struct firmware *firmware;
+>> +	int err;
+>> +
+>> +	if (falcon->firmware.valid)
+>
+> Do we really need the .valid field? It seems like we should be able to
+> derive it from the value of one of the other fields.
+
+Changed to use .vaddr.
+
+>
+>> +		return 0;
+>> +
+>> +	err = request_firmware(&firmware, firmware_name, falcon->dev);
+>> +	if (err < 0) {
+>> +		dev_err(falcon->dev, "failed to get firmware\n");
+>> +		return err;
+>
+> It'd be nice to show the user what error occurred. Maybe also show the
+> name of the firmware that couldn't be loaded.
+
+Fixed.
+
+>
+>> +	}
+>> +
+>> +	falcon->firmware.size = firmware->size;
+>> +
+>> +	/* allocate iova space for the firmware */
+>> +	falcon->firmware.vaddr = falcon->ops->alloc(falcon, firmware->size,
+>> +						 &falcon->firmware.paddr);
+>
+> The arguments aren't properly aligned.
+
+Fixed.
+
+>
+>> +	if (!falcon->firmware.vaddr) {
+>> +		dev_err(falcon->dev, "dma memory mapping failed");
+>> +		err = -ENOMEM;
+>> +		goto err_alloc_firmware;
+>> +	}
+>> +
+>> +	/* copy firmware image into local area. this also ensures endianness */
+>> +	falcon_copy_firmware_image(falcon, firmware);
+>> +
+>> +	/* parse the image data */
+>> +	err = falcon_parse_firmware_image(falcon);
+>> +	if (err < 0) {
+>> +		dev_err(falcon->dev, "failed to parse firmware image\n");
+>> +		goto err_setup_firmware_image;
+>> +	}
+>> +
+>> +	falcon->firmware.valid = true;
+>> +
+>> +	release_firmware(firmware);
+>> +
+>> +	return 0;
+>> +
+>> +err_setup_firmware_image:
+>> +	falcon->ops->free(falcon, falcon->firmware.size,
+>> +			  falcon->firmware.paddr, falcon->firmware.vaddr);
+>> +err_alloc_firmware:
+>> +	release_firmware(firmware);
+>> +
+>> +	return err;
+>> +}
+>> +
+>> +int falcon_init(struct falcon *falcon)
+>> +{
+>> +	/* check mandatory ops */
+>> +	if (!falcon->ops || !falcon->ops->alloc || !falcon->ops->free)
+>> +		return -EINVAL;
+>> +
+>> +	falcon->firmware.valid = false;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +void falcon_exit(struct falcon *falcon)
+>> +{
+>> +	if (!falcon->firmware.valid)
+>> +		return;
+>> +
+>> +	falcon->ops->free(falcon, falcon->firmware.size,
+>> +			  falcon->firmware.paddr,
+>> +			  falcon->firmware.vaddr);
+>> +	falcon->firmware.valid = false;
+>> +}
+>> +
+>> +int falcon_boot(struct falcon *falcon)
+>> +{
+>> +	unsigned long offset;
+>> +	int err = 0;
+>
+> I don'n think it's necessary to initialize err here.
+
+Fixed.
+
+>
+>> +
+>> +	if (!falcon->firmware.valid)
+>> +		return -EINVAL;
+>> +
+>> +	falcon_writel(falcon, 0, FALCON_DMACTL);
+>> +
+>> +	/* setup the address of the binary data. Falcon can access it later */
+>
+> If you write sentences with a full stop, please use a capital first
+> letter. In this case I think you can just drop the full stop:
+>
+> 	/* setup the address of the binary data so Falcon can access it later */
+
+Fixed.
+
+>
+>> +	falcon_writel(falcon, (falcon->firmware.paddr +
+>> +			       falcon->firmware.bin_data.offset) >> 8,
+>> +		      FALCON_DMATRFBASE);
+>> +
+>> +	/* copy the data segment into Falcon internal memory */
+>> +	for (offset = 0; offset < falcon->firmware.data.size; offset += 256)
+>> +		falcon_copy_chunk(falcon,
+>> +				  falcon->firmware.data.offset + offset,
+>> +				  offset, FALCON_MEMORY_DATA);
+>> +
+>> +	/* copy the first code segment into Falcon internal memory */
+>> +	falcon_copy_chunk(falcon, falcon->firmware.code.offset,
+>> +			  0, FALCON_MEMORY_IMEM);
+>> +
+>> +	/* setup falcon interrupts */
+>> +	falcon_writel(falcon, FALCON_IRQMSET_EXT(0xff) |
+>> +			      FALCON_IRQMSET_SWGEN1 |
+>> +			      FALCON_IRQMSET_SWGEN0 |
+>> +			      FALCON_IRQMSET_EXTERR |
+>> +			      FALCON_IRQMSET_HALT |
+>> +			      FALCON_IRQMSET_WDTMR,
+>> +		      FALCON_IRQMSET);
+>> +	falcon_writel(falcon, FALCON_IRQDEST_EXT(0xff) |
+>> +			      FALCON_IRQDEST_SWGEN1 |
+>> +			      FALCON_IRQDEST_SWGEN0 |
+>> +			      FALCON_IRQDEST_EXTERR |
+>> +			      FALCON_IRQDEST_HALT,
+>> +		      FALCON_IRQDEST);
+>> +
+>> +	/* enable interface */
+>> +	falcon_writel(falcon, FALCON_ITFEN_MTHDEN |
+>> +			      FALCON_ITFEN_CTXEN,
+>> +		      FALCON_ITFEN);
+>> +
+>> +	/* boot falcon */
+>> +	falcon_writel(falcon, 0x00000000, FALCON_BOOTVEC);
+>> +	falcon_writel(falcon, FALCON_CPUCTL_STARTCPU, FALCON_CPUCTL);
+>> +
+>> +	err = falcon_wait_idle(falcon);
+>> +	if (err < 0) {
+>> +		dev_err(falcon->dev, "falcon boot failed due to timeout");
+>> +		return err;
+>> +	}
+>> +
+>> +	dev_info(falcon->dev, "falcon booted");
+>
+> No need to brag here, it's supposed to be successful. Let the user know
+> if it isn't. If you really want this, make sure it's output at debug
+> level, not info. Also I think we need to agree on whether these are
+> named Falcon or falcon and then use it consistently. I'm leaning towards
+> the former. Also, there are a few messages with missing newlines.
+
+Removed and fixed.
+
+>
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +void falcon_execute_method(struct falcon *falcon, u32 method, u32 data)
+>> +{
+>> +	falcon_writel(falcon, method >> 2, FALCON_UCLASS_METHOD_OFFSET);
+>> +	falcon_writel(falcon, data, FALCON_UCLASS_METHOD_DATA);
+>> +}
+>> diff --git a/drivers/gpu/drm/tegra/falcon.h b/drivers/gpu/drm/tegra/falcon.h
+>> new file mode 100644
+>> index 0000000..56284b9
+>> --- /dev/null
+>> +++ b/drivers/gpu/drm/tegra/falcon.h
+>> @@ -0,0 +1,130 @@
+>> +/*
+>> + * Copyright (c) 2015, NVIDIA Corporation.
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+>> + */
+>> +
+>> +#ifndef _FALCON_H_
+>> +#define _FALCON_H_
+>> +
+>> +#include <linux/types.h>
+>> +
+>> +#define FALCON_UCLASS_METHOD_OFFSET		0x00000040
+>> +
+>> +#define FALCON_UCLASS_METHOD_DATA		0x00000044
+>> +
+>> +#define FALCON_IRQMSET				0x00001010
+>> +#define FALCON_IRQMSET_WDTMR			(1 << 1)
+>> +#define FALCON_IRQMSET_HALT			(1 << 4)
+>> +#define FALCON_IRQMSET_EXTERR			(1 << 5)
+>> +#define FALCON_IRQMSET_SWGEN0			(1 << 6)
+>> +#define FALCON_IRQMSET_SWGEN1			(1 << 7)
+>> +#define FALCON_IRQMSET_EXT(v)			(((v) & 0xff) << 8)
+>> +
+>> +#define FALCON_IRQDEST				0x0000101c
+>> +#define FALCON_IRQDEST_HALT			(1 << 4)
+>> +#define FALCON_IRQDEST_EXTERR			(1 << 5)
+>> +#define FALCON_IRQDEST_SWGEN0			(1 << 6)
+>> +#define FALCON_IRQDEST_SWGEN1			(1 << 7)
+>> +#define FALCON_IRQDEST_EXT(v)			(((v) & 0xff) << 8)
+>> +
+>> +#define FALCON_ITFEN				0x00001048
+>> +#define FALCON_ITFEN_CTXEN			(1 << 0)
+>> +#define FALCON_ITFEN_MTHDEN			(1 << 1)
+>> +
+>> +#define FALCON_IDLESTATE			0x0000104c
+>> +
+>> +#define FALCON_CPUCTL				0x00001100
+>> +#define FALCON_CPUCTL_STARTCPU			(1 << 1)
+>> +
+>> +#define FALCON_BOOTVEC				0x00001104
+>> +
+>> +#define FALCON_DMACTL				0x0000110c
+>> +#define FALCON_DMACTL_DMEM_SCRUBBING		(1 << 1)
+>> +#define FALCON_DMACTL_IMEM_SCRUBBING		(1 << 2)
+>> +
+>> +#define FALCON_DMATRFBASE			0x00001110
+>> +
+>> +#define FALCON_DMATRFMOFFS			0x00001114
+>> +
+>> +#define FALCON_DMATRFCMD			0x00001118
+>> +#define FALCON_DMATRFCMD_IDLE			(1 << 1)
+>> +#define FALCON_DMATRFCMD_IMEM			(1 << 4)
+>> +#define FALCON_DMATRFCMD_SIZE_256B		(6 << 8)
+>> +
+>> +#define FALCON_DMATRFFBOFFS			0x0000111c
+>> +
+>> +struct falcon_firmware_bin_header_v1 {
+>> +	u32 bin_magic;		/* 0x10de */
+>> +	u32 bin_ver;		/* cya, versioning of bin format (1) */
+>
+> Not sure everyone understands what cya means, here. Perhaps just drop
+> it?
+
+Removed.
+
+>
+>> +	u32 bin_size;		/* entire image size including this header */
+>> +	u32 os_bin_header_offset;
+>> +	u32 os_bin_data_offset;
+>> +	u32 os_bin_size;
+>> +};
+>> +
+>> +struct falcon_firmware_os_app_v1 {
+>> +	u32 offset;
+>> +	u32 size;
+>> +};
+>> +
+>> +struct falcon_firmware_os_header_v1 {
+>> +	u32 os_code_offset;
+>> +	u32 os_code_size;
+>> +	u32 os_data_offset;
+>> +	u32 os_data_size;
+>> +	u32 num_apps;
+>> +	struct falcon_firmware_os_app_v1 *app_code;
+>> +	struct falcon_firmware_os_app_v1 *app_data;
+>
+> The above two seem to be completel unused. Should we drop them?
+
+Dropped the last four fields.
+
+>
+>> +	u32 *os_ovl_offset;
+>> +	u32 *os_ovl_size;
+>> +};
+>
+> Can we in general sanitize the names of these a little? It's redundent
+> to add a os_ prefix in a structure that contains an _os_ infix.
+
+Yep, removed the os_ prefixes.
+
+>
+> Thierry
+>
+
+Thanks,
+Mikko.
