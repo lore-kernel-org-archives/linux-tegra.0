@@ -1,28 +1,32 @@
-From: Bjorn Helgaas <helgaas-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Subject: Re: [PATCH v4 01/10] PCI: Add new method for registering PCI hosts
-Date: Thu, 8 Dec 2016 14:34:11 -0600
-Message-ID: <20161208203411.GB30533@bhelgaas-glaptop.roam.corp.google.com>
-References: <20161125105718.3866-1-thierry.reding@gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+From: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Subject: [PATCH] ARM: tegra: mark panel regulator as enabled on boot
+Date: Fri,  9 Dec 2016 10:20:38 +0100
+Message-ID: <1d6749b2aa21112cb73e162a73e9e0e36b32a677.1481273581.git.marvin24@gmx.de>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20161125105718.3866-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Bjorn Helgaas <bhelgaas-hpIqsD4AKlfQT0dZR+AlfA@public.gmane.org>, Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>, Tomasz Nowicki <tn-nYOzD4b6Jr9Wk0Htik3J/w@public.gmane.org>, Liviu Dudau <liviu.dudau-5wv7dgnIgG8@public.gmane.org>, Lorenzo Pieralisi <lorenzo.pieralisi-5wv7dgnIgG8@public.gmane.org>, Vidya Sagar <vidyas-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-pci-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: Stephen Warren <swarren-dWgojZr1M5Qdnm+yROfE0A@public.gmane.org>, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-On Fri, Nov 25, 2016 at 11:57:09AM +0100, Thierry Reding wrote:
-> From: Arnd Bergmann <arnd-r2nGTMty4D4@public.gmane.org>
-> 
-> This patch makes the existing pci_host_bridge structure a proper device
-> that is usable by PCI host drivers in a more standard way. In addition
-> to the existing pci_scan_bus, pci_scan_root_bus, pci_scan_root_bus_msi,
-> and pci_create_root_bus interfaces, this unfortunately means having to
-> add yet another interface doing basically the same thing, and add some
-> extra code in the initial step.
+Current u-boot enables the display already. Fixes sporadic panel
+initialization failure with tegra_defconfig.
 
-I applied this whole series to pci/host-tegra for v4.10, thanks!
+Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+---
+ arch/arm/boot/dts/tegra20-paz00.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-Bjorn
+diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+index 4e361a8c167e..1be690cce9aa 100644
+--- a/arch/arm/boot/dts/tegra20-paz00.dts
++++ b/arch/arm/boot/dts/tegra20-paz00.dts
+@@ -570,6 +570,7 @@
+ 			regulator-min-microvolt = <3300000>;
+ 			regulator-max-microvolt = <3300000>;
+ 			gpio = <&gpio TEGRA_GPIO(A, 4) GPIO_ACTIVE_HIGH>;
++			regulator-boot-on;
+ 			enable-active-high;
+ 		};
+ 	};
+-- 
+2.11.0
