@@ -1,58 +1,74 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [GIT PULL] drm/tegra: Changes for v4.10-rc1
-Date: Fri,  9 Dec 2016 15:11:29 +0100
-Message-ID: <20161209141129.19961-1-thierry.reding@gmail.com>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Tegra baseline test results for v4.9-rc6
+Date: Mon, 12 Dec 2016 09:30:38 +0000
+Message-ID: <327c4929-c942-f73e-a680-553deb3b099b@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Dave Airlie <airlied-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Cc: kernel-build-reports-cunTk1MwBs8s++Sfvej+rw@public.gmane.org, "linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org" <linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Hi Dave,
+Here are some basic Tegra test results for Linux v4.9-rc6.
+Logs and other details at:
 
-The following changes since commit 1001354ca34179f3db924eb66672442a173147dc:
+    https://nvtb.github.io//linux/test_v4.9-rc6/20161121033104/
 
-  Linux 4.9-rc1 (2016-10-15 12:17:50 -0700)
 
-are available in the git repository at:
+Test summary
+------------
 
-  git://anongit.freedesktop.org/tegra/linux tags/drm/tegra/for-4.10-rc1
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
 
-for you to fetch changes up to 585ee0f27ef7b8db46807b960388b7e58b60766d:
+Build: Image:
+    Pass: ( 1/ 1): defconfig
 
-  drm/tegra: Set sgt pointer in BO pin (2016-11-11 15:37:13 +0100)
+Boot to userspace: defconfig:
+    Pass: ( 4/ 4): qemu-vexpress64, tegra132-norrin,
+		   tegra210-p2371-0000, tegra210-smaug
 
-Thanks,
-Thierry
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
 
-----------------------------------------------------------------
-drm/tegra: Changes for v4.10-rc1
+Boot to userspace: tegra_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
 
-This has a couple of fixes for IOMMU support and some fixes for error
-handling.
+PM: System suspend: multi_v7_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
 
-----------------------------------------------------------------
-Arto Merilainen (3):
-      gpu: host1x: Store device address to all bufs
-      gpu: host1x: Add locking to syncpt
-      drm/tegra: Support kernel mappings with IOMMU
+PM: System suspend: tegra_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
 
-Christophe JAILLET (1):
-      drm/tegra: gem: Remove some dead code
 
-Christophe Jaillet (3):
-      drm/tegra: dpaux: Fix error handling
-      drm/tegra: Fix error handling
-      drm/tegra: sor: No need to free devm_ allocated memory
+vmlinux object size
+(delta in bytes from test_v4.9-rc5 (a25f0944ba9b1d8a6813fd6f1a86f1bd59ac25a6)):
+   text     data      bss    total  kernel
+   -329     +592        0     +263  defconfig
+  +1307      +64        0    +1371  multi_v7_defconfig
+  +1143        0        0    +1143  tegra_defconfig
 
-Mikko Perttunen (1):
-      drm/tegra: Set sgt pointer in BO pin
 
- drivers/gpu/drm/tegra/dpaux.c |  4 ++--
- drivers/gpu/drm/tegra/gem.c   | 41 +++++++++++++++++++++++++++++++++--------
- drivers/gpu/drm/tegra/gr3d.c  |  4 ++--
- drivers/gpu/drm/tegra/sor.c   |  2 --
- drivers/gpu/host1x/dev.h      |  3 ++-
- drivers/gpu/host1x/job.c      |  9 ++++++---
- drivers/gpu/host1x/syncpt.c   | 23 +++++++++++++++++++----
- 7 files changed, 64 insertions(+), 22 deletions(-)
+Boot-time memory difference
+(delta in bytes from test_v4.9-rc5 (a25f0944ba9b1d8a6813fd6f1a86f1bd59ac25a6))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+        .        .        .        .      qemu-vexpress64            defconfig           __internal
+        .        .        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+        .        .        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+        .        .        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+        .        .        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+        .        .        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
+        .        .        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
+        .        .        .        .      tegra132-norrin            defconfig      tegra132-norrin
+        .        .        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+        .        .        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+        .        .        .        .  tegra210-p2371-0000            defconfig  tegra210-p2371-0000
+        .        .        .        .       tegra210-smaug            defconfig       tegra210-smaug
+        .        .        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+        .        .        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
