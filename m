@@ -1,101 +1,114 @@
-From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Subject: Re: [PATCH v2 0/7] Host1x IOMMU support + VIC support
-Date: Wed, 14 Dec 2016 15:48:55 +0100
-Message-ID: <CAKMK7uGw3XwbPU798YJ-9eLbwhMWs7z_F-ro238RfFN8LFURtw@mail.gmail.com>
-References: <20161214111617.24548-1-mperttunen@nvidia.com>
- <20161214123004.urnvlqarcnp5rp4a@phenom.ffwll.local>
- <07daf863-1675-a3d8-e1a7-32131c8035d8@kapsi.fi>
- <20161214130545.gfpkosyixr5lfkkf@phenom.ffwll.local>
- <f3d1d69b-2c1f-a0f7-8301-fee26cec35f1@kapsi.fi>
- <20161214141142.jmrofknylonhprbk@phenom.ffwll.local>
+From: Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: bq24735 charger and ac-detect
+Date: Wed, 14 Dec 2016 15:59:51 +0100
+Message-ID: <20161214145951.uuoijetzat2bxmbv@earth>
+References: <d796f6f9-1b6a-647c-100b-b3e85fc2f4c0@axentia.se>
+ <20161214142502.su4auesnlqmgxspv@earth>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <libva-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <20161214141142.jmrofknylonhprbk-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/libva>,
- <mailto:libva-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/libva>
-List-Post: <mailto:libva-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:libva-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/libva>,
- <mailto:libva-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: libva-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Libva" <libva-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Sean V Kelley <sean.v.kelley-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
-Cc: Dave Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "libva-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <libva-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="qwhxxahzxg3qxq3v"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20161214142502.su4auesnlqmgxspv@earth>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter Rosin <peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gV2VkLCBEZWMgMTQsIDIwMTYgYXQgMzoxMSBQTSwgRGFuaWVsIFZldHRlciA8ZGFuaWVsQGZm
-d2xsLmNoPiB3cm90ZToKPiBPbiBXZWQsIERlYyAxNCwgMjAxNiBhdCAwMzozMjoxNlBNICswMjAw
-LCBNaWtrbyBQZXJ0dHVuZW4gd3JvdGU6Cj4+IE9uIDE0LjEyLjIwMTYgMTU6MDUsIERhbmllbCBW
-ZXR0ZXIgd3JvdGU6Cj4+ID4gT24gV2VkLCBEZWMgMTQsIDIwMTYgYXQgMDI6NDE6MjhQTSArMDIw
-MCwgTWlra28gUGVydHR1bmVuIHdyb3RlOgo+PiA+ID4gT24gMTQuMTIuMjAxNiAxNDozMCwgRGFu
-aWVsIFZldHRlciB3cm90ZToKPj4gPiA+ID4gT24gV2VkLCBEZWMgMTQsIDIwMTYgYXQgMDE6MTY6
-MTBQTSArMDIwMCwgTWlra28gUGVydHR1bmVuIHdyb3RlOgo+PiA+ID4gPiA+IFRoaXMgc2VyaWVz
-IGFkZHMgSU9NTVUgc3VwcG9ydCB0byBIb3N0MXggYW5kIFRlZ3JhRFJNCj4+ID4gPiA+ID4gYW5k
-IGFkZHMgc3VwcG9ydCBmb3IgdGhlIFZJQyAoVmlkZW8gSW1hZ2UgQ29tcG9zaXRvcikKPj4gPiA+
-ID4gPiBob3N0MXggY2xpZW50LiBUaGUgc2VyaWVzIGlzIGF2YWlsYWJsZSBhcyBhIGdpdCByZXBv
-c2l0b3J5IGF0Cj4+ID4gPiA+ID4gZ2l0Oi8vZ2l0aHViLmNvbS9jeW5kaXMvbGludXguZ2l0OyBi
-cmFuY2ggdmljLTIuCj4+ID4gPiA+ID4KPj4gPiA+ID4gPiBBIHVzZXJzcGFjZSB0ZXN0IGNhc2Ug
-Zm9yIFZJQyBjYW4gYmUgZm91bmQgYXQKPj4gPiA+ID4gPiBodHRwczovL2dpdGh1Yi5jb20vY3lu
-ZGlzL2RybS90cmVlL3dvcmsvdGVncmEuCj4+ID4gPiA+ID4gVGhlIHRlc3RjYXNlIGlzIGluIHRl
-c3RzL3RlZ3JhIGFuZCBpcyBjYWxsZWQgc3VibWl0X3ZpYy4KPj4gPiA+ID4gPiBUaGUgdGVzdGNh
-c2UvVFJNIGluY2x1ZGUgZnVsbCBoZWFkZXJzIGFuZCBkb2N1bWVudGF0aW9uCj4+ID4gPiA+ID4g
-dG8gcHJvZ3JhbSB0aGUgdW5pdC4gVGhlIHVuaXQgYnkgaXRzZWxmLCBob3dldmVyLCBkb2VzIG5v
-dAo+PiA+ID4gPiA+IHJlYWRpbHkgbWFwIHRvIGV4aXN0aW5nIHVzZXJzcGFjZSBsaWJyYXJ5IGlu
-dGVyZmFjZXMsIHNvCj4+ID4gPiA+ID4gaW1wbGVtZW50YXRpb25zIGZvciB0aG9zZSBhcmUgbm90
-IHByb3ZpZGVkLgo+PiA+ID4gPgo+PiA+ID4gPiBBZmFpayBsaWJ2YSBoYXMgYW4gZW50aXJlIHBp
-bGUgb2YgcG9zdC1wcm9jZXNzaW5nIHN1cHBvcnQuIFByZXR0eSBzdXJlCj4+ID4gPiA+IG90aGVy
-IHZpZGVvIHRyYW5zY29kZSBsaWJyYXJpZXMgaGF2ZSBzaW1pbGFyIGludGVyZmFjZXMsIHNvIHNo
-b3VsZCBhbGwgYmUKPj4gPiA+ID4gcG9zc2libGUgdG8gaW1wbGVtZW50IHRoaXMuCj4+ID4gPgo+
-PiA+ID4gV2UgZG9uJ3QgaGF2ZSBhbnkgYWN0dWFsIHZpZGVvIHRyYW5zY29kaW5nIHN1cHBvcnQg
-dGhvdWdoLCBzbyB1bmxlc3MgaXQncwo+PiA+ID4gcG9zc2libGUgdG8ganVzdCBpbXBsZW1lbnQg
-YSBwYXJ0IG9mIGxpYnZhIGFuZCBkZWZlciB0aGUgcmVzdCB0byBzb21lIENQVQo+PiA+ID4gaW1w
-bGVtZW50YXRpb24sIEkgZG9uJ3Qgc2VlIGhvdyB0aGlzIGlzIHVzZWZ1bC4gSSBzdXBwb3NlIEkg
-Y291bGQgaW1wbGVtZW50Cj4+ID4gPiBhIEdTdHJlYW1lciBwbHVnaW4gZm9yIGNvbG9yc3BhY2Ug
-Y29udmVyc2lvbiBvciByZXNpemluZywgc2luY2UgdGhvc2UgYXJlCj4+ID4gPiB2ZXJ5IG1vZHVs
-YXIuCj4+ID4KPj4gPiBIbSwgSSBndWVzcyB0aGUgcXVlc3Rpb24gdGhlbiBpcywgaG93IGRpZCB0
-aGF0IGdldCBlbmFibGVkPwo+Pgo+PiBXaGF0IGlzICJ0aGF0Ij8gSSdtIG5vdCBleGFjdGx5IHN1
-cmUuCj4+Cj4+IE91ciBhcmNoaXRlY3R1cmUgaXMgc3VjaCB0aGF0IHRoZXJlJ3MgdGhlIFZJQyB0
-aGF0IGhhbmRsZXMgY29sb3JzcGFjZQo+PiBjb252ZXJzaW9uLCByZXNjYWxpbmcsIGJsaXR0aW5n
-IGFuZCBjYW4gZG8gc29tZSAyZCBwb3N0cHJvY2Vzc2luZyBlZmZlY3RzIGFzCj4+IHdlbGwuCj4+
-Cj4+IFRoZW4gdGhlcmUncyB0aGUgc2VwYXJhdGUgTlZERUMgdGhhdCBpcyBhIHZpZGVvIGJpdHN0
-cmVhbSBkZWNvZGVyLiBUaGVyZSdzCj4+IG5vIHN1cHBvcnQgZm9yIHRoYXQgYXQgdGhlIG1vbWVu
-dC4gSSBhbSB3b3JraW5nIG9uIHRoZSBJUCBzaWRlIG9mIHRoYXQuCj4+Cj4+IFRoZSB2aWRlbyBw
-cm9jZXNzaW5nIHBpcGVsaW5lIGlzIHRoZW4gc3VjaCB0aGF0IE5WREVDIGlzIGZlZCB0aGUgYml0
-c3RyZWFtOwo+PiBOVkRFQyBvdXRwdXRzIGEgWVVWIHBpY3R1cmUgaW4gYSBzcGVjaWZpYyBmb3Jt
-YXQ7IFZJQyB0YWtlcyB0aGF0IFlVViBwaWN0dXJlCj4+IGFuZCBjb252ZXJ0cy9yZXNjYWxlcyBp
-dCBpbnRvIHRoZSBkZXNpcmVkIGZvcm1hdC4gT3IgaWYgd2UgYXJlIGVuY29kaW5nCj4+IHZpZGVv
-LCBWSUMgdGFrZXMgeW91ciBSR0IgaW1hZ2UsIGNvbnZlcnRzIGl0IGludG8gYSBmb3JtYXQgdGhh
-dCBOVkVOQwo+PiB1bmRlcnN0YW5kcywgYW5kIHNvIG9uLgo+Pgo+PiBTbyB3aXRoIGp1c3QgVklD
-IHN1cHBvcnQsIEkgY291bGQgaW1wbGVtZW50IHNvbWUgc2ltcGxlIDJEIHRoaW5ncy4gSSBkb24n
-dAo+PiBrbm93IGlmIGFueW9uZSB3b3VsZCB3YW50IHRvIHNwZWNpZmljYWxseSB1c2UgdGhlIFZJ
-QyBmb3IgdGhvc2Ugc2luY2UKPj4gYXBwbGljYXRpb25zIGFscmVhZHkgaGF2ZSBmYXN0IENQVSBh
-bGdvcml0aG1zLiBGb3IgdGhlIHZpZGVvIHBpcGVsaW5lIHVzaW5nCj4+IFZJQyBpcyBuaWNlIHNp
-bmNlIHRoZXNlIHVuaXRzIGNhbiBzeW5jaHJvbml6ZSB3b3JrIHdpdGhvdXQgQ1BVIGludm9sdmVt
-ZW50Cj4+IGFuZCB3aGVuIHlvdSdyZSBhbHJlYWR5IHVzaW5nIE5WREVDIG9yIE5WRU5DIGl0J3Mg
-YmFyZWx5IGFueSBleHRyYSBlZmZvcnQgdG8KPj4gaW52b2x2ZSBWSUMgYXMgd2VsbC4gSXQgY2Fu
-IGFsc28gYmUgdXNlZnVsIGluIHBvd2VyIHVzYWdlIHNlbnNpdGl2ZQo+PiBzaXR1YXRpb25zLCBi
-dXQgd2UgYXJlbid0IHJlYWxseSBmaXQgZm9yIHRob3NlIHNpdHVhdGlvbnMgd2l0aCB0aGUgdXBz
-dHJlYW0KPj4ga2VybmVsIGFueXdheSA6KQo+Cj4gQWggSSB0aG91Z2h0IHRoZSBudmRlYyB3YXMg
-YWxyZWFkeSBlbmFibGVkLCBzaW5jZSBmb3IgaTkxNSB0aGF0J3MgaG93IHdlCj4gd2VudCBhYm91
-dCB0aGluZ3MgKHdlIGhhdmUgYSBwcmV0dHkgbXVjaCBleGFjdGx5IG1hdGNoaW5nIHNwbGl0IGlu
-IHRoZQo+IHZhcmlvdXMgdmlkZW8gcmVsYXRlZCBlbmdpbmVzKS4gQnV0IGlmIHRoYXQncyBub3Qg
-dGhlcmUgeWV0IHRoZW4gbm8KPiB3b3JyaWVzLCBhbGwgZmluZS4KPgo+IFNpbmNlIHlvdSBkbyBz
-ZWVtIHRvIHBsYW4gdG8gZW5hYmxlIGV2ZXJ5dGhpbmcgYW55d2F5LCBtaWdodCBiZSB3b3J0aCBp
-dAo+IHRvIGdvIGRpcmVjdGx5IHdpdGggc29tZXRoaW5nIGxpa2UgbGlidmEgb3IgbGlidmRwYXUg
-b3Igd2hhdGV2ZXIgdGhlIGNvb2wKPiB0aGluZyBpcy4gbGlidmEgaXMgbXkgcmVjb21tZW5kYXRp
-b24gc2luY2UgaXQgd29ya3Mgb24gbm9uLVgxMSB0b28gYWZhaWssCj4gYnV0IEkgaGF2ZSAwIGNs
-dWUuIEFuZCBtaWdodCBiZSB3b3J0aCBpdCB0byBjaGVjayBvdXQgd2hldGhlciB5b3UgY2FuJ3Qg
-ZG8KPiBhIHN1cGVyLWJhc2ljIGxpYnZhIGRyaXZlciB0aGF0IG9ubHkgZG9lcyB0aGUgcG9zdCBw
-cm9jZXNzaW5nIHN0dWZmLiBXaXRoCj4gbGlidmEgeW91IGNhbiBpbXBvcnQvZXhwb3J0IGltYWdl
-cywgc28gaXQgbWlnaHQgYmUgcG9zc2libGUgZXZlbiAuLi4gQW5kCj4gZGlyZWN0bHkgZG9pbmcg
-dGhlIGZ1bGwgdmlkZW8gZW5naW5lIHN1cHBvcnQgaW5zdGVhZCBvZiBhIG9uZS1vZmYgaW4KPiBn
-c3RyZWFtZXIgc291bmRzIG1vcmUgc2Vuc2libGUgdG8gbWUuCgpTaWxseSBtZSBmb3Jnb3QgdG8g
-YWRkIHRoZSBleHBlcnRzLCBpLmUuIFNlYW4gKGN1cnJlbnQgbGlidmEKbWFpbnRhaW5lcikgYW5k
-IGxpYnZhIG1haWxpbmcgbGlzdHMuCi1EYW5pZWwKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUg
-RW5naW5lZXIsIEludGVsIENvcnBvcmF0aW9uCis0MSAoMCkgNzkgMzY1IDU3IDQ4IC0gaHR0cDov
-L2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX18KTGlidmEgbWFpbGluZyBsaXN0CkxpYnZhQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
-czovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpYnZhCg==
+
+--qwhxxahzxg3qxq3v
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+Ok, Darbha Sriharsha's mail address no longer works, so I Cc'd
+linux-tegra instead. Maybe some of the people there have the
+schematics for one of the Tegra boards using the bq24735 and/or
+could check if charger presence detection actually works on
+those boards with current mainline kernel.
+
+-- Sebastian
+
+On Wed, Dec 14, 2016 at 03:25:02PM +0100, Sebastian Reichel wrote:
+> Hi Peter,
+>=20
+> On Mon, Dec 12, 2016 at 12:12:47AM +0100, Peter Rosin wrote:
+> > Hi!
+> >=20
+> > I'm wondering about the dt bindings for the bq24735 charger. Specifical=
+ly
+> > the ac-detect property. The bindings say:
+>=20
+> I don't have a device with bq24735 and the driver has been added
+> before I was the maintainer of the power-supply subsystem.
+>=20
+> >  - ti,ac-detect-gpios : This GPIO is optionally used to read the AC ada=
+pter
+> >    presence. This is a Host GPIO that is configured as an input and
+> >    connected to the bq24735.
+> >=20
+> > The only way I can make sense of that is if this is the pin on the bq24=
+735
+> > that is named ACOK.
+>=20
+> Yes. I would expect the same.
+>=20
+> > But that pin is active high, and the code has this:
+> >=20
+> > static bool bq24735_charger_is_present(struct bq24735 *charger)
+> > {
+> > 	if (charger->status_gpio)
+> > 		return !gpiod_get_value_cansleep(charger->status_gpio);
+> > ...
+> >=20
+> >=20
+> > (status_gpio is what holds the gpio_desc of ac-detect)
+> >=20
+> > In other words, the code seems to want a signal that is effectively
+> > active low (the code negates the signal and thus returns "present"
+> > when the signal is zero). The existing dts users all have active high
+> > in their bindings, so it's not like they say active low to work around
+> > the negation in the code...
+> >=20
+> > This just makes no sense to me and I'm wondering what I'm missing and
+> > what pin is really meant to be fed to ac-detect???
+> >=20
+> > Yes, there is a pin on the bq24735 that is named ACDET which seems like
+> > a good match, but that is a signal that is entering the bq24735. And it
+> > is also active high, at least the way I read it so the problem persists=
+=2E..
+> >=20
+> > Cheers,
+> > Peter
+>=20
+> As far as I can see all current users are Tegra boards and the
+> driver is also from Nvidia, so let's ask them directly. I guess
+> the driver was ported incorrectly and the "!" should be removed.
+>=20
+> -- Sebastian
+
+
+
+--qwhxxahzxg3qxq3v
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlhRXmQACgkQ2O7X88g7
++pq6fQ/8CrznY73hQRm+XJj7nrX9rcgOuuE7Y5QNioqGjJmULaQpx4Oh82vjFu7d
+rpGCYbSS/aDZHNQ7oqzl+fXJcXWmw6L56/6FBaSITBXDMQN0J5gVWdyIOQ6z25bU
+HPP0CumvQ5w0zAVuEVi/l7KZjqYsRR9yb2c2TmgwyJ4JCCpDlsjk+8q4yIYEDPv0
+pJguu762hiq/7cLeFeU8XP8gChcX3CkXmd+8y2O+dCCvRNhOHoOeLf2pr287P204
+OdzXSj3rB/qYeHBnrNB3IEaSWOKrWIMnkdcxspVCZ8IUEP9+IRN46y70kyqQjM5y
+LAXDcVkJXYhRTc39ES1JN7tK33T2z0mbnzX8+Bn7w1RdPeS6k4Qv4huJf06DltLO
+do9yvtAhBk+MX6RKQkV+1lb3FBG9pJ/kRIw+oGRdsGpY2z1cWwHr22TUN6W6EmF4
+V2CawC9ehf20v888P0kvHQhQLLGI/jytknTDn+rW0ZyeWOY45OJiE9J5z8krlaHQ
+hqEXgUV0JBl5E8z/uZtxyXttfmmbbJGkOu2SGxstUSszBxAYQ6DauQN+qHcQu4w8
+D4HeZbOQq9439MzJVu7MX2pcjcmLwXaP9G0f6USpVhM/9pLXcs04Js/odIqKN44W
+P5+rKUurdlHEpy6BnSV8AGPg7PrCOhzfIxPp0+/pD/W2RPlug80=
+=Srg5
+-----END PGP SIGNATURE-----
+
+--qwhxxahzxg3qxq3v--
