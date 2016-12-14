@@ -1,63 +1,106 @@
-From: Daniel Vetter <daniel@ffwll.ch>
+From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
 Subject: Re: [PATCH v2 0/7] Host1x IOMMU support + VIC support
-Date: Wed, 14 Dec 2016 14:05:45 +0100
-Message-ID: <20161214130545.gfpkosyixr5lfkkf@phenom.ffwll.local>
+Date: Wed, 14 Dec 2016 14:41:28 +0200
+Message-ID: <07daf863-1675-a3d8-e1a7-32131c8035d8@kapsi.fi>
 References: <20161214111617.24548-1-mperttunen@nvidia.com>
  <20161214123004.urnvlqarcnp5rp4a@phenom.ffwll.local>
- <07daf863-1675-a3d8-e1a7-32131c8035d8@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-Content-Disposition: inline
-In-Reply-To: <07daf863-1675-a3d8-e1a7-32131c8035d8@kapsi.fi>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Mikko Perttunen <cyndis@kapsi.fi>
-Cc: dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>, linux-tegra@vger.kernel.org
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20161214123004.urnvlqarcnp5rp4a-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-T24gV2VkLCBEZWMgMTQsIDIwMTYgYXQgMDI6NDE6MjhQTSArMDIwMCwgTWlra28gUGVydHR1bmVu
-IHdyb3RlOgo+IE9uIDE0LjEyLjIwMTYgMTQ6MzAsIERhbmllbCBWZXR0ZXIgd3JvdGU6Cj4gPiBP
-biBXZWQsIERlYyAxNCwgMjAxNiBhdCAwMToxNjoxMFBNICswMjAwLCBNaWtrbyBQZXJ0dHVuZW4g
-d3JvdGU6Cj4gPiA+IFRoaXMgc2VyaWVzIGFkZHMgSU9NTVUgc3VwcG9ydCB0byBIb3N0MXggYW5k
-IFRlZ3JhRFJNCj4gPiA+IGFuZCBhZGRzIHN1cHBvcnQgZm9yIHRoZSBWSUMgKFZpZGVvIEltYWdl
-IENvbXBvc2l0b3IpCj4gPiA+IGhvc3QxeCBjbGllbnQuIFRoZSBzZXJpZXMgaXMgYXZhaWxhYmxl
-IGFzIGEgZ2l0IHJlcG9zaXRvcnkgYXQKPiA+ID4gZ2l0Oi8vZ2l0aHViLmNvbS9jeW5kaXMvbGlu
-dXguZ2l0OyBicmFuY2ggdmljLTIuCj4gPiA+IAo+ID4gPiBBIHVzZXJzcGFjZSB0ZXN0IGNhc2Ug
-Zm9yIFZJQyBjYW4gYmUgZm91bmQgYXQKPiA+ID4gaHR0cHM6Ly9naXRodWIuY29tL2N5bmRpcy9k
-cm0vdHJlZS93b3JrL3RlZ3JhLgo+ID4gPiBUaGUgdGVzdGNhc2UgaXMgaW4gdGVzdHMvdGVncmEg
-YW5kIGlzIGNhbGxlZCBzdWJtaXRfdmljLgo+ID4gPiBUaGUgdGVzdGNhc2UvVFJNIGluY2x1ZGUg
-ZnVsbCBoZWFkZXJzIGFuZCBkb2N1bWVudGF0aW9uCj4gPiA+IHRvIHByb2dyYW0gdGhlIHVuaXQu
-IFRoZSB1bml0IGJ5IGl0c2VsZiwgaG93ZXZlciwgZG9lcyBub3QKPiA+ID4gcmVhZGlseSBtYXAg
-dG8gZXhpc3RpbmcgdXNlcnNwYWNlIGxpYnJhcnkgaW50ZXJmYWNlcywgc28KPiA+ID4gaW1wbGVt
-ZW50YXRpb25zIGZvciB0aG9zZSBhcmUgbm90IHByb3ZpZGVkLgo+ID4gCj4gPiBBZmFpayBsaWJ2
-YSBoYXMgYW4gZW50aXJlIHBpbGUgb2YgcG9zdC1wcm9jZXNzaW5nIHN1cHBvcnQuIFByZXR0eSBz
-dXJlCj4gPiBvdGhlciB2aWRlbyB0cmFuc2NvZGUgbGlicmFyaWVzIGhhdmUgc2ltaWxhciBpbnRl
-cmZhY2VzLCBzbyBzaG91bGQgYWxsIGJlCj4gPiBwb3NzaWJsZSB0byBpbXBsZW1lbnQgdGhpcy4K
-PiAKPiBXZSBkb24ndCBoYXZlIGFueSBhY3R1YWwgdmlkZW8gdHJhbnNjb2Rpbmcgc3VwcG9ydCB0
-aG91Z2gsIHNvIHVubGVzcyBpdCdzCj4gcG9zc2libGUgdG8ganVzdCBpbXBsZW1lbnQgYSBwYXJ0
-IG9mIGxpYnZhIGFuZCBkZWZlciB0aGUgcmVzdCB0byBzb21lIENQVQo+IGltcGxlbWVudGF0aW9u
-LCBJIGRvbid0IHNlZSBob3cgdGhpcyBpcyB1c2VmdWwuIEkgc3VwcG9zZSBJIGNvdWxkIGltcGxl
-bWVudAo+IGEgR1N0cmVhbWVyIHBsdWdpbiBmb3IgY29sb3JzcGFjZSBjb252ZXJzaW9uIG9yIHJl
-c2l6aW5nLCBzaW5jZSB0aG9zZSBhcmUKPiB2ZXJ5IG1vZHVsYXIuCgpIbSwgSSBndWVzcyB0aGUg
-cXVlc3Rpb24gdGhlbiBpcywgaG93IGRpZCB0aGF0IGdldCBlbmFibGVkPwoKPiA+IFVudGlsIHRo
-YXQgZXhpc3RzIEkgcmVhbGx5IHRoaW5rIHRoYXQgdGhlIFZJQyBwYXJ0IChhbmQgb25seSB0aGF0
-LCBzaW5jZQo+ID4gdGsxL3R4MSBpbiBnZW5lcmFsIHNlZW1zIHRvIHdvcmsgd2l0aCBub3V2ZWF1
-IGFuZCBhbGwgdGhhdCkgc2hvdWxkIHN0YXkKPiA+IG91dCBvZiB0cmVlLgo+IAo+IE9rLiBJJ2xs
-IHRyeSB0byB3aGlwIHVwIHNvbWV0aGluZy4KCkJ1dCB5ZWFoIHNvbWUgZ3N0cmVhbWVyIHRoaW5n
-IG1pZ2h0IGJlIGRvYWJsZSwgYnV0IG5vdCBzdXJlIHRoZXkgdGFrZSB0aGF0CihJIGRvbid0IGhh
-dmUgYW55IGNvbnRhY3RzIHRoZXJlKS4gVmlkZW8gaXMgYSBiaXQgYSBtZXNzLCB0aGVyZSdzIG5v
-IGNsZWFyCmdvLXRvIHBsYWNlIGZvciBkcm9wcGluZyBzb21lIG5ldyBodyBzdXBwb3J0LgotRGFu
-aWVsCi0tIApEYW5pZWwgVmV0dGVyClNvZnR3YXJlIEVuZ2luZWVyLCBJbnRlbCBDb3Jwb3JhdGlv
-bgpodHRwOi8vYmxvZy5mZndsbC5jaApfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVl
-ZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5m
-by9kcmktZGV2ZWwK
+On 14.12.2016 14:30, Daniel Vetter wrote:
+> On Wed, Dec 14, 2016 at 01:16:10PM +0200, Mikko Perttunen wrote:
+>> This series adds IOMMU support to Host1x and TegraDRM
+>> and adds support for the VIC (Video Image Compositor)
+>> host1x client. The series is available as a git repository at
+>> git://github.com/cyndis/linux.git; branch vic-2.
+>>
+>> A userspace test case for VIC can be found at
+>> https://github.com/cyndis/drm/tree/work/tegra.
+>> The testcase is in tests/tegra and is called submit_vic.
+>> The testcase/TRM include full headers and documentation
+>> to program the unit. The unit by itself, however, does not
+>> readily map to existing userspace library interfaces, so
+>> implementations for those are not provided.
+>
+> Afaik libva has an entire pile of post-processing support. Pretty sure
+> other video transcode libraries have similar interfaces, so should all be
+> possible to implement this.
+
+We don't have any actual video transcoding support though, so unless 
+it's possible to just implement a part of libva and defer the rest to 
+some CPU implementation, I don't see how this is useful. I suppose I 
+could implement a GStreamer plugin for colorspace conversion or 
+resizing, since those are very modular.
+
+>
+> Until that exists I really think that the VIC part (and only that, since
+> tk1/tx1 in general seems to work with nouveau and all that) should stay
+> out of tree.
+
+Ok. I'll try to whip up something.
+
+> -Daniel
+
+Thanks,
+Mikko.
+
+>
+>>
+>> The in-kernel firewall is not implemented for VIC;
+>> therefore, either the IOMMU must be enabled or the firewall
+>> disabled for the test to pass.
+>>
+>> Tested with Jetson TX1 (T210). Probably works also
+>> with Jetson TK1 (T124). Note that due to hardware changes
+>> the testcase also needs to be changed to run properly
+>> on T124: this can be done by removing the topmost
+>> commit of the aforementioned test repository.
+>>
+>> Thanks,
+>>   Mikko.
+>>
+>> Arto Merilainen (2):
+>>   drm/tegra: Add falcon helper library
+>>   drm/tegra: Add VIC support
+>>
+>> Mikko Perttunen (5):
+>>   drm/tegra: Add Tegra DRM allocation API
+>>   gpu: host1x: Add IOMMU support
+>>   dt-bindings: Add bindings for the Tegra VIC
+>>   arm64: tegra: Enable VIC on T210
+>>   arm64: tegra: Enable IOMMU for Host1x on Tegra210
+>>
+>>  .../display/tegra/nvidia,tegra20-host1x.txt        |  13 +
+>>  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  19 +-
+>>  drivers/gpu/drm/tegra/Makefile                     |   4 +-
+>>  drivers/gpu/drm/tegra/drm.c                        | 114 +++++-
+>>  drivers/gpu/drm/tegra/drm.h                        |  12 +
+>>  drivers/gpu/drm/tegra/falcon.c                     | 259 ++++++++++++++
+>>  drivers/gpu/drm/tegra/falcon.h                     | 127 +++++++
+>>  drivers/gpu/drm/tegra/vic.c                        | 396 +++++++++++++++++++++
+>>  drivers/gpu/drm/tegra/vic.h                        |  31 ++
+>>  drivers/gpu/host1x/cdma.c                          |  74 +++-
+>>  drivers/gpu/host1x/cdma.h                          |   6 +-
+>>  drivers/gpu/host1x/dev.c                           |  40 ++-
+>>  drivers/gpu/host1x/dev.h                           |   6 +
+>>  drivers/gpu/host1x/hw/cdma_hw.c                    |  16 +-
+>>  drivers/gpu/host1x/job.c                           |  72 +++-
+>>  drivers/gpu/host1x/job.h                           |   1 +
+>>  include/linux/host1x.h                             |   1 +
+>>  17 files changed, 1143 insertions(+), 48 deletions(-)
+>>  create mode 100644 drivers/gpu/drm/tegra/falcon.c
+>>  create mode 100644 drivers/gpu/drm/tegra/falcon.h
+>>  create mode 100644 drivers/gpu/drm/tegra/vic.c
+>>  create mode 100644 drivers/gpu/drm/tegra/vic.h
+>>
+>> --
+>> 2.10.2
+>>
+>
