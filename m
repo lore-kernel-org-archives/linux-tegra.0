@@ -1,104 +1,132 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH v2 0/7] Host1x IOMMU support + VIC support
-Date: Wed, 14 Dec 2016 16:29:46 +0200
-Message-ID: <0ae3255d-5b39-39bc-3882-63a8f94d5e99@kapsi.fi>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 1/7] drm/tegra: Add Tegra DRM allocation API
+Date: Wed, 14 Dec 2016 15:39:12 +0100
+Message-ID: <20161214143912.GA30280@ulmo.ba.sec>
 References: <20161214111617.24548-1-mperttunen@nvidia.com>
- <20161214123004.urnvlqarcnp5rp4a@phenom.ffwll.local>
- <07daf863-1675-a3d8-e1a7-32131c8035d8@kapsi.fi>
- <20161214130545.gfpkosyixr5lfkkf@phenom.ffwll.local>
- <f3d1d69b-2c1f-a0f7-8301-fee26cec35f1@kapsi.fi>
- <20161214141142.jmrofknylonhprbk@phenom.ffwll.local>
+ <20161214111617.24548-2-mperttunen@nvidia.com>
+ <1481715331.2313.28.camel@pengutronix.de>
+ <20161214134833.GA29981@ulmo.ba.sec>
+ <1481724116.2313.39.camel@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20161214141142.jmrofknylonhprbk-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1481724116.2313.39.camel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org
+To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
+--xHFwDpU9dbj6ez1V
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 14.12.2016 16:11, Daniel Vetter wrote:
-> On Wed, Dec 14, 2016 at 03:32:16PM +0200, Mikko Perttunen wrote:
->> On 14.12.2016 15:05, Daniel Vetter wrote:
->>> On Wed, Dec 14, 2016 at 02:41:28PM +0200, Mikko Perttunen wrote:
->>>> On 14.12.2016 14:30, Daniel Vetter wrote:
->>>>> On Wed, Dec 14, 2016 at 01:16:10PM +0200, Mikko Perttunen wrote:
->>>>>> This series adds IOMMU support to Host1x and TegraDRM
->>>>>> and adds support for the VIC (Video Image Compositor)
->>>>>> host1x client. The series is available as a git repository at
->>>>>> git://github.com/cyndis/linux.git; branch vic-2.
->>>>>>
->>>>>> A userspace test case for VIC can be found at
->>>>>> https://github.com/cyndis/drm/tree/work/tegra.
->>>>>> The testcase is in tests/tegra and is called submit_vic.
->>>>>> The testcase/TRM include full headers and documentation
->>>>>> to program the unit. The unit by itself, however, does not
->>>>>> readily map to existing userspace library interfaces, so
->>>>>> implementations for those are not provided.
->>>>>
->>>>> Afaik libva has an entire pile of post-processing support. Pretty sure
->>>>> other video transcode libraries have similar interfaces, so should all be
->>>>> possible to implement this.
->>>>
->>>> We don't have any actual video transcoding support though, so unless it's
->>>> possible to just implement a part of libva and defer the rest to some CPU
->>>> implementation, I don't see how this is useful. I suppose I could implement
->>>> a GStreamer plugin for colorspace conversion or resizing, since those are
->>>> very modular.
->>>
->>> Hm, I guess the question then is, how did that get enabled?
->>
->> What is "that"? I'm not exactly sure.
->>
->> Our architecture is such that there's the VIC that handles colorspace
->> conversion, rescaling, blitting and can do some 2d postprocessing effects as
->> well.
->>
->> Then there's the separate NVDEC that is a video bitstream decoder. There's
->> no support for that at the moment. I am working on the IP side of that.
->>
->> The video processing pipeline is then such that NVDEC is fed the bitstream;
->> NVDEC outputs a YUV picture in a specific format; VIC takes that YUV picture
->> and converts/rescales it into the desired format. Or if we are encoding
->> video, VIC takes your RGB image, converts it into a format that NVENC
->> understands, and so on.
->>
->> So with just VIC support, I could implement some simple 2D things. I don't
->> know if anyone would want to specifically use the VIC for those since
->> applications already have fast CPU algorithms. For the video pipeline using
->> VIC is nice since these units can synchronize work without CPU involvement
->> and when you're already using NVDEC or NVENC it's barely any extra effort to
->> involve VIC as well. It can also be useful in power usage sensitive
->> situations, but we aren't really fit for those situations with the upstream
->> kernel anyway :)
->
-> Ah I thought the nvdec was already enabled, since for i915 that's how we
-> went about things (we have a pretty much exactly matching split in the
-> various video related engines). But if that's not there yet then no
-> worries, all fine.
+On Wed, Dec 14, 2016 at 03:01:56PM +0100, Lucas Stach wrote:
+> Am Mittwoch, den 14.12.2016, 14:48 +0100 schrieb Thierry Reding:
+> > On Wed, Dec 14, 2016 at 12:35:31PM +0100, Lucas Stach wrote:
+> > > Am Mittwoch, den 14.12.2016, 13:16 +0200 schrieb Mikko Perttunen:
+> > > > Add a new IO virtual memory allocation API to allow clients to
+> > > > allocate non-GEM memory in the Tegra DRM IOMMU domain. This is
+> > > > required e.g. for loading client firmware when clients are attached
+> > > > to the IOMMU domain.
+> > > >=20
+> > > > The allocator allocates contiguous physical pages that are then
+> > > > mapped contiguously to the IOMMU domain using the iova_domain
+> > > > library provided by the kernel. Contiguous physical pages are
+> > > > used so that the same allocator works also when IOMMU support
+> > > > is disabled and therefore devices access physical memory directly.
+> > > >=20
+> > > Why is this needed? If you use the DMA API for those buffers you shou=
+ld
+> > > end up with CMA memory in the !IOMMU case and normal paged memory with
+> > > IOMMU enabled. From my understanding this should match the requiremen=
+ts.
+> >=20
+> > We can't currently use the DMA API for these allocations because it
+> > doesn't allow (or at least didn't back when this was first implemented)
+> > us to share a mapping between two devices.
+>=20
+> Hm, maybe I'm overlooking something, but isn't this just a matter of
+> allocating on one device, then constructing a SG list (dma_get_sgtable)
+> from the buffer you got and use that to dma_map_sg() the buffer on the
+> other device?
 
-Ah, I see :)
+Yes, that would work. What I was referring to is sharing framebuffers
+between multiple CRTCs. Back at the time when IOMMU support was first
+added, I tried to use the DMA API. However, the problem with that was
+that we would've had to effectively dma_map_sg() on every page-flip
+since the buffer is imported into the DRM device, but there's no call
+that would import it for each CRTC only once. So when the framebuffer
+is added to a plane, you have to map it to the corresponding display
+controller. And the dma_map_sg() was, if I recall correctly, on the
+order of 5-10 ms, which is prohibitively expensive to do per frame.
 
-Yes, perhaps I should have described the situation and hardware in a bit 
-more detail initially - sometimes I forget I'm writing to other people 
-than Thierry as well.. something to keep in mind for future patches.
+It's also completely unnecessary because all CRTCs in a DRM device can
+simply share the same IOMMU domain. I can't think of a reason why you
+would want or need to use separate domains.
 
->
-> Since you do seem to plan to enable everything anyway, might be worth it
-> to go directly with something like libva or libvdpau or whatever the cool
-> thing is. libva is my recommendation since it works on non-X11 too afaik,
-> but I have 0 clue. And might be worth it to check out whether you can't do
-> a super-basic libva driver that only does the post processing stuff. With
-> libva you can import/export images, so it might be possible even ... And
-> directly doing the full video engine support instead of a one-off in
-> gstreamer sounds more sensible to me.
-> -Daniel
->
+Back at the time this was something that the DMA API couldn't do, it
+would simply assign a separate IOMMU domain per device. It's possible
+that this has changed now given that many others must've run into the
+same problem meanwhile.
 
-I'll take a look at libva.
+> Maybe doing the firmware buffer allocation on host1x (with a 4GB upper
+> bound) and then sharing the SG list to the devices?
 
-Thanks,
-Mikko.
+That's pretty much what this API is doing. Only it's the other way
+around: we don't share the SG list with other devices for mapping, we
+simply reuse the same mapping across multiple devices, since they're
+all in the same IOMMU domain.
+
+> > The reason why we need these patches is that when IOMMU is enabled, then
+> > the units' falcons will read memory through the IOMMU, so we must have
+> > allocations for GEM buffers and the firmware go through the same
+> > mechanism.
+>=20
+> Sorry for maybe dumb questions.
+>=20
+> Do you have any engines other than the GPU that can handle SG
+> themselves?
+
+No, I don't think so.
+
+> Wouldn't you want the GEM objects to be backed by CMA in the !MMU
+> case?
+
+That's exactly what's happening already. If no IOMMU is available we
+allocate buffer objects backing store with dma_alloc_wc().
+
+> How are ordinary GEM objects different from the falcon firmware?
+
+They're not. I think we could probably reuse more of the BO allocation
+functions for the firmware as well. I think Mikko already agreed to look
+into that. We might have to add some special cases, or split up the
+helpers a little differently to avoid creating GEM objects from the
+firmware buffers. We wouldn't want userspace to start mmap()'ing those.
+
+Thierry
+
+--xHFwDpU9dbj6ez1V
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlhRWY4ACgkQ3SOs138+
+s6GX2A/+Ok5ao5n9Ufz/FN4QCmIcma5pWzeHZw+YZTayAGKhBuFcNmsMl28aer1n
+eNif88JA/PRKD8nq5C4klTY5avQOiqiPogQXS0H5LpBoY2wuDLHVrEC9fZ6TCBTi
+ypSvUbZ4UhypYTThzAc7DX9U1sdF1coGghMLi5DXUENv1TLCoKVYuO9fKylhwKYu
+brWjMMVotnEA2Uno+8YURdESkcuNUaIjqdRR10Fd/hv6O1ra2SzzoVrzPVOIuHUt
+KjETQ3qHLV95Mm4aj/WygkeZrRIkfrcgaWhuCKlV0kfuNUp6dTF+QNuAXoykS9T1
+wB21Wn9wodYWDusMUUaSWH2LV8O+QGq0U1kLopcLS0+zwuB1EjSHch/LVeL7Xf2v
+FC4W2tJ2ixbaysQ/hxuAWniE1Z3Ao9ogpF4lrwgH/tX3ILREz/qHB1aiEX9zvoXA
+wVMzF0cBwOrZBj6466AA0WUAndz6G+hdiVcy+3iQeIOsuUcnAlJ3CXoIVIGxT8oV
+fRLdl4rtMew9YUMXO9kdz3yTqEXkuRxcUjCX71u6Ws+eeIB56T5iAG/iIl4pR2HO
++EIC9uA9XcGuWqXrYkYHr97Dqdk6cY8M+kUIH+yPzycu7LyHlP3geos+rOp0vjnR
+Soe0RXPuSQDWv5ba5Lvmbi8C1qOqn0FzYEZM10OrUrqL9+RfGig=
+=/5fh
+-----END PGP SIGNATURE-----
+
+--xHFwDpU9dbj6ez1V--
