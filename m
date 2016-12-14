@@ -1,132 +1,101 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: [PATCH v2 1/7] drm/tegra: Add Tegra DRM allocation API
-Date: Wed, 14 Dec 2016 15:39:12 +0100
-Message-ID: <20161214143912.GA30280@ulmo.ba.sec>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [PATCH v2 0/7] Host1x IOMMU support + VIC support
+Date: Wed, 14 Dec 2016 15:48:55 +0100
+Message-ID: <CAKMK7uGw3XwbPU798YJ-9eLbwhMWs7z_F-ro238RfFN8LFURtw@mail.gmail.com>
 References: <20161214111617.24548-1-mperttunen@nvidia.com>
- <20161214111617.24548-2-mperttunen@nvidia.com>
- <1481715331.2313.28.camel@pengutronix.de>
- <20161214134833.GA29981@ulmo.ba.sec>
- <1481724116.2313.39.camel@pengutronix.de>
+ <20161214123004.urnvlqarcnp5rp4a@phenom.ffwll.local>
+ <07daf863-1675-a3d8-e1a7-32131c8035d8@kapsi.fi>
+ <20161214130545.gfpkosyixr5lfkkf@phenom.ffwll.local>
+ <f3d1d69b-2c1f-a0f7-8301-fee26cec35f1@kapsi.fi>
+ <20161214141142.jmrofknylonhprbk@phenom.ffwll.local>
 Mime-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <1481724116.2313.39.camel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <libva-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+In-Reply-To: <20161214141142.jmrofknylonhprbk-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/libva>,
+ <mailto:libva-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/libva>
+List-Post: <mailto:libva-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+List-Help: <mailto:libva-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/libva>,
+ <mailto:libva-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
+Errors-To: libva-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Sender: "Libva" <libva-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
+To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Sean V Kelley <sean.v.kelley-ral2JQCrhuEAvxtiuMwx3w@public.gmane.org>
+Cc: Dave Airlie <airlied-cv59FeDIM0c@public.gmane.org>, dri-devel <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "libva-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <libva-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-
---xHFwDpU9dbj6ez1V
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Dec 14, 2016 at 03:01:56PM +0100, Lucas Stach wrote:
-> Am Mittwoch, den 14.12.2016, 14:48 +0100 schrieb Thierry Reding:
-> > On Wed, Dec 14, 2016 at 12:35:31PM +0100, Lucas Stach wrote:
-> > > Am Mittwoch, den 14.12.2016, 13:16 +0200 schrieb Mikko Perttunen:
-> > > > Add a new IO virtual memory allocation API to allow clients to
-> > > > allocate non-GEM memory in the Tegra DRM IOMMU domain. This is
-> > > > required e.g. for loading client firmware when clients are attached
-> > > > to the IOMMU domain.
-> > > >=20
-> > > > The allocator allocates contiguous physical pages that are then
-> > > > mapped contiguously to the IOMMU domain using the iova_domain
-> > > > library provided by the kernel. Contiguous physical pages are
-> > > > used so that the same allocator works also when IOMMU support
-> > > > is disabled and therefore devices access physical memory directly.
-> > > >=20
-> > > Why is this needed? If you use the DMA API for those buffers you shou=
-ld
-> > > end up with CMA memory in the !IOMMU case and normal paged memory with
-> > > IOMMU enabled. From my understanding this should match the requiremen=
-ts.
-> >=20
-> > We can't currently use the DMA API for these allocations because it
-> > doesn't allow (or at least didn't back when this was first implemented)
-> > us to share a mapping between two devices.
->=20
-> Hm, maybe I'm overlooking something, but isn't this just a matter of
-> allocating on one device, then constructing a SG list (dma_get_sgtable)
-> from the buffer you got and use that to dma_map_sg() the buffer on the
-> other device?
-
-Yes, that would work. What I was referring to is sharing framebuffers
-between multiple CRTCs. Back at the time when IOMMU support was first
-added, I tried to use the DMA API. However, the problem with that was
-that we would've had to effectively dma_map_sg() on every page-flip
-since the buffer is imported into the DRM device, but there's no call
-that would import it for each CRTC only once. So when the framebuffer
-is added to a plane, you have to map it to the corresponding display
-controller. And the dma_map_sg() was, if I recall correctly, on the
-order of 5-10 ms, which is prohibitively expensive to do per frame.
-
-It's also completely unnecessary because all CRTCs in a DRM device can
-simply share the same IOMMU domain. I can't think of a reason why you
-would want or need to use separate domains.
-
-Back at the time this was something that the DMA API couldn't do, it
-would simply assign a separate IOMMU domain per device. It's possible
-that this has changed now given that many others must've run into the
-same problem meanwhile.
-
-> Maybe doing the firmware buffer allocation on host1x (with a 4GB upper
-> bound) and then sharing the SG list to the devices?
-
-That's pretty much what this API is doing. Only it's the other way
-around: we don't share the SG list with other devices for mapping, we
-simply reuse the same mapping across multiple devices, since they're
-all in the same IOMMU domain.
-
-> > The reason why we need these patches is that when IOMMU is enabled, then
-> > the units' falcons will read memory through the IOMMU, so we must have
-> > allocations for GEM buffers and the firmware go through the same
-> > mechanism.
->=20
-> Sorry for maybe dumb questions.
->=20
-> Do you have any engines other than the GPU that can handle SG
-> themselves?
-
-No, I don't think so.
-
-> Wouldn't you want the GEM objects to be backed by CMA in the !MMU
-> case?
-
-That's exactly what's happening already. If no IOMMU is available we
-allocate buffer objects backing store with dma_alloc_wc().
-
-> How are ordinary GEM objects different from the falcon firmware?
-
-They're not. I think we could probably reuse more of the BO allocation
-functions for the firmware as well. I think Mikko already agreed to look
-into that. We might have to add some special cases, or split up the
-helpers a little differently to avoid creating GEM objects from the
-firmware buffers. We wouldn't want userspace to start mmap()'ing those.
-
-Thierry
-
---xHFwDpU9dbj6ez1V
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlhRWY4ACgkQ3SOs138+
-s6GX2A/+Ok5ao5n9Ufz/FN4QCmIcma5pWzeHZw+YZTayAGKhBuFcNmsMl28aer1n
-eNif88JA/PRKD8nq5C4klTY5avQOiqiPogQXS0H5LpBoY2wuDLHVrEC9fZ6TCBTi
-ypSvUbZ4UhypYTThzAc7DX9U1sdF1coGghMLi5DXUENv1TLCoKVYuO9fKylhwKYu
-brWjMMVotnEA2Uno+8YURdESkcuNUaIjqdRR10Fd/hv6O1ra2SzzoVrzPVOIuHUt
-KjETQ3qHLV95Mm4aj/WygkeZrRIkfrcgaWhuCKlV0kfuNUp6dTF+QNuAXoykS9T1
-wB21Wn9wodYWDusMUUaSWH2LV8O+QGq0U1kLopcLS0+zwuB1EjSHch/LVeL7Xf2v
-FC4W2tJ2ixbaysQ/hxuAWniE1Z3Ao9ogpF4lrwgH/tX3ILREz/qHB1aiEX9zvoXA
-wVMzF0cBwOrZBj6466AA0WUAndz6G+hdiVcy+3iQeIOsuUcnAlJ3CXoIVIGxT8oV
-fRLdl4rtMew9YUMXO9kdz3yTqEXkuRxcUjCX71u6Ws+eeIB56T5iAG/iIl4pR2HO
-+EIC9uA9XcGuWqXrYkYHr97Dqdk6cY8M+kUIH+yPzycu7LyHlP3geos+rOp0vjnR
-Soe0RXPuSQDWv5ba5Lvmbi8C1qOqn0FzYEZM10OrUrqL9+RfGig=
-=/5fh
------END PGP SIGNATURE-----
-
---xHFwDpU9dbj6ez1V--
+T24gV2VkLCBEZWMgMTQsIDIwMTYgYXQgMzoxMSBQTSwgRGFuaWVsIFZldHRlciA8ZGFuaWVsQGZm
+d2xsLmNoPiB3cm90ZToKPiBPbiBXZWQsIERlYyAxNCwgMjAxNiBhdCAwMzozMjoxNlBNICswMjAw
+LCBNaWtrbyBQZXJ0dHVuZW4gd3JvdGU6Cj4+IE9uIDE0LjEyLjIwMTYgMTU6MDUsIERhbmllbCBW
+ZXR0ZXIgd3JvdGU6Cj4+ID4gT24gV2VkLCBEZWMgMTQsIDIwMTYgYXQgMDI6NDE6MjhQTSArMDIw
+MCwgTWlra28gUGVydHR1bmVuIHdyb3RlOgo+PiA+ID4gT24gMTQuMTIuMjAxNiAxNDozMCwgRGFu
+aWVsIFZldHRlciB3cm90ZToKPj4gPiA+ID4gT24gV2VkLCBEZWMgMTQsIDIwMTYgYXQgMDE6MTY6
+MTBQTSArMDIwMCwgTWlra28gUGVydHR1bmVuIHdyb3RlOgo+PiA+ID4gPiA+IFRoaXMgc2VyaWVz
+IGFkZHMgSU9NTVUgc3VwcG9ydCB0byBIb3N0MXggYW5kIFRlZ3JhRFJNCj4+ID4gPiA+ID4gYW5k
+IGFkZHMgc3VwcG9ydCBmb3IgdGhlIFZJQyAoVmlkZW8gSW1hZ2UgQ29tcG9zaXRvcikKPj4gPiA+
+ID4gPiBob3N0MXggY2xpZW50LiBUaGUgc2VyaWVzIGlzIGF2YWlsYWJsZSBhcyBhIGdpdCByZXBv
+c2l0b3J5IGF0Cj4+ID4gPiA+ID4gZ2l0Oi8vZ2l0aHViLmNvbS9jeW5kaXMvbGludXguZ2l0OyBi
+cmFuY2ggdmljLTIuCj4+ID4gPiA+ID4KPj4gPiA+ID4gPiBBIHVzZXJzcGFjZSB0ZXN0IGNhc2Ug
+Zm9yIFZJQyBjYW4gYmUgZm91bmQgYXQKPj4gPiA+ID4gPiBodHRwczovL2dpdGh1Yi5jb20vY3lu
+ZGlzL2RybS90cmVlL3dvcmsvdGVncmEuCj4+ID4gPiA+ID4gVGhlIHRlc3RjYXNlIGlzIGluIHRl
+c3RzL3RlZ3JhIGFuZCBpcyBjYWxsZWQgc3VibWl0X3ZpYy4KPj4gPiA+ID4gPiBUaGUgdGVzdGNh
+c2UvVFJNIGluY2x1ZGUgZnVsbCBoZWFkZXJzIGFuZCBkb2N1bWVudGF0aW9uCj4+ID4gPiA+ID4g
+dG8gcHJvZ3JhbSB0aGUgdW5pdC4gVGhlIHVuaXQgYnkgaXRzZWxmLCBob3dldmVyLCBkb2VzIG5v
+dAo+PiA+ID4gPiA+IHJlYWRpbHkgbWFwIHRvIGV4aXN0aW5nIHVzZXJzcGFjZSBsaWJyYXJ5IGlu
+dGVyZmFjZXMsIHNvCj4+ID4gPiA+ID4gaW1wbGVtZW50YXRpb25zIGZvciB0aG9zZSBhcmUgbm90
+IHByb3ZpZGVkLgo+PiA+ID4gPgo+PiA+ID4gPiBBZmFpayBsaWJ2YSBoYXMgYW4gZW50aXJlIHBp
+bGUgb2YgcG9zdC1wcm9jZXNzaW5nIHN1cHBvcnQuIFByZXR0eSBzdXJlCj4+ID4gPiA+IG90aGVy
+IHZpZGVvIHRyYW5zY29kZSBsaWJyYXJpZXMgaGF2ZSBzaW1pbGFyIGludGVyZmFjZXMsIHNvIHNo
+b3VsZCBhbGwgYmUKPj4gPiA+ID4gcG9zc2libGUgdG8gaW1wbGVtZW50IHRoaXMuCj4+ID4gPgo+
+PiA+ID4gV2UgZG9uJ3QgaGF2ZSBhbnkgYWN0dWFsIHZpZGVvIHRyYW5zY29kaW5nIHN1cHBvcnQg
+dGhvdWdoLCBzbyB1bmxlc3MgaXQncwo+PiA+ID4gcG9zc2libGUgdG8ganVzdCBpbXBsZW1lbnQg
+YSBwYXJ0IG9mIGxpYnZhIGFuZCBkZWZlciB0aGUgcmVzdCB0byBzb21lIENQVQo+PiA+ID4gaW1w
+bGVtZW50YXRpb24sIEkgZG9uJ3Qgc2VlIGhvdyB0aGlzIGlzIHVzZWZ1bC4gSSBzdXBwb3NlIEkg
+Y291bGQgaW1wbGVtZW50Cj4+ID4gPiBhIEdTdHJlYW1lciBwbHVnaW4gZm9yIGNvbG9yc3BhY2Ug
+Y29udmVyc2lvbiBvciByZXNpemluZywgc2luY2UgdGhvc2UgYXJlCj4+ID4gPiB2ZXJ5IG1vZHVs
+YXIuCj4+ID4KPj4gPiBIbSwgSSBndWVzcyB0aGUgcXVlc3Rpb24gdGhlbiBpcywgaG93IGRpZCB0
+aGF0IGdldCBlbmFibGVkPwo+Pgo+PiBXaGF0IGlzICJ0aGF0Ij8gSSdtIG5vdCBleGFjdGx5IHN1
+cmUuCj4+Cj4+IE91ciBhcmNoaXRlY3R1cmUgaXMgc3VjaCB0aGF0IHRoZXJlJ3MgdGhlIFZJQyB0
+aGF0IGhhbmRsZXMgY29sb3JzcGFjZQo+PiBjb252ZXJzaW9uLCByZXNjYWxpbmcsIGJsaXR0aW5n
+IGFuZCBjYW4gZG8gc29tZSAyZCBwb3N0cHJvY2Vzc2luZyBlZmZlY3RzIGFzCj4+IHdlbGwuCj4+
+Cj4+IFRoZW4gdGhlcmUncyB0aGUgc2VwYXJhdGUgTlZERUMgdGhhdCBpcyBhIHZpZGVvIGJpdHN0
+cmVhbSBkZWNvZGVyLiBUaGVyZSdzCj4+IG5vIHN1cHBvcnQgZm9yIHRoYXQgYXQgdGhlIG1vbWVu
+dC4gSSBhbSB3b3JraW5nIG9uIHRoZSBJUCBzaWRlIG9mIHRoYXQuCj4+Cj4+IFRoZSB2aWRlbyBw
+cm9jZXNzaW5nIHBpcGVsaW5lIGlzIHRoZW4gc3VjaCB0aGF0IE5WREVDIGlzIGZlZCB0aGUgYml0
+c3RyZWFtOwo+PiBOVkRFQyBvdXRwdXRzIGEgWVVWIHBpY3R1cmUgaW4gYSBzcGVjaWZpYyBmb3Jt
+YXQ7IFZJQyB0YWtlcyB0aGF0IFlVViBwaWN0dXJlCj4+IGFuZCBjb252ZXJ0cy9yZXNjYWxlcyBp
+dCBpbnRvIHRoZSBkZXNpcmVkIGZvcm1hdC4gT3IgaWYgd2UgYXJlIGVuY29kaW5nCj4+IHZpZGVv
+LCBWSUMgdGFrZXMgeW91ciBSR0IgaW1hZ2UsIGNvbnZlcnRzIGl0IGludG8gYSBmb3JtYXQgdGhh
+dCBOVkVOQwo+PiB1bmRlcnN0YW5kcywgYW5kIHNvIG9uLgo+Pgo+PiBTbyB3aXRoIGp1c3QgVklD
+IHN1cHBvcnQsIEkgY291bGQgaW1wbGVtZW50IHNvbWUgc2ltcGxlIDJEIHRoaW5ncy4gSSBkb24n
+dAo+PiBrbm93IGlmIGFueW9uZSB3b3VsZCB3YW50IHRvIHNwZWNpZmljYWxseSB1c2UgdGhlIFZJ
+QyBmb3IgdGhvc2Ugc2luY2UKPj4gYXBwbGljYXRpb25zIGFscmVhZHkgaGF2ZSBmYXN0IENQVSBh
+bGdvcml0aG1zLiBGb3IgdGhlIHZpZGVvIHBpcGVsaW5lIHVzaW5nCj4+IFZJQyBpcyBuaWNlIHNp
+bmNlIHRoZXNlIHVuaXRzIGNhbiBzeW5jaHJvbml6ZSB3b3JrIHdpdGhvdXQgQ1BVIGludm9sdmVt
+ZW50Cj4+IGFuZCB3aGVuIHlvdSdyZSBhbHJlYWR5IHVzaW5nIE5WREVDIG9yIE5WRU5DIGl0J3Mg
+YmFyZWx5IGFueSBleHRyYSBlZmZvcnQgdG8KPj4gaW52b2x2ZSBWSUMgYXMgd2VsbC4gSXQgY2Fu
+IGFsc28gYmUgdXNlZnVsIGluIHBvd2VyIHVzYWdlIHNlbnNpdGl2ZQo+PiBzaXR1YXRpb25zLCBi
+dXQgd2UgYXJlbid0IHJlYWxseSBmaXQgZm9yIHRob3NlIHNpdHVhdGlvbnMgd2l0aCB0aGUgdXBz
+dHJlYW0KPj4ga2VybmVsIGFueXdheSA6KQo+Cj4gQWggSSB0aG91Z2h0IHRoZSBudmRlYyB3YXMg
+YWxyZWFkeSBlbmFibGVkLCBzaW5jZSBmb3IgaTkxNSB0aGF0J3MgaG93IHdlCj4gd2VudCBhYm91
+dCB0aGluZ3MgKHdlIGhhdmUgYSBwcmV0dHkgbXVjaCBleGFjdGx5IG1hdGNoaW5nIHNwbGl0IGlu
+IHRoZQo+IHZhcmlvdXMgdmlkZW8gcmVsYXRlZCBlbmdpbmVzKS4gQnV0IGlmIHRoYXQncyBub3Qg
+dGhlcmUgeWV0IHRoZW4gbm8KPiB3b3JyaWVzLCBhbGwgZmluZS4KPgo+IFNpbmNlIHlvdSBkbyBz
+ZWVtIHRvIHBsYW4gdG8gZW5hYmxlIGV2ZXJ5dGhpbmcgYW55d2F5LCBtaWdodCBiZSB3b3J0aCBp
+dAo+IHRvIGdvIGRpcmVjdGx5IHdpdGggc29tZXRoaW5nIGxpa2UgbGlidmEgb3IgbGlidmRwYXUg
+b3Igd2hhdGV2ZXIgdGhlIGNvb2wKPiB0aGluZyBpcy4gbGlidmEgaXMgbXkgcmVjb21tZW5kYXRp
+b24gc2luY2UgaXQgd29ya3Mgb24gbm9uLVgxMSB0b28gYWZhaWssCj4gYnV0IEkgaGF2ZSAwIGNs
+dWUuIEFuZCBtaWdodCBiZSB3b3J0aCBpdCB0byBjaGVjayBvdXQgd2hldGhlciB5b3UgY2FuJ3Qg
+ZG8KPiBhIHN1cGVyLWJhc2ljIGxpYnZhIGRyaXZlciB0aGF0IG9ubHkgZG9lcyB0aGUgcG9zdCBw
+cm9jZXNzaW5nIHN0dWZmLiBXaXRoCj4gbGlidmEgeW91IGNhbiBpbXBvcnQvZXhwb3J0IGltYWdl
+cywgc28gaXQgbWlnaHQgYmUgcG9zc2libGUgZXZlbiAuLi4gQW5kCj4gZGlyZWN0bHkgZG9pbmcg
+dGhlIGZ1bGwgdmlkZW8gZW5naW5lIHN1cHBvcnQgaW5zdGVhZCBvZiBhIG9uZS1vZmYgaW4KPiBn
+c3RyZWFtZXIgc291bmRzIG1vcmUgc2Vuc2libGUgdG8gbWUuCgpTaWxseSBtZSBmb3Jnb3QgdG8g
+YWRkIHRoZSBleHBlcnRzLCBpLmUuIFNlYW4gKGN1cnJlbnQgbGlidmEKbWFpbnRhaW5lcikgYW5k
+IGxpYnZhIG1haWxpbmcgbGlzdHMuCi1EYW5pZWwKLS0gCkRhbmllbCBWZXR0ZXIKU29mdHdhcmUg
+RW5naW5lZXIsIEludGVsIENvcnBvcmF0aW9uCis0MSAoMCkgNzkgMzY1IDU3IDQ4IC0gaHR0cDov
+L2Jsb2cuZmZ3bGwuY2gKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX18KTGlidmEgbWFpbGluZyBsaXN0CkxpYnZhQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRw
+czovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9tYWlsbWFuL2xpc3RpbmZvL2xpYnZhCg==
