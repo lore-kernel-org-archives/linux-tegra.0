@@ -1,48 +1,46 @@
-From: Mikko Perttunen <mperttunen@nvidia.com>
-Subject: [PATCH v2 6/7] arm64: tegra: Enable VIC on T210
-Date: Wed, 14 Dec 2016 13:16:16 +0200
-Message-ID: <20161214111617.24548-7-mperttunen@nvidia.com>
+From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: [PATCH v2 5/7] dt-bindings: Add bindings for the Tegra VIC
+Date: Wed, 14 Dec 2016 13:16:15 +0200
+Message-ID: <20161214111617.24548-6-mperttunen@nvidia.com>
 References: <20161214111617.24548-1-mperttunen@nvidia.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20161214111617.24548-1-mperttunen@nvidia.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: thierry.reding@gmail.com
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20161214111617.24548-1-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, daniel-/w4YWyX8dFk@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-RW5hYmxlIHRoZSBWSUMgKFZpZGVvIEltYWdlIENvbXBvc2l0b3IpIGhvc3QxeAp1bml0IG9uIFRl
-Z3JhMjEwIHN5c3RlbXMuCgpTaWduZWQtb2ZmLWJ5OiBNaWtrbyBQZXJ0dHVuZW4gPG1wZXJ0dHVu
-ZW5AbnZpZGlhLmNvbT4KLS0tCiBhcmNoL2FybTY0L2Jvb3QvZHRzL252aWRpYS90ZWdyYTIxMC5k
-dHNpIHwgMTcgKysrKysrKysrKysrKysrKy0KIDEgZmlsZSBjaGFuZ2VkLCAxNiBpbnNlcnRpb25z
-KCspLCAxIGRlbGV0aW9uKC0pCgpkaWZmIC0tZ2l0IGEvYXJjaC9hcm02NC9ib290L2R0cy9udmlk
-aWEvdGVncmEyMTAuZHRzaSBiL2FyY2gvYXJtNjQvYm9vdC9kdHMvbnZpZGlhL3RlZ3JhMjEwLmR0
-c2kKaW5kZXggNDYwNDVmZS4uZTEyMzkwZiAxMDA2NDQKLS0tIGEvYXJjaC9hcm02NC9ib290L2R0
-cy9udmlkaWEvdGVncmEyMTAuZHRzaQorKysgYi9hcmNoL2FybTY0L2Jvb3QvZHRzL252aWRpYS90
-ZWdyYTIxMC5kdHNpCkBAIC0xMjIsNyArMTIyLDE0IEBACiAJCXZpY0A1NDM0MDAwMCB7CiAJCQlj
-b21wYXRpYmxlID0gIm52aWRpYSx0ZWdyYTIxMC12aWMiOwogCQkJcmVnID0gPDB4MCAweDU0MzQw
-MDAwIDB4MCAweDAwMDQwMDAwPjsKLQkJCXN0YXR1cyA9ICJkaXNhYmxlZCI7CisJCQlpbnRlcnJ1
-cHRzID0gPEdJQ19TUEkgNzIgSVJRX1RZUEVfTEVWRUxfSElHSD47CisJCQljbG9ja3MgPSA8JnRl
-Z3JhX2NhciBURUdSQTIxMF9DTEtfVklDMDM+OworCQkJY2xvY2stbmFtZXMgPSAidmljIjsKKwkJ
-CXJlc2V0cyA9IDwmdGVncmFfY2FyIDE3OD47CisJCQlyZXNldC1uYW1lcyA9ICJ2aWMiOworCisJ
-CQlpb21tdXMgPSA8Jm1jIFRFR1JBX1NXR1JPVVBfVklDPjsKKwkJCXBvd2VyLWRvbWFpbnMgPSA8
-JnBkX3ZpYz47CiAJCX07CiAKIAkJbnZqcGdANTQzODAwMDAgewpAQCAtNjkyLDYgKzY5OSwxNCBA
-QAogCQkJCXJlc2V0cyA9IDwmdGVncmFfY2FyIFRFR1JBMjEwX0NMS19YVVNCX0hPU1Q+OwogCQkJ
-CSNwb3dlci1kb21haW4tY2VsbHMgPSA8MD47CiAJCQl9OworCisJCQlwZF92aWM6IHZpYyB7CisJ
-CQkJY2xvY2tzID0gPCZ0ZWdyYV9jYXIgVEVHUkEyMTBfQ0xLX1ZJQzAzPjsKKwkJCQljbG9jay1u
-YW1lcyA9ICJ2aWMiOworCQkJCXJlc2V0cyA9IDwmdGVncmFfY2FyIFRFR1JBMjEwX0NMS19WSUMw
-Mz47CisJCQkJcmVzZXQtbmFtZXMgPSAidmljIjsKKwkJCQkjcG93ZXItZG9tYWluLWNlbGxzID0g
-PDA+OworCQkJfTsKIAkJfTsKIAl9OwogCi0tIAoyLjEwLjIKCl9fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fCmRyaS1kZXZlbCBtYWlsaW5nIGxpc3QKZHJpLWRl
-dmVsQGxpc3RzLmZyZWVkZXNrdG9wLm9yZwpodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9yZy9t
-YWlsbWFuL2xpc3RpbmZvL2RyaS1kZXZlbAo=
+The VIC (Video Image Compositor) is a Host1x client unit
+that can do various 2D composition and transform operations.
+
+Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ .../bindings/display/tegra/nvidia,tegra20-host1x.txt        | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+index 0fad7ed..74e1e8a 100644
+--- a/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
++++ b/Documentation/devicetree/bindings/display/tegra/nvidia,tegra20-host1x.txt
+@@ -249,6 +249,19 @@ of the following host1x client modules:
+   See ../pinctrl/nvidia,tegra124-dpaux-padctl.txt for information
+   regarding the DPAUX pad controller bindings.
+ 
++- vic: Video Image Compositor
++  - compatible : "nvidia,tegra<chip>-vic"
++  - reg: Physical base address and length of the controller's registers.
++  - interrupts: The interrupt outputs from the controller.
++  - clocks: Must contain an entry for each entry in clock-names.
++    See ../clocks/clock-bindings.txt for details.
++  - clock-names: Must include the following entries:
++    - vic: clock input for the VIC hardware
++  - resets: Must contain an entry for each entry in reset-names.
++    See ../reset/reset.txt for details.
++  - reset-names: Must include the following entries:
++    - vic
++
+ Example:
+ 
+ / {
+-- 
+2.10.2
