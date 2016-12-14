@@ -1,534 +1,237 @@
 From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 3/7] drm/tegra: Add VIC support
-Date: Wed, 14 Dec 2016 13:16:13 +0200
-Message-ID: <20161214111617.24548-4-mperttunen@nvidia.com>
+Subject: [PATCH v2 1/7] drm/tegra: Add Tegra DRM allocation API
+Date: Wed, 14 Dec 2016 13:16:11 +0200
+Message-ID: <20161214111617.24548-2-mperttunen@nvidia.com>
 References: <20161214111617.24548-1-mperttunen@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <20161214111617.24548-1-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, daniel-/w4YWyX8dFk@public.gmane.org, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, daniel-/w4YWyX8dFk@public.gmane.org, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-From: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Add a new IO virtual memory allocation API to allow clients to
+allocate non-GEM memory in the Tegra DRM IOMMU domain. This is
+required e.g. for loading client firmware when clients are attached
+to the IOMMU domain.
 
-This patch adds support for Video Image Compositor engine which
-can be used for 2d operations.
+The allocator allocates contiguous physical pages that are then
+mapped contiguously to the IOMMU domain using the iova_domain
+library provided by the kernel. Contiguous physical pages are
+used so that the same allocator works also when IOMMU support
+is disabled and therefore devices access physical memory directly.
 
-Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 ---
- drivers/gpu/drm/tegra/Makefile |   3 +-
- drivers/gpu/drm/tegra/drm.c    |   3 +
- drivers/gpu/drm/tegra/drm.h    |   1 +
- drivers/gpu/drm/tegra/vic.c    | 396 +++++++++++++++++++++++++++++++++++++++++
- drivers/gpu/drm/tegra/vic.h    |  31 ++++
- include/linux/host1x.h         |   1 +
- 6 files changed, 434 insertions(+), 1 deletion(-)
- create mode 100644 drivers/gpu/drm/tegra/vic.c
- create mode 100644 drivers/gpu/drm/tegra/vic.h
+ drivers/gpu/drm/tegra/drm.c | 111 +++++++++++++++++++++++++++++++++++++++++---
+ drivers/gpu/drm/tegra/drm.h |  11 +++++
+ 2 files changed, 115 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/tegra/Makefile b/drivers/gpu/drm/tegra/Makefile
-index 93e9a4a..6af3a9a 100644
---- a/drivers/gpu/drm/tegra/Makefile
-+++ b/drivers/gpu/drm/tegra/Makefile
-@@ -14,6 +14,7 @@ tegra-drm-y := \
- 	dpaux.o \
- 	gr2d.o \
- 	gr3d.o \
--	falcon.o
-+	falcon.o \
-+	vic.o
- 
- obj-$(CONFIG_DRM_TEGRA) += tegra-drm.o
 diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
-index cf714c6..f47692e 100644
+index b8be3ee..cf714c6 100644
 --- a/drivers/gpu/drm/tegra/drm.c
 +++ b/drivers/gpu/drm/tegra/drm.c
-@@ -1160,11 +1160,13 @@ static const struct of_device_id host1x_drm_subdevs[] = {
- 	{ .compatible = "nvidia,tegra124-sor", },
- 	{ .compatible = "nvidia,tegra124-hdmi", },
- 	{ .compatible = "nvidia,tegra124-dsi", },
-+	{ .compatible = "nvidia,tegra124-vic", },
- 	{ .compatible = "nvidia,tegra132-dsi", },
- 	{ .compatible = "nvidia,tegra210-dc", },
- 	{ .compatible = "nvidia,tegra210-dsi", },
- 	{ .compatible = "nvidia,tegra210-sor", },
- 	{ .compatible = "nvidia,tegra210-sor1", },
-+	{ .compatible = "nvidia,tegra210-vic", },
- 	{ /* sentinel */ }
+@@ -1,12 +1,13 @@
+ /*
+  * Copyright (C) 2012 Avionic Design GmbH
+- * Copyright (C) 2012-2013 NVIDIA CORPORATION.  All rights reserved.
++ * Copyright (C) 2012-2016 NVIDIA CORPORATION.  All rights reserved.
+  *
+  * This program is free software; you can redistribute it and/or modify
+  * it under the terms of the GNU General Public License version 2 as
+  * published by the Free Software Foundation.
+  */
+ 
++#include <linux/bitops.h>
+ #include <linux/host1x.h>
+ #include <linux/iommu.h>
+ 
+@@ -23,6 +24,8 @@
+ #define DRIVER_MINOR 0
+ #define DRIVER_PATCHLEVEL 0
+ 
++#define CARVEOUT_SZ SZ_64M
++
+ struct tegra_drm_file {
+ 	struct list_head contexts;
  };
+@@ -127,7 +130,8 @@ static int tegra_drm_load(struct drm_device *drm, unsigned long flags)
  
-@@ -1186,6 +1188,7 @@ static struct platform_driver * const drivers[] = {
- 	&tegra_sor_driver,
- 	&tegra_gr2d_driver,
- 	&tegra_gr3d_driver,
-+	&tegra_vic_driver,
- };
+ 	if (iommu_present(&platform_bus_type)) {
+ 		struct iommu_domain_geometry *geometry;
+-		u64 start, end;
++		unsigned long order;
++		u64 carveout_start, carveout_end, gem_start, gem_end;
  
- static int __init host1x_drm_init(void)
-diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
-index 7351dee..6a57e66 100644
---- a/drivers/gpu/drm/tegra/drm.h
-+++ b/drivers/gpu/drm/tegra/drm.h
-@@ -296,5 +296,6 @@ extern struct platform_driver tegra_dpaux_driver;
- extern struct platform_driver tegra_sor_driver;
- extern struct platform_driver tegra_gr2d_driver;
- extern struct platform_driver tegra_gr3d_driver;
-+extern struct platform_driver tegra_vic_driver;
+ 		tegra->domain = iommu_domain_alloc(&platform_bus_type);
+ 		if (!tegra->domain) {
+@@ -136,12 +140,25 @@ static int tegra_drm_load(struct drm_device *drm, unsigned long flags)
+ 		}
  
- #endif /* HOST1X_DRM_H */
-diff --git a/drivers/gpu/drm/tegra/vic.c b/drivers/gpu/drm/tegra/vic.c
-new file mode 100644
-index 0000000..cd804e4
---- /dev/null
-+++ b/drivers/gpu/drm/tegra/vic.c
-@@ -0,0 +1,396 @@
-+/*
-+ * Copyright (c) 2015, NVIDIA Corporation.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
+ 		geometry = &tegra->domain->geometry;
+-		start = geometry->aperture_start;
+-		end = geometry->aperture_end;
++		gem_start = geometry->aperture_start;
++		gem_end = geometry->aperture_end - CARVEOUT_SZ;
++		carveout_start = gem_end + 1;
++		carveout_end = geometry->aperture_end;
 +
-+#include <linux/clk.h>
-+#include <linux/host1x.h>
-+#include <linux/iommu.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/reset.h>
++		order = __ffs(tegra->domain->pgsize_bitmap);
++		init_iova_domain(&tegra->carveout.domain, 1UL << order,
++				 carveout_start >> order,
++				 carveout_end >> order);
 +
-+#include <soc/tegra/pmc.h>
++		tegra->carveout.shift = iova_shift(&tegra->carveout.domain);
++		tegra->carveout.limit = carveout_end >> tegra->carveout.shift;
 +
-+#include "drm.h"
-+#include "falcon.h"
-+#include "vic.h"
-+
-+struct vic_config {
-+	const char *firmware;
-+};
-+
-+struct vic {
-+	struct falcon falcon;
-+	bool booted;
-+
-+	void __iomem *regs;
-+	struct tegra_drm_client client;
-+	struct host1x_channel *channel;
-+	struct iommu_domain *domain;
-+	struct device *dev;
-+	struct clk *clk;
-+
-+	/* Platform configuration */
-+	const struct vic_config *config;
-+};
-+
-+static inline struct vic *to_vic(struct tegra_drm_client *client)
++		drm_mm_init(&tegra->mm, gem_start, gem_end - gem_start + 1);
+ 
+-		DRM_DEBUG_DRIVER("IOMMU aperture initialized (%#llx-%#llx)\n",
+-				 start, end);
+-		drm_mm_init(&tegra->mm, start, end - start + 1);
++		DRM_DEBUG("IOMMU apertures:\n");
++		DRM_DEBUG("  GEM: %#llx-%#llx\n", gem_start, gem_end);
++		DRM_DEBUG("  Carveout: %#llx-%#llx\n", carveout_start,
++			  carveout_end);
+ 	}
+ 
+ 	mutex_init(&tegra->clients_lock);
+@@ -208,6 +225,7 @@ static int tegra_drm_load(struct drm_device *drm, unsigned long flags)
+ 	if (tegra->domain) {
+ 		iommu_domain_free(tegra->domain);
+ 		drm_mm_takedown(&tegra->mm);
++		put_iova_domain(&tegra->carveout.domain);
+ 	}
+ free:
+ 	kfree(tegra);
+@@ -232,6 +250,7 @@ static int tegra_drm_unload(struct drm_device *drm)
+ 	if (tegra->domain) {
+ 		iommu_domain_free(tegra->domain);
+ 		drm_mm_takedown(&tegra->mm);
++		put_iova_domain(&tegra->carveout.domain);
+ 	}
+ 
+ 	kfree(tegra);
+@@ -975,6 +994,84 @@ int tegra_drm_unregister_client(struct tegra_drm *tegra,
+ 	return 0;
+ }
+ 
++void *tegra_drm_alloc(struct tegra_drm *tegra, size_t size,
++			      dma_addr_t *dma)
 +{
-+	return container_of(client, struct vic, client);
-+}
++	struct iova *alloc;
++	void *virt;
++	gfp_t gfp;
++	int err;
 +
-+static void vic_writel(struct vic *vic, u32 value, unsigned int offset)
-+{
-+	writel(value, vic->regs + offset);
-+}
++	if (tegra->domain)
++		size = iova_align(&tegra->carveout.domain, size);
++	else
++		size = PAGE_ALIGN(size);
 +
-+static int vic_runtime_resume(struct device *dev)
-+{
-+	struct vic *vic = dev_get_drvdata(dev);
-+
-+	return clk_prepare_enable(vic->clk);
-+}
-+
-+static int vic_runtime_suspend(struct device *dev)
-+{
-+	struct vic *vic = dev_get_drvdata(dev);
-+
-+	clk_disable_unprepare(vic->clk);
-+
-+	vic->booted = false;
-+
-+	return 0;
-+}
-+
-+static int vic_boot(struct vic *vic)
-+{
-+	u32 fce_ucode_size, fce_bin_data_offset;
-+	void *hdr;
-+	int err = 0;
-+
-+	if (vic->booted)
-+		return 0;
-+
-+	/* setup clockgating registers */
-+	vic_writel(vic, CG_IDLE_CG_DLY_CNT(4) |
-+			CG_IDLE_CG_EN |
-+			CG_WAKEUP_DLY_CNT(4),
-+		   NV_PVIC_MISC_PRI_VIC_CG);
-+
-+	err = falcon_boot(&vic->falcon);
-+	if (err < 0)
-+		return err;
-+
-+	hdr = vic->falcon.firmware.vaddr;
-+	fce_bin_data_offset = *(u32 *)(hdr + VIC_UCODE_FCE_DATA_OFFSET);
-+	hdr = vic->falcon.firmware.vaddr +
-+		*(u32 *)(hdr + VIC_UCODE_FCE_HEADER_OFFSET);
-+	fce_ucode_size = *(u32 *)(hdr + FCE_UCODE_SIZE_OFFSET);
-+
-+	falcon_execute_method(&vic->falcon, VIC_SET_APPLICATION_ID, 1);
-+	falcon_execute_method(&vic->falcon, VIC_SET_FCE_UCODE_SIZE,
-+			      fce_ucode_size);
-+	falcon_execute_method(&vic->falcon, VIC_SET_FCE_UCODE_OFFSET,
-+			      (vic->falcon.firmware.paddr + fce_bin_data_offset)
-+				>> 8);
-+
-+	err = falcon_wait_idle(&vic->falcon);
-+	if (err < 0) {
-+		dev_err(vic->dev,
-+			"failed to set application ID and FCE base\n");
-+		return err;
++	gfp = GFP_KERNEL | __GFP_ZERO;
++	if (!tegra->domain) {
++		/*
++		 * Many units only support 32-bit addresses, even on 64-bit
++		 * SoCs. If there is no IOMMU to translate into a 32-bit IO
++		 * virtual address space, force allocations to be in the
++		 * lower 32-bit range.
++		 */
++		gfp |= GFP_DMA;
 +	}
 +
-+	vic->booted = true;
++	virt = (void *)__get_free_pages(gfp, get_order(size));
++	if (!virt)
++		return ERR_PTR(-ENOMEM);
 +
-+	return 0;
++	if (!tegra->domain) {
++		/*
++		 * If IOMMU is disabled, devices address physical memory
++		 * directly.
++		 */
++		*dma = virt_to_phys(virt);
++		return virt;
++	}
++
++	alloc = alloc_iova(&tegra->carveout.domain,
++			   size >> tegra->carveout.shift,
++			   tegra->carveout.limit, true);
++	if (!alloc) {
++		err = -EBUSY;
++		goto free_pages;
++	}
++
++	*dma = iova_dma_addr(&tegra->carveout.domain, alloc);
++	err = iommu_map(tegra->domain, *dma, virt_to_phys(virt),
++			size, IOMMU_READ | IOMMU_WRITE);
++	if (err < 0)
++		goto free_iova;
++
++	return virt;
++
++free_iova:
++	__free_iova(&tegra->carveout.domain, alloc);
++free_pages:
++	free_pages((unsigned long)virt, get_order(size));
++
++	return ERR_PTR(err);
 +}
 +
-+static void *vic_falcon_alloc(struct falcon *falcon, size_t size,
-+			       dma_addr_t *iova)
++void tegra_drm_free(struct tegra_drm *tegra, size_t size, void *virt,
++		    dma_addr_t dma)
 +{
-+	struct tegra_drm *tegra = falcon->data;
-+
-+	return tegra_drm_alloc(tegra, size, iova);
-+}
-+
-+static void vic_falcon_free(struct falcon *falcon, size_t size,
-+			    dma_addr_t iova, void *va)
-+{
-+	struct tegra_drm *tegra = falcon->data;
-+
-+	return tegra_drm_free(tegra, size, va, iova);
-+}
-+
-+static const struct falcon_ops vic_falcon_ops = {
-+	.alloc = vic_falcon_alloc,
-+	.free = vic_falcon_free
-+};
-+
-+static int vic_init(struct host1x_client *client)
-+{
-+	struct tegra_drm_client *drm = host1x_to_drm_client(client);
-+	struct drm_device *dev = dev_get_drvdata(client->parent);
-+	struct tegra_drm *tegra = dev->dev_private;
-+	struct vic *vic = to_vic(drm);
-+	int err;
++	if (tegra->domain)
++		size = iova_align(&tegra->carveout.domain, size);
++	else
++		size = PAGE_ALIGN(size);
 +
 +	if (tegra->domain) {
-+		err = iommu_attach_device(tegra->domain, vic->dev);
-+		if (err < 0) {
-+			dev_err(vic->dev, "failed to attach to domain: %d\n",
-+				err);
-+			return err;
-+		}
-+
-+		vic->domain = tegra->domain;
++		iommu_unmap(tegra->domain, dma, size);
++		free_iova(&tegra->carveout.domain,
++			  iova_pfn(&tegra->carveout.domain, dma));
 +	}
 +
-+	if (!vic->falcon.data) {
-+		vic->falcon.data = tegra;
-+		err = falcon_load_firmware(&vic->falcon);
-+		if (err < 0)
-+			goto detach_device;
-+	}
-+
-+	vic->channel = host1x_channel_request(client->dev);
-+	if (!vic->channel) {
-+		err = -ENOMEM;
-+		goto detach_device;
-+	}
-+
-+	client->syncpts[0] = host1x_syncpt_request(client->dev, 0);
-+	if (!client->syncpts[0]) {
-+		err = -ENOMEM;
-+		goto free_channel;
-+	}
-+
-+	err = tegra_drm_register_client(tegra, drm);
-+	if (err < 0)
-+		goto free_syncpt;
-+
-+	return 0;
-+
-+free_syncpt:
-+	host1x_syncpt_free(client->syncpts[0]);
-+free_channel:
-+	host1x_channel_free(vic->channel);
-+detach_device:
-+	if (tegra->domain)
-+		iommu_detach_device(tegra->domain, vic->dev);
-+
-+	return err;
++	free_pages((unsigned long)virt, get_order(size));
 +}
 +
-+static int vic_exit(struct host1x_client *client)
-+{
-+	struct tegra_drm_client *drm = host1x_to_drm_client(client);
-+	struct drm_device *dev = dev_get_drvdata(client->parent);
-+	struct tegra_drm *tegra = dev->dev_private;
-+	struct vic *vic = to_vic(drm);
-+	int err;
+ static int host1x_drm_probe(struct host1x_device *dev)
+ {
+ 	struct drm_driver *driver = &tegra_drm_driver;
+diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
+index 0ddcce1..7351dee 100644
+--- a/drivers/gpu/drm/tegra/drm.h
++++ b/drivers/gpu/drm/tegra/drm.h
+@@ -12,6 +12,7 @@
+ 
+ #include <uapi/drm/tegra_drm.h>
+ #include <linux/host1x.h>
++#include <linux/iova.h>
+ #include <linux/of_gpio.h>
+ 
+ #include <drm/drmP.h>
+@@ -43,6 +44,12 @@ struct tegra_drm {
+ 	struct iommu_domain *domain;
+ 	struct drm_mm mm;
+ 
++	struct {
++		struct iova_domain domain;
++		unsigned long shift;
++		unsigned long limit;
++	} carveout;
 +
-+	err = tegra_drm_unregister_client(tegra, drm);
-+	if (err < 0)
-+		return err;
+ 	struct mutex clients_lock;
+ 	struct list_head clients;
+ 
+@@ -104,6 +111,10 @@ int tegra_drm_unregister_client(struct tegra_drm *tegra,
+ int tegra_drm_init(struct tegra_drm *tegra, struct drm_device *drm);
+ int tegra_drm_exit(struct tegra_drm *tegra);
+ 
++void *tegra_drm_alloc(struct tegra_drm *tegra, size_t size, dma_addr_t *iova);
++void tegra_drm_free(struct tegra_drm *tegra, size_t size, void *virt,
++		    dma_addr_t iova);
 +
-+	host1x_syncpt_free(client->syncpts[0]);
-+	host1x_channel_free(vic->channel);
-+
-+	if (vic->domain) {
-+		iommu_detach_device(vic->domain, vic->dev);
-+		vic->domain = NULL;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct host1x_client_ops vic_client_ops = {
-+	.init = vic_init,
-+	.exit = vic_exit,
-+};
-+
-+static int vic_open_channel(struct tegra_drm_client *client,
-+			    struct tegra_drm_context *context)
-+{
-+	struct vic *vic = to_vic(client);
-+	int err;
-+
-+	err = pm_runtime_get_sync(vic->dev);
-+	if (err < 0)
-+		return err;
-+
-+	err = vic_boot(vic);
-+	if (err < 0) {
-+		pm_runtime_put(vic->dev);
-+		return err;
-+	}
-+
-+	context->channel = host1x_channel_get(vic->channel);
-+	if (!context->channel) {
-+		pm_runtime_put(vic->dev);
-+		return -ENOMEM;
-+	}
-+
-+	return 0;
-+}
-+
-+static void vic_close_channel(struct tegra_drm_context *context)
-+{
-+	struct vic *vic = to_vic(context->client);
-+
-+	host1x_channel_put(context->channel);
-+
-+	pm_runtime_put(vic->dev);
-+}
-+
-+static const struct tegra_drm_client_ops vic_ops = {
-+	.open_channel = vic_open_channel,
-+	.close_channel = vic_close_channel,
-+	.submit = tegra_drm_submit,
-+};
-+
-+static const struct vic_config vic_t124_config = {
-+	.firmware = "nvidia/tegra124/vic03_ucode.bin",
-+};
-+
-+static const struct vic_config vic_t210_config = {
-+	.firmware = "nvidia/tegra210/vic04_ucode.bin",
-+};
-+
-+static const struct of_device_id vic_match[] = {
-+	{ .compatible = "nvidia,tegra124-vic", .data = &vic_t124_config },
-+	{ .compatible = "nvidia,tegra210-vic", .data = &vic_t210_config },
-+	{ },
-+};
-+
-+static int vic_probe(struct platform_device *pdev)
-+{
-+	struct vic_config *vic_config = NULL;
-+	struct device *dev = &pdev->dev;
-+	struct host1x_syncpt **syncpts;
-+	struct resource *regs;
-+	const struct of_device_id *match;
-+	struct vic *vic;
-+	int err;
-+
-+	match = of_match_device(vic_match, dev);
-+	vic_config = (struct vic_config *)match->data;
-+
-+	vic = devm_kzalloc(dev, sizeof(*vic), GFP_KERNEL);
-+	if (!vic)
-+		return -ENOMEM;
-+
-+	syncpts = devm_kzalloc(dev, sizeof(*syncpts), GFP_KERNEL);
-+	if (!syncpts)
-+		return -ENOMEM;
-+
-+	regs = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!regs) {
-+		dev_err(&pdev->dev, "failed to get registers\n");
-+		return -ENXIO;
-+	}
-+
-+	vic->regs = devm_ioremap_resource(dev, regs);
-+	if (IS_ERR(vic->regs))
-+		return PTR_ERR(vic->regs);
-+
-+	vic->clk = devm_clk_get(dev, NULL);
-+	if (IS_ERR(vic->clk)) {
-+		dev_err(&pdev->dev, "failed to get clock\n");
-+		return PTR_ERR(vic->clk);
-+	}
-+
-+	vic->falcon.dev = dev;
-+	vic->falcon.regs = vic->regs;
-+	vic->falcon.ops = &vic_falcon_ops;
-+
-+	err = falcon_init(&vic->falcon);
-+	if (err < 0)
-+		return err;
-+
-+	err = falcon_read_firmware(&vic->falcon, vic_config->firmware);
-+	if (err < 0)
-+		goto exit_falcon;
-+
-+	platform_set_drvdata(pdev, vic);
-+
-+	INIT_LIST_HEAD(&vic->client.base.list);
-+	vic->client.base.ops = &vic_client_ops;
-+	vic->client.base.dev = dev;
-+	vic->client.base.class = HOST1X_CLASS_VIC;
-+	vic->client.base.syncpts = syncpts;
-+	vic->client.base.num_syncpts = 1;
-+	vic->dev = dev;
-+	vic->config = vic_config;
-+
-+	INIT_LIST_HEAD(&vic->client.list);
-+	vic->client.ops = &vic_ops;
-+
-+	err = host1x_client_register(&vic->client.base);
-+	if (err < 0) {
-+		dev_err(dev, "failed to register host1x client: %d\n", err);
-+		platform_set_drvdata(pdev, NULL);
-+		goto exit_falcon;
-+	}
-+
-+	pm_runtime_enable(&pdev->dev);
-+	if (!pm_runtime_enabled(&pdev->dev)) {
-+		err = vic_runtime_resume(&pdev->dev);
-+		if (err < 0)
-+			goto unregister_client;
-+	}
-+
-+	return 0;
-+
-+unregister_client:
-+	host1x_client_unregister(&vic->client.base);
-+exit_falcon:
-+	falcon_exit(&vic->falcon);
-+
-+	return err;
-+}
-+
-+static int vic_remove(struct platform_device *pdev)
-+{
-+	struct vic *vic = platform_get_drvdata(pdev);
-+	int err;
-+
-+	err = host1x_client_unregister(&vic->client.base);
-+	if (err < 0) {
-+		dev_err(&pdev->dev, "failed to unregister host1x client: %d\n",
-+			err);
-+		return err;
-+	}
-+
-+	if (pm_runtime_enabled(&pdev->dev))
-+		pm_runtime_disable(&pdev->dev);
-+	else
-+		vic_runtime_suspend(&pdev->dev);
-+
-+	falcon_exit(&vic->falcon);
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops vic_pm_ops = {
-+	SET_RUNTIME_PM_OPS(vic_runtime_suspend, vic_runtime_resume, NULL)
-+};
-+
-+struct platform_driver tegra_vic_driver = {
-+	.driver = {
-+		.name = "tegra-vic",
-+		.of_match_table = vic_match,
-+		.pm = &vic_pm_ops
-+	},
-+	.probe = vic_probe,
-+	.remove = vic_remove,
-+};
-diff --git a/drivers/gpu/drm/tegra/vic.h b/drivers/gpu/drm/tegra/vic.h
-new file mode 100644
-index 0000000..2184481
---- /dev/null
-+++ b/drivers/gpu/drm/tegra/vic.h
-@@ -0,0 +1,31 @@
-+/*
-+ * Copyright (c) 2015, NVIDIA Corporation.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef TEGRA_VIC_H
-+#define TEGRA_VIC_H
-+
-+/* VIC methods */
-+
-+#define VIC_SET_APPLICATION_ID			0x00000200
-+#define VIC_SET_FCE_UCODE_SIZE			0x0000071C
-+#define VIC_SET_FCE_UCODE_OFFSET		0x0000072C
-+
-+/* VIC registers */
-+
-+#define NV_PVIC_MISC_PRI_VIC_CG			0x000016d0
-+#define CG_IDLE_CG_DLY_CNT(val)			((val & 0x3f) << 0)
-+#define CG_IDLE_CG_EN				(1 << 6)
-+#define CG_WAKEUP_DLY_CNT(val)			((val & 0xf) << 16)
-+
-+/* Firmware offsets */
-+
-+#define VIC_UCODE_FCE_HEADER_OFFSET		(6*4)
-+#define VIC_UCODE_FCE_DATA_OFFSET		(7*4)
-+#define FCE_UCODE_SIZE_OFFSET			(2*4)
-+
-+#endif /* TEGRA_VIC_H */
-diff --git a/include/linux/host1x.h b/include/linux/host1x.h
-index 1ffbf2a..3d04aa1 100644
---- a/include/linux/host1x.h
-+++ b/include/linux/host1x.h
-@@ -26,6 +26,7 @@ enum host1x_class {
- 	HOST1X_CLASS_HOST1X = 0x1,
- 	HOST1X_CLASS_GR2D = 0x51,
- 	HOST1X_CLASS_GR2D_SB = 0x52,
-+	HOST1X_CLASS_VIC = 0x5D,
- 	HOST1X_CLASS_GR3D = 0x60,
- };
+ struct tegra_dc_soc_info;
+ struct tegra_output;
  
 -- 
 2.10.2
