@@ -1,447 +1,159 @@
-From: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: [PATCH v2 2/7] drm/tegra: Add falcon helper library
-Date: Wed, 14 Dec 2016 13:16:12 +0200
-Message-ID: <20161214111617.24548-3-mperttunen@nvidia.com>
+From: Lucas Stach <l.stach@pengutronix.de>
+Subject: Re: [PATCH v2 1/7] drm/tegra: Add Tegra DRM allocation API
+Date: Wed, 14 Dec 2016 12:35:31 +0100
+Message-ID: <1481715331.2313.28.camel@pengutronix.de>
 References: <20161214111617.24548-1-mperttunen@nvidia.com>
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20161214111617.24548-1-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, daniel-/w4YWyX8dFk@public.gmane.org, Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+ <20161214111617.24548-2-mperttunen@nvidia.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20161214111617.24548-2-mperttunen@nvidia.com>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Mikko Perttunen <mperttunen@nvidia.com>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Add a set of falcon helper routines for use by the tegradrm client drivers
-of the various falcon-based engines.
-
-The falcon is a microcontroller that acts as a frontend for the rest of a
-particular Tegra engine.  In order to properly utilize these engines, the
-frontend must be booted before pushing any commands.
-
-Based on work by Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-Signed-off-by: Andrew Chew <achew-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Arto Merilainen <amerilainen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
----
- drivers/gpu/drm/tegra/Makefile |   3 +-
- drivers/gpu/drm/tegra/falcon.c | 259 +++++++++++++++++++++++++++++++++++++++++
- drivers/gpu/drm/tegra/falcon.h | 127 ++++++++++++++++++++
- 3 files changed, 388 insertions(+), 1 deletion(-)
- create mode 100644 drivers/gpu/drm/tegra/falcon.c
- create mode 100644 drivers/gpu/drm/tegra/falcon.h
-
-diff --git a/drivers/gpu/drm/tegra/Makefile b/drivers/gpu/drm/tegra/Makefile
-index 2c66a8d..93e9a4a 100644
---- a/drivers/gpu/drm/tegra/Makefile
-+++ b/drivers/gpu/drm/tegra/Makefile
-@@ -13,6 +13,7 @@ tegra-drm-y := \
- 	sor.o \
- 	dpaux.o \
- 	gr2d.o \
--	gr3d.o
-+	gr3d.o \
-+	falcon.o
- 
- obj-$(CONFIG_DRM_TEGRA) += tegra-drm.o
-diff --git a/drivers/gpu/drm/tegra/falcon.c b/drivers/gpu/drm/tegra/falcon.c
-new file mode 100644
-index 0000000..f685e729
---- /dev/null
-+++ b/drivers/gpu/drm/tegra/falcon.c
-@@ -0,0 +1,259 @@
-+/*
-+ * Copyright (c) 2015, NVIDIA Corporation.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <linux/platform_device.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/firmware.h>
-+#include <linux/pci_ids.h>
-+#include <linux/iopoll.h>
-+
-+#include "falcon.h"
-+#include "drm.h"
-+
-+enum falcon_memory {
-+	FALCON_MEMORY_IMEM,
-+	FALCON_MEMORY_DATA,
-+};
-+
-+static void falcon_writel(struct falcon *falcon, u32 value, u32 offset)
-+{
-+	writel(value, falcon->regs + offset);
-+}
-+
-+int falcon_wait_idle(struct falcon *falcon)
-+{
-+	u32 value;
-+
-+	return readl_poll_timeout(falcon->regs + FALCON_IDLESTATE, value,
-+				  (value == 0), 10, 100000);
-+}
-+
-+static int falcon_dma_wait_idle(struct falcon *falcon)
-+{
-+	u32 value;
-+
-+	return readl_poll_timeout(falcon->regs + FALCON_DMATRFCMD, value,
-+				  (value & FALCON_DMATRFCMD_IDLE), 10, 100000);
-+}
-+
-+static int falcon_copy_chunk(struct falcon *falcon,
-+			     phys_addr_t base,
-+			     unsigned long offset,
-+			     enum falcon_memory target)
-+{
-+	u32 cmd = FALCON_DMATRFCMD_SIZE_256B;
-+
-+	if (target == FALCON_MEMORY_IMEM)
-+		cmd |= FALCON_DMATRFCMD_IMEM;
-+
-+	falcon_writel(falcon, offset, FALCON_DMATRFMOFFS);
-+	falcon_writel(falcon, base, FALCON_DMATRFFBOFFS);
-+	falcon_writel(falcon, cmd, FALCON_DMATRFCMD);
-+
-+	return falcon_dma_wait_idle(falcon);
-+}
-+
-+static void falcon_copy_firmware_image(struct falcon *falcon,
-+				       const struct firmware *firmware)
-+{
-+	u32 *firmware_vaddr = falcon->firmware.vaddr;
-+	dma_addr_t daddr;
-+	size_t i;
-+	int err;
-+
-+	/* copy the whole thing taking into account endianness */
-+	for (i = 0; i < firmware->size / sizeof(u32); i++)
-+		firmware_vaddr[i] = le32_to_cpu(((u32 *)firmware->data)[i]);
-+
-+	/* ensure that caches are flushed and falcon can see the firmware */
-+	daddr = dma_map_single(falcon->dev, firmware_vaddr,
-+			       falcon->firmware.size, DMA_TO_DEVICE);
-+	err = dma_mapping_error(falcon->dev, daddr);
-+	if (err) {
-+		dev_err(falcon->dev, "failed to map firmware: %d\n", err);
-+		return;
-+	}
-+	dma_sync_single_for_device(falcon->dev, daddr,
-+				   falcon->firmware.size, DMA_TO_DEVICE);
-+	dma_unmap_single(falcon->dev, daddr, falcon->firmware.size,
-+			 DMA_TO_DEVICE);
-+}
-+
-+static int falcon_parse_firmware_image(struct falcon *falcon)
-+{
-+	struct falcon_fw_bin_header_v1 *bin = (void *)falcon->firmware.vaddr;
-+	struct falcon_fw_os_header_v1 *os;
-+
-+	/* endian problems would show up right here */
-+	if (bin->magic != PCI_VENDOR_ID_NVIDIA) {
-+		dev_err(falcon->dev, "incorrect firmware magic\n");
-+		return -EINVAL;
-+	}
-+
-+	/* currently only version 1 is supported */
-+	if (bin->version != 1) {
-+		dev_err(falcon->dev, "unsupported firmware version\n");
-+		return -EINVAL;
-+	}
-+
-+	/* check that the firmware size is consistent */
-+	if (bin->size > falcon->firmware.size) {
-+		dev_err(falcon->dev, "firmware image size inconsistency\n");
-+		return -EINVAL;
-+	}
-+
-+	os = falcon->firmware.vaddr + bin->os_header_offset;
-+
-+	falcon->firmware.bin_data.size = bin->os_size;
-+	falcon->firmware.bin_data.offset = bin->os_data_offset;
-+	falcon->firmware.code.offset = os->code_offset;
-+	falcon->firmware.code.size = os->code_size;
-+	falcon->firmware.data.offset = os->data_offset;
-+	falcon->firmware.data.size = os->data_size;
-+
-+	return 0;
-+}
-+
-+int falcon_read_firmware(struct falcon *falcon, const char *name)
-+{
-+	int err;
-+
-+	/* request_firmware prints error if it fails */
-+	err = request_firmware(&falcon->firmware.firmware, name, falcon->dev);
-+	if (err < 0)
-+		return err;
-+
-+	return 0;
-+}
-+
-+int falcon_load_firmware(struct falcon *falcon)
-+{
-+	const struct firmware *firmware = falcon->firmware.firmware;
-+	int err;
-+
-+	falcon->firmware.size = firmware->size;
-+
-+	/* allocate iova space for the firmware */
-+	falcon->firmware.vaddr = falcon->ops->alloc(falcon, firmware->size,
-+						    &falcon->firmware.paddr);
-+	if (!falcon->firmware.vaddr) {
-+		dev_err(falcon->dev, "dma memory mapping failed\n");
-+		return -ENOMEM;
-+	}
-+
-+	/* copy firmware image into local area. this also ensures endianness */
-+	falcon_copy_firmware_image(falcon, firmware);
-+
-+	/* parse the image data */
-+	err = falcon_parse_firmware_image(falcon);
-+	if (err < 0) {
-+		dev_err(falcon->dev, "failed to parse firmware image\n");
-+		goto err_setup_firmware_image;
-+	}
-+
-+	release_firmware(firmware);
-+	falcon->firmware.firmware = NULL;
-+
-+	return 0;
-+
-+err_setup_firmware_image:
-+	falcon->ops->free(falcon, falcon->firmware.size,
-+			  falcon->firmware.paddr, falcon->firmware.vaddr);
-+
-+	return err;
-+}
-+
-+int falcon_init(struct falcon *falcon)
-+{
-+	/* check mandatory ops */
-+	if (!falcon->ops || !falcon->ops->alloc || !falcon->ops->free)
-+		return -EINVAL;
-+
-+	falcon->firmware.vaddr = NULL;
-+
-+	return 0;
-+}
-+
-+void falcon_exit(struct falcon *falcon)
-+{
-+	if (falcon->firmware.firmware) {
-+		release_firmware(falcon->firmware.firmware);
-+		falcon->firmware.firmware = NULL;
-+	}
-+
-+	if (falcon->firmware.vaddr) {
-+		falcon->ops->free(falcon, falcon->firmware.size,
-+				  falcon->firmware.paddr,
-+				  falcon->firmware.vaddr);
-+		falcon->firmware.vaddr = NULL;
-+	}
-+}
-+
-+int falcon_boot(struct falcon *falcon)
-+{
-+	unsigned long offset;
-+	int err;
-+
-+	if (!falcon->firmware.vaddr)
-+		return -EINVAL;
-+
-+	falcon_writel(falcon, 0, FALCON_DMACTL);
-+
-+	/* setup the address of the binary data so Falcon can access it later */
-+	falcon_writel(falcon, (falcon->firmware.paddr +
-+			       falcon->firmware.bin_data.offset) >> 8,
-+		      FALCON_DMATRFBASE);
-+
-+	/* copy the data segment into Falcon internal memory */
-+	for (offset = 0; offset < falcon->firmware.data.size; offset += 256)
-+		falcon_copy_chunk(falcon,
-+				  falcon->firmware.data.offset + offset,
-+				  offset, FALCON_MEMORY_DATA);
-+
-+	/* copy the first code segment into Falcon internal memory */
-+	falcon_copy_chunk(falcon, falcon->firmware.code.offset,
-+			  0, FALCON_MEMORY_IMEM);
-+
-+	/* setup falcon interrupts */
-+	falcon_writel(falcon, FALCON_IRQMSET_EXT(0xff) |
-+			      FALCON_IRQMSET_SWGEN1 |
-+			      FALCON_IRQMSET_SWGEN0 |
-+			      FALCON_IRQMSET_EXTERR |
-+			      FALCON_IRQMSET_HALT |
-+			      FALCON_IRQMSET_WDTMR,
-+		      FALCON_IRQMSET);
-+	falcon_writel(falcon, FALCON_IRQDEST_EXT(0xff) |
-+			      FALCON_IRQDEST_SWGEN1 |
-+			      FALCON_IRQDEST_SWGEN0 |
-+			      FALCON_IRQDEST_EXTERR |
-+			      FALCON_IRQDEST_HALT,
-+		      FALCON_IRQDEST);
-+
-+	/* enable interface */
-+	falcon_writel(falcon, FALCON_ITFEN_MTHDEN |
-+			      FALCON_ITFEN_CTXEN,
-+		      FALCON_ITFEN);
-+
-+	/* boot falcon */
-+	falcon_writel(falcon, 0x00000000, FALCON_BOOTVEC);
-+	falcon_writel(falcon, FALCON_CPUCTL_STARTCPU, FALCON_CPUCTL);
-+
-+	err = falcon_wait_idle(falcon);
-+	if (err < 0) {
-+		dev_err(falcon->dev, "Falcon boot failed due to timeout\n");
-+		return err;
-+	}
-+
-+	return 0;
-+}
-+
-+void falcon_execute_method(struct falcon *falcon, u32 method, u32 data)
-+{
-+	falcon_writel(falcon, method >> 2, FALCON_UCLASS_METHOD_OFFSET);
-+	falcon_writel(falcon, data, FALCON_UCLASS_METHOD_DATA);
-+}
-diff --git a/drivers/gpu/drm/tegra/falcon.h b/drivers/gpu/drm/tegra/falcon.h
-new file mode 100644
-index 0000000..4504ed5
---- /dev/null
-+++ b/drivers/gpu/drm/tegra/falcon.h
-@@ -0,0 +1,127 @@
-+/*
-+ * Copyright (c) 2015, NVIDIA Corporation.
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#ifndef _FALCON_H_
-+#define _FALCON_H_
-+
-+#include <linux/types.h>
-+
-+#define FALCON_UCLASS_METHOD_OFFSET		0x00000040
-+
-+#define FALCON_UCLASS_METHOD_DATA		0x00000044
-+
-+#define FALCON_IRQMSET				0x00001010
-+#define FALCON_IRQMSET_WDTMR			(1 << 1)
-+#define FALCON_IRQMSET_HALT			(1 << 4)
-+#define FALCON_IRQMSET_EXTERR			(1 << 5)
-+#define FALCON_IRQMSET_SWGEN0			(1 << 6)
-+#define FALCON_IRQMSET_SWGEN1			(1 << 7)
-+#define FALCON_IRQMSET_EXT(v)			(((v) & 0xff) << 8)
-+
-+#define FALCON_IRQDEST				0x0000101c
-+#define FALCON_IRQDEST_HALT			(1 << 4)
-+#define FALCON_IRQDEST_EXTERR			(1 << 5)
-+#define FALCON_IRQDEST_SWGEN0			(1 << 6)
-+#define FALCON_IRQDEST_SWGEN1			(1 << 7)
-+#define FALCON_IRQDEST_EXT(v)			(((v) & 0xff) << 8)
-+
-+#define FALCON_ITFEN				0x00001048
-+#define FALCON_ITFEN_CTXEN			(1 << 0)
-+#define FALCON_ITFEN_MTHDEN			(1 << 1)
-+
-+#define FALCON_IDLESTATE			0x0000104c
-+
-+#define FALCON_CPUCTL				0x00001100
-+#define FALCON_CPUCTL_STARTCPU			(1 << 1)
-+
-+#define FALCON_BOOTVEC				0x00001104
-+
-+#define FALCON_DMACTL				0x0000110c
-+#define FALCON_DMACTL_DMEM_SCRUBBING		(1 << 1)
-+#define FALCON_DMACTL_IMEM_SCRUBBING		(1 << 2)
-+
-+#define FALCON_DMATRFBASE			0x00001110
-+
-+#define FALCON_DMATRFMOFFS			0x00001114
-+
-+#define FALCON_DMATRFCMD			0x00001118
-+#define FALCON_DMATRFCMD_IDLE			(1 << 1)
-+#define FALCON_DMATRFCMD_IMEM			(1 << 4)
-+#define FALCON_DMATRFCMD_SIZE_256B		(6 << 8)
-+
-+#define FALCON_DMATRFFBOFFS			0x0000111c
-+
-+struct falcon_fw_bin_header_v1 {
-+	u32 magic;		/* 0x10de */
-+	u32 version;		/* version of bin format (1) */
-+	u32 size;		/* entire image size including this header */
-+	u32 os_header_offset;
-+	u32 os_data_offset;
-+	u32 os_size;
-+};
-+
-+struct falcon_fw_os_app_v1 {
-+	u32 offset;
-+	u32 size;
-+};
-+
-+struct falcon_fw_os_header_v1 {
-+	u32 code_offset;
-+	u32 code_size;
-+	u32 data_offset;
-+	u32 data_size;
-+};
-+
-+struct falcon;
-+
-+struct falcon_ops {
-+	void *(*alloc)(struct falcon *falcon, size_t size,
-+		       dma_addr_t *paddr);
-+	void (*free)(struct falcon *falcon, size_t size,
-+		     dma_addr_t paddr, void *vaddr);
-+};
-+
-+struct falcon_firmware_section {
-+	unsigned long offset;
-+	size_t size;
-+};
-+
-+struct falcon_firmware {
-+	/* Firmware after it is read but not loaded */
-+	const struct firmware *firmware;
-+
-+	/* Raw firmware data */
-+	dma_addr_t paddr;
-+	void *vaddr;
-+	size_t size;
-+
-+	/* Parsed firmware information */
-+	struct falcon_firmware_section bin_data;
-+	struct falcon_firmware_section data;
-+	struct falcon_firmware_section code;
-+};
-+
-+struct falcon {
-+	/* Set by falcon client */
-+	struct device *dev;
-+	void __iomem *regs;
-+	const struct falcon_ops *ops;
-+	void *data;
-+
-+	struct falcon_firmware firmware;
-+};
-+
-+int falcon_init(struct falcon *falcon);
-+void falcon_exit(struct falcon *falcon);
-+int falcon_read_firmware(struct falcon *falcon, const char *firmware_name);
-+int falcon_load_firmware(struct falcon *falcon);
-+int falcon_boot(struct falcon *falcon);
-+void falcon_execute_method(struct falcon *falcon, u32 method, u32 data);
-+int falcon_wait_idle(struct falcon *falcon);
-+
-+#endif /* _FALCON_H_ */
--- 
-2.10.2
+QW0gTWl0dHdvY2gsIGRlbiAxNC4xMi4yMDE2LCAxMzoxNiArMDIwMCBzY2hyaWViIE1pa2tvIFBl
+cnR0dW5lbjoKPiBBZGQgYSBuZXcgSU8gdmlydHVhbCBtZW1vcnkgYWxsb2NhdGlvbiBBUEkgdG8g
+YWxsb3cgY2xpZW50cyB0bwo+IGFsbG9jYXRlIG5vbi1HRU0gbWVtb3J5IGluIHRoZSBUZWdyYSBE
+Uk0gSU9NTVUgZG9tYWluLiBUaGlzIGlzCj4gcmVxdWlyZWQgZS5nLiBmb3IgbG9hZGluZyBjbGll
+bnQgZmlybXdhcmUgd2hlbiBjbGllbnRzIGFyZSBhdHRhY2hlZAo+IHRvIHRoZSBJT01NVSBkb21h
+aW4uCj4gCj4gVGhlIGFsbG9jYXRvciBhbGxvY2F0ZXMgY29udGlndW91cyBwaHlzaWNhbCBwYWdl
+cyB0aGF0IGFyZSB0aGVuCj4gbWFwcGVkIGNvbnRpZ3VvdXNseSB0byB0aGUgSU9NTVUgZG9tYWlu
+IHVzaW5nIHRoZSBpb3ZhX2RvbWFpbgo+IGxpYnJhcnkgcHJvdmlkZWQgYnkgdGhlIGtlcm5lbC4g
+Q29udGlndW91cyBwaHlzaWNhbCBwYWdlcyBhcmUKPiB1c2VkIHNvIHRoYXQgdGhlIHNhbWUgYWxs
+b2NhdG9yIHdvcmtzIGFsc28gd2hlbiBJT01NVSBzdXBwb3J0Cj4gaXMgZGlzYWJsZWQgYW5kIHRo
+ZXJlZm9yZSBkZXZpY2VzIGFjY2VzcyBwaHlzaWNhbCBtZW1vcnkgZGlyZWN0bHkuCj4gCldoeSBp
+cyB0aGlzIG5lZWRlZD8gSWYgeW91IHVzZSB0aGUgRE1BIEFQSSBmb3IgdGhvc2UgYnVmZmVycyB5
+b3Ugc2hvdWxkCmVuZCB1cCB3aXRoIENNQSBtZW1vcnkgaW4gdGhlICFJT01NVSBjYXNlIGFuZCBu
+b3JtYWwgcGFnZWQgbWVtb3J5IHdpdGgKSU9NTVUgZW5hYmxlZC4gRnJvbSBteSB1bmRlcnN0YW5k
+aW5nIHRoaXMgc2hvdWxkIG1hdGNoIHRoZSByZXF1aXJlbWVudHMuCgpBbHNvIGhvdyBiaWcgY2Fu
+IHRob3NlIGZpcm13YXJlIGltYWdlcyBnZXQ/IFdpbGwgX19nZXRfZnJlZV9wYWdlcyBiZQphYmxl
+IHRvIHByb3ZpZGUgdGhpcyBtdWNoIGNvbnRpZyBtZW1vcnkgaW4gYSBsb25nIHJ1bm5pbmcgc3lz
+dGVtIHdpdGgKZnJhZ21lbnRlZCBtZW1vcnkgc3BhY2U/IElzbid0IENNQSB0aGUgYmV0dGVyIG9w
+dGlvbiBoZXJlPwoKUmVnYXJkcywKTHVjYXMKCj4gU2lnbmVkLW9mZi1ieTogTWlra28gUGVydHR1
+bmVuIDxtcGVydHR1bmVuQG52aWRpYS5jb20+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS90ZWdy
+YS9kcm0uYyB8IDExMSArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0t
+LQo+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmggfCAgMTEgKysrKysKPiAgMiBmaWxlcyBj
+aGFuZ2VkLCAxMTUgaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0
+IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2Ry
+bS5jCj4gaW5kZXggYjhiZTNlZS4uY2Y3MTRjNiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9k
+cm0vdGVncmEvZHJtLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKPiBAQCAt
+MSwxMiArMSwxMyBAQAo+ICAvKgo+ICAgKiBDb3B5cmlnaHQgKEMpIDIwMTIgQXZpb25pYyBEZXNp
+Z24gR21iSAo+IC0gKiBDb3B5cmlnaHQgKEMpIDIwMTItMjAxMyBOVklESUEgQ09SUE9SQVRJT04u
+ICBBbGwgcmlnaHRzIHJlc2VydmVkLgo+ICsgKiBDb3B5cmlnaHQgKEMpIDIwMTItMjAxNiBOVklE
+SUEgQ09SUE9SQVRJT04uICBBbGwgcmlnaHRzIHJlc2VydmVkLgo+ICAgKgo+ICAgKiBUaGlzIHBy
+b2dyYW0gaXMgZnJlZSBzb2Z0d2FyZTsgeW91IGNhbiByZWRpc3RyaWJ1dGUgaXQgYW5kL29yIG1v
+ZGlmeQo+ICAgKiBpdCB1bmRlciB0aGUgdGVybXMgb2YgdGhlIEdOVSBHZW5lcmFsIFB1YmxpYyBM
+aWNlbnNlIHZlcnNpb24gMiBhcwo+ICAgKiBwdWJsaXNoZWQgYnkgdGhlIEZyZWUgU29mdHdhcmUg
+Rm91bmRhdGlvbi4KPiAgICovCj4gIAo+ICsjaW5jbHVkZSA8bGludXgvYml0b3BzLmg+Cj4gICNp
+bmNsdWRlIDxsaW51eC9ob3N0MXguaD4KPiAgI2luY2x1ZGUgPGxpbnV4L2lvbW11Lmg+Cj4gIAo+
+IEBAIC0yMyw2ICsyNCw4IEBACj4gICNkZWZpbmUgRFJJVkVSX01JTk9SIDAKPiAgI2RlZmluZSBE
+UklWRVJfUEFUQ0hMRVZFTCAwCj4gIAo+ICsjZGVmaW5lIENBUlZFT1VUX1NaIFNaXzY0TQo+ICsK
+PiAgc3RydWN0IHRlZ3JhX2RybV9maWxlIHsKPiAgCXN0cnVjdCBsaXN0X2hlYWQgY29udGV4dHM7
+Cj4gIH07Cj4gQEAgLTEyNyw3ICsxMzAsOCBAQCBzdGF0aWMgaW50IHRlZ3JhX2RybV9sb2FkKHN0
+cnVjdCBkcm1fZGV2aWNlICpkcm0sIHVuc2lnbmVkIGxvbmcgZmxhZ3MpCj4gIAo+ICAJaWYgKGlv
+bW11X3ByZXNlbnQoJnBsYXRmb3JtX2J1c190eXBlKSkgewo+ICAJCXN0cnVjdCBpb21tdV9kb21h
+aW5fZ2VvbWV0cnkgKmdlb21ldHJ5Owo+IC0JCXU2NCBzdGFydCwgZW5kOwo+ICsJCXVuc2lnbmVk
+IGxvbmcgb3JkZXI7Cj4gKwkJdTY0IGNhcnZlb3V0X3N0YXJ0LCBjYXJ2ZW91dF9lbmQsIGdlbV9z
+dGFydCwgZ2VtX2VuZDsKPiAgCj4gIAkJdGVncmEtPmRvbWFpbiA9IGlvbW11X2RvbWFpbl9hbGxv
+YygmcGxhdGZvcm1fYnVzX3R5cGUpOwo+ICAJCWlmICghdGVncmEtPmRvbWFpbikgewo+IEBAIC0x
+MzYsMTIgKzE0MCwyNSBAQCBzdGF0aWMgaW50IHRlZ3JhX2RybV9sb2FkKHN0cnVjdCBkcm1fZGV2
+aWNlICpkcm0sIHVuc2lnbmVkIGxvbmcgZmxhZ3MpCj4gIAkJfQo+ICAKPiAgCQlnZW9tZXRyeSA9
+ICZ0ZWdyYS0+ZG9tYWluLT5nZW9tZXRyeTsKPiAtCQlzdGFydCA9IGdlb21ldHJ5LT5hcGVydHVy
+ZV9zdGFydDsKPiAtCQllbmQgPSBnZW9tZXRyeS0+YXBlcnR1cmVfZW5kOwo+ICsJCWdlbV9zdGFy
+dCA9IGdlb21ldHJ5LT5hcGVydHVyZV9zdGFydDsKPiArCQlnZW1fZW5kID0gZ2VvbWV0cnktPmFw
+ZXJ0dXJlX2VuZCAtIENBUlZFT1VUX1NaOwo+ICsJCWNhcnZlb3V0X3N0YXJ0ID0gZ2VtX2VuZCAr
+IDE7Cj4gKwkJY2FydmVvdXRfZW5kID0gZ2VvbWV0cnktPmFwZXJ0dXJlX2VuZDsKPiArCj4gKwkJ
+b3JkZXIgPSBfX2Zmcyh0ZWdyYS0+ZG9tYWluLT5wZ3NpemVfYml0bWFwKTsKPiArCQlpbml0X2lv
+dmFfZG9tYWluKCZ0ZWdyYS0+Y2FydmVvdXQuZG9tYWluLCAxVUwgPDwgb3JkZXIsCj4gKwkJCQkg
+Y2FydmVvdXRfc3RhcnQgPj4gb3JkZXIsCj4gKwkJCQkgY2FydmVvdXRfZW5kID4+IG9yZGVyKTsK
+PiArCj4gKwkJdGVncmEtPmNhcnZlb3V0LnNoaWZ0ID0gaW92YV9zaGlmdCgmdGVncmEtPmNhcnZl
+b3V0LmRvbWFpbik7Cj4gKwkJdGVncmEtPmNhcnZlb3V0LmxpbWl0ID0gY2FydmVvdXRfZW5kID4+
+IHRlZ3JhLT5jYXJ2ZW91dC5zaGlmdDsKPiArCj4gKwkJZHJtX21tX2luaXQoJnRlZ3JhLT5tbSwg
+Z2VtX3N0YXJ0LCBnZW1fZW5kIC0gZ2VtX3N0YXJ0ICsgMSk7Cj4gIAo+IC0JCURSTV9ERUJVR19E
+UklWRVIoIklPTU1VIGFwZXJ0dXJlIGluaXRpYWxpemVkICglI2xseC0lI2xseClcbiIsCj4gLQkJ
+CQkgc3RhcnQsIGVuZCk7Cj4gLQkJZHJtX21tX2luaXQoJnRlZ3JhLT5tbSwgc3RhcnQsIGVuZCAt
+IHN0YXJ0ICsgMSk7Cj4gKwkJRFJNX0RFQlVHKCJJT01NVSBhcGVydHVyZXM6XG4iKTsKPiArCQlE
+Uk1fREVCVUcoIiAgR0VNOiAlI2xseC0lI2xseFxuIiwgZ2VtX3N0YXJ0LCBnZW1fZW5kKTsKPiAr
+CQlEUk1fREVCVUcoIiAgQ2FydmVvdXQ6ICUjbGx4LSUjbGx4XG4iLCBjYXJ2ZW91dF9zdGFydCwK
+PiArCQkJICBjYXJ2ZW91dF9lbmQpOwo+ICAJfQo+ICAKPiAgCW11dGV4X2luaXQoJnRlZ3JhLT5j
+bGllbnRzX2xvY2spOwo+IEBAIC0yMDgsNiArMjI1LDcgQEAgc3RhdGljIGludCB0ZWdyYV9kcm1f
+bG9hZChzdHJ1Y3QgZHJtX2RldmljZSAqZHJtLCB1bnNpZ25lZCBsb25nIGZsYWdzKQo+ICAJaWYg
+KHRlZ3JhLT5kb21haW4pIHsKPiAgCQlpb21tdV9kb21haW5fZnJlZSh0ZWdyYS0+ZG9tYWluKTsK
+PiAgCQlkcm1fbW1fdGFrZWRvd24oJnRlZ3JhLT5tbSk7Cj4gKwkJcHV0X2lvdmFfZG9tYWluKCZ0
+ZWdyYS0+Y2FydmVvdXQuZG9tYWluKTsKPiAgCX0KPiAgZnJlZToKPiAgCWtmcmVlKHRlZ3JhKTsK
+PiBAQCAtMjMyLDYgKzI1MCw3IEBAIHN0YXRpYyBpbnQgdGVncmFfZHJtX3VubG9hZChzdHJ1Y3Qg
+ZHJtX2RldmljZSAqZHJtKQo+ICAJaWYgKHRlZ3JhLT5kb21haW4pIHsKPiAgCQlpb21tdV9kb21h
+aW5fZnJlZSh0ZWdyYS0+ZG9tYWluKTsKPiAgCQlkcm1fbW1fdGFrZWRvd24oJnRlZ3JhLT5tbSk7
+Cj4gKwkJcHV0X2lvdmFfZG9tYWluKCZ0ZWdyYS0+Y2FydmVvdXQuZG9tYWluKTsKPiAgCX0KPiAg
+Cj4gIAlrZnJlZSh0ZWdyYSk7Cj4gQEAgLTk3NSw2ICs5OTQsODQgQEAgaW50IHRlZ3JhX2RybV91
+bnJlZ2lzdGVyX2NsaWVudChzdHJ1Y3QgdGVncmFfZHJtICp0ZWdyYSwKPiAgCXJldHVybiAwOwo+
+ICB9Cj4gIAo+ICt2b2lkICp0ZWdyYV9kcm1fYWxsb2Moc3RydWN0IHRlZ3JhX2RybSAqdGVncmEs
+IHNpemVfdCBzaXplLAo+ICsJCQkgICAgICBkbWFfYWRkcl90ICpkbWEpCj4gK3sKPiArCXN0cnVj
+dCBpb3ZhICphbGxvYzsKPiArCXZvaWQgKnZpcnQ7Cj4gKwlnZnBfdCBnZnA7Cj4gKwlpbnQgZXJy
+Owo+ICsKPiArCWlmICh0ZWdyYS0+ZG9tYWluKQo+ICsJCXNpemUgPSBpb3ZhX2FsaWduKCZ0ZWdy
+YS0+Y2FydmVvdXQuZG9tYWluLCBzaXplKTsKPiArCWVsc2UKPiArCQlzaXplID0gUEFHRV9BTElH
+TihzaXplKTsKPiArCj4gKwlnZnAgPSBHRlBfS0VSTkVMIHwgX19HRlBfWkVSTzsKPiArCWlmICgh
+dGVncmEtPmRvbWFpbikgewo+ICsJCS8qCj4gKwkJICogTWFueSB1bml0cyBvbmx5IHN1cHBvcnQg
+MzItYml0IGFkZHJlc3NlcywgZXZlbiBvbiA2NC1iaXQKPiArCQkgKiBTb0NzLiBJZiB0aGVyZSBp
+cyBubyBJT01NVSB0byB0cmFuc2xhdGUgaW50byBhIDMyLWJpdCBJTwo+ICsJCSAqIHZpcnR1YWwg
+YWRkcmVzcyBzcGFjZSwgZm9yY2UgYWxsb2NhdGlvbnMgdG8gYmUgaW4gdGhlCj4gKwkJICogbG93
+ZXIgMzItYml0IHJhbmdlLgo+ICsJCSAqLwo+ICsJCWdmcCB8PSBHRlBfRE1BOwo+ICsJfQo+ICsK
+PiArCXZpcnQgPSAodm9pZCAqKV9fZ2V0X2ZyZWVfcGFnZXMoZ2ZwLCBnZXRfb3JkZXIoc2l6ZSkp
+Owo+ICsJaWYgKCF2aXJ0KQo+ICsJCXJldHVybiBFUlJfUFRSKC1FTk9NRU0pOwo+ICsKPiArCWlm
+ICghdGVncmEtPmRvbWFpbikgewo+ICsJCS8qCj4gKwkJICogSWYgSU9NTVUgaXMgZGlzYWJsZWQs
+IGRldmljZXMgYWRkcmVzcyBwaHlzaWNhbCBtZW1vcnkKPiArCQkgKiBkaXJlY3RseS4KPiArCQkg
+Ki8KPiArCQkqZG1hID0gdmlydF90b19waHlzKHZpcnQpOwo+ICsJCXJldHVybiB2aXJ0Owo+ICsJ
+fQo+ICsKPiArCWFsbG9jID0gYWxsb2NfaW92YSgmdGVncmEtPmNhcnZlb3V0LmRvbWFpbiwKPiAr
+CQkJICAgc2l6ZSA+PiB0ZWdyYS0+Y2FydmVvdXQuc2hpZnQsCj4gKwkJCSAgIHRlZ3JhLT5jYXJ2
+ZW91dC5saW1pdCwgdHJ1ZSk7Cj4gKwlpZiAoIWFsbG9jKSB7Cj4gKwkJZXJyID0gLUVCVVNZOwo+
+ICsJCWdvdG8gZnJlZV9wYWdlczsKPiArCX0KPiArCj4gKwkqZG1hID0gaW92YV9kbWFfYWRkcigm
+dGVncmEtPmNhcnZlb3V0LmRvbWFpbiwgYWxsb2MpOwo+ICsJZXJyID0gaW9tbXVfbWFwKHRlZ3Jh
+LT5kb21haW4sICpkbWEsIHZpcnRfdG9fcGh5cyh2aXJ0KSwKPiArCQkJc2l6ZSwgSU9NTVVfUkVB
+RCB8IElPTU1VX1dSSVRFKTsKPiArCWlmIChlcnIgPCAwKQo+ICsJCWdvdG8gZnJlZV9pb3ZhOwo+
+ICsKPiArCXJldHVybiB2aXJ0Owo+ICsKPiArZnJlZV9pb3ZhOgo+ICsJX19mcmVlX2lvdmEoJnRl
+Z3JhLT5jYXJ2ZW91dC5kb21haW4sIGFsbG9jKTsKPiArZnJlZV9wYWdlczoKPiArCWZyZWVfcGFn
+ZXMoKHVuc2lnbmVkIGxvbmcpdmlydCwgZ2V0X29yZGVyKHNpemUpKTsKPiArCj4gKwlyZXR1cm4g
+RVJSX1BUUihlcnIpOwo+ICt9Cj4gKwo+ICt2b2lkIHRlZ3JhX2RybV9mcmVlKHN0cnVjdCB0ZWdy
+YV9kcm0gKnRlZ3JhLCBzaXplX3Qgc2l6ZSwgdm9pZCAqdmlydCwKPiArCQkgICAgZG1hX2FkZHJf
+dCBkbWEpCj4gK3sKPiArCWlmICh0ZWdyYS0+ZG9tYWluKQo+ICsJCXNpemUgPSBpb3ZhX2FsaWdu
+KCZ0ZWdyYS0+Y2FydmVvdXQuZG9tYWluLCBzaXplKTsKPiArCWVsc2UKPiArCQlzaXplID0gUEFH
+RV9BTElHTihzaXplKTsKPiArCj4gKwlpZiAodGVncmEtPmRvbWFpbikgewo+ICsJCWlvbW11X3Vu
+bWFwKHRlZ3JhLT5kb21haW4sIGRtYSwgc2l6ZSk7Cj4gKwkJZnJlZV9pb3ZhKCZ0ZWdyYS0+Y2Fy
+dmVvdXQuZG9tYWluLAo+ICsJCQkgIGlvdmFfcGZuKCZ0ZWdyYS0+Y2FydmVvdXQuZG9tYWluLCBk
+bWEpKTsKPiArCX0KPiArCj4gKwlmcmVlX3BhZ2VzKCh1bnNpZ25lZCBsb25nKXZpcnQsIGdldF9v
+cmRlcihzaXplKSk7Cj4gK30KPiArCj4gIHN0YXRpYyBpbnQgaG9zdDF4X2RybV9wcm9iZShzdHJ1
+Y3QgaG9zdDF4X2RldmljZSAqZGV2KQo+ICB7Cj4gIAlzdHJ1Y3QgZHJtX2RyaXZlciAqZHJpdmVy
+ID0gJnRlZ3JhX2RybV9kcml2ZXI7Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdy
+YS9kcm0uaCBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uaAo+IGluZGV4IDBkZGNjZTEuLjcz
+NTFkZWUgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5oCj4gKysrIGIv
+ZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5oCj4gQEAgLTEyLDYgKzEyLDcgQEAKPiAgCj4gICNp
+bmNsdWRlIDx1YXBpL2RybS90ZWdyYV9kcm0uaD4KPiAgI2luY2x1ZGUgPGxpbnV4L2hvc3QxeC5o
+Pgo+ICsjaW5jbHVkZSA8bGludXgvaW92YS5oPgo+ICAjaW5jbHVkZSA8bGludXgvb2ZfZ3Bpby5o
+Pgo+ICAKPiAgI2luY2x1ZGUgPGRybS9kcm1QLmg+Cj4gQEAgLTQzLDYgKzQ0LDEyIEBAIHN0cnVj
+dCB0ZWdyYV9kcm0gewo+ICAJc3RydWN0IGlvbW11X2RvbWFpbiAqZG9tYWluOwo+ICAJc3RydWN0
+IGRybV9tbSBtbTsKPiAgCj4gKwlzdHJ1Y3Qgewo+ICsJCXN0cnVjdCBpb3ZhX2RvbWFpbiBkb21h
+aW47Cj4gKwkJdW5zaWduZWQgbG9uZyBzaGlmdDsKPiArCQl1bnNpZ25lZCBsb25nIGxpbWl0Owo+
+ICsJfSBjYXJ2ZW91dDsKPiArCj4gIAlzdHJ1Y3QgbXV0ZXggY2xpZW50c19sb2NrOwo+ICAJc3Ry
+dWN0IGxpc3RfaGVhZCBjbGllbnRzOwo+ICAKPiBAQCAtMTA0LDYgKzExMSwxMCBAQCBpbnQgdGVn
+cmFfZHJtX3VucmVnaXN0ZXJfY2xpZW50KHN0cnVjdCB0ZWdyYV9kcm0gKnRlZ3JhLAo+ICBpbnQg
+dGVncmFfZHJtX2luaXQoc3RydWN0IHRlZ3JhX2RybSAqdGVncmEsIHN0cnVjdCBkcm1fZGV2aWNl
+ICpkcm0pOwo+ICBpbnQgdGVncmFfZHJtX2V4aXQoc3RydWN0IHRlZ3JhX2RybSAqdGVncmEpOwo+
+ICAKPiArdm9pZCAqdGVncmFfZHJtX2FsbG9jKHN0cnVjdCB0ZWdyYV9kcm0gKnRlZ3JhLCBzaXpl
+X3Qgc2l6ZSwgZG1hX2FkZHJfdCAqaW92YSk7Cj4gK3ZvaWQgdGVncmFfZHJtX2ZyZWUoc3RydWN0
+IHRlZ3JhX2RybSAqdGVncmEsIHNpemVfdCBzaXplLCB2b2lkICp2aXJ0LAo+ICsJCSAgICBkbWFf
+YWRkcl90IGlvdmEpOwo+ICsKPiAgc3RydWN0IHRlZ3JhX2RjX3NvY19pbmZvOwo+ICBzdHJ1Y3Qg
+dGVncmFfb3V0cHV0Owo+ICAKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
+a3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
+cmktZGV2ZWwK
