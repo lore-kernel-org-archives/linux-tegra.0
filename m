@@ -1,87 +1,73 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
-Subject: Re: [PATCH v2 0/7] Host1x IOMMU support + VIC support
-Date: Wed, 14 Dec 2016 15:32:16 +0200
-Message-ID: <f3d1d69b-2c1f-a0f7-8301-fee26cec35f1@kapsi.fi>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH v2 1/7] drm/tegra: Add Tegra DRM allocation API
+Date: Wed, 14 Dec 2016 14:48:33 +0100
+Message-ID: <20161214134833.GA29981@ulmo.ba.sec>
 References: <20161214111617.24548-1-mperttunen@nvidia.com>
- <20161214123004.urnvlqarcnp5rp4a@phenom.ffwll.local>
- <07daf863-1675-a3d8-e1a7-32131c8035d8@kapsi.fi>
- <20161214130545.gfpkosyixr5lfkkf@phenom.ffwll.local>
+ <20161214111617.24548-2-mperttunen@nvidia.com>
+ <1481715331.2313.28.camel@pengutronix.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cNdxnHkX5QqsyA0e"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20161214130545.gfpkosyixr5lfkkf-dv86pmgwkMBes7Z6vYuT8azUEOm+Xw19@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1481715331.2313.28.camel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
-Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org
+To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
+Cc: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-On 14.12.2016 15:05, Daniel Vetter wrote:
-> On Wed, Dec 14, 2016 at 02:41:28PM +0200, Mikko Perttunen wrote:
->> On 14.12.2016 14:30, Daniel Vetter wrote:
->>> On Wed, Dec 14, 2016 at 01:16:10PM +0200, Mikko Perttunen wrote:
->>>> This series adds IOMMU support to Host1x and TegraDRM
->>>> and adds support for the VIC (Video Image Compositor)
->>>> host1x client. The series is available as a git repository at
->>>> git://github.com/cyndis/linux.git; branch vic-2.
->>>>
->>>> A userspace test case for VIC can be found at
->>>> https://github.com/cyndis/drm/tree/work/tegra.
->>>> The testcase is in tests/tegra and is called submit_vic.
->>>> The testcase/TRM include full headers and documentation
->>>> to program the unit. The unit by itself, however, does not
->>>> readily map to existing userspace library interfaces, so
->>>> implementations for those are not provided.
->>>
->>> Afaik libva has an entire pile of post-processing support. Pretty sure
->>> other video transcode libraries have similar interfaces, so should all be
->>> possible to implement this.
->>
->> We don't have any actual video transcoding support though, so unless it's
->> possible to just implement a part of libva and defer the rest to some CPU
->> implementation, I don't see how this is useful. I suppose I could implement
->> a GStreamer plugin for colorspace conversion or resizing, since those are
->> very modular.
->
-> Hm, I guess the question then is, how did that get enabled?
 
-What is "that"? I'm not exactly sure.
+--cNdxnHkX5QqsyA0e
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Our architecture is such that there's the VIC that handles colorspace 
-conversion, rescaling, blitting and can do some 2d postprocessing 
-effects as well.
+On Wed, Dec 14, 2016 at 12:35:31PM +0100, Lucas Stach wrote:
+> Am Mittwoch, den 14.12.2016, 13:16 +0200 schrieb Mikko Perttunen:
+> > Add a new IO virtual memory allocation API to allow clients to
+> > allocate non-GEM memory in the Tegra DRM IOMMU domain. This is
+> > required e.g. for loading client firmware when clients are attached
+> > to the IOMMU domain.
+> >=20
+> > The allocator allocates contiguous physical pages that are then
+> > mapped contiguously to the IOMMU domain using the iova_domain
+> > library provided by the kernel. Contiguous physical pages are
+> > used so that the same allocator works also when IOMMU support
+> > is disabled and therefore devices access physical memory directly.
+> >=20
+> Why is this needed? If you use the DMA API for those buffers you should
+> end up with CMA memory in the !IOMMU case and normal paged memory with
+> IOMMU enabled. From my understanding this should match the requirements.
 
-Then there's the separate NVDEC that is a video bitstream decoder. 
-There's no support for that at the moment. I am working on the IP side 
-of that.
+We can't currently use the DMA API for these allocations because it
+doesn't allow (or at least didn't back when this was first implemented)
+us to share a mapping between two devices.
 
-The video processing pipeline is then such that NVDEC is fed the 
-bitstream; NVDEC outputs a YUV picture in a specific format; VIC takes 
-that YUV picture and converts/rescales it into the desired format. Or if 
-we are encoding video, VIC takes your RGB image, converts it into a 
-format that NVENC understands, and so on.
+The reason why we need these patches is that when IOMMU is enabled, then
+the units' falcons will read memory through the IOMMU, so we must have
+allocations for GEM buffers and the firmware go through the same
+mechanism.
 
-So with just VIC support, I could implement some simple 2D things. I 
-don't know if anyone would want to specifically use the VIC for those 
-since applications already have fast CPU algorithms. For the video 
-pipeline using VIC is nice since these units can synchronize work 
-without CPU involvement and when you're already using NVDEC or NVENC 
-it's barely any extra effort to involve VIC as well. It can also be 
-useful in power usage sensitive situations, but we aren't really fit for 
-those situations with the upstream kernel anyway :)
+Thierry
 
-Thanks;
-Mikko.
+--cNdxnHkX5QqsyA0e
+Content-Type: application/pgp-signature; name="signature.asc"
 
->
->>> Until that exists I really think that the VIC part (and only that, since
->>> tk1/tx1 in general seems to work with nouveau and all that) should stay
->>> out of tree.
->>
->> Ok. I'll try to whip up something.
->
-> But yeah some gstreamer thing might be doable, but not sure they take that
-> (I don't have any contacts there). Video is a bit a mess, there's no clear
-> go-to place for dropping some new hw support.
-> -Daniel
->
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlhRTa4ACgkQ3SOs138+
+s6Gmtg//aSBhAQsKvSMaS2nw3p/+/r1V87zrmHPIGorjM1p68o8PRdSYoD+8S76T
+Aj80WXu1DBr+PpdHBmA7JOF2NfIWWgkaKU40honwROPefs6rFMjLsP5MzfEsfGb3
+wWqSUVeUCPmAmt3BjQ806pvzFZIXzZy4tQ4SJXkpwyCGMws4xYxWsCnuGK30gRtv
+FF6DVWPaQOQhFuoyxe7UaorZyhFuel/ebk1N1kroIkTZ/P/z8hb3DL5gyvwczAxK
+jEjmlQZVg5SLa4NpNHZCp61FuRqFLDATAx5gc0faWTXWJxlJ+Rd/kQ7nL38C2No6
+kRnfQfIVg4x84iMUFN38rQ44yNbgHfJwghpt4zfVXWaxCQJ5j9r9Rhaf09DwHC60
+pgdvAnVJ4qcIxwN0lrVMdsvkqfAtrwF/WSLtaXP7btdBp2ST+BsC7uHey+64ksx7
+sya+nHGAaUBUlU7mr4kD+iXz/vue8VImUkWJsN1qOvcK9q20evlBgNhwLaNza02w
+Vb+t9eA4SYqHQVbxKE7LJLdlc1JgNL0vcOxWUxHv3ZMSXkqxHr3iFr2P+epK63vA
+8dOSwBDPdDzDei/cXaQYDNVBv8wzMQzMYdpqqKv6nyYpmv0KGlBUtUT4oq/25qM+
+VpBf/xQNr/hYUVknFKtb1foBqspYJjfXh8X1syeYjrJHsc6ENpI=
+=lpz1
+-----END PGP SIGNATURE-----
+
+--cNdxnHkX5QqsyA0e--
