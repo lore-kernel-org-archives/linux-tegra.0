@@ -1,159 +1,94 @@
-From: Lucas Stach <l.stach@pengutronix.de>
-Subject: Re: [PATCH v2 1/7] drm/tegra: Add Tegra DRM allocation API
-Date: Wed, 14 Dec 2016 12:35:31 +0100
-Message-ID: <1481715331.2313.28.camel@pengutronix.de>
+From: Daniel Vetter <daniel-/w4YWyX8dFk@public.gmane.org>
+Subject: Re: [PATCH v2 0/7] Host1x IOMMU support + VIC support
+Date: Wed, 14 Dec 2016 13:30:04 +0100
+Message-ID: <20161214123004.urnvlqarcnp5rp4a@phenom.ffwll.local>
 References: <20161214111617.24548-1-mperttunen@nvidia.com>
- <20161214111617.24548-2-mperttunen@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20161214111617.24548-2-mperttunen@nvidia.com>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Mikko Perttunen <mperttunen@nvidia.com>
-Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org
+Content-Type: text/plain; charset=us-ascii
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <20161214111617.24548-1-mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org, airlied-cv59FeDIM0c@public.gmane.org, daniel-/w4YWyX8dFk@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-QW0gTWl0dHdvY2gsIGRlbiAxNC4xMi4yMDE2LCAxMzoxNiArMDIwMCBzY2hyaWViIE1pa2tvIFBl
-cnR0dW5lbjoKPiBBZGQgYSBuZXcgSU8gdmlydHVhbCBtZW1vcnkgYWxsb2NhdGlvbiBBUEkgdG8g
-YWxsb3cgY2xpZW50cyB0bwo+IGFsbG9jYXRlIG5vbi1HRU0gbWVtb3J5IGluIHRoZSBUZWdyYSBE
-Uk0gSU9NTVUgZG9tYWluLiBUaGlzIGlzCj4gcmVxdWlyZWQgZS5nLiBmb3IgbG9hZGluZyBjbGll
-bnQgZmlybXdhcmUgd2hlbiBjbGllbnRzIGFyZSBhdHRhY2hlZAo+IHRvIHRoZSBJT01NVSBkb21h
-aW4uCj4gCj4gVGhlIGFsbG9jYXRvciBhbGxvY2F0ZXMgY29udGlndW91cyBwaHlzaWNhbCBwYWdl
-cyB0aGF0IGFyZSB0aGVuCj4gbWFwcGVkIGNvbnRpZ3VvdXNseSB0byB0aGUgSU9NTVUgZG9tYWlu
-IHVzaW5nIHRoZSBpb3ZhX2RvbWFpbgo+IGxpYnJhcnkgcHJvdmlkZWQgYnkgdGhlIGtlcm5lbC4g
-Q29udGlndW91cyBwaHlzaWNhbCBwYWdlcyBhcmUKPiB1c2VkIHNvIHRoYXQgdGhlIHNhbWUgYWxs
-b2NhdG9yIHdvcmtzIGFsc28gd2hlbiBJT01NVSBzdXBwb3J0Cj4gaXMgZGlzYWJsZWQgYW5kIHRo
-ZXJlZm9yZSBkZXZpY2VzIGFjY2VzcyBwaHlzaWNhbCBtZW1vcnkgZGlyZWN0bHkuCj4gCldoeSBp
-cyB0aGlzIG5lZWRlZD8gSWYgeW91IHVzZSB0aGUgRE1BIEFQSSBmb3IgdGhvc2UgYnVmZmVycyB5
-b3Ugc2hvdWxkCmVuZCB1cCB3aXRoIENNQSBtZW1vcnkgaW4gdGhlICFJT01NVSBjYXNlIGFuZCBu
-b3JtYWwgcGFnZWQgbWVtb3J5IHdpdGgKSU9NTVUgZW5hYmxlZC4gRnJvbSBteSB1bmRlcnN0YW5k
-aW5nIHRoaXMgc2hvdWxkIG1hdGNoIHRoZSByZXF1aXJlbWVudHMuCgpBbHNvIGhvdyBiaWcgY2Fu
-IHRob3NlIGZpcm13YXJlIGltYWdlcyBnZXQ/IFdpbGwgX19nZXRfZnJlZV9wYWdlcyBiZQphYmxl
-IHRvIHByb3ZpZGUgdGhpcyBtdWNoIGNvbnRpZyBtZW1vcnkgaW4gYSBsb25nIHJ1bm5pbmcgc3lz
-dGVtIHdpdGgKZnJhZ21lbnRlZCBtZW1vcnkgc3BhY2U/IElzbid0IENNQSB0aGUgYmV0dGVyIG9w
-dGlvbiBoZXJlPwoKUmVnYXJkcywKTHVjYXMKCj4gU2lnbmVkLW9mZi1ieTogTWlra28gUGVydHR1
-bmVuIDxtcGVydHR1bmVuQG52aWRpYS5jb20+Cj4gLS0tCj4gIGRyaXZlcnMvZ3B1L2RybS90ZWdy
-YS9kcm0uYyB8IDExMSArKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0t
-LQo+ICBkcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmggfCAgMTEgKysrKysKPiAgMiBmaWxlcyBj
-aGFuZ2VkLCAxMTUgaW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMoLSkKPiAKPiBkaWZmIC0tZ2l0
-IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5jIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2Ry
-bS5jCj4gaW5kZXggYjhiZTNlZS4uY2Y3MTRjNiAxMDA2NDQKPiAtLS0gYS9kcml2ZXJzL2dwdS9k
-cm0vdGVncmEvZHJtLmMKPiArKysgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKPiBAQCAt
-MSwxMiArMSwxMyBAQAo+ICAvKgo+ICAgKiBDb3B5cmlnaHQgKEMpIDIwMTIgQXZpb25pYyBEZXNp
-Z24gR21iSAo+IC0gKiBDb3B5cmlnaHQgKEMpIDIwMTItMjAxMyBOVklESUEgQ09SUE9SQVRJT04u
-ICBBbGwgcmlnaHRzIHJlc2VydmVkLgo+ICsgKiBDb3B5cmlnaHQgKEMpIDIwMTItMjAxNiBOVklE
-SUEgQ09SUE9SQVRJT04uICBBbGwgcmlnaHRzIHJlc2VydmVkLgo+ICAgKgo+ICAgKiBUaGlzIHBy
-b2dyYW0gaXMgZnJlZSBzb2Z0d2FyZTsgeW91IGNhbiByZWRpc3RyaWJ1dGUgaXQgYW5kL29yIG1v
-ZGlmeQo+ICAgKiBpdCB1bmRlciB0aGUgdGVybXMgb2YgdGhlIEdOVSBHZW5lcmFsIFB1YmxpYyBM
-aWNlbnNlIHZlcnNpb24gMiBhcwo+ICAgKiBwdWJsaXNoZWQgYnkgdGhlIEZyZWUgU29mdHdhcmUg
-Rm91bmRhdGlvbi4KPiAgICovCj4gIAo+ICsjaW5jbHVkZSA8bGludXgvYml0b3BzLmg+Cj4gICNp
-bmNsdWRlIDxsaW51eC9ob3N0MXguaD4KPiAgI2luY2x1ZGUgPGxpbnV4L2lvbW11Lmg+Cj4gIAo+
-IEBAIC0yMyw2ICsyNCw4IEBACj4gICNkZWZpbmUgRFJJVkVSX01JTk9SIDAKPiAgI2RlZmluZSBE
-UklWRVJfUEFUQ0hMRVZFTCAwCj4gIAo+ICsjZGVmaW5lIENBUlZFT1VUX1NaIFNaXzY0TQo+ICsK
-PiAgc3RydWN0IHRlZ3JhX2RybV9maWxlIHsKPiAgCXN0cnVjdCBsaXN0X2hlYWQgY29udGV4dHM7
-Cj4gIH07Cj4gQEAgLTEyNyw3ICsxMzAsOCBAQCBzdGF0aWMgaW50IHRlZ3JhX2RybV9sb2FkKHN0
-cnVjdCBkcm1fZGV2aWNlICpkcm0sIHVuc2lnbmVkIGxvbmcgZmxhZ3MpCj4gIAo+ICAJaWYgKGlv
-bW11X3ByZXNlbnQoJnBsYXRmb3JtX2J1c190eXBlKSkgewo+ICAJCXN0cnVjdCBpb21tdV9kb21h
-aW5fZ2VvbWV0cnkgKmdlb21ldHJ5Owo+IC0JCXU2NCBzdGFydCwgZW5kOwo+ICsJCXVuc2lnbmVk
-IGxvbmcgb3JkZXI7Cj4gKwkJdTY0IGNhcnZlb3V0X3N0YXJ0LCBjYXJ2ZW91dF9lbmQsIGdlbV9z
-dGFydCwgZ2VtX2VuZDsKPiAgCj4gIAkJdGVncmEtPmRvbWFpbiA9IGlvbW11X2RvbWFpbl9hbGxv
-YygmcGxhdGZvcm1fYnVzX3R5cGUpOwo+ICAJCWlmICghdGVncmEtPmRvbWFpbikgewo+IEBAIC0x
-MzYsMTIgKzE0MCwyNSBAQCBzdGF0aWMgaW50IHRlZ3JhX2RybV9sb2FkKHN0cnVjdCBkcm1fZGV2
-aWNlICpkcm0sIHVuc2lnbmVkIGxvbmcgZmxhZ3MpCj4gIAkJfQo+ICAKPiAgCQlnZW9tZXRyeSA9
-ICZ0ZWdyYS0+ZG9tYWluLT5nZW9tZXRyeTsKPiAtCQlzdGFydCA9IGdlb21ldHJ5LT5hcGVydHVy
-ZV9zdGFydDsKPiAtCQllbmQgPSBnZW9tZXRyeS0+YXBlcnR1cmVfZW5kOwo+ICsJCWdlbV9zdGFy
-dCA9IGdlb21ldHJ5LT5hcGVydHVyZV9zdGFydDsKPiArCQlnZW1fZW5kID0gZ2VvbWV0cnktPmFw
-ZXJ0dXJlX2VuZCAtIENBUlZFT1VUX1NaOwo+ICsJCWNhcnZlb3V0X3N0YXJ0ID0gZ2VtX2VuZCAr
-IDE7Cj4gKwkJY2FydmVvdXRfZW5kID0gZ2VvbWV0cnktPmFwZXJ0dXJlX2VuZDsKPiArCj4gKwkJ
-b3JkZXIgPSBfX2Zmcyh0ZWdyYS0+ZG9tYWluLT5wZ3NpemVfYml0bWFwKTsKPiArCQlpbml0X2lv
-dmFfZG9tYWluKCZ0ZWdyYS0+Y2FydmVvdXQuZG9tYWluLCAxVUwgPDwgb3JkZXIsCj4gKwkJCQkg
-Y2FydmVvdXRfc3RhcnQgPj4gb3JkZXIsCj4gKwkJCQkgY2FydmVvdXRfZW5kID4+IG9yZGVyKTsK
-PiArCj4gKwkJdGVncmEtPmNhcnZlb3V0LnNoaWZ0ID0gaW92YV9zaGlmdCgmdGVncmEtPmNhcnZl
-b3V0LmRvbWFpbik7Cj4gKwkJdGVncmEtPmNhcnZlb3V0LmxpbWl0ID0gY2FydmVvdXRfZW5kID4+
-IHRlZ3JhLT5jYXJ2ZW91dC5zaGlmdDsKPiArCj4gKwkJZHJtX21tX2luaXQoJnRlZ3JhLT5tbSwg
-Z2VtX3N0YXJ0LCBnZW1fZW5kIC0gZ2VtX3N0YXJ0ICsgMSk7Cj4gIAo+IC0JCURSTV9ERUJVR19E
-UklWRVIoIklPTU1VIGFwZXJ0dXJlIGluaXRpYWxpemVkICglI2xseC0lI2xseClcbiIsCj4gLQkJ
-CQkgc3RhcnQsIGVuZCk7Cj4gLQkJZHJtX21tX2luaXQoJnRlZ3JhLT5tbSwgc3RhcnQsIGVuZCAt
-IHN0YXJ0ICsgMSk7Cj4gKwkJRFJNX0RFQlVHKCJJT01NVSBhcGVydHVyZXM6XG4iKTsKPiArCQlE
-Uk1fREVCVUcoIiAgR0VNOiAlI2xseC0lI2xseFxuIiwgZ2VtX3N0YXJ0LCBnZW1fZW5kKTsKPiAr
-CQlEUk1fREVCVUcoIiAgQ2FydmVvdXQ6ICUjbGx4LSUjbGx4XG4iLCBjYXJ2ZW91dF9zdGFydCwK
-PiArCQkJICBjYXJ2ZW91dF9lbmQpOwo+ICAJfQo+ICAKPiAgCW11dGV4X2luaXQoJnRlZ3JhLT5j
-bGllbnRzX2xvY2spOwo+IEBAIC0yMDgsNiArMjI1LDcgQEAgc3RhdGljIGludCB0ZWdyYV9kcm1f
-bG9hZChzdHJ1Y3QgZHJtX2RldmljZSAqZHJtLCB1bnNpZ25lZCBsb25nIGZsYWdzKQo+ICAJaWYg
-KHRlZ3JhLT5kb21haW4pIHsKPiAgCQlpb21tdV9kb21haW5fZnJlZSh0ZWdyYS0+ZG9tYWluKTsK
-PiAgCQlkcm1fbW1fdGFrZWRvd24oJnRlZ3JhLT5tbSk7Cj4gKwkJcHV0X2lvdmFfZG9tYWluKCZ0
-ZWdyYS0+Y2FydmVvdXQuZG9tYWluKTsKPiAgCX0KPiAgZnJlZToKPiAgCWtmcmVlKHRlZ3JhKTsK
-PiBAQCAtMjMyLDYgKzI1MCw3IEBAIHN0YXRpYyBpbnQgdGVncmFfZHJtX3VubG9hZChzdHJ1Y3Qg
-ZHJtX2RldmljZSAqZHJtKQo+ICAJaWYgKHRlZ3JhLT5kb21haW4pIHsKPiAgCQlpb21tdV9kb21h
-aW5fZnJlZSh0ZWdyYS0+ZG9tYWluKTsKPiAgCQlkcm1fbW1fdGFrZWRvd24oJnRlZ3JhLT5tbSk7
-Cj4gKwkJcHV0X2lvdmFfZG9tYWluKCZ0ZWdyYS0+Y2FydmVvdXQuZG9tYWluKTsKPiAgCX0KPiAg
-Cj4gIAlrZnJlZSh0ZWdyYSk7Cj4gQEAgLTk3NSw2ICs5OTQsODQgQEAgaW50IHRlZ3JhX2RybV91
-bnJlZ2lzdGVyX2NsaWVudChzdHJ1Y3QgdGVncmFfZHJtICp0ZWdyYSwKPiAgCXJldHVybiAwOwo+
-ICB9Cj4gIAo+ICt2b2lkICp0ZWdyYV9kcm1fYWxsb2Moc3RydWN0IHRlZ3JhX2RybSAqdGVncmEs
-IHNpemVfdCBzaXplLAo+ICsJCQkgICAgICBkbWFfYWRkcl90ICpkbWEpCj4gK3sKPiArCXN0cnVj
-dCBpb3ZhICphbGxvYzsKPiArCXZvaWQgKnZpcnQ7Cj4gKwlnZnBfdCBnZnA7Cj4gKwlpbnQgZXJy
-Owo+ICsKPiArCWlmICh0ZWdyYS0+ZG9tYWluKQo+ICsJCXNpemUgPSBpb3ZhX2FsaWduKCZ0ZWdy
-YS0+Y2FydmVvdXQuZG9tYWluLCBzaXplKTsKPiArCWVsc2UKPiArCQlzaXplID0gUEFHRV9BTElH
-TihzaXplKTsKPiArCj4gKwlnZnAgPSBHRlBfS0VSTkVMIHwgX19HRlBfWkVSTzsKPiArCWlmICgh
-dGVncmEtPmRvbWFpbikgewo+ICsJCS8qCj4gKwkJICogTWFueSB1bml0cyBvbmx5IHN1cHBvcnQg
-MzItYml0IGFkZHJlc3NlcywgZXZlbiBvbiA2NC1iaXQKPiArCQkgKiBTb0NzLiBJZiB0aGVyZSBp
-cyBubyBJT01NVSB0byB0cmFuc2xhdGUgaW50byBhIDMyLWJpdCBJTwo+ICsJCSAqIHZpcnR1YWwg
-YWRkcmVzcyBzcGFjZSwgZm9yY2UgYWxsb2NhdGlvbnMgdG8gYmUgaW4gdGhlCj4gKwkJICogbG93
-ZXIgMzItYml0IHJhbmdlLgo+ICsJCSAqLwo+ICsJCWdmcCB8PSBHRlBfRE1BOwo+ICsJfQo+ICsK
-PiArCXZpcnQgPSAodm9pZCAqKV9fZ2V0X2ZyZWVfcGFnZXMoZ2ZwLCBnZXRfb3JkZXIoc2l6ZSkp
-Owo+ICsJaWYgKCF2aXJ0KQo+ICsJCXJldHVybiBFUlJfUFRSKC1FTk9NRU0pOwo+ICsKPiArCWlm
-ICghdGVncmEtPmRvbWFpbikgewo+ICsJCS8qCj4gKwkJICogSWYgSU9NTVUgaXMgZGlzYWJsZWQs
-IGRldmljZXMgYWRkcmVzcyBwaHlzaWNhbCBtZW1vcnkKPiArCQkgKiBkaXJlY3RseS4KPiArCQkg
-Ki8KPiArCQkqZG1hID0gdmlydF90b19waHlzKHZpcnQpOwo+ICsJCXJldHVybiB2aXJ0Owo+ICsJ
-fQo+ICsKPiArCWFsbG9jID0gYWxsb2NfaW92YSgmdGVncmEtPmNhcnZlb3V0LmRvbWFpbiwKPiAr
-CQkJICAgc2l6ZSA+PiB0ZWdyYS0+Y2FydmVvdXQuc2hpZnQsCj4gKwkJCSAgIHRlZ3JhLT5jYXJ2
-ZW91dC5saW1pdCwgdHJ1ZSk7Cj4gKwlpZiAoIWFsbG9jKSB7Cj4gKwkJZXJyID0gLUVCVVNZOwo+
-ICsJCWdvdG8gZnJlZV9wYWdlczsKPiArCX0KPiArCj4gKwkqZG1hID0gaW92YV9kbWFfYWRkcigm
-dGVncmEtPmNhcnZlb3V0LmRvbWFpbiwgYWxsb2MpOwo+ICsJZXJyID0gaW9tbXVfbWFwKHRlZ3Jh
-LT5kb21haW4sICpkbWEsIHZpcnRfdG9fcGh5cyh2aXJ0KSwKPiArCQkJc2l6ZSwgSU9NTVVfUkVB
-RCB8IElPTU1VX1dSSVRFKTsKPiArCWlmIChlcnIgPCAwKQo+ICsJCWdvdG8gZnJlZV9pb3ZhOwo+
-ICsKPiArCXJldHVybiB2aXJ0Owo+ICsKPiArZnJlZV9pb3ZhOgo+ICsJX19mcmVlX2lvdmEoJnRl
-Z3JhLT5jYXJ2ZW91dC5kb21haW4sIGFsbG9jKTsKPiArZnJlZV9wYWdlczoKPiArCWZyZWVfcGFn
-ZXMoKHVuc2lnbmVkIGxvbmcpdmlydCwgZ2V0X29yZGVyKHNpemUpKTsKPiArCj4gKwlyZXR1cm4g
-RVJSX1BUUihlcnIpOwo+ICt9Cj4gKwo+ICt2b2lkIHRlZ3JhX2RybV9mcmVlKHN0cnVjdCB0ZWdy
-YV9kcm0gKnRlZ3JhLCBzaXplX3Qgc2l6ZSwgdm9pZCAqdmlydCwKPiArCQkgICAgZG1hX2FkZHJf
-dCBkbWEpCj4gK3sKPiArCWlmICh0ZWdyYS0+ZG9tYWluKQo+ICsJCXNpemUgPSBpb3ZhX2FsaWdu
-KCZ0ZWdyYS0+Y2FydmVvdXQuZG9tYWluLCBzaXplKTsKPiArCWVsc2UKPiArCQlzaXplID0gUEFH
-RV9BTElHTihzaXplKTsKPiArCj4gKwlpZiAodGVncmEtPmRvbWFpbikgewo+ICsJCWlvbW11X3Vu
-bWFwKHRlZ3JhLT5kb21haW4sIGRtYSwgc2l6ZSk7Cj4gKwkJZnJlZV9pb3ZhKCZ0ZWdyYS0+Y2Fy
-dmVvdXQuZG9tYWluLAo+ICsJCQkgIGlvdmFfcGZuKCZ0ZWdyYS0+Y2FydmVvdXQuZG9tYWluLCBk
-bWEpKTsKPiArCX0KPiArCj4gKwlmcmVlX3BhZ2VzKCh1bnNpZ25lZCBsb25nKXZpcnQsIGdldF9v
-cmRlcihzaXplKSk7Cj4gK30KPiArCj4gIHN0YXRpYyBpbnQgaG9zdDF4X2RybV9wcm9iZShzdHJ1
-Y3QgaG9zdDF4X2RldmljZSAqZGV2KQo+ICB7Cj4gIAlzdHJ1Y3QgZHJtX2RyaXZlciAqZHJpdmVy
-ID0gJnRlZ3JhX2RybV9kcml2ZXI7Cj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdy
-YS9kcm0uaCBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uaAo+IGluZGV4IDBkZGNjZTEuLjcz
-NTFkZWUgMTAwNjQ0Cj4gLS0tIGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5oCj4gKysrIGIv
-ZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2RybS5oCj4gQEAgLTEyLDYgKzEyLDcgQEAKPiAgCj4gICNp
-bmNsdWRlIDx1YXBpL2RybS90ZWdyYV9kcm0uaD4KPiAgI2luY2x1ZGUgPGxpbnV4L2hvc3QxeC5o
-Pgo+ICsjaW5jbHVkZSA8bGludXgvaW92YS5oPgo+ICAjaW5jbHVkZSA8bGludXgvb2ZfZ3Bpby5o
-Pgo+ICAKPiAgI2luY2x1ZGUgPGRybS9kcm1QLmg+Cj4gQEAgLTQzLDYgKzQ0LDEyIEBAIHN0cnVj
-dCB0ZWdyYV9kcm0gewo+ICAJc3RydWN0IGlvbW11X2RvbWFpbiAqZG9tYWluOwo+ICAJc3RydWN0
-IGRybV9tbSBtbTsKPiAgCj4gKwlzdHJ1Y3Qgewo+ICsJCXN0cnVjdCBpb3ZhX2RvbWFpbiBkb21h
-aW47Cj4gKwkJdW5zaWduZWQgbG9uZyBzaGlmdDsKPiArCQl1bnNpZ25lZCBsb25nIGxpbWl0Owo+
-ICsJfSBjYXJ2ZW91dDsKPiArCj4gIAlzdHJ1Y3QgbXV0ZXggY2xpZW50c19sb2NrOwo+ICAJc3Ry
-dWN0IGxpc3RfaGVhZCBjbGllbnRzOwo+ICAKPiBAQCAtMTA0LDYgKzExMSwxMCBAQCBpbnQgdGVn
-cmFfZHJtX3VucmVnaXN0ZXJfY2xpZW50KHN0cnVjdCB0ZWdyYV9kcm0gKnRlZ3JhLAo+ICBpbnQg
-dGVncmFfZHJtX2luaXQoc3RydWN0IHRlZ3JhX2RybSAqdGVncmEsIHN0cnVjdCBkcm1fZGV2aWNl
-ICpkcm0pOwo+ICBpbnQgdGVncmFfZHJtX2V4aXQoc3RydWN0IHRlZ3JhX2RybSAqdGVncmEpOwo+
-ICAKPiArdm9pZCAqdGVncmFfZHJtX2FsbG9jKHN0cnVjdCB0ZWdyYV9kcm0gKnRlZ3JhLCBzaXpl
-X3Qgc2l6ZSwgZG1hX2FkZHJfdCAqaW92YSk7Cj4gK3ZvaWQgdGVncmFfZHJtX2ZyZWUoc3RydWN0
-IHRlZ3JhX2RybSAqdGVncmEsIHNpemVfdCBzaXplLCB2b2lkICp2aXJ0LAo+ICsJCSAgICBkbWFf
-YWRkcl90IGlvdmEpOwo+ICsKPiAgc3RydWN0IHRlZ3JhX2RjX3NvY19pbmZvOwo+ICBzdHJ1Y3Qg
-dGVncmFfb3V0cHV0Owo+ICAKCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBsaXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVz
-a3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9k
-cmktZGV2ZWwK
+On Wed, Dec 14, 2016 at 01:16:10PM +0200, Mikko Perttunen wrote:
+> This series adds IOMMU support to Host1x and TegraDRM
+> and adds support for the VIC (Video Image Compositor)
+> host1x client. The series is available as a git repository at
+> git://github.com/cyndis/linux.git; branch vic-2.
+> 
+> A userspace test case for VIC can be found at
+> https://github.com/cyndis/drm/tree/work/tegra.
+> The testcase is in tests/tegra and is called submit_vic.
+> The testcase/TRM include full headers and documentation
+> to program the unit. The unit by itself, however, does not
+> readily map to existing userspace library interfaces, so
+> implementations for those are not provided.
+
+Afaik libva has an entire pile of post-processing support. Pretty sure
+other video transcode libraries have similar interfaces, so should all be
+possible to implement this.
+
+Until that exists I really think that the VIC part (and only that, since
+tk1/tx1 in general seems to work with nouveau and all that) should stay
+out of tree.
+-Daniel
+
+> 
+> The in-kernel firewall is not implemented for VIC;
+> therefore, either the IOMMU must be enabled or the firewall
+> disabled for the test to pass.
+> 
+> Tested with Jetson TX1 (T210). Probably works also
+> with Jetson TK1 (T124). Note that due to hardware changes
+> the testcase also needs to be changed to run properly
+> on T124: this can be done by removing the topmost
+> commit of the aforementioned test repository.
+> 
+> Thanks,
+>   Mikko.
+> 
+> Arto Merilainen (2):
+>   drm/tegra: Add falcon helper library
+>   drm/tegra: Add VIC support
+> 
+> Mikko Perttunen (5):
+>   drm/tegra: Add Tegra DRM allocation API
+>   gpu: host1x: Add IOMMU support
+>   dt-bindings: Add bindings for the Tegra VIC
+>   arm64: tegra: Enable VIC on T210
+>   arm64: tegra: Enable IOMMU for Host1x on Tegra210
+> 
+>  .../display/tegra/nvidia,tegra20-host1x.txt        |  13 +
+>  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  19 +-
+>  drivers/gpu/drm/tegra/Makefile                     |   4 +-
+>  drivers/gpu/drm/tegra/drm.c                        | 114 +++++-
+>  drivers/gpu/drm/tegra/drm.h                        |  12 +
+>  drivers/gpu/drm/tegra/falcon.c                     | 259 ++++++++++++++
+>  drivers/gpu/drm/tegra/falcon.h                     | 127 +++++++
+>  drivers/gpu/drm/tegra/vic.c                        | 396 +++++++++++++++++++++
+>  drivers/gpu/drm/tegra/vic.h                        |  31 ++
+>  drivers/gpu/host1x/cdma.c                          |  74 +++-
+>  drivers/gpu/host1x/cdma.h                          |   6 +-
+>  drivers/gpu/host1x/dev.c                           |  40 ++-
+>  drivers/gpu/host1x/dev.h                           |   6 +
+>  drivers/gpu/host1x/hw/cdma_hw.c                    |  16 +-
+>  drivers/gpu/host1x/job.c                           |  72 +++-
+>  drivers/gpu/host1x/job.h                           |   1 +
+>  include/linux/host1x.h                             |   1 +
+>  17 files changed, 1143 insertions(+), 48 deletions(-)
+>  create mode 100644 drivers/gpu/drm/tegra/falcon.c
+>  create mode 100644 drivers/gpu/drm/tegra/falcon.h
+>  create mode 100644 drivers/gpu/drm/tegra/vic.c
+>  create mode 100644 drivers/gpu/drm/tegra/vic.h
+> 
+> -- 
+> 2.10.2
+> 
+
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
