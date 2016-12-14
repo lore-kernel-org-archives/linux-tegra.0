@@ -1,274 +1,194 @@
-From: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+From: Lucas Stach <l.stach@pengutronix.de>
 Subject: Re: [PATCH v2 1/7] drm/tegra: Add Tegra DRM allocation API
-Date: Wed, 14 Dec 2016 14:36:07 +0200
-Message-ID: <a578802e-642a-f3c5-7863-1a393e486b6c@kapsi.fi>
+Date: Wed, 14 Dec 2016 13:56:46 +0100
+Message-ID: <1481720206.2313.32.camel@pengutronix.de>
 References: <20161214111617.24548-1-mperttunen@nvidia.com>
  <20161214111617.24548-2-mperttunen@nvidia.com>
  <1481715331.2313.28.camel@pengutronix.de>
+ <a578802e-642a-f3c5-7863-1a393e486b6c@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <1481715331.2313.28.camel-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Lucas Stach <l.stach-bIcnvbaLZ9MEGnE8C9+IrQ@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Cc: thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <a578802e-642a-f3c5-7863-1a393e486b6c@kapsi.fi>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Mikko Perttunen <cyndis@kapsi.fi>
+Cc: linux-tegra@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>
 List-Id: linux-tegra@vger.kernel.org
 
-On 14.12.2016 13:35, Lucas Stach wrote:
-> Am Mittwoch, den 14.12.2016, 13:16 +0200 schrieb Mikko Perttunen:
->> Add a new IO virtual memory allocation API to allow clients to
->> allocate non-GEM memory in the Tegra DRM IOMMU domain. This is
->> required e.g. for loading client firmware when clients are attached
->> to the IOMMU domain.
->>
->> The allocator allocates contiguous physical pages that are then
->> mapped contiguously to the IOMMU domain using the iova_domain
->> library provided by the kernel. Contiguous physical pages are
->> used so that the same allocator works also when IOMMU support
->> is disabled and therefore devices access physical memory directly.
->>
-> Why is this needed? If you use the DMA API for those buffers you should
-> end up with CMA memory in the !IOMMU case and normal paged memory with
-> IOMMU enabled. From my understanding this should match the requirements.
-
-Yes, memory allocated with the DMA API should work as well, but would 
-also require passing the device pointer for the device that is 
-allocating the memory, which isn't a problem, but this way we don't need 
-that.
-
->
-> Also how big can those firmware images get? Will __get_free_pages be
-> able to provide this much contig memory in a long running system with
-> fragmented memory space? Isn't CMA the better option here?
-
-The largest is about 140 kilobytes. The space is also allocated when the 
-device is initialized which usually happens during boot.
-
->
-> Regards,
-> Lucas
-
-Thanks,
-Mikko.
-
->
->> Signed-off-by: Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
->> ---
->>  drivers/gpu/drm/tegra/drm.c | 111 +++++++++++++++++++++++++++++++++++++++++---
->>  drivers/gpu/drm/tegra/drm.h |  11 +++++
->>  2 files changed, 115 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
->> index b8be3ee..cf714c6 100644
->> --- a/drivers/gpu/drm/tegra/drm.c
->> +++ b/drivers/gpu/drm/tegra/drm.c
->> @@ -1,12 +1,13 @@
->>  /*
->>   * Copyright (C) 2012 Avionic Design GmbH
->> - * Copyright (C) 2012-2013 NVIDIA CORPORATION.  All rights reserved.
->> + * Copyright (C) 2012-2016 NVIDIA CORPORATION.  All rights reserved.
->>   *
->>   * This program is free software; you can redistribute it and/or modify
->>   * it under the terms of the GNU General Public License version 2 as
->>   * published by the Free Software Foundation.
->>   */
->>
->> +#include <linux/bitops.h>
->>  #include <linux/host1x.h>
->>  #include <linux/iommu.h>
->>
->> @@ -23,6 +24,8 @@
->>  #define DRIVER_MINOR 0
->>  #define DRIVER_PATCHLEVEL 0
->>
->> +#define CARVEOUT_SZ SZ_64M
->> +
->>  struct tegra_drm_file {
->>  	struct list_head contexts;
->>  };
->> @@ -127,7 +130,8 @@ static int tegra_drm_load(struct drm_device *drm, unsigned long flags)
->>
->>  	if (iommu_present(&platform_bus_type)) {
->>  		struct iommu_domain_geometry *geometry;
->> -		u64 start, end;
->> +		unsigned long order;
->> +		u64 carveout_start, carveout_end, gem_start, gem_end;
->>
->>  		tegra->domain = iommu_domain_alloc(&platform_bus_type);
->>  		if (!tegra->domain) {
->> @@ -136,12 +140,25 @@ static int tegra_drm_load(struct drm_device *drm, unsigned long flags)
->>  		}
->>
->>  		geometry = &tegra->domain->geometry;
->> -		start = geometry->aperture_start;
->> -		end = geometry->aperture_end;
->> +		gem_start = geometry->aperture_start;
->> +		gem_end = geometry->aperture_end - CARVEOUT_SZ;
->> +		carveout_start = gem_end + 1;
->> +		carveout_end = geometry->aperture_end;
->> +
->> +		order = __ffs(tegra->domain->pgsize_bitmap);
->> +		init_iova_domain(&tegra->carveout.domain, 1UL << order,
->> +				 carveout_start >> order,
->> +				 carveout_end >> order);
->> +
->> +		tegra->carveout.shift = iova_shift(&tegra->carveout.domain);
->> +		tegra->carveout.limit = carveout_end >> tegra->carveout.shift;
->> +
->> +		drm_mm_init(&tegra->mm, gem_start, gem_end - gem_start + 1);
->>
->> -		DRM_DEBUG_DRIVER("IOMMU aperture initialized (%#llx-%#llx)\n",
->> -				 start, end);
->> -		drm_mm_init(&tegra->mm, start, end - start + 1);
->> +		DRM_DEBUG("IOMMU apertures:\n");
->> +		DRM_DEBUG("  GEM: %#llx-%#llx\n", gem_start, gem_end);
->> +		DRM_DEBUG("  Carveout: %#llx-%#llx\n", carveout_start,
->> +			  carveout_end);
->>  	}
->>
->>  	mutex_init(&tegra->clients_lock);
->> @@ -208,6 +225,7 @@ static int tegra_drm_load(struct drm_device *drm, unsigned long flags)
->>  	if (tegra->domain) {
->>  		iommu_domain_free(tegra->domain);
->>  		drm_mm_takedown(&tegra->mm);
->> +		put_iova_domain(&tegra->carveout.domain);
->>  	}
->>  free:
->>  	kfree(tegra);
->> @@ -232,6 +250,7 @@ static int tegra_drm_unload(struct drm_device *drm)
->>  	if (tegra->domain) {
->>  		iommu_domain_free(tegra->domain);
->>  		drm_mm_takedown(&tegra->mm);
->> +		put_iova_domain(&tegra->carveout.domain);
->>  	}
->>
->>  	kfree(tegra);
->> @@ -975,6 +994,84 @@ int tegra_drm_unregister_client(struct tegra_drm *tegra,
->>  	return 0;
->>  }
->>
->> +void *tegra_drm_alloc(struct tegra_drm *tegra, size_t size,
->> +			      dma_addr_t *dma)
->> +{
->> +	struct iova *alloc;
->> +	void *virt;
->> +	gfp_t gfp;
->> +	int err;
->> +
->> +	if (tegra->domain)
->> +		size = iova_align(&tegra->carveout.domain, size);
->> +	else
->> +		size = PAGE_ALIGN(size);
->> +
->> +	gfp = GFP_KERNEL | __GFP_ZERO;
->> +	if (!tegra->domain) {
->> +		/*
->> +		 * Many units only support 32-bit addresses, even on 64-bit
->> +		 * SoCs. If there is no IOMMU to translate into a 32-bit IO
->> +		 * virtual address space, force allocations to be in the
->> +		 * lower 32-bit range.
->> +		 */
->> +		gfp |= GFP_DMA;
->> +	}
->> +
->> +	virt = (void *)__get_free_pages(gfp, get_order(size));
->> +	if (!virt)
->> +		return ERR_PTR(-ENOMEM);
->> +
->> +	if (!tegra->domain) {
->> +		/*
->> +		 * If IOMMU is disabled, devices address physical memory
->> +		 * directly.
->> +		 */
->> +		*dma = virt_to_phys(virt);
->> +		return virt;
->> +	}
->> +
->> +	alloc = alloc_iova(&tegra->carveout.domain,
->> +			   size >> tegra->carveout.shift,
->> +			   tegra->carveout.limit, true);
->> +	if (!alloc) {
->> +		err = -EBUSY;
->> +		goto free_pages;
->> +	}
->> +
->> +	*dma = iova_dma_addr(&tegra->carveout.domain, alloc);
->> +	err = iommu_map(tegra->domain, *dma, virt_to_phys(virt),
->> +			size, IOMMU_READ | IOMMU_WRITE);
->> +	if (err < 0)
->> +		goto free_iova;
->> +
->> +	return virt;
->> +
->> +free_iova:
->> +	__free_iova(&tegra->carveout.domain, alloc);
->> +free_pages:
->> +	free_pages((unsigned long)virt, get_order(size));
->> +
->> +	return ERR_PTR(err);
->> +}
->> +
->> +void tegra_drm_free(struct tegra_drm *tegra, size_t size, void *virt,
->> +		    dma_addr_t dma)
->> +{
->> +	if (tegra->domain)
->> +		size = iova_align(&tegra->carveout.domain, size);
->> +	else
->> +		size = PAGE_ALIGN(size);
->> +
->> +	if (tegra->domain) {
->> +		iommu_unmap(tegra->domain, dma, size);
->> +		free_iova(&tegra->carveout.domain,
->> +			  iova_pfn(&tegra->carveout.domain, dma));
->> +	}
->> +
->> +	free_pages((unsigned long)virt, get_order(size));
->> +}
->> +
->>  static int host1x_drm_probe(struct host1x_device *dev)
->>  {
->>  	struct drm_driver *driver = &tegra_drm_driver;
->> diff --git a/drivers/gpu/drm/tegra/drm.h b/drivers/gpu/drm/tegra/drm.h
->> index 0ddcce1..7351dee 100644
->> --- a/drivers/gpu/drm/tegra/drm.h
->> +++ b/drivers/gpu/drm/tegra/drm.h
->> @@ -12,6 +12,7 @@
->>
->>  #include <uapi/drm/tegra_drm.h>
->>  #include <linux/host1x.h>
->> +#include <linux/iova.h>
->>  #include <linux/of_gpio.h>
->>
->>  #include <drm/drmP.h>
->> @@ -43,6 +44,12 @@ struct tegra_drm {
->>  	struct iommu_domain *domain;
->>  	struct drm_mm mm;
->>
->> +	struct {
->> +		struct iova_domain domain;
->> +		unsigned long shift;
->> +		unsigned long limit;
->> +	} carveout;
->> +
->>  	struct mutex clients_lock;
->>  	struct list_head clients;
->>
->> @@ -104,6 +111,10 @@ int tegra_drm_unregister_client(struct tegra_drm *tegra,
->>  int tegra_drm_init(struct tegra_drm *tegra, struct drm_device *drm);
->>  int tegra_drm_exit(struct tegra_drm *tegra);
->>
->> +void *tegra_drm_alloc(struct tegra_drm *tegra, size_t size, dma_addr_t *iova);
->> +void tegra_drm_free(struct tegra_drm *tegra, size_t size, void *virt,
->> +		    dma_addr_t iova);
->> +
->>  struct tegra_dc_soc_info;
->>  struct tegra_output;
->>
->
->
-> --
-> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
-> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-> More majordomo info at  http://vger.kernel.org/majordomo-info.html
->
+QW0gTWl0dHdvY2gsIGRlbiAxNC4xMi4yMDE2LCAxNDozNiArMDIwMCBzY2hyaWViIE1pa2tvIFBl
+cnR0dW5lbjoKPiBPbiAxNC4xMi4yMDE2IDEzOjM1LCBMdWNhcyBTdGFjaCB3cm90ZToKPiA+IEFt
+IE1pdHR3b2NoLCBkZW4gMTQuMTIuMjAxNiwgMTM6MTYgKzAyMDAgc2NocmllYiBNaWtrbyBQZXJ0
+dHVuZW46Cj4gPj4gQWRkIGEgbmV3IElPIHZpcnR1YWwgbWVtb3J5IGFsbG9jYXRpb24gQVBJIHRv
+IGFsbG93IGNsaWVudHMgdG8KPiA+PiBhbGxvY2F0ZSBub24tR0VNIG1lbW9yeSBpbiB0aGUgVGVn
+cmEgRFJNIElPTU1VIGRvbWFpbi4gVGhpcyBpcwo+ID4+IHJlcXVpcmVkIGUuZy4gZm9yIGxvYWRp
+bmcgY2xpZW50IGZpcm13YXJlIHdoZW4gY2xpZW50cyBhcmUgYXR0YWNoZWQKPiA+PiB0byB0aGUg
+SU9NTVUgZG9tYWluLgo+ID4+Cj4gPj4gVGhlIGFsbG9jYXRvciBhbGxvY2F0ZXMgY29udGlndW91
+cyBwaHlzaWNhbCBwYWdlcyB0aGF0IGFyZSB0aGVuCj4gPj4gbWFwcGVkIGNvbnRpZ3VvdXNseSB0
+byB0aGUgSU9NTVUgZG9tYWluIHVzaW5nIHRoZSBpb3ZhX2RvbWFpbgo+ID4+IGxpYnJhcnkgcHJv
+dmlkZWQgYnkgdGhlIGtlcm5lbC4gQ29udGlndW91cyBwaHlzaWNhbCBwYWdlcyBhcmUKPiA+PiB1
+c2VkIHNvIHRoYXQgdGhlIHNhbWUgYWxsb2NhdG9yIHdvcmtzIGFsc28gd2hlbiBJT01NVSBzdXBw
+b3J0Cj4gPj4gaXMgZGlzYWJsZWQgYW5kIHRoZXJlZm9yZSBkZXZpY2VzIGFjY2VzcyBwaHlzaWNh
+bCBtZW1vcnkgZGlyZWN0bHkuCj4gPj4KPiA+IFdoeSBpcyB0aGlzIG5lZWRlZD8gSWYgeW91IHVz
+ZSB0aGUgRE1BIEFQSSBmb3IgdGhvc2UgYnVmZmVycyB5b3Ugc2hvdWxkCj4gPiBlbmQgdXAgd2l0
+aCBDTUEgbWVtb3J5IGluIHRoZSAhSU9NTVUgY2FzZSBhbmQgbm9ybWFsIHBhZ2VkIG1lbW9yeSB3
+aXRoCj4gPiBJT01NVSBlbmFibGVkLiBGcm9tIG15IHVuZGVyc3RhbmRpbmcgdGhpcyBzaG91bGQg
+bWF0Y2ggdGhlIHJlcXVpcmVtZW50cy4KPiAKPiBZZXMsIG1lbW9yeSBhbGxvY2F0ZWQgd2l0aCB0
+aGUgRE1BIEFQSSBzaG91bGQgd29yayBhcyB3ZWxsLCBidXQgd291bGQgCj4gYWxzbyByZXF1aXJl
+IHBhc3NpbmcgdGhlIGRldmljZSBwb2ludGVyIGZvciB0aGUgZGV2aWNlIHRoYXQgaXMgCj4gYWxs
+b2NhdGluZyB0aGUgbWVtb3J5LCB3aGljaCBpc24ndCBhIHByb2JsZW0sIGJ1dCB0aGlzIHdheSB3
+ZSBkb24ndCBuZWVkIAo+IHRoYXQuCj4gCldoaWNoIGluIHR1cm4gd291bGQgYWxsb3cgeW91IHRv
+IHByb3Blcmx5IGRlc2NyaWJlIHRoZSBETUEgY2FwYWJpbGl0aWVzCm9mIGVuZ2luZXMgdGhhdCBj
+YW4gYWRkcmVzcyBtb3JlIHRoYW4gMzIgYml0cyB3aXRob3V0IHRoZSBJT01NVSwgd2hpY2gKd2Fz
+IG9uZSBvZiB0aGUgY29tbWVudHMgVGhpZXJyeSBoYWQgdGhlIGxhc3QgdGltZSBhcm91bmQgSUlS
+Qy4KIAo+ID4KPiA+IEFsc28gaG93IGJpZyBjYW4gdGhvc2UgZmlybXdhcmUgaW1hZ2VzIGdldD8g
+V2lsbCBfX2dldF9mcmVlX3BhZ2VzIGJlCj4gPiBhYmxlIHRvIHByb3ZpZGUgdGhpcyBtdWNoIGNv
+bnRpZyBtZW1vcnkgaW4gYSBsb25nIHJ1bm5pbmcgc3lzdGVtIHdpdGgKPiA+IGZyYWdtZW50ZWQg
+bWVtb3J5IHNwYWNlPyBJc24ndCBDTUEgdGhlIGJldHRlciBvcHRpb24gaGVyZT8KPiAKPiBUaGUg
+bGFyZ2VzdCBpcyBhYm91dCAxNDAga2lsb2J5dGVzLiBUaGUgc3BhY2UgaXMgYWxzbyBhbGxvY2F0
+ZWQgd2hlbiB0aGUgCj4gZGV2aWNlIGlzIGluaXRpYWxpemVkIHdoaWNoIHVzdWFsbHkgaGFwcGVu
+cyBkdXJpbmcgYm9vdC4KPiAKV2hpY2ggaXMgYW4gb3JkZXIgNiBhbGxvY2F0aW9uLCBzb21ldGhp
+bmcgeW91IGFsbW9zdCBjZXJ0YWlubHkgZG9uJ3QgZ2V0CmluIGEgZnJhZ21lbnRlZCBzeXN0ZW0u
+IEkga25vdyBpdCBtYXkgd29yayBtb3N0IG9mIHRoZSB0aW1lLCBhcyB5b3UgYXJlCmFsbG9jYXRp
+bmcgdGhvc2UgYnVmZmVycyBlYXJseSwgYnV0IGlzIG1vc3Qgb2YgdGhlIHRpbWUgcmVhbGx5IGVu
+b3VnaD8KV2hhdCBoYXBwZW5zIG9uIG1vZHVsZSB1bmxvYWQvbG9hZCBhdCBhIGxhdGVyIHRpbWU/
+Cgo+ID4KPiA+IFJlZ2FyZHMsCj4gPiBMdWNhcwo+IAo+IFRoYW5rcywKPiBNaWtrby4KPiAKPiA+
+Cj4gPj4gU2lnbmVkLW9mZi1ieTogTWlra28gUGVydHR1bmVuIDxtcGVydHR1bmVuQG52aWRpYS5j
+b20+Cj4gPj4gLS0tCj4gPj4gIGRyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYyB8IDExMSArKysr
+KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKy0tLQo+ID4+ICBkcml2ZXJzL2dw
+dS9kcm0vdGVncmEvZHJtLmggfCAgMTEgKysrKysKPiA+PiAgMiBmaWxlcyBjaGFuZ2VkLCAxMTUg
+aW5zZXJ0aW9ucygrKSwgNyBkZWxldGlvbnMoLSkKPiA+Pgo+ID4+IGRpZmYgLS1naXQgYS9kcml2
+ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMgYi9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZHJtLmMKPiA+
+PiBpbmRleCBiOGJlM2VlLi5jZjcxNGM2IDEwMDY0NAo+ID4+IC0tLSBhL2RyaXZlcnMvZ3B1L2Ry
+bS90ZWdyYS9kcm0uYwo+ID4+ICsrKyBiL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uYwo+ID4+
+IEBAIC0xLDEyICsxLDEzIEBACj4gPj4gIC8qCj4gPj4gICAqIENvcHlyaWdodCAoQykgMjAxMiBB
+dmlvbmljIERlc2lnbiBHbWJICj4gPj4gLSAqIENvcHlyaWdodCAoQykgMjAxMi0yMDEzIE5WSURJ
+QSBDT1JQT1JBVElPTi4gIEFsbCByaWdodHMgcmVzZXJ2ZWQuCj4gPj4gKyAqIENvcHlyaWdodCAo
+QykgMjAxMi0yMDE2IE5WSURJQSBDT1JQT1JBVElPTi4gIEFsbCByaWdodHMgcmVzZXJ2ZWQuCj4g
+Pj4gICAqCj4gPj4gICAqIFRoaXMgcHJvZ3JhbSBpcyBmcmVlIHNvZnR3YXJlOyB5b3UgY2FuIHJl
+ZGlzdHJpYnV0ZSBpdCBhbmQvb3IgbW9kaWZ5Cj4gPj4gICAqIGl0IHVuZGVyIHRoZSB0ZXJtcyBv
+ZiB0aGUgR05VIEdlbmVyYWwgUHVibGljIExpY2Vuc2UgdmVyc2lvbiAyIGFzCj4gPj4gICAqIHB1
+Ymxpc2hlZCBieSB0aGUgRnJlZSBTb2Z0d2FyZSBGb3VuZGF0aW9uLgo+ID4+ICAgKi8KPiA+Pgo+
+ID4+ICsjaW5jbHVkZSA8bGludXgvYml0b3BzLmg+Cj4gPj4gICNpbmNsdWRlIDxsaW51eC9ob3N0
+MXguaD4KPiA+PiAgI2luY2x1ZGUgPGxpbnV4L2lvbW11Lmg+Cj4gPj4KPiA+PiBAQCAtMjMsNiAr
+MjQsOCBAQAo+ID4+ICAjZGVmaW5lIERSSVZFUl9NSU5PUiAwCj4gPj4gICNkZWZpbmUgRFJJVkVS
+X1BBVENITEVWRUwgMAo+ID4+Cj4gPj4gKyNkZWZpbmUgQ0FSVkVPVVRfU1ogU1pfNjRNCj4gPj4g
+Kwo+ID4+ICBzdHJ1Y3QgdGVncmFfZHJtX2ZpbGUgewo+ID4+ICAJc3RydWN0IGxpc3RfaGVhZCBj
+b250ZXh0czsKPiA+PiAgfTsKPiA+PiBAQCAtMTI3LDcgKzEzMCw4IEBAIHN0YXRpYyBpbnQgdGVn
+cmFfZHJtX2xvYWQoc3RydWN0IGRybV9kZXZpY2UgKmRybSwgdW5zaWduZWQgbG9uZyBmbGFncykK
+PiA+Pgo+ID4+ICAJaWYgKGlvbW11X3ByZXNlbnQoJnBsYXRmb3JtX2J1c190eXBlKSkgewo+ID4+
+ICAJCXN0cnVjdCBpb21tdV9kb21haW5fZ2VvbWV0cnkgKmdlb21ldHJ5Owo+ID4+IC0JCXU2NCBz
+dGFydCwgZW5kOwo+ID4+ICsJCXVuc2lnbmVkIGxvbmcgb3JkZXI7Cj4gPj4gKwkJdTY0IGNhcnZl
+b3V0X3N0YXJ0LCBjYXJ2ZW91dF9lbmQsIGdlbV9zdGFydCwgZ2VtX2VuZDsKPiA+Pgo+ID4+ICAJ
+CXRlZ3JhLT5kb21haW4gPSBpb21tdV9kb21haW5fYWxsb2MoJnBsYXRmb3JtX2J1c190eXBlKTsK
+PiA+PiAgCQlpZiAoIXRlZ3JhLT5kb21haW4pIHsKPiA+PiBAQCAtMTM2LDEyICsxNDAsMjUgQEAg
+c3RhdGljIGludCB0ZWdyYV9kcm1fbG9hZChzdHJ1Y3QgZHJtX2RldmljZSAqZHJtLCB1bnNpZ25l
+ZCBsb25nIGZsYWdzKQo+ID4+ICAJCX0KPiA+Pgo+ID4+ICAJCWdlb21ldHJ5ID0gJnRlZ3JhLT5k
+b21haW4tPmdlb21ldHJ5Owo+ID4+IC0JCXN0YXJ0ID0gZ2VvbWV0cnktPmFwZXJ0dXJlX3N0YXJ0
+Owo+ID4+IC0JCWVuZCA9IGdlb21ldHJ5LT5hcGVydHVyZV9lbmQ7Cj4gPj4gKwkJZ2VtX3N0YXJ0
+ID0gZ2VvbWV0cnktPmFwZXJ0dXJlX3N0YXJ0Owo+ID4+ICsJCWdlbV9lbmQgPSBnZW9tZXRyeS0+
+YXBlcnR1cmVfZW5kIC0gQ0FSVkVPVVRfU1o7Cj4gPj4gKwkJY2FydmVvdXRfc3RhcnQgPSBnZW1f
+ZW5kICsgMTsKPiA+PiArCQljYXJ2ZW91dF9lbmQgPSBnZW9tZXRyeS0+YXBlcnR1cmVfZW5kOwo+
+ID4+ICsKPiA+PiArCQlvcmRlciA9IF9fZmZzKHRlZ3JhLT5kb21haW4tPnBnc2l6ZV9iaXRtYXAp
+Owo+ID4+ICsJCWluaXRfaW92YV9kb21haW4oJnRlZ3JhLT5jYXJ2ZW91dC5kb21haW4sIDFVTCA8
+PCBvcmRlciwKPiA+PiArCQkJCSBjYXJ2ZW91dF9zdGFydCA+PiBvcmRlciwKPiA+PiArCQkJCSBj
+YXJ2ZW91dF9lbmQgPj4gb3JkZXIpOwo+ID4+ICsKPiA+PiArCQl0ZWdyYS0+Y2FydmVvdXQuc2hp
+ZnQgPSBpb3ZhX3NoaWZ0KCZ0ZWdyYS0+Y2FydmVvdXQuZG9tYWluKTsKPiA+PiArCQl0ZWdyYS0+
+Y2FydmVvdXQubGltaXQgPSBjYXJ2ZW91dF9lbmQgPj4gdGVncmEtPmNhcnZlb3V0LnNoaWZ0Owo+
+ID4+ICsKPiA+PiArCQlkcm1fbW1faW5pdCgmdGVncmEtPm1tLCBnZW1fc3RhcnQsIGdlbV9lbmQg
+LSBnZW1fc3RhcnQgKyAxKTsKPiA+Pgo+ID4+IC0JCURSTV9ERUJVR19EUklWRVIoIklPTU1VIGFw
+ZXJ0dXJlIGluaXRpYWxpemVkICglI2xseC0lI2xseClcbiIsCj4gPj4gLQkJCQkgc3RhcnQsIGVu
+ZCk7Cj4gPj4gLQkJZHJtX21tX2luaXQoJnRlZ3JhLT5tbSwgc3RhcnQsIGVuZCAtIHN0YXJ0ICsg
+MSk7Cj4gPj4gKwkJRFJNX0RFQlVHKCJJT01NVSBhcGVydHVyZXM6XG4iKTsKPiA+PiArCQlEUk1f
+REVCVUcoIiAgR0VNOiAlI2xseC0lI2xseFxuIiwgZ2VtX3N0YXJ0LCBnZW1fZW5kKTsKPiA+PiAr
+CQlEUk1fREVCVUcoIiAgQ2FydmVvdXQ6ICUjbGx4LSUjbGx4XG4iLCBjYXJ2ZW91dF9zdGFydCwK
+PiA+PiArCQkJICBjYXJ2ZW91dF9lbmQpOwo+ID4+ICAJfQo+ID4+Cj4gPj4gIAltdXRleF9pbml0
+KCZ0ZWdyYS0+Y2xpZW50c19sb2NrKTsKPiA+PiBAQCAtMjA4LDYgKzIyNSw3IEBAIHN0YXRpYyBp
+bnQgdGVncmFfZHJtX2xvYWQoc3RydWN0IGRybV9kZXZpY2UgKmRybSwgdW5zaWduZWQgbG9uZyBm
+bGFncykKPiA+PiAgCWlmICh0ZWdyYS0+ZG9tYWluKSB7Cj4gPj4gIAkJaW9tbXVfZG9tYWluX2Zy
+ZWUodGVncmEtPmRvbWFpbik7Cj4gPj4gIAkJZHJtX21tX3Rha2Vkb3duKCZ0ZWdyYS0+bW0pOwo+
+ID4+ICsJCXB1dF9pb3ZhX2RvbWFpbigmdGVncmEtPmNhcnZlb3V0LmRvbWFpbik7Cj4gPj4gIAl9
+Cj4gPj4gIGZyZWU6Cj4gPj4gIAlrZnJlZSh0ZWdyYSk7Cj4gPj4gQEAgLTIzMiw2ICsyNTAsNyBA
+QCBzdGF0aWMgaW50IHRlZ3JhX2RybV91bmxvYWQoc3RydWN0IGRybV9kZXZpY2UgKmRybSkKPiA+
+PiAgCWlmICh0ZWdyYS0+ZG9tYWluKSB7Cj4gPj4gIAkJaW9tbXVfZG9tYWluX2ZyZWUodGVncmEt
+PmRvbWFpbik7Cj4gPj4gIAkJZHJtX21tX3Rha2Vkb3duKCZ0ZWdyYS0+bW0pOwo+ID4+ICsJCXB1
+dF9pb3ZhX2RvbWFpbigmdGVncmEtPmNhcnZlb3V0LmRvbWFpbik7Cj4gPj4gIAl9Cj4gPj4KPiA+
+PiAgCWtmcmVlKHRlZ3JhKTsKPiA+PiBAQCAtOTc1LDYgKzk5NCw4NCBAQCBpbnQgdGVncmFfZHJt
+X3VucmVnaXN0ZXJfY2xpZW50KHN0cnVjdCB0ZWdyYV9kcm0gKnRlZ3JhLAo+ID4+ICAJcmV0dXJu
+IDA7Cj4gPj4gIH0KPiA+Pgo+ID4+ICt2b2lkICp0ZWdyYV9kcm1fYWxsb2Moc3RydWN0IHRlZ3Jh
+X2RybSAqdGVncmEsIHNpemVfdCBzaXplLAo+ID4+ICsJCQkgICAgICBkbWFfYWRkcl90ICpkbWEp
+Cj4gPj4gK3sKPiA+PiArCXN0cnVjdCBpb3ZhICphbGxvYzsKPiA+PiArCXZvaWQgKnZpcnQ7Cj4g
+Pj4gKwlnZnBfdCBnZnA7Cj4gPj4gKwlpbnQgZXJyOwo+ID4+ICsKPiA+PiArCWlmICh0ZWdyYS0+
+ZG9tYWluKQo+ID4+ICsJCXNpemUgPSBpb3ZhX2FsaWduKCZ0ZWdyYS0+Y2FydmVvdXQuZG9tYWlu
+LCBzaXplKTsKPiA+PiArCWVsc2UKPiA+PiArCQlzaXplID0gUEFHRV9BTElHTihzaXplKTsKPiA+
+PiArCj4gPj4gKwlnZnAgPSBHRlBfS0VSTkVMIHwgX19HRlBfWkVSTzsKPiA+PiArCWlmICghdGVn
+cmEtPmRvbWFpbikgewo+ID4+ICsJCS8qCj4gPj4gKwkJICogTWFueSB1bml0cyBvbmx5IHN1cHBv
+cnQgMzItYml0IGFkZHJlc3NlcywgZXZlbiBvbiA2NC1iaXQKPiA+PiArCQkgKiBTb0NzLiBJZiB0
+aGVyZSBpcyBubyBJT01NVSB0byB0cmFuc2xhdGUgaW50byBhIDMyLWJpdCBJTwo+ID4+ICsJCSAq
+IHZpcnR1YWwgYWRkcmVzcyBzcGFjZSwgZm9yY2UgYWxsb2NhdGlvbnMgdG8gYmUgaW4gdGhlCj4g
+Pj4gKwkJICogbG93ZXIgMzItYml0IHJhbmdlLgo+ID4+ICsJCSAqLwo+ID4+ICsJCWdmcCB8PSBH
+RlBfRE1BOwo+ID4+ICsJfQo+ID4+ICsKPiA+PiArCXZpcnQgPSAodm9pZCAqKV9fZ2V0X2ZyZWVf
+cGFnZXMoZ2ZwLCBnZXRfb3JkZXIoc2l6ZSkpOwo+ID4+ICsJaWYgKCF2aXJ0KQo+ID4+ICsJCXJl
+dHVybiBFUlJfUFRSKC1FTk9NRU0pOwo+ID4+ICsKPiA+PiArCWlmICghdGVncmEtPmRvbWFpbikg
+ewo+ID4+ICsJCS8qCj4gPj4gKwkJICogSWYgSU9NTVUgaXMgZGlzYWJsZWQsIGRldmljZXMgYWRk
+cmVzcyBwaHlzaWNhbCBtZW1vcnkKPiA+PiArCQkgKiBkaXJlY3RseS4KPiA+PiArCQkgKi8KPiA+
+PiArCQkqZG1hID0gdmlydF90b19waHlzKHZpcnQpOwo+ID4+ICsJCXJldHVybiB2aXJ0Owo+ID4+
+ICsJfQo+ID4+ICsKPiA+PiArCWFsbG9jID0gYWxsb2NfaW92YSgmdGVncmEtPmNhcnZlb3V0LmRv
+bWFpbiwKPiA+PiArCQkJICAgc2l6ZSA+PiB0ZWdyYS0+Y2FydmVvdXQuc2hpZnQsCj4gPj4gKwkJ
+CSAgIHRlZ3JhLT5jYXJ2ZW91dC5saW1pdCwgdHJ1ZSk7Cj4gPj4gKwlpZiAoIWFsbG9jKSB7Cj4g
+Pj4gKwkJZXJyID0gLUVCVVNZOwo+ID4+ICsJCWdvdG8gZnJlZV9wYWdlczsKPiA+PiArCX0KPiA+
+PiArCj4gPj4gKwkqZG1hID0gaW92YV9kbWFfYWRkcigmdGVncmEtPmNhcnZlb3V0LmRvbWFpbiwg
+YWxsb2MpOwo+ID4+ICsJZXJyID0gaW9tbXVfbWFwKHRlZ3JhLT5kb21haW4sICpkbWEsIHZpcnRf
+dG9fcGh5cyh2aXJ0KSwKPiA+PiArCQkJc2l6ZSwgSU9NTVVfUkVBRCB8IElPTU1VX1dSSVRFKTsK
+PiA+PiArCWlmIChlcnIgPCAwKQo+ID4+ICsJCWdvdG8gZnJlZV9pb3ZhOwo+ID4+ICsKPiA+PiAr
+CXJldHVybiB2aXJ0Owo+ID4+ICsKPiA+PiArZnJlZV9pb3ZhOgo+ID4+ICsJX19mcmVlX2lvdmEo
+JnRlZ3JhLT5jYXJ2ZW91dC5kb21haW4sIGFsbG9jKTsKPiA+PiArZnJlZV9wYWdlczoKPiA+PiAr
+CWZyZWVfcGFnZXMoKHVuc2lnbmVkIGxvbmcpdmlydCwgZ2V0X29yZGVyKHNpemUpKTsKPiA+PiAr
+Cj4gPj4gKwlyZXR1cm4gRVJSX1BUUihlcnIpOwo+ID4+ICt9Cj4gPj4gKwo+ID4+ICt2b2lkIHRl
+Z3JhX2RybV9mcmVlKHN0cnVjdCB0ZWdyYV9kcm0gKnRlZ3JhLCBzaXplX3Qgc2l6ZSwgdm9pZCAq
+dmlydCwKPiA+PiArCQkgICAgZG1hX2FkZHJfdCBkbWEpCj4gPj4gK3sKPiA+PiArCWlmICh0ZWdy
+YS0+ZG9tYWluKQo+ID4+ICsJCXNpemUgPSBpb3ZhX2FsaWduKCZ0ZWdyYS0+Y2FydmVvdXQuZG9t
+YWluLCBzaXplKTsKPiA+PiArCWVsc2UKPiA+PiArCQlzaXplID0gUEFHRV9BTElHTihzaXplKTsK
+PiA+PiArCj4gPj4gKwlpZiAodGVncmEtPmRvbWFpbikgewo+ID4+ICsJCWlvbW11X3VubWFwKHRl
+Z3JhLT5kb21haW4sIGRtYSwgc2l6ZSk7Cj4gPj4gKwkJZnJlZV9pb3ZhKCZ0ZWdyYS0+Y2FydmVv
+dXQuZG9tYWluLAo+ID4+ICsJCQkgIGlvdmFfcGZuKCZ0ZWdyYS0+Y2FydmVvdXQuZG9tYWluLCBk
+bWEpKTsKPiA+PiArCX0KPiA+PiArCj4gPj4gKwlmcmVlX3BhZ2VzKCh1bnNpZ25lZCBsb25nKXZp
+cnQsIGdldF9vcmRlcihzaXplKSk7Cj4gPj4gK30KPiA+PiArCj4gPj4gIHN0YXRpYyBpbnQgaG9z
+dDF4X2RybV9wcm9iZShzdHJ1Y3QgaG9zdDF4X2RldmljZSAqZGV2KQo+ID4+ICB7Cj4gPj4gIAlz
+dHJ1Y3QgZHJtX2RyaXZlciAqZHJpdmVyID0gJnRlZ3JhX2RybV9kcml2ZXI7Cj4gPj4gZGlmZiAt
+LWdpdCBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9kcm0uaCBiL2RyaXZlcnMvZ3B1L2RybS90ZWdy
+YS9kcm0uaAo+ID4+IGluZGV4IDBkZGNjZTEuLjczNTFkZWUgMTAwNjQ0Cj4gPj4gLS0tIGEvZHJp
+dmVycy9ncHUvZHJtL3RlZ3JhL2RybS5oCj4gPj4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
+L2RybS5oCj4gPj4gQEAgLTEyLDYgKzEyLDcgQEAKPiA+Pgo+ID4+ICAjaW5jbHVkZSA8dWFwaS9k
+cm0vdGVncmFfZHJtLmg+Cj4gPj4gICNpbmNsdWRlIDxsaW51eC9ob3N0MXguaD4KPiA+PiArI2lu
+Y2x1ZGUgPGxpbnV4L2lvdmEuaD4KPiA+PiAgI2luY2x1ZGUgPGxpbnV4L29mX2dwaW8uaD4KPiA+
+Pgo+ID4+ICAjaW5jbHVkZSA8ZHJtL2RybVAuaD4KPiA+PiBAQCAtNDMsNiArNDQsMTIgQEAgc3Ry
+dWN0IHRlZ3JhX2RybSB7Cj4gPj4gIAlzdHJ1Y3QgaW9tbXVfZG9tYWluICpkb21haW47Cj4gPj4g
+IAlzdHJ1Y3QgZHJtX21tIG1tOwo+ID4+Cj4gPj4gKwlzdHJ1Y3Qgewo+ID4+ICsJCXN0cnVjdCBp
+b3ZhX2RvbWFpbiBkb21haW47Cj4gPj4gKwkJdW5zaWduZWQgbG9uZyBzaGlmdDsKPiA+PiArCQl1
+bnNpZ25lZCBsb25nIGxpbWl0Owo+ID4+ICsJfSBjYXJ2ZW91dDsKPiA+PiArCj4gPj4gIAlzdHJ1
+Y3QgbXV0ZXggY2xpZW50c19sb2NrOwo+ID4+ICAJc3RydWN0IGxpc3RfaGVhZCBjbGllbnRzOwo+
+ID4+Cj4gPj4gQEAgLTEwNCw2ICsxMTEsMTAgQEAgaW50IHRlZ3JhX2RybV91bnJlZ2lzdGVyX2Ns
+aWVudChzdHJ1Y3QgdGVncmFfZHJtICp0ZWdyYSwKPiA+PiAgaW50IHRlZ3JhX2RybV9pbml0KHN0
+cnVjdCB0ZWdyYV9kcm0gKnRlZ3JhLCBzdHJ1Y3QgZHJtX2RldmljZSAqZHJtKTsKPiA+PiAgaW50
+IHRlZ3JhX2RybV9leGl0KHN0cnVjdCB0ZWdyYV9kcm0gKnRlZ3JhKTsKPiA+Pgo+ID4+ICt2b2lk
+ICp0ZWdyYV9kcm1fYWxsb2Moc3RydWN0IHRlZ3JhX2RybSAqdGVncmEsIHNpemVfdCBzaXplLCBk
+bWFfYWRkcl90ICppb3ZhKTsKPiA+PiArdm9pZCB0ZWdyYV9kcm1fZnJlZShzdHJ1Y3QgdGVncmFf
+ZHJtICp0ZWdyYSwgc2l6ZV90IHNpemUsIHZvaWQgKnZpcnQsCj4gPj4gKwkJICAgIGRtYV9hZGRy
+X3QgaW92YSk7Cj4gPj4gKwo+ID4+ICBzdHJ1Y3QgdGVncmFfZGNfc29jX2luZm87Cj4gPj4gIHN0
+cnVjdCB0ZWdyYV9vdXRwdXQ7Cj4gPj4KPiA+Cj4gPgo+ID4gLS0KPiA+IFRvIHVuc3Vic2NyaWJl
+IGZyb20gdGhpcyBsaXN0OiBzZW5kIHRoZSBsaW5lICJ1bnN1YnNjcmliZSBsaW51eC10ZWdyYSIg
+aW4KPiA+IHRoZSBib2R5IG9mIGEgbWVzc2FnZSB0byBtYWpvcmRvbW9Admdlci5rZXJuZWwub3Jn
+Cj4gPiBNb3JlIG1ham9yZG9tbyBpbmZvIGF0ICBodHRwOi8vdmdlci5rZXJuZWwub3JnL21ham9y
+ZG9tby1pbmZvLmh0bWwKPiA+CgoKX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX18KZHJpLWRldmVsIG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRl
+c2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8v
+ZHJpLWRldmVsCg==
