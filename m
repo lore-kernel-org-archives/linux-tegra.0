@@ -1,7 +1,7 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+From: Peter Rosin <peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>
 Subject: Re: bq24735 charger and ac-detect
-Date: Thu, 15 Dec 2016 14:07:11 +0000
-Message-ID: <e254aa4c-18ab-0ace-aede-d7d084d7e184@nvidia.com>
+Date: Thu, 15 Dec 2016 16:34:14 +0100
+Message-ID: <1316ab3d-8a75-6a03-e1d0-7dee55f2c90f@axentia.se>
 References: <d796f6f9-1b6a-647c-100b-b3e85fc2f4c0@axentia.se>
  <20161214142502.su4auesnlqmgxspv@earth>
  <20161214145951.uuoijetzat2bxmbv@earth>
@@ -11,17 +11,16 @@ References: <d796f6f9-1b6a-647c-100b-b3e85fc2f4c0@axentia.se>
  <bfc89f2f-fbcb-2a04-e679-832fef1f0948@axentia.se>
  <721122dd-dda8-1830-9224-40b5ed79e463@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 In-Reply-To: <721122dd-dda8-1830-9224-40b5ed79e463-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter Rosin <peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-
-On 15/12/16 14:04, Jon Hunter wrote:
+On 2016-12-15 15:04, Jon Hunter wrote:
 > 
 > On 15/12/16 12:04, Peter Rosin wrote:
 > 
@@ -57,9 +56,29 @@ On 15/12/16 14:04, Jon Hunter wrote:
 > ultimately help you? How do you tell the driver to use active-high
 > instead of the default which is not active-low?
 
-s/which is not/which is now/
+Oh, you didn't know that gpiod_set_value/gpiod_get_value takes care of
+active high/low automatically. That explains the disconnect.
 
-Jon
+If I have this in my device tree:
 
--- 
-nvpublic
+bq24735-charger@9{
+	compatible = "ti,bq24735";
+	ti,ac-detect-gpios = <&ioexp 3 GPIO_ACTIVE_LOW>;
+};
+
+and do
+	gpiod_get(dev, "ti,ac-detect", GPIOD_IN);
+
+then gpiod_get_value() on that gpio descriptor will return 1 (as in
+active) when the signal is low.
+
+You have to use gpiod_get_raw_value to see what's on the actual line.
+But that is almost always not interesting, the reasons for that should
+be obvious from this discussion...
+
+So, I lie and say GPIO_ACTIVE_LOW so that gpiod_get_value returns 0 when
+AC is there (signal is high), and the driver inverts that and gets that
+AC is present and starts charging.
+
+Cheers,
+peda
