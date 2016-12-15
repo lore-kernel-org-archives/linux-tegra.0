@@ -1,121 +1,71 @@
-From: Sean V Kelley <seanvk-1KBjaw7Xf1+zQB+pC5nmwQ@public.gmane.org>
-Subject: Re: [PATCH v2 0/7] Host1x IOMMU support + VIC support
-Date: Wed, 14 Dec 2016 18:52:17 -0800
-Message-ID: <9245E08B-B89E-4E8E-8074-63BE6462FFDA@posteo.de>
-References: <20161214111617.24548-1-mperttunen@nvidia.com>
- <20161214123004.urnvlqarcnp5rp4a@phenom.ffwll.local>
- <07daf863-1675-a3d8-e1a7-32131c8035d8@kapsi.fi>
- <20161214130545.gfpkosyixr5lfkkf@phenom.ffwll.local>
- <f3d1d69b-2c1f-a0f7-8301-fee26cec35f1@kapsi.fi>
- <20161214141142.jmrofknylonhprbk@phenom.ffwll.local>
- <CAKMK7uGw3XwbPU798YJ-9eLbwhMWs7z_F-ro238RfFN8LFURtw@mail.gmail.com>
-Mime-Version: 1.0 (Mac OS X Mail 10.1 \(3251\))
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <libva-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-In-Reply-To: <CAKMK7uGw3XwbPU798YJ-9eLbwhMWs7z_F-ro238RfFN8LFURtw-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/libva>,
- <mailto:libva-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/libva>
-List-Post: <mailto:libva-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-List-Help: <mailto:libva-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/libva>,
- <mailto:libva-request-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org?subject=subscribe>
-Errors-To: libva-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org
-Sender: "Libva" <libva-bounces-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>
-To: "Daniel Vetter (daniel-/w4YWyX8dFk@public.gmane.org)" <daniel-/w4YWyX8dFk@public.gmane.org>
-Cc: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Dave Airlie <airlied-cv59FeDIM0c@public.gmane.org>, DRI mailing list <dri-devel-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, Mikko Perttunen <mperttunen-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, "libva-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org" <libva-PD4FTy7X32lNgt0PjOBp9y5qC8QIuHrW@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: bq24735 charger and ac-detect
+Date: Thu, 15 Dec 2016 10:45:05 +0000
+Message-ID: <21e09552-96b9-fb72-60be-7a4b9347b761@nvidia.com>
+References: <d796f6f9-1b6a-647c-100b-b3e85fc2f4c0@axentia.se>
+ <20161214142502.su4auesnlqmgxspv@earth>
+ <20161214145951.uuoijetzat2bxmbv@earth>
+ <ecd18356-6b7a-1a98-f16d-9bb97caa9c00@nvidia.com>
+ <84ede737-9e4c-b0ba-5a37-a96a7e86c3ec@axentia.se>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <84ede737-9e4c-b0ba-5a37-a96a7e86c3ec-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Peter Rosin <peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-SGksCgpDb21tZW50cyBiZWxvdzoKCj4gT24gRGVjIDE0LCAyMDE2LCBhdCA2OjQ4IEFNLCBEYW5p
-ZWwgVmV0dGVyIDxkYW5pZWxAZmZ3bGwuY2g+IHdyb3RlOgo+IAo+IE9uIFdlZCwgRGVjIDE0LCAy
-MDE2IGF0IDM6MTEgUE0sIERhbmllbCBWZXR0ZXIgPGRhbmllbEBmZndsbC5jaD4gd3JvdGU6Cj4+
-IE9uIFdlZCwgRGVjIDE0LCAyMDE2IGF0IDAzOjMyOjE2UE0gKzAyMDAsIE1pa2tvIFBlcnR0dW5l
-biB3cm90ZToKPj4+IE9uIDE0LjEyLjIwMTYgMTU6MDUsIERhbmllbCBWZXR0ZXIgd3JvdGU6Cj4+
-Pj4gT24gV2VkLCBEZWMgMTQsIDIwMTYgYXQgMDI6NDE6MjhQTSArMDIwMCwgTWlra28gUGVydHR1
-bmVuIHdyb3RlOgo+Pj4+PiBPbiAxNC4xMi4yMDE2IDE0OjMwLCBEYW5pZWwgVmV0dGVyIHdyb3Rl
-Ogo+Pj4+Pj4gT24gV2VkLCBEZWMgMTQsIDIwMTYgYXQgMDE6MTY6MTBQTSArMDIwMCwgTWlra28g
-UGVydHR1bmVuIHdyb3RlOgo+Pj4+Pj4+IFRoaXMgc2VyaWVzIGFkZHMgSU9NTVUgc3VwcG9ydCB0
-byBIb3N0MXggYW5kIFRlZ3JhRFJNCj4+Pj4+Pj4gYW5kIGFkZHMgc3VwcG9ydCBmb3IgdGhlIFZJ
-QyAoVmlkZW8gSW1hZ2UgQ29tcG9zaXRvcikKPj4+Pj4+PiBob3N0MXggY2xpZW50LiBUaGUgc2Vy
-aWVzIGlzIGF2YWlsYWJsZSBhcyBhIGdpdCByZXBvc2l0b3J5IGF0Cj4+Pj4+Pj4gZ2l0Oi8vZ2l0
-aHViLmNvbS9jeW5kaXMvbGludXguZ2l0OyBicmFuY2ggdmljLTIuCj4+Pj4+Pj4gCj4+Pj4+Pj4g
-QSB1c2Vyc3BhY2UgdGVzdCBjYXNlIGZvciBWSUMgY2FuIGJlIGZvdW5kIGF0Cj4+Pj4+Pj4gaHR0
-cHM6Ly9naXRodWIuY29tL2N5bmRpcy9kcm0vdHJlZS93b3JrL3RlZ3JhLgo+Pj4+Pj4+IFRoZSB0
-ZXN0Y2FzZSBpcyBpbiB0ZXN0cy90ZWdyYSBhbmQgaXMgY2FsbGVkIHN1Ym1pdF92aWMuCj4+Pj4+
-Pj4gVGhlIHRlc3RjYXNlL1RSTSBpbmNsdWRlIGZ1bGwgaGVhZGVycyBhbmQgZG9jdW1lbnRhdGlv
-bgo+Pj4+Pj4+IHRvIHByb2dyYW0gdGhlIHVuaXQuIFRoZSB1bml0IGJ5IGl0c2VsZiwgaG93ZXZl
-ciwgZG9lcyBub3QKPj4+Pj4+PiByZWFkaWx5IG1hcCB0byBleGlzdGluZyB1c2Vyc3BhY2UgbGli
-cmFyeSBpbnRlcmZhY2VzLCBzbwo+Pj4+Pj4+IGltcGxlbWVudGF0aW9ucyBmb3IgdGhvc2UgYXJl
-IG5vdCBwcm92aWRlZC4KPj4+Pj4+IAo+Pj4+Pj4gQWZhaWsgbGlidmEgaGFzIGFuIGVudGlyZSBw
-aWxlIG9mIHBvc3QtcHJvY2Vzc2luZyBzdXBwb3J0LiBQcmV0dHkgc3VyZQo+Pj4+Pj4gb3RoZXIg
-dmlkZW8gdHJhbnNjb2RlIGxpYnJhcmllcyBoYXZlIHNpbWlsYXIgaW50ZXJmYWNlcywgc28gc2hv
-dWxkIGFsbCBiZQo+Pj4+Pj4gcG9zc2libGUgdG8gaW1wbGVtZW50IHRoaXMuCj4+Pj4+IAo+Pj4+
-PiBXZSBkb24ndCBoYXZlIGFueSBhY3R1YWwgdmlkZW8gdHJhbnNjb2Rpbmcgc3VwcG9ydCB0aG91
-Z2gsIHNvIHVubGVzcyBpdCdzCj4+Pj4+IHBvc3NpYmxlIHRvIGp1c3QgaW1wbGVtZW50IGEgcGFy
-dCBvZiBsaWJ2YSBhbmQgZGVmZXIgdGhlIHJlc3QgdG8gc29tZSBDUFUKPj4+Pj4gaW1wbGVtZW50
-YXRpb24sIEkgZG9uJ3Qgc2VlIGhvdyB0aGlzIGlzIHVzZWZ1bC4gSSBzdXBwb3NlIEkgY291bGQg
-aW1wbGVtZW50Cj4+Pj4+IGEgR1N0cmVhbWVyIHBsdWdpbiBmb3IgY29sb3JzcGFjZSBjb252ZXJz
-aW9uIG9yIHJlc2l6aW5nLCBzaW5jZSB0aG9zZSBhcmUKPj4+Pj4gdmVyeSBtb2R1bGFyLgo+Pj4+
-IAo+Pj4+IEhtLCBJIGd1ZXNzIHRoZSBxdWVzdGlvbiB0aGVuIGlzLCBob3cgZGlkIHRoYXQgZ2V0
-IGVuYWJsZWQ/Cj4+PiAKPj4+IFdoYXQgaXMgInRoYXQiPyBJJ20gbm90IGV4YWN0bHkgc3VyZS4K
-Pj4+IAo+Pj4gT3VyIGFyY2hpdGVjdHVyZSBpcyBzdWNoIHRoYXQgdGhlcmUncyB0aGUgVklDIHRo
-YXQgaGFuZGxlcyBjb2xvcnNwYWNlCj4+PiBjb252ZXJzaW9uLCByZXNjYWxpbmcsIGJsaXR0aW5n
-IGFuZCBjYW4gZG8gc29tZSAyZCBwb3N0cHJvY2Vzc2luZyBlZmZlY3RzIGFzCj4+PiB3ZWxsLgo+
-Pj4gCj4+PiBUaGVuIHRoZXJlJ3MgdGhlIHNlcGFyYXRlIE5WREVDIHRoYXQgaXMgYSB2aWRlbyBi
-aXRzdHJlYW0gZGVjb2Rlci4gVGhlcmUncwo+Pj4gbm8gc3VwcG9ydCBmb3IgdGhhdCBhdCB0aGUg
-bW9tZW50LiBJIGFtIHdvcmtpbmcgb24gdGhlIElQIHNpZGUgb2YgdGhhdC4KPj4+IAo+Pj4gVGhl
-IHZpZGVvIHByb2Nlc3NpbmcgcGlwZWxpbmUgaXMgdGhlbiBzdWNoIHRoYXQgTlZERUMgaXMgZmVk
-IHRoZSBiaXRzdHJlYW07Cj4+PiBOVkRFQyBvdXRwdXRzIGEgWVVWIHBpY3R1cmUgaW4gYSBzcGVj
-aWZpYyBmb3JtYXQ7IFZJQyB0YWtlcyB0aGF0IFlVViBwaWN0dXJlCj4+PiBhbmQgY29udmVydHMv
-cmVzY2FsZXMgaXQgaW50byB0aGUgZGVzaXJlZCBmb3JtYXQuIE9yIGlmIHdlIGFyZSBlbmNvZGlu
-Zwo+Pj4gdmlkZW8sIFZJQyB0YWtlcyB5b3VyIFJHQiBpbWFnZSwgY29udmVydHMgaXQgaW50byBh
-IGZvcm1hdCB0aGF0IE5WRU5DCj4+PiB1bmRlcnN0YW5kcywgYW5kIHNvIG9uLgo+Pj4gCj4+PiBT
-byB3aXRoIGp1c3QgVklDIHN1cHBvcnQsIEkgY291bGQgaW1wbGVtZW50IHNvbWUgc2ltcGxlIDJE
-IHRoaW5ncy4gSSBkb24ndAo+Pj4ga25vdyBpZiBhbnlvbmUgd291bGQgd2FudCB0byBzcGVjaWZp
-Y2FsbHkgdXNlIHRoZSBWSUMgZm9yIHRob3NlIHNpbmNlCj4+PiBhcHBsaWNhdGlvbnMgYWxyZWFk
-eSBoYXZlIGZhc3QgQ1BVIGFsZ29yaXRobXMuIEZvciB0aGUgdmlkZW8gcGlwZWxpbmUgdXNpbmcK
-Pj4+IFZJQyBpcyBuaWNlIHNpbmNlIHRoZXNlIHVuaXRzIGNhbiBzeW5jaHJvbml6ZSB3b3JrIHdp
-dGhvdXQgQ1BVIGludm9sdmVtZW50Cj4+PiBhbmQgd2hlbiB5b3UncmUgYWxyZWFkeSB1c2luZyBO
-VkRFQyBvciBOVkVOQyBpdCdzIGJhcmVseSBhbnkgZXh0cmEgZWZmb3J0IHRvCj4+PiBpbnZvbHZl
-IFZJQyBhcyB3ZWxsLiBJdCBjYW4gYWxzbyBiZSB1c2VmdWwgaW4gcG93ZXIgdXNhZ2Ugc2Vuc2l0
-aXZlCj4+PiBzaXR1YXRpb25zLCBidXQgd2UgYXJlbid0IHJlYWxseSBmaXQgZm9yIHRob3NlIHNp
-dHVhdGlvbnMgd2l0aCB0aGUgdXBzdHJlYW0KPj4+IGtlcm5lbCBhbnl3YXkgOikKPj4gCj4+IEFo
-IEkgdGhvdWdodCB0aGUgbnZkZWMgd2FzIGFscmVhZHkgZW5hYmxlZCwgc2luY2UgZm9yIGk5MTUg
-dGhhdCdzIGhvdyB3ZQo+PiB3ZW50IGFib3V0IHRoaW5ncyAod2UgaGF2ZSBhIHByZXR0eSBtdWNo
-IGV4YWN0bHkgbWF0Y2hpbmcgc3BsaXQgaW4gdGhlCj4+IHZhcmlvdXMgdmlkZW8gcmVsYXRlZCBl
-bmdpbmVzKS4gQnV0IGlmIHRoYXQncyBub3QgdGhlcmUgeWV0IHRoZW4gbm8KPj4gd29ycmllcywg
-YWxsIGZpbmUuCj4+IAo+PiBTaW5jZSB5b3UgZG8gc2VlbSB0byBwbGFuIHRvIGVuYWJsZSBldmVy
-eXRoaW5nIGFueXdheSwgbWlnaHQgYmUgd29ydGggaXQKPj4gdG8gZ28gZGlyZWN0bHkgd2l0aCBz
-b21ldGhpbmcgbGlrZSBsaWJ2YSBvciBsaWJ2ZHBhdSBvciB3aGF0ZXZlciB0aGUgY29vbAo+PiB0
-aGluZyBpcy4gbGlidmEgaXMgbXkgcmVjb21tZW5kYXRpb24gc2luY2UgaXQgd29ya3Mgb24gbm9u
-LVgxMSB0b28gYWZhaWssCj4+IGJ1dCBJIGhhdmUgMCBjbHVlLiBBbmQgbWlnaHQgYmUgd29ydGgg
-aXQgdG8gY2hlY2sgb3V0IHdoZXRoZXIgeW91IGNhbid0IGRvCj4+IGEgc3VwZXItYmFzaWMgbGli
-dmEgZHJpdmVyIHRoYXQgb25seSBkb2VzIHRoZSBwb3N0IHByb2Nlc3Npbmcgc3R1ZmYuIFdpdGgK
-Pj4gbGlidmEgeW91IGNhbiBpbXBvcnQvZXhwb3J0IGltYWdlcywgc28gaXQgbWlnaHQgYmUgcG9z
-c2libGUgZXZlbiAuLi4gQW5kCj4+IGRpcmVjdGx5IGRvaW5nIHRoZSBmdWxsIHZpZGVvIGVuZ2lu
-ZSBzdXBwb3J0IGluc3RlYWQgb2YgYSBvbmUtb2ZmIGluCj4+IGdzdHJlYW1lciBzb3VuZHMgbW9y
-ZSBzZW5zaWJsZSB0byBtZS4KPiAKPiBTaWxseSBtZSBmb3Jnb3QgdG8gYWRkIHRoZSBleHBlcnRz
-LCBpLmUuIFNlYW4gKGN1cnJlbnQgbGlidmEKPiBtYWludGFpbmVyKSBhbmQgbGlidmEgbWFpbGlu
-ZyBsaXN0cy4KPiAtRGFuaWVsCgoKRnJvbSBhIHB1cmVseSBWUFAgc3RhbmRwb2ludCBsaWJ2YSBp
-cyBzb21ldGhpbmcgdGhhdCB3b3VsZCBnaXZlIFZJQyBhIHJlYWRpbHkgYXZhaWxhYmxlIEFQSSBp
-biB1c2VyIHNwYWNlLiAgWW91IGRvbuKAmXQgaGF2ZSB0byBoYXZlIGEgdHJhbnNjb2RpbmcgdXNl
-IGNhc2UgdG8gbGV2ZXJhZ2UgVlBQIHdpdGggYSBzdXJmYWNlIHdpdGggVkEtQVBJLiAgT24gdG9w
-IG9mIHRoYXQgd2UgZG8gc3VwcG9ydCBETUEgYnV0IGltcG9ydCBhbmQgZXhwb3J0IHRvIHByb3Zp
-ZGUgZmxleGliaWxpdHkgaW4gc2hhcmluZyB0aGUgbWVtb3J5LiAgSXTigJlzIGVudGlyZWx5IHBv
-c3NpYmxlIHRvIHN1cHBvcnQgYSBzdWJzZXQgb2YgZW50cnkgcG9pbnRzIChzYXkgVlBQIG9ubHkp
-IGZvciBWQS1BUEkgdGhyb3VnaCBMaWJ2YSBhbmQgc2hhcmUgdGhhdCBpbmZvcm1hdGlvbiBpbiBh
-IHF1ZXJ5IG9uIHRoZSBjb25maWcgc2F5IGZvciB5b3VyIGFwcGxpY2F0aW9ucy4gIFdlIGRvIHRo
-YXQgYWxsIHRoZSB0aW1lIHdpdGggdmFyaW91cyBiYWNrZW5kcyBoYXZpbmcgZmVhdHVyZSBzdWJz
-ZXRzIHN1Y2ggYXMgb3VyIGh5YnJpZCBJbnRlbCBkcml2ZXIsIG9yIHRoZSBJTUcgYmFzZWQgUFZS
-IGRyaXZlci4gIEkgYmVsaWV2ZSB0aGVyZSBpcyBhbHNvIGEgUm9jay1DaGlwIHByb2plY3QgZXhw
-ZXJpbWVudGluZyB3aXRoIExpYnZhIGZvciB0aGVpciBtZWRpYSBkcml2ZXIuCgpJ4oCZbGwgdGFr
-ZSBhIGxvb2sgYXQgeW91ciBsaW5rLgoKU2VhbgoKSW50ZWwsIENvcnAuCgoKCgo+IC0tIAo+IERh
-bmllbCBWZXR0ZXIKPiBTb2Z0d2FyZSBFbmdpbmVlciwgSW50ZWwgQ29ycG9yYXRpb24KPiArNDEg
-KDApIDc5IDM2NSA1NyA0OCAtIGh0dHA6Ly9ibG9nLmZmd2xsLmNoCj4gX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KPiBMaWJ2YSBtYWlsaW5nIGxpc3QKPiBM
-aWJ2YUBsaXN0cy5mcmVlZGVza3RvcC5vcmcKPiBodHRwczovL2xpc3RzLmZyZWVkZXNrdG9wLm9y
-Zy9tYWlsbWFuL2xpc3RpbmZvL2xpYnZhCgpfX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fXwpMaWJ2YSBtYWlsaW5nIGxpc3QKTGlidmFAbGlzdHMuZnJlZWRlc2t0
-b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vbGli
-dmEK
+
+On 14/12/16 21:22, Peter Rosin wrote:
+> On 2016-12-14 18:54, Jon Hunter wrote:
+
+...
+
+>> Hmmm ... looking closer at the schematics I see a power-MOSFET in the
+>> path of the ACOK to the Tegra and it looks like this could be inverting
+>> the signal! Seems this was not caught when the code was submitted. This
+>> should have been described in the device-tree somewhere :-(
+> 
+> That's what I suspected...
+> 
+> Ok, I expect the ship has sailed and that it's too late to actually fix
+> this up with active-low in various Tegra dts files and removing the negation
+> in the code, without causing ripples and regressions? Because that would
+> be the clean fix!
+
+Yes, unfortunately it has sailed as we cannot break compatibility AFAIK.
+However, that said, I am not 100% certain for cases where there is a bug
+like this.
+
+I did double check this morning and verified that the gpio is low when
+the charger is connected and so it is inverted.
+
+> One other thing to possibly do is add a new binding that is not negated,
+> and perhaps named after the pin in the data-sheet, i.e. ti,acok-gpios,
+> and deprecate ti,ac-detect-gpios. But that's no fun as it leaves a bunch of
+> compat code that wastes space and some lucky person has to maintain it.
+> 
+> Perhaps the best thing to do is to just re-document ti,ac-detect-gpios
+> to be the inverse of what is currently described, i.e. to be AC absence
+> instead of AC presence? But that feels like giving up and it isn't really
+> nice from a device-tree point of view either, but I guess those points are
+> fairly accademic? Or are there any non-Linux users of this binding? How are
+> these things handled when they pop up elsewhere?
+
+I guess that ideally the polarity should have been specified correctly
+by the gpio property, but even this looks wrong for Tegra as it is
+GPIO_ACTIVE_HIGH and not LOW. The only other option is to add another
+property called something like 'ti,ac-detect-override-pol' to specify
+the polarity you want.
+
+To be honest, I am not sure how this type of thing is normally handled.
+So probably best to put together a patch with whatever option you feel
+best and explain why this is needed and see what the dev-tree folks say.
+
+Cheers
+Jon
+
+-- 
+nvpublic
