@@ -1,71 +1,157 @@
 From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: bq24735 charger and ac-detect
-Date: Thu, 15 Dec 2016 10:45:05 +0000
-Message-ID: <21e09552-96b9-fb72-60be-7a4b9347b761@nvidia.com>
-References: <d796f6f9-1b6a-647c-100b-b3e85fc2f4c0@axentia.se>
- <20161214142502.su4auesnlqmgxspv@earth>
- <20161214145951.uuoijetzat2bxmbv@earth>
- <ecd18356-6b7a-1a98-f16d-9bb97caa9c00@nvidia.com>
- <84ede737-9e4c-b0ba-5a37-a96a7e86c3ec@axentia.se>
+Subject: Re: [RFC PATCH 0/3] PM / Domains: Add support for devices that
+ require multiple domains
+Date: Thu, 15 Dec 2016 11:38:03 +0000
+Message-ID: <c06d8619-0d2b-7b1c-37d9-da64a15c6db1@nvidia.com>
+References: <CAPDyKFoFPNNnoc-7G34A7a4Yo8f=WUyurNP1evabw3MOEubEoA@mail.gmail.com>
+ <90faea7d-65b6-590a-83f1-24fcdffa0569@nvidia.com>
+ <CAPDyKFr4S3tM7KL2hfwJ3R4e5z1-Zd99aMhMSgVq4XzkrUUdow@mail.gmail.com>
+ <fd7c8f40-2a9f-b71c-bd11-43ee657441ae@nvidia.com>
+ <63670abf-1d58-a7e3-6927-0c815d44d8a1@nvidia.com>
+ <d961715d-820a-dd63-e3a9-c908ce465582@nvidia.com>
+ <CAJZ5v0hqdjGJ8v+k-Nkp_bx-fj_yTD5WoMeVfkmqBuTwCjRoyA@mail.gmail.com>
+ <d9a4c1cd-6682-663d-e30d-cc85f665cf64@nvidia.com>
+ <m2lgwbxtea.fsf@baylibre.com>
+ <f54b4912-bfdd-aa2c-6f04-e09ed4207af6@nvidia.com>
+ <CGME20161124023037epcas4p2891cf07f4bc49115f210c1298b0f9b82@epcas4p2.samsung.com>
+ <20161124023014.GK6095@codeaurora.org>
+ <52af1977-8ca3-40d1-43bb-920c5b933f94@samsung.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <84ede737-9e4c-b0ba-5a37-a96a7e86c3ec-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>
+In-Reply-To: <52af1977-8ca3-40d1-43bb-920c5b933f94-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Peter Rosin <peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>, Sebastian Reichel <sre-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-Cc: linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marek Szyprowski <m.szyprowski-Sze3O3UU22JBDgjK7y7TUQ@public.gmane.org>, Stephen Boyd <sboyd-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
+Cc: Kevin Hilman <khilman-rdvid1DuHRBWk0Htik3J/w@public.gmane.org>, "Rafael J. Wysocki" <rafael-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Ulf Hansson <ulf.hansson-QSEj5FYQhm4dnm+yROfE0A@public.gmane.org>, "Rafael J. Wysocki" <rjw-LthD3rsA81gm4RdzfppkhA@public.gmane.org>, "linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-pm-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, "linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org" <linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>, Rajendra Nayak <rnayak-sgV2jX0FEOL9JmXXK+q4OQ@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 
-On 14/12/16 21:22, Peter Rosin wrote:
-> On 2016-12-14 18:54, Jon Hunter wrote:
-
-...
-
->> Hmmm ... looking closer at the schematics I see a power-MOSFET in the
->> path of the ACOK to the Tegra and it looks like this could be inverting
->> the signal! Seems this was not caught when the code was submitted. This
->> should have been described in the device-tree somewhere :-(
+On 29/11/16 11:33, Marek Szyprowski wrote:
+> Hi Stephen,
 > 
-> That's what I suspected...
+> Thanks for pointing to my patches, but I would like to clarify a few
+> things.
 > 
-> Ok, I expect the ship has sailed and that it's too late to actually fix
-> this up with active-low in various Tegra dts files and removing the negation
-> in the code, without causing ripples and regressions? Because that would
-> be the clean fix!
-
-Yes, unfortunately it has sailed as we cannot break compatibility AFAIK.
-However, that said, I am not 100% certain for cases where there is a bug
-like this.
-
-I did double check this morning and verified that the gpio is low when
-the charger is connected and so it is inverted.
-
-> One other thing to possibly do is add a new binding that is not negated,
-> and perhaps named after the pin in the data-sheet, i.e. ti,acok-gpios,
-> and deprecate ti,ac-detect-gpios. But that's no fun as it leaves a bunch of
-> compat code that wastes space and some lucky person has to maintain it.
+> On 2016-11-24 03:30, Stephen Boyd wrote:
+>> On 11/22, Jon Hunter wrote:
+>>> On 22/11/16 18:26, Kevin Hilman wrote:
+>>>> Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org> writes:
+>>>>> However, I would rather the client of
+>>>>> the power-domains specify which power-domains they require and
+>>>>> dynamically nested the power-domains at runtime. This is slightly
+>>>>> different to what I proposed in this RFC, but it is not really beyond
+>>>>> the bounds of what we support today IMO. What is missing is a means to
+>>>>> do this dynamically and not statically.
+>>>>>
+>>>>> By the way, I am not sure if you are suggesting that for devices that
+>>>>> may need multiple power-domains we should architect the driver
+>>>>> differently and split it up in some way such that we have a
+>>>>> power-domain
+>>>>> per device. But for the case of the Tegra XHCI it is quite complex
+>>>>> because the driver loads firmware which runs on a micro-controller and
+>>>>> we need to manage the various power-domains that are used.
+>>>> IMO, constructing a network of new struct devices just to workaround
+>>>> limitations in the framework doesn't sound quite right either.
+>>> I agree.
+>>>
+>> Marek is attempting to do this for the samsung clock
+>> controller[1] (patch #5 is informative).
 > 
-> Perhaps the best thing to do is to just re-document ti,ac-detect-gpios
-> to be the inverse of what is currently described, i.e. to be AC absence
-> instead of AC presence? But that feels like giving up and it isn't really
-> nice from a device-tree point of view either, but I guess those points are
-> fairly accademic? Or are there any non-Linux users of this binding? How are
-> these things handled when they pop up elsewhere?
+> You probably meant patch #3 / #4, which is a patch for Exynos 4412
+> ( https://marc.info/?l=linux-arm-kernel&m=147731142926053&w=2 ).
 
-I guess that ideally the polarity should have been specified correctly
-by the gpio property, but even this looks wrong for Tegra as it is
-GPIO_ACTIVE_HIGH and not LOW. The only other option is to add another
-property called something like 'ti,ac-detect-override-pol' to specify
-the polarity you want.
+Sorry for the delay, I have been meaning to get back to this thread. Yes
+patch #3 is definitely interesting and highlights power-domain
+complexities with various SoCs ...
 
-To be honest, I am not sure how this type of thing is normally handled.
-So probably best to put together a patch with whatever option you feel
-best and explain why this is needed and see what the dev-tree folks say.
+https://marc.info/?l=linux-clk&m=147731116925951&w=2
+
+
+> Patch #5 is for Exynos 5433, which already has separate nodes for
+> each clock sub-controller, so there is no problem to add generic
+> power domains there (see multiple CMU nodes):
+> 
+> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git/tree/arch/arm64/boot/dts/exynos/exynos5433.dtsi#n261
+> 
+> 
+>>  From what I can tell
+>> they have one DT node for their clock controller because it's one
+>> register address space to control clocks. But, certain clocks
+>> exposed by that driver only work when certain power domains are
+>> enabled. For example, they have a clock controller that exposes
+>> clock signals for multimedia hardware blocks like video
+>> accelerators, gpus, and cameras. The clocks seem to have been
+>> placed inside different power domains for the multimedia hardware
+>> they're associated with, so there may be 10 or so power domains
+>> that need to be enabled at different times for different clocks
+>> to work. If the GPU power domain isn't enabled when the GPU
+>> clocks are touched by the driver, things break, etc.
+>>
+>> In the proposed patchset, we have the top-level clock controller
+>> node with subnodes for each power domain that needs to be
+>> associated with clocks inside these different multimedia blocks.
+> 
+> This is valid only for the Exynos4412 case (and not-yet-posted
+> Exynos5422), which has a single clock controller node and patch #4
+> added a sub-node for ISP clocks part (the only one which in fact
+> is in the other power domain).
+> 
+>> So we end up with one parent device and attached driver for the
+>> clock driver, and then that driver populates child nodes as
+>> devices and matches up clocks with child nodes while registering
+>> clks with clk_register(). Because we pass a dev pointer to
+>> clk_register, we associate different devices with different
+>> clocks all from the same top-level clock controller device
+>> driver. Then clk framework calls runtime_pm APIs with devices
+>> used during clk registration.
+> 
+> Right, this is how I did it for Exynos4412 case.
+> 
+>> Some of those devices don't have
+>> any driver bound to them, which feels odd.
+> 
+> Well, I don't get this. In the proposed patches each sub-node has
+> a separate driver, none is left without a driver.
+
+So it seems in this solution you are creating a pseudo device in order
+to control the pm-domain.
+
+>> This seems like a case where we really want a better way to
+>> explicitly control power domains without making up subnodes and
+>> registering struct devices just to work around the one device to
+>> one genpd construct we have today. Maybe power domains just don't
+>> map to genpd though and that's the disconnect.
+> 
+> Having an API for full control over multiple power domain assigned to
+> a single device node might indeed solve somehow this problem, but as
+> long as runtime pm is tied to struct device, this will again end in
+> creating virtual sub-devices per each power domain to fit runtime pm
+> principles. However we might be able to avoid creating sub-nodes in
+> the device tree.
+
+Right, but what if the device is not bound to the pm-domain? What if due
+to pm-domain complexities we need to have finer granularity over the
+control of pm-domains?
+
+It seems to me that because we don't always have foresight into the
+creativeness of the SoC h/w designers, may be the pm-domain framework
+needs to expose APIs to allow direct control of the pm-domains without
+binding the pm-domain to the device, so that these APIs can be called in
+the context on the runtime-pm callbacks as we do for clocks, etc.
+
+Do you see any benefit to being able to directly control the pm-domains?
+
+That said, I did recently add a patch to prevent the expose of the
+pm-domain struct to clients in order to be able to remove them [0].
+However, ref-counting can obviously be used to allow client to request
+handles to pm-domains.
 
 Cheers
 Jon
+
+[0]
+http://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git/commit/drivers/base/power/domain.c?id=f58d4e5ab0ca3453f091eab514474e9fdbfc539f
 
 -- 
 nvpublic
