@@ -1,35 +1,29 @@
-From: "Acct. Dept." <china-zpuelpCxUfgQlE09Ya6tuA@public.gmane.org>
-Subject: STRICTLY CONFIDENTIAL
-Date: Sat, 17 Dec 2016 21:22:55 -0600
-Message-ID: <201612180248.uBI2mQwv027461@infonetg.com>
-Reply-To: <chimwiakim-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+From: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
+Subject: Reboot hangs on Jetson TX1
+Date: Sat, 17 Dec 2016 20:27:16 -0800
+Message-ID: <20161218042716.GA7344@jirafa.cyrius.com>
 Mime-Version: 1.0
-Content-Type: text/plain;
-        charset="Windows-1251"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-I have important transaction for you as next of kin to claim US$18.37m  Mail me on my private email:   chimwiakim-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
- so I can send you more details
+Reboot hangs on the Jetson TX1 developer kit.  This is with mainline
+u-boot and mainline 4.9 (and before) using defconfig.
 
-Thanks
+The last line I see is:
 
-Mr.Chim Wai Kim
+[   31.227974] kvm: exiting hardware virtualization
 
+and then it just hangs.
 
+poweroff doesn't work either.
 
+(The last line is kvm related but the problem has nothing to do with
+kvm.)
 
-
-
-
-
-
-
-MOVE TO INBOX=======================
-
-DISCLAIMER: This email and any files it contains are confidential and intended for the use of the recipient(s) only. If you are not the intended recipient you should notify the sender immediately and destroy the material from your system. 
-
-
-                
+-- 
+Martin Michlmayr
+http://www.cyrius.com/
