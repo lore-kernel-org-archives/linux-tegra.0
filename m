@@ -1,29 +1,57 @@
-From: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
-Subject: Reboot hangs on Jetson TX1
-Date: Sat, 17 Dec 2016 20:27:16 -0800
-Message-ID: <20161218042716.GA7344@jirafa.cyrius.com>
+From: Misha Komarovskiy <zombah-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH] ARM: tegra: mark panel regulator as enabled on boot
+Date: Mon, 19 Dec 2016 23:20:48 +0300
+Message-ID: <CANLc0-ZzB7COEwntY9ndODDtXBrZmeD_=u07+Ut2sQEhLi9+SQ@mail.gmail.com>
+References: <1d6749b2aa21112cb73e162a73e9e0e36b32a677.1481273581.git.marvin24@gmx.de>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
+In-Reply-To: <1d6749b2aa21112cb73e162a73e9e0e36b32a677.1481273581.git.marvin24-Mmb7MZpHnFY@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-dWgojZr1M5Qdnm+yROfE0A@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-Reboot hangs on the Jetson TX1 developer kit.  This is with mainline
-u-boot and mainline 4.9 (and before) using defconfig.
+Hi,
 
-The last line I see is:
+On Fri, Dec 9, 2016 at 12:20 PM, Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org> wrote:
+> Current u-boot enables the display already. Fixes sporadic panel
+> initialization failure with tegra_defconfig.
+>
+> Signed-off-by: Marc Dietrich <marvin24-Mmb7MZpHnFY@public.gmane.org>
+> ---
 
-[   31.227974] kvm: exiting hardware virtualization
+Tested on 4.9.0, 4.8.13 and 4.4.39, display starts every time with this patch.
+Thank you.
 
-and then it just hangs.
+Tested-by: Misha Komarovskiy <zombah-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
 
-poweroff doesn't work either.
+>  arch/arm/boot/dts/tegra20-paz00.dts | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/arch/arm/boot/dts/tegra20-paz00.dts b/arch/arm/boot/dts/tegra20-paz00.dts
+> index 4e361a8c167e..1be690cce9aa 100644
+> --- a/arch/arm/boot/dts/tegra20-paz00.dts
+> +++ b/arch/arm/boot/dts/tegra20-paz00.dts
+> @@ -570,6 +570,7 @@
+>                         regulator-min-microvolt = <3300000>;
+>                         regulator-max-microvolt = <3300000>;
+>                         gpio = <&gpio TEGRA_GPIO(A, 4) GPIO_ACTIVE_HIGH>;
+> +                       regulator-boot-on;
+>                         enable-active-high;
+>                 };
+>         };
+> --
+> 2.11.0
+>
+> --
+> To unsubscribe from this list: send the line "unsubscribe linux-tegra" in
+> the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+> More majordomo info at  http://vger.kernel.org/majordomo-info.html
 
-(The last line is kvm related but the problem has nothing to do with
-kvm.)
+
 
 -- 
-Martin Michlmayr
-http://www.cyrius.com/
+Best Regards,
+Misha Komarovskiy
+zombahatgmaildotcom
