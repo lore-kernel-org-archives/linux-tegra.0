@@ -1,64 +1,68 @@
 From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: Re: Reboot hangs on Jetson TX1
-Date: Mon, 2 Jan 2017 18:08:43 +0100
-Message-ID: <20170102170843.GC18393@ulmo.ba.sec>
-References: <20161218042716.GA7344@jirafa.cyrius.com>
+Subject: Re: Ethernet on Tegra TX
+Date: Mon, 2 Jan 2017 18:10:12 +0100
+Message-ID: <20170102171012.GD18393@ulmo.ba.sec>
+References: <CAGWmfYqgarb5cC08wtkWiWjWMR3tXm39z7bKH8+LZN+sThD8Qg@mail.gmail.com>
 Mime-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="lMM8JwqTlfDpEaS6"
+        protocol="application/pgp-signature"; boundary="kvUQC+jR9YzypDnK"
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
 Content-Disposition: inline
-In-Reply-To: <20161218042716.GA7344-IRMp5PtgtdoigzW5ZibpNwC/G2K4zDHf@public.gmane.org>
+In-Reply-To: <CAGWmfYqgarb5cC08wtkWiWjWMR3tXm39z7bKH8+LZN+sThD8Qg-JsoAwUIsXosN+BqQ9rBEUg@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
+To: Claudio Scordino <claudio-YOzL5CV4y4YG1A2ADO40+w@public.gmane.org>
 Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---lMM8JwqTlfDpEaS6
+--kvUQC+jR9YzypDnK
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Dec 17, 2016 at 08:27:16PM -0800, Martin Michlmayr wrote:
-> Reboot hangs on the Jetson TX1 developer kit.  This is with mainline
-> u-boot and mainline 4.9 (and before) using defconfig.
+On Mon, Jan 02, 2017 at 04:50:46PM +0100, Claudio Scordino wrote:
+> Dear guys,
 >=20
-> The last line I see is:
+> just to let you know that trying the instructions at
+> http://elinux.org/Jetson/TX1_Upstream_Kernel with a TX1 board and a
+> 4.9 kernel, the Ethernet interface doesn't start.
 >=20
-> [   31.227974] kvm: exiting hardware virtualization
+> The console complains saying "RTNETLink Network unreachable" and
+> ifconfig only shows the loopback interface.
 >=20
-> and then it just hangs.
+> Attached the .config file.
 >=20
-> poweroff doesn't work either.
+> Once found the reason (I still have to investigate but you may already
+> know), you may want to update the page with further instructions.
 >=20
-> (The last line is kvm related but the problem has nothing to do with
-> kvm.)
+> Best regards and wishes for 2017.
+>=20
+>                 Claudio
 
-I can confirm that. Looks like communication with the PMIC isn't working
-properly. I'll investigate.
+Can you send out a boot log? Maybe there's something in it that would
+help determine what's going on.
 
 Thanks,
 Thierry
 
---lMM8JwqTlfDpEaS6
+--kvUQC+jR9YzypDnK
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlhqiRkACgkQ3SOs138+
-s6HMLQ/5AWqEVcKRiE95ZCD0lRYRpnYCqAGmwOUBcpVUpAhF7TBt2eY+PZVE8+oL
-dl1a2gHXzwfePBxKpMJRNBcxN2rtZWNWF9xeSO8vDVUq84idyAZsIQudoKNxF9mZ
-VXQWssAeVR0BGb1RnHlzzNDWto+fvwLjsugYhvYsHQ4lLlQfqIVCBiD0M3ZhMsRX
-6BHIVO8Dy0uLMpl52kP4T9TpQSRXwjan+TWnVgKxHInPCDOKWy0b7M+5kyMd7erb
-w5GJMxjzRuR4Ft8jxP4ElOiwOykmsfUXy4sD7HDv5ou6dcnlfYnDzHoHXeAZ2aqr
-sySnuMW5i/U42AdZ6Q7dzjOps5/uh6FhcbGrw2OCkynVaXaOSOQSrTVaP2nnw3Lj
-dNawR64HmXUvTxEgq3TaLbva0do0n5FrE+6CEgKgo0+3H3QWMAYn2NPlTc79yoZD
-nKyDzjOvsWznUDVW4Zzu+M3r5rj2F8YCMXEI8WDSVpIRERSpuVVbhGhvO674+dSy
-UAOyzvY56lRbKYVtOmUAdo9FRwH0YGvW8tQAdY3wM/FFTn/mNb9oCZmsQenhbXoF
-VljoxhEkTvsQAP+8KizjdRRflhUqSGBriP5fCJ9CqQlrsLCfPj+8rVC8TVNbp91N
-NcgEE3Ak/1O59KW3x1YrMBzJBc0+u+j2H3KHqWR9Nu6Z6LHAYQg=
-=UFgA
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlhqiXQACgkQ3SOs138+
+s6H3DQ//fhD2G3hY3t7VF1Zgz8OId1gD+12YeCV2J1g9ifXNxsl49/GP9Hm9JMUC
+P0V2XACb35iOZybPVS+aNPiMJHDFmaCQ2s+oimaJ5iHV+MGdt2zt4EElLZgBhD0J
+PSW2bm4f1qdRHn2tVch7mlRsYNJ4CILSkPzxoC+WPFtYqV5fqToNUZXBDneFYX5m
+ji+lEowZ07RqKQ4HsrJp3IhqMEFXhmeXBxBpku5akJslog1FKwzlEnSjKU8XQvn+
+E6oOPmmyk9Nn+gw2C9LuchRe3yJrUOZb3py5aBLcYF2cqWd4Duoc8E4l/kc/41fC
+sfR2t1kTUp0BKn3xYXW8+yZfWhKWyy7pwmNhygIBlOKIJ8c9u5ElTJCjJYjotUsD
+xeSTKuI7gERch6wDyfh2Pjz9ZlO7P9CP6FP7TTM5qcVYjrFI4/z0AkAn9Iet1UCs
+3FYwRjCgcaVXmSN8e+DWKHsHFfweRPOASt0/JNchLuoeLxI6HBSvrRidXjELGYzm
+AAA+qffoYlMsXZ+ACWQAv/2QxuyDOu+okOgZQgLvLy0hfILE6bmgA75kwthdxcON
+HJ+s7T1FcH6dzCM9YQOioxxo3DUR0uXJ0EQa5IvUNm9q+PUiHnF2UpM7xW79hlPX
+eRFdIx49tZ16yI1XEsypQ7mYs//S6CgRWUQGeK8HTIvilj52xuE=
+=oNPt
 -----END PGP SIGNATURE-----
 
---lMM8JwqTlfDpEaS6--
+--kvUQC+jR9YzypDnK--
