@@ -1,45 +1,68 @@
-From: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
-Subject: Re: Linux hangs on Jetson TX1: Page fault (SMMU translation error
- [--S])
-Date: Mon, 2 Jan 2017 17:03:17 -0800
-Message-ID: <20170103010317.GA1373@jirafa.cyrius.com>
-References: <20161218032759.GA6457@jirafa.cyrius.com>
- <20170102160844.GA18393@ulmo.ba.sec>
+From: Claudio Scordino <claudio-YOzL5CV4y4YG1A2ADO40+w@public.gmane.org>
+Subject: Re: Ethernet on Tegra TX
+Date: Tue, 3 Jan 2017 10:46:51 +0100
+Message-ID: <CAGWmfYpu0B-dSMg2z08yXN7H97HY-+_RDzjuP4=vsXtwMd10Gg@mail.gmail.com>
+References: <CAGWmfYqgarb5cC08wtkWiWjWMR3tXm39z7bKH8+LZN+sThD8Qg@mail.gmail.com>
+ <8056dcbc-193c-3516-a874-c914656ca371@kapsi.fi>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=UTF-8
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-Content-Disposition: inline
-In-Reply-To: <20170102160844.GA18393-EkSeR96xj6Pcmrwk2tT4+A@public.gmane.org>
+In-Reply-To: <8056dcbc-193c-3516-a874-c914656ca371-/1wQRMveznE@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>
+Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-* Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org> [2017-01-02 17:08]:
-> Martin, one thing to check might be if your .config enables the
-> TEGRA_IOMMU_SMMU option.
+Hi Mikko,
 
-Yes, it's built-in.
+thank you for your help.
 
-I disabled TEGRA_IOMMU_SMMU (but left TEGRA_MC=y) and now I get:
+I've downloaded the xusb.bin from
 
-[    6.556591] tegra-mc 70019000.memory-controller: gpusrd: read @0x0000000000000000: EMEM address decode error (EMEM decode error)
-[    6.568158] tegra-mc 70019000.memory-controller: gpusrd: read @0x0000000000000000: Page fault (EMEM decode error)
 
-Ok, this is interesting.  With both TEGRA_MC and TEGRA_IOMMU_SMMU
-disabled, the boot process hangs.  Unfortunately I don't have time
-to investigate more right now.
 
-> Perhaps you can also regenerate a log with drm.debug=0x3f on the
-> kernel command-line. Maybe throw in a NOUVEAU_DEBUG_DEFAULT=5 in
-> .config to make sure Nouveau gives us as much info as possible (=7
-> should give more, but it might be a little overkill).
+2017-01-02 17:48 GMT+01:00 Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>:
+> The reason would likely be that the onboard Ethernet is a USB RTL8152 which
+> does not seem to be compiled in. Additionally you may need to ensure the
+> XUSB controller firmware (firmware/nvidia/tegra210/xusb.bin) is available
+> during boot, either on an initrd or built-in to the kernel. I agree that
+> this should be documented.
+>
+>
+> On 01/02/2017 05:50 PM, Claudio Scordino wrote:
+>>
+>> Dear guys,
+>>
+>> just to let you know that trying the instructions at
+>> http://elinux.org/Jetson/TX1_Upstream_Kernel with a TX1 board and a
+>> 4.9 kernel, the Ethernet interface doesn't start.
+>>
+>> The console complains saying "RTNETLink Network unreachable" and
+>> ifconfig only shows the loopback interface.
+>>
+>> Attached the .config file.
+>>
+>> Once found the reason (I still have to investigate but you may already
+>> know), you may want to update the page with further instructions.
+>>
+>> Best regards and wishes for 2017.
+>>
+>>                 Claudio
+>>
+>
+> Happy new year,
+> Mikko.
 
-Maybe I made a mistake, but I didn't get any more verbose logs with
-drm.debug=0x3f and NOUVEAU_DEBUG_DEFAULT=5.
 
-Let me know if you can reproduce the (original) problem.
 
 -- 
-Martin Michlmayr
-http://www.cyrius.com/
+Claudio Scordino, Ph.D.
+Project Manager - Funded research projects
+
+Evidence Srl
+Via Carducci 56
+56010 S.Giuliano Terme - Pisa - Italy
+Phone:  +39 050 99 11 224
+Mobile: + 39 393 811 7491
+Fax:   +39 050 99 10 812
+http://www.evidence.eu.com
