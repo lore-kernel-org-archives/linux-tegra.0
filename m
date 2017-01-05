@@ -1,51 +1,40 @@
-From: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
-Subject: [PATCH] memory: tegra: Add a missing 'of_node_put()' call
-Date: Wed,  4 Jan 2017 08:13:24 +0100
-Message-ID: <20170104071324.32721-1-christophe.jaillet@wanadoo.fr>
+From: Alexandre Courbot <acourbot-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: Linux hangs on Jetson TX1: Page fault (SMMU translation error
+ [--S])
+Date: Thu, 5 Jan 2017 18:32:47 +0900
+Message-ID: <3f6e74fb-f146-97cc-5988-c01b101220d7@nvidia.com>
+References: <20161218032759.GA6457@jirafa.cyrius.com>
+ <20170102160844.GA18393@ulmo.ba.sec>
+ <20170103010317.GA1373@jirafa.cyrius.com>
+ <20170103224743.GB23466@jirafa.cyrius.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170103224743.GB23466-IRMp5PtgtdoigzW5ZibpNwC/G2K4zDHf@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org, thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org, gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org
-Cc: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, kernel-janitors-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
+To: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-If 'of_find_device_by_node()' fails, an 'of_node_put()' call is missing in
-the error handling path.
-Fix it by reordering the code.
+On 01/04/2017 07:47 AM, Martin Michlmayr wrote:
+> * Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org> [2017-01-02 17:03]:
+>> the boot process hangs.
+> 
+> Ok, so I figured it out.  It's because this commit is missing in 4.9:
+> 5e6b9a8 arm64: tegra: Add VDD_GPU regulator to Jetson TX1
+> 
+>>    [as pointed out by Thierry on IRC, nobody has reported a bug
+>>     in the field, but using a new bootloader with a .dtb that
+>>     has the incorrect data, it will crash on boot]
+> 
+> When I apply this patch to 4.9, the system boots successfully.  The
+> original tegra-mc page fault is also gone.
+> 
+> So looks like it's just a matter of waiting for 4.9.1.
 
-While at it, remove some empty lines in a more or less similar construction
-a few lines below.
+This seems to be a bug anyway - if the regulator is missing, probing of
+the GPU should fail gracefully and not trigger errors like the one you got.
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet-39ZsbGIQGT5GWvitb5QawA@public.gmane.org>
----
- drivers/memory/tegra/tegra124-emc.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
-
-diff --git a/drivers/memory/tegra/tegra124-emc.c b/drivers/memory/tegra/tegra124-emc.c
-index 06cc781ebac1..392dc8dd481f 100644
---- a/drivers/memory/tegra/tegra124-emc.c
-+++ b/drivers/memory/tegra/tegra124-emc.c
-@@ -1115,11 +1115,10 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 	}
- 
- 	mc = of_find_device_by_node(np);
-+	of_node_put(np);
- 	if (!mc)
- 		return -ENOENT;
- 
--	of_node_put(np);
--
- 	emc->mc = platform_get_drvdata(mc);
- 	if (!emc->mc)
- 		return -EPROBE_DEFER;
-@@ -1135,9 +1134,7 @@ static int tegra_emc_probe(struct platform_device *pdev)
- 	}
- 
- 	err = tegra_emc_load_timings_from_dt(emc, np);
--
- 	of_node_put(np);
--
- 	if (err)
- 		return err;
- 
--- 
-2.9.3
+Looking at what is going wrong there, thanks for the report and for
+finding the root cause!
