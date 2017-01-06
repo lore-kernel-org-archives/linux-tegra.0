@@ -1,114 +1,78 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH] regulator: core: Unset supplies when regulators are unregistered
-Date: Fri, 6 Jan 2017 11:54:38 +0000
-Message-ID: <1483703678-19575-1-git-send-email-jonathanh@nvidia.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Re: [PATCH] regulator: core: Unset supplies when regulators are
+ unregistered
+Date: Fri, 6 Jan 2017 18:29:53 +0000
+Message-ID: <20170106182953.ayvailx5sxtiyzwe@sirena.org.uk>
+References: <1483703678-19575-1-git-send-email-jonathanh@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Javier Martinez Canillas <javier@dowhile0.org>, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="vi6o6m3k62rmrhni"
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1483703678-19575-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
-When regulators are unregistered they are removed from the regulator map
-list, however, if the register has been added as a supply for another
-regulator, it is not removed from the regulator as a supply. Therefore,
-a regulator may still be holding a reference to a regulator that has
-been unregistered a lead to a panic.
 
-There is a case where a child regulator is registered before its supply
-and when the supply is registered successfully, the supply for the child
-is then set. Although, this in itself is not a problem, a problem arises
-when the supply is then unregistered again, due to the parent device
-being probed deferred, after successfully registering the supply. This
-leaves the regulator with an invalid reference to supply and can
-eventually result in a kernel panic.
+--vi6o6m3k62rmrhni
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Addtionally, even in the normal case when a regulator is unregistered,
-by unloading a driver, if the regulator happens to be a supply for
-another regulator it is not removed.
+On Fri, Jan 06, 2017 at 11:54:38AM +0000, Jon Hunter wrote:
 
-Fix this by scanning all the registered regulators when a regulator is
-removed and remove it as a supply to any other regulator. There is a
-possibility that a child regulator is in use when the supply is removed
-and so WARN if this happens.
+> There is a case where a child regulator is registered before its supply
+> and when the supply is registered successfully, the supply for the child
+> is then set. Although, this in itself is not a problem, a problem arises
+> when the supply is then unregistered again, due to the parent device
+> being probed deferred, after successfully registering the supply. This
+> leaves the regulator with an invalid reference to supply and can
+> eventually result in a kernel panic.
 
-Note that the debugfs node for the regulator supply must be freed before
-the debugfs node for the regulator_dev and so ensure the regulator_dev
-debugfs node is freed after the any supplies have been removed.
+Why is a parent device doing this?  This doesn't seem like safe or
+helpful behaviour and with probe deferral we'd generally expect the
+device to acquire resources before it starts making use of them.
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
+> Addtionally, even in the normal case when a regulator is unregistered,
+> by unloading a driver, if the regulator happens to be a supply for
+> another regulator it is not removed.
 
-This problem has been exposed on -next due to some other changes that
-have caused a slight re-ordering in the boot sequence for Tegra124
-Jetson-TK1 and causes the boot to fail. The board panics when trying
-to enable a supply which is not valid. This happens because the supply
-for a regulator is resolved when the supply is registered but then the
-supply gets unregistered again due to a probe deferral later on,
-leaving a invalid reference to the supply for the regulator.
+We can't completely stop people doing this but we do make fairly strong
+efforts to stop people pulling in use devices.
 
-I can't say I am completely happy with this as there is still the
-potential for someone to remove a supply while a child regulator is
-in use. However, I guess that is no different from today AFAICT, but
-hopefully this will avoid some panics?!?
+> Fix this by scanning all the registered regulators when a regulator is
+> removed and remove it as a supply to any other regulator. There is a
+> possibility that a child regulator is in use when the supply is removed
+> and so WARN if this happens.
 
-Ideally, it would be good to defer all the supply resolution until we
-know for certain that the device has been probed OK and will not be
-deferred in anyway. So I am not sure if there is a better way to fix
-this.
+This seems like storing up trouble for the future, we'll end up with
+live child devices with parents that weren't around or being refcounted
+through some of the lifetime of the device which will doubtless come
+back and bite us later.
 
- drivers/regulator/core.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+> Note that the debugfs node for the regulator supply must be freed before
+> the debugfs node for the regulator_dev and so ensure the regulator_dev
+> debugfs node is freed after the any supplies have been removed.
 
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 04baac9..18b22fd 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -1242,6 +1242,21 @@ static int set_consumer_device_supply(struct regulator_dev *rdev,
- 	return 0;
- }
- 
-+static int regulator_unset_supply(struct device *dev, void *data)
-+{
-+	struct regulator_dev *rdev = dev_to_rdev(dev);
-+	struct regulator_dev *supply_rdev = data;
-+
-+	if (rdev->supply && rdev->supply->rdev == supply_rdev) {
-+		rdev_dbg(rdev, "removing supply %s\n", rdev_get_name(rdev));
-+		WARN_ON(rdev->open_count);
-+		_regulator_put(rdev->supply);
-+		rdev->supply = NULL;
-+	}
-+
-+	return 0;
-+}
-+
- static void unset_regulator_supplies(struct regulator_dev *rdev)
- {
- 	struct regulator_map *node, *n;
-@@ -1253,6 +1268,9 @@ static void unset_regulator_supplies(struct regulator_dev *rdev)
- 			kfree(node);
- 		}
- 	}
-+
-+	class_for_each_device(&regulator_class, NULL, rdev,
-+			      regulator_unset_supply);
- }
- 
- #ifdef CONFIG_DEBUG_FS
-@@ -4131,10 +4149,10 @@ void regulator_unregister(struct regulator_dev *rdev)
- 		regulator_put(rdev->supply);
- 	}
- 	mutex_lock(&regulator_list_mutex);
--	debugfs_remove_recursive(rdev->debugfs);
- 	flush_work(&rdev->disable_work.work);
--	WARN_ON(rdev->open_count);
- 	unset_regulator_supplies(rdev);
-+	debugfs_remove_recursive(rdev->debugfs);
-+	WARN_ON(rdev->open_count);
- 	list_del(&rdev->list);
- 	regulator_ena_gpio_free(rdev);
- 	mutex_unlock(&regulator_list_mutex);
--- 
-1.9.1
+Please don't mix different changes into one commit, as covered in
+SubmittingPatches please send one patch per change.  This makes things
+easier to=20
+
+--vi6o6m3k62rmrhni
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlhv4iAACgkQJNaLcl1U
+h9C4Sgf8DdWbpxUCnAfHmW1T6S5JsFoDTZz9vdN3nYt/vVg+WVpbGxMm+9YJ8kWG
+4o8yp4P0EajhcTiVLc4pc1jDTDBtctE9Qij+eZiZs5Uw3PcG/MDYAV8OQhgmH22p
+uWomSswNSG9KaH9uG4JrdflbkmIDQQ2Eav5SlssW9hrEyTMdp53rWKaR4l69lwMv
+ZtmmVYJF1V2WBdgmyNTsohS495hJlHVhKWH2mzBT7QjXFQwkywk13tu4IImYA1s2
+JKynSUB3WVuHGgQf2C75oXm6Y+3WkF6DuxEUgF7NiQv5Nv2sC3jl/MK81XAaOqBQ
+IF+ObRI/lSUBAFncWn0PYzTlYA0q2Q==
+=msvB
+-----END PGP SIGNATURE-----
+
+--vi6o6m3k62rmrhni--
