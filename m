@@ -1,121 +1,73 @@
-From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH] regulator: core: Unset supplies when regulators are
- unregistered
-Date: Mon, 9 Jan 2017 13:37:18 +0000
-Message-ID: <084533f5-d611-59ac-7329-657b0523bdb3@nvidia.com>
-References: <1483703678-19575-1-git-send-email-jonathanh@nvidia.com>
- <20170106182953.ayvailx5sxtiyzwe@sirena.org.uk>
+From: Jon Hunter <jonathanh@nvidia.com>
+Subject: Tegra baseline test results for v4.10-rc1
+Date: Mon, 9 Jan 2017 13:55:11 +0000
+Message-ID: <485047a6-faed-c5db-32f4-eab5ce804eb7@nvidia.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset="windows-1252"
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: 7bit
-Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170106182953.ayvailx5sxtiyzwe-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
-Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Javier Martinez Canillas <javier-0uQlZySMnqxg9hUCZPvPmw@public.gmane.org>
+Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
+List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
+List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
+List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
+List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
+List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
+ <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
+Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
+Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
+To: "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Cc: "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, kernel-build-reports@lists.linaro.org
 List-Id: linux-tegra@vger.kernel.org
 
+Here are some basic Tegra test results for Linux v4.10-rc1.
+Logs and other details at:
 
-On 06/01/17 18:29, Mark Brown wrote:
-> * PGP Signed by an unknown key
-> 
-> On Fri, Jan 06, 2017 at 11:54:38AM +0000, Jon Hunter wrote:
-> 
->> There is a case where a child regulator is registered before its supply
->> and when the supply is registered successfully, the supply for the child
->> is then set. Although, this in itself is not a problem, a problem arises
->> when the supply is then unregistered again, due to the parent device
->> being probed deferred, after successfully registering the supply. This
->> leaves the regulator with an invalid reference to supply and can
->> eventually result in a kernel panic.
-> 
-> Why is a parent device doing this?  This doesn't seem like safe or
-> helpful behaviour and with probe deferral we'd generally expect the
-> device to acquire resources before it starts making use of them.
-
-It is not really the parent that is doing this. The child regulator in
-this case is physically a separate regulator from the main PMIC device
-that is registering the supply regulators.
-
-The PMIC is registering N regulators and after registering some
-successfully one fails because it's supply is not found and the
-regulator core returns -EPROBE_DEFER. Normally not finding supply would
-not fail but in this case it is necessary because the regulator is in
-bypass and the supply is needed to get the voltage.
-
-Actually, this particular regulator was the cause of some other issues
-in the past where we needed to fix-up the handling of regulators in
-bypass during registration. See commit 45389c47526d ('regulator: core:
-Add early supply resolution for regulators').
-
-The real problem is that after one of the PMIC's regulators fails to
-register, by then one of the PMIC's other regulators (that has already
-been registered) has been added as a supply for another external regulator.
-
->> Addtionally, even in the normal case when a regulator is unregistered,
->> by unloading a driver, if the regulator happens to be a supply for
->> another regulator it is not removed.
-> 
-> We can't completely stop people doing this but we do make fairly strong
-> efforts to stop people pulling in use devices.
-
-Right, but before removing/unregistering a regulator today, we never
-check to see if it is the supply for any other regulator.
-
->> Fix this by scanning all the registered regulators when a regulator is
->> removed and remove it as a supply to any other regulator. There is a
->> possibility that a child regulator is in use when the supply is removed
->> and so WARN if this happens.
-> 
-> This seems like storing up trouble for the future, we'll end up with
-> live child devices with parents that weren't around or being refcounted
-> through some of the lifetime of the device which will doubtless come
-> back and bite us later.
-
-Yes I am not completely happy. Maybe we should wait for the parent
-device to be bound before allowing any of its's regulators to be added
-as supplies for other regulators? I gave the following a quick test and
-this seems to work too ...
-
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 04baac9a165b..e17915861a54 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -1553,6 +1553,11 @@ static int regulator_resolve_supply(struct
-regulator_dev *rdev)
-                }
-        }
-
-+       if (!device_is_bound(r->dev.parent)) {
-+               put_device(&r->dev);
-+               return -EPROBE_DEFER;
-+       }
-+
-        /* Recursively resolve the supply of the supply */
-        ret = regulator_resolve_supply(r);
-        if (ret < 0) {
+    https://nvtb.github.io//linux/test_v4.10-rc1/20161225163102/
 
 
-The above prevents anyone from using a regulator as a supply if the
-parent has not been bound yet. Therefore, if one of the parent's
-regulators fails to register, after some have already been successfully
-registered, there is no chance any of the successfully added regulators
-will have been already added as a supply to some other regulator in the
-system. Hope that's clear!
+Test summary
+------------
 
->> Note that the debugfs node for the regulator supply must be freed before
->> the debugfs node for the regulator_dev and so ensure the regulator_dev
->> debugfs node is freed after the any supplies have been removed.
-> 
-> Please don't mix different changes into one commit, as covered in
-> SubmittingPatches please send one patch per change.  This makes things
-> easier to 
+Build: zImage:
+    Pass: ( 2/ 2): multi_v7_defconfig, tegra_defconfig
 
-Sorry, may be I worded this badly, however, it is a consequence of this
-particular change and otherwise it would not be needed.
+Build: Image:
+    FAIL: ( 1/ 1): defconfig
 
-Cheers
-Jon
+Boot to userspace: multi_v7_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
 
--- 
-nvpublic
+Boot to userspace: tegra_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: multi_v7_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+PM: System suspend: tegra_defconfig:
+    Pass: ( 5/ 5): tegra114-dalmore-a04, tegra124-jetson-tk1,
+		   tegra124-nyan-big, tegra20-trimslice, tegra30-beaver
+
+
+vmlinux object size
+(delta in bytes from test_v4.9 (69973b830859bc6529a7a0468ba0d80ee5117826)):
+   text     data      bss    total  kernel
++181036   +83696  +131592  +396324  multi_v7_defconfig
+ +89564   +38232     -680  +127116  tegra_defconfig
+
+
+Boot-time memory difference
+(delta in bytes from test_v4.9 (69973b830859bc6529a7a0468ba0d80ee5117826))
+    avail    rsrvd     high    freed                board              kconfig                  dtb
+    -144k     144k        .        . tegra114-dalmore-a04   multi_v7_defconfig     tegra114-dalmore
+      -8k       8k        .        . tegra114-dalmore-a04      tegra_defconfig     tegra114-dalmore
+    -144k     144k        .        .  tegra124-jetson-tk1   multi_v7_defconfig  tegra124-jetson-tk1
+      -8k       8k        .        .  tegra124-jetson-tk1      tegra_defconfig  tegra124-jetson-tk1
+    -144k     144k        .        .    tegra124-nyan-big   multi_v7_defconfig    tegra124-nyan-big
+      -8k       8k        .        .    tegra124-nyan-big      tegra_defconfig    tegra124-nyan-big
+    -144k     144k        .        .    tegra20-trimslice   multi_v7_defconfig    tegra20-trimslice
+      -8k       8k        .        .    tegra20-trimslice      tegra_defconfig    tegra20-trimslice
+    -144k     144k        .        .       tegra30-beaver   multi_v7_defconfig       tegra30-beaver
+      -8k       8k        .        .       tegra30-beaver      tegra_defconfig       tegra30-beaver
