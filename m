@@ -1,55 +1,48 @@
-From: Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH 57/62] watchdog: tegra_wdt: Convert to use device managed functions
-Date: Tue, 10 Jan 2017 18:09:11 -0800
-Message-ID: <1484100561-17638-6-git-send-email-linux@roeck-us.net>
-References: <1484091325-9199-1-git-send-email-linux@roeck-us.net>
- <1484100561-17638-1-git-send-email-linux@roeck-us.net>
-Return-path: <linux-kernel-owner@vger.kernel.org>
-In-Reply-To: <1484100561-17638-1-git-send-email-linux@roeck-us.net>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Wim Van Sebroeck <wim@iguana.be>
-Cc: linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, linux-tegra@vger.kernel.org
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Subject: Re: [PATCH] regulator: core: Don't use regulators as supplies until
+ the parent is bound
+Date: Wed, 11 Jan 2017 16:57:18 +0000
+Message-ID: <5d9b2cf5-55ef-f389-3381-da101bda7db5@nvidia.com>
+References: <1484046069-7893-1-git-send-email-jonathanh@nvidia.com>
+ <20170110165717.7dfxoyajc5p2h5mr@sirena.org.uk>
+Mime-Version: 1.0
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+In-Reply-To: <20170110165717.7dfxoyajc5p2h5mr-GFdadSzt00ze9xe1eoZjHA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Cc: Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-Use device managed functions to simplify error handling, reduce
-source code size, improve readability, and reduce the likelyhood of bugs.
 
-The conversion was done automatically with coccinelle using the
-following semantic patches. The semantic patches and the scripts used
-to generate this commit log are available at
-https://github.com/groeck/coccinelle-patches
+On 10/01/17 16:57, Mark Brown wrote:
+> * PGP Signed by an unknown key
+> 
+> On Tue, Jan 10, 2017 at 11:01:09AM +0000, Jon Hunter wrote:
+> 
+>> +++ b/drivers/regulator/core.c
+>> @@ -1553,6 +1553,11 @@ static int regulator_resolve_supply(struct regulator_dev *rdev)
+>>  		}
+>>  	}
+>>  
+>> +	if (r->dev.parent && !device_is_bound(r->dev.parent)) {
+>> +		put_device(&r->dev);
+>> +		return -EPROBE_DEFER;
+>> +	}
+>> +
+> 
+> I realised earlier that this will trigger when the supply and the
+> consumer are part of the same PMIC which will cause issues as that's a
+> fairly common setup and won't be resolved by deferring.  Can you please
+> modify this to only defer if the parent is not the same as the parent of
+> the regulator we're currently resolving?  Sorry, should've thought of
+> this yesterday.
 
-- Use devm_watchdog_register_driver() to register watchdog device
+OK, no problem. Will send out an update shortly.
 
-Cc: Stephen Warren <swarren@wwwdotorg.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
- drivers/watchdog/tegra_wdt.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Cheers
+Jon
 
-diff --git a/drivers/watchdog/tegra_wdt.c b/drivers/watchdog/tegra_wdt.c
-index 2d53c3f9394f..9403c08816e3 100644
---- a/drivers/watchdog/tegra_wdt.c
-+++ b/drivers/watchdog/tegra_wdt.c
-@@ -226,7 +226,7 @@ static int tegra_wdt_probe(struct platform_device *pdev)
- 
- 	watchdog_set_nowayout(wdd, nowayout);
- 
--	ret = watchdog_register_device(wdd);
-+	ret = devm_watchdog_register_device(&pdev->dev, wdd);
- 	if (ret) {
- 		dev_err(&pdev->dev,
- 			"failed to register watchdog device\n");
-@@ -248,8 +248,6 @@ static int tegra_wdt_remove(struct platform_device *pdev)
- 
- 	tegra_wdt_stop(&wdt->wdd);
- 
--	watchdog_unregister_device(&wdt->wdd);
--
- 	dev_info(&pdev->dev, "removed wdt\n");
- 
- 	return 0;
 -- 
-2.7.4
+nvpublic
