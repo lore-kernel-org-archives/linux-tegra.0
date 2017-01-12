@@ -1,81 +1,40 @@
-From: Jon Hunter <jonathanh@nvidia.com>
-Subject: [PATCH V3] regulator: core: Don't use regulators as supplies until the parent is bound
-Date: Wed, 11 Jan 2017 17:44:25 +0000
-Message-ID: <1484156665-20666-1-git-send-email-jonathanh@nvidia.com>
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: [PATCH] drm: tegra: shut up harmless warning on NOMMU
+Date: Thu, 12 Jan 2017 12:13:51 +0100
+Message-ID: <20170112111425.3228358-1-arnd@arndb.de>
 Mime-Version: 1.0
-Content-Type: text/plain
-Return-path: <linux-kernel-owner@vger.kernel.org>
-Sender: linux-kernel-owner@vger.kernel.org
-To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-When regulators are successfully registered, we check to see if the
-regulator is a supply for any other registered regulator and if so
-add the new regulator as the supply for the existing regulator(s).
-
-Some devices, such as Power Management ICs, may register a series of
-regulators when probed and there are cases where one of the regulators
-may fail to register and defer the probing of the parent device. In this
-case any successfully registered regulators would be unregistered so
-that they can be re-registered at some time later when the probe is
-attempted again. However, if one of the regulators that was registered
-was added as a supply to another registered regulator (that did not
-belong to the same parent device), then this supply regulator was
-unregister again because the parent device is probe deferred, then a
-regulator could be holding an invalid reference to a supply regulator
-that has been unregistered. This will lead to a system crash if that
-regulator is then used.
-
-Although it would be possible to check when unregistering a regulator
-if any other regulator in the system is using it as a supply, it still
-may not be possible to remove it as a supply if this other regulator is
-in use. Therefore, fix this by preventing any regulator from adding
-another regulator as a supply if the parent device for the supply
-regulator has not been bound and if the parent device for the supply
-and the regulator are different. This will allow a parent device that is
-registering regulators to be probe deferred and ensure that none of the
-regulators it has registered are used as supplies for any other
-regulator from another device.
-
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
----
-
-Changes since V2:
-- Fixed comment formatting
-
-Changes since V1:
-- Updated patch per Mark's input to only prevent resolving the supply
-  if the supply's parent is different from the regulator's and the
-  supply's parent device is not bound.
-- Added comment.
-
- drivers/regulator/core.c | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
-
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index 04baac9a165b..bcf67abd1cd2 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -1553,6 +1553,19 @@ static int regulator_resolve_supply(struct regulator_dev *rdev)
- 		}
- 	}
- 
-+	/*
-+	 * If the supply's parent device is not the same as the
-+	 * regulator's parent device, then ensure the parent device
-+	 * is bound before we resolve the supply, in case the parent
-+	 * device get probe deferred and unregisters the supply.
-+	 */
-+	if (r->dev.parent && r->dev.parent != rdev->dev.parent) {
-+		if (!device_is_bound(r->dev.parent)) {
-+			put_device(&r->dev);
-+			return -EPROBE_DEFER;
-+		}
-+	}
-+
- 	/* Recursively resolve the supply of the supply */
- 	ret = regulator_resolve_supply(r);
- 	if (ret < 0) {
--- 
-2.7.4
+VGhlIHRlZ3JhIERSTSBkcml2ZXIgaXMgYWxtb3N0IG9rIHdpdGhvdXQgYW4gTU1VLCBidXQgdGhl
+cmUKaXMgb25lIHNtYWxsIHdhcm5pbmcgdGhhdCBJIGdldDoKCmRyaXZlcnMvZ3B1L2RybS90ZWdy
+YS9nZW0uYzogSW4gZnVuY3Rpb24gJ3RlZ3JhX2RybV9tbWFwJzoKZHJpdmVycy9ncHUvZHJtL3Rl
+Z3JhL2dlbS5jOjUwODoxMjogdW51c2VkIHZhcmlhYmxlICdwcm90JwoKVGhpcyBtYXJrcyB0aGUg
+dmFyaWFibGUgYXMgX19tYXliZV91bnVzZWQgaW5zdGVhZC4KClNpZ25lZC1vZmYtYnk6IEFybmQg
+QmVyZ21hbm4gPGFybmRAYXJuZGIuZGU+Ci0tLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5j
+IHwgMiArLQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCgpk
+aWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5jIGIvZHJpdmVycy9ncHUvZHJt
+L3RlZ3JhL2dlbS5jCmluZGV4IDdkODUzZTZiNWZmMC4uNjNmMTRiN2E1OWEwIDEwMDY0NAotLS0g
+YS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZ2VtLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
+L2dlbS5jCkBAIC01MDUsNyArNTA1LDcgQEAgaW50IHRlZ3JhX2RybV9tbWFwKHN0cnVjdCBmaWxl
+ICpmaWxlLCBzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZtYSkKIAogCQl2bWEtPnZtX3Bnb2ZmID0g
+dm1fcGdvZmY7CiAJfSBlbHNlIHsKLQkJcGdwcm90X3QgcHJvdCA9IHZtX2dldF9wYWdlX3Byb3Qo
+dm1hLT52bV9mbGFncyk7CisJCXBncHJvdF90IHByb3QgX19tYXliZV91bnVzZWQgPSB2bV9nZXRf
+cGFnZV9wcm90KHZtYS0+dm1fZmxhZ3MpOwogCiAJCXZtYS0+dm1fZmxhZ3MgfD0gVk1fTUlYRURN
+QVA7CiAJCXZtYS0+dm1fZmxhZ3MgJj0gflZNX1BGTk1BUDsKLS0gCjIuOS4wCgpfX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
+aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVz
+a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
