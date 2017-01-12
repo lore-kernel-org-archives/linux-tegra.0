@@ -1,40 +1,51 @@
-From: Arnd Bergmann <arnd@arndb.de>
-Subject: [PATCH] drm: tegra: shut up harmless warning on NOMMU
-Date: Thu, 12 Jan 2017 12:13:51 +0100
-Message-ID: <20170112111425.3228358-1-arnd@arndb.de>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Thierry Reding <thierry.reding@gmail.com>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Stephen Warren <swarren@wwwdotorg.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>, linux-tegra@vger.kernel.org
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: [PATCH 1/2] rtc: tegra: Sort includes alphabetically
+Date: Thu, 12 Jan 2017 17:07:42 +0100
+Message-ID: <20170112160743.23367-1-thierry.reding@gmail.com>
+Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
+Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-VGhlIHRlZ3JhIERSTSBkcml2ZXIgaXMgYWxtb3N0IG9rIHdpdGhvdXQgYW4gTU1VLCBidXQgdGhl
-cmUKaXMgb25lIHNtYWxsIHdhcm5pbmcgdGhhdCBJIGdldDoKCmRyaXZlcnMvZ3B1L2RybS90ZWdy
-YS9nZW0uYzogSW4gZnVuY3Rpb24gJ3RlZ3JhX2RybV9tbWFwJzoKZHJpdmVycy9ncHUvZHJtL3Rl
-Z3JhL2dlbS5jOjUwODoxMjogdW51c2VkIHZhcmlhYmxlICdwcm90JwoKVGhpcyBtYXJrcyB0aGUg
-dmFyaWFibGUgYXMgX19tYXliZV91bnVzZWQgaW5zdGVhZC4KClNpZ25lZC1vZmYtYnk6IEFybmQg
-QmVyZ21hbm4gPGFybmRAYXJuZGIuZGU+Ci0tLQogZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5j
-IHwgMiArLQogMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCgpk
-aWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5jIGIvZHJpdmVycy9ncHUvZHJt
-L3RlZ3JhL2dlbS5jCmluZGV4IDdkODUzZTZiNWZmMC4uNjNmMTRiN2E1OWEwIDEwMDY0NAotLS0g
-YS9kcml2ZXJzL2dwdS9kcm0vdGVncmEvZ2VtLmMKKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
-L2dlbS5jCkBAIC01MDUsNyArNTA1LDcgQEAgaW50IHRlZ3JhX2RybV9tbWFwKHN0cnVjdCBmaWxl
-ICpmaWxlLCBzdHJ1Y3Qgdm1fYXJlYV9zdHJ1Y3QgKnZtYSkKIAogCQl2bWEtPnZtX3Bnb2ZmID0g
-dm1fcGdvZmY7CiAJfSBlbHNlIHsKLQkJcGdwcm90X3QgcHJvdCA9IHZtX2dldF9wYWdlX3Byb3Qo
-dm1hLT52bV9mbGFncyk7CisJCXBncHJvdF90IHByb3QgX19tYXliZV91bnVzZWQgPSB2bV9nZXRf
-cGFnZV9wcm90KHZtYS0+dm1fZmxhZ3MpOwogCiAJCXZtYS0+dm1fZmxhZ3MgfD0gVk1fTUlYRURN
-QVA7CiAJCXZtYS0+dm1fZmxhZ3MgJj0gflZNX1BGTk1BUDsKLS0gCjIuOS4wCgpfX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fXwpkcmktZGV2ZWwgbWFpbGluZyBs
-aXN0CmRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmcKaHR0cHM6Ly9saXN0cy5mcmVlZGVz
-a3RvcC5vcmcvbWFpbG1hbi9saXN0aW5mby9kcmktZGV2ZWwK
+From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+
+The ordering of includes is currently completely arbitrary, making it
+impossible to decide where to put new includes. Remove the dilemma by
+sort the include list alphabetically.
+
+Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+---
+ drivers/rtc/rtc-tegra.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
+index 3853ba963bb5..38e662ff1a70 100644
+--- a/drivers/rtc/rtc-tegra.c
++++ b/drivers/rtc/rtc-tegra.c
+@@ -17,16 +17,17 @@
+  * with this program; if not, write to the Free Software Foundation, Inc.,
+  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+  */
+-#include <linux/kernel.h>
++
++#include <linux/delay.h>
+ #include <linux/init.h>
+-#include <linux/module.h>
+-#include <linux/slab.h>
+-#include <linux/irq.h>
+ #include <linux/io.h>
+-#include <linux/delay.h>
+-#include <linux/rtc.h>
++#include <linux/irq.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm.h>
++#include <linux/rtc.h>
++#include <linux/slab.h>
+ 
+ /* set to 1 = busy every eight 32kHz clocks during copy of sec+msec to AHB */
+ #define TEGRA_RTC_REG_BUSY			0x004
+-- 
+2.11.0
