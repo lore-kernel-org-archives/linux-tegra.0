@@ -1,130 +1,105 @@
-From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Subject: [PATCH 2/2] rtc: tegra: Implement clock handling
-Date: Thu, 12 Jan 2017 17:07:43 +0100
-Message-ID: <20170112160743.23367-2-thierry.reding@gmail.com>
-References: <20170112160743.23367-1-thierry.reding@gmail.com>
+From: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
+Subject: Applied "regulator: core: Don't use regulators as supplies until the parent is bound" to the regulator tree
+Date: Thu, 12 Jan 2017 17:46:14 +0000
+Message-ID: <E1cRjS2-000078-4G@debutante>
+References: <1484156665-20666-1-git-send-email-jonathanh@nvidia.com>
 Return-path: <linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
-In-Reply-To: <20170112160743.23367-1-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+In-Reply-To: <1484156665-20666-1-git-send-email-jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 Sender: linux-tegra-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
-To: Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>
-Cc: Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+To: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Cc: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, Liam Girdwood <lgirdwood-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.orglinux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
-From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+The patch
 
-Accessing the registers of the RTC block on Tegra requires the module
-clock to be enabled. This only works because the RTC module clock will
-be enabled by default during early boot. However, because the clock is
-unused, the CCF will disable it at late_init time. This causes the RTC
-to become unusable afterwards. This can easily be reproduced by trying
-to use the RTC:
+   regulator: core: Don't use regulators as supplies until the parent is bound
 
-	$ hwclock --rtc /dev/rtc1
+has been applied to the regulator tree at
 
-This will hang the system. I ran into this by following up on a report
-by Martin Michlmayr that reboot wasn't working on Tegra210 systems. It
-turns out that the rtc-tegra driver's ->shutdown() implementation will
-hang the CPU, because of the disabled clock, before the system can be
-rebooted.
+   git://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git 
 
-What confused me for a while is that the same driver is used on prior
-Tegra generations where the hang can not be observed. However, as Peter
-De Schrijver pointed out, this is because on 32-bit Tegra chips the RTC
-clock is enabled by the tegra20_timer.c clocksource driver, which uses
-the RTC to provide a persistent clock. This code is never enabled on
-64-bit Tegra because the persistent clock infrastructure does not exist
-of 64-bit ARM.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-The proper fix for this is to add proper clock handling to the RTC
-driver in order to ensure that the clock is enabled when the driver
-requires it. All device trees contain the clock already, therefore
-no additional changes are required.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Reported-by: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
-Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 66d228a2bf03b163ddaeca5f24f1ff89a84ad668 Mon Sep 17 00:00:00 2001
+From: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Date: Wed, 11 Jan 2017 17:44:25 +0000
+Subject: [PATCH] regulator: core: Don't use regulators as supplies until the
+ parent is bound
+
+When regulators are successfully registered, we check to see if the
+regulator is a supply for any other registered regulator and if so
+add the new regulator as the supply for the existing regulator(s).
+
+Some devices, such as Power Management ICs, may register a series of
+regulators when probed and there are cases where one of the regulators
+may fail to register and defer the probing of the parent device. In this
+case any successfully registered regulators would be unregistered so
+that they can be re-registered at some time later when the probe is
+attempted again. However, if one of the regulators that was registered
+was added as a supply to another registered regulator (that did not
+belong to the same parent device), then this supply regulator was
+unregister again because the parent device is probe deferred, then a
+regulator could be holding an invalid reference to a supply regulator
+that has been unregistered. This will lead to a system crash if that
+regulator is then used.
+
+Although it would be possible to check when unregistering a regulator
+if any other regulator in the system is using it as a supply, it still
+may not be possible to remove it as a supply if this other regulator is
+in use. Therefore, fix this by preventing any regulator from adding
+another regulator as a supply if the parent device for the supply
+regulator has not been bound and if the parent device for the supply
+and the regulator are different. This will allow a parent device that is
+registering regulators to be probe deferred and ensure that none of the
+regulators it has registered are used as supplies for any other
+regulator from another device.
+
+Signed-off-by: Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
+Signed-off-by: Mark Brown <broonie-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
 ---
- drivers/rtc/rtc-tegra.c | 28 ++++++++++++++++++++++++++--
- 1 file changed, 26 insertions(+), 2 deletions(-)
+ drivers/regulator/core.c | 13 +++++++++++++
+ 1 file changed, 13 insertions(+)
 
-diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
-index 38e662ff1a70..d30d57b048d3 100644
---- a/drivers/rtc/rtc-tegra.c
-+++ b/drivers/rtc/rtc-tegra.c
-@@ -18,6 +18,7 @@
-  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-  */
- 
-+#include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/init.h>
- #include <linux/io.h>
-@@ -60,6 +61,7 @@ struct tegra_rtc_info {
- 	struct platform_device	*pdev;
- 	struct rtc_device	*rtc_dev;
- 	void __iomem		*rtc_base; /* NULL if not initialized. */
-+	struct clk		*clk;
- 	int			tegra_rtc_irq; /* alarm and periodic irq */
- 	spinlock_t		tegra_rtc_lock;
- };
-@@ -327,6 +329,14 @@ static int __init tegra_rtc_probe(struct platform_device *pdev)
- 	if (info->tegra_rtc_irq <= 0)
- 		return -EBUSY;
- 
-+	info->clk = devm_clk_get(&pdev->dev, NULL);
-+	if (IS_ERR(info->clk))
-+		return PTR_ERR(info->clk);
-+
-+	ret = clk_prepare_enable(info->clk);
-+	if (ret < 0)
-+		return ret;
-+
- 	/* set context info. */
- 	info->pdev = pdev;
- 	spin_lock_init(&info->tegra_rtc_lock);
-@@ -347,7 +357,7 @@ static int __init tegra_rtc_probe(struct platform_device *pdev)
- 		ret = PTR_ERR(info->rtc_dev);
- 		dev_err(&pdev->dev, "Unable to register device (err=%d).\n",
- 			ret);
--		return ret;
-+		goto disable_clk;
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 04baac9a165b..bcf67abd1cd2 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -1553,6 +1553,19 @@ static int regulator_resolve_supply(struct regulator_dev *rdev)
+ 		}
  	}
  
- 	ret = devm_request_irq(&pdev->dev, info->tegra_rtc_irq,
-@@ -357,12 +367,25 @@ static int __init tegra_rtc_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev,
- 			"Unable to request interrupt for device (err=%d).\n",
- 			ret);
--		return ret;
-+		goto disable_clk;
- 	}
- 
- 	dev_notice(&pdev->dev, "Tegra internal Real Time Clock\n");
- 
- 	return 0;
++	/*
++	 * If the supply's parent device is not the same as the
++	 * regulator's parent device, then ensure the parent device
++	 * is bound before we resolve the supply, in case the parent
++	 * device get probe deferred and unregisters the supply.
++	 */
++	if (r->dev.parent && r->dev.parent != rdev->dev.parent) {
++		if (!device_is_bound(r->dev.parent)) {
++			put_device(&r->dev);
++			return -EPROBE_DEFER;
++		}
++	}
 +
-+disable_clk:
-+	clk_disable_unprepare(info->clk);
-+	return ret;
-+}
-+
-+static int tegra_rtc_remove(struct platform_device *pdev)
-+{
-+	struct tegra_rtc_info *info = platform_get_drvdata(pdev);
-+
-+	clk_disable_unprepare(info->clk);
-+
-+	return 0;
- }
- 
- #ifdef CONFIG_PM_SLEEP
-@@ -414,6 +437,7 @@ static void tegra_rtc_shutdown(struct platform_device *pdev)
- 
- MODULE_ALIAS("platform:tegra_rtc");
- static struct platform_driver tegra_rtc_driver = {
-+	.remove		= tegra_rtc_remove,
- 	.shutdown	= tegra_rtc_shutdown,
- 	.driver		= {
- 		.name	= "tegra_rtc",
+ 	/* Recursively resolve the supply of the supply */
+ 	ret = regulator_resolve_supply(r);
+ 	if (ret < 0) {
 -- 
 2.11.0
