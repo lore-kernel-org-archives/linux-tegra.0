@@ -1,158 +1,83 @@
-From: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-Subject: Re: [PATCH 2/2] rtc: tegra: Implement clock handling
-Date: Thu, 19 Jan 2017 14:23:53 +0200
-Message-ID: <20170119122353.GN6824@tbergstrom-lnx.Nvidia.com>
-References: <20170112160743.23367-1-thierry.reding@gmail.com>
- <20170112160743.23367-2-thierry.reding@gmail.com>
-Reply-To: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
+From: Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] drm: tegra: shut up harmless warning on NOMMU
+Date: Thu, 19 Jan 2017 16:09:47 +0100
+Message-ID: <7713814.tr8Zr0Cdrc@wuerfel>
+References: <20170112111425.3228358-1-arnd@arndb.de>
+ <20170119110058.GD30182@ulmo.ba.sec>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Return-path: <rtc-linux+bncBCJPTJGIXUFBBYO7QLCAKGQEU4PNFGQ-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-Sender: rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org
-Content-Disposition: inline
-In-Reply-To: <20170112160743.23367-2-thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-List-Post: <https://groups.google.com/group/rtc-linux/post>, <mailto:rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Help: <https://groups.google.com/support/>, <mailto:rtc-linux+help-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Archive: <https://groups.google.com/group/rtc-linux
-List-Subscribe: <https://groups.google.com/group/rtc-linux/subscribe>, <mailto:rtc-linux+subscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>
-List-Unsubscribe: <mailto:googlegroups-manage+712029733259+unsubscribe-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org>,
- <https://groups.google.com/group/rtc-linux/subscribe>
-To: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-Cc: Alessandro Zummo <a.zummo-BfzFCNDTiLLj+vYz1yj4TQ@public.gmane.org>, Alexandre Belloni <alexandre.belloni-wi1+55ScJUtKEb57/3fJTNBPR1lH4CV8@public.gmane.org>, Laxman Dewangan <ldewangan-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>, rtc-linux-/JYPxA39Uh5TLH3MbocFFw@public.gmane.org, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+Return-path: <dri-devel-bounces@lists.freedesktop.org>
+In-Reply-To: <20170119110058.GD30182@ulmo.ba.sec>
+List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
+List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
+List-Post: <mailto:dri-devel@lists.freedesktop.org>
+List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
+List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
+ <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
+Errors-To: dri-devel-bounces@lists.freedesktop.org
+Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
+To: Thierry Reding <thierry.reding@gmail.com>
+Cc: Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>, Russell King <rmk+kernel@armlinux.org.uk>, linux-tegra@vger.kernel.org
 List-Id: linux-tegra@vger.kernel.org
 
-On Thu, Jan 12, 2017 at 05:07:43PM +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> 
-> Accessing the registers of the RTC block on Tegra requires the module
-> clock to be enabled. This only works because the RTC module clock will
-> be enabled by default during early boot. However, because the clock is
-> unused, the CCF will disable it at late_init time. This causes the RTC
-> to become unusable afterwards. This can easily be reproduced by trying
-> to use the RTC:
-> 
-> 	$ hwclock --rtc /dev/rtc1
-> 
-> This will hang the system. I ran into this by following up on a report
-> by Martin Michlmayr that reboot wasn't working on Tegra210 systems. It
-> turns out that the rtc-tegra driver's ->shutdown() implementation will
-> hang the CPU, because of the disabled clock, before the system can be
-> rebooted.
-> 
-> What confused me for a while is that the same driver is used on prior
-> Tegra generations where the hang can not be observed. However, as Peter
-> De Schrijver pointed out, this is because on 32-bit Tegra chips the RTC
-> clock is enabled by the tegra20_timer.c clocksource driver, which uses
-> the RTC to provide a persistent clock. This code is never enabled on
-> 64-bit Tegra because the persistent clock infrastructure does not exist
-> of 64-bit ARM.
-
-'on 64-bit ARM' I guess?
-
-Other than that Acked-By Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-
-> 
-> The proper fix for this is to add proper clock handling to the RTC
-> driver in order to ensure that the clock is enabled when the driver
-> requires it. All device trees contain the clock already, therefore
-> no additional changes are required.
-> 
-> Cc: Peter De Schrijver <pdeschrijver-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> Reported-by: Martin Michlmayr <tbm-R+vWnYXSFMfQT0dZR+AlfA@public.gmane.org>
-> Signed-off-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
-> ---
->  drivers/rtc/rtc-tegra.c | 28 ++++++++++++++++++++++++++--
->  1 file changed, 26 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/rtc/rtc-tegra.c b/drivers/rtc/rtc-tegra.c
-> index 38e662ff1a70..d30d57b048d3 100644
-> --- a/drivers/rtc/rtc-tegra.c
-> +++ b/drivers/rtc/rtc-tegra.c
-> @@ -18,6 +18,7 @@
->   * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
->   */
->  
-> +#include <linux/clk.h>
->  #include <linux/delay.h>
->  #include <linux/init.h>
->  #include <linux/io.h>
-> @@ -60,6 +61,7 @@ struct tegra_rtc_info {
->  	struct platform_device	*pdev;
->  	struct rtc_device	*rtc_dev;
->  	void __iomem		*rtc_base; /* NULL if not initialized. */
-> +	struct clk		*clk;
->  	int			tegra_rtc_irq; /* alarm and periodic irq */
->  	spinlock_t		tegra_rtc_lock;
->  };
-> @@ -327,6 +329,14 @@ static int __init tegra_rtc_probe(struct platform_device *pdev)
->  	if (info->tegra_rtc_irq <= 0)
->  		return -EBUSY;
->  
-> +	info->clk = devm_clk_get(&pdev->dev, NULL);
-> +	if (IS_ERR(info->clk))
-> +		return PTR_ERR(info->clk);
-> +
-> +	ret = clk_prepare_enable(info->clk);
-> +	if (ret < 0)
-> +		return ret;
-> +
->  	/* set context info. */
->  	info->pdev = pdev;
->  	spin_lock_init(&info->tegra_rtc_lock);
-> @@ -347,7 +357,7 @@ static int __init tegra_rtc_probe(struct platform_device *pdev)
->  		ret = PTR_ERR(info->rtc_dev);
->  		dev_err(&pdev->dev, "Unable to register device (err=%d).\n",
->  			ret);
-> -		return ret;
-> +		goto disable_clk;
->  	}
->  
->  	ret = devm_request_irq(&pdev->dev, info->tegra_rtc_irq,
-> @@ -357,12 +367,25 @@ static int __init tegra_rtc_probe(struct platform_device *pdev)
->  		dev_err(&pdev->dev,
->  			"Unable to request interrupt for device (err=%d).\n",
->  			ret);
-> -		return ret;
-> +		goto disable_clk;
->  	}
->  
->  	dev_notice(&pdev->dev, "Tegra internal Real Time Clock\n");
->  
->  	return 0;
-> +
-> +disable_clk:
-> +	clk_disable_unprepare(info->clk);
-> +	return ret;
-> +}
-> +
-> +static int tegra_rtc_remove(struct platform_device *pdev)
-> +{
-> +	struct tegra_rtc_info *info = platform_get_drvdata(pdev);
-> +
-> +	clk_disable_unprepare(info->clk);
-> +
-> +	return 0;
->  }
->  
->  #ifdef CONFIG_PM_SLEEP
-> @@ -414,6 +437,7 @@ static void tegra_rtc_shutdown(struct platform_device *pdev)
->  
->  MODULE_ALIAS("platform:tegra_rtc");
->  static struct platform_driver tegra_rtc_driver = {
-> +	.remove		= tegra_rtc_remove,
->  	.shutdown	= tegra_rtc_shutdown,
->  	.driver		= {
->  		.name	= "tegra_rtc",
-> -- 
-> 2.11.0
-> 
-
--- 
-You received this message because you are subscribed to "rtc-linux".
-Membership options at http://groups.google.com/group/rtc-linux .
-Please read http://groups.google.com/group/rtc-linux/web/checklist
-before submitting a driver.
---- 
-You received this message because you are subscribed to the Google Groups "rtc-linux" group.
-To unsubscribe from this group and stop receiving emails from it, send an email to rtc-linux+unsubscribe-/JYPxA39Uh5TLH3MbocFF+G/Ez6ZCGd0@public.gmane.org
-For more options, visit https://groups.google.com/d/optout.
+T24gVGh1cnNkYXksIEphbnVhcnkgMTksIDIwMTcgMTI6MDA6NTggUE0gQ0VUIFRoaWVycnkgUmVk
+aW5nIHdyb3RlOgo+IE9uIFRodSwgSmFuIDEyLCAyMDE3IGF0IDEyOjEzOjUxUE0gKzAxMDAsIEFy
+bmQgQmVyZ21hbm4gd3JvdGU6Cj4gPiBUaGUgdGVncmEgRFJNIGRyaXZlciBpcyBhbG1vc3Qgb2sg
+d2l0aG91dCBhbiBNTVUsIGJ1dCB0aGVyZQo+ID4gaXMgb25lIHNtYWxsIHdhcm5pbmcgdGhhdCBJ
+IGdldDoKPiA+IAo+ID4gZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5jOiBJbiBmdW5jdGlvbiAn
+dGVncmFfZHJtX21tYXAnOgo+ID4gZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5jOjUwODoxMjog
+dW51c2VkIHZhcmlhYmxlICdwcm90Jwo+ID4gCj4gPiBUaGlzIG1hcmtzIHRoZSB2YXJpYWJsZSBh
+cyBfX21heWJlX3VudXNlZCBpbnN0ZWFkLgo+ID4gCj4gPiBTaWduZWQtb2ZmLWJ5OiBBcm5kIEJl
+cmdtYW5uIDxhcm5kQGFybmRiLmRlPgo+ID4gLS0tCj4gPiAgZHJpdmVycy9ncHUvZHJtL3RlZ3Jh
+L2dlbS5jIHwgMiArLQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxl
+dGlvbigtKQo+ID4gCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5j
+IGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5jCj4gPiBpbmRleCA3ZDg1M2U2YjVmZjAuLjYz
+ZjE0YjdhNTlhMCAxMDA2NDQKPiA+IC0tLSBhL2RyaXZlcnMvZ3B1L2RybS90ZWdyYS9nZW0uYwo+
+ID4gKysrIGIvZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dlbS5jCj4gPiBAQCAtNTA1LDcgKzUwNSw3
+IEBAIGludCB0ZWdyYV9kcm1fbW1hcChzdHJ1Y3QgZmlsZSAqZmlsZSwgc3RydWN0IHZtX2FyZWFf
+c3RydWN0ICp2bWEpCj4gPiAgCj4gPiAgCQl2bWEtPnZtX3Bnb2ZmID0gdm1fcGdvZmY7Cj4gPiAg
+CX0gZWxzZSB7Cj4gPiAtCQlwZ3Byb3RfdCBwcm90ID0gdm1fZ2V0X3BhZ2VfcHJvdCh2bWEtPnZt
+X2ZsYWdzKTsKPiA+ICsJCXBncHJvdF90IHByb3QgX19tYXliZV91bnVzZWQgPSB2bV9nZXRfcGFn
+ZV9wcm90KHZtYS0+dm1fZmxhZ3MpOwo+IAo+IFRoaXMgc2VlbXMgdG8gbWUgbGlrZSBhIHN1Ym9w
+dGltYWwgc29sdXRpb24uIFRoZSByZWFzb24gd2h5IHRoaXMgZmFpbHMKPiBpcyBiZWNhdXNlIHBn
+cHJvdF93cml0ZWNvbWJpbmUocHJvdCkgZm9yIE5PTU1VIHRyYW5zbGF0ZXMgdG8gX19wZ3Byb3Qo
+MCkKPiB2aWEgYSBtYWNyby4gVGhpcyBhbHNvIG1lYW5zIHRoYXQgd2UgbmVlZCB0byBwb3RlbnRp
+YWxseSBhZGQgYQo+IF9fbWF5YmVfdW51c2VkIGFubm90YXRpb24gdG8gZXZlcnkgbG9jYWwgdmFy
+aWFibGUgdGhhdCBzdG9yZXMgYSB2YWx1ZQo+IHRoYXQgZ2V0cyBwYXNzZWQgdG8gcGdwcm90X3dy
+aXRlY29tYmluZSgpLgo+IAo+IFRoZXJlIGZvcnR1bmF0ZWx5IGFyZW4ndCB2ZXJ5IG1hbnkgb2Yg
+dGhvc2UgY2FzZXMsIGJ1dCBJIHN0aWxsIHRoaW5rCj4gdGhhdCBhIGJldHRlciBzb2x1dGlvbiB3
+b3VsZCBiZSB0byB0dXJuIHBncHJvdF93cml0ZWNvbWJpbmUoKSBpbnRvIGEKPiBzdGF0aWMgaW5s
+aW5lIGZ1bmN0aW9uLCBzbyB0aGF0IHRoZSBwYXJhbWV0ZXIgd291bGQgZ2V0IHNpbGVudGx5Cj4g
+aWdub3JlZC4gT3IgcGVyaGFwcyBpZiBpdCBtdXN0IHJlbWFpbiBhIG1hY3JvLCB0aGVuIGRvaW5n
+IHRoZSBmb2xsb3dpbmcKPiBzaG91bGQgc3RpbGwgYXZvaWQgdGhlIG5lZWQgdG8gbW9kaWZ5IGV2
+ZXJ5IGNhbGwgc2l0ZToKPiAKPiAJI2RlZmluZSBwZ3Byb3Rfd3JpdGVjb21iaW5lKHByb3QpICh7
+ICh2b2lkKXByb3Q7IF9fcGdwcm90KDApOyB9KQo+IAo+IFRoaWVycnkKPiAKCk1ha2VzIHNlbnNl
+LiBIb3cgYWJvdXQgdGhpcyB2ZXJzaW9uPwoKCUFybmQKLS0tCkZyb20gODNhZjZiYzc0NDIzYzkw
+YmU3ZjU4MGE4MjcyNjhiODlmOTRiNWM2YiBNb24gU2VwIDE3IDAwOjAwOjAwIDIwMDEKRnJvbTog
+QXJuZCBCZXJnbWFubiA8YXJuZEBhcm5kYi5kZT4KRGF0ZTogVGh1LCAxOSBKYW4gMjAxNyAxNjow
+NToyOSArMDEwMApTdWJqZWN0OiBbUEFUQ0hdIEFSTTogaW1wcm92ZSBOT01NVSBkZWZpbml0aW9u
+IG9mIHBncHJvdF8qKCkKClRoZSB0ZWdyYSBEUk0gZHJpdmVyIHByb2R1Y2VzIGEgaGFybWxlc3Mg
+d2FybmluZyB3aGVuIGJ1aWx0IGZvciBOT01NVToKCmRyaXZlcnMvZ3B1L2RybS90ZWdyYS9nZW0u
+YzogSW4gZnVuY3Rpb24gJ3RlZ3JhX2RybV9tbWFwJzoKZHJpdmVycy9ncHUvZHJtL3RlZ3JhL2dl
+bS5jOjUwODoxMjogdW51c2VkIHZhcmlhYmxlICdwcm90JwoKVGhpcyBpcyBiZWNhdXNlIHBncHJv
+dF93cml0ZWNvbWJpbmUoKSBvbiBBUk0gcmV0dXJucyBhIGNvbnN0YW50IGFuZAppZ25vcmVzIGl0
+cyBhcmd1bWVudC4gVGhlIHZlcnNpb24gaW4gYXNtLWdlbmVyaWMgZG9lc24ndCBoYXZlIHRoYXQK
+cHJvYmxlbSwgc28gbGV0J3MgdXNlIHRoYXQgb25lIGluc3RlYWQuIFdlIGRvbid0IGFjdHVhbGx5
+IGNhcmUKYWJvdXQgdGhlIHZhbHVlIG9uIE5PTU1VLCBhbmQgdGhpcyBpcyBjb25zaXN0ZW50IHdp
+dGggd2hhdCBzb21lCm90aGVyIGFyY2hpdGVjdHVyZXMgZG8uCgpTaWduZWQtb2ZmLWJ5OiBBcm5k
+IEJlcmdtYW5uIDxhcm5kQGFybmRiLmRlPgoKZGlmZiAtLWdpdCBhL2FyY2gvYXJtL2luY2x1ZGUv
+YXNtL3BndGFibGUtbm9tbXUuaCBiL2FyY2gvYXJtL2luY2x1ZGUvYXNtL3BndGFibGUtbm9tbXUu
+aAppbmRleCBhZGQwOTRkMDllM2UuLjMwMjI0MGMxOWE1YSAxMDA2NDQKLS0tIGEvYXJjaC9hcm0v
+aW5jbHVkZS9hc20vcGd0YWJsZS1ub21tdS5oCisrKyBiL2FyY2gvYXJtL2luY2x1ZGUvYXNtL3Bn
+dGFibGUtbm9tbXUuaApAQCAtNjMsOSArNjMsOSBAQCB0eXBlZGVmIHB0ZV90ICpwdGVfYWRkcl90
+OwogLyoKICAqIE1hcmsgdGhlIHByb3QgdmFsdWUgYXMgdW5jYWNoZWFibGUgYW5kIHVuYnVmZmVy
+YWJsZS4KICAqLwotI2RlZmluZSBwZ3Byb3Rfbm9uY2FjaGVkKHByb3QpCV9fcGdwcm90KDApCi0j
+ZGVmaW5lIHBncHJvdF93cml0ZWNvbWJpbmUocHJvdCkgX19wZ3Byb3QoMCkKLSNkZWZpbmUgcGdw
+cm90X2RtYWNvaGVyZW50KHByb3QpIF9fcGdwcm90KDApCisjZGVmaW5lIHBncHJvdF9ub25jYWNo
+ZWQocHJvdCkJKHByb3QpCisjZGVmaW5lIHBncHJvdF93cml0ZWNvbWJpbmUocHJvdCkgKHByb3Qp
+CisjZGVmaW5lIHBncHJvdF9kbWFjb2hlcmVudChwcm90KSAocHJvdCkKIAogCiAvKgoKX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVsIG1haWxp
+bmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlzdHMuZnJl
+ZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
