@@ -1,109 +1,71 @@
-From: Thierry Reding <thierry.reding@gmail.com>
-Subject: Re: [PATCH] drm: tegra: shut up harmless warning on NOMMU
-Date: Thu, 19 Jan 2017 12:00:58 +0100
-Message-ID: <20170119110058.GD30182@ulmo.ba.sec>
-References: <20170112111425.3228358-1-arnd@arndb.de>
+From: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+Subject: Re: [PATCH 57/62] watchdog: tegra_wdt: Convert to use device managed
+ functions
+Date: Thu, 19 Jan 2017 12:04:07 +0100
+Message-ID: <20170119110407.GE30182@ulmo.ba.sec>
+References: <1484091325-9199-1-git-send-email-linux@roeck-us.net>
+ <1484100561-17638-1-git-send-email-linux@roeck-us.net>
+ <1484100561-17638-6-git-send-email-linux@roeck-us.net>
 Mime-Version: 1.0
-Content-Type: multipart/mixed; boundary="===============1779265974=="
-Return-path: <dri-devel-bounces@lists.freedesktop.org>
-In-Reply-To: <20170112111425.3228358-1-arnd@arndb.de>
-List-Unsubscribe: <https://lists.freedesktop.org/mailman/options/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=unsubscribe>
-List-Archive: <https://lists.freedesktop.org/archives/dri-devel>
-List-Post: <mailto:dri-devel@lists.freedesktop.org>
-List-Help: <mailto:dri-devel-request@lists.freedesktop.org?subject=help>
-List-Subscribe: <https://lists.freedesktop.org/mailman/listinfo/dri-devel>,
- <mailto:dri-devel-request@lists.freedesktop.org?subject=subscribe>
-Errors-To: dri-devel-bounces@lists.freedesktop.org
-Sender: "dri-devel" <dri-devel-bounces@lists.freedesktop.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Alexandre Courbot <gnurou@gmail.com>, Stephen Warren <swarren@wwwdotorg.org>, Daniel Vetter <daniel.vetter@ffwll.ch>, linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, Mikko Perttunen <mperttunen@nvidia.com>, linux-tegra@vger.kernel.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="7CZp05NP8/gJM8Cl"
+Return-path: <linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Content-Disposition: inline
+In-Reply-To: <1484100561-17638-6-git-send-email-linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Sender: linux-watchdog-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
+Cc: Wim Van Sebroeck <wim-IQzOog9fTRqzQB+pC5nmwQ@public.gmane.org>, linux-watchdog-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
 List-Id: linux-tegra@vger.kernel.org
 
 
---===============1779265974==
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="sXc4Kmr5FA7axrvy"
-Content-Disposition: inline
-
-
---sXc4Kmr5FA7axrvy
+--7CZp05NP8/gJM8Cl
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jan 12, 2017 at 12:13:51PM +0100, Arnd Bergmann wrote:
-> The tegra DRM driver is almost ok without an MMU, but there
-> is one small warning that I get:
+On Tue, Jan 10, 2017 at 06:09:11PM -0800, Guenter Roeck wrote:
+> Use device managed functions to simplify error handling, reduce
+> source code size, improve readability, and reduce the likelyhood of bugs.
 >=20
-> drivers/gpu/drm/tegra/gem.c: In function 'tegra_drm_mmap':
-> drivers/gpu/drm/tegra/gem.c:508:12: unused variable 'prot'
+> The conversion was done automatically with coccinelle using the
+> following semantic patches. The semantic patches and the scripts used
+> to generate this commit log are available at
+> https://github.com/groeck/coccinelle-patches
 >=20
-> This marks the variable as __maybe_unused instead.
+> - Use devm_watchdog_register_driver() to register watchdog device
 >=20
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Cc: Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>
+> Cc: Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Cc: Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
+> Signed-off-by: Guenter Roeck <linux-0h96xk9xTtrk1uMJSBkQmQ@public.gmane.org>
 > ---
->  drivers/gpu/drm/tegra/gem.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/tegra/gem.c b/drivers/gpu/drm/tegra/gem.c
-> index 7d853e6b5ff0..63f14b7a59a0 100644
-> --- a/drivers/gpu/drm/tegra/gem.c
-> +++ b/drivers/gpu/drm/tegra/gem.c
-> @@ -505,7 +505,7 @@ int tegra_drm_mmap(struct file *file, struct vm_area_=
-struct *vma)
-> =20
->  		vma->vm_pgoff =3D vm_pgoff;
->  	} else {
-> -		pgprot_t prot =3D vm_get_page_prot(vma->vm_flags);
-> +		pgprot_t prot __maybe_unused =3D vm_get_page_prot(vma->vm_flags);
+>  drivers/watchdog/tegra_wdt.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
 
-This seems to me like a suboptimal solution. The reason why this fails
-is because pgprot_writecombine(prot) for NOMMU translates to __pgprot(0)
-via a macro. This also means that we need to potentially add a
-__maybe_unused annotation to every local variable that stores a value
-that gets passed to pgprot_writecombine().
+Acked-by: Thierry Reding <treding-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>
 
-There fortunately aren't very many of those cases, but I still think
-that a better solution would be to turn pgprot_writecombine() into a
-static inline function, so that the parameter would get silently
-ignored. Or perhaps if it must remain a macro, then doing the following
-should still avoid the need to modify every call site:
-
-	#define pgprot_writecombine(prot) ({ (void)prot; __pgprot(0); })
-
-Thierry
-
---sXc4Kmr5FA7axrvy
+--7CZp05NP8/gJM8Cl
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAliAnGcACgkQ3SOs138+
-s6Ez8A/+PEF1HeYHQziB+BNMghIdRWy56xkuFdI9/ShFVAt0u2stKjt5k8exDngo
-NcHS4sXzTtIxw2kv/TV+5qhE/OUUv7BWm3R09MvIiRuwL3KiGlmwdIbV8GbFWpFY
-jjKiXDgHhbRKlEnq28wFhTfvaty/3xmrDSLMN+1iBB970fNYLgTD8dLpYPxhnFp7
-YewWxmjDg2NFpYdW6o1vbS31YvMnJxBGqHmUdNfvIt6kdwcBil0ldhLzVoZCb3vG
-OUDfGXdZ4JgkVmCQiCszyWChLJd0JgFTvytHRgVpUQRLaRkmAQHrL16kI1zj8tUg
-CHmLhQU2ACGUFz1V2qsfNCoCS0ZQjzNCn93rRBGkltEopIv+3dGc1PhG1kCDGEFw
-Rm6GCXfGAjiwkNpVUg1mpsue3LYadMvOhmLDV0R3dqWU0BQ/vwRamgvlAeIHWiGp
-fk1POIpK29B5sn2DFYAZc8Dq9CaIeSg9DAdQuzqimQZsZcqGsOPEgnwFarS6HpLh
-lEpO/nOWDkMEgm7iTjxnKji6DKtQ8NyPtYo6TlQ+bylThclnNen0FvHiokDFcu8E
-VFmu9f0kbPnBKEo8Iw71ZPH81NyCPy8NOlruQ3c1s+a650v+REFt0mOGSVp7a/j9
-xpAbUAjMDOOGEwk4hzg3HtSxf3ME8R/l4hjG5+dmqxuqjXwYz/M=
-=fPBe
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAliAnSYACgkQ3SOs138+
+s6Gxyg//Vl6DcjUBZyclJ177ITiPvPIvG/frmNm0C6T6c82rTlB8pScygjaOlWCK
+YXA2+bS2qz8eseAbijwmwLYnlSZvAeGSBFaExOAlXIkyafTQyt+FE2vL00zV0cPa
+n8V/zUuMnucEsCbw6Wke1xLcigdK0iKi/jxfeYFvC7v74CTMR48tmFcVry21h8/K
+oFeIz0DsBvb0aM35S2coz9pU/WFPyHOxi7R3TZE11wzxplJoufUvXJh1CkBRqWWe
+RI9s7ahIj0Dl+cIekE8Ge0owUBmN4bvu1C05lvsBqjht0OJhEkXM8mNIRSgfZwH/
+50CCqffPgVJu+mY2WNgeNbcnM9wHDqIaiHBf/sYNr1nfGmAphD3umsYb1u4zlFD/
+eWcQG88WYA+6idBBMaa44Z7UuFP0ItusNHmcC5efj8xxaNx4JkLGJg+wymU7In/F
+bYcvJVvaEVmwMrAqDwlWghoG5AZiHpDiy4LfZULN7bVR1PdlocV9/HGNSjOuSzEO
+JPZ+DuCk0Ldtpd+mUTDLbnitkmGlve9QmZSY4BGs0JWsPBeCfdBVjNkgSDkbO2J1
+rZ1lekInNryXo9WuyO08g2jWhKrQva3XwlAiCfoCc58IhRGWEBbb641ILc6iWWJV
+FqqDTUs99F2dRipwhO6MfmL5aAK/gtbYnVKanb9cNA7TZqj+kdc=
+=s9zz
 -----END PGP SIGNATURE-----
 
---sXc4Kmr5FA7axrvy--
-
---===============1779265974==
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
-Content-Disposition: inline
-
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18KZHJpLWRldmVs
-IG1haWxpbmcgbGlzdApkcmktZGV2ZWxAbGlzdHMuZnJlZWRlc2t0b3Aub3JnCmh0dHBzOi8vbGlz
-dHMuZnJlZWRlc2t0b3Aub3JnL21haWxtYW4vbGlzdGluZm8vZHJpLWRldmVsCg==
-
---===============1779265974==--
+--7CZp05NP8/gJM8Cl--
+--
+To unsubscribe from this list: send the line "unsubscribe linux-watchdog" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
