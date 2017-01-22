@@ -1,22 +1,11 @@
-From: Paul Kocialkowski <contact@paulk.fr>
-Subject: [PATCH 1/5] ARM: tegra: nyan: Use proper IRQ type definitions
-Date: Sun, 22 Jan 2017 15:44:11 +0100
-Message-ID: <20170122144415.31208-1-contact@paulk.fr>
-Mime-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-Return-path: <linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org>
-List-Unsubscribe: <http://lists.infradead.org/mailman/options/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=unsubscribe>
-List-Archive: <http://lists.infradead.org/pipermail/linux-arm-kernel/>
-List-Post: <mailto:linux-arm-kernel@lists.infradead.org>
-List-Help: <mailto:linux-arm-kernel-request@lists.infradead.org?subject=help>
-List-Subscribe: <http://lists.infradead.org/mailman/listinfo/linux-arm-kernel>,
- <mailto:linux-arm-kernel-request@lists.infradead.org?subject=subscribe>
-Sender: "linux-arm-kernel" <linux-arm-kernel-bounces@lists.infradead.org>
-Errors-To: linux-arm-kernel-bounces+linux-arm-kernel=m.gmane.org@lists.infradead.org
-To: linux-tegra@vger.kernel.org
-Cc: devicetree@vger.kernel.org, Mikko Perttunen <cyndis@kapsi.fi>, Stephen Warren <swarren@wwwdotorg.org>, Paul Kocialkowski <contact@paulk.fr>, linux-kernel@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>, Thierry Reding <thierry.reding@gmail.com>, Peter Rosin <peda@axentia.se>, Alexandre Courbot <gnurou@gmail.com>, linux-arm-kernel@lists.infradead.org
+From: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
+Subject: [PATCH v2 1/6] ARM: tegra: nyan: Use proper IRQ type definitions
+Date: Sun, 22 Jan 2017 16:47:48 +0100
+Message-ID: <20170122154753.31942-1-contact@paulk.fr>
+Return-path: <devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org>
+Sender: devicetree-owner-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+To: linux-tegra-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+Cc: linux-kernel-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, linux-arm-kernel-IAPFreCvJWM7uuMidbF8XUB+6BGkLq7r@public.gmane.org, devicetree-u79uwXL29TY76Z2rM5mHXA@public.gmane.org, Jon Hunter <jonathanh-DDmLM1+adcrQT0dZR+AlfA@public.gmane.org>, Stephen Warren <swarren-3lzwWm7+Weoh9ZMKESR00Q@public.gmane.org>, Thierry Reding <thierry.reding-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Alexandre Courbot <gnurou-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>, Mikko Perttunen <cyndis-/1wQRMveznE@public.gmane.org>, Peter Rosin <peda-koto5C5qi+TLoDKTGw+V6w@public.gmane.org>, Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
 List-Id: linux-tegra@vger.kernel.org
 
 This switches a few interrupt definitions that were using
@@ -24,7 +13,7 @@ GPIO_ACTIVE_HIGH as IRQ type, which is invalid.
 
 This is mostly a cosmetic change, that doesn't affect any driver.
 
-Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
+Signed-off-by: Paul Kocialkowski <contact-W9ppeneeCTY@public.gmane.org>
 ---
  arch/arm/boot/dts/tegra124-nyan.dtsi | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
@@ -53,3 +42,8 @@ index eabfa655a3cd..ef430aa30152 100644
  							GPIO_ACTIVE_HIGH>;
 -- 
 2.11.0
+
+--
+To unsubscribe from this list: send the line "unsubscribe devicetree" in
+the body of a message to majordomo-u79uwXL29TY76Z2rM5mHXA@public.gmane.org
+More majordomo info at  http://vger.kernel.org/majordomo-info.html
