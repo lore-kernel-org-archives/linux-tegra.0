@@ -1,45 +1,57 @@
 From: Paul Kocialkowski <contact@paulk.fr>
-Subject: [PATCH v2 3/6] ARM: tegra: nyan-big: Include compatible revisions for proper detection
-Date: Sun, 22 Jan 2017 16:47:50 +0100
-Message-ID: <20170122154753.31942-3-contact@paulk.fr>
+Subject: [PATCH v2 6/6] ARM: tegra: nyan-blaze: Proper pinmux for TPM i2c
+Date: Sun, 22 Jan 2017 16:47:53 +0100
+Message-ID: <20170122154753.31942-6-contact@paulk.fr>
 References: <20170122154753.31942-1-contact@paulk.fr>
 Return-path: <linux-kernel-owner@vger.kernel.org>
 In-Reply-To: <20170122154753.31942-1-contact@paulk.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 To: linux-tegra@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Mikko Perttunen <cyndis@kapsi.fi>, Peter Rosin <peda@axentia.se>, Paul Kocialkowski <contact@paulk.fr>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>, Stephen Warren <swarren@wwwdotorg.org>, Thierry Reding <thierry.reding@gmail.com>, Alexandre Courbot <gnurou@gmail.com>, Mikko Perttunen <cyndis@kapsi.fi>, Peter Rosin <peda@axentia.se>, Jerome Coste <jerome.coste@etu.utc.fr>
 List-Id: linux-tegra@vger.kernel.org
 
-Depthcharge (the payload used with cros devices) will attempt to detect
-boards using their revision. This includes all the known revisions for
-the nyan-big board so that the dtb can be selected preferably.
+From: Jerome Coste <jerome.coste@etu.utc.fr>
 
-Defining compatibly revisions allows depthcharge to select the kernel
-via the revision it detects instead of using the default kernel. This
-allows having a FIT image with multiple kernels for multiple devices.
-
-Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
+This corrects the pinmux for accessing the TPM over the i2c line.
+Thus, it allows correctly probing the module, that previously failed with i2c
+errors.
 ---
- arch/arm/boot/dts/tegra124-nyan-big.dts | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/tegra124-nyan-blaze.dts | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-diff --git a/arch/arm/boot/dts/tegra124-nyan-big.dts b/arch/arm/boot/dts/tegra124-nyan-big.dts
-index 67d7cfb32541..f12ece9b76a6 100644
---- a/arch/arm/boot/dts/tegra124-nyan-big.dts
-+++ b/arch/arm/boot/dts/tegra124-nyan-big.dts
-@@ -6,7 +6,12 @@
- 
- / {
- 	model = "Acer Chromebook 13 CB5-311";
--	compatible = "google,nyan-big", "nvidia,tegra124";
-+	compatible = "google,nyan-big-rev7", "google,nyan-big-rev6",
-+			"google,nyan-big-rev5", "google,nyan-big-rev4",
-+			"google,nyan-big-rev3", "google,nyan-big-rev2",
-+			"google,nyan-big-rev5", "google,nyan-big-rev4",
-+			"google,nyan-big-rev1", "google,nyan-big-rev0",
-+			"google,nyan-big", "google,nyan", "nvidia,tegra124";
- 
- 	panel: panel {
- 		compatible = "auo,b133xtn01";
+diff --git a/arch/arm/boot/dts/tegra124-nyan-blaze.dts b/arch/arm/boot/dts/tegra124-nyan-blaze.dts
+index aca0828115eb..9df25ca5ab83 100644
+--- a/arch/arm/boot/dts/tegra124-nyan-blaze.dts
++++ b/arch/arm/boot/dts/tegra124-nyan-blaze.dts
+@@ -1100,19 +1100,19 @@
+ 			};
+ 			cam_i2c_scl_pbb1 {
+ 				nvidia,pins = "cam_i2c_scl_pbb1";
+-				nvidia,function = "rsvd3";
+-				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
+-				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+-				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+-				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
++				nvidia,function = "i2c3";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
+ 			};
+ 			cam_i2c_sda_pbb2 {
+ 				nvidia,pins = "cam_i2c_sda_pbb2";
+-				nvidia,function = "rsvd3";
+-				nvidia,pull = <TEGRA_PIN_PULL_DOWN>;
+-				nvidia,tristate = <TEGRA_PIN_ENABLE>;
+-				nvidia,enable-input = <TEGRA_PIN_DISABLE>;
+-				nvidia,open-drain = <TEGRA_PIN_DISABLE>;
++				nvidia,function = "i2c3";
++				nvidia,pull = <TEGRA_PIN_PULL_NONE>;
++				nvidia,tristate = <TEGRA_PIN_DISABLE>;
++				nvidia,enable-input = <TEGRA_PIN_ENABLE>;
++				nvidia,open-drain = <TEGRA_PIN_ENABLE>;
+ 			};
+ 			pbb3 {
+ 				nvidia,pins = "pbb3";
 -- 
 2.11.0
